@@ -1,0 +1,68 @@
+function [g,L,info] = gabpars_from_window(g,a,M,L,callfun)
+%GABPARS_FROM_WINDOW  Compute g and L from window
+%   Usage: [g,g.info,L] = gabpars_from_window(f,g,a,M);
+%
+%   Use this function if you know a window and a lattice
+%   for the DGT. The function will calculate a transform length L and
+%   evaluate the window g into numerical form.
+%
+%   If the transform length is unknown (as it usually is unless explicitly
+%   specified by the user), set L to be [] in the input to this function.
+  
+if nargin<5
+  stacknames=dbstack;  
+  callfun=stacknames(2).name;
+end;
+
+assert_squarelat(a,M,1,callfun,0);
+
+if ~isempty(L)
+  if (prod(size(L))~=1 || ~isnumeric(L))
+    error('%s: L must be a scalar',callfun);
+  end;
+  
+  if rem(L,1)~=0
+    error('%s: L must be an integer',callfun);
+  end;
+end;
+
+if isnumeric(g)
+  if ~isvector(g)
+    error('%s: g must be a vector',upper(callfun));
+  end;
+  Lwindow=length(g);
+else
+  Lwindow=0;
+end;
+
+
+if isempty(L)
+  % Smallest length transform.
+  Lsmallest=lcm(a,M);
+
+  % Choose a transform length larger than both the length of the
+  % signal and the window.
+  L=ceil(max(1,Lwindow)/Lsmallest)*Lsmallest;
+else
+
+  if rem(L,M)~=0
+    error('%s: The length of the transform must be divisable by M = %i',...
+          callfun,M);
+  end;
+
+  if rem(L,a)~=0
+    error('%s: The length of the transform must be divisable by a = %i',...
+          callfun,a);
+  end;
+
+  if L<Lwindow
+    error('%s: Window is too long.',callfun);
+  end;
+
+end;
+
+b=L/M;
+N=L/a;
+
+[g,info]=comp_window(g,a,M,L,0,callfun);
+

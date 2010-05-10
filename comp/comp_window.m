@@ -1,0 +1,136 @@
+function [g,info] = comp_window(g,a,M,L,wilson,callfun);
+%COMP_WINDOW  Compute the window from numeric, text or cell array.
+%   Usage: [g,info] = comp_window(g,a,M,L,wilson,callfun);
+%
+%   [g,info]=COMP_WINDOW(g,a,M,L,wilson,callfun) will compute the window
+%   from a text description or a cell array containing additional
+%   parameters.
+%
+%   This function is the driving routine behind GABWIN and WILWIN.
+%
+%   See the help on GABWIN and WILWIN for more information.
+%
+%   See also: gabwin, wilwin
+
+  
+% Basic discovery: Some windows depend on L, and some windows help define
+% L, so the calculation of L is window dependant.
+  
+% Default values.
+info.gauss=0;
+info.wasrow=0;
+info.isfir=0;
+info.istight=0;
+info.isdual=0;
+
+firwinnames =  {'hanning','hann','sqrthan','sqrthann','hamming',...
+                'sqrtham','square','rect','sqrtsquare','sqrtrect',...
+                'tria','triangular','sqrttria','blackman',...
+		'ogg'};
+
+% Create window if string was given as input.
+if ischar(g)
+  winname=lower(g);
+  switch(winname)
+   case {'pgauss','gauss'}
+    complain_L(L,callfun);
+    g=comp_pgauss(L,a*M/L,0);
+    info.gauss=1;
+    info.tfr=a*M/L;
+   case {'psech','sech'}
+    complain_L(L,callfun)
+    g=psech(L,a*M/L);
+    info.tfr=a*M/L;
+   case {'dualgauss','gaussdual'}
+    complain_L(L,callfun);
+    g=comp_pgauss(L,a*M/L,0);
+    g=gabdual(g,a,M);
+    if wilson
+      g=2*g;
+    end;
+    info.tfr=a*M/L;
+   case {'tight'}
+    complain_L(L,callfun);
+    g=gabtight(a,M,L);
+    if wilson
+      g=g*sqrt(2);
+    end;
+    info.tfr=a*M/L;
+   case firwinnames
+    g=firwin(winname,M);
+    info.isfir=1;    
+   otherwise
+    error('%s: Unknown window type: %s',callfun,winname);
+  end;
+end;
+
+if iscell(g)
+  if isempty(g) || ~ischar(g{1})
+    error('First element of window cell array must be a character string.');
+  end;
+  
+  winname=lower(g{1});
+  
+  switch(winname)
+   case {'pgauss','gauss'}
+    complain_L(L,callfun);
+    [g,info.tfr]=pgauss(L,g{2:end});
+    info.gauss=1;
+   case {'psech','sech'}
+    complain_L(L,callfun);
+    [g,info.tfr]=psech(L,g{2:end});    
+   case {'dual'}
+    [g,info.auxinfo] = comp_window(g{2},a,M,L,wilson,callfun);    
+    if isempty(L)
+      g = gabdual(g,a,M);
+    else
+      g = gabdual(g,a,M,L);
+    end;
+    info.isdual=1;
+   case {'tight'}
+    [g,info.auxinfo] = comp_window(g{2},a,M,L,wilson,callfun);    
+    if isempty(L)
+      g = gabtight(g,a,M);
+    else
+      g = gabtight(g,a,M,L);
+    end;
+    info.istight=1;
+   case firwinnames
+    g=firwin(winname,g{2:end});
+    info.isfir=1;
+   otherwise
+    error('Unsupported window type.');
+  end;
+end;
+
+if isnumeric(g)
+  if size(g,2)>1
+    if size(g,1)>1
+      error('g must be a vector');
+    else
+      % g was a row vector.
+      g=g(:);
+      info.wasrow=1;
+    end;
+  end;
+end;
+
+% Information to be determined post creation.
+info.wasreal = isreal(g);
+info.gl      = length(g);
+
+if (~isempty(L) && (info.gl<L))
+  info.isfir=1;
+end;
+
+if rem(info.gl,M)~=0
+  error('%s: Length of window must be dividable by M = %i.',...
+        callfun,M);
+end;
+
+function complain_L(L,callfun)
+  
+  if isempty(L)
+    error(['%s: You must specify a length L if a window is represented as a ' ...
+           'text string or cell array.'],callfun);
+  end;

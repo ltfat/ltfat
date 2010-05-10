@@ -1,0 +1,12 @@
+The 'mulaclab' gui makes use of the GPC library from 
+
+   http://www.cs.man.ac.uk/~toby/gpc/
+
+If you wish to use 'mulaclab' you must download the software from the
+homepage, extract it, and put it in this directory. Specifically,
+there must be a 'gpc.c' and a 'gpc.h' file in this directory.
+
+The library is free (as in beer) for non-commercial use. Please see
+the GPC-README.pdf file in the downloaded package.
+
+After download, execute the 'ltfatmex' command to compile the interface.

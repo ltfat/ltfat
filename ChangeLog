@@ -1,0 +1,105 @@
+Version 0.97 
+
+	* Toolbox is now built upon a standalone C library.
+
+	* 
+
+Version 0.96 12/1 2009 svn no 728
+	* Matlab MEX compilation now works under Windows. See the
+	instructions in the INSTALL file.
+	
+	* Speed optimizations in the C-code used by DGT, DWILT and MDCT
+	and their inverses.
+	
+	* New functions DGTREAL and IDGTREAL works with the positive
+	frequencies of the DGT of real valued signals.
+
+	* New functions FFTREAL computes only the positive frequencies of
+	the FFT of a real valued input signal.
+	
+	* More systematic naming of functions:
+		CANDUAL -> GABDUAL
+		CANTIGHT -> GABTIGHT
+		MIXDUAL -> GAMIXDUAL
+		PROJDUAL -> GABPROJDUAL
+		GFBOUNDS -> GABFRAMEBOUNDS and GABRIESZBOUNDS
+		TF_ADAPTLASSO -> GABELITISTLASSO
+		TF_GROUPLASSO -> GABGROUPLASSO
+			
+	* Reassignment is a method for sharpening the spectrogram. Support
+	for reassignment is included in the new function REASSIGN and an
+	easy to use plot RESGRAM.
+
+	* Easy to use plot for plotting instantantaneous frequency:
+	INSTFREQPLOT
+	
+	* Three different methos for computing instantaneous time and
+	frequency: INSTTFDGT, INSTTFPHASE and INSTTFABS.
+
+	* General speedup of many of the SPREAD* routines based on speedup
+	in COL2DIAG and more efficient algorithms for sparse matrices.
+	
+	* COL2DIAG provides the basic coordinate change needed for
+	efficient implementation of spreading function methods. COL2DIAG
+	has a C-implementation.
+
+	* New function WIL2RECT converts Wilson coefficients from the
+	standard compact layout to a more loose layout, where the
+	coefficients are appropriatly placed on the TF-plane. The
+	rectangular format is welll suited for visualizing Wilson
+	coefficients.
+
+	* The functionality of GFBOUNDS was split into two methods
+	computing either frame bounds or Riesz basis bounds
+
+	* Dynamic range in SGRAM and RESGRAM is now specified by the
+	'dynrange' parameter instead of previously 'range'.
+	
+	* greasylong and doppler signals added.
+
+	* Periodic Heaviside function added, PHEAVISIDE.
+
+	* Simple exponential wave added as EXPMODE.
+	
+Version 0.95 6/3 2008 svn no. 595
+
+	* DCT based resampling function.
+	
+Version 0.94 24/10 2007 svn no. 556
+
+	* Numerically stable computation of Hermite functions. Thanks to
+	Thomasz Hrycak.
+
+	* gabmulappr (approximation of an operator by a Gabor multiplier)
+	now works with fast algorithm.
+
+	* group lasso shrinkage and adaptive lasso shrinkage added with an
+	example (examp_audioshrink)
+
+	* Removed all support of lattices in the spreading operator
+	routines, as this is not practically usefull.
+
+	* Special support in candual for windows shorter than the number
+	of channels.
+	
+	* The configure style system has been removed. Use ltfatmex instead.
+	
+	* phaseplot now uses the phaselocked dgt by default.
+
+	
+Version 0.93 10/8 2007 svn no. 504
+	
+	* Easy compilation of Mex/Octave interfaces by 'ltfatmex' command
+
+	* Bug fixed for Wilson bases.
+
+	* Better support of choosing an alternative dimension for the
+	various transforms.
+
+	* fmax option added to sgram
+
+	* fftresample does Fourier interpolation 
+
+	* phaseplot changed to always do full STFT 
+
+	* moved to GPL v 3.0 license

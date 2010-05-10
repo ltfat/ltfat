@@ -1,0 +1,87 @@
+%DEMO_NSDGT  Nonsationary Gabor transform demo
+%
+%   This script sets up a nonstationary Gabor frame with the specified
+%   parameters, computes windows and corresponding canonical dual windows
+%   and a test signal, and plots the windows and the energy of the 
+%   coefficients.
+%
+%   FIGURE 1 windows + dual windows
+%
+%    This figure shows the window functions used and the corresponding
+%    canonical dual windows. 
+%
+%   FIGURE 2 spectrogram (absolute value of coefficients in dB)
+%
+%    This figure shows a (color coded) image of the nsdgt coefficient
+%    modulus. 
+%
+%   SEE ALSO:  NSDGT, INSDGT, NSGABDUAL
+
+disp(['Type "help demo_nsdgt" to see a description of how this example',...
+  ' works.']);
+
+% Setup parameters and length of signal.
+
+Ls=1000; % Length of signal.
+
+N=16; % Number of time positions
+
+% Define a set of windows with length growing linearly. The step beetween
+% to consecutive windows grows also linearly.
+
+M=round(linspace(40,200,N)');
+a=cumsum(round(M/2));
+a=a-a(1);
+
+a_new=round(M/2);
+
+g={};
+for ii=1:length(M)
+    g{ii}=firwin('hann',M(ii));
+end
+
+% Compute corresponding dual windows
+gd=nsgabdual(g,a_new,Ls);
+
+% Plot them
+figure(1);
+color = ['b', 'r'];
+for ii = 1:length(a)
+    subplot(2,1,1);
+    hold on;
+    plot(a(ii)-1-floor(M(ii)/2)+(1:M(ii)), fftshift(g{ii}),...
+      color(rem(ii,2)+1));
+    subplot(2,1,2);
+    hold on;
+    plot(a(ii)-1-floor(M(ii)/2)+(1:M(ii)), fftshift(gd{ii}),...
+      color(rem(ii,2)+1));
+end
+
+subplot(2,1,1);
+title('Analysis windows');
+xlabel('Time index');
+subplot(2,1,2);
+title('Dual synthesis windows');
+xlabel('Time index');
+
+% Define a sinus test signal.
+f=sin(2*pi*0.3*(1:Ls)');
+
+% Calculate coefficients.
+c=nsdgt(f,g,a_new,M);
+
+% Plot corresponding spectrogram
+figure(2);
+plotnsdgt(c,a);
+title('Spectrogram of test signal')
+xlabel('Time');
+ylabel('Frequency');
+
+% Test reconstruction
+f_r=insdgt(c,gd,a_new,Ls);
+
+% Print relative error of reconstruction.
+rec_err = norm(f-f_r)/norm(f);
+
+fprintf(['Relative error of reconstruction (should be close to zero.):'...
+    '   %e \n'],rec_err);

@@ -1,0 +1,49 @@
+
+-------- Compatibility ----------------------------------
+
+The toolbox should work and compile on all versions of Octave later
+than version 3.0, but it is generally recommended to upgrade to the
+latest stable release of Octave. For demos etc. to work, you will need
+to install the Octave-forge packages.
+
+-------- Compiling the Octave interfaces  ------------------
+
+LTFAT comes with C++ Octave interfaces written for all computationally
+intensitive function in the toolbox.
+
+To compile the Octave interfaces, type "ltfatmex" on the Octave command
+prompt. This will compile all the available oct-functions.
+
+For this to work, you will need to install the Octave development
+packages (the 'mkoctfile' script must be available).
+
+The oct-files links to certain libraries, most importantly to the
+LTFAT C-library. In order to compile the oct-interfaces, you must
+first have compiled the C library.
+
+------- Octave on Linux ------ -----------------------------
+
+
+To compile, install the Octave development package and all its
+dependencies. This will also install all necessary libraries and
+header files needed for compilation. 
+
+* On Fedora / Redhat this package is called "octave-devel"
+
+* On Debian / Ubuntu this package is called "octave-headers"
+
+Install the octave-forge packages to add extra toolboxes available for
+Octave.
+
+--------- Compiling libltfat on Linux ------------------------------------
+
+There is no binary release of libltfat for Linux, so you have to
+compile it yourself. Fortunately, this is rather easy:
+
+- Open a terminal, and change to the ltfat/src directory (using 'cd')
+
+- Type 'make unixnomem'
+
+------- Octave on Windows -------------------------------------
+
+Octave on Windows is not yet supported.

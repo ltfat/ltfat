@@ -1,0 +1,86 @@
+
+-------- Compatibility ----------------------------------
+
+The toolbox should work and compile on all versions of Matlab later than 2007a.
+
+-------- Compiling the MEX interfaces  ------------------
+
+LTFAT comes with C Mex interfaces written for all computationally
+intensitive function in the toolbox.
+
+To compile the Mex-interfaces, type "ltfatmex" on the Matlab command
+prompt. This will compile all the available mex-functions.
+
+The Mex-files links to certain libraries, most importantly to the
+LTFAT C-library. In order to compile the Mex-interfaces, you must
+first have compiled the C library. If you have downloaded a binary
+release for Microsoft Windows, then this library has already been
+compiled for you, and you should not need to do anything else.
+
+Currently, lcc is the only supported compiler on Windows, if you use
+some variant of Microsoft Visual Studio, the compilation will most
+likely fail.
+
+--------- Compiling libltfat on Microsoft windows, 32 bit --------------
+
+By far the easiest option is to download the "ltfat-win32" binary
+package from Sourceforge. This package includes a compiled version of
+libltfat and FFTW, enough to compile the Matlab interfaces without
+install anything else.
+
+If you wish to compile libltfat youself, do the following:
+
+- Download and install Mingw and MSYS from http://www.mingw.org. This
+  will give you a minimal GNU environment just large enough to compile the library.
+
+- Open an MSYS shell. All the following commands should be typed into the MSYS shell.
+
+- Make sure that 'gcc' is in the path. Type 'which gcc'. You should
+  get a message that gcc has been found and where it is. If it is not
+  found, you will need to manually add it to the path. Execute a
+  command similarly to the following:
+
+     export PATH=$PATH:/c/MinGW/bin/
+
+- Change to the ltfat/src/ directory (use the 'cd' command).
+
+- Edit the 'Makefile' using your favorite editor. On of the first
+  lines of this file is a path to the 'lcclib.exe' program shipped
+  with Matlab. Make sure this path is correct.
+
+- Type 'make winnomem' to compile the library.
+
+The mex interfaces must be linked to some external libraries, some of
+which are shipped with Matlab. However, if you have not downloaded the
+binary release, you need to download the binary release of FFTW from
+http://www.fftw.org/install/windows.html, and place the two .dll files
+in ltfat/mex.
+
+To finally compile the mex-interfaces, you have to type the 'ltfatmex'
+command TWICE in the Matlab command window. This is because the system
+path needs to be updated, which happens in between the two calls.
+
+--------- Compiling libltfat on Linux ------------------------------------
+
+There is no binary release of libltfat for Linux, so you have to
+compile it yourself. Fortunately, this is rather easy:
+
+- Open a terminal, and change to the ltfat/src directory (using 'cd')
+
+- Type 'make unixnomem'
+
+The mex interfaces must be linked to some external libraries, which
+are all standard packages in most Linux distributions. This is the
+FFTW, LAPACK and BLAS libraries:
+
+- On Redhat / Fedora, install the packages 'fftw-devel',
+  'lapack-devel' and 'blas-devel' and their dependcies.
+
+- On Debian / Ubuntu, install the packages 'libfftw3-dev',
+  'libblas-dev' and 'liblapack-dev'.
+
+
+
+
+
+
