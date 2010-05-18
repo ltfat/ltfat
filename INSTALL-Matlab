@@ -15,7 +15,9 @@ The Mex-files links to certain libraries, most importantly to the
 LTFAT C-library. In order to compile the Mex-interfaces, you must
 first have compiled the C library. If you have downloaded a binary
 release for Microsoft Windows, then this library has already been
-compiled for you, and you should not need to do anything else.
+compiled for you, and you should not need to do anything else. On
+Unix, the "ltfatmex" will automatically build the library if you have
+installed the correct libraries.
 
 Currently, lcc is the only supported compiler on Windows, if you use
 some variant of Microsoft Visual Studio, the compilation will most
@@ -62,12 +64,13 @@ path needs to be updated, which happens in between the two calls.
 
 --------- Compiling libltfat on Linux ------------------------------------
 
-There is no binary release of libltfat for Linux, so you have to
-compile it yourself. Fortunately, this is rather easy:
+On Linux / Unix, the "ltfatmex" script will automatically compile the
+ltfat C library. You can also perform this step manually by doing the
+following steps:
 
 - Open a terminal, and change to the ltfat/src directory (using 'cd')
 
-- Type 'make unixnomem'
+- Type 'make'
 
 The mex interfaces must be linked to some external libraries, which
 are all standard packages in most Linux distributions. This is the
@@ -78,9 +81,3 @@ FFTW, LAPACK and BLAS libraries:
 
 - On Debian / Ubuntu, install the packages 'libfftw3-dev',
   'libblas-dev' and 'liblapack-dev'.
-
-
-
-
-
-
