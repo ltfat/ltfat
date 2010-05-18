@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
-#include "ltfat_blas.h"
-#include "ltfat_lapack.h"
 #include "ltfat.h"
 
 void LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *gf, const int L,

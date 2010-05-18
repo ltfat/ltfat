@@ -187,6 +187,32 @@ int
 LTFAT_H_NAME(complexprod)(LTFAT_H_COMPLEX *c, const LTFAT_H_COMPLEX a,
 			  const LTFAT_H_COMPLEX b);
 
+/* ----- internal routines for calling BLAS and LAPACK ----- */
+
+/* LAPACK overwrites the input argument. */
+int
+LTFAT_H_NAME(ltfat_posv)(const int N, const int NRHS,
+			 LTFAT_H_COMPLEX *A, const int lda,
+			 LTFAT_H_COMPLEX *B, const int ldb);
+
+/* LAPACK overwrites the input argument. */
+int
+LTFAT_H_NAME(ltfat_gesvd)(const int M, const int N,
+			  LTFAT_H_COMPLEX *A, const int lda,
+			  LTFAT_H_REAL *S, LTFAT_H_COMPLEX *U, const int ldu,
+			  LTFAT_H_COMPLEX *VT, const int ldvt);
+
+void
+LTFAT_H_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
+			 const enum CBLAS_TRANSPOSE TransB,
+			 const int M, const int N, const int K,
+			 const LTFAT_H_COMPLEX *alpha,
+			 const LTFAT_H_COMPLEX *A, const int lda,
+			 const LTFAT_H_COMPLEX *B, const int ldb,
+			 const LTFAT_H_COMPLEX *beta,
+			 LTFAT_H_COMPLEX *C, const int ldc);
+
+
 /*  ----- experimental FFTW plan interface ------ */
 
 typedef struct
