@@ -4,8 +4,6 @@
 #include <math.h>
 #include <string.h>
 #include "ltfat.h"
-#include "ltfat_blas.h"
-#include "ltfat_lapack.h"
 
 void LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,
 			      const int a, const int M,

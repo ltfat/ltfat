@@ -4,6 +4,7 @@
 /* #include <common.h> */
 
 #include "fftw3.h"
+#include "cblas.h"
 
 /* Allow using arbitrary complex types. Assumes identical memory layout. */
 #ifndef LTFAT_USER_COMPLEX

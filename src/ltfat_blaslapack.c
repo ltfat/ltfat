@@ -6,12 +6,16 @@
 #define LTFAT_POSV F77_FUNC(zposv,ZPOSV)
 #define LTFAT_GESVD F77_FUNC(zgesvd,ZGESVD)
 #define LTFAT_clapack_posv clapack_zposv
+#define LTFAT_GEMM F77_FUNC (zgemm, ZGEMM)
+#define LTFAT_cblas_gemm cblas_zgemm
 #endif
 
 #ifdef LTFAT_SINGLE
 #define LTFAT_POSV F77_FUNC(cposv,CPOSV)
 #define LTFAT_GESVD F77_FUNC(cgesvd,CGESVD)
 #define LTFAT_clapack_posv clapack_cposv
+#define LTFAT_GEMM F77_FUNC (cgemm, CGEMM)
+#define LTFAT_cblas_gemm cblas_cgemm
 #endif
 
 
@@ -55,6 +59,35 @@ extern "C" {
 
 #endif /* end of HAVE_LAPACK */
 
+/* Call Fortran BLAS */
+#ifdef HAVE_BLAS
+#include "f77-fcn.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+  F77_RET_T
+  LTFAT_GEMM (F77_CONST_CHAR_ARG_DECL TransA,
+	      F77_CONST_CHAR_ARG_DECL TransB,
+	      const int *M, const int *N,
+	      const int *K, 
+	      const LTFAT_COMPLEX *alpha,
+	      const LTFAT_COMPLEX *a, const int *lda,
+	      const LTFAT_COMPLEX *b, const int *ldb, 
+	      const LTFAT_COMPLEX *beta,
+	      LTFAT_COMPLEX *c,
+	      const int *ldc
+	      F77_CHAR_ARG_LEN_DECL
+	      F77_CHAR_ARG_LEN_DECL);
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* end of HAVE_BLAS */
+
+
+
 /* ----- Compute Cholesky factorization  ------------
  *
  * For simplification, the interface assumes that we
@@ -65,7 +98,6 @@ int LTFAT_NAME(ltfat_posv)(const int N, const int NRHS,
 			   LTFAT_COMPLEX *A, const int lda,
 			   LTFAT_COMPLEX *B, const int ldb)
 #ifdef HAVE_CBLASLAPACK
-
 {
   return LTFAT_clapack_posv(CblasColMajor, CblasUpper, N, NRHS, (LTFAT_REAL*)A, lda,
 		       (LTFAT_REAL*)B, ldb);
@@ -150,4 +182,47 @@ int LTFAT_NAME(ltfat_gesvd)(const int M, const int N,
   return info;
 
 }
+#endif /* End of HAVE_LAPACK */
+
+
+void LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
+                 const enum CBLAS_TRANSPOSE TransB,
+		 const int M, const int N, const int K,
+		 const LTFAT_COMPLEX *alpha,
+		 const LTFAT_COMPLEX *A, const int lda,
+		 const LTFAT_COMPLEX *B, const int ldb,
+                 const LTFAT_COMPLEX *beta,
+		 LTFAT_COMPLEX *C, const int ldc)
+#ifdef HAVE_CBLAS
+{
+
+  LTFAT_cblas_gemm(CblasColMajor, TransA, TransB, M, N, K,
+	      (LTFAT_REAL*)alpha, (LTFAT_REAL*)A, lda, (LTFAT_REAL*)B, ldb,
+	      (LTFAT_REAL*)beta, (LTFAT_REAL*)C, ldc);
+
+}
 #endif
+#ifdef HAVE_BLAS
+{
+  char ca, cb;
+
+  if (TransA == CblasNoTrans)   ca='N';
+  if (TransA == CblasConjTrans) ca='C';
+
+  if (TransB == CblasNoTrans)   cb='N';
+  if (TransB == CblasConjTrans) cb='C';
+
+  LTFAT_GEMM (F77_CONST_CHAR_ARG2 (&ca, 1),
+	      F77_CONST_CHAR_ARG2 (&cb, 1),
+	      &M, &N, &K,
+	      alpha,
+	      A, &lda,
+	      B, &ldb,
+	      beta, C, &ldc
+	      F77_CHAR_ARG_LEN (1)
+	      F77_CHAR_ARG_LEN (1)
+	      );
+  
+  
+}
+#endif /* end of HAVE_BLAS */

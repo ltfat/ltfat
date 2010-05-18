@@ -7,20 +7,20 @@ EXT = $(shell mexext)
 # answer into the line below (remember to uncomment).
 #EXT = $(glnx86)
 
-MEXS = comp_wfac comp_iwfac comp_dgt_long comp_idgt_fac			\
-       comp_idgtreal_fac comp_dgt_fb comp_gabdual_long			\
-       comp_gabtight_long comp_heapint comp_col2diag comp_gabreassign	\
-       comp_pgauss comp_fftreal comp_ifftreal comp_dwilt_long
-
-MEXWITHEXTS = $(addsuffix .$(EXT),$(MEXS))
+MEXSC    = $(shell ls comp_*.c)
+MEXSBASE = $(basename $(MEXSC))
+MEXS     = $(addsuffix .$(EXT),$(MEXSBASE))
 
 CFLAGS=-I../thirdparty -I. -I../src -L../lib
 
 
-all:	$(MEXWITHEXTS)
+all:	$(MEXS)
 
-%.$(EXT): %.c Makefile config.h ../src/libltfat.a ../src/ltfat.h
-	mex $(CFLAGS) $< -lfftw3 -lfftw3f -lblas -llapack -lltfat
+%.$(EXT): %.c Makefile config.h ../src/libltfat.a ../src/ltfat.h mex-memalloc.o
+	mex $(CFLAGS) $< mex-memalloc.o -lfftw3 -lfftw3f -lblas -llapack -lltfat-nomem
+
+mex-memalloc.o:	mex-memalloc.c
+	mex $(CFLAGS) $<
 
 clean:
 	rm *.$(EXT)

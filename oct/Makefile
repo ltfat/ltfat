@@ -1,9 +1,8 @@
-OCTS = comp_wfac.oct comp_iwfac.oct comp_idgt_fac.oct			\
-       comp_idgtreal_fac.oct comp_dgt_fb.oct comp_gabdual_long.oct	\
-       comp_gabtight_long.oct comp_heapint.oct	\
-       comp_col2diag.oct comp_gabreassign.oct comp_pgauss.oct		\
-       comp_fftreal.oct comp_ifftreal.oct comp_dgt_long.oct		\
-       comp_dwilt_long.oct comp_dgtreal_long.oct
+# Use GNU Make to process this file.
+
+OCTSCC   = $(shell ls comp_*.cc)
+OCTSBASE = $(basename $(OCTSCC))
+OCTS     = $(addsuffix .oct,$(OCTSBASE))
 
 all:	$(OCTS)
 

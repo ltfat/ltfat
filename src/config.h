@@ -39,11 +39,7 @@ static inline int positiverem(int a,int b)
 /* Define to a macro mangling the given C identifier (in lower and upper
    case), which must not contain underscores, for linking with Fortran. */
 
-#ifdef __linux__
-
-#endif
-
-#ifdef __WIN32__
+#ifdef MATLABFORTRAN
 #define F77_FUNC(name,NAME) NAME 
 #else
 #define F77_FUNC(name,NAME) name ## _
