@@ -26,8 +26,6 @@ end;
   
 bp=TF_CONF.basepath;
 
-return;
-
 defnopos.flags.target={'auto','lib','mex','gpc'};
 defnopos.flags.command={'compile','clean','test'};
 [flags,kv]=ltfatarghelper({},defnopos,varargin);
@@ -59,8 +57,8 @@ if flags.do_clean
   
   if do_lib
     disp('========= Cleaning libltfat ===============');
-    s=['cd ',bp,'src; make clean'];
-    system(s);
+    cd([bp,'src']);
+    system('make clean');
     disp('Done.');    
   end;
   
@@ -90,12 +88,12 @@ end;
 if flags.do_compile
   if do_lib
     disp('========== Compiling libltfat ==============');
-    s=['cd ',bp,'src; '];
+    cd([bp,'src']);
     if isoctave
-      [status,output]=system([s,'mkoctfile -p CC']);
-      system([s,'make CC=',output]);
+      [status,output]=system('mkoctfile -p CC');
+      system(['make CC=',output]);
     else
-      system([s,'make']);
+      system('make');
     end;
     disp('Done.');
   end;
