@@ -60,11 +60,21 @@ function []=resgram(f,varargin)
 %
 %-  'fmax',y  - Display y as the highest frequency.
 %
-%-  'contour' - Do a contour plot
-%          
-%-  'surf'    - Do a surf plot
+%-  'xres',xres - Approximate number of pixels along x-axis /time.
+%               Default value is 800
 %
-%-  'mesh'    - Do a mesh plot
+%-  'yres',yres - Approximate number of pixels along y-axis / frequency
+%               Default value is 600
+%
+%-  'contour' - Do a contour plot to display the spectrogram.
+%          
+%-  'surf'    - Do a surf plot to display the spectrogram.
+%
+%-  'mesh'    - Do a mesh plot to display the spectrogram.
+%
+%-  'colorbar' - Display the colorbar. This is the default.
+%
+%-  'nocolorbar' - Do not display the colorbar.
 %
 %   In Octave, the default colormap is greyscale. Change it to _colormap(jet)
 %   for something prettier.

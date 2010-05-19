@@ -8,7 +8,7 @@ function f=fftreal(f,N,dim);
 %   
 %   The function take exactly the same arguments as FFT. See the help on
 %   FFT for a thorough description.
-%M
+%
 %   See also:  ifftreal, dft
 
 %   AUTHOR    : Peter Soendergaard

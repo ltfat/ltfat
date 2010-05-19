@@ -56,12 +56,11 @@ function varargout=sgram(f,varargin)
 %
 %-  'fmax',y  - Display y as the highest frequency.
 %
-%-  'xres',xres - Approximate number of pixels along x-axis / time.
+%-  'xres',xres - Approximate number of pixels along x-axis /time.
+%               Default value is 800
 %
 %-  'yres',yres - Approximate number of pixels along y-axis / frequency
-%                 If only one of 'xres' and
-%                 'yres' is specified, the default aspect ratio will be
-%                 used.
+%               Default value is 600
 %
 %-  'contour' - Do a contour plot to display the spectrogram.
 %          
@@ -69,7 +68,11 @@ function varargout=sgram(f,varargin)
 %
 %-  'mesh'    - Do a mesh plot to display the spectrogram.
 %
-  %   See also:  dgt, dgtreal
+%-  'colorbar' - Display the colorbar. This is the default.
+%
+%-  'nocolorbar' - Do not display the colorbar.
+%
+%   See also:  dgt, dgtreal
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
@@ -112,7 +115,7 @@ defnopos.keyvals.dynrange=100;
 defnopos.keyvals.xres=800;
 defnopos.keyvals.yres=600;
 
-[flags,keyvals,fs]=ltfatarghelper({'fs'},defnopos,varargin,mfilename);
+[flags,kv,fs]=ltfatarghelper({'fs'},defnopos,varargin,mfilename);
 
 % Resampling rate: Used when fmax is issued.
 resamp=1;
@@ -126,9 +129,9 @@ dofs=~isempty(fs);
 % Downsample
 if flags.do_fmax
   if dofs
-    resamp=keyvals.fmax*2/fs;
+    resamp=kv.fmax*2/fs;
   else
-    resamp=keyvals.fmax*2/length(f);
+    resamp=kv.fmax*2/length(f);
   end;
 
   f=fftresample(f,round(length(f)*resamp));
@@ -137,17 +140,17 @@ end;
 Ls=length(f);
 
 if flags.do_posfreq
-   keyvals.yres=2*keyvals.yres;
+   kv.yres=2*kv.yres;
 end;
 
-[a,M,L,N,Ndisp]=gabimagepars(Ls,keyvals.xres,keyvals.yres);
+[a,M,L,N,Ndisp]=gabimagepars(Ls,kv.xres,kv.yres);
 
 % Set an explicit window length, if this was specified.
 if flags.do_wlen
-  keyvals.tfr=keyvals.wlen^2/L;
+  kv.tfr=kv.wlen^2/L;
 end;
 
-g={'gauss',keyvals.tfr};
+g={'gauss',kv.tfr};
 
 if flags.do_nf
   coef=abs(dgt(f,g,a,M)).^2;
@@ -160,10 +163,10 @@ coef=coef(:,1:Ndisp);
 
 if flags.do_thr
   % keep only the largest coefficients.
-  coef=largestr(coef,keyvals.thr);
+  coef=largestr(coef,kv.thr);
 end
 
-tfplot(coef,a,M,L,resamp,keyvals,flags);
+tfplot(coef,a,M,L,resamp,kv,flags);
 
 if nargout>0
   varargout={coef};
