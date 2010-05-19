@@ -1,13 +1,31 @@
 function ltfatmex(varargin)
 %LTFATMEX   Compile Mex/Oct interfaces
 %   Usage:  ltfatmex;
-%           ltfatmex('clean');
+%           ltfatmex(...);
 %
 %   LTFATMEX compiles certain functions written in C in order to speed
 %   up the execution of the toolbox.
 %
-%   LTFATMEX('clean') removes the compiled functions.
-
+%   The action of LTFATMEX is determined by on of the following flags:
+%
+%-     'compile' - Compile stuff. This is the default.
+%
+%-     'clean'   - Removes the compiled functions.
+%
+%-     'test'    - Run some small tests that verify that the compiled
+%                  functions work.
+%
+%   The target to work on is determined by on of the following flags:
+%
+%-     'lib'     - Perform action on the LTFAT C library.
+%
+%-     'mex'     - Perform action on the mex / oct interfaces.
+%
+%-     'gpc'     - Perform action on the GPC code for use with MULACLAB
+%
+%-     'auto'    - Choose automatically which targets to work on based on
+%                  the operation system etc. This is the default.
+%
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
 %   REFERENCE: NA
