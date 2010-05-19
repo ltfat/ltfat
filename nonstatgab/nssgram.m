@@ -59,9 +59,6 @@ function nssgram(c,a,M,fs,varargin)
 %-  'xres',xres - Approximate number of pixels along x-axis / time.
 %
 %-  'yres',yres - Approximate number of pixels along y-axis / frequency
-%                 If only one of 'xres' and
-%                 'yres' is specified, the default aspect ratio will be
-%                 used.
 %
 %-  'contour' - Do a contour plot to display the spectrogram.
 %          
@@ -69,7 +66,11 @@ function nssgram(c,a,M,fs,varargin)
 %
 %-  'mesh'    - Do a mesh plot to display the spectrogram.
 %
-  %   See also:  dgt, dgtreal
+%-  'colorbar' - Display the colorbar. This is the default.
+%
+%-  'nocolorbar' - Do not display the colorbar.
+%
+%   See also:  dgt, dgtreal
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
