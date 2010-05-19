@@ -1,4 +1,4 @@
-function [] = plotnsdgt(c,a_new,dynrange,sr)
+function [] = plotnsdgt(c,a,fs,varargin)
 %PLOTNSDGT Plot spectrogram from nonstationary Gabor coefficients
 %   Usage:  plotnsdgt(c,a,dynrange,sr);
 %
@@ -8,68 +8,118 @@ function [] = plotnsdgt(c,a_new,dynrange,sr)
 %         dynrange : Colorscale dynamic range in dB (default 60 dB).
 %         sr       : signal sample rate in Hz (default 1 Hz).
 %
-%   PLOTNSDGT the spectrogram from coefficients computed with the 
-%   function ndgt. For more details on the format of the variables c and a 
-%   format, please read the ndgt function help.
+%   PLOTNSDGT the spectrogram from coefficients computed with the functions
+%   NSDGT or NSDGTREAL. For more details on the format of the variables c
+%   and _a format, please read the NSDGT function help.
 %
-%   PLOTNSDGT uses a dB colorscale, and the dynrange value can be used to
-%   specify the dynamic of this colorscale, as the produced image uses a 
-%   colormap in the interval [chigh-dynrange,chigh], where chigh is the 
-%   highest value in the plot.
+%   Additional arguments can be supplied like this:
+%   NSSGRAM(f,'nf','tfr',2,'log'). The arguments must be character strings
+%   possibly followed by an argument:
 %
-%   Limitation: PLOTNSDGT only works for coefficients c obtained from a
-%   monochannel signal.
+%-  'real'    - Assume coefficients from NSDGTREAL. This is the default.
 %
-%   SEE ALSO:  NSDGT
+%-  'complex' - Assume coefficients from NSDGT.
+%
+%-  'image'   - Use 'imagesc' to display the spectrogram. This is the
+%               default.
+%
+%-  'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
+%               values are passed to IMAGESC. See the help on IMAGESC.
+%
+%-  'dynrange',r - Use a colormap in the interval [chigh-r,chigh], where
+%               chigh is the highest value in the plot.
+%
+%-  'xres',xres - Approximate number of pixels along x-axis / time.
+%
+%-  'yres',yres - Approximate number of pixels along y-axis / frequency
+%
+%-  'contour' - Do a contour plot to display the spectrogram.
+%          
+%-  'surf'    - Do a surf plot to display the spectrogram.
+%
+%-  'mesh'    - Do a mesh plot to display the spectrogram.
+%
+%-  'colorbar' - Display the colorbar. This is the default.
+%
+%-  'nocolorbar' - Do not display the colorbar.
+%
+%   See also: nsdgt, nsdgtreal, nssgram
 
-%   AUTHOR : Florent Jaillet
-%   TESTING: 
-%   REFERENCE: 
-%   Last changed 2009-05
+%   AUTHOR : Florent Jaillet & Peter L. Soendergaard
+%   TESTING: OK 
+%   REFERENCE: NA
 
-% Todo :
-% - Check the validity of the input
-% - Handle the case of transform of multichannel signals
+timepos=cumsum(a)-a(1);
 
-if nargin < 4
-  % Default value for sampling frequency.
-  sr=1; 
-end
+% Define initial value for flags and key/value pairs.
+defnopos.flags.plottype={'image','contour','mesh','pcolor'};
+defnopos.flags.transformtype={'real','complex'};
 
-timepos=cumsum(a_new)-a_new(1);
+defnopos.flags.clim={'noclim','clim'};
+defnopos.flags.colorbar={'colorbar','nocolorbar'};
 
-if nargin < 3
-  % Default value for colorscale dynamic.
-  dynrange=60;
-end 
+defnopos.keyvals.clim=[0,1];
+defnopos.keyvals.dynrange=[];
+defnopos.keyvals.xres=800;
+defnopos.keyvals.yres=600;
+
+[flags,kv]=ltfatarghelper({'dynrange'},defnopos,varargin,mfilename);
+
+cwork=zeros(kv.yres,length(a));
+
+%% -------- Interpolate in frequency ---------------------
+
+for ii=1:length(a)
+  column=20*log10(abs(c{ii}+realmin));
+  M=length(column);
+  cwork(:,ii)=interp1(linspace(0,1,M),column,linspace(0,1,kv.yres),'nearest');
+end;
+
+%% --------  Interpolate in time -------------------------
+% this is non-equidistant, so we use a cubic spline
+
+% Time positions (in Hz) of our samples.
+timepos = (cumsum(a)-a(1))/fs;
+
+% Time positions where we want our pixels plotted.
+xr=((0:kv.xres-1)/kv.xres*timepos(end)).';
+
+coef=zeros(kv.yres,kv.xres);
+for ii=1:kv.yres
+  data=interp1(timepos,cwork(ii,:).',xr,'nearest').';
+  coef(ii,:)=data;
+end;
+
+% 'dynrange' parameter is handled by thresholding the coefficients.
+if ~isempty(kv.dynrange)
+  maxclim=max(coef(:));
+  coef(coef<maxclim-kv.dynrange)=maxclim-kv.dynrange;
+end;
+
+xr=linspace(0,timepos(end),kv.xres);
+yr=linspace(0,fs/2,kv.yres);
   
-% Compute time limit for the representation of each window.
-tlim=diff(timepos)/2;
-tlim=[timepos(1)-tlim(1);timepos(1:end-1)+tlim;timepos(end)+tlim(end)];
-tlim=tlim/sr;
+switch(flags.plottype)
+  case 'image'
+    if flags.do_clim
+      imagesc(xr,yr,coef,kv.clim);
+    else
+     imagesc(xr,yr,coef);
+    end;
+  case 'contour'
+    contour(xr,yr,coef);
+  case 'surf'
+    surf(xr,yr,coef);
+  case 'pcolor'
+    pcolor(xr,yr,coef);
+end;
 
-% Compute maximum of the representation for colorscale dynamic handling.
-temp=cell2mat(c);
-ma=20*log10(max(abs(temp(:))));
+if flags.do_colorbar
+  colorbar;
+end;
 
-% Plot the representation: as the sampling grid in the time frequency plane
-% is irregular, the representation by done by plotting many images next to 
-% each other, with one image for each window
-hold('on');
-for ii=1:length(a_new)
-  temp = 20*log10(abs(c{ii})+eps); % +eps is here to avoid log of 0
-  % Octave cannot plot images that are only one point wide, so we use
-  % images that are to points wide
-  imagesc(adapt(tlim(ii:ii+1)),[0,1-1/length(c{ii})]*sr,[temp,temp],...
-    [ma-dynrange,ma]);
-end
-hold('off');
-axis('tight');
+axis('xy');
+xlabel('Time (s)')
+ylabel('Frequency (Hz)')
 
-end
 
-function [res]=adapt(lim) 
-% we have to adapt the time values to fit the way the image function handle
-% the x position
-res=[(3*lim(1)+lim(2))/4,(lim(1)+3*lim(2))/4];
-end
