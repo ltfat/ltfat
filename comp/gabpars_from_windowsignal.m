@@ -68,8 +68,14 @@ end;
 b=L/M;
 N=L/a;
 
-
 [g,info]=comp_window(g,a,M,L,0,callfun);
 
 f=postpad(f,L);
+
+% If the signal is single precision, make the window single precision as
+% well to avoid mismatches.
+if isa(f,'single')
+  g=single(g);
+end;
+
 
