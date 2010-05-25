@@ -54,16 +54,13 @@ function [] = mulaclab()
 %   automatically updated when using the zoom and pan tools of the 'Zoom' 
 %   panel. It can be manually updated by reclicking on the currently
 %   selected tool or by changing the current tool.
+%%
+%   The Matlab Image Processing Toolbox is required by the mulaclab function.
 %
-%   Requirements:
-%
-%   The following toolboxes are required by the mulaclab function:
-%
-%   * Matlab Image Processing Toolbox,
-%
-%   * The GPC library available from
-%   http://www.cs.man.ac.uk/~toby/gpc/. See the README file in
-%   ltfat/thirdparty/GPC
+%   MULACLAB use the GPC library available from
+%   http://www.cs.man.ac.uk/~toby/gpc/. This library is distributed
+%   alongside LTFAT, but under different licensing conditions. Please see
+%   the ltfat/thirdparty/gpc/GPC-README.pdf file for the exact conditions.
 %
 
 % questions : do we want to :
@@ -608,6 +605,23 @@ initialize;
     % check that we have all the toolboxes and functions that we need
     checkToolbox;
     
+    % Display spash screen
+    
+    h=msgbox({['MulacLab: Matlab GUI to manipulate the short-time Fourier ' ...
+               'transform of a signal using Gabor multipliers.'],[],...
+              ['MulacLab makes use of the GPC Polygon Clipping library ' ...
+               'available from http://www.cs.man.ac.uk/~toby/alan/software/'],[]...
+              ['GPC and mulaclab are free for non-commercial use only. Please see the ' ...
+               'GPC homepage for the exact licensing conditions.']},...
+             'MulacLab licensing','modal');
+    
+    uiwait(h,5);
+    if ishandle(h)
+      % Timeout occured, we close the box automatically.
+      close(h);
+    end;
+            
+    
     % get an original signal or decomposition to have something to show
     [fileName, pathName, filterIndex] = uigetfile('*.wav;*.mat',...
       'Open original signal or decomposition'); 
@@ -910,8 +924,7 @@ initialize;
       temp = PolygonClip(temp1, temp2);
     catch 
       error(['This function requires the function PolygonClip for ' ...
-             'polygon clipping. Please install the GPC library as described ' ...
-             'in ltfat/thirdparty/GPC/README and execute the "ltfatmex" ' ...
+             'polygon clipping. Please compile using the "ltfatmex" ' ...
              'command.']);
     end
 

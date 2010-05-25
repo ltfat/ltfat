@@ -127,15 +127,10 @@ if flags.do_compile
   
   if do_gpc
     disp('========= Compiling GPC ===============');
-    if exist([bp,'thirdparty',filesep,'GPC',filesep,'gpc.c'], ...
-             'file')
-      % Compile the PolygonClip interface to GPC for use with mulaclab
-      cd([bp,'thirdparty',filesep,'PolygonClip']);
-      mex('-I../GPC','PolygonClip.c','../GPC/gpc.c');
-      disp('Done.');
-    else
-      disp('ERROR: Unable to compile GPC');
-    end;
+    % Compile the PolygonClip interface to GPC for use with mulaclab
+    cd([bp,'thirdparty',filesep,'PolygonClip']);
+    mex('-I../GPC','PolygonClip.c','../GPC/gpc.c');
+    disp('Done.');
   end;
 end;
 
