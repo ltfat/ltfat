@@ -46,28 +46,24 @@ for (m=0;m<M;m++) \
 #define THE_SUM_REAL { \
 for (m=0;m<M;m++) \
 { \
-   rem = 2*positiverem(m+(n*a-glh), M); \
-   sbuf[rem]=0.0; \
-   sbuf[rem+1]=0.0; \
-   fbd=fw+2*m; \
+   rem = positiverem(m+(n*a-glh), M); \
+   sbuf_in[rem]=0.0; \
+   fbd=fw+m; \
    for (k=0;k<gl/M;k++) \
    { \
-      sbuf_in[rem]  += fbd[0]; \
-      sbuf_in[rem+1]+= fbd[1]; \
-      fbd+=2*M; \
+     sbuf_in[rem]+=(*fbd);			\
+      fbd+=M; \
    } \
 } \
 \
  LTFAT_FFTW(execute)(p_small);			\
 \
-coefsum=(LTFAT_REAL*)cout+2*(n*M+r*M*N+w*M*N*R); \
-for (m=0;m<M;m++) \
+coefsum=(LTFAT_REAL*)cout+2*(n*M2+r*M2*N+w*M2*N*R); \
+for (m=0;m<M2;m++) \
 { \
-   coefsum[2*m] = sbuf_out[2*m]; \
-   coefsum[2*m+1] = sbuf_out[2*m+1]; \
-}} 
-
-
+   coefsum[2*m]   = sbuf_out[m][0]; \
+   coefsum[2*m+1] = sbuf_out[m][1]; \
+}}
 
 
 void LTFAT_NAME(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
@@ -396,7 +392,8 @@ void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    LTFAT_FFTW(plan) p_small;
 
    LTFAT_REAL *gb;
-   LTFAT_REAL *sbuf,*coefsum, *fw;
+   LTFAT_REAL *sbuf_in, *coefsum, *fw;
+   LTFAT_COMPLEX *sbuf_out;
 
    const LTFAT_REAL *fbd;
    
@@ -416,14 +413,12 @@ void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    
    gw   = (LTFAT_REAL*)ltfat_malloc(gl*R*sizeof(LTFAT_REAL));
    fw   = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
-   sbuf = (LTFAT_REAL*)ltfat_malloc(M2*sizeof(LTFAT_COMPLEX));
+   sbuf_in  = (LTFAT_REAL*)ltfat_malloc(M*sizeof(LTFAT_REAL));
+   sbuf_out = (LTFAT_COMPLEX*)ltfat_malloc(M2*sizeof(LTFAT_COMPLEX));
 
-   /* Create plan. In-place. */fftw_plan_dft_r2c_1d(int n, double *in, fftw_complex *out,
-                                    unsigned flags);
+   /* Create plan. In-place. */
 
-   p_small = LTFAT_FFTW(plan_dft_r2c_1d)(M, (LTFAT_COMPLEX*)sbuf,
-				     (LTFAT_COMPLEX*)sbuf,
-				     FFTW_FORWARD, FFTW_MEASURE);
+   p_small = LTFAT_FFTW(plan_dft_r2c_1d)(M, sbuf_in, sbuf_out, FFTW_MEASURE);
    
    /*  ---------- main body ----------- */
   
@@ -463,7 +458,7 @@ void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	       fw[l]  =fbd[l]*gb[l];
 	    }
 
-	    THE_SUM_R
+	    THE_SUM_REAL
 
 	 }	       
 
@@ -485,7 +480,7 @@ void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	       fw[l]  =fbd[l]*gb[l];
 	    }
 
-	    THE_SUM_R
+	    THE_SUM_REAL
 	 }
 
       }
@@ -511,15 +506,16 @@ void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	       fw[l]  =fbd[l]*gb[l];
 	    }
 
-	    THE_SUM_R
+	    THE_SUM_REAL
 	 }
       }
    }
 
     /* -----------  Clean up ----------------- */   
-   ltfat_free(sbuf);    
+   ltfat_free(sbuf_out);
+   ltfat_free(sbuf_in);
    ltfat_free(gw);
-   ltfat_free(fw);    
+   ltfat_free(fw);
 
    LTFAT_FFTW(destroy_plan)(p_small);
 }
