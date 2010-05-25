@@ -1,5 +1,5 @@
-data=load("crossover.log");
-dataref=load("crossover.ref");
+data=load('crossover.log');
+dataref=load('crossover.ref');
 
 % Columns in data: a M L W gl time
 x=data(:,5)./data(:,1);

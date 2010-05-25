@@ -1,4 +1,4 @@
-CFLAGS=-O2 -Wall -std=c99 -I../ltfat/src/ -L../ltfat/src/
+CFLAGS=-O2 -Wall -std=c99 -I../src -L../lib
 LIBS= -lltfat -lfftw3 -lm
 
 all: time_dgt_fac time_dgt_fb

@@ -43,6 +43,30 @@ for (m=0;m<M;m++) \
    coefsum[2*m+1] = sbuf[2*m+1]; \
 }} 
 
+#define THE_SUM_REAL { \
+for (m=0;m<M;m++) \
+{ \
+   rem = 2*positiverem(m+(n*a-glh), M); \
+   sbuf[rem]=0.0; \
+   sbuf[rem+1]=0.0; \
+   fbd=fw+2*m; \
+   for (k=0;k<gl/M;k++) \
+   { \
+      sbuf_in[rem]  += fbd[0]; \
+      sbuf_in[rem+1]+= fbd[1]; \
+      fbd+=2*M; \
+   } \
+} \
+\
+ LTFAT_FFTW(execute)(p_small);			\
+\
+coefsum=(LTFAT_REAL*)cout+2*(n*M+r*M*N+w*M*N*R); \
+for (m=0;m<M;m++) \
+{ \
+   coefsum[2*m] = sbuf_out[2*m]; \
+   coefsum[2*m+1] = sbuf_out[2*m+1]; \
+}} 
+
 
 
 
@@ -256,6 +280,148 @@ void LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
    /* Create plan. In-place. */
    p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_COMPLEX*)sbuf,
+				     (LTFAT_COMPLEX*)sbuf,
+				     FFTW_FORWARD, FFTW_MEASURE);
+   
+   /*  ---------- main body ----------- */
+  
+   /* Do the fftshift of g to place the center in the middle and
+    * conjugate it.
+    */
+   
+   for (r=0;r<R;r++)
+   {
+      for (l=0;l<glh;l++)
+      {
+	 gw[l+gl*r]=g[l+(gl-glh)+gl*r];
+      }
+      for (l=glh;l<gl;l++)
+      {
+	 gw[l+gl*r]=g[l-glh+gl*r];
+      }
+   }
+
+   /*----- Handle the first boundary using periodic boundary conditions.*/
+   for (n=0; n<glh_d_a; n++)
+   {
+      for (r=0;r<R;r++)
+      {
+	 gb=gw+r*gl;
+	 for (w=0;w<W;w++)
+	 {
+
+	    fbd=f+L-(glh-n*a)+L*w;
+	    for (l=0;l<glh-n*a;l++)
+	    {
+	       fw[l]  =fbd[l]*gb[l];
+	    }
+	    fbd=f-(glh-n*a)+L*w;
+	    for (l=glh-n*a;l<gl;l++)
+	    {
+	       fw[l]  =fbd[l]*gb[l];
+	    }
+
+	    THE_SUM_R
+
+	 }	       
+
+      }	     
+   }
+   
+   /* ----- Handle the middle case. --------------------- */
+   for (n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
+   {
+
+      for (r=0;r<R;r++)
+      {
+	 gb=gw+r*gl;
+	 for (w=0;w<W;w++)
+	 {
+	    fbd=f+(n*a-glh+L*w);
+	    for (l=0;l<gl;l++)
+	    {
+	       fw[l]  =fbd[l]*gb[l];
+	    }
+
+	    THE_SUM_R
+	 }
+
+      }
+
+   }
+   
+   /* Handle the last boundary using periodic boundary conditions. */   
+   for (n=(L-(gl+1)/2)/a+1; n<N; n++)
+   {
+      for (r=0;r<R;r++)
+      {
+	 gb=gw+r*gl;
+	 for (w=0;w<W;w++)
+	 {
+	    fbd=f+(n*a-glh+L*w);
+	    for (l=0;l<L-n*a+glh;l++)
+	    {
+	       fw[l]  =fbd[l]*gb[l];
+	    }
+	    fbd=f-(L-n*a+glh)+L*w;
+	    for (l=L-n*a+glh;l<gl;l++)
+	    {	
+	       fw[l]  =fbd[l]*gb[l];
+	    }
+
+	    THE_SUM_R
+	 }
+      }
+   }
+
+    /* -----------  Clean up ----------------- */   
+   ltfat_free(sbuf);    
+   ltfat_free(gw);
+   ltfat_free(fw);    
+
+   LTFAT_FFTW(destroy_plan)(p_small);
+}
+
+void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+	      const int L, const int gl,
+	      const int W, const int a, const int M, 
+	      LTFAT_COMPLEX *cout)
+{
+   /*  --------- initial declarations -------------- */
+
+   int k, l, m, n, r, w, rem;
+
+   LTFAT_REAL *gw;
+
+   LTFAT_FFTW(plan) p_small;
+
+   LTFAT_REAL *gb;
+   LTFAT_REAL *sbuf,*coefsum, *fw;
+
+   const LTFAT_REAL *fbd;
+   
+
+   const int R = 1; 
+
+   /*  ----------- calculation of parameters and plans -------- */
+   
+   const int N=L/a;
+
+   /* These are floor operations. */
+   const int glh=gl/2;
+   const int M2=M/2+1;
+
+   /* This is a ceil operation. */
+   const int glh_d_a=(int)ceil((glh*1.0)/(a));
+   
+   gw   = (LTFAT_REAL*)ltfat_malloc(gl*R*sizeof(LTFAT_REAL));
+   fw   = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
+   sbuf = (LTFAT_REAL*)ltfat_malloc(M2*sizeof(LTFAT_COMPLEX));
+
+   /* Create plan. In-place. */fftw_plan_dft_r2c_1d(int n, double *in, fftw_complex *out,
+                                    unsigned flags);
+
+   p_small = LTFAT_FFTW(plan_dft_r2c_1d)(M, (LTFAT_COMPLEX*)sbuf,
 				     (LTFAT_COMPLEX*)sbuf,
 				     FFTW_FORWARD, FFTW_MEASURE);
    
