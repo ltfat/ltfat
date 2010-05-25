@@ -95,6 +95,33 @@ for ii=1:length(Lr);
       s=sprintf('IREF %s L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',rname,L,W,a,M,gl,res,fail);
       disp(s)
 
+      % Test the real valued transform
+      if rtype==1
+        
+        % --- Reference test ---
+        ccreal=dgtreal(f,g,a,M);
+        M2=floor(M/2)+1;
+        
+        cdiff=cc(1:M2,:,:)-ccreal;
+        res=norm(cdiff(:));
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        s=sprintf('REFREAL    L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',...
+                   L,W,a,M,gl,res,fail);
+        disp(s);
+        
+        % --- Reconstruction test ---
+        % Test following test only makes sense if the dual is also FIR.
+        if gl<=M
+          
+          rreal=idgtreal(ccreal,gd,a,M);
+       
+          res=norm(f-rreal,'fro');
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          s=sprintf('RECREAL    L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',...
+                    L,W,a,M,gl,res,fail);
+          disp(s)
+        end;
+      end;
 
       
     end;  

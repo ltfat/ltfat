@@ -24,7 +24,7 @@ M2=floor(M/2)+1;
 if Lwindow<L
   % Do the filter bank algorithm
   % Periodic boundary conditions
-  c=comp_dgt_fb(f,g,a,M,0);
+  c=comp_dgtreal_fb(f,g,a,M,0);
   c=c(1:M2,:);
   
 else
