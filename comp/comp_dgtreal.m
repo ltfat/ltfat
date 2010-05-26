@@ -1,4 +1,4 @@
-function c=comp_dgtreal(f,g,a,M,L,wilson,callfun)
+function c=comp_dgtreal(f,g,a,M,L)
 %COMP_DGTREAL  Compute a DGTREAL
 %   Usage:  c=comp_dgt_real(f,g,a,M,L);
 %
@@ -25,7 +25,6 @@ if Lwindow<L
   % Do the filter bank algorithm
   % Periodic boundary conditions
   c=comp_dgtreal_fb(f,g,a,M,0);
-  c=c(1:M2,:);
   
 else
   % Do the factorization algorithm 
