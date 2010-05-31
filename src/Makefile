@@ -36,10 +36,10 @@ libltfat.a: $(files_unix) c-safe-memalloc.o
 	cp -f libltfat.a ../lib
 
 sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
-	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o s$*.o
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
 
 dltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
-	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DMATLABFORTRAN -c $< -o d$*.o
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DMATLABFORTRAN -c $< -o $*.o
 
 
 s%.o: %.c config.h
