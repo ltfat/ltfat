@@ -11,7 +11,6 @@
 %    GREASYLONG     -  Full sentence containing the word 'greasy'
 %    LINUS          -  Linus pronouncing Linux.
 %    GSPI           -  Glockenspiel test signal.
-%    BLACKBIRD      -  A singing blackbird.
 %    OTOCLICK       -  Click-evoked otoacoustic emmision. 
 %
 %  Images.
