@@ -3,10 +3,11 @@ function ltfatmex(varargin)
 %   Usage:  ltfatmex;
 %           ltfatmex(...);
 %
-%   LTFATMEX compiles certain functions written in C in order to speed
-%   up the execution of the toolbox.
+%   LTFATMEX compiles the C backend in order to speed up the execution of
+%   the toolbox. The C backend is linked to Matlab and Octave through mex
+%   and Octave C++ interfaces.
 %
-%   The action of LTFATMEX is determined by on of the following flags:
+%   The action of LTFATMEX is determined by one of the following flags:
 %
 %-     'compile' - Compile stuff. This is the default.
 %
