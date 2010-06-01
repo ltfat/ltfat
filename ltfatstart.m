@@ -6,10 +6,18 @@ function ltfatstart()
 %   before using any of the functions in the toolbox. If you issue a
 %   CLEAR ALL then you must call LTFATSTART again.
 %
-%   You may manually edit this function to configure the toolbox to your
-%   taste. This includes default settings for the plotting functions.
+%   To configure default options for functions, you can use the the
+%   LTFATSETDEFAULTS functions in your startup script. A typical startup
+%   file could look like:
 %
-%   See also:  ltfathelp
+%C    addpath('/path/to/my/work/ltfat');
+%C    ltfatstart;
+%C    ltfatsetdefaults('sgram','nocolorbar');
+%
+%   This will add the main LTFAT directory to you path, start the
+%   toolbox, and configure SGRAM to not display the colorbar.
+%
+%   See also:  ltfatsetdefaults, ltfatmex, ltfathelp
 
 %   AUTHOR : Peter Soendergaard.  
 %   TESTING: NA
