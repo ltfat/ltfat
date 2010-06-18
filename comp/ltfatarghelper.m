@@ -1,19 +1,19 @@
-function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,defnopos,arglist,callfun)
+function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglist,callfun)
 %LTFATARGHELPER  Parse arguments for LTFAT
-%   Usage: [flags,varargout]  = ltfatarghelper(posdepnames,posdepdef,arglist);
+%   Usage: [flags,varargout]  = ltfatarghelper(posdepnames,definput,arglist,callfun);
 %
 %   Input parameters:
 %      posdepnames : Names of the position dependant parameters.
-%      posdepdef   : Default values for pos. dep. pars. (cell array)
-%      defnopos    : Definitions of the pos. independent pars (cell array)
+%      definput    : Struct to define the allowed input
 %      arglist     : Commandline of the calling function (varargin)
-%      callfun     : Name of calling function
+%      callfun     : Name of calling function (optional)
 %
 %   Output parameters:
-%      nopos     : Cell array containing parsed pos. independent pars.
-%      varargout : The position dependant pars. properly initialized
+%      flags       : Struct with information about flags.
+%      keyvals     : Struct with key / values.
+%      varargout   : The position dependant pars. properly initialized
 %
-%   [nopos,varargout]=LTFATARGHELPER(posdepnames,posdepdef,arglist) assist in
+%   [flags,keyvals]=LTFATARGHELPER(posdepnames,definput,arglist) assist in
 %   parsing input parameters for a function in LTFAT. Parameters come in
 %   two categories:
 %  
@@ -53,20 +53,20 @@ end;
 
 nposdep=numel(posdepnames);
 
-if isfield(defnopos,'flags')
-  defflags=defnopos.flags;
+if isfield(definput,'flags')
+  defflags=definput.flags;
 else
   defflags=struct;
 end;
 
-if isfield(defnopos,'keyvals')
-  defkeyvals=defnopos.keyvals;
+if isfield(definput,'keyvals')
+  defkeyvals=definput.keyvals;
 else
   defkeyvals=struct;
 end;
 
-if isfield(defnopos,'groups')
-  groups=defnopos.groups;
+if isfield(definput,'groups')
+  groups=definput.groups;
 else
   groups=struct;
 end;

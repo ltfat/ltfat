@@ -1,4 +1,4 @@
-%DEMO_OFDM  Example of Gabor systems used for OFDM
+%DEMO_OFDM  Demo of Gabor systems used for OFDM
 %
 %   This demo shows how to use a Gabor Riesz basis for OFDM.
 %

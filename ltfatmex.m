@@ -31,19 +31,8 @@ function ltfatmex(varargin)
 %   TESTING: NA
 %   REFERENCE: NA
 
-global TF_CONF;
-
-% Verify that TF_CONF has been initialized
-if numel(TF_CONF)==0
-    disp('');
-    disp('--- LTFAT - The Linear Time Frequency Analysis toolbox. ---');
-    disp('')
-    disp('To start the toolbox, call LTFATSTART as the first command.');
-    disp('');
-    return;
-end;
-  
-bp=TF_CONF.basepath;
+bp=mfilename('fullpath');
+bp=bp(1:end-8);
 
 defnopos.flags.target={'auto','lib','mex','gpc'};
 defnopos.flags.command={'compile','clean','test'};
