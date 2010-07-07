@@ -81,12 +81,11 @@ switch(lower(method))
   % ---------------------------  DGT method ------------------------
 
   [f,g,a,M]=deal(varargin{1:4});
-  if numel(varargin)>4
-    L=varargin{5};
-  else
-    L=[];
-  end;
-
+  
+  definput.keyvals.L=[];
+  definput.keyvals.minlvl=eps;
+  [flags,kv,L,minlvl]=ltfatarghelper({'L','minlvl'},definput,varargin(5:end));
+  
   if isnumeric(g)
     if size(g,2)>1
       if size(g,1)>1
@@ -126,8 +125,7 @@ switch(lower(method))
   c_s = abs(c).^2;
   
   % Remove small values because we need to divide by c_s
-  %c_s(c_s<1e-10*max(abs(c_s(:))))=1;    
-  c_s = c_s + realmin;
+  c_s = max(c_s,minlvl*max(c_s(:)));
   
   % Compute the group delay
   fgrad=real(c_h.*conj(c)./c_s);
