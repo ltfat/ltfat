@@ -13,18 +13,18 @@ function c=projkern(c,p2,p3,p4,p5);
 %   Output parameters:
 %         cout  : Output coefficients
 %
-%   cout=PROJKERN(cin,a) projects the symbol c of a Gabor multiplier
-%   onto the space of realisiable symbols. A tight window generated from a
-%   Gaussian will be used.
+%   cout=PROJKERN(cin,a) projects a set of Gabor coefficients c onto the
+%   space of possible Gabor coefficients. This means that cin and cout
+%   synthesize to the same signal. A tight window generated from a Gaussian
+%   will be used for both analysis and synthesis.
 %
 %   The rationale for this function is a follows: Because the coefficient
 %   space of a Gabor frame is larger than the signal space (since the frame
 %   is redundant) then there are many coefficients that correspond to the
-%   same signal. Therefore, when designing the symbol of a gabor multiplier,
-%   the choice of symbol is more limited than one would expect.
+%   same signal.
 %
-%   Therefore, you might desire to work with the symbol cin, but you in
-%   are really working with cout.
+%   Therefore, you might desire to work with the coefficients cin, but you
+%   in are really working with cout.
 %
 %   cout=PROJKERN(cin,g,a) does the same, using the window g for analysis
 %   and synthesis.
@@ -32,9 +32,7 @@ function c=projkern(c,p2,p3,p4,p5);
 %   cout=PROJKERN(cin,ga,gs,a) does the same, but for different analysis
 %   ga and synthesis gs windows.
 %
-%   See also: gabmul
-%
-%   Demos: demo_gabmul
+%   See also: dgt, idgt
 
 error(nargchk(2,4,nargin));
 
