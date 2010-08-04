@@ -1,4 +1,4 @@
-function [f]=idgt(coef,g,a,Ls,dim)
+function [f]=idgt(coef,g,a,varargin)
 %IDGT  Inverse discrete Gabor transform.
 %   Usage:  f=idgt(c,g,a);
 %           f=idgt(c,g,a,Ls);
@@ -36,7 +36,16 @@ function [f]=idgt(coef,g,a,Ls,dim)
 %F  \begin{eqnarray*}
 %F  f(l+1) & = & \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi iml/M}g(l-an+1)
 %F  \end{eqnarray*}
-%  
+%
+%   IDGT takes the following flags at the end of the line of input
+%   arguments:
+%
+%-     'freqinv'  - Compute an IDGT using a frequency-invariant phase. This
+%                   is the default convention described above.
+%
+%-     'timeinv'  - Compute an IDGT using a time-invariant phase. This
+%                   convention is typically used in filter bank algorithms.
+
 %   See also:  dgt, gabwin, dwilt, gabtight
 
 %   AUTHOR : Peter Soendergaard.
@@ -47,9 +56,13 @@ function [f]=idgt(coef,g,a,Ls,dim)
 
 error(nargchk(3,5,nargin));
 
-if prod(size(g))==1
+if numel(g)==1
   error('g must be a vector (you probably forgot to supply the window function as input parameter.)');
 end;
+
+definput.keyvals.Ls=[];
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 wasrow=0;
 
@@ -85,10 +98,14 @@ g=comp_window(g,a,M,L,0,'IDGT');
 assert_L(L,size(g,1),L,a,M,'IDGT');
 
 % Do the actual computation.
+if flags.do_timeinv
+  coef=phaseunlock(coef,a);
+end;
+
 f=comp_idgt(coef,g,a,M,L);
 
 % Cut or extend f to the correct length, if desired.
-if nargin==4
+if ~isempty(Ls)
   f=postpad(f,Ls);
 else
   Ls=L;

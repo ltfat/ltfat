@@ -39,7 +39,16 @@ function [f]=idgtreal(coef,g,a,M,varargin)
 %   See the help on IDGT for the precise definiton of the inverse Gabor
 %   transform.
 %
-%   See also:  dgt, gabwin, gabdual, dwilt
+%   IDGTREAL takes the following flags at the end of the line of input
+%   arguments:
+%
+%-     'freqinv'  - Compute an IDGT using a frequency-invariant phase. This
+%                   is the default convention described in the help for IDGT.
+%
+%-     'timeinv'  - Compute an IDGT using a time-invariant phase. This
+%                   convention is typically used in filter bank algorithms.
+%
+%   See also:  idgt, gabwin, gabdual, dwilt
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_DGT
@@ -56,12 +65,11 @@ if prod(size(g))==1
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.keyvals.Ls=[];
-defnopos.keyvals.dim=[];
+definput.keyvals.Ls=[];
+definput.keyvals.dim=[];
+definput.flags.phase={'freqinv','timeinv'};
 
-[flags,kv]=ltfatarghelper({'Ls','dim',},defnopos,varargin);
-
-
+[flags,kv]=ltfatarghelper({'Ls','dim',},definput,varargin);
 
 wasrow=0;
 

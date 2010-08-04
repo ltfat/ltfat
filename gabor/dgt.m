@@ -50,9 +50,19 @@ function [c,Ls]=dgt(f,g,a,M,varargin)
 %M                 l=0  
 %F  \[c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)e^{-2\pi ilm/M}\overline{g(l-an+1)}\]
 %
-%   where $m=0,...,M-1$ and $n=0,...,N-1$ and $l-an$ is computed modulo L.
+%   where $m=0,...,M-1$ and $n=0,...,N-1$ and $l-an$ is computed modulo
+%   L.
 %
-%   See also:  idgt, gabwin, dwilt, gabdual
+%   DGT takes the following flags at the end of the line of input
+%   arguments:
+%
+%-     'freqinv'  - Compute a DGT using a frequency-invariant phase. This
+%                   is the default convention described above.
+%
+%-     'timeinv'  - Compute a DGT using a time-invariant phase. This
+%                   convention is typically used in filter bank algorithms.
+%
+%   See also:  idgt, gabwin, dwilt, gabdual, phaselock
 %
 %   Demos:  demo_dgt
 %
@@ -68,10 +78,15 @@ if nargin<4
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-defnopos.keyvals.L=[];
-[flags,kv]=ltfatarghelper({'L'},defnopos,varargin);
+definput.keyvals.L=[];
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv]=ltfatarghelper({'L'},definput,varargin);
 
 [f,g,L,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
 
 c=comp_dgt(f,g,a,M,L);
+
+if flags.do_timeinv
+  c=phaselock(c,a);
+end;
 

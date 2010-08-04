@@ -238,13 +238,9 @@ switch(lower(method))
   
   L=N*a;
   tfr=1;
-  
-  if isnumeric(g)
-    error('Only Gaussian windows supported so far.');
-  end;
-  
+    
   [g,info]=comp_window(g,a,M,L,0,'GABPHASEGRAD');
-  
+
   if ~info.gauss
     error(['The window must be a Gaussian window (specified as a string or ' ...
            'as a cell arrray).']);
