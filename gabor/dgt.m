@@ -84,9 +84,5 @@ definput.flags.phase={'freqinv','timeinv'};
 
 [f,g,L,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
 
-c=comp_dgt(f,g,a,M,L);
-
-if flags.do_timeinv
-  c=phaselock(c,a);
-end;
+c=comp_dgt(f,g,a,M,L,flags.do_timeinv);
 

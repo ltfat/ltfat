@@ -116,10 +116,10 @@ switch(lower(method))
   
   % The computation done this way is insensitive to whether the dgt is
   % phaselocked or not.
-  c   = comp_dgt(f,g,a,M,L);
+  c   = comp_dgt(f,g,a,M,L,0);
   c   = reshape(c,M,N,W);
   
-  c_h = comp_dgt(f,hg,a,M,L);
+  c_h = comp_dgt(f,hg,a,M,L,0);
   c_h = reshape(c_h,M,N,W);
   
   c_s = abs(c).^2;
@@ -139,7 +139,7 @@ switch(lower(method))
     % The code below works for any window, and not just the Gaussian
     
     dg  = pderiv(g,[],Inf)/(2*pi);
-    c_d = comp_dgt(f,dg,a,M,L);
+    c_d = comp_dgt(f,dg,a,M,L,0);
     c_d = reshape(c_d,M,N,W);
     
     % Compute the instantaneous frequency
