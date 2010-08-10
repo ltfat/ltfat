@@ -9,9 +9,11 @@ function varargout=sgram(f,varargin)
 %   SGRAM(f,fs) does the same for a signal with sampling rate fs (sampled
 %   with fs samples per second);
 %
-%   C=SGRAM(f, ... ) returns the image to be displayed as a matrix. Use
-%   this in conjunction with IMWRITE etc. Do NOT use this as a method to
-%   create a Gabor transform, use DGT or DGTREAL for that instead.
+%   C=SGRAM(f, ... ) returns the image to be displayed as a matrix. Use this
+%   in conjunction with IMWRITE etc. These coefficients are ONLY intended to
+%   be used by post-processing image tools. Numerical Gabor signal analysis
+%   and synthesis should ALWAYS be done using the DGT, IDGT, DGTREAL and
+%   IDGTREAL functions.
 %
 %   Additional arguments can be supplied like this:
 %   SGRAM(f,'nf','tfr',2,'log'). The arguments must be character strings

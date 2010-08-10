@@ -4,6 +4,10 @@
 %
 %   This page documents the demos.
 %
+%   Basic demos
+%     DEMO_SGRAM            - Spectrogram demo
+%     DEMO_DGT              - DGT and comparison to SGRAM
+%
 %   Applications
 %     DEMO_PARTIALS         - Partials of a sound signal.
 %     DEMO_OFDM             - Simple OFDM demo.
@@ -12,7 +16,6 @@
 %     DEMO_AUDIOCOMPRESSION - Audio compression using an WMDCT.
 %
 %   Aspect of particular functions
-%     DEMO_DGT              - Simple example on the DGT.
 %     DEMO_PGAUSS           - How to use PGAUSS.
 %     DEMO_PBSPLINE         - How to use PBSPLINE.
 %     DEMO_GABMIXDUAL       - How to use MIXDUAL.

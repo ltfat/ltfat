@@ -10,7 +10,7 @@
 %-    Linear approximation     - N coefficients with lowest frequency index
 %
 %-    Non-linear approximation - N largest coefficients (in magnitude)
-%-
+%
 %   The corresponding approximated signal is computed with inverse WMDCT.
 %
 %   FIGURE 1 RATE-DISTORTION
