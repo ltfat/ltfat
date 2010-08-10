@@ -113,7 +113,7 @@ end;
 assert_L(L,size(g,1),L,a,M,'IDGTREAL');
 
 % Do the actual computation.
-f=comp_idgtreal(coef,g,a,M,L);
+f=comp_idgtreal(coef,g,a,M,L,flags.do_timeinv);
 
 % Cut or extend f to the correct length, if desired.
 if ~isempty(kv.Ls)

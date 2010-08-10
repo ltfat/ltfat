@@ -41,7 +41,7 @@ if timeinv
   c=phaseunlock(c,a);
 end;
 
-f=comp_idgt(c,g,a,M,L);
+f=comp_idgt(c,g,a,M,L,0);
 
 % Postprocess to handle c_f different from 0.
 if (c_f~=0)

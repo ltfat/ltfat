@@ -97,12 +97,7 @@ g=comp_window(g,a,M,L,0,'IDGT');
 
 assert_L(L,size(g,1),L,a,M,'IDGT');
 
-% Do the actual computation.
-if flags.do_timeinv
-  coef=phaseunlock(coef,a);
-end;
-
-f=comp_idgt(coef,g,a,M,L);
+f=comp_idgt(coef,g,a,M,L,flags.do_timeinv);
 
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)

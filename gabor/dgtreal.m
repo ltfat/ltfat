@@ -84,6 +84,6 @@ if ~isreal(g)
   error('The window must be real-valued.');  
 end;
 
-c=comp_dgtreal(f,g,a,M,L);
+c=comp_dgtreal(f,g,a,M,L,flags.do_timeinv);
 
 

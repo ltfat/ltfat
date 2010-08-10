@@ -1,4 +1,4 @@
-function c=comp_dgtreal(f,g,a,M,L)
+function c=comp_dgtreal(f,g,a,M,L,phasetype)
 %COMP_DGTREAL  Compute a DGTREAL
 %   Usage:  c=comp_dgt_real(f,g,a,M,L);
 %
@@ -34,6 +34,18 @@ end;
 
 c=reshape(c,M2,N,W);
 
+if phasetype==1
+    
+    TimeInd = (0:(N-1))*a;
+    FreqInd = (0:(M2-1))/M;
+    
+    phase = FreqInd'*TimeInd;
+    phase = exp(2*i*pi*phase);
+    
+    for w=1:W
+        c(:,:,w) = c(:,:,w).*phase;
+    end;
 
+end;
 
 

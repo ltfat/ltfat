@@ -124,7 +124,7 @@ end;
 % Change c to correct shape.
 c=reshape(c,M1,N1,M2*N2*W);
 
-c=comp_idgt(c,g1,a1,M1,L1);
+c=comp_idgt(c,g1,a1,M1,L1,0);
 
 % Check if Ls was specified.
 if doLs
@@ -144,7 +144,7 @@ c=permute(c,[2,1,3]);
 % Change c to correct shape.
 c=reshape(c,M2,N2,Ls(1)*W);
 
-c=comp_idgt(c,g2,a2,M2,L2);
+c=comp_idgt(c,g2,a2,M2,L2,0);
 
 % Check if Ls was specified.
 if doLs

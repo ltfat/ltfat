@@ -115,8 +115,8 @@ total_args = numel(arglist);
   restlist = arglist(first_str_pos:end);
 
   %Check for default arguments
-  if isfield(TF_CONF,callfun)
-    s=TF_CONF.(callfun);
+  if isfield(TF_CONF.fundefs,callfun)
+    s=TF_CONF.fundefs.(callfun);
     restlist={s{:},restlist{:}};
   end;
 
