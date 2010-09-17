@@ -1,5 +1,5 @@
 status=2;
 
-p=[bp,filesep,'thirdparty',filesep];
+p=[bp,'thirdparty',filesep];
 
 addpath([p,'PolygonClip']);

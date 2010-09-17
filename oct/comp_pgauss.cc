@@ -13,7 +13,7 @@ DEFUN_DLD (comp_pgauss, args, ,
 
   Matrix g(L,1);
 
-  pgauss(L, w, center, (double*)g.data());
+  pgauss(L, w, center, g.fortran_vec());
 
   return octave_value (g);
 }
