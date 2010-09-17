@@ -32,7 +32,7 @@ DEFUN_DLD (comp_ifftreal, args, ,
   p = fftw_plan_many_dft_c2r(1, &L, W,
 			     (fftw_complex*)c.data(), NULL,
 			     1, L2,
-			     (double*)f.data(), NULL,
+			     f.fortran_vec(), NULL,
 			     1, L,
 			     FFTW_ESTIMATE);
   
@@ -41,7 +41,7 @@ DEFUN_DLD (comp_ifftreal, args, ,
 
   /* Scale, because Octave's normalization is different. */
   double s  = 1.0/L;
-  double *fp = (double*)f.data();
+  double *fp = f.fortran_vec();
   for (int ii=0; ii<L*W; ii++)
   {
       fp[ii] *=s;

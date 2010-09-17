@@ -44,10 +44,10 @@ if L<1
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.centering = {'wp','hp'};
-defnopos.keyvals.dim     = [];
+definput.flags.centering = {'wp','hp'};
+definput.keyvals.dim     = [];
 
-[flags,keyvals,dim]=ltfatarghelper({'dim'},defnopos,varargin,mfilename);
+[flags,keyvals,dim]=ltfatarghelper({'dim'},definput,varargin);
 
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,'MIDDLEPAD');
 

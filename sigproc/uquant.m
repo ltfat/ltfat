@@ -30,9 +30,9 @@ if nargin<4
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.sign={'s','u'};
+definput.flags.sign={'s','u'};
 
-[flags,keyvals]=ltfatarghelper({},defnopos,varargin);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 % ------ handle complex values ------------------
 if ~isreal(xi)

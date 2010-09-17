@@ -56,11 +56,11 @@ if nargin<5
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.keyvals.C=[];
-defnopos.keyvals.itermax=100;
-defnopos.keyvals.tol=1e-2;
+definput.keyvals.C=[];
+definput.keyvals.itermax=100;
+definput.keyvals.tol=1e-2;
 
-[flags,kv]=ltfatarghelper({'C','itermax','tol'},defnopos,varargin,mfilename);
+[flags,kv]=ltfatarghelper({'C','itermax','tol'},definput,varargin);
 
   
 %   AUTHOR : Bruno Torresani.  

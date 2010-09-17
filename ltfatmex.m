@@ -34,9 +34,9 @@ function ltfatmex(varargin)
 bp=mfilename('fullpath');
 bp=bp(1:end-8);
 
-defnopos.flags.target={'auto','lib','mex','gpc'};
-defnopos.flags.command={'compile','clean','test'};
-[flags,kv]=ltfatarghelper({},defnopos,varargin);
+definput.flags.target={'auto','lib','mex','gpc'};
+definput.flags.command={'compile','clean','test'};
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Remember the current directory.
 curdir=pwd;

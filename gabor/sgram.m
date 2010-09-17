@@ -89,35 +89,35 @@ if sum(size(f)>1)>1
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.wlen={'nowlen','wlen'};
-defnopos.flags.thr={'nothr','thr'};
-defnopos.flags.tc={'notc','tc'};
-defnopos.flags.plottype={'image','contour','mesh','pcolor'};
+definput.flags.wlen={'nowlen','wlen'};
+definput.flags.thr={'nothr','thr'};
+definput.flags.tc={'notc','tc'};
+definput.flags.plottype={'image','contour','mesh','pcolor'};
 
-defnopos.flags.clim={'noclim','clim'};
-defnopos.flags.fmax={'nofmax','fmax'};
-defnopos.flags.log={'db','lin'};
-defnopos.flags.dynrange={'nodynrange','dynrange'};
-defnopos.flags.colorbar={'colorbar','nocolorbar'};
+definput.flags.clim={'noclim','clim'};
+definput.flags.fmax={'nofmax','fmax'};
+definput.flags.log={'db','lin'};
+definput.flags.dynrange={'nodynrange','dynrange'};
+definput.flags.colorbar={'colorbar','nocolorbar'};
 
 if isreal(f)
-  defnopos.flags.posfreq={'posfreq','nf'};
+  definput.flags.posfreq={'posfreq','nf'};
 else
-  defnopos.flags.posfreq={'nf','posfreq'};
+  definput.flags.posfreq={'nf','posfreq'};
 end;
 
-defnopos.keyvals.fs=[];
-defnopos.keyvals.tfr=1;
-defnopos.keyvals.wlen=0;
-defnopos.keyvals.thr=0;
-defnopos.keyvals.clim=[0,1];
-defnopos.keyvals.climsym=1;
-defnopos.keyvals.fmax=0;
-defnopos.keyvals.dynrange=100;
-defnopos.keyvals.xres=800;
-defnopos.keyvals.yres=600;
+definput.keyvals.fs=[];
+definput.keyvals.tfr=1;
+definput.keyvals.wlen=0;
+definput.keyvals.thr=0;
+definput.keyvals.clim=[0,1];
+definput.keyvals.climsym=1;
+definput.keyvals.fmax=0;
+definput.keyvals.dynrange=100;
+definput.keyvals.xres=800;
+definput.keyvals.yres=600;
 
-[flags,kv,fs]=ltfatarghelper({'fs'},defnopos,varargin,mfilename);
+[flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
 % Resampling rate: Used when fmax is issued.
 resamp=1;

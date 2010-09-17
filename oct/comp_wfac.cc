@@ -29,7 +29,8 @@ DEFUN_DLD (comp_wfac, args, ,
      
      ComplexMatrix gf(p*q,c*d);
      
-     wfac((ltfat_complex*)g.data(),L,a,M,(ltfat_complex*)gf.data());
+     wfac((const ltfat_complex*)g.data(),L,a,M,
+	  (ltfat_complex*)gf.fortran_vec());
      
      return octave_value (gf);
 
@@ -48,7 +49,7 @@ DEFUN_DLD (comp_wfac, args, ,
      
      ComplexMatrix gf(p*q,c*d);
      
-     wfac_r((double*)g.data(),L,a,M,(ltfat_complex*)gf.data());
+     wfac_r(g.data(),L,a,M,(ltfat_complex*)gf.fortran_vec());
      
      return octave_value (gf);
 

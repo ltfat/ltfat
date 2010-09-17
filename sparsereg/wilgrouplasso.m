@@ -39,10 +39,10 @@ if nargin<2
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.group={'freq','time'};
-defnopos.flags.thresh={'hard','soft'};
+definput.flags.group={'freq','time'};
+definput.flags.thresh={'hard','soft'};
 
-[flags,kv]=ltfatarghelper({},defnopos,varargin,mfilename);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 M = size(xi,1);
 N = size(xi,2);

@@ -30,9 +30,9 @@ if nargin<2
    error('Too few input parameters.');    
 end;
 
-defnopos.keyvals.L=[];
+definput.keyvals.L=[];
 
-[flags,keyvals]=ltfatarghelper({'L'},defnopos,varargin,mfilename);
+[flags,keyvals]=ltfatarghelper({'L'},definput,varargin);
 L=keyvals.L;
 
 if size(M,1)>1 || size(M,2)>1

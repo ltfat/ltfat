@@ -85,12 +85,12 @@ if rem(M,2)==1
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.centering={'wp','hp'};
-defnopos.flags.delay={'nodelay','delay','causal'};
+definput.flags.centering={'wp','hp'};
+definput.flags.delay={'nodelay','delay','causal'};
 
-defnopos.keyvals.delay=0;
+definput.keyvals.delay=0;
 
-[flags,keyvals]=ltfatarghelper({},defnopos,varargin);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 if flags.do_wp
   cent=0;

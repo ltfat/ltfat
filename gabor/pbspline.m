@@ -94,10 +94,10 @@ function [g,nlen] = pbspline(L,order,a,varargin)
   end;
     
   % Define initial value for flags and key/value pairs.
-  defnopos.flags.centering={'wp','hp'};
-  defnopos.flags.stype={'ed','xd','stard','ec','xc','starc'};
+  definput.flags.centering={'wp','hp'};
+  definput.flags.stype={'ed','xd','stard','ec','xc','starc'};
   
-[flags,keyvals]=ltfatarghelper({},defnopos,varargin,mfilename);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 
   

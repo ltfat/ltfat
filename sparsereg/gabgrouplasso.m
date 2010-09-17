@@ -70,13 +70,13 @@ if ~isvector(x)
 end
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.group={'freq','time'};
+definput.flags.group={'freq','time'};
 
-defnopos.keyvals.C=[];
-defnopos.keyvals.itermax=100;
-defnopos.keyvals.tol=1e-2;
+definput.keyvals.C=[];
+definput.keyvals.itermax=100;
+definput.keyvals.tol=1e-2;
 
-[flags,kv]=ltfatarghelper({'C','itermax','tol'},defnopos,varargin);
+[flags,kv]=ltfatarghelper({'C','itermax','tol'},definput,varargin);
 
 % Determine transform length, and calculate the window.
 [x,g,L] = gabpars_from_windowsignal(x,g,a,M,[],'GABGROUPLASSO');
