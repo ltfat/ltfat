@@ -12,10 +12,8 @@ function ltfatsetdefaults(fname,varargin)
 %
 %  See also: ltfatgetdefaults, ltfatstart
 
-global TF_CONF;
-
 if strcmpi(fname,'clearall')
-    TF_CONF.fundefs=struct;
+  ltfatarghelper('clearall');
 else
-    TF_CONF.fundefs.(fname)=varargin;
+  ltfatarghelper('set',fname,varargin);
 end;

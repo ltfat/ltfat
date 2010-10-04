@@ -8,18 +8,12 @@ function d=ltfatgetdefaults(fname)
 %
 %  See also: ltfatsetdefaults, ltfatstart
 
-global TF_CONF;
-
 if nargin<1
     error('%s: Too few input arguments',upper(mfilename));
 end;
 
 if strcmpi(fname,'all')
-    d=TF_CONF.fundefs;
+  d=ltfatarghelper('all');
 else
-    if isfield(TF_CONF.fundefs,fname)
-        d=TF_CONF.fundefs.(fname);
-    else
-        d={};
-    end;
+  d=ltfatarghelper('get',fname);
 end;

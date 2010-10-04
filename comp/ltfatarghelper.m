@@ -33,17 +33,44 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %   dependant parameters (n and betamul), which will have default values 4
 %   and [] if they are not present.
 
-global TF_CONF;
+persistent TF_CONF;
 
 if isempty(TF_CONF)
 
-  basepath=which('ltfatarghelper');
-  % Kill the function name and comp from the path.
-  basepath=basepath(1:end-22);
-  % add the base path
-  addpath(basepath);
-  ltfatstart;
+%  basepath=which('ltfatarghelper');
+%  % Kill the function name and comp from the path.
+%  basepath=basepath(1:end-22);
+%  % add the base path
+%  addpath(basepath);
+%  ltfatstart;
 
+  TF_CONF.fundefs = struct;
+end;
+
+if ischar(posdepnames)
+  % Special interface needed for ltfatsetdefaults and ltfatgetdefaults,
+  % activated when first argument is a string.
+
+  % First input  argument, posdepnames, is a string, one of the options
+  % in the "switch" section below
+  % Second input argument, definput,    is a function name to get or set
+  % Third  input argument, arglist ,    is a cell-array with options to set.
+  
+  switch(lower(posdepnames))
+   case 'get'
+    if isfield(TF_CONF.fundefs,definput)
+      flags=TF_CONF.fundefs.(definput);
+    else
+      flags={};
+    end;
+   case 'set'
+    TF_CONF.fundefs.(definput)=arglist;
+   case 'all'
+    flags=TF_CONF.fundefs;
+   case 'clearall'
+    TF_CONF.fundefs=struct; 
+  end;
+  return
 end;
 
 if nargin<4

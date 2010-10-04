@@ -1,4 +1,4 @@
-function [V,D]=gabmuleigs(K,c,p3,p4,p5)
+function [V,D]=gabmuleigs(K,c,p3,varargin)
 %GABMULEIGS  Eigenpairs of Gabor multiplier
 %   Usage:  h=gabmuleigs(K,c,g,a);
 %           h=gabmuleigs(K,c,a);
@@ -23,8 +23,8 @@ function [V,D]=gabmuleigs(K,c,p3,p4,p5)
 %   GABMULEIGS(K,c,ga,gs,a) will do the same using the window the window ga
 %   for analysis and gs for synthesis.
 %
-%   GABMULEIGS(K,c,a,L) will do the same using the a tight Gaussian window of
-%   length L for analysis and synthesis.
+%   GABMULEIGS(K,c,a) will do the same using the a tight Gaussian window of
+%   for analysis and synthesis.
 %
 %   If K is empty, then all eigenvalues/pairs will be returned.
 %
@@ -34,7 +34,9 @@ function [V,D]=gabmuleigs(K,c,p3,p4,p5)
 % Change this to 1 or 2 to see the iterative method in action.
 printopts=0;
 
-error(nargchk(3,5,nargin));
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
 
 if nargout==2
   doV=1;
@@ -45,40 +47,45 @@ end;
 M=size(c,1);
 N=size(c,2);
 
-global TF_CONF;
 % Tolerance of iterative method
-tol=TF_CONF.itertol;
+tol=1e-10;
 
 % Maximum number of iterations.
-maxit=TF_CONF.itermaxit;
+maxit=200;
 
 % When to use an iterative method.
-crossover=TF_CONF.itercrossover;
+crossover=200;
 
 istight=1;
-switch(nargin)
-  case 3
-    % Usage: h=gabmuleigs(c,K,a);  
-    a=p3;
-    L=N*a;
-    ga=gabtight(a,M,L);
-    gs=ga;
-  case 4
+if numel(p3)==1
+  % Usage: h=gabmuleigs(c,K,a);  
+  a=p3;
+  L=N*a;
+  ga=gabtight(a,M,L);
+  gs=ga;
+  arglist=varargin;
+else 
+  if numel(varargin{1})==1
     % Usage: h=gabmuleigs(c,K,g,a);  
     ga=p3;
     gs=p3;
-    a=p4;
+    a=varargin{1};
     L=N*a;
-  case 5
-    % Usage: h=gabmuleigs(c,K,ga,gs,a);  
-    ga=p3;
-    gs=p4;
-    a=p5;
-    L=N*a;
-    istight=0;
+    arglist=varargin(2:end);
+  else 
+    if numel(varargin{2})==1
+      % Usage: h=gabmuleigs(c,K,ga,gs,a);  
+      ga=p3;
+      gs=varargin{1};
+      a =varargin{2};
+      L=N*a;
+      istight=0;
+      arglist=varargin(3:end);
+    end;    
+  end;
 end;
-  
 
+crossover=200;
 
 % Do the computation.
 % eigs does not work in Octave, and for small problems a direct calculation is just as fast.
