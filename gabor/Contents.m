@@ -13,11 +13,13 @@
 %  Gabor systems
 %    DGT            -  Discrete Gabor transform.
 %    IDGT           -  Inverse discrete Gabor transform.
+%    ISGRAM         -  Iterative reconstruction from spectrogram.
 %    DGT2           -  2D Discrete Gabor transform.
 %    IDGT2          -  2D Inverse discrete Gabor transform.
 %    DGTREAL        -  DGT for real-valued signals.
 %    IDGTREAL       -  IDGT for real-valued signals.
 %    GABWIN         -  Evaluate Gabor window.
+%    LONGPAR        -  Easy calculation of LONG parameters.
 %
 %  Wilson bases and WMDCT
 %    DWILT          -  Discrete Wilson transform.
@@ -31,17 +33,6 @@
 %    WIL2RECT       -  Rectangular layout of Wilson coefficients.
 %    RECT2WIL       -  Inverse of WIL2RECT.
 %    WILWIN         -  Evaluate Wilson window.
-%
-%  Window functions
-%    PGAUSS         -  Periodized Gaussian.
-%    PSECH          -  Periodized SECH.
-%    PHERM          -  Periodized Hermite functions.
-%    PBSPLINE       -  Periodized B-spline.
-%    FIRWIN         -  FIR windows (Hanning,Hamming,Blackman,...).
-%    FIRKAISER      -  FIR Kaiser-Bessel window.
-%    LONGPAR        -  Easy calculation of LONG parameters.
-%    FIR2LONG       -  Extend FIR window to LONG window.
-%    LONG2FIR       -  Cut LONG window to FIR window.
 %
 %  Reconstructing windows
 %    GABDUAL        -  Canonical dual window.

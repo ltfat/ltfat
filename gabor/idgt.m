@@ -45,7 +45,7 @@ function [f]=idgt(coef,g,a,varargin)
 %
 %-     'timeinv'  - Compute an IDGT using a time-invariant phase. This
 %                   convention is typically used in filter bank algorithms.
-
+%
 %   See also:  dgt, gabwin, dwilt, gabtight
 
 %   AUTHOR : Peter Soendergaard.
@@ -54,7 +54,9 @@ function [f]=idgt(coef,g,a,varargin)
 
 % Check input paramameters.
 
-error(nargchk(3,5,nargin));
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
 
 if numel(g)==1
   error('g must be a vector (you probably forgot to supply the window function as input parameter.)');
