@@ -38,7 +38,10 @@ function [f,r]=isgram(s,g,a,varargin)
 %
 %-    'rand'     - Choose a random starting phase.
 %
-%-    'niter',n  - Do at most n iterations.
+%-    'int'      - Construct a starting phase by integration. Only works
+%                  for Gaussian windows.
+%
+%-    'maxiter',n  - Do at most n iterations.
 %
 %-    'tol',t    - Stop if residual error is less than the specified tolerance.  
 %
@@ -67,11 +70,11 @@ if numel(g)==1
 end;
 
 definput.keyvals.Ls=[];
-definput.keyvals.niter=20;
+definput.keyvals.maxiter=100;
 definput.keyvals.tol=1e-6;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
-definput.flags.startphase={'zero','rand'};
+definput.flags.startphase={'zero','rand','int'};
 
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
@@ -104,12 +107,6 @@ assert_squarelat(a,M,1,'ISGRAM');
 
 L=N*a;
 
-g  = comp_window(g,a,M,L,0,'ISGRAM');
-
-gd = gabdual(g,a,M);
-
-assert_L(L,size(g,1),L,a,M,'ISGRAM');
-
 if flags.do_zero
   % Start with a phase of zero.
   c=s;
@@ -119,8 +116,18 @@ if flags.do_rand
   c=s.*angle(2*pi*i*rand(M,N));
 end;
 
-r=zeros(kv.niter,1);
-for ii=1:kv.niter
+if flags.do_int
+  c=constructphase(s,g,a);
+end;
+
+g  = comp_window(g,a,M,L,0,'ISGRAM');
+
+gd = gabdual(g,a,M);
+
+assert_L(L,size(g,1),L,a,M,'ISGRAM');
+
+r=zeros(kv.maxiter,1);
+for ii=1:kv.maxiter
   f=comp_idgt(c,gd,a,M,L,0);
   c=comp_dgt(f,g,a,M,L,0);
   

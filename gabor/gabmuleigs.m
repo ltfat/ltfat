@@ -47,15 +47,6 @@ end;
 M=size(c,1);
 N=size(c,2);
 
-% Tolerance of iterative method
-tol=1e-10;
-
-% Maximum number of iterations.
-maxit=200;
-
-% When to use an iterative method.
-crossover=200;
-
 istight=1;
 if numel(p3)==1
   % Usage: h=gabmuleigs(c,K,a);  
@@ -85,20 +76,27 @@ else
   end;
 end;
 
-crossover=200;
+definput.keyvals.niter=20;
+definput.keyvals.tol=1e-6;
+definput.keyvals.printstep=10;
+definput.keyvals.crossover=200;
+definput.flags.print={'print','quiet'};
+
+
+[flags,kv]=ltfatarghelper({},definput,arglist);
+
+if flags.print
+  opts.disp=1;
+else
+  opts.disp=0;
+end;
 
 % Do the computation.
 % eigs does not work in Octave, and for small problems a direct calculation is just as fast.
-if isoctave || L<crossover
-  if istight
-    gabbas=tfmat('dgt',ga,a,M);
-    bigM=gabbas*diag(c(:))*gabbas';
-  else
-    gabbasa=tfmat('dgt',ga,a,M);
-    gabbass=tfmat('dgt',gs,a,M);
-    bigM=gabbass*diag(c(:))*gabbasa';      
-  end;
-  
+if L<kv.crossover
+  % Compute the transform matrix.
+  bigM=tfmat('gabmul',c,ga,gs,a);
+
   if doV
     [V,D]=eig(bigM);
   else
@@ -106,7 +104,6 @@ if isoctave || L<crossover
   end;
 
 else
-  opts.disp=printopts;
   gfa=comp_wfac(ga,a,M);
   if istight
     gfs=gfa;
