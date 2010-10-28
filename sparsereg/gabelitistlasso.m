@@ -1,6 +1,6 @@
-function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
-%GABGROUPLASSO  Group LASSO regression in Gabor domain
-%   Usage: [tc,xrec] = gabgrouplasso(x,g,a,M,group,lambda,C,maxit,tol)
+function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
+%GABELITISTLASSO  Elitist LASSO regression in Gabor domain
+%   Usage: [tc,xrec] = gabelitistlasso(x,g,a,M,lambda,C,tol,maxit)
 %   Input parameters:
 %       x        : Input signal
 %       g        : Synthesis window function
@@ -14,11 +14,11 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %      iter      : Number of iterations done.
 %      xrec      : Reconstructed signal
 %
-%   GABGROUPLASSO(x,g,a,M) solves the group LASSO
-%   regression problem in the Gabor domain: minimize a functional
-%   of the synthesis coefficients defined as the sum of half the l2 norm of 
-%   the approximation error and the mixed l1/l2 norm of the coefficient
-%   sequence, with a penalization coefficient lambda.
+%   GABELITISTLASSO(x,g,a,M,lambda) solves the elitist LASSO regression
+%   problem in the Gabor domain: minimize a functional of the synthesis
+%   coefficients defined as the sum of half the l2 norm of the approximation
+%   error and the mixed l2/l1 norm of the coefficient sequence, with a
+%   penalization coefficient lambda.
 %  
 %   The matrix of Gabor coefficients is labelled in terms of groups and
 %   members.  The obtained expansion is sparse in terms of groups, no
@@ -26,10 +26,10 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %   by a regularization term composed of l2 norm within a group, and l1 norm
 %   with respect to groups.
 %
-%   [tc,relres,iter] = GABGROUPLASSO(...) return the residuals relres in a vector
+%   [tc,relres,iter] = GABELITISTLASSO(...) return the residuals relres in a vector
 %   and the number of iteration steps done, maxit.
 %
-%   [tc,relres,iter,xrec] = GABGROUPLASSO(...) returns the reconstructed
+%   [tc,relres,iter,xrec] = GABELITISTLASSO(...) returns the reconstructed
 %   signal from the coefficients, xrec. Note that this requires additional
 %   computations.
 %
@@ -45,12 +45,12 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %                square of upper frame bound. Default value is the upper
 %                frame bound.
 %
-%-      'maxit',maxit - Stopping criterion: maximal number of
-%                iterations. Default value is 100.
-%
 %       'tol',tol - Stopping criterion: minimum relative difference between
 %                norms in two consecutive iterations. Default value is
 %                1e-2.
+%
+%-      'maxit',maxit - Stopping criterion: maximal number of
+%                iterations to do. Default value is 100.
 %
 %-      'print'   - Display the progress.
 %
@@ -58,8 +58,9 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %
 %-      'printstep',p - If 'print' is specified, then print every p'th
 %                iteration. Default value is p=10;
+
 %
-%   The parameters C, maxit and tol may also be specified on the
+%   The parameters C, itermax and tol may also be specified on the
 %   command line in that order: GABGROUPLASSO(x,g,a,M,lambda,C,tol,maxit).
 %
 %   The solution is obtained via an iterative procedure, called Landweber
@@ -83,7 +84,7 @@ end
 definput.flags.group={'freq','time'};
 
 definput.keyvals.C=[];
-definput.keyvals.maxit=100;
+definput.keyvals.itermax=100;
 definput.keyvals.tol=1e-2;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
@@ -92,14 +93,14 @@ definput.flags.startphase={'zero','rand','int'};
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
 % Determine transform length, and calculate the window.
-[x,g,L] = gabpars_from_windowsignal(x,g,a,M,[],'GABGROUPLASSO');
+[x,g,L] = gabpars_from_windowsignal(x,g,a,M,[],'GABELITISTLASSO');
 
 if isempty(kv.C)
   [A_dummy,kv.C] = gabframebounds(g,a,M,L);
 end;
 
 
-tchoice=flags.do_time;
+tchoice = flags.do_time;
 N = floor(length(x)/a);
 
 % Normalization to turn lambda to a value comparable to lasso
@@ -119,21 +120,21 @@ relres = 1e16;
 iter = 0;
 
 % Main loop
-while ((iter < kv.maxit)&&(relres >= kv.tol))
+while ((iter < kv.itermax)&&(relres >= kv.tol))
     tc = c0 - dgt(idgt(tc0,g,a),g,a,M);
     tc = tc0 + tc/kv.C;
     if tchoice
         tc = tc';
     end;
-    tc = groupthresh(tc,threshold,'soft');
+    tc = elitistthresh(tc,threshold,'soft');
     if tchoice
-        tc=tc';
+        tc = tc';
     end;
     relres = norm(tc(:)-tc0(:))/norm(tc0(:));
     tc0 = tc;
     iter = iter + 1;
     if flags.do_print
-      if mod(iter,kv.printstep)==0        
+      if mod(iter,kv.printstep)==0
         fprintf('Iteration %d: relative error = %f\n',iter,relres);
       end;
     end;

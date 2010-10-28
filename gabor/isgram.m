@@ -1,17 +1,18 @@
-function [f,r]=isgram(s,g,a,varargin)
+function [f,relres,iter]=isgram(s,g,a,varargin)
 %ISGRAM  Spectrogram inversion
 %   Usage:  f=isgram(s,g,a);
 %           f=isgram(s,g,a,Ls);
-%           [f,r]=isgram(s,g,a,Ls);
+%           [f,relres,iter]=isgram(...);
 %
 %   Input parameters:
-%         c     : Array of coefficients.
-%         g     : Window function.
-%         a     : Length of time shift.
-%         Ls    : length of signal.
+%         c       : Array of coefficients.
+%         g       : Window function.
+%         a       : Length of time shift.
+%         Ls      : length of signal.
 %   Output parameters:
-%         f     : Signal.
-%         r     : Vector of residuals.
+%         f       : Signal.
+%         relres  : Vector of residuals.
+%         iter    : Number of iterations done.
 %
 %   ISGRAM(s,g,a) attempts to invert a spectrogram computed by
 %
@@ -24,7 +25,8 @@ function [f,r]=isgram(s,g,a,varargin)
 %   If the phase of the spectrogram is known, it is much better to use
 %   IDGT.
 %
-%   [f,r]=ISGRAM(...) additionally return the residuals in a vector r.
+%   [f,relres,iter]=ISGRAM(...) additionally return the residuals in a
+%   vector relres and the number of iteration steps done.
 %
 %   Generally, if the spectrogram has not been modified, the iterative
 %   algorithm will converge slowly to the correct result. If the
@@ -41,9 +43,9 @@ function [f,r]=isgram(s,g,a,varargin)
 %-    'int'      - Construct a starting phase by integration. Only works
 %                  for Gaussian windows.
 %
-%-    'maxiter',n  - Do at most n iterations.
+%-    'tol',t    - Stop if relative residual error is less than the specified tolerance.  
 %
-%-    'tol',t    - Stop if residual error is less than the specified tolerance.  
+%-    'maxit',n  - Do at most n iterations.
 %
 %-    'print'    - Display the progress.
 %
@@ -70,13 +72,13 @@ if numel(g)==1
 end;
 
 definput.keyvals.Ls=[];
-definput.keyvals.maxiter=100;
 definput.keyvals.tol=1e-6;
+definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
 definput.flags.startphase={'zero','rand','int'};
 
-[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+[flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
 
 wasrow=0;
 
@@ -126,24 +128,26 @@ gd = gabdual(g,a,M);
 
 assert_L(L,size(g,1),L,a,M,'ISGRAM');
 
-r=zeros(kv.maxiter,1);
-for ii=1:kv.maxiter
+% For normalization purposes
+norm_s=norm(s,'fro');
+
+relres=zeros(kv.maxit,1);
+for iter=1:kv.maxit
   f=comp_idgt(c,gd,a,M,L,0);
   c=comp_dgt(f,g,a,M,L,0);
   
-  r(ii)=norm(abs(c)-s,'fro');
+  relres(iter)=norm(abs(c)-s,'fro')/norm_s;
   
   c=s.*exp(i*angle(c));
   
   if flags.do_print
-    if mod(ii,kv.printstep)==0
-      disp(sprintf('ISGRAM: Iteration %i, residual = %f.',ii,r(ii)));
-    end;
-    
+    if mod(iter,kv.printstep)==0
+      fsprintf('ISGRAM: Iteration %i, residual = %f.\n',iter,relres(iter));
+    end;    
   end;
   
-  if r(ii)<kv.tol
-    r=r(1:ii);
+  if relres(iter)<kv.tol
+    relres=relres(1:iter);
     break;
   end;
 
