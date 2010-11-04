@@ -7,6 +7,10 @@ function s=cameraman();
 %  The returned matrix s consists of integers between 0 and 255,
 %  which have been converted to double precision.
 %
+%  To display the image, use IMAGESC with a gray colormap:
+%
+%C   imagesc(cameraman); colormap(gray); axis('image');
+%
 %  See ftp://nic.funet.fi/pub/graphics/misc/test-images/ or
 %  http://sipi.usc.edu/database/database.cgi?volume=misc
 %
@@ -22,6 +26,5 @@ end;
 
 f=mfilename('fullpath');
 
-s=load([f,'.mat']);
+s=double(imread([f,'.png']));
 
-s=double(s.camera);
