@@ -9,7 +9,6 @@
 %     DEMO_DGT              - DGT and comparison to SGRAM
 %
 %   Applications
-%     DEMO_PARTIALS         - Partials of a sound signal.
 %     DEMO_OFDM             - Simple OFDM demo.
 %     DEMO_AUDIODENOISE     - Audio denoising using an WMDCT.
 %     DEMO_AUDIOSHRINK      - Lasso shrinkage of audio signal.
