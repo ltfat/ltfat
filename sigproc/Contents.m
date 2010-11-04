@@ -7,6 +7,7 @@
 %    LARGESTN       -  Keep N largest coefficients.
 %    THRESH         -  Threshold hard/soft.
 %    GROUPTHRESH    -  Group thresholding.
+%    ELITISTTHRESH  -  Elitist thresholding.
 %    UQUANT         -  Simulate uniform quantization.
 %    MULAWENCODE    -  Mu-Law companding
 %    MULAWDECODE    -  Inverse Mu-Law companding.
