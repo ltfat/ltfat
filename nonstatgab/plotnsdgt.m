@@ -1,4 +1,4 @@
-function [] = plotnsdgt(c,a,fs,varargin)
+function [] = plotnsdgt(c,a,varargin)
 %PLOTNSDGT Plot spectrogram from nonstationary Gabor coefficients
 %   Usage:  plotnsdgt(c,a,dynrange,sr);
 %
@@ -8,40 +8,40 @@ function [] = plotnsdgt(c,a,fs,varargin)
 %         dynrange : Colorscale dynamic range in dB (default 60 dB).
 %         sr       : signal sample rate in Hz (default 1 Hz).
 %
-%   PLOTNSDGT the spectrogram from coefficients computed with the functions
-%   NSDGT or NSDGTREAL. For more details on the format of the variables c
-%   and _a format, please read the NSDGT function help.
+%   PLOTNSDGT(c,a) plots the spectrogram from coefficients computed with the
+%   functions NSDGT or NSDGTREAL. For more details on the format of the
+%   variables c and _a format, please read the NSDGT function help.
 %
-%   Additional arguments can be supplied like this:
-%   NSSGRAM(f,'nf','tfr',2,'log'). The arguments must be character strings
-%   possibly followed by an argument:
+%   The function takes the following arguments at the end of the command line:
 %
-%-  'real'    - Assume coefficients from NSDGTREAL. This is the default.
+%     'fs'         - Assume a sampling rate of fs Hz.
 %
-%-  'complex' - Assume coefficients from NSDGT.
+%-    'real'       - Assume coefficients from NSDGTREAL. This is the default.
 %
-%-  'image'   - Use 'imagesc' to display the spectrogram. This is the
-%               default.
+%-    'complex'    - Assume coefficients from NSDGT.
 %
-%-  'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
-%               values are passed to IMAGESC. See the help on IMAGESC.
+%-    'image'      - Use 'imagesc' to display the spectrogram. This is the
+%                    default.
 %
-%-  'dynrange',r - Use a colormap in the interval [chigh-r,chigh], where
-%               chigh is the highest value in the plot.
+%-    'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
+%                    values are passed to IMAGESC. See the help on IMAGESC.
 %
-%-  'xres',xres - Approximate number of pixels along x-axis / time.
+%-    'dynrange',r - Use a colormap in the interval [chigh-r,chigh], where
+%                    chigh is the highest value in the plot.
 %
-%-  'yres',yres - Approximate number of pixels along y-axis / frequency
+%-    'xres',xres  - Approximate number of pixels along x-axis / time.
 %
-%-  'contour' - Do a contour plot to display the spectrogram.
+%-    'yres',yres  - Approximate number of pixels along y-axis / frequency
+%
+%-    'contour'    - Do a contour plot to display the spectrogram.
 %          
-%-  'surf'    - Do a surf plot to display the spectrogram.
+%-    'surf'       - Do a surf plot to display the spectrogram.
 %
-%-  'mesh'    - Do a mesh plot to display the spectrogram.
+%-    'mesh'       - Do a mesh plot to display the spectrogram.
 %
-%-  'colorbar' - Display the colorbar. This is the default.
+%-    'colorbar'   - Display the colorbar. This is the default.
 %
-%-  'nocolorbar' - Do not display the colorbar.
+%-    'nocolorbar' - Do not display the colorbar.
 %
 %   See also: nsdgt, nsdgtreal, nssgram
 
@@ -52,18 +52,18 @@ function [] = plotnsdgt(c,a,fs,varargin)
 timepos=cumsum(a)-a(1);
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.plottype={'image','contour','mesh','pcolor'};
-defnopos.flags.transformtype={'real','complex'};
+definput.flags.plottype={'image','contour','mesh','pcolor'};
+definput.flags.transformtype={'real','complex'};
 
-defnopos.flags.clim={'noclim','clim'};
-defnopos.flags.colorbar={'colorbar','nocolorbar'};
+definput.flags.clim={'noclim','clim'};
+definput.flags.colorbar={'colorbar','nocolorbar'};
 
-defnopos.keyvals.clim=[0,1];
-defnopos.keyvals.dynrange=[];
-defnopos.keyvals.xres=800;
-defnopos.keyvals.yres=600;
+definput.keyvals.clim=[0,1];
+definput.keyvals.dynrange=[];
+definput.keyvals.xres=800;
+definput.keyvals.yres=600;
 
-[flags,kv]=ltfatarghelper({'dynrange'},defnopos,varargin,mfilename);
+[flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin,mfilename);
 
 cwork=zeros(kv.yres,length(a));
 
@@ -77,6 +77,10 @@ end;
 
 %% --------  Interpolate in time -------------------------
 % this is non-equidistant, so we use a cubic spline
+
+if isempty(fs)
+  fs=1;
+end;
 
 % Time positions (in Hz) of our samples.
 timepos = (cumsum(a)-a(1))/fs;
