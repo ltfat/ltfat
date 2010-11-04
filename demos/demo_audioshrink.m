@@ -44,14 +44,14 @@ nsig = sig + 0.01*randn(size(sig));
 % Tonal layer
 % -----------
 % Initializations
-NbFreqBands = 256;
-NbTimeSteps = SigLength/NbFreqBands;
+M = 256;
+N = SigLength/M;
 
 % Generate window
-gamma = wilorth(NbFreqBands,SigLength);
+gamma = wilorth(M,SigLength);
 
 % Compute wmdct coefficients
-c = wmdct(nsig,gamma,NbFreqBands);
+c = wmdct(nsig,gamma,M);
 
 % Group lasso and invert
 [c1,N1] = wilgrouplasso(c,0.8,'soft','freq');
@@ -60,14 +60,14 @@ rec1 = iwmdct(c1,gamma);
 % Transient layer
 % ---------------
 % Initializations
-NbFreqBands = 32;
-NbTimeSteps = SigLength/NbFreqBands;
+M = 32;
+N = SigLength/M;
 
 % Generate window
-gamma = wilorth(NbFreqBands,SigLength);
+gamma = wilorth(M,SigLength);
 
 % Compute wmdct coefficients
-c = wmdct(nsig,gamma,NbFreqBands);
+c = wmdct(nsig,gamma,M);
 
 [c2,N2] = wilgrouplasso(c,0.5,'time','soft');
 rec2 = iwmdct(c2,gamma);

@@ -48,7 +48,17 @@ function [c,Ls]=dgtreal(f,g,a,M,varargin)
 %
 %   See the help on DGT for the definition of the discrete Gabor
 %   transform. This routine will return the coeffients for channel
-%   frequencies from 0 to floor(M/2). 
+%   frequencies from 0 to floor(M/2).
+%
+%   DGTREAL takes the following flags at the end of the line of input
+%   arguments:
+%
+%-     'freqinv'  - Compute a DGTREAL using a frequency-invariant phase. This
+%                   is the default convention described in the help for DGT.
+%
+%-     'timeinv'  - Compute a DGTREAL using a time-invariant phase. This
+%                   convention is typically used in filter bank algorithms.
+
 %
 %   See also:  dgt, idgtreal, gabwin, dwilt, gabtight
 %
@@ -64,8 +74,9 @@ if nargin<4
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-defnopos.keyvals.L=[];
-[flags,kv]=ltfatarghelper({'L'},defnopos,varargin);
+definput.keyvals.L=[];
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv]=ltfatarghelper({'L'},definput,varargin);
 
 [f,g,L,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
 
@@ -73,6 +84,6 @@ if ~isreal(g)
   error('The window must be real-valued.');  
 end;
 
-c=comp_dgtreal(f,g,a,M,L);
+c=comp_dgtreal(f,g,a,M,L,flags.do_timeinv);
 
 

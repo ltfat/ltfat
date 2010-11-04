@@ -1,4 +1,4 @@
-function f=comp_idgtreal(coef,g,a,M,L)
+function f=comp_idgtreal(coef,g,a,M,L,phasetype)
 %COMP_IDGTREAL  Compute IDGTREAL
 %   Usage:  f=comp_idgtreal(c,g,a,M,L);
 %
@@ -24,6 +24,20 @@ Lwindow=size(g,1);
 W=size(coef,3);
 M2=floor(M/2)+1;
 M2short=ceil(M/2);
+
+if phasetype==1
+    TimeInd = (0:(N-1))/N;
+    FreqInd = (0:(M2-1))*b;
+    
+    phase = FreqInd'*TimeInd;
+    phase = exp(-2*i*pi*phase);
+    
+    % Handle multisignals
+    for w=1:W
+        coef(:,:,w) = coef(:,:,w).*phase;
+    end;
+    
+end;
 
 if L==Lwindow
   % Do full-window algorithm.

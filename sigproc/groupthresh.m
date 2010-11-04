@@ -40,10 +40,10 @@ if (prod(size(lambda))~=1 || ~isnumeric(lambda))
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.iofun={'hard','soft'};
-defnopos.flags.outclass={'full','sparse'};
+definput.flags.iofun={'hard','soft'};
+definput.flags.outclass={'full','sparse'};
 
-[flags,keyvals]=ltfatarghelper({},defnopos,varargin,mfilename);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 NbGroups = size(xi,1);
 NbMembers = size(xi,2);

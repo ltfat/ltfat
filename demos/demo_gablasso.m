@@ -15,10 +15,10 @@ M2 = floor(M/2);
 lambda = 0.08;
 
 % LASSO
-[tcl,xrecl] = gablasso(x,g,a,M,lambda);
+[tcl,relres,iter,xrecl] = gablasso(x,g,a,M,lambda);
 
 % GLASSO
-[tcgl,xrecgl] = gabgrouplasso(x,g,a,M,lambda);
+[tcgl,relres,iter,xrecgl] = gabgrouplasso(x,g,a,M,lambda);
 
 % Displays
 figure(1);

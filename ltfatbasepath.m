@@ -7,6 +7,6 @@ function bp = ltfatbasepath;
 %
 %   See also: ltfatstart
   
-global TF_CONF
+f=mfilename('fullpath');
 
-bp = TF_CONF.basepath;
+bp = f(1:end-13);

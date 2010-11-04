@@ -14,7 +14,7 @@ function h=pfilt(f,g,a,dim)
 %   See also: pconv
   
 % Assert correct input.
-error(nargchk(2,3,nargin));
+error(nargchk(2,4,nargin));
 
 if nargin<4
   dim=1;
@@ -32,10 +32,9 @@ L=[];
 
 g=fir2long(g,L);
 
-
 % Force FFT along dimension 1, since we have permuted the dimensions
 % manually
-h=ifft(fft(f,L,1).*fft(g,L,1),L,1);
+h=ifft(fft(f,L,1).*repmat(fft(g,L,1),1,W),L,1);
 
 h=h(1:a:end,:);
 

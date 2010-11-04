@@ -30,10 +30,10 @@ if size(f,2)>1
 end;
 
 % Define initial values for flags
-defnopos.flags.centering = {'wp','hp'};
-defnopos.keyvals.tol     = 1e-10; 
+definput.flags.centering = {'wp','hp'};
+definput.keyvals.tol     = 1e-10; 
 
-[flags,keyvals,tol]=ltfatarghelper({'tol'},defnopos,varargin,mfilename);
+[flags,keyvals,tol]=ltfatarghelper({'tol'},definput,varargin);
 
 L=size(f,1);
 

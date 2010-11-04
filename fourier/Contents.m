@@ -23,7 +23,19 @@
 %    PCHIRP         -  Periodic chirp.
 %    SHAH           -  Shah distribution.
 %    PHEAVISIDE     -  Periodic Heaviside function.
+%    PRECT          -  Periodic rectangle function.
+%    PSINC          -  Periodic sinc function.
 %    HERMBASIS      -  Orthonormal basis of Hermite functions.
+%
+%  Window functions
+%    PGAUSS         -  Periodic Gaussian.
+%    PSECH          -  Periodic SECH.
+%    PHERM          -  Periodic Hermite functions.
+%    PBSPLINE       -  Periodic B-splines.
+%    FIRWIN         -  FIR windows (Hanning,Hamming,Blackman,...).
+%    FIRKAISER      -  FIR Kaiser-Bessel window.
+%    FIR2LONG       -  Extend FIR window to LONG window.
+%    LONG2FIR       -  Cut LONG window to FIR window.
 %
 %  Approximation of continous functions
 %    FFTRESAMPLE    -  Fourier interpolation.

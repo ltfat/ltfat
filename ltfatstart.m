@@ -78,6 +78,7 @@ end
 global TF_CONF;
 TF_CONF.basepath=bp;
 TF_CONF.ltfat_version=ltfat_version;
+TF_CONF.fundefs = struct;
 
 % -----------  install the modules -----------------
 

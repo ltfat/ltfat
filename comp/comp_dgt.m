@@ -1,6 +1,6 @@
-function c=comp_dgt(f,g,a,M,L)
+function c=comp_dgt(f,g,a,M,L,phasetype)
 %COMP_DGT  Compute a DGT
-%   Usage:  c=comp_dgt(f,g,a,M,L);
+%   Usage:  c=comp_dgt(f,g,a,M,L,phasetype);
 %
 %   Input parameters:
 %         f     : Input data
@@ -11,6 +11,8 @@ function c=comp_dgt(f,g,a,M,L)
 %   Output parameters:
 %         c     : M*N array of coefficients.
 %
+%   If phasetype is zero, a freq-invariant transform is computed. If
+%   phase-type is one, a time-invariant transform is computed.
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK
@@ -33,3 +35,7 @@ else
 end;
 
 c=reshape(c,M,N,W);
+
+if phasetype==1
+  c=phaselock(c,a);
+end;

@@ -1,6 +1,6 @@
-function [tc,xrec,rel_diff,tol] = gablasso(x,g,a,M,lambda,varargin)
+function [tc,relres,iter,xrec] = gablasso(x,g,a,M,lambda,varargin)
 %GABLASSO  LASSO regression in Gabor domain
-%   Usage: [tc,xrec] = gablasso(x,a,M,lambda,C,itermax,tol)
+%   Usage: [tc,xrec] = gablasso(x,a,M,lambda,C,tol,maxit)
 %
 %   Input parameters:
 %       x        : Input signal
@@ -8,14 +8,11 @@ function [tc,xrec,rel_diff,tol] = gablasso(x,g,a,M,lambda,varargin)
 %       a        : Length of time shift.
 %       M        : Number of channels.
 %       lambda   : Regularization parameter, controls sparsity of the solution
-%       C        : Landweber iteration parameter: must be larger than square of
-%                  upper frame bound.
-%       itermax  : Stopping criterion: maximal number of iterations
-%       tol      : Stopping criterion: minimum relative difference
-%                  between norms in two consecutive iterations%
 %   Output parameters:
-%        tc      : Thresholded coefficients
-%      xrec      : Reconstructed signal
+%       tc       : Thresholded coefficients
+%       relres   : Vector of residuals.
+%       iter     : Number of iterations done.  
+%       xrec     : Reconstructed signal
 %
 %   GABLASSO(x,a,M,lambda) solves the LASSO (or basis pursuit denoising)
 %   regression problem in the Gabor domain: minimize a functional of the
@@ -25,6 +22,13 @@ function [tc,xrec,rel_diff,tol] = gablasso(x,g,a,M,lambda,varargin)
 %
 %   For a general frame, the solution is obtained via an iterative procedure,
 %   called Landweber iteration, involving iterative soft thresholdings.
+%  
+%   [tc,relres,iter] = GABLASSO(...) return the residuals relres in a vector
+%   and the number of iteration steps done, maxit.
+%
+%   [tc,relres,iter,xrec] = GABLASSO(...) returns the reconstructed
+%   signal from the coefficients, xrec. Note that this requires additional
+%   computations.
 %
 %   The relationship between the output coefficients is given by
 %
@@ -37,15 +41,22 @@ function [tc,xrec,rel_diff,tol] = gablasso(x,g,a,M,lambda,varargin)
 %                square of upper frame bound. Default value is the upper
 %                frame bound.
 %
-%-      'itermax',itermax - Stopping criterion: maximal number of
-%                iterations. Default value is 100.
-%
 %       'tol',tol - Stopping criterion: minimum relative difference between
 %                norms in two consecutive iterations. Default value is
 %                1e-2.
 %
-%   The parameters C, itermax and tol may also be specified on the
-%   command line in that order: GABLASSO(x,g,a,M,lambda,C,itermax,tol).
+%-      'maxit',maxit - Stopping criterion: maximal number of
+%                iterations. Default value is 100.
+%
+%-      'print'   - Display the progress.
+%
+%-      'quiet'   - Don't print anything, this is the default.
+%
+%-      'printstep',p - If 'print' is specified, then print every p'th
+%                iteration. Default value is p=10;
+%
+%   The parameters C, maxit and tol may also be specified on the
+%   command line in that order: GABLASSO(x,g,a,M,lambda,C,tol,maxit).
 %  
 %   See also: gabgrouplasso, gabframebounds
 %
@@ -56,11 +67,14 @@ if nargin<5
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.keyvals.C=[];
-defnopos.keyvals.itermax=100;
-defnopos.keyvals.tol=1e-2;
+definput.keyvals.C=[];
+definput.keyvals.tol=1e-2;
+definput.keyvals.maxit=100;
+definput.keyvals.printstep=10;
+definput.flags.print={'print','quiet'};
+definput.flags.startphase={'zero','rand','int'};
 
-[flags,kv]=ltfatarghelper({'C','itermax','tol'},defnopos,varargin,mfilename);
+[flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
   
 %   AUTHOR : Bruno Torresani.  
@@ -88,21 +102,25 @@ end;
 threshold = lambda/kv.C;
 
 tc0 = c0;
-rel_diff = 1e16;
+relres = 1e16;
 iter = 0;
 
 % Main loop
-while ((iter < kv.itermax)&&(rel_diff >= kv.tol))
+while ((iter < kv.maxit)&&(relres >= kv.tol))
     tc = c0 - dgt(idgt(tc0,g,a),g,a,M);
     tc = tc0 + tc/kv.C;
     tc = thresh(tc,threshold,'soft');
-    rel_diff = norm(tc(:)-tc0(:))/norm(tc0(:));
+    relres = norm(tc(:)-tc0(:))/norm(tc0(:));
     tc0 = tc;
     iter = iter + 1;
-    fprintf('Iteration %d: relative error = %f\n',iter,rel_diff);
+    if flags.do_print
+      if mod(iter,kv.printstep)==0        
+        fprintf('Iteration %d: relative error = %f\n',iter,relres);
+      end;
+    end;
 end
 
 % Reconstruction
-if nargout>1
+if nargout>3
   xrec = idgt(tc,g,a);
 end;

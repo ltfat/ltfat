@@ -34,19 +34,19 @@ donf=0;
 
 % Define initial value for flags and key/value pairs.
 
-defnopos.flags.dynrange={'nodynrange','dynrange'};
+definput.flags.dynrange={'nodynrange','dynrange'};
 
 if isreal(g)
-  defnopos.flags.posfreq={'posfreq','nf'};
+  definput.flags.posfreq={'posfreq','nf'};
 else
-  defnopos.flags.posfreq={'nf','posfreq'};
+  definput.flags.posfreq={'nf','posfreq'};
 end;
 
-defnopos.keyvals.fs=[];
-defnopos.keyvals.L=length(g);
-defnopos.keyvals.dynrange=100;
+definput.keyvals.fs=[];
+definput.keyvals.L=length(g);
+definput.keyvals.dynrange=100;
 
-[flags,keyvals,fs,L]=ltfatarghelper({'fs','L'},defnopos,varargin,mfilename);
+[flags,keyvals,fs,L]=ltfatarghelper({'fs','L'},definput,varargin);
 
 g=fir2long(g,L);
 

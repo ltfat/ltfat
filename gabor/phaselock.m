@@ -20,7 +20,7 @@ function cout = phaselock(cin,a)
 %
 %   where $m=0,...,M-1$ and $n=0,...,N-1$ and $l-an$ is computed modulo L.
 %
-%   See also: dgt phaseunlock symphase
+%   See also: dgt, phaseunlock, symphase
 %
 %R  puc95
 

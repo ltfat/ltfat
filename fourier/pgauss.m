@@ -75,16 +75,16 @@ if rem(L,1)~=0
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.centering={'wp','hp'};
-defnopos.flags.delay={'nodelay','delay'};
-defnopos.flags.width={'tfr','width','bandwith'};
+definput.flags.centering={'wp','hp'};
+definput.flags.delay={'nodelay','delay'};
+definput.flags.width={'tfr','width','bandwith'};
 
-defnopos.keyvals.tfr=1;
-defnopos.keyvals.delay=0;
-defnopos.keyvals.width=0;
-defnopos.keyvals.bandwidth=0;
+definput.keyvals.tfr=1;
+definput.keyvals.delay=0;
+definput.keyvals.width=0;
+definput.keyvals.bandwidth=0;
 
-[flags,keyvals,tfr]=ltfatarghelper({'tfr'},defnopos,varargin,'PGAUSS');
+[flags,keyvals,tfr]=ltfatarghelper({'tfr'},definput,varargin,'PGAUSS');
 
 if strcmp(flags.centering,'wp')
   cent=0;

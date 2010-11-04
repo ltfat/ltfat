@@ -1,5 +1,12 @@
 function cout=comp_col2diag(cin);
-%COMP_COL2DIAG  Compute matrix represenation from spreading symbol
+%COMP_COL2DIAG  transforms columns to diagonals (in a special way)
+%
+%  This function transforms the first column to the main diagonal. The
+%  second column to the first side-diagonal below the main diagonal and so
+%  on. 
+% 
+%  This way fits well the connection of matrix and spreading function, see
+%  spreadfun.
 %
 %  This function is its own inverse.
 

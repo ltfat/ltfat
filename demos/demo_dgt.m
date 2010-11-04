@@ -1,85 +1,148 @@
-%DEMO_DGT  How to call a DGT
+%DEMO_DGT  Basic introduction to DGT analysis/synthesis
 %
-%   This script sets up a Gabor frame with the specified
-%   parameters (a, M, L defined below), computes a window
-%   and the corresponding canonical dual  window and a test signal,
-%   and plots the windows and the energy of the coefficients.
+%   This demo shows how to compute Gabor coefficients of a signal.
 %
-%   FIGURE 1 window+dual
+%   FIGURE 1 Spectrogram of the 'bat' signal.
 %
-%    This figure shows a Gaussian used as the window function
-%    and its canonical dual. 
+%     The figure shows a spectrogram of the 'bat' signal. The
+%     coefficients is shown on a linear scale.
 %
-%   FIGURE 2 absolute value of coefficients
+%   FIGURE 2 Gabor coefficient of the 'bat' signal.
 %
-%    This figure shows a (color coded) image of the dgt coefficient
-%    modulus. 
+%     The figure show a set of Gabor coefficients for the 'bat' signal,
+%     computed using a DGT with a Gaussian window. The coefficients
+%     contains all the information to reconstruct the signal, even though
+%     there a far fewer coefficients than the spectrogram contains.
 %
-%   See also:  dgt, idgt, pgauss
+%   FIGURE 3 Real-valued Gabor analysis
+%
+%     This figure shows only the coefficients for the positive
+%     frequencies. As the signal is real-value, these coefficients
+%     contain all the necessary information. Compare to the shape of the
+%     spectrogram shown on Figure 1.
+%
+%   FIGURE 4 DGT coefficients on a spectrogram
+%
+%     This figure shows how the coefficients from DGTREAL can be picked
+%     from the coefficients computed by a full Short-time Fourier
+%     transform, as visualized by a spectrogram.
+%
+%   See also: sgram, dgt, dgtreal
 
 disp('Type "help demo_dgt" to see a description of how this demo works.');
 
-% Setup parameters and length of signal.
-% Not that it must hold that L=M*b=N*a for some integers
-% M and N, and that a*b <= L
+% Load a test signal
+f=bat;
 
-L=480;  % Length of signal.
-a=20;   % Time shift.
-M=24;   % Number of modulations.
+% sampling rate of the test signal, only important for plotting
+fs=143000;
 
-% From the parameters L, a and M we can calculate:
-b=L/M;  % Length of frequency shift.
-N=L/a;  % Number of time shifts.
+% Length of signal
+Ls=length(f);
 
-% Get a good window and its canonical dual.
-g=pgauss(L,a/b);
-gamma=gabdual(g,a,M);
+disp(' ');
+disp('------ Spectrogram analysis -----------------------------------');
 
-% Plot them:
-
-% Standard note on plotting:
-%
-% - The windows are all centered around zero, but this
-%   is not visually pleasing, so the window must be
-%   shifted to the middle by an FFTSHIFT
-
+disp('Figure 1 displays a spectrogram of the bat test signal.');
 figure(1);
+c_sgram=sgram(f,fs,'lin');
 
-subplot(2,1,1);
-plot(fftshift(g));
-title('Periodized gaussian.');
-legend('off');
 
-subplot(2,1,2);
-plot(fftshift(gamma));
-title('Canonical dual window.');
-legend('off');
+% Number of coefficients in the Spectrogram
+no_sgram=numel(c_sgram);
 
-% Setup a complex test signal.
-ftest=ctestfun(L);
+disp(' ');
+disp('The spectrogram is highly redundant.');
+fprintf('No. of coefficients in the signal:       %i\n',Ls);
+fprintf('No. of coefficients in the spectrogram:  %i\n',no_sgram);
+fprintf('Redundacy of the spectrogram:            %f\n',no_sgram/Ls);
 
-% Calculate coefficients.
-coef=dgt(ftest,gamma,a,M);
+% WARNING: In the above code, the spectrogram routine SGRAM returns the
+% coefficients use to plot the image. These coefficients are ONLY
+% intended to be used by post-processing image tools, and in this
+% example, the are only used to illustrate the redundancy of the
+% spectogram. Numerical Gabor signal analysis and synthesis should ALWAYS
+% be done using the DGT, IDGT, DGTREAL and IDGTREAL functions, see the
+% following sections of this example.
 
-% Plot
+disp(' ');
+disp('---- Simple Gabor analysis using a standard Gaussian window. ----');
+
+disp('Setup parameters for a Discrete Gabor Transform.')
+disp('Time shift:')
+a=20
+
+disp('Number of frequency channels.');
+M=40
+
+disp(' ');
+disp('Note that it must hold that L = M*b = N*a for some integers b, N and L,');
+disp('and that a<M. L is the transform length, and the DGT will choose the');
+disp('smallest possible value of L that is larger or equal to the length of the');
+disp('signal. Choosing a<M makes the transform redundant, otherwise the');
+disp('transform will be lossy, and reconstruction will not be possible.');
+
+% Simple DGT using a standard Gaussian window.
+c=dgt(f,'gauss',a,M);
+
+disp('Number of time shifts in transform:')
+N = size(c,2);
+
+disp('Length of transform:')
+L = N*a
+
+
+disp('Figure 2 visualize the Gabor coefficients.');
 figure(2);
-imagesc(log(abs(coef)));
-title('DGT magnitude logarithm');
-if ~isoctave
-    set(gca,'ydir','normal');
-    xlabel('Time');
-    ylabel('Frequency');
-end
+imagesc(abs(c).^2);
+axis('xy');
+colorbar;
 
-% Test reconstruction
-ftest_r=idgt(coef,g,a);
+disp(' ');
+disp(['The redundancy of the Gabor transform can be reduced without loosing ' ...
+      'information.']);
+fprintf('No. of coefficients in the signal:       %i\n',Ls);
+fprintf('No. of output coefficients from the DGT: %i\n',numel(c));
+fprintf('Redundacy of the DGT (in this case)      %f\n',numel(c)/Ls);
 
-% Print relative error of reconstruction.
-disp('');
-%disp('Relative error of reconstruction, should be close to zero.');
-rec_err = norm(ftest-ftest_r)/norm(ftest);
+disp(' ');
+disp('---- Real valued Gabor analysis. ----');
 
-fprintf('Relative error of reconstruction (should be close to zero.):    %e \n',rec_err);
+% Figure 1 and Figure 2 looks quite different, because Figure 2 also
+% displays the coefficients for the n
 
+% Simple real valued DGT using a standard Gaussian window.
+c_real=dgtreal(f,'gauss',a,M);
+
+disp('Figure 3 shows the positive-frequency DGT coefficients (DGTREAL).');
+figure(3);
+imagesc(abs(c_real).^2);
+axis('xy');
+colorbar;
+
+disp('Figure 4 shows placement of the DGTREAL coefficients on the spectrogram.');
+figure(4)
+b=L/M;
+[X,Y]=meshgrid(1:a:L+a,1:b:L/2+b);
+
+hold on;
+imagesc(c_sgram);
+plot([X(:),X(:)]',[Y(:),Y(:)]','wo','Linewidth',1);
+axis('xy','image');
+hold off;
+
+disp(' ');
+disp('---- Perfect reconstruction. ----');
+
+% Reconstruction from the full DGT coefficients
+r      = idgt(c,'gaussdual',a);
+
+% Reconstruction from the DGTREAL coefficients
+% The parameter M cannot be deduced from the size of the coefficient
+% array c_real, so it is an explicit input parameter.
+r_real = idgtreal(c_real,'gaussdual',a,M);
+
+fprintf('Reconstruction error using IDGT:      %e\n',norm(f-r));
+fprintf('Reconstruction error using IDGTREAL:  %e\n',norm(f-r_real));
 
 

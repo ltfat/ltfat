@@ -7,8 +7,13 @@ function ltfatsetdefaults(fname,varargin)
 %  LTFATSETDEFAULTS(fname) will clear any default parameters for the function
 %  fname.
 %
+%  LTFATSETDEFAULTS('clearall') will clear all defaults from all
+%  functions.
+%
 %  See also: ltfatgetdefaults, ltfatstart
 
-global TF_CONF;
-
-TF_CONF.(fname)=varargin;
+if strcmpi(fname,'clearall')
+  ltfatarghelper('clearall');
+else
+  ltfatarghelper('set',fname,varargin);
+end;

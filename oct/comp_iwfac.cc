@@ -15,7 +15,8 @@ DEFUN_DLD (comp_iwfac, args, ,
 
   ComplexMatrix g(L,1);
   
-  iwfac((ltfat_complex*)gf.data(),L,a,M,(ltfat_complex*)g.data());
+  iwfac((const ltfat_complex*)gf.data(),L,a,M,
+	(ltfat_complex*)g.fortran_vec());
 
   return octave_value (g);
 }

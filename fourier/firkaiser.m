@@ -37,10 +37,10 @@ if numel(beta)>1
 end;
 
 % Define initial value for flags and key/value pairs.
-defnopos.flags.centering={'wp','hp'};
-defnopos.flags.stype={'normal','derived'};
+definput.flags.centering={'wp','hp'};
+definput.flags.stype={'normal','derived'};
 
-[flags,keyvals]=ltfatarghelper({},defnopos,varargin,mfilename);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 cent=0;
 if flags.do_hp
