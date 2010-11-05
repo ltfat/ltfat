@@ -1,8 +1,8 @@
 function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %GABPHASEGRAD   Phase gradient of the DGT
-%   Usage:  [tgrad,fgrad] = gabphasegrad('dgt',f,g,a,M);
-%           [tgrad,fgrad] = gabphasegrad('phase',cphase,a);
-%           [tgrad,fgrad,c] = gabphasegrad('abs',s,g,a);
+%   Usage:  [tgrad,fgrad,c] = gabphasegrad('dgt',f,g,a,M);
+%           [tgrad,fgrad]   = gabphasegrad('phase',cphase,a);
+%           [tgrad,fgrad]   = gabphasegrad('abs',s,g,a);
 %
 %   [tgrad,fgrad]=GABPHASEGRAD(method,...) computes the time-frequency
 %   gradient of the phase of the DGT of a signal. The derivative in time

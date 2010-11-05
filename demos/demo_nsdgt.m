@@ -72,7 +72,7 @@ c=nsdgt(f,g,a_new,M);
 
 % Plot corresponding spectrogram
 figure(2);
-plotnsdgt(c,a);
+plotnsdgt(c,a,1,100);
 title('Spectrogram of test signal')
 xlabel('Time');
 ylabel('Frequency');
