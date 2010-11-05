@@ -1,7 +1,14 @@
-% LTFAT - Non-stationary Gabor frames
+% LTFAT - Semi-regular systems
 %
-%  Florent Jaillet, 2009 - 2010.
+%  Florent Jaillet and Peter L. Soendergaard, 2010
 %
+%  Filter banks
+%    FILTERBANK       - Filter bank
+%    IFILTERBANK      - Inverse filter bank
+%    FILTERBANKDUAL   - Canonical dual filters
+%    FILTERBANKTIGHT  - Canonical tight filters
+%    FILTERBANKBOUNDS - Frame bounds of filter bank
+&
 %  Gabor systems with time varying windows
 %    NSDGT            - Non-stationary DGT
 %    INSDGT           - Inverse NSDGT
