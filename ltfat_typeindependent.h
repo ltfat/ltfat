@@ -152,8 +152,12 @@ LTFAT_H_NAME(idgt_fb)(const LTFAT_H_COMPLEX *cin, const LTFAT_H_COMPLEX *g,
 /* -------- windows ------------------------------ */
 
 extern void
-LTFAT_H_NAME(pgauss)(const int L, const double w, const double center,
+LTFAT_H_NAME(pgauss)(const int L, const double w, const double c_t,
 		     LTFAT_H_REAL *g);
+
+extern void
+LTFAT_H_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, 
+		     const double c_f, LTFAT_H_COMPLEX *g);
 
 /* --------- other stuff -------- */
 extern void

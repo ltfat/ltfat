@@ -3,7 +3,7 @@
 
 const double pi = 3.141592653589793;
 
-void LTFAT_NAME(pgauss)(const int L, const double w, const double center,
+void LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
 	    LTFAT_REAL *g)
 {
    
@@ -23,7 +23,7 @@ void LTFAT_NAME(pgauss)(const int L, const double w, const double center,
       for (k=-nk;k<=nk; k++)
       {  
 	 /* Use a tmp variable to calculate squaring */
-	 tmp = ((double)lr+center)/sqrtl-(double)k*sqrtl;
+	 tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
 	 g[lr]+=exp(-pi*tmp*tmp/w);
       }
       gnorm +=g[lr]*g[lr];
@@ -35,5 +35,47 @@ void LTFAT_NAME(pgauss)(const int L, const double w, const double center,
    for ( lr=0; lr<L; lr++)
    {   
       g[lr] /= gnorm;
+   }   
+}
+
+
+void LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, const double c_f,
+			      LTFAT_COMPLEX *g)
+{
+   
+   int lr,k,nk;
+   double tmp,sqrtl, safe, gnorm;
+   
+   sqrtl=sqrt((double)L);
+   safe=4;
+   gnorm=0;
+   
+   /* Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero. */
+   nk=(int)ceil(safe/sqrt((double)L/sqrt(w)));
+   
+   for ( lr=0; lr<L; lr++)
+   {
+      g[lr][0]=0.0;
+      g[lr][1]=0.0;
+      for (k=-nk;k<=nk; k++)
+      {  
+	 /* Use a tmp variable to calculate squaring */
+	 tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
+	 tmp = exp(-pi*tmp*tmp/w);
+	 
+	 g[lr][0]+=tmp*cos(2*pi*c_f*(lr/L-k));
+	 g[lr][1]+=tmp*sin(2*pi*c_f*(lr/L-k));
+
+      }
+      gnorm +=g[lr][0]*g[lr][0]+g[lr][1]*g[lr][1];
+   }
+   
+   /* Normalize it exactly. */
+   gnorm=sqrt(gnorm);
+
+   for ( lr=0; lr<L; lr++)
+   {   
+      g[lr][0] /= gnorm;
+      g[lr][1] /= gnorm;
    }   
 }
