@@ -6,18 +6,19 @@ Directory struture.
 
 The toolbox is organized in subdirectories as follows:
 
-  fourier   - Basic Fourier analysis and DCT/DST transforms.
-  gabor     - Basic time/frequency analysis and synthesis functions.
-  sparsereg - Tools for sparse regression of Gabor and Wilson systems.
-  sigproc   - A collection of simple, signal processing tools.
-  demos     - Demos
-  signals   - Test signals for use with the examples.
-  comp      - Computational subroutines.
-              These should not be called directly.
-  src       - C implementation of the most computationally intensive
-              routines.
-  mex       - Mex files to speed up the toolbox (if compiled)
-  oct       - Octave C++-files to speed up the toolbox (if compiled)
+  fourier     - Fourier analysis, DCT/DST transforms and filters.
+  gabor       - Gabor, Wilson and WMDCT analysis and synthesis functions.
+  semiregular - Filterbanks and non-stationary Gabor systems.
+  sparsereg   - Tools for sparse regression of Gabor and Wilson systems.
+  sigproc     - A collection of simple, signal processing tools.
+  demos       - Demos
+  signals     - Test signals for use with the examples.
+  comp        - Computational subroutines.
+                These should not be called directly.
+  src         - C implementation of the most computationally intensive
+               routines.
+  mex         - Mex files to speed up the toolbox (if compiled)
+  oct         - Octave C++-files to speed up the toolbox (if compiled)
 
 The file INSTALL contains instructions for compiling the C-library and 
 the Octave and Matlab interfaces.

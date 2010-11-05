@@ -1,4 +1,4 @@
-function [g]=comp_pgauss(L,w,center)
+function [g]=comp_pgauss(L,w,c_t,c_f)
 %COMP_PGAUSS  Sampled, periodized Gaussian.
 %   
 %   Computational routine: See help on PGAUSS.
@@ -15,14 +15,6 @@ function [g]=comp_pgauss(L,w,center)
 %   TESTING: OK
 %   REFERENCE: OK
 
-if prod(size(center))==1
-  c_t=center;
-  c_f=0;
-else
-  c_t=center(1);
-  c_f=center(2);
-end;
-
 % c_t - time centering
 % c_f - frequency centering
 
@@ -35,16 +27,15 @@ end;
 sqrtl=sqrt(L);
 safe=4;
 
+% Keep the delay in a sane interval
+c_t=rem(c_t,L);
+
 % Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero.
 nk=ceil(safe/sqrt(L/sqrt(w)));
-
+c_f
 lr=(0:L-1).';
 for k=-nk:nk  
-  % The following line includes a frequency center. This is not exposed in the
-  % current code 
-  %g=g+exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w-2*pi*i*c_f*(lr/L-k));
-
-  g=g+exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w);
+  g=g+exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w+2*pi*i*c_f*(lr/L-k));
 end;
 
 % Normalize it exactly.
