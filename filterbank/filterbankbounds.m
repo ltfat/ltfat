@@ -1,5 +1,17 @@
 function [AF,BF]=filterbankbounds(g,a,varargin);
-
+%FILTERBANKBOUNDS  Frame bounds of filter bank
+%   Usage: fcond=filterbankbounds(g,a);
+%          [A,B]=filterbankbounds(g,a);
+%
+%   FILTERBANKBOUNDS(g,a) calculates the ratio B/A of the frame bounds of
+%   the filterbank specified by g and _a. The ration is a measure of the
+%   stability of the system.
+%
+%   [A,B]=FILTERBANKBOUNDS(g,a) returns the lower and upper frame bounds
+%   explicitly.
+%
+%   See also: filterbank, filterbankdual
+  
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
@@ -49,3 +61,13 @@ end;
     
 AF=AF/a;
 BF=BF/a;
+
+if nargout<2
+  % Avoid the potential warning about division by zero.
+  if AF==0
+    AF=Inf;
+  else
+    AF=BF/AF;
+  end;
+end;
+  

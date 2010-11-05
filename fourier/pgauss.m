@@ -77,26 +77,26 @@ end;
 % Define initial value for flags and key/value pairs.
 definput.flags.centering={'wp','hp'};
 definput.flags.delay={'nodelay','delay'};
-definput.flags.width={'tfr','width','bandwith'};
+definput.flags.width={'tfr','width','bandwidth'};
 
 definput.keyvals.tfr=1;
 definput.keyvals.delay=0;
 definput.keyvals.width=0;
 definput.keyvals.bandwidth=0;
 
-[flags,keyvals,tfr]=ltfatarghelper({'tfr'},definput,varargin,'PGAUSS');
+[flags,keyvals,tfr]=ltfatarghelper({'tfr'},definput,varargin);
 
-if strcmp(flags.centering,'wp')
+if flags.do_wp
   cent=0;
 else
   cent=0.5;
 end;
 
-if strcmp(flags.width,'width')
+if flags.do_width
   tfr=keyvals.width^2/L;
 end;
 
-if strcmp(flags.width,'bandwidth')
+if flags.do_bandwidth
   tfr=L/keyvals.bandwidth^2;
 end;
 
