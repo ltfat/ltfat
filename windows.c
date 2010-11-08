@@ -39,6 +39,12 @@ void LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
 }
 
 
+/* does not work correctly. This code does:
+%for k=-nk:nk  
+%  tmp=exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w)
+%  g=g+tmp.*cos(2*pi*c_f*(lr/L-k))+i*tmp.*sin(2*pi*c_f*(lr/L-k));  
+%end;
+*/
 void LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, const double c_f,
 			      LTFAT_COMPLEX *g)
 {
