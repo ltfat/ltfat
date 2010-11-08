@@ -8,7 +8,7 @@
 %    FILTERBANKDUAL   - Canonical dual filters
 %    FILTERBANKTIGHT  - Canonical tight filters
 %    FILTERBANKBOUNDS - Frame bounds of filter bank
-&
+%
 %  Gabor systems with time varying windows
 %    NSDGT            - Non-stationary DGT
 %    INSDGT           - Inverse NSDGT
