@@ -37,7 +37,7 @@ function [g,tfr]=pgauss(L,varargin)
 %   flags at the end of the list of input parameters:
 %
 %      'fs',fs    - Use a sampling rate of fs Hz as unit for specifying the
-%                   width, bandwith, center frequency and delay of the
+%                   width, bandwidth, center frequency and delay of the
 %                   Gaussian. Default is fs=[] which indicates to measure
 %                   everything in samples.
 %
@@ -48,11 +48,11 @@ function [g,tfr]=pgauss(L,varargin)
 %                   corresponds to a -6 db cutoff. This is equivalent to
 %                   calling PGAUSS(L,s^2/L);
 %
-%      'bandwidth',bw - As for the 'width' argument, but speficies the width
+%      'bw',bw    - As for the 'width' argument, but speficies the width
 %                   in the frequency domain. The bandwidth is measured in
 %                   samples.
 %
-%      'fc',fc    - Set the center frequency of the Gaussian to fc.  
+%      'cf',cf    - Set the center frequency of the Gaussian to fc.  
 %
 %-     'wp'       - Output is whole point even. This is the default.
 %
@@ -90,14 +90,14 @@ end;
 % Define initial value for flags and key/value pairs.
 definput.flags.centering={'wp','hp'};
 definput.flags.delay={'nodelay','delay'};
-definput.flags.width={'tfr','width','bandwidth'};
+definput.flags.width={'tfr','width','bw'};
 
 definput.keyvals.tfr=1;
 definput.keyvals.delay=0;
 definput.keyvals.width=0;
 definput.keyvals.fs=[];
-definput.keyvals.fc=0;
-definput.keyvals.bandwidth=0;
+definput.keyvals.cf=0;
+definput.keyvals.bw=0;
 
 [flags,keyvals,tfr]=ltfatarghelper({'tfr'},definput,varargin);
 
@@ -119,25 +119,25 @@ if isempty(fs)
     tfr=keyvals.width^2/L;
   end;
   
-  if flags.do_bandwidth
-    tfr=L/keyvals.bandwidth^2;
+  if flags.do_bw
+    tfr=L/keyvals.bw^2;
   end;
   
   delay_s=keyvals.delay;
-  fc_s   =keyvals.fc;
+  cf_s   =keyvals.cf;
 else
   
   if flags.do_width
     tfr=(keyvals.width*fs)^2/L;
   end;
 
-  if flags.do_bandwidth
-    tfr=L/(keyvals.bandwidth/fs*L)^2;
+  if flags.do_bw
+    tfr=L/(keyvals.bw/fs*L)^2;
   end;
   
   delay_s=keyvals.delay*fs;
-  fc_s   =keyvals.fc/fs*L;
+  cf_s   =keyvals.cf/fs*L;
 end;
 
-g=comp_pgauss(L,tfr,cent-delay_s,fc_s);
+g=comp_pgauss(L,tfr,cent-delay_s,cf_s);
 

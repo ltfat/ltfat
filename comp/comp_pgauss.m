@@ -32,7 +32,6 @@ c_t=rem(c_t,L);
 
 % Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero.
 nk=ceil(safe/sqrt(L/sqrt(w)));
-c_f
 lr=(0:L-1).';
 for k=-nk:nk  
   g=g+exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w+2*pi*i*c_f*(lr/L-k));
