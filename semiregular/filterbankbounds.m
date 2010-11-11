@@ -4,7 +4,7 @@ function [AF,BF]=filterbankbounds(g,a,varargin);
 %          [A,B]=filterbankbounds(g,a);
 %
 %   FILTERBANKBOUNDS(g,a) calculates the ratio B/A of the frame bounds of
-%   the filterbank specified by g and _a. The ration is a measure of the
+%   the filterbank specified by g and _a. The ratio is a measure of the
 %   stability of the system.
 %
 %   [A,B]=FILTERBANKBOUNDS(g,a) returns the lower and upper frame bounds

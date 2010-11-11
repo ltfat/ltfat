@@ -84,7 +84,7 @@ title('SQRT Hanning window FIR window.');
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,1,2);
-magresp(g,LLong);
+magresp(g,'L',LLong);
 title('Magnitude response of SQRT Hanning window.');
 
 % -------- second part: True, short FIR window -------------------------
@@ -114,7 +114,7 @@ title('Kaiser window.');
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,2,2);
-magresp(g,LLong);
+magresp(g,'L',LLong);
 title('Magnitude response of Kaiser window.');
 
 % Plot the window in the time-domain.
@@ -126,7 +126,7 @@ title('Dual of Kaiser window.');
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,2,4);
-magresp(gd,LLong);
+magresp(gd,'L',LLong);
 title('Magnitude response of dual Kaiser window.');
 
 
@@ -174,7 +174,7 @@ title('Gaussian FIR window.');
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,2,2);
-magresp(gfir,LLong);
+magresp(gfir,'L',LLong);
 title('Magnitude response of FIR Gaussian.')
 
 % Plot the window in the time-domain.
@@ -186,7 +186,7 @@ title('Dual of Gaussian FIR window.');
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,2,4);
-magresp(gd_fir,LLong);
+magresp(gd_fir,'L',LLong);
 title('Magnitude response.');
 
 % ----- Fourth part, cutting a tight LONG window --------------
@@ -219,5 +219,5 @@ title('Almost tight FIR window.');
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,1,2);
-magresp(gt_fir,LLong);
+magresp(gt_fir,'L',LLong);
 title('Magnitude response.');

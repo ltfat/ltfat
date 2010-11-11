@@ -43,6 +43,7 @@ else
 end;
 
 definput.keyvals.fs=[];
+definput.keyvals.opts={};
 definput.keyvals.L=length(g);
 definput.keyvals.dynrange=100;
 
@@ -87,7 +88,7 @@ else
   plotff=FF(1:floor(L/2)+1);
 end;
 
-plot(xrange,plotff);
+plot(xrange,plotff,keyvals.opts{:});
 axis(axisvec);
 ylabel('Magnitude response / Db');
 

@@ -34,7 +34,7 @@ if ischar(g)
   switch(winname)
    case {'pgauss','gauss'}
     complain_L(L,callfun);
-    g=comp_pgauss(L,a*M/L,0);
+    g=comp_pgauss(L,a*M/L,0,0);
     info.gauss=1;
     info.tfr=a*M/L;
    case {'psech','sech'}
@@ -43,7 +43,7 @@ if ischar(g)
     info.tfr=a*M/L;
    case {'dualgauss','gaussdual'}
     complain_L(L,callfun);
-    g=comp_pgauss(L,a*M/L,0);
+    g=comp_pgauss(L,a*M/L,0,0);
     g=gabdual(g,a,M);
     if wilson
       g=2*g;
