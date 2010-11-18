@@ -37,6 +37,8 @@ void LTFAT_NAME(dgtreal_fac)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
    /* FFT to modulate the coefficients. */
    LTFAT_FFTW(execute)(p_veryend);   
 
-   LTFAT_FFTW(destroy_plan)(p_veryend);   
+   LTFAT_FFTW(destroy_plan)(p_veryend);
+
+   ltfat_free(cwork);
    
 }
