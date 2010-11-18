@@ -72,7 +72,6 @@
 %    GABIMAGEPARS   -  Choose paramets for nice Gabor image.
 %    RESGRAM        -  Reassigned spectrogram.
 %    INSTFREQPLOT   -  Plot of the instantaneous frequency.
-%    MAGRESP        -  Magnitude response plot.
 %    PHASEPLOT      -  Plot of STFT phase.
 %
 %  For help, bug reports, suggestions etc. please send email to

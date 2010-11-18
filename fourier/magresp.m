@@ -19,6 +19,17 @@ function magresp(g,varargin);
 %   If the input window is real, only the positive frequencies will be
 %   shown. Adding the option 'nf' as the last parameter will show the
 %   negative frequencies anyway.
+%
+%   The following will display the magnitude response of a Hann window
+%   of length 20:
+%
+%C     magresp({'hann',20});
+%
+%   The following will display the magnitude response of a Gaussian window of length 100
+%
+%C     magresp('gauss','L',100);
+%
+%   Demos: demo_gaborfir     
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
@@ -44,10 +55,16 @@ end;
 
 definput.keyvals.fs=[];
 definput.keyvals.opts={};
-definput.keyvals.L=length(g);
+definput.keyvals.L=[];
 definput.keyvals.dynrange=100;
 
 [flags,keyvals,fs,L]=ltfatarghelper({'fs','L'},definput,varargin);
+
+[g,info] = comp_fourierwindow(g,L,'MAGRESP');
+
+if isempty(L) && info.isfir
+   L=length(g)*13+47;
+end;
 
 g=fir2long(g,L);
 
@@ -79,8 +96,8 @@ if donf
 else
   % Only plot positive frequencies for real-valued signals.
   if isempty(fs)
-    xrange=0:floor(L/2);
-    axisvec=[0 L/2 ymin 0];
+    xrange=linspace(0,1,floor(L/2)+1);
+    axisvec=[0 1 ymin 0];
   else
     xrange=linspace(0,floor(fs/2),L/2+1).';
     axisvec=[0 fs/2 ymin 0];
@@ -90,12 +107,12 @@ end;
 
 plot(xrange,plotff,keyvals.opts{:});
 axis(axisvec);
-ylabel('Magnitude response / Db');
+ylabel('Magnitude response (Db)');
 
 if isempty(fs)
-  xlabel('Frequency');
+  xlabel('Frequency (normalized) ');
 else
-  xlabel('Frequency / Hz');
+  xlabel('Frequency (Hz)');
 end;
 
 legend('off');

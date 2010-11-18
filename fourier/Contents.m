@@ -36,6 +36,7 @@
 %    FIRKAISER      -  FIR Kaiser-Bessel window.
 %    FIR2LONG       -  Extend FIR window to LONG window.
 %    LONG2FIR       -  Cut LONG window to FIR window.
+%    MAGRESP        -  Magnitude response plot.
 %
 %  Approximation of continous functions
 %    FFTRESAMPLE    -  Fourier interpolation.

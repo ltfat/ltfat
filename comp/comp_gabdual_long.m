@@ -33,3 +33,7 @@ for ii=1:c*d
 end;
 
 gd=comp_iwfac(gdf,L,a,M);
+
+if isreal(g)
+  gd=real(gd);
+end;

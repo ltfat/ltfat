@@ -28,7 +28,7 @@ L=[];
 
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,'PFILT');
 
-[g,info] = comp_window(g,a,a,L,0,'PFILT');
+[g,info] = comp_fourierwindow(g,L,'PFILT');
 
 g=fir2long(g,L);
 

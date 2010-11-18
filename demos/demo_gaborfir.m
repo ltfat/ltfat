@@ -1,6 +1,6 @@
-%DEMO_FIR
+%DEMO_GABORFIR
 %
-%   This demo demonstrates how to work with FIR windows.
+%   This demo demonstrates how to work with FIR windows in Gabor systems.
 %
 %   FIR windows are the windows traditionally used in signal processing.
 %   They are short, much shorter than the signal, and this is used to 
@@ -14,7 +14,7 @@
 %
 %   This demo demonstrates two methods:
 %
-%     1) Using a Gabor frame with a simple structure, for which tight
+%     1) Using a Gabor frame with a simple structure, for which dual/tight
 %        FIR windows are easy to construct. This is a very common
 %        technique in traditional signal processing, but it limits the
 %        choice of windows and lattice parameters.
@@ -151,7 +151,7 @@ gfir=long2fir(glong,2*M,'wp');
 gfirextend=fir2long(gfir,LLong);
 gd_long=gabdual(gfirextend,a,M);
 
-% Cut it, preserving the WPE symmetri
+% Cut it, preserving the WPE symmetry
 gd_fir=long2fir(gd_long,6*M,'wp');
 
 % Compute the reconstruction error

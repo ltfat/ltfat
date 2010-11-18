@@ -49,8 +49,8 @@ function [g,tfr]=pgauss(L,varargin)
 %                   calling PGAUSS(L,s^2/L);
 %
 %      'bw',bw    - As for the 'width' argument, but speficies the width
-%                   in the frequency domain. The bandwidth is measured in
-%                   samples.
+%                   in the frequency domain. The bandwidth is measured in 
+%                   normalized frequency, unless the 'fs' value is given.
 %
 %      'cf',cf    - Set the center frequency of the Gaussian to fc.  
 %
@@ -120,7 +120,7 @@ if isempty(fs)
   end;
   
   if flags.do_bw
-    tfr=L/keyvals.bw^2;
+  tfr=L/(keyvals.bw*L/2)^2;
   end;
   
   delay_s=keyvals.delay;

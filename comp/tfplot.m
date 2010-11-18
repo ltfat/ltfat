@@ -29,7 +29,8 @@ if flags.do_nf
     if dofs
       yr=-keyvals.fs/2:keyvals.fs/M:keyvals.fs/2;
     else
-      yr=-L/2:b:L/2;
+%yr=-L/2:b:L/2;      
+      yr=linspce(-1,1,M);
     end;
   end;
 else
@@ -39,7 +40,8 @@ else
     if dofs
       yr=0:keyvals.fs/M:keyvals.fs/2;
     else
-      yr=0:b:L/2;
+      %yr=0:b:L/2;
+      yr=linspace(0,1,M/2);
     end;
   end;
 end;
@@ -96,6 +98,6 @@ if ~isempty(keyvals.fs)
   ylabel('Frequency (Hz)')
 else
   xlabel('Time (samples)')
-  ylabel('Frequency (samples)')
+  ylabel('Frequency (normalized)')
 end;
 
