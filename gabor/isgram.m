@@ -115,7 +115,7 @@ if flags.do_zero
 end;
 
 if flags.do_rand
-  c=s.*angle(2*pi*i*rand(M,N));
+  c=s.*exp(2*pi*i*rand(M,N));
 end;
 
 if flags.do_int
