@@ -1,7 +1,7 @@
 function test_failed=test_pconv
 Lr=[9,10];
 
-ctypes={'','r','rr'};
+ctypes={'default','r','rr'};
 
 test_failed=0;
 
@@ -15,7 +15,7 @@ for jj=1:length(Lr)
     f=crand(L,1);
     g=crand(L,1);
     
-    h1=pconv(ctype,f,g);
+    h1=pconv(f,g,ctype);
     h2=ref_pconv(f,g,ctype);
     
     res=norm(h1-h2);

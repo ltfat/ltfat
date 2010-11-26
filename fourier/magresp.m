@@ -56,14 +56,23 @@ end;
 definput.keyvals.fs=[];
 definput.keyvals.opts={};
 definput.keyvals.L=[];
+definput.flags.wintype={'notype','fir','long'};
 definput.keyvals.dynrange=100;
 
 [flags,keyvals,fs,L]=ltfatarghelper({'fs','L'},definput,varargin);
 
 [g,info] = comp_fourierwindow(g,L,'MAGRESP');
 
-if isempty(L) && info.isfir
-   L=length(g)*13+47;
+if flags.do_fir
+  info.isfir=1;
+end;
+
+if isempty(L) 
+  if info.isfir
+    L=length(g)*13+47;
+  else
+    L=length(g);
+  end;
 end;
 
 g=fir2long(g,L);

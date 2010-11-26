@@ -1,4 +1,4 @@
-function h=pconv(p1,p2,p3)
+function h=pconv(f,g,varargin)
 %PCONV  Periodic convolution
 %   Usage:  h=pconv(f,g)
 %           h=pconv(ptype,f,g); 
@@ -35,37 +35,28 @@ function h=pconv(p1,p2,p3)
 %   REFERENCE: REF_PCONV
 
 % Assert correct input.
-error(nargchk(2,3,nargin));
-
-if nargin==2
-  ctype='';
-  f=p1;
-  g=p2;
-else
-  ctype=p1;
-  f=p2;
-  g=p3;
+if nargin<2
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
 if ~all(size(f)==size(g))
   error('f and g must have the same size.');
 end;
 
-% The following is a HACK to work around broken support for switch
-% statements of empty strings in some Octave versions.
-if strcmp(ctype,'')
-  ctype=' ';
+definput.flags.type={'default','r','rr'};
+
+[flags,kv]=ltfatarghelper({},definput,varargin);
+
+if flags.do_default
+    h=ifft(fft(f).*fft(g));
 end;
 
-switch(lower(ctype))
-  case {' '}
-    h=ifft(fft(f).*fft(g));
-  case {'r'}
-    h=ifft(fft(f).*conj(fft(g)));
-  case {'rr'}
-    h=ifft(conj(fft(f)).*conj(fft(g)));
- otherwise
-    error('Unknown convolution type: %s',ctype);
+if flags.do_r
+  h=ifft(fft(f).*conj(fft(g)));
+end;
+
+if flags.do_rr
+  h=ifft(conj(fft(f)).*conj(fft(g)));
 end;
 
 % Clean output if input was real-valued

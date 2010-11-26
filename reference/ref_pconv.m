@@ -9,18 +9,9 @@ function h=ref_pconv(f,g,ctype)
 L=length(f);
 h=zeros(L,1);
 
-if nargin==2
-  ctype='';
-end;
-
-% The following is a HACK to work around broken support for switch
-% statements of empty strings in some Octave versions.
-if strcmp(ctype,'')
-  ctype=' ';
-end;
 
 switch(lower(ctype))
-  case {' '}    
+  case {'default'}    
     for ii=0:L-1
       for jj=0:L-1
 	h(ii+1)=h(ii+1)+f(jj+1)*g(mod(ii-jj,L)+1);
