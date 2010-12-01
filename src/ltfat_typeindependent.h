@@ -238,25 +238,25 @@ typedef struct
   LTFAT_H_FFTW(plan) p_after;
   LTFAT_H_FFTW(plan) p_veryend;
   LTFAT_H_REAL *sbuf;
-  LTFAT_H_COMPLEX *f;
+  const LTFAT_H_COMPLEX *f;
   LTFAT_H_COMPLEX *gf;
   LTFAT_H_COMPLEX *cout;
 } LTFAT_H_NAME(ltfat_plan);
 
 extern LTFAT_H_NAME(ltfat_plan)
-LTFAT_H_NAME(plan_dgt_long)(LTFAT_H_COMPLEX *f, LTFAT_H_COMPLEX *g,
+LTFAT_H_NAME(plan_dgt_long)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
 		       const int L, const int W, const int a,
 		       const int M, LTFAT_H_COMPLEX *cout,
 		       unsigned flags);
 
 extern void 
-LTFAT_H_NAME(ltfat_execute_plan)(LTFAT_H_NAME(ltfat_plan) plan);
+LTFAT_H_NAME(ltfat_execute_plan)(const LTFAT_H_NAME(ltfat_plan) plan);
 
 extern void
 LTFAT_H_NAME(ltfat_destroy_plan)(LTFAT_H_NAME(ltfat_plan) plan);
 
 extern void
 LTFAT_H_NAME(dgt_walnut_plan)(LTFAT_H_NAME(ltfat_plan) plan,
-				 const LTFAT_H_COMPLEX *f, 
-				 const LTFAT_H_COMPLEX *gf);
+			      const LTFAT_H_COMPLEX *f, 
+			      const LTFAT_H_COMPLEX *gf);
 

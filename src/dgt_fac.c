@@ -27,7 +27,8 @@ void LTFAT_NAME(dgt_fac)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *gf,
 }
 
 LTFAT_NAME(ltfat_plan)
-LTFAT_NAME(plan_dgt_long)(LTFAT_COMPLEX *f, LTFAT_COMPLEX *g, const int L, const int W,
+LTFAT_NAME(plan_dgt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+			  const int L, const int W,
 			  const int a, const int M, LTFAT_COMPLEX *cout,
 			  unsigned flags)		      
 {
@@ -79,10 +80,10 @@ LTFAT_NAME(plan_dgt_long)(LTFAT_COMPLEX *f, LTFAT_COMPLEX *g, const int L, const
 }
 
 
-void LTFAT_NAME(ltfat_execute_plan)(LTFAT_NAME(ltfat_plan) plan)
+void LTFAT_NAME(ltfat_execute_plan)(const LTFAT_NAME(ltfat_plan) plan)
 {
 
-   LTFAT_NAME(dgt_walnut_plan)(plan,plan.f,plan.gf);
+   LTFAT_NAME(dgt_walnut_plan)(plan,plan.f,(const LTFAT_COMPLEX*)plan.gf);
       
    /* FFT to modulate the coefficients. */
    LTFAT_FFTW(execute)(plan.p_veryend);   
