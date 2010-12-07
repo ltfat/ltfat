@@ -29,3 +29,10 @@ gt = filterbanktight(g,a);
 
 AF
 BF
+
+
+gdreal=filterbankrealdual(g,a);
+
+rreal=2*real(ifilterbank(c,gdreal,a));
+
+norm(f-rreal)

@@ -18,11 +18,7 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~iscell(g)
-  error('g must be a cell-array.');
-end;
-
-M=numel(g);
+[M,longestfilter]=assert_filterbankinput(g,a);
 
 if ~(size(c,2)==M)
   error(['Mismatch between the size of the input coefficients and the ' ...

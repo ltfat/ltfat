@@ -16,16 +16,10 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~iscell(g)
-  error('g must be a cell-array.');
-end;
+[M,longestfilter]=assert_filterbankinput(g,a);
 
 definput.keyvals.L=[];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
-
-M=numel(g);
-
-longestfilter=max(cellfun(@numel,g));
 
 if isempty(L)
   L=ceil(longestfilter/a)*a;

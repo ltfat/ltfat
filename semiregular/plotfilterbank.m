@@ -1,5 +1,5 @@
-function [] = plotnsdgt(c,a,varargin)
-%PLOTNSDGT Plot spectrogram from nonstationary Gabor coefficients
+function [] = plotfilterbank(coef,a,varargin)
+%PLOTNSDGT Plot spectrogram from filterbank coefficients
 %   Usage:  plotnsdgt(c,a,dynrange,sr);
 %
 %   Input parameters:
@@ -9,17 +9,13 @@ function [] = plotnsdgt(c,a,varargin)
 %         sr       : signal sample rate in Hz (default 1 Hz).
 %
 %   PLOTNSDGT(c,a) plots the spectrogram from coefficients computed with the
-%   functions NSDGT or NSDGTREAL. For more details on the format of the
-%   variables c and _a, please read the NSDGT function help.
+%   function FILTERBANK. For more details on the format of the variables c
+%   and _a, please read the NSDGT function help.
 %
 %   The function takes the following arguments at the end of the command line:
 %
 %     'fs'         - Assume a sampling rate of fs Hz.
-%
-%-    'real'       - Assume coefficients from NSDGTREAL. This is the default.
-%
-%-    'complex'    - Assume coefficients from NSDGT.
-%
+%%
 %-    'image'      - Use 'imagesc' to display the spectrogram. This is the
 %                    default.
 %
@@ -43,17 +39,14 @@ function [] = plotnsdgt(c,a,varargin)
 %
 %-    'nocolorbar' - Do not display the colorbar.
 %
-%   See also: nsdgt, nsdgtreal
+%   See also: filterbank, nssgram
 
-%   AUTHOR : Florent Jaillet & Peter L. Soendergaard
+%   AUTHOR : Peter L. Soendergaard
 %   TESTING: OK 
 %   REFERENCE: NA
 
-timepos=cumsum(a)-a(1);
-
 % Define initial value for flags and key/value pairs.
 definput.flags.plottype={'image','contour','mesh','pcolor'};
-definput.flags.transformtype={'real','complex'};
 
 definput.flags.clim={'noclim','clim'};
 definput.flags.colorbar={'colorbar','nocolorbar'};
@@ -66,34 +59,20 @@ definput.keyvals.fs=[];
 
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
-cwork=zeros(kv.yres,length(a));
+N=size(coef,1);
+M=size(coef,2);
 
-%% -------- Interpolate in frequency ---------------------
-
-for ii=1:length(a)
-  column=20*log10(abs(c{ii}+realmin));
-  M=length(column);
-  cwork(:,ii)=interp1(linspace(0,1,M),column,linspace(0,1,kv.yres),'nearest');
-end;
-
-%% --------  Interpolate in time -------------------------
-% this is non-equidistant, so we use a cubic spline
+coef=20*log10(abs(coef));
 
 if isempty(fs)
   fs=1;
 end;
 
 % Time positions (in Hz) of our samples.
-timepos = (cumsum(a)-a(1))/fs;
+xr = (0:a:N*a-1)/fs;
 
-% Time positions where we want our pixels plotted.
-xr=((0:kv.xres-1)/kv.xres*timepos(end)).';
-
-coef=zeros(kv.yres,kv.xres);
-for ii=1:kv.yres
-  data=interp1(timepos,cwork(ii,:).',xr,'nearest').';
-  coef(ii,:)=data;
-end;
+% Freq. pos is just number of the channel.
+yr=1:M;
 
 % 'dynrange' parameter is handled by thresholding the coefficients.
 if ~isempty(kv.dynrange)
@@ -101,8 +80,6 @@ if ~isempty(kv.dynrange)
   coef(coef<maxclim-kv.dynrange)=maxclim-kv.dynrange;
 end;
 
-xr=linspace(0,timepos(end),kv.xres);
-yr=linspace(0,fs/2,kv.yres);
   
 switch(flags.plottype)
   case 'image'
