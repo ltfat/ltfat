@@ -15,6 +15,8 @@ function c=filterbank(f,g,a);
 %   will correspond to the columns of the input signal.
 %
 %   See also: ifilterbank, filterbankdual
+%
+%R  bohlfe02
   
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
