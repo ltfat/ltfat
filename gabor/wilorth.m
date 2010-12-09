@@ -103,7 +103,7 @@ else
     b=L/(2*M);
         
     % Create default window, a Gaussian.
-    g=comp_pgauss(L,a/b,0);    
+    g=comp_pgauss(L,a/b,0,0);    
   end;
 
 end;
