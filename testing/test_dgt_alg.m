@@ -23,7 +23,7 @@ for ii=1:length(Lr);
   
   cc  = ref_dgt(f,g,a,M);
   
-  for jj=1:5
+  for jj=1:6
     
     cc_comp = feval(['ref_dgt_',num2str(jj)],f,g,a,M);
     
