@@ -1,4 +1,4 @@
-function op1=ltfathelp(q,modulename)
+function op1=ltfathelp(varargin)
 %LTFATHELP Help on the LTFAT toolbox.
 %   Usage:  ltfathelp;
 %           v=ltfathelp('version');
@@ -19,10 +19,10 @@ function op1=ltfathelp(q,modulename)
 %   TESTING: NA
 %   REFERENCE: NA
 
-global TF_CONF;
 
-% Verify that TF_CONF has been initialized
-if numel(TF_CONF)==0
+  
+% Verify that ltfatarghelper is in path
+if ~exist('ltfatarghelper','file')
   disp(' ');
   disp('--- LTFAT - The Linear Time Frequency Analysis toolbox. ---');
   disp(' ')
@@ -31,12 +31,20 @@ if numel(TF_CONF)==0
   return;
 end;
 
-if nargin==0
+bp=ltfatbasepath;
+
+definput.keyvals.versiondata=[];
+definput.keyvals.modulesdata=[];
+definput.flags.mode={'general','version','modules','authors'};
+
+[flags,kv]=ltfatarghelper({},definput,varargin);
+
+if flags.do_general
   disp(' ');
   disp('--- LTFAT - The Linear Time Frequency Analysis toolbox. ---');
   disp(' ')
 
-  disp(['Version ',TF_CONF.ltfat_version]);
+  disp(['Version ',kv.versiondata]);
   disp(' ');
   disp('Installed modules:');
   disp(' ');
@@ -61,10 +69,50 @@ if nargin==0
   disp(' ');
   disp('For other questions, please don''t hesitate to send an email to ltfat-help@lists.sourceforge.net.'); 
     
-  return
 end;
   
-if ischar(q);
+if flags.do_version
+  op1=kv.versiondata;
+end;
+
+if flags.do_modules
+  op1={};
+  for ii=1:numel(kv.modulesdata)
+    
+    p=kv.modulesdata{ii};
+    
+    % Get the first line of the help file
+    [FID, MSG] = fopen ([bp,p.name,filesep,'Contents.m'],'r');
+    if FID==-1
+      error('Module %s does not contain a Contents.m file.',p.name);
+    end;
+    firstline = fgetl (FID);
+    fclose(FID);
+    
+    
+    % Load the information into the cell array.	
+    op1{ii}.name=p.name;
+    op1{ii}.version=p.version;
+    op1{ii}.description=firstline(2:end);
+  end;
+end;
+
+if flags.do_authors
+  disp('Peter L. Soendergaard, Centre for Applied Hearing Research,');
+  disp('                       Technical University of Denmark.');
+  disp(' ');
+  disp('Bruno Torresani, LABORATOIRE D''ANALYSE, TOPOLOGIE ET PROBABILITES');
+  disp('                 Universite de Provence, Marseille, France');
+  disp(' ');
+  disp('Peter Balazs, Acoustics Research Institute');
+  disp('              Austrian Academy of Sciences, Vienna, Austria');
+  disp(' ');
+  disp('Florent Jaillet, IRISA');
+  disp('              Rennes, France');
+end;
+
+
+if 0
 
   bp=TF_CONF.basepath;
 
@@ -87,40 +135,6 @@ if ischar(q);
 	error('Unknown module name.');
 				   
       end;
-    case {'m','modules'}
-      op1={};
-      for ii=1:length(TF_CONF.modules);
-
-	p=TF_CONF.modules{ii};
-
-	% Get the first line of the help file
-	[FID, MSG] = fopen ([bp,p.name,filesep,'Contents.m'],'r');
-        if FID==-1
-          error('Module %s does not contain a Contents.m file.',p.name);
-	end;
-	firstline = fgetl (FID);
-	fclose(FID);
-
-    
-	% Load the information into the cell array.	
-	op1{ii}.name=p.name;
-	op1{ii}.version=p.version;
-	op1{ii}.description=firstline(2:end);
-        
-      end;
-    case {'a','authors'}
-      disp('Peter L. Soendergaard, Centre for Applied Hearing Research,');
-      disp('                       Technical University of Denmark.');
-      disp(' ');
-      disp('Bruno Torresani, LABORATOIRE D''ANALYSE, TOPOLOGIE ET PROBABILITES');
-      disp('                 Universite de Provence, Marseille, France');
-      disp(' ');
-      disp('Peter Balazs, Acoustics Research Institute');
-      disp('              Austrian Academy of Sciences, Vienna, Austria');
-      disp(' ');
-      disp('Florent Jaillet, IRISA');
-      disp('              Rennes, France');
-
       
     otherwise
       found=0;

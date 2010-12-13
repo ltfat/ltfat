@@ -69,8 +69,8 @@ void LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, con
 	 tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
 	 tmp = exp(-pi*tmp*tmp/w);
 	 
-	 g[lr][0]+=tmp*cos(2*pi*c_f*(lr/L-k));
-	 g[lr][1]+=tmp*sin(2*pi*c_f*(lr/L-k));
+	 g[lr][0]+=tmp*cos(2*pi*c_f*((double)lr/L-(double)k));
+	 g[lr][1]+=tmp*sin(2*pi*c_f*((double)lr/L-(double)k));
 
       }
       gnorm +=g[lr][0]*g[lr][0]+g[lr][1]*g[lr][1];

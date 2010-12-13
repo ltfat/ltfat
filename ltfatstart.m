@@ -23,35 +23,16 @@ function ltfatstart()
 %   TESTING: NA
 %   REFERENCE: NA
 
-% ------- Settings: ----------------------------------
+%% ------- Settings: ----------------------------------
 
 % --- general settings ---
 % Print the banner at startup?
 printbanner=1;
 
-% --- Settings for iterative algorithms ---
-
-% Problem sizes below this value will be handled by a direct approach.
-itercrossover=200;
-
-% Maximum number of iterations to do:
-itermaxit=200;
-
-% The precision to stop at:
-itertol=1e-10;
-
-% --- Settings for plots ---
-
-% Approximate resolution along time-axis.
-xres=800;
-
-% Ratio of frequency resolution versus time resolution
-displayratio=3/4;
-
 
 % ----------------------------------------------------
 % -------   do not edit below this line   ------------
-% ----------------------------------------------------
+%%----------------------------------------------------
 
 % Get the basepath as the directory this function resides in.
 % The 'which' solution below is more portable than 'mfilename'
@@ -74,13 +55,8 @@ else
     fclose(FID);
 end
 
-% Create and load the information.
-global TF_CONF;
-TF_CONF.basepath=bp;
-TF_CONF.ltfat_version=ltfat_version;
-TF_CONF.fundefs = struct;
 
-% -----------  install the modules -----------------
+%% -----------  install the modules -----------------
 
 modules={};
 nplug=0;
@@ -132,7 +108,6 @@ for ii=1:length(d)
   end;
 end;
 
-TF_CONF.modules=modules;
 
 % Check if Octave was called using 'silent'
 %if isoctave
@@ -167,3 +142,15 @@ if printbanner
   
   disp(banner);
 end;
+
+%% ---------- load information into ltfathelp ------------
+
+% As comp is now in the path, we can call ltfatarghelper
+ltfatsetdefaults('ltfathelp','versiondata',ltfat_version,...
+                 'modulesdata',modules);
+
+%% ---------- other initializations ---------------------
+
+% Force the loading of FFTW, necessary for Matlab 64 bit on Linux. Thanks
+% to NFFT for this trick.1
+fft([1,2,3,4]);
