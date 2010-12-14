@@ -38,12 +38,8 @@ AF=Inf;
 BF=0;
 
 for w=0:N-1
-  
-  for k=0:a-1
-    for m=0:M-1
-      H(k+1,m+1)=G(mod(w-k*N,L)+1,m+1);
-    end;
-  end;
+  idx = mod(w-(0:a-1)*N,L)+1;
+  H = G(idx,:);
   
   % A 'real' is needed here, because the matrices are known to be
   % Hermitian, but sometimes Matlab/Octave does not recognize this.

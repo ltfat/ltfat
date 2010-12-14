@@ -1,4 +1,4 @@
-function gd=filterbankrealtight(g,a,varargin);
+function gtout=filterbankrealtight(g,a,varargin);
 %FILTERBANKTIGHT  Tight filters of filterbank for real signals only 
 %   Usage:  gd=filterbanktight(g,a);
 %
@@ -11,7 +11,7 @@ function gd=filterbankrealtight(g,a,varargin);
 %   help of FILTERANK.
 %
 %   To actually invert the output of a filterbank, use the tight filters
-%   together with the IFILTERBANK function.
+%   together with 2*real(IFILTERBANK(...)) function.
 %
 %   See also: filterbank, ifilterbank
 
@@ -21,7 +21,43 @@ end;
 
 [M,longestfilter]=assert_filterbankinput(g,a);
 
-gd2=filterbanktight([g,cellfun(@conj,g,'UniformOutput',false)],a,varargin{:});
+definput.keyvals.L=[];
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-gd = gd2(M+1:2*M);
+if isempty(L)
+  L=ceil(longestfilter/a)*a;
+end;
+
+G=zeros(L,M);
+for ii=1:M
+  G(:,ii)=fft(fir2long(g{ii},L));
+end;
+
+N=L/a;
+
+gt=zeros(N,M);
+
+for w=0:N-1
+  idx_a = mod(w-(0:a-1)*N,L)+1;
+  idx_b = mod((0:a-1)*N-w,L)+1;
+  Ha = G(idx_a,:);
+  Hb = conj(G(idx_b,:));
+    
+  Ha=sqrtm(Ha*Ha'+Hb*Hb')\Ha;
+
+  gt(idx_a,:)=Ha;
+end;
+  
+gt=ifft(gt)*sqrt(a);
+
+if isreal(g)
+  gt=real(gt);
+end;
+
+gtout=cell(1,M);
+for m=1:M
+  gtout{m}=gt(:,m);
+end;
+
+
 

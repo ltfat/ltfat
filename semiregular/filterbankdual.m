@@ -33,23 +33,15 @@ end;
 
 N=L/a;
 
-H=zeros(a,M);
 gd=zeros(N,M);
 
 for w=0:N-1
-  for k=0:a-1
-    for m=0:M-1
-      H(k+1,m+1)=G(mod(w-k*N,L)+1,m+1);
-    end;
-  end;
-      
+  idx = mod(w-(0:a-1)*N,L)+1;
+  H = G(idx,:);
+        
   H=pinv(H)';
-
-  for k=0:a-1
-    for m=0:M-1
-      gd(mod(w-k*N,L)+1,m+1)=H(k+1,m+1);
-    end;
-  end;
+  
+  gd(idx,:)=H;
 end;
   
 gd=ifft(gd)*a;

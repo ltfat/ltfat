@@ -34,20 +34,13 @@ H=zeros(a,M);
 gt=zeros(N,M);
 
 for w=0:N-1
-  for k=0:a-1
-    for m=0:M-1
-      H(k+1,m+1)=G(mod(w-k*N,L)+1,m+1);
-    end;
-  end;
+  idx = mod(w-(0:a-1)*N,L)+1;
+  H = G(idx,:);
       
-  [U,S,V]=svd(H,0);
+  [U,S,V]=svd(H,'econ');
   H=U*V';  
 
-  for k=0:a-1
-    for m=0:M-1
-      gt(mod(w-k*N,L)+1,m+1)=H(k+1,m+1);
-    end;
-  end;
+  gt(idx,:)=H;
 end;
   
 gt=ifft(gt)*sqrt(a);  

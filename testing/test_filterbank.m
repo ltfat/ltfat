@@ -6,7 +6,7 @@ L=a*N;
 
 g=cell(1,M);
 for ii=1:M
-  g{ii}=rand(L,1);
+  g{ii}=crand(L,1);
 end;
 
 gd = filterbankdual(g,a);
@@ -30,9 +30,19 @@ gt = filterbanktight(g,a);
 AF
 BF
 
-
 gdreal=filterbankrealdual(g,a);
+gtreal=filterbankrealtight(g,a);
 
 rreal=2*real(ifilterbank(c,gdreal,a));
 
+[AF,BF]=filterbankrealbounds(gtreal,a);
+
+AF
+BF
+
 norm(f-rreal)
+
+ct     = filterbank(f,gtreal,a);
+rrealt = 2*real(ifilterbank(ct,gtreal,a));
+
+norm(f-rrealt)
