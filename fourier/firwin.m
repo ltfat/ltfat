@@ -59,12 +59,14 @@ function g=firwin(name,M,varargin);
 %
 %-      blackman   - Blackman window
 %
+%-      nuttall    - Nuttall window
+%
 %-      ogg        - Iterated sine window used in the ogg sound
 %                    Generates an ortonormal Wilson/WMDCT basis.
 % 
 %   See also:  pgauss, pbspline, firkaiser
 %
-%R  opsc89
+%R  opsc89 nuttall1981
 
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA
@@ -128,6 +130,9 @@ switch name
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
 
+ case {'nuttall'}
+  g = 0.355768 - 0.487396*cos(2*pi*(x-.5)) + 0.144232*cos(4*pi*(x-.5)) -0.012604*cos(6*pi*(x-.5));
+  
  case {'ogg'}
   g=sin(pi/2*sin(pi*(x-.5)).^2)/sqrt(M/2);
   

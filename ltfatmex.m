@@ -31,6 +31,16 @@ function ltfatmex(varargin)
 %   TESTING: NA
 %   REFERENCE: NA
 
+% Verify that ltfatarghelper is in path
+if ~exist('ltfatarghelper','file')
+  disp(' ');
+  disp('--- LTFAT - The Linear Time Frequency Analysis toolbox. ---');
+  disp(' ')
+  disp('To start the toolbox, call LTFATSTART as the first command.');
+  disp(' ');
+  return;
+end;
+
 bp=mfilename('fullpath');
 bp=bp(1:end-8);
 

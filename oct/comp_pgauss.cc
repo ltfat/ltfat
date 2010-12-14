@@ -4,7 +4,7 @@
 
 DEFUN_DLD (comp_pgauss, args, ,
   "This function calls the C-library\n\
-  c=comp_pgauss(L,wf,center);\n")
+  c=comp_pgauss(L,w,c_t,c_f);\n")
 {
 
   const int    L      = args(0).int_value();
