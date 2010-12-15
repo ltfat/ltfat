@@ -66,7 +66,7 @@ function g=firwin(name,M,varargin);
 % 
 %   See also:  pgauss, pbspline, firkaiser
 %
-%R  opsc89 nuttall1981
+%R  opsc89 harris1978 nuttall1981
 
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA
@@ -90,6 +90,7 @@ end;
 definput.flags.centering={'wp','hp'};
 definput.flags.delay={'nodelay','delay','causal'};
 
+definput.keyvals.taper=1;
 definput.keyvals.delay=0;
 
 [flags,keyvals]=ltfatarghelper({},definput,varargin);
@@ -98,6 +99,34 @@ if flags.do_wp
   cent=0;
 else
   cent=0.5;
+end;
+
+% Deal with tapering
+if keyvals.taper<1
+  if keyvals.taper==0
+    % Window is only tapering, do this and bail out, because subsequent
+    % code may fail.
+    g=ones(M,1);
+    return;
+  end;
+
+  % Modify M to fit with tapering
+  Morig=M;
+  M=round(M*keyvals.taper);
+  Mtaper=Morig-M;
+
+  p1=round(Mtaper/2);
+  p2=Mtaper-p1;
+
+  % Switch centering if necessary
+  if cent==0 && p1~=p2
+    cent=0.5;
+  end;
+  
+  if cent==0.5 && p1~=p2
+    cent=1;
+  end;
+    
 end;
 
 % This is the normally used sampling vector.
@@ -141,3 +170,9 @@ switch name
  otherwise
   error('Unknown window: %s.',name);
 end;
+
+if keyvals.taper<1
+  % Perform the actual tapering.
+  g=[ones(p1,1);g;ones(p2,1)];  
+end;
+
