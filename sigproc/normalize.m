@@ -25,6 +25,8 @@ function f=normalize(f,varargin)
 %
 %-     's0'     : Normalize the S0-norm to be 1.
 %
+%-     'null'   : Do NOT normalize, output is identical to input.
+%
 %   It is possible to specify the dimension:
 %
 %-     'dim',d  : Work along specified dimension. The default value of []
@@ -40,10 +42,14 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.flags.norm={'2','1','inf','area','energy','peak','s0','rms'};
+definput.flags.norm={'2','1','inf','area','energy','peak','s0','rms','null'};
 definput.keyvals.dim=[];
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
+
+if flags.do_null
+  return
+end;
 
 %% ------ Computation --------------------------
  

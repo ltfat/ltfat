@@ -35,12 +35,9 @@ function g=firwin(name,M,varargin);
 %
 %   The windows available are:
 %
-%-      hanning    - Hanning window. Forms a PU.
+%-      hann       - Hann window. Forms a PU.
 %
-%-      sqrthann   - Square root of a Hanning window. Normalized so it
-%                    generates a normalized tight Gabor system with parameters
-%                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
-%                    M channels.
+%-      sqrthann   - Square root of a Hanning window.
 %
 %-      square     - (Almost) rectangular window. Forms a PU. Alias: 'rect'
 %
@@ -67,6 +64,12 @@ function g=firwin(name,M,varargin);
 %   See also:  pgauss, pbspline, firkaiser
 %
 %R  opsc89 harris1978 nuttall1981
+  
+  
+%     Normalized so it
+%                    generates a normalized tight Gabor system with parameters
+%                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
+%                    M channels.
 
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA
@@ -136,25 +139,25 @@ switch name
   g=(0.5+0.5*cos(2*pi*x));
   
  case {'sqrthann'}
-  g=sqrt(firwin('hanning',M,varargin{:}))/sqrt(M/2);
+  g=sqrt(firwin('hanning',M,varargin{:}));
   
  case {'hamming'}
   g=0.54-0.46*cos(2*pi*(x-.5));
   
- case {'sqrtham'}
-  g=sqrt(2)*sqrt(firwin('hamming',M,varargin{:})/1.08)/sqrt(M);
+ case {'sqrtham','sqrthamming'}
+  g=sqrt(firwin('hamming',M,varargin{:})/1.08);
   
  case {'square','rect'} 
   g=middlepad(ones(M/2,1),M,flags.centering);
   
  case {'sqrtsquare','sqrtrect'}
-  g=sqrt(middlepad(ones(M/2,1),M,flags.centering))/sqrt(M/2);
+  g=sqrt(middlepad(ones(M/2,1),M,flags.centering));
 
  case {'tria','triangular','bartlett'}
-  g=pbspline(M,1,M/2,flags.centering)*sqrt(M/2);
+  g=pbspline(M,1,M/2,flags.centering);
 
  case {'sqrttria'}
-  g=sqrt(pbspline(M,1,M/2,flags.centering)/sqrt(M/2));
+  g=sqrt(pbspline(M,1,M/2,flags.centering));
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
