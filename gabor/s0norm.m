@@ -18,6 +18,8 @@ function y = s0norm(f,varargin)
 %-     'dim',d  : Work along specified dimension. The default value of []
 %                 means to work along the first non-singleton one.
 %
+%-     'rel'    : Return the result relative to the $l^2$ norm (the energy) of the
+%                 signal.
 
 %   AUTHOR : Peter L. Soendergaard
   
@@ -31,6 +33,7 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+definput.flags.rel={'norel','rel'};
 definput.keyvals.dim=[];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -44,8 +47,17 @@ y=zeros(permutedsize);
 g=pgauss(L);
 
 for ii=1:W  
-  c=dgt(f(:,ii),g,1,L);    
-  y(1,ii)=sum(abs(c(:)))/L;
+  % Compute the STFT by the simple algorithm and sum each column of the
+  % STFT as they are computed, to avoid L^2 memory usage.
+  for jj=0:L-1
+    y(1,ii)=y(1,ii)+sum(abs(fft(f(:,ii).*circshift(g,jj))));
+  end;
+  
+  if flags.do_rel
+    y(1,ii)=y(1,ii)/norm(f(:,ii));
+  end;
 end;
   
+y=y/L;
+
 y=assert_sigreshape_post(y,kv.dim,permutedsize,order);

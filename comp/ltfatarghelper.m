@@ -126,13 +126,18 @@ total_args = numel(arglist);
   % and create reverse mapping of flag -> group
   flagnames=fieldnames(defflags);
   flags=struct;
+  % In order for flags to start with a number, it is necessary to add
+  % 'x_' before the flag when the flags are used a field names in
+  % flagreverse. Externally, flags are never used a field names in
+  % structs, so this is an internal problem in ltfatarghelper that is
+  % fixed this way.
   flagsreverse=struct;
   for ii=1:numel(flagnames)
     name=flagnames{ii};
     flaggroup=defflags.(name);
     flags.(name)=flaggroup{1};
     for jj=1:numel(flaggroup)
-      flagsreverse.(flaggroup{jj})=name;
+      flagsreverse.(['x_', flaggroup{jj}])=name;
       flags.(['do_',flaggroup{jj}])=0;
     end;
     flags.(['do_',flaggroup{1}])=1;
@@ -152,14 +157,14 @@ total_args = numel(arglist);
     restlist=restlist(2:end);  % pop
     found=0;
     % Is this name a flag? If so, set it
-    if isfield(flagsreverse,argname)
+    if isfield(flagsreverse,['x_',argname])
       % Unset all other flags in this group
-      flaggroup=defflags.(flagsreverse.(argname));
+      flaggroup=defflags.(flagsreverse.(['x_',argname]));
       for jj=1:numel(flaggroup)
         flags.(['do_',flaggroup{jj}])=0;
       end;
       
-      flags.(flagsreverse.(argname))=argname;
+      flags.(flagsreverse.(['x_',argname]))=argname;
       flags.(['do_',argname])=1;
       found=1;
     end;
