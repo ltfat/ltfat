@@ -4,6 +4,7 @@
 %
 %  General
 %    RMS            -  Root Mean Square norm of signal.
+%    NORMALIZE      -  Normalize signal by specified norm.
 %
 %  Working with coefficients.
 %    LARGESTR       -  Keep largest ratio of coefficients.
