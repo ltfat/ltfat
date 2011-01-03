@@ -6,9 +6,11 @@ function test_failed=test_firwin
   
 PUwins = {'hanning','square','tria','hamming'};
 
-orthwins = {'sqrthann','sqrtsquare','sqrttria','sqrtham','ogg'};
+orthwins = {'sine','sqrtsquare','sqrttria','sqrtham','ogg'};
 
-allwins = {PUwins{:},orthwins{:}};
+otherwins = {'blackman','nuttall'};
+
+allwins = {PUwins{:},orthwins{:},otherwins{:}};
 
 test_failed=0;
 
@@ -32,6 +34,17 @@ for cent=0:1
     
     s=sprintf(['SYMM %10s %s %0.5g %s'],winname,centtype,res,fail);
     disp(s);
+    
+    if cent==0
+      res=1-g(1);
+
+      [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    
+      s=sprintf(['PEAK %10s %s %0.5g %s'],winname,centtype,res,fail);
+      disp(s);
+
+      
+    end;
 
     
   end;

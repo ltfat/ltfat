@@ -3,15 +3,10 @@ function g=firwin(name,M,varargin);
 %   Usage:  g=firwin(name,M);
 %           g=firwin(name,M,...);
 %
-%   FIRWIN(name,M) will return a FIR window of length M of type
-%   name.
+%   FIRWIN(name,M) will return a FIR window of length M of type name.
 %
-%   The windows are normalized, such that if used for Gabor systems
-%   with parameters _a=M/2 and M, they will generate Gabor frames
-%   with framebounds close to 1.
-%
-%   All windows are symmetric and can be used for Wilson bases, except
-%   when noted otherwise.
+%   All windows are symmetric, they are zero delay and zero phase
+%   filters. They can be used for Wilson bases, except when noted otherwise.
 %
 %   If a window g forms a "partition of unity" (PU) it means specifically
 %   that
@@ -20,6 +15,10 @@ function g=firwin(name,M,varargin);
 %
 %   A perfect PU can only be formed if the window length is even, but
 %   some windows may work for odd lengths anyway.
+%
+%   If a window is the square root of a window that forms a PU, the window
+%   will generate a tight Gabor frame / orthonormal Wilson/WMDCT basis if
+%   the number of channels is less than M.
 % 
 %   FIRWIN understands the following flags at the end of the list of input
 %   parameters:
@@ -37,22 +36,23 @@ function g=firwin(name,M,varargin);
 %
 %-      hann       - Hann window. Forms a PU.
 %
-%-      sqrthann   - Square root of a Hanning window.
+%-      sine       - Sine window. This is the square root of the Hanning
+%                    window. Aliases: 'cosine', 'sqrthann'
 %
 %-      square     - (Almost) rectangular window. Forms a PU. Alias: 'rect'
 %
-%-      sqrtsquare - Square root of the square window. As sqrthann.
+%-      sqrtsquare - Square root of the square window.
 %
-%-      tria - (Almost) triangular window. Forms a PU. Alias: 'bartlett'
+%-      tria -       (Almost) triangular window. Forms a PU. Alias: 'bartlett'
 %
-%-      sqrttria   - Square root of the triangular window. As sqrthann.
+%-      sqrttria   - Square root of the triangular window.
 %
 %-      hamming    - Hamming window. Forms a PU that sums to 1.08 instead
 %                    of 1.0 as usual. This window should not be used for
 %                    a Wilson basis, as a reconstruction window cannot be
 %                    found by WILDUAL.
 %
-%-      sqrtham    - Square root of a Hamming window. As sqrthan.
+%-      sqrtham    - Square root of a Hamming window.
 %
 %-      blackman   - Blackman window
 %
@@ -138,7 +138,7 @@ switch name
  case {'hanning','hann'}
   g=(0.5+0.5*cos(2*pi*x));
   
- case {'sqrthann'}
+ case {'sine','cosine','sqrthann'}
   g=sqrt(firwin('hanning',M,varargin{:}));
   
  case {'hamming'}
@@ -166,10 +166,8 @@ switch name
   g = 0.355768 - 0.487396*cos(2*pi*(x-.5)) + 0.144232*cos(4*pi*(x-.5)) -0.012604*cos(6*pi*(x-.5));
   
  case {'ogg'}
-  g=sin(pi/2*sin(pi*(x-.5)).^2)/sqrt(M/2);
+  g=sin(pi/2*sin(pi*(x-.5)).^2);
   
- case {'testfun'}
-  g=fftshift(exp(-1./(1/10*x.*(1-x)))/exp(-4));  
  otherwise
   error('Unknown window: %s.',name);
 end;
