@@ -34,7 +34,7 @@ function g=firwin(name,M,varargin);
 %
 %   The windows available are:
 %
-%-      hann       - Hann window. Forms a PU.
+%-      hann       - von Hann window. Forms a PU.
 %
 %-      sine       - Sine window. This is the square root of the Hanning
 %                    window. Aliases: 'cosine', 'sqrthann'
@@ -51,8 +51,6 @@ function g=firwin(name,M,varargin);
 %                    of 1.0 as usual. This window should not be used for
 %                    a Wilson basis, as a reconstruction window cannot be
 %                    found by WILDUAL.
-%
-%-      sqrtham    - Square root of a Hamming window.
 %
 %-      blackman   - Blackman window
 %
@@ -71,6 +69,11 @@ function g=firwin(name,M,varargin);
 %                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
 %                    M channels.
 
+% The sqrthamm window was killed: Bad performance, hard to define properly.   
+% case {'sqrtham','sqrthamming'}
+%  g=sqrt(firwin('hamming',M,varargin{:})/1.08);
+
+  
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA
   
@@ -80,14 +83,15 @@ end;
 
 name=lower(name);
 
-if rem(M,2)==1
-  % Some windows are not defined for odd lengths.
-  
-  switch name
- case {'square','rect','sqrtsquare','sqrtrect','tria','sqrttria','sqrtblack'}
-    error('The length of the choosen window must be even.');
-  end;
-end;
+%if rem(M,2)==1
+%  % Some windows are not defined for odd lengths.
+%  
+%  switch name
+% case {'square','rect','sqrtsquare','sqrtrect','tria','sqrttria','sqrtblack'}
+%    error('The length of the choosen window must be even.');
+%  end;
+%end;
+
 
 % Define initial value for flags and key/value pairs.
 definput.flags.centering={'wp','hp'};
@@ -133,7 +137,13 @@ if keyvals.taper<1
 end;
 
 % This is the normally used sampling vector.
-x=((0:M-1)'+cent)/M;
+x   = ((0:M-1)'+cent)/M;
+
+% Use this if window length must be odd or even
+Modd   = M-mod(M+1,2);
+Meven  = M-mod(M,2);
+xodd   = ((0:Modd-1)'+cent)/Modd;
+xeven  = ((0:Meven-1)'+cent)/Meven;
 switch name    
  case {'hanning','hann'}
   g=(0.5+0.5*cos(2*pi*x));
@@ -141,23 +151,27 @@ switch name
  case {'sine','cosine','sqrthann'}
   g=sqrt(firwin('hanning',M,varargin{:}));
   
- case {'hamming'}
-  g=0.54-0.46*cos(2*pi*(x-.5));
-  
- case {'sqrtham','sqrthamming'}
-  g=sqrt(firwin('hamming',M,varargin{:})/1.08);
+ case {'hamming'}  
+  if cent==0
+    g=0.54-0.46*cos(2*pi*(xodd-.5));
+  else
+    g=0.54-0.46*cos(2*pi*(xeven-.5));
+  end;
   
  case {'square','rect'} 
-  g=middlepad(ones(M/2,1),M,flags.centering);
-  
+  g=ones(Modd,1);
+
+ case {'halfsquare','halfrect'} 
+  g=pbspline(M,0,Meven/2,flags.centering);
+
  case {'sqrtsquare','sqrtrect'}
-  g=sqrt(middlepad(ones(M/2,1),M,flags.centering));
+  g=sqrt(ones(Modd,1));
 
  case {'tria','triangular','bartlett'}
-  g=pbspline(M,1,M/2,flags.centering);
+  g=pbspline(M,1,Meven/2,flags.centering);
 
  case {'sqrttria'}
-  g=sqrt(pbspline(M,1,M/2,flags.centering));
+  g=sqrt(pbspline(M,1,Meven/2,flags.centering));
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
@@ -170,6 +184,11 @@ switch name
   
  otherwise
   error('Unknown window: %s.',name);
+end;
+
+% Add zeros if needed.
+if length(g)<M
+  g=middlepad(g,M,flags.centering);
 end;
 
 if keyvals.taper<1
