@@ -19,18 +19,6 @@ function g=firwin(name,M,varargin);
 %   If a window is the square root of a window that forms a PU, the window
 %   will generate a tight Gabor frame / orthonormal Wilson/WMDCT basis if
 %   the number of channels is less than M.
-% 
-%   FIRWIN understands the following flags at the end of the list of input
-%   parameters:
-%
-%-     'wp'      - Output is whole point even. This is the default.
-%
-%-     'hp'      - Output is half point even, as most Matlab filter
-%                  routines.
-%
-%-     'delay',d - Delay the output by d samples. Default is zero delay.
-%
-%-     'causual' - Delay the window enough to make it causal.
 %
 %   The windows available are:
 %
@@ -58,12 +46,28 @@ function g=firwin(name,M,varargin);
 %
 %-      ogg        - Iterated sine window used in the ogg sound
 %                    Generates an ortonormal Wilson/WMDCT basis.
-% 
-%   See also:  pgauss, pbspline, firkaiser
+%
+%   FIRWIN understands the following flags at the end of the list of input
+%   parameters:
+%
+%-     'wp'      - Output is whole point even. This is the default.
+%
+%-     'hp'      - Output is half point even, as most Matlab filter
+%                  routines.
+%
+%   Additionally, FIRWIN accepts flags to normalize the output. Please see the
+%   help of NORMALIZE. Default is to use 'peak' normalization.
+%
+%   See also:  pgauss, pbspline, firkaiser, normalize
 %
 %R  opsc89 harris1978 nuttall1981
+ 
+%  Stuff that has been cut away
   
-  
+%-     'delay',d - Delay the output by d samples. Default is zero delay.
+%
+%-     'causual' - Delay the window enough to make it causal.
+%
 %     Normalized so it
 %                    generates a normalized tight Gabor system with parameters
 %                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
@@ -83,24 +87,15 @@ end;
 
 name=lower(name);
 
-%if rem(M,2)==1
-%  % Some windows are not defined for odd lengths.
-%  
-%  switch name
-% case {'square','rect','sqrtsquare','sqrtrect','tria','sqrttria','sqrtblack'}
-%    error('The length of the choosen window must be even.');
-%  end;
-%end;
-
-
 % Define initial value for flags and key/value pairs.
+definput.import={'normalize'};
 definput.flags.centering={'wp','hp'};
-definput.flags.delay={'nodelay','delay','causal'};
+%definput.flags.delay={'nodelay','delay','causal'};
 
 definput.keyvals.taper=1;
 definput.keyvals.delay=0;
 
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,keyvals]=ltfatarghelper({},definput,[{'null'},varargin]);
 
 if flags.do_wp
   cent=0;
@@ -159,13 +154,17 @@ switch name
   end;
   
  case {'square','rect'} 
-  g=ones(Modd,1);
+  if cent==0
+    g=ones(Modd,1);
+  else
+    g=ones(Meven,1);
+  end;
 
  case {'halfsquare','halfrect'} 
-  g=pbspline(M,0,Meven/2,flags.centering);
+  g=ones(Meven/2,1);
 
- case {'sqrtsquare','sqrtrect'}
-  g=sqrt(ones(Modd,1));
+ case {'sqrthalfsquare','sqrthalfrect'}
+  g=sqrt(ones(Meven/2,1));
 
  case {'tria','triangular','bartlett'}
   g=pbspline(M,1,Meven/2,flags.centering);
@@ -196,3 +195,4 @@ if keyvals.taper<1
   g=[ones(p1,1);g;ones(p2,1)];  
 end;
 
+g=normalize(g,flags.norm);

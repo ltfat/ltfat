@@ -4,9 +4,9 @@ function test_failed=test_firwin
 %  This test script verifies the properties listed in the help of firwin
   
   
-PUwins = {'hann','halfsquare','tria'};
+PUwins = {'hann','halfsquarex','tria'};
 
-orthwins = {'sine','sqrtsquare','sqrttria','ogg'};
+orthwins = {'sine','sqrthalfsquare','sqrttria','ogg'};
 
 otherwins = {'square','hamming','blackman','nuttall'};
 
@@ -74,7 +74,7 @@ for L=[18,19]
     for ii=1:length(orthwins);
       winname=orthwins{ii};
       
-      g=firwin(winname,L);
+      g=firwin(winname,L,'2');
       
       [A,B] = wilbounds(g,L/2);
       

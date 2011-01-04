@@ -52,7 +52,10 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %   If nlen < L, you can choose to remove the additional zeros by calling
 %   MIDDLEPAD(g,nlen)
 %
-%   See also:   pgauss, firwin, middlepad
+%   Additionally, PBSPLINE accepts flags to normalize the output. Please see the
+%   help of NORMALIZE. Default is to use 'peak' normalization.
+%
+%   See also:   pgauss, firwin, middlepad, normalize
 %
 %   Demos: demo_pbspline
 %
@@ -94,10 +97,11 @@ function [g,nlen] = pbspline(L,order,a,varargin)
   end;
     
   % Define initial value for flags and key/value pairs.
+  definput.import={'normalize'};
   definput.flags.centering={'wp','hp'};
   definput.flags.stype={'ed','xd','stard','ec','xc','starc'};
   
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,keyvals]=ltfatarghelper({},definput,[{'inf'},varargin]);
 
 
   
@@ -232,7 +236,8 @@ if dodisc
   g=g./a.^order;
 
   % Normalize
-  g=g/sqrt(a);
+  %g=g/sqrt(a);
+
 
 else
 
@@ -423,7 +428,7 @@ end;
 % nlen cannot be larger that L
 nlen=min(L,nlen);
 
-
+g=normalize(g,flags.norm);
 
 function Z=myhzeta(z,v);
   

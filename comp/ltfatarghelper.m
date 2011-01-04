@@ -80,6 +80,13 @@ end;
 
 nposdep=numel(posdepnames);
 
+% Resolve import specifications BEFORE adding our own specifications.
+if isfield(definput,'import')
+  for imp = definput.import;
+    definput=feval(['args_',imp{1}],definput);
+  end;
+end;
+
 if isfield(definput,'flags')
   defflags=definput.flags;
 else

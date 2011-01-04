@@ -42,7 +42,7 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.flags.norm={'2','1','inf','area','energy','peak','s0','rms','null'};
+definput.import={'normalize'};
 definput.keyvals.dim=[];
 
 [flags,kv]=ltfatarghelper({},definput,varargin);

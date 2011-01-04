@@ -57,7 +57,7 @@ if ischar(g)
     end;
     info.tfr=a*M/L;
    case firwinnames
-    g=firwin(winname,M);
+    g=firwin(winname,M,'2');
     info.isfir=1;    
    otherwise
     error('%s: Unknown window type: %s',callfun,winname);
