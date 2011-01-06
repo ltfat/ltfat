@@ -32,15 +32,16 @@ c_t=rem(c_t,L);
 
 % Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero.
 nk=ceil(safe/sqrt(L/sqrt(w)));
-lr=(0:L-1).';
+lr=(0:L-1).'+c_t;
 for k=-nk:nk  
-  g=g+exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w+2*pi*i*c_f*(lr/L-k));
+  g=g+exp(-pi*(lr/sqrtl-k*sqrtl).^2/w+2*pi*i*c_f*(lr/L-k));
 end;
 
 % Normalize it exactly.
 g=g/norm(g);
 
-% This normalization is only approximate
+% This normalization is only approximate, it works for the continous case
+% but not for the discrete
 %g=g*(w*L/2)^(-.25);
 
 
