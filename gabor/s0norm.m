@@ -60,4 +60,4 @@ end;
   
 y=y/L;
 
-y=assert_sigreshape_post(y,kv.dim,permutedsize,order);
+y=assert_sigreshape_post(y,dim,permutedsize,order);
