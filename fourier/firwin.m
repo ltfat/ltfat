@@ -21,18 +21,6 @@ function g=firwin(name,M,varargin);
 %   A perfect PU can only be formed if the window length is even, but
 %   some windows may work for odd lengths anyway.
 % 
-%   FIRWIN understands the following flags at the end of the list of input
-%   parameters:
-%
-%-     'wp'      - Output is whole point even. This is the default.
-%
-%-     'hp'      - Output is half point even, as most Matlab filter
-%                  routines.
-%
-%-     'delay',d - Delay the output by d samples. Default is zero delay.
-%
-%-     'causual' - Delay the window enough to make it causal.
-%
 %   The windows available are:
 %
 %-      hanning    - Hanning window. Forms a PU.
@@ -61,10 +49,19 @@ function g=firwin(name,M,varargin);
 %
 %-      nuttall    - Nuttall window
 %
-%-      ogg        - Iterated sine window used in the ogg sound
+%-      ogg        - Iterated sine window used in the ogg sound codec.
 %                    Generates an ortonormal Wilson/WMDCT basis.
+%
+%   FIRWIN understands the following flags at the end of the list of input
+%   parameters:
+%
+%-     'wp'      - Output is whole point even. This is the default.
+%
+%-     'hp'      - Output is half point even, as most Matlab filter
+%                  routines.
+%
 % 
-%   See also:  pgauss, pbspline, firkaiser
+%   See also:  pgauss, firkaiser, pbspline
 %
 %R  opsc89 harris1978 nuttall1981
 
@@ -88,10 +85,10 @@ end;
 
 % Define initial value for flags and key/value pairs.
 definput.flags.centering={'wp','hp'};
-definput.flags.delay={'nodelay','delay','causal'};
+%definput.flags.delay={'nodelay','delay','causal'};
 
 definput.keyvals.taper=1;
-definput.keyvals.delay=0;
+%definput.keyvals.delay=0;
 
 [flags,keyvals]=ltfatarghelper({},definput,varargin);
 
