@@ -25,8 +25,8 @@ info.isdual=0;
 
 firwinnames =  {'hanning','hann','sqrthan','sqrthann','hamming',...
                 'sqrtham','square','rect','sqrtsquare','sqrtrect',...
-                'tria','triangular','sqrttria','blackman',...
-		'ogg'};
+                'tria','triangular','sqrttria','blackman','nuttall',...
+                'ogg'};
 
 % Create window if string was given as input.
 if ischar(g)
@@ -57,7 +57,7 @@ if ischar(g)
     end;
     info.tfr=a*M/L;
    case firwinnames
-    g=firwin(winname,M);
+    g=firwin(winname,M,'2');
     info.isfir=1;    
    otherwise
     error('%s: Unknown window type: %s',callfun,winname);

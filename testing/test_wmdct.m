@@ -23,7 +23,7 @@ for ii=1:length(Lr);
 	  gd=wildual(g,M);
           wtype='LONG';
 	else
-	  g=firwin('sqrthann',2*M);
+	  g=firwin('sqrthann',2*M,'2');
 	  gd=g;
           wtype='FIR ';
 	end;

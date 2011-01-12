@@ -3,15 +3,10 @@ function g=firwin(name,M,varargin);
 %   Usage:  g=firwin(name,M);
 %           g=firwin(name,M,...);
 %
-%   FIRWIN(name,M) will return a FIR window of length M of type
-%   name.
+%   FIRWIN(name,M) will return a FIR window of length M of type name.
 %
-%   The windows are normalized, such that if used for Gabor systems
-%   with parameters _a=M/2 and M, they will generate Gabor frames
-%   with framebounds close to 1.
-%
-%   All windows are symmetric and can be used for Wilson bases, except
-%   when noted otherwise.
+%   All windows are symmetric, they are zero delay and zero phase
+%   filters. They can be used for Wilson bases, except when noted otherwise.
 %
 %   If a window g forms a "partition of unity" (PU) it means specifically
 %   that
@@ -20,30 +15,30 @@ function g=firwin(name,M,varargin);
 %
 %   A perfect PU can only be formed if the window length is even, but
 %   some windows may work for odd lengths anyway.
-% 
+%
+%   If a window is the square root of a window that forms a PU, the window
+%   will generate a tight Gabor frame / orthonormal Wilson/WMDCT basis if
+%   the number of channels is less than M.
+%
 %   The windows available are:
 %
-%-      hanning    - Hanning window. Forms a PU.
+%-      hann       - von Hann window. Forms a PU.
 %
-%-      sqrthann   - Square root of a Hanning window. Normalized so it
-%                    generates a normalized tight Gabor system with parameters
-%                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
-%                    M channels.
+%-      sine       - Sine window. This is the square root of the Hanning
+%                    window. Aliases: 'cosine', 'sqrthann'
 %
 %-      square     - (Almost) rectangular window. Forms a PU. Alias: 'rect'
 %
-%-      sqrtsquare - Square root of the square window. As sqrthann.
+%-      sqrtsquare - Square root of the square window.
 %
-%-      tria - (Almost) triangular window. Forms a PU. Alias: 'bartlett'
+%-      tria -       (Almost) triangular window. Forms a PU. Alias: 'bartlett'
 %
-%-      sqrttria   - Square root of the triangular window. As sqrthann.
+%-      sqrttria   - Square root of the triangular window.
 %
 %-      hamming    - Hamming window. Forms a PU that sums to 1.08 instead
 %                    of 1.0 as usual. This window should not be used for
 %                    a Wilson basis, as a reconstruction window cannot be
 %                    found by WILDUAL.
-%
-%-      sqrtham    - Square root of a Hamming window. As sqrthan.
 %
 %-      blackman   - Blackman window
 %
@@ -60,11 +55,29 @@ function g=firwin(name,M,varargin);
 %-     'hp'      - Output is half point even, as most Matlab filter
 %                  routines.
 %
-% 
-%   See also:  pgauss, firkaiser, pbspline
+%   Additionally, FIRWIN accepts flags to normalize the output. Please see the
+%   help of NORMALIZE. Default is to use 'peak' normalization.
+%
+%   See also:  pgauss, pbspline, firkaiser, normalize
 %
 %R  opsc89 harris1978 nuttall1981
+ 
+%  Stuff that has been cut away
+  
+%-     'delay',d - Delay the output by d samples. Default is zero delay.
+%
+%-     'causual' - Delay the window enough to make it causal.
+%
+%     Normalized so it
+%                    generates a normalized tight Gabor system with parameters
+%                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
+%                    M channels.
 
+% The sqrthamm window was killed: Bad performance, hard to define properly.   
+% case {'sqrtham','sqrthamming'}
+%  g=sqrt(firwin('hamming',M,varargin{:})/1.08);
+
+  
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA
   
@@ -74,23 +87,15 @@ end;
 
 name=lower(name);
 
-if rem(M,2)==1
-  % Some windows are not defined for odd lengths.
-  
-  switch name
- case {'square','rect','sqrtsquare','sqrtrect','tria','sqrttria','sqrtblack'}
-    error('The length of the choosen window must be even.');
-  end;
-end;
-
 % Define initial value for flags and key/value pairs.
+definput.import={'normalize'};
 definput.flags.centering={'wp','hp'};
 %definput.flags.delay={'nodelay','delay','causal'};
 
 definput.keyvals.taper=1;
 %definput.keyvals.delay=0;
 
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,keyvals]=ltfatarghelper({},definput,[{'null'},varargin]);
 
 if flags.do_wp
   cent=0;
@@ -127,31 +132,45 @@ if keyvals.taper<1
 end;
 
 % This is the normally used sampling vector.
-x=((0:M-1)'+cent)/M;
+x   = ((0:M-1)'+cent)/M;
+
+% Use this if window length must be odd or even
+Modd   = M-mod(M+1,2);
+Meven  = M-mod(M,2);
+xodd   = ((0:Modd-1)'+cent)/Modd;
+xeven  = ((0:Meven-1)'+cent)/Meven;
 switch name    
  case {'hanning','hann'}
   g=(0.5+0.5*cos(2*pi*x));
   
- case {'sqrthann'}
-  g=sqrt(firwin('hanning',M,varargin{:}))/sqrt(M/2);
+ case {'sine','cosine','sqrthann'}
+  g=sqrt(firwin('hanning',M,varargin{:}));
   
- case {'hamming'}
-  g=0.54-0.46*cos(2*pi*(x-.5));
-  
- case {'sqrtham'}
-  g=sqrt(2)*sqrt(firwin('hamming',M,varargin{:})/1.08)/sqrt(M);
+ case {'hamming'}  
+  if cent==0
+    g=0.54-0.46*cos(2*pi*(xodd-.5));
+  else
+    g=0.54-0.46*cos(2*pi*(xeven-.5));
+  end;
   
  case {'square','rect'} 
-  g=middlepad(ones(M/2,1),M,flags.centering);
-  
- case {'sqrtsquare','sqrtrect'}
-  g=sqrt(middlepad(ones(M/2,1),M,flags.centering))/sqrt(M/2);
+  if cent==0
+    g=ones(Modd,1);
+  else
+    g=ones(Meven,1);
+  end;
+
+ case {'halfsquare','halfrect'} 
+  g=ones(Meven/2,1);
+
+ case {'sqrthalfsquare','sqrthalfrect'}
+  g=sqrt(ones(Meven/2,1));
 
  case {'tria','triangular','bartlett'}
-  g=pbspline(M,1,M/2,flags.centering)*sqrt(M/2);
+  g=pbspline(M,1,Meven/2,flags.centering);
 
  case {'sqrttria'}
-  g=sqrt(pbspline(M,1,M/2,flags.centering)/sqrt(M/2));
+  g=sqrt(pbspline(M,1,Meven/2,flags.centering));
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
@@ -160,12 +179,15 @@ switch name
   g = 0.355768 - 0.487396*cos(2*pi*(x-.5)) + 0.144232*cos(4*pi*(x-.5)) -0.012604*cos(6*pi*(x-.5));
   
  case {'ogg'}
-  g=sin(pi/2*sin(pi*(x-.5)).^2)/sqrt(M/2);
+  g=sin(pi/2*sin(pi*(x-.5)).^2);
   
- case {'testfun'}
-  g=fftshift(exp(-1./(1/10*x.*(1-x)))/exp(-4));  
  otherwise
   error('Unknown window: %s.',name);
+end;
+
+% Add zeros if needed.
+if length(g)<M
+  g=middlepad(g,M,flags.centering);
 end;
 
 if keyvals.taper<1
@@ -173,3 +195,4 @@ if keyvals.taper<1
   g=[ones(p1,1);g;ones(p2,1)];  
 end;
 
+g=normalize(g,flags.norm);
