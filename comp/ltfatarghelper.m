@@ -194,7 +194,7 @@ total_args = numel(arglist);
       error('%s: Unknown parameter: %s',upper(callfun),argname);
     end;
 
-    ii=ii+1;
+    %ii=ii+1;
   end;
 
 % Fill varargout
