@@ -4,7 +4,7 @@ function test_failed=test_firwin
 %  This test script verifies the properties listed in the help of firwin
   
   
-PUwins = {'hann','halfsquarex','tria'};
+PUwins = {'hann','halfsquare','tria'};
 
 orthwins = {'sine','sqrthalfsquare','sqrttria','ogg'};
 
