@@ -95,7 +95,7 @@ assert_squarelat(a,M,1,'IDGT');
 
 L=N*a;
 
-g=comp_window(g,a,M,L,0,'IDGT');
+g=gabwin(g,a,M,L,'IDGT');
 
 assert_L(L,size(g,1),L,a,M,'IDGT');
 

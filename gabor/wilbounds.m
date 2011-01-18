@@ -43,7 +43,7 @@ if rem(M,1)~=0
   error('M must be an integer.')
 end;
 
-[g,info]=comp_window(g,M,2*M,L,1,'WILBOUNDS');
+[g,info]=wilwin(g,M,L,'WILBOUNDS');
 Lwindow=length(g);
 
 [b,N,L]=assert_L(Lwindow,Lwindow,L,M,2*M,'WILBOUNDS');

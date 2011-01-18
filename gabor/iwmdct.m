@@ -57,7 +57,7 @@ L=M*N;
 
 assert_L(L,0,L,a,2*M,'IWMDCT');
 
-g=comp_window(g,a,2*M,L,1,'IWMDCT');
+g=wilwin(g,M,L,'IWMDCT');
 
 f=comp_idwiltiii(c,g);
 

@@ -38,7 +38,7 @@ L=M*N;
 
 assert_L(L,0,L,a,2*M,'IDWILT');
 
-[g,info]=comp_window(g,a,2*M,L,1,'IDWILT');
+[g,info]=wilwin(g,M,L,'IDWILT');
 
 wasrow=0;
 if (ndims(c)==2 && info.wasrow)

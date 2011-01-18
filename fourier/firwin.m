@@ -1,4 +1,4 @@
-function g=firwin(name,M,varargin);
+function [g,info]=firwin(name,M,varargin);
 %FIRWIN  FIR window
 %   Usage:  g=firwin(name,M);
 %           g=firwin(name,M,...);
@@ -64,28 +64,19 @@ function g=firwin(name,M,varargin);
 %
 %R  opsc89 harris1978 nuttall1981 wesfreid1993
  
-%  Stuff that has been cut away
-  
-%-     'delay',d - Delay the output by d samples. Default is zero delay.
-%
-%-     'causual' - Delay the window enough to make it causal.
-%
-%     Normalized so it
-%                    generates a normalized tight Gabor system with parameters
-%                    a=M/2 and M or an orthonormal Wilson/WMDCT basis with
-%                    M channels.
-
-% The sqrthamm window was killed: Bad performance, hard to define properly.   
-% case {'sqrtham','sqrthamming'}
-%  g=sqrt(firwin('hamming',M,varargin{:})/1.08);
-
-  
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA
   
 if nargin<2
   error('Too few input parameters.');
 end;
+
+% Always set to this
+info.isfir=1;
+
+% Default values, may be overwritten later in the code
+info.ispu=0;
+info.issqpu=0;
 
 name=lower(name);
 
@@ -144,9 +135,11 @@ xeven  = ((0:Meven-1)'+cent)/Meven;
 switch name    
  case {'hanning','hann'}
   g=(0.5+0.5*cos(2*pi*x));
+  info.ispu=1;
   
  case {'sine','cosine','sqrthann'}
   g=sqrt(firwin('hanning',M,varargin{:}));
+  info.issqpu=1;
   
  case {'hamming'}  
   if cent==0
@@ -164,15 +157,19 @@ switch name
 
  case {'halfsquare','halfrect'} 
   g=ones(Meven/2,1);
-
+  info.ispu=1;
+  
  case {'sqrthalfsquare','sqrthalfrect'}
   g=sqrt(ones(Meven/2,1));
-
+  info.issqpu=1;
+  
  case {'tria','triangular','bartlett'}
   g=pbspline(M,1,Meven/2,flags.centering);
-
+  info.ispu=1;
+  
  case {'sqrttria'}
   g=sqrt(pbspline(M,1,Meven/2,flags.centering));
+  info.issqpu=1;
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
@@ -180,9 +177,10 @@ switch name
  case {'nuttall'}
   g = 0.355768 - 0.487396*cos(2*pi*(x-.5)) + 0.144232*cos(4*pi*(x-.5)) -0.012604*cos(6*pi*(x-.5));
   
- case {'ogg'}
+ case {'itersine','ogg'}
   g=sin(pi/2*sin(pi*(x-.5)).^2);
-    
+  info.issqpu=1;
+  
  otherwise
   error('Unknown window: %s.',name);
 end;

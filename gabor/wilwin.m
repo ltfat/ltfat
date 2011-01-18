@@ -1,4 +1,4 @@
-function [g,info] = wilwin(g,M,L);
+function [g,info] = wilwin(g,M,L,callfun);
 %WILWIN  Compute a Wilson/WMDCT window from text or cell array.
 %   Usage: [g,info] = wilwin(g,M,L);
 %
@@ -89,10 +89,16 @@ function [g,info] = wilwin(g,M,L);
 %   See also: pgauss, firwin, gabwin
   
 % Assert correct input.
-error(nargchk(2,3,nargin));
+error(nargchk(2,4,nargin));
 
 if nargin==2
   L=[];
 end;
 
-[g,info] = comp_window(g,M,2*M,L,1,'WILWIN');
+[g,info] = comp_window(g,M,2*M,L,'WILWIN');
+
+if info.isfir==0
+  if info.istight
+    g=g*sqrt(2);
+  end;
+end;

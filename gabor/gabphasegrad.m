@@ -107,7 +107,7 @@ switch(lower(method))
 
   [b,N,L]=assert_L(Ls,Lwindow,L,a,M,'GABPHASEGRAD');
 
-  [g,info]=comp_window(g,a,M,L,0,'GABPHASEGRAD');
+  [g,info]=gabwin(g,a,M,L,'GABPHASEGRAD');
   
   f=postpad(f,L);  
   
@@ -239,7 +239,7 @@ switch(lower(method))
   L=N*a;
   tfr=1;
     
-  [g,info]=comp_window(g,a,M,L,0,'GABPHASEGRAD');
+  [g,info]=gabwin(g,a,M,L,'GABPHASEGRAD');
 
   if ~info.gauss
     error(['The window must be a Gaussian window (specified as a string or ' ...

@@ -76,8 +76,8 @@ end;
 
 [b,N,L]=assert_L(Ls,Lwindow,L,a,M,'GABDUALNORM');
 
-[g,info_g]         = comp_window(g,a,M,L,0,'GABDUALNORM');
-[gamma,info_gamma] = comp_window(gamma,a,M,L,0,'GABDUALNORM');
+[g,info_g]         = gabwin(g,a,M,L,'GABDUALNORM');
+[gamma,info_gamma] = gabwin(gamma,a,M,L,'GABDUALNORM');
  
 g=fir2long(g,L);
 gamma=fir2long(gamma,L);

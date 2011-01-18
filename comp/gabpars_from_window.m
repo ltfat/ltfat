@@ -64,5 +64,5 @@ end;
 b=L/M;
 N=L/a;
 
-[g,info]=comp_window(g,a,M,L,0,callfun);
+[g,info]=gabwin(g,a,M,L,callfun);
 

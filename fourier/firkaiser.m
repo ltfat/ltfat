@@ -18,13 +18,11 @@ function g=firkaiser(L,beta,varargin)
 %-    'wp'      - Generate a whole point even window. This is the default.
 %
 %-    'hp'      - Generate half point even window.
+%  
+%   Additionally, FIRWIN accepts flags to normalize the output. Please see the
+%   help of NORMALIZE. Default is to use 'peak' normalization.
 %
-%   FIRKAISER(L,beta,cent) will create a window centered as 
-%   specified by cent. The default (cent=0) is to return
-%   a whole-point centered window, while a value of .5 will produce a
-%   half-point even function (traditional signal processing style).
-%
-%   See also: firwin
+%   See also: firwin, normalize
 %
 %R  opsc89
 
@@ -37,10 +35,11 @@ if numel(beta)>1
 end;
 
 % Define initial value for flags and key/value pairs.
+definput.import={'normalize'};
 definput.flags.centering={'wp','hp'};
 definput.flags.stype={'normal','derived'};
 
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,keyvals]=ltfatarghelper({},definput,[{'null'},varargin]);
 
 cent=0;
 if flags.do_hp
@@ -115,3 +114,5 @@ end;
 
 % The besseli computation sometimes generates a zero imaginary component.
 g=real(g);
+
+g=normalize(g,flags.norm);
