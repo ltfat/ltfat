@@ -57,6 +57,12 @@ function [g,info]=firwin(name,M,varargin);
 %-     'hp'      - Output is half point even, as most Matlab filter
 %                  routines.
 %
+%-     'taper',t - Extend the window by a flat section in the middle. The
+%                  argument t is the ratio of the rising and falling
+%                  parts as compared to the total length of the
+%                  window. The default value of 1 means no
+%                  tapering. Accepted values lie in the range from 0 to 1.
+%
 %   Additionally, FIRWIN accepts flags to normalize the output. Please see the
 %   help of NORMALIZE. Default is to use 'peak' normalization.
 %

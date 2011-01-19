@@ -7,26 +7,26 @@ function f=involute(f,dim);
 %
 %   INVOLUTE(f,dim) will return the involution of f along dimension dim.
 %   This can for instance be used to calculate the 2D involution:
-%M
+%
 %C        f=involute(f,1);
 %C        f=involute(f,2);
-%M
+%
 %   The involution finv of f is given by
-%M
+%
 %C        finv(l+1)=conj(f(mod(-l,L)+1));
-%M
+%
 %   for $l=0,...,L-1$.
 %
 %   The relation between conjugation, Fourier transformation and involution
 %   is expressed by
-%M
+%
 %C      conj(dft(f)) == dft(involute(f))
-%M
+%
 %   for all signals f. The inverse discrete Fourier transform can be
 %   expressed by
-%M
+%
 %C      idft(f) == conj(involute(dft(f)));
-%M
+%
 %   See also:  dft, pconv
 
 % Assert correct input.

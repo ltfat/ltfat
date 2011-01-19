@@ -5,6 +5,9 @@
 %  General
 %    RMS            -  Root Mean Square norm of signal.
 %    NORMALIZE      -  Normalize signal by specified norm.
+%    RAMPUP         -  Rising ramp.
+%    RAMPDOWN       -  Falling ramp.
+%    RAMPSIGNAL     -  Ramp a signal.
 %
 %  Working with coefficients.
 %    LARGESTR       -  Keep largest ratio of coefficients.
