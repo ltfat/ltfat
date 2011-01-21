@@ -23,7 +23,6 @@
 %     DEMO_GABMULAPPR       - Approx. of time-varying system.
 %     DEMO_ZAK              - Zak transform of a Gauss function.
 %     DEMO_PHASEPLOT        - Phaseplots.
-%     DEMO_NSDGT            - Non stationary Gabor frames
 %
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net
