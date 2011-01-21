@@ -22,7 +22,7 @@ function [xo]=elitistthresh(xi,lambda,varargin)
 %
 %-     'sparse' - Returns the output as a sparse matrix.
 %  
-%   See also:  groupthreshold
+%   See also:  groupthresh
 %
 %   Demos:  demo_audioshrink
 %
