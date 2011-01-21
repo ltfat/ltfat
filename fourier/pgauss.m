@@ -27,7 +27,7 @@ function [g,tfr]=pgauss(L,varargin)
 %   the end of the line of input arguments.
 %
 %   [g,tfr] = PGAUSS( ... ) will additionally return the time-to-frequency
-%   support ratio. This is usefull if you did not specify it (i.e. used
+%   support ratio. This is useful if you did not specify it (i.e. used
 %   the 'width' or bandwidth flag).
 %
 %   The function is whole-point even. This implies that FFT(PGAUSS(L,tfr))
@@ -48,7 +48,7 @@ function [g,tfr]=pgauss(L,varargin)
 %                   corresponds to a -6 db cutoff. This is equivalent to
 %                   calling PGAUSS(L,s^2/L);
 %
-%      'bw',bw    - As for the 'width' argument, but speficies the width
+%      'bw',bw    - As for the 'width' argument, but specifies the width
 %                   in the frequency domain. The bandwidth is measured in 
 %                   normalized frequency, unless the 'fs' value is given.
 %

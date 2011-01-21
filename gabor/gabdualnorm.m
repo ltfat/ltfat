@@ -20,7 +20,7 @@ function [o1,o2]=gabdualnorm(gamma,g,a,M,L);
 %   window of the Gabor frame with window g and parameters _a and M.
 %
 %   The windows g and gamma may be vectors of numerical values, text strings
-%   or cell arrays. See the help of GABWIN for more detailts.
+%   or cell arrays. See the help of GABWIN for more details.
 %
 %   GABDUALNORM(g,gamma,a,M,L) does the same, but considers a transform
 %   length of L.

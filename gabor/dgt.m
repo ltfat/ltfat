@@ -26,7 +26,7 @@ function [c,Ls]=dgt(f,g,a,M,varargin)
 %   L=size(c,2)*a;
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %
 %   DGT(f,g,a,M,L) computes the Gabor coefficients as above, but does
 %   a transform of length L. f will be cut or zero-extended to length L before

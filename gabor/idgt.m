@@ -21,7 +21,7 @@ function [f]=idgt(coef,g,a,varargin)
 %   one used to generate the coefficients.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %
 %   If g is a row vector, then the output will also be a row vector. If c is
 %   3-dimensional, then IDGT will return a matrix consisting of one column

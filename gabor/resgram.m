@@ -31,7 +31,7 @@ function []=resgram(f,varargin)
 %
 %-  'sharp',alpha - Set the sharpness of the plot. If alpha=0 the regular
 %               spectrogram is obtained. alpha=1 means full
-%               reassignment. Anything inbetween will produce a partially
+%               reassignment. Anything in between will produce a partially
 %               sharpened picture. Default is alpha=1
 %
 %-  'nf'      - Display negative frequencies, with the zero-frequency

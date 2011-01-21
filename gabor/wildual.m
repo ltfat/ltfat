@@ -14,11 +14,11 @@ function [gamma]=wildual(g,M,L)
 %   window g, parameter M and length equal to the length of the window g.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more detailts.
+%   cell array. See the help of WILWIN for more details.
 %
 %   If the length of g is equal to 2*M, then the input window is assumed to
 %   be a FIR window. In this case, the dual window also has length of
-%   2*M. Otherwise the smallest possible transform length is choosen as the
+%   2*M. Otherwise the smallest possible transform length is chosen as the
 %   window length.
 %
 %   WILDUAL(g,M,L) does the same, but now L is used as the length of the

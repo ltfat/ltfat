@@ -6,10 +6,11 @@
 %   variant system (A) as well as of the best approximation of (A) by a 
 %   Gabor multiplier (B) on a sinusoids and an exponential sweep.
 %
-%   FIGURE 1 
+%   FIGURE 1 Spectrogram of signals
 %
-%     shows the spectogram of the ouput of the two systems applied on a 
-%     sinusoid (left) and an exponential sweep.   
+%     The figure shows the spectogram of the output of the two systems applied on a 
+%     sinusoid (left) and an exponential sweep.
+%
 
 %   AUTHOR : Peter Balazs.
 %   based on demo_gabmulappr.m 

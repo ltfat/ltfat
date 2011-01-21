@@ -3,7 +3,7 @@ function outsig=rampsignal(insig,L,varargin)
 %   Usage: outsig=rampup(insig,L);
 %
 %   RAMPSIGNAL(insig,L) will apply a ramp function of length L to the
-%   beginning and the end of the input signal. The ramp is a sinsosoidal
+%   beginning and the end of the input signal. The ramp is a sinusoide
 %   starting from zero and ending at one.
 %
 %   If L is scalar, the starting and ending ramps will be of the same

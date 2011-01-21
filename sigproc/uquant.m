@@ -10,12 +10,12 @@ function xo=uquant(xi,nbits,xmax,varargin);
 %   UQUANT takes the following flags at the end of the input arguments.
 %
 %-   's' - Signed quantization. This assumes that the signal
-%            has a both positive and negative part. Usefull for sound
-%            signals. This is the default
+           has a both positive and negative part. Useful for sound
+           signals. This is the default
 %
 %-   'u' - Unsigned quantization. Assumes the signal is positive.
 %          Negative values are silently rounded to zero.
-%          Usefull for images.
+%          Useful for images.
 %
 %   If this function is applied to a complex signal, it will simply be
 %   applied to the real and imaginary part separately.

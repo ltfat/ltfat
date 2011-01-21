@@ -34,7 +34,7 @@
 %   FIGURE 2 Kaiser-Bessel FIR window
 %
 %      This figure shows a Kaiser Bessel window and its magnitude response,
-%      and the same two plot for the canonical dual of the window.
+%      and the same two plots for the canonical dual of the window.
 %
 %   FIGURE 3 Gaussian FIR window for low redundancy
 %

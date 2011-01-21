@@ -1,5 +1,5 @@
 function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
-%GABMULAPPR_1  Best Approximation by a Gabor multiplier.
+%GABMULAPPR  Best Approximation by a Gabor multiplier.
 %   Usage:  sym=gabmulappr(T,a,M);
 %           sym=gabmulappr(T,g,a,M);
 %           sym=gabmulappr(T,ga,gs,a,M);
@@ -17,7 +17,7 @@ function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
 %         sym   : symbol
 %
 %   GABMULAPPR(T,g,a,M) will calculate the best approximation of the given
-%   matrix T in the frobenius norm by a Gabor multiplier determined by the
+%   matrix T in the Frobenius norm by a Gabor multiplier determined by the
 %   symbol sym over the rectangular time-frequency lattice determined by a
 %   and M.  The window g will be used for both analysis and synthesis.
 %   IMPORTANT: The chosen Gabor system has to be a frame sequence!

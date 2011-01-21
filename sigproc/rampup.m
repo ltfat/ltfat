@@ -3,7 +3,7 @@ function outsig=rampup(L,wintype)
 %   Usage: outsig=rampup(L);
 %
 %   RAMPUP(L) will return a rising ramp function of length L. The
-%   ramp is a sinsosoidal starting from zero and ending at one. The ramp
+%   ramp is a sinusoide starting from zero and ending at one. The ramp
 %   is centered such that the first element is always 0 and the last
 %   element is not quite 1, such that the ramp fits with following ones.
 %

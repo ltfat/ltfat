@@ -6,9 +6,9 @@ function [L,tfr]=longpar(varargin)
 %           [L,tfr]=longpar('wmdct',Ls,M);
 %
 %   [L,tfr]=LONGPAR(Ls,a,M) or [L,tfr]=LONGPAR('dgt',Ls,a,M) calculates the 
-%   mimumal transform length L for a DGT of a signal of length Ls with
+%   minimal transform length L for a DGT of a signal of length Ls with
 %   parameters _a and M. L is always larger than Ls. The parameters tfr
-%   describes the time-to-frequency ratio of the choosen lattice.
+%   describes the time-to-frequency ratio of the chosen lattice.
 %
 %   An example can most easily describe the use of LONGPAR. Assume that
 %   with wish to perform Gabor analysis of an input signal _f with a 

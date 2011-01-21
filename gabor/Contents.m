@@ -59,7 +59,7 @@
 %    WILBOUNDS      -  Frame bounds of Wilson basis.
 %    GABDUALNORM    -  Test if two windows are dual.
 %
-%  Phase gradiant methods and reassignment
+%  Phase gradient methods and reassignment
 %    GABPHASEGRAD   -  Instantaneous time/frequency from signal.
 %    GABREASSIGN    -  Reassign positive distribution.
 %

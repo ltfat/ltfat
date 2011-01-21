@@ -19,12 +19,12 @@ function gt=gabtight(p1,p2,p3,p4)
 %   with window g and parameters _a, M.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %  
 %   If the length of g is equal to M, then the input window is assumed to
 %   be a FIR window. In this case, the canonical dual window also has
 %   length of M. Otherwise the smallest possible transform length is
-%   choosen as the window length.
+%   chosen as the window length.
 %
 %   GABTIGHT(g,a,M,L) returns a window that is tight for a system of
 %   length L. Unless the tight window is a FIR window, the tight window

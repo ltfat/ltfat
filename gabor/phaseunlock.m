@@ -5,8 +5,8 @@ function cout = phaseunlock(cin,a)
 %   PHASEUNLOCK(c,a) removes phase locking from the Gabor coefficients c.
 %   The coefficient must have been obtained from a DGT with parameter _a.
 %
-%   Phaselocking the coefficients modyfies them so as if they were obtained
-%   from a time-invarient Gabor system. A filter bank produces phase locked
+%   Phaselocking the coefficients modifies them so as if they were obtained
+%   from a time-invariant Gabor system. A filter bank produces phase locked
 %   coeffiecients. 
 %
 %   See also: dgt, phaselock

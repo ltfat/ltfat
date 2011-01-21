@@ -44,9 +44,9 @@ function [g,info]=firwin(name,M,varargin);
 %
 %-      nuttall    - Nuttall window
 %
-%-      itersine -   Iterated sine window. Generates an ortonormal
+%-      itersine -   Iterated sine window. Generates an orthonormal
 %                    Wilson/WMDCT basis. This window is described in 
-%                    Wesfreid & Wickerhauser (1993) and is used in  the
+%                    Wesfreid and Wickerhauser (1993) and is used in  the
 %                    ogg sound codec. Alias: 'ogg'
 %
 %   FIRWIN understands the following flags at the end of the list of input

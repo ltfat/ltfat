@@ -3,7 +3,7 @@ function f=fftreal(f,N,dim);
 %   Usage: f=fftreal(f);
 %          f=fftreal(f,N,dim);
 %
-%   FFTREAL(f) computes the coefficients correcsponding to the positive
+%   FFTREAL(f) computes the coefficients corresponding to the positive
 %   frequencies of the FFT of the real valued input signal f.
 %   
 %   The function take exactly the same arguments as FFT. See the help on

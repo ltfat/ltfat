@@ -8,7 +8,7 @@ function [xo]=elitistthresh(xi,lambda,varargin)
 %   All coefficients within a given group are shrunk according to the value
 %   of the L1 norm of the group in comparison to the threshold lambda
 %
-%   ELITISTTHRESH(x,l ambda,'soft') will do the same using soft
+%   ELITISTTHRESH(x,lambda,'soft') will do the same using soft
 %   thresholding.
 %
 %   ELITISTTHRESH takes the following flags at the end of the line of input

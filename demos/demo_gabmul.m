@@ -3,11 +3,21 @@
 %   This script creates several different time-frequency symbols
 %   and demonstrate their effect on a random, real input signal.
 %
-%
+%   Figure 1 Cut a circle in the TF-plane
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).
-
+%
+%   Figure 2 Keep low frequencies (low-pass)
+%
+%     This figure shows the symbol (top plot, only the positive frequencies are displayed),
+%     the input random signal (bottom) and the output signal (middle).
+%
+%   Figure 3 Keep middle frequencies (band-pass)
+%
+%     This figure shows the symbol (top plot, only the positive frequencies are displayed),
+%     the input random signal (bottom) and the output signal (middle).
+%
 disp('Type "help demo_gabmul" to see a description of how this demo works.');
 
 % Setup some suitable parameters for the Gabor system
@@ -59,32 +69,22 @@ ff1=gabmul(f,symbol1,g,a);
 % plotting
 figure(1);
 
+subplot(3,1,1);
+mesh(t_axis,f_axis,symbol1(f_range,:));
+
 if isoctave
-  subplot(3,1,1);
-  mesh(t_axis,f_axis,symbol1(f_range,:));
   xlabel('Time');
   ylabel('Frequency');
-
-  subplot(3,1,2);
-  plot(real(ff1),';;');
-  
-  subplot(3,1,3);
-  plot(f,';;');
 else
-  subplot(3,1,1);
-  mesh(t_axis,f_axis,symbol1(f_range,:));
   xlabel('Time','rotation',xlabel_angle);
   ylabel('Frequency','rotation',ylabel_angle);
-%  axis tight;
-
-  subplot(3,1,2);
-  plot(real(ff1));
-%  axis tight;
-  
-  subplot(3,1,3);
-  plot(f);
-%  axis tight;
 end;
+
+subplot(3,1,2);
+plot(real(ff1));
+
+subplot(3,1,3);
+plot(f);
 
 
 % ---- Tensor product symbol, keep low frequencies.
@@ -99,36 +99,22 @@ ff2=gabmul(f,symbol2,g,a);
 
 figure(2);
 
+subplot(3,1,1);
+mesh(t_axis,f_axis,symbol2(f_range,:));
+
 if isoctave
-    
-  subplot(3,1,1);
-  mesh(t_axis,f_axis,symbol2(f_range,:));
   xlabel('Time');
   ylabel('Frequency');
-
-  subplot(3,1,2);
-  plot(real(ff2),';;');
-  
-  subplot(3,1,3);
-  plot(f,';;');
-  
 else
-  
-  subplot(3,1,1);
-  mesh(t_axis,f_axis,symbol2(f_range,:));
-%  axis tight;
   xlabel('Time','rotation',xlabel_angle);
   ylabel('Frequency','rotation',ylabel_angle);
-
-  subplot(3,1,2);
-  plot(real(ff2));
-%  axis tight;
-
-  subplot(3,1,3);
-  plot(f);
-%  axis tight;
 end;
 
+subplot(3,1,2);
+plot(real(ff2));
+
+subplot(3,1,3);
+plot(f);
 
 % ----- Tensor product symbol, keeps middle frequencies.
 t1=circshift(pgauss(M,.5),round(M/4))+circshift(pgauss(M,.5),round(3*M/4));
@@ -142,88 +128,20 @@ ff3=gabmul(f,symbol3,g,a);
 
 figure(3);
 
-if isoctave
+subplot(3,1,1);
+mesh(t_axis,f_axis,symbol3(f_range,:));
 
-  subplot(3,1,1);
-  mesh(t_axis,f_axis,symbol3(f_range,:));
+if isoctave
   xlabel('Time');
-  ylabel('Frequency');
-  
-  subplot(3,1,2);
-  plot(real(ff3),';;');
-  
-  subplot(3,1,3);
-  plot(f,';;');
-  
-else
-    
-  subplot(3,1,1);
-  mesh(t_axis,f_axis,symbol3(f_range,:));
+  ylabel('Frequency');    
+else    
   xlabel('Time','rotation',xlabel_angle);
   ylabel('Frequency','rotation',ylabel_angle);
-
-  subplot(3,1,2);
-  plot(real(ff1));
-%  axis tight;
-
-  subplot(3,1,3);
-  plot(f);
-%  axis tight;
 end;
 
-% % ---- Tensor product symbol, keep low frequencies.
-% t1=pgauss(M);
-% t2=pgauss(N);
-% 
-% symbol2=fftshift(t1*t2',2);
-% 
-% % Do the actual filtering
-% ff2=gabmul(f,symbol2,g,a);
-% 
-% 
-% figure(2);
-% subplot(3,1,1);
-% mesh(symbol2);
-% 
-% if isoctave
-%   subplot(3,1,2);
-%   plot(real(ff2),';;');
-%   
-%   subplot(3,1,3);
-%   plot(f,';;');
-% else
-%   subplot(3,1,2);
-%   plot(real(ff2));
-%   
-%   subplot(3,1,3);
-%   plot(f);
-% end;
-% 
-% % ----- Tensor product symbol, keeps middle frequencies.
-% t1=circshift(pgauss(M,.5),round(M/4))+circshift(pgauss(M,.5),round(3*M/4));
-% t2=pgauss(N);
-% 
-% symbol3=fftshift(t1*t2',2);
-% 
-% % Do the actual filtering
-% ff3=gabmul(f,symbol3,g,a);
-% 
-% 
-% figure(3);
-% subplot(3,1,1);
-% mesh(symbol3);
-% 
-% if isoctave
-%   subplot(3,1,2);
-%   plot(real(ff3),';;');
-%   
-%   subplot(3,1,3);
-%   plot(f,';;');
-% else
-%   subplot(3,1,2);
-%   plot(real(ff3));
-%   
-%   subplot(3,1,3);
-%   plot(f);
-% end;
-% 
+subplot(3,1,2);
+plot(real(ff3));
+
+subplot(3,1,3);
+plot(f);
+

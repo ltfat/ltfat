@@ -30,7 +30,7 @@ function [c,Ls]=dgtreal(f,g,a,M,varargin)
 %   L=size(c,2)*a;
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %
 %   DGTREAL(f,g,a,M,L) computes the Gabor coefficients as above, but does
 %   a transform of length L. f will be cut or zero-extended to length L before
@@ -47,7 +47,7 @@ function [c,Ls]=dgtreal(f,g,a,M,varargin)
 %   that _gd is a dual window of g.
 %
 %   See the help on DGT for the definition of the discrete Gabor
-%   transform. This routine will return the coeffients for channel
+%   transform. This routine will return the coefficients for channel
 %   frequencies from 0 to floor(M/2).
 %
 %   DGTREAL takes the following flags at the end of the line of input

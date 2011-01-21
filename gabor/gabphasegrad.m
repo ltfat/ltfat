@@ -10,14 +10,14 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   fgrad is the local group delay.
 %
 %   tgrad and fgrad measures the deviation from the current time and
-%   frequency, so a value of zero means that the instantaenous frequency
+%   frequency, so a value of zero means that the instantaneous frequency
 %   is equal to the center frequency of the considered channel.
 %
 %   tgrad is scaled such that distances are measured in samples. Similarly,
 %   fgrad is scaled such that the Nyquest frequency (this highest possible
 %   frequency) corresponds to a value of L/2.
 %
-%   The computation of tgrad and fgrad is inacurrate when the absolute value
+%   The computation of tgrad and fgrad is inaccurate when the absolute value
 %   of the Gabor coefficients is low. This is due to the fact the the phase
 %   of complex numbers close to the machine precision is almost
 %   random. Therefore, tgrad and fgrad may attain very large random values
@@ -57,7 +57,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %   [tgrad,fgrad]=GABPHASEGRAD('abs',s,g,a,difforder) uses a centered finite
 %   diffence scheme of order difforder to perform the needed numerical
-%   differentaion. Default is to use a 4th order scheme.
+%   differentiation. Default is to use a 4th order scheme.
 %
 %   Currently the 'abs' method only works if the window g is a Gaussian
 %   window specified as a string or cell array.

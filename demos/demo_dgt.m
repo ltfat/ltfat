@@ -7,7 +7,7 @@
 %     The figure shows a spectrogram of the 'bat' signal. The
 %     coefficients is shown on a linear scale.
 %
-%   FIGURE 2 Gabor coefficient of the 'bat' signal.
+%   FIGURE 2 Gabor coefficients of the 'bat' signal.
 %
 %     The figure show a set of Gabor coefficients for the 'bat' signal,
 %     computed using a DGT with a Gaussian window. The coefficients

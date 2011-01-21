@@ -3,7 +3,7 @@ function cout = symphase(cin,a)
 %   Usage:  c=symphase(c,a);
 %
 %   SYMPHASE(c,a) alters the phase of the Gabor coefficients c so as if they
-%   were obtained from a Gabor tranform based on symmetric time/frequency
+%   were obtained from a Gabor transform based on symmetric time/frequency
 %   shifts. The coefficient must have been obtained from a DGT with
 %   parameter _a.
 %

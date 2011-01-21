@@ -18,7 +18,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %C     s = abs(dgt(f,g,a,M));
 %
-%   by an interative method.
+%   by an iterative method.
 %
 %   ISGRAM(c,g,a,Ls) does as above but cuts or extends f to length Ls.
 %
