@@ -95,7 +95,7 @@ if iscell(g)
     end;
     info.istight=1;
    case firwinnames
-    g=firwin(winname,g{2},['2',g(3:end)]);
+    g=firwin(winname,g{2},'energy',g{3:end});
     info.isfir=1;
    otherwise
     error('Unsupported window type.');

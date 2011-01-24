@@ -156,7 +156,7 @@ total_args = numel(arglist);
   %Check for default arguments
   if isfield(TF_CONF.fundefs,callfun)
     s=TF_CONF.fundefs.(callfun);
-    restlist={s{:},restlist{:}};
+    restlist=[s,restlist];
   end;
 
   while ~isempty(restlist)
@@ -186,12 +186,17 @@ total_args = numel(arglist);
     % Is this name a group definition? If so, put the group in front of the parameters
     if isfield(groups,argname)
       s=groups.(argname);
-      restlist={s{:},restlist{:}};
+      restlist=[s,restlist];
       found=1;
     end;      
     
     if found==0
-      error('%s: Unknown parameter: %s',upper(callfun),argname);
+        if ischar(argname)
+          error('%s: Unknown parameter: %s',upper(callfun),argname);
+        else
+          error('%s: Parameter is not a string, it is of class %s',upper(callfun),class(argname));          
+        end;
+        
     end;
 
     %ii=ii+1;
