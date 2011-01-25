@@ -29,7 +29,8 @@ function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
 %   and gs for synthesis.
 %
 %   [sym,lowb,upb]=GABMULAPPR(...) additionally return the lower and
-%   upper bound FIXME
+%   upper Riesz bounds of the rank one operators, the projections resulting
+%   from the tensor products of the analysis and synthesis frames.
 %
 %   See also: gabmul
 %
