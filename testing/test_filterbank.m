@@ -13,8 +13,16 @@ gd = filterbankdual(g,a);
 
 f=rand(L,1);
 
-c=ufilterbank(f,g,a);
-r=iufilterbank(c,gd,a);
+c_u  = ufilterbank(f,g,a);
+c_nu = filterbank(f,g,a);
+
+res=0;
+for m=1:M
+  res=res+norm(c_nu{m}-c_u(:,m));  
+end;
+
+res
+r=iufilterbank(c_u,gd,a);
 
 norm(f-r)
 
@@ -33,8 +41,7 @@ BF
 gdreal=filterbankrealdual(g,a);
 gtreal=filterbankrealtight(g,a);
 
-rreal=2*real(iufilterbank(c,gdreal,a));
-
+rreal=2*real(iufilterbank(c_u,gdreal,a));
 [AF,BF]=filterbankrealbounds(gtreal,a);
 
 AF

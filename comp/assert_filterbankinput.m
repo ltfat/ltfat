@@ -40,8 +40,13 @@ function [a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,mustbeuniform);
       a=a*ones(M,1);
     end;
     
-    a_cell=num2cell(a);
-    lcm_a=lcm(a_cell{:});
+    % This code works in Octave, but not in Matlab, so we have to iterate
+    % through "a" to calculate the lcm.
+    %lcm_a=lcm(num2cell(a){:});
+    lcm_a=a(1);
+    for m=2:M
+      lcm_a=lcm(lcm_a,a(m));
+    end;
   end;
     
   longestfilter=max(cellfun(@numel,g));

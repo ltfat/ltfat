@@ -62,7 +62,7 @@ if all(a==a(1))
   
 else
   
-  
+   gd=nsgabdual(g,a,Ls)
   
 end;
 

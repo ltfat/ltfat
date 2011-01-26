@@ -38,7 +38,7 @@ for ii=1:M
 end;
 
 for w=1:W
-  F=fft(f(:,w));
+  F=fft(postpad(f(:,w),L));
   for m=1:M
     c(:,m,w)=ifft(sum(reshape(F.*conj(G(:,m)),N,a),2))/a;
   end;
