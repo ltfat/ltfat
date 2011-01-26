@@ -7,14 +7,14 @@
 %
 %     The figure shows a spectrogram of the 'greasy' test signal. The
 %     magnitude of the Gagor coefficients is shown on a logarithmic
-%     scale, and only the largest coefficients are shows, corresponding
+%     scale, and only the largest coefficients are shown, corresponding
 %     to a dynamic range of 50 dB.
 %
 %   FIGURE 2 Spectrogram using longer window
 %
 %     Same spectrogram as Figure 1, but now using a longer window, with a
-%     window length of 20 ms. This gives a sharper with of the partials,
-%     at the expense of a more blurred wiew along the time dimension.
+%     window length of 20 ms. This gives a sharper view of the partials,
+%     at the expense of a more blurred view along the time dimension.
 %
 %   See also: sgram, greasy
 

@@ -8,6 +8,7 @@
 %    ZAK            -  Zak transform.
 %    IZAK           -  Inverse Zak transform.
 %    COL2DIAG       -  Move columns of a matrix to diagonals.
+%    S0NORM         -  Compute the S0-norm.
 %    TFMAT          -  Matrix of transform or operator in LTFAT.
 %
 %  Gabor systems
@@ -58,7 +59,7 @@
 %    WILBOUNDS      -  Frame bounds of Wilson basis.
 %    GABDUALNORM    -  Test if two windows are dual.
 %
-%  Phase gradiant methods and reassignment
+%  Phase gradient methods and reassignment
 %    GABPHASEGRAD   -  Instantaneous time/frequency from signal.
 %    GABREASSIGN    -  Reassign positive distribution.
 %

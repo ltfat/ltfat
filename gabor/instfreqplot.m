@@ -8,7 +8,7 @@ function []=instfreqplot(f,varargin)
 %   INSTFREQPLOT(f,fs) does the same for a signal with sampling rate fs
 %   (sampled with fs samples per second);
 %
-%   The instantanous frequency contains extreme spikes in regions
+%   The instantaneous frequency contains extreme spikes in regions
 %   where the spectrogram is close to zero. These points are usually
 %   uninteresting and destroy the visibility of the plot. Use the 'thr'
 %   or 'clim' or 'climsym' options (see below) to remove these points.

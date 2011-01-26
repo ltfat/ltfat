@@ -13,7 +13,7 @@ function magresp(g,varargin);
 %   longer than the window to make an accurate plot.
 %
 %   MAGRESP(g,fs,L) MAGRESP(g,[],L) will do the same for a window
-%   intended to be used with signals with sampling rate sr. The x-axis
+%   intended to be used with signals with sampling rate fs. The x-axis
 %   will display Hz.
 %
 %   If the input window is real, only the positive frequencies will be

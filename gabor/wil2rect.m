@@ -3,8 +3,8 @@ function cout=wil2rect(cin);
 %   Usage:  c=wil2rect(c);
 %
 %   WIL2RECT(c) rearranges the coefficients c in a rectangular shape. The
-%   coeffiecients must have been obtained from DWILT. After rearrangement
-%   the coefficients are placed correcly on the time/frequency-plane.
+%   coefficients must have been obtained from DWILT. After rearrangement
+%   the coefficients are placed correctly on the time/frequency-plane.
 %
 %   The rearranged array is larger than the input array; it contains
 %   zeros on the spots where the Wilson transform is missing a DC or

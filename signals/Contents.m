@@ -2,6 +2,8 @@
 %
 %  Synthetic signals
 %    CTESTFUN       -  Complex valued test function.
+%    PINKNOISE      -  Pink noise.
+%    EXPCHIRP       -  Exponential chirp.
 %
 %  Sound signals.
 %    BAT            -  Bat chirp.

@@ -5,15 +5,15 @@ function [] = mulaclab()
 %   When starting the interface, the user is asked to choose the processed 
 %   signal, named original signal in the interface. 
 %   Possible signals are .wav files and .mat files containing decompositions 
-%   premilinarly saved using the mulaclab interface.
+%   preliminarily saved using the mulaclab interface.
 %   The interface only handle monochannel signals. So for multichannel .wav 
 %   files, the first channel is used as original signal.
 %
 %   After choosing the original signal, the user is presented with the main
-%   interface. This interface is devided in two areas: 
+%   interface. This interface is divided in two areas: 
 %
 %   * The right part of the figure contains the visualizations, which
-%   represent the sprectograms of the original and modified signals.
+%   represent the spectrograms of the original and modified signals.
 %
 %   The 'Original signal' visualization is used to display the original
 %   signal spectrogram and to graphically define the symbol of the Gabor 
@@ -39,20 +39,20 @@ function [] = mulaclab()
 %   The 'Visualization' panel contains tools used to adapt the display
 %   of the visualizations.
 %
-%   The 'Selection' panel contains tools and informations concerning the
+%   The 'Selection' panel contains tools and information concerning the
 %   multilayered selection used to graphically specify the symbol of the 
 %   multiplier.
 % 
-%   Known matlab limitations: 
+%   Known Matlab limitations: 
 %
-%   * When using matlab on linux with multiple screens, there might be a 
-%   matlab bug preventing the display of the multiplier symbol. This can be
+%   * When using Matlab on Linux with multiple screens, there might be a 
+%   Matlab bug preventing the display of the multiplier symbol. This can be
 %   solved by docking the figure.
 %
-%   * When using a matlab version prior to 7.3 (R2006b), the rectangle
+%   * When using a Matlab version prior to 7.3 (R2006b), the rectangle
 %   displayed on the 'Overview of original signal' visualization is not
 %   automatically updated when using the zoom and pan tools of the 'Zoom' 
-%   panel. It can be manually updated by reclicking on the currently
+%   panel. It can be manually updated by re-clicking on the currently
 %   selected tool or by changing the current tool.
 %%
 %   The Matlab Image Processing Toolbox is required by the mulaclab function.

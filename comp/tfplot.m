@@ -30,7 +30,7 @@ if flags.do_nf
       yr=-keyvals.fs/2:keyvals.fs/M:keyvals.fs/2;
     else
 %yr=-L/2:b:L/2;      
-      yr=linspce(-1,1,M);
+      yr=linspace(-1,1,M);
     end;
   end;
 else

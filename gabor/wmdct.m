@@ -23,7 +23,7 @@ function [c,Ls]=wmdct(f,g,M,L)
 %   g must be whole-point even.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more detailts.
+%   cell array. See the help of WILWIN for more details.
 %
 %   WMDCT(f,g,M,L) computes the MDCT transform as above, but does
 %   a transform of length L. f will be cut or zero-extended to length L

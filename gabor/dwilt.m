@@ -22,7 +22,7 @@ function [c,Ls]=dwilt(f,g,M,L)
 %   transform. If f is a matrix, the transformation is applied to each column.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more detailts.
+%   cell array. See the help of WILWIN for more details.
 %
 %   DWILT(f,g,M,L) computes the Wilson transform as above, but does
 %   a transform of length L. f will be cut or zero-extended to length L before

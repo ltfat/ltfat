@@ -15,12 +15,12 @@ function gd=gabdual(g,a,M,L)
 %   frame with window g and parameters _a, M.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %
 %   If the length of g is equal to M, then the input window is assumed to
 %   be a FIR window. In this case, the canonical dual window also has
 %   length of M. Otherwise the smallest possible transform length is
-%   choosen as the window length.
+%   chosen as the window length.
 %
 %   GABDUAL(g,a,M,L) returns a window that is the dual window for a system
 %   of length L. Unless the dual window is a FIR window, the dual window

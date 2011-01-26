@@ -20,7 +20,7 @@ function [c,Ls]=wmdct2(f,g1,p3,p4,p5)
 %
 %   For each dimension, the length of the transform will be the smallest
 %   possible that is larger than the length of the signal along that
-%   dimension. f will be appropriatly zero-extended.
+%   dimension. f will be appropriately zero-extended.
 %
 %   All windows must be whole-point even.
 % 

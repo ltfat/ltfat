@@ -31,6 +31,16 @@ function ltfatmex(varargin)
 %   TESTING: NA
 %   REFERENCE: NA
 
+% Verify that ltfatarghelper is in path
+if ~exist('ltfatarghelper','file')
+  disp(' ');
+  disp('--- LTFAT - The Linear Time Frequency Analysis toolbox. ---');
+  disp(' ')
+  disp('To start the toolbox, call LTFATSTART as the first command.');
+  disp(' ');
+  return;
+end;
+
 bp=mfilename('fullpath');
 bp=bp(1:end-8);
 
@@ -174,6 +184,8 @@ end;
 
 function status=compile_ltfat(bp)
 
+  uses_lapack = {'comp_gabdual_long','comp_gabtight_long'};
+  
 % If we exit early, it is because of an error, so set status=1
 status=1;
 
@@ -240,6 +252,7 @@ else
     endchar=1;
 end;
 
+
 for ii=1:numel(L)
     filename = L(ii).name;
     objname  = [filename(1:end-endchar),ext];
@@ -247,6 +260,16 @@ for ii=1:numel(L)
     
     % Make-like behaviour: build only the files where the src file is
     % newer than the object file, or the object file is missing.
+    
+    if ~isoctave && strcmp(mexext,'mexa64')
+      
+      % We don't know how to call LAPACK properly for this platform, so
+      % if a mex-file uses LAPACK, skip its compilation
+      if any(strcmp(uses_lapack,filename(1:end-endchar-1)))
+        disp(['Skipping ',filename]);
+        continue
+      end;
+    end;
     
     if isempty(objdirinfo) || (objdirinfo.datenum<L(ii).datenum)
         
@@ -278,6 +301,7 @@ for ii=1:numel(L)
                 
                 
             else
+              
                 mex('-I../thirdparty',...
                     '-I.','-I../src','-L../src','-L../lib',...
                     filename,'mex-memalloc.o',...

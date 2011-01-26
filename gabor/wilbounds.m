@@ -14,11 +14,11 @@ function [AF,BF]=wilbounds(g,M,varargin)
 %   of the Wilson basis with window g and M channels.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more detailts.
+%   cell array. See the help of WILWIN for more details.
 %
 %   If the length of g is equal to 2*M, then the input window is assumed to
 %   be a FIR window. In this case, the dual window also has length of
-%   g. Otherwise the smallest possible transform length is choosen as the
+%   g. Otherwise the smallest possible transform length is chosen as the
 %   window length.
 %
 %   If the optional parameter L is specified, the window is cut or
@@ -43,7 +43,7 @@ if rem(M,1)~=0
   error('M must be an integer.')
 end;
 
-[g,info]=comp_window(g,M,2*M,L,1,'WILBOUNDS');
+[g,info]=wilwin(g,M,L,'WILBOUNDS');
 Lwindow=length(g);
 
 [b,N,L]=assert_L(Lwindow,Lwindow,L,M,2*M,'WILBOUNDS');

@@ -6,7 +6,7 @@ function f=idft(f,N,dim)
 %   This function computes a normalized inverse discrete Fourier transform.
 %   This is nothing but a scaled version of the output from IFFT. The
 %   function takes exactly the same arguments as IFFT. See the help on IFFT
-%   for a throurough description.
+%   for a thorough description.
 %
 %   See also:  dft
 

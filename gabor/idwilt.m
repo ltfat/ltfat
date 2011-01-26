@@ -14,7 +14,7 @@ function [f]=idwilt(c,g,Ls)
 %   The number of channels is deduced from the size of the coefficient array c.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more detailts.
+%   cell array. See the help of WILWIN for more details.
 %  
 %   IDWILT(f,g,Ls) does the same, but cuts of zero-extend the final
 %   result to length Ls.
@@ -38,7 +38,7 @@ L=M*N;
 
 assert_L(L,0,L,a,2*M,'IDWILT');
 
-[g,info]=comp_window(g,a,2*M,L,1,'IDWILT');
+[g,info]=wilwin(g,M,L,'IDWILT');
 
 wasrow=0;
 if (ndims(c)==2 && info.wasrow)

@@ -1,4 +1,4 @@
-function [g,info] = gabwin(g,a,M,L);
+function [g,info] = gabwin(g,a,M,L,callfun);
 %GABWIN  Compute a Gabor window from text or cell array.
 %   Usage: [g,info] = gabwin(g,a,M,L);
 %
@@ -25,7 +25,7 @@ function [g,info] = gabwin(g,a,M,L);
 %   In these cases, a long window is generated with a length of L.
 %
 %   It is also possible to specify one of the window names from FIRWIN. In
-%   such a case, GABWIN will generate the speficied FIR window with a length
+%   such a case, GABWIN will generate the specified FIR window with a length
 %   of M.
 %
 %   The window can also be specified as cell array. The possibilities are:
@@ -90,10 +90,16 @@ function [g,info] = gabwin(g,a,M,L);
 %   See also: pgauss, firwin, wilwin
   
 % Assert correct input.
-error(nargchk(3,4,nargin));
+error(nargchk(3,5,nargin));
 
 if nargin==3
   L=[];
 end;
 
-[g,info] = comp_window(g,a,M,L,0,'GABWIN');
+[g,info] = comp_window(g,a,M,L,'GABWIN');
+
+if (info.isfir)  
+  if info.istight
+    g=g/sqrt(2);
+  end;  
+end;

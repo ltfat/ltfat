@@ -1,4 +1,4 @@
-%DEMO_AUDIOSHRINK
+%DEMO_AUDIOSHRINK  Decomposition into tonal and transient parts
 %
 %   This demos shows how to do audio coding and "tonal + transient"
 %   decomposition using group lasso shrinkage of two WMDCT transforms

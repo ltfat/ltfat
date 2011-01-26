@@ -1,4 +1,4 @@
-%DEMO_AUDIODENOISE
+%DEMO_AUDIODENOISE  Audio denoising using thresholding
 %
 %   This demos shows how to do audio denoising using thresholding
 %   of WMDCT transform.

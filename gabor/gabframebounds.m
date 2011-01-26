@@ -20,7 +20,7 @@ function [AF,BF]=gabframebounds(g,a,M,L)
 %   of the Gabor frame with window g, and parameters _a, M. 
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %  
 %   If the optional parameter L is specified, the window is cut or
 %   zero-extended to length L.

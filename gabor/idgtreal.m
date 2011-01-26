@@ -22,21 +22,18 @@ function [f]=idgtreal(coef,g,a,M,varargin)
 %   takes an additional parameter as opposed to IDGT.
 %
 %   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more detailts.
+%   cell array. See the help of GABWIN for more details.
 %  
 %   IDGTREAL(c,g,a,M,Ls) does as above but cuts or extends f to length Ls.
 %
 %   For perfect reconstruction, the window used must be a dual window of the
 %   one used to generate the coefficients.
 %
-%   The window g may be a text string decribing the window. The following
-%   types are recognized
-%
 %   If g is a row vector, then the output will also be a row vector. If c is
 %   3-dimensional, then IDGTREAL will return a matrix consisting of one column
 %   vector for each of the TF-planes in c.
 %
-%   See the help on IDGT for the precise definiton of the inverse Gabor
+%   See the help on IDGT for the precise definition of the inverse Gabor
 %   transform.
 %
 %   IDGTREAL takes the following flags at the end of the line of input
@@ -104,7 +101,7 @@ assert_squarelat(a,M,1,'IDGTREAL');
 
 L=N*a;
 
-g=comp_window(g,a,M,L,0,'IDGTREAL');
+g=gabwin(g,a,M,L,'IDGTREAL');
 
 if ~isreal(g)
   error('Window must be real-valued.');

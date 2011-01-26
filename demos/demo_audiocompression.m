@@ -1,4 +1,4 @@
-%DEMO_AUDIOCOMPRESSION
+%DEMO_AUDIOCOMPRESSION  Audio compression using N-term approx.
 %
 %   This demos shows how to do audio compression using best N-term
 %   approximation of WMDCT transform.
@@ -13,7 +13,7 @@
 %
 %   The corresponding approximated signal is computed with inverse WMDCT.
 %
-%   FIGURE 1 RATE-DISTORTION
+%   FIGURE 1 Rate-distortion
 %
 %     The figure shows the output Signal to Noise Ratio (SNR) as a function of
 %     the number of retained coefficients.

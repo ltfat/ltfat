@@ -6,7 +6,7 @@ function fd=pderiv(f,dim,difforder)
 %
 %   PDERIV(f) will compute the derivative of f using a using a 4th order
 %   centered finite difference scheme. f must have been obtained by a
-%   regular sampling. If f is a matrix, the derivate along the columns will
+%   regular sampling. If f is a matrix, the derivative along the columns will
 %   be found.
 %
 %   PDERIV(f,dim) will do the same along dimension dim.

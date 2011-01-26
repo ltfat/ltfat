@@ -7,7 +7,7 @@ function g=fir2long(g,Llong);
 %   than MIDDLEPAD.
 %
 %   FIR2LONG can also be used to extend a FIR window to a longer FIR window,
-%   for instance in order to satisfy that the window length is divisable by
+%   for instance in order to satisfy that the window length is divisible by
 %   the number of channels.
 %
 %   See also:  long2fir, middlepad

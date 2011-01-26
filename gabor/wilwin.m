@@ -1,4 +1,4 @@
-function [g,info] = wilwin(g,M,L);
+function [g,info] = wilwin(g,M,L,callfun);
 %WILWIN  Compute a Wilson/WMDCT window from text or cell array.
 %   Usage: [g,info] = wilwin(g,M,L);
 %
@@ -20,12 +20,12 @@ function [g,info] = wilwin(g,M,L);
 %
 %-      'dualgauss' - Riesz dual of Gaussian window with optimal concentration.
 %
-%-      'tight'     - Window generating an ortonormal basis
+%-      'tight'     - Window generating an orthonormal basis
 %
 %   In these cases, a long window is generated with a length of L.
 %
 %   It is also possible to specify one of the window names from FIRWIN. In
-%   such a case, WILWIN will generate the speficied FIR window with a length
+%   such a case, WILWIN will generate the specified FIR window with a length
 %   of M.
 %
 %   The window can also be specified as cell array. The possibilities are:
@@ -35,7 +35,7 @@ function [g,info] = wilwin(g,M,L);
 %-    {'dual',...}  - Dual window of whatever follows. See the
 %                   examples below.
 %
-%-    {'tight',...} - Ortonormal window of whatever follows.
+%-    {'tight',...} - Orthonormal window of whatever follows.
 %
 %   It is also possible to specify one of the window names from FIRWIN as
 %   the first field in the cell array. In this case, the remaining
@@ -89,10 +89,16 @@ function [g,info] = wilwin(g,M,L);
 %   See also: pgauss, firwin, gabwin
   
 % Assert correct input.
-error(nargchk(2,3,nargin));
+error(nargchk(2,4,nargin));
 
 if nargin==2
   L=[];
 end;
 
-[g,info] = comp_window(g,M,2*M,L,1,'WILWIN');
+[g,info] = comp_window(g,M,2*M,L,'WILWIN');
+
+if info.isfir==0
+  if info.istight
+    g=g*sqrt(2);
+  end;
+end;

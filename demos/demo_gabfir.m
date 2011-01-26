@@ -34,7 +34,7 @@
 %   FIGURE 2 Kaiser-Bessel FIR window
 %
 %      This figure shows a Kaiser Bessel window and its magnitude response,
-%      and the same two plot for the canonical dual of the window.
+%      and the same two plots for the canonical dual of the window.
 %
 %   FIGURE 3 Gaussian FIR window for low redundancy
 %
@@ -63,14 +63,14 @@ M=2*a;
 % of the correct result.
 LLong=M*16;
 
-% Compute the square root of a Hanning window. This window is a tight
-% window when used with a Gabor system of redundancy two, and a value of
-% 'a' equal to half the length of the window. This is called a
-% 'two-overlapping' window.
-g=firwin('sqrthann',M);
+% Compute the iterated sine window. This window is a tight window when used
+% with a Gabor system where the number of channels is larger than or
+% equal to the length of the window. To make it tight, it must have
+% normalized energy (the l^2 norm).
+g=firwin('itersine',M,'energy');
 
 disp('');
-disp('Reconstruction error using sqrthann window, should be close to zero:');
+disp('Reconstruction error using itersine window, should be close to zero:');
 gabdualnorm(g,g,a,M,LLong)
 
 figure(1);
@@ -79,13 +79,13 @@ figure(1);
 subplot(2,1,1);
 plot(fftshift(g));
 legend('off');
-title('SQRT Hanning window FIR window.');
+title('itersine FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
 % the window on a Db scale).
 subplot(2,1,2);
-magresp(g,'L',LLong);
-title('Magnitude response of SQRT Hanning window.');
+magresp(g,'fir');
+title('Magnitude response of itersine window.');
 
 % -------- second part: True, short FIR window -------------------------
 
@@ -94,7 +94,7 @@ title('Magnitude response of SQRT Hanning window.');
 % same support. This case is explicitly supported by gabdual
 
 % Set up a nice Kaiser-Bessel window.
-g=firkaiser(M,3.2);
+g=firkaiser(M,3.2,'energy');
 
 % Compute the canonical dual window
 gd=gabdual(g,a,M);

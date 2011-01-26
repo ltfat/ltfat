@@ -18,7 +18,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %C     s = abs(dgt(f,g,a,M));
 %
-%   by an interative method.
+%   by an iterative method.
 %
 %   ISGRAM(c,g,a,Ls) does as above but cuts or extends f to length Ls.
 %
@@ -122,7 +122,7 @@ if flags.do_int
   c=constructphase(s,g,a);
 end;
 
-g  = comp_window(g,a,M,L,0,'ISGRAM');
+g  = gabwin(g,a,M,L,'ISGRAM');
 
 gd = gabdual(g,a,M);
 

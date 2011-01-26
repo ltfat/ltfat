@@ -11,7 +11,7 @@
 %    LTFATSETDEFAULTS -  Get the default values for a function
 %    ISOCTAVE         -  True if interpreter is Octave
 %
-%  Graphical user intefaces
+%  Graphical user interfaces
 %    MULACLAB         -  Short Time-Fourier transform modification in Matlab
 %
 %  For help, bug reports, suggestions etc. please send email to
