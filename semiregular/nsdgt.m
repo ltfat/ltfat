@@ -18,10 +18,10 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %   number of signal channels.
 %
 %   The nonstationnary Gabor theory extends standard Gabor theory by 
-%   enabling the evolution of the window over time. It is therefor
+%   enabling the evolution of the window over time. It is therefore
 %   necessary to specify a set of windows instead of a single window. 
 %   This is done by using a cell array for g. In this cell array, the nth 
-%   element g{n} is a row vetor specifying the nth window.
+%   element g{n} is a column vetor specifying the nth window.
 %
 %   The resulting coefficients also require a storage in a cell array, as 
 %   the number of frequency channels is not constant over time. More 

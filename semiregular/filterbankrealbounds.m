@@ -17,46 +17,54 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[M,longestfilter]=assert_filterbankinput(g,a);
+[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
 
 
 definput.keyvals.L=[];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 if isempty(L)
-  L=ceil(longestfilter/a)*a;
+  L=ceil(longestfilter/lcm_a)*lcm_a;
 end;
-
-N=L/a;
-
-G=zeros(L,M);
-for ii=1:M
-  G(:,ii)=fft(fir2long(g{ii},L));
-end;
-
-Ha=zeros(a,M);
-Hb=zeros(a,M);
 
 AF=Inf;
 BF=0;
-
-for w=0:N-1
-  idx_a = mod(w-(0:a-1)*N,L)+1;
-  idx_b = mod((0:a-1)*N-w,L)+1;
-  Ha = G(idx_a,:);
-  Hb = conj(G(idx_b,:));
   
-  % A 'real' is needed here, because the matrices are known to be
-  % Hermitian, but sometimes Matlab/Octave does not recognize this.  
-  work=real(eig(real(Ha*Ha'+Hb*Hb')));
+if all(a==a(1))
+  % Uniform filterbank, use polyphase representation
+  a=a(1);
+  
+  N=L/a;
 
-  AF=min(AF,min(work));
-  BF=max(BF,max(work));
+  G=zeros(L,M);
+  for ii=1:M
+    G(:,ii)=fft(fir2long(g{ii},L));
+  end;
+  
+  Ha=zeros(a,M);
+  Hb=zeros(a,M);
+  
+  for w=0:N-1
+    idx_a = mod(w-(0:a-1)*N,L)+1;
+    idx_b = mod((0:a-1)*N-w,L)+1;
+    Ha = G(idx_a,:);
+    Hb = conj(G(idx_b,:));
+    
+    % A 'real' is needed here, because the matrices are known to be
+    % Hermitian, but sometimes Matlab/Octave does not recognize this.  
+    work=real(eig(real(Ha*Ha'+Hb*Hb')));
+    
+    AF=min(AF,min(work));
+    BF=max(BF,max(work));
+    
+  end;
+  
+  AF=AF/a;
+  BF=BF/a;
+  
+else
   
 end;
-    
-AF=AF/a;
-BF=BF/a;
 
 if nargout<2
   % Avoid the potential warning about division by zero.

@@ -17,40 +17,54 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[M,longestfilter]=assert_filterbankinput(g,a);
+[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
 
 definput.keyvals.L=[];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 if isempty(L)
-  L=ceil(longestfilter/a)*a;
+  L=ceil(longestfilter/lcm_a)*lcm_a;
 end;
 
-G=zeros(L,M);
-for ii=1:M
-  G(:,ii)=fft(fir2long(g{ii},L));
-end;
 
-N=L/a;
-
-gd=zeros(N,M);
-
-for w=0:N-1
-  idx = mod(w-(0:a-1)*N,L)+1;
-  H = G(idx,:);
-        
-  H=pinv(H)';
+if all(a==a(1))
+  % Uniform filterbank, use polyphase representation
+  a=a(1);
   
-  gd(idx,:)=H;
-end;
+  G=zeros(L,M);
+  for ii=1:M
+    G(:,ii)=fft(fir2long(g{ii},L));
+  end;
   
-gd=ifft(gd)*a;
-
-if isreal(g)
-  gd=real(gd);
+  N=L/a;
+  
+  gd=zeros(N,M);
+  
+  for w=0:N-1
+    idx = mod(w-(0:a-1)*N,L)+1;
+    H = G(idx,:);
+    
+    H=pinv(H)';
+    
+    gd(idx,:)=H;
+  end;
+  
+  gd=ifft(gd)*a;
+  
+  if isreal(g)
+    gd=real(gd);
+  end;
+  
+  gdout=cell(1,M);
+  for m=1:M
+    gdout{m}=gd(:,m);
+  end;
+  
+else
+  
+  
+  
 end;
 
-gdout=cell(1,M);
-for m=1:M
-  gdout{m}=gd(:,m);
-end;
+
+

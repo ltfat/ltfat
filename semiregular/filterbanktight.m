@@ -14,42 +14,51 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[M,longestfilter]=assert_filterbankinput(g,a);
+[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
 
 definput.keyvals.L=[];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 if isempty(L)
-  L=ceil(longestfilter/a)*a;
+  L=ceil(longestfilter/lcm_a)*lcm_a;
 end;
 
-G=zeros(L,M);
-for ii=1:M
-  G(:,ii)=fft(fir2long(g{ii},L));
-end;
-
-N=L/a;
-
-H=zeros(a,M);
-gt=zeros(N,M);
-
-for w=0:N-1
-  idx = mod(w-(0:a-1)*N,L)+1;
-  H = G(idx,:);
-      
-  [U,S,V]=svd(H,'econ');
-  H=U*V';  
-
-  gt(idx,:)=H;
-end;
+if all(a==a(1))
+  % Uniform filterbank, use polyphase representation
+  a=a(1);
   
-gt=ifft(gt)*sqrt(a);  
+  G=zeros(L,M);
+  for ii=1:M
+    G(:,ii)=fft(fir2long(g{ii},L));
+  end;
+  
+  N=L/a;
+  
+  H=zeros(a,M);
+  gt=zeros(N,M);
+  
+  for w=0:N-1
+    idx = mod(w-(0:a-1)*N,L)+1;
+    H = G(idx,:);
+    
+    [U,S,V]=svd(H,'econ');
+    H=U*V';  
+    
+    gt(idx,:)=H;
+  end;
+  
+  gt=ifft(gt)*sqrt(a);  
 
-if isreal(g)
-  gt=real(gt);
-end;
-
-gtout=cell(1,M);
-for m=1:M
-  gtout{m}=gt(:,m);
+  if isreal(g)
+    gt=real(gt);
+  end;
+  
+  gtout=cell(1,M);
+  for m=1:M
+    gtout{m}=gt(:,m);
+  end;
+  
+else
+  
+  
 end;
