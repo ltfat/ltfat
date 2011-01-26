@@ -1,6 +1,6 @@
 % LTFAT - Gabor analysis
 %
-%  Peter L. Soendergaard, 2007 - 2010.
+%  Peter L. Soendergaard, 2007 - 2011.
 %
 %  Basic Time/Frequency analysis
 %    TCONV          -  Twisted convolution.
