@@ -3,6 +3,8 @@
 %  Florent Jaillet and Peter L. Soendergaard, 2010
 %
 %  Filter banks
+%    UFILTERBANK          - Uniform Filter bank
+%    IUFILTERBANK         - Inverse Uniform filter bank
 %    FILTERBANK           - Filter bank
 %    IFILTERBANK          - Inverse filter bank
 %    FILTERBANKDUAL       - Canonical dual filters
@@ -13,6 +15,10 @@
 %    FILTERBANKREALBOUNDS - Frame bounds of filter bank for real signals
 %
 %  Gabor systems with time varying windows
+%    UNSDGT           - Uniform Non-stationary DGT
+%    IUNSDGT          - Uniform Inverse NSDGT
+%    UNSDGTREAL       - Uniform Non-stationary DGT for real-valued signals
+%    IUNSDGTREAL      - Inverse UNSDGTREAL
 %    NSDGT            - Non-stationary DGT
 %    INSDGT           - Inverse NSDGT
 %    NSDGTREAL        - Non-stationary DGT for real-valued signals

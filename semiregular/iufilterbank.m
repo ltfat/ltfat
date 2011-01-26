@@ -1,8 +1,8 @@
-function f=ifilterbank(c,g,a);  
-%IFILTERBANK  Filter bank inversion
-%   Usage:  f=ifilterbank(c,g,a);
+function f=iufilterbank(c,g,a);  
+%IUFILTERBANK  Filter bank inversion
+%   Usage:  f=iufilterbank(c,g,a);
 %
-%   IFILTERBANK(c,g,a) will synthesize a signal f from the coefficients c
+%   IUFILTERBANK(c,g,a) will synthesize a signal f from the coefficients c
 %   using the filters stores in g for a channel subsampling rate of _a (the
 %   hop-size).
 %

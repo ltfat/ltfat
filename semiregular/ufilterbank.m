@@ -1,8 +1,8 @@
-function c=filterbank(f,g,a);  
-%FILTERBANK   Apply filterbank
-%   Usage:  c=filterbank(f,g,a);
+function c=ufilterbank(f,g,a);  
+%UFILTERBANK   Apply Uniform filterbank
+%   Usage:  c=ufilterbank(f,g,a);
 %
-%   FILTERBANK(f,g,a) applies the filter given in g to the signal f. Each
+%   UFILTERBANK(f,g,a) applies the filter given in g to the signal f. Each
 %   subband will be subsampled by a factor of _a (the hop-size). If f is a
 %   matrix, the transformation is applied to each column.
 %
@@ -14,7 +14,7 @@ function c=filterbank(f,g,a);
 %   matrix, the output will be 3-dimensional, and the third dimension
 %   will correspond to the columns of the input signal.
 %
-%   See also: ifilterbank, filterbankdual
+%   See also: iufilterbank, filterbankdual
 %
 %R  bohlfe02
   
@@ -24,7 +24,7 @@ end;
 
 [M,longestfilter]=assert_filterbankinput(g,a);
 
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'FILTERBANK',0);
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UFILTERBANK',0);
 
 L=ceil(max(Ls,longestfilter)/a)*a;
 
