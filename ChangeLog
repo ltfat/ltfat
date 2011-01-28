@@ -1,22 +1,90 @@
-Version 0.97 
+Version 0.98 28/1 2011
+
+	* The flags 'freqinv' and 'timeinv' can be passed to the DGT, IDGT,
+	DGTREAL and IDGTREAL to select a time- or frequency-invariant phase.
+
+	* Three new functions to ramp a signal (create a smooth transition
+	from 0 to 1), RAMPUP, RAMPDOWN and RAMPSIGNAL.
+
+	* nuttall window added to FIRWIN. General cleanup of FIRWIN. If is
+	now possible to taper the window in the middle.
+
+	* Support for different normalization of the function in all
+	window functions. This is done through the function NORMALIZE.
+
+	* PGAUSS takes options for shifting the center frequency and
+	specifying the bandwidth, in both samples or Hz.
+
+	* PINKNOISE: Pink noise generator.
+
+	* ISGRAM: Spectrogram reconstruction using the classical iterative
+	method by Griffin and Lim.
+
+	* ELITISTHRESH: Elitist LASSO thresholding.
+
+	* PRECT and PSINC: periodic rectangular and periodic Sinc function.
+
+Version 0.97.2:
+
+	* The GPC source code is now distributed with LTFAT. A popup
+	dialog has been added to mulaclab to explan the license
+	conditions.
+
+	* The algorithm for computing dgtreal with a FIR window is now
+          implemented in C.
+
+Version 0.97.1:
+
+	* Support for Octave on Windows XP.
+
+	* It is now possible to specify various targets and commands in
+	ltfatmex.
+
+Version 0.97
 
 	* Toolbox is now built upon a standalone C library.
 
-	* 
+	* The 'mulaclab' is a graphical user interface for
+          manipulating the spectrogram of a signal. The gui works only
+          in Matlab.
+
+	* All functions in the LTFAT C library are now available in
+          both single and double precision
+
+	* Compilation and interfaces for both Matlab and Octave
+          interfaces now works on Windows XP.
+
+ 	* It is now possible to supply a window described by a text
+          string or a cell array to all relevant functions. See the
+          help on gabwin or wilwin for a description of the
+          possibilities.
+
+	* Much better support for optional arguments in functions, and
+          for setting default at startup. See the function
+          ltfatsetdefaults, ltfatgetdefaults and ltfatarghelper
+
+        * GABRIESZBOUNDS: compute Gabor Riesz bounds for a Gabor Riesz
+            sequence.
+
+	* WIL2RECT and RECT2WIL: arrange Wilson coefficients in a
+          rectangular shape (with holes) at the correct position in
+          the TF-plane.
+
+        * PEVEN and PODD extracts the even and odd part of a signal.
 
 Version 0.96 12/1 2009 svn no 728
 	* Matlab MEX compilation now works under Windows. See the
 	instructions in the INSTALL file.
-	
+
 	* Speed optimizations in the C-code used by DGT, DWILT and MDCT
 	and their inverses.
-	
+
 	* New functions DGTREAL and IDGTREAL works with the positive
 	frequencies of the DGT of real valued signals.
 
 	* New functions FFTREAL computes only the positive frequencies of
 	the FFT of a real valued input signal.
-	
+
 	* More systematic naming of functions:
 		CANDUAL -> GABDUAL
 		CANTIGHT -> GABTIGHT
@@ -25,20 +93,20 @@ Version 0.96 12/1 2009 svn no 728
 		GFBOUNDS -> GABFRAMEBOUNDS and GABRIESZBOUNDS
 		TF_ADAPTLASSO -> GABELITISTLASSO
 		TF_GROUPLASSO -> GABGROUPLASSO
-			
+
 	* Reassignment is a method for sharpening the spectrogram. Support
 	for reassignment is included in the new function REASSIGN and an
 	easy to use plot RESGRAM.
 
 	* Easy to use plot for plotting instantantaneous frequency:
 	INSTFREQPLOT
-	
+
 	* Three different methos for computing instantaneous time and
 	frequency: INSTTFDGT, INSTTFPHASE and INSTTFABS.
 
 	* General speedup of many of the SPREAD* routines based on speedup
 	in COL2DIAG and more efficient algorithms for sparse matrices.
-	
+
 	* COL2DIAG provides the basic coordinate change needed for
 	efficient implementation of spreading function methods. COL2DIAG
 	has a C-implementation.
@@ -54,17 +122,17 @@ Version 0.96 12/1 2009 svn no 728
 
 	* Dynamic range in SGRAM and RESGRAM is now specified by the
 	'dynrange' parameter instead of previously 'range'.
-	
+
 	* greasylong and doppler signals added.
 
 	* Periodic Heaviside function added, PHEAVISIDE.
 
 	* Simple exponential wave added as EXPMODE.
-	
+
 Version 0.95 6/3 2008 svn no. 595
 
 	* DCT based resampling function.
-	
+
 Version 0.94 24/10 2007 svn no. 556
 
 	* Numerically stable computation of Hermite functions. Thanks to
@@ -81,14 +149,14 @@ Version 0.94 24/10 2007 svn no. 556
 
 	* Special support in candual for windows shorter than the number
 	of channels.
-	
+
 	* The configure style system has been removed. Use ltfatmex instead.
-	
+
 	* phaseplot now uses the phaselocked dgt by default.
 
-	
+
 Version 0.93 10/8 2007 svn no. 504
-	
+
 	* Easy compilation of Mex/Octave interfaces by 'ltfatmex' command
 
 	* Bug fixed for Wilson bases.
