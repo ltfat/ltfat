@@ -138,14 +138,16 @@ Modd   = M-mod(M+1,2);
 Meven  = M-mod(M,2);
 xodd   = ((0:Modd-1)'+cent)/Modd;
 xeven  = ((0:Meven-1)'+cent)/Meven;
+do_sqrt=0;
 switch name    
  case {'hanning','hann'}
   g=(0.5+0.5*cos(2*pi*x));
   info.ispu=1;
   
  case {'sine','cosine','sqrthann'}
-  g=sqrt(firwin('hanning',M,varargin{:}));
+  g=firwin('hanning',M,varargin{:});
   info.issqpu=1;
+  do_sqrt=1;
   
  case {'hamming'}  
   if cent==0
@@ -166,16 +168,22 @@ switch name
   info.ispu=1;
   
  case {'sqrthalfsquare','sqrthalfrect'}
-  g=sqrt(ones(Meven/2,1));
+  g=ones(Meven/2,1);
   info.issqpu=1;
+  do_sqrt=1;
   
  case {'tria','triangular','bartlett'}
   g=pbspline(M,1,Meven/2,flags.centering);
   info.ispu=1;
   
  case {'sqrttria'}
-  g=sqrt(pbspline(M,1,Meven/2,flags.centering));
+  g=pbspline(M,1,Meven/2,flags.centering);
   info.issqpu=1;
+  do_sqrt=1;
+  if flags.do_hp && rem(M,2)==1
+    % Remove small error in this case
+    g((M+1)/2)=0;
+  end;
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
@@ -194,6 +202,12 @@ end;
 % Add zeros if needed.
 if length(g)<M
   g=middlepad(g,M,flags.centering);
+end;
+
+% Do sqrt if needed. This must be done /after/ middlepad, so do it at
+% this point.
+if do_sqrt
+  g=sqrt(g);
 end;
 
 if keyvals.taper<1
