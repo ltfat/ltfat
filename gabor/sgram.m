@@ -4,10 +4,13 @@ function varargout=sgram(f,varargin)
 %          sgram(f,fs,op1,op2, ... );
 %          C=sgram(f, ... );
 %
-%   SGRAM(f) plots a spectrogram of f using a DGT.
+%   SGRAM(f) plots a spectrogram of f using a Discrete Gabor Transform (DGT).
 %
 %   SGRAM(f,fs) does the same for a signal with sampling rate fs (sampled
 %   with fs samples per second);
+%
+%   SGRAM(f,fs,dynrange) additionally limits the dynamic range of the
+%   plot. See the description of the 'dynrange' parameter belowe.
 %
 %   C=SGRAM(f, ... ) returns the image to be displayed as a matrix. Use this
 %   in conjunction with IMWRITE etc. These coefficients are ONLY intended to
@@ -16,8 +19,15 @@ function varargout=sgram(f,varargin)
 %   IDGTREAL functions.
 %
 %   Additional arguments can be supplied like this:
-%   SGRAM(f,'nf','tfr',2,'log'). The arguments must be character strings
-%   possibly followed by an argument:
+%
+%C      SGRAM(f,fs,'dynrange',50).
+%
+%   The arguments must be character strings possibly followed by an argument:
+%
+%-  'dynrange',r - Limit the dynamical range to r by using a colormap in
+%               the interval [chigh-r,chigh], where chigh is the highest
+%               value in the plot. The default value of [] means to not
+%               limit the dynamical range.
 %
 %-  'db'      - Apply 20*log10 to the coefficients. This makes it possible to
 %               see very weak phenomena, but it might show too much noise. A
@@ -49,9 +59,6 @@ function varargout=sgram(f,varargin)
 %
 %-  'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
 %               values are passed to IMAGESC. See the help on IMAGESC.
-%
-%-  'dynrange',r - Use a colormap in the interval [chigh-r,chigh], where
-%               chigh is the highest value in the plot.
 %
 %-  'thr',r   - Keep only the largest fraction r of the coefficients, and
 %               set the rest to zero.
@@ -97,7 +104,6 @@ definput.flags.plottype={'image','contour','mesh','pcolor'};
 definput.flags.clim={'noclim','clim'};
 definput.flags.fmax={'nofmax','fmax'};
 definput.flags.log={'db','lin'};
-definput.flags.dynrange={'nodynrange','dynrange'};
 definput.flags.colorbar={'colorbar','nocolorbar'};
 
 if isreal(f)
@@ -113,11 +119,11 @@ definput.keyvals.thr=0;
 definput.keyvals.clim=[0,1];
 definput.keyvals.climsym=1;
 definput.keyvals.fmax=0;
-definput.keyvals.dynrange=100;
+definput.keyvals.dynrange=[];
 definput.keyvals.xres=800;
 definput.keyvals.yres=600;
 
-[flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 % Resampling rate: Used when fmax is issued.
 resamp=1;
