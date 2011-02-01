@@ -1,6 +1,6 @@
 % LTFAT - Demos
 %
-%   Peter L. Soendergaard, 2007 - 2010.
+%   Peter L. Soendergaard, 2007 - 2011.
 %
 %   This page documents the demos.
 %
