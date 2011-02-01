@@ -15,20 +15,17 @@ function []=phaseplot(f,varargin)
 %   (as opposed to SGRAM), and you therefore risk running out of memory
 %   for long signals.
 %
-%   Additional arguments can be supplied like this:
-%   PHASEPLOT(f,'nf','tfr',2,'phl'). The arguments must be character strings
-%   possibly followed by an argument:
+%   PHASEPLOT takes the following flags at the end of the line of input
+%   arguments:
 %
 %-  'tfr',v   - Set the ratio of frequency resolution to time resolution.
 %               A value v=1 is the default. Setting v>1 will give better
 %               frequency resolution at the expense of a worse time
 %               resolution. A value of 0<v<1 will do the opposite.
 %
-%-  'p'       - Use a periodic bounday condition. This is the default.
-%
-%-  'e'       - Use an even boundary condition. The produces the fewest
-%               visible artifacts at the boundary. Note: Currently this
-%               doubles the computational time.
+%-  'wlen',s  - Window length. Specifies the length of the window
+%               measured in samples. See help of PGAUSS on the exact
+%               details of the window length.
 %
 %-  'nf'      - Display negative frequencies, with the zero-frequency
 %               centered in the middle. For real signals, this will just
@@ -39,19 +36,16 @@ function []=phaseplot(f,varargin)
 %               middle of the plot. This is usefull for visualizing the
 %               window functions of the toolbox.
 %
-%-  'thr'     - Use the amplitude values to threshold the phase values.
-%               For small amplitude values the phase values can be meaningless.
-%               This is because an error, that is small in amplitude can still
-%               lead to arbitrary phase values in the vicinity of zero.
-%               Setting this flag will set the phase is to a constant value
-%               (0) for all pairs (m,n), where the amplitude is below a 
-%               certain relative value, set to 0.001 of the maximum amplitude.
+%-  'thr',r   - Keep the coefficients with a magnitude larger than r times the
+%               largest magnitude. Set the phase of the rest of the
+%               coefficients to zero. This is useful, because for small
+%               amplitude the phase values can be meaningless.
 %
-%-  'nophl'   - By default the phase is displayed as it would be if calculated
-%               by a traditional filter bank implementation (a time
-%               invariant Gabor system). This is called a phase-locked
-%               dgt. This switch will instead display the phase as it is
-%               calculated by the DGT (a frequency invariant Gabor system).
+%-  'timeinv' - Display the phase as computed by a time-invariant
+%               DGT. This is the default.
+%
+%-  'freqinv' - Display the phase as computed by a frequency-invariant
+%               DGT.
 %
 %-  'fmax',y  - Display y as the highest frequency.
 % 
@@ -73,101 +67,49 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-% Standard values controlled by optional arguments
+% Define initial value for flags and key/value pairs.
+definput.flags.wlen={'nowlen','wlen'};
+definput.flags.tc={'notc','tc'};
+
+definput.flags.clim={'noclim','clim'};
+definput.flags.fmax={'nofmax','fmax'};
+definput.flags.phase={'timeinv','freqinv'};
+
 if isreal(f)
-  donf=0;
+  definput.flags.posfreq={'posfreq','nf'};
 else
-  donf=1;
+  definput.flags.posfreq={'nf','posfreq'};
 end;
 
-tfr_mul=1;
-dotc=0;
-domask=0;
-dophaslock=1;
-dofs=0;
-doeven=0;
-dosymphl=0;
-dofmax=0;
+definput.keyvals.fs=[];
+definput.keyvals.tfr=1;
+definput.keyvals.wlen=0;
+definput.keyvals.thr=[];
+definput.keyvals.fmax=0;
+
+[flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
 % Resampling rate: Used when fmax is issued.
 resamp=1;
 
-% Parse optional arguments
-if ~isempty(varargin)
-
-  startii=1;
-
-  if isnumeric(varargin{1})
-    dofs=1;
-    fs=varargin{1};
-    startii=2;
-  end;
-
-  ii=startii-1;
-  while ii<length(varargin)
-
-    ii=ii+1;
-
-    optarg=varargin{ii};
-
-    if ischar(optarg)
-      switch lower(optarg)
-	case 'nf'
-	  donf=1;
-	case 'tc'
-	  dotc=1;
-	  f=fftshift(f);
-	case 'p'
-	case 'e'
-	  doeven=1;
-    case 'thr'
-      domask=1;
-      % mask_val=varargin{ii+1}; Old version, not fitting description
-      mask_val=0.001;
-      ii=ii+1;
-    case 'fmax'
-      dofmax=1;
-      fmax=varargin{ii+1};
-      ii=ii+1;
-    case 'nophl'
-      dophaslock=0;          
-    case 'phl'
-      dophaslock=1;
-    case 'symphl'
-      dosymphl=1;
-    otherwise
-	  error([optarg,' : Unknown optional argument 1']);
-      end;
-    end;
-
-    if iscell(optarg)
-      if isempty(optarg) || ~ischar(optarg{1})
-	error('First element of optinal argument cell array must be a character string.');
-      end;
-
-      switch lower(optarg{1})
-	case 'tfr'
-	  tfr_mul=optarg{2};
-	otherwise
-	  error([optarg{1},' : Unknown optional argument 2']);
-      end;
-
-    end;
-  end;
-  
+if flags.do_tc
+  f=fftshift(f);
 end;
 
+dofs=~isempty(fs);
+
 % Downsample
-if dofmax
+if flags.do_fmax
   if dofs
-    resamp=fmax*2/fs;
+    resamp=kv.fmax*2/fs;
   else
-    resamp=fmax*2/length(f);
+    resamp=kv.fmax*2/length(f);
   end;
-  
+
   f=fftresample(f,round(length(f)*resamp));
 end;
 
+Ls=length(f);
 
 % Always do the full STFT
 L=length(f);
@@ -176,80 +118,33 @@ b=1;
 M=L;
 N=L;
 
-if doeven
-  if mod(a,2)==0
-    g=pgauss(2*L,.5*tfr_mul,.5);
-  else
-    g=pgauss(2*L,.5*tfr_mul,0);
-  end;
-else
-  g=pgauss(L,tfr_mul);
+% Set an explicit window length, if this was specified.
+if flags.do_wlen
+  kv.tfr=kv.wlen^2/L;
 end;
 
-if doeven
-  f=[f;flipud(f)];
-  eL=length(f);
-  f=f.*(exp(-2*pi*i*(eL-1)).');
-  g=circshift(g,floor(a/2));
-  coef=dgt(f,g,a,M);
-  coef=coef(:,1:size(coef,2)/2);
+g={'gauss',kv.tfr};
 
-  % Correct the phase.
-  if dophaslock
-    % Correct the phase.
-    TimeInd = (0:(N-1))*a+.5;
-    FreqInd = (0:(M-1)+.5)/M;
-    
-    phase = FreqInd'*TimeInd;
-    phase = exp(-2*i*pi*phase);
-    coef=coef.*phase;
-
-    %for n=0:size(coef,2)-1
-    %  for m=0:M-1
-%	coef(m+1,n+1)=coef(m+1,n+1)*exp(-2*pi*i*(.5-n*a)*(m+.5)/M);
-%      end;
- %   end;
-  else
-    phasecor=exp(-2*pi*i*.5*((0:M-1).'+.5)/M);
-    coef=coef.*repmat(phasecor,1,size(coef,2));
-  end;
-
+if flags.do_nf
+  coef=dgt(f,g,a,M,flags.phase);
 else
-  coef=dgt(f,g,a,M);
-
-  if dophaslock
-    % use phase locking
-    coef = phaselock(coef,a);
-  end
-  
-  if dosymphl
-    TimeInd = (0:(N-1))/N;
-    FreqInd = (0:(M-1))*b;
-    
-    phase = FreqInd'*TimeInd;
-    phase = exp(i*pi*phase);
-    coef=coef.*phase;
-  end;
-
+  coef=dgtreal(f,g,a,M,flags.phase);
 end;
 
-if domask
+if ~isempty(kv.thr)
   % keep only the largest coefficients.
   maxc=max(abs(coef(:)));
-  mask=abs(coef)<maxc*mask_val;
+  mask=abs(coef)<maxc*kv.thr;
   coef(mask)=0;
 end
 
 coef = angle(coef);
 
-if donf
-  % Calculate negative frequencies, use DGT
-  % Display zero frequency in middle of plot.
- 
+if flags.do_nf
   % Move zero frequency to the center.
   coef=fftshift(coef,1);
 
-  if dofmax
+  if flags.do_fmax
     yr=-fmax:fmax/M:fmax;
   else
     if dofs
@@ -260,9 +155,7 @@ if donf
   end;
 
 else
-  % Dont calculate negative frequencies, try to use DGT of twice the size.
-  coef=coef(1:ceil((M+1)/2),:);
-  if dofmax
+  if flags.do_fmax
     yr=0:fmax/M:fmax;
   else
     if dofs
@@ -273,13 +166,13 @@ else
   end;
 end;
 
-if dotc
+if flags.do_tc
   xr=-floor(N/2)*a:a:floor((N-1)/2)*a;
 else
   xr=0:a:N*a-1;
 end;
 
-if dofs
+if ~isempty(fs)
   % Scale x-axis by sampling rate.
   xr=xr/fs;  
 end;

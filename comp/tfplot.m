@@ -68,7 +68,7 @@ if isfield(flags,'do_db') && flags.do_db
 end;
   
 % 'dynrange' parameter is handled by thresholding the coefficients.
-if isfield(flags,'dynrange') && flags.do_dynrange
+if isfield(keyvals,'dynrange') && ~isempty(keyvals.dynrange)
   maxclim=max(coef(:));
   coef(coef<maxclim-keyvals.dynrange)=maxclim-keyvals.dynrange;
 end;

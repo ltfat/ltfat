@@ -83,7 +83,7 @@ nposdep=numel(posdepnames);
 % Resolve import specifications BEFORE adding our own specifications.
 if isfield(definput,'import')
   for imp = definput.import;
-    definput=feval(['args_',imp{1}],definput);
+    definput=feval(['arg_',imp{1}],definput);
   end;
 end;
 
@@ -163,6 +163,7 @@ total_args = numel(arglist);
     argname=restlist{1};
     restlist=restlist(2:end);  % pop
     found=0;
+        
     % Is this name a flag? If so, set it
     if isfield(flagsreverse,['x_',argname])
       % Unset all other flags in this group
@@ -188,15 +189,30 @@ total_args = numel(arglist);
       s=groups.(argname);
       restlist=[s,restlist];
       found=1;
-    end;      
+    end;
+    
+    % Is the name == 'argimport'
+    if strcmp('argimport',argname)   
+      fieldnames_flags= fieldnames(restlist{1});  
+      fieldnames_kvs  = fieldnames(restlist{2});        
+      for ii=1:numel(fieldnames_flags)
+        importname=fieldnames_flags{ii};
+        flags.(importname)=restlist{1}.(importname);
+      end;
+      for ii=1:numel(fieldnames_kvs)
+        importname=fieldnames_kvs{ii};
+        keyvals.(importname)=restlist{2}.(importname);
+      end;      
+      restlist=restlist(3:end);
+      found=1;
+    end;
     
     if found==0
-        if ischar(argname)
-          error('%s: Unknown parameter: %s',upper(callfun),argname);
-        else
-          error('%s: Parameter is not a string, it is of class %s',upper(callfun),class(argname));          
-        end;
-        
+      if ischar(argname)
+        error('%s: Unknown parameter: %s',upper(callfun),argname);
+      else
+        error('%s: Parameter is not a string, it is of class %s',upper(callfun),class(argname));          
+      end;      
     end;
 
     %ii=ii+1;

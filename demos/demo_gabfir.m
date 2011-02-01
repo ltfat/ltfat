@@ -24,7 +24,6 @@
 %        are close to zero. This will work for any analysis window and
 %        any lattice constant, but the reconstruction obtained is not
 %        perfect.
-%-
 %
 %   FIGURE 1 Hanning FIR window
 %
@@ -65,9 +64,8 @@ LLong=M*16;
 
 % Compute the iterated sine window. This window is a tight window when used
 % with a Gabor system where the number of channels is larger than or
-% equal to the length of the window. To make it tight, it must have
-% normalized energy (the l^2 norm).
-g=firwin('itersine',M,'energy');
+% equal to the length of the window.
+g=gabwin('itersine',a,M);
 
 disp('');
 disp('Reconstruction error using itersine window, should be close to zero:');

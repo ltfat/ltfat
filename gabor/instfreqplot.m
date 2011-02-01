@@ -78,7 +78,6 @@ end;
 
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
-definput.flags.thr={'nothr','thr'};
 definput.flags.tc={'notc','tc'};
 definput.flags.plottype={'image','contour','mesh','pcolor'};
 definput.flags.method={'dgt','phase','abs'};
@@ -96,7 +95,7 @@ end;
 definput.keyvals.fs=[];
 definput.keyvals.tfr=1;
 definput.keyvals.wlen=0;
-definput.keyvals.thr=0;
+definput.keyvals.thr=[];
 definput.keyvals.clim=[0,1];
 definput.keyvals.climsym=1;
 definput.keyvals.fmax=0;
@@ -104,7 +103,7 @@ definput.keyvals.xres=800;
 definput.keyvals.yres=600;
 
 
-[flags,keyvals,fs]=ltfatarghelper({'fs'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
 % Resampling rate: Used when fmax is issued.
 resamp=1;
@@ -115,13 +114,13 @@ end;
 
 if flags.do_climsym
   flags.do_clim=1;
-  keyvals.clim=[-keyvals.climsym,keyvals.climsym];
+  kv.clim=[-kv.climsym,kv.climsym];
 end;
 
 dofs=~isempty(fs);
 
 % Downsample
-fmax=keyvals.fmax;
+fmax=kv.fmax;
 if flags.do_fmax
   if dofs
     resamp=fmax*2/fs;
@@ -135,19 +134,19 @@ end;
 Ls=length(f);
 
 if flags.do_posfreq
-   keyvals.yres=2*keyvals.yres;
+   kv.yres=2*kv.yres;
 end;
 
-[a,M,L,N,Ndisp]=gabimagepars(Ls,keyvals.xres,keyvals.yres);
+[a,M,L,N,Ndisp]=gabimagepars(Ls,kv.xres,kv.yres);
 
 b=L/N;
 
 % Set an explicit window length, if this was specified.
 if flags.do_wlen
-  keyvals.tfr=keyvals.wlen^2/L;
+  kv.tfr=kv.wlen^2/L;
 end;
 
-g={'gauss',keyvals.tfr};
+g={'gauss',kv.tfr};
 
 if flags.do_dgt
   [coef,fgrad,dgtcoef]=gabphasegrad('dgt',f,g,a,M);
@@ -163,10 +162,10 @@ if flags.do_abs
   [coef,fgrad]=gabphasegrad('abs',abs(dgtcoef),g,a);
 end;
 
-if flags.do_thr
+if ~isempty(kv.thr)
   % keep only the largest coefficients.
   maxc=max(abs(dgtcoef(:)));
-  mask=abs(dgtcoef)<maxc*keyvals.thr;
+  mask=abs(dgtcoef)<maxc*kv.thr;
 
   coef(mask)=0;
 end
@@ -178,7 +177,7 @@ end;
 % Cut away zero-extension.
 coef=coef(:,1:Ndisp);
 
-tfplot(coef,a,M,L,resamp,keyvals,flags);
+tfplot(coef,a,M,L,resamp,kv,flags);
 
 if nargout>0
   varargout={coef};
