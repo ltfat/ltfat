@@ -63,13 +63,13 @@ if ~isnumeric(fc) || ~isvector(fc) || any(fc<0) || any(fc>fs/2)
          'the sampling rate.'],upper(mfilename));
 end;
 
-definput.flags.real={'real','complex'};
-definput.flags.norm={'equalfreq','equalenergy'};
+definput.import={'normalize'};
+definput.flags.real={'complex','real'};
 definput.keyvals.n=[];
 
 definput.keyvals.betamul=1.0183;
 
-[flags,keyvals,n,betamul]  = ltfatarghelper({'n','betamul'},definput,varargin);
+[flags,keyvals,n,betamul]  = ltfatarghelper({'n','betamul'},definput,[{'null'},varargin]);
 
 nchannels = length(fc);
 
@@ -106,9 +106,6 @@ for ii = 1:nchannels
                                                       ourbeta(ii)*t);
   end;    
     
-  if flags.do_equalenergy
-    b{ii}=b{ii}/rms(b{ii});
-  end;
-  
+  b{ii}=normalize(b{ii},flags.norm);  
   
 end;

@@ -20,7 +20,7 @@ M=ceil(freqtoerb(fs/2));
 % Compute center frequencies.
 fc=erbspace(0,fs/2,M);
 
-g=gammatonefir(fc,fs);
+g=gammatonefir(fc,fs');
 
 disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
 filterbankrealbounds(g,a)
