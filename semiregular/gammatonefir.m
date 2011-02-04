@@ -80,7 +80,7 @@ ourbeta = betamul*audfiltbw(fc);
 if isempty(n)
   % Calculate a good value for n
   % FIXME actually do this
-  n=2000;
+  n=5000;
 end;
 
 b={};
@@ -92,19 +92,29 @@ for ii = 1:nchannels
   scalconst = 2*(2*pi*ourbeta(ii))^4/factorial(4-1)/fs;
   
   nfirst = ceil(fs*delay);
-  nlast = n-nfirst;
+  
+  if nfirst>n/2
+    error(['%s: The desired filter length is too short to accomodate the ' ...
+           'beginning of the filter. Please choose a filter length of ' ...
+           'at least %i samples.'],upper(mfilename),nfirst*2);
+  end;
+  
+  nlast = n/2;
 
   t=[(0:nlast-1)/fs+delay,...
      (0:nfirst-1)/fs-nfirst/fs+delay].';  
 
   % g(t) = a*t^(n-1)*cos(2*pi*fc*t)*exp(-2*pi*beta*t)
   if flags.do_real
-    b{ii} = scalconst*t.^(4-1).*cos(2*pi*fc(ii)*t).*exp(-2*pi* ...
+    bwork = scalconst*t.^(4-1).*cos(2*pi*fc(ii)*t).*exp(-2*pi* ...
                                                       ourbeta(ii)*t);
   else
-    b{ii} = scalconst*t.^(4-1).*exp(2*pi*i*fc(ii)*t).*exp(-2*pi* ...
+    bwork = scalconst*t.^(4-1).*exp(2*pi*i*fc(ii)*t).*exp(-2*pi* ...
                                                       ourbeta(ii)*t);
-  end;    
+  end;
+  
+  % Insert zeros before the start of the signal.
+  b{ii}=[bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)];
     
   b{ii}=normalize(b{ii},flags.norm);  
   
