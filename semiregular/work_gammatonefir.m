@@ -9,26 +9,44 @@
 % The filterbank cover only the positive frequencies, so we must use filterbankrealdual and
 % filterbankrealbounds
 
-f=greasy;
-fs=16000;
-L=length(f);
-a=2;
+if 0
+  % Use greasy, low sampling rate, short signal
+  f=greasy;
+  fs=16000;
+  a=16;
+  erbs_per_channel=1;
+  Ldualfilters=ceil(length(f)/a)*a;
+else
+  % glockenspiel, high sampling rate, longer signal
+  f=gspi;
+  fs=44100;
+  a=16;
+  erbs_per_channel=1;
+  Ldualfilters=5000;
+end;
+
+% Determine minimal transform length
+Ls=length(f);
+L=ceil(Ldualfilters/a)*a;
 
 % Number of channels, slightly less than 1 ERB(Cambridge) per channel.
-M=ceil(freqtoerb(fs/2));
+M=ceil(freqtoerb(fs/2)/erbs_per_channel);
 
 % Compute center frequencies.
 fc=erbspace(0,fs/2,M);
 
-g=gammatonefir(fc,fs');
+g=gammatonefir(fc,fs);
 
+% In production code, it is not necessary to call 'filterbankrealbounds',
+% this is just for veryfying the setup.
 disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
-filterbankrealbounds(g,a)
+filterbankrealbounds(g,a,L)
 
-gd=filterbankrealdual(g,a);
+% Create reconstruction filters
+gd=filterbankrealdual(g,a,L);
 
 coef=ufilterbank(f,g,a);
-r=2*real(iufilterbank(coef,gd,a));
+r=2*real(iufilterbank(coef,gd,a,Ls));
 
 disp('Error in reconstruction, should be close to zero.');
 norm(f-r)

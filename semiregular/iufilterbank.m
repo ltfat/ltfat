@@ -1,4 +1,4 @@
-function f=iufilterbank(c,g,a);  
+function f=iufilterbank(c,g,a,varargin);  
 %IUFILTERBANK  Filter bank inversion
 %   Usage:  f=iufilterbank(c,g,a);
 %
@@ -19,6 +19,9 @@ function f=iufilterbank(c,g,a);
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
+
+definput.keyvals.Ls=[];
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 [a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,1);
 
@@ -44,4 +47,10 @@ for w=1:W
 end;
 
 
+% Cut or extend f to the correct length, if desired.
+if ~isempty(Ls)
+  f=postpad(f,Ls);
+else
+  Ls=L;
+end;
   
