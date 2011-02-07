@@ -98,10 +98,11 @@ function [g,nlen] = pbspline(L,order,a,varargin)
     
   % Define initial value for flags and key/value pairs.
   definput.import={'normalize'};
+  definput.importdefaults={'inf'};
   definput.flags.centering={'wp','hp'};
   definput.flags.stype={'ed','xd','stard','ec','xc','starc'};
   
-[flags,keyvals]=ltfatarghelper({},definput,[{'inf'},varargin]);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 
   

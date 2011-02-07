@@ -88,13 +88,14 @@ name=lower(name);
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
+definput.importdefaults={'null'};
 definput.flags.centering={'wp','hp'};
 %definput.flags.delay={'nodelay','delay','causal'};
 
 definput.keyvals.taper=1;
 %definput.keyvals.delay=0;
 
-[flags,keyvals]=ltfatarghelper({},definput,[{'null'},varargin]);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 if flags.do_wp
   cent=0;

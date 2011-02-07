@@ -10,8 +10,8 @@ function xo=uquant(xi,nbits,xmax,varargin);
 %   UQUANT takes the following flags at the end of the input arguments.
 %
 %-   's' - Signed quantization. This assumes that the signal
-           has a both positive and negative part. Useful for sound
-           signals. This is the default
+%          has a both positive and negative part. Useful for sound
+%          signals. This is the default.
 %
 %-   'u' - Unsigned quantization. Assumes the signal is positive.
 %          Negative values are silently rounded to zero.
@@ -41,7 +41,7 @@ if ~isreal(xi)
   return
 end;
 
-if nbits<1
+if nbits<2
   error('Must specify at least 2 bits.');
 end;
 

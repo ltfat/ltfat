@@ -107,120 +107,126 @@ end;
 
 total_args = numel(arglist);
 
-  % Determine the position of the first optional argument.
-  % If no optional argument is given, return nposdep+1
-  first_str_pos = 1;
-  while first_str_pos<=total_args && ~ischar(arglist{first_str_pos}) 
-    first_str_pos = first_str_pos +1;    
-  end;
-    
-  % If more than nposdep arguments are given, the first additional one must
-  % be a string
-  if (first_str_pos>nposdep+1)
-    error('%s: Too many input arguments',upper(callfun));
-  end;
+% Determine the position of the first optional argument.
+% If no optional argument is given, return nposdep+1
+first_str_pos = 1;
+while first_str_pos<=total_args && ~ischar(arglist{first_str_pos}) 
+  first_str_pos = first_str_pos +1;    
+end;
 
-  n_first_args=min(nposdep,first_str_pos-1);
+% If more than nposdep arguments are given, the first additional one must
+% be a string
+if (first_str_pos>nposdep+1)
+  error('%s: Too many input arguments',upper(callfun));
+end;
 
-  keyvals=defkeyvals;      
+n_first_args=min(nposdep,first_str_pos-1);
+
+keyvals=defkeyvals;      
+
+% Copy the given first arguments
+for ii=1:n_first_args
+  keyvals.(posdepnames{ii})=arglist{ii};
+end;
+
+% Initialize the position independent parameters.
+% and create reverse mapping of flag -> group
+flagnames=fieldnames(defflags);
+flags=struct;
+% In order for flags to start with a number, it is necessary to add
+% 'x_' before the flag when the flags are used a field names in
+% flagreverse. Externally, flags are never used a field names in
+% structs, so this is an internal problem in ltfatarghelper that is
+% fixed this way.
+flagsreverse=struct;
+for ii=1:numel(flagnames)
+  name=flagnames{ii};
+  flaggroup=defflags.(name);
+  flags.(name)=flaggroup{1};
+  for jj=1:numel(flaggroup)
+    flagsreverse.(['x_', flaggroup{jj}])=name;
+    flags.(['do_',flaggroup{jj}])=0;
+  end;
+  flags.(['do_',flaggroup{1}])=1;
+end;
+
+%Get the rest of the arguments
+restlist = arglist(first_str_pos:end);
+
+%Check for default arguments
+if isfield(TF_CONF.fundefs,callfun)
+  s=TF_CONF.fundefs.(callfun);
+  restlist=[s,restlist];
+end;
+
+% Check for import defaults
+if isfield(definput,'importdefaults')
+  % Add the importdefaults before the user specified arguments.
+  restlist=[definput.importdefaults,restlist];
+end;
+
+while ~isempty(restlist)
+  argname=restlist{1};
+  restlist=restlist(2:end);  % pop
+  found=0;
   
-  % Copy the given first arguments
-  for ii=1:n_first_args
-    keyvals.(posdepnames{ii})=arglist{ii};
-  end;
-
-  % Initialize the position independent parameters.
-  % and create reverse mapping of flag -> group
-  flagnames=fieldnames(defflags);
-  flags=struct;
-  % In order for flags to start with a number, it is necessary to add
-  % 'x_' before the flag when the flags are used a field names in
-  % flagreverse. Externally, flags are never used a field names in
-  % structs, so this is an internal problem in ltfatarghelper that is
-  % fixed this way.
-  flagsreverse=struct;
-  for ii=1:numel(flagnames)
-    name=flagnames{ii};
-    flaggroup=defflags.(name);
-    flags.(name)=flaggroup{1};
+  % Is this name a flag? If so, set it
+  if isfield(flagsreverse,['x_',argname])
+    % Unset all other flags in this group
+    flaggroup=defflags.(flagsreverse.(['x_',argname]));
     for jj=1:numel(flaggroup)
-      flagsreverse.(['x_', flaggroup{jj}])=name;
       flags.(['do_',flaggroup{jj}])=0;
     end;
-    flags.(['do_',flaggroup{1}])=1;
+    
+    flags.(flagsreverse.(['x_',argname]))=argname;
+    flags.(['do_',argname])=1;
+    found=1;
   end;
   
-  %Get the rest of the arguments
-  restlist = arglist(first_str_pos:end);
-
-  %Check for default arguments
-  if isfield(TF_CONF.fundefs,callfun)
-    s=TF_CONF.fundefs.(callfun);
+  % Is this name the key of a key/value pair? If so, set the value.
+  if isfield(defkeyvals,argname)      
+    keyvals.(argname)=restlist{1};
+    restlist=restlist(2:end);
+    found=1;
+  end;
+  
+  % Is this name a group definition? If so, put the group in front of the parameters
+  if isfield(groups,argname)
+    s=groups.(argname);
     restlist=[s,restlist];
+    found=1;
   end;
-
-  while ~isempty(restlist)
-    argname=restlist{1};
-    restlist=restlist(2:end);  % pop
-    found=0;
-        
-    % Is this name a flag? If so, set it
-    if isfield(flagsreverse,['x_',argname])
-      % Unset all other flags in this group
-      flaggroup=defflags.(flagsreverse.(['x_',argname]));
-      for jj=1:numel(flaggroup)
-        flags.(['do_',flaggroup{jj}])=0;
-      end;
-      
-      flags.(flagsreverse.(['x_',argname]))=argname;
-      flags.(['do_',argname])=1;
-      found=1;
+  
+  % Is the name == 'argimport'
+  if strcmp('argimport',argname)   
+    fieldnames_flags= fieldnames(restlist{1});  
+    fieldnames_kvs  = fieldnames(restlist{2});        
+    for ii=1:numel(fieldnames_flags)
+      importname=fieldnames_flags{ii};
+      flags.(importname)=restlist{1}.(importname);
     end;
-      
-    % Is this name the key of a key/value pair? If so, set the value.
-    if isfield(defkeyvals,argname)      
-      keyvals.(argname)=restlist{1};
-      restlist=restlist(2:end);
-      found=1;
-    end;
-
-    % Is this name a group definition? If so, put the group in front of the parameters
-    if isfield(groups,argname)
-      s=groups.(argname);
-      restlist=[s,restlist];
-      found=1;
-    end;
-    
-    % Is the name == 'argimport'
-    if strcmp('argimport',argname)   
-      fieldnames_flags= fieldnames(restlist{1});  
-      fieldnames_kvs  = fieldnames(restlist{2});        
-      for ii=1:numel(fieldnames_flags)
-        importname=fieldnames_flags{ii};
-        flags.(importname)=restlist{1}.(importname);
-      end;
-      for ii=1:numel(fieldnames_kvs)
-        importname=fieldnames_kvs{ii};
-        keyvals.(importname)=restlist{2}.(importname);
-      end;      
-      restlist=restlist(3:end);
-      found=1;
-    end;
-    
-    if found==0
-      if ischar(argname)
-        error('%s: Unknown parameter: %s',upper(callfun),argname);
-      else
-        error('%s: Parameter is not a string, it is of class %s',upper(callfun),class(argname));          
-      end;      
-    end;
-
-    %ii=ii+1;
+    for ii=1:numel(fieldnames_kvs)
+      importname=fieldnames_kvs{ii};
+      keyvals.(importname)=restlist{2}.(importname);
+    end;      
+    restlist=restlist(3:end);
+    found=1;
   end;
+  
+  if found==0
+    if ischar(argname)
+      error('%s: Unknown parameter: %s',upper(callfun),argname);
+    else
+      error('%s: Parameter is not a string, it is of class %s',upper(callfun),class(argname));          
+    end;      
+  end;
+  
+  %ii=ii+1;
+end;
 
 % Fill varargout
 
-varargout={};
+varargout=cell(1,nposdep);
 for ii=1:nposdep
     varargout(ii)={keyvals.(posdepnames{ii})};
 end;
