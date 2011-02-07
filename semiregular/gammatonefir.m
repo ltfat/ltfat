@@ -67,6 +67,7 @@ definput.import={'normalize'};
 definput.importdefaults={'null'};
 definput.flags.real={'complex','real'};
 definput.keyvals.n=[];
+definput.flags.phase={'causalphase','peakphase'};
 
 definput.keyvals.betamul=1.0183;
 
@@ -113,6 +114,11 @@ for ii = 1:nchannels
     bwork = scalconst*t.^(4-1).*exp(2*pi*i*fc(ii)*t).*exp(-2*pi* ...
                                                       ourbeta(ii)*t);
   end;
+
+  if flags.do_peakphase
+    bwork=bwork*exp(-2*pi*i*fc(ii)*delay);
+  end;
+
   
   % Insert zeros before the start of the signal.
   b{ii}=[bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)];

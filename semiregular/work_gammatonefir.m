@@ -35,7 +35,7 @@ M=ceil(freqtoerb(fs/2)/erbs_per_channel);
 % Compute center frequencies.
 fc=erbspace(0,fs/2,M);
 
-g=gammatonefir(fc,fs,filterlength);
+g=gammatonefir(fc,fs,filterlength,'peakphase');
 
 % In production code, it is not necessary to call 'filterbankrealbounds',
 % this is just for veryfying the setup.
