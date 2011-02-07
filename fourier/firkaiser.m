@@ -36,10 +36,11 @@ end;
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
+definput.importdefaults={'null'};
 definput.flags.centering={'wp','hp'};
 definput.flags.stype={'normal','derived'};
 
-[flags,keyvals]=ltfatarghelper({},definput,[{'null'},varargin]);
+[flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 cent=0;
 if flags.do_hp
