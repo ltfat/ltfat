@@ -64,12 +64,13 @@ if ~isnumeric(fc) || ~isvector(fc) || any(fc<0) || any(fc>fs/2)
 end;
 
 definput.import={'normalize'};
+definput.importdefaults={'null'};
 definput.flags.real={'complex','real'};
 definput.keyvals.n=[];
 
 definput.keyvals.betamul=1.0183;
 
-[flags,keyvals,n,betamul]  = ltfatarghelper({'n','betamul'},definput,[{'null'},varargin]);
+[flags,keyvals,n,betamul]  = ltfatarghelper({'n','betamul'},definput,varargin);
 
 nchannels = length(fc);
 

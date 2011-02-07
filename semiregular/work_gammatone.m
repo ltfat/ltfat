@@ -9,32 +9,44 @@
 % The filterbank cover only the positive frequencies, so we must use filterbankrealdual and
 % filterbankrealbounds
 
-f=greasy;
-fs=16000;
-L=length(f);
-a=2;
+if 0
+  % Use greasy, low sampling rate, short signal
+  f=greasy;
+  fs=16000;
+  a=16;
+  erbs_per_channel=1;
+  filterlength=ceil(length(f)/a)*a;
+else
+  % glockenspiel, high sampling rate, longer signal
+  f=gspi;
+  fs=44100;
+  a=16;
+  erbs_per_channel=1;
+  filterlength=5000;
+end;
 
-FL=5000;
+% Determine minimal transform length
+Ls=length(f);
+L=ceil(filterlength/a)*a;
 
 % Number of channels, slightly less than 1 ERB(Cambridge) per channel.
-%M=2*ceil(freqtoerb(fs/2));
+M=ceil(freqtoerb(fs/2)/erbs_per_channel);
 
 % Compute center frequencies.
-%fc=erbspace(0,fs/2,M);
-fc=erbspacebw(0,fs/2,.5);
-M=length(fc);
+fc=erbspace(0,fs/2,M);
 
 g=cell(M,1);
 
 [b_gt,a_gt]=gammatone(fc,fs,'complex');
 for m=1:M
-  g{m}=filter(b_gt(m,:),a_gt(m,:),[1;ones(FL-1,1)]);
+  g{m}=[filter(b_gt(m,:),a_gt(m,:),[1;zeros(filterlength-1,1)]);...
+        zeros(filterlength,1)];
 end;
 
 disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
 filterbankrealbounds(g,a)
 
-gd=filterbankrealdual(g,a);
+gd=filterbankrealdual(g,a,2*filterlength);
 
 coef=ufilterbank(f,g,a);
 r=2*real(iufilterbank(coef,gd,a));
