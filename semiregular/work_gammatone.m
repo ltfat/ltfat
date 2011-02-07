@@ -37,16 +37,24 @@ fc=erbspace(0,fs/2,M);
 
 g=cell(M,1);
 
-[b_gt,a_gt]=gammatone(fc,fs,'complex');
+[b_gt,a_gt,delay]=gammatone(fc,fs,'complex','peakphase');
 for m=1:M
-  g{m}=[filter(b_gt(m,:),a_gt(m,:),[1;zeros(filterlength-1,1)]);...
-        zeros(filterlength,1)];
+  % Get the impulse response
+  work=filter(b_gt(m,:),a_gt(m,:),[1;zeros(L-1,1)]);
+  
+  % Shift to make a zero-delay filter
+  ds=round(fs*delay(m));
+  work=circshift(work,-ds);
+  
+  % Zero the part that is leading the beginning
+  work(L/2+1:L-ds)=zeros(L/2-ds,1);
+  g{m}=work;
 end;
 
 disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
 filterbankrealbounds(g,a)
 
-gd=filterbankrealdual(g,a,2*filterlength);
+gd=filterbankrealdual(g,a,L);
 
 coef=ufilterbank(f,g,a);
 r=2*real(iufilterbank(coef,gd,a));
