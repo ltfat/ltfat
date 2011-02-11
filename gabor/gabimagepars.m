@@ -26,32 +26,47 @@ function [a,M,L,N,Ngood]=gabimagepars(Ls,x,y)
 %C     c = dgtreal(f,'gauss',a,M);
 %
 %   The size of c is N x _(M/2)+1 equal to _801 _x _600 pixels. 
+%
+%   For this function to work, the specified numbers for x
+%   and y must not be large prime numbers.
 %  
 %   See also: dgt, dgtreal, sgram
 
-% The image cannot be bigger than the length of the signal.
-M=min(y,Ls);
-N=min(x,Ls);
+if min(x,y)>Ls
+  % Small values case, just do an STFT
+  M=Ls;
+  N=Ls;
+  a=1;
+  Ngood=N;
+  L=Ls;
+else
 
-% Determine the minimum transform size.
-K=lcm(M,N);
+  % Set M and N to be what the user specified
+  M=y;
+  N=x;
 
-% This L is good, but is it not the same as DGT will choose.
-Llong=ceil(Ls/K)*K;
-
-% Fix a from the long L
-a=Llong/N;
-
-% Now we have fixed a and M, so we can use the standard method of choosing L
-Lsmallest=lcm(a,M);
-L=ceil(Ls/Lsmallest)*Lsmallest;
-
-% We did not get N as desired.
-N=L/a;
-
-% Number of columns to display
-Ngood=ceil(Ls/a);
-
-if M<=a
-  error('Fixme: Generate better code, this is not a frame');
+  % Determine the minimum transform size.
+  K=lcm(M,N);
+    
+  % This L is good, but is it not the same as DGT will choose.
+  Llong=ceil(Ls/K)*K;
+  
+  % Fix a from the long L
+  a=Llong/N;
+  
+  % Now we have fixed a and M, so we can use the standard method of choosing L
+  Lsmallest=lcm(a,M);
+  L=ceil(Ls/Lsmallest)*Lsmallest;
+  
+  % We did not get N as desired.
+  N=L/a;
+  
+  % Number of columns to display
+  Ngood=ceil(Ls/a);
+  
+  if M<=a
+    error('Fixme: Generate better code, this is not a frame');
+  end;
+  
 end;
+
