@@ -8,15 +8,17 @@
 %  Sound signals.
 %    BAT            -  Bat chirp.
 %    BATMASK        -  Mask for bat signal.
-%    TRAINDOPPLER   -  Sound of passing train.
 %    GREASY         -  Woman speaking the word 'greasy'
 %    GREASYLONG     -  Full sentence containing the word 'greasy'
-%    LINUS          -  Linus pronouncing Linux.
 %    GSPI           -  Glockenspiel test signal.
+%    LINUS          -  Linus pronouncing Linux.
+%    LTFATLOGO      -  Synthetic sound from spectrogram reconstruction.
 %    OTOCLICK       -  Click-evoked otoacoustic emmision. 
+%    TRAINDOPPLER   -  Sound of passing train.
 %
 %  Images.
 %    CAMERAMAN      -  Greyscale image of the cameraman.
+%    LTFATTEXT      -  Black and white word: 'LTFAT'.
 %
 %  Other test signals are available from:
 %
