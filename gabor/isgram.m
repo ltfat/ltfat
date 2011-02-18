@@ -56,6 +56,8 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %   See also:  dgt, idgt
 %
+%   Demos: demo_isgram
+%
 %R  griffin1984sem
   
 %   AUTHOR : Peter Soendergaard.

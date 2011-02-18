@@ -57,6 +57,8 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %
 %   See also:  dgt, idgt
 %
+%   Demos: demo_isgram
+%
 %R  griffin1984sem
   
 %   AUTHOR : Peter Soendergaard.
