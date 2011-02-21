@@ -74,7 +74,9 @@ permutedsize=size(f);
 permutedsize(1)=L;
   
 % Reshape f to a matrix.
-f=reshape(f,size(f,1),numel(f)/size(f,1));
+if ~isempty(f)
+  f=reshape(f,size(f,1),numel(f)/size(f,1));
+end;
 W=size(f,2);
 
 

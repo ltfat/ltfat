@@ -103,6 +103,11 @@ else
   cent=0.5;
 end;
 
+if M==0
+  g=[];
+  return;
+end;
+
 % Deal with tapering
 if keyvals.taper<1
   if keyvals.taper==0

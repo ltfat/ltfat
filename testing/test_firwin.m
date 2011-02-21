@@ -11,7 +11,7 @@ test_failed=0;
 
 disp(' ===============  TEST_FIRWIN ================');
 
-for L=[18,19]
+for L=[18,19,20,21]
 
   for cent=0:1
     if cent==0

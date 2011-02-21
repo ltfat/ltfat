@@ -1,7 +1,7 @@
 function [g,nlen] = pbspline(L,order,a,varargin)
 %PBSPLINE   Periodized B-spline.
-%   Usage:   g=pbspline(L,order,a);
-%            [g,nlen]=pbspline(stype,L,order);
+%   Usage:   g=pbspline(L,order,a,...);
+%            [g,nlen]=pbspline(L,order,a,...);
 %
 %   Input parameters:
 %         L      : Length of window.
@@ -224,7 +224,7 @@ if dodisc
       % even spline
 
       if flags.do_wp
-	g = real(ifft(real(fft(s1)).^(order+1)));
+	g = ifftreal(real(fftreal(s1)).^(order+1),L);
       else
 	s2=middlepad([ones(a,1)],L,'hp');
 	g=real(ifft(real(fft(s1).^order).*fft(s2)));
