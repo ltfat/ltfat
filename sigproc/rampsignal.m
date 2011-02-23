@@ -38,6 +38,10 @@ switch numel(L)
   error('%s: The length must a scalar or vector.',upper(mfilename));
 end;
 
+if rem(L1,1)~=0 || rem(L2,1)~=0
+  error('The length of the ramp must be an integer.');
+end;
+
 r1=rampup(L1,flags.wintype);
 r2=rampdown(L2,flags.wintype);
 
