@@ -8,8 +8,8 @@
 %
 %   FIGURE 2 Linear reconstruction
 %
-%      This figure shows a spectrogram of the a linear reconstruction of
-%      the target spectrogram.
+%      This figure shows a spectrogram of a linear reconstruction of the
+%      target spectrogram.
 %
 %   FIGURE 3 Gaussian FIR window for low redundancy
 %
