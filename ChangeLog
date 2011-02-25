@@ -1,3 +1,9 @@
+Version 0.98.1 25/2 2011
+	* New iterative spectrogram reconstruction featuring the word "LTFAT".
+
+	* Features added to ltfatarghelper to support importing definitions
+	from aux. functions.
+
 Version 0.98 28/1 2011
 
 	* The flags 'freqinv' and 'timeinv' can be passed to the DGT, IDGT,
