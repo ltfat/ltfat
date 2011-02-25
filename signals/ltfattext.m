@@ -13,6 +13,8 @@ function s=ltfattext();
 %
 %C   imagesc(ltfattext); colormap(gray); axis('xy');
 %
+%  See also: ltfatlogo
+%
 %  Demos: demo_isgram
 
 %   AUTHOR : Peter Soendergaard

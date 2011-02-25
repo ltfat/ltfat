@@ -9,6 +9,8 @@ function s=ltfatlogo()
 %   scaled to not produce any clipping.
 %
 %   See also: ltfattext
+%
+%  Demos: demo_isgram
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_SIGNALS
