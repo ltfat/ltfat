@@ -2,11 +2,9 @@ function inoutsig = gaindb(inoutsig,gn)
 %GAINDB  Increase/decrease level of signal
 %   Usage:  outsig = gaindb(insig,gn);
 %
-%   GAINDB(insig,gn) changes the level of the signal by gn dB.
+%   GAINDB(insig,gn) changes the energy level of the signal by gn dB.
 %
 %   See also: rms
-%
-%R  moore2003introduction
 
 %   AUTHOR: Peter L. Soendergaard, 2009
 
