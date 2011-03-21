@@ -149,6 +149,7 @@ LTFAT_H_NAME(idgt_fb)(const LTFAT_H_COMPLEX *cin, const LTFAT_H_COMPLEX *g,
 		      const int W, const int a, const int M, 
 		      LTFAT_H_COMPLEX *f);
 
+
 /* -------- windows ------------------------------ */
 
 extern void
