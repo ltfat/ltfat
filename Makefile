@@ -8,7 +8,7 @@ files = sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
 	sdgt_walnut.o ddgt.o ddgt_fac.o ddgtreal_fac.o didgt_fac.o	\
 	ddgt_fb.o ddgt_walnut.o sgabdual_fac.o sgabtight_fac.o		\
 	dgabdual_fac.o dgabtight_fac.o		\
-	swfac.o siwfac.o sidgt_fb.o didgt_fb.o	\
+	swfac.o siwfac.o sidgt_fb.o didgt_fb.o \
 	sreassign.o swindows.o dwfac.o diwfac.o		\
 	dreassign.o dwindows.o sspread.o sheapint.o swinmanip.o		\
 	dspread.o dheapint.o dwinmanip.o \
