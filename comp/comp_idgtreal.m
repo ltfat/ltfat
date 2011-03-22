@@ -58,6 +58,6 @@ else
   else
     coef2(M2+1:M,:,:)=conj(coef(M2:-1:2,:,:));
   end;
-  f = comp_idgt_fb(coef2,g,L,a,M);
+  f = comp_idgt_fb(reshape(coef2,M,N*W),g,L,a,M);
 
 end;

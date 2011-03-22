@@ -50,12 +50,17 @@ void LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
       gw[l][0] = g[l-glh][0];
       gw[l][1] = g[l-glh][1];
    }
-
+   
    LTFAT_COMPLEX *ff  = (LTFAT_COMPLEX*)ltfat_malloc(gl*sizeof(LTFAT_COMPLEX));
    
    for (int w=0; w<W; w++)
    {
       fw=f+w*L;
+      for (int l=0;l<L;l++)
+      {
+	 fw[l][0]=0.0;
+	 fw[l][1]=0.0;
+      }
       /* ----- Handle the first boundary using periodic boundary conditions. --- */
       for (int n=0; n<glh_d_a; n++)
       {
@@ -67,16 +72,16 @@ void LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
 	 }
 	 LTFAT_FFTW(execute)(p_small);
 
-	 const int rem = positiverem(n*a-glh, M);	 
+	 const int rem = positiverem(-n*a+glh, M);	 
 	 for (int ii=0; ii<gl/M; ii++)
 	 {
 	    for (int m=0; m<rem; m++)
 	    {
-	       LTFAT_NAME(complexprod)(ff+m+ii*M,cbuf[M-rem+m],g[m+ii*M]);
+	       LTFAT_NAME(complexprod)(ff+m+ii*M,cbuf[M-rem+m],gw[m+ii*M]);
 	    }
 	    for (int m=0; m<M-rem; m++)
 	    {
-	       LTFAT_NAME(complexprod)(ff+m+ii*M+rem,cbuf[m],g[m+rem+ii*M]);
+	       LTFAT_NAME(complexprod)(ff+m+ii*M+rem,cbuf[m],gw[m+rem+ii*M]);
 	    }
 	 }
 
@@ -100,60 +105,77 @@ void LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
       /* ----- Handle the middle case. --------------------- */
       for (int n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
       {
-	 const int rem=positiverem(-n*a+glh,M);      
-	 for (int ii=0; ii<gl/M; ii++)
+	 /* Copy to c-buffer and ifft it */
+	 for (int m=0; m<M; m++)
 	 {
-	    for (int m=0; m<rem; m++)
-	    {
-	       LTFAT_NAME(complexprod)(ff+m+ii*M,cbuf[M-rem+m],g[m+ii*M]);
-	    }
-	    for (int m=0; m<M-rem; m++)
-	    {
-	       LTFAT_NAME(complexprod)(ff+m+ii*M+rem,cbuf[m],g[m+rem+ii*M]);
-	    }
+	    cbuf[m][0]=cin[m+n*M+w*M*N][0];
+	    cbuf[m][1]=cin[m+n*M+w*M*N][1];
 	 }
+	 LTFAT_FFTW(execute)(p_small);
+
+      	 const int rem = positiverem(-n*a+glh,M);
+      	 for (int ii=0; ii<gl/M; ii++)
+      	 {
+      	    for (int m=0; m<rem; m++)
+      	    {
+      	       LTFAT_NAME(complexprod)(ff+m+ii*M,cbuf[M-rem+m],gw[m+ii*M]);
+      	    }
+      	    for (int m=0; m<M-rem; m++)
+      	    {
+      	       LTFAT_NAME(complexprod)(ff+m+ii*M+rem,cbuf[m],gw[m+rem+ii*M]);
+      	    }
+      	 }
 	 
-	 sp=positiverem(n*a-glh,L);
-	 ep=positiverem(n*a-glh+gl-1,L);
+      	 sp=positiverem(n*a-glh,L);
+      	 ep=positiverem(n*a-glh+gl-1,L);
 	 
-	 /* Add the ff vector to f at position sp. */
-	 for (int ii=0;ii<ep-sp+1;ii++)
-	 {
-	    fw[ii+sp][0] += ff[ii][0];
-	    fw[ii+sp][1] += ff[ii][1];
-	 }
+      	 /* Add the ff vector to f at position sp. */
+      	 for (int ii=0;ii<ep-sp+1;ii++)
+      	 {
+      	    fw[ii+sp][0] += ff[ii][0];
+      	    fw[ii+sp][1] += ff[ii][1];
+      	 }
       }
       
-      /* Handle the last boundary using periodic boundary conditions. */   
+      /* Handle the last boundary using periodic boundary conditions. */
       for (int n=(L-(gl+1)/2)/a+1; n<N; n++)
       {
-	 const int rem=positiverem(-n*a+glh,M);
-	 for (int ii=0; ii<gl/M; ii++)
+
+	 /* Copy to c-buffer and ifft it */
+	 for (int m=0; m<M; m++)
 	 {
-	    for (int m=0; m<rem; m++)
-	    {
-	       LTFAT_NAME(complexprod)(ff+m+ii*M,cbuf[M-rem+m],g[m+ii*M]);
-	    }
-	    for (int m=0; m<M-rem; m++)
-	    {
-	       LTFAT_NAME(complexprod)(ff+m+ii*M+rem,cbuf[m],g[m+rem+ii*M]);
-	    }
+	    cbuf[m][0]=cin[m+n*M+w*M*N][0];
+	    cbuf[m][1]=cin[m+n*M+w*M*N][1];
 	 }
+	 LTFAT_FFTW(execute)(p_small);
+
+      	 const int rem = positiverem(-n*a+glh,M);
+      	 for (int ii=0; ii<gl/M; ii++)
+      	 {
+      	    for (int m=0; m<rem; m++)
+      	    {
+      	       LTFAT_NAME(complexprod)(ff+m+ii*M,cbuf[M-rem+m],gw[m+ii*M]);
+      	    }
+      	    for (int m=0; m<M-rem; m++)
+      	    {
+      	       LTFAT_NAME(complexprod)(ff+m+ii*M+rem,cbuf[m],gw[m+rem+ii*M]);
+      	    }
+      	 }
 	 
-	 sp=positiverem(n*a-glh,L);
-	 ep=positiverem(n*a-glh+gl-1,L);
+      	 sp=positiverem(n*a-glh,L);
+      	 ep=positiverem(n*a-glh+gl-1,L);
 	 
-	 /* Add the ff vector to f at position sp. */
-	 for (int ii=0;ii<L-sp;ii++)
-	 {
-	    fw[sp+ii][0]+=ff[ii][0];
-	    fw[sp+ii][1]+=ff[ii][1];
-	 }
-	 for (int ii=0; ii<ep+1;ii++)
-	 {
-	    fw[ii][0] +=ff[L-sp+ii][0];
-	    fw[ii][1] +=ff[L-sp+ii][1];
-	 }
+      	 /* Add the ff vector to f at position sp. */
+      	 for (int ii=0;ii<L-sp;ii++)
+      	 {
+      	    fw[sp+ii][0]+=ff[ii][0];
+      	    fw[sp+ii][1]+=ff[ii][1];
+      	 }
+      	 for (int ii=0; ii<ep+1;ii++)
+      	 {
+      	    fw[ii][0] +=ff[L-sp+ii][0];
+      	    fw[ii][1] +=ff[L-sp+ii][1];
+      	 }
 	 
       }
    }
