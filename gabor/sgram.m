@@ -81,6 +81,9 @@ function varargout=sgram(f,varargin)
 %
 %-  'nocolorbar' - Do not display the colorbar.
 %
+%   In addition to these parameteres, SGRAM accepts any of the flags
+%   from NORMALIZE. The window will be normalized as specified.
+%
 %   See also:  dgt, dgtreal
 
 %   AUTHOR : Peter Soendergaard.
@@ -94,6 +97,8 @@ end;
 if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
+
+definput.import={'normalize'};
 
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
@@ -158,7 +163,7 @@ if flags.do_wlen
   kv.tfr=kv.wlen^2/L;
 end;
 
-g={'gauss',kv.tfr};
+g={'gauss',kv.tfr,flags.norm};
 
 if flags.do_nf
   coef=abs(dgt(f,g,a,M)).^2;
