@@ -27,17 +27,29 @@ void mexFunction( int nlhs, mxArray *plhs[],
    /* Create temporary matrices to convert to correct complex layout. */
 
    c_combined=mxMalloc(M*N*W*sizeof(ltfat_complex));   
-   g_combined=mxMalloc(gl*sizeof(ltfat_complex));
    f_combined=mxMalloc(L*W*sizeof(ltfat_complex));
    
    split2combined(M*N*W, prhs[0], c_combined);
-   split2combined(   gl, prhs[1], g_combined);
+
+   if (mxIsComplex(prhs[1]))
+   {
+
+      g_combined=mxMalloc(gl*sizeof(ltfat_complex));
+      split2combined(   gl, prhs[1], g_combined);
       
-   idgt_fb((const ltfat_complex*)c_combined,(const ltfat_complex*)g_combined,L,gl,W,a,M,
-	   f_combined);
-   
+      idgt_fb((const ltfat_complex*)c_combined,(const ltfat_complex*)g_combined,L,gl,W,a,M,
+	      f_combined);
+      
+      mxFree(g_combined);     
+   }
+   else
+   {
+      idgt_fb_r((const ltfat_complex*)c_combined,
+		(const double*)mxGetPr(prhs[1]),L,gl,W,a,M,
+		f_combined);            
+   }
    mxFree(c_combined);
-   mxFree(g_combined);
+
    
    plhs[0] = mxCreateDoubleMatrix(L, W, mxCOMPLEX);
    

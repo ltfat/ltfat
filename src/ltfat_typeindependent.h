@@ -149,6 +149,18 @@ LTFAT_H_NAME(idgt_fb)(const LTFAT_H_COMPLEX *cin, const LTFAT_H_COMPLEX *g,
 		      const int W, const int a, const int M, 
 		      LTFAT_H_COMPLEX *f);
 
+extern void
+LTFAT_H_NAME(idgt_fb_r)(const LTFAT_H_COMPLEX *cin, const LTFAT_H_REAL *g,
+		      const int L, const int gl,
+		      const int W, const int a, const int M, 
+		      LTFAT_H_COMPLEX *f);
+
+extern void 
+LTFAT_H_NAME(idgtreal_fb)(const LTFAT_H_COMPLEX *cin, const LTFAT_H_REAL *g, 
+			  const int L, const int gl, const int W,
+			  const int a, const int M,
+			  LTFAT_H_REAL *f);
+
 
 /* -------- windows ------------------------------ */
 

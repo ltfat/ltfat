@@ -27,22 +27,34 @@ void mexFunction( int nlhs, mxArray *plhs[],
    
    N=L/a;
    
-   /* Create temporary matrices to convert to correct complex layout. */
-   
-   f_combined=mxMalloc(L*W*sizeof(ltfat_complex));
-   g_combined=mxMalloc(L*2*sizeof(ltfat_complex));
    out_combined=mxMalloc(M*N*W*sizeof(ltfat_complex));
    
    /* Copy the data. */
-   split2combined(L*W, prhs[0], f_combined);
-   split2combined(gl,  prhs[1], g_combined);
          
-   dgt_fb((const ltfat_complex*)f_combined,(const ltfat_complex*)g_combined,
-	  L,gl,W,a,M,
-	  (ltfat_complex*)out_combined);
-   
-   mxFree(f_combined);
-   mxFree(g_combined);
+   if (mxIsComplex(prhs[0]) || mxIsComplex(prhs[1]))
+   {
+      f_combined=mxMalloc(L*W*sizeof(ltfat_complex));
+      split2combined(L*W, prhs[0], f_combined);
+
+      g_combined=mxMalloc(L*2*sizeof(ltfat_complex));
+      split2combined(gl,  prhs[1], g_combined);
+
+      dgt_fb((const ltfat_complex*)f_combined,(const ltfat_complex*)g_combined,
+	     L,gl,W,a,M,
+	     (ltfat_complex*)out_combined);
+
+      mxFree(f_combined);
+      mxFree(g_combined);
+      
+   }
+   else
+   {
+      dgt_fb_r((const double*)mxGetPr(prhs[0]),
+	       (const double*)mxGetPr(prhs[1]),
+	       L,gl,W,a,M,
+	       (ltfat_complex*)out_combined);
+   }
+
    
    plhs[0] = mxCreateDoubleMatrix(M, N*W, mxCOMPLEX);
 

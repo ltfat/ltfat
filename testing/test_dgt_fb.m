@@ -23,6 +23,8 @@ disp('--- Used subroutines ---');
 
 which comp_dgt_fb
 which comp_idgt_fb
+which comp_dgtreal_fb
+which comp_idgtreal_fb
 
 
 for ii=1:length(Lr);
