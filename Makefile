@@ -1,6 +1,5 @@
 # Use GNU Make to process this file
 CC = gcc
-LCCLIB = '/c/Program Files/MATLAB/R2009b/sys/lcc/bin/lcclib'
 
 CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty
 
@@ -21,9 +20,10 @@ files_matlab = $(files) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
 
 all: libltfat.a unixnomem
 
-winnomem: $(files_matlab) 
-	$(LCCLIB) /out:libltfat-nomem.lib $(files_matlab)
-	mv -f libltfat-nomem.lib ../lib
+winnomem: $(files_matlab)
+	ar rvu libltfat-nomem.lib $(files_matlab)
+	ranlib libltfat-nomem.lib
+	cp -f libltfat-nomem.lib ../lib/
 
 unixnomem: $(files_unix) 
 	ar rvu libltfat-nomem.a $(files_unix)
