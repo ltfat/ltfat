@@ -23,7 +23,9 @@ all: libltfat.a unixnomem
 winnomem: $(files_matlab)
 	ar rvu libltfat-nomem.lib $(files_matlab)
 	ranlib libltfat-nomem.lib
+	dlltool -z libltfat-nomem.def --export-all-symbols libltfat-nomem.lib
 	cp -f libltfat-nomem.lib ../lib/
+	cp -f libltfat-nomem.def ../lib/
 
 unixnomem: $(files_unix) 
 	ar rvu libltfat-nomem.a $(files_unix)
