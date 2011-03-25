@@ -201,7 +201,7 @@ LTFAT_H_NAME(gabreassign)(const LTFAT_H_REAL *s, const LTFAT_H_REAL *tgrad,
 			  const int a, const int M, LTFAT_H_REAL *sr);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(fftshift_r)(const double *f, const int L, double *h);
+LTFAT_H_NAME(fftshift_r)(const LTFAT_H_REAL *f, const int L, LTFAT_H_REAL *h);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(ifftshift_r)(const LTFAT_H_REAL *f, const int L, LTFAT_H_REAL *h);

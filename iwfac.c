@@ -8,7 +8,8 @@
 #include "fftw3.h"
 #include "ltfat.h"
 
-void LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L,
 		       const int a, const int M, LTFAT_COMPLEX *g)
 {
    
@@ -87,7 +88,8 @@ void LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L,
 /* This routine only returns the real valued part of the output. Use
  * this ONLY if you know beforehand that the output is real.
  */
-void LTFAT_NAME(iwfac_r)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(iwfac_r)(const LTFAT_COMPLEX *gf, const int L,
 			 const int a, const int M, LTFAT_REAL *g)
 {
    

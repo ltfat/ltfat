@@ -22,7 +22,8 @@
     Code works on LTFAT_REAL's instead on LTFAT_COMPLEX
 */
 
-void LTFAT_NAME(dgt_walnut)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *gf,
+LTFAT_EXTERN void
+LTFAT_NAME(dgt_walnut)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *gf,
 			    const int L, const int W,
 			    const int a, const int M,
 			    LTFAT_COMPLEX *cout)

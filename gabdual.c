@@ -1,8 +1,8 @@
 #include "config.h"
 #include "ltfat.h"
 
-
-void LTFAT_NAME(gabdual_long)(const LTFAT_COMPLEX *g,
+LTFAT_EXTERN void
+LTFAT_NAME(gabdual_long)(const LTFAT_COMPLEX *g,
 			      const int L, const int a,
 			      const int M, LTFAT_COMPLEX *gd)
 {
@@ -18,8 +18,8 @@ void LTFAT_NAME(gabdual_long)(const LTFAT_COMPLEX *g,
 
 }
 
-
-void LTFAT_NAME(gabdualreal_long)(const LTFAT_REAL *g,
+LTFAT_EXTERN void
+LTFAT_NAME(gabdualreal_long)(const LTFAT_REAL *g,
 				  const int L, const int a,
 				  const int M, LTFAT_REAL *gd)
 {

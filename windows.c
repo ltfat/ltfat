@@ -1,9 +1,11 @@
 #include "config.h"
 #include <math.h>
+#include "ltfat.h"
 
 const double pi = 3.141592653589793;
 
-void LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
+LTFAT_EXTERN void
+LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
 	    LTFAT_REAL *g)
 {
    
@@ -45,7 +47,9 @@ void LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
 %  g=g+tmp.*cos(2*pi*c_f*(lr/L-k))+i*tmp.*sin(2*pi*c_f*(lr/L-k));  
 %end;
 */
-void LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, const double c_f,
+
+LTFAT_EXTERN void
+LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, const double c_f,
 			      LTFAT_COMPLEX *g)
 {
    

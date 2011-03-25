@@ -2,6 +2,7 @@
 #include "fftw3.h"
 #include "ltfat.h"
 
+LTFAT_EXTERN
 void LTFAT_NAME(dgt_fac)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *gf,
 			 const int L, const int W, const int a,
 			 const int M, LTFAT_COMPLEX *cout)
@@ -105,7 +106,7 @@ void LTFAT_NAME(ltfat_destroy_plan)(LTFAT_NAME(ltfat_plan) plan)
 
 /* -------------- Real valued signal ------------------------ */
 
-
+LTFAT_EXTERN
 void LTFAT_NAME(dgt_fac_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 			   const int L,
 			   const int W, const int a,
