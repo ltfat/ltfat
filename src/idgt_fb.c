@@ -32,7 +32,8 @@
 	 } \
 }
 
-void LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
+LTFAT_EXTERN void
+LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
 			 const int L, const int gl, const int W,
 			 const int a, const int M,
 			 LTFAT_COMPLEX *f)
@@ -178,7 +179,8 @@ void LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
 	 } \
 }
 
-void LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
+LTFAT_EXTERN void
+LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
 			 const int L, const int gl, const int W,
 			 const int a, const int M,
 			 LTFAT_COMPLEX *f)
@@ -323,7 +325,8 @@ void LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
 	 } \
 }
 
-void LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
+LTFAT_EXTERN void
+LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
 			 const int L, const int gl, const int W,
 			 const int a, const int M,
 			 LTFAT_REAL *f)

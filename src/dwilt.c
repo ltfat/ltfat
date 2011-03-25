@@ -3,7 +3,8 @@
 #include "fftw3.h"
 #include "ltfat.h"
 
-void LTFAT_NAME(dwilt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_EXTERN void
+LTFAT_NAME(dwilt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 			   const int L, const int W, const int M, 
 			   LTFAT_COMPLEX *cout)
 {
@@ -64,8 +65,8 @@ void LTFAT_NAME(dwilt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
 }
 
-
-void LTFAT_NAME(dwiltreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+LTFAT_EXTERN void
+LTFAT_NAME(dwiltreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 			   const int L, const int W, const int M, 
 			   LTFAT_REAL *cout)
 {

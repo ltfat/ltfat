@@ -2,7 +2,8 @@
 #include <math.h>
 #include "ltfat.h"
 
-void LTFAT_NAME(fftindex)(const int N, int *indexout)
+LTFAT_EXTERN void
+LTFAT_NAME(fftindex)(const int N, int *indexout)
 {
    int ii;
 
@@ -31,7 +32,8 @@ void LTFAT_NAME(fftindex)(const int N, int *indexout)
 
 }
 
-void LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
+LTFAT_EXTERN void
+LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
 			     const LTFAT_REAL *fgrad, const int L, const int W, 
 			     const int a, const int M, LTFAT_REAL *sr)
 {

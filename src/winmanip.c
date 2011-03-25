@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include "config.h"
+#include "ltfat.h"
+
 
 /*  This routines changes the center of a vector from the beginning
  *  to the middle.
@@ -16,7 +18,9 @@
  *  h = fftshift(f,1);
  *
  */
-void LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
+
+LTFAT_EXTERN void
+LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
 {
   
    int ii;
@@ -50,7 +54,8 @@ void LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
  *  h = ifftshift(f,1);
  *
  */
-void LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
+LTFAT_EXTERN void
+LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
 {
   
    int ii;
@@ -77,7 +82,8 @@ void LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
  *  Liir  : Length of output array
  *  h     : Output array
  */ 
-void LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
+LTFAT_EXTERN void
+LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
 	       LTFAT_REAL *h)
 {
   div_t domod;
@@ -138,7 +144,8 @@ void LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
  *                             = 2 HPE symmetry is assumed
  *  h     : Output array
  */ 
-void LTFAT_NAME(iir2fir_r)(const LTFAT_REAL *f, const int Liir, const int Lfir, const int symm,LTFAT_REAL *h)
+LTFAT_EXTERN void
+LTFAT_NAME(iir2fir_r)(const LTFAT_REAL *f, const int Liir, const int Lfir, const int symm,LTFAT_REAL *h)
 {
   div_t domod;
   int ii,ss;

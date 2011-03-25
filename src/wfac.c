@@ -5,7 +5,8 @@
 #include "fftw3.h"
 #include "ltfat.h"
 
-void LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
 		      const int a, const int M,
 		      LTFAT_COMPLEX *gf)
 {
@@ -76,7 +77,8 @@ void LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
 
 
 /* wfac for real valued input. */
-void LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
 			const int a, const int M,
 			LTFAT_COMPLEX *gf)
 {
