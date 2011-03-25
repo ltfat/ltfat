@@ -1,7 +1,7 @@
 # Use GNU Make to process this file
 CC = gcc
 
-CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty
+CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty -DLTFAT_DLL -DLTFAT_COMPILE
 
 files = sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
 	sdgt_walnut.o ddgt.o ddgt_fac.o ddgtreal_fac.o didgt_fac.o	\
