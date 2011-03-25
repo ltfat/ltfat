@@ -1,3 +1,8 @@
+Version 0.98.2 25/3 2011
+	* Added C code for IDGT using FIR filters.
+
+	* WinXP compilation now works without LCC.
+
 Version 0.98.1 25/2 2011
 	* New iterative spectrogram reconstruction featuring the word "LTFAT".
 
