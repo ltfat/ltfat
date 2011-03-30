@@ -36,7 +36,7 @@ for (m=0;m<M;m++) \
 \
  LTFAT_FFTW(execute)(p_small);			\
 \
-coefsum=(LTFAT_REAL*)cout+2*(n*M+r*M*N+w*M*N*R); \
+coefsum=(LTFAT_REAL*)cout+2*(n*M+w*M*N); \
 for (m=0;m<M;m++) \
 { \
    coefsum[2*m] = sbuf[2*m]; \
@@ -58,49 +58,42 @@ for (m=0;m<M;m++) \
 \
  LTFAT_FFTW(execute)(p_small);			\
 \
-coefsum=(LTFAT_REAL*)cout+2*(n*M2+r*M2*N+w*M2*N*R); \
+coefsum=(LTFAT_REAL*)cout+2*(n*M2+w*M2*N); \
 for (m=0;m<M2;m++) \
 { \
    coefsum[2*m]   = sbuf_out[m][0]; \
    coefsum[2*m+1] = sbuf_out[m][1]; \
 }}
 
-
-void LTFAT_NAME(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_EXTERN void
+LTFAT_NAME(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 	      const int L, const int gl,
 	      const int W, const int a, const int M, 
 	      LTFAT_COMPLEX *cout)
 {
    /*  --------- initial declarations -------------- */
 
-   int b, N;
-   int glh, glh_d_a;
+   const int N=L/a;
 
-   int k, l, m, n, r, w, rem;
-
-   LTFAT_COMPLEX *gw;
+   int k, l, m, rem;
 
    LTFAT_FFTW(plan) p_small;
 
    LTFAT_COMPLEX *gb;
-   LTFAT_REAL *sbuf,*coefsum, *fbd, *fw;
+   LTFAT_REAL *coefsum, *fbd, *fw;
    
-   const int R = 1;
-
    /*  ----------- calculation of parameters and plans -------- */
    
-   b=L/M;
-   N=L/a;
 
    /* This is a floor operation. */
-   glh=gl/2;
+   const int glh=gl/2;
 
    /* This is a ceil operation. */
-   glh_d_a=(int)ceil((glh*1.0)/(a));
+   const int glh_d_a=(int)ceil((glh*1.0)/(a));
    
-   gw   = (LTFAT_COMPLEX*)ltfat_malloc(gl*R*sizeof(LTFAT_COMPLEX));
+   LTFAT_COMPLEX *gw  = (LTFAT_COMPLEX*)ltfat_malloc(gl*sizeof(LTFAT_COMPLEX));
    fw   = (LTFAT_REAL*)ltfat_malloc(2*gl*sizeof(LTFAT_REAL));
-   sbuf = (LTFAT_REAL*)ltfat_malloc(2*M*sizeof(LTFAT_REAL));
+   LTFAT_REAL *sbuf = (LTFAT_REAL*)ltfat_malloc(M*sizeof(LTFAT_COMPLEX));
 
    /* Create plan. In-place. */
    p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_COMPLEX*)sbuf, (LTFAT_COMPLEX*)sbuf,
@@ -112,95 +105,80 @@ void LTFAT_NAME(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     * conjugate it.
     */
    
-   for (r=0;r<R;r++)
+   for (int l=0;l<glh;l++)
    {
-      for (l=0;l<glh;l++)
-      {
-	 gw[l+gl*r][0]=g[l+(gl-glh)+gl*r][0];
-	 gw[l+gl*r][1]=-g[l+(gl-glh)+gl*r][1];
-      }
-      for (l=glh;l<gl;l++)
-      {
-	 gw[l+gl*r][0]=g[l-glh+gl*r][0];
-	 gw[l+gl*r][1]=-g[l-glh+gl*r][1];
-      }
+      gw[l][0]=g[l+(gl-glh)][0];
+      gw[l][1]=-g[l+(gl-glh)][1];
+   }
+   for (int l=glh;l<gl;l++)
+   {
+      gw[l][0]=g[l-glh][0];
+      gw[l][1]=-g[l-glh][1];
    }
 
    /*----- Handle the first boundary using periodic boundary conditions.*/
-   for (n=0; n<glh_d_a; n++)
+   for (int n=0; n<glh_d_a; n++)
    {
-      for (r=0;r<R;r++)
+      gb=gw;
+      for (int w=0;w<W;w++)
       {
-	 gb=gw+r*gl;
-	 for (w=0;w<W;w++)
+	 
+	 fbd=(LTFAT_REAL*)f+2*(L-(glh-n*a)+L*w);
+	 for (int l=0;l<glh-n*a;l++)
 	 {
-
-	    fbd=(LTFAT_REAL*)f+2*(L-(glh-n*a)+L*w);
-	    for (l=0;l<glh-n*a;l++)
-	    {
-	       fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	       fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
-	    }
-	    fbd=(LTFAT_REAL*)f-2*(glh-n*a)+2*L*w;
-	    for (l=glh-n*a;l<gl;l++)
-	    {
-	       fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	       fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
-	    }
-
-	    THE_SUM
-
-	 }	       
+	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
+	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	 }
+	 fbd=(LTFAT_REAL*)f-2*(glh-n*a)+2*L*w;
+	 for (int l=glh-n*a;l<gl;l++)
+	 {
+	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
+	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	 }
+	 
+	 THE_SUM	    
 
       }	     
    }
    
    /* ----- Handle the middle case. --------------------- */
-   for (n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
+   for (int n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
    {
-
-      for (r=0;r<R;r++)
+      gb=gw;
+      for (int w=0;w<W;w++)
       {
-	 gb=gw+r*gl;
-	 for (w=0;w<W;w++)
+	 fbd=(LTFAT_REAL*)f+2*(n*a-glh+L*w);
+	 for (int l=0;l<gl;l++)
 	 {
-	    fbd=(LTFAT_REAL*)f+2*(n*a-glh+L*w);
-	    for (l=0;l<gl;l++)
-	    {
-	       fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	       fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
-	    }
-
-	    THE_SUM
+	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
+	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
 	 }
-
+	 
+	 THE_SUM
       }
 
    }
    
    /* Handle the last boundary using periodic boundary conditions. */   
-   for (n=(L-(gl+1)/2)/a+1; n<N; n++)
+   for (int n=(L-(gl+1)/2)/a+1; n<N; n++)
    {
-      for (r=0;r<R;r++)
+      gb=gw;
+      for (int w=0;w<W;w++)
       {
-	 gb=gw+r*gl;
-	 for (w=0;w<W;w++)
+	 fbd=(LTFAT_REAL*)f+2*(n*a-glh+L*w);
+	 for (l=0;l<L-n*a+glh;l++)
 	 {
-	    fbd=(LTFAT_REAL*)f+2*(n*a-glh+L*w);
-	    for (l=0;l<L-n*a+glh;l++)
-	    {
-	       fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	       fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
-	    }
-	    fbd=(LTFAT_REAL*)f-2*(L-n*a+glh)+2*L*w;
-	    for (l=L-n*a+glh;l<gl;l++)
-	    {	
-	       fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	       fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
-	    }
-
-	    THE_SUM
+	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
+	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
 	 }
+	 fbd=(LTFAT_REAL*)f-2*(L-n*a+glh)+2*L*w;
+	 for (l=L-n*a+glh;l<gl;l++)
+	 {	
+	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
+	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	 }
+	 
+	 THE_SUM
       }
    }
 
@@ -238,8 +216,8 @@ for (m=0;m<M;m++) \
 }} 
 
 
-
-void LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+LTFAT_EXTERN void
+LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	      const int L, const int gl,
 	      const int W, const int a, const int M, 
 	      LTFAT_COMPLEX *cout)
@@ -378,7 +356,8 @@ void LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    LTFAT_FFTW(destroy_plan)(p_small);
 }
 
-void LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+LTFAT_EXTERN void
+LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	      const int L, const int gl,
 	      const int W, const int a, const int M, 
 	      LTFAT_COMPLEX *cout)

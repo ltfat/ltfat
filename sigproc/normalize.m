@@ -47,7 +47,7 @@ definput.keyvals.dim=[];
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-if flags.do_null
+if flags.do_null || isempty(f);
   return
 end;
 

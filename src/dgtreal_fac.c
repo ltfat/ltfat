@@ -8,7 +8,8 @@
 #include "fftw3.h"
 #include "ltfat.h"
 
-void LTFAT_NAME(dgtreal_fac)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
+LTFAT_EXTERN void
+LTFAT_NAME(dgtreal_fac)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 			     const int L,const int W, const int a,	     
 			     const int M, LTFAT_COMPLEX *cout)
 {

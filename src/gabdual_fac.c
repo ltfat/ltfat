@@ -5,7 +5,8 @@
 #include <string.h>
 #include "ltfat.h"
 
-void LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *gf, const int L,
 			     const int a, const int M,
 			     LTFAT_COMPLEX *gdualf)
 {

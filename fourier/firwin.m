@@ -103,6 +103,11 @@ else
   cent=0.5;
 end;
 
+if M==0
+  g=[];
+  return;
+end;
+
 % Deal with tapering
 if keyvals.taper<1
   if keyvals.taper==0
@@ -174,17 +179,24 @@ switch name
   do_sqrt=1;
   
  case {'tria','triangular','bartlett'}
-  g=pbspline(M,1,Meven/2,flags.centering);
+  if flags.do_wp
+    gw=linspace(1,0,Meven/2+1).';
+    g=[gw;flipud(gw(2:end-1))];
+  %g=pbspline(M,1,Meven/2,flags.centering);
+  else
+    gw=((0:Meven/2-1)/(Meven/2)+0.5).';
+    g=[gw;flipud(gw)];
+  end;
   info.ispu=1;
   
  case {'sqrttria'}
-  g=pbspline(M,1,Meven/2,flags.centering);
+  g=firwin('tria',M,flags.centering);
   info.issqpu=1;
   do_sqrt=1;
-  if flags.do_hp && rem(M,2)==1
-    % Remove small error in this case
-    g((M+1)/2)=0;
-  end;
+  %if flags.do_hp && rem(M,2)==1
+  %  % Remove small error in this case
+  %  g((M+1)/2)=0;
+  %end;
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));

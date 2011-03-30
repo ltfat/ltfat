@@ -1,6 +1,6 @@
 #include "config.h"
 
-int LTFAT_NAME(complexprod)(LTFAT_COMPLEX *c, LTFAT_COMPLEX a,LTFAT_COMPLEX b)
+int LTFAT_NAME(complexprod)(LTFAT_COMPLEX *c, const LTFAT_COMPLEX a, const LTFAT_COMPLEX b)
 {
 #ifdef HAVE_COMPLEX_H
   (*c)=a*b;

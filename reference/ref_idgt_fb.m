@@ -1,11 +1,8 @@
-function [f]=comp_idgt_fb(coef,g,L,a,M)
+function [f]=ref_idgt_fb(coef,g,L,a,M)
 %COMP_IDGT_FB  Filter bank IDGT.
 %   Usage:  f=comp_idgt_fb(c,g,L,a,M);
 %       
 %   This is a computational routine. Do not call it directly.
-%
-%   Input must be in the M x N*W format, so the N and W dimension is
-%   combined.
 %
 %   See also: idgt
 
@@ -17,7 +14,9 @@ function [f]=comp_idgt_fb(coef,g,L,a,M)
 N=L/a;
 b=L/M;
 
-W=prod(size(coef))/(M*N);
+R=size(g,2);
+
+W=prod(size(coef))/(M*N*R);
 
 N=L/a;
 b=L/M;
@@ -25,18 +24,15 @@ b=L/M;
 gl=length(g);
 glh=floor(gl/2);  % gl-half
 
-if ndims(coef)>2
-  error('Reshape to M x N*W');
-end;
-
 % Apply ifft to the coefficients.
-coef=ifft(coef)*sqrt(M);
+coef=ifft(reshape(coef,M,N*W))*sqrt(M);
 
 coef=reshape(coef,M,N,W);
 
 % The fftshift actually makes some things easier.
 g=fftshift(g);
 
+g
 f=zeros(L,W);
 
 % Make multicolumn g by replication.
@@ -67,10 +63,10 @@ for w=1:W
     
     % Add the ff vector to f at position sp.
     for ii=0:L-sp-1
-      f(sp+ii+1,w)=f(sp+ii+1,w)+ff(1+ii);
+      f(sp+ii+1,w)+=ff(1+ii);
     end;
     for ii=0:ep
-      f(1+ii,w)=f(1+ii,w)+ff(L-sp+1+ii); 
+      f(1+ii,w)+=ff(L-sp+1+ii); 
     end;
   end;
 
@@ -91,7 +87,7 @@ for w=1:W
   
     % Add the ff vector to f at position sp.
     for ii=0:ep-sp
-      f(ii+sp+1,w)=f(ii+sp+1,w)+ff(ii+1);
+      f(ii+sp+1,w)+=ff(ii+1);
     end;
   end;
 
@@ -113,10 +109,10 @@ for w=1:W
     
     % Add the ff vector to f at position sp.
     for ii=0:L-sp-1
-      f(sp+ii+1,w)=f(sp+ii+1,w)+ff(1+ii);
+      f(sp+ii+1,w)+=ff(1+ii);
     end;
     for ii=0:ep
-      f(1+ii,w)=f(1+ii,w)+ff(L-sp+1+ii); 
+      f(1+ii,w)+=ff(L-sp+1+ii); 
     end;
   end;
 end;

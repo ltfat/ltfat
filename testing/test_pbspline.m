@@ -1,10 +1,11 @@
 function test_failed=test_pbspline
 
-Lr=[15,20];
-ar=[ 3, 4];
+Lr=[15,16,18,20];
+ar=[ 3, 4, 6, 5];
 or=[1, 1.5, 2,3];
 
-btypes={'ed','xd','stard','ec','xc','starc'};
+%btypes={'ed','xd','stard','ec','xc','starc'};
+btypes={'ed','xd','stard'};
 centtypes={'wp','hp'};
 
 test_failed=0;
@@ -19,7 +20,7 @@ for ii=1:length(Lr)
   for jj=1:length(or)
     order=or(jj);
     
-    for kk=1:6
+    for kk=1:numel(btypes)
       btype=btypes{kk};
       
       for ll=1:2

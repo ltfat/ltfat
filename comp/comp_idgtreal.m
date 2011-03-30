@@ -51,13 +51,6 @@ if L==Lwindow
 else
   % Do filter bank algorithm.
   % Call the computational subroutine.
-  coef2=zeros(M,N,W);
-  coef2(1:M2,:,:)=coef;
-  if rem(M,2)==0
-    coef2(M2+1:M,:,:)=conj(coef(M2-1:-1:2,:,:));
-  else
-    coef2(M2+1:M,:,:)=conj(coef(M2:-1:2,:,:));
-  end;
-  f = comp_idgt_fb(coef2,g,L,a,M);
-
+  
+  f = comp_idgtreal_fb(reshape(coef,M2,N*W),g,L,a,M);
 end;

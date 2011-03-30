@@ -1,31 +1,32 @@
-function [f,relres,iter]=isgram(s,g,a,varargin)
+function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %ISGRAM  Spectrogram inversion
-%   Usage:  f=isgram(s,g,a);
-%           f=isgram(s,g,a,Ls);
+  %   Usage:  f=isgram(s,g,a,M);
+%           f=isgram(s,g,a,M,Ls);
 %           [f,relres,iter]=isgram(...);
 %
 %   Input parameters:
 %         c       : Array of coefficients.
 %         g       : Window function.
 %         a       : Length of time shift.
+%         M       : Number of channels.
 %         Ls      : length of signal.
 %   Output parameters:
 %         f       : Signal.
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   ISGRAM(s,g,a) attempts to invert a spectrogram computed by
+%   ISGRAMREAL(s,g,a) attempts to invert a spectrogram computed by
 %
-%C     s = abs(dgt(f,g,a,M));
+%C     s = abs(dgtreal(f,g,a,M));
 %
 %   by an iterative method.
 %
-%   ISGRAM(c,g,a,Ls) does as above but cuts or extends f to length Ls.
+%   ISGRAMREAL(c,g,a,Ls) does as above but cuts or extends f to length Ls.
 %
 %   If the phase of the spectrogram is known, it is much better to use
-%   IDGT.
+%   IDGTREAL.
 %
-%   [f,relres,iter]=ISGRAM(...) additionally return the residuals in a
+%   [f,relres,iter]=ISGRAMREAL(...) additionally return the residuals in a
 %   vector relres and the number of iteration steps done.
 %
 %   Generally, if the spectrogram has not been modified, the iterative
@@ -33,7 +34,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %   spectrogram has been modified, the algorithm is not guaranteed to
 %   converge at all.  
 %
-%   ISGRAM takes the following parameters at the end of the line of input
+%   ISGRAMREAL takes the following parameters at the end of the line of input
 %   arguments:
 %
 %-    'zero'     - Choose a starting phase of zero. This is the default
@@ -41,7 +42,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %-    'rand'     - Choose a random starting phase.
 %
 %-    'int'      - Construct a starting phase by integration. Only works
-%                  for Gaussian windows.
+%                  for Gaussian windows. This is not implemented yet.
 %
 %-    'tol',t    - Stop if relative residual error is less than the specified tolerance.  
 %
@@ -102,12 +103,11 @@ if isnumeric(g)
   end;
 end;
 
-M=size(s,1);
 N=size(s,2);
 W=size(s,3);
 
 % use assert_squarelat to check a and the window size.
-assert_squarelat(a,M,1,'ISGRAM');
+assert_squarelat(a,M,1,'ISGRAMREAL');
 
 L=N*a;
 
@@ -121,22 +121,23 @@ if flags.do_rand
 end;
 
 if flags.do_int
-  c=constructphase(s,g,a);
+  error('This has not been implemented yet. Please use ISGRAM, which supports this option.');
+  %c=constructphase(s,g,a);
 end;
 
-g  = gabwin(g,a,M,L,'ISGRAM');
+g  = gabwin(g,a,M,L,'ISGRAMREAL');
 
 gd = gabdual(g,a,M);
 
-assert_L(L,size(g,1),L,a,M,'ISGRAM');
+assert_L(L,size(g,1),L,a,M,'ISGRAMREAL');
 
 % For normalization purposes
 norm_s=norm(s,'fro');
 
 relres=zeros(kv.maxit,1);
 for iter=1:kv.maxit
-  f=comp_idgt(c,gd,a,M,L,0);
-  c=comp_dgt(f,g,a,M,L,0);
+  f=comp_idgtreal(c,gd,a,M,L,0);
+  c=comp_dgtreal(f,g,a,M,L,0);
   
   relres(iter)=norm(abs(c)-s,'fro')/norm_s;
   
@@ -144,7 +145,7 @@ for iter=1:kv.maxit
   
   if flags.do_print
     if mod(iter,kv.printstep)==0
-      fprintf('ISGRAM: Iteration %i, residual = %f.\n',iter,relres(iter));
+      fprintf('ISGRAMREAL: Iteration %i, residual = %f.\n',iter,relres(iter));
     end;    
   end;
   

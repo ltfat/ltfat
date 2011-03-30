@@ -1,7 +1,9 @@
 #include "config.h"
 #include <math.h>
+#include "ltfat.h"
 
-void LTFAT_NAME(col2diag)(const LTFAT_COMPLEX *cin, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(col2diag)(const LTFAT_COMPLEX *cin, const int L,
 			  LTFAT_COMPLEX *cout)
 {
    int ii;
@@ -31,8 +33,8 @@ void LTFAT_NAME(col2diag)(const LTFAT_COMPLEX *cin, const int L,
    }   
 }
 
-
-void LTFAT_NAME(col2diag_r)(const LTFAT_REAL *cin, const int L,
+LTFAT_EXTERN void
+LTFAT_NAME(col2diag_r)(const LTFAT_REAL *cin, const int L,
 			    LTFAT_REAL *cout)
 {
    int ii;

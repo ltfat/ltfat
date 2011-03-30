@@ -5,6 +5,8 @@
 %  General
 %    RMS            -  Root Mean Square norm of signal.
 %    NORMALIZE      -  Normalize signal by specified norm.
+%    GAINDB         -  Scale input signal
+%    CRESTFACTOR    -  Compute the crest factor of a signal.
 %    RAMPUP         -  Rising ramp.
 %    RAMPDOWN       -  Falling ramp.
 %    RAMPSIGNAL     -  Ramp a signal.

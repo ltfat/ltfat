@@ -19,6 +19,17 @@ extern "C"
 {
 #endif /* __cplusplus */
 
+/* Handle Windows DLL files */
+#if defined(LTFAT_DLL) && (defined(_WIN32) || defined(__WIN32__)) 
+#  if defined(COMPILING_LTFAT) /* defined by Makefile when compiling LTFAT */
+#    define LTFAT_EXTERN extern __declspec(dllexport) 
+#  else /* user is calling LTFAT; import symbol */
+#    define LTFAT_EXTERN extern __declspec(dllimport) 
+#  endif
+#else
+#  define LTFAT_EXTERN extern
+#endif
+
   /* -------- Define the double precision routines ----- */
 
 #define LTFAT_H_REAL double

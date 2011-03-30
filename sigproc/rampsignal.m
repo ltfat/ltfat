@@ -3,23 +3,29 @@ function outsig=rampsignal(insig,L,varargin)
 %   Usage: outsig=rampup(insig,L);
 %
 %   RAMPSIGNAL(insig,L) will apply a ramp function of length L to the
-%   beginning and the end of the input signal. The ramp is a sinusoide
-%   starting from zero and ending at one.
+%   beginning and the end of the input signal. The default ramp is a
+%   sinusoide starting from zero and ending at one (also known as a cosine
+%   squared ramp).
 %
 %   If L is scalar, the starting and ending ramps will be of the same
 %   length. If L is a vector of length 2, the first entry will be used
 %   for the rising ramp, and the second for the falling.
 %
-%   If the input is a matrix or and 
+%   If the input is a matrix or an N-D array, the ramp will be applied
+%   along the first non-singleton dimension.
 %
 %   RAMPUP(insig,L,wintype) will use another window for ramping. This may be
-%   any of the window types from FIRWIN. Please see the help on FIRWIN
-%   for more information. The default is to use a piece of the Hann
-%   window.
+%   any of the window types from FIRWIN. Please see the help on FIRWIN for
+%   more information. The default is to use a piece of the Hann window.
 %
 %   For very long signals, it may be more efficient to manually do the
 %   ramping by using RAMPUP and RAMPDOWN, because Matlab/Octave does not
 %   need to copy the entire input signal.
+%
+%   RAMPSIGNAL accepts the following optional parameters:
+%
+%-    'dim',d - Apply the ramp along dimension d. The default value of []
+%               means to use the first non-singleton dimension.     
 %
 %   See also: rampdown, rampsignal, firwin
 
@@ -36,6 +42,10 @@ switch numel(L)
   L2=L(2);
  otherwise
   error('%s: The length must a scalar or vector.',upper(mfilename));
+end;
+
+if rem(L1,1)~=0 || rem(L2,1)~=0
+  error('The length of the ramp must be an integer.');
 end;
 
 r1=rampup(L1,flags.wintype);
