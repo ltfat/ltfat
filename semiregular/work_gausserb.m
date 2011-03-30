@@ -12,6 +12,7 @@ f=greasy;
 fs=16000;
 L=length(f);
 a=4;
+filterlength=5000;
 
 % Number of channels, slightly less than 1 ERB(Cambridge) per channel.
 M=ceil(freqtoerb(fs/2));
@@ -25,18 +26,21 @@ g=cell(M,1);
 bw=audfiltbw(fc)/0.79*1.5;
 
 for m=1:M
-  g{m}=pgauss(L,'fs',fs,'bw',bw(m),'cf',fc(m));
+  g{m}=pgauss(filterlength,'fs',fs,'bw',bw(m),'cf',fc(m));
 end;
 
 disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
-filterbankrealbounds(g,a)
+filterbankrealbounds(g,a,filterlength)
 
-if 0
-gd=filterbankrealdual(g,a);
+% Synthesis filters
+gd=filterbankrealdual(g,a,filterlength);
 
+% Analysis transform
 coef=ufilterbank(f,g,a);
+
+% Synthesis transform
 r=2*real(iufilterbank(coef,gd,a));
 
 disp('Error in reconstruction, should be close to zero.');
-norm(f-r)
-end;
+norm(f-r)/norm(f)
+

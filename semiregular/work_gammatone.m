@@ -54,13 +54,17 @@ end;
 disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
 filterbankrealbounds(g,a)
 
+% Synthesis filters
 gd=filterbankrealdual(g,a,L);
 
+% Analysis transform
 coef=ufilterbank(f,g,a);
+
+% Synthesis transform
 r=2*real(iufilterbank(coef,gd,a));
 
-disp('Error in reconstruction, should be close to zero.');
-norm(f-r)
+disp('Relative error in reconstruction, should be close to zero.');
+norm(f-r)/norm(f)
   
 %for m=1:M
 %  magresp(g{m});

@@ -45,9 +45,12 @@ filterbankrealbounds(g,a,L)
 % Create reconstruction filters
 gd=filterbankrealdual(g,a,L);
 
+% Analysis transform
 coef=ufilterbank(f,g,a);
+
+% Synthesis transform
 r=2*real(iufilterbank(coef,gd,a,Ls));
 
-disp('Error in reconstruction, should be close to zero.');
-norm(f-r)
+disp('Relative error in reconstruction, should be close to zero.');
+norm(f-r)/norm(f)
   

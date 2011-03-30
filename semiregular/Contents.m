@@ -1,6 +1,6 @@
 % LTFAT - Semi-regular systems
 %
-%  Florent Jaillet and Peter L. Soendergaard, 2010
+%  Florent Jaillet and Peter L. Soendergaard, 2011
 %
 %  Filter banks
 %    UFILTERBANK          - Uniform Filter bank
