@@ -1,4 +1,4 @@
-function nfft=nextfastfft(n,varargin)
+function [nfft,tableout]=nextfastfft(n,method)
 %NEXTNICEFFT  Next higher number with a fast FFT
 %   Usage: nfft=nextfastfft(n);
 %
@@ -11,11 +11,16 @@ function nfft=nextfastfft(n,varargin)
 %   usually performs well for size which are powers or 2,3,5 and 7.
 %  
   
+  if nargin==1
+    method=1;
+  end;
+  
   persistent table;
   
-  maxval=1e6;
+  maxval=1e8;
 
   if isempty(table)
+    disp('Making table.');
     for i2=0:floor(log(maxval)/log(2))
       for i3=0:floor(log(maxval)/log(3))
         for i5=0:floor(log(maxval)/log(5))
@@ -29,11 +34,31 @@ function nfft=nextfastfft(n,varargin)
       end;
     end;
     table=sort(table);
+    numel(table)
   end;
 
   nfft=zeros(size(n));
-  % Handle input of any shape by Fortran indexing.
-  for ii=1:numel(n)    
-    ind=find(table>=n(ii));
-    nfft(ii)=table(ind(1));  
+  if method==1
+    
+    % Handle input of any shape by Fortran indexing.
+    for ii=1:numel(n)    
+      ind=find(table>=n(ii));
+      nfft(ii)=table(ind(1));  
+    end;
+    
   end;
+  
+  if method==2    
+    nfft=2.^nextpow2(n);
+  end;
+  
+  if method==3
+    nfft=2.^nextpow2(n);
+    for ii=1:numel(n)
+      if n(ii)<3/4*nfft(ii) && nfft(ii)>=4
+        nfft(ii)=nfft(ii)*3/4;
+      end;
+    end;
+  end;
+  
+  tableout=table;

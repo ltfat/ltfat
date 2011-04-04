@@ -94,8 +94,7 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-
-
+definput.import={'tfplot'};
 
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
@@ -103,11 +102,10 @@ definput.flags.thr={'nothr','thr'};
 definput.flags.tc={'notc','tc'};
 definput.flags.plottype={'image','contour','mesh','pcolor'};
 
-definput.flags.clim={'noclim','clim'};
-definput.flags.fmax={'nofmax','fmax'};
+% Override the setting from tfplot, because SGRAM does not support the
+% 'dbsq' setting (it does not make sense).
 definput.flags.log={'db','lin'};
-definput.flags.dynrange={'nodynrange','dynrange'};
-definput.flags.colorbar={'colorbar','nocolorbar'};
+
 
 if isreal(f)
   definput.flags.posfreq={'posfreq','nf'};
@@ -115,68 +113,66 @@ else
   definput.flags.posfreq={'nf','posfreq'};
 end;
 
-definput.keyvals.fs=[];
 definput.keyvals.sharp=1;
 definput.keyvals.tfr=1;
 definput.keyvals.wlen=0;
 definput.keyvals.thr=0;
-definput.keyvals.clim=[0,1];
-definput.keyvals.climsym=1;
-definput.keyvals.fmax=0;
-definput.keyvals.dynrange=100;
+definput.keyvals.fmax=[];
 definput.keyvals.xres=800;
 definput.keyvals.yres=600;
 
-[flags,keyvals,fs]=ltfatarghelper({'fs'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
-if (keyvals.sharp<0 || keyvals.sharp >1)
+if (kv.sharp<0 || kv.sharp >1)
   error(['RESGRAM: Sharpness parameter must be between (including) ' ...
 	 '0 and 1']);
 end;
 
 % Downsample
-resamp=1;
-if flags.do_fmax
-  if dofs
-    resamp=fmax*2/fs;
+if ~isempty(kv.fmax)
+  if ~isempty(kv.fs)
+    resamp=kv.fmax*2/fs;
   else
-    resamp=fmax*2/length(f);
+    resamp=kv.fmax*2/length(f);
   end;
 
   f=fftresample(f,round(length(f)*resamp));
+  kv.fs=2*kv.fmax;1
 end;
 
 Ls=length(f);
 
 if flags.do_posfreq
-   keyvals.yres=2*keyvals.yres;
+   kv.yres=2*kv.yres;
 end;
 
-[a,M,L,N,Ndisp]=gabimagepars(Ls,keyvals.xres,keyvals.yres);
+[a,M,L,N,Ndisp]=gabimagepars(Ls,kv.xres,kv.yres);
 
 % Set an explicit window length, if this was specified.
 if flags.do_wlen
-  keyvals.tfr=keyvals.wlen^2/L;
+  kv.tfr=kv.wlen^2/L;
 end;
 
-g={'gauss',keyvals.tfr};
+g={'gauss',kv.tfr};
 
 [tgrad,fgrad,c]=gabphasegrad('dgt',f,g,a,M);          
-coef=gabreassign(abs(c).^2,keyvals.sharp*tgrad,keyvals.sharp*fgrad,a);
-
-if flags.do_posfreq
-  coef=coef(1:floor(M/2)+1,:);
-end;
+coef=gabreassign(abs(c).^2,kv.sharp*tgrad,kv.sharp*fgrad,a);
 
 % Cut away zero-extension.
 coef=coef(:,1:Ndisp);
 
 if flags.do_thr
   % keep only the largest coefficients.
-  coef=largestr(coef,keyvals.thr);
+  coef=largestr(coef,kv.thr);
 end
 
-tfplot(coef,a,M,L,resamp,keyvals,flags);
+if flags.do_posfreq
+  coef=coef(1:floor(M/2)+1,:);
+  plotdgtreal(coef,a,M,'argimport',flags,kv);
+else
+  plotdgt(coef,a,'argimport',flags,kv);
+end;
+
 
 if nargout>0
   varargout={coef};

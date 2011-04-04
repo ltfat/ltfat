@@ -1,4 +1,4 @@
-function plotdgt(coef,a,varargin)
+function tfplot(coef,step,yr,varargin)
 %DGTPLOT  Plot DGT coefficients.
 %   Usage: plotdgt(coef,a);
 %          plotdgt(coef,a,fs);
@@ -19,29 +19,28 @@ function plotdgt(coef,a,varargin)
 %               logarithmic scale is more adapted to perception of sound.
 %               This is the default.
 %
-%-  'lin'     - Show the energy of the coefficients on a linear scale.
+%-  'dbsq'    - Apply 10*log10 to the coefficients. Same as the 'db'
+%               option, but assume that the input is already squared.  
+%
+%-  'lin'     - Show the coefficients on a linear scale.
 %
 %-  'tc'      - Time centering. Move the beginning of the signal to the
-%               middle of the plot. This is useful for visualizing the
-%               window functions of the toolbox.
+%               middle of the plot. 
 %
 %-  'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
 %               values are passed to IMAGESC. See the help on IMAGESC.
 %
-%-  'image'   - Use 'imagesc' to display the spectrogram. This is the
-%               default.
+%-  'image'   - Use 'imagesc' to display the plot. This is the default.
 %
 %-  'contour' - Do a contour plot.
 %          
 %-  'surf'    - Do a surf plot.
 %
-%-  'mesh'    - Do a mesh plot.
-%
 %-  'colorbar' - Display the colorbar. This is the default.
 %
 %-  'nocolorbar' - Do not display the colorbar.
 %
-%   See also:  plotdgtreal, sgram
+%   See also:  dgtrealplot, sgram
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
@@ -52,24 +51,65 @@ if nargin<2
 end;
 
 definput.import={'tfplot'};
-
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 M=size(coef,1);
 N=size(coef,2);
 
-% Move zero frequency to the center and Nyquest frequency to the top.
-if rem(M,2)==0
-  coef=circshift(coef,M/2-1);
-  yr=(-M/2+1:M/2)/(M/2);
+if ~isreal(coef)
+  coef=abs(coef);
+end;
+
+if size(coef,3)>1
+  error('Input is multidimensional.');
+end;
+
+% Apply transformation to coefficients.
+if flags.do_db
+  coef=20*log10(coef+realmin);
+end;
+
+if flags.do_dbsq
+  coef=10*log10(coef+realmin);
+end;
+  
+% 'dynrange' parameter is handled by thresholding the coefficients.
+if ~isempty(kv.dynrange)
+  maxclim=max(coef(:));
+  coef(coef<maxclim-kv.dynrange)=maxclim-kv.dynrange;
+end;
+
+if flags.do_tc
+  xr=-floor(N/2)*step:step:floor((N-1)/2)*step;
 else
-  coef=circshift(coef,(M-1)/2);
-  yr=(-(M-1)/2:(M-1)/2)/((M-1)/2);
+  xr=0:step:N*step-1;
 end;
 
+switch(flags.plottype)
+  case 'image'
+    if flags.do_clim
+      imagesc(xr,yr,coef,kv.clim);
+    else
+      imagesc(xr,yr,coef);
+    end;
+  case 'contour'
+    contour(xr,yr,coef);
+  case 'surf'
+    surf(xr,yr,coef);
+  case 'pcolor'
+    pcolor(xr,yr,coef);
+end;
+
+if flags.do_colorbar
+  colorbar;
+end;
+
+axis('xy');
 if ~isempty(kv.fs)
-  yr=yr*fs/2;
+  xlabel('Time (s)')
+  ylabel('Frequency (Hz)')
+else
+  xlabel('Time (samples)')
+  ylabel('Frequency (normalized)')
 end;
 
-
-tfplot(coef,a,yr,'argimport',flags,kv);

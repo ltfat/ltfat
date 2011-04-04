@@ -10,6 +10,7 @@
 %    COL2DIAG       -  Move columns of a matrix to diagonals.
 %    S0NORM         -  Compute the S0-norm.
 %    TFMAT          -  Matrix of transform or operator in LTFAT.
+%    TFPLOT         -  Plot coefficients on the time-frequency plane.
 %
 %  Gabor systems
 %    DGT            -  Discrete Gabor transform.
@@ -21,6 +22,8 @@
 %    IDGTREAL       -  IDGT for real-valued signals.
 %    GABWIN         -  Evaluate Gabor window.
 %    LONGPAR        -  Easy calculation of LONG parameters.
+%    PLOTDGT        -  Plot DGT coefficients.
+%    PLOTDGTREAL    -  Plot DGTREAL coefficients.
 %
 %  Wilson bases and WMDCT
 %    DWILT          -  Discrete Wilson transform.
