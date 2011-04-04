@@ -13,6 +13,7 @@ files = sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
 	dspread.o dheapint.o dwinmanip.o \
 	sdwilt.o sgabdual.o sgabtight.o stfutil.o \
 	ddwilt.o dgabdual.o dgabtight.o dtfutil.o \
+	spfilt.o dpfilt.o \
 	integer_manip.o 
 
 files_unix = $(files) dltfat_blaslapack.o sltfat_blaslapack.o
