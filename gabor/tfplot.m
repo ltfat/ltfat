@@ -1,46 +1,60 @@
 function tfplot(coef,step,yr,varargin)
-%DGTPLOT  Plot DGT coefficients.
-%   Usage: plotdgt(coef,a);
-%          plotdgt(coef,a,fs);
-%          plotdgt(coef,a,fs,dynrange);
+%TFPLOT  Plot coefficient array on the TF plane.
+%   Usage: tfplot(coef,step,yr);
+%          tfplot(coef,step,yr,...);
 %
-%   PLOTDGT(coef,a) will plot the Gabor coefficient coefficients
-%   coef. The coefficient must have been produce with a timeshift of _a.
+%   TFPLOT(coef,step,yr) will plot a rectangular coefficient array on the
+%   TF-plane. The shift in samples between each column of coefficients is
+%   given by the variable step. The vector yr denotes the frequency
+%   positions of each row.
 %
-%   The arguments must be character strings possibly followed by an argument:
+%   TFPLOT is not meant to be called directly. Instead, it is called by
+%   other plotting routines to give a uniform display format. 
 %
-%-  'dynrange',r - Limit the dynamical range to r by using a colormap in
+%   TFPLOT (and all functions that calls it) takes the following arguments.
+%
+%-    'dynrange',r - Limit the dynamical range to r by using a colormap in
 %               the interval [chigh-r,chigh], where chigh is the highest
 %               value in the plot. The default value of [] means to not
 %               limit the dynamical range.
 %
-%-  'db'      - Apply 20*log10 to the coefficients. This makes it possible to
+%-    'db'    - Apply 20*log10 to the coefficients. This makes it possible to
 %               see very weak phenomena, but it might show too much noise. A
 %               logarithmic scale is more adapted to perception of sound.
 %               This is the default.
 %
-%-  'dbsq'    - Apply 10*log10 to the coefficients. Same as the 'db'
+%-    'dbsq'  - Apply 10*log10 to the coefficients. Same as the 'db'
 %               option, but assume that the input is already squared.  
 %
-%-  'lin'     - Show the coefficients on a linear scale.
+%-    'lin'   - Show the coefficients on a linear scale.
 %
-%-  'tc'      - Time centering. Move the beginning of the signal to the
+%-    'tc'    - Time centering. Move the beginning of the signal to the
 %               middle of the plot. 
 %
-%-  'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
+%-    'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
 %               values are passed to IMAGESC. See the help on IMAGESC.
 %
-%-  'image'   - Use 'imagesc' to display the plot. This is the default.
+%-    'image' - Use 'imagesc' to display the plot. This is the default.
 %
-%-  'contour' - Do a contour plot.
+%-    'contour' - Do a contour plot.
 %          
-%-  'surf'    - Do a surf plot.
+%-    'surf'  - Do a surf plot.
 %
-%-  'colorbar' - Display the colorbar. This is the default.
+%-    'colorbar' - Display the colorbar. This is the default.
 %
-%-  'nocolorbar' - Do not display the colorbar.
+%-    'nocolorbar' - Do not display the colorbar.
 %
-%   See also:  dgtrealplot, sgram
+%   It is possible to customize the text by setting the following values:
+%
+%-    'time', t     - The word denoting time. Default is 'Time'
+%
+%-    'frequency',f - The word denoting frequency. Default is 'Frequency'
+%  
+%-    'samples',s   - The word denoting samples. Default is 'samples'
+%  
+%-    'normalized',n - Defult value is 'normalized'.
+%  
+%   See also:  sgram, plotdgt, plotdgtreal, plotwmdct, plotdwilt
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
@@ -56,21 +70,17 @@ definput.import={'tfplot'};
 M=size(coef,1);
 N=size(coef,2);
 
-if ~isreal(coef)
-  coef=abs(coef);
-end;
-
 if size(coef,3)>1
   error('Input is multidimensional.');
 end;
 
 % Apply transformation to coefficients.
 if flags.do_db
-  coef=20*log10(coef+realmin);
+  coef=20*log10(abs(coef)+realmin);
 end;
 
 if flags.do_dbsq
-  coef=10*log10(coef+realmin);
+  coef=10*log10(abs(coef)+realmin);
 end;
   
 % 'dynrange' parameter is handled by thresholding the coefficients.
@@ -106,10 +116,10 @@ end;
 
 axis('xy');
 if ~isempty(kv.fs)
-  xlabel('Time (s)')
-  ylabel('Frequency (Hz)')
+  xlabel(sprintf('%s (s)',kv.time));
+  ylabel(sprintf('%s (Hz)',kv.frequency));
 else
-  xlabel('Time (samples)')
-  ylabel('Frequency (normalized)')
+  xlabel(sprintf('%s (%s)',kv.time,kv.samples));
+  ylabel(sprintf('%s (%s)',kv.frequency,kv.normalized));
 end;
 

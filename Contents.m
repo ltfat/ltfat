@@ -7,9 +7,12 @@
 %    LTFATHELP        -  Help
 %    LTFATMEX         -  Compile Mex/Oct interfaces
 %    LTFATBASEPATH    -  Return the base path
-%    LTFATGETDEFAULTS -  Get the default values for a function
-%    LTFATSETDEFAULTS -  Get the default values for a function
 %    ISOCTAVE         -  True if interpreter is Octave
+%
+%  Parameter handling
+%    LTFATARGHELPER   -  Handle optional parameters of functions.
+%    LTFATGETDEFAULTS -  Get the default values for a function.
+%    LTFATSETDEFAULTS -  Get the default values for a function.
 %
 %  Graphical user interfaces
 %    MULACLAB         -  Short Time-Fourier transform modification in Matlab

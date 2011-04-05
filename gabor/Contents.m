@@ -37,6 +37,8 @@
 %    WIL2RECT       -  Rectangular layout of Wilson coefficients.
 %    RECT2WIL       -  Inverse of WIL2RECT.
 %    WILWIN         -  Evaluate Wilson window.
+%    PLOTDWILT      -  Plot DWILT coefficients.
+%    PLOTWMDCT      -  Plot WMDCT coefficients.
 %
 %  Reconstructing windows
 %    GABDUAL        -  Canonical dual window.
