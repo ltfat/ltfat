@@ -80,31 +80,25 @@ plot(x,fftshift(g),'-',...
      x,circshift(fftshift(g),a),'-',...
      x,circshift(fftshift(g),-a),'-');
 title('g=pgauss(72,6/8)');
-legend('off');
 
 subplot(3,2,2);
 plot(gf_plot);
 title('g, frequency domain');
-legend('off');
 
 subplot(3,2,3);
 plot(gdual_plot);
 title('Dual window of g');
-legend('off');
 
 subplot(3,2,4);
 plot(gdualf_plot);
 title('dual window, frequency domain');
-legend('off');
 
 subplot(3,2,5);
 plot(gtight_plot);
 title('Tight window generated from g');
-legend('off');
 
 subplot(3,2,6);
 plot(gtightf_plot);
 title('tight window, frequency domain');
-legend('off');
 
 

@@ -8,6 +8,7 @@
 %    FFTREAL        -  FFT for real valued signals.
 %    IFFTREAL       -  Inverse of FFTREAL.
 %    FFTINDEX       -  Index of positive and negative frequencies.
+%    NEXTFASTFFT    -  Next efficient FFT size.
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.

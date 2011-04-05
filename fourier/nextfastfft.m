@@ -1,4 +1,4 @@
-function [nfft,tableout]=nextfastfft(n,method)
+function [nfft,tableout]=nextfastfft(n)
 %NEXTNICEFFT  Next higher number with a fast FFT
 %   Usage: nfft=nextfastfft(n);
 %
@@ -9,18 +9,25 @@ function [nfft,tableout]=nextfastfft(n,method)
 %   NEXTFASTFFT is intended as a replacement of NEXTPOW2, which if often
 %   used for the same purpose. However, a modern FFT implementation (like FFTW)
 %   usually performs well for size which are powers or 2,3,5 and 7.
-%  
+%
+%   The algorithm will look up the best size in a table, which is
+%   computed the first time the function is run. If the input size is
+%   larger than the largest value in the table, the input size will be
+%   reduced by factors of 2, until it is in range.
+%
+%   [n,nfft]=NEXTFASTFFT(n) additionally returns the table used for lookup.
+%
+%   Demos: demo_nextfastfft
   
-  if nargin==1
-    method=1;
-  end;
+%   AUTHOR: Peter L. Soendergaard and Johan Sebastian Rosenkilde Nielsen
+  
   
   persistent table;
   
-  maxval=1e8;
+  maxval=2^20;
 
   if isempty(table)
-    disp('Making table.');
+    % Compute the table for the first time, it is empty.
     for i2=0:floor(log(maxval)/log(2))
       for i3=0:floor(log(maxval)/log(3))
         for i5=0:floor(log(maxval)/log(5))
@@ -34,31 +41,38 @@ function [nfft,tableout]=nextfastfft(n,method)
       end;
     end;
     table=sort(table);
-    numel(table)
   end;
 
-  nfft=zeros(size(n));
-  if method==1
+  % Copy input to output. This allows us to efficiently work in-place.
+  nfft=n;
     
-    % Handle input of any shape by Fortran indexing.
-    for ii=1:numel(n)    
-      ind=find(table>=n(ii));
-      nfft(ii)=table(ind(1));  
+  % Handle input of any shape by Fortran indexing.
+  for ii=1:numel(n)
+    n2reduce=0;
+    
+    if n(ii)>maxval
+      % Reduce by factors of 2 to get below maxval
+      n2reduce=ceil(log2(nfft(ii)/maxval));
+      nfft(ii)=nfft(ii)/2^n2reduce;
     end;
     
-  end;
-  
-  if method==2    
-    nfft=2.^nextpow2(n);
-  end;
-  
-  if method==3
-    nfft=2.^nextpow2(n);
-    for ii=1:numel(n)
-      if n(ii)<3/4*nfft(ii) && nfft(ii)>=4
-        nfft(ii)=nfft(ii)*3/4;
-      end;
-    end;
+    % Use a simple bisection method to find the answer in the table.
+    from=1;
+    to=numel(table);
+    while from<=to
+      mid = round((from + to)/2);    
+      diff = table(mid)-nfft(ii);
+      if diff<0
+        from=mid+1;
+      else
+        to=mid-1;                       
+      end
+    end
+    nfft(ii)=table(from);
+
+    % Add back the missing factors of 2 (if any)
+    nfft(ii)=nfft(ii)*2^n2reduce;
+
   end;
   
   tableout=table;

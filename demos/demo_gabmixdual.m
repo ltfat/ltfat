@@ -79,29 +79,23 @@ figure(1);
 subplot(3,2,1);
 plot(fftshift(gc1));
 title('Canonical dual window.');  
-legend('off');
 
 subplot(3,2,2);
 semilogy(abs(fftshift(gc1)));
 title('Decay of canonical dual window.');  
-legend('off');
 
 subplot(3,2,3);
 plot(fftshift(gc2));
 title('Can. dual of mix. window.');
-legend('off');
 
 subplot(3,2,4);
 semilogy(abs(fftshift(gc2)));
 title('Decay of can.dual of mix. window.')
-legend('off');
 
 subplot(3,2,5);
 plot(fftshift(gd));
 title('Gabmixdual');
-legend('off');
 
 subplot(3,2,6);
 semilogy(abs(fftshift(gd)));
 title('Decay of gabmixdual');
-legend('off');

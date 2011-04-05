@@ -24,6 +24,7 @@
 %     DEMO_ZAK              - Zak transform of a Gauss function.
 %     DEMO_PHASEPLOT        - Phaseplots.
 %     DEMO_ISGRAM           - Iterative spectrogram reconstruction.
+%     DEMO_NEXTFASTFFT      - Next fast FFT size.
 %
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net
