@@ -1,6 +1,6 @@
 function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %ISGRAM  Spectrogram inversion
-  %   Usage:  f=isgram(s,g,a,M);
+%   Usage:  f=isgram(s,g,a,M);
 %           f=isgram(s,g,a,M,Ls);
 %           [f,relres,iter]=isgram(...);
 %
@@ -68,9 +68,9 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %
 %   Demos: demo_isgram
 %
-%R  griffin1984sem decorsiere2011
+%R  griffin1984sem decorsiere2011 liu1989limited
   
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Remi Decorsiere and Peter Soendergaard.
 %   REFERENCE: OK
 
 % Check input paramameters.
