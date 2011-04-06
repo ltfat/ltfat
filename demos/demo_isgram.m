@@ -31,7 +31,7 @@ colormap(gray);
 axis('xy');
 
 figure(2);
-sig_lin = idgtreal(s,'gauss',8,800);
+sig_lin = idgtreal(sqrt(s),'gauss',8,800);
 sgram(sig_lin,'dynrange',100);
 
 figure(3);

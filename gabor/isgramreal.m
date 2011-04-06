@@ -17,7 +17,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %
 %   ISGRAMREAL(s,g,a) attempts to invert a spectrogram computed by
 %
-%C     s = abs(dgtreal(f,g,a,M));
+%C     s = abs(dgtreal(f,g,a,M)).^2;
 %
 %   by an iterative method.
 %
@@ -150,7 +150,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
       f=comp_idgtreal(c,gd,a,M,L,0);
       c=comp_dgtreal(f,g,a,M,L,0);
       
-      relres(iter)=norm(abs(c)-s,'fro')/norm_s;
+      relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
       c=s.*exp(i*angle(c));
       
@@ -182,8 +182,8 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     opts.usmex = 0;
     
     f0 = comp_idgtreal(c,gd,a,M,L,0);
-    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s.^2);
-    
+    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
+    relres = output.trace.fval/norm_s;
   end;
   
   % Cut or extend f to the correct length, if desired.
@@ -197,13 +197,13 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   
 %  Subfunction to compute the objective function for the BFGS method.
 function [f,df]=objfun(x,g,a,M,s);
-  
-  c=dgtreal(x,g,a,M);
+  L=size(s,2)*a;
+  c=comp_dgtreal(x,g,a,M,L,0);
   
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;
   
-  df=4*real(conj(idgtreal(inner.*c,g,a,M)));
+  df=4*real(conj(comp_idgtreal(inner.*c,g,a,M,L,0)));
 
 
 
