@@ -121,13 +121,15 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   
   L=N*a;
   
+  sqrt_s=sqrt(s);
+  
   if flags.do_zero
     % Start with a phase of zero.
-    c=s;
+    c=sqrt(s);
   end;
   
   if flags.do_rand
-    c=s.*exp(2*pi*1i*rand(M,N));
+    c=sqrt_s.*exp(2*pi*1i*rand(M,N));
   end;
   
   if flags.do_int
@@ -152,7 +154,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
-      c=s.*exp(i*angle(c));
+      c=sqrt_s.*exp(i*angle(c));
       
       if flags.do_print
         if mod(iter,kv.printstep)==0
@@ -179,7 +181,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     opts = struct;
     opts.display = kv.printstep;
     opts.maxiter = kv.maxit;
-    opts.usmex = 0;
+    opts.usemex = 0;
     
     f0 = comp_idgtreal(c,gd,a,M,L,0);
     [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
