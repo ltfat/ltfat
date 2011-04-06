@@ -28,14 +28,18 @@ function [nfft,tableout]=nextfastfft(n)
 
   if isempty(table)
     % Compute the table for the first time, it is empty.
-    for i2=0:floor(log(maxval)/log(2))
-      for i3=0:floor(log(maxval)/log(3))
-        for i5=0:floor(log(maxval)/log(5))
-          for i7=0:floor(log(maxval)/log(7))
-            candidate=2^i2*3^i3*5^i5*7^i7;
-            if candidate<=maxval
-              table=[table;candidate];
-            end;
+    l2=log(2);
+    l3=log(3);
+    l5=log(5);
+    l7=log(7);
+    tables=zeros(1286,1);
+    ii=1;
+    for i2=0:floor(log(maxval)/l2)
+      for i3=0:floor((log(maxval)-i2*l2)/l3)
+        for i5=0:floor((log(maxval)-i2*l2-i3*l3)/l5)
+          for i7=0:floor((log(maxval)-i2*l2-i3*l3-i5*l5)/l7)
+            table(ii)=2^i2*3^i3*5^i5*7^i7;
+            ii=ii+1;
           end;
         end;
       end;
