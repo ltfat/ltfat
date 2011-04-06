@@ -8,7 +8,8 @@ function [nfft,tableout]=nextfastfft(n)
 %
 %   NEXTFASTFFT is intended as a replacement of NEXTPOW2, which if often
 %   used for the same purpose. However, a modern FFT implementation (like FFTW)
-%   usually performs well for size which are powers or 2,3,5 and 7.
+%   usually performs well for sizes which are powers or 2,3,5 and 7, and
+%   not only just for powers of 2.
 %
 %   The algorithm will look up the best size in a table, which is
 %   computed the first time the function is run. If the input size is
@@ -32,17 +33,26 @@ function [nfft,tableout]=nextfastfft(n)
     l3=log(3);
     l5=log(5);
     l7=log(7);
-    tables=zeros(1286,1);
+    lmaxval=log(maxval);
+    table=zeros(1286,1);
     ii=1;
-    for i2=0:floor(log(maxval)/l2)
-      for i3=0:floor((log(maxval)-i2*l2)/l3)
-        for i5=0:floor((log(maxval)-i2*l2-i3*l3)/l5)
-          for i7=0:floor((log(maxval)-i2*l2-i3*l3-i5*l5)/l7)
-            table(ii)=2^i2*3^i3*5^i5*7^i7;
+    prod2=1;
+    for i2=0:floor(lmaxval/l2)
+      prod3=prod2;
+      for i3=0:floor((lmaxval-i2*l2)/l3)               
+        prod5=prod3;
+        for i5=0:floor((lmaxval-i2*l2-i3*l3)/l5)
+          prod7=prod5;
+          for i7=0:floor((lmaxval-i2*l2-i3*l3-i5*l5)/l7)
+            table(ii)=prod7; 
+            prod7=prod7*7;
             ii=ii+1;
           end;
+          prod5=prod5*5;                    
         end;
+        prod3=prod3*3;
       end;
+      prod2=prod2*2;            
     end;
     table=sort(table);
   end;
