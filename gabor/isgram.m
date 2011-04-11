@@ -184,8 +184,10 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     
     f0 = comp_idgt(c,gd,a,M,L,0);
     [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
-    relres = output.trace.fval/norm_s;
-
+    % First entry of output.trace.fval is the objective function
+    % evaluated on the initial input. Skip it to be consistent.
+    relres = output.trace.fval(2:end)/norm_s;
+    iter = output.iterations;
   end;
 
     

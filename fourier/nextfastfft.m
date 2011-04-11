@@ -19,6 +19,8 @@ function [nfft,tableout]=nextfastfft(n)
 %   [n,nfft]=NEXTFASTFFT(n) additionally returns the table used for lookup.
 %
 %   Demos: demo_nextfastfft
+%
+%R  frjo05 cooley1965algorithm ltfatnote017
   
 %   AUTHOR: Peter L. Soendergaard and Johan Sebastian Rosenkilde Nielsen
   
