@@ -57,7 +57,7 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
       /*----- Handle the first boundary using periodic boundary conditions.*/
       for (n=0; n<glh_d_a; n++)
       {
-	 gb=gw+r*gl;
+	 gb=gw;
 	 fbd=f+L-(glh-n*a)+L*w;
 	 fw=0.0;
 	 for (l=0;l<glh-n*a;l++)
