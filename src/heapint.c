@@ -4,7 +4,7 @@
 #include <math.h>
 #include "ltfat.h"
 
-const LTFAT_REAL pi = 3.14159265358979323846;
+#define PI 3.1415926535897932384626433832795
 
 typedef struct 
 {
@@ -176,8 +176,8 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
   {
      for (ii=0; ii<M; ii++)
      {
-       tgradw[ii+jj*M] = tgrad[ii+jj*M]*2*pi*a/L;
-       fgradw[ii+jj*M] = fgrad[ii+jj*M]*2*pi*b/L+2*pi*jj*a*b/L;
+       tgradw[ii+jj*M] = tgrad[ii+jj*M]*2*PI*a/L;
+       fgradw[ii+jj*M] = fgrad[ii+jj*M]*2*PI*b/L+2*PI*jj*a*b/L;
      }
   }
 
