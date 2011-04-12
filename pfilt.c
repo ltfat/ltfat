@@ -16,7 +16,7 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 {
    /*  --------- initial declarations -------------- */
 
-   int l, n, r, w;
+   int l, n, w;
 
    LTFAT_REAL *gw;
 
