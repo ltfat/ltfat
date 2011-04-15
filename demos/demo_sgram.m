@@ -25,9 +25,9 @@ f=greasy;
 fs=16000;
 
 % Default window
-figure(1)
+figure(1);
 sgram(f,fs,'dynrange',50);
 
 % Longer window, 20 ms.
-figure(2)
+figure(2);
 sgram(f,fs,'wlen',round(20/1000*fs),'dynrange',50);
