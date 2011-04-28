@@ -57,7 +57,6 @@ figure(2);
 subplot(3,1,1);
 plot(sig);
 title('Synthetic signal');
-legend('off');
 
 subplot(3,1,2);
 phaseplot(sig,'freqinv'); 
@@ -71,7 +70,6 @@ figure(3);
 subplot(3,1,1);
 plot(sig);
 title('Synthetic signal');
-legend('off');
 
 subplot(3,1,2);
 phaseplot(sig,'freqinv','thr',0.001)

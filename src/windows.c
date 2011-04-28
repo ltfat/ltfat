@@ -2,7 +2,7 @@
 #include <math.h>
 #include "ltfat.h"
 
-const double pi = 3.141592653589793;
+#define PI 3.1415926535897932384626433832795
 
 LTFAT_EXTERN void
 LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
@@ -26,7 +26,7 @@ LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
       {  
 	 /* Use a tmp variable to calculate squaring */
 	 tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
-	 g[lr]+=exp(-pi*tmp*tmp/w);
+	 g[lr]+=exp(-PI*tmp*tmp/w);
       }
       gnorm +=g[lr]*g[lr];
    }
@@ -71,10 +71,10 @@ LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, const do
       {  
 	 /* Use a tmp variable to calculate squaring */
 	 tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
-	 tmp = exp(-pi*tmp*tmp/w);
+	 tmp = exp(-PI*tmp*tmp/w);
 	 
-	 g[lr][0]+=tmp*cos(2*pi*c_f*((double)lr/L-(double)k));
-	 g[lr][1]+=tmp*sin(2*pi*c_f*((double)lr/L-(double)k));
+	 g[lr][0]+=tmp*cos(2*PI*c_f*((double)lr/L-(double)k));
+	 g[lr][1]+=tmp*sin(2*PI*c_f*((double)lr/L-(double)k));
 
       }
       gnorm +=g[lr][0]*g[lr][0]+g[lr][1]*g[lr][1];

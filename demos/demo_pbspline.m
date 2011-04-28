@@ -89,8 +89,6 @@ g3d=gabdual(g3,a,M);
 
 figure(1);
 
-legend('off');
-
 xplot=(0:L-1).';
 
 subplot(3,2,1);
@@ -98,34 +96,28 @@ plot(xplot,fftshift(g1),...
      xplot,circshift(fftshift(g1),a),...
      xplot,circshift(fftshift(g1),-a));
 title('Zero order spline.');
-legend('off');
 
 subplot(3,2,2);
 plot(xplot,fftshift(g1d));
 title('Dual window.');
-legend('off');
 
 subplot(3,2,3);
 plot(xplot,fftshift(g2),...
      xplot,circshift(fftshift(g2),a),...
      xplot,circshift(fftshift(g2),-a));
 title('First order spline.');
-legend('off');  
 
 subplot(3,2,4);
 plot(xplot,fftshift(g2d));
 title('Dual window.');
-legend('off');    
 
 subplot(3,2,5);
 plot(xplot,fftshift(g3),...
      xplot,circshift(fftshift(g3),a),...
      xplot,circshift(fftshift(g3),-a));
 title('Second order spline.');
-legend('off');      
 
 subplot(3,2,6);
 plot(xplot,fftshift(g3d));
 title('Dual window.');
-legend('off');      
 

@@ -31,7 +31,7 @@ L=a^2;
 % Make a Gaussian function
 g=pgauss(L);
 
-% Compute the Zak-transform in square layout.
+% Compute the Zak-transform
 zg=zak(g,a);
 
 % Visualize it
@@ -39,23 +39,15 @@ figure(1);
 
 subplot(1,2,1);
 mesh(abs(zg));
-legend('off');
-%axis('vis3d');
 
 subplot(1,2,2);
-%mesh(abs(zak(pbspline('ec',L,2,a),a)));
-legend('off');
-%axis('vis3d');
+mesh(abs(zak(pbspline(L,2,a),a)));
 
 % Do the same for the Hermite function.
 figure(2);
 
 subplot(1,2,1);
 mesh(abs(zak(pherm(L,4),a)));
-legend('off');
-%axis('vis3d');
 
 subplot(1,2,2);
 mesh(abs(zak(pchirp(L,1),a)));
-legend('off');
-%axis('vis3d');

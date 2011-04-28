@@ -76,7 +76,6 @@ figure(1);
 % Plot the window in the time-domain.
 subplot(2,1,1);
 plot(fftshift(g));
-legend('off');
 title('itersine FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
@@ -106,7 +105,6 @@ figure(2);
 % Plot the window in the time-domain.
 subplot(2,2,1);
 plot(fftshift(g));
-legend('off');
 title('Kaiser window.');
 
 % Plot the magnitude response of the window (the frequency representation of
@@ -118,7 +116,6 @@ title('Magnitude response of Kaiser window.');
 % Plot the window in the time-domain.
 subplot(2,2,3);
 plot(fftshift(gd));
-legend('off');
 title('Dual of Kaiser window.');
 
 % Plot the magnitude response of the window (the frequency representation of
@@ -166,7 +163,6 @@ figure(3);
 % Plot the window in the time-domain.
 subplot(2,2,1);
 plot(fftshift(gfir));
-legend('off');
 title('Gaussian FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
@@ -178,7 +174,6 @@ title('Magnitude response of FIR Gaussian.')
 % Plot the window in the time-domain.
 subplot(2,2,3);
 plot(fftshift(gd_fir));
-legend('off');
 title('Dual of Gaussian FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
@@ -211,7 +206,6 @@ figure(4);
 % Plot the window in the time-domain.
 subplot(2,1,1);
 plot(fftshift(gt_fir));
-legend('off');
 title('Almost tight FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of

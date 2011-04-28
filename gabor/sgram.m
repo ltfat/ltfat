@@ -63,7 +63,8 @@ function varargout=sgram(f,varargin)
 %-  'thr',r   - Keep only the largest fraction r of the coefficients, and
 %               set the rest to zero.
 %
-%-  'fmax',y  - Display y as the highest frequency.
+%-  'fmax',y  - Display y as the highest frequency. Default value of []
+%               means to use the Nyquest frequency.
 %
 %-  'xres',xres - Approximate number of pixels along x-axis /time.
 %               Default value is 800
@@ -98,18 +99,14 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-definput.import={'normalize'};
+definput.import={'normalize','tfplot'};
+% Override the setting from tfplot, because SGRAM does not support the
+% 'dbsq' setting (it does not make sense).
+definput.flags.log={'db','lin'};
 
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
 definput.flags.thr={'nothr','thr'};
-definput.flags.tc={'notc','tc'};
-definput.flags.plottype={'image','contour','mesh','pcolor'};
-
-definput.flags.clim={'noclim','clim'};
-definput.flags.fmax={'nofmax','fmax'};
-definput.flags.log={'db','lin'};
-definput.flags.colorbar={'colorbar','nocolorbar'};
 
 if isreal(f)
   definput.flags.posfreq={'posfreq','nf'};
@@ -117,37 +114,25 @@ else
   definput.flags.posfreq={'nf','posfreq'};
 end;
 
-definput.keyvals.fs=[];
 definput.keyvals.tfr=1;
 definput.keyvals.wlen=0;
 definput.keyvals.thr=0;
-definput.keyvals.clim=[0,1];
-definput.keyvals.climsym=1;
-definput.keyvals.fmax=0;
-definput.keyvals.dynrange=[];
+definput.keyvals.fmax=[];
 definput.keyvals.xres=800;
 definput.keyvals.yres=600;
 
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
-% Resampling rate: Used when fmax is issued.
-resamp=1;
-
-if flags.do_tc
-  f=fftshift(f);
-end;
-
-dofs=~isempty(fs);
-
 % Downsample
-if flags.do_fmax
-  if dofs
+if ~isempty(kv.fmax)
+  if ~isempty(fs)
     resamp=kv.fmax*2/fs;
   else
     resamp=kv.fmax*2/length(f);
   end;
 
   f=fftresample(f,round(length(f)*resamp));
+  kv.fs=2*kv.fmax;
 end;
 
 Ls=length(f);
@@ -166,9 +151,9 @@ end;
 g={'gauss',kv.tfr,flags.norm};
 
 if flags.do_nf
-  coef=abs(dgt(f,g,a,M)).^2;
+  coef=abs(dgt(f,g,a,M));
 else
-  coef=abs(dgtreal(f,g,a,M)).^2;
+  coef=abs(dgtreal(f,g,a,M));
 end;
 
 % Cut away zero-extension.
@@ -179,7 +164,11 @@ if flags.do_thr
   coef=largestr(coef,kv.thr);
 end
 
-tfplot(coef,a,M,L,resamp,kv,flags);
+if flags.do_nf
+  plotdgt(coef,a,'argimport',flags,kv);
+else
+  plotdgtreal(coef,a,M,'argimport',flags,kv);
+end;
 
 if nargout>0
   varargout={coef};

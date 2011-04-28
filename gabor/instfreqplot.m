@@ -59,9 +59,6 @@ function []=instfreqplot(f,varargin)
 %
 %-  'fmax',y  - Display y as the highest frequency.
 %
-%-  'contour' - Do a contour plot to display the spectrogram.
-%          
-%-  'mesh'    - Do a surf plot to display the spectrogram.
 %
   
 %   AUTHOR: Peter Soendergaard
@@ -79,12 +76,8 @@ end;
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
 definput.flags.tc={'notc','tc'};
-definput.flags.plottype={'image','contour','mesh','pcolor'};
 definput.flags.method={'dgt','phase','abs'};
 definput.flags.clim={'noclim','clim','climsym'};
-definput.flags.fmax={'nofmax','fmax'};
-definput.flags.colorbar={'colorbar','nocolorbar'};
-
 
 if isreal(f)
   definput.flags.posfreq={'posfreq','nf'};
@@ -92,43 +85,35 @@ else
   definput.flags.posfreq={'nf','posfreq'};
 end;
 
-definput.keyvals.fs=[];
 definput.keyvals.tfr=1;
 definput.keyvals.wlen=0;
 definput.keyvals.thr=[];
 definput.keyvals.clim=[0,1];
 definput.keyvals.climsym=1;
-definput.keyvals.fmax=0;
+definput.keyvals.fmax=[];
 definput.keyvals.xres=800;
 definput.keyvals.yres=600;
 
-
 [flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
-% Resampling rate: Used when fmax is issued.
-resamp=1;
-
-if flags.do_tc
-  f=fftshift(f);
-end;
-
-if flags.do_climsym
-  flags.do_clim=1;
-  kv.clim=[-kv.climsym,kv.climsym];
-end;
+% Override the setting from tfplot, because INSTFREQPLOT does not support the
+% dB-settings
+flags.do_lin=1;
+flags.do_db=0;
+flags.do_dbsq=0;
 
 dofs=~isempty(fs);
 
 % Downsample
-fmax=kv.fmax;
-if flags.do_fmax
-  if dofs
-    resamp=fmax*2/fs;
+if ~isempty(kv.fmax)
+  if ~isempty(kv.fs)
+    resamp=kv.fmax*2/fs;
   else
-    resamp=fmax*2/length(f);
+    resamp=kv.fmax*2/length(f);
   end;
 
   f=fftresample(f,round(length(f)*resamp));
+  kv.fs=2*kv.fmax;
 end;
 
 Ls=length(f);
@@ -170,14 +155,15 @@ if ~isempty(kv.thr)
   coef(mask)=0;
 end
 
-if flags.do_posfreq
-  coef=coef(1:floor(M/2)+1,:);
-end;
-
 % Cut away zero-extension.
 coef=coef(:,1:Ndisp);
 
-tfplot(coef,a,M,L,resamp,kv,flags);
+if flags.do_posfreq
+  coef=coef(1:floor(M/2)+1,:);
+  plotdgtreal(coef,a,M,'argimport',flags,kv);
+else
+  plotdgt(coef,a,'argimport',flags,kv);
+end;
 
 if nargout>0
   varargout={coef};

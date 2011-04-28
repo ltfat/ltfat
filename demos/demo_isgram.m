@@ -11,12 +11,16 @@
 %      This figure shows a spectrogram of a linear reconstruction of the
 %      target spectrogram.
 %
-%   FIGURE 3 Gaussian FIR window for low redundancy
+%   FIGURE 3 Iterative reconstruction using the Griffin-Lim method.
 %
 %      This figure shows a spectrogram of an iterative reconstruction of the
-%      target spectrogram.
+%      target spectrogram using the Griffin-Lim projection method.
 %
+%   FIGURE 4 Iterative reconstruction using the BFGS method
 %
+%      This figure shows a spectrogram of an iterative reconstruction of the
+%      target spectrogram using the BFGS method.
+
 %   See also:  isgramreal, isgram, 
 
 s=ltfattext;
@@ -27,9 +31,13 @@ colormap(gray);
 axis('xy');
 
 figure(2);
-sig_lin = idgtreal(s,'gauss',8,800);
+sig_lin = idgtreal(sqrt(s),'gauss',8,800);
 sgram(sig_lin,'dynrange',100);
 
 figure(3);
 sig_iter = isgramreal(s,'gauss',8,800);
+sgram(sig_iter,'dynrange',100);
+
+figure(4);
+sig_iter = isgramreal(s,'gauss',8,800,'bfgs');
 sgram(sig_iter,'dynrange',100);

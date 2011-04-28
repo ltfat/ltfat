@@ -121,7 +121,7 @@ axis('xy');
 colorbar;
 
 disp('Figure 4 shows placement of the DGTREAL coefficients on the spectrogram.');
-figure(4)
+figure(4);
 b=L/M;
 [X,Y]=meshgrid(1:a:L+a,1:b:L/2+b);
 

@@ -179,6 +179,13 @@ LTFAT_EXTERN void
 LTFAT_H_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, 
 		     const double c_f, LTFAT_H_COMPLEX *g);
 
+/* --------- pfilt and filterbanks ------------- */
+LTFAT_EXTERN void
+LTFAT_H_NAME(pfilt_fir_rr)(const LTFAT_H_REAL *f, const LTFAT_H_REAL *g,
+			   const int L, const int gl,
+			   const int W, const int a,
+			   LTFAT_H_REAL *cout);
+
 /* --------- other stuff -------- */
 LTFAT_EXTERN void
 LTFAT_H_NAME(heapint)(const LTFAT_H_REAL *s,
