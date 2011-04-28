@@ -8,7 +8,6 @@
 %     DEMO_SGRAM            - Spectrogram demo
 %     DEMO_DGT              - DGT and comparison to SGRAM
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
-%     DEMO_AUDSCALES        - Different auditory scales.
 %
 %   Applications
 %     DEMO_OFDM             - Simple OFDM demo.
@@ -27,6 +26,11 @@
 %     DEMO_ISGRAM           - Iterative spectrogram reconstruction.
 %     DEMO_NEXTFASTFFT      - Next fast FFT size.
 %
+%  Auditory scales and filters
+%     DEMO_AUDSCALES        - Different auditory scales.
+%     DEMO_GAMMATONEFIR     - FIR Gammatone filters.
+%     DEMO_GAUSSERB         - ERB-spaced Gaussian filters.
+% 
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net
 %

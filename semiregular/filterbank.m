@@ -17,8 +17,6 @@ function c=filterbank(f,g,a);
 %   thus the value of the coefficient for time index n, frequency index m
 %   and signal channel l.
 %
-%   See also: ifilterbank, filterbankdual
-%
 %R  bohlfe02
   
 if nargin<3
