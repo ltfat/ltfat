@@ -1,6 +1,6 @@
 function test_failed=test_nsdgt()
-%TEST_DGT Simple test of nsdgt and associated functions
-%  Usage: testnsdgt()
+%TEST_NSDGT Simple test of nsdgt and associated functions
+%  Usage: test_nsdgt()
 % 
 %  This function checks the exact reconstruction (up to numeric precision)
 %  of the functions nsdgt and insdgt, when using dual windows computed with
@@ -16,55 +16,37 @@ function test_failed=test_nsdgt()
 test_failed=0;
 
 disp(' ===============  TEST_NSDGT ================');
-  
+
+a=[20,30,40];
+M=[30,40,50];
+L=sum(a);
+
+f=randn(L,1);
+
+g=cell(3,1);
 for ii=1:3
-  % Parameters
-  sigLen = 450;
-  nbTimePosition = 11;
-  winType = 'hann'; % type of window
-  width = round(linspace(32,256,nbTimePosition)); % width of the windows
-  M=width;
-  if ii==2
-    % Make M longer than the window length.
-    M=M+2;
-  end;
-  
-  if ii==3
-    % Make M shorter than the window length.
-    M=M-2;
-  end;
-  
-  
-  a=round(width/4);
-    
-  win = cell(nbTimePosition, 1);
-  for k=1:nbTimePosition
-    win{k}=firwin(winType,width(k));
-  end
-
-
-
-  sig = randn(sigLen,1)-0.5; % random signal
-  
-  for jj=1:2
-    if jj==1
-      winn = win;
-      wind = nsgabdual(win,a,sigLen);
-      wintype='DUAL ';
-    else    
-      wind = nsgabtight(win,a,sigLen);
-      winn = wind;
-      wintype='TIGHT';
-    end;
-    
-    [c,Ls] = nsdgt(sig,winn,a,M);
-    sigd=insdgt(c,wind,a,sigLen);
-    
-    res=norm(sigd-sig)/ norm(sig);
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    fprintf(['%s %0.5g %s\n'],wintype,res,fail);
-    
-  end;
-  
+  g{ii}=randn(M(ii),1);
 end;
 
+% ----- dual and inversion -----
+
+gd=nsgabdual(g,a,M);
+
+c=nsdgt(f,g,a,M);
+r=insdgt(c,gd,a);
+
+res=norm(f-r);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['NSDGT DUAL  %0.5g %s\n'],res,fail);
+
+% ----- tight and inversion -----------------
+gt=nsgabtight(g,a,M);
+
+ct=nsdgt(f,gt,a,M);
+rt=insdgt(ct,gt,a);
+
+res=norm(f-rt);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['NSDGT TIGHT %0.5g %s\n'],res,fail);

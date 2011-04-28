@@ -1,7 +1,16 @@
 function test_failed=test_filterbank
 %TEST_FILTERBANK test the filterbank codes
+%  Usage: test_filterbank()
+%
+%  This function checks the exact reconstruction (up to numeric precision)
+%  of the functions ufilterbank and iufilterbank, when using dual windows computed with
+%  filterbankdual / filterbankrealdual, or tight windows computed with
+%  filterbanktight / filterbankrealtight
 
 test_failed=0;
+
+disp(' ===============  TEST_FILTERBANK ================');
+
 M=6;
 a=3;
 N=4;

@@ -90,9 +90,13 @@ if ~isempty(kv.dynrange)
 end;
 
 if flags.do_tc
-  xr=-floor(N/2)*step:step:floor((N-1)/2)*step;
+  xr=(-floor(N/2):floor((N-1)/2))*step;
 else
-  xr=0:step:N*step-1;
+  xr=(0:N-1)*step;
+end;
+
+if ~isempty(kv.fs)
+  xr=xr/kv.fs;
 end;
 
 switch(flags.plottype)

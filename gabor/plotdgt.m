@@ -4,8 +4,8 @@ function plotdgt(coef,a,varargin)
 %          plotdgt(coef,a,fs);
 %          plotdgt(coef,a,fs,dynrange);
 %
-%   PLOTDGT(coef,a) will plot the Gabor coefficient coefficients
-%   coef. The coefficient must have been produce with a timeshift of _a.
+%   PLOTDGT(coef,a) will plot the Gabor coefficients coef. The coefficients
+%   must have been produced with a timeshift of _a.
 %
 %   PLOTDGT(coef,a,fs) will do the same assuming a sampling rate of
 %   fs Hz of the original signal.

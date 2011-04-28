@@ -1,6 +1,6 @@
-function [] = plotnsdgt(coef,a,varargin)
-%PLOTNSDGT Plot spectrogram from nonstationary Gabor coefficients
-%   Usage:  plotnsdgt(c,a,dynrange,sr);
+function [] = plotnsdgtreal(coef,a,varargin)
+%PLOTNSDGTREAL Plot spectrogram from NSDGTREAL coefficients
+%   Usage:  plotnsdgtreal(c,a,dynrange,sr);
 %
 %   Input parameters:
 %         coef     : Cell array of coefficients.
@@ -8,25 +8,25 @@ function [] = plotnsdgt(coef,a,varargin)
 %         dynrange : Colorscale dynamic range in dB (default 60 dB).
 %         sr       : signal sample rate in Hz (default 1 Hz).
 %
-%   PLOTNSDGT(coef,a) plots coefficients computed using NSDGT. For
+%   PLOTNSDGTREAL(coef,a) plots coefficients computed NSDGTREAL. For
 %   more details on the format of the variables coef and _a, please read the
 %   NSDGT function help.
 %
-%   PLOTNSDGT(coef,a,fs) will do the same assuming a sampling rate of
+%   PLOTNSDGTREAL(coef,a,fs) will do the same assuming a sampling rate of
 %   fs Hz of the original signal.
 %
-%   PLOTNSDGT(coef,a,fs,dynrange) will additionally limit the dynamic
+%   PLOTNSDGTREAL(coef,a,fs,dynrange) will additionally limit the dynamic
 %   range.
 %
-%   PLOTNSDGT supports all the optional parameters of TFPLOT. Please
+%   PLOTNSDGTREAL supports all the optional parameters of TFPLOT. Please
 %   see the help of TFPLOT for an exhaustive list. In addition, the
 %   following parameters may be specified:
 %
-%-    'xres',xres - Approximate number of pixels along x-axis /time.
-%                   Default value is 800
+%-  'xres',xres - Approximate number of pixels along x-axis /time.
+%               Default value is 800
 %
-%-    'yres',yres - Approximate number of pixels along y-axis / frequency
-%                   Default value is 600
+%-  'yres',yres - Approximate number of pixels along y-axis / frequency
+%               Default value is 600
 %
 %   See also: tfplot, nsdgt, nsdgtreal
 
@@ -66,20 +66,13 @@ aplot=timepos(end)/kv.xres;
 % Time positions where we want our pixels plotted (in samples)
 xr=(0:kv.xres-1)*aplot;
 
-% Move zero frequency to the center and Nyquest frequency to the top.
-if rem(kv.yres,2)==0
-  coef=circshift(coef,kv.yres/2-1);
-else
-  coef=circshift(coef,(kv.yres-1)/2);
-end;
-
 coef=zeros(kv.yres,kv.xres);
 for ii=1:kv.yres
   data=interp1(timepos,cwork(ii,:).',xr,'nearest').';
   coef(ii,:)=data;
 end;
 
-yr=(-kv.yres/2+1:kv.yres/2)/(kv.yres/2);
+yr=(0:kv.yres-1)/(kv.yres/2);
 
 if ~isempty(kv.fs)
   yr=yr*fs/2;

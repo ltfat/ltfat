@@ -1,12 +1,12 @@
 function [c,Ls] = nsdgt(f,g,a,M)
-%NSDGT  Nonsationary Discrete Gabor transform.
+%NSDGT  Nonstationary Discrete Gabor transform.
 %   Usage:  c=nsdgt(f,g,a,M);
 %           [c,Ls]=nsdgt(f,g,a,M);
 %
 %   Input parameters:
 %         f     : Input signal.
 %         g     : Cell array of window functions.
-%         a     : Vector of time positions of windows.
+%         a     : Vector of time shifts.
 %         M     : Vector of numbers of frequency channels.
 %   Output parameters:
 %         c     : Cell array of coefficients.

@@ -1,15 +1,16 @@
-function gd=nsgabdual(g,a,Ls)
+function gd=nsgabdual(g,a,M,varargin)
 %NSGABDUAL  Canonical dual window for nsionnary Gabor frames
-%   Usage:  gd=nsgabdual(g,a,Ls)
+%   Usage:  gd=nsgabdual(g,a,L)
 %
 %   Input parameters:
-%         g     : Cell array of windows
-%         a     : Vector of time positions of windows.
-%         Ls    : Length of analyzed signal.
+%         g     : Cell array of windows.
+%         a     : Vector of time shift.
+%         M     : Vector of numbers of channels.
+%         L     : Transform length.
 %   Output parameters:
 %         gd : Cell array of canonical dual windows
 %
-%   NSGABDUAL(g,a,Ls) computes the canonical dual windows of the 
+%   NSGABDUAL(g,a,M,L) computes the canonical dual windows of the 
 %   nsionary discrete Gabor frame defined by windows given in g an
 %   time-shifts given by a.
 %   
@@ -30,10 +31,17 @@ function gd=nsgabdual(g,a,Ls)
 %   TESTING: TEST_NSDGT
 %   REFERENCE:
 
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
+definput.keyvals.L=sum(a);
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions
-f=zeros(Ls,1); % Diagonal of the frame operator
+f=zeros(L,1); % Diagonal of the frame operator
 
 % Compute the diagonal of the frame operator:
 % sum up in time (overlap-add) all the contributions of the windows as if 
@@ -41,7 +49,7 @@ f=zeros(Ls,1); % Diagonal of the frame operator
 for ii=1:N
   shift=floor(length(g{ii})/2);
   temp=abs(circshift(g{ii},shift)).^2*length(g{ii});
-  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
+  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
   f(tempind)=f(tempind)+temp;
 end
 
@@ -51,6 +59,6 @@ gd=g;
 % Correct each window to ensure perfect reconstrution
 for ii=1:N
   shift=floor(length(g{ii})/2);
-  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
+  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
   gd{ii}(:)=circshift(circshift(g{ii},shift)./f(tempind),-shift);
 end

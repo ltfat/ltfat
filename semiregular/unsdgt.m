@@ -1,43 +1,36 @@
-function [c,Ls] = nsdgt(f,g,a,M)
-%NSDGT  Nonsationary Discrete Gabor transform.
-%   Usage:  c=nsdgt(f,g,a,M);
-%           [c,Ls]=nsdgt(f,g,a,M);
+function [c,Ls] = unsdgt(f,g,a,M)
+%UNSDGT  Uniform Nonstationary Discrete Gabor transform.
+%   Usage:  c=unsdgt(f,g,a,M);
+%           [c,Ls]=unsdgt(f,g,a,M);
 %
 %   Input parameters:
 %         f     : Input signal.
 %         g     : Cell array of window functions.
 %         a     : Vector of time positions of windows.
-%         M     : Vector of numbers of frequency channels.
+%         M     : Numbers of frequency channels.
 %   Output parameters:
 %         c     : Cell array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   NSDGT(f,g,a,M) computes the nonstationary Gabor coefficients of the 
-%   input signal f. The signal f can be a multichannel signal, given in the
-%   form of a 2D matrix of size Ls x W, with Ls the signal length and W the
-%   number of signal channels.
+%   UNSDGT(f,g,a,M) computes the uniform nonstationary Gabor coefficients of
+%   the input signal f. The signal f can be a multichannel signal, given in
+%   the form of a 2D matrix of size Ls x W, with Ls the signal length and W
+%   the number of signal channels.
 %
-%   The nonstationnary Gabor theory extends standard Gabor theory by 
-%   enabling the evolution of the window over time. It is therefor
-%   necessary to specify a set of windows instead of a single window. 
-%   This is done by using a cell array for g. In this cell array, the nth 
-%   element g{n} is a row vetor specifying the nth window.
+%   The uniform nonstationnary Gabor theory extends standard Gabor theory by
+%   enabling the evolution of the window over time. It is therefor necessary
+%   to specify a set of windows instead of a single window.  This is done by
+%   using a cell array for g. In this cell array, the nth element g{n} is a
+%   row vetor specifying the nth window. However, the uniformity means
+%   that the number of channels is fixed.
 %
-%   The resulting coefficients also require a storage in a cell array, as 
-%   the number of frequency channels is not constant over time. More 
-%   precisely, the nth cell of c, c{n}, is a 2D matrix of size M(n) x W 
-%   and containing the complex local spectra of the signal channels 
-%   windowed by the nth window g{n} shifted in time at position a(n). 
-%   c{n}(m,l) is thus the value of the coefficient for time index n, 
-%   frequency index m and signal channel l.
+%   The resulting coefficients is stored as a M x N x W array. c(m,n,l) is
+%   thus the value of the coefficient for time index n, frequency index m
+%   and signal channel l.
 %
-%   The variable _a contains the distance in samples between two
-%   consequtive blocks of coefficients. The variable M contains the
-%   number of channels for each block of coefficients. Both _a and M are
-%   vectors of integers.
-%
-%   The variables g, a and M must have the same length, and the result c 
-%   will also have the same length.
+%   The variable _a contains the distance in samples between two consequtive
+%   blocks of coefficients. _a is a vectors of integers. The variables g and
+%   a must have the same length.
 %   
 %   The time positions of the coefficients blocks can be obtained by the
 %   following code. A value of 0 correspond to the first sample of the
@@ -48,8 +41,8 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %   [c,Ls]=nsdgt(f,g,a,M) additionally returns the length Ls of the input 
 %   signal f. This is handy for reconstruction:
 %
-%      [c,Ls]=nsdgt(f,g,a,M);
-%      fr=insdgt(c,gd,a,Ls);
+%      [c,Ls]=unsdgt(f,g,a,M);
+%      fr=iunsdgt(c,gd,a,Ls);
 %
 %   will reconstruct the signal f no matter what the length of f is, 
 %   provided that gd are dual windows of g.
@@ -100,7 +93,8 @@ N=length(a); % Number of time positions
 
 W=size(f,2); % Number of signal channels
 
-c=cell(N,1); % Initialisation of the result
+
+c=zeros(M,N,W); % Initialisation of the result
 
 for ii=1:N
   shift=floor(length(g{ii})/2);
@@ -129,6 +123,7 @@ for ii=1:N
     temp(1:y,:)=temp(1:y,:)+temp1(x*M(ii)+(1:y),:);
   end
   
-  c{ii}=fft(temp); % FFT of the windowed signal
+  % FFT of the windowed signal
+  c(:,ii,:) = reshape(fft(temp),M,1,W); 
 end
 

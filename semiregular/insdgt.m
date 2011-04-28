@@ -1,4 +1,4 @@
-function f=insdgt(c,g,a,Ls)
+function f=insdgt(c,g,a,varargin)
 %INSDGT  Inverse nonstationary discrete Gabor transform
 %   Usage:  f=insdgt(c,g,a,Ls);
 %
@@ -37,11 +37,23 @@ function f=insdgt(c,g,a,Ls)
 %   check: chack the coherence of sizes in c, g, a, check that each cell of
 %   g is vector, that values of a are intergers,...
 
-% !!! There might be a bug when the window is bigger than the fft and that 
+% XXX There might be a bug when the window is bigger than the fft and that 
 % the window length is odd (anyway, nsdgt, insdgt, nsgabdual and
 % nonstatgabtight have not been extensively tested, so there might be other
 % bugs. Sytematic testing would be good). 
 
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
+if numel(g)==1
+  error('g must be a vector (you probably forgot to supply the window function as input parameter.)');
+end;
+
+definput.keyvals.Ls=sum(a);
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+
+  
 timepos=cumsum(a)-a(1);
 
   
