@@ -8,6 +8,7 @@
 %     DEMO_SGRAM            - Spectrogram demo
 %     DEMO_DGT              - DGT and comparison to SGRAM
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
+%     DEMO_AUDSCALES        - Different auditory scales.
 %
 %   Applications
 %     DEMO_OFDM             - Simple OFDM demo.
