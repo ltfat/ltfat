@@ -8,7 +8,7 @@ function gtout=filterbanktight(g,a,varargin);
 %   The input and output format of the filters g are described in the
 %   help of FILTERANK.
 %
-%   See also: filterbank, ifilterbank, filterbankdual
+%   See also: filterbank, filterbankdual, ufilterbank, iufilterbank
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

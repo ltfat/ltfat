@@ -13,7 +13,7 @@ function gtout=filterbankrealtight(g,a,varargin);
 %   To actually invert the output of a filterbank, use the tight filters
 %   together with 2*real(IFILTERBANK(...)) function.
 %
-%   See also: filterbank, ifilterbank
+%   See also: filterbank, ufilterbank, iufilterbank
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
