@@ -5,8 +5,8 @@ function tfplot(coef,step,yr,varargin)
 %
 %   TFPLOT(coef,step,yr) will plot a rectangular coefficient array on the
 %   TF-plane. The shift in samples between each column of coefficients is
-%   given by the variable step. The vector yr denotes the frequency
-%   positions of each row.
+%   given by the variable step. The vector yr is a 1 x 2 vector
+%   containing the lowest and highest normalized frequency.
 %
 %   TFPLOT is not meant to be called directly. Instead, it is called by
 %   other plotting routines to give a uniform display format. 
@@ -27,6 +27,8 @@ function tfplot(coef,step,yr,varargin)
 %               option, but assume that the input is already squared.  
 %
 %-    'lin'   - Show the coefficients on a linear scale.
+%
+%-    'linsq' - Show the square of the coefficients on a linear scale.
 %
 %-    'tc'    - Time centering. Move the beginning of the signal to the
 %               middle of the plot. 
@@ -82,6 +84,10 @@ end;
 if flags.do_dbsq
   coef=10*log10(abs(coef)+realmin);
 end;
+
+if flags.do_linsq
+  coef=abs(coef).^2;
+end;
   
 % 'dynrange' parameter is handled by thresholding the coefficients.
 if ~isempty(kv.dynrange)
@@ -97,7 +103,11 @@ end;
 
 if ~isempty(kv.fs)
   xr=xr/kv.fs;
+  yr=yr*fs/2;
 end;
+
+% Convert yr to range of values
+yr=linspace(yr(1),yr(2),M);
 
 switch(flags.plottype)
   case 'image'

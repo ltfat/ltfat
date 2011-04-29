@@ -94,9 +94,7 @@ L = N*a
 
 disp('Figure 2 visualize the Gabor coefficients.');
 figure(2);
-imagesc(abs(c).^2);
-axis('xy');
-colorbar;
+plotdgt(c,a,'linsq');
 
 disp(' ');
 disp(['The redundancy of the Gabor transform can be reduced without loosing ' ...
@@ -116,9 +114,7 @@ c_real=dgtreal(f,'gauss',a,M);
 
 disp('Figure 3 shows the positive-frequency DGT coefficients (DGTREAL).');
 figure(3);
-imagesc(abs(c_real).^2);
-axis('xy');
-colorbar;
+plotdgtreal(c,a,M,'linsq');
 
 disp('Figure 4 shows placement of the DGTREAL coefficients on the spectrogram.');
 figure(4);

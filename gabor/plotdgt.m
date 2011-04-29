@@ -35,15 +35,10 @@ M=size(coef,1);
 % Move zero frequency to the center and Nyquest frequency to the top.
 if rem(M,2)==0
   coef=circshift(coef,M/2-1);
-  yr=(-M/2+1:M/2)/(M/2);
+  yr=[-1+2/M, 1];
 else
   coef=circshift(coef,(M-1)/2);
-  yr=(-(M-1)/2:(M-1)/2)/((M-1)/2);
+  yr=[-1+2/M, 1-2/M];
 end;
-
-if ~isempty(kv.fs)
-  yr=yr*fs/2;
-end;
-
 
 tfplot(coef,a,yr,'argimport',flags,kv);

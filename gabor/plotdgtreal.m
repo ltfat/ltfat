@@ -31,13 +31,9 @@ definput.import={'tfplot'};
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 if rem(M,2)==0
-  yr=(0:M/2)/(M/2);
+  yr=[0,1];
 else
-  yr=(0:(M-1)/2)/((M-1)/2);
-end;
-
-if ~isempty(kv.fs)
-  yr=yr*fs/2;
+  yr=[0,1-2/M];
 end;
 
 tfplot(coef,a,yr,'argimport',flags,kv);

@@ -50,10 +50,6 @@ end;
 
 coef=wil2rect(coef);
 
-yr=linspace(0,1,M+1);
-
-if ~isempty(kv.fs)
-  yr=yr*fs/2;
-end;
+yr=[0,1];
 
 tfplot(coef,M,yr,'argimport',flags,kv);

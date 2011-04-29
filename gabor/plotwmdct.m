@@ -31,10 +31,6 @@ definput.import={'tfplot'};
 
 M=size(coef,1);
 
-yr=((0:M-1)+.5)/M;
-
-if ~isempty(kv.fs)
-  yr=yr*fs/2;
-end;
+yr=[.5/M, 1-.5/M];
 
 tfplot(coef,M,yr,'argimport',flags,kv);

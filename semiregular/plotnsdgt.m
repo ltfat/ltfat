@@ -79,10 +79,6 @@ for ii=1:kv.yres
   coef(ii,:)=data;
 end;
 
-yr=(-kv.yres/2+1:kv.yres/2)/(kv.yres/2);
-
-if ~isempty(kv.fs)
-  yr=yr*fs/2;
-end;
+yr=[-1+2/kv.yres,1];
 
 tfplot(coef,aplot,yr,'argimport',flags,kv);
