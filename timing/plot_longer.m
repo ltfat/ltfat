@@ -1,5 +1,5 @@
-data_fb =load("longer_fb.log");
-data_fac=load("longer_fac.log");
+data_fb =load('longer_fb.log');
+data_fac=load('longer_fac.log');
 
 % Columns in data, fb : a M L W gl time
 % Columns in data, fac: a M L W time
@@ -13,12 +13,9 @@ L=data_fac(:,3);
 NL=nextfastfft(L/M);
 Nt_fac=t_fac(NL-9);
 
-if 0
-  plot(Ls,t_fb,Ls,t_fac);
-  legend('FB','FAC');
-  xlabel('Signal length / samples');
-  ylabel('Running time / seconds');
-else
-  plot(Ls,t_fb,Ls,Nt_fac);
-end;
+plot(Ls,t_fb,Ls,Nt_fac);
+legend('FB','FAC','Location','SouthEast');
+xlabel('Signal length / samples');
+ylabel('Running time / seconds');
+
 
