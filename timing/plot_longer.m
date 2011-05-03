@@ -13,9 +13,11 @@ L=data_fac(:,3);
 NL=nextfastfft(L/M);
 Nt_fac=t_fac(NL-9);
 
-plot(Ls,t_fb,Ls,Nt_fac);
-legend('FB','FAC','Location','SouthEast');
+plot(Ls,t_fb,'b--',...
+     Ls,Nt_fac,'b','LineWidth',2);
+legend(' Poisson',' FAC','Location','SouthEast');
 xlabel('Signal length / samples');
 ylabel('Running time / seconds');
+set(gca,'fontsize',16);
 
 

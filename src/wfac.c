@@ -145,3 +145,75 @@ LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
    
    ltfat_free(sbuf);
 }
+
+
+/* wfac for real valued input. Produces only half the output coefficients of wfac_r */
+LTFAT_EXTERN void
+LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
+			const int a, const int M,
+			LTFAT_COMPLEX *gf)
+{
+  
+   int h_a, h_m;   
+
+   LTFAT_REAL *sbuf, *gfp;
+
+   int ldf, s;
+   int rem, negrem;
+
+   const int R = 1;
+
+   LTFAT_FFTW(plan) p_before;   
+   
+   const int b=L/M;
+   const int c=gcd(a, M,&h_a, &h_m);
+   const int p=a/c;
+   const int q=M/c;
+   const int d=b/p;
+
+   /* This is a floor operation. */
+   const int d2= d/2+1;
+
+   const double sqrtM=sqrt(M);
+   
+   /* for testing, set ldf=L. */
+   ldf=L;
+
+   sbuf = (LTFAT_REAL*)ltfat_malloc(d*sizeof(LTFAT_REAL));
+   cbuf = (LTFAT_COMPLEX*)ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
+     
+   /* Create plan. In-place. */
+   p_before = LTFAT_FFTW(plan_dft_r2c_1d)(d, sbuf, cbuf, FFTW_MEASURE);
+
+   const int ld3=2*c*p*q*R;
+   gfp=(LTFAT_REAL*)gf;
+   for (int r=0;r<c;r++)
+   {      
+      for (int w=0;w<R;w++)
+      {
+	 for (int l=0;l<q;l++)
+	 {
+	    for (int k=0;k<p;k++)
+	    {
+	       negrem = positiverem(k*M-l*a,L);
+	       for (s=0;s<d;s++)
+	       {		  
+		  rem = (negrem+s*p*M)%L;
+		  sbuf[s]   = sqrtM*g[r+rem+L*w];
+	       }
+
+	       LTFAT_FFTW(execute)(p_before);	  
+
+	       for (s=0;s<d2;s+=2)
+	       {		  
+		  gfp[s*ld3]  = cbuf[s][0];
+		  gfp[s*ld3+1]= cbuf[s][1];
+	       }
+	       gfp+=2;
+	    }
+	 }
+      }
+   }
+   
+   ltfat_free(sbuf);
+}

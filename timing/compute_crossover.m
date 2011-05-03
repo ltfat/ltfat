@@ -1,4 +1,4 @@
-if 1
+if 0
   % This is the setup used in the paper
   a=30;
   M=60; 
@@ -6,11 +6,11 @@ if 1
   W=4;
   nrep=20;
 else
-  a=16;
-  M=64; 
+  a=50;
+  M=200; 
   L=a*M; 
-  W=1;
-  nrep=4;  
+  W=4;
+  nrep=20;  
   
 end;
 

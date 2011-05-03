@@ -27,10 +27,9 @@ l2='b--';
 
 figure(1);
 set(gca,'fontsize',16);
-set(gca,'LineWidth',2);
 
 plot(x,flop_fb,l1,...
-     x,flop_fac,l2);
+     x,flop_fac,l2,'LineWidth',2);
 legend('Poisson','Fac');
 
 xlabel('Overlapping factor');
@@ -39,10 +38,9 @@ title('Flop count comparison');
 
 figure(2);
 set(gca,'fontsize',16);
-set(gca,'LineWidth',2);
 
 plot(x,t,l1,...
-     x,plotref,l2);
+     x,plotref,l2,'LineWidth',2);
 
 legend('Poisson','Fac');
 xlabel('Overlapping factor');
