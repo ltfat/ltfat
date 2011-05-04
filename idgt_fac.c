@@ -248,6 +248,9 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    const int q=M/c;
    const int d=b/p;
 
+   /* This is a floor operation. */
+   const int d2= d/2+1;
+
    h_a=-h_a;
 
    ff    = (LTFAT_COMPLEX*)ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));

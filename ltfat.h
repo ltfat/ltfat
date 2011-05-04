@@ -77,6 +77,8 @@ int lcm(const int a, const int b);
 void gabimagepars(const int Ls, const int x, const int y,
 		  int *a, int *M, int *L, int *N, int *Ngood);
 
+int wfacreal_size(const int L, const int a, const int M);
+
 #ifdef __cplusplus
 }  /* extern "C" */
 #endif /* __cplusplus */

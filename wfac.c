@@ -146,7 +146,6 @@ LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
    ltfat_free(sbuf);
 }
 
-
 /* wfac for real valued input. Produces only half the output coefficients of wfac_r */
 LTFAT_EXTERN void
 LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
@@ -156,7 +155,7 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
   
    int h_a, h_m;   
 
-   LTFAT_REAL *sbuf, *gfp;
+   LTFAT_REAL *gfp;
 
    int ldf, s;
    int rem, negrem;
@@ -179,8 +178,8 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
    /* for testing, set ldf=L. */
    ldf=L;
 
-   sbuf = (LTFAT_REAL*)ltfat_malloc(d*sizeof(LTFAT_REAL));
-   cbuf = (LTFAT_COMPLEX*)ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
+   LTFAT_REAL *sbuf = (LTFAT_REAL*)ltfat_malloc(d*sizeof(LTFAT_REAL));
+   LTFAT_COMPLEX *cbuf = (LTFAT_COMPLEX*)ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
      
    /* Create plan. In-place. */
    p_before = LTFAT_FFTW(plan_dft_r2c_1d)(d, sbuf, cbuf, FFTW_MEASURE);
@@ -204,7 +203,7 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
 
 	       LTFAT_FFTW(execute)(p_before);	  
 
-	       for (s=0;s<d2;s+=2)
+	       for (s=0;s<d2;s++)
 	       {		  
 		  gfp[s*ld3]  = cbuf[s][0];
 		  gfp[s*ld3+1]= cbuf[s][1];

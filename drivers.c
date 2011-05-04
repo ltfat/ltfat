@@ -11,36 +11,25 @@ void fircanon_r(const double *g, const int Lg, const int L, const int a,
 {
    
    double *tmp_fir, *tmp_iir;
-   LTFAT_COMPLEX *gf, *gdualf;
    
    tmp_fir = (double*)ltfat_malloc(Lg*sizeof(double));
    tmp_iir = (double*)ltfat_malloc(L*sizeof(double));
-   gf       = (LTFAT_COMPLEX*)ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
-   gdualf   = (LTFAT_COMPLEX*)ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
    /* Move center of window from the middle of the vector to the beginning. */
    ifftshift_r(g, Lg, tmp_fir);
    
    /* Extend the FIR window to an IIR window. */
    fir2iir_r(tmp_fir, Lg, L, tmp_iir);
-      
-   /* Compute factorization of IIR window. */
-   wfac_r(tmp_iir, L, 1, a, M, gf);
-   
+         
    if (wintype==0)
    {
-      /* Compute factorization of dual IIR window. */
-      gabdual_fac(gf, L, 1, a, M, gdualf);
+      gabdualreal_long(g, L, a, M, tmp_iir);
    }
    else
    {
-      /* Compute factorization of tight IIR window. */
-      gabtight_fac(gf, L, 1, a, M, gdualf);
+      gabtightreal_long(g, L, a, M, tmp_iir);
    }
-   
-   /* Invert factorization to get dual IIR window. */
-   iwfac_r(gdualf, L, 1, a, M, tmp_iir);
-   
+      
    /* Cut dual IIR window to a FIR window. */
    iir2fir_r(tmp_iir, L, Ldual, symm, tmp_fir);
    
