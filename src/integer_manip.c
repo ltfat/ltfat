@@ -97,3 +97,21 @@ void gabimagepars(const int Ls, const int x, const int y,
   /* Number of columns to display */
   *Ngood=(Ls/(*a));
 }
+
+/* Determine the size of the output array of wfacreal and iwfacreal */
+int wfacreal_size(const int L, const int a, const int M)
+{
+
+   int h_a, h_m;   
+
+   const int b=L/M;
+   const int c=gcd(a, M,&h_a, &h_m);
+   const int p=a/c;
+   const int d=b/p;
+
+   /* This is a floor operation. */
+   const int d2= d/2+1;
+
+   return d2*p*M;
+
+}
