@@ -9,27 +9,30 @@ DEFUN_DLD (comp_dgt_long, args, ,
   Yeah.")
 {
 
-  const bool f_is_complex  = args(0).is_complex_type();
+  //const bool f_is_complex  = args(0).is_complex_type();
 
   const int a = args(2).int_value();
   const int M = args(3).int_value();
 
+  const ComplexMatrix f = args(0).complex_matrix_value();
+  const ComplexMatrix g = args(1).complex_matrix_value();
+  
+  const int L = f.rows();
+  const int W = f.columns();
+  const int N = L/a;
+  
+  ComplexMatrix cout(M,N*W);  
+  
+  dgt_long((ltfat_complex*)f.data(),(ltfat_complex*)g.data(),
+	   L, W, a, M,(ltfat_complex*)cout.data());
+  
+  return octave_value (cout);
+
+
+  /*
   if (f_is_complex)
   {
 
-    const ComplexMatrix f = args(0).complex_matrix_value();
-    const ComplexMatrix g = args(1).complex_matrix_value();
-    
-    const int L = f.rows();
-    const int W = f.columns();
-    const int N = L/a;
-        
-    ComplexMatrix cout(M,N*W);  
-    
-    dgt_long((ltfat_complex*)f.data(),(ltfat_complex*)g.data(),
-	     L, W, a, M,(ltfat_complex*)cout.data());
-	
-    return octave_value (cout);
 
   }
   else
@@ -65,5 +68,7 @@ DEFUN_DLD (comp_dgt_long, args, ,
     return octave_value (cout);
 
   }
+
+  */
 
 }
