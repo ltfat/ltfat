@@ -25,13 +25,17 @@ int main( int argc, char *argv[] )
   f  = ltfat_malloc(L*W*sizeof(ltfat_complex));
   g  = ltfat_malloc(L*W*sizeof(ltfat_complex));
   c  = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
+
+  dgt_fb_plan plan = dgt_fb_init((const ltfat_complex*)g, gl, a, M, FFTW_PATIENT);
   
   s0 = ltfat_time();
   for (ii=0;ii<nrep;ii++)
   {
-     dgt_fb((const ltfat_complex*)f,(const ltfat_complex*)g,L,gl,W,a,M,c);
+     dgt_fb_execute(plan,(const ltfat_complex*)f,L,W,c);
   }
   s1 = ltfat_time();
+
+  dgt_fb_done(plan);
 
   printf("%i %i %i %i %i %f\n",a,M,L,W,gl,(s1-s0)/nrep); 
 

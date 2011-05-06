@@ -6,19 +6,28 @@
 %  All other parameters except L remain fixed. The window length for the
 %  filter bank algorithm is also kept fixed.
 %
-a=50;
-M=200; 
+a=30;
+M=60; 
 W=4;
 nrep=20;
-gl=10*M;
+gl=1200;
 
 % Get test sizes. Use only test sizes from nextfastfft, as the others
 % cause to large a variability.
 [dummy,table]=nextfastfft(1);
 
-system('rm longer_fb1.log');
-system('rm longer_fac1.log');
-for L=gl:M:M*table(find(table<=500));
+system('rm longer_fb.log');
+system('rm longer_fac.log');
+system('rm longer_fb_real.log');
+system('rm longer_fac_real.log');
+
+testrange=M*table(find(table<=500));
+idx=round(testrange/gl)==testrange/gl;
+testrange=testrange(idx);
+testrange
+
+for ii=1:length(testrange)
+  L=testrange(ii);
   s=sprintf('./time_dgt_fb %i %i %i %i %i %i >> longer_fb.log\n',a,M,L,W, ...
             gl,nrep);
   disp(s);
@@ -27,5 +36,16 @@ for L=gl:M:M*table(find(table<=500));
   s=sprintf('./time_dgt_fac %i %i %i %i %i >> longer_fac.log\n',a,M,L,W,nrep);  
   disp(s);
   system(s);
+  
+  s=sprintf('./time_dgtreal_fb %i %i %i %i %i %i >> longer_fb_real.log\n',a,M,L,W, ...
+            gl,nrep);
+  disp(s);
+  system(s);
+
+  s=sprintf('./time_dgtreal_fac %i %i %i %i %i >> longer_fac_real.log\n',a,M,L,W,nrep);  
+  disp(s);
+  system(s);
+
 end;
+
 

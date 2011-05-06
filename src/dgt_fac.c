@@ -22,6 +22,7 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
    plan.c=gcd(a, M,&plan.h_a, &h_m);
    const int p=a/plan.c;
+   const int q=M/plan.c;
    const int d=b/p;
    plan.h_a=-plan.h_a;
 
@@ -30,6 +31,9 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    plan.f    = f;
 
    plan.gf   = (LTFAT_COMPLEX*)ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+
+   plan.ff = ltfat_malloc(2*d*p*q*W*sizeof(LTFAT_REAL));
+   plan.cf = ltfat_malloc(2*d*q*q*W*sizeof(LTFAT_REAL));
 
    /* Get factorization of window */
    LTFAT_NAME(wfac)(g, L, a, M, plan.gf);
@@ -77,6 +81,9 @@ void LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan) plan)
 
    ltfat_free(plan.sbuf);
    ltfat_free(plan.gf);
+   ltfat_free(plan.ff);
+   ltfat_free(plan.cf);
+
 }
 
 

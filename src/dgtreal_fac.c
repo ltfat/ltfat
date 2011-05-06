@@ -29,6 +29,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    plan.c=gcd(a, M,&plan.h_a, &h_m);
    const int b=L/M;
    const int p=a/plan.c;
+   const int q=M/plan.c;
    const int d=b/p;
    plan.h_a=-plan.h_a;
 
@@ -39,6 +40,9 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    plan.cbuf = ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
    plan.cout = cout;
    plan.f    = f;
+
+   plan.ff = ltfat_malloc(2*d*p*q*W*sizeof(LTFAT_REAL));
+   plan.cf = ltfat_malloc(2*d*q*q*W*sizeof(LTFAT_REAL));
 
    const int wfs = wfacreal_size(L,a,M);
 
@@ -92,6 +96,9 @@ void LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan) plan)
    ltfat_free(plan.cbuf);
    ltfat_free(plan.cwork);
    ltfat_free(plan.gf);
+   ltfat_free(plan.ff);
+   ltfat_free(plan.cf);
+
 }
 
 
