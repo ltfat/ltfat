@@ -278,6 +278,8 @@ typedef struct
   const LTFAT_H_COMPLEX *f;
   LTFAT_H_COMPLEX *gf;
   LTFAT_H_COMPLEX *cout;
+  LTFAT_H_REAL *ff, *cf;
+
 } LTFAT_H_NAME(dgt_long_plan);
 
 
@@ -315,6 +317,7 @@ typedef struct
   LTFAT_H_COMPLEX *gf;
   LTFAT_H_REAL *cwork;
   LTFAT_H_COMPLEX *cout;
+  LTFAT_H_REAL *ff, *cf;
 } LTFAT_H_NAME(dgtreal_long_plan);
 
 
@@ -333,4 +336,66 @@ LTFAT_H_NAME(dgtreal_long_done)(LTFAT_H_NAME(dgtreal_long_plan) plan);
 LTFAT_EXTERN void
 LTFAT_H_NAME(dgtreal_walnut_plan)(LTFAT_H_NAME(dgtreal_long_plan) plan);
 
+
+
+
+/*   --- dgt_fb class definition  --- */
+typedef struct
+{
+  int a;
+  int M;
+  int gl;
+
+  LTFAT_H_FFTW(plan) p_small; 
+  LTFAT_H_REAL *sbuf;
+  LTFAT_H_REAL *fw;
+  LTFAT_H_COMPLEX *gw;
+  LTFAT_H_COMPLEX *cout;
+} LTFAT_H_NAME(dgt_fb_plan);
+
+
+LTFAT_EXTERN LTFAT_H_NAME(dgt_fb_plan)
+LTFAT_H_NAME(dgt_fb_init)(const LTFAT_H_COMPLEX *g,
+   const int gl, const int a, const int M, 
+   unsigned flags);
+
+LTFAT_EXTERN void 
+LTFAT_H_NAME(dgt_fb_execute)(const LTFAT_H_NAME(dgt_fb_plan) plan,
+			     const LTFAT_H_COMPLEX *f, const int L, const int W,
+			     LTFAT_H_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_fb_done)(LTFAT_H_NAME(dgt_fb_plan) plan);
+
+
+
+/*   --- dgtreal_fb class definition  --- */
+
+typedef struct
+{
+  int a;
+  int M;
+  int gl;
+
+  LTFAT_H_FFTW(plan) p_small; 
+  LTFAT_H_REAL    *sbuf;
+  LTFAT_H_COMPLEX *cbuf;
+  LTFAT_H_REAL *fw;
+  LTFAT_H_REAL *gw;
+  LTFAT_H_COMPLEX *cout;
+} LTFAT_H_NAME(dgtreal_fb_plan);
+
+
+LTFAT_EXTERN LTFAT_H_NAME(dgtreal_fb_plan)
+LTFAT_H_NAME(dgtreal_fb_init)(const LTFAT_H_REAL *g,
+   const int gl, const int a, const int M, 
+   unsigned flags);
+
+LTFAT_EXTERN void 
+LTFAT_H_NAME(dgtreal_fb_execute)(const LTFAT_H_NAME(dgtreal_fb_plan) plan,
+			     const LTFAT_H_REAL *f, const int L, const int W,
+			     LTFAT_H_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgtreal_fb_done)(LTFAT_H_NAME(dgtreal_fb_plan) plan);
 

@@ -60,9 +60,6 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
    /* Scaling constant needed because of FFTWs normalization. */
    const LTFAT_REAL scalconst=1.0/((LTFAT_REAL)d*sqrt((LTFAT_REAL)M));
 
-   LTFAT_REAL *ff = ltfat_malloc(2*d*p*q*W*sizeof(LTFAT_REAL));
-   LTFAT_REAL *cf = ltfat_malloc(2*d*q*q*W*R*sizeof(LTFAT_REAL));
-
    /* Leading dimensions of the 4dim array. */
    const int ld2a=2*p*q*W;
 
@@ -78,7 +75,7 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
       
       
       /*  ---------- compute signal factorization ----------- */
-      ffp=ff;
+      ffp=plan.ff;
       fp=(LTFAT_REAL*)f+2*r;
       if (p==1)
       {
@@ -112,8 +109,8 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
 	 for (int s=0;s<d;s++)
 	 {	
 	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q*R;
-	    fbase=ff+2*s*q*W;
-	    cbase=cf+2*s*q*q*W*R;
+	    fbase=plan.ff+2*s*q*W;
+	    cbase=plan.cf+2*s*q*q*W*R;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
@@ -166,8 +163,8 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
 	 for (int s=0;s<d;s++)
 	 {	
 	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q*R;
-	    fbase=ff+2*s*p*q*W;
-	    cbase=cf+2*s*q*q*W*R;
+	    fbase=plan.ff+2*s*p*q*W;
+	    cbase=plan.cf+2*s*q*q*W*R;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
@@ -195,7 +192,7 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
       } /* end of if p==1 */
 
       /*  -------  compute inverse coefficient factorization ------- */
-      cfp=cf;
+      cfp=plan.cf;
 
       /* Cover both integer and rational sampling case */
       /* The following loop is almost always not used, so put it
@@ -233,9 +230,6 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
       
       /* ----------- Main loop ends here ------------------------ */
    }     
-
-   ltfat_free(ff);
-   ltfat_free(cf);
    
 }
 
@@ -534,9 +528,6 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
    /* Scaling constant needed because of FFTWs normalization. */
    const LTFAT_REAL scalconst=1.0/((LTFAT_REAL)d*sqrt((LTFAT_REAL)M));
 
-   LTFAT_REAL *ff = ltfat_malloc(2*d2*p*q*W*sizeof(LTFAT_REAL));
-   LTFAT_REAL *cf = ltfat_malloc(2*d2*q*q*W*R*sizeof(LTFAT_REAL));
-
    /* Leading dimensions of the 4dim array. */
    const int ld2a=2*p*q*W;
 
@@ -547,7 +538,7 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
    for (int r=0;r<c;r++)
    {            
       /*  ---------- compute signal factorization ----------- */
-      ffp=ff;
+      ffp=plan.ff;
       fp=f+r;
       if (p==1)	
       {
@@ -616,8 +607,8 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 	 for (int s=0;s<d2;s++)
 	 {	
 	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q*R;
-	    fbase=ff+2*s*q*W;
-	    cbase=cf+2*s*q*q*W*R;
+	    fbase=plan.ff+2*s*q*W;
+	    cbase=plan.cf+2*s*q*q*W*R;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
@@ -642,8 +633,8 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 	 for (int s=0;s<d2;s++)
 	 {	
 	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q*R;
-	    fbase=ff+2*s*p*q*W;
-	    cbase=cf+2*s*q*q*W*R;
+	    fbase=plan.ff+2*s*p*q*W;
+	    cbase=plan.cf+2*s*q*q*W*R;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
@@ -672,7 +663,7 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 
 
       /*  -------  compute inverse coefficient factorization ------- */
-      LTFAT_REAL *cfp=cf;
+      LTFAT_REAL *cfp=plan.cf;
       const int ld4c=M*N;
       const int ld5c=M*N*R;
 
@@ -708,8 +699,5 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
       
       /* ----------- Main loop ends here ------------------------ */
    }     
-
-   ltfat_free(ff);
-   ltfat_free(cf);
    
 }
