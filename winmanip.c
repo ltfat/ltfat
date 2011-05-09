@@ -24,9 +24,8 @@ LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
 {
   
    int ii;
-   div_t domod;
 
-   domod=div(L,2);
+   const div_t domod=div(L,2);
 
    for (ii=0; ii<domod.quot; ii++)
    {
@@ -86,26 +85,23 @@ LTFAT_EXTERN void
 LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
 	       LTFAT_REAL *h)
 {
-  div_t domod;
-  int ii,ss;
-  
-  domod=div(Lfir,2);
+  const div_t domod=div(Lfir,2);
   
   if (domod.rem==0)
   {
 
      /* ----- Even case, split right in the middle and insert zeros ---*/
 
-     for (ii=0; ii<domod.quot; ii++)
+     for (int ii=0; ii<domod.quot; ii++)
      {
 	h[ii]=f[ii];
      }
-     for (ii=domod.quot; ii<Liir-domod.quot;ii++)
+     for (int ii=domod.quot; ii<Liir-domod.quot;ii++)
      {
 	h[ii]=0.0;
      }
-     ss=Liir-Lfir;
-     for (ii=domod.quot; ii<Lfir;ii++)
+     const int ss=Liir-Lfir;
+     for (int ii=domod.quot; ii<Lfir;ii++)
      {
 	h[ii+ss]=f[ii];
      }
@@ -115,16 +111,16 @@ LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
   {
      /* ---- Odd case, the additional element is kept in the first half. ---*/
      
-     for (ii=0; ii<domod.quot+domod.rem; ii++)
+     for (int ii=0; ii<domod.quot+domod.rem; ii++)
      {
 	h[ii]=f[ii];
      }
-     for (ii=domod.quot+domod.rem; ii<Liir-domod.quot;ii++)
+     for (int ii=domod.quot+domod.rem; ii<Liir-domod.quot;ii++)
      {
 	h[ii]=0.0;
      }
-     ss=Liir-Lfir;
-     for (ii=domod.quot+domod.rem; ii<Lfir;ii++)
+     const int ss=Liir-Lfir;
+     for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
      {
 	h[ii+ss]=f[ii];
      }
@@ -147,21 +143,18 @@ LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
 LTFAT_EXTERN void
 LTFAT_NAME(iir2fir_r)(const LTFAT_REAL *f, const int Liir, const int Lfir, const int symm,LTFAT_REAL *h)
 {
-  div_t domod;
-  int ii,ss;
-  
-  domod=div(Lfir,2);
+  const div_t domod=div(Lfir,2);
 
   if (domod.rem==0)
   {
      /* ----- Even case, split right in the middle and remove ---*/
      
-     for (ii=0; ii<domod.quot; ii++)
+     for (int ii=0; ii<domod.quot; ii++)
      {
 	h[ii]=f[ii];
      }
-     ss=Liir-Lfir;
-     for (ii=domod.quot; ii<Lfir;ii++)
+     const int ss=Liir-Lfir;
+     for (int ii=domod.quot; ii<Lfir;ii++)
      {
 	h[ii]=f[ii+ss];
      }
@@ -171,12 +164,12 @@ LTFAT_NAME(iir2fir_r)(const LTFAT_REAL *f, const int Liir, const int Lfir, const
   {
      /* ---- Odd case, the additional element is kept in the first half. ---*/
      
-     for (ii=0; ii<domod.quot+domod.rem; ii++)
+     for (int ii=0; ii<domod.quot+domod.rem; ii++)
      {
 	h[ii]=f[ii];
      }
-     ss=Liir-Lfir;
-     for (ii=domod.quot+domod.rem; ii<Lfir;ii++)
+     const int ss=Liir-Lfir;
+     for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
      {
 	h[ii]=f[ii+ss];
      }
