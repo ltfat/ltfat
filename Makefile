@@ -5,6 +5,7 @@ CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty -DLTFAT_DLL -DLT
 
 files = sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
 	sdgt_walnut.o ddgt.o ddgt_fac.o ddgtreal_fac.o didgt_fac.o	\
+	ddgt_ola.o sdgt_ola.o \
 	ddgt_fb.o ddgt_walnut.o sgabdual_fac.o sgabtight_fac.o		\
 	dgabdual_fac.o dgabtight_fac.o		\
 	swfac.o siwfac.o sidgt_fb.o didgt_fb.o \

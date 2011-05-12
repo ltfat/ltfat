@@ -176,6 +176,18 @@ LTFAT_H_NAME(idgtreal_fb)(const LTFAT_H_COMPLEX *cin, const LTFAT_H_REAL *g,
 			  const int a, const int M,
 			  LTFAT_H_REAL *f);
 
+/* ---------- OLA DGTs ------------- */
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_ola)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
+			  const int L, const int gl,
+			  const int W, const int a, const int M, const int bl, 
+			  LTFAT_H_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgtreal_ola)(const LTFAT_H_REAL *f, const LTFAT_H_REAL *g,
+			  const int L, const int gl,
+			  const int W, const int a, const int M, const int bl, 
+			  LTFAT_H_COMPLEX *cout);
 
 /* -------- windows ------------------------------ */
 
@@ -224,6 +236,11 @@ LTFAT_H_NAME(ifftshift_r)(const LTFAT_H_REAL *f, const int L, LTFAT_H_REAL *h);
 LTFAT_EXTERN void
 LTFAT_H_NAME(fir2iir_r)(const LTFAT_H_REAL *f, const int Lfir, const int Liir,
 			LTFAT_H_REAL *h);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(fir2iir_c)(const LTFAT_H_COMPLEX *f,
+			const int Lfir,	const int Liir,
+			LTFAT_H_COMPLEX *h);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(iir2fir_r)(const LTFAT_H_REAL *f, const int Liir,
@@ -399,3 +416,66 @@ LTFAT_H_NAME(dgtreal_fb_execute)(const LTFAT_H_NAME(dgtreal_fb_plan) plan,
 LTFAT_EXTERN void
 LTFAT_H_NAME(dgtreal_fb_done)(LTFAT_H_NAME(dgtreal_fb_plan) plan);
 
+
+/*   --- dgt_ola class definition  --- */
+typedef struct
+{
+   LTFAT_H_NAME(dgt_long_plan) plan;
+   int bl;
+   int gl;
+   int W;
+   LTFAT_H_COMPLEX *buf;
+   LTFAT_H_COMPLEX *gext;
+   LTFAT_H_COMPLEX *cbuf;
+
+} LTFAT_H_NAME(dgt_ola_plan);
+
+
+LTFAT_EXTERN LTFAT_H_NAME(dgt_ola_plan)
+LTFAT_H_NAME(dgt_ola_init)(const LTFAT_H_COMPLEX *g, const int gl,
+			   const int W, const int a, const int M, const int bl,
+			   unsigned flags);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_ola_execute)(const LTFAT_H_NAME(dgt_ola_plan) plan,
+			    const LTFAT_H_COMPLEX *f, const int L,
+			    LTFAT_H_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_ola_done)(LTFAT_H_NAME(dgt_ola_plan) plan);
+
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_walnut_plan)(LTFAT_H_NAME(dgt_long_plan) plan);
+
+
+/*   --- dgtreal_ola class definition  --- */
+typedef struct
+{
+   LTFAT_H_NAME(dgtreal_long_plan) plan;
+   int bl;
+   int gl;
+   int W;
+   LTFAT_H_REAL *buf;
+   LTFAT_H_REAL *gext;
+   LTFAT_H_COMPLEX *cbuf;
+
+} LTFAT_H_NAME(dgtreal_ola_plan);
+
+
+LTFAT_EXTERN LTFAT_H_NAME(dgtreal_ola_plan)
+LTFAT_H_NAME(dgtreal_ola_init)(const LTFAT_H_REAL *g, const int gl,
+			       const int W, const int a, const int M, const int bl,
+			       unsigned flags);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgtreal_ola_execute)(const LTFAT_H_NAME(dgtreal_ola_plan) plan,
+				  const LTFAT_H_REAL *f, const int L,
+				  LTFAT_H_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgtreal_ola_done)(LTFAT_H_NAME(dgtreal_ola_plan) plan);
+
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgtreal_walnut_plan)(LTFAT_H_NAME(dgtreal_long_plan) plan);
