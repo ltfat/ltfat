@@ -128,6 +128,68 @@ LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
   }     
 }
 
+/* This routine changes a FIR window to an IIR window.
+ *
+ * Input parameters:
+ *  f     : Complex valued input array.
+ *  Lfir  : Length of input array
+ *  Liir  : Length of output array
+ *  h     : Output array
+ */ 
+LTFAT_EXTERN void
+LTFAT_NAME(fir2iir_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Liir,
+		      LTFAT_COMPLEX *h)
+{
+  const div_t domod=div(Lfir,2);
+  
+  if (domod.rem==0)
+  {
+
+     /* ----- Even case, split right in the middle and insert zeros ---*/
+
+     for (int ii=0; ii<domod.quot; ii++)
+     {
+	h[ii][0]=f[ii][0];
+	h[ii][1]=f[ii][1];
+     }
+     for (int ii=domod.quot; ii<Liir-domod.quot;ii++)
+     {
+	h[ii][0]=0.0;
+	h[ii][1]=0.0;
+     }
+     const int ss=Liir-Lfir;
+     for (int ii=domod.quot; ii<Lfir;ii++)
+     {
+	h[ii+ss][0]=f[ii][0];
+	h[ii+ss][1]=f[ii][1];
+     }
+     
+  }
+  else
+  {
+     /* ---- Odd case, the additional element is kept in the first half. ---*/
+     
+     for (int ii=0; ii<domod.quot+domod.rem; ii++)
+     {
+	h[ii][0]=f[ii][0];
+	h[ii][1]=f[ii][1];
+     }
+     for (int ii=domod.quot+domod.rem; ii<Liir-domod.quot;ii++)
+     {
+	h[ii][0]=0.0;
+	h[ii][1]=0.0;
+     }
+     const int ss=Liir-Lfir;
+     for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
+     {
+	h[ii+ss][0]=f[ii][0];
+	h[ii+ss][1]=f[ii][1];
+     }
+     
+  }     
+}
+
+
 
 /* This routine changes an IIR window to a FIR window.
  *

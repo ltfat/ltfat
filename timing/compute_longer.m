@@ -10,32 +10,25 @@ a=30;
 M=60; 
 W=4;
 nrep=20;
-gl=1200;
+gl=2400;
+bl=24000;
 
 % Get test sizes. Use only test sizes from nextfastfft, as the others
 % cause to large a variability.
 [dummy,table]=nextfastfft(1);
 
-system('rm longer_fb.log');
-system('rm longer_fac.log');
 system('rm longer_fb_real.log');
 system('rm longer_fac_real.log');
+system('rm longer_ola_real.log');
 
-testrange=M*table(find(table<=500));
+
+testrange=M*table(find(table<=1500));
 idx=round(testrange/gl)==testrange/gl;
 testrange=testrange(idx);
 testrange
 
 for ii=1:length(testrange)
   L=testrange(ii);
-  s=sprintf('./time_dgt_fb %i %i %i %i %i %i >> longer_fb.log\n',a,M,L,W, ...
-            gl,nrep);
-  disp(s);
-  system(s);
-
-  s=sprintf('./time_dgt_fac %i %i %i %i %i >> longer_fac.log\n',a,M,L,W,nrep);  
-  disp(s);
-  system(s);
   
   s=sprintf('./time_dgtreal_fb %i %i %i %i %i %i >> longer_fb_real.log\n',a,M,L,W, ...
             gl,nrep);
@@ -46,6 +39,13 @@ for ii=1:length(testrange)
   disp(s);
   system(s);
 
+  % Extend L to multiple of bl for the OLA algorithm.
+  Lola = ceil(L/bl)*bl;
+
+  s=sprintf('./time_dgtreal_ola %i %i %i %i %i %i %i >> longer_ola_real.log\n',a,M,Lola,W,gl,bl,nrep);  
+  disp(s);
+  system(s);
+  
 end;
 
 

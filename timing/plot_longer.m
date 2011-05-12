@@ -1,19 +1,15 @@
 lw=2;
 
-data_fb =load('longer_fb.log');
-data_fac=load('longer_fac.log');
 data_fb_real =load('longer_fb_real.log');
 data_fac_real=load('longer_fac_real.log');
-
-
+data_ola_real=load('longer_ola_real.log');
 
 % Columns in data, fb : a M L W gl time
 % Columns in data, fac: a M L W time
-Ls=data_fac(:,3);
-t_fb =data_fb(:,6);
-t_fac=data_fac(:,5);
+Ls=data_fac_real(:,3);
 t_fb_real =data_fb_real(:,6);
 t_fac_real=data_fac_real(:,5);
+t_ola_real=data_ola_real(:,7);
 
 if 0
   % Color legend
@@ -31,15 +27,14 @@ end;
 
 figure(1);
 
-M=data_fac(1,2);
-L=data_fac(:,3);
+M=data_fac_real(1,2);
+L=data_fac_real(:,3);
 
-plot(Ls,t_fb,l1,...  
-     Ls,t_fac,l2,...
-     Ls,t_fb_real,l3,...  
-     Ls,t_fac_real,l4,'LineWidth',lw);
+plot(Ls,t_fb_real,l1,...  
+     Ls,t_fac_real,l2,...
+     Ls,t_ola_real,l3,'LineWidth',lw);
 
-legend('Portnoff','Fac','Portnoff, real','Fac, real',...
+legend('Portnoff, real','Fac, real','OLA, real',...
        'Location','NorthWest');
 
 xlabel('Signal length / samples');
