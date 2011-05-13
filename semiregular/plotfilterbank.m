@@ -1,8 +1,9 @@
-function [] = plotfilterbank(coef,step,varargin)
+function [] = plotfilterbank(coef,a,varargin)
 %PLOTNSDGT Plot spectrogram from filterbank coefficients
 %   Usage:  plotfilterbank(coef,a);
-%           plotfilterbank(coef,a,fs);
-%           plotfilterbank(coef,a,fs,dynrange);
+%           plotfilterbank(coef,a,fc);
+%           plotfilterbank(coef,a,fc,fs);
+%           plotfilterbank(coef,a,fc,fs,dynrange);
 %
 %   PLOTFILTERBANK(coef,a) plots filterbank coefficients coef obtained from
 %   either the FILTERBANK or UFILTERBANK functions. The coefficients must
@@ -10,8 +11,14 @@ function [] = plotfilterbank(coef,step,varargin)
 %   format of the variables coef and _a, see the help of the FILTERBANK
 %   or UFILTERBANK functions.
 %
-%   PLOTFILTERBANK(coef,a) does the same assuming a sampling rate of
+%   PLOTFILTERBANK(coef,a,fc) makes it possible to specify the center
+%   frequency for each channel in the vector fc.
+%
+%   PLOTFILTERBANK(coef,a,fc,fs) does the same assuming a sampling rate of
 %   fs Hz of the original signal.
+%
+%   PLOTFILTERBANK(coef,a,fc,fs,dynrange) makes it possible to specify
+%   the dynamic range of the coefficients.
 %
 %   PLOTFILTERBANK supports all the optional parameters of TFPLOT. Please
 %   see the help of TFPLOT for an exhaustive list.
@@ -23,8 +30,10 @@ if nargin<2
 end;
 
 definput.import={'tfplot'};
+definput.keyvals.fc=[];
+definput.keyvals.ntickpos=10;
 
-[flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
   
 N=size(coef,1);
 M=size(coef,2);
@@ -59,9 +68,9 @@ if ~isempty(kv.dynrange)
 end;
 
 if flags.do_tc
-  xr=(-floor(N/2):floor((N-1)/2))*step;
+  xr=(-floor(N/2):floor((N-1)/2))*a;
 else
-  xr=(0:N-1)*step;
+  xr=(0:N-1)*a;
 end;
 
 if ~isempty(kv.fs)
@@ -93,5 +102,17 @@ if ~isempty(kv.fs)
 else
   xlabel(sprintf('%s (%s)',kv.time,kv.samples));
 end;
-ylabel('Channel No.');
+
+if isempty(kv.fc)
+  ylabel('Channel No.');
+else
+  ylabel(sprintf('%s (s)',kv.frequency));
+
+  tickpos=linspace(1,M,kv.ntickpos);
+  tick=spline(1:M,kv.fc,tickpos);
+
+  set(gca,'YTick',tickpos);
+  set(gca,'YTickLabel',num2str(tick(:),3));
+  
+end;
 
