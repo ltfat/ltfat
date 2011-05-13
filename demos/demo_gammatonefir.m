@@ -53,4 +53,7 @@ r=2*real(iufilterbank(coef,gd,a,Ls));
 
 disp('Relative error in reconstruction, should be close to zero.');
 norm(f-r)/norm(f)
-  
+
+figure(1);
+plotfilterbank(coef,a,fs,100);
+
