@@ -6,7 +6,7 @@
 %  All other parameters except L remain fixed. The window length for the
 %  filter bank algorithm is also kept fixed.
 %
-a=30;
+a=40;
 M=60; 
 W=4;
 nrep=20;

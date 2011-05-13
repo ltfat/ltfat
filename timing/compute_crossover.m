@@ -1,6 +1,6 @@
 if 1
   % This is the setup used in the paper
-  a=30;
+  a=40;
   M=60; 
   L=a*M;
   W=4;

@@ -23,6 +23,21 @@ function [] = plotfilterbank(coef,a,varargin)
 %   PLOTFILTERBANK supports all the optional parameters of TFPLOT. Please
 %   see the help of TFPLOT for an exhaustive list.
 %
+%   In addition to the flags and key/values in TFPLoT, PLOTFILTERBANK
+%   supports the following optional arguments:
+%
+%-     'fc',fc    - Center frequencies of the channels. fc must be a vector with
+%                   the length equal to the number of channels. The
+%                   default value of [] means to plot the channel
+%                   no. instead of its frequency.
+%
+%-     'ntickpos',n - Number of tick positions along the y-axis. The
+%                   position of the ticks are determined automatically.
+%                   Default value is 10.
+%
+%-     'tick',t     - Array of tick positions on the y-axis. Use this
+%                   option to specify the tick position manually.
+%
 %   See also:  filterbank, ufilterbank, tfplot, sgram
 
 if nargin<2
@@ -32,6 +47,7 @@ end;
 definput.import={'tfplot'};
 definput.keyvals.fc=[];
 definput.keyvals.ntickpos=10;
+definput.keyvals.tick=[];
 
 [flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
   
@@ -106,13 +122,34 @@ end;
 if isempty(kv.fc)
   ylabel('Channel No.');
 else
+  
+  if isempty(kv.tick)
+    tickpos=linspace(1,M,kv.ntickpos);
+    tick=spline(1:M,kv.fc,tickpos);
+    
+    set(gca,'YTick',tickpos);
+    set(gca,'YTickLabel',num2str(tick(:),3));
+
+  else
+    % Create a crude inverse mapping to determine the positions of the
+    % ticks
+    tick=kv.tick;
+    manyticks=spline(1:M,kv.fc,linspace(1,M,1000));
+    nticks=length(tick);
+    tickpos=zeros(nticks,1);
+    for ii=1:nticks
+      jj=find(manyticks>=tick(ii));
+      tickpos(ii)=jj(1)/1000*M;
+    end;
+    
+    set(gca,'YTick',tickpos);
+    set(gca,'YTickLabel',num2str(tick(:)));
+
+  end;
+  
   ylabel(sprintf('%s (s)',kv.frequency));
 
-  tickpos=linspace(1,M,kv.ntickpos);
-  tick=spline(1:M,kv.fc,tickpos);
 
-  set(gca,'YTick',tickpos);
-  set(gca,'YTickLabel',num2str(tick(:),3));
   
 end;
 

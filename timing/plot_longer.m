@@ -27,6 +27,7 @@ end;
 
 figure(1);
 
+a=data_fac_real(1,1);
 M=data_fac_real(1,2);
 L=data_fac_real(:,3);
 
