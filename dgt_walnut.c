@@ -34,9 +34,6 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
 
    LTFAT_REAL *ffp, *fp, *cfp;
 
-   /* This is preserved for potential future use. */
-   const int R = 1;
-
    /*  ----------- calculation of parameters and plans -------- */
    
    const int a=plan.a;
@@ -64,10 +61,8 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
    const int ld2a=2*p*q*W;
 
    /* Leading dimensions of cf */
-   const int ld3b=2*q*R*q*W;
-
-   const int ld4c=M*N;
-   const int ld5c=M*N*R;
+   const int ld3b=2*q*q*W;
+   const int ld5c=M*N;
 
    /* --------- main loop begins here ------------------- */
    for (int r=0;r<c;r++)
@@ -108,23 +103,23 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
 	 /* Do the Matmul */	 
 	 for (int s=0;s<d;s++)
 	 {	
-	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q*R;
+	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q;
 	    fbase=plan.ff+2*s*q*W;
-	    cbase=plan.cf+2*s*q*q*W*R;
+	    cbase=plan.cf+2*s*q*q*W;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
-	       for (int mm=0;mm<q*R;mm++)
+	       for (int mm=0;mm<q;mm++)
 	       {
 		  cbase[0]=gbase[0]*fbase[0]+gbase[1]*fbase[1];
 		  cbase[1]=gbase[0]*fbase[1]-gbase[1]*fbase[0];
 		  gbase+=2;
 		  cbase+=2;
 	       }			       
-	       gbase-=2*q*R;
+	       gbase-=2*q;
 	       fbase+=2;
 	    }
-	    cbase-=2*q*R*q*W;
+	    cbase-=2*q*q*W;
 	 }
 
 
@@ -162,13 +157,13 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
 
 	 for (int s=0;s<d;s++)
 	 {	
-	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q*R;
+	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q;
 	    fbase=plan.ff+2*s*p*q*W;
-	    cbase=plan.cf+2*s*q*q*W*R;
+	    cbase=plan.cf+2*s*q*q*W;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
-	       for (int mm=0;mm<q*R;mm++)
+	       for (int mm=0;mm<q;mm++)
 	       {
 		  cbase[0]=0.0;
 		  cbase[1]=0.0;
@@ -182,10 +177,10 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
 		  fbase-=2*p;
 		  cbase+=2;
 	       }			       
-	       gbase-=2*q*R*p;
+	       gbase-=2*q*p;
 	       fbase+=2*p;
 	    }
-	    cbase-=2*q*R*q*W;
+	    cbase-=2*q*q*W;
 	    fbase-=2*p*q*W;
 	 }
 
@@ -195,38 +190,33 @@ void LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan)
       cfp=plan.cf;
 
       /* Cover both integer and rational sampling case */
-      /* The following loop is almost always not used, so put it
-       * first. */
-      for (int rw=0;rw<R;rw++)
-      {	 
-	 for (int w=0;w<W;w++)
+      for (int w=0;w<W;w++)
+      {
+	 /* Complete inverse fac of coefficients */
+	 for (int l=0;l<q;l++)
 	 {
-	    /* Complete inverse fac of coefficients */
-	    for (int l=0;l<q;l++)
-	    {
-	       for (int u=0;u<q;u++)
-	       {	       	       
-		  for (int s=0;s<d;s++)	       
-		  {	
-		     sbuf[2*s]   = cfp[s*ld3b];
-		     sbuf[2*s+1] = cfp[s*ld3b+1];
-		  }
-		  cfp+=2;
-		  
-		  /* Do inverse fft of length d */
-		  LTFAT_FFTW(execute)(plan.p_after);
-		  
-		  for (int s=0;s<d;s++)	       
-		  {	
-		     rem= r+l*c+positiverem(u+s*q-l*h_a,N)*M+rw*ld4c+w*ld5c;
-		     cout[rem][0]=sbuf[2*s];
-		     cout[rem][1]=sbuf[2*s+1];
-		  }		    
+	    for (int u=0;u<q;u++)
+	    {	       	       
+	       for (int s=0;s<d;s++)	       
+	       {	
+		  sbuf[2*s]   = cfp[s*ld3b];
+		  sbuf[2*s+1] = cfp[s*ld3b+1];
 	       }
+	       cfp+=2;
+	       
+	       /* Do inverse fft of length d */
+	       LTFAT_FFTW(execute)(plan.p_after);
+	       
+	       for (int s=0;s<d;s++)	       
+	       {	
+		  rem= r+l*c+positiverem(u+s*q-l*h_a,N)*M+w*ld5c;
+		  cout[rem][0]=sbuf[2*s];
+		  cout[rem][1]=sbuf[2*s+1];
+	       }		    
 	    }
 	 }
       }            
-
+      
       
       /* ----------- Main loop ends here ------------------------ */
    }     
@@ -251,7 +241,7 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
    
    LTFAT_REAL *gbase, *fbase, *cbase;
 
-   int l, k, r, s, u, w, rw, nm, mm, km;
+   int l, k, r, s, u, w, nm, mm, km;
    int ld2a, ld3b;
    int ld4c, ld5c;
    int rem;
@@ -264,9 +254,6 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 
 
    LTFAT_REAL scalconst;   
-
-   /* This is preserved for potential future use. */
-   const int R = 1;
 
    /*  ----------- calculation of parameters and plans -------- */
    
@@ -284,7 +271,7 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
    scalconst=1.0/((LTFAT_REAL)d*sqrt((LTFAT_REAL)M));
 
    ff = (LTFAT_REAL*)ltfat_malloc(2*d*p*q*W*sizeof(LTFAT_REAL));
-   cf = (LTFAT_REAL*)ltfat_malloc(2*d*q*q*W*R*sizeof(LTFAT_REAL));
+   cf = (LTFAT_REAL*)ltfat_malloc(2*d*q*q*W*sizeof(LTFAT_REAL));
    sbuf = (LTFAT_REAL*)ltfat_malloc(2*d*sizeof(LTFAT_REAL));
 
    /* Create plans. In-place. */
@@ -299,7 +286,7 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
    ld2a=2*p*q*W;
 
    /* Leading dimensions of cf */
-   ld3b=2*q*R*q*W;
+   ld3b=2*q*q*W;
 
    /* --------- main loop begins here ------------------- */
    for (r=0;r<c;r++)
@@ -377,23 +364,23 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 	 /* Rational oversampling case */
 	 for (s=0;s<d;s++)
 	 {	
-	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q*R;
+	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q;
 	    fbase=ff+2*s*q*W;
-	    cbase=cf+2*s*q*q*W*R;
+	    cbase=cf+2*s*q*q*W;
 	    
 	    for (nm=0;nm<q*W;nm++)
 	    {
-	       for (mm=0;mm<q*R;mm++)
+	       for (mm=0;mm<q;mm++)
 	       {
 		  cbase[0]=gbase[0]*fbase[0]+gbase[1]*fbase[1];
 		  cbase[1]=gbase[0]*fbase[1]-gbase[1]*fbase[0];
 		  gbase+=2;
 		  cbase+=2;
 	       }			       
-	       gbase-=2*q*R;
+	       gbase-=2*q;
 	       fbase+=2;
 	    }
-	    cbase-=2*q*R*q*W;
+	    cbase-=2*q*q*W;
 	 }
 
       }
@@ -403,13 +390,13 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 	 /* Rational oversampling case */
 	 for (s=0;s<d;s++)
 	 {	
-	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q*R;
+	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q;
 	    fbase=ff+2*s*p*q*W;
-	    cbase=cf+2*s*q*q*W*R;
+	    cbase=cf+2*s*q*q*W;
 	    
 	    for (nm=0;nm<q*W;nm++)
 	    {
-	       for (mm=0;mm<q*R;mm++)
+	       for (mm=0;mm<q;mm++)
 	       {
 		  cbase[0]=0.0;
 		  cbase[1]=0.0;
@@ -423,10 +410,10 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 		  fbase-=2*p;
 		  cbase+=2;
 	       }			       
-	       gbase-=2*q*R*p;
+	       gbase-=2*q*p;
 	       fbase+=2*p;
 	    }
-	    cbase-=2*q*R*q*W;
+	    cbase-=2*q*q*W;
 	    fbase-=2*p*q*W;
 	 }
       }
@@ -436,7 +423,7 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
       /*  -------  compute inverse coefficient factorization ------- */
       cfp=cf;
       ld4c=M*N;
-      ld5c=M*N*R;
+      ld5c=M*N;
 
       /* Cover both integer and rational sampling case */
       for (w=0;w<W;w++)
@@ -444,27 +431,24 @@ void LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 	 /* Complete inverse fac of coefficients */
 	 for (l=0;l<q;l++)
 	 {
-	    for (rw=0;rw<R;rw++)
-	    {
-	       for (u=0;u<q;u++)
-	       {	       	       
-		  for (s=0;s<d;s++)	       
-		  {	
-		     sbuf[2*s]   = cfp[s*ld3b];
-		     sbuf[2*s+1] = cfp[s*ld3b+1];
-		  }
-		  cfp+=2;
-		  
-		  /* Do inverse fft of length d */
-		  LTFAT_FFTW(execute)(p_after);
-		  
-		  for (s=0;s<d;s++)	       
-		  {	
-		     rem= r+l*c+positiverem(u+s*q-l*h_a,N)*M+rw*ld4c+w*ld5c;
-		     cout[rem][0]=sbuf[2*s];
-		     cout[rem][1]=sbuf[2*s+1];
-		  }		    
+	    for (u=0;u<q;u++)
+	    {	       	       
+	       for (s=0;s<d;s++)	       
+	       {	
+		  sbuf[2*s]   = cfp[s*ld3b];
+		  sbuf[2*s+1] = cfp[s*ld3b+1];
 	       }
+	       cfp+=2;
+	       
+	       /* Do inverse fft of length d */
+	       LTFAT_FFTW(execute)(p_after);
+	       
+	       for (s=0;s<d;s++)	       
+	       {	
+		  rem= r+l*c+positiverem(u+s*q-l*h_a,N)*M+w*ld5c;
+		  cout[rem][0]=sbuf[2*s];
+		  cout[rem][1]=sbuf[2*s+1];
+	       }		    
 	    }
 	 }
       }            
@@ -522,9 +506,6 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 
    const LTFAT_REAL *fp;
 
-   /* This is preserved for potential future use. */
-   const int R = 1;
-
    /* Scaling constant needed because of FFTWs normalization. */
    const LTFAT_REAL scalconst=1.0/((LTFAT_REAL)d*sqrt((LTFAT_REAL)M));
 
@@ -532,7 +513,7 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
    const int ld2a=2*p*q*W;
 
    /* Leading dimensions of cf */
-   const int ld3b=2*q*R*q*W;
+   const int ld3b=2*q*q*W;
 
    /* --------- main loop begins here ------------------- */
    for (int r=0;r<c;r++)
@@ -606,23 +587,23 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 	 /* Rational oversampling case */
 	 for (int s=0;s<d2;s++)
 	 {	
-	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q*R;
+	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*q;
 	    fbase=plan.ff+2*s*q*W;
-	    cbase=plan.cf+2*s*q*q*W*R;
+	    cbase=plan.cf+2*s*q*q*W;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
-	       for (int mm=0;mm<q*R;mm++)
+	       for (int mm=0;mm<q;mm++)
 	       {
 		  cbase[0]=gbase[0]*fbase[0]+gbase[1]*fbase[1];
 		  cbase[1]=gbase[0]*fbase[1]-gbase[1]*fbase[0];
 		  gbase+=2;
 		  cbase+=2;
 	       }			       
-	       gbase-=2*q*R;
+	       gbase-=2*q;
 	       fbase+=2;
 	    }
-	    cbase-=2*q*R*q*W;
+	    cbase-=2*q*q*W;
 	 }
 
       }
@@ -632,13 +613,13 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 	 /* Rational oversampling case */
 	 for (int s=0;s<d2;s++)
 	 {	
-	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q*R;
+	    gbase=(LTFAT_REAL*)gf+2*(r+s*c)*p*q;
 	    fbase=plan.ff+2*s*p*q*W;
-	    cbase=plan.cf+2*s*q*q*W*R;
+	    cbase=plan.cf+2*s*q*q*W;
 	    
 	    for (int nm=0;nm<q*W;nm++)
 	    {
-	       for (int mm=0;mm<q*R;mm++)
+	       for (int mm=0;mm<q;mm++)
 	       {
 		  cbase[0]=0.0;
 		  cbase[1]=0.0;
@@ -652,10 +633,10 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 		  fbase-=2*p;
 		  cbase+=2;
 	       }			       
-	       gbase-=2*q*R*p;
+	       gbase-=2*q*p;
 	       fbase+=2*p;
 	    }
-	    cbase-=2*q*R*q*W;
+	    cbase-=2*q*q*W;
 	    fbase-=2*p*q*W;
 	 }
       }
@@ -664,8 +645,7 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 
       /*  -------  compute inverse coefficient factorization ------- */
       LTFAT_REAL *cfp=plan.cf;
-      const int ld4c=M*N;
-      const int ld5c=M*N*R;
+      const int ld5c=M*N;
 
       /* Cover both integer and rational sampling case */
       for (int w=0;w<W;w++)
@@ -673,25 +653,22 @@ void LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 	 /* Complete inverse fac of coefficients */
 	 for (int l=0;l<q;l++)
 	 {
-	    for (int rw=0;rw<R;rw++)
-	    {
-	       for (int u=0;u<q;u++)
-	       {	       	       
-		  for (int s=0;s<d2;s++)	       
-		  {	
-		     cbuf[s][0] = cfp[s*ld3b];
-		     cbuf[s][1] = cfp[s*ld3b+1];
-		  }
-		  cfp+=2;
-		  
-		  /* Do inverse fft of length d */
-		  LTFAT_FFTW(execute)(plan.p_after);
-		  
-		  for (int s=0;s<d;s++)	       
-		  {	
-		     cout[ r+l*c+positiverem(u+s*q-l*h_a,N)*M+rw*ld4c+w*ld5c ]=sbuf[s];
-		  }		    
+	    for (int u=0;u<q;u++)
+	    {	       	       
+	       for (int s=0;s<d2;s++)	       
+	       {	
+		  cbuf[s][0] = cfp[s*ld3b];
+		  cbuf[s][1] = cfp[s*ld3b+1];
 	       }
+	       cfp+=2;
+	       
+	       /* Do inverse fft of length d */
+	       LTFAT_FFTW(execute)(plan.p_after);
+	       
+	       for (int s=0;s<d;s++)	       
+	       {	
+		     cout[ r+l*c+positiverem(u+s*q-l*h_a,N)*M+w*ld5c ]=sbuf[s];
+	       }		    
 	    }
 	 }
       }            

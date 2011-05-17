@@ -22,14 +22,8 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
    int h_a, h_m;
    
-   LTFAT_COMPLEX *fbase, *cbase;
-
-   const LTFAT_COMPLEX *gbase;
-
-   div_t domod;
-
    LTFAT_FFTW(plan) p_before, p_after, p_veryend;
-   LTFAT_COMPLEX *ff, *cf, *cwork;
+   LTFAT_COMPLEX *ff, *cf, *cwork, *cbuf;
 
    /*  ----------- calculation of parameters and plans -------- */
 
@@ -44,28 +38,20 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    h_a=-h_a;
 
    ff    = (LTFAT_COMPLEX*)ltfat_malloc(d*p*q*W*sizeof(LTFAT_COMPLEX));
-   cf    = (LTFAT_COMPLEX*)ltfat_malloc(q*N*W*sizeof(LTFAT_COMPLEX));
+   cf    = (LTFAT_COMPLEX*)ltfat_malloc(d*q*q*W*sizeof(LTFAT_COMPLEX));
    cwork = (LTFAT_COMPLEX*)ltfat_malloc(M*N*W*sizeof(LTFAT_COMPLEX));
+   cbuf  = (LTFAT_COMPLEX*)ltfat_malloc(d*sizeof(LTFAT_COMPLEX));
 
    /* Scaling constant needed because of FFTWs normalization. */
    const double scalconst = 1.0/((double)d*sqrt((double)M));
 
    /* Create plans. In-place. */   
-   p_before = LTFAT_FFTW(plan_many_dft)(1, &d, p*q*W,
-				 ff, NULL,
-				 p*q*W, 1,
-				 ff, NULL,
-				 p*q*W, 1,
-				 FFTW_BACKWARD, FFTW_ESTIMATE);
 
+   p_after  = LTFAT_FFTW(plan_dft_1d)(d, cbuf, cbuf,
+			       FFTW_FORWARD, FFTW_ESTIMATE);
 
-   p_after = LTFAT_FFTW(plan_many_dft)(1, &d, q*q*W,
-				cf, NULL,
-				q*q*W, 1,
-				cf, NULL,
-				q*q*W, 1,
-				FFTW_FORWARD, FFTW_ESTIMATE);
-   
+   p_before = LTFAT_FFTW(plan_dft_1d)(d, cbuf, cbuf,
+			       FFTW_BACKWARD, FFTW_ESTIMATE);
 
    /* Create plan. Copy data so we do not overwrite input. Therefore
       it is ok to cast away the constness of cin.*/
@@ -82,36 +68,51 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
    /* -------- Main loop ----------------------------------- */
 
+   const int ld4c=M*N;
+
+   /* Leading dimensions of cf */
+   const int ld3b=q*q*W;
+
+   /* Leading dimensions of the 4dim array. */
+   const int ld2ff=p*q*W;
+
    for (int r=0;r<c;r++)
    {	
 
 
-      /* -------- compute coefficient factorization ----------- */
+      LTFAT_COMPLEX *cfp=cf;
 
-      /* Leading dimensions of the 4dim array. */
-      const int ld1=q;
-      int ld2=q*q*W;
-      
       for (int w=0;w<W;w++)
       {
-	 for (int s=0;s<d;s++)
+	 /* Complete inverse fac of coefficients */
+	 for (int l=0;l<q;l++)
 	 {
-	    for (int l=0;l<q;l++)
-	    {
-	       for (int u=0;u<q;u++)
-	       {	       
-		  /*Add N to make sure it is positive */
-		  domod= div(u+s*q-l*h_a+N*M,N);
-		  
-		  cf[u+(l+q*w)*ld1+s*ld2][0] = cwork[r+l*c+domod.rem*M+w*M*N][0];
-		  cf[u+(l+q*w)*ld1+s*ld2][1] = cwork[r+l*c+domod.rem*M+w*M*N][1];
+	    for (int u=0;u<q;u++)
+	    {	       	       
+	       for (int s=0;s<d;s++)	       
+	       {	
+		  const int rem = r+l*c+positiverem(u+s*q-l*h_a,N)*M+w*ld4c;
+		  cbuf[s][0] = cwork[rem][0];
+		  cbuf[s][1] = cwork[rem][1];
+	       }		    
+	       
+	       /* Do inverse fft of length d */
+	       LTFAT_FFTW(execute)(p_after);
+
+	       for (int s=0;s<d;s++)	       
+	       {	
+		  cfp[s*ld3b][0] = cbuf[s][0];
+		  cfp[s*ld3b][1] = cbuf[s][1];
 	       }
+	       /* Advance the cf pointer. This is only done in this
+		* one place, because the loops are placed such that
+		* this pointer will advance linearly through
+		* memory. Reordering the loops will break this. */
+	       cfp++;
 	    }
 	 }
-      }           
-      
-      /* Do fft of length d */
-      LTFAT_FFTW(execute)(p_after);
+      }            
+
       
       
       /* -------- compute matrix multiplication ---------- */
@@ -120,9 +121,10 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
       /* Do the matmul  */
       for (int s=0;s<d;s++)
       {	
-	 gbase=gf+(r+s*c)*p*q;
-	 fbase=ff+s*p*q*W;
-	 cbase=cf+s*q*q*W;
+
+	 const LTFAT_COMPLEX *gbase = gf+(r+s*c)*p*q;
+	 LTFAT_COMPLEX       *fbase = ff+s*p*q*W;
+	 const LTFAT_COMPLEX *cbase = (const LTFAT_COMPLEX *)cf+s*q*q*W;
 	 
 	 for (int nm=0;nm<q*W;nm++)
 	 {
@@ -158,29 +160,40 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
       /* ----------- compute inverse signal factorization ---------- */
 
 
-      /* Do ifft to begin inverse signal factorization.*/
-      LTFAT_FFTW(execute)(p_before);
-
-      /* Leading dimensions of the 4dim array. */
-      ld2=p*q*W;
+      LTFAT_COMPLEX *ffp = ff;
+      LTFAT_COMPLEX *fp  = f+r;
 
       for (int w=0;w<W;w++)
       {
-	 for (int s=0;s<d;s++)
+	 for (int l=0;l<q;l++)
 	 {
-	    for (int l=0;l<q;l++)
+	    for (int k=0;k<p;k++)
 	    {
-	       for (int k=0;k<p;k++)
-	       {
-		  /* Add L*M to make sure it is always positive */
-		  domod = div(k*M+s*p*M+l*(c-h_m*M)+L*M, L);		  
-		  f[r+domod.rem+L*w][0] = ff[k+(l+q*w)*p+s*ld2][0];
-		  f[r+domod.rem+L*w][1] = ff[k+(l+q*w)*p+s*ld2][1];
+	       for (int s=0;s<d;s++)
+	       {		  
+		  cbuf[s][0] = ffp[s*ld2ff][0];
+		  cbuf[s][1] = ffp[s*ld2ff][1];
 	       }
+	       	       
+	       LTFAT_FFTW(execute)(p_before);
+	       
+	       for (int s=0;s<d;s++)
+	       {		  
+		  const int rem = positiverem(k*M+s*p*M-l*h_a*a, L);
+		  fp[rem][0] = cbuf[s][0];
+		  fp[rem][1] = cbuf[s][1];
+	       }
+	       
+	       /* Advance the ff pointer. This is only done in this
+		* one place, because the loops are placed such that
+		* this pointer will advance linearly through
+		* memory. Reordering the loops will break this. */		  
+	       ffp++;
 	    }
 	 }
+	 fp+=L;	 
       }
-
+      fp-=L*W;
 
       /* ----- Main loop ends here ------------- */
    }           
@@ -194,6 +207,9 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    ltfat_free(cwork);
    ltfat_free(ff);
    ltfat_free(cf);
+
+   ltfat_free(cbuf);
+
    
 }
 
@@ -210,15 +226,9 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
    int h_a, h_m;
    
-   LTFAT_COMPLEX *fbase, *cbase;
-
-   const LTFAT_COMPLEX *gbase;
-
-   div_t domod;
-
    LTFAT_FFTW(plan) p_before, p_after, p_veryend;
-   LTFAT_COMPLEX *ff, *cf;
-   LTFAT_REAL *cwork;
+   LTFAT_COMPLEX *ff, *cf, *cbuf;
+   LTFAT_REAL *cwork, *sbuf;
 
    /* This is a floor operation. */
    const int M2= M/2+1;
@@ -238,28 +248,19 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
    h_a=-h_a;
 
-   ff    = (LTFAT_COMPLEX*)ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
-   cf    = (LTFAT_COMPLEX*)ltfat_malloc(M*N*W*sizeof(LTFAT_COMPLEX));
+   ff    = (LTFAT_COMPLEX*)ltfat_malloc(d2*p*q*W*sizeof(LTFAT_COMPLEX));
+   cf    = (LTFAT_COMPLEX*)ltfat_malloc(d2*q*q*W*sizeof(LTFAT_COMPLEX));
    cwork = (LTFAT_REAL*)ltfat_malloc(M*N*W*sizeof(LTFAT_REAL));
+   cbuf  = (LTFAT_COMPLEX*)ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
+   sbuf  =    (LTFAT_REAL*)ltfat_malloc(d*sizeof(LTFAT_REAL));
 
    /* Scaling constant needed because of FFTWs normalization. */
    const double scalconst = 1.0/((double)d*sqrt((double)M));
 
    /* Create plans. In-place. */   
-   p_before = LTFAT_FFTW(plan_many_dft)(1, &d, p*q*W,
-				 ff, NULL,
-				 p*q*W, 1,
-				 ff, NULL,
-				 p*q*W, 1,
-				 FFTW_BACKWARD, FFTW_ESTIMATE);
+   p_before = LTFAT_FFTW(plan_dft_c2r_1d)(d, cbuf, sbuf, FFTW_ESTIMATE);
 
-
-   p_after = LTFAT_FFTW(plan_many_dft)(1, &d, q*q*W,
-				cf, NULL,
-				q*q*W, 1,
-				cf, NULL,
-				q*q*W, 1,
-				FFTW_FORWARD, FFTW_ESTIMATE);
+   p_after  = LTFAT_FFTW(plan_dft_r2c_1d)(d, sbuf, cbuf, FFTW_ESTIMATE);         
    
    /* Create plan. Copy data so we do not overwrite input. Therefore
       it is ok to cast away the constness of cin. This transform
@@ -277,48 +278,62 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    LTFAT_FFTW(execute)(p_veryend);   
 
 
+
+   const int ld4c=M*N;
+
+   /* Leading dimensions of cf */
+   const int ld3b=q*q*W;
+
+   /* Leading dimensions of the 4dim array. */
+   const int ld2ff=p*q*W;
+
    /* -------- Main loop ----------------------------------- */
    for (int r=0;r<c;r++)
    {	
 
-
       /* -------- compute coefficient factorization ----------- */
-      
-      /* Leading dimensions of the 4dim array. */
-      const int ld1=q;
-      int ld2=q*q*W;
-   
+
+      LTFAT_COMPLEX *cfp=cf;
+
       for (int w=0;w<W;w++)
       {
-	 for (int s=0;s<d;s++)
+	 /* Complete inverse fac of coefficients */
+	 for (int l=0;l<q;l++)
 	 {
-	    for (int l=0;l<q;l++)
-	    {
-	       for (int u=0;u<q;u++)
-	       {	       
-		  /*Add N to make sure it is positive */
-		  domod= div(u+s*q-l*h_a+N*M,N);
-		  cf[u+(l+q*w)*ld1+s*ld2][0] = cwork[r+l*c+domod.rem*M+w*M*N];
-		  cf[u+(l+q*w)*ld1+s*ld2][1] = 0.0;
-	       }	       
+	    for (int u=0;u<q;u++)
+	    {	       	       
+	       for (int s=0;s<d;s++)	       
+	       {	
+		  sbuf[s] = cwork[r+l*c+positiverem(u+s*q-l*h_a,N)*M+w*ld4c];
+	       }		    
+	       
+	       /* Do inverse fft of length d */
+	       LTFAT_FFTW(execute)(p_after);
+
+	       for (int s=0;s<d2;s++)	       
+	       {	
+		  cfp[s*ld3b][0] = cbuf[s][0];
+		  cfp[s*ld3b][1] = cbuf[s][1];
+	       }
+	       /* Advance the cf pointer. This is only done in this
+		* one place, because the loops are placed such that
+		* this pointer will advance linearly through
+		* memory. Reordering the loops will break this. */
+	       cfp++;
 	    }
 	 }
-      }           
-
-      
-      /* Do fft of length d */
-      LTFAT_FFTW(execute)(p_after);
+      }            
 
 
       /* -------- compute matrix multiplication ---------- */
       
       
       /* Do the matmul  */
-      for (int s=0;s<d;s++)
+      for (int s=0;s<d2;s++)
       {	
-	 gbase=gf+(r+s*c)*p*q;
-	 fbase=ff+s*p*q*W;
-	 cbase=cf+s*q*q*W;
+	 const LTFAT_COMPLEX *gbase = gf+(r+s*c)*p*q;
+	 LTFAT_COMPLEX       *fbase = ff+s*p*q*W;
+	 const LTFAT_COMPLEX *cbase = (const LTFAT_COMPLEX *)cf+s*q*q*W;
 	 
 	 for (int nm=0;nm<q*W;nm++)
 	 {
@@ -351,28 +366,39 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
       /* ----------- compute inverse signal factorization ---------- */
 
-
-      /* Do ifft to begin inverse signal factorization.*/
-      LTFAT_FFTW(execute)(p_before);
-
-      /* Leading dimensions of the 4dim array. */
-      ld2=p*q*W;
+      LTFAT_COMPLEX *ffp = ff;
+      LTFAT_REAL    *fp  = f+r;
 
       for (int w=0;w<W;w++)
       {
-	 for (int s=0;s<d;s++)
+	 for (int l=0;l<q;l++)
 	 {
-	    for (int l=0;l<q;l++)
+	    for (int k=0;k<p;k++)
 	    {
-	       for (int k=0;k<p;k++)
-	       {
-		  /* Add L*M to make sure it is always positive */
-		  domod = div(k*M+s*p*M+l*(c-h_m*M)+L*M, L);		  
-		  f[r+domod.rem+L*w] = ff[k+(l+q*w)*p+s*ld2][0];
+	       for (int s=0;s<d2;s++)
+	       {		  
+		  cbuf[s][0] = ffp[s*ld2ff][0];
+		  cbuf[s][1] = ffp[s*ld2ff][1];
 	       }
+	       	       
+	       LTFAT_FFTW(execute)(p_before);
+	       
+	       for (int s=0;s<d;s++)
+	       {		  
+		  fp[positiverem(k*M+s*p*M-l*h_a*a, L)] = sbuf[s];
+	       }
+	       
+	       /* Advance the ff pointer. This is only done in this
+		* one place, because the loops are placed such that
+		* this pointer will advance linearly through
+		* memory. Reordering the loops will break this. */		  
+	       ffp++;
 	    }
 	 }
+	 fp+=L;	 
       }
+      fp-=L*W;
+
 
       /*  ------- main loop ends -------- */
    }           
@@ -386,5 +412,8 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    ltfat_free(cwork);
    ltfat_free(ff);
    ltfat_free(cf);
+
+   ltfat_free(cbuf);
+   ltfat_free(sbuf);
    
 }
