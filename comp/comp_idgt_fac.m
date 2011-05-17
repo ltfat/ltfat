@@ -114,8 +114,8 @@ if p==1
 
 else
   % Rational oversampling
-  for s=0:d-1
-    for w=0:W-1
+  for w=0:W-1
+    for s=0:d-1
       for l=0:q-1
 	for k=0:p-1
 	  f((1:c)+mod(k*M+s*p*M-l*h_a*a,L),w+1)=reshape(ff(k+1,l+1+w*q,:,s+1),c,1);

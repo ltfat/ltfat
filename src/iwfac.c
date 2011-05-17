@@ -153,9 +153,7 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const int L,
    
    int h_a, h_m;
       
-   LTFAT_FFTW(plan) p_before;
-
-   LTFAT_COMPLEX *gfp;
+   LTFAT_FFTW(plan) p_before;   
    
    const int R = 1;
    
@@ -180,7 +178,7 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const int L,
    const int ld3=c*p*q*R;
 
    /* Advancing pointer: Runs through array pointing out the base for the strided operations. */
-   gfp=gf;
+   const LTFAT_COMPLEX *gfp = gf;
 
    for (int r=0;r<c;r++)
    {	
