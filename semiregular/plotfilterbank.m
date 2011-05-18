@@ -1,5 +1,5 @@
 function [] = plotfilterbank(coef,a,varargin)
-%PLOTNSDGT Plot spectrogram from filterbank coefficients
+%PLOTFILTERBANK Plot filterbank and ufilterbank coefficients
 %   Usage:  plotfilterbank(coef,a);
 %           plotfilterbank(coef,a,fc);
 %           plotfilterbank(coef,a,fc,fs);
@@ -38,6 +38,9 @@ function [] = plotfilterbank(coef,a,varargin)
 %-     'tick',t     - Array of tick positions on the y-axis. Use this
 %                   option to specify the tick position manually.
 %
+%-     'audtick'   - Use ticks suitable for visualizing and auditory
+%                    filterbank. Same as tick,[0,50,100,250,500,1000,...].
+%
 %   See also:  filterbank, ufilterbank, tfplot, sgram
 
 if nargin<2
@@ -48,6 +51,7 @@ definput.import={'tfplot'};
 definput.keyvals.fc=[];
 definput.keyvals.ntickpos=10;
 definput.keyvals.tick=[];
+definput.groups.audtick={'tick',[0,50,100,250,500,1000,2000,4000,8000,16000,32000]};
 
 [flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
   
@@ -131,9 +135,13 @@ else
     set(gca,'YTickLabel',num2str(tick(:),3));
 
   else
+    tick=kv.tick;
+    
+    % Keep only ticks less than highest frequency
+    tick=tick(tick<kv.fc(M));
+    
     % Create a crude inverse mapping to determine the positions of the
     % ticks
-    tick=kv.tick;
     manyticks=spline(1:M,kv.fc,linspace(1,M,1000));
     nticks=length(tick);
     tickpos=zeros(nticks,1);
