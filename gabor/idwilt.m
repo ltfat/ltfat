@@ -1,4 +1,4 @@
-function [f]=idwilt(c,g,Ls)
+function [f,g]=idwilt(c,g,Ls)
 %IDWILT  Inverse discrete Wilson transform.
 %   Usage:  f=idwilt(c,g);
 %           f=idwilt(c,g,Ls);
@@ -18,6 +18,10 @@ function [f]=idwilt(c,g,Ls)
 %  
 %   IDWILT(f,g,Ls) does the same, but cuts of zero-extend the final
 %   result to length Ls.
+%
+%   [f,g]=IDWILT(...) additionally outputs the window used in the
+%   transform. This is usefull if the window was generated from a description
+%   in a string or cell array.
 %
 %   See also:  dwilt, wilwin, dgt, wilorth
 %

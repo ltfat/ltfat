@@ -1,4 +1,4 @@
-function [c,Ls]=dgt(f,g,a,M,varargin)
+function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %DGT  Discrete Gabor transform.
 %   Usage:  c=dgt(f,g,a,M);
 %           c=dgt(f,g,a,M,L);
@@ -40,6 +40,10 @@ function [c,Ls]=dgt(f,g,a,M,varargin)
 %
 %   will reconstruct the signal f no matter what the length of f is, provided
 %   that _gd is a dual window of g.
+%
+%   [c,Ls,g]=DGT(...) additionally outputs the window used in the
+%   transform. This is useful if the window was generated from a description
+%   in a string or cell array.
 %
 %   The Discrete Gabor Transform is defined as follows: Consider a window g
 %   and a one-dimensional signal f of length L and define $N=L/a$.

@@ -1,4 +1,4 @@
-function [c,Ls]=dgtreal(f,g,a,M,varargin)
+function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %DGTREAL  Discrete Gabor transform.
 %   Usage:  c=dgtreal(f,g,a,M);
 %           c=dgtreal(f,g,a,M,L);
@@ -45,6 +45,10 @@ function [c,Ls]=dgtreal(f,g,a,M,varargin)
 %
 %   will reconstruct the signal f no matter what the length of f is, provided
 %   that _gd is a dual window of g.
+%
+%   [c,Ls,g]=DGTREAL(...) additionally outputs the window used in the
+%   transform. This is useful if the window was generated from a description
+%   in a string or cell array.
 %
 %   See the help on DGT for the definition of the discrete Gabor
 %   transform. This routine will return the coefficients for channel

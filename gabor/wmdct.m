@@ -1,4 +1,4 @@
-function [c,Ls]=wmdct(f,g,M,L)
+function [c,Ls,g]=wmdct(f,g,M,L)
 %WMDCT  Windowed MDCT transform.
 %   Usage:  c=wmdct(f,g,M);
 %           c=wmdct(f,g,M,L);
@@ -37,6 +37,10 @@ function [c,Ls]=wmdct(f,g,M,L)
 %
 %   will reconstuct the signal f no matter what the length of f is, provided
 %   that _gd is a dual Wilson window of g.
+%
+%   [c,Ls,g]=WMDCT(...) additionally outputs the window used in the
+%   transform. This is useful if the window was generated from a description
+%   in a string or cell array.
 %
 %   The WMDCT is sometimes known as an odd-stacked cosine modulated filter
 %   bank. The WMDCT defined by this routine is slightly different from the

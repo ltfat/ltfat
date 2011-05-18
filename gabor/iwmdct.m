@@ -19,6 +19,10 @@ function [f,g]=iwmdct(c,g,Ls)
 %   IWMDCT(f,g,Ls) does the same, but cuts or zero-extends the final
 %   result to length Ls.
 %
+%   [f,g]=IWMDCT(...) additionally outputs the window used in the
+%   transform. This is usefull if the window was generated from a description
+%   in a string or cell array.
+%
 %   See also:  wmdct, wilwin, dgt, wildual, wilorth
 %
 %R  prbr86 prjobr87 ma92 bohl96-1 

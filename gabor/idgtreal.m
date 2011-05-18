@@ -1,4 +1,4 @@
-function [f]=idgtreal(coef,g,a,M,varargin)
+function [f,g]=idgtreal(coef,g,a,M,varargin)
 %IDGTREAL  Inverse discrete Gabor transform.
 %   Usage:  f=idgtreal(c,g,a,M);
 %           f=idgtreal(c,g,a,M,Ls);
@@ -25,6 +25,10 @@ function [f]=idgtreal(coef,g,a,M,varargin)
 %   cell array. See the help of GABWIN for more details.
 %  
 %   IDGTREAL(c,g,a,M,Ls) does as above but cuts or extends f to length Ls.
+%
+%   [f,g]=IDGTREAL(...) additionally outputs the window used in the
+%   transform. This is usefull if the window was generated from a description
+%   in a string or cell array.
 %
 %   For perfect reconstruction, the window used must be a dual window of the
 %   one used to generate the coefficients.

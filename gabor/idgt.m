@@ -1,4 +1,4 @@
-function [f]=idgt(coef,g,a,varargin)
+function [f,g]=idgt(coef,g,a,varargin)
 %IDGT  Inverse discrete Gabor transform.
 %   Usage:  f=idgt(c,g,a);
 %           f=idgt(c,g,a,Ls);
@@ -16,6 +16,10 @@ function [f]=idgt(coef,g,a,varargin)
 %   channels is deduced from the size of the coefficients c.
 %
 %   IDGT(c,g,a,Ls) does as above but cuts or extends f to length Ls.
+%
+%   [f,g]=IDGT(...) additionally outputs the window used in the
+%   transform. This is useful if the window was generated from a description
+%   in a string or cell array.
 %
 %   For perfect reconstruction, the window used must be a dual window of the
 %   one used to generate the coefficients.

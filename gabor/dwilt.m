@@ -1,4 +1,4 @@
-function [c,Ls]=dwilt(f,g,M,L)
+function [c,Ls,g]=dwilt(f,g,M,L)
 %DWILT  Discrete Wilson transform.
 %   Usage:  c=dwilt(f,g,M);
 %           c=dwilt(f,g,M,L);
@@ -36,6 +36,10 @@ function [c,Ls]=dwilt(f,g,M,L)
 %
 %   will reconstruct the signal f no matter what the length of f is, provided
 %   that _gd is a dual Wilson window of g.
+%
+%   [c,Ls,g]=DWILT(...) additionally outputs the window used in the
+%   transform. This is useful if the window was generated from a description
+%   in a string or cell array.
 %
 %   A Wilson transform is also known as a maximally decimated, even-stacked
 %   cosine modulated filter bank.
