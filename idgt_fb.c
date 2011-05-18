@@ -7,7 +7,6 @@
 #include <math.h>
 #include "fftw3.h"
 #include "ltfat.h"
-#include "tfutil.c"
 
 #define THE_SUM { \
 	 /* Copy to c-buffer and ifft it */ \
