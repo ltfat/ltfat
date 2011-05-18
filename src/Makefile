@@ -3,24 +3,35 @@ CC = gcc
 
 CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty -DLTFAT_DLL -DLTFAT_COMPILE
 
-files = sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
+files = \
+	sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
 	sdgt_walnut.o ddgt.o ddgt_fac.o ddgtreal_fac.o didgt_fac.o	\
 	ddgt_ola.o sdgt_ola.o \
-	ddgt_fb.o ddgt_walnut.o sgabdual_fac.o sgabtight_fac.o		\
-	dgabdual_fac.o dgabtight_fac.o		\
+	ddgt_fb.o ddgt_walnut.o \
 	swfac.o siwfac.o sidgt_fb.o didgt_fb.o \
 	sreassign.o swindows.o dwfac.o diwfac.o		\
 	dreassign.o dwindows.o sspread.o sheapint.o swinmanip.o		\
 	dspread.o dheapint.o dwinmanip.o \
-	sdwilt.o sgabdual.o sgabtight.o stfutil.o \
-	ddwilt.o dgabdual.o dgabtight.o dtfutil.o \
+	sdwilt.o stfutil.o \
+	ddwilt.o dtfutil.o \
 	spfilt.o dpfilt.o \
 	integer_manip.o 
+	
+files_blaslapack = \
+	sgabdual.o sgabtight.o sgabdual_fac.o sgabtight_fac.o \
+	dgabdual.o dgabtight.o dgabdual_fac.o dgabtight_fac.o 	
 
-files_unix = $(files) dltfat_blaslapack.o sltfat_blaslapack.o
-files_matlab = $(files) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
+files_unix = $(files) $(files_blaslapack) dltfat_blaslapack.o sltfat_blaslapack.o
+files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
 
 all: libltfat.a unixnomem
+
+winshared: $(files) c-safe-memalloc.o
+	gcc -shared -o ltfat.dll -Wl,--export-all-symbols,--out-implib,libltfat_dll.a \
+		-L../thirdparty -lfftw3-3 -lfftw3f-3 $(files) c-safe-memalloc.o
+	dlltool -z libltfat.def --export-all-symbols libltfat.lib
+	cp -f ltfat.dll ../mex/
+	cp -f ltfat.lib ../mex/
 
 winnomem: $(files_matlab)
 	ar rvu libltfat-nomem.lib $(files_matlab)
