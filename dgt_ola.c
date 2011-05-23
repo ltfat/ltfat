@@ -4,7 +4,7 @@
 #include "ltfat.h"
 
 
-LTFAT_NAME(dgt_ola_plan)
+LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
 LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const int gl,
 			 const int W, const int a, const int M, const int bl,
 			 unsigned flags)
@@ -149,7 +149,7 @@ LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan)
 
 
 
-LTFAT_NAME(dgtreal_ola_plan)
+LTFAT_EXTERN LTFAT_NAME(dgtreal_ola_plan)
 LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const int gl,
 			 const int W, const int a, const int M, const int bl,
 			 unsigned flags)

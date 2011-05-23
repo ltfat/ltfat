@@ -2,7 +2,7 @@
 #include <math.h>
 #include "ltfat.h"
 
-LTFAT_EXTERN void
+void
 LTFAT_NAME(fftindex)(const int N, int *indexout)
 {
    int ii;
