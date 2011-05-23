@@ -2,35 +2,6 @@
 #include <math.h>
 #include "ltfat.h"
 
-void
-LTFAT_NAME(fftindex)(const int N, int *indexout)
-{
-   int ii;
-
-   if (N%2==0)
-   {
-      for (ii=0;ii<N/2;ii++)
-      {
-	 indexout[ii]=ii;
-      }
-      for (ii=N/2;ii<N;ii++)
-      {
-	 indexout[ii]=-N+ii+1;
-      }
-   }
-   else
-   {
-      for (ii=0;ii<(N-1)/2;ii++)
-      {
-	 indexout[ii]=ii;
-      }
-      for (ii=(N-1)/2;ii<N;ii++)
-      {
-	 indexout[ii]=-N+ii+1;
-      }
-   }
-
-}
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
@@ -47,8 +18,8 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
    int *timepos = (int*)ltfat_malloc(N*sizeof(int));
    int *freqpos = (int*)ltfat_malloc(M*sizeof(int));
    
-   LTFAT_NAME(fftindex)(N,timepos);
-   LTFAT_NAME(fftindex)(M,freqpos);
+   fftindex(N,timepos);
+   fftindex(M,freqpos);
 
    /* Zero the output array. */
    for (ii=0;ii<M*N*W;ii++)
