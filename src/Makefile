@@ -27,11 +27,12 @@ files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_bl
 all: libltfat.a unixnomem
 
 winshared: $(files) c-safe-memalloc.o
-	gcc -shared -o ltfat.dll -Wl,--export-all-symbols,--out-implib,libltfat_dll.a \
+	gcc -shared -no-leading-underscore -o ltfat.dll -Wl,--output-def,ltfat.def,--out-implib,libltfat_dll.a \
 		-L../thirdparty -lfftw3-3 -lfftw3f-3 $(files) c-safe-memalloc.o
-	dlltool -z libltfat.def --export-all-symbols libltfat.lib
+	#dlltool -z libltfat.def --export-all-symbols libltfat.lib
 	cp -f ltfat.dll ../mex/
-	cp -f ltfat.lib ../mex/
+	#cp -f ltfat.lib ../mex/
+	cp -f ltfat.def ../mex/
 
 winnomem: $(files_matlab)
 	ar rvu libltfat-nomem.lib $(files_matlab)
