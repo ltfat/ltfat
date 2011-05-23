@@ -61,15 +61,14 @@ extern "C"
 
   /* -------- Define routines that do not change between single/double-- */
   
-extern int gcd(const int a, const int b, int *r, int *s );
+int gcd(const int a, const int b, int *r, int *s );
 
-extern void* ltfat_malloc (size_t n);
+void* ltfat_malloc (size_t n);
+void* ltfat_calloc (size_t nmemb, size_t size);
+void* ltfat_realloc (void *ptr, size_t n);
+void  ltfat_free(void *ptr);
 
-extern void* ltfat_calloc (size_t nmemb, size_t size);
-
-extern void* ltfat_realloc (void *ptr, size_t n);
-
-extern void ltfat_free(void *ptr);
+void fftindex(const int N, int *indexout);
 
 int makelarger(const int L, const int K);
 int int_max(const int a, const int b);

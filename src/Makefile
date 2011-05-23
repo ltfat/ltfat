@@ -16,7 +16,7 @@ files = \
 	ddwilt.o dtfutil.o \
 	spfilt.o dpfilt.o \
 	integer_manip.o 
-	
+
 files_blaslapack = \
 	sgabdual.o sgabtight.o sgabdual_fac.o sgabtight_fac.o \
 	dgabdual.o dgabtight.o dgabdual_fac.o dgabtight_fac.o 	
@@ -26,13 +26,12 @@ files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_bl
 
 all: libltfat.a unixnomem
 
-winshared: $(files) c-safe-memalloc.o
-	gcc -shared -no-leading-underscore -o ltfat.dll -Wl,--output-def,ltfat.def,--out-implib,libltfat_dll.a \
+win_ms: $(files) c-safe-memalloc.o
+	gcc -shared -o ltfat.dll -Wl,--output-def,ltfat.def,--out-implib,libltfat_dll.a \
 		-L../thirdparty -lfftw3-3 -lfftw3f-3 $(files) c-safe-memalloc.o
-	#dlltool -z libltfat.def --export-all-symbols libltfat.lib
 	cp -f ltfat.dll ../mex/
-	#cp -f ltfat.lib ../mex/
 	cp -f ltfat.def ../mex/
+	echo "To finish the creation, please run the Microsoft lib tool on ltfat.dll and ltfat.def"
 
 winnomem: $(files_matlab)
 	ar rvu libltfat-nomem.lib $(files_matlab)
