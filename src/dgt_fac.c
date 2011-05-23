@@ -3,7 +3,7 @@
 #include "ltfat.h"
 
 
-LTFAT_NAME(dgt_long_plan)
+LTFAT_EXTERN LTFAT_NAME(dgt_long_plan)
 LTFAT_NAME(dgt_long_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 			  const int L, const int W,
 			  const int a, const int M, LTFAT_COMPLEX *cout,
@@ -61,7 +61,8 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 }
 
 
-void LTFAT_NAME(dgt_long_execute)(const LTFAT_NAME(dgt_long_plan) plan)
+LTFAT_EXTERN void
+LTFAT_NAME(dgt_long_execute)(const LTFAT_NAME(dgt_long_plan) plan)
 {
 
    LTFAT_NAME(dgt_walnut_plan)(plan);
@@ -72,7 +73,8 @@ void LTFAT_NAME(dgt_long_execute)(const LTFAT_NAME(dgt_long_plan) plan)
 }
 
 
-void LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan) plan)
+LTFAT_EXTERN void
+LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan) plan)
 {
 
    LTFAT_FFTW(destroy_plan)(plan.p_veryend);
