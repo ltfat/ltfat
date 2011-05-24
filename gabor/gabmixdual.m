@@ -16,7 +16,7 @@ function gamma=gabmixdual(g1,g2,a,M,L)
 %
 %   See also:  gabdual, gabprojdual
 %
-%   Demos: demo_mixdual   
+%   Demos: demo_gabmixdual   
 %
 %R  elsuwe05
 

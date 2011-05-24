@@ -23,7 +23,7 @@ function [] = plotfilterbank(coef,a,varargin)
 %   PLOTFILTERBANK supports all the optional parameters of TFPLOT. Please
 %   see the help of TFPLOT for an exhaustive list.
 %
-%   In addition to the flags and key/values in TFPLoT, PLOTFILTERBANK
+%   In addition to the flags and key/values in TFPLOT, PLOTFILTERBANK
 %   supports the following optional arguments:
 %
 %-     'fc',fc    - Center frequencies of the channels. fc must be a vector with

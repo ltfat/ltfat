@@ -12,6 +12,7 @@
 %    FILTERBANKREALTIGHT  - Canonical tight filters for real signals
 %    FILTERBANKBOUNDS     - Frame bounds of filter bank
 %    FILTERBANKREALBOUNDS - Frame bounds of filter bank for real signals
+%    PLOTFILTERBANK       - Plot filterbank and ufilterbank coefficients
 %
 %  Gabor systems with time varying windows
 %    UNSDGT               - Uniform Non-stationary DGT
