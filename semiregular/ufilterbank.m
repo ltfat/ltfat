@@ -40,7 +40,7 @@ end;
 for w=1:W
   F=fft(postpad(f(:,w),L));
   for m=1:M
-    c(:,m,w)=ifft(sum(reshape(F.*conj(G(:,m)),N,a),2))/a;
+    c(:,m,w)=ifft(sum(reshape(F.*G(:,m),N,a),2))/a;
   end;
 end;
 

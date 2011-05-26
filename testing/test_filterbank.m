@@ -26,8 +26,9 @@ gd = filterbankdual(g,a);
 
 f=crand(L,1);
 
-c_u  = ufilterbank(f,g,a);
-c_nu = filterbank(f,g,a);
+c_u      = ufilterbank(f,g,a);
+c_u_ref  = ref_ufilterbank(f,g,a);
+c_nu     = filterbank(f,g,a);
 
 %% check that filterbank and ufilterbank produce the same results.
 res=0;
@@ -38,6 +39,14 @@ end;
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 s=sprintf(['FB MATCH  %0.5g %s'],res,fail);
 disp(s)
+
+%% check that ufilterbank match its reference
+res=norm(c_u-c_u_ref,'fro');
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+s=sprintf(['FB RES    %0.5g %s'],res,fail);
+disp(s)
+
 
 %% Check that ufilterbank is invertible using dual window
 r=iufilterbank(c_u,gd,a);

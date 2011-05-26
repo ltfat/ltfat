@@ -42,7 +42,7 @@ end;
 f=zeros(L,W);
 for w=1:W
   for m=1:M
-    f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a,1).*G(:,m));
+    f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a,1).*conj(G(:,m)));
   end;
 end;
 
