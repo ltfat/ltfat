@@ -50,6 +50,9 @@ libltfat.a: $(files_unix) c-safe-memalloc.o
 	ranlib libltfat.a
 	cp -f libltfat.a ../lib
 
+libltfat.so: $(files_unix) c-safe-memalloc.o
+	gcc -shared -Wl,-soname,libltfat.so.1 -o libltfat.so.1.0 $(files_unix) c-safe-memalloc.o
+
 sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
 	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
 
