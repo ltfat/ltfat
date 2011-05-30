@@ -16,6 +16,7 @@ Nb=L/Lb;
 
 % Number of time positions per block
 Nblock   = Lb/a;
+Next = Lext/a;
 
 if rem(Nblock,1)~=0
   error('The length of the time shift must devide the block length.');
@@ -36,7 +37,8 @@ coef=zeros(M,N,W);
 
 for ii=0:Nb-1
   
-  block=dgt(postpad(f(ii*Lb+1:(ii+1)*Lb,:),Lext),gpad,a,M);
+  block=comp_dgt_long(postpad(f(ii*Lb+1:(ii+1)*Lb,:),Lext),gpad,a,M);
+  block=reshape(block,M,Next,W);
 
   % Large block
   coef(:,ii*Nblock+1:(ii+1)*Nblock,:) = coef(:,ii*Nblock+1:(ii+1)*Nblock,:)+block(:,1:Nblock,:);  
