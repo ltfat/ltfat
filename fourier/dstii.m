@@ -26,16 +26,16 @@ function c=dstii(f,L,dim)
 %N    w = [1 1 1 1 ... 1/sqrt(2)]
 %L    \[w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=L-1\\1 & \text{otherwise}\end{cases}\]
 %   Then 
-%M
+%
 %M                         L-1
 %M    c(n+1) = sqrt(2/L) * sum w(n+1)*f(m+1)*sin(pi*n*(m+.5)/L) 
 %M                         m=0 
 %F  \[
 %F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\sin\left(\frac{\pi}{L}n\left(m+\frac{1}{2}\right)\right)
 %F  \]
-%M
+%
 %   See also:  dctii, dstiii, dstiv
-%M
+%
 %R  rayi90 wi94
 
 %   AUTHOR: Peter Soendergaard

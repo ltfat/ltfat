@@ -39,9 +39,9 @@ function c=dcti(f,L,dim)
 %   prime number. This may cause the function to sometimes execute slowly.
 %   If guaranteed high speed is a concern, please consider using one of the
 %   other DCT transforms.
-%M
+%
 %   See also:  dctii, dctiv, dsti
-%M
+%
 %R  rayi90 wi94
 
 %   AUTHOR: Peter Soendergaard

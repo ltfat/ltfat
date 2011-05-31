@@ -40,7 +40,7 @@ else
   h=ifft(fft(f,L,1).*repmat(fft(g,L,1),1,W),L,1);
 end;
 
-h=h(1:a:end,:);
+h=comp_pfilt(f,g,a);
 
 permutedsize(1)=size(h,1);
 

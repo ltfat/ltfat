@@ -33,9 +33,9 @@ function c=dctiii(f,L,dim)
 %F  \[
 %F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)m\right)
 %F  \]
-%M
+%
 %   See also:  dctii, dctiv, dstii
-%M
+%
 %R  rayi90 wi94
 
 %   AUTHOR: Peter Soendergaard

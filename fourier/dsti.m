@@ -22,7 +22,7 @@ function c=dsti(f,L,dim)
 %   This transform is its own inverse.
 %
 %   Let f be a signal of length _L and let c=DSTI(f). Then 
-%M
+%
 %M                             L-1
 %M    c(n+1) = sqrt(2/(L+1)) * sum sin(pi*(n+1)*(m+1)/(L+1)) 
 %M                             m=0 
@@ -35,9 +35,9 @@ function c=dsti(f,L,dim)
 %   prime number. This may cause the function to sometimes execute slowly.
 %   If guaranteed high speed is a concern, please consider using one of the
 %   other DST transforms.
-%M
+%
 %   See also:  dcti, dstiii, dstiv
-%M
+%
 %R  rayi90 wi94
 
 %   AUTHOR: Peter Soendergaard

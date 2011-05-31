@@ -20,16 +20,16 @@ function c=dstiv(f,L,dim)
 %   it is orthonormal. It is its own inverse.
 %
 %   Let f be a signal of length _L and let c=DSTIV(f). Then
-%M
+%
 %M                         L-1
 %M    c(n+1) = sqrt(2/L) * sum f(m+1)*sin(pi*n*(m+.5)/L) 
 %M                         m=0 
 %F  \[
 %F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\sin\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
 %F  \]
-%M
+%
 %   See also:  dstii, dstiii, dctii
-%M
+%
 %R  rayi90 wi94
 
 %   AUTHOR: Peter Soendergaard
