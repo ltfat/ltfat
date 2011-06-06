@@ -8,7 +8,8 @@ The toolbox is organized in subdirectories as follows:
 
   fourier     - Fourier analysis, DCT/DST transforms and filters.
   gabor       - Gabor, Wilson and WMDCT analysis and synthesis functions.
-  semiregular - Filter banks and non-stationary Gabor frames.
+  filterbank  - Filter banks.
+  nonstatgab  - Non-stationary Gabor frames.
   sparsereg   - Tools for sparse regression of Gabor and Wilson systems.
   sigproc     - A collection of simple, signal processing tools.
   auditory    - Auditory scales and common filters types.
