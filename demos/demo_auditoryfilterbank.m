@@ -16,11 +16,17 @@
 %     A classic spectrogram of the spoken sentense. The dynamic range has
 %     been set to 50 dB, to highlight the most important features.
 %
-%   FIGURE 2 Auditory filterbank reprensentation
+%   FIGURE 2 Auditory filterbank representation
 %
-%     Auditory filterbank representation of the spoken sentense.  The
-%     dynamic range has been set to 50 dB, to highlight the most important
-%     features.
+%     Auditory filterbank representation of the spoken sentense using
+%     gammatone filters on an Erb scale.  The dynamic range has been set to
+%     50 dB, to highlight the most important features.
+%
+%   FIGURE 3 Auditory filterbank representation using Gaussian filters
+%
+%     Auditory filterbank representation of the spoken sentense using
+%     Gaussian filters on an Erb scale.  The dynamic range has been set to
+%     50 dB, to highlight the most important features.
 %
 %   See also: freqtoaud, audfiltbw, gammatonefir, ufilterbank, filterbankrealdual
 %
@@ -45,28 +51,64 @@ M=ceil(freqtoerb(fs/2)*channels_per_erb);
 % Compute center frequencies.
 fc=erbspace(0,fs/2,M);
 
-g=gammatonefir(fc,fs,filterlength,'peakphase');
-
-% In production code, it is not necessary to call 'filterbankrealbounds',
-% this is just for veryfying the setup.
-disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
-filterbankrealbounds(g,a,L)
-
-% Create reconstruction filters
-gd=filterbankrealdual(g,a,L);
-
-% Analysis transform
-coef=ufilterbank(f,g,a);
-
-% Synthesis transform
-r=2*real(iufilterbank(coef,gd,a,Ls));
-
-disp('Relative error in reconstruction, should be close to zero.');
-norm(f-r)/norm(f)
-
+%% --------------- display classic spectrogram -------------------
 figure(1);
 sgram(f,fs,dynrange_for_plotting);
 
+
+%% ---------------  Gammatone filters ----------------------------
+
+g_gam=gammatonefir(fc,fs,filterlength,'peakphase');
+
+% In production code, it is not necessary to call 'filterbankrealbounds',
+% this is just for veryfying the setup.
+disp('Frame bound ratio for gammatone filterbank, should be close to 1 if the filters are choosen correctly.');
+filterbankrealbounds(g_gam,a,L)
+
+% Create reconstruction filters
+gd_gam=filterbankrealdual(g_gam,a,L);
+
+% Analysis transform
+coef_gam=ufilterbank(f,g_gam,a);
+
+% Synthesis transform
+r_gam=2*real(iufilterbank(coef_gam,gd_gam,a,Ls));
+
+disp('Relative error in reconstruction, should be close to zero.');
+norm(f-r_gam)/norm(f)
+
 figure(2);
-plotfilterbank(coef,a,fc,fs,dynrange_for_plotting,'audtick');
+plotfilterbank(coef_gam,a,fc,fs,dynrange_for_plotting,'audtick');
+
+
+%% ---------------  Gauss filters ----------------------------
+
+
+g_gauss=cell(M,1);
+
+% Account for the bandwidth specification to PGAUSS is for 79% of the ERB(integral).  
+bw_gauss=audfiltbw(fc)/0.79*1.5;
+
+for m=1:M
+  g_gauss{m}=pgauss(filterlength,'fs',fs,'bw',bw_gauss(m),'cf',fc(m));
+end;
+
+disp('Frame bound ratio for Gaussian filterbank, should be close to 1 if the filters are choosen correctly.');
+filterbankrealbounds(g_gauss,a,filterlength)
+
+% Synthesis filters
+gd_gauss=filterbankrealdual(g_gauss,a,filterlength);
+
+% Analysis transform
+coef_gauss=ufilterbank(f,g_gauss,a);
+
+% Synthesis transform
+r_gauss=2*real(iufilterbank(coef_gauss,gd_gauss,a));
+
+disp('Error in reconstruction, should be close to zero.');
+norm(f-r_gauss)/norm(f)
+
+
+figure(3);
+plotfilterbank(coef_gauss,a,fc,fs,dynrange_for_plotting,'audtick');
 

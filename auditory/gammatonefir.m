@@ -43,6 +43,10 @@ function b=gammatonefir(fc,fs,varargin);
 %   gammatone filters use the following construction
 %
 %C    [b,a] = gammatonefir(fs,erbspacebw(flow,fhigh));
+%
+%   See also: erbspace, audspace, audfiltbw
+%
+%   Demos: demo_auditoryfilterbank
 %  
 %R  aertsen1980strI glasberg1990daf
   
