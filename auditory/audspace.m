@@ -13,8 +13,6 @@ function [y,bw] = audspace(flow,fhigh,n,varargin)
 %   each sample measured on the selected scale.
 %  
 %   See also: freqtoaud, audspacebw, audfiltbw
-%
-%R  glasberg1990daf
   
 %   AUTHOR : Peter L. Soendergaard
   

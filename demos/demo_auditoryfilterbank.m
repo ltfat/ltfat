@@ -1,0 +1,72 @@
+%DEMO_AUDITORYFILTERBANK
+%
+%   In this file we construct a uniform filterbank using a the impulse
+%   response of a 4th order gammatone for each channel. The center frequencies
+%   are equidistantly spaced on an ERB-scale, and the width of the filter are
+%   choosen to match the auditory filter bandwidth as determined by Moore.
+%
+%   Each channel is subsampled by a factor of 8 (a=8), and to generate a
+%   nice plot, 4 channels per Erb has been used.
+%
+%   The filterbank cover only the positive frequencies, so we must use
+%   filterbankrealdual and filterbankrealbounds.
+%
+%   FIGURE 1 Classic spectrogram 
+%
+%     A classic spectrogram of the spoken sentense. The dynamic range has
+%     been set to 50 dB, to highlight the most important features.
+%
+%   FIGURE 2 Auditory filterbank reprensentation
+%
+%     Auditory filterbank representation of the spoken sentense.  The
+%     dynamic range has been set to 50 dB, to highlight the most important
+%     features.
+%
+%   See also: freqtoaud, audfiltbw, gammatonefir, ufilterbank, filterbankrealdual
+%
+%R  glasberg1990daf
+
+
+% Use the greasylong spoken sentense.
+f=greasylong;
+fs=8000;
+a=8;
+channels_per_erb=4;
+filterlength=5000;
+dynrange_for_plotting=50;
+
+% Determine minimal transform length
+Ls=length(f);
+L=ceil(filterlength/a)*a;
+
+% Number of channels, slightly less than 1 ERB(Cambridge) per channel.
+M=ceil(freqtoerb(fs/2)*channels_per_erb);
+
+% Compute center frequencies.
+fc=erbspace(0,fs/2,M);
+
+g=gammatonefir(fc,fs,filterlength,'peakphase');
+
+% In production code, it is not necessary to call 'filterbankrealbounds',
+% this is just for veryfying the setup.
+disp('Frame bound ratio, should be close to 1 if the filters are choosen correctly.');
+filterbankrealbounds(g,a,L)
+
+% Create reconstruction filters
+gd=filterbankrealdual(g,a,L);
+
+% Analysis transform
+coef=ufilterbank(f,g,a);
+
+% Synthesis transform
+r=2*real(iufilterbank(coef,gd,a,Ls));
+
+disp('Relative error in reconstruction, should be close to zero.');
+norm(f-r)/norm(f)
+
+figure(1);
+sgram(f,fs,dynrange_for_plotting);
+
+figure(2);
+plotfilterbank(coef,a,fc,fs,dynrange_for_plotting,'audtick');
+
