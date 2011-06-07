@@ -18,7 +18,7 @@
 %    4) Convert the received signal into noisy coefficients by a Gabor
 %    transform
 %
-%    5) Convert the noisy coefficients into bit by inverse QAM.
+%    5) Convert the noisy coefficients into bits by inverse QAM.
 %
 %   Some simplifications used to make this demo simple:
 %
@@ -26,8 +26,8 @@
 %
 %     * The window and its dual have full length support. This is not
 %       practical, because all data would have to be processed at once.
-%       Instead, a filter bank approach should be used, with both the
-%       window and its dual having a short length. 
+%       Instead, an FIR should be used, with both the window and its dual
+%       having a short length.
 %
 %     * The window is periodic. The data at the very end interferes with
 %       the data at the very beginning. A simple way to solve this is to

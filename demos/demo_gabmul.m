@@ -3,17 +3,17 @@
 %   This script creates several different time-frequency symbols
 %   and demonstrate their effect on a random, real input signal.
 %
-%   Figure 1 Cut a circle in the TF-plane
+%   FIGURE 1 Cut a circle in the TF-plane
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).
 %
-%   Figure 2 Keep low frequencies (low-pass)
+%   FIGURE 2 Keep low frequencies (low-pass)
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).
 %
-%   Figure 3 Keep middle frequencies (band-pass)
+%   FIGURE 3 Keep middle frequencies (band-pass)
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).

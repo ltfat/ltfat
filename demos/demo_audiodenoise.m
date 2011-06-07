@@ -66,10 +66,3 @@ fprintf('      Input SNR: %f dB.\n',InputSNR);
 fprintf('      Output SNR (hard): %f dB.\n',OutputSNR_h);
 fprintf('      Output SNR (soft): %f dB.\n',OutputSNR_s);
 fprintf(' Signals are stored in variables sig, nsig, hrec, srec\n');
-
-% Return signals as global variables
-% global SIGNALS;
-% SIGNALS.o = sig;
-% SIGNALS.n = nsig;
-% SIGNALS.h = hrec;
-% SIGNALS.s = srec;

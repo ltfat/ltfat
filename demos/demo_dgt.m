@@ -43,9 +43,9 @@ Ls=length(f);
 disp(' ');
 disp('------ Spectrogram analysis -----------------------------------');
 
-disp('Figure 1 displays a spectrogram of the bat test signal.');
 figure(1);
 c_sgram=sgram(f,fs,'lin');
+title('Spectrogram of the bat test signal.');
 
 
 % Number of coefficients in the Spectrogram
@@ -92,9 +92,9 @@ disp('Length of transform:')
 L = N*a
 
 
-disp('Figure 2 visualize the Gabor coefficients.');
 figure(2);
 plotdgt(c,a,'linsq');
+title('Gabor coefficients.');
 
 disp(' ');
 disp(['The redundancy of the Gabor transform can be reduced without loosing ' ...
@@ -112,11 +112,10 @@ disp('---- Real valued Gabor analysis. ----');
 % Simple real valued DGT using a standard Gaussian window.
 c_real=dgtreal(f,'gauss',a,M);
 
-disp('Figure 3 shows the positive-frequency DGT coefficients (DGTREAL).');
 figure(3);
-plotdgtreal(c,a,M,'linsq');
+plotdgtreal(c_real,a,M,'linsq');
+title('Positive-frequency DGT coefficients (DGTREAL).');
 
-disp('Figure 4 shows placement of the DGTREAL coefficients on the spectrogram.');
 figure(4);
 b=L/M;
 [X,Y]=meshgrid(1:a:L+a,1:b:L/2+b);
@@ -126,6 +125,7 @@ imagesc(c_sgram);
 plot([X(:),X(:)]',[Y(:),Y(:)]','wo','Linewidth',1);
 axis('xy','image');
 hold off;
+title('Placement of the DGTREAL coefficients on the spectrogram.');
 
 disp(' ');
 disp('---- Perfect reconstruction. ----');
