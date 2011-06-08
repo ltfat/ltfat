@@ -33,9 +33,9 @@
 %R  glasberg1990daf
 
 
-% Use the greasylong spoken sentense.
-f=greasylong;
-fs=8000;
+% Use the 'cocktailparty' spoken sentense.
+f=cocktailparty;
+fs=44100;
 a=8;
 channels_per_erb=4;
 filterlength=5000;

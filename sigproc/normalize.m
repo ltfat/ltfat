@@ -6,30 +6,30 @@ function f=normalize(f,varargin)
 %
 %   The norm is specified as a string and may be one of:
 %
-%-     '1'      : Normalize the $l^1$ norm to be 1.
+%-     '1'      - Normalize the $l^1$ norm to be 1.
 %
-%-     'area'   : Normalize the area of the signal to be 1. This is exactly the same as '1'.
+%-     'area'   - Normalize the area of the signal to be 1. This is exactly the same as '1'.
 %
-%-     '2'      : Normalize the $l^2$ norm to be 1.
+%-     '2'      - Normalize the $l^2$ norm to be 1.
 %
-%-     'energy' : Normalize the energy of the signal to be 1. This is exactly
+%-     'energy' - Normalize the energy of the signal to be 1. This is exactly
 %                 the same as '2'.
 %
-%-     'inf'    : Normalize the $l^inf$ norm to be 1.
+%-     'inf'    - Normalize the $l^inf$ norm to be 1.
 %
-%-     'peak'   : Normalize the peak value of the signal to be 1. This is exactly
+%-     'peak'   - Normalize the peak value of the signal to be 1. This is exactly
 %                 the same as 'inf'.
 %
-%-     'rms'    : Normalize the Root Means Square (RMS) norm of the
+%-     'rms'    - Normalize the Root Means Square (RMS) norm of the
 %                 signal to be 1.
 %
-%-     's0'     : Normalize the S0-norm to be 1.
+%-     's0'     - Normalize the S0-norm to be 1.
 %
-%-     'null'   : Do NOT normalize, output is identical to input.
+%-     'null'   - Do NOT normalize, output is identical to input.
 %
 %   It is possible to specify the dimension:
 %
-%-     'dim',d  : Work along specified dimension. The default value of []
+%-     'dim',d  - Work along specified dimension. The default value of []
 %                 means to work along the first non-singleton one.
 %
 %   See also: rms, s0norm

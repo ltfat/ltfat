@@ -15,9 +15,6 @@ disp(['SIGNALS BATMASK   ',fail]);
 [test_failed,fail]=ltfatdiditfail(numel(greasy)-5880,test_failed);
 disp(['SIGNALS GREASY    ',fail]);
 
-[test_failed,fail]=ltfatdiditfail(numel(greasylong)-20768,test_failed);
-disp(['SIGNALS GREASYLONG',fail]);
-
 [test_failed,fail]=ltfatdiditfail(numel(linus)-41461,test_failed);
 disp(['SIGNALS LINUS     ',fail]);
 
@@ -32,3 +29,6 @@ disp(['SIGNALS OTOCLICK  ',fail]);
 
 [test_failed,fail]=ltfatdiditfail(numel(cameraman)-65536,test_failed);
 disp(['SIGNALS CAMERAMAN ',fail]);
+
+[test_failed,fail]=ltfatdiditfail(numel(cocktailparty)-363200,test_failed);
+disp(['SIGNALS COCKTAILPARTY ',fail]);
