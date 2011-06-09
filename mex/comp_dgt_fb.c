@@ -12,6 +12,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
    
 { 
    int L, gl,W, a, M, N;
+   mwSize ndim;
+   mwSize dims[3];
+
    ltfat_complex *f_combined, *g_combined;
    ltfat_complex *out_combined;
    
@@ -26,6 +29,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
    M=(int)mxGetScalar(prhs[3]);
    
    N=L/a;
+
+   dims[0]=M;
+   dims[1]=N;
+   dims[2]=W;
+   ndim=3;
+   if (W==1)
+   {
+      ndim=2;
+   }
    
    out_combined=mxMalloc(M*N*W*sizeof(ltfat_complex));
    
@@ -55,8 +67,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	       (ltfat_complex*)out_combined);
    }
 
-   
-   plhs[0] = mxCreateDoubleMatrix(M, N*W, mxCOMPLEX);
+   plhs[0] = mxCreateNumericArray(ndim,dims,mxDOUBLE_CLASS,mxCOMPLEX);   
 
    combined2split(M*N*W, (const ltfat_complex*)out_combined, plhs[0]);
    

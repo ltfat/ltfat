@@ -1,6 +1,6 @@
 function cout=comp_dgtreal_long(f,g,a,M)
 %COMP_DGTREAL_LONG  Full-window factorization of a Gabor matrix.
-%   Usage:  c=comp_dgt_long(f,g,a,M);
+%   Usage:  c=comp_dgtreal_long(f,g,a,M);
 %
 %   Input parameters:
 %         f      : Factored input data

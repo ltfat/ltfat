@@ -189,6 +189,13 @@ LTFAT_H_NAME(dgtreal_ola)(const LTFAT_H_REAL *f, const LTFAT_H_REAL *g,
 			  const int W, const int a, const int M, const int bl, 
 			  LTFAT_H_COMPLEX *cout);
 
+/* --------- filterbank codes ------------*/
+LTFAT_EXTERN void
+LTFAT_H_NAME(ufilterbank_fft)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
+                              const int L, const int gl,
+			      const int W, const int a, const int M,
+			      LTFAT_H_COMPLEX *cout);
+
 /* -------- windows ------------------------------ */
 
 LTFAT_EXTERN void
@@ -234,11 +241,11 @@ LTFAT_EXTERN void
 LTFAT_H_NAME(ifftshift_r)(const LTFAT_H_REAL *f, const int L, LTFAT_H_REAL *h);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(fir2iir_r)(const LTFAT_H_REAL *f, const int Lfir, const int Liir,
+LTFAT_H_NAME(fir2long_r)(const LTFAT_H_REAL *f, const int Lfir, const int Liir,
 			LTFAT_H_REAL *h);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(fir2iir_c)(const LTFAT_H_COMPLEX *f,
+LTFAT_H_NAME(fir2long_c)(const LTFAT_H_COMPLEX *f,
 			const int Lfir,	const int Liir,
 			LTFAT_H_COMPLEX *h);
 

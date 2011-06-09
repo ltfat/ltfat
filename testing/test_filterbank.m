@@ -11,6 +11,8 @@ test_failed=0;
 
 disp(' ===============  TEST_FILTERBANK ================');
 
+which comp_ufilterbank_fft
+
 M=6;
 a=3;
 N=4;

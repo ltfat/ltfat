@@ -12,8 +12,8 @@ files = \
 	sreassign.o swindows.o dwfac.o diwfac.o		\
 	dreassign.o dwindows.o sspread.o sheapint.o swinmanip.o		\
 	dspread.o dheapint.o dwinmanip.o \
-	sdwilt.o stfutil.o \
-	ddwilt.o dtfutil.o \
+	sdwilt.o stfutil.o sfilterbank.o \
+	ddwilt.o dtfutil.o dfilterbank.o \
 	spfilt.o dpfilt.o \
 	integer_manip.o 
 

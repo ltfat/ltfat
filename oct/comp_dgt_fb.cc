@@ -23,8 +23,11 @@ DEFUN_DLD (comp_dgt_fb, args, ,
      const int W  = f.columns();
      const int gl = g.rows();
      const int N = L/a;
+
+     dim_vector dims_out(M,N,W);  
+     dims_out.chop_trailing_singletons();
      
-     ComplexMatrix cout(M,N*W);  
+     ComplexNDArray cout(dims_out);  
      
      dgt_fb((ltfat_complex*)f.data(),(ltfat_complex*)g.data(),L,gl,W,a,M,
      (ltfat_complex*)cout.data());  
@@ -43,7 +46,10 @@ DEFUN_DLD (comp_dgt_fb, args, ,
      const int gl = g.rows();
      const int N = L/a;
      
-     ComplexMatrix cout(M,N*W);  
+     dim_vector dims_out(M,N,W);  
+     dims_out.chop_trailing_singletons();
+
+     ComplexNDArray cout(dims_out);  
      
      dgt_fb_r((double*)f.data(),(double*)g.data(),L,gl,W,a,M,
      (ltfat_complex*)cout.data());  

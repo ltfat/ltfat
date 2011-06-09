@@ -30,18 +30,13 @@ L=ceil(max(Ls,longestfilter)/lcm_a)*lcm_a;
 
 N=L/a;
 
-c=zeros(N,M,W);
-  
-G=zeros(L,M);
+f=postpad(f,L);
+
+gw=zeros(L,M);
 for ii=1:M
-  G(:,ii)=fft(fir2long(g{ii},L));
+  gw(:,ii)=fir2long(g{ii},L);
 end;
 
-for w=1:W
-  F=fft(postpad(f(:,w),L));
-  for m=1:M
-    c(:,m,w)=ifft(sum(reshape(F.*G(:,m),N,a),2))/a;
-  end;
-end;
+c=comp_ufilterbank_fft(f,gw,a);
 
   

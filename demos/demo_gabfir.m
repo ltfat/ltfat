@@ -1,16 +1,16 @@
-%DEMO_GABORFIR
+%DEMO_GABFIR  Working with FIR windows
 %
 %   This demo demonstrates how to work with FIR windows in Gabor systems.
 %
 %   FIR windows are the windows traditionally used in signal processing.
-%   They are short, much shorter than the signal, and this is used to 
-%   make effecient algorithms using a filter bank implementation. They
-%   are also the only choice for applications involving streaming data.
+%   They are short, much shorter than the signal, and this is used to make
+%   effecient algorithms. They are also the only choice for applications
+%   involving streaming data.
 %
 %   It is very easy to compute a spectrogram or Gabor coefficients using a
 %   FIR window. The hard part is reconstruction, because both the window and
 %   the dual window used for reconstruction must be FIR, and this is hard
-%   to obtain.
+%   to obtain, if the window is longer than the number of channels.
 %
 %   This demo demonstrates two methods:
 %

@@ -82,7 +82,7 @@ LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
  *  h     : Output array
  */ 
 LTFAT_EXTERN void
-LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
+LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
 	       LTFAT_REAL *h)
 {
   const div_t domod=div(Lfir,2);
@@ -137,7 +137,7 @@ LTFAT_NAME(fir2iir_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
  *  h     : Output array
  */ 
 LTFAT_EXTERN void
-LTFAT_NAME(fir2iir_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Liir,
+LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Liir,
 		      LTFAT_COMPLEX *h)
 {
   const div_t domod=div(Lfir,2);

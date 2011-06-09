@@ -20,8 +20,11 @@ DEFUN_DLD (comp_dgt_long, args, ,
   const int L = f.rows();
   const int W = f.columns();
   const int N = L/a;
-  
-  ComplexMatrix cout(M,N*W);  
+
+  dim_vector dims_out(M,N,W);  
+  dims_out.chop_trailing_singletons();
+
+  ComplexNDArray cout(dims_out);  
   
   dgt_long((ltfat_complex*)f.data(),(ltfat_complex*)g.data(),
 	   L, W, a, M,(ltfat_complex*)cout.data());

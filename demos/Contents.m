@@ -28,7 +28,6 @@
 %
 %  Auditory scales and filters
 %     DEMO_AUDSCALES        - Different auditory scales.
-%     DEMO_AUDITORYFILTERBANK - FIR Gammatone filters.
 % 
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net
