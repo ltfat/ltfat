@@ -15,7 +15,6 @@ LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
 
    LTFAT_REAL *sbuf, *gfp;
 
-   int ldf;
    int rem, negrem;
 
    LTFAT_FFTW(plan) p_before;
@@ -32,9 +31,6 @@ LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
 
    const double sqrtM=sqrt(M);
    
-   /* for testing, set ldf=L. */
-   ldf=L;
-
    sbuf = (LTFAT_REAL*)ltfat_malloc(2*d*sizeof(LTFAT_REAL));
      
    /* Create plan. In-place. */
@@ -87,7 +83,7 @@ LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
 
    LTFAT_REAL *sbuf, *gfp;
 
-   int ldf, s;
+   int s;
    int rem, negrem;
 
    const int R = 1;
@@ -102,9 +98,6 @@ LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
 
    const double sqrtM=sqrt(M);
    
-   /* for testing, set ldf=L. */
-   ldf=L;
-
    sbuf = (LTFAT_REAL*)ltfat_malloc(2*d*sizeof(LTFAT_REAL));
      
    /* Create plan. In-place. */
@@ -157,7 +150,7 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
 
    LTFAT_REAL *gfp;
 
-   int ldf, s;
+   int s;
    int rem, negrem;
 
    const int R = 1;
@@ -175,9 +168,6 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
 
    const double sqrtM=sqrt(M);
    
-   /* for testing, set ldf=L. */
-   ldf=L;
-
    LTFAT_REAL *sbuf = (LTFAT_REAL*)ltfat_malloc(d*sizeof(LTFAT_REAL));
    LTFAT_COMPLEX *cbuf = (LTFAT_COMPLEX*)ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
      

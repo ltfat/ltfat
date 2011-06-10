@@ -151,7 +151,7 @@ if flags.do_test
     
     fprintf('2.: Test if pgauss executes:              ');
     pgauss(100);
-    % If the execution of the script makes it here, we now that pgauss
+    % If the execution of the script makes it here, we know that pgauss
     % did not crash the system, so we can just print success. Same story
     % with the following entries.
     disp('SUCCESS.');

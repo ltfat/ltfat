@@ -245,7 +245,6 @@ LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 
    int l, k, r, s, u, w, nm, mm, km;
    int ld2a, ld3b;
-   int ld4c, ld5c;
    int rem;
 
    LTFAT_FFTW(plan) p_before, p_after;
@@ -424,8 +423,7 @@ LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 
       /*  -------  compute inverse coefficient factorization ------- */
       cfp=cf;
-      ld4c=M*N;
-      ld5c=M*N;
+      const int ld5c=M*N;
 
       /* Cover both integer and rational sampling case */
       for (w=0;w<W;w++)

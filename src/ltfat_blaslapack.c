@@ -129,7 +129,7 @@ int LTFAT_NAME(ltfat_gesvd)(const int M, const int N,
 #ifdef HAVE_LAPACK
 {
 
-  int lwork, info, minMN, maxMN;
+  int lwork, info, maxMN;
   LTFAT_REAL workquery[2]; 
   LTFAT_REAL *rwork, *work;
 
@@ -140,7 +140,6 @@ int LTFAT_NAME(ltfat_gesvd)(const int M, const int N,
   jobu = 'S';
   jobvt = 'S';  
 
-  minMN = M < N ? M : N;
   maxMN = M > N ? M : N;
 
   /* Allocate workspace */

@@ -11,7 +11,7 @@ N=L/a;
 
 c=zeros(N,M,W);
   
-G=fft(g);
+G=fft(fir2long(g,L));
 
 for w=1:W
   F=fft(f(:,w));
