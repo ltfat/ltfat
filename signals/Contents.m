@@ -9,7 +9,7 @@
 %    BAT            -  Bat chirp.
 %    BATMASK        -  Mask for bat signal.
 %    GREASY         -  Woman speaking the word 'greasy'
-%    COCKTAILPARTY  -  Full sentence.
+%    COCKTAILPARTY  -  Sentence by male, native English speaker.
 %    GSPI           -  Glockenspiel test signal.
 %    LINUS          -  Linus pronouncing Linux.
 %    LTFATLOGO      -  Synthetic sound from spectrogram reconstruction.
