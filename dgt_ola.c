@@ -23,7 +23,7 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const int gl,
    plan.gext = ltfat_malloc(Lext*sizeof(LTFAT_COMPLEX));   
    plan.cbuf = ltfat_malloc(M*Nblocke*W*sizeof(LTFAT_COMPLEX));
    
-   LTFAT_NAME(fir2iir_c)(g, gl, Lext, plan.gext);
+   LTFAT_NAME(fir2long_c)(g, gl, Lext, plan.gext);
    
    /* Zero the last part of the buffer, it will always be zero. */
    for (int w=0; w<W; w++)
@@ -169,7 +169,7 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const int gl,
    plan.gext = ltfat_malloc(Lext*sizeof(LTFAT_REAL));   
    plan.cbuf = ltfat_malloc(M2*Nblocke*W*sizeof(LTFAT_COMPLEX));
    
-   LTFAT_NAME(fir2iir_r)(g, gl, Lext, plan.gext);
+   LTFAT_NAME(fir2long_r)(g, gl, Lext, plan.gext);
    
    /* Zero the last part of the buffer, it will always be zero. */
    for (int w=0; w<W; w++)
