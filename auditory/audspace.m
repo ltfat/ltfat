@@ -24,12 +24,12 @@ end;
   
 % Default parameters.
 
-if ~isnumeric(flow) || ~isscalar(flow) || flow<0
-  error('%s: flow must be a non-negative scalar.',upper(mfilename));
+if ~isnumeric(flow) || ~isscalar(flow) 
+  error('%s: flow must be a scalar.',upper(mfilename));
 end;
 
-if ~isnumeric(fhigh) || ~isscalar(fhigh) || fhigh<0
-  error('%s: fhigh must be a non-negative scalar.',upper(mfilename));
+if ~isnumeric(fhigh) || ~isscalar(fhigh) 
+  error('%s: fhigh must be a scalar.',upper(mfilename));
 end;
 
 if ~isnumeric(n) || ~isscalar(n) || n<=0 || fix(n)~=n

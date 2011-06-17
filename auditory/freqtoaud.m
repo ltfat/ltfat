@@ -47,8 +47,8 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isnumeric(freq) ||  all(freq(:)<0)
-  error('%s: freq must be a non-negative number.',upper(mfilename));
+if ~isnumeric(freq) 
+  error('%s: freq must be number.',upper(mfilename));
 end;
 
 definput.import={'freqtoaud'};
@@ -58,11 +58,11 @@ definput.import={'freqtoaud'};
 
 
 if flags.do_mel
-  aud = 1000/log(17/7)*log(1+freq/700);
+  aud = 1000/log(17/7)*sign(freq).*log(1+abs(freq)/700);
 end;
 
 if flags.do_mel1000
-  aud = 1000/log(2)*log(1+freq/1000);
+  aud = 1000/log(2)*sign(freq).*log(1+abs(freq)/1000);
 end;
 
 if flags.do_erb
@@ -72,21 +72,21 @@ if flags.do_erb
   % On page 37 of the paper, there is Fortran code with yet another set
   % of constants:
   %     2302.6/(24.673*4.368)*log10(1+freq*0.004368);
-  aud = 9.2645*log(1+freq*0.00437);
+  aud = 9.2645*sign(freq).*log(1+abs(freq)*0.00437);
 end;
 
 if flags.do_bark
   % The bark scale seems to have several different approximations available.
   
   % This one was found through http://www.ling.su.se/STAFF/hartmut/bark.htm
-  aud = (26.81./(1+1960./freq))-0.53;
+  aud = sign(freq).*((26.81./(1+1960./abs(freq)))-0.53);
   
   % The one below was found on Wikipedia.
   %aud = 13*atan(0.00076*freq)+3.5*atan((freq/7500).^2);
 end;
 
 if flags.do_erb83
-  aud = 11.17*log((freq+312)./(freq+14675))+43.0;
+  aud = sign(freq).*(11.17*log((abs(freq)+312)./(abs(freq)+14675))+43.0);
 end;
 
 if flags.do_freq
