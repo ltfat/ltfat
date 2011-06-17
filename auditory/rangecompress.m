@@ -26,3 +26,7 @@ if flags.do_mulaw
   outsig = sign(insig) .* log(1+kv.mu*abs(insig))/tmp;
 
 end;
+
+if flags.do_alaw
+  error('Not implemented yet.');
+end;

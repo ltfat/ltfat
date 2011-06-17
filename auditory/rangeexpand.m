@@ -22,3 +22,8 @@ if flags.do_mulaw
   sig = sig * sigweight/kv.mu;
 
 end;
+
+if flags.do_alaw
+  error('Not implemented yet.');
+end;
+
