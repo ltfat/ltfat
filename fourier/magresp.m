@@ -132,7 +132,7 @@ if isempty(fs)
   axisvec=[xmin 1 ymin ymax];
 else
   xrange=linspace(xmin*floor(fs/2),floor(fs/2),Lplot).';
-  axisvec=[xmin fs/2 ymin ymax];
+  axisvec=[xmin*fs/2 fs/2 ymin ymax];
 end;
 
 plot(xrange,FF,keyvals.opts{:});
