@@ -20,7 +20,7 @@
 %
 %      This figure shows a spectrogram of an iterative reconstruction of the
 %      target spectrogram using the BFGS method.
-
+%
 %   See also:  isgramreal, isgram, 
 
 s=ltfattext;
