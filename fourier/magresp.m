@@ -70,9 +70,9 @@ definput.keyvals.L=[];
 definput.flags.wintype={'notype','fir','long'};
 definput.keyvals.dynrange=[];
 
-[flags,keyvals,fs,L]=ltfatarghelper({'fs','L'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
-[g,info] = comp_fourierwindow(g,L,'MAGRESP');
+[g,info] = comp_fourierwindow(g,kv.L,'MAGRESP');
 
 do_real=flags.do_posfreq;
 if flags.do_autoposfreq
@@ -83,17 +83,17 @@ if flags.do_fir
   info.isfir=1;
 end;
 
-if isempty(L) 
+if isempty(kv.L) 
   if info.isfir
     % Choose a strange length, such that we don't accidentically hit all
     % the zeros in the response.
-    L=length(g)*13+47;
+    kv.L=length(g)*13+47;
   else
-    L=length(g);
+    kv.L=length(g);
   end;
 end;
 
-g=fir2long(g,L);
+g=fir2long(g,kv.L);
 
 g=normalize(g,flags.norm);
 if do_real
@@ -118,8 +118,8 @@ else
 end;
 
 ymax=max(FF);
-if ~isempty(keyvals.dynrange)
-  ymin=ymax-keyvals.dynrange;
+if ~isempty(kv.dynrange)
+  ymin=ymax-kv.dynrange;
 else
   ymin=min(FF);
 end;
@@ -135,7 +135,7 @@ else
   axisvec=[xmin*fs/2 fs/2 ymin ymax];
 end;
 
-plot(xrange,FF,keyvals.opts{:});
+plot(xrange,FF,kv.opts{:});
 axis(axisvec);
 ylabel('Magnitude response (Db)');
 
