@@ -1,3 +1,26 @@
+Version 1.0.0 16/6 2011
+	* Auditory scales: Erb, bark, mel
+
+	* Gammatone filters.
+
+	* Filterbanks with a full set of support functions.
+
+	* non-stationary Gabor frames with a full set of support
+	functions.
+
+	* rangecompress and rangeexpand does ulaw and alaw.
+
+	* cocktailparty test signal replaces older 'greasylong'
+
+	* plot functions for visualizing coefficients of all transforms.
+
+	* C implementation improved: speedup in gabdual and gabtight,
+	implementation of dgtreal, pfilt and ufilterbank.
+
+	* nextfastfft computes next larger problem size with a fast FFT.
+
+	* isgramreal can use BFGS method, requires external software.
+
 Version 0.98.2 25/3 2011
 	* Added C code for IDGT using FIR filters.
 
