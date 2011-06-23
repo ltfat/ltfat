@@ -155,7 +155,7 @@ else
 
   end;
   
-  ylabel(sprintf('%s (s)',kv.frequency));
+  ylabel(sprintf('%s (Hz)',kv.frequency));
 
 
   

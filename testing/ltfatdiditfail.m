@@ -6,7 +6,7 @@ function [test_failed,fail]=ltfatdiditfail(res,test_failed);
 %  fail. Use only in testing scripts.
   
 fail='';
-if abs(res)>10e-10
+if (abs(res)>10e-10) || isnan(res)
   fail='FAILED';
   test_failed=test_failed+1;
 end;
