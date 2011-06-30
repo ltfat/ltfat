@@ -1,10 +1,18 @@
-function sig = rangeexpand(codedsig,mu,sigweight);
+function outsig = rangeexpand(insig,varargin);
 %RANGEEXPAND  Expand the dynamic range of a signal
-%   Usage:  sig = rangeexpand(codedsig,mu,sigweight);
+%   Usage:  sig = rangeexpand(insig,mu,sigweight);
 %
-%   RANGEEXPAND(codedsig,mu,sigweight) inverts a previously
-%   applied mu-law companding to the signal codedsig. The parameters
+%   RANGEEXPAND(insig,mu,sigweight) inverts a previously
+%   applied mu-law companding to the signal insig. The parameters
 %   mu and sigweight must match those from the call to MULAWENCODE
+%
+%   RANGEEXPAND takes the following optional arguments:
+%
+%-     'mulaw'  - Do mu-law compression, this is the default.
+%
+%-     'alaw'   - Do A-law compression.
+%
+%-     'mu',mu  - mu-law parameter. Default value is 255.
 %  
 %R  jano90
 
@@ -17,9 +25,9 @@ definput.keyvals.mu=255;
 if flags.do_mulaw
 
   cst = (1+kv.mu);
-  sig = cst.^(abs(codedsig));
-  sig = sign(codedsig) .* (sig-1);
-  sig = sig * sigweight/kv.mu;
+  outsig = cst.^(abs(insig));
+  outsig = sign(insig) .* (sig-1);
+  outsig = sig * sigweight/kv.mu;
 
 end;
 

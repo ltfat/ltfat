@@ -5,6 +5,14 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %   [outsig, sigweight]=RANGECOMPRESS(insig,mu) mu-law rangecompresss the input
 %   signal insig using mu-law rangecompressing with parameters mu.
 %
+%   RANGECOMPRESS takes the following optional arguments:
+%
+%-     'mulaw'  - Do mu-law compression, this is the default.
+%
+%-     'alaw'   - Do A-law compression.
+%
+%-     'mu',mu  - mu-law parameter. Default value is 255.
+%
 %R  jano90
 
 % AUTHOR: Bruno Torresani and Peter L. Soendergaard
