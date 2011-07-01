@@ -18,20 +18,25 @@ function outsig = rangeexpand(insig,varargin);
 
 % AUTHOR: Bruno Torresani and Peter Soendergaard
 
-definput.flags.method={'mulaw','alaw'}
+definput.flags.method={'mulaw','alaw'};
 definput.keyvals.mu=255;
-[flags,kv]=ltfatarghelper({'L'},definput,varargin);
+definput.keyvals.A=87.7;
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 if flags.do_mulaw
 
   cst = (1+kv.mu);
   outsig = cst.^(abs(insig));
-  outsig = sign(insig) .* (sig-1);
-  outsig = sig * sigweight/kv.mu;
+  outsig = sign(insig) .* (outsig-1);
+  outsig = outsig/kv.mu;
 
 end;
 
 if flags.do_alaw
-  error('Not implemented yet.');
+  absx=abs(insig);
+  tmp=1+log(kv.A);
+  mask=absx<1/tmp;
+
+  outsig = sign(insig).*(mask.*(absx*tmp/kv.A)+(1-mask).*exp(absx*tmp-1)/kv.A);
 end;
 

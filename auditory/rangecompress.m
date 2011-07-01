@@ -13,6 +13,8 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %
 %-     'mu',mu  - mu-law parameter. Default value is 255.
 %
+%-     'A',A    - A-law parameter. Default value is 87.7.
+%
 %R  jano90
 
 % AUTHOR: Bruno Torresani and Peter L. Soendergaard
@@ -21,20 +23,23 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.flags.method={'mulaw','alaw'}
+definput.flags.method={'mulaw','alaw'};
 definput.keyvals.mu=255;
-[flags,kv]=ltfatarghelper({'L'},definput,varargin);
+definput.keyvals.A=87.7;
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 if flags.do_mulaw
   tmp = log(1+kv.mu);
   
   sigweight = max(abs(insig(:)));
-  insig = insig/sigweight;
-  
   outsig = sign(insig) .* log(1+kv.mu*abs(insig))/tmp;
 
 end;
 
 if flags.do_alaw
-  error('Not implemented yet.');
+  absx=abs(insig);
+  tmp=1+log(kv.A);
+  mask=absx<1/kv.A;
+
+  outsig = sign(insig).*(mask.*kv.A.*absx./tmp+(1-mask).*(1+log(kv.A*absx))/tmp);
 end;
