@@ -18,8 +18,6 @@
 %    GROUPTHRESH    -  Group thresholding.
 %    ELITISTTHRESH  -  Elitist thresholding.
 %    UQUANT         -  Simulate uniform quantization.
-%    MULAWENCODE    -  Mu-Law companding
-%    MULAWDECODE    -  Inverse Mu-Law companding.
 %
 %  Tools for OFDM
 %    QAM4           -  Quadrature amplitude modulation, order 4

@@ -1,38 +1,46 @@
-function xo=uquant(xi,nbits,xmax,varargin);
+function xo=uquant(xi,varargin);
 %UQUANT  Simulate uniform quantization.
-%   Usage:  x=uquant(x,nbits,xmax);
+%   Usage:  x=uquant(x);
 %           x=uquant(x,nbits,xmax,...);
 %
 %   UQUANT(x,nbits,xmax) simulates the effect of uniform quantization of x using
 %   nbits bit. The output is simply x rounded to $2^{nbits}$ different values.
 %   The xmax parameters specify the maximal value that should be quantifiable.
 %
+%   UQUANT(x,nbits) assumes a maximal quantifiable value of 1.
+%
+%   UQUANT(x) additionally assumes 8 bit quantization.
+%
 %   UQUANT takes the following flags at the end of the input arguments.
 %
-%-   's' - Signed quantization. This assumes that the signal
-%          has a both positive and negative part. Useful for sound
-%          signals. This is the default.
+%    'nbits' - Number of bits to use in the quantization. Default is 8.
 %
-%-   'u' - Unsigned quantization. Assumes the signal is positive.
-%          Negative values are silently rounded to zero.
-%          Useful for images.
+%    'xmax'  - Maximal quantifiable value. Default is 1.
+%  
+%-   's'     - Use signed quantization. This assumes that the signal
+%              has a both positive and negative part. Useful for sound
+%              signals. This is the default.
+%
+%-   'u'     - Use unsigned quantization. Assumes the signal is positive.
+%              Negative values are silently rounded to zero.
+%              Useful for images.
 %
 %   If this function is applied to a complex signal, it will simply be
 %   applied to the real and imaginary part separately.
-%
 
 %   AUTHOR : Peter Soendergaard and Bruno Torresani.  
 %   TESTING: OK
 %   REFERENCE: OK
 
-if nargin<4
+if nargin<1
   error('Too few input parameters.');
 end;
 
 % Define initial value for flags and key/value pairs.
 definput.flags.sign={'s','u'};
-
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+definput.keyvals.nbits=8;
+definput.keyvals.xmax=1;
+[flags,keyvals,nbits,xmax]=ltfatarghelper({'nbits','xmax'},definput,varargin);
 
 % ------ handle complex values ------------------
 if ~isreal(xi)
