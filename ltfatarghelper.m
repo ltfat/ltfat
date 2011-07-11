@@ -39,7 +39,6 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %C    definput.flags.phase={'freqinv','timeinv'};
 %C    [flags,kv]=ltfatarghelper({'L'},definput,varargin);
 %
-%
 %   The first line defines a key/value pair with the key 'L' having an initial value of []
 %   (the empty matrix).
 %

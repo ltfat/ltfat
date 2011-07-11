@@ -1,7 +1,8 @@
 % LTFAT - Signals
 %
-%  Synthetic signals
+%  Signal generators
 %    CTESTFUN       -  Complex valued test function.
+%    NOISE          -  Stochastic noise generator.
 %    PINKNOISE      -  Pink noise.
 %    EXPCHIRP       -  Exponential chirp.
 %

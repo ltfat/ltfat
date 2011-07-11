@@ -1,4 +1,4 @@
-function outsig = pinknoise(siglen,nsigs)
+function outsig = pinknoise(varargin)
 % PINKNOISE Generates a pink noise signal
 %   Usage: outsig = pinknoise(siglen,nsigs);
 %
@@ -12,43 +12,9 @@ function outsig = pinknoise(siglen,nsigs)
 %   PINKNOISE(siglen,nsigs) generates nsigs channels containing pink noise
 %   (1/f spectrum) with the length of siglen. The signals are arranged as
 %   columns in the output.
+%
+%   PINKNOISE is just a wrapper around NOISE(...,'pink');
+%
+%   See also: noise
 
-%   AUTHOR: Hagen Wierstorf
-
-
-% ------ Checking of input parameter -------------------------------------
-
-error(nargchk(1,2,nargin));
-
-if ~isnumeric(siglen) || ~isscalar(siglen) || siglen<=0
-    error('%s: siglen has to be a positive scalar.',upper(mfilename));
-end
-
-if nargin==1
-  nsigs=1;
-end;
-
-if ~isnumeric(nsigs) || ~isscalar(nsigs) || nsigs<=0
-    error('%s: siglen has to be a positive scalar.',upper(mfilename));
-end
-
-% --- Handle trivial condition
-
-if siglen==1
-  outsig=ones(1,nsigs);
-  return;
-end;
-
-% ------ Computation -----------------------------------------------------
-fmax = floor(siglen/2)-1;
-f = (2:(fmax+1)).';
-% 1/f amplitude factor
-a = 1./sqrt(f);
-% Random phase
-p = randn(fmax,nsigs) + i*randn(fmax,nsigs);
-sig = repmat(a,1,nsigs).*p;
-
-outsig = ifftreal([ones(1,nsigs); sig; 1/(fmax+2)*ones(1,nsigs)],siglen);
-
-% Scale output
-%outsig = outsig ./ (max(abs(outsig(:)))+eps);
+outsig = noise(varargin{:},'pink');
