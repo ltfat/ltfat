@@ -280,12 +280,13 @@ for ii=1:numel(L)
         fprintf('Compiling %s\n',filename);
         
         if isoctave
+            % Octave dynamically links to FFTW, Blas and Lapack, so they
+            % are not included on the compilation line.
             mkoctfile('-c','oct-memalloc.c');
             mkoctfile('-I../thirdparty',...
                       '-I.','-I../src','-L../src','-L../lib',...
                       filename,'oct-memalloc.o',...
-                      '-lltfat-nomem');
-            
+                      '-lltfat-nomem');            
         else
             mex('-c','mex-memalloc.c');
             if ispc

@@ -1,6 +1,6 @@
 function [b,N,L]=assert_L(Ls,Lwindow,L,a,M,callfun)
 %ASSERT_L  Validate lattice and window size.
-%   Usage:  [b,N,L]=assert_L(Ls,Lwindow,a,M,callfun);
+%   Usage:  [b,N,L]=assert_L(Ls,Lwindow,L,a,M,callfun);
 %
 %   Input parameters:
 %         Ls      : Length of signal (see below).
