@@ -1,5 +1,7 @@
 # Use GNU Make to process this file
-CC = gcc
+CC = i686-pc-mingw32-gcc 
+#CC = gcc
+
 
 CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty
 
@@ -32,6 +34,11 @@ win_ms: $(files) c-safe-memalloc.o
 	cp -f ltfat.dll ../mex/
 	cp -f ltfat.def ../mex/
 	echo "To finish the creation, please run the Microsoft lib tool on ltfat.dll and ltfat.def"
+
+wincrosscompile: $(files_matlab)
+	ar rvu libltfat-nomem.lib $(files_matlab)
+	ranlib libltfat-nomem.lib
+	cp -f libltfat-nomem.lib ../lib/
 
 winnomem: $(files_matlab)
 	ar rvu libltfat-nomem.lib $(files_matlab)
