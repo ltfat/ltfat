@@ -24,11 +24,11 @@ function outsig = noise(siglen,varargin)
 %
 %-     'red'    - This is the same as brown noise.     
 %
-%   By default, the noise is normalized to have a unit energy, but this can be changed by
-%   passing a flag to NORMALIZE.
+%   By default, the noise is normalized to have a unit energy, but this can
+%   be changed by passing a flag to NORMALIZE.
 %
 %   See also: normalize
-%  
+
 %   AUTHOR: Hagen Wierstorf and Peter L. Soendergaard.
 
 
