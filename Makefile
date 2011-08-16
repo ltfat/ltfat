@@ -1,6 +1,6 @@
 # Use GNU Make to process this file
-CC = i686-pc-mingw32-gcc 
-#CC = gcc
+#CC = i686-pc-mingw32-gcc 
+CC = gcc
 
 
 CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty
