@@ -97,6 +97,7 @@ end;
 
 if flags.do_tc
   xr=(-floor(N/2):floor((N-1)/2))*step;
+  coef=fftshift(coef,2);
 else
   xr=(0:N-1)*step;
 end;
