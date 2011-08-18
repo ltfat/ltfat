@@ -80,7 +80,18 @@ end;
 if flags.do_linsq
   coef=abs(coef).^2;
 end;
-  
+
+if flags.do_linabs
+  coef=abs(coef);
+end;
+
+if flags.do_lin
+  if ~isreal(coef)
+    error(['Complex valued input cannot be plotted using the "lin" flag.',...
+           'Please use the "linsq" or "linabs" flag.']);
+  end;
+end;
+
 % 'dynrange' parameter is handled by thresholding the coefficients.
 if ~isempty(kv.dynrange)
   maxclim=max(coef(:));
