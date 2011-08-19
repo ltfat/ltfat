@@ -34,7 +34,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
    /* Get pointer to output */
    phase=mxGetPr(plhs[0]);
    
-   heapint(s, tgrad, fgrad, a, M, L, W, tol, phase);
+   heapint((const double*)s,
+	   (const double*)tgrad,
+	   (const double*)fgrad,
+	   a, M, L, W, 
+	   tol, phase);
 
    return;
    

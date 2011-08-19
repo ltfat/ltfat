@@ -15,13 +15,13 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   ISGRAMREAL(s,g,a) attempts to invert a spectrogram computed by
+%   ISGRAMREAL(s,g,a,M) attempts to invert a spectrogram computed by
 %
 %C     s = abs(dgtreal(f,g,a,M)).^2;
 %
 %   by an iterative method.
 %
-%   ISGRAMREAL(c,g,a,Ls) does as above but cuts or extends f to length Ls.
+%   ISGRAMREAL(s,g,a,M,Ls) does as above but cuts or extends f to length Ls.
 %
 %   If the phase of the spectrogram is known, it is much better to use
 %   IDGTREAL.
@@ -134,8 +134,15 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   end;
   
   if flags.do_int
-    error('This has not been implemented yet. Please use ISGRAM, which supports this option.');
-    %c=constructphase(s,g,a);
+    s2=zeros(M,N);
+    s2(1:M2,:)=s;
+    if rem(M,2)==0
+      s2(M2+1:M,:)=flipud(s(2:end-1,:));
+    else
+      s2(M2+1:M,:)=flipud(s(2:end));
+    end;
+    c=constructphase(s2,g,a);
+    c=c(1:M2,:);
   end;
   
   g  = gabwin(g,a,M,L,'ISGRAMREAL');

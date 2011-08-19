@@ -111,7 +111,11 @@ if flags.do_compile
       [status,output]=system('mkoctfile -p CC');
       system(['make CC=',output]);
     else
-      system('make');
+      if ispc
+        system('make winnomem');
+      else
+        system('make unixnomem');
+      end;
     end;
     disp('Done.');
   end;
