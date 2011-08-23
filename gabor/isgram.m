@@ -180,6 +180,10 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     opts = struct;
     opts.display = kv.printstep;
     opts.maxiter = kv.maxit;
+    
+    % Don't limit the number of function evaluations, just the number of
+    % time-steps.
+    opts.MaxFunEvals = 1e9;
     opts.usemex = 0;
     
     f0 = comp_idgt(c,gd,a,M,L,0);

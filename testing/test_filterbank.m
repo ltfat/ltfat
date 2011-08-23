@@ -3,7 +3,7 @@ function test_failed=test_filterbank
 %  Usage: test_filterbank()
 %
 %  This function checks the exact reconstruction (up to numeric precision)
-%  of the functions ufilterbank and iufilterbank, when using dual windows computed with
+%  of the functions ufilterbank and ifilterbank, when using dual windows computed with
 %  filterbankdual / filterbankrealdual, or tight windows computed with
 %  filterbanktight / filterbankrealtight
 
@@ -51,7 +51,7 @@ disp(s)
 
 
 %% Check that ufilterbank is invertible using dual window
-r=iufilterbank(c_u,gd,a);
+r=ifilterbank(c_u,gd,a);
 
 res=norm(f-r);
 
@@ -64,7 +64,7 @@ disp(s)
 gt = filterbanktight(g,a);
 
 c_ut = ufilterbank(f,gt,a);
-r=iufilterbank(c_ut,gt,a);
+r=ifilterbank(c_ut,gt,a);
 
 res=norm(f-r);
 
@@ -90,7 +90,7 @@ fr=rand(L,1);
 gdreal=filterbankrealdual(g,a);
 
 c_ur=ufilterbank(fr,g,a);
-rreal=2*real(iufilterbank(c_ur,gdreal,a));
+rreal=2*real(ifilterbank(c_ur,gdreal,a));
 
 res=norm(fr-rreal);
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -103,7 +103,7 @@ disp(s)
 gtreal=filterbankrealtight(g,a);
 
 ct     = ufilterbank(fr,gtreal,a);
-rrealt = 2*real(iufilterbank(ct,gtreal,a));
+rrealt = 2*real(ifilterbank(ct,gtreal,a));
 
 res=norm(fr-rrealt);
 [test_failed,fail]=ltfatdiditfail(res,test_failed);

@@ -72,7 +72,7 @@ gd_gam=filterbankrealdual(g_gam,a,L);
 coef_gam=ufilterbank(f,g_gam,a);
 
 % Synthesis transform
-r_gam=2*real(iufilterbank(coef_gam,gd_gam,a,Ls));
+r_gam=2*real(ifilterbank(coef_gam,gd_gam,a,Ls));
 
 disp('Relative error in reconstruction, should be close to zero.');
 norm(f-r_gam)/norm(f)
@@ -103,7 +103,7 @@ gd_gauss=filterbankrealdual(g_gauss,a,filterlength);
 coef_gauss=ufilterbank(f,g_gauss,a);
 
 % Synthesis transform
-r_gauss=2*real(iufilterbank(coef_gauss,gd_gauss,a));
+r_gauss=2*real(ifilterbank(coef_gauss,gd_gauss,a));
 
 disp('Error in reconstruction, should be close to zero.');
 norm(f-r_gauss)/norm(f)

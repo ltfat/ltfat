@@ -3,9 +3,9 @@
 %  Peter L. Soendergaard, 2011
 %
 %  Transforms
-%    UFILTERBANK          - Uniform Filter bank
-%    IUFILTERBANK         - Inverse Uniform filter bank
 %    FILTERBANK           - Filter bank
+%    UFILTERBANK          - Uniform Filter bank
+%    IFILTERBANK          - Inverse normal/uniform filter bank
 %
 %  Window construction and bounds
 %    FILTERBANKDUAL       - Canonical dual filters
@@ -16,7 +16,7 @@
 %    FILTERBANKREALBOUNDS - Frame bounds of filter bank for real signals
 %
 %  Plots
-%    PLOTFILTERBANK       - Plot filterbank and ufilterbank coefficients
+%    PLOTFILTERBANK       - Plot normal/uniform filter bank coefficients
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

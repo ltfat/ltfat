@@ -190,6 +190,10 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     opts.display = kv.printstep;
     opts.maxiter = kv.maxit;
     opts.usemex = 0;
+
+    % Don't limit the number of function evaluations, just the number of
+    % time-steps.
+    opts.MaxFunEvals = 1e9;
     
     f0 = comp_idgtreal(c,gd,a,M,L,0);
     [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
