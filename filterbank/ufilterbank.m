@@ -14,7 +14,7 @@ function c=ufilterbank(f,g,a);
 %   matrix, the output will be 3-dimensional, and the third dimension
 %   will correspond to the columns of the input signal.
 %
-%   See also: iufilterbank, filterbankdual
+%   See also: ifilterbank, filterbankdual
 %
 %R  bohlfe02
   

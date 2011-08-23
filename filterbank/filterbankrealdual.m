@@ -13,7 +13,7 @@ function gdout=filterbankrealdual(g,a,varargin);
 %   To actually invert the output of a filterbank, use the dual filters
 %   together with 2*real(IFILTERBANK(...)).
 %
-%   See also: filterbank, ufilterbank, iufilterbank
+%   See also: filterbank, ufilterbank, ifilterbank
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
