@@ -9,6 +9,7 @@
 %    IFFTREAL       -  Inverse of FFTREAL.
 %    FFTINDEX       -  Index of positive and negative frequencies.
 %    NEXTFASTFFT    -  Next efficient FFT size.
+%    MODCENT        -  Centered modulo operation.
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.
