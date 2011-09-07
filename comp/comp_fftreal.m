@@ -1,5 +1,5 @@
 function f=comp_fftreal(f)
-%COMP_FFTREAL  Compute a FFTREAL
+%COMP_FFTREAL  Compute an FFTREAL
   
 N=size(f,1);
 N2=floor(N/2)+1;

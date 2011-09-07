@@ -10,6 +10,7 @@
 %    FFTINDEX       -  Index of positive and negative frequencies.
 %    NEXTFASTFFT    -  Next efficient FFT size.
 %    MODCENT        -  Centered modulo operation.
+%    CONVOLVE       -  Convolution
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.
@@ -40,7 +41,7 @@
 %    LONG2FIR       -  Cut LONG window to FIR window.
 %    MAGRESP        -  Magnitude response plot.
 %
-%  Approximation of continous functions
+%  Approximation of continuous functions
 %    FFTRESAMPLE    -  Fourier interpolation.
 %    DCTRESAMPLE    -  Cosine interpolation.
 %    PDERIV         -  Derivative of periodic function.
