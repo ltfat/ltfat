@@ -10,7 +10,6 @@
 %    FFTINDEX       -  Index of positive and negative frequencies.
 %    NEXTFASTFFT    -  Next efficient FFT size.
 %    MODCENT        -  Centered modulo operation.
-%    CONVOLVE       -  Convolution
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.

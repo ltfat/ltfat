@@ -1,5 +1,5 @@
 function c=comp_ufilterbank_fft(f,g,a);  
-%COMP_UFILTERBANK_FFT   Classic fitlering by FFT
+%COMP_UFILTERBANK_FFT   Classic filtering by FFT
 %   Usage:  c=comp_ufilterbank_fft(f,g,a);
 %
 
@@ -10,7 +10,9 @@ M=size(g,2);
 N=L/a;
 
 c=zeros(N,M,W);
-  
+
+% This routine does not yet use FFTREAL, because it must be able to
+% handle downsampling, which is much easier to express in the FFT case.
 G=fft(fir2long(g,L));
 
 for w=1:W

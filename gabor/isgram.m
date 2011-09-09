@@ -87,7 +87,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   definput.keyvals.maxit=100;
   definput.keyvals.printstep=10;
   definput.flags.method={'griflim','bfgs'};
-  definput.flags.print={'print','quiet'};
+  definput.flags.print={'quiet','print'};
   definput.flags.startphase={'zero','rand','int'};
   
   [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);

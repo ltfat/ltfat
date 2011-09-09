@@ -5,7 +5,7 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %           h=gabmuleigs(K,c,ga,gs,a);
 %
 %   Input parameters:
-%         K     : Number of eigenvector to compute.
+%         K     : Number of eigenvectors to compute.
 %         c     : symbol of Gabor multiplier
 %         g     : analysis/synthesis window
 %         ga    : analysis window
@@ -27,6 +27,29 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %   for analysis and synthesis.
 %
 %   If K is empty, then all eigenvalues/pairs will be returned.
+%
+%   GABMULEIGS takes the following parameters at the end of the line of input
+%   arguments:
+%
+%-    'tol',t    - Stop if relative residual error is less than the
+%                  specified tolerance. Default is 1e-9 
+%
+%-    'maxit',n  - Do at most n iterations.
+%
+%-    'iter'     - Call EIGS to use an iterative algorithm.
+%
+%-    'full'     - Call EIG to sole the full problem.
+%
+%-    'auto'     - Use the full method for small problems and the
+%                  iterative method for larger problems. This is the
+%                  default. 
+%
+%     'crossover',c - Set the problem size for which the 'auto' method
+%                  switches. Default is 200.
+%
+%-    'print'    - Display the progress.
+%
+%-    'quiet'    - Don't print anything, this is the default.
 %
 %   See also: gabmul, dgt, idgt, gabdual, gabtight
 %
@@ -76,24 +99,40 @@ else
   end;
 end;
 
-definput.keyvals.niter=20;
-definput.keyvals.tol=1e-6;
-definput.keyvals.printstep=10;
+definput.keyvals.maxit=100;
+definput.keyvals.tol=1e-9;
 definput.keyvals.crossover=200;
-definput.flags.print={'print','quiet'};
+definput.flags.print={'quiet','print'};
+definput.flags.method={'auto','iter','full'};
 
 
 [flags,kv]=ltfatarghelper({},definput,arglist);
 
-if flags.print
-  opts.disp=1;
-else
-  opts.disp=0;
-end;
 
-% Do the computation.
-% eigs does not work in Octave, and for small problems a direct calculation is just as fast.
-if L<kv.crossover
+% Do the computation. For small problems a direct calculation is just as
+% fast.
+
+if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
+  
+  if flags.do_print
+    opts.disp=1;
+  else
+    opts.disp=0;
+  end;
+  opts.isreal = false;
+  opts.maxit  = kv.maxit;
+  opts.tol    = kv.tol;
+  
+  % Setup afun
+  afun(1,c,ga,gs,a,M,L)
+  
+  if doV
+    [V,D] = eigs(@afun,L,K,'LM',opts);
+  else
+    D     = eigs(@afun,L,K,'LM',opts);
+  end;
+
+else
   % Compute the transform matrix.
   bigM=tfmat('gabmul',c,ga,gs,a);
 
@@ -103,27 +142,44 @@ if L<kv.crossover
     D=eig(bigM);
   end;
 
-else
-  gfa=comp_wfac(ga,a,M);
-  if istight
-    gfs=gfa;
-  else
-    gfs=comp_wfac(gs,a,M);
-  end;
-
-  if doV
-    [V,D] = eigs(@afun_sep,L,K,'LM',opts,c,gfa,gfs,L,a,M);
-  else
-    D = eigs(@afun_sep,L,K,'LM',opts,c,gfa,gfs,a,M);
-  end;
 
 end;
 
+% The output from eig and eigs is a diagonal matrix, so we must extract the
+% diagonal.
 D=diag(D);
 
+% Sort them in descending order
+[~,idx]=sort(abs(D),1,'descend');
+D=D(idx(1:K));
 
-function y=afun_sep(x,c,gfa,gfs,L,a,M)
- % Apply ifft to the coefficients.
-  c=ifft(c);
+if doV
+  V=V(idx(1:K));
+end;
 
-  y=comp_idgt_fac(ifft(c.*fft(comp_dgt_fac(x,gfa,a,M))),gfs,L,a,M);
+% Clean the eigenvalues, if we know that they are real-valued
+%if isreal(ga) && isreal(gs) && isreal(c)
+%  D=real(D);
+%end;
+
+% The function has been written in this way, because Octave (at the time
+% of writing) does not accept additional parameters at the end of the
+% line of input arguments for eigs
+function y=afun(x,c_in,ga_in,gs_in,a_in,M_in,L_in)
+  persistent c;
+  persistent ga;
+  persistent gs;
+  persistent a;
+  persistent M;
+  persistent L; 
+  
+  if nargin>1
+    c  = c_in; 
+    ga = ga_in;
+    gs = gs_in;
+    a  = a_in; 
+    M  = M_in; 
+    L  = L_in;
+  else
+    y=comp_idgt(c.*comp_dgt(x,ga,a,M,L,0),gs,a,M,L,0);
+  end;
