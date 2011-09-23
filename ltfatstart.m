@@ -141,6 +141,11 @@ if printbanner
                    ltfat_version,backend);
   
   disp(banner);
+  
+  if exist('ltfat_binary_notes.m','file')
+    ltfat_binary_notes;    
+  end;
+
 end;
 
 %% ---------- load information into ltfathelp ------------

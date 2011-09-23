@@ -1,28 +1,40 @@
-function x = postpad (x, L)
+function x = postpad (x, L, varargin)
 %POSTPAD   Pads or truncates a vector x to a specified length L.
+%   Usage: y=postpad(x,L);
+%          y=postpad(x,L,C);
+%          y=postpad(x,L,C,dim);
 %
-%   This is a simpler version of the file distributed with octave.
-%   The function does not check input parameters.
-
+%   POSTPAD(x,L) will add zeros to the end of the vector x, until the
+%   result has length L. If L is less than the length of the signal, it
+%   will be truncated. POSTPAD works along the first non-singleton
+%   dimension.
+%
+%   POSTPAD(x,L,C) will add entries with a value of C instead of zeros.
+%
+%   POSTPAD(x,L,C,dim) works along dimension dim instead of the first
+%   non-singleton.
+%
+%   See also: middlepad
+  
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK
 %   REFERENCE: NA
 
-xl=size(x,1);
-
-if xl==L
-  % Do nothing, bails out as quickly as possible.
-  return;
+if nargin<2
+  error('Too few input parameters.');
 end;
 
-xw=size(x,2);
+definput.keyvals.dim  = [];
+definput.keyvals.C    = 0;
+[flags,keyvals,C,dim] = ltfatarghelper({'C','dim'},definput,varargin);
 
-if ndims(x)>2
-  error('Postpad of multidim not done yet.');
-end;
+[x,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(x,L,dim,'POSTPAD');
 
-if xl<L
-  x=[x; zeros(L-xl,xw)];
+if Ls<L
+  x=[x; C*ones(L-Ls,W)];
 else
   x=x(1:L,:);
 end;
+  
+x=assert_sigreshape_post(x,dim,permutedsize,order);
+
