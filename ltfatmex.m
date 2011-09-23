@@ -87,6 +87,10 @@ if flags.do_clean
       deletefiles([bp,'oct'],'*.o');
     else
       deletefiles([bp,'mex'],['*.',mexext]);
+      if exist('ltfat_binary_notes.m','file')
+        fullname=which('ltfat_binary_notes');
+        delete(fullname);        
+      end;
     end;
   end;
   
