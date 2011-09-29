@@ -101,7 +101,7 @@ if do_real
   % Compute spectrum and normalize
   FF=abs(fftreal(real(g)));
     
-  % Convert to Db. Add eps to avoid log of zero.
+  % Convert to dB. Add eps to avoid log of zero.
   FF=20*log10(FF+realmin);
 
   xmin=0;
@@ -111,7 +111,7 @@ else
   % Compute spectrum and normalize. fftshift to center correctly for plotting.
   FF=fftshift(abs(fft(g)));
   
-  % Convert to Db. Add eps to avoid log of zero.
+  % Convert to dB. Add eps to avoid log of zero.
   FF=20*log10(FF+realmin);
 
   xmin=-1;
@@ -137,7 +137,7 @@ end;
 
 plot(xrange,FF,kv.opts{:});
 axis(axisvec);
-ylabel('Magnitude response (Db)');
+ylabel('Magnitude response (dB)');
 
 if isempty(fs)
   xlabel('Frequency (normalized) ');

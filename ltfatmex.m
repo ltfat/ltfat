@@ -149,7 +149,7 @@ if flags.do_test
   if do_mex
     
     fprintf('========= Testing %s interfaces ==========\n', extname);
-    fprintf('1.: Test if comp_pgauss.%s was compiled: ',extname);
+    fprintf('1.: Test if comp_pgauss.%s was compiled: ',ext);
     fname=[bp,extname,filesep,'comp_pgauss.',ext];
     if exist(fname,'file')
       disp('SUCCESS.');

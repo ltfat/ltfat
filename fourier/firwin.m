@@ -63,8 +63,11 @@ function [g,info]=firwin(name,M,varargin);
 %                  window. The default value of 1 means no
 %                  tapering. Accepted values lie in the range from 0 to 1.
 %
-%   Additionally, FIRWIN accepts flags to normalize the output. Please see the
-%   help of NORMALIZE. Default is to use 'peak' normalization.
+%   Additionally, FIRWIN accepts flags to normalize the output. Please see
+%   the help of NORMALIZE. Default is to use 'peak' normalization, which is
+%   useful for using the output for windowing in the time-domain. For
+%   filtering in the time-domain, a normalization of '1' or 'area' is
+%   preferable.
 %
 %   See also:  pgauss, pbspline, firkaiser, normalize
 %

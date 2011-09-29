@@ -17,7 +17,7 @@ function h=pfilt(f,g,a,dim)
 error(nargchk(2,4,nargin));
 
 if nargin<4
-  dim=1;
+  dim=[];
 end;
 
 if nargin<3

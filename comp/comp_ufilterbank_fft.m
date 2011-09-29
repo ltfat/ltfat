@@ -22,4 +22,7 @@ for w=1:W
   end;
 end;
 
+if isreal(f) && isreal(g)
+  c=real(c);
+end;
   
