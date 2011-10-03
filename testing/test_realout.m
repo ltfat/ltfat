@@ -41,6 +41,8 @@ function test_failed=test_realout
   test_failed=realhelper(test_failed,'dstiii',randn(Nfft,1));
   test_failed=realhelper(test_failed,'dstiv',randn(Nfft,1));
 
+  test_failed=realhelper(test_failed,'pfilt',randn(L,1),randn(L,1));
+
   c=dgtreal(randn(L,W),randn(L,1),a,M);
   test_failed=realhelper(test_failed,'idgtreal',c,randn(L,1),a,M);
   test_failed=realhelper(test_failed,'idgtreal',c,randn(M,1),a,M);
