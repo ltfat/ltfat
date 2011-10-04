@@ -97,3 +97,10 @@ if ~isempty(kv.fs)
 end;
 
 plot(xr,coef,kv.opts{:});
+
+ylabel(sprintf('Magnitude'));
+if ~isempty(kv.fs)
+  xlabel(sprintf('Frequency (Hz)',kv.frequency));
+else
+  xlabel(sprintf('Frequency (normalized)'));
+end;
