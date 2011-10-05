@@ -31,7 +31,14 @@ L=[];
 [g,info] = comp_fourierwindow(g,L,'PFILT');
 
 h=squeeze(comp_ufilterbank_fft(f,g,a));
-  
+
+% FIXME: This check should be removed when comp_ufilterbank_fft{.c/.cc}
+% have been fixed.
+if isreal(f) && isreal(g)
+  h=real(h);
+end;
+
 permutedsize(1)=size(h,1);
   
 h=assert_sigreshape_post(h,dim,permutedsize,order);
+

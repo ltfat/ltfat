@@ -1,4 +1,4 @@
-function outsig=rampsignal(insig,L,varargin)
+function outsig=rampsignal(insig,varargin)
 %RAMPUP  Rising ramp function
 %   Usage: outsig=rampup(insig,L);
 %
@@ -14,7 +14,9 @@ function outsig=rampsignal(insig,L,varargin)
 %   If the input is a matrix or an N-D array, the ramp will be applied
 %   along the first non-singleton dimension.
 %
-%   RAMPUP(insig,L,wintype) will use another window for ramping. This may be
+%   RAMPSIGNAL(insig) will use a ramp length of half the signal.
+%
+%   RAMPSIGNAL(insig,L,wintype) will use another window for ramping. This may be
 %   any of the window types from FIRWIN. Please see the help on FIRWIN for
 %   more information. The default is to use a piece of the Hann window.
 %
@@ -31,15 +33,22 @@ function outsig=rampsignal(insig,L,varargin)
 
 definput.import={'firwin'};
 definput.keyvals.dim=[];
-[flags,kv]=ltfatarghelper({},definput,varargin);
-  
-switch numel(L)
+definput.keyvals.L=[];
+[flags,kv]=ltfatarghelper({'L','dim'},definput,varargin);
+
+[insig,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(insig,[],kv.dim,'RAMPSIGNAL');
+% Note: Meaning of L has changed, it is now the length of the signal.
+
+switch numel(kv.L)
+ case 0
+  L1=L/2;
+  L2=L/2;
  case 1
-  L1=L;
-  L2=L;
+  L1=kv.L;
+  L2=kv.L;
  case 2
-  L1=L(1);
-  L2=L(2);
+  L1=kv.L(1);
+  L2=kv.L(2);
  otherwise
   error('%s: The length must a scalar or vector.',upper(mfilename));
 end;
@@ -48,17 +57,13 @@ if rem(L1,1)~=0 || rem(L2,1)~=0
   error('The length of the ramp must be an integer.');
 end;
 
-r1=rampup(L1,flags.wintype);
-r2=rampdown(L2,flags.wintype);
-
-L=[];
-[insig,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(insig,L,kv.dim,'RAMPSIGNAL');
-% Note: Meaning of L has changed, it is now the length of the signal.
-
 if L<L1+L2
   error(['%s: The length of the input signal must be greater than the length of the ramps ' ...
          'combined.'],upper(mfilename));
 end;
+
+r1=rampup(L1,flags.wintype);
+r2=rampdown(L2,flags.wintype);
 
 ramp=[r1;ones(L-L1-L2,1);r2];
 

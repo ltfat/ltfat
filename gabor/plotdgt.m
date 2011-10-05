@@ -26,7 +26,7 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'tfplot'};
+definput.import={'ltfattranslate','tfplot'};
 
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 

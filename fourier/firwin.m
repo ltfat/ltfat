@@ -20,29 +20,48 @@ function [g,info]=firwin(name,M,varargin);
 %   will generate a tight Gabor frame / orthonormal Wilson/WMDCT basis if
 %   the number of channels is less than M.
 %
+%   In the following PSL means "Peak Sidelobe level", and the main lobe
+%   width is measured in normalized frequencies.
+%
 %   The windows available are:
 %
-%-      hann       - von Hann window. Forms a PU.
+%-      hann       - von Hann window. Forms a PU. The Hann window has a
+%                    mainlobe with of 8/M, a PSL of -31.5 dB and decay rate
+%                    of 18 dB/Octave.
 %
 %-      sine       - Sine window. This is the square root of the Hanning
-%                    window. Aliases: 'cosine', 'sqrthann'
+%                    window. The sine window has a mainlobe width of 8/M,
+%                    a  PSL of -22.3 dB and decay rate of 12 dB/Octave.
+%                    Aliases: 'cosine', 'sqrthann'
 %
-%-      square     - (Almost) rectangular window. Forms a PU. Alias: 'rect'
+%-      rect       - (Almost) rectangular window. The rectangular window has a
+%                    mainlobe width of 4/M, a  PSL of -13.3 dB and decay
+%                    rate of 6 dB/Octave. Forms a PU. Alias: 'square'
 %
-%-      sqrtsquare - Square root of the square window.
+%-      sqrtrect   - Square root of the rectangular window.
 %
-%-      tria -       (Almost) triangular window. Forms a PU. Alias: 'bartlett'
+%-      tria       - (Almost) triangular window. Forms a PU. Alias: 'bartlett'
 %
 %-      sqrttria   - Square root of the triangular window.
 %
 %-      hamming    - Hamming window. Forms a PU that sums to 1.08 instead
-%                    of 1.0 as usual. This window should not be used for
+%                    of 1.0 as usual. The Hamming window has a
+%                    mainlobe width of 8/M, a  PSL of -42.7 dB and decay
+%                    rate of 6 dB/Octave. This window should not be used for
 %                    a Wilson basis, as a reconstruction window cannot be
 %                    found by WILDUAL.
 %
-%-      blackman   - Blackman window
+%-      blackman   - Blackman window. The Hamming window has a
+%                    mainlobe width of 12/M, a PSL of -58.1 dB and decay
+%                    rate of 18 dB/Octave.
 %
-%-      nuttall    - Nuttall window
+%-      blackman2  - Alternate Blackman window. This window has a
+%                    mainlobe width of 12/M, a PSL of -68.24 dB and decay
+%                    rate of 6 dB/Octave.
+%
+%-      nuttall    - Nuttall window. The Nuttall window has a
+%                    mainlobe width of 16/M, a PSL of -93.32 dB and decay
+%                    rate of 18 dB/Octave.
 %
 %-      itersine -   Iterated sine window. Generates an orthonormal
 %                    Wilson/WMDCT basis. This window is described in 
@@ -77,8 +96,13 @@ function [g,info]=firwin(name,M,varargin);
 %   REFERENCE: NA
   
 if nargin<2
-  error('Too few input parameters.');
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
+
+if ~isstr(name)
+  error('%s: First input argument must the name of a window.',upper(mfilename));
+end;
+  
 
 % Always set to this
 info.isfir=1;
@@ -203,6 +227,9 @@ switch name
   
  case {'blackman'}
   g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
+
+ case {'blackman2'}
+  g=7938/18608-9240/18608*cos(2*pi*(x-.5))+1430/18608*cos(4*pi*(x-.5));
 
  case {'nuttall'}
   g = 0.355768 - 0.487396*cos(2*pi*(x-.5)) + 0.144232*cos(4*pi*(x-.5)) -0.012604*cos(6*pi*(x-.5));

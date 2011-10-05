@@ -99,7 +99,7 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-definput.import={'normalize','tfplot'};
+definput.import={'ltfattranslate','normalize','tfplot'};
 % Override the setting from tfplot, because SGRAM does not support the
 % 'dbsq' setting (it does not make sense).
 definput.flags.log={'db','lin'};

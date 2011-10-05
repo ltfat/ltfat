@@ -47,7 +47,7 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'tfplot'};
+definput.import={'ltfattranslate','tfplot'};
 definput.keyvals.fc=[];
 definput.keyvals.ntickpos=10;
 definput.keyvals.tick=[];

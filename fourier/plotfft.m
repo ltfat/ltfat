@@ -19,7 +19,7 @@ if ~isvector(coef)>1
   error('Input is multidimensional.');
 end;
 
-definput.import={'normalize'};
+definput.import={'ltfattranslate','normalize'};
 definput.importdefaults={'null'};
 
 definput.flags.log={'db','dbsq','lin','linsq','linabs'};
@@ -27,12 +27,6 @@ definput.flags.posfreq={'nf','posfreq'};
 
 definput.keyvals.fs=[];
 definput.keyvals.dynrange=[];
-
-definput.keyvals.frequency='Frequency';
-definput.keyvals.time='Time';
-definput.keyvals.samples='samples';
-definput.keyvals.normalized='normalized';
-
 
 definput.keyvals.opts={};
 
@@ -97,10 +91,11 @@ if ~isempty(kv.fs)
 end;
 
 plot(xr,coef,kv.opts{:});
+xlim([xr(1) xr(end)]);
 
-ylabel(sprintf('Magnitude'));
+ylabel(sprintf('%s (dB)',kv.magnitude));
 if ~isempty(kv.fs)
-  xlabel(sprintf('Frequency (Hz)',kv.frequency));
+  xlabel(sprintf('%s (Hz)',kv.frequency));
 else
-  xlabel(sprintf('Frequency (normalized)'));
+  xlabel(sprintf('%s (%s)',kv.frequency,kv.normalized));
 end;

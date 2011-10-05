@@ -10,7 +10,3 @@ function definput=arg_tfplot(definput)
   definput.keyvals.clim=[0,1];
   definput.keyvals.dynrange=[];
   
-  definput.keyvals.frequency='Frequency';
-  definput.keyvals.time='Time';
-  definput.keyvals.samples='samples';
-  definput.keyvals.normalized='normalized';

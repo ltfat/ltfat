@@ -114,17 +114,17 @@ if isnumeric(g)
   end;
 end;
 
+if rem(length(g),M)~=0
+  % Zero-extend the window to a multiple of M
+  g=fir2long(g,ceil(length(g)/M)*M);
+end;
+
 % Information to be determined post creation.
 info.wasreal = isreal(g);
 info.gl      = length(g);
 
 if (~isempty(L) && (info.gl<L))
   info.isfir=1;
-end;
-
-if rem(info.gl,M)~=0
-  error('%s: Length of window must be dividable by M = %i.',...
-        callfun,M);
 end;
 
 function complain_L(L,callfun)
