@@ -6,7 +6,10 @@ function [g,info]=firwin(name,M,varargin);
 %   FIRWIN(name,M) will return a FIR window of length M of type name.
 %
 %   All windows are symmetric, they are zero delay and zero phase
-%   filters. They can be used for Wilson bases, except when noted otherwise.
+%   filters. They can be used for the Wilson and WMDCT transform, except when noted otherwise.
+%
+%   In the following PSL means "Peak Sidelobe level", and the main lobe
+%   width is measured in normalized frequencies.
 %
 %   If a window g forms a "partition of unity" (PU) it means specifically
 %   that
@@ -19,9 +22,6 @@ function [g,info]=firwin(name,M,varargin);
 %   If a window is the square root of a window that forms a PU, the window
 %   will generate a tight Gabor frame / orthonormal Wilson/WMDCT basis if
 %   the number of channels is less than M.
-%
-%   In the following PSL means "Peak Sidelobe level", and the main lobe
-%   width is measured in normalized frequencies.
 %
 %   The windows available are:
 %
@@ -99,7 +99,7 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isstr(name)
+if ~ischar(name)
   error('%s: First input argument must the name of a window.',upper(mfilename));
 end;
   
