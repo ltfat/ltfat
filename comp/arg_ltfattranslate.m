@@ -1,4 +1,4 @@
-function definput=arg_tfplot(definput)
+function definput=arg_ltfattranslate(definput)
 
   definput.keyvals.frequency='Frequency';
   definput.keyvals.time='Time';
