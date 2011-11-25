@@ -7,7 +7,7 @@ function s=cocktailparty()
 %   effect refers to the ability to focus on a single talker among a mixture
 %   of conversations in background noises'.
 %
-%   The signal is 363200 samples long and recorded at 44100 khz in an
+%   The signal is 363200 samples long and recorded at 44.1 khz in an
 %   anechoic environment.
 
 %   AUTHOR : James harte and Peter Soendergaard

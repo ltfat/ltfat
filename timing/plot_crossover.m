@@ -65,14 +65,19 @@ plot(x,flop_fb,l1,...
      x,flop_fac,l2,...
      x,flop_fb_real,l3,...
      x,flop_fac_real,l4,'LineWidth',lw);
+set(gca,'Fontsize',fz);
 
-legend('Portnoff','Fac','Portnoff, real','Fac, real',...
+h=legend('Portnoff','Fac','Portnoff, real','Fac, real',...
        'Location','NorthWest');
 
+% Grow the box a little, otherwise the export to .eps is messed up.
+q=get(h,'Position');
+set(h,'Position',[q(1)*0.90 q(2)*.95 q(3)*1.6 q(4)]);
+
 %xlabel('Overlapping factor');
-xlabel('Window length / samples');
-ylabel('Flop count / flop');
-title('Flop count comparison');
+xlabel('Window length / samples','Fontsize',fz);
+ylabel('Flop count / flop','Fontsize',fz);
+title('Flop count comparison','Fontsize',fz);
 
 print -deps plot_crossover_1.eps
 
@@ -83,12 +88,18 @@ plot(x,t,l1,...
      x,plotref,l2,...
      x,t_real,l3,...
      x,plotref_real,l4,'LineWidth',lw);
+set(gca,'Fontsize',fz);
 
-legend('Portnoff','Fac','Portnoff, real','Fac, real',...
+h=legend('Portnoff','Fac','Portnoff, real','Fac, real',...
        'Location','NorthWest');
+
+% Grow the box a little, otherwise the export to .eps is messed up.
+q=get(h,'Position');
+set(h,'Position',[q(1)*0.90 q(2)*.95 q(3)*1.6 q(4)]);
+
 %xlabel('Overlapping factor');
-xlabel('Window length / samples');
-ylabel('Execution time / seconds');
-title('Execution time comparison');
+xlabel('Window length / samples','Fontsize',fz);
+ylabel('Execution time / seconds','Fontsize',fz);
+title('Execution time comparison','Fontsize',fz);
 
 print -deps plot_crossover_2.eps

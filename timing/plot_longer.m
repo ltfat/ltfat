@@ -1,4 +1,5 @@
 lw=2;
+fz=20;
 
 data_fb_real =load('longer_fb_real.log');
 data_fac_real=load('longer_fac_real.log');
@@ -34,13 +35,16 @@ L=data_fac_real(:,3);
 plot(Ls,t_fb_real,l1,...  
      Ls,t_fac_real,l2,...
      Ls,t_ola_real,l3,'LineWidth',lw);
+set(gca,'Fontsize',fz);
 
-legend('Portnoff, real','Fac, real','OLA, real',...
+h=legend('Portnoff, real','Fac, real','OLA, real',...
        'Location','NorthWest');
+% Grow the box a little, otherwise the export to .eps is messed up.
+q=get(h,'Position');
+set(h,'Position',[q(1)*0.90 q(2)*.95 q(3)*1.6 q(4)]);
 
-xlabel('Signal length / samples');
-ylabel('Running time / seconds');
-set(gca,'fontsize',16);
+xlabel('Signal length / samples','Fontsize',fz);
+ylabel('Running time / seconds','Fontsize',fz);
 
 print -deps plot_longer_1.eps
 
