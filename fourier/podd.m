@@ -6,8 +6,11 @@ function f=podd(f,dim)
 %   PODD(f) returns the odd part of the periodic sequence f.
 %
 %   PODD(f,dim) does the same along dimension dim.
-%M
+%
 %   See also:  peven, dft, involute, pconv
-  
-f=(f-involute(f))/2;
-
+ 
+if nargin==1 
+  f=(f-involute(f))/2;
+else
+  f=(f-involute(f),dim)/2;
+end;

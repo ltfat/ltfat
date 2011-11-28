@@ -21,7 +21,7 @@ end;
 x=(2*pi*(0:L-1)/L).';
   
 n_odd = n-(1-mod(n,2));
-n_odd
+
 f = sin(n_odd.*x./2)./(n_odd.*sin(x./2));
 
 f(1)  = 1;
