@@ -1,10 +1,12 @@
-function s=bat()
+function [s,fs]=bat()
 %BAT  Load the 'bat' test signal.
 %   Usage:  s=bat;
 %
 %   BAT loads the 'bat' signal. It is a 400 samples long recording
 %   of a bat chirp sampled with a sampling period of 7 microseconds.
-%   This gives a sampling rate of 143 khz.
+%   This gives a sampling rate of 143 kHz.
+%
+%   [sig,fs]=BAT additionally returns the sampling frequency fs.
 %
 %   The signal can be obtained from
 %   http://dsp.rice.edu/software/bat-echolocation-chirp
@@ -27,3 +29,4 @@ end;
 f=mfilename('fullpath');
 
 s=load('-ascii',[f,'.asc']);
+fs=143000;

@@ -4,7 +4,8 @@ function s=ltfattext();
 %
 %  LTFATTEXT loads a 401x600 black and white image of the word 'LTFAT'.
 %
-%  The image is assumed to be used as a spectrogram with 800 channels.
+%  The image is assumed to be used as a spectrogram with 800 channels
+%  as produced by DGTREAL.
 %
 %  The returned matrix s consists of the integers between 0 and 1,
 %  which have been converted to double precision.
@@ -13,7 +14,7 @@ function s=ltfattext();
 %
 %C   imagesc(ltfattext); colormap(gray); axis('xy');
 %
-%  See also: ltfatlogo
+%  See also: ltfatlogo, dgtreal
 %
 %  Demos: demo_isgram
 
