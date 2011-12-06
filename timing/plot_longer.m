@@ -37,11 +37,11 @@ plot(Ls,t_fb_real,l1,...
      Ls,t_ola_real,l3,'LineWidth',lw);
 set(gca,'Fontsize',fz);
 
-h=legend('Portnoff, real','Fac, real','OLA, real',...
+h=legend('Portnoff, real','Fac, real','Fac-OLA, real',...
        'Location','NorthWest');
 % Grow the box a little, otherwise the export to .eps is messed up.
 q=get(h,'Position');
-set(h,'Position',[q(1)*0.90 q(2)*.95 q(3)*1.6 q(4)]);
+set(h,'Position',[q(1)*0.90 q(2)*.95 q(3)*1.8 q(4)]);
 
 xlabel('Signal length / samples','Fontsize',fz);
 ylabel('Running time / seconds','Fontsize',fz);

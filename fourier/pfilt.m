@@ -1,4 +1,4 @@
-function h=pfilt(f,g,a,dim)
+function h=pfilt(f,g,varargin)
 %PFILT  Apply filter with periodic boundary conditions
 %   Usage:  h=pfilt(f,g);
 %           h=pfilt(f,g,a,dim);
@@ -12,17 +12,16 @@ function h=pfilt(f,g,a,dim)
 %   PFILT(f,g,a,dim) filters along dimension dim.
 %
 %   See also: pconv
+
   
 % Assert correct input.
-error(nargchk(2,4,nargin));
-
-if nargin<4
-  dim=[];
+if nargin<2
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if nargin<3
-  a=1;
-end;
+definput.keyvals.a=1;
+definput.keyvals.dim=[];
+[flags,kv,a,dim]=ltfatarghelper({'a','dim'},definput,varargin);
 
 L=[];
 
