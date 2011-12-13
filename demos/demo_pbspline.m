@@ -44,7 +44,7 @@ norm(imag(dft(g)))
 
 disp('');
 disp('Window is whole point even. Should be 1.');
-iseven(g)
+isevenfunction(g)
 
 % We can cut g to length ntap without loosing any information:
 % Cut g

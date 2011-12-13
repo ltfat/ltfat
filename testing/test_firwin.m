@@ -24,7 +24,7 @@ for L=[18,19,20,21]
       
       [g,info]=firwin(winname,L,centtype);
       
-      res = 1-iseven(fir2long(g,2*L),centtype);
+      res = 1-isevenfunction(fir2long(g,2*L),centtype);
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
       
       s=sprintf(['SYMM %10s %s L: %i %0.5g %s'],winname,centtype,L,res,fail);

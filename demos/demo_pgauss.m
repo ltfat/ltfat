@@ -42,7 +42,7 @@ g=pgauss(L,a/b);
 % real and whole point even
 disp('');
 disp('The function is WP even. The following should be 1.');
-iseven(g)
+isevenfunction(g)
 
 disp('Therefore, its DFT is real.');
 disp('The norm of the imaginary part should be close to zero.');

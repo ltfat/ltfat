@@ -34,7 +34,7 @@ function [gamma]=wildual(g,M,L)
 %   All Gabor windows in the toolbox satisfies these restrictions unless
 %   clearly stated otherwise.
 %
-%   See also:  dwilt, wilwin, wmdct, wilorth, iseven
+%   See also:  dwilt, wilwin, wmdct, wilorth, isevenfunction
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_DWILT

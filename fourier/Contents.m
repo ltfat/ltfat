@@ -19,7 +19,7 @@
 %    PODD           -  Odd part of periodic function.
 %    PCONV          -  Periodic convolution.
 %    PFILT          -  Apply filter with periodic boundary conditions.
-%    ISEVEN         -  Test if function is even.
+%    ISEVENFUNCTION -  Test if function is even.
 %    MIDDLEPAD      -  Cut or extend even function.
 %
 %  Functions

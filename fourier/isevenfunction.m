@@ -1,12 +1,13 @@
-function t=iseven(f,varargin);
-%ISEVEN  True if function is even
-%   Usage:  t=iseven(f);
-%           t=iseven(f,tol);
+function t=isevenfunction(f,varargin);
+%ISEVENFUNCTION  True if function is even
+%   Usage:  t=isevenfunction(f);
+%           t=isevenfunction(f,tol);
 %
-%   ISEVEN(f) returns 1 if f is whole point even. Otherwise it returns 0.
+%   ISEVENFUNCTION(f) returns 1 if f is whole point even. Otherwise it
+%   returns 0.
 %
-%   ISEVEN(f,tol) does the same, using the tolerance tol to measure how
-%   large the error between the two parts of the vector can be. Default
+%   ISEVENFUNCTION(f,tol) does the same, using the tolerance tol to measure
+%   how large the error between the two parts of the vector can be. Default
 %   is 1e-10
 %
 %   Adding the flag 'hp' as the last argument do the same for half point

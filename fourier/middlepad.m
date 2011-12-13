@@ -20,7 +20,7 @@ function f=middlepad(f,L,varargin)
 %   even functions.  Adding 'hp' will do the same for half point even
 %   functions.
 %
-%   See also:  iseven, fir2long, fftresample
+%   See also:  isevenfunction, fir2long, fftresample
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: OK

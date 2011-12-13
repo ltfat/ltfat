@@ -40,7 +40,7 @@ function [gt]=wilorth(p1,p2,p3)
 %   All Gabor windows in the toolbox satisfies these restrictions unless
 %   clearly stated otherwise.
 %
-%   See also:  dwilt, wmdct, wildual, iseven
+%   See also:  dwilt, wmdct, wildual, isevenfunction
 
 %   AUTHOR: Peter Soendergaard
 %   TESTING: TEST_DWILT TEST_WMDCT
