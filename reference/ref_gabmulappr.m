@@ -42,7 +42,7 @@ function sym=ref_gabmulappr(T,p2,p3,p4,p5);
 %   symbol is the analysis with the dual sequence (if the P have formed a 
 %   frame). Because the 
 %
-%   References:
+%   References :
 %   * P. Balazs, Basic Definition and Properties of Bessel Multipliers, 
 %     Journal of Mathematical Analysis and Applications 325(1):571--585, 
 %     January 2007.
