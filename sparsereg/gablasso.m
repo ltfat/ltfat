@@ -60,7 +60,7 @@ function [tc,relres,iter,xrec] = gablasso(x,g,a,M,lambda,varargin)
 %  
 %   See also: gabgrouplasso, gabframebounds
 %
-%R  dademo04
+%   References: dademo04
 
 if nargin<5
   error('%s: Too few input parameters.',upper(mfilename));

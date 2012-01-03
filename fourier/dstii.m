@@ -36,7 +36,7 @@ function c=dstii(f,L,dim)
 %
 %   See also:  dctii, dstiii, dstiv
 %
-%R  rayi90 wi94
+%   References: rayi90 wi94
 
 %   AUTHOR: Peter Soendergaard
 %   TESTING: TEST_PUREFREQ

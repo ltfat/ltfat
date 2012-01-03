@@ -18,7 +18,7 @@ function F=dsft(F);
 %
 %   The DSFT is its own inverse.
 %
-%R  fekolu06 
+%   References: fekolu06 
 
 error(nargchk(1,1,nargin));
 

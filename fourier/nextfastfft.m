@@ -20,7 +20,7 @@ function [nfft,tableout]=nextfastfft(n)
 %
 %   Demos: demo_nextfastfft
 %
-%R  frjo05 cooley1965algorithm ltfatnote017
+%   References: frjo05 cooley1965algorithm ltfatnote017
   
 %   AUTHOR: Peter L. Soendergaard and Johan Sebastian Rosenkilde Nielsen
   

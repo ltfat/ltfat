@@ -48,7 +48,7 @@ function b=gammatonefir(fc,fs,varargin);
 %
 %   Demos: demo_auditoryfilterbank
 %  
-%R  aertsen1980strI glasberg1990daf
+%   References: aertsen1980strI glasberg1990daf
   
 %   AUTHOR : Peter L. Soendergaard
 

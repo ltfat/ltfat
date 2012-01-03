@@ -70,7 +70,7 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %
 %   Demos:  demo_nsdgtreal
 %
-%R  ltfatnote010
+%   References: ltfatnote010
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGTREAL

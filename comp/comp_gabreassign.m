@@ -9,7 +9,7 @@ function sr=comp_gabreassign(s,tgrad,fgrad,a);
 %
 %   See also: gabreassign
 %
-%R  aufl95
+%   References: aufl95
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK

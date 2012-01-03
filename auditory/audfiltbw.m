@@ -12,7 +12,7 @@ function bw = audfiltbw(fc)
 %
 %   See also: freqtoerb, erbspace
 %
-%R  glasberg1990daf
+%   References: glasberg1990daf
   
 %   AUTHOR : Peter L. Soendergaard
   

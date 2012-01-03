@@ -25,7 +25,7 @@ function gd=nsgabdual(g,a,M,varargin)
 %
 %   See also:  nsgabtight, nsdgt, insdgt
 %
-%R  ltfatnote010
+%   References: ltfatnote010
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGT

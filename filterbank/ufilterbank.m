@@ -16,7 +16,7 @@ function c=ufilterbank(f,g,a);
 %
 %   See also: ifilterbank, filterbankdual
 %
-%R  bohlfe02
+%   References: bohlfe02
   
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

@@ -2,7 +2,7 @@ function gf=comp_wfac(g,a,M)
 %COMP_WFAC  Compute window factorization
 %  Usage: gf=comp_wfac(g,a,M);
 %
-%R  so07-2 st98-8
+%   References: so07-2 st98-8
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK

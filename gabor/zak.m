@@ -22,7 +22,7 @@ function c=zak(f,a);
 %
 %   See also:  izak
 %
-%R  ja94-4 bohl97-1
+%   References: ja94-4 bohl97-1
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_ZAK

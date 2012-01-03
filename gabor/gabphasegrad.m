@@ -64,7 +64,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %   See also: resgram, gabreassign, dgt
 %
-%R  aufl95 cmdaaufl97 fl65
+%   References: aufl95 cmdaaufl97 fl65
 
   
 % AUTHOR: Peter L. Soendergaard, 2008.

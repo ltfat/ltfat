@@ -9,7 +9,7 @@ function [g]=comp_iwfac(gf,L,a,M)
 %   Output parameters:
 %         g     : Window function.
 %
-%R  so07-2 st98-8
+%   References: so07-2 st98-8
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK

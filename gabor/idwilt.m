@@ -25,7 +25,7 @@ function [f,g]=idwilt(c,g,Ls)
 %
 %   See also:  dwilt, wilwin, dgt, wilorth
 %
-%R  bofegrhl96-1 liva95
+%   References: bofegrhl96-1 liva95
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_DWILT

@@ -33,7 +33,7 @@
 %     The figure shows a part of the 'linus' signal. The fundamental
 %     frequency of the speaker can be nicely seen.
 %
-%R  carmonmultiridge1 Carmona98practical gross1
+%   References: carmonmultiridge1 Carmona98practical gross1
 
 disp('Type "help demo_phaseplot" to see a description of how this demo works.');
 

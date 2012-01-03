@@ -36,7 +36,7 @@ function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
 %
 %   Demos: demo_gabmulappr
 %
-%R  doetor09 ba07 ba06 fehakr04
+%   References: doetor09 ba07 ba06 fehakr04
 
 % AUTHOR    : Monika Döerfler
 % REFERENCE : REF_GABMULAPPR

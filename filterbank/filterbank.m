@@ -17,7 +17,7 @@ function c=filterbank(f,g,a);
 %   thus the value of the coefficient for time index n, frequency index m
 %   and signal channel l.
 %
-%R  bohlfe02
+%   References: bohlfe02
   
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

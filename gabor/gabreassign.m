@@ -18,7 +18,7 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %  
 %   See also: resgram, gabphasegrad
 %
-%R  aufl95
+%   References: aufl95
 
 % AUTHOR: Peter L. Soendergaard, 2008.
   

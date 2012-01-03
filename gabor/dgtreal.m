@@ -66,7 +66,7 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %
 %   See also:  dgt, idgtreal, gabwin, dwilt, gabtight
 %
-%R  fest98 gr01
+%   References: fest98 gr01
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_DGT

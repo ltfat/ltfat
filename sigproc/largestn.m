@@ -16,7 +16,7 @@ function [xo]=largestn(xi,N,mtype)
 %
 %   See also:  largestr
 %
-%R  ma98
+%   References: ma98
 
 %   AUTHOR : Peter Soendergaard and Bruno Torresani.  
 %   TESTING: OK

@@ -67,7 +67,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %   Demos: demo_isgram
 %
-%R  griffin1984sem  decorsiere2011 liu1989limited
+%   References: griffin1984sem  decorsiere2011 liu1989limited
   
 %   AUTHOR : Remi Decorsiere and Peter Soendergaard.
 %   REFERENCE: OK

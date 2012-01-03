@@ -63,7 +63,7 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %
 %   Demos:  demo_nsdgt
 %
-%R  ltfatnote010
+%   References: ltfatnote010
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGT

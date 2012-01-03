@@ -18,7 +18,7 @@ function gamma=gabmixdual(g1,g2,a,M,L)
 %
 %   Demos: demo_gabmixdual   
 %
-%R  elsuwe05
+%   References: elsuwe05
 
 %   AUTHOR : Peter Soendergaard.
 

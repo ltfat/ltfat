@@ -30,7 +30,7 @@
 %
 %   See also: freqtoaud, audfiltbw, gammatonefir, ufilterbank, filterbankrealdual
 %
-%R  glasberg1990daf
+%   References: glasberg1990daf
 
 
 % Use the 'cocktailparty' spoken sentense.

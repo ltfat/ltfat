@@ -72,7 +72,7 @@ function [g,tfr]=pgauss(L,varargin)
 %
 %   Demos:  demo_pgauss
 %
-%R  mazh93
+%   References: mazh93
 
 % AUTHOR : Peter Soendergaard.
 

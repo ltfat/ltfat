@@ -16,7 +16,7 @@ function [s,fs]=greasy()
 %   The signal was obtained from Wavelab:
 %     http://www-stat.stanford.edu/~wavelab/
 %
-%R  mazh93
+%   References: mazh93
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_SIGNALS

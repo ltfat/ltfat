@@ -53,7 +53,7 @@ function []=phaseplot(f,varargin)
 %
 %   Demos: demo_phaseplot
 %
-%R  Carmona98practical
+%   References: Carmona98practical
 
 %   AUTHOR: Peter Soendergaard
 %   REFERENCE: NA

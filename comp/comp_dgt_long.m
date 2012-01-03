@@ -13,7 +13,7 @@ function cout=comp_dgt_long(f,g,a,M)
 %   Do not call this function directly, use DGT instead.
 %   This function does not check input parameters!
 %
-%R  so07-2 st98-8
+%   References: so07-2 st98-8
 
 %   AUTHOR : Peter Soendergaard.
 

@@ -24,7 +24,7 @@ function g=firkaiser(L,beta,varargin)
 %
 %   See also: firwin, normalize
 %
-%R  opsc89
+%   References: opsc89
 
 if nargin<2
   error('Too few input arguments.');

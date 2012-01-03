@@ -14,7 +14,7 @@ function outsig = rangeexpand(insig,varargin);
 %
 %-     'mu',mu  - mu-law parameter. Default value is 255.
 %  
-%R  jano90
+%   References: jano90
 
 % AUTHOR: Bruno Torresani and Peter Soendergaard
 

@@ -31,7 +31,7 @@ function sym=ref_gabmulappr_1(T,p2,p3,p4,p5);
 %
 %   Demos: demo_gabmulappr
 %
-%R  ba07 ba06 fehakr04
+%   References: ba07 ba06 fehakr04
   
 %   AUTHOR: P. Balazs (XXL)
 

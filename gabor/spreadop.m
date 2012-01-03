@@ -25,7 +25,7 @@ function h=spreadop(f,coef)
 %
 %   See also:  tconv, spreadfun, spreadinv, spreadadj
 %
-%R  feko98
+%   References: feko98
 
 %   AUTHOR: Peter Soendergaard
 %   TESTING: TEST_SPREAD

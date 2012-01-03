@@ -90,7 +90,7 @@ function [g,info]=firwin(name,M,varargin);
 %
 %   See also:  pgauss, pbspline, firkaiser, normalize
 %
-%R  opsc89 harris1978 nuttall1981 wesfreid1993
+%   References: opsc89 harris1978 nuttall1981 wesfreid1993
  
 %   AUTHOR : Peter Soendergaard.
 %   REFERENCE: NA

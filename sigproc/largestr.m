@@ -25,7 +25,7 @@ function [xo,N]=largestr(xi,p,mtype)
 %
 %   See also:  largestn
 %
-%R  ma98
+%   References: ma98
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: OK

@@ -24,7 +24,7 @@ function f=insdgt(c,g,a,Ls)
 %
 %   Demos:  demo_nsdgt
 %
-%R  ltfatnote010
+%   References: ltfatnote010
 
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGT

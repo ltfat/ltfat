@@ -22,7 +22,7 @@ function cout = phaselock(cin,a)
 %
 %   See also: dgt, phaseunlock, symphase
 %
-%R  puc95
+%   References: puc95
 
 %   AUTHOR:    Peter Balazs, Peter Soendergaard.
 %   TESTING:   OK

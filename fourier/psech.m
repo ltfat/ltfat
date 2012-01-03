@@ -41,7 +41,7 @@ function [g,tfr]=psech(L,p2,p3,p4)
 %
 %   See also:  pgauss, pbspline, pherm
 %
-%R  jast02-1
+%   References: jast02-1
 
 error(nargchk(1,4,nargin));
 

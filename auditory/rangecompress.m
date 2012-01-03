@@ -15,7 +15,7 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %
 %-     'A',A    - A-law parameter. Default value is 87.7.
 %
-%R  jano90
+%   References: jano90
 
 % AUTHOR: Bruno Torresani and Peter L. Soendergaard
 

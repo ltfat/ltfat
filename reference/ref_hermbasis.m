@@ -12,7 +12,7 @@ function [V]=hermbasis(L)
 %
 %   See also:  dft, pherm
 %
-%R  ozzaku01
+%   References: ozzaku01
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_HERMBASIS

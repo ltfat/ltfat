@@ -21,7 +21,7 @@ function cout=comp_dgt_walnut(f,gf,a,M)
 %   This function does not handle the multidim case. Take care before
 %   calling this.
 %
-%R  so07-2 st98-8
+%   References: so07-2 st98-8
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK

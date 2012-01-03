@@ -59,7 +59,7 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %
 %   Demos: demo_pbspline
 %
-%R  so07-1  
+%   References: so07-1  
  
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_PBSPLINE

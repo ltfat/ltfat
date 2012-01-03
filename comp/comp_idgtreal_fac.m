@@ -19,7 +19,7 @@ function f=comp_idgtreal_fac(coef,gf,L,a,M)
 %   This function does not handle multidimensional data, take care before
 %   you call it.
 %
-%R  so07-2 st98-8
+%   References: so07-2 st98-8
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: OK

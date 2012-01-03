@@ -21,7 +21,7 @@ function g=pchirp(L,n)
 %
 %   See also: dft, expwave
 %
-%R  fehakamane06
+%   References: fehakamane06
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: OK

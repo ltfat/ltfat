@@ -70,7 +70,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %
 %   Demos:  demo_dgt
 %
-%R  fest98 gr01
+%   References: fest98 gr01
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_DGT
