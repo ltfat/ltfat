@@ -26,3 +26,4 @@ for ii=0:Nb-1
   h(s_ii*Lb-b2+1:s_ii*Lb)+=block(Lb+b2+1:Lext);  % Small block -
 
 end;
+%OLDFORMAT

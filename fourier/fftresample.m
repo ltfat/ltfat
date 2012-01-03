@@ -37,3 +37,4 @@ f=assert_sigreshape_post(f,dim,permutedsize,order);
 if wasreal
   f=real(f);
 end;
+%OLDFORMAT

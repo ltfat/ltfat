@@ -16,3 +16,4 @@ c=reshape(c,L2,L1);
 c=c.';
 
 c=reshape(c,M1,L1/M1,M2,L2/M2);
+%OLDFORMAT

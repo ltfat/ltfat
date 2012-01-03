@@ -17,3 +17,4 @@ if strcmpi(fname,'all')
 else
   d=ltfatarghelper('get',fname);
 end;
+%OLDFORMAT

@@ -39,3 +39,5 @@ c=reshape(c,M,N,W);
 if phasetype==1
   c=phaselock(c,a);
 end;
+
+%OLDFORMAT

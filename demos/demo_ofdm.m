@@ -131,3 +131,5 @@ faulty=sum(abs(receivedbits-inputdata))
 disp(' ');
 disp('Error rate:');
 faulty/nbits
+
+%OLDFORMAT

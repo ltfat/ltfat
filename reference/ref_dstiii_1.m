@@ -29,3 +29,4 @@ else
   c=fflong(2:2:2*L,:);
 
 end
+%OLDFORMAT

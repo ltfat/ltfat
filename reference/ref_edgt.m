@@ -20,3 +20,5 @@ for n=0:N-1
 end;
 
 c=F'*f;
+
+%OLDFORMAT

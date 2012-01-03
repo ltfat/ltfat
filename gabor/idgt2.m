@@ -160,3 +160,5 @@ c=reshape(c,Ls(2),Ls(1),W);
 f=permute(c,[2,1,3]);
 
 
+
+%OLDFORMAT

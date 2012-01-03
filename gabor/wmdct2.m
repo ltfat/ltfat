@@ -178,3 +178,4 @@ c=reshape(c,M1,N1,M2,N2,W);
 if inputwasreal
   c=real(c);
 end;
+%OLDFORMAT

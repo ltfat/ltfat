@@ -3,3 +3,5 @@ function f=crand(p1,p2);
 %   Usage: f=crand(p1,p2);
 
 f=rand(p1,p2)-.5+i*(rand(p1,p2)-.5);
+
+%OLDFORMAT

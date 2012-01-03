@@ -33,3 +33,4 @@ function test_failed=test_pgauss
     fprintf(['PGAUSS 3 %0.5g %s\n'],res,fail);
 
     
+%OLDFORMAT

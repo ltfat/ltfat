@@ -88,3 +88,5 @@ if nargout==2
   N=numel(signifmap);
 end;
 
+
+%OLDFORMAT

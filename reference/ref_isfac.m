@@ -33,3 +33,5 @@ for l=0:q-1
 end;
 
 f=ref_ifac(ff,W,c,d,p,q,permutation);
+
+%OLDFORMAT

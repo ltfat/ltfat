@@ -195,3 +195,5 @@ c=permute(c,[2,1,3]);
 % Reshape to final layout.
 c=reshape(c,M1,N1,M2,N2,W);
 
+
+%OLDFORMAT

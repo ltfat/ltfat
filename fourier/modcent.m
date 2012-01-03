@@ -12,3 +12,5 @@ function x=modcent(x,r);
 x=mod(x,r);  
 idx=x>r/2;
 x(idx)=x(idx)-r;
+
+%OLDFORMAT

@@ -61,3 +61,5 @@ for ii=1:W
   c(:,:,ii)=dft(reshape(f(:,ii),a,N),[],2);
 end;
 
+
+%OLDFORMAT

@@ -73,3 +73,5 @@ if nargout==2
     N = sum(signif_map(:));
 end
     
+
+%OLDFORMAT

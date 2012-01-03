@@ -35,3 +35,5 @@ coef=reshape(coef,M,N,W);
 if (isreal(g) && fwasreal);
   coef=real(coef);
 end;
+
+%OLDFORMAT

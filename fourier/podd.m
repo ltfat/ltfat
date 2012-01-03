@@ -14,3 +14,5 @@ if nargin==1
 else
   f=(f-involute(f),dim)/2;
 end;
+
+%OLDFORMAT

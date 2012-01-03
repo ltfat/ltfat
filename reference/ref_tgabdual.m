@@ -9,3 +9,5 @@ end;
 info=ref_transforminfo(ttype,L,a,M);
 
 gd=info.winscale*gabdual(g,info.a,info.M);
+
+%OLDFORMAT

@@ -78,3 +78,5 @@ if nargout==2
     signif_map = (abs(xo)>0);
     N = sum(signif_map(:));
 end
+
+%OLDFORMAT

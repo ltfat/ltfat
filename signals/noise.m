@@ -79,3 +79,5 @@ if flags.do_pink
 end;
 
 outsig=normalize(outsig,flags.norm);
+
+%OLDFORMAT

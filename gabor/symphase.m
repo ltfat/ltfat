@@ -43,3 +43,5 @@ cout=zeros(size(cin));
 for w=1:size(cin,3)
   cout(:,:,w) = cin(:,:,w).*phase;
 end;
+
+%OLDFORMAT

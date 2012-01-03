@@ -23,3 +23,4 @@ tic;
 t2=toc;
 
 disp(sprintf('Time to execute dgtreal: %f',t2));
+%OLDFORMAT

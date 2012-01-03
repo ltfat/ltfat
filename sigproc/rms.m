@@ -66,3 +66,5 @@ else
 end;
   
 y=assert_sigreshape_post(y,kv.dim,permutedsize,order);
+
+%OLDFORMAT

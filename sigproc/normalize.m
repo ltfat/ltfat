@@ -83,3 +83,5 @@ end;
 
 
 f=assert_sigreshape_post(f,kv.dim,permutedsize,order);
+
+%OLDFORMAT

@@ -24,3 +24,5 @@ if mod(M,2)==0
   cout(M/2+1,:,:)=-i*cin(M,:,:);
 end;
 
+
+%OLDFORMAT

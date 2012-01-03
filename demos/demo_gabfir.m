@@ -213,3 +213,5 @@ title('Almost tight FIR window.');
 subplot(2,1,2);
 magresp(gt_fir,'fir','dynrange',100);
 title('Magnitude response.');
+
+%OLDFORMAT

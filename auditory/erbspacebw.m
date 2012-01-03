@@ -12,3 +12,5 @@ function [y,n] = erbspacebw(flow,fhigh,varargin)
 %   AUTHOR : Peter L. Soendergaard
   
 [y,n] = audspacebw(flow,fhigh,varargin{:},'erb');
+
+%OLDFORMAT

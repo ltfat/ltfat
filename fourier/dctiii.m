@@ -89,3 +89,5 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 %c=fft(R*f)/sqrt(L);
 
 %c=c(1:L,:);
+
+%OLDFORMAT

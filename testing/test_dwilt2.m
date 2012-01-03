@@ -82,3 +82,5 @@ s=sprintf('DWILT2 INV M1:%3i M2:%3i %0.5g %s',M1,M2,nres,failed);
 disp(s)
 
 
+
+%OLDFORMAT

@@ -89,3 +89,5 @@ else
 end;
 
 y = audtofreq(audpoints,flags.audscale);
+
+%OLDFORMAT

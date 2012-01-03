@@ -259,3 +259,5 @@ if keyvals.taper<1
 end;
 
 g=normalize(g,flags.norm);
+
+%OLDFORMAT

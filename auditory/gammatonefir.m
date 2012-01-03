@@ -130,3 +130,5 @@ for ii = 1:nchannels
   b{ii}=normalize(b{ii},flags.norm);  
   
 end;
+
+%OLDFORMAT

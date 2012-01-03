@@ -14,3 +14,5 @@ L=size(coef,1);
 T=tfmat('spread',coef);
 cadj=spreadfun(T');
 
+
+%OLDFORMAT

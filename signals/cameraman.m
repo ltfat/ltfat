@@ -28,3 +28,5 @@ f=mfilename('fullpath');
 
 s=double(imread([f,'.png']));
 
+
+%OLDFORMAT

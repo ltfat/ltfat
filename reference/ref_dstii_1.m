@@ -23,3 +23,4 @@ else
   % Scale last coefficients to obtain orthonormal transform.
   c(end,:)=1/sqrt(2)*c(end,:);
 end
+%OLDFORMAT

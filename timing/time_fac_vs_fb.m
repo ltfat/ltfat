@@ -45,3 +45,5 @@ for ii=1:length(Lr)
   c1=mex_dgt_fac_7(f,gf,a,M,1);
   
 end;
+
+%OLDFORMAT

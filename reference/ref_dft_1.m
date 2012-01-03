@@ -17,3 +17,5 @@ flong(1:2:end-1)=f;
 fflong=fft(flong)/sqrt(L);
 
 c=fflong(1:L,:);
+
+%OLDFORMAT

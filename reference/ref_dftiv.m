@@ -21,3 +21,5 @@ end;
 
 % Compute coefficients.
 c=F'*f;
+
+%OLDFORMAT

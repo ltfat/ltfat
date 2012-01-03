@@ -22,3 +22,5 @@ for ii=0:L-1
   cout(ii+1,:)=cin(ii+1,mod(ii-jj,L)+1);
 end;
 
+
+%OLDFORMAT

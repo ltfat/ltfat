@@ -173,3 +173,5 @@ cout=reshape(cout,M,N*W*R);
 function r=mymod(x,y)
   r=x-y*floor(x/y);
 
+
+%OLDFORMAT

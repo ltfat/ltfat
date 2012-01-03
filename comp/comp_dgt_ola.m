@@ -53,3 +53,4 @@ for ii=0:Nb-1
   coef(:,s_ii*Nblock-b2+1:s_ii*Nblock,:) =coef(:,s_ii*Nblock-b2+1:s_ii*Nblock,:)+ block(:,Nblock+b2+1:Nblock+2*b2,:);
 
 end;
+%OLDFORMAT

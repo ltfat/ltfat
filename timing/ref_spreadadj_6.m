@@ -19,3 +19,5 @@ ii=mod(L-row+1, L);
 jj=mod(L-col+1, L);
 cadj=sparse(ii+1,jj+1,conj(val).*temp(mod(ii.*jj,L)+1),L,L);        
 
+
+%OLDFORMAT

@@ -103,3 +103,4 @@ if (info.isfir)
     g=g/sqrt(2);
   end;  
 end;
+%OLDFORMAT

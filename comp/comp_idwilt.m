@@ -52,3 +52,4 @@ f=comp_idgt(coef2,g,a,2*M,L,0);
 if (isreal(coef) && isreal(g))
   f=real(f);
 end;
+%OLDFORMAT

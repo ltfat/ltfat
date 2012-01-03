@@ -120,3 +120,5 @@ sym = reshape(iGram*(lowsym(:)),M,N);
 % sym = involute(sym); % strange but true ?
  
 
+
+%OLDFORMAT

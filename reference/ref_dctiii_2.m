@@ -22,3 +22,5 @@ R
 R(1,1)=1;
 
 c=real(R'*fft([f;flipud(f)])/sqrt(L)/2);
+
+%OLDFORMAT

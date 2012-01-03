@@ -80,3 +80,5 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 %	     flipud(diag(-exp((1:L)*pi*i/(2*L))))];
 
 %c=i*(exp(-pi*i/(4*L))*R.'*fft(R*f)/sqrt(2*L));
+
+%OLDFORMAT

@@ -27,3 +27,5 @@ for ii=1:c*d
   ff(:,ii)=Gpinv(:);
 end;
 
+
+%OLDFORMAT

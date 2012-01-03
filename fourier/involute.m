@@ -51,3 +51,5 @@ f=reshape(conj([f(1,:); ...
 	  flipud(f(2:L,:))]),size(f));
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
+
+%OLDFORMAT

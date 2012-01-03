@@ -31,3 +31,5 @@ end;
 f=zeros(L,1);
 
 f(1:a:L)=1/sqrt(L/a);
+
+%OLDFORMAT

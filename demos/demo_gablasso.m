@@ -34,3 +34,5 @@ tmp = abs(dgt(x,g,a,M));
 subplot(2,2,2); imagesc(tmp(1:M2,:)); axis xy; title('Noisy')
 subplot(2,2,3); imagesc(abs(tcl(1:M2,:))); axis xy; title('LASSO')
 subplot(2,2,4); imagesc(abs(tcgl(1:M2,:))); axis xy; title('GLASSO')
+
+%OLDFORMAT

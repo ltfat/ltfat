@@ -92,3 +92,4 @@ function [nfft,tableout]=nextfastfft(n)
   end;
   
   tableout=table;
+%OLDFORMAT

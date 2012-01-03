@@ -29,3 +29,5 @@ for k=1:length(val)
   cadj(ii+1,jj+1)=conj(val(k))*temp(mod(ii*jj,L)+1);
 end
 
+
+%OLDFORMAT

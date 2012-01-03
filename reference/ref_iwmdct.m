@@ -4,3 +4,4 @@ function f=ref_iwmdct(c,g,M)
 %
 
   FIXME : DOES NOTHING
+%OLDFORMAT

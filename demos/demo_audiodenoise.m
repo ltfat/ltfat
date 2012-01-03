@@ -66,3 +66,5 @@ fprintf('      Input SNR: %f dB.\n',InputSNR);
 fprintf('      Output SNR (hard): %f dB.\n',OutputSNR_h);
 fprintf('      Output SNR (soft): %f dB.\n',OutputSNR_s);
 fprintf(' Signals are stored in variables sig, nsig, hrec, srec\n');
+
+%OLDFORMAT

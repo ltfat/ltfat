@@ -88,3 +88,5 @@ end;
 
 s=sprintf('DGT2 INV L1:%3i L2:%3i %0.5g %s',L1,L2,nres,failed);
 disp(s)
+
+%OLDFORMAT

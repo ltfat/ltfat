@@ -142,3 +142,5 @@ fprintf('Reconstruction error using IDGT:      %e\n',norm(f-r));
 fprintf('Reconstruction error using IDGTREAL:  %e\n',norm(f-r_real));
 
 
+
+%OLDFORMAT

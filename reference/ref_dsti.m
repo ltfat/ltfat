@@ -19,3 +19,5 @@ end;
 F=F*sqrt(2/(L+1));
 % Compute coefficients.
 c=F'*f;
+
+%OLDFORMAT

@@ -14,3 +14,4 @@ if (abs(res)>tolerance) || isnan(res)
   fail='FAILED';
   test_failed=test_failed+1;
 end;
+%OLDFORMAT

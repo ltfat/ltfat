@@ -50,3 +50,5 @@ else
 end;
 
 c=fft(w);
+
+%OLDFORMAT

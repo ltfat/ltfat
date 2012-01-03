@@ -17,3 +17,4 @@ for m=0:L-1
 end;
 
 C=C/sqrt(K*L);
+%OLDFORMAT

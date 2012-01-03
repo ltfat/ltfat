@@ -31,3 +31,5 @@ end;
 f=ifft(f,N,1)*sqrt(N);
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
+
+%OLDFORMAT

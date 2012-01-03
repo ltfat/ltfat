@@ -88,3 +88,5 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 %c2=-sqrt(L)*2*i*ifft(R*f);
 %
 %c=c2(1:L,:);
+
+%OLDFORMAT

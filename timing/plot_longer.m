@@ -48,3 +48,5 @@ ylabel('Running time / seconds','Fontsize',fz);
 
 print -deps plot_longer_1.eps
 
+
+%OLDFORMAT

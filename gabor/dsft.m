@@ -43,3 +43,4 @@ else
   end;
   F=Fo;
 end;
+%OLDFORMAT

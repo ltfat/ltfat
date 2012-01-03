@@ -31,3 +31,5 @@ else
   g=middlepad(g,Llong);
 end;
   
+
+%OLDFORMAT

@@ -82,3 +82,5 @@ end;
 yr=[-1+2/kv.yres,1];
 
 tfplot(coef,aplot,yr,'argimport',flags,kv);
+
+%OLDFORMAT

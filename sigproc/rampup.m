@@ -22,3 +22,4 @@ end;
 win=firwin(wintype,2*L,'inf');
 outsig=win(L+1:2*L);
   
+%OLDFORMAT

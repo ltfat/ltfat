@@ -49,3 +49,5 @@ if mod(L,4)==0
   V(:,L/2+1)=x_e;
 
 end;
+
+%OLDFORMAT

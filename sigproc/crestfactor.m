@@ -8,3 +8,4 @@ function c=crestfactor(insig)
 %   See also: rms, gaindb
 
 c=20*log10(norm(insig,Inf)/rms(insig));
+%OLDFORMAT

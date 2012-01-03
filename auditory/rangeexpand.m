@@ -40,3 +40,5 @@ if flags.do_alaw
   outsig = sign(insig).*(mask.*(absx*tmp/kv.A)+(1-mask).*exp(absx*tmp-1)/kv.A);
 end;
 
+
+%OLDFORMAT

@@ -10,3 +10,4 @@ function bp = ltfatbasepath;
 f=mfilename('fullpath');
 
 bp = f(1:end-13);
+%OLDFORMAT

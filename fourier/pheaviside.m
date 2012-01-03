@@ -37,3 +37,5 @@ if L>0
     h(L/2+1)=.5;
   end;
 end;
+
+%OLDFORMAT

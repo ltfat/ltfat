@@ -40,3 +40,5 @@ if flag>0
     error('%s: The lattice must not be undersampled',callfun);
   end;
 end;
+
+%OLDFORMAT

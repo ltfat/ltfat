@@ -64,3 +64,5 @@ assert_squarelat(a,M,1,'PROJKERN');
 
 c=dgt(idgt(c,gs,a),ga,a,M);
 
+
+%OLDFORMAT

@@ -88,3 +88,5 @@ else
 end;
 
 c=assert_sigreshape_post(c,dim,permutedsize,order);
+
+%OLDFORMAT

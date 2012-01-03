@@ -46,3 +46,5 @@ else
 end;
 
 f=ref_igdgt(reshape(coef2,2*M*N,W),g,a,2*M,0,0.5,0);
+
+%OLDFORMAT

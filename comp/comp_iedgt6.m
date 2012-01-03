@@ -17,3 +17,5 @@ cout(1,N+1:2*N,:)=cin(1,N:-1:1,:);
 % Copy the modulated coefficients.
 cout(2:M,N+1:2*N,:)=-cin(M:-1:2,N:-1:1,:);
 
+
+%OLDFORMAT

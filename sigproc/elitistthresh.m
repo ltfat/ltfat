@@ -65,3 +65,5 @@ for g=1:NbGroups,
     end
     xo(g,:) = thresh(xi(g,:),tau_g,flags.iofun,flags.outclass);
 end
+
+%OLDFORMAT

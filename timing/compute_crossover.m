@@ -41,3 +41,4 @@ s=sprintf('./time_dgtreal_fac %i %i %i %i %i > crossover_real.ref\n',a,M,L,W,nre
 
 disp(s);
 system(s);
+%OLDFORMAT

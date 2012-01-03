@@ -33,3 +33,5 @@ for n=0:N-1
 end;
 
 f=F*c;
+
+%OLDFORMAT

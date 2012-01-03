@@ -51,3 +51,5 @@ mesh(abs(zak(pherm(L,4),a)));
 
 subplot(1,2,2);
 mesh(abs(zak(pchirp(L,1),a)));
+
+%OLDFORMAT

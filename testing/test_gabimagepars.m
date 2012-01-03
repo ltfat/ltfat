@@ -17,3 +17,4 @@ end;
 figure(1);
 % res(:,3) is L
 plot(res(:,3)./((1+offset:Ntests+offset)'))
+%OLDFORMAT

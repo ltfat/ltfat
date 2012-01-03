@@ -85,3 +85,5 @@ rec_err = norm(f-f_r)/norm(f);
 
 fprintf(['Relative error of reconstruction (should be close to zero.):'...
     '   %e \n'],rec_err);
+
+%OLDFORMAT

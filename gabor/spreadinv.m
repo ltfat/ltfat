@@ -43,3 +43,5 @@ else
   out=T\f;
   
 end;
+
+%OLDFORMAT

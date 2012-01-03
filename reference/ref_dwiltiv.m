@@ -25,3 +25,5 @@ for n=0:floor(N/2)-1
 end;
 
 c=F.'*f;
+
+%OLDFORMAT

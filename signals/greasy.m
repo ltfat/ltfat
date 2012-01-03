@@ -30,3 +30,5 @@ f=mfilename('fullpath');
 
 s = wavread([f,'.wav']);
 fs = 16000;
+
+%OLDFORMAT

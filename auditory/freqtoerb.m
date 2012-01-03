@@ -12,3 +12,4 @@ function erb = freqtoerb(freq);
 %   AUTHOR: Peter L. Soendergaard
 
 erb = freqtoaud(freq,'erb');
+%OLDFORMAT

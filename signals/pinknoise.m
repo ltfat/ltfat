@@ -18,3 +18,5 @@ function outsig = pinknoise(varargin)
 %   See also: noise
 
 outsig = noise(varargin{:},'pink');
+
+%OLDFORMAT

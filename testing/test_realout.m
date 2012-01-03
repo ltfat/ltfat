@@ -65,3 +65,5 @@ function test_failed=realhelper(test_failed,funname,varargin)
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
 
   fprintf('REAL %s %i %s\n',funname,res,fail);
+
+%OLDFORMAT

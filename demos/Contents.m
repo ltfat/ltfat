@@ -33,3 +33,5 @@
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net
 %
+
+%OLDFORMAT

@@ -52,3 +52,5 @@ end;
 if flags.do_freq
   freq=aud;
 end;
+
+%OLDFORMAT

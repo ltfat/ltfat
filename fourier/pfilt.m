@@ -41,3 +41,5 @@ permutedsize(1)=size(h,1);
   
 h=assert_sigreshape_post(h,dim,permutedsize,order);
 
+
+%OLDFORMAT

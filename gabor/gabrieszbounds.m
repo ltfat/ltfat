@@ -54,3 +54,5 @@ else
   AF=AF*M/a;
   BF=BF*M/a;
 end;
+
+%OLDFORMAT

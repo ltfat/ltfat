@@ -53,3 +53,4 @@ coef=wil2rect(coef);
 yr=[0,1];
 
 tfplot(coef,M,yr,'argimport',flags,kv);
+%OLDFORMAT

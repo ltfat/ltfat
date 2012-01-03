@@ -30,3 +30,5 @@ for ii=1:W
   % of the Zak transform.
   f(:,ii)=reshape(idft(c(:,:,ii),[],2),L,1);
 end;
+
+%OLDFORMAT

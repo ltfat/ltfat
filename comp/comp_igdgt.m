@@ -48,3 +48,5 @@ if (c_f~=0)
   halfmod=exp(2*pi*i*c_f*(0:L-1).'/M);
   f=f.*repmat(halfmod,1,W);
 end;
+
+%OLDFORMAT

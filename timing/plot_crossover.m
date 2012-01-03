@@ -103,3 +103,4 @@ ylabel('Execution time / seconds','Fontsize',fz);
 title('Execution time comparison','Fontsize',fz);
 
 print -deps plot_crossover_2.eps
+%OLDFORMAT

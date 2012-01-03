@@ -78,3 +78,5 @@ else
   sr=comp_gabreassign(s,tgrad,fgrad,a);
   
 end;
+
+%OLDFORMAT

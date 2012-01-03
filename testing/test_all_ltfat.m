@@ -36,3 +36,5 @@ else
     disp(['   ',list_of_failed_tests{ii}]);
   end;
 end;
+
+%OLDFORMAT

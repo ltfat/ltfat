@@ -14,3 +14,5 @@ ftest(sp+1:sp+lchirp)=exp(2*i*linspace(0,2*pi*sqrt(lchirp)/10,lchirp).^2)';
 s=round(L*7/16);
 l=round(L/16);
 ftest(s:s+l)=ftest(s:s+l)+ones(l+1,1);
+
+%OLDFORMAT

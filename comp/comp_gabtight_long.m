@@ -46,3 +46,5 @@ gt=comp_iwfac(gf,L,a,M);
 if isreal(g)
   gt=real(gt);
 end;
+
+%OLDFORMAT

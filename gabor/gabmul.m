@@ -80,3 +80,5 @@ h=idgt(coef,gs,a,Ls);
 % Change h to have same shape as f originally had.
 h=comp_sigreshape_post(h,Ls,wasrow,remembershape);
 
+
+%OLDFORMAT

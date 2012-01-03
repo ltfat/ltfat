@@ -13,3 +13,5 @@ warning(['LTFAT: IUFILTERBANK has been deprecated, used IFILTERBANK ' ...
 
 f=ifilterbank(varargin{:});
 
+
+%OLDFORMAT

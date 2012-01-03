@@ -67,3 +67,5 @@ if nargout<2
     AF=BF/AF;
   end;
 end;
+
+%OLDFORMAT

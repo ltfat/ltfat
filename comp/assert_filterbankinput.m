@@ -50,3 +50,4 @@ function [a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,mustbeuniform);
   end;
     
   longestfilter=max(cellfun(@numel,g));
+%OLDFORMAT

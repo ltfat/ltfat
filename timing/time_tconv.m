@@ -47,3 +47,4 @@ densityh=nnz(h)/numel(h);
 disp(['Algorithm 2  : duration ' num2str(duration) ', maximum of error '...
     num2str(errorMax) ', density ' num2str(densityh)])
 clear('h');
+%OLDFORMAT

@@ -149,3 +149,5 @@ end;
 cout=reshape(cout,M,N*W*R);
 
 
+
+%OLDFORMAT

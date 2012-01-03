@@ -23,3 +23,5 @@ coef=comp_col2diag(full(T));
 
 coef=fft(coef)/L;
 
+
+%OLDFORMAT

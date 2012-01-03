@@ -43,3 +43,5 @@ else
 end;
 
 semilogy(rsym);
+
+%OLDFORMAT

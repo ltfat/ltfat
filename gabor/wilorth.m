@@ -120,3 +120,5 @@ gt=sqrt(2)*comp_gabtight_long(g,a,2*M);
 if wasrow
   gt=gt.';
 end;
+
+%OLDFORMAT

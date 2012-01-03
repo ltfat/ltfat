@@ -144,3 +144,5 @@ end
 if nargout>3
   xrec = idgt(tc,g,a);
 end;
+
+%OLDFORMAT

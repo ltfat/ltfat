@@ -29,3 +29,5 @@ f(1)  = 1;
 if (mod(n,2))==0;
   f = f+cos(x*n/2)/n_odd;
 end;
+
+%OLDFORMAT

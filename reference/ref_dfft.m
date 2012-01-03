@@ -9,3 +9,5 @@ L=size(f,1);
 F=idft(eye(L));
 
 c=(F^order)*f;
+
+%OLDFORMAT

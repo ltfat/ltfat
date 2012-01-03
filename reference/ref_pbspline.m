@@ -155,3 +155,5 @@ function xa=onesidedpower(x,a)
   % Raise
   xa=x.^a;
   
+
+%OLDFORMAT

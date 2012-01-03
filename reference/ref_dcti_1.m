@@ -20,3 +20,5 @@ R(L,L)=1;
 
 c=R'*dft(R*f);
 
+
+%OLDFORMAT

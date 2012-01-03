@@ -66,3 +66,5 @@ cadj=ref_spreadadj_6(sparseMat);
 duration=toc;
 disp(['Algorithm 6  : duration ' num2str(duration)])
 clear('cadj');
+
+%OLDFORMAT

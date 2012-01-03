@@ -61,3 +61,5 @@ for g=1:NbGroups,
     end;
     xo(g,:) = xi(g,:) * mask;
 end
+
+%OLDFORMAT

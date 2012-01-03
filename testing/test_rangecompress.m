@@ -22,3 +22,5 @@ res=norm(x-x_r,'fro');
 
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['RANGECOMPRESS  ALAW %0.5g %s\n'],res,fail);
+
+%OLDFORMAT

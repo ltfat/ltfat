@@ -3,3 +3,5 @@ if isoctave
 else
   status=0;
 end;
+
+%OLDFORMAT

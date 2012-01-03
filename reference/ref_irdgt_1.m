@@ -16,3 +16,5 @@ c=ref_irdft(reshape(c,M,N*R*W));
 
 gf = comp_wfac(g,a,M);      
 f = comp_idgt_fw(c,gf,L,a,M);
+
+%OLDFORMAT

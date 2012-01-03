@@ -102,3 +102,4 @@ if info.isfir==0
     g=g*sqrt(2);
   end;
 end;
+%OLDFORMAT

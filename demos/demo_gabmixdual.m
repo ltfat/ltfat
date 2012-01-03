@@ -99,3 +99,5 @@ title('Gabmixdual');
 subplot(3,2,6);
 semilogy(abs(fftshift(gd)));
 title('Decay of gabmixdual');
+
+%OLDFORMAT

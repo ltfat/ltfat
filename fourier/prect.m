@@ -27,3 +27,5 @@ if ~(numel(n)==1) || ~(isnumeric(L)) || mod(n,1)~=0 || n<=0
 end;
 
 f=pbspline(L,0,n);
+
+%OLDFORMAT

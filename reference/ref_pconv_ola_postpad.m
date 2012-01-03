@@ -21,3 +21,4 @@ function h=ref_pconv_ola_postpad(f,g,Lb)
     s_ii=mod(ii+1,Nb);
     h(s_ii*Lb+1:s_ii*Lb+Lg)+=block(Lb+1:Lext);  % Small block
   end;
+%OLDFORMAT

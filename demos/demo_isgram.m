@@ -41,3 +41,5 @@ sgram(sig_iter,'dynrange',100);
 figure(4);
 sig_iter = isgramreal(s,'gauss',8,800,'bfgs');
 sgram(sig_iter,'dynrange',100);
+
+%OLDFORMAT

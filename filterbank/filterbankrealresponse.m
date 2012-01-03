@@ -7,3 +7,5 @@ function gf=filterbankrealresponse(g,a,L)
   gf=gf(1:L2);
   
   
+
+%OLDFORMAT

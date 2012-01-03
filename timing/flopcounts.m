@@ -18,3 +18,5 @@ fcfb      = 8*L*Lg/a+4*M*N*log2(M);
 fcfacreal = L*4*q+2*L*(1+q/p)*log2(d)+2*M*N*log2(M);
 
 fcfbreal  = 2*L*Lg/a+2*M*N*log2(M);
+
+%OLDFORMAT

@@ -29,3 +29,4 @@ if ~isnumeric(cin)
 end;
 
 cout=comp_col2diag(full(cin));
+%OLDFORMAT

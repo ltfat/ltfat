@@ -94,3 +94,5 @@ for ii=1:N
   tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
   f(tempind,:)=f(tempind,:)+temp;
 end
+
+%OLDFORMAT

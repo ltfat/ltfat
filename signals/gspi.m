@@ -23,3 +23,4 @@ f=mfilename('fullpath');
 % Load audio signal
 s = wavread([f,'.wav']);
 fs = 44100;
+%OLDFORMAT

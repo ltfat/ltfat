@@ -102,3 +102,5 @@ plot(gtightf_plot);
 title('tight window, frequency domain');
 
 
+
+%OLDFORMAT

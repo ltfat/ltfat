@@ -46,3 +46,5 @@ figure(2);
 semilogx(table(2:end),eff);
 xlabel('Input size.');
 ylabel('Output/input ratio.');
+
+%OLDFORMAT

@@ -24,3 +24,4 @@ else
   % Scale first coefficients to obtain orthonormal transform.
   c(1,:)=1/sqrt(2)*c(1,:);
 end;
+%OLDFORMAT

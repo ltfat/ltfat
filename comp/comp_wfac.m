@@ -68,3 +68,4 @@ end;
 gf=gf*sqrt(M);
 
 gf=reshape(gf,p*q*R,c*d);
+%OLDFORMAT

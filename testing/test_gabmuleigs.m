@@ -27,3 +27,5 @@ s=sprintf('GABMULEIGS   L:%3i a:%3i M:%3i %0.5g %s',L,a,M,res,fail);
 disp(s);
 
 
+
+%OLDFORMAT

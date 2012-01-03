@@ -27,3 +27,5 @@ c(:,:)=[clong(1:M/2,:); ...
 % Scale the first coefficients correctly
 c(1,:)=c(1,:)/sqrt(2);
 c(M*(N-1)+M/2+1,:)=c(M*(N-1)+M/2+1,:)/sqrt(2);
+
+%OLDFORMAT

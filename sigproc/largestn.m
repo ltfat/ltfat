@@ -72,3 +72,5 @@ lambda=sxi(ss-N+1);
 signifmap=find(abs(xi)>=lambda);
 xo(signifmap)=xi(signifmap);
 
+
+%OLDFORMAT

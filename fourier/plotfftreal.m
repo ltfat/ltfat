@@ -74,3 +74,5 @@ if ~isempty(kv.fs)
 else
   xlabel(sprintf('%s (%s)',kv.frequency,kv.normalized));
 end;
+
+%OLDFORMAT

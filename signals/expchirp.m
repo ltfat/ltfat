@@ -40,3 +40,5 @@ tau=1/log(w2/w1);
 t=((0:L-1)/L).';
 outsig=exp(i*A*(exp(t/tau)-1)+kv.phi);
 
+
+%OLDFORMAT

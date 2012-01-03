@@ -112,3 +112,5 @@ norm(f-r_gauss)/norm(f)
 figure(3);
 plotfilterbank(coef_gauss,a,fc,fs,dynrange_for_plotting,'audtick');
 
+
+%OLDFORMAT

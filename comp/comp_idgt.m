@@ -44,3 +44,4 @@ if L==Lwindow
   f=comp_idgt_fb(coef,g,L,a,M);
 
 end;
+%OLDFORMAT

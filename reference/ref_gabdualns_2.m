@@ -150,3 +150,5 @@ if swap
   gd=parno/qarno*gd;
 end;
 
+
+%OLDFORMAT

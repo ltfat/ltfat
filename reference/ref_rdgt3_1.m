@@ -27,3 +27,5 @@ if mod(M,2)==1
 end;
 
 c=reshape(c,M*N,W);
+
+%OLDFORMAT

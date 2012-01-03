@@ -173,3 +173,5 @@ end;
 if nargout>0
   varargout={coef};
 end;
+
+%OLDFORMAT

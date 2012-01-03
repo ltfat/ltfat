@@ -11,3 +11,4 @@ cout=zeros(M,N,W);
 cout=cin(:,1:N,:);
 
 cout=reshape(cout,M*N,W);
+%OLDFORMAT

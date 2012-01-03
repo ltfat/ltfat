@@ -147,3 +147,5 @@ end;
 g=comp_pgauss(L,tfr,cent-delay_s,cf_s);
 
 g=normalize(g,flags.norm);
+
+%OLDFORMAT

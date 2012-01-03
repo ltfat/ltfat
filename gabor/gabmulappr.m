@@ -122,3 +122,5 @@ SF=SF1(iimod,jjmod);
 
 sym=b*dsft(SF)*sqrt(M)/sqrt(N);
 
+
+%OLDFORMAT

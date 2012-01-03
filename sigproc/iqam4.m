@@ -40,3 +40,4 @@ for bit=1:nbits
 end;
 
 xo=xo(:);
+%OLDFORMAT

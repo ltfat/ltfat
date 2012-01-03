@@ -35,3 +35,5 @@ f=comp_igdgt(coef2,g,a,2*M,L,0,.5,0,0)/sqrt(2);
 if isreal(coef) && isreal(g)
   f=real(f);
 end;
+
+%OLDFORMAT

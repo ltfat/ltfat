@@ -66,3 +66,5 @@ for ii=1:N
   tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
   gt{ii}(:)=circshift(circshift(g{ii},shift)./f(tempind),-shift);
 end
+
+%OLDFORMAT

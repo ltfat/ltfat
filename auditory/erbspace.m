@@ -11,3 +11,5 @@ function [y,bw] = erbspace(flow,fhigh,n)
   
 [y,bw] = audspace(flow,fhigh,n,'erb');
   
+
+%OLDFORMAT

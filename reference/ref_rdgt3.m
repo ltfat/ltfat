@@ -33,3 +33,5 @@ end;
 
 % dot-transpose will work because F is real.
 c=F.'*f;
+
+%OLDFORMAT

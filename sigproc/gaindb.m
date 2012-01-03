@@ -23,3 +23,5 @@ end;
 % ------ Computation --------------------------
 
 inoutsig = inoutsig*10^(gn/20);
+
+%OLDFORMAT

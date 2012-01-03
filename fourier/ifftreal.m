@@ -30,3 +30,5 @@ f=comp_ifftreal(c,N);
 permutedsize(1)=N;
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
+
+%OLDFORMAT

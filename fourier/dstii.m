@@ -85,3 +85,5 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 %R(L+1,L)=i;
 
 %c=i*(R'*fft([f;-flipud(f)])/sqrt(L)/2);
+
+%OLDFORMAT

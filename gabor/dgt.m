@@ -90,3 +90,5 @@ definput.flags.phase={'freqinv','timeinv'};
 
 c=comp_dgt(f,g,a,M,L,flags.do_timeinv);
 
+
+%OLDFORMAT

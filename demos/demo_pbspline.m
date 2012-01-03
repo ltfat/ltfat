@@ -121,3 +121,5 @@ subplot(3,2,6);
 plot(xplot,fftshift(g3d));
 title('Dual window.');
 
+
+%OLDFORMAT

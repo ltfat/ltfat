@@ -8,3 +8,5 @@ function gamma=ref_gabdualns_3(g,V);
 gmd=gabdual(gm,a,M);
 
 gamma=gmd(:,1);
+
+%OLDFORMAT

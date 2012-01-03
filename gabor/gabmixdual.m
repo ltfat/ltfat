@@ -70,3 +70,5 @@ gammaf=comp_gabmixdual_fac(gf1,gf2,L,a,M);
 
 gamma=comp_iwfac(gammaf,L,a,M);
 
+
+%OLDFORMAT

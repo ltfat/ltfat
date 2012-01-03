@@ -82,3 +82,4 @@ f=ref_igdgt(reshape(coef2,2*M*N,W),g,a,2*M,.5,0,0);
 %if norm(imag(f(:)))<1e-10
 %  f=real(f);
 %end;
+%OLDFORMAT

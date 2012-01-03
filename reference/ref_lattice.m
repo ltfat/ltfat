@@ -22,3 +22,5 @@ end;
 
 % Mod' the lattice.
 lat=mod(lat,L);
+
+%OLDFORMAT

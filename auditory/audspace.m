@@ -56,3 +56,5 @@ bw=(audlimits(2)-audlimits(1))/(n-1);
 % calculated values
 y(1)=flow;
 y(end)=fhigh;
+
+%OLDFORMAT

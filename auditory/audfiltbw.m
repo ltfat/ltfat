@@ -29,3 +29,4 @@ end;
 % FIXME: What is the upper frequency for which the estimation is valid?
 
 bw = 24.7 + fc/9.265;
+%OLDFORMAT

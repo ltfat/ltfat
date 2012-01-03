@@ -31,3 +31,5 @@ error(nargchk(2,2,nargin));
 
 % Compute normalized chirp
 g=(exp((0:L-1).^2/L*pi*i*n)/sqrt(L)).';
+
+%OLDFORMAT

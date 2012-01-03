@@ -41,3 +41,5 @@ clong=reshape(clong,2*M*N,W);
 fdouble=ref_idgtii(clong,g,a,2*b);
 
 f=fdouble(1:L,:);
+
+%OLDFORMAT

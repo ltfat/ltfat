@@ -133,3 +133,5 @@ function complain_L(L,callfun)
     error(['%s: You must specify a length L if a window is represented as a ' ...
            'text string or cell array.'],callfun);
   end;
+
+%OLDFORMAT

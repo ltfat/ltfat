@@ -110,3 +110,5 @@ else
   o2=norm(rhs(2:end),1);
 end;
   
+
+%OLDFORMAT

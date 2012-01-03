@@ -45,3 +45,5 @@ g=g/norm(g);
 %g=g*(w*L/2)^(-.25);
 
 
+
+%OLDFORMAT

@@ -55,3 +55,5 @@ switch(difforder)
 end;
 
 fd=assert_sigreshape_post(fd,dim,permutedsize,order);
+
+%OLDFORMAT

@@ -90,3 +90,5 @@ end;
 [f,g,L,Ls,W,info] = gabpars_from_windowsignal(f,g,M,2*M,L,'WMDCT');
 
 c  = comp_dwiltiii(f,g,M,L);
+
+%OLDFORMAT

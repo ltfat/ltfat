@@ -31,3 +31,5 @@ sgram(f,fs,'dynrange',50);
 % Longer window, 20 ms.
 figure(2);
 sgram(f,fs,'wlen',round(20/1000*fs),'dynrange',50);
+
+%OLDFORMAT

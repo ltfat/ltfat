@@ -30,3 +30,5 @@ f=mfilename('fullpath');
 
 s=flipud(double(imread([f,'.png'])))/255;
 
+
+%OLDFORMAT

@@ -19,3 +19,5 @@ R=1/sqrt(2)*[zeros(1,L);...
 
 c=i*R'*dft(R*f);
 
+
+%OLDFORMAT

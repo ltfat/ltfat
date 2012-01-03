@@ -13,3 +13,4 @@ function test_failed=test_demos
      eval(filename(1:end-2));
      
   end;
+%OLDFORMAT

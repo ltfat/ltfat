@@ -34,3 +34,4 @@ M=size(coef,1);
 yr=[.5/M, 1-.5/M];
 
 tfplot(coef,M,yr,'argimport',flags,kv);
+%OLDFORMAT

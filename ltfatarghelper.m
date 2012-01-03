@@ -260,3 +260,5 @@ varargout=cell(1,nposdep);
 for ii=1:nposdep
     varargout(ii)={keyvals.(posdepnames{ii})};
 end;
+
+%OLDFORMAT

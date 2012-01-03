@@ -17,3 +17,4 @@ if strcmpi(fname,'clearall')
 else
   ltfatarghelper('set',fname,varargin);
 end;
+%OLDFORMAT

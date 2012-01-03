@@ -30,3 +30,4 @@ f=mfilename('fullpath');
 
 s=load('-ascii',[f,'.asc']);
 fs=143000;
+%OLDFORMAT

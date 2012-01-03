@@ -12,3 +12,4 @@ L=numel(val);
 val=rand(L,1)-.5+i*(rand(L,1)-.5);
 
 f=sparse(row,col,val,n1,n2);
+%OLDFORMAT

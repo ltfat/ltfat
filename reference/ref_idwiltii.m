@@ -39,3 +39,4 @@ for n=0:N/2-1
 end;
 
 f=F*c;
+%OLDFORMAT

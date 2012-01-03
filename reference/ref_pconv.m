@@ -35,3 +35,4 @@ end;
 if isreal(f) && isreal(g)
   h=real(h);
 end;
+%OLDFORMAT

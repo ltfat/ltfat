@@ -159,3 +159,4 @@ ltfatsetdefaults('ltfathelp','versiondata',ltfat_version,...
 % Force the loading of FFTW, necessary for Matlab 64 bit on Linux. Thanks
 % to NFFT for this trick.1
 fft([1,2,3,4]);
+%OLDFORMAT

@@ -144,3 +144,5 @@ f=permute(c,[2,1,3]);
 if inputwasreal
   f=real(f);
 end;
+
+%OLDFORMAT

@@ -22,3 +22,5 @@ G=ref_gaboratoms(g,lat);
   
 % Apply matrix to c.
 f=G*c;
+
+%OLDFORMAT

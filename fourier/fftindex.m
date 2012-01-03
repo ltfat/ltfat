@@ -30,3 +30,5 @@ else
     n=[0:(N-1)/2,-(N-1)/2:-1].';
   end;  
 end;
+
+%OLDFORMAT

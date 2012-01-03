@@ -27,3 +27,5 @@ c=G'*f;
 % reshape to correct output format.
 
 c=reshape(c,M,N,R*W);
+
+%OLDFORMAT

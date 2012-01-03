@@ -117,3 +117,5 @@ end;
 g=real(g);
 
 g=normalize(g,flags.norm);
+
+%OLDFORMAT

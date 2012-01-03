@@ -95,3 +95,5 @@ title('Phaseplot of linus');
 subplot(3,1,3);
 phaseplot(f,'thr',.001)
 title('Phaseplot of linus - thresholded version');
+
+%OLDFORMAT

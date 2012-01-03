@@ -172,3 +172,5 @@ compnorm(GM_direct,T);
 % compnorm(GM_soend,T);
 
 
+
+%OLDFORMAT

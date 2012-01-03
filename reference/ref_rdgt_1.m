@@ -15,3 +15,5 @@ gf=comp_wfac(g,a,M);
 % Compute the window application and the DFT modulation.
 c=zeros(M*N*R,W);
 c(:)=ref_rdft(comp_dgt_fw(f,gf,L,a,M));
+
+%OLDFORMAT

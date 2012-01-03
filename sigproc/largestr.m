@@ -47,3 +47,5 @@ ss=prod(size(xi));
 N=round(ss*p);
 
 xo=largestn(xi,N,mtype);
+
+%OLDFORMAT
