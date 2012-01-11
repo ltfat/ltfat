@@ -14,38 +14,37 @@ function [c,Ls]=dgt2(f,g1,p3,p4,p5,p6)
 %         L1,L2   : Length of transform to do 
 %   Output parameters:
 %         c       : array of coefficients.
-%         Ls       : Original size of input matrix.
+%         Ls      : Original size of input matrix.
 %
-%   DGT2(f,g,a,M) will calculate a separable two dimensional discrete
-%   Gabor transformation of the input signal f with respect to the window
-%   g and parameters _a and M.
+%   `dgt2(f,g,a,M)` will calculate a separable two-dimensional discrete
+%   Gabor transformation of the input signal *f* with respect to the window
+%   *g* and parameters *a* and *M*.
 %
 %   For each dimension, the length of the transform will be the smallest
 %   possible that is larger than the length of the signal along that dimension.
 %   f will be appropriately zero-extended.
 %
-%   DGT2(f,g,a,M,L) computes a Gabor transform as above, but does
-%   a transform of length L along each dimension. f will be cut or
-%   zero-extended to length L before the transform is done.
+%   `dgt2(f,g,a,M,L)` computes a Gabor transform as above, but does
+%   a transform of length *L* along each dimension. *f* will be cut or
+%   zero-extended to length *L* before the transform is done.
 %
-%   [c,Ls]=DGT2(f,g,a,M) or [c,Ls]=DGT2(f,g,a,M,L) additionally returns
-%   the length of the input signal f. This is handy for reconstruction:
+%   `[c,Ls]=dgt2(f,g,a,M)` or `[c,Ls]=dgt2(f,g,a,M,L)` additionally returns
+%   the length of the input signal *f*. This is handy for reconstruction::
 %
-%C               [c,Ls]=dgt2(f,g,a,M);
-%C               fr=idgt2(c,gd,a,Ls);
+%                [c,Ls]=dgt2(f,g,a,M);
+%                fr=idgt2(c,gd,a,Ls);
 %
-%   will reconstruct the signal f no matter what the size of f is, provided
-%   that _gd is a dual window of g. 
+%   will reconstruct the signal *f* no matter what the size of *f* is, provided
+%   that *gd* is a dual window of *g*. 
 %
-%   DGT2(f,g1,g2,a,M) makes it possible to use a different window along the
+%   `dgt2(f,g1,g2,a,M)` makes it possible to use a different window along the
 %   two dimensions. 
 %
-%   The parameters _a, M, L and Ls can also be vectors of length 2.
+%   The parameters *a*, *M*, *L* and *Ls* can also be vectors of length 2.
 %   In this case the first element will be used for the first dimension
-%   and the second element will be used for the second dimension. For perfect
-%   reconstruction, 
+%   and the second element will be used for the second dimension.
 %
-%   The output c will be have 4 or 5 dimensions. The dimensions index the
+%   The output *c* will be have *4* or *5* dimensions. The dimensions index the
 %   following properties:
 %
 %      1. Number of translation along 1st dimension of input.
@@ -194,6 +193,3 @@ c=permute(c,[2,1,3]);
 
 % Reshape to final layout.
 c=reshape(c,M1,N1,M2,N2,W);
-
-
-%OLDFORMAT

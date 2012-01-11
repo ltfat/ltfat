@@ -3,27 +3,29 @@ function y = rms(f,varargin)
 %   Usage: y = rms(f);
 %          y = rms(f,...);
 %
-%   RMS(f) computes the RMS (Root Mean Square) value of a finite sampled
+%   `RMS(f)` computes the RMS (Root Mean Square) value of a finite sampled
 %   signal sampled at a uniform sampling rate. This is a vector norm
 %   equal to the $l^2$ averaged by the length of the signal.
 %
 %   If the input is a matrix or ND-array, the RMS is computed along the
 %   first (non-singleton) dimension, and a vector of values is returned.
 %
-%   The RMS value of a signal x of length N is computed by
+%   The RMS value of a signal *x* of length *N* is computed by
 %
-%C                         N
-%C     rms(f) = 1/sqrt(N) sum f(n)^2
-%C                        n=1
+%   ..                     N
+%      rms(f) = 1/sqrt(N) sum |f(n)|^2
+%                         n=1
 %
-%   RMS takes the following flags at the end of the line of input
+%   .. math:: rms(f) = \frac{1}{\sqrt N} \sum_{n=1}^N |f(n)|^2
+%
+%   `RMS` takes the following flags at the end of the line of input
 %   parameters:
 %
-%-     'ac'     : Consider only the AC component of the signal (i.e. the mean is
-%                 removed).
+%     'ac'       Consider only the AC component of the signal (i.e. the mean is
+%                removed).
 %
-%-     'dim',d  : Work along specified dimension. The default value of []
-%                 means to work along the first non-singleton one.
+%     'dim',d    Work along specified dimension. The default value of `[]`
+%                means to work along the first non-singleton one.
 %
 
 %   AUTHOR : Peter L. Soendergaard
@@ -66,5 +68,3 @@ else
 end;
   
 y=assert_sigreshape_post(y,kv.dim,permutedsize,order);
-
-%OLDFORMAT
