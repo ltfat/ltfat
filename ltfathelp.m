@@ -158,5 +158,3 @@ if 0
       end;
   end;
 end;
-
-%OLDFORMAT
