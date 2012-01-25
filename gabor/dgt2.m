@@ -12,6 +12,7 @@ function [c,Ls]=dgt2(f,g1,p3,p4,p5,p6)
 %         a,a1,a2 : Length of time shifts.
 %         M,M1,M2 : Number of modulations.
 %         L1,L2   : Length of transform to do 
+%
 %   Output parameters:
 %         c       : array of coefficients.
 %         Ls      : Original size of input matrix.

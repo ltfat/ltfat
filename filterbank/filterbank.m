@@ -2,20 +2,20 @@ function c=filterbank(f,g,a);
 %FILTERBANK   Apply filterbank
 %   Usage:  c=filterbank(f,g,a);
 %
-%   FILTERBANK(f,g,a) applies the filters given in g to the signal f. Each
-%   subband will be subsampled by a factor of _a (the hop-size). In contrast
-%   to UFILTERBANK, _a can be a vector so the hop-size can be
-%   channel-dependant. If f is a matrix, the transformation is applied to
-%   each column.
+%   `filterbank(f,g,a)` applies the filters given in *g* to the signal
+%   *f*. Each subband will be subsampled by a factor of *a* (the
+%   hop-size). In contrast to |ufilterbank|_, *a* can be a vector so the
+%   hop-size can be channel-dependant. If *f* is a matrix, the
+%   transformation is applied to each column.
 %
-%   The filters g must be a cell-array, where each entry in the cell
+%   The filters *g* must be a cell-array, where each entry in the cell
 %   array corresponds to an FIR filter.
 %
-%   The output coefficients are stored a cell array. More precisely, the nth
-%   cell of c, c{m}, is a 2D matrix of size M(n) x W and containing the
-%   output from the m'th channel subsampled at a rate of a(m).  c{m}(n,l) is
-%   thus the value of the coefficient for time index n, frequency index m
-%   and signal channel l.
+%   The output coefficients are stored a cell array. More precisely, the
+%   n'th cell of *c*, `c{m}`, is a 2D matrix of size $M(n) \times W$ and
+%   containing the output from the m'th channel subsampled at a rate of
+%   $a(m)$.  `c{m}(n,l)` is thus the value of the coefficient for time index
+%   *n*, frequency index *m* and signal channel *l*.
 %
 %   References: bohlfe02
   
@@ -47,6 +47,3 @@ for w=1:W
     c{m}(:,w)=ifft(sum(reshape(F.*G(:,m),N(m),a(m)),2))/a(m);
   end;
 end;
-
-
-%OLDFORMAT

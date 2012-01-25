@@ -72,6 +72,9 @@ php.head="""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>The Linear Time-Frequency Analysis Toolbox</title>
 <link rel="stylesheet" href="/ltfat.css" type="text/css">
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 </head>
 <body>
 

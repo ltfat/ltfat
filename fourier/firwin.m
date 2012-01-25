@@ -3,90 +3,91 @@ function [g,info]=firwin(name,M,varargin);
 %   Usage:  g=firwin(name,M);
 %           g=firwin(name,M,...);
 %
-%   FIRWIN(name,M) will return a FIR window of length M of type name.
+%   `firwin(name,M)` will return an FIR window of length *M* of type *name*.
 %
-%   All windows are symmetric, they are zero delay and zero phase
-%   filters. They can be used for the Wilson and WMDCT transform, except when noted otherwise.
+%   All windows are symmetric and generate zero delay and zero phase
+%   filters. They can be used for the Wilson and WMDCT transform, except
+%   when noted otherwise.
 %
 %   In the following PSL means "Peak Sidelobe level", and the main lobe
 %   width is measured in normalized frequencies.
 %
-%   If a window g forms a "partition of unity" (PU) it means specifically
-%   that
+%   If a window *g* forms a "partition of unity" (PU) it means specifically
+%   that::
 %
-%C         g+fftshift(g)==ones(L,1);
+%     g+fftshift(g)==ones(L,1);
 %
-%   A perfect PU can only be formed if the window length is even, but
-%   some windows may work for odd lengths anyway.
+%   A PU can only be formed if the window length is even, but some windows
+%   may work for odd lengths anyway.
 %
 %   If a window is the square root of a window that forms a PU, the window
 %   will generate a tight Gabor frame / orthonormal Wilson/WMDCT basis if
-%   the number of channels is less than M.
+%   the number of channels is less than *M*.
 %
 %   The windows available are:
 %
-%-      hann       - von Hann window. Forms a PU. The Hann window has a
-%                    mainlobe with of 8/M, a PSL of -31.5 dB and decay rate
-%                    of 18 dB/Octave.
+%     'hann'       von Hann window. Forms a PU. The Hann window has a
+%                  mainlobe with of 8/M, a PSL of -31.5 dB and decay rate
+%                  of 18 dB/Octave.
 %
-%-      sine       - Sine window. This is the square root of the Hanning
-%                    window. The sine window has a mainlobe width of 8/M,
-%                    a  PSL of -22.3 dB and decay rate of 12 dB/Octave.
-%                    Aliases: 'cosine', 'sqrthann'
+%     'sine'       Sine window. This is the square root of the Hanning
+%                  window. The sine window has a mainlobe width of 8/M,
+%                  a  PSL of -22.3 dB and decay rate of 12 dB/Octave.
+%                  Aliases: `'cosine'`, `'sqrthann'`
 %
-%-      rect       - (Almost) rectangular window. The rectangular window has a
-%                    mainlobe width of 4/M, a  PSL of -13.3 dB and decay
-%                    rate of 6 dB/Octave. Forms a PU. Alias: 'square'
+%     'rect'       (Almost) rectangular window. The rectangular window has a
+%                  mainlobe width of 4/M, a  PSL of -13.3 dB and decay
+%                  rate of 6 dB/Octave. Forms a PU. Alias: `'square'`
 %
-%-      sqrtrect   - Square root of the rectangular window.
+%     'sqrtrect'   Square root of the rectangular window.
 %
-%-      tria       - (Almost) triangular window. Forms a PU. Alias: 'bartlett'
+%     'tria'       (Almost) triangular window. Forms a PU. Alias: `'bartlett'`
 %
-%-      sqrttria   - Square root of the triangular window.
+%     'sqrttria'   Square root of the triangular window.
 %
-%-      hamming    - Hamming window. Forms a PU that sums to 1.08 instead
-%                    of 1.0 as usual. The Hamming window has a
-%                    mainlobe width of 8/M, a  PSL of -42.7 dB and decay
-%                    rate of 6 dB/Octave. This window should not be used for
-%                    a Wilson basis, as a reconstruction window cannot be
-%                    found by WILDUAL.
+%     'hamming'    Hamming window. Forms a PU that sums to 1.08 instead
+%                  of 1.0 as usual. The Hamming window has a
+%                  mainlobe width of 8/M, a  PSL of -42.7 dB and decay
+%                  rate of 6 dB/Octave. This window should not be used for
+%                  a Wilson basis, as a reconstruction window cannot be
+%                  found by WILDUAL.
 %
-%-      blackman   - Blackman window. The Hamming window has a
-%                    mainlobe width of 12/M, a PSL of -58.1 dB and decay
-%                    rate of 18 dB/Octave.
+%     'blackman'   Blackman window. The Hamming window has a
+%                  mainlobe width of 12/M, a PSL of -58.1 dB and decay
+%                  rate of 18 dB/Octave.
 %
-%-      blackman2  - Alternate Blackman window. This window has a
-%                    mainlobe width of 12/M, a PSL of -68.24 dB and decay
-%                    rate of 6 dB/Octave.
+%     'blackman2'  Alternate Blackman window. This window has a
+%                  mainlobe width of 12/M, a PSL of -68.24 dB and decay
+%                  rate of 6 dB/Octave.
 %
-%-      nuttall    - Nuttall window. The Nuttall window has a
-%                    mainlobe width of 16/M, a PSL of -93.32 dB and decay
-%                    rate of 18 dB/Octave.
+%     'nuttall'    Nuttall window. The Nuttall window has a
+%                  mainlobe width of 16/M, a PSL of -93.32 dB and decay
+%                  rate of 18 dB/Octave.
 %
-%-      itersine -   Iterated sine window. Generates an orthonormal
-%                    Wilson/WMDCT basis. This window is described in 
-%                    Wesfreid and Wickerhauser (1993) and is used in  the
-%                    ogg sound codec. Alias: 'ogg'
+%     'itersine'   Iterated sine window. Generates an orthonormal
+%                  Wilson/WMDCT basis. This window is described in 
+%                  Wesfreid and Wickerhauser (1993) and is used in  the
+%                  ogg sound codec. Alias: `'ogg'`
 %
 %   FIRWIN understands the following flags at the end of the list of input
 %   parameters:
 %
-%-     'wp'      - Output is whole point even. This is the default.
+%     'wp'         Output is whole point even. This is the default.
 %
-%-     'hp'      - Output is half point even, as most Matlab filter
+%     'hp'         Output is half point even, as most Matlab filter
 %                  routines.
 %
-%-     'taper',t - Extend the window by a flat section in the middle. The
+%     'taper',t    Extend the window by a flat section in the middle. The
 %                  argument t is the ratio of the rising and falling
 %                  parts as compared to the total length of the
 %                  window. The default value of 1 means no
 %                  tapering. Accepted values lie in the range from 0 to 1.
 %
-%   Additionally, FIRWIN accepts flags to normalize the output. Please see
-%   the help of NORMALIZE. Default is to use 'peak' normalization, which is
-%   useful for using the output for windowing in the time-domain. For
-%   filtering in the time-domain, a normalization of '1' or 'area' is
-%   preferable.
+%   Additionally, `firwin` accepts flags to normalize the output. Please see
+%   the help of |normalize|_. Default is to use `'peak'` normalization,
+%   which is useful for using the output from `firwin` for windowing in the
+%   time-domain. For filtering in the time-domain, a normalization of `'1'`
+%   or `'area'` is preferable.
 %
 %   See also:  pgauss, pbspline, firkaiser, normalize
 %
@@ -260,4 +261,3 @@ end;
 
 g=normalize(g,flags.norm);
 
-%OLDFORMAT

@@ -5,37 +5,40 @@ function c=dcti(f,L,dim)
 %           c=dcti(f,[],dim);
 %           c=dcti(f,L,dim);
 %
-%   DCTI(f) computes the discrete cosine transform of type I of the
-%   input signal f. If f is a matrix, then the transformation is applied to
+%   `dcti(f)` computes the discrete cosine transform of type I of the
+%   input signal *f*. If *f* is a matrix then the transformation is applied to
 %   each column. For N-D arrays, the transformation is applied to the first
-%   dimension.
+%   non-singleton dimension.
 %
-%   DCTI(f,L) zero-pads or truncates f to length L before doing the
+%   `dcti(f,L)` zero-pads or truncates *f* to length *L* before doing the
 %   transformation.
 %
-%   DCTI(f,[],dim) applies the transformation along dimension dim. 
-%   DCTI(f,L,dim) does the same, but pads or truncates to length L.
+%   `dcti(f,[],dim)` or `dcti(f,L,dim)` applies the transformation along
+%   dimension *dim*.
 %   
 %   The transform is real (output is real if input is real) and
 %   it is orthonormal.
 %
 %   This transform is its own inverse.
 %
-%   Let f be a signal of length _L, let c=DCTI(f) and define the vector
-%   _w of length _L by  
-%N    w = [1/sqrt(2) 1 1 1 1 ...1/sqrt(2)]
-%L    \[w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\text{ or }n=L-1\\1 & \text{otherwise}\end{cases}\]
+%   Let f be a signal of length *L*, let $c=dcti(f)$ and define the vector
+%   *w* of length *L* by  
+%
+%   .. w = [1/sqrt(2) 1 1 1 1 ...1/sqrt(2)]
+%
+% 
+%   .. math:: w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\text{ or }n=L-1\\1 & \text{otherwise}\end{cases}
+%
 %   Then 
-%M
-%M                             L-1
-%M    c(n+1) = sqrt(2/(L-1)) * sum w(n+1)*w(m+1)*f(m+1)*cos(pi*n*m/(L-1)) 
-%M                             m=0 
-%F  \[
-%F  c\left(n+1\right)=\sqrt{\frac{2}{L-1}}\sum_{m=0}^{L-1}w\left(n\right)w\left(m\right)f\left(m+1\right)\cos\left(\frac{\pi nm}{L-1}\right)
-%F  \]
-%M
+%
+%   ..                         L-1
+%     c(n+1) = sqrt(2/(L-1)) * sum w(n+1)*w(m+1)*f(m+1)*cos(pi*n*m/(L-1)) 
+%                              m=0 
+%
+%   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L-1}}\sum_{m=0}^{L-1}w\left(n\right)w\left(m\right)f\left(m+1\right)\cos\left(\frac{\pi nm}{L-1}\right)
+%
 %   The implementation of this functions uses a simple algorithm that require
-%   an FFT of length 2L-2, which might potentially be the product of a large
+%   an FFT of length *2L-2*, which might potentially be the product of a large
 %   prime number. This may cause the function to sometimes execute slowly.
 %   If guaranteed high speed is a concern, please consider using one of the
 %   other DCT transforms.
@@ -93,4 +96,3 @@ end;
 
 c=assert_sigreshape_post(c,dim,permutedsize,order);
 
-%OLDFORMAT
