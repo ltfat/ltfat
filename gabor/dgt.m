@@ -56,7 +56,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %
 %   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\bar{g}(l-an+1)e^{-2\pi ilm/M}
 %
-%   where $m=0,...,M-1$ and $n=0,...,N-1$ and $l-an$ is computed modulo *L*.
+%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
 %
 %   `dgt` takes the following flags at the end of the line of input
 %   arguments:

@@ -1,20 +1,20 @@
 function s=cameraman();
 %CAMERAMAN  Load the 'cameraman' test image
-%  Usage: s=cameraman;
-%
-%  CAMERAMAN loads a 256x256 greyscale image of a cameraman.
-%
-%  The returned matrix s consists of integers between 0 and 255,
-%  which have been converted to double precision.
-%
-%  To display the image, use IMAGESC with a gray colormap:
-%
-%C   imagesc(cameraman); colormap(gray); axis('image');
-%
-%  See ftp://nic.funet.fi/pub/graphics/misc/test-images/ or
-%  http://sipi.usc.edu/database/database.cgi?volume=misc
-%
-%  Demos: demo_compression
+%   Usage: s=cameraman;
+% 
+%   `cameraman` loads a $256 \times 256$ greyscale image of a cameraman.
+% 
+%   The returned matrix `s` consists of integers between 0 and 255,
+%   which have been converted to double precision.
+% 
+%   To display the image, use `imagesc` with a gray colormap::
+% 
+%     imagesc(cameraman); colormap(gray); axis('image');
+% 
+%   See `<ftp://nic.funet.fi/pub/graphics/misc/test-images/>`_ or
+%   `<http://sipi.usc.edu/database/database.cgi?volume=misc>`_.
+% 
+%   Demos: demo_compression
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_SIGNALS
@@ -27,6 +27,3 @@ end;
 f=mfilename('fullpath');
 
 s=double(imread([f,'.png']));
-
-
-%OLDFORMAT

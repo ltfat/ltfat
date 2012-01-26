@@ -3,30 +3,31 @@ function ltfatmex(varargin)
 %   Usage:  ltfatmex;
 %           ltfatmex(...);
 %
-%   LTFATMEX compiles the C backend in order to speed up the execution of
-%   the toolbox. The C backend is linked to Matlab and Octave through mex
+%   `ltfatmex` compiles the C backend in order to speed up the execution of
+%   the toolbox. The C backend is linked to Matlab and Octave through Mex
 %   and Octave C++ interfaces.
 %
-%   The action of LTFATMEX is determined by one of the following flags:
+%   The action of `ltfatmex` is determined by one of the following flags:
 %
-%-     'compile' - Compile stuff. This is the default.
+%     'compile'  Compile stuff. This is the default.
 %
-%-     'clean'   - Removes the compiled functions.
+%     'clean'    Removes the compiled functions.
 %
-%-     'test'    - Run some small tests that verify that the compiled
-%                  functions work.
+%     'test'     Run some small tests that verify that the compiled
+%                functions work.
 %
 %   The target to work on is determined by on of the following flags:
 %
-%-     'lib'     - Perform action on the LTFAT C library.
+%     'lib'      Perform action on the LTFAT C library.
 %
-%-     'mex'     - Perform action on the mex / oct interfaces.
+%     'mex'      Perform action on the mex / oct interfaces.
 %
-%-     'gpc'     - Perform action on the GPC code for use with MULACLAB
+%     'gpc'      Perform action on the GPC code for use with MULACLAB
 %
-%-     'auto'    - Choose automatically which targets to work on based on
-%                  the operation system etc. This is the default.
+%     'auto'     Choose automatically which targets to work on based on
+%                the operation system etc. This is the default.
 %
+  
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
 %   REFERENCE: NA
@@ -340,4 +341,3 @@ end;
 
 status=0;
 
-%OLDFORMAT

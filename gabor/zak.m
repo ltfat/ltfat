@@ -2,23 +2,21 @@ function c=zak(f,a);
 %ZAK  Zak transform
 %   Usage:  c=zak(f,a);
 %
-%   ZAK(f,a) computes the Zak transform of f with parameter _a.
-%   The coefficients are arranged in an _a x _L/a matrix, where _L is the
-%   length of f.
+%   `zak(f,a)` computes the Zak transform of *f* with parameter *a*.  The
+%   coefficients are arranged in an $a \times L/a$ matrix, where *L* is the
+%   length of *f*.
 %
-%   If f is a matrix, then the transformation is applied to each column.
+%   If *f* is a matrix then the transformation is applied to each column.
 %   This is then indexed by the third dimension of the output.
 %
+%   Assume that $c=zak(f,a)$, where *f* is a column vector of length *L* and
+%   $N=L/a$. Then the following holds for $m=0,\ldots,a-1$ and $n=0,\ldots,N-1$
 %
-%   Assume that c=ZAK(f,a), where f is a column vector of length L and
-%   N=L/a. Then the following holds for $m=0,...,a-1$ and $n=0,...,N-1$
+%   ..                     N-1  
+%     c(m+1,n+1)=1/sqrt(N)*sum f(m-k*a+1)*exp(2*pi*i*n*k/N)
+%                          k=0
 %
-%M                         N-1  
-%M    c(m+1,n+1)=1/sqrt(N)*sum f(m-k*a+1)*exp(2*pi*i*n*k/N)
-%M                         k=0
-%F  \begin{eqnarray*}
-%F  c(m+1,n+1) & = & \frac{1}{\sqrt{N}}\sum_{k=0}^{N-1}f(m-ka+1)e^{2\pi ink/M}
-%F  \end{eqnarray*}
+%   .. math:: c(m+1,n+1) = \frac{1}{\sqrt{N}}\sum_{k=0}^{N-1}f(m-ka+1)e^{2\pi ink/M}
 %
 %   See also:  izak
 %
@@ -62,4 +60,3 @@ for ii=1:W
 end;
 
 
-%OLDFORMAT

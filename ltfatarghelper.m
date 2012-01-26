@@ -13,53 +13,56 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %      keyvals     : Struct with key / values.
 %      varargout   : The position dependant pars. properly initialized
 %
-%   [flags,keyvals]=LTFATARGHELPER(posdepnames,definput,arglist) assist in
+%   `[flags,keyvals]=ltfatarghelper(posdepnames,definput,arglist)` assists in
 %   parsing input parameters for a function in LTFAT. Parameters come in
 %   four categories:
 %  
-%      * Position dependant parameters. These must not be strings. These are
-%      the first parameters passed to a function, and they are really just a short way
-%      of specifying key/value pairs. See below.
+%     * Position dependant parameters. These must not be strings. These are
+%       the first parameters passed to a function, and they are really just a short way
+%       of specifying key/value pairs. See below.
 %
-%      * Flags. These are single string appearing after the position dependant
-%      parameters.
+%     * Flags. These are single string appearing after the position dependant
+%       parameters.
 %
-%      * Key/value pairs. The key is always a string followed by the value, which can be
-%      anything.
+%     * Key/value pairs. The key is always a string followed by the value, which can be
+%       anything.
 %
-%      * Expansions. These appear as flags, that expand into a pre-defined list of parameters.
-%      This is a short-hand way of specifying standard sets of flags and key/value pairs.
+%     * Expansions. These appear as flags, that expand into a pre-defined list of parameters.
+%       This is a short-hand way of specifying standard sets of flags and key/value pairs.
 %
 %   The parameters are parsed in order, so parameters appearing later in varargin will override
 %   previously set values.
 %
-%   The following example for calling LTFATARGHELPER is taken from DGT:
+%   The following example for calling `ltfatarghelper` is taken from |dgt|_::
 %  
-%C    definput.keyvals.L=[];
-%C    definput.flags.phase={'freqinv','timeinv'};
-%C    [flags,kv]=ltfatarghelper({'L'},definput,varargin);
+%     definput.keyvals.L=[];
+%     definput.flags.phase={'freqinv','timeinv'};
+%     [flags,kv]=ltfatarghelper({'L'},definput,varargin);
 %
-%   The first line defines a key/value pair with the key 'L' having an initial value of []
+%   The first line defines a key/value pair with the key `'L'` having an initial value of `[]`
 %   (the empty matrix).
 %
-%   The second line defines a group of flags by the name of 'phase'.
-%   The group 'phase' contains the flags 'freqinv' and 'timeinv', which can both be specified
-%   on the command line by the user. The group-name 'phase' is just for internal use, and
-%   does not appear to the user. The flag mentioned first in the list will be selected by
-%   default, and only one flag in a group can be selected at any time. As group can contains as
+%   The second line defines a group of flags by the name of `phase`.  The
+%   group `phase` contains the flags `'freqinv'` and `'timeinv'`, which can
+%   both be specified on the command line by the user. The group-name
+%   `phase` is just for internal use, and does not appear to the user. The
+%   flag mentioned first in the list will be selected by default, and only
+%   one flag in a group can be selected at any time. A group can contain as
 %   many flags as desired.
 %  
-%   The third line is the actual call to LTFATARGHELPER which defines the output 'flags' and 'kv'.
-%   The input {'L'} indicates that the value of the parameter 'L' can also be given as the very
-%   first value in varargin.
+%   The third line is the actual call to `ltfatarghelper` which defines the
+%   output `flags` and `kv`.  The input `{'L'}` indicates that the value of
+%   the parameter `'L'` can also be given as the very first value in
+%   varargin.
 %
-%   The output struct 'kv' contains the key/value pairs, so the value associated to 'L' is
-%   stored in kv.L .
+%   The output struct `kv` contains the key/value pairs, so the value associated to `'L'` is
+%   stored in `kv.L`.
 %
-%   The output struct 'flags' contains information about the flags choosen by the user. The value
-%   of flags.phase will be set to the selected flag in the group 'phase' and additionally, the
-%   value of flags.do_timeinv will be 1 if 'timeinv' was selected and 0 otherwise, and similarly
-%   for 'freqinv'. This allows for easy checking of selected flags.
+%   The output struct `flags` contains information about the flags choosen
+%   by the user. The value of `flags.phase` will be set to the selected flag
+%   in the group `phase` and additionally, the value of `flags.do_timeinv`
+%   will be 1 if `'timeinv'` was selected and 0 otherwise, and similarly for
+%   `'freqinv'`. This allows for easy checking of selected flags.
 %
 %   See also: ltfatgetdefaults, ltfatsetdefaults
 
@@ -261,4 +264,3 @@ for ii=1:nposdep
     varargout(ii)={keyvals.(posdepnames{ii})};
 end;
 
-%OLDFORMAT

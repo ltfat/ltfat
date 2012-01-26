@@ -2,17 +2,18 @@ function [s,fs]=ltfatlogo()
 %LTFATLOGO  Load the 'ltfatlogo' test signal.
 %   Usage:  s=ltfatlogo;
 %
-%   LTFATLOGO loads the 'ltfatlogo' signal. This is a sound synthezised from an
-%   artificial spectrogram of the word 'LTFAT'. See the help of LTFATTEXT.
+%   `ltfatlogo` loads the 'ltfatlogo' signal. This is a sound synthezised
+%   from an artificial spectrogram of the word 'LTFAT'. See the help of
+%   |ltfattext|_.
 %
-%   [sig,fs]=LTFATLOGO additionally returns the sampling frequency fs.
+%   `[sig,fs]=ltfatlogo` additionally returns the sampling frequency *fs*.
 %
 %   The signal is 7200 samples long and recorded at 8 kHz. It has been
 %   scaled to not produce any clipping.
 %
 %   See also: ltfattext
 %
-%  Demos: demo_isgram
+%   Demos: demo_isgram
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_SIGNALS
@@ -26,5 +27,3 @@ f=mfilename('fullpath');
 
 s = wavread([f,'.wav']);
 fs=8000;
-
-%OLDFORMAT

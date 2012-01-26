@@ -2,11 +2,11 @@ function [s,fs]=otoclick()
 %OTOCLICK  Load the 'otoclick' test signal.
 %   Usage:  s=otoclick;
 %
-%   OTOCLICK loads the 'otoclick' signal. The signal is a click-evoked
+%   `otoclick` loads the 'otoclick' signal. The signal is a click-evoked
 %   otoacoustic emission. It consists of two clear clicks followed by a
 %   ringing. The ringing is the actual otoacoustic emission.
 %
-%   [sig,fs]=OTOCLICK additionally returns the sampling frequency fs.
+%   `[sig,fs]=otoclick` additionally returns the sampling frequency fs.
 %
 %   It was measured by Sarah Verhulst at CAHR (Centre of Applied Hearing
 %   Research) at Department of Eletrical Engineering, Technical University
@@ -26,4 +26,4 @@ f=mfilename('fullpath');
 
 s=load('-ascii',[f,'.asc']);
 fs=44100;
-%OLDFORMAT
+
