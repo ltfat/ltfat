@@ -3,23 +3,23 @@ function y = s0norm(f,varargin)
 %   Usage: y = s0norm(f);
 %          y = s0norm(f,...);
 %
-%   S0NORM(f) computes the S0-norm of a vector.
+%   `s0norm(f)` computes the $S_0$-norm of a vector.
 %
-%   If the input is a matrix or ND-array, the RMS is computed along the
-%   first (non-singleton) dimension, and a vector of values is returned.
+%   If the input is a matrix or ND-array, the $S_0$-norm is computed along
+%   the first (non-singleton) dimension, and a vector of values is returned.
 %
-%   WARNING: The S0-norm is computed by computing a full Short-time
+%   **WARNING**: The $S_0$-norm is computed by computing a full Short-time
 %   Fourier transform of a signal, which can be quite time-consuming. Use
 %   this function with care for long signals.
 %
-%   S0NORM takes the following flags at the end of the line of input
+%   `s0norm` takes the following flags at the end of the line of input
 %   parameters:
 %
-%-     'dim',d  : Work along specified dimension. The default value of []
-%                 means to work along the first non-singleton one.
+%     'dim',d   Work along specified dimension. The default value of []
+%               means to work along the first non-singleton one.
 %
-%-     'rel'    : Return the result relative to the $l^2$ norm (the energy) of the
-%                 signal.
+%     'rel'     Return the result relative to the $l^2$ norm (the energy) of the
+%               signal.
 
 %   AUTHOR : Peter L. Soendergaard
   
@@ -62,4 +62,3 @@ y=y/L;
 
 y=assert_sigreshape_post(y,dim,permutedsize,order);
 
-%OLDFORMAT

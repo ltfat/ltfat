@@ -2,19 +2,20 @@ function F=dsft(F);
 %DSFT  Discrete Symplectic Fourier Transform
 %   Usage:  C=dsft(F);
 %
-%   DSFT(F) computes the discrete symplectic Fourier transform of F.
-%   F must be a matrix or a 3D array. If F is a 3D array, the 
+%   `dsft(F)` computes the discrete symplectic Fourier transform of *F*.
+%   *F* must be a matrix or a 3D array. If *F* is a 3D array, the 
 %   transformation is applied along the first two dimensions.
 %
-%   Let F be a _K x _L matrix. Then the DSFT of F is given by
+%   Let *F* be a $K \times L$ matrix. Then the DSFT of *F* is given by
 %
-%M                              L-1 K-1
-%M   C(m+1,n+1) = 1/sqrt(K*L) * sum sum F(k+1,l+1)*exp(2*pi*i(k*n/K-l*m/L))
-%M                              l=0 k=0
+%   ..                           L-1 K-1
+%     C(m+1,n+1) = 1/sqrt(K*L) * sum sum F(k+1,l+1)*exp(2*pi*i(k*n/K-l*m/L))
+%                                l=0 k=0
 %
-%F \[C\left(m+1,n+1\right)=\frac{1}{\sqrt{KL}}\sum_{l=0}^{L-1}\sum_{k=0}^{K-1}F
-%F \left(k+1,l+1\right)e^{2\pi i\left(kn/K-lm/L\right)}\]
-%   for $m=0,...,L-1$ and $n=0,...,K-1$.
+%   .. math:: C\left(m+1,n+1\right)=\frac{1}{\sqrt{KL}}\sum_{l=0}^{L-1}\sum_{k=0}^{K-1}F
+%            \left(k+1,l+1\right)e^{2\pi i\left(kn/K-lm/L\right)}
+%
+%   for $m=0,\ldots,L-1$ and $n=0,\ldots,K-1$.
 %
 %   The DSFT is its own inverse.
 %
@@ -43,4 +44,4 @@ else
   end;
   F=Fo;
 end;
-%OLDFORMAT
+

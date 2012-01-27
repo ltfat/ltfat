@@ -2,15 +2,15 @@ function cout=col2diag(cin)
 %COL2DIAG  Move columns of a matrix to diagonals
 %   Usage:  cout=col2diag(cin);
 %
-%   COL2DIAG(cin) will rearrange the elements in the square matrix cin so
-%   that columns of cin appears as diagonals. Column number _n will appear
-%   as diagonal number _-n and _L-n, where _L is the size of the matrix.
+%   `col2diag(cin)` will rearrange the elements in the square matrix *cin* so
+%   that columns of *cin* appears as diagonals. Column number *n* will appear
+%   as diagonal number $-n$ and $L-n$, where *L* is the size of the matrix.
 %
 %   The function is its own inverse.
 %
-%   COL2DIAG performs the underlying coordinate transform for spreading
+%   `col2diag` performs the underlying coordinate transform for spreading
 %   function and Kohn-Nirenberg calculus in the finite, discrete setting.
-%M
+%
 %   See also: spreadop, spreadfun, tconv
   
 %   AUTHOR : Peter Soendergaard.
@@ -29,4 +29,4 @@ if ~isnumeric(cin)
 end;
 
 cout=comp_col2diag(full(cin));
-%OLDFORMAT
+

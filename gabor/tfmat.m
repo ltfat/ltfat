@@ -9,47 +9,47 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %           F=tfmat('gabmul',sym,a);
 %           F=tfmat('spread',c);
 %
-%   TFMAT returns a matrix F containing the basis functions / atoms of
+%   `tfmat` returns a matrix *F* containing the basis functions / atoms of
 %   one of the transforms in the toolbox. The atoms are placed as column
-%   vectors in the matrix. A forward transform (analysis) can be done by
+%   vectors in the matrix. A forward transform (analysis) can be done by::
 %
-%C      c=F'*f;
+%     c=F'*f;
 %
-%   and a backwards or adjoint transform (synthesis) can be done by
+%   and a backwards or adjoint transform (synthesis) can be done by::
 %
-%C      r=F*c;
+%     r=F*c;
 %
 %   The possibilities are:
 %
-%   TFMAT('fourier',L) returns the matrix of the unitary Fourier
-%   transform of length L. See DFT.
+%   `tfmat('fourier',L)` returns the matrix of the unitary Fourier
+%   transform of length *L*. See |dft|_.
 %
-%   TFMAT('dcti',L) returns the matrix of the DCTI transform of length
-%   L. Similarly for 'dctii', 'dctiii', 'dctiv', 'dsti', 'dstii',
-%   'dstiii' or 'dstiv'
+%   `tfmat('dcti',L)` returns the matrix of the DCTI transform of length
+%   *L*. Similarly for `'dctii'`, `'dctiii'`, `'dctiv'`, `'dsti'`, `'dstii'`,
+%   `'dstiii'` or `'dstiv'`.
 %
-%   TFMAT('dgt',g,a,M) returns a matrix containing all the atoms of the
-%   Gabor frame with window g and lattice constants _a and M. 
-%   TFMAT('dgt',g,a,M,L) will do the same for a FIR window g.
+%   `tfmat('dgt',g,a,M)` returns a matrix containing all the atoms of the
+%   Gabor frame with window g and lattice constants *a* and *M*. 
+%   `tfmat('dgt',g,a,M,L)` will do the same for a FIR window *g*.
 %
-%   TFMAT('dwilt',g,M) returns a matrix containing all the atoms of the
-%   Wilson  basis with window g and M channels. TFMAT(g,M,L) will do the
-%   same for a FIR window g.
+%   `tfmat('dwilt',g,M)` returns a matrix containing all the atoms of the
+%   Wilson  basis with window *g* and *M* channels. `tfmat(g,M,L)` will do the
+%   same for a FIR window *g*.
 %
-%   TFMAT('wmdct',g,M) and TFMAT('wmdct',g,M,L) does the same for an WMDCT
-%   with M channels.
+%   `tfmat('wmdct',g,M)` and `tfmat('wmdct',g,M,L)` does the same for an WMDCT
+%   with *M* channels.
 %
-%   TFMAT('gabmul',sym,a) return the matrix of the Gabor multiplier with
-%   symbol sym and time shift _a. TFMAT('gabmul',c,g,a) does the same using
-%   the window g for both analysis and
-%   synthesis. TFMAT('gabmul',sym,ga,gs,a) does the same using ga as
-%   analysis window and gs as synthesis window.
+%   `tfmat('gabmul',sym,a)` return the matrix of the Gabor multiplier with
+%   symbol sym and time shift *a*. `tfmat('gabmul',c,g,a)` does the same using
+%   the window *g* for both analysis and
+%   synthesis. `tfmat('gabmul',sym,ga,gs,a)` does the same using *ga* as
+%   analysis window and *gs* as synthesis window.
 %
-%   TFMAT('spread',c) returns the matrix of the
-%   spreading operator with symbol c.
+%   `tfmat('spread',c)` returns the matrix of the spreading operator with
+%   symbol *c*.
 %
-%   TFMAT('zak',L,a) returns the transform matrix for a Zak transform of
-%   length L and parameter _a.
+%   `tfmat('zak',L,a)` returns the transform matrix for a Zak transform of
+%   length *L* and parameter *a*.
 % 
 %   This function should mainly be used for educational purposes or for 
 %   experimenting with systems, as the generated matrix can
@@ -200,5 +200,3 @@ switch(lower(ttype))
     error('Unknown transform.');
 end;
 
-
-%OLDFORMAT

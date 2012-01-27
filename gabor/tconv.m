@@ -2,30 +2,31 @@ function h=tconv(f,g)
 %TCONV  Twisted convolution
 %   Usage:  h=tconv(f,g);
 %
-%   TCONV(f,g) computes the twisted convolution of the square matrices
-%   f and g.
+%   `tconv(f,g)` computes the twisted convolution of the square matrices
+%   *f* and *g*.
 %
-%   Let h=TCONV(f,g) for f,g being _LxL matrices. Then h is given by
+%   Let `h=tconv(f,g)` for *f,g* being $L \times L$ matrices. Then *h* is given by
 %
-%M                  L-1 L-1
-%M     h(m+1,n+1) = sum sum f(k+1,l+1)*g(m-k+1,n-l+1)*exp(-2*pi*i*(m-k)*l/L);
-%M                  l=0 k=0
-%F  \[h\left(m+1,n+1\right)=\sum_{l=0}^{L-1}\sum_{k=0}^{L-1}f\left(k+1,l+1\right)g\left(m-k+1,n-l+1\right)e^{-2\pi i(m-k)l/L}\]
+%   ..              L-1 L-1
+%      h(m+1,n+1) = sum sum f(k+1,l+1)*g(m-k+1,n-l+1)*exp(-2*pi*i*(m-k)*l/L);
+%                   l=0 k=0
 %
-%   where m-k and n-l are computed modulo L.
+%   .. math:: h\left(m+1,n+1\right)=\sum_{l=0}^{L-1}\sum_{k=0}^{L-1}f\left(k+1,l+1\right)g\left(m-k+1,n-l+1\right)e^{-2\pi i(m-k)l/L}
 %
-%   If both f and g are of class 'sparse' then h will also be a sparse
-%   matrix. The number of non-zero elements of h is usually much larger than
-%   the numbers for f and g. Unless f and g are very sparse, it can be
-%   faster to convert them to full matrices before calling TCONV. 
+%   where $m-k$ and $n-l$ are computed modulo *L*.
 %
-%   The routine SPREADINV can be used to calculate an inverse convolution.
-%   Define h and _r by
+%   If both *f* and *g* are of class `sparse` then *h* will also be a sparse
+%   matrix. The number of non-zero elements of *h* is usually much larger than
+%   the numbers for *f* and *g*. Unless *f* and *g* are very sparse, it can be
+%   faster to convert them to full matrices before calling `tconv`. 
 %
-%C    h=tconv(f,g);
-%C    r=tconv(spreadinv(f),h);
+%   The routine |spreadinv|_ can be used to calculate an inverse convolution.
+%   Define *h* and *r* by::
 %
-%   then _r is equal to g.
+%     h=tconv(f,g);
+%     r=tconv(spreadinv(f),h);
+%
+%   then *r* is equal to *g*.
 %
 %   See also:  spreadop, spreadfun, spreadinv
 
@@ -84,7 +85,3 @@ else
   h=spreadfun(Th);
 
 end;
-
-
-
-%OLDFORMAT

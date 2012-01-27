@@ -2,65 +2,65 @@ function [] = mulaclab()
 %MULACLAB Graphical interface for audio processing using frame multipliers
 %   Usage: mulaclab;
 % 
-%   When starting the interface, the user is asked to choose the processed 
-%   signal, named original signal in the interface. 
-%   Possible signals are .wav files and .mat files containing decompositions 
-%   preliminarily saved using the mulaclab interface.
-%   The interface only handle monochannel signals. So for multichannel .wav 
-%   files, the first channel is used as original signal.
+%   When starting the interface, the user is asked to choose the processed
+%   signal, named original signal in the interface.  Possible signals are
+%   `.wav` files and `.mat` files containing decompositions preliminarily
+%   saved using the `mulaclab` interface.  The interface only handles
+%   monochannel signals. So for a multichannel `.wav` files, the first channel
+%   is used as the original signal.
 %
 %   After choosing the original signal, the user is presented with the main
 %   interface. This interface is divided in two areas: 
 %
 %   * The right part of the figure contains the visualizations, which
-%   represent the spectrograms of the original and modified signals.
+%     represent the spectrograms of the original and modified signals.
 %
-%   The 'Original signal' visualization is used to display the original
-%   signal spectrogram and to graphically define the symbol of the Gabor 
-%   multiplier that will be applied on this signal. 
+%     The 'Original signal' visualization is used to display the original
+%     signal spectrogram and to graphically define the symbol of the Gabor 
+%     multiplier that will be applied on this signal. 
 %
-%   The 'Overview of original signal' visualization also represents the
-%   original signal spectrogram and can be used for fast zooming and moving
-%   of the other visualizations. Zooming and moving is controlled by mouse
-%   interaction with the white rectangle displayed on this visualization. 
+%     The 'Overview of original signal' visualization also represents the
+%     original signal spectrogram and can be used for fast zooming and moving
+%     of the other visualizations. Zooming and moving is controlled by mouse
+%     interaction with the white rectangle displayed on this visualization. 
 %
-%   The 'Modified signal' visualization is used to display the spectrogram
-%   of the modified signal after application of the multiplier.
+%     The 'Modified signal' visualization is used to display the spectrogram
+%     of the modified signal after application of the multiplier.
 %
-%   'Overview of original signal' and 'Modified signal' visulizations can
-%   be shown or hidden using the 'Visualization' menu.
+%     It is possible to hide the 'Overview of original signal' and 'Modified
+%     signal' visulizations using the 'Visualization' menu.
 %
 %   * The left part of the figure contains panels with tools for user 
-%   interaction.
+%     interaction.
 %
-%   The 'Audioplayer' panel contains the controls for audio playback of the
-%   original and modified signal.
+%     The 'Audioplayer' panel contains the controls for audio playback of the
+%     original and modified signal.
 %
-%   The 'Visualization' panel contains tools used to adapt the display
-%   of the visualizations.
+%     The 'Visualization' panel contains tools used to adapt the display
+%     of the visualizations.
 %
-%   The 'Selection' panel contains tools and information concerning the
-%   multilayered selection used to graphically specify the symbol of the 
-%   multiplier.
+%     The 'Selection' panel contains tools and information concerning the
+%     multilayered selection used to graphically specify the symbol of the 
+%     multiplier.
 % 
 %   Known Matlab limitations: 
 %
 %   * When using Matlab on Linux with multiple screens, there might be a 
-%   Matlab bug preventing the display of the multiplier symbol. This can be
-%   solved by docking the figure.
+%     Matlab bug preventing the display of the multiplier symbol. This can be
+%     solved by docking the figure.
 %
 %   * When using a Matlab version prior to 7.3 (R2006b), the rectangle
-%   displayed on the 'Overview of original signal' visualization is not
-%   automatically updated when using the zoom and pan tools of the 'Zoom' 
-%   panel. It can be manually updated by re-clicking on the currently
-%   selected tool or by changing the current tool.
-%%
+%     displayed on the 'Overview of original signal' visualization is not
+%     automatically updated when using the zoom and pan tools of the 'Zoom' 
+%     panel. It can be manually updated by re-clicking on the currently
+%     selected tool or by changing the current tool.
+%
 %   The Matlab Image Processing Toolbox is required by the mulaclab function.
 %
-%   MULACLAB use the GPC library available from
-%   http://www.cs.man.ac.uk/~toby/gpc/. This library is distributed
+%   MULACLAB uses the GPC library available from
+%   `<http://www.cs.man.ac.uk/~toby/gpc/>`_. This library is distributed
 %   alongside LTFAT, but under different licensing conditions. Please see
-%   the ltfat/thirdparty/gpc/GPC-README.pdf file for the exact conditions.
+%   the `ltfat/thirdparty/gpc/GPC-README.pdf` file for the exact conditions.
 %
 
 % questions : do we want to :
@@ -3592,4 +3592,3 @@ initialize;
 
 end
 
-%OLDFORMAT

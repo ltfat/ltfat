@@ -2,8 +2,8 @@ function f=izak(c);
 %IZAK  Inverse Zak transform
 %   Usage:  f=izak(c);
 %
-%   IZAK(c) computes the inverse Zak transform of c. The parameter of
-%   the Zak transform is deduced from the size of c.
+%   `izak(c)` computes the inverse Zak transform of *c*. The parameter of
+%   the Zak transform is deduced from the size of *c*.
 %
 %   See also:  zak
 %
@@ -30,5 +30,3 @@ for ii=1:W
   % of the Zak transform.
   f(:,ii)=reshape(idft(c(:,:,ii),[],2),L,1);
 end;
-
-%OLDFORMAT

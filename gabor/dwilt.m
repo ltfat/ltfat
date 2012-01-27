@@ -52,7 +52,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %     c=dwilt(f,g,M);  % Compute a Wilson transform of f.
 %     N=size(c,2)*2;   % Number of translation coefficients.
 %
-%   The following holds for $m=0,...,M-1$ and $n=0,...,N/2-1$:
+%   The following holds for $m=0,\ldots,M-1$ and $n=0,\ldots,N/2-1$:
 %
 %   If $m=0$:
 %
@@ -60,7 +60,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %     c(m+1,n+1)   = sum f(l+1)*g(l-2*n*M+1)
 %                    l=0  
 %
-%   .. math:: c\left(1,n+1\right) & = & \sum_{l=0}^{L-1}f(l+1)g\left(l-2nM+1\right)
+%   .. math:: c\left(1,n+1\right) = \sum_{l=0}^{L-1}f(l+1)g\left(l-2nM+1\right)
 %
 %
 %   If $m$ is odd and less than $M$
@@ -95,7 +95,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %     c(m+1,n+1)   = sum f(l+1)*(-1)^(l)*g(l-2*n*M+1)
 %                    l=0
 %
-%   .. math:: c\left(M+1,n+1\right) & = & \sum_{l=0}^{L-1}f(l+1)(-1)^{l}g(l-2nM+1)
+%   .. math:: c\left(M+1,n+1\right) = \sum_{l=0}^{L-1}f(l+1)(-1)^{l}g(l-2nM+1)
 %
 %   else if $m=M$ and $M$ is odd
 %
@@ -103,7 +103,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %     c(m+1,n+1)   = sum f(l+1)*(-1)^l*g(l-(2*n+1)*M+1)
 %                    l=0
 %
-%   .. math:: c\left(M+1,n+1\right) & = & \sum_{k=0}^{L-1}f(l+1)(-1)^{l}g\left(l-\left(2n+1\right)M+1\right)
+%   .. math:: c\left(M+1,n+1\right) = \sum_{k=0}^{L-1}f(l+1)(-1)^{l}g\left(l-\left(2n+1\right)M+1\right)
 %
 %   See also:  idwilt, wilwin, wil2rect, dgt, wmdct, wilorth
 %
