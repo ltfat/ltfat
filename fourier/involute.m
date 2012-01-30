@@ -3,29 +3,29 @@ function f=involute(f,dim);
 %   Usage: finv=involute(f);
 %          finv=involute(f,dim);
 %
-%   INVOLUTE(f) will return the involution of f.
+%   `involute(f)` will return the involution of *f*.
 %
-%   INVOLUTE(f,dim) will return the involution of f along dimension dim.
-%   This can for instance be used to calculate the 2D involution:
+%   `involute(f,dim)` will return the involution of *f* along dimension *dim*.
+%   This can for instance be used to calculate the 2D involution::
 %
-%C        f=involute(f,1);
-%C        f=involute(f,2);
+%     f=involute(f,1);
+%     f=involute(f,2);
 %
-%   The involution finv of f is given by
+%   The involution *finv* of *f* is given by::
 %
-%C        finv(l+1)=conj(f(mod(-l,L)+1));
+%     finv(l+1)=conj(f(mod(-l,L)+1));
 %
-%   for $l=0,...,L-1$.
+%   for $l=0,\ldots,L-1$.
 %
 %   The relation between conjugation, Fourier transformation and involution
-%   is expressed by
+%   is expressed by::
 %
-%C      conj(dft(f)) == dft(involute(f))
+%     conj(dft(f)) == dft(involute(f))
 %
-%   for all signals f. The inverse discrete Fourier transform can be
-%   expressed by
+%   for all signals *f*. The inverse discrete Fourier transform can be
+%   expressed by::
 %
-%C      idft(f) == conj(involute(dft(f)));
+%     idft(f) == conj(involute(dft(f)));
 %
 %   See also:  dft, pconv
 
@@ -51,5 +51,3 @@ f=reshape(conj([f(1,:); ...
 	  flipud(f(2:L,:))]),size(f));
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
-
-%OLDFORMAT

@@ -12,21 +12,22 @@ function [f]=idgt2(c,g1,p3,p4,p5)
 %         g,g1,g2 : Window function(s).
 %         a,a1,a2 : Length(s) of time shift.
 %         Ls      : Length(s) of reconstructed signal (optional).
+%
 %   Output parameters:
-%         f     : Output data, matrix.
+%         f       : Output data, matrix.
 %
-%   IDGT2(c,g,a,M) will calculate a separable two dimensional inverse
-%   discrete Gabor transformation of the input coefficients c using the
-%   window g and parameters _a, along each dimension.  The number of channels
-%   is deduced from the size of the coefficients c.
+%   `idgt2(c,g,a,M)` will calculate a separable two dimensional inverse
+%   discrete Gabor transformation of the input coefficients *c* using the
+%   window *g* and parameters *a*, along each dimension. The number of channels
+%   is deduced from the size of the coefficients *c*.
 %
-%   IDGT2(c,g1,g2,a) will do the same using the window g1 along the first
-%   dimension, and window g2 the second dimension.
+%   `idgt2(c,g1,g2,a)` will do the same using the window *g1* along the first
+%   dimension, and window *g2* along the second dimension.
 %
-%   IDGT2(c,g,a,Ls) or IDGT2(c,g1,g2,a,Ls) will cut the signal to size Ls
+%   `idgt2(c,g,a,Ls)` or `idgt2(c,g1,g2,a,Ls)` will cut the signal to size *Ls*
 %   after the transformation is done.
 %
-%   The parameters _a and Ls can also be vectors of length 2.
+%   The parameters *a* and *Ls* can also be vectors of length 2.
 %   In this case the first element will be used for the first dimension
 %   and the second element will be used for the second dimension. 
 %
@@ -159,6 +160,3 @@ c=reshape(c,Ls(2),Ls(1),W);
 % Exchange first and second dimension.
 f=permute(c,[2,1,3]);
 
-
-
-%OLDFORMAT

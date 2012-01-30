@@ -11,44 +11,43 @@ function [f,g]=idgt(coef,g,a,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   IDGT(c,g,a) computes the Gabor expansion of the input coefficients
-%   c with respect to the window g and time shift _a. The number of 
-%   channels is deduced from the size of the coefficients c.
+%   `idgt`(c,g,a)` computes the Gabor expansion of the input coefficients
+%   *c* with respect to the window *g* and time shift *a*. The number of 
+%   channels is deduced from the size of the coefficients *c*.
 %
-%   IDGT(c,g,a,Ls) does as above but cuts or extends f to length Ls.
+%   `idgt(c,g,a,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
-%   [f,g]=IDGT(...) additionally outputs the window used in the
+%   `[f,g]=idgt(...)` additionally outputs the window used in the
 %   transform. This is useful if the window was generated from a description
 %   in a string or cell array.
 %
 %   For perfect reconstruction, the window used must be a dual window of the
 %   one used to generate the coefficients.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |gabwin|_ for more details.
 %
-%   If g is a row vector, then the output will also be a row vector. If c is
-%   3-dimensional, then IDGT will return a matrix consisting of one column
-%   vector for each of the TF-planes in c.
+%   If *g* is a row vector, then the output will also be a row vector. If *c* is
+%   3-dimensional, then `idgt` will return a matrix consisting of one column
+%   vector for each of the TF-planes in *c*.
 %
-%   Assume that f=IDGT(c,g,a,L) for an array c of size $M$ x $N$. 
-%   Then the following holds for k=0,...,L-1: 
+%   Assume that `f=idgt(c,g,a,L)` for an array *c* of size $M \times N$. 
+%   Then the following holds for $k=0,\ldots,L-1$: 
 % 
-%M            N-1 M-1          
-%M  f(l+1)  = sum sum c(m+1,n+1)*exp(2*pi*i*m*l/M)*g(l-a*n+1)
-%M            n=0 m=0          
-%F  \begin{eqnarray*}
-%F  f(l+1) & = & \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi iml/M}g(l-an+1)
-%F  \end{eqnarray*}
+%   ..          N-1 M-1          
+%     f(l+1)  = sum sum c(m+1,n+1)*exp(2*pi*i*m*l/M)*g(l-a*n+1)
+%               n=0 m=0          
 %
-%   IDGT takes the following flags at the end of the line of input
+%   .. math:: f(l+1) = \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi iml/M}g(l-an+1)
+%
+%   `idgt` takes the following flags at the end of the line of input
 %   arguments:
 %
-%-     'freqinv'  - Compute an IDGT using a frequency-invariant phase. This
-%                   is the default convention described above.
+%     'freqinv'  Compute an IDGT using a frequency-invariant phase. This
+%                is the default convention described above.
 %
-%-     'timeinv'  - Compute an IDGT using a time-invariant phase. This
-%                   convention is typically used in filter bank algorithms.
+%     'timeinv'  Compute an IDGT using a time-invariant phase. This
+%                convention is typically used in filter bank algorithms.
 %
 %   See also:  dgt, gabwin, dwilt, gabtight
 
@@ -113,9 +112,3 @@ else
 end;
 
 f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
-
-
-
-
-
-%OLDFORMAT

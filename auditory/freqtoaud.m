@@ -2,36 +2,36 @@ function aud = freqtoaud(freq,varargin);
 %FREQTOAUD  Converts frequencies (Hz) to auditory scale units.
 %   Usage: aud = freqtoaud(freq,scale);
 %
-%   FREQTOAUD(freq,scale) converts values on frequency scale (measured in Hz) to
-%   values on the selected auditory scale. The value of the parameter
-%   scale determines the auditory scale:
+%   `freqtoaud(freq,scale)` converts values on the frequency scale (measured
+%   in Hz) to values on the selected auditory scale. The value of the
+%   parameter *scale* determines the auditory scale:
 %
-%-    'erb'   - A distance of 1 erb is equal to the equivalent rectangular
+%     'erb'     A distance of 1 erb is equal to the equivalent rectangular
 %               bandwidth of the auditory filters at that point on the
 %               frequency scale. The scale is normalized such that 0 erbs
 %               corresponds to 0 Hz. The width of the auditory filters were
 %               determined by a notched-noise experiment. The erb scale is
 %               defined in Glasberg and Moore (1990). This is the default.
 %
-%-    'mel'  -  The mel scale is a perceptual scale of pitches judged by
+%     'mel'     The mel scale is a perceptual scale of pitches judged by
 %               listeners to be equal in distance from one another. The
 %               reference point between this scale and normal frequency
 %               measurement is defined by equating a 1000 Hz tone, 40 dB above
 %               the listener's threshold, with a pitch of 1000 mels.
 %               The mel-scale is defined in Stevens et. al (1937).
 %
-%-    'mel1000' - Alternative definition of the mel scale using a break
-%               frequency of 1000 Hz. This scale was reported in Fant (1968). 
+%     'mel1000'  Alternative definition of the mel scale using a break
+%                frequency of 1000 Hz. This scale was reported in Fant (1968). 
 %
-%-    'bark'  - The bark-scale is originally defined in Zwicker (1961). A
+%     'bark'    The bark-scale is originally defined in Zwicker (1961). A
 %               distance of 1 on the bark scale is known as a critical
 %               band. The implementation provided in this function is
 %               described in Traunmuller (1990).
 %
-%-    'erb83' - This is the original defintion of the erb scale given in
+%     'erb83'   This is the original defintion of the erb scale given in
 %               Moore. et al. (1983).
 %
-%-    'freq'  - Return the frequency in Hz. 
+%     'freq'    Return the frequency in Hz. 
 %
 %   If no flag is given, the erb-scale will be selected.
 %
@@ -93,4 +93,3 @@ if flags.do_freq
   aud = freq;
 end;
 
-%OLDFORMAT

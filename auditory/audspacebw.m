@@ -5,21 +5,20 @@ function [y,n] = audspacebw(flow,fhigh,varargin)
 %          y=audspacebw(flow,fhigh);
 %          [y,n]=audspacebw(...);
 %
-%   AUDSPACEBW(flow,fhigh,bw,scale) computes a vector containing
-%   values equistantly scaled between flow and fhigh on the selected
-%   auditory scale.  All frequencies are specified in Hz.The distance
-%   between two consecutive values are given by a value of bw the
-%   scale, and the points will be centered on the scale between flow
-%   and fhigh.
+%   `audspacebw(flow,fhigh,bw,scale)` computes a vector containing values
+%   equistantly scaled between frequencies *flow* and *fhigh* on the
+%   selected auditory scale.  All frequencies are specified in Hz.The
+%   distance between two consecutive values is *bw* on the selected scale,
+%   and the points will be centered on the scale between *flow* and *fhigh*.
 %
-%   See the help on FREQTOAUD to get a list of the supported values of the
-%   scale parameter.
+%   See the help on |freqtoaud|_ to get a list of the supported values of the
+%   *scale* parameter.
 %  
-%   AUDSPACEBW(flow,fhigh,bw,hitme,scale) will do as above, but one of
-%   the points is quaranteed to be the frequency hitme.
+%   `audspacebw(flow,fhigh,bw,hitme,scale)` will do as above, but one of
+%   the points is quaranteed to be the frequency *hitme*.
 %
-%   [y,n]=AUDSPACEBW( ... ) additionally returns the number of points n in
-%   the output vector y.
+%   `[y,n]=audspacebw(...)` additionally returns the number of points *n* in
+%   the output vector *y*.
 %
 %   See also: freqtoaud, audspace, audfiltbw
   
@@ -89,5 +88,3 @@ else
 end;
 
 y = audtofreq(audpoints,flags.audscale);
-
-%OLDFORMAT

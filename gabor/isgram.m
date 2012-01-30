@@ -14,54 +14,54 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   ISGRAM(s,g,a) attempts to invert a spectrogram computed by
+%   `isgram(s,g,a)` attempts to invert a spectrogram computed by
 %
-%C     s = abs(dgt(f,g,a,M)).^2;
+%     s = abs(dgt(f,g,a,M)).^2;
 %
-%   by an iterative method.
+%   using an iterative method.
 %
-%   ISGRAM(c,g,a,Ls) does as above but cuts or extends f to length Ls.
+%   `isgram(c,g,a,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
 %   If the phase of the spectrogram is known, it is much better to use
-%   IDGT.
+%   `idgt`.
 %
-%   [f,relres,iter]=ISGRAM(...) additionally return the residuals in a
-%   vector relres and the number of iteration steps done.
+%   `[f,relres,iter]=isgram(...)` additionally return the residuals in a
+%   vector *relres* and the number of iteration steps *iter*.
 %
 %   Generally, if the spectrogram has not been modified, the iterative
 %   algorithm will converge slowly to the correct result. If the
 %   spectrogram has been modified, the algorithm is not guaranteed to
 %   converge at all.  
 %
-%   ISGRAM takes the following parameters at the end of the line of input
+%   `isgram` takes the following parameters at the end of the line of input
 %   arguments:
 %
-%-    'zero'     - Choose a starting phase of zero. This is the default
+%     'zero'       Choose a starting phase of zero. This is the default
 %
-%-    'rand'     - Choose a random starting phase.
+%     'rand'       Choose a random starting phase.
 %
-%-    'int'      - Construct a starting phase by integration. Only works
+%     'int'        Construct a starting phase by integration. Only works
 %                  for Gaussian windows.
 %
-%     'griflim'  - Use the Griffin-Lim iterative method, this is the
+%     'griflim'    Use the Griffin-Lim iterative method, this is the
 %                  default.
 %
-%-    'bfgs'     - Use the limited-memory Broyden Fletcher Goldfarb
+%     'bfgs'       Use the limited-memory Broyden Fletcher Goldfarb
 %                  Shanno (BFGS) method.  
 %
-%-    'tol',t    - Stop if relative residual error is less than the specified tolerance.  
+%     'tol',t      Stop if relative residual error is less than the specified tolerance.  
 %
-%-    'maxit',n  - Do at most n iterations.
+%     'maxit',n    Do at most n iterations.
 %
-%-    'print'    - Display the progress.
+%     'print'      Display the progress.
 %
-%-    'quiet'    - Don't print anything, this is the default.
+%     'quiet'      Don't print anything, this is the default.
 %
-%-    'printstep',p - If 'print' is specified, then print every p'th
-%                  iteration. Default value is p=10;
+%     'printstep',p  If 'print' is specified, then print every p'th
+%                    iteration. Default value is p=10;
 %
 %   To use the BFGS method, please install the minFunc software from
-%   http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html
+%   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
 %   See also:  dgt, idgt
 %
@@ -214,8 +214,3 @@ function [f,df]=objfun(x,g,a,M,s);
   
   df=4*real(conj(comp_idgt(inner.*c,g,a,M,L,0)));
 
-
-
-
-
-%OLDFORMAT

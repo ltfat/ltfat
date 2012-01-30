@@ -2,14 +2,15 @@ function [y,bw] = audspace(flow,fhigh,n,varargin)
 %AUDSPACE  Equidistantly spaced points on auditory scale
 %   Usage: y=audspace(scale,flow,fhigh,n);
 %
-%   AUDSPACE(flow,fhigh,n,scale) computes a vector of length n containing values
-%   equistantly scaled on the selected auditory scale between flow and fhigh. All
-%   frequencies are specified in Hz.
+%   `audspace(flow,fhigh,n,scale)` computes a vector of length *n*
+%   containing values equidistantly scaled on the selected auditory scale
+%   between the frequencies *flow* and *fhigh*. All frequencies are
+%   specified in Hz.
 %
-%   See the help on FREQTOAUD to get a list of the supported values of the
-%   scale parameter.
+%   See the help on |freqtoaud|_ to get a list of the supported values of the
+%   *scale* parameter.
 %  
-%   [y,bw]=AUDSPACE(...) does the same but outputs the bandwidth between
+%   `[y,bw]=audspace(...)` does the same but outputs the bandwidth between
 %   each sample measured on the selected scale.
 %  
 %   See also: freqtoaud, audspacebw, audfiltbw
@@ -57,4 +58,3 @@ bw=(audlimits(2)-audlimits(1))/(n-1);
 y(1)=flow;
 y(end)=fhigh;
 
-%OLDFORMAT
