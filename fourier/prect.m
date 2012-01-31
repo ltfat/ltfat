@@ -2,17 +2,17 @@ function f=prect(L,n)
 %PRECT   Periodic rectangle
 %   Usage:  f=prect(L,n);
 %
-%   PSINC(L,n) computes the periodic rectangle (or square) function of
-%   length L supported on n samples. The DFT of the periodic rect
-%   function in the periodic sinc function.
+%   `psinc(L,n)` computes the periodic rectangle (or square) function of
+%   length *L* supported on *n* samples. The |dft|_ of the periodic
+%   rectangle function in the periodic sinc function, |psinc|_.
 %
-%   * If n is odd, the output will be supported on exactly n samples
-%   centered around the first sample.
+%   * If *n* is odd, the output will be supported on exactly *n* samples
+%     centered around the first sample.
 %
-%   * If n is even, the output will be supported on exactly n+1 samples
-%   centered around the first sample. The function value on the two
-%   samples on the edge of the function will have half the magnitude of
-%   the other samples.
+%   * If *n* is even, the output will be supported on exactly *n+1* samples
+%     centered around the first sample. The function value on the two
+%     samples on the edge of the function will have half the magnitude of
+%     the other samples.
 %
 %   See also: psinc
   
@@ -28,4 +28,3 @@ end;
 
 f=pbspline(L,0,n);
 
-%OLDFORMAT

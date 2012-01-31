@@ -3,6 +3,8 @@ function plotfftreal(coef,varargin)
 %   Usage: plotfftreal(coef);
 %          plotfftreal(coef,N);
 %          plotfftreal(coef,
+
+  
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;

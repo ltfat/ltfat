@@ -2,9 +2,9 @@ function f=psinc(L,n)
 %PSINC   Periodic Sinc function (Dirichlet function)
 %   Usage:  f=psinc(L,n);
 %
-%   PSINC(L,n) computes the periodic Sinc function of length L with n-1
-%   local extrema. The DFT of the periodic Sinc function is the periodic
-%   rectangle of length n.
+%   `psinc(L,n)` computes the periodic Sinc function of length *L* with
+%   $n-1$ local extrema. The |dft|_ of the periodic Sinc function is the
+%   periodic rectangle, |prect|_, of length *n*.
 %
 %   See also: prect
   
@@ -30,4 +30,3 @@ if (mod(n,2))==0;
   f = f+cos(x*n/2)/n_odd;
 end;
 
-%OLDFORMAT

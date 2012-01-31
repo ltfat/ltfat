@@ -3,11 +3,12 @@ function plotfft(coef,varargin)
 %   Usage: plotfft(coef);
 %          plotfft(coef,fs);
 %
-%   PLOTFFT(coef) will plot the output from the FFT function. The
-%   frequency axis will use normalized frequencies between 0 and 1 (Nyquest).
+%   `plotfft(coef)` plots the output from the `fft` function. The
+%   frequency axis will use normalized frequencies between 0 and 1 (the
+%   Nyquest frequency).
 %
-%   PLOTFFT(coef,fs) will do the same for the FFT of a signal sampled at
-%   a sampling rate of fs Hz.
+%   `plotfft(coef,fs)` does the same for the FFT of a signal sampled at
+%   a sampling rate of *fs* Hz.
 %
 %   See also: plotfftreal
   
@@ -100,4 +101,3 @@ else
   xlabel(sprintf('%s (%s)',kv.frequency,kv.normalized));
 end;
 
-%OLDFORMAT
