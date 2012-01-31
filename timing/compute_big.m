@@ -25,4 +25,4 @@ for a=a_init:a_init:50*a_init
   end;
 end;
 
-%OLDFORMAT
+

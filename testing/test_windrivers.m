@@ -19,4 +19,4 @@ gd=gabwin('gaussdual',a,M,L);
 gd=gabwin({'tight','gauss'},a,M,L);
 g=gabwin({'dual',{'hann',M}},a,M,L);
 
-%OLDFORMAT
+

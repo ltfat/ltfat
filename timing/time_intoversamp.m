@@ -33,4 +33,4 @@ for ii=1:length(Lr)
   c2=mex_dgt_fac_2(f,gf,a,M);
 
 end;
-%OLDFORMAT
+

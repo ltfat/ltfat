@@ -9,4 +9,4 @@ N2=floor(N/2)+1;
 f=fft(f,N,1);
 f=f(1:N2,:);
 
-%OLDFORMAT
+

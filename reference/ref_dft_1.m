@@ -18,4 +18,4 @@ fflong=fft(flong)/sqrt(L);
 
 c=fflong(1:L,:);
 
-%OLDFORMAT
+

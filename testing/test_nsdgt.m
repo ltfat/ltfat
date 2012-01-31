@@ -51,4 +51,4 @@ res=norm(f-rt);
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['NSDGT TIGHT %0.5g %s\n'],res,fail);
 
-%OLDFORMAT
+

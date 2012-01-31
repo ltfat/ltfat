@@ -64,4 +64,4 @@ plot(x,data_fac,'x',...
      x,data_fb,'o');
 
 legend;
-%OLDFORMAT
+

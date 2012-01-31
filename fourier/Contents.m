@@ -60,4 +60,3 @@
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
 
-%OLDFORMAT

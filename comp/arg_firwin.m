@@ -6,4 +6,4 @@ function definput=arg_firwin(definput)
                       'sqrttria','blackman','blackman2','nuttall', 'ogg','itersine', ...
                       'sine'};
 
-%OLDFORMAT
+

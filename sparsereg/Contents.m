@@ -1,6 +1,6 @@
 % LTFAT - Sparse regression methods
 %
-%  Bruno Torresani, 2009 - 2011.
+%  Bruno Torresani, 2009 - 2012.
 %
 %  Lasso methods for Gabor transforms
 %    GABLASSO      -  LASSO threshholding using Landweber iterations.
@@ -13,4 +13,3 @@
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
 
-%OLDFORMAT

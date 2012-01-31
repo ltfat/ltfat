@@ -44,4 +44,4 @@ end
 % construct the sparse result
 h=sparse(mn(:,1)+1,mn(:,2)+1,valh,L,L);
 
-%OLDFORMAT
+

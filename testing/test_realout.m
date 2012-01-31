@@ -66,4 +66,4 @@ function test_failed=realhelper(test_failed,funname,varargin)
 
   fprintf('REAL %s %i %s\n',funname,res,fail);
 
-%OLDFORMAT
+

@@ -22,4 +22,4 @@ c=reshape(c,M2*N2,M1*N1);
 c=c.';
 
 c=reshape(c,M1,N1,M2,N2);
-%OLDFORMAT
+

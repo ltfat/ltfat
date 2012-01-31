@@ -15,4 +15,4 @@ G=ref_gaboratoms(gamma,lat);
 % Apply matrix to f.
 c=G'*f;
 
-%OLDFORMAT
+

@@ -7,4 +7,4 @@ function gd=ref_gabtight(g,a,M)
 G=tfmat('dgt',g,a,M);
 
 gd=(G*G')^(-1/2)*g;
-%OLDFORMAT
+

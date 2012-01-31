@@ -28,4 +28,4 @@ if mod(L,2)==1
   c(end,:)=real(cc((L+1)/2,:));
 end;
 
-%OLDFORMAT
+

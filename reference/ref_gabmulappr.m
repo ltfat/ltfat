@@ -121,4 +121,4 @@ sym = reshape(iGram*(lowsym(:)),M,N);
  
 
 
-%OLDFORMAT
+

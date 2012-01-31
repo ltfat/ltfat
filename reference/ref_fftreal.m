@@ -10,4 +10,4 @@ c=fft(f);
 
 c=c(1:floor(L/2)+1,:);
 
-%OLDFORMAT
+

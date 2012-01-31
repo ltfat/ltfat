@@ -18,4 +18,4 @@ coef(2:2:M,1:2:N,:)= 1/sqrt(2)*(exp(i*pi/4)*coef2(2:2:M,1:2:N,:)+exp(i*pi*3/4)*c
 coef(2:2:M,2:2:N,:)= 1/sqrt(2)*(exp(-i*pi/4)*coef2(2:2:M,2:2:N,:)+exp(-i*pi*3/4)*coef2(2*M-1:-2:M+1,2:2:N,:));
 
 coef=reshape(coef,M*N,W);
-%OLDFORMAT
+

@@ -1,6 +1,6 @@
 % LTFAT - Non-stationary Gabor systems
 %
-%  Florent Jaillet and Peter L. Soendergaard, 2011
+%  Florent Jaillet and Peter L. Soendergaard, 2011 - 2012
 %
 %  Transforms
 %    UNSDGT               - Uniform Non-stationary DGT
@@ -23,5 +23,3 @@
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
-
-%OLDFORMAT

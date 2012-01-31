@@ -25,4 +25,4 @@ cout=comp_dgt_walnut(f,gf,a,M);
 % Apply dft modulation.
 cout=fft(cout)/sqrt(M);
 
-%OLDFORMAT
+

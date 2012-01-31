@@ -34,4 +34,4 @@ end;
 
 f=ref_ifac(ff,W,c,d,p,q,permutation);
 
-%OLDFORMAT
+

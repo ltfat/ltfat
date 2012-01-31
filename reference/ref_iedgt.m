@@ -48,4 +48,4 @@ F(:,M*(N-1)+M/2+1)=F(:,M*(N-1)+M/2+1)/sqrt(2);
 
 f=F*c;
 
-%OLDFORMAT
+

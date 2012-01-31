@@ -160,4 +160,4 @@ a = reshape(a,K,Marno);
 
 coef=a(:);
 
-%OLDFORMAT
+

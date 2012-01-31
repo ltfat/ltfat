@@ -123,4 +123,4 @@ s=sprintf(['FB FBR A  %0.5g %s'],AF-1,fail);
 disp(s)
 
 
-%OLDFORMAT
+

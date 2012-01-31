@@ -26,4 +26,4 @@ if isreal(f) && isreal(g)
   c=real(c);
 end;
   
-%OLDFORMAT
+

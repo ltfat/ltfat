@@ -1,6 +1,6 @@
 % LTFAT - Base routines
 %
-%  Peter L. Soendergaard, 2009 - 2011.
+%  Peter L. Soendergaard, 2009 - 2012.
 %
 %  Basic routines
 %    LTFATSTART       -  Start the toolbox
@@ -19,6 +19,3 @@
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
-
-
-%OLDFORMAT

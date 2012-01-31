@@ -45,4 +45,4 @@ gf=gf*sqrt(M);
 %norm(gf_nos(:)-gf(:))
 
 gf=reshape(gf,p*q*R,c*d);
-%OLDFORMAT
+

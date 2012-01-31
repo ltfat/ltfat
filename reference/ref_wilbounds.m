@@ -12,4 +12,4 @@ d=eig(S);
 
 A=min(d);
 B=max(d);
-%OLDFORMAT
+

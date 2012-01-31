@@ -1,6 +1,6 @@
 % LTFAT - Filterbanks
 %
-%  Peter L. Soendergaard, 2011
+%  Peter L. Soendergaard, 2011 - 2012
 %
 %  Transforms
 %    FILTERBANK           - Filter bank
@@ -21,4 +21,3 @@
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
 
-%OLDFORMAT

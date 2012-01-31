@@ -15,4 +15,4 @@ fflong=fft(flong)/sqrt(L);
 
 c=fflong(2:2:2*L,:);
 
-%OLDFORMAT
+

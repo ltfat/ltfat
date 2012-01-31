@@ -10,4 +10,4 @@ F=idft(eye(L));
 
 c=(F^order)*f;
 
-%OLDFORMAT
+

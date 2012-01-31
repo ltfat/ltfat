@@ -86,4 +86,4 @@ end;
 f=idgt(reshape(coef2,2*M,N,W),g,a);
 
 
-%OLDFORMAT
+

@@ -36,4 +36,4 @@ if isreal(coef) && isreal(g)
   f=real(f);
 end;
 
-%OLDFORMAT
+

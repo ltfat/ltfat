@@ -26,4 +26,4 @@ coef2(2*M-1:-2:M+1,1:2:N,:) = exp(-i*pi*3/4)/sqrt(2)*coef(2:2:M,1:2:N,:);
 coef2(2:2:M,2:2:N,:)        = exp(i*pi/4)/sqrt(2)*coef(2:2:M,2:2:N,:);
 coef2(2*M-1:-2:M+1,2:2:N,:) = exp(i*pi*3/4)/sqrt(2)*coef(2:2:M,2:2:N,:);
 
-%OLDFORMAT
+

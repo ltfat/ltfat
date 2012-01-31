@@ -31,4 +31,4 @@ F=F/sqrt(L);
 c=F.'*f;
 
 
-%OLDFORMAT
+

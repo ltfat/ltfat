@@ -21,4 +21,4 @@ tic
 gdf2=ref_gabdual_fac_time(gf,L,a,M);
 toc
 
-%OLDFORMAT
+

@@ -28,4 +28,4 @@ c=G'*f;
 
 c=reshape(c,M,N,R*W);
 
-%OLDFORMAT
+

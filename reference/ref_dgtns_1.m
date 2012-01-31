@@ -103,4 +103,4 @@ for n=1:N
   coef((n-1)*M+1:n*M,:)=fft(coef((n-1)*M+1:n*M,:));
 end;
 
-%OLDFORMAT
+

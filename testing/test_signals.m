@@ -32,4 +32,4 @@ disp(['SIGNALS CAMERAMAN ',fail]);
 
 [test_failed,fail]=ltfatdiditfail(numel(cocktailparty)-363200,test_failed);
 disp(['SIGNALS COCKTAILPARTY ',fail]);
-%OLDFORMAT
+

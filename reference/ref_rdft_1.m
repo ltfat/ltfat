@@ -37,4 +37,4 @@ else
   % Make it an ortonomal transform
   c=c/sqrt(L/2);
 end;
-%OLDFORMAT
+

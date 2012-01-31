@@ -7,4 +7,4 @@ function gd=ref_gabdual(g,a,M)
 G=tfmat('dgt',g,a,M);
 
 gd=(G*G')\g;
-%OLDFORMAT
+

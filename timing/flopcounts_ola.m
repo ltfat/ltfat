@@ -17,4 +17,4 @@ fcfacola  = rho*(8*L*q+4*L*(1+q/p)*log2(d*rho)+4*M*N*log2(M));
 
 fcola     = rho*(8*L*M+4*L*log2(rho*Lb)+4*M*N*log2(rho*N));
 
-%OLDFORMAT
+

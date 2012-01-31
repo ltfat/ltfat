@@ -173,4 +173,4 @@ compnorm(GM_direct,T);
 
 
 
-%OLDFORMAT
+

@@ -47,4 +47,4 @@ if isreal(g)
   gt=real(gt);
 end;
 
-%OLDFORMAT
+

@@ -38,4 +38,4 @@ if isreal(g)
   gd=real(gd);
 end;
 
-%OLDFORMAT
+

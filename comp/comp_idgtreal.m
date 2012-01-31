@@ -54,4 +54,4 @@ else
   
   f = comp_idgtreal_fb(reshape(coef,M2,N*W),g,L,a,M);
 end;
-%OLDFORMAT
+

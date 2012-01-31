@@ -18,4 +18,4 @@ ola2=ref_pconv_ola_fir2long(f,g,Lb);
 norm(ref2-ola2)
 
 [ref2,ola2,ref2-ola2]
-%OLDFORMAT
+

@@ -29,4 +29,4 @@ fdouble=ref_igdgt(clong,g,a,M,.5,0,floor(a/2));
 
 f=fdouble(1:L,:);
 
-%OLDFORMAT
+

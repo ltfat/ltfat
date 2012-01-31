@@ -9,4 +9,4 @@ gmd=gabdual(gm,a,M);
 
 gamma=gmd(:,1);
 
-%OLDFORMAT
+

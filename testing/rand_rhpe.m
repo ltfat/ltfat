@@ -29,4 +29,4 @@ else
      rand([1 s(2:end)])-.5; ...
      flipud(f)];
 end;
-%OLDFORMAT
+

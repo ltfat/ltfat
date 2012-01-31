@@ -36,4 +36,4 @@ if (isreal(g) && fwasreal);
   coef=real(coef);
 end;
 
-%OLDFORMAT
+

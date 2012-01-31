@@ -31,4 +31,4 @@ cout=real(comp_dgt_walnut(f,gf,a,M));
 % FFT with only positive frequencies
 cout=fftreal(cout)/sqrt(M);
 
-%OLDFORMAT
+

@@ -45,4 +45,4 @@ for ii=1:length(Lr)
 end;
 
 test_failed=ref_failed+inv_failed;
-%OLDFORMAT
+

@@ -15,4 +15,4 @@ end;
 
 h=h(1:a:end,:);
 
-%OLDFORMAT
+

@@ -16,4 +16,4 @@ clong=ref_gdgt([f;conj(flipud(f))],g,a,M,.5,0,floor(a/2));
 
 c=clong(1:M*N,:);
 
-%OLDFORMAT
+

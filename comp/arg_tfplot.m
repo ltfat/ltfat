@@ -10,4 +10,4 @@ function definput=arg_tfplot(definput)
   definput.keyvals.clim=[0,1];
   definput.keyvals.dynrange=[];
   
-%OLDFORMAT
+

@@ -1,6 +1,6 @@
 % LTFAT - Demos
 %
-%   Peter L. Soendergaard, 2007 - 2011.
+%   Peter L. Soendergaard, 2007 - 2012.
 %
 %   This page documents the demos.
 %
@@ -34,4 +34,3 @@
 %   ltfat-help@lists.sourceforge.net
 %
 
-%OLDFORMAT

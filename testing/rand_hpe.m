@@ -29,4 +29,4 @@ else
      randn([1 s(2:end)])-.5; ...
      flipud(conj(f))];
 end;
-%OLDFORMAT
+

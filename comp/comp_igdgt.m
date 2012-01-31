@@ -49,4 +49,4 @@ if (c_f~=0)
   f=f.*repmat(halfmod,1,W);
 end;
 
-%OLDFORMAT
+

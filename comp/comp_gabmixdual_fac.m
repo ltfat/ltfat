@@ -49,4 +49,4 @@ for ii=1:c*d
   gammaf(:,ii)=Gpinv(:);
 end;
 
-%OLDFORMAT
+

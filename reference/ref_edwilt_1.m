@@ -17,4 +17,4 @@ reshape(c2,2*M,N)
 c=zeros(M*N,1);
 
 c(1:
-%OLDFORMAT
+
