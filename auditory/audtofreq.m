@@ -2,11 +2,12 @@ function freq = audtofreq(aud,varargin);
 %AUDTOFREQ  Converts auditory units to frequency (Hz)
 %   Usage: freq = audtofreq(aud);
 %  
-%   AUDTOFREQ(aud,scale) converts values on the selected auditory scale to
-%   values on the frequency scale measured in Hz.
+%   `audtofreq(aud,scale)` converts values on the selected auditory scale to
+%   frequencies measured in Hz.
 %
-%   See the help on FREQTOAUD to get a list of the supported values of the
-%   scale parameter. If no scale is given, the erb-scale will be selected by default.
+%   See the help on |freqtoaud|_ to get a list of the supported values of
+%   the *scale* parameter. If no scale is given, the erb-scale will be
+%   selected by default.
 %
 %   See also: freqtoaud, audspace, audfiltbw
 
@@ -53,4 +54,3 @@ if flags.do_freq
   freq=aud;
 end;
 
-%OLDFORMAT

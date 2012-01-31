@@ -2,11 +2,13 @@ function bw = audfiltbw(fc)
 %AUDFILTBW  Bandwidth of auditory filter.
 %   Usage: bw = audfiltbw(fc)
 %
-%   AUDFILTBW(fc) returns the equivalent rectangular bandwidth of the
-%   auditory filter at center frequency fc. The function uses the
+%   `audfiltbw(fc)` returns the equivalent rectangular bandwidth of the
+%   auditory filter at center frequency *fc*. The function uses the
 %   relation
 %
-%C     bw = 24.7 + fc/9.265
+%   ..  bw = 24.7 + fc/9.265
+%
+%   ..  math::  bw = 24.7 + \frac{fc}{9.265}
 %     
 %   as estimated in Glasberg and Moore (1990)
 %
@@ -29,4 +31,4 @@ end;
 % FIXME: What is the upper frequency for which the estimation is valid?
 
 bw = 24.7 + fc/9.265;
-%OLDFORMAT
+

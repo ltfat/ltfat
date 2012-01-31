@@ -2,23 +2,22 @@ function h=semiaudplot(x,y,varargin)
 %SEMIAUDPLOT  2D plot on auditory scale
 %   Usage: h=semiaudplot(x,y);
 %
-%   SEMIAUDPLOT(x,y) plots the data (x,y) on an auditory scale. By
-%   default the values of the x-axis will be show on the Erb-scale.
+%   `semiaudplot(x,y)` plots the data $(x,y)$ on an auditory scale. By
+%   default the values of the x-axis will be shown on the Erb-scale.
 %
-%   SEMIAUDPLOT takes the following parameters at the end of the line of input
+%   `semiaudplot` takes the following parameters at the end of the line of input
 %   arguments:
 %
-%-     'x'    - Make the x-axis use the auditory scale. This is the default.
+%     'x'       Make the x-axis use the auditory scale. This is the default.
 %
-%-     'y'    - Make the y-axis use the auditory scale.
+%     'y'       Make the y-axis use the auditory scale.
 %
-%-     'opts',c - Pass options stored in a cell array onto the plot
-%                  function.
+%     'opts',c  Pass options stored in a cell array onto the plot
+%               function.
 %
 %   In addition to these parameters, the auditory scale can be
-%   specified. All scales supported by FREQTOAUD are supported. Default
-%   is to use the erb-scale. 
-%    
+%   specified. All scales supported by |freqtoaud|_ are supported. The default
+%   is to use the erb-scale.     
 %
 %   See also: freqtoaud
 
@@ -61,6 +60,3 @@ if flags.do_y
   
 end;
 
-
-
-%OLDFORMAT

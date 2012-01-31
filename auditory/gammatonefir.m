@@ -5,44 +5,45 @@ function b=gammatonefir(fc,fs,varargin);
 %          b = gammatonefir(fc,fs);
 %
 %   Input parameters:
-%      fc    -  center frequency in Hz.
-%      fs    -  sampling rate in Hz.
-%      n     -  filter order.
-%      beta  -  bandwidth of the filter.
+%      fc    :  center frequency in Hz.
+%      fs    :  sampling rate in Hz.
+%      n     :  filter order.
+%      beta  :  bandwidth of the filter.
 %
 %   Output parameters:
-%      b     -  FIR filters as columns
+%      b     :  FIR filters as columns
 %
-%   GAMMATONEFIR(fc,fs,n,betamul) computes the filter coefficients of a digital
-%   FIR gammatone filter of length n with center frequency fc, 4th order
-%   rising slope, sampling rate fs and bandwith determined by betamul. The
-%   bandwidth _beta of each filter is determined as betamul times AUDFILTBW
-%   of the center frequency of corresponding filter.
+%   `gammatonefir(fc,fs,n,betamul)` computes the filter coefficients of a
+%   digital FIR gammatone filter of length *n* with center frequency *fc*,
+%   4th order rising slope, sampling rate *fs* and bandwith determined by
+%   *betamul*. The bandwidth *beta* of each filter is determined as *betamul*
+%   times |audfiltbw|_ of the center frequency of corresponding filter.
 %
-%   GAMMATONEFIR(fc,fs,n) will do the same but choose a filter bandwidth
-%   according to Glasberg and Moore (1990).  betamul is choosen to be 1.0183.
+%   `gammatonefir(fc,fs,n)` will do the same but choose a filter bandwidth
+%   according to Glasberg and Moore (1990).  *betamul* is choosen to be 1.0183.
 %
-%   GAMMATONEFIR(fc,fs) will do as above and choose a sufficiently long
+%   `gammatonefir(fc,fs)` will do as above and choose a sufficiently long
 %   filter to accurately represent the lowest subband channel.
 %
-%   If fc is a vector, each entry of fc is considered as one center
+%   If *fc* is a vector, each entry of *fc* is considered as one center
 %   frequency, and the corresponding coefficients are returned as column
 %   vectors in the output.
 %
 %   The inpulse response of the gammatone filter is given by
 %
-%M    g(t) = a*t^(n-1)*cos(2*pi*fc*t)*exp(-2*pi*beta*t)
-%F  \[g(t) = at^{n-1}cos(2\pi\cdot fc\cdot t)e^{-2\pi \beta \cdot t}\]
+%   ..  g(t) = a*t^(n-1)*cos(2*pi*fc*t)*exp(-2*pi*beta*t)
+%
+%   .. math:: g(t) = at^{n-1}cos(2\pi\cdot fc\cdot t)e^{-2\pi \beta \cdot t}
 %
 %   The gammatone filters as implemented by this function generate
 %   complex valued output, because the filters are modulated by the
-%   exponential function. Using REAL on the output will give the
+%   exponential function. Using `real` on the output will give the
 %   coefficients of the corresponding cosine modulated filters.
 %
 %   To create the filter coefficients of a 1-erb spaced filter bank using
-%   gammatone filters use the following construction
+%   gammatone filters use the following construction::
 %
-%C    g = gammatonefir(erbspacebw(flow,fhigh),fs);
+%     g = gammatonefir(erbspacebw(flow,fhigh),fs);
 %
 %   See also: erbspace, audspace, audfiltbw
 %
@@ -131,4 +132,3 @@ for ii = 1:nchannels
   
 end;
 
-%OLDFORMAT

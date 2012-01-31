@@ -2,18 +2,18 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %RANGECOMPRESS   Compress the dynamic range of a signal 
 %   Usage: [outsig, sigweight] = rangecompress(insig,mu);
 %   
-%   [outsig, sigweight]=RANGECOMPRESS(insig,mu) mu-law rangecompresss the input
-%   signal insig using mu-law rangecompressing with parameters mu.
+%   `[outsig, sigweight]=rangecompress(insig,mu)` range-compresss the input
+%   signal *insig* using $\mu$-law rangecompression with parameter *mu*.
 %
-%   RANGECOMPRESS takes the following optional arguments:
+%   `rangecompress` takes the following optional arguments:
 %
-%-     'mulaw'  - Do mu-law compression, this is the default.
+%     'mulaw'  Do mu-law compression, this is the default.
 %
-%-     'alaw'   - Do A-law compression.
+%     'alaw'   Do A-law compression.
 %
-%-     'mu',mu  - mu-law parameter. Default value is 255.
+%     'mu',mu  $\mu$-law parameter. Default value is 255.
 %
-%-     'A',A    - A-law parameter. Default value is 87.7.
+%     'A',A    A-law parameter. Default value is 87.7.
 %
 %   References: jano90
 
@@ -44,4 +44,3 @@ if flags.do_alaw
   outsig = sign(insig).*(mask.*kv.A.*absx./tmp+(1-mask).*(1+log(kv.A*absx))/tmp);
 end;
 
-%OLDFORMAT
