@@ -12,42 +12,42 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   IDGTREAL(c,g,a,M) computes the Gabor expansion of the input coefficients
-%   c with respect to the real-valued window g, time shift _a and number of
-%   channels M. c is assumed to be the positive frequencies of the Gabor
+%   `idgtreal(c,g,a,M)` computes the Gabor expansion of the input coefficients
+%   *c* with respect to the real-valued window *g*, time shift *a* and number of
+%   channels *M*. *c* is assumed to be the positive frequencies of the Gabor
 %   expansion of a real-valued signal.
 %
-%   It must hold that size(c,1)==floor(M/2)+1. Note that since the
-%   correct number of channels cannot be deduced from the input, IDGTREAL
-%   takes an additional parameter as opposed to IDGT.
+%   It must hold that `size(c,1)==floor(M/2)+1`. Note that since the
+%   correct number of channels cannot be deduced from the input, `idgtreal`
+%   takes an additional parameter as opposed to |idgt|_.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |gabwin|_ for more details.
 %  
-%   IDGTREAL(c,g,a,M,Ls) does as above but cuts or extends f to length Ls.
+%   `idgtreal(c,g,a,M,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
-%   [f,g]=IDGTREAL(...) additionally outputs the window used in the
+%   `[f,g]=idgtreal(...)` additionally outputs the window used in the
 %   transform. This is usefull if the window was generated from a description
 %   in a string or cell array.
 %
 %   For perfect reconstruction, the window used must be a dual window of the
 %   one used to generate the coefficients.
 %
-%   If g is a row vector, then the output will also be a row vector. If c is
-%   3-dimensional, then IDGTREAL will return a matrix consisting of one column
-%   vector for each of the TF-planes in c.
+%   If *g* is a row vector, then the output will also be a row vector. If *c* is
+%   3-dimensional, then `idgtreal` will return a matrix consisting of one column
+%   vector for each of the TF-planes in *c*.
 %
-%   See the help on IDGT for the precise definition of the inverse Gabor
+%   See the help on |idgt|_ for the precise definition of the inverse Gabor
 %   transform.
 %
-%   IDGTREAL takes the following flags at the end of the line of input
+%   `idgtreal` takes the following flags at the end of the line of input
 %   arguments:
 %
-%-     'freqinv'  - Compute an IDGT using a frequency-invariant phase. This
-%                   is the default convention described in the help for IDGT.
+%     'freqinv'  Use a frequency-invariant phase. This is the default
+%                convention described in the help for |dgt|_.
 %
-%-     'timeinv'  - Compute an IDGT using a time-invariant phase. This
-%                   convention is typically used in filter bank algorithms.
+%     'timeinv'  Use a time-invariant phase. This convention is typically 
+%                used in filter bank algorithms.
 %
 %   See also:  idgt, gabwin, gabdual, dwilt
 
@@ -124,9 +124,3 @@ else
 end;
 
 f=comp_sigreshape_post(f,kv.Ls,wasrow,[0; W]);
-
-
-
-
-
-%OLDFORMAT

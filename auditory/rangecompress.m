@@ -3,7 +3,7 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %   Usage: [outsig, sigweight] = rangecompress(insig,mu);
 %   
 %   `[outsig, sigweight]=rangecompress(insig,mu)` range-compresss the input
-%   signal *insig* using $\mu$-law rangecompression with parameter *mu*.
+%   signal *insig* using $\mu$-law range-compression with parameter *mu*.
 %
 %   `rangecompress` takes the following optional arguments:
 %
