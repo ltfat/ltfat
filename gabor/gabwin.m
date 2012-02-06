@@ -71,22 +71,29 @@ function [g,info] = gabwin(g,a,M,L,callfun);
 %   The structure info provides some information about the computed
 %   window:
 %
-%     --info.gauss    True if the window is a Gaussian.
+%     `info.gauss`
+%        True if the window is a Gaussian.
 %
-%     --info.tfr      Time/frequency support ratio of the window. Set
-%                     whenever it makes sense.
+%     `info.tfr`
+%        Time/frequency support ratio of the window. Set whenever it makes sense.
 %
-%     --info.wasrow   Input was a row window
+%     `info.wasrow`
+%        Input was a row window
 %
-%     --info.isfir    Input is a FIR window
+%     `info.isfir`
+%        Input is an FIR window
 %
-%     --info.isdual   Output is the dual window of the aux window.
+%     `info.isdual`
+%        Output is the dual window of the auxiliary window.
 %
-%     --info.istight  Output is known to be a tight window.
+%     `info.istight`
+%        Output is known to be a tight window.
 %
-%     --info.auxinfo  Info about auxiliary window.
-%
-%     --info.gl       Length of window.
+%     `info.auxinfo`
+%        Info about auxiliary window.
+%   
+%     `info.gl`
+%        Length of window.
 %
 %   See also: pgauss, firwin, wilwin
   

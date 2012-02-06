@@ -14,31 +14,31 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %         c     : 2*M x N array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   WMDCT(f,g,M) computes a Windowed Modified Discrete Cosine Transform with
-%   M bands and window g.
+%   `wmdct(f,g,M)` computes a Windowed Modified Discrete Cosine Transform with
+%   *M* bands and window *g*.
 %
 %   The length of the transform will be the smallest possible that is
-%   larger than the signal. f will be zero-extended to the length of the 
-%   transform. If f is a matrix, the transformation is applied to each column.
-%   g must be whole-point even.
+%   larger than the signal. *f* will be zero-extended to the length of the 
+%   transform. If *f* is a matrix, the transformation is applied to each column.
+%   *g* must be whole-point even.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |wilwin|_ for more details.
 %
-%   WMDCT(f,g,M,L) computes the MDCT transform as above, but does
-%   a transform of length L. f will be cut or zero-extended to length L
+%   `wmdct(f,g,M,L)` computes the MDCT transform as above, but does
+%   a transform of length *L*. *f* will be cut or zero-extended to length *L*
 %   before the transform is done.
 %
-%   [c,Ls]=WMDCT(f,g,M) or [c,Ls]=WMDCT(f,g,M,L) additionally return the
-%   length of the input signal f. This is handy for reconstruction:
+%   `[c,Ls]=wmdct(f,g,M)` or [c,Ls]=wmdct(f,g,M,L)` additionally returns the
+%   length of the input signal *f*. This is handy for reconstruction::
 %
-%C           [c,Ls]=wmdct(f,g,M);
-%C           fr=iwmdct(c,gd,M,Ls);
+%     [c,Ls]=wmdct(f,g,M);
+%     fr=iwmdct(c,gd,M,Ls);
 %
-%   will reconstuct the signal f no matter what the length of f is, provided
-%   that _gd is a dual Wilson window of g.
+%   will reconstruct the signal *f* no matter what the length of *f* is, provided
+%   that *gd* is a dual Wilson window of *g*.
 %
-%   [c,Ls,g]=WMDCT(...) additionally outputs the window used in the
+%   `[c,Ls,g]=wmdct(...)` additionally outputs the window used in the
 %   transform. This is useful if the window was generated from a description
 %   in a string or cell array.
 %
@@ -48,30 +48,28 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %   same window functions as the Wilson transform.
 %
 %   Assume that the following code has been executed for a column vector f
-%   of length L:
+%   of length L::
 %
-%C           c=wmdct(f,g,M);  % Compute the WMDCT of f.
-%C           N=size(c,2);    % Number of translation coefficients.
+%     c=wmdct(f,g,M);  % Compute the WMDCT of f.
+%     N=size(c,2);     % Number of translation coefficients.
 %
-%   The following holds for $m=0,...,M-1$ 
-%   and $n=0,...,N-1$:
+%   The following holds for $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$:
 %
 %   If $m+n$ is even:
 %
-%M                    L-1
-%M       c(m+1,n+1) = sum f(l+1)*cos(pi*(m+.5)*l/M+pi/4)*g(l-n*M+1)
-%M                    l=0
-%F  \begin{eqnarray*}
-%F  c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)
-%F  \end{eqnarray*}
+%   ..               L-1
+%       c(m+1,n+1) = sum f(l+1)*cos(pi*(m+.5)*l/M+pi/4)*g(l-n*M+1)
+%                    l=0
+%
+%   .. math:: c\left(m+1,n+1\right) = \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)
 %
 %   If $m+n$ is odd:
-%M                    L-1
-%M       c(m+1,n+1) = sum f(l+1)*sin(pi*(m+.5)*l/M+pi/4)*g(l-n*M+1)
-%M                    l=0
-%F  \begin{eqnarray*}
-%F  c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)
-%F  \end{eqnarray*}
+%
+%   ..              L-1
+%      c(m+1,n+1) = sum f(l+1)*sin(pi*(m+.5)*l/M+pi/4)*g(l-n*M+1)
+%                   l=0
+%
+%   .. math:: c\left(m+1,n+1\right) = \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)
 %
 %   See also:  iwmdct, wilwin, dwilt, wildual, wilorth
 %
@@ -91,4 +89,3 @@ end;
 
 c  = comp_dwiltiii(f,g,M,L);
 
-%OLDFORMAT

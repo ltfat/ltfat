@@ -11,7 +11,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   `idgt`(c,g,a)` computes the Gabor expansion of the input coefficients
+%   `idgt(c,g,a)` computes the Gabor expansion of the input coefficients
 %   *c* with respect to the window *g* and time shift *a*. The number of 
 %   channels is deduced from the size of the coefficients *c*.
 %

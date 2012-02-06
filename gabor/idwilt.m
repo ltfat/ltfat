@@ -4,24 +4,24 @@ function [f,g]=idwilt(c,g,Ls)
 %           f=idwilt(c,g,Ls);
 %
 %   Input parameters:
-%         c     : M*N array of coefficients.
-%         g     : Window function.
-%         Ls    : Final length of function (optional)
+%      c     : $M \times N$ array of coefficients.
+%      g     : Window function.
+%      Ls    : Final length of function (optional)
 %   Output parameters:
-%         f     : Input data
+%      f     : Input data
 %
-%   IDWILT(c,g) computes an inverse discrete Wilson transform with window g.
-%   The number of channels is deduced from the size of the coefficient array c.
+%   `idwilt(c,g)` computes an inverse discrete Wilson transform with window *g*.
+%   The number of channels is deduced from the size of the coefficient array *c*.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |wilwin|_ for more details.
 %  
-%   IDWILT(f,g,Ls) does the same, but cuts of zero-extend the final
-%   result to length Ls.
+%   `idwilt(f,g,Ls)` does the same, but cuts of zero-extend the final
+%   result to length *Ls*.
 %
-%   [f,g]=IDWILT(...) additionally outputs the window used in the
-%   transform. This is usefull if the window was generated from a description
-%   in a string or cell array.
+%   `[f,g]=idwilt(...)` additionally outputs the window used in the
+%   transform. This is usefull if the window was generated from a
+%   description in a string or cell array.
 %
 %   See also:  dwilt, wilwin, dgt, wilorth
 %
@@ -60,6 +60,3 @@ end;
 
 f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
 
-    
-
-%OLDFORMAT

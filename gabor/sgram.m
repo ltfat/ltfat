@@ -86,6 +86,14 @@ function varargout=sgram(f,varargin)
 %   |normalize|_. The window used in to calculate the spectrogram will be
 %   normalized as specified.
 %
+%   Examples:
+%   ---------
+%
+%   The 'greasy' signal is sampled using a sampling rate of 16 kHz. To
+%   display a spectrogram of 'greasy' with a dynamic range og 90 dB, use:::
+%
+%     sgram(greasy,16000,90);
+%
 %   See also:  dgt, dgtreal
 
 %   AUTHOR : Peter Soendergaard.

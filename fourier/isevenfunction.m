@@ -3,16 +3,18 @@ function t=isevenfunction(f,varargin);
 %   Usage:  t=isevenfunction(f);
 %           t=isevenfunction(f,tol);
 %
-%   ISEVENFUNCTION(f) returns 1 if f is whole point even. Otherwise it
+%   `isevenfunction(f)` returns 1 if f is whole point even. Otherwise it
 %   returns 0.
 %
-%   ISEVENFUNCTION(f,tol) does the same, using the tolerance tol to measure
+%   `isevenfunction(f,tol)` does the same, using the tolerance *tol* to measure
 %   how large the error between the two parts of the vector can be. Default
-%   is 1e-10
+%   is 1e-10.
 %
-%   Adding the flag 'hp' as the last argument do the same for half point
-%   even functions.   
-
+%   Adding the flag `'hp'` as the last argument do the same for half point
+%   even functions.
+%  
+%   See also: middlepad, peven
+  
 %   AUTHOR : Peter Soendergaard
 %   TESTING: OK
 %   REFERENCE: OK
@@ -58,12 +60,3 @@ end;
 
 % Return true if d less than tolerance.
 t=d<=tol;
-
-
-
-
-
-
-
-
-%OLDFORMAT

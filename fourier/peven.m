@@ -3,9 +3,9 @@ function f=peven(f,dim)
 %   Usage:  fe=peven(f);
 %           fe=peven(f,dim);
 %
-%   PEVEN(f) returns the even part of the periodic sequence f.
+%   `peven(f)` returns the even part of the periodic sequence *f*.
 %
-%   PEVEN(f,dim) does the same along dimension dim.
+%   `peven(f,dim)` does the same along dimension *dim*.
 %
 %   See also:  podd, dft, involute, pconv
   
@@ -15,5 +15,3 @@ else
   f=(f+involute(f,dim))/2;
 end;
 
-
-%OLDFORMAT

@@ -144,8 +144,6 @@ mat.basetype='mat'
 
 mat.subdir='ltfat/'
 
-mat.checkout='distrib'
-
 mat.urlbase='http://ltfat.sourceforge.net/doc'
 mat.urlext='php'
 

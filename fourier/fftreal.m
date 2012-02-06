@@ -3,11 +3,11 @@ function f=fftreal(f,N,dim);
 %   Usage: f=fftreal(f);
 %          f=fftreal(f,N,dim);
 %
-%   FFTREAL(f) computes the coefficients corresponding to the positive
-%   frequencies of the FFT of the real valued input signal f.
+%   `fftreal(f)` computes the coefficients corresponding to the positive
+%   frequencies of the FFT of the real valued input signal *f*.
 %   
-%   The function take exactly the same arguments as FFT. See the help on
-%   FFT for a thorough description.
+%   The function take exactly the same arguments as `fft`. See the help on
+%   `fft` for a thorough description.
 %
 %   See also:  ifftreal, dft
 
@@ -41,5 +41,3 @@ permutedsize(1)=N2;
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
 
-
-%OLDFORMAT

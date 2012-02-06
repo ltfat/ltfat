@@ -3,30 +3,46 @@ function outsig = noise(siglen,varargin)
 %   Usage: outsig = noise(siglen,nsigs,type);
 %
 %   Input parameters:
-%       siglen    - Length of the noise (samples)
-%       nsigs     - Number of signals (default is 1)
-%       type      - type of noise: 'white', 'brown', 'pink', 'red'
+%       siglen    : Length of the noise (samples)
+%       nsigs     : Number of signals (default is 1)
+%       type      : type of noise. See below.
 %
 %   Output parameters:
-%       outsig      - siglen x nsigs signal vector
+%       outsig    : $siglen \times nsigs$ signal vector
 %
-%   NOISE(siglen,nsigs) generates nsigs channels containing white noise of the
-%   given type with the length of siglen. The signals are arranged as columns
-%   in the output. If only siglen is given, a column vector is returned.
+%   `noise(siglen,nsigs)` generates *nsigs* channels containing white noise
+%   of the given type with the length of *siglen*. The signals are arranged as
+%   columns in the output. If only *siglen* is given, a column vector is
+%   returned.
 %
-%   NOISE takes the following optional parameters:
+%   `noise` takes the following optional parameters:
 %
-%-     'white'  - Generate white (gaussian) noise. This is the default.
+%     'white'  Generate white (gaussian) noise. This is the default.
 %
-%-     'pink'   - Generate pink noise.
+%     'pink'   Generate pink noise.
 %
-%-     'brown'  - Generate brown noise.
+%     'brown'  Generate brown noise.
 %
-%-     'red'    - This is the same as brown noise.     
+%     'red'    This is the same as brown noise.     
 %
 %   By default, the noise is normalized to have a unit energy, but this can
-%   be changed by passing a flag to NORMALIZE.
+%   be changed by passing a flag to |normalize|_.
 %
+%   Examples:
+%   ---------
+%    
+%   White noise in the time-frequency domain:::
+%
+%     sgram(noise(5000,'white'),'dynrange',70);
+%
+%   Pink noise in the time-frequency domain:::
+%
+%     sgram(noise(5000,'pink'),'dynrange',70);
+%
+%   Brown/red noise in the time-frequency domain:::
+%
+%     sgram(noise(5000,'brown'),'dynrange',70);
+% 
 %   See also: normalize
 
 %   AUTHOR: Hagen Wierstorf and Peter L. Soendergaard.
@@ -80,4 +96,3 @@ end;
 
 outsig=normalize(outsig,flags.norm);
 
-%OLDFORMAT

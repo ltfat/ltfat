@@ -3,32 +3,36 @@ function h=pconv(f,g,varargin)
 %   Usage:  h=pconv(f,g)
 %           h=pconv(ptype,f,g); 
 %
-%   PCONV(f,g) computes the periodic convolution of f and g. The convolution
+%   `pconv(f,g)` computes the periodic convolution of *f* and *g*. The convolution
 %   is given by
 %
-%M              L-1
-%M     h(l+1) = sum f(k+1) * g(l-k+1)
-%M              k=0
+%   ..          L-1
+%      h(l+1) = sum f(k+1) * g(l-k+1)
+%               k=0
 %
-%F  \[h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)\]
-%   PCONV('r',f,g) computes the convolution where g is reversed
+%   .. math::
+%   h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)
+% 
+%   `pconv('r',f,g)` computes the convolution where *g* is reversed
 %   (involuted) given by
 %
-%M              L-1
-%M     h(l+1) = sum f(k+1) * conj(g(k-l+1))
-%M              k=0
+%   ..          L-1
+%      h(l+1) = sum f(k+1) * conj(g(k-l+1))
+%               k=0
 %
-%F  \[h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)\overline{g\left(k-l+1\right)}\]
+%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)\overline{g\left(k-l+1\right)}
+%
 %   This type of convolution is also known as cross-correlation.
 %
-%   PCONV('rr',f,g) computes the alternative where both f and g are reversed
+%   `pconv('rr',f,g)` computes the alternative where both *f* and *g* are reversed
 %   given by
 %
-%M              L-1
-%M     h(l+1) = sum conj(f(-k+1)) * conj(g(k-l+1))
-%M              k=0
+%   ..          L-1
+%      h(l+1) = sum conj(f(-k+1)) * conj(g(k-l+1))
+%               k=0
 %     
-%F  \[h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(-k+1\right)g\left(l-k+1\right)\]
+%    .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(-k+1\right)g\left(l-k+1\right)
+%
 %   In the above formulas, $l-k$, $k-l$ and $-k$ are computed modulo $L$.
 %
 %   See also: dft, involute
@@ -66,4 +70,4 @@ end;
 if isreal(f) && isreal(g)
   h=real(h);
 end;
-%OLDFORMAT
+

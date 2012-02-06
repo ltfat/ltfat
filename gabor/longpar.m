@@ -5,23 +5,23 @@ function [L,tfr]=longpar(varargin)
 %           [L,tfr]=longpar('dwilt',Ls,M);
 %           [L,tfr]=longpar('wmdct',Ls,M);
 %
-%   [L,tfr]=LONGPAR(Ls,a,M) or [L,tfr]=LONGPAR('dgt',Ls,a,M) calculates the 
-%   minimal transform length L for a DGT of a signal of length Ls with
-%   parameters _a and M. L is always larger than Ls. The parameters tfr
+%   `[L,tfr]=longpar(Ls,a,M)` or `[L,tfr]=longpar('dgt',Ls,a,M)` calculates the 
+%   minimal transform length *L* for a |dgt|_ of a signal of length *Ls* with
+%   parameters *a* and *M*. *L* is always larger than *Ls*. The parameters *tfr*
 %   describes the time-to-frequency ratio of the chosen lattice.
 %
-%   An example can most easily describe the use of LONGPAR. Assume that
-%   with wish to perform Gabor analysis of an input signal _f with a 
-%   suitable Gaussian window and lattice given by _a and M. The following
-%   code will always work:
+%   An example can most easily describe the use of `longpar`. Assume that
+%   we wish to perform Gabor analysis of an input signal *f* with a 
+%   suitable Gaussian window and lattice given by *a* and *M*. The following
+%   code will always work::
 %
-%C     Ls=length(f);
-%C     [L,tfr]=longpar(Ls,a,M);
-%C     g=pgauss(L,tfr);
-%C     c=dgt(f,g,a,M);
+%     Ls=length(f);
+%     [L,tfr]=longpar(Ls,a,M);
+%     g=pgauss(L,tfr);
+%     c=dgt(f,g,a,M);
 %
-%   [L,tfr]=LONGPAR('dwilt',Ls,M) and [L,tfr]=LONGPAR('wmdct',Ls,M) will
-%   do the same for a Wilson/WMDCT basis with M channels.
+%   `[L,tfr]=longpar('dwilt',Ls,M)` and `[L,tfr]=longpar('wmdct',Ls,M)` will
+%   do the same for a Wilson/WMDCT basis with *M* channels.
 %
 %   See also:  dgt, dwilt, pgauss, psech, pherm
 
@@ -71,7 +71,3 @@ switch(lower(ttype))
     otherwise
         error('Unknown transform type.');
 end;
-
-
-
-%OLDFORMAT

@@ -4,20 +4,21 @@ function f=middlepad(f,L,varargin)
 %           h=middlepad(f,L,dim);
 %           h=middlepad(f,L,...);
 %
-%   MIDDLEPAD(f,L) cuts or zero-extends f to length L by inserting
+%   `middlepad(f,L)` cuts or zero-extends *f* to length *L* by inserting
 %   zeros in the middle of the vector, or by cutting in the middle
 %   of the vector.
 %
-%   If f is whole-point even, MIDDLEPAD(f,L) will also be whole-point even.
+%   If *f* is whole-point even, `middlepad(f,L)` will also be whole-point
+%   even.
 %
-%   MIDDLEPAD(f,L,dim) does the same along dimension dim.
+%   `middlepad(f,L,dim)` does the same along dimension *dim*.
 %   
-%   If f has even length, then f will not be purely zero-extended, but
+%   If *f* has even length, then *f* will not be purely zero-extended, but
 %   the last element will be repeated once and multiplied by 1/2.
-%   That is, the support of f will increase by one!
+%   That is, the support of *f* will increase by one!
 %
-%   Adding the flag 'wp' as the last argument will cut or extend whole point
-%   even functions.  Adding 'hp' will do the same for half point even
+%   Adding the flag `'wp'` as the last argument will cut or extend whole point
+%   even functions.  Adding `'hp'` will do the same for half point even
 %   functions.
 %
 %   See also:  isevenfunction, fir2long, fftresample
@@ -164,4 +165,3 @@ end;
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
 
-%OLDFORMAT

@@ -18,6 +18,23 @@ function [s,fs]=greasy()
 %   first sentence of the TIMIT speech corpus:
 %   `<http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S1>`_.
 %
+%   Examples:
+%   ---------
+%
+%   Plot of 'greasy' in the time-domain:::
+%
+%     plot((1:5880)/16000,greasy);
+%     xlabel('Time (seconds)');
+%     ylabel('Amplitude');
+%
+%   Plot of 'greasy' in the frequency-domain:::
+%
+%     plotfft(fft(greasy),16000,90,'posfreq');
+%
+%   Plot of 'greasy' in the time-frequency-domain:::
+%
+%     sgram(greasy,16000,90);
+%
 %   References: mazh93
 
 %   AUTHOR : Peter Soendergaard
