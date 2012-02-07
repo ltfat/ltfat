@@ -11,15 +11,15 @@ function [f]=idwilt2(c,g1,p3,p4)
 %   Output parameters:
 %         f       : Output data, matrix.
 %
-%   IDWILT2(c,g) will calculate a separable two dimensional inverse
-%   discrete Wilson transformation of the input coefficients c using the
-%   window g. The number of channels is deduced from the size of the
-%   coefficients c.
+%   `idwilt2(c,g)` calculates a separable two dimensional inverse
+%   discrete Wilson transformation of the input coefficients *c* using the
+%   window *g*. The number of channels is deduced from the size of the
+%   coefficients *c*.
 %
-%   IDWILT2(c,g1,g2) will do the same using the window g1 along the first
-%   dimension, and window g2 the second dimension.
+%   `idwilt2(c,g1,g2)` does the same using the window *g1* along the first
+%   dimension, and window *g2* along the second dimension.
 %
-%   IDWILT2(c,g1,g2,Ls) will cut the signal to size Ls after the transformation
+%   `idwilt2(c,g1,g2,Ls)` cuts the signal to size *Ls* after the transformation
 %   is done.
 %
 %   See also:  dwilt2, dgt2, wildual
@@ -146,4 +146,3 @@ if inputwasreal
   f=real(f);
 end;
 
-%OLDFORMAT

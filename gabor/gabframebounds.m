@@ -13,17 +13,17 @@ function [AF,BF]=gabframebounds(g,a,M,L)
 %           fcond : Frame condition number (B/A)
 %           A,B   : Frame bounds.
 %          
-%   GABFRAMEBOUNDS(g,a,M) calculates the ratio B/A of the frame bounds
-%   of the Gabor system with window g, and parameters _a, M.
+%   `gabframebounds(g,a,M)` calculates the ratio $B/A$ of the frame bounds
+%   of the Gabor system with window *g*, and parameters *a*, *M*.
 %
-%   [A,B]=GABFRAMEBOUNDS(g,a,M) calculates the frame bounds A and B
-%   of the Gabor frame with window g, and parameters _a, M. 
+%   `[A,B]=gabframebounds(g,a,M)` returns the frame bounds *A* and *B*
+%   instead of just the ratio.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |gabwin|_ for more details.
 %  
-%   If the optional parameter L is specified, the window is cut or
-%   zero-extended to length L.
+%   If the optional parameter *L* is specified, the window is cut or
+%   zero-extended to length *L*.
 %
 %   See also: gabrieszbounds, gabwin
 
@@ -62,6 +62,4 @@ if nargout<2
     AF=BF/AF;
   end;
 end;
-  
 
-%OLDFORMAT

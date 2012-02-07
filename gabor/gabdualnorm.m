@@ -16,35 +16,35 @@ function [o1,o2]=gabdualnorm(gamma,g,a,M,L);
 %         scal   : Scaling factor
 %         res    : Residual
 %
-%   GABDUALNORM(g,gamma,a,M) calculates how close gamma is to be a dual
-%   window of the Gabor frame with window g and parameters _a and M.
+%   `gabdualnorm(g,gamma,a,M)` calculates how close *gamma* is to being a
+%   dual window of the Gabor frame with window *g* and parameters *a* and *M*.
 %
-%   The windows g and gamma may be vectors of numerical values, text strings
-%   or cell arrays. See the help of GABWIN for more details.
+%   The windows *g* and *gamma* may be vectors of numerical values, text strings
+%   or cell arrays. See the help of |gabwin|_ for more details.
 %
-%   GABDUALNORM(g,gamma,a,M,L) does the same, but considers a transform
-%   length of L.
+%   `gabdualnorm(g,gamma,a,M,L)` does the same, but considers a transform
+%   length of *L*.
 %
-%   [scal,res]=GABDUALNORM(g,gamma,a,M) or
-%   [scal,res]=GABDUALNORM(g,gamma,a,M,L) will compute two entities:
-%   scal determines if the windows are scaled correctly, it must be 1 
-%   for the windows to be dual. res is close to zero if the windows
-%   (scaled correctly) are dual windows.
+%   `[scal,res]=gabdualnorm(g,gamma,a,M)` or
+%   `[scal,res]=gabdualnorm(g,gamma,a,M,L)` computes two entities: *scal*
+%   determines if the windows are scaled correctly, it must be 1 for the
+%   windows to be dual. *res* is close to zero if the windows (scaled
+%   correctly) are dual windows.
 %
-%   GABDUALNORM can be used to get the maximum relative reconstruction
+%   `gabdualnorm` can be used to get the maximum relative reconstruction
 %   error when using the two specified windows. Consider the following code
-%   for some signal f, windows g, gamma, parameters _a and M and 
-%   transform-length L (See help on DGT for how to obtain L):
+%   for some signal *f*, windows *g*, *gamma*, parameters *a* and *M* and 
+%   transform-length *L* (See help on |dgt|_ on how to obtain *L*)::
 %
-%C     fr=idgt(dgt(f,g,a,M),gamma,a); 
-%C     er=norm(f-fr)/norm(f);
-%C     eest=gabdualnorm(g,gamma,a,M,L);
+%     fr=idgt(dgt(f,g,a,M),gamma,a); 
+%     er=norm(f-fr)/norm(f);
+%     eest=gabdualnorm(g,gamma,a,M,L);
 %
-%   Then  _er < _eest for all possible input signals f.
+%   Then  $er<eest$ for all possible input signals *f*.
 %
-%   To get a similar estimate for a tight window gt, simply use
+%   To get a similar estimate for an almost tight window *gt*, simply use ::
 %  
-%C     eest=gabdualnorm(gt,gt,a,M,L);
+%     eest=gabdualnorm(gt,gt,a,M,L);
 %
 %   See also:  gabframebounds, dgt
 
@@ -109,6 +109,3 @@ else
   o1=rhs(1)/scalconst;
   o2=norm(rhs(2:end),1);
 end;
-  
-
-%OLDFORMAT
