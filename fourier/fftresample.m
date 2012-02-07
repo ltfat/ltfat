@@ -3,15 +3,14 @@ function f=fftresample(f,L,dim)
 %   Usage:  h=fftresample(f,L);
 %           h=fftresample(f,L,dim);
 %
-%   FFTRESAMPLE(f,L) returns a Fourier interpolation of the signal f
-%   to length L. If the function is applied to a matrix, it will apply
+%   `fftresample(f,L)` returns a Fourier interpolation of the signal *f*
+%   to length *L*. If the function is applied to a matrix, it will apply
 %   to each column.  
 %
-%   FFTRESAMPLE(f,L,dim) does the same along dimension dim.
+%   `fftresample(f,L,dim)` does the same along dimension *dim*.
 %
-%   If the input signal is NOT a periodic signal (or close to), the
-%   DCTRESAMPLE method will give much better results at the
-%   endpoints.
+%   If the input signal is **not** a periodic signal (or close to), the
+%   |dctresample|_ method gives much better results at the endpoints.
 %
 %   See also:  dctresample, middlepad
 
@@ -37,4 +36,4 @@ f=assert_sigreshape_post(f,dim,permutedsize,order);
 if wasreal
   f=real(f);
 end;
-%OLDFORMAT
+

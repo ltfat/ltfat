@@ -2,12 +2,13 @@ function g=long2fir(g,varargin);
 %LONG2FIR   Cut LONG window to FIR
 %   Usage:  g=long2fir(g,L);
 %
-%   LONG2FIR(g,L) will cut the LONG window g to a length L FIR window by
+%   `long2fir(g,L)` will cut the LONG window *g* to a length *L* FIR window by
 %   cutting out the middle part. Note that this is a slightly different
-%   behaviour than MIDDLEPAD.
+%   behaviour than |middlepad|_.
 %
-%   LONG2FIR(g,L,'wp') or LONG2FIR(g,L,'hp') does the same assuming the
-%   input window is a WPE or HPE window, respectively.
+%   `long2fir(g,L,'wp')` or `long2fir(g,L,'hp')` does the same assuming the
+%   input window is a whole-point even or half-point even window,
+%   respectively.
 %
 %   See also:  fir2long, middlepad
 
@@ -65,4 +66,3 @@ else
   end;
 end;
 
-%OLDFORMAT

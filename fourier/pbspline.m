@@ -8,52 +8,53 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %         order  : Order of B-spline.
 %         a      : Time-shift parameter for partition of unity.
 %   Output parameters:
-%         g         : Fractional B-spline.
-%         nlen      : Number of non-zero elements in out.
+%         g      : Fractional B-spline.
+%         nlen   : Number of non-zero elements in out.
 %
-%   PBSPLINE(L,order,a) computes a (slightly modified) B-spline of order
-%   _order of total length L.
+%   `pbspline(L,order,a)` computes a (slightly modified) B-spline of order
+%   *order* of total length *L*.
 %
-%   If shifted by the distance _a, the returned function will form a partition
-%   of unity. The result is normalized such that the functions sum to
-%   1/sqrt(a).
+%   If shifted by the distance *a*, the returned function will form a
+%   partition of unity. The result is normalized such that the functions sum
+%   to $1/\sqrt(a)$.
 %
-%   PBSPLINE takes the following flags at the end of the input arguments:
+%   `pbspline` takes the following flags at the end of the input arguments:
 %
-%-    'ed'      - Even discrete fractional spline. This is the default
+%     'ed'     Even discrete fractional spline. This is the default
 %
-%-    'xd'      - 'flat' discrete fractional spline.
+%     'xd'     'flat' discrete fractional spline.
 %
-%-    'stard'   - 'pointy' discrete fractional spline
+%     'stard'  'pointy' discrete fractional spline
 %
-%-    'ec'      - Even fractional spline by sampling.
+%     'ec'     Even fractional spline by sampling.
 %
-%-    'xc'      - 'flat' fractional spline by sampling.
+%     'xc'     'flat' fractional spline by sampling.
 %
-%-    'starc'   - 'pointy' fractional spline by sampling.
+%     'starc'  'pointy' fractional spline by sampling.
 %
-%-    'wp'      - Generate whole point centered splines. This is the default.
+%     'wp'     Generate whole point centered splines. This is the default.
 %
-%-    'hp'      - Generate half point centered splines.
+%     'hp'     Generate half point centered splines.
 %
 %   The different types are accurately described in the referenced paper.
-%   Generally, the 'd' types of splines are very fast to compute, while the 'c'
-%   types are samplings of the continuous splines. The 'e' types coincides
-%   with the regular B-splines for integer orders. The 'x' types do not
-%   coincide, but generate Gabor frames with favorable frame bounds. The
-%   default type is 'ed' to guarantee fast computation and a familiar shape
-%   of the splines.
+%   Generally, the 'd' types of splines are very fast to compute, while the
+%   'c' types are samplings of the continuous splines. The 'e' types
+%   coincides with the regular B-splines for integer orders. The 'x' types
+%   do not coincide, but generate Gabor frames with favorable frame
+%   bounds. The default type is 'ed' to guarantee fast computation and a
+%   familiar shape of the splines.
 %
-%   [out,nlen]=PBSPLINE(...) will additionally compute the number of
+%   `[out,nlen]=pbspline(...)` will additionally compute the number of
 %   non-zero elements in out.
 %
-%   If nlen = L, the function returned will be a periodization of a B-spline.
+%   If $nlen = L$, the function returned will be a periodization of a
+%   B-spline.
 %
-%   If nlen < L, you can choose to remove the additional zeros by calling
-%   MIDDLEPAD(g,nlen)
+%   If $nlen < L$, you can choose to remove the additional zeros by calling
+%   `g=middlepad(g,nlen)$.
 %
-%   Additionally, PBSPLINE accepts flags to normalize the output. Please see the
-%   help of NORMALIZE. Default is to use 'peak' normalization.
+%   Additionally, `pbspline` accepts flags to normalize the output. Please
+%   see the help of |normalize|_. Default is to use `'peak'` normalization.
 %
 %   See also:   pgauss, firwin, middlepad, normalize
 %
@@ -461,5 +462,3 @@ function Z=myhzeta(z,v);
 
   end;
 
-
-%OLDFORMAT

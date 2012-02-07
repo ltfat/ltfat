@@ -3,16 +3,16 @@ function [xo]=largestn(xi,N,mtype)
 %   Usage:  xo=largestn(x,N);
 %           xo=largestn(x,N,mtype);
 %
-%   LARGESTN(x,N) returns an array of the same size as x keeping
-%   the N largest coefficients.
+%   `largestn(x,N)` returns an array of the same size as *x* keeping
+%   the *N* largest coefficients.
 %
-%   LARGESTN(x,N,'full') returns the output as a full matrix. This is the
+%   `largestn(x,N,'full')` returns the output as a full matrix. This is the
 %   default.
 %
-%   LARGESTN(x,N,'sparse') returns the output as a sparse matrix.
+%   `largestn(x,N,'sparse')` returns the output as a sparse matrix.
 %
 %   If the coefficients represents a signal expanded in an orthonormal
-%   basis, then this will be the best N-term approximation.
+%   basis then this will be the best N-term approximation.
 %
 %   See also:  largestr
 %
@@ -72,5 +72,3 @@ lambda=sxi(ss-N+1);
 signifmap=find(abs(xi)>=lambda);
 xo(signifmap)=xi(signifmap);
 
-
-%OLDFORMAT

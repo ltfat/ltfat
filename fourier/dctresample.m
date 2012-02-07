@@ -3,14 +3,14 @@ function f=dctresample(f,L,dim)
 %   Usage:  h=dctresample(f,L);
 %           h=dctresample(f,L,dim);
 %
-%   DCTRESAMPLE(f,L) returns a discrete cosine interpolation of the signal f
-%   to length L. If the function is applied to a matrix, it will apply
+%   `dctresample(f,L)` returns a discrete cosine interpolation of the signal *f*
+%   to length *L*. If the function is applied to a matrix, it will apply
 %   to each column.
 %
-%   DCTRESAMPLE(f,L,dim) does the same along dimension dim.
+%   `dctresample(f,L,dim)` does the same along dimension *dim*.
 %
-%   If the input signal is NOT a periodic signal (or close to), this method
-%   will give much better results than FFTRESAMPLE at the endpoints, as
+%   If the input signal is not a periodic signal (or close to), this method
+%   will give much better results than |fftresample|_ at the endpoints, as
 %   this method assumes than the signal is even a the endpoints.
 %
 %   The algorithm uses a DCT type iii.
@@ -39,4 +39,4 @@ f=assert_sigreshape_post(f,dim,permutedsize,order);
 if wasreal
   f=real(f);
 end;
-%OLDFORMAT
+

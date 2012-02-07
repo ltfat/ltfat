@@ -4,33 +4,33 @@ function g=pherm(L,order,tfr)
 %          g=pherm(L,order,tfr);
 % 
 %   Input parameters:
-%        L : Length of vector.
-%    order : Order of Hermite function.
-%      tfr : ratio between time and frequency support.
+%      L     : Length of vector.
+%      order : Order of Hermite function.
+%      tfr   : ratio between time and frequency support.
 %   Output parameters:
-%        g : The periodized Gaussian(s).
+%      g     : The periodized Hermite function
 %
-%   PHERM(L,order,tfr) computes samples of a periodized Hermite function
-%   of order _order. order is counted from 0, so the zeroth order Hermite
-%   function is the Gaussian.
+%   `pherm(L,order,tfr)` computes samples of a periodized Hermite function
+%   of order *order*. *order* is counted from 0, so the zero'th order
+%   Hermite function is the Gaussian.
 %
 %   The returned functions are eigenvectors of the DFT. The first four 
 %   Hermite functions are orthonormal, but in general they are not.    
 %
-%   The parameter tfr determines the ratio between the effective
-%   support of g and the effective support of the DFT of g. If tfr>1 then
-%   g has a wider support than the DFT of g.
+%   The parameter *tfr* determines the ratio between the effective support
+%   of *g* and the effective support of the DFT of *g*. If $tfr>1$ then *g*
+%   has a wider support than the DFT of *g*.
 %
-%   PHERM(L,order) does the same setting tfr=1.
+%   `pherm(L,order)` does the same setting $tfr=1$.
 %
-%   If _order is a vector, PHERM will return a matrix, where each column
-%   is a Hermite function with the corresponding order.
+%   If *order* is a vector, `pherm` will return a matrix, where each column
+%   is a Hermite function with the corresponding *order*.
 %
-%   If tfr is a vector, PHERM will return a matrix, where each column
-%   is a Hermite function with the corresponding tfr.
+%   If *tfr* is a vector, `pherm` will return a matrix, where each column
+%   is a Hermite function with the corresponding *tfr*.
 %
-%   If both _order and tfr are vectors, they must have the same length,
-%   and the values will be paired.
+%   If both *order* and *tfr* are vectors, they must have the same length,
+%   and their values will be paired.
 %
 %   See also:  hermbasis, pgauss, psech
 
@@ -120,5 +120,4 @@ for w=1:W
   g(:,w)=g(:,w)/norm(g(:,w));
   
 end;
-  
-%OLDFORMAT
+

@@ -10,6 +10,27 @@ function plotfft(coef,varargin)
 %   `plotfft(coef,fs)` does the same for the FFT of a signal sampled at
 %   a sampling rate of *fs* Hz.
 %
+%   `plotfft` accepts the following optional arguments:
+%
+%     'db'     Apply $20\cdot \log_{10}$ to the coefficients. This makes 
+%              it possible to see very weak phenomena, but it might show 
+%              too much noise. This is the default.
+%
+%     'dbsq'   Apply $10\cdot \log_{10}$ to the coefficients. Same as the
+%              `'db'` option, but assumes that the input is already squared.  
+%
+%     'lin'    Show the coefficients on a linear scale. This will
+%              display the raw input without any modifications. Only works for
+%              real-valued input.
+%
+%     'linsq'  Show the square of the coefficients on a linear scale.
+%
+%     'linabs'  Show the absolute value of the coefficients on a linear scale.
+%
+%   In addition to these parameteres, `plotfft` accepts any of the flags
+%   from |normalize|_. The coefficients will be normalized as specified
+%   before plotting.
+%
 %   See also: plotfftreal
   
 if nargin<1

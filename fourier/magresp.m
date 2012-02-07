@@ -4,45 +4,50 @@ function magresp(g,varargin);
 %            magresp(g,fs,...);
 %            magresp(g,fs,dynrange,....);
 %
-%   MAGRESP(g) will display the magnitude response of the window on a log
+%   `magresp(g)` will display the magnitude response of the window on a log
 %   scale (dB);
 %
-%   MAGRESP(g,fs) does the same for windows that are intended to be used
-%   with signals with sampling rate fs. The x-axis will display Hz.
+%   `magresp(g,fs)` does the same for windows that are intended to be used
+%   with signals with sampling rate *fs*. The x-axis will display Hz.
 %
-%   MAGRESP(g,fs,dynrange) will limit the dynamic range (see below).
+%   `magresp(g,fs,dynrange)` will limit the dynamic range (see below).
 %   
-%   MAGRESP takes the following parameters at the end of the line of
+%   `magresp` takes the following parameters at the end of the line of
 %   input arguments.
 %
-%-     'dynrange',r - Limit the dynamic range of the plot to r dB.
+%     'dynrange',r  Limit the dynamic range of the plot to r dB.
 %
-%-     'fir'  - Indicate that the input is an FIR window. MAGRESP will
-%               zero-extend the window to display a smooth magnitude
-%               response.
+%     'fir'         Indicate that the input is an FIR window. MAGRESP will
+%                   zero-extend the window to display a smooth magnitude
+%                   response.
 %
-%-     'L',L  - Zero-extend the window to length L.
+%     'L',L         Zero-extend the window to length L.
 %
-%-     'posfreq' - Show only positive frequencies.
+%     'posfreq'     Show only positive frequencies.
 %
-%-     'nf'      - Show negative frequencies
+%     'nf'          Show also negative frequencies
 %
-%-     'autoposfreq' - Show positive frequencies for real-valued signals,
-%               otherwise show also the negative frequencies. This is the default.
+%     'autoposfreq'  Show positive frequencies for real-valued signals,
+%                    otherwise show also the negative frequencies. This is
+%                    the default.
 %
 %   In addition to these flags, it is possible to speficy any of the
-%   normalization flags from NORMALIZE to normalize the input before
-%   calculation of the magnitude response. Specifying '1' or 'area' will
+%   normalization flags from |normalize|_ to normalize the input before
+%   calculation of the magnitude response. Specifying `'1'` or `'area'` will
 %   display a magnitude response which peaks at 0 dB.
 %
+%   Examples:
+%   ---------
+%
 %   The following will display the magnitude response of a Hann window
-%   of length 20:
+%   of length 20:::
 %
-%C     magresp({'hann',20});
+%     magresp({'hann',20});
 %
-%   The following will display the magnitude response of a Gaussian window of length 100
+%   The following will display the magnitude response of a Gaussian window
+%   of length 100:::
 %
-%C     magresp('gauss','L',100);
+%     magresp('gauss','L',100);
 %
 %   Demos: demo_gabfir     
 
@@ -147,5 +152,3 @@ end;
 
 legend('off');
 
-
-%OLDFORMAT

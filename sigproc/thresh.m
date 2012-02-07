@@ -3,27 +3,28 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %   Usage:  x=thresh(x,lambda,...);
 %           [x,N]=thresh(x,lambda,...);
 %
-%   THRESH(x,lambda) will perform hard thresholding on x, i.e. all
-%   element with absolute value less than lambda will be set to zero.
+%   `thresh(x,lambda)` will perform hard thresholding on *x*, i.e. all
+%   elements with absolute value less than *lambda* will be set to zero.
 %
-%   THRESH(lambda,'soft') will perform soft thresholding on x, i.e. lambda
-%   will be subtracted from the absolute value of every element of x.
+%   `thresh(x,lambda,'soft')` will perform soft thresholding on *x*,
+%   i.e. *lambda* will be subtracted from the absolute value of every element
+%   of *x*.
 %
-%   [x,N]=THRESH(x,lambda) additionally returns a number N specifying
+%   `[x,N]=thresh(x,lambda)` additionally returns a number *N* specifying
 %   how many numbers where kept.
 %
-%   THRESH takes the following flags at the end of the line of input
+%   `thresh` takes the following flags at the end of the line of input
 %   arguments:
 %
-%-     'hard'   - Perform hard thresholding. This is the default.
+%     'hard'    Perform hard thresholding. This is the default.
 %
-%-     'soft'   - Perform soft thresholding.  
+%     'soft'    Perform soft thresholding.  
 %
-%-     'full'   - Returns the output as a full matrix. This is the default.
+%     'full'    Returns the output as a full matrix. This is the default.
 %
-%-     'sparse' - Returns the output as a sparse matrix.
+%     'sparse'  Returns the output as a sparse matrix.
 %
-%   The function WTHRESH in the Matlab Wavelet toolbox implements the same
+%   The function `wthresh` in the Matlab Wavelet toolbox implements the same
 %   functionality.
 %
 %   See also: largestr, largestn
@@ -112,5 +113,3 @@ else
   end;
 end;
 
-
-%OLDFORMAT

@@ -3,9 +3,9 @@ function f=dft(f,N,dim);
 %   Usage: f=dft(f);
 %          f=dft(f,N,dim);
 %
-%   DFT computes a normalized discrete Fourier transform. This is nothing
-%   but a scaled version of the output from FFT. The function takes exactly
-%   the same arguments as FFT. See the help on FFT for a thorough
+%   `dft` computes a normalized discrete Fourier transform. This is nothing
+%   but a scaled version of the output from `fft`. The function takes exactly
+%   the same arguments as `fft`. See the help on `fft` for a thorough
 %   description.
 %
 %   See also:  idft
@@ -32,4 +32,3 @@ f=fft(f,N,1)/sqrt(N);
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
 
-%OLDFORMAT

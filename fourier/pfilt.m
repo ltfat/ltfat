@@ -3,13 +3,14 @@ function h=pfilt(f,g,varargin)
 %   Usage:  h=pfilt(f,g);
 %           h=pfilt(f,g,a,dim);
 %
-%   PFILT(f,g) applies the filter g to the input f. If f is a matrix, the
-%   filter is applied along each column.
+%   `pfilt(f,g)` applies the filter *g* to the input *f*. If *f* is a
+%   matrix, the filter is applied along each column.
 %
-%   PFILT(f,g,a) does the same, but downsamples the output keeping only
+%   `pfilt(f,g,a)` does the same, but downsamples the output keeping only
 %   every a'th sample (starting with the first one).
 %
-%   PFILT(f,g,a,dim) filters along dimension dim.
+%   `pfilt(f,g,a,dim)` filters along dimension dim. The default value of
+%   [] means to filter along the first non-singleton dimension.
 %
 %   See also: pconv
 
@@ -41,5 +42,3 @@ permutedsize(1)=size(h,1);
   
 h=assert_sigreshape_post(h,dim,permutedsize,order);
 
-
-%OLDFORMAT

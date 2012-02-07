@@ -2,8 +2,8 @@ function [V]=hermbasis(L)
 %HERMBASIS  Orthonormal basis of discrete Hermite functions.
 %   Usage:  V=hermbasis(L);
 %
-%   HERMBASIS(L) will compute an orthonormal basis of discrete Hermite
-%   functions of length L. The vectors are returned as columns in the
+%   `hermbasis(L)` computes an orthonormal basis of discrete Hermite
+%   functions of length *L*. The vectors are returned as columns in the
 %   output.
 %
 %   All the vectors in the output are eigenvectors of the discrete Fourier
@@ -51,4 +51,3 @@ if mod(L,4)==0
 
 end;
 
-%OLDFORMAT

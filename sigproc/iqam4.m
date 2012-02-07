@@ -1,9 +1,9 @@
 function xo=iqam4(xi)
 %IQAM4  Inverse QAM of order 4
 %
-%    IQAM4(xi) demodulates a signal mapping the input coefficients to the
+%    `iqam4(xi)` demodulates a signal mapping the input coefficients to the
 %    closest complex root of unity, and returning the associated bit
-%    pattern. This is the inverse operation of QAM4.
+%    pattern. This is the inverse operation of |qam4|_.
 %
 %    See also: qam4
 %
@@ -40,4 +40,3 @@ for bit=1:nbits
 end;
 
 xo=xo(:);
-%OLDFORMAT

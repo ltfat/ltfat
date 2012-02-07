@@ -2,27 +2,25 @@ function c=dctiv(f,L,dim)
 %DCTIV  Discrete Consine Transform type IV
 %   Usage:  c=dctiv(f);
 %
-%   DCTIV(f) computes the discrete consine transform of type IV of the
-%   input signal f. If f is a matrix, then the transformation is applied to
-%   each column.
+%   `dctiv(f)` computes the discrete cosine transform of type IV of the
+%   input signal *f*. If *f* is multi-dimensional, the transformation is
+%   applied along the first non-singleton dimension.
 %
-%   DCTIV(f,L) zero-pads or truncates f to length L before doing the
+%   `dctiv(f,L)` zero-pads or truncates *f* to length *L* before doing the
 %   transformation.
 %
-%   DCTIV(f,[],dim) applies the transformation along dimension dim. 
-%   DCTIV(f,L,dim) does the same, but pads or truncates to length L.
-
-%   The transform is real (output is real if input is real) and
-%   it is orthonormal. It is is own inverse.
+%   `dctiv(f,[],dim)` or `dctiv(f,L,dim)` applies the transformation along
+%   dimension *dim*.
 %
-%   Let f be a signal of length _L and let c=DCTIV(f). Then
+%   The transform is real (output is real if input is real) and orthonormal.
 %
-%M                         L-1
-%M    c(n+1) = sqrt(2/L) * sum f(m+1)*cos(pi*n*(m+.5)/L) 
-%M                         m=0 
-%F  \[
-%F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
-%F  \]
+%   Let f be a signal of length *L* and let `c=dctiv(f)`. Then
+%
+%   ..                     L-1
+%     c(n+1) = sqrt(2/L) * sum f(m+1)*cos(pi*n*(m+.5)/L) 
+%                          m=0 
+%
+%   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
 %
 %   See also:  dctii, dctiii, dstii
 %
@@ -76,5 +74,3 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 %	     flipud(diag(exp((1:L)*pi*i/(2*L))))];
   
 %c=exp(-pi*i/(4*L))*R.'*fft(R*f)/sqrt(2*L);
-
-%OLDFORMAT

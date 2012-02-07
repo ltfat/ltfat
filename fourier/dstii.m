@@ -5,34 +5,34 @@ function c=dstii(f,L,dim)
 %           c=dstii(f,[],dim);
 %           c=dstii(f,L,dim);
 %
-%   DSTII(f) computes the discrete sine transform of type II of the
-%   input signal f. If f is a matrix, then the transformation is applied to
-%   each column. For N-D arrays, the transformation is applied to the first
-%   dimension.
+%   `dstii(f)` computes the discrete sine transform of type II of the
+%   input signal *f*. If *f* is multi-dimensional, the transformation is
+%   applied along the first non-singleton dimension.
 %
-%   DSTII(f,L) zero-pads or truncates f to length L before doing the
+%   `dstii(f,L)` zero-pads or truncates *f* to length *L* before doing the
 %   transformation.
 %
-%   DSTII(f,[],dim) applies the transformation along dimension dim. 
-%   DSTII(f,L,dim) does the same, but pads or truncates to length L.
+%   `dstii(f,[],dim)` or `dstii(f,L,dim)` applies the transformation along
+%   dimension *dim*.
 %
-%   The transform is real (output is real if input is real) and
-%   it is orthonormal.
+%   The transform is real (output is real if input is real) and orthonormal.
 %
-%   The inverse transform of DSTII is DSTIII.
+%   The inverse transform of |dstii|_ is |dstiii|_.
 %
-%   Let f be a signal of length _L, let c=DSTII(f) and define the vector
-%   _w of length _L by  
-%N    w = [1 1 1 1 ... 1/sqrt(2)]
-%L    \[w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=L-1\\1 & \text{otherwise}\end{cases}\]
+%   Let *f* be a signal of length *L*, let `c=dstii(f)` and define the vector
+%   *w* of length *L* by
+%
+%   .. w = [1 1 1 1 ... 1/sqrt(2)]
+%
+%   .. math:: w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=L-1\\1 & \text{otherwise}\end{cases}
+%
 %   Then 
 %
-%M                         L-1
-%M    c(n+1) = sqrt(2/L) * sum w(n+1)*f(m+1)*sin(pi*n*(m+.5)/L) 
-%M                         m=0 
-%F  \[
-%F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\sin\left(\frac{\pi}{L}n\left(m+\frac{1}{2}\right)\right)
-%F  \]
+%   ..                     L-1
+%     c(n+1) = sqrt(2/L) * sum w(n+1)*f(m+1)*sin(pi*n*(m+.5)/L) 
+%                          m=0 
+%
+%   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\sin\left(\frac{\pi}{L}n\left(m+\frac{1}{2}\right)\right)
 %
 %   See also:  dctii, dstiii, dstiv
 %
@@ -86,4 +86,3 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 
 %c=i*(R'*fft([f;-flipud(f)])/sqrt(L)/2);
 
-%OLDFORMAT

@@ -4,21 +4,21 @@ function fd=pderiv(f,dim,difforder)
 %           fd=pderiv(f,dim);
 %           fd=pderiv(f,dim,difforder);
 %
-%   PDERIV(f) will compute the derivative of f using a using a 4th order
-%   centered finite difference scheme. f must have been obtained by a
-%   regular sampling. If f is a matrix, the derivative along the columns will
-%   be found.
+%   `pderiv(f)` will compute the derivative of *f* using a using a 4th order
+%   centered finite difference scheme. *f* must have been obtained by a
+%   regular sampling. If *f* is a matrix, the derivative along the columns
+%   will be found.
 %
-%   PDERIV(f,dim) will do the same along dimension dim.
+%   `pderiv(f,dim)` will do the same along dimension *dim*.
 %
-%   PDERIV(f,dim,difforder) uses a centered finite difference scheme of
-%   order difforder instead of the default.
+%   `pderiv(f,dim,difforder)` uses a centered finite difference scheme of
+%   order *difforder* instead of the default.
 %
-%   PDERIV(f,dim,Inf) will compute the spectral derivative using a DFT.
+%   `pderiv(f,dim,Inf)` will compute the spectral derivative using a DFT.
 %
-%   PDERIV assumes that f is a regular sampling of a function on the
-%   torus [0,1). The derivative of a function on a general torus [0,T)
-%   can be found by scaling the output by 1/T. 
+%   `pderiv` assumes that *f* is a regular sampling of a function on the
+%   torus $[0,1)$. The derivative of a function on a general torus $[0,T)$
+%   can be found by scaling the output by $1/T$. 
 
 % Assert correct input.
 
@@ -56,4 +56,3 @@ end;
 
 fd=assert_sigreshape_post(fd,dim,permutedsize,order);
 
-%OLDFORMAT

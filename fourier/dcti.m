@@ -26,7 +26,6 @@ function c=dcti(f,L,dim)
 %
 %   .. w = [1/sqrt(2) 1 1 1 1 ...1/sqrt(2)]
 %
-% 
 %   .. math:: w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\text{ or }n=L-1\\1 & \text{otherwise}\end{cases}
 %
 %   Then 

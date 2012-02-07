@@ -5,17 +5,17 @@ function [xo,N]=largestr(xi,p,mtype)
 %           xo=LARGESTR(x,p,mtype);
 %           [xo,N]=LARGESTR(x,p,mtype);
 %
-%   LARGESTR(x,p) returns an array of the same size as x keeping
-%   the fraction p of the coefficients. The coefficients with the largest
+%   `largestr(x,p)` returns an array of the same size as *x* keeping
+%   the fraction *p* of the coefficients. The coefficients with the largest
 %   magnitude are kept.
 %
-%   [xo,N]=LARGESTR(xi,p) will additionally return the number of
-%   coefficients kept.
+%   `[xo,n]=largestr(xi,p)` additionally returns the number of coefficients
+%   kept.
 %
-%   LARGESTR(x,p,'full') returns the output as a full matrix. This is the
+%   `largestr(x,p,'full')` returns the output as a full matrix. This is the
 %   default.
 %
-%   LARGESTR(x,p,'sparse') returns the output as a sparse matrix.
+%   `largestr(x,p,'sparse')` returns the output as a sparse matrix.
 % 
 %   Note that if this function is used on coefficients coming from a
 %   redundant transform or from a transform where the input signal was
@@ -48,4 +48,3 @@ N=round(ss*p);
 
 xo=largestn(xi,N,mtype);
 
-%OLDFORMAT

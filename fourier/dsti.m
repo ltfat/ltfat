@@ -5,33 +5,29 @@ function c=dsti(f,L,dim)
 %           c=dsti(f,[],dim);
 %           c=dsti(f,L,dim);
 %
-%   DSTI(f) computes the discrete sine transform of type I of the
-%   input signal f. If f is a matrix, then the transformation is applied to
-%   each column. For N-D arrays, the transformation is applied to the first
-%   dimension.
+%   `dsti(f)` computes the discrete sine transform of type I of the
+%   input signal *f*. If *f* is multi-dimensional, the transformation is
+%   applied along the first non-singleton dimension.
 %
-%   DSTI(f,L) zero-pads or truncates f to length N before doing the
+%   `dsti(f,L)` zero-pads or truncates *f* to length *L* before doing the
 %   transformation.
 %
-%   DSTI(f,[],dim) applies the transformation along dimension dim. 
-%   DSTI(f,L,dim) does the same, but pads or truncates to length L.
+%   `dsti(f,[],dim)` or `dsti(f,L,dim)` applies the transformation along
+%   dimension *dim*.
 %
-%   The transform is real (output is real if input is real) and
-%   it is orthonormal.
+%   The transform is real (output is real if input is real) and orthonormal.
 %
 %   This transform is its own inverse.
 %
-%   Let f be a signal of length _L and let c=DSTI(f). Then 
+%   Let f be a signal of length *L* and let `c=dsti(f)`. Then 
 %
-%M                             L-1
-%M    c(n+1) = sqrt(2/(L+1)) * sum sin(pi*(n+1)*(m+1)/(L+1)) 
-%M                             m=0 
-%F  \[
-%F  c\left(n+1\right)=\sqrt{\frac{2}{L+1}}\sum_{m=0}^{L-1}f\left(m+1\right)\sin\left(\frac{\pi \left(n+1\right)\left(m+1\right)}{L+1}\right)
-%F  \]
+%   ..                         L-1
+%     c(n+1) = sqrt(2/(L+1)) * sum sin(pi*(n+1)*(m+1)/(L+1)) 
+%                              m=0 
+%   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L+1}}\sum_{m=0}^{L-1}f\left(m+1\right)\sin\left(\frac{\pi \left(n+1\right)\left(m+1\right)}{L+1}\right)
 %
-%   The implementation of this functions uses a simple algorithm that require
-%   an FFT of length 2N+2, which might potentially be the product of a large
+%   The implementation of this functions uses a simple algorithm that requires
+%   an FFT of length $2N+2$, which might potentially be the product of a large
 %   prime number. This may cause the function to sometimes execute slowly.
 %   If guaranteed high speed is a concern, please consider using one of the
 %   other DST transforms.
@@ -89,4 +85,3 @@ end;
 
 c=assert_sigreshape_post(c,dim,permutedsize,order);
 
-%OLDFORMAT

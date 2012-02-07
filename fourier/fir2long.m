@@ -2,13 +2,13 @@ function g=fir2long(g,Llong);
 %FIR2LONG   Extend FIR window to LONG
 %   Usage:  g=fir2long(g,Llong);
 %
-%   FIR2LONG(g,Llong) will extend the FIR window g to a length Llong window
-%   by inserting zeros. Note that this is a slightly different behaviour
-%   than MIDDLEPAD.
+%   `fir2long(g,Llong)` will extend the FIR window *g* to a length *Llong*
+%   window by inserting zeros. Note that this is a slightly different
+%   behaviour than |middlepad|_.
 %
-%   FIR2LONG can also be used to extend a FIR window to a longer FIR window,
-%   for instance in order to satisfy that the window length is divisible by
-%   the number of channels.
+%   `fir2long` can also be used to extend a FIR window to a longer FIR
+%   window, for instance in order to satisfy the usual requirement that the
+%   window length should be divisible by the number of channels.
 %
 %   See also:  long2fir, middlepad
 
@@ -30,6 +30,4 @@ else
   % inserting zeros) for odd-length signals.
   g=middlepad(g,Llong);
 end;
-  
 
-%OLDFORMAT

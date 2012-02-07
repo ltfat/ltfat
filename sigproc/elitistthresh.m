@@ -1,26 +1,27 @@
 function [xo]=elitistthresh(xi,lambda,varargin)
 %ELITISTTHRESH   elitist (hard/soft) thresholding
-%   Usage:  xo=elitistthresh(x,lambda);
+%   Usage:  xo=elitistthresh(xi,lambda);
 %
-%   ELITISTTHRESH(x,lambda) will perform hard elitist thresholding on x,
-%   with threshold lambda xi is a two-dimensional array, the first
-%   dimension labelling groups, and the second one labelling members.
-%   All coefficients within a given group are shrunk according to the value
-%   of the L1 norm of the group in comparison to the threshold lambda
+%   `elitistthresh(xi,lambda)` performs hard elitist thresholding on *xi*,
+%   with threshold *lambda*. The input *xi* must be a two-dimensional array,
+%   the first dimension labelling groups, and the second one labelling
+%   members.  All coefficients within a given group are shrunk according to
+%   the value of the $l^1$ norm of the group in comparison to the threshold
+%   value *lambda*.
 %
-%   ELITISTTHRESH(x,lambda,'soft') will do the same using soft
+%   `elitistthresh(x,lambda,'soft')` will do the same using soft
 %   thresholding.
 %
-%   ELITISTTHRESH takes the following flags at the end of the line of input
+%   `elitistthresh` accepts the following flags at the end of the line of input
 %   arguments:
 %
-%-     'hard'   - Perform hard thresholding. This is the default.
+%     'hard'    Perform hard thresholding. This is the default.
 %
-%-     'soft'   - Perform soft thresholding.  
+%     'soft'    Perform soft thresholding.  
 %
-%-     'full'   - Returns the output as a full matrix. This is the default.
+%     'full'    Return the output as a full matrix. This is the default.
 %
-%-     'sparse' - Returns the output as a sparse matrix.
+%     'sparse'  Return the output as a sparse matrix.
 %  
 %   See also:  groupthresh
 %
@@ -65,5 +66,3 @@ for g=1:NbGroups,
     end
     xo(g,:) = thresh(xi(g,:),tau_g,flags.iofun,flags.outclass);
 end
-
-%OLDFORMAT

@@ -4,8 +4,8 @@ function f=idft(f,N,dim)
 %          f=idft(f,N,dim);
 %
 %   This function computes a normalized inverse discrete Fourier transform.
-%   This is nothing but a scaled version of the output from IFFT. The
-%   function takes exactly the same arguments as IFFT. See the help on IFFT
+%   This is nothing but a scaled version of the output from `ifft`. The
+%   function takes exactly the same arguments as `ifft`. See the help on `ifft`
 %   for a thorough description.
 %
 %   See also:  dft
@@ -32,4 +32,3 @@ f=ifft(f,N,1)*sqrt(N);
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
 
-%OLDFORMAT

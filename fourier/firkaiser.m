@@ -3,24 +3,24 @@ function g=firkaiser(L,beta,varargin)
 %   Usage:  g=firkaiser(L,beta);
 %           g=firkaiser(L,beta,...);
 %
-%   FIRKAISER(L,beta) computes the Kaiser-Bessel window of length L with
-%   parameter beta. The smallest element of the window is set to zero when
+%   `firkaiser(L,beta)` computes the Kaiser-Bessel window of length *L* with
+%   parameter *beta*. The smallest element of the window is set to zero when
 %   the window has an even length. This gives the window perfect whole-point
 %   even symmetry, and makes it possible to use the window for a Wilson
 %   basis.
 %
-%   FIRKAISER takes the following flags at the end of the input arguments:
+%   `firkaiser` takes the following flags at the end of the input arguments:
 %
-%-    'normal'  - Normal Kaiser-Bessel window. This is the default.
+%     'normal'   Normal Kaiser-Bessel window. This is the default.
 %
-%-    'derived' - Derived Kaiser-Bessel window.
+%     'derived'  Derived Kaiser-Bessel window.
 %
-%-    'wp'      - Generate a whole point even window. This is the default.
+%     'wp'       Generate a whole point even window. This is the default.
 %
-%-    'hp'      - Generate half point even window.
+%     'hp'       Generate half point even window.
 %  
-%   Additionally, FIRWIN accepts flags to normalize the output. Please see the
-%   help of NORMALIZE. Default is to use 'peak' normalization.
+%   Additionally, `firkaiser` accepts flags to normalize the output. Please
+%   see the help of |normalize|_. Default is to use `'peak'` normalization.
 %
 %   See also: firwin, normalize
 %
@@ -118,4 +118,3 @@ g=real(g);
 
 g=normalize(g,flags.norm);
 
-%OLDFORMAT

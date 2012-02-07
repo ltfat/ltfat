@@ -3,30 +3,31 @@ function xo=uquant(xi,varargin);
 %   Usage:  x=uquant(x);
 %           x=uquant(x,nbits,xmax,...);
 %
-%   UQUANT(x,nbits,xmax) simulates the effect of uniform quantization of x using
-%   nbits bit. The output is simply x rounded to $2^{nbits}$ different values.
-%   The xmax parameters specify the maximal value that should be quantifiable.
+%   `uquant(x,nbits,xmax)` simulates the effect of uniform quantization of
+%   *x* using *nbits* bits. The output is simply *x* rounded to $2^{nbits}$
+%   different values.  The *xmax* parameters specify the maximal value that
+%   should be quantifiable.
 %
-%   UQUANT(x,nbits) assumes a maximal quantifiable value of 1.
+%   `uquant(x,nbits)` assumes a maximal quantifiable value of 1.
 %
-%   UQUANT(x) additionally assumes 8 bit quantization.
+%   `uquant(x)` additionally assumes 8 bit quantization.
 %
-%   UQUANT takes the following flags at the end of the input arguments.
+%   `uquant` takes the following flags at the end of the input arguments:
 %
-%    'nbits' - Number of bits to use in the quantization. Default is 8.
+%     'nbits'  Number of bits to use in the quantization. Default is 8.
 %
-%    'xmax'  - Maximal quantifiable value. Default is 1.
+%     'xmax'   Maximal quantifiable value. Default is 1.
 %  
-%-   's'     - Use signed quantization. This assumes that the signal
+%     's'      Use signed quantization. This assumes that the signal
 %              has a both positive and negative part. Useful for sound
 %              signals. This is the default.
 %
-%-   'u'     - Use unsigned quantization. Assumes the signal is positive.
+%     'u'      Use unsigned quantization. Assumes the signal is positive.
 %              Negative values are silently rounded to zero.
 %              Useful for images.
 %
-%   If this function is applied to a complex signal, it will simply be
-%   applied to the real and imaginary part separately.
+%   If this function is applied to a complex signal, it will be applied to
+%   the real and imaginary part separately.
 
 %   AUTHOR : Peter Soendergaard and Bruno Torresani.  
 %   TESTING: OK
@@ -81,5 +82,3 @@ else
   
 end;
 
-
-%OLDFORMAT

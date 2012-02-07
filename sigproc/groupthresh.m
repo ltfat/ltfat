@@ -1,26 +1,25 @@
 function [xo]=groupthresh(xi,lambda,varargin)
 %GROUPTHRESH   group (hard/soft) thresholding
-%   Usage:  xo=groupthresh(x,lambda);
+%   Usage:  xo=groupthresh(xi,lambda);
 %
-%   GROUPTHRESH(x,lambda) will perform hard group thresholding on x, with
-%   threshold lambda xi is a two-dimensional array, the first dimension
-%   labelling groups, and the second one labelling members All coefficients
-%   within a given group are shrunk according to the value of the L2 norm of
-%   the group in comparison to the threshold lambda
+%   `groupthresh(x,lambda)` performs hard group thresholding on *xi*, with
+%   threshold *lambda*.  *xi* must be a two-dimensional array, the first
+%   dimension labelling groups, and the second one labelling members. All
+%   coefficients within a given group are shrunk according to the value of
+%   the $l^2$ norm of the group in comparison to the threshold *lambda*
 %
-%   GROUPTHRESH(x,lambda,'soft') will do the same using soft
-%   thresholding.
+%   `groupthresh(x,lambda,'soft')` does the same using soft thresholding.
 %
-%   GROUPTHRESH takes the following flags at the end of the line of input
+%   `groupthresh` accepts the following flags at the end of the line of input
 %   arguments:
 %
-%-     'hard'   - Perform hard thresholding. This is the default.
+%     'hard'    Perform hard thresholding. This is the default.
 %
-%-     'soft'   - Perform soft thresholding.  
+%     'soft'    Perform soft thresholding.  
 %
-%-     'full'   - Returns the output as a full matrix. This is the default.
+%     'full'    Return the output as a full matrix. This is the default.
 %
-%-     'sparse' - Returns the output as a sparse matrix.
+%     'sparse'  Return the output as a sparse matrix.
 %  
 %   See also:  gabgrouplasso
 %
@@ -62,4 +61,3 @@ for g=1:NbGroups,
     xo(g,:) = xi(g,:) * mask;
 end
 
-%OLDFORMAT

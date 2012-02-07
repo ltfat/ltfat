@@ -5,34 +5,34 @@ function c=dctiii(f,L,dim)
 %           c=dctiii(f,[],dim);
 %           c=dctiii(f,L,dim);
 %
-%   DCTIII(f) computes the discrete consine transform of type III of the
-%   input signal f. If f is a matrix, then the transformation is applied to
-%   each column. For N-D arrays, the transformation is applied to the first
-%   dimension.
+%   `dctiii(f)` computes the discrete cosine transform of type III of the
+%   input signal *f*. If *f* is multi-dimensional, the transformation is
+%   applied along the first non-singleton dimension.
 %
-%   DCTIII(f,L) zero-pads or truncates f to length L before doing the
+%   `dctiii(f,L)` zero-pads or truncates *f* to length *L* before doing the
 %   transformation.
 %
-%   DCTIII(f,[],dim) applies the transformation along dimension dim. 
-%   DCTIII(f,L,dim) does the same, but pads or truncates to length L.
+%   `dctiii(f,[],dim)` or `dctiii(f,L,dim)` applies the transformation along
+%   dimension *dim*.
 %
-%   The transform is real (output is real if input is real) and
-%   it is orthonormal.
+%   The transform is real (output is real if input is real) and orthonormal.
 %
-%   This is the inverse of DCTII
+%   This is the inverse of |dctii|_.
 %
-%   Let f be a signal of length _L, let c=DCTIII(f) and define the vector
-%   _w of length _L by  
-%N    w = [1/sqrt(2) 1 1 1 1 ...]
-%L    \[w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\\1 & \text{otherwise}\end{cases}\]
+%   Let f be a signal of length *L*, let `c=dctiii(f)` and define the vector
+%   *w* of length *L* by  
+%
+%   ..  w = [1/sqrt(2) 1 1 1 1 ...]
+%
+%   .. math: w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\\1 & \text{otherwise}\end{cases}
+%
 %   Then 
-%M
-%M                         L-1
-%M    c(n+1) = sqrt(2/L) * sum w(n+1)*f(m+1)*cos(pi*(n+.5)*m/L) 
-%M                         m=0 
-%F  \[
-%F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)m\right)
-%F  \]
+%
+%   ..                     L-1
+%     c(n+1) = sqrt(2/L) * sum w(n+1)*f(m+1)*cos(pi*(n+.5)*m/L) 
+%                          m=0 
+%
+%   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)m\right)
 %
 %   See also:  dctii, dctiv, dstii
 %
@@ -89,5 +89,3 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 %c=fft(R*f)/sqrt(L);
 
 %c=c(1:L,:);
-
-%OLDFORMAT

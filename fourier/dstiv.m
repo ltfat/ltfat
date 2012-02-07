@@ -5,28 +5,27 @@ function c=dstiv(f,L,dim)
 %           c=dstiv(f,[],dim);
 %           c=dstiv(f,L,dim);
 %
-%   DSTIV(f) computes the discrete sine transform of type IV of the
-%   input signal f. If f is a matrix, then the transformation is applied to
+%   `dstiv(f)` computes the discrete sine transform of type IV of the input
+%   signal *f*. If *f* is a matrix, then the transformation is applied to
 %   each column. For N-D arrays, the transformation is applied to the first
-%   dimension.
+%   non-singleton dimension.
 %
-%   DSTIV(f,L) zero-pads or truncates f to length L before doing the
+%   `dstiv(f,L)` zero-pads or truncates f to length *L* before doing the
 %   transformation.
 %
-%   DSTIV(f,[],dim) applies the transformation along dimension dim. 
-%   DSTIV(f,L,dim) does the same, but pads or truncates to length L.
+%   `dstiv(f,[],dim)` applies the transformation along dimension *dim*. 
+%   `dstiv(f,L,dim)` does the same, but pads or truncates to length *L*.
 %   
 %   The transform is real (output is real if input is real) and
 %   it is orthonormal. It is its own inverse.
 %
-%   Let f be a signal of length _L and let c=DSTIV(f). Then
+%   Let *f* be a signal of length *L* and let `c=dstiv(f)`. Then
 %
-%M                         L-1
-%M    c(n+1) = sqrt(2/L) * sum f(m+1)*sin(pi*n*(m+.5)/L) 
-%M                         m=0 
-%F  \[
-%F  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\sin\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
-%F  \]
+%   ..                     L-1
+%     c(n+1) = sqrt(2/L) * sum f(m+1)*sin(pi*n*(m+.5)/L) 
+%                          m=0 
+%
+%   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\sin\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
 %
 %   See also:  dstii, dstiii, dctii
 %
@@ -81,4 +80,3 @@ c=assert_sigreshape_post(c,dim,permutedsize,order);
 
 %c=i*(exp(-pi*i/(4*L))*R.'*fft(R*f)/sqrt(2*L));
 
-%OLDFORMAT

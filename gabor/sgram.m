@@ -82,8 +82,8 @@ function varargout=sgram(f,varargin)
 %    
 %     'nocolorbar'  Do not display the colorbar.
 %
-%   In addition to these parameteres, sgram accepts any of the flags from
-%   |normalize|_. The window used in to calculate the spectrogram will be
+%   In addition to these parameteres, `sgram` accepts any of the flags from
+%   |normalize|_. The window used to calculate the spectrogram will be
 %   normalized as specified.
 %
 %   Examples:

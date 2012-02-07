@@ -2,18 +2,18 @@ function h=pheaviside(L)
 %PHEAVISIDE  Periodic Heaviside function
 %   Usage: h=pheaviside(L);
 %
-%   PHEAVISIDE(L) will return a periodic Heaviside function. The periodic
+%   `pheaviside(L)` returns a periodic Heaviside function. The periodic
 %   Heaviside function takes on the value 1 for indices corresponding to
 %   positive frequencies, 0 corresponding to negative frequencies and the
 %   value .5 for the zero and Nyquest frequencies.
 %
-%   To get a function that weight the negative frequencies by 1 and the
-%   positive by 0, use INVOLUTE(PHEAVISIDE(L))
+%   To get a function that weights the negative frequencies by 1 and the
+%   positive by 0, use `involute(pheaviside(L))`
 %
-%   As an example, the PHEAVISIDE function can be use to calculate the
-%   Hilbert transform for a column vector _f:
+%   As an example, the `pheaviside` function can be use to calculate the
+%   Hilbert transform for a column vector *f*::
 %
-%C    h=2*ifft(fft(f).*pheaviside(length(f)));
+%     h=2*ifft(fft(f).*pheaviside(length(f)));
 %
 %   See also: middlepad, involute, fftindex
 
@@ -38,4 +38,3 @@ if L>0
   end;
 end;
 
-%OLDFORMAT

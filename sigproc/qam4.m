@@ -2,7 +2,7 @@ function xo=qam4(xi)
 %QAM4  Quadrature amplitude modulation of order 4
 %   Usage:  xo=qam4(xi);
 %
-%   QAM4(xi) convert a vector of 0's and 1's into the complex roots of
+%   `qam4(xi)` converts a vector of 0's and 1's into the complex roots of
 %   unity (QAM4 modulation). Every 2 input coefficients are mapped into 1
 %   output coefficient.
 %
@@ -45,5 +45,3 @@ end;
 % Convert to the corresponding complex root of unity.
 xo=exp(2*pi*i*bitorder(xo+1)/4);
 
-
-%OLDFORMAT
