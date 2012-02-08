@@ -10,7 +10,7 @@ function varargout=sgram(f,varargin)
 %   with `fs` samples per second);
 %
 %   `sgram(f,fs,dynrange)` additionally limits the dynamic range of the
-%   plot. See the description of the `'dynrange'` parameter belowe.
+%   plot. See the description of the `'dynrange'` parameter below.
 %
 %   `C=sgram(f, ... )` returns the image to be displayed as a matrix. Use this
 %   in conjunction with `imwrite` etc. These coefficients are **only** intended to
@@ -44,6 +44,9 @@ function varargout=sgram(f,varargin)
 %     'wlen',s     Window length. Specifies the length of the window
 %                  measured in samples. See help of `pgauss` on the exact
 %                  details of the window length.
+%
+%     'posfreq'    Display only the positive frequencies. This is the
+%                  default for real-valued signals.
 %    
 %     'nf'         Display negative frequencies, with the zero-frequency
 %                  centered in the middle. For real signals, this will just

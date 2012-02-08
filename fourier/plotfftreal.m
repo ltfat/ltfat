@@ -9,29 +9,37 @@ function plotfftreal(coef,varargin)
 %   Nyquest frequency). It is assumed that the length of the original
 %   transform was even.
 %
-%   `plotfftreal(coef,N)` additionally specifies then length of the
-%   original transform. Use this if you are unsure if the transform
-%   length was even.
-%
-%   `plotfft(coef,N,fs)` does the same for the |fftreal|_ of a signal
+%   `plotfftreal(coef,fs)` does the same for the |fftreal|_ of a signal
 %   sampled at a sampling rate of *fs* Hz.
+%
+%   `plotfftreal(coef,fs,dynrange)` additionally limits the dynamic range of the
+%   plot. See the description of the `'dynrange'` parameter below.
 %
 %   `plotfftreal` accepts the following optional arguments:
 %
-%     'db'     Apply $20\cdot \log_{10}$ to the coefficients. This makes 
-%              it possible to see very weak phenomena, but it might show 
-%              too much noise. This is the default.
+%     'dynrange',r  Limit the dynamical range to `r` by using a colormap in
+%                   the interval `[chigh-r,chigh]`, where `chigh` is the highest
+%                   value in the plot. The default value of `[]` means to not
+%                   limit the dynamical range. 
 %
-%     'dbsq'   Apply $10\cdot \log_{10}$ to the coefficients. Same as the
-%              `'db'` option, but assumes that the input is already squared.  
+%     'db'      Apply $20\cdot \log_{10}$ to the coefficients. This makes 
+%               it possible to see very weak phenomena, but it might show 
+%               too much noise. This is the default.
 %
-%     'lin'    Show the coefficients on a linear scale. This will
-%              display the raw input without any modifications. Only works for
-%              real-valued input.
+%     'dbsq'    Apply $10\cdot \log_{10}$ to the coefficients. Same as the
+%               `'db'` option, but assumes that the input is already squared.  
 %
-%     'linsq'  Show the square of the coefficients on a linear scale.
+%     'lin'     Show the coefficients on a linear scale. This will
+%               display the raw input without any modifications. Only works for
+%               real-valued input.
 %
-%     'linabs'  Show the absolute value of the coefficients on a linear scale.
+%     'linsq'   Show the square of the coefficients on a linear scale.
+%
+%     'linabs'  Show the absolute value of the coefficients on a linear
+%               scale.
+%     
+%     'N',N     Specify the transform length *N*. Use this if you are
+%               unsure if the original input signal was of even length.
 %
 %   In addition to these parameteres, `plotfftreal` accepts any of the flags
 %   from |normalize|_. The coefficients will be normalized as specified
@@ -58,7 +66,9 @@ definput.keyvals.dynrange=[];
 definput.keyvals.opts={};
 
 definput.keyvals.N=2*(length(coef)-1);
-[flags,kv,N,fs]=ltfatarghelper({'N','fs','dynrange'},definput,varargin);
+[flags,kv,fs,]=ltfatarghelper({'fs','dynrange'},definput,varargin);
+
+N=kv.N;
 
 N2=floor(N/2)+1;
 if N2~=length(coef)

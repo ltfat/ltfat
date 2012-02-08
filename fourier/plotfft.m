@@ -10,22 +10,37 @@ function plotfft(coef,varargin)
 %   `plotfft(coef,fs)` does the same for the FFT of a signal sampled at
 %   a sampling rate of *fs* Hz.
 %
+%   `plotfft(coef,fs,dynrange)` additionally limits the dynamic range of the
+%   plot. See the description of the `'dynrange'` parameter below.
+%
 %   `plotfft` accepts the following optional arguments:
 %
-%     'db'     Apply $20\cdot \log_{10}$ to the coefficients. This makes 
-%              it possible to see very weak phenomena, but it might show 
-%              too much noise. This is the default.
+%     'dynrange',r Limit the dynamical range to `r` by using a colormap in
+%                  the interval `[chigh-r,chigh]`, where `chigh` is the highest
+%                  value in the plot. The default value of `[]` means to not
+%                  limit the dynamical range. 
 %
-%     'dbsq'   Apply $10\cdot \log_{10}$ to the coefficients. Same as the
-%              `'db'` option, but assumes that the input is already squared.  
+%     'db'         Apply $20\cdot \log_{10}$ to the coefficients. This makes 
+%                  it possible to see very weak phenomena, but it might show 
+%                  too much noise. This is the default.
 %
-%     'lin'    Show the coefficients on a linear scale. This will
-%              display the raw input without any modifications. Only works for
-%              real-valued input.
+%     'dbsq'       Apply $10\cdot \log_{10}$ to the coefficients. Same as the
+%                  `'db'` option, but assumes that the input is already squared.  
 %
-%     'linsq'  Show the square of the coefficients on a linear scale.
+%     'lin'        Show the coefficients on a linear scale. This will
+%                  display the raw input without any modifications. Only works for
+%                  real-valued input.
+%                 
+%     'linsq'      Show the square of the coefficients on a linear scale.
+%                 
+%     'linabs'     Show the absolute value of the coefficients on a linear
+%                  scale.
 %
-%     'linabs'  Show the absolute value of the coefficients on a linear scale.
+%     'nf'         Display negative frequencies, with the zero-frequency
+%                  centered in the middle. This is the default.
+%
+%     'posfreq'    Display only the positive frequencies.
+%
 %
 %   In addition to these parameteres, `plotfft` accepts any of the flags
 %   from |normalize|_. The coefficients will be normalized as specified

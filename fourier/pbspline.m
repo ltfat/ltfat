@@ -37,8 +37,8 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %     'hp'     Generate half point centered splines.
 %
 %   The different types are accurately described in the referenced paper.
-%   Generally, the 'd' types of splines are very fast to compute, while the
-%   'c' types are samplings of the continuous splines. The 'e' types
+%   Generally, the 'd' types of splines are very fast to compute, while
+%   the 'c' types are samplings of the continuous splines. The 'e' types
 %   coincides with the regular B-splines for integer orders. The 'x' types
 %   do not coincide, but generate Gabor frames with favorable frame
 %   bounds. The default type is 'ed' to guarantee fast computation and a

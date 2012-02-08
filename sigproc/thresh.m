@@ -27,6 +27,14 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %   The function `wthresh` in the Matlab Wavelet toolbox implements the same
 %   functionality.
 %
+%   The following code produces a plot to demonstrate the difference
+%   between hard and soft thresholding for a simple linear input:::
+%
+%     t=linspace(-2.5,2.5,100);
+%     plot(t,thresh(t,1,'soft'),'r',...
+%          t,thresh(t,1,'hard'),'.b');
+%     legend('Soft thresh.','Hard thresh','Location','NorthWest');
+%
 %   See also: largestr, largestn
 
 %   AUTHOR : Peter Soendergaard and Bruno Torresani.  

@@ -21,7 +21,15 @@ function f=shah(L,a);
 % 
 %   The Shah function has an extremely bad time-frequency localization.
 %   It does not generate a Gabor frame for any *L* and *a*.
-
+%
+%   Examples:
+%   ---------
+%
+%   A simple spectrogram of the Shah function (includes the negative
+%   frequencies to display the whole TF-plane):::
+%
+%     sgram(shah(256,16),'dynrange',100,'nf')
+%
 %   AUTHOR : Peter Soendergaard
 %   TESTING: OK
 %   REFERENCE: OK

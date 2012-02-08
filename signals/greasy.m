@@ -29,7 +29,7 @@ function [s,fs]=greasy()
 %
 %   Plot of 'greasy' in the frequency-domain:::
 %
-%     plotfft(fft(greasy),16000,90,'posfreq');
+%     plotfftreal(fftreal(greasy),16000,90);
 %
 %   Plot of 'greasy' in the time-frequency-domain:::
 %

@@ -10,8 +10,7 @@ function h=pconv(f,g,varargin)
 %      h(l+1) = sum f(k+1) * g(l-k+1)
 %               k=0
 %
-%   .. math::
-%   h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)
+%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)
 % 
 %   `pconv('r',f,g)` computes the convolution where *g* is reversed
 %   (involuted) given by
@@ -24,8 +23,8 @@ function h=pconv(f,g,varargin)
 %
 %   This type of convolution is also known as cross-correlation.
 %
-%   `pconv('rr',f,g)` computes the alternative where both *f* and *g* are reversed
-%   given by
+%   `pconv('rr',f,g)` computes the alternative where both *f* and *g* are
+%   reversed given by
 %
 %   ..          L-1
 %      h(l+1) = sum conj(f(-k+1)) * conj(g(k-l+1))

@@ -11,6 +11,13 @@ function [s,fs]=ltfatlogo()
 %   The signal is 7200 samples long and recorded at 8 kHz. It has been
 %   scaled to not produce any clipping.
 %
+%   Examples:
+%   ---------
+%
+%   To produce a spectrogram of the logo, use:::
+%
+%     sgram(ltfatlogo,8000,100);
+%
 %   See also: ltfattext
 %
 %   Demos: demo_isgram
