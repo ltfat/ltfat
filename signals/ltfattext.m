@@ -11,9 +11,11 @@ function s=ltfattext();
 %   The returned matrix `s` consists of the integers 0 and 1, which have
 %   been converted to double precision.
 % 
-%   To display the image, use `imagesc` with a gray colormap::
+%   To display the image, use `imagesc` with a gray colormap:::
 % 
-%     imagesc(ltfattext); colormap(gray); axis('xy');
+%     imagesc(ltfattext);
+%     colormap(gray);
+%     axis('xy');
 % 
 %   See also: ltfatlogo, dgtreal
 % 

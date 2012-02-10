@@ -12,7 +12,8 @@ function c=dctiv(f,L,dim)
 %   `dctiv(f,[],dim)` or `dctiv(f,L,dim)` applies the transformation along
 %   dimension *dim*.
 %
-%   The transform is real (output is real if input is real) and orthonormal.
+%   The transform is real (output is real if input is real) and
+%   orthonormal.  It is its own inverse.
 %
 %   Let f be a signal of length *L* and let `c=dctiv(f)`. Then
 %

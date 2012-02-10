@@ -16,7 +16,8 @@ function [s,fs]=ltfatlogo()
 %
 %   To produce a spectrogram of the logo, use:::
 %
-%     sgram(ltfatlogo,8000,100);
+%     c=dgtreal(ltfatlogo,'gauss',8,800);
+%     plotdgtreal(c,8,800,8000,90);
 %
 %   See also: ltfattext
 %

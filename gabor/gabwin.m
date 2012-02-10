@@ -68,7 +68,7 @@ function [g,info] = gabwin(g,a,M,L,callfun);
 % 
 %     g=gabwin({'dual',{'hann',20}},a,M,L);
 %
-%   The structure info provides some information about the computed
+%   The structure *info* provides some information about the computed
 %   window:
 %
 %     `info.gauss`

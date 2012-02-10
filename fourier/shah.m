@@ -28,8 +28,9 @@ function f=shah(L,a);
 %   A simple spectrogram of the Shah function (includes the negative
 %   frequencies to display the whole TF-plane):::
 %
-%     sgram(shah(256,16),'dynrange',100,'nf')
+%     sgram(shah(256,16),'dynrange',80,'nf')
 %
+  
 %   AUTHOR : Peter Soendergaard
 %   TESTING: OK
 %   REFERENCE: OK

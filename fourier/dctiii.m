@@ -24,7 +24,7 @@ function c=dctiii(f,L,dim)
 %
 %   ..  w = [1/sqrt(2) 1 1 1 1 ...]
 %
-%   .. math: w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\\1 & \text{otherwise}\end{cases}
+%   .. math:: w\left(n\right)=\begin{cases}\frac{1}{\sqrt{2}} & \text{if }n=0\\1 & \text{otherwise}\end{cases}
 %
 %   Then 
 %
