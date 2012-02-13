@@ -7,68 +7,68 @@ function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
 %       a        : Length of time shift
 %       M        : Number of channels
 %       lambda   : Regularization parameter, controls sparsity of the
-%                   solution
+%                  solution
 %   Output parameters:
 %      tc        : Thresholded coefficients
 %      relres    : Vector of residuals.
 %      iter      : Number of iterations done.
 %      xrec      : Reconstructed signal
 %
-%   GABELITISTLASSO(x,g,a,M,lambda) solves the elitist LASSO regression
+%   `gabelitistlasso(x,g,a,M,lambda)` solves the elitist LASSO regression
 %   problem in the Gabor domain: minimize a functional of the synthesis
-%   coefficients defined as the sum of half the l2 norm of the approximation
-%   error and the mixed l2/l1 norm of the coefficient sequence, with a
-%   penalization coefficient lambda.
+%   coefficients defined as the sum of half the $l^2$ norm of the
+%   approximation error and the mixed $l^2$ / $l^1$ norm of the coefficient
+%   sequence, with a penalization coefficient *lambda*.
 %  
 %   The matrix of Gabor coefficients is labelled in terms of groups and
 %   members.  The obtained expansion is sparse in terms of groups, no
 %   sparsity being imposed to the members of a given group. This is achieved
-%   by a regularization term composed of l2 norm within a group, and l1 norm
+%   by a regularization term composed of $l^2$ norm within a group, and $l^1$ norm
 %   with respect to groups.
 %
-%   [tc,relres,iter] = GABELITISTLASSO(...) return the residuals relres in a vector
-%   and the number of iteration steps done, maxit.
+%   `[tc,relres,iter] = gabelitistlasso(...)` returns the residuals *relres*
+%   in a vector and the number of iteration steps done, *maxit*.
 %
-%   [tc,relres,iter,xrec] = GABELITISTLASSO(...) returns the reconstructed
-%   signal from the coefficients, xrec. Note that this requires additional
+%   `[tc,relres,iter,xrec] = gabelitistlasso(...)` returns the reconstructed
+%   signal from the coefficients, *xrec*. Note that this requires additional
 %   computations.
 %
 %   The function takes the following optional parameters at the end of
 %   the line of input arguments:
 %
-%-      'freq' - Group in frequency (search for tonal components). This is the
+%     'freq'     Group in frequency (search for tonal components). This is the
 %                default.
 %
-%-      'time' - Group in time (search for transient components). 
+%     'time'     Group in time (search for transient components). 
 %
-%-      'C',cval - Landweber iteration parameter: must be larger than
+%     'C',cval   Landweber iteration parameter: must be larger than
 %                square of upper frame bound. Default value is the upper
 %                frame bound.
 %
-%       'tol',tol - Stopping criterion: minimum relative difference between
+%     'tol',tol  Stopping criterion: minimum relative difference between
 %                norms in two consecutive iterations. Default value is
 %                1e-2.
 %
-%-      'maxit',maxit - Stopping criterion: maximal number of
-%                iterations to do. Default value is 100.
+%     'maxit',maxit
+%                Stopping criterion: maximal number of iterations to do. Default value is 100.
 %
-%-      'print'   - Display the progress.
+%     'print'    Display the progress.
 %
-%-      'quiet'   - Don't print anything, this is the default.
+%     'quiet'    Don't print anything, this is the default.
 %
-%-      'printstep',p - If 'print' is specified, then print every p'th
-%                iteration. Default value is p=10;
-
+%     'printstep',p
+%                If 'print' is specified, then print every p'th
+%                iteration. Default value is 10;
 %
-%   The parameters C, itermax and tol may also be specified on the
-%   command line in that order: GABGROUPLASSO(x,g,a,M,lambda,C,tol,maxit).
+%   The parameters *C*, *itermax* and *tol* may also be specified on the
+%   command line in that order: `gabgrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative group thresholdings.
 %
-%   The relationship between the output coefficients is given by
+%   The relationship between the output coefficients is given by ::
 %
-%C      xrec = idgt(tc,g,a);
+%     xrec = idgt(tc,g,a);
 %
 %   See also: gablasso, gabframebounds
 
@@ -144,5 +144,3 @@ end
 if nargout>3
   xrec = idgt(tc,g,a);
 end;
-
-%OLDFORMAT

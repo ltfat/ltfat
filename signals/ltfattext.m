@@ -2,7 +2,7 @@ function s=ltfattext();
 %LTFATTEXT  Load the 'ltfattext' test image
 %   Usage: s=ltfattext;
 % 
-%   `ltfattext loads a $401 \times 600$ black and white image of the word
+%   `ltfattext` loads a $401 \times 600$ black and white image of the word
 %   'LTFAT'.
 % 
 %   The image is assumed to be used as a spectrogram with 800 channels

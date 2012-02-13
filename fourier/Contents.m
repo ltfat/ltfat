@@ -12,6 +12,7 @@
 %    MODCENT        -  Centered modulo operation.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot FFTREAL coefficients.
+%    CONVOLVE       -  Fast, non-periodic convolution.
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.

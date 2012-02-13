@@ -2,8 +2,8 @@ function [V,D]=spreadeigs(K,coef);
 %SPREADEIGS  Eigenpairs of Spreading operator
 %   Usage: h=spreadeigs(K,c);
 %
-%   SPREADEIGS(K,c) computes the K largest eigenvalues and eigen-
-%   vectors of the spreading operator with symbol c.
+%   `spreadeigs(K,c)` computes the *K* largest eigenvalues and eigen-
+%   vectors of the spreading operator with symbol *c*.
 %
 %   See also:  tconv, spreadfun, spreadinv, spreadadj
 
@@ -37,9 +37,3 @@ if doV
 else
   D=eig(T);
 end;
-
-
-
-
-
-%OLDFORMAT

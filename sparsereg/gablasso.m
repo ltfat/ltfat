@@ -14,49 +14,50 @@ function [tc,relres,iter,xrec] = gablasso(x,g,a,M,lambda,varargin)
 %       iter     : Number of iterations done.  
 %       xrec     : Reconstructed signal
 %
-%   GABLASSO(x,a,M,lambda) solves the LASSO (or basis pursuit denoising)
+%   `gablasso(x,a,M,lambda)` solves the LASSO (or basis pursuit denoising)
 %   regression problem in the Gabor domain: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with
-%   a penalization coefficient lambda.
+%   a penalization coefficient *lambda*.
 %
 %   For a general frame, the solution is obtained via an iterative procedure,
 %   called Landweber iteration, involving iterative soft thresholdings.
 %  
-%   [tc,relres,iter] = GABLASSO(...) return the residuals relres in a vector
-%   and the number of iteration steps done, maxit.
+%   `[tc,relres,iter] = gablasso(...)` return thes residuals *relres* in a vector
+%   and the number of iteration steps done, *maxit*.
 %
-%   [tc,relres,iter,xrec] = GABLASSO(...) returns the reconstructed
-%   signal from the coefficients, xrec. Note that this requires additional
+%   `[tc,relres,iter,xrec] = gablasso(...)` returns the reconstructed
+%   signal from the coefficients, *xrec*. Note that this requires additional
 %   computations.
 %
-%   The relationship between the output coefficients is given by
+%   The relationship between the output coefficients is given by ::
 %
-%C      xrec = idgt(tc,g,a);
+%     xrec = idgt(tc,g,a);
 %
 %   The function takes the following optional parameters at the end of
 %   the line of input arguments:
 %
-%-      'C',cval - Landweber iteration parameter: must be larger than
+%     'C',cval   Landweber iteration parameter: must be larger than
 %                square of upper frame bound. Default value is the upper
 %                frame bound.
 %
-%       'tol',tol - Stopping criterion: minimum relative difference between
+%     'tol',tol  Stopping criterion: minimum relative difference between
 %                norms in two consecutive iterations. Default value is
 %                1e-2.
 %
-%-      'maxit',maxit - Stopping criterion: maximal number of
-%                iterations. Default value is 100.
+%     'maxit',maxit
+%                Stopping criterion: maximal number of iterations to do. Default value is 100.
 %
-%-      'print'   - Display the progress.
+%     'print'    Display the progress.
 %
-%-      'quiet'   - Don't print anything, this is the default.
+%     'quiet'    Don't print anything, this is the default.
 %
-%-      'printstep',p - If 'print' is specified, then print every p'th
-%                iteration. Default value is p=10;
+%     'printstep',p
+%                If 'print' is specified, then print every p'th
+%                iteration. Default value is 10;
 %
-%   The parameters C, maxit and tol may also be specified on the
-%   command line in that order: GABLASSO(x,g,a,M,lambda,C,tol,maxit).
+%   The parameters *C*, *itermax* and *tol* may also be specified on the
+%   command line in that order: `gablasso(x,g,a,M,lambda,C,tol,maxit)`.
 %  
 %   See also: gabgrouplasso, gabframebounds
 %
@@ -124,4 +125,3 @@ end
 if nargout>3
   xrec = idgt(tc,g,a);
 end;
-%OLDFORMAT

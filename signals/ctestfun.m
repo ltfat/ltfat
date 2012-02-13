@@ -2,7 +2,7 @@ function [ftest]=ctestfun(L)
 %CTESTFUN  Complex 1-D test function.
 %   Usage:  ftest=ctestfun(L);
 %
-%   CTESTFUN(L) returns a test signal consisting of a superposition of a
+%   `ctestfun(L)` returns a test signal consisting of a superposition of a
 %   chirp and an indicator function.
 
 ftest=zeros(L,1);
@@ -15,4 +15,3 @@ s=round(L*7/16);
 l=round(L/16);
 ftest(s:s+l)=ftest(s:s+l)+ones(l+1,1);
 
-%OLDFORMAT

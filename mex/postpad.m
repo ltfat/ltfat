@@ -4,14 +4,14 @@ function x = postpad (x, L, varargin)
 %          y=postpad(x,L,C);
 %          y=postpad(x,L,C,dim);
 %
-%   POSTPAD(x,L) will add zeros to the end of the vector x, until the
-%   result has length L. If L is less than the length of the signal, it
-%   will be truncated. POSTPAD works along the first non-singleton
+%   `postpad(x,L)` will add zeros to the end of the vector *x*, until the
+%   result has length *L*. If *L* is less than the length of the signal, it
+%   will be truncated. `postpad` works along the first non-singleton
 %   dimension.
 %
-%   POSTPAD(x,L,C) will add entries with a value of C instead of zeros.
+%   `postpad(x,L,C)` will add entries with a value of *C* instead of zeros.
 %
-%   POSTPAD(x,L,C,dim) works along dimension dim instead of the first
+%   `postpad(x,L,C,dim)` works along dimension *dim* instead of the first
 %   non-singleton.
 %
 %   See also: middlepad
@@ -37,6 +37,3 @@ else
 end;
   
 x=assert_sigreshape_post(x,dim,permutedsize,order);
-
-
-%OLDFORMAT

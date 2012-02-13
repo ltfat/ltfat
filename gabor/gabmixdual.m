@@ -11,8 +11,8 @@ function gamma=gabmixdual(g1,g2,a,M,L)
 %   Output parameters:
 %        gammaf : Mixdual of window 1.
 %
-%   MIXDUAL(g1,g2,a,M) computes a dual window of g1 from a mix of the
-%   canonical dual windows of g1 and g2.
+%   `gabmixdual(g1,g2,a,M)` computes a dual window of *g1* from a mix of the
+%   canonical dual windows of *g1* and *g2*.
 %
 %   See also:  gabdual, gabprojdual
 %
@@ -69,6 +69,3 @@ gf2=comp_wfac(g2,a,M);
 gammaf=comp_gabmixdual_fac(gf1,gf2,L,a,M);
 
 gamma=comp_iwfac(gammaf,L,a,M);
-
-
-%OLDFORMAT

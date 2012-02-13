@@ -2,16 +2,16 @@ function gdout=filterbankrealdual(g,a,varargin);
 %FILTERBANKDUAL  Dual filters of filterbank for real signals only 
 %   Usage:  gd=filterbankdual(g,a);
 %
-%   FILTERABANKDUAL(g,a) computes the canonical dual filters of g for a
-%   channel subsampling rate of _a (hop-size). The dual filters work only
+%   `filterabankdual(g,a)` computes the canonical dual filters of *g* for a
+%   channel subsampling rate of *a* (hop-size). The dual filters work only
 %   for real-valued signals. Use this function on the common construction
-%   where the filters in g only covers the positive frequencies.
+%   where the filters in *g* only covers the positive frequencies.
 %
-%   The format of the filters g are described in the
-%   help of FILTERANK.
+%   The format of the filters *g* are described in the
+%   help of |filterbank|_.
 %
 %   To actually invert the output of a filterbank, use the dual filters
-%   together with 2*real(IFILTERBANK(...)).
+%   together with `2*real(ifilterbank(...))`.
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
@@ -74,7 +74,3 @@ else
   error('Not implemented yet.');
   
 end;
-
-
-
-%OLDFORMAT

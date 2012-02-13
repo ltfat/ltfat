@@ -2,16 +2,16 @@ function f=ifilterbank(c,g,a,varargin);
 %IFILTERBANK  Filter bank inversion
 %   Usage:  f=ifilterbank(c,g,a);
 %
-%   IFILTERBANK(c,g,a) will synthesize a signal f from the coefficients c
-%   using the filters stores in g for a channel subsampling rate of _a (the
+%   `ifilterbank(c,g,a)` synthesizes a signal *f* from the coefficients *c*
+%   using the filters stored in *g* for a channel subsampling rate of *a* (the
 %   hop-size). The coefficients has to be in the format returned by
-%   either FILTERBANK or UFILTERBANK.
+%   either |filterbank|_ or |ufilterbank|_.
 %
-%   The filter format for g is the same as for FILTERBANK.
+%   The filter format for *g* is the same as for |filterbank|_.
 %
 %   If perfect reconstruction is desired, the filters must be the duals
 %   of the filters used to generate the coefficients. See the help on
-%   FILTERBANKDUAL.
+%   |filterbankdual|_.
 %
 %   See also: filterbank, ufilterbank, filterbankdual
 %
@@ -64,6 +64,3 @@ if ~isempty(Ls)
 else
   Ls=L;
 end;
-  
-
-%OLDFORMAT

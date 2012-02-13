@@ -13,8 +13,8 @@ function c=projkern(c,p2,p3,p4,p5);
 %   Output parameters:
 %         cout  : Output coefficients
 %
-%   cout=PROJKERN(cin,a) projects a set of Gabor coefficients c onto the
-%   space of possible Gabor coefficients. This means that cin and cout
+%   `cout=projkern(cin,a)` projects a set of Gabor coefficients *c* onto the
+%   space of possible Gabor coefficients. This means that *cin* and *cout*
 %   synthesize to the same signal. A tight window generated from a Gaussian
 %   will be used for both analysis and synthesis.
 %
@@ -23,14 +23,14 @@ function c=projkern(c,p2,p3,p4,p5);
 %   is redundant) then there are many coefficients that correspond to the
 %   same signal.
 %
-%   Therefore, you might desire to work with the coefficients cin, but you
-%   in are really working with cout.
+%   Therefore, you might desire to work with the coefficients *cin*, but you
+%   are in reality working with *cout*.
 %
-%   cout=PROJKERN(cin,g,a) does the same, using the window g for analysis
+%   `cout=projkern(cin,g,a)` does the same, using the window *g* for analysis
 %   and synthesis.
 %
-%   cout=PROJKERN(cin,ga,gs,a) does the same, but for different analysis
-%   ga and synthesis gs windows.
+%   `cout=projkern(cin,ga,gs,a)` does the same, but for different analysis
+%   *ga* and synthesis *gs* windows.
 %
 %   See also: dgt, idgt
 
@@ -64,5 +64,3 @@ assert_squarelat(a,M,1,'PROJKERN');
 
 c=dgt(idgt(c,gs,a),ga,a,M);
 
-
-%OLDFORMAT

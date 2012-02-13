@@ -2,11 +2,11 @@ function out=spreadinv(p1,p2);
 %SPREADINV  Apply inverse spreading operator.
 %   Usage: h=spreadinv(f,c);
 %
-%   SPREADINV(c) will compute the symbol of the inverse of the spreading
-%   operator with symbol c.
+%   `spreadinv(c)` computes the symbol of the inverse of the spreading
+%   operator with symbol *c*.
 %
-%   SPREADINV(f,c) will apply the inverse of the spreading with symbol c
-%   to the input signal f.
+%   `spreadinv(f,c)` applies the inverse of the spreading operator with
+%   symbol *c* to the input signal *f*.
 %
 %   See also: spreadfun, tconv, spreadfun, spreadadj
 
@@ -43,5 +43,3 @@ else
   out=T\f;
   
 end;
-
-%OLDFORMAT

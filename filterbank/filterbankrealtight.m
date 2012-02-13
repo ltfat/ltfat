@@ -2,16 +2,17 @@ function gtout=filterbankrealtight(g,a,varargin);
 %FILTERBANKTIGHT  Tight filters of filterbank for real signals only 
 %   Usage:  gd=filterbanktight(g,a);
 %
-%   FILTERABANKTIGHT(g,a) computes the canonical tight filters of g for a
-%   channel subsampling rate of _a (hop-size). The tight filters work only
+%   `filterabanktight(g,a)` computes the canonical tight filters of *g* for a
+%   channel subsampling rate of *a* (hop-size). The tight filters work only
 %   for real-valued signals. Use this function on the common construction
-%   where the filters in g only covers the positive frequencies.
+%   where the filters in *g* only covers the positive frequencies.
 %
-%   The format of the filters g are described in the
-%   help of FILTERANK.
+%   The format of the filters *g* are described in the
+%   help of |filterbank|_.
 %
 %   To actually invert the output of a filterbank, use the tight filters
-%   together with 2*real(IFILTERBANK(...)) function.
+%   together with the `ifilterbank` function as in
+%   `2*real(ifilterbank(...))`.
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
@@ -68,8 +69,3 @@ else
   error('Not implemented yet.');
   
 end;
-
-
-
-
-%OLDFORMAT

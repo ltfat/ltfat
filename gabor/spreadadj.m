@@ -2,8 +2,8 @@ function cadj=spreadadj(coef);
 %SPREADADJ  Symbol of adjoint spreading function.
 %   Usage: cadj=spreadadj(c);
 %
-%   cadj=SPREADADJ(c) will compute the symbol cadj of the spreading
-%   operator that is the adjoint of the spreading operator with symbol c.
+%   `cadj=spreadadj(c)` computes the symbol *cadj* of the spreading
+%   operator that is the adjoint of the spreading operator with symbol *c*.
 %
 %   See also:  spreadop, tconv, spreadfun, spreadinv
 
@@ -88,4 +88,3 @@ else
   cadj(2:L,2:L)=conj(coef(L:-1:2,L:-1:2)).*temp;    
 end;
 
-%OLDFORMAT

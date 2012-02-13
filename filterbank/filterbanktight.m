@@ -2,11 +2,11 @@ function gtout=filterbanktight(g,a,varargin);
 %FILTERBANKTIGHT  Tight filters
 %   Usage:  gt=filterbanktight(g,a);
 %
-%   FILTERABANKTIGHT(g,a) computes the canonical tight filters of g for a
-%   channel subsampling rate of _a (hop-size).
+%   `filterabanktight(g,a)` computes the canonical tight filters of *g* for a
+%   channel subsampling rate of *a* (hop-size).
 %
-%   The input and output format of the filters g are described in the
-%   help of FILTERANK.
+%   The input and output format of the filters *g* are described in the
+%   help of |filterbank|_.
 %
 %   See also: filterbank, filterbankdual, ufilterbank, ifilterbank
 
@@ -63,4 +63,3 @@ else
   error('Not implemented yet.');  
   
 end;
-%OLDFORMAT

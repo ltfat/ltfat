@@ -3,33 +3,33 @@ function [xo,N]=wilgrouplasso(xi,lambda,varargin);
 %   Usage:  xo=wilgrouplasso(x,lambda,...);
 %           [xo,N]=wilgrouplasso(x,lambda,...));
 %
-%   WILGROUPLASSO(x,lambda,'time','hard') will perform
-%   group thresholding on x, i.e. all time-frequency
-%   groups whose norm is less than lambda will be set to zero.
+%   `wilgrouplasso(x,lambda,'time','hard')` will perform group thresholding on
+%   *x*, i.e. all time-frequency groups whose norm is less than *lambda* will be
+%   set to zero.
 %
 %   The function takes the following optional parameters at the end of
 %   the line of input arguments:
 %
-%-      'freq' - Group in frequency (search for tonal components). This is the
-%                default.
+%     'freq'  Group in frequency (search for tonal components). This is the
+%             default.
 %
-%-      'time' - Group in time (search for transient components). 
+%     'time'  Group in time (search for transient components). 
 %
-%-      'hard' - Use hard thresholding. This is the default.
+%     'hard'  Use hard thresholding. This is the default.
 %
-%-      'soft' - Use soft thresholding.
+%     'soft'  Use soft thresholding.
 %
-%   [xo,N]=WILGROUPLASSO(x,lambda,...) additionally returns
-%   a number N specifying how many numbers where kept.
+%   `[xo,N]=wilgrouplasso(x,lambda,...)` additionally returns a number *N*
+%   specifying how many numbers where kept.
 %
 %   The function may meaningfully be applied to output from WMDCT or from
-%   WIL2RECT(DWILT(...)) using an ortonormal transform.
+%   `wil2rect(dwilt(...))` using an ortonormal transform.
 %
 %   See also:  gablasso
 %
 %   Demos: demo_audioshrink
 %
-%   References: Kowalski08sparsity Kowalski09mixed
+%   References: Kowalski08sparsity kowalski2009mixed
 
 %   AUTHOR : Bruno Torresani.  
 %   REFERENCE: OK
@@ -78,5 +78,3 @@ if nargout==2
     signif_map = (abs(xo)>0);
     N = sum(signif_map(:));
 end
-
-%OLDFORMAT

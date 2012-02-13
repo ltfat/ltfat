@@ -2,14 +2,14 @@ function gdout=filterbankdual(g,a,varargin);
 %FILTERBANKDUAL  Dual filters
 %   Usage:  gd=filterbankdual(g,a);
 %
-%   FILTERABANKDUAL(g,a) computes the canonical dual filters of g for a
-%   channel subsampling rate of _a (hop-size).
+%   `filterabankdual(g,a)` computes the canonical dual filters of *g* for a
+%   channel subsampling rate of *a* (hop-size).
 %
-%   The input and output format of the filters g are described in the
-%   help of FILTERANK.
+%   The input and output format of the filters *g* are described in the
+%   help of |filterbank|_.
 %
 %   To actually invert the output of a filterbank, use the dual filters
-%   together with the IFILTERBANK function.
+%   together with the |ifilterbank|_ function.
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
@@ -65,8 +65,3 @@ else
   error('Not implemented yet.');
   
 end;
-
-
-
-
-%OLDFORMAT

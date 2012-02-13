@@ -2,10 +2,10 @@ function coef=spreadfun(T)
 %SPREADFUN  Spreading function of a matrix
 %   Usage:  c=spreadfun(T);
 %
-%   SPREADFUN(T) computes the spreading function of the operator T,
-%   represented as a matrix. The spreading function represent the operator T
+%   `spreadfun(T)` computes the spreading function of the operator *T*,
+%   represented as a matrix. The spreading function represent the operator *T*
 %   as a weighted sum of time-frequency shifts. See the help text for
-%   SPREADOP for the exact definition.
+%   |spreadop|_ for the exact definition.
 %
 %   See also:  spreadop, tconv, spreadinv, spreadadj
 
@@ -23,5 +23,3 @@ coef=comp_col2diag(full(T));
 
 coef=fft(coef)/L;
 
-
-%OLDFORMAT

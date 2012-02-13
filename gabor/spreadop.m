@@ -2,26 +2,27 @@ function h=spreadop(f,coef)
 %SPREADOP  Spreading operator
 %   Usage: h=spreadop(f,c);
 %
-%   SPREADOP(f,c) applies the operator with spreading function c to the
-%   input f. c must be square.
+%   `spreadop(f,c)` applies the operator with spreading function *c* to the
+%   input *f*. *c* must be square.
 %
-%   SPREADOP(f,c) computes the following for c of size _LxL:
+%   `spreadop(f,c)` computes the following for *c* of size $L \times L$:
 % 
-%M             L-1 L-1 
-%M    h(l+1) = sum sum c(m+1,n+1)*exp(2*pi*i*l*m/L)*f(l-n+1)
-%M             n=0 m=0
-%F \[h\left(l+1\right)=\sum_{n=0}^{L-1}\sum_{m=0}^{L-1}c\left(m+1,n+1\right)e^{2{\pi}ilm/L}f\left(l-n+1\right)\]
+%   ..         L-1 L-1 
+%     h(l+1) = sum sum c(m+1,n+1)*exp(2*pi*i*l*m/L)*f(l-n+1)
+%              n=0 m=0
 %
-%   where $l=0,...,L-1$ and $l-n$ is computed modulo L.
+%   .. math:: h\left(l+1\right)=\sum_{n=0}^{L-1}\sum_{m=0}^{L-1}c\left(m+1,n+1\right)e^{2{\pi}ilm/L}f\left(l-n+1\right)
 %
-%   The combined symbol of two spreading operators can be found by
-%   using TCONV. Consider two symbols _c1 and _c2 and define _f1 and _f2 by:
+%   where $l=0,\ldots,L-1$ and $l-n$ is computed modulo *L*.
 %
-%C    h  = tconv(c1,c2)
-%C    f1 = spreadop(spreadop(f,c2),c1);
-%C    f2 = spreadop(f,h);
+%   The combined symbol of two spreading operators can be found by using
+%   `tconv`. Consider two symbols *c1* and *c2* and define *f1* and *f2* by::
 %
-%   then _f1 and _f2 are equal.
+%     h  = tconv(c1,c2)
+%     f1 = spreadop(spreadop(f,c2),c1);
+%     f2 = spreadop(f,h);
+%
+%   then *f1* and *f2* are equal.
 %
 %   See also:  tconv, spreadfun, spreadinv, spreadadj
 %
@@ -94,4 +95,3 @@ else
   
 end;
 
-%OLDFORMAT
