@@ -12,10 +12,13 @@ function gd=projdual(gm,g,a,M,L);
 %   Output parameters:
 %         gd    : Dual window.
 %
-%   PROJDUAL(gm,g,a,M) calculates the dual window of the Gabor frame given
-%   by g, _a and M closest to gm measured in the $l^2$ norm.
+%   `projdual(gm,g,a,M)` calculates the dual window of the Gabor frame given
+%   by *g*, *a* and *M* closest to *gm* measured in the $l^2$ norm. The
+%   function projects the suggested window *gm* onto the subspace of
+%   admissable dual windows, hence the name of the function.
 %
-%   PROJDUAL(gm,g,a,M,L) first extends the windows g and gm to length L.
+%   `projdual(gm,g,a,M,L`) first extends the windows *g* and *gm* to length
+%   *L*.
 %
 %   See also:  gabdual, gabtight, gabdualnorm, fir2long
 
@@ -75,6 +78,3 @@ if wasrow
   gd=gd.';
 end;
 
-
-
-%OLDFORMAT

@@ -2,33 +2,35 @@ function [a,M,L,N,Ngood]=gabimagepars(Ls,x,y)
 %GABIMAGEPARS  Find Gabor parameters to generate image
 %   Usage: [a,M,L,N,Ngood]=gabimagepars(Ls,x,y);
 %
-%   [a,M,L,N,Ngood]=GABIMAGEPARS(Ls,x,y) will compute a reasonable set of
-%   parameters _a, M and L to produce a nice Gabor 'image' of a signal of
-%   length Ls. The approximate number of pixels in the time direction is
-%   given as x and the number of pixels in the frequency direction is
-%   given as y.
+%   `[a,M,L,N,Ngood]=gabimagepars(Ls,x,y)` will compute a reasonable set of
+%   parameters *a*, *M* and *L* to produce a nice Gabor 'image' of a signal
+%   of length *Ls*. The approximate number of pixels in the time direction is
+%   given as *x* and the number of pixels in the frequency direction is given
+%   as *y*.
 %
-%   The output parameter Ngood contains the number of time steps (columns
+%   The output parameter *Ngood* contains the number of time steps (columns
 %   in the coefficients matrix) that contains relevant information. The
-%   columns from Ngood until N only contains information from a
+%   columns from *Ngood* until *N* only contains information from a
 %   zero-extension of the signal.
 %
 %   If you use this function to calculate a grid size for analysis of a
-%   real-valued signal (using DGTREAL), please input twice of the desired
-%   size y. This is because DGTREAL only returns half as many
-%   coefficients in the frequency direction as DGT.
+%   real-valued signal (using |dgtreal|_), please input twice of the desired
+%   size *y*. This is because |DGTREAL|_ only returns half as many
+%   coefficients in the frequency direction as |dgt|_.
 %
-%   An example: We wish to compute a Gabor image of a real valued signal _f
-%   of length _7500. The image should have an approximate resolution of _800
-%   _x _600 pixels:
+%   An example: We wish to compute a Gabor image of a real valued signal *f*
+%   of length $7500$. The image should have an approximate resolution of
+%   $800 \times 600$ pixels:::
 %
-%C     [a,M,L,N,Ngood] = gabimagepars(7500,800,2*600);
-%C     c = dgtreal(f,'gauss',a,M);
+%     [f,fs]=linus; f=f(4001:4000+7500);
+%     [a,M,L,N,Ngood] = gabimagepars(7500,800,2*600);
+%     c = dgtreal(f,'gauss',a,M);
+%     plotdgtreal(c,a,M,fs,90);
 %
-%   The size of c is N x _(M/2)+1 equal to _801 _x _600 pixels. 
+%   The size of c is $N \times (M/2)+1$ equal to $801 \times 600$ pixels. 
 %
-%   For this function to work, the specified numbers for x
-%   and y must not be large prime numbers.
+%   For this function to work properly, the specified numbers for *x* and
+%   *y* must not be large prime numbers.
 %  
 %   See also: dgt, dgtreal, sgram
 
@@ -69,6 +71,3 @@ else
   end;
   
 end;
-
-
-%OLDFORMAT

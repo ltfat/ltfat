@@ -14,6 +14,20 @@ function f=prect(L,n)
 %     samples on the edge of the function will have half the magnitude of
 %     the other samples.
 %
+%   Examples:
+%   ---------
+%
+%   This figure displays an odd length periodic rectangle:::
+%
+%     stem(prect(30,11));
+%     ylim([-.2 1.2]);
+%
+%   This figure displays an even length periodic rectangle. Notice the
+%   border points:::
+%
+%     stem(prect(30,12));
+%     ylim([-.2 1.2]);
+%
 %   See also: psinc
   
 error(nargchk(2,2,nargin));

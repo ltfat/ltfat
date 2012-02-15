@@ -4,17 +4,16 @@ function plotdgt(coef,a,varargin)
 %          plotdgt(coef,a,fs);
 %          plotdgt(coef,a,fs,dynrange);
 %
-%   PLOTDGT(coef,a) will plot the Gabor coefficients coef. The coefficients
-%   must have been produced with a timeshift of _a.
+%   `plotdgt(coef,a)` plots the Gabor coefficients *coef*. The coefficients
+%   must have been produced with a timeshift of *a*.
 %
-%   PLOTDGT(coef,a,fs) will do the same assuming a sampling rate of
-%   fs Hz of the original signal.
+%   `plotdgt(coef,a,fs)` does the same assuming a sampling rate of
+%   *fs* Hz of the original signal.
 %
-%   PLOTDGT(coef,a,fs,dynrange) will additionally limit the dynamic
-%   range.
+%   `plotdgt(coef,a,fs,dynrange)` additionally limits the dynamic range.
 %   
-%   PLOTDGT supports all the optional parameters of TFPLOT. Please
-%   see the help of TFPLOT for an exhaustive list.
+%   `plotdgt` supports all the optional parameters of |tfplot|_. Please see
+%   the help of |tfplot|_ for an exhaustive list.
 %
 %   See also:  dgt, tfplot, sgram, plotdgtreal
 
@@ -42,4 +41,4 @@ else
 end;
 
 tfplot(coef,a,yr,'argimport',flags,kv);
-%OLDFORMAT
+

@@ -8,18 +8,19 @@ function [AF,BF]=nsgabframebounds(g,a,Ls)
 %         a     : Vector of time positions of windows.
 %         Ls    : Length of analyzed signal.
 %   Output parameters:
-%         fcond : Frame condition number (B/A)
+%         fcond : Frame condition number ($B/A$)
 %         A,B   : Frame bounds.
 %
-%   NSGABFRAMEBOUNDS(g,a,Ls) calculates the ratio B/A of the frame bounds of
-%   the nonstationary discrete Gabor frame defined by windows given in g at
-%   positions given by a. Please see the help on NSDGT for a more thourough
-%   description of g and _a.
+%   `nsgabframebounds(g,a,Ls)` calculates the ratio $B/A$ of the frame
+%   bounds of the nonstationary discrete Gabor frame defined by windows
+%   given in *g* at positions given by *a*. Please see the help on |nsdgt|_
+%   for a more thourough description of *g* and *a*.
 %
-%   [A,B]=NSGABFRAMEBOUNDS(g,a,Ls) calculates the frame bounds A and B.
+%   `[A,B]=nsgabframebounds(g,a,Ls)` returns the actual frame bounds *A*
+%   and *B* instead of just the their ratio.
 %
 %   The computed frame bounds are only valid for the 'painless case' when
-%   the number of frequency channels used for computation of NSDGT is greater
+%   the number of frequency channels used for computation of |nsdgt|_ is greater
 %   than or equal to the window length. This correspond to cases for which
 %   the frame operator is diagonal.
 %
@@ -68,4 +69,3 @@ if nargout<2
   end;
 end;
 
-%OLDFORMAT

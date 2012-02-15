@@ -4,17 +4,17 @@ function plotdgtreal(coef,a,M,varargin)
 %          plotdgtreal(coef,a,M,fs);
 %          plotdgtreal(coef,a,M,fs,dynrange);
 %
-%   PLOTDGTREAL(coef,a,M) will plot Gabor coefficient from DGTREAL. The
-%   parameters _a and M must match those from the call to DGTREAL.
+%   `plotdgtreal(coef,a,M)` plots Gabor coefficient from |dgtreal|_. The
+%   parameters *a* and *M* must match those from the call to |dgtreal|_.
 %
-%   PLOTDGTREAL(coef,a,M,fs) will do the same assuming a sampling rate of
-%   fs Hz of the original signal.
+%   `plotdgtreal(coef,a,M,fs)` does the same assuming a sampling rate of *fs*
+%   Hz of the original signal.
 %
-%   PLOTDGTREAL(coef,a,M,fs,dynrange) will additionally limit the dynamic
+%   `plotdgtreal(coef,a,M,fs,dynrange)` additionally limits the dynamic
 %   range.
 %   
-%   PLOTDGTREAL supports all the optional parameters of TFPLOT. Please
-%   see the help of TFPLOT for an exhaustive list.
+%   `plotdgtreal` supports all the optional parameters of |tfplot|_. Please
+%   see the help of |tfplot|_ for an exhaustive list.
 %
 %   See also:  dgtreal, tfplot, sgram, plotdgt
 
@@ -37,4 +37,4 @@ else
 end;
 
 tfplot(coef,a,yr,'argimport',flags,kv);
-%OLDFORMAT
+

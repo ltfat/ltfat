@@ -2,9 +2,9 @@ function cout=rect2wil(cin);
 %RECT2WIL  Inverse of WIL2RECT
 %   Usage:  c=rect2wil(c);
 %   
-%   RECT2WIL(c) takes Wilson coefficients processed by WIL2RECT and puts
-%   them back in the compact form used by DWILT and IDWILT. The
-%   coefficients can then be processed by IDWILT.
+%   `rect2wil(c)` takes Wilson coefficients processed by |wil2rect|_ and
+%   puts them back in the compact form used by |dwilt|_ and |idwilt|_. The
+%   coefficients can then be processed by |idwilt|_.
 %
 %   See also: wil2rect, dwilt, idwilt
   
@@ -32,5 +32,4 @@ else
     cout(M+1    ,ii+1,:)=cin(M+1,2*ii+2,:);
   end;  
 end;
-  
-%OLDFORMAT
+

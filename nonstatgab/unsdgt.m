@@ -12,51 +12,53 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %         c     : Cell array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   UNSDGT(f,g,a,M) computes the uniform nonstationary Gabor coefficients of
-%   the input signal f. The signal f can be a multichannel signal, given in
-%   the form of a 2D matrix of size Ls x W, with Ls the signal length and W
-%   the number of signal channels.
+%   `unsdgt(f,g,a,M)` computes the uniform nonstationary Gabor coefficients
+%   of the input signal *f*. The signal f can be a multichannel signal,
+%   given in the form of a 2D matrix of size $Ls \times W$, with *Ls* being
+%   the signal length and *W* the number of signal channels.
 %
 %   The uniform nonstationnary Gabor theory extends standard Gabor theory by
 %   enabling the evolution of the window over time. It is therefor necessary
 %   to specify a set of windows instead of a single window.  This is done by
-%   using a cell array for g. In this cell array, the nth element g{n} is a
-%   row vetor specifying the nth window. However, the uniformity means
-%   that the number of channels is fixed.
+%   using a cell array for *g*. In this cell array, the n'th element `g{n}`
+%   is a row vector specifying the n'th window. However, the uniformity
+%   means that the number of channels is fixed.
 %
-%   The resulting coefficients is stored as a M x N x W array. c(m,n,l) is
-%   thus the value of the coefficient for time index n, frequency index m
-%   and signal channel l.
+%   The resulting coefficients is stored as a $M \times N \times W$
+%   array. `c(m,n,l)` is thus the value of the coefficient for time index *n*,
+%   frequency index *m* and signal channel *l*.
 %
-%   The variable _a contains the distance in samples between two consequtive
-%   blocks of coefficients. _a is a vectors of integers. The variables g and
-%   a must have the same length.
+%   The variable *a* contains the distance in samples between two consequtive
+%   blocks of coefficients. *a* is a vectors of integers. The variables *g* and
+%   *a* must have the same length.
 %   
 %   The time positions of the coefficients blocks can be obtained by the
 %   following code. A value of 0 correspond to the first sample of the
-%   signal:
+%   signal::
 %
-%C     timepos = cumsum(a)-a(1);
+%     timepos = cumsum(a)-a(1);
 %
-%   [c,Ls]=nsdgt(f,g,a,M) additionally returns the length Ls of the input 
-%   signal f. This is handy for reconstruction:
+%   `[c,Ls]=nsdgt(f,g,a,M)` additionally returns the length *Ls* of the input 
+%   signal *f*. This is handy for reconstruction::
 %
-%      [c,Ls]=unsdgt(f,g,a,M);
-%      fr=iunsdgt(c,gd,a,Ls);
+%     [c,Ls]=unsdgt(f,g,a,M);
+%     fr=iunsdgt(c,gd,a,Ls);
 %
-%   will reconstruct the signal f no matter what the length of f is, 
-%   provided that gd are dual windows of g.
+%   will reconstruct the signal *f* no matter what the length of *f* is, 
+%   provided that *gd* are dual windows of *g*.
 %
-%   Notes: 
-%   nsdgt uses circular border conditions, that is to say that the signal is
+%   Notes:
+%   ------
+%
+%   `unsdgt` uses circular border conditions, that is to say that the signal is
 %   considered as periodic for windows overlapping the beginning or the 
 %   end of the signal.
 %
-%   The phaselocking convention used in NSDGT is different from the
-%   convention used in the DGT function. NSDGT results are phaselocked (a
-%   phase reference moving with the window is used), whereas DGT results are
-%   not phaselocked (a fixed phase reference corresponding to time 0 of the
-%   signal is used). See the help on PHASELOCK for more details on
+%   The phaselocking convention used in `unsdgt` is different from the
+%   convention used in the |dgt|_ function. `unsdgt` results are phaselocked
+%   (a phase reference moving with the window is used), whereas |dgt|_ results
+%   are not phaselocked (a fixed phase reference corresponding to time 0 of
+%   the signal is used). See the help on |phaselock|_ for more details on
 %   phaselocking conventions.
 %
 %   See also:  insdgt, nsgabdual, nsgabtight, phaselock
@@ -126,6 +128,3 @@ for ii=1:N
   % FFT of the windowed signal
   c(:,ii,:) = reshape(fft(temp),M,1,W); 
 end
-
-
-%OLDFORMAT

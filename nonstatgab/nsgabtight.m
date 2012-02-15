@@ -11,16 +11,17 @@ function gt=nsgabtight(g,a,M,varargin)
 %   Output parameters:
 %         gt : Cell array of canonical tight windows
 %
-%   NSGABTIGHT(g,a,M) computes the canonical tight windows of the 
-%   nonstationary discrete Gabor frame defined by windows given in g an  
-%   time-shifts given by _a.
+%   `nsgabtight(g,a,M)` computes the canonical tight windows of the 
+%   nonstationary discrete Gabor frame defined by windows given in *g* and  
+%   time-shifts given by *a*.
 %   
-%   NSGABTIGHT is designed to be used with functions NSDGT and INSDGT.  Read
-%   the help on NSDGT for more details about the variables structure.
+%   `nsgabtight` is designed to be used with functions |nsdgt|_ and
+%   |insdgt|_.  Read the help on |NSDGT|_ for more details about the variables
+%   structure.
 %
 %   The computed tight windows are only valid for the 'painless case', that
 %   is to say that they ensure perfect reconstruction only if for each 
-%   window the number of frequency channels used for computation of NSDGT is
+%   window the number of frequency channels used for computation of |nsdgt|_ is
 %   greater than or equal to the window length. This correspond to cases
 %   for which the frame operator is diagonal.
 %
@@ -66,5 +67,3 @@ for ii=1:N
   tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
   gt{ii}(:)=circshift(circshift(g{ii},shift)./f(tempind),-shift);
 end
-
-%OLDFORMAT

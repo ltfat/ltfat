@@ -12,26 +12,28 @@ function gt=gabtight(p1,p2,p3,p4)
 %   Output parameters:
 %         gt    : Canonical tight window, column vector.
 %
-%   GABTIGHT(a,M,L) computes a nice tight LONG window of length L for a
-%   lattice with parameters _a, M.
+%   `gabtight(a,M,L)` computes a nice tight window of length *L* for a
+%   lattice with parameters *a*, *M*. The window is not an FIR window,
+%   meaning that it will only generate a tight system if the system
+%   length is equal to *L*.
 %
-%   GABTIGHT(g,a,M) computes the canonical tight window of the Gabor frame
-%   with window g and parameters _a, M.
+%   `gabtight(g,a,M)` computes the canonical tight window of the Gabor frame
+%   with window *g* and parameters *a*, *M*.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |gabwin|_ for more details.
 %  
-%   If the length of g is equal to M, then the input window is assumed to
+%   If the length of *g* is equal to *M*, then the input window is assumed to
 %   be a FIR window. In this case, the canonical dual window also has
-%   length of M. Otherwise the smallest possible transform length is
+%   length of *M*. Otherwise the smallest possible transform length is
 %   chosen as the window length.
 %
-%   GABTIGHT(g,a,M,L) returns a window that is tight for a system of
-%   length L. Unless the tight window is a FIR window, the tight window
-%   will have length L.
+%   `gabtight(g,a,M,L)` returns a window that is tight for a system of
+%   length *L*. Unless the input window *g* is a FIR window, the returned
+%   tight window will have length *L*.
 %
-%   If a>M then an orthonormal window of the Gabor Riesz sequence with
-%   window g and parameters _a and M will be calculated.
+%   If $a>M$ then an orthonormal window of the Gabor Riesz sequence with
+%   window *g* and parameters *a* and *M* will be calculated.
 %
 %   See also:  gabdual, gabwin, fir2long, dgt
 
@@ -123,12 +125,3 @@ end;
 if info.wasrow
   gt=gt.';
 end;
-
-
-
-
-
-
-
-
-%OLDFORMAT

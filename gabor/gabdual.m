@@ -11,23 +11,23 @@ function gd=gabdual(g,a,M,L)
 %   Output parameters:
 %         gd : Canonical dual window.
 %
-%   GABDUAL(g,a,M) computes the canonical dual window of the discrete Gabor
-%   frame with window g and parameters _a, M.
+%   `gabdual(g,a,M)` computes the canonical dual window of the discrete Gabor
+%   frame with window *g* and parameters *a*, *M*.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of GABWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |gabwin|_ for more details.
 %
-%   If the length of g is equal to M, then the input window is assumed to
-%   be a FIR window. In this case, the canonical dual window also has
-%   length of M. Otherwise the smallest possible transform length is
-%   chosen as the window length.
+%   If the length of *g* is equal to *M*, then the input window is assumed
+%   to be an FIR window. In this case, the canonical dual window also has
+%   length of *M*. Otherwise the smallest possible transform length is chosen
+%   as the window length.
 %
-%   GABDUAL(g,a,M,L) returns a window that is the dual window for a system
-%   of length L. Unless the dual window is a FIR window, the dual window
-%   will have length L.
+%   `gabdual(g,a,M,L)` returns a window that is the dual window for a system
+%   of length *L*. Unless the dual window is a FIR window, the dual window
+%   will have length *L*.
 %
-%   If a>M then the dual window of the Gabor Riesz sequence with window g
-%   and parameters _a and M will be calculated.
+%   If $a>M$ then the dual window of the Gabor Riesz sequence with window
+%   *g* and parameters *a* and *M* will be calculated.
 %
 %   See also:  gabtight, gabwin, fir2long, dgt
 
@@ -93,5 +93,3 @@ end;
 if info.wasrow
   gd=gd.';
 end;
-
-%OLDFORMAT

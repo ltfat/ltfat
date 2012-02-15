@@ -6,6 +6,13 @@ function f=psinc(L,n)
 %   $n-1$ local extrema. The |dft|_ of the periodic Sinc function is the
 %   periodic rectangle, |prect|_, of length *n*.
 %
+%   Examples:
+%   ---------
+%
+%   This figure displays a the periodic sinc function with 6 local extremas:::
+%
+%     plot(psinc(30,7));
+%
 %   See also: prect
   
 error(nargchk(2,2,nargin));

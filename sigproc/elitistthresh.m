@@ -27,7 +27,7 @@ function [xo]=elitistthresh(xi,lambda,varargin)
 %
 %   Demos:  demo_audioshrink
 %
-%   References: Kowalski08sparsity Kowalski09mixed
+%   References: Kowalski08sparsity kowalski2009mixed
 
 %   AUTHOR : Bruno Torresani.  
  

@@ -11,31 +11,31 @@ function [gt]=wilorth(p1,p2,p3)
 %   Output parameters:
 %         gt  : Window generating an orthonormal Wilson basis.
 %
-%   WILORTH(M,L) computes a nice window of length L generating an orthonormal
-%   Wilson or WMDCT basis with M frequency bands for signals of
-%   length L.
+%   `wilorth(M,L)` computes a nice window of length *L* generating an
+%   orthonormal Wilson or WMDCT basis with *M* frequency bands for signals
+%   of length *L*.
 %
-%   WILORTH(g,M) computes a window generating an orthonomal basis from the
-%   window g and number of channels M.
+%   `wilorth(g,M)` computes a window generating an orthonomal basis from the
+%   window *g* and number of channels *M*.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |wilwin|_ for more details.
 %
-%   If the length of g is equal to 2*M, then the input window is assumed to
-%   be a FIR window. In this case, the orthonormal window also has length of
-%   2*M. Otherwise the smallest possible transform length is chosen as the
-%   window length.
+%   If the length of *g* is equal to $2\times M$, then the input window is
+%   assumed to be a FIR window. In this case, the orthonormal window also
+%   has length of $2\times M$. Otherwise the smallest possible transform
+%   length is chosen as the window length.
 %
-%   WILORTH(g,M,L) pads or truncates g to length L before
-%   calculating the orthonormal window. The output will also be of length L.
+%   `wilorth(g,M,L)` pads or truncates *g* to length *L* before calculating
+%   the orthonormal window. The output will also be of length *L*.
 %
-%   The input window g must be real whole-point even. If g is not
+%   The input window *g* must be real whole-point even. If *g* is not
 %   whole-point even, the computed window will not generate an orthonormal
-%   system (i.e. reconstruction will not be perfect). For a random window g,
-%   the window closest to g that satisfies these restrictions can be found
-%   by
+%   system (i.e. reconstruction will not be perfect). For a random window
+%   *g*, the window closest to *g* that satisfies these restrictions can be
+%   found by ::
 %
-%C     g_wpe = real(g+involute(g));
+%     g_wpe = real(peven(g));
 %
 %   All Gabor windows in the toolbox satisfies these restrictions unless
 %   clearly stated otherwise.
@@ -121,4 +121,3 @@ if wasrow
   gt=gt.';
 end;
 
-%OLDFORMAT
