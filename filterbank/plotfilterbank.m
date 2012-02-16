@@ -5,41 +5,41 @@ function [] = plotfilterbank(coef,a,varargin)
 %           plotfilterbank(coef,a,fc,fs);
 %           plotfilterbank(coef,a,fc,fs,dynrange);
 %
-%   PLOTFILTERBANK(coef,a) plots filterbank coefficients coef obtained from
-%   either the FILTERBANK or UFILTERBANK functions. The coefficients must
-%   have been produced with a time-shift of _a. For more details on the
-%   format of the variables coef and _a, see the help of the FILTERBANK
-%   or UFILTERBANK functions.
+%   `plotfilterbank(coef,a)` plots filterbank coefficients *coef* obtained from
+%   either the |filterbank|_ or |ufilterbank|_ functions. The coefficients must
+%   have been produced with a time-shift of *a*. For more details on the
+%   format of the variables *coef* and *a*, see the help of the |filterbank|_
+%   or |ufilterbank|_ functions.
 %
-%   PLOTFILTERBANK(coef,a,fc) makes it possible to specify the center
-%   frequency for each channel in the vector fc.
+%   `plotfilterbank(coef,a,fc)` makes it possible to specify the center
+%   frequency for each channel in the vector *fc*.
 %
-%   PLOTFILTERBANK(coef,a,fc,fs) does the same assuming a sampling rate of
-%   fs Hz of the original signal.
+%   `plotfilterbank(coef,a,fc,fs)` does the same assuming a sampling rate of
+%   *fs* Hz of the original signal.
 %
-%   PLOTFILTERBANK(coef,a,fc,fs,dynrange) makes it possible to specify
+%   `plotfilterbank(coef,a,fc,fs,dynrange)` makes it possible to specify
 %   the dynamic range of the coefficients.
 %
-%   PLOTFILTERBANK supports all the optional parameters of TFPLOT. Please
-%   see the help of TFPLOT for an exhaustive list.
+%   `plotfilterbank` supports all the optional parameters of |tfplot|_. Please
+%   see the help of |tfplot|_ for an exhaustive list.
 %
-%   In addition to the flags and key/values in TFPLOT, PLOTFILTERBANK
+%   In addition to the flags and key/values in |tfplot|_, `plotfilterbank`
 %   supports the following optional arguments:
 %
-%-     'fc',fc    - Center frequencies of the channels. fc must be a vector with
+%     'fc',fc       Centre frequencies of the channels. *fc* must be a vector with
 %                   the length equal to the number of channels. The
 %                   default value of [] means to plot the channel
 %                   no. instead of its frequency.
 %
-%-     'ntickpos',n - Number of tick positions along the y-axis. The
+%     'ntickpos',n  Number of tick positions along the y-axis. The
 %                   position of the ticks are determined automatically.
 %                   Default value is 10.
 %
-%-     'tick',t     - Array of tick positions on the y-axis. Use this
+%     'tick',t      Array of tick positions on the y-axis. Use this
 %                   option to specify the tick position manually.
 %
-%-     'audtick'   - Use ticks suitable for visualizing an auditory
-%                    filterbank. Same as tick,[0,50,100,250,500,1000,...].
+%     'audtick'     Use ticks suitable for visualizing an auditory
+%                   filterbank. Same as `'tick',[0,50,100,250,500,1000,...]`.
 %
 %   See also:  filterbank, ufilterbank, tfplot, sgram
 
@@ -179,5 +179,3 @@ else
   
 end;
 
-
-%OLDFORMAT

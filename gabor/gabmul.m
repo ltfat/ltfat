@@ -14,20 +14,20 @@ function h=gabmul(f,c,p3,p4,p5)
 %   Output parameters:
 %         h     : Output signal
 %
-%   GABMUL(f,c,g,a) will filter f by a Gabor multiplier determined by
-%   the symbol c over the rectangular time-frequency lattice determined by 
-%   _a and _M, where _M is deduced from the size of c. The rows of c
-%   correspond to frequency, the columns to temporal sampling points.
-%   The window g will be used for both analysis and synthesis.
+%   `gabmul(f,c,g,a)` filters *f* by a Gabor multiplier determined by
+%   the symbol *c* over the rectangular time-frequency lattice determined by
+%   *a* and *M*, where *M* is deduced from the size of *c*. The rows of *c*
+%   correspond to frequency, the columns to temporal sampling points.  The
+%   window *g* will be used for both analysis and synthesis.
 %
-%   GABMUL(f,c,a) will do the same using an optimally concentrated, tight
+%   `gabmul(f,c,a)` does the same using an optimally concentrated, tight
 %   Gaussian as window function.
 %
-%   GABMUL(f,c,ga,gs,a) will do the same using the window ga for
-%   analysis and gs for synthesis.
+%   `gabmul(f,c,ga,gs,a)` does the same using the window *ga* for analysis
+%   and *gs* for synthesis.
 %
-%   The adjoint operator of GABMUL(f,c,ga,gs,a) is given by
-%   GABMUL(f,conj(c),gs,ga,a).
+%   The adjoint operator of `gabmul(f,c,ga,gs,a)` is given by
+%   `gabmul(f,conj(c),gs,ga,a)`.
 %
 %   See also: dgt, idgt, gabdual, gabtight
 %
@@ -80,5 +80,3 @@ h=idgt(coef,gs,a,Ls);
 % Change h to have same shape as f originally had.
 h=comp_sigreshape_post(h,Ls,wasrow,remembershape);
 
-
-%OLDFORMAT

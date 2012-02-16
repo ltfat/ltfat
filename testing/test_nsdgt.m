@@ -28,7 +28,7 @@ for ii=1:3
   g{ii}=randn(M(ii),1);
 end;
 
-% ----- dual and inversion -----
+% ----- non-uniform dual and inversion -----
 
 gd=nsgabdual(g,a,M);
 
@@ -40,6 +40,18 @@ res=norm(f-r);
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['NSDGT DUAL  %0.5g %s\n'],res,fail);
 
+% ----- non-uniform inversion, real -----
+
+c=nsdgtreal(f,g,a,M);
+r=insdgtreal(c,gd,a,M);
+
+res=norm(f-r);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['NSDGTREAL DUAL  %0.5g %s\n'],res,fail);
+
+
+
 % ----- tight and inversion -----------------
 gt=nsgabtight(g,a,M);
 
@@ -50,5 +62,53 @@ res=norm(f-rt);
 
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['NSDGT TIGHT %0.5g %s\n'],res,fail);
+
+
+
+a=[20,30,40];
+M=50;
+L=sum(a);
+
+f=randn(L,1);
+
+g=cell(3,1);
+for ii=1:3
+  g{ii}=randn(M,1);
+end;
+
+% ----- non-uniform dual and inversion -----
+
+gd=nsgabdual(g,a,M);
+
+c=unsdgt(f,g,a,M);
+r=insdgt(c,gd,a);
+
+res=norm(f-r);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['UNSDGT DUAL  %0.5g %s\n'],res,fail);
+
+% ----- non-uniform inversion, real -----
+
+c=unsdgtreal(f,g,a,M);
+r=insdgtreal(c,gd,a,M);
+
+res=norm(f-r);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['UNSDGTREAL DUAL  %0.5g %s\n'],res,fail);
+
+
+
+% ----- tight and inversion -----------------
+gt=nsgabtight(g,a,M);
+
+ct=unsdgt(f,gt,a,M);
+rt=insdgt(ct,gt,a);
+
+res=norm(f-rt);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['UNSDGT TIGHT %0.5g %s\n'],res,fail);
 
 

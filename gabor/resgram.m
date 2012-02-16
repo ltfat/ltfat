@@ -3,82 +3,96 @@ function []=resgram(f,varargin)
 %   Usage: resgram(f,op1,op2, ... );
 %          resgram(f,fs,op1,op2, ... );
 %
-%   RESGRAM(f) plots a reassigned spectrogram of f.
+%   `resgram(f)` plots a reassigned spectrogram of *f*.
 %
-%   RESGRAM(f,fs) does the same for a signal with sampling rate fs (sampled
-%   with fs samples per second);
+%   `resgram(f,fs)` does the same for a signal with sampling rate *fs*
+%   (sampled with *fs* samples per second).
 %
 %   Because reassigned spectrograms can have an extreme dynamical range,
-%   consider using the 'dynrange' or 'clim' options (see below) in
-%   conjunction with the 'db' option (on by default). An example:
+%   consider always using the `'dynrange'` or `'clim'` options (see below)
+%   in conjunction with the `'db'` option (on by default). An example:::
 %
-%C    resgram(greasy,16000,'dynrange',40);
+%     resgram(greasy,16000,'dynrange',70);
 %
 %   This will produce a reassigned spectrogram of the 'greasy' signal
 %   without drowning the interesting features in noise.
 %
-%   Additional arguments can be supplied like this:
-%   RESGRAM(f,'nf','tfr',2,'log'). The arguments must be character
-%   strings possibly followed by an argument:
+%   `resgram` accepts the following additional arguments:
 %
-%-  'tfr',v   - Set the ratio of frequency resolution to time resolution.
-%               A value v=1 is the default. Setting v>1 will give better
-%               frequency resolution at the expense of a worse time
-%               resolution. A value of 0<v<1 will do the opposite.
 %
-%-  'thr',r   - Keep only the largest fraction r of the coefficients, and
-%               set the rest to zero.
+%     'dynrange',r  Limit the dynamical range to `r` by using a colormap in
+%                   the interval `[chigh-r,chigh]`, where `chigh` is the highest
+%                   value in the plot. The default value of `[]` means to not
+%                   limit the dynamical range.
+%    
+%     'db'         Apply `20*log10` to the coefficients. This makes it possible to
+%                  see very weak phenomena, but it might show too much noise. A
+%                  logarithmic scale is more adapted to perception of sound.
+%                  This is the default.
 %
-%-  'sharp',alpha - Set the sharpness of the plot. If alpha=0 the regular
-%               spectrogram is obtained. alpha=1 means full
-%               reassignment. Anything in between will produce a partially
-%               sharpened picture. Default is alpha=1
+%     'sharp',alpha
+%                  Set the sharpness of the plot. If $alpha=0$ the regular
+%                  spectrogram is obtained. $alpha=1$ means full
+%                  reassignment. Anything in between will produce a partially
+%                  sharpened picture. Default is $alpha=1$.
+%    
+%     'lin'        Show the energy of the coefficients on a linear scale.
+%    
+%     'tfr',v      Set the ratio of frequency resolution to time resolution.
+%                  A value $v=1$ is the default. Setting $v>1$ will give better
+%                  frequency resolution at the expense of a worse time
+%                  resolution. A value of $0<v<1$ will do the opposite.
+%    
+%     'wlen',s     Window length. Specifies the length of the window
+%                  measured in samples. See help of |pgauss|_ on the exact
+%                  details of the window length.
 %
-%-  'nf'      - Display negative frequencies, with the zero-frequency
-%               centered in the middle. For real signals, this will just
-%               mirror the upper half plane. This is standard for complex
-%               signals.
+%     'posfreq'    Display only the positive frequencies. This is the
+%                  default for real-valued signals.
+%    
+%     'nf'         Display negative frequencies, with the zero-frequency
+%                  centered in the middle. For real signals, this will just
+%                  mirror the upper half plane. This is standard for complex
+%                  signals.
+%    
+%     'tc'         Time centering. Move the beginning of the signal to the
+%                  middle of the plot. This is useful for visualizing the
+%                  window functions of the toolbox.
+%    
+%     'image'      Use `imagesc` to display the spectrogram. This is the
+%                  default.
+%    
+%     'clim',clim  Use a colormap ranging from `clim(1)` to `clim(2)`. These
+%                  values are passed to `imagesc`. See the help on `imagesc`.
+%    
+%     'thr',r      Keep only the largest fraction `r` of the coefficients, and
+%                  set the rest to zero.
+%    
+%     'fmax',y     Display `y` as the highest frequency. Default value of `[]`
+%                  means to use the Nyquest frequency.
+%    
+%     'xres',xres  Approximate number of pixels along x-axis / time.
+%                  Default value is 800
+%    
+%     'yres',yres  Approximate number of pixels along y-axis / frequency
+%                  Default value is 600
+%    
+%     'contour'    Do a contour plot to display the spectrogram.
+%           
+%     'surf'       Do a surf plot to display the spectrogram.
+%    
+%     'mesh'       Do a mesh plot to display the spectrogram.
+%    
+%     'colorbar'   Display the colorbar. This is the default.
+%    
+%     'nocolorbar'  Do not display the colorbar.
 %
-%-  'tc'      - Time centering. Move the beginning of the signal to the
-%               middle of the plot. This is useful for visualizing the
-%               window functions of the toolbox.
+%   In addition to these parameteres, `sgram` accepts any of the flags from
+%   |normalize|_. The window used to calculate the spectrogram will be
+%   normalized as specified.
 %
-%-  'db'      - Apply 20*log10 to the coefficients. This makes it possible to
-%               see very weak phenomena, but it might show to much noise. A
-%               logarithmic scale is more adapted to perception of sound.
-%
-%-  'lin'     - Show the energy of the coefficients on a linear scale.
-%
-%-  'image'   - Use 'imagesc' to display the spectrogram. This is the
-%               default.
-%
-%-  'clim',[clow,chigh] - Use a colormap ranging from clow to chigh. These
-%               values are passed to IMAGESC. See the help on IMAGESC.
-%
-%-  'dynrange',range - Use a colormap in the interval [chigh-range,chigh], where
-%               chigh is the highest value in the plot.
-%
-%-  'fmax',y  - Display y as the highest frequency.
-%
-%-  'xres',xres - Approximate number of pixels along x-axis /time.
-%               Default value is 800
-%
-%-  'yres',yres - Approximate number of pixels along y-axis / frequency
-%               Default value is 600
-%
-%-  'contour' - Do a contour plot to display the spectrogram.
-%          
-%-  'surf'    - Do a surf plot to display the spectrogram.
-%
-%-  'mesh'    - Do a mesh plot to display the spectrogram.
-%
-%-  'colorbar' - Display the colorbar. This is the default.
-%
-%-  'nocolorbar' - Do not display the colorbar.
-%
-%   In Octave, the default colormap is greyscale. Change it to _colormap(jet)
-%   for something prettier.
-
+%   See also: sgram  
+  
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: NA
 %   REFERENCE: NA
@@ -94,7 +108,7 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-definput.import={'ltfattranslate','tfplot'};
+definput.import={'ltfattranslate','normalize','tfplot'};
 
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
@@ -153,7 +167,7 @@ if flags.do_wlen
   kv.tfr=kv.wlen^2/L;
 end;
 
-g={'gauss',kv.tfr};
+g={'gauss',kv.tfr,flags.norm};
 
 [tgrad,fgrad,c]=gabphasegrad('dgt',f,g,a,M);          
 coef=gabreassign(abs(c).^2,kv.sharp*tgrad,kv.sharp*fgrad,a);
@@ -177,6 +191,3 @@ end;
 if nargout>0
   varargout={coef};
 end;
-
-
-%OLDFORMAT

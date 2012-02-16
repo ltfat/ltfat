@@ -3,18 +3,18 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %   Usage:  sr = gabreassign(s,tgrad,fgrad,a);
 %           sr = gabreassign(s,tgrad,fgrad,a,'aa');
 %
-%   GABREASSIGN(s,tgrad,fgrad,a) will reassign the values of the positive
-%   time-frequency distribution s using the phase gradient given by fgrad
-%   and tgrad. The lattice is determined by the time shift _a and the number
-%   of channels deduced from the size of s.
+%   `gabreassign(s,tgrad,fgrad,a)` reassigns the values of the positive
+%   time-frequency distribution *s* using the phase gradient given by *fgrad*
+%   and *tgrad*. The lattice is determined by the time shift *a* and the number
+%   of channels deduced from the size of *s*.
 %
-%   fgrad and tgrad can be obtained by the routine GABPHASEGRAD
+%   *fgrad* and *tgrad* can be obtained by the routine |gabphasegrad|_.
 %
 %   The standard way of calling this routine to generate a reassigned
-%   spectrogram from a signal _f is:
+%   spectrogram from a signal *f* is::
 %
-%C     [fgrad, tgrad, c] = gabphasegrad('dgt',f,'gauss',a,M);
-%C     sr = gabreassign(abs(c).^2,tgrad,fgrad,a);
+%     [fgrad, tgrad, c] = gabphasegrad('dgt',f,'gauss',a,M);
+%     sr = gabreassign(abs(c).^2,tgrad,fgrad,a);
 %  
 %   See also: resgram, gabphasegrad
 %
@@ -78,5 +78,3 @@ else
   sr=comp_gabreassign(s,tgrad,fgrad,a);
   
 end;
-
-%OLDFORMAT

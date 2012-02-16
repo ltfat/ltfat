@@ -2,23 +2,24 @@ function cout = phaselock(cin,a)
 %PHASELOCK  Phaselock Gabor coefficients
 %   Usage:  c=phaselock(c,a);
 %
-%   PHASELOCK(c,a) phaselocks the Gabor coefficients c. The coefficient must
-%   have been obtained from a DGT with parameter _a.
+%   `phaselock(c,a)` phaselocks the Gabor coefficients *c*. The coefficient must
+%   have been obtained from a |dgt|_ with parameter *a*.
 %
 %   Phaselocking the coefficients modifies them so as if they were obtained
 %   from a time-invariant Gabor system. A filter bank produces phase locked
 %   coefficients.
 %
 %   Phaselocking of Gabor coefficients correspond to the following transform:
-%   Consider a signal f of length L and define $N=L/a$ and $b=L/M$.
-%   The output from c=PHASELOCK(DGT(f,g,a,M),a) is given by
+%   Consider a signal *f* of length *L* and define $N=L/a$ and $b=L/M$.
+%   The output from `c=phaselock(dgt(f,g,a,M),a)` is given by
 %
-%M                 L-1 
-%M    c(m+1,n+1) = sum f(l+1)*exp(-2*pi*i*(m*b-n*a)*l/L)*conj(g(l-a*n+1)), 
-%M                 l=0  
-%F  \[c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)e^{-2\pi il(mb-na)/L}\overline{g(l-an+1)}\]
+%   ..             L-1 
+%     c(m+1,n+1) = sum f(l+1)*exp(-2*pi*i*(m*b-n*a)*l/L)*conj(g(l-a*n+1)), 
+%                  l=0  
 %
-%   where $m=0,...,M-1$ and $n=0,...,N-1$ and $l-an$ is computed modulo L.
+%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)e^{-2\pi il(mb-na)/L}\overline{g(l-an+1)}
+%
+%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
 %
 %   See also: dgt, phaseunlock, symphase
 %
@@ -59,4 +60,3 @@ for w=1:size(cin,3)
   cout(:,:,w) = cin(:,:,w).*phase;
 end;
 
-%OLDFORMAT

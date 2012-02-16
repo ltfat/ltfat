@@ -3,11 +3,11 @@ function [AF,BF]=filterbankbounds(g,a,varargin);
 %   Usage: fcond=filterbankbounds(g,a);
 %          [A,B]=filterbankbounds(g,a);
 %
-%   FILTERBANKBOUNDS(g,a) calculates the ratio B/A of the frame bounds of
-%   the filterbank specified by g and _a. The ratio is a measure of the
+%   `filterbankbounds(g,a)` calculates the ratio $B/A$ of the frame bounds of
+%   the filterbank specified by *g* and *a*. The ratio is a measure of the
 %   stability of the system.
 %
-%   [A,B]=FILTERBANKBOUNDS(g,a) returns the lower and upper frame bounds
+%   `[A,B]=filterbankbounds(g,a)` returns the lower and upper frame bounds
 %   explicitly.
 %
 %   See also: filterbank, filterbankdual
@@ -70,6 +70,4 @@ if nargout<2
     AF=BF/AF;
   end;
 end;
-  
 
-%OLDFORMAT

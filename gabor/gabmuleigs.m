@@ -15,44 +15,44 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %         V     : Matrix containing eigenvectors.
 %         D     : Eigenvalues.
 %
-%   GABMULEIGS(K,c,g,a) computes the K largest eigenvalues and eigen-
-%   vectors of the Gabor multiplier with symbol c and time shift _a.
-%   The number of channels is deduced from the size of the symbol c.
-%   The window g will be used for both analysis and synthesis.
+%   `gabmuleigs(K,c,g,a)` computes the *K* largest eigenvalues and eigen-
+%   vectors of the Gabor multiplier with symbol *c* and time shift *a*.  The
+%   number of channels is deduced from the size of the symbol *c*.  The
+%   window *g* will be used for both analysis and synthesis.
 %
-%   GABMULEIGS(K,c,ga,gs,a) will do the same using the window the window ga
-%   for analysis and gs for synthesis.
+%   `gabmuleigs(K,c,ga,gs,a)` does the same using the window the window *ga*
+%   for analysis and *gs* for synthesis.
 %
-%   GABMULEIGS(K,c,a) will do the same using the a tight Gaussian window of
+%   `gabmuleigs(K,c,a)` does the same using the a tight Gaussian window of
 %   for analysis and synthesis.
 %
-%   If K is empty, then all eigenvalues/pairs will be returned.
+%   If *K* is empty, then all eigenvalues/pairs will be returned.
 %
-%   GABMULEIGS takes the following parameters at the end of the line of input
+%   `gabmuleigs` takes the following parameters at the end of the line of input
 %   arguments:
 %
-%-    'tol',t    - Stop if relative residual error is less than the
+%     'tol',t      Stop if relative residual error is less than the
 %                  specified tolerance. Default is 1e-9 
 %
-%-    'maxit',n  - Do at most n iterations.
+%     'maxit',n    Do at most n iterations.
 %
-%-    'iter'     - Call EIGS to use an iterative algorithm.
+%     'iter'       Call `eigs` to use an iterative algorithm.
 %
-%-    'full'     - Call EIG to sole the full problem.
+%     'full'       Call `eig` to sole the full problem.
 %
-%-    'auto'     - Use the full method for small problems and the
+%     'auto'       Use the full method for small problems and the
 %                  iterative method for larger problems. This is the
 %                  default. 
 %
-%     'crossover',c - Set the problem size for which the 'auto' method
+%     'crossover',c
+%                  Set the problem size for which the 'auto' method
 %                  switches. Default is 200.
 %
-%-    'print'    - Display the progress.
+%     'print'      Display the progress.
 %
-%-    'quiet'    - Don't print anything, this is the default.
+%     'quiet'      Don't print anything, this is the default.
 %
 %   See also: gabmul, dgt, idgt, gabdual, gabtight
-%
 
 % Change this to 1 or 2 to see the iterative method in action.
 printopts=0;
@@ -183,5 +183,3 @@ function y=afun(x,c_in,ga_in,gs_in,a_in,M_in,L_in)
   else
     y=comp_idgt(c.*comp_dgt(x,ga,a,M,L,0),gs,a,M,L,0);
   end;
-
-%OLDFORMAT

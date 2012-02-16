@@ -37,12 +37,12 @@ function varargout=sgram(f,varargin)
 %     'lin'        Show the energy of the coefficients on a linear scale.
 %    
 %     'tfr',v      Set the ratio of frequency resolution to time resolution.
-%                  A value :math:`v=1` is the default. Setting :math:`v>1` will give better
+%                  A value $v=1$ is the default. Setting $v>1$ will give better
 %                  frequency resolution at the expense of a worse time
-%                  resolution. A value of :math:`0<v<1` will do the opposite.
+%                  resolution. A value of $0<v<1$ will do the opposite.
 %    
 %     'wlen',s     Window length. Specifies the length of the window
-%                  measured in samples. See help of `pgauss` on the exact
+%                  measured in samples. See help of |pgauss|_ on the exact
 %                  details of the window length.
 %
 %     'posfreq'    Display only the positive frequencies. This is the

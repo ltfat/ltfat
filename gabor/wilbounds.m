@@ -10,19 +10,21 @@ function [AF,BF]=wilbounds(g,M,varargin)
 %   Output parameters:
 %           AF,BF   : Frame bounds.
 %          
-%   WILBOUNDS(g,M) calculates the frame bounds of the Wilson frame operator
-%   of the Wilson basis with window g and M channels.
+%   `wilbounds(g,M)` calculates the frame bounds of the Wilson frame operator
+%   of the Wilson basis with window *g* and *M* channels.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more details.
+%   `[A,B]=wilbounds(g,a,M)` returns the frame bounds *A* and *B* instead of
+%   just the ratio.
 %
-%   If the length of g is equal to 2*M, then the input window is assumed to
-%   be a FIR window. In this case, the dual window also has length of
-%   g. Otherwise the smallest possible transform length is chosen as the
-%   window length.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |wilwin|_ for more details.
 %
-%   If the optional parameter L is specified, the window is cut or
-%   zero-extended to length L.
+%   If the length of *g* is equal to $2\cdot M$ then the input window is
+%   assumed to be a FIR window. Otherwise the smallest possible transform
+%   length is chosen as the window length.
+%
+%   If the optional parameter *L* is specified, the window is cut or
+%   zero-extended to length *L*.
 %
 %   See also: wilwin, gabframebounds
 
@@ -76,15 +78,3 @@ BF=BF/2;
 if nargout<2
   AF=BF/AF;
 end;
-
-
-
-
-
-
-
-
-
-
-
-%OLDFORMAT

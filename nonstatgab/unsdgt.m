@@ -17,7 +17,7 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   given in the form of a 2D matrix of size $Ls \times W$, with *Ls* being
 %   the signal length and *W* the number of signal channels.
 %
-%   The uniform nonstationnary Gabor theory extends standard Gabor theory by
+%   The non-stationary Gabor theory extends standard Gabor theory by
 %   enabling the evolution of the window over time. It is therefor necessary
 %   to specify a set of windows instead of a single window.  This is done by
 %   using a cell array for *g*. In this cell array, the n'th element `g{n}`
@@ -100,7 +100,7 @@ c=zeros(M,N,W); % Initialisation of the result
 
 for ii=1:N
   shift=floor(length(g{ii})/2);
-  temp=zeros(M(ii),W);
+  temp=zeros(M,W);
   
   % Windowing of the signal.
   % Possible improvements: The following could be computed faster by 
@@ -111,18 +111,18 @@ for ii=1:N
     repmat(conj(circshift(g{ii},shift)),1,W);
   
   temp=circshift(temp,-shift);
-  if M(ii)<length(g{ii}) 
+  if M<length(g{ii}) 
     % Fft size is smaller than window length, some aliasing is needed
-    x=floor(length(g{ii})/M(ii));
-    y=length(g{ii})-x*M(ii);
+    x=floor(length(g{ii})/M);
+    y=length(g{ii})-x*M;
     % Possible improvements: the following could probably be computed 
     % faster using matrix manipulation (reshape, sum...)
     temp1=temp;
-    temp=zeros(M(ii),size(temp,2));
+    temp=zeros(M,size(temp,2));
     for jj=0:x-1
-      temp=temp+temp1(jj*M(ii)+(1:M(ii)),:);
+      temp=temp+temp1(jj*M+(1:M),:);
     end
-    temp(1:y,:)=temp(1:y,:)+temp1(x*M(ii)+(1:y),:);
+    temp(1:y,:)=temp(1:y,:)+temp1(x*M+(1:y),:);
   end
   
   % FFT of the windowed signal

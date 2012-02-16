@@ -2,16 +2,14 @@ function cout = symphase(cin,a)
 %SYMPHASE  Change Gabor coefficients to symmetric phase
 %   Usage:  c=symphase(c,a);
 %
-%   SYMPHASE(c,a) alters the phase of the Gabor coefficients c so as if they
-%   were obtained from a Gabor transform based on symmetric time/frequency
-%   shifts. The coefficient must have been obtained from a DGT with
-%   parameter _a.
+%   `symphase(c,a)` alters the phase of the Gabor coefficients *c* so as if
+%   they were obtained from a Gabor transform based on symmetric
+%   time/frequency shifts. The coefficient must have been obtained from a
+%   |dgt|_ with parameter *a*.
 %
-%   See also: dgt phaselock
-%
+%   See also: dgt, phaselock
 
-%   AUTHORS : Peter Balazs
-%             Peter Soendergaard.
+%   AUTHORS : Peter Balazs, Peter Soendergaard.
 
 error(nargchk(2,2,nargin));
 
@@ -43,5 +41,3 @@ cout=zeros(size(cin));
 for w=1:size(cin,3)
   cout(:,:,w) = cin(:,:,w).*phase;
 end;
-
-%OLDFORMAT

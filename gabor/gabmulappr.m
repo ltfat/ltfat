@@ -16,19 +16,19 @@ function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
 %   Output parameters:
 %         sym   : symbol
 %
-%   GABMULAPPR(T,g,a,M) will calculate the best approximation of the given
-%   matrix T in the Frobenius norm by a Gabor multiplier determined by the
-%   symbol sym over the rectangular time-frequency lattice determined by a
-%   and M.  The window g will be used for both analysis and synthesis.
-%   IMPORTANT: The chosen Gabor system has to be a frame sequence!
+%   `sym=gabmulappr(T,g,a,M)` calculates the best approximation of the given
+%   matrix *T* in the Frobenius norm by a Gabor multiplier determined by the
+%   symbol *sym* over the rectangular time-frequency lattice determined by
+%   *a* and *M*.  The window *g* will be used for both analysis and
+%   synthesis.  The chosen Gabor system has to be a frame.
 %
-%   GABMULAPPR(T,a,M) will do the same using an optimally concentrated,
-%   tight Gaussian as window function.
+%   `gabmulappr(T,a,M)` does the same using an optimally concentrated, tight
+%   Gaussian as window function.
 %
-%   GABMULAPPR(T,gs,ga,a) will do the same using the window ga for analysis
-%   and gs for synthesis.
+%   `gabmulappr(T,gs,ga,a)` does the same using the window *ga* for analysis
+%   and *gs* for synthesis.
 %
-%   [sym,lowb,upb]=GABMULAPPR(...) additionally return the lower and
+%   `[sym,lowb,upb]=gabmulappr(...)` additionally returns the lower and
 %   upper Riesz bounds of the rank one operators, the projections resulting
 %   from the tensor products of the analysis and synthesis frames.
 %
@@ -121,6 +121,3 @@ iimod=mod(-N:-1,N)+1;
 SF=SF1(iimod,jjmod);
 
 sym=b*dsft(SF)*sqrt(M)/sqrt(N);
-
-
-%OLDFORMAT

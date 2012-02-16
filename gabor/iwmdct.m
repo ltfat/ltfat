@@ -10,18 +10,18 @@ function [f,g]=iwmdct(c,g,Ls)
 %   Output parameters:
 %         f     : Input data
 %
-%   IWMDCT(c,g) computes an inverse windowed MDCT with window g. The number
-%   of channels is deduced from the size of the coefficient array c.
+%   `iwmdct(c,g)` computes an inverse windowed MDCT with window *g*. The
+%   number of channels is deduced from the size of the coefficient array *c*.
 %
-%   The window g may be a vector of numerical values, a text string or a
-%   cell array. See the help of WILWIN for more details.
+%   The window *g* may be a vector of numerical values, a text string or a
+%   cell array. See the help of |wilwin|_ for more details.
 %
-%   IWMDCT(f,g,Ls) does the same, but cuts or zero-extends the final
-%   result to length Ls.
+%   `iwmdct(f,g,Ls)` does the same, but cuts or zero-extends the final
+%   result to length *Ls*.
 %
-%   [f,g]=IWMDCT(...) additionally outputs the window used in the
-%   transform. This is usefull if the window was generated from a description
-%   in a string or cell array.
+%   `[f,g]=iwmdct(...)` additionally outputs the window used in the
+%   transform. This is usefull if the window was generated from a
+%   description in a string or cell array.
 %
 %   See also:  wmdct, wilwin, dgt, wildual, wilorth
 %
@@ -74,5 +74,3 @@ end;
 
 f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
 
-
-%OLDFORMAT

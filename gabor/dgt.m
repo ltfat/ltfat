@@ -54,7 +54,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %      c(m+1,n+1) = sum f(l+1)*conj(g(l-a*n+1))*exp(-2*pi*i*m*l/M), 
 %                   l=0  
 %
-%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\bar{g}(l-an+1)e^{-2\pi ilm/M}
+%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi ilm/M}
 %
 %   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
 %

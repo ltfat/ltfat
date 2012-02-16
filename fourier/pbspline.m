@@ -51,7 +51,7 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %   B-spline.
 %
 %   If $nlen < L$, you can choose to remove the additional zeros by calling
-%   `g=middlepad(g,nlen)$.
+%   `g=middlepad(g,nlen)`.
 %
 %   Additionally, `pbspline` accepts flags to normalize the output. Please
 %   see the help of |normalize|_. Default is to use `'peak'` normalization.

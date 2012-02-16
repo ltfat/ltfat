@@ -6,6 +6,3 @@ function gf=filterbankrealresponse(g,a,L)
   gf=gf+involute(gf);
   gf=gf(1:L2);
   
-  
-
-%OLDFORMAT

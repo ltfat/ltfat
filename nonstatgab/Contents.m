@@ -3,14 +3,12 @@
 %  Florent Jaillet and Peter L. Soendergaard, 2011 - 2012
 %
 %  Transforms
-%    UNSDGT               - Uniform Non-stationary DGT
-%    IUNSDGT              - Uniform Inverse NSDGT
 %    NSDGT                - Non-stationary DGT
-%    INSDGT               - Inverse NSDGT
-%    UNSDGTREAL           - Uniform Non-stationary DGT for real-valued signals
-%    IUNSDGTREAL          - Inverse UNSDGTREAL
+%    UNSDGT               - Uniform Non-stationary DGT
+%    INSDGT               - Inverse NSDGT and UNSDGT
 %    NSDGTREAL            - Non-stationary DGT for real-valued signals
-%    INSDGTREAL           - Inverse NSDGTREAL
+%    UNSDGTREAL           - Uniform Non-stationary DGT for real-valued signals
+%    INSDGTREAL           - Inverse NSDGTREAL and UNSDGTREAL
 %
 %  Window construction and bounds
 %    NSGABDUAL            - Non-stationary dual windows

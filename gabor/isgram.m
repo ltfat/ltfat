@@ -14,7 +14,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `isgram(s,g,a)` attempts to invert a spectrogram computed by
+%   `isgram(s,g,a)` attempts to invert a spectrogram computed by ::
 %
 %     s = abs(dgt(f,g,a,M)).^2;
 %

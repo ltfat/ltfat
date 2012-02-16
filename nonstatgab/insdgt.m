@@ -10,15 +10,16 @@ function f=insdgt(c,g,a,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   INSDGT(c,g,a,Ls) computes the nonstationary Gabor expansion of the 
-%   input coefficients c.
+%   `insdgt(c,g,a,Ls)` computes the inverse non-stationary Gabor transform
+%   of the input coefficients *c*.
 %
-%   INSDGT is used to invert the function NSDGT. Read the help of NSDGT
-%   for details of variables format and usage.
+%   `insdgt` is used to invert the functions |nsdgt|_ and |unsdgt|_. Please
+%   read the help of these functions for details of variables format and
+%   usage.
 %
-%   For perfect reconstruction, the windows used must be dual windows of 
-%   the ones used to generate the coefficients. The windows can be
-%   generated unsing NSGABDUAL.
+%   For perfect reconstruction, the windows used must be dual windows of the
+%   ones used to generate the coefficients. The windows can be generated
+%   using |nsgabdual|_ or |nsgabtight|_.
 %
 %   See also:  nsdgt, nsgabdual, nsgabtight
 %
@@ -53,46 +54,89 @@ end;
 definput.keyvals.Ls=sum(a);
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
-  
 timepos=cumsum(a)-a(1);
 
+if iscell(c)
   
-N=length(c); % Number of time positions
-
-W=size(c{1},2); % Number of signal channels
-
-f=zeros(Ls,W); % Initialisation of the result
-
-for ii=1:N
-  shift=floor(length(g{ii})/2);
-  % Note: the *size(c{ii},1) in the following is here to ensure the 
-  % coherence of the ifft normalisation convention with the function dgt 
-  % of ltfat
-  temp=ifft(c{ii})*size(c{ii},1); 
+  % ---- invert the non-uniform case ---------
+      
+  N=length(c); % Number of time positions
+  
+  W=size(c{1},2); % Number of signal channels
+  
+  f=zeros(Ls,W); % Initialisation of the result
+  
+  for ii=1:N
+    shift=floor(length(g{ii})/2);
+    % Note: the *size(c{ii},1) in the following is here to ensure the 
+    % coherence of the ifft normalisation convention with the function dgt 
+    % of ltfat
+    temp=ifft(c{ii})*size(c{ii},1); 
     
-  if size(c{ii},1)<length(g{ii}) 
-    % The number of frequency channels is smaller than window length, 
-    % we need to periodize.
-    % We have to periodize symetrically around time 0 which requires
-    % some heavy indexing because time zero is index 1 and negative times
-    % are at the end of the vector.
-    temp=circshift(temp,mod(floor(length(g{ii})/2),length(g{ii})));
-    x=floor(length(g{ii})/size(c{ii},1));
-    y=length(g{ii})-x*size(c{ii},1);
-    temp=[repmat(temp,x,1);temp(1:y,:)];
-  else
-    temp=circshift(temp,shift);
+    if size(c{ii},1)<length(g{ii}) 
+      % The number of frequency channels is smaller than window length, 
+      % we need to periodize.
+      % We have to periodize symetrically around time 0 which requires
+      % some heavy indexing because time zero is index 1 and negative times
+      % are at the end of the vector.
+      temp=circshift(temp,mod(floor(length(g{ii})/2),length(g{ii})));
+      x=floor(length(g{ii})/size(c{ii},1));
+      y=length(g{ii})-x*size(c{ii},1);
+      temp=[repmat(temp,x,1);temp(1:y,:)];
+    else
+      temp=circshift(temp,shift);
+    end
+    
+    % Windowing with the synthesis window
+    % Possible improvement: the following repmat is not needed if W=1 
+    % (but the time difference when removing it should be really small)
+    temp=temp(1:length(g{ii}),:).*repmat(circshift(g{ii},shift),1,W);
+    
+    % Possible improvement: the following could be computed faster by 
+    % explicitely computing the indexes instead of using modulo
+    tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
+    f(tempind,:)=f(tempind,:)+temp;
   end
   
-  % Windowing with the synthesis window
-  % Possible improvement: the following repmat is not needed if W=1 
-  % (but the time difference when removing it should be really small)
-  temp=temp(1:length(g{ii}),:).*repmat(circshift(g{ii},shift),1,W);
+else   
   
-  % Possible improvement: the following could be computed faster by 
-  % explicitely computing the indexes instead of using modulo
-  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
-  f(tempind,:)=f(tempind,:)+temp;
-end
+  % ---- invert the uniform case ----------------
+  
+  [M, N, W]=size(c);
 
-%OLDFORMAT
+  f=zeros(Ls,W); % Initialisation of the result
+
+  for ii=1:N
+    shift=floor(length(g{ii})/2);
+    % Note: the *size(c{ii},1) in the following is here to ensure the 
+    % coherence of the ifft normalisation convention with the function dgt 
+    % of ltfat
+    temp=ifft(squeeze(c(:,ii,:)))*M;
+    
+    if M<length(g{ii}) 
+      % The number of frequency channels is smaller than window length, 
+      % we need to periodize.
+      % We have to periodize symetrically around time 0 which requires
+      % some heavy indexing because time zero is index 1 and negative times
+      % are at the end of the vector.
+      temp=circshift(temp,mod(floor(length(g{ii})/2),length(g{ii})));
+      x=floor(length(g{ii})/M);
+      y=length(g{ii})-x*M;
+      temp=[repmat(temp,x,1);temp(1:y,:)];
+    else
+      temp=circshift(temp,shift);
+    end
+    
+    % Windowing with the synthesis window
+    % Possible improvement: the following repmat is not needed if W=1 
+    % (but the time difference when removing it should be really small)
+    temp=temp(1:length(g{ii}),:).*repmat(circshift(g{ii},shift),1,W);
+    
+    % Possible improvement: the following could be computed faster by 
+    % explicitely computing the indexes instead of using modulo
+    tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
+    f(tempind,:)=f(tempind,:)+temp;
+  end
+  
+end;
+

@@ -8,25 +8,24 @@ function [] = plotnsdgtreal(coef,a,varargin)
 %         dynrange : Colorscale dynamic range in dB (default 60 dB).
 %         sr       : signal sample rate in Hz (default 1 Hz).
 %
-%   PLOTNSDGTREAL(coef,a) plots coefficients computed NSDGTREAL. For
-%   more details on the format of the variables coef and _a, please read the
-%   NSDGT function help.
+%   `plotnsdgtreal(coef,a)` plots coefficients computed using |nsdgtreal|_ or
+%   |unsdgtreal|_. For more details on the format of the variables *coef* and *a*,
+%   please read the function help for these functions.
 %
-%   PLOTNSDGTREAL(coef,a,fs) will do the same assuming a sampling rate of
-%   fs Hz of the original signal.
+%   `plotnsdgtreal(coef,a,fs)` does the same assuming a sampling rate of
+%   *fs* Hz of the original signal.
 %
-%   PLOTNSDGTREAL(coef,a,fs,dynrange) will additionally limit the dynamic
-%   range.
+%   `plotnsdgtreal(coef,a,fs,dynrange)` additionally limits the dynamic range.
 %
-%   PLOTNSDGTREAL supports all the optional parameters of TFPLOT. Please
-%   see the help of TFPLOT for an exhaustive list. In addition, the
+%   `plotnsdgtreal` supports all the optional parameters of |tfplot|_. Please
+%   see the help of |tfplot|_ for an exhaustive list. In addition, the
 %   following parameters may be specified:
 %
-%-  'xres',xres - Approximate number of pixels along x-axis /time.
-%               Default value is 800
+%     'xres',xres  Approximate number of pixels along x-axis /time.
+%                  Default value is 800
 %
-%-  'yres',yres - Approximate number of pixels along y-axis / frequency
-%               Default value is 600
+%     'yres',yres  Approximate number of pixels along y-axis / frequency
+%                  Default value is 600
 %
 %   See also: tfplot, nsdgt, nsdgtreal
 
@@ -75,5 +74,3 @@ end;
 yr=[0,1];
 
 tfplot(coef,aplot,yr,'argimport',flags,kv);
-
-%OLDFORMAT
