@@ -1,5 +1,5 @@
 function [f,g]=idgt(coef,g,a,varargin)
-%IDGT  Inverse discrete Gabor transform.
+%IDGT  Inverse discrete Gabor transform
 %   Usage:  f=idgt(c,g,a);
 %           f=idgt(c,g,a,Ls);
 %

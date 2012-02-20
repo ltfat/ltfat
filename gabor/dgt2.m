@@ -1,5 +1,5 @@
 function [c,Ls]=dgt2(f,g1,p3,p4,p5,p6)
-%DGT2  2-D Discrete Gabor transform.
+%DGT2  2-D Discrete Gabor transform
 %   Usage: c=dgt2(f,g,a,M);
 %          c=dgt2(f,g1,g2,[a1,a2],[M1,M2]);
 %          c=dgt2(f,g1,g2,[a1,a2],[M1,M2],[L1,L2]);

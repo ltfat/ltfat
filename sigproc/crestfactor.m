@@ -1,5 +1,5 @@
 function c=crestfactor(insig)
-%CRESTFACTOR  Crest factor of input signal in dB.
+%CRESTFACTOR  Crest factor of input signal in dB
 %   Usage:  c=crestfactor(insig);
 %
 %   `crestfactor(insig)` computes the crest factor of the input signal

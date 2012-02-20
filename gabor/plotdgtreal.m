@@ -1,5 +1,5 @@
 function plotdgtreal(coef,a,M,varargin)
-%PLOTDGTREAL  Plot DGTREAL coefficients.
+%PLOTDGTREAL  Plot DGTREAL coefficients
 %   Usage: plotdgtreal(coef,a,M);
 %          plotdgtreal(coef,a,M,fs);
 %          plotdgtreal(coef,a,M,fs,dynrange);

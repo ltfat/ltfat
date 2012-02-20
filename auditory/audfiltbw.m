@@ -1,5 +1,5 @@
 function bw = audfiltbw(fc)
-%AUDFILTBW  Bandwidth of auditory filter.
+%AUDFILTBW  Bandwidth of auditory filter
 %   Usage: bw = audfiltbw(fc)
 %
 %   `audfiltbw(fc)` returns the equivalent rectangular bandwidth of the

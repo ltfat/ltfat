@@ -1,5 +1,5 @@
 function op1=ltfathelp(varargin)
-%LTFATHELP Help on the LTFAT toolbox.
+%LTFATHELP Help on the LTFAT toolbox
 %   Usage:  ltfathelp;
 %           v=ltfathelp('version');
 %           mlist=ltfathelp('modules');

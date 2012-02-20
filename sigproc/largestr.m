@@ -1,5 +1,5 @@
 function [xo,N]=largestr(xi,p,mtype)
-%LARGESTR   Keep fixed ratio of largest coefficients.
+%LARGESTR   Keep fixed ratio of largest coefficients
 %   Usage:  xo=LARGESTR(x,p);
 %           [xo,N]=LARGESTR(x,p);
 %           xo=LARGESTR(x,p,mtype);

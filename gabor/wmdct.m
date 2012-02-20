@@ -1,5 +1,5 @@
 function [c,Ls,g]=wmdct(f,g,M,L)
-%WMDCT  Windowed MDCT transform.
+%WMDCT  Windowed MDCT transform
 %   Usage:  c=wmdct(f,g,M);
 %           c=wmdct(f,g,M,L);
 %           [c,Ls]=wmdct(f,g,M);

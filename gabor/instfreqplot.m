@@ -1,5 +1,5 @@
 function []=instfreqplot(f,varargin)
-%INSTFREQPLOT  Plot of instantaneous frequency.
+%INSTFREQPLOT  Plot of instantaneous frequency
 %   Usage: instfreqplot(f,op1,op2, ... );
 %          instfreqplot(f,fs,op1,op2, ... );
 %

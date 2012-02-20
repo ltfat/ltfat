@@ -1,5 +1,5 @@
 function t=isoctave()
-%ISOCTAVE  True if the operating environment is octave.
+%ISOCTAVE  True if the operating environment is octave
 %   Usage: t=isoctave();
 %
 %   `isoctave` returns 1 if the operating environment is Octave, otherwise

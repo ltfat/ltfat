@@ -1,5 +1,5 @@
 function aud = freqtoaud(freq,varargin);
-%FREQTOAUD  Converts frequencies (Hz) to auditory scale units.
+%FREQTOAUD  Converts frequencies (Hz) to auditory scale units
 %   Usage: aud = freqtoaud(freq,scale);
 %
 %   `freqtoaud(freq,scale)` converts values on the frequency scale (measured

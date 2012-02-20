@@ -1,5 +1,5 @@
 function cadj=spreadadj(coef);
-%SPREADADJ  Symbol of adjoint spreading function.
+%SPREADADJ  Symbol of adjoint spreading function
 %   Usage: cadj=spreadadj(c);
 %
 %   `cadj=spreadadj(c)` computes the symbol *cadj* of the spreading

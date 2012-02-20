@@ -1,5 +1,5 @@
 function erb = freqtoerb(freq);
-%FREQTOERB  Converts frequencies (Hz) to erbs.
+%FREQTOERB  Converts frequencies (Hz) to erbs
 %   Usage: erb = freqtoerb(freq);
 %
 %   This is a wrapper around |freqtoaud|_ that selects the erb-scale. Please

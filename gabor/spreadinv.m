@@ -1,5 +1,5 @@
 function out=spreadinv(p1,p2);
-%SPREADINV  Apply inverse spreading operator.
+%SPREADINV  Apply inverse spreading operator
 %   Usage: h=spreadinv(f,c);
 %
 %   `spreadinv(c)` computes the symbol of the inverse of the spreading

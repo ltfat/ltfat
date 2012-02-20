@@ -1,5 +1,5 @@
 function sr=gabreassign(s,tgrad,fgrad,a,p5);
-%GABREASSIGN  Reassign time-frequency distribution.
+%GABREASSIGN  Reassign time-frequency distribution
 %   Usage:  sr = gabreassign(s,tgrad,fgrad,a);
 %           sr = gabreassign(s,tgrad,fgrad,a,'aa');
 %

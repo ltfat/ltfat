@@ -1,5 +1,5 @@
 function f=fftreal(f,N,dim);
-%FFTREAL   FFT for real valued input data.
+%FFTREAL   FFT for real valued input data
 %   Usage: f=fftreal(f);
 %          f=fftreal(f,N,dim);
 %

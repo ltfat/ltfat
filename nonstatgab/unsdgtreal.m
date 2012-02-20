@@ -1,5 +1,5 @@
 function [c,Ls] = unsdgtreal(f,g,a,M)
-%UNSDGTREAL  Uniform non-stationary Discrete Gabor transform.
+%UNSDGTREAL  Uniform non-stationary Discrete Gabor transform
 %   Usage:  c=nsdgtreal(f,g,a,M);
 %           [c,Ls]=nsdgtreal(f,g,a,M);
 %

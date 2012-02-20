@@ -1,5 +1,5 @@
 function [V]=hermbasis(L)
-%HERMBASIS  Orthonormal basis of discrete Hermite functions.
+%HERMBASIS  Orthonormal basis of discrete Hermite functions
 %   Usage:  V=hermbasis(L);
 %
 %   `hermbasis(L)` computes an orthonormal basis of discrete Hermite

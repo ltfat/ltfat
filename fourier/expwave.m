@@ -1,5 +1,5 @@
 function h=expwave(L,m,cent);
-%EXPWAVE   Complex exponential wave.
+%EXPWAVE   Complex exponential wave
 %   Usage:  h=expwave(L,m);
 %           h=expwave(L,m,cent);
 %

@@ -1,5 +1,5 @@
 function gt=gabtight(p1,p2,p3,p4)
-%GABTIGHT  Canonical tight window.
+%GABTIGHT  Canonical tight window of Gabor frame
 %   Usage:  gt=gabtight(a,M,L);
 %           gt=gabtight(g,a,M);
 %           gt=gabtight(g,a,M,L);

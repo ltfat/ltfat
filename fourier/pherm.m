@@ -1,5 +1,5 @@
 function g=pherm(L,order,tfr)
-%PHERM  Periodized Hermite function.
+%PHERM  Periodized Hermite function
 %   Usage: g=pherm(L,order);
 %          g=pherm(L,order,tfr);
 % 

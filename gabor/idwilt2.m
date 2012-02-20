@@ -1,5 +1,5 @@
 function [f]=idwilt2(c,g1,p3,p4)
-%IDWILT2  2D Inverse Discrete Wilson transform.
+%IDWILT2  2D Inverse Discrete Wilson transform
 %   Usage: f=idwilt2(c,g);
 %          f=idwilt2(c,g1,g2);
 %          f=idwilt2(c,g1,g2,Ls);

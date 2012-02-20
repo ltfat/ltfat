@@ -1,5 +1,5 @@
 function [g,info] = gabwin(g,a,M,L,callfun);
-%GABWIN  Compute a Gabor window from text or cell array.
+%GABWIN  Compute a Gabor window from text or cell array
 %   Usage: [g,info] = gabwin(g,a,M,L);
 %
 %   `[g,info]=gabwin(g,a,M,L)` computes a window that fits well with the

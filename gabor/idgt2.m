@@ -1,5 +1,5 @@
 function [f]=idgt2(c,g1,p3,p4,p5)
-%IDGT2  2D Inverse discrete Gabor transform.
+%IDGT2  2D Inverse discrete Gabor transform
 %   Usage: f=idgt2(c,g,a);
 %          f=idgt2(c,g1,g2,a);
 %          f=idgt2(c,g1,g2,[a1 a2]);

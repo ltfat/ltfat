@@ -1,5 +1,5 @@
 function [c,Ls]=dwilt2(f,g1,p3,p4,p5)
-%DWILT2  2-D Discrete Wilson transform.
+%DWILT2  2-D Discrete Wilson transform
 %   Usage: c=dwilt2(f,g,M); 
 %          c=dwilt2(f,g1,g2,[M1,M2]);
 %          c=dwilt2(f,g1,g2,[M1,M2],[L1,L2]);

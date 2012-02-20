@@ -1,5 +1,5 @@
 function [g,tfr]=psech(L,p2,p3,p4)
-%PSECH  Sampled, periodized hyperbolic secant.
+%PSECH  Sampled, periodized hyperbolic secant
 %   Usage: g=psech(L);
 %          g=psech(L,tfr);
 %          g=psech(L,s,'samples);

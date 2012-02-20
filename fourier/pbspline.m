@@ -1,5 +1,5 @@
 function [g,nlen] = pbspline(L,order,a,varargin)
-%PBSPLINE   Periodized B-spline.
+%PBSPLINE   Periodized B-spline
 %   Usage:   g=pbspline(L,order,a,...);
 %            [g,nlen]=pbspline(L,order,a,...);
 %

@@ -1,5 +1,5 @@
 function xo=uquant(xi,varargin);
-%UQUANT  Simulate uniform quantization.
+%UQUANT  Simulate uniform quantization
 %   Usage:  x=uquant(x);
 %           x=uquant(x,nbits,xmax,...);
 %

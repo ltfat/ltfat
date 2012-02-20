@@ -1,5 +1,5 @@
 function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
-%DGTREAL  Discrete Gabor transform.
+%DGTREAL  Discrete Gabor transform for real-valued signals
 %   Usage:  c=dgtreal(f,g,a,M);
 %           c=dgtreal(f,g,a,M,L);
 %           [c,Ls]=dgtreal(f,g,a,M);

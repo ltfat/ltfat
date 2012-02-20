@@ -1,5 +1,5 @@
 function [f,g]=idgtreal(coef,g,a,M,varargin)
-%IDGTREAL  Inverse discrete Gabor transform.
+%IDGTREAL  Inverse discrete Gabor transform for real-valued signals
 %   Usage:  f=idgtreal(c,g,a,M);
 %           f=idgtreal(c,g,a,M,Ls);
 %

@@ -1,5 +1,5 @@
 function [xo]=largestn(xi,N,mtype)
-%LARGESTN   Keep N largest coefficients.
+%LARGESTN   Keep N largest coefficients
 %   Usage:  xo=largestn(x,N);
 %           xo=largestn(x,N,mtype);
 %

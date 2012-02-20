@@ -1,5 +1,5 @@
 function f=middlepad(f,L,varargin)
-%MIDDLEPAD  Symmetrically zero-extends or cuts a function.
+%MIDDLEPAD  Symmetrically zero-extends or cuts a function
 %   Usage:  h=middlepad(f,L);
 %           h=middlepad(f,L,dim);
 %           h=middlepad(f,L,...);

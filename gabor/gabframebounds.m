@@ -1,5 +1,5 @@
 function [AF,BF]=gabframebounds(g,a,M,L)
-%GABFRAMEBOUNDS  Calculate frame bounds of Gabor frame.
+%GABFRAMEBOUNDS  Calculate frame bounds of Gabor frame
 %   Usage:  fcond=gabframebounds(g,a,M);
 %           [A,B]=gabframebounds(g,a,M);
 %           [A,B]=gabframebounds(g,a,M,L);

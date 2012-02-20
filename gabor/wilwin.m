@@ -1,5 +1,5 @@
 function [g,info] = wilwin(g,M,L,callfun);
-%WILWIN  Compute a Wilson/WMDCT window from text or cell array.
+%WILWIN  Compute a Wilson/WMDCT window from text or cell array
 %   Usage: [g,info] = wilwin(g,M,L);
 %
 %   `[g,info]=wilwin(g,M,L)` computes a window that fits well with the

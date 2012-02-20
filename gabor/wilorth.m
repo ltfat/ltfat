@@ -1,5 +1,5 @@
 function [gt]=wilorth(p1,p2,p3)
-%WILORTH  Wilson orthonormal window.
+%WILORTH  Wilson orthonormal window
 %   Usage:   gt=wilorth(M,L);
 %            gt=wilorth(g,M);
 %            gt=wilorth(g,M,L);

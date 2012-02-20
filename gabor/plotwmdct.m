@@ -1,5 +1,5 @@
 function plotwmdct(coef,varargin)
-%PLOTWMDCT  Plot WMDCT coefficients.
+%PLOTWMDCT  Plot WMDCT coefficients
 %   Usage: plotwmdct(coef,);
 %          plotwmdct(coef,fs);
 %          plotwmdct(coef,fs,dynrange);

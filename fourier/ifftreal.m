@@ -1,5 +1,5 @@
 function f=ifftreal(c,N,dim);
-%IFFTREAL  Inverse FFT for real valued signals.
+%IFFTREAL  Inverse FFT for real valued signals
 %   Usage: f=ifftreal(c,N);
 %          f=ifftreal(c,N,dim);
 %

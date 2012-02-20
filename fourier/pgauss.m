@@ -1,5 +1,5 @@
 function [g,tfr]=pgauss(L,varargin)
-%PGAUSS  Sampled, periodized Gaussian.
+%PGAUSS  Sampled, periodized Gaussian
 %   Usage: g=pgauss(L);
 %          g=pgauss(L,tfr);
 %          g=pgauss(L,...);

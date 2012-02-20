@@ -1,5 +1,5 @@
 function [c,Ls,g]=dwilt(f,g,M,L)
-%DWILT  Discrete Wilson transform.
+%DWILT  Discrete Wilson transform
 %   Usage:  c=dwilt(f,g,M);
 %           c=dwilt(f,g,M,L);
 %           [c,Ls]=dwilt(f,g,M);

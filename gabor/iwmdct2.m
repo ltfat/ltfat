@@ -1,5 +1,5 @@
 function [f]=iwmdct2(c,g1,p3,p4)
-%IWMDCT2  2D Inverse windowed MDCT transform.
+%IWMDCT2  2D Inverse windowed MDCT transform
 %   Usage: f=iwmdct2(c,g);
 %          f=iwmdct2(c,g1,g2);
 %          f=iwmdct2(c,g1,g2,Ls);

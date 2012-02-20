@@ -1,5 +1,5 @@
 function [c,Ls]=wmdct2(f,g1,p3,p4,p5)
-%WMDCT2  2D Discrete windowed MDCT transform.
+%WMDCT2  2D Discrete windowed MDCT transform
 %   Usage: c=wmdct2(f,g,M); 
 %          c=wmdct2(f,g1,g2,[M1,M2]);
 %          c=wmdct2(f,g1,g2,[M1,M2],[L1,L2]);

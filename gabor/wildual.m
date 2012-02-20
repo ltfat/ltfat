@@ -1,5 +1,5 @@
 function [gamma]=wildual(g,M,L)
-%WILDUAL  Canonical dual window.
+%WILDUAL  Wilson dual window
 %   Usage:  gamma=wildual(g,M);
 %           gamma=wildual(g,M,L);
 %

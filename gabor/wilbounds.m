@@ -1,5 +1,5 @@
 function [AF,BF]=wilbounds(g,M,varargin)
-%WILBOUNDS  Calculate frame bounds of Wilson basis.
+%WILBOUNDS  Calculate frame bounds of Wilson basis
 %   Usage:  [AF,BF]=wilbounds(g,M)
 %           [AF,BF]=wilbounds(g,M,L)
 %

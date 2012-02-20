@@ -1,5 +1,5 @@
 function tfplot(coef,step,yr,varargin)
-%TFPLOT  Plot coefficient matrix on the TF plane.
+%TFPLOT  Plot coefficient matrix on the TF plane
 %   Usage: tfplot(coef,step,yr);
 %          tfplot(coef,step,yr,...);
 %

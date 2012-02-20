@@ -1,5 +1,5 @@
 function [AF,BF]=gabrieszbounds(varargin)
-%GABRIESZBOUNDS  Calculate Riesz sequence/basis bounds of Gabor frame.
+%GABRIESZBOUNDS  Calculate Riesz sequence/basis bounds of Gabor frame
 %   Usage:  fcond=gabrieszbounds(g,a,M);
 %           [A,B]=gabrieszbounds(g,a,M);
 %           [A,B]=gabrieszbounds(g,a,M,L);

@@ -1,5 +1,5 @@
 function gd=gabdual(g,a,M,L)
-%GABDUAL  Canonical dual window.
+%GABDUAL  Canonical dual window of Gabor frame
 %   Usage:  gd=gabdual(g,a,M);
 %           gd=gabdual(g,a,M,L);
 %

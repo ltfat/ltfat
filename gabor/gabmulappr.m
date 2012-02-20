@@ -1,5 +1,5 @@
 function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
-%GABMULAPPR  Best Approximation by a Gabor multiplier.
+%GABMULAPPR  Best Approximation by a Gabor multiplier
 %   Usage:  sym=gabmulappr(T,a,M);
 %           sym=gabmulappr(T,g,a,M);
 %           sym=gabmulappr(T,ga,gs,a,M);

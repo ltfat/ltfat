@@ -1,5 +1,5 @@
 function h=gabmul(f,c,p3,p4,p5)
-%GABMUL  Gabor multiplier.
+%GABMUL  Apply Gabor multiplier
 %   Usage:  h=gabmul(f,c,a);
 %           h=gabmul(f,c,g,a);
 %           h=gabmul(f,c,ga,gs,a);
