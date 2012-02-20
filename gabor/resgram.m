@@ -14,14 +14,14 @@ function []=resgram(f,varargin)
 %
 %     resgram(greasy,16000,'dynrange',70);
 %
-%   This will produce a reassigned spectrogram of the 'greasy' signal
+%   This will produce a reassigned spectrogram of the |greasy|_ signal
 %   without drowning the interesting features in noise.
 %
 %   `resgram` accepts the following additional arguments:
 %
 %
-%     'dynrange',r  Limit the dynamical range to `r` by using a colormap in
-%                   the interval `[chigh-r,chigh]`, where `chigh` is the highest
+%     'dynrange',r  Limit the dynamical range to *r* by using a colormap in
+%                   the interval $[chigh-r,chigh]$, where *chigh* is the highest
 %                   value in the plot. The default value of `[]` means to not
 %                   limit the dynamical range.
 %    
@@ -62,13 +62,13 @@ function []=resgram(f,varargin)
 %     'image'      Use `imagesc` to display the spectrogram. This is the
 %                  default.
 %    
-%     'clim',clim  Use a colormap ranging from `clim(1)` to `clim(2)`. These
+%     'clim',clim  Use a colormap ranging from $clim(1)$ to $clim(2)$. These
 %                  values are passed to `imagesc`. See the help on `imagesc`.
 %    
-%     'thr',r      Keep only the largest fraction `r` of the coefficients, and
+%     'thr',r      Keep only the largest fraction *r* of the coefficients, and
 %                  set the rest to zero.
 %    
-%     'fmax',y     Display `y` as the highest frequency. Default value of `[]`
+%     'fmax',y     Display *y* as the highest frequency. Default value of `[]`
 %                  means to use the Nyquest frequency.
 %    
 %     'xres',xres  Approximate number of pixels along x-axis / time.

@@ -24,8 +24,8 @@ function varargout=sgram(f,varargin)
 %
 %   The arguments must be character strings possibly followed by an argument:
 %
-%     'dynrange',r  Limit the dynamical range to `r` by using a colormap in
-%                   the interval `[chigh-r,chigh]`, where `chigh` is the highest
+%     'dynrange',r  Limit the dynamical range to *r* by using a colormap in
+%                   the interval $[chigh-r,chigh]$, where *chigh* is the highest
 %                   value in the plot. The default value of `[]` means to not
 %                   limit the dynamical range.
 %    
@@ -60,10 +60,10 @@ function varargout=sgram(f,varargin)
 %     'image'      Use `imagesc` to display the spectrogram. This is the
 %                  default.
 %    
-%     'clim',clim  Use a colormap ranging from `clim(1)` to `clim(2)`. These
+%     'clim',clim  Use a colormap ranging from $clim(1)$ to $clim(2)$. These
 %                  values are passed to `imagesc`. See the help on `imagesc`.
 %    
-%     'thr',r      Keep only the largest fraction `r` of the coefficients, and
+%     'thr',r      Keep only the largest fraction *r* of the coefficients, and
 %                  set the rest to zero.
 %    
 %     'fmax',y     Display `y` as the highest frequency. Default value of `[]`
@@ -92,10 +92,16 @@ function varargout=sgram(f,varargin)
 %   Examples:
 %   ---------
 %
-%   The 'greasy' signal is sampled using a sampling rate of 16 kHz. To
-%   display a spectrogram of 'greasy' with a dynamic range og 90 dB, use:::
+%   The |greasy|_ signal is sampled using a sampling rate of 16 kHz. To
+%   display a spectrogram of |greasy|_ with a dynamic range og 90 dB, use:::
 %
 %     sgram(greasy,16000,90);
+%
+%   To create a spectrogram with a window length of 20ms (which is
+%   typically used in speech analysis) use :::
+%
+%     fs=16000;
+%     sgram(greasy,fs,90,'wlen',round(20/1000*fs));
 %
 %   See also:  dgt, dgtreal
 

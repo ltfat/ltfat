@@ -11,15 +11,15 @@ function [f]=iwmdct2(c,g1,p3,p4)
 %   Output parameters:
 %         f       : Output data, matrix.
 %
-%   IWMDCT2(c,g) calculates a separable two dimensional inverse WMDCT
-%   transform of the input coefficients c using the window g. The number of
-%   channels is deduced from the size of the coefficients c.
+%   `iwmdct2(c,g)` calculates a separable two dimensional inverse |wmdct|_
+%   transform of the input coefficients *c* using the window *g*. The number of
+%   channels is deduced from the size of the coefficients *c*.
 %
-%   IWMDCT2(c,g1,g2) does the same using the window g1 along the first
-%   dimension, and window g2 the second dimension.
+%   `iwmdct2(c,g1,g2)` does the same using the window *g1* along the first
+%   dimension, and window *g2* along the second dimension.
 %
-%   IWMDCT2(c,g1,g2,Ls) cuts the signal to size Ls after the transform is
-%   done.
+%   `iwmdct2(c,g1,g2,Ls)` cuts the signal to size *Ls* after the transform
+%   is done.
 %
 %   See also:  wmdct2, dgt2, wildual
 
@@ -145,4 +145,3 @@ if inputwasreal
   f=real(f);
 end;
 
-%OLDFORMAT

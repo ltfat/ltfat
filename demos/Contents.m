@@ -5,7 +5,6 @@
 %   This page documents the demos.
 %
 %   Basic demos
-%     DEMO_SGRAM            - Spectrogram demo
 %     DEMO_DGT              - DGT and comparison to SGRAM
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
 %

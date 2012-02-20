@@ -3,51 +3,50 @@ function []=phaseplot(f,varargin)
 %   Usage: phaseplot(f,op1,op2, ... );
 %          phaseplot(f,fs,op1,op2, ... );
 %
-%   PHASEPLOT(f) plots the phase of f using a DGT.
+%   `phaseplot(f)` plots the phase of f using a |dgt|_.
 %
-%   PHASEPLOT(f,fs) does the same for a signal with sampling rate fs
-%   (sampled with fs samples per second);
+%   `phaseplot(f,fs)` does the same for a signal with sampling rate *fs* Hz.
 %
-%   PHASEPLOT should only be used for short signals (shorter than the
+%   `phaseplot` should only be used for short signals (shorter than the
 %   resolution of the screen), as there will otherwise be some visual
 %   aliasing, such that very fast changing areas will look very smooth.
-%   PHASEPLOT always calculates the phase of the full time/frequency plane
-%   (as opposed to SGRAM), and you therefore risk running out of memory
+%   `phaseplot` always calculates the phase of the full time/frequency plane
+%   (as opposed to |sgram|_), and you therefore risk running out of memory
 %   for long signals.
 %
-%   PHASEPLOT takes the following flags at the end of the line of input
+%   `phaseplot` takes the following flags at the end of the line of input
 %   arguments:
 %
-%-  'tfr',v   - Set the ratio of frequency resolution to time resolution.
-%               A value v=1 is the default. Setting v>1 will give better
-%               frequency resolution at the expense of a worse time
-%               resolution. A value of 0<v<1 will do the opposite.
-%
-%-  'wlen',s  - Window length. Specifies the length of the window
-%               measured in samples. See help of PGAUSS on the exact
-%               details of the window length.
-%
-%-  'nf'      - Display negative frequencies, with the zero-frequency
-%               centered in the middle. For real signals, this will just
-%               mirror the upper half plane. This is standard for complex
-%               signals.
-%
-%-  'tc'      - Time centering. Move the beginning of the signal to the
-%               middle of the plot. This is usefull for visualizing the
-%               window functions of the toolbox.
-%
-%-  'thr',r   - Keep the coefficients with a magnitude larger than r times the
-%               largest magnitude. Set the phase of the rest of the
-%               coefficients to zero. This is useful, because for small
-%               amplitude the phase values can be meaningless.
-%
-%-  'timeinv' - Display the phase as computed by a time-invariant
-%               DGT. This is the default.
-%
-%-  'freqinv' - Display the phase as computed by a frequency-invariant
-%               DGT.
-%
-%-  'fmax',y  - Display y as the highest frequency.
+%     'tfr',v     Set the ratio of frequency resolution to time resolution.
+%                 A value v=1 is the default. Setting v>1 will give better
+%                 frequency resolution at the expense of a worse time
+%                 resolution. A value of 0<v<1 will do the opposite.
+%  
+%     'wlen',s    Window length. Specifies the length of the window
+%                 measured in samples. See help of PGAUSS on the exact
+%                 details of the window length.
+%  
+%     'nf'        Display negative frequencies, with the zero-frequency
+%                 centered in the middle. For real signals, this will just
+%                 mirror the upper half plane. This is standard for complex
+%                 signals.
+%  
+%     'tc'        Time centering. Move the beginning of the signal to the
+%                 middle of the plot. This is usefull for visualizing the
+%                 window functions of the toolbox.
+%  
+%     'thr',r     Keep the coefficients with a magnitude larger than r times the
+%                 largest magnitude. Set the phase of the rest of the
+%                 coefficients to zero. This is useful, because for small
+%                 amplitude the phase values can be meaningless.
+%  
+%     'timeinv'   Display the phase as computed by a time-invariant
+%                 |dgt|_. This is the default.
+%  
+%     'freqinv'   Display the phase as computed by a frequency-invariant
+%                 |dgt|_.
+%  
+%     'fmax',y    Display y as the highest frequency.
 % 
 %   See also: phaselock
 %
@@ -187,5 +186,3 @@ else
   ylabel('Frequency')
 end;
 
-
-%OLDFORMAT
