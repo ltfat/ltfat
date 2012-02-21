@@ -1,7 +1,7 @@
 function gd=gabprojdual(gm,g,a,M,L);
 %GABPROJDUAL   Gabor Dual window by projection
-%   Usage:  gd=projdual(gm,g,a,M)
-%           gd=projdual(gm,g,a,M,L)
+%   Usage:  gd=gabprojdual(gm,g,a,M)
+%           gd=gabprojdual(gm,g,a,M,L)
 %
 %   Input parameters:
 %         gm    : Window to project.

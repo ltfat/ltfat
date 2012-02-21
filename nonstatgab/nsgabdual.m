@@ -1,5 +1,5 @@
 function gd=nsgabdual(g,a,M,varargin)
-%NSGABDUAL  Canonical dual window for nsionnary Gabor frames
+%NSGABDUAL  Canonical dual window for non-stationary Gabor frames
 %   Usage:  gd=nsgabdual(g,a,L)
 %
 %   Input parameters:
@@ -11,7 +11,7 @@ function gd=nsgabdual(g,a,M,varargin)
 %         gd : Cell array of canonical dual windows
 %
 %   `nsgabdual(g,a,M,L)` computes the canonical dual windows of the 
-%   nsionary discrete Gabor frame defined by windows given in *g* an
+%   non-stationary discrete Gabor frame defined by windows given in *g* an
 %   time-shifts given by *a*.
 %   
 %   `nsgabdual` is designed to be used with the functions |nsdgt|_ and

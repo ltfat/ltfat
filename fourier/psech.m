@@ -3,7 +3,7 @@ function [g,tfr]=psech(L,p2,p3,p4)
 %   Usage: g=psech(L);
 %          g=psech(L,tfr);
 %          g=psech(L,s,'samples);
-%          [g,tfr]=pgauss( ... );
+%          [g,tfr]=psech( ... );
 %
 %   Input parameters:
 %      L   : Length of vector.

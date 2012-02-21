@@ -1,7 +1,7 @@
 function [c,Ls] = unsdgtreal(f,g,a,M)
 %UNSDGTREAL  Uniform non-stationary Discrete Gabor transform
-%   Usage:  c=nsdgtreal(f,g,a,M);
-%           [c,Ls]=nsdgtreal(f,g,a,M);
+%   Usage:  c=unsdgtreal(f,g,a,M);
+%           [c,Ls]=unsdgtreal(f,g,a,M);
 %
 %   Input parameters:
 %         f     : Input signal.

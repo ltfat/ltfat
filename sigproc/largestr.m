@@ -1,9 +1,8 @@
 function [xo,N]=largestr(xi,p,mtype)
 %LARGESTR   Keep fixed ratio of largest coefficients
-%   Usage:  xo=LARGESTR(x,p);
-%           [xo,N]=LARGESTR(x,p);
-%           xo=LARGESTR(x,p,mtype);
-%           [xo,N]=LARGESTR(x,p,mtype);
+%   Usage:  xo=largestr(x,p);
+%           xo=largestr(x,p,mtype);  
+%           [xo,N]=largestr(...);
 %
 %   `largestr(x,p)` returns an array of the same size as *x* keeping
 %   the fraction *p* of the coefficients. The coefficients with the largest
