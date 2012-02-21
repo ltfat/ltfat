@@ -1,5 +1,5 @@
 function [s,fs]=greasy()
-%GREASY  Load the 'greasy' test signal.
+%GREASY  Load the 'greasy' test signal
 %   Usage:  s=greasy;
 %
 %   `greasy` loads the 'greasy' signal. It is a recording of a woman

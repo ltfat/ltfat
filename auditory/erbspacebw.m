@@ -1,5 +1,5 @@
 function [y,n] = erbspacebw(flow,fhigh,varargin)
-%ERBSPACE  Erbscale points specified by bandwidth
+%ERBSPACEBW  Erbscale points specified by bandwidth
 %   Usage: y=erbspacebw(flow,fhigh,bw,hitme);
 %          y=erbspacebw(flow,fhigh,bw);
 %          y=erbspacebw(flow,fhigh);

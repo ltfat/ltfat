@@ -1,6 +1,6 @@
 function outsig=rampsignal(insig,varargin)
-%RAMPUP  Rising ramp function
-%   Usage: outsig=rampup(insig,L);
+%RAMPSIGNAL  Ramp signal
+%   Usage: outsig=rampsignal(insig,L);
 %
 %   `rampsignal(insig,L)` applies a ramp function of length *L* to the
 %   beginning and the end of the input signal. The default ramp is a

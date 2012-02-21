@@ -1,5 +1,5 @@
 function [s,fs]=ltfatlogo()
-%LTFATLOGO  Load the 'ltfatlogo' test signal.
+%LTFATLOGO  Load the 'ltfatlogo' test signal
 %   Usage:  s=ltfatlogo;
 %
 %   `ltfatlogo` loads the 'ltfatlogo' signal. This is a sound synthezised

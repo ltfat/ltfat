@@ -1,7 +1,7 @@
 function [AF,BF]=filterbankrealbounds(g,a,varargin);
-%FILTERBANKBOUNDS  Frame bounds of filter bank for real signals only
-%   Usage: fcond=filterbankbounds(g,a);
-%          [A,B]=filterbankbounds(g,a);
+%FILTERBANKrealBOUNDS  Frame bounds of filter bank for real signals only
+%   Usage: fcond=filterbankrealbounds(g,a);
+%          [A,B]=filterbankrealbounds(g,a);
 %
 %   `filterbankrealbounds(g,a)` calculates the ratio $B/A$ of the frame
 %   bounds of the filterbank specified by *g* and *a*. The ratio is a measure

@@ -1,5 +1,5 @@
 function [s,fs]=linus()
-%LINUS  Load the 'linus' test signal.
+%LINUS  Load the 'linus' test signal
 %   Usage:  s=linus;
 %
 %   `linus` loads the 'linus' signal. It is a recording of Linus Thorvalds

@@ -1,5 +1,5 @@
 function gdout=filterbankrealdual(g,a,varargin);
-%FILTERBANKDUAL  Dual filters of filterbank for real signals only 
+%FILTERBANKREALDUAL  Dual filters of filterbank for real signals only 
 %   Usage:  gd=filterbankdual(g,a);
 %
 %   `filterabankdual(g,a)` computes the canonical dual filters of *g* for a

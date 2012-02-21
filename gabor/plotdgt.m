@@ -1,5 +1,5 @@
 function plotdgt(coef,a,varargin)
-%DGTPLOT  Plot DGT coefficients
+%PLOTDGT  Plot DGT coefficients
 %   Usage: plotdgt(coef,a);
 %          plotdgt(coef,a,fs);
 %          plotdgt(coef,a,fs,dynrange);

@@ -1,5 +1,5 @@
 function c=batmask()
-%BATMASK  Load a Gabor multiplier symbol for the 'bat' test signal.
+%BATMASK  Load a Gabor multiplier symbol for the 'bat' test signal
 %   Usage:  c=batmask;
 %
 %   `batmask` loads a Gabor multiplier with a 0/1 symbol that masks out

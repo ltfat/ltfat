@@ -1,5 +1,5 @@
 function [s,fs]=traindoppler()
-%TRAINDOPPLER  Load the 'traindoppler' test signal.
+%TRAINDOPPLER  Load the 'traindoppler' test signal
 %   Usage:  s=traindoppler;
 %
 %   `traindoppler` loads the 'traindoppler' signal. It is a recording

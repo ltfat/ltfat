@@ -1,5 +1,5 @@
 function [s,fs]=cocktailparty()
-%COCKTAILPARTY  Load the 'cocktailparty' test signal.
+%COCKTAILPARTY  Load the 'cocktailparty' test signal
 %   Usage:  s=cocktailparty;
 %
 %   `cocktailparty` loads the 'cocktailparty' signal. It is a recording of a

@@ -1,5 +1,5 @@
 function [s,fs]=gspi()
-%GSPI  Load the 'glockenspiel' test signal.
+%GSPI  Load the 'glockenspiel' test signal
 %
 %   `gspi` loads the 'glockenspiel' signal. This is a recording of a simple
 %   tune played on a glockenspiel. It is 262144 samples long, mono, recorded

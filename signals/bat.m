@@ -1,5 +1,5 @@
 function [s,fs]=bat()
-%BAT  Load the 'bat' test signal.
+%BAT  Load the 'bat' test signal
 %   Usage:  s=bat;
 %
 %   `bat` loads the 'bat' signal. It is a 400 samples long recording

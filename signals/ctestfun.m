@@ -1,5 +1,5 @@
 function [ftest]=ctestfun(L)
-%CTESTFUN  Complex 1-D test function.
+%CTESTFUN  Complex 1-D test function
 %   Usage:  ftest=ctestfun(L);
 %
 %   `ctestfun(L)` returns a test signal consisting of a superposition of a

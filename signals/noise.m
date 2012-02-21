@@ -1,5 +1,5 @@
 function outsig = noise(siglen,varargin)
-% NOISE  Stochastic noise generator.
+% NOISE  Stochastic noise generator
 %   Usage: outsig = noise(siglen,nsigs,type);
 %
 %   Input parameters:

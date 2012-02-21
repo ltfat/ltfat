@@ -1,5 +1,5 @@
 function [s,fs]=otoclick()
-%OTOCLICK  Load the 'otoclick' test signal.
+%OTOCLICK  Load the 'otoclick' test signal
 %   Usage:  s=otoclick;
 %
 %   `otoclick` loads the 'otoclick' signal. The signal is a click-evoked

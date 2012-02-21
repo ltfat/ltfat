@@ -1,6 +1,6 @@
 function gtout=filterbankrealtight(g,a,varargin);
-%FILTERBANKTIGHT  Tight filters of filterbank for real signals only 
-%   Usage:  gd=filterbanktight(g,a);
+%FILTERBANKREALTIGHT  Tight filters of filterbank for real signals only 
+%   Usage:  gd=filterbankrealtight(g,a);
 %
 %   `filterabanktight(g,a)` computes the canonical tight filters of *g* for a
 %   channel subsampling rate of *a* (hop-size). The tight filters work only
