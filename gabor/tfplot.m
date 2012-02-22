@@ -106,11 +106,19 @@ if flags.do_lin
 end;
   
 % 'dynrange' parameter is handled by thresholding the coefficients.
-if ~isempty(kv.dynrange)
+% clim overrides dynrange ??
+if flags.do_dynrange
   maxclim=max(coef(:));
-  coef(coef<maxclim-kv.dynrange)=maxclim-kv.dynrange;
+  kv.clim=[maxclim-kv.dynrange,maxclim];  
 end;
 
+% Handle clim by thresholding and cutting
+if ~isempty(kv.clim)
+  kv.clim
+  coef(coef<kv.clim(1))=kv.clim(1);
+  coef(coef>kv.clim(2))=kv.clim(2);
+end;
+  
 if flags.do_tc
   xr=(-floor(N/2):floor((N-1)/2))*step;
   coef=fftshift(coef,2);
@@ -128,15 +136,15 @@ yr=linspace(yr(1),yr(2),M);
 
 switch(flags.plottype)
   case 'image'
-    if flags.do_clim
-      imagesc(xr,yr,coef,kv.clim);
-    else
+    %if flags.do_clim
+    %  imagesc(xr,yr,coef,kv.clim);
+    %else
       imagesc(xr,yr,coef);
-    end;
+    %end;
   case 'contour'
     contour(xr,yr,coef);
   case 'surf'
-    surf(xr,yr,coef);
+    surf(xr,yr,coef,'EdgeColor','none');
   case 'pcolor'
     pcolor(xr,yr,coef);
 end;

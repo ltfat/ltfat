@@ -18,12 +18,12 @@ function []=phaseplot(f,varargin)
 %   arguments:
 %
 %     'tfr',v     Set the ratio of frequency resolution to time resolution.
-%                 A value v=1 is the default. Setting v>1 will give better
+%                 A value $v=1$ is the default. Setting $v>1$ will give better
 %                 frequency resolution at the expense of a worse time
-%                 resolution. A value of 0<v<1 will do the opposite.
+%                 resolution. A value of $0<v<1$ will do the opposite.
 %  
 %     'wlen',s    Window length. Specifies the length of the window
-%                 measured in samples. See help of PGAUSS on the exact
+%                 measured in samples. See help of |pgauss|_ on the exact
 %                 details of the window length.
 %  
 %     'nf'        Display negative frequencies, with the zero-frequency
@@ -47,6 +47,17 @@ function []=phaseplot(f,varargin)
 %                 |dgt|_.
 %  
 %     'fmax',y    Display y as the highest frequency.
+%
+%     'colorbar'   Display the colorbar. This is the default.
+%    
+%     'nocolorbar'  Do not display the colorbar.
+%
+%   For the best result when using `phaseplot`, use a circulant color
+%   map, for instance `hsv`. The following code shows the phaseplot of a
+%   periodic, hyperbolic secant visualized using the `hsv` colormap:::
+%
+%     phaseplot(psech(200),'tc','nf');
+%     colormap(hsv);
 % 
 %   See also: phaselock
 %
@@ -66,11 +77,16 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
+definput.import={'ltfattranslate','normalize','tfplot'};
+% Override the setting from tfplot, because phaseplot only uses the 'lin'
+% plotting.
+definput.flags.log={'lin'};
+definput.importdefaults={'lin'};
+
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};
 definput.flags.tc={'notc','tc'};
 
-definput.flags.clim={'noclim','clim'};
 definput.flags.fmax={'nofmax','fmax'};
 definput.flags.phase={'timeinv','freqinv'};
 
@@ -80,35 +96,24 @@ else
   definput.flags.posfreq={'nf','posfreq'};
 end;
 
-definput.keyvals.fs=[];
 definput.keyvals.tfr=1;
 definput.keyvals.wlen=0;
+definput.keyvals.fmax=[];
 definput.keyvals.thr=[];
-definput.keyvals.fmax=0;
 
 [flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
-% Resampling rate: Used when fmax is issued.
-resamp=1;
-
-if flags.do_tc
-  f=fftshift(f);
-end;
-
-dofs=~isempty(fs);
-
 % Downsample
-if flags.do_fmax
-  if dofs
+if ~isempty(kv.fmax)
+  if ~isempty(fs)
     resamp=kv.fmax*2/fs;
   else
     resamp=kv.fmax*2/length(f);
   end;
 
   f=fftresample(f,round(length(f)*resamp));
+  kv.fs=2*kv.fmax;
 end;
-
-Ls=length(f);
 
 % Always do the full STFT
 L=length(f);
@@ -122,7 +127,7 @@ if flags.do_wlen
   kv.tfr=kv.wlen^2/L;
 end;
 
-g={'gauss',kv.tfr};
+g={'gauss',kv.tfr,flags.norm};
 
 if flags.do_nf
   coef=dgt(f,g,a,M,flags.phase);
@@ -140,49 +145,11 @@ end
 coef = angle(coef);
 
 if flags.do_nf
-  % Move zero frequency to the center.
-  coef=fftshift(coef,1);
-
-  if flags.do_fmax
-    yr=-fmax:fmax/M:fmax;
-  else
-    if dofs
-      yr=-fs/2:fs/M:fs/2;
-    else
-      yr=-L/2:b:L/2;
-    end;
-  end;
-
+  plotdgt(coef,a,'argimport',flags,kv);
 else
-  if flags.do_fmax
-    yr=0:fmax/M:fmax;
-  else
-    if dofs
-      yr=0:fs/M:fs/2;
-    else
-      yr=0:b:L/2;
-    end;
-  end;
+  plotdgtreal(coef,a,M,'argimport',flags,kv);
 end;
 
-if flags.do_tc
-  xr=-floor(N/2)*a:a:floor((N-1)/2)*a;
-else
-  xr=0:a:N*a-1;
+if nargout>0
+  varargout={coef};
 end;
-
-if ~isempty(fs)
-  % Scale x-axis by sampling rate.
-  xr=xr/fs;  
-end;
-
-imagesc(xr,yr,coef);
-axis('xy');
-if dofs
-  xlabel('Time (s)')
-  ylabel('Frequency (Hz)')
-else
-  xlabel('Time')
-  ylabel('Frequency')
-end;
-

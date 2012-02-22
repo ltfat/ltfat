@@ -47,11 +47,7 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'ltfattranslate','tfplot'};
-definput.keyvals.fc=[];
-definput.keyvals.ntickpos=10;
-definput.keyvals.tick=[];
-definput.groups.audtick={'tick',[0,50,100,250,500,1000,2000,4000,8000,16000,32000]};
+definput.import={'plotfilterbank','tfplot','ltfattranslate'};
 
 [flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
   
