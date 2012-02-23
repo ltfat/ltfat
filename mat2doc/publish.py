@@ -47,7 +47,7 @@ if 'stagemat' in todo:
     os.system('rm '+fname+'.zip')
 
     printdoc.dos2unix(cwd+'ltfat')
-    os.system('gtar zcvf '+fname+'.tgz ltfat/')
+    os.system('tar zcvf '+fname+'.tgz ltfat/')
 
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
@@ -66,7 +66,7 @@ if 'releasemat' in todo:
     os.system('rm '+fname+'.zip')
 
     printdoc.dos2unix(cwd+'ltfat')
-    os.system('gtar zcvf '+fname+'.tgz ltfat/')
+    os.system('tar zcvf '+fname+'.tgz ltfat/')
 
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
@@ -85,7 +85,7 @@ if 'releasebranch' in todo:
     os.system('rm '+fname+'.zip')
 
     printdoc.dos2unix(cwd+'ltfat')
-    os.system('gtar zcvf '+fname+'.tgz ltfat/')
+    os.system('tar zcvf '+fname+'.tgz ltfat/')
 
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
@@ -99,7 +99,7 @@ if 'releasetestbranch' in todo:
     os.system('rm '+fname+'.zip')
 
     printdoc.dos2unix(cwd+'ltfat')
-    os.system('gtar zcvf '+fname+'.tgz ltfat/')
+    os.system('tar zcvf '+fname+'.tgz ltfat/')
 
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
