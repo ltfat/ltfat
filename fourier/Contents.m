@@ -1,6 +1,6 @@
 % LTFAT - Basic Fourier and DCT analysis.
 %
-%  Peter L. Soendergaard, 2008.
+%  Peter L. Soendergaard, 2008 - 2012.
 %
 %  Basic Fourier analysis
 %    DFT            -  Unitary discrete Fourier transform.
@@ -19,6 +19,7 @@
 %    PEVEN          -  Even part of periodic function.
 %    PODD           -  Odd part of periodic function.
 %    PCONV          -  Periodic convolution.
+%    PXCORR         -  Periodic cross correlation.
 %    PFILT          -  Apply filter with periodic boundary conditions.
 %    ISEVENFUNCTION -  Test if function is even.
 %    MIDDLEPAD      -  Cut or extend even function.
