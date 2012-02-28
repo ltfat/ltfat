@@ -39,7 +39,7 @@ function [] = plotfilterbank(coef,a,varargin)
 %                   option to specify the tick position manually.
 %
 %     'audtick'     Use ticks suitable for visualizing an auditory
-%                   filterbank. Same as `'tick',[0,50,100,250,500,1000,...]`.
+%                   filterbank. Same as `'tick',[0,100,250,500,1000,...]`.
 %
 %   See also:  filterbank, ufilterbank, tfplot, sgram
 
