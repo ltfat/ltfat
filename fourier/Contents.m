@@ -13,6 +13,7 @@
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot FFTREAL coefficients.
 %    CONVOLVE       -  Fast, non-periodic convolution.
+%    DOMAINCOLOR    -  Convert complex values to color.
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.
