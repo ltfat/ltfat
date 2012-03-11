@@ -111,5 +111,8 @@ if info.isfir==0
   if info.istight
     g=g*sqrt(2);
   end;
+  if info.isdual
+    g=g*2;
+  end;
 end;
 
