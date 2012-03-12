@@ -39,7 +39,7 @@ def mycopyrightfun(self):
 conf.copyright=mycopyrightfun
 
 contentsfiles=['Contents','gabor/Contents','fourier/Contents',
-               'filterbank/Contents','nonstatgab/Contents',
+               'filterbank/Contents','nonstatgab/Contents','frames/Contents',
                'sigproc/Contents','sparsereg/Contents','auditory/Contents',
                'demos/Contents','signals/Contents']
 

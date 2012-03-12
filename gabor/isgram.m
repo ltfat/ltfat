@@ -158,7 +158,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
       
       if flags.do_print
         if mod(iter,kv.printstep)==0
-          fprintf('ISGRAM: Iteration %i, residual = %f.\n',iter,relres(iter));
+          fprintf('ISGRAM: Iteration %i, residual = %f\n',iter,relres(iter));
         end;    
       end;
       

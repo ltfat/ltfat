@@ -1,4 +1,21 @@
 function outsig=framet(insig,F);
+%FRAMET  Frame transform
+%   Usage: c=framet(f,F);
+%
+%   `c=framet(f,F)` computes the frame coefficients *c* of the input
+%   signal *f* using the frame *F*. The frame object *F* must have been
+%   created using |newframe|_.
+%
+%   If *f* is a matrix, the transform will be applied along the columns
+%   of *f*. If *f* is an N-D array, the transform will be applied along
+%   the first non-singleton dimension.
+%
+%   The output coefficients are stored as columns. This is usually
+%   **not** the same format as the 'native' format of the frame. As an
+%   examples, the output from |framet|_ for a gabor frame cannot be
+%   passed to |idgt|_ without a reshape.
+%
+%   See also: newframe, iframet, plotframe
   
 switch(F.type)
  case 'dgt'

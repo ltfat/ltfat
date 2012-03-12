@@ -1,4 +1,12 @@
 function outsig=iframet(insig,F);
+%IFRAMET  Inverse frame transform
+%   Usage: f=iframet(c,F);
+%
+%   `f=framet(c,F)` constructs a signal *f* from the frame coefficients *c*
+%   using the frame *F*. The frame object *F* must have been created using
+%   |newframe|_.
+%
+%   See also: newframe, framet, plotframe
   
 switch(F.type)
  case 'dgt'

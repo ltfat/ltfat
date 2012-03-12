@@ -1,5 +1,5 @@
 function [f,relres,iter]=iframeabs(s,F,varargin)
-%IFRAMEABS  Spectrogram inversion
+%IFRAMEABS  Reconstruction from magnitude of coefficients
 %   Usage:  f=iframeabs(s,F);
 %           f=iframeabs(s,F,Ls);
 %           [f,relres,iter]=iframeabs(...);
@@ -20,10 +20,10 @@ function [f,relres,iter]=iframeabs(s,F,varargin)
 %
 %   using an iterative method.
 %
-%   `iframeabs(c,g,a,Ls)` does as above but cuts or extends *f* to length *Ls*.
+%   `iframeabs(s,F,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
-%   If the phase of the spectrogram is known, it is much better to use
-%   `idgt`.
+%   If the phase of the coefficients *s* is known, it is much better to use
+%   `iframet`.
 %
 %   `[f,relres,iter]=iframeabs(...)` additionally return the residuals in a
 %   vector *relres* and the number of iteration steps *iter*.
