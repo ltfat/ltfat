@@ -1,34 +1,22 @@
-function [V,D]=gabmuleigs(K,c,p3,varargin)
-%GABMULEIGS  Eigenpairs of Gabor multiplier
-%   Usage:  h=gabmuleigs(K,c,g,a);
-%           h=gabmuleigs(K,c,a);
-%           h=gabmuleigs(K,c,ga,gs,a);
+function [V,D]=framemuleigs(F,coef,varargin)
+%FRAMEMULEIGS  Eigenpairs of frame multiplier
+%   Usage:  h=framemuleigs(F,c,K);
+%           h=framemuleigs(F,c,K,...);
 %
 %   Input parameters:
+%         F     : Frame definition
 %         K     : Number of eigenvectors to compute.
 %         c     : symbol of Gabor multiplier
-%         g     : analysis/synthesis window
-%         ga    : analysis window
-%         gs    : synthesis window
-%         a     : Length of time shift.
 %   Output parameters:
 %         V     : Matrix containing eigenvectors.
 %         D     : Eigenvalues.
 %
-%   `gabmuleigs(K,c,g,a)` computes the *K* largest eigenvalues and eigen-
-%   vectors of the Gabor multiplier with symbol *c* and time shift *a*.  The
-%   number of channels is deduced from the size of the symbol *c*.  The
-%   window *g* will be used for both analysis and synthesis.
-%
-%   `gabmuleigs(K,c,ga,gs,a)` does the same using the window the window *ga*
-%   for analysis and *gs* for synthesis.
-%
-%   `gabmuleigs(K,c,a)` does the same using the a tight Gaussian window of
-%   for analysis and synthesis.
+%   `framemuleigs(F,c,K)` computes the *K* largest eigenvalues and eigen-
+%   vectors of the frame multiplier with symbol *c*.
 %
 %   If *K* is empty, then all eigenvalues/pairs will be returned.
 %
-%   `gabmuleigs` takes the following parameters at the end of the line of input
+%   `framemuleigs` takes the following parameters at the end of the line of input
 %   arguments:
 %
 %     'tol',t      Stop if relative residual error is less than the
@@ -38,7 +26,7 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %
 %     'iter'       Call `eigs` to use an iterative algorithm.
 %
-%     'full'       Call `eig` to sole the full problem.
+%     'full'       Call `eig` to solve the full problem.
 %
 %     'auto'       Use the full method for small problems and the
 %                  iterative method for larger problems. This is the
@@ -52,12 +40,24 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %
 %     'quiet'      Don't print anything, this is the default.
 %
+%   Examples:
+%   ---------
+%
+%   The following example calculates and plots the first eigenvector of the
+%   Gabor multiplier given by the |batmask|_ function. Note that the mask
+%   must be converted to a column vector to work with in this framework:::
+%
+%     mask=batmask;
+%     F=newframe('dgt','gauss','dual',10,40);
+%     [V,D]=framemuleigs(F,mask(:));
+%     sgram(V(:,1),'dynrange',90);
+%
 %   See also: gabmul, dgt, idgt, gabdual, gabtight
 
 % Change this to 1 or 2 to see the iterative method in action.
 printopts=0;
 
-if nargin<3
+if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
@@ -67,38 +67,7 @@ else
   doV=0;
 end;
 
-M=size(c,1);
-N=size(c,2);
-
-istight=1;
-if numel(p3)==1
-  % Usage: h=gabmuleigs(c,K,a);  
-  a=p3;
-  L=N*a;
-  ga=gabtight(a,M,L);
-  gs=ga;
-  arglist=varargin;
-else 
-  if numel(varargin{1})==1
-    % Usage: h=gabmuleigs(c,K,g,a);  
-    ga=p3;
-    gs=p3;
-    a=varargin{1};
-    L=N*a;
-    arglist=varargin(2:end);
-  else 
-    if numel(varargin{2})==1
-      % Usage: h=gabmuleigs(c,K,ga,gs,a);  
-      ga=p3;
-      gs=varargin{1};
-      a =varargin{2};
-      L=N*a;
-      istight=0;
-      arglist=varargin(3:end);
-    end;    
-  end;
-end;
-
+definput.keyvals.K=6;
 definput.keyvals.maxit=100;
 definput.keyvals.tol=1e-9;
 definput.keyvals.crossover=200;
@@ -106,14 +75,15 @@ definput.flags.print={'quiet','print'};
 definput.flags.method={'auto','iter','full'};
 
 
-[flags,kv]=ltfatarghelper({},definput,arglist);
-
+[flags,kv,K]=ltfatarghelper({'K'},definput,varargin);
 
 % Do the computation. For small problems a direct calculation is just as
 % fast.
 
+L=framelengthcoef(F,size(coef,1));
+
 if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
-  
+    
   if flags.do_print
     opts.disp=1;
   else
@@ -124,7 +94,7 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   opts.tol    = kv.tol;
   
   % Setup afun
-  afun(1,c,ga,gs,a,M,L)
+  afun(1,coef,F)
   
   if doV
     [V,D] = eigs(@afun,L,K,'LM',opts);
@@ -134,8 +104,9 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
 
 else
   % Compute the transform matrix.
-  bigM=tfmat('gabmul',c,ga,gs,a);
+  bigM=frsyn(F,diag(coef)*frana(F,eye(L)));
 
+  size(bigM)
   if doV
     [V,D]=eig(bigM);
   else
@@ -165,21 +136,13 @@ end;
 % The function has been written in this way, because Octave (at the time
 % of writing) does not accept additional parameters at the end of the
 % line of input arguments for eigs
-function y=afun(x,c_in,ga_in,gs_in,a_in,M_in,L_in)
+function y=afun(x,c_in,F_in)
   persistent c;
-  persistent ga;
-  persistent gs;
-  persistent a;
-  persistent M;
-  persistent L; 
+  persistent F;
   
   if nargin>1
     c  = c_in; 
-    ga = ga_in;
-    gs = gs_in;
-    a  = a_in; 
-    M  = M_in; 
-    L  = L_in;
+    F  = F_in; 
   else
-    y=comp_idgt(c.*comp_dgt(x,ga,a,M,L,0),gs,a,M,L,0);
+    y=frsyn(F,c.*frana(F,x));
   end;

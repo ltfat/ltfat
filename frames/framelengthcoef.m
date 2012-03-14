@@ -1,9 +1,9 @@
-function L=framelengthcoef(coef,F);
+function L=framelengthcoef(F,Ncoef);
 %FRAMELENGTHCOEF  Frame length from signal
-%   Usage: L=framelengthcoef(Ls,F);
+%   Usage: L=framelengthcoef(F,Ncoef);
 %
-%   `framelengthcoef(coef,F)` returns the length of the frame *F*, such that
-%   *F* is long enough to expand the coefficients *coef*.
+%   `framelengthcoef(F,Ncoef)` returns the length of the frame *F*, such that
+%   *F* is long enough to expand the coefficients of length *Ncoef*.
 %
 %   If instead a signal is given, call |framelengthsignal|_.
 %
@@ -11,12 +11,10 @@ function L=framelengthcoef(coef,F);
   
 switch(F.type)
  case 'dgt'
-  [MN,W]=size(coef);
-  L=MN/F.M*F.a;
+  L=Ncoef/F.M*F.a;
  case 'dgtreal'
-  [MN,W]=size(coef);
-  L=MN/(floor(F.M/2)+1)*F.a;
+  L=Ncoef/(floor(F.M/2)+1)*F.a;
  otherwise
   % handle all the bases
-  L=size(coef,1);
+  L=Ncoef;
 end;

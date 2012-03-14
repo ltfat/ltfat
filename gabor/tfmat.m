@@ -40,10 +40,10 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %   with *M* channels.
 %
 %   `tfmat('gabmul',sym,a)` return the matrix of the Gabor multiplier with
-%   symbol sym and time shift *a*. `tfmat('gabmul',c,g,a)` does the same using
-%   the window *g* for both analysis and
-%   synthesis. `tfmat('gabmul',sym,ga,gs,a)` does the same using *ga* as
-%   analysis window and *gs* as synthesis window.
+%   symbol sym and time shift *a*. `tfmat('gabmul',c,g,a)` does the same
+%   using the window *g* for both analysis and synthesis.
+%   `tfmat('gabmul',sym,ga,gs,a)` does the same using *ga* as analysis window
+%   and *gs* as synthesis window.
 %
 %   `tfmat('spread',c)` returns the matrix of the spreading operator with
 %   symbol *c*.

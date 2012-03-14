@@ -1,12 +1,12 @@
-function L=framelengthsignal(Ls,F);
+function L=framelengthsignal(F,Ls);
 %FRAMELENGTHSIGNAL  Frame length from signal
-%   Usage: L=framelengthsignal(Ls,F);
+%   Usage: L=framelengthsignal(F,Ls);
 %
-%   `framelengthsignal(Ls,F)` returns the length of the frame *F*, such that
+%   `framelengthsignal(F,Ls)` returns the length of the frame *F*, such that
 %   *F* is long enough to expand a signal of length *Ls*.
 %
 %   If the frame length is longer than the signal length, the signal will be
-%   zero-padded by |framet|_.
+%   zero-padded by |frana|_.
 %
 %   If instead a set of coefficients are given, call |framelengthcoef|_.
 %

@@ -1,31 +1,31 @@
-function [f,relres,iter]=iframeabs(s,F,varargin)
-%IFRAMEABS  Reconstruction from magnitude of coefficients
-%   Usage:  f=iframeabs(s,F);
-%           f=iframeabs(s,F,Ls);
-%           [f,relres,iter]=iframeabs(...);
+function [f,relres,iter]=frsynabs(F,s,varargin)
+%FRSYNABS  Reconstruction from magnitude of coefficients
+%   Usage:  f=frsynabs(F,s);
+%           f=frsynabs(F,s,Ls);
+%           [f,relres,iter]=frsynabs(...);
 %
 %   Input parameters:
-%         c       : Array of coefficients.
-%         F       : Frame 
+%         F       : Frame   
+%         s       : Array of coefficients.
 %         Ls      : length of signal.
 %   Output parameters:
 %         f       : Signal.
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `iframeabs(s,F)` attempts to find a signal which has `s` as the absolute
+%   `frsynabs(F,s)` attempts to find a signal which has `s` as the absolute
 %   value of its frame coefficients ::
 %
-%     s = abs(framet(f,F));
+%     s = abs(frana(F,f));
 %
 %   using an iterative method.
 %
-%   `iframeabs(s,F,Ls)` does as above but cuts or extends *f* to length *Ls*.
+%   `frsynabs(F,s,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
 %   If the phase of the coefficients *s* is known, it is much better to use
-%   `iframet`.
+%   `frsyn`.
 %
-%   `[f,relres,iter]=iframeabs(...)` additionally return the residuals in a
+%   `[f,relres,iter]=frsynabs(...)` additionally returns the residuals in a
 %   vector *relres* and the number of iteration steps *iter*.
 %
 %   Generally, if the absolute value of the frame coefficients has not been
@@ -33,7 +33,7 @@ function [f,relres,iter]=iframeabs(s,F,varargin)
 %   result. If the coeffficients have been modified, the algorithm is not
 %   guaranteed to converge at all.
 %
-%   `iframeabs` takes the following parameters at the end of the line of input
+%   `frsynabs` takes the following parameters at the end of the line of input
 %   arguments:
 %
 %     'zero'       Choose a starting phase of zero. This is the default
@@ -76,7 +76,7 @@ definput.flags.method={'griflim','bfgs'};
 [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
 
 % Determine the proper length of the frame
-L=framelengthcoef(s,F);   
+L=framelengthcoef(F,size(s,1));   
 W=size(s,2);
 
 % Initialize windows to speed up computation
@@ -98,8 +98,8 @@ relres=zeros(kv.maxit,1);
 if flags.do_griflim
   
   for iter=1:kv.maxit
-    f=iframet(c,F);
-    c=framet(f,F);
+    f=frsyn(F,c);
+    c=frana(F,f);
     
     relres(iter)=norm(abs(c)-s,'fro')/norm_s;
     
@@ -107,7 +107,7 @@ if flags.do_griflim
     
     if flags.do_print
       if mod(iter,kv.printstep)==0
-        fprintf('IFRAMEABS: Iteration %i, residual = %f.\n',iter,relres(iter));
+        fprintf('FRSYNABS: Iteration %i, residual = %f.\n',iter,relres(iter));
       end;    
     end;
     

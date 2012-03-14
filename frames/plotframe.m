@@ -1,11 +1,11 @@
-function outsig=plotframe(insig,F,varargin);
+function outsig=plotframe(F,insig,varargin);
 %PLOTFRAME  Plot frame coefficients
-%   Usage: plotframe(c,f);
+%   Usage: plotframe(F,insig,...);
 %
-%   `plotframe(c,F)` plots the frame coefficients *c* using the plot
+%   `plotframe(F,c)` plots the frame coefficients *c* using the plot
 %   command associanted to the frame *F*.
 %
-%   `plotframe(c,F,...)` passes any additional parameters to the native
+%   `plotframe(F,c,...)` passes any additional parameters to the native
 %   plot routine. Please see the help on the specific plot routine for a
 %   complete description. 
 %
@@ -36,31 +36,50 @@ function outsig=plotframe(insig,F,varargin);
 %              Only show values in between $clim(1)$ and $clim(2)$. This
 %              is usually done by adjusting the colormap. See the help on `imagesc`.
 %
-%   See also: newframe, framet
+%   See also: newframe, frana
   
 switch(F.type)
  case 'dgt'
   [MN,W]=size(insig);
   N=MN/F.M;
   insig=reshape(insig,[F.M,N,W]);
-
   plotdgt(insig,F.a,varargin);
+ 
  case 'dgtreal'
   [MN,W]=size(insig);
   M2=floor(F.M/2)+1;
   N=MN/M2;
   insig=reshape(insig,[M2,N,W]);
   plotdgtreal(insig,F.a,F.M,varargin);
+ 
  case 'dwilt'
   [MN,W]=size(insig);
   N=MN/F.M;
   insig=reshape(insig,[2*F.M,N/2,W]);
   plotdwilt(insig,varargin);
+ 
  case 'wmdct'
   [MN,W]=size(insig);
   N=MN/F.M;
   insig=reshape(insig,[2*F.M,N/2,W]);
   plotwmdct(insig,varargin);
+
+ case 'dgt'
+  [MN,W]=size(insig);
+  N=MN/F.M;
+  insig=reshape(insig,[N,F.M,W]);
+  plotfilterbank(insig,F.a,varargin);
+  
+ case 'gen'
+  error(['%s: There is no default way of visualizing general frame ' ...
+         'coefficients.'],upper(mfilename));
+ case 'dft'
+  plotfft(insig,varargin);
+ case {'dcti','dctii','dctiii','dctiv',...
+       'dsti','dstii','dstiii','dstiv'}
+  % FIXME : This is not strictly correct, as half the transforms use an
+  % odd frequency centering.
+  plotfftreal(insig,varargin);
 end;
 
   

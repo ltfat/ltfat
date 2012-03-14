@@ -10,6 +10,9 @@
 %  Lasso methods for orthonormal Wilson/WMDCT bases
 %    WILGROUPLASSO - Group LASSO threshholding.
 %
+%  Lasso methods for frames
+%    FRAMELASSO    -  LASSO threshholding using Landweber iterations.
+%
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
 

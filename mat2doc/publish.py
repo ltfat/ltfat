@@ -71,6 +71,18 @@ if 'releasemat' in todo:
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
 
+if 'develmat' in todo:
+    printdoc.git_repoexport(tbpath,'master','ltfat',cwd)
+
+    fname=cwd+'ltfat-devel-'+versionstring
+    os.system('rm '+fname+'.zip')
+
+    printdoc.dos2unix(cwd+'ltfat')
+    os.system('tar zcvf '+fname+'.tgz ltfat/')
+
+    printdoc.unix2dos(cwd+'ltfat')
+    os.system('zip -r '+fname+'.zip ltfat/')
+
 if 'releasebranch' in todo:
     bname=sys.argv[2]
     printdoc.git_repoexport(tbpath,bname,'ltfat',cwd)
@@ -117,9 +129,9 @@ if 'stagewww' in todo:
     publishwww=cwd+'ltfatwww/'
     printdoc.autostage(tbwww)
     printdoc.git_stageexport(tbwww,publishwww)
-    os.system('cp ltfat-'+versionstring+'.zip '+publishwww+'/prerelease/')    
-    os.system('cp ltfat-'+versionstring+'.tgz '+publishwww+'/prerelease/')
-    os.system('cp ltfat-'+versionstring+'-win32.zip '+publishwww+'/prerelease/')
+    os.system('cp ltfat-devel-'+versionstring+'.zip '+publishwww+'/prerelease/')    
+    os.system('cp ltfat-devel-'+versionstring+'.tgz '+publishwww+'/prerelease/')
+    os.system('cp ltfat-devel-'+versionstring+'-win32.zip '+publishwww+'/prerelease/')
 
     os.system('rsync -av '+publishwww+' '+host+':'+www);
 

@@ -51,6 +51,9 @@ function tfplot(coef,step,yr,varargin)
 %
 %     'nocolorbar'  Do not display the colorbar.
 %
+%   If both `'clim'` and `'dynrange'` are specified, then `'clim'` takes
+%   precedence.
+%
 %   It is possible to customize the text by setting the following values:
 %
 %     'time', t       The word denoting time. Default is 'Time'
@@ -105,16 +108,15 @@ if flags.do_lin
   end;
 end;
   
-% 'dynrange' parameter is handled by thresholding the coefficients.
-% clim overrides dynrange ??
-if flags.do_dynrange
+% 'dynrange' parameter is handled by converting it into clim
+% clim overrides dynrange, so do nothing if clim is already specified
+if  ~isempty(kv.dynrange) && isempty(kv.clim)
   maxclim=max(coef(:));
-  kv.clim=[maxclim-kv.dynrange,maxclim];  
+  kv.clim=[maxclim-kv.dynrange,maxclim];
 end;
 
 % Handle clim by thresholding and cutting
 if ~isempty(kv.clim)
-  kv.clim
   coef(coef<kv.clim(1))=kv.clim(1);
   coef(coef>kv.clim(2))=kv.clim(2);
 end;
@@ -136,11 +138,7 @@ yr=linspace(yr(1),yr(2),M);
 
 switch(flags.plottype)
   case 'image'
-    %if flags.do_clim
-    %  imagesc(xr,yr,coef,kv.clim);
-    %else
-      imagesc(xr,yr,coef);
-    %end;
+   imagesc(xr,yr,coef);
   case 'contour'
     contour(xr,yr,coef);
   case 'surf'

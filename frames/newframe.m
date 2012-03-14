@@ -3,49 +3,153 @@ function F=newframe(ftype,varargin);
 %   Usage: F=newframe(ftype,...);
 %
 %   `F=newframe(ftype,...)` constructs a new frame object *F* of type
-%   *ftype*. Argument following *ftype* a specific to the type of frame
+%   *ftype*. Arguments following *ftype* are specific to the type of frame
 %   chosen.
 %
-%   `newframe('dgt',g,a,M)` constructs a Gabor frame with window *g*,
-%   time-shift *a* and *M* channels. See the help on |dgt|_ for more
-%   information.
+%   `newframe('dgt',ga,gs,a,M)` constructs a Gabor frame with analysis
+%   window *ga*, synthesis window *gs*, time-shift *a* and *M* channels. See
+%   the help on |dgt|_ for more information.
 %
-%   `newframe('dgtreal',g,a,M)` constructs a Gabor frame for real-values
-%   signals with window *g*, time-shift *a* and *M* channels. See the help
-%   on |dgtreal|_ for more information.
+%   `newframe('dgtreal',ga,gs,a,M)` constructs a Gabor frame for real-valued
+%   signals with analysis window *ga*, synthesis window *gs*,time-shift *a*
+%   and *M* channels. See the help on |dgtreal|_ for more information.
 %
-%   `newframe('dwilt',g,M)` constructs a Wilson basis with window *g*, and
-%   *M* channels. See the help on |dwilt|_ for more information.
+%   `newframe('dwilt',ga,gs,M)` constructs a Wilson basis with analysis window
+%   *ga*, synthesis window *gs*, and *M* channels. See the help on |dwilt|_ for more information.
 %
-%   `newframe('wmdct',g,M)` constructs a windowed MDCT basis with window
-%   *g*, and *M* channels. See the help on |wmdct|_ for more information.
+%   `newframe('wmdct',ga,gs,M)` constructs a windowed MDCT basis with
+%   analysis window *ga*, synthesis window *gs*, and *M* channels. See the
+%   help on |wmdct|_ for more information.
 %
-%   Example:
+%   `newframe('gen',ga,gs)` constructs an general frame with analysis
+%   matrix *ga* and synthesis matrix *gs*. The frame atoms must be stored
+%   as column vectors in the matrices.
+%
+%   `newframe('dft')` constructs a frame where the analysis operator is the
+%   |dft|_, and the synthesis operator is its inverse, |idft|_. Completely
+%   similar to this, you can enter the name of any of the cosine or sine
+%   transforms |dcti|_, |dctii|_, |dctiii|_, |dctiv|_, |dsti|_, |dstii|_,
+%   |dstiii|_ or |dstiv|_, or the `fft` transform.
+%
+%   `newframe('fftreal',L)` constructs an FFT frame for real-valued
+%   signals only, using |fftreal|_. You must specify the signal length
+%   *L*, otherwise the synthesis operation cannot work.
+%
+%   Dual and tight frames 
+%   ---------------------
+%
+%   All the systems that makes it possible to specify the analysis and
+%   synthesis frame uses the same simple mechanism for specifying canonical
+%   dual and canonical tight frames: simply specify `'dual'` if one frame
+%   should be the dual of the other, or `'tight'` if both are normalised
+%   tight frames.
+%
+%   This is most easily explained through three examples. The following
+%   creates a Gabor frame with a Gaussian analysis window and its
+%   canonical dual frame as synthesis frame::
+%
+%     F=newframe('dgt','gauss','dual',10,20);
+%
+%   The following example creates a Wilson basis with a Gaussian
+%   synthesis window, and its canonical dual frame as the analysis
+%   frame::
+% 
+%     F=newframe('dwilt','dual','gauss',20);
+%
+%   The following example creates a tight Gabor frame for real-valued
+%   signals only. The tight frame is used for both analysis and
+%   synthesis, and it is computed from a Gaussian window::
+%
+%     F=newframe('dgtreal','gauss','tight',10,20);
+%
+%   Note that the word `'tight'` must always appear instead of the synthesis
+%   frame definition, so it appears after the window definition.
+%
+%   Examples
 %   --------
 %
 %   The following example create a Gabor frame for real-valued signals,
 %   analysis and input signal and plots the frame coefficients:::
 %
-%      F=newframe('dgtreal','gauss',20,294);
-%      c=framet(greasy,F);
-%      plotframe(c,F);
+%      F=newframe('dgtreal','gauss','dual',20,294);
+%      c=frana(F,greasy);
+%      plotframe(F,c);
 %
-%   See also: framet, iframet, plotframe
+%   See also: frana, frsyn, plotframe
+
+% CUT: Window support is not yet good enough to automatically handle
+% filterbanks.
+% `newframe('ufilterbank',ga,gs,a)` constructs a uniform
+% filterbank with analysis windows *ga*, synthesis windows *gs* and uniform
+% time-shift *a*. See the help on |ufilterbank|_ for more information.
+
+
   
+if nargin<1
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
+if ~ischar(ftype)
+  error(['%s: First agument must be a string denoting the type of ' ...
+         'frame.'],upper(mfilename));
+end;
+
 ftype=lower(ftype);
+
+% Handle the windowed transforms
 switch(ftype)
- case 'dgt'
-  F.g=varargin{1};
-  F.a=varargin{2};
-  F.M=varargin{3};
- case 'dgtreal'
-  F.g=varargin{1};
-  F.a=varargin{2};
-  F.M=varargin{3};
+ case {'dgt','dgtreal','dwilt','wmdct','ufilterbank'}
+  F.ga=varargin{1};
+  F.gs=varargin{2};
+  
+  if strcmp(F.ga,'dual')
+    F.ga={'dual',F.gs};
+  end;
+  
+  if strcmp(F.gs,'dual')
+    F.gs={'dual',F.ga};
+  end;
+  
+  if strcmp(F.gs,'tight')
+    F.gs={'tight',F.ga};
+    F.ga={'tight',F.ga};
+  end;  
+  
+end;
+
+switch(ftype)
+ case {'dgt','dgtreal'}
+  F.a=varargin{3};
+  F.M=varargin{4};
  case {'dwilt','wmdct'}
-  F.g=varargin{1};
-  F.M=varargin{2};  
+  F.M=varargin{3};
+ case {'ufilterbank'}
+  F.a=varargin{3};
+ case 'gen'
+  F.ga=varargin{1};
+  F.gs=varargin{2};
+
+  if strcmp(F.ga,'dual')
+    F.ga=pinv(F.gs)';
+  end;
+  
+  if strcmp(F.gs,'dual')
+    F.gs=pinv(F.ga)';
+  end;
+  
+  if strcmp(F.gs,'tight')
+    [U,sv,V] = svd(F.ga,'econ');
+    
+    F.ga=U*V'; 
+    F.gs=F.ga;
+  end;
+ case {'dft','fft',...
+       'dcti','dctii','dctiii','dctiv',...
+       'dsti','dstii','dstiii','dstiv'}
+ case 'fftreal'
+  F.L=varargin{1};
+ otherwise
+    error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
 end;
 
 F.type=ftype;
-F.gd={'dual',F.g};

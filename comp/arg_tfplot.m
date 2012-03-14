@@ -7,6 +7,4 @@ function definput=arg_tfplot(definput)
   
   definput.keyvals.fs=[];
   definput.keyvals.clim=[];
-  definput.keyvals.dynrange=[];
-  
-  definput.flags.rangetype={'norangelimit','dynrange','clim'};
+  definput.keyvals.dynrange=[];  
