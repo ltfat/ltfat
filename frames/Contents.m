@@ -1,6 +1,6 @@
 % LTFAT - Frames
 %
-%  Peter L. Soendergaard, 2007 - 2012.
+%  Peter L. Soendergaard, 2012.
 %
 %  Basic methods
 %    NEWFRAME          - Construct a new frame
@@ -21,6 +21,7 @@
 %
 %  Advanced methods on frames
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
+%    FRSYNITER         - Iterative frame inversion
 %    FRAMEMULEIGS      - Eigenpairs of a frame multiplier
 %
 %  For help, bug reports, suggestions etc. please send email to
