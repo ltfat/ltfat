@@ -27,33 +27,17 @@ end;
 
 switch(F.type)
  case 'gen'
-  outsig=F.ga'*insig;
- 
+  outsig=F.ga'*insig; 
  case 'dgt'
-  outsig=dgt(insig,F.ga,F.a,F.M);
-  [M,N,W]=size(outsig);
-  outsig=reshape(outsig,[M*N,W]);
- 
+  outsig=framenative2coef(F,dgt(insig,F.ga,F.a,F.M));
  case 'dgtreal'
-  outsig=dgtreal(insig,F.ga,F.a,F.M);
-  [M,N,W]=size(outsig);
-  outsig=reshape(outsig,[M*N,W]);
- 
+  outsig=framenative2coef(F,dgtreal(insig,F.ga,F.a,F.M));
  case 'dwilt'
-  outsig=dwilt(insig,F.ga,F.M);
-  [M,N,W]=size(outsig);
-  outsig=reshape(outsig,[M*N,W]);
- 
+  outsig=framenative2coef(F,dwilt(insig,F.ga,F.M));
  case 'wmdct'
-  outsig=wmdct(insig,F.ga,F.M);
-  [M,N,W]=size(outsig);
-  outsig=reshape(outsig,[M*N,W]);
- 
+  outsig=framenative2coef(F,wmdct(insig,F.ga,F.M));
  case 'ufilterbank'
-  outsig=filterbank(insig,F.ga,F.a);
-  [N,M,W]=size(outsig);
-  outsig=reshape(outsig,[N*M,W]);
-  
+  outsig=framenative2coef(F,filterbank(insig,F.ga,F.a));
  case {'dft','fft','fftreal',...
        'dcti','dctii','dctiii','dctiv',...
        'dsti','dstii','dstiii','dstiv'}

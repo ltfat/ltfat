@@ -19,6 +19,12 @@
 %    FRAMELENGTHSIGNAL - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
 %
+%  Coefficients conversions
+%    FRAMECOEF2NATIVE  - Convert to native transform format
+%    FRAMENATIVE2COEF  - Convert native to column format
+%    FRAMECOEF2TF      - Convert to time-frequency plane layout
+%    FRAMETF2COEF      - Convert TF-plane layout to native
+%
 %  Advanced methods on frames
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %    FRSYNITER         - Iterative frame inversion

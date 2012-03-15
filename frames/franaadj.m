@@ -20,41 +20,21 @@ end;
 
 switch(F.type)
  case 'gen'
-  outsig=F.ga*insig;
-  
+  outsig=F.ga*insig;  
  case 'dgt'
-  [MN,W]=size(insig);
-  N=MN/F.M;
-  insig=reshape(insig,[F.M,N,W]);
-  outsig=idgt(insig,F.ga,F.a);
-  
+  outsig=idgt(framecoef2native(F,insig),F.ga,F.a);  
  case 'dgtreal'
-  [MN,W]=size(insig);
-  M2=floor(F.M/2)+1;
-  N=MN/M2;
-  insig=reshape(insig,[M2,N,W]);
-  outsig=idgtreal(insig,F.ga,F.a,F.M);
-  
+  outsig=idgtreal(framecoef2native(F,insig),F.ga,F.a,F.M);  
  case 'dwilt'
-  [MN,W]=size(insig);
-  N=MN/F.M;
-  insig=reshape(insig,[2*F.M,N/2,W]);
-  outsig=idwilt(insig,F.ga);
-  
+  outsig=idwilt(framecoef2native(F,insig),F.ga);  
  case 'wmdct'
-  [MN,W]=size(insig);
-  N=MN/F.M;
-  insig=reshape(insig,[F.M,N,W]);
-  outsig=iwmdct(insig,F.ga);
-  
+  outsig=iwmdct(framecoef2native(F,insig),F.ga);  
+ case 'ufilterbank'
+  outsig=ifilterbank(framecoef2native(F,insig),F.ga,F.a);   
+ 
  case {'dcti','dctiv','dsti','dstiv'}
   outsig=feval(F.type,insig);
   
- case 'ufilterbank'
-  [MN,W]=size(insig);
-  N=MN/F.M;
-  insig=reshape(insig,[N,F.M,W]);
-  outsig=ifilterbank(insig,F.ga,F.a);   
 
  case 'dctii'
   outsig=dctiii(insig);

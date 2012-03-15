@@ -1,11 +1,10 @@
-function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
-%GABELITISTLASSO  Elitist LASSO regression in Gabor domain
-%   Usage: [tc,xrec] = gabelitistlasso(x,g,a,M,lambda,C,tol,maxit)
+function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
+%FRAMEGROUPLASSO  Group LASSO regression in the TF-domain
+%   Usage: [tc,xrec] = framegrouplasso(F,x,group,lambda,C,maxit,tol)
+%
 %   Input parameters:
+%       F        : Frame definition
 %       x        : Input signal
-%       g        : Synthesis window function
-%       a        : Length of time shift
-%       M        : Number of channels
 %       lambda   : Regularization parameter, controls sparsity of the
 %                  solution
 %   Output parameters:
@@ -14,22 +13,22 @@ function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
 %      iter      : Number of iterations done.
 %      xrec      : Reconstructed signal
 %
-%   `gabelitistlasso(x,g,a,M,lambda)` solves the elitist LASSO regression
-%   problem in the Gabor domain: minimize a functional of the synthesis
-%   coefficients defined as the sum of half the $l^2$ norm of the
-%   approximation error and the mixed $l^2$ / $l^1$ norm of the coefficient
-%   sequence, with a penalization coefficient *lambda*.
+%   `framegrouplasso(F,x)` solves the group LASSO regression problem in
+%   the time-frequency domain: minimize a functional of the synthesis coefficients
+%   defined as the sum of half the $l^2$ norm of the approximation error and
+%   the mixed $l^1$ / $l^2$ norm of the coefficient sequence, with a penalization
+%   coefficient lambda.
 %  
-%   The matrix of Gabor coefficients is labelled in terms of groups and
+%   The matrix of time-frequency coefficients is labelled in terms of groups and
 %   members.  The obtained expansion is sparse in terms of groups, no
 %   sparsity being imposed to the members of a given group. This is achieved
-%   by a regularization term composed of $l^2$ norm within a group, and $l^1$ norm
-%   with respect to groups.
+%   by a regularization term composed of $l^2$ norm within a group, and
+%   $l^1$ norm with respect to groups.
 %
-%   `[tc,relres,iter] = gabelitistlasso(...)` returns the residuals *relres*
-%   in a vector and the number of iteration steps done, *maxit*.
+%   `[tc,relres,iter] = framegrouplasso(...)` returns the residuals *relres* in
+%   a vector and the number of iteration steps done, *maxit*.
 %
-%   `[tc,relres,iter,xrec] = gabelitistlasso(...)` returns the reconstructed
+%   `[tc,relres,iter,xrec] = framegrouplasso(...)` returns the reconstructed
 %   signal from the coefficients, *xrec*. Note that this requires additional
 %   computations.
 %
@@ -45,12 +44,12 @@ function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
 %                square of upper frame bound. Default value is the upper
 %                frame bound.
 %
-%     'tol',tol  Stopping criterion: minimum relative difference between
-%                norms in two consecutive iterations. Default value is
-%                1e-2.
-%
 %     'maxit',maxit
-%                Stopping criterion: maximal number of iterations to do. Default value is 100.
+%                Stopping criterion: maximal number of iterations. Default value is 100.
+%
+%     'tol',tol  Stopping criterion: minimum relative difference between
+%              norms in two consecutive iterations. Default value is
+%              1e-2.
 %
 %     'print'    Display the progress.
 %
@@ -60,19 +59,19 @@ function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
 %                If 'print' is specified, then print every p'th
 %                iteration. Default value is 10;
 %
-%   The parameters *C*, *itermax* and *tol* may also be specified on the
-%   command line in that order: `gabgrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
+%   The parameters *C*, *maxit* and *tol* may also be specified on the
+%   command line in that order: `framegrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative group thresholdings.
 %
 %   The relationship between the output coefficients is given by ::
 %
-%     xrec = idgt(tc,g,a);
+%     xrec = frsyn(F,tc);
 %
-%   See also: gablasso, gabframebounds
+%   See also: framelasso, framebounds
 
-if nargin<5
+if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
@@ -84,22 +83,20 @@ end
 definput.flags.group={'freq','time'};
 
 definput.keyvals.C=[];
-definput.keyvals.itermax=100;
+definput.keyvals.maxit=100;
 definput.keyvals.tol=1e-2;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
-% Determine transform length, and calculate the window.
-[x,g,L] = gabpars_from_windowsignal(x,g,a,M,[],'GABELITISTLASSO');
+L=framelengthsignal(F,length(x));
 
 if isempty(kv.C)
-  [A_dummy,kv.C] = gabframebounds(g,a,M,L);
+  [A_dummy,kv.C] = framebounds(F,L);
 end;
 
-
-tchoice = flags.do_time;
+tchoice=flags.do_time;
 N = floor(length(x)/a);
 
 % Normalization to turn lambda to a value comparable to lasso
@@ -113,27 +110,35 @@ end
 threshold = lambda/kv.C;
 
 % Initialization of thresholded coefficients
-c0 = dgt(x,g,a,M);
+c0 = franaadj(F,x);
 tc0 = c0;
 relres = 1e16;
 iter = 0;
 
 % Main loop
-while ((iter < kv.itermax)&&(relres >= kv.tol))
-    tc = c0 - dgt(idgt(tc0,g,a),g,a,M);
+while ((iter < kv.maxit)&&(relres >= kv.tol))
+    tc = c0 - franaadj(F,frsyn(F,tc0));
     tc = tc0 + tc/kv.C;
+    
+    %  ------------ Convert to TF-plane ---------
+    tc = framecoef2tf(F,tc);
     if tchoice
-        tc = tc';
+      tc = tc.';
     end;
-    tc = elitistthresh(tc,threshold,'soft');
+    tc = groupthresh(tc,threshold,'soft');
     if tchoice
-        tc = tc';
+      tc=tc.';
     end;
+    
+    % Convert back from TF-plane
+    tc=frametf2coef(F,tc);
+    % -------------------------------------------
+    
     relres = norm(tc(:)-tc0(:))/norm(tc0(:));
     tc0 = tc;
     iter = iter + 1;
     if flags.do_print
-      if mod(iter,kv.printstep)==0
+      if mod(iter,kv.printstep)==0        
         fprintf('Iteration %d: relative error = %f\n',iter,relres);
       end;
     end;
@@ -141,5 +146,6 @@ end
 
 % Reconstruction
 if nargout>3
-  xrec = idgt(tc,g,a);
+  xrec = frsyn(F,tc);
 end;
+
