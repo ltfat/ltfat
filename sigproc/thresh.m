@@ -40,6 +40,8 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %     legend('Soft thresh.','Hard thresh.','Wiener thresh.','Location','NorthWest');
 %
 %   See also: largestr, largestn
+%
+%   References: yu2008audio
 
 %   AUTHOR : Kai Siedenburg, Bruno Torresani and Peter Soendergaard.
 %   TESTING: OK

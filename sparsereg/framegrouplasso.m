@@ -19,11 +19,12 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %   the mixed $l^1$ / $l^2$ norm of the coefficient sequence, with a penalization
 %   coefficient lambda.
 %  
-%   The matrix of time-frequency coefficients is labelled in terms of groups and
-%   members.  The obtained expansion is sparse in terms of groups, no
-%   sparsity being imposed to the members of a given group. This is achieved
-%   by a regularization term composed of $l^2$ norm within a group, and
-%   $l^1$ norm with respect to groups.
+%   The matrix of time-frequency coefficients is labelled in terms of groups
+%   and members.  By default, the obtained expansion is sparse in terms of
+%   groups, no sparsity being imposed to the members of a given group. This
+%   is achieved by a regularization term composed of $l^2$ norm within a
+%   group, and $l^1$ norm with respect to groups. See the help on
+%   |groupthresh|_ for more information.
 %
 %   `[tc,relres,iter] = framegrouplasso(...)` returns the residuals *relres* in
 %   a vector and the number of iteration steps done, *maxit*.
@@ -59,6 +60,10 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %                If 'print' is specified, then print every p'th
 %                iteration. Default value is 10;
 %
+%   In addition to these parameters, this function accepts all flags from
+%   the |groupthresh|_ and |thresh|_ functions. This makes it possible to
+%   switch the grouping mechanism or inner thresholding type.
+%
 %   The parameters *C*, *maxit* and *tol* may also be specified on the
 %   command line in that order: `framegrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
 %
@@ -80,6 +85,7 @@ if ~isvector(x)
 end
 
 % Define initial value for flags and key/value pairs.
+definout.import={'thresh','groupthresh'};
 definput.flags.group={'freq','time'};
 
 definput.keyvals.C=[];
@@ -125,7 +131,7 @@ while ((iter < kv.maxit)&&(relres >= kv.tol))
     if tchoice
       tc = tc.';
     end;
-    tc = groupthresh(tc,threshold,'soft');
+    tc = groupthresh(tc,threshold,'argimport',flags,kv);
     if tchoice
       tc=tc.';
     end;

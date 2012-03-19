@@ -38,9 +38,9 @@ if (prod(size(lambda))~=1 || ~isnumeric(lambda))
 end;
 
 % Define initial value for flags and key/value pairs.
-definput.import={'thresh'};
+definput.import={'thresh','groupthresh'};
 definput.importdefaults={'soft'};
-definput.flags.gtype={'group','elite'};
+definput.flags.grouptype={'group','elite'};
 
 [flags,keyvals]=ltfatarghelper({},definput,varargin);
 
