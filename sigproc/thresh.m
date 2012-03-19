@@ -1,5 +1,5 @@
 function [xo,N]=thresh(xi,lambda,varargin);
-%THRESH   Threshold (hard/soft)
+%THRESH   Coefficient thresholding
 %   Usage:  x=thresh(x,lambda,...);
 %           [x,N]=thresh(x,lambda,...);
 %
@@ -18,6 +18,9 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %
 %     'hard'    Perform hard thresholding. This is the default.
 %
+%     'wiener'  Perform empirical Wiener shrinkage. This is in between
+%               soft and hard thresholding
+%
 %     'soft'    Perform soft thresholding.  
 %
 %     'full'    Returns the output as a full matrix. This is the default.
@@ -30,14 +33,15 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %   The following code produces a plot to demonstrate the difference
 %   between hard and soft thresholding for a simple linear input:::
 %
-%     t=linspace(-2.5,2.5,100);
+%     t=linspace(-4,4,100);
 %     plot(t,thresh(t,1,'soft'),'r',...
-%          t,thresh(t,1,'hard'),'.b');
-%     legend('Soft thresh.','Hard thresh','Location','NorthWest');
+%          t,thresh(t,1,'hard'),'.b',...
+%          t,thresh(t,1,'wiener'),'--g');
+%     legend('Soft thresh.','Hard thresh.','Wiener thresh.','Location','NorthWest');
 %
 %   See also: largestr, largestn
 
-%   AUTHOR : Peter Soendergaard and Bruno Torresani.  
+%   AUTHOR : Kai Siedenburg, Bruno Torresani and Peter Soendergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 
@@ -50,9 +54,7 @@ if (prod(size(lambda))~=1 || ~isnumeric(lambda))
 end;
 
 % Define initial value for flags and key/value pairs.
-definput.flags.iofun={'hard','soft'};
-definput.flags.outclass={'full','sparse'};
-
+definput.import={'thresh'};
 [flags,keyvals]=ltfatarghelper({},definput,varargin);
 
 if flags.do_sparse
@@ -67,9 +69,17 @@ if flags.do_sparse
   if flags.do_hard
     % Create a significance map pointing to the non-zero elements.
     signifmap=find(abs(xi)>=lambda);
-    
+   
     xo(signifmap)=xi(signifmap);
-  else
+  end;
+  
+  if flags.do_wiener
+    signifmap=find(abs(xi)>lambda);
+    xo(signifmap) = 1 - (lambda./abs(xi(signifmap))).^2;
+    xo(signifmap) = xi(signifmap).*xo(signifmap); 
+  end;
+  
+  if flags.do_soft
     % Create a significance map pointing to the non-zero elements.
     signifmap=find(abs(xi)>lambda);
     
@@ -103,7 +113,9 @@ else
       xo=xi.*(abs(xi)>=lambda);    
     end;
     
-  else
+  end;
+  
+  if flags.do_soft
     % In the following lines, the +0 is significant: It turns
     % -0 into +0, oh! the joy of numerics.
     
@@ -117,6 +129,23 @@ else
       xa=abs(xi)-lambda;    
       xo=((xa>=0).*xa+0).*sign(xi);
     end;
+  end;
+  
+  if flags.do_wiener
+
+    if nargout==2
+      xa = lambda./abs(xi);
+      xa(isinf(xa)) = 0;
+      xa = 1 - xa.^2;
+      mask = xa>0;
+      xo = xi.*xa.*mask;
+      N = sum(mask(:));
+    else
+      xa = lambda./abs(xi);
+      xa(isinf(xa)) = 0;
+      xa = 1 - xa.^2;
+      xo = xi.*xa.*(xa>0);
+    end
 
   end;
 end;
