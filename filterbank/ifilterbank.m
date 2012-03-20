@@ -32,6 +32,7 @@ if iscell(c)
   Mcoef=numel(c);
 else
   Mcoef=size(c,2);
+  W=size(c,3);    
 end;
 
 mustbeuniform=isnumeric(c);
@@ -60,15 +61,14 @@ end;
 if iscell(c)
   error('Not implemented yet.');
 else
-  N=size(c,1);
-  L=N*a;
-  W=size(c,3);
+ 
+  a=a(1);
   
   G=zeros(L,M);
   for ii=1:M
     G(:,ii)=fft(fir2long(g{ii},L));
   end;
-  
+    
   f=zeros(L,W);
   for w=1:W
     for m=1:M
