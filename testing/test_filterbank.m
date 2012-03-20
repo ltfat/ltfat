@@ -122,5 +122,12 @@ disp(s)
 s=sprintf(['FB FBR A  %0.5g %s'],AF-1,fail);
 disp(s)
 
+%% check filterbankwin
 
+r=ifilterbank(c_u,{'dual',g},a);
 
+res=norm(f-r);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+s=sprintf(['FB WIN DUAL %0.5g %s'],res,fail);
+disp(s)

@@ -24,13 +24,33 @@ end;
 definput.keyvals.Ls=[];
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,1);
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(callfun));
+end;
 
 if iscell(c)
   Mcoef=numel(c);
 else
   Mcoef=size(c,2);
 end;
+
+mustbeuniform=isnumeric(c);
+
+L=filterbanklengthcoef(c,a);
+
+[g,info]=filterbankwin(g,a,L,'normal');
+
+M=info.M;
+
+if length(a)>1 
+  if  length(a)~=M
+    error(['%s: The number of entries in "a" must match the number of ' ...
+           'filters.'],upper(callfun));
+  end;
+else
+  a=a*ones(M,1);
+end;
+
 
 if ~(size(c,2)==Mcoef)
   error(['Mismatch between the size of the input coefficients and the ' ...

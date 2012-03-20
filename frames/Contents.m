@@ -29,6 +29,8 @@
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %    FRSYNITER         - Iterative frame inversion
 %    FRAMEMULEIGS      - Eigenpairs of a frame multiplier
+%    FRAMELASSO        - LASSO threshholding using Landweber iterations.
+%    FRAMEGROUPLASSO   - Group LASSO threshholding.
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

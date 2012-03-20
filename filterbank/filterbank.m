@@ -1,4 +1,4 @@
-function c=filterbank(f,g,a);  
+function c=filterbank(f,g,a,varargin);  
 %FILTERBANK   Apply filterbank
 %   Usage:  c=filterbank(f,g,a);
 %
@@ -23,11 +23,32 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
+definput.keyvals.L=[];
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'FILTERBANK',0);
 
-L=ceil(max(Ls,longestfilter)/lcm_a)*lcm_a;
+mustbeuniform=0;
+  
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(callfun));
+end;
+  
+if isempty(L)
+  L=filterbanklengthsignal(a,Ls);
+end;
+
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
+
+if length(a)>1 
+  if  length(a)~=M
+    error(['%s: The number of entries in "a" must match the number of ' ...
+           'filters.'],upper(callfun));
+  end;
+else
+  a=a*ones(M,1);
+end;
 
 N=L./a;
 

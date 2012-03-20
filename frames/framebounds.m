@@ -1,4 +1,4 @@
-function [AF,BF]=framebounds(F,L);
+function [AF,BF]=framebounds(F,varargin);
 %FRAMEBOUNDS  Frame bounds
 %   Usage: fcond=framebounds(F);
 %          [A,B]=framebounds(F);
@@ -12,21 +12,36 @@ function [AF,BF]=framebounds(F,L);
 %   `[A,B]=framebounds(F)` returns the frame bounds *A* and *B* instead of
 %   just their ratio.
 %
+%   `framebounds(F,'s')` returns the framebounds of the synthesis frame
+%   instead of those of the analysis frame.
+%
 %   See also: newframe, framered
 
+definput.keyvals.L=[];
+definput.flags.system={'a','s'};
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+ 
 % Default values, works for the pure frequency transforms.
 AF=1;
 BF=1;
 
+if isfield(F,'ga')
+  if flags.do_a
+    g=F.ga;
+  else
+    g=F.gs;
+  end;
+end;
+
 switch(F.type)
  case 'gen'
-  V=svd(F.ga);
+  V=svd(g);
   AF=min(V)^2;
   BF=max(V)^2;
  case {'dgt','dgtreal'}
-  [AF,BF]=gabframebounds(F.ga,F.a,F.M); 
+  [AF,BF]=gabframebounds(g,F.a,F.M); 
  case {'dwilt','wmdct'}
-  [AF,BF]=wilbounds(F.ga,F.M); 
+  [AF,BF]=wilbounds(g,F.M); 
  case 'fft'
   AF=L;
   BF=L;

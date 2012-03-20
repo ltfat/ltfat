@@ -17,4 +17,6 @@ switch(F.type)
   L = longpar('dgt',Ls,F.a,F.M)
  case {'dwilt','wmdct'}
   L = longpar('dwilt',Ls,F.M)
+ case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
+  L = filterbanklengthsignal(F.a,Ls);
 end;

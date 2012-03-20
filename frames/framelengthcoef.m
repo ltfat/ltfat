@@ -1,5 +1,5 @@
 function L=framelengthcoef(F,Ncoef);
-%FRAMELENGTHCOEF  Frame length from signal
+%FRAMELENGTHCOEF  Frame length from coefficients
 %   Usage: L=framelengthcoef(F,Ncoef);
 %
 %   `framelengthcoef(F,Ncoef)` returns the length of the frame *F*, such that
@@ -7,7 +7,7 @@ function L=framelengthcoef(F,Ncoef);
 %
 %   If instead a signal is given, call |framelengthsignal|_.
 %
-%   See also: newframe, framelengthcoef
+%   See also: newframe, framelengthsignal
   
 switch(F.type)
  case 'dgt'

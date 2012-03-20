@@ -26,6 +26,6 @@ switch(F.type)
   [M,N,W]=size(coef);
   coef=reshape(coef,[M*N,W]); 
  otherwise
-  error(['%s: TF-plane layout not supported for this transform.',upper(mfilename));
+  error('%s: TF-plane layout not supported for this transform.',upper(mfilename));
 end;
 

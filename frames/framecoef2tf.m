@@ -48,6 +48,6 @@ switch(F.type)
   N=MN/M;
   coef=permute(reshape(coef,[N,M,W]),[2,1,3]);  
  otherwise
-  error(['%s: TF-plane layout not supported for this transform.',upper(mfilename));
+  error('%s: TF-plane layout not supported for this transform.',upper(mfilename));
 end;
 

@@ -13,14 +13,36 @@ function F=frameaccel(F,L);
 %   is only a benefit if *L* stays fixed.
 %
 %   See also: newframe, frana, framelengthsignal, framelengthcoef
-  
-switch(F.type)
- case {'dgt','dgtreal'}
-  [F.ga,F.g_info]  = gabwin(F.ga,F.a,F.M,L);
-  [F.gs,F.gs_info] = gabwin(F.gs,F.a,F.M,L);
- case {'dwilt','wmdct'}
-  [F.ga,F.g_info]  = wilwin(F.ga,F.M,L);
-  [F.gs,F.gs_info] = wilwin(F.gs,F.M,L);
+
+if ~isfield(F,'ga')
+  % Quick exit, the transform does not use analysis or synthesis
+  % windows.
+  return;
 end;
+  
+% From this point and on, we are sure that F.ga and F.gs exists.
+
+if ~isempty(F.ga)
+  
+  switch(F.type)
+   case {'dgt','dgtreal'}
+    [F.ga,F.g_info]  = gabwin(F.ga,F.a,F.M,L);
+   case {'dwilt','wmdct'}
+    [F.ga,F.g_info]  = wilwin(F.ga,F.M,L);
+  end;
+  
+end;
+
+if ~isempty(F.gs)
+  
+  switch(F.type)
+   case {'dgt','dgtreal'}
+    [F.gs,F.gs_info] = gabwin(F.gs,F.a,F.M,L);
+   case {'dwilt','wmdct'}
+    [F.gs,F.gs_info] = wilwin(F.gs,F.M,L);
+  end;
+  
+end;
+
 
   

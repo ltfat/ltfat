@@ -12,7 +12,7 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %       iter     : Number of iterations done.  
 %       xrec     : Reconstructed signal
 %
-%   `framelasso(x,a,M,lambda)` solves the LASSO (or basis pursuit denoising)
+%   `framelasso(x,lambda)` solves the LASSO (or basis pursuit denoising)
 %   regression problem for a general frame: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with
@@ -56,12 +56,16 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %
 %   The parameters *C*, *itermax* and *tol* may also be specified on the
 %   command line in that order: `framelasso(F,x,lambda,C,tol,maxit)`.
+%
+%   **Note**: If you do not specify *C*, it will be obtained as the upper
+%   framebound. Depending on the structure of the frame, this can be an
+%   expensive operation.
 %  
 %   See also: newframe, frsyn, framebounds
 %
 %   References: dademo04
 
-if nargin<3
+if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
@@ -92,10 +96,10 @@ L = framelengthsignal(F,size(x,1));
 F=frameaccel(F,L);  
 
 % Initialization of thresholded coefficients
-c0 = frana(F,x);
+c0 = frsynadj(F,x);
 
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F);
+  [A_dummy,kv.C] = framebounds(F,L,'s');
 end;
 
 % Various parameter initializations

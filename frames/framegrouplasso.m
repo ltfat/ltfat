@@ -98,41 +98,46 @@ definput.flags.print={'print','quiet'};
 
 L=framelengthsignal(F,length(x));
 
+F=frameaccel(F,L);
+
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F,L);
+  [A_dummy,kv.C] = framebounds(F,L,'s');
 end;
-
-tchoice=flags.do_time;
-N = floor(length(x)/a);
-
-% Normalization to turn lambda to a value comparable to lasso
-if tchoice
-    lambda = lambda * sqrt(N);
-else
-    lambda = lambda * sqrt(M);
-end
 
 % Various parameter initializations
 threshold = lambda/kv.C;
 
 % Initialization of thresholded coefficients
-c0 = franaadj(F,x);
+c0 = frsynadj(F,x);
+
+% We have to convert the coefficients to time-frequency layout to
+% discover their size
+tc = framecoef2tf(F,c0);
+[M,N]=size(tc);
+
+% Normalization to turn lambda to a value comparable to lasso
+if flags.do_time
+  lambda = lambda*sqrt(N);
+else
+  lambda = lambda*sqrt(M);
+end
+
 tc0 = c0;
 relres = 1e16;
 iter = 0;
 
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - franaadj(F,frsyn(F,tc0));
+    tc = c0 - frsynadj(F,frsyn(F,tc0));
     tc = tc0 + tc/kv.C;
     
     %  ------------ Convert to TF-plane ---------
     tc = framecoef2tf(F,tc);
-    if tchoice
+    if flags.do_time
       tc = tc.';
     end;
     tc = groupthresh(tc,threshold,'argimport',flags,kv);
-    if tchoice
+    if flags.do_time
       tc=tc.';
     end;
     
