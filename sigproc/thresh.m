@@ -41,7 +41,7 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %
 %   See also: largestr, largestn
 %
-%   References: yu2008audio
+%   References: lim1979enhancement ghael1997improved
 
 %   AUTHOR : Kai Siedenburg, Bruno Torresani and Peter Soendergaard.
 %   TESTING: OK

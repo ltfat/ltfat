@@ -1,10 +1,12 @@
-function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
-%FRAMEGROUPLASSO  Group LASSO regression in the TF-domain
-%   Usage: [tc,xrec] = framegrouplasso(F,x,group,lambda,C,maxit,tol)
+function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
+%GABGROUPLASSO  Group LASSO regression in Gabor domain
+%   Usage: [tc,xrec] = gabgrouplasso(x,g,a,M,group,lambda,C,maxit,tol)
 %
 %   Input parameters:
-%       F        : Frame definition
 %       x        : Input signal
+%       g        : Synthesis window function
+%       a        : Length of time shift
+%       M        : Number of channels
 %       lambda   : Regularization parameter, controls sparsity of the
 %                  solution
 %   Output parameters:
@@ -13,23 +15,22 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %      iter      : Number of iterations done.
 %      xrec      : Reconstructed signal
 %
-%   `framegrouplasso(F,x)` solves the group LASSO regression problem in
-%   the time-frequency domain: minimize a functional of the synthesis coefficients
+%   `gabgrouplasso(x,g,a,M)` solves the group LASSO regression problem in
+%   the Gabor domain: minimize a functional of the synthesis coefficients
 %   defined as the sum of half the $l^2$ norm of the approximation error and
 %   the mixed $l^1$ / $l^2$ norm of the coefficient sequence, with a penalization
 %   coefficient lambda.
 %  
-%   The matrix of time-frequency coefficients is labelled in terms of groups
-%   and members.  By default, the obtained expansion is sparse in terms of
-%   groups, no sparsity being imposed to the members of a given group. This
-%   is achieved by a regularization term composed of $l^2$ norm within a
-%   group, and $l^1$ norm with respect to groups. See the help on
-%   |groupthresh|_ for more information.
+%   The matrix of Gabor coefficients is labelled in terms of groups and
+%   members.  The obtained expansion is sparse in terms of groups, no
+%   sparsity being imposed to the members of a given group. This is achieved
+%   by a regularization term composed of $l^2$ norm within a group, and
+%   $l^1$ norm with respect to groups.
 %
-%   `[tc,relres,iter] = framegrouplasso(...)` returns the residuals *relres* in
+%   `[tc,relres,iter] = gabgrouplasso(...)` returns the residuals *relres* in
 %   a vector and the number of iteration steps done, *maxit*.
 %
-%   `[tc,relres,iter,xrec] = framegrouplasso(...)` returns the reconstructed
+%   `[tc,relres,iter,xrec] = gabgrouplasso(...)` returns the reconstructed
 %   signal from the coefficients, *xrec*. Note that this requires additional
 %   computations.
 %
@@ -60,23 +61,19 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %                If 'print' is specified, then print every p'th
 %                iteration. Default value is 10;
 %
-%   In addition to these parameters, this function accepts all flags from
-%   the |groupthresh|_ and |thresh|_ functions. This makes it possible to
-%   switch the grouping mechanism or inner thresholding type.
-%
 %   The parameters *C*, *maxit* and *tol* may also be specified on the
-%   command line in that order: `framegrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
+%   command line in that order: `gabgrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative group thresholdings.
 %
 %   The relationship between the output coefficients is given by ::
 %
-%     xrec = frsyn(F,tc);
+%     xrec = idgt(tc,g,a);
 %
-%   See also: framelasso, framebounds
+%   See also: gablasso, gabframebounds
 
-if nargin<2
+if nargin<5
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
@@ -85,7 +82,6 @@ if ~isvector(x)
 end
 
 % Define initial value for flags and key/value pairs.
-definout.import={'thresh','groupthresh'};
 definput.flags.group={'freq','time'};
 
 definput.keyvals.C=[];
@@ -93,60 +89,48 @@ definput.keyvals.maxit=100;
 definput.keyvals.tol=1e-2;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
+definput.flags.startphase={'zero','rand','int'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
-L=framelengthsignal(F,length(x));
-
-F=frameaccel(F,L);
+% Determine transform length, and calculate the window.
+[x,g,L] = gabpars_from_windowsignal(x,g,a,M,[],'GABGROUPLASSO');
 
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F,L,'s');
+  [A_dummy,kv.C] = gabframebounds(g,a,M,L);
 end;
+
+
+tchoice=flags.do_time;
+N = floor(length(x)/a);
+
+% Normalization to turn lambda to a value comparable to lasso
+if tchoice
+    lambda = lambda * sqrt(N);
+else
+    lambda = lambda * sqrt(M);
+end
 
 % Various parameter initializations
 threshold = lambda/kv.C;
 
 % Initialization of thresholded coefficients
-c0 = frsynadj(F,x);
-
-% We have to convert the coefficients to time-frequency layout to
-% discover their size
-tc = framecoef2tf(F,c0);
-[M,N]=size(tc);
-
-% Normalization to turn lambda to a value comparable to lasso
-if flags.do_time
-  lambda = lambda*sqrt(N);
-else
-  lambda = lambda*sqrt(M);
-end
-
+c0 = dgt(x,g,a,M);
 tc0 = c0;
 relres = 1e16;
 iter = 0;
 
-% Choose the dimension to group along
-if flags.do_freq
-  dim=1;
-else
-  dim=2;
-end;
-  
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - frsynadj(F,frsyn(F,tc0));
+    tc = c0 - dgt(idgt(tc0,g,a),g,a,M);
     tc = tc0 + tc/kv.C;
-    
-    %  ------------ Convert to TF-plane ---------
-    tc = framecoef2tf(F,tc);
-
-    tc = groupthresh(tc,threshold,dim,'argimport',flags,kv);
-    
-    % Convert back from TF-plane
-    tc=frametf2coef(F,tc);
-    % -------------------------------------------
-    
+    if tchoice
+        tc = tc';
+    end;
+    tc = groupthresh(tc,threshold,'soft');
+    if tchoice
+        tc=tc';
+    end;
     relres = norm(tc(:)-tc0(:))/norm(tc0(:));
     tc0 = tc;
     iter = iter + 1;
@@ -159,6 +143,6 @@ end
 
 % Reconstruction
 if nargout>3
-  xrec = frsyn(F,tc);
+  xrec = idgt(tc,g,a);
 end;
 

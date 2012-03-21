@@ -15,6 +15,11 @@ function [xo]=groupthresh(xi,lambda,varargin)
 %     given group according to the value of the $l^1$ norm of the
 %     group in comparison to the threshold value *lambda*.
 %
+%   By default, `groupthresh` chooses the groups to be the column vectors
+%   of the input (the vectors along the 1st dimension). This can be
+%   changed by calling `groupthresh(x,lambda,dim)`, where *dim* is the
+%   dimension to group along. 
+%
 %   `groupthresh` accepts all the flags of |thresh|_ to choose the
 %   thresholding type within each group and the output type (full / sparse
 %   matrix). Please see the help of |thresh|_ for the available
@@ -24,7 +29,7 @@ function [xo]=groupthresh(xi,lambda,varargin)
 %
 %   Demos:  demo_audioshrink
 %
-%   References: Kowalski08sparsity kowalski2009mixed
+%   References: Kowalski08sparsity kowalski2009mixed yu2008audio
 
 %   AUTHOR : Bruno Torresani.  
 %   REFERENCE: OK
@@ -40,9 +45,14 @@ end;
 % Define initial value for flags and key/value pairs.
 definput.import={'thresh','groupthresh'};
 definput.importdefaults={'soft'};
+definput.keyvals.dim=1;
 definput.flags.grouptype={'group','elite'};
 
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,keyvals,dim]=ltfatarghelper({'dim'},definput,varargin);
+
+nd=ndims(xi);
+order=[dim,1:dim-1,dim+1:nd];
+xi=permute(xi,order);
 
 NbGroups = size(xi,1);
 NbMembers = size(xi,2);
@@ -82,3 +92,6 @@ if flags.do_elite
     xo(g,:) = thresh(xi(g,:),tau_g,flags.iofun,flags.outclass);
   end
 end;
+
+xo=ipermute(xo,order);
+

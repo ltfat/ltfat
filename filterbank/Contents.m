@@ -11,7 +11,6 @@
 %    FILTERBANKLENGTHCOEF   - Length of filterbank to expand coefficients
 %
 %  Window construction and bounds
-
 %    FILTERBANKDUAL         - Canonical dual filters
 %    FILTERBANKTIGHT        - Canonical tight filters
 %    FILTERBANKREALDUAL     - Canonical dual filters for real signals
