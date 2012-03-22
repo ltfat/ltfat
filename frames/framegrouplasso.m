@@ -128,9 +128,9 @@ iter = 0;
 
 % Choose the dimension to group along
 if flags.do_freq
-  dim=1;
+  kv.dim=2;
 else
-  dim=2;
+  kv.dim=1;
 end;
   
 % Main loop
@@ -141,7 +141,7 @@ while ((iter < kv.maxit)&&(relres >= kv.tol))
     %  ------------ Convert to TF-plane ---------
     tc = framecoef2tf(F,tc);
 
-    tc = groupthresh(tc,threshold,dim,'argimport',flags,kv);
+    tc = groupthresh(tc,threshold,'argimport',flags,kv);
     
     % Convert back from TF-plane
     tc=frametf2coef(F,tc);

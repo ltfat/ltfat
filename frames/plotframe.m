@@ -40,15 +40,15 @@ function outsig=plotframe(F,insig,varargin);
   
 switch(F.type)
  case 'dgt'
-  plotdgt(framecoef2native(insig),F.a,varargin); 
+  plotdgt(framecoef2native(F,insig),F.a,varargin); 
  case 'dgtreal'
-  plotdgtreal(framecoef2native(insig),F.a,F.M,varargin); 
+  plotdgtreal(framecoef2native(F,insig),F.a,F.M,varargin); 
  case 'dwilt'
-  plotdwilt(framecoef2native(insig),varargin); 
+  plotdwilt(framecoef2native(F,insig),varargin); 
  case 'wmdct'
-  plotwmdct(framecoef2native(insig),varargin);
+  plotwmdct(framecoef2native(F,insig),varargin);
  case 'dgt'
-  plotfilterbank(framecoef2native(insig),F.a,varargin);  
+  plotfilterbank(framecoef2native(F,insig),F.a,varargin);  
  case 'gen'
   error(['%s: There is no default way of visualizing general frame ' ...
          'coefficients.'],upper(mfilename));
