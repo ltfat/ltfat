@@ -106,9 +106,9 @@ N = floor(length(x)/a);
 
 % Normalization to turn lambda to a value comparable to lasso
 if tchoice
-    lambda = lambda * sqrt(N);
+  lambda = lambda * sqrt(N);
 else
-    lambda = lambda * sqrt(M);
+  lambda = lambda * sqrt(M);
 end
 
 % Various parameter initializations

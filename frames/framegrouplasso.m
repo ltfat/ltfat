@@ -92,7 +92,7 @@ definput.keyvals.C=[];
 definput.keyvals.maxit=100;
 definput.keyvals.tol=1e-2;
 definput.keyvals.printstep=10;
-definput.flags.print={'print','quiet'};
+definput.flags.print={'quiet','print'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
