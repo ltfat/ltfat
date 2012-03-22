@@ -14,9 +14,8 @@
 %  Working with coefficients.
 %    LARGESTR       -  Keep largest ratio of coefficients.
 %    LARGESTN       -  Keep N largest coefficients.
-%    THRESH         -  Threshold hard/soft.
+%    THRESH         -  Coefficient thresholding.
 %    GROUPTHRESH    -  Group thresholding.
-%    ELITISTTHRESH  -  Elitist thresholding.
 %    UQUANT         -  Simulate uniform quantization.
 %
 %  Tools for OFDM

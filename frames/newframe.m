@@ -21,6 +21,16 @@ function F=newframe(ftype,varargin);
 %   analysis window *ga*, synthesis window *gs*, and *M* channels. See the
 %   help on |wmdct|_ for more information.
 %
+%   `newframe('filterbank',ga,gs,a,M)` constructs a filterbank with analysis
+%   windows *ga*, synthesis windows *gs*, time-shifts of *a* and *M
+%   channels. For the ease of implementation, it is necessary to specify
+%   *M*, even though it strictly speaking could be deduced from the size of
+%   the windows. See the help on |filterbank|_ for more information on the
+%   parameters. Similarly, you can construct a uniform filterbank by
+%   selecting `'ufilterbank'`, a positive-frequency filterbank by selecting
+%   `'filterbankreal'` or a uniform positive-frequency filterbank by
+%   selecting `'ufilterbankreal'`.
+%
 %   `newframe('gen',ga,gs)` constructs an general frame with analysis
 %   matrix *ga* and synthesis matrix *gs*. The frame atoms must be stored
 %   as column vectors in the matrices.
@@ -98,7 +108,8 @@ ftype=lower(ftype);
 
 % Handle the windowed transforms
 switch(ftype)
- case {'dgt','dgtreal','dwilt','wmdct','ufilterbank'}
+ case {'dgt','dgtreal','dwilt','wmdct','filterbank',...
+       'ufilterbank','filterbankreal','ufilterbankreal'}
   F.ga=varargin{1};
   F.gs=varargin{2};
   
@@ -123,8 +134,14 @@ switch(ftype)
   F.M=varargin{4};
  case {'dwilt','wmdct'}
   F.M=varargin{3};
- case {'ufilterbank'}
+ case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
   F.a=varargin{3};
+  F.M=varargin{4};
+
+  % Sanitize 'a': Make it a column vector of length M
+  F.a=F.a(:);
+  [F.a,~]=scalardistribute(F.a,ones(F.M,1));
+
  case 'gen'
   F.ga=varargin{1};
   F.gs=varargin{2};

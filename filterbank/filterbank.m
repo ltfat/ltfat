@@ -18,7 +18,7 @@ function c=filterbank(f,g,a,varargin);
 %   *n*, frequency index *m* and signal channel *l*.
 %
 %   References: bohlfe02
-  
+    
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
@@ -35,7 +35,7 @@ if ~isnumeric(a)
 end;
   
 if isempty(L)
-  L=filterbanklengthsignal(a,Ls);
+  L=filterbanklengthsignal(Ls,a);
 end;
 
 [g,info]=filterbankwin(g,a,L,'normal');

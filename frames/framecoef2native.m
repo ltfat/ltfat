@@ -16,34 +16,35 @@ if ~isstruct(F)
   error('%s: First agument must be a frame definition structure.',upper(mfilename));
 end;
 
+[MN,W]=size(coef);
+
 switch(F.type)
  case 'dgt'
-  [MN,W]=size(coef);
   N=MN/F.M;
   coef=reshape(coef,[F.M,N,W]);
   
  case 'dgtreal'
-  [MN,W]=size(coef);
   M2=floor(F.M/2)+1;
   N=MN/M2;
   coef=reshape(coef,[M2,N,W]);
   
  case 'dwilt'
-  [MN,W]=size(coef);
   N=MN/F.M;
   coef=reshape(coef,[2*F.M,N/2,W]);
   
  case 'wmdct'
-  [MN,W]=size(coef);
   N=MN/F.M;
   coef=reshape(coef,[F.M,N,W]);
   
- case 'ufilterbank'
-  [MN,W]=size(coef);
-  M=numel(F.gs);
-  N=MN/M;
-  coef=reshape(coef,[N,M,W]);
+ case {'ufilterbank','ufilterbankreal'}
+  N=MN/F.M;
+  coef=reshape(coef,[N,F.M,W]);
   
+ case {'filterbank','filterbankreal'}
+  L=framelengthcoef(F,MN);
+  N=L./F.a
+  coef=mat2cell(coef,N,W);
+    
  otherwise
   % No conversion necessary, formats are the same.
   cout=coef;

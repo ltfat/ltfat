@@ -42,6 +42,10 @@ switch(F.type)
   [AF,BF]=gabframebounds(g,F.a,F.M); 
  case {'dwilt','wmdct'}
   [AF,BF]=wilbounds(g,F.M); 
+ case {'filterbank','ufilterbank'}
+  [AF,BF]=filterbankbounds(g,F.a);
+ case {'filterbankreal','ufilterbankreal'}
+  [AF,BF]=filterbankrealbounds(g,F.a); 
  case 'fft'
   AF=L;
   BF=L;

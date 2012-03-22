@@ -26,9 +26,13 @@ if ~isempty(F.ga)
   
   switch(F.type)
    case {'dgt','dgtreal'}
-    [F.ga,F.g_info]  = gabwin(F.ga,F.a,F.M,L);
+    [F.ga,F.ga_info]  = gabwin(F.ga,F.a,F.M,L);
    case {'dwilt','wmdct'}
-    [F.ga,F.g_info]  = wilwin(F.ga,F.M,L);
+    [F.ga,F.ga_info]  = wilwin(F.ga,F.M,L);
+   case {'filterbank','ufilterbank'}
+    [F.ga,F.ga_info]  = filterbankwin(F.ga,F.a,L);
+   case {'filterbankreal','ufilterbankreal'}
+    [F.ga,F.ga_info]  = filterbankwin(F.ga,F.a,L,'real');
   end;
   
 end;
@@ -40,6 +44,11 @@ if ~isempty(F.gs)
     [F.gs,F.gs_info] = gabwin(F.gs,F.a,F.M,L);
    case {'dwilt','wmdct'}
     [F.gs,F.gs_info] = wilwin(F.gs,F.M,L);
+   case {'filterbank','ufilterbank'}
+    [F.gs,F.gs_info]  = filterbankwin(F.gs,F.a,L);
+   case {'filterbankreal','ufilterbankreal'}
+    [F.gs,F.gs_info]  = filterbankwin(F.gs,F.a,L,'real');
+
   end;
   
 end;

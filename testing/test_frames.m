@@ -3,7 +3,7 @@ function test_failed=test_frames
 
 test_failed=0;
   
-disp(' ===============  TEST_DGT ================');
+disp(' ===============  TEST_FRAMES ================');
 
 
 Fr=cell(1,2);
@@ -26,8 +26,14 @@ Fr{12}=newframe('dstii');
 Fr{13}=newframe('dstiii');
 Fr{14}=newframe('dstiv');
 
-% The window support is not yeat good enough to handle filterbanks
-%Fr{15}=newframe('ufilterbank',{randn(L,1),randn(L,1),randn(L,1),randn(L,1)},'dual',2);
+gfilt={randn(30,1),randn(20,1),randn(15,1),randn(10,1)};
+Fr{15}=newframe('ufilterbank',    gfilt,'dual',3,4);
+Fr{16}=newframe('ufilterbankreal',gfilt,'dual',3,4);
+
+%Fr{17}=newframe('filterbank',     gfilt,[],[4 3 2 2],4);
+%Fr{18}=newframe('filterbankreal', gfilt,[],[4 3 2 2],4);
+
+
 
 f=randn(L,1);
 
@@ -42,7 +48,7 @@ for ii=1:numel(Fr)
   
   c=frana(F,f);
   r=frsyn(F,c);
-  res=norm(r-f);
+  res=norm(r(1:L)-f);
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf(['FRAMES RECONSTRUCTION %s %0.5g %s'],FT,res,fail);    
@@ -52,7 +58,7 @@ for ii=1:numel(Fr)
 
   c=frana(F2,f);
   r=frsyn(F2,c);
-  res=norm(r-f);
+  res=norm(r(1:L)-f);
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf(['FRAMES ACCEL RECON    %s %0.5g %s'],FT,res,fail);    

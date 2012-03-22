@@ -36,8 +36,12 @@ switch(F.type)
   outsig=framenative2coef(F,dwilt(insig,F.ga,F.M));
  case 'wmdct'
   outsig=framenative2coef(F,wmdct(insig,F.ga,F.M));
- case 'ufilterbank'
+ 
+ case {'filterbank','filterbankreal'}
   outsig=framenative2coef(F,filterbank(insig,F.ga,F.a));
+ case {'ufilterbank','ufilterbankreal'}
+  outsig=framenative2coef(F,ufilterbank(insig,F.ga,F.a));
+
  case {'dft','fft','fftreal',...
        'dcti','dctii','dctiii','dctiv',...
        'dsti','dstii','dstiii','dstiv'}

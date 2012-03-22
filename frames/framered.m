@@ -33,6 +33,10 @@ switch(F.type)
   red=F.M/F.a;
  case 'dgtreal'
   red=F.M/F.a;
+ case {'ufilterbank','filterbank'}
+  red=sum(1./F.a);
+ case {'ufilterbankreal','filterbankreal'}
+  red=2*sum(1./F.a);
 end;
 
   

@@ -23,6 +23,8 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+a=a(1);
+
 [a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,1);
 
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UFILTERBANK',0);

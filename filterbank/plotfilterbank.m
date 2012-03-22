@@ -88,10 +88,17 @@ if flags.do_lin
   end;
 end;
 
-% 'dynrange' parameter is handled by thresholding the coefficients.
-if ~isempty(kv.dynrange)
+% 'dynrange' parameter is handled by converting it into clim
+% clim overrides dynrange, so do nothing if clim is already specified
+if  ~isempty(kv.dynrange) && isempty(kv.clim)
   maxclim=max(coef(:));
-  coef(coef<maxclim-kv.dynrange)=maxclim-kv.dynrange;
+  kv.clim=[maxclim-kv.dynrange,maxclim];
+end;
+
+% Handle clim by thresholding and cutting
+if ~isempty(kv.clim)
+  coef(coef<kv.clim(1))=kv.clim(1);
+  coef(coef>kv.clim(2))=kv.clim(2);
 end;
 
 if flags.do_tc
@@ -106,15 +113,11 @@ end;
 
 switch(flags.plottype)
   case 'image'
-    if flags.do_clim
-      imagesc(xr,yr,coef,kv.clim);
-    else
-      imagesc(xr,yr,coef);
-    end;
+   imagesc(xr,yr,coef);
   case 'contour'
     contour(xr,yr,coef);
   case 'surf'
-    surf(xr,yr,coef);
+    surf(xr,yr,coef,'EdgeColor','none');
   case 'pcolor'
     pcolor(xr,yr,coef);
 end;
@@ -170,8 +173,6 @@ else
   end;
   
   ylabel(sprintf('%s (Hz)',kv.frequency));
-
-
   
 end;
 

@@ -27,3 +27,5 @@ for m=2:length(a)
 end;
 
 L=ceil(Ls/lcm_a)*lcm_a;
+
+L

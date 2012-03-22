@@ -14,6 +14,8 @@ switch(F.type)
   L=Ncoef/F.M*F.a;
  case 'dgtreal'
   L=Ncoef/(floor(F.M/2)+1)*F.a;
+ case {'filterbank','ufilterbank','ufilterbank','ufilterbankreal'}
+  L=round(Ncoef/sum(1./F.a));
  otherwise
   % handle all the bases
   L=Ncoef;

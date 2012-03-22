@@ -15,10 +15,10 @@ function [xo]=groupthresh(xi,lambda,varargin)
 %     given group according to the value of the $l^1$ norm of the
 %     group in comparison to the threshold value *lambda*.
 %
-%   By default, `groupthresh` chooses the groups to be the column vectors
-%   of the input (the vectors along the 1st dimension). This can be
-%   changed by calling `groupthresh(x,lambda,dim)`, where *dim* is the
-%   dimension to group along. 
+%   By default, `groupthresh` chooses the groups to be the row vectors of
+%   the input (the vectors along the 2nd dimension). This can be changed by
+%   calling `groupthresh(x,lambda,dim)`, where *dim* is the dimension to
+%   **not** group along.
 %
 %   `groupthresh` accepts all the flags of |thresh|_ to choose the
 %   thresholding type within each group and the output type (full / sparse
@@ -46,16 +46,10 @@ end;
 definput.import={'thresh','groupthresh'};
 definput.importdefaults={'soft'};
 definput.keyvals.dim=1;
-definput.flags.grouptype={'group','elite'};
 
 [flags,keyvals,dim]=ltfatarghelper({'dim'},definput,varargin);
 
-nd=ndims(xi);
-order=[dim,1:dim-1,dim+1:nd];
-xi=permute(xi,order);
-
-NbGroups = size(xi,1);
-NbMembers = size(xi,2);
+[xi,L,NbGroups,NbMembers,dim,permutedsize,order]=assert_sigreshape_pre(xi,[],dim,'GROUPTHRESH');
 
 if flags.do_sparse
   xo = sparse(size(xi));
@@ -63,22 +57,20 @@ else
   xo = zeros(size(xi));
 end;
 
-
 if flags.do_group
-  for g=1:NbGroups,
-    threshold = norm(xi(g,:));
-    mask = (1-lambda/threshold);
-    mask = mask * (mask>0);
-    if flags.do_hard
-      mask = (mask>0);
-    else      
-      mask = mask * (mask>0);
-    end;
-    xo(g,:) = xi(g,:) * mask;
-  end
-end;
+  
+  groupnorm = sqrt(sum(abs(xi).^2, 2));
+  w = thresh(groupnorm, lambda, flags.iofun,flags.outclass)./groupnorm;
+  
+  % Clean w for NaN. NaN appears if the input has a group with norm
+  % exactly 0.
+  w(isnan(w)) = 0;
+  
+  xo = xi.*repmat(w,1,NbMembers);
 
-if flags.do_elite
+end
+
+if flags.do_elite  
   for g=1:NbGroups,
     y = sort(abs(xi(g,:)),'descend');
     rhs = cumsum(y);
@@ -88,10 +80,12 @@ if flags.do_elite
       tau_g = lambda * norm(y(1:M_g),1)/(1+lambda*M_g);
     else
       tau_g = 0;
-    end
+    end        
+    
+    % FIXME: The following line does not work for sparse matrices.
     xo(g,:) = thresh(xi(g,:),tau_g,flags.iofun,flags.outclass);
   end
 end;
 
-xo=ipermute(xo,order);
+xo=assert_sigreshape_post(xo,dim,permutedsize,order);
 
