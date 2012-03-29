@@ -29,11 +29,12 @@ wasreal=isreal(f);
 
 % The 'dim=1' below have been added to avoid fft and middlepad being
 % smart about choosing the dimension.
-f=ifft(middlepad(fft(f,[],1),L,1))/Ls*L;
+if isreal(f)
+  L2=floor(L/2)+1;
+  f=ifftreal(postpad(fftreal(f,[],1),L2,1),L,1)/Ls*L;;
+else
+  f=ifft(middlepad(fft(f,[],1),L,1))/Ls*L;
+end;
 
 f=assert_sigreshape_post(f,dim,permutedsize,order);
-
-if wasreal
-  f=real(f);
-end;
 
