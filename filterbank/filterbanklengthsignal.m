@@ -13,12 +13,21 @@ function L=filterbanklengthsignal(Ls,a);
 %
 %   See also: filterbank, filterbanklengthcoef
 
-if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+if ~isnumeric(Ls)
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
+if ~isscalar(Ls)
+  error('%s: Ls must a scalar.',upper(mfilename));
+end;
+
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(mfilename));
+end;
+
+
 if ~isvector(a) || any(a<=0)
-  error('%s: "a" must be a vector of positive numbers.',upper(callfun));
+  error('%s: "a" must be a vector of positive numbers.',upper(mfilename));
 end;
 
 lcm_a=a(1);
@@ -27,5 +36,3 @@ for m=2:length(a)
 end;
 
 L=ceil(Ls/lcm_a)*lcm_a;
-
-L

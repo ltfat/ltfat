@@ -12,11 +12,16 @@ function L=framelengthsignal(F,Ls);
 %
 %   See also: newframe, framelengthcoef
   
+% Default value, the frame works for all input lengths
+L=Ls;
+  
 switch(F.type)
  case {'dgt','dgtreal'}
-  L = longpar('dgt',Ls,F.a,F.M)
+  L = longpar('dgt',Ls,F.a,F.M);
  case {'dwilt','wmdct'}
-  L = longpar('dwilt',Ls,F.M)
+  L = longpar('dwilt',Ls,F.M);
+ case {'gen'}
+  L = size(F.ga,1);
  case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
-  L = filterbanklengthsignal(F.a,Ls);
+  L = filterbanklengthsignal(Ls,F.a);
 end;

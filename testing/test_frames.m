@@ -64,9 +64,10 @@ for ii=1:numel(Fr)
   s=sprintf(['FRAMES ACCEL RECON    %s %0.5g %s'],FT,res,fail);    
   disp(s);
 
-  if ~any(strcmp(FT,{'dgtreal','fftreal'}))
-    G=framematrix(F,L);
-    res=norm(c-G'*f);
+  if ~any(strcmp(FT,{'dgtreal','fftreal','ufilterbankreal','filterbankreal'}))
+    LL=framelengthsignal(F,L);
+    G=framematrix(F,LL);
+    res=norm(c-G'*postpad(f,LL));
     
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
     s=sprintf(['FRAMES MATRIX         %s %0.5g %s'],FT,res,fail);    

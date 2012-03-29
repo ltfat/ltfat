@@ -1,19 +1,19 @@
-function F=frameaccel(F,L);  
+function F=frameaccel(F,Ls);  
 %FRAMEACCEL  Precompute structures
 %   Usage: F=frameaccel(F,L);
 %
-%   `F=frameaccel(F,L)` precomputes certain structures that makes the basic
+%   `F=frameaccel(F,Ls)` precomputes certain structures that makes the basic
 %   frame operations |frana|_ and |frsyn|_ faster (like instantiating the
 %   window from a textual description). If you only need to call the
 %   routines once, calling `frameaccel` first will not provide any total
 %   gain, but if you are repeatedly calling these routines, for instance in
 %   an iterative algorithm, is will be a benefit.
 %
-%   Notice that you need to input the frame length *L*, so this routines
-%   is only a benefit if *L* stays fixed.
+%   Notice that you need to input the signal length *Ls*, so this routines
+%   is only a benefit if *Ls* stays fixed.
 %
 %   See also: newframe, frana, framelengthsignal, framelengthcoef
-
+  
 if ~isfield(F,'ga')
   % Quick exit, the transform does not use analysis or synthesis
   % windows.
@@ -21,6 +21,8 @@ if ~isfield(F,'ga')
 end;
   
 % From this point and on, we are sure that F.ga and F.gs exists.
+
+L=framelengthsignal(F,Ls);
 
 if ~isempty(F.ga)
   
@@ -53,5 +55,6 @@ if ~isempty(F.gs)
   
 end;
 
+F.L=L;
 
   

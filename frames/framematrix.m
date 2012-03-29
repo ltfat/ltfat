@@ -34,6 +34,12 @@ switch(F.type)
  case {'dgtreal','fftreal'}
   error('%s: The analysis operator of this frame does not have a matrix representation.',upper(mfilename));
  otherwise
+  
+  Lcheck=framelengthsignal(F,L);
+  if Lcheck~=L
+    error('%s: Incompatible frame length.',upper(mfilename));
+  end;
+  
   % Generic code handles all frames where there are no extra coefficients
   % in the representation
   Ncoef=framered(F)*L;

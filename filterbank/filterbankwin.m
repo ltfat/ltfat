@@ -1,4 +1,4 @@
-function [g,info] = filterbankwin(g,a,L,varargin);
+function [g,info] = filterbankwin(g,a,varargin);
 %FILTERBANKWIN  Compute set of filter bank windows from text or cell array
 %   Usage: [g,info] = filterbankwin(g,a,L);
 %
@@ -73,7 +73,6 @@ end;
 definput.keyvals.L=[];
 definput.flags.realtype={'normal','real'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
-
 
 if ischar(g{1})
   winname=lower(g{1});

@@ -8,6 +8,10 @@ function gtout=filterbanktight(g,a,varargin);
 %   The input and output format of the filters *g* are described in the
 %   help of |filterbank|_.
 %
+%   `filterabanktight(g,a,L)` computes canonical tight filters for a system
+%   of length *L*. If *L* is not specified, the shortest possible transform
+%   length is choosen.
+%
 %   See also: filterbank, filterbankdual, ufilterbank, ifilterbank
 
 if nargin<2

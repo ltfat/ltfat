@@ -1,12 +1,17 @@
 function gdout=filterbankdual(g,a,varargin);
 %FILTERBANKDUAL  Dual filters
 %   Usage:  gd=filterbankdual(g,a);
+%           gd=filterbankdual(g,a,L);
 %
 %   `filterabankdual(g,a)` computes the canonical dual filters of *g* for a
 %   channel subsampling rate of *a* (hop-size).
 %
 %   The input and output format of the filters *g* are described in the
 %   help of |filterbank|_.
+%
+%   `filterabankdual(g,a,L)` computes canonical dual filters for a system
+%   of length *L*. If *L* is not specified, the shortest possible
+%   transform length is choosen.
 %
 %   To actually invert the output of a filterbank, use the dual filters
 %   together with the |ifilterbank|_ function.
@@ -24,6 +29,11 @@ definput.keyvals.L=[];
 
 if isempty(L)
   L=ceil(longestfilter/lcm_a)*lcm_a;
+else
+  if rem(L,lcm_a)>0
+    error(['%s: Specified length L is incompatible with the length of ' ...
+           'the time shifts. L = %i, lcm_a = %i'],upper(mfilename),L,lcm_a);
+  end;
 end;
 
 

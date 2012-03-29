@@ -26,6 +26,11 @@ definput.keyvals.L=[];
 
 if isempty(L)
   L=ceil(longestfilter/lcm_a)*lcm_a;
+else
+  if rem(L,lcm_a)>0
+    error(['%s: Specified length L is incompatible with the length of ' ...
+           'the time shifts. L = %i, lcm_a = %i'],upper(mfilename),L,lcm_a);
+  end;
 end;
 
 if all(a==a(1))
