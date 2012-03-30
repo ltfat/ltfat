@@ -1,4 +1,4 @@
-function c=ufilterbank(f,g,a);  
+function c=ufilterbank(f,g,a,varargin);  
 %UFILTERBANK   Apply Uniform filterbank
 %   Usage:  c=ufilterbank(f,g,a);
 %
@@ -23,13 +23,19 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-a=a(1);
-
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,1);
+definput.keyvals.L=[];
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UFILTERBANK',0);
 
-L=ceil(max(Ls,longestfilter)/lcm_a)*lcm_a;
+a=a(1);
+
+if isempty(L)
+  L=filterbanklengthsignal(Ls,a);
+end;
+
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
 
 N=L/a;
 

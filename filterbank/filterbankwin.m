@@ -22,8 +22,16 @@ function [g,info] = filterbankwin(g,a,varargin);
 %     `{'dual',...}`
 %         Canonical dual window of whatever follows. See the examples below.
 %
-%     `{'tight',...}` 
-%         Canonical tight window of whatever follows.
+%     `{'realdual',...}`
+%         Canonical dual window for a positive-frequency filterbank
+%         of whatever follows. See the examples below.
+%
+%     `{'tight',...}`
+%         Canonical tight window of whatever follows. See the examples below.
+%
+%     `{'realtight',...}` 
+%         Canonical tight window for a real-valued for a positive
+%         frequency filterbank of whatever follows.
 %
 %   The structure *info* provides some information about the computed
 %   window:
@@ -79,21 +87,25 @@ if ischar(g{1})
   switch(winname)
    case {'dual'}
     [g,info.auxinfo] = filterbankwin(g{2},a,L);
-    if flags.do_normal
       g = filterbankdual(g,a,L);
-    else
-      g = filterbankrealdual(g,a,L);
-    end;
+      info.isdual=1;
+   
+   case {'realdual'}
+    [g,info.auxinfo] = filterbankwin(g{2},a,L);
+    g = filterbankrealdual(g,a,L);
     info.isdual=1;
+   
    case {'tight'}
     [g,info.auxinfo] = filterbankwin(g{2},a,L);    
-    if flags.do_normal      
-      g = filterbanktight(g,a,L);
-    else
-      g = filterbankrealtight(g,a,L);        
-    end;
+    g = filterbanktight(g,a,L);
     info.istight=1;
-   otherwise
+   
+   case {'realtight'}
+    [g,info.auxinfo] = filterbankwin(g{2},a,L);    
+    g = filterbankrealtight(g,a,L);        
+    info.istight=1;
+    
+otherwise
     error('%s: Unsupported window type %s.',winname,upper(mfilename));
   end;
 end;

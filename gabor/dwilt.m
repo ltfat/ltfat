@@ -119,7 +119,46 @@ if nargin<4
   L=[];
 end;
 
-[f,g,L,Ls,W,info] = gabpars_from_windowsignal(f,g,M,2*M,L,'DWILT');
+
+assert_squarelat(M,M,1,'DWILT',0);
+
+if ~isempty(L)
+  if (prod(size(L))~=1 || ~isnumeric(L))
+    error('%s: L must be a scalar','DWILT');
+  end;
+  
+  if rem(L,1)~=0
+    error('%s: L must be an integer','DWILT');
+  end;
+end;
+
+% Change f to correct shape.
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'DWILT',0);
+
+if isempty(L)
+  % Smallest length transform.
+  Lsmallest=2*M;
+
+  % Choose a transform length larger than the signal
+  L=ceil(Ls/Lsmallest)*Lsmallest;
+else
+
+  if rem(L,2*M)~=0
+    error('%s: The length of the transform must be divisable by 2*M = %i',...
+          'DWILT',2*M);
+  end;
+
+end;
+
+[g,info]=wilwin(g,M,L,'DWILT');
+
+f=postpad(f,L);
+
+% If the signal is single precision, make the window single precision as
+% well to avoid mismatches.
+if isa(f,'single')
+  g=single(g);
+end;
 
 % Call the computational subroutines.
 c=comp_dwilt(f,g,M,L);

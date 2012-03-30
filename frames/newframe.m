@@ -108,12 +108,11 @@ ftype=lower(ftype);
 
 % Handle the windowed transforms
 switch(ftype)
- case {'dgt','dgtreal','dwilt','wmdct','filterbank',...
-       'ufilterbank','filterbankreal','ufilterbankreal'}
+ case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank'}
   F.ga=varargin{1};
   F.gs=varargin{2};
   
-  if strcmp(F.ga,'dual')
+  if strcmp(F.ga,'dual')    
     F.ga={'dual',F.gs};
   end;
   
@@ -125,6 +124,25 @@ switch(ftype)
     F.gs={'tight',F.ga};
     F.ga={'tight',F.ga};
   end;  
+
+ case {'filterbankreal','ufilterbankreal'}
+  F.ga=varargin{1};
+  F.gs=varargin{2};
+  
+  if strcmp(F.ga,'dual')    
+    F.ga={'realdual',F.gs};
+  end;
+  
+  if strcmp(F.gs,'dual')
+    F.gs={'realdual',F.ga};
+  end;
+  
+  if strcmp(F.gs,'tight')
+    F.gs={'realtight',F.ga};
+    F.ga={'realtight',F.ga};
+  end;  
+
+  
   
 end;
 

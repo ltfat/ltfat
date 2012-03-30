@@ -9,6 +9,14 @@ function L=framelengthcoef(F,Ncoef);
 %
 %   See also: newframe, framelengthsignal
   
+if nargin<2
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
+if ~isscalar(Ncoef)
+  error('%s: Ncoef must be a scalar.',upper(mfilename));
+end;
+
 switch(F.type)
  case 'dgt'
   L=Ncoef/F.M*F.a;

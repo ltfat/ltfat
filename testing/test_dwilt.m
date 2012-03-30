@@ -45,26 +45,13 @@ for ii=1:length(Lr);
 	r=idwilt(c,gd);  
 	
 	res=norm(c(:)-c2(:));
-	
-        fail='';
-        if res>10e-10
-	  fail='FAILED';
-	  test_failed=test_failed+1;
-        end;
-        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
 	s=sprintf('REF  %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
 	disp(s)
 	
 	rdiff=f-r;
 	res=norm(rdiff(:));
-	
-        fail='';
-        if res>10e-10
-	  fail='FAILED';
-	  test_failed=test_failed+1;
-        end;
-   
-    
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);	
 	s=sprintf('REC  %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
 	disp(s)
 
@@ -74,17 +61,24 @@ for ii=1:length(Lr);
         rdiff=f-r;
         
 	res=norm(rdiff(:));
-	
-        fail='';
-        if res>10e-10
-	  fail='FAILED';
-	  test_failed=test_failed+1;
-        end;
-       
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);	
 	s=sprintf('ORTH %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
 	disp(s)
-        
-                        
+
+	c=dwilt(f,'gauss',M);
+        r=idwilt(c,{'dual','gauss'});
+	res=norm(f-r);
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);	
+	s=sprintf('WIN %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);                
+        disp(s)
+
+        c=dwilt(f,{'tight','gauss'},M);
+        r=idwilt(c,{'tight','gauss'});
+	res=norm(f-r);
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);	
+	s=sprintf('WIN TIGHT %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
+        disp(s)
+
       end;
     end;
   end;
