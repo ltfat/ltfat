@@ -1,0 +1,45 @@
+Release notes of LTFAT version 0.97
+
+	New additions to the toolbox
+
+	* The 'mulaclab' is a graphical user interface for
+          manipulating the spectrogram of a signal. The gui works only
+          in Matlab.
+
+	* All function in the LTFAT C library are now available in
+          both single and double precision
+
+	* Compilation and interfaces for both Matlab and Octave
+          interfaces now works on Windows XP.
+
+ 	* It is now possible to supply a window described by a text
+          string or a cell array to all relevant functions. See the
+          help on gabwin or wilwin for a description of the
+          possibilities.
+
+	* Much better support for optional argument in functions, and
+          for setting default at startup. See the function
+          ltfatsetdefaults, ltfatgetdefaults and ltfatarghelper
+
+        * gabrieszbounds: compute Gabor Riesz bounds for a Gabor Riesz
+            sequence.
+
+	* wil2rect and rect2wil: arrange Wilson coefficients in a
+          rectangular shape (with holes) at the correct position in
+          the TF-plane.
+
+        * peven and podd extracts the even and odd part of a signal.	  
+
+	Changes since version 0.96
+
+	* More functions now have an implementation in C: fftreal, dgtreal
+
+	* fftreal was broken in 0.96. It now works and has a C
+          implementation linking to FFTW.
+
+	* Sign changes in all the spread* functions and in tconv to
+          make them fit better with the sign convention of dgt.
+
+	* bug fix in gabgrouplasso: it now uses Landweber iteration
+          instead of the previous algorithm, which only worked for
+          bases.

@@ -1,0 +1,76 @@
+LTFAT version 1.0 was released on June 18. 2011 after more than 7
+years of development.
+
+The Linear Time-Frequency Analysis Toolbox (LTFAT) is a free software
+toolbox (GPLv3) written in the Matlab/Octave scripting language. It
+comprises more than 200 different functions in the area of Fourier
+analysis, signal processing and time-frequency analysis.
+
+The toolbox can be downloaded from http://ltfat.sourceforge.net.
+
+The toolbox can be used for both educational, research and
+computational purposes. It has a backend implemented in C, which can
+be compiled to speed up all computational intensive functions.
+
+The following is a list of the current major functionality in LTFAT:
+
+Fourier analysis:
+* FFT for real valued signals (fftreal) and its inverse.
+* 8 different discrete cosine and sine transforms.
+* Next fast FFT size (modern nextpow2 replacement).
+* Periodic, zero-delay filtering.
+* Periodic, discrete function (chirp, heaviside, sinc etc.)
+* 2 different classes of discrete Hermite functions.
+* Periodic Gauss function.
+* Long list of classic FIR window functions (Hann, Hamming, Blackman,
+  iterated sine, Nuttall etc.),
+
+Time-frequency analysis:
+* The discrete Gabor transform (DGT) and its inverse.
+* Wilson and windowed MDCT bases.
+* Methods for constructing dual and tight windows (perfect and
+  paraunitary filter prototypes).
+* GUI (Matlab-only) to modify signals in the time-frequency domain.
+* Spectrogram and reassigned spectrogram plots.
+* Accurate computation of localized instantaneous frequency and group
+  delay.
+* Twisted convolution and discrete, symplectic Fourier transform.
+* Zak transform and its inverse.
+* TF-multiplier operators with adjoint and best approximation
+  function.
+* Spreading operators with inverse and adjoint.
+* Reconstruction from the magnitude of the DGT.
+
+Filterbanks:
+* Uniform filterbanks and inverse.
+* Non-uniform filterbanks and inverse.
+* Methods for constructing dual and tight filterbanks (perfect reconstruction
+  and paraunitary filterbanks).
+
+Time-evolving TF-systems:
+* Non-stationary Gabor systems (NSDGT) and inverse.
+* Methods for constructing dual and tight NSDGTs.
+
+Auditory functions:
+* Perceptual frequency scales: Erb, Bark and Mel scales.
+* Gammatone filters.
+* Range compression (mu-law and A-law).
+
+Signal processing:
+* Levels of signals: RMS-norm, gain and crest factor.
+* Ramping of signals based on FIR windows.
+* Simple tools for working with coefficients (thresholding, N-term
+  approx. etc)
+* Group and elitist threshholding.
+* Sparse regression in the Gabor and WMDCT domain.
+* Uniform quantization.
+
+and not forgetting:
+* Demos demonstrating the use of the toolbox.
+* Test signals: sounds, images and noise generators (white, pink,
+  red/brown noise).
+
+
+On behalf of the LTFAT developers,
+
+Peter L. Soendergaard.
