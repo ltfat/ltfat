@@ -82,13 +82,24 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %   TESTING: TEST_NSDGTREAL
 %   REFERENCE: 
 
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(callfun));
+end;
+
+if ~isnumeric(M)
+  error('%s: M must be numeric.',upper(callfun));
+end;
+
+L=sum(a);
+
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'NSDGTREAL',0);
+f=postpad(f,L);
+
+[g,info]=nsgabwin(g,a,M);
+
 timepos=cumsum(a)-a(1);
-  
-Ls=length(f);
 
 N=length(a); % Number of time positions
-
-W=size(f,2); % Number of signal channels
 
 c=cell(N,1); % Initialisation of the result
 
@@ -101,7 +112,7 @@ for ii=1:N
   % explicitely computing the indexes instead of using modulo and the 
   % repmat is not needed if the number of signal channels W=1 (but the time 
   % difference when removing it whould be really small)
-  temp(1:length(g{ii}))=f(mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1,:).*...
+  temp(1:length(g{ii}))=f(mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1,:).*...
     repmat(conj(circshift(g{ii},shift)),1,W);
   
   temp=circshift(temp,-shift);

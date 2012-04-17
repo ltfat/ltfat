@@ -82,7 +82,7 @@ for ii=1:numel(Fr)
   
   if ~any(strcmp(FT,{'dgtreal','fftreal','ufilterbankreal','filterbankreal'}))
     LL=framelengthsignal(F,L);
-    G=framematrix(F,LL);
+    G=franamat(F,LL);
     res=norm(c-G'*postpad(f,LL));
     
     [test_failed,fail]=ltfatdiditfail(res,test_failed);

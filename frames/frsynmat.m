@@ -1,9 +1,9 @@
-function G=framematrix(F,L);
-%FRAMEMATRIX  Frame matrix
-%   Usage: G=framematrix(F,L);
+function G=frsynmat(F,L);
+%FRSYNMAT  Frame synthesis operator matrix
+%   Usage: G=frsynmat(F,L);
 %
-%   `G=framematrix(F,L)` returns the matrix representation *G* of the frame
-%   analysis operator for a frame *F* of length *L*. The frame object *F*
+%   `G=frsynmat(F,L)` returns the matrix representation *G* of the frame
+%   synthesis operator for a frame *F* of length *L*. The frame object *F*
 %   must have been created using |newframe|_.
 %
 %   The frame matrix contains all the frame atoms as column vectors. It has
@@ -13,18 +13,19 @@ function G=framematrix(F,L);
 %   **very** large, and this routine should only be used for small values
 %   of *L*.
 %
-%   The action of the frame transform operator |frana|_ is equal to
-%   multiplication with the Hermitean transpose of the frame
+%   The action of the frame synthesis operator |frsyn|_ is equal to
+%   multiplication with the frame synthesis operator
 %   matrix. Consider the following simple example:::
 %
 %     L=200;
 %     F=newframe('dgt','gauss','dual',10,20);
-%     G=framematrix(F,L);
-%     testsig = randn(L,1);
-%     res = frana(F,testsig)-G'*testsig;
+%     G=frsynmat(F,L);
+%     testsig  = randn(L,1);
+%     testcoef = frana(F,f); 
+%     res = frsyn(F,testcoef)-G*testcoef;
 %     norm(res)
 %
-%   See also: newframe, frana, frsyn, franaadj
+%   See also: newframe, frana, frsyn, franaadj, franamat
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -32,7 +33,7 @@ end;
 
 switch(F.type)
  case {'dgtreal','fftreal'}
-  error('%s: The analysis operator of this frame does not have a matrix representation.',upper(mfilename));
+  error('%s: The synthesis operator of this frame does not have a matrix representation.',upper(mfilename));
  otherwise
   
   Lcheck=framelengthsignal(F,L);
@@ -44,6 +45,6 @@ switch(F.type)
   % in the representation
   Ncoef=framered(F)*L;
   coef=eye(Ncoef);
-  G = franaadj(F,coef);  
+  G = frsyn(F,coef);  
 end;
 

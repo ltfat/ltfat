@@ -15,7 +15,7 @@ function F=frameaccel(F,Ls);
 %   See also: newframe, frana, framelengthsignal, framelengthcoef
   
 if ~isfield(F,'ga')
-  % Quick exit, the transform does not use analysis or synthesis
+  % Quick exit, the transform does not use analysis nor synthesis
   % windows.
   return;
 end;
@@ -35,6 +35,9 @@ if ~isempty(F.ga)
     [F.ga,F.ga_info]  = filterbankwin(F.ga,F.a,L);
    case {'filterbankreal','ufilterbankreal'}
     [F.ga,F.ga_info]  = filterbankwin(F.ga,F.a,L,'real');
+ case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+    [F.ga,F.ga_info]  = nsgabwin(F.ga,F.a,F.M,L);
+
   end;
   
 end;

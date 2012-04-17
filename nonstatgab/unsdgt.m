@@ -71,30 +71,24 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   TESTING: TEST_NSDGT
 %   REFERENCE: 
 
-% Notes:
-% - The variable names used in this function are intentionally similar to
-%   the variable names used in dgt as nsdgt is a generalization of dgt.
-% - The choice of a different phaselocking convention than the one used in
-%   dgt is motivated by the will to keep a diagonal frame operator in the
-%   painless case and to keep the circular border condition. With the other
-%   convention, there is in general a problem for windows overlapping the
-%   beginning and the end of the signal (except if time positions and
-%   signal length have some special ratio properties).
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(callfun));
+end;
 
-% todo: 
-% - It would be good to check the validity of the inputs. Some things to
-%   check: g,a,M must have the same length, each cell of g must be a
-%   vector, values of a and M must be intergers,...
+if ~isnumeric(M)
+  error('%s: M must be numeric.',upper(callfun));
+end;
 
+L=sum(a);
+
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UNSDGT',0);
+f=postpad(f,L);
+
+[g,info]=nsgabwin(g,a,M);
 
 timepos=cumsum(a)-a(1);
   
-Ls=length(f);
-
 N=length(a); % Number of time positions
-
-W=size(f,2); % Number of signal channels
-
 
 c=zeros(M,N,W); % Initialisation of the result
 
@@ -107,7 +101,7 @@ for ii=1:N
   % explicitely computing the indexes instead of using modulo and the 
   % repmat is not needed if the number of signal channels W=1 (but the time 
   % difference when removing it whould be really small)
-  temp(1:length(g{ii}))=f(mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1,:).*...
+  temp(1:length(g{ii}))=f(mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1,:).*...
     repmat(conj(circshift(g{ii},shift)),1,W);
   
   temp=circshift(temp,-shift);

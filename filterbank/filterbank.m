@@ -63,7 +63,7 @@ for ii=1:M
 end;
 
 for w=1:W
-  F=fft(postpad(f(:,w),L));
+  F=fft(f(:,w),L);
   for m=1:M
     c{m}(:,w)=ifft(sum(reshape(F.*G(:,m),N(m),a(m)),2))/a(m);
   end;

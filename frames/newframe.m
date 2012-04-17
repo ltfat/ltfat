@@ -87,13 +87,6 @@ function F=newframe(ftype,varargin);
 %
 %   See also: frana, frsyn, plotframe
 
-% CUT: Window support is not yet good enough to automatically handle
-% filterbanks.
-% `newframe('ufilterbank',ga,gs,a)` constructs a uniform
-% filterbank with analysis windows *ga*, synthesis windows *gs* and uniform
-% time-shift *a*. See the help on |ufilterbank|_ for more information.
-
-
   
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
@@ -108,7 +101,8 @@ ftype=lower(ftype);
 
 % Handle the windowed transforms
 switch(ftype)
- case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank'}
+ case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
+       'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
   F.ga=varargin{1};
   F.gs=varargin{2};
   
@@ -158,7 +152,18 @@ switch(ftype)
 
   % Sanitize 'a': Make it a column vector of length M
   F.a=F.a(:);
-  [F.a,~]=scalardistribute(F.a,ones(F.M,1));
+  [F.a,dummy]=scalardistribute(F.a,ones(F.M,1));
+
+ case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+  F.a=varargin{3};
+  F.M=varargin{4};
+
+  % Sanitize 'a' and 'M'. Make M a column vector of length N,
+  % where N is determined from the length of 'a'
+  F.a=F.a(:);
+  F.N=numel(F.a);
+  F.M=F.M(:);
+  [F.M,dummy]=scalardistribute(F.M,ones(F.N,1));
 
  case 'gen'
   F.ga=varargin{1};

@@ -15,7 +15,8 @@
 %    FRAMETYPE         - Type of frame
 %    FRAMEBOUNDS       - Frame bounds
 %    FRAMERED          - Redundancy of frame
-%    FRAMEMATRIX       - Frame transform matrix
+%    FRANAMAT          - Frame analysis operator matrix
+%    FRSYNMAT          - Frame synthesis operator matrix
 %    FRAMELENGTHSIGNAL - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
 %

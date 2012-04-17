@@ -21,7 +21,7 @@ end;
 a=a(:);
 cl=cl(:);
 
-[a,~]=scalardistribute(a,cl);
+[a,dummy]=scalardistribute(a,cl);
 
 L=a.*cl;
 
