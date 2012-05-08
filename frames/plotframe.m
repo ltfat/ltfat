@@ -40,25 +40,25 @@ function outsig=plotframe(F,insig,varargin);
   
 switch(F.type)
  case 'dgt'
-  plotdgt(framecoef2native(F,insig),F.a,varargin); 
+  plotdgt(framecoef2native(F,insig),F.a,varargin{:}); 
  case 'dgtreal'
-  plotdgtreal(framecoef2native(F,insig),F.a,F.M,varargin); 
+  plotdgtreal(framecoef2native(F,insig),F.a,F.M,varargin{:}); 
  case 'dwilt'
-  plotdwilt(framecoef2native(F,insig),varargin); 
+  plotdwilt(framecoef2native(F,insig),varargin{:}); 
  case 'wmdct'
-  plotwmdct(framecoef2native(F,insig),varargin);
+  plotwmdct(framecoef2native(F,insig),varargin{:});
  case 'dgt'
-  plotfilterbank(framecoef2native(F,insig),F.a,varargin);  
+  plotfilterbank(framecoef2native(F,insig),F.a,varargin{:});  
  case 'gen'
   error(['%s: There is no default way of visualizing general frame ' ...
          'coefficients.'],upper(mfilename));
  case 'dft'
-  plotfft(insig,varargin);
+  plotfft(insig,varargin{:});
  case {'dcti','dctii','dctiii','dctiv',...
        'dsti','dstii','dstiii','dstiv'}
   % FIXME : This is not strictly correct, as half the transforms use an
   % odd frequency centering.
-  plotfftreal(insig,varargin);
+  plotfftreal(insig,varargin{:});
 end;
 
   

@@ -104,7 +104,7 @@ if nargin==3
   L=[];
 end;
 
-[g,info] = comp_window(g,a,M,L,'GABWIN');
+[g,info] = comp_window(g,a,M,L,[0 0],'GABWIN');
 
 if (info.isfir)  
   if info.istight

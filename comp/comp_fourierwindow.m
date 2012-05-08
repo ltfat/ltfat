@@ -1,8 +1,8 @@
 function [g,info] = comp_fourierwindow(g,L,callfun);
-%COMP_WINDOW  Compute the window from numeric, text or cell array.
-%   Usage: [g,info] = comp_window(g,a,M,L,wilson,callfun);
+%COMP_FOURIERWINDOW  Compute the window from numeric, text or cell array.
+%   Usage: [g,info] = comp_fourierwindow(g,a,M,L,wilson,callfun);
 %
-%   [g,info]=COMP_WINDOW(g,L,callfun) will compute the window
+%   [g,info]=COMP_FOURIERWINDOW(g,L,callfun) will compute the window
 %   from a text description or a cell array containing additional
 %   parameters.
 %

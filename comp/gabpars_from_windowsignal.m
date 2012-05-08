@@ -30,23 +30,13 @@ end;
 % Change f to correct shape.
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,0);
 
-if isnumeric(g)
-  if ~isvector(g)
-    error('%s: g must be a vector',upper(callfun));
-  end;
-  Lwindow=length(g);
-else
-  Lwindow=0;
-end;
-
-
 if isempty(L)
   % Smallest length transform.
   Lsmallest=lcm(a,M);
 
   % Choose a transform length larger than both the length of the
   % signal and the window.
-  L=ceil(max(Ls,Lwindow)/Lsmallest)*Lsmallest;
+  L=ceil(Ls/Lsmallest)*Lsmallest;
 else
 
   if rem(L,M)~=0

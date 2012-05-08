@@ -13,11 +13,11 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %      iter      : Number of iterations done.
 %      xrec      : Reconstructed signal
 %
-%   `framegrouplasso(F,x)` solves the group LASSO regression problem in
-%   the time-frequency domain: minimize a functional of the synthesis coefficients
-%   defined as the sum of half the $l^2$ norm of the approximation error and
-%   the mixed $l^1$ / $l^2$ norm of the coefficient sequence, with a penalization
-%   coefficient lambda.
+%   `framegrouplasso(F,x)` solves the group LASSO regression problem in the
+%   time-frequency domain: minimize a functional of the synthesis
+%   coefficients defined as the sum of half the $l^2$ norm of the
+%   approximation error and the mixed $l^1$ / $l^2$ norm of the coefficient
+%   sequence, with a penalization coefficient lambda.
 %  
 %   The matrix of time-frequency coefficients is labelled in terms of groups
 %   and members.  By default, the obtained expansion is sparse in terms of
@@ -46,11 +46,12 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %                frame bound.
 %
 %     'maxit',maxit
-%                Stopping criterion: maximal number of iterations. Default value is 100.
+%                Stopping criterion: maximal number of iterations. 
+%                Default value is 100.
 %
 %     'tol',tol  Stopping criterion: minimum relative difference between
-%              norms in two consecutive iterations. Default value is
-%              1e-2.
+%                norms in two consecutive iterations. Default value is
+%                1e-2.
 %
 %     'print'    Display the progress.
 %
@@ -135,26 +136,26 @@ end;
   
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - frsynadj(F,frsyn(F,tc0));
-    tc = tc0 + tc/kv.C;
-    
-    %  ------------ Convert to TF-plane ---------
-    tc = framecoef2tf(F,tc);
-
-    tc = groupthresh(tc,threshold,'argimport',flags,kv);
-    
-    % Convert back from TF-plane
-    tc=frametf2coef(F,tc);
-    % -------------------------------------------
-    
-    relres = norm(tc(:)-tc0(:))/norm(tc0(:));
-    tc0 = tc;
-    iter = iter + 1;
-    if flags.do_print
-      if mod(iter,kv.printstep)==0        
-        fprintf('Iteration %d: relative error = %f\n',iter,relres);
-      end;
+  tc = c0 - frsynadj(F,frsyn(F,tc0));
+  tc = tc0 + tc/kv.C;
+  
+  %  ------------ Convert to TF-plane ---------
+  tc = framecoef2tf(F,tc);
+  
+  tc = groupthresh(tc,threshold,'argimport',flags,kv);
+  
+  % Convert back from TF-plane
+  tc=frametf2coef(F,tc);
+  % -------------------------------------------
+  
+  relres = norm(tc(:)-tc0(:))/norm(tc0(:));
+  tc0 = tc;
+  iter = iter + 1;
+  if flags.do_print
+    if mod(iter,kv.printstep)==0        
+      fprintf('Iteration %d: relative error = %f\n',iter,relres);
     end;
+  end;
 end
 
 % Reconstruction

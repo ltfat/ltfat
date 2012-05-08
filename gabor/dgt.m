@@ -9,7 +9,6 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %         f     : Input data.
 %         g     : Window function.
 %         a     : Length of time shift.
-%                 This is a two-line description.
 %         M     : Number of channels.
 %         L     : Length of transform to do.
 %   Output parameters:

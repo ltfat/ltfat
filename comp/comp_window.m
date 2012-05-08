@@ -1,6 +1,6 @@
-function [g,info] = comp_window(g,a,M,L,callfun);
+function [g,info] = comp_window(g,a,M,L,s,callfun);
 %COMP_WINDOW  Compute the window from numeric, text or cell array.
-%   Usage: [g,info] = comp_window(g,a,M,L,callfun);
+%   Usage: [g,info] = comp_window(g,a,M,L,s,callfun);
 %
 %   [g,info]=COMP_WINDOW(g,a,M,L,callfun) will compute the window
 %   from a text description or a cell array containing additional
@@ -23,10 +23,13 @@ info.isfir=0;
 info.istight=0;
 info.isdual=0;
 
-firwinnames =  {'hanning','hann','sqrthan','sqrthann','hamming',...
-                'sqrtham','square','halfsquare','rect','sqrtsquare','sqrtrect',...
-                'tria','triangular','sqrttria','blackman','nuttall',...
-                'ogg','itersine','sine'};
+isrect=all(s==[0 0]);
+
+firwinnames =  {...
+    'hanning','hann','sqrthan','sqrthann','hamming',...
+    'sqrtham','square','halfsquare','rect','sqrtsquare','sqrtrect',...
+    'tria','triangular','sqrttria','blackman','nuttall',...
+    'ogg','itersine','sine'};
 
 % Create window if string was given as input.
 if ischar(g)
@@ -44,12 +47,20 @@ if ischar(g)
    case {'dualgauss','gaussdual'}
     complain_L(L,callfun);
     g=comp_pgauss(L,a*M/L,0,0);
-    g=gabdual(g,a,M);
+    if isrect
+      g=gabdual(g,a,M);
+    else
+      g=nonsepgabdual(g,a,M);
+    end;
     info.isdual=1;
     info.tfr=a*M/L;
    case {'tight'}
     complain_L(L,callfun);
-    g=gabtight(a,M,L);
+    if isrect
+      g=gabtight(a,M,L);
+    else
+      g=nonsepgabtight(a,M,s,L);
+    end;
     info.tfr=a*M/L;
     info.istight=1;
    case firwinnames
@@ -79,19 +90,19 @@ if iscell(g)
     complain_L(L,callfun);
     [g,info.tfr]=psech(L,g{2:end});    
    case {'dual'}
-    [g,info.auxinfo] = comp_window(g{2},a,M,L,callfun);    
-    if isempty(L)
-      g = gabdual(g,a,M);
-    else
+    [g,info.auxinfo] = comp_window(g{2},a,M,L,s,callfun);    
+    if isrect
       g = gabdual(g,a,M,L);
+    else
+      g = nonsepgabdual(g,a,M,s,L);
     end;
     info.isdual=1;
    case {'tight'}
-    [g,info.auxinfo] = comp_window(g{2},a,M,L,callfun);    
-    if isempty(L)
-      g = gabtight(g,a,M);
-    else
+    [g,info.auxinfo] = comp_window(g{2},a,M,L,s,callfun);    
+    if isrect
       g = gabtight(g,a,M,L);
+    else
+      g = nonsepgabtight(g,a,M,s,L);
     end;
     info.istight=1;
    case firwinnames
