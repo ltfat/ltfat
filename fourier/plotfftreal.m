@@ -115,7 +115,13 @@ end;
 plot(xr,coef,kv.opts{:});
 xlim([xr(1) xr(end)]);
 
-ylabel(sprintf('%s (dB)',kv.magnitude));
+
+if flags.do_db || flags.do_dbsq
+  ylabel(sprintf('%s (dB)',kv.magnitude));
+else
+  ylabel(sprintf('%s',kv.magnitude));
+end;
+
 if ~isempty(kv.fs)
   xlabel(sprintf('%s (Hz)',kv.frequency));
 else

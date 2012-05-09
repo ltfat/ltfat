@@ -49,13 +49,31 @@ end;
 
 definput.import={'plotfilterbank','tfplot','ltfattranslate'};
 
-[flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
-  
-N=size(coef,1);
-M=size(coef,2);
+definput.keyvals.xres=800;
 
-% Turn the coefficients as in DGT.
-coef=coef.';
+[flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
+
+if iscell(coef)
+  L=a(1)*size(coef{1},1);
+  M=numel(coef);
+  N=kv.xres;
+  coef2=zeros(M,N);
+  for ii=1:M
+    row=coef{ii};
+    coef2(ii,:)=interp1(linspace(0,1,numel(row)),row,...
+                       linspace(0,1,N),'nearest');
+  end;
+  coef=coef2;
+  delta_t=L/N;
+else
+  
+  N=size(coef,1);
+  M=size(coef,2);
+
+  % Turn the coefficients as in DGT.
+  coef=coef.';
+  delta_t=a;
+end;
 
 % Freq. pos is just number of the channel.
 yr=1:M;
@@ -104,7 +122,7 @@ end;
 if flags.do_tc
   xr=(-floor(N/2):floor((N-1)/2))*a;
 else
-  xr=(0:N-1)*a;
+  xr=(0:N-1)*delta_t;
 end;
 
 if ~isempty(kv.fs)

@@ -104,7 +104,8 @@ f=postpad(f,L);
 [g,info]=nsgabwin(g,a,M);
 
 timepos=cumsum(a)-a(1);
-  
+%timepos=a-a(1);
+
 N=length(a); % Number of time positions
 
 c=cell(N,1); % Initialisation of the result

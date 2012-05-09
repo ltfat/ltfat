@@ -111,4 +111,25 @@ res=norm(f-rt);
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['UNSDGT TIGHT %0.5g %s\n'],res,fail);
 
+% ------ Reference DGT ----------------------
+
+a1=3;
+M1=4;
+N=8;
+a=a1*ones(1,N);
+M=M1*ones(1,N);
+L=a1*N;
+f=crand(L,1);
+g1=crand(L,1);
+for ii=1:N
+  g{ii}=g1;
+end;
+
+c     = nsdgt(f,g,a,M);
+c_ref = dgt(f,g1,a1,M1,'timeinv');
+
+res=norm(reshape(cell2mat(c),M1,N)-c_ref,'fro');
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['NSDGT REF %0.5g %s\n'],res,fail);
 

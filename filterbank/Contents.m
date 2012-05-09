@@ -17,6 +17,7 @@
 %    FILTERBANKREALTIGHT    - Canonical tight filters for real signals
 %    FILTERBANKBOUNDS       - Frame bounds of filter bank
 %    FILTERBANKREALBOUNDS   - Frame bounds of filter bank for real signals
+%    FILTERBANKRESPONSE     - Total frequency response
 %
 %  Plots
 %    PLOTFILTERBANK       - Plot normal/uniform filter bank coefficients
