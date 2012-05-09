@@ -1,0 +1,76 @@
+I have just released LTFAT version 1.1, which is the first on in a new development series.
+
+Version 1.1 is backwards comptatible with the 1.0 series, but
+introduces some new stuff. The "new stuff" is the "frames" framework,
+which is an object-oriented interface to the various frames in
+LTFAT. It does not actually use the object oriented features in
+Matlab, instead it uses a simple struct to keep track of things.
+
+Strictly speaking, the object returned by "newframe" contains both an
+analysis and a synthesis frame, so it represents TWO frames and not
+one. They do not need to be duals of each other.
+
+The external interface of "frames" are expected to change during the
+1.1 development cycle, and when we think that we have reached the
+right implementation, the interfaces will be stabilized and released
+as LTFAT 1.2, so LTFAT 1.2 will be the next "stable" version of LTFAT
+to which everything must be backwards compatible.
+
+The frames framework is tested by the test_frames routine, and
+currently passes all tests. Through the framework, you can access the
+following types of frames:
+
+- unstructured, general frames
+- dgt
+- dgtreal
+- dwilt
+- wmdct
+- filterbank
+- ufilterbank
+- filterbankreal
+- ufilterbankreal
+- dft
+- fft
+- fftreal
+- dcti, dctii, dctiii, dctiv
+- dsti, dstii, dstiii, dstiv
+
+Absent from this list are the non-stationary Gabor frames. The only
+reason for this is that I have not had time to implement them.
+
+The framework supports the following basic operators for each frame:
+
+- Analysis, frana
+- Synthesis, frsyn
+- Adjoint analysis, franaadj (synthesis using the analysis window)
+- Adjoint synthesis, frsynadj (analysis using the synthesis window)
+
+The coefficient layout for all the frames are simple column vectors,
+and *not* the layout that is "native" to each type of frame. It is
+possible to convert back and forth between the representations using
+framecoef2native and framenative2coef. The reason for this is that it
+would otherwise be impossible to do simple things like adding or
+scaling coefficients, without checking for their type.
+
+Some frame types support that their coefficients be laid out on a
+rectangular grid in the TF-plane. This includes the following types:
+dgt, dgtreal, dwilt, wmdct, ufilterbank, ufilterbankreal (and to come:
+unsgab and unsgabreal). For these transforms you can use framecoef2tf
+and frametf2coef to convert back and forth between column layout and a
+standardized layout on the TF-plane.
+
+The following advanced methods have already been implemented using this framework:
+
+- frsynabs: Iterative synthesis for absolute value of coefficients.
+- frsyniter: Iterative reconstruction of frame coefficients (useful if a dual frame is unknown or not possible to calculate)
+- framemuleigs: eigenvector pairs of frame multipliers
+- framelasso:  LASSO threshholding using Landweber iterations.
+- framegrouplasso: Group LASSO threshholding
+
+Please download and try out this version of LTFAT. If you have
+algorithms that work for general frames, please port them to this
+framework and help me include them into LTFAT.
+
+Cheers,
+Peter.
+
