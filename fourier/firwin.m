@@ -89,6 +89,24 @@ function [g,info]=firwin(name,M,varargin);
 %   time-domain. For filtering in the time-domain, a normalization of `'1'`
 %   or `'area'` is preferable.
 %
+%   Examples:
+%   ---------
+%
+%   The following plot shows the magnitude response for some common
+%   windows:::
+%
+%     hold all; 
+%     L=30;
+%     dr=110;
+%
+%     magresp(firwin('hanning',L,'1'),'fir','dynrange',dr);
+%     magresp(firwin('hamming',L,'1'),'fir','dynrange',dr);
+%     magresp(firwin('blackman',L,'1'),'fir','dynrange',dr);
+%     magresp(firwin('nuttall',L,'1'),'fir','dynrange',dr);
+%     magresp(firwin('itersine',L,'1'),'fir','dynrange',dr);
+%
+%     legend('Hann','Hamming','Blackman','Nuttall','Itersine');
+%
 %   See also:  pgauss, pbspline, firkaiser, normalize
 %
 %   References: opsc89 harris1978 nuttall1981 wesfreid1993

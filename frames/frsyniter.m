@@ -53,7 +53,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
   
   % Determine L from the first vector, it must match for all of them.
-  L=framelengthcoef(F,c);
+  L=framelengthcoef(F,size(c,1));
     
   % Set up the persisten variable
   afun(1, 'dummy', F);

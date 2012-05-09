@@ -60,6 +60,9 @@ if isempty(g)
   error('%s: Window g must not be empty.',upper(mfilename));
 end;
 
+info.isdual=0;
+info.istight=0;
+
 if ischar(g{1})
   winname=lower(g{1});
   switch(winname)

@@ -29,8 +29,6 @@ function gd=nonsepgabdual(g,a,M,s,L)
 %
 %   If $a>M$ then the dual window of the Gabor Riesz sequence with window
 %   *g* and parameters *a* and *M* will be calculated.
-%
-%   See also:  nonsepgabtight, gabwin, fir2long, nonsepdgt
 
 %   AUTHOR : Peter Soendergaard.
 %   TESTING: TEST_DGT

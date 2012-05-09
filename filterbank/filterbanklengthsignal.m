@@ -6,15 +6,15 @@ function L=filterbanklengthsignal(Ls,a);
 %   time shifts *a*, such that it is long enough to expand a signal of
 %   length *Ls*.
 %
-%   If the filterbank length is longer than the signal length, the signal will be
-%   zero-padded by |filterbank|_ or |ufilterbank|_.
+%   If the filterbank length is longer than the signal length, the signal
+%   will be zero-padded by |filterbank|_ or |ufilterbank|_.
 %
 %   If instead a set of coefficients are given, call |filterbanklengthcoef|_.
 %
 %   See also: filterbank, filterbanklengthcoef
 
 if ~isnumeric(Ls)
-  error('%s: a must be numeric.',upper(mfilename));
+  error('%s: Ls must be numeric.',upper(mfilename));
 end;
 
 if ~isscalar(Ls)
@@ -24,7 +24,6 @@ end;
 if ~isnumeric(a)
   error('%s: a must be numeric.',upper(mfilename));
 end;
-
 
 if ~isvector(a) || any(a<=0)
   error('%s: "a" must be a vector of positive numbers.',upper(mfilename));

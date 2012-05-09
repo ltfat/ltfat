@@ -18,6 +18,7 @@ function G=frsynmat(F,L);
 %   matrix. Consider the following simple example:::
 %
 %     L=200;
+%     f=randn(L,1);
 %     F=newframe('dgt','gauss','dual',10,20);
 %     G=frsynmat(F,L);
 %     testsig  = randn(L,1);

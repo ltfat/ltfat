@@ -1,4 +1,4 @@
-function [c,Ls,g]=dgt(f,g,a,M,s,varargin)
+function [c,Ls,g]=nonsepdgt(f,g,a,M,s,varargin)
 %NONSEPDGT  Non-separable Discrete Gabor transform
 %   Usage:  c=nonsepdgt(f,g,a,M,s);
 %           c=nonsepdgt(f,g,a,M,s,L);
@@ -21,7 +21,7 @@ function [c,Ls,g]=dgt(f,g,a,M,s,varargin)
 %   time-shift *a*, number of channels *M* and shear *s*. The output is a
 %   vector/matrix in a rectangular layout.
 %
-%   The shear *s* is a $1 \times 2$ vector $\[s_1 s_2\]$ denoting an
+%   The shear *s* is a $1 \times 2$ vector $[s_1,s_2]$ denoting an
 %   irreducible fraction $s_1/s_2$. This fraction describes the distance
 %   in frequency (counted in frequency channels) that each coefficient is
 %   offset when moving in time by the time-shift of *a*. Some examples:
@@ -58,15 +58,17 @@ function [c,Ls,g]=dgt(f,g,a,M,s,varargin)
 %   The non-separable discrete Gabor transform is defined as follows:
 %   Consider a window *g* and a one-dimensional signal *f* of length *L* and
 %   define $N=L/a$.  The output from `c=nonsepdgt(f,g,a,M,s)` is then given
-%   by: FIXTHIS
+%   by:
 %
 %   ..              L-1 
-%      c(m+1,n+1) = sum f(l+1)*conj(g(l-a*n+1))*exp(-2*pi*i*m*l/M), 
+%      c(m+1,n+1) = sum f(l+1)*conj(g(l-a*n+1))*exp(-2*pi*i*(m+w(n))*l/M), 
 %                   l=0  
 %
-%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi ilm/M}
+%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi il(m+w(n))/M}
 %
-%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
+%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed
+%   modulo *L*.  The additional offset $w$ is given by
+%   $w(n)=\mod(n\cdot s_1,s_2)/s_2$ in the formula above.
 %
 %   Coefficient layout:
 %   -------------------
@@ -79,6 +81,8 @@ function [c,Ls,g]=dgt(f,g,a,M,s,varargin)
 %     N=6;
 %     L=N*a;
 %     b=L/M;
+%     cw=3;
+%     ftz=12;
 %     
 %     [x,y]=meshgrid(a*(0:N-1),b*(0:M-1));
 %
@@ -92,15 +96,15 @@ function [c,Ls,g]=dgt(f,g,a,M,s,varargin)
 %         z=z+mod(s1(fignum)*x/s2(fignum),b);
 %       end;
 %       for ii=1:M*N
-%         text(x(ii),z(ii),sprintf('%2.0i',ii));
-%         rectangle('Curvature',[1 1], 'Position',[x(ii)-.5,z(ii)-.5,3,3]);
+%         text(x(ii)-cw/4,z(ii),sprintf('%2.0i',ii),'Fontsize',ftz);
+%         rectangle('Curvature',[1 1], 'Position',[x(ii)-cw/2,z(ii)-cw/2,cw,cw]);
 %       end;
-%       axis([0 L 0 L]);
+%       axis([-cw L -cw L]);
 %       axis('square');
-%       title(sprintf('s=[%i %i]',s1(fignum),s2(fignum)));
+%       title(sprintf('s=[%i %i]',s1(fignum),s2(fignum)),'Fontsize',ftz);
 %     end;
 %
-%   See also:  inonsepdgt, nonsepgabwin, nonsepgabdual
+%   See also:  nonsepgabdual
 
 % Assert correct input.
 
@@ -109,70 +113,18 @@ if nargin<5
 end;
 
 definput.keyvals.L=[];
-[flags,kv]=ltfatarghelper({'L'},definput,varargin);
-
-if  (prod(size(M))~=1 || ~isnumeric(M))
-  error('%s: M must be a scalar',callfun);
-end;
-
-if (prod(size(a))~=1 || ~isnumeric(a))
-  error('%s: a must be a scalar',callfun);
-end;
-
-if rem(M,1)~=0
-  error('%s: M must be an integer',callfun);
-end;
-
-if rem(a,1)~=0
-  error('%s: a must be an integer',callfun);
-end;
-
-if ~isempty(L)
-  if (prod(size(L))~=1 || ~isnumeric(L))
-    error('%s: L must be a scalar',callfun);
-  end;
-  
-  if rem(L,1)~=0
-    error('%s: L must be an integer',callfun);
-  end;
-end;
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 % Change f to correct shape.
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,0);
-
-if isnumeric(g)
-  if ~isvector(g)
-    error('%s: g must be a vector',upper(callfun));
-  end;
-  Lwindow=length(g);
-else
-  Lwindow=0;
-end;
-
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
 
 if isempty(L)
-  % Smallest length transform. FIXME
-  Lsmallest=lcm(a,M);
-
-  % Choose a transform length larger than both the length of the
-  % signal and the window.
-  L=ceil(Ls/Lsmallest)*Lsmallest;
+  L=nonsepdgtlengthsignal(Ls,a,M,s);
 else
-
-  if rem(L,M)~=0
-    error('%s: The length of the transform must be divisable by M = %i',...
-          callfun,M);
+  Lcheck=nonsepdgtlengthsignal(L,a,M,s);
+  if Lcheck~=L
+    error('%s: Invalid transform size L',upper(mfilename));
   end;
-
-  if rem(L,a)~=0
-    error('%s: The length of the transform must be divisable by a = %i',...
-          callfun,a);
-  end;
-
-  if L<Lwindow
-    error('%s: Window is too long.',callfun);
-  end;
-
 end;
 
 b=L/M;
@@ -195,13 +147,13 @@ if isa(f,'single')
 end;
 
 
-% FIXME ----- algorithm starts here ---------------
+% ----- algorithm starts here, split into sub-lattices ---------------
 
 % simple algorithm: split into sublattices
 c=zeros(M,N,W);
-for ii=1:s(2)
+for ii=0:s(2)-1
   % Modulate the window
-  gw=g.*expwave(L,a*s1
-  
+  gw=g.*expwave(L,mod(s(1)*ii,s(2))*b/s(2));
+  c(:,ii+1:s(2):end)=comp_dgt(f,gw,s(2)*a,M,L,0);  
 end;
 
