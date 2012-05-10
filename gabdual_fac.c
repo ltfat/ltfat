@@ -6,16 +6,14 @@
 #include "ltfat.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
 			     const int a, const int M,
 			     LTFAT_COMPLEX *gdualf)
 {
   
    int h_a, h_m;  
 
-   LTFAT_COMPLEX *Sf;
-   
-   const int R = 1;
+   LTFAT_COMPLEX *Sf;   
 
    const LTFAT_COMPLEX zzero = {0.0, 0.0 };
    const LTFAT_COMPLEX alpha = {1.0, 0.0 };
@@ -58,7 +56,7 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *gf, const int L,
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
 			     const int a, const int M,
 			     LTFAT_COMPLEX *gdualf)
 {
@@ -67,8 +65,6 @@ LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *gf, const int L,
 
    LTFAT_COMPLEX *Sf;
    
-   const int R = 1;
-
    const LTFAT_COMPLEX zzero = {0.0, 0.0 };
    const LTFAT_COMPLEX alpha = {1.0, 0.0 };
 

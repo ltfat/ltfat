@@ -6,7 +6,7 @@
 #include "ltfat.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
+LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L, const int R, 
 		      const int a, const int M,
 		      LTFAT_COMPLEX *gf)
 {
@@ -19,9 +19,6 @@ LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
 
    LTFAT_FFTW(plan) p_before;
 
-   /* This is preserved for potential future use. */
-   const int R = 1;
-   
    const int b = L/M;
    
    const int c=gcd(a, M,&h_a, &h_m);
@@ -74,7 +71,7 @@ LTFAT_NAME(wfac)(const LTFAT_COMPLEX *g, const int L,
 
 /* wfac for real valued input. */
 LTFAT_EXTERN void
-LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
+LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L, const int R, 
 			const int a, const int M,
 			LTFAT_COMPLEX *gf)
 {
@@ -85,8 +82,6 @@ LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
 
    int s;
    int rem, negrem;
-
-   const int R = 1;
 
    LTFAT_FFTW(plan) p_before;   
    
@@ -141,7 +136,7 @@ LTFAT_NAME(wfac_r)(const LTFAT_REAL *g, const int L,
 
 /* wfac for real valued input. Produces only half the output coefficients of wfac_r */
 LTFAT_EXTERN void
-LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
+LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L, const int R, 
 			const int a, const int M,
 			LTFAT_COMPLEX *gf)
 {
@@ -152,8 +147,6 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L,
 
    int s;
    int rem, negrem;
-
-   const int R = 1;
 
    LTFAT_FFTW(plan) p_before;   
    

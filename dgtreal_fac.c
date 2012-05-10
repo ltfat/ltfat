@@ -51,7 +51,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    plan.cwork = (LTFAT_REAL*)ltfat_malloc(M*N*W*sizeof(LTFAT_REAL));
 
    /* Get factorization of window */
-   LTFAT_NAME(wfacreal)(g, L, a, M, plan.gf);
+   LTFAT_NAME(wfacreal)(g, L, 1, a, M, plan.gf);
    
   /* Create plans. In-place. */
    plan.p_veryend = 

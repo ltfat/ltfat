@@ -1,27 +1,27 @@
 /*  --------- factorizations --------------- */
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(wfac)(const LTFAT_H_COMPLEX *g, const int L, 
+LTFAT_H_NAME(wfac)(const LTFAT_H_COMPLEX *g, const int L, const int R, 
 		 const int a, const int M, LTFAT_H_COMPLEX *gf);
 		
 LTFAT_EXTERN void
-LTFAT_H_NAME(wfac_r)(const LTFAT_H_REAL *g, const int L, 
+LTFAT_H_NAME(wfac_r)(const LTFAT_H_REAL *g, const int L, const int R, 
 		   const int a, const int M, LTFAT_H_COMPLEX *gf);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(wfacreal)(const LTFAT_H_REAL *g, const int L, 
+LTFAT_H_NAME(wfacreal)(const LTFAT_H_REAL *g, const int L, const int R, 
 		       const int a, const int M, LTFAT_H_COMPLEX *gf);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(iwfac)(const LTFAT_H_COMPLEX *gf, const int L, 
+LTFAT_H_NAME(iwfac)(const LTFAT_H_COMPLEX *gf, const int L, const int R, 
 		  const int a, const int M, LTFAT_H_COMPLEX *g);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(iwfac_r)(const LTFAT_H_COMPLEX *gf, const int L, 
+LTFAT_H_NAME(iwfac_r)(const LTFAT_H_COMPLEX *gf, const int L, const int R, 
 		    const int a, const int M, LTFAT_H_REAL *g);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(iwfacreal)(const LTFAT_H_COMPLEX *gf, const int L, 
+LTFAT_H_NAME(iwfacreal)(const LTFAT_H_COMPLEX *gf, const int L, const int R, 
 		    const int a, const int M, LTFAT_H_REAL *g);
 
 /* --------- DGT by factorization ------------ */
@@ -100,41 +100,41 @@ LTFAT_H_NAME(wmdctreal_long)(const LTFAT_H_REAL *f,
 /* --------- dual windows etc. --------------- */
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(gabdual_fac)(const LTFAT_H_COMPLEX *g, const int L, 
+LTFAT_H_NAME(gabdual_fac)(const LTFAT_H_COMPLEX *g, const int L, const int R, 
 			const int a, const int M, LTFAT_H_COMPLEX *gdualf);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(gabdualreal_fac)(const LTFAT_H_COMPLEX *g, const int L, 
+LTFAT_H_NAME(gabdualreal_fac)(const LTFAT_H_COMPLEX *g, const int L, const int R, 
 			const int a, const int M, LTFAT_H_COMPLEX *gdualf);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(gabtight_fac)(const LTFAT_H_COMPLEX *gf, const int L, 
+LTFAT_H_NAME(gabtight_fac)(const LTFAT_H_COMPLEX *gf, const int L, const int R,
 			   const int a, const int M,
 			   LTFAT_H_COMPLEX *gtightf);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(gabtightreal_fac)(const LTFAT_H_COMPLEX *gf, const int L, 
+LTFAT_H_NAME(gabtightreal_fac)(const LTFAT_H_COMPLEX *gf, const int L, const int R,
 			   const int a, const int M,
 			   LTFAT_H_COMPLEX *gtightf);
 
 LTFAT_EXTERN
 void LTFAT_H_NAME(gabdual_long)(const LTFAT_H_COMPLEX *g,
-				const int L, const int a,
+				const int L, const int R, const int a,
 				const int M, LTFAT_H_COMPLEX *gd);
 
 LTFAT_EXTERN				
 void LTFAT_H_NAME(gabdualreal_long)(const LTFAT_H_REAL *g,
-				    const int L, const int a,
+				    const int L, const int R, const int a,
 				    const int M, LTFAT_H_REAL *gd);
 
 LTFAT_EXTERN
 void LTFAT_H_NAME(gabtight_long)(const LTFAT_H_COMPLEX *g,
-				const int L, const int a,
+				const int L, const int R, const int a,
 				const int M, LTFAT_H_COMPLEX *gd);
 
 LTFAT_EXTERN
 void LTFAT_H_NAME(gabtightreal_long)(const LTFAT_H_REAL *g,
-				    const int L, const int a,
+				    const int L, const int R, const int a,
 				    const int M, LTFAT_H_REAL *gd);
 
 

@@ -23,11 +23,11 @@ void fircanon_r(const double *g, const int Lg, const int L, const int a,
          
    if (wintype==0)
    {
-      gabdualreal_long(g, L, a, M, tmp_iir);
+     gabdualreal_long(g, L, 1, a, M, tmp_iir);
    }
    else
    {
-      gabtightreal_long(g, L, a, M, tmp_iir);
+     gabtightreal_long(g, L, 1, a, M, tmp_iir);
    }
       
    /* Cut dual IIR window to a FIR window. */

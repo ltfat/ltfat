@@ -6,9 +6,9 @@
 #include "ltfat.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,
-			      const int a, const int M,
-			      LTFAT_COMPLEX *gtightf)
+LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,const int R,
+			 const int a, const int M,
+			 LTFAT_COMPLEX *gtightf)
 {
   
    int h_a, h_m;
@@ -21,8 +21,6 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,
    const LTFAT_COMPLEX zzero = {0.0, 0.0 };
    const LTFAT_COMPLEX alpha = {1.0, 0.0 };
    
-   const int R = 1;
-
    const int N=L/a;
    
    const int c=gcd(a, M,&h_a, &h_m);
@@ -70,7 +68,7 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
 			      const int a, const int M,
 			      LTFAT_COMPLEX *gtightf)
 {
@@ -83,9 +81,7 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L,
    LTFAT_REAL *S;
 
    const LTFAT_COMPLEX zzero = {0.0, 0.0 };
-   const LTFAT_COMPLEX alpha = {1.0, 0.0 };
-   
-   const int R = 1;
+   const LTFAT_COMPLEX alpha = {1.0, 0.0 };   
 
    const int N=L/a;
    
@@ -130,7 +126,5 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L,
    ltfat_free(S);
    ltfat_free(U);
    ltfat_free(VT);
-
-
 }
 
