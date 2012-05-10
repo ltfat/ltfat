@@ -7,6 +7,7 @@ function gd=comp_gabdual_long(g,a,M);
 %  See also: gabdual
   
 L=length(g);
+R=size(g,2);
 
 gf=comp_wfac(g,a,M);
 
@@ -19,9 +20,9 @@ d=gcd(b,N);
 p=b/d;
 q=N/d;
 
-gdf=zeros(p*q,c*d);
+gdf=zeros(p*q*R,c*d);
 
-G=zeros(p,q);
+G=zeros(p,q*R);
 for ii=1:c*d
   % This essentially computes pinv of each block.
 

@@ -73,10 +73,11 @@ end;
 
 [g,L,info] = gabpars_from_window(g,a,M,L);
   
+R=size(g,2);
 % -------- Are we in the Riesz sequence of in the frame case
 
 scale=1;
-if a>M
+if a>M*R
   % Handle the Riesz basis (dual lattice) case.
   % Swap a and M, and scale differently.
   scale=sqrt(a/M);

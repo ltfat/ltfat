@@ -106,13 +106,11 @@ else
   % Compute the transform matrix.
   bigM=frsyn(F,diag(coef)*frana(F,eye(L)));
 
-  size(bigM)
   if doV
     [V,D]=eig(bigM);
   else
     D=eig(bigM);
   end;
-
 
 end;
 

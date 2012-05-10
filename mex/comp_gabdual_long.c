@@ -11,7 +11,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		  int nrhs, const mxArray *prhs[] )
      
 { 
-   int L, a, M;
+   int L, R, a, M;
    ltfat_complex *g_combined, *gd_combined;
    double *gd_r, *gd_i;
    
@@ -20,21 +20,22 @@ void mexFunction( int nlhs, mxArray *plhs[],
    /* Get matrix dimensions.*/
    
    L=(int)mxGetM(prhs[0]);
+   R=(int)mxGetN(prhs[0]);
    a=(int)mxGetScalar(prhs[1]);
    M=(int)mxGetScalar(prhs[2]);
 
    if (mxIsComplex(prhs[0]))
    {
-      g_combined  = mxCalloc(L,2*sizeof(double));
-      gd_combined = mxCalloc(L,2*sizeof(double));
+      g_combined  = mxCalloc(L*R,2*sizeof(double));
+      gd_combined = mxCalloc(L*R,2*sizeof(double));
 
-      split2combined(L, prhs[0], g_combined);
+      split2combined(L*R, prhs[0], g_combined);
 
-      gabdual_long((const ltfat_complex*)g_combined,L,a,M,gd_combined);
+      gabdual_long((const ltfat_complex*)g_combined,L,R,a,M,gd_combined);
 
-      plhs[0] = mxCreateDoubleMatrix(L, 1, mxCOMPLEX);
+      plhs[0] = mxCreateDoubleMatrix(L, R, mxCOMPLEX);
    
-      combined2split(L, (const ltfat_complex*)gd_combined, plhs[0]);
+      combined2split(L*R, (const ltfat_complex*)gd_combined, plhs[0]);
 
       mxFree(gd_combined);
       mxFree(g_combined);
@@ -43,10 +44,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
    else      
    {
 
-      plhs[0] = mxCreateDoubleMatrix(L, 1, mxREAL);
+      plhs[0] = mxCreateDoubleMatrix(L, R, mxREAL);
 
       gabdualreal_long((const double*)mxGetPr(prhs[0]),
-		       L,a,M,
+		       L,R,a,M,
 		       mxGetPr(plhs[0]));
    
    }

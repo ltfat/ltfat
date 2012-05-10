@@ -27,9 +27,6 @@ if ~isempty(L)
 end;
 
 if isnumeric(g)
-  if ~isvector(g)
-    error('%s: g must be a vector',upper(callfun));
-  end;
   Lwindow=length(g);
 else
   Lwindow=0;
@@ -42,7 +39,7 @@ if isempty(L)
 
   % Choose a transform length larger than both the length of the
   % signal and the window.
-  L=ceil(max(1,Lwindow)/Lsmallest)*Lsmallest;
+  L=ceil(Lwindow/Lsmallest)*Lsmallest;
 else
 
   if rem(L,M)~=0

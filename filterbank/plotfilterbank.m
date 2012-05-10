@@ -51,7 +51,7 @@ definput.import={'plotfilterbank','tfplot','ltfattranslate'};
 
 definput.keyvals.xres=800;
 
-[flags,kv,fs]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
+[flags,kv]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
 
 if iscell(coef)
   L=a(1)*size(coef{1},1);
@@ -66,7 +66,7 @@ if iscell(coef)
   coef=coef2;
   delta_t=L/N;
 else
-  
+  a=a(1);
   N=size(coef,1);
   M=size(coef,2);
 

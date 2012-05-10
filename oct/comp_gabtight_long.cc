@@ -13,14 +13,15 @@ DEFUN_DLD (comp_gabtight_long, args, ,
 
      const ComplexMatrix g = args(0).complex_matrix_value();
      const int L = g.rows();
+     const int R = g.columns();
      const int a = args(1).int_value();
      const int M = args(2).int_value();
 
-     ComplexMatrix gd(L,1);
+     ComplexMatrix gd(L,R);
      
      gabtight_long((const ltfat_complex*)g.fortran_vec(),
-		  L,a,M,
-		  (ltfat_complex*)gd.data());
+		   L,R,a,M,
+		   (ltfat_complex*)gd.data());
 
      return octave_value (gd);
 
@@ -30,14 +31,15 @@ DEFUN_DLD (comp_gabtight_long, args, ,
 
      const Matrix g = args(0).matrix_value();
      const int L = g.rows();
+     const int R = g.columns();
      const int a = args(1).int_value();
      const int M = args(2).int_value();
 
-     Matrix gd(L,1);
+     Matrix gd(L,R);
   
      gabtightreal_long((double*)g.fortran_vec(),
-		  L,a,M,
-		  (double*)gd.fortran_vec());
+		       L,R,a,M,
+		       (double*)gd.fortran_vec());
 
      return octave_value (gd);
 

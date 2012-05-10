@@ -183,6 +183,7 @@ switch(ftype)
     F.ga=U*V'; 
     F.gs=F.ga;
   end;
+  
  case {'dft','fft',...
        'dcti','dctii','dctiii','dctiv',...
        'dsti','dstii','dstiii','dstiv'}

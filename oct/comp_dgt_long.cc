@@ -53,12 +53,12 @@ DEFUN_DLD (comp_dgt_long, args, ,
     if (args(1).is_complex_type())
     {
        const ComplexMatrix g = args(1).complex_matrix_value();
-       wfac((ltfat_complex*)g.data(),L,a,M,gf);
+       wfac((ltfat_complex*)g.data(),L,1,a,M,gf);
     }
     else
     {
        const Matrix g = args(1).matrix_value();
-       wfac_r((double*)g.data(),L,a,M,gf);
+       wfac_r((double*)g.data(),L,1,a,M,gf);
     }
     
     ComplexMatrix cout(M,N*W);  

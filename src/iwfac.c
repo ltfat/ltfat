@@ -9,7 +9,7 @@
 #include "ltfat.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L, const int R,
 		       const int a, const int M, LTFAT_COMPLEX *g)
 {
    
@@ -20,8 +20,6 @@ LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L,
    LTFAT_REAL scaling, *sbuf, *gfp;
    
    LTFAT_FFTW(plan) p_before;
-   
-   const int R = 1;
    
    const int b=L/M;
    const int c=gcd(a, M,&h_a, &h_m);
@@ -79,7 +77,7 @@ LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const int L,
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(iwfac_r)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_NAME(iwfac_r)(const LTFAT_COMPLEX *gf, const int L, const int R,
 		       const int a, const int M, LTFAT_REAL *g)
 {
    
@@ -90,8 +88,6 @@ LTFAT_NAME(iwfac_r)(const LTFAT_COMPLEX *gf, const int L,
    LTFAT_REAL scaling, *sbuf, *gfp;
    
    LTFAT_FFTW(plan) p_before;
-   
-   const int R = 1;
    
    const int b=L/M;
    const int c=gcd(a, M,&h_a, &h_m);
@@ -147,15 +143,13 @@ LTFAT_NAME(iwfac_r)(const LTFAT_COMPLEX *gf, const int L,
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const int L,
+LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const int L, const int R,
 		       const int a, const int M, LTFAT_REAL *g)
 {
    
    int h_a, h_m;
       
    LTFAT_FFTW(plan) p_before;   
-   
-   const int R = 1;
    
    const int b=L/M;
    const int c=gcd(a, M,&h_a, &h_m);

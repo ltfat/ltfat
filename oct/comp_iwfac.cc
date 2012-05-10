@@ -10,12 +10,13 @@ DEFUN_DLD (comp_iwfac, args, ,
 
   const ComplexMatrix gf = args(0).complex_matrix_value();
   const int L = args(1).int_value();
+  const int R = gf.numel()/L;
   const int a = args(2).int_value();
   const int M = args(3).int_value();
 
   ComplexMatrix g(L,1);
   
-  iwfac((const ltfat_complex*)gf.data(),L,a,M,
+  iwfac((const ltfat_complex*)gf.data(),L,R,a,M,
 	(ltfat_complex*)g.fortran_vec());
 
   return octave_value (g);

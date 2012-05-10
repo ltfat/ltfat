@@ -115,9 +115,7 @@ end;
 
 if isnumeric(g)
   if size(g,2)>1
-    if size(g,1)>1
-      error('g must be a vector');
-    else
+    if size(g,1)==1
       % g was a row vector.
       g=g(:);
       info.wasrow=1;

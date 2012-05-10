@@ -19,6 +19,7 @@ DEFUN_DLD (comp_wfac, args, ,
   {
      const ComplexMatrix g = args(0).complex_matrix_value();
      const int L = g.rows();
+     const int R = g.columns();
      
      const int b = L/M;
          
@@ -27,9 +28,9 @@ DEFUN_DLD (comp_wfac, args, ,
      const int q=M/c;
      const int d=b/p;
      
-     ComplexMatrix gf(p*q,c*d);
+     ComplexMatrix gf(p*q*R,c*d);
      
-     wfac((const ltfat_complex*)g.data(),L,a,M,
+     wfac((const ltfat_complex*)g.data(),L,R,a,M,
 	  (ltfat_complex*)gf.fortran_vec());
      
      return octave_value (gf);
@@ -40,6 +41,7 @@ DEFUN_DLD (comp_wfac, args, ,
 
      const Matrix g = args(0).matrix_value();
      const int L = g.rows();
+     const int R = g.columns();
      const int b = L/M;
          
      const int c=gcd(a, M,&h_a, &h_m);
@@ -47,13 +49,10 @@ DEFUN_DLD (comp_wfac, args, ,
      const int q=M/c;
      const int d=b/p;
      
-     ComplexMatrix gf(p*q,c*d);
+     ComplexMatrix gf(p*q*R,c*d);
      
-     wfac_r(g.data(),L,a,M,(ltfat_complex*)gf.fortran_vec());
+     wfac_r(g.data(),L,R,a,M,(ltfat_complex*)gf.fortran_vec());
      
      return octave_value (gf);
-
-
-
   }
 }
