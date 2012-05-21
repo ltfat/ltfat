@@ -1,5 +1,5 @@
-function test_failed=test_dgt
-%TEST_DGT  Test DGT
+function test_failed=test_nonsepdgt
+%TEST_NONSEPDGT  Test non-separable DGT
 %
 %  This script runs a throrough test of the DGT routine,
 %  testing it on a range of input parameters.
@@ -12,9 +12,11 @@ function test_failed=test_dgt
 %  Use TEST_WFAC and TEST_DGT_FAC for more specific testing
 %  of the DGT backend.
       
-Lr=[24,16,144,108,144,24,135,35,77,20];
-ar=[ 4, 4,  9,  9, 12, 6,  9, 5, 7, 1];
-Mr=[ 6, 8, 16, 12, 24, 8,  9, 7,11,20];
+Lr=[24,24];
+ar=[ 4, 4];
+Mr=[ 6, 6];
+s1=[ 0, 1];
+s2=[ 1, 2];
 
 test_failed=0;
 
@@ -38,6 +40,7 @@ for ii=1:length(Lr);
   
   M=Mr(ii);
   a=ar(ii);
+  s=[s1(ii), s2(ii)];
   
   b=L/M;
   N=L/a;
@@ -58,7 +61,7 @@ for ii=1:length(Lr);
     end;
     
     gd=gabdual(g,a,M);
-    gt=gabtight(g,a,M);
+    %gt=gabtight(g,a,M);
     
 
     for W=1:3
@@ -67,36 +70,27 @@ for ii=1:length(Lr);
         f=rand(L,W);
       else
         f=crand(L,W);
-      end;
+      end;      
       
-      % --- Test DGT against its reference implementation. ---
+      cc = nonsepdgt(f,g,a,M,s);
       
-      cc=nonsepdgt(f,g,a,M);  
-      cc2=ref_dgt(f,g,a,M);
+      cc_ref = ref_nonsepdgt(f,g,a,M,s);
       
-      cdiff=cc-cc2;
-      res=norm(cdiff(:));      
+      res = norm(cc(:)-cc_ref(:));
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      s=sprintf(['REF %s L:%3i W:%2i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i '...
-                 '%0.5g %s'],rname,L,W,a,b,c,d,p,q,res,fail);
-      disp(s)
+      stext=sprintf(['REF %s L:%3i W:%2i a:%3i M:%3i s1:%3i s2:%3i %0.5g %s'],...
+                    rname,L,W,a,M,s(1),s(2),res,fail);
+      disp(stext)
       
-      % --- Test reconstruction of IDGT using a canonical dual window. ---
       
-      r=idgt(cc,gd,a);  
+      r=inonsepdgt(cc,gd,a,s);  
       res=norm(f-r,'fro');
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      s=sprintf(['REC %s L:%3i W:%2i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i ' ...
-                 '%0.5g %s'],rname,L,W,a,b,c,d,p,q,res,fail);
-      disp(s)
       
-      % --- Test reconstruction of IDGT using a canonical tight window. ---
-      
-      res=norm(f-idgt(dgt(f,gt,a,M),gt,a),'fro');
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      s=sprintf(['TIG %s L:%3i W:%2i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i ' ...
-                 '%0.5g %s'],rname,L,W,a,b,c,d,p,q,res,fail);
-      disp(s);
+      stext=sprintf(['REC %s L:%3i W:%2i a:%3i M:%3i s1:%3i s2:%3i %0.5g %s'],...
+                rname,L,W,a,M,s(1),s(2),res,fail);
+      disp(stext)
+      
       
     end;
 

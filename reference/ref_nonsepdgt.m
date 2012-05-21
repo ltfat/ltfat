@@ -1,4 +1,4 @@
-function [c]=ref_nonsepdgt(f,g,a,M)
+function [c]=ref_nonsepdgt(f,g,a,M,s)
 %REF_NONSEPDGT  Reference non-sep Discrete Gabor transform.
 %   Usage:  c=ref_dgt(f,g,a,M,s);
 %
@@ -14,7 +14,7 @@ W=size(f,2);
 R=size(g,2);
 
 % Create 2x2 grid matrix..
-V=[a,0;
+V=[a,0;...
    b/s(2)*s(1),b];
   
 % Create lattice and Gabor matrix.

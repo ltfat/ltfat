@@ -87,7 +87,7 @@ function [c,Ls,g]=nonsepdgt(f,g,a,M,s,varargin)
 %     [x,y]=meshgrid(a*(0:N-1),b*(0:M-1));
 %
 %     s1=[0 1 1 2];
-%     s2=[0 2 3 3];
+%     s2=[1 2 3 3];
 %
 %     for fignum=1:4
 %       figure;
@@ -149,11 +149,12 @@ end;
 
 % ----- algorithm starts here, split into sub-lattices ---------------
 
+mwin=comp_nonsepwin2multi(g,a,M,s);
+
 % simple algorithm: split into sublattices
 c=zeros(M,N,W);
 for ii=0:s(2)-1
-  % Modulate the window
-  gw=g.*expwave(L,mod(s(1)*ii,s(2))*b/s(2));
-  c(:,ii+1:s(2):end)=comp_dgt(f,gw,s(2)*a,M,L,0);  
+  ii+1:s(2):N;
+  c(:,ii+1:s(2):end,:)=comp_dgt(f,mwin(:,ii+1),s(2)*a,M,L,0);  
 end;
 

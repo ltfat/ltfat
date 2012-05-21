@@ -13,8 +13,6 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,const int R,
   
    int h_a, h_m;
    
-   int w, rs;
-
    LTFAT_COMPLEX *Sf, *U, *VT, *gfwork;
    LTFAT_REAL *S;
 
@@ -39,22 +37,19 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,const int R,
     */
    memcpy(gfwork,gf,sizeof(LTFAT_COMPLEX)*L*R);
   
-   for (w=0;w<R;w++)
+   for (int rs=0;rs<c*d;rs++)
    {
-      for (rs=0;rs<c*d;rs++)
-      {
-	/* Compute the thin SVD */
-	LTFAT_NAME(ltfat_gesvd)(p, q*R, gfwork+rs*p*q*R, p,
-		     S, U, p, VT, p);
-
-	/* Combine U and V. */
-	LTFAT_NAME(ltfat_gemm)(CblasNoTrans,CblasNoTrans,p,q*R,p,
-			       &alpha,(const LTFAT_COMPLEX*)U,p,
-			       (const LTFAT_COMPLEX*)VT,p,
-			       &zzero,gtightf+rs*p*q*R, p);
-
-
-      }
+      /* Compute the thin SVD */
+      LTFAT_NAME(ltfat_gesvd)(p, q*R, gfwork+rs*p*q*R, p,
+			      S, U, p, VT, p);
+      
+      /* Combine U and V. */
+      LTFAT_NAME(ltfat_gemm)(CblasNoTrans,CblasNoTrans,p,q*R,p,
+			     &alpha,(const LTFAT_COMPLEX*)U,p,
+			     (const LTFAT_COMPLEX*)VT,p,
+			     &zzero,gtightf+rs*p*q*R, p);
+      
+      
    }
 
    ltfat_free(gfwork);
@@ -75,8 +70,6 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
   
    int h_a, h_m;
    
-   int w, rs;
-
    LTFAT_COMPLEX *Sf, *U, *VT, *gfwork;
    LTFAT_REAL *S;
 
@@ -104,21 +97,17 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
     */
    memcpy(gfwork,gf,sizeof(LTFAT_COMPLEX)*L*R);
   
-   for (w=0;w<R;w++)
+   for (int rs=0;rs<c*d2;rs++)
    {
-      for (rs=0;rs<c*d2;rs++)
-      {
-	/* Compute the thin SVD */
-	LTFAT_NAME(ltfat_gesvd)(p, q*R, gfwork+rs*p*q*R, p,
-		     S, U, p, VT, p);
-
-	/* Combine U and V. */
-	LTFAT_NAME(ltfat_gemm)(CblasNoTrans,CblasNoTrans,p,q*R,p,
-			       &alpha,(const LTFAT_COMPLEX*)U,p,
-			       (const LTFAT_COMPLEX*)VT,p,
-			       &zzero,gtightf+rs*p*q*R, p);
-
-      }
+      /* Compute the thin SVD */
+      LTFAT_NAME(ltfat_gesvd)(p, q*R, gfwork+rs*p*q*R, p,
+			      S, U, p, VT, p);
+      
+      /* Combine U and V. */
+      LTFAT_NAME(ltfat_gemm)(CblasNoTrans,CblasNoTrans,p,q*R,p,
+			     &alpha,(const LTFAT_COMPLEX*)U,p,
+			     (const LTFAT_COMPLEX*)VT,p,
+			     &zzero,gtightf+rs*p*q*R, p);      
    }
 
    ltfat_free(gfwork);

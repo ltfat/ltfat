@@ -7,6 +7,7 @@ function gt=comp_gabtight_long(g,a,M);
 %  See also: gabtight
   
 L=length(g);
+R=size(g,2);
 
 gf=comp_wfac(g,a,M);
 
@@ -19,7 +20,8 @@ d=gcd(b,N);
 p=b/d;
 q=N/d;
 
-G=zeros(p,q);
+G=zeros(p,q*R);
+
 
 
 if p==1

@@ -1,35 +1,76 @@
- 
-R=2;
-L=24;
+function test_failed=test_multiwin
+%TEST_MULTIWIN  Test multiwindow gabdual and gabtight
 
-for wintype = 1:3
-  switch wintype
-   case 1
-    a=6;
-    M=4;
-    g=pherm(24,0:R-1);
-   case 2
-    a=4;
-    M=6;
-    g=crand(L,R);
-   case 3
-    a=6;
-    M=4;
-    g=[pgauss(L,1),circshift(pgauss(L),a/2)];
-  end;
+      
+Lr=[24,16,144,108,144,24,135,35,77,20];
+ar=[ 4, 4,  9,  9, 12, 6,  9, 5, 7, 1];
+Mr=[ 6, 8, 16, 12, 24, 8,  9, 7,11,20];
   
-  N=L/a;
+disp(' ===============  TEST_MULTIWIN ================');
+
+disp('--- Used subroutines ---');
+
+which comp_wfac
+which comp_iwfac
+which comp_gabdual_long
+which comp_gabtight_long
+
+test_failed=0;
+
+for ii=1:length(Lr);
+
+  L=Lr(ii);
   
-  gd=gabdual(g,a,M);
+  M=Mr(ii);
+  a=ar(ii);
   
-  f=crand(24,1);
   r=zeros(L,1);
-  c=zeros(M,N,R);
-  for ii=1:R
-    c=dgt(f,g(:,ii),a,M);
-    r=r+idgt(c,gd(:,ii),a);
+
+  for R=1:3
+    
+    for wintype = 1:2
+      switch wintype
+       case 1
+        g=randn(L,R);
+        rname='REAL ';
+       case 2
+        g=crand(L,R);
+        rname='CMPLX';
+      end;
+      
+      N=L/a;
+      
+      gd=gabdual(g,a,M);
+      
+      f=crand(L,1);
+      r=zeros(L,1);
+      for ii=1:R
+        c=dgt(f,g(:,ii),a,M);
+        r=r+idgt(c,gd(:,ii),a);
+      end;
+      
+      res=norm(f-r);
+      [test_failed,fail]=ltfatdiditfail(res,test_failed);
+      fprintf(['MULTIDUAL  %s L:%3i R:%3i a:%3i M:%3i %0.5g %s\n'],rname,L, ...
+              R,a,M,res,fail);
+      
+      
+      
+      gt=gabtight(g,a,M);
+      
+      f=crand(L,1);
+      r=zeros(L,1);
+      for ii=1:R
+        c=dgt(f,gt(:,ii),a,M);
+        r=r+idgt(c,gt(:,ii),a);
+      end;
+      
+      res=norm(f-r);
+      [test_failed,fail]=ltfatdiditfail(res,test_failed);
+      fprintf(['MULTITIGHT %s L:%3i R:%3i a:%3i M:%3i %0.5g %s\n'],rname,L, ...
+              R,a,M,res,fail);
+      
+      
+    end;
   end;
- 
-  norm(f-r)
-  
 end;

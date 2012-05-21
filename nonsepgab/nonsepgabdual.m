@@ -1,4 +1,4 @@
-function gd=nonsepgabdual(g,a,M,s,L)
+function [gd,gdfull]=nonsepgabdual(g,a,M,s,L)
 %NONSEPGABDUAL  Canonical dual window of Gabor frame
 %   Usage:  gd=nonsepgabdual(g,a,M,s);
 %           gd=nonsepgabdual(g,a,M,s,L);
@@ -58,34 +58,18 @@ end;
 
 % -------- Compute ------------- 
 
-if (info.gl<=M)
-     
-  % FIR case
-  N_win = ceil(info.gl/a);
-  Lwin_new = N_win*a;
-  if Lwin_new ~= info.gl
-    g_new = fir2long(g,Lwin_new);
-  else
-    g_new = g;
-  end
-  weight = sum(reshape(abs(g_new).^2,a,N_win),2);
-  
-  gd = g_new./repmat(weight,N_win,1);
-  gd = gd/M;
-  if Lwin_new ~= info.gl
-    gd = long2fir(gd,info.gl);
-  end
-  
-else
-  
-  % Long window case
+% Just in case, otherwise the call is harmless. 
+g=fir2long(g,L);
 
-  % Just in case, otherwise the call is harmless. 
-  g=fir2long(g,L);
-  
-  gd=comp_nonsepgabdual_long(g,a,M)*scale;
-  
-end;
+mwin=comp_nonsepwin2multi(g,a,M,s);
+
+gdfull=comp_gabdual_long(mwin,a*s(2),M)*scale;
+
+% We need just the first vector
+gd=gdfull(:,1);
+
+gdfull-comp_nonsepwin2multi(gd,a,M,s)
+
 
 % --------- post process result -------
       

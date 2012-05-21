@@ -88,7 +88,7 @@ end;
 
 % -------- Compute ------------- 
 
-if (info.gl<=M)
+if (info.gl<=M) && (R==1)
      
   % FIR case
   N_win = ceil(info.gl/a);
