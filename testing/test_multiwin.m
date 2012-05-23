@@ -39,6 +39,8 @@ for ii=1:length(Lr);
       end;
       
       N=L/a;
+
+      % ----------- test canonical dual ----------------
       
       gd=gabdual(g,a,M);
       
@@ -54,7 +56,7 @@ for ii=1:length(Lr);
       fprintf(['MULTIDUAL  %s L:%3i R:%3i a:%3i M:%3i %0.5g %s\n'],rname,L, ...
               R,a,M,res,fail);
       
-      
+      % ----------- test canonical tight ----------------
       
       gt=gabtight(g,a,M);
       
@@ -70,6 +72,14 @@ for ii=1:length(Lr);
       fprintf(['MULTITIGHT %s L:%3i R:%3i a:%3i M:%3i %0.5g %s\n'],rname,L, ...
               R,a,M,res,fail);
       
+      % ----------- test frame bounds ----------------
+      
+      B=gabframebounds(gt,a,M);
+      res=B-1;
+      
+      [test_failed,fail]=ltfatdiditfail(res,test_failed);
+      fprintf(['MULTIFB    %s L:%3i R:%3i a:%3i M:%3i %0.5g %s\n'],rname,L, ...
+              R,a,M,res,fail);
       
     end;
   end;

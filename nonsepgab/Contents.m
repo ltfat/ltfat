@@ -4,7 +4,10 @@
 %
 %  Gabor systems for non-separable lattices
 %    NONSEPDGT      -  DGT for a non-separable lattice.
+%    INONSEPDGT     -  IDGT for a non-separable lattice.
 %    NONSEPGABDUAL  -  Canonical dual window for a non-separable lattice.
+%    NONSEPGABTIGHT -  Canonical tight window for a non-separable lattice.
+%    NONSEPGABFRAMEBOUNDS  -  Framebounds for a non-separable lattice.
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

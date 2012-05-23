@@ -1,4 +1,4 @@
-function [gd,gdfull]=nonsepgabdual(g,a,M,s,L)
+function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,s,L)
 %NONSEPGABDUAL  Canonical dual window of Gabor frame
 %   Usage:  gd=nonsepgabdual(g,a,M,s);
 %           gd=nonsepgabdual(g,a,M,s,L);
@@ -42,8 +42,8 @@ if nargin==4
   L=[];
 end;
 
-[g,L,info] = gabpars_from_window(g,a,M,L);
-  
+[g,L,info] = nonsepgabpars_from_window(g,a,M,s,L);
+
 % -------- Are we in the Riesz sequence of in the frame case
 
 scale=1;
@@ -68,8 +68,7 @@ gdfull=comp_gabdual_long(mwin,a*s(2),M)*scale;
 % We need just the first vector
 gd=gdfull(:,1);
 
-gdfull-comp_nonsepwin2multi(gd,a,M,s)
-
+gdmatch=comp_nonsepwin2multi(gd,a,M,s);
 
 % --------- post process result -------
       

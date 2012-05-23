@@ -33,7 +33,7 @@ lambdas=zeros(p,c*d);
 
 % Iterate through all the subsubmatrices.
 for k=0:c*d-1
-  % Extract p x q matrix of array.
+  % Extract p x q*R matrix of array.
   C(:)=gf(:,k+1);
   
   % Get eigenvalues of 'squared' subsubmatrix.

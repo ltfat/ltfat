@@ -40,7 +40,7 @@ if ~isscalar(Ls)
   error('%s: Ls must a scalar.',upper(mfilename));
 end;
 
-Lsmallest=lcm(a*s(2),M);
+Lsmallest=lcm(a*s(2),M*s(2));
 
 L=ceil(Ls/Lsmallest)*Lsmallest;
 
