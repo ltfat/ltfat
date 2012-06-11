@@ -52,8 +52,8 @@ function [f,g]=inonsepdgt(coef,g,a,s,varargin)
 %
 %   See also:  dgt, gabwin, dwilt, gabtight
 
-%   AUTHOR : Peter Soendergaard.
-%   TESTING: TEST_DGT
+%   AUTHOR : Nicki Holighaus and Peter Soendergaard
+%   TESTING: TEST_NONSEPDGT
 %   REFERENCE: OK
 
 % Check input paramameters.
@@ -88,19 +88,23 @@ assert_L(L,size(g,1),L,a,M,'INONSEPDGT');
 
 mwin=comp_nonsepwin2multi(g,a,M,s);
 
+% phase factor correction (backwards), for more information see 
+% analysis routine
+
+E = exp(2*pi*i*a*kron(0:N/s(2)-1,ones(1,s(2))).*...
+        rem(kron(ones(1,N/s(2)), 0:s(2)-1)*s(1),s(2))/M);
+for w=1:W
+  coef(:,:,w) = coef(:,:,w).*repmat(E,M,1);
+end;
+
 % simple algorithm: split into sublattices and add the result from eacg
 % sublattice.
 f=zeros(L,W);
 for ii=0:s(2)-1
   % Extract sublattice
   sub=coef(:,ii+1:s(2):end);
-  % Correct phases
-  for jj=0:N/s(2)
-    %sub(:,jj+1)=sub(:,jj+1)*exp(2*pi*i*jj/s(2));
-  end;
   f=f+comp_idgt(sub,mwin(:,ii+1),s(2)*a,M,L,0);  
 end;
-
 
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)

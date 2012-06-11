@@ -106,6 +106,10 @@ function [c,Ls,g]=nonsepdgt(f,g,a,M,s,varargin)
 %
 %   See also:  nonsepgabdual
 
+%   AUTHOR : Nicki Holighaus and Peter Soendergaard
+%   TESTING: TEST_NONSEPDGT
+%   REFERENCE: REF_NONSEPDGT
+
 % Assert correct input.
 
 if nargin<5
@@ -153,8 +157,22 @@ mwin=comp_nonsepwin2multi(g,a,M,s);
 
 % simple algorithm: split into sublattices
 c=zeros(M,N,W);
+
 for ii=0:s(2)-1
-  ii+1:s(2):N;
-  c(:,ii+1:s(2):end,:)=comp_dgt(f,mwin(:,ii+1),s(2)*a,M,L,0);  
+  c(:,ii+1:s(2):end,:)=comp_dgt(f,mwin(:,ii+1),s(2)*a,M,L,0);% .* e;
 end;
 
+% phase factor correction 
+% Explanation:
+%         For c(m,l*s(2)+n), the missing phase factor is given by 
+%       exp(-2*pi*i*l*s(2)*a*rem(n*s(1),s(2))/s(2)/M),
+%       independently of m. Furthermore s(2)/s(2) cancels.
+%         The Kronecker products in the following setup a matrix 
+%       the size of the coefficient matrix and compute the product.
+
+ E = exp(-2*pi*i*a*kron(0:N/s(2)-1,ones(1,s(2))).*...
+         rem(kron(ones(1,N/s(2)),0:s(2)-1)*s(1),s(2))/M);
+
+for w=1:W
+  c(:,:,w) = c(:,:,w).*repmat(E,M,1);
+end;
