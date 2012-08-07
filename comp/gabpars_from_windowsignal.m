@@ -1,6 +1,6 @@
 function [f,g,L,Ls,W,info] = gabpars_from_windowsignal(f,g,a,M,L,callfun)
 %GABPARS_FROM_WINDOWSIGNAL  Compute g and L from window and signal
-%   Usage: [g,g.info,L] = gabpars_from_windowsignal(f,g,a,M);
+%   Usage: [g,g.info,L] = gabpars_from_windowsignal(f,g,a,M,L);
 %
 %   Use this function if you know an input signal, a window and a lattice
 %   for the DGT. The function will calculate a transform length L and
@@ -15,8 +15,14 @@ if nargin<6
   callfun=stacknames(2).name;
 end;
 
+% ----- step 1 : Verify a, M ----------
 assert_squarelat(a,M,1,callfun,0);
 
+% ----- step 2 : Verify f and determine its length -------
+% Change f to correct shape.
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,0);
+
+% ----- step 3 : Determine L
 if ~isempty(L)
   if (prod(size(L))~=1 || ~isnumeric(L))
     error('%s: L must be a scalar',callfun);
@@ -25,19 +31,6 @@ if ~isempty(L)
   if rem(L,1)~=0
     error('%s: L must be an integer',callfun);
   end;
-end;
-
-% Change f to correct shape.
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,0);
-
-if isempty(L)
-  % Smallest length transform.
-  Lsmallest=lcm(a,M);
-
-  % Choose a transform length larger than both the length of the
-  % signal and the window.
-  L=ceil(Ls/Lsmallest)*Lsmallest;
-else
 
   if rem(L,M)~=0
     error('%s: The length of the transform must be divisable by M = %i',...
@@ -49,16 +42,28 @@ else
           callfun,a);
   end;
 
-  if L<Lwindow
-    error('%s: Window is too long.',callfun);
-  end;
+else
 
+  % Smallest length transform.
+  Lsmallest=lcm(a,M);
+
+  % Choose a transform length larger than both the length of the
+  % signal and the window.
+  L=ceil(Ls/Lsmallest)*Lsmallest;
 end;
 
 b=L/M;
 N=L/a;
 
+% ----- step 4 : Determine the window 
+
 [g,info]=gabwin(g,a,M,L,callfun);
+
+if L<info.gl
+  error('%s: Window is too long.',callfun);
+end;
+
+% ----- final cleanup ---------------
 
 f=postpad(f,L);
 
