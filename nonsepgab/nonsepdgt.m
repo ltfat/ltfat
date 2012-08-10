@@ -76,11 +76,11 @@ function [c,Ls,g]=nonsepdgt(f,g,a,M,s,varargin)
 %   The following code generates plots which show the coefficient layout
 %   and enumeration of the first 4 lattices in the time-frequecy plane:::
 %
-%     a=4;
+%     a=6;
 %     M=6;
-%     N=6;
 %     L=36;
 %     b=L/M;
+%     N=L/a;
 %     cw=3;
 %     ftz=12;
 %     
