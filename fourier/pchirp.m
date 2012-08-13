@@ -20,6 +20,22 @@ function g=pchirp(L,n)
 %   The chirp has absolute value 1 everywhere. To get a chirp with unit
 %   $l^2$-norm, divide the chirp by $\sqrt L$.
 %
+%   Examples:
+%   ---------
+%
+%   A spectrogram on a linear scale of an even length chirp:::
+%
+%     sgram(pchirp(40,2),'lin');
+%
+%   The DFT of the same chirp, now revolving around in time:::
+%
+%     sgram(dft(pchirp(40,2)),'lin');
+%
+%   An odd-length chirp. Notice that the chirp starts at a frequency between
+%   two sampling points:::
+%
+%     sgram(pchirp(41,2),'lin');
+%   
 %   See also: dft, expwave
 %
 %   References: feichtinger2008metaplectic

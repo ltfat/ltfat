@@ -2,6 +2,9 @@
 %
 %  Peter L. Soendergaard, 2012.
 %
+%  Lattice transformations
+%    SMITHNORMALFORM       - Smith normal form of integer matrix.
+%
 %  Gabor systems for non-separable lattices
 %    NONSEPDGT             - DGT for a non-separable lattice.
 %    INONSEPDGT            - IDGT for a non-separable lattice.
