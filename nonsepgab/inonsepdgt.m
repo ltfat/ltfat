@@ -32,8 +32,8 @@ function [f,g]=inonsepdgt(coef,g,a,s,varargin)
 %   3-dimensional, then `inonsepdgt` will return a matrix consisting of one column
 %   vector for each of the TF-planes in *c*.
 %
-%   Assume that `f=inonsepdgt(c,g,a,s,L)` for an array *c* of size $M \times
-%   N$.  Then the following holds for $k=0,\ldots,L-1$:
+%   Assume that `f=inonsepdgt(c,g,a,s,L)` for an array *c* of size $M\times N$.
+%   Then the following holds for $k=0,\ldots,L-1$:
 % 
 %   ..          N-1 M-1          
 %     f(l+1)  = sum sum c(m+1,n+1)*exp(2*pi*i*m*l/M)*g(l-a*n+1)
@@ -44,10 +44,10 @@ function [f,g]=inonsepdgt(coef,g,a,s,varargin)
 %   `inonsepdgt` takes the following flags at the end of the line of input
 %   arguments:
 %
-%     'freqinv'  Compute an INONSEPDGT using a frequency-invariant phase. This
+%     'freqinv'  Compute an `inonsepdgt` using a frequency-invariant phase. This
 %                is the default convention described above.
 %
-%     'timeinv'  Compute an INONSEPDGT using a time-invariant phase. This
+%     'timeinv'  Compute an `inonsepdgt` using a time-invariant phase. This
 %                convention is typically used in filter bank algorithms.
 %
 %   See also:  dgt, gabwin, dwilt, gabtight

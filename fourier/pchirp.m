@@ -13,12 +13,12 @@ function g=pchirp(L,n)
 %
 %   The chirp is computed by:
 %   
-%   ..  g(l+1) = exp(pi*i*n*l^2*(L+1)/L) for l=0,...,L-1
+%   ..  g(l+1) = exp(pi*i*n*(l-ceil(L/2))^2*(L+1)/L) for l=0,...,L-1
 %
-%   .. math:: g\left(l+1\right)=e^{\pi inl^{2}(L+1)/L},\quad l=0,\ldots,L-1
+%   .. math:: g\left(l+1\right)=e^{\pi in(l-\lceil L/2\rceil)^{2}(L+1)/L},\quad l=0,\ldots,L-1
 %
 %   The chirp has absolute value 1 everywhere. To get a chirp with unit
-%   $l^2$-norm, divide the chirp by $\sqrt(L)$.
+%   $l^2$-norm, divide the chirp by $\sqrt L$.
 %
 %   See also: dft, expwave
 %
@@ -37,5 +37,5 @@ error(nargchk(2,2,nargin));
 
 % Compute normalized chirp
 m = 0:L-1;
-X = mod(n*m.^2*(L+1),2*L);
+X = mod(n*(m-ceil(L/2)).^2*(L+1),2*L);
 g = (exp(pi*1i*X/L)/sqrt(L)).';
