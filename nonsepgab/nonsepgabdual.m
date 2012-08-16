@@ -1,19 +1,19 @@
-function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,s,L)
+function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,lt,L)
 %NONSEPGABDUAL  Canonical dual window of Gabor frame
-%   Usage:  gd=nonsepgabdual(g,a,M,s);
-%           gd=nonsepgabdual(g,a,M,s,L);
+%   Usage:  gd=nonsepgabdual(g,a,M,lt);
+%           gd=nonsepgabdual(g,a,M,lt,L);
 %
 %   Input parameters:
 %         g     : Gabor window.
 %         a     : Length of time shift.
 %         M     : Number of channels.
-%         s     : Shape of lattice
+%         lt    : Lattice type
 %         L     : Length of window. (optional)
 %   Output parameters:
 %         gd : Canonical dual window.
 %
-%   `nonsepgabdual(g,a,M,s)` computes the canonical dual window of the
-%   discrete Gabor frame with window *g* and parameters *a*, *M* and *s*.
+%   `nonsepgabdual(g,a,M,lt)` computes the canonical dual window of the
+%   discrete Gabor frame with window *g* and parameters *a*, *M* and *lt*.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
 %   cell array. See the help of |gabwin|_ for more details.
@@ -23,7 +23,7 @@ function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,s,L)
 %   length of *M*. Otherwise the smallest possible transform length is chosen
 %   as the window length.
 %
-%   `nonsepgabdual(g,a,M,s,L)` returns a window that is the dual window for a
+%   `nonsepgabdual(g,a,M,lt,L)` returns a window that is the dual window for a
 %   system of length *L*. Unless the dual window is a FIR window, the dual
 %   window will have length *L*.
 %
@@ -42,7 +42,7 @@ if nargin==4
   L=[];
 end;
 
-[g,L,info] = nonsepgabpars_from_window(g,a,M,s,L);
+[g,L,info] = nonsepgabpars_from_window(g,a,M,lt,L);
 
 % -------- Are we in the Riesz sequence of in the frame case
 
@@ -61,14 +61,14 @@ end;
 % Just in case, otherwise the call is harmless. 
 g=fir2long(g,L);
 
-mwin=comp_nonsepwin2multi(g,a,M,s);
+mwin=comp_nonsepwin2multi(g,a,M,lt);
 
-gdfull=comp_gabdual_long(mwin,a*s(2),M)*scale;
+gdfull=comp_gabdual_long(mwin,a*lt(2),M)*scale;
 
 % We need just the first vector
 gd=gdfull(:,1);
 
-gdmatch=comp_nonsepwin2multi(gd,a,M,s);
+gdmatch=comp_nonsepwin2multi(gd,a,M,lt);
 
 % --------- post process result -------
       

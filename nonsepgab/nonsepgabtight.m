@@ -1,25 +1,25 @@
 function gt=nonsepgabtight(p1,p2,p3,p4)
 %NONSEPGABTIGHT  Canonical tight window for non-separable lattices
-%   Usage:  gt=nonsepgabtight(a,M,s,L);
-%           gt=nonsepgabtight(g,a,M,s);
-%           gt=nonsepgabtight(g,a,M,s,L);
+%   Usage:  gt=nonsepgabtight(a,M,lt,L);
+%           gt=nonsepgabtight(g,a,M,lt);
+%           gt=nonsepgabtight(g,a,M,lt,L);
 %
 %   Input parameters:
 %         g     : Gabor window.
 %         a     : Length of time shift.
 %         M     : Number of modulations.
-%         s     : Skew of lattice.
+%         lt    : Lattice type
 %         L     : Length of window. (optional)
 %   Output parameters:
 %         gt    : Canonical tight window, column vector.
 %
-%   `nonsepgabtight(a,M,L,s)` computes a nice tight window of length *L* for
-%   a lattice with parameters *a*, *M* and *s*. The window is not an FIR
+%   `nonsepgabtight(a,M,L,lt)` computes a nice tight window of length *L* for
+%   a lattice with parameters *a*, *M* and *lt*. The window is not an FIR
 %   window, meaning that it will only generate a tight system if the system
 %   length is equal to *L*.
 %
-%   `nonsepgabtight(g,a,M,s)` computes the canonical tight window of the Gabor
-%   frame with window *g* and parameters *a*, *M* and *s*.
+%   `nonsepgabtight(g,a,M,lt)` computes the canonical tight window of the Gabor
+%   frame with window *g* and parameters *a*, *M* and *lt*.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
 %   cell array. See the help of |gabwin|_ for more details.
@@ -29,7 +29,7 @@ function gt=nonsepgabtight(p1,p2,p3,p4)
 %   length of *M*. Otherwise the smallest possible transform length is
 %   chosen as the window length.
 %
-%   `nonsepgabtight(g,a,M,s,L)` returns a window that is tight for a system of
+%   `nonsepgabtight(g,a,M,lt,L)` returns a window that is tight for a system of
 %   length *L*. Unless the input window *g* is a FIR window, the returned
 %   tight window will have length *L*.
 %
@@ -51,7 +51,7 @@ if numel(p1)==1
 
   a=p1;
   M=p2;
-  s=p3;
+  lt=p3;
   L=p4;
 
   g='gauss';
@@ -64,7 +64,7 @@ else
   g=p1;
   a=p2;
   M=p3;
-  s=p4;
+  lt=p4;
     
   if nargin==4
     L=[];
@@ -74,7 +74,7 @@ else
 
 end;
 
-[g,L,info] = nonsepgabpars_from_window(g,a,M,s,L);
+[g,L,info] = nonsepgabpars_from_window(g,a,M,lt,L);
   
 % -------- Are we in the Riesz sequence of in the frame case
 
@@ -90,9 +90,9 @@ end;
 
 % -------- Compute ------------- 
 
-mwin=comp_nonsepwin2multi(g,a,M,s);
+mwin=comp_nonsepwin2multi(g,a,M,lt);
 
-gtfull=comp_gabtight_long(mwin,a*s(2),M)*scale;
+gtfull=comp_gabtight_long(mwin,a*lt(2),M)*scale;
 
 % We need just the first vector
 gt=gtfull(:,1);

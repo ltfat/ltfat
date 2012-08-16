@@ -15,8 +15,8 @@ function test_failed=test_nonsepdgt
 Lr=[24,24,36,36];
 ar=[ 4, 4, 4, 4];
 Mr=[ 6, 6, 6, 6];
-s1=[ 0, 1, 1, 2];
-s2=[ 1, 2, 3, 3];
+lt1=[ 0, 1, 1, 2];
+lt2=[ 1, 2, 3, 3];
 
 test_failed=0;
 
@@ -40,7 +40,7 @@ for ii=1:length(Lr);
   
   M=Mr(ii);
   a=ar(ii);
-  s=[s1(ii), s2(ii)];
+  lt=[lt1(ii), lt2(ii)];
   
   b=L/M;
   N=L/a;
@@ -60,9 +60,8 @@ for ii=1:length(Lr);
       g=crand(L,1);
     end;
     
-    gd=nonsepgabdual(g,a,M,s);
-    gt=nonsepgabtight(g,a,M,s);
-    
+    gd=nonsepgabdual(g,a,M,lt);
+    gt=nonsepgabtight(g,a,M,lt);
 
     for W=1:3
           
@@ -74,46 +73,47 @@ for ii=1:length(Lr);
       
       % --------- test reference comparison ------------
       
-      cc = nonsepdgt(f,g,a,M,s);
+      cc = nonsepdgt(f,g,a,M,lt);
       
-      cc_ref = ref_nonsepdgt(f,g,a,M,s);
+      cc_ref = ref_nonsepdgt(f,g,a,M,lt);
       
       res = norm(cc(:)-cc_ref(:));
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i s1:%2i s2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,s(1),s(2),res,fail);
+      stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
       disp(stext)
       
       % -------- test reconstruction using canonical dual -------
       
-      r=inonsepdgt(cc,gd,a,s);  
+      r=inonsepdgt(cc,gd,a,lt);  
       res=norm(f-r,'fro');
       
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REC D %s L:%3i W:%2i a:%3i M:%3i s1:%2i s2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,s(1),s(2),res,fail);
+      stext=sprintf(['REC D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
       disp(stext)
       
       % -------- test reconstruction using canonical dual -------
 
-      cc = nonsepdgt(f,gt,a,M,s);
-      r=inonsepdgt(cc,gt,a,s);  
+      cc = nonsepdgt(f,gt,a,M,lt);
+      r=inonsepdgt(cc,gt,a,lt);  
       res=norm(f-r,'fro');
       
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REC T %s L:%3i W:%2i a:%3i M:%3i s1:%2i s2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,s(1),s(2),res,fail);
+      stext=sprintf(['REC T %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
       disp(stext)
 
-      % -------- test frame bounds for tight frame -------
-      
-      B=nonsepgabframebounds(gt,a,M,s);
-      res=B-1;
-      stext=sprintf(['FRB   %s L:%3i W:%2i a:%3i M:%3i s1:%2i s2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,s(1),s(2),res,fail);
-      disp(stext)
       
     end;
+
+    % -------- test frame bounds for tight frame -------
+    
+    B=nonsepgabframebounds(gt,a,M,lt);
+    res=B-1;
+    stext=sprintf(['FRB   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+    disp(stext)
 
   end;  
 

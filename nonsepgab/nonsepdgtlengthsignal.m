@@ -1,11 +1,11 @@
-function L=nonsepdgtlengthsignal(Ls,a,M,s);
+function L=nonsepdgtlengthsignal(Ls,a,M,lt);
 %NONSEPDGTLENGTHSIGNAL  Non-separable DGT length from signal
 %   Usage: L=nonsepdgtlengthsignal(Ls,a,M,s);
 %
-%   `nonsepdgtlengthsignal(Ls,a,M,s)` returns the length of a Gabor system
+%   `nonsepdgtlengthsignal(Ls,a,M,lt)` returns the length of a Gabor system
 %   on a non-separable lattice that is long enough to expand a signal of
 %   length *Ls*. Please see the help on |nonsepdgt|_ for an explanation
-%   of the parameters *a*, *M* and *s*.
+%   of the parameters *a*, *M* and *lt*.
 %
 %   If the returned length is longer than the signal length, the signal
 %   will be zero-padded by |nonsepdgt|_.
@@ -28,8 +28,8 @@ if rem(a,1)~=0
   error('%s: a must be an integer',upper(mfilename));
 end;
 
-if ~isnumeric(s) || ~isvector(s) || length(s)~=2
-    error('%s: s must be a vector of length 2.',upper(mfilename));
+if ~isnumeric(lt) || ~isvector(lt) || length(lt)~=2
+    error('%s: lt must be a vector of length 2.',upper(mfilename));
 end;
 
 if ~isnumeric(Ls)
@@ -40,7 +40,7 @@ if ~isscalar(Ls)
   error('%s: Ls must a scalar.',upper(mfilename));
 end;
 
-Lsmallest=lcm(a*s(2),M*s(2));
+Lsmallest=lcm(a*lt(2),M*lt(2));
 
 L=ceil(Ls/Lsmallest)*Lsmallest;
 

@@ -1,21 +1,23 @@
-function [f,g]=inonsepdgt(coef,g,a,s,varargin)
+function [f,g]=inonsepdgt(coef,g,a,lt,varargin)
 %INONSEPDGT  Inverse discrete Gabor transform
-%   Usage:  f=inonsepdgt(c,g,a,s);
-%           f=inonsepdgt(c,g,a,s,Ls);
+%   Usage:  f=inonsepdgt(c,g,a,lt);
+%           f=inonsepdgt(c,g,a,lt,Ls);
 %
 %   Input parameters:
 %         c     : Array of coefficients.
 %         g     : Window function.
 %         a     : Length of time shift.
+%         lt    : Lattice type
 %         Ls    : length of signal.
 %   Output parameters:
 %         f     : Signal.
 %
-%   `inonsepdgt(c,g,a,s)` computes the Gabor expansion of the input coefficients
-%   *c* with respect to the window *g* and time shift *a*. The number of 
-%   channels is deduced from the size of the coefficients *c*.
+%   `inonsepdgt(c,g,a,lt)` computes the Gabor expansion of the input
+%   coefficients *c* with respect to the window *g*, time shift *a* and
+%   lattice type *lt*. The number of channels is deduced from the size of
+%   the coefficients *c*.
 %
-%   `inonsepdgt(c,g,a,s,Ls)` does as above but cuts or extends *f* to length
+%   `inonsepdgt(c,g,a,lt,Ls)` does as above but cuts or extends *f* to length
 %   *Ls*.
 %
 %   `[f,g]=inonsepdgt(...)` additionally outputs the window used in the
@@ -32,7 +34,7 @@ function [f,g]=inonsepdgt(coef,g,a,s,varargin)
 %   3-dimensional, then `inonsepdgt` will return a matrix consisting of one column
 %   vector for each of the TF-planes in *c*.
 %
-%   Assume that `f=inonsepdgt(c,g,a,s,L)` for an array *c* of size $M\times N$.
+%   Assume that `f=inonsepdgt(c,g,a,lt,L)` for an array *c* of size $M\times N$.
 %   Then the following holds for $k=0,\ldots,L-1$:
 % 
 %   ..          N-1 M-1          
@@ -80,19 +82,19 @@ assert_squarelat(a,M,1,'INONSEPDGT');
 
 L=N*a;
 
-[g,info] = comp_window(g,a,M,L,s,'INONSEPDGT');
+[g,info] = comp_window(g,a,M,L,lt,'INONSEPDGT');
 
 assert_L(L,size(g,1),L,a,M,'INONSEPDGT');
 
 % ----- algorithm starts here, split into sub-lattices ---------------
 
-mwin=comp_nonsepwin2multi(g,a,M,s);
+mwin=comp_nonsepwin2multi(g,a,M,lt);
 
 % phase factor correction (backwards), for more information see 
 % analysis routine
 
-E = exp(2*pi*i*a*kron(0:N/s(2)-1,ones(1,s(2))).*...
-        rem(kron(ones(1,N/s(2)), 0:s(2)-1)*s(1),s(2))/M);
+E = exp(2*pi*i*a*kron(0:N/lt(2)-1,ones(1,lt(2))).*...
+        rem(kron(ones(1,N/lt(2)), 0:lt(2)-1)*lt(1),lt(2))/M);
 for w=1:W
   coef(:,:,w) = coef(:,:,w).*repmat(E,M,1);
 end;
@@ -100,10 +102,10 @@ end;
 % simple algorithm: split into sublattices and add the result from eacg
 % sublattice.
 f=zeros(L,W);
-for ii=0:s(2)-1
+for ii=0:lt(2)-1
   % Extract sublattice
-  sub=coef(:,ii+1:s(2):end);
-  f=f+comp_idgt(sub,mwin(:,ii+1),s(2)*a,M,L,0);  
+  sub=coef(:,ii+1:lt(2):end);
+  f=f+comp_idgt(sub,mwin(:,ii+1),lt(2)*a,M,L,0);  
 end;
 
 % Cut or extend f to the correct length, if desired.

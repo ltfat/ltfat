@@ -1,15 +1,27 @@
 function [U,S,V] = smithnormalform(A);
-%SMITHNORMALFORM Smith normal form of an integer matrix
+%SMITHNF Smith normal form of an integer matrix
 % 
-%   `[U,S,V] = smithnormalform(A)` returns integer matrices `U`, `S`, and
-%   `V` such that `A = U*S*V'`, `S` is diagonal and nonnegative, `S(i,i)`
-%   divides `S(i+1,i+1)` for all `i`, `det U =+-1`, and `det V =+-1`.
+%   `[U,S,V] = smithnf(A)` returns integer matrices `U`, `S`, and
+%   `V` such that::
 %
-%   `S = smithnormalform(A)` just returns diag(S).
+%     A = U*S*V',
+%
+%   `S` is diagonal and nonnegative, `S(i,i)` divides `S(i+1,i+1)` for
+%   all `i`, $\det U = \pm 1$, and $det V =\pm 1$.
+%
+%   `S = smithnf(A)` just returns `diag(S)`.
 % 
-%   This function is in some ways analogous to SVD.
+%   This function is in some ways analogous to SVD for integer matrices.
+%
+%   An example:::
+%
+%     [U,S,V] = smithnf([10 5; 0 10])
+%
+%   For more information, see `<http://en.wikipedia.org/wiki/Smith_normal_form>`_.
+%
+%   See also: hermitenf
 
-%  Authors: John Gilbert, Ewa Matusiak
+%   Authors: John Gilbert, Ewa Matusiak
 
 %  This function was originally written by John Gilbert, Xerox Corporation,
 %  December 1993.

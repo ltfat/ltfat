@@ -1,24 +1,24 @@
-function [AF,BF]=nonsepgabframebounds(g,a,M,s,L)
+function [AF,BF]=nonsepgabframebounds(g,a,M,lt,L)
 %NONSEPGABFRAMEBOUNDS  Calculate frame bounds of Gabor frame
-%   Usage:  fcond=nonsepgabframebounds(g,a,M,s);
-%           [A,B]=nonsepgabframebounds(g,a,M,s);
-%           [A,B]=nonsepgabframebounds(g,a,M,s,L);
+%   Usage:  fcond=nonsepgabframebounds(g,a,M,lt);
+%           [A,B]=nonsepgabframebounds(g,a,M,lt);
+%           [A,B]=nonsepgabframebounds(g,a,M,lt,L);
 %
 %   Input parameters:
 %           g     : The window function.
 %           a     : Length of time shift.
 %           M     : Number of channels.
-%           s     : Shear of lattice.
+%           lt    : Lattice type
 %           L     : Length of transform to consider.
 %   Output parameters:
 %           fcond : Frame condition number (B/A)
 %           A,B   : Frame bounds.
 %          
-%   `nonsepgabframebounds(g,a,M,s)` calculates the ratio $B/A$ of the frame
+%   `nonsepgabframebounds(g,a,M,lt)` calculates the ratio $B/A$ of the frame
 %   bounds of the non-separable Gabor system with window *g*, and parameters
-%   *a*, *M* and *s*.
+%   *a*, *M* and *lt*.
 %
-%   `[A,B]=nonsepgabframebounds(g,a,M,s)` returns the frame bounds *A* and
+%   `[A,B]=nonsepgabframebounds(g,a,M,lt)` returns the frame bounds *A* and
 %   *B* instead of just the ratio.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
@@ -35,25 +35,25 @@ if nargin<5
   L=[];
 end;
 
-[g,L] = nonsepgabpars_from_window(g,a,M,s,L);
+[g,L] = nonsepgabpars_from_window(g,a,M,lt,L);
 
 g=fir2long(g,L);
 
 % ---- algorithm starts here: Use the multi-window factorization ---
 
 % Convert to multi-window
-mwin=comp_nonsepwin2multi(g,a,M,s);
+mwin=comp_nonsepwin2multi(g,a,M,lt);
 
 % Get the factorization of the window.
-gf=comp_wfac(mwin,a*s(2),M);
+gf=comp_wfac(mwin,a*lt(2),M);
 
 % Compute all eigenvalues.
-lambdas=comp_gfeigs(gf,L,a*s(2),M);
+lambdas=comp_gfeigs(gf,L,a*lt(2),M);
 s=size(lambdas,1);
 
 % Min and max eigenvalue.
 if a>M
-  % This can is not a frame, so A is identically 0.
+  % This cannot be a frame, so A is identically 0.
   AF=0;
 else
   AF=lambdas(1);
