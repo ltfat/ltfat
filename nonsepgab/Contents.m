@@ -7,6 +7,7 @@
 %    HERMITENF             - Hermite normal form of 2x2 integer matrix.
 %    MATRIX2LATTICETYPE    - Matrix form to standard lattice description.
 %    LATTICETYPE2MATRIX    - Standard lattice description to matrix form.
+%    METAPLECOP            - Metaplectic operator.
 %
 %  Gabor systems for non-separable lattices
 %    NONSEPDGT             - DGT for a non-separable lattice.

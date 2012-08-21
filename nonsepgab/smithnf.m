@@ -19,7 +19,7 @@ function [U,S,V] = smithnormalform(A);
 %
 %   For more information, see `<http://en.wikipedia.org/wiki/Smith_normal_form>`_.
 %
-%   See also: hermitenf
+%   See also: hermitenf, metaplecop
 
 %   Authors: John Gilbert, Ewa Matusiak
 
