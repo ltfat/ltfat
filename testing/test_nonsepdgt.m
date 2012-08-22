@@ -12,11 +12,11 @@ function test_failed=test_nonsepdgt
 %  Use TEST_WFAC and TEST_DGT_FAC for more specific testing
 %  of the DGT backend.
       
-Lr=[24,24,36,36];
-ar=[ 4, 4, 4, 4];
-Mr=[ 6, 6, 6, 6];
-lt1=[ 0, 1, 1, 2];
-lt2=[ 1, 2, 3, 3];
+Lr=[24,24,36,36,2835,4050];
+ar=[ 4, 4, 4, 4,  45,  45];
+Mr=[ 6, 6, 6, 6,  63,  50];
+lt1=[ 0, 1, 1, 2,  5,   5];
+lt2=[ 1, 2, 3, 3,  9,   9];
 
 test_failed=0;
 
@@ -61,6 +61,7 @@ for ii=1:length(Lr);
     end;
     
     gd=nonsepgabdual(g,a,M,lt);
+    gd_smith=nonsepgabdual(g,a,M,lt,'smith'); 
     gt=nonsepgabtight(g,a,M,lt);
 
     for W=1:3
@@ -77,7 +78,7 @@ for ii=1:length(Lr);
       
       cc_ref = ref_nonsepdgt(f,g,a,M,lt);
       
-      res = norm(cc(:)-cc_ref(:));
+      res = norm(cc(:)-cc_ref(:))/norm(cc(:));
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
       stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
       '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
@@ -115,6 +116,12 @@ for ii=1:length(Lr);
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
 
+    % -------- test smith dual -------
+    
+    res=norm(gd-gd_smith)/norm(g);
+    stext=sprintf(['DUAL SMITH   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+    disp(stext)
   end;  
 
 end;

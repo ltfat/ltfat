@@ -70,9 +70,9 @@ function h = metaplecop(f,A,varargin)
   definput.flags.oppower={'forward','inv'};
   [flags,kv]=ltfatarghelper({},definput,varargin);
   
-  if size(A,1) ~= size(A,2) || size(A,1) ~= 2 || A ~= round(A)
+  if size(A,1) ~= size(A,2) || size(A,1) ~= 2 || sum(sum(A ~= round(A)))>0
       error('A must be an integer valued 2x2 matrix');
-  elseif det(A) ~= 1
+  elseif round(det(A)) ~= 1 % rounding errors might occur in det(A)
       error('A is not symplectic, det(A) != 1');
   end
     

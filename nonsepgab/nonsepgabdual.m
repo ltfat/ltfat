@@ -1,4 +1,4 @@
-function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,lt,varargin)
+function gd=nonsepgabdual(g,a,M,lt,varargin)
 %NONSEPGABDUAL  Canonical dual window of Gabor frame
 %   Usage:  gd=nonsepgabdual(g,a,M,lt);
 %           gd=nonsepgabdual(g,a,M,lt,L);
