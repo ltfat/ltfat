@@ -94,7 +94,10 @@ function h = metaplecop(f,A,varargin)
   
   a0 = mod(a + t*b,L);    % Invertible element equivalent to a
   c0 = mod(c + t*d,L);    % c has to be changed accordingly
-  a0_inv = invmod(a0,L);  % Inverse of a0
+  
+  % Compute the inverse of a0 
+  [~,c] = gcd(a0,L);
+  a0_inv = mod(c,L);
   
   % Determine shear parameters 
   ca = mod(c0*a0_inv,L);  
@@ -102,18 +105,13 @@ function h = metaplecop(f,A,varargin)
   
   % Determine dilation parameters
   sub = mod((0:a0_inv:a0_inv*(L-1)).',L) + 1;
-  
-  % Compute chirps (corresponding to the shear parameters)
-  c_t = pchirp(L,-t);
-  c_ab = pchirp(L,-ab);
-  c_ca = pchirp(L,ca);
-  
-  %     @Peter: Old version (delete once this is working)
-  %     c_t = chirp_vec(-t,L);
-  %     c_ab = chirp_vec(-ab,L); 
-  %     c_ca = chirp_vec(ca,L);
-  
+    
   if flags.do_forward
+      % Compute chirps (corresponding to the shear parameters)
+      c_t = pchirp(L,-t);
+      c_ab = pchirp(L,-ab);
+      c_ca = pchirp(L,ca);
+
       % Apply metaplectic operator to v
       f = c_t .* f;
       f = fft(f);
@@ -121,14 +119,21 @@ function h = metaplecop(f,A,varargin)
       f = ifft(f);
       f = f(sub);
       h = c_ca .* f;
+      
   else
+      
+      % Compute chirps (corresponding to the shear parameters)
+      c_t = pchirp(L,t);
+      c_ab = pchirp(L,ab);
+      c_ca = pchirp(L,-ca);
+      
       % Apply inverse metaplectic operator to v
-      f = f ./ c_ca;
+      f = f .* c_ca;
       f(sub) = f;
       f = fft(f);
-      f = f ./ c_ab;
+      f = f .* c_ab;
       f = ifft(f);
-      h = f ./ c_t;
+      h = f .* c_t;
   end
   
 end

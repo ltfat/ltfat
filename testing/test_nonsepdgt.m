@@ -63,6 +63,7 @@ for ii=1:length(Lr);
     gd=nonsepgabdual(g,a,M,lt);
     gd_smith=nonsepgabdual(g,a,M,lt,'smith'); 
     gt=nonsepgabtight(g,a,M,lt);
+    gt_smith=nonsepgabtight(g,a,M,lt,'smith');
 
     for W=1:3
           
@@ -122,6 +123,14 @@ for ii=1:length(Lr);
     stext=sprintf(['DUAL SMITH   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
+    
+    % -------- test smith tight -------
+    
+    res=norm(gt-gt_smith)/norm(g);
+    stext=sprintf(['TIGHT SMITH   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+    disp(stext)
+
   end;  
 
 end;

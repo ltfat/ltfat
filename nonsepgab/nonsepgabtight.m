@@ -1,4 +1,4 @@
-function gt=nonsepgabtight(p1,p2,p3,p4)
+function gt=nonsepgabtight(p1,p2,p3,p4,varargin)
 %NONSEPGABTIGHT  Canonical tight window for non-separable lattices
 %   Usage:  gt=nonsepgabtight(a,M,lt,L);
 %           gt=nonsepgabtight(g,a,M,lt);
@@ -52,30 +52,26 @@ if numel(p1)==1
   a=p1;
   M=p2;
   lt=p3;
-  L=p4;
+  varargin=[L,varargin];
 
   g='gauss';
   
 else    
   % First argument assumed to be a vector.
-    
-  error(nargchk(4,5,nargin));
-  
+      
   g=p1;
   a=p2;
   M=p3;
   lt=p4;
     
-  if nargin==4
-    L=[];
-  else
-    L=p4;
-  end;
-
 end;
 
+definput.keyvals.L=[];
+definput.flags.nsalg={'multiwin','smith'};
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+
 [g,L,info] = nonsepgabpars_from_window(g,a,M,lt,L);
-  
+
 % -------- Are we in the Riesz sequence of in the frame case
 
 scale=1;
@@ -88,21 +84,48 @@ if a>M
   M=tmp;
 end;
 
-% -------- Compute ------------- 
+%% -------- Compute ------------- 
 
-mwin=comp_nonsepwin2multi(g,a,M,lt);
+% Just in case, otherwise the call is harmless. 
+g=fir2long(g,L);
 
-gtfull=comp_gabtight_long(mwin,a*lt(2),M)*scale;
+if flags.do_multiwin
 
-% We need just the first vector
-gt=gtfull(:,1);
+    mwin=comp_nonsepwin2multi(g,a,M,lt);
+    
+    gtfull=comp_gabtight_long(mwin,a*lt(2),M)*scale;
+    
+    % We need just the first vector
+    gt=gtfull(:,1);
+    
+end;
 
-% --------- post process result -------
+if flags.do_smith
 
-%if info.wasreal
-%  gt=real(gt);
-%end;
+    % Convert the lattice type representation to matrix type representation
+    latm = latticetype2matrix(L,a,M,lt);
+    
+    % and convert this representation to Smith normal form
+    [U,S,V] = smithnf(latm);
+    
+    % Convert the S matrix back to lattice type, for use with 'gabdual'
+    [a0,M0,~]=matrix2latticetype(L,S);
+    
+    g0 = metaplecop(g,U,'inv');
+    gt0 = gabtight(g0,a0,M0);
+    gt  = metaplecop(gt0,U);    
+    
+end;
+
+
+%% --------- post process result -------
       
 if info.wasrow
   gt=gt.';
+end;
+
+if isreal(g) && (lt(2)==1 || lt(2)==2)
+  % If g is real and the lattice is either rectangular or quinqux, then
+  % the output is known to be real.
+  gt=real(gt);
 end;

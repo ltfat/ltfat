@@ -84,7 +84,7 @@ if flags.do_smith
     [U,S,V] = smithnf(latm);
     
     % Convert the S matrix back to lattice type, for use with 'gabdual'
-    [a0,M0,lt0]=matrix2latticetype(L,S);
+    [a0,M0,~]=matrix2latticetype(L,S);
     
     g0 = metaplecop(g,U,'inv');
     gd0 = gabdual(g0,a0,M0);
@@ -98,10 +98,8 @@ if info.wasrow
   gd=gd.';
 end;
 
-if 0
 if isreal(g) && (lt(2)==1 || lt(2)==2)
     % If g is real and the lattice is either rectangular or quinqux, then
     % the output is known to be real.
     gd=real(gd);
-end;
 end;
