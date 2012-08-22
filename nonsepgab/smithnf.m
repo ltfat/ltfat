@@ -1,4 +1,4 @@
-function [U,S,V] = smithnormalform(A);
+function [U,S,V] = smithnf(A);
 %SMITHNF Smith normal form of an integer matrix
 % 
 %   `[U,S,V] = smithnf(A)` returns integer matrices `U`, `S`, and

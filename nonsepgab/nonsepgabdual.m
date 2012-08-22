@@ -1,4 +1,4 @@
-function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,lt,L)
+function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,lt,varargin)
 %NONSEPGABDUAL  Canonical dual window of Gabor frame
 %   Usage:  gd=nonsepgabdual(g,a,M,lt);
 %           gd=nonsepgabdual(g,a,M,lt,L);
@@ -36,11 +36,13 @@ function [gd,gdfull,gdmatch]=nonsepgabdual(g,a,M,lt,L)
   
 % ------ Direct checks on input parameters ----
 
-error(nargchk(4,5,nargin));  
-
-if nargin==4
-  L=[];
+if nargin<4
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
+
+definput.keyvals.L=[];
+definput.flags.nsalg={'multiwin','smith'};
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 [g,L,info] = nonsepgabpars_from_window(g,a,M,lt,L);
 
@@ -56,22 +58,50 @@ if a>M
   M=tmp;
 end;
 
-% -------- Compute ------------- 
+
+%% -------- Compute ------------- 
 
 % Just in case, otherwise the call is harmless. 
 g=fir2long(g,L);
 
-mwin=comp_nonsepwin2multi(g,a,M,lt);
+if flags.do_multiwin
+    
+    mwin=comp_nonsepwin2multi(g,a,M,lt);
+    
+    gdfull=comp_gabdual_long(mwin,a*lt(2),M)*scale;
+    
+    % We need just the first vector
+    gd=gdfull(:,1);
 
-gdfull=comp_gabdual_long(mwin,a*lt(2),M)*scale;
+end;
 
-% We need just the first vector
-gd=gdfull(:,1);
+if flags.do_smith
 
-gdmatch=comp_nonsepwin2multi(gd,a,M,lt);
+    % Convert the lattice type representation to matrix type representation
+    latm = latticetype2matrix(L,a,M,lt);
+    
+    % and convert this representation to Smith normal form
+    [U,S,V] = smithnf(latm);
+    
+    % Convert the S matrix back to lattice type, for use with 'gabdual'
+    [a0,M0,lt0]=matrix2latticetype(L,S);
+    
+    g0 = metaplecop(g,U,'inv');
+    gd0 = gabdual(g0,a0,M0);
+    gd  = metaplecop(gd0,U);    
+    
+end;
 
-% --------- post process result -------
+%% --------- post process result -------
       
 if info.wasrow
   gd=gd.';
+end;
+
+if 0
+if isreal(g) && (lt(2)==1 || lt(2)==2)
+    % If g is real and the lattice is either rectangular or quinqux, then
+    % the output is known to be real.
+    gd=real(gd);
+end;
 end;
