@@ -67,7 +67,7 @@ else
 end;
 
 definput.keyvals.L=[];
-definput.flags.nsalg={'multiwin','smith'};
+definput.flags.nsalg={'multiwin','smith','shear'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 [g,L,info] = nonsepgabpars_from_window(g,a,M,lt,L);
@@ -114,6 +114,35 @@ if flags.do_smith
     g0 = metaplecop(g,U,'inv');
     gt0 = gabtight(g0,a0,M0);
     gt  = metaplecop(gt0,U);    
+    
+end;
+
+if flags.do_shear
+    b=L/M;
+    s=b*lt(1)/lt(2);
+    
+    [s0,s1,X] = shearfind(a,b,s,L);
+    
+    if s0 ~= 0
+        g = ifft(pchirp(L,-s0).*fft(g));
+    end
+    
+    if s1 ~= 0
+        g = pchirp(L,s1).*g;
+    end
+    
+    Mr = L/X;
+    ar = a*b/X;
+    
+    gt=gabtight(g,ar,Mr,L);
+    
+    if s1 ~= 0
+        gt = pchirp(L,-s1).*gt;
+    end
+
+    if s0 ~= 0
+        gt = ifft(pchirp(L,s0).*fft(gt));
+    end
     
 end;
 
