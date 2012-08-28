@@ -12,20 +12,11 @@ function test_failed=test_nonsepdgt
 %  Use TEST_WFAC and TEST_DGT_FAC for more specific testing
 %  of the DGT backend.
 
-if 1
-    % Slow test, but tests some large, strange lattices
-    Lr=[24,24,36,36,2835,4050];
-    ar=[ 4, 4, 4, 4,  45,  45];
-    Mr=[ 6, 6, 6, 6,  63,  50];
-    lt1=[ 0, 1, 1, 2,  5,   5];
-    lt2=[ 1, 2, 3, 3,  9,   9];
-else
-    Lr =[24,24,36,36];
-    ar =[ 4, 4, 4, 4];
-    Mr =[ 6, 6, 6, 6];
-    lt1=[ 0, 1, 1, 2];
-    lt2=[ 1, 2, 3, 3];
-end;
+Lr =[24,24,36,36,48];
+ar =[ 4, 4, 4, 4, 4];
+Mr =[ 6, 6, 6, 6, 6];
+lt1=[ 0, 1, 1, 2, 1];
+lt2=[ 1, 2, 3, 3, 4];
     
 test_failed=0;
 
