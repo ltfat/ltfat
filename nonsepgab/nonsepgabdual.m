@@ -93,9 +93,15 @@ if flags.do_smith
 end;
 
 if flags.do_shear
-    b=L/M;
-    s=b*lt(1)/lt(2);
-    
+    if 1
+        b=L/M;
+        s=b*lt(1)/lt(2);
+    else
+        Nabs=latticetype2matrix_2(L,a,M,lt(1),lt(2));
+        s = Nabs(4);
+        b = Nabs(3);
+    end;
+
     [s0,s1,X] = shearfind(a,b,s,L);
     
     if s0 ~= 0
