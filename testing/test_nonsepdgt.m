@@ -125,6 +125,7 @@ for ii=1:length(Lr);
     
     B=nonsepgabframebounds(gt,a,M,lt);
     res=B-1;
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['FRB   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
@@ -132,10 +133,12 @@ for ii=1:length(Lr);
     % -------- test smith and shear duals -------
     
     res=norm(gd-gd_smith)/norm(g);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['DUAL SMITH  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
     res=norm(gd-gd_shear)/norm(g);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['DUAL SHEAR  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
@@ -143,10 +146,12 @@ for ii=1:length(Lr);
     % -------- test smith and shear tights -------
     
     res=norm(gt-gt_smith)/norm(g);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['TIGHT SMITH %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
     res=norm(gt-gt_shear)/norm(g);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['TIGHT SHEAR %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
