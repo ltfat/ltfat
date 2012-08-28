@@ -28,13 +28,7 @@ for lt2=lt2r
                     s=b*lt(1)/lt(2);
 
                     [s0,s1,X] = shearfind(a,b,s,L);
-                    
-                    if (s0 ~= 0) && (s1 ~= 0)
-                        continue
-                    end
-
-                    
-                    
+                              
                     g=crand(L,1);
                     
                     gd       = nonsepgabdual(g,a,M,lt);

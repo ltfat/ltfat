@@ -122,26 +122,26 @@ if flags.do_shear
     s=b*lt(1)/lt(2);
     
     [s0,s1,X] = shearfind(a,b,s,L);
-    
-    if s0 ~= 0
-        g = ifft(pchirp(L,-s0).*fft(g));
-    end
-    
+        
     if s1 ~= 0
         g = pchirp(L,s1).*g;
     end
-    
+
+    if s0 ~= 0
+        g = ifft(pchirp(L,-s0).*fft(g));
+    end
+
     Mr = L/X;
     ar = a*b/X;
     
     gt=gabtight(g,ar,Mr,L);
-    
-    if s1 ~= 0
-        gt = pchirp(L,-s1).*gt;
-    end
 
     if s0 ~= 0
         gt = ifft(pchirp(L,s0).*fft(gt));
+    end
+
+    if s1 ~= 0
+        gt = pchirp(L,-s1).*gt;
     end
     
 end;
