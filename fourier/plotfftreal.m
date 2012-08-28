@@ -1,8 +1,7 @@
 function plotfftreal(coef,varargin)  
 %PLOTFFTREAL  Plot the output from FFTREAL  
 %   Usage: plotfftreal(coef);
-%          plotfftreal(coef,N);
-%          plotfftreal(coef,N,fs);
+%          plotfftreal(coef,fs);
 %
 %   `plotfftreal(coef)` plots the output from the |fftreal|_ function. The
 %   frequency axis will use normalized frequencies between 0 and 1 (the
