@@ -68,7 +68,7 @@ for ii=1:length(Lr);
     gt_smith=nonsepgabtight(g,a,M,lt,'smith');
     gt_shear=nonsepgabtight(g,a,M,lt,'shear');
 
-    for W=1:3
+    for W=1:1
           
       if rtype==1
         f=rand(L,W);
@@ -87,7 +87,18 @@ for ii=1:length(Lr);
       stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
       '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
       disp(stext)
+
       
+      % --------- test shear DGT -------------------------------
+      
+      cc_shear = nonsepdgt(f,g,a,M,lt,'shear');
+            
+      res = norm(cc(:)-cc_shear(:))/norm(cc(:));
+      [test_failed,fail]=ltfatdiditfail(res,test_failed);
+      stext=sprintf(['DGT SHREAR   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+      disp(stext)
+
       % -------- test reconstruction using canonical dual -------
       
       r=inonsepdgt(cc,gd,a,lt);  

@@ -56,6 +56,23 @@ for lt2=lt2r
                         error('Failed test');
                     end;
 
+                    f=crand(L,1);
+                    g=crand(L,1);
+                    cc = nonsepdgt(f,g,a,M,lt);
+                    
+                    cc_shear = nonsepdgt(f,g,a,M,lt,'shear');
+                    
+                    res = norm(cc(:)-cc_shear(:))/norm(cc(:));
+                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                    stext=sprintf(['DGT SHREAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                                   '%s'], L,a,M,lt(1),lt(2),res,fail);
+                    disp(stext)
+
+                    if numel(fail)>0
+                        error('Failed test');
+                    end;
+
+                    
                 end;
             end;
         end;
