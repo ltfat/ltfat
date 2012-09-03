@@ -69,6 +69,7 @@ if numel(g)==1
 end;
 
 definput.keyvals.Ls=[];
+definput.flags.nsalg={'multiwin','shear'};
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 wasrow=0;
@@ -86,28 +87,82 @@ L=N*a;
 
 assert_L(L,size(g,1),L,a,M,'INONSEPDGT');
 
-% ----- algorithm starts here, split into sub-lattices ---------------
+if flags.do_multiwin
+    % ----- algorithm starts here, split into sub-lattices ---------------
+    
+    mwin=comp_nonsepwin2multi(g,a,M,lt);
+    
+    % phase factor correction (backwards), for more information see 
+    % analysis routine
+    
+    E = exp(2*pi*i*a*kron(0:N/lt(2)-1,ones(1,lt(2))).*...
+            rem(kron(ones(1,N/lt(2)), 0:lt(2)-1)*lt(1),lt(2))/M);
+    for w=1:W
+        coef(:,:,w) = coef(:,:,w).*repmat(E,M,1);
+    end;
+    
+    % simple algorithm: split into sublattices and add the result from eacg
+    % sublattice.
+    f=zeros(L,W);
+    for ii=0:lt(2)-1
+        % Extract sublattice
+        sub=coef(:,ii+1:lt(2):end);
+        f=f+comp_idgt(sub,mwin(:,ii+1),lt(2)*a,M,L,0);  
+    end;
 
-mwin=comp_nonsepwin2multi(g,a,M,lt);
-
-% phase factor correction (backwards), for more information see 
-% analysis routine
-
-E = exp(2*pi*i*a*kron(0:N/lt(2)-1,ones(1,lt(2))).*...
-        rem(kron(ones(1,N/lt(2)), 0:lt(2)-1)*lt(1),lt(2))/M);
-for w=1:W
-  coef(:,:,w) = coef(:,:,w).*repmat(E,M,1);
 end;
 
-% simple algorithm: split into sublattices and add the result from eacg
-% sublattice.
-f=zeros(L,W);
-for ii=0:lt(2)-1
-  % Extract sublattice
-  sub=coef(:,ii+1:lt(2):end);
-  f=f+comp_idgt(sub,mwin(:,ii+1),lt(2)*a,M,L,0);  
-end;
+if flags.do_shear
+    V = latticetype2matrix(L,a,M,lt);
 
+    b = L/M;
+    [s0,s1,X] = shearfind(a,b,V(2,1),L);
+    
+    br = X;
+    ar = a*b/X;
+    Mr = L/br;
+    Nr = L/ar;
+        
+    ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar),(0:L/br-1))];
+    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2-s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
+    phs = exp(-pi*1i*phs/L);
+    
+    ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
+    ind_final = mod(ind_final,L);
+    
+    c2 = zeros(Mr,Nr);
+    
+    %This loop should be made a single step, but
+    %   c2(floor(ind_final(2,:)/b)+1,ind_final(1,:)/a+1) = c(ind(2,:)/br+1,ind(1,:)/ar+1);
+    %seems to result in rubbish.
+    
+    for jj = 1:size(ind,2)
+        c2(ind(2,jj)/br+1,ind(1,jj)/ar+1) = coef(floor(ind_final(2,jj)/b)+1,ind_final(1,jj)/a+1);
+    end
+    
+    c = c2;
+    c = phs.*c;
+    
+    if s1 ~= 0
+        g = pchirp(L,s1).*g;
+    end
+    
+    if s0 ~= 0
+        g = ifft(pchirp(L,-s0).*fft(g));
+    end
+    
+    f = idgt(c,g,a*b/X);
+    
+    if s0 ~= 0
+        f = ifft(pchirp(L,s0).*fft(f));    
+    end
+    
+    if s1 ~= 0
+        f = pchirp(L,-s1).*f;
+    end
+    
+end;
+    
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
   f=postpad(f,Ls);

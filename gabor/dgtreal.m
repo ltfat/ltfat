@@ -15,9 +15,10 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %         c     : $M*N$ array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   `dgtreal(f,g,a,M)` computes the Gabor coefficients of the real-valued
-%   input signal *f* with respect to the real-valued window `g` and parameters
-%   *a* and *M*. The output is a vector/matrix in a rectangular layout.
+%   `dgtreal(f,g,a,M)` computes the Gabor coefficients (also known as a
+%   windowed Fourier transform) of the real-valued input signal *f* with
+%   respect to the real-valued window `g` and parameters *a* and *M*. The
+%   output is a vector/matrix in a rectangular layout.
 %
 %   As opposed to |dgt|_ only the coefficients of the positive frequencies
 %   of the output are returned. `dgtreal` will refuse to work for complex
@@ -63,7 +64,23 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %     'timeinv'  Compute a `dgtreal` using a time-invariant phase. This
 %                convention is typically used in filter bank algorithms.
 %
-%   See also:  dgt, idgtreal, gabwin, dwilt, gabtight
+%   `dgtreal` can be used to manually compute a spectrogram, if you
+%   want full control over the parameters and want to capture the output
+%   :::
+%
+%     f=greasy;  % Input test signal
+%     fs=16000;  % The sampling rate of this particular test signal
+%     a=10;      % Downsampling factor in time
+%     M=200;     % Total number of channels, only 101 will be computed
+%
+%     % Compute the coefficients using a 20 ms long Hann window
+%     c=dgtreal(f,{'hann',0.02*fs'},a,M);
+%
+%     % Visualize the coefficients as a spectrogram
+%     dynrange=90; % 90 dB dynamical range for the plotting
+%     plotdgtreal(c,a,M,fs,dynrange);
+%     
+%   See also:  dgt, idgtreal, gabwin, dwilt, gabtight, plotdgtreal
 %
 %   References: fest98 gr01
 

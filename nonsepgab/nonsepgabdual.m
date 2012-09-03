@@ -87,20 +87,14 @@ if flags.do_smith
     [a0,M0,~]=matrix2latticetype(L,S);
     
     g0 = metaplecop(g,U,'inv');
-    gd0 = gabdual(g0,a0,M0);
+    gd0 = comp_gabdual_long(g0,a0,M0);
     gd  = metaplecop(gd0,U);    
     
 end;
 
 if flags.do_shear
-    if 1
-        b=L/M;
-        s=b*lt(1)/lt(2);
-    else
-        Nabs=latticetype2matrix_2(L,a,M,lt(1),lt(2));
-        s = Nabs(4);
-        b = Nabs(3);
-    end;
+    b=L/M;
+    s=b*lt(1)/lt(2);
 
     [s0,s1,X] = shearfind(a,b,s,L);
     
@@ -116,7 +110,7 @@ if flags.do_shear
     Mr = L/X;
     ar = a*b/X;
     
-    gd=gabdual(g,ar,Mr,L);
+    gd=comp_gabdual_long(g,ar,Mr);
 
     if s0 ~= 0
         gd = ifft(pchirp(L,s0).*fft(gd));

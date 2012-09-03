@@ -117,7 +117,7 @@ if nargin<5
 end;
 
 definput.keyvals.L=[];
-definput.flags.nsalg={'multiwin','smith','shear'};
+definput.flags.nsalg={'multiwin','shear'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 % Change f to correct shape.
@@ -201,7 +201,8 @@ if flags.do_shear
     
     br = X;
     ar = a*b/X;
-    c = dgt(f,g,ar,L/br);
+    Mr = L/br;
+    c = comp_dgt(f,g,ar,Mr,L,0);
     
     ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar),(0:L/br-1))];
     phs = reshape(mod((-s1*(-s0*ind(2,:)+ind(1,:)).^2-s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
@@ -212,16 +213,17 @@ if flags.do_shear
     ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
     ind_final = mod(ind_final,L);
 
-    c2 = zeros(M,L/a);
+    c2 = zeros(M,N);
+    
+    % The code line below this comment executes the commented for-loop
+    % using Fortran indexing.
+    %
+    % for jj = 1:size(ind,2)        
+    %     c2(floor(ind_final(2,jj)/b)+1, ind_final(1,jj)/a+1) = ...
+    %         c(ind(2,jj)/br+1, ind(1,jj)/ar+1);
+    % end
+    c2(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M) = c(ind(2,:)/br+1+(ind(1,:)/ar)*Mr);
 
-    %This loop should be made a single step, but
-    %   c2(floor(ind_final(2,:)/b)+1,ind_final(1,:)/a+1) = c(ind(2,:)/br+1,ind(1,:)/ar+1);
-    %seems to result in rubbish.
-    
-    for jj = 1:size(ind,2)
-        c2(floor(ind_final(2,jj)/b)+1,ind_final(1,jj)/a+1) = c(ind(2,jj)/br+1,ind(1,jj)/ar+1);
-    end
-    
     c = c2;    
     
 end;

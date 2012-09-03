@@ -112,7 +112,7 @@ if flags.do_smith
     [a0,M0,~]=matrix2latticetype(L,S);
     
     g0 = metaplecop(g,U,'inv');
-    gt0 = gabtight(g0,a0,M0);
+    gt0 = comp_gabtight_long(g0,a0,M0);
     gt  = metaplecop(gt0,U);    
     
 end;
@@ -134,7 +134,7 @@ if flags.do_shear
     Mr = L/X;
     ar = a*b/X;
     
-    gt=gabtight(g,ar,Mr,L);
+    gt=comp_gabtight_long(g,ar,Mr,L);
 
     if s0 ~= 0
         gt = ifft(pchirp(L,s0).*fft(gt));

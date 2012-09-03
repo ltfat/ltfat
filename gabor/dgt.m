@@ -15,9 +15,10 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %         c     : $M \times N$ array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   `dgt(f,g,a,M)` computes the Gabor coefficients of the input
-%   signal *f* with respect to the window *g* and parameters *a* and *M*. The
-%   output is a vector/matrix in a rectangular layout.
+%   `dgt(f,g,a,M)` computes the Gabor coefficients (also known as a windowed
+%   Fourier transform) of the input signal *f* with respect to the window
+%   *g* and parameters *a* and *M*. The output is a vector/matrix in a
+%   rectangular layout.
 %
 %   The length of the transform will be the smallest multiple of *a* and *M*
 %   that is larger than the signal. *f* will be zero-extended to the length of

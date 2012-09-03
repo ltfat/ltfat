@@ -109,7 +109,7 @@ for ii=1:length(Lr);
       '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
       disp(stext)
       
-      % -------- test reconstruction using canonical dual -------
+      % -------- test reconstruction using canonical tight -------
 
       cc = nonsepdgt(f,gt,a,M,lt);
       r=inonsepdgt(cc,gt,a,lt);  
@@ -117,6 +117,16 @@ for ii=1:length(Lr);
       
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
       stext=sprintf(['REC T %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+      disp(stext)
+
+      % -------- test reconstruction using canonical dual, shear algorithm -------
+      
+      r=inonsepdgt(cc,gd,a,lt,'shear');  
+      res=norm(f-r,'fro');
+      
+      [test_failed,fail]=ltfatdiditfail(res,test_failed);
+      stext=sprintf(['REC SHEAR D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
       '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
       disp(stext)
 

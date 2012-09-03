@@ -53,5 +53,6 @@ error(nargchk(2,2,nargin));
 
 % Compute normalized chirp
 m = (0:L-1).';
-X = mod(n*(m-ceil(L/2)).^2*(L+1),2*L);
+%X = mod(n*(m-ceil(L/2)).^2*(L+1),2*L);
+X = mod(n*m.^2*(L+1),2*L);
 g = exp(pi*1i*X/L);
