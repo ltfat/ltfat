@@ -29,6 +29,7 @@ for lt2=lt2r
 
                     [s0,s1,X] = shearfind(a,b,s,L);
                               
+                    f=crand(L,1);                                        
                     g=crand(L,1);
                     
                     gd       = nonsepgabdual(g,a,M,lt);
@@ -56,8 +57,7 @@ for lt2=lt2r
                         error('Failed test');
                     end;
 
-                    f=crand(L,1);
-                    g=crand(L,1);
+                    
                     cc = nonsepdgt(f,g,a,M,lt);
                     
                     cc_shear = nonsepdgt(f,g,a,M,lt,'shear');
@@ -72,6 +72,23 @@ for lt2=lt2r
                         error('Failed test');
                     end;
 
+
+                    
+                    
+                    r=inonsepdgt(cc_shear,gd,a,lt,'shear');  
+                    res=norm(f-r,'fro');
+                    
+                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                    stext=sprintf(['REC SHEAR D L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                                   '%s'], L,a,M,lt(1),lt(2),res,fail);
+                    disp(stext)
+
+                    
+                    if numel(fail)>0
+                        error('Failed test');
+                    end;
+                    
+                    
                     
                 end;
             end;

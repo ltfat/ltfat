@@ -134,7 +134,7 @@ if flags.do_shear
     Mr = L/X;
     ar = a*b/X;
     
-    gt=comp_gabtight_long(g,ar,Mr,L);
+    gt=comp_gabtight_long(g,ar,Mr);
 
     if s0 ~= 0
         gt = ifft(pchirp(L,s0).*fft(gt));

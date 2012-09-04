@@ -204,9 +204,13 @@ if flags.do_shear
     Mr = L/br;
     c = comp_dgt(f,g,ar,Mr,L,0);
     
-    ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar),(0:L/br-1))];
-    phs = reshape(mod((-s1*(-s0*ind(2,:)+ind(1,:)).^2-s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
-    phs = exp(-1*pi*1i*phs/L);
+    ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar), ...
+                                                      (0:L/br-1))];
+    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
+    phs = exp(pi*1i*phs/L);
+
+    %phs = reshape(mod((-s1*(-s0*ind(2,:)+ind(1,:)).^2-s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
+    %phs = exp(-1*pi*1i*phs/L);
     
     c = phs.*c;
     

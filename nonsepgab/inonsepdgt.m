@@ -112,22 +112,18 @@ if flags.do_multiwin
 
 end;
 
-if 0
- f = idgt_sympl(coef,g,a,lt);
-    
-end;
 
-if 1
+if flags.do_shear
     V = latticetype2matrix(L,a,M,lt);
     
     b = L/M;
     [s0,s1,X] = shearfind(a,b,V(2,1),L);
-
+    
     br = X;
     ar = a*b/X;
     
     ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar),(0:L/br-1))];
-    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2-s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
+    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
     phs = exp(-pi*1i*phs/L);
     
     ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
@@ -154,7 +150,7 @@ if 1
         g = ifft(pchirp(L,-s0).*fft(g));    
     end
     
-    f = idgt(coef,g,a*b/X);
+    f = comp_idgt(coef,g,a*b/X,L/X,L,0);
     
     if s0 ~= 0
         f = ifft(pchirp(L,s0).*fft(f));    
@@ -162,7 +158,7 @@ if 1
     
     if s1 ~= 0
         f = pchirp(L,-s1).*f;
-    end
+    end        
 end;
     
 % Cut or extend f to the correct length, if desired.
