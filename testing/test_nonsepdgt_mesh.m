@@ -20,7 +20,7 @@ for lt2=lt2r
                     continue;
                 end;                
                 for Lmod=Lmodr
-
+                    
                     L=nonsepdgtlengthsignal(1,a,M,[lt1,lt2]);
                     lt=[lt1,lt2];
                                        
@@ -33,18 +33,7 @@ for lt2=lt2r
                     g=crand(L,1);
                     
                     gd       = nonsepgabdual(g,a,M,lt);
-                    gd_smith = nonsepgabdual(g,a,M,lt,'smith');
                     gd_shear = nonsepgabdual(g,a,M,lt,'shear');
-
-                    res=norm(gd-gd_smith)/norm(g);
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                    stext=sprintf(['DUAL SMITH L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                                   '%s'], L,a,M,lt(1),lt(2),res,fail);
-                    disp(stext)
-
-                    if numel(fail)>0
-                        error('Failed test');
-                    end;
                     
                     res=norm(gd-gd_shear)/norm(g);
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -64,7 +53,7 @@ for lt2=lt2r
                     
                     res = norm(cc(:)-cc_shear(:))/norm(cc(:));
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                    stext=sprintf(['DGT SHREAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                    stext=sprintf(['DGT  SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                                    '%s'], L,a,M,lt(1),lt(2),res,fail);
                     disp(stext)
 
@@ -79,7 +68,7 @@ for lt2=lt2r
                     res=norm(f-r,'fro');
                     
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                    stext=sprintf(['REC SHEAR D L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                    stext=sprintf(['REC  SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                                    '%s'], L,a,M,lt(1),lt(2),res,fail);
                     disp(stext)
 

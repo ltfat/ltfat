@@ -40,7 +40,24 @@ if ~isscalar(Ls)
   error('%s: Ls must a scalar.',upper(mfilename));
 end;
 
-Lsmallest=lcm(a*lt(2),M*lt(2));
+if (mod(lt(2),1)>0) || lt(2)<=0
+    error('%s: lt(2) must be a positive integer.',upper(mfilename));
+end;
+
+if (mod(lt(1),1)>0) || lt(1)<0 || lt(1)>=lt(2)
+    error(['%s: lt(1) must be a positive integer that is larger than 0 but ' ...
+           'smaller than lt(2).'],upper(mfilename));
+end;
+
+if lt(1)==0 && lt(2)~=1
+    error('%s: The rectangular lattice can only be specified by lt=[0 1].',upper(mfilename));
+end;
+
+if gcd(lt(1),lt(2))>1
+    error('%s: lt(1)/lt(2) must be an irriducible fraction.',upper(mfilename));
+end;
+
+Lsmallest=lcm(a,M)*lt(2);
 
 L=ceil(Ls/Lsmallest)*Lsmallest;
 

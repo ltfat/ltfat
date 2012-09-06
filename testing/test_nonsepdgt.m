@@ -61,11 +61,9 @@ for ii=1:length(Lr);
     end;
     
     gd=nonsepgabdual(g,a,M,lt);
-    gd_smith=nonsepgabdual(g,a,M,lt,'smith');
     gd_shear=nonsepgabdual(g,a,M,lt,'shear');
 
     gt=nonsepgabtight(g,a,M,lt);
-    gt_smith=nonsepgabtight(g,a,M,lt,'smith');
     gt_shear=nonsepgabtight(g,a,M,lt,'shear');
 
     for W=1:1
@@ -143,26 +141,16 @@ for ii=1:length(Lr);
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
 
-    % -------- test smith and shear duals -------
+    % -------- test shear dual -------
     
-    res=norm(gd-gd_smith)/norm(g);
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    stext=sprintf(['DUAL SMITH  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
-    disp(stext)
     res=norm(gd-gd_shear)/norm(g);
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['DUAL SHEAR  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                    '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
     disp(stext)
     
-    % -------- test smith and shear tights -------
+    % -------- test shear tight -------
     
-    res=norm(gt-gt_smith)/norm(g);
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    stext=sprintf(['TIGHT SMITH %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
-    disp(stext)
     res=norm(gt-gt_shear)/norm(g);
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
     stext=sprintf(['TIGHT SHEAR %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...

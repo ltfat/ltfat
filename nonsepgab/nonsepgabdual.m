@@ -41,7 +41,7 @@ if nargin<4
 end;
 
 definput.keyvals.L=[];
-definput.flags.nsalg={'multiwin','smith','shear'};
+definput.flags.nsalg={'multiwin','shear'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 [g,L,info] = nonsepgabpars_from_window(g,a,M,lt,L);
@@ -73,23 +73,6 @@ if flags.do_multiwin
     % We need just the first vector
     gd=gdfull(:,1);
 
-end;
-
-if flags.do_smith
-
-    % Convert the lattice type representation to matrix type representation
-    latm = latticetype2matrix(L,a,M,lt);
-    
-    % and convert this representation to Smith normal form
-    [U,S,V] = smithnf(latm);
-    
-    % Convert the S matrix back to lattice type, for use with 'gabdual'
-    [a0,M0,~]=matrix2latticetype(L,S);
-    
-    g0 = metaplecop(g,U,'inv');
-    gd0 = comp_gabdual_long(g0,a0,M0);
-    gd  = metaplecop(gd0,U);    
-    
 end;
 
 if flags.do_shear
