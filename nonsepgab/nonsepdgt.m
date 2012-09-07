@@ -193,11 +193,13 @@ if flags.do_shear
         g = pchirp(L,s1).*g;
         f = repmat(pchirp(L,s1),1,W).*f;
     end
-    
+       
+    % Equivalent condition: mod(L,a*M*lt(2)/gcd(a,M,lt(1)))
+
     if s0 ~= 0
         g = ifft(pchirp(L,-s0).*fft(g));
         f = ifft(repmat(pchirp(L,-s0),1,W).*fft(f));
-    end
+    end;
     
     br = X;
     ar = a*b/X;
@@ -208,9 +210,6 @@ if flags.do_shear
                                                       (0:L/br-1))];
     phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
     phs = exp(pi*1i*phs/L);
-
-    %phs = reshape(mod((-s1*(-s0*ind(2,:)+ind(1,:)).^2-s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
-    %phs = exp(-1*pi*1i*phs/L);
     
     c = phs.*c;
     
