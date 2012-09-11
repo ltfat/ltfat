@@ -40,8 +40,8 @@ N_sh = L/a_sh;
 c_sh=M_sh/q;
 d_sh=N_sh/q;
 
-k_freq=(s0>0);
-k_time=(s1>0);
+k_freq=(s0~=0);
+k_time=(s1~=0);
 
 fc_mw_dual = 16*L*p_mw*lt(2)+4/3*c_mw*d_mw*p_mw^3+8*L*lt(2)*log2(d_mw);
 fc_sm_dual = 16*L*p+4/3*c*d*p^3+8*L*log2(d_sm)+36*L+16*L*log2(L);
