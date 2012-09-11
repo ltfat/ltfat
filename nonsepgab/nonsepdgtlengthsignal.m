@@ -45,8 +45,8 @@ if (mod(lt(2),1)>0) || lt(2)<=0
 end;
 
 if (mod(lt(1),1)>0) || lt(1)<0 || lt(1)>=lt(2)
-    error(['%s: lt(1) must be a positive integer that is larger than 0 but ' ...
-           'smaller than lt(2).'],upper(mfilename));
+    error(['%s: lt(1)=%i must be a positive integer that is larger than 0 but ' ...
+           'smaller than lt(2)=%i.'],upper(mfilename),lt(1),lt(2));
 end;
 
 if lt(1)==0 && lt(2)~=1
