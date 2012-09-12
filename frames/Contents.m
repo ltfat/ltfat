@@ -17,7 +17,7 @@
 %    FRAMERED          - Redundancy of frame
 %    FRANAMAT          - Frame analysis operator matrix
 %    FRSYNMAT          - Frame synthesis operator matrix
-%    FRAMELENGTHSIGNAL - Length of frame to expand signal
+%    FRAMELENGTH       - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
 %
 %  Coefficients conversions

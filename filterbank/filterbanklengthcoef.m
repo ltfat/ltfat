@@ -6,9 +6,9 @@ function L=filterbanklengthcoef(coef,a);
 %   time-shifts *a*, such that the filterbank is long enough to expand the
 %   coefficients *coef*.
 %
-%   If instead a signal is given, call |filterbanklengthsignal|_.
+%   If instead a signal is given, call |filterbanklength|_.
 %
-%   See also: filterbank, filterbanklengthsignal
+%   See also: filterbank, filterbanklength
   
 if iscell(coef)
   Mcoef=numel(coef);

@@ -14,8 +14,9 @@ function F=newframe(ftype,varargin);
 %   signals with analysis window *ga*, synthesis window *gs*,time-shift *a*
 %   and *M* channels. See the help on |dgtreal|_ for more information.
 %
-%   `newframe('dwilt',ga,gs,M)` constructs a Wilson basis with analysis window
-%   *ga*, synthesis window *gs*, and *M* channels. See the help on |dwilt|_ for more information.
+%   `newframe('dwilt',ga,gs,M)` constructs a Wilson basis with analysis
+%   window *ga*, synthesis window *gs*, and *M* channels. See the help on
+%   |dwilt|_ for more information.
 %
 %   `newframe('wmdct',ga,gs,M)` constructs a windowed MDCT basis with
 %   analysis window *ga*, synthesis window *gs*, and *M* channels. See the

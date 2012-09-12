@@ -114,10 +114,9 @@ end;
 
 
 if flags.do_shear
-    V = latticetype2matrix(L,a,M,lt);
-    
     b = L/M;
-    [s0,s1,X] = shearfind(a,b,V(2,1),L);
+    s=b*lt(1)/lt(2);
+    [s0,s1,X] = shearfind(a,b,s,L);
     
     br = X;
     ar = a*b/X;
@@ -129,18 +128,18 @@ if flags.do_shear
     ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
     ind_final = mod(ind_final,L);
     
-    c2 = zeros(L/br,L/ar);
+    c_rect = zeros(L/br,L/ar,W);
     
-    %This loop should be made a single step, but
-    %   c2(floor(ind_final(2,:)/b)+1,ind_final(1,:)/a+1) = c(ind(2,:)/br+1,ind(1,:)/ar+1);
-    %seems to result in rubbish.
+    % This loop should be made a single step using Fortran indexing
+    for w=1:W
+        for jj = 1:size(ind,2)
+            c_rect(ind(2,jj)/br+1,ind(1,jj)/ar+1,w) = coef(floor(ind_final(2,jj)/b)+1,ind_final(1,jj)/a+1,w);
+        end
+    end;
     
-    for jj = 1:size(ind,2)
-        c2(ind(2,jj)/br+1,ind(1,jj)/ar+1) = coef(floor(ind_final(2,jj)/b)+1,ind_final(1,jj)/a+1);
-    end
-    
-    coef = c2;
-    coef = phs.*coef;
+    for w=1:W
+        c_rect(:,:,w) = phs.*c_rect(:,:,w);
+    end;
     
     if s1 ~= 0
         g = pchirp(L,s1).*g;
@@ -150,14 +149,14 @@ if flags.do_shear
         g = ifft(pchirp(L,-s0).*fft(g));    
     end
     
-    f = comp_idgt(coef,g,a*b/X,L/X,L,0);
+    f = comp_idgt(c_rect,g,a*b/X,L/X,L,0);
     
     if s0 ~= 0
-        f = ifft(pchirp(L,s0).*fft(f));    
+        f = ifft(repmat(pchirp(L,s0),1,W).*fft(f));    
     end
     
     if s1 ~= 0
-        f = pchirp(L,-s1).*f;
+        f = repmat(pchirp(L,-s1),1,W).*f;
     end        
 end;
     

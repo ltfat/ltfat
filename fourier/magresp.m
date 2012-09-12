@@ -141,6 +141,7 @@ else
 end;
 
 plot(xrange,FF,kv.opts{:});
+set(gca,'yscale','linear');
 axis(axisvec);
 ylabel('Magnitude response (dB)');
 

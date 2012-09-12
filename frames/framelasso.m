@@ -90,7 +90,7 @@ definput.flags.startphase={'zero','rand','int'};
 %   basis coefficients (BCR algorithm)
 
 % Determine transform length, and calculate the window.
-L = framelengthsignal(F,size(x,1));
+L = framelength(F,size(x,1));
 
 % Accelerate frame, we will need it repeatedly
 F=frameaccel(F,L);  

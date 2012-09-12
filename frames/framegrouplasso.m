@@ -97,7 +97,7 @@ definput.flags.print={'quiet','print'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
-L=framelengthsignal(F,length(x));
+L=framelength(F,length(x));
 
 F=frameaccel(F,L);
 

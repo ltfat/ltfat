@@ -60,8 +60,6 @@ else
         k_time*6*L+6*M*N;    
 end;
 
-[c,d]
-
 % pack it up
 out = [fc_mw_dual,fc_sm_dual,fc_sh_dual,...
        fc_mw_dgt, fc_sm_dgt, fc_sh_dgt];

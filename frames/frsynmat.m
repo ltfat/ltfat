@@ -37,7 +37,7 @@ switch(F.type)
   error('%s: The synthesis operator of this frame does not have a matrix representation.',upper(mfilename));
  otherwise
   
-  Lcheck=framelengthsignal(F,L);
+  Lcheck=framelength(F,L);
   if Lcheck~=L
     error('%s: Incompatible frame length.',upper(mfilename));
   end;

@@ -35,7 +35,7 @@ if ~isnumeric(a)
 end;
   
 if isempty(L)
-  L=filterbanklengthsignal(Ls,a);
+  L=filterbanklength(Ls,a);
 end;
 
 [g,info]=filterbankwin(g,a,L,'normal');

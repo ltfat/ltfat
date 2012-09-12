@@ -1,8 +1,8 @@
-function L=filterbanklengthsignal(Ls,a);
-%FILTERBANKLENGTHSIGNAL  Filterbank length from signal
-%   Usage: L=filterbanklengthsignal(Ls,a);
+function L=filterbanklength(Ls,a);
+%FILTERBANKLENGTH  Filterbank length from signal
+%   Usage: L=filterbanklength(Ls,a);
 %
-%   `filterbanklengthsignal(Ls,a)` returns the length of a filterbank with
+%   `filterbanklength(Ls,a)` returns the length of a filterbank with
 %   time shifts *a*, such that it is long enough to expand a signal of
 %   length *Ls*.
 %

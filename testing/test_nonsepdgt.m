@@ -66,7 +66,7 @@ for ii=1:length(Lr);
     gt=nonsepgabtight(g,a,M,lt);
     gt_shear=nonsepgabtight(g,a,M,lt,'shear');
 
-    for W=1:1
+    for W=1:3
           
       if rtype==1
         f=rand(L,W);

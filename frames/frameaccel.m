@@ -15,7 +15,7 @@ function F=frameaccel(F,Ls);
 %   If `frameaccel` is called twice for the same transform length, no
 %   additional computations will be done.
 %
-%   See also: newframe, frana, framelengthsignal, framelengthcoef
+%   See also: newframe, frana, framelength, framelengthcoef
   
 if ~isfield(F,'ga')
   % Quick exit, the transform does not use analysis nor synthesis
@@ -25,7 +25,7 @@ end;
   
 % From this point and on, we are sure that F.ga and F.gs exists.
 
-L=framelengthsignal(F,Ls);
+L=framelength(F,Ls);
 
 if (isfield(F,'L') && (L==F.L))
   % Quick return, we have already accelerated

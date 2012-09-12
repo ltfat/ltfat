@@ -5,9 +5,9 @@ function L=framelengthcoef(F,Ncoef);
 %   `framelengthcoef(F,Ncoef)` returns the length of the frame *F*, such that
 %   *F* is long enough to expand the coefficients of length *Ncoef*.
 %
-%   If instead a signal is given, call |framelengthsignal|_.
+%   If instead a signal is given, call |framelength|_.
 %
-%   See also: newframe, framelengthsignal
+%   See also: newframe, framelength
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

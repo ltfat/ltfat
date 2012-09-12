@@ -81,7 +81,7 @@ for ii=1:numel(Fr)
 
   
   if ~any(strcmp(FT,{'dgtreal','fftreal','ufilterbankreal','filterbankreal'}))
-    LL=framelengthsignal(F,L);
+    LL=framelength(F,L);
     G=franamat(F,LL);
     res=norm(c-G'*postpad(f,LL));
     

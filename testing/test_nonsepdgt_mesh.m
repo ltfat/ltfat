@@ -21,7 +21,7 @@ for lt2=lt2r
                 end;                
                 for Lmod=Lmodr
                     
-                    L=nonsepdgtlengthsignal(1,a,M,[lt1,lt2]);
+                    L=dgtlength(1,a,M,[lt1,lt2]);
                     lt=[lt1,lt2];
                                        
                     b=L/M;

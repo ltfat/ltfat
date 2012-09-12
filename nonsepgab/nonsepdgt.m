@@ -124,9 +124,9 @@ definput.flags.nsalg={'multiwin','shear'};
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
 
 if isempty(L)
-  L=nonsepdgtlengthsignal(Ls,a,M,lt);
+  L=dgtlength(Ls,a,M,lt);
 else
-  Lcheck=nonsepdgtlengthsignal(L,a,M,lt);
+  Lcheck=dgtlength(L,a,M,lt);
   if Lcheck~=L
     error('%s: Invalid transform size L',upper(mfilename));
   end;
@@ -188,45 +188,7 @@ if flags.do_shear
     s=b*lt(1)/lt(2);
     
     [s0,s1,X] = shearfind(a,b,s,L);
-    
-    if s1 ~= 0
-        g = pchirp(L,s1).*g;
-        f = repmat(pchirp(L,s1),1,W).*f;
-    end
-       
-    % Equivalent condition: mod(L,a*M*lt(2)/gcd(a,M,lt(1)))
 
-    if s0 ~= 0
-        g = ifft(pchirp(L,-s0).*fft(g));
-        f = ifft(repmat(pchirp(L,-s0),1,W).*fft(f));
-    end;
-    
-    br = X;
-    ar = a*b/X;
-    Mr = L/br;
-    c = comp_dgt(f,g,ar,Mr,L,0);
-    
-    ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar), ...
-                                                      (0:L/br-1))];
-    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
-    phs = exp(pi*1i*phs/L);
-    
-    c = phs.*c;
-    
-    ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
-    ind_final = mod(ind_final,L);
-
-    c2 = zeros(M,N);
-    
-    % The code line below this comment executes the commented for-loop
-    % using Fortran indexing.
-    %
-    % for jj = 1:size(ind,2)        
-    %     c2(floor(ind_final(2,jj)/b)+1, ind_final(1,jj)/a+1) = ...
-    %         c(ind(2,jj)/br+1, ind(1,jj)/ar+1);
-    % end
-    c2(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M) = c(ind(2,:)/br+1+(ind(1,:)/ar)*Mr);
-
-    c = c2;    
+    c = comp_nonsepdgt_shear(f,g,a,M,s0,s1,X);
     
 end;

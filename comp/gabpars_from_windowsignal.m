@@ -15,47 +15,30 @@ if nargin<6
   callfun=stacknames(2).name;
 end;
 
-% ----- step 1 : Verify a, M ----------
-assert_squarelat(a,M,1,callfun,0);
-
-% ----- step 2 : Verify f and determine its length -------
+% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,0);
 
-% ----- step 3 : Determine L
-if ~isempty(L)
-  if (prod(size(L))~=1 || ~isnumeric(L))
-    error('%s: L must be a scalar',callfun);
-  end;
-  
-  if rem(L,1)~=0
-    error('%s: L must be an integer',callfun);
-  end;
 
-  if rem(L,M)~=0
-    error('%s: The length of the transform must be divisable by M = %i',...
-          callfun,M);
-  end;
+if isempty(L)
 
-  if rem(L,a)~=0
-    error('%s: The length of the transform must be divisable by a = %i',...
-          callfun,a);
-  end;
+    % ----- step 2b : Verify a, M and get L from the signal length f----------
+    L=dgtlength(Ls,a,M);
 
 else
 
-  % Smallest length transform.
-  Lsmallest=lcm(a,M);
+    % ----- step 2a : Verify a, M and get L
+    Luser=dgtlength(L,a,M);
+    if Luser~=L
+        error('Incorrect transform length specified.');
+    end;
 
-  % Choose a transform length larger than both the length of the
-  % signal and the window.
-  L=ceil(Ls/Lsmallest)*Lsmallest;
 end;
 
 b=L/M;
 N=L/a;
 
-% ----- step 4 : Determine the window 
+% ----- step 3 : Determine the window 
 
 [g,info]=gabwin(g,a,M,L,callfun);
 

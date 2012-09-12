@@ -15,7 +15,7 @@ function V=latticetype2matrix(L,a,M,lt);
 %
 %   See also: matrix2latticetype, hermitenf
 
-L2=nonsepdgtlengthsignal(L,a,M,lt);
+L2=dgtlength(L,a,M,lt);
 
 if L~=L2
     error('Invalid transform length.');

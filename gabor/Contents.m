@@ -21,7 +21,7 @@
 %    DGTREAL        -  DGT for real-valued signals.
 %    IDGTREAL       -  IDGT for real-valued signals.
 %    GABWIN         -  Evaluate Gabor window.
-%    LONGPAR        -  Easy calculation of LONG parameters.
+%    DGTLENGTH      -  Length of Gabor system to expand a signal
 %
 %  Wilson bases and WMDCT
 %    DWILT          -  Discrete Wilson transform.

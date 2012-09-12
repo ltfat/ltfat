@@ -18,10 +18,10 @@ if isempty(L)
   if isnumeric(g)
     L=length(g);
   else
-    L=nonsepdgtlengthsignal(1,a,M,lt);
+    L=dgtlength(1,a,M,lt);
   end;
 else
-  Lcheck=nonsepdgtlengthsignal(L,a,M,lt);
+  Lcheck=dgtlength(L,a,M,lt);
   if Lcheck~=L
     error('%s: Invalid transform size L',upper(mfilename));
   end;

@@ -27,7 +27,16 @@ function [s0,s1,X] = shearfind(a,b,s,N)
             s1 = b-s/a;
         end
         s0 = 0;
-        %alpha = 0;
+        X = b;
+    elseif ones(1,lenNabfac) == (min(Nabfac(3,:),Nabfac(4,:)) <= sfac(2,1:end-1))
+        s0 = 0;
+        [Y,alpha,temp] = gcd(a,b);
+        s1 = -alpha*s/Y;
+         
+        B = prod(Nabfac(1,:).^max(Nabfac(4,:)-Nabfac(3,:),0));
+        if abs(s1) > B/2
+            s1 = s1-sign(alpha)*B;            
+        end
         X = b;
     elseif ones(1,lenNabfac) == (Nabfac(3,:) < sfac(2,1:end-1))
         s1 = 0;

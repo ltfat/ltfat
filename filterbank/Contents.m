@@ -7,7 +7,7 @@
 %    UFILTERBANK            - Uniform Filter bank
 %    IFILTERBANK            - Inverse normal/uniform filter bank
 %    FILTERBANKWIN          - Evaluate filterbank window
-%    FILTERBANKLENGTHSIGNAL - Length of filterbank to expand signal
+%    FILTERBANKLENGTH       - Length of filterbank to expand signal
 %    FILTERBANKLENGTHCOEF   - Length of filterbank to expand coefficients
 %
 %  Window construction and bounds
