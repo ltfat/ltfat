@@ -30,13 +30,11 @@ else
     % ----- step 2a : Verify a, M and get L
     Luser=dgtlength(L,a,M);
     if Luser~=L
-        error('Incorrect transform length specified.');
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i.'],callfun,L,Luser)
     end;
 
 end;
-
-b=L/M;
-N=L/a;
 
 % ----- step 3 : Determine the window 
 

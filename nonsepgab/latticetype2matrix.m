@@ -7,18 +7,21 @@ function V=latticetype2matrix(L,a,M,lt);
 %   integer matrix description. The conversion is *only* valid for the
 %   specified transform length *L*.
 %
-%   The output will be in Hemite normal form, see |hermitenf|_.
+%   The output will be in lower triangular Hemite normal form.
+%
+%   For more information, see
+%   `<http://en.wikipedia.org/wiki/Hermite_normal_form>`_.
 %
 %   An example:::
 %
 %     V = latticetype2matrix(120,10,12,[1 2])
 %
-%   See also: matrix2latticetype, hermitenf
+%   See also: matrix2latticetype
 
 L2=dgtlength(L,a,M,lt);
 
 if L~=L2
-    error('Invalid transform length.');
+    error('%s: Invalid transform length.',upper(mfilename));
 end;
 
 b=L/M;

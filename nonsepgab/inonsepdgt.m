@@ -114,50 +114,56 @@ end;
 
 
 if flags.do_shear
+
     b = L/M;
-    s=b*lt(1)/lt(2);
-    [s0,s1,X] = shearfind(a,b,s,L);
+    s = b*lt(1)/lt(2);
+    [s0,s1,br] = shearfind(a,b,s,L);
     
-    br = X;
-    ar = a*b/X;
+    ar = a*b/br;
+    Mr = L/br;
+    Nr = L/ar;
     
-    ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar),(0:L/br-1))];
-    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1),2*L),L/br,L/ar);
+    ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar), ...
+                                                      (0:L/br-1))];
+    phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1) ...
+                    -2*(s0 ~= 0)*ind(1,:).*ind(2,:),2*L),L/br,L/ar);    
     phs = exp(-pi*1i*phs/L);
-    
+
     ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
     ind_final = mod(ind_final,L);
-    
-    c_rect = zeros(L/br,L/ar,W);
-    
-    % This loop should be made a single step using Fortran indexing
-    for w=1:W
-        for jj = 1:size(ind,2)
-            c_rect(ind(2,jj)/br+1,ind(1,jj)/ar+1,w) = coef(floor(ind_final(2,jj)/b)+1,ind_final(1,jj)/a+1,w);
-        end
-    end;
-    
-    for w=1:W
-        c_rect(:,:,w) = phs.*c_rect(:,:,w);
-    end;
     
     if s1 ~= 0
         g = pchirp(L,s1).*g;
     end
     
     if s0 ~= 0
-        g = ifft(pchirp(L,-s0).*fft(g));    
-    end
-    
-    f = comp_idgt(c_rect,g,a*b/X,L/X,L,0);
-    
-    if s0 ~= 0
-        f = ifft(repmat(pchirp(L,s0),1,W).*fft(f));    
+        
+        c_rect = zeros(Nr,Mr,W);
+        g = pchirp(L,-s0).*fft(g);
+        for w=0:W-1
+            c_rect(ind(1,[1:Mr,end:-1:Mr+1])/ar+1+(ind(2,:)/br)*Nr+w*M*N) = ...
+                coef(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M+w*M* ...
+                     N).*phs(ind(2,:)/br+1+(ind(1,:)/ar)*Mr);
+        end;
+        f = comp_idgt(c_rect,g,br,Nr,L,0);
+        f = ifft(repmat(pchirp(L,s0),1,W).*f);   
+        
+    else
+        
+        c_rect = zeros(Mr,Nr,W);
+        for w=0:W-1
+            c_rect(ind(2,:)/br+1+(ind(1,:)/ar)*Mr+w*M*N) = ... 
+                coef(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M+w*M*N);       
+            c_rect(:,:,w+1) = phs.*c_rect(:,:,w+1);
+        end;
+        f = comp_idgt(c_rect,g,ar,Mr,L,0);
+        
     end
     
     if s1 ~= 0
         f = repmat(pchirp(L,-s1),1,W).*f;
     end        
+
 end;
     
 % Cut or extend f to the correct length, if desired.
@@ -168,3 +174,4 @@ else
 end;
 
 f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
+

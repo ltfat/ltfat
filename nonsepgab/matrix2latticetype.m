@@ -11,15 +11,105 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %
 %     [a,M,lt] = matrix2latticetype(120,[10 0; 5 10])
 %
-%   See also: latticetype2matrix, hermitenf
+%   Coefficient layout:
+%   -------------------
+%
+%   The following code generates plots which show the coefficient layout
+%   and enumeration of the first 4 lattices in the time-frequecy plane:::
+%
+%     a=4;
+%     M=6;
+%     L=72;
+%     b=L/M;
+%     N=L/a;
+%     cw=3;
+%     ftz=12;
+%     
+%     [x,y]=meshgrid(a*(0:N-1),b*(0:M-1));
+%
+%     lt1=[0 1 1 2];
+%     lt2=[1 2 3 3];
+%
+%     for fignum=1:4
+%       figure;
+%       z=y;
+%       if lt2(fignum)>0
+%         z=z+mod(lt1(fignum)*x/lt2(fignum),b);
+%       end;
+%       for ii=1:M*N
+%         text(x(ii)-cw/4,z(ii),sprintf('%2.0i',ii),'Fontsize',ftz);
+%         rectangle('Curvature',[1 1], 'Position',[x(ii)-cw/2,z(ii)-cw/2,cw,cw]);
+%       end;
+%       axis([-cw L -cw L]);
+%       axis('square');
+%       title(sprintf('lt=[%i %i]',lt1(fignum),lt2(fignum)),'Fontsize',ftz);
+%     end;
 
-V=hermitenf(V);
+%
+%   See also: latticetype2matrix
 
-a=V(1,1);
-b=V(2,2);
-s=V(2,1);
+% The Hermite normal form code was originally written by Arno J. van Leest, 1999.
+% Positive determinant by Peter Soendergaard, 2004.
+% Unique form by Christoph Wiesmeyr, 2012
+
+if nargin~=2
+  error('%s: Wrong number of input arguments.',upper(mfilename));
+end;
+
+% Check if matrix has correct size.
+if size(V,1)~=2 || size(V,2)~=2
+  error('%s: V must be a 2x2 matrix.',upper(mfilename));
+end;
+
+% Integer values
+if norm(mod(V,1))~=0
+  error('%s: V must have all integer values.',upper(mfilename));
+end;
+
+% Convert to Arnos normal form.
+gcd1=gcd(V(1,1),V(1,2));
+gcd2=gcd(V(2,1),V(2,2));
+
+A=zeros(2);
+A(1,:)=V(1,:)/gcd1;
+A(2,:)=V(2,:)/gcd2;
+
+D = det(A);
+
+% Exchange vectors if determinant is negative.
+if D<0
+  D=-D;
+  A=fliplr(A);
+end;
+
+[g,h0,h1] = gcd(A(1,1),A(1,2));
+
+x = A(2,:)*[h0;h1];
+
+x = mod(x,D);
+
+% Nuhag notation
+a = gcd1;
+b = D*gcd2;
+s = x*gcd2;
+
+% Make the numbers unique
+b = gcd(b,L);
+b2 = L/a*s;
+b = gcd(b,b2);
+
+s = mod(s,b);
+
 M=L/b;
 
 k=gcd(s,b);
 lt=[s/k b/k];
+
+% The following is sometimes needed for Octave.
+% Octave mistakenly converts the numbers to floats,
+% and later complains, so we round to integers.
+a = round(a);
+M = round(M);
+lt= round(lt);
+
 
