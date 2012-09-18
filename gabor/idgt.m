@@ -2,12 +2,14 @@ function [f,g]=idgt(coef,g,a,varargin)
 %IDGT  Inverse discrete Gabor transform
 %   Usage:  f=idgt(c,g,a);
 %           f=idgt(c,g,a,Ls);
+%           f=idgt(c,g,a,Ls,lt);
 %
 %   Input parameters:
 %         c     : Array of coefficients.
 %         g     : Window function.
 %         a     : Length of time shift.
-%         Ls    : length of signal.
+%         Ls    : Length of signal.
+%         lt    : Lattice type (for non-separable lattices)
 %   Output parameters:
 %         f     : Signal.
 %
@@ -38,7 +40,28 @@ function [f,g]=idgt(coef,g,a,varargin)
 %     f(l+1)  = sum sum c(m+1,n+1)*exp(2*pi*i*m*l/M)*g(l-a*n+1)
 %               n=0 m=0          
 %
+%   .. math:: f(l+1) = \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi
+%      iml/M}g(l-an+1)
+%
+%   Non-separable lattices:
+%   -----------------------
+%
+%   `idgt(c,g,a,[],lt)` or `idgt(c,g,Ls,lt)` computes the Gabor expansion of
+%   the input coefficients *c* with respect to the window *g*, time shift
+%   *a* and lattice type *lt*. Please see the help of |matrix2latticetype|_
+%   for a precise description of the parameter *lt*.
+%
+%   Assume that `f=dgt(c,g,a,L,lt)` for an array *c* of size $M\times N$.
+%   Then the following holds for $k=0,\ldots,L-1$:
+% 
+%   ..          N-1 M-1          
+%     f(l+1)  = sum sum c(m+1,n+1)*exp(2*pi*i*m*l/M)*g(l-a*n+1)
+%               n=0 m=0          
+%
 %   .. math:: f(l+1) = \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi iml/M}g(l-an+1)
+%
+%   Additional paramaters:
+%   ----------------------
 %
 %   `idgt` takes the following flags at the end of the line of input
 %   arguments:
@@ -66,43 +89,51 @@ if numel(g)==1
 end;
 
 definput.keyvals.Ls=[];
+definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
-
-wasrow=0;
-
-if isnumeric(g)
-  if size(g,2)>1
-    if size(g,1)>1
-      error('g must be a vector');
-    else
-      % g was a row vector.
-      g=g(:);
-      
-      % If the input window is a row vector, and the dimension of c is
-      % equal to two, the output signal will also
-      % be a row vector.
-      if ndims(coef)==2
-        wasrow=1;
-      end;
-    end;
-  end;
-end;
+definput.flags.nsalg={'nsauto','multiwin','shear'};
+[flags,kv,Ls,lt]=ltfatarghelper({'Ls','lt'},definput,varargin);
 
 M=size(coef,1);
 N=size(coef,2);
 W=size(coef,3);
 
-% use assert_squarelat to check a and the window size.
-assert_squarelat(a,M,1,'IDGT');
+
+if ~isnumeric(a) || ~isscalar(a)
+  error('%s: "a" must be a scalar',upper(mfilename));
+end;
+
+if rem(a,1)~=0
+  error('%s: "a" must be an integer',upper(mfilename));
+end;
 
 L=N*a;
 
-g=gabwin(g,a,M,L,'IDGT');
+Ltest=dgtlength(L,a,M,lt);
 
-assert_L(L,size(g,1),L,a,M,'IDGT');
+if Ltest~=L
+    error(['%s: Incorrect size of coefficient array or "a" parameter. See ' ...
+           'the help of DGTLENGTH for the requirements.'], ...
+          upper(mfilename),L,Luser)
+end;
 
-f=comp_idgt(coef,g,a,M,L,flags.do_timeinv);
+g=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+
+if lt(2)==1
+    f=comp_idgt(coef,g,a,M,L,flags.do_timeinv);
+else
+    if flags.do_nsauto
+        alg=0;
+    end;
+    if flags.do_multiwin
+        alg=1;
+    end;
+    if flags.do_shear
+        alg=2;
+    end;
+
+    f=comp_inonsepdgt(coef,g,a,lt,flags.do_timeinv,alg);
+end;
 
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
@@ -111,4 +142,4 @@ else
   Ls=L;
 end;
 
-f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
+f=comp_sigreshape_post(f,Ls,0,[0; W]);

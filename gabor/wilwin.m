@@ -105,7 +105,7 @@ if nargin==2
   L=[];
 end;
 
-[g,info] = comp_window(g,M,2*M,L,[0 0],'WILWIN');
+[g,info] = comp_window(g,M,2*M,L,[0 1],'WILWIN');
 
 if info.isfir==0
   if info.istight

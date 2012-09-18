@@ -1,8 +1,8 @@
-function [g,info] = comp_window(g,a,M,L,s,callfun);
+function [g,info] = comp_window(g,a,M,L,lt,callfun);
 %COMP_WINDOW  Compute the window from numeric, text or cell array.
 %   Usage: [g,info] = comp_window(g,a,M,L,s,callfun);
 %
-%   [g,info]=COMP_WINDOW(g,a,M,L,callfun) will compute the window
+%   [g,info]=COMP_WINDOW(g,a,M,L,lt,callfun) will compute the window
 %   from a text description or a cell array containing additional
 %   parameters.
 %
@@ -23,7 +23,7 @@ info.isfir=0;
 info.istight=0;
 info.isdual=0;
 
-isrect=all(s==[0 0]);
+isrect=(lt(2)==1);
 
 firwinnames =  {...
     'hanning','hann','sqrthan','sqrthann','hamming',...
@@ -90,7 +90,7 @@ if iscell(g)
     complain_L(L,callfun);
     [g,info.tfr]=psech(L,g{2:end});    
    case {'dual'}
-    [g,info.auxinfo] = comp_window(g{2},a,M,L,s,callfun);    
+    [g,info.auxinfo] = comp_window(g{2},a,M,L,lt,callfun);    
     if isrect
       g = gabdual(g,a,M,L);
     else
@@ -98,7 +98,7 @@ if iscell(g)
     end;
     info.isdual=1;
    case {'tight'}
-    [g,info.auxinfo] = comp_window(g{2},a,M,L,s,callfun);    
+    [g,info.auxinfo] = comp_window(g{2},a,M,L,lt,callfun);    
     if isrect
       g = gabtight(g,a,M,L);
     else

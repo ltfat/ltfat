@@ -9,16 +9,31 @@ function [L,tfr]=dgtlength(Ls,a,M,lt);
 %   If the returned length is longer than the signal length, the signal
 %   will be zero-padded by |dgt|_.
 %
-%   `dgtlength(Ls,a,M,lt)` does the same for a non-separable lattice.
+%   A valid transform length must be divisable by both *a* and *M*. This
+%   means that the minumal admissable transform length is ::
+%
+%     Lsmallest = lcm(a,M);
+%
+%   and all valid transform lengths are multipla of *Lsmallest*
+%
+%   Non-separable lattices:
+%   -----------------------
+%
+%   `dgtlength(Ls,a,M,lt)` does as above for a non-separable lattice with
+%   lattice-type *lt*. For non-separable lattices, there is the additinal
+%   requirement on the transform length, that the structure of the
+%   lattice must be periodic. This gives a minimal transform length of ::
+%
+%     Lsmallest = lcm(a,M)*lt(2);
 %
 %   See also: dgt
 
-if ~isscalar(M)
+if ~isnumeric(M) || ~isscalar(M)
   error('%s: M must be a scalar',upper(mfilename));
 end;
 
-if ~isscalar(a)
-  error('%s: a must be a scalar',upper(mfilename));
+if ~isnumeric(a) || ~isscalar(a)
+  error('%s: "a" must be a scalar',upper(mfilename));
 end;
 
 if rem(M,1)~=0
@@ -26,7 +41,7 @@ if rem(M,1)~=0
 end;
 
 if rem(a,1)~=0
-  error('%s: a must be an integer',upper(mfilename));
+  error('%s: "a" must be an integer',upper(mfilename));
 end;
 
 if ~isnumeric(Ls)

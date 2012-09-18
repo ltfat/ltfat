@@ -7,6 +7,14 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %   *M* and *lt*. The conversion is *only* valid for the specified transform
 %   length *L*.
 %
+%   The lattice type *lt* is a $1 \times 2$ vector $[lt_1,lt_2]$ denoting an
+%   irreducible fraction $lt_1/lt_2$. This fraction describes the distance
+%   in frequency (counted in frequency channels) that each coefficient is
+%   offset when moving in time by the time-shift of *a*. Some examples:
+%   `lt=[0 1]` defines a square lattice, `lt=[1 2]` defines the quinqux
+%   (almost hexagonal) lattice, `lt=[1 3]` describes a lattice with a
+%   $1/3$ frequency offset for each time shift and so forth.
+%
 %   An example:::
 %
 %     [a,M,lt] = matrix2latticetype(120,[10 0; 5 10])
@@ -17,9 +25,9 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %   The following code generates plots which show the coefficient layout
 %   and enumeration of the first 4 lattices in the time-frequecy plane:::
 %
-%     a=4;
+%     a=6;
 %     M=6;
-%     L=72;
+%     L=36;
 %     b=L/M;
 %     N=L/a;
 %     cw=3;
@@ -44,7 +52,6 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %       axis('square');
 %       title(sprintf('lt=[%i %i]',lt1(fignum),lt2(fignum)),'Fontsize',ftz);
 %     end;
-
 %
 %   See also: latticetype2matrix
 

@@ -69,6 +69,10 @@
 %    PHASEUNLOCK    -  Undo phase locking.
 %    SYMPHASE       -  Convert to symmetric phase.
 %
+%  Support for non-separable lattices
+%    MATRIX2LATTICETYPE - Matrix form to standard lattice description.
+%    LATTICETYPE2MATRIX - Standard lattice description to matrix form.
+%
 %  Plots
 %    TFPLOT         -  Plot coefficients on the time-frequency plane.
 %    PLOTDGT        -  Plot DGT coefficients.

@@ -1,4 +1,4 @@
-function [g,info] = gabwin(g,a,M,L,callfun);
+function [g,info] = gabwin(g,a,M,varargin);
 %GABWIN  Compute a Gabor window from text or cell array
 %   Usage: [g,info] = gabwin(g,a,M,L);
 %
@@ -98,13 +98,17 @@ function [g,info] = gabwin(g,a,M,L,callfun);
 %   See also: pgauss, firwin, wilwin
   
 % Assert correct input.
-error(nargchk(3,5,nargin));
-
-if nargin==3
-  L=[];
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[g,info] = comp_window(g,a,M,L,[0 0],'GABWIN');
+definput.keyvals.L=[];
+definput.keyvals.lt=[0 1];
+definput.keyvals.callfun='GABWIN';
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
+
+[g,info] = comp_window(g,a,M,L,lt,kv.callfun);
 
 if (info.isfir)  
   if info.istight

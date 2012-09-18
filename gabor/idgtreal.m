@@ -105,7 +105,7 @@ assert_squarelat(a,M,1,'IDGTREAL');
 
 L=N*a;
 
-g=gabwin(g,a,M,L,'IDGTREAL');
+g=gabwin(g,a,M,L,'callfun','IDGTREAL');
 
 if ~isreal(g)
   error('Window must be real-valued.');

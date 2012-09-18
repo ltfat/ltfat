@@ -76,7 +76,7 @@ for ii=1:length(Lr);
       
       % --------- test reference comparison ------------
       
-      cc = nonsepdgt(f,g,a,M,lt);
+      cc = dgt(f,g,a,M,[],lt,'multiwin');
       
       cc_ref = ref_nonsepdgt(f,g,a,M,lt);
       
@@ -89,7 +89,7 @@ for ii=1:length(Lr);
       
       % --------- test shear DGT -------------------------------
       
-      cc_shear = nonsepdgt(f,g,a,M,lt,'shear');
+      cc_shear = dgt(f,g,a,M,[],lt,'shear');
             
       res = norm(cc(:)-cc_shear(:))/norm(cc(:));
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -99,7 +99,7 @@ for ii=1:length(Lr);
 
       % -------- test reconstruction using canonical dual -------
       
-      r=inonsepdgt(cc,gd,a,lt);  
+      r=idgt(cc,gd,a,[],lt,'multiwin');
       res=norm(f-r,'fro');
       
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -109,7 +109,7 @@ for ii=1:length(Lr);
 
       % -------- test reconstruction using canonical dual, shear algorithm -------
       
-      r=inonsepdgt(cc,gd,a,lt,'shear');  
+      r=idgt(cc,gd,a,[],lt,'shear');  
       res=norm(f-r,'fro');
       
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -120,8 +120,8 @@ for ii=1:length(Lr);
 
       % -------- test reconstruction using canonical tight -------
 
-      cc = nonsepdgt(f,gt,a,M,lt);
-      r=inonsepdgt(cc,gt,a,lt);  
+      cc = dgt(f,gt,a,M,[],lt,'multiwin');
+      r=idgt(cc,gt,a,[],lt,'multiwin');  
       res=norm(f-r,'fro');
       
       [test_failed,fail]=ltfatdiditfail(res,test_failed);

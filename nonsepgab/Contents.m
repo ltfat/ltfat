@@ -2,11 +2,6 @@
 %
 %  Peter L. Soendergaard, 2012.
 %
-%  Lattice transformations
-%    HERMITENF             - Hermite normal form of 2x2 integer matrix.
-%    MATRIX2LATTICETYPE    - Matrix form to standard lattice description.
-%    LATTICETYPE2MATRIX    - Standard lattice description to matrix form.
-%
 %  Gabor systems for non-separable lattices
 %    NONSEPDGT             - DGT for a non-separable lattice.
 %    INONSEPDGT            - IDGT for a non-separable lattice.

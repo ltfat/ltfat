@@ -2,6 +2,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %DGT  Discrete Gabor transform
 %   Usage:  c=dgt(f,g,a,M);
 %           c=dgt(f,g,a,M,L);
+%           c=dgt(f,g,a,M,L,lt);
 %           [c,Ls]=dgt(f,g,a,M);
 %           [c,Ls]=dgt(f,g,a,M,L);
 %
@@ -11,6 +12,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %         a     : Length of time shift.
 %         M     : Number of channels.
 %         L     : Length of transform to do.
+%         lt    : Lattice type (for non-separable lattices).
 %   Output parameters:
 %         c     : $M \times N$ array of coefficients.
 %         Ls    : Length of input signal.
@@ -56,7 +58,34 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %
 %   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi ilm/M}
 %
-%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
+%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed
+%   modulo *L*.
+%
+%   Non-separable lattices:
+%   -----------------------
+%
+%   `dgt(f,g,a,M,[],lt)` or `dgt(f,g,a,M,L,lt)` computes the DGT for a
+%   non-separable lattice given by the time-shift *a*, number of channels
+%   *M* and lattice type *lt*. Please see the help of |matrix2latticetype|_
+%   for a precise description of the parameter *lt*.
+%
+%   The non-separable discrete Gabor transform is defined as follows:
+%   Consider a window *g* and a one-dimensional signal *f* of length *L* and
+%   define $N=L/a$.  The output from `c=dgt(f,g,a,M,L,lt)` is then given
+%   by:
+%
+%   ..              L-1 
+%      c(m+1,n+1) = sum f(l+1)*conj(g(l-a*n+1))*exp(-2*pi*i*(m+w(n))*l/M), 
+%                   l=0  
+%
+%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi il(m+w(n))/M}
+%
+%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ are computed
+%   modulo *L*.  The additional offset $w$ is given by $w(n)=\mod(n\cdot
+%   lt_1,lt_2)/lt_2$ in the formula above.
+%
+%   Additional parameters:
+%   ----------------------
 %
 %   `dgt` takes the following flags at the end of the line of input
 %   arguments:
@@ -77,16 +106,76 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %   TESTING: TEST_DGT
 %   REFERENCE: REF_DGT
   
-% Assert correct input.
+%% ---------- Assert correct input.
 
 if nargin<4
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
 definput.keyvals.L=[];
+definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,kv]=ltfatarghelper({'L'},definput,varargin);
+definput.flags.nsalg={'nsauto','multiwin','shear'};
+[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
 
-[f,g,L,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
 
-c=comp_dgt(f,g,a,M,L,flags.do_timeinv);
+%% ----- step 1 : Verify f and determine its length -------
+% Change f to correct shape.
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+
+
+%% ------ step 2: Verify a, M and L
+if isempty(L)
+
+    % ----- step 2b : Verify a, M and get L from the signal length f----------
+    L=dgtlength(Ls,a,M,lt);
+
+else
+
+    % ----- step 2a : Verify a, M and get L
+    L
+    Luser=dgtlength(L,a,M,lt);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser)
+    end;
+
+end;
+
+%% ----- step 3 : Determine the window 
+
+[g,info]=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
+
+%% ----- step 4: final cleanup ---------------
+
+f=postpad(f,L);
+
+% If the signal is single precision, make the window single precision as
+% well to avoid mismatches.
+if isa(f,'single')
+  g=single(g);
+end;
+
+%% ------ call the computation subroutines 
+
+
+if lt(2)==1
+    c=comp_dgt(f,g,a,M,L,flags.do_timeinv);
+else
+    if flags.do_nsauto
+        alg=0;
+    end;
+    if flags.do_multiwin
+        alg=1;
+    end;
+    if flags.do_shear
+        alg=2;
+    end;
+    
+    c=comp_nonsepdgt(f,g,a,M,lt,flags.do_timeinv,alg);
+end;

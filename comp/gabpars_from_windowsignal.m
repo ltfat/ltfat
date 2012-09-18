@@ -1,4 +1,4 @@
-function [f,g,L,Ls,W,info] = gabpars_from_windowsignal(f,g,a,M,L,callfun)
+function [f,g,L,Ls,W,info] = gabpars_from_windowsignal(f,g,a,M,L,lt,callfun)
 %GABPARS_FROM_WINDOWSIGNAL  Compute g and L from window and signal
 %   Usage: [g,g.info,L] = gabpars_from_windowsignal(f,g,a,M,L);
 %
@@ -38,7 +38,7 @@ end;
 
 % ----- step 3 : Determine the window 
 
-[g,info]=gabwin(g,a,M,L,callfun);
+[g,info]=gabwin(g,a,M,L,'callfun',callfun);
 
 if L<info.gl
   error('%s: Window is too long.',callfun);

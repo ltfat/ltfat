@@ -61,7 +61,7 @@ end;
 b=L/M;
 N=L/a;
 
-[g,info]=gabwin(g,a,M,L,callfun);
+[g,info]=gabwin(g,a,M,L,[0 1],'callfun',callfun);
 
 
 
