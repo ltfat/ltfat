@@ -75,6 +75,20 @@ for ii=1:length(Lr);
                '%0.5g %s'],rname,L,a,b,c,d,p,q,res,fail);    
     disp(s);
 
+    % ---- Test gabdualnorm --------------------------------------
+    res=gabdualnorm(g,gd,a,M);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['DUALNORM1 %s L:%3i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i '...
+               '%0.5g %s'],rname,L,a,b,c,d,p,q,res,fail);    
+    disp(s);
+
+    [o1,o2]=gabdualnorm(g,gd,a,M);
+    res=o1-1+o2;
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['DUALNORM2 %s L:%3i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i '...
+               '%0.5g %s'],rname,L,a,b,c,d,p,q,res,fail);    
+    disp(s);
+
     for W=1:3
           
       if rtype==1

@@ -51,19 +51,19 @@ for ii=1:length(Lr);
   
   for gtype=1:2
       if gtype==1
-          Lwindow=L;
+          Lw=L;
       else
-          Lwindow=M;
+          Lw=M;
       end;
       
       for rtype=1:2
           
           if rtype==1
               rname='REAL';
-              g=rand(Lwindow,1);
+              g=rand(Lw,1);
           else
               rname='CMPLX';	
-              g=crand(Lwindow,1);
+              g=crand(Lw,1);
           end;
                     
           gd=gabdual(g,a,M,[],lt);
@@ -95,8 +95,8 @@ for ii=1:length(Lr);
               
               res = norm(cc(:)-cc_ref(:))/norm(cc(:));
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['REF   %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               % --------- test multiwindow ---------------------
@@ -105,8 +105,8 @@ for ii=1:length(Lr);
               
               res = norm(cc(:)-cc_ref(:))/norm(cc(:));
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['DGT MULTIW %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['DGT MULTIW %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               
@@ -116,8 +116,8 @@ for ii=1:length(Lr);
               
               res = norm(cc(:)-cc_ref(:))/norm(cc(:));
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['DGT SHREAR   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['DGT SHREAR   %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               % -------- test reconstruction using canonical dual -------
@@ -126,8 +126,8 @@ for ii=1:length(Lr);
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['REC D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['REC D %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               % -------- test reconstruction using canonical dual, multiwin algorithm -------
@@ -136,8 +136,8 @@ for ii=1:length(Lr);
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['REC MULTIW D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['REC MULTIW D %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               % -------- test reconstruction using canonical dual, shear algorithm -------
@@ -146,8 +146,8 @@ for ii=1:length(Lr);
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['REC SHEAR D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['REC SHEAR D %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               
@@ -158,8 +158,8 @@ for ii=1:length(Lr);
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
-              stext=sprintf(['REC T %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              stext=sprintf(['REC T %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
               
               
@@ -170,41 +170,58 @@ for ii=1:length(Lr);
           B=gabframebounds(gt,a,M,[],lt);
           res=B-1;
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
-          stext=sprintf(['FRB   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          stext=sprintf(['FRB   %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
           disp(stext)
           
           % -------- test multiwin dual -------
           
           res=norm(gd-gd_multi)/norm(g);
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
-          stext=sprintf(['DUAL MULTI  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          stext=sprintf(['DUAL MULTI  %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
           disp(stext)
           
           % -------- test shear dual -------
           
           res=norm(gd-gd_shear)/norm(g);
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
-          stext=sprintf(['DUAL SHEAR  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          stext=sprintf(['DUAL SHEAR  %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
           disp(stext)
           
           % -------- test shear tight -------
           
           res=norm(gt-gt_multi)/norm(g);
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
-          stext=sprintf(['TIGHT MULTI %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          stext=sprintf(['TIGHT MULTI %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
           disp(stext)
 
           % -------- test shear tight -------
           
           res=norm(gt-gt_shear)/norm(g);
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
-          stext=sprintf(['TIGHT SHEAR %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          stext=sprintf(['TIGHT SHEAR %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
           disp(stext)
+
+          % ---- Test gabdualnorm --------------------------------------
+          res=gabdualnorm(g,gd,a,M,[],lt);
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['DUALNORM1 %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
+          
+          disp(stext);
+          
+          [o1,o2]=gabdualnorm(g,gd,a,M,[],lt);
+          res=o1-1+o2;
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['DUALNORM2 %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
+
+          disp(stext);
+
           
       end;  
       

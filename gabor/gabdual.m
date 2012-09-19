@@ -183,7 +183,13 @@ else
 end;
     
 % --------- post process result -------
-      
+
+if isreal(g) && (lt(2)==1 || lt(2)==2)
+  % If g is real and the lattice is either rectangular or quinqux, then
+  % the output is known to be real.
+  gd=real(gd);
+end;
+
 if info.wasrow
   gd=gd.';
 end;

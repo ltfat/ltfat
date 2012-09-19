@@ -1,5 +1,5 @@
-function [o1,o2]=gabdualnorm(gamma,g,a,M,L);
-%GABDUALNORM  Measure of how close a window is to be a dual window
+function [o1,o2]=gabdualnorm(g,gamma,a,M,varargin);
+%GABDUALNORM  Measure of how close a window is to being a dual window
 %   Usage:  dn=gabdualnorm(g,gamma,a,M);
 %           dn=gabdualnorm(g,gamma,a,M,L);
 %           [scal,res]=gabdualnorm(g,gamma,a,M);
@@ -22,14 +22,18 @@ function [o1,o2]=gabdualnorm(gamma,g,a,M,L);
 %   The windows *g* and *gamma* may be vectors of numerical values, text strings
 %   or cell arrays. See the help of |gabwin|_ for more details.
 %
+%   `[scal,res]=gabdualnorm(...)` computes two entities: *scal* determines
+%   if the windows are scaled correctly, it must be 1 for the windows to be
+%   dual. *res* is close to zero if the windows (scaled correctly) are dual
+%   windows.
+%
 %   `gabdualnorm(g,gamma,a,M,L)` does the same, but considers a transform
 %   length of *L*.
 %
-%   `[scal,res]=gabdualnorm(g,gamma,a,M)` or
-%   `[scal,res]=gabdualnorm(g,gamma,a,M,L)` computes two entities: *scal*
-%   determines if the windows are scaled correctly, it must be 1 for the
-%   windows to be dual. *res* is close to zero if the windows (scaled
-%   correctly) are dual windows.
+%   `gabdualnorm(g,gamma,a,M,[],lt)` or `gabdualnorm(g,gamma,a,M,L,lt)` does
+%   the same for a non-separable lattice specified by *lt*. Please see the
+%   help of |matrix2latticetype|_ for a precise description of the parameter
+%   *lt*.
 %
 %   `gabdualnorm` can be used to get the maximum relative reconstruction
 %   error when using the two specified windows. Consider the following code
@@ -48,51 +52,67 @@ function [o1,o2]=gabdualnorm(gamma,g,a,M,L);
 %
 %   See also:  gabframebounds, dgt
 
-error(nargchk(4,5,nargin));
+  
+%% ---------- Assert correct input.
 
-if nargin<5
-  L=[];
+if nargin<4
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-assert_squarelat(a,M,1,'GABDUALNORM',0);
+definput.keyvals.L=[];
+definput.keyvals.lt=[0 1];
+[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
 
-if isnumeric(g)
-  if ~isvector(g)
-    error('%s: g must be a vector',upper(callfun));
-  end;
-  Ls=length(g);
+%% ------ step 2: Verify a, M and L
+if isempty(L)
+    % Minimum transform length by default.
+    Ls=1;
+    
+    % Use the window lengths, if any of them are numerical
+    if isnumeric(g)
+        Ls=max(length(g),Ls);
+    end;
+
+    if isnumeric(gamma)
+        Ls=max(length(g),Ls);
+    end;
+
+    % ----- step 2b : Verify a, M and get L from the window length ----------
+    L=dgtlength(Ls,a,M,lt);
+
 else
-  Ls=0;
+
+    % ----- step 2a : Verify a, M and get L
+
+    Luser=dgtlength(L,a,M,lt);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser)
+    end;
+
 end;
 
-if isnumeric(gamma)
-  if ~isvector(gamma)
-    error('%s: gamma must be a vector',upper(callfun));
-  end;
-  Lwindow=length(gamma);
-else
-  Lwindow=0;
-end;
+[g,info]=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
 
-[b,N,L]=assert_L(Ls,Lwindow,L,a,M,'GABDUALNORM');
-
-[g,info_g]         = gabwin(g,a,M,L,'GABDUALNORM');
-[gamma,info_gamma] = gabwin(gamma,a,M,L,'GABDUALNORM');
+[g,    info_g]     = gabwin(g,    a,M,L,lt,'callfun','GABDUALNORM');
+[gamma,info_gamma] = gabwin(gamma,a,M,L,lt,'callfun','GABDUALNORM');
  
-g=fir2long(g,L);
+% gamma must have the correct length, otherwise dgt will zero-extend it
+% incorrectly using postpad instead of fir2long
 gamma=fir2long(gamma,L);
 
 % Handle the Riesz basis (dual lattice) case.
 if a>M
 
   % Calculate the right-hand side of the Wexler-Raz equations.
-  rhs=dgt(gamma,g,a,M);
+  rhs=dgt(gamma,g,a,M,L,lt);
   scalconst=1;
   
 else
   
   % Calculate the right-hand side of the Wexler-Raz equations.
-  rhs=dgt(gamma,g,M,a);
+  rhs=dgt(gamma,g,M,a,L,lt);
   
   scalconst=a/M;
   
