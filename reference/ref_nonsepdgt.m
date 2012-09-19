@@ -1,12 +1,13 @@
-function [c]=ref_nonsepdgt(f,g,a,M,s)
+function [c]=ref_nonsepdgt(f,g,a,M,lt)
 %REF_NONSEPDGT  Reference non-sep Discrete Gabor transform.
-%   Usage:  c=ref_dgt(f,g,a,M,s);
+%   Usage:  c=ref_dgt(f,g,a,M,lt);
 %
 %   Linear algebra version of the algorithm. Create big matrix
 %   containing all the basis functions and multiply with the transpose.
 
 % Calculate the parameters that was not specified.
-L=size(g,1);
+L=size(f,1);
+g=fir2long(g,L);
 
 b=L/M;
 N=L/a;
@@ -15,7 +16,7 @@ R=size(g,2);
 
 % Create 2x2 grid matrix..
 V=[a,0;...
-   b/s(2)*s(1),b];
+   b/lt(2)*lt(1),b];
   
 % Create lattice and Gabor matrix.
 lat=ref_lattice(V,L);

@@ -115,7 +115,6 @@ end;
 definput.keyvals.L=[];
 definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
-definput.flags.nsalg={'nsauto','multiwin','shear'};
 [flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
 
 
@@ -133,7 +132,6 @@ if isempty(L)
 else
 
     % ----- step 2a : Verify a, M and get L
-    L
     Luser=dgtlength(L,a,M,lt);
     if Luser~=L
         error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
@@ -167,15 +165,6 @@ end;
 if lt(2)==1
     c=comp_dgt(f,g,a,M,L,flags.do_timeinv);
 else
-    if flags.do_nsauto
-        alg=0;
-    end;
-    if flags.do_multiwin
-        alg=1;
-    end;
-    if flags.do_shear
-        alg=2;
-    end;
-    
-    c=comp_nonsepdgt(f,g,a,M,lt,flags.do_timeinv,alg);
+    g=fir2long(g,L);
+    c=comp_nonsepdgt(f,g,a,M,lt,flags.do_timeinv,0);
 end;

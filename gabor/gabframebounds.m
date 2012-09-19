@@ -1,14 +1,16 @@
-function [AF,BF]=gabframebounds(g,a,M,L)
+function [AF,BF]=gabframebounds(g,a,M,varargin)
 %GABFRAMEBOUNDS  Calculate frame bounds of Gabor frame
 %   Usage:  fcond=gabframebounds(g,a,M);
 %           [A,B]=gabframebounds(g,a,M);
 %           [A,B]=gabframebounds(g,a,M,L);
+%           [A,B]=gabframebounds(g,a,M,L,lt);
 %
 %   Input parameters:
 %           g     : The window function.
 %           a     : Length of time shift.
 %           M     : Number of channels.
 %           L     : Length of transform to consider.
+%           lt    : Lattice type (for non-separable lattices).
 %   Output parameters:
 %           fcond : Frame condition number (B/A)
 %           A,B   : Frame bounds.
@@ -16,51 +18,112 @@ function [AF,BF]=gabframebounds(g,a,M,L)
 %   `gabframebounds(g,a,M)` calculates the ratio $B/A$ of the frame bounds
 %   of the Gabor system with window *g*, and parameters *a*, *M*.
 %
-%   `[A,B]=gabframebounds(g,a,M)` returns the frame bounds *A* and *B*
+%   `[A,B]=gabframebounds(...)` returns the frame bounds *A* and *B*
 %   instead of just the ratio.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
 %   cell array. See the help of |gabwin|_ for more details.
 %  
-%   If the optional parameter *L* is specified, the window is cut or
-%   zero-extended to length *L*.
+%   `gabframebounds(g,a,M,L)` will cut or zero-extend the window to length
+%   *L*.
+%
+%   `gabframebounds(g,a,M,[],lt)` or `gabframebounds(g,a,M,L,lt)` does the
+%   same for a non-separable lattice specified by *lt*. Please see the help
+%   of |matrix2latticetype|_ for a precise description of the parameter
+%   *lt*.
 %
 %   See also: gabrieszbounds, gabwin
 
-error(nargchk(3,4,nargin));
+  
+%% ---------- Assert correct input.
 
-if nargin<4
-  L=[];
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[g,L,info] = gabpars_from_window(g,a,M,L);
+definput.keyvals.L=[];
+definput.keyvals.lt=[0 1];
+[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
+
+
+%% ------ step 2: Verify a, M and L
+if isempty(L)
+    if isnumeric(g)
+        % Use the window length
+        Ls=length(g);
+    else
+        % Use the smallest possible length
+        Ls=1;
+    end;
+
+    % ----- step 2b : Verify a, M and get L from the window length ----------
+    L=dgtlength(Ls,a,M,lt);
+
+else
+
+    % ----- step 2a : Verify a, M and get L
+
+    Luser=dgtlength(L,a,M,lt);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser)
+    end;
+
+end;
+
+%% ----- step 3 : Determine the window 
+
+[g,info]=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
+
+%% ----- actual computation ------------
 
 g=fir2long(g,L);
 R=size(g,2);
 
-% Get the factorization of the window.
-gf=comp_wfac(g,a,M);
+if lt(2)==1
+    % Rectangular case
+    % Get the factorization of the window.
+    gf=comp_wfac(g,a,M);
+    
+    % Compute all eigenvalues.
+    lambdas=comp_gfeigs(gf,L,a,M);
+    s=size(lambdas,1);
+    
+else
+    
+    % Convert to multi-window
+    mwin=comp_nonsepwin2multi(g,a,M,lt);
+    
+    % Get the factorization of the window.
+    gf=comp_wfac(mwin,a*lt(2),M);
 
-% Compute all eigenvalues.
-lambdas=comp_gfeigs(gf,L,a,M);
-s=size(lambdas,1);
-
+    % Compute all eigenvalues.
+    lambdas=comp_gfeigs(gf,L,a*lt(2),M);
+    s=size(lambdas,1);
+        
+end;
+    
 % Min and max eigenvalue.
 if a>M*R
-  % This can is not a frame, so A is identically 0.
-  AF=0;
+    % This can is not a frame, so A is identically 0.
+    AF=0;
 else
-  AF=lambdas(1);
+    AF=lambdas(1);
 end;
 
 BF=lambdas(s);
 
 if nargout<2
-  % Avoid the potential warning about division by zero.
-  if AF==0
-    AF=Inf;
-  else
-    AF=BF/AF;
-  end;
+    % Avoid the potential warning about division by zero.
+    if AF==0
+        AF=Inf;
+    else
+        AF=BF/AF;
+    end;
 end;
 

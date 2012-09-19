@@ -40,7 +40,7 @@ conf.copyright=mycopyrightfun
 
 contentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'filterbank/Contents','nonstatgab/Contents',
-               'frames/Contents','nonsepgab/Contents',
+               'frames/Contents',
                'sigproc/Contents','auditory/Contents',
                'demos/Contents','signals/Contents']
 

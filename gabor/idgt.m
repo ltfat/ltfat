@@ -60,7 +60,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %
 %   .. math:: f(l+1) = \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi iml/M}g(l-an+1)
 %
-%   Additional paramaters:
+%   Additional parameters:
 %   ----------------------
 %
 %   `idgt` takes the following flags at the end of the line of input
@@ -91,7 +91,6 @@ end;
 definput.keyvals.Ls=[];
 definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
-definput.flags.nsalg={'nsauto','multiwin','shear'};
 [flags,kv,Ls,lt]=ltfatarghelper({'Ls','lt'},definput,varargin);
 
 M=size(coef,1);
@@ -122,17 +121,8 @@ g=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
 if lt(2)==1
     f=comp_idgt(coef,g,a,M,L,flags.do_timeinv);
 else
-    if flags.do_nsauto
-        alg=0;
-    end;
-    if flags.do_multiwin
-        alg=1;
-    end;
-    if flags.do_shear
-        alg=2;
-    end;
-
-    f=comp_inonsepdgt(coef,g,a,lt,flags.do_timeinv,alg);
+    g=fir2long(g,L);
+    f=comp_inonsepdgt(coef,g,a,lt,flags.do_timeinv,0);
 end;
 
 % Cut or extend f to the correct length, if desired.

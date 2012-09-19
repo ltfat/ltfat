@@ -49,115 +49,166 @@ for ii=1:length(Lr);
   p=a/c;
   q=M/c;
   
-
-  for rtype=1:2
-      
-    if rtype==1
-      rname='REAL ';	
-      g=rand(L,1);
-    else
-      rname='CMPLX';	
-      g=crand(L,1);
-    end;
-    
-    gd=nonsepgabdual(g,a,M,lt);
-    gd_shear=nonsepgabdual(g,a,M,lt,'shear');
-
-    gt=nonsepgabtight(g,a,M,lt);
-    gt_shear=nonsepgabtight(g,a,M,lt,'shear');
-
-    for W=1:3
-          
-      if rtype==1
-        f=rand(L,W);
+  for gtype=1:2
+      if gtype==1
+          Lwindow=L;
       else
-        f=crand(L,W);
-      end;      
+          Lwindow=M;
+      end;
       
-      % --------- test reference comparison ------------
-      
-      cc = dgt(f,g,a,M,[],lt,'multiwin');
-      
-      cc_ref = ref_nonsepdgt(f,g,a,M,lt);
-      
-      res = norm(cc(:)-cc_ref(:))/norm(cc(:));
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
-      disp(stext)
+      for rtype=1:2
+          
+          if rtype==1
+              rname='REAL';
+              g=rand(Lwindow,1);
+          else
+              rname='CMPLX';	
+              g=crand(Lwindow,1);
+          end;
+                    
+          gd=gabdual(g,a,M,[],lt);
+          gd_multi=gabdual(g,a,M,[],lt,'nsalg',1);
+          gd_shear=gabdual(g,a,M,[],lt,'nsalg',2);
 
+          gt=gabtight(g,a,M,[],lt);
+          gt_multi=gabtight(g,a,M,[],lt,'nsalg',1);
+          gt_shear=gabtight(g,a,M,[],lt,'nsalg',2);
+
+          % For testing, we need to call some computational subroutines directly.
+          gsafe=fir2long(g,L);
+          gdsafe=fir2long(gd,L);
+
+          
+          for W=1:3
+              
+              if rtype==1
+                  f=rand(L,W);
+              else
+                  f=crand(L,W);
+              end;      
+              
+              % --------- test reference comparison ------------
+              
+              cc = dgt(f,g,a,M,[],lt);
+              
+              cc_ref = ref_nonsepdgt(f,g,a,M,lt);
+              
+              res = norm(cc(:)-cc_ref(:))/norm(cc(:));
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['REF   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              % --------- test multiwindow ---------------------
+              
+              cc = comp_nonsepdgt(f,gsafe,a,M,lt,0,1);
+              
+              res = norm(cc(:)-cc_ref(:))/norm(cc(:));
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['DGT MULTIW %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              
+              % --------- test shear DGT -------------------------------
+              
+              cc = comp_nonsepdgt(f,gsafe,a,M,lt,0,2);
+              
+              res = norm(cc(:)-cc_ref(:))/norm(cc(:));
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['DGT SHREAR   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              % -------- test reconstruction using canonical dual -------
+              
+              r=idgt(cc,gd,a,[],lt);
+              res=norm(f-r,'fro');
+              
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['REC D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              % -------- test reconstruction using canonical dual, multiwin algorithm -------
+              
+              r=comp_inonsepdgt(cc,gdsafe,a,lt,0,1);  
+              res=norm(f-r,'fro');
+              
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['REC MULTIW D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              % -------- test reconstruction using canonical dual, shear algorithm -------
+              
+              r=comp_inonsepdgt(cc,gdsafe,a,lt,0,2);  
+              res=norm(f-r,'fro');
+              
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['REC SHEAR D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              
+              % -------- test reconstruction using canonical tight -------
+              
+              cc = dgt(f,gt,a,M,[],lt);
+              r=idgt(cc,gt,a,[],lt);  
+              res=norm(f-r,'fro');
+              
+              [test_failed,fail]=ltfatdiditfail(res,test_failed);
+              stext=sprintf(['REC T %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                             '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
+              disp(stext)
+              
+              
+          end;
+          
+          % -------- test frame bounds for tight frame -------
+          
+          B=gabframebounds(gt,a,M,[],lt);
+          res=B-1;
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['FRB   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          disp(stext)
+          
+          % -------- test multiwin dual -------
+          
+          res=norm(gd-gd_multi)/norm(g);
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['DUAL MULTI  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          disp(stext)
+          
+          % -------- test shear dual -------
+          
+          res=norm(gd-gd_shear)/norm(g);
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['DUAL SHEAR  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          disp(stext)
+          
+          % -------- test shear tight -------
+          
+          res=norm(gt-gt_multi)/norm(g);
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['TIGHT MULTI %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          disp(stext)
+
+          % -------- test shear tight -------
+          
+          res=norm(gt-gt_shear)/norm(g);
+          [test_failed,fail]=ltfatdiditfail(res,test_failed);
+          stext=sprintf(['TIGHT SHEAR %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                         '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
+          disp(stext)
+          
+      end;  
       
-      % --------- test shear DGT -------------------------------
-      
-      cc_shear = dgt(f,g,a,M,[],lt,'shear');
-            
-      res = norm(cc(:)-cc_shear(:))/norm(cc(:));
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['DGT SHREAR   %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
-      disp(stext)
-
-      % -------- test reconstruction using canonical dual -------
-      
-      r=idgt(cc,gd,a,[],lt,'multiwin');
-      res=norm(f-r,'fro');
-      
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REC D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
-      disp(stext)
-
-      % -------- test reconstruction using canonical dual, shear algorithm -------
-      
-      r=idgt(cc,gd,a,[],lt,'shear');  
-      res=norm(f-r,'fro');
-      
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REC SHEAR D %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
-      disp(stext)
-
-
-      % -------- test reconstruction using canonical tight -------
-
-      cc = dgt(f,gt,a,M,[],lt,'multiwin');
-      r=idgt(cc,gt,a,[],lt,'multiwin');  
-      res=norm(f-r,'fro');
-      
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      stext=sprintf(['REC T %s L:%3i W:%2i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-      '%s'], rname,L,W,a,M,lt(1),lt(2),res,fail);
-      disp(stext)
-
-      
-    end;
-
-    % -------- test frame bounds for tight frame -------
-    
-    B=nonsepgabframebounds(gt,a,M,lt);
-    res=B-1;
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    stext=sprintf(['FRB   %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
-    disp(stext)
-
-    % -------- test shear dual -------
-    
-    res=norm(gd-gd_shear)/norm(g);
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    stext=sprintf(['DUAL SHEAR  %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
-    disp(stext)
-    
-    % -------- test shear tight -------
-    
-    res=norm(gt-gt_shear)/norm(g);
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    stext=sprintf(['TIGHT SHEAR %s L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                   '%s'], rname,L,a,M,lt(1),lt(2),res,fail);
-    disp(stext)
-
-  end;  
+  end;
 
 end;
 
