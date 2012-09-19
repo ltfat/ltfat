@@ -82,20 +82,20 @@ else
     ind_final = mod(ind_final,L);
     
     if s1 ~= 0
-        g = pchirp(L,s1).*g;
+        g = comp_pchirp(L,s1).*g;
     end
     
     if s0 ~= 0
         
         c_rect = zeros(Nr,Mr,W);
-        g = pchirp(L,-s0).*fft(g);
+        g = comp_pchirp(L,-s0).*fft(g);
         for w=0:W-1
             c_rect(ind(1,[1:Mr,end:-1:Mr+1])/ar+1+(ind(2,:)/br)*Nr+w*M*N) = ...
                 coef(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M+w*M* ...
                      N).*phs(ind(2,:)/br+1+(ind(1,:)/ar)*Mr);
         end;
         f = comp_idgt(c_rect,g,br,Nr,L,0);
-        f = ifft(repmat(pchirp(L,s0),1,W).*f);   
+        f = ifft(repmat(comp_pchirp(L,s0),1,W).*f);   
         
     else
         
@@ -110,7 +110,7 @@ else
     end
     
     if s1 ~= 0
-        f = repmat(pchirp(L,-s1),1,W).*f;
+        f = repmat(comp_pchirp(L,-s1),1,W).*f;
     end        
 
 end;

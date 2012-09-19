@@ -85,13 +85,13 @@ else
     ind_final = mod(ind_final,L);
     
     if s1 ~= 0
-        g = pchirp(L,s1).*g;
-        f = repmat(pchirp(L,s1),1,W).*f;
+        g = comp_pchirp(L,s1).*g;
+        f = repmat(comp_pchirp(L,s1),1,W).*f;
     end
     
     if s0 ~= 0
-        g = pchirp(L,-s0).*fft(g)/L;
-        f = repmat(pchirp(L,-s0),1,W).*fft(f);
+        g = comp_pchirp(L,-s0).*fft(g)/L;
+        f = repmat(comp_pchirp(L,-s0),1,W).*fft(f);
         
         c_rect = comp_dgt(f,g,br,Nr,L,0);
         

@@ -1,4 +1,4 @@
-function g=pchirp(L,n)
+function g=ref_pchirp(L,n)
 %PCHIRP  Periodic chirp
 %   Usage:  g=pchirp(L,n);
 %
@@ -46,20 +46,13 @@ function g=pchirp(L,n)
 
 error(nargchk(2,2,nargin));
 
-if ~isnumeric(L) || ~isscalar(L)
-  error('%s: L must be a scalar',upper(mfilename));
-end;
+% Compute normalized chirp
 
-if ~isnumeric(n) || ~isscalar(n)
-  error('%s: n must be a scalar',upper(mfilename));
-end;
+% Old code, has low numerical precision and do not work correctly for odd legths.
+%g=(exp((0:L-1).^2/L*pi*i*n)/sqrt(L)).';
 
-if rem(L,1)~=0
-  error('%s: L must be an integer',upper(mfilename));
-end;
-
-if rem(n,1)~=0
-  error('%s: n must be an integer',upper(mfilename));
-end;
-
-g=comp_pchirp(L,n);
+% Compute normalized chirp
+m = (0:L-1).';
+%X = mod(n*(m-ceil(L/2)).^2*(L+1),2*L);
+X = mod(n*m.^2*(L+1),2*L);
+g = exp(pi*1i*X/L);

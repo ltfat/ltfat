@@ -182,11 +182,11 @@ else
         [s0,s1,br] = shearfind(a,b,s,L);
         
         if s1 ~= 0
-            g = pchirp(L,s1).*g;
+            g = comp_pchirp(L,s1).*g;
         end
         
         if s0 ~= 0
-            g = ifft(pchirp(L,-s0).*fft(g));
+            g = ifft(comp_pchirp(L,-s0).*fft(g));
         end
         
         Mr = L/br;
@@ -195,11 +195,11 @@ else
         gt=comp_gabtight_long(g,ar,Mr);
         
         if s0 ~= 0
-            gt = ifft(pchirp(L,s0).*fft(gt));
+            gt = ifft(comp_pchirp(L,s0).*fft(gt));
         end
         
         if s1 ~= 0
-            gt = pchirp(L,-s1).*gt;
+            gt = comp_pchirp(L,-s1).*gt;
         end
     end;
     
