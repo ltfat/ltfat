@@ -31,8 +31,7 @@ static inline int ltfat_round(double x)
 
 static inline int positiverem(int a,int b)
 {
-  int c;
-  c=a%b;
+  const int c = a%b;
   return(c<0 ? c+b : c);
 }
 

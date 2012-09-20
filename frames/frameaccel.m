@@ -41,7 +41,7 @@ if ~isempty(F.ga)
    case 'gen'
     info.isfacana=~issparse(F.ga);  
    case {'dgt','dgtreal'}
-    [F.ga,F.ga_info]  = gabwin(F.ga,F.a,F.M,L);
+    [F.ga,F.ga_info]  = gabwin(F.ga,F.a,F.M,L,F.vars{:});
    case {'dwilt','wmdct'}
     [F.ga,F.ga_info]  = wilwin(F.ga,F.M,L);
    case {'filterbank','ufilterbank'}
@@ -63,7 +63,7 @@ if ~isempty(F.gs)
    case 'gen'
     info.isfacsyn=~issparse(F.gs);  
    case {'dgt','dgtreal'}
-    [F.gs,F.gs_info] = gabwin(F.gs,F.a,F.M,L);
+    [F.gs,F.gs_info] = gabwin(F.gs,F.a,F.M,L,F.vars{:});
    case {'dwilt','wmdct'}
     [F.gs,F.gs_info] = wilwin(F.gs,F.M,L);
    case {'filterbank','ufilterbank'}

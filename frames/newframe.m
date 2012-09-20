@@ -145,6 +145,7 @@ switch(ftype)
  case {'dgt','dgtreal'}
   F.a=varargin{3};
   F.M=varargin{4};
+  F.vars=varargin(5:end);
  case {'dwilt','wmdct'}
   F.M=varargin{3};
  case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}

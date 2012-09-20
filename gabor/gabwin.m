@@ -14,6 +14,10 @@ function [g,info] = gabwin(g,a,M,varargin);
 %   `[g,info]=gabwin(g,a,M)` does the same, but the window must be a FIR
 %   window, as the transform length is unspecified.
 %
+%   `gabwin(g,a,M,L,lt)` or `gabwin(g,a,M)` does as above but for a
+%   non-separable lattice specified by *lt*. Please see the help of
+%   |matrix2latticetype|_ for a precise description of the parameter *lt*.
+%
 %   The window can be specified as one of the following text strings:
 %  
 %     'gauss'      Gaussian window fitted to the lattice,

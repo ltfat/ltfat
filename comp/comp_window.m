@@ -50,7 +50,7 @@ if ischar(g)
     if isrect
       g=gabdual(g,a,M);
     else
-      g=nonsepgabdual(g,a,M);
+      g=gabdual(g,a,M,[],lt);
     end;
     info.isdual=1;
     info.tfr=a*M/L;
@@ -59,7 +59,7 @@ if ischar(g)
     if isrect
       g=gabtight(a,M,L);
     else
-      g=nonsepgabtight(a,M,s,L);
+      g=gabtight(a,M,L,lt);
     end;
     info.tfr=a*M/L;
     info.istight=1;
@@ -94,7 +94,7 @@ if iscell(g)
     if isrect
       g = gabdual(g,a,M,L);
     else
-      g = nonsepgabdual(g,a,M,s,L);
+      g = gabdual(g,a,M,L,lt);
     end;
     info.isdual=1;
    case {'tight'}
@@ -102,7 +102,7 @@ if iscell(g)
     if isrect
       g = gabtight(g,a,M,L);
     else
-      g = nonsepgabtight(g,a,M,s,L);
+      g = gabtight(g,a,M,L,lt);
     end;
     info.istight=1;
    case firwinnames

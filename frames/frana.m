@@ -29,9 +29,9 @@ switch(F.type)
  case 'gen'
   outsig=F.ga'*insig; 
  case 'dgt'
-  outsig=framenative2coef(F,dgt(insig,F.ga,F.a,F.M));
+  outsig=framenative2coef(F,dgt(insig,F.ga,F.a,F.M,F.vars{:}));
  case 'dgtreal'
-  outsig=framenative2coef(F,dgtreal(insig,F.ga,F.a,F.M));
+  outsig=framenative2coef(F,dgtreal(insig,F.ga,F.a,F.M,F.vars{:}));
  case 'dwilt'
   outsig=framenative2coef(F,dwilt(insig,F.ga,F.M));
  case 'wmdct'

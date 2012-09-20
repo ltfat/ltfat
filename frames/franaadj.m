@@ -22,7 +22,7 @@ switch(F.type)
  case 'gen'
   outsig=F.ga*insig;  
  case 'dgt'
-  outsig=idgt(framecoef2native(F,insig),F.ga,F.a);  
+  outsig=idgt(framecoef2native(F,insig),F.ga,F.a,F.vars{:});  
  case 'dgtreal'
   outsig=idgtreal(framecoef2native(F,insig),F.ga,F.a,F.M);  
  case 'dwilt'

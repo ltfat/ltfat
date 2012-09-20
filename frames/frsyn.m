@@ -21,9 +21,9 @@ switch(F.type)
   outsig=F.gs*insig;
   
  case 'dgt'
-  outsig=idgt(framecoef2native(F,insig),F.gs,F.a);  
+  outsig=idgt(framecoef2native(F,insig),F.gs,F.a,F.vars{:});  
  case 'dgtreal'
-  outsig=idgtreal(framecoef2native(F,insig),F.gs,F.a,F.M);  
+  outsig=idgtreal(framecoef2native(F,insig),F.gs,F.a,F.M,F.vars{:});  
  case 'dwilt'
   outsig=idwilt(framecoef2native(F,insig),F.gs);  
  case 'wmdct'

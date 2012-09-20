@@ -29,7 +29,7 @@ switch(F.type)
  case 'gen'
   outsig=F.gs'*insig; 
  case 'dgt'
-  outsig=framenative2coef(F,dgt(insig,F.gs,F.a,F.M));
+  outsig=framenative2coef(F,dgt(insig,F.gs,F.a,F.M,F.vars{:}));
  case 'dgtreal'
   outsig=framenative2coef(F,dgtreal(insig,F.gs,F.a,F.M));
  case 'dwilt'

@@ -1,4 +1,4 @@
-function [L,tfr]=dgtlength(Ls,a,M,lt);
+function [L,tfr]=dgtlength(Ls,a,M,varargin);
 %DGTLENGTH  DGT length from signal
 %   Usage: L=dgtlength(Ls,a,M,s);
 %
@@ -27,6 +27,14 @@ function [L,tfr]=dgtlength(Ls,a,M,lt);
 %     Lsmallest = lcm(a,M)*lt(2);
 %
 %   See also: dgt
+
+% This function takes some of the same input parameters as DGT. The phase
+% parameter is ignore, because it does not change the length of the
+% transform, but is included to not cause problem when dgtlength is
+% called via framelength.
+definput.keyvals.lt=[0 1];
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv,lt]=ltfatarghelper({'lt'},definput,varargin);
 
 if ~isnumeric(M) || ~isscalar(M)
   error('%s: M must be a scalar',upper(mfilename));

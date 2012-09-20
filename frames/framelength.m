@@ -17,7 +17,7 @@ L=Ls;
   
 switch(F.type)
  case {'dgt','dgtreal'}
-  L = dgtlength(Ls,F.a,F.M);
+  L = dgtlength(Ls,F.a,F.M,F.vars{:});
  case {'dwilt','wmdct'}
   L = longpar('dwilt',Ls,F.M);
  case {'gen'}

@@ -24,15 +24,7 @@ disp(' ===============  TEST_NONSEPDGT ================');
 
 disp('--- Used subroutines ---');
 
-which comp_wfac
-which comp_iwfac
-which comp_dgt_long
-which comp_idgt_fac
-which comp_dgtreal_long
-which comp_idgtreal_fac
-which comp_gabdual_long
-which comp_gabtight_long
-
+which comp_nonsepdgt_multi
 
 for ii=1:length(Lr);
 
