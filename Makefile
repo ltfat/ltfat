@@ -17,6 +17,7 @@ files = \
 	sdwilt.o stfutil.o sfilterbank.o \
 	ddwilt.o dtfutil.o dfilterbank.o \
 	spfilt.o dpfilt.o \
+	snonsep.o dnonsep.o \
 	integer_manip.o 
 
 files_blaslapack = \

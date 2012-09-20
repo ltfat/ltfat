@@ -206,6 +206,23 @@ LTFAT_EXTERN void
 LTFAT_H_NAME(pgauss_cmplx)(const int L, const double w, const double c_t, 
 		     const double c_f, LTFAT_H_COMPLEX *g);
 
+/* ----------- non-separable lattices ------------ */
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(pchirp)(const int L, const int n, LTFAT_H_COMPLEX *g);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(nonsepwin2multi)(const LTFAT_H_COMPLEX *g,
+			      const int L, const int a, const int M,
+			      const int lt1, const int lt2,
+			      LTFAT_H_COMPLEX *mwin);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(nonsepdgt_multi)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
+			      const int L, const int W, const int a, const int M,
+			      const int lt1, const int lt2,
+			      LTFAT_H_COMPLEX *c);
+
 /* --------- pfilt and filterbanks ------------- */
 LTFAT_EXTERN void
 LTFAT_H_NAME(pfilt_fir_rr)(const LTFAT_H_REAL *f, const LTFAT_H_REAL *g,
