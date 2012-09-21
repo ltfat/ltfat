@@ -25,4 +25,10 @@ cout=comp_dgt_walnut(f,gf,a,M);
 % Apply dft modulation.
 cout=fft(cout)/sqrt(M);
 
+% Change to the right shape
+L=size(f,1);
+W=size(f,2);
+N=L/a;
+cout=reshape(cout,M,N,W);
+
 

@@ -138,20 +138,16 @@ else
 
     if (kv.nsalg==1) || (kv.nsalg==0 && lt(2)<=2) 
         
-        mwin=comp_nonsepwin2multi(g,a,M,lt);
+        mwin=comp_nonsepwin2multi(g,a,M,lt,L);
         
         gdfull=comp_gabdual_long(mwin,a*lt(2),M)*scale;
         
         % We need just the first vector
         gd=gdfull(:,1);
             
-    else
+    else        
         
-        b=L/M;
-        s=b*lt(1)/lt(2);
-        
-        [s0,s1,X] = shearfind(a,b,s,L);
-        
+        [s0,s1,br] = shearfind(L,a,M,lt);        
         
         if s1 ~= 0
             g = comp_pchirp(L,s1).*g;
@@ -161,8 +157,9 @@ else
             g = ifft(comp_pchirp(L,-s0).*fft(g));
         end
         
-        Mr = L/X;
-        ar = a*b/X;
+        b=L/M;
+        Mr = L/br;
+        ar = a*b/br;
         
         gd=comp_gabdual_long(g,ar,Mr);
         

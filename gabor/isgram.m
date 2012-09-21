@@ -150,7 +150,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     
     for iter=1:kv.maxit
       f=comp_idgt(c,gd,a,M,L,0);
-      c=comp_dgt(f,g,a,M,L,0);
+      c=comp_dgt(f,g,a,M,[0 1],0,0,0);
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
@@ -207,7 +207,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %  Subfunction to compute the objective function for the BFGS method.
 function [f,df]=objfun(x,g,a,M,s);
   L=size(s,2)*a;
-  c=comp_dgt(x,g,a,M,L,0);
+  c=comp_dgt(x,g,a,M,[0 1],0,0,0);
   
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;

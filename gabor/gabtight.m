@@ -168,7 +168,7 @@ else
 
     if (kv.nsalg==1) || (kv.nsalg==0 && lt(2)<=2) 
         
-        mwin=comp_nonsepwin2multi(g,a,M,lt);
+        mwin=comp_nonsepwin2multi(g,a,M,lt,L);
         
         gtfull=comp_gabtight_long(mwin,a*lt(2),M)*scale;
         
@@ -176,10 +176,8 @@ else
         gt=gtfull(:,1);
             
     else
-        b=L/M;
-        s=b*lt(1)/lt(2);
         
-        [s0,s1,br] = shearfind(a,b,s,L);
+        [s0,s1,br] = shearfind(L,a,M,lt);        
         
         if s1 ~= 0
             g = comp_pchirp(L,s1).*g;
@@ -188,7 +186,8 @@ else
         if s0 ~= 0
             g = ifft(comp_pchirp(L,-s0).*fft(g));
         end
-        
+
+        b=L/M;
         Mr = L/br;
         ar = a*b/br;
         

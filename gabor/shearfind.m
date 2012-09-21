@@ -1,24 +1,22 @@
-function [s0,s1,X] = shearfind(a,b,s,N)
+function [s0,s1,X] = shearfind(L,a,M,lt)
 
     if nargin < 4 
         error('Too few input arguments');
     end
+    
+    Ltest=dgtlength(L,a,M,lt);
+    if Ltest~=L
+        error(['%s: Incorrect transform length L=%i specified. '...
+               'See the help of DGTLENGTH for the requirements.'],...
+              upper(mfilename),L);
+    end;
 
-    if a>N || b>N || N/a ~= round(N/a) || N/b ~= round(N/b)
-        error('a and b must be divisors of N');
-    end
+    b=L/M;
+    s=b*lt(1)/lt(2);
+        
+    [Labfac,sfac,lenLabfac] = lattfac(a,b,s,L);
 
-    if s >= b || s < 0
-        error('Choose an s < b');
-    elseif s == 0
-        s0 = 0; s1 = 0; 
-        X = b;
-        return;
-    end
-
-    [Nabfac,sfac,lenNabfac] = lattfac(a,b,s,N);
-
-    %lenNabfac = size(Nabfac,2);
+    %lenLabfac = size(Labfac,2);
 
     if s/a == round(s/a)
         if s/a <= b/2
@@ -28,17 +26,17 @@ function [s0,s1,X] = shearfind(a,b,s,N)
         end
         s0 = 0;
         X = b;
-    elseif ones(1,lenNabfac) == (min(Nabfac(3,:),Nabfac(4,:)) <= sfac(2,1:end-1))
+    elseif ones(1,lenLabfac) == (min(Labfac(3,:),Labfac(4,:)) <= sfac(2,1:end-1))
         s0 = 0;
         [Y,alpha,temp] = gcd(a,b);
         s1 = -alpha*s/Y;
          
-        B = prod(Nabfac(1,:).^max(Nabfac(4,:)-Nabfac(3,:),0));
+        B = prod(Labfac(1,:).^max(Labfac(4,:)-Labfac(3,:),0));
         if abs(s1) > B/2
             s1 = s1-sign(alpha)*B;            
         end
         X = b;
-    elseif ones(1,lenNabfac) == (Nabfac(3,:) < sfac(2,1:end-1))
+    elseif ones(1,lenLabfac) == (Labfac(3,:) < sfac(2,1:end-1))
         s1 = 0;
         [X,alpha,temp] = gcd(s,b);
         if alpha < 0
@@ -46,13 +44,13 @@ function [s0,s1,X] = shearfind(a,b,s,N)
         end
         s0 = alpha*a/X;    
     else
-        s1fac = (Nabfac(3,:) == sfac(2,1:end-1)).*(Nabfac(3,:) < Nabfac(4,:));
-        s1 = prod(Nabfac(1,:).^s1fac);
+        s1fac = (Labfac(3,:) == sfac(2,1:end-1)).*(Labfac(3,:) < Labfac(4,:));
+        s1 = prod(Labfac(1,:).^s1fac);
 
         if s1*a/b == round(s1*a/b) 
             s1 = 0; 
         else 
-           B = prod(Nabfac(1,:).^max(Nabfac(4,:)-Nabfac(3,:),0));
+           B = prod(Labfac(1,:).^max(Labfac(4,:)-Labfac(3,:),0));
            if s1 > B/2
                 s1 = s1-B;
            end   
@@ -65,27 +63,27 @@ function [s0,s1,X] = shearfind(a,b,s,N)
         tempX = factor(X);
         tempalph = factor(alpha);
 
-        Xfac = zeros(1,length(lenNabfac));
-        alphfac = zeros(1,length(lenNabfac)+1);
+        Xfac = zeros(1,length(lenLabfac));
+        alphfac = zeros(1,length(lenLabfac)+1);
 
-        for kk = 1:lenNabfac
-            Xfac(kk) = sum(tempX == Nabfac(1,kk));
-            tempX = tempX(tempX ~= Nabfac(1,kk));
-            alphfac(kk) = sum(tempalph == Nabfac(1,kk));
-            tempalph = tempalph(tempalph ~= Nabfac(1,kk));
+        for kk = 1:lenLabfac
+            Xfac(kk) = sum(tempX == Labfac(1,kk));
+            tempX = tempX(tempX ~= Labfac(1,kk));
+            alphfac(kk) = sum(tempalph == Labfac(1,kk));
+            tempalph = tempalph(tempalph ~= Labfac(1,kk));
         end
 
-        alphfac(lenNabfac+1) = prod(tempalph);
+        alphfac(lenLabfac+1) = prod(tempalph);
 
-        s0fac = [Nabfac(3,:)+min(alphfac(1:end-1),Nabfac(4,:)-Xfac)-Xfac,0];
-        pwrs = max(Nabfac(4,:)-Xfac-alphfac(1:end-1),0);
-        pwrs2 = max(-Nabfac(4,:)+Xfac+alphfac(1:end-1),0);
+        s0fac = [Labfac(3,:)+min(alphfac(1:end-1),Labfac(4,:)-Xfac)-Xfac,0];
+        pwrs = max(Labfac(4,:)-Xfac-alphfac(1:end-1),0);
+        pwrs2 = max(-Labfac(4,:)+Xfac+alphfac(1:end-1),0);
 
-        K = ceil(alphfac(end).*prod(Nabfac(1,:).^(pwrs2-pwrs))-.5);
+        K = ceil(alphfac(end).*prod(Labfac(1,:).^(pwrs2-pwrs))-.5);
 
-        s0fac(end) = K*prod(Nabfac(1,:).^pwrs) - alphfac(end).*prod(Nabfac(1,:).^pwrs2);
+        s0fac(end) = K*prod(Labfac(1,:).^pwrs) - alphfac(end).*prod(Labfac(1,:).^pwrs2);
 
-        s0 = prod(Nabfac(1,:).^s0fac(1:end-1))*s0fac(end);
+        s0 = prod(Labfac(1,:).^s0fac(1:end-1))*s0fac(end);
 
         if s0*X^2/(a*b) == round(s0*X^2/(a*b)) 
             s0 = 0; 
@@ -94,9 +92,9 @@ function [s0,s1,X] = shearfind(a,b,s,N)
     
 end
 
-function [Nabfac,sfac,lenNabfac] = lattfac(a,b,s,N)    
+function [Labfac,sfac,lenLabfac] = lattfac(a,b,s,L)    
 
-    tempN = factor(N);
+    tempL = factor(L);
     tempa = factor(a);
     
     if tempa == 1
@@ -107,36 +105,36 @@ function [Nabfac,sfac,lenNabfac] = lattfac(a,b,s,N)
         tempb = [];
     end
 
-    Nabfac = unique(tempN);
-    lenNabfac = length(Nabfac);
-    Nabfac = [Nabfac;zeros(3,lenNabfac)];
+    Labfac = unique(tempL);
+    lenLabfac = length(Labfac);
+    Labfac = [Labfac;zeros(3,lenLabfac)];
 
-    for kk = 1:lenNabfac
-       Nabfac(2,kk) = sum(tempN == Nabfac(1,kk));
-       tempN = tempN(tempN ~= Nabfac(1,kk));
-       Nabfac(3,kk) = sum(tempa == Nabfac(1,kk));
-       tempa = tempa(tempa ~= Nabfac(1,kk));
-       Nabfac(4,kk) = sum(tempb == Nabfac(1,kk));
-       tempb = tempb(tempb ~= Nabfac(1,kk));
+    for kk = 1:lenLabfac
+       Labfac(2,kk) = sum(tempL == Labfac(1,kk));
+       tempL = tempL(tempL ~= Labfac(1,kk));
+       Labfac(3,kk) = sum(tempa == Labfac(1,kk));
+       tempa = tempa(tempa ~= Labfac(1,kk));
+       Labfac(4,kk) = sum(tempb == Labfac(1,kk));
+       tempb = tempb(tempb ~= Labfac(1,kk));
     end
 
     if isempty(tempa) == 0 || isempty(tempb) == 0
-        error('a and b must be divisors of N');
+        error('a and b must be divisors of L');
     end
 
-    if s*N/(a*b) ~= round(s*N/(a*b));
-        error('s must be a multiple of a*b/N');
+    if s*L/(a*b) ~= round(s*L/(a*b));
+        error('s must be a multiple of a*b/L');
     end
 
     temps = factor(s);
 
-    sfac = [Nabfac(1,:),0;zeros(1,lenNabfac+1)];
+    sfac = [Labfac(1,:),0;zeros(1,lenLabfac+1)];
 
-    for kk = 1:lenNabfac
+    for kk = 1:lenLabfac
        sfac(2,kk) = sum(temps == sfac(1,kk));
        temps = temps(temps ~= sfac(1,kk));
     end
 
-    sfac(:,lenNabfac+1) = [prod(temps);1];
+    sfac(:,lenLabfac+1) = [prod(temps);1];
 
 end

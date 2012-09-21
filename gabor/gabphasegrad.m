@@ -85,42 +85,55 @@ switch(lower(method))
   
   definput.keyvals.L=[];
   definput.keyvals.minlvl=eps;
+  definput.keyvals.lt=[0 1];
   [flags,kv,L,minlvl]=ltfatarghelper({'L','minlvl'},definput,varargin(5:end));
   
-  if isnumeric(g)
-    if size(g,2)>1
-      if size(g,1)>1
-        error('g must be a vector');
-      else
-        % g was a row vector.
-        g=g(:);
-      end;
-    end;
-    Lwindow=size(g,1);
-  else
-    Lwindow=0;
-  end;
-
-  assert_squarelat(a,M,1,'GABPHASEGRAD',0);
   
+  %% ----- step 1 : Verify f and determine its length -------
   % Change f to correct shape.
-  [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'GABPHASEGRAD',0);
-
-  [b,N,L]=assert_L(Ls,Lwindow,L,a,M,'GABPHASEGRAD');
-
-  [g,info]=gabwin(g,a,M,L,'GABPHASEGRAD');
+  [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
   
-  f=postpad(f,L);  
+  %% ------ step 2: Verify a, M and L
+  if isempty(L)
+      
+      % ----- step 2b : Verify a, M and get L from the signal length f----------
+      L=dgtlength(Ls,a,M,kv.lt);
+      
+  else
+      
+      % ----- step 2a : Verify a, M and get L
+      Luser=dgtlength(L,a,M,kv.lt);
+      if Luser~=L
+          error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+                 'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+                upper(mfilename),L,Luser);
+      end;
+      
+  end;
+  
+  %% ----- step 3 : Determine the window 
+  
+  [g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
+  
+  if L<info.gl
+      error('%s: Window is too long.',upper(mfilename));
+  end;
+  
+  %% ----- step 4: final cleanup ---------------
+  
+  f=postpad(f,L);
+  
+  %% ------ algorithm starts --------------------
   
   % Compute the time weighted version of the window.
   hg=fftindex(L).*g;
   
   % The computation done this way is insensitive to whether the dgt is
   % phaselocked or not.
-  c   = comp_dgt(f,g,a,M,L,0);
+  c   = comp_dgt(f,g,a,M,kv.lt,0,0,0);
   c   = reshape(c,M,N,W);
   
-  c_h = comp_dgt(f,hg,a,M,L,0);
+  c_h = comp_dgt(f,hg,a,M,kv.lt,0,0,0);
   c_h = reshape(c_h,M,N,W);
   
   c_s = abs(c).^2;
@@ -140,7 +153,7 @@ switch(lower(method))
     % The code below works for any window, and not just the Gaussian
     
     dg  = pderiv(g,[],Inf)/(2*pi);
-    c_d = comp_dgt(f,dg,a,M,L,0);
+    c_d = comp_dgt(f,dg,a,M,kv.lt,0,0,0);
     c_d = reshape(c_d,M,N,W);
     
     % Compute the instantaneous frequency

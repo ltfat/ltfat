@@ -1,7 +1,7 @@
-function mwin=comp_nonsepwin2multi(g,a,M,lt);
+function mwin=comp_nonsepwin2multi(g,a,M,lt,L);
 % Create multiwindow from non-sep win
   
-L=size(g,1);
+Lw=size(g,1);
 
 b=L/M;
 mwin=zeros(L,lt(2));

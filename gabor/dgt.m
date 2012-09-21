@@ -136,7 +136,7 @@ else
     if Luser~=L
         error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
                'is L=%i. See the help of DGTLENGTH for the requirements.'],...
-              upper(mfilename),L,Luser)
+              upper(mfilename),L,Luser);
     end;
 
 end;
@@ -161,10 +161,4 @@ end;
 
 %% ------ call the computation subroutines 
 
-
-if lt(2)==1
-    c=comp_dgt(f,g,a,M,L,flags.do_timeinv);
-else
-    g=fir2long(g,L);
-    c=comp_nonsepdgt(f,g,a,M,lt,flags.do_timeinv,0);
-end;
+c=comp_dgt(f,g,a,M,lt,flags.do_timeinv,0,0);

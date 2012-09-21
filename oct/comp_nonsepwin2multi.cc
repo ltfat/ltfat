@@ -10,15 +10,16 @@ static inline int ltfat_round(double x)
 
 DEFUN_DLD (comp_nonsepwin2multi, args, ,
   "This function calls the C-library\n\
-  c=comp_nonsepwin2multi(g,a,M,lt);\n")
+  c=comp_nonsepwin2multi(g,a,M,lt,L);\n")
 {
 
    const ComplexMatrix g = args(0).complex_matrix_value();
    const int    a        = args(1).int_value();
-   const double M        = args(2).int_value();
+   const int    M        = args(2).int_value();
    const Matrix lt       = args(3).matrix_value();
+   const int    L        = args(4).int_value();
    
-   const int L = g.rows();
+   const int Lw = g.rows();
    const int lt1 = ltfat_round(lt(0));
    const int lt2 = ltfat_round(lt(1));
 

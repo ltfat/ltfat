@@ -15,7 +15,7 @@ if 0
 else
   halfmod=exp(-pi*i*(0:L-1).'/(2*M));
   f=f.*repmat(halfmod,1,W);
-  coef2=comp_dgt(f,g,a,2*M,L,0);
+  coef2=comp_dgt(f,g,a,2*M,[0 1],0,0,0);
   
 
 end;

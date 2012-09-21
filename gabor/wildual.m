@@ -41,45 +41,48 @@ function [gamma]=wildual(g,M,L)
 %   REFERENCE: OK
 
 error(nargchk(2,3,nargin));
-  
-wasrow=0;
 
-if size(g,2)>1
-  if size(g,1)>1
-    error('g must be a vector');
-  else
-    % g was a row vector.
-    wasrow=1;
-    g=g(:);
-  end;
+if nargin==2
+    L=[];
 end;
-  
-assert_squarelat(M,M,1,'WILDUAL',0);
 
-Lwindow=length(g);
-Ls=Lwindow;
+%% ------ step 2: Verify a, M and L
+if isempty(L)
+    if isnumeric(g)
+        % Use the window length
+        Ls=length(g);
+    else
+        % Use the smallest possible length
+        Ls=1;
+    end;
 
-% There is no reason to do special support for FIR Wilson windows
+    % ----- step 2b : Verify M and get L from the window length ----------
+    L=dwiltlength(Ls,M);
 
-if nargin<3
-  [b,N,L]=assert_L(Ls,Lwindow,[],M,2*M,'WILDUAL');
 else
-  [b,N,L]=assert_L(L,Lwindow,L,M,2*M,'WILDUAL');
-  g=fir2long(g,L);
+
+    % ----- step 2a : Verify M and get L
+
+    Luser=dwiltlength(L,M);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DWILTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser)
+    end;
+
 end;
 
-  
-% If input is real, output must be real as well.
-inputwasreal = isreal(g);
 
+%% ----- step 3 : Determine the window 
+
+[g,info]=wilwin(g,M,L,upper(mfilename));
+
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
+
+%% ----- call gabdual ----------------
 a=M;
 
+g=fir2long(g,L);
 gamma=2*comp_gabdual_long(g,a,2*M);
-
-if inputwasreal
-  gamma=real(gamma);
-end;
-      
-if wasrow
-  gamma=gamma.';
-end;

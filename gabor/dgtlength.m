@@ -1,6 +1,7 @@
 function [L,tfr]=dgtlength(Ls,a,M,varargin);
 %DGTLENGTH  DGT length from signal
-%   Usage: L=dgtlength(Ls,a,M,s);
+%   Usage: L=dgtlength(Ls,a,M);
+%          L=dgtlength(Ls,a,M,lt);
 %
 %   `dgtlength(Ls,a,M)` returns the length of a Gabor system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
@@ -28,6 +29,10 @@ function [L,tfr]=dgtlength(Ls,a,M,varargin);
 %
 %   See also: dgt
 
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
 % This function takes some of the same input parameters as DGT. The phase
 % parameter is ignore, because it does not change the length of the
 % transform, but is included to not cause problem when dgtlength is
@@ -44,12 +49,12 @@ if ~isnumeric(a) || ~isscalar(a)
   error('%s: "a" must be a scalar',upper(mfilename));
 end;
 
-if rem(M,1)~=0
-  error('%s: M must be an integer',upper(mfilename));
+if rem(M,1)~=0 || M<=0
+  error('%s: M must be a positive integer',upper(mfilename));
 end;
 
-if rem(a,1)~=0
-  error('%s: "a" must be an integer',upper(mfilename));
+if rem(a,1)~=0 || a<=0
+  error('%s: "a" must be a positive integer',upper(mfilename));
 end;
 
 if ~isnumeric(Ls)

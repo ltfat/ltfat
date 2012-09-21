@@ -13,5 +13,6 @@ function g=comp_pchirp(L,n)
 %   TESTING: OK
 %   REFERENCE: OK
 
-X = mod(n*m.^2*(L+1),2*L);
+l= (0:L-1).';
+X = mod(n*l.^2*(L+1),2*L);
 g = exp(pi*1i*X/L);

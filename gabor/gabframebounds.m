@@ -97,7 +97,7 @@ if lt(2)==1
 else
     
     % Convert to multi-window
-    mwin=comp_nonsepwin2multi(g,a,M,lt);
+    mwin=comp_nonsepwin2multi(g,a,M,lt,L);
     
     % Get the factorization of the window.
     gf=comp_wfac(mwin,a*lt(2),M);

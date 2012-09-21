@@ -42,7 +42,7 @@ if (alg==1) || (alg==0 && lt(2)<=2)
     
     % ----- algorithm starts here, split into sub-lattices ---------------
     
-    mwin=comp_nonsepwin2multi(g,a,M,lt);
+    mwin=comp_nonsepwin2multi(g,a,M,lt,L);
     
     % phase factor correction (backwards), for more information see 
     % analysis routine
@@ -63,11 +63,10 @@ if (alg==1) || (alg==0 && lt(2)<=2)
     end;
 
 else
+
+    [s0,s1,br] = shearfind(L,a,M,lt);
     
-    b = L/M;
-    s = b*lt(1)/lt(2);
-    [s0,s1,br] = shearfind(a,b,s,L);
-    
+    b=L/M;
     ar = a*b/br;
     Mr = L/br;
     Nr = L/ar;

@@ -29,13 +29,13 @@ void mexFunction( int nlhs, mxArray *plhs[],
    LL=2.0*L;
    Lpone=L+1;
 
-   for (m=0;m<L;m++)
+   for (l=0;l<L;l++)
    {
       /* mod(n*m.^2*(L+1),LL); */
       /* workl = (n*m*(L+1))%LL; */
-      work = PI*fmod(Lpone*n*m*m,LL)/L;
-      gr[m] = cos(work);
-      gi[m] = sin(work);
+      work = PI*fmod(Lpone*n*l*l,LL)/L;
+      gr[l] = cos(work);
+      gi[l] = sin(work);
 
    }
 

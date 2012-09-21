@@ -166,7 +166,7 @@ end;
 % Zero-extend if neccesary.
 f=postpad(f,L1);
 
-c=comp_dgt(f,g1,a1,M1,L1,0);
+c=comp_dgt(f,g1,a1,M1,[0 1],0,0,0);
 
 % Combine dimensions again.
 c=reshape(c,M1*N1,Ls(2),W);
@@ -182,7 +182,7 @@ c=permute(c,[2,1,3]);
 % Zero-extend if neccesary.
 c=postpad(c,L2);
 
-c=comp_dgt(c,g2,a2,M2,L2,0);
+c=comp_dgt(c,g2,a2,M2,[0 1],0,0,0);
 
 c=comp_sigreshape_post(c,M2*N2,wasrow,remembershape);
 

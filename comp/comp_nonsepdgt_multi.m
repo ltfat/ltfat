@@ -18,12 +18,12 @@ N=L/a;
 
 c=zeros(M,N,W);
 
-mwin=comp_nonsepwin2multi(g,a,M,lt);
+mwin=comp_nonsepwin2multi(g,a,M,lt,L);
 
 % simple algorithm: split into sublattices
 
 for ii=0:lt(2)-1
-    c(:,ii+1:lt(2):end,:)=comp_dgt(f,mwin(:,ii+1),lt(2)*a,M,L,0);
+    c(:,ii+1:lt(2):end,:)=comp_dgt(f,mwin(:,ii+1),lt(2)*a,M,[0 1],0,0,0);
 end;
 
 % Phase factor correction 
@@ -33,7 +33,6 @@ for win=0:lt(2)-1
         E(win+n*lt(2)+1) = exp(-2*pi*i*a*n*rem(win*lt(1),lt(2))/M);
     end;
 end;
-E
 
 for w=1:W
     c(:,:,w) = c(:,:,w).*repmat(E,M,1);

@@ -93,7 +93,7 @@ for ii=1:length(Lr);
               
               % --------- test multiwindow ---------------------
               
-              cc = comp_nonsepdgt(f,gsafe,a,M,lt,0,1);
+              cc = comp_dgt(f,gsafe,a,M,lt,0,0,1);
               
               res = norm(cc(:)-cc_ref(:))/norm(cc(:));
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -104,7 +104,7 @@ for ii=1:length(Lr);
               
               % --------- test shear DGT -------------------------------
               
-              cc = comp_nonsepdgt(f,gsafe,a,M,lt,0,2);
+              cc = comp_dgt(f,gsafe,a,M,lt,0,0,2);
               
               res = norm(cc(:)-cc_ref(:))/norm(cc(:));
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
