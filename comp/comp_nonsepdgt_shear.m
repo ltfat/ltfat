@@ -82,21 +82,25 @@ else
         g = p.*g;
         f = repmat(p,1,W).*f;
     end
-    
+
+    cc1=ar/a;
+    cc2=-s0*br/a;
+
     if s0 ~= 0
         p = comp_pchirp(L,-s0);
         g = p.*fft(g)/L;
         f = repmat(p,1,W).*fft(f);
         
         c_rect = comp_dgt_long(f,g,br,Nr);
-        
+            
         for k=0:Nr-1   
             for m=0:Mr-1
                 phs = mod((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1) ...
                           -2*(k*ar*m*br),2*L);
                 phs = exp(pi*1i*phs/L);
                 
-                idx1 =       mod(    k*ar       -s0*m*br,L)/a;
+                %idx1 =       mod(    k*ar       -s0*m*br,L)/a;
+                idx1 =       mod(    k*cc1       +cc2*m,N);
                 idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
                                                 
                 for w=0:W-1                    
@@ -107,13 +111,13 @@ else
     else 
         
         c_rect = comp_dgt_long(f,g,ar,Mr);
-                
+
         for k=0:Nr-1   
             for m=0:Mr-1
                 phs= mod((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1),2*L);
                 phs = exp(pi*1i*phs/L);
                 
-                idx1 =       mod(    k*ar       -s0*m*br,L)/a;
+                idx1 =       mod(    k*cc1        +cc2*m,N);
                 idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
                 
                 for w=0:W-1    
