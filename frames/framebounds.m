@@ -56,7 +56,22 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %   See also: newframe, framered
 
-  definput.keyvals.Ls=[];
+% We handle fusion frames first
+  if strcmp(F.type,'fusion')
+      AF=0;
+      BF=0;
+      for ii=1:F.Nframes
+          [A,B]=framebounds(F.frames{ii},varargin{:});
+          AF=AF+(A*F.w(ii)).^2;
+          BF=BF+(B*F.w(ii)).^2;
+      end;
+      AF=sqrt(AF);
+      BF=sqrt(BF);
+        
+      return;
+  end;    
+    
+  definput.keyvals.Ls=1;
   definput.flags.system={'a','s'};
   definput.keyvals.maxit=100;
   definput.keyvals.tol=1e-9;
@@ -74,6 +89,7 @@ function [AF,BF]=framebounds(F,varargin);
   AF=1;
   BF=1;
   
+  % Simple heuristic: If F.ga is defined, the frame uses windows.
   if isfield(F,'ga')
     if flags.do_a
       if isempty(F.ga)
@@ -92,7 +108,11 @@ function [AF,BF]=framebounds(F,varargin);
       op    = @frsyn;
       opadj = @frsynadj;
     end;
-  end;  
+  else
+      % If F.ga is not defined, the tranform always has a fast way of
+      % calculating the frame bounds.
+      isfac=1;
+  end;
   
   if flags.do_fac && ~isfac
     error('%s: The type of frame has no factorization algorithm.',upper(mfilename));

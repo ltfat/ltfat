@@ -66,6 +66,16 @@ switch(F.type)
     outsig=fft(insig)/L;
   case 'fftreal'
     outsig=fftreal(insig,F.L)/F.L;  
+  case 'fusion'
+    % All frames must use the same length signal.
+    L=framelength(F,size(insig,1));
+    insig=postpad(insig,L);
+
+    coefs = cell(F.Nframes,1);
+    for ii=1:F.Nframes
+        coefs(ii)=frsynadj(F.frames{ii},insig)/(F.Nframes*F.w(ii));
+    end;
+    outsig=cell2mat(coefs);
 end;
 
   

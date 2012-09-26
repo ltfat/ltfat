@@ -131,10 +131,7 @@ switch(lower(method))
   % The computation done this way is insensitive to whether the dgt is
   % phaselocked or not.
   c   = comp_dgt(f,g,a,M,kv.lt,0,0,0);
-  c   = reshape(c,M,N,W);
-  
   c_h = comp_dgt(f,hg,a,M,kv.lt,0,0,0);
-  c_h = reshape(c_h,M,N,W);
   
   c_s = abs(c).^2;
   

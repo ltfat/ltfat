@@ -61,6 +61,16 @@ switch(F.type)
         'dcti','dctii','dctiii','dctiv',...
         'dsti','dstii','dstiii','dstiv'}
     outsig=feval(F.type,insig);
+  case 'fusion'
+    % All frames must use the same length signal.
+    L=framelength(F,size(insig,1));
+    insig=postpad(insig,L);
+    
+    coefs = cell(F.Nframes,1);
+    for ii=1:F.Nframes
+        coefs(ii)=F.w(ii)*frana(F.frames{ii},insig);
+    end;
+    outsig=cell2mat(coefs);
 end;
 
   

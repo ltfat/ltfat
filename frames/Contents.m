@@ -12,13 +12,13 @@
 %    FRAMEACCEL        - Precompute arrays for faster application
 %
 %  Information about a frame
-%    FRAMETYPE         - Type of frame
 %    FRAMEBOUNDS       - Frame bounds
 %    FRAMERED          - Redundancy of frame
 %    FRANAMAT          - Frame analysis operator matrix
 %    FRSYNMAT          - Frame synthesis operator matrix
 %    FRAMELENGTH       - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
+%    FRAMECOEFLENGTH   - Length of the coefficient array given a signal
 %
 %  Coefficients conversions
 %    FRAMECOEF2NATIVE  - Convert to native transform format

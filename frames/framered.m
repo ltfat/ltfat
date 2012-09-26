@@ -27,16 +27,18 @@ function red=framered(F);
 red=1;
 
 switch(F.type)
- case 'gen'
-  red=size(F.ga,2)/size(F.ga,1);
- case 'dgt'
-  red=F.M/F.a;
- case 'dgtreal'
-  red=F.M/F.a;
- case {'ufilterbank','filterbank'}
-  red=sum(1./F.a);
- case {'ufilterbankreal','filterbankreal'}
-  red=2*sum(1./F.a);
+  case 'gen'
+    red=size(F.ga,2)/size(F.ga,1);
+  case 'dgt'
+    red=F.M/F.a;
+  case 'dgtreal'
+    red=F.M/F.a;
+  case {'ufilterbank','filterbank'}
+    red=sum(1./F.a);
+  case {'ufilterbankreal','filterbankreal'}
+    red=2*sum(1./F.a);
+  case 'fusion'
+    red=sum(cellfun(@framered,F.frames));
 end;
 
   

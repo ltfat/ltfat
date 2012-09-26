@@ -113,7 +113,7 @@ Ltest=dgtlength(L,a,M,lt);
 if Ltest~=L
     error(['%s: Incorrect size of coefficient array or "a" parameter. See ' ...
            'the help of DGTLENGTH for the requirements.'], ...
-          upper(mfilename),L,Luser)
+          upper(mfilename))
 end;
 
 g=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));

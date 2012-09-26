@@ -6,6 +6,9 @@ function F=newframe(ftype,varargin);
 %   *ftype*. Arguments following *ftype* are specific to the type of frame
 %   chosen.
 %
+%   Time/frequency frames
+%   ---------------------
+%
 %   `newframe('dgt',ga,gs,a,M)` constructs a Gabor frame with analysis
 %   window *ga*, synthesis window *gs*, time-shift *a* and *M* channels. See
 %   the help on |dgt|_ for more information.
@@ -23,7 +26,7 @@ function F=newframe(ftype,varargin);
 %   help on |wmdct|_ for more information.
 %
 %   `newframe('filterbank',ga,gs,a,M)` constructs a filterbank with analysis
-%   windows *ga*, synthesis windows *gs*, time-shifts of *a* and *M
+%   windows *ga*, synthesis windows *gs*, time-shifts of *a* and *M*
 %   channels. For the ease of implementation, it is necessary to specify
 %   *M*, even though it strictly speaking could be deduced from the size of
 %   the windows. See the help on |filterbank|_ for more information on the
@@ -32,13 +35,8 @@ function F=newframe(ftype,varargin);
 %   `'filterbankreal'` or a uniform positive-frequency filterbank by
 %   selecting `'ufilterbankreal'`.
 %
-%   `newframe('gen',ga,gs)` constructs an general frame with analysis
-%   matrix *ga* and synthesis matrix *gs*. The frame atoms must be stored
-%   as column vectors in the matrices.
-%
-%   `newframe('identity')` constructs the canonical orthornormal
-%   basis, meaning that all operators return their input as output, so it
-%   is the dummy operation.
+%   Pure frequency frames
+%   ---------------------
 %
 %   `newframe('dft')` constructs a frame where the analysis operator is the
 %   |dft|_, and the synthesis operator is its inverse, |idft|_. Completely
@@ -49,6 +47,25 @@ function F=newframe(ftype,varargin);
 %   `newframe('fftreal',L)` constructs an FFT frame for real-valued
 %   signals only, using |fftreal|_. You must specify the signal length
 %   *L*, otherwise the synthesis operation cannot work.
+%
+%   Special / general frames
+%   ------------------------
+%
+%   `newframe('gen',ga,gs)` constructs an general frame with analysis
+%   matrix *ga* and synthesis matrix *gs*. The frame atoms must be stored
+%   as column vectors in the matrices.
+%
+%   `newframe('identity')` constructs the canonical orthornormal
+%   basis, meaning that all operators return their input as output, so it
+%   is the dummy operation.
+%
+%   Container frames
+%   ----------------
+%
+%   `newframe('fusion',w,F1,F2,...)` constructs a fusion frame, which is
+%   the collection of the frames specified by *F1*, *F2*,... The vector
+%   *w* contains a weight for each frame. If *w* is a scalar, this weight
+%   will be applied to all the sub-frames.
 %
 %   Dual and tight frames 
 %   ---------------------
@@ -83,8 +100,8 @@ function F=newframe(ftype,varargin);
 %   Examples
 %   --------
 %
-%   The following example create a Gabor frame for real-valued signals,
-%   analysis and input signal and plots the frame coefficients:::
+%   The following example creates a Gabor frame for real-valued signals,
+%   analyses an input signal and plots the frame coefficients:::
 %
 %      F=newframe('dgtreal','gauss','dual',20,294);
 %      c=frana(F,greasy);
@@ -197,6 +214,13 @@ switch(ftype)
         'dsti','dstii','dstiii','dstiv'}
   case 'fftreal'
     F.L=varargin{1};
+    
+  case 'fusion'
+    F.w=varargin{1};
+    F.frames=varargin(2:end);
+    F.Nframes=numel(F.frames);
+    F.w=bsxfun(@times,ones(F.Nframes,1),F.w(:));
+    
   otherwise
     error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
 end;

@@ -61,6 +61,18 @@ switch(F.type)
     outsig=ifft(insig)*L;
   case 'fftreal'
     outsig=ifftreal(insig,F.L)*F.L;
+  case 'fusion'
+    W=size(insig,2);
+    L=size(insig,1)/framered(F);
+
+    outsig=zeros(L,W);
+
+    idx=0;    
+    for ii=1:F.Nframes
+        coeflen=L*framered(F.frames{ii});
+        outsig=outsig+F.w(ii)*franaadj(F.frames{ii},insig(idx+1:idx+coeflen,:));
+        idx=idx+coeflen;
+    end;
 end;
 
   

@@ -6,7 +6,7 @@ test_failed=0;
 disp(' ===============  TEST_FRAMES ================');
 
 
-Fr=cell(1,2);
+Fr=cell(1,26);
 
 L=200;
 Fr{1} =newframe('dgt','gauss','dual',10,20);
@@ -39,6 +39,7 @@ Fr{23}=newframe('ufilterbankreal',gfilt,'dual',3,4);
 
 Fr{24}=newframe('dgt','gauss','dual',4,6,'lt',[1 2]);
 Fr{25}=newframe('identity');
+Fr{26}=newframe('fusion',[1 1],Fr{1},Fr{3});
 
 %Fr{19}=newframe('filterbank',     gfilt,[],[4 3 2 2],4);
 %Fr{20}=newframe('filterbankreal', gfilt,[],[4 3 2 2],4);
@@ -54,14 +55,12 @@ for ii=1:numel(Fr)
     continue;
   end;
   
-  FT=frametype(F);
-  
   c=frana(F,f);
   r=frsyn(F,c);
   res=norm(r(1:L)-f);
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
-  s=sprintf(['FRAMES RECONSTRUCTION %s %0.5g %s'],FT,res,fail);    
+  s=sprintf(['FRAMES RECONSTRUCTION %s %0.5g %s'],F.type,res,fail);    
   disp(s);  
 
   F2=frameaccel(F,L);
@@ -71,7 +70,7 @@ for ii=1:numel(Fr)
   res=norm(r(1:L)-f);
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
-  s=sprintf(['FRAMES ACCEL RECON    %s %0.5g %s'],FT,res,fail);    
+  s=sprintf(['FRAMES ACCEL RECON    %s %0.5g %s'],F.type,res,fail);    
   disp(s);
 
   cadj=frsynadj(F,f);
@@ -79,22 +78,24 @@ for ii=1:numel(Fr)
   res=norm(radj(1:L)-f);
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
-  s=sprintf(['FRAMES ADJ RECON      %s %0.5g %s'],FT,res,fail);    
+  s=sprintf(['FRAMES ADJ RECON      %s %0.5g %s'],F.type,res,fail);    
   disp(s);  
 
+  [A,B]=framebounds(F,L);
+
   
-  if ~any(strcmp(FT,{'dgtreal','fftreal','ufilterbankreal','filterbankreal'}))
+  if ~any(strcmp(F.type,{'dgtreal','fftreal','ufilterbankreal','filterbankreal'}))
     LL=framelength(F,L);
     G=franamat(F,LL);
     res=norm(c-G'*postpad(f,LL));
     
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    s=sprintf(['FRAMES MATRIX         %s %0.5g %s'],FT,res,fail);    
+    s=sprintf(['FRAMES MATRIX         %s %0.5g %s'],F.type,res,fail);    
     disp(s);
     
     res=norm(franaadj(F,c)-G*c);
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
-    s=sprintf(['FRAMES ANA ADJOINT    %s %0.5g %s'],FT,res,fail);    
+    s=sprintf(['FRAMES ANA ADJOINT    %s %0.5g %s'],F.type,res,fail);    
     disp(s);
     
   end;

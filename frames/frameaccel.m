@@ -17,6 +17,16 @@ function F=frameaccel(F,Ls);
 %
 %   See also: newframe, frana, framelength, framelengthcoef
   
+if strcmp(F.type,'fusion')
+    for ii=1:F.Nframes
+        F.frames{ii}=frameaccel(F.frames{ii},Ls);
+    end;
+    return;
+end;
+
+% Default value for a lot of transforms
+F.L=Ls;
+
 if ~isfield(F,'ga')
   % Quick exit, the transform does not use analysis nor synthesis
   % windows.
@@ -26,14 +36,14 @@ end;
 % From this point and on, we are sure that F.ga and F.gs exists.
 
 L=framelength(F,Ls);
+  
+F.isfacana=1;
+F.isfacsyn=1;
 
 if (isfield(F,'L') && (L==F.L))
   % Quick return, we have already accelerated
   return
 end;
-  
-F.isfacana=1;
-F.isfacsyn=1;
 
 if ~isempty(F.ga)
   
