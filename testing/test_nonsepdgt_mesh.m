@@ -21,19 +21,17 @@ for lt2=lt2r
                 end;                
                 for Lmod=Lmodr
                     
+                    
                     L=dgtlength(1,a,M,[lt1,lt2]);
                     lt=[lt1,lt2];
-                                       
-                    b=L/M;
-                    s=b*lt(1)/lt(2);
 
-                    [s0,s1,X] = shearfind(a,b,s,L);
-                              
+                    [s0,s1,br] = shearfind(L,a,M,lt);
+
                     f=crand(L,1);                                        
                     g=crand(L,1);
                     
-                    gd       = nonsepgabdual(g,a,M,lt);
-                    gd_shear = nonsepgabdual(g,a,M,lt,'shear');
+                    gd       = gabdual(g,a,M,[],lt);
+                    gd_shear = gabdual(g,a,M,[],lt,'nsalg',2);
                     
                     res=norm(gd-gd_shear)/norm(g);
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -47,9 +45,9 @@ for lt2=lt2r
                     end;
 
                     
-                    cc = nonsepdgt(f,g,a,M,lt);
+                    cc = comp_nonsepdgt_multi(f,g,a,M,lt);
                     
-                    cc_shear = nonsepdgt(f,g,a,M,lt,'shear');
+                    cc_shear = comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
                     
                     res = norm(cc(:)-cc_shear(:))/norm(cc(:));
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -64,7 +62,7 @@ for lt2=lt2r
 
                     
                     
-                    r=inonsepdgt(cc_shear,gd,a,lt,'shear');  
+                    r=comp_inonsepdgt(cc_shear,gd,a,lt,0,2);  
                     res=norm(f-r,'fro');
                     
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);

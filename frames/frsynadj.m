@@ -26,44 +26,46 @@ if ~isstruct(F)
 end;
 
 switch(F.type)
- case 'gen'
-  outsig=F.gs'*insig; 
- case 'dgt'
-  outsig=framenative2coef(F,dgt(insig,F.gs,F.a,F.M,F.vars{:}));
- case 'dgtreal'
-  outsig=framenative2coef(F,dgtreal(insig,F.gs,F.a,F.M));
- case 'dwilt'
-  outsig=framenative2coef(F,dwilt(insig,F.gs,F.M));
- case 'wmdct'
-  outsig=framenative2coef(F,wmdct(insig,F.gs,F.M));
-  
- case 'filterbank'
-  outsig=framenative2coef(F,filterbank(insig,F.gs,F.a));
- case 'filterbankreal'
-  outsig=framenative2coef(F,filterbank(insig,F.gs,F.a));
- case 'ufilterbank'
-  outsig=framenative2coef(F,ufilterbank(insig,F.gs,F.a));
- case 'ufilterbankreal'
-  outsig=framenative2coef(F,ufilterbank(insig,F.gs,F.a));
+  case 'identity'
+    outsig=insig;    
+  case 'gen'
+    outsig=F.gs'*insig; 
+  case 'dgt'
+    outsig=framenative2coef(F,dgt(insig,F.gs,F.a,F.M,F.vars{:}));
+  case 'dgtreal'
+    outsig=framenative2coef(F,dgtreal(insig,F.gs,F.a,F.M));
+  case 'dwilt'
+    outsig=framenative2coef(F,dwilt(insig,F.gs,F.M));
+  case 'wmdct'
+    outsig=framenative2coef(F,wmdct(insig,F.gs,F.M));
+    
+  case 'filterbank'
+    outsig=framenative2coef(F,filterbank(insig,F.gs,F.a));
+  case 'filterbankreal'
+    outsig=framenative2coef(F,filterbank(insig,F.gs,F.a));
+  case 'ufilterbank'
+    outsig=framenative2coef(F,ufilterbank(insig,F.gs,F.a));
+  case 'ufilterbankreal'
+    outsig=framenative2coef(F,ufilterbank(insig,F.gs,F.a));
 
- case 'nsdgt'
-  outsig=framenative2coef(F,nsdgt(insig,F.gs,F.a));
- case 'unsdgt'
-  outsig=framenative2coef(F,unsdgt(insig,F.gs,F.a));
- case 'nsdgtreal'
-  outsig=framenative2coef(F,nsdgtreal(insig,F.gs,F.a));
- case 'unsdgtreal'
-  outsig=framenative2coef(F,unsdgtreal(insig,F.gs,F.a));
- 
- case {'dft',...
-       'dcti','dctii','dctiii','dctiv',...
-       'dsti','dstii','dstiii','dstiv'}
-  outsig=feval(F.type,insig);
- case 'fft'
-  L=size(insig,1);
-  outsig=fft(insig)/L;
- case 'fftreal'
-  outsig=fftreal(insig,F.L)/F.L;  
+  case 'nsdgt'
+    outsig=framenative2coef(F,nsdgt(insig,F.gs,F.a));
+  case 'unsdgt'
+    outsig=framenative2coef(F,unsdgt(insig,F.gs,F.a));
+  case 'nsdgtreal'
+    outsig=framenative2coef(F,nsdgtreal(insig,F.gs,F.a));
+  case 'unsdgtreal'
+    outsig=framenative2coef(F,unsdgtreal(insig,F.gs,F.a));
+    
+  case {'dft',...
+        'dcti','dctii','dctiii','dctiv',...
+        'dsti','dstii','dstiii','dstiv'}
+    outsig=feval(F.type,insig);
+  case 'fft'
+    L=size(insig,1);
+    outsig=fft(insig)/L;
+  case 'fftreal'
+    outsig=fftreal(insig,F.L)/F.L;  
 end;
 
   

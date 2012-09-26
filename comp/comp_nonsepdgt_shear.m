@@ -95,9 +95,8 @@ else
             
         for k=0:Nr-1   
             for m=0:Mr-1
-                phs = mod((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1) ...
-                          -2*(k*ar*m*br),2*L);
-                phs = exp(pi*1i*phs/L);
+                phs = mod(((a*s1*(k*cc1+cc2*m).^2-cc2*m*m*br)*(L+1)-2*(k*cc1*m*br)),2*N);
+                phs = exp(pi*1i*phs/N);
                 
                 %idx1 =       mod(    k*ar       -s0*m*br,L)/a;
                 idx1 =       mod(    k*cc1       +cc2*m,N);
@@ -114,8 +113,9 @@ else
 
         for k=0:Nr-1   
             for m=0:Mr-1
-                phs= mod((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1),2*L);
-                phs = exp(pi*1i*phs/L);
+
+                phs= mod((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1)/a,2*N);
+                phs = exp(pi*1i*phs/N);
                 
                 idx1 =       mod(    k*cc1        +cc2*m,N);
                 idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);

@@ -38,6 +38,7 @@ Fr{22}=newframe('ufilterbank',    gfilt,'dual',3,4);
 Fr{23}=newframe('ufilterbankreal',gfilt,'dual',3,4);
 
 Fr{24}=newframe('dgt','gauss','dual',4,6,'lt',[1 2]);
+Fr{25}=newframe('identity');
 
 %Fr{19}=newframe('filterbank',     gfilt,[],[4 3 2 2],4);
 %Fr{20}=newframe('filterbankreal', gfilt,[],[4 3 2 2],4);

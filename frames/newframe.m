@@ -36,6 +36,10 @@ function F=newframe(ftype,varargin);
 %   matrix *ga* and synthesis matrix *gs*. The frame atoms must be stored
 %   as column vectors in the matrices.
 %
+%   `newframe('identity')` constructs the canonical orthornormal
+%   basis, meaning that all operators return their input as output, so it
+%   is the dummy operation.
+%
 %   `newframe('dft')` constructs a frame where the analysis operator is the
 %   |dft|_, and the synthesis operator is its inverse, |idft|_. Completely
 %   similar to this, you can enter the name of any of the cosine or sine
@@ -142,56 +146,58 @@ switch(ftype)
 end;
 
 switch(ftype)
- case {'dgt','dgtreal'}
-  F.a=varargin{3};
-  F.M=varargin{4};
-  F.vars=varargin(5:end);
- case {'dwilt','wmdct'}
-  F.M=varargin{3};
- case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
-  F.a=varargin{3};
-  F.M=varargin{4};
-
-  % Sanitize 'a': Make it a column vector of length M
-  F.a=F.a(:);
-  [F.a,dummy]=scalardistribute(F.a,ones(F.M,1));
-
- case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
-  F.a=varargin{3};
-  F.M=varargin{4};
-
-  % Sanitize 'a' and 'M'. Make M a column vector of length N,
-  % where N is determined from the length of 'a'
-  F.a=F.a(:);
-  F.N=numel(F.a);
-  F.M=F.M(:);
-  [F.M,dummy]=scalardistribute(F.M,ones(F.N,1));
-
- case 'gen'
-  F.ga=varargin{1};
-  F.gs=varargin{2};
-
-  if strcmp(F.ga,'dual')
-    F.ga=pinv(F.gs)';
-  end;
-  
-  if strcmp(F.gs,'dual')
-    F.gs=pinv(F.ga)';
-  end;
-  
-  if strcmp(F.gs,'tight')
-    [U,sv,V] = svd(F.ga,'econ');
+  case {'dgt','dgtreal'}
+    F.a=varargin{3};
+    F.M=varargin{4};
+    F.vars=varargin(5:end);
+  case {'dwilt','wmdct'}
+    F.M=varargin{3};
+  case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
+    F.a=varargin{3};
+    F.M=varargin{4};
     
-    F.ga=U*V'; 
-    F.gs=F.ga;
-  end;
-  
- case {'dft','fft',...
-       'dcti','dctii','dctiii','dctiv',...
-       'dsti','dstii','dstiii','dstiv'}
- case 'fftreal'
-  F.L=varargin{1};
- otherwise
+    % Sanitize 'a': Make it a column vector of length M
+    F.a=F.a(:);
+    [F.a,dummy]=scalardistribute(F.a,ones(F.M,1));
+    
+  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+    F.a=varargin{3};
+    F.M=varargin{4};
+    
+    % Sanitize 'a' and 'M'. Make M a column vector of length N,
+    % where N is determined from the length of 'a'
+    F.a=F.a(:);
+    F.N=numel(F.a);
+    F.M=F.M(:);
+    [F.M,dummy]=scalardistribute(F.M,ones(F.N,1));
+    
+  case 'gen'
+    F.ga=varargin{1};
+    F.gs=varargin{2};
+    
+    if strcmp(F.ga,'dual')
+        F.ga=pinv(F.gs)';
+    end;
+    
+    if strcmp(F.gs,'dual')
+        F.gs=pinv(F.ga)';
+    end;
+    
+    if strcmp(F.gs,'tight')
+        [U,sv,V] = svd(F.ga,'econ');
+        
+        F.ga=U*V'; 
+        F.gs=F.ga;
+    end;
+    
+  case 'identity'
+    
+  case {'dft','fft',...
+        'dcti','dctii','dctiii','dctiv',...
+        'dsti','dstii','dstiii','dstiv'}
+  case 'fftreal'
+    F.L=varargin{1};
+  otherwise
     error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
 end;
 
