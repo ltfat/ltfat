@@ -14,7 +14,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		  int nrhs, const mxArray *prhs[] )
      
 { 
-   int L, n, m;
+  int l, L, n, m;
    long long workl;
    double work, LL, Lpone;
    double *gr,*gi;

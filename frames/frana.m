@@ -68,7 +68,7 @@ switch(F.type)
     
     coefs = cell(F.Nframes,1);
     for ii=1:F.Nframes
-        coefs(ii)=F.w(ii)*frana(F.frames{ii},insig);
+        coefs(ii)={F.w(ii)*frana(F.frames{ii},insig)};
     end;
     outsig=cell2mat(coefs);
 end;

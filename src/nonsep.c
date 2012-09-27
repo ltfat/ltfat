@@ -91,7 +91,7 @@ LTFAT_NAME(nonsepdgt_multi)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 LTFAT_EXTERN void
 LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 			    const int L, const int W, const int a, const int M,
-			    const int s0, const int a1, const int br
+			    const int s0, const int s1, const int br,
 			    LTFAT_COMPLEX *c)
 { 
    const int b=L/M;
@@ -104,11 +104,13 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    int using_fwork = 0;
    int using_gwork = 0;
 
+   const unsigned flags = FFTW_ESTIMATE;
+
    LTFAT_COMPLEX *fwork = f;
    LTFAT_COMPLEX *gwork = g;
 
             
-   if (s1<>0)
+   if (!s1==0)
    {
       LTFAT_COMPLEX *p = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
@@ -116,7 +118,7 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
       using_gwork=1;
 
       fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
-      gwork = ltfat_malloc(Lsizeof(LTFAT_COMPLEX));
+      gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
       LTFAT_NAME(pchirp)(L,s1,p);
 
@@ -136,23 +138,92 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 	 }
       }
 
-      ltfat_free(p1);
+      ltfat_free(p);
       
    }
    
-   if (s0<>0)
+   if (!s0==0)
    {
-      g = comp_pchirp(L,-s0).*fft(g)/L;
-      f = repmat(comp_pchirp(L,-s0),1,W).*fft(f);
+      LTFAT_COMPLEX *p = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+
+      LTFAT_FFTW(plan) f_plan, g_plan;
+
+      /* if data has already been copied to the working arrays, use
+       * inline FFTs. Otherwise, if this is the first time they are
+       * being used, do the copying using the fft. */
+
+      if (!using_fwork)
+      { 
+	 fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
+	 
+	 f_plan = LTFAT_FFTW(plan_many_dft)(1, &L, W,
+					    f, NULL, 1, L,
+					    fwork, NULL, 1, L,
+					    FFTW_FORWARD, flags);
+	 
+	 using_fwork=1;      
+	 }
+      else
+      {
+	 f_plan = LTFAT_FFTW(plan_many_dft)(1, &L, W,
+					    fwork, NULL, 1, L,
+					    fwork, NULL, 1, L,
+					    FFTW_FORWARD, flags);
+      }
       
-      c_rect = comp_dgt_long(f,g,br,Nr);
+      if (!using_gwork)
+      {
+	 gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+
+	 g_plan = LTFAT_FFTW(plan_dft_1d)(L, g, gwork, FFTW_FORWARD, flags);
+	 
+	 using_gwork=1;
+      }
+      else
+      {
+	 g_plan = LTFAT_FFTW(plan_dft_1d)(L, gwork, gwork, FFTW_FORWARD, flags);
+      }
+
+      /* Compute the pchirp */
+      LTFAT_NAME(pchirp)(L,-s0,p);
+
+      /* Execute the FFTs */
+      LTFAT_FFTW(execute)(f_plan);
+      LTFAT_FFTW(execute)(g_plan);
+
+      /* Scale by the chirp, and scale g by 1/L */
+      for (int l=0;l<L;l++)
+      {
+	 gwork[l][0] = (gwork[l][0]*p[l][0]-gwork[l][1]*p[l][1])/L;
+	 gwork[l][1] = (gwork[l][1]*p[l][0]+gwork[l][0]*p[l][1])/L;
+
+      }
+
+      for (int w=0;w<W;w++)
+      {
+	 for (int l=0;l<L;l++)
+	 {
+	    fwork[l+w*L][0] = fwork[l+w*L][0]*p[l][0]-fwork[l+w*L][1]*p[l][1];
+	    fwork[l+w*L][1] = fwork[l+w*L][1]*p[l][0]+fwork[l+w*L][0]*p[l][1];	    
+	 }
+      }
+
+      ltfat_free(p);
+
+      LTFAT_COMPLEX *c_rect = ltfat_malloc(M*N*W*sizeof(LTFAT_COMPLEX));
+      
+      /* Call the rectangular computation in the frequency domain*/
+      LTFAT_NAME(dgt_long)(fwork,gwork,L,W,br,Nr,c_rect);
       
       for (int k=0;k<Nr;k++)
       {   
 	 for (int m=0;m<Mr;m++)
 	 {
+	    const int t1 = k*ar-s0*m*br;
+	    const int t2 = m*br;
+
 	    const LTFAT_REAL phs = 
-	       PI*positiverem((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1)-2*(k*ar*m*br),2*L)/L;
+	       PI*positiverem((s1*t1*t1+s0*t2*t2)*(L+1)-2*(k*ar*m*br),2*L)/L;
 	    
 	    const LTFAT_REAL phs0 = cos(phs);
 	    const LTFAT_REAL phs1 = sin(phs);
@@ -161,23 +232,33 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 	    const int idx2 = floor(positiverem(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
             
 	    for (int w=0;w<W;w++)
-	    {                    
-	       c(idx2+1,idx1+1,w+1) = c_rect(positiverem(-k,Nr)+1,m+1,w+1).*phs;
+	    {                  
+	       const int inidx  = positiverem(-k,Nr)+m*Nr+w*M*N;
+	       const int outidx = idx2+idx1*M+w*M*N;
+	       c[outidx][0] = c_rect[inidx][0]*phs0-c_rect[inidx][1]*phs1;
+	       c[outidx][1] = c_rect[inidx][1]*phs0+c_rect[inidx][0]*phs1;
 	    }
 	 }
       }
+
+      ltfat_free(c_rect);
    }
    else 
    {     
-      c_rect = comp_dgt_long(f,g,ar,Mr);
+
+      LTFAT_COMPLEX *c_rect = ltfat_malloc(M*N*W*sizeof(LTFAT_COMPLEX));
       
+      /* Call the rectangular computation in the time domain */
+      LTFAT_NAME(dgt_long)(fwork,gwork,L,W,ar,Mr,c_rect);
+
       for (int k=0;k<Nr;k++)
       {   
 	 for (int m=0;m<Mr;m++)
 	 {
-	    
+	    const int t1 = k*ar-s0*m*br;
+	    const int t2 = m*br;
 	    const LTFAT_REAL phs = 
-	       PI*positiverem((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1),2*L)/L;
+	       PI*positiverem((s1*t1*t1+s0*t2*t2)*(L+1),2*L)/L;
 	    
 	    const LTFAT_REAL phs0 = cos(phs);
 	    const LTFAT_REAL phs1 = sin(phs);
@@ -188,10 +269,15 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 	    
 	    for (int w=0;w<W;w++)
 	    {
-	       c(idx2+1,idx1+1,w+1) = c_rect(m+1,k+1,w+1).*phs;
+	       const int inidx  = m+k*Mr+w*M*N;
+	       const int outidx = idx2+idx1*M+w*M*N;
+	       c[outidx][0] = c_rect[inidx][0]*phs0-c_rect[inidx][1]*phs1;
+	       c[outidx][1] = c_rect[inidx][1]*phs0+c_rect[inidx][0]*phs1;
 	    }
 	 }
       }
+
+      ltfat_free(c_rect);
    }  
 
    if (using_fwork)

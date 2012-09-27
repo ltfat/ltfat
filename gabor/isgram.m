@@ -170,7 +170,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     end;
   end;
   
-    if flags.do_bfgs
+  if flags.do_bfgs
     if exist('minFunc')~=2
       error(['To use the BFGS method in ISGRAMREAL, please install the minFunc ' ...
              'software from http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html.']);

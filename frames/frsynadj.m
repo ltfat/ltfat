@@ -73,7 +73,7 @@ switch(F.type)
 
     coefs = cell(F.Nframes,1);
     for ii=1:F.Nframes
-        coefs(ii)=frsynadj(F.frames{ii},insig)/(F.Nframes*F.w(ii));
+        coefs(ii)={frsynadj(F.frames{ii},insig)/(F.Nframes*F.w(ii))};
     end;
     outsig=cell2mat(coefs);
 end;
