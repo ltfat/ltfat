@@ -25,27 +25,34 @@
 %        any lattice constant, but the reconstruction obtained is not
 %        perfect.
 %
-%   FIGURE 1 Hanning FIR window
+%   .. figure:: 
+%
+%      Hanning FIR window
 %
 %      This figure shows the a Hanning window in the time domain and its
 %      magnitude response.
 %
-%   FIGURE 2 Kaiser-Bessel FIR window
+%   .. figure:: 
+%
+%      Kaiser-Bessel FIR window
 %
 %      This figure shows a Kaiser Bessel window and its magnitude response,
 %      and the same two plots for the canonical dual of the window.
 %
-%   FIGURE 3 Gaussian FIR window for low redundancy
+%   .. figure:: 
+%
+%      Gaussian FIR window for low redundancy
 %
 %      This figure shows a truncated Gaussian window and its magnitude
 %      response. The same two plots are show for the truncated canonical
 %      dual window.
 %
-%   FIGURE 4 Almost tight Gaussian FIR window
+%   .. figure::
+%
+%      Almost tight Gaussian FIR window
 %
 %      This figure shows a tight Gaussian window that has been truncated
 %      and its magnitude response.
-%
 %
 %   See also:  firwin, firkaiser, gabdual
 
@@ -213,5 +220,3 @@ title('Almost tight FIR window.');
 subplot(2,1,2);
 magresp(gt_fir,'fir','dynrange',100);
 title('Magnitude response.');
-
-%OLDFORMAT

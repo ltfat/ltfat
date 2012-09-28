@@ -6,7 +6,9 @@
 %   variant system (A) as well as of the best approximation of (A) by a 
 %   Gabor multiplier (B) on a sinusoids and an exponential sweep.
 %
-%   FIGURE 1 Spectrogram of signals
+%   .. figure::
+%
+%     Spectrogram of signals
 %
 %     The figure shows the spectogram of the output of the two systems applied on a 
 %     sinusoid (left) and an exponential sweep.
@@ -84,7 +86,3 @@ subplot(2,2,4); sgram(real(Ge1),'tfr',10,'clim',[-40,13],'nocolorbar');
 title (sprintf('Spectogram of output signal: \n Best approximation by Gabor multipliers applied on exponential sweep'),'Fontsize',14);
 set(get(gca,'XLabel'),'Fontsize',14);
 set(get(gca,'YLabel'),'Fontsize',14);
-
-
-
-%OLDFORMAT

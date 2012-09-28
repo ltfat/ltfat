@@ -3,10 +3,12 @@
 %  This demos generates a simple figure that shows the behaviour of
 %  the different audiory scales in the frequency range from 0 to 8000 Hz.
 %
-%  FIGURE 1
+%  .. figure::
 %
-%    Show the behaviour of the audiory scales on a normalized frequency
-%    plot.
+%     Auditory scales
+%
+%     The figure shows the behaviour of the audiory scales on a normalized
+%     frequency plot.
 %
 %  See also:  freqtoaud, audtofreq, audspace, audspacebw
 
@@ -37,6 +39,3 @@ hold off;
 legend(types{:},'Location','SouthEast');
 xlabel('Frequency (Hz)');
 ylabel('Auditory unit (normalized)');
-
-
-%OLDFORMAT

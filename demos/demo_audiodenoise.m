@@ -7,11 +7,13 @@
 %   followed by a thresholding. Then the signal is reconstructed
 %   and compared with the original.
 %
-%   FIGURE 1 Denoising
+%   .. figure:: 
 %
-%     The figure shows the original signal, the noisy signal and denoised
-%     signals using hard and soft threshholding applied to the WMDCT of the
-%     noise signal.
+%      Denoising
+%
+%      The figure shows the original signal, the noisy signal and denoised
+%      signals using hard and soft threshholding applied to the WMDCT of the
+%      noise signal.
 %
 
 % Load audio signal
@@ -66,5 +68,3 @@ fprintf('      Input SNR: %f dB.\n',InputSNR);
 fprintf('      Output SNR (hard): %f dB.\n',OutputSNR_h);
 fprintf('      Output SNR (soft): %f dB.\n',OutputSNR_s);
 fprintf(' Signals are stored in variables sig, nsig, hrec, srec\n');
-
-%OLDFORMAT

@@ -17,12 +17,14 @@
 %   The corresponding approximated signals are computed with corresponding
 %   inverse WMDCT.
 %
-%   FIGURE 1 plots and time-frequency images
+%   .. figure:: 
 %
-%     The upper plots in the figure show the tonal parts of the signal, the
-%     lower plots show the transients. The TF-plots on the left are the
-%     corresponding wmdct coefficients found by appropriate group lasso
-%     shrinkage
+%      Plots and time-frequency images
+%
+%      The upper plots in the figure show the tonal parts of the signal, the
+%      lower plots show the transients. The TF-plots on the left are the
+%      corresponding wmdct coefficients found by appropriate group lasso
+%      shrinkage
 %
 %   Corresponding reconstructed tonal and transient sounds may be
 %   listened from arrays rec1 and rec2 (sampling rate: 44.1 kHz)
@@ -33,6 +35,7 @@
 % -------------------------------
 % Use the 'glockenspiel' signal.
 sig=gspi;
+fs=44100;
 
 % Shorten signal
 SigLength = 2^16;
@@ -43,37 +46,34 @@ nsig = sig + 0.01*randn(size(sig));
 
 % Tonal layer
 % -----------
-% Initializations
-M = 256;
-N = SigLength/M;
 
-% Generate window
-gamma = wilorth(M,SigLength);
+% Create a WMDCT basis with 256 channels
+F1=newframe('wmdct','gauss','tight',256);
 
 % Compute wmdct coefficients
-c = wmdct(nsig,gamma,M);
+c1 = frana(F1,nsig);
 
 % Group lasso and invert
-[c1,N1] = wilgrouplasso(c,0.8,'soft','freq');
-rec1 = iwmdct(c1,gamma);
+[c1s,N1] = framegrouplasso(F1,c1,0.8,'soft','freq');
+rec1 = frsyn(F1,c1s);
 
 % Transient layer
 % ---------------
-% Initializations
-M = 32;
-N = SigLength/M;
 
-% Generate window
-gamma = wilorth(M,SigLength);
+% Create a WMDCT basis with 32 channels
+F2=newframe('wmdct','gauss','tight',32);
 
 % Compute wmdct coefficients
-c = wmdct(nsig,gamma,M);
+c2 = frana(F2,nsig);
 
-[c2,N2] = wilgrouplasso(c,0.5,'time','soft');
-rec2 = iwmdct(c2,gamma);
+[c2s,N2] = framegrouplasso(F2,c2,0.5,'time','soft');
+rec2 = frsyn(F2,c2s);
 
 % Plots
 % -----
+
+% Dynamic range for plotting
+dr=50;
 
 figure(1);
 subplot(2,2,1);
@@ -81,16 +81,14 @@ plot(rec1);
 axis tight;
 
 subplot(2,2,2);
-imagesc(log(abs(c1)+0.00001));
-set(gca,'ydir','normal');
+plotframe(F1,c1,fs,dr);
 
 subplot(2,2,3);
 plot(rec2);
 axis tight;
 
 subplot(2,2,4);
-imagesc(log(abs(c2)+0.00001));
-set(gca,'ydir','normal');
+plotframe(F2,c2,fs,dr);
 
 p1 = 100*N1/SigLength;
 p2 = 100*N2/SigLength;
@@ -98,14 +96,6 @@ p=p1+p2;
 
 fprintf('Percentage of retained coefficients: %f + %f = %f\n',p1,p2,p);
 
-if ispc && ~isoctave
-    disp('Playing sounds: Original');
-    wavplay(sig);
-    disp('Playing sounds: Tonal part');
-    wavplay(rec1);
-    disp('Playing sounds: Transient part');
-    wavplay(rec2);
-end
-
-
-%OLDFORMAT
+disp('To play the original, type "soundsc(sig,fs)"');
+disp('To play the tonal part, type "soundsc(rec1,fs)"');
+disp('To play the transient part, type "soundsc(rec2,fs)"');

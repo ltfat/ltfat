@@ -66,7 +66,7 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %   switch the grouping mechanism or inner thresholding type.
 %
 %   The parameters *C*, *maxit* and *tol* may also be specified on the
-%   command line in that order: `framegrouplasso(x,g,a,M,lambda,C,tol,maxit)`.
+%   command line in that order: `framegrouplasso(F,x,lambda,C,tol,maxit)`.
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative group thresholdings.
@@ -86,7 +86,7 @@ if ~isvector(x)
 end
 
 % Define initial value for flags and key/value pairs.
-definout.import={'thresh','groupthresh'};
+definput.import={'thresh','groupthresh'};
 definput.flags.group={'freq','time'};
 
 definput.keyvals.C=[];

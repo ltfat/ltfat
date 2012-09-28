@@ -88,7 +88,7 @@ php.foot="""<?php require("footer.php");?>
 </body>
 </html>"""
 
-php.dryrun=1;
+php.dryrun=0;
 
 
 # ------------------------------------------

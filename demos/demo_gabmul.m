@@ -3,21 +3,28 @@
 %   This script creates several different time-frequency symbols
 %   and demonstrate their effect on a random, real input signal.
 %
-%   FIGURE 1 Cut a circle in the TF-plane
+%   .. figure::
+%
+%     Cut a circle in the TF-plane
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).
 %
-%   FIGURE 2 Keep low frequencies (low-pass)
+%   .. figure::
+%
+%     Keep low frequencies (low-pass)
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).
 %
-%   FIGURE 3 Keep middle frequencies (band-pass)
+%   .. figure::
+%
+%     Keep middle frequencies (band-pass)
 %
 %     This figure shows the symbol (top plot, only the positive frequencies are displayed),
 %     the input random signal (bottom) and the output signal (middle).
 %
+
 disp('Type "help demo_gabmul" to see a description of how this demo works.');
 
 % Setup some suitable parameters for the Gabor system
@@ -144,6 +151,3 @@ plot(real(ff3));
 
 subplot(3,1,3);
 plot(f);
-
-
-%OLDFORMAT

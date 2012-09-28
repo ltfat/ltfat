@@ -10,4 +10,4 @@ magresp(firwin('nuttall',L,'1'),'fir','dynrange',dr);
 magresp(firwin('itersine',L,'1'),'fir','dynrange',dr);
 
 legend('Hann','Hamming','Blackman','Nuttall','Itersine');
-%OLDFORMAT
+

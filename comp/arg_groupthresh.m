@@ -1,4 +1,4 @@
-function definput=arg_thresh(definput)
+function definput=arg_groupthresh(definput)
 
   definput.flags.grouptype={'group','elite'};
 

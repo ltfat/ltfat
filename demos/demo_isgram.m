@@ -2,21 +2,29 @@
 %
 %   This demo demonstrates iterative reconstruction of a spectrogram.
 %
-%   FIGURE 1 Original spectrogram
+%   .. figure::
+%
+%      Original spectrogram
 %
 %      This figure shows the target spectrogram
 %
-%   FIGURE 2 Linear reconstruction
+%   .. figure::
+%
+%      Linear reconstruction
 %
 %      This figure shows a spectrogram of a linear reconstruction of the
 %      target spectrogram.
 %
-%   FIGURE 3 Iterative reconstruction using the Griffin-Lim method.
+%   .. figure::
+%
+%      Iterative reconstruction using the Griffin-Lim method.
 %
 %      This figure shows a spectrogram of an iterative reconstruction of the
 %      target spectrogram using the Griffin-Lim projection method.
 %
-%   FIGURE 4 Iterative reconstruction using the BFGS method
+%   .. figure::
+%
+%      Iterative reconstruction using the BFGS method
 %
 %      This figure shows a spectrogram of an iterative reconstruction of the
 %      target spectrogram using the BFGS method.
@@ -41,5 +49,3 @@ sgram(sig_iter,'dynrange',100);
 figure(4);
 sig_iter = isgramreal(s,'gauss',8,800,'bfgs');
 sgram(sig_iter,'dynrange',100);
-
-%OLDFORMAT

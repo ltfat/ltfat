@@ -1,14 +1,18 @@
 %DEMO_NEXTFASTFFT  Next fast FFT number
 %
-%   This demo shows the behaviour of the NEXTFASTFFT function.
+%   This demo shows the behaviour of the `nextfastfft` function.
 %
-%   FIGURE 1 Benchmark of the FFT routine
+%   .. figure::
 %
-%     The figure shows the sizes returned by the NEXTFASTFFT function
-%     compared to using NEXTPOW2. As can be seen, the NEXTFASTFFT
+%     Benchmark of the FFT routine
+%
+%     The figure shows the sizes returned by the `nextfastfft` function
+%     compared to using `nextpow2`. As can be seen, the `nextfastfft`
 %     approach gives FFT sizes that are much closer to the input size.
 %
-%   FIGURE 2 Efficiency of the table
+%   .. figure::
+%
+%     Efficiency of the table
 %
 %     The figure show the highest output/input ratio for varying input
 %     sizes. As can be seen, the efficiency is better for larger input
@@ -46,5 +50,3 @@ figure(2);
 semilogx(table(2:end),eff);
 xlabel('Input size.');
 ylabel('Output/input ratio.');
-
-%OLDFORMAT

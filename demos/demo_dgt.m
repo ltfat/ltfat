@@ -2,30 +2,38 @@
 %
 %   This demo shows how to compute Gabor coefficients of a signal.
 %
-%   FIGURE 1 Spectrogram of the 'bat' signal.
+%   .. figure::
 %
-%     The figure shows a spectrogram of the 'bat' signal. The
-%     coefficients is shown on a linear scale.
+%      Spectrogram of the 'bat' signal.
 %
-%   FIGURE 2 Gabor coefficients of the 'bat' signal.
+%      The figure shows a spectrogram of the 'bat' signal. The
+%      coefficients are shown on a linear scale.
 %
-%     The figure show a set of Gabor coefficients for the 'bat' signal,
-%     computed using a DGT with a Gaussian window. The coefficients
-%     contains all the information to reconstruct the signal, even though
-%     there a far fewer coefficients than the spectrogram contains.
+%   .. figure::
 %
-%   FIGURE 3 Real-valued Gabor analysis
+%      Gabor coefficients of the 'bat' signal.
 %
-%     This figure shows only the coefficients for the positive
-%     frequencies. As the signal is real-value, these coefficients
-%     contain all the necessary information. Compare to the shape of the
-%     spectrogram shown on Figure 1.
+%      The figure show a set of Gabor coefficients for the 'bat' signal,
+%      computed using a DGT with a Gaussian window. The coefficients
+%      contains all the information to reconstruct the signal, even though
+%      there a far fewer coefficients than the spectrogram contains.
 %
-%   FIGURE 4 DGT coefficients on a spectrogram
+%   .. figure::
 %
-%     This figure shows how the coefficients from DGTREAL can be picked
-%     from the coefficients computed by a full Short-time Fourier
-%     transform, as visualized by a spectrogram.
+%      Real-valued Gabor analysis
+%
+%      This figure shows only the coefficients for the positive
+%      frequencies. As the signal is real-value, these coefficients
+%      contain all the necessary information. Compare to the shape of the
+%      spectrogram shown on Figure 1.
+%
+%   .. figure::
+%
+%      DGT coefficients on a spectrogram
+%
+%      This figure shows how the coefficients from DGTREAL can be picked
+%      from the coefficients computed by a full Short-time Fourier
+%      transform, as visualized by a spectrogram.
 %
 %   See also: sgram, dgt, dgtreal
 
@@ -140,7 +148,3 @@ r_real = idgtreal(c_real,'gaussdual',a,M);
 
 fprintf('Reconstruction error using IDGT:      %e\n',norm(f-r));
 fprintf('Reconstruction error using IDGTREAL:  %e\n',norm(f-r_real));
-
-
-
-%OLDFORMAT

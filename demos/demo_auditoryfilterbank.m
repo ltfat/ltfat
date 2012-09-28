@@ -11,22 +11,28 @@
 %   The filterbank cover only the positive frequencies, so we must use
 %   filterbankrealdual and filterbankrealbounds.
 %
-%   FIGURE 1 Classic spectrogram 
+%   .. figure:: 
 %
-%     A classic spectrogram of the spoken sentense. The dynamic range has
-%     been set to 50 dB, to highlight the most important features.
+%      Classic spectrogram 
 %
-%   FIGURE 2 Auditory filterbank representation
+%      A classic spectrogram of the spoken sentense. The dynamic range has
+%      been set to 50 dB, to highlight the most important features.
 %
-%     Auditory filterbank representation of the spoken sentense using
-%     gammatone filters on an Erb scale.  The dynamic range has been set to
-%     50 dB, to highlight the most important features.
+%   .. figure:: 
 %
-%   FIGURE 3 Auditory filterbank representation using Gaussian filters
+%      Auditory filterbank representation
 %
-%     Auditory filterbank representation of the spoken sentense using
-%     Gaussian filters on an Erb scale.  The dynamic range has been set to
-%     50 dB, to highlight the most important features.
+%      Auditory filterbank representation of the spoken sentense using
+%      gammatone filters on an Erb scale.  The dynamic range has been set to
+%      50 dB, to highlight the most important features.
+%
+%   .. figure:: 
+%
+%      Auditory filterbank representation using Gaussian filters
+%
+%      Auditory filterbank representation of the spoken sentense using
+%      Gaussian filters on an Erb scale.  The dynamic range has been set to
+%      50 dB, to highlight the most important features.
 %
 %   See also: freqtoaud, audfiltbw, gammatonefir, ufilterbank, filterbankrealdual
 %
@@ -111,6 +117,3 @@ norm(f-r_gauss)/norm(f)
 
 figure(3);
 plotfilterbank(coef_gauss,a,fc,fs,dynrange_for_plotting,'audtick');
-
-
-%OLDFORMAT

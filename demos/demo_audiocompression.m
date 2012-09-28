@@ -1,4 +1,4 @@
-%DEMO_AUDIOCOMPRESSION  Audio compression using N-term approx.
+%DEMO_AUDIOCOMPRESSION  Audio compression using N-term approx
 %
 %   This demos shows how to do audio compression using best N-term
 %   approximation of WMDCT transform.
@@ -7,20 +7,22 @@
 %   Then approximations with fixed number N of coefficients are obtained
 %   by:
 %
-%-    Linear approximation     - N coefficients with lowest frequency index
+%     * Linear approximation     - N coefficients with lowest frequency index
 %
-%-    Non-linear approximation - N largest coefficients (in magnitude)
+%     * Non-linear approximation - N largest coefficients (in magnitude)
 %
 %   The corresponding approximated signal is computed with inverse WMDCT.
 %
-%   FIGURE 1 Rate-distortion
+%   .. figure::
 %
-%     The figure shows the output Signal to Noise Ratio (SNR) as a function of
-%     the number of retained coefficients.
-%     Nota: actually, inverse WMDCT is not used, as Parseval theorem states
-%     that the norm of a signal equals the norm of the sequence of its wmdct
-%     coefficients. The latter is used for computing SNRs.
+%      Rate-distorition plot
 %
+%      The figure shows the output Signal to Noise Ratio (SNR) as a function
+%      of the number of retained coefficients.
+%
+%      Note: actually, inverse WMDCT is not used, as Parseval theorem states
+%      that the norm of a signal equals the norm of the sequence of its
+%      wmdct coefficients. The latter is used for computing SNRs.
 
 % Load audio signal
 % Use the 'glockenspiel' signal.
@@ -60,28 +62,10 @@ end
 % Plot
 figure(1);
 
-if isoctave
-  plot(krange*NbTimeSteps,SNR_NL(krange),'x-b');
-  hold on;
-  plot(krange*NbTimeSteps,SNR_L(krange),'o-r');
-  axis tight; grid;
-  hold off;
-  xlabel('Number of Samples');
-  ylabel('SNR (dB)');
-  
-else
-
-  set(gca,'fontsize',14);
-  plot(krange*NbTimeSteps,SNR_NL(krange),'x-b',...
-       krange*NbTimeSteps,SNR_L(krange),'o-r');
-  axis tight; grid;
-  legend('Best N-term','Linear');
-  xlabel('Number of Samples', 'fontsize',14);
-  ylabel('SNR (dB)','fontsize',14);
-end;
-
-
-
-
-
-%OLDFORMAT
+set(gca,'fontsize',14);
+plot(krange*NbTimeSteps,SNR_NL(krange),'x-b',...
+     krange*NbTimeSteps,SNR_L(krange),'o-r');
+axis tight; grid;
+legend('Best N-term','Linear');
+xlabel('Number of Samples', 'fontsize',14);
+ylabel('SNR (dB)','fontsize',14);
