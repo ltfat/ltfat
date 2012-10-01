@@ -10,11 +10,22 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %
 %   *fgrad* and *tgrad* can be obtained by the routine |gabphasegrad|_.
 %
-%   The standard way of calling this routine to generate a reassigned
-%   spectrogram from a signal *f* is::
+%   Examples:
+%   ---------
 %
-%     [fgrad, tgrad, c] = gabphasegrad('dgt',f,'gauss',a,M);
+%   The following example demonstrates how to manually create a
+%   reassigned spectrogram. An easier way is to just call |resgram|_:::
+%
+%     % Create reassigned vector field of the bat signal.
+%     a=4;
+%     M=100
+%     [tgrad, fgrad, c] = gabphasegrad('dgt',bat,'gauss',a,M);
+%
+%     % Perform the actual reassignment
 %     sr = gabreassign(abs(c).^2,tgrad,fgrad,a);
+%
+%     % Display it using plotdgt
+%     plotdgt(sr,a,143000,50);
 %  
 %   See also: resgram, gabphasegrad
 %

@@ -20,7 +20,6 @@
 %     DEMO_PBSPLINE         - How to use PBSPLINE.
 %     DEMO_GABMIXDUAL       - How to use MIXDUAL.
 %     DEMO_GABMUL           - Time-frequency localization by Gabor multiplier.
-%     DEMO_ZAK              - Zak transform of a Gauss function.
 %     DEMO_PHASEPLOT        - Phaseplots.
 %     DEMO_ISGRAM           - Iterative spectrogram reconstruction.
 %     DEMO_NEXTFASTFFT      - Next fast FFT size.

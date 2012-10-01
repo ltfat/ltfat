@@ -1,14 +1,14 @@
 %DEMO_PGAUSS  How to use PGAUSS
 %
-%  This script illustrates various properties of the
-%  Gaussian function.
+%   This script illustrates various properties of the Gaussian function.
 %
-%  FIGURE 1 Window+Dual+Tight
+%   .. figure::
 %
-%   This figure shows an optimally centered Gaussian for a 
-%   given Gabor system, its canonical dual and tight windows
-%   and the DFTs of these windows.
+%     Window+Dual+Tight
 %
+%     This figure shows an optimally centered Gaussian for a 
+%     given Gabor system, its canonical dual and tight windows
+%     and the DFTs of these windows.
 
 disp('Type "help demo_pgauss" to see a description of how this demo works.');
 
@@ -100,7 +100,3 @@ title('Tight window generated from g');
 subplot(3,2,6);
 plot(gtightf_plot);
 title('tight window, frequency domain');
-
-
-
-%OLDFORMAT

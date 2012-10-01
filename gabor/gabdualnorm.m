@@ -30,10 +30,9 @@ function [o1,o2]=gabdualnorm(g,gamma,a,M,varargin);
 %   `gabdualnorm(g,gamma,a,M,L)` does the same, but considers a transform
 %   length of *L*.
 %
-%   `gabdualnorm(g,gamma,a,M,[],lt)` or `gabdualnorm(g,gamma,a,M,L,lt)` does
-%   the same for a non-separable lattice specified by *lt*. Please see the
-%   help of |matrix2latticetype|_ for a precise description of the parameter
-%   *lt*.
+%   `gabdualnorm(g,gamma,a,M,'lt',lt)` does the same for a non-separable
+%   lattice specified by *lt*. Please see the help of |matrix2latticetype|_
+%   for a precise description of the parameter *lt*.
 %
 %   `gabdualnorm` can be used to get the maximum relative reconstruction
 %   error when using the two specified windows. Consider the following code
@@ -61,7 +60,7 @@ end;
 
 definput.keyvals.L=[];
 definput.keyvals.lt=[0 1];
-[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 %% ------ step 2: Verify a, M and L
 if isempty(L)
@@ -78,13 +77,13 @@ if isempty(L)
     end;
 
     % ----- step 2b : Verify a, M and get L from the window length ----------
-    L=dgtlength(Ls,a,M,lt);
+    L=dgtlength(Ls,a,M,kv.lt);
 
 else
 
     % ----- step 2a : Verify a, M and get L
 
-    Luser=dgtlength(L,a,M,lt);
+    Luser=dgtlength(L,a,M,kv.lt);
     if Luser~=L
         error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
                'is L=%i. See the help of DGTLENGTH for the requirements.'],...
@@ -93,10 +92,10 @@ else
 
 end;
 
-[g,info]=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+[g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
 
-[g,    info_g]     = gabwin(g,    a,M,L,lt,'callfun','GABDUALNORM');
-[gamma,info_gamma] = gabwin(gamma,a,M,L,lt,'callfun','GABDUALNORM');
+[g,    info_g]     = gabwin(g,    a,M,L,kv.lt,'callfun','GABDUALNORM');
+[gamma,info_gamma] = gabwin(gamma,a,M,L,kv.lt,'callfun','GABDUALNORM');
  
 % gamma must have the correct length, otherwise dgt will zero-extend it
 % incorrectly using postpad instead of fir2long
@@ -106,13 +105,13 @@ gamma=fir2long(gamma,L);
 if a>M
 
   % Calculate the right-hand side of the Wexler-Raz equations.
-  rhs=dgt(gamma,g,a,M,L,lt);
+  rhs=dgt(gamma,g,a,M,L,'lt',kv.lt);
   scalconst=1;
   
 else
   
   % Calculate the right-hand side of the Wexler-Raz equations.
-  rhs=dgt(gamma,g,M,a,L,lt);
+  rhs=dgt(gamma,g,M,a,L,'lt',kv.lt);
   
   scalconst=a/M;
   

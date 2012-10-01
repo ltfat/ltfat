@@ -5,17 +5,21 @@
 %   and a test signal, and plots the windows and the energy of the 
 %   coefficients.
 %
-%   FIGURE 1 windows + dual windows
+%   ..figure::
 %
-%    This figure shows the window functions used and the corresponding
-%    canonical dual windows. 
+%     Windows + dual windows
+% 
+%     This figure shows the window functions used and the corresponding
+%     canonical dual windows. 
 %
-%   FIGURE 2 spectrogram (absolute value of coefficients in dB)
+%   ..figure::
 %
-%    This figure shows a (color coded) image of the nsdgt coefficient
-%    modulus. 
+%     Spectrogram (absolute value of coefficients in dB)
 %
-%   SEE ALSO:  NSDGT, INSDGT, NSGABDUAL
+%     This figure shows a (color coded) image of the nsdgt coefficient
+%     modulus. 
+%
+%   See also:  nsdgt, insdgt, nsgabdual
 
 disp(['Type "help demo_nsdgt" to see a description of how this example',...
   ' works.']);
@@ -85,5 +89,3 @@ rec_err = norm(f-f_r)/norm(f);
 
 fprintf(['Relative error of reconstruction (should be close to zero.):'...
     '   %e \n'],rec_err);
-
-%OLDFORMAT

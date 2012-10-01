@@ -67,51 +67,40 @@ end;
 
 % Define initial value for flags and key/value pairs.
 definput.keyvals.Ls=[];
-definput.keyvals.dim=[];
+definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
 
-[flags,kv]=ltfatarghelper({'Ls','dim',},definput,varargin);
-
-wasrow=0;
-
-if isnumeric(g)
-  if size(g,2)>1
-    if size(g,1)>1
-      error('g must be a vector');
-    else
-      % g was a row vector.
-      g=g(:);
-      
-      % If the input window is a row vector, and the dimension of c is
-      % equal to two, the output signal will also
-      % be a row vector.
-      if ndims(coef)==2
-        wasrow=1;
-      end;
-    end;
-  end;
-end;
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 N=size(coef,2);
 W=size(coef,3);
+
+% Make a dummy call to test the input parameters
+Lsmallest=dgtlength(1,a,M,kv.lt);
+
 M2=floor(M/2)+1;
 
 if M2~=size(coef,1)
   error('Mismatch between the specified number of channels and the size of the input coefficients.');
 end;
 
-% use assert_squarelat to check a and the window size.
-assert_squarelat(a,M,1,'IDGTREAL');
-
 L=N*a;
 
-g=gabwin(g,a,M,L,'callfun','IDGTREAL');
-
-if ~isreal(g)
-  error('Window must be real-valued.');
+if rem(L,Lsmallest)>0
+    error('%s: Invalid size of coefficient array.',upper(mfilename));
 end;
 
-assert_L(L,size(g,1),L,a,M,'IDGTREAL');
+%% ----- step 3 : Determine the window 
+
+[g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
+
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
+
+if ~isreal(g)
+  error('%s: Window must be real-valued.',upper(mfilename));
+end;
 
 % Do the actual computation.
 f=comp_idgtreal(coef,g,a,M,L,flags.do_timeinv);
@@ -123,4 +112,4 @@ else
   kv.Ls=L;
 end;
 
-f=comp_sigreshape_post(f,kv.Ls,wasrow,[0; W]);
+f=comp_sigreshape_post(f,Ls,0,[0; W]);

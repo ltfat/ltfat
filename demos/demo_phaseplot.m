@@ -1,12 +1,14 @@
 %DEMO_PHASEPLOT  Give demos of nice phaseplots
 %
-%   This script creates a synthetic signal and then uses 'phaseplot' on it,
-%   using several of the possible options
+%   This script creates a synthetic signal and then uses |phaseplot|_ on it,
+%   using several of the possible options.
 % 
-%   For real-life signal only small parts should be analyzed. In the chosen 
+%   For real-life signal only small parts should be analyzed. In the chosen
 %   demo the fundamental frequency of the speaker can be nicely seen.
 %
-%   FIGURE 1 Synthetic signal
+%   .. figure:: 
+%
+%     Synthetic signal
 %
 %     Compare this to the pictures in reference 2 and 3. In 
 %     the first two figures a synthetic signal is analyzed. It consists of a 
@@ -19,16 +21,20 @@
 %     that the rectangular part in the middle of the signal can be seen by the
 %     phase plot, but not by the spectogram.
 % 
-%     In the frequency-invariant version the fundamental frequency of the
+%     In the frequency-invariant version, the fundamental frequency of the
 %     sinusoid can still be guessed as the position of an horizontal
 %     asymptotic line.
 %
-%   FIGURE 2 Synthetic signal, thresholded.
+%   .. figure::
+%
+%     Synthetic signal, thresholded.
 %
 %     This figure shows the same as Figure 1, except that values with low
 %     magnitude has been removed.
 %
-%   FIGURE 3 Speech signal.
+%   .. figure::
+%
+%     Speech signal.
 %
 %     The figure shows a part of the 'linus' signal. The fundamental
 %     frequency of the speaker can be nicely seen.
@@ -96,4 +102,3 @@ subplot(3,1,3);
 phaseplot(f,'thr',.001)
 title('Phaseplot of linus - thresholded version');
 
-%OLDFORMAT

@@ -85,6 +85,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   end;
   
   definput.keyvals.Ls=[];
+  definput.keyvals.lt=[0 1];
   definput.keyvals.tol=1e-6;
   definput.keyvals.maxit=100;
   definput.keyvals.printstep=10;
@@ -93,35 +94,38 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   definput.flags.startphase={'zero','rand','int'};
   
   [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
-  
-  wasrow=0;
-  
-  if isnumeric(g)
-    if size(g,2)>1
-      if size(g,1)>1
-        error('g must be a vector');
-      else
-        % g was a row vector.
-        g=g(:);
-        
-        % If the input window is a row vector, and the dimension of c is
-        % equal to two, the output signal will also
-        % be a row vector.
-        if ndims(s)==2
-          wasrow=1;
-        end;
-      end;
-    end;
-  end;
-  
-  M2=size(s,1);
+
   N=size(s,2);
   W=size(s,3);
   
-  % use assert_squarelat to check a and the window size.
-  assert_squarelat(a,M,1,'ISGRAMREAL');
+  % Make a dummy call to test the input parameters
+  Lsmallest=dgtlength(1,a,M,kv.lt);
+  
+  M2=floor(M/2)+1;
+  
+  if M2~=size(s,1)
+      error('Mismatch between the specified number of channels and the size of the input coefficients.');
+  end;
   
   L=N*a;
+  
+  if rem(L,Lsmallest)>0
+      error('%s: Invalid size of coefficient array.',upper(mfilename));
+  end;
+  
+  %% ----- step 3 : Determine the window 
+  
+  [g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
+  
+  if L<info.gl
+      error('%s: Window is too long.',upper(mfilename));
+  end;
+  
+  if ~isreal(g)
+      error('%s: Window must be real-valued.',upper(mfilename));
+  end;
+  
+  %% Actual computation
   
   sqrt_s=sqrt(s);
   
@@ -145,13 +149,9 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     c=constructphase(s2,g,a);
     c=c(1:M2,:);
   end;
-  
-  g  = gabwin(g,a,M,L,'ISGRAMREAL');
-  
+    
   gd = gabdual(g,a,M);
-  
-  assert_L(L,size(g,1),L,a,M,'ISGRAMREAL');
-  
+    
   % For normalization purposes
   norm_s=norm(s,'fro');
   
@@ -211,7 +211,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     Ls=L;
   end;
   
-  f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
+  f=comp_sigreshape_post(f,Ls,0,[0; W]);
   
 %  Subfunction to compute the objective function for the BFGS method.
 function [f,df]=objfun(x,g,a,M,s);

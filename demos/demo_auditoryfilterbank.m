@@ -1,4 +1,4 @@
-%DEMO_AUDITORYFILTERBANK
+%DEMO_AUDITORYFILTERBANK  Construct an auditory filterbank
 %
 %   In this file we construct a uniform filterbank using a the impulse
 %   response of a 4th order gammatone for each channel. The center frequencies
@@ -9,7 +9,7 @@
 %   nice plot, 4 channels per Erb has been used.
 %
 %   The filterbank cover only the positive frequencies, so we must use
-%   filterbankrealdual and filterbankrealbounds.
+%   |filterbankrealdual|_ and |filterbankrealbounds|_.
 %
 %   .. figure:: 
 %
@@ -39,8 +39,9 @@
 %   References: glasberg1990daf
 
 
-% Use the 'cocktailparty' spoken sentense.
+% Use part of the 'cocktailparty' spoken sentense.
 f=cocktailparty;
+f=f(1:64000,:);
 fs=44100;
 a=8;
 channels_per_erb=4;
@@ -113,7 +114,6 @@ r_gauss=2*real(ifilterbank(coef_gauss,gd_gauss,a));
 
 disp('Error in reconstruction, should be close to zero.');
 norm(f-r_gauss)/norm(f)
-
 
 figure(3);
 plotfilterbank(coef_gauss,a,fc,fs,dynrange_for_plotting,'audtick');

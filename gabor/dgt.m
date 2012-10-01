@@ -64,10 +64,10 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %   Non-separable lattices:
 %   -----------------------
 %
-%   `dgt(f,g,a,M,[],lt)` or `dgt(f,g,a,M,L,lt)` computes the DGT for a
-%   non-separable lattice given by the time-shift *a*, number of channels
-%   *M* and lattice type *lt*. Please see the help of |matrix2latticetype|_
-%   for a precise description of the parameter *lt*.
+%   `dgt(f,g,a,M,'lt',lt)` computes the DGT for a non-separable lattice
+%   given by the time-shift *a*, number of channels *M* and lattice type
+%   *lt*. Please see the help of |matrix2latticetype|_ for a precise
+%   description of the parameter *lt*.
 %
 %   The non-separable discrete Gabor transform is defined as follows:
 %   Consider a window *g* and a one-dimensional signal *f* of length *L* and
@@ -115,7 +115,7 @@ end;
 definput.keyvals.L=[];
 definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 
 %% ----- step 1 : Verify f and determine its length -------
@@ -127,12 +127,12 @@ definput.flags.phase={'freqinv','timeinv'};
 if isempty(L)
 
     % ----- step 2b : Verify a, M and get L from the signal length f----------
-    L=dgtlength(Ls,a,M,lt);
+    L=dgtlength(Ls,a,M,kv.lt);
 
 else
 
     % ----- step 2a : Verify a, M and get L
-    Luser=dgtlength(L,a,M,lt);
+    Luser=dgtlength(L,a,M,kv.lt);
     if Luser~=L
         error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
                'is L=%i. See the help of DGTLENGTH for the requirements.'],...
@@ -143,7 +143,7 @@ end;
 
 %% ----- step 3 : Determine the window 
 
-[g,info]=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+[g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
 
 if L<info.gl
   error('%s: Window is too long.',upper(mfilename));
@@ -161,4 +161,4 @@ end;
 
 %% ------ call the computation subroutines 
 
-c=comp_dgt(f,g,a,M,lt,flags.do_timeinv,0,0);
+c=comp_dgt(f,g,a,M,kv.lt,flags.do_timeinv,0,0);

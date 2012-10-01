@@ -18,6 +18,31 @@ function c=zak(f,a);
 %
 %   .. math:: c(m+1,n+1) = \frac{1}{\sqrt{N}}\sum_{k=0}^{N-1}f(m-ka+1)e^{2\pi ink/M}
 %
+%   Examples:
+%   ---------
+%
+%   This figure shows the absolute value of the Zak-transform of a Gaussian.
+%   Notice that the Zak-transform is 0 in only a single point right in the
+%   middle of the plot :::
+%
+%     a=64;
+%     L=a^2; 
+%     g=pgauss(L);
+%     zg=zak(g,a);
+%
+%     surf(abs(zg));
+%   
+%   This figure shows the absolute value of the Zak-transform of a 4th order
+%   Hermite function.  Notice how the Zak transform of the Hermite functions
+%   is zero on a circle centered on the corner :::
+%
+%     a=64;
+%     L=a^2; 
+%     g=pherm(L,4);
+%     zg=zak(g,a);
+%
+%     surf(abs(zg));
+%
 %   See also:  izak
 %
 %   References: ja94-4 bohl97-1

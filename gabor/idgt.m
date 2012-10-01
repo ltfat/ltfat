@@ -46,10 +46,10 @@ function [f,g]=idgt(coef,g,a,varargin)
 %   Non-separable lattices:
 %   -----------------------
 %
-%   `idgt(c,g,a,[],lt)` or `idgt(c,g,Ls,lt)` computes the Gabor expansion of
-%   the input coefficients *c* with respect to the window *g*, time shift
-%   *a* and lattice type *lt*. Please see the help of |matrix2latticetype|_
-%   for a precise description of the parameter *lt*.
+%   `idgt(c,g,a,'lt',lt)` computes the Gabor expansion of the input
+%   coefficients *c* with respect to the window *g*, time shift *a* and
+%   lattice type *lt*. Please see the help of |matrix2latticetype|_ for a
+%   precise description of the parameter *lt*.
 %
 %   Assume that `f=dgt(c,g,a,L,lt)` for an array *c* of size $M\times N$.
 %   Then the following holds for $k=0,\ldots,L-1$:
@@ -91,7 +91,7 @@ end;
 definput.keyvals.Ls=[];
 definput.keyvals.lt=[0 1];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,kv,Ls,lt]=ltfatarghelper({'Ls','lt'},definput,varargin);
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 M=size(coef,1);
 N=size(coef,2);
@@ -108,7 +108,7 @@ end;
 
 L=N*a;
 
-Ltest=dgtlength(L,a,M,lt);
+Ltest=dgtlength(L,a,M,kv.lt);
 
 if Ltest~=L
     error(['%s: Incorrect size of coefficient array or "a" parameter. See ' ...
@@ -116,13 +116,13 @@ if Ltest~=L
           upper(mfilename))
 end;
 
-g=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+g=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
 
-if lt(2)==1
+if kv.lt(2)==1
     f=comp_idgt(coef,g,a,M,L,flags.do_timeinv);
 else
     g=fir2long(g,L);
-    f=comp_inonsepdgt(coef,g,a,lt,flags.do_timeinv,0);
+    f=comp_inonsepdgt(coef,g,a,kv.lt,flags.do_timeinv,0);
 end;
 
 % Cut or extend f to the correct length, if desired.

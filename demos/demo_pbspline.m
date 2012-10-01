@@ -1,16 +1,18 @@
 %DEMO_PBSPLINE  How to use PBSPLINE
 %
 %   This script illustrates various properties of the
-%   PBSPLINE function.
+%   |pbspline|_ function.
 %
-%   FIGURE 1 Three first splines
+%   .. figure::
 %
-%    This figure shows the three first splines (order 0,1 and 2)
-%    and their dual windows.
+%     Three first splines
 %
-%    Note that they are calculated for an even number of the parameter
-%    'a', meaning that they are not exactly splines, but a slightly
-%    smoother construction, that still form a partition of unity.
+%     This figure shows the three first splines (order 0,1 and 2)
+%     and their dual windows.
+%
+%     Note that they are calculated for an even number of the parameter *a*,
+%     meaning that they are not exactly splines, but a slightly smoother
+%     construction, that still form a partition of unity.
 %
 %   See also: pbspline, middlepad
 
@@ -120,6 +122,3 @@ title('Second order spline.');
 subplot(3,2,6);
 plot(xplot,fftshift(g3d));
 title('Dual window.');
-
-
-%OLDFORMAT

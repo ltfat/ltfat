@@ -1,16 +1,16 @@
-%DEMO_AUDSCALES  Plot of the different auditory scales.
+%DEMO_AUDSCALES  Plot of the different auditory scales
 %
-%  This demos generates a simple figure that shows the behaviour of
-%  the different audiory scales in the frequency range from 0 to 8000 Hz.
+%   This demos generates a simple figure that shows the behaviour of
+%   the different audiory scales in the frequency range from 0 to 8000 Hz.
 %
-%  .. figure::
+%   .. figure::
 %
 %     Auditory scales
 %
 %     The figure shows the behaviour of the audiory scales on a normalized
 %     frequency plot.
 %
-%  See also:  freqtoaud, audtofreq, audspace, audspacebw
+%   See also:  freqtoaud, audtofreq, audspace, audspacebw
 
 disp(['Type "help demo_audscales" to see a description of how this ', ...
       'demo works.']);

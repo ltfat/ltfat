@@ -6,19 +6,19 @@
 %   noisy communication channel. This is accomplished in the following
 %   steps in the demo:
 %
-%    1) Convert this digital signal into complex valued coefficients by
-%    QAM modulation.
+%     1) Convert this digital signal into complex valued coefficients by
+%        QAM modulation.
 %
-%    2) Construct the signal to be transmitted by an inverse Gabor
-%    transform of the complex coefficients
+%     2) Construct the signal to be transmitted by an inverse Gabor
+%        transform of the complex coefficients
 %
-%    3) "Transmit" the signal by applying a spreading operator to the
-%    signal and adding white noise
+%     3) "Transmit" the signal by applying a spreading operator to the
+%        signal and adding white noise
 %
-%    4) Convert the received signal into noisy coefficients by a Gabor
-%    transform
+%     4) Convert the received signal into noisy coefficients by a Gabor
+%        transform
 %
-%    5) Convert the noisy coefficients into bits by inverse QAM.
+%     5) Convert the noisy coefficients into bits by inverse QAM.
 %
 %   Some simplifications used to make this demo simple:
 %
@@ -34,7 +34,9 @@
 %       transmit zeros at the beginning and at the end, to flush the system
 %       properly.
 %
-%   FIGURE 1 Received coefficients.
+%   ..figure::
+%
+%     Received coefficients.
 %
 %     This figure shows the distribution in the complex plane of the 
 %     received coefficients. If the channel was perfect, all the points
@@ -131,5 +133,3 @@ faulty=sum(abs(receivedbits-inputdata))
 disp(' ');
 disp('Error rate:');
 faulty/nbits
-
-%OLDFORMAT
