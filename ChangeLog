@@ -1,3 +1,18 @@
+Version 1.1.2 2/10 2012
+	* Almost full support for non-separable Gabor laticces
+
+	* Multi-win support re-enabled in gabdual and gabtight
+
+	* Demos finally converted to new documentation system
+
+Version 1.1.1 30/3 2012
+	* Initial inclusion of the frames framework
+
+	* New and more flexible groupthresh
+
+	* Much improved framelasso and framegrouplasso replaces the old
+	lasso methods
+	
 Version 1.0.0 16/6 2011
 	* Auditory scales: Erb, bark, mel
 
