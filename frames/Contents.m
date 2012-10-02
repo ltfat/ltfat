@@ -18,7 +18,6 @@
 %    FRSYNMAT          - Frame synthesis operator matrix
 %    FRAMELENGTH       - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
-%    FRAMECOEFLENGTH   - Length of the coefficient array given a signal
 %
 %  Coefficients conversions
 %    FRAMECOEF2NATIVE  - Convert to native transform format
