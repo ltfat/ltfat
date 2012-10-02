@@ -11,7 +11,7 @@
 %       index are kept.
 %
 %     * Non-linear approximation: The *N* largest coefficients (in
-%     magnitude) are kept.
+%       magnitude) are kept.
 %
 %   The corresponding approximated signal can be computed using |iwmdct|_.
 %

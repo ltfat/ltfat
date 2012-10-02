@@ -31,7 +31,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %     'unlocbox'   Use unlocbox. This is the default.
 %
-%     'lsqr'       Use the Matlab `lsqr`function.
+%     'lsqr'       Use the Matlab `lsqr` function.
 %
 %     'print'      Display the progress.
 %
@@ -59,7 +59,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   definput.keyvals.Ls=[];
   definput.keyvals.tol=1e-6;
   definput.keyvals.maxit=100;
-  definput.flags.alg={'unlocbox','lsqr'};
+  definput.flags.alg={'lsqr','unlocbox'};
   definput.keyvals.printstep=10;
   definput.flags.print={'quiet','print'};
 
