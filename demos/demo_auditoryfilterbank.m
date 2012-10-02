@@ -8,7 +8,7 @@
 %   Each channel is subsampled by a factor of 8 (a=8), and to generate a
 %   nice plot, 4 channels per Erb has been used.
 %
-%   The filterbank cover only the positive frequencies, so we must use
+%   The filterbank covers only the positive frequencies, so we must use
 %   |filterbankrealdual|_ and |filterbankrealbounds|_.
 %
 %   .. figure:: 
@@ -26,14 +26,6 @@
 %      gammatone filters on an Erb scale.  The dynamic range has been set to
 %      50 dB, to highlight the most important features.
 %
-%   .. figure:: 
-%
-%      Auditory filterbank representation using Gaussian filters
-%
-%      Auditory filterbank representation of the spoken sentense using
-%      Gaussian filters on an Erb scale.  The dynamic range has been set to
-%      50 dB, to highlight the most important features.
-%
 %   See also: freqtoaud, audfiltbw, gammatonefir, ufilterbank, filterbankrealdual
 %
 %   References: glasberg1990daf
@@ -41,7 +33,7 @@
 
 % Use part of the 'cocktailparty' spoken sentense.
 f=cocktailparty;
-f=f(1:64000,:);
+f=f(20000:80000,:);
 fs=44100;
 a=8;
 channels_per_erb=4;
@@ -86,34 +78,3 @@ norm(f-r_gam)/norm(f)
 
 figure(2);
 plotfilterbank(coef_gam,a,fc,fs,dynrange_for_plotting,'audtick');
-
-
-%% ---------------  Gauss filters ----------------------------
-
-
-g_gauss=cell(M,1);
-
-% Account for the bandwidth specification to PGAUSS is for 79% of the ERB(integral).  
-bw_gauss=audfiltbw(fc)/0.79*1.5;
-
-for m=1:M
-  g_gauss{m}=pgauss(filterlength,'fs',fs,'bw',bw_gauss(m),'cf',fc(m));
-end;
-
-disp('Frame bound ratio for Gaussian filterbank, should be close to 1 if the filters are choosen correctly.');
-filterbankrealbounds(g_gauss,a,filterlength)
-
-% Synthesis filters
-gd_gauss=filterbankrealdual(g_gauss,a,filterlength);
-
-% Analysis transform
-coef_gauss=ufilterbank(f,g_gauss,a);
-
-% Synthesis transform
-r_gauss=2*real(ifilterbank(coef_gauss,gd_gauss,a));
-
-disp('Error in reconstruction, should be close to zero.');
-norm(f-r_gauss)/norm(f)
-
-figure(3);
-plotfilterbank(coef_gauss,a,fc,fs,dynrange_for_plotting,'audtick');

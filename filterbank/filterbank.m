@@ -14,8 +14,21 @@ function c=filterbank(f,g,a,varargin);
 %   The output coefficients are stored a cell array. More precisely, the
 %   n'th cell of *c*, `c{m}`, is a 2D matrix of size $M(n) \times W$ and
 %   containing the output from the m'th channel subsampled at a rate of
-%   $a(m)$.  `c{m}(n,l)` is thus the value of the coefficient for time index
+%   $a(m)$.  *c\{m\}(n,l)* is thus the value of the coefficient for time index
 %   *n*, frequency index *m* and signal channel *l*.
+%
+%   The coefficients *c* computed from the signal *f* and the filterbank
+%   with windows *g_m* are defined by
+%
+%   ..            L-1
+%      c_m(n+1) = sum f(l+1) * g_m (a(m)n-l+1)
+%                 l=0
+%
+%   .. math:: c_m\left(n+1\right)=\sum_{l=0}^{L-1}f\left(l+1\right)g\left(a_mn-l+1\right)
+%
+%   where $an-l$ is computed modulo $L$.
+%
+%   See also: ufilterbank, ifilterbank, pfilt
 %
 %   References: bohlfe02
     

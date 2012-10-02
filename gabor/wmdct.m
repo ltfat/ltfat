@@ -2,8 +2,7 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %WMDCT  Windowed MDCT transform
 %   Usage:  c=wmdct(f,g,M);
 %           c=wmdct(f,g,M,L);
-%           [c,Ls]=wmdct(f,g,M);
-%           [c,Ls]=wmdct(f,g,M,L);
+%           [c,Ls]=wmdct(...);
 %
 %   Input parameters:
 %         f     : Input data
@@ -11,7 +10,7 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %         M     : Number of bands.
 %         L     : Length of transform to do.
 %   Output parameters:
-%         c     : 2*M x N array of coefficients.
+%         c     : $M \times N$ array of coefficients.
 %         Ls    : Length of input signal.
 %
 %   `wmdct(f,g,M)` computes a Windowed Modified Discrete Cosine Transform with
@@ -69,7 +68,21 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %      c(m+1,n+1) = sum f(l+1)*sin(pi*(m+.5)*l/M+pi/4)*g(l-n*M+1)
 %                   l=0
 %
-%   .. math:: c\left(m+1,n+1\right) = \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)
+%   .. math:: c\left(m+1,n+1\right) =
+%      \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)
+%
+%   Examples:
+%   ---------
+%
+%   The following example shows the WMDCT coefficients (128 channels) of the
+%   |greasy|_ test signal:::
+%
+%     fs=16000; % Sampling rate
+%     c=wmdct(greasy,{'hann',0.02*fs'},128);
+%     plotwmdct(c,fs,90);
+%
+%   Compare the visual difference with the redundant expansion of the
+%   same signal given in the example of the |dgtreal|_ function.
 %
 %   See also:  iwmdct, wilwin, dwilt, wildual, wilorth
 %

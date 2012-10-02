@@ -15,6 +15,16 @@ function c=ufilterbank(f,g,a,varargin);
 %   a matrix, the output will be 3-dimensional, and the third dimension will
 %   correspond to the columns of the input signal.
 %
+%   The coefficients *c* computed from the signal *f* and the filterbank
+%   with windows *g_m* are defined by
+%
+%   ..              L-1
+%      c(n+1,m+1) = sum f(l+1) * g_m (an-l+1)
+%                   l=0
+%
+%   .. math:: c\left(n+1,m+1\right)=\sum_{l=0}^{L-1}f\left(l+1\right)g\left(an-l+1\right)
+
+%
 %   See also: ifilterbank, filterbankdual
 %
 %   References: bohlfe02

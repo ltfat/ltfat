@@ -12,6 +12,17 @@ function h=pfilt(f,g,varargin)
 %   `pfilt(f,g,a,dim)` filters along dimension dim. The default value of
 %   [] means to filter along the first non-singleton dimension.
 %
+%   The coefficients obtained from filtering a signal *f* by a filter *g* are
+%   defined by
+%
+%   ..          L-1
+%      c(n+1) = sum f(l+1) * g(an-l+1)
+%               l=0
+%
+%   .. math:: c\left(n+1\right)=\sum_{l=0}^{L-1}f\left(l+1\right)g\left(an-l+1\right)
+%
+%   where $an-l$ is computed modulo $L$.
+%
 %   See also: pconv
 
   

@@ -58,13 +58,13 @@ for ii=1:length(Lr);
               g=crand(Lw,1);
           end;
                     
-          gd=gabdual(g,a,M,[],lt);
-          gd_multi=gabdual(g,a,M,[],lt,'nsalg',1);
-          gd_shear=gabdual(g,a,M,[],lt,'nsalg',2);
+          gd=gabdual(g,a,M,'lt',lt);
+          gd_multi=gabdual(g,a,M,'lt',lt,'nsalg',1);
+          gd_shear=gabdual(g,a,M,'lt',lt,'nsalg',2);
 
-          gt=gabtight(g,a,M,[],lt);
-          gt_multi=gabtight(g,a,M,[],lt,'nsalg',1);
-          gt_shear=gabtight(g,a,M,[],lt,'nsalg',2);
+          gt=gabtight(g,a,M,'lt',lt);
+          gt_multi=gabtight(g,a,M,'lt',lt,'nsalg',1);
+          gt_shear=gabtight(g,a,M,'lt',lt,'nsalg',2);
 
           % For testing, we need to call some computational subroutines directly.
           gsafe=fir2long(g,L);
@@ -81,7 +81,7 @@ for ii=1:length(Lr);
               
               % --------- test reference comparison ------------
               
-              cc = dgt(f,g,a,M,[],lt);
+              cc = dgt(f,g,a,M,'lt',lt);
               
               cc_ref = ref_nonsepdgt(f,g,a,M,lt);
               
@@ -114,7 +114,7 @@ for ii=1:length(Lr);
               
               % -------- test reconstruction using canonical dual -------
               
-              r=idgt(cc,gd,a,[],lt);
+              r=idgt(cc,gd,a,'lt',lt);
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -145,8 +145,8 @@ for ii=1:length(Lr);
               
               % -------- test reconstruction using canonical tight -------
               
-              cc = dgt(f,gt,a,M,[],lt);
-              r=idgt(cc,gt,a,[],lt);  
+              cc = dgt(f,gt,a,M,'lt',lt);
+              r=idgt(cc,gt,a,'lt',lt);  
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -159,7 +159,7 @@ for ii=1:length(Lr);
           
           % -------- test frame bounds for tight frame -------
           
-          B=gabframebounds(gt,a,M,[],lt);
+          B=gabframebounds(gt,a,M,'lt',lt);
           res=B-1;
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
           stext=sprintf(['FRB   %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
@@ -199,14 +199,14 @@ for ii=1:length(Lr);
           disp(stext)
 
           % ---- Test gabdualnorm --------------------------------------
-          res=gabdualnorm(g,gd,a,M,[],lt);
+          res=gabdualnorm(g,gd,a,M,'lt',lt);
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
           stext=sprintf(['DUALNORM1 %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                          '%s'], rname,L,Lw,a,M,lt(1),lt(2),res,fail);
           
           disp(stext);
           
-          [o1,o2]=gabdualnorm(g,gd,a,M,[],lt);
+          [o1,o2]=gabdualnorm(g,gd,a,M,'lt',lt);
           res=o1-1+o2;
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
           stext=sprintf(['DUALNORM2 %s L:%3i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...

@@ -2,8 +2,8 @@ function [o1,o2]=gabdualnorm(g,gamma,a,M,varargin);
 %GABDUALNORM  Measure of how close a window is to being a dual window
 %   Usage:  dn=gabdualnorm(g,gamma,a,M);
 %           dn=gabdualnorm(g,gamma,a,M,L);
-%           [scal,res]=gabdualnorm(g,gamma,a,M);
-%           [scal,res]=gabdualnorm(g,gamma,a,M,L);
+%           dn=gabdualnorm(g,gamma,a,M,'lt',lt);
+%           [scal,res]=gabdualnorm(...);
 %
 %   Input parameters:
 %         gamma  : input window..

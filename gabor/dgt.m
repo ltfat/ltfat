@@ -2,9 +2,8 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %DGT  Discrete Gabor transform
 %   Usage:  c=dgt(f,g,a,M);
 %           c=dgt(f,g,a,M,L);
-%           c=dgt(f,g,a,M,L,lt);
-%           [c,Ls]=dgt(f,g,a,M);
-%           [c,Ls]=dgt(f,g,a,M,L);
+%           c=dgt(f,g,a,M,'lt',lt);
+%           [c,Ls]=dgt(...);
 %
 %   Input parameters:
 %         f     : Input data.
@@ -95,6 +94,28 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %
 %     'timeinv'  Compute a DGT using a time-invariant phase. This
 %                convention is typically used in filter bank algorithms.
+%
+%   Examples:
+%   ---------
+%
+%   In the following example we create a Hermite function, which is a
+%   complex-valued function with a circular spectrogram, and visualize
+%   the coefficients using both `imagesc` and |plotdgt|_:::
+%
+%     a=10;
+%     M=40;
+%     L=a*M;
+%     h=pherm(L,4); % 4th order hermite function.
+%     c=dgt(h,'gauss',a,M);
+%
+%     % Simple plot: The squared modulus of the coefficients on linear scale
+%     figure(1);
+%     imagesc(abs(c).^2);
+%
+%     % Better plot: zero-frequency is displayed in the middle, and the
+%     % coefficients are show on a logarithmic scale.
+%     figure(2);
+%     plotdgt(c,a,'dynrange',50);
 %
 %   See also:  idgt, gabwin, dwilt, gabdual, phaselock
 %

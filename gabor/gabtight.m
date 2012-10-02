@@ -3,7 +3,7 @@ function gt=gabtight(varargin)
 %   Usage:  gt=gabtight(a,M,L);
 %           gt=gabtight(g,a,M);
 %           gt=gabtight(g,a,M,L);
-%           gd=gabtight(g,a,M,L,lt);
+%           gd=gabtight(g,a,M,'lt',lt);
 %
 %   Input parameters:
 %         g     : Gabor window.
@@ -34,12 +34,32 @@ function gt=gabtight(varargin)
 %   length *L*. Unless the input window *g* is a FIR window, the returned
 %   tight window will have length *L*.
 %
-%   `gabtight(g,a,M,[],lt)` or `gabtight(g,a,M,L,lt)` does the same for a
-%   non-separable lattice specified by *lt*. Please see the help of
-%   |matrix2latticetype|_ for a precise description of the parameter *lt*.
+%   `gabtight(g,a,M,'lt',lt)` does the same for a non-separable lattice
+%   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
+%   precise description of the parameter *lt*.
 %
 %   If $a>M$ then an orthonormal window of the Gabor Riesz sequence with
 %   window *g* and parameters *a* and *M* will be calculated.
+%
+%   Examples:
+%   ---------
+%
+%   The following example shows the canonical tight window of the Gaussian
+%   window. This is calculated by default by |gabtight|_ if no window is
+%   specified:::
+%
+%     a=20;
+%     M=30;
+%     L=300;
+%     gt=gabtight(a,M,L);
+%     
+%     % Simple plot in the time-domain
+%     figure(1);
+%     plot(gt);
+%
+%     % Frequency domain
+%     figure(2);
+%     magresp(gt,'dynrange',100);
 %
 %   See also:  gabdual, gabwin, fir2long, dgt
 
@@ -75,7 +95,7 @@ end;
 definput.keyvals.L=[];
 definput.keyvals.lt=[0 1];
 definput.keyvals.nsalg=0;
-[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 
 %% ------ step 2: Verify a, M and L
@@ -89,13 +109,13 @@ if isempty(L)
     end;
 
     % ----- step 2b : Verify a, M and get L from the window length ----------
-    L=dgtlength(Ls,a,M,lt);
+    L=dgtlength(Ls,a,M,kv.lt);
 
 else
 
     % ----- step 2a : Verify a, M and get L
 
-    Luser=dgtlength(L,a,M,lt);
+    Luser=dgtlength(L,a,M,kv.lt);
     if Luser~=L
         error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
                'is L=%i. See the help of DGTLENGTH for the requirements.'],...
@@ -107,7 +127,7 @@ end;
 
 %% ----- step 3 : Determine the window 
 
-[g,info]=gabwin(g,a,M,L,lt,'callfun',upper(mfilename));
+[g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
 
 if L<info.gl
   error('%s: Window is too long.',upper(mfilename));
@@ -129,7 +149,7 @@ end;
 
 % -------- Compute ------------- 
 
-if lt(2)==1
+if kv.lt(2)==1
     % Rectangular case
 
     if (info.gl<=M) && (R==1)
@@ -166,18 +186,18 @@ else
     % Just in case, otherwise the call is harmless. 
     g=fir2long(g,L);
 
-    if (kv.nsalg==1) || (kv.nsalg==0 && lt(2)<=2) 
+    if (kv.nsalg==1) || (kv.nsalg==0 && kv.lt(2)<=2) 
         
-        mwin=comp_nonsepwin2multi(g,a,M,lt,L);
+        mwin=comp_nonsepwin2multi(g,a,M,kv.lt,L);
         
-        gtfull=comp_gabtight_long(mwin,a*lt(2),M)*scale;
+        gtfull=comp_gabtight_long(mwin,a*kv.lt(2),M)*scale;
         
         % We need just the first vector
         gt=gtfull(:,1);
             
     else
         
-        [s0,s1,br] = shearfind(L,a,M,lt);        
+        [s0,s1,br] = shearfind(L,a,M,kv.lt);        
         
         if s1 ~= 0
             g = comp_pchirp(L,s1).*g;
@@ -210,7 +230,7 @@ end;
 
 % --------- post process result -------
 
-if isreal(g) && (lt(2)==1 || lt(2)==2)
+if isreal(g) && (kv.lt(2)==1 || kv.lt(2)==2)
   % If g is real and the lattice is either rectangular or quinqux, then
   % the output is known to be real.
   gt=real(gt);

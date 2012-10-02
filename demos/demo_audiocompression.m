@@ -1,17 +1,19 @@
 %DEMO_AUDIOCOMPRESSION  Audio compression using N-term approx
 %
 %   This demos shows how to do audio compression using best N-term
-%   approximation of WMDCT transform.
+%   approximation of an |wmdct|_ transform.
 %
-%   The signal is transformed using an orthonormal WMDCT transform.
-%   Then approximations with fixed number N of coefficients are obtained
+%   The signal is transformed using an orthonormal |wmdct|_ transform.
+%   Then approximations with a fixed number *N* of coefficients are obtained
 %   by:
 %
-%     * Linear approximation     - N coefficients with lowest frequency index
+%     * Linear approximation: The *N* coefficients with lowest frequency
+%       index are kept.
 %
-%     * Non-linear approximation - N largest coefficients (in magnitude)
+%     * Non-linear approximation: The *N* largest coefficients (in
+%     magnitude) are kept.
 %
-%   The corresponding approximated signal is computed with inverse WMDCT.
+%   The corresponding approximated signal can be computed using |iwmdct|_.
 %
 %   .. figure::
 %
@@ -20,39 +22,41 @@
 %      The figure shows the output Signal to Noise Ratio (SNR) as a function
 %      of the number of retained coefficients.
 %
-%      Note: actually, inverse WMDCT is not used, as Parseval theorem states
-%      that the norm of a signal equals the norm of the sequence of its
-%      wmdct coefficients. The latter is used for computing SNRs.
+%   Note: The inverse WMDCT is not needed for computing computing
+%   SNRs. Instead Parseval theorem states that the norm of a signal equals
+%   the norm of the sequence of its |wmdct|_ coefficients.
 
 % Load audio signal
 % Use the 'glockenspiel' signal.
 sig=gspi;
 
 % Shorten signal
-SigLength = 2^16;
-sig = sig(1:SigLength);
+L = 2^16;
+sig = sig(1:L);
 
-% Initializations
-NbFreqBands = 1024;
-NbTimeSteps = SigLength/NbFreqBands;
+% Number of frequency channels
+M = 1024;
+
+% Number of time steps
+N = L/M;
 
 % Generate window
-gamma = wilorth(NbFreqBands,SigLength);
+gamma = wilorth(M,L);
 
 % Compute wmdct coefficients
-c = wmdct(sig,gamma,NbFreqBands);
+c = wmdct(sig,gamma,M);
 
 
 % L2 norm of signal
 InputL2Norm = norm(c,'fro');
 
 % Approximate, and compute SNR values
-kmax = NbFreqBands;
+kmax = M;
 kmin = kmax/32;             % 32 is an arbitrary choice
 krange = kmin:32:(kmax-1);  % same remark
 
 for k = krange,
-    ResL2Norm_NL = norm(c-largestn(c,k*NbTimeSteps),'fro');
+    ResL2Norm_NL = norm(c-largestn(c,k*N),'fro');
     SNR_NL(k) = 20*log10(InputL2Norm/ResL2Norm_NL);
     ResL2Norm_L = norm(c(k:kmax,:),'fro');
     SNR_L(k) = 20*log10(InputL2Norm/ResL2Norm_L);
@@ -63,8 +67,8 @@ end
 figure(1);
 
 set(gca,'fontsize',14);
-plot(krange*NbTimeSteps,SNR_NL(krange),'x-b',...
-     krange*NbTimeSteps,SNR_L(krange),'o-r');
+plot(krange*N,SNR_NL(krange),'x-b',...
+     krange*N,SNR_L(krange),'o-r');
 axis tight; grid;
 legend('Best N-term','Linear');
 xlabel('Number of Samples', 'fontsize',14);
