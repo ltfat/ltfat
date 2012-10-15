@@ -136,7 +136,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     c=constructphase(s,g,a);
   end;
   
-  g  = gabwin(g,a,M,L,'ISGRAM');
+  g  = gabwin(g,a,M,L,'callfun','ISGRAM');
   
   gd = gabdual(g,a,M);
   
@@ -149,8 +149,9 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   if flags.do_griflim
     
     for iter=1:kv.maxit
-      f=comp_idgt(c,gd,a,M,L,0);
-      c=comp_dgt(f,g,a,M,[0 1],0,0,0);
+        %c = comp_dgt_proj(c,g,gd,a,M,L);
+        f=comp_idgt(c,gd,a,M,L,0);
+        c=comp_dgt(f,g,a,M,[0 1],0,0,0);
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
@@ -168,6 +169,8 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
       end;
       
     end;
+    
+    f=comp_idgt(c,gd,a,M,L,0);
   end;
   
   if flags.do_bfgs

@@ -172,9 +172,6 @@ if 'binary' in todo:
     s='cd '+cwd+'buildbinary; zip -r '+fname+'.zip ltfat/'
     print s
     os.system(s)
-
-
-
     
 
 if 'php' in todo:

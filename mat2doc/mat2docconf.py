@@ -1,32 +1,22 @@
-
 # -------------------------------------------
 # Global configuration of the mat2doc system
 # -------------------------------------------
 
+# When writing this file, certain variables are already defined:
+#
+#   self.root points to the project directory
+
+
 import localconf
 
 conf=ConfType()
-
-conf.octexec=localconf.octexec
-conf.matexec=localconf.matexec
-conf.plotengine=localconf.plotengine
-   
-conf.root=localconf.userdir+'nw/ltfat/'
-
-conf.bibfile=conf.root+'mat2doc/project'
-
-conf.workdir=localconf.userdir+'publish/'
-
-conf.ignorepars=['a','order','noise']
-
-conf.copyrightplate=conf.root+'mat2doc/copyrightplate'
 
 def mycopyrightfun(self):
     vf=file(self.root+'ltfat_version');
     v=vf.readline()
     vf.close
     
-    f=file(self.copyrightplate)
+    f=file(conf.root+'mat2doc/copyrightplate')
     buf=f.readlines()
     f.close
 
@@ -34,7 +24,6 @@ def mycopyrightfun(self):
     copyright.extend(buf)
     
     return copyright
-
 
 conf.copyright=mycopyrightfun
 
@@ -48,11 +37,9 @@ contentsfiles=['Contents','gabor/Contents','fourier/Contents',
 # Configuration of PHP for Sourceforge
 # ------------------------------------------
 
-php=HTMLConf()
+php=phpConf()
 
-php.basetype='html'
-
-php.subdir='ltfathtml/'
+php.basetype='php'
 
 php.indexfiles=contentsfiles
 
@@ -60,12 +47,7 @@ php.indexfiles=contentsfiles
 php.docroot='/home/groups/l/lt/ltfat/htdocs/doc/'
 
 # This is the usual web-server root for "<a href=" ... > tags.
-php.htmlroot='/doc/'
-    
-php.hb='<H2>'
-
-php.he='</H2>'
-
+php.urlbase='/doc/'    
 php.fext='.php'
 
 php.head="""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><html>
@@ -88,8 +70,6 @@ php.foot="""<?php require("footer.php");?>
 </body>
 </html>"""
 
-php.dryrun=0;
-
 
 # ------------------------------------------
 # Configuration of LaTeX
@@ -98,10 +78,6 @@ php.dryrun=0;
 tex=TexConf()
 
 tex.basetype='tex'
-
-tex.subdir='toolboxref/'
-
-tex.texfile='toolboxref'
 
 tex.indexfiles=contentsfiles
     
@@ -127,13 +103,16 @@ tex.head="""\documentclass{amsart}
 \\tableofcontents{}
 
 """
-tex.foot='\\bibliographystyle{abbrv}\n'+ \
-         '\\bibliography{'+conf.bibfile+'}\n'+ \
-"""\end{document}
+tex.foot="""
+\\bibliographystyle{abbrv}
+\\bibliography{project}
+\end{document}
 """
 
-tex.dryrun=1
 tex.dooutput=0
+
+tex.urlbase='http://ltfat.sourceforge.net/doc'
+tex.urlext='php'
 
 # ------------------------------------------
 # Configuration of Matlab
@@ -142,8 +121,6 @@ tex.dooutput=0
 mat=ConfType()
 
 mat.basetype='mat'
-
-mat.subdir='ltfat/'
 
 mat.urlbase='http://ltfat.sourceforge.net/doc'
 mat.urlext='php'
@@ -161,4 +138,25 @@ verify.targets=['AUTHOR','TESTING','REFERENCE']
 verify.notappears=['FIXME','BUG','XXL','XXX']
 
 verify.ignore=["demo_","comp_","assert_","Contents.m","init.m"]
+
+# ------------------- Cutting these away --------------
+
+#conf.octexec=localconf.octexec
+#conf.matexec=localconf.matexec
+#conf.plotengine=localconf.plotengine
+   
+#conf.root=localconf.userdir+'nw/ltfat/'
+
+#conf.bibfile=conf.root+'mat2doc/project'
+
+#conf.workdir=localconf.userdir+'publish/'
+
+#mat.subdir='ltfat/'
+#php.subdir='ltfatphp/'
+#tex.subdir='toolboxref/'
+#tex.texfile='toolboxref'
+#php.hb='<H2>'
+#php.he='</H2>'
+
+
 

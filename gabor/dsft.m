@@ -17,9 +17,9 @@ function F=dsft(F);
 %
 %   for $m=0,\ldots,L-1$ and $n=0,\ldots,K-1$.
 %
-%   The DSFT is its own inverse.
+%   The `dsft` is its own inverse.
 %
-%   References: fekolu06 
+%   References: feichtinger2008metaplectic
 
 error(nargchk(1,1,nargin));
 
