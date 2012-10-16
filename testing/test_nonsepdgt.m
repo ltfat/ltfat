@@ -145,14 +145,30 @@ for ii=1:length(Lr);
               
               % -------- test reconstruction using canonical tight -------
               
-              cc = dgt(f,gt,a,M,'lt',lt);
-              r=idgt(cc,gt,a,'lt',lt);  
+              cc_t = dgt(f,gt,a,M,'lt',lt);
+              r=idgt(cc_t,gt,a,'lt',lt);  
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
               stext=sprintf(['REC T %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
                              '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
               disp(stext)
+
+              % -------- test dgtreal-----------------------
+              
+              if (rtype==1) && (lt(2)<=2)
+                  M2=floor(M/2)+1;
+                  
+                  cc_r = dgtreal(f,g,a,M,'lt',lt);
+                  res=cc_r-cc(1:M2,:,:);
+                  res=norm(res(:));
+
+                  [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                  stext=sprintf(['RECREAL %s L:%3i W:%2i LW:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                                 '%s'], rname,L,W,Lw,a,M,lt(1),lt(2),res,fail);
+                  disp(stext)
+
+              end;
               
               
           end;

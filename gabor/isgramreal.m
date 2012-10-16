@@ -158,8 +158,8 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   relres=zeros(kv.maxit,1);
   if flags.do_griflim
     for iter=1:kv.maxit
-      f=comp_idgtreal(c,gd,a,M,L,0);
-      c=comp_dgtreal(f,g,a,M,L,0);
+      f=comp_idgtreal(c,gd,a,M,0);
+      c=comp_dgtreal(f,g,a,M,[0 1],0);
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
@@ -215,8 +215,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   
 %  Subfunction to compute the objective function for the BFGS method.
 function [f,df]=objfun(x,g,a,M,s);
-  L=size(s,2)*a;
-  c=comp_dgtreal(x,g,a,M,L,0);
+  c=comp_dgtreal(x,g,a,M,[0 1],0);
   
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;

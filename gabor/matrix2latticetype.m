@@ -95,28 +95,28 @@ x = A(2,:)*[h0;h1];
 
 x = mod(x,D);
 
-% Nuhag notation
+% Octave does not automatically round the double division to integer
+% numbers, and this causes confusion later in the GCD computations. 
 a = gcd1;
-b = D*gcd2;
-s = x*gcd2;
+b = round(D*gcd2);
+s = round(x*gcd2);
 
-% Make the numbers unique
-b = gcd(b,L);
-b2 = L/a*s;
-b = gcd(b,b2);
+% compute nabs format of <a,s>
+b1 = gcd(s*lcm(a,L)/a,L);
+[a,k1] = gcd(a,L);
+s = k1*s;
 
+% update b
+b = gcd(b,gcd(b1,L));
+
+% update s
 s = mod(s,b);
 
+% conversion from nabs to latticetype
 M=L/b;
 
 k=gcd(s,b);
 lt=[s/k b/k];
 
-% The following is sometimes needed for Octave.
-% Octave mistakenly converts the numbers to floats,
-% and later complains, so we round to integers.
-a = round(a);
-M = round(M);
-lt= round(lt);
 
 

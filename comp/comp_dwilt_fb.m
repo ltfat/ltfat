@@ -11,7 +11,7 @@ coef=zeros(2*M,N/2,W);
 
 if (isreal(f) && isreal(g))
 
-  coef2=comp_dgt_fb(f,g,a,2*M,0);
+  coef2=comp_dgt_fb(f,g,a,2*M);
 
   % If the input coefficients are real, the calculations can be
   % be simplified. The complex case code also works for the real case.
@@ -42,7 +42,7 @@ if (isreal(f) && isreal(g))
 else
   % Complex valued case
   
-      coef2=comp_dgt_fb(f,g,a,2*M,0);
+  coef2=comp_dgt_fb(f,g,a,2*M);
   
   % Unmodulated case.
   coef(1,:,:)=coef2(1,1:2:N,:);
