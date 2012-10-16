@@ -1,13 +1,15 @@
 function f = ifwt(c,g,J,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt(c,g,J)
+%   Usage:  f = ifwt(c,g,J,)
+%           f = ifwt(c,g,J,Ls)
 %
 %   Input parameters:
 %         c     : Coefficients stored in J+1 cell-array.
-%         h     : Reconstruction wavelet filters.
+%         g     : Synthesis wavelet filters.
 %         J     : Number of filterbank iterations.
+%         Ls    : Length of signal.
 %   Output parameters:
-%         f     : Output data.
+%         f     : Reconstructed data.
 %
 %
 %   See also:
@@ -21,35 +23,39 @@ function f = ifwt(c,g,J,varargin)
 %   REFERENCE: REF_IFWT
 
 
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
 % works with coefficients obtained from input signals of lengts a*2^J
+definput.keyvals.Ls=[];
 definput.flags.type = {'dec','undec'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+
+if ~isnumeric(J) || ~isscalar(J)
+  error('%s: "J" must be a scalar.',upper(mfilename));
+end;
 
 if(J<1)
    error('%s: J must be a positive integer.',upper(callfun)); 
 end
 
-
-gpad = cell(J,length(g));
-[sigHalfLen,W] = size(c{end});  
-sigLen = ceil((sigHalfLen*2)/2^J)*2^J;
-flen = length(g{1});
-
-       for hidx=1:length(g)
-            for j=0:J-1
-               gpad{j+1,hidx}=zeros(2*length(c{j+2}(:,1)),1);
-               gpad{j+1,hidx}(1:flen) = g{hidx}(:);
-               gpad{j+1,hidx} = circshift(gpad{j+1,hidx},-ceil(flen/2));
-           end
-        end
-
-f = zeros(sigLen,W);
-  
-  
-for w=1:W  
-  tempa = c{1}(:,w);
-    for j=1:J
-       tempa = pconv(ups(tempa,2,2), gpad{j,1}) + pconv(ups(tempa,2,2), gpad{j,2});
-    end
-    f(1:length(tempa),w) = tempa;
+if(~iscell(g) || length(g)<2)
+   error('%s: h is expected to be a cell array containing two wavelet filters.',upper(callfun)); 
 end
+
+[sigHalfLen,W] = size(c{end});
+
+if(flags.do_dec)
+  f = comp_ifwt(c,g,J);
+elseif(flags.do_undec)
+  f = comp_ifwt_undec(c,g,J);  
+end
+
+
+% Cut or extend f to the correct length, if desired.
+if ~isempty(Ls)
+  f=postpad(f,Ls);
+end;
+
+f=comp_sigreshape_post(f,Ls,0,[0; W]);
