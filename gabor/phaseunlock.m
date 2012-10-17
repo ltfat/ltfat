@@ -1,4 +1,4 @@
-function cout = phaseunlock(cin,a)
+function cout = phaseunlock(c,a)
 %PHASEUNLOCK  Undo phase lock of Gabor coefficients
 %   Usage:  c=phaseunlock(c,a);
 %
@@ -27,8 +27,8 @@ if rem(a,1)~=0
   error('a must be an integer');
 end;
 
-M=size(cin,1);
-N=size(cin,2);
+M=size(c,1);
+N=size(c,2);
 L=N*a;
 b=L/M;
 
@@ -43,8 +43,4 @@ phase = FreqInd'*TimeInd;
 phase = exp(-2*i*pi*phase);
 
 % Handle multisignals
-cout=zeros(size(cin));
-for w=1:size(cin,3)
-  cout(:,:,w) = cin(:,:,w).*phase;
-end;
-
+c=bsxfun(@times,c,phase);

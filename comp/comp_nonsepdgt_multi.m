@@ -35,6 +35,3 @@ for win=0:lt(2)-1
 end;
 
 c=bsxfun(@times,c,E);
-%for w=1:W
-%    c(:,:,w) = c(:,:,w).*repmat(E,M,1);
-%end;

@@ -90,6 +90,11 @@ if rem(L,Lsmallest)>0
     error('%s: Invalid size of coefficient array.',upper(mfilename));
 end;
 
+if kv.lt(2)>2
+  error('Only rectangular or quinqux lattices are supported.');  
+end;
+
+
 %% ----- step 3 : Determine the window 
 
 [g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
@@ -103,7 +108,7 @@ if ~isreal(g)
 end;
 
 % Do the actual computation.
-f=comp_idgtreal(coef,g,a,M,L,flags.do_timeinv);
+f=comp_idgtreal(coef,g,a,M,kv.lt,flags.do_timeinv);
 
 % Cut or extend f to the correct length, if desired.
 if ~isempty(kv.Ls)

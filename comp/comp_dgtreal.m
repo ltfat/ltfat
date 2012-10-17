@@ -51,7 +51,6 @@ if lt(2)==1
     
 else
     % Quinqux lattice
-    g=fir2long(g,L);
     c=comp_nonsepdgtreal_quinqux(f,g,a,M);            
 end;
 

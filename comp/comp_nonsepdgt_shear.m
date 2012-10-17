@@ -38,12 +38,12 @@ if 0
     
     if s1 ~= 0
         g = comp_pchirp(L,s1).*g;
-        f = repmat(comp_pchirp(L,s1),1,W).*f;
+        f = bsxfun(@times,comp_pchirp(L,s1),f);
     end
     
     if s0 ~= 0
         g = comp_pchirp(L,-s0).*fft(g)/L;
-        f = repmat(comp_pchirp(L,-s0),1,W).*fft(f);
+        f = bsxfun(@times,comp_pchirp(L,-s0),fft(f));
         
         c_rect = comp_dgt_long(f,g,br,Nr);
         
@@ -80,7 +80,7 @@ else
     if s1 ~= 0
         p = comp_pchirp(L,s1);
         g = p.*g;
-        f = repmat(p,1,W).*f;
+        f = bsxfun(@times,p,f);
     end
 
     cc1=ar/a;
@@ -89,7 +89,7 @@ else
     if s0 ~= 0
         p = comp_pchirp(L,-s0);
         g = p.*fft(g)/L;
-        f = repmat(p,1,W).*fft(f);
+        f = bsxfun(@times,p,fft(f));
         
         c_rect = comp_dgt_long(f,g,br,Nr);
             

@@ -158,7 +158,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   relres=zeros(kv.maxit,1);
   if flags.do_griflim
     for iter=1:kv.maxit
-      f=comp_idgtreal(c,gd,a,M,0);
+      f=comp_idgtreal(c,gd,a,M,[0 1],0);
       c=comp_dgtreal(f,g,a,M,[0 1],0);
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
@@ -196,7 +196,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     % time-steps.
     opts.MaxFunEvals = 1e9;
     
-    f0 = comp_idgtreal(c,gd,a,M,L,0);
+    f0 = comp_idgtreal(c,gd,a,M,[0 1],0);
     [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
     % First entry of output.trace.fval is the objective function
     % evaluated on the initial input. Skip it to be consistent.
@@ -220,4 +220,4 @@ function [f,df]=objfun(x,g,a,M,s);
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;
   
-  df=4*real(conj(comp_idgtreal(inner.*c,g,a,M,L,0)));
+  df=4*real(conj(comp_idgtreal(inner.*c,g,a,M,[0 1],0)));
