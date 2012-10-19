@@ -29,7 +29,9 @@ function [AF,BF]=gabrieszbounds(varargin)
   
 % AUTHOR: Peter Soendergaard.  
   
-error(nargchk(3,4,nargin));
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
 
 % The computation is done by computing the frame bounds of the Gabor
 % system on the dual lattice (interchange a and M) followed by an

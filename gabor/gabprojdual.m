@@ -69,7 +69,7 @@ else
 
 end;
 
-[g, info_g]     = gabwin(g,    a,M,L,kv.lt,'callfun',upper(mfilename));
+[g, info_g]  = gabwin(g, a,M,L,kv.lt,'callfun',upper(mfilename));
 [gm,info_gm] = gabwin(gm,a,M,L,kv.lt,'callfun',upper(mfilename));
  
 % gm must have the correct length, otherwise dgt will zero-extend it
@@ -84,17 +84,13 @@ gres=gm-gamma0;
 
 % Calculate parts that lives in span of adjoint lattice.
 if isreal(gres) && isreal(gamma0) && isreal(g) && kv.lt(2)<=2
-    999
-    gk=idgtreal(dgtreal(gres,gamma0,M,a,'lt',kv.lt),g,M,a,'lt',kv.lt)*M/a;
-    
+    gk=idgtreal(dgtreal(gres,gamma0,M,a,'lt',kv.lt),g,M,a,'lt',kv.lt)*M/a;    
 else
-
     gk=idgt(dgt(gres,gamma0,M,a,'lt',kv.lt),g,M,'lt',kv.lt)*M/a;
-
 end;
     
-    % Construct dual window
-    gd=gamma0+(gres-gk);
+% Construct dual window
+gd=gamma0+(gres-gk);
     
     
     

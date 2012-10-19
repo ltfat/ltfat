@@ -16,7 +16,7 @@ def mycopyrightfun(self):
     v=vf.readline()
     vf.close
     
-    f=file(conf.root+'mat2doc/copyrightplate')
+    f=file(self.root+'mat2doc/copyrightplate')
     buf=f.readlines()
     f.close
 
@@ -54,6 +54,7 @@ php.head="""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>The Linear Time-Frequency Analysis Toolbox</title>
+<meta> 
 <link rel="stylesheet" href="/ltfat.css" type="text/css">
 <script type="text/javascript"
    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">

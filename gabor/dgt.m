@@ -80,8 +80,8 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi il(m+w(n))/M}
 %
 %   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ are computed
-%   modulo *L*.  The additional offset $w$ is given by $w(n)=\mod(n\cdot
-%   lt_1,lt_2)/lt_2$ in the formula above.
+%   modulo *L*.  The additional offset $w$ is given by $w(n)=\mod(n\cdot lt_1,lt_2)/lt_2$
+%   in the formula above.
 %
 %   Additional parameters:
 %   ----------------------

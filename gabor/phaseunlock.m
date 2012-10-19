@@ -1,4 +1,4 @@
-function cout = phaseunlock(c,a)
+function c = phaseunlock(c,a,varargin)
 %PHASEUNLOCK  Undo phase lock of Gabor coefficients
 %   Usage:  c=phaseunlock(c,a);
 %
@@ -16,8 +16,13 @@ function cout = phaseunlock(c,a)
 %   AUTHOR:    Peter Balazs, Peter Soendergaard.
 %   TESTING:   OK
 %   REFERENCE: OK
-  
-error(nargchk(2,2,nargin));
+
+if nargin<2
+  error('%s: Too few input parameters.',upper(mfilename));
+end;
+
+definput.keyvals.lt=[0 1];
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 if  (prod(size(a))~=1 || ~isnumeric(a))
   error('a must be a scalar');
@@ -36,11 +41,21 @@ if rem(b,1)~=0
   error('Lattice error. The a parameter is probably incorrect.');
 end;
 
-TimeInd = (0:(N-1))/N;
-FreqInd = (0:(M-1))*b;
+TimeInd = (0:(N-1))*a;
+FreqInd = (0:(M-1));
 
 phase = FreqInd'*TimeInd;
-phase = exp(-2*i*pi*phase);
+phase = mod(phase,M);
+phase = exp(-2*1i*pi*phase/M);
+
+if kv.lt(1)>0 
+    % truly non-separable case
+    
+    for n=0:(N-1)
+        w = mod(n*kv.lt(1)/kv.lt(2),1);
+        phase(:,n+1) = phase(:,n+1)*exp(-2*pi*1i*a*w*n/M);
+    end
+end
 
 % Handle multisignals
 c=bsxfun(@times,c,phase);

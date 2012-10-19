@@ -36,6 +36,8 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %   `isgram` takes the following parameters at the end of the line of input
 %   arguments:
 %
+%     'lt',lt      Specify the lattice type. See the help on |matrix2latticetype|_.
+%
 %     'zero'       Choose a starting phase of zero. This is the default
 %
 %     'rand'       Choose a random starting phase.
@@ -83,6 +85,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   end;
   
   definput.keyvals.Ls=[];
+  definput.keyvals.lt=[0 1];
   definput.keyvals.tol=1e-6;
   definput.keyvals.maxit=100;
   definput.keyvals.printstep=10;
@@ -92,34 +95,30 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   
   [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
 
-  wasrow=0;
+  M=size(coef,1);
+  N=size(coef,2);
+  W=size(coef,3);
   
-  if isnumeric(g)
-    if size(g,2)>1
-      if size(g,1)>1
-        error('g must be a vector');
-      else
-        % g was a row vector.
-        g=g(:);
-        
-        % If the input window is a row vector, and the dimension of c is
-        % equal to two, the output signal will also
-        % be a row vector.
-        if ndims(s)==2
-          wasrow=1;
-        end;
-      end;
-    end;
+  if ~isnumeric(a) || ~isscalar(a)
+      error('%s: "a" must be a scalar',upper(mfilename));
   end;
   
-  M=size(s,1);
-  N=size(s,2);
-  W=size(s,3);
-  
-  % use assert_squarelat to check a and the window size.
-  assert_squarelat(a,M,1,'ISGRAM');
+  if rem(a,1)~=0
+      error('%s: "a" must be an integer',upper(mfilename));
+  end;
   
   L=N*a;
+  
+  Ltest=dgtlength(L,a,M,kv.lt);
+  
+  if Ltest~=L
+      error(['%s: Incorrect size of coefficient array or "a" parameter. See ' ...
+             'the help of DGTLENGTH for the requirements.'], ...
+            upper(mfilename))
+  end;
+  
+  g=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
+    
   
   sqrt_s=sqrt(s);
   
@@ -133,15 +132,16 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   end;
   
   if flags.do_int
-    c=constructphase(s,g,a);
+      if lt(2)>1
+          error(['%s: The integration initilization is not implemented for ' ...
+                 'non-sep lattices.'],upper(mfilename));
+      end;
+          
+      c=constructphase(s,g,a);
   end;
-  
-  g  = gabwin(g,a,M,L,'callfun','ISGRAM');
-  
-  gd = gabdual(g,a,M);
-  
-  assert_L(L,size(g,1),L,a,M,'ISGRAM');
-  
+    
+  gd = gabdual(g,a,M,L);
+    
   % For normalization purposes
   norm_s=norm(s,'fro');
   
@@ -150,8 +150,13 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     
     for iter=1:kv.maxit
         %c = comp_dgt_proj(c,g,gd,a,M,L);
-        f=comp_idgt(c,gd,a,M,L,0);
-        c=comp_dgt(f,g,a,M,[0 1],0,0,0);
+        if lt(2)==1
+            f=comp_idgt(c,gd,a,[0 1],0,0);
+            c=comp_dgt(f,g,a,M,[0 1],0,0,0);
+        else
+            f=comp_idgt(c,gd,a,[0 1],0,0);
+            c=comp_dgt(f,g,a,M,[0 1],0,0,0);            
+        end;
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
@@ -170,7 +175,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
       
     end;
     
-    f=comp_idgt(c,gd,a,M,L,0);
+    f=comp_idgt(c,gd,a,[0 1],0,0);
   end;
   
   if flags.do_bfgs
@@ -189,7 +194,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     opts.MaxFunEvals = 1e9;
     opts.usemex = 0;
     
-    f0 = comp_idgt(c,gd,a,M,L,0);
+    f0 = comp_idgt(c,gd,a,[0 1],0,0);
     [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
     % First entry of output.trace.fval is the objective function
     % evaluated on the initial input. Skip it to be consistent.
@@ -215,5 +220,5 @@ function [f,df]=objfun(x,g,a,M,s);
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;
   
-  df=4*real(conj(comp_idgt(inner.*c,g,a,M,L,0)));
+  df=4*real(conj(comp_idgt(inner.*c,g,a,[0 1],0,0)));
 

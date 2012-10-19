@@ -181,5 +181,5 @@ function y=afun(x,c_in,ga_in,gs_in,a_in,M_in,L_in)
     M  = M_in; 
     L  = L_in;
   else
-    y=comp_idgt(c.*comp_dgt(x,ga,a,M,[0 1],0,0,0),gs,a,M,L,0);
+    y=comp_idgt(c.*comp_dgt(x,ga,a,M,[0 1],0,0,0),gs,a,[0 1],0,0);
   end;

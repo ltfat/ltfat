@@ -164,6 +164,7 @@ if kv.lt(2)==1
         end
         weight = sqrt(sum(reshape(abs(g_new).^2,a,N_win),2));
         
+        % This repmat cannot be replaced by bsxfun
         gt = g_new./repmat(weight,N_win,1);
         gt = gt/sqrt(M);
         if Lwin_new ~= info.gl

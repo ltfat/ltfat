@@ -124,7 +124,7 @@ for ii=1:length(Lr);
               
               % -------- test reconstruction using canonical dual, multiwin algorithm -------
               
-              r=comp_inonsepdgt(cc,gdsafe,a,lt,0,1);  
+              r=comp_idgt(cc,gdsafe,a,lt,0,1);  
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -134,7 +134,7 @@ for ii=1:length(Lr);
               
               % -------- test reconstruction using canonical dual, shear algorithm -------
               
-              r=comp_inonsepdgt(cc,gdsafe,a,lt,0,2);  
+              r=comp_idgt(cc,gdsafe,a,lt,0,2);  
               res=norm(f-r,'fro');
               
               [test_failed,fail]=ltfatdiditfail(res,test_failed);

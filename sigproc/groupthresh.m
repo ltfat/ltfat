@@ -67,7 +67,7 @@ if flags.do_group
   % exactly 0.
   w(isnan(w)) = 0;
   
-  xo = xi.*repmat(w,NbMembers,1);
+  xo = bsxfun(@times,xi,w);
 
 end
 

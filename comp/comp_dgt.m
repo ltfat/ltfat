@@ -69,8 +69,9 @@ else
 
 end;
 
+% FIXME : Calls non-comp function 
 if phasetype==1
-  c=phaselock(c,a);
+  c=phaselock(c,a,'lt',lt);
 end;
 
 
