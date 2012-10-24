@@ -11,6 +11,8 @@ import localconf
 
 conf=ConfType()
 
+conf.urlbase='http://ltfat.sourceforge.net/doc/'
+
 def mycopyrightfun(self):
     vf=file(self.root+'ltfat_version');
     v=vf.readline()
@@ -37,17 +39,14 @@ contentsfiles=['Contents','gabor/Contents','fourier/Contents',
 # Configuration of PHP for Sourceforge
 # ------------------------------------------
 
-php=phpConf()
-
-php.basetype='php'
+php=PhpConf()
 
 php.indexfiles=contentsfiles
 
 # This is the full path, used for php-including files.
-php.docroot='/home/groups/l/lt/ltfat/htdocs/doc/'
+php.docroot='/home/project-web/ltfat/htdocs/doc/'
 
 # This is the usual web-server root for "<a href=" ... > tags.
-php.urlbase='/doc/'    
 php.fext='.php'
 
 php.head="""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><html>
@@ -62,12 +61,12 @@ php.head="""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><html>
 </head>
 <body>
 
-   <?php ini_set("include_path",".:/home/groups/l/lt/ltfat/htdocs/"); ?>
-   <?php require("topnav.php");?>
+   <?php ini_set("include_path",".:/home/project-web/ltfat/htdocs/"); ?>
+   <?php include("topnav.php");?>
 
 """
 
-php.foot="""<?php require("footer.php");?>
+php.foot="""<?php include("footer.php");?>
 </body>
 </html>"""
 
@@ -78,53 +77,13 @@ php.foot="""<?php require("footer.php");?>
 
 tex=TexConf()
 
-tex.basetype='tex'
-
 tex.indexfiles=contentsfiles
     
-tex.head="""\documentclass{amsart}
-\usepackage{ae}
-\usepackage{aecompl}
-\usepackage[T1]{fontenc}
-\usepackage[latin1]{inputenc}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\setlength\parskip{\medskipamount}
-\setlength\parindent{0pt}
-\makeatletter
-
-%\usepackage{babel}
-\usepackage{amssymb}
-\makeatother
-\\begin{document}
-\\title{LTFAT Reference manual}
-\\author{Peter L. S{\\o}ndergaard}
-
-\\maketitle
-\\tableofcontents{}
-
-"""
-tex.foot="""
-\\bibliographystyle{abbrv}
-\\bibliography{project}
-\end{document}
-"""
-
-tex.dooutput=0
-
-tex.urlbase='http://ltfat.sourceforge.net/doc'
-tex.urlext='php'
-
 # ------------------------------------------
 # Configuration of Matlab
 # ------------------------------------------
 
-mat=ConfType()
-
-mat.basetype='mat'
-
-mat.urlbase='http://ltfat.sourceforge.net/doc'
-mat.urlext='php'
+mat=MatConf()
 
 # ------------------------------------------
 # Configuration of Verification system
@@ -139,25 +98,6 @@ verify.targets=['AUTHOR','TESTING','REFERENCE']
 verify.notappears=['FIXME','BUG','XXL','XXX']
 
 verify.ignore=["demo_","comp_","assert_","Contents.m","init.m"]
-
-# ------------------- Cutting these away --------------
-
-#conf.octexec=localconf.octexec
-#conf.matexec=localconf.matexec
-#conf.plotengine=localconf.plotengine
-   
-#conf.root=localconf.userdir+'nw/ltfat/'
-
-#conf.bibfile=conf.root+'mat2doc/project'
-
-#conf.workdir=localconf.userdir+'publish/'
-
-#mat.subdir='ltfat/'
-#php.subdir='ltfatphp/'
-#tex.subdir='toolboxref/'
-#tex.texfile='toolboxref'
-#php.hb='<H2>'
-#php.he='</H2>'
 
 
 

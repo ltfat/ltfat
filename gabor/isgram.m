@@ -132,7 +132,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   end;
   
   if flags.do_int
-      if lt(2)>1
+      if kv.lt(2)>1
           error(['%s: The integration initilization is not implemented for ' ...
                  'non-sep lattices.'],upper(mfilename));
       end;
@@ -150,12 +150,12 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     
     for iter=1:kv.maxit
         %c = comp_dgt_proj(c,g,gd,a,M,L);
-        if lt(2)==1
-            f=comp_idgt(c,gd,a,[0 1],0,0);
-            c=comp_dgt(f,g,a,M,[0 1],0,0,0);
+        if kv.lt(2)==1
+            f=comp_idgt(c,gd,a,kv.lt,0,0);
+            c=comp_dgt(f,g,a,M,kv.lt,0,0,0);
         else
-            f=comp_idgt(c,gd,a,[0 1],0,0);
-            c=comp_dgt(f,g,a,M,[0 1],0,0,0);            
+            f=comp_idgt(c,gd,a,kv.lt,0,0);
+            c=comp_dgt(f,g,a,M,kv.lt,0,0,0);            
         end;
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
@@ -175,7 +175,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
       
     end;
     
-    f=comp_idgt(c,gd,a,[0 1],0,0);
+    f=comp_idgt(c,gd,a,kv.lt,0,0);
   end;
   
   if flags.do_bfgs
@@ -194,8 +194,8 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     opts.MaxFunEvals = 1e9;
     opts.usemex = 0;
     
-    f0 = comp_idgt(c,gd,a,[0 1],0,0);
-    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
+    f0 = comp_idgt(c,gd,a,kv.lt,0,0);
+    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s,kv.lt);
     % First entry of output.trace.fval is the objective function
     % evaluated on the initial input. Skip it to be consistent.
     relres = output.trace.fval(2:end)/norm_s;
@@ -213,12 +213,12 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
 
 %  Subfunction to compute the objective function for the BFGS method.
-function [f,df]=objfun(x,g,a,M,s);
+function [f,df]=objfun(x,g,a,M,s,lt);
   L=size(s,2)*a;
-  c=comp_dgt(x,g,a,M,[0 1],0,0,0);
+  c=comp_dgt(x,g,a,M,lt,0,0,0);
   
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;
   
-  df=4*real(conj(comp_idgt(inner.*c,g,a,[0 1],0,0)));
+  df=4*real(conj(comp_idgt(inner.*c,g,a,lt,0,0)));
 

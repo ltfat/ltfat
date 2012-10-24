@@ -22,7 +22,8 @@ function varargout=sgram(f,varargin)
 %
 %       sgram(f,fs,'dynrange',50)
 %
-%   The arguments must be character strings possibly followed by an argument:
+%   The arguments must be character strings possibly followed by an
+%   argument:
 %
 %     'dynrange',r  Limit the dynamical range to *r* by using a colormap in
 %                   the interval $[chigh-r,chigh]$, where *chigh* is the highest
