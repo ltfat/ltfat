@@ -43,32 +43,7 @@ php=PhpConf()
 
 php.indexfiles=contentsfiles
 
-# This is the full path, used for php-including files.
-php.docroot='/home/project-web/ltfat/htdocs/doc/'
-
-# This is the usual web-server root for "<a href=" ... > tags.
-php.fext='.php'
-
-php.head="""<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"><html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>The Linear Time-Frequency Analysis Toolbox</title>
-<meta> 
-<link rel="stylesheet" href="/ltfat.css" type="text/css">
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-</head>
-<body>
-
-   <?php ini_set("include_path",".:/home/project-web/ltfat/htdocs/"); ?>
-   <?php include("topnav.php");?>
-
-"""
-
-php.foot="""<?php include("footer.php");?>
-</body>
-</html>"""
+php.includedir='../include/'
 
 
 # ------------------------------------------
