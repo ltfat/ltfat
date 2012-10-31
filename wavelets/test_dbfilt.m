@@ -5,7 +5,7 @@ for ord=1:25
     [lo,hi,lo_r,hi_r] = wfilters(sprintf('db%d',ord));
     [h,g] = dbfilt(ord);
     err=cmp_filt(lo,hi,lo_r,hi_r,h,g);
-    if(err>10^-6)
+    if(err>1e-6)
         figure(1);
         subplot(2,2,1); stem([lo(:),h{1}(:)]); title('Analysis lowpass'); legend('wfilters','dbfilt');
         subplot(2,2,2); stem([hi(:),h{2}(:)]); title('Analysis highpass');

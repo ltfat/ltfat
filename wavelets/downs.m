@@ -1,7 +1,7 @@
 function [y] = downs(x,varargin)
 
 if(length(varargin)>0)
-    L = varargin{1};
+    L = max([varargin{1},1]);
 else
     L=2;
 end

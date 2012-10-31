@@ -2,37 +2,42 @@ function test_failed = test_fwt_undec
 
 
     ord = 10;
-    J= 8;
+    J= 6;
    
     wavName = sprintf('db%d',ord);
     [H, G] = dbfilt(ord);
-    dwtmode('per','nodisp');
+    dwtM = 'sym';
+    dwtmode(dwtM,'nodisp');
 
 
-  %  f = 1:2^J*22;
-  %  f = f(:);
+    f = 1:2^J*20;
+    f = f(:);
   %  f = greasy;
    % f = randn(2^J*180+47,1);
    % f= zeros(2^J*180,1);
-f = [randn(2^J*180+2,1),randn(2^J*180+2,1),randn(2^J*180+2,1)];
+%f = [randn(2^J*200,1)];
     
-
-    %[SWC] = swt(f,J,wavName);
-
-    c = fwt(f,H,J,'undec');
-    fhat = ifwt(c,G,J,length(f),'undec');
+tic;
+    %[SWC] = swt(f,J,H{1},H{2});
+  t1= toc
+  tic; 
+    c = comp_fwt_all(f,H,J,'undec',dwtM);
+  t2=toc
+  fprintf('Speedup: %f \n', t1/t2);
+    %fhat = ifwt(c,G,J,length(f),'undec');
     
-    if(norm(f-fhat)>1^-10)
-    figure(2); clf;
-    stem([f,fhat]);
-    end
-
-%     [err,coefs] = checkCoefs(c,SWC,J);
-%     if(err>1^-10)
-%         figure(1);clf;
-%         printCoeffs(c,coefs);
-%          error('Coefficients are not equal! Error is %g',err);
+%     if(norm(f-fhat)>1^-10)
+%     figure(2); clf;
+%     stem([f,fhat]);
 %     end
+
+   %  [err,coefs] = checkCoefs(c,SWC,J);
+   %   printCoeffs(c,coefs);
+     if(err>10^(-10))
+         figure(1);clf;
+         printCoeffs(c,coefs);
+         error('Coefficients are not equal! Error is %g',err);
+    end
 
 
 

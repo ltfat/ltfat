@@ -1,7 +1,7 @@
 function [y] = ups(x,varargin)
 
 if(~isempty(varargin))
-    L = varargin{1};
+    L = max([varargin{1},1]);
 else
     L=2;
 end
@@ -31,17 +31,3 @@ elseif(sudy==3)
   y(1:L:end)=x;  
 end
 
-% if(sudy==0)
-%    Lmat=[zeros(L-1,length(x)); xrow];
-%     y = [Lmat(:); zeros(L-1,1)];
-% elseif(sudy == 1)
-%    Lmat=[ xrow; zeros(L-1,length(x));];
-%    ytemp = Lmat(:);
-%    y = ytemp(1:end-(L-1));
-% elseif(sudy==2)
-%     Lmat=[ xrow; zeros(L-1,length(x));];
-%    y = Lmat(:);
-% else
-%          
-%             
-% end
