@@ -98,6 +98,7 @@ end;
 % gamma must have the correct length, otherwise dgt will zero-extend it
 % incorrectly using postpad instead of fir2long
 gamma=fir2long(gamma,L);
+g    =fir2long(g,L);
 
 % Handle the Riesz basis (dual lattice) case.
 if a>M
