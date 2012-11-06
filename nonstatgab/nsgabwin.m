@@ -87,7 +87,7 @@ otherwise
   end;
 end;
   
-info.gl=cellfun(@length,g);
+info.gl=cellfun(@length,g).';
 
 info.isfac=1;
 % The generated frame does not have a factorization if it is not uniform

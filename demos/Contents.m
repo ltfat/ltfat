@@ -16,6 +16,7 @@
 %     DEMO_GABMULAPPR       - Approx. of time-varying system.
 %
 %   Aspects of particular functions
+%     DEMO_NSDGT            - Non-stationary Gabor systems
 %     DEMO_PGAUSS           - How to use PGAUSS.
 %     DEMO_PBSPLINE         - How to use PBSPLINE.
 %     DEMO_GABMIXDUAL       - How to use MIXDUAL.

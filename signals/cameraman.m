@@ -13,8 +13,6 @@ function s=cameraman();
 % 
 %   See `<ftp://nic.funet.fi/pub/graphics/misc/test-images/>`_ or
 %   `<http://sipi.usc.edu/database/database.cgi?volume=misc>`_.
-% 
-%   Demos: demo_compression
 
 %   AUTHOR : Peter Soendergaard
 %   TESTING: TEST_SIGNALS
