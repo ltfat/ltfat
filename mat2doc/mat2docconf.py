@@ -11,8 +11,6 @@ import localconf
 
 conf=ConfType()
 
-conf.urlbase='http://ltfat.sourceforge.net/doc/'
-
 def mycopyrightfun(self):
     vf=file(self.root+'ltfat_version');
     v=vf.readline()
@@ -45,6 +43,21 @@ php.indexfiles=contentsfiles
 
 php.includedir='../include/'
 
+php.urlbase='doc/'
+
+
+# ------------------------------------------
+# Local php
+# ------------------------------------------
+
+phplocal=PhpConf()
+
+phplocal.indexfiles=contentsfiles
+
+phplocal.includedir='../include/'
+
+phplocal.urlbase='doc/'
+
 
 # ------------------------------------------
 # Configuration of LaTeX
@@ -53,12 +66,14 @@ php.includedir='../include/'
 tex=TexConf()
 
 tex.indexfiles=contentsfiles
+tex.urlbase='http://ltfat.sourceforge.net/doc/'
     
 # ------------------------------------------
 # Configuration of Matlab
 # ------------------------------------------
 
 mat=MatConf()
+mat.urlbase='http://ltfat.sourceforge.net/doc/'
 
 # ------------------------------------------
 # Configuration of Verification system

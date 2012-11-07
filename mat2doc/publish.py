@@ -87,7 +87,7 @@ if todo=='php':
     os.system(s)    
 
 if todo=='phplocal' in todo:
-    printdoc.printdoc(projectname,'php')
+    printdoc.printdoc(projectname,'phplocal')
 
 if todo=='phprebuild' in todo:
     printdoc.printdoc(projectname,'php','rebuild')
