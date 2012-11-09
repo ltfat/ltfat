@@ -146,11 +146,6 @@ if 'releasetestbranch' in todo:
     
 if 'pdf' in todo:
     printdoc.printdoc([m2dfile,'tex'])
-    os.system('cd toolboxref; pdflatex toolboxref.tex')
-    os.system('cd toolboxref; bibtex toolboxref')
-    os.system('cd toolboxref; pdflatex toolboxref.tex')
-    
-    os.system('scp toolboxref/toolboxref.pdf '+host+':'+www+'doc/ltfat.pdf')
 
 if 'stagewww' in todo:
     publishwww=cwd+'ltfatwww/'

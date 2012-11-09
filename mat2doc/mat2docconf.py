@@ -66,6 +66,7 @@ tex=TexConf()
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
+tex.codedir=localconf.ltfat['mat']
     
 # ------------------------------------------
 # Configuration of Matlab
