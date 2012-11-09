@@ -223,11 +223,11 @@ function [] = mulaclab()
 %     the number of parameters and their nature depends of the convType
 %     parameter of the layer according to the following:
 %
-%     ° if convType is 'constGain': only one parameter named 'Gain' is 
+%     * if convType is 'constGain': only one parameter named 'Gain' is 
 %       defined and it contain the value of the constant gain applied to 
 %       region corresponding to the polygons of the layer
 %
-%     ° if convType is 'smoothBorder': two parameters named 'Gain' and 
+%     * if convType is 'smoothBorder': two parameters named 'Gain' and 
 %       'Border' are defined
 %       'Gain' contain the value of the gain applied inside region 
 %       corresponding to the polygons of the layer away from the border
@@ -235,7 +235,7 @@ function [] = mulaclab()
 %       coeffiicents) in which the gain value is linearly interpolated 
 %       between 1 and the value given by 'Gain'
 %
-%     ° if convType is 'fill' or 'fillNoise' : two parameters 'Height' and
+%     * if convType is 'fill' or 'fillNoise' : two parameters 'Height' and
 %       'Width' are defined
 %       these parameters specifiy the size of the ellipse used to define
 %       the size of the neighborhood used the estimate the level around the

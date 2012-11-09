@@ -17,10 +17,10 @@ function gd=gabprojdual(gm,g,a,M,varargin);
 %   function projects the suggested window *gm* onto the subspace of
 %   admissable dual windows, hence the name of the function.
 %
-%   `gabprojdual(gm,g,a,M,L`) first extends the windows *g* and *gm* to
+%   `gabprojdual(gm,g,a,M,L)` first extends the windows *g* and *gm* to
 %   length *L*.
 %
-%   `gabprojdual(...,'lt',lt) does the same for a non-separable lattice
+%   `gabprojdual(...,'lt',lt)` does the same for a non-separable lattice
 %   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
 %   precise description of the parameter *lt*.
 %

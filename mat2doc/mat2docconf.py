@@ -33,6 +33,9 @@ contentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'sigproc/Contents','auditory/Contents',
                'demos/Contents','signals/Contents']
 
+# The urlbase in the targets must always be an absolute path, and it
+# must end in a slash
+
 # ------------------------------------------
 # Configuration of PHP for Sourceforge
 # ------------------------------------------
@@ -40,23 +43,19 @@ contentsfiles=['Contents','gabor/Contents','fourier/Contents',
 php=PhpConf()
 
 php.indexfiles=contentsfiles
-
 php.includedir='../include/'
-
-php.urlbase='doc/'
-
+php.urlbase='/doc/'
+php.codedir=localconf.ltfat['mat']
 
 # ------------------------------------------
 # Local php
 # ------------------------------------------
 
 phplocal=PhpConf()
-
 phplocal.indexfiles=contentsfiles
-
 phplocal.includedir='../include/'
-
-phplocal.urlbase='doc/'
+phplocal.urlbase='/doc/'
+phplocal.codedir=localconf.ltfat['mat']
 
 
 # ------------------------------------------

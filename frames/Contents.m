@@ -27,7 +27,8 @@
 %
 %  Advanced methods on frames
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
-%    FRSYNITER         - Iterative frame inversion
+%    FRANAITER         - Iterative inversion of the synthesis frame
+%    FRSYNITER         - Iterative inversion of the analysis frame
 %    FRAMEMULEIGS      - Eigenpairs of a frame multiplier
 %    FRAMELASSO        - LASSO threshholding using Landweber iterations.
 %    FRAMEGROUPLASSO   - Group LASSO threshholding.

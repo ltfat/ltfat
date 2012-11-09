@@ -92,8 +92,8 @@ info.gl=cellfun(@length,g).';
 info.isfac=1;
 % The generated frame does not have a factorization if it is not uniform
 % and at least one window is longer than it's M.
-if ~all(M==M(1)) && any(info.gl>M)
-  info.isfac=0;
-end;
+%if ~all(M==M(1)) && any(info.gl>M)
+%  info.isfac=0;
+%end;
   
 

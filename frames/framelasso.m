@@ -12,7 +12,7 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %       iter     : Number of iterations done.  
 %       xrec     : Reconstructed signal
 %
-%   `framelasso(x,lambda)` solves the LASSO (or basis pursuit denoising)
+%   `framelasso(F,x,lambda)` solves the LASSO (or basis pursuit denoising)
 %   regression problem for a general frame: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with

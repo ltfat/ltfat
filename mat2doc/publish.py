@@ -60,13 +60,14 @@ if 'develmat' in todo:
 # Release for users to download
 if 'releasemat' in todo:
     printdoc.git_repoexport(project['dir'],'master',projectname,filesdir)
-    #os.system('svn export --force '+project['dir']+' '+project['mat'])
-    printdoc.printdoc(projectname,'mat')
-    
+
     # Remove unwanted files
     os.system('rm -rf '+project['mat']+'testing')
     os.system('rm -rf '+project['mat']+'reference')
     os.system('rm -rf '+project['mat']+'timing')
+
+    printdoc.printdoc(projectname,'mat')
+    
 
     fname=filesdir+projectname+'-'+versionstring
 
