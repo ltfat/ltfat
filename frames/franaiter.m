@@ -73,7 +73,7 @@ function [c,relres,iter]=franaiter(F,c,varargin)
                   
       % It is possible to specify the initial guess
       [fout,flag,relres,iter]=pcg(A,c,kv.tol,kv.maxit);
-      c=frsynadj(F,fout)
+      c=frsynadj(F,fout);
   end;
            
 end
