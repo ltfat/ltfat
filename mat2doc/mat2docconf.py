@@ -64,7 +64,15 @@ phplocal.codedir=localconf.ltfat['mat']
 
 tex=TexConf()
 
-tex.indexfiles=contentsfiles
+# No demos
+texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
+               'filterbank/Contents','nonstatgab/Contents',
+               'frames/Contents',
+               'sigproc/Contents','auditory/Contents',
+               'signals/Contents']
+
+
+tex.indexfiles=texcontentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
 tex.codedir=localconf.ltfat['mat']
     

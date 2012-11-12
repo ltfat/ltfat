@@ -79,8 +79,11 @@ if 'releasemat' in todo:
     printdoc.unix2dos(filesdir+projectname)
     os.system('zip -r '+fname+'.zip '+projectname+'/')
     
-if 'tex' in todo:
+if 'tex'==todo:
     printdoc.printdoc(projectname,'tex')
+
+if 'texrebuild'==todo:
+    printdoc.printdoc(projectname,'tex','rebuild')
 
 if todo=='php':
     printdoc.printdoc(projectname,'php')
