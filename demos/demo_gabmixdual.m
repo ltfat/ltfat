@@ -13,20 +13,20 @@
 %
 %   .. figure::
 %
-%     Gabmixdual of two Gaussians.
+%      Gabmixdual of two Gaussians.
 %
-%     The first row of the figure shows the canonical dual window
-%     of the input window, which is a Gaussian function perfectly
-%     localized in the time and frequency domains.
+%      The first row of the figure shows the canonical dual window
+%      of the input window, which is a Gaussian function perfectly
+%      localized in the time and frequency domains.
 %
-%     The second row shows the canonical dual window of the window we
-%     will be mixing with: This is a Gaussian that is 10 times more
-%     concentrated in the time domain than in the frequency domain.
-%     The resulting canonical dual window has rapid decay in the time domain.
+%      The second row shows the canonical dual window of the window we
+%      will be mixing with: This is a Gaussian that is 10 times more
+%      concentrated in the time domain than in the frequency domain.
+%      The resulting canonical dual window has rapid decay in the time domain.
 %
-%     The last row shows the gabmixdual of these two. This is a non-canonical
-%     dual window of the first Gaussian, with decay resembling that of the
-%     second.
+%      The last row shows the gabmixdual of these two. This is a non-canonical
+%      dual window of the first Gaussian, with decay resembling that of the
+%      second.
 %
 %   See also: gabmixdual, gabdual
 

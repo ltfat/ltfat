@@ -111,6 +111,17 @@ res=norm(f-rt);
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['UNSDGT TIGHT %0.5g %s\n'],res,fail);
 
+% ----- framebounds -----------------
+FB=nsgabframebounds(gt,a,M);
+
+FB
+
+res=norm(FB-1);
+
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['UNSDGT FRAMEBOUNDS %0.5g %s\n'],res,fail);
+
+
 % ------ Reference DGT ----------------------
 
 a1=3;

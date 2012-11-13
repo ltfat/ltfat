@@ -5,14 +5,14 @@
 %
 %   .. figure::
 %
-%     Three first splines
+%      Three first splines
 %
-%     This figure shows the three first splines (order 0,1 and 2)
-%     and their dual windows.
+%      This figure shows the three first splines (order 0,1 and 2)
+%      and their dual windows.
 %
-%     Note that they are calculated for an even number of the parameter *a*,
-%     meaning that they are not exactly splines, but a slightly smoother
-%     construction, that still form a partition of unity.
+%      Note that they are calculated for an even number of the parameter *a*,
+%      meaning that they are not exactly splines, but a slightly smoother
+%      construction, that still form a partition of unity.
 %
 %   See also: pbspline, middlepad
 

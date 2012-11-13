@@ -72,7 +72,7 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'signals/Contents']
 
 
-tex.indexfiles=texcontentsfiles
+tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
 tex.codedir=localconf.ltfat['mat']
     
