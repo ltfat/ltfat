@@ -85,6 +85,13 @@ if 'tex'==todo:
 if 'texrebuild'==todo:
     printdoc.printdoc(projectname,'tex','rebuild')
 
+if 'texupload'==todo:
+    s='rsync -av '+project['tex']+'ltfat.pdf '+host+':'+www+'doc/'
+    os.system(s)
+
+if 'texrelease'==todo:
+    printdoc.printdoc(projectname,'tex')
+
 if todo=='php':
     printdoc.printdoc(projectname,'php')
     s='rsync -av '+project['php']+' '+host+':'+www+'doc/'
@@ -145,11 +152,7 @@ if 'releasetestbranch' in todo:
 
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
-
     
-if 'pdf' in todo:
-    printdoc.printdoc([m2dfile,'tex'])
-
 if 'stagewww' in todo:
     publishwww=cwd+'ltfatwww/'
     printdoc.autostage(tbwww)
@@ -199,10 +202,10 @@ if 'binary' in todo:
     os.system(s)
     
 
-if 'upload' in todo:
-    ddir=cwd+'ltfat_sourceforge/ltfat/'
-    os.system('rsync -av '+ddir+
-              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
+#if 'upload' in todo:
+#    ddir=cwd+'ltfat_sourceforge/ltfat/'
+#    os.system('rsync -av '+ddir+
+#              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
 
 if 'notesmake' in todo:
     notes=notes.getnotenumbers(notesdir)
