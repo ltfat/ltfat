@@ -60,13 +60,14 @@ if 'develmat' in todo:
 # Release for users to download
 if 'releasemat' in todo:
     printdoc.git_repoexport(project['dir'],'master',projectname,filesdir)
-    #os.system('svn export --force '+project['dir']+' '+project['mat'])
-    printdoc.printdoc(projectname,'mat')
-    
+
     # Remove unwanted files
     os.system('rm -rf '+project['mat']+'testing')
     os.system('rm -rf '+project['mat']+'reference')
     os.system('rm -rf '+project['mat']+'timing')
+
+    printdoc.printdoc(projectname,'mat')
+    
 
     fname=filesdir+projectname+'-'+versionstring
 
@@ -78,7 +79,17 @@ if 'releasemat' in todo:
     printdoc.unix2dos(filesdir+projectname)
     os.system('zip -r '+fname+'.zip '+projectname+'/')
     
-if 'tex' in todo:
+if 'tex'==todo:
+    printdoc.printdoc(projectname,'tex')
+
+if 'texrebuild'==todo:
+    printdoc.printdoc(projectname,'tex','rebuild')
+
+if 'texupload'==todo:
+    s='rsync -av '+project['tex']+'ltfat.pdf '+host+':'+www+'doc/'
+    os.system(s)
+
+if 'texrelease'==todo:
     printdoc.printdoc(projectname,'tex')
 
 if todo=='php':
@@ -87,7 +98,7 @@ if todo=='php':
     os.system(s)    
 
 if todo=='phplocal' in todo:
-    printdoc.printdoc(projectname,'php')
+    printdoc.printdoc(projectname,'phplocal')
 
 if todo=='phprebuild' in todo:
     printdoc.printdoc(projectname,'php','rebuild')
@@ -141,16 +152,7 @@ if 'releasetestbranch' in todo:
 
     printdoc.unix2dos(cwd+'ltfat')
     os.system('zip -r '+fname+'.zip ltfat/')
-
     
-if 'pdf' in todo:
-    printdoc.printdoc([m2dfile,'tex'])
-    os.system('cd toolboxref; pdflatex toolboxref.tex')
-    os.system('cd toolboxref; bibtex toolboxref')
-    os.system('cd toolboxref; pdflatex toolboxref.tex')
-    
-    os.system('scp toolboxref/toolboxref.pdf '+host+':'+www+'doc/ltfat.pdf')
-
 if 'stagewww' in todo:
     publishwww=cwd+'ltfatwww/'
     printdoc.autostage(tbwww)
@@ -200,10 +202,10 @@ if 'binary' in todo:
     os.system(s)
     
 
-if 'upload' in todo:
-    ddir=cwd+'ltfat_sourceforge/ltfat/'
-    os.system('rsync -av '+ddir+
-              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
+#if 'upload' in todo:
+#    ddir=cwd+'ltfat_sourceforge/ltfat/'
+#    os.system('rsync -av '+ddir+
+#              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
 
 if 'notesmake' in todo:
     notes=notes.getnotenumbers(notesdir)

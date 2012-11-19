@@ -51,7 +51,7 @@ function b=gammatonefir(fc,fs,varargin);
 %  
 %   References: aertsen1980strI glasberg1990daf
   
-%   AUTHOR : Peter L. Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 % ------ Checking of input parameters ---------
 

@@ -1,6 +1,6 @@
 % LTFAT - Demos
 %
-%   Peter L. Soendergaard, 2007 - 2012.
+%   Peter L. Søndergaard, 2007 - 2012.
 %
 %   This page documents the demos.
 %
@@ -16,6 +16,7 @@
 %     DEMO_GABMULAPPR       - Approx. of time-varying system.
 %
 %   Aspects of particular functions
+%     DEMO_NSDGT            - Non-stationary Gabor systems
 %     DEMO_PGAUSS           - How to use PGAUSS.
 %     DEMO_PBSPLINE         - How to use PBSPLINE.
 %     DEMO_GABMIXDUAL       - How to use MIXDUAL.

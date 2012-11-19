@@ -1,4 +1,4 @@
-function plotdgtreal(coef,a,M,varargin)
+function coef=plotdgtreal(coef,a,M,varargin)
 %PLOTDGTREAL  Plot DGTREAL coefficients
 %   Usage: plotdgtreal(coef,a,M);
 %          plotdgtreal(coef,a,M,fs);
@@ -12,13 +12,18 @@ function plotdgtreal(coef,a,M,varargin)
 %
 %   `plotdgtreal(coef,a,M,fs,dynrange)` additionally limits the dynamic
 %   range.
-%   
+%
+%   `C=plotdgtreal(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is usefull for custom
+%   post-processing of the image data.
+%
 %   `plotdgtreal` supports all the optional parameters of |tfplot|_. Please
 %   see the help of |tfplot|_ for an exhaustive list.
 %
 %   See also:  dgtreal, tfplot, sgram, plotdgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 
@@ -36,5 +41,4 @@ else
   yr=[0,1-2/M];
 end;
 
-tfplot(coef,a,yr,'argimport',flags,kv);
-
+coef=tfplot(coef,a,yr,'argimport',flags,kv);

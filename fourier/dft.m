@@ -10,7 +10,7 @@ function f=dft(f,N,dim);
 %
 %   See also:  idft
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

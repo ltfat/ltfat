@@ -6,7 +6,7 @@ function cout=ref_dgt_fw_time(f,gf,a,M)
 %   subdirectory in the toolbox. It is intended for timing when the original
 %   file is masked by an oct/mex implementation. 
 
-%   Author : Peter Soendergaard.
+%   Author : Peter L. Søndergaard.
 
 debug=0;
 if debug

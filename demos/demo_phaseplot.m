@@ -8,36 +8,36 @@
 %
 %   .. figure:: 
 %
-%     Synthetic signal
+%      Synthetic signal
 %
-%     Compare this to the pictures in reference 2 and 3. In 
-%     the first two figures a synthetic signal is analyzed. It consists of a 
-%     sinusoid, a small Delta peak, a periodic triangular function and a 
-%     Gaussian. In the time-invariant version in the first part the periodicity 
-%     of the sinusoid can be nicely seen also in the phase coefficients. Also
-%     the points of discontinuities can be seen as asymptotic lines approached
-%     by parabolic shapes. In the third part both properties, periodicity and 
-%     discontinuities can be nicely seen. A comparison to the spectogram shows 
-%     that the rectangular part in the middle of the signal can be seen by the
-%     phase plot, but not by the spectogram.
+%      Compare this to the pictures in reference 2 and 3. In 
+%      the first two figures a synthetic signal is analyzed. It consists of a 
+%      sinusoid, a small Delta peak, a periodic triangular function and a 
+%      Gaussian. In the time-invariant version in the first part the periodicity 
+%      of the sinusoid can be nicely seen also in the phase coefficients. Also
+%      the points of discontinuities can be seen as asymptotic lines approached
+%      by parabolic shapes. In the third part both properties, periodicity and 
+%      discontinuities can be nicely seen. A comparison to the spectogram shows 
+%      that the rectangular part in the middle of the signal can be seen by the
+%      phase plot, but not by the spectogram.
 % 
-%     In the frequency-invariant version, the fundamental frequency of the
-%     sinusoid can still be guessed as the position of an horizontal
-%     asymptotic line.
+%      In the frequency-invariant version, the fundamental frequency of the
+%      sinusoid can still be guessed as the position of an horizontal
+%      asymptotic line.
 %
 %   .. figure::
 %
-%     Synthetic signal, thresholded.
+%      Synthetic signal, thresholded.
 %
-%     This figure shows the same as Figure 1, except that values with low
-%     magnitude has been removed.
+%      This figure shows the same as Figure 1, except that values with low
+%      magnitude has been removed.
 %
 %   .. figure::
 %
-%     Speech signal.
+%      Speech signal.
 %
-%     The figure shows a part of the 'linus' signal. The fundamental
-%     frequency of the speaker can be nicely seen.
+%      The figure shows a part of the 'linus' signal. The fundamental
+%      frequency of the speaker can be nicely seen.
 %
 %   References: carmonmultiridge1 Carmona98practical gross1
 

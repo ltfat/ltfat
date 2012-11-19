@@ -15,7 +15,7 @@ function cout=comp_dgtreal_long(f,g,a,M)
 %
 %   References: so07-2 st98-8
 
-%   AUTHOR    : Peter Soendergaard.
+%   AUTHOR    : Peter L. Søndergaard.
 %   TESTING   : TEST_DGT
 %   REFERENCE : OK 
   

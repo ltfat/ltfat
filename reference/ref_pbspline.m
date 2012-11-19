@@ -19,7 +19,7 @@ function [out,nlen] = ref_pbspline(splinetype,L,order,a,centering)
 %         2 - New even
 %         3 - computed from continous case
  
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 error(nargchk(4,5,nargin));
 

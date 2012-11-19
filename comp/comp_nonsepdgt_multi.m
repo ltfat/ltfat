@@ -4,7 +4,7 @@ function c=comp_nonsepdgt_multi(f,g,a,M,lt)
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter L. Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: REF_NONSEPDGT
 

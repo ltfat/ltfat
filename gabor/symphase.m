@@ -9,7 +9,7 @@ function c = symphase(c,a,varargin)
 %
 %   See also: dgt, phaselock
 
-%   AUTHORS : Peter Balazs, Peter Soendergaard.
+%   AUTHORS : Peter Balazs, Peter L. Søndergaard.
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

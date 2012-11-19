@@ -17,7 +17,7 @@ function [c,Ls]=comp_gdgt(f,g,a,M,L,c_t,c_f,c_w,timeinv)
 %         Ls      : Length of input signal.
 %
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 Lwindow=size(g,1);
 

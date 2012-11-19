@@ -4,20 +4,20 @@
 %
 %   .. figure::
 %
-%     Benchmark of the FFT routine
+%      Benchmark of the FFT routine
 %
-%     The figure shows the sizes returned by the `nextfastfft` function
-%     compared to using `nextpow2`. As can be seen, the `nextfastfft`
-%     approach gives FFT sizes that are much closer to the input size.
+%      The figure shows the sizes returned by the `nextfastfft` function
+%      compared to using `nextpow2`. As can be seen, the `nextfastfft`
+%      approach gives FFT sizes that are much closer to the input size.
 %
 %   .. figure::
 %
-%     Efficiency of the table
+%      Efficiency of the table
 %
-%     The figure show the highest output/input ratio for varying input
-%     sizes. As can be seen, the efficiency is better for larger input
-%     values, where the output size is at most a few percent larger than
-%     the input size.
+%      The figure show the highest output/input ratio for varying input
+%      sizes. As can be seen, the efficiency is better for larger input
+%      values, where the output size is at most a few percent larger than
+%      the input size.
 %
 %   See also: nextfastfft
 

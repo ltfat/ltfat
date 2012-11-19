@@ -10,7 +10,7 @@ function cout=comp_col2diag(cin);
 %
 %  This function is its own inverse.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

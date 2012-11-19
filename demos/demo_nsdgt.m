@@ -78,8 +78,6 @@ c=nsdgt(f,g,a_new,M);
 figure(2);
 plotnsdgt(c,a,'dynrange',100);
 title('Spectrogram of test signal')
-xlabel('Time');
-ylabel('Frequency');
 
 % Test reconstruction
 f_r=insdgt(c,gd,a_new,Ls);

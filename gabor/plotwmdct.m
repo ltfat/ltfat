@@ -17,7 +17,7 @@ function plotwmdct(coef,varargin)
 %
 %   See also:  wmdct, tfplot, sgram, plotdgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

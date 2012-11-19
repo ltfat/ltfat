@@ -29,9 +29,10 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %     'maxit',n    Do at most n iterations.
 %
-%     'unlocbox'   Use unlocbox. This is the default.
+%     'unlocbox'   Use unlocbox.
 %
-%     'lsqr'       Use the Matlab `lsqr` function.
+%     'pcg'        Solve the problem using the Conjugate Gradient
+%                  algorithm. This is the default.
 %
 %     'print'      Display the progress.
 %
@@ -50,16 +51,16 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %   See also: newframe, frana, frsyn
   
-% AUTHORS: Nathanael Perraudin and Peter L. Soendergaard
+% AUTHORS: Nathanael Perraudin and Peter L. Søndergaard
     
   if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));
   end;
   
   definput.keyvals.Ls=[];
-  definput.keyvals.tol=1e-6;
+  definput.keyvals.tol=1e-9;
   definput.keyvals.maxit=100;
-  definput.flags.alg={'lsqr','unlocbox'};
+  definput.flags.alg={'pcg','unlocbox'};
   definput.keyvals.printstep=10;
   definput.flags.print={'quiet','print'};
 
@@ -68,15 +69,14 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   % Determine L from the first vector, it must match for all of them.
   L=framelengthcoef(F,size(c,1));
     
-  
-  if flags.do_lsqr
-      % Set up the persisten variable
-      afun(1, 'dummy', F);
-      
+  if flags.do_pcg
+
+      A=@(x) franaadj(F,frana(F,x));
+                  
       % It is possible to specify the initial guess
-      [f,flag,~,iter,relres]=lsqr(@afun,c,kv.tol,kv.maxit);
-      
+      [f,flag,relres,iter]=pcg(A,franaadj(F,c),kv.tol,kv.maxit);
   end;
+
   
   if flags.do_unlocbox
 
@@ -119,20 +119,5 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
       
 end
 
-% This is a nested function, as it must use variables from the scope
-% or the main function
-function y=afun(x, transp_flag, F_in)
-  persistent F;
 
-  if nargin>2
-    F  = F_in; 
-  else  
-    if strcmp(transp_flag,'transp') 
-      y = franaadj(F,x);    
-    elseif strcmp(transp_flag,'notransp')
-      y = frana(F,x);    
-    end 
-  end
-end
-  
     

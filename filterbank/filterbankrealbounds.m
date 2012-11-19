@@ -1,5 +1,5 @@
 function [AF,BF]=filterbankrealbounds(g,a,varargin);
-%FILTERBANKrealBOUNDS  Frame bounds of filter bank for real signals only
+%FILTERBANKREALBOUNDS  Frame bounds of filter bank for real signals only
 %   Usage: fcond=filterbankrealbounds(g,a);
 %          [A,B]=filterbankrealbounds(g,a);
 %

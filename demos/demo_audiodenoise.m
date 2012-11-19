@@ -7,7 +7,7 @@
 %   followed by a thresholding. Then the signal is reconstructed
 %   and compared with the original.
 %
-%   .. figure:: 
+%   .. figure::
 %
 %      Denoising
 %

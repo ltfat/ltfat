@@ -4,7 +4,7 @@ function c=comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter L. Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: REF_NONSEPDGT
 

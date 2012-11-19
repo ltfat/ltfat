@@ -33,7 +33,7 @@ function [f]=idgt2(c,g1,p3,p4,p5)
 %
 %   See also:  dgt2, gabdual
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 error(nargchk(3,5,nargin));
 

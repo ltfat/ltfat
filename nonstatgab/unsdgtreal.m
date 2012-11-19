@@ -72,7 +72,7 @@ function [c,Ls] = unsdgtreal(f,g,a,M)
 %
 %   See also:  nsdgt, insdgtreal, nsgabdual, nsgabtight, phaselock
 %
-%   Demos:  demo_nsdgtreal
+%   Demos:  demo_nsdgt
 %
 %   References: ltfatnote010
   

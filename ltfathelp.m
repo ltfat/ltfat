@@ -4,18 +4,16 @@ function op1=ltfathelp(varargin)
 %           v=ltfathelp('version');
 %           mlist=ltfathelp('modules');
 %
-%   LTFATHELP displays some general help on the LTFAT toolbox.
+%   `ltfathelp` displays some general help on the LTFAT toolbox.
 %
-%   LTFATHELP('version') returns the version number.
+%   `ltfathelp('version')` returns the version number.
 %
-%   LTFATHELP('modules') returns a cell array of installed modules and
+%   `ltfathelp('modules')` returns a cell array of installed modules and
 %   corresponding version numbers.
-%
-%   LTFATHELP('authors') lists the name of the authors.
 %
 %   See also:  ltfatstart
 
-%   AUTHOR : Peter Soendergaard.  
+%   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
 %   REFERENCE: NA
 
@@ -35,7 +33,7 @@ bp=ltfatbasepath;
 
 definput.keyvals.versiondata=[];
 definput.keyvals.modulesdata=[];
-definput.flags.mode={'general','version','modules','authors'};
+definput.flags.mode={'general','version','modules'};
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -56,16 +54,9 @@ if flags.do_general
     disp(s);
   end;
 
-  disp(' ')
-  if isoctave
-    disp('Type ltfathelp("modulename") where "modulename" is the name of one');
-    disp('of the modules to see help on that module.');
-    
-  else
-    disp('Type "help modulename" where "modulename" is the name of one')
-    disp('of the modules to see help on that module.') 
+  disp('Type "help modulename" where "modulename" is the name of one')
+  disp('of the modules to see help on that module.') 
 
-  end; 
   disp(' ');
   disp('For other questions, please don''t hesitate to send an email to ltfat-help@lists.sourceforge.net.'); 
     
@@ -97,64 +88,5 @@ if flags.do_modules
   end;
 end;
 
-if flags.do_authors
-  disp('Peter L. Soendergaard, Centre for Applied Hearing Research,');
-  disp('                       Technical University of Denmark.');
-  disp(' ');
-  disp('Bruno Torresani, LABORATOIRE D''ANALYSE, TOPOLOGIE ET PROBABILITES');
-  disp('                 Universite de Provence, Marseille, France');
-  disp(' ');
-  disp('Peter Balazs, Acoustics Research Institute');
-  disp('              Austrian Academy of Sciences, Vienna, Austria');
-  disp(' ');
-  disp('Florent Jaillet, IRISA');
-  disp('              Rennes, France');
-end;
 
 
-if 0
-
-  bp=TF_CONF.basepath;
-
-  switch(lower(q))
-    case {'v','version'}
-      if nargin==1
-	op1=TF_CONF.ltfat_version;
-      else
-	for ii=1:length(TF_CONF.modules);
-      % strcmpi does not exist in older versions of Octave,
-      % therefore use strcmp(lower(...
-	  if strcmp(lower(modulename),TF_CONF.modules{ii}.name)
-	    found=1;
-	    op1=TF_CONF.modules{ii}.version;
-	    return
-	  end;
-	end;
-
-	% If we get here, it means that no module matched 'modulename'.
-	error('Unknown module name.');
-				   
-      end;
-      
-    otherwise
-      found=0;
-      for ii=1:length(TF_CONF.modules);
-	if strcmp(lower(q),TF_CONF.modules{ii}.name)
-	  found=1;
-	  p=TF_CONF.modules{ii};
-
-	  if isoctave
-	    s=pwd;
-	    cd([bp,p.name]);
-	    help Contents
-	    cd(s);
-	  else
-	    help(lower(q))
-	  end;
-	end;
-      end;  
-      if ~found
-	error('Unknown command or module name.');
-      end;
-  end;
-end;

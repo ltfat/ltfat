@@ -4,7 +4,7 @@ function [f]=comp_idwiltiii(coef,g)
 %   This is a computational routine. Do not call it
 %   directly.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

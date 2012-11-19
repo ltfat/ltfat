@@ -16,7 +16,7 @@ function outsig = rangeexpand(insig,varargin);
 %  
 %   References: jano90
 
-% AUTHOR: Bruno Torresani and Peter Soendergaard
+% AUTHOR: Bruno Torresani and Peter L. Søndergaard
 
 definput.flags.method={'mulaw','alaw'};
 definput.keyvals.mu=255;

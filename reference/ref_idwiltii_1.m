@@ -2,7 +2,7 @@ function [f]=ref_idwiltii_1(coef,g,a,M)
 %REF_IDWILTII_1  Reference IDWILTII by IDGT type II
 % 
 
-%   Author : Peter Soendergaard
+%   Author : Peter L. Søndergaard
 
 L=size(g,1);
 N=L/a;

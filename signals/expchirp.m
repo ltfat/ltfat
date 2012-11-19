@@ -15,7 +15,7 @@ function outsig=expchirp(L,fstart,fend,varargin)
 %
 %   See also: pchirp
     
-% AUTHORS:  Piotr Majdak, Peter Soendergaard.
+% AUTHORS:  Piotr Majdak, Peter L. Søndergaard.
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

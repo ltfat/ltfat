@@ -42,7 +42,7 @@ function [gt]=wilorth(p1,p2,p3)
 %
 %   See also:  dwilt, wmdct, wildual, isevenfunction
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_DWILT TEST_WMDCT
 %   REFERENCE: OK
 

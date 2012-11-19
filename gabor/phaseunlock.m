@@ -13,7 +13,7 @@ function c = phaseunlock(c,a,varargin)
 %
 %   References: puc95
 
-%   AUTHOR:    Peter Balazs, Peter Soendergaard.
+%   AUTHOR:    Peter Balazs, Peter L. Søndergaard.
 %   TESTING:   OK
 %   REFERENCE: OK
 

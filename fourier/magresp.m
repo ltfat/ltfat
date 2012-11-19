@@ -51,7 +51,7 @@ function magresp(g,varargin);
 %
 %   Demos: demo_gabfir     
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

@@ -28,7 +28,7 @@ function h=spreadop(f,coef)
 %
 %   References: feko98
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_SPREAD
 %   REFERENCE: REF_SPREADOP
 

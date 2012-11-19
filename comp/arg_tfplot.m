@@ -4,6 +4,7 @@ function definput=arg_tfplot(definput)
   definput.flags.plottype={'image','contour','surf','pcolor'};  
   definput.flags.log={'db','dbsq','lin','linsq','linabs'};
   definput.flags.colorbar={'colorbar','nocolorbar'};
+  definput.flags.display={'display','nodisplay'};
   
   definput.keyvals.fs=[];
   definput.keyvals.clim=[];

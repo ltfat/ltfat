@@ -17,7 +17,7 @@ function h=pheaviside(L)
 %
 %   See also: middlepad, involute, fftindex
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   REFERENCE: OK
 %   TESTING: OK
   

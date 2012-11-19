@@ -45,7 +45,7 @@ function outsig = noise(siglen,varargin)
 % 
 %   See also: normalize
 
-%   AUTHOR: Hagen Wierstorf and Peter L. Soendergaard.
+%   AUTHOR: Hagen Wierstorf and Peter L. Søndergaard.
 
 
 

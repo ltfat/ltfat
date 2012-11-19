@@ -75,7 +75,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %
 %   References: griffin1984sem decorsiere2011 liu1989limited
   
-%   AUTHOR : Remi Decorsiere and Peter Soendergaard.
+%   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
 
 % Check input paramameters.

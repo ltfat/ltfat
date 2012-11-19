@@ -106,7 +106,7 @@ function varargout=sgram(f,varargin)
 %
 %   See also:  dgt, dgtreal
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
   
@@ -184,9 +184,9 @@ if flags.do_thr
 end
 
 if flags.do_nf
-  plotdgt(coef,a,'argimport',flags,kv);
+  coef=plotdgt(coef,a,'argimport',flags,kv);
 else
-  plotdgtreal(coef,a,M,'argimport',flags,kv);
+  coef=plotdgtreal(coef,a,M,'argimport',flags,kv);
 end;
 
 if nargout>0

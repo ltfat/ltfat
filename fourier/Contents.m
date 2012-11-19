@@ -1,6 +1,6 @@
 % LTFAT - Basic Fourier and DCT analysis.
 %
-%  Peter L. Soendergaard, 2008 - 2012.
+%  Peter L. Søndergaard, 2008 - 2012.
 %
 %  Basic Fourier analysis
 %    DFT            -  Unitary discrete Fourier transform.
@@ -13,7 +13,6 @@
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot FFTREAL coefficients.
 %    CONVOLVE       -  Fast, non-periodic convolution.
-%    DOMAINCOLOR    -  Convert complex values to color.
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.

@@ -17,7 +17,7 @@ function f=comp_igdgt(c,g,a,M,L,c_t,c_f,c_w,timeinv)
 %         f     : Signal.
 %
 
-% AUTHOR : Peter Soendergaard.
+% AUTHOR : Peter L. Søndergaard.
 
 b=L/M;
 N=L/a;

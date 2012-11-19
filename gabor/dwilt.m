@@ -73,7 +73,8 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %                    l=0  
 %
 %   .. math:: c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin(\pi\frac{m}{M}l)g(l-2nM+1)\\
-%             c\left(m+M+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos(\pi\frac{m}{M}l)g\left(l-\left(2n+1\right)M+1\right)
+%             c\left(m+M+1,n+1\right) & = &
+%             \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos(\pi\frac{m}{M}l)g\left(l-\left(2n+1\right)M+1\right)
 %
 %   If $m$ is even and less than $M$
 %
@@ -86,7 +87,8 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %                    l=0  
 %
 %   .. math:: c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos(\pi\frac{m}{M}l)g(l-2nM+1)\\
-%             c\left(m+M+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin(\pi\frac{m}{M}l)g\left(l-\left(2n+1\right)M+1\right)
+%             c\left(m+M+1,n+1\right) & = &
+%             \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin(\pi\frac{m}{M}l)g\left(l-\left(2n+1\right)M+1\right)
 %
 %   if $m=M$ and $M$ is even:
 %
@@ -108,7 +110,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %
 %   References: bofegrhl96-1 liva95
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DWILT
 %   REFERENCE: REF_DWILT
 

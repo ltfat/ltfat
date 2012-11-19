@@ -27,7 +27,7 @@ function f=iunsdgtreal(c,g,a,M,Ls)
 %
 %   References: ltfatnote010
 
-%   AUTHOR : Florent Jaillet and Peter L. Soendergaard
+%   AUTHOR : Florent Jaillet and Peter L. Søndergaard
 %   TESTING: TEST_NSDGT
 %   REFERENCE: OK
 

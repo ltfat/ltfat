@@ -9,7 +9,7 @@ function g=comp_pchirp(L,n)
 %   This is a computational routine. Do not call it unless you have
 %   verified the input parameters.
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

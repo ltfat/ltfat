@@ -1,12 +1,12 @@
-function [] = plotnsdgtreal(coef,a,varargin)
+function coef = plotnsdgtreal(coef,a,varargin)
 %PLOTNSDGTREAL Plot spectrogram from NSDGTREAL coefficients
-%   Usage:  plotnsdgtreal(c,a,dynrange,sr);
+%   Usage:  plotnsdgtreal(c,a,fs,dynrange);
 %
 %   Input parameters:
 %         coef     : Cell array of coefficients.
 %         a        : Vector of time positions of windows.
-%         dynrange : Colorscale dynamic range in dB (default 60 dB).
-%         sr       : signal sample rate in Hz (default 1 Hz).
+%         fs       : signal sample rate in Hz (optional).
+%         dynrange : Colorscale dynamic range in dB (optional).
 %
 %   `plotnsdgtreal(coef,a)` plots coefficients computed using |nsdgtreal|_ or
 %   |unsdgtreal|_. For more details on the format of the variables *coef* and *a*,
@@ -16,6 +16,11 @@ function [] = plotnsdgtreal(coef,a,varargin)
 %   *fs* Hz of the original signal.
 %
 %   `plotnsdgtreal(coef,a,fs,dynrange)` additionally limits the dynamic range.
+%
+%   `C=plotnsdgtreal(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is usefull for custom
+%   post-processing of the image data.
 %
 %   `plotnsdgtreal` supports all the optional parameters of |tfplot|_. Please
 %   see the help of |tfplot|_ for an exhaustive list. In addition, the
@@ -29,7 +34,7 @@ function [] = plotnsdgtreal(coef,a,varargin)
 %
 %   See also: tfplot, nsdgt, nsdgtreal
 
-%   AUTHOR : Florent Jaillet & Peter L. Soendergaard
+%   AUTHOR : Florent Jaillet & Peter L. Søndergaard
 %   TESTING: OK 
 %   REFERENCE: NA
 
@@ -73,4 +78,4 @@ end;
 
 yr=[0,1];
 
-tfplot(coef,aplot,yr,'argimport',flags,kv);
+coef=tfplot(coef,aplot,yr,'argimport',flags,kv);

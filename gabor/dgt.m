@@ -108,12 +108,13 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %     h=pherm(L,4); % 4th order hermite function.
 %     c=dgt(h,'gauss',a,M);
 %
-%     % Simple plot: The squared modulus of the coefficients on linear scale
+%     % Simple plot: The squared modulus of the coefficients on
+%     % a linear scale
 %     figure(1);
 %     imagesc(abs(c).^2);
 %
-%     % Better plot: zero-frequency is displayed in the middle, and the
-%     % coefficients are show on a logarithmic scale.
+%     % Better plot: zero-frequency is displayed in the middle, 
+%     % and the coefficients are show on a logarithmic scale.
 %     figure(2);
 %     plotdgt(c,a,'dynrange',50);
 %
@@ -123,7 +124,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 % 
 %   References: fest98 gr01
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: REF_DGT
   

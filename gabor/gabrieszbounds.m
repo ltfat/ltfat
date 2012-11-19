@@ -27,7 +27,7 @@ function [AF,BF]=gabrieszbounds(varargin)
 %
 %   See also: gabframebounds, gabwin, gabdualnorm
   
-% AUTHOR: Peter Soendergaard.  
+% AUTHOR: Peter L. Søndergaard.  
   
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

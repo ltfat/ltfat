@@ -5,10 +5,10 @@
 %
 %   .. figure::
 %
-%     Auditory scales
+%      Auditory scales
 %
-%     The figure shows the behaviour of the audiory scales on a normalized
-%     frequency plot.
+%      The figure shows the behaviour of the audiory scales on a normalized
+%      frequency plot.
 %
 %   See also:  freqtoaud, audtofreq, audspace, audspacebw
 

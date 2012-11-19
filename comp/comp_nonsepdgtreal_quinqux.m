@@ -4,7 +4,7 @@ function c=comp_nonsepdgtreal_quinqux(f,g,a,M)
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter L. Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: REF_NONSEPDGT
 

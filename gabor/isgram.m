@@ -71,7 +71,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %   References: griffin1984sem  decorsiere2011 liu1989limited
   
-%   AUTHOR : Remi Decorsiere and Peter Soendergaard.
+%   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
 
 % Check input paramameters.

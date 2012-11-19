@@ -9,9 +9,9 @@ function [g]=comp_pgauss(L,w,c_t,c_f)
 %   Does not check input parameters, do not call this
 %   function directly.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

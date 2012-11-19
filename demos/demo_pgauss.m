@@ -4,11 +4,13 @@
 %
 %   .. figure::
 %
-%     Window+Dual+Tight
+%      Window+Dual+Tight
 %
-%     This figure shows an optimally centered Gaussian for a 
-%     given Gabor system, its canonical dual and tight windows
-%     and the DFTs of these windows.
+%      This figure shows an optimally centered Gaussian for a 
+%      given Gabor system, its canonical dual and tight windows
+%      and the DFTs of these windows.
+%
+%   See also: pgauss
 
 disp('Type "help demo_pgauss" to see a description of how this demo works.');
 

@@ -16,6 +16,6 @@ function freq = erbtofreq(erb);
 %  
 %   See also: audtofreq, freqtoaud
 
-%   AUTHOR: Peter L. Soendergaard
+%   AUTHOR: Peter L. Søndergaard
   
 freq = audtofreq(erb,'erb');

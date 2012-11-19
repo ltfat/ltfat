@@ -19,7 +19,7 @@ function f=comp_idgt(coef,g,a,lt,phasetype,algns)
 %
 %     * $algns=1$ : Always choose shear
 
-% AUTHOR : Peter Soendergaard.
+% AUTHOR : Peter L. Søndergaard.
 
 M=size(coef,1);
 N=size(coef,2);

@@ -1,4 +1,4 @@
-function plotdgt(coef,a,varargin)
+function coef=plotdgt(coef,a,varargin)
 %PLOTDGT  Plot DGT coefficients
 %   Usage: plotdgt(coef,a);
 %          plotdgt(coef,a,fs);
@@ -12,12 +12,17 @@ function plotdgt(coef,a,varargin)
 %
 %   `plotdgt(coef,a,fs,dynrange)` additionally limits the dynamic range.
 %   
+%   `C=plotdgt(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is usefull for custom
+%   post-processing of the image data.
+%
 %   `plotdgt` supports all the optional parameters of |tfplot|_. Please see
 %   the help of |tfplot|_ for an exhaustive list.
 %
 %   See also:  dgt, tfplot, sgram, plotdgtreal
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 
@@ -40,5 +45,5 @@ else
   yr=[-1+2/M, 1-2/M];
 end;
 
-tfplot(coef,a,yr,'argimport',flags,kv);
+coef=tfplot(coef,a,yr,'argimport',flags,kv);
 

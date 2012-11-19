@@ -1,12 +1,12 @@
-function [] = plotnsdgt(coef,a,varargin)
+function coef = plotnsdgt(coef,a,varargin)
 %PLOTNSDGT Plot spectrogram from nonstationary Gabor coefficients
-%   Usage:  plotnsdgt(c,a,dynrange,sr);
+%   Usage:  plotnsdgt(c,a,fs,dynrange);
 %
 %   Input parameters:
 %         coef     : Cell array of coefficients.
 %         a        : Vector of time positions of windows.
-%         dynrange : Colorscale dynamic range in dB (default 60 dB).
-%         sr       : signal sample rate in Hz (default 1 Hz).
+%         fs       : signal sample rate in Hz (optional)
+%         dynrange : Colorscale dynamic range in dB (optional).
 %
 %   `plotnsdgt(coef,a)` plots coefficients computed using |nsdgt|_ or
 %   |unsdgt|_. For more details on the format of the variables *coef* and *a*,
@@ -16,6 +16,11 @@ function [] = plotnsdgt(coef,a,varargin)
 %   *fs* Hz of the original signal.
 %
 %   `plotnsdgt(coef,a,fs,dynrange)` additionally limits the dynamic range.
+%
+%   `C=plotnsdgt(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is usefull for custom
+%   post-processing of the image data.
 %
 %   `plotnsdgt` supports all the optional parameters of |tfplot|_. Please
 %   see the help of |tfplot|_ for an exhaustive list. In addition, the
@@ -29,7 +34,7 @@ function [] = plotnsdgt(coef,a,varargin)
 %
 %   See also: tfplot, nsdgt, unsdgt, nsdgtreal
 
-%   AUTHOR : Florent Jaillet & Peter L. Soendergaard
+%   AUTHOR : Florent Jaillet and Peter L. Søndergaard
 %   TESTING: OK 
 %   REFERENCE: NA
 
@@ -80,5 +85,5 @@ end;
 
 yr=[-1+2/kv.yres,1];
 
-tfplot(coef,aplot,yr,'argimport',flags,kv);
+coef=tfplot(coef,aplot,yr,'argimport',flags,kv);
 

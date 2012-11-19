@@ -1,6 +1,6 @@
 % LTFAT - Filterbanks
 %
-%  Peter L. Soendergaard, 2011 - 2012
+%  Peter L. Søndergaard, 2011 - 2012
 %
 %  Transforms and basic routines
 %    FILTERBANK             - Filter bank

@@ -1,4 +1,4 @@
-function [] = plotfilterbank(coef,a,varargin)
+function coef = plotfilterbank(coef,a,varargin)
 %PLOTFILTERBANK Plot filterbank and ufilterbank coefficients
 %   Usage:  plotfilterbank(coef,a);
 %           plotfilterbank(coef,a,fc);
@@ -19,6 +19,11 @@ function [] = plotfilterbank(coef,a,varargin)
 %
 %   `plotfilterbank(coef,a,fc,fs,dynrange)` makes it possible to specify
 %   the dynamic range of the coefficients.
+%
+%   `C=plotfilterbank(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is usefull for custom
+%   post-processing of the image data.
 %
 %   `plotfilterbank` supports all the optional parameters of |tfplot|_. Please
 %   see the help of |tfplot|_ for an exhaustive list.

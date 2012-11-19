@@ -17,7 +17,7 @@ function coef = ref_dgtns_2(f,g,V);
 %   Authors:
 %   Marc Geilen, 1995.       (rectangular lattice)
 %   Arno J. van Leest, 1998. (non-separable lattice)
-%   Peter Soendergaard, 2006 (change of variable names)
+%   Peter L. Søndergaard, 2006 (change of variable names)
 
 % Conversion of parameters.
 phi=f;

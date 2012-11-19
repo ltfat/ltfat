@@ -73,7 +73,7 @@ function [g,tfr]=pgauss(L,varargin)
 %
 %   References: mazh93
 
-% AUTHOR : Peter Soendergaard.
+% AUTHOR : Peter L. Søndergaard.
 
 %   First reference on this found in mazh93 eq. 63
 

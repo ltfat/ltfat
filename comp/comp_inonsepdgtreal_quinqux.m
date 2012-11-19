@@ -14,7 +14,7 @@ function f=comp_inonsepdgtreal_quinqux(coef,g,a,M,do_timeinv)
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: OK
 

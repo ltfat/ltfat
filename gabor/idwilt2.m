@@ -24,7 +24,7 @@ function [f]=idwilt2(c,g1,p3,p4)
 %
 %   See also:  dwilt2, dgt2, wildual
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 error(nargchk(2,4,nargin));
 

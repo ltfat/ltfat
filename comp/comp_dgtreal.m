@@ -12,7 +12,7 @@ function c=comp_dgtreal(f,g,a,M,lt,phasetype)
 %         c     : M*N array of coefficients.
 %
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 L=size(f,1);
 Lwindow=size(g,1);

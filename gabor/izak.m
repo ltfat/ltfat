@@ -9,7 +9,7 @@ function f=izak(c);
 %
 %   References: ja94-4 bohl97-1
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_ZAK
 %   REFERENCE: OK
 

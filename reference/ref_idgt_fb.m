@@ -6,7 +6,7 @@ function [f]=ref_idgt_fb(coef,g,L,a,M)
 %
 %   See also: idgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

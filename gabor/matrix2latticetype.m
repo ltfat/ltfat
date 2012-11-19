@@ -39,7 +39,7 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %     lt2=[1 2 3 3];
 %
 %     for fignum=1:4
-%       figure;
+%       subplot(2,2,fignum);
 %       z=y;
 %       if lt2(fignum)>0
 %         z=z+mod(lt1(fignum)*x/lt2(fignum),b);
@@ -56,7 +56,7 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %   See also: latticetype2matrix
 
 % The Hermite normal form code was originally written by Arno J. van Leest, 1999.
-% Positive determinant by Peter Soendergaard, 2004.
+% Positive determinant by Peter L. Søndergaard, 2004.
 % Unique form by Christoph Wiesmeyr, 2012
 
 if nargin~=2
