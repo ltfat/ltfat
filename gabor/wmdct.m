@@ -88,7 +88,7 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %
 %   References: prbr86 prjobr87 ma92 bohl96-1 
 
-%   AUTHOR:    Peter Soendergaard
+%   AUTHOR:    Peter L. Søndergaard
 %   TESTING:   TEST_WMDCT
 %   REFERENCE: REF_WMDCT
 

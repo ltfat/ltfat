@@ -22,7 +22,7 @@ function [nfft,tableout]=nextfastfft(n)
 %
 %   References: frjo05 cooley1965algorithm ltfatnote017
   
-%   AUTHOR: Peter L. Soendergaard and Johan Sebastian Rosenkilde Nielsen
+%   AUTHOR: Peter L. Søndergaard and Johan Sebastian Rosenkilde Nielsen
   
   
 persistent table;

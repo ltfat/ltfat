@@ -31,7 +31,7 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %
 %   References: aufl95
 
-% AUTHOR: Peter L. Soendergaard, 2008.
+% AUTHOR: Peter L. Søndergaard, 2008.
   
 error(nargchk(4,5,nargin));
 

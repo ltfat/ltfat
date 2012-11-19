@@ -12,7 +12,7 @@ function [s,fs]=linus()
 %
 %   See `<http://www.paul.sladen.org/pronunciation/>`_.
   
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
 

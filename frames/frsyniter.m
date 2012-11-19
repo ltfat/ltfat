@@ -51,7 +51,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %   See also: newframe, frana, frsyn
   
-% AUTHORS: Nathanael Perraudin and Peter L. Soendergaard
+% AUTHORS: Nathanael Perraudin and Peter L. Søndergaard
     
   if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));

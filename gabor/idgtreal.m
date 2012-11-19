@@ -51,7 +51,7 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %
 %   See also:  idgt, gabwin, gabdual, dwilt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
 

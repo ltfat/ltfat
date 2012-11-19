@@ -63,7 +63,7 @@ function gt=gabtight(varargin)
 %
 %   See also:  gabdual, gabwin, fir2long, dgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
 

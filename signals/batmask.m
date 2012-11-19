@@ -13,7 +13,7 @@ function c=batmask()
 %
 %   See also:  bat
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_BATMASK
 %   REFERENCE: OK
   

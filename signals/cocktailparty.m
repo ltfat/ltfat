@@ -12,7 +12,7 @@ function [s,fs]=cocktailparty()
 %   The signal is 363200 samples long and recorded at 44.1 kHz in an
 %   anechoic environment.
 
-%   AUTHOR : James harte and Peter Soendergaard
+%   AUTHOR : James harte and Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
 

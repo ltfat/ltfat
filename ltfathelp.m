@@ -13,7 +13,7 @@ function op1=ltfathelp(varargin)
 %
 %   See also:  ltfatstart
 
-%   AUTHOR : Peter Soendergaard.  
+%   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
 %   REFERENCE: NA
 

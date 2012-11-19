@@ -11,7 +11,7 @@ function sr=comp_gabreassign(s,tgrad,fgrad,a);
 %
 %   References: aufl95
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

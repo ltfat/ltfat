@@ -59,7 +59,7 @@ function []=instfreqplot(f,varargin)
 %
 %   See also: sgram, resgram, phaseplot
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   REFERENCE: NA
 %   TESTING: NA
   

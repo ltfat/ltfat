@@ -4,7 +4,7 @@ function h=ref_pconv(f,g,ctype)
 %
 %   PCONV(f,g) computes the periodic convolution of f and g.
 
-% AUTHOR: Peter Soendergaard
+% AUTHOR: Peter L. Søndergaard
 
 L=length(f);
 h=zeros(L,1);

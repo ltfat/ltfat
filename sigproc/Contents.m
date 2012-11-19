@@ -1,6 +1,6 @@
 % LTFAT - Signal processing tools
 %
-%  Peter L. Soendergaard, 2007 - 2012.
+%  Peter L. Søndergaard, 2007 - 2012.
 %
 %  General
 %    RMS            -  Root Mean Square norm of signal.

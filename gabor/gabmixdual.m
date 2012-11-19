@@ -20,7 +20,7 @@ function gamma=gabmixdual(g1,g2,a,M,varargin)
 %
 %   References: elsuwe05
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 % Assert correct input.
 

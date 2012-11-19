@@ -49,7 +49,7 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %
 %   See also: newframe, frana, frsyn, frsyniter
   
-% AUTHORS: Nathanael Perraudin and Peter L. Soendergaard
+% AUTHORS: Nathanael Perraudin and Peter L. Søndergaard
     
   if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));

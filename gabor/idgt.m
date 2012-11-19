@@ -74,7 +74,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %
 %   See also:  dgt, gabwin, dwilt, gabtight
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
 

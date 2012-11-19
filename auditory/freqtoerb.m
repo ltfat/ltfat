@@ -9,7 +9,7 @@ function erb = freqtoerb(freq);
 %
 %   Demos: demo_audscales
   
-%   AUTHOR: Peter L. Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 
 erb = freqtoaud(freq,'erb');
 

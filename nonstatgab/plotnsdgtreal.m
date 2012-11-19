@@ -34,7 +34,7 @@ function coef = plotnsdgtreal(coef,a,varargin)
 %
 %   See also: tfplot, nsdgt, nsdgtreal
 
-%   AUTHOR : Florent Jaillet & Peter L. Soendergaard
+%   AUTHOR : Florent Jaillet & Peter L. Søndergaard
 %   TESTING: OK 
 %   REFERENCE: NA
 

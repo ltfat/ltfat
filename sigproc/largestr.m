@@ -26,7 +26,7 @@ function [xo,N]=largestr(xi,p,mtype)
 %
 %   References: ma98
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

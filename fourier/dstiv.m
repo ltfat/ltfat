@@ -31,7 +31,7 @@ function c=dstiv(f,L,dim)
 %
 %   References: rayi90 wi94
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_PUREFREQ
 %   REFERENCE: REF_DSTIV
 

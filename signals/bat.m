@@ -36,7 +36,7 @@ function [s,fs]=bat()
 %
 %   See also:  batmask
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
   

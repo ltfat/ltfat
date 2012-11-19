@@ -11,7 +11,7 @@ function f=fftreal(f,N,dim);
 %
 %   See also:  ifftreal, dft
 
-%   AUTHOR    : Peter Soendergaard
+%   AUTHOR    : Peter L. Søndergaard
 %   TESTING   : TEST_PUREFREQ
 %   REFERENCE : OK
   

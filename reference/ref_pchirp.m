@@ -40,7 +40,7 @@ function g=ref_pchirp(L,n)
 %
 %   References: feichtinger2008metaplectic
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

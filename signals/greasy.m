@@ -37,7 +37,7 @@ function [s,fs]=greasy()
 %
 %   References: mazh93
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
   

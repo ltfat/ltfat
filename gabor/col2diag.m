@@ -13,7 +13,7 @@ function cout=col2diag(cin)
 %
 %   See also: spreadop, spreadfun, tconv
   
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_SPREAD
 %   REFERENCE: OK
 

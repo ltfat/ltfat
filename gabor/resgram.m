@@ -93,7 +93,7 @@ function []=resgram(f,varargin)
 %
 %   See also: sgram  
   
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

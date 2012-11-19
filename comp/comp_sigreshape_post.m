@@ -2,7 +2,7 @@ function f=comp_sigreshape_post(f,fl,wasrow,remembershape)
 %COMP_SIGRESHAPE_POST
 %
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

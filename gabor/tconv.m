@@ -31,7 +31,7 @@ function h=tconv(f,g)
 %   See also:  spreadop, spreadfun, spreadinv
 
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_SPREAD
 %   REFERENCE: REF_TCONV
 

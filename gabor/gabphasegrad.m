@@ -68,7 +68,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   References: aufl95 cmdaaufl97 fl65
 
   
-% AUTHOR: Peter L. Soendergaard, 2008.
+% AUTHOR: Peter L. Søndergaard, 2008.
   
 %error(nargchk(4,6,nargin));
 

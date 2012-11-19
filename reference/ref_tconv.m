@@ -4,7 +4,7 @@ function h=ref_tconv(f,g,a)
 %
 %   TCONV(f,g,a) computes the twisted convolution of f and g.
 
-% AUTHOR: Peter Soendergaard
+% AUTHOR: Peter L. Søndergaard
 
 M=size(f,1);
 N=size(f,2);

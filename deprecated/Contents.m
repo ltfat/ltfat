@@ -1,6 +1,6 @@
 % LTFAT - Deprecated functions
 %
-%  Peter L. Soendergaard, 2012
+%  Peter L. Søndergaard, 2012
 %
 %  Decprecated functions
 %    IUFILTERBANK         - Use IFILTERBANK instead

@@ -28,7 +28,7 @@ function y = rms(f,varargin)
 %                means to work along the first non-singleton one.
 %
 
-%   AUTHOR : Peter L. Soendergaard
+%   AUTHOR : Peter L. Søndergaard
   
 %% ------ Checking of input parameters ---------
 

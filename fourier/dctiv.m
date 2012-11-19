@@ -27,7 +27,7 @@ function c=dctiv(f,L,dim)
 %
 %   References: rayi90 wi94
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_PUREFREQ
 %   REFERENCE: REF_DCTIV
 

@@ -12,7 +12,7 @@ function f=comp_idgtreal(coef,g,a,M,lt,phasetype)
 %         f     : Signal.
 %
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
 

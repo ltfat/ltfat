@@ -106,7 +106,7 @@ function varargout=sgram(f,varargin)
 %
 %   See also:  dgt, dgtreal
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
   

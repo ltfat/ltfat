@@ -28,7 +28,7 @@ function ltfatmex(varargin)
 %                the operation system etc. This is the default.
 %
   
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

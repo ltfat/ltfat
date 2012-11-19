@@ -65,7 +65,7 @@ function []=phaseplot(f,varargin)
 %
 %   References: Carmona98practical
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   REFERENCE: NA
 %   TESTING: NA
 

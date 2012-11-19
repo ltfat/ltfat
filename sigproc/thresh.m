@@ -43,7 +43,7 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %
 %   References: lim1979enhancement ghael1997improved
 
-%   AUTHOR : Kai Siedenburg, Bruno Torresani and Peter Soendergaard.
+%   AUTHOR : Kai Siedenburg, Bruno Torresani and Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

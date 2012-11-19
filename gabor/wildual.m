@@ -36,7 +36,7 @@ function [gamma]=wildual(g,M,L)
 %
 %   See also:  dwilt, wilwin, wmdct, wilorth, isevenfunction
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DWILT
 %   REFERENCE: OK
 

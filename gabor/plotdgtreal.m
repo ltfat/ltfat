@@ -23,7 +23,7 @@ function coef=plotdgtreal(coef,a,M,varargin)
 %
 %   See also:  dgtreal, tfplot, sgram, plotdgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

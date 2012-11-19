@@ -17,7 +17,7 @@ function f=dctresample(f,L,dim)
 %
 %   See also:  fftresample, middlepad, dctiii
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
   
 % ------- Checking of input --------------------
 error(nargchk(2,3,nargin));

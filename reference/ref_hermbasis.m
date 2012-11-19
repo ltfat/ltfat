@@ -14,7 +14,7 @@ function [V]=hermbasis(L)
 %
 %   References: ozzaku01
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_HERMBASIS
 %   REFERENCE: OK
 

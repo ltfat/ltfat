@@ -77,7 +77,7 @@ function coef=tfplot(coef,step,yr,varargin)
 %  
 %   See also:  sgram, plotdgt, plotdgtreal, plotwmdct, plotdwilt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

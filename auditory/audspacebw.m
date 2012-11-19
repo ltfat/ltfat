@@ -22,7 +22,7 @@ function [y,n] = audspacebw(flow,fhigh,varargin)
 %
 %   See also: freqtoaud, audspace, audfiltbw
   
-%   AUTHOR : Peter L. Soendergaard
+%   AUTHOR : Peter L. Søndergaard
   
 % ------ Checking of input parameters ---------
   

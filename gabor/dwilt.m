@@ -110,7 +110,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %
 %   References: bofegrhl96-1 liva95
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DWILT
 %   REFERENCE: REF_DWILT
 

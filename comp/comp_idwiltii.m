@@ -4,7 +4,7 @@ function [coef2]=comp_idwiltii(coef,a,M)
 %   This is a computational routine. Do not call it
 %   directly.
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 N=size(coef,1)/M;
 W=size(coef,2);

@@ -39,7 +39,7 @@ function aud = freqtoaud(freq,varargin);
 %
 %   References: stevens1937smp zwicker1961saf fant1968 glasberg1990daf traunmuller1990aet moore1983sfc
   
-%   AUTHOR: Peter L. Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 
 %% ------ Checking of input parameters ---------
 

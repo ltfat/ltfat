@@ -32,7 +32,7 @@ function c=comp_dgt(f,g,a,M,lt,phasetype,algfir,algns)
 %      * $algns=2$  : Always choose shear
       
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

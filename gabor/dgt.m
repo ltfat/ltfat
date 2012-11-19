@@ -124,7 +124,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 % 
 %   References: fest98 gr01
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: REF_DGT
   

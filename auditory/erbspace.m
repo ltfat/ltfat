@@ -7,7 +7,7 @@ function [y,bw] = erbspace(flow,fhigh,n)
 %
 %   See also: audspace, freqtoaud
 
-%   AUTHOR : Peter L. Soendergaard
+%   AUTHOR : Peter L. Søndergaard
   
 [y,bw] = audspace(flow,fhigh,n,'erb');
 

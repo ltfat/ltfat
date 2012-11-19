@@ -111,7 +111,7 @@ function [g,info]=firwin(name,M,varargin);
 %
 %   References: opsc89 harris1978 nuttall1981 wesfreid1993
  
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   REFERENCE: NA
   
 if nargin<2

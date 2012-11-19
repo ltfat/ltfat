@@ -6,7 +6,7 @@ function [coef]=comp_dgt_fb(f,g,a,M)
 %
 %   See help on DGT.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 % Calculate the parameters that was not specified.
 L=size(f,1);

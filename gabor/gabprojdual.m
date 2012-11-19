@@ -26,7 +26,7 @@ function gd=gabprojdual(gm,g,a,M,varargin);
 %
 %   See also:  gabdual, gabtight, gabdualnorm, fir2long
 
-%   AUTHOR : Peter Soendergaard 
+%   AUTHOR : Peter L. Søndergaard 
 
 if nargin<4
   error('%s: Too few input parameters.',upper(mfilename));

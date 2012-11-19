@@ -29,7 +29,7 @@ function c = phaselock(c,a,varargin)
 %
 %   References: puc95
 
-%   AUTHOR:    Christoph Wiesmeyr, Peter Soendergaard.
+%   AUTHOR:    Christoph Wiesmeyr, Peter L. Søndergaard.
 %   TESTING:   test_phaselock
 %   REFERENCE: OK
 

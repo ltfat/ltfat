@@ -17,7 +17,7 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %
 %   References: jano90
 
-% AUTHOR: Bruno Torresani and Peter L. Soendergaard
+% AUTHOR: Bruno Torresani and Peter L. Søndergaard
 
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
