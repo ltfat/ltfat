@@ -213,13 +213,13 @@ LTFAT_H_NAME(pchirp)(const int L, const int n, LTFAT_H_COMPLEX *g);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(nonsepwin2multi)(const LTFAT_H_COMPLEX *g,
-			      const int L, const int a, const int M,
+			      const int L, const int Lg, const int a, const int M,
 			      const int lt1, const int lt2,
 			      LTFAT_H_COMPLEX *mwin);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(nonsepdgt_multi)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
-			      const int L, const int W, const int a, const int M,
+			      const int L, const int Lg, const int W, const int a, const int M,
 			      const int lt1, const int lt2,
 			      LTFAT_H_COMPLEX *c);
 
@@ -264,17 +264,21 @@ LTFAT_EXTERN void
 LTFAT_H_NAME(ifftshift_r)(const LTFAT_H_REAL *f, const int L, LTFAT_H_REAL *h);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(fir2long_r)(const LTFAT_H_REAL *f, const int Lfir, const int Liir,
+LTFAT_H_NAME(fir2long_r)(const LTFAT_H_REAL *f, const int Lfir, const int Llong,
 			LTFAT_H_REAL *h);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(fir2long_c)(const LTFAT_H_COMPLEX *f,
-			const int Lfir,	const int Liir,
-			LTFAT_H_COMPLEX *h);
+			 const int Lfir, const int Llong,
+			 LTFAT_H_COMPLEX *h);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(iir2fir_r)(const LTFAT_H_REAL *f, const int Liir,
-			const int Lfir,	const int symm, LTFAT_H_REAL *h);
+LTFAT_H_NAME(long2fir_r)(const LTFAT_H_REAL *f, const int Llong,
+			const int Lfir, LTFAT_H_REAL *h);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(long2fir_c)(const LTFAT_H_COMPLEX *f, const int Llong,
+			const int Lfir, LTFAT_H_COMPLEX *h);
 
 int
 LTFAT_H_NAME(complexprod)(LTFAT_H_COMPLEX *c, const LTFAT_H_COMPLEX a,
