@@ -24,7 +24,7 @@ LTFAT_NAME(pchirp)(const int L, const int n, LTFAT_COMPLEX *g)
 
 LTFAT_EXTERN void
 LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
-			    const int L, const int a, const int M,
+			    const int L, const int Lg, const int a, const int M,
 			    const int lt1, const int lt2,
 			    LTFAT_COMPLEX *mwin)
 { 
@@ -32,6 +32,17 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
   const int b=L/M;
 
   const LTFAT_REAL scal = 2*PI/L;
+
+  LTFAT_COMPLEX *gwork;
+  if (Lg<L)
+  {
+     gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+     LTFAT_NAME(fir2long_c)(g,Lg,L,gwork);
+  }
+  else
+  {
+     gwork=g;
+  }
 
   for (int w=0;w<lt2;w++)
   {
@@ -41,16 +52,22 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
 	const LTFAT_REAL e0 = cos(scal*l*wavenum);
 	const LTFAT_REAL e1 = sin(scal*l*wavenum);
 	const int idx = positiverem(l-w*a,L);
-	mwin[l+w*L][0]=e0*g[idx][0]-e1*g[idx][1];
-	mwin[l+w*L][1]=e1*g[idx][0]+e0*g[idx][1];
+	mwin[l+w*L][0]=e0*gwork[idx][0]-e1*gwork[idx][1];
+	mwin[l+w*L][1]=e1*gwork[idx][0]+e0*gwork[idx][1];
      }
   }
+
+  if (Lg<L)
+  {
+     ltfat_free(gwork);
+  }
+
 }
 
 
 LTFAT_EXTERN void
 LTFAT_NAME(nonsepdgt_multi)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-			    const int L, const int W, const int a, const int M,
+			    const int L, const int Lg, const int W, const int a, const int M,
 			    const int lt1, const int lt2,
 			    LTFAT_COMPLEX *c)
 { 
@@ -59,7 +76,7 @@ LTFAT_NAME(nonsepdgt_multi)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    LTFAT_COMPLEX *mwin = ltfat_malloc(L*lt2*sizeof(LTFAT_COMPLEX));
    LTFAT_COMPLEX *c_scratch = ltfat_malloc(M*Ns*W*sizeof(LTFAT_COMPLEX));
 
-   LTFAT_NAME(nonsepwin2multi)(g,L,a,M,lt1,lt2,mwin);
+   LTFAT_NAME(nonsepwin2multi)(g,L,Lg,a,M,lt1,lt2,mwin);
    
    for (int win=0;win<lt2;win++)
    {

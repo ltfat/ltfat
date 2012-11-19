@@ -19,9 +19,10 @@ DEFUN_DLD (comp_nonsepdgt_multi, args, ,
    const double M        = args(3).int_value();
    const Matrix lt       = args(4).matrix_value();
    
-   const int L = f.rows();
-   const int W = f.cols();
-   const int N = L/a;
+   const int L  = f.rows();
+   const int W  = f.cols();
+   const int Lg = g.rows();
+   const int N  = L/a;
   
    const int lt1 = ltfat_round(lt(0));
    const int lt2 = ltfat_round(lt(1));
@@ -33,7 +34,7 @@ DEFUN_DLD (comp_nonsepdgt_multi, args, ,
 
    nonsepdgt_multi((const ltfat_complex*)f.fortran_vec(),
    		   (const ltfat_complex*)g.fortran_vec(),
-   		   L,W,a,M,lt1,lt2,
+   		   L,Lg,W,a,M,lt1,lt2,
    		   (ltfat_complex*)cout.data());
         
    return octave_value (cout);

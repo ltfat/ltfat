@@ -1,7 +1,7 @@
-function [test_failed]=ltfatdiditfail(res,outstr,test_failed,mode,tolerance);
-%LTFATDIDITFAIL  Did a test fail, new method
+function [test_failed]=ltfatchecktest(res,outstr,test_failed,mode,tolerance);
+%LTFATCHECKTEST  Did a test fail, new method
 %
-%  `[test_fail,fail]=ltfatdiditfail(res,test_fail)` updates *test_fail* if
+%  `[test_fail,fail]=ltfatchecktest(res,test_fail)` updates *test_fail* if
 %  *res* is above threshhold and outputs the word FAIL in the variable
 %  fail. Use only in testing scripts.
 %
