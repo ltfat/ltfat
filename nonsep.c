@@ -1,6 +1,7 @@
 #include "config.h"
 #include <math.h>
 #include "ltfat.h"
+#include <stdio.h>
 
 #define PI 3.1415926535897932384626433832795
 
@@ -106,8 +107,8 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
    const unsigned flags = FFTW_ESTIMATE;
 
-   LTFAT_COMPLEX *fwork = f;
-   LTFAT_COMPLEX *gwork = g;
+   LTFAT_COMPLEX *fwork = (LTFAT_COMPLEX *)f;
+   LTFAT_COMPLEX *gwork = (LTFAT_COMPLEX *)g;
 
             
    if (!s1==0)
@@ -144,7 +145,10 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    
    if (!s0==0)
    {
+      /* Allocate memory and compute the pchirp */
       LTFAT_COMPLEX *p = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+      LTFAT_NAME(pchirp)(L,-s0,p);
+
 
       LTFAT_FFTW(plan) f_plan, g_plan;
 
@@ -162,7 +166,7 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 					    FFTW_FORWARD, flags);
 	 
 	 using_fwork=1;      
-	 }
+      }
       else
       {
 	 f_plan = LTFAT_FFTW(plan_many_dft)(1, &L, W,
@@ -184,27 +188,27 @@ LTFAT_NAME(nonsepdgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 	 g_plan = LTFAT_FFTW(plan_dft_1d)(L, gwork, gwork, FFTW_FORWARD, flags);
       }
 
-      /* Compute the pchirp */
-      LTFAT_NAME(pchirp)(L,-s0,p);
 
       /* Execute the FFTs */
       LTFAT_FFTW(execute)(f_plan);
       LTFAT_FFTW(execute)(g_plan);
 
-      /* Scale by the chirp, and scale g by 1/L */
+      /* Multiply g by the chirp and scale by 1/L */
       for (int l=0;l<L;l++)
       {
-	 gwork[l][0] = (gwork[l][0]*p[l][0]-gwork[l][1]*p[l][1])/L;
+	 const LTFAT_REAL tmp = (gwork[l][0]*p[l][0]-gwork[l][1]*p[l][1])/L; 	 
 	 gwork[l][1] = (gwork[l][1]*p[l][0]+gwork[l][0]*p[l][1])/L;
-
+	 gwork[l][0] = tmp;
       }
 
       for (int w=0;w<W;w++)
       {
 	 for (int l=0;l<L;l++)
 	 {
-	    fwork[l+w*L][0] = fwork[l+w*L][0]*p[l][0]-fwork[l+w*L][1]*p[l][1];
+	    const LTFAT_REAL tmp = fwork[l+w*L][0]*p[l][0]-fwork[l+w*L][1]*p[l][1];
+	    
 	    fwork[l+w*L][1] = fwork[l+w*L][1]*p[l][0]+fwork[l+w*L][0]*p[l][1];	    
+	    fwork[l+w*L][0] = tmp;
 	 }
       }
 
