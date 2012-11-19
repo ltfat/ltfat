@@ -90,6 +90,8 @@ else
 
     else
 
+        g=fir2long(g,L);
+      
         [s0,s1,br] = shearfind(L,a,M,lt);
         
         b=L/M;

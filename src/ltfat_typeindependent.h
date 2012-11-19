@@ -223,6 +223,12 @@ LTFAT_H_NAME(nonsepdgt_multi)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g
 			      const int lt1, const int lt2,
 			      LTFAT_H_COMPLEX *c);
 
+LTFAT_EXTERN void
+LTFAT_H_NAME(nonsepdgt_shear)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
+			      const int L, const int W, const int a, const int M,
+			      const int s0, const int s1, const int br,  
+			      LTFAT_H_COMPLEX *c);
+
 /* --------- pfilt and filterbanks ------------- */
 LTFAT_EXTERN void
 LTFAT_H_NAME(pfilt_fir_rr)(const LTFAT_H_REAL *f, const LTFAT_H_REAL *g,

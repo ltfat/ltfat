@@ -55,7 +55,7 @@ coef = bsxfun(@times,coef,E);
 f=zeros(L,W);
 for ii=0:2-1
     % Extract sublattice
-    sub=coef(:,ii+1:2:end);
+    sub=coef(:,ii+1:2:end,:);
     f=f+comp_idgt(sub,mwin(:,ii+1),2*a,[0 1],0,0);  
 end;
     
