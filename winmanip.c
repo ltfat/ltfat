@@ -73,7 +73,7 @@ LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
 }
 
 
-/* This routine changes a FIR window to a LONG window.
+/* This routine changes an FIR window to a LONG window.
  *
  * Input parameters:
  *  f     : Real valued input array.
@@ -105,7 +105,7 @@ LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Llong,
    
 }
 
-/* This routine changes a FIR window to a LONG window.
+/* This routine changes an FIR window to a LONG window.
  *
  * Input parameters:
  *  f     : Complex valued input array.
@@ -142,7 +142,7 @@ LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Llong,
 
 
 
-/* This routine changes a LONG window to a FIR window.
+/* This routine changes a LONG window to an FIR window.
  *
  * Input parameters:
  *  f     : Real valued input array.
