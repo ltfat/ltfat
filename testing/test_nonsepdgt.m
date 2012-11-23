@@ -19,7 +19,7 @@ lt1=[ 0, 1, 1, 1, 2, 1];
 lt2=[ 1, 2, 2, 3, 3, 4];
     
 test_failed=0;
-testmode=1;
+testmode=0;
 
 disp(' ===============  TEST_NONSEPDGT ================');
 
@@ -27,7 +27,7 @@ disp('--- Used subroutines ---');
 
 which comp_nonsepdgt_multi
 which comp_nonsepdgt_shear
-which comp_nonsepwin2multi.oct
+which comp_nonsepwin2multi
 
 for ii=1:length(Lr);
 

@@ -23,7 +23,7 @@ DEFUN_DLD (comp_nonsepwin2multi, args, ,
    const int lt1 = ltfat_round(lt(0));
    const int lt2 = ltfat_round(lt(1));
 
-   ComplexMatrix mwin(Lg,lt2);
+   ComplexMatrix mwin(L,lt2);
 
    nonsepwin2multi((const ltfat_complex*)g.fortran_vec(),
 		   L,Lg,a,M,lt1,lt2,

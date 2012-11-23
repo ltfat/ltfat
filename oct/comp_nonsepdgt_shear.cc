@@ -5,7 +5,7 @@
 
 DEFUN_DLD (comp_nonsepdgt_shear, args, ,
   "This function calls the C-library\n\
-  c=comp_nonsepwin2multi(f,g,a,M,s0,s1,br);\n")
+  c=comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);\n")
 {
 
    const ComplexMatrix f = args(0).complex_matrix_value();
@@ -25,10 +25,10 @@ DEFUN_DLD (comp_nonsepdgt_shear, args, ,
 
    ComplexNDArray cout(dims_out);
 
-   nonsepdgt_shear((const ltfat_complex*)f.fortran_vec(),
-   		   (const ltfat_complex*)g.fortran_vec(),
-   		   L,W,a,M,s0,s1,br,
-   		   (ltfat_complex*)cout.data());
+   dgt_shear((const ltfat_complex*)f.fortran_vec(),
+	     (const ltfat_complex*)g.fortran_vec(),
+	     L,W,a,M,s0,s1,br,
+	     (ltfat_complex*)cout.data());
         
    return octave_value (cout);
 }
