@@ -113,7 +113,6 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
       /* Call the rectangular computation in the frequency domain*/
       plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, L, W, br, Nr, plan.c_rect, flags);
 
-
    }
    else 
    {     
@@ -125,6 +124,13 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 						 L, W, ar, Mr, plan.c_rect, flags);      
 
    }  
+
+   plan.finalmod = ltfat_malloc(2*N*sizeof(LTFAT_COMPLEX));
+   
+   for (int n=0;n<2*N;n++)
+   {
+      plan.finalmod[n]=cexp(PI*I*n/N);
+   }
 
    return plan;
 
@@ -160,8 +166,18 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
       
    }
 
+   const int cc1=ar/a;
+   const int cc2=-plan.s0*plan.br/a;
+   const int twoN=2*N;
+   const int cc6=(s0*s1+1)*plan.br;
+
    if (!plan.s0==0)
    {
+
+      const int cc3=a*plan.s1*(L+1);
+      const int cc4=cc2*plan.br*(L+1);
+      const int cc5=2*cc1*plan.br;
+
       LTFAT_FFTW(execute)(plan.f_plan);
 
       for (int w=0;w<plan.W;w++)
@@ -178,59 +194,64 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
       for (int k=0;k<Nr;k++)
       {
       	 for (int m=0;m<Mr;m++)
-      	 {
-      	    const int t1 = k*ar-s0*m*plan.br;
-      	    const int t2 = m*plan.br;
+      	 {      	    
+	    const int sq1 = k*cc1+cc2*m;
+	    
+	    const int phsidx = positiverem(cc3*sq1*sq1-m*(cc4*m+k*cc5),twoN);
+                
+	    const int idx1 = positiverem(k*cc1+cc2*m,N);
+	    
+	    /* The line below has a hidden floor operation by diving with the last b */
+	    const int idx2 = positiverem(-s1*k*ar+cc6*m,L)/b;
 
-      	    const LTFAT_COMPLEX phs = cexp(PI*I*positiverem((s1*t1*t1+s0*t2*t2)*(L+1)-2*(k*ar*m*plan.br),2*L)/L);
-      	    const int idx1 =       positiverem(    k*ar       -s0*m*plan.br,L)/a;
-      	    const int idx2 = floor(positiverem(-s1*k*ar+(s0*s1+1)*m*plan.br,L)/b);
-            
-      	    for (int w=0;w<plan.W;w++)
-      	    {
-      	       const int inidx  = positiverem(-k,Nr)+m*Nr+w*plan.M*N;
-      	       const int outidx = idx2+idx1*M+w*M*N;
-      	       plan.cout[outidx] = plan.c_rect[inidx]*phs;
-      	    }
+	    for (int w=0;w<plan.W;w++) 
+	    {
+	       const int inidx  = positiverem(-k,Nr)+m*Nr+w*plan.M*N;
+	       const int outidx = idx2+idx1*M+w*M*N;
+	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
+
+	    }
       	 }
       }
 
    }
    else
    {
+      const int cc3 = s1*(L+1);
+      const int cc4 = s0*plan.br*plan.br*(L+1);
+
       LTFAT_NAME(dgt_long_execute)(plan.rect_plan);
 
       for (int k=0;k<Nr;k++)
       {
       	 for (int m=0;m<Mr;m++)
       	 {
-      	    const int t1 = k*ar-s0*m*plan.br;
-      	    const int t2 = m*plan.br;
-
-      	    const LTFAT_COMPLEX phs = cexp(I*PI*positiverem((s1*t1*t1+s0*t2*t2)*(L+1),2*L)/L);
-            
-      	    const int idx1 =       positiverem(    k*ar       -s0*m*plan.br,L)/a;
-      	    const int idx2 = floor(positiverem(-s1*k*ar+(s0*s1+1)*m*plan.br,L)/b);
-            
+	    const int sq1=k*ar-s0*m*plan.br;
+	    const int phsidx= positiverem((cc3*sq1*sq1+cc4*m*m)/a,twoN);
+                
+	    const int idx1 = positiverem(k*cc1+cc2*m,N);
 	    
+	    /* The line below has a hidden floor operation by diving with the last b */
+	    const int idx2 = positiverem(-s1*k*ar+cc6*m,L)/b;
+            	    
       	    for (int w=0;w<plan.W;w++)
       	    {
       	       const int inidx  = m+k*Mr+w*M*N;
       	       const int outidx = idx2+idx1*M+w*M*N;
-      	       plan.cout[outidx] = plan.c_rect[inidx]*phs;
+      	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
       	    }
       	 }
       }
 
-   }
-
-      
+   }      
 }
    
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
 {
+   ltfat_free(plan.finalmod);
+
    LTFAT_NAME(dgt_long_done)(plan.rect_plan);
   
    ltfat_free(plan.c_rect);

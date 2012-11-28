@@ -15,6 +15,8 @@ typedef struct
    LTFAT_H_COMPLEX *gwork;
    LTFAT_H_COMPLEX *c_rect;
 
+   LTFAT_H_COMPLEX *finalmod;
+
    LTFAT_H_FFTW(plan) f_plan; 
    LTFAT_H_FFTW(plan) g_plan;
 

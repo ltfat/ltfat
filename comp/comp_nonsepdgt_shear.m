@@ -98,7 +98,6 @@ else
                 phs = mod(((a*s1*(k*cc1+cc2*m).^2-cc2*m*m*br)*(L+1)-2*(k*cc1*m*br)),2*N);
                 phs = exp(pi*1i*phs/N);
                 
-                %idx1 =       mod(    k*ar       -s0*m*br,L)/a;
                 idx1 =       mod(    k*cc1       +cc2*m,N);
                 idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
                                                 
