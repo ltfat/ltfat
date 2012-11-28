@@ -98,9 +98,9 @@ LTFAT_NAME(dgt_multi_execute)(const LTFAT_NAME(dgt_multi_plan) plan)
    for (int win=0;win<plan.lt2;win++)
    {
       LTFAT_NAME(dgt_long_execute)(plan.rect_plan_array[win]);
-      for (int n=0;n<Ns;n++)
+      for (int w=0;w<W;w++)
       {
-	 for (int w=0;w<W;w++)
+	 for (int n=0;n<Ns;n++)
 	 {
    	    for (int m=0;m<M;m++)
    	    {
