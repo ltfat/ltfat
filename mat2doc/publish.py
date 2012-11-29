@@ -59,7 +59,7 @@ if 'develmat' in todo:
 
 # Release for users to download
 if 'releasemat' in todo:
-    printdoc.git_repoexport(project['dir'],'master',projectname,filesdir)
+    printdoc.git_repoexport(project['dir'],'master',project['mat'])
 
     # Remove unwanted files
     os.system('rm -rf '+project['mat']+'testing')
@@ -68,7 +68,6 @@ if 'releasemat' in todo:
 
     printdoc.printdoc(projectname,'mat')
     
-
     fname=filesdir+projectname+'-'+versionstring
 
     # Create the Unix src package
@@ -103,21 +102,30 @@ if todo=='phplocal' in todo:
 if todo=='phprebuild' in todo:
     printdoc.printdoc(projectname,'php','rebuild')
 
+if todo=='wavephp': 
+    assert_git_on_branch(ltfat['dir'],'wavelets')
+    printdoc.printdoc(projectname,'phpwave')
+    s='rsync -av '+project['php']+' '+host+':'+www+'wavelet/'
+    os.system(s)    
+
+
 if 'verify' in todo or todo==[]:
     printdoc.printdoc([m2dfile,'verify'])
 
 if 'stagemat' in todo:
-    printdoc.git_stageexport(tbpath,publishmat)
-    printdoc.print_mat(m2dfile,publishmat)
+    printdoc.git_autostage(project['dir'])
+    printdoc.git_stageexport(project['dir'],project['mat'])
+    printdoc.printdoc(projectname,'mat')
 
-    fname=cwd+'ltfat-'+versionstring
+    fname=filesdir+projectname+'-'+versionstring
+
+    # Create the Unix src package
+    os.system('tar zcvf '+fname+'.tgz '+projectname+'/')
+
+    # Create the Windows src package
     os.system('rm '+fname+'.zip')
-
-    printdoc.dos2unix(cwd+'ltfat')
-    os.system('tar zcvf '+fname+'.tgz ltfat/')
-
-    printdoc.unix2dos(cwd+'ltfat')
-    os.system('zip -r '+fname+'.zip ltfat/')
+    printdoc.unix2dos(filesdir+projectname)
+    os.system('zip -r '+fname+'.zip '+projectname+'/')
 
 
 if 'releasebranch' in todo:

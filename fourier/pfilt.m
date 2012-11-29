@@ -39,15 +39,34 @@ L=[];
 
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,'PFILT');
 
-[g,info] = comp_fourierwindow(g,L,'PFILT');
+if ~isstruct(g)
+    [g,info] = comp_fourierwindow(g,L,'PFILT');
+    
+    h=squeeze(comp_ufilterbank_fft(f,g,a));
 
-h=squeeze(comp_ufilterbank_fft(f,g,a));
+    % FIXME: This check should be removed when comp_ufilterbank_fft{.c/.cc}
+    % have been fixed.
+    if isreal(f) && isreal(g)
+        h=real(h);
+    end;
 
-% FIXME: This check should be removed when comp_ufilterbank_fft{.c/.cc}
-% have been fixed.
-if isreal(f) && isreal(g)
-  h=real(h);
+else
+    N=L/a;
+    G=middlepad(g.filter(L),L);
+
+    for w=1:W
+        F=fft(f(:,w));
+        h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
+    end;
+    
+    % Insert check for window being
+    if isreal(f) && g.isreal
+        h=real(h);
+    end;
+        
 end;
+
+
 
 permutedsize(1)=size(h,1);
   
