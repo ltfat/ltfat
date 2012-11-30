@@ -1,19 +1,12 @@
-function [coef]=comp_dgt_fb(f,g,a,M,boundary)
+function [coef]=comp_dgt_fb(f,g,a,M)
 %COMP_DGT_FB  Filter bank DGT
-%   Usage:  c=comp_dgt_fb(f,g,a,M,boundary);
+%   Usage:  c=comp_dgt_fb(f,g,a,M);
 %  
 %   This is a computational routine. Do not call it directly.
 %
-%   The value of boundary can take the following values:
-%
-%-     0 - Periodic boundary conditions, this is the default.
-%-     1 - Even boundary conditions.
-%-     2 - Zero boundary conditions.
-%-
-
 %   See help on DGT.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 % Calculate the parameters that was not specified.
 L=size(f,1);
@@ -28,36 +21,24 @@ g=conj(fftshift(g));
 
 coef=zeros(M,N,W);
 
-% Replicate g when multiple columns should be transformed.
-gw=repmat(g,1,W);
-
 % ----- Handle the first boundary using periodic boundary conditions. ---
 for n=0:ceil(glh/a)-1
 
-  switch(boundary)
-    case 0
-      % Periodic boundary condition.
-      fpart=[f(L-(glh-n*a)+1:L,:);...
-	     f(1:gl-(glh-n*a),:)];
-    case 1
-      % Even boundary condition.
-    case 2
-      % Zero boundary condition.
-      fpart=[zeros(glh-n*a,W);...
-	     f(1:gl-(glh-n*a),:)];      
-  end;
-
-  fg=fpart.*gw;
-  
-  % Do the sum (decimation in frequency, Poisson summation)
-  coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);
+    % Periodic boundary condition.
+    fpart=[f(L-(glh-n*a)+1:L,:);...
+           f(1:gl-(glh-n*a),:)];
+    
+    fg=bsxfun(@times,fpart,g);
+    
+    % Do the sum (decimation in frequency, Poisson summation)
+    coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);
       
 end;
 
 % ----- Handle the middle case. ---------------------
 for n=ceil(glh/a):floor((L-ceil(gl/2))/a)
   
-  fg=f(n*a-glh+1:n*a-glh+gl,:).*gw;
+  fg=bsxfun(@times,f(n*a-glh+1:n*a-glh+gl,:),g);
   
   % Do the sum (decimation in frequency, Poisson summation)
   coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);
@@ -66,24 +47,14 @@ end;
 % ----- Handle the last boundary using periodic boundary conditions. ---
 for n=floor((L-ceil(gl/2))/a)+1:N-1
 
-  switch(boundary)
-    case 0
-      % Periodic boundary condition.
-      fpart=[f((n*a-glh)+1:L,:);... %   L-n*a+glh elements
-             f(1:n*a-glh+gl-L,:)];  %  gl-L+n*a-glh elements
-    case 1
-      % Even boundary condition.
-    case 2
-      % Zero boundary condition.
-      fpart=[f((n*a-glh)+1:L,:);...  %   L-n*a+glh elements
-             zeros(gl-L+n*a-glh,W)]; %  gl-L+n*a-glh elements
-      
-  end;
-
-  fg=fpart.*gw;
-  
-  % Do the sum (decimation in frequency, Poisson summation)
-  coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);      
+    % Periodic boundary condition.
+    fpart=[f((n*a-glh)+1:L,:);... %   L-n*a+glh elements
+           f(1:n*a-glh+gl-L,:)];  %  gl-L+n*a-glh elements      
+    
+    fg=bsxfun(@times,fpart,g);
+    
+    % Do the sum (decimation in frequency, Poisson summation)
+    coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);      
 end;
 
 % --- Shift back again to make it a frequency-invariant system. ---

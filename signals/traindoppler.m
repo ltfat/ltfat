@@ -14,7 +14,7 @@ function [s,fs]=traindoppler()
 %   The signal was obtained from
 %   `<http://www.fourmilab.ch/cship/doppler.html>`_
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
   

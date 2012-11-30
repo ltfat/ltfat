@@ -29,7 +29,7 @@ function xo=uquant(xi,varargin);
 %   If this function is applied to a complex signal, it will be applied to
 %   the real and imaginary part separately.
 
-%   AUTHOR : Peter Soendergaard and Bruno Torresani.  
+%   AUTHOR : Peter L. Søndergaard and Bruno Torresani.  
 %   TESTING: OK
 %   REFERENCE: OK
 

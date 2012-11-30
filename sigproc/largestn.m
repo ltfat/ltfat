@@ -18,7 +18,7 @@ function [xo]=largestn(xi,N,mtype)
 %
 %   References: ma98
 
-%   AUTHOR : Peter Soendergaard and Bruno Torresani.  
+%   AUTHOR : Peter L. Søndergaard and Bruno Torresani.  
 %   TESTING: OK
 %   REFERENCE: OK
 

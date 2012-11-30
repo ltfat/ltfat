@@ -31,7 +31,7 @@ function f=shah(L,a);
 %     sgram(shah(256,16),'dynrange',80,'nf')
 %
   
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

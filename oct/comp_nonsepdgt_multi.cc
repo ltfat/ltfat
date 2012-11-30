@@ -10,7 +10,7 @@ static inline int ltfat_round(double x)
 
 DEFUN_DLD (comp_nonsepdgt_multi, args, ,
   "This function calls the C-library\n\
-  c=comp_nonsepwin2multi(f,g,a,M,lt);\n")
+  c=comp_nonsepdgt_multi(f,g,a,M,lt);\n")
 {
 
    const ComplexMatrix f = args(0).complex_matrix_value();
@@ -19,9 +19,10 @@ DEFUN_DLD (comp_nonsepdgt_multi, args, ,
    const double M        = args(3).int_value();
    const Matrix lt       = args(4).matrix_value();
    
-   const int L = f.rows();
-   const int W = f.cols();
-   const int N = L/a;
+   const int L  = f.rows();
+   const int W  = f.cols();
+   const int Lg = g.rows();
+   const int N  = L/a;
   
    const int lt1 = ltfat_round(lt(0));
    const int lt2 = ltfat_round(lt(1));
@@ -31,10 +32,10 @@ DEFUN_DLD (comp_nonsepdgt_multi, args, ,
 
    ComplexNDArray cout(dims_out);
 
-   nonsepdgt_multi((const ltfat_complex*)f.fortran_vec(),
-   		   (const ltfat_complex*)g.fortran_vec(),
-   		   L,W,a,M,lt1,lt2,
-   		   (ltfat_complex*)cout.data());
+   dgt_multi((const ltfat_complex*)f.fortran_vec(),
+	     (const ltfat_complex*)g.fortran_vec(),
+	     L,Lg,W,a,M,lt1,lt2,
+	     (ltfat_complex*)cout.data());
         
    return octave_value (cout);
 }

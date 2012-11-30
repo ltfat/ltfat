@@ -25,8 +25,8 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   means that the number of channels is fixed.
 %
 %   The resulting coefficients is stored as a $M \times N \times W$
-%   array. `c(m,n,l)` is thus the value of the coefficient for time index *n*,
-%   frequency index *m* and signal channel *l*.
+%   array. `c(m,n,w)` is thus the value of the coefficient for time index *n*,
+%   frequency index *m* and signal channel *w*.
 %
 %   The variable *a* contains the distance in samples between two consequtive
 %   blocks of coefficients. *a* is a vectors of integers. The variables *g* and
@@ -79,46 +79,42 @@ if ~isnumeric(M)
   error('%s: M must be numeric.',upper(callfun));
 end;
 
-L=sum(a);
 
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UNSDGT',0);
+%% ----- step 1 : Verify f and determine its length -------
+% Change f to correct shape.
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+
+L=nsdgtlength(Ls,a);
 f=postpad(f,L);
 
 [g,info]=nsgabwin(g,a,M);
 
-timepos=cumsum(a)-a(1);
-  
-N=length(a); % Number of time positions
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
 
+timepos=cumsum(a)-a(1);
+
+N=length(a); % Number of time positions
 c=zeros(M,N,W); % Initialisation of the result
 
-for ii=1:N
-  shift=floor(length(g{ii})/2);
-  temp=zeros(M,W);
-  
-  % Windowing of the signal.
-  % Possible improvements: The following could be computed faster by 
-  % explicitely computing the indexes instead of using modulo and the 
-  % repmat is not needed if the number of signal channels W=1 (but the time 
-  % difference when removing it whould be really small)
-  temp(1:length(g{ii}))=f(mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1,:).*...
-    repmat(conj(circshift(g{ii},shift)),1,W);
-  
-  temp=circshift(temp,-shift);
-  if M<length(g{ii}) 
-    % Fft size is smaller than window length, some aliasing is needed
-    x=floor(length(g{ii})/M);
-    y=length(g{ii})-x*M;
-    % Possible improvements: the following could probably be computed 
-    % faster using matrix manipulation (reshape, sum...)
-    temp1=temp;
-    temp=zeros(M,size(temp,2));
-    for jj=0:x-1
-      temp=temp+temp1(jj*M+(1:M),:);
-    end
-    temp(1:y,:)=temp(1:y,:)+temp1(x*M+(1:y),:);
-  end
-  
-  % FFT of the windowed signal
-  c(:,ii,:) = reshape(fft(temp),M,1,W); 
+   
+for ii = 1:N
+    Lg = length(g{ii});
+    gt = g{ii}; gt = gt([end-floor(Lg/2)+1:end,1:ceil(Lg/2)]);
+    win_range = mod(timepos(ii)+(-floor(Lg/2):ceil(Lg/2)-1),L)+1;
+    if M < Lg 
+        % if the number of frequency channels is too small, aliasing is introduced
+        col = ceil(Lg/M);
+        temp = zeros(col*M,W);
+        temp([col*M-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times,f(win_range,:),gt);
+        temp = reshape(temp,M,col,W);
+        
+        c(:,ii,:)=fft(sum(temp,2));
+    else
+        temp = zeros(M,W);
+        temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, ...
+                                                          f(win_range,:),gt);
+        c(:,ii,:)=fft(temp);
+    end       
 end

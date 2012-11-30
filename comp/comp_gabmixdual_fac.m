@@ -19,7 +19,7 @@ function gammaf=comp_gabmixdual_fac(gf1,gf2,L,a,M)
 %
 %   See also:  gabmixdual, comp_fac, compute_ifac
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

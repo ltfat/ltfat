@@ -1,4 +1,4 @@
-function gamma=gabmixdual(g1,g2,a,M,L)
+function gamma=gabmixdual(g1,g2,a,M,varargin)
 %GABMIXDUAL  Computes the mixdual of g1
 %   Usage: gamma=mixdual(g1,g2,a,M)
 %
@@ -20,48 +20,58 @@ function gamma=gabmixdual(g1,g2,a,M,L)
 %
 %   References: elsuwe05
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 % Assert correct input.
 
 if nargin<4
-  error('Too few input parameters.');
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if nargin>4
-  error('Too many input parameters.');
-end;
+definput.keyvals.L=[];
+definput.keyvals.lt=[0 1];
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-assert_squarelat(a,M,1,'MIXDUAL',1);
 
-if size(g1,2)>1
-  if size(g1,1)>1
-    error('g1 must be a vector');
-  else
-    % g1 was a row vector.
-    g1=g1(:);
-  end;
-end;
 
-if size(g2,2)>1
-  if size(g2,1)>1
-    error('g2 must be a vector');
-  else
-    % g2 was a row vector.
-    g2=g2(:);
-  end;
-end;
+%% ------ step 2: Verify a, M and L
+if isempty(L)
+    % Minimum transform length by default.
+    Ls=1;
+    
+    % Use the window lengths, if any of them are numerical
+    if isnumeric(g1)
+        Ls=max(length(g1),Ls);
+    end;
 
-Ls=size(g1,1);
-Lwindow=size(g2,1);
+    if isnumeric(g2)
+        Ls=max(length(g2),Ls);
+    end;
 
-if nargin<5
-  [b,N,L]=assert_L(Ls,Lwindow,[],a,M,'MIXDUAL');
+    % ----- step 2b : Verify a, M and get L from the window length ----------
+    L=dgtlength(Ls,a,M,kv.lt);
+
 else
-  [b,N,L]=assert_L(Ls,Lwindow,L,a,M,'MIXDUAL');
-  g1=fir2long(g1,L);
-  g2=fir2long(g2,L);
+
+    % ----- step 2a : Verify a, M and get L
+
+    Luser=dgtlength(L,a,M,kv.lt);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser)
+    end;
+
 end;
+
+[g1,info_g1] = gabwin(g1,a,M,L,kv.lt,'callfun',upper(mfilename));
+[g2,info_g2] = gabwin(g2,a,M,L,kv.lt,'callfun',upper(mfilename));
+ 
+% gm must have the correct length, otherwise dgt will zero-extend it
+% incorrectly using postpad instead of fir2long
+g1=fir2long(g1,L);
+g2=fir2long(g2,L);
 
 gf1=comp_wfac(g1,a,M);
 gf2=comp_wfac(g2,a,M);

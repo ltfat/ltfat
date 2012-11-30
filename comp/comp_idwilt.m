@@ -4,7 +4,7 @@ function [f]=comp_idwilt(coef,g)
 %   This is a computational routine. Do not call it
 %   directly.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 
@@ -46,7 +46,7 @@ coef2(2*M:-2:M+2,2:2:N,:)   = 1/sqrt(2)*coef(M+2:2:2*M,:,:);
 
 
 % Apply the final DGT
-f=comp_idgt(coef2,g,a,2*M,L,0);
+f=comp_idgt(coef2,g,a,[0 1],0,0);
 
 % Clean signal if it is known to be real
 if (isreal(coef) && isreal(g))

@@ -23,7 +23,7 @@ function [f]=iwmdct2(c,g1,p3,p4)
 %
 %   See also:  wmdct2, dgt2, wildual
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 error(nargchk(2,4,nargin));
 

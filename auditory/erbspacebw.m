@@ -9,6 +9,6 @@ function [y,n] = erbspacebw(flow,fhigh,varargin)
 %
 %   See also: audspacebw, freqtoaud
   
-%   AUTHOR : Peter L. Soendergaard
+%   AUTHOR : Peter L. Søndergaard
   
 [y,n] = audspacebw(flow,fhigh,varargin{:},'erb');

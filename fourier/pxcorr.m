@@ -18,7 +18,7 @@ function h=pxcorr(f,g,varargin)
 %
 %   See also: dft, pfilt, involute
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 
 % Assert correct input.
 if nargin<2

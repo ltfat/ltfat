@@ -18,7 +18,7 @@ function c=dctiv(f,L,dim)
 %   Let f be a signal of length *L* and let `c=dctiv(f)`. Then
 %
 %   ..                     L-1
-%     c(n+1) = sqrt(2/L) * sum f(m+1)*cos(pi*n*(m+.5)/L) 
+%     c(n+1) = sqrt(2/L) * sum f(m+1)*cos(pi*(n+.5)*(m+.5)/L) 
 %                          m=0 
 %
 %   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
@@ -27,7 +27,7 @@ function c=dctiv(f,L,dim)
 %
 %   References: rayi90 wi94
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_PUREFREQ
 %   REFERENCE: REF_DCTIV
 

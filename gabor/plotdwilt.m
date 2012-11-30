@@ -20,7 +20,7 @@ function plotdwilt(coef,varargin)
 %
 %   See also:  dwilt, tfplot, sgram, wil2rect
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 

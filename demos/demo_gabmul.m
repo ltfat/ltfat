@@ -5,24 +5,24 @@
 %
 %   .. figure::
 %
-%     Cut a circle in the TF-plane
+%      Cut a circle in the TF-plane
 %
-%     This figure shows the symbol (top plot, only the positive frequencies are displayed),
-%     the input random signal (bottom) and the output signal (middle).
-%
-%   .. figure::
-%
-%     Keep low frequencies (low-pass)
-%
-%     This figure shows the symbol (top plot, only the positive frequencies are displayed),
-%     the input random signal (bottom) and the output signal (middle).
+%      This figure shows the symbol (top plot, only the positive frequencies are displayed),
+%      the input random signal (bottom) and the output signal (middle).
 %
 %   .. figure::
 %
-%     Keep middle frequencies (band-pass)
+%      Keep low frequencies (low-pass)
 %
-%     This figure shows the symbol (top plot, only the positive frequencies are displayed),
-%     the input random signal (bottom) and the output signal (middle).
+%      This figure shows the symbol (top plot, only the positive frequencies are displayed),
+%      the input random signal (bottom) and the output signal (middle).
+%
+%   .. figure::
+%
+%      Keep middle frequencies (band-pass)
+%
+%      This figure shows the symbol (top plot, only the positive frequencies are displayed),
+%      the input random signal (bottom) and the output signal (middle).
 %
 
 disp('Type "help demo_gabmul" to see a description of how this demo works.');

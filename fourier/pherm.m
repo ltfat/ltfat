@@ -34,7 +34,7 @@ function g=pherm(L,order,tfr)
 %
 %   See also:  hermbasis, pgauss, psech
 
-% AUTHORs: Thomasz Hrycak and Peter Soendergaard.
+% AUTHORs: Thomasz Hrycak and Peter L. Søndergaard.
 % 
 
 error(nargchk(1,3,nargin));

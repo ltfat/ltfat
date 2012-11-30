@@ -28,7 +28,7 @@ function c=constructphase(s,g,a)
 %
 %   Demos:  demo_constructphase
   
-% AUTHOR: Peter Soendergaard
+% AUTHOR: Peter L. Søndergaard
 M=size(s,1);
 N=size(s,2);
 L=N*a;

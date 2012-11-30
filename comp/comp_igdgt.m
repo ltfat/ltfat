@@ -17,7 +17,7 @@ function f=comp_igdgt(c,g,a,M,L,c_t,c_f,c_w,timeinv)
 %         f     : Signal.
 %
 
-% AUTHOR : Peter Soendergaard.
+% AUTHOR : Peter L. Søndergaard.
 
 b=L/M;
 N=L/a;
@@ -41,7 +41,7 @@ if timeinv
   c=phaseunlock(c,a);
 end;
 
-f=comp_idgt(c,g,a,M,L,0);
+f=comp_idgt(c,g,a,[0 1],0,0);
 
 % Postprocess to handle c_f different from 0.
 if (c_f~=0)

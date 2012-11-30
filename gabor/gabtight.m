@@ -63,7 +63,7 @@ function gt=gabtight(varargin)
 %
 %   See also:  gabdual, gabwin, fir2long, dgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
 
@@ -164,6 +164,7 @@ if kv.lt(2)==1
         end
         weight = sqrt(sum(reshape(abs(g_new).^2,a,N_win),2));
         
+        % This repmat cannot be replaced by bsxfun
         gt = g_new./repmat(weight,N_win,1);
         gt = gt/sqrt(M);
         if Lwin_new ~= info.gl
@@ -230,7 +231,7 @@ end;
 
 % --------- post process result -------
 
-if isreal(g) && (kv.lt(2)==1 || kv.lt(2)==2)
+if isreal(g) && (kv.lt(2)<=2)
   % If g is real and the lattice is either rectangular or quinqux, then
   % the output is known to be real.
   gt=real(gt);

@@ -3,7 +3,7 @@ function [coef]=ref_dwiltiv_1(f,g,a,M)
 %   
 %   Do not call this function directly, use DWILT instead.
 
-%   Author : Peter Soendergaard.
+%   Author : Peter L. Søndergaard.
 
 L=size(g,1);
 N=L/a;

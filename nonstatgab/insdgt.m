@@ -66,6 +66,22 @@ if iscell(c)
   
   f=zeros(Ls,W); % Initialisation of the result
   
+  if 0
+      
+      % Nicki's code
+  
+      for ii = 1:N
+          X = length(g{ii});
+          win_range = mod(timepos(ii)+(-floor(X/2):ceil(X/2)-1),Ls)+1;
+          temp = ifft(c{ii})*length(c{ii});
+          %size(temp)
+          %[NN-floor(X/2)+1:NN,1:ceil(X/2)]
+          f(win_range) = f(win_range) + temp(mod([end-floor(X/2)+1:end,1:ceil(X/2)]-1,length(temp))+1).*fftshift(g{ii});
+      end
+  
+  else
+  
+  
   for ii=1:N
     shift=floor(length(g{ii})/2);
     % Note: the *size(c{ii},1) in the following is here to ensure the 
@@ -98,6 +114,7 @@ if iscell(c)
     f(tempind,:)=f(tempind,:)+temp;
   end
   
+  end;
 else   
   
   % ---- invert the uniform case ----------------

@@ -32,7 +32,7 @@ function c=comp_dgt(f,g,a,M,lt,phasetype,algfir,algns)
 %      * $algns=2$  : Always choose shear
       
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 
@@ -43,8 +43,7 @@ if lt(2)==1
 
     if Lwindow<L
         % Do the filter bank algorithm
-        % Periodic boundary conditions
-        c=comp_dgt_fb(f,g,a,M,0);
+        c=comp_dgt_fb(f,g,a,M);
         
     else
         % Do the factorization algorithm
@@ -70,8 +69,9 @@ else
 
 end;
 
+% FIXME : Calls non-comp function 
 if phasetype==1
-  c=phaselock(c,a);
+  c=phaselock(c,a,'lt',lt);
 end;
 
 

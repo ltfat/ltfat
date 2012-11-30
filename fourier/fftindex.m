@@ -10,7 +10,7 @@ function n=fftindex(N,nyquestzero)
 %
 %   See also: dft
   
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

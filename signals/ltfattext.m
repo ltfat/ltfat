@@ -21,7 +21,7 @@ function s=ltfattext();
 % 
 %   Demos: demo_isgram
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
   

@@ -1,4 +1,4 @@
-function gd=gabprojdual(gm,g,a,M,L);
+function gd=gabprojdual(gm,g,a,M,varargin);
 %GABPROJDUAL   Gabor Dual window by projection
 %   Usage:  gd=gabprojdual(gm,g,a,M)
 %           gd=gabprojdual(gm,g,a,M,L)
@@ -8,7 +8,7 @@ function gd=gabprojdual(gm,g,a,M,L);
 %         g     : Window function.
 %         a     : Length of time shift.
 %         M     : Number of modulations.
-%         L     : Total length of vectors (optional).
+%         L     : Length of transform to consider
 %   Output parameters:
 %         gd    : Dual window.
 %
@@ -17,64 +17,80 @@ function gd=gabprojdual(gm,g,a,M,L);
 %   function projects the suggested window *gm* onto the subspace of
 %   admissable dual windows, hence the name of the function.
 %
-%   `gabprojdual(gm,g,a,M,L`) first extends the windows *g* and *gm* to length
-%   *L*.
+%   `gabprojdual(gm,g,a,M,L)` first extends the windows *g* and *gm* to
+%   length *L*.
+%
+%   `gabprojdual(...,'lt',lt)` does the same for a non-separable lattice
+%   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
+%   precise description of the parameter *lt*.
 %
 %   See also:  gabdual, gabtight, gabdualnorm, fir2long
 
-%   AUTHOR : Peter Soendergaard 
+%   AUTHOR : Peter L. Søndergaard 
 
-if nargin<3
-  error('To few input parameters.');
+if nargin<4
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if nargin>5
-  error('To many input parameters.');
-end;
+definput.keyvals.L=[];
+definput.keyvals.lt=[0 1];
+definput.flags.phase={'freqinv','timeinv'};
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-assert_squarelat(a,M,1,'PROJDUAL',1);
 
-if size(g,2)>1
-  if size(g,1)>1
-    error('g must be a vector');
-  else
-    % g was a row vector.
-    g=g(:);
-  end;
-end;
 
-wasrow=0;
-if size(gm,2)>1
-  if size(gm,1)>1
-    error('gm must be a vector');
-  else
-    % gm was a row vector.
-    wasrow=1;
-    gm=gm(:);
-  end;
-end;
+%% ------ step 2: Verify a, M and L
+if isempty(L)
+    % Minimum transform length by default.
+    Ls=1;
+    
+    % Use the window lengths, if any of them are numerical
+    if isnumeric(g)
+        Ls=max(length(g),Ls);
+    end;
 
-if nargin<5
-  [b,N,L]=assert_L(Ls,Lwindow,[],a,M,'PROJDUAL');
+    if isnumeric(gm)
+        Ls=max(length(gm),Ls);
+    end;
+
+    % ----- step 2b : Verify a, M and get L from the window length ----------
+    L=dgtlength(Ls,a,M,kv.lt);
+
 else
-  [b,N,L]=assert_L(Ls,Lwindow,L,a,M,'PROJDUAL');
-  g1=fir2long(g1,L);
-  g2=fir2long(g2,L);
+
+    % ----- step 2a : Verify a, M and get L
+
+    Luser=dgtlength(L,a,M,kv.lt);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser)
+    end;
+
 end;
+
+[g, info_g]  = gabwin(g, a,M,L,kv.lt,'callfun',upper(mfilename));
+[gm,info_gm] = gabwin(gm,a,M,L,kv.lt,'callfun',upper(mfilename));
+ 
+% gm must have the correct length, otherwise dgt will zero-extend it
+% incorrectly using postpad instead of fir2long
+gm=fir2long(gm,L);
 
 % Calculate the canonical dual.
-gamma0=gabdual(g,a,M);
+gamma0=gabdual(g,a,M,'lt',kv.lt);
   
 % Get the residual
 gres=gm-gamma0;
 
 % Calculate parts that lives in span of adjoint lattice.
-gk=idgt(dgt(gres,gamma0,M,a),g,M)*M/a;
-
+if isreal(gres) && isreal(gamma0) && isreal(g) && kv.lt(2)<=2
+    gk=idgtreal(dgtreal(gres,gamma0,M,a,'lt',kv.lt),g,M,a,'lt',kv.lt)*M/a;    
+else
+    gk=idgt(dgt(gres,gamma0,M,a,'lt',kv.lt),g,M,'lt',kv.lt)*M/a;
+end;
+    
 % Construct dual window
 gd=gamma0+(gres-gk);
-
-if wasrow
-  gd=gd.';
-end;
-
+    
+    
+    

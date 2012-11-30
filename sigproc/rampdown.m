@@ -3,7 +3,7 @@ function outsig=rampdown(L,wintype)
 %   Usage: outsig=rampdown(siglen);
 %
 %   `rampdown(siglen)` will return a falling ramp function of length
-%   siglen. The ramp is a sinusoide starting from one and ending at
+%   *siglen*. The ramp is a sinusoid starting from one and ending at
 %   zero. The ramp is centered such that the first element is always one and
 %   the last element is not quite zero, such that the ramp fits with
 %   following zeros.

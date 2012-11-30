@@ -1,19 +1,12 @@
-function [coef]=comp_dgtreal_fb(f,g,a,M,boundary)
+function [coef]=comp_dgtreal_fb(f,g,a,M)
 %COMP_DGTREAL_FB  Filter bank DGT
 %   Usage:  c=comp_dgt_fb(f,g,a,M,boundary);
 %  
 %   This is a computational routine. Do not call it directly.
-%
-%   The value of boundary can take the following values:
-%
-%-     0 - Periodic boundary conditions, this is the default.
-%-     1 - Even boundary conditions.
-%-     2 - Zero boundary conditions.
-%-
 
 %   See help on DGT.
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 % Calculate the parameters that was not specified.
 L=size(f,1);
@@ -21,6 +14,7 @@ N=L/a;
 gl=length(g);
 W=size(f,2);      % Number of columns to apply the transform to.
 glh=floor(gl/2);  % gl-half
+M2=floor(M/2)+1;
 
 
 % Conjugate the window here.
@@ -34,18 +28,9 @@ gw=repmat(g,1,W);
 % ----- Handle the first boundary using periodic boundary conditions. ---
 for n=0:ceil(glh/a)-1
 
-  switch(boundary)
-    case 0
-      % Periodic boundary condition.
-      fpart=[f(L-(glh-n*a)+1:L,:);...
-	     f(1:gl-(glh-n*a),:)];
-    case 1
-      % Even boundary condition.
-    case 2
-      % Zero boundary condition.
-      fpart=[zeros(glh-n*a,W);...
-	     f(1:gl-(glh-n*a),:)];      
-  end;
+    % Periodic boundary condition.
+    fpart=[f(L-(glh-n*a)+1:L,:);...
+           f(1:gl-(glh-n*a),:)];
 
   fg=fpart.*gw;
   
@@ -66,24 +51,14 @@ end;
 % ----- Handle the last boundary using periodic boundary conditions. ---
 for n=floor((L-ceil(gl/2))/a)+1:N-1
 
-  switch(boundary)
-    case 0
-      % Periodic boundary condition.
-      fpart=[f((n*a-glh)+1:L,:);... %   L-n*a+glh elements
-             f(1:n*a-glh+gl-L,:)];  %  gl-L+n*a-glh elements
-    case 1
-      % Even boundary condition.
-    case 2
-      % Zero boundary condition.
-      fpart=[f((n*a-glh)+1:L,:);...  %   L-n*a+glh elements
-             zeros(gl-L+n*a-glh,W)]; %  gl-L+n*a-glh elements
-      
-  end;
+    % Periodic boundary condition.
+    fpart=[f((n*a-glh)+1:L,:);... %   L-n*a+glh elements
+           f(1:n*a-glh+gl-L,:)];  %  gl-L+n*a-glh elements
 
-  fg=fpart.*gw;
-  
-  % Do the sum (decimation in frequency, Poisson summation)
-  coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);      
+    fg=fpart.*gw;
+    
+    % Do the sum (decimation in frequency, Poisson summation)
+    coef(:,n+1,:)=sum(reshape(fg,M,gl/M,W),2);      
 end;
 
 % --- Shift back again to make it a frequency-invariant system. ---
@@ -92,6 +67,7 @@ for n=0:N-1
 end;
 
 coef=fftreal(coef);
+coef=reshape(coef,M2,N,W);
 
 %c=c(1:M2,:);
 

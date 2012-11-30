@@ -31,61 +31,55 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %
 %   References: aufl95
 
-% AUTHOR: Peter L. Soendergaard, 2008.
+% AUTHOR: Peter L. Søndergaard, 2008.
   
 error(nargchk(4,5,nargin));
 
-if nargin==5
-  switch(lower(p5))
-   case {'aa'}
-    
-    % --- use antialiasing ----
 
-    [M,N,W]=size(s);
-    L=N*a;
-    b=L/M;
+sr=comp_gabreassign(s,tgrad,fgrad,a);
+
+
+
+
+% The following code is currently not actived. It calculates the
+% reassigment using anti-aliasing, but it make very little visual
+% difference, and it is slower.
+  %   [M,N,W]=size(s);
+  %   L=N*a;
+  %   b=L/M;
     
-    freqpos=fftindex(M);  
-    for w=1:W
-      tgrad(:,:,w)=tgrad(:,:,w)/b+repmat(freqpos,1,N);
-    end;
-    
-    timepos=fftindex(N);
-    for w=1:W
-      fgrad(:,:,w)=fgrad(:,:,w)/a+repmat(timepos.',M,1);
-    end;
-    
-    tgrad=round(tgrad);
-    fgrad=round(fgrad);
-    
-    tgrad=mod(tgrad,M);
-    fgrad=mod(fgrad,N);  
-    
-    sr=zeros(M,N,W);
-    
-    fk=mod(floor(tgrad),M)+1;
-    ck=mod(ceil(tgrad),M)+1;
-    fn=mod(floor(fgrad),N)+1;
-    cn=mod(ceil(fgrad),N)+1;
-    
-    alpha = fgrad-floor(fgrad);
-    beta  = tgrad-floor(tgrad);
-    m1 =(1-alpha).*(1-beta).*s;
-    m2 =(1-alpha).*beta.*s;
-    m3 =alpha.*(1-beta).*s;
-    m4 =alpha.*beta.*s;
-    for ii=1:M
-      for jj=1:N
-        sr(fk(ii,jj),fn(ii,jj))=sr(fk(ii,jj),fn(ii,jj))+m1(ii,jj);
-        sr(ck(ii,jj),fn(ii,jj))=sr(ck(ii,jj),fn(ii,jj))+m2(ii,jj);
-        sr(fk(ii,jj),cn(ii,jj))=sr(fk(ii,jj),cn(ii,jj))+m3(ii,jj);
-        sr(ck(ii,jj),cn(ii,jj))=sr(ck(ii,jj),cn(ii,jj))+m4(ii,jj);
+  %   freqpos=fftindex(M);  
+  %   tgrad=bsxfun(@plus,tgrad/b,freqpos);
         
-      end;
-    end;
-  end;
-else
-
-  sr=comp_gabreassign(s,tgrad,fgrad,a);
-  
-end;
+  %   timepos=fftindex(N);
+  %   fgrad=bsxfun(@plus,fgrad/a,timepos.');
+    
+  %   tgrad=round(tgrad);
+  %   fgrad=round(fgrad);
+    
+  %   tgrad=mod(tgrad,M);
+  %   fgrad=mod(fgrad,N);  
+    
+  %   sr=zeros(M,N,W);
+    
+  %   fk=mod(floor(tgrad),M)+1;
+  %   ck=mod(ceil(tgrad),M)+1;
+  %   fn=mod(floor(fgrad),N)+1;
+  %   cn=mod(ceil(fgrad),N)+1;
+    
+  %   alpha = fgrad-floor(fgrad);
+  %   beta  = tgrad-floor(tgrad);
+  %   m1 =(1-alpha).*(1-beta).*s;
+  %   m2 =(1-alpha).*beta.*s;
+  %   m3 =alpha.*(1-beta).*s;
+  %   m4 =alpha.*beta.*s;
+  %   for ii=1:M
+  %     for jj=1:N
+  %       sr(fk(ii,jj),fn(ii,jj))=sr(fk(ii,jj),fn(ii,jj))+m1(ii,jj);
+  %       sr(ck(ii,jj),fn(ii,jj))=sr(ck(ii,jj),fn(ii,jj))+m2(ii,jj);
+  %       sr(fk(ii,jj),cn(ii,jj))=sr(fk(ii,jj),cn(ii,jj))+m3(ii,jj);
+  %       sr(ck(ii,jj),cn(ii,jj))=sr(ck(ii,jj),cn(ii,jj))+m4(ii,jj);
+        
+  %     end;
+  %   end;
+  % end;

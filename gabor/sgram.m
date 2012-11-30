@@ -22,7 +22,8 @@ function varargout=sgram(f,varargin)
 %
 %       sgram(f,fs,'dynrange',50)
 %
-%   The arguments must be character strings possibly followed by an argument:
+%   The arguments must be character strings possibly followed by an
+%   argument:
 %
 %     'dynrange',r  Limit the dynamical range to *r* by using a colormap in
 %                   the interval $[chigh-r,chigh]$, where *chigh* is the highest
@@ -105,7 +106,7 @@ function varargout=sgram(f,varargin)
 %
 %   See also:  dgt, dgtreal
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
   
@@ -183,9 +184,9 @@ if flags.do_thr
 end
 
 if flags.do_nf
-  plotdgt(coef,a,'argimport',flags,kv);
+  coef=plotdgt(coef,a,'argimport',flags,kv);
 else
-  plotdgtreal(coef,a,M,'argimport',flags,kv);
+  coef=plotdgtreal(coef,a,M,'argimport',flags,kv);
 end;
 
 if nargout>0

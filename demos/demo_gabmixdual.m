@@ -13,20 +13,20 @@
 %
 %   .. figure::
 %
-%     Gabmixdual of two Gaussians.
+%      Gabmixdual of two Gaussians.
 %
-%     The first row of the figure shows the canonical dual window
-%     of the input window, which is a Gaussian function perfectly
-%     localized in the time and frequency domains.
+%      The first row of the figure shows the canonical dual window
+%      of the input window, which is a Gaussian function perfectly
+%      localized in the time and frequency domains.
 %
-%     The second row shows the canonical dual window of the window we
-%     will be mixing with: This is a Gaussian that is 10 times more
-%     concentrated in the time domain than in the frequency domain.
-%     The resulting canonical dual window has rapid decay in the time domain.
+%      The second row shows the canonical dual window of the window we
+%      will be mixing with: This is a Gaussian that is 10 times more
+%      concentrated in the time domain than in the frequency domain.
+%      The resulting canonical dual window has rapid decay in the time domain.
 %
-%     The last row shows the gabmixdual of these two. This is a non-canonical
-%     dual window of the first Gaussian, with decay resembling that of the
-%     second.
+%      The last row shows the gabmixdual of these two. This is a non-canonical
+%      dual window of the first Gaussian, with decay resembling that of the
+%      second.
 %
 %   See also: gabmixdual, gabdual
 
@@ -83,7 +83,7 @@ plot(fftshift(gc1));
 title('Canonical dual window.');  
 
 subplot(3,2,2);
-semilogy(abs(fftshift(gc1)));
+plot(20*log10(abs(fftshift(gc1))));
 title('Decay of canonical dual window.');  
 
 subplot(3,2,3);
@@ -91,7 +91,7 @@ plot(fftshift(gc2));
 title('Can. dual of mix. window.');
 
 subplot(3,2,4);
-semilogy(abs(fftshift(gc2)));
+plot(20*log10(abs(fftshift(gc2))));
 title('Decay of can.dual of mix. window.')
 
 subplot(3,2,5);
@@ -99,5 +99,5 @@ plot(fftshift(gd));
 title('Gabmixdual');
 
 subplot(3,2,6);
-semilogy(abs(fftshift(gd)));
+plot(20*log10(abs(fftshift(gd))));
 title('Decay of gabmixdual');

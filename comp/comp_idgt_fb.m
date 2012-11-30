@@ -9,7 +9,7 @@ function [f]=comp_idgt_fb(coef,g,L,a,M)
 %
 %   See also: idgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 
@@ -39,14 +39,11 @@ g=fftshift(g);
 
 f=zeros(L,W);
 
-% Make multicolumn g by replication.
-gw=repmat(g,1,W);
-
 ff=zeros(gl,1);
 
 % Rotate the coefficients, duplicate them until they have same
 % length as g, and multiply by g.
-
+% FIXME Kill the loop over w by bsxfun
 for w=1:W
   
     

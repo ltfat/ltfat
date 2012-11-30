@@ -1,4 +1,4 @@
-function tfplot(coef,step,yr,varargin)
+function coef=tfplot(coef,step,yr,varargin)
 %TFPLOT  Plot coefficient matrix on the TF plane
 %   Usage: tfplot(coef,step,yr);
 %          tfplot(coef,step,yr,...);
@@ -7,6 +7,11 @@ function tfplot(coef,step,yr,varargin)
 %   TF-plane. The shift in samples between each column of coefficients is
 %   given by the variable *step*. The vector *yr* is a $1 \times 2$ vector
 %   containing the lowest and highest normalized frequency.
+%
+%   `C=tfplot(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is usefull for custom
+%   post-processing of the image data.
 %
 %   `tfplot` is not meant to be called directly. Instead, it is called by
 %   other plotting routines to give a uniform display format. 
@@ -41,16 +46,22 @@ function tfplot(coef,step,yr,varargin)
 %     'clim',clim  Use a colormap ranging from $clim(1)$ to $clim(2)$. These
 %                  values are passed to `imagesc`. See the help on `imagesc`.
 %
-%     'image'  Use `'imagesc'` to display the plot. This is the default.
+%     'image'       Use `imagesc` to display the plot. This is the default.
 %
-%     'contour'  Do a contour plot.
+%     'contour'     Do a contour plot.
 %          
-%     'surf'   Do a surf plot.
+%     'surf'        Do a surf plot.
 %
-%     'colorbar'  Display the colorbar. This is the default.
+%     'colorbar'    Display the colorbar. This is the default.
 %
 %     'nocolorbar'  Do not display the colorbar.
 %
+%     'display'     Display the figure. This is the default.
+%
+%     'nodisplay'   Do not display figure. This is usefull if you only
+%                   want to obtain the output for further processing.
+%
+
 %   If both `'clim'` and `'dynrange'` are specified, then `'clim'` takes
 %   precedence.
 %
@@ -66,7 +77,7 @@ function tfplot(coef,step,yr,varargin)
 %  
 %   See also:  sgram, plotdgt, plotdgtreal, plotwmdct, plotdwilt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
 
@@ -128,34 +139,38 @@ else
   xr=(0:N-1)*step;
 end;
 
-if ~isempty(kv.fs)
-  xr=xr/kv.fs;
-  yr=yr*fs/2;
-end;
 
-% Convert yr to range of values
-yr=linspace(yr(1),yr(2),M);
-
-switch(flags.plottype)
-  case 'image'
-   imagesc(xr,yr,coef);
-  case 'contour'
-    contour(xr,yr,coef);
-  case 'surf'
-    surf(xr,yr,coef,'EdgeColor','none');
-  case 'pcolor'
-    pcolor(xr,yr,coef);
-end;
-
-if flags.do_colorbar
-  colorbar;
-end;
-
-axis('xy');
-if ~isempty(kv.fs)
-  xlabel(sprintf('%s (s)',kv.time));
-  ylabel(sprintf('%s (Hz)',kv.frequency));
-else
-  xlabel(sprintf('%s (%s)',kv.time,kv.samples));
-  ylabel(sprintf('%s (%s)',kv.frequency,kv.normalized));
+if flags.do_display
+    if ~isempty(kv.fs)
+        xr=xr/kv.fs;
+        yr=yr*fs/2;
+    end;
+    
+    % Convert yr to range of values
+    yr=linspace(yr(1),yr(2),M);
+        
+    switch(flags.plottype)
+      case 'image'
+        imagesc(xr,yr,coef);
+      case 'contour'
+        contour(xr,yr,coef);
+      case 'surf'
+        surf(xr,yr,coef,'EdgeColor','none');
+      case 'pcolor'
+        pcolor(xr,yr,coef);
+    end;
+    
+    if flags.do_colorbar
+        colorbar;
+    end;
+    
+    axis('xy');
+    if ~isempty(kv.fs)
+        xlabel(sprintf('%s (s)',kv.time));
+        ylabel(sprintf('%s (Hz)',kv.frequency));
+    else
+        xlabel(sprintf('%s (%s)',kv.time,kv.samples));
+        ylabel(sprintf('%s (%s)',kv.frequency,kv.normalized));
+    end;
+    
 end;

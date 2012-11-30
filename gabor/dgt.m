@@ -80,8 +80,8 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi il(m+w(n))/M}
 %
 %   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ are computed
-%   modulo *L*.  The additional offset $w$ is given by $w(n)=\mod(n\cdot
-%   lt_1,lt_2)/lt_2$ in the formula above.
+%   modulo *L*.  The additional offset $w$ is given by $w(n)=\mod(n\cdot lt_1,lt_2)/lt_2$
+%   in the formula above.
 %
 %   Additional parameters:
 %   ----------------------
@@ -108,12 +108,13 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %     h=pherm(L,4); % 4th order hermite function.
 %     c=dgt(h,'gauss',a,M);
 %
-%     % Simple plot: The squared modulus of the coefficients on linear scale
+%     % Simple plot: The squared modulus of the coefficients on
+%     % a linear scale
 %     figure(1);
 %     imagesc(abs(c).^2);
 %
-%     % Better plot: zero-frequency is displayed in the middle, and the
-%     % coefficients are show on a logarithmic scale.
+%     % Better plot: zero-frequency is displayed in the middle, 
+%     % and the coefficients are show on a logarithmic scale.
 %     figure(2);
 %     plotdgt(c,a,'dynrange',50);
 %
@@ -123,7 +124,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 % 
 %   References: fest98 gr01
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: REF_DGT
   

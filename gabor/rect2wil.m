@@ -8,7 +8,7 @@ function cout=rect2wil(cin);
 %
 %   See also: wil2rect, dwilt, idwilt
   
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

@@ -8,11 +8,12 @@
 %
 %   .. figure::
 %
-%     Spectrogram of signals
+%      Spectrogram of signals
 %
-%     The figure shows the spectogram of the output of the two systems applied on a 
-%     sinusoid (left) and an exponential sweep.
+%      The figure shows the spectogram of the output of the two systems applied on a 
+%      sinusoid (left) and an exponential sweep.
 %
+%   See also: gabmulappr
 
 %   AUTHOR : Peter Balazs.
 %   based on demo_gabmulappr.m 

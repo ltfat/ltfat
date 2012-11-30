@@ -15,10 +15,13 @@ function cout=comp_dgtreal_long(f,g,a,M)
 %
 %   References: so07-2 st98-8
 
-%   AUTHOR    : Peter Soendergaard.
+%   AUTHOR    : Peter L. Søndergaard.
 %   TESTING   : TEST_DGT
 %   REFERENCE : OK 
   
+L=size(f,1);
+W=size(f,2);
+N=L/a;
 M2=floor(M/2)+1;
   
 gf=comp_wfac(g,a,M);
@@ -30,5 +33,6 @@ cout=real(comp_dgt_walnut(f,gf,a,M));
 
 % FFT with only positive frequencies
 cout=fftreal(cout)/sqrt(M);
+cout=reshape(cout,M2,N,W);
 
 

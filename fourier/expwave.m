@@ -16,7 +16,7 @@ function h=expwave(L,m,cent);
 %  
 %   See also: dft, pchirp
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

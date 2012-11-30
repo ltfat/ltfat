@@ -1,8 +1,7 @@
 function gf=filterbankresponse(g,a,L,varargin)
 %FILTERBANKRESPONSE  Response of filterbank as function of frequency
 %   Usage:  gf=filterbankresponse(g,a,L);
-%   
-%   
+%      
 %   `filterbankresponse(g,a,L)` computes the total response in frequency of
 %   a filterbank specified by *g* and *a* for a signal length of
 %   *L*. This corresponds to summing up all channels. The output is a

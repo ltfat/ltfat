@@ -37,6 +37,10 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %   `isgramreal` takes the following parameters at the end of the line of
 %   input arguments:
 %
+%     'lt',lt      Specify the lattice type. See the help on
+%                  |matrix2latticetype|_. Only the rectangular or quinqux
+%                  lattices can be specified.
+%
 %     'zero'       Choose a starting phase of zero. This is the default
 %
 %     'rand'       Choose a random starting phase.
@@ -71,7 +75,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %
 %   References: griffin1984sem decorsiere2011 liu1989limited
   
-%   AUTHOR : Remi Decorsiere and Peter Soendergaard.
+%   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
 
 % Check input paramameters.
@@ -139,6 +143,12 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   end;
   
   if flags.do_int
+      if kv.lt(2)>1
+          error(['%s: The integration initilization is not implemented for ' ...
+                 'non-sep lattices.'],upper(mfilename));
+      end;
+
+      
     s2=zeros(M,N);
     s2(1:M2,:)=s;
     if rem(M,2)==0
@@ -158,8 +168,8 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   relres=zeros(kv.maxit,1);
   if flags.do_griflim
     for iter=1:kv.maxit
-      f=comp_idgtreal(c,gd,a,M,L,0);
-      c=comp_dgtreal(f,g,a,M,L,0);
+      f=comp_idgtreal(c,gd,a,M,kv.lt,0);
+      c=comp_dgtreal(f,g,a,M,kv.lt,0);
       
       relres(iter)=norm(abs(c).^2-s,'fro')/norm_s;
       
@@ -196,8 +206,8 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
     % time-steps.
     opts.MaxFunEvals = 1e9;
     
-    f0 = comp_idgtreal(c,gd,a,M,L,0);
-    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s);
+    f0 = comp_idgtreal(c,gd,a,M,kv.lt,0);
+    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,g,a,M,s,kv.lt);
     % First entry of output.trace.fval is the objective function
     % evaluated on the initial input. Skip it to be consistent.
     relres = sqrt(output.trace.fval(2:end))/norm_s;
@@ -214,11 +224,10 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
   f=comp_sigreshape_post(f,Ls,0,[0; W]);
   
 %  Subfunction to compute the objective function for the BFGS method.
-function [f,df]=objfun(x,g,a,M,s);
-  L=size(s,2)*a;
-  c=comp_dgtreal(x,g,a,M,L,0);
+function [f,df]=objfun(x,g,a,M,s,lt);
+  c=comp_dgtreal(x,g,a,M,lt,0);
   
   inner=abs(c).^2-s;
   f=norm(inner,'fro')^2;
   
-  df=4*real(conj(comp_idgtreal(inner.*c,g,a,M,L,0)));
+  df=4*real(conj(comp_idgtreal(inner.*c,g,a,M,lt,0)));

@@ -14,7 +14,7 @@ function f=fftresample(f,L,dim)
 %
 %   See also:  dctresample, middlepad
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
   
 % ------- Checking of input --------------------
 error(nargchk(2,3,nargin));

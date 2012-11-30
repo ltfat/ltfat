@@ -4,7 +4,7 @@ function cout=comp_irdgtiii(cin,a,M)
 %   This is a computational routine. Do not call it
 %   directly.
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 N=size(cin,1)/M;
 W=size(cin,2);

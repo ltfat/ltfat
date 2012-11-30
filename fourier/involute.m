@@ -31,7 +31,7 @@ function f=involute(f,dim);
 
 % Assert correct input.
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_INVOLUTE
 %   REFERENCE: OK
 

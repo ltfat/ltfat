@@ -14,7 +14,7 @@ function inoutsig = gaindb(inoutsig,gn,varargin)
 %
 %   See also: rms
 
-%   AUTHOR: Peter L. Soendergaard, 2009
+%   AUTHOR: Peter L. Søndergaard, 2009
 
 % ------ Checking of input parameters ---------
   

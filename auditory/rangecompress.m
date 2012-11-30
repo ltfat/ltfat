@@ -15,9 +15,19 @@ function [outsig, sigweight] = rangecompress(insig,varargin)
 %
 %     'A',A    A-law parameter. Default value is 87.7.
 %
+%   The following plot shows how the output range is compressed for input
+%   values between 0 and 1:::
+%
+%     x=linspace(0,1,100);
+%     xc=rangecompress(x);
+%     plot(x,xc);
+%     xlabel('input');
+%     ylabel('output');
+%     title('\mu-law compression');
+%  
 %   References: jano90
 
-% AUTHOR: Bruno Torresani and Peter L. Soendergaard
+% AUTHOR: Bruno Torresani and Peter L. Søndergaard
 
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));

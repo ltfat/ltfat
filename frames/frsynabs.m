@@ -56,7 +56,7 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %
 %   References: griffin1984sem
   
-%   AUTHOR : Remi Decorsiere and Peter Soendergaard.
+%   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
 
 % Check input paramameters.

@@ -27,7 +27,7 @@ function [f,g]=idwilt(c,g,Ls)
 %
 %   References: bofegrhl96-1 liva95
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DWILT
 %   REFERENCE: OK
 

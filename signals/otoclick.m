@@ -14,7 +14,7 @@ function [s,fs]=otoclick()
 %
 %   The signal is 2210 samples long and sampled at 44.1 kHz.
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
   

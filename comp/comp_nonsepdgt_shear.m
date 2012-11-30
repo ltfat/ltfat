@@ -4,7 +4,7 @@ function c=comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter L. Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: REF_NONSEPDGT
 
@@ -38,12 +38,12 @@ if 0
     
     if s1 ~= 0
         g = comp_pchirp(L,s1).*g;
-        f = repmat(comp_pchirp(L,s1),1,W).*f;
+        f = bsxfun(@times,comp_pchirp(L,s1),f);
     end
     
     if s0 ~= 0
         g = comp_pchirp(L,-s0).*fft(g)/L;
-        f = repmat(comp_pchirp(L,-s0),1,W).*fft(f);
+        f = bsxfun(@times,comp_pchirp(L,-s0),fft(f));
         
         c_rect = comp_dgt_long(f,g,br,Nr);
         
@@ -80,7 +80,7 @@ else
     if s1 ~= 0
         p = comp_pchirp(L,s1);
         g = p.*g;
-        f = repmat(p,1,W).*f;
+        f = bsxfun(@times,p,f);
     end
 
     cc1=ar/a;
@@ -89,7 +89,7 @@ else
     if s0 ~= 0
         p = comp_pchirp(L,-s0);
         g = p.*fft(g)/L;
-        f = repmat(p,1,W).*fft(f);
+        f = bsxfun(@times,p,fft(f));
         
         c_rect = comp_dgt_long(f,g,br,Nr);
             
@@ -98,7 +98,6 @@ else
                 phs = mod(((a*s1*(k*cc1+cc2*m).^2-cc2*m*m*br)*(L+1)-2*(k*cc1*m*br)),2*N);
                 phs = exp(pi*1i*phs/N);
                 
-                %idx1 =       mod(    k*ar       -s0*m*br,L)/a;
                 idx1 =       mod(    k*cc1       +cc2*m,N);
                 idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
                                                 

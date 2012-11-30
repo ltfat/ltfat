@@ -27,8 +27,6 @@ function [xo,N]=gabglasso(ttype,xi,lambda,group);
 %   See also:  gablasso, gabelasso
 %
 %   Demos: demo_audioshrink
-%
-%   References: Kowalski08sparsity Kowalski09mixed
 
 %   AUTHOR : Bruno Torresani.  
 %   REFERENCE: OK

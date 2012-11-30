@@ -73,7 +73,7 @@ if isempty(L)
     end;
 
     if isnumeric(gamma)
-        Ls=max(length(g),Ls);
+        Ls=max(length(gamma),Ls);
     end;
 
     % ----- step 2b : Verify a, M and get L from the window length ----------
@@ -92,14 +92,13 @@ else
 
 end;
 
-[g,info]=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
-
-[g,    info_g]     = gabwin(g,    a,M,L,kv.lt,'callfun','GABDUALNORM');
-[gamma,info_gamma] = gabwin(gamma,a,M,L,kv.lt,'callfun','GABDUALNORM');
+[g,    info_g]     = gabwin(g,    a,M,L,kv.lt,'callfun',upper(mfilename));
+[gamma,info_gamma] = gabwin(gamma,a,M,L,kv.lt,'callfun',upper(mfilename));
  
 % gamma must have the correct length, otherwise dgt will zero-extend it
 % incorrectly using postpad instead of fir2long
 gamma=fir2long(gamma,L);
+g    =fir2long(g,L);
 
 % Handle the Riesz basis (dual lattice) case.
 if a>M

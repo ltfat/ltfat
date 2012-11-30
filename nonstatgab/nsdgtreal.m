@@ -74,7 +74,7 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %
 %   See also:  nsdgt, insdgtreal, nsgabdual, nsgabtight, phaselock
 %
-%   Demos:  demo_nsdgtreal
+%   Demos:  demo_nsdgt
 %
 %   References: ltfatnote010
   
@@ -90,19 +90,46 @@ if ~isnumeric(M)
   error('%s: M must be numeric.',upper(callfun));
 end;
 
-L=sum(a);
 
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'NSDGTREAL',0);
+%% ----- step 1 : Verify f and determine its length -------
+% Change f to correct shape.
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+
+L=nsdgtlength(Ls,a);
 f=postpad(f,L);
 
 [g,info]=nsgabwin(g,a,M);
+
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
 
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions
 
 c=cell(N,1); % Initialisation of the result
+   
+for ii = 1:N
+    Lg = length(g{ii});
+    gt = g{ii}; gt = gt([end-floor(Lg/2)+1:end,1:ceil(Lg/2)]);
+    win_range = mod(timepos(ii)+(-floor(Lg/2):ceil(Lg/2)-1),L)+1;
+    if M(ii) < Lg 
+        % if the number of frequency channels is too small, aliasing is introduced
+        col = ceil(Lg/M(ii));
+        temp = zeros(col*M(ii),W);
+        temp([col*M(ii)-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times,f(win_range,:),gt);
+        temp = reshape(temp,M(ii),col,W);
+        
+        c{ii}=squeeze(fftreal(sum(temp,2)));
+    else
+        temp = zeros(M(ii),W);
+        temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times,f(win_range,:),gt);
+        c{ii} = fftreal(temp);
+    end       
+end
 
+if 0
 for ii=1:N
   shift=floor(length(g{ii})/2);
   temp=zeros(M(ii),W);
@@ -132,3 +159,4 @@ for ii=1:N
   
   c{ii}=fftreal(temp); % FFT of the windowed signal
 end
+end;

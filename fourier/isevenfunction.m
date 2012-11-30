@@ -15,7 +15,7 @@ function t=isevenfunction(f,varargin);
 %  
 %   See also: middlepad, peven
   
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 

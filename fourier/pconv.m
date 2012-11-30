@@ -36,7 +36,7 @@ function h=pconv(f,g,varargin)
 %
 %   See also: dft, involute
 
-%   AUTHOR: Peter Soendergaard
+%   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_PCONV
 %   REFERENCE: REF_PCONV
 

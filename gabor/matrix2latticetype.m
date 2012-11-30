@@ -39,7 +39,7 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %     lt2=[1 2 3 3];
 %
 %     for fignum=1:4
-%       figure;
+%       subplot(2,2,fignum);
 %       z=y;
 %       if lt2(fignum)>0
 %         z=z+mod(lt1(fignum)*x/lt2(fignum),b);
@@ -56,7 +56,7 @@ function [a,M,lt] = matrix2latticetype(L,V);
 %   See also: latticetype2matrix
 
 % The Hermite normal form code was originally written by Arno J. van Leest, 1999.
-% Positive determinant by Peter Soendergaard, 2004.
+% Positive determinant by Peter L. Søndergaard, 2004.
 % Unique form by Christoph Wiesmeyr, 2012
 
 if nargin~=2
@@ -95,28 +95,28 @@ x = A(2,:)*[h0;h1];
 
 x = mod(x,D);
 
-% Nuhag notation
+% Octave does not automatically round the double division to integer
+% numbers, and this causes confusion later in the GCD computations. 
 a = gcd1;
-b = D*gcd2;
-s = x*gcd2;
+b = round(D*gcd2);
+s = round(x*gcd2);
 
-% Make the numbers unique
-b = gcd(b,L);
-b2 = L/a*s;
-b = gcd(b,b2);
+% compute nabs format of <a,s>
+b1 = gcd(s*lcm(a,L)/a,L);
+[a,k1] = gcd(a,L);
+s = k1*s;
 
+% update b
+b = gcd(b,gcd(b1,L));
+
+% update s
 s = mod(s,b);
 
+% conversion from nabs to latticetype
 M=L/b;
 
 k=gcd(s,b);
 lt=[s/k b/k];
 
-% The following is sometimes needed for Octave.
-% Octave mistakenly converts the numbers to floats,
-% and later complains, so we round to integers.
-a = round(a);
-M = round(M);
-lt= round(lt);
 
 

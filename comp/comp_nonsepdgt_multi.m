@@ -4,7 +4,7 @@ function c=comp_nonsepdgt_multi(f,g,a,M,lt)
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter L. Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: REF_NONSEPDGT
 
@@ -34,6 +34,4 @@ for win=0:lt(2)-1
     end;
 end;
 
-for w=1:W
-    c(:,:,w) = c(:,:,w).*repmat(E,M,1);
-end;
+c=bsxfun(@times,c,E);

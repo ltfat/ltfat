@@ -21,7 +21,7 @@ function f=comp_idgt_fac(coef,gf,L,a,M)
 %
 %   References: so07-2 st98-8
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

@@ -6,7 +6,7 @@ function [coef]=ref_dgt_fb(f,g,a,M)
 %   the oct/mex routines and for timings.
 %
 
-%   Author : Peter Soendergaard.
+%   Author : Peter L. Søndergaard.
 
 % Calculate the parameters that was not specified.
 L=size(f,1);

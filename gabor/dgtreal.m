@@ -84,7 +84,7 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %
 %   References: fest98 gr01
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
   
@@ -96,6 +96,7 @@ end;
 
 definput.keyvals.L=[];
 definput.flags.phase={'freqinv','timeinv'};
+definput.keyvals.lt=[0 1];
 [flags,kv]=ltfatarghelper({'L'},definput,varargin);
 
 [f,g,L,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
@@ -104,5 +105,9 @@ if ~isreal(g)
   error('The window must be real-valued.');  
 end;
 
-c=comp_dgtreal(f,g,a,M,L,flags.do_timeinv);
+if kv.lt(2)>2
+  error('Only rectangular or quinqux lattices are supported.');  
+end;
+
+c=comp_dgtreal(f,g,a,M,kv.lt,flags.do_timeinv);
 

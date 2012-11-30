@@ -3,7 +3,8 @@
 CC = gcc
 
 
-CFLAGS=-O2 -Wall -fPIC -std=c99 -I../thirdparty -L../thirdparty
+CFLAGS=-O2 -Wall -g -fPIC -std=c99 -I../thirdparty -L../thirdparty
+#CFLAGS=-O2 -fPIC -std=c99 -I../thirdparty -L../thirdparty
 
 files = \
 	sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
@@ -17,7 +18,8 @@ files = \
 	sdwilt.o stfutil.o sfilterbank.o \
 	ddwilt.o dtfutil.o dfilterbank.o \
 	spfilt.o dpfilt.o \
-	snonsep.o dnonsep.o \
+	sdgt_shear.o ddgt_shear.o \
+	sdgt_multi.o ddgt_multi.o \
 	integer_manip.o 
 
 files_blaslapack = \

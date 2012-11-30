@@ -45,7 +45,7 @@ function outsig = noise(siglen,varargin)
 % 
 %   See also: normalize
 
-%   AUTHOR: Hagen Wierstorf and Peter L. Soendergaard.
+%   AUTHOR: Hagen Wierstorf and Peter L. Søndergaard.
 
 
 
@@ -88,7 +88,7 @@ if flags.do_pink
   a = 1./sqrt(f);
   % Random phase
   p = randn(fmax,nsigs) + i*randn(fmax,nsigs);
-  sig = repmat(a,1,nsigs).*p;
+  sig = bsxfun(@times,a,p);
 
   outsig = ifftreal([ones(1,nsigs); sig; 1/(fmax+2)*ones(1,nsigs)],siglen);
 

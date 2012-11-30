@@ -15,7 +15,7 @@ function cout=comp_dgt_long(f,g,a,M)
 %
 %   References: so07-2 st98-8
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 gf=comp_wfac(g,a,M);
   

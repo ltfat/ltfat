@@ -12,7 +12,7 @@ function f=ifftreal(c,N,dim);
 %
 %   See also:  fftreal
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 error(nargchk(2,3,nargin));
 

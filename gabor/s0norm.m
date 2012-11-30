@@ -21,7 +21,7 @@ function y = s0norm(f,varargin)
 %     'rel'     Return the result relative to the $l^2$ norm (the energy) of the
 %               signal.
 
-%   AUTHOR : Peter L. Soendergaard
+%   AUTHOR : Peter L. Søndergaard
   
 %% ------ Checking of input parameters ---------
 

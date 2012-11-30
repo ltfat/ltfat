@@ -9,7 +9,7 @@ function lambdas=comp_gfeigs(gf,L,a,M)
 %
 %   See help on GFBOUNDS
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 LR=prod(size(gf));
 R=LR/L;

@@ -11,7 +11,7 @@ function [s,fs]=gspi()
 %   the EBU SQAM test signal CD `<http://tech.ebu.ch/publications/sqamcd>`_.
 %
   
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 %   REFERENCE: OK
   

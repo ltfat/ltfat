@@ -73,191 +73,121 @@ LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
 }
 
 
-/* This routine changes a FIR window to an IIR window.
+/* This routine changes an FIR window to a LONG window.
  *
  * Input parameters:
  *  f     : Real valued input array.
  *  Lfir  : Length of input array
- *  Liir  : Length of output array
+ *  Llong  : Length of output array
  *  h     : Output array
  */ 
 LTFAT_EXTERN void
-LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Liir,
+LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Llong,
 	       LTFAT_REAL *h)
 {
-  const div_t domod=div(Lfir,2);
-  
-  if (domod.rem==0)
-  {
-
-     /* ----- Even case, split right in the middle and insert zeros ---*/
-
-     for (int ii=0; ii<domod.quot; ii++)
-     {
-	h[ii]=f[ii];
-     }
-     for (int ii=domod.quot; ii<Liir-domod.quot;ii++)
-     {
-	h[ii]=0.0;
-     }
-     const int ss=Liir-Lfir;
-     for (int ii=domod.quot; ii<Lfir;ii++)
-     {
-	h[ii+ss]=f[ii];
-     }
+   const div_t domod=div(Lfir,2);
+   
+   /* ---- In the odd case, the additional element is kept in the first half. ---*/
      
-  }
-  else
-  {
-     /* ---- Odd case, the additional element is kept in the first half. ---*/
-     
-     for (int ii=0; ii<domod.quot+domod.rem; ii++)
-     {
-	h[ii]=f[ii];
-     }
-     for (int ii=domod.quot+domod.rem; ii<Liir-domod.quot;ii++)
-     {
-	h[ii]=0.0;
-     }
-     const int ss=Liir-Lfir;
-     for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-     {
-	h[ii+ss]=f[ii];
-     }
-     
-  }     
+   for (int ii=0; ii<domod.quot+domod.rem; ii++)
+   {
+      h[ii]=f[ii];
+   }
+   for (int ii=domod.quot+domod.rem; ii<Llong-domod.quot;ii++)
+   {
+      h[ii]=0.0;
+   }
+   const int ss=Llong-Lfir;
+   for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
+   {
+      h[ii+ss]=f[ii];
+   }
+   
 }
 
-/* This routine changes a FIR window to an IIR window.
+/* This routine changes an FIR window to a LONG window.
  *
  * Input parameters:
  *  f     : Complex valued input array.
  *  Lfir  : Length of input array
- *  Liir  : Length of output array
+ *  Llong  : Length of output array
  *  h     : Output array
  */ 
 LTFAT_EXTERN void
-LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Liir,
-		      LTFAT_COMPLEX *h)
+LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Llong,
+		       LTFAT_COMPLEX *h)
 {
-  const div_t domod=div(Lfir,2);
-  
-  if (domod.rem==0)
-  {
-
-     /* ----- Even case, split right in the middle and insert zeros ---*/
-
-     for (int ii=0; ii<domod.quot; ii++)
-     {
-	h[ii][0]=f[ii][0];
-	h[ii][1]=f[ii][1];
-     }
-     for (int ii=domod.quot; ii<Liir-domod.quot;ii++)
-     {
-	h[ii][0]=0.0;
-	h[ii][1]=0.0;
-     }
-     const int ss=Liir-Lfir;
-     for (int ii=domod.quot; ii<Lfir;ii++)
-     {
-	h[ii+ss][0]=f[ii][0];
-	h[ii+ss][1]=f[ii][1];
-     }
-     
-  }
-  else
-  {
-     /* ---- Odd case, the additional element is kept in the first half. ---*/
-     
-     for (int ii=0; ii<domod.quot+domod.rem; ii++)
-     {
-	h[ii][0]=f[ii][0];
-	h[ii][1]=f[ii][1];
-     }
-     for (int ii=domod.quot+domod.rem; ii<Liir-domod.quot;ii++)
-     {
-	h[ii][0]=0.0;
-	h[ii][1]=0.0;
-     }
-     const int ss=Liir-Lfir;
-     for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-     {
-	h[ii+ss][0]=f[ii][0];
-	h[ii+ss][1]=f[ii][1];
-     }
-     
-  }     
+   const div_t domod=div(Lfir,2);
+   
+   /* ---- In the odd case, the additional element is kept in the first half. ---*/
+   
+   for (int ii=0; ii<domod.quot+domod.rem; ii++)
+   {
+      h[ii][0]=f[ii][0];
+      h[ii][1]=f[ii][1];
+   }
+   for (int ii=domod.quot+domod.rem; ii<Llong-domod.quot;ii++)
+   {
+      h[ii][0]=0.0;
+      h[ii][1]=0.0;
+   }
+   const int ss=Llong-Lfir;
+   for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
+   {
+      h[ii+ss][0]=f[ii][0];
+      h[ii+ss][1]=f[ii][1];
+   }
+   
 }
 
 
 
-/* This routine changes an IIR window to a FIR window.
+/* This routine changes a LONG window to an FIR window.
  *
  * Input parameters:
  *  f     : Real valued input array.
- *  Liir  : Length of input array
+ *  Llong  : Length of input array
  *  Lfir  : Length of output array
- *  symm  : Symmetry:  if symm = 0 no special symmetry is assumed
- *                             = 1 WPE symmetry is assumed
- *                             = 2 HPE symmetry is assumed
  *  h     : Output array
  */ 
 LTFAT_EXTERN void
-LTFAT_NAME(iir2fir_r)(const LTFAT_REAL *f, const int Liir, const int Lfir, const int symm,LTFAT_REAL *h)
+LTFAT_NAME(long2fir_r)(const LTFAT_REAL *f, const int Llong, const int Lfir, LTFAT_REAL *h)
 {
   const div_t domod=div(Lfir,2);
 
-  if (domod.rem==0)
-  {
-     /* ----- Even case, split right in the middle and remove ---*/
-     
-     for (int ii=0; ii<domod.quot; ii++)
-     {
-	h[ii]=f[ii];
-     }
-     const int ss=Liir-Lfir;
-     for (int ii=domod.quot; ii<Lfir;ii++)
-     {
-	h[ii]=f[ii+ss];
-     }
-     
-  }
-  else
-  {
-     /* ---- Odd case, the additional element is kept in the first half. ---*/
-     
-     for (int ii=0; ii<domod.quot+domod.rem; ii++)
-     {
-	h[ii]=f[ii];
-     }
-     const int ss=Liir-Lfir;
-     for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-     {
-	h[ii]=f[ii+ss];
-     }
-  }
-
+  /* ---- In the odd case, the additional element is kept in the first half. ---*/
   
-  /* Assume that the input window is WPE and preserve the symmetry.
-   */
-  if (symm==1)
+  for (int ii=0; ii<domod.quot+domod.rem; ii++)
   {
-     if (domod.rem==0)
-     {
-	/* zero the endpoint */
-	h[domod.quot]=0.0;
-     }
+     h[ii]=f[ii];
   }
-
-  /* Assume that the input window is HPE and preserve the symmetry.
-   */
-  if (symm==2)
+  const int ss=Llong-Lfir;
+  for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
   {
-     if (domod.rem==1)
-     {
-	/* zero the endpoint */
-	h[domod.quot]=0.0;
-     }
+     h[ii]=f[ii+ss];
   }
 	
+}
+
+
+
+LTFAT_EXTERN void
+LTFAT_NAME(long2fir_c)(const LTFAT_COMPLEX *f, const int Llong, const int Lfir, LTFAT_COMPLEX *h)
+{
+  const div_t domod=div(Lfir,2);
+
+  /* ---- In the odd case, the additional element is kept in the first half. ---*/
+     
+  for (int ii=0; ii<domod.quot+domod.rem; ii++)
+  {
+     h[ii][0]=f[ii][0];
+     h[ii][1]=f[ii][1];
+  }
+  const int ss=Llong-Lfir;
+  for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
+  {
+     h[ii][0]=f[ii+ss][0];
+     h[ii][1]=f[ii+ss][1];
+  }
+  	
 }

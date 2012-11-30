@@ -26,7 +26,7 @@ function f=comp_inonsepdgt(coef,g,a,lt,do_timeinv,alg)
 %
 %   This is a computational subroutine, do not call it directly.
 
-%   AUTHOR : Nicki Holighaus and Peter Soendergaard
+%   AUTHOR : Nicki Holighaus and Peter L. Søndergaard
 %   TESTING: TEST_NONSEPDGT
 %   REFERENCE: OK
 
@@ -49,9 +49,8 @@ if (alg==1) || (alg==0 && lt(2)<=2)
     
     E = exp(2*pi*i*a*kron(0:N/lt(2)-1,ones(1,lt(2))).*...
             rem(kron(ones(1,N/lt(2)), 0:lt(2)-1)*lt(1),lt(2))/M);
-    for w=1:W
-        coef(:,:,w) = coef(:,:,w).*repmat(E,M,1);
-    end;
+
+    coef=bsxfun(@times,coef,E);
     
     % simple algorithm: split into sublattices and add the result from eacg
     % sublattice.
@@ -94,7 +93,7 @@ else
                      N).*phs(ind(2,:)/br+1+(ind(1,:)/ar)*Mr);
         end;
         f = comp_idgt(c_rect,g,br,Nr,L,0);
-        f = ifft(repmat(comp_pchirp(L,s0),1,W).*f);   
+        f = ifft(bsxfun(@times,comp_pchirp(L,s0),f));   
         
     else
         
@@ -109,7 +108,7 @@ else
     end
     
     if s1 ~= 0
-        f = repmat(comp_pchirp(L,-s1),1,W).*f;
+        f = bsxfun(@times,comp_pchirp(L,-s1),f);
     end        
 
 end;

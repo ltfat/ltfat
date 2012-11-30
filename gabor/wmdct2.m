@@ -53,7 +53,7 @@ function [c,Ls]=wmdct2(f,g1,p3,p4,p5)
 % 
 %   See also:  wmdct, iwmdct2, dgt2, wildual
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 
 error(nargchk(3,5,nargin));
 

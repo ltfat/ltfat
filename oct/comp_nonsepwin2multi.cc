@@ -19,14 +19,14 @@ DEFUN_DLD (comp_nonsepwin2multi, args, ,
    const Matrix lt       = args(3).matrix_value();
    const int    L        = args(4).int_value();
    
-   const int Lw = g.rows();
+   const int Lg = g.rows();
    const int lt1 = ltfat_round(lt(0));
    const int lt2 = ltfat_round(lt(1));
 
    ComplexMatrix mwin(L,lt2);
 
    nonsepwin2multi((const ltfat_complex*)g.fortran_vec(),
-		   L,a,M,lt1,lt2,
+		   L,Lg,a,M,lt1,lt2,
 		   (ltfat_complex*)mwin.data());
         
    return octave_value (mwin);

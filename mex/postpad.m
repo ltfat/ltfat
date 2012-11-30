@@ -16,7 +16,7 @@ function x = postpad (x, L, varargin)
 %
 %   See also: middlepad
   
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: NA
 

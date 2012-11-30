@@ -74,7 +74,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %
 %   See also:  dgt, gabwin, dwilt, gabtight
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: OK
 
@@ -97,7 +97,6 @@ M=size(coef,1);
 N=size(coef,2);
 W=size(coef,3);
 
-
 if ~isnumeric(a) || ~isscalar(a)
   error('%s: "a" must be a scalar',upper(mfilename));
 end;
@@ -118,12 +117,7 @@ end;
 
 g=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
 
-if kv.lt(2)==1
-    f=comp_idgt(coef,g,a,M,L,flags.do_timeinv);
-else
-    g=fir2long(g,L);
-    f=comp_inonsepdgt(coef,g,a,kv.lt,flags.do_timeinv,0);
-end;
+f=comp_idgt(coef,g,a,kv.lt,flags.do_timeinv,0);
 
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)

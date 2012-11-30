@@ -16,103 +16,179 @@ function test_failed=test_nsdgt()
 test_failed=0;
 
 disp(' ===============  TEST_NSDGT ================');
+% First case is even numbers, painless
+% Second case is even numbers, non-painless
+% Third case has odd numbers, painless
+% Fouth case has odd numbers, non-painless
 
-a=[20,30,40];
-M=[30,40,50];
-L=sum(a);
+ar ={[20,30,40],[20,30,40],[5,11,19],[5,11,19]};
+Mr ={[30,40,50],[30,40,50],[7,12,29],[7,12,29]};
+Lgr={[30,40,50],[60,80,60],[7,12,29],[9,19,33]};
 
-f=randn(L,1);
+for tc=1:numel(ar)
+    N=numel(ar{tc});
+    M=Mr{tc};
+    a=ar{tc};
+    Lg=Lgr{tc};
+    L=sum(a);
 
-g=cell(3,1);
-for ii=1:3
-  g{ii}=randn(M(ii),1);
+
+    g=cell(N,1);
+    
+    for ii=1:N
+        g{ii}=randn(Lg(ii),1);
+    end;
+
+    % ----- non-uniform dual and inversion -----
+
+    ispainless=all(cellfun(@length,g)<=M.');
+
+
+    if ispainless
+        gd=nsgabdual(g,a,M);
+        gt=nsgabtight(g,a,M);
+    end;
+
+    for W=1:3
+        
+        f=randn(L,W);
+        c=nsdgt(f,g,a,M);
+        
+        % ----- reference ---------------------
+        
+        c_ref=ref_nsdgt(f,g,a,M);
+        
+        res=sum(cellfun(@(x,y) norm(x-y,'fro'),c,c_ref));
+        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        fprintf(['NSDGT REF  tc:%3i W:%3i %0.5g %s\n'],tc,W,res,fail);
+        
+        
+        % ----- reference inverse ---------------
+        
+        f_syn=insdgt(c,g,a);
+        
+        f_ref=ref_insdgt(c,g,a,M);
+
+        res=norm(f_ref-f_syn,'fro');
+        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        fprintf(['NSDGT INV REF tc:%3i W:%3i %0.5g %s\n'],tc,W,res,fail);
+
+
+
+        % ----- inversion ---------------------
+        
+        if ispainless
+            
+            r=insdgt(c,gd,a);
+            res=norm(f-r);
+            
+            [test_failed,fail]=ltfatdiditfail(res,test_failed);
+            fprintf(['NSDGT DUAL tc:%3i W:%3i %0.5g %s\n'],tc,W,res,fail);
+
+            % ----- tight and inversion -----------------
+
+            ct=nsdgt(f,gt,a,M);
+            rt=insdgt(ct,gt,a);
+            
+            res=norm(f-rt);
+            
+            [test_failed,fail]=ltfatdiditfail(res,test_failed);
+            fprintf(['NSDGT TIGHT tc:%3i %0.5g %s\n'],tc,res,fail);            
+            
+            % ----- non-uniform inversion, real -----
+            
+            c=nsdgtreal(f,g,a,M);
+            r=insdgtreal(c,gd,a,M);
+            
+            res=norm(f-r);
+            
+            [test_failed,fail]=ltfatdiditfail(res,test_failed);
+            fprintf(['NSDGTREAL DUAL  tc:%3i %0.5g %s\n'],tc,res,fail);
+            
+        end;
+
+    end;
+
 end;
 
-% ----- non-uniform dual and inversion -----
-
-gd=nsgabdual(g,a,M);
-
-c=nsdgt(f,g,a,M);
-r=insdgt(c,gd,a);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['NSDGT DUAL  %0.5g %s\n'],res,fail);
-
-% ----- non-uniform inversion, real -----
-
-c=nsdgtreal(f,g,a,M);
-r=insdgtreal(c,gd,a,M);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['NSDGTREAL DUAL  %0.5g %s\n'],res,fail);
 
 
+ar ={[20,30,40],[20,30,40]};
+Mr =[50,50];
+Lgr={[50,50,50],[40,50,60]};
 
-% ----- tight and inversion -----------------
-gt=nsgabtight(g,a,M);
+for tc=1:numel(ar)
+    N=numel(ar{tc});
+    M=Mr(tc);
+    a=ar{tc};
+    Lg=Lgr{tc};
+    L=sum(a);
 
-ct=nsdgt(f,gt,a,M);
-rt=insdgt(ct,gt,a);
+    g=cell(N,1);
+    
+    for ii=1:N
+        g{ii}=randn(Lg(ii),1);
+    end;
 
-res=norm(f-rt);
+    gd=nsgabdual(g,a,M);
+    gt=nsgabtight(g,a,M);
 
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['NSDGT TIGHT %0.5g %s\n'],res,fail);
-
-
-
-a=[20,30,40];
-M=50;
-L=sum(a);
-
-f=randn(L,1);
-
-g=cell(3,1);
-for ii=1:3
-  g{ii}=randn(M,1);
+    for W=1:3
+        
+        L=sum(a);
+        
+        f=randn(L,1);
+        
+        
+        % ----- uniform dual and inversion -----
+            
+        c=unsdgt(f,g,a,M);
+        r=insdgt(c,gd,a);
+        
+        res=norm(f-r);
+        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        fprintf(['UNSDGT DUAL tc:%3i W:%3i %0.5g %s\n'],tc,W,res,fail);
+        
+        % ----- uniform inversion, real -----
+        
+        cr=unsdgtreal(f,g,a,M);
+        r=insdgtreal(cr,gd,a,M);
+        
+        res=norm(f-r);
+        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        fprintf(['UNSDGTREAL DUAL tc:%3i W:%3i %0.5g %s\n'],tc,W,res,fail);
+        
+                
+        % ----- uniform tight and inversion -----------------
+        
+        ct=unsdgt(f,gt,a,M);
+        rt=insdgt(ct,gt,a);
+        
+        res=norm(f-rt);
+        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        fprintf(['UNSDGT TIGHT tc:%3i W:%3i %0.5g %s\n'],tc,W,res,fail);
+        
+        % ----- framebounds -----------------
+        if 0
+            FB=nsgabframebounds(gt,a,M);
+            
+            res=norm(FB-1);
+            
+            [test_failed,fail]=ltfatdiditfail(res,test_failed);
+            fprintf(['UNSDGT FRAMEBOUNDS tc:%3i %0.5g %s\n'],tc,res,fail);
+        end;
+        
+    end;
 end;
-
-% ----- non-uniform dual and inversion -----
-
-gd=nsgabdual(g,a,M);
-
-c=unsdgt(f,g,a,M);
-r=insdgt(c,gd,a);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['UNSDGT DUAL  %0.5g %s\n'],res,fail);
-
-% ----- non-uniform inversion, real -----
-
-c=unsdgtreal(f,g,a,M);
-r=insdgtreal(c,gd,a,M);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['UNSDGTREAL DUAL  %0.5g %s\n'],res,fail);
-
-
-
-% ----- tight and inversion -----------------
-gt=nsgabtight(g,a,M);
-
-ct=unsdgt(f,gt,a,M);
-rt=insdgt(ct,gt,a);
-
-res=norm(f-rt);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['UNSDGT TIGHT %0.5g %s\n'],res,fail);
-
-% ------ Reference DGT ----------------------
-
+        
+        % ------ Reference DGT ----------------------
+        
+        if 0
 a1=3;
 M1=4;
 N=8;
@@ -132,4 +208,4 @@ res=norm(reshape(cell2mat(c),M1,N)-c_ref,'fro');
 
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['NSDGT REF %0.5g %s\n'],res,fail);
-
+end;

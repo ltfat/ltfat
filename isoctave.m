@@ -5,7 +5,7 @@ function t=isoctave()
 %   `isoctave` returns 1 if the operating environment is Octave, otherwise
 %   it returns 0 (Matlab)
 
-%   AUTHOR : Peter Soendergaard.  
+%   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
 %   REFERENCE: NA
 persistent inout;

@@ -1,6 +1,7 @@
 function gd=nsgabdual(g,a,M,varargin)
 %NSGABDUAL  Canonical dual window for non-stationary Gabor frames
-%   Usage:  gd=nsgabdual(g,a,L)
+%   Usage:  gd=nsgabdual(g,a,M);
+%           gd=nsgabdual(g,a,M,L);
 %
 %   Input parameters:
 %         g     : Cell array of windows.
@@ -42,6 +43,11 @@ definput.keyvals.L=sum(a);
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions
+
+ispainless=all(cellfun(@length,g)<=M.')
+
+
+
 f=zeros(L,1); % Diagonal of the frame operator
 
 % Compute the diagonal of the frame operator:

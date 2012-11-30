@@ -1,6 +1,6 @@
 % LTFAT - Gabor analysis
 %
-%  Peter L. Soendergaard, 2007 - 2012.
+%  Peter L. Søndergaard, 2007 - 2012.
 %
 %  Basic Time/Frequency analysis
 %    TCONV          -  Twisted convolution.
@@ -12,14 +12,14 @@
 %    TFMAT          -  Matrix of transform or operator in LTFAT.
 %
 %  Gabor systems
-%    DGT            -  Discrete Gabor transform.
+%    dgt            -  Discrete Gabor transform.
 %    IDGT           -  Inverse discrete Gabor transform.
 %    ISGRAM         -  Iterative reconstruction from spectrogram.
 %    ISGRAMREAL     -  Iterative reconstruction from spectrogram (real signal).
 %    DGT2           -  2D Discrete Gabor transform.
 %    IDGT2          -  2D Inverse discrete Gabor transform.
 %    DGTREAL        -  DGT for real-valued signals.
-%    IDGTREAL       -  IDGT for real-valued signals.
+%    IDGTREAL       -  |idgt|_ for real-valued signals.
 %    GABWIN         -  Evaluate Gabor window.
 %    DGTLENGTH      -  Length of Gabor system to expand a signal
 %

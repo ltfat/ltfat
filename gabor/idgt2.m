@@ -33,7 +33,7 @@ function [f]=idgt2(c,g1,p3,p4,p5)
 %
 %   See also:  dgt2, gabdual
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 
 error(nargchk(3,5,nargin));
 
@@ -125,7 +125,7 @@ end;
 % Change c to correct shape.
 c=reshape(c,M1,N1,M2*N2*W);
 
-c=comp_idgt(c,g1,a1,M1,L1,0);
+c=comp_idgt(c,g1,a1,[0 1],0,0);
 
 % Check if Ls was specified.
 if doLs
@@ -145,7 +145,7 @@ c=permute(c,[2,1,3]);
 % Change c to correct shape.
 c=reshape(c,M2,N2,Ls(1)*W);
 
-c=comp_idgt(c,g2,a2,M2,L2,0);
+c=comp_idgt(c,g2,a2,[0 1],0,0);
 
 % Check if Ls was specified.
 if doLs

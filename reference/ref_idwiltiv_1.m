@@ -2,7 +2,7 @@ function [f]=ref_idwiltiv_1(coef,g,a,M)
 %REF_IDWILTIV_1  Reference IDWILTIV by IDGT type IV
 % 
 
-%   Author : Peter Soendergaard
+%   Author : Peter L. Søndergaard
 
 L=size(g,1);
 N=L/a;

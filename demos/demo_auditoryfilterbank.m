@@ -33,10 +33,10 @@
 
 % Use part of the 'cocktailparty' spoken sentense.
 f=cocktailparty;
-f=f(20000:80000,:);
+f=f(20001:80000,:);
 fs=44100;
 a=8;
-channels_per_erb=4;
+channels_per_erb=2;
 filterlength=5000;
 dynrange_for_plotting=50;
 
@@ -78,3 +78,12 @@ norm(f-r_gam)/norm(f)
 
 figure(2);
 plotfilterbank(coef_gam,a,fc,fs,dynrange_for_plotting,'audtick');
+
+F  = newframe('ufilterbankreal',g_gam,'none',a,M);
+c2 = frana(F,f); 
+Ls=length(f);
+
+[r_iter,relres,iter] = frsyniter(F,c2,Ls);
+norm(f-r_iter)/norm(f)
+
+

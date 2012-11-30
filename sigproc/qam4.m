@@ -37,9 +37,7 @@ two_power=(2.^(0:nbits-1)).';
 
 % This could be vectorized by a repmat.
 xo=zeros(symbols,1);
-for ii=1:symbols
-  xo(ii)=sum(xi(:,ii).*two_power);
-end;
+xo(:)=sum(bsxfun(@times,xi,two_power));
 
 % xo now consist of numbers in the range 0:3
 % Convert to the corresponding complex root of unity.

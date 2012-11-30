@@ -57,7 +57,7 @@ function gd=gabdual(g,a,M,varargin)
 %
 %   See also:  gabtight, gabwin, fir2long, dgt
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DGT
 %   REFERENCE: REF_GABDUAL.
   

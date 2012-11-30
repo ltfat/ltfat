@@ -23,7 +23,7 @@ function cout=comp_dgt_walnut(f,gf,a,M)
 %
 %   References: so07-2 st98-8
 
-%   AUTHOR : Peter Soendergaard.
+%   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
 

@@ -23,7 +23,7 @@ function f=middlepad(f,L,varargin)
 %
 %   See also:  isevenfunction, fir2long, fftresample
 
-%   AUTHOR : Peter Soendergaard
+%   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 
