@@ -1,13 +1,37 @@
-function [c, Lc] = fwt(f,h,J,varargin)
+function c = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
 %           c = fwt(f,h,J,...);
-%           [c,Lc] = fwt(...);
 %
 %   Input parameters:
 %         f     : Input data.
 %         h     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
+%
+%   Output parameters:
+%         c      : Coefficients stored in J+1 cell-array.
+%
+%
+%   `c=fwt(f,h,J)` computes wavelet coefficients *c* of the input signal *f*
+%   using basis constructed from the filters *h* and the depth *J* using MRA principle.
+%   For computing the coefficients the fast wavelet transform algorithm (or Mallat's algorithm) is
+%   emplyed. If *f* is a matrix, the transformation is applied to each of *W* columns. 
+%   Coefficients in cell array $c\{j\}$ for $j=1,\ldots,J+1$ are ordered with inceasing central frequency
+%   of the equivalent filter frequency response or equivalently with decreasing wavelet scale. 
+%   The number of coefficients in $c\{j\}$ for $j=2,\ldots,J+1$ is as
+%   follows::
+%
+%      length(c{j}) = ceil(2^(j-2-J)length(f))
+%
+%   and length(c{1})=length(c{2}). 
+%   If *f* is matrix with *W* collumns, each element of the cell array $c\{j\}$ is a matrix
+%   with *W* collumns with coefficients belonging to the appropriate input channel.
+%
+%   The proper name for the transform is dyadic (or critically subsampled)
+%   discrete wavelet transform which is equivalent to the (bi)orthogonal
+%   wavelet expansion provided appropriate (bi)orthogonal wavelet filterbank is supplied.
+%
+%   The transform is 2^J-shift invariant.
 %
 %   The following flags are supported:
 %
@@ -16,31 +40,6 @@ function [c, Lc] = fwt(f,h,J,varargin)
 %
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 %                Type of the boundary handling.
-%
-%   Output parameters:
-%         c      : Coefficients stored in J+1 cell-array.
-%         [c,Lc] : Coefficients stored as one collumn vector, Lc array
-%         defines lengths of coefficients vectors.
-%
-%   `c=fwt(f,h,J)` computes wavelet coefficients *c* of the input signal *f*
-%   using basis constructed from the filters *h* and the depth *J* using MRA principle.
-%   For computing the coefficients the fast wavelet transform algorithm (or Mallat's algorithm) is
-%   emplyed. If *f* is a matrix, the transformation is applied to each of *W* columns. 
-%   Coefficients in cell array *c{j}* for *j*=1,...,J+1 are ordered with inceasing central frequency
-%   of the equivalent filter frequency response or equivalently with decreasing wavelet scale. 
-%   The number of coefficients in *c\{j\}* for *j*=2,...,J+1 is as follows:
-%
-%   .. length(c{j}) = ceil(2^(j-2-J)length(f))
-%
-%   and length(c{1})=length(c{2}). 
-%   If *f* is matrix with *W* collumns, each element of the cell array *c\{j\}* is a matrix
-%   with *W* collumns with coefficients belonging to the appropriate input channel.
-%
-%   The proper name for the transform is dyadic (or critically subsampled)
-%   discrete wavelet transform which is equivalent to the (bi)orthogonal
-%   wavelet expansion provided appropriate (bi)orthogonal wavelet filterbank is supplied.
-%
-%   The transform is 2^J-shift invariant.
 %
 %   Time-invariant wavelet tranform:
 %   --------------------------------
@@ -67,9 +66,9 @@ function [c, Lc] = fwt(f,h,J,varargin)
 %   redundancy of the wavelet representation. 
 %
 %   For the *type*='dec' option, the number of coefficients in *c{j}* for *j*=2,...,J+1 is as
-%   follows:
+%   follows::
 %
-%   .. length(c{j}) = floor(2^(j-2-J)length(f) + (1-2^(j-2-J))(length(h{1})-1))
+%      length(c{j}) = floor(2^(j-2-J)length(f) + (1-2^(j-2-J))(length(h{1})-1))
 %
 %   and length(c{1})=length(c{2}).
 %
@@ -88,7 +87,7 @@ function [c, Lc] = fwt(f,h,J,varargin)
 %
 %   Demos:
 %
-%   References: mallat,  
+%   References: ma98  
 
 %   AUTHOR : Zdenek Prusa.
 %   TESTING: TEST_FWT
@@ -108,17 +107,21 @@ end
 
 do_definedfb = 0;
 if(iscell(h))
-    if(length(h)<2 || length(h) > 2)
-       error('%s: h is expected to be a cell array containing two wavelet filters.',upper(mfilename)); 
+    if(length(h)<2)
+       error('%s: h is expected to be a cell array containing two or more filters.',upper(mfilename)); 
     end
 
-    if(length(h{1})< 2 && length(h{2})< 2)
+    for ii=2:numel(h)
+     if(length(h{1})~=length(h{ii}))
+        error('%s: Wavelet filters have to have equal length.',upper(mfilename));
+     end
+    end
+    
+    if(length(h{1})< 2)
         error('%s: Wavelet filters should have at least two coefficients.',upper(mfilename)); 
     end
 
-    if(length(h{1})~=length(h{2}))
-        error('%s: Wavelet filters have to have equal length.',upper(mfilename));
-    end
+
 elseif(isstruct(h))
     do_definedfb = 1;
 elseif(ischar(h))
@@ -178,9 +181,5 @@ end
 
 %% ----- step 3 : Run computation
  c = comp_fwt_all(f,h,J,flags.type,flags.ext);
- 
- % TO DO: integrate to previous function to avoid copying (if it turns out to cause serious slowdown)
-if(nargout>1)
-    [c,Lc] = cell2pack(c);
-end
+
 

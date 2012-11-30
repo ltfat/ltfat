@@ -1,7 +1,7 @@
 function test_failed=test_fwt
 
-f = randn(1789,1);
-J = 4;
+f = randn(17897,1);
+J = 10;
 % Examples
 
 w = waveletfb('db',8);
@@ -39,5 +39,11 @@ stem([f,fhat]);
 w = waveletfb('db',8,'undec','sym');
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w);
+stem([f,fhat]);
+
+
+w = waveletfb('db',8);
+[c] = fwt(f,w,J,'undec','sym');
+fhat = ifwt(c,w,'undec','sym');
 stem([f,fhat]);
 

@@ -1,15 +1,17 @@
-function f = ifwt(c,varargin)
+function f = ifwt(c,g,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
 %   Usage:  f = ifwt(c,g)
 %           f = ifwt(c,g,Ls,...)
-%           f = ifwt(c,Lc,g,...)
-%           f = ifwt(c,Lc,g,Ls,...)
 %
 %   Input parameters:
 %         c     : Coefficients stored in J+1 cell-array or in packed format.
 %         g     : Synthesis wavelet filters.
 %         Ls    : Length of the reconstructed signal.
-%         Lc    : Lengths of the wavelet coefficients in c.
+%
+
+%
+%   Output parameters:
+%         f     : Reconstructed data.
 %
 %   The following flags are supported:
 %
@@ -17,10 +19,7 @@ function f = ifwt(c,varargin)
 %                Type of the wavelet transform.
 %
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
-%
-%   Output parameters:
-%         f     : Reconstructed data.
+%                Type of the boundary handling.%
 %
 %
 %   See also:
@@ -33,27 +32,16 @@ function f = ifwt(c,varargin)
 %   TESTING: TEST_IFWT
 %   REFERENCE: REF_IFWT
 
-if(iscell(c))
     if nargin<2
       error('%s: Too few input parameters.',upper(mfilename));
     end;
-else
-    if nargin<3
-      error('%s: Too few input parameters.',upper(mfilename));
-    end; 
-end
+
 %% PARSE INPUT
 definput.keyvals.Ls=[];    
 definput.import = {'fwt'};
 
 if(iscell(c))
-    g = varargin{1};
-    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,{varargin{2:end}});
-elseif(isnumeric(c))
-    Lc = varargin{1};
-    g = varargin{2};
-    c = pack2cell(c,Lc); % TO DO: adapt comp functions to work with the packed format
-    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,{varargin{3:end}});
+    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 else
     error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
@@ -61,16 +49,20 @@ end
 do_definedfb = 0;
 if(iscell(g))
     if( length(g)<2)
-       error('%s: h is expected to be a cell array containing two wavelet filters.',upper(mfilename)); 
+       error('%s: h is expected to be a cell array containing two or more wavelet filters.',upper(mfilename)); 
     end
 
-    if(length(g{1})< 2 && length(g{2})< 2)
+
+    for ii=2:numel(g)
+       if(length(g{1})~=length(g{ii}))
+           error('%s: Wavelet filters have to have equal length.',upper(mfilename));
+       end
+    end
+    
+    if(length(g{1})< 2)
         error('%s: Wavelet filters should have at least two coefficients.',upper(mfilename)); 
     end
-
-    if(length(g{1})~=length(g{2}))
-        error('%s: Wavelet filters have to have equal length.',upper(mfilename));
-    end
+    
 elseif(isstruct(g))
     do_definedfb = 1;
 elseif(ischar(g))
@@ -108,7 +100,8 @@ end
 
 
 % Determine J from number of elements of c
-J = length(c)-1;
+[cR cC] = size(c);
+J = cR-1;
 
 if isempty(Ls)
     % Estimate output signal length from the number of coefficients

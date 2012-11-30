@@ -1,10 +1,13 @@
-function ccell = pack2cell(cvec,Lc)
+function ccell = pack2cell(cvec,Lc,varargin)
 %PACK2CELL Changes wavelet coefficients storing format
-%   Usage:  ccell = pack2cell(cvec,lengths);
+%   Usage:  
+%          ccell = pack2cell(cvec,Lc);
+%          ccell = pack2cell(cvec,Lc,bands);
 %
 %   Input parameters:
 %         cvec     : Coefficients in packed format.
-%         lengths  : J+1 element vector containing coefficients lengths.
+%         Lc       : J+1 element vector containing coefficients lengths.
+%         bands    : Number of wavelet filters
 %
 %   Output parameters:
 %         ccell    : Coefficients stored in J+1 cell-array.
@@ -15,22 +18,51 @@ function ccell = pack2cell(cvec,Lc)
 %   cvec(1+sum(lengths(1:j-1)):sum(lengths(1:j),w) for *j=2,...,J+1* - detail coefficients at
 %   level *J-2+j*.
 %
+if(isempty(varargin))
+    bands = 1;
+else
+    bands = varargin{1}-1;
+end
 
-JJ = length(Lc);
+% check if (length(Lc)-1)/bands is integer
+JJ = (length(Lc)-1)/bands + 1;
 
 [cLen, W] = size(cvec);
 
-ccell = cell(JJ,1);
-
-
-for jj=1:JJ
-   ccell{jj} = zeros(Lc(jj),W);
+% ALLOCATING OUTPUT
+ccell = cell(JJ,bands);
+ccell{1} = zeros(Lc(1),W);
+jjIdx = 2;
+for jj=2:JJ
+  for bb=1:bands
+     ccell{jj,bb} = zeros(Lc(jjIdx),W);
+     jjIdx = jjIdx +1;
+  end
 end
 
-lenSum = 0;
-for jj=1:JJ
-    for w=1:W
-        ccell{jj}(:,w) = cvec(1+lenSum:Lc(jj)+lenSum,w);
+% DO THE COPY
+for w=1:W
+    ccell{1}(:,w) = cvec(1:Lc(1),w);
+end
+
+for w=1:W
+   lenSumIdx = 1;
+   lenSum = Lc(lenSumIdx);
+    for jj=2:JJ
+      for bb=1:bands
+        ccell{jj,bb}(:,w) = cvec(1+lenSum:Lc(lenSumIdx+1)+lenSum,w);
+        lenSum = lenSum+Lc(lenSumIdx+1);
+        lenSumIdx=lenSumIdx+1;
+      end
     end
-    lenSum = lenSum + Lc(jj);
 end
+
+
+
+
+
+
+
+
+
+

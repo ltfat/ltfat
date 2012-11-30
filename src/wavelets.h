@@ -6,6 +6,7 @@
 #include "fftw3.h"
 #include "ltfat.h"
 
+
 #define ONEOVERSQRT2 0.707106781186548 \
 
 //#define WORDBITSM1 (sizeof(int)*8)-1
@@ -15,7 +16,7 @@
 #define LTFAT_H_NAME(name) name
 #define LTFAT_H_FFTW(name) fftw_ ## name  
 
-// common routines
+// common basic routines
 
 LTFAT_EXTERN
 void LTFAT_H_NAME(extend_left)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int buffLen, int filtLen, int type);
@@ -26,8 +27,20 @@ void LTFAT_H_NAME(extend_right)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *
 LTFAT_EXTERN
 void LTFAT_H_NAME(conv_td_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, int ext, int filtUps);
 
+
 LTFAT_EXTERN
 void LTFAT_H_NAME(up_conv_td)(const LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext, int filtUps);
+
+// additional common basic routines
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(up_conv_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, int outLen, LTFAT_H_REAL *filt, int fLen, int up, int sub, int skip, int ext);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(up_conv_sub_1toN)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, int ext);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(up_conv_sub_Nto1)(const LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext);
 
 
 // execution routines

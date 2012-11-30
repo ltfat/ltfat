@@ -30,7 +30,7 @@ for typeIdx=1:length(type)
      
      for ord=1:10
          for J=1:9
-            [H, G] = dbfilt(ord);  
+            [H, G] = wfilt_db(ord);  
             c = comp_fwt_all(f,H,J,typeCur,extCur);
             fhat = comp_ifwt_all(c,G,J,length(f),typeCur,extCur);
             err = norm(f(:)-fhat(:));

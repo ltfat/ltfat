@@ -5,8 +5,8 @@ function test_failed = test_fwt_undec
     J= 6;
    
     wavName = sprintf('db%d',ord);
-    [H, G] = dbfilt(ord);
-    dwtM = 'sym';
+    [H, G] = wfilt_db(ord);
+    dwtM = 'per';
     dwtmode(dwtM,'nodisp');
 
 
@@ -18,7 +18,7 @@ function test_failed = test_fwt_undec
 %f = [randn(2^J*200,1)];
     
 tic;
-    %[SWC] = swt(f,J,H{1},H{2});
+    [SWC] = swt(f,J,H{1}/sqrt(2),H{2}/sqrt(2));
   t1= toc
   tic; 
     c = comp_fwt_all(f,H,J,'undec',dwtM);
@@ -31,8 +31,8 @@ tic;
 %     stem([f,fhat]);
 %     end
 
-   %  [err,coefs] = checkCoefs(c,SWC,J);
-   %   printCoeffs(c,coefs);
+     [err,coefs] = checkCoefs(c,SWC,J);
+      printCoeffs(c,coefs);
      if(err>10^(-10))
          figure(1);clf;
          printCoeffs(c,coefs);

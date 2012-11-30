@@ -20,6 +20,7 @@ else
     doNoExt = 0;
 end
 
+filts = numel(g);
 fLen = length(g{1});
 len = zeros(J+1,1);
     for jj=1:J
@@ -29,37 +30,86 @@ len = zeros(J+1,1);
 
 [cLen,chans] = size(c{end});   
 f = zeros(Ls,chans);
+tmpin = cell(filts,1);
 
-
-if(strcmp(type,'dec'))
+if(strcmp(type,'dec') || strcmp(type,'dtdwt') || strcmp(type,'hddwt'))
     upFac= 2;
     if(doNoExt)
-        skip = floor((fLen+1)/2) -1;
+        skip = floor((fLen)/2) -1;
     else
         skip = fLen - 2;
     end
 
+ if(strcmp(type,'dec'))
     for ch=1:chans
        tempca = c{1}(:,ch);
        for jj=2:J+1
-           tempca = up_conv_td({tempca;c{jj}(:,ch)},len(jj),g,upFac,skip,doNoExt,0);
+           tmpin{1} = tempca;
+           for ff=1:filts-1
+               tmpin{1+ff}= c{jj,ff}(:,ch);
+           end
+           tempca = up_conv_td(tmpin, len(jj),g,upFac,skip,doNoExt,0);
        end
        f(:,ch) = tempca;
     end
-    
+ elseif(strcmp(type,'dtdwt'))
+    for ii = 1:4
+       g{ii} = g{ii}/sqrt(2);
+    end
+    for ch=1:chans
+       tempca1 = real(c{1}(:,ch));
+       tempca2 = imag(c{1}(:,ch));
+       
+       for jj=2:J
+           tmpin{1} = tempca1;
+           tmpin{2} = real(c{jj}(:,ch));
+           tempca1 = up_conv_td(tmpin, len(jj),{g{:,3+mod(J+2-jj,2)}},upFac,skip,doNoExt,0);
+           tmpin{1} = tempca2;
+           tmpin{2} = imag(c{jj}(:,ch));
+           tempca2 = up_conv_td(tmpin, len(jj),{g{:,4-mod(J+2-jj,2)}},upFac,skip,doNoExt,0);
+       end
+       tmpin{1} = tempca1;
+       tmpin{2} = real(c{end}(:,ch));
+       tempca1 = up_conv_td(tmpin, len(end),{g{:,1}},upFac,skip,doNoExt,0);
+       tmpin{1} = tempca2;
+       tmpin{2} = imag(c{end}(:,ch));
+       tempca2 = up_conv_td(tmpin, len(end),{g{:,2}},upFac,skip,doNoExt,0);
+       
+       f(:,ch) = (tempca1 + tempca2);
+    end 
+ elseif(strcmp(type,'hddwt'))
+     skip = floor((fLen)/2)-1;
+     %skipch3 = floor((fLen+1)/2);
+     for ch=1:chans
+       tempca = c{1}(:,ch);
+       for jj=2:J+1
+           tmpin{1} = tempca;
+           tmpin{2}= c{jj,1}(:,ch);
+           tempca = up_conv_td(tmpin, len(jj),{g{1},g{2}},upFac,skip,doNoExt,0);
+           tempca = tempca + up_conv_td({c{jj,2}(:,ch)}, len(jj),{g{3}},1,skip,doNoExt,0);
+       end
+       f(:,ch) = tempca;
+    end
+ end
 
 elseif(strcmp(type,'undec'))
     upFac= 1;
-    g{1} = g{1}/sqrt(2);
-    g{2} = g{2}/sqrt(2);
+    for ii = 1:numel(g)
+       g{ii} = g{ii}/sqrt(2);
+    end
     
     if(doNoExt)
+
        for ch=1:chans
           tempca = c{1}(:,ch);
           for jj=2:J+1
+             tmpin{1} = tempca;
+             for ff=1:filts-1
+                 tmpin{1+ff}= c{jj,ff}(:,ch);
+             end
              filtUps = 2^(J+1-jj); 
              skip = floor((filtUps*fLen)/2) - filtUps;  
-             tempca = up_conv_td({tempca;c{jj}(:,ch)},len(jj),g,upFac,skip,doNoExt,filtUps);
+             tempca = up_conv_td(tmpin,len(jj),g,upFac,skip,doNoExt,filtUps);
           end
           f(:,ch) = tempca;
        end
@@ -67,9 +117,13 @@ elseif(strcmp(type,'undec'))
        for ch=1:chans
           tempca = c{1}(:,ch);
           for jj=2:J+1
+             tmpin{1} = tempca;
+             for ff=1:filts-1
+               tmpin{1+ff}= c{jj,ff}(:,ch);
+             end
              filtUps = 2^(J+1-jj); 
              skip = filtUps*fLen - (filtUps-1) - 1;  
-             tempca = up_conv_td({tempca;c{jj}(:,ch)},len(jj),g,upFac,skip,doNoExt,filtUps);
+             tempca = up_conv_td(tmpin,len(jj),g,upFac,skip,doNoExt,filtUps);
           end
           f(:,ch) = tempca;
        end
