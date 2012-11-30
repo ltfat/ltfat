@@ -16,10 +16,14 @@ function test_failed=test_nsdgt()
 test_failed=0;
 
 disp(' ===============  TEST_NSDGT ================');
+% First case is even numbers, painless
+% Second case is even numbers, non-painless
+% Third case has odd numbers, painless
+% Fouth case has odd numbers, non-painless
 
 ar ={[20,30,40],[20,30,40],[5,11,19],[5,11,19]};
 Mr ={[30,40,50],[30,40,50],[7,12,29],[7,12,29]};
-Lgr={[40,40,50],[60,80,60],[9,19,51],[7,12,29]};
+Lgr={[30,40,50],[60,80,60],[7,12,29],[9,19,51]};
 
 for tc=1:numel(ar)
     N=numel(ar{tc});
