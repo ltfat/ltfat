@@ -42,8 +42,7 @@ if 'verify' in todo:
 
 # Release for other developers to download
 if 'develmat' in todo:
-    #printdoc.git_stageexport(project['dir'],project['mat'])
-    os.system('svn export --force '+project['dir']+' '+project['mat'])
+    printdoc.git_stageexport_mat(projectname)
     printdoc.printdoc(projectname,'mat')
 
     fname=filesdir+projectname+'-devel-'+versionstring
@@ -59,7 +58,7 @@ if 'develmat' in todo:
 
 # Release for users to download
 if 'releasemat' in todo:
-    printdoc.git_repoexport(project['dir'],'master',project['mat'])
+    printdoc.git_repoexport_mat(projectname)
 
     # Remove unwanted files
     os.system('rm -rf '+project['mat']+'testing')
@@ -103,63 +102,15 @@ if todo=='phprebuild' in todo:
     printdoc.printdoc(projectname,'php','rebuild')
 
 if todo=='wavephp': 
-    assert_git_on_branch(ltfat['dir'],'wavelets')
-    printdoc.printdoc(projectname,'phpwave')
-    s='rsync -av '+project['php']+' '+host+':'+www+'wavelet/'
-    os.system(s)    
+    printdoc.assert_git_on_branch(localconf.ltfatwave['dir'],'wavelets')
+    printdoc.printdoc('ltfatwave','php')
 
+if todo=='wavestagemat': 
+    printdoc.git_stageexport_mat('ltfatwave')
+    printdoc.printdoc('ltfatwave','mat')
 
 if 'verify' in todo or todo==[]:
     printdoc.printdoc([m2dfile,'verify'])
-
-if 'stagemat' in todo:
-    printdoc.git_autostage(project['dir'])
-    printdoc.git_stageexport(project['dir'],project['mat'])
-    printdoc.printdoc(projectname,'mat')
-
-    fname=filesdir+projectname+'-'+versionstring
-
-    # Create the Unix src package
-    os.system('tar zcvf '+fname+'.tgz '+projectname+'/')
-
-    # Create the Windows src package
-    os.system('rm '+fname+'.zip')
-    printdoc.unix2dos(filesdir+projectname)
-    os.system('zip -r '+fname+'.zip '+projectname+'/')
-
-
-if 'releasebranch' in todo:
-    bname=sys.argv[2]
-    printdoc.git_repoexport(tbpath,bname,'ltfat',cwd)
-    printdoc.print_mat(m2dfile,publishmat)
-    
-    # Remove unwanted files
-    os.system('rm -rf '+publishmat+'testing')
-    os.system('rm -rf '+publishmat+'reference')
-    os.system('rm -rf '+publishmat+'timing')
-
-    fname=cwd+'ltfat-'+bname+'-'+versionstring
-    os.system('rm '+fname+'.zip')
-
-    printdoc.dos2unix(cwd+'ltfat')
-    os.system('tar zcvf '+fname+'.tgz ltfat/')
-
-    printdoc.unix2dos(cwd+'ltfat')
-    os.system('zip -r '+fname+'.zip ltfat/')
-
-if 'releasetestbranch' in todo:
-    bname=sys.argv[2]
-    printdoc.git_repoexport(tbpath,bname,'ltfat',cwd)
-    printdoc.print_mat(m2dfile,publishmat)
-    
-    fname=cwd+'ltfat-'+bname+'-'+versionstring
-    os.system('rm '+fname+'.zip')
-
-    printdoc.dos2unix(cwd+'ltfat')
-    os.system('tar zcvf '+fname+'.tgz ltfat/')
-
-    printdoc.unix2dos(cwd+'ltfat')
-    os.system('zip -r '+fname+'.zip ltfat/')
     
 if 'stagewww' in todo:
     publishwww=cwd+'ltfatwww/'
