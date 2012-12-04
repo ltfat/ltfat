@@ -26,12 +26,12 @@ disp(['Type "help demo_nsdgt" to see a description of how this example',...
 
 % Setup parameters and length of signal.
 
-Ls=1000; % Length of signal.
+Ls=965; % Length of signal.
 
 N=16; % Number of time positions
 
 % Define a set of windows with length growing linearly. The step beetween
-% to consecutive windows grows also linearly.
+% to consecutive windows also grows linearly.
 
 M=round(linspace(40,200,N)');
 a=cumsum(round(M/2));
@@ -69,7 +69,7 @@ title('Dual synthesis windows');
 xlabel('Time index');
 
 % Define a sinus test signal.
-f=sin(2*pi*0.3*(1:Ls)');
+f=sin(2*pi*0.3*(0:Ls-1)');
 
 % Calculate coefficients.
 c=nsdgt(f,g,a_new,M);
