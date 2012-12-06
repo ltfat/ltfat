@@ -3,12 +3,12 @@ function [w,s,xvals] = wavfun(g,N)
 %    Usage: [w,s,xvals] = wavfun(g,N) 
 %
 %   Input parameters:
-%         g     :  Wavelet filterbank
-%         N     :  Number of iterations
+%         g     : Wavelet filterbank
+%         N     : Number of iterations
 %   Output parameters:
-%         w     : J+1 cell array of analysing filters impulse reponses
+%         w     : $J+1$ cell array of analysing filters impulse reponses
 %
-% Iteratively generate a discrete approximation of wavelet and scaling functions 
+%   Iteratively generate a discrete approximation of wavelet and scaling functions 
 %
 
 if(isstruct(g))

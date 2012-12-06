@@ -36,8 +36,10 @@ harr = [
 -0.0190928308 -0.1152813433 -0.0280987676 -0.0174753464
 ];
 a= [4;4;4;4];
-end
 
+  otherwise
+        error('%s: No such orthonormal M-band wavelet filter bank.',upper(mfilename));
+end
 h=mat2cell(harr.',ones(length(a),1),length(harr));
 
 if(nargout>1)

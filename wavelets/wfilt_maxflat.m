@@ -99,10 +99,39 @@ end
 
 rh=sqrt(2)/sum(rh)*rh;
 
-% Calculate h,g,rg
+g{1} = rh;
+g{2} = -(-1).^(1:length(rh)).*g{1}(end:-1:1);
+ 
+h{1}=g{1}(length(g{1}):-1:1);
+h{2}=g{2}(length(g{2}):-1:1);
 
-[g{1},g{2},h{1},h{2}]=rh2rg(rh);
 a= [2;2];
+
+function y=numcomb(n,k)
+
+if n==k,
+   y=1;
+elseif k==0,
+   y=1;
+elseif k==1,
+   y=n;
+else 
+   y=fact(n)/(fact(k)*fact(n-k));
+end
+
+function y=fact(x)
+
+for j=1:length(x)
+    if x(j)==0,
+       y(j)=1;
+    else
+       y(j)=x(j)*fact(x(j)-1);
+    end
+end
+
+
+
+      
 
 
 

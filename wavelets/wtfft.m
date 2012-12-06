@@ -35,10 +35,10 @@ function c = wtfft(f,H,a,varargin)
 %    error('%s: Unrecognized Wavelet filters definition.',upper(mfilename)); 
 % end
 
-if isa(H, 'function_handle')
-    disp('it is function handle!');
-    return;
-end
+% if isa(H, 'function_handle')
+%     disp('it is function handle!');
+%     return;
+% end
 
 
 %% ----- step 1 : Verify f and determine its length -------

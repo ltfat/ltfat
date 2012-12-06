@@ -35,7 +35,8 @@ else
    out = zeros(outLen,1);
 end
 
-inExt = extendBoundary(in,fLen-1,ext);
+
+inExt = extendBoundary(in,fLen-1,ext,sub);
 
 for ff=1:noOfFilts
     outTemp = conv(inExt,ups(filts{ff}(:),filtUps,1));

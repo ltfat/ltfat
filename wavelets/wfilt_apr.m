@@ -3,7 +3,7 @@ function [h,g,a] = wfilt_apr(N)
 %
 %REFERENCE: Hosseini, Vafadust: Almost Perfect Reconstruction Filter Bank for
 %Non-redundant, Approximately Shift-Invariant,
-%ComplexWavelet Transforms
+%Complex Wavelet Transforms
 
 a= [3;3;3];
 switch(N)
@@ -52,7 +52,7 @@ harr = [
         ];
 
     otherwise
-        error('%s: No such Almost Perfect Reconstruction Filter Bank filter',upper(mfilename));
+        error('%s: No such Almost Perfect Reconstruction Filter Bank filter. ',upper(mfilename));
 end;
 
 h=mat2cell(harr.',[1,1,1],length(harr));

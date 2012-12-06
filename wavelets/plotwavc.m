@@ -1,8 +1,14 @@
 function [ ] = plotwavc(c,varargin )
-%
+%PLOTWAVC  Plot wavelet coefficients
 %   Usage:  plotwavc(c) 
 %           plotwavc(c,Lc)
 %           plotwavc(...,type,fs,dynrange)
+%
+%   `plotwavc(c)` plot the wavelet coefficients *c*. The input cell-array
+%   *c* must have the same structure as coefficients returned from
+%   |fwt|_. See the help on |fwt|_ for more information.
+%
+%   See also: fwt
 
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));

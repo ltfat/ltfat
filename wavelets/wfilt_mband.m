@@ -80,6 +80,8 @@ harr = [
 ]
 ];
 a= [4;4;4;4];
+otherwise
+        error('%s: No such M-Band filters.',upper(mfilename));
 end
 
 h=mat2cell(harr.',ones(length(a),1),length(harr));

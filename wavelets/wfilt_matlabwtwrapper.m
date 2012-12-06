@@ -1,6 +1,6 @@
 function [h,g] = wfilt_matlabwtwrapper(wname)
-% wrapper of the Matlab Wavelet Toolbox wfilters function
-% remove unnecerary initial zeros of some filters
+% Wrapper of the Matlab Wavelet Toolbox wfilters function
+% Requires Matlab Wavelet Toolbox
 
 [lo,hi,lo_s,hi_s] = wfilters(wname);
 

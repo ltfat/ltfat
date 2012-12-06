@@ -1,14 +1,12 @@
-function f = ifwt(c,g,varargin)
+function f = ifwt(c,g,J,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
 %   Usage:  f = ifwt(c,g)
 %           f = ifwt(c,g,Ls,...)
 %
 %   Input parameters:
-%         c     : Coefficients stored in J+1 cell-array or in packed format.
+%         c     : Coefficients stored in J+1 cell-array.
 %         g     : Synthesis wavelet filters.
 %         Ls    : Length of the reconstructed signal.
-%
-
 %
 %   Output parameters:
 %         f     : Reconstructed data.
@@ -19,7 +17,7 @@ function f = ifwt(c,g,varargin)
 %                Type of the wavelet transform.
 %
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.%
+%                Type of the boundary handling.
 %
 %
 %   See also:
@@ -84,7 +82,7 @@ if(do_definedfb)
     if(flags.do_ext_null)
        flags.ext = g.ext; 
     end
-    
+    a = g.a;
     g = g.g;
 else
     % manually setting defaults
@@ -95,13 +93,15 @@ else
     if(flags.do_ext_null)
        flags.ext = 'per'; 
     end
+    % critical subsampling by default 
+    a = length(g)*ones(length(g),1);
 end
 
 
 
-% Determine J from number of elements of c
+% TO REMOVE: Determine J from number of elements of c
 [cR cC] = size(c);
-J = cR-1;
+
 
 if isempty(Ls)
     % Estimate output signal length from the number of coefficients
@@ -127,6 +127,6 @@ if isempty(Ls)
 end
 
 
-f = comp_ifwt_all(c,g,J,Ls,flags.type,flags.ext);
+f = comp_ifwt_all(c,g,J,a,Ls,flags.type,flags.ext);
 
 

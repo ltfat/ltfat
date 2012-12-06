@@ -23,11 +23,16 @@ function [h,g,a]=wfilt_lemaire(num_coefs)
 
 L = 1024;
 H = wfreq_lemaire(L);
-hh=real(ifft(H,L));
+hh=real(ifft(H{1},L));
 hh=[ hh(L-floor(num_coefs/2)+1:L) hh(1:ceil(num_coefs/2))];
 hh=sqrt(2)/sum(hh)*hh;
 
-[g{1},g{2},h{1},h{2}]=rh2rg(fliplr(hh));
+g{1} = fliplr(hh);
+g{2} = -(-1).^(1:length(hh)).*g{1}(end:-1:1);
+ 
+h{1}=g{1}(length(g{1}):-1:1);
+h{2}=g{2}(length(g{2}):-1:1);
+
 a= [2;2];
 
 

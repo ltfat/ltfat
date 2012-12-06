@@ -11,7 +11,7 @@ function f = iwtfft(c,G,a,varargin)
 definput.keyvals.L=[];    
 definput.import = {'wtfft'};
 
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+[flags,kv,Ls]=ltfatarghelper({'L'},definput,varargin);
 
 [Gr,Gc] = size(G);
 
@@ -19,6 +19,7 @@ if(isempty(a))
     a = ones(Gc,1);
 end
 
+L=filterbanklengthcoef(c,a);
 [sigHalfLen,W] = size(c{end});
 f = zeros(L,W);
 
@@ -35,5 +36,9 @@ for w=1:W
    end
 end
 
-
+if ~isempty(Ls)
+  f=postpad(f,Ls);
+else
+  Ls=L;
+end;
 

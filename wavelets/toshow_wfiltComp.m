@@ -1,9 +1,10 @@
 function toshow_wfiltComp
-
-load vonkoch;
-f=vonkoch';
-clear vonkoch;
+%%
+%load vonkoch;
+%f=vonkoch';
+%clear vonkoch;
 %f = traindoppler;
+f = greasy;
 figure(1);
 clf;
 plot(f);
@@ -23,7 +24,7 @@ c = fwt(f,w,J);
 figure(2);clf;plotwavc(c,'clim',scalegramBounds);
 figure(3);freqzfb(fftshift(multid(w.h,J)));
 pause(waitS);
-
+%%
 w = waveletfb('optfs',2);
 c = fwt(f,w,J);
 figure(2);clf;plotwavc(c,'clim',scalegramBounds);

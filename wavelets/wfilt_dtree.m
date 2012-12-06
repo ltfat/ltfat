@@ -1,11 +1,12 @@
-function [h,g] = wfilt_dtree()
+function [h,g,a] = wfilt_dtree(N)
 %
 %
 %   REFERENCE: Selesnick, Baraniuk, Kingsbury: THE DUAL TREE COMPLEX WAVELET TRANSFORM,
 %   http://eeweb.poly.edu/iselesni/double/double.pdf
 
-
-harrT1first = [
+switch(N)
+case 1
+harr = [
                   0                  0
   -0.08838834764832  -0.01122679215254
    0.08838834764832   0.01122679215254
@@ -17,8 +18,8 @@ harrT1first = [
    0.01122679215254  -0.08838834764832
                   0                  0
 ];
-
-harrT2first = [
+case 2
+harr = [
   0.01122679215254                  0
    0.01122679215254                  0
   -0.08838834764832  -0.08838834764832
@@ -31,7 +32,8 @@ harrT2first = [
                   0  -0.01122679215254
 ];
 
-harrT1other = [
+case 3
+harr = [
    0.03516384000000                  0
                   0                  0
   -0.08832942000000  -0.11430184000000
@@ -44,7 +46,8 @@ harrT1other = [
                   0  -0.03516384000000
 ];
 
-harrT2other = [
+case 4
+harr = [
                   0  -0.03516384000000
                   0                  0
   -0.11430184000000   0.08832942000000
@@ -57,60 +60,14 @@ harrT2other = [
    0.03516384000000                  0
 ];
 
-h= cell(2,4);
-
-
-
-% h{1,3} = [
-%    -0.00228413             
-%     0.00120989              
-%    -0.01183479  
-%     0.00128346               
-%     0.04436522           
-%     -0.05327611   
-%    -0.11330589  
-%    0.28090286      
-%    0.75281604   
-%    0.56580807
-%    0.02455015
-%    -0.12018854
-%    0.01815649
-%    0.03152638
-%    -0.00662879
-%    -0.00257617
-%    0.00127756
-%    0.00241187
-% ];
-% flen = length(h{1,3});
-% h{2,3}= (-1).^(0:flen-1).'.*h{1,3}(end:-1:1);
-% h{1,4}= h{1,3}(end:-1:1);
-% h{2,4}= h{2,3}(end:-1:1);
-
-tmph1col=mat2cell(harrT1first.',[1,1],length(harrT1first));
-tmph2col=mat2cell(harrT2first.',[1,1],length(harrT2first));
-tmph3col=mat2cell(harrT1other.',[1,1],length(harrT1other));
-tmph4col=mat2cell(harrT2other.',[1,1],length(harrT2other));
-for ii=1:2
-    h{ii,1} = tmph1col{ii};
-    h{ii,2} = tmph2col{ii};
-    h{ii,3} = tmph3col{ii};
-    h{ii,4} = tmph4col{ii};
+ otherwise
+        error('%s: No such Dual-Tree Complex Wavelet Transform Filters..',upper(mfilename));
 end
+a= [2;2];
+
+h=mat2cell(harr.',[1,1],length(harr));
 
 if(nargout>1)
-    g= cell(2,4);
-    garr = harrT1first(end:-1:1, :);
-    tmpg1col=mat2cell(garr.',[1,1],length(garr));
-    garr = harrT2first(end:-1:1, :);
-    tmpg2col=mat2cell(garr.',[1,1],length(garr));
-    garr = harrT1other(end:-1:1, :);
-    tmpg3col=mat2cell(garr.',[1,1],length(garr));
-    garr = harrT2other(end:-1:1, :);
-    tmpg4col=mat2cell(garr.',[1,1],length(garr));
-    for ii=1:2
-        g{ii,1} = tmpg1col{ii};
-        g{ii,2} = tmpg2col{ii};
-        g{ii,3} = tmpg3col{ii};
-        g{ii,4} = tmpg4col{ii};
-    end
+    garr = harr(end:-1:1, :);
+    g=mat2cell(garr.',[1,1],length(garr));
 end

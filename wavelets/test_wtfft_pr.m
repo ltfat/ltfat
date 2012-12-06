@@ -8,39 +8,54 @@ test_failed = 0;
 
 
 load vonkoch;
-f=vonkoch;
-%f = 0:2^9-1;
+%f=vonkoch;
+f = 0:30;
 f = f';
+%f = randn(32,1);
 
-J = 2;
-
-
-[w.h,w.g,abase]=wfilt_mband(1); 
+J = 1;
 
 
+w = waveletfb('hden',4);
+%[w.h,w.g,abase]=wfilt_hden(1); 
+abase = w.a;
 
-[h,a] = multid(w.h,J,abase,'full');
-[g,a] = multid(w.g,J,abase,'full','syn');
+c2 = fwt(f,w,J);
+fhat2 = ifwt(c2,w,J,length(f));
+
+
+[h,a] = multid(w.h,J,abase);
+[g,a] = multid(w.g,J,abase,'syn');
 figure(3);freqzfb(h,length(f));
 figure(4);freqzfb(g,length(f));
 H = freqzfb(h,filterbanklength(length(f),a));
 G = freqzfb(g,filterbanklength(length(f),a));
 
 
-%[H,G] = wfreq_lemaire(length(f));
+
 
 c1 = wtfft(f,H,a);
 
-figure(2);clf;plotwavc(c1,'undec');
+figure(2);clf;plotwavc(c1);
 
 fhat = iwtfft(c1,G,a,length(f));
 
 
-figure(1);clf;stem([f,fhat]);
+figure(1);clf;stem([f,fhat,fhat2]);
 legend({'orig','iwtfft'});
-title(sprintf('norm(f-fhat)=%d',norm(f-fhat)));
+title(sprintf('norm(f-fhat)=%d',norm(f-fhat2)));
 
-
+c2form = cell(numel(c2)-(length(w.h)-2),1);
+c2form{1} = c2{1};
+cSformIdx = 2;
+for jj=2:J+1
+    for ii=1:length(w.h)-1
+       c2form{cSformIdx} = c2{jj,ii};
+       cSformIdx=cSformIdx+1;
+    end
+end
+figure(5);
+printCoeffs( c1,c2form);
 
 
  

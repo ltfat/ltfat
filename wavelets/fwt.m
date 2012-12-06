@@ -9,29 +9,32 @@ function c = fwt(f,h,J,varargin)
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
-%         c      : Coefficients stored in J+1 cell-array.
-%
+%         c      : Coefficients stored in $J+1$ cell-array.
 %
 %   `c=fwt(f,h,J)` computes wavelet coefficients *c* of the input signal *f*
-%   using basis constructed from the filters *h* and the depth *J* using MRA principle.
-%   For computing the coefficients the fast wavelet transform algorithm (or Mallat's algorithm) is
-%   emplyed. If *f* is a matrix, the transformation is applied to each of *W* columns. 
-%   Coefficients in cell array $c\{j\}$ for $j=1,\ldots,J+1$ are ordered with inceasing central frequency
-%   of the equivalent filter frequency response or equivalently with decreasing wavelet scale. 
-%   The number of coefficients in $c\{j\}$ for $j=2,\ldots,J+1$ is as
-%   follows::
+%   using a basis constructed from the filters *h* and the depth *J* using
+%   the MRA principle.  For computing the coefficients the fast wavelet
+%   transform algorithm (or Mallat's algorithm) is emplyed. If *f* is a
+%   matrix, the transformation is applied to each of *W* columns.
+%
+%   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J+1$ are ordered
+%   with inceasing central frequency of the equivalent filter frequency
+%   response or equivalently with decreasing wavelet scale.  The number of
+%   coefficients in $c\{j\}$ for $j=2,\ldots,J+1$ is as follows::
 %
 %      length(c{j}) = ceil(2^(j-2-J)length(f))
 %
-%   and length(c{1})=length(c{2}). 
-%   If *f* is matrix with *W* collumns, each element of the cell array $c\{j\}$ is a matrix
-%   with *W* collumns with coefficients belonging to the appropriate input channel.
+%   and length(c{1})=length(c{2}).
 %
-%   The proper name for the transform is dyadic (or critically subsampled)
+%   If the input *f* is matrix with *W* columns, each element of the cell
+%   array $c\{j\}$ is a matrix with *W* columns with coefficients belonging
+%   to the appropriate input channel.
+%
+%   The proper name for the transform is the dyadic (or critically subsampled)
 %   discrete wavelet transform which is equivalent to the (bi)orthogonal
 %   wavelet expansion provided appropriate (bi)orthogonal wavelet filterbank is supplied.
 %
-%   The transform is 2^J-shift invariant.
+%   The transform is $2^J$-shift invariant.
 %
 %   The following flags are supported:
 %
@@ -44,44 +47,44 @@ function c = fwt(f,h,J,varargin)
 %   Time-invariant wavelet tranform:
 %   --------------------------------
 %
-%   `c=fwt(f,h,J,'undec')` computes redundant time (or shift) invariant wavelet representation of the
-%   input signal *f* using a-trous algorithm. length(c{j})=length(f) for all *j*.
+%   `c=fwt(f,h,J,'undec')` computes redundant time (or shift) invariant
+%   wavelet representation of the input signal *f* using the "a-trous"
+%   algorithm. `length(c{j})=length(f)` for all *j*.
 %
-%   Another names for this version of the wavelet transform are:
-%   undecimated wavelet transform, stationary wavelet transform or even
-%   "continuous" (as the time step is one sample) wavelet transform.
-%                                                                                                                                                                                  The redundancy is exactly *J+1*.
+%   Other names for this version of the wavelet transform are: the
+%   undecimated wavelet transform, the stationary wavelet transform or even
+%   the "continuous" (as the time step is one sample) wavelet transform.  The
+%   redundancy is exactly *J+1*.
 %
 %   Boundary handling:
 %   ------------------
 %
-%   `fwt(f,h,J,ext)` computes slightly redundant wavelet
-%   representation of the input signal *f* with the chosen boundary
-%   extension *ext*.
+%   `fwt(f,h,J,ext)` computes slightly redundant wavelet representation of
+%   the input signal *f* with the chosen boundary extension *ext*.
 %
 %   The default periodic extension at the signal boundaries can result in
-%   "false" hight wavelet coefficients near the boundaries due to the
+%   "false" high wavelet coefficients near the boundaries due to the
 %   possible discontinuity introduced by the periodic extension. Using
-%   different kind of the boundary extension comes with a price of a slight
-%   redundancy of the wavelet representation. 
+%   different kind of boundary extensions comes with a price of a slight
+%   redundancy of the wavelet representation.
 %
-%   For the *type*='dec' option, the number of coefficients in *c{j}* for *j*=2,...,J+1 is as
-%   follows::
+%   For the `'dec'` option, the number of coefficients in *c{j}* for
+%   $j=2,\ldots,J+1$ is as follows::
 %
 %      length(c{j}) = floor(2^(j-2-J)length(f) + (1-2^(j-2-J))(length(h{1})-1))
 %
-%   and length(c{1})=length(c{2}).
+%   and `length(c{1})=length(c{2})`.
 %
-%   For the *type*='undec' option, the redundancy can become more than slight for the
-%   number of coefficients in *c* grows as follows:
+%   For the `'undec'` option, the redundancy can increase slightly as the
+%   number of coefficients in *c* grows as follows::
 %
-%   .. length(c{J+1}) = length(f) + length(h{1})-1
+%      length(c{J+1}) = length(f) + length(h{1})-1
 %
-%   and for *j*=J,...,2
+%   and for $j=J,\ldots,2$ ::
 %
-%   .. length(c{j}) = length(c{j+1}) + 2^(j-J+1)*(length(h{1})-1)
+%      length(c{j}) = length(c{j+1}) + 2^(j-J+1)*(length(h{1})-1)
 %
-%   and length(c{1})=length(c{2}).
+%   and `length(c{1})=length(c{2})`.
 %
 %   See also: ifwt
 %
@@ -120,8 +123,6 @@ if(iscell(h))
     if(length(h{1})< 2)
         error('%s: Wavelet filters should have at least two coefficients.',upper(mfilename)); 
     end
-
-
 elseif(isstruct(h))
     do_definedfb = 1;
 elseif(ischar(h))
@@ -142,6 +143,7 @@ end
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
+
 if(do_definedfb)
     if(flags.do_type_null)
        flags.type = h.type; 
@@ -150,7 +152,7 @@ if(do_definedfb)
     if(flags.do_ext_null)
        flags.ext = h.ext; 
     end
-    
+    a = h.a;
     h = h.h;
 else
     % setting defaults
@@ -161,7 +163,9 @@ else
     if(flags.do_ext_null)
        flags.ext = 'per'; 
     end
+    a = length(h)*ones(length(h),1);
 end
+
 
 
 %% ----- step 2 : Check whether the input signal is long enough
@@ -180,6 +184,6 @@ end
 
 
 %% ----- step 3 : Run computation
- c = comp_fwt_all(f,h,J,flags.type,flags.ext);
+ c = comp_fwt_all(f,h,J,a,flags.type,flags.ext);
 
 

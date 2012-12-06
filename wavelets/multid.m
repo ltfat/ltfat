@@ -1,5 +1,5 @@
 function [out,a,origs] = multid( filts, J, varargin)
-% MULTID Depth-J 
+%MULTID  Creates equivalent one-level multirate identity filterbank
 % filts = cell array
 %   - row or collumn orientation -> one level filters, ordered from the lowest
 %   central fequency to the highest
@@ -25,7 +25,17 @@ definput.flags.treetype = {'dwt','full','cust','wpack'};
 nodePredecesorsMultId();
 
 [fR, fC] = size(filts);
-%  if isa(filts{1}, 'function_handle')
+
+% input is structure defined by waveletfb
+if(isstruct(filts))
+    a = filts.a;
+    if(flags.do_ana)
+        filts = filts.h;
+    else
+        filts = filts.g;
+    end
+end
+
 if(iscell(filts))
   if(isnumeric(filts{1}))
      if(min([fR, fC])==1)

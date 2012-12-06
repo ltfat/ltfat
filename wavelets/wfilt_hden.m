@@ -85,6 +85,9 @@ case 4
 
     return
 
+
+otherwise
+        error('%s: No such Higher Density Wavelet Transform Filters..',upper(mfilename));
 end
 
 h=mat2cell(harr.',[1,1,1],length(harr));

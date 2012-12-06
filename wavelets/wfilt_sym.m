@@ -1,4 +1,4 @@
-function [h,g,a]=wfilt_sym(num_coefs)
+function [h,g,a]=wfilt_sym(ord)
 
 %SYMLETS    Generates the "least asymmetric" Daubechies' wavelets or "symlets".
 %
@@ -22,11 +22,7 @@ function [h,g,a]=wfilt_sym(num_coefs)
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es
 
-
-
-if rem(num_coefs,2)
-   error( 'Error: NUM_COEFS must be even!!!')
-end
+num_coefs = 2*ord;
 
 if num_coefs==2	    % Haar filters
 	rh=0.5*[sqrt(2) sqrt(2)];
@@ -151,9 +147,247 @@ end
 
 cte=sqrt(2)/sum(rh);
 rh=cte*rh;
-[g{1},g{2},h{1},h{2}]=rh2rg(rh);
+
+g{1} = rh;
+g{2} = -(-1).^(1:length(rh)).*g{1}(end:-1:1);
+ 
+h{1}=g{1}(length(g{1}):-1:1);
+h{2}=g{2}(length(g{2}):-1:1);
+
+
 a= [2;2];
 
+
+function  bin=dec2bina(num,bits)
+
+%DEC2BINA    BIN = DEC2BINA(NUM,BITS) returns a vector which contains 
+%	     the decimal number NUM in binary format, with a number of 
+%	     digits equal to BITS. It is an auxiliary function used by
+%	     SYMLETS.
+
+%--------------------------------------------------------
+% Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
+%                                                      
+%                                                      
+% Uvi_Wave is free software; you can redistribute it and/or modify it      
+% under the terms of the GNU General Public License as published by the    
+% Free Software Foundation; either version 2, or (at your option) any      
+% later version.                                                           
+%                                                                          
+% Uvi_Wave is distributed in the hope that it will be useful, but WITHOUT  
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+% for more details.                                                        
+%                                                                          
+% You should have received a copy of the GNU General Public License        
+% along with Uvi_Wave; see the file COPYING.  If not, write to the Free    
+% Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.             
+%                                                                          
+%       Author: Jose Martin Garcia
+%       e-mail: Uvi_Wave@tsc.uvigo.es
+%--------------------------------------------------------
+
+
+if nargin<2
+	flag=0;
+else
+	flag=1;
+end
+
+bin=[];
+coc=num;
+while coc>1
+	bin=[rem(coc,2) bin];
+	coc=fix(coc/2);
+end
+bin=[coc bin];
+if flag 
+ 	if length(bin)<bits
+		bin=[zeros(1,bits-length(bin)) bin];
+	end
+end
+
+function fase=atang1(R,alfa)
+
+%ATANG1    PHASE=ATANG1(R,ALFA) returns the phase contribution
+%	   of a complex pair of zeros. Linear terms have been
+%	   removed. It is an auxiliary function used by SYMLETS.
+
+%--------------------------------------------------------
+% Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
+%                                                      
+%                                                      
+% Uvi_Wave is free software; you can redistribute it and/or modify it      
+% under the terms of the GNU General Public License as published by the    
+% Free Software Foundation; either version 2, or (at your option) any      
+% later version.                                                           
+%                                                                          
+% Uvi_Wave is distributed in the hope that it will be useful, but WITHOUT  
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+% for more details.                                                        
+%                                                                          
+% You should have received a copy of the GNU General Public License        
+% along with Uvi_Wave; see the file COPYING.  If not, write to the Free    
+% Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.             
+%                                                                          
+%       Author: Jose Martin Garcia
+%       e-mail: Uvi_Wave@tsc.uvigo.es
+%--------------------------------------------------------
+
+
+w=[0:2*pi/1e3:2*pi];		%frequency axis
+
+fas=atan( (1-R^2)*sin(w)./((1+R^2)*cos(w)-2*R*cos(alfa)) );
+
+zero=acos(2*R*cos(alfa)/(1+R^2));
+u1=ceil(zero*1000/(2*pi))+1;
+u2=ceil((2*pi-zero)*1000/(2*pi))+1;
+if (1-R^2)*sin(zero)<0
+	cte=pi;
+	fase=fas+w;
+else
+	fase=fas-w;
+	cte=-pi;
+end
+fase(u1:1001)=fase(u1:1001)-cte;
+fase(u2:1001)=fase(u2:1001)-cte;
+
+function fase=atang2(R)
+
+%ATANG2    PHASE=ATANG2(R) returns the phase contribution of
+%	   a real zero. Linear terms have been removed. It is
+%	   an auxiliary function used by SYMLETS.
+
+%--------------------------------------------------------
+% Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
+%                                                      
+%                                                      
+% Uvi_Wave is free software; you can redistribute it and/or modify it      
+% under the terms of the GNU General Public License as published by the    
+% Free Software Foundation; either version 2, or (at your option) any      
+% later version.                                                           
+%                                                                          
+% Uvi_Wave is distributed in the hope that it will be useful, but WITHOUT  
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+% for more details.                                                        
+%                                                                          
+% You should have received a copy of the GNU General Public License        
+% along with Uvi_Wave; see the file COPYING.  If not, write to the Free    
+% Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.             
+%                                                                          
+%       Author: Jose Martin Garcia
+%       e-mail: Uvi_Wave@tsc.uvigo.es
+%--------------------------------------------------------
+
+
+w=[0:2*pi/1e3:2*pi];	%frequency axis
+
+fas=atan( (1+R)/(1-R)*tan(w/2) );
+
+if R<1
+	fase=fas-w;
+	cte=-pi;
+else
+	fase=fas+w;
+	cte=pi;
+end;
+u=ceil(pi*1000/(2*pi))+2;
+fase(u:1001)=fase(u:1001)-cte;
+
+function fase=linealiz(f)
+
+%LINEALIZ     PHASE = LINEALIZ(F) is an auxiliary function used
+%	      by SYMLETS. It eliminates the linearity of the
+%	      phase vector F.
+
+
+%--------------------------------------------------------
+% Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
+%                                                      
+%                                                      
+% Uvi_Wave is free software; you can redistribute it and/or modify it      
+% under the terms of the GNU General Public License as published by the    
+% Free Software Foundation; either version 2, or (at your option) any      
+% later version.                                                           
+%                                                                          
+% Uvi_Wave is distributed in the hope that it will be useful, but WITHOUT  
+% ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or    
+% FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License    
+% for more details.                                                        
+%                                                                          
+% You should have received a copy of the GNU General Public License        
+% along with Uvi_Wave; see the file COPYING.  If not, write to the Free    
+% Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.             
+%                                                                          
+%       Author: Jose Martin Garcia
+%       e-mail: Uvi_Wave@tsc.uvigo.es
+%--------------------------------------------------------
+
+
+if abs(sum(f(1,:))) >0.0001
+	w=[0:2*pi/1e3:2*pi];
+	[m,n]=size(f);
+	fase=zeros(m,n);
+	for cont=1 : m
+		if sum(f(cont,:)) >0
+			fase(cont,:)=f(cont,:)-w/2;
+		else
+			fase(cont,:)=f(cont,:)+w/2;
+		end
+	end
+else
+	fase=f;
+end 
+
+function polinomio=trigpol(N)
+
+coefs=zeros(N,2*N-1);
+coefs(1,N)=1;
+
+ 
+for i=1:N-1
+	fila=[1 -2 1];
+	for j=2:i
+		fila=conv(fila,[1 -2 1]);
+	end;
+	fila=numcomb(N-1+i,i)*(-0.25)^i*fila;
+	fila=[ zeros(1,(N-i-1))  fila zeros(1,(N-i-1))];
+	coefs(i+1,:)=fila;
+end
+
+for i=0:(2*(N-1))
+	polinomio(i+1)=0;
+	for j=1:N
+		polinomio(i+1)=polinomio(i+1)+coefs(j,i+1);
+	end
+end; 
+
+function y=numcomb(n,k)
+
+if n==k,
+   y=1;
+elseif k==0,
+   y=1;
+elseif k==1,
+   y=n;
+else 
+   y=fact(n)/(fact(k)*fact(n-k));
+end
+
+function y=fact(x)
+
+% FACT   Factorial.
+%        FACT(X) is the factorial of the elements in X vector.
+
+for j=1:length(x)
+    if x(j)==0,
+       y(j)=1;
+    else
+       y(j)=x(j)*fact(x(j)-1);
+    end
+end
 
 
 
