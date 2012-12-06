@@ -853,21 +853,23 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
 
 LTFAT_EXTERN
 void LTFAT_NAME(up_conv_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, int outLen, LTFAT_REAL *filt, int fLen, int up, int sub, int skip, int ext){
-    
+  	skip = 0;
+    // type-2 polyphase representation
 	LTFAT_REAL **pphase = (LTFAT_REAL **) ltfat_malloc(up*sizeof(LTFAT_REAL*));
 	int pphaseLen = (fLen+up-1)/up;
 	for(int ii=0;ii<up;ii++)
 	{
-		pphase[ii] = (LTFAT_REAL *) ltfat_malloc(pphaseLen*sizeof(LTFAT_REAL));
-		memset(pphase[ii],0,pphaseLen*sizeof(LTFAT_REAL));
+		LTFAT_REAL **tmpPPhase = &pphase[up-1-ii];
+		*tmpPPhase = (LTFAT_REAL *) ltfat_malloc(pphaseLen*sizeof(LTFAT_REAL));
+		memset(*tmpPPhase,0,pphaseLen*sizeof(LTFAT_REAL));
 		for(int jj=0;jj<(fLen-ii+up-1)/up;jj++)
 		{
-			pphase[ii][jj] = filt[ii+up*jj]; 
+			(*tmpPPhase)[jj] = filt[ii+up*jj]; 
 		}
 	}
 
 
-   int outLenN = (inLen - skip + sub -1)/sub;
+   
 
 	// prepare cyclic buffer of length of power of two (for effective modulo operations)
    int buffLen = nextPow2(imax(fLen,sub+1));
@@ -879,8 +881,71 @@ void LTFAT_NAME(up_conv_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, i
    LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
    memset(buffer,0,buffLen*sizeof(LTFAT_REAL));
 
+   /*** initial buffer fill ***/ 
+   int toRead = skip + (up-1)+ 1;
+   // number of overflowing samples
+   int buffOver = imax(buffPtr+toRead-buffLen, 0);
+   // copy non-overflowing
+   memcpy(buffer+buffPtr,tmpIn,(toRead-buffOver)*sizeof(LTFAT_REAL));
+   tmpIn += (toRead-buffOver);
+   // copy overflowing
+   memcpy(buffer,tmpIn,buffOver*sizeof(LTFAT_REAL));
+   tmpIn += buffOver;
+   // move buffer pointer (can overflow)
+   buffPtr = modPow2(buffPtr+=toRead,buffLen);
 
-   for(int ii=0;ii<up;ii++) ltfat_free(pphase[ii]);
+     
+   int outLenN = (inLen - (toRead-1) + sub -1)/sub;
+   // Take the smaller value from "painless" output length and the user defined output length
+   int iiLoops = imin(outLenN-1,outLen-1);
+   int jjLoops = pphaseLen;
+   LTFAT_REAL *outTmp = out;
+   LTFAT_REAL *buffTmp = buffer;
+
+   // loop trough all output samples, omit the very last one.
+   for (int ii = 0; ii < iiLoops; ii++) 
+   {
+	   // polyphase repr. idx
+	   for (int kk = 0; kk < up; kk++) 
+	   {
+		   LTFAT_REAL* outkkTmp = (outTmp-(up-1-kk));
+	      // polyphase repr. length
+	      for (int jj = 0; jj < jjLoops; jj++) 
+	      {
+		     // buffer index modulo buffer length
+		     int idx = modPow2((-kk-jj+buffPtr-1),buffLen);
+		     // ponter to the actual value
+             buffTmp = buffer+idx;
+		     // loop trough polyphase samples
+		     *outkkTmp += *(buffTmp)*pphase[kk][jj];
+          }
+	   }
+	   outTmp+=up;
+
+
+	   // number of samples overflowing buffer
+	   int buffOver = imax(buffPtr+sub-buffLen, 0);
+	   // have to copy just non-overfloving samples
+   	   memcpy(buffer + buffPtr, tmpIn, (sub-buffOver)*sizeof(LTFAT_REAL));
+	   // copy the rest to the beginning of the buffer
+	   memcpy(buffer,tmpIn+sub-buffOver,buffOver*sizeof(LTFAT_REAL));
+
+	   // move buffer index, modulo by buffer length
+	   buffPtr = modPow2(buffPtr += sub,buffLen);
+	   // move input pointer
+	   tmpIn += sub;
+   }
+
+
+
+
+
+
+
+
+   for(int ii=0;ii<up;ii++) 
+	   ltfat_free(pphase[ii]);
+
    ltfat_free(pphase);
    ltfat_free(buffer);
 }
@@ -978,8 +1043,8 @@ void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer
            for(int ii=0;ii<filtLen;ii++)
 			   buffer[ii] = in[inLen-1];
            break;
-		 case 7: // periodic padding with possible last sample repplication
-			if(modPow2(inLen,2)==0)
+		 case 7: // periodic padding with possible last sample repplications
+			if(inLen%2==0)
 			{
               for(int ii=0;ii<legalExtLen;ii++)
 			    buffer[ii] = in[ii];
