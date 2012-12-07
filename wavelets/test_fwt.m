@@ -1,51 +1,99 @@
-function test_failed=test_fwt
-%%
+function test_failed=test_fwt(verbose)
+%
+%  Check perfect reconstruction of some parameter combinations
+%
+
 f = randn(17897,1);
-J = 1;
+J = 9;
 % Examples
+if(nargin>0)
+  verbose=1;
+else
+  verbose=0;
+end
+test_failed = 0;
 
-
-w = waveletfb('algmband',1);
+w = waveletfb({'algmband',1});
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w,J,length(f));
-stem([f,fhat]);
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 %%
-w = waveletfb('db',8);
+w = waveletfb({'db',8});
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w,J,length(f));
-stem([f,fhat]);
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 %%
 
 [h,g] = wfilt_db(8);
 [c] = fwt(f,h,J);
 fhat = ifwt(c,g,J,length(f));
-stem([f,fhat]);
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 %%
 
-w = waveletfb('db',8,'undec');
+w = waveletfb({'db',8},'undec');
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w,J,length(f));
-stem([f,fhat]);
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 
-w = waveletfb('db',8,'undec','sym');
+w = waveletfb({'db',8},'undec','sym');
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w,J,length(f));
-stem([f,fhat]);
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 
 
-w = waveletfb('db',8,'undec','sym');
+w = waveletfb({'db',8},'undec','sym');
 [c] = fwt(f,w,J,'per');
 fhat = ifwt(c,w,J,length(f),'per');
-stem([f,fhat]);
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 
-w = waveletfb('db',8,'undec','sym');
+w = waveletfb({'db',8},'undec','sym');
 [c] = fwt(f,w,J);
-fhat = ifwt(c,w,J);
-stem([f,fhat]);
+fhat = ifwt(c,w,J,length(f));
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 
 
-w = waveletfb('db',8);
+w = waveletfb({'db',8});
 [c] = fwt(f,w,J,'undec','sym');
-fhat = ifwt(c,w,J,'undec','sym');
-stem([f,fhat]);
+fhat = ifwt(c,w,J,length(f),'undec','sym');
+err=norm(f-fhat);
+if(err>1e-6)
+ test_failed = 1; 
+ if verbose, stem([f,fhat]); end;
+ return;
+end
 

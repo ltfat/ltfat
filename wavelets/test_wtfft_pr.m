@@ -8,15 +8,16 @@ test_failed = 0;
 
 
 load vonkoch;
-%f=vonkoch;
-f = 0:30;
-f = f';
+f=vonkoch;f=f';
+%f = 0:6;
+%f = flipud(f');
+%f = ones(7,1);
 %f = randn(32,1);
 
-J = 1;
+J = 7;
 
 
-w = waveletfb('hden',4);
+w = waveletfb({'hden',3});
 %[w.h,w.g,abase]=wfilt_hden(1); 
 abase = w.a;
 

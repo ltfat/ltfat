@@ -1,7 +1,9 @@
 function test_failed = test_comp_fwt_all
 %TEST_COMP_FWT_ALL
 %
-% Checks perfect reconstruction of the wavelet transform
+%  Checks perfect reconstruction of  comp_fwt_all comp_ifwt_all for
+%  multiple channel input, usind Daubechies filters m=2,...,20, J=1,...,10
+% 
 %
 test_failed = 0;
 
@@ -22,7 +24,7 @@ ext = {'ppd','per'};
 
 f = randn(14576,1);
 % multiple channels
-%f = [2*f,f,0.1*f];
+f = [2*f,f,0.1*f];
     
 for typeIdx=1:length(type)
   typeCur = type{typeIdx};

@@ -24,13 +24,14 @@ filts = numel(g);
 fLen = length(g{1});
 len = zeros(J+1,1);
     for jj=1:J
-       len(jj) = length(c{jj+1});
+       len(jj) = length(c{(jj-1)*(filts-1)+2});
     end
     len(jj+1) = Ls;
 
 [cLen,chans] = size(c{end});   
 f = zeros(Ls,chans);
 tmpin = cell(filts,1);
+
 
 if(strcmp(type,'dec'))
     upFac= a(1);
@@ -47,7 +48,8 @@ if(strcmp(type,'dec'))
           for jj=2:J+1
              tmpin{1} = tempca;
              for ff=1:filts-1
-                tmpin{1+ff}= c{jj,ff}(:,ch);
+               % tmpin{1+ff}= c{jj,ff}(:,ch);
+               tmpin{1+ff}= c{(jj-2)*(filts-1)+ff+1}(:,ch);
              end
              tempca = up_conv_td(tmpin, len(jj),g,upFac,skip,doNoExt,0);
           end
@@ -60,7 +62,7 @@ if(strcmp(type,'dec'))
            for jj=2:J+1
               tempca = up_conv_td({tempca}, len(jj),{g{1}},a(1),skip,doNoExt,0);
               for ff=1:filts-1
-                 tempca = tempca + up_conv_td({c{jj,ff}(:,ch)}, len(jj),{g{ff+1}},a(ff+1),skip,doNoExt,0);  
+                 tempca = tempca + up_conv_td({c{(jj-2)*(filts-1)+ff+1}(:,ch)}, len(jj),{g{ff+1}},a(ff+1),skip,doNoExt,0);  
               end
            end
            f(:,ch) = tempca; 
@@ -92,7 +94,8 @@ elseif(strcmp(type,'undec'))
           for jj=2:J+1
              tmpin{1} = tempca;
              for ff=1:filts-1
-                 tmpin{1+ff}= c{jj,ff}(:,ch);
+                 % tmpin{1+ff}= c{jj,ff}(:,ch);
+                 tmpin{1+ff}=c{(jj-2)*(filts-1)+ff+1}(:,ch);
              end
              tempca = up_conv_td(tmpin,len(jj),g,upFac,skip(jj-1),doNoExt,a(1)^(J+1-jj));
           end

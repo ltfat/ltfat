@@ -21,7 +21,7 @@ else
 end
 
 [filts] = length(h);
-c = cell(J+1,filts-1);
+c = cell((filts-1)*J+1,1);
 
 % number of coefficients at each level, according to the filtertree lowpass path
 cLen = zeros(J,1);
@@ -53,7 +53,7 @@ end
                   ctemp = conv_td_sub(tempca,cLen(J+1-jj),h,sub,skip,ext,0);
                   tempca = ctemp{1};
                   for ff=1:filts-1
-                     c{J+2-jj,ff}(:,ch) = ctemp{1+ff};
+                     c{end-jj*(filts-1)+ff}(:,ch) = ctemp{1+ff};
                   end
                end
             c{1}(:,ch) = tempca;
@@ -71,25 +71,13 @@ end
                      if(doNoExt), actOutLen = ceil(actInLen/a(ff+1));
                      else actOutLen = floor((actInLen+(fLen-1))/a(ff+1)); end 
                      
-                     c{J+2-jj,ff}(:,ch) = conv_td_sub(tempca,actOutLen,{h{ff+1}},a(ff+1),skip,ext,0);
+                     c{end-jj*(filts-1)+ff}(:,ch) = conv_td_sub(tempca,actOutLen,{h{ff+1}},a(ff+1),skip,ext,0);
                   end
                      tempca = conv_td_sub(tempca,cLen(J+1-jj),{h{1}},a(1),skip,ext,0);
                end
            c{1}(:,ch) = tempca;
       end
    end
-
-%       ch3cLen = [cLen; inLen];  
-%       for ch=1:chans
-%         tempca = f(:,ch);
-%           for jj=1:J
-%             ctemp = conv_td_sub(tempca,cLen(J+1-jj),{h{1},h{2}},sub,skip,ext,0);
-%             c{J+2-jj,2}(:,ch) = conv_td_sub(tempca,ch3cLen(end+1-jj),{h{3}},1,skip,ext,0);
-%             c{J+2-jj,1}(:,ch) = ctemp{2};
-%             tempca = ctemp{1};
-%           end
-%          c{1}(:,ch) = tempca;
-%       end
 
 % time-invariant wavelet transform    
 elseif(strcmp(type,'undec'))
@@ -121,7 +109,7 @@ elseif(strcmp(type,'undec'))
         tempca = ctemp{1};
         %c{J+2-jj}(:,ch) = ctemp{2};
         for ff=1:filts-1
-          c{J+2-jj,ff}(:,ch) = ctemp{1+ff};
+          c{end-jj*(filts-1)+ff}(:,ch) = ctemp{1+ff};
         end
       end
      c{1}(:,ch) = tempca;

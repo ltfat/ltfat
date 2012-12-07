@@ -25,45 +25,34 @@ definput.keyvals.xres=800;
 
 
 if iscell(c)
-  [cM, cN] = size(c); 
+  cM = length(c); 
+  L=size(c{end}(:,1),1); 
 
-  M=numel(c);
-  if cN>1
-      M=M-(cN-1);
-  end
-
-     if(flags.do_undec)
-       L=size(c{1},1); 
-     else
-       L=size(c{1},1)*2^(cM-1)+2^(cM-1);  
-     end
 
   N=kv.xres;
   if(flags.do_uni)
-     coef2=zeros(M,N);
-     yr=1:M;
+     coef2=zeros(cM,N);
+     yr=1:cM;
   elseif(flags.do_dyad)
-     coef2=zeros(2^(M-1),N); 
-     yr=1:2^(M-1);
+     coef2=zeros(2^(cM-1),N); 
+     yr=1:2^(cM-1);
   end
   
   row=c{1}(:,1);
   coef2(end,:)=interp1(linspace(0,1,numel(row)),row,linspace(0,1,N),'nearest');
   runii = 1;
   for ii=1:cM-1
-    for ff=1:cN
-       row=c{end+1-ii,end+1-ff}(:,1);
+       row=c{end+1-ii}(:,1);
        if(flags.do_uni)
             rows = 1;
        elseif(flags.do_dyad)
-            rows = 2^(M-ii-1);
+            rows = 2^(cM-ii-1);
        end
 
     rowint = interp1(linspace(0,1,numel(row)),row,linspace(0,1,N),'nearest');
 
     coef2(runii:runii+rows-1,:)= repmat(rowint,[rows,1]);
     runii = runii + rows;
-    end;
   end;
   coef=coef2;
   delta_t=L/N;

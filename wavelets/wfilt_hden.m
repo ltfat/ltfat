@@ -2,10 +2,8 @@ function [h,g,a] = wfilt_hden(N)
 %
 %
 %   REFERENCE: Selesnick, I. W.: A HIGHER DENSITY
-%   DWT, http://eeweb.poly.edu/iselesni/double/double.pdf
+%   DWT, 
 %
-% THESE ARE ALL MINIMAL LENGTH SOLUTIONS. ONE MIGHT EXPECT better frequecy selectivity
-% for other solutions
 a= [2;2;1];
 
 switch(N)

@@ -1,4 +1,4 @@
-function [w] = waveletfb(wname,varargin)
+function [w] = waveletfb(wavname,varargin)
 %WAVELETFB   Wavelet Filterbank
 %
 %
@@ -19,13 +19,22 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~ischar(wname)
-  error(['%s: First agument must be a string denoting the type of ' ...
+if ischar(wavname)
+    wname = {wavname};
+elseif iscell(wavname)
+    wname = wavname;
+    if ~ischar(wname{1})
+    error(['%s: First element of the first agument must be a string denoting the type of ' ...
          'wavelet.'],upper(mfilename));
+    end;
+else
+    error('%s: First argument must be a string or cell.',upper(mfilename));
 end;
 
-ord = 1;
-if(~isempty(varargin)) ord = varargin{1}; end;
+
+
+%ord = 1;
+%if(~isempty(varargin)) ord = varargin{1}; end;
 
 % Search for m-file containing string wname
 wfiltFiles =dir(fullfile(ltfatbasepath,sprintf('wavelets/%s*.m',wprefix)));
@@ -33,7 +42,7 @@ found = 0;
 for ii = 1:length(wfiltFiles)
     tmpFile = lower(wfiltFiles(ii).name);
     subtmpFile = tmpFile(length(wprefix)+1:end-2);
-    if(strcmp(subtmpFile,wname))
+    if(strcmp(subtmpFile,wname{1}))
        found = 1; break;
     end
 end
@@ -45,12 +54,9 @@ else
    tmpFile = tmpFile(1:end-2); 
 end
 
-% call function
-if isempty({varargin{2:end}})
- [w.h, w.g, w.a] = feval(tmpFile,ord);
-else
-  [w.h, w.g, w.a] = feval(tmpFile,ord,varargin{2:end}); 
-end
+
+[w.h, w.g, w.a] = feval(tmpFile,wname{2:end});
+
 
 % process other parameters
 definput.import = {'fwt'};

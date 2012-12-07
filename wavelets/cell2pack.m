@@ -16,39 +16,51 @@ function [cvec,Lc] = cell2pack(ccell)
 %   level *J-2+j*.
 %
 
-[JJ bands] = size(ccell);
-JJtotal = (JJ-1)*bands + 1;
+JJtotal = length(ccell);
+%JJtotal = (JJ-1)*bands + 1;
 
 [cLen, W] = size(ccell{end});
 
 
 Lc = zeros(JJtotal,1);
-Lc(1) =  length(ccell{1});
-jjIdx = 2;
-for jj=2:JJ
-    for bb=1:bands
-       Lc(jjIdx) =  length(ccell{jj,bb}(:,1));
-       jjIdx = jjIdx +1;
-    end
+for jj=1:JJtotal
+   Lc(jj) =  length(ccell{jj});
 end
+% jjIdx = 2;
+% for jj=2:JJ
+%     for bb=1:bands
+%        Lc(jjIdx) =  length(ccell{jj,bb}(:,1));
+%        jjIdx = jjIdx +1;
+%     end
+% end
 
 
 cvec = zeros(sum(Lc),W);
 
-for w=1:W
-    cvec(1:Lc(1),w) = ccell{1}(:,w);
-end
+ for w=1:W
+   lenSumIdx = 1;
+   lenSum = 0;
+   for jj=1:JJtotal
+      cvec(1+lenSum:Lc(lenSumIdx)+lenSum,w) = ccell{jj}(:,w);
+      lenSum = lenSum+Lc(lenSumIdx);
+      lenSumIdx=lenSumIdx+1;
+   end
+ end
 
-
-for w=1:W
- lenSumIdx = 1;
- lenSum = Lc(lenSumIdx);
-
- for jj=2:JJ
-    for bb=1:bands 
-        cvec(1+lenSum:Lc(lenSumIdx+1)+lenSum,w) = ccell{jj,bb}(:,w);
-        lenSum = lenSum+Lc(lenSumIdx+1);
-        lenSumIdx=lenSumIdx+1;
-    end
-  end
-end
+% for w=1:W
+%     cvec(1:Lc(1),w) = ccell{1}(:,w);
+% end
+% 
+% 
+% for w=1:W
+%  lenSumIdx = 1;
+%  lenSum = Lc(lenSumIdx);
+% 
+%  for jj=2:JJ
+%     for bb=1:bands 
+%         cvec(1+lenSum:Lc(lenSumIdx+1)+lenSum,w) = ccell{jj,bb}(:,w);
+%         lenSum = lenSum+Lc(lenSumIdx+1);
+%         lenSumIdx=lenSumIdx+1;
+%     end
+%   end
+% end

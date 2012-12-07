@@ -1,4 +1,4 @@
-function ccell = pack2cell(cvec,Lc,varargin)
+function ccell = pack2cell(cvec,Lc)
 %PACK2CELL Changes wavelet coefficients storing format
 %   Usage:  
 %          ccell = pack2cell(cvec,Lc);
@@ -7,7 +7,6 @@ function ccell = pack2cell(cvec,Lc,varargin)
 %   Input parameters:
 %         cvec     : Coefficients in packed format.
 %         Lc       : J+1 element vector containing coefficients lengths.
-%         bands    : Number of wavelet filters
 %
 %   Output parameters:
 %         ccell    : Coefficients stored in J+1 cell-array.
@@ -18,44 +17,57 @@ function ccell = pack2cell(cvec,Lc,varargin)
 %   cvec(1+sum(lengths(1:j-1)):sum(lengths(1:j),w) for *j=2,...,J+1* - detail coefficients at
 %   level *J-2+j*.
 %
-if(isempty(varargin))
-    bands = 1;
-else
-    bands = varargin{1}-1;
-end
+
 
 % check if (length(Lc)-1)/bands is integer
-JJ = (length(Lc)-1)/bands + 1;
+JJ = length(Lc);
 
 [cLen, W] = size(cvec);
 
 % ALLOCATING OUTPUT
-ccell = cell(JJ,bands);
-ccell{1} = zeros(Lc(1),W);
-jjIdx = 2;
-for jj=2:JJ
-  for bb=1:bands
-     ccell{jj,bb} = zeros(Lc(jjIdx),W);
-     jjIdx = jjIdx +1;
-  end
+ccell = cell(JJ,1);
+
+for jj=1:JJ
+     ccell{jj} = zeros(Lc(jj),W);
 end
+
+% ccell{1} = zeros(Lc(1),W);
+% jjIdx = 2;
+% for jj=2:JJ
+%   for bb=1:bands
+%      ccell{jj,bb} = zeros(Lc(jjIdx),W);
+%      jjIdx = jjIdx +1;
+%   end
+% end
 
 % DO THE COPY
-for w=1:W
-    ccell{1}(:,w) = cvec(1:Lc(1),w);
-end
 
 for w=1:W
-   lenSumIdx = 1;
-   lenSum = Lc(lenSumIdx);
-    for jj=2:JJ
-      for bb=1:bands
-        ccell{jj,bb}(:,w) = cvec(1+lenSum:Lc(lenSumIdx+1)+lenSum,w);
-        lenSum = lenSum+Lc(lenSumIdx+1);
-        lenSumIdx=lenSumIdx+1;
-      end
+    lenSumIdx = 1;
+    lenSum = 0;
+    for jj=1:JJ
+       ccell{jj}(:,w) = cvec(1+lenSum:Lc(lenSumIdx)+lenSum,w);
+       lenSum = lenSum+Lc(lenSumIdx);
+       lenSumIdx=lenSumIdx+1;
     end
 end
+
+
+% for w=1:W
+%     ccell{1}(:,w) = cvec(1:Lc(1),w);
+% end
+% 
+% for w=1:W
+%    lenSumIdx = 1;
+%    lenSum = Lc(lenSumIdx);
+%     for jj=2:JJ
+%       for bb=1:bands
+%         ccell{jj,bb}(:,w) = cvec(1+lenSum:Lc(lenSumIdx+1)+lenSum,w);
+%         lenSum = lenSum+Lc(lenSumIdx+1);
+%         lenSumIdx=lenSumIdx+1;
+%       end
+%     end
+% end
 
 
 

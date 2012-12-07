@@ -1,10 +1,15 @@
-function test_failed = test_comp_fwt_all
+function test_failed = test_comp_fwt_all_filters(verbose)
 %TEST_COMP_FWT_ALL
 %
-% Checks perfect reconstruction of the wavelet transform
+% Checks perfect reconstruction of the wavelet transform of different
+% filters
 %
 test_failed = 0;
-verbose = 0;
+if(nargin>0)
+   verbose = 1;
+else
+   verbose = 0;
+end
 
 %  curDir = pwd;
 %  mexDir = [curDir(1:strfind(pwd,'\ltfat')+5),'\mex'];
@@ -26,9 +31,9 @@ test_filters = {
                %{'hden',3} % onyl one with 3 filters and different
                %subsampling factors, not working
                {'algmband',2} % 4 filters, subsampling by the factor of 4!, really long identical lowpass filter
+               {'symds',1}
                {'sym',4}
                {'sym',9}
-               {'symds',1}
                {'symds',2}
 %               {'symds',3}
 %               {'symds',4}
@@ -91,6 +96,8 @@ for typeIdx=1:length(type)
            if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s\n',jj,actFilt{1},extCur,typeCur); end; 
            
            c = comp_fwt_all(f,H,jj,a,typeCur,extCur);
+           %[cvec ,Lc] = cell2pack(c);
+           %c = pack2cell(cvec,Lc);
             fhat = comp_ifwt_all(c,G,jj,a,length(f),typeCur,extCur);
             err = norm(f(:)-fhat(:));
             if err>1e-6

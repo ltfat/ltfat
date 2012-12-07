@@ -17,7 +17,7 @@ w = waveletfb('db',2);
 
  wh = w.h;
  for ii=1:numel(wh)
-     wh{ii}=w.h{ii}./sqrt(2);
+     wh{ii}=w.h{ii}./sqrt(w.a(ii));
  end
 
 [h,a] = multid(wh,J);
@@ -28,7 +28,7 @@ printCoeffs(c1,c2);
 
 wg = w.g;
  for ii=1:numel(wh)
-     wg{ii}=w.g{ii}./sqrt(2);
+     wg{ii}=w.g{ii}./sqrt(w.a(ii));
  end
 [g,a] = multid(wg,J);
 G = freqzfb(g,length(f),a,'syn','wtfft');
