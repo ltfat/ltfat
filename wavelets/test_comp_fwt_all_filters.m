@@ -31,10 +31,11 @@ test_filters = {
                %{'hden',3} % onyl one with 3 filters and different
                %subsampling factors, not working
                {'algmband',2} % 4 filters, subsampling by the factor of 4!, really long identical lowpass filter
-               {'symds',1}
+               %{'symds',1}
+               {'algmband',1}
                {'sym',4}
                {'sym',9}
-               {'symds',2}
+               %{'symds',2}
 %               {'symds',3}
 %               {'symds',4}
 %               {'symds',5}
@@ -59,7 +60,7 @@ test_filters = {
                {'dgrid',1}
                {'dgrid',2}
                {'dgrid',3}
-               {'algmband',1} 
+               %{'algmband',1} 
                {'mband',1}
                %{'hden',3}
                %{'hden',2}
@@ -77,6 +78,7 @@ testLen = 40*2^J;%(2^J-1);
 for inLenRound=0:2^J-1
 %f = randn(14576,1);
 f = randn(testLen+inLenRound,1);
+%f = 1:testLen-1;f=f';
 %f = 0:30;f=f';
 % multiple channels
 %f = [2*f,f,0.1*f];
@@ -104,7 +106,8 @@ for typeIdx=1:length(type)
                test_failed = 1; 
                if verbose
                  fprintf('err=%d, J=%d, filt=%s, type=%s, ext=%s, inLen=%d',err,jj,actFilt{1},extCur,typeCur,testLen+inLenRound);
-                 stem([f,fhat]);
+                 figure(1);clf;stem([f,fhat]);
+                 figure(2);clf;stem([f-fhat]);
                end
                break; 
             end

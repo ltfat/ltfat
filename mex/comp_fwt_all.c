@@ -4,18 +4,30 @@
 #include "ltfat-mex-helper.h"
 #include "wavelets.h"
 
+bool checkArrayEqual(double* in,int inLen)
+{
+for(int aIdx=0;aIdx<inLen;aIdx++)
+	{
+		if(in[aIdx]!=in[0])
+		{
+		   return false;
+		}
+	}
+return true;
+}
+
 /*
 Calling convention:
-   c = comp_fwt_all( in, filts, J, type, ext)
+                      0      1  2  3     4    5
+   c = comp_fwt_all( in, filts, J, a, type, ext)
 */
-void mexFunction( int nlhs, mxArray *plhs[], 
-		  int nrhs, const mxArray *prhs[] )
-     
+void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 { 
 
 	double * in; int inLen; int inChan;
 	double ** out; int* outLen;
 	double ** filts; int fLen;
+	double *a; int aLen;
     int ext = 0;
 	int J;
 	int noOfFilts = 2;
@@ -28,28 +40,38 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	inChan = mxGetN(prhs[0]);
 	// depth of decomposition
 	J = (int) mxGetScalar(prhs[2]);
+	a = mxGetPr(prhs[3]);
+	aLen = mxGetNumberOfElements(prhs[3]);
+	
+	if(!checkArrayEqual(a,aLen))
+	{
+		mexErrMsgTxt("Not supported non-equal subsampling factors.");	
+	}
 
 	// reading ext string
-	int extStrLen = mxGetN(prhs[4]);
+	int extStrLen = mxGetN(prhs[5]);
 	char* extStr = (char*) mxMalloc(extStrLen);
-	mxGetString(prhs[4],extStr,extStrLen+1);
+	mxGetString(prhs[5],extStr,extStrLen+1);
 
 	// reading flags string
-	int flagsStrLen = mxGetN(prhs[3]);
+	int flagsStrLen = mxGetN(prhs[4]);
 	char* flagsStr = (char*) mxMalloc(flagsStrLen);
-	mxGetString(prhs[3],flagsStr,flagsStrLen+1);
+	mxGetString(prhs[4],flagsStr,flagsStrLen+1);
 	
 	// reading filters
+	noOfFilts = mxGetNumberOfElements(prhs[1]);
 	filts = (double **) mxMalloc(noOfFilts*sizeof(double *));
 	fLen = mxGetNumberOfElements(mxGetCell(prhs[1], 0));
+
 	for(int ii=0;ii<noOfFilts;ii++)
 	    filts[ii] = mxGetPr(mxGetCell(prhs[1], ii));
 
 
 	// prepare output poiner arrays 
-	out = (double **) mxMalloc((J+1)*sizeof(double *));
-	outLen = (int *) mxMalloc((J+1)*sizeof(int));
-	plhs[0] = mxCreateCellMatrix(J+1, 1);
+	int outArrays = J*(noOfFilts-1)+1;
+	out = (double **) mxMalloc(outArrays*sizeof(double *));
+	outLen = (int *) mxMalloc(outArrays*sizeof(int));
+	plhs[0] = mxCreateCellMatrix(outArrays, 1);
 	
 	bool doNonexp = false;
 
@@ -69,25 +91,33 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	else if(!strcmp(extStr,"sp0")) // repeating last sample
 		ext = 6;
 	else
+	{
+		ext = 7;
 		doNonexp = true; // 'per' or otherwise: periodic extension with nonexpansive representation
+	}
 
-
-
+	
+	
+	int sub = a[0];
 	// decimated wavelet transform
 	if(!strcmp(flagsStr,"dec"))
 	{
       if(doNonexp)
 	  {
 		  // determine coefficient vectors lengths
-		 int toNext = modPow2(pow2(J)-modPow2(inLen,pow2(J)),pow2(J));
-		  for(int ii=1;ii<J+1;ii++)
+		  // int toNext = modPow2(pow2(J)-modPow2(inLen,pow2(J)),pow2(J));
+		  for(int ii=0;ii<J;ii++)
 	      {
-	         outLen[ii] = ( inLen+pow2(J-ii+1)-1)/pow2(J-ii+1);
+			 for(int ff=0;ff<noOfFilts-1;ff++)
+	         {
+				int tmpDiv = ipow(a[ff+1],J-ii);
+	            outLen[ii*(noOfFilts-1)+1+ff] = ( inLen+tmpDiv-1)/tmpDiv;
+			 }
 	      }
 	      outLen[0] = outLen[1];
 
 		  // do output arrays memory allocations
-		  for(int ii=0;ii<J+1;ii++)
+		  for(int ii=0;ii<outArrays;ii++)
 	      {
 		      mxSetCell(plhs[0],ii, mxCreateDoubleMatrix(outLen[ii],inChan,mxREAL));
 	      }
@@ -95,25 +125,34 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 		for(int ch=0;ch<inChan;ch++)
 		{
-		   for(int ii=0;ii<J+1;ii++)
+		   for(int ii=0;ii<outArrays;ii++)
 	       {
 		      out[ii] = mxGetPr(mxGetCell(plhs[0], ii)) + ch*outLen[ii];
 		   }
 		      // call computation routine
-		      dyadic_dwt_per(in+ch*inLen, inLen, out, outLen, filts, fLen, J);
+		     dyadic_dwt_per(in+ch*inLen, inLen, out, outLen, filts, fLen,noOfFilts,sub ,J);
 		}
 	  }
 	  else
 	  {
 		  // determine coefficient vectors lengths
-	      for(int ii=1;ii<J+1;ii++)
+		  int tmpcLen = inLen;
+	      for(int ii=J;ii>=1;ii--)
 	      {
-	         outLen[ii] = (int)( ((double)inLen)/pow2(J-ii+1) + (1.0-1.0/pow2(J-ii+1))*(fLen-1) );
+			  int tmpOutLen = (int)( (tmpcLen+fLen-1 -1 +sub-1)/sub);
+			  for(int ff=0;ff<noOfFilts-1;ff++)
+	          {
+				 outLen[(ii-1)*(noOfFilts-1)+1+ff] = tmpOutLen;
+				 //int tmpDiv = ipow(a[ff+1],J-ii+1);
+				 //outLen[(ii-1)*(noOfFilts-1)+1+ff] = (int)( ((double)inLen)/tmpDiv + (1.0-1.0/tmpDiv)*(fLen-1) );
+	             // outLen[ii*(noOfFilts-1)+1+ff] = (int)( ((double)inLen)/pow2(J-ii+1) + (1.0-1.0/pow2(J-ii+1))*(fLen-1) );
+			  }
+			  tmpcLen = tmpOutLen;
 	      }
-	      outLen[0] = (int)( ((double)inLen)/pow2(J) + (1.0-1.0/pow2(J))*(fLen-1) );
+	      outLen[0] = outLen[1];
 
 		     // do output arrays memory allocations
-	         for(int ii=0;ii<J+1;ii++)
+	         for(int ii=0;ii<outArrays;ii++)
 	         {
 		         mxSetCell(plhs[0],ii, mxCreateDoubleMatrix(outLen[ii],inChan,mxREAL));
 	         }
@@ -121,11 +160,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			 // call computation routine
 		     for(int ch=0;ch<inChan;ch++)
 		     {
-	            for(int ii=0;ii<J+1;ii++)
+	            for(int ii=0;ii<outArrays;ii++)
 	            {
 		          out[ii] = mxGetPr(mxGetCell(plhs[0], ii)) + ch*outLen[ii];
 			    }
-				dyadic_dwt_exp(in+ch*inLen, inLen, out, outLen, filts, fLen, J, ext);
+				dyadic_dwt_exp(in+ch*inLen, inLen, out, outLen, filts, fLen, noOfFilts, sub, J, ext);
 		     }
 	  }
 	}
@@ -136,46 +175,53 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	   {
 		  // do output arrays memory allocations
 
-		     for(int ii=0;ii<J+1;ii++)
+		     for(int ii=0;ii<outArrays;ii++)
 	         {
 		         mxSetCell(plhs[0],ii, mxCreateDoubleMatrix(inLen,inChan,mxREAL));
 	         }
 
 		  for(int ch=0;ch<inChan;ch++)
 		  {
-			 for(int ii=0;ii<J+1;ii++)
+			 for(int ii=0;ii<outArrays;ii++)
 	         {
 		         out[ii] = mxGetPr(mxGetCell(plhs[0], ii)) + ch*inLen;
 	         }
              // call computation routine
-		     undec_dwt_per(in+ch*inLen, inLen, out, inLen, filts, fLen, J);
+		     undec_dwt_per(in+ch*inLen, inLen, out, inLen, filts, fLen, noOfFilts, sub, J);
 		  }
 	   }
 	   else
 	   {
 		  // determine coefficient vectors lengths
-		  outLen[J] = inLen + fLen -1;
-	      for(int ii=J-1;ii>0;ii--)
+		  int tmpcLen = inLen;
+		  // outLen[outArrays-1] = inLen + fLen -1;
+	      for(int ii=J;ii>0;ii--)
 	      {
-			  outLen[ii] = outLen[ii+1] + pow2(J-ii)*fLen-(pow2(J-ii)-1) -1;
+			 int tmpDiv = ipow(sub,J-ii)*fLen - ipow(sub,J-ii);
+			 for(int ff=0;ff<noOfFilts-1;ff++)
+	         {
+			    //outLen[ii] = tmpcLen + pow2(J-ii)*fLen-(pow2(J-ii)-1) -1;
+				outLen[(ii-1)*(noOfFilts-1)+1+ff] = tmpcLen + tmpDiv;
+			 }
+			 tmpcLen = tmpcLen + tmpDiv;
 	      }
 	      outLen[0] = outLen[1];
 
 		  // do output arrays memory allocations
 
-	         for(int ii=0;ii<J+1;ii++)
+	         for(int ii=0;ii<outArrays;ii++)
 	         {
 		         mxSetCell(plhs[0],ii, mxCreateDoubleMatrix(outLen[ii],inChan,mxREAL));
 	         }
 
 		  for(int ch=0;ch<inChan;ch++)
 		  {
-			 for(int ii=0;ii<J+1;ii++)
+			 for(int ii=0;ii<outArrays;ii++)
 	         {
 		         out[ii] = mxGetPr(mxGetCell(plhs[0], ii)) + ch*outLen[ii];
 	         }
 			 // call computation routine
-		     undec_dwt_exp(in+ch*inLen, inLen, out, outLen, filts, fLen, J,ext);
+		     undec_dwt_exp(in+ch*inLen, inLen, out, outLen, filts, fLen, noOfFilts, sub, J,ext);
 		  }
 	   } 
 	

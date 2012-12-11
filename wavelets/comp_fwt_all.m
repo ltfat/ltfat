@@ -41,8 +41,9 @@ if(doNoExt)
    end
 else
    skip = 1; 
-   for jj=1:J
-      cLen(J+1-jj) = floor(sub^(-jj)*inLen + (1-sub^(-jj))*(fLen-1));
+   cLen(J) = ceil((inLen + fLen-1 -skip)/sub);
+   for jj=2:J
+      cLen(J+1-jj) = ceil((cLen(J+1-jj+1)+ fLen-1-skip)/sub);%floor(sub^(-jj)*inLen + (1-sub^(-jj))*(fLen-1));
     end
 end
    % all subsampling factors are equal 

@@ -4,190 +4,280 @@
 
 
 LTFAT_EXTERN
-    void LTFAT_NAME(undec_dwt_per)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen, const LTFAT_REAL *filts[], int fLen, const int J)
+    void LTFAT_NAME(undec_dwt_per)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J)
 {
-	LTFAT_REAL *filtsNorm[2];
-	filtsNorm[0] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	filtsNorm[1] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	for(int ff=0;ff<fLen;ff++)
+	/************************* STEP 1: Prepare ***************************/
+	LTFAT_REAL **filtsNorm = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	LTFAT_REAL **tmpOut = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	for(int ff=0;ff<noOfFilts;ff++)
 	{
-		filtsNorm[0][ff] = filts[0][ff]*ONEOVERSQRT2;
-		filtsNorm[1][ff] = filts[1][ff]*ONEOVERSQRT2;
+	   filtsNorm[ff] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
+	   for(int fid=0;fid<fLen;fid++)
+	   {
+		   filtsNorm[ff][fid] = (LTFAT_REAL) filts[ff][fid]/sqrt((LTFAT_REAL)subFac);
+	   }
 	}
-    LTFAT_REAL* tmpOut[2];
-
+	int noOfOutputs = J*(noOfFilts-1) + 1;
+	/*********************************************************************/
+	/************************* STEP 2: CALCULATIONS **********************/
 	if(J<=1)
 	{
 	  int skip = (fLen+1)/2;
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen,filtsNorm,fLen,2,1,skip,5,0);
+	  for(int ff=0;ff<noOfFilts;ff++)
+	  {
+		  tmpOut[ff] = out[ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen,filtsNorm,fLen,noOfFilts,1,skip,5,0);
 	}
 	else
 	{
 	  // there is no other way: creating buffer to hold intermediate results
 	  LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(outLen*sizeof(LTFAT_REAL));
-	  tmpOut[0] = buffer; tmpOut[1] = out[J];
-	  int skip = (fLen+1)/2;
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen,filtsNorm,fLen,2,1,skip,5,0);
-
 	  tmpOut[0] = buffer;
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+		  tmpOut[ff+1] = out[noOfOutputs-(noOfFilts-1)+ff];
+	  }
+
+	  int skip = (fLen+1)/2;
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen,filtsNorm,fLen,noOfFilts,1,skip,5,0);
+
+
 	  for(int jj=1;jj<J-1;jj++)
 	  {
-		 skip = (pow2(jj)*fLen+1)/2;
-	     tmpOut[1] = out[J-jj]; 
-	     LTFAT_NAME(conv_td_sub)(buffer,outLen,tmpOut,outLen,filtsNorm,fLen,2,1,skip,5,jj);
+		 skip = (ipow(subFac,jj)*fLen+1)/2;
+	     for(int ff=0;ff<noOfFilts-1;ff++)
+	     {
+	        tmpOut[1+ff] = out[noOfOutputs-(jj+1)*(noOfFilts-1)+ff];
+	     }
+	     LTFAT_NAME(conv_td_sub)(buffer,outLen,tmpOut,outLen,filtsNorm,fLen,noOfFilts,1,skip,5,ipow(subFac,jj));
 	  }
 	
-	  skip = (pow2(J-1)*fLen+1)/2;
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(buffer,outLen,tmpOut,outLen,filtsNorm,fLen,2,1,skip,5,J-1);
+	  skip = (ipow(subFac,J-1)*fLen+1)/2;
+	  tmpOut[0] = out[0]; 
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpOut[1+ff] = out[1+ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(buffer,outLen,tmpOut,outLen,filtsNorm,fLen,noOfFilts,1,skip,5,ipow(subFac,J-1));
     
+	  /****** STEP 3: FREE ALL ******/
 	  ltfat_free(buffer);
-	  ltfat_free(filtsNorm[0]);
-	  ltfat_free(filtsNorm[1]);
 	}
+    for(int ff=0;ff<noOfFilts;ff++)  ltfat_free(filtsNorm[ff]); 
+	ltfat_free(filtsNorm);
+	ltfat_free(tmpOut);
 }
 
 LTFAT_EXTERN
-    void LTFAT_NAME(undec_dwt_exp)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen[], const LTFAT_REAL *filts[], int fLen, const int J, int ext)
+    void LTFAT_NAME(undec_dwt_exp)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen[], const LTFAT_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J, int ext)
 {
-	LTFAT_REAL *filtsNorm[2];
-	filtsNorm[0] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	filtsNorm[1] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	for(int ff=0;ff<fLen;ff++)
+    /************************* STEP 1: Prepare ***************************/
+	LTFAT_REAL **filtsNorm = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	LTFAT_REAL **tmpOut = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	for(int ff=0;ff<noOfFilts;ff++)
 	{
-		filtsNorm[0][ff] = filts[0][ff]*ONEOVERSQRT2;
-		filtsNorm[1][ff] = filts[1][ff]*ONEOVERSQRT2;
+	   filtsNorm[ff] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
+	   for(int fid=0;fid<fLen;fid++)
+	   {
+		   filtsNorm[ff][fid] = (LTFAT_REAL) filts[ff][fid]/sqrt((LTFAT_REAL)subFac);
+	   }
 	}
-	  LTFAT_REAL* tmpOut[2];
+	int noOfOutputs = J*(noOfFilts-1) + 1;
+	/*********************************************************************/
 
 	if(J<=1)
 	{
-	  int skip = 0;//(fLen+1)/2;
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[0],filtsNorm,fLen,2,1,skip,ext,0);
+	  int skip = 0;
+	  for(int ff=0;ff<noOfFilts;ff++)
+	  {
+		  tmpOut[ff] = out[ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[0],filtsNorm,fLen,noOfFilts,1,skip,ext,0);
 	}
 	else
 	{
 	  // there is no other way: creating buffer to hold intermediate results
 	  LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(outLen[0]*sizeof(LTFAT_REAL));
-	  tmpOut[0] = buffer; tmpOut[1] = out[J];
+	  tmpOut[0] = buffer;
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+		  tmpOut[ff+1] = out[noOfOutputs-(noOfFilts-1)+ff];
+	  }
 	  int skip = 0;//(fLen+1)/2;
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[J],filtsNorm,fLen,2,1,skip,ext,0);
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[noOfOutputs-1],filtsNorm,fLen,noOfFilts,1,skip,ext,0);
 
 	  tmpOut[0] = buffer;
 	  for(int jj=1;jj<J-1;jj++)
 	  {
-		// skip = (pow2(jj)*fLen+1)/2;
-	     tmpOut[1] = out[J-jj]; 
-	     LTFAT_NAME(conv_td_sub)(buffer,outLen[J-jj+1],tmpOut,outLen[J-jj],filtsNorm,fLen,2,1,skip,ext,jj);
+	     for(int ff=0;ff<noOfFilts-1;ff++)
+	     {
+	        tmpOut[1+ff] = out[noOfOutputs-(jj+1)*(noOfFilts-1)+ff];
+	     }
+		 int outLenIdx = noOfOutputs-(jj+1)*(noOfFilts-1);
+		 int inLenIdx = noOfOutputs-jj*(noOfFilts-1);
+	     LTFAT_NAME(conv_td_sub)(buffer,outLen[inLenIdx],tmpOut,outLen[outLenIdx],filtsNorm,fLen,noOfFilts,1,skip,ext,ipow(subFac,jj));
 	  }
 	
-	  skip = 0;// fLen-2;//(pow2(J-1)*fLen+1) - fLen;
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(buffer,outLen[2],tmpOut,outLen[0],filtsNorm,fLen,2,1,skip,ext,J-1);
-	 // LTFAT_NAME(conv_td_sub)(buffer,outLen[2],tmpOut,outLen[0],filts,fLen,2,1,skip,ext,J-1);
+	  skip = 0;
+	  tmpOut[0] = out[0]; 
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpOut[1+ff] = out[1+ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(buffer,outLen[noOfFilts],tmpOut,outLen[0],filtsNorm,fLen,noOfFilts,1,skip,ext,ipow(subFac,J-1));
+
     
+	 /****** STEP 3: FREE ALL ******/
 	  ltfat_free(buffer);
-	  ltfat_free(filtsNorm[0]);
-	  ltfat_free(filtsNorm[1]);
 	}
+    for(int ff=0;ff<noOfFilts;ff++)  ltfat_free(filtsNorm[ff]); 
+	ltfat_free(filtsNorm);
+	ltfat_free(tmpOut);
 }
 
-/*
- Expected out[j] for j=0,...,J  of lengths 2^(-J+j)*inLen +(1-2^(-J+j))(fLen-1)
-*/
 LTFAT_EXTERN
-	void LTFAT_NAME(dyadic_dwt_per)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen[], const LTFAT_REAL *filts[], int fLen, const int J)
+	void LTFAT_NAME(dyadic_dwt_per)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen[], const LTFAT_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J)
 {
-	LTFAT_REAL* tmpOut[2];
+	LTFAT_REAL** tmpOut= (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
 	int skip = (fLen+1)/2;
 	int extType = 7;
 	if(J<=1)
 	{
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[0],filts,fLen,2,2,skip,extType,0);
+      for(int ff=0;ff<noOfFilts;ff++)
+	  {
+	     tmpOut[ff] = out[ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[0],filts,fLen,noOfFilts,subFac,skip,extType,0);
 	}
 	else
 	{
 	  // there is no other way: creating buffer to hold intermediate results
-	  LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(outLen[J]*sizeof(LTFAT_REAL));
-	  tmpOut[0] = buffer; tmpOut[1] = out[J];
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[J],filts,fLen,2,2,skip,extType,0);
+	  int noOfOutputs = J*(noOfFilts-1)+1;
+	  LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(outLen[noOfOutputs-1]*sizeof(LTFAT_REAL));
 
+
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpOut[1+ff] = out[noOfOutputs-(noOfFilts-1)+ff];
+	  }
 	  tmpOut[0] = buffer;
+
+	  // tmpOut[1] = out[J];
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[noOfOutputs-1],filts,fLen,noOfFilts,subFac,skip,extType,0);
+
 	  for(int jj=1;jj<J-1;jj++)
 	  {
-	     tmpOut[1] = out[J-jj]; 
-	     LTFAT_NAME(conv_td_sub)(buffer,outLen[J-jj+1],tmpOut,outLen[J-jj],filts,fLen,2,2,skip,extType,0);
+		 for(int ff=0;ff<noOfFilts-1;ff++)
+	     {
+	        tmpOut[1+ff] = out[noOfOutputs-(jj+1)*(noOfFilts-1)+ff];
+	     }
+		 int outLenIdx = noOfOutputs-(jj+1)*(noOfFilts-1);
+		 int inLenIdx = noOfOutputs-jj*(noOfFilts-1);
+	     // tmpOut[1] = out[J-jj]; 
+	     //LTFAT_NAME(conv_td_sub)(buffer,outLen[J-jj+1],tmpOut,outLen[J-jj],filts,fLen,noOfFilts,subFac,skip,extType,0);
+		 LTFAT_NAME(conv_td_sub)(buffer,outLen[inLenIdx],tmpOut,outLen[outLenIdx],filts,fLen,noOfFilts,subFac,skip,extType,0);
 	  }
 	
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(buffer,outLen[2],tmpOut,outLen[0],filts,fLen,2,2,skip,extType,0);
+	  tmpOut[0] = out[0]; 
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpOut[1+ff] = out[1+ff];
+	  }
+	  //tmpOut[1] = out[1]; 
+	  LTFAT_NAME(conv_td_sub)(buffer,outLen[noOfFilts],tmpOut,outLen[0],filts,fLen,noOfFilts,subFac,skip,extType,0);
     
 	  ltfat_free(buffer);
 	}
+
+	ltfat_free(tmpOut);
 }
 
 LTFAT_EXTERN
-	void LTFAT_NAME(dyadic_dwt_exp)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen[], const LTFAT_REAL *filts[], int fLen, const int J, int ext)
+	void LTFAT_NAME(dyadic_dwt_exp)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen[], const LTFAT_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J, int ext)
 {
-	LTFAT_REAL* tmpOut[2];
+	int noOfOutputs = J*(noOfFilts-1)+1;
+	LTFAT_REAL** tmpOut= (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	int skip=1;
 	
 	if(J<=1)
 	{
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[0],filts,fLen,2,2,1,ext,0);
+	  for(int ff=0;ff<noOfFilts;ff++)
+	  {
+	     tmpOut[ff] = out[ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[0],filts,fLen,noOfFilts,subFac,1,ext,0);
 	}
 	else
 	{
-		// determine maximum length of the coefficient vectors to be used as buffer length
-		int maxOutLen = outLen[J];
-		for(int xx=0;xx<J;xx++)
+		// determine maximum length of the coefficient vectors to be used as buffer
+		int maxOutLen = outLen[noOfOutputs-1];
+		for(int xx=0;xx<noOfOutputs;xx++)
 		{
 		  if(outLen[xx]>maxOutLen) maxOutLen = outLen[xx];
 		}
 
 	  LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(maxOutLen*sizeof(LTFAT_REAL));
-	  tmpOut[0] = buffer; tmpOut[1] = out[J];
-	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[J],filts,fLen,2,2,1,ext,0);
 
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpOut[1+ff] = out[noOfOutputs-(noOfFilts-1)+ff];
+	  }
 	  tmpOut[0] = buffer;
+	  LTFAT_NAME(conv_td_sub)(in,inLen,tmpOut,outLen[noOfOutputs-1],filts,fLen,noOfFilts,subFac,skip,ext,0);
+
+	  //tmpOut[0] = buffer;
 	  for(int jj=1;jj<J-1;jj++)
 	  {
-	     tmpOut[1] = out[J-jj]; 
-	     LTFAT_NAME(conv_td_sub)(buffer,outLen[J-jj+1],tmpOut,outLen[J-jj],filts,fLen,2,2,1,ext,0);
+		  for(int ff=0;ff<noOfFilts-1;ff++)
+	     {
+	        tmpOut[1+ff] = out[noOfOutputs-(jj+1)*(noOfFilts-1)+ff];
+	     }
+		 int outLenIdx = noOfOutputs-(jj+1)*(noOfFilts-1);
+		 int inLenIdx = noOfOutputs-jj*(noOfFilts-1);
+
+	     LTFAT_NAME(conv_td_sub)(buffer,outLen[inLenIdx],tmpOut,outLen[outLenIdx],filts,fLen,noOfFilts,subFac,skip,ext,0);
 	  }
 	
-	  tmpOut[0] = out[0]; tmpOut[1] = out[1]; 
-	  LTFAT_NAME(conv_td_sub)(buffer,outLen[2],tmpOut,outLen[0],filts,fLen,2,2,1,ext,0);
+	  tmpOut[0] = out[0]; 
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpOut[1+ff] = out[1+ff];
+	  }
+	  LTFAT_NAME(conv_td_sub)(buffer,outLen[noOfFilts],tmpOut,outLen[0],filts,fLen,noOfFilts,subFac,skip,ext,0);
     
 	  ltfat_free(buffer);
 	}
+
+	ltfat_free(tmpOut);
 }
 
 
 
 
-
-
 LTFAT_EXTERN
-void LTFAT_NAME(dyadic_idwt_exp)(const LTFAT_REAL *in[], int inLen[], LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, const int J)
+void LTFAT_NAME(dyadic_idwt_exp)(LTFAT_REAL *in[], int inLen[], LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int up, const int J)
 {
-	int filtUps = 0;
-	int ups = 1;
-	const LTFAT_REAL* tmpIn[2];
-	int skip = fLen-1-(pow2(ups)-1);
-
+	int filtUps = 1;
+	int ups = up;
+	int noOfInputs = J*(noOfFilts-1)+1;
+	//const LTFAT_REAL* tmpIn[2];
+	LTFAT_REAL** tmpIn = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	//int skip = fLen-1-(pow2(ups)-1);
+	int skip = fLen-2;
 	if(J<=1)
 	{
-	  tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
-	  LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,outLen,filts,fLen,2,ups,skip,0,filtUps);
+	  tmpIn[0] = in[0];
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpIn[ff+1] = in[ff+1]; 
+	  }
+	  LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,outLen,filts,fLen,noOfFilts,ups,skip,0,filtUps);
 	}
 	else
 	{
 		int maxLen = outLen;
-		for(int xx=0;xx<J;xx++)
+		for(int xx=0;xx<noOfInputs;xx++)
 		{
 		  if(inLen[xx]>maxLen) maxLen = inLen[xx];
 		}
@@ -199,239 +289,298 @@ void LTFAT_NAME(dyadic_idwt_exp)(const LTFAT_REAL *in[], int inLen[], LTFAT_REAL
 		}
 
 		LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(maxLen*sizeof(LTFAT_REAL));
-	    tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
+	    tmpIn[0] = in[0]; 
+		for(int ff=0;ff<noOfFilts-1;ff++)
+	    {
+	       tmpIn[ff+1] = in[ff+1]; 
+	    }
 
 		if(modPow2(J,2)==0)
 		{
-			LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer,inLen[2],filts, fLen,2,ups,skip,0,filtUps);
+			LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer,inLen[noOfFilts],filts, fLen,noOfFilts,ups,skip,0,filtUps);
 		}
 		else
 		{
-	       LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer2,inLen[2],filts, fLen,2,ups,skip,0,filtUps);
+	       LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer2,inLen[noOfFilts],filts, fLen,noOfFilts,ups,skip,0,filtUps);
 		}
 
 		for(int jj=J-1;jj>1;jj--)
 		{
-		   tmpIn[1] = in[(J-1)-jj+2]; 
+		   // tmpIn[1] = in[(J-1)-jj+2]; 
+		   for(int ff=0;ff<noOfFilts-1;ff++)
+	       {
+	           tmpIn[ff+1] = in[noOfInputs-jj*(noOfFilts-1)+ff]; 
+	       }
+
+		   //tmpIn[1] = in[(J-1)-jj+2]; 
+		   int actInLenIdx = noOfInputs-jj*(noOfFilts-1);
+		   int nextInLenIdx = noOfInputs-(jj-1)*(noOfFilts-1);
+
 		   if(modPow2(jj,2)==0)
 		   {
 			  tmpIn[0] = buffer2;
-	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[(J-1)-jj+2],buffer,inLen[(J-1)-jj+3],filts,fLen,2,ups,skip,0,filtUps);
+	         // LTFAT_NAME(up_conv_td)(tmpIn,inLen[(J-1)-jj+2],buffer,inLen[(J-1)-jj+3],filts,fLen,noOfFilts,ups,skip,0,filtUps);
+			   LTFAT_NAME(up_conv_td)(tmpIn,inLen[actInLenIdx],buffer,inLen[nextInLenIdx],filts,fLen,noOfFilts,ups,skip,0,filtUps);
 		   }
 		   else
 		   {
 			  tmpIn[0] = buffer;
-	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[(J-1)-jj+2],buffer2,inLen[(J-1)-jj+3],filts,fLen,2,ups,skip,0,filtUps);
+	          //LTFAT_NAME(up_conv_td)(tmpIn,inLen[(J-1)-jj+2],buffer2,inLen[(J-1)-jj+3],filts,fLen,noOfFilts,ups,skip,0,filtUps);
+			  LTFAT_NAME(up_conv_td)(tmpIn,inLen[actInLenIdx],buffer2,inLen[nextInLenIdx],filts,fLen,noOfFilts,ups,skip,0,filtUps);
 		   }
 		}
 
-		tmpIn[1] = in[J]; 
+		for(int ff=0;ff<noOfFilts-1;ff++)
+	    {
+			tmpIn[ff+1] = in[noOfInputs-(noOfFilts-1)+ff]; 
+	    }
 		tmpIn[0] = buffer;
-	    LTFAT_NAME(up_conv_td)(tmpIn,inLen[J],out,outLen,filts,fLen,2,ups,skip,0,filtUps);
+	    LTFAT_NAME(up_conv_td)(tmpIn,inLen[noOfInputs-1],out,outLen,filts,fLen,noOfFilts,ups,skip,0,filtUps);
 
 
 		ltfat_free(buffer);
 		if(buffer2!=out) ltfat_free(buffer2);
 	}
-
+	ltfat_free(tmpIn);
 }
 
-
 LTFAT_EXTERN
-void LTFAT_NAME(dyadic_idwt_per)(const LTFAT_REAL *in[], int inLen[], LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, const int J)
+void LTFAT_NAME(dyadic_idwt_per)(LTFAT_REAL *in[], int inLen[], LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int up, const int J)
 {
-	int filtUps = 0;
-	int ups = 1;
-	const LTFAT_REAL* tmpIn[2];
+	int filtUps = 1;
+	int ups = up;
+	int noOfInputs = J*(noOfFilts-1)+1;
+
+	LTFAT_REAL** tmpIn = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
 	int skip = (fLen+1)/2 -1;
 
 	if(J<=1)
 	{
-	  tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
-	  LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,outLen,filts,fLen,2,ups,skip,1,filtUps);
+	  tmpIn[0] = in[0];
+	  for(int ff=0;ff<noOfFilts-1;ff++)
+	  {
+	     tmpIn[ff+1] = in[ff+1]; 
+	  }
+	  LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,outLen,filts,fLen,noOfFilts,ups,skip,1,filtUps);
 	}
 	else
 	{
 		LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(outLen*sizeof(LTFAT_REAL));
-	    tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
+	    tmpIn[0] = in[0]; 
+		for(int ff=0;ff<noOfFilts-1;ff++)
+	    {
+	       tmpIn[ff+1] = in[ff+1]; 
+	    }
 
 		if(modPow2(J,2)==0)
 		{
-			LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer,inLen[2],filts, fLen,2,ups,skip,1,filtUps);
+			LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer,inLen[noOfFilts],filts, fLen,noOfFilts,ups,skip,1,filtUps);
 		}
 		else
 		{
-	       LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,inLen[2],filts, fLen,2,ups,skip,1,filtUps);
+	       LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,inLen[noOfFilts],filts, fLen,noOfFilts,ups,skip,1,filtUps);
 		}
 
 		for(int jj=J-1;jj>1;jj--)
 		{
-		   tmpIn[1] = in[(J-1)-jj+2]; 
+           for(int ff=0;ff<noOfFilts-1;ff++)
+	       {
+	           tmpIn[ff+1] = in[noOfInputs-jj*(noOfFilts-1)+ff]; 
+	       }
+
+		   //tmpIn[1] = in[(J-1)-jj+2]; 
+		   int actInLenIdx = noOfInputs-jj*(noOfFilts-1);
+		   int nextInLenIdx = noOfInputs-(jj-1)*(noOfFilts-1);
 		   if(modPow2(jj,2)==0)
 		   {
 			  tmpIn[0] = out;
-	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[(J-1)-jj+2],buffer,inLen[(J-1)-jj+3],filts,fLen,2,ups,skip,1,filtUps);
+	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[actInLenIdx],buffer,inLen[nextInLenIdx],filts,fLen,noOfFilts,ups,skip,1,filtUps);
 		   }
 		   else
 		   {
 			  tmpIn[0] = buffer;
-	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[(J-1)-jj+2],out,inLen[(J-1)-jj+3],filts,fLen,2,ups,skip,1,filtUps);
+	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[actInLenIdx],out,inLen[nextInLenIdx],filts,fLen,noOfFilts,ups,skip,1,filtUps);
 		   }
 		}
 
-		tmpIn[1] = in[J]; 
+		//tmpIn[1] = in[J]; 
+		for(int ff=0;ff<noOfFilts-1;ff++)
+	    {
+			tmpIn[ff+1] = in[noOfInputs-(noOfFilts-1)+ff]; 
+	    }
 		tmpIn[0] = buffer;
-	    LTFAT_NAME(up_conv_td)(tmpIn,inLen[J],out,outLen,filts,fLen,2,ups,skip,1,filtUps);
+	    LTFAT_NAME(up_conv_td)(tmpIn,inLen[noOfInputs-1],out,outLen,filts,fLen,noOfFilts,ups,skip,1,filtUps);
 
 
 		ltfat_free(buffer);
 	}
+	ltfat_free(tmpIn);
 
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(undec_idwt_exp)(const LTFAT_REAL *in[], int inLen[], LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, const int J)
+void LTFAT_NAME(undec_idwt_exp)(LTFAT_REAL *in[], int inLen[], LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int up, const int J)
 {
-	LTFAT_REAL *filtsNorm[2];
-	filtsNorm[0] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	filtsNorm[1] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	for(int ff=0;ff<fLen;ff++)
+	LTFAT_REAL **filtsNorm = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	LTFAT_REAL **tmpIn = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	for(int ff=0;ff<noOfFilts;ff++)
 	{
-		filtsNorm[0][ff] = filts[0][ff]*ONEOVERSQRT2;
-		filtsNorm[1][ff] = filts[1][ff]*ONEOVERSQRT2;
+	   filtsNorm[ff] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
+	   for(int fid=0;fid<fLen;fid++)
+	   {
+		   filtsNorm[ff][fid] = (LTFAT_REAL) filts[ff][fid]/sqrt((LTFAT_REAL)up);
+	   }
 	}
 
-	int filtUps = 0;
-	int ups = 0;
+	int filtUps = 1;
+	int ups = 1;
 	int tmpFlen = fLen;
-	const LTFAT_REAL* tmpIn[2];
 	int skip = fLen-1;
-//	LTFAT_REAL normFac = 2.0;
+	int noOfInputs = J*(noOfFilts-1)+1;
+
 
 	if(J<=1)
 	{
-	  tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
-	  LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,outLen,filtsNorm,fLen,2,ups,skip,0,filtUps);
+	  for(int ff=0;ff<noOfFilts;ff++)
+	  {
+		  tmpIn[ff] = in[ff];
+	  }
+	  LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],out,outLen,filtsNorm,fLen,noOfFilts,ups,skip,0,filtUps);
 	}
 	else
 	{
 		filtUps = J-1;
-		tmpFlen = pow2(filtUps)*fLen-(pow2(filtUps)-1);
+		tmpFlen = ipow(up,filtUps)*fLen-(ipow(up,filtUps)-1);
 		skip = tmpFlen-1;
 		int buffLen = inLen[2];
 		LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
-	    tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
-
-
-	       LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer,inLen[2],filtsNorm,fLen,2,ups,skip,0,filtUps);
+	    tmpIn[0] = in[0]; 
+	    for(int ff=0;ff<noOfFilts;ff++)
+	    {
+		  tmpIn[ff] = in[ff];
+	    }
+        LTFAT_NAME(up_conv_td)(tmpIn,inLen[0],buffer,inLen[noOfFilts],filtsNorm,fLen,noOfFilts,ups,skip,0,ipow(up,filtUps));
 
 
 		tmpIn[0] = buffer;
 		for(int jj=J-1;jj>1;jj--)
 		{
 			filtUps = jj-1;
-			tmpFlen = pow2(filtUps)*fLen-(pow2(filtUps)-1);
+			tmpFlen = ipow(up,filtUps)*fLen-(ipow(up,filtUps)-1);
 			skip = tmpFlen-1;
-			int currjj=(J-1)-jj+2;
-		    tmpIn[1] = in[currjj]; 
+			//int currjj=(J-1)-jj+2;
+		    //tmpIn[1] = in[currjj]; 
+			for(int ff=0;ff<noOfFilts-1;ff++)
+	       {
+	           tmpIn[ff+1] = in[noOfInputs-jj*(noOfFilts-1)+ff]; 
+	       }
+
+		   //tmpIn[1] = in[(J-1)-jj+2]; 
+		   int actInLenIdx = noOfInputs-jj*(noOfFilts-1);
+		   int nextInLenIdx = noOfInputs-(jj-1)*(noOfFilts-1);
 			  
-	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[currjj],buffer,inLen[currjj+1],filtsNorm,fLen,2,ups,skip,0,filtUps);
+	          LTFAT_NAME(up_conv_td)(tmpIn,inLen[actInLenIdx],buffer,inLen[nextInLenIdx],filtsNorm,fLen,noOfFilts,ups,skip,0,ipow(up,filtUps));
 
 		}
 
 		filtUps = 0;
 		tmpFlen = fLen;
 		skip = tmpFlen-1;
-		tmpIn[1] = in[J]; 
+		for(int ff=0;ff<noOfFilts-1;ff++)
+	    {
+			tmpIn[ff+1] = in[noOfInputs-(noOfFilts-1)+ff]; 
+	    }
 
-	    LTFAT_NAME(up_conv_td)(tmpIn,inLen[J],out,outLen,filtsNorm,fLen,2,ups,skip,0,filtUps);
+	    LTFAT_NAME(up_conv_td)(tmpIn,inLen[noOfInputs-1],out,outLen,filtsNorm,fLen,noOfFilts,ups,skip,0,filtUps);
 
 
 
 		ltfat_free(buffer);
-		ltfat_free(filtsNorm[0]);
-	    ltfat_free(filtsNorm[1]);
-
 	}
+	for(int ff=0;ff<noOfFilts;ff++)  ltfat_free(filtsNorm[ff]); 
+	ltfat_free(filtsNorm);
+	ltfat_free(tmpIn);
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(undec_idwt_per)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, const int J)
+void LTFAT_NAME(undec_idwt_per)(LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int up, const int J)
 {
-	int filtUps = 0;
-	int ups = 0;
+	int filtUps = 1;
+	int ups = 1;
 	int tmpFlen = fLen;
-	const LTFAT_REAL* tmpIn[2];
 	int skip = (tmpFlen)/2 - 1 ;
-//	LTFAT_REAL normFac = 2.0;
-	LTFAT_REAL *filtsNorm[2];
-	filtsNorm[0] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	filtsNorm[1] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
-	for(int ff=0;ff<fLen;ff++)
+	int upLog2 = log2(up);
+
+	LTFAT_REAL **filtsNorm = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	LTFAT_REAL **tmpIn = (LTFAT_REAL**) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
+	for(int ff=0;ff<noOfFilts;ff++)
 	{
-		filtsNorm[0][ff] = filts[0][ff]*ONEOVERSQRT2;
-		filtsNorm[1][ff] = filts[1][ff]*ONEOVERSQRT2;
+	   filtsNorm[ff] = (LTFAT_REAL*) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
+	   for(int fid=0;fid<fLen;fid++)
+	   {
+		   filtsNorm[ff][fid] = (LTFAT_REAL) filts[ff][fid]/sqrt((LTFAT_REAL)up);
+	   }
 	}
+	int noOfInputs = J*(noOfFilts-1) + 1;
 
 	if(J<=1)
 	{
-	  tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
-	  LTFAT_NAME(up_conv_td)(tmpIn,inLen,out,outLen,filtsNorm,fLen,2,ups,skip,1,filtUps);
-	/*  for(int ii=0;ii<outLen;ii++)
+	  for(int ff=0;ff<noOfFilts;ff++)
 	  {
-		  out[ii]/= (LTFAT_REAL) normFac; // normalize
-	  }*/
+		  tmpIn[ff] = in[ff];
+	  }
+	  LTFAT_NAME(up_conv_td)(tmpIn,inLen,out,outLen,filtsNorm,fLen,noOfFilts,ups,skip,1,filtUps);
 	}
 	else
 	{
 		filtUps = J-1;
-		tmpFlen = pow2(filtUps)*fLen-(pow2(filtUps)-1);
-		skip = (pow2(filtUps)*fLen)/2-pow2(filtUps);
+		tmpFlen = ipow(up,filtUps)*fLen-(ipow(up,filtUps)-1);
+		skip = (ipow(up,filtUps)*fLen)/2-ipow(up,filtUps);
 		int buffLen = inLen;
 		LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
-	    tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
+	    //tmpIn[0] = in[0]; tmpIn[1] = in[1]; 
 
+	    for(int ff=0;ff<noOfFilts;ff++)
+	    {
+			tmpIn[ff] = in[ff];
+	    }
 
-	       LTFAT_NAME(up_conv_td)(tmpIn,inLen,buffer,inLen,filtsNorm,fLen,2,ups,skip,1,filtUps);
-		/*   for(int ii=0;ii<inLen;ii++)
-	       {
-		      buffer[ii]/= normFac; 
-	       }*/
+	    LTFAT_NAME(up_conv_td)(tmpIn,inLen,buffer,inLen,filtsNorm,fLen,noOfFilts,ups,skip,1,ipow(up,filtUps));
 
 		tmpIn[0] = buffer;
 		for(int jj=J-1;jj>1;jj--)
 		{
 			filtUps = jj-1;
-			tmpFlen = pow2(filtUps)*fLen-(pow2(filtUps)-1);
-		    skip = (pow2(filtUps)*fLen)/2-pow2(filtUps);
+			tmpFlen = ipow(up,filtUps)*fLen-(ipow(up,filtUps)-1);
+		    skip = (ipow(up,filtUps)*fLen)/2-ipow(up,filtUps);
 			int currjj=(J-1)-jj+2;
-		    tmpIn[1] = in[currjj]; 
+		    
+			for(int ff=0;ff<noOfFilts-1;ff++)
+	        {
+	           tmpIn[ff+1] = in[noOfInputs-jj*(noOfFilts-1)+ff]; 
+	        }
+			//tmpIn[1] = in[currjj]; 
 			  
-	          LTFAT_NAME(up_conv_td)(tmpIn,inLen,buffer,inLen,filtsNorm,fLen,2,ups,skip,1,filtUps);
-            /*  for(int ii=0;ii<inLen;ii++)
-	          {
-		         buffer[ii]/= normFac; 
-	          }*/
-
+	        LTFAT_NAME(up_conv_td)(tmpIn,inLen,buffer,inLen,filtsNorm,fLen,noOfFilts,ups,skip,1,ipow(up,filtUps));
 		}
 
-		filtUps = 0;
+		filtUps = 1;
 		tmpFlen = fLen;
 		skip = (tmpFlen)/2 -1;
-		tmpIn[1] = in[J]; 
-
-	    LTFAT_NAME(up_conv_td)(tmpIn,inLen,out,outLen,filtsNorm,fLen,2,ups,skip,1,filtUps);
-		/* for(int ii=0;ii<outLen;ii++)
+		//tmpIn[1] = in[J]; 
+		for(int ff=0;ff<noOfFilts-1;ff++)
 	    {
-		  out[ii]/= normFac; 
-	    }*/
-		
+			tmpIn[ff+1] = in[noOfInputs-(noOfFilts-1)+ff]; 
+	    }
+	    LTFAT_NAME(up_conv_td)(tmpIn,inLen,out,outLen,filtsNorm,fLen,noOfFilts,ups,skip,1,filtUps);
 
 
+		/***** FREE STUF *******/
 		ltfat_free(buffer);
-		ltfat_free(filtsNorm[0]);
-	    ltfat_free(filtsNorm[1]);
 	}
+        for(int ff=0;ff<noOfFilts;ff++)  ltfat_free(filtsNorm[ff]); 
+	    ltfat_free(filtsNorm);
+	    ltfat_free(tmpIn);
 }
 
 
@@ -456,15 +605,17 @@ REMARK 2: if sub >= filtLen, no buffer cycling is necessary...buffer is filled w
 LTFAT_EXTERN
 void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[], const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, int ext, int filtUps)
 {
-	int filtUpsPow2 = 1;
-	if(filtUps<0) 
+	if(filtUps<1) filtUps=1;
+	int filtUpsPow2 = filtUps;
+	filtUps = log2(filtUpsPow2);
+	/*if(filtUps<0) 
 	{
 		filtUps=0;
 	}
 	else
 	{
 	  filtUpsPow2 = pow2(filtUps);
-	}
+	}*/
 	int fLenUps = filtUpsPow2*fLen-(filtUpsPow2-1);
 
 	LTFAT_REAL *righExtbuff = 0;
@@ -483,7 +634,7 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
    
    // fill buffer with the initial values from the input signal according to the boundary treatment
    // last fLenUps buffer samples are filled to keep buffPtr=0
-   extend_left(in,inLen,buffer,buffLen,fLenUps,ext);
+   extend_left(in,inLen,buffer,buffLen,fLenUps,ext,sub);
 
    if(outLenN<outLen)
    {
@@ -491,7 +642,7 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
 	   righExtbuff = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL)); 
        memset(righExtbuff,0,buffLen*sizeof(LTFAT_REAL)); 
 	   // store extension in the buffer (must be done now to avoid errors when inplace calculation is done)
-	   extend_right(in,inLen,righExtbuff,fLenUps,ext);
+	   extend_right(in,inLen,righExtbuff,fLenUps,ext,sub);
    }
 
 
@@ -534,7 +685,8 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
 	   for (int jj = 0; jj < jjLoops; jj++) 
 	   {
           // buffer index modulo buffer length
-		  int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+		  // int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+		   int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1),buffLen);
 		
 		  // pinter to the actual value
           buffTmp = buffer+idx;
@@ -593,7 +745,8 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
 	   for (int jj = 0; jj < jjLoops; jj++) 
 	   {
           // buffer index modulo filter buffer length
-		  int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+		  //int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+		   int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1),buffLen);
 		  // actual value
           buffTmp = buffer+idx;
 		  // loop trough filters
@@ -617,7 +770,7 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
 	  // last index in the input signal for which reading next sub samples reaches outside of the input signal
 	  int lastInIdx = (sub*(outLenN-1)+1+skip);
 	  // remaining samples: diff<sub
-	  int diff = (inLen) - lastInIdx;
+	  int diff = imax(0,(inLen) - lastInIdx);
 	  // fill buffer with the remaining values, values outside of the input signal are read from different buffer
 	   // number of samples overflowing buffer
 	   int buffOver = imax(buffPtr+diff-buffLen, 0);
@@ -647,7 +800,8 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
 	   for (int jj = 0; jj < jjLoops; jj++) 
 	   {
           // buffer index modulo filter buffer length
-		  int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+		  // int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+		   int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1),buffLen);
 		  // actual value
           buffTmp = buffer+idx;
 		  // loop trough filters
@@ -684,10 +838,12 @@ void LTFAT_NAME(conv_td_sub)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out[],
 SKIP in odd upsampled input
 */
 LTFAT_EXTERN
-void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext, int filtUps)
+void LTFAT_NAME(up_conv_td)(LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext, int filtUps)
 {
-   int filtUpsPow2 = pow2(filtUps); // filtUps and up are kept separetely for purposes of time-invariant DWT
-   int upPow2 = pow2(up);
+   if(filtUps<1) filtUps=1;
+   int filtUpsPow2 = filtUps; // filtUps and up are kept separetely for purposes of time-invariant DWT
+   filtUps = log2(filtUpsPow2);
+   int upPow2 = up;
    int tmpfLen = filtUpsPow2*fLen - (filtUpsPow2-1);
 //   int outLenN = inLen*up - skip;  // number of output samples, that can be calculated from input data given skip
    int buffLen = nextPow2(imax(tmpfLen,upPow2+1));
@@ -705,7 +861,8 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
    int remainsInSamp = (inLen - inStart) - (iiLoops);
 
 
-   int rightBuffLen = imax((remainsOutSamp>>up)-remainsInSamp,buffLen);
+   // int rightBuffLen = imax((remainsOutSamp>>up)-remainsInSamp,buffLen);
+   int rightBuffLen = imax((remainsOutSamp/upPow2)-remainsInSamp,buffLen);
    LTFAT_REAL ** rightBuffers = (LTFAT_REAL **) ltfat_malloc(noOfFilts*sizeof(LTFAT_REAL*));
 
    for(int kk = 0;kk<noOfFilts;kk++)
@@ -716,8 +873,8 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
 	  memset(rightBuffers[kk],0,rightBuffLen*sizeof(LTFAT_REAL));
 	  if(ext) // if periodic extension
       {
-         extend_left(in[kk],inLen,buffers[kk],buffLen,tmpfLen,5); // extension as a last (tmpfLen-1) samples of the buffer -> pointer dont have to be moved
-		 extend_right(in[kk],inLen,rightBuffers[kk],tmpfLen,5);
+         extend_left(in[kk],inLen,buffers[kk],buffLen,tmpfLen,5,upPow2); // extension as a last (tmpfLen-1) samples of the buffer -> pointer dont have to be moved
+		 extend_right(in[kk],inLen,rightBuffers[kk],tmpfLen,5,upPow2);
       }
 	  memcpy(buffers[kk],in[kk],iniStoCopy*sizeof(LTFAT_REAL)); // TO DO: add some shift in in if iniStoCopy>buffLen
    }
@@ -732,15 +889,18 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
 
    for(int ii=0;ii<skipToNextUp;ii++)
    {
-		*tmpOut =  (LTFAT_REAL) 0.0;
-		int jjLoops = ((fLen-(skipModUp-ii)+upPow2-1)>>up); 
+		*tmpOut =  (LTFAT_REAL) 0.0;  
+		// int jjLoops = ((fLen-(skipModUp-ii)+upPow2-1)>>up); 
+		int jjLoops = ((fLen-(skipModUp-ii)+upPow2-1)/upPow2); 
 
 		    for(int jj=0;jj<jjLoops;jj++)
 		    {
-        		int idx = modPow2((-(jj<<filtUps)+buffPtr-1), buffLen);
+        		// int idx = modPow2((-(jj<<filtUps)+buffPtr-1), buffLen);
+				int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1), buffLen);
      			for(int kk = 0;kk<noOfFilts;kk++)
 		        {
-					*tmpOut += buffers[kk][idx] * filts[kk][(jj<<up)+skipModUp+ii];
+					// *tmpOut += buffers[kk][idx] * filts[kk][(jj<<up)+skipModUp+ii];
+					*tmpOut += buffers[kk][idx] * filts[kk][(jj*upPow2)+skipModUp+ii];
 		        }
 		    }
 	    tmpOut++;
@@ -765,14 +925,17 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
 	     {
 			 LTFAT_REAL tmpOutVal = (LTFAT_REAL) 0.0;
 			//tmpOut[uu] = (LTFAT_REAL) 0.0; // clear output
-		    int jjLoops = ((fLen-uu+upPow2-1)>>up);  // jjLoopsMax or jjLoopsMax
+		   // int jjLoops = ((fLen-uu+upPow2-1)>>up);  // jjLoopsMax or jjLoopsMax
+			 int jjLoops = ((fLen-uu+upPow2-1)/upPow2);  // jjLoopsMax or jjLoopsMax
 
 		    for(int jj=0;jj<jjLoops;jj++)
 		    {
-        		int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+				// int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+        		int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1),buffLen);
      			for(int kk = 0;kk<noOfFilts;kk++)
 		        {
-					 tmpOutVal += buffers[kk][idx] * filts[kk][(jj<<up)+uu];
+					// tmpOutVal += buffers[kk][idx] * filts[kk][(jj<<up)+uu];
+					tmpOutVal += buffers[kk][idx] * filts[kk][(jj*upPow2)+uu];
 		        }
 		    }
 			tmpOut[uu] = tmpOutVal;
@@ -785,34 +948,35 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
     */
 	
 	 /*
-	 STEP 3a: load additional input sample (if there are any) or load zero
+	 STEP 3a: load additional input sample!s! (if there are any) or load zero
 	 */
 	 int rightBuffPtr = 0;
-	    if(remainsInSamp>0)
-		 {
+
+        if(remainsInSamp>0)
+		  {
 		     for(int kk = 0;kk<noOfFilts;kk++)
 		     {
 			    *(buffers[kk] + buffPtr) = *(in[kk] + inStart + iiLoops);
 		     }
 		     buffPtr = modPow2(++buffPtr,buffLen);
 			 remainsInSamp--;
-		 }
-		 else
-		 {
+		  }
+		  else
+		  {
 		 	 for(int kk = 0;kk<noOfFilts;kk++)
 		     {
 				 *(buffers[kk] + buffPtr) = (LTFAT_REAL) rightBuffers[kk][0];
 		     }
 		     buffPtr = modPow2(++buffPtr,buffLen);
 			 rightBuffPtr++;
-		 }
+		  }
 
      /*
 	 STEP 3b: calculate remaining output samples, supplying zeros as new values
 	 */
        for(int ii=0;ii<remainsOutSamp;ii++)
        {
-		  if(ii!=0 && modPow2(ii,upPow2)==0)
+		  if(ii!=0 && ii%upPow2==0)
 		  {
 		    // just supply zeros to the buffers
 		    for(int kk = 0;kk<noOfFilts;kk++)
@@ -825,14 +989,17 @@ void LTFAT_NAME(up_conv_td)(const LTFAT_REAL *in[], int inLen, LTFAT_REAL *out, 
 
 		   *tmpOut =  (LTFAT_REAL) 0.0;
 
-		    int jjLoops = ((fLen-modPow2(ii,upPow2)+upPow2-1)>>up);
+		   //  int jjLoops = ((fLen-modPow2(ii,upPow2)+upPow2-1)>>up);
+		   int jjLoops = ((fLen-ii%upPow2+upPow2-1)/upPow2);
 
 		    for(int jj=0;jj<jjLoops;jj++)
 		    {
-        		int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+        		// int idx = modPow2((-(jj<<filtUps)+buffPtr-1),buffLen);
+				int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1),buffLen);
      			for(int kk = 0;kk<noOfFilts;kk++)
 		        {
-					*tmpOut += buffers[kk][idx] * filts[kk][(jj<<up) + modPow2(ii,upPow2) ];
+					//*tmpOut += buffers[kk][idx] * filts[kk][(jj<<up) + modPow2(ii,upPow2) ];
+					*tmpOut += buffers[kk][idx] * filts[kk][(jj*upPow2) + ii%upPow2 ];
 		        }
 		    }
 		   tmpOut++;
@@ -961,7 +1128,7 @@ void LTFAT_NAME(up_conv_sub_1toN)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *o
 
 // fills last buffer samples
 LTFAT_EXTERN
-void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer,int buffLen, int filtLen, int type){
+void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer,int buffLen, int filtLen, int type, int a){
 		int legalExtLen = imin(filtLen-1, inLen);
 		LTFAT_REAL *buffTmp = buffer + buffLen - legalExtLen;
 	switch (type) {
@@ -996,16 +1163,23 @@ void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer
 			   buffTmp[ii] = in[0];
            break;
 		   case 7: // periodic padding with possible last sample repplication
-			if(modPow2(inLen,2)==0)
+            int rem = inLen%a;
+			if(rem==0)
 			{
               for(int ii=0;ii<legalExtLen;ii++)
 			     buffTmp[ii] = in[inLen-1-(legalExtLen-1)+ii];
 			}
 			else
 			{
-			  buffTmp[legalExtLen-1] = in[inLen-1];
-			  for(int ii=0;ii<legalExtLen-1;ii++)
-			     buffTmp[ii] = in[inLen-1-(legalExtLen-1-1)+ii];
+			  int remto = a - rem;
+
+			  // replicated
+			  for(int ii=0;ii<remto;ii++)
+			     buffTmp[legalExtLen-1-ii] = in[inLen-1];
+			  
+			  // periodic extension
+			  for(int ii=0;ii<legalExtLen-remto;ii++)
+			     buffTmp[ii] = in[inLen-1-(legalExtLen-1-1)+ii+remto-1];
 			}
            break;
 		case 0: // zero-padding by default
@@ -1014,7 +1188,7 @@ void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer
 	}
 }
 
-void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer, int filtLen, int type){
+void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer, int filtLen, int type, int a){
 	int legalExtLen = imin(filtLen-1, inLen);
 	switch (type) {
 		case 1: // half-point symmetry
@@ -1044,16 +1218,22 @@ void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer
 			   buffer[ii] = in[inLen-1];
            break;
 		 case 7: // periodic padding with possible last sample repplications
-			if(inLen%2==0)
+			int rem = inLen%a;
+			if(rem==0)
 			{
               for(int ii=0;ii<legalExtLen;ii++)
 			    buffer[ii] = in[ii];
 			}
 			else
 			{
-			  buffer[0] = in[inLen-1];
-			  for(int ii=0;ii<legalExtLen-1;ii++)
-			     buffer[ii+1] = in[ii];
+			  int remto = a - rem;
+			  // replicated
+			  for(int ii=0;ii<remto;ii++)
+			     buffer[ii] = in[inLen-1];
+
+			  // periodized
+			  for(int ii=0;ii<legalExtLen-remto;ii++)
+			     buffer[ii+remto] = in[ii];
 			}
            break;
 		case 0: // zero-padding by default
