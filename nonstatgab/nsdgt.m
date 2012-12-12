@@ -74,13 +74,11 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %
 %   References: ltfatnote010
   
-%   AUTHOR : Florent Jaillet
+%   AUTHOR : Florent Jaillet and Nicki Holighaus
 %   TESTING: TEST_NSDGT
-%   REFERENCE: 
+%   REFERENCE: REF_NSDGT
 
 % Notes:
-% - The variable names used in this function are intentionally similar to
-%   the variable names used in dgt as nsdgt is a generalization of dgt.
 % - The choice of a different phaselocking convention than the one used in
 %   dgt is motivated by the will to keep a diagonal frame operator in the
 %   painless case and to keep the circular border condition. With the other

@@ -186,7 +186,7 @@ for tc=1:numel(ar)
     end;
 end;
         
-        % ------ Reference DGT ----------------------
+% ------ Reference DGT ----------------------
         
         if 0
 a1=3;
