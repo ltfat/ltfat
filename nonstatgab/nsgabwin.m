@@ -66,6 +66,7 @@ end;
 info.isdual=0;
 info.istight=0;
 
+% To stop the madness, all index/lengths vectors are converted to columns
 a=a(:);
 M=M(:);
 
@@ -87,13 +88,17 @@ otherwise
   end;
 end;
   
-info.gl=cellfun(@length,g).';
+info.gl=cellfun(@length,g);
+info.gl=info.gl(:);
+info.L=sum(a);
 
-info.isfac=1;
-% The generated frame does not have a factorization if it is not uniform
-% and at least one window is longer than it's M.
-%if ~all(M==M(1)) && any(info.gl>M)
-%  info.isfac=0;
-%end;
-  
+if any(info.L<info.gl)
+    info.L
+    info.gl
+    error('%s: Window is too long.',upper(mfilename));
+end;
 
+info.ispainless=all(info.gl<=M);
+info.isuniform=std(M)==0;
+
+info.isfac=info.ispainless || (info.isuniform && rem(info.L,M(1))==0);

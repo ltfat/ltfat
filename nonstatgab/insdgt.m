@@ -37,7 +37,7 @@ if nargin<3
 end;
 
 if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
 definput.keyvals.Ls=[];

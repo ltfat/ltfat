@@ -88,11 +88,11 @@ function [c,Ls] = nsdgt(f,g,a,M)
 
 
 if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
 if ~isnumeric(M)
-  error('%s: M must be numeric.',upper(callfun));
+  error('%s: M must be numeric.',upper(mfilename));
 end;
 
 %% ----- step 1 : Verify f and determine its length -------
@@ -103,10 +103,6 @@ L=nsdgtlength(Ls,a);
 f=postpad(f,L);
 
 [g,info]=nsgabwin(g,a,M);
-
-if L<info.gl
-  error('%s: Window is too long.',upper(mfilename));
-end;
 
 timepos=cumsum(a)-a(1);
 

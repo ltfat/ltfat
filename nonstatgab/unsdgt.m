@@ -89,10 +89,6 @@ f=postpad(f,L);
 
 [g,info]=nsgabwin(g,a,M);
 
-if L<info.gl
-  error('%s: Window is too long.',upper(mfilename));
-end;
-
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions

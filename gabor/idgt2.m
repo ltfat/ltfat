@@ -46,6 +46,7 @@ doLs=0;
 switch nargin
   case 3
     g2=g1;
+    a=p3;
   case 4
     if prod(size(p3))>2
       % Two windows was specified.
