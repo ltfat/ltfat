@@ -21,10 +21,10 @@ switch(F.type)
   case {'dwilt','wmdct'}
     L = longpar('dwilt',Ls,F.M);
   case {'gen'}
-    L = size(F.ga,1);
+    L = size(F.g,1);
   case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
     L = filterbanklength(Ls,F.a);
-  case {'fftreal','fusion'}
+  case {'fusion'}
     % This is highly tricky: Get the minimal transform length for each
     % subframe, and set the length as the lcm of that.
     Lsmallest=1;

@@ -28,7 +28,7 @@ red=1;
 
 switch(F.type)
   case 'gen'
-    red=size(F.ga,2)/size(F.ga,1);
+    red=size(F.g,2)/size(F.g,1);
   case 'dgt'
     red=F.M/F.a;
   case 'dgtreal'

@@ -3,8 +3,8 @@ function [AF,BF]=framebounds(F,varargin);
 %   Usage: fcond=framebounds(F);
 %          [A,B]=framebounds(F);
 %
-%   `framebounds(F)` calculates the ratio $B/A$ of the frame bounds
-%   of the frame given by *F*.
+%   `framebounds(F)` calculates the ratio $B/A$ of the frame bounds of the
+%   frame given by *F*.
 %
 %   `framebounds(F,Ls)` additionally specifies a signal length for which
 %   the frame should work.
@@ -12,14 +12,7 @@ function [AF,BF]=framebounds(F,varargin);
 %   `[A,B]=framebounds(F)` returns the frame bounds *A* and *B* instead of
 %   just their ratio.
 %
-%   `framebounds(F,'s')` returns the framebounds of the synthesis frame
-%   instead of those of the analysis frame.
-%
 %   'framebounds` accepts the following optional parameters:
-%
-%     'a'          Use the analysis frame. This is the default.
-%  
-%     's'          Use the synthesis.
 %
 %     'fac'        Use a factorization algorithm. The function will throw
 %                  an error if no algorithm is available.
@@ -52,9 +45,8 @@ function [AF,BF]=framebounds(F,varargin);
 %     'print'      Display the progress.
 %
 %     'quiet'      Don't print anything, this is the default.
-
 %
-%   See also: newframe, framered
+%   See also: frame, framered
 
 % We handle fusion frames first
   if strcmp(F.type,'fusion')
@@ -72,7 +64,6 @@ function [AF,BF]=framebounds(F,varargin);
   end;    
     
   definput.keyvals.Ls=1;
-  definput.flags.system={'a','s'};
   definput.keyvals.maxit=100;
   definput.keyvals.tol=1e-9;
   definput.keyvals.crossover=200;
@@ -89,36 +80,21 @@ function [AF,BF]=framebounds(F,varargin);
   AF=1;
   BF=1;
   
-  % Simple heuristic: If F.ga is defined, the frame uses windows.
-  if isfield(F,'ga')
-    if flags.do_a
-      if isempty(F.ga)
-        error('%s: No analysis frame is defined.', upper(mfilename));
+  % Simple heuristic: If F.g is defined, the frame uses windows.
+  if isfield(F,'g')
+      if isempty(F.g)
+          error('%s: No analysis frame is defined.', upper(mfilename));
       end;
-      g=F.ga;
-      isfac=F.isfacana;
+      g=F.g;
       op    = @frana;
-      opadj = @franaadj;
-    else
-      if isempty(F.gs)
-        error('%s: No synthesis frame is defined.', upper(mfilename));
-      end;
-      g=F.gs;
-      isfac=F.isfacsyn;
-      op    = @frsyn;
-      opadj = @frsynadj;
-    end;
-  else
-      % If F.ga is not defined, the tranform always has a fast way of
-      % calculating the frame bounds.
-      isfac=1;
+      opadj = @frsyn;
   end;
   
-  if flags.do_fac && ~isfac
+  if flags.do_fac && ~F.isfac
     error('%s: The type of frame has no factorization algorithm.',upper(mfilename));
   end;
   
-  if (flags.do_auto && isfac) || flags.do_fac
+  if (flags.do_auto && F.isfac) || flags.do_fac
     switch(F.type)
      case 'gen'
       V=svd(g);
@@ -132,16 +108,10 @@ function [AF,BF]=framebounds(F,varargin);
       [AF,BF]=filterbankbounds(g,F.a,L);
      case {'filterbankreal','ufilterbankreal'}
       [AF,BF]=filterbankrealbounds(g,F.a,L); 
-     case 'fft'
-      AF=L;
-      BF=L;
-     case 'fftreal'
-      AF=F.L;
-      BF=F.L; 
     end;  
   end;
   
-  if (flags.do_auto && ~isfac && F.L>kv.crossover) || flags.do_iter
+  if (flags.do_auto && ~F.isfac && F.L>kv.crossover) || flags.do_iter
     
     if flags.do_print
       opts.disp=1;
@@ -154,14 +124,15 @@ function [AF,BF]=framebounds(F,varargin);
     %opts.issym  = 1;
     opts.p      = kv.p;
     
-    afun(1,F,op,opadj); 
+    %afun(1,F,op,opadj); 
     % The inverse method does not work.
     %AF = real(eigs(@afun,L,1,'SM',opts));
-    BF = real(eigs(@afun,L,1,'LM',opts));
+    %BF = real(eigs(@afun,L,1,'LM',opts));
+    BF = real(eigs(@(x) opadj(F,op(F,x)),L,1,'LM',opts));
     
   end;
   
-  if (flags.do_auto && ~isfac && F.L<=kv.crossover) || flags.do_full
+  if (flags.do_auto && ~F.isfac && F.L<=kv.crossover) || flags.do_full
     % Compute thee transform matrix.
     bigM=opadj(F,op(F,eye(L)));
     

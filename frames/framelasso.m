@@ -96,7 +96,7 @@ L = framelength(F,size(x,1));
 F=frameaccel(F,L);  
 
 % Initialization of thresholded coefficients
-c0 = frsynadj(F,x);
+c0 = frana(F,x);
 
 if isempty(kv.C)
   [A_dummy,kv.C] = framebounds(F,L,'s');
@@ -111,7 +111,7 @@ iter = 0;
 
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - frsynadj(F,frsyn(F,tc0));
+    tc = c0 - frana(F,frsyn(F,tc0));
     tc = tc0 + tc/kv.C;
     tc = thresh(tc,threshold,'soft');
     relres = norm(tc(:)-tc0(:))/norm(tc0(:));

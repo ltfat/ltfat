@@ -97,8 +97,10 @@ norm_s=norm(s,'fro');
 relres=zeros(kv.maxit,1);
 if flags.do_griflim
   
+  Fs=framedual(F);
+  
   for iter=1:kv.maxit
-    f=frsyn(F,c);
+    f=frsyn(Fs,c);
     c=frana(F,f);
     
     relres(iter)=norm(abs(c)-s,'fro')/norm_s;

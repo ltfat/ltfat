@@ -1,5 +1,5 @@
 function [c,relres,iter]=franaiter(F,c,varargin)
-%FRANAITER  Iterative analysis frame inversion
+%FRANAITER  Iterative analysis
 %   Usage:  f=franaiter(F,c);
 %
 %   Input parameters:
@@ -11,7 +11,7 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `c=franaiter(F,f)` iteratively inverts the analysis frame of *F* using a
+%   `c=franaiter(F,f)` iteratively inverts the frame *F* using a
 %   least-squares method.
 %
 %   `[c,relres,iter]=franaiter(...)` additionally returns the residuals in a
@@ -69,11 +69,11 @@ function [c,relres,iter]=franaiter(F,c,varargin)
     
   if flags.do_pcg
 
-      A=@(x) frsyn(F,frsynadj(F,x));
+      A=@(x) frsyn(F,frana(F,x));
                   
       % It is possible to specify the initial guess
       [fout,flag,relres,iter]=pcg(A,c,kv.tol,kv.maxit);
-      c=frsynadj(F,fout);
+      c=frana(F,fout);
   end;
            
 end

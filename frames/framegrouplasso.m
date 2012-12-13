@@ -109,7 +109,7 @@ end;
 threshold = lambda/kv.C;
 
 % Initialization of thresholded coefficients
-c0 = frsynadj(F,x);
+c0 = frana(F,x);
 
 % We have to convert the coefficients to time-frequency layout to
 % discover their size
@@ -136,7 +136,7 @@ end;
   
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-  tc = c0 - frsynadj(F,frsyn(F,tc0));
+  tc = c0 - frana(F,frsyn(F,tc0));
   tc = tc0 + tc/kv.C;
   
   %  ------------ Convert to TF-plane ---------

@@ -71,10 +71,10 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
     
   if flags.do_pcg
 
-      A=@(x) franaadj(F,frana(F,x));
+      A=@(x) frsyn(F,frana(F,x));
                   
       % It is possible to specify the initial guess
-      [f,flag,relres,iter]=pcg(A,franaadj(F,c),kv.tol,kv.maxit);
+      [f,flag,relres,iter]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);
   end;
 
   
@@ -84,7 +84,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
       [~,B]=framebounds(F,L,'a'); 
       
       % Set the parameter for the fast projection on a B2 ball
-      param.At=@(x) franaadj(F,x);  % adjoint operator
+      param.At=@(x) frsyn(F,x);     % adjoint operator
       param.A=@(x)  frana(F,x);     % direct operator
       param.y=c;                    % coefficient
       param.tight=0;                % It's not a tight frame
