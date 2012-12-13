@@ -42,12 +42,12 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %   The following example shows how to rectruct a signal without ever
 %   using the dual frame:::
 %
-%      F=newframe('dgtreal','none','gauss',10,20);
+%      F=frame('dgtreal','gauss',10,20);
 %      [c,relres,iter]=franaiter(F,bat);
 %      r=frsyn(F,c);
 %      norm(bat-r)/norm(bat)
 %
-%   See also: newframe, frana, frsyn, frsyniter
+%   See also: frame, frana, frsyn, frsyniter
   
 % AUTHORS: Nathanael Perraudin and Peter L. Søndergaard
     

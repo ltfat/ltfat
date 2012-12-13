@@ -10,7 +10,7 @@ function L=framelength(F,Ls);
 %
 %   If instead a set of coefficients are given, call |framelengthcoef|_.
 %
-%   See also: newframe, framelengthcoef
+%   See also: frame, framelengthcoef
   
 % Default value, the frame works for all input lengths
 L=Ls;

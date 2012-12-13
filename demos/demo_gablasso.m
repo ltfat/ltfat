@@ -15,7 +15,7 @@ lambda = 0.08;
 maxit=500;
 tol=1e-4;
 
-F=newframe('dgtreal','gauss','tight',a,M);
+F=frametight(frame('dgtreal','gauss',a,M));
 
 % LASSO
 [tcl,relres,iter,xrecl] = framelasso(F,x,lambda,'maxit',maxit,'tol',tol);

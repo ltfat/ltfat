@@ -18,13 +18,13 @@ function G=framematrix(F,L);
 %   matrix. Consider the following simple example:::
 %
 %     L=200;
-%     F=newframe('dgt','gauss','dual',10,20);
+%     F=frame('dgt','gauss',10,20);
 %     G=framematrix(F,L);
 %     testsig = randn(L,1);
 %     res = frana(F,testsig)-G'*testsig;
 %     norm(res)
 %
-%   See also: newframe, frana, frsyn
+%   See also: frame, frana, frsyn
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

@@ -4,7 +4,7 @@ function coef=framecoef2tf(F,coef);
 %
 %   `framecoef2tf(F,coef)` converts the frame coefficients *coef* into the
 %   time-frequency plane layout. The frame object *F* must have been
-%   created using |newframe|_.
+%   created using |frame|_.
 %
 %   The time-frequency plane layout is a matrix, where the first
 %   dimension indexes frequency and the second dimension time. This is
@@ -14,7 +14,7 @@ function coef=framecoef2tf(F,coef);
 %   types are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'` and
 %   `'ufilterbank'`.
 %
-%   See also: newframe, frametf2coef, framecoef2native
+%   See also: frame, frametf2coef, framecoef2native
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

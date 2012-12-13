@@ -13,15 +13,15 @@ function red=framered(F);
 %   The following simple example shows how to obtain the redundancy of a
 %   Gabor frame:::
 %
-%     F=newframe('dgt','gauss','dual',30,40);
+%     F=frame('dgt','gauss',30,40);
 %     framered(F)
 %
 %   The redundancy of a basis is always one:::
 %
-%     F=newframe('wmdct','gauss','dual',40);
+%     F=frame('wmdct','gauss',40);
 %     framered(F)
 %
-%   See also: newframe, frana, framebounds
+%   See also: frame, frana, framebounds
 
 % Default value: works for all the bases.
 red=1;

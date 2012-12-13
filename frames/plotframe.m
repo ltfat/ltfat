@@ -36,7 +36,7 @@ function outsig=plotframe(F,insig,varargin);
 %              Only show values in between $clim(1)$ and $clim(2)$. This
 %              is usually done by adjusting the colormap. See the help on `imagesc`.
 %
-%   See also: newframe, frana
+%   See also: frame, frana
   
 switch(F.type)
  case 'dgt'

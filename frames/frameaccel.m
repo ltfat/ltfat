@@ -15,7 +15,7 @@ function F=frameaccel(F,Ls);
 %   If `frameaccel` is called twice for the same transform length, no
 %   additional computations will be done.
 %
-%   See also: newframe, frana, framelength, framelengthcoef
+%   See also: frame, frana, framelength, framelengthcoef
   
 if strcmp(F.type,'fusion')
     for ii=1:F.Nframes

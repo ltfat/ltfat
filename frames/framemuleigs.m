@@ -81,7 +81,7 @@ definput.flags.method={'auto','iter','full'};
 % Do the computation. For small problems a direct calculation is just as
 % fast.
 
-L=framelengthcoef(F,size(coef,1));
+L=framelengthcoef(Fa,size(coef,1));
 
 if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
     
@@ -95,9 +95,9 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   opts.tol    = kv.tol;
   
   if doV
-    [V,D] = eigs(@(c) frsyn(Fs,c.*frana(Fa,x)),L,K,'LM',opts);
+    [V,D] = eigs(@(x) frsyn(Fs,coef.*frana(Fa,x)),L,K,'LM',opts);
   else
-    D     = eigs(@(c) frsyn(Fs,c.*frana(Fa,x)),L,K,'LM',opts);
+    D     = eigs(@(x) frsyn(Fs,coef.*frana(Fa,x)),L,K,'LM',opts);
   end;
 
 else

@@ -10,6 +10,7 @@
 %    FRANA             - Frame analysis
 %    FRSYN             - Frame synthesis
 %    PLOTFRAME         - Plot frame coefficients
+%    FRAMEGRAM         - Plot energy of signal in frame space
 %    FRAMEACCEL        - Precompute arrays for faster application
 %
 %  Information about a frame

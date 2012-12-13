@@ -5,7 +5,7 @@ function coef=framenative2coef(F,coef);
 %   `framenative2coef(F,coef)` convert frame coefficients from the native
 %   format of the transform into the common column format.
 %
-%   See also: newframe, framecoef2native
+%   See also: frame, framecoef2native
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

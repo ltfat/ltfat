@@ -102,7 +102,7 @@ L=framelength(F,length(x));
 F=frameaccel(F,L);
 
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F,L,'s');
+  [A_dummy,kv.C] = framebounds(F,L);
 end;
 
 % Various parameter initializations
