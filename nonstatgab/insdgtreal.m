@@ -1,5 +1,5 @@
 function f=insdgtreal(c,g,a,M,varargin)
-%INSDGT  Inverse nonstationary discrete Gabor transform
+%INSDGTREAL  Inverse NSDGT for real-valued signals
 %   Usage:  f=insdgt(c,g,a,M,Ls);
 %
 %   Input parameters:
