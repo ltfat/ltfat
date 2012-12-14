@@ -54,19 +54,15 @@ N=length(a);
 
 [g,info]=nsgabwin(g,a,M);
 
+a=info.a;
+M=info.M;
+
 if info.isfac
     if info.ispainless
         f=zeros(L,1); % Diagonal of the frame operator
         
         % Compute the diagonal of the frame operator:
-        % sum up in time (overlap-add) all the contributions of the windows as if 
-        % we where using windows in g as analysis and synthesis windows
-        for ii=1:N
-            shift=floor(length(g{ii})/2);
-            temp=abs(circshift(g{ii},shift)).^2*length(g{ii});
-            tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
-        f(tempind)=f(tempind)+temp;
-        end
+        f=nsgabframediag(g,a,M);
         
         % As we want tight frame, we will use the sqrt of the operator
         f=sqrt(f);

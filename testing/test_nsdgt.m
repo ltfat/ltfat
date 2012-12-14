@@ -20,10 +20,11 @@ disp(' ===============  TEST_NSDGT ================');
 % Second case is even numbers, non-painless
 % Third case has odd numbers, painless
 % Fouth case has odd numbers, non-painless
+% Fifth case is even numbers, painless, window length less than M
 
-ar ={[20,30,40],[20,30,40],[5,11,19],[5,11,19]};
-Mr ={[30,40,50],[30,40,50],[7,12,29],[7,12,29]};
-Lgr={[30,40,50],[60,80,60],[7,12,29],[9,19,33]};
+ar ={[20,30,40],[20,30,40],[5,11,19],[5,11,19],[20,30,40]};
+Mr ={[30,40,50],[30,40,50],[7,12,29],[7,12,29],[35,40,50]};
+Lgr={[30,40,50],[60,80,60],[7,12,29],[9,19,33],[30,40,50]};
 
 for tc=1:numel(ar)
     N=numel(ar{tc});

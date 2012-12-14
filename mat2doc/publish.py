@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys,os
-cwd=os.getcwd()+'/'
+cwd=os.getcwd()+os.sep
 
 # ------- Configuration parameters -------------
 
@@ -25,11 +25,11 @@ import localconf
 sys.path.append(localconf.mat2docdir)
 
 # Get the data from localconf
-project=eval('localconf.'+projectname)
-conffile=project['dir']+'/mat2doc/mat2docconf.py'
-filesdir=localconf.filesdir
+projectdir=localconf.projects[projectname]
+conffile=projectdir+'mat2doc/mat2docconf.py'
+filesdir=localconf.outputdir+projectname+'-files'+os.sep
 
-f=file(project['dir']+projectname+'_version')
+f=file(projectdir+projectname+'_version')
 versionstring=f.read()[:-1]
 f.close()
 
@@ -38,8 +38,6 @@ import printdoc
 def runcommand(todo,redomode='auto'):
 
     print 'PUBLISH '+todo+' '+redomode
-    if 'verify' in todo:
-        printdoc.printdoc(projectname,'verify')
 
     # Release for other developers to download
     if 'develmat' in todo:
@@ -50,33 +48,40 @@ def runcommand(todo,redomode='auto'):
         os.system('rm '+fname+'.zip')
 
         # Create the Unix src package
-        os.system('tar zcvf '+fname+'.tgz '+projectname+'/')
+        os.system('tar zcvf '+fname+'.tgz '+projectname+os.sep)
 
         # Create the Windows src package
         os.system('rm '+fname+'.zip')
         printdoc.unix2dos(filesdir+projectname)
-        os.system('zip -r '+fname+'.zip '+projectname+'/')
+        os.system('zip -r '+fname+'.zip '+projectname+os.sep)
 
     # Release for users to download
     if 'releasemat' in todo:
         printdoc.git_repoexport_mat(projectname)
+        matdir=localconf.outputdir+projectname+'-mat'+os.sep
 
         # Remove unwanted files
-        os.system('rm -rf '+project['mat']+'testing')
-        os.system('rm -rf '+project['mat']+'reference')
-        os.system('rm -rf '+project['mat']+'timing')
+        os.system('rm -rf '+matdir+'testing')
+        os.system('rm -rf '+matdir+'reference')
+        os.system('rm -rf '+matdir+'timing')
 
         printdoc.printdoc(projectname,'mat')
 
         fname=filesdir+projectname+'-'+versionstring
+        printdoc.safe_mkdir(filesdir)
+
+        # Create the binary packages In order to get the right path in
+        # the compressed files, copy the source to the temporary
+        # directory with the projectname
+        os.system('cp -R '+matdir+' '+localconf.tmpdir+projectname)
 
         # Create the Unix src package
-        os.system('tar zcvf '+fname+'.tgz '+projectname+'/')
+        os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+projectname)
 
         # Create the Windows src package
         os.system('rm '+fname+'.zip')
         printdoc.unix2dos(filesdir+projectname)
-        os.system('zip -r '+fname+'.zip '+projectname+'/')
+        os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+projectname)
 
     if 'tex'==todo:
         printdoc.printdoc(projectname,'tex')
@@ -87,10 +92,12 @@ def runcommand(todo,redomode='auto'):
         printdoc.printdoc(projectname,'tex')
 
     if 'texupload'==todo:
-        s='rsync -av '+project['tex']+'ltfat.pdf '+host+':'+www+'doc/'
+        texdir=localconf.outputdir+projectname+'-tex'+os.sep
+        s='rsync -av '+texdir+'ltfat.pdf '+host+':'+www+'doc/'
         os.system(s)
 
     if todo=='php':
+        phpdir=localconf.outputdir+projectname+'-php'+os.sep
         printdoc.printdoc(projectname,'php')
         s='rsync -av '+project['php']+' '+host+':'+www+'doc/'
         os.system(s)    
@@ -105,8 +112,9 @@ def runcommand(todo,redomode='auto'):
         runcommand('tex',redomode)
         runcommand('texupload')
     
-    if todo=='wavephp': 
-        printdoc.assert_git_on_branch(localconf.ltfatwave['dir'],'wavelets')
+    if todo=='wavephp':
+        wavedir=localconf.projects['ltfatwave']
+        printdoc.assert_git_on_branch(wavedir,'wavelets')
         printdoc.printdoc('ltfatwave','php')
 
     if todo=='wavestagemat': 

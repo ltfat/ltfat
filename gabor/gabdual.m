@@ -125,22 +125,10 @@ if kv.lt(2)==1
     % Rectangular case
     if (info.gl<=M) && (R==1)
         
-        % FIR case
-        N_win = ceil(info.gl/a);
-        Lwin_new = N_win*a;
-        if Lwin_new ~= info.gl
-            g_new = fir2long(g,Lwin_new);
-        else
-            g_new = g;
-        end
-        weight = sum(reshape(abs(g_new).^2,a,N_win),2);
-        
-        gd = g_new./repmat(weight,N_win,1);
-        gd = gd/M;
-        if Lwin_new ~= info.gl
-            gd = long2fir(gd,info.gl);
-        end
-        
+        % Diagonal of the frame operator
+        d = gabframediag(g,a,M,L);
+        gd=g./long2fir(d,info.gl);
+                
     else
         
         % Long window case

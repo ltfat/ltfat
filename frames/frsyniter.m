@@ -31,8 +31,11 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %     'unlocbox'   Use unlocbox.
 %
-%     'pcg'        Solve the problem using the Conjugate Gradient
+%     'cg'         Solve the problem using the Conjugate Gradient
 %                  algorithm. This is the default.
+%
+%     'pcg'        Solve the problem using the Preconditioned Conjugate Gradient
+%                  algorithm.
 %
 %     'print'      Display the progress.
 %
@@ -60,7 +63,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   definput.keyvals.Ls=[];
   definput.keyvals.tol=1e-9;
   definput.keyvals.maxit=100;
-  definput.flags.alg={'pcg','unlocbox'};
+  definput.flags.alg={'cg','pcg','unlocbox'};
   definput.keyvals.printstep=10;
   definput.flags.print={'quiet','print'};
 
@@ -69,12 +72,24 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   % Determine L from the first vector, it must match for all of them.
   L=framelengthcoef(F,size(c,1));
     
-  if flags.do_pcg
+  if flags.do_pcg || flags.do_cg
 
       A=@(x) frsyn(F,frana(F,x));
-                  
-      % It is possible to specify the initial guess
-      [f,flag,relres,iter]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);
+
+      % It is possible to specify the initial guess, but this is not
+      % currently done
+
+      if flags.do_pcg
+          d=framediag(F,L);
+          M=spdiags(1./d,0,L,L);
+
+          plot(d);
+          
+          [f,flag,relres,iter]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
+      else
+
+          [f,flag,relres,iter]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
+      end;
   end;
 
   

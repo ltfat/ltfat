@@ -91,10 +91,10 @@ end;
 info.gl=cellfun(@length,g);
 info.gl=info.gl(:);
 info.L=sum(a);
+info.a=a;
+N=length(a);
 
 if any(info.L<info.gl)
-    info.L
-    info.gl
     error('%s: Window is too long.',upper(mfilename));
 end;
 
@@ -102,3 +102,9 @@ info.ispainless=all(info.gl<=M);
 info.isuniform=std(M)==0;
 
 info.isfac=info.ispainless || (info.isuniform && rem(info.L,M(1))==0);
+
+if info.isuniform
+    info.M=repmat(M,N,1);
+else
+    info.M=M;
+end;
