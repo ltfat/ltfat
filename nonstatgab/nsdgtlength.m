@@ -25,8 +25,8 @@ if ~isnumeric(a)
   error('%s: a must be numeric.',upper(mfilename));
 end;
 
-if ~isvector(a) || any(a<=0)
-  error('%s: "a" must be a vector of positive numbers.',upper(mfilename));
+if ~isvector(a) || any(a<0)
+  error('%s: "a" must be a vector of non-negative numbers.',upper(mfilename));
 end;
 
 L=sum(a);
