@@ -82,8 +82,6 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
       if flags.do_pcg
           d=framediag(F,L);
           M=spdiags(1./d,0,L,L);
-
-          plot(d);
           
           [f,flag,relres,iter]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
       else

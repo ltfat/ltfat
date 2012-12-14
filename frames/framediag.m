@@ -34,8 +34,8 @@ switch(F.type)
   case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
     error('Not implemented yet.');
 
-  case {'nsdgt','unsdgt'}
-    d=gabframediag(F.g,F.a,F.M);
+  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+    d=nsgabframediag(F.g,F.a,F.M);
     
   case 'fusion'
     error('Not implemented yet.');

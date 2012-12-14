@@ -49,13 +49,13 @@ switch(F.type)
     outsig=framenative2coef(F,ufilterbank(insig,F.g,F.a));
     
   case 'nsdgt'
-    outsig=framenative2coef(F,nsdgt(insig,F.g,F.a));
+    outsig=framenative2coef(F,nsdgt(insig,F.g,F.a,F.M));
   case 'unsdgt'
-    outsig=framenative2coef(F,unsdgt(insig,F.g,F.a));
+    outsig=framenative2coef(F,unsdgt(insig,F.g,F.a,F.M));
   case 'nsdgtreal'
-    outsig=framenative2coef(F,nsdgtreal(insig,F.g,F.a));
+    outsig=framenative2coef(F,nsdgtreal(insig,F.g,F.a,F.M));
   case 'unsdgtreal'
-    outsig=framenative2coef(F,unsdgtreal(insig,F.g,F.a));
+    outsig=framenative2coef(F,unsdgtreal(insig,F.g,F.a,F.M));
     
   case {'dft',...
         'dcti','dctii','dctiii','dctiv',...
