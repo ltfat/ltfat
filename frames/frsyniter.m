@@ -1,4 +1,4 @@
-function [f,relres,iter,resvec]=frsyniter(F,c,varargin)
+function [f,relres,iter]=frsyniter(F,c,varargin)
 %FRSYNITER  Iterative analysis frame inversion
 %   Usage:  f=frsyniter(F,c);
 %
@@ -83,10 +83,14 @@ function [f,relres,iter,resvec]=frsyniter(F,c,varargin)
           d=framediag(F,L);
           M=spdiags(d,0,L,L);
           
-          [f,flag,relres,iter,resvec]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
+          [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
       else
 
-          [f,flag,relres,iter,resvec]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
+          [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
+      end;
+
+      if nargout>1
+         relres=relres/norm(c(:));
       end;
   end;
 
