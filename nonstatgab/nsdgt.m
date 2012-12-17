@@ -74,13 +74,11 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %
 %   References: ltfatnote010
   
-%   AUTHOR : Florent Jaillet
+%   AUTHOR : Florent Jaillet and Nicki Holighaus
 %   TESTING: TEST_NSDGT
-%   REFERENCE: 
+%   REFERENCE: REF_NSDGT
 
 % Notes:
-% - The variable names used in this function are intentionally similar to
-%   the variable names used in dgt as nsdgt is a generalization of dgt.
 % - The choice of a different phaselocking convention than the one used in
 %   dgt is motivated by the will to keep a diagonal frame operator in the
 %   painless case and to keep the circular border condition. With the other
@@ -90,11 +88,11 @@ function [c,Ls] = nsdgt(f,g,a,M)
 
 
 if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
 if ~isnumeric(M)
-  error('%s: M must be numeric.',upper(callfun));
+  error('%s: M must be numeric.',upper(mfilename));
 end;
 
 %% ----- step 1 : Verify f and determine its length -------
@@ -105,10 +103,6 @@ L=nsdgtlength(Ls,a);
 f=postpad(f,L);
 
 [g,info]=nsgabwin(g,a,M);
-
-if L<info.gl
-  error('%s: Window is too long.',upper(mfilename));
-end;
 
 timepos=cumsum(a)-a(1);
 

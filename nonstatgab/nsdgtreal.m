@@ -83,11 +83,11 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %   REFERENCE: 
 
 if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
 if ~isnumeric(M)
-  error('%s: M must be numeric.',upper(callfun));
+  error('%s: M must be numeric.',upper(mfilename));
 end;
 
 

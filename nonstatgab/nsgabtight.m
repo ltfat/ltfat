@@ -37,33 +37,66 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(mfilename));
+end;
+
+if ~isnumeric(M)
+  error('%s: M must be numeric.',upper(mfilename));
+end;
+
 definput.keyvals.L=sum(a);
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 timepos=cumsum(a)-a(1);
 
-N=length(a); % Number of time positions
-f=zeros(L,1); % Diagonal of the frame operator
+N=length(a);
 
-% Compute the diagonal of the frame operator:
-% sum up in time (overlap-add) all the contributions of the windows as if 
-% we where using windows in g as analysis and synthesis windows
-for ii=1:N
-  shift=floor(length(g{ii})/2);
-  temp=abs(circshift(g{ii},shift)).^2*length(g{ii});
-  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
-  f(tempind)=f(tempind)+temp;
-end
+[g,info]=nsgabwin(g,a,M);
 
-% As we want tight frame, we will use the sqrt of the operator
-f=sqrt(f);
+a=info.a;
+M=info.M;
 
-% Initialize the result with g
-gt=g;
-
-% Correct each window to ensure perfect reconstrution
-for ii=1:N
-  shift=floor(length(g{ii})/2);
-  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
-  gt{ii}(:)=circshift(circshift(g{ii},shift)./f(tempind),-shift);
-end
+if info.isfac
+    if info.ispainless
+        f=zeros(L,1); % Diagonal of the frame operator
+        
+        % Compute the diagonal of the frame operator:
+        f=nsgabframediag(g,a,M);
+        
+        % As we want tight frame, we will use the sqrt of the operator
+        f=sqrt(f);
+        
+        % Initialize the result with g
+        gt=g;
+        
+        % Correct each window to ensure perfect reconstrution
+        for ii=1:N
+            shift=floor(length(g{ii})/2);
+            tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,L)+1;
+            gt{ii}(:)=circshift(circshift(g{ii},shift)./f(tempind),-shift);
+        end
+    
+    else
+        if 0
+            % Convert to freq. domain and run filterbanktight
+            gf=cell(1,N);
+            gt=cell(1,N);
+            for ii=1:N
+                gf{ii}=circshift(fft(fir2long(g{ii},L)),timepos(ii));
+            end;
+            
+            gft=filterbanktight(gf,M);
+            for ii=1:N
+                gt{ii}=ifft(circshift(gft{ii},-timepos(ii)));
+            end;
+                
+        else
+            error(['%s: Not implemented yet.'],upper(mfilename));
+        end;
+    end;
+else
+            
+    error(['%s: The canonical tight frame of this system is not a ' ...
+               'non-stationary Gabor frame.'],upper(mfilename));
+end;

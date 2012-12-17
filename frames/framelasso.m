@@ -61,7 +61,7 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %   framebound. Depending on the structure of the frame, this can be an
 %   expensive operation.
 %  
-%   See also: newframe, frsyn, framebounds
+%   See also: frame, frsyn, framebounds
 %
 %   References: dademo04
 
@@ -96,10 +96,10 @@ L = framelength(F,size(x,1));
 F=frameaccel(F,L);  
 
 % Initialization of thresholded coefficients
-c0 = frsynadj(F,x);
+c0 = frana(F,x);
 
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F,L,'s');
+  [A_dummy,kv.C] = framebounds(F,L);
 end;
 
 % Various parameter initializations
@@ -111,7 +111,7 @@ iter = 0;
 
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - frsynadj(F,frsyn(F,tc0));
+    tc = c0 - frana(F,frsyn(F,tc0));
     tc = tc0 + tc/kv.C;
     tc = thresh(tc,threshold,'soft');
     relres = norm(tc(:)-tc0(:))/norm(tc0(:));

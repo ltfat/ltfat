@@ -3,19 +3,20 @@
 %  Peter L. Søndergaard, 2012.
 %
 %  Basic methods
-%    NEWFRAME          - Construct a new frame
+%    FRAME             - Construct a new frame
+%    FRAMEPAIR         - Construct a pair of frames
+%    FRAMEDUAL         - The canonical dual frame
+%    FRAMETIGHT        - The canonical tight frame
 %    FRANA             - Frame analysis
 %    FRSYN             - Frame synthesis
-%    FRANAADJ          - Frame analysis adjoint operator
-%    FRSYNADJ          - Frame synthesis adjoint operator
 %    PLOTFRAME         - Plot frame coefficients
+%    FRAMEGRAM         - Plot energy of signal in frame space
 %    FRAMEACCEL        - Precompute arrays for faster application
 %
 %  Information about a frame
 %    FRAMEBOUNDS       - Frame bounds
 %    FRAMERED          - Redundancy of frame
-%    FRANAMAT          - Frame analysis operator matrix
-%    FRSYNMAT          - Frame synthesis operator matrix
+%    FRAMEMATRIX       - Frame analysis operator matrix
 %    FRAMELENGTH       - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
 %

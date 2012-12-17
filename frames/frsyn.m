@@ -4,9 +4,9 @@ function outsig=frsyn(F,insig);
 %
 %   `f=frsyn(F,c)` constructs a signal *f* from the frame coefficients *c*
 %   using the frame *F*. The frame object *F* must have been created using
-%   |newframe|_.
+%   |frame|_.
 %
-%   See also: newframe, frana, plotframe
+%   See also: frame, frana, plotframe
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -20,26 +20,26 @@ switch(F.type)
   case 'identity'
     outsig=insig;    
   case 'gen'
-    outsig=F.gs*insig;
+    outsig=F.g*insig;
     
   case 'dgt'
-    outsig=idgt(framecoef2native(F,insig),F.gs,F.a,F.vars{:});  
+    outsig=idgt(framecoef2native(F,insig),F.g,F.a,F.vars{:});  
   case 'dgtreal'
-    outsig=idgtreal(framecoef2native(F,insig),F.gs,F.a,F.M,F.vars{:});  
+    outsig=idgtreal(framecoef2native(F,insig),F.g,F.a,F.M,F.vars{:});  
   case 'dwilt'
-    outsig=idwilt(framecoef2native(F,insig),F.gs);  
+    outsig=idwilt(framecoef2native(F,insig),F.g);  
   case 'wmdct'
-    outsig=iwmdct(framecoef2native(F,insig),F.gs);  
+    outsig=iwmdct(framecoef2native(F,insig),F.g);  
     
   case {'filterbank','ufilterbank'}
-    outsig=ifilterbank(framecoef2native(F,insig),F.gs,F.a);   
+    outsig=ifilterbank(framecoef2native(F,insig),F.g,F.a);   
   case {'filterbankreal','ufilterbankreal'}
-    outsig=2*real(ifilterbank(framecoef2native(F,insig),F.gs,F.a));
+    outsig=2*real(ifilterbank(framecoef2native(F,insig),F.g,F.a));
 
   case {'nsdgt','unsdgt'}
-    outsig=insdgt(framecoef2native(F,insig),F.gs,F.a);   
+    outsig=insdgt(framecoef2native(F,insig),F.g,F.a);   
   case {'nsdgtreal','unsdgtreal'}
-    outsig=insdgtreal(framecoef2native(F,insig),F.gs,F.a);
+    outsig=insdgtreal(framecoef2native(F,insig),F.g,F.a);
     
   case {'dcti','dctiv','dsti','dstiv'}
     outsig=feval(F.type,insig);
@@ -54,10 +54,6 @@ switch(F.type)
     outsig=dstii(insig);
   case 'dft'
     outsig=idft(insig);
-  case 'fft'
-    outsig=ifft(insig);
-  case 'fftreal'
-    outsig=ifftreal(insig,F.L);  
   case 'fusion'
     W=size(insig,2);
     L=size(insig,1)/framered(F);
@@ -67,7 +63,7 @@ switch(F.type)
     idx=0;    
     for ii=1:F.Nframes
         coeflen=L*framered(F.frames{ii});
-        outsig=outsig+frsyn(F.frames{ii},insig(idx+1:idx+coeflen,:))/(F.Nframes*F.w(ii));
+        outsig=outsig+frsyn(F.frames{ii},insig(idx+1:idx+coeflen,:))*F.w(ii);
         idx=idx+coeflen;
     end;
 end;

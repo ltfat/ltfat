@@ -1,21 +1,21 @@
 %DEMO_AUDIOSHRINK  Decomposition into tonal and transient parts
 %
 %   This demos shows how to do audio coding and "tonal + transient"
-%   decomposition using group lasso shrinkage of two WMDCT transforms
+%   decomposition using group lasso shrinkage of two |wmdct|_ transforms
 %   with different time-frequency resolutions.
 %
-%   The signal is transformed using two orthonormal WMDCT bases.
+%   The signal is transformed using two orthonormal |wmdct|_ bases.
 %   Then group lasso shrinkage is applied to the two transforms
 %   in order to:
 %
-%     * select fixed frequency lines of large wmdct coefficients on the
-%       wide window wmdct transform
+%     * select fixed frequency lines of large |wmdct|_ coefficients on the
+%       wide window |wmdct|_ transform
 %
-%     * select fixed time lines of large wmdct coefficients on the
-%       narrow window wmdct transform
+%     * select fixed time lines of large |wmdct|_ coefficients on the
+%       narrow window |wmdct|_ transform
 % 
-%   The corresponding approximated signals are computed with corresponding
-%   inverse WMDCT.
+%   The corresponding approximated signals are computed with the
+%   corresponding inverse, |iwmdct|_.
 %
 %   .. figure:: 
 %
@@ -48,7 +48,7 @@ nsig = sig + 0.01*randn(size(sig));
 % -----------
 
 % Create a WMDCT basis with 256 channels
-F1=newframe('wmdct','gauss','tight',256);
+F1=frametight(frame('wmdct','gauss',256));
 
 % Compute wmdct coefficients
 c1 = frana(F1,nsig);
@@ -61,7 +61,7 @@ rec1 = frsyn(F1,c1s);
 % ---------------
 
 % Create a WMDCT basis with 32 channels
-F2=newframe('wmdct','gauss','tight',32);
+F2=frametight(frame('wmdct','gauss',32));
 
 % Compute wmdct coefficients
 c2 = frana(F2,nsig);

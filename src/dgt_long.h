@@ -1,4 +1,4 @@
-LTFAT_EXTERN void
+LTFAT_EXTERN void 
 LTFAT_H_NAME(dgt_long)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
                       const int L, const int W,  const int a,
                       const int M, LTFAT_H_COMPLEX *cout);

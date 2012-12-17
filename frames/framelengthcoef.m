@@ -7,7 +7,7 @@ function L=framelengthcoef(F,Ncoef);
 %
 %   If instead a signal is given, call |framelength|_.
 %
-%   See also: newframe, framelength
+%   See also: frame, framelength
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -18,13 +18,15 @@ if ~isscalar(Ncoef)
 end;
 
 switch(F.type)
- case 'dgt'
-  L=Ncoef/F.M*F.a;
- case 'dgtreal'
-  L=Ncoef/(floor(F.M/2)+1)*F.a;
- case {'filterbank','ufilterbank','ufilterbank','ufilterbankreal'}
-  L=round(Ncoef/sum(1./F.a));
- otherwise
-  % handle all the bases
-  L=Ncoef;
+  case 'dgt'
+    L=Ncoef/F.M*F.a;
+  case 'dgtreal'
+    L=Ncoef/(floor(F.M/2)+1)*F.a;
+  case {'filterbank','ufilterbank','ufilterbank','ufilterbankreal'}
+    L=round(Ncoef/sum(1./F.a));
+  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+    L=sum(F.a);
+  otherwise
+    % handle all the bases
+    L=Ncoef;
 end;

@@ -1,5 +1,5 @@
 function [c,relres,iter]=franaiter(F,c,varargin)
-%FRANAITER  Iterative analysis frame inversion
+%FRANAITER  Iterative analysis
 %   Usage:  f=franaiter(F,c);
 %
 %   Input parameters:
@@ -11,7 +11,7 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `c=franaiter(F,f)` iteratively inverts the analysis frame of *F* using a
+%   `c=franaiter(F,f)` iteratively inverts the frame *F* using a
 %   least-squares method.
 %
 %   `[c,relres,iter]=franaiter(...)` additionally returns the residuals in a
@@ -29,8 +29,11 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %
 %     'maxit',n    Do at most n iterations.
 %
-%     'pcg'        Solve the problem using the Conjugate Gradient
+%     'pg'        Solve the problem using the Conjugate Gradient
 %                  algorithm. This is the default.
+%
+%     'pcg'        Solve the problem using the Preconditioned Conjugate Gradient
+%                  algorithm.
 %
 %     'print'      Display the progress.
 %
@@ -42,14 +45,19 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %   The following example shows how to rectruct a signal without ever
 %   using the dual frame:::
 %
-%      F=newframe('dgtreal','none','gauss',10,20);
-%      [c,relres,iter]=franaiter(F,bat);
+%      f=greasy;
+%      F=frame('dgtreal','gauss',40,60);
+%      [c,relres,iter]=franaiter(F,f,'tol',1e-14);
 %      r=frsyn(F,c);
-%      norm(bat-r)/norm(bat)
+%      norm(f-r)/norm(f)
+%      semilogy(relres);
+%      title('Conversion rate of the CG algorithm');
+%      xlabel('No. of iterations');
+%      ylabel('Relative residual');
 %
-%   See also: newframe, frana, frsyn, frsyniter
+%   See also: frame, frana, frsyn, frsyniter
   
-% AUTHORS: Nathanael Perraudin and Peter L. Søndergaard
+% AUTHORS: Peter L. Søndergaard
     
   if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));
@@ -58,7 +66,7 @@ function [c,relres,iter]=franaiter(F,c,varargin)
   definput.keyvals.Ls=[];
   definput.keyvals.tol=1e-9;
   definput.keyvals.maxit=100;
-  definput.flags.alg={'pcg'};
+  definput.flags.alg={'cg','pcg'};
   definput.keyvals.printstep=10;
   definput.flags.print={'quiet','print'};
 
@@ -67,15 +75,25 @@ function [c,relres,iter]=franaiter(F,c,varargin)
   % Determine L from the first vector, it must match for all of them.
   L=framelengthcoef(F,size(c,1));
     
-  if flags.do_pcg
-
-      A=@(x) frsyn(F,frsynadj(F,x));
-                  
-      % It is possible to specify the initial guess
-      [fout,flag,relres,iter]=pcg(A,c,kv.tol,kv.maxit);
-      c=frsynadj(F,fout);
-  end;
+  A=@(x) frsyn(F,frana(F,x));
            
+      
+  if flags.do_pcg
+      d=framediag(F,L);
+      M=spdiags(d,0,L,L);
+      
+      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit,M);
+  else
+      
+      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit);          
+  end;
+
+  c=frana(F,fout);
+
+  if nargout>1
+      relres=relres/norm(fout(:));
+  end;
+
 end
 
 

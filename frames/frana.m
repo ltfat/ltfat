@@ -4,7 +4,7 @@ function outsig=frana(F,insig);
 %
 %   `c=frana(F,f)` computes the frame coefficients *c* of the input
 %   signal *f* using the frame *F*. The frame object *F* must have been
-%   created using |newframe|_.
+%   created using |frame|_ or |framepair|_.
 %
 %   If *f* is a matrix, the transform will be applied along the columns
 %   of *f*. If *f* is an N-D array, the transform will be applied along
@@ -15,7 +15,7 @@ function outsig=frana(F,insig);
 %   examples, the output from |frana|_ for a gabor frame cannot be
 %   passed to |idgt|_ without a reshape.
 %
-%   See also: newframe, frsyn, plotframe
+%   See also: frame, framepair, frsyn, plotframe
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -29,35 +29,35 @@ switch(F.type)
   case 'identity'
     outsig=insig;
   case 'gen'
-    outsig=F.ga'*insig;  
+    outsig=F.g'*insig;  
   case 'dgt'
-    outsig=framenative2coef(F,dgt(insig,F.ga,F.a,F.M,F.vars{:}));
+    outsig=framenative2coef(F,dgt(insig,F.g,F.a,F.M,F.vars{:}));
   case 'dgtreal'
-    outsig=framenative2coef(F,dgtreal(insig,F.ga,F.a,F.M,F.vars{:}));
+    outsig=framenative2coef(F,dgtreal(insig,F.g,F.a,F.M,F.vars{:}));
   case 'dwilt'
-    outsig=framenative2coef(F,dwilt(insig,F.ga,F.M));
+    outsig=framenative2coef(F,dwilt(insig,F.g,F.M));
   case 'wmdct'
-    outsig=framenative2coef(F,wmdct(insig,F.ga,F.M));
+    outsig=framenative2coef(F,wmdct(insig,F.g,F.M));
     
   case 'filterbank'
-    outsig=framenative2coef(F,filterbank(insig,F.ga,F.a));
+    outsig=framenative2coef(F,filterbank(insig,F.g,F.a));
   case 'filterbankreal'
-    outsig=framenative2coef(F,filterbank(insig,F.ga,F.a));
+    outsig=framenative2coef(F,filterbank(insig,F.g,F.a));
  case 'ufilterbank'
-   outsig=framenative2coef(F,ufilterbank(insig,F.ga,F.a));
+   outsig=framenative2coef(F,ufilterbank(insig,F.g,F.a));
   case 'ufilterbankreal'
-    outsig=framenative2coef(F,ufilterbank(insig,F.ga,F.a));
+    outsig=framenative2coef(F,ufilterbank(insig,F.g,F.a));
     
   case 'nsdgt'
-    outsig=framenative2coef(F,nsdgt(insig,F.ga,F.a));
+    outsig=framenative2coef(F,nsdgt(insig,F.g,F.a,F.M));
   case 'unsdgt'
-    outsig=framenative2coef(F,unsdgt(insig,F.ga,F.a));
+    outsig=framenative2coef(F,unsdgt(insig,F.g,F.a,F.M));
   case 'nsdgtreal'
-    outsig=framenative2coef(F,nsdgtreal(insig,F.ga,F.a));
+    outsig=framenative2coef(F,nsdgtreal(insig,F.g,F.a,F.M));
   case 'unsdgtreal'
-    outsig=framenative2coef(F,unsdgtreal(insig,F.ga,F.a));
+    outsig=framenative2coef(F,unsdgtreal(insig,F.g,F.a,F.M));
     
-  case {'dft','fft','fftreal',...
+  case {'dft',...
         'dcti','dctii','dctiii','dctiv',...
         'dsti','dstii','dstiii','dstiv'}
     outsig=feval(F.type,insig);

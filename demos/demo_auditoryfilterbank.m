@@ -79,7 +79,7 @@ norm(f-r_gam)/norm(f)
 figure(2);
 plotfilterbank(coef_gam,a,fc,fs,dynrange_for_plotting,'audtick');
 
-F  = newframe('ufilterbankreal',g_gam,'none',a,M);
+F  = frame('ufilterbankreal',g_gam,a,M);
 c2 = frana(F,f); 
 Ls=length(f);
 

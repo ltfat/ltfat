@@ -27,133 +27,59 @@ function f=insdgt(c,g,a,varargin)
 %
 %   References: ltfatnote010
 
-%   AUTHOR : Florent Jaillet
+%   AUTHOR : Florent Jaillet and Nicki Holighaus
 %   TESTING: TEST_NSDGT
-%   REFERENCE: 
+%   REFERENCE: REF_INSDGT
 %   Last changed 2009-05
-
-
-% todo: 
-% - It would be good to check the validity of the inputs. Some things to
-%   check: chack the coherence of sizes in c, g, a, check that each cell of
-%   g is vector, that values of a are intergers,...
-
-% XXX There might be a bug when the window is bigger than the fft and that 
-% the window length is odd (anyway, nsdgt, insdgt, nsgabdual and
-% nonstatgabtight have not been extensively tested, so there might be other
-% bugs. Sytematic testing would be good). 
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if numel(g)==1
-  error('g must be a vector (you probably forgot to supply the window function as input parameter.)');
+if ~isnumeric(a)
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
-definput.keyvals.Ls=sum(a);
+definput.keyvals.Ls=[];
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 timepos=cumsum(a)-a(1);
+L=sum(a);
 
 if iscell(c)
-  
-  % ---- invert the non-uniform case ---------
-      
-  N=length(c); % Number of time positions
-  
-  W=size(c{1},2); % Number of signal channels
-  
-  f=zeros(Ls,W); % Initialisation of the result
-  
-  if 0
-      
-      % Nicki's code
-  
-      for ii = 1:N
-          X = length(g{ii});
-          win_range = mod(timepos(ii)+(-floor(X/2):ceil(X/2)-1),Ls)+1;
-          temp = ifft(c{ii})*length(c{ii});
-          %size(temp)
-          %[NN-floor(X/2)+1:NN,1:ceil(X/2)]
-          f(win_range) = f(win_range) + temp(mod([end-floor(X/2)+1:end,1:ceil(X/2)]-1,length(temp))+1).*fftshift(g{ii});
-      end
-  
-  else
-  
-  
-  for ii=1:N
-    shift=floor(length(g{ii})/2);
-    % Note: the *size(c{ii},1) in the following is here to ensure the 
-    % coherence of the ifft normalisation convention with the function dgt 
-    % of ltfat
-    temp=ifft(c{ii})*size(c{ii},1); 
-    
-    if size(c{ii},1)<length(g{ii}) 
-      % The number of frequency channels is smaller than window length, 
-      % we need to periodize.
-      % We have to periodize symetrically around time 0 which requires
-      % some heavy indexing because time zero is index 1 and negative times
-      % are at the end of the vector.
-      temp=circshift(temp,mod(floor(length(g{ii})/2),length(g{ii})));
-      x=floor(length(g{ii})/size(c{ii},1));
-      y=length(g{ii})-x*size(c{ii},1);
-      temp=[repmat(temp,x,1);temp(1:y,:)];
-    else
-      temp=circshift(temp,shift);
-    end
-    
-    % Windowing with the synthesis window
-    % Possible improvement: the following repmat is not needed if W=1 
-    % (but the time difference when removing it should be really small)
-    temp=temp(1:length(g{ii}),:).*repmat(circshift(g{ii},shift),1,W);
-    
-    % Possible improvement: the following could be computed faster by 
-    % explicitely computing the indexes instead of using modulo
-    tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
-    f(tempind,:)=f(tempind,:)+temp;
-  end
-  
-  end;
-else   
-  
-  % ---- invert the uniform case ----------------
-  
-  [M, N, W]=size(c);
+    % ---- invert the non-uniform case ---------
+    M=cellfun(@(x) size(x,1),c);
+    N=length(c);
+    W=size(c{1},2);    
+else
+    % ---- invert the uniform case ----------------
+    [M, N, W]=size(c);    
+end
 
-  f=zeros(Ls,W); % Initialisation of the result
+[g,info]=nsgabwin(g,a,M);
 
-  for ii=1:N
-    shift=floor(length(g{ii})/2);
-    % Note: the *size(c{ii},1) in the following is here to ensure the 
-    % coherence of the ifft normalisation convention with the function dgt 
-    % of ltfat
-    temp=ifft(squeeze(c(:,ii,:)))*M;
+f=zeros(L,W);
+
+for ii = 1:N
+    Lg = length(g{ii});
+    gt = g{ii};
     
-    if M<length(g{ii}) 
-      % The number of frequency channels is smaller than window length, 
-      % we need to periodize.
-      % We have to periodize symetrically around time 0 which requires
-      % some heavy indexing because time zero is index 1 and negative times
-      % are at the end of the vector.
-      temp=circshift(temp,mod(floor(length(g{ii})/2),length(g{ii})));
-      x=floor(length(g{ii})/M);
-      y=length(g{ii})-x*M;
-      temp=[repmat(temp,x,1);temp(1:y,:)];
+    % This is an explicit fftshift
+    gt = gt([Lg-floor(Lg/2)+1:Lg,1:ceil(Lg/2)]);
+    
+    win_range = mod(timepos(ii)+(-floor(Lg/2):ceil(Lg/2)-1),L)+1;
+    
+    if iscell(c)
+        M = size(c{ii},1);
+        temp = ifft(c{ii},[],1)*M;
     else
-      temp=circshift(temp,shift);
+        temp = ifft(c(:,ii,:),[],1)*M;
     end
-    
-    % Windowing with the synthesis window
-    % Possible improvement: the following repmat is not needed if W=1 
-    % (but the time difference when removing it should be really small)
-    temp=temp(1:length(g{ii}),:).*repmat(circshift(g{ii},shift),1,W);
-    
-    % Possible improvement: the following could be computed faster by 
-    % explicitely computing the indexes instead of using modulo
-    tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
-    f(tempind,:)=f(tempind,:)+temp;
-  end
-  
+    idx = mod([M-floor(Lg/2)+1:M,1:ceil(Lg/2)]-1,M)+1;
+    temp = temp(idx,:);
+    f(win_range,:) = f(win_range,:) + bsxfun(@times,temp,gt);
+end
+
+if ~isempty(Ls)
+  f = f(1:Ls,:);
 end;
-

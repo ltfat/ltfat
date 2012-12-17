@@ -4,9 +4,9 @@ function coef=framecoef2native(F,coef);
 %
 %   `framecoef2native(F,coef)` converts the frame coefficients *coef* into the
 %   native coefficient format of the frame. The frame object *F* must have been
-%   created using |newframe|_.
+%   created using |frame|_.
 %
-%   See also: newframe, framenative2coef, framecoef2tf
+%   See also: frame, framenative2coef, framecoef2tf
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

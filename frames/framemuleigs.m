@@ -1,10 +1,11 @@
-function [V,D]=framemuleigs(F,coef,varargin)
+function [V,D]=framemuleigs(Fa,Fs,coef,varargin)
 %FRAMEMULEIGS  Eigenpairs of frame multiplier
 %   Usage:  h=framemuleigs(F,c,K);
 %           h=framemuleigs(F,c,K,...);
 %
 %   Input parameters:
-%         F     : Frame definition
+%         Fa    : Frame analysis definition
+%         Fs    : Frame analysis definition
 %         K     : Number of eigenvectors to compute.
 %         c     : symbol of Gabor multiplier
 %   Output parameters:
@@ -48,8 +49,8 @@ function [V,D]=framemuleigs(F,coef,varargin)
 %   must be converted to a column vector to work with in this framework:::
 %
 %     mask=batmask;
-%     F=newframe('dgt','gauss','dual',10,40);
-%     [V,D]=framemuleigs(F,mask(:));
+%     [Fa,Fs]=framepair('dgt','gauss','dual',10,40);
+%     [V,D]=framemuleigs(Fa,Fs,mask(:));
 %     sgram(V(:,1),'dynrange',90);
 %
 %   See also: gabmul, dgt, idgt, gabdual, gabtight
@@ -80,7 +81,7 @@ definput.flags.method={'auto','iter','full'};
 % Do the computation. For small problems a direct calculation is just as
 % fast.
 
-L=framelengthcoef(F,size(coef,1));
+L=framelengthcoef(Fa,size(coef,1));
 
 if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
     
@@ -93,13 +94,10 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   opts.maxit  = kv.maxit;
   opts.tol    = kv.tol;
   
-  % Setup afun
-  afun(1,coef,F)
-  
   if doV
-    [V,D] = eigs(@afun,L,K,'LM',opts);
+    [V,D] = eigs(@(x) frsyn(Fs,coef.*frana(Fa,x)),L,K,'LM',opts);
   else
-    D     = eigs(@afun,L,K,'LM',opts);
+    D     = eigs(@(x) frsyn(Fs,coef.*frana(Fa,x)),L,K,'LM',opts);
   end;
 
 else
@@ -130,17 +128,3 @@ end;
 %if isreal(ga) && isreal(gs) && isreal(c)
 %  D=real(D);
 %end;
-
-% The function has been written in this way, because Octave (at the time
-% of writing) does not accept additional parameters at the end of the
-% line of input arguments for eigs
-function y=afun(x,c_in,F_in)
-  persistent c;
-  persistent F;
-  
-  if nargin>1
-    c  = c_in; 
-    F  = F_in; 
-  else
-    y=frsyn(F,c.*frana(F,x));
-  end;

@@ -5,7 +5,7 @@ function coef=frametf2coef(F,coef);
 %   `frametf2coef(F,coef)` convert frame coefficients from the
 %   time-frequency plane layout into the common column format.
 %
-%   See also: newframe, framecoef2tf, framecoef2native
+%   See also: frame, framecoef2tf, framecoef2native
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

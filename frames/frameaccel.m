@@ -15,7 +15,7 @@ function F=frameaccel(F,Ls);
 %   If `frameaccel` is called twice for the same transform length, no
 %   additional computations will be done.
 %
-%   See also: newframe, frana, framelength, framelengthcoef
+%   See also: frame, frana, framelength, framelengthcoef
   
 if strcmp(F.type,'fusion')
     for ii=1:F.Nframes
@@ -24,72 +24,46 @@ if strcmp(F.type,'fusion')
     return;
 end;
 
-% Default value for a lot of transforms
+% Default values for a lot of transforms
 F.L=Ls;
+F.isfac=1;
 
-if ~isfield(F,'ga')
-  % Quick exit, the transform does not use analysis nor synthesis
-  % windows.
+if ~isfield(F,'g')
+  % Quick exit, the frame does not use a window. In this case, the frame
+  % always has a factorizations
   return;
 end;
   
-% From this point and on, we are sure that F.ga and F.gs exists.
+% From this point and on, we are sure that F.g
 
 L=framelength(F,Ls);
   
-F.isfacana=1;
-F.isfacsyn=1;
 
 if (isfield(F,'L') && (L==F.L))
   % Quick return, we have already accelerated
   return
 end;
 
-if ~isempty(F.ga)
+if ~isempty(F.g)
   
   switch(F.type)
    case 'gen'
-    info.isfacana=~issparse(F.ga);  
+    info.isfac=~issparse(F.g);  
    case {'dgt','dgtreal'}
-    [F.ga,F.ga_info]  = gabwin(F.ga,F.a,F.M,L,F.vars{:});
+    [F.g,F.g_info]  = gabwin(F.g,F.a,F.M,L,F.vars{:});
    case {'dwilt','wmdct'}
-    [F.ga,F.ga_info]  = wilwin(F.ga,F.M,L);
+    [F.g,F.g_info]  = wilwin(F.g,F.M,L);
    case {'filterbank','ufilterbank'}
-    [F.ga,F.ga_info]  = filterbankwin(F.ga,F.a,L);
-    F.isfacana=F.ga_info.isfac;
+    [F.g,F.g_info]  = filterbankwin(F.g,F.a,L);
+    F.isfac=F.g_info.isfac;
    case {'filterbankreal','ufilterbankreal'}
-    [F.ga,F.ga_info]  = filterbankwin(F.ga,F.a,L,'real');
-    F.isfacana=F.ga_info.isfac;
+    [F.g,F.g_info]  = filterbankwin(F.g,F.a,L,'real');
+    F.isfac=F.g_info.isfac;
    case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
-    [F.ga,F.ga_info]  = nsgabwin(F.ga,F.a,F.M,L);
-    F.isfacana=F.ga_info.isfac;
-  end;
-  
-end;
-
-if ~isempty(F.gs)
-  
-  switch(F.type)
-   case 'gen'
-    info.isfacsyn=~issparse(F.gs);  
-   case {'dgt','dgtreal'}
-    [F.gs,F.gs_info] = gabwin(F.gs,F.a,F.M,L,F.vars{:});
-   case {'dwilt','wmdct'}
-    [F.gs,F.gs_info] = wilwin(F.gs,F.M,L);
-   case {'filterbank','ufilterbank'}
-    [F.gs,F.gs_info]  = filterbankwin(F.gs,F.a,L);
-    F.isfacsyn=F.gs_info.isfac;
-   case {'filterbankreal','ufilterbankreal'}
-    [F.gs,F.gs_info]  = filterbankwin(F.gs,F.a,L,'real');
-    F.isfacsyn=F.gs_info.isfac;
-   case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
-    [F.gs,F.gs_info]  = nsgabwin(F.gs,F.a,F.M,L);
-    F.isfacsyn=F.gs_info.isfac;
-
+    [F.g,F.g_info]  = nsgabwin(F.g,F.a,F.M,L);
+    F.isfac=F.g_info.isfac;
   end;
   
 end;
 
 F.L=L;
-
-  

@@ -1,10 +1,10 @@
-function G=franamat(F,L);
-%FRANAMAT  Frame analysis operator matrix
-%   Usage: G=franamat(F,L);
+function G=framematrix(F,L);
+%FRAMEMATRIX  Frame analysis operator matrix
+%   Usage: G=framematrix(F,L);
 %
-%   `G=franamat(F,L)` returns the matrix representation *G* of the frame
+%   `G=framematrix(F,L)` returns the matrix representation *G* of the frame
 %   analysis operator for a frame *F* of length *L*. The frame object *F*
-%   must have been created using |newframe|_.
+%   must have been created using |frame|_.
 %
 %   The frame analysis operator matrix contains all the frame atoms as column vectors. It has
 %   dimensions $L \times Ncoef$, where $Ncoef$ is the number of
@@ -18,13 +18,13 @@ function G=franamat(F,L);
 %   matrix. Consider the following simple example:::
 %
 %     L=200;
-%     F=newframe('dgt','gauss','dual',10,20);
-%     G=franamat(F,L);
+%     F=frame('dgt','gauss',10,20);
+%     G=framematrix(F,L);
 %     testsig = randn(L,1);
 %     res = frana(F,testsig)-G'*testsig;
 %     norm(res)
 %
-%   See also: newframe, frana, frsyn, franaadj, frsynmat
+%   See also: frame, frana, frsyn
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -44,6 +44,6 @@ switch(F.type)
   % in the representation
   Ncoef=framered(F)*L;
   coef=eye(Ncoef);
-  G = franaadj(F,coef);  
+  G = frsyn(F,coef);  
 end;
 
