@@ -29,8 +29,6 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %     'maxit',n    Do at most n iterations.
 %
-%     'unlocbox'   Use unlocbox.
-%
 %     'cg'         Solve the problem using the Conjugate Gradient
 %                  algorithm. This is the default.
 %
@@ -49,12 +47,16 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %      F=frame('dgtreal','gauss',10,20);
 %      c=frana(F,bat);
-%      r=frsyniter(F,c);
+%      [r,relres]=frsyniter(F,c,'tol',1e-14);
 %      norm(bat-r)/norm(bat)
+%      semilogy(relres);
+%      title('Conversion rate of the CG algorithm');
+%      xlabel('No. of iterations');
+%      ylabel('Relative residual');
 %
 %   See also: frame, frana, frsyn
   
-% AUTHORS: Nathanael Perraudin and Peter L. Søndergaard
+% AUTHORS: Nicki Holighaus & Peter L. Søndergaard
     
   if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));
@@ -63,7 +65,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   definput.keyvals.Ls=[];
   definput.keyvals.tol=1e-9;
   definput.keyvals.maxit=100;
-  definput.flags.alg={'cg','pcg','unlocbox'};
+  definput.flags.alg={'cg','pcg'};
   definput.keyvals.printstep=10;
   definput.flags.print={'quiet','print'};
 
@@ -72,30 +74,39 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   % Determine L from the first vector, it must match for all of them.
   L=framelengthcoef(F,size(c,1));
     
-  if flags.do_pcg || flags.do_cg
+  A=@(x) frsyn(F,frana(F,x));
 
-      A=@(x) frsyn(F,frana(F,x));
-
-      % It is possible to specify the initial guess, but this is not
-      % currently done
-
-      if flags.do_pcg
-          d=framediag(F,L);
-          M=spdiags(d,0,L,L);
-          
-          [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
-      else
-
-          [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
-      end;
-
-      if nargout>1
-         relres=relres/norm(c(:));
-      end;
+  % It is possible to specify the initial guess, but this is not
+  % currently done
+  
+  if flags.do_pcg
+      d=framediag(F,L);
+      M=spdiags(d,0,L,L);
+      
+      [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
+  else
+      
+      [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
+  end;
+  
+  if nargout>1
+      relres=relres/norm(c(:));
+  end;
+  
+      
+  % Cut or extend f to the correct length, if desired.
+  if ~isempty(Ls)
+      f=postpad(f,Ls);
+  else
+      Ls=L;
   end;
 
-  
-  if flags.do_unlocbox
+
+
+if 0
+    
+    % This code has been disabled, as the PCG algorithm is so much faster.
+      if flags.do_unlocbox
 
       % Get the upper frame bound (Or an estimation bigger than the bound)
       [~,B]=framebounds(F,L,'a'); 
@@ -126,15 +137,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
       
       iter=0; % The code of the fast_proj_B2 is not yet compatible with this
   end;
-      
-  % Cut or extend f to the correct length, if desired.
-  if ~isempty(Ls)
-      f=postpad(f,Ls);
-  else
-      Ls=L;
-  end;
-      
-end
 
+end;
 
     

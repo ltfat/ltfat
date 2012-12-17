@@ -99,7 +99,7 @@ def runcommand(todo,redomode='auto'):
     if todo=='php':
         phpdir=localconf.outputdir+projectname+'-php'+os.sep
         printdoc.printdoc(projectname,'php')
-        s='rsync -av '+project['php']+' '+host+':'+www+'doc/'
+        s='rsync -av '+phpdir+' '+host+':'+www+'doc/'
         os.system(s)    
 
     if todo=='phplocal' in todo:
@@ -123,7 +123,6 @@ def runcommand(todo,redomode='auto'):
 
     if 'stagewww'==todo:
         publishwww=cwd+'ltfatwww/'
-        printdoc.autostage(tbwww)
         printdoc.git_stageexport(tbwww,publishwww)
         #os.system('cp ltfat-devel-'+versionstring+'.zip '+publishwww+'/prerelease/')    
         #os.system('cp ltfat-devel-'+versionstring+'.tgz '+publishwww+'/prerelease/')
