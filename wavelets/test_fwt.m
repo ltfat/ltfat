@@ -4,7 +4,7 @@ function test_failed=test_fwt(verbose)
 %
 
 f = randn(17897,1);
-J = 9;
+J = 7;
 % Examples
 if(nargin>0)
   verbose=1;

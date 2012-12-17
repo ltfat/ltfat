@@ -128,21 +128,15 @@ elseif(isstruct(h))
 elseif(ischar(h))
     h = waveletfb(h);
     do_definedfb = 1;
+elseif(isnumeric(h))
+    % TO DO: Does it make sense to accept filter coefficients as matrix?
 else
    error('%s: Unrecognized Wavelet filters definition.',upper(mfilename)); 
 end
 
-
-%% ----- step 1 : Verify f and determine its length -------
-% Change f to correct shape.
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
-if(Ls<2)
-   error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
-end
-
+%% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
-
 
 if(do_definedfb)
     if(flags.do_type_null)
@@ -166,6 +160,15 @@ else
     a = length(h)*ones(length(h),1);
 end
 
+%% ----- step 1 : Verify f and determine its length -------
+% Change f to correct shape.
+% TO DO: if elements of a are not equal and the flags are 'dec' and 'per',
+% do zero padding to the next multiple of 2^J
+[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+if(Ls<2)
+   error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
+end
+ 
 
 
 %% ----- step 2 : Check whether the input signal is long enough
@@ -173,14 +176,15 @@ end
 flen = length(h{1});
 if(strcmp(flags.ext,'per'))
    if(strcmp(flags.type,'dec'))
-     minLs = (2^J-1)*(flen-1); % length of the longest equivalent filter -1
+     minLs = (a(1)^J-1)*(flen-1); % length of the longest equivalent filter -1
    else
-     minLs = (2^(J-1))*(flen-1); % length of the longest upsampled filter - 1
+     minLs = (a(1)^(J-1))*(flen-1); % length of the longest upsampled filter - 1
    end
    if Ls<minLs
      error('%s: Input signal length is %d. Minimum signal length is %d or use %s flag instead. \n',upper(mfilename),Ls,minLs,'''ppd''');
    end;
 end
+
 
 
 %% ----- step 3 : Run computation
