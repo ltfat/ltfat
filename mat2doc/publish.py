@@ -29,11 +29,17 @@ projectdir=localconf.projects[projectname]
 conffile=projectdir+'mat2doc/mat2docconf.py'
 filesdir=localconf.outputdir+projectname+'-files'+os.sep
 
+
 f=file(projectdir+projectname+'_version')
 versionstring=f.read()[:-1]
 f.close()
 
 import printdoc
+
+# Safely create directories if they are missing
+printdoc.safe_mkdir(localconf.outputdir)
+printdoc.safe_mkdir(localconf.tmpdir)
+printdoc.safe_mkdir(filesdir)
 
 def runcommand(todo,redomode='auto'):
 
@@ -42,18 +48,28 @@ def runcommand(todo,redomode='auto'):
     # Release for other developers to download
     if 'develmat' in todo:
         printdoc.git_stageexport_mat(projectname)
+
+        printdoc.git_repoexport_mat(projectname)
+        matdir=localconf.outputdir+projectname+'-mat'+os.sep
+
         printdoc.printdoc(projectname,'mat')
 
         fname=filesdir+projectname+'-devel-'+versionstring
-        os.system('rm '+fname+'.zip')
+
+        # Create the binary packages In order to get the right path in
+        # the compressed files, copy the source to the temporary
+        # directory with the projectname
+        tmpworkdir=localconf.tmpdir+projectname
+        os.system('cp -R '+matdir+' '+tmpworkdir)
 
         # Create the Unix src package
-        os.system('tar zcvf '+fname+'.tgz '+projectname+os.sep)
+        os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+projectname)
 
-        # Create the Windows src package
+        # Create the Windows src package. Remove old zip file,
+        # otherwise we add to the archive
         os.system('rm '+fname+'.zip')
-        printdoc.unix2dos(filesdir+projectname)
-        os.system('zip -r '+fname+'.zip '+projectname+os.sep)
+        printdoc.unix2dos(tmpworkdir)
+        os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+projectname)
 
     # Release for users to download
     if 'releasemat' in todo:
@@ -68,19 +84,19 @@ def runcommand(todo,redomode='auto'):
         printdoc.printdoc(projectname,'mat')
 
         fname=filesdir+projectname+'-'+versionstring
-        printdoc.safe_mkdir(filesdir)
+        tmpworkdir=localconf.tmpdir+projectname
 
         # Create the binary packages In order to get the right path in
         # the compressed files, copy the source to the temporary
         # directory with the projectname
-        os.system('cp -R '+matdir+' '+localconf.tmpdir+projectname)
+        os.system('cp -R '+matdir+' '+tmpworkdir)
 
         # Create the Unix src package
         os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+projectname)
 
         # Create the Windows src package
         os.system('rm '+fname+'.zip')
-        printdoc.unix2dos(filesdir+projectname)
+        printdoc.unix2dos(tmpworkdir)
         os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+projectname)
 
     if 'tex'==todo:
@@ -136,37 +152,41 @@ def runcommand(todo,redomode='auto'):
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'binary'==todo:
+        # You must run this command right after the "releasemat" or "develmat" commands
+
+        # We assume that everything is as it was left by "releasemat" or "develmat" 
+
+        tmpworkdir=localconf.tmpdir+projectname
+
         # Build windows binary
-        fname=cwd+'ltfat-'+versionstring+'-win32'
+        fname=filesdir+'ltfat-'+versionstring+'-win64'
         os.system('rm '+fname+'.zip')
 
-        bdir=cwd+'buildbinary/ltfat'
+        bdir=localconf.tmpdir+'buildbinary'
         printdoc.rmrf(bdir)
 
-        printdoc.unix2dos(cwd+'ltfat')
+        os.system('cp -r '+tmpworkdir+' '+bdir)
+        os.system('cp -r '+localconf.outputdir+'ltfat-win64-addon/* '+bdir+os.sep+projectname)
 
-        os.system('cp -r '+cwd+'ltfat/* '+bdir)
-        os.system('cp -r '+cwd+'ltfat-win32-addon/* '+bdir)
-
-        s='cd '+cwd+'buildbinary; zip -r '+fname+'.zip ltfat/'
-        print s
+        s='cd '+bdir+'; zip -r '+fname+'.zip ltfat/'
+        #print s
         os.system(s)
 
         # Build Mac binary
-        fname=cwd+'ltfat-'+versionstring+'-mac'
-        os.system('rm '+fname+'.zip')
+        #fname=cwd+'ltfat-'+versionstring+'-mac'
+        #os.system('rm '+fname+'.zip')
 
-        bdir=cwd+'buildbinary/ltfat'
-        printdoc.rmrf(bdir)
+        #bdir=cwd+'buildbinary/ltfat'
+        #printdoc.rmrf(bdir)
 
-        printdoc.unix2dos(cwd+'ltfat')
+        #printdoc.unix2dos(cwd+'ltfat')
 
-        os.system('cp -r '+cwd+'ltfat/* '+bdir)
-        os.system('cp -r '+cwd+'ltfat-mac-addon/* '+bdir)
+        #os.system('cp -r '+cwd+'ltfat/* '+bdir)
+        #os.system('cp -r '+cwd+'ltfat-mac-addon/* '+bdir)
 
-        s='cd '+cwd+'buildbinary; zip -r '+fname+'.zip ltfat/'
-        print s
-        os.system(s)
+        #s='cd '+cwd+'buildbinary; zip -r '+fname+'.zip ltfat/'
+        #print s
+        #os.system(s)
 
 
     #if 'upload' in todo:
