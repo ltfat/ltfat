@@ -82,10 +82,10 @@ function [c,relres,iter]=franaiter(F,c,varargin)
       d=framediag(F,L);
       M=spdiags(d,0,L,L);
       
-      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit,M);
+      [fout,flag,dummytilde,iter,relres]=pcg(A,c,kv.tol,kv.maxit,M);
   else
       
-      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit);          
+      [fout,flag,dummytilde,iter,relres]=pcg(A,c,kv.tol,kv.maxit);          
   end;
 
   c=frana(F,fout);

@@ -83,10 +83,10 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
       d=framediag(F,L);
       M=spdiags(d,0,L,L);
       
-      [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
+      [f,flag,dummytilde,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
   else
       
-      [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
+      [f,flag,dummytilde,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
   end;
   
   if nargout>1
@@ -109,7 +109,7 @@ if 0
       if flags.do_unlocbox
 
       % Get the upper frame bound (Or an estimation bigger than the bound)
-      [~,B]=framebounds(F,L,'a'); 
+      [dummytilde,B]=framebounds(F,L,'a'); 
       
       % Set the parameter for the fast projection on a B2 ball
       param.At=@(x) frsyn(F,x);     % adjoint operator
@@ -129,7 +129,7 @@ if 0
       end;
       
       % Make the projection. Requires UNLocBOX
-      [f, ~] = fast_proj_B2(zeros(L,1), 0, param);
+      [f, dummytilde] = fast_proj_B2(zeros(L,1), 0, param);
       
       % compute the residue
       res = param.A(f) - param.y; norm_res = norm(res(:), 2);

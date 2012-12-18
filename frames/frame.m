@@ -112,7 +112,7 @@ switch(ftype)
     
     % Sanitize 'a': Make it a column vector of length M
     F.a=F.a(:);
-    [F.a,~]=scalardistribute(F.a,ones(F.M,1));
+    [F.a,dummytilde]=scalardistribute(F.a,ones(F.M,1));
     
   case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     F.a=varargin{2};
@@ -123,7 +123,7 @@ switch(ftype)
     F.a=F.a(:);
     F.N=numel(F.a);
     F.M=F.M(:);
-    [F.M,~]=scalardistribute(F.M,ones(F.N,1));
+    [F.M,dummytilde]=scalardistribute(F.M,ones(F.N,1));
     
   case 'gen'
     F.g=varargin{1};
@@ -138,7 +138,7 @@ switch(ftype)
     F.w=varargin{1};
     F.frames=varargin(2:end);
     F.Nframes=numel(F.frames);
-    [F.w,~]=scalardistribute(F.w(:),ones(F.Nframes,1));
+    [F.w,dummytilde]=scalardistribute(F.w(:),ones(F.Nframes,1));
     
   otherwise
     error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
