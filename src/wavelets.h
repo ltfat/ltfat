@@ -33,6 +33,7 @@ void LTFAT_H_NAME(up_conv_td)(LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, 
 
 // additional common basic routines
 
+
 LTFAT_EXTERN
 void LTFAT_H_NAME(up_conv_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, int outLen, LTFAT_H_REAL *filt, int fLen, int up, int sub, int skip, int ext);
 
@@ -66,10 +67,10 @@ LTFAT_EXTERN
 void LTFAT_H_NAME(dyadic_idwt_per)(LTFAT_H_REAL *in[], int inLen[], LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(undec_idwt_exp)(LTFAT_H_REAL *in[], int inLen[], LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, const int J);
+void LTFAT_H_NAME(undec_idwt_exp)(LTFAT_H_REAL *in[], int inLen[], LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(undec_idwt_per)(LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, const int J);
+void LTFAT_H_NAME(undec_idwt_per)(LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
 
 #undef LTFAT_H_REAL
 #undef LTFAT_H_COMPLEX

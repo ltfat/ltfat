@@ -24,7 +24,7 @@ definput.flags.treetype = {'dwt','full','cust','wpack'};
 % for purposes of cleaning the cache
 nodePredecesorsMultId();
 
-[fR, fC] = size(filts);
+
 
 % input is structure defined by waveletfb
 if(isstruct(filts))
@@ -35,6 +35,7 @@ if(isstruct(filts))
         filts = filts.g;
     end
 end
+[fR, fC] = size(filts);
 
 if(iscell(filts))
   if(isnumeric(filts{1}))
@@ -102,8 +103,7 @@ if(iscell(filts))
  
      end
   end
-  elseif(isstruct(filts))
-      
+
       
       
   else

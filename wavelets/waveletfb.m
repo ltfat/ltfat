@@ -31,27 +31,13 @@ else
     error('%s: First argument must be a string or cell.',upper(mfilename));
 end;
 
-
-
-%ord = 1;
-%if(~isempty(varargin)) ord = varargin{1}; end;
-
 % Search for m-file containing string wname
-wfiltFiles =dir(fullfile(ltfatbasepath,sprintf('wavelets/%s*.m',wprefix)));
-found = 0;
-for ii = 1:length(wfiltFiles)
-    tmpFile = lower(wfiltFiles(ii).name);
-    subtmpFile = tmpFile(length(wprefix)+1:end-2);
-    if(strcmp(subtmpFile,wname{1}))
-       found = 1; break;
-    end
-end
-
-if(~found)
+wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('wavelets/%s%s*.m',wprefix,lower(wavname{1}))));
+if(isempty(wfiltFiles))
    error('%s: Unknown wavelet type: %s',upper(mfilename),name); 
 else
    % if found, crop '.m' from the filename 
-   tmpFile = tmpFile(1:end-2); 
+   tmpFile = wfiltFiles.name(1:end-2); 
 end
 
 
