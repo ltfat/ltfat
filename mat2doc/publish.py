@@ -17,29 +17,35 @@ tbwww='/home/peter/nw/ltfatwww'
 # as this function is called from.
 
 sys.path.append(cwd)
-
 import localconf
 
 sys.path.append(localconf.mat2docdir)
-
-# Get the data from localconf
-#conffile=projectdir+'mat2doc/mat2docconf.py'
-
-
+import mat2doc
 import printdoc
 
 # Safely create directories if they are missing
 printdoc.safe_mkdir(localconf.outputdir)
 printdoc.safe_mkdir(localconf.tmpdir)
 
-def versionstring(project):
-    projectdir=localconf.projects[project]
-    f=file(projectdir+project+'_version')
-    versionstring=f.read()[:-1]
-    f.close()
-    return versionstring    
+# This is run if the file is called from the command line
+project=sys.argv[1]
+todo=sys.argv[2]
+redomode='auto'
+if len(sys.argv)>3:
+    redomode=sys.argv[3]
 
-def createcompressedfiles(srcdir,fname,do_zip=True,do_tgz=True):
+
+sys.path.append(localconf.projects[project]+'mat2doc')
+from mat2docconf import *
+
+filesdir=localconf.outputdir+project+'-files'+os.sep
+printdoc.safe_mkdir(filesdir)
+
+def createcompressedfile(srcdir,fname,target):
+    # The following targets are supported:
+    # unix - Unix lineendings, UTF-8 encoding and gzip compression
+    # win  - Windows lineendings, 8859 enconding and zip compression
+    # mac  - Unix lineendings, 8859 encoding and zip compression
     tmpworkdir=localconf.tmpdir+project
     fname=filesdir+fname
     srcdir=localconf.outputdir+srcdir+os.sep
@@ -53,21 +59,22 @@ def createcompressedfiles(srcdir,fname,do_zip=True,do_tgz=True):
     printdoc.rmrf(tmpworkdir)
     os.system('cp -R '+srcdir+'* '+tmpworkdir)
     
-    if do_tgz:
+    if target=='unix':
         os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+project)
     
-    if do_zip:
+    if target=='win':
         os.system('rm '+fname+'.zip')
         printdoc.unix2dos(tmpworkdir)
+        printdoc.convertencoding(tmpworkdir,'ISO-8859-1')
+        os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+project)
+
+    if target=='mac':
+        os.system('rm '+fname+'.zip')
+        printdoc.convertencoding(tmpworkdir,'ISO-8859-1')
         os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+project)
     
-def createbinaryfile(filename,ext):
-    tmpworkdir=localconf.outputdir+project+'-mat'
-    
-    # Build windows binary
-    fname=filesdir+filename+'-'+ext
-    os.system('rm '+fname+'.zip')
-    
+def createbinaryfile(filename,ext,target):
+    tmpworkdir=localconf.outputdir+project+'-mat'        
     bdir=localconf.outputdir+project+'-'+ext
 
     printdoc.safe_mkdir(bdir)
@@ -79,9 +86,13 @@ def createbinaryfile(filename,ext):
     s='cp -r '+localconf.outputdir+project+'-'+ext+'-addon/* '+bdir
     os.system(s)
 
-    createcompressedfiles(project+'-'+ext,project+'-'+versionstring(project)+'-'+ext,do_tgz=False)
+    createcompressedfile(project+'-'+ext,project+'-'+versionstring+'-'+ext,target)
 
-def runcommand(project,todo,redomode='auto'):
+def runcommand(todo,redomode='auto'):
+    # When editing these commands, some variables are already defined
+    #
+    #   versionstring - This is the string from mat2docconf
+    #   project       - This is the name of the project from calling publish.py
 
     print 'PUBLISH '+todo+' '+redomode
 
@@ -100,13 +111,14 @@ def runcommand(project,todo,redomode='auto'):
 
     # Release for other developers to download
     if 'develmat' in todo:
-        runcommand(project,'gitstagemat')
+        runcommand('gitstagemat')
 
-        createcompressedfiles(project+'-mat',project+'-devel-'+versionstring(project))
+        createcompressedfile(project+'-mat',project+'-devel-'+versionstring,'unix')
+        createcompressedfile(project+'-mat',project+'-devel-'+versionstring,'win')
 
     # Release for users to download
     if 'releasemat' in todo:
-        runcommand(project,'gitrepomat')
+        runcommand('gitrepomat')
 
         matdir=localconf.outputdir+project+'-mat'+os.sep
 
@@ -115,7 +127,8 @@ def runcommand(project,todo,redomode='auto'):
         os.system('rm -rf '+matdir+'reference')
         os.system('rm -rf '+matdir+'timing')
 
-        createcompressedfiles(project+'-mat',project+'-'+versionstring(project))
+        createcompressedfile(project+'-mat',project+'-'+versionstring,'unix')
+        createcompressedfile(project+'-mat',project+'-'+versionstring,'win')
 
     if 'tex'==todo:
         printdoc.printdoc(project,'tex')
@@ -140,11 +153,11 @@ def runcommand(project,todo,redomode='auto'):
         printdoc.printdoc(project,'phplocal')
 
     if todo=='fullrelease':
-        runcommand(project,'releasemat',redomode)
-        runcommand(project,'binary')
-        runcommand(project,'php',redomode)
-        runcommand(project,'tex',redomode)
-        runcommand(project,'texupload')
+        runcommand('releasemat',redomode)
+        runcommand('binary')
+        runcommand('php',redomode)
+        runcommand('tex',redomode)
+        runcommand('texupload')
     
     if todo=='wavephp':
         wavedir=localconf.projects['ltfatwave']
@@ -166,10 +179,12 @@ def runcommand(project,todo,redomode='auto'):
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'binary'==todo:
-        # You must run this command right after the "releasemat" or "develmat" commands
-        # We assume that everything is as it was left by "releasemat" or "develmat" 
+        # You must run this command right after the "releasemat" or
+        # "develmat" commands as this will create a correct "-mat"
+        # directory
 
-        createbinaryfile(project+'-'+versionstring(project),'win64')
+        createbinaryfile(project+'-'+versionstring,'win64','win')
+        createbinaryfile(project+'-'+versionstring,'mac','mac')
 
 
     #if 'upload' in todo:
@@ -201,16 +216,8 @@ def runcommand(project,todo,redomode='auto'):
         os.system('rsync -av '+notehtml+' '+host+':'+noteswww);
 
 
-# This is run if the file is called from the command line
-project=sys.argv[1]
-todo=sys.argv[2]
-redomode='auto'
-if len(sys.argv)>3:
-    redomode=sys.argv[3]
 
-filesdir=localconf.outputdir+project+'-files'+os.sep
-printdoc.safe_mkdir(filesdir)
-    
-runcommand(project,todo,redomode)
 
+# Excute runcommand, this is where the main stuff happens    
+runcommand(todo,redomode)
 
