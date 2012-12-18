@@ -2,35 +2,37 @@
 # Global configuration of the mat2doc system
 # -------------------------------------------
 
-# When writing this file, certain variables are already defined:
-#
-#   self.root points to the project directory
-
-
 import localconf
+from mat2doc import *
+
+f=file(localconf.projects['ltfatwave']+'ltfat_version')
+versionstring=f.read()[:-1]
+f.close
 
 conf=ConfType()
 
-def mycopyrightfun(self):
-    vf=file(self.root+'ltfat_version');
-    v=vf.readline()
-    vf.close
+def copyrightfun():
+
+    f=file(localconf.projects['ltfat']+'ltfat_version')
+    versionstring=f.read()[:-1]
+    f.close
     
-    f=file(self.root+'mat2doc/copyrightplate')
+    f=file(localconf.projects['ltfat']+'mat2doc/copyrightplate')
     buf=f.readlines()
     f.close
 
-    copyright=[u'Copyright (C) 2005-2012 Peter L. Soendergaard.\n','This file is part of LTFAT version '+v]
+    copyright=[u'Copyright (C) 2005-2012 Peter L. S\xf8ndergaard.\n',
+               u'This file is part of LTFAT version '+versionstring+'\n']
     copyright.extend(buf)
     
     return copyright
 
-conf.copyright=mycopyrightfun
+conf.copyright=copyrightfun
 
 contentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'filterbank/Contents','nonstatgab/Contents',
                'frames/Contents',
-               'sigproc/Contents','auditory/Contents',
+               'sigproc/Contents','auditory/Contents','wavelets/Contents',
                'demos/Contents','signals/Contents']
 
 # The urlbase in the targets must always be an absolute path, and it
@@ -44,8 +46,8 @@ php=PhpConf()
 
 php.indexfiles=contentsfiles
 php.includedir='../include/'
-php.urlbase='/doc/'
-php.codedir=localconf.outputdir+'ltfat-mat'+os.sep
+php.urlbase='/wavelets/'
+php.codedir=localconf.outputdir+'ltfatwave-mat'+os.sep
 
 # ------------------------------------------
 # Local php
@@ -55,8 +57,7 @@ phplocal=PhpConf()
 phplocal.indexfiles=contentsfiles
 phplocal.includedir='../include/'
 phplocal.urlbase='/doc/'
-phplocal.codedir=localconf.outputdir+'ltfat-mat'+os.sep
-
+phplocal.codedir=localconf.outputdir+'ltfatwave-mat'+os.sep
 
 # ------------------------------------------
 # Configuration of LaTeX
@@ -74,7 +75,7 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
-tex.codedir=localconf.outputdir+'ltfat-mat'+os.sep
+tex.codedir=localconf.outputdir+'ltfatwave-mat'+os.sep
     
 # ------------------------------------------
 # Configuration of Matlab
