@@ -20,7 +20,7 @@ def mycopyrightfun(self):
     buf=f.readlines()
     f.close
 
-    copyright=[u'Copyright (C) 2005-2012 Peter L. Soendergaard.\n','This file is part of LTFAT version '+v]
+    copyright=[u'Copyright (C) 2005-2012 Peter L. S\xf8ndergaard.\n',u'This file is part of LTFAT version '+v]
     copyright.extend(buf)
     
     return copyright
@@ -74,7 +74,6 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
-tex.codedir=localconf.outputdir+'ltfat-mat'+os.sep
     
 # ------------------------------------------
 # Configuration of Matlab

@@ -5,8 +5,6 @@ cwd=os.getcwd()+os.sep
 
 # ------- Configuration parameters -------------
 
-projectname='ltfat'
-
 # Configure HTML placement at remote server
 host='soender,ltfat@web.sourceforge.net'
 www='/home/project-web/ltfat/htdocs//'
@@ -15,7 +13,7 @@ tbwww='/home/peter/nw/ltfatwww'
 
 # ------- do not edit below this line ----------
 
-# Import the localconf file, it should be place in the same directory
+# Import the localconf file, it should be placed in the same directory
 # as this function is called from.
 
 sys.path.append(cwd)
@@ -25,108 +23,128 @@ import localconf
 sys.path.append(localconf.mat2docdir)
 
 # Get the data from localconf
-projectdir=localconf.projects[projectname]
-conffile=projectdir+'mat2doc/mat2docconf.py'
-filesdir=localconf.outputdir+projectname+'-files'+os.sep
+#conffile=projectdir+'mat2doc/mat2docconf.py'
 
-
-f=file(projectdir+projectname+'_version')
-versionstring=f.read()[:-1]
-f.close()
 
 import printdoc
 
 # Safely create directories if they are missing
 printdoc.safe_mkdir(localconf.outputdir)
 printdoc.safe_mkdir(localconf.tmpdir)
-printdoc.safe_mkdir(filesdir)
 
-def runcommand(todo,redomode='auto'):
+def versionstring(project):
+    projectdir=localconf.projects[project]
+    f=file(projectdir+project+'_version')
+    versionstring=f.read()[:-1]
+    f.close()
+    return versionstring    
+
+def createcompressedfiles(srcdir,fname,do_zip=True,do_tgz=True):
+    tmpworkdir=localconf.tmpdir+project
+    fname=filesdir+fname
+    srcdir=localconf.outputdir+srcdir+os.sep
+
+    printdoc.safe_mkdir(tmpworkdir)
+    printdoc.rmrf(tmpworkdir)
+
+    # Create zip and tgz archives.  In order to get the right path in
+    # the compressed files, copy the source to the temporary directory
+    # with the project
+    printdoc.rmrf(tmpworkdir)
+    os.system('cp -R '+srcdir+'* '+tmpworkdir)
+    
+    if do_tgz:
+        os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+project)
+    
+    if do_zip:
+        os.system('rm '+fname+'.zip')
+        printdoc.unix2dos(tmpworkdir)
+        os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+project)
+    
+def createbinaryfile(filename,ext):
+    tmpworkdir=localconf.outputdir+project+'-mat'
+    
+    # Build windows binary
+    fname=filesdir+filename+'-'+ext
+    os.system('rm '+fname+'.zip')
+    
+    bdir=localconf.outputdir+project+'-'+ext
+
+    printdoc.safe_mkdir(bdir)
+    printdoc.rmrf(bdir)
+    
+    s='cp -r '+tmpworkdir+'/* '+bdir
+    os.system(s)
+
+    s='cp -r '+localconf.outputdir+project+'-'+ext+'-addon/* '+bdir
+    os.system(s)
+
+    createcompressedfiles(project+'-'+ext,project+'-'+versionstring(project)+'-'+ext,do_tgz=False)
+
+def runcommand(project,todo,redomode='auto'):
 
     print 'PUBLISH '+todo+' '+redomode
 
+    # Simple commands to make the others easier to write
+    if todo=='svnmat':
+        pass
+
+    if todo=='gitstagemat':
+        printdoc.git_stageexport_mat(project)
+        printdoc.printdoc(project,'mat')
+
+    if todo=='gitrepomat':
+        printdoc.git_repoexport_mat(project)
+        printdoc.printdoc(project,'mat')
+
+
     # Release for other developers to download
     if 'develmat' in todo:
-        printdoc.git_stageexport_mat(projectname)
+        runcommand(project,'gitstagemat')
 
-        printdoc.git_repoexport_mat(projectname)
-        matdir=localconf.outputdir+projectname+'-mat'+os.sep
-
-        printdoc.printdoc(projectname,'mat')
-
-        fname=filesdir+projectname+'-devel-'+versionstring
-
-        # Create the binary packages In order to get the right path in
-        # the compressed files, copy the source to the temporary
-        # directory with the projectname
-        tmpworkdir=localconf.tmpdir+projectname
-        os.system('cp -R '+matdir+' '+tmpworkdir)
-
-        # Create the Unix src package
-        os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+projectname)
-
-        # Create the Windows src package. Remove old zip file,
-        # otherwise we add to the archive
-        os.system('rm '+fname+'.zip')
-        printdoc.unix2dos(tmpworkdir)
-        os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+projectname)
+        createcompressedfiles(project+'-mat',project+'-devel-'+versionstring(project))
 
     # Release for users to download
     if 'releasemat' in todo:
-        printdoc.git_repoexport_mat(projectname)
-        matdir=localconf.outputdir+projectname+'-mat'+os.sep
+        runcommand(project,'gitrepomat')
+
+        matdir=localconf.outputdir+project+'-mat'+os.sep
 
         # Remove unwanted files
         os.system('rm -rf '+matdir+'testing')
         os.system('rm -rf '+matdir+'reference')
         os.system('rm -rf '+matdir+'timing')
 
-        printdoc.printdoc(projectname,'mat')
-
-        fname=filesdir+projectname+'-'+versionstring
-        tmpworkdir=localconf.tmpdir+projectname
-
-        # Create the binary packages In order to get the right path in
-        # the compressed files, copy the source to the temporary
-        # directory with the projectname
-        os.system('cp -R '+matdir+' '+tmpworkdir)
-
-        # Create the Unix src package
-        os.system('cd '+localconf.tmpdir+'; tar zcvf '+fname+'.tgz '+projectname)
-
-        # Create the Windows src package
-        os.system('rm '+fname+'.zip')
-        printdoc.unix2dos(tmpworkdir)
-        os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+projectname)
+        createcompressedfiles(project+'-mat',project+'-'+versionstring(project))
 
     if 'tex'==todo:
-        printdoc.printdoc(projectname,'tex')
+        printdoc.printdoc(project,'tex')
 
     if 'texmake'==todo:
         os.system('cd '+project['tex']+'; make')
 
-        printdoc.printdoc(projectname,'tex')
+        printdoc.printdoc(project,'tex')
 
     if 'texupload'==todo:
-        texdir=localconf.outputdir+projectname+'-tex'+os.sep
+        texdir=localconf.outputdir+project+'-tex'+os.sep
         s='rsync -av '+texdir+'ltfat.pdf '+host+':'+www+'doc/'
         os.system(s)
 
     if todo=='php':
-        phpdir=localconf.outputdir+projectname+'-php'+os.sep
-        printdoc.printdoc(projectname,'php')
+        phpdir=localconf.outputdir+project+'-php'+os.sep
+        printdoc.printdoc(project,'php')
         s='rsync -av '+phpdir+' '+host+':'+www+'doc/'
         os.system(s)    
 
     if todo=='phplocal' in todo:
-        printdoc.printdoc(projectname,'phplocal')
+        printdoc.printdoc(project,'phplocal')
 
     if todo=='fullrelease':
-        runcommand('releasemat',redomode)
-        runcommand('binary')
-        runcommand('php',redomode)
-        runcommand('tex',redomode)
-        runcommand('texupload')
+        runcommand(project,'releasemat',redomode)
+        runcommand(project,'binary')
+        runcommand(project,'php',redomode)
+        runcommand(project,'tex',redomode)
+        runcommand(project,'texupload')
     
     if todo=='wavephp':
         wavedir=localconf.projects['ltfatwave']
@@ -138,59 +156,24 @@ def runcommand(todo,redomode='auto'):
         printdoc.printdoc('ltfatwave','mat')
 
     if 'stagewww'==todo:
-        publishwww=cwd+'ltfatwww/'
+        publishwww=localconf.outputdir+'ltfatwww/'
         printdoc.git_stageexport(tbwww,publishwww)
-        #os.system('cp ltfat-devel-'+versionstring+'.zip '+publishwww+'/prerelease/')    
-        #os.system('cp ltfat-devel-'+versionstring+'.tgz '+publishwww+'/prerelease/')
-        #os.system('cp ltfat-devel-'+versionstring+'-win32.zip '+publishwww+'/prerelease/')
-
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'releasewww'==todo:
-        publishwww=cwd+'ltfatwww/'
-        printdoc.git_repoexport(tbwww,'master','ltfatwww',cwd)
+        publishwww=localconf.outputdir+'ltfatwww/'
+        printdoc.git_repoexport(tbwww,'master','ltfatwww',localconf.outputdir)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'binary'==todo:
         # You must run this command right after the "releasemat" or "develmat" commands
-
         # We assume that everything is as it was left by "releasemat" or "develmat" 
 
-        tmpworkdir=localconf.tmpdir+projectname
-
-        # Build windows binary
-        fname=filesdir+'ltfat-'+versionstring+'-win64'
-        os.system('rm '+fname+'.zip')
-
-        bdir=localconf.tmpdir+'buildbinary'
-        printdoc.rmrf(bdir)
-
-        os.system('cp -r '+tmpworkdir+' '+bdir)
-        os.system('cp -r '+localconf.outputdir+'ltfat-win64-addon/* '+bdir+os.sep+projectname)
-
-        s='cd '+bdir+'; zip -r '+fname+'.zip ltfat/'
-        #print s
-        os.system(s)
-
-        # Build Mac binary
-        #fname=cwd+'ltfat-'+versionstring+'-mac'
-        #os.system('rm '+fname+'.zip')
-
-        #bdir=cwd+'buildbinary/ltfat'
-        #printdoc.rmrf(bdir)
-
-        #printdoc.unix2dos(cwd+'ltfat')
-
-        #os.system('cp -r '+cwd+'ltfat/* '+bdir)
-        #os.system('cp -r '+cwd+'ltfat-mac-addon/* '+bdir)
-
-        #s='cd '+cwd+'buildbinary; zip -r '+fname+'.zip ltfat/'
-        #print s
-        #os.system(s)
+        createbinaryfile(project+'-'+versionstring(project),'win64')
 
 
     #if 'upload' in todo:
-    #    ddir=cwd+'ltfat_sourceforge/ltfat/'
+    #    ddir=localconf.outputdir+'ltfat_sourceforge/ltfat/'
     #    os.system('rsync -av '+ddir+
     #              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
 
@@ -219,11 +202,15 @@ def runcommand(todo,redomode='auto'):
 
 
 # This is run if the file is called from the command line
-todo=sys.argv[1]
+project=sys.argv[1]
+todo=sys.argv[2]
 redomode='auto'
-if len(sys.argv)>2:
-    redomode=sys.argv[2]
+if len(sys.argv)>3:
+    redomode=sys.argv[3]
+
+filesdir=localconf.outputdir+project+'-files'+os.sep
+printdoc.safe_mkdir(filesdir)
     
-runcommand(todo,redomode)
+runcommand(project,todo,redomode)
 
 
