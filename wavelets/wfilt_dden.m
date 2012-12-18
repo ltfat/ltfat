@@ -1,7 +1,10 @@
 function [h,g,a] = wfilt_dden(N)
+%WFILT_DDEN  Double-DENsity dwt filters (tight frame)
+%   Usage: [h,g,a] = wfilt_dden(N);
 %
+%   `[h,g,a]=wfilt_dden(N)` computes XXX
 %
-%   REFERENCE: Selesnick, I. W.: THE DOUBLE DENSITY
+%   XXX FIND THIS REFERENCE: Selesnick, I. W.: THE DOUBLE DENSITY
 %   DWT, http://eeweb.poly.edu/iselesni/double/double.pdf
 
 a= [2;2;2];

@@ -1,9 +1,12 @@
 function [h,g,a] = wfilt_apr(N)
+%WFILT_APR Almost Perfect Reconstruction Filter Bank for Non-redundant, Approximately Shift-Invariant, ComplexWavelet Transforms
+%   Usage: [h,g,a] = wfilt_apr(N);
 %
+%   `[h,g,a] = wfilt_apr(N)` computes an almost perfect reconstruction
+%   filter bank for non-redundant, approximately shift-invariant,
+%   ComplexWavelet Transforms 
 %
-%REFERENCE: Hosseini, Vafadust: Almost Perfect Reconstruction Filter Bank for
-%Non-redundant, Approximately Shift-Invariant,
-%Complex Wavelet Transforms
+%   References: hosseini2008almost
 
 a= [3;3;3];
 switch(N)

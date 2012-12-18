@@ -1,9 +1,10 @@
 function [h,g,a] = wfilt_hden(N)
+%WFILT_HDEN  Higher DENsity dwt filters (tight frame, frame)
+%   Usage: [h,g,a] = wfilt_hden(N);
 %
+%   `[h,g,a]=wfilt_hden(N)` computes Higher DENsity dwt filters (tight frame, frame).
 %
-%   REFERENCE: Selesnick, I. W.: A HIGHER DENSITY
-%   DWT, 
-%
+%   References: selesnick2006higher
 a= [2;2;1];
 
 switch(N)

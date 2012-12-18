@@ -1,16 +1,22 @@
 function [out,a,origs] = multid( filts, J, varargin)
 %MULTID  Creates equivalent one-level multirate identity filterbank
-% filts = cell array
-%   - row or collumn orientation -> one level filters, ordered from the lowest
+%   Usage: [out,a,origs] = multid( filts, J, varargin)
+%
+%   `multid(filts,J)` calculates the impulse responses of non-iterated
+%   noble multirate-identity wavelet filterbank.
+%
+%   * row or collumn orientation -> one level filters, ordered from the lowest
 %   central fequency to the highest
-%   - cell matrix -> J collumns denote filters at each level, -> no need
+%   
+%   * cell matrix -> J collumns denote filters at each level, -> no need
 %   for J?
-%   - dual-tree structures encoded how?
+%   
+%   * dual-tree structures encoded how?
 % 
-% Deafault downsampling factor for each filter is 2.
+%   Default downsampling factor for each filter is 2.
 % 
-% key-value pair 'pack' - actual tree shape (encoded somehow)
-% flag dual-tree...
+%   key-value pair 'pack' - actual tree shape (encoded somehow)
+%   flag dual-tree...
 
 
 if(nargin<2)

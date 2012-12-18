@@ -1,10 +1,10 @@
-function [ ] = plotwavc(c,varargin )
-%PLOTWAVC  Plot wavelet coefficients
-%   Usage:  plotwavc(c) 
-%           plotwavc(c,Lc)
-%           plotwavc(...,type,fs,dynrange)
+function [ ] = plotfwt(c,varargin )
+%PLOTFWT  Plot wavelet coefficients
+%   Usage:  plotfwt(c) 
+%           plotfwt(c,Lc)
+%           plotfwt(...,type,fs,dynrange)
 %
-%   `plotwavc(c)` plot the wavelet coefficients *c*. The input cell-array
+%   `plotfwt(c)` plot the wavelet coefficients *c*. The input cell-array
 %   *c* must have the same structure as coefficients returned from
 %   |fwt|_. See the help on |fwt|_ for more information.
 %
@@ -14,7 +14,7 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'tfplot','ltfattranslate','fwt','plotwavc'};
+definput.import={'tfplot','ltfattranslate','fwt','plotfwt'};
 
 definput.keyvals.xres=800;
 

@@ -1,4 +1,4 @@
-function definput=arg_plotwavc(definput)
+function definput=arg_plotfwt(definput)
 
   definput.flags.frqbands = {'uni', 'dyad'};
   definput.flags.wavplottype = {'image', 'stem', 'surf','waterfall'};

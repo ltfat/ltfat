@@ -1,6 +1,9 @@
 function [H,f] = freqzfb(h,varargin);
-% N,Fs
-% eqnorm
+%FREQZFB Zero-delay frequency responses from the impulse responses
+%   Usage:  freqzfb(h,
+%
+%   XXX Merge this function with magresp
+
 
 definput.keyvals.Ls = 1024;
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);   
