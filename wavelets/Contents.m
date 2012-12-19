@@ -1,43 +1,26 @@
 % LTFAT - Wavelets
 %
-%   Basic wavelet analysis/synthesis interface functions
+%   Basic analysis/synthesis
 %      FWT               - Fast Wavelet Transform 
 %      IFWT              - Inverse Fast Wavelet Transform
 %      WTFFT             - Wavelet Transform in the frequency-domain
 %      IWTFFT            - Inverse Wavelet Transform in the frequency-domain
 %
 %   Plots
-%      PLOTWAVC          - Plot wavelet coefficients
+%      PLOTFWT           - Plot wavelet coefficients
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
 %      CELL2PACK         - Changes wavelet coefficient storing format
 %      PACK2CELL         - Changes wavelet coefficient storing format back
-%      FREQZFB           - Calculate a zero-delay frequency responses from the given impulse responses 
 %      MULTID            - Calculates the impulse responses of non-iterated noble multirate-identity wavelet filterbank
 %
-%   Wavelet filters defined in the time-domain
-%      WFILT_ALGMBAND        - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
-%      WFILT_APR             - Almost Perfect Reconstruction Filter Bank for Non-redundant, Approximately Shift-Invariant, ComplexWavelet Transforms
-%      WFILT_DB              - DauBechies orthogonal filters (ortonormal base)
-%      WFILT_DDEN            - Double-DENsity dwt filters (tight frame)
-%      WFILT_DGRID           - Dense GRID framelets (tight frame, symmetric)
-%      WFILT_DTREE           - Dual-TREE complex wavelet transform filters (two orthonormal bases)
-%      WFILT_HDEN            - Higher DENsity dwt filters (tight frame, frame)  
-%      WFILT_LEMAIRE         - Battle and Lemarie quadrature filters
-%      WFILT_MATLABWTWRAPPER - Wrapper of the wfilters function from the Matlab Wavelet Toolbox 
-%      WFILT_MAXFLAT         - Maximally flat FIR filters
-%      WFILT_MBAND           - M-band filters
-%      WFILT_OPTFS           - Optimized orthogonal filters with improved Frequency Selectivity (ortonormal base)
-%      WFILT_REMEZ           - Wavelet orthonogal filters based on the Remez Exchange algorithm
-%      WFILT_SYMDS           - SYMmetric wavelet Dyadic Siblings (frames)
-%      WFILT_SPLINE          - Biorthogonal spline wavelet filters
-%      WFILT_SYM             - Least asymmetric Daubechies wavelet filters
-%      
+%   Filters defined in the time-domain
+%      WFILT_ALGMBAND    - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
+%      WFILT_APR         - Almost Perfect Reconstruction Filter Bank for Non-redundant, Approximately Shift-Invariant, ComplexWavelet Transforms
+%      WFILT_DB          - DauBechies orthogonal filters (ortonormal base)
+%      WFILT_DDEN        - Double-DENsity dwt filters (tight frame)
+%      WFILT_DGRID       - Dense GRID framelets (tight frame, symmetric)
+%      WFILT_DTREE       - Dual-TREE complex wavelet transform filters (two orthonormal bases)
+%      WFILT_HDEN        - Higher DENsity dwt filters (tight frame, frame)  
 %
-%   Wavelet filters defined in the frequency-domain
-%      WFREQ_RADWT           - Overcomplete Rational-Dilation wavelet transform
-%      WFREQ_LEMAIRE         - Battle and Lemarie wavelet filters
-%
-%   Misc
-%      

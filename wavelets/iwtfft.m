@@ -1,6 +1,11 @@
 function f = iwtfft(c,G,a,varargin)
-
-
+%IWTFFT  Inverse Wavelet Transform in the frequency-domain
+%   Usage: f=iwtfft(c,G,a);
+%          f=iwtfft(c,G,a,...);
+%
+%   `iwtfft(c,G,a)` computes XXX.
+%
+%   See also: wtfft
 
     if nargin<2
       error('%s: Too few input parameters.',upper(mfilename));
