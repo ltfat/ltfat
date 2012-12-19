@@ -35,6 +35,7 @@
 %    WIL2RECT       -  Rectangular layout of Wilson coefficients
 %    RECT2WIL       -  Inverse of WIL2RECT
 %    WILWIN         -  Evaluate Wilson window
+%    DWILTLENGTH    -  Length of Wilson/WMDCT system to expand a signal
 %
 %  Reconstructing windows
 %    GABDUAL        -  Canonical dual window

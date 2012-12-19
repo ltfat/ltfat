@@ -11,24 +11,25 @@ intensitive function in the toolbox.
 To compile the Mex-interfaces, type "ltfatmex" on the Matlab command
 prompt. This will compile all the available mex-functions.
 
+If you have downloaded a binary release, everything is already
+compiled and you should not need to do anything else.
+
 The Mex-files links to certain libraries, most importantly to the
 LTFAT C-library. In order to compile the Mex-interfaces, you must
-first have compiled the C library. If you have downloaded a binary
-release for Microsoft Windows, then this library has already been
-compiled for you, and you should not need to do anything else. On
-Unix, the "ltfatmex" will automatically build the library if you have
-installed the correct libraries.
+first compile the C library.  On Unix and MacOS, the "ltfatmex" will
+automatically build the library if you have installed the correct
+libraries.
 
-Currently, lcc is the only supported compiler on Windows, if you use
-some variant of Microsoft Visual Studio, the compilation will most
-likely fail.
+Currently, lcc is the only supported compiler on Windows XP (32 bit),
+if you use some variant of Microsoft Visual Studio, the compilation
+will most likely fail.
+
+--------- Compiling on MacOS -------------------------------------------
+
+On MacOS, you must have the gcc compiler and the FFTW libraries
+installed. Then just type "ltfatmex" and everything should work.
 
 --------- Compiling libltfat on Microsoft windows, 32 bit --------------
-
-By far the easiest option is to download the "ltfat-win32" binary
-package from Sourceforge. This package includes a compiled version of
-libltfat and FFTW, enough to compile the Matlab interfaces without
-install anything else.
 
 If you wish to compile libltfat youself, do the following:
 
@@ -81,3 +82,4 @@ FFTW, LAPACK and BLAS libraries:
 
 - On Debian / Ubuntu, install the packages 'libfftw3-dev',
   'libblas-dev' and 'liblapack-dev'.
+

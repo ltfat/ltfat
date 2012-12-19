@@ -2,30 +2,32 @@
 # Global configuration of the mat2doc system
 # -------------------------------------------
 
-# When writing this file, certain variables are already defined:
-#
-#   self.root points to the project directory
-
-
 import localconf
+from mat2doc import *
 
-conf=ConfType()
+f=file(localconf.projects['ltfat']+'ltfat_version')
+versionstring=f.read()[:-1]
+f.close
 
-def mycopyrightfun(self):
-    vf=file(self.root+'ltfat_version');
-    v=vf.readline()
-    vf.close
+def copyrightfun():
+
+    f=file(localconf.projects['ltfat']+'ltfat_version')
+    versionstring=f.read()[:-1]
+    f.close
     
-    f=file(self.root+'mat2doc/copyrightplate')
+    f=file(localconf.projects['ltfat']+'mat2doc/copyrightplate')
     buf=f.readlines()
     f.close
 
-    copyright=[u'Copyright (C) 2005-2012 Peter L. Soendergaard.\n','This file is part of LTFAT version '+v]
+    copyright=[u'Copyright (C) 2005-2012 Peter L. S\xf8ndergaard.\n',
+               u'This file is part of LTFAT version '+versionstring+'\n']
     copyright.extend(buf)
     
     return copyright
 
-conf.copyright=mycopyrightfun
+conf=ConfType()
+
+conf.copyright=copyrightfun
 
 contentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'filterbank/Contents','nonstatgab/Contents',
@@ -74,7 +76,6 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
-tex.codedir=localconf.outputdir+'ltfat-mat'+os.sep
     
 # ------------------------------------------
 # Configuration of Matlab
