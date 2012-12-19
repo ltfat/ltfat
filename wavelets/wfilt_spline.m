@@ -1,23 +1,15 @@
 function [h,g,a]=wfilt_spline(m,n)
-
-% WSPLINE  Generates spline wavelets.
+% WFILT_SPLINE  Birthogonal spline wavelets.
+%   Usage: [h,g,a]=wfilt_spline(m,n);
 %
-%          [H,G,RH,RG]=WSPLINE(M,N) returns the analysis and
-%          synthesis filters corresponding to a biortoghonal 
-%          scheme with spline wavelets of compact support. 
-%          H is the analysis lowpass filter, RH the synthesis 
-%          lowpass filter, G the analysis highpass filter and
-%          RG the synthesis highpass filter.
-%          N and M specify the number of zeros in z=-1 required 
-%          for H(z) and RH(z) respectively.
-% 
-%          N+M must be even. 
+%   Input parameters:
+%         m     : Number of zeros at $z=-1$ of the lowpass filter in g{1}
+%         n     : Number of zeros at $z=-1$ of the lowpass filter in h{1}. m+n have to be even. 
 %
-%          With these examples is possible to achieve arbitrarily 
-%          high regularity. For large M, the analysis wavelet
-%          will belong to C^k if N>4.165M+5.165(k+1).
-
-%--------------------------------------------------------
+%   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters corresponding to a biortoghonal 
+%   scheme with spline wavelets of compact support. 
+%
+% Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es

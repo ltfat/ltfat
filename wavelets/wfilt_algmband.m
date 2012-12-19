@@ -2,8 +2,9 @@ function [h,g,a] = wfilt_algmband(N)
 %WFILT_ALGMBAND  An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
 %   Usage: [h,g,a] = wfilt_algmband(N);
 %
-%   '[h,g,a]=wfilt_algmband(N)` computes an algebraic construction of
-%   orthonormal m-band wavelets with perfect reconstruction.
+%   `[h,g,a]=wfilt_algmband(N)` computes an algebraic construction of
+%   orthonormal m-band wavelets with perfect reconstruction. Critically
+%   subsampled.
 %
 %   References:  lin2006algebraic  
 

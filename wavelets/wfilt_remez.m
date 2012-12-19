@@ -1,23 +1,19 @@
 function [h,g,a]=wfilt_remez(L,K,B)
-
-%REMEZFLT Generates orthonormal wavelet filters based on the Remez
-%	      exchange algorithm.
+%WFILT_REMEZ Filters designed using Remez exchange algorithm
+%   Usage: [h,g,a]=wfilt_remez(L,K,B)
 %
-%	      [H,G,RH,RG] = REMEZFLT(L,K,B) returns a set of wavelet
-%	      filters. You can control regularity, frequency selectivity,
-%	      and length of the filters. It works performing a factorization
-%	      based on the complex cepstrum of the polynomial returned by
-%	      REMEZWAV.
+%   Input parameters:
+%         L     : Length of the filters.
+%         K     : Degree of flatness at $z=-1$. 
+%         B     : Normalized transition bandwidth.
 %
-%	      L is the length of the filters. K is degree of flatness at
-%	      z=-1. B is the normalized transition bandwidth.
+%   `[h,g,a]=wfilt_remez(L,K,B)` calculates a set of wavelet filters. You can
+%   control regularity, frequency selectivity, and length of the filters.
+%   It works performing a factorization based on the complex cepstrum of the polynomial.
 %
-%	      References: O. Rioul and P. Duhamel, "A Remez Exchange Algorithm
-%			  for Orthonormal Wavelets", IEEE Trans. Circuits and
-%			  Systems - II: Analog and Digital Signal Processing,
-%			  41(8), August 1994
-
-%--------------------------------------------------------
+% References: rioul94remez
+%
+% Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es

@@ -11,8 +11,8 @@
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
-%      CELL2PACK         - Changes wavelet coefficient storing format
-%      PACK2CELL         - Changes wavelet coefficient storing format back
+%      WAVCELL2PACK      - Changes wavelet coefficient storing format
+%      WAVPACK2CELL      - Changes wavelet coefficient storing format back
 %      MULTID            - Calculates the impulse responses of non-iterated noble multirate-identity wavelet filterbank
 %
 %   Filters defined in the time-domain
@@ -23,4 +23,17 @@
 %      WFILT_DGRID       - Dense GRID framelets (tight frame, symmetric)
 %      WFILT_DTREE       - Dual-TREE complex wavelet transform filters (two orthonormal bases)
 %      WFILT_HDEN        - Higher DENsity dwt filters (tight frame, frame)  
+%      WFILT_LEMAIRE         - Battle and Lemarie quadrature filters
+%      WFILT_MATLABWTWRAPPER - Wrapper of the wfilters function from the Matlab Wavelet Toolbox 
+%      WFILT_MAXFLAT         - Maximally flat FIR filters
+%      WFILT_MBAND           - M-band filters
+%      WFILT_OPTFS           - Optimized orthogonal filters with improved Frequency Selectivity (ortonormal base)
+%      WFILT_REMEZ           - Wavelet orthonogal filters based on the Remez Exchange algorithm
+%      WFILT_SYMDS           - SYMmetric wavelet Dyadic Siblings (frames)
+%      WFILT_SPLINE          - Biorthogonal spline wavelet filters
+%      WFILT_SYM             - Least asymmetric Daubechies wavelet filters
+%      
+%   Wavelet filters defined in the frequency-domain
+%      WFREQ_LEMAIRE         - Battle and Lemarie filters sampled freq. resp.
+%
 %

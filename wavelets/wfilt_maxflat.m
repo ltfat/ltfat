@@ -1,26 +1,18 @@
-function [h,g,a]=wfilt_maxflat(N0)
-
-%MAXFLAT    Generates maximally flat FIR filters.
+function [h,g,a]=wfilt_maxflat(N)
+%WFILT_MAXFLAT Generates maximally flat FIR filters.
+%   Usage: [h,g,a] = wfilt_maxflat(N);
 %
-%           [H,G,RH,RG] = MAXFLAT(N0,NPI) where (N0-1) is the degree
-%	    of flatness at w=0 and (NPI-1) at w=pi radians. 
-%	    This function returns half band filters only if N0=NPI.
-%	    Otherwise, they cannot be passed to WT, WPK.
+%   `[h,g,a]=wfilt_maxflat(N)` calculates half-band maximally flat FIR filters,
+%   where $(N0-1)$ is the degree of flatness at $w=0$ and $w=pi$ radians. 
 %
-%           H is the analysis lowpass filter, RH the synthesis 
-%           lowpass filter, G the analysis highpass filter and
-%           RG the synthesis highpass filter.
+% References: vaidy93mult
 %
-%	    For a given order, an increase in NPI results in a wider
-%           stopband. 
-%
-% 	    References: P.P. Vaidyanathan, "Multirate Systems and
-%	                Filter Banks", Prentice-hall, pp. 532-535.
-
-%--------------------------------------------------------
+% Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es
+
+
 
 Npi=N0;
 

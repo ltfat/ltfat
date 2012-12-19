@@ -1,11 +1,12 @@
 function f = ifwt(c,g,J,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt(c,g)
-%           f = ifwt(c,g,Ls,...)
+%   Usage:  f = ifwt(c,g,J)
+%           f = ifwt(c,g,J,Ls,...)
 %
 %   Input parameters:
 %         c     : Coefficients stored in J+1 cell-array.
 %         g     : Synthesis wavelet filters.
+%         J     : Number of filterbank iterations.
 %         Ls    : Length of the reconstructed signal.
 %
 %   Output parameters:
@@ -20,15 +21,13 @@ function f = ifwt(c,g,J,varargin)
 %                Type of the boundary handling.
 %
 %
-%   See also:
+%   See also:  fwt, waveletfb, wfilt_db
 %
 %   Demos:
 %
-%   References:
+%   References: ma98
 
-%   AUTHOR : Zdenek Prusa.
-%   TESTING: TEST_IFWT
-%   REFERENCE: REF_IFWT
+
 
     if nargin<2
       error('%s: Too few input parameters.',upper(mfilename));

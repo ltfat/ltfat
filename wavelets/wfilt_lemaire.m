@@ -1,26 +1,22 @@
-function [h,g,a]=wfilt_lemaire(num_coefs)
-
-%LEMARIE    Generates the quadrature filters given by Battle and Lemarie.
+function [h,g,a]=wfilt_lemaire(N)
+%WFILT_LEMARIE  Battle and Lemarie filters.
+%   Usage: [h,g,a]=wfilt_lemaire(N)
 %
-%	    [H,G,RH,RG] = LEMARIE (NUM_COEFS) returns the coeficients of
-%	    orthonormal  Battle-Lemarie wavelets. NUM_COEFS specifies the
-%           number of coefficients. 
+%   Input parameters:
+%         N     : Filter length.
 %
-%	    H is the analysis lowpass filter, RH the synthesis lowpass 
-%	    filter, G the analysis higthpass filter and RG the synthesis
-%	    highpass filter.
+%   `[h,g,a]=wfilt_lemaire(N)` calculates coeficients of orthonormal
+%   Battle-Lemarie wavelets. Filter coefficients are obtainded by
+%   frequency domain sampling and trunctating the impulse response.
 %
-%	    References: S. Mallat, "A Theory for Multiresolution Signal
-%	    		Decomposition: The Wavelet Representation", IEEE Trans.
-%			on Patt. An. and Mach. Intell., July 1989
-
-%--------------------------------------------------------
+% References: mallat89atheory
+%
+% Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es
 
-
-
+num_coefs = N;
 L = 1024;
 H = wfreq_lemaire(L);
 hh=real(ifft(H{1},L));

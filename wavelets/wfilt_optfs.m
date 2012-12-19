@@ -1,11 +1,13 @@
 function [h,g,a] = wfilt_optfs(N)
+%WFILT_OPTFS Improved frequency separation filters 
+%   Usage: [h,g,a] = wfilt_optfs(N);
 %
+%   `[h,g,a]=wfilt_optfs(N)` returns wavelet filters with better frequency
+%   band sepparation (compared to Daubeschies filters of the same length)
+%   having at least two vanishing moments.
 %
-%   RERERENCE: Optimized orthonormal wavelet filters with improved frequency separation
-%   Henrique Mohallem Paiva a, Roberto Kawakami Harrop Galv?o
-%   http://www.sciencedirect.com/science/article/pii/S1051200412000735
+%   References:  paiva2012opt
 %
-%   Little steper frequency responses (when compared to db filers of the same length), little rippling in the stopbands
 a = [2,2];
 h = cell(2,1);
 switch(N)

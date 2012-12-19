@@ -1,13 +1,15 @@
-function [h,g] = wfilt_matlabwtwrapper(wname)
-% Wrapper of the Matlab Wavelet Toolbox wfilters function
-% Requires Matlab Wavelet Toolbox
+function [h,g,a] = wfilt_matlabwtwrapper(wname)
+%WFILT_MATLABWTWRAPPER Wrapper of the Matlab Wavelet Toolbox wfilters function
+%  Usage: [h,g,a] = wfilt_matlabwtwrapper(wname);
+%
+%   '[h,g,a]=wfilt_matlabwtwrapper(wname)` calls Matlab Wavelet Toolbox
+%   function wfilters and passes parameter wname. Requires Matlab Wavelet
+%   Toolbox.
+%
 
+
+a = [2,2];
 [lo,hi,lo_s,hi_s] = wfilters(wname);
-
-%     if lo(1)==0 && hi(1)==0 && lo_s(1) == 0 &&  hi_s(1) == 0
-%         lo = lo(2:end); hi = hi(2:end);
-%         lo_s = lo_s(2:end);hi_s = hi_s(2:end);
-%     end
 
 h=cell(2,1);
 h{1} = lo;

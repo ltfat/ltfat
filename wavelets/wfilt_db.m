@@ -19,24 +19,23 @@ function [H, G, a] = wfilt_db(N)
 %                 
 %   .. H_l(z)=(1+z^-1)^N*R(z),
 %
-%   .. math:: H_l(z)=\left(1+z^{-1}\right)R(z),
+%   .. math:: H_l(z)=\left(1+z^{-1}\right)^NR(z),
 %   
-%   where $R(z)$ is a spectral factor of $P(z)=2R(z)*R(z^{-1})$
+%   where $R(z)$ is a spectral factor of the Legrange interpolator $P(z)=2R(z)*R(z^{-1})$
 %   All subsequent filters of the two-channel filterbank are derived as
-%   follows::
+%   follows:
 %
-%     H_h(z)=H_l((-z)^-1)
-%     G_l(z)=H_l(z^-1)
-%    G_h(z)=-H_l(-z)
+%   .. H_h(z)=H_l((-z)^-1)
+%   .. G_l(z)=H_l(z^-1)
+%   .. G_h(z)=-H_l(-z)
+%
+%   .. math:: H_h(z)=H_l((-z)^-1)
+%   .. math:: G_l(z)=H_l(z^-1)
+%   .. math:: G_h(z)=-H_l(-z)
 %
 %   making them an orthogonal causal perfect-reconstruction QMF.
 %
-%   `[H,G] = dbfilt(N,J)` computes a one-iteration $J+1$ channel Daubechies
-%   FIR filterbank equivalent to the $J$ iterations of the basic two-channel
-%   filterbank using the multirate identity.
-  
-%   XXX Insert the correct references
-%   References: Daubechies, Kovacevic, MultirateId
+%   References: daub98tenlectures
 
 if(nargin<1)
    error('%s: Too few input parameters.',upper(mfilename));

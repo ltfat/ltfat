@@ -2,12 +2,11 @@ function [h,g,a] = wfilt_dgrid(N)
 %WFILT_DGRID  Dense GRID framelets (tight frame, symmetric)
 %   Usage: [h,g,a] = wfilt_dgrid(N);
 %
-%   `[h,g,a]=wfilt_dgrid(N)` computes Dense GRID framelets (tight frame,
-%   symmetric).
+%   `[h,g,a]=wfilt_dgrid(N)` computes Dense GRID framelets. Redundancy
+%   equal to 2.
 %
-%   XXX REFERENCE: A. Farras Abdelnour: 
-%   DENSE GRID FRAMELETS WITH SYMMETRIC LOWPASS AND BANDPASS FILTERS 
-%   http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=04555520
+%   References: abdelnour2007dense
+
 
 a = [2;2;2;2];
 switch(N)

@@ -1,32 +1,25 @@
-function [h,g,a]=wfilt_sym(ord)
-
-%SYMLETS    Generates the "least asymmetric" Daubechies' wavelets or "symlets".
+function [h,g,a]=wfilt_sym(N)
+%WFILT_SYM Symlet filters 
+%   Usage: [h,g,a]=wfilt_sym(N);    
 %
-%	    [H,G,RH,RG] = SYMLETS (NUM_COEFS) generates  the quadrature 
-%	    filters, given by Daubechies, with zeros of the trigonometrical 
-%	    polynomial selected alternatively inside and outside the
-%	    unit circle. NUM_COEFS specifies the number of coefficients.
+%   `[h,g,a]=wfilt_sym(N)` generates the "least asymmetric" Daubechies' wavelets or "symlets". 
+%   Zeros of the filters are of the trigonometrical polynomial selected alternatively inside and outside the
+%	unit circle. 
 %
-%	    In this way "least asymmetric" compactly supported wavelets are
-%	    obtained. H is the analysis lowpass filter, RH the synthesis lowpass 
-%	    filter, G the analysis higthpass filter and RG the synthesis
-%	    highpass filter.
+%   References: daub98tenlectures
 %
-%	    References: I. Daubechies
-%			"Orthonormal bases of compactly supported wavelets.
-%		        II.Variations on a theme.", SIAM
-%			March 1993
-
-%--------------------------------------------------------
+% Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es
 
-num_coefs = 2*ord;
+num_coefs = 2*N;
 
 if num_coefs==2	    % Haar filters
-	rh=0.5*[sqrt(2) sqrt(2)];
-	[rh,rg,h,g]=rh2rg(rh);
+	g{1} = 0.5*[sqrt(2) sqrt(2)];
+    g{2} = 0.5*[sqrt(2) -sqrt(2)];
+ 	h{1} = 0.5*[sqrt(2) sqrt(2)];
+    h{2} = 0.5*[-sqrt(2) sqrt(2)];
 	return
 end
 

@@ -4,7 +4,7 @@ function [h,g,a] = wfilt_apr(N)
 %
 %   `[h,g,a] = wfilt_apr(N)` computes an almost perfect reconstruction
 %   filter bank for non-redundant, approximately shift-invariant,
-%   ComplexWavelet Transforms 
+%   Complex Wavelet Transforms. Critically subsampled. 
 %
 %   References: hosseini2008almost
 

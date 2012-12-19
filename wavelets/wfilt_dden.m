@@ -1,11 +1,11 @@
 function [h,g,a] = wfilt_dden(N)
-%WFILT_DDEN  Double-DENsity dwt filters (tight frame)
+%WFILT_DDEN  Double-DENsity DWT filters (tight frame)
 %   Usage: [h,g,a] = wfilt_dden(N);
 %
-%   `[h,g,a]=wfilt_dden(N)` computes XXX
+%   `[h,g,a]=wfilt_dden(N)` computes oversampled dyadic double-density DWT
+%   filters. The redundancy is equal to 2.
 %
-%   XXX FIND THIS REFERENCE: Selesnick, I. W.: THE DOUBLE DENSITY
-%   DWT, http://eeweb.poly.edu/iselesni/double/double.pdf
+%   References: selesnick2001double
 
 a= [2;2;2];
 switch(N)

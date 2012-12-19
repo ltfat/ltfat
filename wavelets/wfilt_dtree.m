@@ -2,11 +2,10 @@ function [h,g,a] = wfilt_dtree(N)
 %WFILT_DTREE  Dual-TREE complex wavelet transform filters
 %   Usage: [h,g,a] = wfilt_dtree(N);
 %
-%   `[h,g,a]=wfilt_dtree(N)` computes dual-tree complex wavelet transform
-%   filters (two orthonormal bases).
+%   `[h,g,a]=wfilt_dtree(N)` computes filters used in the dual-tree complex wavelet transform. 
 %
-%   XXX REFERENCE: Selesnick, Baraniuk, Kingsbury: THE DUAL TREE COMPLEX WAVELET TRANSFORM,
-%   http://eeweb.poly.edu/iselesni/double/double.pdf
+%   References: selesnick2005dtree
+
 
 switch(N)
 case 1
@@ -24,7 +23,7 @@ harr = [
 ];
 case 2
 harr = [
-  0.01122679215254                  0
+  0.01122679215254                   0
    0.01122679215254                  0
   -0.08838834764832  -0.08838834764832
    0.08838834764832  -0.08838834764832

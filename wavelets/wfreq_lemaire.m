@@ -1,4 +1,19 @@
-function [H,G] = wfreq_lemaire(L);
+function [H,G] = wfreq_lemaire(L)
+%WFREQ_LEMARIE  Battle and Lemarie filters frequency resp. sampling
+%   Usage: [H,G]=wfreq_lemaire(L)
+%
+%   Input parameters:
+%         N     : Number of samples of the frequency response.
+%
+%   `[H,G]=wfreq_lemaire(L)` calculates $L$ samples of the Battle and
+%   Lemarie filters frequency responses.
+%
+% References: mallat89atheory
+%
+% Original copyright goes to:
+% Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
+% Author: Jose Martin Garcia
+% e-mail: Uvi_Wave@tsc.uvigo.es
 
 
 % frequency axis

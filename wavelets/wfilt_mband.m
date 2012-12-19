@@ -1,8 +1,11 @@
 function [h,g,a] = wfilt_mband(N)
-% Oktay Alkin and Hakan Caglar: Design of Efficient M-Band Coders with
-% Linear-Phase and Perfect-Reconstruction Properties
+%WFILT_MBAND  Generates M-Band coders
+%   Usage: [h,g,a] = wfilt_mband(N);
 %
-%   
+%   `[h,g,a]=wfilt_mband(N)` returns linear-phase M-band wavelet filters. 
+%
+%   References:  alkin95mband  
+
 
 switch(N)
 case 1

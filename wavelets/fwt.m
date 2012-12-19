@@ -2,41 +2,40 @@ function c = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
 %           c = fwt(f,h,J,...);
+%           c = fwt(f,h,J,a,...);
 %
 %   Input parameters:
 %         f     : Input data.
 %         h     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
+%         a     : Subsampling factor(s).
 %
 %   Output parameters:
-%         c      : Coefficients stored in $J+1$ cell-array.
+%         c      : Coefficients stored in a cell-array.
 %
 %   `c=fwt(f,h,J)` computes wavelet coefficients *c* of the input signal *f*
-%   using a basis constructed from the filters *h* and the depth *J* using
+%   using a basis (or frame) constructed from the filters specified in *h* and the depth *J* using
 %   the MRA principle.  For computing the coefficients the fast wavelet
 %   transform algorithm (or Mallat's algorithm) is emplyed. If *f* is a
 %   matrix, the transformation is applied to each of *W* columns.
 %
-%   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J+1$ are ordered
+%   The wavelet filters $h$ should be a structure produced by the waveletfb
+%   function. The .h field of the structure passed is a cell-array as in
+%   the following case.
+%
+%   The wavelet filters can be also passed directly as a collumn cell-array in which each entry
+%   contain single filter impulse response. Functions with wfilt_ prefix generate
+%   such cell arrays. The number of filters will be refered to as $length(h)$.
+%
+%   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J*(length(h)-1)+1$ are ordered
 %   with inceasing central frequency of the equivalent filter frequency
-%   response or equivalently with decreasing wavelet scale.  The number of
-%   coefficients in $c\{j\}$ for $j=2,\ldots,J+1$ is as follows::
-%
-%      length(c{j}) = ceil(2^(j-2-J)length(f))
-%
-%   and length(c{1})=length(c{2}).
+%   response or equivalently with decreasing wavelet scale.
 %
 %   If the input *f* is matrix with *W* columns, each element of the cell
 %   array $c\{j\}$ is a matrix with *W* columns with coefficients belonging
 %   to the appropriate input channel.
 %
-%   The proper name for the transform is the dyadic (or critically subsampled)
-%   discrete wavelet transform which is equivalent to the (bi)orthogonal
-%   wavelet expansion provided appropriate (bi)orthogonal wavelet filterbank is supplied.
-%
-%   The transform is $2^J$-shift invariant.
-%
-%   The following flags are supported:
+%   The following flag groups are supported:
 %
 %         'dec','undec'
 %                Type of the wavelet transform.
@@ -54,7 +53,7 @@ function c = fwt(f,h,J,varargin)
 %   Other names for this version of the wavelet transform are: the
 %   undecimated wavelet transform, the stationary wavelet transform or even
 %   the "continuous" (as the time step is one sample) wavelet transform.  The
-%   redundancy is exactly *J+1*.
+%   redundancy is exactly *J(length(h)-1)+1*.
 %
 %   Boundary handling:
 %   ------------------
@@ -68,33 +67,13 @@ function c = fwt(f,h,J,varargin)
 %   different kind of boundary extensions comes with a price of a slight
 %   redundancy of the wavelet representation.
 %
-%   For the `'dec'` option, the number of coefficients in *c{j}* for
-%   $j=2,\ldots,J+1$ is as follows::
+%   See also: ifwt, waveletfb, wfilt_db
 %
-%      length(c{j}) = floor(2^(j-2-J)length(f) + (1-2^(j-2-J))(length(h{1})-1))
-%
-%   and `length(c{1})=length(c{2})`.
-%
-%   For the `'undec'` option, the redundancy can increase slightly as the
-%   number of coefficients in *c* grows as follows::
-%
-%      length(c{J+1}) = length(f) + length(h{1})-1
-%
-%   and for $j=J,\ldots,2$ ::
-%
-%      length(c{j}) = length(c{j+1}) + 2^(j-J+1)*(length(h{1})-1)
-%
-%   and `length(c{1})=length(c{2})`.
-%
-%   See also: ifwt
-%
-%   Demos:
+%   Demos: demo_fwt
 %
 %   References: ma98  
 
-%   AUTHOR : Zdenek Prusa.
-%   TESTING: TEST_FWT
-%   REFERENCE: REF_FWT
+
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
@@ -135,8 +114,33 @@ else
 end
 
 %% ----- step 0 : Check inputs -------
+definput.keyvals.a = [];
 definput.import = {'fwt'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv,a]=ltfatarghelper({'a'},definput,varargin);
+anotequal = 0;
+if(length(a)>1)
+   if(do_definedfb)
+       if(length(a)~=length(h.h))
+          anotequal=1;
+       end
+   else
+       if(length(a)~=length(h))
+          anotequal=1;
+       end
+   end
+end
+
+if(anotequal)
+   error('%s: Number of the subsampling factors is not equal to the number of filters.',upper(mfilename)); 
+end
+
+if(length(a)==1)
+   if(do_definedfb)
+       a = a*ones(length(h.h),1); 
+   else
+       a = a*ones(length(h),1); 
+   end
+end
 
 if(do_definedfb)
     if(flags.do_type_null)
@@ -146,7 +150,10 @@ if(do_definedfb)
     if(flags.do_ext_null)
        flags.ext = h.ext; 
     end
-    a = h.a;
+    
+    if(isempty(a))
+      a = h.a;
+    end
     h = h.h;
 else
     % setting defaults
@@ -157,8 +164,14 @@ else
     if(flags.do_ext_null)
        flags.ext = 'per'; 
     end
-    a = length(h)*ones(length(h),1);
+
+    if(isempty(a))
+      a = length(h)*ones(length(h),1);
+    end
 end
+
+
+
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.

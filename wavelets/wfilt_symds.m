@@ -1,10 +1,12 @@
 function [h,g,a] = wfilt_symds(N)
+%WFILT_SYMDS  Symmetric wavelets dyadic sibling
+%   Usage: [h,g,a] = wfilt_symds(N);
 %
+%   `[h,g,a]=wfilt_symds(N)` Returns symmetric dyadic sibling wavelet filters.
+%   The redundancy is equal to 2.
 %
-%   REFERENCE: A. Farras Abdelnour: : Symmetric wavelets dyadic sibling and
-%   dual frames. SignalProcessing(2011), doi:10.1016/j.sigpro.2011.11.011
-%   
-%
+%   References: abdelnour2012sib
+
 a = [2;2;2;2];
 
 switch(N)
