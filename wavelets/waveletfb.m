@@ -14,7 +14,7 @@ function [w] = waveletfb(wavname,varargin)
 %   to be called or it can be cell-array with the first element beeing the
 %   function name and the remaining elements are passed further to the wfilt_ function.
 %
-%   Function is a wrapper for calling all the functions starting with wfilt_
+%   The function is a wrapper for calling all the functions starting with wfilt_
 %   defined in the LTFAT wavelets directory. The structure the function
 %   produces can (and should) be directly passed to all functions instead of
 %   the cell-arrays with wavelet filters which all wfilt_ functions
