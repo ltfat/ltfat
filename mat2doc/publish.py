@@ -3,12 +3,6 @@
 import sys,os
 cwd=os.getcwd()+os.sep
 
-# ------- Configuration parameters -------------
-
-# Configure HTML placement at remote server
-host='soender,ltfat@web.sourceforge.net'
-www='/home/project-web/ltfat/htdocs//'
-
 tbwww='/home/peter/nw/ltfatwww'
 
 # ------- do not edit below this line ----------
@@ -34,8 +28,12 @@ redomode='auto'
 if len(sys.argv)>3:
     redomode=sys.argv[3]
 
+projectdir=localconf.projects[project]
+host=localconf.webserver[project]
+remotedir=localconf.remotedir[project]
 
-sys.path.append(localconf.projects[project]+'mat2doc')
+
+sys.path.append(projectdir+'mat2doc')
 from mat2docconf import *
 
 filesdir=localconf.outputdir+project+'-files'+os.sep
@@ -113,8 +111,8 @@ def runcommand(todo,redomode='auto'):
     if 'develmat' in todo:
         runcommand('gitstagemat')
 
-        createcompressedfile(project+'-mat',project+'-devel-'+versionstring,'unix')
-        createcompressedfile(project+'-mat',project+'-devel-'+versionstring,'win')
+        createcompressedfile(project+'-mat',project+'-devel-'+printdoc.datesuffix(),'unix')
+        createcompressedfile(project+'-mat',project+'-devel-'+printdoc.datesuffix(),'win')
 
     # Release for users to download
     if 'releasemat' in todo:
@@ -131,26 +129,29 @@ def runcommand(todo,redomode='auto'):
         createcompressedfile(project+'-mat',project+'-'+versionstring,'win')
 
     if 'tex'==todo:
-        printdoc.printdoc(project,'tex')
+        printdoc.printdoc(project,'tex',redomode)
 
     if 'texmake'==todo:
-        os.system('cd '+project['tex']+'; make')
+        s=localconf.outputdir+project+'-tex/'
+        os.system('cp '+projectdir+'mat2doc/tex/* '+s)
 
-        printdoc.printdoc(project,'tex')
+        os.system('cd '+s+'; make')
+
+        printdoc.printdoc(project,'tex',redomode)
 
     if 'texupload'==todo:
         texdir=localconf.outputdir+project+'-tex'+os.sep
-        s='rsync -av '+texdir+'ltfat.pdf '+host+':'+www+'doc/'
+        s='rsync -av '+texdir+'ltfat.pdf '+host+':'+remotedir
         os.system(s)
 
     if todo=='php':
         phpdir=localconf.outputdir+project+'-php'+os.sep
-        printdoc.printdoc(project,'php')
-        s='rsync -av '+phpdir+' '+host+':'+www+'doc/'
+        printdoc.printdoc(project,'php',redomode)
+        s='rsync -av '+phpdir+' '+host+':'+remotedir
         os.system(s)    
 
     if todo=='phplocal' in todo:
-        printdoc.printdoc(project,'phplocal')
+        printdoc.printdoc(project,'phplocal',redomode)
 
     if todo=='fullrelease':
         runcommand('releasemat',redomode)
@@ -159,15 +160,6 @@ def runcommand(todo,redomode='auto'):
         runcommand('tex',redomode)
         runcommand('texupload')
     
-    if todo=='wavephp':
-        wavedir=localconf.projects['ltfatwave']
-        printdoc.assert_git_on_branch(wavedir,'wavelets')
-        printdoc.printdoc('ltfatwave','php')
-
-    if todo=='wavestagemat': 
-        printdoc.git_stageexport_mat('ltfatwave')
-        printdoc.printdoc('ltfatwave','mat')
-
     if 'stagewww'==todo:
         publishwww=localconf.outputdir+'ltfatwww/'
         printdoc.git_stageexport(tbwww,publishwww)

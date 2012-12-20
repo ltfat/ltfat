@@ -76,6 +76,7 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
+tex.codedir=localconf.outputdir+'ltfat-mat'+os.sep
     
 # ------------------------------------------
 # Configuration of Matlab

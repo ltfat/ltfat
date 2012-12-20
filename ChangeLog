@@ -1,14 +1,20 @@
 Version 1.2.0 13/12 2012
-	Full support for non-separable Gabor lattices with support in the C backend.
+	* Full support for non-separable Gabor lattices with support in the C backend.
 
-	Improved non-stationary Gabor systems: bugfixes for system with
+	* Improved non-stationary Gabor systems: bugfixes for system with
 	odd-length shifts, tester has been extented to cover all these
 	cases.
 
-	Iterative analysis and synthesis for frames: franaiter and
+	* Iterative analysis and synthesis for frames: franaiter and
 	frsyniter uses the conjugate gradients algorithm.
 
-	Small bugfixes: idgt2, gabdualnorm
+	* The "frames" framework has changed so that each frame object
+	only includes one frame. This means that you will need to create
+	two frames if you want to perform analysis/synthesis with a
+	bi-orthogonal / canonical dual system. On the other hand, a lot of
+	duplication was removed.
+
+	* Small bugfixes: idgt2, gabdualnorm
 
 Version 1.1.2 2/10 2012
 	* Almost full support for non-separable Gabor laticces

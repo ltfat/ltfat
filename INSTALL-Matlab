@@ -27,7 +27,15 @@ will most likely fail.
 --------- Compiling on MacOS -------------------------------------------
 
 On MacOS, you must have the gcc compiler and the FFTW libraries
-installed. Then just type "ltfatmex" and everything should work.
+installed.
+
+- You must download and install Xcode and Macports according to the
+given description. 
+
+- Open the terminal and type "sudo port install fftw-3", confirm your
+administrator password.
+
+Then just type "ltfatmex" and everything should work.
 
 --------- Compiling libltfat on Microsoft windows, 32 bit --------------
 
