@@ -1,4 +1,4 @@
-function [w,s,xvals] = wavfun(g,N)
+function [w,s,xvals] = wavfun(g,N,varargin)
 % WAVFUN  Wavelet Function
 %    Usage: [w,s,xvals] = wavfun(g,N) 
 %
@@ -10,15 +10,33 @@ function [w,s,xvals] = wavfun(g,N)
 %         s     : Approximation of the scaling function
 %         xvals : Correct 
 %
-%   Iteratively generate a discrete approximation of wavelet and scaling functions.  
-%
+%   Iteratively generate a discrete approximation of wavelet and scaling
+%   functions. The algorithm is equal to the DWT reconstruction of a single
+%   coefficient at level $N$ set to 1.
 
-
+definput.keyvals.a = [];
+[flags,kv,a]=ltfatarghelper({'a'},definput,varargin);
 if(isstruct(g))
+    if(isempty(a))
+       a = g.a; 
+    end
     g=g.g;
 end
-
 gLen = length(g);
+
+if(isempty(a))
+       a = gLen*ones(gLen,1);
+else
+    if(length(a)==1)
+        a = a*ones(gLen,1); 
+    else
+       if(length(a)~=gLen)
+            error('%s: Number of the subsampling factors is not equal to the number of filters.',upper(mfilename));  
+       end
+    end
+end
+
+
 
 lo = g{1}(:);
 s = lo;
@@ -29,9 +47,9 @@ end
 
 for n=1:N
     for ii=1:gLen-1 
-       wtemp{ii} = convolve(ups(wtemp{ii},2,1),lo);
+       wtemp{ii} = convolve(ups(wtemp{ii},a(1),1),lo);
     end
-    s = convolve(ups(s,2,1),lo);
+    s = convolve(ups(s,a(1),1),lo);
 end
 
 w = zeros(length(wtemp{1}),gLen-1);

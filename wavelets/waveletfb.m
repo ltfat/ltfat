@@ -1,16 +1,31 @@
 function [w] = waveletfb(wavname,varargin)
-%WAVELETFB   Wavelet Filterbank
+%WAVELETFB  Basic Wavelet Filters
+%   Usage:  w = waveletfb(wavname,...);
 %
+%   Input parameters:
+%         wavname : Wavelet filters generating function name (without the prefix).
 %
-% `w=waveletfb(name,...)` produces structure describing one level perfect
-% reconstruction wavelet-type filterbank analysis and synthesis parts.
+%   Output parameters:
+%         w       : Structure defining the filters.
 %
-% The structure have the following fields:
-% w.h - analysis filter bank
-% w.g - synthesis filter bank
-% w.a - implicit subsampling factors
-% w.type - dec, undec
-% w.ext - extension type
+%   `w=waveletfb(wavname,...)` produces structure describing one level perfect
+%   reconstruction wavelet-type filterbank analysis and synthesis parts.
+%   The *wavname* can be string defining function name (without the prefix)
+%   to be called or it can be cell-array with the first element beeing the
+%   function name and the remaining elements are passed further to the wfilt_ function.
+%
+%   Function is a wrapper for calling all the functions starting with wfilt_
+%   defined in the LTFAT wavelets directory. The structure the function produces can (and should)
+%   be directly passed to all functions instead of the cell-arrays with wavelet filters which all wfilt_ functions produces.    
+%
+%   The structure have the following fields:
+%   w.h - analysis filter bank
+%   w.g - synthesis filter bank
+%   w.a - implicit subsampling factors
+%   w.type - dec, undec
+%   w.ext - extension type
+%
+%   See also: fwt, ifwt, waveletfb, multid, wfilt_db
 
 %Wavelet filters functions definition prefix
 wprefix = 'wfilt_';
@@ -40,7 +55,6 @@ else
    tmpFile = wfiltFiles.name(1:end-2); 
 end
 
-
 [w.h, w.g, w.a] = feval(tmpFile,wname{2:end});
 
 
@@ -58,140 +72,4 @@ if(flags.do_ext_null)
 else
    w.ext =  flags.ext; 
 end
-
-
-
-% switch(wname)
-%     case('algmband')
-%         % ord = 1,2
-% 
-%        [w.h, w.g, w.a] = wfilt_algmband(ord);
-%     case('db')
-%        ord = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv,J]=ltfatarghelper({},definput,{varargin{2:end}});
-%        if(~isempty(varargin)) ord = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_db(ord);
-%        if(flags.do_type_null)
-%          w.type = 'dec'; 
-%        else
-%          w.type = flags.type; 
-%        end
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-%     case('dden')
-%        no = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv]=ltfatarghelper({},definput,{varargin{2:end}});
-%        if(~isempty(varargin)) no = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_dden(no);
-%        
-%        if(flags.do_type_null)
-%          w.type = 'dec'; 
-%        else
-%          w.type = flags.type; 
-%        end
-% 
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-%        
-%     case('dgrid')
-%        no = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv]=ltfatarghelper({},definput,{varargin{2:end}});
-%        if(~isempty(varargin)) no = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_dgrid(no);
-%        
-%        if(flags.do_type_null)
-%          w.type = 'dec'; 
-%        else
-%          w.type = flags.type; 
-%        end
-% 
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-%        
-%      case('dtree')
-%        no = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv]=ltfatarghelper({},definput,{varargin{:}});
-%        if(~isempty(varargin)) no = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_dtree;
-%        
-%        w.type = 'dtdwt'; 
-% 
-% 
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-%        
-%      case('hden')
-%        no = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv]=ltfatarghelper({},definput,{varargin{2:end}});
-%        if(~isempty(varargin)) no = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_hden(no);
-%        
-%        w.type = 'hddwt'; 
-% 
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-%        
-%      case('optfs')
-%        no = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv]=ltfatarghelper({},definput,{varargin{2:end}});
-%        if(~isempty(varargin)) no = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_optfs(no);
-%        
-%        if(flags.do_type_null)
-%          w.type = 'dec'; 
-%        else
-%          w.type = flags.type; 
-%        end
-% 
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-%        
-%     case('symds')
-%        no = 1;
-%        definput.import = {'fwt'};
-%        [flags,kv]=ltfatarghelper({},definput,{varargin{2:end}});
-%        if(~isempty(varargin)) no = varargin{1}; end;
-%        [w.h, w.g, w.a] = wfilt_symds(no);
-%        
-%        if(flags.do_type_null)
-%          w.type = 'dec'; 
-%        else
-%          w.type = flags.type; 
-%        end
-% 
-%        if(flags.do_ext_null)
-%          w.ext = 'per'; 
-%        else
-%          w.ext =  flags.ext; 
-%        end
-% 
-%         
-%     otherwise
-%         error('%s: Unknown wavelet type: %s',upper(mfilename),name); 
-% end;
-
 

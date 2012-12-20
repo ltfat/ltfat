@@ -15,8 +15,7 @@ function [out,a,origs] = multid( filts, J, varargin)
 % 
 %   Default downsampling factor for each filter is 2.
 % 
-%   key-value pair 'pack' - actual tree shape (encoded somehow)
-%   flag dual-tree...
+%   TODO: create functions for building the filtertree
 
 
 if(nargin<2)
@@ -33,6 +32,7 @@ nodePredecesorsMultId();
 
 
 % input is structure defined by waveletfb
+% should also be able to distinguish the filter tree structure.
 if(isstruct(filts))
     a = filts.a;
     if(flags.do_ana)

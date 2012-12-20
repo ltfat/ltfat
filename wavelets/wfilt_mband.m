@@ -5,7 +5,7 @@ function [h,g,a] = wfilt_mband(N)
 %   `[h,g,a]=wfilt_mband(N)` returns linear-phase M-band wavelet filters. 
 %
 %   References:  alkin95mband  
-
+a= [4;4;4;4];
 
 switch(N)
 case 1
@@ -82,7 +82,7 @@ harr = [
 -0.036796442259
 ]
 ];
-a= [4;4;4;4];
+
 otherwise
         error('%s: No such M-Band filters.',upper(mfilename));
 end

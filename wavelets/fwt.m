@@ -2,13 +2,11 @@ function c = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
 %           c = fwt(f,h,J,...);
-%           c = fwt(f,h,J,a,...);
 %
 %   Input parameters:
 %         f     : Input data.
 %         h     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
-%         a     : Subsampling factor(s).
 %
 %   Output parameters:
 %         c      : Coefficients stored in a cell-array.
@@ -58,14 +56,43 @@ function c = fwt(f,h,J,varargin)
 %   Boundary handling:
 %   ------------------
 %
-%   `fwt(f,h,J,ext)` computes slightly redundant wavelet representation of
+%   The default periodic extension considers the input signal being one
+%   period of some infinite periodic signal as is natural for the transforms based on the FFT.
+%   The resulting wavelet representation is non-expansive, that is if the input signal length 
+%   is a multiple of a $J$th power of the subsampling factor, the total number of
+%   coefficients is equal to the input signal length in the decimated case. If the input signal
+%   length is not a multiple of a $J$th power of the subsampling factor,
+%   the processed signal is padded internally by repeating the last sample at each step
+%   of the transfrom to the next multiple of the subsampling factor rather
+%   than doing the prior explicit padding. 
+%   In addition, the periodic extension restrict the input signal length to be greater than certain length.
+%
+%   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes slightly redundant wavelet representation of
 %   the input signal *f* with the chosen boundary extension *ext*.
 %
-%   The default periodic extension at the signal boundaries can result in
+%   The default periodic extension can result in
 %   "false" high wavelet coefficients near the boundaries due to the
-%   possible discontinuity introduced by the periodic extension. Using
-%   different kind of boundary extensions comes with a price of a slight
-%   redundancy of the wavelet representation.
+%   possible discontinuity introduced by the periodic extension. The custom extension 
+%   can diminish this phenomenon. The extensions are done at each level of the transform internally
+%   rather than doing the prior explicit padding. The supported possibilities are:
+%
+%   *`'zpd'` - zeros are considered outside of the signal (coefficient) support. 
+%   *`'sym'` - half-point symmetric extension.
+%   *`'symw'` - whole-point symmetric extension
+%   *`'asym'` - half-point antisymmetric extension
+%   *`'asymw'` - whole point antisymmetric extension
+%   *`'ppd'` - periodic padding, same as `'ppd'` but result is expansive representation
+%   *`'sp0'` - repeating boundary sample
+%
+%   Examples:
+%   ---------
+%   
+%   Simple example of calling the fwt function.:::
+%   f = gspi;
+%   J = 10;
+%   w = waveletfb({'db',8});
+%   c = fwt(f,w,J);
+%   plotfwt(c);
 %
 %   See also: ifwt, waveletfb, wfilt_db
 %
@@ -114,33 +141,8 @@ else
 end
 
 %% ----- step 0 : Check inputs -------
-definput.keyvals.a = [];
 definput.import = {'fwt'};
-[flags,kv,a]=ltfatarghelper({'a'},definput,varargin);
-anotequal = 0;
-if(length(a)>1)
-   if(do_definedfb)
-       if(length(a)~=length(h.h))
-          anotequal=1;
-       end
-   else
-       if(length(a)~=length(h))
-          anotequal=1;
-       end
-   end
-end
-
-if(anotequal)
-   error('%s: Number of the subsampling factors is not equal to the number of filters.',upper(mfilename)); 
-end
-
-if(length(a)==1)
-   if(do_definedfb)
-       a = a*ones(length(h.h),1); 
-   else
-       a = a*ones(length(h),1); 
-   end
-end
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 if(do_definedfb)
     if(flags.do_type_null)
@@ -151,9 +153,7 @@ if(do_definedfb)
        flags.ext = h.ext; 
     end
     
-    if(isempty(a))
-      a = h.a;
-    end
+    a = h.a;
     h = h.h;
 else
     % setting defaults
@@ -165,9 +165,7 @@ else
        flags.ext = 'per'; 
     end
 
-    if(isempty(a))
-      a = length(h)*ones(length(h),1);
-    end
+    a = length(h)*ones(length(h),1);
 end
 
 
