@@ -1,14 +1,16 @@
 function [h,g,a]=wfilt_spline(m,n)
-% WFILT_SPLINE  Birthogonal spline wavelets.
+% WFILT_SPLINE  Birthogonal spline wavelets
 %   Usage: [h,g,a]=wfilt_spline(m,n);
 %
 %   Input parameters:
-%         m     : Number of zeros at $z=-1$ of the lowpass filter in g{1}
-%         n     : Number of zeros at $z=-1$ of the lowpass filter in h{1}. m+n have to be even. 
+%         m     : Number of zeros at $z=-1$ of the lowpass filter in `g{1}`
+%         n     : Number of zeros at $z=-1$ of the lowpass filter in
+%                 `h{1}`. $m+n$ must be even. 
 %
-%   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters corresponding to a biortoghonal 
-%   scheme with spline wavelets of compact support. 
-%
+%   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters
+%   corresponding to a biortoghonal scheme with spline wavelets of compact
+%   support.
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

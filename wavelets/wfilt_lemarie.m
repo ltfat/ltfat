@@ -1,16 +1,16 @@
-function [h,g,a]=wfilt_lemaire(N)
-%WFILT_LEMARIE  Battle and Lemarie filters.
-%   Usage: [h,g,a]=wfilt_lemaire(N)
+function [h,g,a]=wfilt_lemarie(N)
+%WFILT_LEMARIE  Battle and Lemarie filters
+%   Usage: [h,g,a]=wfilt_lemarie(N)
 %
 %   Input parameters:
 %         N     : Filter length.
 %
-%   `[h,g,a]=wfilt_lemaire(N)` calculates coeficients of orthonormal
+%   `[h,g,a]=wfilt_lemarie(N)` calculates coeficients of orthonormal
 %   Battle-Lemarie wavelets. Filter coefficients are obtainded by
 %   frequency domain sampling and trunctating the impulse response.
 %
-% References: mallat89atheory
-%
+%   References: mallat89atheory
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

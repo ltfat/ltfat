@@ -2,12 +2,13 @@ function [h,g,a]=wfilt_sym(N)
 %WFILT_SYM Symlet filters 
 %   Usage: [h,g,a]=wfilt_sym(N);    
 %
-%   `[h,g,a]=wfilt_sym(N)` generates the "least asymmetric" Daubechies' wavelets or "symlets". 
-%   Zeros of the filters are of the trigonometrical polynomial selected alternatively inside and outside the
-%	unit circle. 
+%   `[h,g,a]=wfilt_sym(N)` generates the "least asymmetric" Daubechies'
+%   wavelets or "symlets".  Zeros of the trigonometrical polynomial the
+%   filters of are selected alternatingly inside and outside the unit
+%   circle.
 %
 %   References: daub98tenlectures
-%
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

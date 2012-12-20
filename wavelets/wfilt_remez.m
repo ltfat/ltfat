@@ -11,8 +11,8 @@ function [h,g,a]=wfilt_remez(L,K,B)
 %   control regularity, frequency selectivity, and length of the filters.
 %   It works performing a factorization based on the complex cepstrum of the polynomial.
 %
-% References: rioul94remez
-%
+%   References: rioul94remez
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

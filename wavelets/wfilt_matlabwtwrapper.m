@@ -1,11 +1,11 @@
 function [h,g,a] = wfilt_matlabwtwrapper(wname)
 %WFILT_MATLABWTWRAPPER Wrapper of the Matlab Wavelet Toolbox wfilters function
-%  Usage: [h,g,a] = wfilt_matlabwtwrapper(wname);
+%   Usage: [h,g,a] = wfilt_matlabwtwrapper(wname);
 %
 %   '[h,g,a]=wfilt_matlabwtwrapper(wname)` calls Matlab Wavelet Toolbox
-%   function wfilters and passes parameter wname. Requires Matlab Wavelet
-%   Toolbox.
-%
+%   function wfilters and passes the parameter *wname*. This function
+%   requires the Matlab Wavelet Toolbox.
+
 
 
 a = [2,2];

@@ -22,7 +22,7 @@ function c = fwt(f,h,J,varargin)
 %   the following case.
 %
 %   The wavelet filters can be also passed directly as a collumn cell-array in which each entry
-%   contain single filter impulse response. Functions with wfilt_ prefix generate
+%   contain single filter impulse response. Functions with a `wfilt_` prefix generate
 %   such cell arrays. The number of filters will be refered to as $length(h)$.
 %
 %   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J*(length(h)-1)+1$ are ordered
@@ -56,47 +56,57 @@ function c = fwt(f,h,J,varargin)
 %   Boundary handling:
 %   ------------------
 %
-%   The default periodic extension considers the input signal being one
-%   period of some infinite periodic signal as is natural for the transforms based on the FFT.
-%   The resulting wavelet representation is non-expansive, that is if the input signal length 
-%   is a multiple of a $J$th power of the subsampling factor, the total number of
-%   coefficients is equal to the input signal length in the decimated case. If the input signal
-%   length is not a multiple of a $J$th power of the subsampling factor,
-%   the processed signal is padded internally by repeating the last sample at each step
-%   of the transfrom to the next multiple of the subsampling factor rather
-%   than doing the prior explicit padding. 
-%   In addition, the periodic extension restrict the input signal length to be greater than certain length.
+%   The default periodic extension considers the input signal as being one
+%   period of some infinite periodic signal as is natural for the transforms
+%   based on the FFT.  The resulting wavelet representation is
+%   non-expansive, that is if the input signal length is a multiple of a
+%   $J$-th power of the subsampling factor, the total number of coefficients
+%   is equal to the input signal length in the decimated case. 
 %
-%   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes slightly redundant wavelet representation of
-%   the input signal *f* with the chosen boundary extension *ext*.
+%   If the input signal length is not a multiple of a $J$-th power of the
+%   subsampling factor, the processed signal is padded internally by
+%   repeating the last sample at each step of the transfrom to the next
+%   multiple of the subsampling factor rather than doing the prior explicit
+%   padding.  In addition, the periodic extension restrict the input signal
+%   length to be greater than a certain length.
 %
-%   The default periodic extension can result in
-%   "false" high wavelet coefficients near the boundaries due to the
-%   possible discontinuity introduced by the periodic extension. The custom extension 
-%   can diminish this phenomenon. The extensions are done at each level of the transform internally
-%   rather than doing the prior explicit padding. The supported possibilities are:
+%   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes a slightly
+%   redundant wavelet representation of the input signal *f* with the chosen
+%   boundary extension *ext*.
 %
-%   *`'zpd'` - zeros are considered outside of the signal (coefficient) support. 
-%   *`'sym'` - half-point symmetric extension.
-%   *`'symw'` - whole-point symmetric extension
-%   *`'asym'` - half-point antisymmetric extension
-%   *`'asymw'` - whole point antisymmetric extension
-%   *`'ppd'` - periodic padding, same as `'ppd'` but result is expansive representation
-%   *`'sp0'` - repeating boundary sample
+%   The default periodic extension can result in "false" high wavelet
+%   coefficients near the boundaries due to the possible discontinuity
+%   introduced by the periodic extension. The custom extension can diminish
+%   this phenomenon. The extensions are done at each level of the transform
+%   internally rather than doing the prior explicit padding. The supported
+%   possibilities are:
+%
+%     * `'zpd'` - zeros are considered outside of the signal (coefficient) support. 
+%
+%     * `'sym'` - half-point symmetric extension.
+%
+%     * `'symw'` - whole-point symmetric extension
+%
+%     * `'asym'` - half-point antisymmetric extension
+%
+%     * `'asymw'` - whole point antisymmetric extension
+%
+%     * `'ppd'` - periodic padding, same as `'ppd'` but the result is expansive representation
+%
+%     * `'sp0'` - repeating boundary sample
 %
 %   Examples:
 %   ---------
 %   
-%   Simple example of calling the fwt function.:::
-%   f = gspi;
-%   J = 10;
-%   w = waveletfb({'db',8});
-%   c = fwt(f,w,J);
-%   plotfwt(c);
+%   A Simple example of calling the fwt function.:::
+% 
+%     f = gspi;
+%     J = 10;
+%     w = waveletfb({'db',8});
+%     c = fwt(f,w,J);
+%     plotfwt(c);
 %
 %   See also: ifwt, waveletfb, wfilt_db
-%
-%   Demos: demo_fwt
 %
 %   References: ma98  
 

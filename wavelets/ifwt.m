@@ -20,10 +20,9 @@ function f = ifwt(c,g,J,varargin)
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 %                Type of the boundary handling.
 %
+%   Please see the help on |fwt|_ for a description of the flags.
 %
 %   See also:  fwt, waveletfb, wfilt_db
-%
-%   Demos:
 %
 %   References: ma98
 
