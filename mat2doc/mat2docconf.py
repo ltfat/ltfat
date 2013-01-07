@@ -19,7 +19,7 @@ def copyrightfun():
     buf=f.readlines()
     f.close
 
-    copyright=[u'Copyright (C) 2005-2012 Peter L. S\xf8ndergaard.\n',
+    copyright=[u'Copyright (C) 2005-2013 Peter L. S\xf8ndergaard.\n',
                u'This file is part of LTFAT version '+versionstring+'\n']
     copyright.extend(buf)
     

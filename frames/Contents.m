@@ -1,6 +1,6 @@
 % LTFAT - Frames
 %
-%  Peter L. Søndergaard, 2012.
+%  Peter L. Søndergaard, 2012 - 2013.
 %
 %  Basic methods
 %    FRAME             - Construct a new frame
