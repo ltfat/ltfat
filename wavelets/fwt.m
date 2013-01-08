@@ -23,9 +23,9 @@ function c = fwt(f,h,J,varargin)
 %
 %   The wavelet filters can be also passed directly as a collumn cell-array in which each entry
 %   contain single filter impulse response. Functions with a `wfilt_` prefix generate
-%   such cell arrays. The number of filters will be refered to as $length(h)$.
+%   such cell arrays. The number of filters will be refered to as `length(h)`.
 %
-%   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J*(length(h)-1)+1$ are ordered
+%   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J\cdot(length(h)-1)+1$ are ordered
 %   with inceasing central frequency of the equivalent filter frequency
 %   response or equivalently with decreasing wavelet scale.
 %
@@ -51,7 +51,7 @@ function c = fwt(f,h,J,varargin)
 %   Other names for this version of the wavelet transform are: the
 %   undecimated wavelet transform, the stationary wavelet transform or even
 %   the "continuous" (as the time step is one sample) wavelet transform.  The
-%   redundancy is exactly *J(length(h)-1)+1*.
+%   redundancy is exactly `J*(length(h)-1)+1`.
 %
 %   Boundary handling:
 %   ------------------
@@ -98,7 +98,7 @@ function c = fwt(f,h,J,varargin)
 %   Examples:
 %   ---------
 %   
-%   A Simple example of calling the fwt function.:::
+%   A simple example of calling the |fwt|_ function:::
 % 
 %     f = gspi;
 %     J = 10;

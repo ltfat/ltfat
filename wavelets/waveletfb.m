@@ -8,24 +8,35 @@ function [w] = waveletfb(wavname,varargin)
 %   Output parameters:
 %         w       : Structure defining the filters.
 %
-%   `w=waveletfb(wavname,...)` produces structure describing one level perfect
-%   reconstruction wavelet-type filterbank analysis and synthesis parts.
-%   The *wavname* can be string defining function name (without the prefix)
-%   to be called or it can be cell-array with the first element beeing the
-%   function name and the remaining elements are passed further to the wfilt_ function.
+%   `w=waveletfb(wavname,...)` produces a structure describing the analysis
+%   and synthesis parts of a one level perfect reconstruction wavelet-type
+%   filterbank.  The *wavname* can be a string defining a function name (without
+%   the prefix) to be called or it can be a cell-array with the first element
+%   beeing the function name and the remaining elements are passed further
+%   to the `wfilt_` function.
 %
-%   The function is a wrapper for calling all the functions starting with wfilt_
-%   defined in the LTFAT wavelets directory. The structure the function
-%   produces can (and should) be directly passed to all functions instead of
-%   the cell-arrays with wavelet filters which all wfilt_ functions
-%   produces.
+%   The function is a wrapper for calling all the functions starting with
+%   `wfilt_` defined in the LTFAT wavelets directory. The structure which
+%   the function produces can (and should) be directly passed to all
+%   functions instead of the cell-arrays with wavelet filters which all
+%   `wfilt_` functions produces.
 %
-%   The structure have the following fields:
-%   w.h - analysis filter bank
-%   w.g - synthesis filter bank
-%   w.a - implicit subsampling factors
-%   w.type - dec, undec
-%   w.ext - extension type
+%   The structure has the following fields:
+%
+%     `w.h`
+%        analysis filter bank
+%     
+%     `w.g`
+%        synthesis filter bank
+%
+%     `w.a`
+%        implicit subsampling factors
+% 
+%     `w.type`
+%        `'dec'`, `'undec'`
+%
+%     `w.ext`
+%        extension type
 %
 %   See also: fwt, ifwt, waveletfb, multid, wfilt_db
 
