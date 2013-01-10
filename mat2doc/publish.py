@@ -161,11 +161,13 @@ def runcommand(todo,redomode='auto'):
         runcommand('texupload')
     
     if 'stagewww'==todo:
+        www='/home/project-web/ltfat/htdocs/'
         publishwww=localconf.outputdir+'ltfatwww/'
         printdoc.git_stageexport(tbwww,publishwww)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'releasewww'==todo:
+        www='/home/project-web/ltfat/htdocs/'
         publishwww=localconf.outputdir+'ltfatwww/'
         printdoc.git_repoexport(tbwww,'master','ltfatwww',localconf.outputdir)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
