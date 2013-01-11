@@ -27,9 +27,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
                  int nrhs, const mxArray *prhs[])
 {
 	gpc_polygon subject, clip, result;
-    int dims[2], GPC_ARG;
+    mwSize dims[2], GPC_ARG;
 	const char *field_names[] = {"x","y","hole"};
-    
+
 	if (nrhs == 0) {
         mexPrintf("\nOutPol = PolygonClip(RefPol, ClipPol, [type]);\n\n");
         mexPrintf("All polygons are structures with the fields ...\n");
@@ -45,7 +45,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
         mexPrintf("Alan Murta, Advanced Interfaces Group, Department of Computer Science, University of Manchester\n");
         mexPrintf("http://www.cs.man.ac.uk/~toby/alan/software//\n\n");
         return;}
-      
+
     /*  Check number of arguments */
 	if (nrhs < 2 || nrhs > 3)
         mexErrMsgTxt("Two or three inputs required.");
@@ -54,7 +54,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 	/* Import polygons to structures */
 	gpc_read_polygon_MATLAB(prhs[0], &subject);
-    gpc_read_polygon_MATLAB(prhs[1], &clip);  
+    gpc_read_polygon_MATLAB(prhs[1], &clip);
 
 	/* Calling computational routine */
     if (nrhs==2 || !mxIsDouble(prhs[2]) || mxGetM(prhs[2])!=1 || mxGetN(prhs[2])!=1)
@@ -63,9 +63,9 @@ void mexFunction(int nlhs, mxArray *plhs[],
         GPC_ARG = mxGetScalar(prhs[2]);
     if (GPC_ARG!=GPC_DIFF && GPC_ARG!=GPC_INT && GPC_ARG!=GPC_XOR && GPC_ARG!=GPC_UNION)
         GPC_ARG = GPC_INT;
-    
+
 	gpc_polygon_clip(GPC_ARG, &subject, &clip, &result);
-    
+
 	/* Output Data to Matlab */
     dims[0] = 1;
     dims[1] = result.num_contours;
@@ -75,7 +75,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 }
 
 /* =================================
-	END GATEWAY 
+	END GATEWAY
 	=================================*/
 
 
@@ -119,7 +119,7 @@ void gpc_read_polygon_MATLAB(const mxArray *prhs, gpc_polygon *p)
     id_x = mxGetFieldNumber(prhs,"x");
     if (id_x==-1)
         mexErrMsgTxt("Input structure must contain a field 'x'.");
-    
+
 	field_x = mxGetFieldByNumber(prhs, 0, id_x);
     if (!mxIsDouble(field_x))
         mexErrMsgTxt("Structure field 'x' must be of type DOUBLE.");
@@ -137,7 +137,7 @@ void gpc_read_polygon_MATLAB(const mxArray *prhs, gpc_polygon *p)
 	else
 		read_hole_flag = TRUE;
 
-		
+
 
 /*  Passing data: Matlab -> C++	*/
 	p->num_contours = mxGetNumberOfElements(prhs);
@@ -150,7 +150,7 @@ void gpc_read_polygon_MATLAB(const mxArray *prhs, gpc_polygon *p)
 		/* Check vertices */
 		field_x = mxGetFieldByNumber(prhs, c, id_x);
 		field_y = mxGetFieldByNumber(prhs, c, id_y);
-        
+
 		nx[0] = mxGetM(field_x);
 		nx[1] = mxGetN(field_x);
 		ny[0] = mxGetM(field_y);
@@ -160,7 +160,7 @@ void gpc_read_polygon_MATLAB(const mxArray *prhs, gpc_polygon *p)
 
 		p->contour[c].num_vertices = Max(nx,2);
 		p->contour[c].vertex = mxMalloc(p->contour[c].num_vertices * sizeof(gpc_vertex));
-		
+
 		x = mxGetPr(field_x);
 		y = mxGetPr(field_y);
 		for (v= 0; v < p->contour[c].num_vertices; v++) {
@@ -177,7 +177,7 @@ void gpc_read_polygon_MATLAB(const mxArray *prhs, gpc_polygon *p)
         }
 		if (!read_hole_flag || p->hole[c]!=1)
 			p->hole[c] = FALSE; /* Assume all contours to be external */
-        
+
   }
 }
 
@@ -187,16 +187,16 @@ void gpc_write_polygon_MATLAB(mxArray *plhs, gpc_polygon *p)
 	int c, v;
 	int dims[2];
     mxArray *field_x, *field_y, *field_hole;
-    
+
     const char *field_names[] = {"x","y","hole"};
-    
+
     dims[0]=1;
     dims[1]=p->num_contours;
-    
-	
-        
+
+
+
 	for (c=0; c < p->num_contours; c++)
-	{	
+	{
 		field_x = mxCreateDoubleMatrix(p->contour[c].num_vertices,1,mxREAL);
 		field_y = mxCreateDoubleMatrix(p->contour[c].num_vertices,1,mxREAL);
 		for (v= 0; v < p->contour[c].num_vertices; v++)
@@ -204,10 +204,10 @@ void gpc_write_polygon_MATLAB(mxArray *plhs, gpc_polygon *p)
             ((double*)mxGetPr(field_x))[v]=p->contour[c].vertex[v].x;
             ((double*)mxGetPr(field_y))[v]=p->contour[c].vertex[v].y;
 		}
-        
+
         mxSetFieldByNumber(plhs,c,0,field_x);
         mxSetFieldByNumber(plhs,c,1,field_y);
-       
+
 		field_hole = mxCreateDoubleMatrix(1,1,mxREAL);
         ((double*)mxGetPr(field_hole))[0]=p->hole[c];
 		mxSetFieldByNumber(plhs,c,2,field_hole);
