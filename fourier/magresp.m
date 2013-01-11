@@ -17,7 +17,7 @@ function magresp(g,varargin);
 %
 %     'dynrange',r  Limit the dynamic range of the plot to r dB.
 %
-%     'fir'         Indicate that the input is an FIR window. MAGRESP will
+%     'fir'         Indicate that the input is an FIR window. |magresp|_ will
 %                   zero-extend the window to display a smooth magnitude
 %                   response.
 %

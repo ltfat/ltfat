@@ -102,6 +102,10 @@ def runcommand(todo,redomode='auto'):
         printdoc.git_stageexport_mat(project)
         printdoc.printdoc(project,'mat')
 
+    if todo=='gitstagemat':
+        printdoc.git_stageexport_mat(project)
+        printdoc.printdoc(project,'mat')
+
     if todo=='gitrepomat':
         printdoc.git_repoexport_mat(project)
         printdoc.printdoc(project,'mat')
@@ -121,6 +125,7 @@ def runcommand(todo,redomode='auto'):
         matdir=localconf.outputdir+project+'-mat'+os.sep
 
         # Remove unwanted files
+        os.system('rm -rf '+matdir+'mat2doc')
         os.system('rm -rf '+matdir+'testing')
         os.system('rm -rf '+matdir+'reference')
         os.system('rm -rf '+matdir+'timing')
