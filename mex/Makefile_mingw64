@@ -1,0 +1,57 @@
+CC=gcc
+CFLAGS=-shared -O3 -std=c99 -m64 -Wall -I../thirdparty -I../src
+
+
+#These variables are overwritten by the matlab script
+MATLABROOT="C:\Program Files\MATLAB\R2011b"
+EXT=mexw64
+MEXSC=\
+	comp_col2diag.c\
+	comp_dgt_fb.c \
+	comp_dgt_long.c \
+	comp_dgt_ola.c  \
+	comp_dgtreal_fb.c \
+	comp_dgtreal_long.c \
+	comp_dgtreal_ola.c \
+	comp_dwilt_long.c  \
+	comp_fftreal.c  \
+	comp_fwt_all.c \
+	comp_gabreassign.c  \
+	comp_heapint.c  \
+	comp_idgt_fac.c  \
+	comp_idgt_fb.c  \
+	comp_ifftreal.c  \
+	comp_ifwt_all.c \
+	comp_iwfac.c \
+	comp_nonsepdgt_multi.c  \
+	comp_nonsepdgt_shear.c  \
+	comp_nonsepwin2multi.c  \
+	comp_pchirp.c  \
+	comp_pgauss.c  \
+	comp_ufilterbank_fft.c  \
+	comp_wfac.c \
+#	comp_gabdual_long.c \
+#	comp_gabtight_long.c  \
+#	comp_idgtreal_fac.c \
+#	comp_idgtreal_fb.c	
+
+
+MEXSBASE = $(basename $(MEXSC))
+MEXS     = $(addsuffix .$(EXT),$(MEXSBASE))
+
+MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include"
+MEXLIBS=-lmex -lmx
+MEXLINKFLAGS=-static-libgcc mex.def -L"$(MATLABROOT)\bin\win64" $(MEXLIBS)
+
+
+all: $(MEXS)
+
+%.$(EXT): %.c 
+	echo EXPORTS > mex.def & echo mexFunction >> mex.def 
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ -lltfat_dll -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
+	del mex.def 
+
+clean:
+	del *.$(EXT)
+
+.PHONY: all clean

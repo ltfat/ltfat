@@ -1,0 +1,75 @@
+# Use GNU Make to process this file
+MATLABROOT="C:\Program Files\MATLAB\R2011b"
+MATLABLIBS=-lmwlapack -lmwblas
+MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\win64" $(MATLABLIBS)
+
+#CC = i686-pc-mingw32-gcc 
+CC=gcc
+
+CFLAGS=-O3 -std=c99 -m64 -I../thirdparty -I./
+DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -D_WIN32 -D_WINDOWS -D_USRDLL -DLTFAT_BACKEND_EXPORTS
+#CFLAGS=-O2 -fPIC -std=c99 -I../thirdparty -L../thirdparty
+
+toCompile = \
+  c-safe-memalloc.o dgt.o dgt_fac.o dgt_fb.o dgt_multi.o dgt_ola.o dgt_shear.o \
+  dgt_walnut.o dgtreal_fac.o dwilt.o filterbank.o heapint.o idgt_fac.o idgt_fb.o \
+  integer_manip.o iwfac.o pfilt.o reassign.o spread.o tfutil.o wavelets.o wfac.o \
+  windows.o winmanip.o 
+#ltfat_blaslapack.o gabdual.o gabdual_fac.o gabtight.o gabtight_fac.o
+  
+files = \
+	sdgt.o sdgt_fac.o sdgtreal_fac.o sidgt_fac.o sdgt_fb.o		\
+	sdgt_walnut.o ddgt.o ddgt_fac.o ddgtreal_fac.o didgt_fac.o	\
+	ddgt_ola.o sdgt_ola.o \
+	ddgt_fb.o ddgt_walnut.o \
+	swfac.o siwfac.o sidgt_fb.o didgt_fb.o \
+	sreassign.o swindows.o dwfac.o diwfac.o		\
+	dreassign.o dwindows.o sspread.o sheapint.o swinmanip.o		\
+	dspread.o dheapint.o dwinmanip.o \
+	sdwilt.o stfutil.o sfilterbank.o \
+	ddwilt.o dtfutil.o dfilterbank.o \
+	spfilt.o dpfilt.o \
+	sdgt_shear.o ddgt_shear.o \
+	sdgt_multi.o ddgt_multi.o \
+	integer_manip.o 
+
+files_blaslapack = \
+	sgabdual.o sgabtight.o sgabdual_fac.o sgabtight_fac.o \
+	dgabdual.o dgabtight.o dgabdual_fac.o dgabtight_fac.o 	
+
+files_unix = $(files) $(files_blaslapack) dltfat_blaslapack.o sltfat_blaslapack.o
+files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
+
+all: mingw64
+
+win_ms: $(files) c-safe-memalloc.o
+	gcc -shared -o ltfat.dll -Wl,--output-def,ltfat.def,--out-implib,libltfat_dll.a \
+		-L../thirdparty -lfftw3-3 -lfftw3f-3 $(files) c-safe-memalloc.o
+	cp -f ltfat.dll ../mex/
+	cp -f ltfat.def ../mex/
+	echo "To finish the creation, please run the Microsoft lib tool on ltfat.dll and ltfat.def"
+
+mingw64: $(toCompile)
+	$(CC) -shared -Wl,--out-implib=../mex/ltfat_dll.lib \
+	-Wl,--dll $(toCompile) \
+	-o ../mex/ltfat.dll -static-libgcc ltfat_notdllexport.def -L../mex -lfftw3-3 -lfftw3f-3 $(MATLABLINKFLAGS)
+	del *.o *.a
+
+sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
+
+dltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DMATLABFORTRAN -c $< -o $*.o
+
+s%.o: %.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o s$*.o
+
+d%.o: %.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE  -c $< -o d$*.o
+
+%.o: %.c Makefile config.h
+	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $<
+
+clean:
+	del ../mex/ltfat.dll
+	del ../mex/ltfat_dll.lib
