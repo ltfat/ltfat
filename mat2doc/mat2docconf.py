@@ -2,20 +2,26 @@
 # Global configuration of the mat2doc system
 # -------------------------------------------
 
-import localconf
+# When writing this file, the following variables are available
+#
+#   projectname  - The name of your project, OK, you already know this
+#   projectdir   - The directory where your project is located
+#   outputdir    - The output directory
+#   target       - The target 
+
 from mat2doc import *
 
-f=file(localconf.projects['ltfat']+'ltfat_version')
+f=file(projectdir+'ltfat_version')
 versionstring=f.read()[:-1]
 f.close
 
 def copyrightfun():
 
-    f=file(localconf.projects['ltfat']+'ltfat_version')
+    f=file(projectdir+'ltfat_version')
     versionstring=f.read()[:-1]
     f.close
     
-    f=file(localconf.projects['ltfat']+'mat2doc/copyrightplate')
+    f=file(projectdir+'mat2doc/copyrightplate')
     buf=f.readlines()
     f.close
 
@@ -47,7 +53,7 @@ php=PhpConf()
 php.indexfiles=contentsfiles
 php.includedir='../include/'
 php.urlbase='/doc/'
-php.codedir=localconf.outputdir+'ltfat-mat'+os.sep
+php.codedir=outputdir+'ltfat-mat'+os.sep
 
 # ------------------------------------------
 # Local php
@@ -57,7 +63,7 @@ phplocal=PhpConf()
 phplocal.indexfiles=contentsfiles
 phplocal.includedir='../include/'
 phplocal.urlbase='/doc/'
-phplocal.codedir=localconf.outputdir+'ltfat-mat'+os.sep
+phplocal.codedir=outputdir+'ltfat-mat'+os.sep
 
 
 # ------------------------------------------
@@ -76,7 +82,7 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
-tex.codedir=localconf.outputdir+'ltfat-mat'+os.sep
+tex.codedir=outputdir+'ltfat-mat'+os.sep
     
 # ------------------------------------------
 # Configuration of Matlab

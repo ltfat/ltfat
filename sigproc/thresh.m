@@ -19,7 +19,7 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %     'hard'    Perform hard thresholding. This is the default.
 %
 %     'wiener'  Perform empirical Wiener shrinkage. This is in between
-%               soft and hard thresholding
+%               soft and hard thresholding.
 %
 %     'soft'    Perform soft thresholding.  
 %
@@ -27,8 +27,8 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %
 %     'sparse'  Returns the output as a sparse matrix.
 %
-%   The function `wthresh` in the Matlab Wavelet toolbox implements the same
-%   functionality.
+%   The function `wthresh` in the Matlab Wavelet toolbox implements some of
+%   the same functionality.
 %
 %   The following code produces a plot to demonstrate the difference
 %   between hard and soft thresholding for a simple linear input:::
@@ -103,7 +103,7 @@ if flags.do_sparse
 else
   xo=zeros(size(xi));
   
-  % Create a mask with a value of 1 for non-zero element. For full
+  % Create a mask with a value of 1 for non-zero elements. For full
   % matrices, this is faster than the significance map.
 
   if flags.do_hard
@@ -118,37 +118,33 @@ else
   end;
   
   if flags.do_soft
-    % In the following lines, the +0 is significant: It turns
-    % -0 into +0, oh! the joy of numerics.
-    
-    if nargout==2
-      xa=abs(xi)-lambda;    
-      mask=xa>=0;
-      xo=(mask.*xa+0).*sign(xi);
-      N=sum(mask(:));
+      % In the following lines, the +0 is significant: It turns
+      % -0 into +0, oh! the joy of numerics.
       
-    else
-      xa=abs(xi)-lambda;    
-      xo=((xa>=0).*xa+0).*sign(xi);
-    end;
+      if nargout==2
+          xa=abs(xi)-lambda;    
+          mask=xa>=0;
+          xo=(mask.*xa+0).*sign(xi);
+          N=sum(mask(:))-sum(xa(:)==0);      
+      else
+          xa=abs(xi)-lambda;    
+          xo=((xa>=0).*xa+0).*sign(xi);
+      end;
   end;
   
   if flags.do_wiener
-
-    if nargout==2
       xa = lambda./abs(xi);
       xa(isinf(xa)) = 0;
       xa = 1 - xa.^2;
-      mask = xa>0;
-      xo = xi.*xa.*mask;
-      N = sum(mask(:));
-    else
-      xa = lambda./abs(xi);
-      xa(isinf(xa)) = 0;
-      xa = 1 - xa.^2;
-      xo = xi.*xa.*(xa>0);
-    end
-
+      
+      if nargout==2
+          mask = xa>0;
+          xo = xi.*xa.*mask;
+          N = sum(mask(:));
+      else
+          xo = xi.*xa.*(xa>0);
+      end
+      
   end;
 end;
 

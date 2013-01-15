@@ -102,10 +102,6 @@ def runcommand(todo,redomode='auto'):
         printdoc.git_stageexport_mat(project)
         printdoc.printdoc(project,'mat')
 
-    if todo=='gitstagemat':
-        printdoc.git_stageexport_mat(project)
-        printdoc.printdoc(project,'mat')
-
     if todo=='gitrepomat':
         printdoc.git_repoexport_mat(project)
         printdoc.printdoc(project,'mat')
