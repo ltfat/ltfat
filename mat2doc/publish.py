@@ -33,8 +33,8 @@ host=localconf.webserver[project]
 remotedir=localconf.remotedir[project]
 
 
-sys.path.append(projectdir+'mat2doc')
-from mat2docconf import *
+#sys.path.append(projectdir+'mat2doc')
+#from mat2docconf import *
 
 filesdir=localconf.outputdir+project+'-files'+os.sep
 printdoc.safe_mkdir(filesdir)

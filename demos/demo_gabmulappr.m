@@ -67,23 +67,28 @@ Ge1=gabmul(e1,sym,a);
 % Plotting the results
 %% ------------- figure 1 ------------------------------------------
 
+clim=[-40,13];
 figure(1);
-subplot(2,2,1); sgram(real(As1),'tfr',10,'clim',[-40,13],'nocolorbar'); 
+subplot(2,2,1);
+sgram(real(As1),'tfr',10,'clim',clim,'nocolorbar'); 
 title (sprintf('Spectogram of output signal: \n Time-variant system applied on sinusoid'),'Fontsize',14);
 set(get(gca,'XLabel'),'Fontsize',14);
 set(get(gca,'YLabel'),'Fontsize',14);
 
-subplot(2,2,2); sgram(real(Ae1),'tfr',10,'clim',[-40,13],'nocolorbar'); 
+subplot(2,2,2);
+sgram(real(Ae1),'tfr',10,'clim',clim,'nocolorbar'); 
 title (sprintf('Spectogram of output signal: \n Time-variant system applied on exponential sweep'),'Fontsize',14);
 set(get(gca,'XLabel'),'Fontsize',14);
 set(get(gca,'YLabel'),'Fontsize',14);
 
-subplot(2,2,3); sgram(real(Gs1),'tfr',10,'clim',[-40,13],'nocolorbar');
+subplot(2,2,3);
+sgram(real(Gs1),'tfr',10,'clim',clim,'nocolorbar');
 title (sprintf('Spectogram of output signal: \n Best approximation by Gabor multipliers applied on sinusoid'),'Fontsize',14);
 set(get(gca,'XLabel'),'Fontsize',14);
 set(get(gca,'YLabel'),'Fontsize',14);
 
-subplot(2,2,4); sgram(real(Ge1),'tfr',10,'clim',[-40,13],'nocolorbar');
+subplot(2,2,4);
+sgram(real(Ge1),'tfr',10,'clim',clim,'nocolorbar');
 title (sprintf('Spectogram of output signal: \n Best approximation by Gabor multipliers applied on exponential sweep'),'Fontsize',14);
 set(get(gca,'XLabel'),'Fontsize',14);
 set(get(gca,'YLabel'),'Fontsize',14);

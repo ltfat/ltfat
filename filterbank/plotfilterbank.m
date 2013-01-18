@@ -155,13 +155,13 @@ end;
 
 axis('xy');
 if ~isempty(kv.fs)
-  xlabel(sprintf('%s (s)',kv.time));
+  xlabel(sprintf('%s (s)',kv.time),'fontsize',kv.fontsize);
 else
-  xlabel(sprintf('%s (%s)',kv.time,kv.samples));
+  xlabel(sprintf('%s (%s)',kv.time,kv.samples),'fontsize',kv.fontsize);
 end;
 
 if isempty(kv.fc)
-  ylabel('Channel No.');
+  ylabel('Channel No.','fontsize',kv.fontsize);
 else
   
   if isempty(kv.tick)
@@ -199,7 +199,7 @@ else
 
   end;
   
-  ylabel(sprintf('%s (Hz)',kv.frequency));
+  ylabel(sprintf('%s (Hz)',kv.frequency),'fontsize',kv.fontsize);
   
 end;
 

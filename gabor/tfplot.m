@@ -154,7 +154,7 @@ if flags.do_display
         % situations where the data (is by itself limited (from above or
         % below) to within the specified range. Setting clim explicitly
         % avoids the the colormap moves in the top or bottom.
-        imagesc(xr,yr,coef,kv.clim);
+        imagesc(xr,yr,coef);
       case 'contour'
         contour(xr,yr,coef);
       case 'surf'
