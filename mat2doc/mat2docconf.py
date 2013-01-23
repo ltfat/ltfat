@@ -7,33 +7,31 @@
 #   projectname  - The name of your project, OK, you already know this
 #   projectdir   - The directory where your project is located
 #   outputdir    - The output directory
-#   target       - The target 
+
+print projectname
+print projectdir
+print outputdir
 
 from mat2doc import *
 
+# Define versionstring
 f=file(projectdir+'ltfat_version')
 versionstring=f.read()[:-1]
 f.close
 
-def copyrightfun():
+# Define copyright    
+f=file(projectdir+'mat2doc/copyrightplate')
+buf=f.readlines()
+f.close
 
-    f=file(projectdir+'ltfat_version')
-    versionstring=f.read()[:-1]
-    f.close
+copyright=[u'Copyright (C) 2005-2013 Peter L. S\xf8ndergaard.\n',
+           u'This file is part of LTFAT version '+versionstring+'\n']
+copyright.extend(buf)
     
-    f=file(projectdir+'mat2doc/copyrightplate')
-    buf=f.readlines()
-    f.close
-
-    copyright=[u'Copyright (C) 2005-2013 Peter L. S\xf8ndergaard.\n',
-               u'This file is part of LTFAT version '+versionstring+'\n']
-    copyright.extend(buf)
-    
-    return copyright
 
 conf=ConfType()
 
-conf.copyright=copyrightfun
+conf.copyright=copyright
 
 contentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'filterbank/Contents','nonstatgab/Contents',

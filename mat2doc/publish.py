@@ -31,10 +31,16 @@ if len(sys.argv)>3:
 projectdir=localconf.projects[project]
 host=localconf.webserver[project]
 remotedir=localconf.remotedir[project]
-
+projectname=project # For mat2docconf
+outputdir=localconf.outputdir # For mat2docconf
 
 #sys.path.append(projectdir+'mat2doc')
 #from mat2docconf import *
+
+conffile=projectdir+'mat2doc/mat2docconf.py'
+newlocals=locals()
+execfile(conffile,globals(),newlocals)
+
 
 filesdir=localconf.outputdir+project+'-files'+os.sep
 printdoc.safe_mkdir(filesdir)
