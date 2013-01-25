@@ -3,7 +3,7 @@ function f = comp_ifwt_all(c,g,J,a,Ls,type,ext)
 %   Usage:  f = comp_ifwt_all(c,g,J,Ls,type,ext);
 %
 %   Input parameters:
-%         c     : Coefficients stored in J+1 cell-array.
+%         c     : Coefficients stored in a cell-array.
 %         g     : Synthesis wavelet filters.
 %         Ls    : Length of the reconstructed signal.
 %         type  : 'dec','undec' Type of the wavelet transform.

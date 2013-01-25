@@ -16,14 +16,14 @@ f=vonkoch;f=f';
 
 J = 7;
 
-w = waveletfb({'dden',3});
+w = fwtinit({'dden',3});
 %[w.h,w.g,abase]=wfilt_hden(1); 
 
 c2 = fwt(f,w,J);
 fhat2 = ifwt(c2,w,J,length(f));
 
-[h,a] = multid(w,J,'ana');
-[g,a] = multid(w,J,'syn');
+[h,a] = wfbtmultid(w,J,'ana');
+[g,a] = wfbtmultid(w,J,'syn');
 figure(3);freqzfb(h,length(f));
 figure(4);freqzfb(g,length(f));
 H = freqzfb(h,filterbanklength(length(f),a));

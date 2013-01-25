@@ -1,6 +1,6 @@
 function [H, G, a] = wfilt_db(N)
 %WFILT_DB    Daubechies FIR filterbank
-%   Usage:  [H,G] = wfilt_db(N);
+%   Usage:  [h,g] = wfilt_db(N);
 %
 %   Input parameters:
 %         N     : Order of Daubechies filters. 

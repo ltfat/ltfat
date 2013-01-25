@@ -10,7 +10,7 @@ function c = comp_fwt_all(f,h,J,a,type,ext)
 %         ext   : 'per','zpd','sym','symw','asym','asymw','ppd','sp0' Type of the forward transform boundary handling.
 %
 %   Output parameters:
-%         c     : Coefficients stored in J+1 cell-array.
+%         c     : Coefficients stored in J*length(h)+1 cell-array.
 %
 
 % Do non-expansve transform if ext='per'

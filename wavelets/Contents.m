@@ -3,9 +3,21 @@
 %   Basic analysis/synthesis
 %      FWT               - Fast Wavelet Transform 
 %      IFWT              - Inverse Fast Wavelet Transform
+%      UNFWT             - Undecimated Fast Wavelet Transform
+%      IUNFWT            - Inverse Undecimated Fast Wavelet Transform 
 %      WTFFT             - Wavelet Transform in the frequency-domain
 %      IWTFFT            - Inverse Wavelet Transform in the frequency-domain
+%      WFBT              - Transform using general Wavelet Filterbank Tree 
+%      IWFBT             - Inverse transform using general Wavelet Filterbank Tree
 %
+%   Wavelet Filterbank trees manipulation
+%      WFBTINIT          - Wavelet Filterbank tree structure initialization
+%      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
+%      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
+%      WFBTMULTID        - Impulse responses of the analysis non-iterated multirate-identity wavelet filterbank
+%      IWFBTMULTID       - Impulse responses of the synthesis non-iterated multirate-identity wavelet filterbank 
+%      FWTINIT           - Basic Wavelet Filters structure initialization
+%  
 %   Plots
 %      PLOTFWT           - Plot wavelet coefficients
 %
@@ -13,8 +25,7 @@
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
 %      WAVCELL2PACK      - Changes wavelet coefficient storing format
 %      WAVPACK2CELL      - Changes wavelet coefficient storing format back
-%      WAVELETFB         - Basic Wavelet Filters
-%      MULTID            - Calculates the impulse responses of non-iterated noble multirate-identity wavelet filterbank
+%
 %
 %   Filters defined in the time-domain
 %      WFILT_ALGMBAND    - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction

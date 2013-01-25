@@ -3,7 +3,7 @@ function [h,g,a]=wfilt_maxflat(N)
 %   Usage: [h,g,a] = wfilt_maxflat(N);
 %
 %   `[h,g,a]=wfilt_maxflat(N)` calculates half-band maximally flat FIR filters,
-%   where $(N0-1)$ is the degree of flatness at $w=0$ and $w=\pi$ radians. 
+%   where $(N-1)$ is the degree of flatness at $w=0$ and $w=\pi$ radians. 
 %
 %   References: vaidy93mult
 
@@ -14,10 +14,10 @@ function [h,g,a]=wfilt_maxflat(N)
 
 
 
-Npi=N0;
+Npi=N;
 
 poly=[];		% Calculate trigonometric polynomial
-for i=1:N0
+for i=1:N
 	poly=[poly , 2*numcomb(Npi+i-2,i-1)];
 end
 poly=poly(length(poly):-1:1);
@@ -75,7 +75,7 @@ end
 
 rh=[1 1];
 
-for i=2:N0
+for i=2:N
 	rh=conv(rh,[1 1]);
 end
 

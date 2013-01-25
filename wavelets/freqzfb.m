@@ -5,7 +5,7 @@ function [H,f] = freqzfb(h,varargin);
 %   XXX Merge this function with magresp
 
 
-definput.keyvals.Ls = 1024;
+definput.keyvals.Ls = 4*1024;
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);   
 
 if(isnumeric(h))

@@ -8,7 +8,7 @@ function [w,s,xvals] = wavfun(g,N,varargin)
 %   Output parameters:
 %         w     : Approximation of wavelet function(s)
 %         s     : Approximation of the scaling function
-%         xvals : Correct 
+%         xvals : Correct x-axis values
 %
 %   Iteratively generate a discrete approximation of wavelet and scaling
 %   functions. The algorithm is equal to the DWT reconstruction of a single

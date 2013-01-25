@@ -7,61 +7,58 @@ function c = fwt(f,h,J,varargin)
 %         f     : Input data.
 %         h     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
+%         a     : Explicitly defined subsampling factors.
 %
 %   Output parameters:
 %         c      : Coefficients stored in a cell-array.
 %
-%   `c=fwt(f,h,J)` computes wavelet coefficients *c* of the input signal *f*
-%   using a basis (or frame) constructed from the filters specified in *h* and the depth *J* using
-%   the MRA principle.  For computing the coefficients the fast wavelet
-%   transform algorithm (or Mallat's algorithm) is emplyed. If *f* is a
-%   matrix, the transformation is applied to each of *W* columns.
+%   `c=fwt(f,h,J)` returns wavelet coefficients *c* of the input signal *f*
+%   using *J* iterations of the basic wavelet filterbank defined by *h*.
+%   The fast wavelet transform algorithm (or Mallat's algorithm) is employed.
+%   If *f* is a matrix, the transformation is applied to each of *W* columns.
+%   
+%   The coefficents *c* are Discrete Wavelet transform of the input signal *f*,
+%   if *h* defines two-channel wavelet filterbank. The function can apply
+%   the Mallat's algorithm using basic filter banks with any number of the
+%   channels. In such case, the transforms have different names.    
 %
-%   The wavelet filters $h$ should be a structure produced by the waveletfb
-%   function. The .h field of the structure passed is a cell-array as in
-%   the following case.
-%
-%   The wavelet filters can be also passed directly as a collumn cell-array in which each entry
-%   contain single filter impulse response. Functions with a `wfilt_` prefix generate
-%   such cell arrays. The number of filters will be refered to as `length(h)`.
-%
-%   The coefficients in the cell array $c\{j\}$ for $j=1,\ldots,J\cdot(length(h)-1)+1$ are ordered
-%   with inceasing central frequency of the equivalent filter frequency
-%   response or equivalently with decreasing wavelet scale.
+%   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
+%   The formats are the same as for the |fwtinit|_ function. The simplest
+%   is passing a cell array, whose first element is the name of the function
+%   defining the basic wavelet filters (|wfilt_|_ prefix) and the other elements are 
+%   the parameters of the function. e.g. `{'db',10}` calls  `wfilt_db(10)` internally.
+%   The second possible format of $h$ is to pass cell array of one dimensional
+%   numerical vectors directly defining the wavelet filter impulse responses.
+%   In this case, outputs of the filters are subsampled by a factor equal
+%   to the number of the filters. For creating completely custom filterbanks use the
+%   |fwtinit|_ function.
+%   The third option is to pass structure obtained from the |fwtinit|_
+%   function.
+%   
+%   The coefficients in the cell array $c\{jj\}$ for $jj=1,\ldots,J\cdot(N-1)+1$,
+%   where $N$ is number of filters in the basic wavelet filterbank, are ordered
+%   with inceasing central frequency of the corresponding effective filter frequency
+%   responses or equivalently with decreasing wavelet scale.
 %
 %   If the input *f* is matrix with *W* columns, each element of the cell
-%   array $c\{j\}$ is a matrix with *W* columns with coefficients belonging
+%   array $c\{jj\}$ is a matrix with *W* columns with coefficients belonging
 %   to the appropriate input channel.
 %
 %   The following flag groups are supported:
 %
-%         'dec','undec'
-%                Type of the wavelet transform.
-%
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 %                Type of the boundary handling.
 %
-%   Time-invariant wavelet tranform:
-%   --------------------------------
-%
-%   `c=fwt(f,h,J,'undec')` computes redundant time (or shift) invariant
-%   wavelet representation of the input signal *f* using the "a-trous"
-%   algorithm. `length(c{j})=length(f)` for all *j*.
-%
-%   Other names for this version of the wavelet transform are: the
-%   undecimated wavelet transform, the stationary wavelet transform or even
-%   the "continuous" (as the time step is one sample) wavelet transform.  The
-%   redundancy is exactly `J*(length(h)-1)+1`.
 %
 %   Boundary handling:
 %   ------------------
 %
-%   The default periodic extension considers the input signal as being one
+%   The default periodic extension considers the input signal as it was a one
 %   period of some infinite periodic signal as is natural for the transforms
 %   based on the FFT.  The resulting wavelet representation is
 %   non-expansive, that is if the input signal length is a multiple of a
 %   $J$-th power of the subsampling factor, the total number of coefficients
-%   is equal to the input signal length in the decimated case. 
+%   is equal to the input signal length. 
 %
 %   If the input signal length is not a multiple of a $J$-th power of the
 %   subsampling factor, the processed signal is padded internally by
@@ -95,6 +92,9 @@ function c = fwt(f,h,J,varargin)
 %
 %     * `'sp0'` - repeating boundary sample
 %
+%   Note that the same flag have to be used in the call of the inverse transform
+%   function `ifwt`.
+%
 %   Examples:
 %   ---------
 %   
@@ -102,14 +102,12 @@ function c = fwt(f,h,J,varargin)
 % 
 %     f = gspi;
 %     J = 10;
-%     w = waveletfb({'db',8});
-%     c = fwt(f,w,J);
+%     c = fwt(f,{'db',8},J);
 %     plotfwt(c);
 %
-%   See also: ifwt, waveletfb, wfilt_db
+%   See also: ifwt, fwtinit
 %
 %   References: ma98  
-
 
 
 if nargin<3
@@ -124,91 +122,36 @@ if(J<1 && rem(a,1)~=0)
    error('%s: J must be a positive integer.',upper(mfilename)); 
 end
 
-do_definedfb = 0;
-if(iscell(h))
-    if(length(h)<2)
-       error('%s: h is expected to be a cell array containing two or more filters.',upper(mfilename)); 
-    end
-
-    for ii=2:numel(h)
-     if(length(h{1})~=length(h{ii}))
-        error('%s: Wavelet filters have to have equal length.',upper(mfilename));
-     end
-    end
-    
-    if(length(h{1})< 2)
-        error('%s: Wavelet filters should have at least two coefficients.',upper(mfilename)); 
-    end
-elseif(isstruct(h))
-    do_definedfb = 1;
-elseif(ischar(h))
-    h = waveletfb(h);
-    do_definedfb = 1;
-elseif(isnumeric(h))
-    % TO DO: Does it make sense to accept filter coefficients as matrix?
-else
-   error('%s: Unrecognized Wavelet filters definition.',upper(mfilename)); 
-end
+% Initialize the wavelet filters structure
+h = fwtinit(h);
 
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-if(do_definedfb)
-    if(flags.do_type_null)
-       flags.type = h.type; 
-    end
-
-    if(flags.do_ext_null)
-       flags.ext = h.ext; 
-    end
-    
-    a = h.a;
-    h = h.h;
-else
-    % setting defaults
-    if(flags.do_type_null)
-       flags.type = 'dec'; 
-    end
-
-    if(flags.do_ext_null)
-       flags.ext = 'per'; 
-    end
-
-    a = length(h)*ones(length(h),1);
-end
-
-
-
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
-% TO DO: if elements of a are not equal and the flags are 'dec' and 'per',
+% TO DO: if elements of h.a are not equal and the flag is 'per',
 % do zero padding to the next multiple of 2^J
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
 if(Ls<2)
    error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
 end
- 
 
 
 %% ----- step 2 : Check whether the input signal is long enough
 % input signal length is not restricted for expansive wavelet transform (extension type other than the default 'per')
-flen = length(h{1});
+flen = length(h.h{1});
 if(strcmp(flags.ext,'per'))
-   if(strcmp(flags.type,'dec'))
-     minLs = (a(1)^J-1)*(flen-1); % length of the longest equivalent filter -1
-   else
-     minLs = (a(1)^(J-1))*(flen-1); % length of the longest upsampled filter - 1
-   end
+     minLs = (h.a(1)^J-1)*(flen-1); % length of the longest equivalent filter -1
    if Ls<minLs
      error('%s: Input signal length is %d. Minimum signal length is %d or use %s flag instead. \n',upper(mfilename),Ls,minLs,'''ppd''');
    end;
 end
 
 
-
 %% ----- step 3 : Run computation
- c = comp_fwt_all(f,h,J,a,flags.type,flags.ext);
+ c = comp_fwt_all(f,h.h,J,h.a,'dec',flags.ext);
 
 

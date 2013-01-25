@@ -19,39 +19,39 @@ waitS =3;
 
 
 J = 5;
-w = waveletfb('db',5);
+w = fwtinit({'db',5});
 c = fwt(f,w,J);
-figure(2);clf;plotwavc(c,'clim',scalegramBounds);
+figure(2);clf;plotfwt(c,'clim',scalegramBounds);
 figure(3);freqzfb(fftshift(multid(w.h,J)));
 pause(waitS);
 %%
-w = waveletfb('optfs',2);
+w = fwtinit({'optfs',2});
 c = fwt(f,w,J);
-figure(2);clf;plotwavc(c,'clim',scalegramBounds);
+figure(2);clf;plotfwt(c,'clim',scalegramBounds);
 figure(3);freqzfb(multid(w.h,J));
 pause(waitS);
 
-w = waveletfb('dden',6);
+w = fwtinit({'dden',5});
 c = fwt(f,w,J);
-figure(2);clf;plotwavc(c,'clim',scalegramBounds);
+figure(2);clf;plotfwt(c,'clim',scalegramBounds);
 figure(3);freqzfb(multid(w.h,J));
 pause(waitS);
 
-w = waveletfb('hden',3);
+w = fwtinit({'hden',2});
 c = fwt(f,w,J);
-figure(2);clf;plotwavc(c,'clim',scalegramBounds);
+figure(2);clf;plotfwt(c,'clim',scalegramBounds);
 figure(3);freqzfb(multid(w.h,J));
 pause(waitS);
 
-w = waveletfb('dgrid',3);
+w = fwtinit({'dgrid',3});
 c = fwt(f,w,J);
-figure(2);clf;plotwavc(c,'clim',scalegramBounds);
+figure(2);clf;plotfwt(c,'clim',scalegramBounds);
 figure(3);freqzfb(multid(w.h,J));
 pause(waitS);
 
-w = waveletfb('symds',3);
+w = fwtinit({'symds',3});
 c = fwt(f,w,J);
-figure(2);clf;plotwavc(c,'clim',scalegramBounds);
+figure(2);clf;plotfwt(c,'clim',scalegramBounds);
 figure(3);freqzfb(multid(w.h,J));
 pause(waitS);
 
@@ -59,7 +59,7 @@ pause(waitS);
 
 
 
-w = waveletfb('dtree');
+w = fwtinit('dtree');
 c = fwt(f,w,J);
 figure(2);clf;plotwavc(c,'clim',scalegramBounds);
 hdt = cell(2,J);

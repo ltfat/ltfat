@@ -13,7 +13,7 @@ else
 end
 test_failed = 0;
 
-w = waveletfb({'algmband',1});
+w = fwtinit({'algmband',1});
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w,J,length(f));
 err=norm(f-fhat);
@@ -23,7 +23,7 @@ if(err>1e-6)
  return;
 end
 %%
-w = waveletfb({'db',8});
+w = fwtinit({'db',8});
 [c] = fwt(f,w,J);
 fhat = ifwt(c,w,J,length(f));
 err=norm(f-fhat);
@@ -44,56 +44,56 @@ if(err>1e-6)
  return;
 end
 %%
-
-w = waveletfb({'db',8},'undec');
-[c] = fwt(f,w,J);
-fhat = ifwt(c,w,J,length(f));
-err=norm(f-fhat);
-if(err>1e-6)
- test_failed = 1; 
- if verbose, stem([f,fhat]); end;
- return;
-end
-
-w = waveletfb({'db',8},'undec','sym');
-[c] = fwt(f,w,J);
-fhat = ifwt(c,w,J,length(f));
-err=norm(f-fhat);
-if(err>1e-6)
- test_failed = 1; 
- if verbose, stem([f,fhat]); end;
- return;
-end
-
-
-w = waveletfb({'db',8},'undec','sym');
-[c] = fwt(f,w,J,'per');
-fhat = ifwt(c,w,J,length(f),'per');
-err=norm(f-fhat);
-if(err>1e-6)
- test_failed = 1; 
- if verbose, stem([f,fhat]); end;
- return;
-end
-
-w = waveletfb({'db',8},'undec','sym');
-[c] = fwt(f,w,J);
-fhat = ifwt(c,w,J,length(f));
-err=norm(f-fhat);
-if(err>1e-6)
- test_failed = 1; 
- if verbose, stem([f,fhat]); end;
- return;
-end
-
-
-w = waveletfb({'db',8});
-[c] = fwt(f,w,J,'undec','sym');
-fhat = ifwt(c,w,J,length(f),'undec','sym');
-err=norm(f-fhat);
-if(err>1e-6)
- test_failed = 1; 
- if verbose, stem([f,fhat]); end;
- return;
-end
+% TODO: put somewhere else
+% w = fwtinit({'db',8},'undec');
+% [c] = fwt(f,w,J);
+% fhat = ifwt(c,w,J,length(f));
+% err=norm(f-fhat);
+% if(err>1e-6)
+%  test_failed = 1; 
+%  if verbose, stem([f,fhat]); end;
+%  return;
+% end
+% 
+% w = waveletfb({'db',8},'undec','sym');
+% [c] = fwt(f,w,J);
+% fhat = ifwt(c,w,J,length(f));
+% err=norm(f-fhat);
+% if(err>1e-6)
+%  test_failed = 1; 
+%  if verbose, stem([f,fhat]); end;
+%  return;
+% end
+% 
+% 
+% w = waveletfb({'db',8},'undec','sym');
+% [c] = fwt(f,w,J,'per');
+% fhat = ifwt(c,w,J,length(f),'per');
+% err=norm(f-fhat);
+% if(err>1e-6)
+%  test_failed = 1; 
+%  if verbose, stem([f,fhat]); end;
+%  return;
+% end
+% 
+% w = waveletfb({'db',8},'undec','sym');
+% [c] = fwt(f,w,J);
+% fhat = ifwt(c,w,J,length(f));
+% err=norm(f-fhat);
+% if(err>1e-6)
+%  test_failed = 1; 
+%  if verbose, stem([f,fhat]); end;
+%  return;
+% end
+% 
+% 
+% w = waveletfb({'db',8});
+% [c] = fwt(f,w,J,'undec','sym');
+% fhat = ifwt(c,w,J,length(f),'undec','sym');
+% err=norm(f-fhat);
+% if(err>1e-6)
+%  test_failed = 1; 
+%  if verbose, stem([f,fhat]); end;
+%  return;
+% end
 

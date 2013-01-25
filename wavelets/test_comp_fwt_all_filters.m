@@ -43,8 +43,8 @@ test_filters = {
                {'spline',3,5}
                {'spline',3,11}
                {'spline',11,3}
-               {'maxflat',2}
-               {'maxflat',11}
+               %{'maxflat',2}
+               %{'maxflat',11}
                {'db',1}
                {'db',10}
                {'db',20}
