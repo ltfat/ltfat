@@ -94,14 +94,13 @@ mat.urlbase='http://ltfat.sourceforge.net/doc/'
 # ------------------------------------------
 
 verify=ConfType()
-
 verify.basetype='verify'
+verify.sourcedir=outputdir+'ltfat-mat'+os.sep
 
-verify.targets=['AUTHOR','TESTING','REFERENCE']
-
+verify.targets=['AUTHOR','TESTING']
 verify.notappears=['FIXME','BUG','XXL','XXX']
 
-verify.ignore=["demo_","comp_","assert_","Contents.m","init.m"]
+verify.ignore=["comp_","assert_","Contents.m","init.m"]
 
 
 

@@ -217,6 +217,8 @@ def runcommand(todo,redomode='auto'):
         os.system('rsync -av '+notehtml+' '+host+':'+noteswww);
 
 
+    if todo=='verify':
+        printdoc.printdoc(project,'verify',redomode)
 
 
 # Excute runcommand, this is where the main stuff happens    
