@@ -34,7 +34,7 @@
 %       transmit zeros at the beginning and at the end, to flush the system
 %       properly.
 %
-%   ..figure::
+%   .. figure::
 %
 %     Received coefficients.
 %
