@@ -8,10 +8,6 @@
 #   projectdir   - The directory where your project is located
 #   outputdir    - The output directory
 
-print projectname
-print projectdir
-print outputdir
-
 from mat2doc import *
 
 # Define versionstring
