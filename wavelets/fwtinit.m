@@ -36,7 +36,7 @@ function [w] = fwtinit(wavname,varargin)
 %        implicit subsampling factors
 % 
 %
-%   See also: fwt, ifwt, waveletfb, multid, wfilt_db
+%   See also: fwt, ifwt, wfilt_db
 
 
 persistent cachw;

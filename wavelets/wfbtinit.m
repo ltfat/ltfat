@@ -24,7 +24,7 @@ function wtree = wfbtinit(filts,varargin);
 %   `wfbtinit({w,J})` creates filterbank tree of depth *J*. Parameter `w` 
 %   can be either structure obtained form the |fwtinit|_ function or a cell
 %   array, whose first element is a name of the function defining the basic
-%   wavelet filters (|wfilt_|_ prefix) and the other elements are parameters
+%   wavelet filters (`wfilt_` prefix) and the other elements are parameters
 %   passed to the function e.g. : `wfbtinit({{'db',10},4})`.
 %
 

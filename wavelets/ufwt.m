@@ -14,7 +14,7 @@ function c = ufwt(f,h,J,varargin)
 %   `c=ufwt(f,h,J)` computes redundant time (or shift) invariant
 %   wavelet representation *c* of the input signal *f* using the "a-trous"
 %   algorithm.
-
+%
 %   The coefficents *c* are so coalled Undecimated Discrete Wavelet transform
 %   of the input signal *f*, if *h* defines two-channel wavelet filterbank.
 %   Other names for this version of the wavelet transform are: the
