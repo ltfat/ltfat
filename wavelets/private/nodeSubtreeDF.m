@@ -1,4 +1,4 @@
-function nodesIdxs = nodeSubtreeBF(nodeNo,treeStruct)
+function nodesIdxs = nodeSubtreeDF(nodeNo,treeStruct)
 % subtreeIdx = [];
 % 
 % children = treeStruct.children{nodeNo}(find(treeStruct.children{nodeNo}~=0));
@@ -14,6 +14,10 @@ nodesIdxs = [];
 while ~isempty(toGoTrough)
    chtmp = find(treeStruct.children{toGoTrough(1)}~=0);
    chIdxtmp = treeStruct.children{toGoTrough(1)}(chtmp);
-   nodesIdxs = [nodesIdxs,chIdxtmp];
-   toGoTrough = [toGoTrough(2:end),chIdxtmp];
+   nodesIdxs = [nodesIdxs,toGoTrough(1)];
+   toGoTrough = [chIdxtmp,toGoTrough(2:end)];
 end
+
+% remove the nodeNo from the just to be consistent with nodeSubtreeBF
+% TO DO: is it wise?
+nodesIdxs = nodesIdxs(2:end);

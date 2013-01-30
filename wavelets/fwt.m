@@ -20,7 +20,7 @@ function c = fwt(f,h,J,varargin)
 %   The coefficents *c* are Discrete Wavelet transform of the input signal *f*,
 %   if *h* defines two-channel wavelet filterbank. The function can apply
 %   the Mallat's algorithm using basic filter banks with any number of the
-%   channels. In such case, the transforms have different names.    
+%   channels. In such case, the transform have different name.    
 %
 %   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
 %   The formats are the same as for the |fwtinit|_ function. The simplest
@@ -62,7 +62,7 @@ function c = fwt(f,h,J,varargin)
 %
 %   If the input signal length is not a multiple of a $J$-th power of the
 %   subsampling factor, the processed signal is padded internally by
-%   repeating the last sample at each step of the transfrom to the next
+%   repeating the last sample at each step of the transform to the next
 %   multiple of the subsampling factor rather than doing the prior explicit
 %   padding.  In addition, the periodic extension restrict the input signal
 %   length to be greater than a certain length.
@@ -118,12 +118,12 @@ if ~isnumeric(J) || ~isscalar(J)
   error('%s: "J" must be a scalar.',upper(mfilename));
 end;
 
-if(J<1 && rem(a,1)~=0)
+if(J<1 || rem(J,1)~=0)
    error('%s: J must be a positive integer.',upper(mfilename)); 
 end
 
 % Initialize the wavelet filters structure
-h = fwtinit(h);
+h = fwtinit(h,'ana');
 
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
@@ -142,7 +142,7 @@ end
 
 %% ----- step 2 : Check whether the input signal is long enough
 % input signal length is not restricted for expansive wavelet transform (extension type other than the default 'per')
-flen = length(h.h{1});
+flen = length(h.filts{1}.h);
 if(strcmp(flags.ext,'per'))
      minLs = (h.a(1)^J-1)*(flen-1); % length of the longest equivalent filter -1
    if Ls<minLs
@@ -152,6 +152,6 @@ end
 
 
 %% ----- step 3 : Run computation
- c = comp_fwt_all(f,h.h,J,h.a,'dec',flags.ext);
+ c = comp_fwt_all(f,h.filts,J,h.a,'dec',flags.ext);
 
 

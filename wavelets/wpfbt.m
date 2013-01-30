@@ -1,5 +1,5 @@
-function c=wfbt(f,wt,varargin)
-%WTREE   Wavelet FilterBank Tree
+function c=wpfbt(f,wt,varargin)
+%WTREE   Wavelet Packet FilterBank Tree
 %   Usage:  c=wfbt(f,wt);
 %           c=wfbt(f,wt,...);
 %

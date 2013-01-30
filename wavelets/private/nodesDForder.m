@@ -1,4 +1,4 @@
-function nodesIdxs = nodesBForder(treeStruct)
+function nodesIdxs = nodesDForder(treeStruct)
 %NODESBFORDER Nodes in the Breadth-First search order
 %  Usage:  nodesIdxs = nodesBForder(treeStruct)
 %
@@ -17,4 +17,4 @@ function nodesIdxs = nodesBForder(treeStruct)
 
 %find root
 nodeNo = find(treeStruct.parents==0);
-nodesIdxs = [nodeNo,nodeSubtreeBF(nodeNo,treeStruct)];
+nodesIdxs = [nodeNo,nodeSubtreeDF(nodeNo,treeStruct)];

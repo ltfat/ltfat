@@ -21,7 +21,7 @@ else
 end
 
 filts = numel(g);
-fLen = length(g{1});
+fLen = length(g{1}.h);
 len = zeros(J+1,1);
     for jj=1:J
        len(jj) = length(c{(jj-1)*(filts-1)+2});
@@ -32,11 +32,15 @@ len = zeros(J+1,1);
 f = zeros(Ls,chans);
 tmpin = cell(filts,1);
 
+tmpg = cell(length(g),1);
+for ff=1:length(g)
+    tmpg{ff} = g{ff}.h;
+end
 
 if(strcmp(type,'dec'))
     upFac= a(1);
     if(doNoExt)
-        skip = floor((fLen)/2) -1;
+        skip = g{1}.d -1;
     else
         skip = fLen - 2;
     end
@@ -51,7 +55,7 @@ if(strcmp(type,'dec'))
                % tmpin{1+ff}= c{jj,ff}(:,ch);
                tmpin{1+ff}= c{(jj-2)*(filts-1)+ff+1}(:,ch);
              end
-             tempca = up_conv_td(tmpin, len(jj),g,upFac,skip,doNoExt,0);
+             tempca = up_conv_td(tmpin, len(jj),tmpg,upFac,skip,doNoExt,0);
           end
           f(:,ch) = tempca;
        end
@@ -60,9 +64,9 @@ if(strcmp(type,'dec'))
         for ch=1:chans
            tempca = c{1}(:,ch);
            for jj=2:J+1
-              tempca = up_conv_td({tempca}, len(jj),{g{1}},a(1),skip,doNoExt,0);
+              tempca = up_conv_td({tempca}, len(jj),{tmpg{1}},a(1),skip,doNoExt,0);
               for ff=1:filts-1
-                 tempca = tempca + up_conv_td({c{(jj-2)*(filts-1)+ff+1}(:,ch)}, len(jj),{g{ff+1}},a(ff+1),skip,doNoExt,0);  
+                 tempca = tempca + up_conv_td({c{(jj-2)*(filts-1)+ff+1}(:,ch)}, len(jj),{tmpg{ff+1}},a(ff+1),skip,doNoExt,0);  
               end
            end
            f(:,ch) = tempca; 
@@ -72,15 +76,15 @@ if(strcmp(type,'dec'))
 elseif(strcmp(type,'undec'))
     upFac= 1;
     % Since no downsampling takes place, normalize impulse responses
-    for ii = 1:numel(g)
-       g{ii} = g{ii}/sqrt(a(ii));
+    for ii = 1:numel(tmpg)
+       tmpg{ii} = tmpg{ii}/sqrt(a(ii));
     end
 
     skip = zeros(J,1);
     if(doNoExt)
        for jj=1:J
            filtUps = a(1)^(J-jj); 
-           skip(jj) = floor((filtUps*fLen)/2) - filtUps; 
+           skip(jj) = floor(filtUps*g{1}.d) - filtUps; 
        end
     else
        for jj=1:J
@@ -97,7 +101,7 @@ elseif(strcmp(type,'undec'))
                  % tmpin{1+ff}= c{jj,ff}(:,ch);
                  tmpin{1+ff}=c{(jj-2)*(filts-1)+ff+1}(:,ch);
              end
-             tempca = up_conv_td(tmpin,len(jj),g,upFac,skip(jj-1),doNoExt,a(1)^(J+1-jj));
+             tempca = up_conv_td(tmpin,len(jj),tmpg,upFac,skip(jj-1),doNoExt,a(1)^(J+1-jj));
           end
           f(:,ch) = tempca;
        end

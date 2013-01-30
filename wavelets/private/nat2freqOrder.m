@@ -1,4 +1,4 @@
-function treeStruct = nat2freqOrder(doSyn,treeStruct)
+function treeStruct = nat2freqOrder(treeStruct)
 %NAT2FREQORDER Natural To Frequency Ordering
 %   Usage:  wtree = nat2freqOrder(doSyn,wtree);
 %
@@ -27,11 +27,12 @@ for ii=1:length(treePath)
     nodeId = treePath(ii);
     parentId = treeStruct.parents(nodeId);
     % number of parent outputs
-    if(doSyn)
-       chan = length(treeStruct.nodes{parentId}.g);
-    else
-       chan = length(treeStruct.nodes{parentId}.h);
-    end
+    chan = length(treeStruct.nodes{parentId}.filts);
+%     if(doSyn)
+%        chan = length(treeStruct.nodes{parentId}.g);
+%     else
+%        chan = length(treeStruct.nodes{parentId}.h);
+%     end
     % local index of the parent output connected to the treePath(ii) node,
     % is in range 1:chan
     locIdx = find(treeStruct.children{parentId}==nodeId,1);
@@ -41,12 +42,12 @@ for ii=1:length(treePath)
     if(rem(locIdx,2)~=1)
        % now for the filter reordering
        range = chan:-1:1;
-    
-       if(doSyn)
-          treeStruct.nodes{nodeId}.g = {treeStruct.nodes{nodeId}.g{range}};
-       else
-          treeStruct.nodes{nodeId}.h = {treeStruct.nodes{nodeId}.h{range}};
-       end
+       treeStruct.nodes{nodeId}.filts = {treeStruct.nodes{nodeId}.filts{range}};
+%        if(doSyn)
+%           treeStruct.nodes{nodeId}.g = {treeStruct.nodes{nodeId}.g{range}};
+%        else
+%           treeStruct.nodes{nodeId}.h = {treeStruct.nodes{nodeId}.h{range}};
+%        end
     end    
     
 end

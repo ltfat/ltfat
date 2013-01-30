@@ -58,11 +58,11 @@ if isempty(Ls)
        else
             % estimated Ls can be one sample more, if the original input
             % signal length plus length(h{1})-1 was an even number
-           Ls = g.a(end)*sigHalfLen - (length(g.g{end})-2);
+           Ls = g.a(end)*sigHalfLen - (length(g.filts{end}.h)-2);
        end
 end
 
 
-f = comp_ifwt_all(c,g.g,J,g.a,Ls,'dec',flags.ext);
+f = comp_ifwt_all(c,g.filts,J,g.a,Ls,'dec',flags.ext);
 
 

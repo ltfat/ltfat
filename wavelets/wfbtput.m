@@ -7,13 +7,13 @@ function wtree = wfbtput(d,k,filt,wtree,varargin)
 %         d     : 
 %         k     :
 %         filts :
-%         a     :
 %         wtree :
 %
 %   Output parameters:
 %         wtree : Modified input structure.
 %
-%   `wtreeput(d,k,filt,a,wtree)`
+%   `wtreeput(d,k,filt,wtree)` puts basic filterbank *filt* to the filter tree
+%   structure *wtree* at level *d* and index *k*.
 %
   
 if(nargin<4)

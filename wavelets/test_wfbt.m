@@ -9,14 +9,14 @@ function test_wfbt
 % 'mband' 3 filters, subs 2,2,1
 %w = waveletfb({'hden',3});
 
-w = fwtinit({'db',10});
+w = fwtinit({'db',20});
 
 
-J = 5;
-wt = wfbtinit(w,'J',J,'full');
-wt = wfbtremove(2,0,wt,'force');
-wt = nat2freqOrder(0,wt);
-wtdual = nat2freqOrder(1,wt);
+J = 8;
+wt = wfbtinit({w,J},'full');
+%wt = wfbtremove(3,0,wt,'force');
+%wt = nat2freqOrder(wt);
+%wtdual = nat2freqOrder(wfbtinit(wt,'syn'));
 
 
 % Building custom filterbank tree
@@ -31,7 +31,8 @@ f = randn(L,1);
 f=gspi;
 L = length(f);
 figure(1);
-freqzfb(multid(wtdual),1024*64);
+clf;
+wtfftfreqz(wfbtmultid(wt));
 
 
 %[h,a] = multid(wt);
@@ -43,7 +44,7 @@ c2 = wfbt(f,wt);
 toc;
 
 tic;
-fhat = iwfbt(c2,wtdual,length(f));
+fhat = iwfbt(c2,wt,length(f));
 toc;
 
 errf = norm(f-fhat);
@@ -59,7 +60,7 @@ end
 % else
 %     disp('OK');
 % end
-figure(1);
+figure(2);
 plotfwt(c2);
 
 

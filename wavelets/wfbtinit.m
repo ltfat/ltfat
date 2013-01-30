@@ -41,24 +41,41 @@ if(nargin==0)
     return;
 end
 
+
+definput.import = {'wfbtcommon','fwtcommon'};
+
+[flags,kv]=ltfatarghelper({},definput,varargin);
+
+
 if((isstruct(filts)&&isfield(filts,'nodes')))
     wtree = filts;
+    nodes = wtree.nodes;
+    for ii=1:length(nodes)
+        if(flags.do_ana)
+           wtree.nodes{ii}.filts = wtree.nodes{ii}.h;
+        else
+           wtree.nodes{ii}.filts = wtree.nodes{ii}.g;
+        end
+    end
+    if(flags.do_freq)
+       wtree = nat2freqOrder(wtree); 
+    end
     return;
+end
+
+if(iscell(filts)&&ischar(filts{1}))
+    filts = {filts,1};
 end
 
 if ~(iscell(filts)&&length(filts)==2&&isnumeric(filts{2}))
     error('%s: Unsupported filterbank tree definition.',upper(mfilename));
 end
 
-definput.import = {'wfbtcommon'};
-
-[flags,kv]=ltfatarghelper({},definput,varargin);
-% explicitly defined subsampling factors are preferred
 
 J = filts{2};
-filtsStruct = fwtinit(filts{1});
+filtsStruct = fwtinit(filts{1},flags.ansy);
 
-filtsNo = max([length(filtsStruct.h),length(filtsStruct.g)]);
+filtsNo = length(filtsStruct.filts);
 
 if(flags.do_dwt || J==1)
   for jj=1:J
@@ -103,14 +120,18 @@ elseif(flags.do_full)
      wtree.children = wtree.children'; 
      
      % TO DO: Do it better!
-     wtree = nat2freqOrder(0,wtree);
-     wtree = nat2freqOrder(1,wtree);
+     %wtree = nat2freqOrder(0,wtree);
+     %wtree = nat2freqOrder(1,wtree);
 else
     %just root node
      wtree.nodes{1} = filtsStruct;
      %wtree.a{1} = a;
      wtree.children{1} = zeros(filtsNo,1);
      wtree.parents(1) = 0;
+end
+
+if(flags.do_freq)
+   wtree = nat2freqOrder(wtree); 
 end
 
 

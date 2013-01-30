@@ -31,11 +31,12 @@ while(treeStruct.parents(tmpNodeNo))
    parentNo = treeStruct.parents(tmpNodeNo);
    tmpIdx = find(treeStruct.children{parentNo}==tmpNodeNo);
    subPat(end+1) = treeStruct.nodes{parentNo}.a(tmpIdx);
-   if(doSyn)
-      filtLenPat(end+1) = length(treeStruct.nodes{parentNo}.g{tmpIdx});
-   else
-      filtLenPat(end+1) = length(treeStruct.nodes{parentNo}.h{tmpIdx}); 
-   end
+   filtLenPat(end+1) = length(treeStruct.nodes{parentNo}.filts{tmpIdx}.h);
+%    if(doSyn)
+%       filtLenPat(end+1) = length(treeStruct.nodes{parentNo}.g{tmpIdx});
+%    else
+%       filtLenPat(end+1) = length(treeStruct.nodes{parentNo}.h{tmpIdx}); 
+%    end
    tmpNodeNo=parentNo;
 end
 
