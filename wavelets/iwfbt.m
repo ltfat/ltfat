@@ -2,7 +2,7 @@ function f=iwfbt(c,wt,Ls,varargin)
 %IWFBT   Inverse Wavelet Filterbank Tree
 %
 %
-% `f=iwfbt(c,wtdual)` 
+%   `f=iwfbt(c,wtdual)` XXX
 
 if nargin<3
    error('%s: Too few input parameters.',upper(mfilename));

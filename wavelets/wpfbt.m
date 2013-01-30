@@ -1,7 +1,7 @@
 function c=wpfbt(f,wt,varargin)
-%WTREE   Wavelet Packet FilterBank Tree
-%   Usage:  c=wfbt(f,wt);
-%           c=wfbt(f,wt,...);
+%WPFBT   Wavelet Packet FilterBank Tree
+%   Usage:  c=wpfbt(f,wt);
+%           c=wpfbt(f,wt,...);
 %
 %   Input parameters:
 %         f   : Input data.
@@ -10,7 +10,7 @@ function c=wpfbt(f,wt,varargin)
 %   Output parameters:
 %         c   : Coefficients stored in a cell-array.
 %
-%   `c=wfbt(f,wt)` returns coefficients *c* obtained applying wavelet filterbank tree
+%   `c=wpfbt(f,wt)` returns coefficients *c* obtained applying wavelet filterbank tree
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
 %   is applied to each of *W* columns. 
 %

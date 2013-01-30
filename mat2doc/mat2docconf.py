@@ -2,32 +2,26 @@
 # Global configuration of the mat2doc system
 # -------------------------------------------
 
-import localconf
 from mat2doc import *
 
-f=file(localconf.projects['ltfatwave']+'ltfat_version')
+# Define versionstring
+f=file(projectdir+'ltfat_version')
 versionstring=f.read()[:-1]
 f.close
 
+# Define copyright    
+f=file(projectdir+'mat2doc/copyrightplate')
+buf=f.readlines()
+f.close
+
+copyright=[u'Copyright (C) 2005-2013 Peter L. S\xf8ndergaard.\n',
+           u'This file is part of LTFAT version '+versionstring+'\n']
+copyright.extend(buf)
+    
+
 conf=ConfType()
 
-def copyrightfun():
-
-    f=file(localconf.projects['ltfat']+'ltfat_version')
-    versionstring=f.read()[:-1]
-    f.close
-    
-    f=file(localconf.projects['ltfat']+'mat2doc/copyrightplate')
-    buf=f.readlines()
-    f.close
-
-    copyright=[u'Copyright (C) 2005-2012 Peter L. S\xf8ndergaard.\n',
-               u'This file is part of LTFAT version '+versionstring+'\n']
-    copyright.extend(buf)
-    
-    return copyright
-
-conf.copyright=copyrightfun
+conf.copyright=copyright
 
 contentsfiles=['Contents','gabor/Contents','fourier/Contents',
                'filterbank/Contents','nonstatgab/Contents',

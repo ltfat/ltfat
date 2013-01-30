@@ -1,7 +1,7 @@
 function wtree = wfbtinit(filts,varargin);
 %WFBTINIT Initialize Filterbank Tree
-%   Usage:  wtree = wtreeinit();
-%           wtree = wtreeinit(filts);
+%   Usage:  wfbt = wfbtinit();
+%           wfbt = wfbtinit(filts);
 %
 %   Input parameters:
 %         filts   : Basic wavelet filterbank.
@@ -9,7 +9,7 @@ function wtree = wfbtinit(filts,varargin);
 %   Output parameters:
 %         wtree   : Structure describing the filter tree.
 %
-%   `wtreeinit()` creates empty structure. The structure describing the 
+%   `wfbtinit()` creates empty structure. The structure describing the 
 %   tree has the following fields:
 %
 %     `wtree.nodes`
@@ -21,14 +21,14 @@ function wtree = wfbtinit(filts,varargin);
 %     `wtree.parents`
 %        indexes of a parent node
 %
-%   `wtreeinit({w,J})` creates filterbank tree of depth *J*. Parameter `w` 
+%   `wfbtinit({w,J})` creates filterbank tree of depth *J*. Parameter `w` 
 %   can be either structure obtained form the |fwtinit|_ function or a cell
 %   array, whose first element is a name of the function defining the basic
 %   wavelet filters (|wfilt_|_ prefix) and the other elements are parameters
-%   passed to the function e.g. : `wtreeinit({{'db',10},4})`.
+%   passed to the function e.g. : `wfbtinit({{'db',10},4})`.
 %
 
-% TO DO: Do some chaching
+% TO DO: Do some caching
 
 % initial empty structure
 wtree.nodes = {};

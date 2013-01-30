@@ -25,7 +25,7 @@ function c = fwt(f,h,J,varargin)
 %   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
 %   The formats are the same as for the |fwtinit|_ function. The simplest
 %   is passing a cell array, whose first element is the name of the function
-%   defining the basic wavelet filters (|wfilt_|_ prefix) and the other elements are 
+%   defining the basic wavelet filters (`wfilt_` prefix) and the other elements are 
 %   the parameters of the function. e.g. `{'db',10}` calls  `wfilt_db(10)` internally.
 %   The second possible format of $h$ is to pass cell array of one dimensional
 %   numerical vectors directly defining the wavelet filter impulse responses.

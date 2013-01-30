@@ -1,7 +1,7 @@
 function wtree = wfbtput(d,k,filt,wtree,varargin)
-%WTREE_PUT Put node to the filterbank tree
-%   Usage:  wtree = wtreeput(d,k,filt,wtree);
-%           wtree = wtreeput(d,k,filt,wtree,'force','a',a);
+%WFBTPUT  Put node to the filterbank tree
+%   Usage:  wtree = wfbtput(d,k,filt,wtree);
+%           wtree = wfbtput(d,k,filt,wtree,'force','a',a);
 %
 %   Input parameters:
 %         d     : 
@@ -12,8 +12,8 @@ function wtree = wfbtput(d,k,filt,wtree,varargin)
 %   Output parameters:
 %         wtree : Modified input structure.
 %
-%   `wtreeput(d,k,filt,wtree)` puts basic filterbank *filt* to the filter tree
-%   structure *wtree* at level *d* and index *k*.
+%   `wfbtput(d,k,filt,wtree)` puts basic filterbank *filt* to the filter
+%   tree structure *wtree* at level *d* and index *k*.
 %
   
 if(nargin<4)

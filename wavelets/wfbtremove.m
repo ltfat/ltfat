@@ -1,7 +1,7 @@
 function wtree = wfbtremove(d,k,wtree,varargin)
-%WTREE_REMOVE Remove node from the filterbank tree
-%   Usage:  wtree = wtreeremove(d,k,wtree);
-%           wtree = wtreeremove(d,k,wtree,'force');
+%WFBTREMOVE Remove node from the filterbank tree
+%   Usage:  wtree = wbftremove(d,k,wtree);
+%           wtree = wfbtremove(d,k,wtree,'force');
 %
 %   Input parameters:
 %         d     : 
@@ -11,9 +11,9 @@ function wtree = wfbtremove(d,k,wtree,varargin)
 %   Output parameters:
 %         wtree : Modified input structure.
 %   
-%   `wtreeremove(d,k,wtree)` removes node from the filterbank tree structure 
+%   `wfbtremove(d,k,wtree)` removes node from the filterbank tree structure
 %   *wtree*. The removed node is at level *d* and index *k*.
-%
+
 if(nargin<3)
    error('%s: Too few input parameters.',upper(mfilename)); 
 end

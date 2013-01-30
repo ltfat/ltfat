@@ -1,5 +1,5 @@
 function c=wfbt(f,wt,varargin)
-%WTREE   Wavelet FilterBank Tree
+%WFBT   Wavelet FilterBank Tree
 %   Usage:  c=wfbt(f,wt);
 %           c=wfbt(f,wt,...);
 %
