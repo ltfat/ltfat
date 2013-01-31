@@ -1,5 +1,5 @@
 function [f,relres,iter]=frsyniter(F,c,varargin)
-%FRSYNITER  Iterative analysis frame inversion
+%FRSYNITER  Iterative synthesis
 %   Usage:  f=frsyniter(F,c);
 %
 %   Input parameters:
@@ -11,11 +11,12 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `f=frsyniter(F,c)` iteratively inverts the analysis frame of *F* using a
-%   least-squares method.
+%   `f=frsyniter(F,c)` iteratively inverts the analysis operator of *F*, so
+%   `frsyniter` always performs the inverse operation of |frana|_, even
+%   when a perfect reconstruction is not possible by using |frsyn|_.
 %
-%   `[f,relres,iter]=frsyniter(...)` additionally returns the residuals in a
-%   vector *relres* and the number of iteration steps *iter*.
+%   `[f,relres,iter]=frsyniter(...)` additionally returns the relative
+%   residuals in a vector *relres* and the number of iteration steps *iter*.
 %  
 %   **Note:** If it is possible to explicitly calculate the canonical dual
 %   frame then this is usually a much faster method than invoking
@@ -54,7 +55,7 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %      xlabel('No. of iterations');
 %      ylabel('Relative residual');
 %
-%   See also: frame, frana, frsyn
+%   See also: frame, frana, frsyn, franaiter
   
 % AUTHORS: Nicki Holighaus & Peter L. Søndergaard
     
