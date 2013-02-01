@@ -25,7 +25,7 @@ function f=iunsdgtreal(c,g,a,M,Ls)
 %
 %   Demos:  demo_nsdgt
 %
-%   References: ltfatnote010
+%   References: ltfatnote018
 
 %   AUTHOR : Florent Jaillet and Peter L. Søndergaard
 %   TESTING: TEST_NSDGT

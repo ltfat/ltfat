@@ -76,7 +76,7 @@ for ii=1:numel(Fr)
 
   [A,B]=framebounds(F,L);
   
-  if ~any(strcmp(F.type,{'dgtreal','fftreal','ufilterbankreal','filterbankreal'}))
+  if ~F.realinput
     LL=framelength(F,L);
     G=framematrix(F,LL);
     res=norm(c-G'*postpad(f,LL));
@@ -91,5 +91,14 @@ for ii=1:numel(Fr)
     disp(s);
     
   end;
-
+  
+  % Test the frame multiplier: test framemul, framemuladj and framemulinv
+  m=1+1i+0.01*crand(size(c,1),1);
+  ff=framemul(f,F,Fd,m);
+  fr=iframemul(ff,F,Fd,m,'tol',1e-13);
+  res=norm(f-fr(1:L))/norm(f);
+  s=sprintf('FRAMEMUL INV          frameno:%3i %s %0.5g %s',ii, ...
+            F.type,res,fail);
+  disp(s);
+  
 end;

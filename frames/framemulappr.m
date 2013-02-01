@@ -1,6 +1,6 @@
 function [sym,TA]=framemulappr(Fa,Fs,T,D,Ds)
 %FRAMEMULAPPR  Best Approximation of a matrix by a frame multiplier
-%  Usage: sym=framemulappr(Fa,Fs,T);
+%   Usage: sym=framemulappr(Fa,Fs,T);
 %         [sym,TA]=framemulappr(Fa,Fs,T);
 %
 %   Input parameters:
@@ -67,8 +67,12 @@ Ds=framematrix(Fs,Mfix);
 % is slower, O(k(n^2+n^2)))
 % see [Xxl]
 
-if 0
-    lowsym = diag(D'*T*D);
+if 1
+  % Original expression
+  %lowsym = diag(D'*T*D);
+  
+  % New expression
+  lowsym = conj(diag(frana(Fa,frana(Fa,T)')));
 else
     lowsym = zeros(Kd,1); %lower symbol
     for ii=1:Kd

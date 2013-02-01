@@ -39,7 +39,8 @@
 %
 %  Frame multipliers
 %    FRAMEMUL          - Apply frame multiplier
-%    FRAMEMULINV       - Inversion of frame multiplier
+%    IFRAMEMUL         - Apply the inverse of a frame multipllier
+%    FRAMEMULADJ       - Apply the adjoint of a frame multiplier
 %    FRAMEMULAPPR      - Best approx. by frame multiplier
 %    FRAMEMULEIGS      - Eigenpairs of a frame multiplier
 %

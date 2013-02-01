@@ -40,4 +40,7 @@ switch(F.type)
                    'not support a length of L=%i.'],upper(mfilename),ii,L);
         end;
     end;
+ case {'tensor'}
+    error(['For the tensor product frame, call framelength for the ' ...
+           'individual subframes']);
 end;
