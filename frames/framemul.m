@@ -15,7 +15,7 @@ function h=framemul(f,Fa,Fs,sym,varargin)
 %   to the signal *f*. The frame *Fa* is used for analysis and the frame
 %   *Fs* for synthesis.
 %
-%   See also: iframemul
+%   See also: iframemul, framemuladj
   
 % Author: Peter L. Søndergaard
 

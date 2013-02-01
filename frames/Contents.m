@@ -13,6 +13,7 @@
 %    FRANA             - Frame analysis
 %    FRSYN             - Frame synthesis
 %    FRAMEMATRIX       - Frame analysis operator matrix
+%    FRAMEDIAG         - Diagonal of frame operator
 %
 %  Visualization
 %    PLOTFRAME         - Plot frame coefficients

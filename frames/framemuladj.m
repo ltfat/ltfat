@@ -1,10 +1,8 @@
-function h=framemuladj(f,varargin)
+function h=framemuladj(f,Fa,Fs,sym,varargin)
 %FRAMEMULADJ  Adjoint operator of frame multiplier
-%   Usage: h=framemuladj(f,F,sym);
-%         h=framemuladj(f,Fa,Fs,sym);
+%   Usage: h=framemuladj(f,Fa,Fs,sym);
 %
 %   Input parameters:
-%          F    : Frame used for both analysis and synthesis
 %          Fa   : Analysis frame
 %          Fs   : Synthesis frame
 %          sym  : Symbol
@@ -13,14 +11,14 @@ function h=framemuladj(f,varargin)
 %   Output parameters: 
 %          h    : Output signal
 %
-%   `framemuladj(f,F,sym)` applies the adjoint of the frame multiplier with
-%   symbol *sym* to the signal *f*. The frame *F* is used for both analysis
-%   and synthesis.
+%   `framemuladj(f,Fa,Fs,sym)` applies the adjoint of the frame multiplier
+%   with symbol *sym* to the signal *f*. The frame *Fa* is used for analysis
+%   and the frame *Fs* for synthesis.
 %
-%   `framemul(f,Fa,Fs,sym)` does the same using the frames *Fa* for
+%   `framemuladj(f,Fa,Fs,sym)` does the same using the frames *Fa* for
 %   analysis and *Fs* for synthesis.
 %
-%   See also: framemul
+%   See also: framemul, iframemul
   
 % Author: Peter L. Søndergaard
 

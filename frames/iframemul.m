@@ -49,14 +49,17 @@ definput.flags.print={'quiet','print'};
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
+% TODO: Check that the symbol length match the input signal length
+
+% Determine L from the firstvector, it must match for all of them.
+L=framelengthcoef(Fa,size(sym,1));
+
 % The frame multiplier is not positive definite, so we cannot solve it
 % directly using pcg.
-
 % Apply the multiplier followed by its adjoint. 
 A=@(x) framemuladj(framemul(x,Fa,Fs,sym),Fa,Fs,sym);
 
-[h,flag,dummytilde,iter,relres]=pcg(A,framemuladj(f,Fa,Fs,sym),kv.tol,kv.maxit);          
-
+[h,flag,dummytilde,iter1,relres]=pcg(A,framemuladj(f,Fa,Fs,sym),kv.tol,kv.maxit);
 
 
 
