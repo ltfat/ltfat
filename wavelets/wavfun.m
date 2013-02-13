@@ -38,11 +38,11 @@ end
 
 
 
-lo = g{1}(:);
+lo = g{1}.h(:);
 s = lo;
 wtemp = cell(gLen-1,1);
 for ii=1:gLen-1
-    wtemp{ii} = g{ii+1}(:);
+    wtemp{ii} = g{ii+1}.h(:);
 end
 
 for n=1:N
@@ -59,5 +59,5 @@ end
 
 
 if(nargout>2)
-    xvals=linspace(0,length(lo),length(s));
+    xvals=linspace(0,length(lo)-1/length(s),length(s));
 end

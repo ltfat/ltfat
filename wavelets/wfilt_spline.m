@@ -10,11 +10,25 @@ function [h,g,a]=wfilt_spline(m,n)
 %   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters
 %   corresponding to a biortoghonal scheme with spline wavelets of compact
 %   support.
-
-% Original copyright goes to:
-% Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
-% Author: Jose Martin Garcia
-% e-mail: Uvi_Wave@tsc.uvigo.es
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters::: 
+%
+%      w = fwtinit({'spline',4,4});
+%      wtfftfreqz(w.h);
+%
+%   Frequency responses of the synthesis filters::: 
+%
+%      w = fwtinit({'spline',4,4});
+%      wtfftfreqz(w.g);
+%
+%
+%   Original copyright goes to:
+%   Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
+%   Author: Jose Martin Garcia
+%   e-mail: Uvi_Wave@tsc.uvigo.es
 
 if(nargin<2)
      error('%s: Too few input parameters.',upper(mfilename)); 

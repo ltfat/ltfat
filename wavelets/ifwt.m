@@ -26,6 +26,18 @@ function f = ifwt(c,g,J,varargin)
 %
 %   Please see the help on |fwt|_ for a description of the parameters.
 %
+%   Examples:
+%   ---------
+%   
+%   A simple example showing perfect reconstruction:::
+% 
+%     f = gspi;
+%     J = 10;
+%     c = fwt(f,{'db',8},J);
+%     fhat = ifwt(c,{'db',8},J,length(f));
+%     % The following should give (almost) zero
+%     norm(f-fhat)
+%   
 %   See also:  fwt, fwtinit
 %
 %   References: ma98

@@ -23,6 +23,18 @@ function f = iufwt(c,g,J,varargin)
 %
 %   Please see the help on |ufwt|_ for a description of the parameters.
 %
+%   Examples:
+%   ---------
+%   
+%   A simple example showing perfect reconstruction:::
+% 
+%     f = gspi;
+%     J = 8;
+%     c = ufwt(f,{'db',8},J);
+%     fhat = iufwt(c,{'db',8},J);
+%     % The following should give (almost) zero
+%     norm(f-fhat)
+%
 %   See also:  ufwt, fwtinit
 %
 %   References: ma98

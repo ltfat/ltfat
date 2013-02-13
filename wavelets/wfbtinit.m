@@ -27,6 +27,14 @@ function wtree = wfbtinit(filts,varargin);
 %   wavelet filters (`wfilt_` prefix) and the other elements are parameters
 %   passed to the function e.g. : `wfbtinit({{'db',10},4})`.
 %
+%   The following flag groups are supported:
+%
+%         'dwt','full'
+%                Type of the tree to be used.
+%
+%         'freq','nat'
+%                Frequency or natural order of the coefficient subbands.
+%
 
 % TO DO: Do some caching
 

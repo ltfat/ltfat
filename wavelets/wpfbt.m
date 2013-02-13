@@ -48,7 +48,7 @@ definput.import = {'fwt','wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.treetype,'ana');
+wt = wfbtinit(wt,flags.treetype,flags.forder,'ana');
 
     
 %% ----- step 1 : Verify f and determine its length -------
@@ -61,4 +61,4 @@ end
 % TO DO: determine length of the longest equivalent filter
 
 %% ----- step 3 : Run computation
-c = comp_wfbt(f,wt,'dec',flags.ext);
+c = comp_wpfbt(f,wt,'dec',flags.ext);

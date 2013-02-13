@@ -36,6 +36,15 @@ function [H, G, a] = wfilt_db(N)
 %   making them an orthogonal causal perfect-reconstruction QMF.
 %
 %   References: daub98tenlectures
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters::: 
+%
+%      w = fwtinit({'db',8});
+%      wtfftfreqz(w.h);   
+%
 
 if(nargin<1)
    error('%s: Too few input parameters.',upper(mfilename));

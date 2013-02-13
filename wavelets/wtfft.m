@@ -10,7 +10,7 @@ if(Ls<2)
    error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
 end
 
-definput.import = {'wtfft'};
+
 definput.keyvals.L = [];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
@@ -26,8 +26,10 @@ if(isempty(L))
     L = filterbanklength(Ls,a);
 end
 
+if(iscell(H))
 if(strcmpi(H{1},'fir'))
     H = wtfftfreqz(H,L);
+end
 end
 
 
@@ -45,7 +47,7 @@ end;
 for w=1:W
    F = fft(f(:,w),L);
    for hh=1:Hc
-      c{hh}(:,w) = real( ifft(sum(reshape(F.*H(:,hh),N(hh),a(hh)),2))/a(hh) );
+      c{hh}(:,w) = real( ifft(sum(reshape(F.*conj(H(:,hh)),N(hh),a(hh)),2))/a(hh) );
    end
 end
 

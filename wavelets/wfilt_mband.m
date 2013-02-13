@@ -4,7 +4,13 @@ function [h,g,a] = wfilt_mband(N)
 %
 %   `[h,g,a]=wfilt_mband(N)` returns linear-phase M-band wavelet filters. 
 %
-%   References:  alkin95mband  
+%   References:  alkin95mband
+%
+%   Frequency responses of the analysis filters:::
+%
+%     w = fwtinit({'mband',1});
+%     wtfftfreqz(w.h);
+%
 a= [4;4;4;4];
 
 switch(N)

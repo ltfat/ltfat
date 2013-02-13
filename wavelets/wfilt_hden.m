@@ -5,6 +5,16 @@ function [h,g,a] = wfilt_hden(N)
 %   `[h,g,a]=wfilt_hden(N)` computes Higher DENsity dwt filters (tight frame, frame).
 %
 %   References: selesnick2006higher
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'hden',3});
+%      wtfftfreqz(w.h);
+%
+
 a= [2;2;1];
 
 switch(N)

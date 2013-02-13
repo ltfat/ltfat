@@ -8,6 +8,14 @@ function [h,g,a] = wfilt_optfs(N)
 %
 %   References:  paiva2012opt
 %
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'optfs',7});
+%      wtfftfreqz(w.h);
+%
 a = [2,2];
 h = cell(2,1);
 switch(N)

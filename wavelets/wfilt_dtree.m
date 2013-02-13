@@ -4,7 +4,16 @@ function [h,g,a] = wfilt_dtree(N)
 %
 %   `[h,g,a]=wfilt_dtree(N)` computes filters used in the dual-tree complex wavelet transform. 
 %
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'dtree',1});
+%      wtfftfreqz(w.h);
+%
 %   References: selesnick2005dtree
+%
 
 
 switch(N)

@@ -12,17 +12,21 @@ function c=wfbt(f,wt,varargin)
 %
 %   `c=wfbt(f,wt)` returns coefficients *c* obtained applying wavelet filterbank tree
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
-%   is applied to each of *W* columns. 
-%
-%   
-%
-%
-%
+%   is applied to each of *W* columns. The *wt* parameter can be structure
+%   obtained from the |wfbtinit|_ function and modified arbitrarily or it
+%   can be cell-array, which is used as a parameter in the internal call of
+%   the |wfbtinit|_ function.
 %
 %   The following flag groups are supported:
 %
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 %                Type of the boundary handling.
+%
+%         'dwt','full'
+%                Type of the tree to be used.
+%
+%         'freq','nat'
+%                Frequency or natural order of the coefficient subbands.
 %
 %   Please see the help on |fwt|_ for a description of the flags.
 %
@@ -32,11 +36,12 @@ function c=wfbt(f,wt,varargin)
 %   A simple example of calling the |wfbt|_ function using the "full decomposition" wavelet tree:::
 % 
 %     f = gspi;
-%     J = 6;
+%     J = 7;
 %     c = wfbt(f,{{'db',10},J},'full');
 %     plotfwt(c);
 %
 %   See also: iwfbt, wfbtinit
+%
 
 
 if(nargin<2)

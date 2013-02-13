@@ -10,7 +10,15 @@ function [h,g,a]=wfilt_lemarie(N)
 %   frequency domain sampling and trunctating the impulse response.
 %
 %   References: mallat89atheory
-
+%   
+%   %   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'lemarie',40});
+%      wtfftfreqz(w.h);
+%
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
@@ -18,7 +26,7 @@ function [h,g,a]=wfilt_lemarie(N)
 
 num_coefs = N;
 L = 1024;
-H = wfreq_lemaire(L);
+H = wfreq_lemarie(L);
 hh=real(ifft(H{1},L));
 hh=[ hh(L-floor(num_coefs/2)+1:L) hh(1:ceil(num_coefs/2))];
 hh=sqrt(2)/sum(hh)*hh;

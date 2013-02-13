@@ -1,6 +1,6 @@
-function nodesIdxs = nodesBForder(treeStruct)
+function nodesIdxs = nodesBForder(treeStruct,varargin)
 %NODESBFORDER Nodes in the Breadth-First search order
-%  Usage:  nodesIdxs = nodesBForder(treeStruct)
+%  Usage:  nodesIdxs = nodesBForder(treeStruct,order)
 %
 %   Input parameters:
 %         treeStruct  : Structure containing description of the filter tree.
@@ -11,6 +11,10 @@ function nodesIdxs = nodesBForder(treeStruct)
 %   `nodesBForder(treeStruct)` For definition of the structure see
 %   `wfbinit`.
 %
+%   Supported flags:
+%
+%             'ord','rev'
+%
 %   See also: wfbtinit
 %
 
@@ -18,3 +22,9 @@ function nodesIdxs = nodesBForder(treeStruct)
 %find root
 nodeNo = find(treeStruct.parents==0);
 nodesIdxs = [nodeNo,nodeSubtreeBF(nodeNo,treeStruct)];
+
+if(~isempty(varargin))
+    if(strcmpi(varargin{1},'rev'))
+       nodesIdxs = nodesIdxs(end:-1:1); 
+    end
+end

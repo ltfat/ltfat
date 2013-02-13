@@ -76,7 +76,7 @@ function c = ufwt(f,h,J,varargin)
 %   A simple example of calling the |ufwt|_ function:::
 % 
 %     f = gspi;
-%     J = 10;
+%     J = 8;
 %     c = ufwt(f,{'db',8},J);
 %     plotfwt(c);
 %
@@ -117,9 +117,9 @@ end
 
 %% ----- step 2 : Check whether the input signal is long enough
 % input signal length is not restricted for expansive wavelet transform (extension type other than the default 'per')
-flen = length(h{1});
+flen = length(h.filts{1}.h);
 if(strcmp(flags.ext,'per'))
-     minLs = (a(1)^(J-1))*(flen-1); % length of the longest upsampled filter - 1
+     minLs = (h.a(1)^(J-1))*(flen-1); % length of the longest upsampled filter - 1
    if Ls<minLs
      error('%s: Input signal length is %d. Minimum signal length is %d or use %s flag instead. \n',upper(mfilename),Ls,minLs,'''ppd''');
    end;
@@ -128,6 +128,6 @@ end
 
 
 %% ----- step 3 : Run computation
- c = comp_fwt_all(f,h,J,a,'undec',flags.ext);
+ c = comp_fwt_all(f,h.filts,J,h.a,'undec',flags.ext);
 
 

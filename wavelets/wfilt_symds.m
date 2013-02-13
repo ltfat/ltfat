@@ -6,6 +6,20 @@ function [h,g,a] = wfilt_symds(N)
 %   The redundancy is equal to 2.
 %
 %   References: abdelnour2012sib
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'symds',2});
+%      wtfftfreqz(w.h);
+%
+%   Frequency responses of the synthesis filters:::  
+%
+%      w = fwtinit({'symds',2});
+%      wtfftfreqz(w.g);
+%
 
 a = [2;2;2;2];
 

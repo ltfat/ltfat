@@ -70,17 +70,19 @@ if(nargout==0)
     flags.do_norm = 1;
     flags.do_db = 0;
 
+     if(flags.do_norm)
+       for nn = 1:fNo
+          Hplot(:,nn) = Hplot(:,nn)/max(abs(Hplot(:,nn)));
+       end
+    end
+    
     if(flags.do_db)
        Hplot = 20*log10(abs(Hplot));
     else
        Hplot = abs(Hplot); 
     end
     
-    if(flags.do_norm)
-       for nn = 1:fNo
-          Hplot(:,nn) = Hplot(:,nn)/max(abs(Hplot(:,nn)));
-       end
-    end
+
     
     
     

@@ -6,6 +6,15 @@ function [h,g,a] = wfilt_dgrid(N)
 %   equal to 2.
 %
 %   References: abdelnour2007dense
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters::: 
+%
+%      w = fwtinit({'dgrid',3});
+%      wtfftfreqz(w.h);
+%
 
 
 a = [2;2;2;2];

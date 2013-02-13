@@ -6,6 +6,15 @@ function [h,g,a] = wfilt_dden(N)
 %   filters. The redundancy is equal to 2.
 %
 %   References: selesnick2001double
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters::: 
+%
+%      w = fwtinit({'dden',2});
+%      wtfftfreqz(w.h);
+%
 
 a= [2;2;2];
 switch(N)

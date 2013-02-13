@@ -7,6 +7,16 @@ function [h,g,a] = wfilt_apr(N)
 %   Complex Wavelet Transforms. Critically subsampled. 
 %
 %   References: hosseini2008almost
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters::: 
+%
+%   w = fwtinit({'apr',2});
+%   wtfftfreqz(w.h);
+%
+
 
 a= [3;3;3];
 switch(N)

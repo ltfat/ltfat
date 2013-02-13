@@ -7,6 +7,15 @@ function [h,g,a] = wfilt_algmband(N)
 %   subsampled.
 %
 %   References:  lin2006algebraic  
+%
+%   Examples:
+%   ---------
+%   
+%   Frequency responses of the analysis filters:::
+% 
+%     w = fwtinit({'algmband',2});
+%     wtfftfreqz(w.h);
+%
 
 
 switch(N)

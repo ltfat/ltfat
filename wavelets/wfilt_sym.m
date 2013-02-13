@@ -8,7 +8,16 @@ function [h,g,a]=wfilt_sym(N)
 %   circle.
 %
 %   References: daub98tenlectures
-
+%   
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'sym',10});
+%      wtfftfreqz(w.h);
+%
+%
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

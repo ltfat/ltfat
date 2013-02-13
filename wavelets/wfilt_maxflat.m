@@ -6,7 +6,16 @@ function [h,g,a]=wfilt_maxflat(N)
 %   where $(N-1)$ is the degree of flatness at $w=0$ and $w=\pi$ radians. 
 %
 %   References: vaidy93mult
-
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'maxflat',4});
+%      wtfftfreqz(w.h);
+%
+%
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

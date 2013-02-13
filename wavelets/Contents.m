@@ -3,8 +3,8 @@
 %   Basic analysis/synthesis
 %      FWT               - Fast Wavelet Transform 
 %      IFWT              - Inverse Fast Wavelet Transform
-%      UFWT             - Undecimated Fast Wavelet Transform
-%      IUFWT            - Inverse Undecimated Fast Wavelet Transform 
+%      UFWT              - Undecimated Fast Wavelet Transform
+%      IUFWT             - Inverse Undecimated Fast Wavelet Transform 
 %      WTFFT             - Wavelet Transform in the frequency-domain
 %      IWTFFT            - Inverse Wavelet Transform in the frequency-domain
 %
@@ -12,6 +12,8 @@
 %      WFBT              - Transform using general Wavelet Filterbank Tree 
 %      IWFBT             - Inverse transform using general Wavelet Filterbank Tree
 %      WPFBT             - Wavelet Packet Transform using general Wavelet Filterbank Tree 
+%      IWPFBT            - Inverse Wavelet Packet Transform using general Wavelet Filterbank Tree
+%      WPBEST            - Best Tree selection
 %
 %   Wavelet Filterbank trees manipulation
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization

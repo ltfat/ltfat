@@ -1,7 +1,7 @@
-function f=iwfbt(c,wt,Ls,varargin)
-%IWFBT   Inverse Wavelet Filterbank Tree
-%   Usage:  f=iwfbt(c,wt,Ls);
-%           f=iwfbt(c,wt,Ls,...);
+function f=iwpfbt(c,wt,Ls,varargin)
+%IWPFBT   Inverse Wavelet Packet Filterbank Tree
+%   Usage:  f=iwpfbt(c,wt,Ls);
+%           f=iwpfbt(c,wt,Ls,...);
 %
 %   Input parameters:
 %         c     : Coefficients stored in a cell-array.
@@ -11,7 +11,7 @@ function f=iwfbt(c,wt,Ls,varargin)
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f=iwfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
+%   `f=iwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
 %   wavelet filterbank tree *wt*.
 %
 %   The following flag groups are supported:
@@ -19,7 +19,7 @@ function f=iwfbt(c,wt,Ls,varargin)
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 %                Type of the boundary handling.
 %
-%         'dwt','full'
+%         'full','dwt'
 %                Type of the tree to be used.
 %
 %         'freq','nat'
@@ -35,8 +35,8 @@ function f=iwfbt(c,wt,Ls,varargin)
 %     f = gspi;
 %     J = 7;
 %     wt = wfbtinit({{'db',10},J},'full');
-%     c = wfbt(f,wt);
-%     fhat = iwfbt(c,wt,length(f));
+%     c = wpfbt(f,wt);
+%     fhat = iwpfbt(c,wt,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
@@ -60,4 +60,4 @@ end
 % Initialize the wavelet tree structure
 wt = wfbtinit(wt,flags.treetype,'syn');
 
-f = comp_iwfbt(c,wt,Ls,'dec',flags.ext);
+f = comp_iwpfbt(c,wt,Ls,'dec',flags.ext);

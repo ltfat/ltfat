@@ -12,7 +12,15 @@ function [h,g,a]=wfilt_remez(L,K,B)
 %   It works performing a factorization based on the complex cepstrum of the polynomial.
 %
 %   References: rioul94remez
-
+%
+%   Examples:
+%   ---------
+%
+%   Frequency responses of the analysis filters:::  
+%
+%      w = fwtinit({'remez',40,4,0.1});
+%      wtfftfreqz(w.h);
+%
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
