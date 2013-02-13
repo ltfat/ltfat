@@ -193,29 +193,6 @@ def runcommand(todo,redomode='auto'):
     #    os.system('rsync -av '+ddir+
     #              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
 
-    if 'notesmake'==todo:
-        notes=notes.getnotenumbers(notesdir)
-
-        notes = filter(lambda x: (os.path.exists(notesdir+x+'/Makefile')), notes)
-
-        for notenumber in notes:
-            print 'Trying to make LTFAT note '+notenumber
-            os.system('cd '+notesdir+notenumber+'; make')
-
-    if 'notestexclean'==todo:
-        notes=notes.getnotenumbers(notesdir)
-
-        notes = filter(lambda x: (os.path.exists(notesdir+x+'/Makefile')), notes)
-
-        for notenumber in notes:
-            os.system('cd '+notesdir+notenumber+'; make texclean')
-
-    if 'noteshtml'==todo:
-
-        printdoc.printnoteshtml('ltfatnote',notesdir,notehtml)
-
-        os.system('rsync -av '+notehtml+' '+host+':'+noteswww);
-
 
     if todo=='verify':
         printdoc.printdoc(project,'verify',redomode)
