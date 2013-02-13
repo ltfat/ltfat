@@ -64,6 +64,12 @@ function F=frame(ftype,varargin);
 %   *w* contains a weight for each frame. If *w* is a scalar, this weight
 %   will be applied to all the sub-frames.
 %
+%   `frame('tensor',F1,F2,...)` constructs a tensor product frame, where the
+%   frames *F1, *F2*,... are applied along the 1st, 2nd etc. dimensions. If
+%   you don't want any action along a specific dimension, use the `identity`
+%   frame along that dimension. Any remaining dimensions in the input
+%   signal are left alone.
+%  
 %   Examples
 %   --------
 %
@@ -88,14 +94,19 @@ end;
 
 ftype=lower(ftype);
 
+% True if the frame only works with real-valued input.
+F.realinput=0;
+
 % Handle the windowed transforms
 switch(ftype)
- case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
-       'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+ case {'dgt','dwilt','wmdct','filterbank','ufilterbank',...
+       'nsdgt','unsdgt'}
   F.g=varargin{1};
   
- case {'filterbankreal','ufilterbankreal'}
-  F.g=varargin{1};    
+ case {'dgtreal','filterbankreal','ufilterbankreal',...
+      'nsdgtreal','unsdgtreal'}
+  F.g=varargin{1};
+  F.realinput=1;
   
 end;
 
@@ -103,7 +114,7 @@ switch(ftype)
   case {'dgt','dgtreal'}
     F.a=varargin{2};
     F.M=varargin{3};
-    F.vars=varargin(4:end);
+    F.vars=varargin(4:end);    
   case {'dwilt','wmdct'}
     F.M=varargin{2};
   case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
@@ -111,8 +122,7 @@ switch(ftype)
     F.M=varargin{3};
     
     % Sanitize 'a': Make it a column vector of length M
-    F.a=F.a(:);
-    [F.a,dummytilde]=scalardistribute(F.a,ones(F.M,1));
+    F.a=bsxfun(@times,F.a(:),ones(F.M,1));
     
   case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     F.a=varargin{2};
@@ -122,8 +132,7 @@ switch(ftype)
     % where N is determined from the length of 'a'
     F.a=F.a(:);
     F.N=numel(F.a);
-    F.M=F.M(:);
-    [F.M,dummytilde]=scalardistribute(F.M,ones(F.N,1));
+    F.M=bsxfun(@times,F.M(:),ones(F.N,1));
     
   case 'gen'
     F.g=varargin{1};
@@ -138,7 +147,17 @@ switch(ftype)
     F.w=varargin{1};
     F.frames=varargin(2:end);
     F.Nframes=numel(F.frames);
-    [F.w,dummytilde]=scalardistribute(F.w(:),ones(F.Nframes,1));
+    F.w=bsxfun(@times,F.w(:),ones(F.Nframes,1));
+
+ case 'tensor'
+    F.frames=varargin;
+    F.Nframes=numel(F.frames);
+    for ii=1:F.Nframes
+      if F.frames{ii}.realinput
+        error(['It is not safe to embed a real-valued-input-only frame ' ...
+               'into the tensor frame.']);
+      end;
+    end;
     
   otherwise
     error('%s: Unknows frame type: %s',upper(mfilename),ftype);  

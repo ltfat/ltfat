@@ -11,11 +11,13 @@ function [c,relres,iter]=franaiter(F,c,varargin)
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `c=franaiter(F,f)` iteratively inverts the frame *F* using a
-%   least-squares method.
+%   `c=franaiter(F,f)` computes the frame coefficients *c* using an
+%   iterative method such that perfect reconstruct can be obtained using
+%   |frsyn|_. `franaiter` always works, even when |frana|_ cannot
+%   generate perfect reconstruction coefficients.
 %
-%   `[c,relres,iter]=franaiter(...)` additionally returns the residuals in a
-%   vector *relres* and the number of iteration steps *iter*.
+%   `[c,relres,iter]=franaiter(...)` additionally returns the relative
+%   residuals in a vector *relres* and the number of iteration steps *iter*.
 %  
 %   **Note:** If it is possible to explicitly calculate the canonical dual
 %   frame then this is usually a much faster method than invoking
@@ -82,10 +84,10 @@ function [c,relres,iter]=franaiter(F,c,varargin)
       d=framediag(F,L);
       M=spdiags(d,0,L,L);
       
-      [fout,flag,dummytilde,iter,relres]=pcg(A,c,kv.tol,kv.maxit,M);
+      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit,M);
   else
       
-      [fout,flag,dummytilde,iter,relres]=pcg(A,c,kv.tol,kv.maxit);          
+      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit);          
   end;
 
   c=frana(F,fout);

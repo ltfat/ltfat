@@ -74,7 +74,7 @@ function [c,Ls] = unsdgtreal(f,g,a,M)
 %
 %   Demos:  demo_nsdgt
 %
-%   References: ltfatnote010
+%   References: ltfatnote018
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGTREAL

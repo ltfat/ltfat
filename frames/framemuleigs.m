@@ -1,19 +1,20 @@
-function [V,D]=framemuleigs(Fa,Fs,coef,varargin)
+function [V,D]=framemuleigs(Fa,Fs,sym,varargin)
 %FRAMEMULEIGS  Eigenpairs of frame multiplier
-%   Usage:  h=framemuleigs(F,c,K);
-%           h=framemuleigs(F,c,K,...);
+%   Usage:  h=framemuleigs(Fa,Fs,sym,K);
+%           h=framemuleigs(Fa,Fs,sym,K,...);
 %
 %   Input parameters:
 %         Fa    : Frame analysis definition
 %         Fs    : Frame analysis definition
+%         sym   : symbol of Gabor multiplier
 %         K     : Number of eigenvectors to compute.
-%         c     : symbol of Gabor multiplier
 %   Output parameters:
 %         V     : Matrix containing eigenvectors.
 %         D     : Eigenvalues.
 %
-%   `framemuleigs(F,c,K)` computes the *K* largest eigenvalues and eigen-
-%   vectors of the frame multiplier with symbol *c*.
+%   `framemuleigs(Fa,Fs,sym,K)` computes the *K* largest eigenvalues and eigen-
+%   vectors of the frame multiplier with symbol *c*, analysis frame *Fa*
+%   and synthesis frame *Fs*.
 %
 %   If *K* is empty, then all eigenvalues/pairs will be returned.
 %
@@ -53,7 +54,7 @@ function [V,D]=framemuleigs(Fa,Fs,coef,varargin)
 %     [V,D]=framemuleigs(Fa,Fs,mask(:));
 %     sgram(V(:,1),'dynrange',90);
 %
-%   See also: gabmul, dgt, idgt, gabdual, gabtight
+%   See also: framemul, framemulappr
 
 % Change this to 1 or 2 to see the iterative method in action.
 printopts=0;
@@ -81,7 +82,7 @@ definput.flags.method={'auto','iter','full'};
 % Do the computation. For small problems a direct calculation is just as
 % fast.
 
-L=framelengthcoef(Fa,size(coef,1));
+L=framelengthcoef(Fa,size(sym,1));
 
 if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
     
@@ -95,14 +96,14 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   opts.tol    = kv.tol;
   
   if doV
-    [V,D] = eigs(@(x) frsyn(Fs,coef.*frana(Fa,x)),L,K,'LM',opts);
+    [V,D] = eigs(@(x) frsyn(Fs,sym.*frana(Fa,x)),L,K,'LM',opts);
   else
-    D     = eigs(@(x) frsyn(Fs,coef.*frana(Fa,x)),L,K,'LM',opts);
+    D     = eigs(@(x) frsyn(Fs,sym.*frana(Fa,x)),L,K,'LM',opts);
   end;
 
 else
   % Compute the transform matrix.
-  bigM=frsyn(F,diag(coef)*frana(F,eye(L)));
+  bigM=frsyn(F,diag(sym)*frana(F,eye(L)));
 
   if doV
     [V,D]=eig(bigM);
@@ -117,7 +118,7 @@ end;
 D=diag(D);
 
 % Sort them in descending order
-[dummytilde,idx]=sort(abs(D),1,'descend');
+[~,idx]=sort(abs(D),1,'descend');
 D=D(idx(1:K));
 
 if doV

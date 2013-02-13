@@ -71,6 +71,21 @@ switch(F.type)
         coefs(ii)={F.w(ii)*frana(F.frames{ii},insig)};
     end;
     outsig=cell2mat(coefs);
+ case 'tensor'
+  999
+  size(insig)
+    outsig=frana(F.frames{1},insig);
+    size(outsig)
+    perm=[circshift((1:F.Nframes).',-1);
+          F.Nframes+1:ndims(insig)];
+    perm
+    for ii=2:F.Nframes
+      outsig=permute(outsig,perm);
+      size(outsig)
+      outsig=frana(F.frames{ii},outsig);
+      size(outsig)
+    end;
+    outsig=permute(outsig,perm);
 end;
 
   

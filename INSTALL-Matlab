@@ -1,7 +1,6 @@
-
 -------- Compatibility ----------------------------------
 
-The toolbox should work and compile on all versions of Matlab later than 2007a.
+The toolbox should work and compile on all versions of Matlab later than 2009b.
 
 -------- Compiling the MEX interfaces  ------------------
 

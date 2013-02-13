@@ -21,7 +21,8 @@ end;
 a=a(:);
 cl=cl(:);
 
-[a,dummy]=scalardistribute(a,cl);
+% Make 'a' have the length of '
+a=bsxfun(@times,a,ones(numel(cl),1));
 
 L=a.*cl;
 

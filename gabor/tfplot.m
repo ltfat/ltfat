@@ -61,7 +61,6 @@ function coef=tfplot(coef,step,yr,varargin)
 %     'nodisplay'   Do not display figure. This is usefull if you only
 %                   want to obtain the output for further processing.
 %
-
 %   If both `'clim'` and `'dynrange'` are specified, then `'clim'` takes
 %   precedence.
 %
@@ -151,7 +150,15 @@ if flags.do_display
         
     switch(flags.plottype)
       case 'image'
-        imagesc(xr,yr,coef);
+        % Call imagesc explicitly with clim. This is necessary for the
+        % situations where the data (is by itself limited (from above or
+        % below) to within the specified range. Setting clim explicitly
+        % avoids the the colormap moves in the top or bottom.
+	if isempty(kv.clim)
+          imagesc(xr,yr,coef);
+        else
+	  imagesc(xr,yr,coef,kv.clim);
+        end;
       case 'contour'
         contour(xr,yr,coef);
       case 'surf'

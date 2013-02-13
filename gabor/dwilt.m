@@ -108,7 +108,7 @@ function [c,Ls,g]=dwilt(f,g,M,L)
 %
 %   See also:  idwilt, wilwin, wil2rect, dgt, wmdct, wilorth
 %
-%   References: bofegrhl96-1 liva95
+%   References: bofegrhl96-1 liva95 dajajo91
 
 %   AUTHOR : Peter L. Søndergaard.
 %   TESTING: TEST_DWILT

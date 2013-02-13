@@ -39,6 +39,9 @@ switch(F.type)
     red=2*sum(1./F.a);
   case 'fusion'
     red=sum(cellfun(@framered,F.frames));
+ case 'tensor'
+    red=prod(cellfun(@framered,F.frames));
+    
 end;
 
   

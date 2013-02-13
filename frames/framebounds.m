@@ -48,7 +48,7 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %   See also: frame, framered
 
-% We handle fusion frames first
+% We handle the container frames first
   if strcmp(F.type,'fusion')
       AF=0;
       BF=0;
@@ -61,6 +61,18 @@ function [AF,BF]=framebounds(F,varargin);
       BF=sqrt(BF);
         
       return;
+  end;    
+  
+  if strcmp(F.type,'tensor')
+    AF=1;
+    BF=1;
+    for ii=1:F.Nframes
+      [A,B]=framebounds(F.frames{ii},varargin{:});
+      AF=AF*A;
+      BF=BF*B;
+    end;
+    
+    return;
   end;    
     
   definput.keyvals.Ls=1;

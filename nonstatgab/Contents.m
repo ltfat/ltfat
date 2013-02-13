@@ -1,6 +1,6 @@
 % LTFAT - Non-stationary Gabor systems
 %
-%  Florent Jaillet and Peter L. Søndergaard, 2011 - 2012
+%  Florent Jaillet and Peter L. Søndergaard, 2011 - 2013
 %
 %  Transforms
 %    NSDGT                - Non-stationary DGT

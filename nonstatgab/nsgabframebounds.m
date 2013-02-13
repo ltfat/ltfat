@@ -26,7 +26,7 @@ function [AF,BF]=nsgabframebounds(g,a,Ls)
 %
 %   See also:  nsgabtight, nsdgt, insdgt
 %
-%   References: ltfatnote010
+%   References: ltfatnote018
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGT

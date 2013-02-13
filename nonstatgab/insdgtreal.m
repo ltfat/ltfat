@@ -26,7 +26,7 @@ function f=insdgtreal(c,g,a,M,varargin)
 %
 %   Demos:  demo_nsdgt
 %
-%   References: ltfatnote010
+%   References: ltfatnote018
 
 %   AUTHOR : Florent Jaillet and Nicki Holighaus
 %   TESTING: TEST_NSDGT

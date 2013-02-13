@@ -5,14 +5,14 @@
 %   and a test signal, and plots the windows and the energy of the 
 %   coefficients.
 %
-%   ..figure::
+%   .. figure::
 %
 %     Windows + dual windows
 % 
 %     This figure shows the window functions used and the corresponding
 %     canonical dual windows. 
 %
-%   ..figure::
+%   .. figure::
 %
 %     Spectrogram (absolute value of coefficients in dB)
 %

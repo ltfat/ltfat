@@ -72,7 +72,7 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %
 %   Demos:  demo_nsdgt
 %
-%   References: ltfatnote010
+%   References: ltfatnote018
   
 %   AUTHOR : Florent Jaillet and Nicki Holighaus
 %   TESTING: TEST_NSDGT

@@ -6,12 +6,12 @@ function G=framematrix(F,L);
 %   analysis operator for a frame *F* of length *L*. The frame object *F*
 %   must have been created using |frame|_.
 %
-%   The frame analysis operator matrix contains all the frame atoms as column vectors. It has
-%   dimensions $L \times Ncoef$, where $Ncoef$ is the number of
-%   coefficients. The number of coefficients can be found as
+%   The frame analysis operator matrix contains all the frame atoms as
+%   column vectors. It has dimensions $L \times Ncoef$, where $Ncoef$ is the
+%   number of coefficients. The number of coefficients can be found as
 %   `Ncoef=framered(F)*L`. This means than the frame matrix is usually
-%   **very** large, and this routine should only be used for small values
-%   of *L*.
+%   **very** large, and this routine should only be used for small values of
+%   *L*.
 %
 %   The action of the frame transform operator |frana|_ is equal to
 %   multiplication with the Hermitean transpose of the frame
@@ -30,10 +30,10 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-switch(F.type)
- case {'dgtreal','fftreal'}
-  error('%s: The analysis operator of this frame does not have a matrix representation.',upper(mfilename));
- otherwise
+if F.realinput
+  error(['%s: The synthesis operator of real-valued-input frames does is ' ...
+         'non-linear and does not have a matrix represenation.']);
+else
   
   Lcheck=framelength(F,L);
   if Lcheck~=L

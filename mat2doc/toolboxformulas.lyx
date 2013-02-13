@@ -1,0 +1,399 @@
+#LyX 1.5.6 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass article
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 0
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section
+DFT
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+c\left(k+1\right)=\frac{1}{\sqrt{L}}\sum_{l=0}^{L-1}f\left(l+1\right)e^{2\pi ikl/L}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PCONV 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)\overline{g\left(k-l+1\right)}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(-k+1\right)g\left(l-k+1\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+DSFT
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+C\left(m+1,n+1\right)=\frac{1}{\sqrt{KL}}\sum_{l=0}^{L-1}\sum_{k=0}^{K-1}F\left(k+1,l+1\right)e^{2\pi i\left(kn/K-lm/L\right)}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+DGT
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)e^{-2\pi imbk/L}\overline{g\left(l-an+1\right)}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+IDGT
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+f(l+1) & = & \sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m+1,n+1)e^{2\pi imbl/L}g\left(l-an+1\right)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+DWILT
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $m=0$
+\end_inset
+
+:
+\begin_inset Formula \begin{eqnarray*}
+c\left(1,n+1\right) & = & \sum_{l=0}^{L-1}f(l+1)g\left(l-2nM+1\right)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $m$
+\end_inset
+
+ is odd and less than 
+\begin_inset Formula $M$
+\end_inset
+
+:
+\begin_inset Formula \begin{eqnarray*}
+c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin(\pi\frac{m}{M}l)g(l-2nM+1)\\
+c\left(m+M+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos(\pi\frac{m}{M}l)g\left(l-\left(2n+1\right)M+1\right)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $m$
+\end_inset
+
+ is even and less than 
+\begin_inset Formula $M$
+\end_inset
+
+:
+\begin_inset Formula \begin{eqnarray*}
+c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos(\pi\frac{m}{M}l)g(l-2nM+1)\\
+c\left(m+M+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin(\pi\frac{m}{M}l)g\left(l-\left(2n+1\right)M+1\right)\end{eqnarray*}
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $m=M$
+\end_inset
+
+ and 
+\begin_inset Formula $M$
+\end_inset
+
+ is even:
+\begin_inset Formula \begin{eqnarray*}
+c\left(M+1,n+1\right) & = & \sum_{l=0}^{L-1}f(l+1)(-1)^{l}g(l-2nM+1)\end{eqnarray*}
+
+\end_inset
+
+else if 
+\begin_inset Formula $m=M$
+\end_inset
+
+ and 
+\begin_inset Formula $M$
+\end_inset
+
+ is odd:
+\begin_inset Formula \begin{eqnarray*}
+c\left(M+1,n+1\right) & = & \sum_{k=0}^{L-1}f(l+1)(-1)^{l}g\left(l-\left(2n+1\right)M+1\right)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+MDCT
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $m+n$
+\end_inset
+
+ even:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\cos\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For 
+\begin_inset Formula $m+n$
+\end_inset
+
+ odd:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+c\left(m+1,n+1\right) & = & \sqrt{2}\sum_{l=0}^{L-1}f(l+1)\sin\left(\frac{\pi}{M}\left(m+\frac{1}{2}\right)l+\frac{\pi}{4}\right)g(l-nM+1)\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PGAUSS
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\varphi(l+1)=\left(\frac{wL}{2}\right)^{-1/4}\sum_{k\in\mathbb{Z}}e^{-\pi\left(\left(l+c_{t}\right)/\sqrt{L}-k\sqrt{L}\right)^{2}/w}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PSECH
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\psi\left(l+1\right)=\sqrt{\frac{\pi}{2\sqrt{wL}}}\sum_{k\in\mathbb{Z}}\textrm{sech}\left(\left(\frac{l}{\sqrt{L}}-k\sqrt{L}\right)\frac{\pi}{\sqrt{w}}\right).$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PMEXHAT
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\psi\left(l+1\right)=e^{}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+PCHIRP
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+g\left(l+1\right)=\frac{1}{\sqrt{L}}e^{\pi inl^{2}/L},\quad l=0,\ldots,L-1\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+GABMUL
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+h=\sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m,n)\left\langle f,M_{mb}T_{na}g_{a}\right\rangle M_{mb}T_{na}g_{s}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+SPREADOP
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+h=\sum_{n=0}^{N-1}\sum_{m=0}^{M-1}c(m,n)M_{-mb}T_{na}f\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+GFDUALNORM
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+e_{est}=\sum_{s=0}^{b-1}\sum_{rsum=0}^{a-1}\sum_{l=0}^{L-1}\gamma\left(l+1\right)\overline{g}\left(l-rM\right)e^{-2\pi is/a}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+GFMINNORMDUAL
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+\left\Vert x\right\Vert ^{2} & = & \sum_{k=1}^{L}\left(\frac{x(k)}{r(k)}\right)^{2}\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+ZAK
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \begin{eqnarray*}
+c(m+1,n+1) & = & \frac{1}{\sqrt{N}}\sum_{k=0}^{N-1}f(m-ka+1)e^{2\pi ink/M}\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+SGRAM
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+c\left(m+1,n+1\right)=\left|\sum_{k=0}^{L-1}f(k)e^{-2\pi imk/L}\overline{g\left(k-n+1\right)}\right|^{2}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+DCTII
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+w\left(n\right)=\sqrt{\frac{2}{L}}\begin{cases}
+\frac{1}{\sqrt{2}} & \text{if }n=0\\
+1 & \text{otherwise}\end{cases}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+c\left(n+1\right)=\sum_{m=0}^{L-1}w\left(n+1\right)f\left(m+1\right)\cos\left(\pi n\left(m+\frac{1}{2}\right)\right)\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

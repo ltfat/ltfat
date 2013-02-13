@@ -150,7 +150,7 @@ end;
 D=diag(D);
 
 % Sort them in descending order
-[dummytilde,idx]=sort(abs(D),1,'descend');
+[~,idx]=sort(abs(D),1,'descend');
 D=D(idx(1:K));
 
 if doV

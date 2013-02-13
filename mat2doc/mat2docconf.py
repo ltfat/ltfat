@@ -2,6 +2,12 @@
 # Global configuration of the mat2doc system
 # -------------------------------------------
 
+# When writing this file, the following variables are available
+#
+#   projectname  - The name of your project, OK, you already know this
+#   projectdir   - The directory where your project is located
+#   outputdir    - The output directory
+
 from mat2doc import *
 
 # Define versionstring
@@ -40,8 +46,8 @@ php=PhpConf()
 
 php.indexfiles=contentsfiles
 php.includedir='../include/'
-php.urlbase='/wavelets/'
-php.codedir=localconf.outputdir+'ltfatwave-mat'+os.sep
+php.urlbase='/doc/'
+php.codedir=outputdir+'ltfat-mat'+os.sep
 
 # ------------------------------------------
 # Local php
@@ -51,7 +57,7 @@ phplocal=PhpConf()
 phplocal.indexfiles=contentsfiles
 phplocal.includedir='../include/'
 phplocal.urlbase='/doc/'
-phplocal.codedir=localconf.outputdir+'ltfatwave-mat'+os.sep
+phplocal.codedir=outputdir+'ltfat-mat'+os.sep
 
 # ------------------------------------------
 # Configuration of LaTeX
@@ -69,7 +75,7 @@ texcontentsfiles=['Contents','gabor/Contents','fourier/Contents',
 
 tex.indexfiles=contentsfiles
 tex.urlbase='http://ltfat.sourceforge.net/doc/'
-tex.codedir=localconf.outputdir+'ltfatwave-mat'+os.sep
+tex.codedir=outputdir+'ltfat-mat'+os.sep
     
 # ------------------------------------------
 # Configuration of Matlab
@@ -83,14 +89,13 @@ mat.urlbase='http://ltfat.sourceforge.net/doc/'
 # ------------------------------------------
 
 verify=ConfType()
-
 verify.basetype='verify'
+verify.sourcedir=outputdir+'ltfat-mat'+os.sep
 
-verify.targets=['AUTHOR','TESTING','REFERENCE']
-
+verify.targets=['AUTHOR','TESTING']
 verify.notappears=['FIXME','BUG','XXL','XXX']
 
-verify.ignore=["demo_","comp_","assert_","Contents.m","init.m"]
+verify.ignore=["comp_","assert_","Contents.m","init.m"]
 
 
 

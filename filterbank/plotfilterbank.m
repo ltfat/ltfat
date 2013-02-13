@@ -136,7 +136,15 @@ end;
 
 switch(flags.plottype)
   case 'image'
-   imagesc(xr,yr,coef);
+    % Call imagesc explicitly with clim. This is necessary for the
+    % situations where the data (is by itself limited (from above or
+    % below) to within the specified range. Setting clim explicitly
+    % avoids the the colormap moves in the top or bottom.
+    if isempty(kv.clim)
+      imagesc(xr,yr,coef);
+    else
+      imagesc(xr,yr,coef,kv.clim);
+    end;   
   case 'contour'
     contour(xr,yr,coef);
   case 'surf'
@@ -151,13 +159,13 @@ end;
 
 axis('xy');
 if ~isempty(kv.fs)
-  xlabel(sprintf('%s (s)',kv.time));
+  xlabel(sprintf('%s (s)',kv.time),'fontsize',kv.fontsize);
 else
-  xlabel(sprintf('%s (%s)',kv.time,kv.samples));
+  xlabel(sprintf('%s (%s)',kv.time,kv.samples),'fontsize',kv.fontsize);
 end;
 
 if isempty(kv.fc)
-  ylabel('Channel No.');
+  ylabel('Channel No.','fontsize',kv.fontsize);
 else
   
   if isempty(kv.tick)
@@ -195,7 +203,7 @@ else
 
   end;
   
-  ylabel(sprintf('%s (Hz)',kv.frequency));
+  ylabel(sprintf('%s (Hz)',kv.frequency),'fontsize',kv.fontsize);
   
 end;
 

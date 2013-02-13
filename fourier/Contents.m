@@ -1,6 +1,6 @@
 % LTFAT - Basic Fourier and DCT analysis.
 %
-%  Peter L. Søndergaard, 2008 - 2012.
+%  Peter L. Søndergaard, 2008 - 2013.
 %
 %  Basic Fourier analysis
 %    DFT            -  Unitary discrete Fourier transform.
