@@ -115,7 +115,16 @@ end;
 
 info.M=numel(g);
 
-info.gl=cellfun(@length,g);
+for m=1:info.M
+    if isvector(g{m})
+        g{m}=g{m}(:);
+    else
+        error('Window no. %i must be a vector.',m);
+    end;
+    
+end;
+
+info.gl=cellfun(@numel,g);
 
 info.longestfilter=max(info.gl);
 
