@@ -13,6 +13,17 @@ function [w,s,xvals] = wavfun(g,N,varargin)
 %   Iteratively generate a discrete approximation of wavelet and scaling
 %   functions. The algorithm is equal to the DWT reconstruction of a single
 %   coefficient at level $N$ set to 1.
+%
+%   Examples:
+%   ---------
+%   
+%   Approximation of a Daubechies wavelet and scaling functions from the 12tap filters:::
+% 
+%   w = fwtinit({'db',6});
+%   [wfn,sfn,xvals] = wavfun(w.g,6);
+%   plot(xvals,[wfn,sfn]);
+%   legend('wavelet function','scaling function');
+%
 
 definput.keyvals.a = [];
 [flags,kv,a]=ltfatarghelper({'a'},definput,varargin);
@@ -47,15 +58,16 @@ end
 
 for n=1:N
     for ii=1:gLen-1 
-       wtemp{ii} = convolve(ups(wtemp{ii},a(1),1),lo);
+       wtemp{ii} = convolve(comp_ups(wtemp{ii},a(1),1),lo);
     end
-    s = convolve(ups(s,a(1),1),lo);
+    s = convolve(comp_ups(s,a(1),1),lo);
 end
 
 w = zeros(length(wtemp{1}),gLen-1);
 for ii=1:gLen-1 
-   w(:,ii) = wtemp{ii};
+   w(:,ii) = wtemp{ii}(end:-1:1)/norm(wtemp{ii});
 end
+s = s(end:-1:1)/norm(s);
 
 
 if(nargout>2)

@@ -1,8 +1,12 @@
 function f=iuwfbt(c,wt,varargin)
-%IWFBT   Inverse Undecimated Wavelet Filterbank Tree
+%IUWFBT   Inverse Undecimated Wavelet Filterbank Tree
+%   Usage:  f = iuwfbt(c,wt,...) 
+%
+%   `f=iuwfbt(c,wt)` computes XXX 
 %
 %
-% `f=iwfbt(c,wtdual)` 
+%
+%
 
 if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
@@ -22,7 +26,6 @@ definput.keyval.Ls = [];
 
 % Initialize the wavelet tree structure
 wt = wfbtinit(wt,flags.treetype,'syn');
-
 
 % Estimate output signal length from the number of coefficients
 if isempty(Ls)

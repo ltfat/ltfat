@@ -1,6 +1,11 @@
 function c = wtfft(f,H,a,varargin)
 %WTFFT Wavelet Transform via FFT
-
+%   Usage:  c = wtfft(f,H,a,varargin);
+%
+%
+%   `wtfft(f,H,a)` calculates XXX
+%
+%
 
 
 %% ----- step 1 : Verify f and determine its length -------

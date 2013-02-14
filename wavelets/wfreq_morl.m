@@ -1,4 +1,4 @@
-function [H] = wfreq_morl(s,N);
+function [H] = wfreq_morl(N,s);
 
 
 

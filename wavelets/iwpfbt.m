@@ -12,7 +12,7 @@ function f=iwpfbt(c,wt,Ls,varargin)
 %         f     : Reconstructed data.
 %
 %   `f=iwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
-%   wavelet filterbank tree *wt*.
+%   wavelet filterbank tree *wt*. 
 %
 %   The following flag groups are supported:
 %
@@ -60,4 +60,7 @@ end
 % Initialize the wavelet tree structure
 wt = wfbtinit(wt,flags.treetype,'syn');
 
-f = comp_iwpfbt(c,wt,Ls,'dec',flags.ext);
+
+wtreePath = nodesBForder(wt,'rev');
+[pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
+f = comp_iwpfbt(c,wt.nodes(wtreePath),pOutIdxs,chOutIdxs,Ls,'dec',flags.ext);

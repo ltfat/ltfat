@@ -33,7 +33,7 @@ function c=wpfbt(f,wt,varargin)
 % 
 %     f = gspi;
 %     J = 6;
-%     c = wfbt(f,{{'db',10},J},'full');
+%     c = wpfbt(f,{{'db',10},J},'full');
 %     plotfwt(c);
 %
 %   See also: iwfbt, wfbtinit
@@ -59,6 +59,15 @@ end
 
 %% ----- step 2 : Check whether the input signal is long enough
 % TO DO: determine length of the longest equivalent filter
+% Do non-expansve transform if ext='per'
+if(strcmp(flags.ext,'per'))
+    doNoExt = 1;
+else
+    doNoExt = 0;
+end
+
 
 %% ----- step 3 : Run computation
-c = comp_wpfbt(f,wt,'dec',flags.ext);
+treePath = nodesBForder(wt);
+inLengths = nodeInLen(treePath,Ls,doNoExt,wt);
+c = comp_wpfbt(f,wt.nodes(treePath),inLengths,'dec',flags.ext);

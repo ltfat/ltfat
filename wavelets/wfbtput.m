@@ -6,8 +6,8 @@ function wtree = wfbtput(d,k,filt,wtree,varargin)
 %   Input parameters:
 %         d     : 
 %         k     :
-%         filts :
-%         wtree :
+%         filt  :
+%         wtree : 
 %
 %   Output parameters:
 %         wtree : Modified input structure.
