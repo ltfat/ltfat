@@ -12,7 +12,7 @@ function L=filterbanklengthcoef(coef,a);
   
 if iscell(coef)
   Mcoef=numel(coef);
-  cl=cellfun(@numel,coef);
+  cl=cellfun(@(x) size(x,1),coef);
 else
   Mcoef=size(coef,2);
   cl=ones(1,Mcoef)*size(coef,1);    

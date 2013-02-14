@@ -25,109 +25,127 @@ for ii=1:M
 end;
 
 gd = filterbankdual(g,a);
-
-f=crand(L,1);
-
-c_u      = ufilterbank(f,g,a);
-c_u_ref  = ref_ufilterbank(f,g,a);
-c_nu     = filterbank(f,g,a);
-
-%% check that filterbank and ufilterbank produce the same results.
-res=0;
-for m=1:M
-  res=res+norm(c_nu{m}-c_u(:,m));  
-end;
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB MATCH  %0.5g %s'],res,fail);
-disp(s)
-
-%% check that ufilterbank match its reference
-res=norm(c_u-c_u_ref,'fro');
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB RES    %0.5g %s'],res,fail);
-disp(s)
-
-
-%% Check that ufilterbank is invertible using dual window
-r=ifilterbank(c_u,gd,a);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB DUAL   %0.5g %s'],res,fail);
-disp(s)
-
-
-%% Check that filterbanktight gives a tight filterbank
 gt = filterbanktight(g,a);
-
-c_ut = ufilterbank(f,gt,a);
-r=ifilterbank(c_ut,gt,a);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB TIGHT  %0.5g %s'],res,fail);
-disp(s)
+gtreal=filterbankrealtight(g,a);
 
 %% Check that filterbankbounds detect the tight frame
 [AF,BF]=filterbankbounds(gt,a);
 
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
+[test_failed,fail]=ltfatdiditfail(BF-1,test_failed);
 s=sprintf(['FB FB B   %0.5g %s'],BF-1,fail);
 disp(s)
 
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
+[test_failed,fail]=ltfatdiditfail(AF-1,test_failed);
 s=sprintf(['FB FB A   %0.5g %s'],AF-1,fail);
-disp(s)
-
-%% Check the real valued systems, dual
-
-fr=rand(L,1);
-
-gdreal=filterbankrealdual(g,a);
-
-c_ur=ufilterbank(fr,g,a);
-rreal=2*real(ifilterbank(c_ur,gdreal,a));
-
-res=norm(fr-rreal);
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB RDUAL  %0.5g %s'],res,fail);
-disp(s)
-
-
-%% Check the real valued systems, tight
-
-gtreal=filterbankrealtight(g,a);
-
-ct     = ufilterbank(fr,gtreal,a);
-rrealt = 2*real(ifilterbank(ct,gtreal,a));
-
-res=norm(fr-rrealt);
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB RTIGHT %0.5g %s'],res,fail);
 disp(s)
 
 %% check filterbankrealbounds
 
 [AF,BF]=filterbankrealbounds(gtreal,a);
 
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
+[test_failed,fail]=ltfatdiditfail(BF-1,test_failed);
 s=sprintf(['FB FBR B  %0.5g %s'],BF-1,fail);
 disp(s)
 
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
+[test_failed,fail]=ltfatdiditfail(AF-1,test_failed);
 s=sprintf(['FB FBR A  %0.5g %s'],AF-1,fail);
 disp(s)
 
-%% check filterbankwin
+for w=1:3
 
-r=ifilterbank(c_u,{'dual',g},a);
-
-res=norm(f-r);
-
-[test_failed,fail]=ltfatdiditfail(res,test_failed);
-s=sprintf(['FB WIN DUAL %0.5g %s'],res,fail);
-disp(s)
+    f=crand(L,w);
+    
+    c_u      = ufilterbank(f,g,a);
+    c_u_ref  = ref_ufilterbank(f,g,a);
+    c_nu     = filterbank(f,g,a);
+    
+    %% check that filterbank and ufilterbank produce the same results.
+    res=0;
+    for m=1:M
+        res=res+norm(c_nu{m}-squeeze(c_u(:,m,:)));  
+    end;
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB MATCH  W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
+    %% check that ufilterbank match its reference
+    res=c_u-c_u_ref;
+    res=norm(res(:));
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB RES    W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
+    
+    %% Check that ufilterbank is invertible using dual window
+    r=ifilterbank(c_u,gd,a);
+    
+    res=norm(f-r);
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB DUAL   W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
+    
+    %% Test that ifilterbank returns the same for the uniform and non-uniform
+    %% case
+    c_nu=mat2cell(c_u,size(c_u,1),ones(1,M),w);
+    c_nu=cellfun(@squeeze,c_nu,'UniformOutput',false);
+    
+    r_nu=ifilterbank(c_nu,gd,a);
+    
+    res=norm(r_nu-r);
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB INV MATCH W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
+    
+    %% Check that filterbanktight gives a tight filterbank
+    
+    c_ut = ufilterbank(f,gt,a);
+    r=ifilterbank(c_ut,gt,a);
+    
+    res=norm(f-r);
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB TIGHT  W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+        
+    %% Check the real valued systems, dual
+    
+    fr=rand(L,1);
+    
+    gdreal=filterbankrealdual(g,a);
+    
+    c_ur=ufilterbank(fr,g,a);
+    rreal=2*real(ifilterbank(c_ur,gdreal,a));
+    
+    res=norm(fr-rreal);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB RDUAL  W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
+    
+    %% Check the real valued systems, tight
+        
+    ct     = ufilterbank(fr,gtreal,a);
+    rrealt = 2*real(ifilterbank(ct,gtreal,a));
+    
+    res=norm(fr-rrealt);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB RTIGHT W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+        
+    %% check filterbankwin
+    
+    r=ifilterbank(c_u,{'dual',g},a);
+    
+    res=norm(f-r);
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB WIN DUAL %0.5g %s'],res,fail);
+    disp(s)
+    
+end;

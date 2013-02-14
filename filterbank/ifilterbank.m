@@ -53,21 +53,21 @@ else
   a=a*ones(M,1);
 end;
 
-if ~(numel(c)==Mcoef)
+if ~(M==Mcoef)
   error(['Mismatch between the size of the input coefficients and the ' ...
          'number of filters.']);
 end;
 
 if iscell(c)
-        
+         
   f=zeros(L,W);
   for m=1:M
      for w=1:W
         
         G=fft(fir2long(g{m},L));
-        
+
         % This repmat cannot be replaced by bsxfun
-        f(:,w)=f(:,w)+ifft(repmat(fft(c{m}(:,w)),a(m),1).*conj(G));
+        f(:,w)=f(:,w)+ifft(bsxfun(@times,repmat(fft(c{m}(:,w)),a(m),1),conj(G)));
     end;
   end;
   
