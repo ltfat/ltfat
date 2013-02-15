@@ -1,20 +1,21 @@
-function [c,relres,iter]=franaiter(F,c,varargin)
+function [c,relres,iter]=franaiter(F,f,varargin)
 %FRANAITER  Iterative analysis
-%   Usage:  f=franaiter(F,c);
+%   Usage:  c=franaiter(F,f);
+%           [c,relres,iter]=franaiter(F,f,...);
 %
 %   Input parameters:
-%         F       : Frame   
-%         c       : Array of coefficients.
-%         Ls      : length of signal.
-%   Output parameters:
+%         F       : Frame.
 %         f       : Signal.
+%         Ls      : Length of signal.
+%   Output parameters:
+%         c       : Array of coefficients.    
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
 %
-%   `c=franaiter(F,f)` computes the frame coefficients *c* using an
-%   iterative method such that perfect reconstruct can be obtained using
-%   |frsyn|_. `franaiter` always works, even when |frana|_ cannot
-%   generate perfect reconstruction coefficients.
+%   `c=franaiter(F,f)` computes the frame coefficients *c* of the signal *f*
+%   using an iterative method such that perfect reconstruction can be
+%   obtained using |frsyn|_. `franaiter` always works, even when |frana|_
+%   cannot generate perfect reconstruction coefficients.
 %
 %   `[c,relres,iter]=franaiter(...)` additionally returns the relative
 %   residuals in a vector *relres* and the number of iteration steps *iter*.
@@ -75,7 +76,7 @@ function [c,relres,iter]=franaiter(F,c,varargin)
   [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
   
   % Determine L from the first vector, it must match for all of them.
-  L=framelengthcoef(F,size(c,1));
+  L=framelengthcoef(F,size(f,1));
     
   A=@(x) frsyn(F,frana(F,x));
            
@@ -84,10 +85,10 @@ function [c,relres,iter]=franaiter(F,c,varargin)
       d=framediag(F,L);
       M=spdiags(d,0,L,L);
       
-      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit,M);
+      [fout,flag,~,iter,relres]=pcg(A,f,kv.tol,kv.maxit,M);
   else
       
-      [fout,flag,~,iter,relres]=pcg(A,c,kv.tol,kv.maxit);          
+      [fout,flag,~,iter,relres]=pcg(A,f,kv.tol,kv.maxit);          
   end;
 
   c=frana(F,fout);
