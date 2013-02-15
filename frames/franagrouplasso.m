@@ -1,6 +1,6 @@
-function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
-%FRAMEGROUPLASSO  Group LASSO regression in the TF-domain
-%   Usage: [tc,xrec] = framegrouplasso(F,x,group,lambda,C,maxit,tol)
+function [tc,relres,iter,xrec] = franagrouplasso(F,x,lambda,varargin)
+%FRANAGROUPLASSO  Group LASSO regression in the TF-domain
+%   Usage: [tc,xrec] = franagrouplasso(F,x,group,lambda,C,maxit,tol)
 %
 %   Input parameters:
 %       F        : Frame definition
@@ -13,7 +13,7 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %      iter      : Number of iterations done.
 %      xrec      : Reconstructed signal
 %
-%   `framegrouplasso(F,x)` solves the group LASSO regression problem in the
+%   `franagrouplasso(F,x)` solves the group LASSO regression problem in the
 %   time-frequency domain: minimize a functional of the synthesis
 %   coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the mixed $l^1$ / $l^2$ norm of the coefficient
@@ -26,10 +26,10 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %   group, and $l^1$ norm with respect to groups. See the help on
 %   |groupthresh|_ for more information.
 %
-%   `[tc,relres,iter] = framegrouplasso(...)` returns the residuals *relres* in
+%   `[tc,relres,iter] = franagrouplasso(...)` returns the residuals *relres* in
 %   a vector and the number of iteration steps done, *maxit*.
 %
-%   `[tc,relres,iter,xrec] = framegrouplasso(...)` returns the reconstructed
+%   `[tc,relres,iter,xrec] = franagrouplasso(...)` returns the reconstructed
 %   signal from the coefficients, *xrec*. Note that this requires additional
 %   computations.
 %
@@ -66,7 +66,7 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %   switch the grouping mechanism or inner thresholding type.
 %
 %   The parameters *C*, *maxit* and *tol* may also be specified on the
-%   command line in that order: `framegrouplasso(F,x,lambda,C,tol,maxit)`.
+%   command line in that order: `franagrouplasso(F,x,lambda,C,tol,maxit)`.
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative group thresholdings.
@@ -75,7 +75,7 @@ function [tc,relres,iter,xrec] = framegrouplasso(F,x,lambda,varargin)
 %
 %     xrec = frsyn(F,tc);
 %
-%   See also: framelasso, framebounds
+%   See also: franalasso, framebounds
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

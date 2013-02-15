@@ -1,6 +1,6 @@
-function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
-%FRAMELASSO  Frame LASSO regression
-%   Usage: [tc,xrec] = framelasso(F,x,lambda,C,tol,maxit)
+function [tc,relres,iter,xrec] = franalasso(F,x,lambda,varargin)
+%FRANALASSO  Frame LASSO regression
+%   Usage: [tc,xrec] = franalasso(F,x,lambda,C,tol,maxit)
 %
 %   Input parameters:
 %       F        : Frame definition
@@ -12,7 +12,7 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %       iter     : Number of iterations done.  
 %       xrec     : Reconstructed signal
 %
-%   `framelasso(F,x,lambda)` solves the LASSO (or basis pursuit denoising)
+%   `franalasso(F,x,lambda)` solves the LASSO (or basis pursuit denoising)
 %   regression problem for a general frame: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with
@@ -21,10 +21,10 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative soft thresholdings.
 %  
-%   `[tc,relres,iter] = framelasso(...)` return thes residuals *relres* in a vector
+%   `[tc,relres,iter] = franalasso(...)` return thes residuals *relres* in a vector
 %   and the number of iteration steps done, *maxit*.
 %
-%   `[tc,relres,iter,xrec] = framelasso(...)` returns the reconstructed
+%   `[tc,relres,iter,xrec] = franalasso(...)` returns the reconstructed
 %   signal from the coefficients, *xrec*. Note that this requires additional
 %   computations.
 %
@@ -55,13 +55,13 @@ function [tc,relres,iter,xrec] = framelasso(F,x,lambda,varargin)
 %                iteration. Default value is 10;
 %
 %   The parameters *C*, *itermax* and *tol* may also be specified on the
-%   command line in that order: `framelasso(F,x,lambda,C,tol,maxit)`.
+%   command line in that order: `franalasso(F,x,lambda,C,tol,maxit)`.
 %
 %   **Note**: If you do not specify *C*, it will be obtained as the upper
 %   framebound. Depending on the structure of the frame, this can be an
 %   expensive operation.
 %  
-%   See also: frame, frsyn, framebounds
+%   See also: frame, frsyn, framebounds, franagrouplasso
 %
 %   References: dademo04
 

@@ -18,10 +18,10 @@ tol=1e-4;
 F=frametight(frame('dgtreal','gauss',a,M));
 
 % LASSO
-[tcl,relres,iter,xrecl] = framelasso(F,x,lambda,'maxit',maxit,'tol',tol);
+[tcl,relres,iter,xrecl] = franalasso(F,x,lambda,'maxit',maxit,'tol',tol);
 
 % GLASSO
-[tcgl,relres,iter,xrecgl] = framegrouplasso(F,x,lambda,'maxit',maxit,'tol',tol);
+[tcgl,relres,iter,xrecgl] = franagrouplasso(F,x,lambda,'maxit',maxit,'tol',tol);
 
 % Displays
 figure(1);

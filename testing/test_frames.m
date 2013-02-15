@@ -76,7 +76,7 @@ for ii=1:numel(Fr)
 
   [A,B]=framebounds(F,L);
   
-  if ~F.realinput
+  if (~F.realinput)
     LL=framelength(F,L);
     G=framematrix(F,LL);
     res=norm(c-G'*postpad(f,LL));
@@ -97,6 +97,7 @@ for ii=1:numel(Fr)
   ff=framemul(f,F,Fd,m);
   fr=iframemul(ff,F,Fd,m,'tol',1e-13);
   res=norm(f-fr(1:L))/norm(f);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf('FRAMEMUL INV          frameno:%3i %s %0.5g %s',ii, ...
             F.type,res,fail);
   disp(s);
