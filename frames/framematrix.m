@@ -30,16 +30,34 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if F.realinput
-  error(['%s: The synthesis operator of real-valued-input frames does is ' ...
-         'non-linear and does not have a matrix represenation.']);
-else
-  
-  Lcheck=framelength(F,L);
-  if Lcheck~=L
+Lcheck=framelength(F,L);
+if Lcheck~=L
     error('%s: Incompatible frame length.',upper(mfilename));
-  end;
-  
+end;
+
+if F.realinput
+    
+    %switch(F.type)
+    %  case 'dgtreal'
+        
+    %  This code correctly reproduces the matrix represenation of the
+    %  analysis operator, but not of the synthesis.
+    %
+    %    F2=frame('dgt',F.g,F.a,F.M);
+    %    G2=framematrix(F2,L);
+    %    M2=floor(F.M/2)+1;
+    %    N=L/F.a;
+    %    G=zeros(L,M2*N);
+    %    for n=0:N-1
+    %        G(:,1+n*M2:(n+1)*M2)=G2(:,1+n*F.M:M2+n*F.M);
+    %    end;
+        
+    %  otherwise
+        error(['%s: The synthesis operator of real-valued-input frames does is ' ...
+               'non-linear and does not have a matrix represenation.']);
+        %end;
+else
+    
   % Generic code handles all frames where there are no extra coefficients
   % in the representation
   Ncoef=framered(F)*L;

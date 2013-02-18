@@ -15,7 +15,7 @@ function c = ufwt(f,h,J,varargin)
 %   wavelet representation *c* of the input signal *f* using the "a-trous"
 %   algorithm.
 %
-%   The coefficents *c* are so coalled Undecimated Discrete Wavelet transform
+%   The coefficents *c* are so called Undecimated Discrete Wavelet transform
 %   of the input signal *f*, if *h* defines two-channel wavelet filterbank.
 %   Other names for this version of the wavelet transform are: the
 %   time-invariant wavelet transform, the stationary wavelet transform, 
@@ -82,9 +82,7 @@ function c = ufwt(f,h,J,varargin)
 %
 %   See also: iunfwt, fwtinit
 %
-%   References: ma98  
-
-
+%   References: holschneider1989real
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

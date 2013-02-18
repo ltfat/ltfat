@@ -22,20 +22,8 @@ function h=framemuladj(f,Fa,Fs,sym,varargin)
   
 % Author: Peter L. Søndergaard
 
-if nargin < 2
+if nargin < 4
     error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if nargin==3
-  Fa=varargin{1};
-  Fs=varargin{1};
-  sym=varargin{2};
-end;
-
-if nargin==4
-  Fa=varargin{1};
-  Fs=varargin{2};
-  sym=varargin{3};
 end;
 
 % Swap the analysis and synthesis frames and conjugate the symbol.

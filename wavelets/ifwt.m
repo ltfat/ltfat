@@ -17,12 +17,25 @@ function f = ifwt(c,g,J,varargin)
 %   filterbank defined by *g*. The fast wavelet transform algorithm 
 %   (or Mallat's algorithm) is employed. 
 %
-%   The following flags are supported:
+%   The supported boundary conditions are:
 %
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
+%     'per'    Periodic boundary extension. This is the default.
 %
-%   Node that the same flag as in the `fwt` function have to be used.
+%     'zpd'    Zeros are considered outside of the signal (coefficient) support. 
+%
+%     'sym'    Half-point symmetric extension.
+%
+%     'symw'   Whole-point symmetric extension
+%
+%     'asym'   Half-point antisymmetric extension
+%
+%     'asymw'  Whole point antisymmetric extension
+%
+%     'ppd'    Periodic padding, same as `'per'` but the result is expansive representation
+%
+%     'sp0'    Repeating boundary sample
+%
+%   Node that the same flag as in the |fwt|_ function have to be used.
 %
 %   Please see the help on |fwt|_ for a description of the parameters.
 %
@@ -32,7 +45,7 @@ function f = ifwt(c,g,J,varargin)
 %   A simple example showing perfect reconstruction:::
 % 
 %     f = gspi;
-%     J = 10;
+%     J = 8;
 %     c = fwt(f,{'db',8},J);
 %     fhat = ifwt(c,{'db',8},J,length(f));
 %     % The following should give (almost) zero

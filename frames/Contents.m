@@ -32,11 +32,11 @@
 %    FRAMETF2COEF      - Convert TF-plane layout to native
 %
 %  Non-linear analysis and synthesis
-%    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %    FRANAITER         - Iterative perfect reconstruction analysis
+%    FRANALASSO        - LASSO threshholding using Landweber iterations.
+%    FRANAGROUPLASSO   - Group LASSO threshholding.
 %    FRSYNITER         - Iterative perfect reconstruction synthesis
-%    FRAMELASSO        - LASSO threshholding using Landweber iterations.
-%    FRAMEGROUPLASSO   - Group LASSO threshholding.
+%    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %
 %  Frame multipliers
 %    FRAMEMUL          - Apply frame multiplier

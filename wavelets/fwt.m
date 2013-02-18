@@ -7,7 +7,6 @@ function c = fwt(f,h,J,varargin)
 %         f     : Input data.
 %         h     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
-%         a     : Explicitly defined subsampling factors.
 %
 %   Output parameters:
 %         c      : Coefficients stored in a cell-array.
@@ -23,32 +22,31 @@ function c = fwt(f,h,J,varargin)
 %   channels. In such case, the transform have different name.    
 %
 %   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
-%   The formats are the same as for the |fwtinit|_ function. The simplest
-%   is passing a cell array, whose first element is the name of the function
-%   defining the basic wavelet filters (`wfilt_` prefix) and the other elements are 
-%   the parameters of the function. e.g. `{'db',10}` calls  `wfilt_db(10)` internally.
-%   The second possible format of $h$ is to pass cell array of one dimensional
-%   numerical vectors directly defining the wavelet filter impulse responses.
-%   In this case, outputs of the filters are subsampled by a factor equal
-%   to the number of the filters. For creating completely custom filterbanks use the
-%   |fwtinit|_ function.
-%   The third option is to pass structure obtained from the |fwtinit|_
-%   function.
+%   The formats are the same as for the |fwtinit|_ function.
+%
+%     1) The simplest is passing a cell array, whose first element is the
+%        name of the function defining the basic wavelet filters (`wfilt_`
+%        prefix) and the other elements are the parameters of the
+%        function. e.g. `{'db',10}` calls `wfilt_db(10)` internally.
+%
+%     2) The second possible format of $h$ is to pass cell array of one dimensional
+%        numerical vectors directly defining the wavelet filter impulse
+%        responses.  In this case, outputs of the filters are subsampled by a
+%        factor equal to the number of the filters. For creating completely
+%        custom filterbanks use the |fwtinit|_ function.
+%
+%     3) The third option is to pass a structure obtained from the
+%        |fwtinit|_ function.
 %   
-%   The coefficients in the cell array $c\{jj\}$ for $jj=1,\ldots,J\cdot(N-1)+1$,
-%   where $N$ is number of filters in the basic wavelet filterbank, are ordered
-%   with inceasing central frequency of the corresponding effective filter frequency
-%   responses or equivalently with decreasing wavelet scale.
+%   The coefficients in the cell array $c\{jj\}$ for
+%   $jj=1,\ldots,J\cdot(N-1)+1$, where $N$ is the number of filters in the
+%   basic wavelet filterbank, are ordered with inceasing central frequency
+%   of the corresponding effective filter frequency responses or
+%   equivalently with decreasing wavelet scale.
 %
 %   If the input *f* is matrix with *W* columns, each element of the cell
 %   array $c\{jj\}$ is a matrix with *W* columns with coefficients belonging
 %   to the appropriate input channel.
-%
-%   The following flag groups are supported:
-%
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
-%
 %
 %   Boundary handling:
 %   ------------------
@@ -78,19 +76,21 @@ function c = fwt(f,h,J,varargin)
 %   internally rather than doing the prior explicit padding. The supported
 %   possibilities are:
 %
-%     * `'zpd'` - zeros are considered outside of the signal (coefficient) support. 
+%     'per'    Periodic boundary extension. This is the default.
 %
-%     * `'sym'` - half-point symmetric extension.
+%     'zpd'    Zeros are considered outside of the signal (coefficient) support. 
 %
-%     * `'symw'` - whole-point symmetric extension
+%     'sym'    Half-point symmetric extension.
 %
-%     * `'asym'` - half-point antisymmetric extension
+%     'symw'   Whole-point symmetric extension
 %
-%     * `'asymw'` - whole point antisymmetric extension
+%     'asym'   Half-point antisymmetric extension
 %
-%     * `'ppd'` - periodic padding, same as `'per'` but the result is expansive representation
+%     'asymw'  Whole point antisymmetric extension
 %
-%     * `'sp0'` - repeating boundary sample
+%     'ppd'    Periodic padding, same as `'per'` but the result is expansive representation
+%
+%     'sp0'    Repeating boundary sample
 %
 %   Note that the same flag have to be used in the call of the inverse transform
 %   function `ifwt`.

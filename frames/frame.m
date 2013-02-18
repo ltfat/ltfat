@@ -100,7 +100,7 @@ F.realinput=0;
 % Handle the windowed transforms
 switch(ftype)
  case {'dgt','dwilt','wmdct','filterbank','ufilterbank',...
-       'nsdgt','unsdgt'}
+       'nsdgt','unsdgt','fwt'}
   F.g=varargin{1};
   
  case {'dgtreal','filterbankreal','ufilterbankreal',...
@@ -133,6 +133,9 @@ switch(ftype)
     F.a=F.a(:);
     F.N=numel(F.a);
     F.M=bsxfun(@times,F.M(:),ones(F.N,1));
+    
+  case {'fwt'}
+    F.J=varargin{2};
     
   case 'gen'
     F.g=varargin{1};

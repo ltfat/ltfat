@@ -57,6 +57,8 @@ switch(F.type)
   case 'unsdgtreal'
     outsig=framenative2coef(F,unsdgtreal(insig,F.g,F.a,F.M));
     
+  case 'fwt'
+    outsig=framenative2coef(F,fwt(insig,F.g,F.J));
   case {'dft',...
         'dcti','dctii','dctiii','dctiv',...
         'dsti','dstii','dstiii','dstiv'}

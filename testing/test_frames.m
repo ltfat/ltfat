@@ -74,9 +74,26 @@ for ii=1:numel(Fr)
   s=sprintf(['FRAMES ACCEL DUAL REC frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);
 
+  % Test that framebounds are able to run, not actual resting is done on
+  % the values.
   [A,B]=framebounds(F,L);
   
-  if ~F.realinput
+  %% Test iterative analysis and synthesis
+  r=frsyniter(F,c);
+  
+  res=norm(r(1:L)-f);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,1e-6);
+  s=sprintf(['FRSYNITER             frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
+  disp(s);
+  
+  c2=franaiter(Fd,f);
+  res=norm(c2-c);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,1e-6);
+  s=sprintf(['FRANAITER             frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
+  disp(s);  
+  
+  %% Test matrix representations
+  if (~F.realinput)
     LL=framelength(F,L);
     G=framematrix(F,LL);
     res=norm(c-G'*postpad(f,LL));
@@ -92,11 +109,12 @@ for ii=1:numel(Fr)
     
   end;
   
-  % Test the frame multiplier: test framemul, framemuladj and framemulinv
+  %% Test the frame multipliers: test framemul, framemuladj and framemulinv
   m=1+1i+0.01*crand(size(c,1),1);
   ff=framemul(f,F,Fd,m);
   fr=iframemul(ff,F,Fd,m,'tol',1e-13);
   res=norm(f-fr(1:L))/norm(f);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf('FRAMEMUL INV          frameno:%3i %s %0.5g %s',ii, ...
             F.type,res,fail);
   disp(s);
