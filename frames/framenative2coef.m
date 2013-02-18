@@ -16,10 +16,12 @@ if ~isstruct(F)
 end;
 
 switch(F.type)
- case {'dgt','dgtreal','dwilt','wmdct','ufilterbank','ufilterbankreal'}
-  [M,N,W]=size(coef);
-  coef=reshape(coef,[M*N,W]); 
- case {'filterbank','filterbankreal'}
-  coef=cell2mat(coef(:));
+  case {'dgt','dgtreal','dwilt','wmdct','ufilterbank','ufilterbankreal'}
+    [M,N,W]=size(coef);
+    coef=reshape(coef,[M*N,W]); 
+  case {'filterbank','filterbankreal'}
+    coef=cell2mat(coef(:));
+  case {'fwt'}
+    coef=wavecell2pack(coef);
 end;
 
