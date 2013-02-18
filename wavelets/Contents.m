@@ -7,6 +7,7 @@
 %      IUFWT             - Inverse Undecimated Fast Wavelet Transform 
 %      WTFFT             - Wavelet Transform in the frequency-domain
 %      IWTFFT            - Inverse Wavelet Transform in the frequency-domain
+%      FWTLENGTH         - Length of Wavelet system to expand a signal
 %
 %   Advanced analysis/synthesis
 %      WFBT              - Transform using general Wavelet Filterbank Tree 

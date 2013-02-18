@@ -22,6 +22,6 @@ switch(F.type)
   case {'filterbank','filterbankreal'}
     coef=cell2mat(coef(:));
   case {'fwt'}
-    coef=wavecell2pack(coef);
+    coef=wavcell2pack(coef);
 end;
 
