@@ -17,12 +17,13 @@ function [w,s,xvals] = wavfun(g,N,varargin)
 %   Examples:
 %   ---------
 %   
-%   Approximation of a Daubechies wavelet and scaling functions from the 12tap filters:::
+%   Approximation of a Daubechies wavelet and scaling functions from the
+%   12 tap filters:::
 % 
-%   w = fwtinit({'db',6});
-%   [wfn,sfn,xvals] = wavfun(w.g,6);
-%   plot(xvals,[wfn,sfn]);
-%   legend('wavelet function','scaling function');
+%     w = fwtinit({'db',6});
+%     [wfn,sfn,xvals] = wavfun(w.g,6);
+%     plot(xvals,[wfn,sfn]);
+%     legend('wavelet function','scaling function');
 %
 
 definput.keyvals.a = [];

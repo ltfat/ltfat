@@ -5,8 +5,6 @@ function [h,g,a]=wfilt_maxflat(N)
 %   `[h,g,a]=wfilt_maxflat(N)` calculates half-band maximally flat FIR filters,
 %   where $(N-1)$ is the degree of flatness at $w=0$ and $w=\pi$ radians. 
 %
-%   References: vaidy93mult
-%
 %   Examples:
 %   ---------
 %
@@ -15,7 +13,8 @@ function [h,g,a]=wfilt_maxflat(N)
 %      w = fwtinit({'maxflat',4});
 %      wtfftfreqz(w.h);
 %
-%
+%   References: vaidy93mult
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

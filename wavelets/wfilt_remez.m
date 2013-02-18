@@ -7,11 +7,10 @@ function [h,g,a]=wfilt_remez(L,K,B)
 %         K     : Degree of flatness at $z=-1$. 
 %         B     : Normalized transition bandwidth.
 %
-%   `[h,g,a]=wfilt_remez(L,K,B)` calculates a set of wavelet filters. You can
-%   control regularity, frequency selectivity, and length of the filters.
-%   It works performing a factorization based on the complex cepstrum of the polynomial.
-%
-%   References: rioul94remez
+%   `[h,g,a]=wfilt_remez(L,K,B)` calculates a set of wavelet filters. You
+%   can control regularity, frequency selectivity, and length of the
+%   filters.  It works performing a factorization based on the complex
+%   cepstrum of the polynomial.
 %
 %   Examples:
 %   ---------
@@ -21,6 +20,8 @@ function [h,g,a]=wfilt_remez(L,K,B)
 %      w = fwtinit({'remez',40,4,0.1});
 %      wtfftfreqz(w.h);
 %
+%   References: rioul94remez
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia
