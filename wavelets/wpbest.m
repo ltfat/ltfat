@@ -1,6 +1,8 @@
 function [c,wt] = wpbest(f,w,J,varargin)
-%WPBEST
+%WPBEST  Best Tree selection
+%   Usage: [c,wt] = wpbest(f,w,J);
 %
+%   XXX Description is missing
 %
 
 if nargin<3

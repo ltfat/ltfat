@@ -6,8 +6,6 @@ function [h,g,a]=wfilt_sym(N)
 %   wavelets or "symlets".  Zeros of the trigonometrical polynomial the
 %   filters of are selected alternatingly inside and outside the unit
 %   circle.
-%
-%   References: daub98tenlectures
 %   
 %   Examples:
 %   ---------
@@ -17,7 +15,8 @@ function [h,g,a]=wfilt_sym(N)
 %      w = fwtinit({'sym',10});
 %      wtfftfreqz(w.h);
 %
-%
+%   References: daub98tenlectures
+
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
 % Author: Jose Martin Garcia

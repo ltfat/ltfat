@@ -80,7 +80,7 @@ function c = ufwt(f,h,J,varargin)
 %     c = ufwt(f,{'db',8},J);
 %     plotfwt(c);
 %
-%   See also: iunfwt, fwtinit
+%   See also: iufwt, fwtinit
 %
 %   References: holschneider1989real
 
