@@ -1,22 +1,25 @@
 function [out,a] = wfbtmultid( filts, varargin)
 %WFBTMULTID  WFBT equivalent non-iterated filterbank
-%   Usage: [out,a,origs] = wfbtmultid(filts)
+%   Usage: [out,a] = wfbtmultid(filts)
 %
 %   Input parameters:
 %         filts : Wavelet filter tree definition or basic filters
 %                 definition.
 %
 %   Output parameters:
-%         c      : Coefficients stored in a cell-array.
+%         out   : Cell array containing impulse responses
+%         a     : Array of sub-/upsampling factors
 %
-%   `multid(filts)` calculates the impulse responses of non-iterated
+%   `wfbtmultid(filts)` calculates the impulse responses of non-iterated
 %   noble multirate-identity wavelet filterbank.
 %
-%   The following flag groups are supported:
+%   The function internally calls |wfbtinit|_ and passes all parameters to it.
 %
-%         'dwt','full' : 
-%
-% 
+%   
+%   Examples:
+%   ---------
+%   
+%   Create 
 
 if(nargin<1)
     error('%s: Not enough input arguments',upper(mfilename));
@@ -28,6 +31,7 @@ definput.import = {'fwtcommon','wfbtcommon'};
 nodePredecesorsMultId();
 
 filtTree = wfbtinit(filts,varargin{:});
+
 treeOutputs = noOfOutputs(filtTree);
 out = cell(treeOutputs,1);
 a = zeros(treeOutputs,1);
@@ -48,34 +52,9 @@ a = zeros(treeOutputs,1);
             a(outRange) = atmp(locRange);
         end
 
-
 % clean the cache
 nodePredecesorsMultId();
-
-%no padding used
-function h = pad(h,origs)
-supp = cell(numel(h),1);
-
-for ii=1:numel(h)
-    supp{ii} = [-origs{ii},length(h{ii})-origs{ii}-1];
-end
-
-
-for ii=1:numel(h)
- [s] = supp{ii};
- lS = s(1); hS = s(2);
- if ((lS>0) && (hS>0)) || ((lS<0) && (hS<0) || (abs(lS)==abs(hS)))
-     % do nothing, no zero index included in the support
-     continue;
- end
- 
- if abs(hS) <  abs(lS)   
-     h{ii} = [h{ii}(:);zeros(abs(lS)-abs(hS),1);];
- elseif abs(hS) >  abs(lS)
-     h{ii} = [zeros(abs(hS)-abs(lS),1);h{ii}(:)]; 
- end
-
-end
+% END WFBTMULTID
 
 function hmi = nodePredecesorsMultId(nodeNo,treeStruct)
 % Build multirate identity of nodes preceeding nodeNo
@@ -106,19 +85,12 @@ for jj = 1:length(pre)
 end
 
 pre = pre(end:-1:1);
-%pre(end+1) = nodeNo;
 
 for ii=startIdx:length(pre)-1
     id = pre(ii);
     hcurr = treeStruct.nodes{id}.filts{find(treeStruct.children{id}==pre(ii+1))}.h;
-%     if(doSyn)
-%        hcurr = treeStruct.nodes{id}.g{find(treeStruct.children{id}==pre(ii+1))};
-%     else
-%        hcurr = treeStruct.nodes{id}.h{find(treeStruct.children{id}==pre(ii+1))};
-%     end
     hcurr = comp_ups(hcurr,nodeFiltUps(id,treeStruct),1);
     hmi = convolve(hmi,hcurr);
-   % multIdPre{pre(ii+1)} = hmi;
 end
 
 function predori = nodePredecesorsOrig(baseOrig,nodeNo,treeStruct)

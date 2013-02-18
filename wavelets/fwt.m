@@ -62,8 +62,7 @@ function c = fwt(f,h,J,varargin)
 %   subsampling factor, the processed signal is padded internally by
 %   repeating the last sample at each step of the transform to the next
 %   multiple of the subsampling factor rather than doing the prior explicit
-%   padding.  In addition, the periodic extension restrict the input signal
-%   length to be greater than a certain length.
+%   padding.  
 %
 %   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes a slightly
 %   redundant wavelet representation of the input signal *f* with the chosen

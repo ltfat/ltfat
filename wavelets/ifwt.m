@@ -15,7 +15,7 @@ function f = ifwt(c,g,J,varargin)
 %   `f = ifwt(c,g,J)` reconstructs signal *f* from the wavelet coefficients
 %   *c* using *J*-iteration synthesis filter bank build from the basic synthesis
 %   filterbank defined by *g*. The fast wavelet transform algorithm 
-%   (or Mallat's algorithm) is employed. 
+%   (Mallat's algorithm) is employed. 
 %
 %   The supported boundary conditions are:
 %

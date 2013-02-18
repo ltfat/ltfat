@@ -115,13 +115,13 @@ end
 
 %% ----- step 2 : Check whether the input signal is long enough
 % input signal length is not restricted for expansive wavelet transform (extension type other than the default 'per')
-flen = length(h.filts{1}.h);
-if(strcmp(flags.ext,'per'))
-     minLs = (h.a(1)^(J-1))*(flen-1); % length of the longest upsampled filter - 1
-   if Ls<minLs
-     error('%s: Input signal length is %d. Minimum signal length is %d or use %s flag instead. \n',upper(mfilename),Ls,minLs,'''ppd''');
-   end;
-end
+% flen = length(h.filts{1}.h);
+% if(strcmp(flags.ext,'per'))
+%      minLs = (h.a(1)^(J-1))*(flen-1); % length of the longest upsampled filter - 1
+%    if Ls<minLs
+%      error('%s: Input signal length is %d. Minimum signal length is %d or use %s flag instead. \n',upper(mfilename),Ls,minLs,'''ppd''');
+%    end;
+% end
 
 
 

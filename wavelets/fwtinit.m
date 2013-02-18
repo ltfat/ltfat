@@ -70,6 +70,7 @@ definput.import = {'fwtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % was the function called before with the same parameters?
+% if yes, return the chached one
 if(isequal(cachwDesc,{wavname,kv.a}))
    w = cachw;
    w = updateTraDirect(flags.do_ana,w);

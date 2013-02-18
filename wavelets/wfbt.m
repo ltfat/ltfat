@@ -62,8 +62,6 @@ if(Ls<2)
    error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
 end
 
-%% ----- step 2 : Check whether the input signal is long enough
-% TO DO: determine length of the longest equivalent filter
 % Do non-expansve transform if ext='per'
 if(strcmp(flags.ext,'per'))
     doNoExt = 1;

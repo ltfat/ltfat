@@ -21,7 +21,7 @@ JJtotal = length(ccell);
 
 Lc = zeros(JJtotal,1);
 for jj=1:JJtotal
-   Lc(jj) =  length(ccell{jj});
+   Lc(jj) =  size(ccell{jj},1);
 end
 
 

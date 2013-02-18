@@ -18,6 +18,9 @@ h = fwtinit(h,'ana');
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-blocksize=h.a(1)^J;
-
-L=ceil(Ls/blocksize)*blocksize;
+if(strcmp(flags.ext,'per'))
+   blocksize=h.a(1)^J;
+   L=ceil(Ls/blocksize)*blocksize;
+else
+   L = Ls;
+end
