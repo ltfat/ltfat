@@ -15,10 +15,22 @@ function outRange = rangeInLocalOutputs(nodeNo,treeStruct)
 %
 %   See also: wfbtinit
 %
-chIdx = find(treeStruct.children{nodeNo}~=0);
-chan = max([length(treeStruct.nodes{nodeNo}.g), length(treeStruct.nodes{nodeNo}.h)]);
-outNodes = zeros(chan,1);
-outNodes(chIdx) = treeStruct.children{nodeNo}(chIdx);
-outRange = find(outNodes==0);
+nodesCount = length(nodeNo);
+if(nodesCount>1)
+   outRange = cell(nodesCount,1); 
+else
+   outRange = []; 
+end
 
+for ii = 1:nodesCount
+   chIdx = find(treeStruct.children{nodeNo(ii)}~=0);
+   chan = max([length(treeStruct.nodes{nodeNo(ii)}.g), length(treeStruct.nodes{nodeNo(ii)}.h)]);
+   outNodes = zeros(chan,1);
+   outNodes(chIdx) = treeStruct.children{nodeNo(ii)}(chIdx);
+   if(iscell(outRange))
+      outRange{ii} = find(outNodes==0);
+   else
+      outRange = find(outNodes==0);
+   end
+end
 

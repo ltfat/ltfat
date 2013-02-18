@@ -2,7 +2,7 @@ f = gspi;
 
 J = 10;
 w = fwtinit({'db',10});
-[h,a] = multid(w,J);
+[h,a] = wfbtmultid({w,J});
 H = freqzfb(h,filterbanklength(length(f),a));
 c = wtfft(f,H,a);
 

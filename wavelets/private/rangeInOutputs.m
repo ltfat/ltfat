@@ -17,30 +17,45 @@ function outRange = rangeInOutputs(nodeNo,treeStruct)
 %   See also: wfbtinit
 %
 
-outRange = rangeInNodeOutputs(nodeNo,treeStruct);
+nodesCount = length(nodeNo);
+if(nodesCount>1)
+   outRange = cell(nodesCount,1); 
+else
+    outRange = [];
+end
 
-if(isempty(outRange))
-    return;
-end
-%rootId = find(treeStruct.parents==0);
-rootId = nodeNo;
-higherNodes = [];
-while treeStruct.parents(rootId)
-     parId = treeStruct.parents(rootId);
-      % save idx of all higher nodes
-     ch = treeStruct.children{parId};
-     childIdx = find(ch==rootId);
-     higherNodes(end+1:end+(childIdx-1))=ch(1:childIdx-1);
-     rootId = parId;
-end
- 
-noOutPrev = 0;
-for ii=1:length(higherNodes)
-    if(higherNodes(ii)==0) 
-       noOutPrev=noOutPrev+1; 
-    else
-       noOutPrev = noOutPrev + noOfSubtreeOutputs(higherNodes(ii),treeStruct);
+for jj=1:nodesCount
+    outRangeTmp = rangeInNodeOutputs(nodeNo(jj),treeStruct);
+
+    if(isempty(outRangeTmp))
+        continue;
     end
+    %rootId = find(treeStruct.parents==0);
+    rootId = nodeNo(jj);
+    higherNodes = [];
+    while treeStruct.parents(rootId)
+         parId = treeStruct.parents(rootId);
+          % save idx of all higher nodes
+         ch = treeStruct.children{parId};
+         childIdx = find(ch==rootId);
+         higherNodes(end+1:end+(childIdx-1))=ch(1:childIdx-1);
+         rootId = parId;
+    end
+
+    noOutPrev = 0;
+    for ii=1:length(higherNodes)
+        if(higherNodes(ii)==0) 
+           noOutPrev=noOutPrev+1; 
+        else
+           noOutPrev = noOutPrev + noOfSubtreeOutputs(higherNodes(ii),treeStruct);
+        end
+    end
+
+    outRangeTmp = outRangeTmp + noOutPrev;
+    
+   if(iscell(outRange))
+      outRange{jj} = outRangeTmp;
+   else
+      outRange = outRangeTmp;
+   end
 end
- 
-outRange = outRange + noOutPrev;

@@ -60,4 +60,20 @@ end
 % Initialize the wavelet tree structure
 wt = wfbtinit(wt,flags.treetype,'syn');
 
-f = comp_iwfbt(c,wt,Ls,'dec',flags.ext);
+
+%% ----- step 2 : Check whether the input signal is long enough
+% TO DO: determine length of the longest equivalent filter
+% Do non-expansve transform if ext='per'
+if(strcmp(flags.ext,'per'))
+    doNoExt = 1;
+else
+    doNoExt = 0;
+end
+
+
+%% ----- step 3 : Run computation
+treePath = nodesBForder(wt,'rev');
+outLengths = nodeInLen(treePath,Ls,doNoExt,wt);
+rangeLoc = rangeInLocalOutputs(treePath,wt);
+rangeOut = rangeInOutputs(treePath,wt);
+f = comp_iwfbt(c,wt.nodes(treePath),outLengths,rangeLoc,rangeOut,Ls,'dec',flags.ext);

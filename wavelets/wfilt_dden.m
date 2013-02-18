@@ -12,8 +12,8 @@ function [h,g,a] = wfilt_dden(N)
 %
 %   Frequency responses of the analysis filters::: 
 %
-%      w = fwtinit({'dden',2});
-%      wtfftfreqz(w.h);
+%     w = fwtinit({'dden',2});
+%     wtfftfreqz(w.h);
 %
 
 a= [2;2;2];

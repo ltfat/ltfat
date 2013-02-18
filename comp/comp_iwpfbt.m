@@ -1,12 +1,12 @@
-function f=comp_iwpfbt(c,wt,Ls,type,ext)
+function f=comp_iwpfbt(c,wtreePath,pOutIdxs,chOutIdxs,Ls,type,ext)
 %COMP_IWFBT Compute Inverse Wavelet Packet Filter-Bank Tree
 %   Usage:  f=comp_iwpfbt(c,wt,Ls,type,ext)
 %
 %   Input parameters:
-%         c     : Coefficients stored in the cell array.
-%         wt    : Structure defining the filterbank tree (see |wfbtinit|_) 
-%         type  : 'dec','undec' Type of the wavelet transform.
-%         ext   : 'per','zpd','sym','symw','asym','asymw','ppd','sp0' Type of the forward transform boundary handling.
+%         c          : Coefficients stored in the cell array.
+%         wtreePath  : Nodes in the reverse BF order
+%         type       : 'dec','undec' Type of the wavelet transform.
+%         ext        : 'per','zpd','sym','symw','asym','asymw','ppd','sp0' Type of the forward transform boundary handling.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
@@ -24,22 +24,17 @@ chans = size(c{end},2);
 f = zeros(Ls,chans);
 
 % Nodes in the reverse BF order
-treePath = nodesBForder(wt,'rev');
-[pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-noOfCoeff = length(c);
+%treePath = nodesBForder(wt,'rev');
+
 
 % The decimated case
 if(strcmp(type,'dec'))
-    nodesOutLengths = zeros(length(treePath),1);
-    for ii=1:length(treePath)
-       nodesOutLengths(ii) =  nodeInLen(treePath(ii),Ls,doNoExt,wt);
-    end
     for ch=1:chans
        % exclude root
-       for jj=1:length(treePath)-1
-           tmpfilt = wt.nodes{treePath(jj)}.filts;
+       for jj=1:length(wtreePath)-1
+           tmpfilt = wtreePath{jj}.filts;
            tmpfiltNo = length(tmpfilt);
-           tmpa = wt.nodes{treePath(jj)}.a;
+           tmpa = wtreePath{jj}.a;
 
            % HOWTO combine redundant coefficients
            c{pOutIdxs(jj)} = c{pOutIdxs(jj)}/2;
@@ -53,14 +48,14 @@ if(strcmp(type,'dec'))
                else
                   tmpSkip = ffTmpFlen-2;
                end
-               c{pOutIdxs(jj)} = c{pOutIdxs(jj)} + 0.5*up_conv_td({c{chOutIdxs{jj}(ff)}(:,ch)},...
+               c{pOutIdxs(jj)} = c{pOutIdxs(jj)} + 0.5*comp_upconv({c{chOutIdxs{jj}(ff)}(:,ch)},...
                    length(c{pOutIdxs(jj)}),{ffTmpFilt},ffTmpa,tmpSkip,doNoExt,0);
            end
        end
        
-       tmpfilt = wt.nodes{treePath(end)}.filts;
+       tmpfilt = wtreePath{end}.filts;
        tmpfiltNo = length(tmpfilt);
-       tmpa = wt.nodes{treePath(end)}.a;
+       tmpa = wtreePath{end}.a;
            %tmpOutLen = nodesOutLengths(jj);
            
        for ff=1:tmpfiltNo
@@ -73,7 +68,7 @@ if(strcmp(type,'dec'))
           else
             tmpSkip = ffTmpFlen-2;
           end
-          f(:,ch) = f(:,ch) + up_conv_td({c{chOutIdxs{end}(ff)}(:,ch)},...
+          f(:,ch) = f(:,ch) + comp_upconv({c{chOutIdxs{end}(ff)}(:,ch)},...
                Ls,{ffTmpFilt},ffTmpa,tmpSkip,doNoExt,0);
        end
        

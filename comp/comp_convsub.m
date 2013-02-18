@@ -1,5 +1,5 @@
-function out = conv_td_sub(in,outLen,filts,sub,skip,ext,filtUps)
-%CONV_TD_SUB Time-domain convolution followed by subsampling
+function out = comp_convsub(in,outLen,filts,sub,skip,ext,filtUps)
+%COMP_CONVSUB Time-domain convolution followed by subsampling
 %   Usage:  out = conv_td_sub(in,outLen,filts,sub,skip,ext,filtUps)
 %
 %   Input parameters:
@@ -23,7 +23,7 @@ function out = conv_td_sub(in,outLen,filts,sub,skip,ext,filtUps)
 
 
 noOfFilts = length(filts);
-fLen = length(ups(filts{1},filtUps,1));
+fLen = length(comp_ups(filts{1},filtUps,1));
 inLen = length(in);
 
 if(noOfFilts>1)
@@ -39,8 +39,8 @@ end
 inExt = extendBoundary(in,fLen-1,ext,sub);
 
 for ff=1:noOfFilts
-    outTemp = conv(inExt,ups(filts{ff}(:),filtUps,1));
-    outTemp = downs(outTemp(fLen+skip:end-fLen+1),sub,1);
+    outTemp = conv(inExt,comp_ups(filts{ff}(:),filtUps,1));
+    outTemp = comp_downs(outTemp(fLen+skip:end-fLen+1),sub,1);
     toWrite = min([length(outTemp),outLen]);
     if(noOfFilts>1)
        out{ff}(1:toWrite) = outTemp(1:toWrite);

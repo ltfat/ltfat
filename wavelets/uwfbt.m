@@ -59,4 +59,8 @@ end
 % TO DO: determine length of the longest equivalent filter
 
 %% ----- step 3 : Run computation
-c = comp_wfbt(f,wt,'undec',flags.ext);
+treePath = nodesBForder(wt);
+inLengths = Ls*ones(length(treePath),1);
+rangeLoc = rangeInLocalOutputs(treePath,wt);
+rangeOut = rangeInOutputs(treePath,wt);
+c = comp_wfbt(f,wt.nodes(treePath),inLengths,rangeLoc,rangeOut,'undec',flags.ext);

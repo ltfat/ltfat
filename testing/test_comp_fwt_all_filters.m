@@ -28,7 +28,7 @@ ext = {'per','ppd'};
 prefix = 'wfilt_';
 test_filters = {
                %{'lemaire',80} % not exact reconstruction
-               %{'hden',3} % onyl one with 3 filters and different
+               %{'hden',3} % only one with 3 filters and different
                %subsampling factors, not working
                {'algmband',2} % 4 filters, subsampling by the factor of 4!, really long identical lowpass filter
                %{'symds',1}
@@ -91,16 +91,16 @@ for typeIdx=1:length(type)
      
      for tt=1:length(test_filters)
          actFilt = test_filters{tt};
-         fname = strcat(prefix,actFilt{1});
-         [H, G, a] = feval(fname,actFilt{2:end});  
+         %fname = strcat(prefix,actFilt{1});
+         w = fwtinit(test_filters{tt});  
 
      for jj=1:J
-           if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s\n',jj,actFilt{1},extCur,typeCur); end; 
+           if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s, inLen=%d\n',jj,actFilt{1},typeCur,extCur,length(f)); end; 
            
-           c = comp_fwt_all(f,H,jj,a,typeCur,extCur);
+           c = comp_fwt_all(f,w.h,jj,w.a,typeCur,extCur);
            %[cvec ,Lc] = cell2pack(c);
            %c = pack2cell(cvec,Lc);
-            fhat = comp_ifwt_all(c,G,jj,a,length(f),typeCur,extCur);
+            fhat = comp_ifwt_all(c,w.g,jj,w.a,length(f),typeCur,extCur);
             err = norm(f(:)-fhat(:));
             if err>1e-6
                test_failed = 1; 

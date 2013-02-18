@@ -14,8 +14,10 @@ function [h,g,a] = wfilt_apr(N)
 %   Frequency responses of the analysis filters::: 
 %
 %   w = fwtinit({'apr',2});
+%   figure(1);
 %   wtfftfreqz(w.h);
-%
+%   figure(2);
+%   wtfftfreqz(w.g);
 
 
 a= [3;3;3];

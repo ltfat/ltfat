@@ -57,7 +57,7 @@ end
          for ch=1:chans
             tempca = f(:,ch);
                for jj=1:J
-                  ctemp = conv_td_sub(tempca,cLen(J+1-jj),tmph,sub,skip,ext,0);
+                  ctemp = comp_convsub(tempca,cLen(J+1-jj),tmph,sub,skip,ext,0);
                   tempca = ctemp{1};
                   for ff=1:filts-1
                      c{end-jj*(filts-1)+ff}(:,ch) = ctemp{1+ff};
@@ -80,7 +80,7 @@ end
                      
                      c{end-jj*(filts-1)+ff}(:,ch) = conv_td_sub(tempca,actOutLen,{tmph{ff+1}},a(ff+1),skip,ext,0);
                   end
-                     tempca = conv_td_sub(tempca,cLen(J+1-jj),{tmph{1}},a(1),skip,ext,0);
+                     tempca = comp_convsub(tempca,cLen(J+1-jj),{tmph{1}},a(1),skip,ext,0);
                end
            c{1}(:,ch) = tempca;
       end
@@ -112,7 +112,7 @@ elseif(strcmp(type,'undec'))
     for ch=1:chans
     tempca = f(:,ch);  
       for jj=1:J
-        ctemp = conv_td_sub(tempca,cLen(J+1-jj),tmph,sub,skip(jj),ext,a(1)^(jj-1));
+        ctemp = comp_convsub(tempca,cLen(J+1-jj),tmph,sub,skip(jj),ext,a(1)^(jj-1));
         tempca = ctemp{1};
         %c{J+2-jj}(:,ch) = ctemp{2};
         for ff=1:filts-1

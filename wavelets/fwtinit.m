@@ -17,7 +17,7 @@ function [w] = fwtinit(wavname,varargin)
 %
 %   The function is a wrapper for calling all the functions starting with
 %   `wfilt_` defined in the LTFAT wavelets directory. The structure which
-%   the function produces can (and should) be directly passed to all
+%   the function produces can be directly passed to all
 %   functions instead of the cell-arrays with wavelet filters which all
 %   `wfilt_` functions produces.
 %
@@ -39,32 +39,34 @@ function [w] = fwtinit(wavname,varargin)
 %   See also: fwt, ifwt, wfilt_db
 
 
+% chached last filterbank
 persistent cachw;
+% cached function parameters passed last
 persistent cachwDesc;
 
 
-%Wavelet filters functions definition prefix
+% wavelet filters functions definition prefix
 wprefix = 'wfilt_';
-% Output structure definition
-% w = struct('h',{},...
-%            'g',{},...
-%            'a',[],...
-%            'type',[],...
-%            'ext',[]);
+
+% output structure definition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+w.filts = {};
 w.h = {};
 w.g = {};
 w.a = [];
-w.filts = {};
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% return empty struct if no argument was passed
 if nargin<1
   return;
 end;
 
-
 % process other parameters
 
-%definput.import = {'fwtcommon','fwt'};
 definput.import = {'fwtcommon'};
+% Contents of the arg_fwtcommon:
+% definput.flags.ansy = {'ana','syn'};
+% definput.keyvals.a = [];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % was the function called before with the same parameters?

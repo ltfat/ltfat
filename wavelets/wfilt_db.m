@@ -43,7 +43,8 @@ function [H, G, a] = wfilt_db(N)
 %   Frequency responses of the analysis filters::: 
 %
 %      w = fwtinit({'db',8});
-%      wtfftfreqz(w.h);   
+%     figure(1);
+%     wtfftfreqz(w.h);
 %
 
 if(nargin<1)

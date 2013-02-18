@@ -12,8 +12,8 @@ function [h,g,a] = wfilt_dgrid(N)
 %
 %   Frequency responses of the analysis filters::: 
 %
-%      w = fwtinit({'dgrid',3});
-%      wtfftfreqz(w.h);
+%     w = fwtinit({'dgrid',3});
+%     wtfftfreqz(w.h);
 %
 
 

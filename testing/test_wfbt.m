@@ -9,15 +9,13 @@ function test_wfbt
 % 'mband' 3 filters, subs 2,2,1
 %w = waveletfb({'hden',3});
 
-w = fwtinit({'db',20});
+w = fwtinit({'db',10});
 
 
-J = 8;
+J = 6;
 wt = wfbtinit({w,J},'full');
-%wt = wfbtremove(3,0,wt,'force');
-%wt = nat2freqOrder(wt);
-%wtdual = nat2freqOrder(wfbtinit(wt,'syn'));
-
+wt = wfbtremove(3,1,wt,'force');
+wt = wfbtremove(3,3,wt,'force');
 
 % Building custom filterbank tree
 % DWT case
@@ -25,8 +23,7 @@ wt = wfbtinit({w,J},'full');
 % for jj=1:J
 %     wt = wfbtput(jj-1,0,w.h,w.a,wt);
 % end
-L = 1024;
-f = randn(L,1);
+
 
 f=gspi;
 L = length(f);

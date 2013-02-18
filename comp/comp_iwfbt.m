@@ -1,4 +1,4 @@
-function f=comp_iwfbt(c,wt,Ls,type,ext)
+function f=comp_iwfbt(c,wtreePath,outLens,rangeLoc,rangeOut,Ls,type,ext)
 %COMP_IWFBT Compute Inverse Wavelet Filter-Bank Tree
 %   Usage:  f=comp_iwfbt(c,wt,Ls,type,ext)
 %
@@ -22,38 +22,20 @@ end
 % number of channels
 chans = size(c{end},2);  
 
-% Nodes in the reverse BF order
-treePath = nodesBForder(wt);
-treePath = treePath(end:-1:1);
-
-% 
-
 
 % The decimated case
 if(strcmp(type,'dec'))
-    nodesOutLengths = zeros(length(treePath),1);
-    for ii=1:length(treePath)
-       nodesOutLengths(ii) =  nodeInLen(treePath(ii),Ls,doNoExt,wt);
-    end
     for ch=1:chans
        tempca = {};
-       for jj=1:length(treePath)
-           tmpfilt = wt.nodes{treePath(jj)}.filts;
-           if(isempty(tmpfilt))
-               error('%s: Synthesis filters not defined.',upper(mfilename));
-           end
-           tmpa = wt.nodes{treePath(jj)}.a;
-           tmpOutLen = nodesOutLengths(jj);
+       for jj=1:length(wtreePath)
+           tmpfilt = wtreePath{jj}.filts;
+           tmpa = wtreePath{jj}.a;
+           tmpOutLen = outLens(jj);
            tmpNoOfFilters = length(tmpfilt);
            
            % find all unconnected outputs of the node
-           tmpOutRange = rangeInLocalOutputs(treePath(jj),wt);
-           tmpOutRange = tmpOutRange(end:-1:1);
-           tmpCoefOutRange = []; 
-           if(~isempty(tmpOutRange))
-               tmpCoefOutRange = rangeInOutputs(treePath(jj),wt);
-               tmpCoefOutRange = tmpCoefOutRange(end:-1:1);
-           end
+           tmpOutRange = rangeLoc{jj}(end:-1:1);
+           tmpCoefOutRange = rangeOut{jj}(end:-1:1);
            
            tempOut = zeros(tmpOutLen,1);
            % first, do the filtering that uses c 
@@ -67,7 +49,7 @@ if(strcmp(type,'dec'))
                else
                   tmpSkip = ffTmpFlen-2;
                end
-               tempOut = tempOut + up_conv_td({c{tmpCoefOutRange(ff)}(:,ch)},...
+               tempOut = tempOut + comp_upconv({c{tmpCoefOutRange(ff)}(:,ch)},...
                    tmpOutLen,{ffTmpFilt},ffTmpa,tmpSkip,doNoExt,0);
            end
            
@@ -85,7 +67,7 @@ if(strcmp(type,'dec'))
                else
                   tmpSkip = ffTmpFlen-2;
                end
-               tempOut = tempOut + up_conv_td({tempca{ff}},...
+               tempOut = tempOut + comp_upconv({tempca{ff}},...
                    tmpOutLen,{ffTmpFilt},ffTmpa,tmpSkip,doNoExt,0);
            end
         
@@ -95,28 +77,20 @@ if(strcmp(type,'dec'))
        f(:,ch) = tempca{end};
     end
 elseif(strcmp(type,'undec'))
-   for ii=1:length(treePath)
-      nodesOutLengths(ii) =  Ls;
-   end
    for ch=1:chans
        tempca = {};
-       for jj=1:length(treePath)
+       for jj=1:length(wtreePath)
            tmpfilt = wt.nodes{treePath(jj)}.filts;
            tmpa = wt.nodes{treePath(jj)}.a;
            for ii = 1:numel(tmpfilt)
               tmpfilt{ii}.h = tmpfilt{ii}.h/sqrt(tmpa(ii));
            end
-           tmpOutLen = nodesOutLengths(jj);
+           tmpOutLen = outLens(jj);
            tmpNoOfFilters = length(tmpfilt);
            
            % find all unconnected outputs of the node
-           tmpOutRange = rangeInLocalOutputs(treePath(jj),wt);
-           tmpOutRange = tmpOutRange(end:-1:1);
-           tmpCoefOutRange = []; 
-           if(~isempty(tmpOutRange))
-               tmpCoefOutRange = rangeInOutputs(treePath(jj),wt);
-               tmpCoefOutRange = tmpCoefOutRange(end:-1:1);
-           end
+           tmpOutRange = rangeLoc{jj}(end:-1:1);
+           tmpCoefOutRange = rangeOut{jj}(end:-1:1);
            
            tempOut = zeros(tmpOutLen,1);
            % first, do the filtering that uses c 

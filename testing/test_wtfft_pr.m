@@ -22,8 +22,8 @@ w = fwtinit({'dden',3});
 c2 = fwt(f,w,J);
 fhat2 = ifwt(c2,w,J,length(f));
 
-[h,a] = wfbtmultid(w,J,'ana');
-[g,a] = wfbtmultid(w,J,'syn');
+[h,a] = wfbtmultid({w,J},'ana');
+[g,a] = wfbtmultid({w,J},'syn');
 figure(3);freqzfb(h,length(f));
 figure(4);freqzfb(g,length(f));
 H = freqzfb(h,filterbanklength(length(f),a));

@@ -66,6 +66,9 @@ if(nargout==0)
     subplot(2,1,2);
     plot(f,unwrap(angle(Hplot))/pi);
     axis tight;  
+    xlabel('\omega \rightarrow');
+    ylabel('\angle {\it H}[rad] \rightarrow');
+
     
     flags.do_norm = 1;
     flags.do_db = 0;
@@ -82,7 +85,7 @@ if(nargout==0)
        Hplot = abs(Hplot); 
     end
     
-
+    
     
     
     
@@ -90,5 +93,7 @@ if(nargout==0)
     subplot(2,1,1);
     plot(f,Hplot);
     axis tight;
+    xlabel('\omega \rightarrow');
+    ylabel('|{\it H}| \rightarrow');
 
 end;

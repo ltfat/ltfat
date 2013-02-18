@@ -41,7 +41,7 @@ a = zeros(treeOutputs,1);
                 tmpUpsFac = nodeFiltUps(ii,filtTree);
                 tmpFilt = filtTree.nodes{ii}.filts{locRange(jj)};
                 out{outRange(jj)} = wfiltstruct('FIR');
-                out{outRange(jj)}.h = convolve(hmi,ups(tmpFilt.h,tmpUpsFac,1));
+                out{outRange(jj)}.h = convolve(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
                 out{outRange(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
             end
             atmp = nodeSub(ii,filtTree);
@@ -116,7 +116,7 @@ for ii=startIdx:length(pre)-1
 %     else
 %        hcurr = treeStruct.nodes{id}.h{find(treeStruct.children{id}==pre(ii+1))};
 %     end
-    hcurr = ups(hcurr,nodeFiltUps(id,treeStruct),1);
+    hcurr = comp_ups(hcurr,nodeFiltUps(id,treeStruct),1);
     hmi = convolve(hmi,hcurr);
    % multIdPre{pre(ii+1)} = hmi;
 end

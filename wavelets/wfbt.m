@@ -64,6 +64,17 @@ end
 
 %% ----- step 2 : Check whether the input signal is long enough
 % TO DO: determine length of the longest equivalent filter
+% Do non-expansve transform if ext='per'
+if(strcmp(flags.ext,'per'))
+    doNoExt = 1;
+else
+    doNoExt = 0;
+end
+
 
 %% ----- step 3 : Run computation
-c = comp_wfbt(f,wt,'dec',flags.ext);
+treePath = nodesBForder(wt);
+inLengths = nodeInLen(treePath,Ls,doNoExt,wt);
+rangeLoc = rangeInLocalOutputs(treePath,wt);
+rangeOut = rangeInOutputs(treePath,wt);
+c = comp_wfbt(f,wt.nodes(treePath),inLengths,rangeLoc,rangeOut,'dec',flags.ext);

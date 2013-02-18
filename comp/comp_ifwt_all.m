@@ -55,7 +55,7 @@ if(strcmp(type,'dec'))
                % tmpin{1+ff}= c{jj,ff}(:,ch);
                tmpin{1+ff}= c{(jj-2)*(filts-1)+ff+1}(:,ch);
              end
-             tempca = up_conv_td(tmpin, len(jj),tmpg,upFac,skip,doNoExt,0);
+             tempca = comp_upconv(tmpin, len(jj),tmpg,upFac,skip,doNoExt,0);
           end
           f(:,ch) = tempca;
        end
@@ -66,7 +66,7 @@ if(strcmp(type,'dec'))
            for jj=2:J+1
               tempca = up_conv_td({tempca}, len(jj),{tmpg{1}},a(1),skip,doNoExt,0);
               for ff=1:filts-1
-                 tempca = tempca + up_conv_td({c{(jj-2)*(filts-1)+ff+1}(:,ch)}, len(jj),{tmpg{ff+1}},a(ff+1),skip,doNoExt,0);  
+                 tempca = tempca + comp_upconv({c{(jj-2)*(filts-1)+ff+1}(:,ch)}, len(jj),{tmpg{ff+1}},a(ff+1),skip,doNoExt,0);  
               end
            end
            f(:,ch) = tempca; 
@@ -101,7 +101,7 @@ elseif(strcmp(type,'undec'))
                  % tmpin{1+ff}= c{jj,ff}(:,ch);
                  tmpin{1+ff}=c{(jj-2)*(filts-1)+ff+1}(:,ch);
              end
-             tempca = up_conv_td(tmpin,len(jj),tmpg,upFac,skip(jj-1),doNoExt,a(1)^(J+1-jj));
+             tempca = comp_upconv(tmpin,len(jj),tmpg,upFac,skip(jj-1),doNoExt,a(1)^(J+1-jj));
           end
           f(:,ch) = tempca;
        end

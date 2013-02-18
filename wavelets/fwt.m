@@ -88,7 +88,7 @@ function c = fwt(f,h,J,varargin)
 %
 %     * `'asymw'` - whole point antisymmetric extension
 %
-%     * `'ppd'` - periodic padding, same as `'ppd'` but the result is expansive representation
+%     * `'ppd'` - periodic padding, same as `'per'` but the result is expansive representation
 %
 %     * `'sp0'` - repeating boundary sample
 %

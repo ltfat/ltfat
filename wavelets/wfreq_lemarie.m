@@ -9,6 +9,8 @@ function [H,G] = wfreq_lemarie(L)
 %   Lemarie filters frequency responses.
 %
 %   References: mallat89atheory
+%
+%
 
 % Original copyright goes to:
 % Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
