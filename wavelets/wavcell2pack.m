@@ -26,13 +26,12 @@ end
 
 cvec = zeros(sum(Lc),W);
 
- for w=1:W
-   lenSumIdx = 1;
-   lenSum = 0;
-   for jj=1:JJtotal
-      cvec(1+lenSum:Lc(lenSumIdx)+lenSum,w) = ccell{jj}(:,w);
-      lenSum = lenSum+Lc(lenSumIdx);
-      lenSumIdx=lenSumIdx+1;
-   end
- end
+lenSumIdx = 1;
+lenSum = 0;
+for jj=1:JJtotal
+   cvec(1+lenSum:Lc(lenSumIdx)+lenSum,:) = ccell{jj};
+   lenSum = lenSum+Lc(lenSumIdx);
+   lenSumIdx=lenSumIdx+1;
+end
+
 

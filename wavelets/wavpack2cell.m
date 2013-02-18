@@ -29,15 +29,15 @@ end
 
 % DO THE COPY
 
-for w=1:W
-    lenSumIdx = 1;
-    lenSum = 0;
-    for jj=1:JJ
-       ccell{jj}(:,w) = cvec(1+lenSum:Lc(lenSumIdx)+lenSum,w);
-       lenSum = lenSum+Lc(lenSumIdx);
-       lenSumIdx=lenSumIdx+1;
-    end
+
+lenSumIdx = 1;
+lenSum = 0;
+for jj=1:JJ
+   ccell{jj} = cvec(1+lenSum:Lc(lenSumIdx)+lenSum,:);
+   lenSum = lenSum+Lc(lenSumIdx);
+   lenSumIdx=lenSumIdx+1;
 end
+
 
 
 

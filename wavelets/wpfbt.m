@@ -10,14 +10,9 @@ function c=wpfbt(f,wt,varargin)
 %   Output parameters:
 %         c   : Coefficients stored in a cell-array.
 %
-%   `c=wpfbt(f,wt)` returns coefficients *c* obtained applying wavelet filterbank tree
+%   `c=wpfbt(f,wt)` returns wavlet packet coefficients *c* obtained applying wavelet filterbank tree
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
 %   is applied to each of *W* columns. 
-%
-%   
-%
-%
-%
 %
 %   The following flag groups are supported:
 %
@@ -29,7 +24,7 @@ function c=wpfbt(f,wt,varargin)
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |wfbt|_ function using the "full decomposition" wavelet tree:::
+%   A simple example of calling the |wpfbt|_ function using the "full decomposition" wavelet tree:::
 % 
 %     f = gspi;
 %     J = 6;

@@ -1,4 +1,4 @@
-function [out,a] = wfbtmultid( filts, varargin)
+function [wfb,a] = wfbtmultid( filts, varargin)
 %WFBTMULTID  WFBT equivalent non-iterated filterbank
 %   Usage: [out,a] = wfbtmultid(filts)
 %
@@ -7,7 +7,7 @@ function [out,a] = wfbtmultid( filts, varargin)
 %                 definition.
 %
 %   Output parameters:
-%         out   : Cell array containing impulse responses
+%         wfb   : Cell array containing impulse responses
 %         a     : Array of sub-/upsampling factors
 %
 %   `wfbtmultid(filts)` calculates the impulse responses of non-iterated
@@ -19,7 +19,20 @@ function [out,a] = wfbtmultid( filts, varargin)
 %   Examples:
 %   ---------
 %   
-%   Create 
+%   Creating multirate identity filterbank using depth 3 tree:::
+%
+%    % Filterbank identical to the depth 3 DWT tree
+%    [wfb,a] = wfbtmultid({{'db',10},3},'dwt');
+%    figure(1);
+%    wtfftfreqz(wfb);
+%
+%    % Filetrbank identical to the depth 3 full tree
+%    [wfb,a] = wfbtmultid({{'db',10},3},'full');
+%    figure(2);
+%    wtfftfreqz(wfb);
+%
+
+
 
 if(nargin<1)
     error('%s: Not enough input arguments',upper(mfilename));
@@ -27,13 +40,16 @@ end
 
 definput.import = {'fwtcommon','wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);  
-%clean the cache
+
+%clean cache
 nodePredecesorsMultId();
 
+% build the tree
 filtTree = wfbtinit(filts,varargin{:});
 
+% number of outputs of the tree
 treeOutputs = noOfOutputs(filtTree);
-out = cell(treeOutputs,1);
+wfb = cell(treeOutputs,1);
 a = zeros(treeOutputs,1);
         
         for ii = 1:length(filtTree.nodes)
@@ -44,9 +60,9 @@ a = zeros(treeOutputs,1);
             for jj = 1:length(locRange)
                 tmpUpsFac = nodeFiltUps(ii,filtTree);
                 tmpFilt = filtTree.nodes{ii}.filts{locRange(jj)};
-                out{outRange(jj)} = wfiltstruct('FIR');
-                out{outRange(jj)}.h = convolve(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
-                out{outRange(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
+                wfb{outRange(jj)} = wfiltstruct('FIR');
+                wfb{outRange(jj)}.h = convolve(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
+                wfb{outRange(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
             end
             atmp = nodeSub(ii,filtTree);
             a(outRange) = atmp(locRange);

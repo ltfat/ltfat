@@ -2,8 +2,20 @@ function [c,wt] = wpbest(f,w,J,varargin)
 %WPBEST  Best Tree selection
 %   Usage: [c,wt] = wpbest(f,w,J);
 %
-%   XXX Description is missing
+%   Input parameters:
+%         f   : Input data.
+%         w   : Wavelet Filterbank.
+%         J   : Maximum depth of the tree.
 %
+%   Output parameters:
+%         c   : Coefficients stored in a cell-array.
+%         wt  : Structure defining the best tree.
+%
+%   `[c,wt]=wpbest(f,w,J)` select the best tree *wt* with max. depth *J*, which minimises
+%   coefficient entropy. 
+%  
+%
+%   References: wick92lecton, tas94near-bestbasis   
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
@@ -35,7 +47,7 @@ end
 do_additive = isAdditive(kv.entropy);
 
 if(flags.do_bottomup)
-   % do full-tree Wavelet Packet decomposition beforehand and prune
+   % Do full-tree Wavelet Packet decomposition beforehand and prune.
    wt = wfbtinit({w,J},'full','nat');
    c = wpfbt(f,wt,flags.ext);
    % calculate entropy of all subbands
@@ -46,10 +58,11 @@ if(flags.do_bottomup)
     
    % Nodes in the reverse BF order
    treePath = nodesBForder(wt,'rev');
+   % Relationship between nodes
    [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
    % Nodes to be removed
    removeNodes = [];
-   % omit root
+   % Skip root.
    for ii=1:length(pOutIdxs)-1
        pEnt = cEnt(pOutIdxs(ii));
        chEnt = cEnt(chOutIdxs{ii});
@@ -59,15 +72,16 @@ if(flags.do_bottomup)
            removeNodes(end+1) = treePath(ii);
        else
            if(do_additive)
-              % Works just for additive measures
+              % Set parent entropy to the sum of the children entropy. 
               cEnt(pOutIdxs(ii)) = sum(chEnt);
            else
               % Set parent entropy to value obtanied by concatenating child
-              % subbands
+              % subbands.
               cEnt(pOutIdxs(ii)) = wentwrap({c{chOutIdxs{ii}}},kv.entropy{1},kv.entropy{2:end}); 
            end
        end
    end
+   % Do tree prunning.
    for ii=1:length(removeNodes)
        wt = deleteSubtree(removeNodes(ii),wt);
    end

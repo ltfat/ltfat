@@ -35,8 +35,14 @@ function [w] = fwtinit(wavname,varargin)
 %     `w.a`
 %        implicit subsampling factors
 % 
+%   Choosing a wavelet
+%   ------------------
+%
+%   
 %
 %   See also: fwt, ifwt, wfilt_db
+%
+%   References: ma08wt
 
 
 % chached last filterbank

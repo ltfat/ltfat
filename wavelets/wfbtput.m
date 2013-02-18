@@ -1,13 +1,13 @@
-function wtree = wfbtput(d,k,filt,wtree,varargin)
+function wfb = wfbtput(d,k,filt,wfb,varargin)
 %WFBTPUT  Put node to the filterbank tree
-%   Usage:  wtree = wfbtput(d,k,filt,wtree);
-%           wtree = wfbtput(d,k,filt,wtree,'force','a',a);
+%   Usage:  wtree = wfbtput(d,k,filt,wfb);
+%           wtree = wfbtput(d,k,filt,wfb,'force','a',a);
 %
 %   Input parameters:
 %         d     : 
 %         k     :
 %         filt  :
-%         wtree : 
+%         wfb : 
 %
 %   Output parameters:
 %         wtree : Modified input structure.
@@ -25,44 +25,44 @@ definput.import = {'fwtcommon'};
 
 node = fwtinit(filt,'a',kv.a,flags.ansy);
 
-[nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wtree);
+[nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wfb);
 
 if(nodeNo==0)
     % adding root 
-    if(~isempty(find(wtree.parents==0,1)))
+    if(~isempty(find(wfb.parents==0,1)))
         if(flags.do_force)
-           rootId = find(wtree.parents==0,1);
+           rootId = find(wfb.parents==0,1);
            % if root has children, check if the new root has the same
            % number of them
-           if(~isempty(find(wtree.children{rootId}~=0,1)))
-              if(length(filt)~=length(wtree.nodes{rootId}))
-                 error('%s: The replacing root have to have %d filters.',mfilename,length(wtree.nodes{rootId})); 
+           if(~isempty(find(wfb.children{rootId}~=0,1)))
+              if(length(filt)~=length(wfb.nodes{rootId}))
+                 error('%s: The replacing root have to have %d filters.',mfilename,length(wfb.nodes{rootId})); 
               end
            end
         else
             error('%s: Root already defined. Use FORCE option to replace.',mfilename);  
         end
-        wtree.nodes{rootId} = node;
+        wfb.nodes{rootId} = node;
         return;
     end
-    wtree.nodes{end+1} = node;
-    wtree.parents(end+1) = nodeNo;
-    wtree.children{end+1} = [];
+    wfb.nodes{end+1} = node;
+    wfb.parents(end+1) = nodeNo;
+    wfb.children{end+1} = [];
     return;
 end
 
-childrenIdx = find(wtree.children{nodeNo}~=0);
+childrenIdx = find(wfb.children{nodeNo}~=0);
 found = find(childrenIdx==nodeChildIdx,1);
 if(~isempty(found))
    if(doForce)
         %check if childrenIdx has any children
-     tmpnode = wtree.children{nodeNo}(found);  
-     if(~isempty(find(wtree.children{tmpnode}~=0, 1)))
-         if(length(filt)~=length(wtree.nodes{tmpnode}))
-            error('%s: The replacing root have to have %d filters.',mfilename,length(wtree.nodes{childrenIdx})); 
+     tmpnode = wfb.children{nodeNo}(found);  
+     if(~isempty(find(wfb.children{tmpnode}~=0, 1)))
+         if(length(filt)~=length(wfb.nodes{tmpnode}))
+            error('%s: The replacing root have to have %d filters.',mfilename,length(wfb.nodes{childrenIdx})); 
          end
      end
-     wtree.nodes{tmpnode} = node;
+     wfb.nodes{tmpnode} = node;
      %wtree.a{tmpnode} = a;
      return;
    else
@@ -71,7 +71,7 @@ if(~isempty(found))
 end
 
 
-wtree.nodes{end+1} = node;
-wtree.parents(end+1) = nodeNo;
-wtree.children{end+1} = [];
-wtree.children{nodeNo}(nodeChildIdx) = length(wtree.parents);
+wfb.nodes{end+1} = node;
+wfb.parents(end+1) = nodeNo;
+wfb.children{end+1} = [];
+wfb.children{nodeNo}(nodeChildIdx) = length(wfb.parents);
