@@ -12,9 +12,12 @@ function L=fwtlength(Ls,h,J,varargin);
 %
 %   See also: fwt
 
+% Initialize the wavelet filters structure
+h = fwtinit(h,'ana');
+
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-blocksize=2^J;
+blocksize=h.a(1)^J;
 
 L=ceil(Ls/blocksize)*blocksize;
