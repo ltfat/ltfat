@@ -1,4 +1,4 @@
-function ccell = wavpack2cell(cvec,Lc)
+function ccell = wavpack2cell(cvec,Lc,varargin)
 %WAVPACK2CELL Changes wavelet coefficients storing format
 %   Usage:  
 %          ccell = wavpack2cell(cvec,Lc);
@@ -16,26 +16,56 @@ function ccell = wavpack2cell(cvec,Lc)
 %   cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w) for *j>1*.
 %
 
-JJ = length(Lc);
-
-[cLen, W] = size(cvec);
-
-% ALLOCATING OUTPUT
-ccell = cell(JJ,1);
-
-for jj=1:JJ
-     ccell{jj} = zeros(Lc(jj),W);
+if(nargin<2)
+    error('%s: Too few input parameters.',upper(mfilename));
 end
 
-% DO THE COPY
+definput.flags.format = {'channels','onecol'};
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 
-lenSumIdx = 1;
-lenSum = 0;
-for jj=1:JJ
-   ccell{jj} = cvec(1+lenSum:Lc(lenSumIdx)+lenSum,:);
-   lenSum = lenSum+Lc(lenSumIdx);
-   lenSumIdx=lenSumIdx+1;
+JJ = length(Lc);
+
+if(flags.do_channels)
+
+   [cLen, W] = size(cvec);
+
+   % ALLOCATING OUTPUT
+   ccell = cell(JJ,1);
+
+   for jj=1:JJ
+      ccell{jj} = zeros(Lc(jj),W);
+   end
+
+   % DO THE COPY
+
+
+   lenSumIdx = 1;
+   lenSum = 0;
+   for jj=1:JJ
+      ccell{jj} = cvec(1+lenSum:Lc(lenSumIdx)+lenSum,:);
+      lenSum = lenSum+Lc(lenSumIdx);
+      lenSumIdx=lenSumIdx+1;
+   end
+
+elseif(flags.do_onecol)
+   JJ = size(Lc,1);
+   ccell = cell(JJ,1);
+   for jj=1:JJ
+      ccell{jj} = zeros(Lc{jj});
+   end
+   
+   lenSumIdx = 1;
+   lenSum = 0;
+   for jj=1:JJ
+      ccell{jj}(:) = cvec(1+lenSum:prod(Lc{lenSumIdx})+lenSum);
+      lenSum = lenSum+prod(Lc{lenSumIdx});
+      lenSumIdx=lenSumIdx+1;
+   end
+   
+    
+else
+    error('Should not get here.');
 end
 
 
