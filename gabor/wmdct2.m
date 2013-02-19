@@ -38,8 +38,8 @@ function [c,Ls]=wmdct2(f,g1,p3,p4,p5)
 %   the first element will be used for the first dimension and the second
 %   element will be used for the second dimension. 
 %
-%   The output *c* will be have 4 or 5 dimensions. The dimensions index the
-%   following properties:
+%   The output *c* has 4 or 5 dimensions. The dimensions index the following
+%   properties:
 %
 %      1. Number of translation along 1st dimension of input.
 %

@@ -114,11 +114,10 @@ c=cell(N,1); % Initialisation of the result
    
 for ii = 1:N
     Lg = length(g{ii});
-    gt = g{ii}; 
     
     % This is an explicit fftshift
     idx=[Lg-floor(Lg/2)+1:Lg,1:ceil(Lg/2)];
-    gt = gt(idx);
+
     win_range = mod(timepos(ii)+(-floor(Lg/2):ceil(Lg/2)-1),L)+1;
     if M(ii) < Lg 
         % if the number of frequency channels is too small, aliasing is introduced
@@ -126,7 +125,7 @@ for ii = 1:N
         
         temp = zeros(col*M(ii),W);
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@ ...
-                                                          times,f(win_range,:),gt);
+                                                          times,f(win_range,:),g{ii}(idx));
         
         temp = reshape(temp,M(ii),col,W);
         X = squeeze(fft(sum(temp,2)));
@@ -136,7 +135,7 @@ for ii = 1:N
         
         temp = zeros(M(ii),W);
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, ...
-                                                          f(win_range,:),gt);
+                                                          f(win_range,:),g{ii}(idx));
         
         
         c{ii} = fft(temp);
