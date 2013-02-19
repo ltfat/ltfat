@@ -10,26 +10,24 @@ function c=wpfbt(f,wt,varargin)
 %   Output parameters:
 %         c   : Coefficients stored in a cell-array.
 %
-%   `c=wpfbt(f,wt)` returns wavlet packet coefficients *c* obtained applying wavelet filterbank tree
-%   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
-%   is applied to each of *W* columns. 
+%   `c=wpfbt(f,wt)` returns wavelet packet coefficients *c* obtained by
+%   applying a wavelet filterbank tree defined by *wt* to the input data
+%   *f*. If *f* is a matrix, the transformation is applied to each of column
+%   of the matrix.
 %
-%   The following flag groups are supported:
-%
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
-%
-%   Please see the help on |fwt|_ for a description of the flags.
+%   This routine supports the same boundary conditions flags as
+%   |fwt|_. Please see the help on |fwt|_ for a description of the flags.
 %
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |wpfbt|_ function using the "full decomposition" wavelet tree:::
+%   A simple example of calling the |wpfbt|_ function using the "full
+%   decomposition" wavelet tree:::
 % 
 %     f = gspi;
 %     J = 6;
 %     c = wpfbt(f,{{'db',10},J},'full');
-%     plotfwt(c);
+%     plotfwt(c,44100,90);
 %
 %   See also: iwfbt, wfbtinit
 

@@ -14,24 +14,26 @@ function [wfb,a] = wfbtmultid( filts, varargin)
 %   noble multirate-identity wavelet filterbank.
 %
 %   The function internally calls |wfbtinit|_ and passes all parameters to it.
-%
 %   
 %   Examples:
 %   ---------
 %   
-%   Creating multirate identity filterbank using depth 3 tree:::
+%   The following two examples create a multirate identity filterbank
+%   using a tree of depth 3. In the first example, the filterbank is
+%   identical to the DWT tree:::
 %
-%    % Filterbank identical to the depth 3 DWT tree
-%    [wfb,a] = wfbtmultid({{'db',10},3},'dwt');
-%    figure(1);
-%    wtfftfreqz(wfb);
+%     [wfb,a] = wfbtmultid({{'db',10},3},'dwt');
+%     figure(1);
+%     wtfftfreqz(wfb);
 %
-%    % Filetrbank identical to the depth 3 full tree
+%   In the second example, the filterbank is identical to the full
+%   wavelet tree:::
+%
 %    [wfb,a] = wfbtmultid({{'db',10},3},'full');
 %    figure(2);
 %    wtfftfreqz(wfb);
 %
-
+%   See also: wfbtinit
 
 
 if(nargin<1)

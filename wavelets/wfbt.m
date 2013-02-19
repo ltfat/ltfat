@@ -38,7 +38,7 @@ function c=wfbt(f,wt,varargin)
 %     f = gspi;
 %     J = 7;
 %     c = wfbt(f,{{'db',10},J},'full');
-%     plotfwt(c);
+%     plotfwt(c,44100,90);
 %
 %   See also: iwfbt, wfbtinit
 %

@@ -4,11 +4,24 @@ function [ ] = plotfwt(c,varargin )
 %           plotfwt(c,Lc)
 %           plotfwt(...,type,fs,dynrange)
 %
-%   `plotfwt(c)` plot the wavelet coefficients *c*. The input cell-array
+%   `plotfwt(c)` plots the wavelet coefficients *c*. The input cell-array
 %   *c* must have the same structure as coefficients returned from
 %   |fwt|_. See the help on |fwt|_ for more information.
 %
-%   See also: fwt
+%   `plotfwt(c,fs)` does the same assuming a sampling rate of *fs* Hz of the
+%   original signal.
+%
+%   `plotfwt(c,fs,dynrange)` additionally limits the dynamic range.
+%
+%   `C=plotfwt(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar functions
+%   will create the plot. This is usefull for custom post-processing of the
+%   image data.
+%
+%   `plotfwt` supports all the optional parameters of |tfplot|_. Please see
+%   the help of |tfplot|_ for an exhaustive list.
+%
+%   See also: fwt, tfplot
 
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
@@ -94,29 +107,44 @@ if ~isempty(kv.fs)
   xr=xr/kv.fs;
 end;
 
+if flags.do_display
 
-switch(flags.wavplottype)
-  case 'image'
-   imagesc(xr,yr,coef);
-   hold on;
-
-   hold off;
-  case 'waterfall'
-   waterfall(xr,yr,coef);
-   hold on;
-
-   hold off; 
-  case 'stem'
-    subplot(M,1,1);
-   stem(c{1});
-   axis tight;
-    for jj=2:cM
-        for ff=1:cN
-           subplot(M,1,1+(jj-2)*cN+ff);
-           stem(c{jj,ff});
-           axis tight;
+    switch(flags.wavplottype)
+      case 'image'
+        imagesc(xr,yr,coef);
+        hold on;
+        
+        hold off;
+      case 'waterfall'
+        waterfall(xr,yr,coef);
+        hold on;
+        
+        hold off; 
+      case 'stem'
+        subplot(M,1,1);
+        stem(c{1});
+        axis tight;
+        for jj=2:cM
+            for ff=1:cN
+                subplot(M,1,1+(jj-2)*cN+ff);
+                stem(c{jj,ff});
+                axis tight;
+            end;
         end;
+      case 'surf'
+        surf(xr,yr,coef,'EdgeColor','none');
     end;
-  case 'surf'
-    surf(xr,yr,coef,'EdgeColor','none');
+    
+    if flags.do_colorbar
+        colorbar;
+    end;
+    
+    if ~isempty(kv.fs)
+        xlabel(sprintf('%s (s)',kv.time));
+        ylabel(sprintf('%s (Hz)',kv.frequency));
+    else
+        xlabel(sprintf('%s (%s)',kv.time,kv.samples));
+        ylabel('Level XXX');
+    end;
+
 end;

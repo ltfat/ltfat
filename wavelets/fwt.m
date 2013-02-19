@@ -102,7 +102,7 @@ function c = fwt(f,h,J,varargin)
 %     f = gspi;
 %     J = 10;
 %     c = fwt(f,{'db',8},J);
-%     plotfwt(c);
+%     plotfwt(c,44100,90);
 %
 %   See also: ifwt, fwtinit
 %

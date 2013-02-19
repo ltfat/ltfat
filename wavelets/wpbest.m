@@ -15,7 +15,7 @@ function [c,wt] = wpbest(f,w,J,varargin)
 %   coefficient entropy. 
 %  
 %
-%   References: wick92lecton, tas94near-bestbasis   
+%   References: wick92lecton tas94near-bestbasis   
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
