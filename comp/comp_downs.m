@@ -1,4 +1,4 @@
-function [y] = downs(x,varargin)
+function [y] = comp_downs(x,varargin)
 
 if(length(varargin)>0)
     L = max([varargin{1},1]);

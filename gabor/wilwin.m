@@ -146,7 +146,7 @@ if ischar(g)
     info.tfr=2*M*M/L;
     info.istight=1;
    case firwinnames
-    [g,firinfo]=firwin(winname,M,'2');
+    [g,firinfo]=firwin(winname,2*M,'2');
     info.isfir=1;
     if firinfo.issqpu
       info.istight=1;
@@ -197,9 +197,9 @@ if isnumeric(g)
   end;
 end;
 
-if rem(length(g),M)~=0
-  % Zero-extend the window to a multiple of M
-  g=fir2long(g,ceil(length(g)/M)*M);
+if rem(length(g),2*M)~=0
+  % Zero-extend the window to a multiple of 2*M
+  g=fir2long(g,ceil(length(g)/(2*M))*2*M);
 end;
 
 % Information to be determined post creation.

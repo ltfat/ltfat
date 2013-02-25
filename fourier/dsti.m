@@ -32,6 +32,20 @@ function c=dsti(f,L,dim)
 %   If guaranteed high speed is a concern, please consider using one of the
 %   other DST transforms.
 %
+%   Examples:
+%   ---------
+%
+%   The following figures show the first 4 basis functions of the DSTI of
+%   length 20:::
+%
+%     % The dsti is its own adjoint.
+%     F=dsti(eye(20));
+%
+%     for ii=1:4
+%       subplot(4,1,ii);
+%       stem(F(:,ii));
+%     end;
+%
 %   See also:  dcti, dstiii, dstiv
 %
 %   References: rayi90 wi94

@@ -1,4 +1,4 @@
-function [c,Ls,g]=wmdct(f,g,M,L)
+function [c,Ls,g]=wmdct(f,g,M,varargin)
 %WMDCT  Windowed MDCT transform
 %   Usage:  c=wmdct(f,g,M);
 %           c=wmdct(f,g,M,L);
@@ -78,7 +78,7 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %   |greasy|_ test signal:::
 %
 %     fs=16000; % Sampling rate
-%     c=wmdct(greasy,{'hann',0.02*fs'},128);
+%     c=wmdct(greasy,{'hann',0.02*fs},128);
 %     plotwmdct(c,fs,90);
 %
 %   Compare the visual difference with the redundant expansion of the
@@ -92,44 +92,46 @@ function [c,Ls,g]=wmdct(f,g,M,L)
 %   TESTING:   TEST_WMDCT
 %   REFERENCE: REF_WMDCT
 
-error(nargchk(3,4,nargin));
-
-if nargin<4
-  L=[];
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+definput.keyvals.L=[];
+definput.keyvals.dim=[];
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-assert_squarelat(M,M,1,'WMDCT',0);
 
-if ~isempty(L)
-  if (prod(size(L))~=1 || ~isnumeric(L))
-    error('%s: L must be a scalar','WMDCT');
-  end;
-  
-  if rem(L,1)~=0
-    error('%s: L must be an integer','WMDCT');
-  end;
-end;
-
+%% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'WMDCT',0);
+[f,dummy,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
 
+%% ------ step 2: Verify a, M and L
 if isempty(L)
-  % Smallest length transform.
-  Lsmallest=2*M;
 
-  % Choose a transform length larger than the signal
-  L=ceil(Ls/Lsmallest)*Lsmallest;
+    % ----- step 2b : Verify a, M and get L from the signal length f----------
+    L=dwiltlength(Ls,M);
+
 else
 
-  if rem(L,2*M)~=0
-    error('%s: The length of the transform must be divisable by 2*M = %i',...
-          'WMDCT',2*M);
-  end;
+    % ----- step 2a : Verify a, M and get L
+    Luser=dwiltlength(L,M);
+    if Luser~=L
+        error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+               'is L=%i. See the help of DWILTLENGTH for the requirements.'],...
+              upper(mfilename),L,Luser);
+    end;
 
 end;
 
-[g,info]=wilwin(g,M,L,'WMDCT');
+%% ----- step 3 : Determine the window 
+
+[g,info]=wilwin(g,M,L,upper(mfilename));
+
+if L<info.gl
+  error('%s: Window is too long.',upper(mfilename));
+end;
+
+%% ----- step 4: final cleanup ---------------
 
 f=postpad(f,L);
 
@@ -139,5 +141,12 @@ if isa(f,'single')
   g=single(g);
 end;
 
+%% ----- Call the computational subroutines.
 c  = comp_dwiltiii(f,g,M,L);
+
+%% ----- reorder coefficients to correct final layout
+order=assert_groworder(order);
+permutedsize=[M,L/M,permutedsize(2:end)];
+
+c=assert_sigreshape_post(c,dim,permutedsize,order);
 

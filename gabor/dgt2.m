@@ -64,11 +64,6 @@ error(nargchk(4,6,nargin));
 
 L=[];
 
-% Refuse to do nd-arrays.
-%if ndims(f)>2
-%  error('DGT2 does not work for nd-arrays.');
-%end;
-
 if prod(size(p3))>2
   % Two windows was specified.
   g2=p3;
@@ -86,111 +81,20 @@ else
   end;
 end;
   
-if size(g1,2)>1
-  if size(g1,1)>1
-    error('g1 must be a vector');
-  else
-    % g1 was a row vector.
-    g1=g1(:);
-  end;
-end;
-
-if size(g2,2)>1
-  if size(g2,1)>1
-    error('g2 must be a vector');
-  else
-    % g2 was a row vector.
-    g2=g2(:);
-  end;
-end;
-
-if prod(size(a))>2 || prod(size(a))==0
-  error('a must be a scalar or 1x2 vector');
-end;
-
-if prod(size(M))>2 || prod(size(M))==0
-  error('M must be a scalar or 1x2 vector');
-end;
-
-if length(a)==2
-  a1=a(1);
-  a2=a(2);
+if isempty(L)
+  L1=[];
+  L2=[];
 else
-  a1=a;
-  a2=a;
-end;
-
-if length(M)==2
-  M1=M(1);
-  M2=M(2);
-else
-  M1=M;
-  M2=M;
-end;
-
-assert_squarelat(a1,M1,1,'DGT2');
-assert_squarelat(a2,M2,1,'DGT2');
-
-
-Lwindow1=size(g1,1);
-Lwindow2=size(g2,1);
-
-Ls(1)=size(f,1);
-Ls(2)=size(f,2);
-W=size(f,3);
-
-if ndims(f)<2 || ndims(f)>3
-  error('f must be 2 or 3 dimensional.');
-end;
-
-if ~isempty(L) && (numel(L)>2 || numel(L)==0)
-  error('L must be a scalar or 1x2 vector');
-end;
-
-if length(L)==2
   L1=L(1);
   L2=L(2);
-else
-  L1=L;
-  L2=L;
 end;
 
-[b1,N1,L1]=assert_L(Ls(1),Lwindow1,L1,a1,M1,'DGT2');
-[b2,N2,L2]=assert_L(Ls(2),Lwindow2,L2,a2,M2,'DGT2');
+% Expand 'a' and M if necessary to two elements
+a=bsxfun(@times,a,[1 1]);
+M=bsxfun(@times,M,[1 1]);
 
-% --- Do transform along first dimension ---
+Ls=size(f);
+Ls=Ls(1:2);
 
-% Change f to correct shape.
-[f,fl,Wtemp,wasrow,remembershape]=comp_sigreshape_pre(f,'DWILT2',3);
-
-% Zero-extend if neccesary.
-f=postpad(f,L1);
-
-c=comp_dgt(f,g1,a1,M1,[0 1],0,0,0);
-
-% Combine dimensions again.
-c=reshape(c,M1*N1,Ls(2),W);
-
-% Exchange first and second dimension.
-c=permute(c,[2,1,3]);
-
-% --- do transform along second dimension ---
-
-% Change f to correct shape.
-[c,cl,Wtemp,wasrow,remembershape]=comp_sigreshape_pre(c,'DWILT2',3);
-
-% Zero-extend if neccesary.
-c=postpad(c,L2);
-
-c=comp_dgt(c,g2,a2,M2,[0 1],0,0,0);
-
-c=comp_sigreshape_post(c,M2*N2,wasrow,remembershape);
-
-% Combine dimensions again.
-c=reshape(c,M2*N2,M1*N1,W);
-
-% Exchange first and second dimension.
-c=permute(c,[2,1,3]);
-
-% Reshape to final layout.
-c=reshape(c,M1,N1,M2,N2,W);
+c=dgt(f,g1,a(1),M(1),L1);
+c=dgt(c,g2,a(2),M(2),L2,'dim',3);

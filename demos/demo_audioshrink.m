@@ -54,7 +54,7 @@ F1=frametight(frame('wmdct','gauss',256));
 c1 = frana(F1,nsig);
 
 % Group lasso and invert
-[c1s,N1] = framegrouplasso(F1,c1,0.8,'soft','freq');
+[c1s,N1] = franagrouplasso(F1,c1,0.8,'soft','freq');
 rec1 = frsyn(F1,c1s);
 
 % Transient layer
@@ -66,7 +66,7 @@ F2=frametight(frame('wmdct','gauss',32));
 % Compute wmdct coefficients
 c2 = frana(F2,nsig);
 
-[c2s,N2] = framegrouplasso(F2,c2,0.5,'time','soft');
+[c2s,N2] = franagrouplasso(F2,c2,0.5,'time','soft');
 rec2 = frsyn(F2,c2s);
 
 % Plots

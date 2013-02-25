@@ -36,6 +36,20 @@ function c=dstiii(f,L,dim)
 %
 %   See also:  dctii, dstii, dstiv
 %
+%   Examples:
+%   ---------
+%
+%   The following figures show the first 4 basis functions of the DSTIII of
+%   length 20:::
+%
+%     % The dstii is the adjoint of dstiii.
+%     F=dstii(eye(20));
+%
+%     for ii=1:4
+%       subplot(4,1,ii);
+%       stem(F(:,ii));
+%     end;
+%
 %   References: rayi90 wi94
   
 %   AUTHOR: Peter L. Søndergaard

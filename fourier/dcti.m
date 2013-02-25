@@ -42,6 +42,20 @@ function c=dcti(f,L,dim)
 %   If guaranteed high speed is a concern, please consider using one of the
 %   other DCT transforms.
 %
+%   Examples:
+%   ---------
+%
+%   The following figures show the first 4 basis functions of the DCTI of
+%   length 20:::
+%
+%     % The dcti is its own adjoint.
+%     F=dcti(eye(20));
+%
+%     for ii=1:4
+%       subplot(4,1,ii);
+%       stem(F(:,ii));
+%     end;
+%
 %   See also:  dctii, dctiv, dsti
 %
 %   References: rayi90 wi94
