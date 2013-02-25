@@ -1,7 +1,7 @@
 function c = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
-%           c = fwt(f,h,J,...);
+%           c = fwt(f,h,J,dim,...);
 %
 %   Input parameters:
 %         f     : Input data.
@@ -13,7 +13,7 @@ function c = fwt(f,h,J,varargin)
 %
 %   `c=fwt(f,h,J)` returns wavelet coefficients *c* of the input signal *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *h*.
-%   The fast wavelet transform algorithm (or Mallat's algorithm) is employed.
+%   The fast wavelet transform algorithm (Mallat's algorithm) is employed.
 %   If *f* is a matrix, the transformation is applied to each of *W* columns.
 %   
 %   The coefficents *c* are Discrete Wavelet transform of the input signal *f*,
@@ -51,47 +51,41 @@ function c = fwt(f,h,J,varargin)
 %   Boundary handling:
 %   ------------------
 %
-%   The default periodic extension considers the input signal as it was a one
-%   period of some infinite periodic signal as is natural for the transforms
-%   based on the FFT.  The resulting wavelet representation is
-%   non-expansive, that is if the input signal length is a multiple of a
-%   $J$-th power of the subsampling factor, the total number of coefficients
-%   is equal to the input signal length. 
-%
-%   If the input signal length is not a multiple of a $J$-th power of the
-%   subsampling factor, the processed signal is padded internally by
-%   repeating the last sample at each step of the transform to the next
-%   multiple of the subsampling factor rather than doing the prior explicit
-%   padding.  
+%   `fwt(f,h,J,'per')` (default) uses the periodic extension which considers
+%   the input signal as it was a one period of some infinite periodic signal
+%   as is natural for transforms based on the FFT. The resulting wavelet 
+%   representation is non-expansive, that is if the input signal length is a multiple of a
+%   $J$-th power of the subsampling factor and the filterbank is critically subsampled,
+%   the total number of coefficients is equal to the input signal length. The input signal is
+%   padded with zeros to the next legal length otherwise. The initial position of the
+%   filters determines the relative delay between wavelet coefficients
+%   subbands. Unfortunatelly, there are only a few wavelet filter types which have
+%   linear phase and the point of symmetry cannot be identified in general. Therefore the impulse 
+%   responses are circularly shifted by the half of the filter length to compensate for the delay
+%   as much as possible.
+%   
+%   The default periodic extension can result in "false" high wavelet
+%   coefficients near the boundaries due to the possible discontinuity
+%   introduced by the zero padding and periodic boundary treatment.
 %
 %   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes a slightly
 %   redundant wavelet representation of the input signal *f* with the chosen
-%   boundary extension *ext*.
+%   boundary extension *ext*. The redundancy (expansivity) of the represenation
+%   is the price to pay for using general filterbank and custom boundary treatment.
+%   The extensions are done at each level of the transform internally rather than doing the prior explicit padding. 
+%   
 %
-%   The default periodic extension can result in "false" high wavelet
-%   coefficients near the boundaries due to the possible discontinuity
-%   introduced by the periodic extension. The custom extension can diminish
-%   this phenomenon. The extensions are done at each level of the transform
-%   internally rather than doing the prior explicit padding. The supported
-%   possibilities are:
+%   The supported possibilities are:
 %
-%     'per'    Periodic boundary extension. This is the default.
+%     'per'    Zero padding to the enxt legal length and periodic boundary extension. This is the default.
 %
-%     'zpd'    Zeros are considered outside of the signal (coefficient) support. 
+%     'zero'   Zeros are considered outside of the signal (coefficient) support. 
 %
-%     'sym'    Half-point symmetric extension.
+%     'even'   Even symmetric extension.
 %
-%     'symw'   Whole-point symmetric extension
+%     'odd'    Odd symmetric extension.
 %
-%     'asym'   Half-point antisymmetric extension
-%
-%     'asymw'  Whole point antisymmetric extension
-%
-%     'ppd'    Periodic padding, same as `'per'` but the result is expansive representation
-%
-%     'sp0'    Repeating boundary sample
-%
-%   Note that the same flag have to be used in the call of the inverse transform
+%   Note that the same flag has to be used in the call of the inverse transform
 %   function `ifwt`.
 %
 %   Examples:
@@ -126,31 +120,43 @@ h = fwtinit(h,'ana');
 
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
 
-
-%% ----- step 1 : Verify f and determine its length -------
-% Change f to correct shape.
-% TO DO: if elements of h.a are not equal and the flag is 'per',
-% do zero padding to the next multiple of 2^J
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
-if(Ls<2)
-   error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
+%If dim is not specified use first non-singleton dimension.
+if(isempty(dim))
+    dim=find(size(f)>1,1);
 end
 
+%% ----- step 1 : Verify f and determine its length -------
+% Determine input data length.
+Ls = size(f,dim);
+% Determine "safe" input data length.
+L = fwtlength(Ls,h,J,flags.ext);
+% Change f to correct shape according to the dim. 
+[f,L,Ls,~,dim,~,order]=assert_sigreshape_pre(f,L,dim,upper(mfilename));
+if(Ls==1)
+   error('%s: Input signal length is 1 along dimension %d.',upper(mfilename),dim);  
+end
 
-%% ----- step 2 : Check whether the input signal is long enough
-% input signal length is not restricted for expansive wavelet transform (extension type other than the default 'per')
-% flen = length(h.filts{1}.h);
-% if(strcmp(flags.ext,'per'))
-%      minLs = (h.a(1)^J-1)*(flen-1); % length of the longest equivalent filter -1
-%    if Ls<minLs
-%      error('%s: Input signal length is %d. Minimum signal length is %d or use %s flag instead. \n',upper(mfilename),Ls,minLs,'''ppd''');
-%    end;
-% end
+% Pad with zeros if the safe length L differ from the Ls.
+if(Ls~=L)
+   f=postpad(f,L); 
+end
 
+%% ----- step 2 : Determine number of ceoefficients in each subband
+Lc = fwtclength(L,h,J,flags.ext);
 
-%% ----- step 3 : Run computation
- c = comp_fwt_all(f,h.filts,J,h.a,'dec',flags.ext);
+%% ----- step 3 : Run computation ------
+c = comp_fwt(f,h.filts,J,h.a,Lc,flags.ext);
+
+% Reshape back according to the dim.
+permutedsizeAlt = size(c);
+c=assert_sigreshape_post(c,dim,permutedsizeAlt,order);
+
+% Add option for returning cell-array?
+% c = wavpack2cell(c,Lc,dim);
+%END FWT
+ 
+ 
 
 

@@ -21,9 +21,11 @@ function c = fwt2(f,h,J,varargin)
 %   
 %   A simple example of calling the |fwt2|_ function:::
 % 
-%     f = cameraman;
-%     J = 6;
-%     c = fwt2(f,{'db',8},J);
+%     figure(1);
+%     image(cameraman);axis equal;axis off;colormap Gray;
+%     c = fwt2(cameraman,{'db',8},4);
+%     figure(2);
+%     imagesc(20*log10(abs(c)));axis equal;axis off;colormap jet;
 %
 %   See also: ifwt2, fwtinit
 %
@@ -50,34 +52,60 @@ end
 % Initialize the wavelet filters structure
 h = fwtinit(h,'ana');
 
+if(~all(h.a==length(h.filts)))
+   error('%s: Non-critically subsampled filterbanks not supported.',upper(mfilename));  
+end
+
+
 %% ----- step 0 : Check inputs -------
-definput.import = {'fwt'};
+definput.import = {'fwt2'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
+nFilts = numel(h.filts);
+
+Lcrows = fwtclength(size(f,1),h,J);
+Lccols = fwtclength(size(f,2),h,J);
+
+if(flags.do_standard)
+   Jstep = 1;
+   c = fwt(f,h,Jstep,1,'per');
+   c = fwt(c,h,Jstep,2,'per');
+   for jj=1:J-1
+      colRange = 1:Lcrows(end-jj*(nFilts-1)+1);
+      rowRange = 1:Lccols(end-jj*(nFilts-1)+1);
+      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,1,'per');
+      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,2,'per');
+   end
+elseif(flags.do_tensor)
+   c = fwt(f,h,J,1,'per');
+   c = fwt(c,h,J,2,'per');
+else
+    error('%s: Should not get here. Bug somewhere else.',upper(mfilename))
+end
 
 
 %% ----- step 1 : Run calc -----------
-filtNo = length(h.filts);
-subbNo = filtNo^2-1;
-c = cell(J*subbNo+1,1);
-cJidx = J*subbNo+1;
-cTmp = f;
-for jj=1:J
-     cCols = comp_fwt_all(cTmp,h.filts,1,h.a,'dec',flags.ext);
-     [cColsPack,rows] = wavcell2pack(cCols); 
-     cRows = comp_fwt_all(cColsPack.',h.filts,1,h.a,'dec',flags.ext);
-     [cRowsPack,cols] = wavcell2pack(cRows); 
-     cTmp = cRowsPack(1:cols(1),1:rows(1)).';
-     
-     cJidxTmp = cJidx - jj*subbNo+1;
-
-     for cc= 1:filtNo
-        for rr = 1:filtNo
-           if(cc==1&&rr==1), continue; end; 
-           c{cJidxTmp} = cRowsPack(sum(cols(1:cc-1))+1:sum(cols(1:cc)),sum(rows(1:rr-1))+1:sum(rows(1:rr))).';
-           cJidxTmp = cJidxTmp + 1;
-        end
-     end
-end
-c{1} = cTmp;
+% filtNo = length(h.filts);
+% subbNo = filtNo^2-1;
+% c = cell(J*subbNo+1,1);
+% cJidx = J*subbNo+1;
+% cTmp = f;
+% for jj=1:J
+%      cCols = comp_fwt_all(cTmp,h.filts,1,h.a,'dec',flags.ext);
+%      [cColsPack,rows] = wavcell2pack(cCols); 
+%      cRows = comp_fwt_all(cColsPack.',h.filts,1,h.a,'dec',flags.ext);
+%      [cRowsPack,cols] = wavcell2pack(cRows); 
+%      cTmp = cRowsPack(1:cols(1),1:rows(1)).';
+%      
+%      cJidxTmp = cJidx - jj*subbNo+1;
+% 
+%      for cc= 1:filtNo
+%         for rr = 1:filtNo
+%            if(cc==1&&rr==1), continue; end; 
+%            c{cJidxTmp} = cRowsPack(sum(cols(1:cc-1))+1:sum(cols(1:cc)),sum(rows(1:rr-1))+1:sum(rows(1:rr))).';
+%            cJidxTmp = cJidxTmp + 1;
+%         end
+%      end
+% end
+% c{1} = cTmp;
 
 

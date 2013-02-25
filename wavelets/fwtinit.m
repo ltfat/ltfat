@@ -35,9 +35,18 @@ function [w] = fwtinit(wavname,varargin)
 %     `w.a`
 %        implicit subsampling factors
 % 
-%   Choosing a wavelet
-%   ------------------
 %
+%   Choosing wavelet filters
+%   ------------------------
+%   
+%   
+%   orthogonality/biorthogonality/frame
+%   number of vanishing moments psi
+%   symmetry/linear phase
+%
+%   support of psi
+%   smoothnes and regularity of psi
+%   
 %   
 %
 %   See also: fwt, ifwt, wfilt_db
@@ -148,14 +157,14 @@ if(do_ana)
    for ff=1:noFilts
       w.h{ff} = wfiltstruct('FIR');
       w.h{ff}.h = cellh{ff};
-      w.h{ff}.d = floor(length(cellh{ff})/2)+1;
+      w.h{ff}.d = ceil((length(cellh{ff})+1)/2);
    end  
 else
    w.g = cell(noFilts,1);
    for ff=1:noFilts
       w.g{ff} = wfiltstruct('FIR');
       w.g{ff}.h = cellh{ff};
-      w.g{ff}.d = floor(length(cellh{ff})/2);
+      w.g{ff}.d = floor((length(cellh{ff})+1)/2);
    end 
 end
 

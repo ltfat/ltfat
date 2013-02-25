@@ -1,6 +1,6 @@
-function f = ifwt(c,g,J,varargin)
+function f = ifwt(c,g,J,Ls,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt(c,g,J)
+%   Usage:  f = ifwt(c,g,J,Ls)
 %           f = ifwt(c,g,J,Ls,...)
 %
 %   Input parameters:
@@ -63,19 +63,23 @@ end;
 g = fwtinit(g,'syn');
 
 %% PARSE INPUT
-definput.keyvals.Ls=[];    
 definput.import = {'fwt'};
 
-if(iscell(c))
-    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+if(iscell(c)||isnumeric(c))
+    [flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
+    %If dim is not specified use first non-singleton dimension.
+    if(isempty(dim))
+       dim=find(size(c)>1,1);
+    end
 else
     error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
-
+% will probably go away
 if isempty(Ls)
-    % Estimate output signal length from the number of coefficients
-   [sigHalfLen,W] = size(c{end});
+    if iscell(c)
+    % Try to estimate output signal length from the number of coefficients
+    [sigHalfLen,W] = size(c{end});
        if(strcmp(flags.ext,'per'))
             % estimated Ls can be one sample more, if the original input
             % signal length was odd
@@ -85,9 +89,36 @@ if isempty(Ls)
             % signal length plus length(h{1})-1 was an even number
            Ls = g.a(end)*sigHalfLen - (length(g.filts{end}.h)-2);
        end
+    else
+        error('%s: Output signal length is not defined.',upper(mfilename));
+    end
+end
+
+if iscell(c)
+    error('%s: No cells!',upper(mfilename));
 end
 
 
-f = comp_ifwt_all(c,g.filts,J,g.a,Ls,'dec',flags.ext);
+%% ----- step 1 : Verify f and determine its length -------
+% Determine input data length.
+L = fwtlength(Ls,g,J,flags.ext);
+% Change c to correct shape according to the dim. 
+[c,~,Lcsum,~,dim,~,order]=assert_sigreshape_pre(c,size(c,dim),dim,upper(mfilename));
+if(Lcsum==1)
+   error('%s: Input signal length is 1 along dimension %d.',upper(mfilename),dim);  
+end
+
+
+%% ----- step 2 : Determine number of ceoefficients in each subband
+Lc = fwtclength(L,g,J,flags.ext);
+
+%% ----- step 3 : Run computation -------------------
+f = comp_ifwt(c,g.filts,J,g.a,Lc,Ls,flags.ext);
+
+% Reshape back according to the dim.
+permutedsizeAlt = size(f);
+f=assert_sigreshape_post(f,dim,permutedsizeAlt,order);
+
+%END IFWT
 
 
