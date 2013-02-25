@@ -90,6 +90,7 @@ end;
 
 definput.keyvals.Ls=[];
 definput.keyvals.lt=[0 1];
+definput.keyvals.dim=[];
 definput.flags.phase={'freqinv','timeinv'};
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 

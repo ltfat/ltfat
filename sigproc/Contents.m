@@ -10,13 +10,14 @@
 %    RAMPUP         -  Rising ramp.
 %    RAMPDOWN       -  Falling ramp.
 %    RAMPSIGNAL     -  Ramp a signal.
+%    UQUANT         -  Simulate uniform quantization.
 %
-%  Working with coefficients.
+%  Thresholding methods
+%    THRESH         -  Coefficient thresholding.
 %    LARGESTR       -  Keep largest ratio of coefficients.
 %    LARGESTN       -  Keep N largest coefficients.
-%    THRESH         -  Coefficient thresholding.
+%    DYNLIMIT       -  Limit the dynamical range.
 %    GROUPTHRESH    -  Group thresholding.
-%    UQUANT         -  Simulate uniform quantization.
 %
 %  Tools for OFDM
 %    QAM4           -  Quadrature amplitude modulation, order 4

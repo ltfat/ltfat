@@ -10,7 +10,7 @@ function t=isevenfunction(f,varargin);
 %   how large the error between the two parts of the vector can be. Default
 %   is 1e-10.
 %
-%   Adding the flag `'hp'` as the last argument do the same for half point
+%   Adding the flag `'hp'` as the last argument does the same for half point
 %   even functions.
 %  
 %   See also: middlepad, peven

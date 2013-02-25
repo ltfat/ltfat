@@ -136,13 +136,15 @@ end;
 
 definput.keyvals.L=[];
 definput.keyvals.lt=[0 1];
+definput.keyvals.dim=[];
 definput.flags.phase={'freqinv','timeinv'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+%[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+[f,~,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
 
 
 %% ------ step 2: Verify a, M and L
@@ -184,3 +186,9 @@ end;
 %% ------ call the computation subroutines 
 
 c=comp_dgt(f,g,a,M,kv.lt,flags.do_timeinv,0,0);
+
+order=assert_groworder(order);
+permutedsize=[M,L/a,permutedsize(2:end)];
+
+c=assert_sigreshape_post(c,dim,permutedsize,order);
+

@@ -54,10 +54,19 @@ if (prod(size(p))~=1 || ~isnumeric(p))
   error('p must be a scalar.');
 end;
 
+wascell=iscell(xi);
+
+if wascell
+  [xi,shape]=cell2vec(xi);
+end;
+
 % Determine the size of the array.
-ss=prod(size(xi));
+ss=numel(xi);
 
 N=round(ss*p);
-
+  
 [xo,Nout]=largestn(xi,N,flags.outclass,flags.iofun);
 
+if wascell
+  xo=vec2cell(xo,shape);
+end;

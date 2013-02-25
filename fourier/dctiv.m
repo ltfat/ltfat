@@ -23,6 +23,20 @@ function c=dctiv(f,L,dim)
 %
 %   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\cos\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
 %
+%   Examples:
+%   ---------
+%
+%   The following figures show the first 4 basis functions of the DCTIV of
+%   length 20:::
+%
+%     % The dctiv is its own adjoint.
+%     F=dctiv(eye(20));
+%
+%     for ii=1:4
+%       subplot(4,1,ii);
+%       stem(F(:,ii));
+%     end;
+%
 %   See also:  dctii, dctiii, dstii
 %
 %   References: rayi90 wi94

@@ -27,6 +27,20 @@ function c=dstiv(f,L,dim)
 %
 %   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}f\left(m+1\right)\sin\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)\left(m+\frac{1}{2}\right)\right)
 %
+%   Examples:
+%   ---------
+%
+%   The following figures show the first 4 basis functions of the DSTIV of
+%   length 20:::
+%
+%     % The dstiv is its own adjoint.
+%     F=dstiv(eye(20));
+%
+%     for ii=1:4
+%       subplot(4,1,ii);
+%       stem(F(:,ii));
+%     end;
+%
 %   See also:  dstii, dstiii, dctii
 %
 %   References: rayi90 wi94

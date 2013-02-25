@@ -34,6 +34,20 @@ function c=dctii(f,L,dim)
 %
 %   .. math:: c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\cos\left(\frac{\pi}{L} n\left(m+\frac{1}{2}\right)\right)
 %
+%   Examples:
+%   ---------
+%
+%   The following figures show the first 4 basis functions of the DCTII of
+%   length 20:::
+%
+%     % The dctiii is the adjoint of dctii.
+%     F=dctiii(eye(20));
+%
+%     for ii=1:4
+%       subplot(4,1,ii);
+%       stem(F(:,ii));
+%     end;
+%
 %   See also:  dctiii, dctiv, dstii
 %
 %   References: rayi90 wi94

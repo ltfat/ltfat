@@ -74,108 +74,19 @@ else
   end;
 end;
   
-if size(g1,2)>1
-  if size(g1,1)>1
-    error('g1 must be a vector');
-  else
-    % g1 was a row vector.
-    g1=g1(:);
-  end;
-end;
-
-if size(g2,2)>1
-  if size(g2,1)>1
-    error('g2 must be a vector');
-  else
-    % g2 was a row vector.
-    g2=g2(:);
-  end;
-end;
-
-if prod(size(M))>2 || prod(size(M))==0
-  error('M must be a scalar or 1x2 vector');
-end;
-
-% If input is real, and window is real, output must be real as well.
-inputwasreal = (isreal(g1) && isreal(g2) && isreal(f));
-
-if length(M)==2
-  M1=M(1);
-  M2=M(2);
+if isempty(L)
+  L1=[];
+  L2=[];
 else
-  M1=M;
-  M2=M;
-end;
-
-assert_squarelat(M1,M1,1,'WMDCT2');
-assert_squarelat(M2,M2,1,'WMDCT2');
-
-Lwindow1=size(g1,1);
-Lwindow2=size(g2,1);
-
-Ls(1)=size(f,1);
-Ls(2)=size(f,2);
-W=size(f,3);
-
-if ndims(f)<2 || ndims(f)>3
-  error('f must be 2 or 3 dimensional.');
-end;
-
-if ~isempty(L) && (numel(L)>2 || numel(L)==0)
-  error('L must be a scalar or 1x2 vector');
-end;
-
-if length(L)==2
   L1=L(1);
   L2=L(2);
-else
-  L1=L;
-  L2=L;
 end;
 
-[b1,N1,L1]=assert_L(Ls(1),Lwindow1,L1,M1,M1,'WMDCT2');
-[b2,N2,L2]=assert_L(Ls(2),Lwindow2,L2,M2,M2,'WMDCT2');
+% Expand M if necessary to two elements
+M=bsxfun(@times,M,[1 1]);
 
-a1=M1;
-a2=M2;
+Ls=size(f);
+Ls=Ls(1:2);
 
-% --- Do transform along first dimension ---
-% Change f to correct shape.
-[f,fl,Wtemp,wasrow,remembershape]=comp_sigreshape_pre(f,'WMDCT2',3);
-
-% Zero-extend if neccesary.
-f=postpad(f,L1);
-
-c=comp_dwiltiii(f,g1,M1,L1);
-
-% Combine dimensions again.
-c=reshape(c,L1,Ls(2),W);
-
-% Exchange first and second dimension.
-c=permute(c,[2,1,3]);
-
-% --- do transform along second dimension ---
-
-% Change f to correct shape.
-[c,cl,Wtemp,wasrow,remembershape]=comp_sigreshape_pre(c,'WMDCT2',3);
-
-% Zero-extend if neccesary.
-c=postpad(c,L2);
-
-c=comp_dwiltiii(c,g2,M2,L2);
-c=comp_sigreshape_post(c,L2,wasrow,remembershape);
-
-% Combine dimensions again.
-c=reshape(c,L2,L1,W);
-
-% Exchange first and second dimension.
-c=permute(c,[2,1,3]);
-
-% Reshape to final layout.
-c=reshape(c,M1,N1,M2,N2,W);
-
-% Clean coefficients if they are known to be real
-if inputwasreal
-  c=real(c);
-end;
-
+c=wmdct(f,g1,M(1),L1);
+c=wmdct(c,g2,M(2),L2,'dim',3);

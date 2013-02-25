@@ -53,7 +53,7 @@ if flags.do_sparse
 end;
 
 % Determine the size of the array.
-ss=prod(size(xi));
+ss=numel(xi);
 
 % Sort the absolute values of the coefficients.
 sxi=sort(abs(xi(:)));
