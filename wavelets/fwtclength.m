@@ -3,12 +3,13 @@ function [Lc,L]=fwtclength(Ls,h,J,varargin)
 %   Usage: L=fwtlength(Ls,h,J);
 %          L=fwtlength(Ls,h,J,...);
 %
-%  `Lc=fwtclength(Ls,h,J)` returns the lengths of wavelet coefficient subbands
-%  for a signal of length Ls. Please see the help on |fwt|_ for an explanation
-%  of the parameters *h* and *J*. In addition, the function returns next legal
-%  length of te iput signal for the given extension type.
+%   `Lc=fwtclength(Ls,h,J)` returns the lengths of the wavelet coefficient
+%   subbands for a signal of length *Ls*. Please see the help on |fwt|_ for
+%   an explanation of the parameters *h* and *J*. In addition, the function
+%   returns the next legal length of the iput signal for the given extension
+%   type.
 %
-% See also: fwt
+%   See also: fwt, fwtlength
 
 
 h = fwtinit(h,'ana');

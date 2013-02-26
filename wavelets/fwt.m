@@ -1,7 +1,8 @@
 function c = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
-%           c = fwt(f,h,J,dim,...);
+%           c = fwt(f,h,J,L);
+%           c = fwt(f,h,J,L,dim,...);
 %
 %   Input parameters:
 %         f     : Input data.
@@ -29,11 +30,11 @@ function c = fwt(f,h,J,varargin)
 %        prefix) and the other elements are the parameters of the
 %        function. e.g. `{'db',10}` calls `wfilt_db(10)` internally.
 %
-%     2) The second possible format of $h$ is to pass cell array of one dimensional
-%        numerical vectors directly defining the wavelet filter impulse
-%        responses.  In this case, outputs of the filters are subsampled by a
-%        factor equal to the number of the filters. For creating completely
-%        custom filterbanks use the |fwtinit|_ function.
+%     2) The second possible format of $h$ is to pass cell array of one
+%        dimensional numerical vectors directly defining the wavelet filter
+%        impulse responses.  In this case, outputs of the filters are
+%        subsampled by a factor equal to the number of the filters. For
+%        creating completely custom filterbanks use the |fwtinit|_ function.
 %
 %     3) The third option is to pass a structure obtained from the
 %        |fwtinit|_ function.
@@ -53,16 +54,19 @@ function c = fwt(f,h,J,varargin)
 %
 %   `fwt(f,h,J,'per')` (default) uses the periodic extension which considers
 %   the input signal as it was a one period of some infinite periodic signal
-%   as is natural for transforms based on the FFT. The resulting wavelet 
-%   representation is non-expansive, that is if the input signal length is a multiple of a
-%   $J$-th power of the subsampling factor and the filterbank is critically subsampled,
-%   the total number of coefficients is equal to the input signal length. The input signal is
-%   padded with zeros to the next legal length otherwise. The initial position of the
-%   filters determines the relative delay between wavelet coefficients
-%   subbands. Unfortunatelly, there are only a few wavelet filter types which have
-%   linear phase and the point of symmetry cannot be identified in general. Therefore the impulse 
-%   responses are circularly shifted by the half of the filter length to compensate for the delay
-%   as much as possible.
+%   as is natural for transforms based on the FFT. The resulting wavelet
+%   representation is non-expansive, that is if the input signal length is a
+%   multiple of a $J$-th power of the subsampling factor and the filterbank
+%   is critically subsampled, the total number of coefficients is equal to
+%   the input signal length. The input signal is padded with zeros to the
+%   next legal length otherwise. 
+%
+%   The initial position of the filters determines the relative delay
+%   between wavelet coefficients subbands. Unfortunatelly, there are only a
+%   few wavelet filter types which have linear phase and the point of
+%   symmetry cannot be identified in general. Therefore the impulse
+%   responses are circularly shifted by the half of the filter length to
+%   compensate for the delay as much as possible.
 %   
 %   The default periodic extension can result in "false" high wavelet
 %   coefficients near the boundaries due to the possible discontinuity
@@ -70,16 +74,19 @@ function c = fwt(f,h,J,varargin)
 %
 %   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes a slightly
 %   redundant wavelet representation of the input signal *f* with the chosen
-%   boundary extension *ext*. The redundancy (expansivity) of the represenation
-%   is the price to pay for using general filterbank and custom boundary treatment.
-%   The extensions are done at each level of the transform internally rather than doing the prior explicit padding. 
+%   boundary extension *ext*. The redundancy (expansivity) of the
+%   represenation is the price to pay for using general filterbank and
+%   custom boundary treatment.  The extensions are done at each level of the
+%   transform internally rather than doing the prior explicit padding.
 %   
 %
 %   The supported possibilities are:
 %
-%     'per'    Zero padding to the enxt legal length and periodic boundary extension. This is the default.
+%     'per'    Zero padding to the next legal length and periodic boundary
+%              extension. This is the default.
 %
-%     'zero'   Zeros are considered outside of the signal (coefficient) support. 
+%     'zero'   Zeros are considered outside of the signal (coefficient)
+%              support. 
 %
 %     'even'   Even symmetric extension.
 %
@@ -96,7 +103,7 @@ function c = fwt(f,h,J,varargin)
 %     f = gspi;
 %     J = 10;
 %     c = fwt(f,{'db',8},J);
-%     plotfwt(c,44100,90);
+%     %plotfwt(c,44100,90);
 %
 %   See also: ifwt, fwtinit
 %
@@ -120,23 +127,14 @@ h = fwtinit(h,'ana');
 
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
+definput.keyvals.dim = [];
 [flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
 
-%If dim is not specified use first non-singleton dimension.
-if(isempty(dim))
-    dim=find(size(f)>1,1);
-end
-
 %% ----- step 1 : Verify f and determine its length -------
-% Determine input data length.
-Ls = size(f,dim);
+[f,L,Ls,~,dim,~,order]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
+
 % Determine "safe" input data length.
 L = fwtlength(Ls,h,J,flags.ext);
-% Change f to correct shape according to the dim. 
-[f,L,Ls,~,dim,~,order]=assert_sigreshape_pre(f,L,dim,upper(mfilename));
-if(Ls==1)
-   error('%s: Input signal length is 1 along dimension %d.',upper(mfilename),dim);  
-end
 
 % Pad with zeros if the safe length L differ from the Ls.
 if(Ls~=L)

@@ -34,9 +34,6 @@ definput.keyvals.xres=800;
 [flags,kv]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 
-
-
-
 if iscell(c)
   cM = length(c); 
   L=size(c{end}(:,1),1); 
