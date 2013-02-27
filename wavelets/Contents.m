@@ -3,6 +3,8 @@
 %   Basic analysis/synthesis
 %      FWT               - Fast Wavelet Transform 
 %      IFWT              - Inverse Fast Wavelet Transform
+%      FWT2              - 2D Fast Wavelet Transform 
+%      IFWT2             - 2D Inverse Fast Wavelet Transform
 %      UFWT              - Undecimated Fast Wavelet Transform
 %      IUFWT             - Inverse Undecimated Fast Wavelet Transform 
 %      WTFFT             - Wavelet Transform in the frequency-domain

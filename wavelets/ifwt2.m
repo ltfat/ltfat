@@ -13,25 +13,15 @@ function f = ifwt2(c,g,J,varargin)
 %         f     : Reconstructed data.
 %
 %   `f = ifwt2(c,g,J)` reconstructs signal *f* from the wavelet coefficients
-%   *c* using *J*-iteration synthesis filter bank build from the basic synthesis
+%   *c* using a *J*-iteration synthesis filter bank build from the basic synthesis
 %   filterbank defined by *g*.
 %
-%   Please see the help on |fwt2|_ for a description of the parameters.
-%
-%   Examples:
-%   ---------
-%   
-%   A simple example showing reconstruction from 2% of coefficients:::
-% 
-%     figure(1);
-%     image(cameraman);axis equal;axis off;colormap Gray;
-%     c = fwt2(cameraman,{'db',8},6);
-%     chat = largestr(c,0.02);
-%     fhat = ifwt2(chat,{'db',8},6,256);
-%     figure(2);
-%     image(fhat);axis equal;axis off;colormap Gray;
+%   This function takes the same optional parameters as |fwt2|_. Please see
+%   the help on |fwt2|_ for a description of the parameters.
 %   
 %   See also:  fwt2, fwtinit
+%
+%   Demos: demo_imagecompression
 %
 %   References: ma98
 

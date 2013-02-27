@@ -7,7 +7,7 @@ function s=cameraman();
 %   The returned matrix `s` consists of integers between 0 and 255,
 %   which have been converted to double precision.
 % 
-%   To display the image, use `imagesc` with a gray colormap::
+%   To display the image, use `imagesc` with a gray colormap:::
 % 
 %     imagesc(cameraman); colormap(gray); axis('image');
 % 

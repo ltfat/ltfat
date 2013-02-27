@@ -19,6 +19,7 @@
 %
 %  Images.
 %    CAMERAMAN      -  Greyscale image of the cameraman.
+%    LICHTENSTEIN   -  Color image of the Lichtenstein castle.
 %    LTFATTEXT      -  Black and white word: 'LTFAT'.
 %
 %  Other test signals are available from:

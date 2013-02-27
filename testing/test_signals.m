@@ -33,3 +33,6 @@ disp(['SIGNALS CAMERAMAN ',fail]);
 [test_failed,fail]=ltfatdiditfail(numel(cocktailparty)-363200,test_failed);
 disp(['SIGNALS COCKTAILPARTY ',fail]);
 
+[test_failed,fail]=ltfatdiditfail(numel(lichtenstein)-262144*3,test_failed);
+disp(['SIGNALS LICHTENSTEIN ',fail]);
+

@@ -13,21 +13,39 @@ function c = fwt2(f,h,J,varargin)
 %
 %   `c=fwt2(f,h,J)` returns wavelet coefficients *c* of the input matrix *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *h*.
-%   
-%   
 %
+%   'fwt2` supports the same boundary conditions as |fwt|_, but in
+%   addition to these flags it is possible to specify how the algorithm
+%   should subdivide the matrix:
+%
+%     'standard'  This is the standard behaviour of the JPEG 2000
+%                 standard
+%
+%     'tensor'    This corresponds to doing a |fwt|_ along each dimension
+%                 of the matrix.
+%   
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |fwt2|_ function:::
+%   Some simple example of calling the |fwt2|_ function, compare with the
+%   |cameraman|_ image. Only the 70 dB largest coefficients are shown, to
+%   make the structures more visible.
+%
+%   The first example uses the standard layout:::
 % 
-%     figure(1);
-%     image(cameraman);axis equal;axis off;colormap Gray;
 %     c = fwt2(cameraman,{'db',8},4);
-%     figure(2);
-%     imagesc(20*log10(abs(c)));axis equal;axis off;colormap jet;
+%     imagesc(dynlimit(20*log10(abs(c)),70));
+%     axis('image'); colormap(gray);
+%
+%   The second example uses the tensor product layout:::
+%
+%     c = fwt2(cameraman,{'db',8},4,'tensor');
+%     imagesc(dynlimit(20*log10(abs(c)),70));
+%     axis('image'); colormap(gray);
 %
 %   See also: ifwt2, fwtinit
+%
+%   Demos: demo_imagecompression
 %
 %   References: ma98  
 
