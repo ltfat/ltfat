@@ -1,4 +1,4 @@
-function test_failed = test_comp_fwt_all_filters(verbose)
+function test_failed = test_fwtpr(verbose)
 %TEST_COMP_FWT_ALL
 %
 % Checks perfect reconstruction of the wavelet transform of different
@@ -22,24 +22,24 @@ end
 which comp_fwt_all -all
 which comp_ifwt_all -all
 
-type = {'dec','undec'};
-ext = {'per','ppd'};
+type = {'dec'};
+ext = {'per','zero','odd','even'};
 
 prefix = 'wfilt_';
 test_filters = {
+               {'spline',4,4}
                %{'lemaire',80} % not exact reconstruction
                %{'hden',3} % only one with 3 filters and different
                %subsampling factors, not working
                {'algmband',2} % 4 filters, subsampling by the factor of 4!, really long identical lowpass filter
                %{'symds',1}
-               {'algmband',1}
+               {'algmband',1} % 3 filters, sub sampling factor 3, even length
                {'sym',4}
                {'sym',9}
                %{'symds',2}
 %               {'symds',3}
 %               {'symds',4}
 %               {'symds',5}
-               {'spline',4,4}
                {'spline',3,5}
                {'spline',3,11}
                {'spline',11,3}
@@ -65,8 +65,8 @@ test_filters = {
                %{'hden',3}
                %{'hden',2}
                %{'hden',1}
-              % {'algmband',2}
-               %{'apr',1} % complex filter values
+               %{'algmband',2}
+               %{'apr',1} % complex filter values, odd length filters
                };
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 
@@ -92,15 +92,15 @@ for typeIdx=1:length(type)
      for tt=1:length(test_filters)
          actFilt = test_filters{tt};
          %fname = strcat(prefix,actFilt{1});
-         w = fwtinit(test_filters{tt});  
+         %w = fwtinit(test_filters{tt});  
 
      for jj=1:J
            if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s, inLen=%d\n',jj,actFilt{1},typeCur,extCur,length(f)); end; 
            
-           c = comp_fwt_all(f,w.h,jj,w.a,typeCur,extCur);
+           c = fwt(f,test_filters{tt},jj,extCur);
            %[cvec ,Lc] = cell2pack(c);
            %c = pack2cell(cvec,Lc);
-            fhat = comp_ifwt_all(c,w.g,jj,w.a,length(f),typeCur,extCur);
+            fhat = ifwt(c,test_filters{tt},jj,length(f),extCur);
             err = norm(f(:)-fhat(:));
             if err>1e-6
                test_failed = 1; 
