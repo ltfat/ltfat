@@ -142,8 +142,8 @@ else
 end
 
 [tmph, tmpg, w.a] = feval(tmpFile,wname{2:end});
-w = formatFilters(tmph,0,w);
-w = formatFilters(tmpg,1,w);
+w = formatFilters(tmph,1,w);
+w = formatFilters(tmpg,0,w);
 w = updateTraDirect(flags.do_ana,w);
 
 % overwrite a if explicitly defined
