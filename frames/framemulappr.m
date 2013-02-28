@@ -1,7 +1,7 @@
-function [sym,TA]=framemulappr(Fa,Fs,T,D,Ds)
+function [s,TA]=framemulappr(Fa,Fs,T,D,Ds)
 %FRAMEMULAPPR  Best Approximation of a matrix by a frame multiplier
-%   Usage: sym=framemulappr(Fa,Fs,T);
-%         [sym,TA]=framemulappr(Fa,Fs,T);
+%   Usage: s=framemulappr(Fa,Fs,T);
+%         [s,TA]=framemulappr(Fa,Fs,T);
 %
 %   Input parameters:
 %          Fa   : Analysis frame
@@ -9,10 +9,10 @@ function [sym,TA]=framemulappr(Fa,Fs,T,D,Ds)
 %          T    : The operator represented as a matrix
 %
 %   Output parameters: 
-%          sym  : Symbol of best approximation
+%          s    : Symbol of best approximation
 %          TA   : The best approximation of the matrix T
 %
-%   `sym=framemulappr(Fa,Fs,T)` computes the symbol *sym* of the frame
+%   `s=framemulappr(Fa,Fs,T)` computes the symbol *s* of the frame
 %   multiplier that best approximates the matrix *T* in the Frobenious norm
 %   of the matrix (the Hilbert-Schmidt norm of the operator). The frame
 %   multiplier uses *Fa* for analysis and *Fs* for synthesis.
@@ -83,14 +83,14 @@ end;
 Gram = (Ds'*Ds).*((D'*D).');
 
 % upper symbol:
-sym = Gram\lowsym;
+s = Gram\lowsym;
   
 % synthesis
 if nargout>1
     TA = zeros(N,M);
     for ii = 1:Kd
         P = Ds(:,ii)*D(:,ii)';
-        TA = TA + sym(ii)*P;
+        TA = TA + s(ii)*P;
     end;
 end;
 

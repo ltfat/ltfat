@@ -1,19 +1,19 @@
-function [h,relres,iter]=iframemul(f,Fa,Fs,sym,varargin)
+function [h,relres,iter]=iframemul(f,Fa,Fs,s,varargin)
 %IFRAMEMUL  Inverse of frame multiplier
-%   Usage: h=iframemul(f,Fa,Fs,sym);
+%   Usage: h=iframemul(f,Fa,Fs,s);
 %         [h,relres,iter]=iframemul(...);
 %
 %   Input parameters:
 %          Fa   : Analysis frame
 %          Fs   : Synthesis frame
-%          sym  : Symbol
+%          s    : Symbol
 %          f    : Input signal
 %
 %   Output parameters: 
 %          h    : Output signal
 %
-%   `iframemul(f,F,sym)` applies the inverse of the frame multiplier with
-%   symbol *sym* to the signal *f*. The frame *Fa* is used for analysis
+%   `iframemul(f,F,s)` applies the inverse of the frame multiplier with
+%   symbol *s* to the signal *f*. The frame *Fa* is used for analysis
 %   and the frame *Fs* for synthesis.
 %
 %   Because the inverse of a frame multiplier is not necessarily again a
@@ -54,9 +54,9 @@ definput.flags.print={'quiet','print'};
 % The frame multiplier is not positive definite, so we cannot solve it
 % directly using pcg.
 % Apply the multiplier followed by its adjoint. 
-A=@(x) framemuladj(framemul(x,Fa,Fs,sym),Fa,Fs,sym);
+A=@(x) framemuladj(framemul(x,Fa,Fs,s),Fa,Fs,s);
 
-[h,flag,dummytilde,iter1,relres]=pcg(A,framemuladj(f,Fa,Fs,sym),kv.tol,kv.maxit);
+[h,flag,dummytilde,iter1,relres]=pcg(A,framemuladj(f,Fa,Fs,s),kv.tol,kv.maxit);
 
 
 
