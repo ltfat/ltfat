@@ -1,17 +1,17 @@
-function h=framemul(f,Fa,Fs,sym,varargin)
+function h=framemul(f,Fa,Fs,s,varargin)
 %FRAMEMUL  Frame multiplier
-%   Usage:  h=framemul(f,Fa,Fs,sym);
+%   Usage:  h=framemul(f,Fa,Fs,s);
 %
 %   Input parameters:
 %          Fa   : Analysis frame
 %          Fs   : Synthesis frame
-%          sym  : Symbol
+%          s    : Symbol
 %          f    : Input signal
 %
 %   Output parameters: 
 %          h    : Output signal
 %
-%   `framemul(f,Fa,Fs,sym)` applies the frame multiplier with symbol *sym*
+%   `framemul(f,Fa,Fs,s)` applies the frame multiplier with symbol *s*
 %   to the signal *f*. The frame *Fa* is used for analysis and the frame
 %   *Fs* for synthesis.
 %
@@ -23,7 +23,7 @@ if nargin < 4
     error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-h=frsyn(Fs,sym.*frana(Fa,f));
+h=frsyn(Fs,s.*frana(Fa,f));
 
 
 

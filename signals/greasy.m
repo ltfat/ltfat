@@ -14,8 +14,9 @@ function [s,fs]=greasy()
 %   played. To get integer values use `round(greasy*2048)`.
 %
 %   The signal was obtained from Wavelab:
-%   `<http://www-stat.stanford.edu/~wavelab/>`_, it is a part of the
-%   first sentence of the TIMIT speech corpus:
+%   `<http://www-stat.stanford.edu/~wavelab/>`_, it is a part of the first
+%   sentence of the TIMIT speech corpus "She had your dark suit in greasy
+%   wash water all year":
 %   `<http://www.ldc.upenn.edu/Catalog/CatalogEntry.jsp?catalogId=LDC93S1>`_.
 %
 %   Examples:

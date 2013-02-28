@@ -1,0 +1,20 @@
+MATLABROOT=C:\Program Files\MATLAB\R2011b
+EXT=mexw64
+MEXTGT=PolygonClip.$(EXT)
+MEXSRC=PolygonClip.c ../GPC/gpc.c
+LIBS= -L"$(MATLABROOT)\bin\win64" -lmex -lmx
+INCLUDES= -I"$(MATLABROOT)\extern\include" -I../GPC
+
+CC=gcc
+CFLAGS=-std=c99 -Wall -m64 -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) -static-libgcc mex.def
+
+
+all: $(SOURCE) 
+	echo EXPORTS > mex.def & echo mexFunction >> mex.def 
+	$(CC) $(CFLAGS) 
+	del mex.def 
+
+clean:
+	del $(MEXTGT)
+
+.PHONY: all clean
