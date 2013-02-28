@@ -17,7 +17,8 @@ function [h,relres,iter]=iframemul(f,Fa,Fs,sym,varargin)
 %   and the frame *Fs* for synthesis.
 %
 %   Because the inverse of a frame multiplier is not necessarily again a
-%   frame multiplier, the problem is solved using an iterative algorithm.
+%   frame multiplier for the same frames, the problem is solved using an 
+%   iterative algorithm.
 %
 %   `[h,relres,iter]=iframemul(...)` additionally returns the relative
 %   residuals in a vector *relres* and the number of iteration steps *iter*.
