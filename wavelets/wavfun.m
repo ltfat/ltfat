@@ -22,10 +22,10 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %
 %   'ana','syn' - Which filters to use for generating the wavelet and scaling functions.
 %   
-%   'fft','conv' - How to do the computations. 'fft' option is much faster
-%   for higher N (N>10).
+%   'fft','conv' - How to do the computations. What is faster depends on
+%   the speed of the conv2 function.
 %
-%   WARNING! The output lengths *L* depend on *N* exponentially like:
+%   WARNING! The output array lengths *L* depend on *N* exponentially like:
 %   
 %   .. L=(m-1)*(a^N-1)/(a-1) + 1
 %
@@ -33,8 +33,7 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %
 %   where *a* is subsamling factor after the lowpass filter in the wavelet
 %   filterbank and *m* is length of the filters. Expect isues for
-%   high N e.g. {'db',10} m=20 and N=20 yeld ~150MB array and can take over 10s
-%   (assuming 'fft' flag is used, the 'conv' flag is way slower).
+%   high N e.g. {'db',10} m=20 and N=20 yeld ~150MB array.
 %
 %   Examples:
 %   ---------
@@ -49,7 +48,7 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 
 definput.keyvals.N = 6;
 definput.flags.ansy = {'ana','syn'};
-definput.flags.howcomp = {'fft','conv'};
+definput.flags.howcomp = {'conv','fft'};
 [flags,kv,N]=ltfatarghelper({'N'},definput,varargin);
 w = fwtinit(w,flags.ansy);
 a = w.a(1);
@@ -65,7 +64,7 @@ end
 if(flags.do_conv)
    % Linear convolutions in the time domain.
    for n=2:N
-      wtemp = convolve(comp_ups(wtemp,a,1),lo);
+      wtemp = conv2(comp_ups(wtemp,a,1),lo);
    end
 elseif(flags.do_fft)
    % Cyclic convolutions and upsampling in freqency domain.
