@@ -1,22 +1,26 @@
-function [V,D]=framemuleigs(Fa,Fs,sym,varargin)
+function varargout=framemuleigs(Fa,Fs,s,varargin)
 %FRAMEMULEIGS  Eigenpairs of frame multiplier
-%   Usage:  h=framemuleigs(Fa,Fs,sym,K);
-%           h=framemuleigs(Fa,Fs,sym,K,...);
+%   Usage:  [V,D]=framemuleigs(Fa,Fs,s,K);
+%           D=framemuleigs(Fa,Fs,s,K,...);
 %
 %   Input parameters:
 %         Fa    : Frame analysis definition
 %         Fs    : Frame analysis definition
-%         sym   : symbol of Gabor multiplier
+%         s     : symbol of Gabor multiplier
 %         K     : Number of eigenvectors to compute.
 %   Output parameters:
 %         V     : Matrix containing eigenvectors.
 %         D     : Eigenvalues.
 %
-%   `framemuleigs(Fa,Fs,sym,K)` computes the *K* largest eigenvalues and eigen-
-%   vectors of the frame multiplier with symbol *c*, analysis frame *Fa*
-%   and synthesis frame *Fs*.
+%   `[V,D]=framemuleigs(Fa,Fs,s,K)` computes the *K* largest eigenvalues and eigen-
+%   vectors of the frame multiplier with symbol *s*, analysis frame *Fa*
+%   and synthesis frame *Fs*. The eigenvectors are stored as column
+%   vectors in the matrix *V* and the corresponding eigenvalues in the
+%   vector *D*.
 %
 %   If *K* is empty, then all eigenvalues/pairs will be returned.
+%
+%   `D=framemuleigs(...)` computes only the eigenvalues.
 %
 %   `framemuleigs` takes the following parameters at the end of the line of input
 %   arguments:
@@ -82,7 +86,7 @@ definput.flags.method={'auto','iter','full'};
 % Do the computation. For small problems a direct calculation is just as
 % fast.
 
-L=framelengthcoef(Fa,size(sym,1));
+L=framelengthcoef(Fa,size(s,1));
 
 if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
     
@@ -96,14 +100,14 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   opts.tol    = kv.tol;
   
   if doV
-    [V,D] = eigs(@(x) frsyn(Fs,sym.*frana(Fa,x)),L,K,'LM',opts);
+    [V,D] = eigs(@(x) frsyn(Fs,s.*frana(Fa,x)),L,K,'LM',opts);
   else
-    D     = eigs(@(x) frsyn(Fs,sym.*frana(Fa,x)),L,K,'LM',opts);
+    D     = eigs(@(x) frsyn(Fs,s.*frana(Fa,x)),L,K,'LM',opts);
   end;
 
 else
   % Compute the transform matrix.
-  bigM=frsyn(F,diag(sym)*frana(F,eye(L)));
+  bigM=framematrix(Fs,L)*diag(s)*framematrix(Fa,L)'; 
 
   if doV
     [V,D]=eig(bigM);
@@ -113,9 +117,11 @@ else
 
 end;
 
-% The output from eig and eigs is a diagonal matrix, so we must extract the
-% diagonal.
-D=diag(D);
+% The output from eig and eigs is sometimes a diagonal matrix, so we must
+% extract the diagonal.
+if doV
+  D=diag(D);
+end;
 
 % Sort them in descending order
 [~,idx]=sort(abs(D),1,'descend');
@@ -123,6 +129,9 @@ D=D(idx(1:K));
 
 if doV
   V=V(:,idx(1:K));
+  varargout={V,D};
+else
+  varargout={D};
 end;
 
 % Clean the eigenvalues, if we know that they are real-valued
