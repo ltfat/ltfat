@@ -1,18 +1,40 @@
-function [w,s,xvals] = wavfun(g,N,varargin)
+function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 % WAVFUN  Wavelet Function
-%    Usage: [w,s,xvals] = wavfun(g,N) 
+%    Usage: [w,s,xvals] = wavfun(g) 
+%           [w,s,xvals] = wavfun(g,N) 
 %
 %   Input parameters:
-%         g     : Wavelet filterbank
+%         w     : Wavelet filterbank
 %         N     : Number of iterations
 %   Output parameters:
-%         w     : Approximation of wavelet function(s)
-%         s     : Approximation of the scaling function
+%         wfunc : Approximation of wavelet function(s)
+%         sfunc : Approximation of the scaling function
 %         xvals : Correct x-axis values
 %
-%   Iteratively generate a discrete approximation of wavelet and scaling
-%   functions. The algorithm is equal to the DWT reconstruction of a single
-%   coefficient at level $N$ set to 1.
+%   Iteratively generate (*N* iterations) a discrete approximation of wavelet
+%   and scaling functions using filters obtained from *w*. The possible formats of *w*
+%   are the same as for the |fwt|_ function. The algorithm is equal to the 
+%   DWT reconstruction of a single coefficient at level $N$ set to 1. *xvals*
+%   contains correct x-axis values. All but alst collumns belong to the
+%   *wfunc*, last one to the *sfunc*.
+%   
+%   The following flag groups are supported (first is default):
+%
+%   'ana','syn' - Which filters to use for generating the wavelet and scaling functions.
+%   
+%   'fft','conv' - How to do the computations. 'fft' option is much faster
+%   for higher N (N>10).
+%
+%   WARNING! The output lengths *L* depend on *N* exponentially like:
+%   
+%   .. L=(m-1)*(a^N-1)/(a-1) + 1
+%
+%   .. math:: L=\frac{a^N-1}{a-1}(m-1)+1
+%
+%   where *a* is subsamling factor after the lowpass filter in the wavelet
+%   filterbank and *m* is length of the filters. Expect isues for
+%   high N e.g. {'db',10} m=20 and N=20 yeld ~150MB array and can take over 10s
+%   (assuming 'fft' flag is used, the 'conv' flag is way slower).
 %
 %   Examples:
 %   ---------
@@ -20,57 +42,80 @@ function [w,s,xvals] = wavfun(g,N,varargin)
 %   Approximation of a Daubechies wavelet and scaling functions from the
 %   12 tap filters:::
 % 
-%     w = fwtinit({'db',6});
-%     [wfn,sfn,xvals] = wavfun(w.g,6);
+%     [wfn,sfn,xvals] = wavfun({'db',6});
 %     plot(xvals,[wfn,sfn]);
 %     legend('wavelet function','scaling function');
 %
 
-definput.keyvals.a = [];
-[flags,kv,a]=ltfatarghelper({'a'},definput,varargin);
-if(isstruct(g))
-    if(isempty(a))
-       a = g.a; 
-    end
-    g=g.g;
-end
-gLen = length(g);
+definput.keyvals.N = 6;
+definput.flags.ansy = {'ana','syn'};
+definput.flags.howcomp = {'fft','conv'};
+[flags,kv,N]=ltfatarghelper({'N'},definput,varargin);
+w = fwtinit(w,flags.ansy);
+a = w.a(1);
+filtNo = length(w.filts);
 
-if(isempty(a))
-       a = gLen*ones(gLen,1);
+% Copy impulse responses as columns of a single matrix.
+lo = w.filts{1}.h(:);
+wtemp = zeros(length(lo),filtNo);
+for ff=1:filtNo
+    wtemp(:,ff) =  w.filts{ff}.h(:);
+end
+
+if(flags.do_conv)
+   % Linear convolutions in the time domain.
+   for n=2:N
+      wtemp = convolve(comp_ups(wtemp,a,1),lo);
+   end
+elseif(flags.do_fft)
+   % Cyclic convolutions and upsampling in freqency domain.
+   % Much faster for higher N (N>5). 
+   m = length(lo);
+   L = (m-1)*(a^N-1)/(a-1) + 1;
+   % Padding with zeros to avoid time aliasing.
+   wtmpFFT = fft(wtemp,nextfastfft(2*m-1));
+   for n=2:N
+      loFFT = fft(lo,a*size(wtmpFFT,1));
+      wtmpFFT = bsxfun(@times,repmat(wtmpFFT,a,1),loFFT);
+   end
+
+   wtemp = real(ifft(wtmpFFT));
+   wtemp = wtemp(1:L,:);
 else
-    if(length(a)==1)
-        a = a*ones(gLen,1); 
-    else
-       if(length(a)~=gLen)
-            error('%s: Number of the subsampling factors is not equal to the number of filters.',upper(mfilename));  
-       end
-    end
+   error('%s: Unexpected flag.',upper(mfilename));
 end
 
-
-
-lo = g{1}.h(:);
-s = lo;
-wtemp = cell(gLen-1,1);
-for ii=1:gLen-1
-    wtemp{ii} = g{ii+1}.h(:);
-end
-
-for n=1:N
-    for ii=1:gLen-1 
-       wtemp{ii} = convolve(comp_ups(wtemp{ii},a(1),1),lo);
-    end
-    s = convolve(comp_ups(s,a(1),1),lo);
-end
-
-w = zeros(length(wtemp{1}),gLen-1);
-for ii=1:gLen-1 
-   w(:,ii) = wtemp{ii}(end:-1:1)/norm(wtemp{ii});
-end
-s = s(end:-1:1)/norm(s);
-
+% Final fomating
+sfunc = wtemp(:,1);
+wfunc = wtemp(:,2:end);
 
 if(nargout>2)
-    xvals=linspace(0,length(lo)-1/length(s),length(s));
+    % Calculate xvals
+    xvals = zeros(length(sfunc),filtNo);
+    zeroPos = findFuncZeroPos(w.filts{1}.d,a,N);
+    sxvals = -zeroPos + (1:length(sfunc));
+    xvals(:,end)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
+
+    for ii=1:filtNo-1 
+       zeroPos = findFuncZeroPos(w.filts{ii+1}.d,a,N);
+       sxvals = -zeroPos + (1:length(sfunc));
+       xvals(:,ii)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
+    end
 end
+%END WAVFUN
+
+
+function zeroPos = findFuncZeroPos(baseZeroPos,a1,N)
+%FINDFUNCZEROPOS Finds zero index position in the *N* iteration approfimation of 
+%                the wavelet or scaling functions.
+
+zeroPos = baseZeroPos;
+for n=2:N
+   zeroPos = zeroPos*a1-(a1-1) + baseZeroPos-1;
+end
+
+
+
+
+
+
