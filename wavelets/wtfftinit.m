@@ -76,10 +76,15 @@ elseif(do_func)
       H(:,end+1-ss) = H(:,end+1-ss)/max(H(:,end+1-ss));
    end
 elseif(do_filt)
-      h = fwtinit(w);
-      [wvals,~,xvals] = wavfun(h,7);
+      h = fwtinit(w,'syn');
+      filtLen = length(h.filts{2}.h);
+      [wvals,~,xvals] = wavfun(h);
+      wvalsInt = cumsum([zeros(1,size(wvals,2));wvals;zeros(1,size(wvals,2))]);
+      
    for ss=1:scales
-      wh = interp1(xvals,wvals,xvals(1):1/s(ss):xvals(end)); 
+      samples = (filtLen-1)/s(ss);
+      t = (0:1/s(ss):filtLen-1);
+      wh = interp1(wvalsInt,0:length(wvalsInt)-1,t); 
       whlen = length(wh);
       whtemp = zeros(Ls,1);
       whtemp(1:whlen)= wh(:);

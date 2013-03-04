@@ -23,14 +23,14 @@ function out = comp_upconv(in,outLen,filts,up,skip,ext,filtUps)
 
 noOfFilts = length(filts);
 fLen = length(comp_ups(filts{1},filtUps,1));
-inLen = length(in{1});
+inLen = size(in{1},1);
 out = zeros(outLen,1);
 
 inExt = zeros(inLen + 2*(fLen-1),1);
 
 for ff=1:noOfFilts
     if(ext)
-      inExt = extendBoundary(in{ff},fLen-1,'per');  
+      inExt = comp_extBoundary(in{ff},fLen-1,'per');  
     else  
       inExt(fLen:end-fLen+1) = in{ff};
     end

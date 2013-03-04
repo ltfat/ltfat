@@ -44,6 +44,7 @@ function [H, G, a] = wfilt_db(N)
 %
 %      w = fwtinit({'db',8});
 %     figure(1);
+%     subfig(2,1,1);
 %     wtfftfreqz(w.h);
 %
 

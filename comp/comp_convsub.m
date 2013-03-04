@@ -36,11 +36,11 @@ else
 end
 
 
-inExt = extendBoundary(in,fLen-1,ext,sub);
+inExt = comp_extBoundary(in,fLen-1,ext,sub);
 
 for ff=1:noOfFilts
     outTemp = conv(inExt,comp_ups(filts{ff}(:),filtUps,1));
-    outTemp = comp_downs(outTemp(fLen+skip:end-fLen+1),sub,1);
+    outTemp = comp_downs(outTemp(fLen+skip:end-fLen+1),sub,0);
     toWrite = min([length(outTemp),outLen]);
     if(noOfFilts>1)
        out{ff}(1:toWrite) = outTemp(1:toWrite);

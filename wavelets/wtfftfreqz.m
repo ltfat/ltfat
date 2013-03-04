@@ -28,24 +28,26 @@ end
 
 fNo = numel(h);
 
-
-H = cell(fNo,1);
+H = zeros(Ls,fNo);
+%H = cell(fNo,1);
 for jj=1:fNo
    hlen = length(h{jj}.h);
-   H{jj} = wfiltstruct('FREQ');
-   H{jj}.d = 0;
+   %H{jj} = wfiltstruct('FREQ');
+   %H{jj}.d = 0;
    if(hlen<Ls) 
       %well behaved case
       htemp = zeros(Ls,1);
       htemp(1:hlen) = h{jj}.h(:);
-      H{jj}.H = fft(circshift(htemp,-(h{jj}.d-1)));
+      %H{jj}.H = fft(circshift(htemp,-(h{jj}.d-1)));
+      H(:,jj) = fft(circshift(htemp,-(h{jj}.d-1)));
    else
       %periodic wraparound od the filter impulse response
       ratio = hlen/Ls;
       htemp = zeros(1,ceil(ratio)*Ls);
       htemp(1:hlen) = h{jj}.h(:);
       htemp = circshift(htemp,-(h{jj}.d-1));
-      H{jj}.H = fft(sum(reshape(htemp,ceil(ratio),Ls)));
+      %H{jj}.H = fft(sum(reshape(htemp,ceil(ratio),Ls)));
+      H(:,jj) = fft(sum(reshape(htemp,ceil(ratio),Ls)));
    end
 end 
 

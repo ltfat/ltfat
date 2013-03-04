@@ -149,15 +149,14 @@ end
 
 cte=sqrt(2)/sum(rh);
 rh=cte*rh;
+fLen = length(rh);
 
 g{1} = rh;
-g{2} = -(-1).^(1:length(rh)).*g{1}(end:-1:1);
+g{2} = -(-1).^(1:fLen).*g{1}(end:-1:1);
  
-h{1}=g{1}(length(g{1}):-1:1);
-h{2}=g{2}(length(g{2}):-1:1);
-
-
-a= [2;2];
+h{1}=g{1}(fLen:-1:1);
+h{2}=g{2}(fLen:-1:1);
+a = [2;2];
 
 
 function  bin=dec2bina(num,bits)

@@ -43,7 +43,7 @@ for ff=1:filtNo
      % analysis filters. 
      % Instead, we could have used causal filters here and do the
      % delay compensation at the end (cropping f).
-     skip(ff) = length(g{ff}.h)-1 - (a(ff)-1);
+     skip(ff) = length(g{ff}.h) - (a(ff)-1) -1;
   end
 end
 %tempca = c{1}(:,ch);

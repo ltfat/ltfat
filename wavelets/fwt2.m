@@ -85,13 +85,13 @@ Lccols = fwtclength(size(f,2),h,J);
 
 if(flags.do_standard)
    Jstep = 1;
-   c = fwt(f,h,Jstep,1,'per');
-   c = fwt(c,h,Jstep,2,'per');
+   c = fwt(f,h,Jstep,'dim',1,'per');
+   c = fwt(c,h,Jstep,'dim',2,'per');
    for jj=1:J-1
       colRange = 1:Lcrows(end-jj*(nFilts-1)+1);
       rowRange = 1:Lccols(end-jj*(nFilts-1)+1);
-      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,1,'per');
-      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,2,'per');
+      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,'dim',1,'per');
+      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,'dim',2,'per');
    end
 elseif(flags.do_tensor)
    c = fwt(f,h,J,'dim',1,'per');

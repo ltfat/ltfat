@@ -1,4 +1,4 @@
-function test_failed = test_fwtpr(verbose)
+function test_failed = test_ufwtpr(verbose)
 %TEST_COMP_FWT_ALL
 %
 % Checks perfect reconstruction of the wavelet transform of different
@@ -7,8 +7,8 @@ function test_failed = test_fwtpr(verbose)
 test_failed = 0;
 if(nargin>0)
    verbose = 1;
-   which comp_fwt -all
-   which comp_ifwt -all
+   which comp_ufwt -all
+   which comp_iufwt -all
 else
    verbose = 0;
 end
@@ -22,9 +22,8 @@ end
 %  which comp_fwt_all
 
 
-type = {'dec'};
-ext = {'per','zero','odd','even'};
-format = {'pack','cell'};
+type = {'undec'};
+ext = {'per'};
 
 prefix = 'wfilt_';
 test_filters = {
@@ -75,11 +74,7 @@ test_filters = {
 J = 4;
 testLen = 10*2^J-1;%(2^J-1);
 
-for formatIdx = 1:length(format)
-    formatCurr = format{formatIdx};
-
 for extIdx=1:length(ext)  
-extCur = ext{extIdx};
 %for inLenRound=0:2^J-1
 for inLenRound=0:0
 %f = randn(14576,1);
@@ -91,31 +86,27 @@ f = randn(testLen+inLenRound,1);
     
 for typeIdx=1:length(type)
   typeCur = type{typeIdx};
+
+     extCur = ext{extIdx};  
+     
+     
      for tt=1:length(test_filters)
          actFilt = test_filters{tt};
          %fname = strcat(prefix,actFilt{1});
          %w = fwtinit(test_filters{tt});  
 
      for jj=1:J
-           if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s, inLen=%d, format=%s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr); end; 
+           if verbose, fprintf('J=%d, filt=%s, inLen=%d\n',jj,actFilt{1},length(f)); end; 
            
-           if(strcmp(formatCurr,'pack'))
-              c = fwt(f,test_filters{tt},jj,extCur);
-              fhat = ifwt(c,test_filters{tt},jj,length(f),extCur);
-           elseif(strcmp(formatCurr,'cell'))
-              [c,Lc] = fwt(f,test_filters{tt},jj,extCur);
-              ccell = wavpack2cell(c,Lc);
-              fhat = ifwt(ccell,test_filters{tt},jj,length(f),extCur); 
-           else
-               error('Should not get here.');
-           end
-           
-           
+           c = ufwt(f,test_filters{tt},jj);
+           %[cvec ,Lc] = cell2pack(c);
+           %c = pack2cell(cvec,Lc);
+            fhat = iufwt(c,test_filters{tt},jj);
             err = norm(f(:)-fhat(:));
             if err>1e-6
                test_failed = 1; 
                if verbose
-                 fprintf('err=%d, J=%d, filt=%s, type=%s, ext=%s, inLen=%d',err,jj,actFilt{1},extCur,typeCur,testLen+inLenRound);
+                 fprintf('err=%d, J=%d, filt=%s, inLen=%d',err,jj,actFilt{1},testLen+inLenRound);
                  figure(1);clf;stem([f,fhat]);
                  figure(2);clf;stem([f-fhat]);
                end
@@ -127,8 +118,6 @@ for typeIdx=1:length(type)
      if test_failed, break; end;
   end 
    if test_failed, break; end;
-end
- if test_failed, break; end;
 end
  if test_failed, break; end;
 end
