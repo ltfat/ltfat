@@ -38,10 +38,12 @@ else
   filts = h.filts;
   for jj=1:J
     for ff=filtNo:-1:2
-       Lc(end-runPtr) = floor((levelLen+(length(filts{ff}.h)-1))/h.a(ff));
+       skip = h.a(ff) - 1;
+       Lc(end-runPtr) = ceil((levelLen+(length(filts{ff}.h)-1)-skip)/h.a(ff));
        runPtr = runPtr + 1;
     end
-    levelLen = floor((levelLen+(length(filts{1}.h)-1))/h.a(1));
+    skip = h.a(1) - 1;
+    levelLen = ceil((levelLen+(length(filts{1}.h)-1)-skip)/h.a(1));
  end
 end
 Lc(1)=levelLen; 

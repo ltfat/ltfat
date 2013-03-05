@@ -30,22 +30,26 @@ if(dim>2)
     error('%s: Multidimensional data is not accepted.',upper(mfilename));
 end
 
+% Actual computation
+Lc = cellfun(@(x) size(x,1), ccell);
+cvec = cell2mat(ccell);
 
-JJ = numel(ccell);
-Lc = zeros(JJ,1);
-for jj=1:JJ
-   Lc(jj) =  size(ccell{jj},1);
-end
+%JJ = numel(ccell);
 
-W = size(ccell{end},2);
-% ALLOCATING OUTPUT
-cvec = zeros(sum(Lc),W);
-% DO THE COPY
-LcStart = 1 + cumsum([0;Lc(1:end-1)]); 
-LcEnd = cumsum(Lc); 
-for jj=1:JJ
-  cvec(LcStart(jj):LcEnd(jj),:) = ccell{jj};
-end
+% Lc = zeros(JJ,1);
+% for jj=1:JJ
+%    Lc(jj) =  size(ccell{jj},1);
+% end
+
+% W = size(ccell{end},2);
+% % ALLOCATING OUTPUT
+% cvec = zeros(sum(Lc),W);
+% % DO THE COPY
+% LcStart = 1 + cumsum([0;Lc(1:end-1)]); 
+% LcEnd = cumsum(Lc); 
+% for jj=1:JJ
+%   cvec(LcStart(jj):LcEnd(jj),:) = ccell{jj};
+% end
 
 % Reshape back to rows
 if(dim==2)

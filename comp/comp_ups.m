@@ -1,12 +1,14 @@
 function fups = comp_ups(f,varargin)
 %COMP_UPS Upsampling
-%   Usage: fups = comp_ups(f,a,type) 
-%          fups = comp_ups(f,a,type,'dim',dim) 
+%   Usage: fups = comp_ups(f,a) 
+%          fups = comp_ups(f,a,type,'dim',dim)
+%          fups = comp_ups(f,a,skip,L,'dim',dim) 
 %   
 %   Input parameters:
 %         f     : Input vector/matrix.
 %         a     : Upsampling factor.
-%         type  : Type of the upsampling.
+%         type  : Type of the upsampling/initial skip.
+%         L     : Required output length.
 %         dim   : Direction of upsampling.
 %   Output parameters:
 %         fups  : Upsampled vector/matrix.
@@ -20,6 +22,10 @@ function fups = comp_ups(f,varargin)
 %   type=1: No beginning nor tailing zeros.
 %   type=2: Includes just begining zeros.
 %   type=3: Includes both. 
+%
+%   If non-empty parameter *L* is passed, it specifies the required output
+%   length and the *type* changes to *skip* which denotes how many zeros to
+%   add before the first sample.
 %
 %   Examples:
 %   ---------
@@ -37,18 +43,27 @@ function fups = comp_ups(f,varargin)
 definput.keyvals.dim = [];
 definput.keyvals.a = 2;
 definput.keyvals.type = 0;
-[flags,kv,a,type]=ltfatarghelper({'a','type'},definput,varargin);
+definput.keyvals.L = [];
+[flags,kv,a,type,L]=ltfatarghelper({'a','type','L'},definput,varargin);
 
 % a have to be positive integer
 if(a<1)
     a = 1;
 end
+if(type<0)
+    type = 0;
+end
+
 if(a<0 || rem(a,1)~=0)
     error('%s: Parameter *a* have to be a positive integer.',upper(mfilename));
 end
-% supported type are 0-3
-if(type<0||type>3)
+% if L == [], supported types are 0-3
+if(isempty(L)&&(type<0||type>3))
     error('%s: Unsupported upsampling type.',upper(mfilename));
+end
+
+if(~isempty(L)&&type>=L)
+    error('%s: Initial zeros count is bigger than the output length.',upper(mfilename));
 end
 
 if(ndims(f)>2)
@@ -56,24 +71,31 @@ if(ndims(f)>2)
 end
 
 %% ----- step 1 : Verify f and determine its length -------
-[f,L,Ls,~,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
+[f,~,Ls,~,dim,~,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
 
-if(type==0)
-  % Include just tailing zeros.
-  fups=zeros(a*Ls,size(f,2));    
-  fups(1:a:end,:)=f; 
-elseif(type==1)
-  % Do not include beginning nor tailing zeros.
-  fups=zeros(a*Ls-(a-1),size(f,2));    
-  fups(1:a:end,:)=f;    
-elseif(type==2)
-  % Include just beginning zeros.
-  fups=zeros(a*Ls,size(f,2));    
-  fups(a:a:end,:)=f;  
-elseif(type==3)
-  % Include both beginning and tailing zeros.
-  fups=zeros(a*Ls+a-1,size(f,2));    
-  fups(a:a:end,:)=f;   
+
+if(~isempty(L))
+    fups=zeros(L,size(f,2)); 
+    fbound = min(ceil((L-type)/a),Ls);
+    fups(1+type:a:fbound*a+type,:)=f(1:fbound); 
+else
+    if(type==0)
+      % Include just tailing zeros.
+      fups=zeros(a*Ls,size(f,2));    
+      fups(1:a:end,:)=f; 
+    elseif(type==1)
+      % Do not include beginning nor tailing zeros.
+      fups=zeros(a*Ls-(a-1),size(f,2));    
+      fups(1:a:end,:)=f;    
+    elseif(type==2)
+      % Include just beginning zeros.
+      fups=zeros(a*Ls,size(f,2));    
+      fups(a:a:end,:)=f;  
+    elseif(type==3)
+      % Include both beginning and tailing zeros.
+      fups=zeros(a*Ls+a-1,size(f,2));    
+      fups(a:a:end,:)=f;   
+    end
 end
 
 permutedSizeAlt = size(fups);

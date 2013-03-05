@@ -16,22 +16,14 @@ function c = comp_fwt(f,h,J,a,Lc,ext)
 % wavelet filters? If your filterbank has different subsampling factors following the first two filters, please send a feature request.
 assert(a(1)==a(2),'First two elements of *a* are not equal. Such wavelet filterbank is not suported.');
 
-
 filtNo = length(h);
 
-% Determine idxs of wavelet subbands
-LcStarts = 1 + cumsum([0;Lc(1:end-1)]); 
-LcEnds = cumsum(Lc); 
-
-[inLen, W] = size(f);
-c = zeros(sum(Lc),W);
-
-% For holding the impulse responses.
-tmph = cell(filtNo,1);
-% For holding the 
+% Impulse responses.
+filtLen = length(h{1}.h);
+hMat = zeros(filtLen,filtNo);
 skip = zeros(filtNo,1);
 for ff=1:filtNo
-  tmph{ff} =  h{ff}.h; 
+  hMat(:,ff) =  h{ff}.h(:);
   if(strcmp(ext,'per'))
      % Initial shift of the filter to compensate for it's delay.
      % "Zero" delay transform is produced
@@ -48,25 +40,23 @@ for ff=1:filtNo
   end
 end
 
-% runPtr = 0;
-% c = f;
-% for jj=1:J
-%     c = comp_ufilterbank_td(c(LcStarts(runPtr):LcEnds(runPtr)),gMat,a,ext);
-% end
-
-
-for ch=1:W
-  tempca = f(:,ch);
-  runPtr = 0;
-  for jj=1:J
-     for ff=filtNo:-1:2
-        c(LcStarts(end-runPtr):LcEnds(end-runPtr),ch) = comp_convsub(tempca,Lc(end-runPtr),{tmph{ff}},a(ff),skip(ff),ext,0);
-        runPtr = runPtr + 1;
-     end
-     tempca = comp_convsub(tempca,Lc(end-runPtr+1),{tmph{1}},a(1),skip(1),ext,0);
-  end
-  c(LcStarts(1):LcEnds(1),ch) = tempca;
+ccell = cell(numel(Lc),1);
+%Non-uniform filterbank
+runPtr = numel(Lc)-filtNo+2;
+ctmp = f;
+for jj=1:J
+    % Run filterbank
+    ctmp = comp_filterbank_td(ctmp,hMat,a,skip,ext);
+    % Bookkeeping
+    [ccell{runPtr:runPtr+filtNo-2}] = ctmp{2:end};
+    ctmp = ctmp{1};
+    runPtr = runPtr - (filtNo - 1);
 end
+% Save final approximation coefficients
+ccell{1} = ctmp;
+c = wavcell2pack(ccell);
+
+
 
        
 

@@ -40,7 +40,7 @@ definput.keyvals.skip = 0;
 definput.keyvals.L = [];
 [flags,kv,skip,L]=ltfatarghelper({'skip','L','dim'},definput,varargin);
 
-% a have to be positive integer
+% a have to be a positive integer
 if(a<1)
     a = 1;
 end

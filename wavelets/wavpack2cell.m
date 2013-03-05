@@ -49,15 +49,19 @@ if(sum(Lc)~=size(cvec,1))
     error('%s: Sum of elements of Lc is not equal to vector length along dimension %d. Possibly wrong dim?',upper(mfilename),dim);
 end
 
-JJ = length(Lc);
-% ALLOCATING OUTPUT
-ccell = cell(JJ,1);
-% DO THE COPY
-LcEnd = cumsum(Lc); 
-LcStart = 1 + cumsum([0;Lc(1:end-1)]); 
-for jj=1:JJ
-  ccell{jj} = cvec(LcStart(jj):LcEnd(jj),:);
-end
+% Actual computaion
+ccell = mat2cell(cvec,Lc);
+
+
+% JJ = length(Lc);
+% % ALLOCATING OUTPUT
+% ccell = cell(JJ,1);
+% % DO THE COPY
+% LcEnd = cumsum(Lc); 
+% LcStart = 1 + cumsum([0;Lc(1:end-1)]); 
+% for jj=1:JJ
+%   ccell{jj} = cvec(LcStart(jj):LcEnd(jj),:);
+% end
 
 
 

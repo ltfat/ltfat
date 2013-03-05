@@ -17,9 +17,9 @@ function fout = comp_extBoundary(f,extLen,ext,varargin)
 %
 
 
-if(ndims(f)>2)
-    error('%s: Multidimensional signals (d>2) are not supported.',upper(mfilename));
-end
+ if(ndims(f)>2)
+     error('%s: Multidimensional signals (d>2) are not supported.',upper(mfilename));
+ end
 
 definput.flags.ext = {'per','ppd','perdec','odd','even','sym','asym',...
                       'symw','asymw','zero','zpd','sp0'};
@@ -28,20 +28,20 @@ definput.keyvals.dim = [];
 [flags,kv,a]=ltfatarghelper({'a'},definput,varargin);
 
 % How slow is this?
-[f,L,Ls,~,dim,~,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
+[f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
 
 
-fout = zeros(length(f) + 2*extLen,size(f,2));
+fout = zeros(size(f,1) + 2*extLen,size(f,2));
 fout(extLen+1:end-extLen,:) = f;
 
-legalExtLen = min([length(f),extLen]);
-timesExtLen = floor(extLen/length(f));
-moduloExtLen = mod(extLen,length(f));
+legalExtLen = min([size(f,1),extLen]);
+timesExtLen = floor(extLen/size(f,1));
+moduloExtLen = mod(extLen,size(f,1));
 
 % zero padding by default
 % ext: 'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 if(strcmp(ext,'perdec')) % possible last samples replications
-    moda = mod(length(f),a);
+    moda = mod(size(f,1),a);
     repl = a-moda;
     if(moda)
         % version with replicated last sample
@@ -70,8 +70,8 @@ if(strcmp(ext,'perdec')) % possible last samples replications
     end
 elseif(strcmp(ext,'per') || strcmp(ext,'ppd'))
        % if ext > length(f)
-       fout(1+extLen-timesExtLen*length(f):extLen,:) = repmat(f,timesExtLen,1);
-       fout(end-extLen+1:end-extLen+timesExtLen*length(f),:) = repmat(f,timesExtLen,1);
+       fout(1+extLen-timesExtLen*size(f,1):extLen,:) = repmat(f,timesExtLen,1);
+       fout(end-extLen+1:end-extLen+timesExtLen*size(f,1),:) = repmat(f,timesExtLen,1);
        %  mod(extLen,length(f)) samples are the rest
        fout(1:moduloExtLen,:) = f(end-moduloExtLen+1:end,:);
        fout(end-moduloExtLen+1:end,:) = f(1:moduloExtLen,:);
@@ -79,14 +79,14 @@ elseif(strcmp(ext,'sym')||strcmp(ext,'even'))
     fout(1+extLen-legalExtLen:extLen,:) = f(legalExtLen:-1:1,:);
     fout(end-extLen+1:end-extLen+legalExtLen,:) = f(end:-1:end-legalExtLen+1,:);
 elseif(strcmp(ext,'symw'))
-    legalExtLen = min([length(f)-1,extLen]);
+    legalExtLen = min([size(f,1)-1,extLen]);
     fout(1+extLen-legalExtLen:extLen,:) = f(legalExtLen+1:-1:2,:);
     fout(end-extLen+1:end-extLen+legalExtLen,:) = f(end-1:-1:end-legalExtLen,:);
 elseif(strcmp(ext,'asym')||strcmp(ext,'odd'))
     fout(1+extLen-legalExtLen:extLen,:) = -f(legalExtLen:-1:1,:);
     fout(end-extLen+1:end-extLen+legalExtLen,:) = -f(end:-1:end-legalExtLen+1,:);
 elseif(strcmp(ext,'asymw'))
-    legalExtLen = min([length(f)-1,extLen]);
+    legalExtLen = min([size(f,1)-1,extLen]);
     fout(1+extLen-legalExtLen:extLen,:) = -f(legalExtLen+1:-1:2,:);
     fout(end-extLen+1:end-extLen+legalExtLen,:) = -f(end-1:-1:end-legalExtLen,:);
 elseif(strcmp(ext,'sp0'))

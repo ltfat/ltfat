@@ -16,21 +16,14 @@ function f = comp_ifwt(c,g,J,a,Lc,Ls,ext)
 assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterbank is not suported.');
 
 filtNo = numel(g);
-LcStart = 1 + cumsum([0;Lc(1:end-1)]); 
-LcEnd = cumsum(Lc); 
 Lc(end+1) = Ls;
 
-% Determine number of channels.
-chans = size(c,2); 
-f = zeros(Ls,chans);
-
-
+filtLen = numel(g{1}.h);
 % For holding the impulse responses.
-tmpg = cell(filtNo,1);
-% For holding the 
+gMat = zeros(filtLen,filtNo);
 skip = zeros(filtNo,1);
 for ff=1:filtNo
-  tmpg{ff} =  g{ff}.h; 
+  gMat(:,ff) = g{ff}.h;
   if(strcmp(ext,'per'))
      % Initial shift of the filter to compensate for it's delay.
      % "Zero" delay reconstruction is produced.
@@ -46,23 +39,34 @@ for ff=1:filtNo
      skip(ff) = length(g{ff}.h) - (a(ff)-1) -1;
   end
 end
-%tempca = c{1}(:,ch);
 
-for ch=1:chans
-  tempca = c(LcStart(1):LcEnd(1),ch);
-  LcRunPtr = filtNo+1;
-  cRunPtr = 2;
-  for jj=1:J
-     tempca = comp_upconv({tempca}, Lc(LcRunPtr),{tmpg{1}},a(1),skip(1),ext,0);
-     for ff=2:filtNo
-        % tempca = tempca + comp_upconv({c{cRunPtr}(:,ch)}, Lc(LcRunPtr),{tmpg},a(ff),skip,doNoExt,0);
-        tempca = tempca + comp_upconv({c(LcStart(cRunPtr):LcEnd(cRunPtr),ch)}, Lc(LcRunPtr),{tmpg{ff}},a(ff),skip(ff),ext,0);
-        cRunPtr = cRunPtr + 1;
-     end
-     LcRunPtr = LcRunPtr + filtNo -1;
-  end
-  f(:,ch) = tempca;
+% Change format to cell
+ccell = wavpack2cell(c,Lc(1:end-1));
+tempca = ccell{1};
+cRunPtr = 2;
+for jj=1:J
+   tempca=comp_ifilterbank_td({tempca,ccell{cRunPtr:cRunPtr+filtNo-2}},gMat,a,Lc(cRunPtr+filtNo-1),skip,ext); 
+   cRunPtr = cRunPtr + filtNo -1;
 end
+f = tempca;
+
+
+
+% for ch=1:chans
+%   tempca = c(LcStart(1):LcEnd(1),ch);
+%   LcRunPtr = filtNo+1;
+%   cRunPtr = 2;
+%   for jj=1:J
+%      tempca = comp_upconv({tempca}, Lc(LcRunPtr),{tmpg{1}},a(1),skip(1),ext,0);
+%      for ff=2:filtNo
+%         % tempca = tempca + comp_upconv({c{cRunPtr}(:,ch)}, Lc(LcRunPtr),{tmpg},a(ff),skip,doNoExt,0);
+%         tempca = tempca + comp_upconv({c(LcStart(cRunPtr):LcEnd(cRunPtr),ch)}, Lc(LcRunPtr),{tmpg{ff}},a(ff),skip(ff),ext,0);
+%         cRunPtr = cRunPtr + 1;
+%      end
+%      LcRunPtr = LcRunPtr + filtNo -1;
+%   end
+%   f(:,ch) = tempca;
+% end
 
 
     
