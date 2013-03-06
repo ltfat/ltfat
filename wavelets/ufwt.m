@@ -50,7 +50,7 @@ function c = ufwt(f,h,J,varargin)
 %     f = gspi;
 %     J = 8;
 %     c = ufwt(f,{'db',8},J);
-%     plotufwt(c);
+%     %plotufwt(c); FIXME
 %
 %   See also: iufwt, fwtinit
 %

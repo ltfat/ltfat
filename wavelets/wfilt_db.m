@@ -42,9 +42,7 @@ function [H, G, a] = wfilt_db(N)
 %
 %   Frequency responses of the analysis filters::: 
 %
-%      w = fwtinit({'db',8});
-%     figure(1);
-%     subfig(2,1,1);
+%     w = fwtinit({'db',8});
 %     wtfftfreqz(w.h);
 %
 

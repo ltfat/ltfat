@@ -9,27 +9,29 @@ function H = wtfftfreqz(h,varargin);
 definput.keyvals.Ls = [];
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);   
 
+if(isnumeric(h))
+    h={h};
+    fNo=1;
+else
+    fNo = numel(h);    
+end;
+
 if(isempty(Ls))
    % find the longest filter
-   maxLen = length(h{1}.h);
-   for ff = 2:length(h)
-      tmpLen = length(h{ff}.h);
-      if(tmpLen>maxLen)
-         maxLen = tmpLen;
-      end
-   end 
+   %maxLen = length(h{1}.h);
+   %for ff = 2:length(h)
+   %   tmpLen = length(h{ff}.h);
+   %   if(tmpLen>maxLen)
+   %      maxLen = tmpLen;
+   %   end
+   %end 
    % if bigger than 1024, use next fast fft length
+   maxLen=max(cellfun(@(x) numel(x.h),h));
    Ls = nextfastfft(max([maxLen,1024])); 
 end
 
-if(isnumeric(h))
-    h={h};
-end
-
-fNo = numel(h);
 
 H = zeros(Ls,fNo);
-%H = cell(fNo,1);
 for jj=1:fNo
    hlen = length(h{jj}.h);
    %H{jj} = wfiltstruct('FREQ');
@@ -41,7 +43,7 @@ for jj=1:fNo
       %H{jj}.H = fft(circshift(htemp,-(h{jj}.d-1)));
       H(:,jj) = fft(circshift(htemp,-(h{jj}.d-1)));
    else
-      %periodic wraparound od the filter impulse response
+      %periodic wraparound of the filter impulse response
       ratio = hlen/Ls;
       htemp = zeros(1,ceil(ratio)*Ls);
       htemp(1:hlen) = h{jj}.h(:);
@@ -55,10 +57,10 @@ end
 % DO THE PLOTTING
 if(nargout==0)
     Hplot = zeros(Ls,fNo);
-    for ff=1:fNo
-       Hplot(:,ff) = H{ff}.H; 
-    end
-    
+    %for ff=1:fNo
+    %   Hplot(:,ff) = H{ff}.H; 
+    %end
+    Hplot=H;
     
     f = -ceil((Ls-1)/2):floor((Ls-1)/2);
     f = f/(Ls/2);
