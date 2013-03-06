@@ -3,23 +3,25 @@ function f = comp_ifwt(c,g,J,a,Lc,Ls,ext)
 %   Usage:  f = comp_ifwt_all(c,g,J,Ls,type,ext);
 %
 %   Input parameters:
-%         c     : Coefficients stored in a cell-array.
-%         g     : Synthesis wavelet filters.
+%         c     : sum(Lc)*W array of coefficients.
+%         g     : Synthesis wavelet filters - cell-array of length *filtNo*.
+%         J     : Number of filterbank iterations.
+%         a     : Upsampling factors - array of length *filtNo*.
 %         Ls    : Length of the reconstructed signal.
+%         Lc    : Output subband lengths - array of length J*(filtNo-1)+1
 %         ext   : 'per','zero','odd','even', Type of the forward transform boundary handling.
 %
 %   Output parameters:
-%         f     : Reconstructed data.
+%         f     : Reconstructed data - Ls*W array.
 %
 
 % see comp_fwt for explanantion
 assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterbank is not suported.');
 
-filtNo = numel(g);
-Lc(end+1) = Ls;
 
+% Impulse responses to a correct format.
 filtLen = numel(g{1}.h);
-% For holding the impulse responses.
+filtNo = numel(g);
 gMat = zeros(filtLen,filtNo);
 skip = zeros(filtNo,1);
 for ff=1:filtNo
@@ -41,13 +43,15 @@ for ff=1:filtNo
 end
 
 % Change format to cell
-ccell = wavpack2cell(c,Lc(1:end-1));
+ccell = wavpack2cell(c,Lc);
+Lc(end+1) = Ls;
 tempca = ccell{1};
 cRunPtr = 2;
 for jj=1:J
    tempca=comp_ifilterbank_td({tempca,ccell{cRunPtr:cRunPtr+filtNo-2}},gMat,a,Lc(cRunPtr+filtNo-1),skip,ext); 
    cRunPtr = cRunPtr + filtNo -1;
 end
+% Save reconstructed data.
 f = tempca;
 
 

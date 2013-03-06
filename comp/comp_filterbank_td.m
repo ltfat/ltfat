@@ -1,16 +1,16 @@
 function c=comp_filterbank_td(f,g,a,skip,ext)  
 %COMP_UFILTERBANK_TD   Non-uniform filterbank by conv2
-%   Usage:  c=comp_ufilterbank_fft(f,g,a,ext);
+%   Usage:  c=comp_ufilterbank_fft(f,g,a,skip,ext);
 %
 %   Input parameters:
-%         f   : Input data.
-%         g   : Filterbank filters
-%         a   : Subsampling factors
-%         skip: Delay of the filters.
+%         f   : Input data - L*W array.
+%         g   : Filterbank filters - filtLen*M array.
+%         a   : Subsampling factors - array of length M.
+%         skip: Delay of the filters - scalar or array of length M. 
 %         ext : Border exension technique.
 %
 %   Output parameters:
-%         c  : Coefficients
+%         c  : Cell array of length M. Each element is N(m)*W array.
 
 %input data length
 L=size(f,1);
@@ -45,10 +45,10 @@ for m=1:M
 end;
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
-fext = comp_extBoundary(f,filtLen-1,ext);
+fext = comp_extBoundary(f,filtLen-1,ext,'dim',1);
 % CONV2 with 'valid' does 2-D linear convolution and crops (filtLen-1) samples from both ends.  
 % length(fextconv2) = length(f) + (filtLen-1)
-
+% length(c{m}) = N(m)
 % W channels are done simultaneously
 for m=1:M
    c{m} = comp_downs(conv2(fext,g(:,m),'valid'),a(m),skip(m),Lreq(m)); 

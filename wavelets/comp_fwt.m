@@ -3,22 +3,24 @@ function c = comp_fwt(f,h,J,a,Lc,ext)
 %   Usage:  c=comp_fwt_all(f,h,J,type,ext);
 %
 %   Input parameters:
-%         f     : Input data.
-%         h     : Analysis Wavelet filters.
+%         f     : Input data - L*W array.
+%         h     : Analysis Wavelet filters - cell-array of length *filtNo*.
 %         J     : Number of filterbank iterations.
+%         a     : Subsampling factors - array of length *filtNo*. 
+%         Lc    : Output subband lengths - array of length J*(filtNo-1)+1
 %         ext   : 'per','zero','even','odd' Type of the forward transform boundary handling.
 %
 %   Output parameters:
-%         c     : Coefficients stored in J*length(h)+1 cell-array.
+%         c     : Coefficients in sum(Lc)*W array.
 %
 
 % This could be removed with some effort. The question is, are there such
 % wavelet filters? If your filterbank has different subsampling factors following the first two filters, please send a feature request.
 assert(a(1)==a(2),'First two elements of *a* are not equal. Such wavelet filterbank is not suported.');
 
-filtNo = length(h);
 
 % Impulse responses.
+filtNo = length(h);
 filtLen = length(h{1}.h);
 hMat = zeros(filtLen,filtNo);
 skip = zeros(filtNo,1);
@@ -41,7 +43,6 @@ for ff=1:filtNo
 end
 
 ccell = cell(numel(Lc),1);
-%Non-uniform filterbank
 runPtr = numel(Lc)-filtNo+2;
 ctmp = f;
 for jj=1:J
@@ -54,6 +55,7 @@ for jj=1:J
 end
 % Save final approximation coefficients
 ccell{1} = ctmp;
+% Change format.
 c = wavcell2pack(ccell);
 
 

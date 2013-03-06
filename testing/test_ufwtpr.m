@@ -32,7 +32,7 @@ test_filters = {
                {'db',10}
                {'spline',4,4}
                %{'lemaire',80} % not exact reconstruction
-               %{'hden',3} % only one with 3 filters and different
+               {'hden',3} % only one with 3 filters and different
                %subsampling factors, not working
                {'algmband',2} % 4 filters, subsampling by the factor of 4!, really long identical lowpass filter
                %{'symds',1}
@@ -66,7 +66,7 @@ test_filters = {
                %{'hden',2}
                %{'hden',1}
                %{'algmband',2}
-               %{'apr',1} % complex filter values, odd length filters
+               %{'apr',1} % complex filter values, odd length filters, no perfect reconstruction
                };
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 

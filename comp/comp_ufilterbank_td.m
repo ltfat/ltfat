@@ -3,14 +3,14 @@ function c=comp_ufilterbank_td(f,g,a,skip,ext)
 %   Usage:  c=comp_ufilterbank_fft(f,g,a,skip,ext);
 %
 %   Input parameters:
-%         f   : Input data.
-%         g   : Filterbank filters. 
-%         a   : Subsampling factor.
-%         skip: Delay of the filters.
+%         f   : Input data - L*W array.
+%         g   : Filterbank filters - filtLen*M array. 
+%         a   : Subsampling factor - scalar.
+%         skip: Delay of the filters - scalar or array of length M. 
 %         ext : Border exension technique.
 %
 %   Output parameters:
-%         c  : Coefficients 
+%         c  : N*M*W array of coefficients
 %
 
 
@@ -48,9 +48,11 @@ Lreq = a*(N-1) + 1;
 c=zeros(N,M,W);
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
-fext = comp_extBoundary(f,filtLen-1,ext);
-% CONV2 does 2-D linear convolution. 
-% length(fextconv2) = length(f) + 3*(filtLen-1)
+fext = comp_extBoundary(f,filtLen-1,ext,'dim',1);
+% CONV2 does 2-D linear convolution. 'valid' option crops tails
+% length(fextconv2) = length(f) + (filtLen-1)
+% length(c(:,m,:)) = N
+% W channels done simultaneously by conv2
 for m=1:M
   c(:,m,:) = comp_downs(conv2(fext,g(:,m),'valid'),a,skip(m),Lreq); 
 end;

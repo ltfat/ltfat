@@ -1,30 +1,36 @@
 function f=comp_ifilterbank_td(c,g,a,Ls,skip,ext)  
 %COMP_UFILTERBANK_TD   Synthesis Uniform filterbank by conv2
-%   Usage:  c=comp_ufilterbank_fft(f,g,a,skip,ext);
+%   Usage:  f=comp_iufilterbank_fft(c,g,a,Ls,skip,ext);
 %
 %   Input parameters:
-%         f   : Input data.
-%         g   : Filterbank filters. 
-%         a   : Subsampling factor.
-%         skip: Delay of the filters.
-%         ext : Border exension technique.
+%         c    : Cell array of length M, each element is N(m)*W matrix.
+%         g    : Filterbank filters - filtLen*M array. 
+%         a    : Upsampling factors - array of length M.
+%         skip : Delay of the filters - scalar or array of length M.
+%         Ls   : Output length.
+%         ext  : Border exension technique.
 %
 %   Output parameters:
-%         c  : Coefficients 
+%         f  : Output Ls*W array. 
 %
 
-%input length
-N=size(c,1);
 %input channel number
 W=size(c{1},2);
 %filter number
 M=size(g,2);
 %length of filters
 filtLen = size(g,1);
+
+
 % Allow filter delay only in the filter support range
 if(any(skip>=filtLen) || any(skip)<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  
 end
+
+if(numel(skip)==1)
+    skip = skip*ones(M,1);
+end
+
 
 % Output memory allocation
 f=zeros(Ls,W);
