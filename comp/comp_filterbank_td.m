@@ -4,7 +4,7 @@ function c=comp_filterbank_td(f,g,a,skip,ext)
 %
 %   Input parameters:
 %         f   : Input data - L*W array.
-%         g   : Filterbank filters - filtLen*M array.
+%         g   : Filterbank filters - length M cell-array of vectors of lengths filtLen(m).
 %         a   : Subsampling factors - array of length M.
 %         skip: Delay of the filters - scalar or array of length M. 
 %         ext : Border exension technique.
@@ -17,9 +17,9 @@ L=size(f,1);
 %input channel number
 W=size(f,2);
 %filter number
-M=size(g,2);
+M=numel(g);
 %filter length
-filtLen = size(g,1);
+filtLen = cellfun(@(x) numel(x),g);
 % Allow filter delay only in the filter support range
 if(any(skip>=filtLen) || any(skip)<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  
@@ -45,13 +45,14 @@ for m=1:M
 end;
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
-fext = comp_extBoundary(f,filtLen-1,ext,'dim',1);
+%fext = comp_extBoundary(f,filtLen-1,ext,'dim',1);
 % CONV2 with 'valid' does 2-D linear convolution and crops (filtLen-1) samples from both ends.  
 % length(fextconv2) = length(f) + (filtLen-1)
 % length(c{m}) = N(m)
 % W channels are done simultaneously
 for m=1:M
-   c{m} = comp_downs(conv2(fext,g(:,m),'valid'),a(m),skip(m),Lreq(m)); 
+   fext = comp_extBoundary(f,filtLen(m)-1,ext,'dim',1);
+   c{m} = comp_downs(conv2(fext,g{m}(:),'valid'),a(m),skip(m),Lreq(m)); 
 end
 
 

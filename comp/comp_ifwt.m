@@ -19,34 +19,31 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 
 
 % Impulse responses to a correct format.
-filtLen = numel(g{1}.h);
 filtNo = numel(g);
-gMat = zeros(filtLen,filtNo);
-skip = zeros(filtNo,1);
-for ff=1:filtNo
-  gMat(:,ff) = g{ff}.h;
-  if(strcmp(ext,'per'))
-     % Initial shift of the filter to compensate for it's delay.
-     % "Zero" delay reconstruction is produced.
-     skip(ff) = g{ff}.d-1;
-  else
-     % -1 + 1 = 0 is used for better readability and to be consistent
-     % with the shift in comp_fwt.
-     % Here we are cheating, because we are making the filters
-     % anti-causal to compensate for the delay introduced by causal
-     % analysis filters. 
-     % Instead, we could have used causal filters here and do the
-     % delay compensation at the end (cropping f).
-     skip(ff) = length(g{ff}.h) - (a(ff)-1) -1;
-  end
+gCell = cellfun(@(gEl) gEl.h(:),g,'UniformOutput',0);
+
+if(strcmp(ext,'per'))
+   % Initial shift of the filter to compensate for it's delay.
+   % "Zero" delay reconstruction is produced.
+   skip = cellfun(@(gEl) gEl.d-1,g); 
+else
+   % -1 + 1 = 0 is used for better readability and to be consistent
+   % with the shift in comp_fwt.
+   % Here we are cheating, because we are making the filters
+   % anti-causal to compensate for the delay introduced by causal
+   % analysis filters. 
+   % Instead, we could have used causal filters here and do the
+   % delay compensation at the end (cropping f).
+   skip = cellfun(@(gEl) numel(gEl),gCell) - (a -1) -1;
 end
 
-Lc = cellfun(@(x) size(x,1),c);
+
+Lc = cellfun(@(cEl) size(cEl,1),c);
 Lc(end+1) = Ls;
 tempca = c(1);
 cRunPtr = 2;
 for jj=1:J
-   tempca=comp_ifilterbank_td([tempca;c(cRunPtr:cRunPtr+filtNo-2)],gMat,a,Lc(cRunPtr+filtNo-1),skip,ext); 
+   tempca=comp_ifilterbank_td([tempca;c(cRunPtr:cRunPtr+filtNo-2)],gCell,a,Lc(cRunPtr+filtNo-1),skip,ext); 
    cRunPtr = cRunPtr + filtNo -1;
 end
 % Save reconstructed data.

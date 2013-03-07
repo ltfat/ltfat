@@ -4,7 +4,7 @@ function f=comp_ifilterbank_td(c,g,a,Ls,skip,ext)
 %
 %   Input parameters:
 %         c    : Cell array of length M, each element is N(m)*W matrix.
-%         g    : Filterbank filters - filtLen*M array. 
+%         g    : Filterbank filters - length M cell-array, each element is vector of length filtLen(m) 
 %         a    : Upsampling factors - array of length M.
 %         skip : Delay of the filters - scalar or array of length M.
 %         Ls   : Output length.
@@ -17,9 +17,9 @@ function f=comp_ifilterbank_td(c,g,a,Ls,skip,ext)
 %input channel number
 W=size(c{1},2);
 %filter number
-M=size(g,2);
+M=numel(g);
 %length of filters
-filtLen = size(g,1);
+filtLen = cellfun(@(x) numel(x),g);
 
 
 % Allow filter delay only in the filter support range
@@ -43,7 +43,7 @@ skipOut = a.*(filtLen-1)+skip;
 
 % W channels are done simultaneously
 for m=1:M
-   cext = comp_extBoundary(c{m},filtLen-1,ext,'dim',1); 
-   ftmp = conv2(g(:,m),comp_ups(cext,a(m)));
+   cext = comp_extBoundary(c{m},filtLen(m)-1,ext,'dim',1); 
+   ftmp = conv2(g{m}(:),comp_ups(cext,a(m)));
    f = f + ftmp(1+skipOut(m):Ls+skipOut(m),:); 
 end
