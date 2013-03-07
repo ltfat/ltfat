@@ -34,23 +34,6 @@ end
 Lc = cellfun(@(x) size(x,1), ccell);
 cvec = cell2mat(ccell);
 
-%JJ = numel(ccell);
-
-% Lc = zeros(JJ,1);
-% for jj=1:JJ
-%    Lc(jj) =  size(ccell{jj},1);
-% end
-
-% W = size(ccell{end},2);
-% % ALLOCATING OUTPUT
-% cvec = zeros(sum(Lc),W);
-% % DO THE COPY
-% LcStart = 1 + cumsum([0;Lc(1:end-1)]); 
-% LcEnd = cumsum(Lc); 
-% for jj=1:JJ
-%   cvec(LcStart(jj):LcEnd(jj),:) = ccell{jj};
-% end
-
 % Reshape back to rows
 if(dim==2)
     cvec = cvec.';

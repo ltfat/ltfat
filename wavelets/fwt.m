@@ -93,8 +93,8 @@ function [c,Lc] = fwt(f,h,J,varargin)
 % 
 %     f = gspi;
 %     J = 10;
-%     c = fwt(f,{'db',8},J);
-%     %plotfwt(c,44100,90);
+%     [c,Lc] = fwt(f,{'db',8},J);
+%     plotfwt({c,Lc},{'db',8},44100,'dynrange',90);
 %
 %   See also: ifwt, fwtinit, wavpack2cell, plotfwt
 %
@@ -119,10 +119,11 @@ h = fwtinit(h,'ana');
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
 definput.keyvals.dim = [];
-[flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
+[flags,~,dim]=ltfatarghelper({'dim'},definput,varargin);
+
 
 %% ----- step 1 : Verify f and determine its length -------
-[f,L,Ls,~,dim,~,order]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
+[f,~,Ls,~,dim]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
 
 % Determine next legal input data length.
 L = fwtlength(Ls,h,J,flags.ext);
@@ -132,16 +133,14 @@ if(Ls~=L)
    f=postpad(f,L); 
 end
 
-%% ----- step 2 : Determine number of ceoefficients in each subband
+%% ----- step 2 : Determine number of ceoefficients in each subband.
 Lc = fwtclength(L,h,J,flags.ext);
 
-%% ----- step 3 : Run computation 
+%% ----- step 3 : Run computation. 
 c = comp_fwt(f,h.filts,J,h.a,Lc,flags.ext);
 
-%% ----- FINALIZE : Reshape back 
-permutedsizeAlt = size(c);
-c=assert_sigreshape_post(c,dim,permutedsizeAlt,order);
-
+%% ----- FINALIZE: Change format.
+c = wavcell2pack(c,dim);
 %END FWT
  
  

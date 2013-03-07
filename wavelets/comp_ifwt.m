@@ -1,14 +1,13 @@
-function f = comp_ifwt(c,g,J,a,Lc,Ls,ext)
+function f = comp_ifwt(c,g,J,a,Ls,ext)
 %COMP_IFWT_ALL Compute Inverse DWT
 %   Usage:  f = comp_ifwt_all(c,g,J,Ls,type,ext);
 %
 %   Input parameters:
-%         c     : sum(Lc)*W array of coefficients.
+%         c     : Cell array of length M = J*(filtNo-1)+1. Each element is Lc(m)*W array
 %         g     : Synthesis wavelet filters - cell-array of length *filtNo*.
 %         J     : Number of filterbank iterations.
 %         a     : Upsampling factors - array of length *filtNo*.
 %         Ls    : Length of the reconstructed signal.
-%         Lc    : Output subband lengths - array of length J*(filtNo-1)+1
 %         ext   : 'per','zero','odd','even', Type of the forward transform boundary handling.
 %
 %   Output parameters:
@@ -42,13 +41,12 @@ for ff=1:filtNo
   end
 end
 
-% Change format to cell
-ccell = wavpack2cell(c,Lc);
+Lc = cellfun(@(x) size(x,1),c);
 Lc(end+1) = Ls;
-tempca = ccell{1};
+tempca = c(1);
 cRunPtr = 2;
 for jj=1:J
-   tempca=comp_ifilterbank_td({tempca,ccell{cRunPtr:cRunPtr+filtNo-2}},gMat,a,Lc(cRunPtr+filtNo-1),skip,ext); 
+   tempca=comp_ifilterbank_td([tempca;c(cRunPtr:cRunPtr+filtNo-2)],gMat,a,Lc(cRunPtr+filtNo-1),skip,ext); 
    cRunPtr = cRunPtr + filtNo -1;
 end
 % Save reconstructed data.

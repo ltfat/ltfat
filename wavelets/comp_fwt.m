@@ -7,11 +7,11 @@ function c = comp_fwt(f,h,J,a,Lc,ext)
 %         h     : Analysis Wavelet filters - cell-array of length *filtNo*.
 %         J     : Number of filterbank iterations.
 %         a     : Subsampling factors - array of length *filtNo*. 
-%         Lc    : Output subband lengths - array of length J*(filtNo-1)+1
+%         Lc    : Output subband lengths - array of length M = J*(filtNo-1)+1
 %         ext   : 'per','zero','even','odd' Type of the forward transform boundary handling.
 %
 %   Output parameters:
-%         c     : Coefficients in sum(Lc)*W array.
+%         c     : Cell array of length M. Each element is Lc(m)*W array.
 %
 
 % This could be removed with some effort. The question is, are there such
@@ -42,21 +42,20 @@ for ff=1:filtNo
   end
 end
 
-ccell = cell(numel(Lc),1);
+c = cell(numel(Lc),1);
 runPtr = numel(Lc)-filtNo+2;
 ctmp = f;
 for jj=1:J
     % Run filterbank
     ctmp = comp_filterbank_td(ctmp,hMat,a,skip,ext);
     % Bookkeeping
-    [ccell{runPtr:runPtr+filtNo-2}] = ctmp{2:end};
+    c(runPtr:runPtr+filtNo-2) = ctmp(2:end);
     ctmp = ctmp{1};
     runPtr = runPtr - (filtNo - 1);
 end
 % Save final approximation coefficients
-ccell{1} = ctmp;
-% Change format.
-c = wavcell2pack(ccell);
+c{1} = ctmp;
+
 
 
 

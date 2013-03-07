@@ -20,7 +20,7 @@ function f = ifwt(c,g,J,varargin)
 %   |wavpack2cell|_ function.
 %
 %   The *Ls* parameter is mandatory due to the ambiguity of lengths introduced
-%   by the subsampling operation.
+%   by the subsampling operation and by boundary treatment methods.
 %
 %   `ifwt` supports the same boundary conditions as |fwt|_. Note that the
 %   same flag as in the |fwt|_ function have to be used, otherwise
@@ -58,36 +58,42 @@ end
 definput.import = {'fwt'};
 definput.keyvals.dim = [];
 definput.keyvals.Ls = [];
-[flags,kv,Ls,dim]=ltfatarghelper({'Ls','dim'},definput,varargin);
+[flags,~,Ls,dim]=ltfatarghelper({'Ls','dim'},definput,varargin);
 
 % Initialize the wavelet filters structure
 g = fwtinit(g,'syn');
 
-
-Lc = [];
-% If cell array was passed change the format.
-if iscell(c)
-   [c,Lc] =  wavcell2pack(c,dim);
+%If dim is not specified use first non-singleton dimension.
+if(isempty(dim))
+    dim=find(size(c)>1,1);
 end
-
-%% ----- step 0 : Change c to correct shape according to the dim. 
-[c,~,Lcsum,W,dim,permutedsize,order]=assert_sigreshape_pre(c,[],dim,upper(mfilename));
-
 
 %% ----- step 1 : Determine input data length.
 L = fwtlength(Ls,g,J,flags.ext);
 
 %% ----- step 2 : Determine number of ceoefficients in each subband
-if isempty(Lc)
-   Lc = fwtclength(L,g,J,flags.ext);
-end
+Lc = fwtclength(L,g,J,flags.ext);
 
-%% ----- step 3 : Run computation 
-f = comp_ifwt(c,g.filts,J,g.a,Lc,Ls,flags.ext);
+%% ----- step 4 : Change c to correct shape according to the dim.
+if(isnumeric(c))
+   %Change format
+   c =  wavpack2cell(c,Lc,dim);
+elseif(iscell(c))
+   %Just check *Lc*
+   if(~isequal(Lc,cellfun(@(x) size(x,1),c)))
+      error('%s: Coefficient subband lengths does not comply with parameter *Ls*.',upper(mfilename));
+   end
+else
+   error('%s: Unrecognized coefficient format.',upper(mfilename)); 
+end;
+
+%% ----- step 4 : Run computation 
+f = comp_ifwt(c,g.filts,J,g.a,Ls,flags.ext);
 
 %% ----- FINALIZE: Reshape back according to the dim.
-permutedsizeAlt = size(f);
-f=assert_sigreshape_post(f,dim,permutedsizeAlt,order);
+if(dim==2)
+    f = f.';
+end
 
 %END IFWT
 

@@ -61,6 +61,8 @@ for ff=1:filtNo
     wtemp(:,ff) =  w.filts{ff}.h(:);
 end
 
+filtsAreReal = isreal(wtemp);
+
 if(flags.do_conv)
    % Linear convolutions in the time domain.
    for n=2:N
@@ -68,25 +70,30 @@ if(flags.do_conv)
    end
 elseif(flags.do_fft)
    % Cyclic convolutions and upsampling in freqency domain.
-   % Much faster for higher N (N>5). 
    m = length(lo);
    L = (m-1)*(a^N-1)/(a-1) + 1;
-   % Padding with zeros to avoid time aliasing.
+   % Initial padding with zeros to avoid time aliasing.
    wtmpFFT = fft(wtemp,nextfastfft(2*m-1));
    for n=2:N
       loFFT = fft(lo,a*size(wtmpFFT,1));
       wtmpFFT = bsxfun(@times,repmat(wtmpFFT,a,1),loFFT);
    end
 
-   wtemp = real(ifft(wtmpFFT));
+   wtemp = ifft(wtmpFFT);
    wtemp = wtemp(1:L,:);
 else
    error('%s: Unexpected flag.',upper(mfilename));
 end
 
 % Final fomating
-sfunc = wtemp(:,1);
-wfunc = wtemp(:,2:end);
+if filtsAreReal
+   sfunc = real(wtemp(:,1));
+   wfunc = real(wtemp(:,2:end));
+else
+   sfunc = wtemp(:,1);
+   wfunc = wtemp(:,2:end);
+end
+
 
 if(nargout>2)
     % Calculate xvals

@@ -75,6 +75,11 @@ if(~all(h.a==length(h.filts)))
 end
 
 
+%Do not allow single wavelet coefficient at two consecutive levels
+if(any(h.a(1)^J>size(f)))
+   error('%s: %d-level decomposition of the input is not possible. Maximum J is %d.',upper(mfilename),J,floor(log(max(size(f)))/log(h.a(1))));
+end
+
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt','fwt2'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
