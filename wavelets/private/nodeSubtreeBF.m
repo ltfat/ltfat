@@ -1,4 +1,15 @@
-function nodesIdxs = nodeSubtreeBF(nodeNo,treeStruct)
+function nodesIdxs = nodeSubtreeBF(nodeNo,wt)
+%NODESUBTREEBF Node subtree nodes in Breath-First order
+%   Usage:  noOut = nodeSubtreeBF(nodeNo,wt);
+%
+%   Input parameters:
+%         nodeNo  : Node index.
+%         wt      : Structure containing description of the filter tree.
+%
+%   Output parameters:
+%         noOut   : Nodes in a Breath-First order. 
+%
+
 % subtreeIdx = [];
 % 
 % children = treeStruct.children{nodeNo}(find(treeStruct.children{nodeNo}~=0));
@@ -12,8 +23,8 @@ function nodesIdxs = nodeSubtreeBF(nodeNo,treeStruct)
 toGoTrough = [nodeNo];
 nodesIdxs = [];
 while ~isempty(toGoTrough)
-   chtmp = find(treeStruct.children{toGoTrough(1)}~=0);
-   chIdxtmp = treeStruct.children{toGoTrough(1)}(chtmp);
+   chtmp = find(wt.children{toGoTrough(1)}~=0);
+   chIdxtmp = wt.children{toGoTrough(1)}(chtmp);
    nodesIdxs = [nodesIdxs,chIdxtmp];
    toGoTrough = [toGoTrough(2:end),chIdxtmp];
 end

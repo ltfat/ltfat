@@ -55,6 +55,7 @@ wfb = cell(treeOutputs,1);
 a = zeros(treeOutputs,1);
         
         for ii = 1:length(filtTree.nodes)
+            % skip nodes with no outputs
             if(noOfNodeOutputs(ii,filtTree)==0), continue; end;
             hmi = nodePredecesorsMultId(ii,filtTree);
             locRange = rangeInLocalOutputs(ii,filtTree);
@@ -63,7 +64,7 @@ a = zeros(treeOutputs,1);
                 tmpUpsFac = nodeFiltUps(ii,filtTree);
                 tmpFilt = filtTree.nodes{ii}.filts{locRange(jj)};
                 wfb{outRange(jj)} = wfiltstruct('FIR');
-                wfb{outRange(jj)}.h = convolve(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
+                wfb{outRange(jj)}.h = conv2(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
                 wfb{outRange(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
             end
             atmp = nodeSub(ii,filtTree);
@@ -106,9 +107,9 @@ pre = pre(end:-1:1);
 
 for ii=startIdx:length(pre)-1
     id = pre(ii);
-    hcurr = treeStruct.nodes{id}.filts{find(treeStruct.children{id}==pre(ii+1))}.h;
+    hcurr = treeStruct.nodes{id}.filts{treeStruct.children{id}==pre(ii+1)}.h;
     hcurr = comp_ups(hcurr,nodeFiltUps(id,treeStruct),1);
-    hmi = convolve(hmi,hcurr);
+    hmi = conv2(hmi,hcurr);
 end
 
 function predori = nodePredecesorsOrig(baseOrig,nodeNo,treeStruct)

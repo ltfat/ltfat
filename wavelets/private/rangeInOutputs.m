@@ -1,15 +1,15 @@
-function outRange = rangeInOutputs(nodeNo,treeStruct)
+function outRange = rangeInOutputs(nodeNo,wt)
 %RANGEINOUTPUTS Index range of the outputs
 %   Usage:  outRange = rangeInOutputs(nodeNo,treeStruct);
 %
 %   Input parameters:
 %         nodeNo     : Node index.
-%         treeStruct : Structure containing description of the filter tree.
+%         wt         : Structure containing description of the filter tree.
 %
 %   Output parameters:
 %         outRange   : Coefficients stored in J+1 cell-array.
 %
-%   `rangeInOutputs(nodeNo,treeStruct)` Returns index range in the global
+%   `rangeInOutputs(nodeNo,wt)` Returns index range in the global
 %   tree outputs associated with node `nodeNo`. Empty matrix is returned if
 %   node has all outputs connected do children nodes. For definition of the
 %   structure see `wfbinit`.
@@ -25,7 +25,7 @@ else
 end
 
 for jj=1:nodesCount
-    outRangeTmp = rangeInNodeOutputs(nodeNo(jj),treeStruct);
+    outRangeTmp = rangeInNodeOutputs(nodeNo(jj),wt);
 
     if(isempty(outRangeTmp))
         continue;
@@ -33,10 +33,10 @@ for jj=1:nodesCount
     %rootId = find(treeStruct.parents==0);
     rootId = nodeNo(jj);
     higherNodes = [];
-    while treeStruct.parents(rootId)
-         parId = treeStruct.parents(rootId);
+    while wt.parents(rootId)
+         parId = wt.parents(rootId);
           % save idx of all higher nodes
-         ch = treeStruct.children{parId};
+         ch = wt.children{parId};
          childIdx = find(ch==rootId);
          higherNodes(end+1:end+(childIdx-1))=ch(1:childIdx-1);
          rootId = parId;
@@ -47,7 +47,7 @@ for jj=1:nodesCount
         if(higherNodes(ii)==0) 
            noOutPrev=noOutPrev+1; 
         else
-           noOutPrev = noOutPrev + noOfSubtreeOutputs(higherNodes(ii),treeStruct);
+           noOutPrev = noOutPrev + noOfSubtreeOutputs(higherNodes(ii),wt);
         end
     end
 

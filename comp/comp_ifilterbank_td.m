@@ -19,11 +19,11 @@ W=size(c{1},2);
 %filter number
 M=numel(g);
 %length of filters
-filtLen = cellfun(@(x) numel(x),g);
+filtLen = cellfun(@(x) numel(x),g(:));
 
 
 % Allow filter delay only in the filter support range
-if(any(skip>=filtLen) || any(skip)<0)
+if(any(skip(:)>=filtLen) || any(skip)<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  
 end
 
@@ -39,7 +39,7 @@ if(~strcmp(ext,'per'))
     ext = 'zero';
 end
 
-skipOut = a.*(filtLen-1)+skip;
+skipOut = a.*(filtLen-1)+skip(:);
 
 % W channels are done simultaneously
 for m=1:M

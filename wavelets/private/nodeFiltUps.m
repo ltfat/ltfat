@@ -1,8 +1,32 @@
-function upsNo = nodeFiltUps(nodeNo,treeStruct)
-tmpNodeNo =nodeNo;
-upsNo = 1;
-while(treeStruct.parents(tmpNodeNo))
-    parentNo = treeStruct.parents(tmpNodeNo);
-    upsNo=upsNo*treeStruct.nodes{parentNo}.a(find(treeStruct.children{parentNo}==tmpNodeNo));
-    tmpNodeNo=parentNo;
+function upsNo = nodeFiltUps(nodeNo,wt)
+%NODEFILTUPS  Node upsamplig factor
+%   Usage:  upsNo = nodeFiltUps(nodeNo,wt)
+%
+%   Input parameters:
+%         wt  : Structure containing description of the filter tree.
+%
+%   Output parameters:
+%         upsNo : Accumulated upsampling factor along path to root.
+%
+%   `nodeFiltUps(wt)` Returns upsampling factor, which can be used to
+%   upsample the node filters using the a-trous algorithm.
+%   For definition of the structure see |wfbinit|_.
+%
+%   See also: wfbtinit
+%
+
+if(any(nodeNo>numel(wt.nodes)))
+   error('%s: Invalid node index range. Number of nodes is %d.\n',upper(mfilename),numel(wt.nodes));
+end
+
+nodesCount = numel(nodeNo);
+upsNo = zeros(nodesCount,1);
+for ii=1:nodesCount
+   tmpNodeNo = nodeNo(ii);
+   upsNo(ii) = 1;
+   while(wt.parents(tmpNodeNo))
+       parentNo = wt.parents(tmpNodeNo);
+       upsNo(ii)=upsNo(ii)*wt.nodes{parentNo}.a(wt.children{parentNo}==tmpNodeNo);
+       tmpNodeNo=parentNo;
+   end
 end

@@ -35,7 +35,6 @@ else
    out = zeros(outLen,1);
 end
 
-
 inExt = comp_extBoundary(in,fLen-1,ext,sub);
 
 for ff=1:noOfFilts

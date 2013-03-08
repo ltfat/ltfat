@@ -94,7 +94,14 @@ else
 end
 
 if ischar(wavname)
-    wname = {wavname};
+   try
+    wname = parseNameValPair(wavname,wprefix);
+   catch err
+      % If failed, clean the cache.
+      cachwDesc = [];
+      cachw = [];
+      error(err.message);
+   end
 elseif iscell(wavname)
     wname = wavname;
     if ~ischar(wname{1})
@@ -132,7 +139,7 @@ else
 end;
 
 % Search for m-file containing string wname
-wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('wavelets/%s%s.m',wprefix,lower(wavname{1}))));
+wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('wavelets/%s%s.m',wprefix,lower(wname{1}))));
 if(isempty(wfiltFiles))
    error('%s: Unknown wavelet type: %s',upper(mfilename),name); 
 else
@@ -143,6 +150,11 @@ end
 % Synthesis filters delay
 d = [];
 wfiltNargout = nargout(tmpFile);
+
+if(nargin(tmpFile)~=numel(wname)-1)
+   error('%s: Incorrect number of parameters to be passed to the wfilt_ func.',upper(mfilename));
+end
+
 if(wfiltNargout==3)
    [tmph, tmpg, w.a] = feval(tmpFile,wname{2:end});
 elseif(wfiltNargout==4) 
@@ -156,8 +168,6 @@ w.a = formata(length(w.h),kv.a,w.a);
 w = formatFilters(tmph,1,d,w);
 w = formatFilters(tmpg,0,d,w);
 w = updateTransDirect(flags.do_ana,w);
-
-
 
 cachw = w;
 
@@ -181,7 +191,6 @@ else
       w.g{ff}.d = d(ff);
    end 
 end
-
 %END FORMATFILTERS
 
 function w = updateTransDirect(do_ana,w)
@@ -206,6 +215,38 @@ else
        a = atmp*filtsNo;
     end
 end
+
+function wcell = parseNameValPair(wchar,wprefix)
+%PARSENAMEVALPAIR
+%Parses string in the following format wnameN1:N2... , where wname have to
+%be name of the existing function with wfilt_ prefix. N1,N2,... are doubles
+%delimited by character ':'.
+%The output is cell array {wname,str2double(N1),str2double(N2),...}
+
+numDelimiter = ':';
+wchar = lower(wchar);
+wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('wavelets/%s*',wprefix)));
+wfiltNames = arrayfun(@(fEl) fEl.name(1+find(fEl.name=='_',1):find(fEl.name=='.',1,'last')-1),wfiltFiles,'UniformOutput',0);
+wcharMatch = cellfun(@(nEl) strcmp(wchar(1:min([numel(nEl),numel(wchar)])),nEl),wfiltNames);
+wcharMatchIdx = find(wcharMatch~=0);
+if(isempty(wcharMatchIdx))
+   error('%s: Unknown wavelet filter definition string.',upper(mfilename));
+end
+if(numel(wcharMatchIdx)>2)
+   error('%s: Ambiguous wavelet filter definition string. Probably bug somewhere.',upper(mfilename));
+end
+
+wcell{1} = wfiltNames{wcharMatchIdx};
+numString = wchar(numel(wcell{1})+1:end);
+if(isempty(numString))
+   error('%s: No numeric parameter specified in %s.',upper(mfilename),wchar); 
+end
+wcharNum = textscan(numString,'%f','Delimiter',numDelimiter);
+if(~isnumeric(wcharNum{1})||any(isnan(wcharNum{1})))
+   error('%s: Incorrect numeric part of the wavelet filter definition string.',upper(mfilename));
+end
+wcell = [wcell, num2cell(wcharNum{1}).'];
+%END PARSENAMEVALPAIR
 
 function d = findFiltDelays(cellh,do_ana,type)
 filtNo = numel(cellh);

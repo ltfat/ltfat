@@ -63,7 +63,7 @@ if(strcmp(ext,'perdec')) % possible last samples replications
         %fout(rightStartIdx:end-extLen+timesExtLen*length(f)) = repmat(f(:),timesExtLen,1);
         %fout(1+extLen-legalExtLen:extLen-repl)= f(end-legalExtLen+1+repl:end);
     else
-        fout = extendBoundary(f,extLen,'per',varargin{:});
+        fout = comp_extBoundary(f,extLen,'per',varargin{:});
        % fout(1+extLen-legalExtLen:extLen) = f(end-legalExtLen+1:end);
        % fout(1:extLen-legalExtLen) = f(end-(extLen-legalExtLen)+1:end);
        % fout(end-extLen+1:end-extLen+legalExtLen) = f(1:legalExtLen);

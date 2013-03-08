@@ -23,18 +23,23 @@ function [c,Lc] = fwt(f,h,J,varargin)
 %   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
 %   The formats are the same as for the |fwtinit|_ function.
 %
-%     1) The simplest is passing a cell array, whose first element is the
+%     1) One option is passing a cell array whose first element is the
 %        name of the function defining the basic wavelet filters (`wfilt_`
 %        prefix) and the other elements are the parameters of the
 %        function. e.g. `{'db',10}` calls `wfilt_db(10)` internally.
 %
-%     2) The second possible format of $h$ is to pass cell array of one
+%     2) Character string as concatenation of the name of the wavelet
+%        filters defining function (as above) and the numeric parameters
+%        delimited by ':' character, e.g. 'db10' has the same effect as above,
+%        'spline4:4' calls `wfilt_spline(4,4)` internally.
+%
+%     3) The third possible format of $h$ is to pass cell array of one
 %        dimensional numerical vectors directly defining the wavelet filter
 %        impulse responses.  In this case, outputs of the filters are
 %        subsampled by a factor equal to the number of the filters. For
 %        creating completely custom filterbanks use the |fwtinit|_ function.
 %
-%     3) The third option is to pass a structure obtained from the
+%     4) The fourth option is to pass a structure obtained from the
 %        |fwtinit|_ function.
 %   
 %   If *f* is row/collumn vector, the subbands *c* are stored in a single
@@ -125,21 +130,20 @@ definput.keyvals.dim = [];
 %% ----- step 1 : Verify f and determine its length -------
 [f,~,Ls,~,dim]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
 
-% Determine next legal input data length.
-L = fwtlength(Ls,h,J,flags.ext);
+%% ----- step 2 : Determine number of ceoefficients in each subband *Lc*
+%  and next legal input data length *L*.
+[Lc, L] = fwtclength(Ls,h,J,flags.ext);
 
 % Pad with zeros if the safe length L differ from the Ls.
 if(Ls~=L)
    f=postpad(f,L); 
 end
 
-%% ----- step 2 : Determine number of ceoefficients in each subband.
-Lc = fwtclength(L,h,J,flags.ext);
 
 %% ----- step 3 : Run computation. 
 c = comp_fwt(f,h.filts,J,h.a,Lc,flags.ext);
 
-%% ----- FINALIZE: Change format.
+%% ----- FINALIZE: Change format of coefficients.
 c = wavcell2pack(c,dim);
 %END FWT
  
