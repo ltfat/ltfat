@@ -31,6 +31,9 @@ switch(F.type)
     L=Ncoef;
 end;
 
+L
+L-round(L)
+
 if L~=round(L)
   error(['%s: The coefficient number given does not correspond to a valid ' ...
          'set of coefficients for this type of frame.'],upper(mfilename));
