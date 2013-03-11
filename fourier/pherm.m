@@ -32,6 +32,24 @@ function g=pherm(L,order,tfr)
 %   If both *order* and *tfr* are vectors, they must have the same length,
 %   and their values will be paired.
 %
+%   Examples:
+%   ---------
+%
+%   The following plot shows the spectrograms of 4 Hermite functions of
+%   length 200 with order 1, 10, 100, and 190:::
+%
+%     subplot(2,2,1);
+%     sgram(pherm(200,1),'nf','tc','lin','nocolorbar'); axis('square');
+%
+%     subplot(2,2,2);
+%     sgram(pherm(200,10),'nf','tc','lin','nocolorbar'); axis('square');
+%    
+%     subplot(2,2,3);
+%     sgram(pherm(200,100),'nf','tc','lin','nocolorbar'); axis('square');
+%    
+%     subplot(2,2,4);
+%     sgram(pherm(200,190),'nf','tc','lin','nocolorbar'); axis('square');
+%
 %   See also:  hermbasis, pgauss, psech
 
 % AUTHORs: Thomasz Hrycak and Peter L. Søndergaard.

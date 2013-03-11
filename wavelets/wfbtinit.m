@@ -83,11 +83,6 @@ if((isstruct(filts)&&isfield(filts,'nodes')))
     return;
 end
 
-% if no J was specified use J=1; e.g. function was called like so: wfbtinit({'db',10})
-if(iscell(filts)&&ischar(filts{1}))
-    filts = {filts,1};
-end
-
 % break if the input parameter is not in the correct format
 if ~(iscell(filts)&&length(filts)==2&&isnumeric(filts{2}))
     error('%s: Unsupported filterbank tree definition.',upper(mfilename));
@@ -136,7 +131,9 @@ elseif(flags.do_full)
       wfbt.children{end+1-jj} = [];
    end
      
-   wfbt.children = wfbt.children'; 
+   % I messed something here
+   wfbt.children = wfbt.children(:)'; 
+   wfbt.parents = wfbt.parents(:)';
      
 else
     %just root node

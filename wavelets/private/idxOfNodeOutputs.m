@@ -1,4 +1,4 @@
-function idxOut = idxOfNodeOutputs(nodeNo,treeStruct)
+function idxOut = idxOfNodeOutputs(nodeNo,wt)
 %NOOFNODEOUTPUTS Number of node Outputs
 %   Usage:  noOut = noOfNodeOutputs(nodeNo,treeStruct);
 %
@@ -16,6 +16,5 @@ function idxOut = idxOfNodeOutputs(nodeNo,treeStruct)
 %   See also: wfbtinit
 %
 
-chan = max([length(treeStruct.nodes{nodeNo}.g), length(treeStruct.nodes{nodeNo}.h)]);
-idxOut = find(treeStruct.children{nodeNo}~=0);
+idxOut = find(wt.children{nodeNo}~=0);
 

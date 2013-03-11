@@ -71,6 +71,6 @@ end;
 
 h=mat2cell(harr.',[1,1,1],length(harr));
 if(nargout>1)
-    garr = harr(end:-1:1, :);
+    garr = conj(harr(end:-1:1, :));
     g=mat2cell(garr.',[1,1,1],length(harr));
 end

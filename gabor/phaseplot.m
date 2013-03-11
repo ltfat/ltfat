@@ -53,10 +53,20 @@ function []=phaseplot(f,varargin)
 %     'nocolorbar'  Do not display the colorbar.
 %
 %   For the best result when using `phaseplot`, use a circulant color
-%   map, for instance `hsv`. The following code shows the phaseplot of a
+%   map, for instance `hsv`.
+%
+%   Examples:
+%   ---------
+%
+%   The following code shows the phaseplot of a
 %   periodic, hyperbolic secant visualized using the `hsv` colormap:::
 %
 %     phaseplot(psech(200),'tc','nf');
+%     colormap(hsv);
+%
+%   The following phaseplot shows the phase of white, Gaussian noise:::
+%
+%     phaseplot(randn(200,1));
 %     colormap(hsv);
 % 
 %   See also: phaselock
@@ -66,7 +76,6 @@ function []=phaseplot(f,varargin)
 %   References: Carmona98practical
 
 %   AUTHOR: Peter L. Søndergaard
-%   REFERENCE: NA
 %   TESTING: NA
 
 if nargin<1

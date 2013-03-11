@@ -19,7 +19,7 @@ function c=wfbt(f,wt,varargin)
 %
 %   The following flag groups are supported:
 %
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
+%         'per','zero','odd','even'
 %                Type of the boundary handling.
 %
 %         'dwt','full'
@@ -49,30 +49,27 @@ if(nargin<2)
 end
 
 definput.import = {'fwt','wfbtcommon'};
-%definput.flags.pack={'pack_null','pack'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+definput.keyvals.dim = [];
+[flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.treetype,'ana');
-
+wt = wfbtinit(wt,flags.treetype,flags.forder,'ana');
     
 %% ----- step 1 : Verify f and determine its length -------
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
-if(Ls<2)
-   error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
-end
+[f,~,Ls,~,dim]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
 
-% Do non-expansve transform if ext='per'
-if(strcmp(flags.ext,'per'))
-    doNoExt = 1;
-else
-    doNoExt = 0;
+% Determine next legal input data length.
+L = wfbtlength(Ls,wt,flags.ext);
+
+% Pad with zeros if the safe length L differ from the Ls.
+if(Ls~=L)
+   f=postpad(f,L); 
 end
 
 
 %% ----- step 3 : Run computation
 treePath = nodesBForder(wt);
-inLengths = nodeInLen(treePath,Ls,doNoExt,wt);
 rangeLoc = rangeInLocalOutputs(treePath,wt);
-rangeOut = rangeInOutputs(treePath,wt);
-c = comp_wfbt(f,wt.nodes(treePath),inLengths,rangeLoc,rangeOut,'dec',flags.ext);
+rangeOut = rangeInOutputs(treePath,wt); % very slow
+c = comp_wfbt(f,wt.nodes(treePath),rangeLoc,rangeOut,flags.ext);
+

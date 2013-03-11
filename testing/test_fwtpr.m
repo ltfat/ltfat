@@ -1,5 +1,5 @@
 function test_failed = test_fwtpr(verbose)
-%TEST_COMP_FWT_ALL
+%TEST_COMP_FWTPR
 %
 % Checks perfect reconstruction of the wavelet transform of different
 % filters
@@ -26,7 +26,7 @@ type = {'dec'};
 ext = {'per','zero','odd','even'};
 format = {'pack','cell'};
 
-prefix = 'wfilt_';
+
 test_filters = {
                %{'apr',2} % complex filter values, odd length filters, no exact PR
                {'algmband',2} % 4 filters,

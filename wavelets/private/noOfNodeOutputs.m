@@ -1,21 +1,30 @@
-function noOut = noOfNodeOutputs(nodeNo,treeStruct)
+function noOut = noOfNodeOutputs(nodeNo,wt)
 %NOOFNODEOUTPUTS Number of node Outputs
-%   Usage:  noOut = noOfNodeOutputs(nodeNo,treeStruct);
+%   Usage:  noOut = noOfNodeOutputs(nodeNo,wt);
 %
 %   Input parameters:
-%         nodeNo     : Node index.
-%         treeStruct : Structure containing description of the filter tree.
+%         nodeNo  : Node index.
+%         wt      : Structure containing description of the filter tree.
 %
 %   Output parameters:
 %         noOut      : Number of node outputs. 
 %
-%   `noOfNodeOutputs(nodeNo,treeStruct)` Return number of the terminal 
+%   `noOfNodeOutputs(nodeNo,wt)` Return number of the terminal 
 %   outputs of the node `nodeNo`. For definition of the structure
 %   see `wfbinit`.
 %
 %   See also: wfbtinit
 %
 
-chan = max([length(treeStruct.nodes{nodeNo}.g), length(treeStruct.nodes{nodeNo}.h)]);
-child = length(find(treeStruct.children{nodeNo}~=0));
-noOut = chan -child;
+if(any(nodeNo>numel(wt.nodes)))
+   error('%s: Invalid node index range. Number of nodes is %d.\n',upper(mfilename),numel(wt.nodes));
+end
+
+noOut = cellfun(@(nEl) numel(nEl.filts), wt.nodes(nodeNo)) -...
+        cellfun(@(chEl) numel(chEl(chEl~=0)), wt.children(nodeNo));
+
+%  chan = max([length(wt.nodes{nodeNo}.g), length(wt.nodes{nodeNo}.h)]);
+%  child = length(find(wt.children{nodeNo}~=0));
+%  noOut = chan -child;
+
+

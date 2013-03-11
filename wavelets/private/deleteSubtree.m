@@ -1,9 +1,9 @@
-function treeStruct = deleteSubtree(nodeNo,treeStruct)
-toDelete = nodeSubtreeBF(nodeNo,treeStruct);
+function wt = deleteSubtree(nodeNo,wt)
+toDelete = nodeSubtreeBF(nodeNo,wt);
 
 for ii = length(toDelete):-1:1
-  treeStruct = deleteNode(toDelete(ii),treeStruct); 
+  wt = deleteNode(toDelete(ii),wt); 
   biggerIdx = find(toDelete>toDelete(ii));
   toDelete(biggerIdx) = toDelete(biggerIdx) - 1;
 end
-treeStruct = deleteNode(nodeNo,treeStruct); 
+wt = deleteNode(nodeNo,wt); 

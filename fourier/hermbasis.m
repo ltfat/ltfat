@@ -8,7 +8,27 @@ function [V]=hermbasis(L)
 %
 %   All the vectors in the output are eigenvectors of the discrete Fourier
 %   transform, and resemble samplings of the continuous Hermite functions
-%   to some degree.
+%   to some degree (for low orders).
+%
+%   Examples:
+%   ---------
+%
+%   The following plot shows the spectrograms of 4 Hermite functions of
+%   length 200 with order 1, 10, 100, and 190:::
+%
+%     H=hermbasis(200);
+%   
+%     subplot(2,2,1);
+%     sgram(H(:,1),'nf','tc','lin','nocolorbar'); axis('square');
+%
+%     subplot(2,2,2);
+%     sgram(H(:,10),'nf','tc','lin','nocolorbar'); axis('square');
+%    
+%     subplot(2,2,3);
+%     sgram(H(:,100),'nf','tc','lin','nocolorbar'); axis('square');
+%    
+%     subplot(2,2,4);
+%     sgram(H(:,190),'nf','tc','lin','nocolorbar'); axis('square');
 %
 %   See also:  dft, pherm
 %
@@ -28,9 +48,11 @@ H(L,1)=1;
 
 H=H*pi/(i*2*pi)^2;
 
-% This seem to be the only way to compute the eigenvalue of a tridiagonal
-% matrix in Matlab/Octave.
+% This seem to be the only way to compute the eigenvalues of a tridiagonal
+% matrix in Matlab/Octave. The "eigs" routine refuses to work for the
+% case when all eigenvalues are requisted.
 [V,D]=eig(full(H));
+
 % FIXME: The speed could be greatly optimized by writing a C interface to
 % the DSTEV routine in LAPACK.
 
