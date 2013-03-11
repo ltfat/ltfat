@@ -50,7 +50,7 @@ function c = ufwt(f,h,J,varargin)
 %     f = gspi;
 %     J = 8;
 %     c = ufwt(f,{'db',8},J);
-%     plotufwt(c,{'db',8},44100,'dynrange',90);
+%     %plotufwt(c,{'db',8},44100,'dynrange',90);
 %
 %   See also: iufwt, fwtinit
 %
