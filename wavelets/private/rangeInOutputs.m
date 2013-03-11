@@ -18,14 +18,18 @@ function outRange = rangeInOutputs(nodeNo,wt)
 %
 
 nodesCount = length(nodeNo);
-if(nodesCount>1)
-   outRange = cell(nodesCount,1); 
-else
-    outRange = [];
-end
+outRange = cell(nodesCount,1); 
+
+% tic;
+% noOut = cellfun(@(nEl) numel(nEl.filts), wt.nodes(nodeNo)) -...
+%         cellfun(@(chEl) numel(chEl(chEl~=0)), wt.children(nodeNo));
+% toc;
+
 
 for jj=1:nodesCount
-    outRangeTmp = rangeInNodeOutputs(nodeNo(jj),wt);
+
+   outRangeTmp = rangeInNodeOutputs(nodeNo(jj),wt);
+
 
     if(isempty(outRangeTmp))
         continue;
@@ -33,6 +37,7 @@ for jj=1:nodesCount
     %rootId = find(treeStruct.parents==0);
     rootId = nodeNo(jj);
     higherNodes = [];
+
     while wt.parents(rootId)
          parId = wt.parents(rootId);
           % save idx of all higher nodes
@@ -41,6 +46,7 @@ for jj=1:nodesCount
          higherNodes(end+1:end+(childIdx-1))=ch(1:childIdx-1);
          rootId = parId;
     end
+
 
     noOutPrev = 0;
     for ii=1:length(higherNodes)
@@ -51,11 +57,13 @@ for jj=1:nodesCount
         end
     end
 
+
     outRangeTmp = outRangeTmp + noOutPrev;
     
-   if(iscell(outRange))
-      outRange{jj} = outRangeTmp;
-   else
-      outRange = outRangeTmp;
-   end
+%    if(iscell(outRange))
+    outRange{jj} = outRangeTmp;
+%    else
+%       outRange = outRangeTmp;
+%    end
+
 end

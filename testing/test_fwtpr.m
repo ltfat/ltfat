@@ -73,7 +73,8 @@ test_filters = {
 
 
 J = 6;
-testLen = 4*2^J-1;%(2^J-1);
+%testLen = 4*2^J-1;%(2^J-1);
+testLen = 53;
 
 for formatIdx = 1:length(format)
     formatCurr = format{formatIdx};
@@ -83,7 +84,7 @@ extCur = ext{extIdx};
 %for inLenRound=0:2^J-1
 for inLenRound=0:0
 %f = randn(14576,1);
-f = randn(testLen+inLenRound,100);
+f = randn(testLen+inLenRound,10);
 %f = 1:testLen-1;f=f';
 %f = 0:30;f=f';
 % multiple channels

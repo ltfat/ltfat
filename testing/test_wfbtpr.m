@@ -18,20 +18,20 @@ ext = {'per','zero','odd','even'};
 format = {'pack','cell'};
 
 
-J = 3;
+J = 4;
 %! Mild tree
 wt1 = wfbtinit({{'db',10},6},'full');
 wt1 = wfbtremove(2,1,wt1,'force');
 wt1 = wfbtremove(2,3,wt1,'force');
 
 %! Hardcore tree
-wt2 = wfbtinit({'hden3',1});
+wt2 = wfbtinit({'db3',1});
 wt2 = wfbtput(1,1,'mband1',wt2);
 wt2 = wfbtput(2,2,'mband1',wt2);
 wt2 = wfbtput(3,3,'mband1',wt2);
 wt2 = wfbtput(3,1,'db10',wt2);
 wt2 = wfbtput(4,1,'dgrid2',wt2);
-wt2 = wfbtput(5,1,'hden2',wt2);
+wt2 = wfbtput(5,1,'db3',wt2);
 
 % wt2 = wfbtinit();
 % wt2 = wfbtput(0,0,{'db',4},wt2);
@@ -43,9 +43,9 @@ wt2 = wfbtput(5,1,'hden2',wt2);
 
 
 test_filters = {
-               {'algmband1',J} % 3 filters, uniform, crit. sub.
                {'algmband2',J} % 4 filters, uniform, crit. sub.
-               {'db10',J}
+               {'db4',J}
+               {'algmband1',J} % 3 filters, uniform, crit. sub.
                %{{'hden',3},J} % 3 filters, non-uniform, no crit. sub. no correct
                {'dgrid1',J} % 4 filters. sub. fac. 2
                wt1
@@ -56,8 +56,9 @@ test_filters = {
 
 
 
-testLen = 4*2^7-1;%(2^J-1);
-f = randn(testLen,100);
+%testLen = 4*2^7-1;%(2^J-1);
+testLen = 53;
+f = randn(testLen,10);
 
 for extIdx=1:length(ext)  
    extCur = ext{extIdx};
@@ -65,7 +66,7 @@ for extIdx=1:length(ext)
    for typeIdx=1:length(type)
      for tt=1:length(test_filters)
         actFilt = test_filters{tt};
-         if verbose, if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d \n',actFilt{2},actFilt{1},extCur,length(f)); else disp('Custom'); end; end;
+         if verbose, if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d \n',actFilt{2},actFilt{1},extCur,size(f,1)); else disp('Custom'); end; end;
 
         c = wfbt(f,actFilt,extCur);
         fhat = iwfbt(c,actFilt,size(f,1),extCur);
@@ -75,7 +76,7 @@ for extIdx=1:length(ext)
             if err>1e-6
                test_failed = 1; 
                if verbose
-                 fprintf('err=%d, filt=%s, ext=%s, inLen=%d \n',err,actFilt{1},extCur,testLen);
+                if(~isstruct(actFilt)) fprintf('err=%d, filt=%s, ext=%s, inLen=%d \n',err,actFilt{1},extCur,testLen); else disp('Custom'); end;
                  figure(1);clf;stem([f,fhat]);
                  figure(2);clf;stem([f-fhat]);
                end

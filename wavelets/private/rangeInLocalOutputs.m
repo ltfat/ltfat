@@ -28,18 +28,20 @@ outRange = cell(nodesCount,1);
 nodeChans = cellfun(@(nEl) numel(nEl.filts), wt.nodes(nodeNo));
 chIdx = cellfun(@(chEl) find(chEl~=0), wt.children(nodeNo),'UniformOutput',0);
 
+
 for ii = 1:nodesCount
-   outNodes = zeros(nodeChans(ii),1);
-   outNodes(chIdx{ii}) = 1;
-   zeroIdx = find(outNodes==0);
-   if(~isempty(zeroIdx))
-      outRange{ii} = zeroIdx;
-   end
+ outRange{ii} = setdiff(1:nodeChans(ii),chIdx{ii}); 
+%    outNodes = zeros(nodeChans(ii),1);
+%    outNodes(chIdx{ii}) = 1;
+%    zeroIdx = find(outNodes==0);
+%    if(~isempty(zeroIdx))
+%       outRange{ii} = zeroIdx;
+%    end
 end
 
-if(numel(outRange)==1)
-   outRange = outRange{1};
-end
+% if(numel(outRange)==1)
+%    outRange = outRange{1};
+% end
 
 
 % for ii = 1:nodesCount

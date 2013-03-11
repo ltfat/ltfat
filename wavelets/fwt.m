@@ -98,7 +98,7 @@ function [c,Lc] = fwt(f,h,J,varargin)
 % 
 %     f = gspi;
 %     J = 10;
-%     [c,Lc] = fwt(f,{'db',8},J);
+%     [c,Lc] = fwt(f,'db8',J);
 %     plotfwt({c,Lc},{'db',8},44100,'dynrange',90);
 %
 %   See also: ifwt, fwtinit, wavpack2cell, plotfwt

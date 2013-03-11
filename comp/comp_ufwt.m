@@ -18,15 +18,12 @@ function c = comp_ufwt(f,h,J,a)
 assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterbank is not suported.');
 
 % For holding the impulse responses.
-filtLen = numel(h{1}.h);
 filtNo = length(h);
-hMat = zeros(filtLen,filtNo);
-hDel = zeros(filtNo,1);
-for ff=1:filtNo
-  hDel(ff) = h{ff}.d;  
-  % Normalizing filters
-  hMat(:,ff) = h{ff}.h/sqrt(a(ff));
-end
+hDel = cellfun(@(hEl) hEl.d,h(:));
+%Change format to a matrix
+hMat = cell2mat(cellfun(@(hEl) hEl.h(:),h(:)','UniformOutput',0));
+%Divide each column (filter) by a element of a
+hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
 
 % Allocate output
 [L, W] = size(f);

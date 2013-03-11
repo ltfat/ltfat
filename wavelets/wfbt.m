@@ -68,8 +68,9 @@ end
 
 
 %% ----- step 3 : Run computation
-treePath = nodesBForder(wt);
-rangeLoc = rangeInLocalOutputs(treePath,wt);
-rangeOut = rangeInOutputs(treePath,wt); % very slow
-c = comp_wfbt(f,wt.nodes(treePath),rangeLoc,rangeOut,flags.ext);
+wtPath = nodesBForder(wt);
+rangeLoc = rangeInLocalOutputs(wtPath,wt);
+rangeOut = rangeInOutputs(wtPath,wt); % very slow
+c = comp_wfbt(f,wt.nodes(wtPath),rangeLoc,rangeOut,flags.ext);
+disp('------------------');
 

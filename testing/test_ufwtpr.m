@@ -72,7 +72,8 @@ test_filters = {
 
 
 J = 4;
-testLen = 10*2^J-1;%(2^J-1);
+%testLen = 10*2^J-1;%(2^J-1);
+testLen = 53;
 
 for extIdx=1:length(ext)  
 %for inLenRound=0:2^J-1

@@ -19,16 +19,13 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 % Output length
 L = size(c,1);
 
-% Impulse responses to a matrix
-filtLen = numel(g{1}.h);
-filtNo = numel(g);
-gMat = zeros(filtLen,filtNo);
-gDel = zeros(filtNo,1);
-for ff = 1:filtNo
-    gDel(ff) = g{ff}.d;
-    % Normalize filters
-    gMat(:,ff) = g{ff}.h/sqrt(a(ff));
-end
+% For holding the impulse responses.
+filtNo = length(g);
+gDel = cellfun(@(gEl) gEl.d,g(:));
+%Change format to a matrix
+gMat = cell2mat(cellfun(@(gEl) gEl.h(:),g(:)','UniformOutput',0));
+%Divide each column (filter) by a
+gMat = bsxfun(@rdivide,gMat,sqrt(a(:)'));
 
 % Read top-level appr. coefficients.
 ca = squeeze(c(:,1,:));
@@ -38,7 +35,7 @@ for jj=1:J
    filtUps = a(1)^(J-jj); 
    gMatUps = comp_ups(gMat,filtUps,1);
    % Zero index position of the upsampled filetrs.
-   skip = floor(filtUps.*gDel) - filtUps; 
+   skip = filtUps.*gDel - filtUps; 
    % Run the filterbank
    ca=comp_iufilterbank_td([reshape(ca,size(ca,1),1,size(ca,2)),c(:,cRunPtr:cRunPtr+filtNo-2,:)],gMatUps,1,L,skip,'per'); 
    % Bookkeeping
