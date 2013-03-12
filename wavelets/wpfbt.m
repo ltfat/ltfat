@@ -26,8 +26,8 @@ function c=wpfbt(f,wt,varargin)
 % 
 %     f = gspi;
 %     J = 6;
-%     c = wpfbt(f,{{'db',10},J},'full');
-%     plotfwt(c,44100,90);
+%     %c = wpfbt(f,{{'db',10},J},'full'); FIXME
+%     %plotfwt(c,44100,90);
 %
 %   See also: iwfbt, wfbtinit
 
