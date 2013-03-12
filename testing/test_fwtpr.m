@@ -104,8 +104,8 @@ for typeIdx=1:length(type)
               c = fwt(f,test_filters{tt},jj,extCur);
               fhat = ifwt(c,test_filters{tt},jj,size(f,1),extCur);
            elseif(strcmp(formatCurr,'cell'))
-              [c,Lc] = fwt(f,test_filters{tt},jj,extCur);
-              ccell = wavpack2cell(c,Lc);
+              [c,info] = fwt(f,test_filters{tt},jj,extCur);
+              ccell = wavpack2cell(c,info.Lc);
               fhat = ifwt(ccell,test_filters{tt},jj,size(f,1),extCur); 
            else
                error('Should not get here.');

@@ -1,17 +1,16 @@
-function f=iwpfbt(c,wt,Ls,varargin)
-%IWPFBT   Inverse Wavelet Packet Filterbank Tree
-%   Usage:  f=iwpfbt(c,wt,Ls);
+function f=iuwpfbt(c,wt,varargin)
+%IWPFBT Inverse Undecimated Wavelet Packet Filterbank Tree
+%   Usage:  f=iwpfbt(c,wt);
 %           f=iwpfbt(c,wt,Ls,...);
 %
 %   Input parameters:
 %         c     : Coefficients stored in a cell-array.
 %         wt    : Wavelet Filterbank tree
-%         Ls    : Length of the reconstructed signal.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f=iwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
+%   `f=iuwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
 %   wavelet filterbank tree *wt*. 
 %
 %   The following flag groups are supported:
@@ -36,22 +35,20 @@ function f=iwpfbt(c,wt,Ls,varargin)
 %     J = 7;
 %     wt = wfbtinit({{'db',10},J},'full');
 %     c = wpfbt(f,wt);
-%     fhat = iwpfbt(c,wt,length(f));
+%     fhat = iuwpfbt(c,wt,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
 %   See also: wfbt, wfbtinit
 %
-if nargin<3
+if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
 
 %% PARSE INPUT
-definput.keyvals.Ls=[];    
-definput.import = {'fwt','wfbtcommon'};
-
-if(~iscell(c))
+definput.import = {'wfbtcommon'};
+if(~isnumeric(c))
     error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
@@ -61,6 +58,7 @@ end
 wt = wfbtinit(wt,flags.forder,'syn');
 
 
-wtreePath = nodesBForder(wt,'rev');
+wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-f = comp_iwpfbt(c,wt.nodes(wtreePath),pOutIdxs,chOutIdxs,Ls,flags.ext);
+nodesUps = nodeFiltUps(wtPath,wt);
+f = comp_iuwpfbt(c,wt.nodes(wtPath),nodesUps,pOutIdxs,chOutIdxs);

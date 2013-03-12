@@ -1,4 +1,4 @@
-function c=wfbt(f,wt,varargin)
+function [c,info]=wfbt(f,wt,varargin)
 %WFBT   Wavelet FilterBank Tree
 %   Usage:  c=wfbt(f,wt);
 %           c=wfbt(f,wt,...);
@@ -37,8 +37,8 @@ function c=wfbt(f,wt,varargin)
 % 
 %     f = gspi;
 %     J = 7;
-%     c = wfbt(f,{{'db',10},J},'full');
-%     plotfwt(c,44100,90);
+%     [c,info] = wfbt(f,{'sym10',J,'full'});
+%     plotfwt(c,info,44100,'dynrange',90);
 %
 %   See also: iwfbt, wfbtinit
 %
@@ -53,10 +53,10 @@ definput.keyvals.dim = [];
 [flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.treetype,flags.forder,'ana');
+wt = wfbtinit(wt,flags.forder,'ana');
     
 %% ----- step 1 : Verify f and determine its length -------
-[f,~,Ls,~,dim]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
+[f,~,Ls]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
 
 % Determine next legal input data length.
 L = wfbtlength(Ls,wt,flags.ext);
@@ -72,5 +72,17 @@ wtPath = nodesBForder(wt);
 rangeLoc = rangeInLocalOutputs(wtPath,wt);
 rangeOut = rangeInOutputs(wtPath,wt); % very slow
 c = comp_wfbt(f,wt.nodes(wtPath),rangeLoc,rangeOut,flags.ext);
-disp('------------------');
+
+%% ----- Optionally : Fill info struct ----
+if nargout>1
+   info.fname = 'wfbt';
+   info.wt = wt;
+   info.ext = flags.ext;
+   info.Lc = cellfun(@(cEl) size(c,1),c);
+   info.dim = dim;
+   info.Ls = Ls;
+   info.fOrder = flags.forder;
+   info.isPacked = 0;
+end
+
 

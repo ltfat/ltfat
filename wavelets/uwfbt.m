@@ -46,7 +46,7 @@ definput.import = {'wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.treetype,flags.forder,'ana');
+wt = wfbtinit(wt,flags.forder,'ana');
 
 %% ----- step 1 : Verify f and determine its length -------
 [f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);

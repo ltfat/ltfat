@@ -1,4 +1,4 @@
-function test_failed = test_wfbtpr(verbose)
+function test_failed = test_wpfbtpr(verbose)
 %TEST_WFBTPR
 %
 % Checks perfect reconstruction of the general wavelet transform of different
@@ -18,7 +18,7 @@ ext = {'per','zero','odd','even'};
 format = {'pack','cell'};
 
 
-J = 4;
+J = 3;
 %! Mild tree
 wt1 = wfbtinit({'db10',6,'full'});
 wt1 = wfbtremove(2,1,wt1,'force');
@@ -58,7 +58,7 @@ test_filters = {
 
 %testLen = 4*2^7-1;%(2^J-1);
 testLen = 53;
-f = randn(testLen,10);
+f = randn(testLen,1);
 
 for extIdx=1:length(ext)  
    extCur = ext{extIdx};
@@ -68,8 +68,8 @@ for extIdx=1:length(ext)
         actFilt = test_filters{tt};
          if verbose, if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d \n',actFilt{2},actFilt{1},extCur,size(f,1)); else disp('Custom'); end; end;
 
-        c = wfbt(f,actFilt,extCur);
-        fhat = iwfbt(c,actFilt,size(f,1),extCur);
+        c = wpfbt(f,actFilt,extCur);
+        fhat = iwpfbt(c,actFilt,size(f,1),extCur);
         
         %MSE
             err = sum(f(:).^2-fhat(:).^2)/length(f(:));

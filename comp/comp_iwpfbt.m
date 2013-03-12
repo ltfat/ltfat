@@ -1,145 +1,44 @@
-function f=comp_iwpfbt(c,wtreePath,pOutIdxs,chOutIdxs,Ls,type,ext)
+function f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext)
 %COMP_IWFBT Compute Inverse Wavelet Packet Filter-Bank Tree
 %   Usage:  f=comp_iwpfbt(c,wt,Ls,type,ext)
 %
 %   Input parameters:
-%         c          : Coefficients stored in the cell array.
-%         wtreePath  : Nodes in the reverse BF order
-%         type       : 'dec','undec' Type of the wavelet transform.
-%         ext        : 'per','zpd','sym','symw','asym','asymw','ppd','sp0' Type of the forward transform boundary handling.
+%         c          : Coefficients stored in cell array.
+%         wtNodes    : Filterbank tree nodes (elementary filterbans) in
+%                      reverse BF order. Cell array of structures of length *nodeNo*.
+%         pOutIdxs   : Idx of each node's parent. Array of length *nodeNo*.
+%         chOutIdxs  : Idxs of each node children. Cell array of vectors of
+%                      length *nodeNo*.
+%         ext        : Type of the forward transform boundary handling.
 %
 %   Output parameters:
-%         f     : Reconstructed data.
+%         f          : Reconstructed data in L*W array.
 %
 
-% Do non-expansve transform if ext='per'
-if(strcmp(ext,'per'))
-    doNoExt = 1;
-else
-    doNoExt = 0;
-end
+% Do non-expansve transform if ext=='per'
+doPer = strcmp(ext,'per');
 
-% number of channels
-chans = size(c{end},2); 
-f = zeros(Ls,chans);
-
-% Nodes in the reverse BF order
-%treePath = nodesBForder(wt,'rev');
-
-
-% The decimated case
-if(strcmp(type,'dec'))
-    for ch=1:chans
-       % exclude root
-       for jj=1:length(wtreePath)-1
-           tmpfilt = wtreePath{jj}.filts;
-           tmpfiltNo = length(tmpfilt);
-           tmpa = wtreePath{jj}.a;
-
-           % HOWTO combine redundant coefficients
-           c{pOutIdxs(jj)} = c{pOutIdxs(jj)}/2;
-           for ff=1:tmpfiltNo
-               ffTmpFilt = tmpfilt{ff}.h;
-               ffTmpFiltD = tmpfilt{ff}.d;
-               ffTmpFlen = length(ffTmpFilt);
-               ffTmpa = tmpa(ff);
-               if(doNoExt)
-                  tmpSkip = ffTmpFiltD-1;
-               else
-                  tmpSkip = ffTmpFlen-2;
-               end
-               c{pOutIdxs(jj)} = c{pOutIdxs(jj)} + 0.5*comp_upconv({c{chOutIdxs{jj}(ff)}(:,ch)},...
-                   length(c{pOutIdxs(jj)}),{ffTmpFilt},ffTmpa,tmpSkip,doNoExt,0);
-           end
-       end
-       
-       tmpfilt = wtreePath{end}.filts;
-       tmpfiltNo = length(tmpfilt);
-       tmpa = wtreePath{end}.a;
-           %tmpOutLen = nodesOutLengths(jj);
-           
-       for ff=1:tmpfiltNo
-          ffTmpFilt = tmpfilt{ff}.h;
-          ffTmpFiltD = tmpfilt{ff}.d;
-          ffTmpFlen = length(ffTmpFilt);
-          ffTmpa = tmpa(ff);
-          if(doNoExt)
-            tmpSkip = ffTmpFiltD-1;
-          else
-            tmpSkip = ffTmpFlen-2;
-          end
-          f(:,ch) = f(:,ch) + comp_upconv({c{chOutIdxs{end}(ff)}(:,ch)},...
-               Ls,{ffTmpFilt},ffTmpa,tmpSkip,doNoExt,0);
-       end
-       
-       
-       
+% For each node in tree in the BF order...
+ for jj=1:length(wtNodes)
+    % Node filters to a cell array
+    gCell = cellfun(@(gEl) gEl.h(:),wtNodes{jj}.filts(:),'UniformOutput',0);
+    % Node filters subs. factors
+    a = wtNodes{jj}.a;
+    % Node filters initial skips
+    if(doPer)
+       skip = cellfun(@(gEl) gEl.d-1,wtNodes{jj}.filts);
+    else
+       skip = cellfun(@(gEl) numel(gEl),gCell) - 1 - (a - 1);
     end
-elseif(strcmp(type,'undec'))
-    error('Not done yet!');
-   for ii=1:length(treePath)
-      nodesOutLengths(ii) =  Ls;
-   end
-   for ch=1:chans
-       tempca = {};
-       for jj=1:length(treePath)
-           tmpfilt = wt.nodes{treePath(jj)}.filts;
-           tmpa = wt.nodes{treePath(jj)}.a;
-           for ii = 1:numel(tmpfilt)
-              tmpfilt{ii}.h = tmpfilt{ii}.h/sqrt(tmpa(ii));
-           end
-           tmpOutLen = nodesOutLengths(jj);
-           tmpNoOfFilters = length(tmpfilt);
-           
-           % find all unconnected outputs of the node
-           tmpOutRange = rangeInLocalOutputs(treePath(jj),wt);
-           tmpOutRange = tmpOutRange(end:-1:1);
-           tmpCoefOutRange = []; 
-           if(~isempty(tmpOutRange))
-               tmpCoefOutRange = rangeInOutputs(treePath(jj),wt);
-               tmpCoefOutRange = tmpCoefOutRange(end:-1:1);
-           end
-           
-           tempOut = zeros(tmpOutLen,1);
-           % first, do the filtering that uses c 
-           for ff=1:length(tmpCoefOutRange)
-               ffTmpFilt = tmpfilt{tmpOutRange(ff)}.h;
-               ffTmpFiltD = tmpfilt{tmpOutRange(ff)}.d;
-               ffTmpFlen = length(ffTmpFilt);
-               %ffTmpa = tmpa(tmpOutRange(ff));
-               ffTmpUpFac = nodeFiltUps(treePath(jj),wt);
-               if(doNoExt)
-                  tmpSkip = ffTmpUpFac*(ffTmpFiltD-1);
-               else
-                  error('Not done yet!');
-                  %tmpSkip = ffTmpFlen-2;
-               end
-               tempOut = tempOut + up_conv_td({c{tmpCoefOutRange(ff)}(:,ch)},...
-                   tmpOutLen,{ffTmpFilt},1,tmpSkip,doNoExt,ffTmpUpFac);
-           end
-           
-           % second, do other filtering
-           tmpOtherRange = 1:tmpNoOfFilters;tmpOtherRange(tmpOutRange)=0;tmpOtherRange=tmpOtherRange(tmpOtherRange~=0);
-           tmpOtherRange = tmpOtherRange(end:-1:1);
-           tmpOtherOutNo = length(tmpOtherRange);
-           for ff=1:tmpOtherOutNo
-               ffTmpFilt = tmpfilt{tmpOtherRange(ff)}.h;
-               ffTmpFiltD = tmpfilt{tmpOtherRange(ff)}.d;
-               ffTmpFlen = length(ffTmpFilt);
-               %ffTmpa = tmpa(tmpOtherRange(ff));
-               ffTmpUpFac = nodeFiltUps(treePath(jj),wt);
-               if(doNoExt)
-                  tmpSkip = ffTmpUpFac*(ffTmpFiltD-1);
-               else
-                  tmpSkip = ffTmpFlen-2;
-               end
-               tempOut = tempOut + up_conv_td({tempca{ff}},...
-                   tmpOutLen,{ffTmpFilt},1,tmpSkip,doNoExt,ffTmpUpFac);
-           end
-        
-           % store the intermediate results
-           tempca = {tempca{tmpOtherOutNo+1:end},tempOut};
-       end
-       f(:,ch) = tempca{end};
+    
+    if(pOutIdxs(jj))
+       % Run filterbank and add to the existing subband.
+       ctmp = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,size(c{pOutIdxs(jj)},1),skip,ext);
+       c{pOutIdxs(jj)} = 0.5*c{pOutIdxs(jj)}+0.5*ctmp;
+    else
+       % We are at the root.
+       f = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,Ls,skip,ext);
     end
-end
+ end
+     
+ 

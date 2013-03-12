@@ -1,6 +1,6 @@
-function f = ifwt(c,g,J,varargin)
+function f = ifwt(c,par,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt(c,g,J,Ls)
+%   Usage:  f = ifwt(c,info)
 %           f = ifwt(c,g,J,Ls,...)
 %
 %   Input parameters:
@@ -44,57 +44,68 @@ function f = ifwt(c,g,J,varargin)
 %
 %   References: ma98
 
-if nargin<4
+if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
-
 
 if  ~(iscell(c) || isnumeric(c))
   error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
-
-%% PARSE INPUT
-definput.import = {'fwt'};
-definput.keyvals.dim = [];
-definput.keyvals.Ls = [];
-[flags,~,Ls,dim]=ltfatarghelper({'Ls','dim'},definput,varargin);
-
-% Initialize the wavelet filters structure
-g = fwtinit(g,'syn');
-
-%If dim is not specified use first non-singleton dimension.
-if(isempty(dim))
-    dim=find(size(c)>1,1);
-end
-
-%% ----- step 1 : Determine input data length.
-L = fwtlength(Ls,g,J,flags.ext);
-
-%% ----- step 2 : Determine number of ceoefficients in each subband
-Lc = fwtclength(L,g,J,flags.ext);
-
-%% ----- step 4 : Change c to correct shape according to the dim.
-if(isnumeric(c))
-   %Change format
-   c =  wavpack2cell(c,Lc,dim);
-elseif(iscell(c))
-   %Just check *Lc*
-   if(~isequal(Lc,cellfun(@(x) size(x,1),c)))
-      error('%s: Coefficient subband lengths does not comply with parameter *Ls*.',upper(mfilename));
-   end
+if(isstruct(par))
+   % process info struct
+   g = fwtinit(par.fwtstruct,'syn');
+   J = par.J;
+   Lc = par.Lc;
+   Ls = par.Ls;
+   dim = par.dim;
+   ext = par.ext;
 else
-   error('%s: Unrecognized coefficient format.',upper(mfilename)); 
-end;
+   if nargin<4
+      error('%s: Too few input parameters.',upper(mfilename));
+   end;
+   
+   %% PARSE INPUT
+   definput.import = {'fwt'};
+   definput.keyvals.dim = [];
+   definput.keyvals.Ls = [];
+   definput.keyvals.J = [];
+   [flags,~,J,Ls,dim]=ltfatarghelper({'J','Ls','dim'},definput,varargin);
+ 
+   ext = flags.ext;
+   %If dim is not specified use first non-singleton dimension.
+   if(isempty(dim))
+       dim=find(size(c)>1,1);
+   end
+   
+   % Initialize the wavelet filters structure
+   g = fwtinit(par,'syn');
 
-%% ----- step 4 : Run computation 
-f = comp_ifwt(c,g.filts,J,g.a,Ls,flags.ext);
+   %% ----- Determine input data length.
+   L = fwtlength(Ls,g,J,ext);
 
-%% ----- FINALIZE: Reshape back according to the dim.
-if(dim==2)
-    f = f.';
+   %% ----- Determine number of ceoefficients in each subband
+   Lc = fwtclength(L,g,J,ext);
 end
 
+   %% ----- Change c to correct shape according to the dim.
+   if(isnumeric(c))
+      %Change format
+      c =  wavpack2cell(c,Lc,dim);
+   elseif(iscell(c))
+      %Just check *Lc*
+      if(~isequal(Lc,cellfun(@(x) size(x,1),c)))
+         error('%s: Coefficient subband lengths does not comply with parameter *Ls*.',upper(mfilename));
+      end
+   else
+      error('%s: Unrecognized coefficient format.',upper(mfilename)); 
+   end;
+
+   %% ----- Run computation 
+   f = comp_ifwt(c,g.filts,J,g.a,Ls,ext);
+
+   %% ----- FINALIZE: Reshape back according to the dim.
+   if(dim==2)
+       f = f.';
+   end
 %END IFWT
-
-

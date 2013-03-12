@@ -1,7 +1,7 @@
-function [C] = plotfwt(c,varargin)
+function [C] = plotfwt(c,info,varargin)
 %PLOTFWT  Plot wavelet coefficients
-%   Usage:  plotfwt(c,g,fs) 
-%           plotfwt({c,Lc},g,fs)
+%   Usage:  plotfwt(c,info,fs) 
+%           plotfwt(c,info,fs,'dynrange',dynrange,...)
 %
 %   `plotfwt(c,g)` plots the wavelet coefficients *c* which were obtained
 %   from |fwt|_ with wavelet filters definition *g*. The input cell-array
@@ -34,61 +34,80 @@ function [C] = plotfwt(c,varargin)
 %
 %   See also: fwt, tfplot
 
-if nargin<1
+if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
 definput.import={'tfplot'};
 definput.flags.fwtplottype = {'tfplot','stem'};
-definput.keyvals.g = [];
 definput.keyvals.fs = [];
 definput.keyvals.dynrange = [];
-[flags,kv]=ltfatarghelper({'g','fs'},definput,varargin);
+[flags,kv]=ltfatarghelper({'fs'},definput,varargin);
 
-if(~iscell(c))
-   error('%s: Unrecognized coefficient format.',upper(mfilename));
+if(flags.do_stem)
+   error('%s: Flag %s not supported yet.',upper(mfilename),flags.fwtplottype);
 end
 
-% Change to the cell format
-if(iscell(c) && size(c,2)==2 && size(c,1)==1)
-    c = wavpack2cell(c{1},c{2});
-end
+draw_ticks = 1;
+if(strcmpi(info.fname,'fwt'))
+   % Change to the cell format
+   if(isnumeric(c))
+       c = wavpack2cell(c,info.Lc,info.dim);
+   end
 
-% Only one channel signals can be plotted.
-if(size(c{1},2)>1)
-   error('%s: Multichannel input.',upper(mfilename));
-end
+   % Only one channel signals can be plotted.
+   if(size(c{1},2)>1)
+      error('%s: Multichannel input not supported.',upper(mfilename));
+   end
 
-subbNo = numel(c);
-if(~isempty(kv.g))
-   % Determine number of levels *J* and subsampling factors *a* for
-   % subbands
-   g = fwtinit(kv.g,'syn');
+   subbNo = numel(c);
+   g = fwtinit(info.fwtstruct,'syn');
    aBase = g.a;
    filtNo = numel(g.filts);
-   J = (subbNo-1)/(filtNo-1);
+   J = info.J;
    a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
-else
-   % general values
-   filtNo = 2;
-   J = subbNo-1;
+elseif(strcmpi(info.fname,'ufwt'))
+   % Only one channel signals can be plotted.
+   if(ndims(c)>2)
+      error('%s: Multichannel not supported.',upper(mfilename));
+   end
+
+   subbNo = size(c,2);
    a = ones(subbNo,1);
+
+   % Determine number of levels *J* and subsampling factors *a* for
+   % subbands. For correct y axis description.
+   g = fwtinit(info.fwtstruct,'syn');
+   filtNo = numel(g.filts);
+   J = info.J; 
+elseif(strcmpi(info.fname,'wfbt'))
+   % Only one channel signals can be plotted.
+   if(size(c{1},2)>1)
+      error('%s: Multichannel input not supported.',upper(mfilename));
+   end
+   a = treeSub(info.wt);
+   subbNo = numel(c);
+   J = subbNo - 1;
+   filtNo = 2;
+   draw_ticks = 0;
 end
 
 % Use plotfilterbank
 C=plotfilterbank(c,a,[],kv.fs,kv.dynrange,flags.plottype,...
   flags.log,flags.colorbar,flags.display,'fontsize',kv.fontsize,'clim',kv.clim);
 
-% Redo the yticks and ylabel
-yTickLabels = cell(1,subbNo);
-yTickLabels{1} = sprintf('a%d',J);
-Jtmp = ones(filtNo-1,1)*(J:-1:1);
-for ii=1:subbNo-1
-   yTickLabels{ii+1} = sprintf('d%d',Jtmp(ii));
-end
+if(draw_ticks)
+   % Redo the yticks and ylabel
+   yTickLabels = cell(1,subbNo);
+   yTickLabels{1} = sprintf('a%d',J);
+   Jtmp = ones(filtNo-1,1)*(J:-1:1);
+   for ii=1:subbNo-1
+      yTickLabels{ii+1} = sprintf('d%d',Jtmp(ii));
+   end
 
-ylabel('Subbands','fontsize',kv.fontsize);
-set(gca,'ytick',1:subbNo);
-set(gca,'ytickLabel',yTickLabels,'fontsize',kv.fontsize);
+   ylabel('Subbands','fontsize',kv.fontsize);
+   set(gca,'ytick',1:subbNo);
+   set(gca,'ytickLabel',yTickLabels,'fontsize',kv.fontsize);
+end
 
 

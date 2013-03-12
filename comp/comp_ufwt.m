@@ -36,7 +36,7 @@ for jj=1:J
     % Upsampling the filters.
     hMatUps = comp_ups(hMat,a(1)^(jj-1),1);
     % Zero index position of the upsampled filters.
-    skip = ceil(a(1)^(jj-1).*(hDel - 1));
+    skip = a(1)^(jj-1).*(hDel - 1);
     % Run filterbank.
     ca=comp_ufilterbank_td(ca,hMatUps,1,skip,'per');
     % Bookkeeping
@@ -46,22 +46,4 @@ for jj=1:J
 end
 % Saving final approximation coefficients.
 c(:,1,:) = ca;
-
-
-% sub = 1;
-% for ch=1:W
-%   tempca = f(:,ch);  
-%   runPtr = 0;
-%   for jj=1:J
-%      for ff=filtNo:-1:2
-%         skip = ceil(a(1)^(jj-1)*(h{ff}.d - 1));
-%         c(:,end-runPtr,ch) = comp_convsub(tempca,inLen,{tmph{ff}},sub,skip,'per',a(1)^(jj-1)); 
-%         runPtr = runPtr + 1;
-%      end
-%      skip = ceil(a(1)^(jj-1)*(h{1}.d - 1));
-%      tempca = comp_convsub(tempca,inLen,{tmph{1}},sub,skip,'per',a(1)^(jj-1));
-%   end
-%   c(:,1,ch) = tempca;
-% end 
-
 

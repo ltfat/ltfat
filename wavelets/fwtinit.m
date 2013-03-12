@@ -223,16 +223,17 @@ function wcell = parseNameValPair(wchar,wprefix)
 %delimited by character ':'.
 %The output is cell array {wname,str2double(N1),str2double(N2),...}
 
+wcharNoNum = wchar(1:find(isstrprop(wchar,'digit')~=0,1)-1);
+
 numDelimiter = ':';
-wchar = lower(wchar);
 wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('wavelets/%s*',wprefix)));
 wfiltNames = arrayfun(@(fEl) fEl.name(1+find(fEl.name=='_',1):find(fEl.name=='.',1,'last')-1),wfiltFiles,'UniformOutput',0);
-wcharMatch = cellfun(@(nEl) strcmp(wchar(1:min([numel(nEl),numel(wchar)])),nEl),wfiltNames);
+wcharMatch = cellfun(@(nEl) strcmpi(wcharNoNum,nEl),wfiltNames);
 wcharMatchIdx = find(wcharMatch~=0);
 if(isempty(wcharMatchIdx))
    error('%s: Unknown wavelet filter definition string.',upper(mfilename));
 end
-if(numel(wcharMatchIdx)>2)
+if(numel(wcharMatchIdx)>1)
    error('%s: Ambiguous wavelet filter definition string. Probably bug somewhere.',upper(mfilename));
 end
 

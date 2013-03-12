@@ -48,7 +48,7 @@ do_additive = isAdditive(kv.entropy);
 
 if(flags.do_bottomup)
    % Do full-tree Wavelet Packet decomposition beforehand and prune.
-   wt = wfbtinit({w,J},'full','nat');
+   wt = wfbtinit({w,J,'full'},'nat');
    c = wpfbt(f,wt,flags.ext);
    % calculate entropy of all subbands
    cEnt = zeros(length(c),1);

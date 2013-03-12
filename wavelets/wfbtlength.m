@@ -17,7 +17,7 @@ definput.import = {'fwt','wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet filters structure
-wt = wfbtinit(wt,'ana',flags.treetype,flags.forder);
+wt = wfbtinit(wt,flags.forder,'ana');
 
 
 if(flags.do_per)

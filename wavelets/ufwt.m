@@ -1,4 +1,4 @@
-function c = ufwt(f,h,J,varargin)
+function [c,info] = ufwt(f,h,J,varargin)
 %UFWT  Undecimated Fast Wavelet Transform 
 %   Usage:  c = ufwt(f,h,J);
 %
@@ -49,8 +49,8 @@ function c = ufwt(f,h,J,varargin)
 % 
 %     f = gspi;
 %     J = 8;
-%     c = ufwt(f,{'db',8},J);
-%     plotufwt(c,{'db',8},44100,'dynrange',90);
+%     [c,info] = ufwt(f,'db8',J);
+%     plotfwt(c,info,44100,'dynrange',90);
 %
 %   See also: iufwt, fwtinit
 %
@@ -69,21 +69,23 @@ if(J<1 && rem(a,1)~=0)
 end
 
 % Initialize the wavelet filters structure
-h = fwtinit(h);
-
-%% ----- step 0 : Check inputs -------
-definput.import = {'fwt'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
-
+h = fwtinit(h,'ana');
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+[f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);
 if(Ls<2)
    error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
 end
  
 %% ----- step 2 : Run computation
  c = comp_ufwt(f,h.filts,J,h.a);
+ 
+%% ----- Optionally : Fill info struct ----
+if nargout>1
+   info.fname = 'ufwt';
+   info.fwtstruct = h;
+   info.J = J;
+end
 
 

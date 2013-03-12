@@ -1,4 +1,4 @@
-function [c,Lc] = fwt(f,h,J,varargin)
+function [c,info] = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
 %           c = fwt(f,h,J,'ext',ext,'dim',dim);
@@ -98,8 +98,8 @@ function [c,Lc] = fwt(f,h,J,varargin)
 % 
 %     f = gspi;
 %     J = 10;
-%     [c,Lc] = fwt(f,'db8',J);
-%     plotfwt({c,Lc},{'db',8},44100,'dynrange',90);
+%     [c,info] = fwt(f,'db8',J);
+%     plotfwt(c,info,44100,'dynrange',90);
 %
 %   See also: ifwt, fwtinit, wavpack2cell, plotfwt
 %
@@ -145,8 +145,16 @@ c = comp_fwt(f,h.filts,J,h.a,Lc,flags.ext);
 
 %% ----- FINALIZE: Change format of coefficients.
 c = wavcell2pack(c,dim);
+
+%% ----- FILL INFO STRUCT ----------------------
+if nargout>1
+   info.fname = 'fwt';
+   info.fwtstruct = h;
+   info.ext = flags.ext;
+   info.Lc = Lc;
+   info.J = J;
+   info.dim = dim;
+   info.Ls = Ls;
+   info.isPacked = 1;
+end
 %END FWT
- 
- 
-
-

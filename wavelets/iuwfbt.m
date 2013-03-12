@@ -14,15 +14,11 @@ end;
 
 
 %% PARSE INPUT
-definput.keyvals.Ls=[];    
 definput.import = {'wfbtcommon'};
-
-
-definput.keyval.Ls = [];
-[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.treetype,'syn');
+wt = wfbtinit(wt,flags.forder,'syn');
 
 %% ----- step 2 : Prepare input parameters
 wtPath = nodesBForder(wt,'rev');
