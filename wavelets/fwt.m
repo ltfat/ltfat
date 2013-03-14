@@ -96,12 +96,12 @@ function [c,info] = fwt(f,h,J,varargin)
 %   
 %   A simple example of calling the |fwt|_ function:::
 % 
-%     f = gspi;
+%     f = greasy;
 %     J = 10;
 %     [c,info] = fwt(f,'db8',J);
 %     plotwavelets(c,info,44100,'dynrange',90);
 %
-%   See also: ifwt, fwtinit, wavpack2cell, plotfwt
+%   See also: ifwt, fwtinit, wavpack2cell, plotwavelets
 %
 %   References: ma98  
 

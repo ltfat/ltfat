@@ -50,7 +50,7 @@ function [c,info] = ufwt(f,h,J,varargin)
 %     f = gspi;
 %     J = 8;
 %     [c,info] = ufwt(f,'db8',J);
-%     plotwavelets(c,info,44100,'dynrange',90);
+%     %plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: iufwt, fwtinit
 %

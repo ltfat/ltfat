@@ -5,9 +5,9 @@ function wt = wfbtremove(d,k,wt,varargin)
 %
 %   Input parameters:
 %           d   : Level in the tree (0 - root).
-%           k   : Index of the node at leveù *d* (starting at 0).
+%           k   : Index of the node at level *d* (starting at 0).
 %           wt  : Wavelet filterbank tree structure (as returned from
-%           |wfbtinit|_).
+%                 |wfbtinit|_).
 %
 %   Output parameters:
 %           wt : Modified filterbank structure.

@@ -1,9 +1,9 @@
 function [C] = plotwavelets(c,info,varargin)
-%PLOTFWT  Plot wavelet coefficients
-%   Usage:  plotfwt(c,info,fs) 
-%           plotfwt(c,info,fs,'dynrange',dynrange,...)
+%PLOTWAVELETS  Plot wavelet coefficients
+%   Usage:  plotwavelets(c,info,fs) 
+%           plotwavelets(c,info,fs,'dynrange',dynrange,...)
 %
-%   `plotfwt(c,g)` plots the wavelet coefficients *c* which were obtained
+%   `plowavelets(c,g)` plots the wavelet coefficients *c* which were obtained
 %   from |fwt|_ with wavelet filters definition *g*. The input cell-array
 %   *c* can have two formats:
 % 
@@ -19,17 +19,17 @@ function [C] = plotwavelets(c,info,varargin)
 %
 %   For possible formats of the parameter *g* see |fwt|_ function.
 %
-%   `plotfwt(c,g,fs)` does the same plot assuming a sampling rate of *fs* Hz
+%   `plowavelets(c,g,fs)` does the same plot assuming a sampling rate of *fs* Hz
 %   of the original signal.
 %
-%   `plotfwt(c,g,fs,'dynrange',dynrange)` additionally limits the dynamic range.
+%   `plowavelets(c,g,fs,'dynrange',dynrange)` additionally limits the dynamic range.
 %
-%   `C=plotfwt(...)` returns the processed image data used in the
+%   `C=plowavelets(...)` returns the processed image data used in the
 %   plotting. Inputting this data directly to `imagesc` or similar functions
 %   will create the plot. This is usefull for custom post-processing of the
 %   image data.
 %
-%   `plotfwt` supports optional parameters of |tfplot|_. Please see
+%   `plowavelets` supports optional parameters of |tfplot|_. Please see
 %   the help of |tfplot|_ for an exhaustive list.
 %
 %   See also: fwt, tfplot

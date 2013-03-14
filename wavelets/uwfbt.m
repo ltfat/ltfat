@@ -14,11 +14,6 @@ function [c,info]=uwfbt(f,wt,varargin)
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
 %   is applied to each of *W* columns. 
 %
-%   
-%
-%
-%
-%
 %   The following flag groups are supported:
 %
 %         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
@@ -31,10 +26,10 @@ function [c,info]=uwfbt(f,wt,varargin)
 %   
 %   A simple example of calling the |wfbt|_ function using the "full decomposition" wavelet tree:::
 % 
-%     f = gspi;
+%     f = greasy;
 %     J = 8;
 %     [c,info] = uwfbt(f,{'sym10',J,'full'});
-%     plotwavelets(c,info,44100,'dynrange',90);
+%     plotwavelets(c,info,16000,'dynrange',90);
 %
 %   See also: iuwfbt, wfbtinit
 

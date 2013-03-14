@@ -1,7 +1,7 @@
 function f=iuwpfbt(c,par,varargin)
-%IWPFBT Inverse Undecimated Wavelet Packet Filterbank Tree
-%   Usage:  f=iwpfbt(c,info);
-%           f=iwpfbt(c,wt,...);
+%IUWPFBT Inverse Undecimated Wavelet Packet Filterbank Tree
+%   Usage:  f=iuwpfbt(c,info);
+%           f=iuwpfbt(c,wt,...);
 %
 %   Input parameters:
 %         c     : Coefficients stored in a cell-array.
@@ -31,7 +31,7 @@ function f=iuwpfbt(c,par,varargin)
 %   
 %   A simple example showing perfect reconstruction using the "full decomposition" wavelet tree:::
 % 
-%     f = gspi;
+%     f = greasy;
 %     J = 7;
 %     wtdef = {'db10',J,'full'};
 %     c = uwpfbt(f,wtdef);

@@ -28,7 +28,7 @@
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %  
 %   Plots
-%      PLOTFWT           - Plot wavelet coefficients
+%      PLOTWAVELETS      - Plot wavelet coefficients
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions

@@ -4,7 +4,7 @@ function [L,tfr]=dwiltlength(Ls,M);
 %
 %   `dwiltlength(Ls,M)` returns the length of a Wilson / WMDCT system with
 %   *M* channels system is long enough to expand a signal of length
-%   *Ls*. Please see the help on |dwilt|_ or |wmdct|_for an explanation of the
+%   *Ls*. Please see the help on |dwilt|_ or |wmdct|_ for an explanation of the
 %   parameter *M*.
 %
 %   If the returned length is longer than the signal length, the signal will

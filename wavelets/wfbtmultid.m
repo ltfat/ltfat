@@ -23,14 +23,12 @@ function [wfb,a] = wfbtmultid( filts, varargin)
 %   identical to the DWT tree:::
 %
 %     [wfb,a] = wfbtmultid({'db10',3,'dwt'});
-%     figure(1);
 %     wtfftfreqz(wfb);
 %
 %   In the second example, the filterbank is identical to the full
 %   wavelet tree:::
 %
 %    [wfb,a] = wfbtmultid({'db10',3,'full'});
-%    figure(2);
 %    wtfftfreqz(wfb);
 %
 %   See also: wfbtinit

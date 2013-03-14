@@ -6,9 +6,6 @@ function f=iuwfbt(c,par,varargin)
 %
 %   `f=iuwfbt(c,wt)` computes XXX 
 %
-%
-%
-%
 
 if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));

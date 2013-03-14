@@ -1,5 +1,5 @@
 function [c,info]=uwpfbt(f,wt,varargin)
-%WPFBT Undecimated Wavelet Packet FilterBank Tree
+%UWPFBT Undecimated Wavelet Packet FilterBank Tree
 %   Usage:  c=uwpfbt(f,wt);
 %           c=uwpfbt(f,wt,...);
 %
@@ -15,14 +15,13 @@ function [c,info]=uwpfbt(f,wt,varargin)
 %   input data *f*. If *f* is a matrix, the transformation is applied to 
 %   each of column of the matrix.
 %
-%
 %   Examples:
 %   ---------
 %   
 %   A simple example of calling the |uwpfbt|_ function using the "full
 %   decomposition" wavelet tree:::
 % 
-%     f = gspi;
+%     f = greasy;
 %     J = 6;
 %     [c,info] = uwpfbt(f,{'db10',J,'full'});
 %     plotwavelets(c,info,44100,'dynrange',90);

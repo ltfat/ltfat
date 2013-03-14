@@ -76,7 +76,7 @@ function [c,relres,iter]=franaiter(F,f,varargin)
   [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
   
   % Determine L from the first vector, it must match for all of them.
-  L=framelengthcoef(F,size(f,1));
+  L=framelength(F,size(f,1));
     
   A=@(x) frsyn(F,frana(F,x));
            
