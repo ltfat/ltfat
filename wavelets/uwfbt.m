@@ -14,12 +14,8 @@ function [c,info]=uwfbt(f,wt,varargin)
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
 %   is applied to each of *W* columns. 
 %
-%   The following flag groups are supported:
-%
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
-%
-%   Please see the help on |fwt|_ for a description of the flags.
+%   This routine accepts the same flags as |fwt|_ for specifying the boundary
+%   conditions. Please see the help on |fwt|_ for a description of the flags.
 %
 %   Examples:
 %   ---------

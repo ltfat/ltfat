@@ -12,12 +12,12 @@ function [c,info] = wpbest(f,w,J,varargin)
 %         wt  : Structure defining the best tree.
 %
 %   `[c,wt]=wpbest(f,w,J)` select the best tree *wt* with max. depth *J*, which minimises
-%   coefficient entropy. 
+%   the coefficient entropy. 
 %  
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |wpbest|_ :::
+%   A simple example of calling |wpbest|_ :::
 % 
 %     f = gspi;
 %     J = 6;

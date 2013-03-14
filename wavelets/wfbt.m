@@ -28,7 +28,7 @@ function [c,info]=wfbt(f,wt,varargin)
 %         'freq','nat'
 %                Frequency or natural order of the coefficient subbands.
 %
-%   Please see the help on |fwt|_ for a description of the flags.
+%   Please see the help on |fwt|_ for a description of the boundary condition flags.
 %
 %   Examples:
 %   ---------
