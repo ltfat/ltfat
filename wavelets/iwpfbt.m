@@ -1,6 +1,6 @@
-function f=iwpfbt(c,wt,Ls,varargin)
+function f=iwpfbt(c,par,varargin)
 %IWPFBT   Inverse Wavelet Packet Filterbank Tree
-%   Usage:  f=iwpfbt(c,wt,Ls);
+%   Usage:  f=iwpfbt(c,info);
 %           f=iwpfbt(c,wt,Ls,...);
 %
 %   Input parameters:
@@ -34,33 +34,42 @@ function f=iwpfbt(c,wt,Ls,varargin)
 % 
 %     f = gspi;
 %     J = 7;
-%     wt = wfbtinit({{'db',10},J},'full');
-%     c = wpfbt(f,wt);
-%     fhat = iwpfbt(c,wt,length(f));
+%     wtdef = {'db10',J,'full'};
+%     c = wpfbt(f,wtdef);
+%     fhat = iwpfbt(c,wtdef,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
 %   See also: wfbt, wfbtinit
 %
-if nargin<3
+if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
-
-
-%% PARSE INPUT
-definput.keyvals.Ls=[];    
-definput.import = {'fwt','wfbtcommon'};
 
 if(~iscell(c))
     error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+if(isstruct(par)&&isfield(par,'fname'))
+   if nargin>2
+      error('%s: Too many input parameters.',upper(mfilename));
+   end
+   wt = wfbtinit(par.wt,par.fOrder,'syn');
+   Ls = par.Ls;
+   ext = par.ext;
+else
+   if nargin<3
+      error('%s: Too few input parameters.',upper(mfilename));
+   end
+   %% PARSE INPUT
+   definput.keyvals.Ls=[];    
+   definput.import = {'fwt','wfbtcommon'};
+   [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+   ext = flags.ext;
+   % Initialize the wavelet tree structure
+   wt = wfbtinit(par,flags.forder,'syn');
+end
 
-% Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.forder,'syn');
-
-
-wtreePath = nodesBForder(wt,'rev');
+wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-f = comp_iwpfbt(c,wt.nodes(wtreePath),pOutIdxs,chOutIdxs,Ls,flags.ext);
+f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,Ls,ext);

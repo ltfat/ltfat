@@ -41,6 +41,7 @@ for ii=1:length(treePath)
        % now for the filter reordering
        chan = numel(wt.nodes{nodeId}.filts);
        wt.nodes{nodeId}.filts = wt.nodes{nodeId}.filts(chan:-1:1);
+       wt.nodes{nodeId}.a = wt.nodes{nodeId}.a(chan:-1:1);
 %        if(doSyn)
 %           treeStruct.nodes{nodeId}.g = {treeStruct.nodes{nodeId}.g{range}};
 %        else

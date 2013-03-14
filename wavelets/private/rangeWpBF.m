@@ -1,7 +1,7 @@
 function [pOutIdxs,chOutIdxs] = rangeWpBF(wt,varargin)
 
 treePath = nodesBForder(wt);
-trLen = length(treePath);
+trLen = numel(treePath);
 pOutIdxs = zeros(1,trLen);
 chOutIdxs = cell(1,trLen);
 pRunIdx = [0];

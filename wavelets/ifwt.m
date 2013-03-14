@@ -35,8 +35,8 @@ function f = ifwt(c,par,varargin)
 % 
 %     f = gspi;
 %     J = 8;
-%     c = fwt(f,{'db',8},J);
-%     fhat = ifwt(c,{'db',8},J,length(f));
+%     c = fwt(f,'db8',J);
+%     fhat = ifwt(c,'db8',J,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %   
@@ -52,7 +52,10 @@ if  ~(iscell(c) || isnumeric(c))
   error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
-if(isstruct(par))
+if(isstruct(par)&&isfield(par,'fname'))
+   if nargin>2
+      error('%s: Too many input parameters.',upper(mfilename));
+   end
    % process info struct
    g = fwtinit(par.fwtstruct,'syn');
    J = par.J;

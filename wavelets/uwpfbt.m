@@ -1,4 +1,4 @@
-function c=uwpfbt(f,wt,varargin)
+function [c,info]=uwpfbt(f,wt,varargin)
 %WPFBT Undecimated Wavelet Packet FilterBank Tree
 %   Usage:  c=uwpfbt(f,wt);
 %           c=uwpfbt(f,wt,...);
@@ -24,8 +24,8 @@ function c=uwpfbt(f,wt,varargin)
 % 
 %     f = gspi;
 %     J = 6;
-%     c = uwpfbt(f,{'db10',J},'full');
-%     plotufwt(c,'db10',44100,'dynrange',90);
+%     [c,info] = uwpfbt(f,{'db10',J,'full'});
+%     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: iuwpfbt, wfbtinit
 
@@ -50,3 +50,11 @@ end
 wtPath = nodesBForder(wt);
 nodesUps = nodeFiltUps(wtPath,wt);
 c = comp_uwpfbt(f,wt.nodes(wtPath),nodesUps);
+
+%% ----- Optional : Fill the info struct. -----
+if nargout>1
+   info.fname = 'uwpfbt';
+   info.wt = wt;
+   info.fOrder = flags.forder;
+   info.isPacked = 0;
+end

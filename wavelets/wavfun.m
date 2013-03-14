@@ -33,7 +33,7 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %
 %   where *a* is subsamling factor after the lowpass filter in the wavelet
 %   filterbank and *m* is length of the filters. Expect isues for
-%   high N e.g. {'db',10} m=20 and N=20 yeld ~150MB array.
+%   high N e.g. 'db10' (m=20) and N=20 yeld ~150MB array.
 %
 %   Examples:
 %   ---------
@@ -41,13 +41,13 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %   Approximation of a Daubechies wavelet and scaling functions from the
 %   12 tap filters:::
 % 
-%     [wfn,sfn,xvals] = wavfun({'db',6});
+%     [wfn,sfn,xvals] = wavfun('db6');
 %     plot(xvals,[wfn,sfn]);
 %     legend('wavelet function','scaling function');
 %
 
 definput.keyvals.N = 6;
-definput.flags.ansy = {'ana','syn'};
+definput.flags.ansy = {'syn','ana'};
 definput.flags.howcomp = {'conv','fft'};
 [flags,kv,N]=ltfatarghelper({'N'},definput,varargin);
 w = fwtinit(w,flags.ansy);

@@ -41,7 +41,10 @@ if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if(isstruct(par))
+if(isstruct(par)&&isfield(par,'fname'))
+   if nargin>2
+      error('%s: Too many input parameters.',upper(mfilename));
+   end
    g = fwtinit(par.fwtstruct,'syn');
    J = par.J;
 else

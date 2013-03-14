@@ -1,28 +1,31 @@
 function wt = wfbtremove(d,k,wt,varargin)
 %WFBTREMOVE Remove node from the filterbank tree
-%   Usage:  wtree = wbftremove(d,k,wtree);
-%           wtree = wfbtremove(d,k,wtree,'force');
+%   Usage:  wt = wbftremove(d,k,wt);
+%           wt = wfbtremove(d,k,wt,'force');
 %
 %   Input parameters:
-%         d     : 
-%         k     :
-%         wtree :
+%           d   : Level in the tree (0 - root).
+%           k   : Index of the node at leveù *d* (starting at 0).
+%           wt  : Wavelet filterbank tree structure (as returned from
+%           |wfbtinit|_).
 %
 %   Output parameters:
-%         wtree : Modified input structure.
+%           wt : Modified filterbank structure.
 %   
-%   `wfbtremove(d,k,wtree)` removes node from the filterbank tree structure
-%   *wtree*. The removed node is at level *d* and index *k*.
+%   `wfbtremove(d,k,wt)` removes existing node at level *d* and index *k*
+%   from the filterbank tree structure *wt*. The function fails if the 
+%   node has any children (is not a leaf node).
+%
+%   `wfbtremove(d,k,wt,'force')` does the same, but any childern of the
+%   node are removed too.
+%
 
 if(nargin<3)
    error('%s: Too few input parameters.',upper(mfilename)); 
 end
 
 definput.flags.force = {'noforce','force'};
-%definput.import = {'fwtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
-
-%node = fwtinit(filt,'a',kv.a,flags.ansy);
 
 if(isempty(wt.nodes))
    error('%s: Tree is empty.',mfilename); 

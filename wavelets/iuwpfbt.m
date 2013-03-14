@@ -1,7 +1,7 @@
-function f=iuwpfbt(c,wt,varargin)
+function f=iuwpfbt(c,par,varargin)
 %IWPFBT Inverse Undecimated Wavelet Packet Filterbank Tree
-%   Usage:  f=iwpfbt(c,wt);
-%           f=iwpfbt(c,wt,Ls,...);
+%   Usage:  f=iwpfbt(c,info);
+%           f=iwpfbt(c,wt,...);
 %
 %   Input parameters:
 %         c     : Coefficients stored in a cell-array.
@@ -33,9 +33,9 @@ function f=iuwpfbt(c,wt,varargin)
 % 
 %     f = gspi;
 %     J = 7;
-%     wt = wfbtinit({{'db',10},J},'full');
-%     c = wpfbt(f,wt);
-%     fhat = iuwpfbt(c,wt,length(f));
+%     wtdef = {'db10',J,'full'};
+%     c = uwpfbt(f,wtdef);
+%     fhat = iuwpfbt(c,wtdef);
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
@@ -45,18 +45,26 @@ if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+if(isstruct(par)&&isfield(par,'fname'))
+   if nargin>2
+      error('%s: Too many input parameters.',upper(mfilename));
+   end
+   if ~strcmpi(par.fname,'uwpfbt')
+      error('%s: Wrong func name in info struct. The info parameter was created by %s.',upper(mfilename),par.fname);
+   end
+   wt = wfbtinit(par.wt,par.fOrder,'syn');
+else
+   %% PARSE INPUT
+   definput.import = {'wfbtcommon'};
+   if(~isnumeric(c))
+       error('%s: Unrecognized coefficient format.',upper(mfilename));
+   end
 
-%% PARSE INPUT
-definput.import = {'wfbtcommon'};
-if(~isnumeric(c))
-    error('%s: Unrecognized coefficient format.',upper(mfilename));
+   [flags,kv]=ltfatarghelper({},definput,varargin);
+
+   % Initialize the wavelet tree structure
+   wt = wfbtinit(par,flags.forder,'syn');
 end
-
-[flags,kv]=ltfatarghelper({},definput,varargin);
-
-% Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.forder,'syn');
-
 
 wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');

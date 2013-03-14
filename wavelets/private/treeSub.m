@@ -1,4 +1,5 @@
 function a = treeSub(wt)
+%TREESUB
 
 % All nodes with at least one final output.
 termN = find(noOfNodeOutputs(1:numel(wt.nodes),wt)~=0);

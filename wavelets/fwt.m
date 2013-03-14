@@ -99,7 +99,7 @@ function [c,info] = fwt(f,h,J,varargin)
 %     f = gspi;
 %     J = 10;
 %     [c,info] = fwt(f,'db8',J);
-%     plotfwt(c,info,44100,'dynrange',90);
+%     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: ifwt, fwtinit, wavpack2cell, plotfwt
 %

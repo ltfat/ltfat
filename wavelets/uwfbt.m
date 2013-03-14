@@ -1,4 +1,4 @@
-function c=uwfbt(f,wt,varargin)
+function [c,info]=uwfbt(f,wt,varargin)
 %UWFBT   Undecimated Wavelet FilterBank Tree
 %   Usage:  c=uwfbt(f,wt);
 %           c=uwfbt(f,wt,...);
@@ -32,9 +32,9 @@ function c=uwfbt(f,wt,varargin)
 %   A simple example of calling the |wfbt|_ function using the "full decomposition" wavelet tree:::
 % 
 %     f = gspi;
-%     J = 6;
-%     c = uwfbt(f,{{'db',10},J},'full');
-%     plotfwt(c);
+%     J = 8;
+%     [c,info] = uwfbt(f,{'sym10',J,'full'});
+%     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: iuwfbt, wfbtinit
 
@@ -43,13 +43,13 @@ if(nargin<2)
 end
 
 definput.import = {'wfbtcommon'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+flags=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
 wt = wfbtinit(wt,flags.forder,'ana');
 
 %% ----- step 1 : Verify f and determine its length -------
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,upper(mfilename),0);
+[f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);
 if(Ls<2)
    error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
 end
@@ -61,3 +61,11 @@ rangeLoc = rangeInLocalOutputs(wtPath,wt);
 rangeOut = rangeInOutputs(wtPath,wt);
 %% ----- step 3 : Run computation
 c = comp_uwfbt(f,wt.nodes(wtPath),nodesUps,rangeLoc,rangeOut);
+
+%% ----- Optional : Fill the info struct. -----
+if nargout>1
+   info.fname = 'uwfbt';
+   info.wt = wt;
+   info.fOrder = flags.forder;
+   info.isPacked = 0;
+end

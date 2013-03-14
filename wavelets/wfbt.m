@@ -38,7 +38,7 @@ function [c,info]=wfbt(f,wt,varargin)
 %     f = gspi;
 %     J = 7;
 %     [c,info] = wfbt(f,{'sym10',J,'full'});
-%     plotfwt(c,info,44100,'dynrange',90);
+%     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: iwfbt, wfbtinit
 %

@@ -22,14 +22,14 @@ function [wfb,a] = wfbtmultid( filts, varargin)
 %   using a tree of depth 3. In the first example, the filterbank is
 %   identical to the DWT tree:::
 %
-%     [wfb,a] = wfbtmultid({{'db',10},3},'dwt');
+%     [wfb,a] = wfbtmultid({'db10',3,'dwt'});
 %     figure(1);
 %     wtfftfreqz(wfb);
 %
 %   In the second example, the filterbank is identical to the full
 %   wavelet tree:::
 %
-%    [wfb,a] = wfbtmultid({{'db',10},3},'full');
+%    [wfb,a] = wfbtmultid({'db10',3,'full'});
 %    figure(2);
 %    wtfftfreqz(wfb);
 %
@@ -60,15 +60,15 @@ a = zeros(treeOutputs,1);
             hmi = nodePredecesorsMultId(ii,filtTree);
             locRange = rangeInLocalOutputs(ii,filtTree);
             outRange = rangeInOutputs(ii,filtTree);
-            for jj = 1:length(locRange)
+            for jj = 1:length(locRange{1})
                 tmpUpsFac = nodeFiltUps(ii,filtTree);
-                tmpFilt = filtTree.nodes{ii}.filts{locRange(jj)};
-                wfb{outRange(jj)} = wfiltstruct('FIR');
-                wfb{outRange(jj)}.h = conv2(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
-                wfb{outRange(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
+                tmpFilt = filtTree.nodes{ii}.filts{locRange{1}(jj)};
+                wfb{outRange{1}(jj)} = wfiltstruct('FIR');
+                wfb{outRange{1}(jj)}.h = conv2(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
+                wfb{outRange{1}(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
             end
             atmp = nodeSub(ii,filtTree);
-            a(outRange) = atmp(locRange);
+            a(outRange{1}) = atmp{1}(locRange{1});
         end
 
 % clean the cache

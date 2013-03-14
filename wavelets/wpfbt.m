@@ -1,4 +1,4 @@
-function c=wpfbt(f,wt,varargin)
+function [c,info]=wpfbt(f,wt,varargin)
 %WPFBT   Wavelet Packet FilterBank Tree
 %   Usage:  c=wpfbt(f,wt);
 %           c=wpfbt(f,wt,...);
@@ -26,8 +26,8 @@ function c=wpfbt(f,wt,varargin)
 % 
 %     f = gspi;
 %     J = 6;
-%     %c = wpfbt(f,{{'db',10},J},'full'); FIXME
-%     %plotfwt(c,44100,90);
+%     [c,info] = wpfbt(f,{'sym10',J,'full'});
+%     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: iwfbt, wfbtinit
 
@@ -59,3 +59,14 @@ end
 %% ----- step 3 : Run computation
 treePath = nodesBForder(wt);
 c = comp_wpfbt(f,wt.nodes(treePath),flags.ext);
+
+%% ----- Optional : Fill the info struct. -----
+if nargout>1
+   info.fname = 'wpfbt';
+   info.wt = wt;
+   info.ext = flags.ext;
+   info.Lc = cellfun(@(cEl) size(c,1),c);
+   info.Ls = Ls;
+   info.fOrder = flags.forder;
+   info.isPacked = 0;
+end

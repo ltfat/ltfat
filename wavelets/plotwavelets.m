@@ -1,4 +1,4 @@
-function [C] = plotfwt(c,info,varargin)
+function [C] = plotwavelets(c,info,varargin)
 %PLOTFWT  Plot wavelet coefficients
 %   Usage:  plotfwt(c,info,fs) 
 %           plotfwt(c,info,fs,'dynrange',dynrange,...)
@@ -48,13 +48,17 @@ if(flags.do_stem)
    error('%s: Flag %s not supported yet.',upper(mfilename),flags.fwtplottype);
 end
 
+maxSubLen = [];
 draw_ticks = 1;
+
 if(strcmpi(info.fname,'fwt'))
+%% FWT plot
    % Change to the cell format
    if(isnumeric(c))
        c = wavpack2cell(c,info.Lc,info.dim);
    end
-
+   maxSubLen = max(info.Lc);
+   
    % Only one channel signals can be plotted.
    if(size(c{1},2)>1)
       error('%s: Multichannel input not supported.',upper(mfilename));
@@ -67,6 +71,7 @@ if(strcmpi(info.fname,'fwt'))
    J = info.J;
    a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
 elseif(strcmpi(info.fname,'ufwt'))
+   
    % Only one channel signals can be plotted.
    if(ndims(c)>2)
       error('%s: Multichannel not supported.',upper(mfilename));
@@ -75,8 +80,6 @@ elseif(strcmpi(info.fname,'ufwt'))
    subbNo = size(c,2);
    a = ones(subbNo,1);
 
-   % Determine number of levels *J* and subsampling factors *a* for
-   % subbands. For correct y axis description.
    g = fwtinit(info.fwtstruct,'syn');
    filtNo = numel(g.filts);
    J = info.J; 
@@ -85,16 +88,44 @@ elseif(strcmpi(info.fname,'wfbt'))
    if(size(c{1},2)>1)
       error('%s: Multichannel input not supported.',upper(mfilename));
    end
+   maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
    a = treeSub(info.wt);
    subbNo = numel(c);
-   J = subbNo - 1;
-   filtNo = 2;
    draw_ticks = 0;
+elseif(strcmpi(info.fname,'uwfbt'))
+   % Only one channel signals can be plotted.
+   if(ndims(c)>2)
+      error('%s: Multichannel not supported.',upper(mfilename));
+   end
+
+   subbNo = size(c,2);
+   a = ones(subbNo,1);
+   draw_ticks = 0;
+elseif(strcmpi(info.fname,'wpfbt'))
+   % Only one channel signals can be plotted.
+   if(size(c{1},2)>1)
+      error('%s: Multichannel input not supported.',upper(mfilename));
+   end
+   maxSubLen = max(cellfun(@(cEl) size(c,1),c));
+   aCell = nodeSub(nodesBForder(info.wt),info.wt);
+   a = cell2mat(cellfun(@(aEl) aEl(:)',aCell,'UniformOutput',0));
+   draw_ticks = 0;
+elseif(strcmpi(info.fname,'uwpfbt'))
+   % Only one channel signals can be plotted.
+   if(ndims(c)>2)
+      error('%s: Multichannel not supported.',upper(mfilename));
+   end
+
+   subbNo = size(c,2);
+   a = ones(subbNo,1);
+   draw_ticks = 0;
+else
+   error('%s: Unknown function name %s.',upper(mfilename),info.fname);
 end
 
 % Use plotfilterbank
 C=plotfilterbank(c,a,[],kv.fs,kv.dynrange,flags.plottype,...
-  flags.log,flags.colorbar,flags.display,'fontsize',kv.fontsize,'clim',kv.clim);
+  flags.log,flags.colorbar,flags.display,'fontsize',kv.fontsize,'clim',kv.clim,'xres',min([maxSubLen,800]));
 
 if(draw_ticks)
    % Redo the yticks and ylabel

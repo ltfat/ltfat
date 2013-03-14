@@ -7,15 +7,17 @@
 %      IFWT2             - 2D Inverse Fast Wavelet Transform
 %      UFWT              - Undecimated Fast Wavelet Transform
 %      IUFWT             - Inverse Undecimated Fast Wavelet Transform 
-%      WTFFT             - Wavelet Transform in the frequency-domain
-%      IWTFFT            - Inverse Wavelet Transform in the frequency-domain
 %      FWTLENGTH         - Length of Wavelet system to expand a signal
 %
 %   Advanced analysis/synthesis
 %      WFBT              - Transform using general Wavelet Filterbank Tree 
 %      IWFBT             - Inverse transform using general Wavelet Filterbank Tree
+%      UWFBT             - Undecimated transform using general Wavelet Filterbank Tree 
+%      IUWFBT            - Inverse Undecimated transform using general Wavelet Filterbank Tree
 %      WPFBT             - Wavelet Packet Transform using general Wavelet Filterbank Tree 
 %      IWPFBT            - Inverse Wavelet Packet Transform using general Wavelet Filterbank Tree
+%      UWPFBT            - Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree 
+%      IUWPFBT           - Inverse Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree
 %      WPBEST            - Best Tree selection
 %
 %   Wavelet Filterbank trees manipulation

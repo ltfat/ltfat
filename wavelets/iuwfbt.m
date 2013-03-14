@@ -1,6 +1,8 @@
-function f=iuwfbt(c,wt,varargin)
+function f=iuwfbt(c,par,varargin)
 %IUWFBT   Inverse Undecimated Wavelet Filterbank Tree
-%   Usage:  f = iuwfbt(c,wt,...) 
+%   Usage: f = iuwfbt(c,info) 
+%          f = iuwfbt(c,wt,...) 
+%
 %
 %   `f=iuwfbt(c,wt)` computes XXX 
 %
@@ -12,13 +14,20 @@ if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+if(isstruct(par)&&isfield(par,'fname'))
+   if nargin>2
+      error('%s: Too many input parameters.',upper(mfilename));
+   end
+   wt = wfbtinit(par.wt,par.fOrder,'syn');
+else
+   %% PARSE INPUT
+   definput.import = {'wfbtcommon'};
+   flags=ltfatarghelper({},definput,varargin);
 
-%% PARSE INPUT
-definput.import = {'wfbtcommon'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+   % Initialize the wavelet tree structure
+   wt = wfbtinit(par,flags.forder,'syn');
+end
 
-% Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.forder,'syn');
 
 %% ----- step 2 : Prepare input parameters
 wtPath = nodesBForder(wt,'rev');

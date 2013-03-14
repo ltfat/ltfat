@@ -1,6 +1,6 @@
-function [c,wt] = wpbest(f,w,J,varargin)
+function [c,info] = wpbest(f,w,J,varargin)
 %WPBEST  Best Tree selection
-%   Usage: [c,wt] = wpbest(f,w,J);
+%   Usage: c = wpbest(f,w,J,...);
 %
 %   Input parameters:
 %         f   : Input data.
@@ -14,6 +14,15 @@ function [c,wt] = wpbest(f,w,J,varargin)
 %   `[c,wt]=wpbest(f,w,J)` select the best tree *wt* with max. depth *J*, which minimises
 %   coefficient entropy. 
 %  
+%   Examples:
+%   ---------
+%   
+%   A simple example of calling the |wpbest|_ :::
+% 
+%     f = gspi;
+%     J = 6;
+%     [c,info] = wpbest(f,'sym10',J,'entropy',{'wlpnorm',1.3});;
+%     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   References: wick92lecton tas94near-bestbasis   
 
@@ -30,7 +39,6 @@ if(J<1 || rem(J,1)~=0)
 end
 
 w = fwtinit(w,'ana');
-
 definput.import = {'fwt'};
 definput.flags.buildOrder = {'bottomup','topdown'};
 definput.flags.bestWhat = {'tree','level'};
@@ -58,7 +66,7 @@ if(flags.do_bottomup)
     
    % Nodes in the reverse BF order
    treePath = nodesBForder(wt,'rev');
-   % Relationship between nodes
+   % Relationships between nodes
    [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
    % Nodes to be removed
    removeNodes = [];
@@ -96,7 +104,7 @@ elseif(flags.do_topdown)
 end
 
 % finally do the analysis using the created best tree
-c = wfbt(f,wt,flags.ext,'freq'); 
+[c,info] = wfbt(f,wt,flags.ext,'freq'); 
 %END WPBEST
 
 function ad = isAdditive(entFunc)

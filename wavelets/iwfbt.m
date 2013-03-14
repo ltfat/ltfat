@@ -51,7 +51,10 @@ if(~iscell(c))
    error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
-if(isstruct(par)&&~isfield(par,'nodes'))
+if(isstruct(par)&&isfield(par,'fname'))
+   if nargin>2
+      error('%s: Too many input parameters.',upper(mfilename));
+   end
    wt = wfbtinit(par.wt,par.fOrder,'syn');
    Ls = par.Ls;
    ext = par.ext;
