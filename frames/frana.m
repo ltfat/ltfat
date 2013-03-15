@@ -12,7 +12,7 @@ function outsig=frana(F,insig);
 %
 %   The output coefficients are stored as columns. This is usually
 %   **not** the same format as the 'native' format of the frame. As an
-%   examples, the output from |frana|_ for a gabor frame cannot be
+%   example, the output from |frana|_ for a gabor frame cannot be
 %   passed to |idgt|_ without a reshape.
 %
 %   See also: frame, framepair, frsyn, plotframe

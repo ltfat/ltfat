@@ -19,13 +19,12 @@ function s=lichtenstein();
 %   ---------
 %
 %   The following figures show the image split into the three colorplanes
-%   used by the JPEG standard:::
+%   used by the JPEG standard.
 %
 %   See also: cameraman  
 
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
-%   REFERENCE: OK
 
 if nargin>0
   error('This function does not take input arguments.')

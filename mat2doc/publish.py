@@ -3,8 +3,6 @@
 import sys,os
 cwd=os.getcwd()+os.sep
 
-tbwww='/home/peter/nw/ltfatwww'
-
 # ------- do not edit below this line ----------
 
 # Import the localconf file, it should be placed in the same directory
@@ -32,15 +30,8 @@ projectdir=localconf.projects[project]
 host=localconf.webserver[project]
 remotedir=localconf.remotedir[project]
 projectname=project # For mat2docconf
-outputdir=localconf.outputdir # For mat2docconf
-
-#sys.path.append(projectdir+'mat2doc')
-#from mat2docconf import *
-
-conffile=projectdir+'mat2doc/mat2docconf.py'
-newlocals=locals()
-execfile(conffile,globals(),newlocals)
-
+www=localconf.remotedir[project]
+tbwww=localconf.projectwww[project]
 
 filesdir=localconf.outputdir+project+'-files'+os.sep
 printdoc.safe_mkdir(filesdir)
@@ -105,8 +96,7 @@ def runcommand(todo,redomode='auto'):
         pass
 
     if todo=='gitstagemat':
-        printdoc.git_stageexport_mat(project)
-        printdoc.printdoc(project,'mat')
+        os.system('mat2doc mat '+projectdir)
 
     if todo=='gitrepomat':
         printdoc.git_repoexport_mat(project)
@@ -127,7 +117,6 @@ def runcommand(todo,redomode='auto'):
         matdir=localconf.outputdir+project+'-mat'+os.sep
 
         # Remove unwanted files
-        os.system('rm -rf '+matdir+'mat2doc')
         os.system('rm -rf '+matdir+'testing')
         os.system('rm -rf '+matdir+'reference')
         os.system('rm -rf '+matdir+'timing')
@@ -152,13 +141,10 @@ def runcommand(todo,redomode='auto'):
         os.system(s)
 
     if todo=='php':
-        phpdir=localconf.outputdir+project+'-php'+os.sep
-        printdoc.printdoc(project,'php',redomode)
+        os.system('mat2doc php '+projectdir)
+
         s='rsync -av '+phpdir+' '+host+':'+remotedir
         os.system(s)    
-
-    if todo=='phplocal' in todo:
-        printdoc.printdoc(project,'phplocal',redomode)
 
     if todo=='fullrelease':
         runcommand('releasemat',redomode)
@@ -168,14 +154,13 @@ def runcommand(todo,redomode='auto'):
         runcommand('texupload')
     
     if 'stagewww'==todo:
-        www='/home/project-web/ltfat/htdocs/'
-        publishwww=localconf.outputdir+'ltfatwww/'
+        publishwww=localconf.outputdir+project+'twww/'
+        printdoc.git_autostage(tbwww)
         printdoc.git_stageexport(tbwww,publishwww)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'releasewww'==todo:
-        www='/home/project-web/ltfat/htdocs/'
-        publishwww=localconf.outputdir+'ltfatwww/'
+        publishwww=localconf.outputdir+project+'www/'
         printdoc.git_repoexport(tbwww,'master','ltfatwww',localconf.outputdir)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 

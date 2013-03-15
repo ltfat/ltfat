@@ -2,8 +2,8 @@
 <html>
 <head>
 <title>{TITLE}</title>
-<link rel="stylesheet" href="{INCLUDEDIR}mat2doc.css" type="text/css">
-<link rel="stylesheet" href="{INCLUDEDIR}color_text.css" type="text/css">
+<link rel="stylesheet" href="{BASEDIR}include/mat2doc.css" type="text/css">
+<link rel="stylesheet" href="{BASEDIR}include/color_text.css" type="text/css">
 <META NAME="keywords" CONTENT="{KEYWORDS}"/> 
 
 <!-- Script to enable latex equations with MathJax -->
@@ -23,7 +23,7 @@
 <h2>Short description of my toolbox</h2>
 </td>
 <td valign="middle">
-<a href="./index.php"><img src="{INCLUDEDIR}logo_tr.png" alt="Logo" height="70"></a>
+<a href="./index.php"><img src="{BASEDIR}include/logo_tr.png" alt="Logo" height="70"></a>
 </td>
 </tr>
 </table> 
@@ -34,7 +34,9 @@
 <tr>
 <td valign="top" width="20%">
 <div id="menu">
+{SWITCHVIEW}
 {MENU}
+{SEEALSO}
 </div>
 </td>
 <td valign="top"  width="80%">
@@ -43,9 +45,7 @@
 
 <div id="content">
 
-<h2>{TITLE}</h2>
 {CONTENT}
-
 
 </div>
 
