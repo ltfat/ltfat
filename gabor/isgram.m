@@ -36,7 +36,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %   `isgram` takes the following parameters at the end of the line of input
 %   arguments:
 %
-%     'lt',lt      Specify the lattice type. See the help on |matrix2latticetype|_.
+%     'lt',lt      Specify the lattice type. See the help on |matrix2latticetype|.
 %
 %     'zero'       Choose a starting phase of zero. This is the default
 %
@@ -62,7 +62,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %     'printstep',p  If 'print' is specified, then print every p'th
 %                    iteration. Default value is p=10;
 %
-%   To use the BFGS method, please install the minFunc software from
+%   To use the BFGS method, please install the minFunc software from 
 %   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
 %   See also:  dgt, idgt

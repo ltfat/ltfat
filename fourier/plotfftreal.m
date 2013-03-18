@@ -3,12 +3,12 @@ function plotfftreal(coef,varargin)
 %   Usage: plotfftreal(coef);
 %          plotfftreal(coef,fs);
 %
-%   `plotfftreal(coef)` plots the output from the |fftreal|_ function. The
+%   `plotfftreal(coef)` plots the output from the |fftreal| function. The
 %   frequency axis will use normalized frequencies between 0 and 1 (the
 %   Nyquest frequency). It is assumed that the length of the original
 %   transform was even.
 %
-%   `plotfftreal(coef,fs)` does the same for the |fftreal|_ of a signal
+%   `plotfftreal(coef,fs)` does the same for the |fftreal| of a signal
 %   sampled at a sampling rate of *fs* Hz.
 %
 %   `plotfftreal(coef,fs,dynrange)` additionally limits the dynamic range of the
@@ -41,7 +41,7 @@ function plotfftreal(coef,varargin)
 %               unsure if the original input signal was of even length.
 %
 %   In addition to these parameteres, `plotfftreal` accepts any of the flags
-%   from |normalize|_. The coefficients will be normalized as specified
+%   from |normalize|. The coefficients will be normalized as specified
 %   before plotting.
 %
 %   See also: plotfft, fftreal

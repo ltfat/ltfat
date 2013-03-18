@@ -3,7 +3,7 @@ function xo=iqam4(xi)
 %
 %    `iqam4(xi)` demodulates a signal mapping the input coefficients to the
 %    closest complex root of unity, and returning the associated bit
-%    pattern. This is the inverse operation of |qam4|_.
+%    pattern. This is the inverse operation of |qam4|.
 %
 %    See also: qam4
 %

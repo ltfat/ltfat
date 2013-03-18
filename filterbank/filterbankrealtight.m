@@ -8,7 +8,7 @@ function gtout=filterbankrealtight(g,a,varargin);
 %   where the filters in *g* only covers the positive frequencies.
 %
 %   The format of the filters *g* are described in the
-%   help of |filterbank|_.
+%   help of |filterbank|.
 %
 %   To actually invert the output of a filterbank, use the tight filters
 %   together with the `ifilterbank` function as in

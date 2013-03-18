@@ -3,7 +3,7 @@ function c = phaselock(c,a,varargin)
 %   Usage:  c=phaselock(c,a);
 %
 %   `phaselock(c,a)` phaselocks the Gabor coefficients *c*. The coefficients
-%   must have been obtained from a |dgt|_ with parameter *a*.
+%   must have been obtained from a |dgt| with parameter *a*.
 %
 %   Phaselocking the coefficients modifies them so as if they were obtained
 %   from a time-invariant Gabor system. A filter bank produces phase locked
@@ -22,7 +22,7 @@ function c = phaselock(c,a,varargin)
 %   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
 %
 %   `phaselock(c,a,'lt',lt)` does the same for a non-separable lattice
-%   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
+%   specified by *lt*. Please see the help of |matrix2latticetype| for a
 %   precise description of the parameter *lt*.
 %
 %   See also: dgt, phaseunlock, symphase

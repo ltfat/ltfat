@@ -54,7 +54,7 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %   `g=middlepad(g,nlen)`.
 %
 %   Additionally, `pbspline` accepts flags to normalize the output. Please
-%   see the help of |normalize|_. Default is to use `'peak'` normalization.
+%   see the help of |normalize|. Default is to use `'peak'` normalization.
 %
 %   See also:   pgauss, firwin, middlepad, normalize
 %

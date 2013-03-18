@@ -14,7 +14,7 @@ function [c,relres,iter]=franaiter(F,f,varargin)
 %
 %   `c=franaiter(F,f)` computes the frame coefficients *c* of the signal *f*
 %   using an iterative method such that perfect reconstruction can be
-%   obtained using |frsyn|_. `franaiter` always works, even when |frana|_
+%   obtained using |frsyn|. `franaiter` always works, even when |frana|
 %   cannot generate perfect reconstruction coefficients.
 %
 %   `[c,relres,iter]=franaiter(...)` additionally returns the relative

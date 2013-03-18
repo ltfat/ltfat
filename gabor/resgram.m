@@ -14,7 +14,7 @@ function []=resgram(f,varargin)
 %
 %     resgram(greasy,16000,'dynrange',70);
 %
-%   This will produce a reassigned spectrogram of the |greasy|_ signal
+%   This will produce a reassigned spectrogram of the |greasy| signal
 %   without drowning the interesting features in noise.
 %
 %   `resgram` accepts the following additional arguments:
@@ -44,7 +44,7 @@ function []=resgram(f,varargin)
 %                  resolution. A value of $0<v<1$ will do the opposite.
 %    
 %     'wlen',s     Window length. Specifies the length of the window
-%                  measured in samples. See help of |pgauss|_ on the exact
+%                  measured in samples. See help of |pgauss| on the exact
 %                  details of the window length.
 %
 %     'posfreq'    Display only the positive frequencies. This is the
@@ -88,7 +88,7 @@ function []=resgram(f,varargin)
 %     'nocolorbar'  Do not display the colorbar.
 %
 %   In addition to these parameteres, `sgram` accepts any of the flags from
-%   |normalize|_. The window used to calculate the spectrogram will be
+%   |normalize|. The window used to calculate the spectrogram will be
 %   normalized as specified.
 %
 %   See also: sgram  

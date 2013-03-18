@@ -22,7 +22,7 @@ function [c,Ls,g]=wmdct(f,g,M,varargin)
 %   *g* must be whole-point even.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |wilwin|_ for more details.
+%   cell array. See the help of |wilwin| for more details.
 %
 %   `wmdct(f,g,M,L)` computes the MDCT transform as above, but does
 %   a transform of length *L*. *f* will be cut or zero-extended to length *L*
@@ -75,14 +75,14 @@ function [c,Ls,g]=wmdct(f,g,M,varargin)
 %   ---------
 %
 %   The following example shows the WMDCT coefficients (128 channels) of the
-%   |greasy|_ test signal:::
+%   |greasy| test signal:::
 %
 %     fs=16000; % Sampling rate
 %     c=wmdct(greasy,{'hann',0.02*fs},128);
 %     plotwmdct(c,fs,90);
 %
 %   Compare the visual difference with the redundant expansion of the
-%   same signal given in the example of the |dgtreal|_ function.
+%   same signal given in the example of the |dgtreal| function.
 %
 %   See also:  iwmdct, wilwin, dwilt, wildual, wilorth
 %

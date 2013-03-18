@@ -24,7 +24,7 @@ function [g,info] = wilwin(g,M,L,callfun);
 %
 %   In these cases, a long window is generated with a length of *L*.
 %
-%   It is also possible to specify one of the window names from |firwin|_. In
+%   It is also possible to specify one of the window names from |firwin|. In
 %   such a case, `wilwin` generates the specified FIR window with a length
 %   of *M*.
 %
@@ -39,9 +39,9 @@ function [g,info] = wilwin(g,M,L,callfun);
 %     `{'tight',...}`
 %       Orthonormal window of whatever follows.
 %
-%   It is also possible to specify one of the window names from |firwin|_ as
+%   It is also possible to specify one of the window names from |firwin| as
 %   the first field in the cell array. In this case, the remaining
-%   entries of the cell array are passed directly to |firwin|_.
+%   entries of the cell array are passed directly to |firwin|.
 %
 %   Some examples::
 %

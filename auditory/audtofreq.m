@@ -5,7 +5,7 @@ function freq = audtofreq(aud,varargin);
 %   `audtofreq(aud,scale)` converts values on the selected auditory scale to
 %   frequencies measured in Hz.
 %
-%   See the help on |freqtoaud|_ to get a list of the supported values of
+%   See the help on |freqtoaud| to get a list of the supported values of
 %   the *scale* parameter. If no scale is given, the erb-scale will be
 %   selected by default.
 %

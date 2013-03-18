@@ -8,8 +8,8 @@ function coef = plotnsdgtreal(coef,a,varargin)
 %         fs       : signal sample rate in Hz (optional).
 %         dynrange : Colorscale dynamic range in dB (optional).
 %
-%   `plotnsdgtreal(coef,a)` plots coefficients computed using |nsdgtreal|_ or
-%   |unsdgtreal|_. For more details on the format of the variables *coef* and *a*,
+%   `plotnsdgtreal(coef,a)` plots coefficients computed using |nsdgtreal| or
+%   |unsdgtreal|. For more details on the format of the variables *coef* and *a*,
 %   please read the function help for these functions.
 %
 %   `plotnsdgtreal(coef,a,fs)` does the same assuming a sampling rate of
@@ -22,8 +22,8 @@ function coef = plotnsdgtreal(coef,a,varargin)
 %   functions will create the plot. This is usefull for custom
 %   post-processing of the image data.
 %
-%   `plotnsdgtreal` supports all the optional parameters of |tfplot|_. Please
-%   see the help of |tfplot|_ for an exhaustive list. In addition, the
+%   `plotnsdgtreal` supports all the optional parameters of |tfplot|. Please
+%   see the help of |tfplot| for an exhaustive list. In addition, the
 %   following parameters may be specified:
 %
 %     'xres',xres  Approximate number of pixels along x-axis /time.

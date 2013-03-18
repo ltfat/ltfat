@@ -13,14 +13,14 @@ function [AF,BF]=nsgabframebounds(g,a,Ls)
 %
 %   `nsgabframebounds(g,a,Ls)` calculates the ratio $B/A$ of the frame
 %   bounds of the nonstationary discrete Gabor frame defined by windows
-%   given in *g* at positions given by *a*. Please see the help on |nsdgt|_
+%   given in *g* at positions given by *a*. Please see the help on |nsdgt|
 %   for a more thourough description of *g* and *a*.
 %
 %   `[A,B]=nsgabframebounds(g,a,Ls)` returns the actual frame bounds *A*
 %   and *B* instead of just the their ratio.
 %
 %   The computed frame bounds are only valid for the 'painless case' when
-%   the number of frequency channels used for computation of |nsdgt|_ is greater
+%   the number of frequency channels used for computation of |nsdgt| is greater
 %   than or equal to the window length. This correspond to cases for which
 %   the frame operator is diagonal.
 %

@@ -7,7 +7,7 @@ function [y,bw] = audspace(flow,fhigh,n,varargin)
 %   between the frequencies *flow* and *fhigh*. All frequencies are
 %   specified in Hz.
 %
-%   See the help on |freqtoaud|_ to get a list of the supported values of the
+%   See the help on |freqtoaud| to get a list of the supported values of the
 %   *scale* parameter.
 %  
 %   `[y,bw]=audspace(...)` does the same but outputs the bandwidth between

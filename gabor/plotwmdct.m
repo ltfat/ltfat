@@ -4,7 +4,7 @@ function plotwmdct(coef,varargin)
 %          plotwmdct(coef,fs);
 %          plotwmdct(coef,fs,dynrange);
 %
-%   `plotwmdct(coef)` plots coefficients from |wmdct|_.
+%   `plotwmdct(coef)` plots coefficients from |wmdct|.
 %
 %   `plotwmdct(coef,fs)` does the same assuming a sampling rate of
 %   *fs* Hz of the original signal.
@@ -12,8 +12,8 @@ function plotwmdct(coef,varargin)
 %   `plotwmdct(coef,fs,dynrange)` additionally limits the dynamic
 %   range.
 %   
-%   |plotwmdct|_ supports all the optional parameters of |tfplot|_. Please
-%   see the help of |tfplot|_ for an exhaustive list.
+%   |plotwmdct| supports all the optional parameters of |tfplot|. Please
+%   see the help of |tfplot| for an exhaustive list.
 %
 %   See also:  wmdct, tfplot, sgram, plotdgt
 

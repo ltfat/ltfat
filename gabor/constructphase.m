@@ -22,7 +22,7 @@ function c=constructphase(s,g,a)
 %   computation. By default, *tol* has the value 1e-10.
 %
 %   This function requires a computational subroutine that is only
-%   available in C. Use |ltfatmex|_ to compile it.
+%   available in C. Use |ltfatmex| to compile it.
 %
 %   See also:  dgt, gabphasegrad, ltfatmex
 %

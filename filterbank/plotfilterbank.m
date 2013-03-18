@@ -6,10 +6,10 @@ function coef = plotfilterbank(coef,a,varargin)
 %           plotfilterbank(coef,a,fc,fs,dynrange);
 %
 %   `plotfilterbank(coef,a)` plots filterbank coefficients *coef* obtained from
-%   either the |filterbank|_ or |ufilterbank|_ functions. The coefficients must
+%   either the |filterbank| or |ufilterbank| functions. The coefficients must
 %   have been produced with a time-shift of *a*. For more details on the
-%   format of the variables *coef* and *a*, see the help of the |filterbank|_
-%   or |ufilterbank|_ functions.
+%   format of the variables *coef* and *a*, see the help of the |filterbank|
+%   or |ufilterbank| functions.
 %
 %   `plotfilterbank(coef,a,fc)` makes it possible to specify the center
 %   frequency for each channel in the vector *fc*.
@@ -25,10 +25,10 @@ function coef = plotfilterbank(coef,a,varargin)
 %   functions will create the plot. This is usefull for custom
 %   post-processing of the image data.
 %
-%   `plotfilterbank` supports all the optional parameters of |tfplot|_. Please
-%   see the help of |tfplot|_ for an exhaustive list.
+%   `plotfilterbank` supports all the optional parameters of |tfplot|. Please
+%   see the help of |tfplot| for an exhaustive list.
 %
-%   In addition to the flags and key/values in |tfplot|_, `plotfilterbank`
+%   In addition to the flags and key/values in |tfplot|, `plotfilterbank`
 %   supports the following optional arguments:
 %
 %     'fc',fc       Centre frequencies of the channels. *fc* must be a vector with

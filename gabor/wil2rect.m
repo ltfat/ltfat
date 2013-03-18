@@ -3,7 +3,7 @@ function cout=wil2rect(cin);
 %   Usage:  c=wil2rect(c);
 %
 %   `wil2rect(c)` rearranges the coefficients *c* in a rectangular shape. The
-%   coefficients must have been obtained from |dwilt|_. After rearrangement
+%   coefficients must have been obtained from |dwilt|. After rearrangement
 %   the coefficients are placed correctly on the time/frequency-plane.
 %
 %   The rearranged array is larger than the input array: it contains

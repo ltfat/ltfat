@@ -23,7 +23,7 @@ function gt=gabtight(varargin)
 %   with window *g* and parameters *a*, *M*.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %  
 %   If the length of *g* is equal to *M*, then the input window is assumed to
 %   be a FIR window. In this case, the canonical dual window also has
@@ -35,7 +35,7 @@ function gt=gabtight(varargin)
 %   tight window will have length *L*.
 %
 %   `gabtight(g,a,M,'lt',lt)` does the same for a non-separable lattice
-%   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
+%   specified by *lt*. Please see the help of |matrix2latticetype| for a
 %   precise description of the parameter *lt*.
 %
 %   If $a>M$ then an orthonormal window of the Gabor Riesz sequence with
@@ -45,7 +45,7 @@ function gt=gabtight(varargin)
 %   ---------
 %
 %   The following example shows the canonical tight window of the Gaussian
-%   window. This is calculated by default by |gabtight|_ if no window is
+%   window. This is calculated by default by |gabtight| if no window is
 %   specified:::
 %
 %     a=20;

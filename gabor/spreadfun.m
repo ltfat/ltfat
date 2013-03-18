@@ -5,7 +5,7 @@ function coef=spreadfun(T)
 %   `spreadfun(T)` computes the spreading function of the operator *T*,
 %   represented as a matrix. The spreading function represent the operator *T*
 %   as a weighted sum of time-frequency shifts. See the help text for
-%   |spreadop|_ for the exact definition.
+%   |spreadop| for the exact definition.
 %
 %   See also:  spreadop, tconv, spreadinv, spreadadj
 

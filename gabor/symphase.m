@@ -5,7 +5,7 @@ function c = symphase(c,a,varargin)
 %   `symphase(c,a)` alters the phase of the Gabor coefficients *c* so as if
 %   they were obtained from a Gabor transform based on symmetric
 %   time/frequency shifts. The coefficient must have been obtained from a
-%   |dgt|_ with parameter *a*.
+%   |dgt| with parameter *a*.
 %
 %   See also: dgt, phaselock
 

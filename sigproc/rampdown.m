@@ -9,7 +9,7 @@ function outsig=rampdown(L,wintype)
 %   following zeros.
 %
 %   `rampdown(L,wintype)` will use another window for ramping. This may be
-%   any of the window types from |firwin|_. Please see the help on |firwin|_
+%   any of the window types from |firwin|. Please see the help on |firwin|
 %   for more information. The default is to use a piece of the Hann window.
 %  
 %   See also: rampup, rampsignal, firwin

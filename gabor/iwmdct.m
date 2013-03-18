@@ -14,7 +14,7 @@ function [f,g]=iwmdct(c,g,Ls)
 %   number of channels is deduced from the size of the coefficient array *c*.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |wilwin|_ for more details.
+%   cell array. See the help of |wilwin| for more details.
 %
 %   `iwmdct(f,g,Ls)` does the same, but cuts or zero-extends the final
 %   result to length *Ls*.

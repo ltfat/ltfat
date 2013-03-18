@@ -22,13 +22,13 @@ function [AF,BF]=gabframebounds(g,a,M,varargin)
 %   instead of just the ratio.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %  
 %   `gabframebounds(g,a,M,L)` will cut or zero-extend the window to length
 %   *L*.
 %
 %   `gabframebounds(g,a,M,'lt',lt)` does the same for a non-separable
-%   lattice specified by *lt*. Please see the help of |matrix2latticetype|_
+%   lattice specified by *lt*. Please see the help of |matrix2latticetype|
 %   for a precise description of the parameter *lt*.
 %
 %   See also: gabrieszbounds, gabwin

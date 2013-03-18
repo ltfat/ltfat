@@ -1,5 +1,5 @@
-% Copyright (C) 2005-2013 Peter L. Soendergaard.
-% This file is part of LTFAT version 1.3.0
+% Copyright (C) 2005-2013 {AUTHOR}
+% This file is part of LTFAT version {VERSION}
 %
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by

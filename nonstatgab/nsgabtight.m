@@ -15,13 +15,13 @@ function gt=nsgabtight(g,a,M,varargin)
 %   non-stationary discrete Gabor frame defined by windows given in *g* and  
 %   time-shifts given by *a*.
 %   
-%   `nsgabtight` is designed to be used with functions |nsdgt|_ and
-%   |insdgt|_.  Read the help on |NSDGT|_ for more details about the variables
+%   `nsgabtight` is designed to be used with functions |nsdgt| and
+%   |insdgt|.  Read the help on |NSDGT| for more details about the variables
 %   structure.
 %
 %   The computed tight windows are only valid for the 'painless case', that
 %   is to say that they ensure perfect reconstruction only if for each 
-%   window the number of frequency channels used for computation of |nsdgt|_ is
+%   window the number of frequency channels used for computation of |nsdgt| is
 %   greater than or equal to the window length. This correspond to cases
 %   for which the frame operator is diagonal.
 %

@@ -6,7 +6,7 @@ function s=ltfattext();
 %   'LTFAT'.
 % 
 %   The image is assumed to be used as a spectrogram with 800 channels
-%   as produced by |dgtreal|_.
+%   as produced by |dgtreal|.
 % 
 %   The returned matrix `s` consists of the integers 0 and 1, which have
 %   been converted to double precision.

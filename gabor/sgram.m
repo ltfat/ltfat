@@ -15,8 +15,8 @@ function varargout=sgram(f,varargin)
 %   `C=sgram(f, ... )` returns the image to be displayed as a matrix. Use this
 %   in conjunction with `imwrite` etc. These coefficients are **only** intended to
 %   be used by post-processing image tools. Numerical Gabor signal analysis
-%   and synthesis should **always** be done using the |dgt|_, |idgt|_, |dgtreal|_ and
-%   |idgtreal|_ functions.
+%   and synthesis should **always** be done using the |dgt|, |idgt|, |dgtreal| and
+%   |idgtreal| functions.
 %
 %   Additional arguments can be supplied like this::
 %
@@ -43,7 +43,7 @@ function varargout=sgram(f,varargin)
 %                  resolution. A value of $0<v<1$ will do the opposite.
 %    
 %     'wlen',s     Window length. Specifies the length of the window
-%                  measured in samples. See help of |pgauss|_ on the exact
+%                  measured in samples. See help of |pgauss| on the exact
 %                  details of the window length.
 %
 %     'posfreq'    Display only the positive frequencies. This is the
@@ -87,14 +87,14 @@ function varargout=sgram(f,varargin)
 %     'nocolorbar'  Do not display the colorbar.
 %
 %   In addition to these parameteres, `sgram` accepts any of the flags from
-%   |normalize|_. The window used to calculate the spectrogram will be
+%   |normalize|. The window used to calculate the spectrogram will be
 %   normalized as specified.
 %
 %   Examples:
 %   ---------
 %
-%   The |greasy|_ signal is sampled using a sampling rate of 16 kHz. To
-%   display a spectrogram of |greasy|_ with a dynamic range of 90 dB, use:::
+%   The |greasy| signal is sampled using a sampling rate of 16 kHz. To
+%   display a spectrogram of |greasy| with a dynamic range of 90 dB, use:::
 %
 %     sgram(greasy,16000,90);
 %

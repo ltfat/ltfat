@@ -20,7 +20,7 @@ function g=firkaiser(L,beta,varargin)
 %     'hp'       Generate half point even window.
 %  
 %   Additionally, `firkaiser` accepts flags to normalize the output. Please
-%   see the help of |normalize|_. Default is to use `'peak'` normalization.
+%   see the help of |normalize|. Default is to use `'peak'` normalization.
 %
 %   See also: firwin, normalize
 %

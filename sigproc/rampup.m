@@ -8,7 +8,7 @@ function outsig=rampup(L,wintype)
 %   element is not quite 1, such that the ramp fits with following ones.
 %
 %   `rampup(L,wintype)` will use another window for ramping. This may be any
-%   of the window types from |firwin|_. Please see the help on |firwin|_ for
+%   of the window types from |firwin|. Please see the help on |firwin| for
 %   more information. The default is to use a piece of the Hann window.
 %
 %   See also: rampdown, rampsignal, firwin

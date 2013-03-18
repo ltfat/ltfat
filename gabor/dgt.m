@@ -28,7 +28,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %   `L=size(c,2)*a;`
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %
 %   `dgt(f,g,a,M,L)` computes the Gabor coefficients as above, but does
 %   a transform of length *L*. f will be cut or zero-extended to length *L* before
@@ -65,7 +65,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %
 %   `dgt(f,g,a,M,'lt',lt)` computes the DGT for a non-separable lattice
 %   given by the time-shift *a*, number of channels *M* and lattice type
-%   *lt*. Please see the help of |matrix2latticetype|_ for a precise
+%   *lt*. Please see the help of |matrix2latticetype| for a precise
 %   description of the parameter *lt*.
 %
 %   The non-separable discrete Gabor transform is defined as follows:
@@ -100,7 +100,7 @@ function [c,Ls,g]=dgt(f,g,a,M,varargin)
 %
 %   In the following example we create a Hermite function, which is a
 %   complex-valued function with a circular spectrogram, and visualize
-%   the coefficients using both `imagesc` and |plotdgt|_:::
+%   the coefficients using both `imagesc` and |plotdgt|:::
 %
 %     a=10;
 %     M=40;

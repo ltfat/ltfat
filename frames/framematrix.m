@@ -4,7 +4,7 @@ function G=framematrix(F,L);
 %
 %   `G=framematrix(F,L)` returns the matrix representation *G* of the frame
 %   analysis operator for a frame *F* of length *L*. The frame object *F*
-%   must have been created using |frame|_.
+%   must have been created using |frame|.
 %
 %   The frame analysis operator matrix contains all the frame atoms as
 %   column vectors. It has dimensions $L \times Ncoef$, where $Ncoef$ is the
@@ -13,7 +13,7 @@ function G=framematrix(F,L);
 %   **very** large, and this routine should only be used for small values of
 %   *L*.
 %
-%   The action of the frame transform operator |frana|_ is equal to
+%   The action of the frame transform operator |frana| is equal to
 %   multiplication with the Hermitean transpose of the frame
 %   matrix. Consider the following simple example:::
 %

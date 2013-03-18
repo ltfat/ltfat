@@ -43,7 +43,7 @@ function plotfft(coef,varargin)
 %
 %
 %   In addition to these parameteres, `plotfft` accepts any of the flags
-%   from |normalize|_. The coefficients will be normalized as specified
+%   from |normalize|. The coefficients will be normalized as specified
 %   before plotting.
 %
 %   See also: plotfftreal

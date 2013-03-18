@@ -19,7 +19,7 @@
 %    DGT2           -  2D Discrete Gabor transform
 %    IDGT2          -  2D Inverse discrete Gabor transform
 %    DGTREAL        -  DGT for real-valued signals
-%    IDGTREAL       -  |idgt|_ for real-valued signals
+%    IDGTREAL       -  |idgt| for real-valued signals
 %    GABWIN         -  Evaluate Gabor window
 %    DGTLENGTH      -  Length of Gabor system to expand a signal
 %

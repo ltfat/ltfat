@@ -3,7 +3,7 @@ function F=frameaccel(F,Ls);
 %   Usage: F=frameaccel(F,L);
 %
 %   `F=frameaccel(F,Ls)` precomputes certain structures that makes the basic
-%   frame operations |frana|_ and |frsyn|_ faster (like instantiating the
+%   frame operations |frana| and |frsyn| faster (like instantiating the
 %   window from a textual description). If you only need to call the
 %   routines once, calling `frameaccel` first will not provide any total
 %   gain, but if you are repeatedly calling these routines, for instance in

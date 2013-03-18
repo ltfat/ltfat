@@ -16,7 +16,7 @@ function [g,info] = gabwin(g,a,M,varargin);
 %
 %   `gabwin(g,a,M,L,lt)` or `gabwin(g,a,M)` does as above but for a
 %   non-separable lattice specified by *lt*. Please see the help of
-%   |matrix2latticetype|_ for a precise description of the parameter *lt*.
+%   |matrix2latticetype| for a precise description of the parameter *lt*.
 %
 %   The window can be specified as one of the following text strings:
 %  
@@ -29,14 +29,14 @@ function [g,info] = gabwin(g,a,M,varargin);
 %
 %   In these cases, a long window is generated with a length of *L*.
 %
-%   It is also possible to specify one of the window names from |firwin|_. In
+%   It is also possible to specify one of the window names from |firwin|. In
 %   such a case, `gabwin` will generate the specified FIR window with a length
 %   of *M*.
 %
 %   The window can also be specified as cell array. The possibilities are:
 %
 %     `{'gauss',...}`
-%         Additional parameters are passed to |pgauss|_.
+%         Additional parameters are passed to |pgauss|.
 %
 %     `{'dual',...}`
 %         Canonical dual window of whatever follows. See the examples below.
@@ -44,9 +44,9 @@ function [g,info] = gabwin(g,a,M,varargin);
 %     `{'tight',...}` 
 %         Canonical tight window of whatever follows.
 %
-%   It is also possible to specify one of the window names from |firwin|_ as
+%   It is also possible to specify one of the window names from |firwin| as
 %   the first field in the cell array. In this case, the remaining
-%   entries of the cell array are passed directly to |firwin|_.
+%   entries of the cell array are passed directly to |firwin|.
 %
 %   Some examples: To compute a Gaussian window of length *L* fitted for a
 %   system with time-shift *a* and *M* channels use::

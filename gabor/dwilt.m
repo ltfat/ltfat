@@ -21,7 +21,7 @@ function [c,Ls,g]=dwilt(f,g,M,varargin)
 %   transform. If *f* is a matrix, the transformation is applied to each column.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |wilwin|_ for more details.
+%   cell array. See the help of |wilwin| for more details.
 %
 %   `dwilt(f,g,M,L)` computes the Wilson transform as above, but does a
 %   transform of length *L*. *f* will be cut or zero-extended to length *L*
@@ -43,7 +43,7 @@ function [c,Ls,g]=dwilt(f,g,M,varargin)
 %   A Wilson transform is also known as a maximally decimated, even-stacked
 %   cosine modulated filter bank.
 %
-%   Use the function |wil2rect|_ to visualize the coefficients or to work
+%   Use the function |wil2rect| to visualize the coefficients or to work
 %   with the coefficients in the TF-plane.
 %
 %   Assume that the following code has been executed for a column vector *f*::

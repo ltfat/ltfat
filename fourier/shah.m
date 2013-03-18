@@ -17,7 +17,7 @@ function f=shah(L,a);
 %   the shape of the function resembles a comb. It is the sum of unit
 %   impulses ('diracs') with the distance *a*.
 % 
-%   If *a* divides *L*, then the |dft|_ of `shah(L,a)` is `shah(L,L/a)`.
+%   If *a* divides *L*, then the |dft| of `shah(L,a)` is `shah(L,L/a)`.
 % 
 %   The Shah function has an extremely bad time-frequency localization.
 %   It does not generate a Gabor frame for any *L* and *a*.

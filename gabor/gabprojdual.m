@@ -21,7 +21,7 @@ function gd=gabprojdual(gm,g,a,M,varargin);
 %   length *L*.
 %
 %   `gabprojdual(...,'lt',lt)` does the same for a non-separable lattice
-%   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
+%   specified by *lt*. Please see the help of |matrix2latticetype| for a
 %   precise description of the parameter *lt*.
 %
 %   See also:  gabdual, gabtight, gabdualnorm, fir2long

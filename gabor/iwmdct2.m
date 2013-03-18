@@ -11,7 +11,7 @@ function [f]=iwmdct2(c,g1,p3,p4)
 %   Output parameters:
 %         f       : Output data, matrix.
 %
-%   `iwmdct2(c,g)` calculates a separable two dimensional inverse |wmdct|_
+%   `iwmdct2(c,g)` calculates a separable two dimensional inverse |wmdct|
 %   transform of the input coefficients *c* using the window *g*. The number of
 %   channels is deduced from the size of the coefficients *c*.
 %

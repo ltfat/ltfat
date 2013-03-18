@@ -17,7 +17,7 @@ function gd=gabdual(g,a,M,varargin)
 %   frame with window *g* and parameters *a*, *M*.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %
 %   If the length of *g* is equal to *M*, then the input window is assumed
 %   to be an FIR window. In this case, the canonical dual window also has
@@ -29,7 +29,7 @@ function gd=gabdual(g,a,M,varargin)
 %   will have length *L*.
 %
 %   `gabdual(g,a,M,'lt',lt)` does the same for a non-separable lattice
-%   specified by *lt*. Please see the help of |matrix2latticetype|_ for a
+%   specified by *lt*. Please see the help of |matrix2latticetype| for a
 %   precise description of the parameter *lt*.
 %
 %   If $a>M$ then the dual window of the Gabor Riesz sequence with window

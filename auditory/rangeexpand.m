@@ -4,7 +4,7 @@ function outsig = rangeexpand(insig,varargin);
 %
 %   `rangeexpand(insig,mu,sigweight)` inverts a previously
 %   applied $\mu$-law companding to the signal *insig*. The parameters
-%   *mu* and *sigweight* must match those from the call to |rangecompress|_
+%   *mu* and *sigweight* must match those from the call to |rangecompress|
 %
 %   `rangeexpand` takes the following optional arguments:
 %

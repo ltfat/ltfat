@@ -19,10 +19,10 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %
 %   It must hold that `size(c,1)==floor(M/2)+1`. Note that since the
 %   correct number of channels cannot be deduced from the input, `idgtreal`
-%   takes an additional parameter as opposed to |idgt|_.
+%   takes an additional parameter as opposed to |idgt|.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %  
 %   `idgtreal(c,g,a,M,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
@@ -37,14 +37,14 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %   3-dimensional, then `idgtreal` will return a matrix consisting of one column
 %   vector for each of the TF-planes in *c*.
 %
-%   See the help on |idgt|_ for the precise definition of the inverse Gabor
+%   See the help on |idgt| for the precise definition of the inverse Gabor
 %   transform.
 %
 %   `idgtreal` takes the following flags at the end of the line of input
 %   arguments:
 %
 %     'freqinv'  Use a frequency-invariant phase. This is the default
-%                convention described in the help for |dgt|_.
+%                convention described in the help for |dgt|.
 %
 %     'timeinv'  Use a time-invariant phase. This convention is typically 
 %                used in filter bank algorithms.

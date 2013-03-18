@@ -84,7 +84,7 @@ function [g,info]=firwin(name,M,varargin);
 %                  tapering. Accepted values lie in the range from 0 to 1.
 %
 %   Additionally, `firwin` accepts flags to normalize the output. Please see
-%   the help of |normalize|_. Default is to use `'peak'` normalization,
+%   the help of |normalize|. Default is to use `'peak'` normalization,
 %   which is useful for using the output from `firwin` for windowing in the
 %   time-domain. For filtering in the time-domain, a normalization of `'1'`
 %   or `'area'` is preferable.

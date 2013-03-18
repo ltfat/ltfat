@@ -9,7 +9,7 @@ function framegram(F,x,varargin);
 %     plotframe(F,abs(frana(F,x)).^2);
 %
 %   Any additional arguments given to `framegram` are passed onto
-%   |plotframe|_.
+%   |plotframe|.
 %
 %   See also: plotframe
     

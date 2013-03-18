@@ -20,7 +20,7 @@ function [AF,BF]=gabrieszbounds(varargin)
 %   instead of just the ratio.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %  
 %   If the optional parameter *L* is specified, the window is cut or
 %   zero-extended to length *L*.

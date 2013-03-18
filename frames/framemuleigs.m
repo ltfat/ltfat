@@ -50,7 +50,7 @@ function varargout=framemuleigs(Fa,Fs,s,varargin)
 %   ---------
 %
 %   The following example calculates and plots the first eigenvector of the
-%   Gabor multiplier given by the |batmask|_ function. Note that the mask
+%   Gabor multiplier given by the |batmask| function. Note that the mask
 %   must be converted to a column vector to work with in this framework:::
 %
 %     mask=batmask;

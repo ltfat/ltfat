@@ -4,8 +4,8 @@ function coef=plotdgtreal(coef,a,M,varargin)
 %          plotdgtreal(coef,a,M,fs);
 %          plotdgtreal(coef,a,M,fs,dynrange);
 %
-%   `plotdgtreal(coef,a,M)` plots Gabor coefficient from |dgtreal|_. The
-%   parameters *a* and *M* must match those from the call to |dgtreal|_.
+%   `plotdgtreal(coef,a,M)` plots Gabor coefficient from |dgtreal|. The
+%   parameters *a* and *M* must match those from the call to |dgtreal|.
 %
 %   `plotdgtreal(coef,a,M,fs)` does the same assuming a sampling rate of *fs*
 %   Hz of the original signal.
@@ -18,8 +18,8 @@ function coef=plotdgtreal(coef,a,M,varargin)
 %   functions will create the plot. This is usefull for custom
 %   post-processing of the image data.
 %
-%   `plotdgtreal` supports all the optional parameters of |tfplot|_. Please
-%   see the help of |tfplot|_ for an exhaustive list.
+%   `plotdgtreal` supports all the optional parameters of |tfplot|. Please
+%   see the help of |tfplot| for an exhaustive list.
 %
 %   See also:  dgtreal, tfplot, sgram, plotdgt
 

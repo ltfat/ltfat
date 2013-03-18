@@ -17,7 +17,7 @@ function b=gammatonefir(fc,fs,varargin);
 %   digital FIR gammatone filter of length *n* with center frequency *fc*,
 %   4th order rising slope, sampling rate *fs* and bandwith determined by
 %   *betamul*. The bandwidth *beta* of each filter is determined as *betamul*
-%   times |audfiltbw|_ of the center frequency of corresponding filter.
+%   times |audfiltbw| of the center frequency of corresponding filter.
 %
 %   `gammatonefir(fc,fs,n)` will do the same but choose a filter bandwidth
 %   according to Glasberg and Moore (1990).  *betamul* is choosen to be 1.0183.

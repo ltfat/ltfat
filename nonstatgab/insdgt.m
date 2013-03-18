@@ -13,13 +13,13 @@ function f=insdgt(c,g,a,varargin)
 %   `insdgt(c,g,a,Ls)` computes the inverse non-stationary Gabor transform
 %   of the input coefficients *c*.
 %
-%   `insdgt` is used to invert the functions |nsdgt|_ and |unsdgt|_. Please
+%   `insdgt` is used to invert the functions |nsdgt| and |unsdgt|. Please
 %   read the help of these functions for details of variables format and
 %   usage.
 %
 %   For perfect reconstruction, the windows used must be dual windows of the
 %   ones used to generate the coefficients. The windows can be generated
-%   using |nsgabdual|_ or |nsgabtight|_.
+%   using |nsgabdual| or |nsgabtight|.
 %
 %   See also:  nsdgt, nsgabdual, nsgabtight
 %

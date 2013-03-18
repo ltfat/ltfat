@@ -22,7 +22,7 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %   The possibilities are:
 %
 %   `tfmat('fourier',L)` returns the matrix of the unitary Fourier
-%   transform of length *L*. See |dft|_.
+%   transform of length *L*. See |dft|.
 %
 %   `tfmat('dcti',L)` returns the matrix of the DCTI transform of length
 %   *L*. Similarly for `'dctii'`, `'dctiii'`, `'dctiv'`, `'dsti'`, `'dstii'`,

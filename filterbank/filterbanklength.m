@@ -7,9 +7,9 @@ function L=filterbanklength(Ls,a);
 %   length *Ls*.
 %
 %   If the filterbank length is longer than the signal length, the signal
-%   will be zero-padded by |filterbank|_ or |ufilterbank|_.
+%   will be zero-padded by |filterbank| or |ufilterbank|.
 %
-%   If instead a set of coefficients are given, call |filterbanklengthcoef|_.
+%   If instead a set of coefficients are given, call |filterbanklengthcoef|.
 %
 %   See also: filterbank, filterbanklengthcoef
 
