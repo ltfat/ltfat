@@ -8,6 +8,7 @@
 %      UFWT              - Undecimated Fast Wavelet Transform
 %      IUFWT             - Inverse Undecimated Fast Wavelet Transform 
 %      FWTLENGTH         - Length of Wavelet system to expand a signal
+%      FWTCLENGTH        - Lengths of the wavelet coefficients subbands
 %
 %   Advanced analysis/synthesis
 %      WFBT              - Transform using general Wavelet Filterbank Tree 
@@ -19,6 +20,7 @@
 %      UWPFBT            - Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree 
 %      IUWPFBT           - Inverse Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree
 %      WPBEST            - Best Tree selection
+%      WFBTLENGTH        - Length of Wavelet filterbank system to expand a signal
 %
 %   Wavelet Filterbank trees manipulation
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
@@ -29,6 +31,7 @@
 %  
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients
+%      PLOTWAVINFO       - Plot wavelet characteristics
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions

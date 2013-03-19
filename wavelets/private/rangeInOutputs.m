@@ -17,6 +17,16 @@ function outRange = rangeInOutputs(nodeNo,wt)
 %   See also: wfbtinit
 %
 
+
+nodesBFo = nodesBForder(wt,'rev');
+nOuts = noOfNodeOutputs(nodesBFo,wt);
+nSubtOut = zeros(numel(nodesBFo),1);
+for ii=1:numel(nodesBFo)
+   childTmp = wt.children{nodesBFo(ii)};
+   childTmp(childTmp==0)=[];
+   nSubtOut(nodesBFo(ii)) = nOuts(ii) + sum(nSubtOut(childTmp));
+end
+
 nodesCount = length(nodeNo);
 outRange = cell(nodesCount,1); 
 
@@ -25,10 +35,11 @@ outRange = cell(nodesCount,1);
 %         cellfun(@(chEl) numel(chEl(chEl~=0)), wt.children(nodeNo));
 % toc;
 
-
+t = 0;
 for jj=1:nodesCount
-
+   %tic;
    outRangeTmp = rangeInNodeOutputs(nodeNo(jj),wt);
+   %t=t+toc;
 
 
     if(isempty(outRangeTmp))
@@ -38,6 +49,7 @@ for jj=1:nodesCount
     rootId = nodeNo(jj);
     higherNodes = [];
 
+%tic;
     while wt.parents(rootId)
          parId = wt.parents(rootId);
           % save idx of all higher nodes
@@ -46,24 +58,22 @@ for jj=1:nodesCount
          higherNodes(end+1:end+(childIdx-1))=ch(1:childIdx-1);
          rootId = parId;
     end
-
-
+%t=t+toc;
+%tic;
     noOutPrev = 0;
     for ii=1:length(higherNodes)
         if(higherNodes(ii)==0) 
            noOutPrev=noOutPrev+1; 
         else
-           noOutPrev = noOutPrev + noOfSubtreeOutputs(higherNodes(ii),wt);
+          % noOutPrev = noOutPrev + noOfSubtreeOutputs(higherNodes(ii),wt);
+          noOutPrev = noOutPrev + nSubtOut(higherNodes(ii));
         end
     end
+%t=t+toc;
 
-
-    outRangeTmp = outRangeTmp + noOutPrev;
-    
-%    if(iscell(outRange))
-    outRange{jj} = outRangeTmp;
-%    else
-%       outRange = outRangeTmp;
-%    end
-
+    outRange{jj} = outRangeTmp + noOutPrev;
 end
+
+%disp(sprintf('Spend %d ms.',1000*t));
+
+

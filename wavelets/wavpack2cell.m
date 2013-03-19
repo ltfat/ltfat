@@ -11,7 +11,7 @@ function [ccell,dim] = wavpack2cell(cvec,Lc,varargin)
 %
 %   Output parameters:
 %         ccell    : Coefficients stored in a cell-array. Each element is
-%         collum or matrix.
+%         a collum or a matrix.
 %         dim      : Return used dim. Usefull as an input of the
 %                    complementary function |wavcell2pack|_.
 %
