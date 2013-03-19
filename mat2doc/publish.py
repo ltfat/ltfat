@@ -106,7 +106,7 @@ def runcommand(todo,redomode='auto'):
 
     if todo=='gitstagemat':
         printdoc.git_stageexport_mat(project)
-        printdoc.printdoc(project,'mat')
+        os.system('mat2doc mat '+projectdir)
 
     if todo=='gitrepomat':
         printdoc.git_repoexport_mat(project)
@@ -153,7 +153,7 @@ def runcommand(todo,redomode='auto'):
 
     if todo=='php':
         phpdir=localconf.outputdir+project+'-php'+os.sep
-        printdoc.printdoc(project,'php',redomode)
+        os.system('mat2doc php '+projectdir)
         s='rsync -av '+phpdir+' '+host+':'+remotedir
         os.system(s)    
 

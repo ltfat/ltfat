@@ -1,7 +1,7 @@
 function [Lc,L]=fwtclength(Ls,h,J,varargin) 
 %FWTCLENGTH FWT subbands length fom signal
-%   Usage: L=fwtlength(Ls,h,J);
-%          L=fwtlength(Ls,h,J,...);
+%   Usage: L=fwtclength(Ls,h,J);
+%          L=fwtclength(Ls,h,J,...);
 %
 %   `Lc=fwtclength(Ls,h,J)` returns the lengths of the wavelet coefficient
 %   subbands for a signal of length *Ls*. Please see the help on |fwt| for

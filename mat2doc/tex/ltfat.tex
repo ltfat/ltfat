@@ -85,6 +85,21 @@
     {\enddescription\endquote}
 }{}
 
+% inline markup (custom roles)
+% \DUrole{#1}{#2} tries \DUrole#1{#2}
+\providecommand*{\DUrole}[2]{%
+  \ifcsname DUrole#1\endcsname%
+    \csname DUrole#1\endcsname{#2}%
+  \else% backwards compatibility: try \docutilsrole#1{#2}
+    \ifcsname docutilsrole#1\endcsname%
+      \csname docutilsrole#1\endcsname{#2}%
+    \else%
+      #2%
+    \fi%
+  \fi%
+}
+
+
 % reSTtructuredText uses this counter
 \newcounter{listcnt0}
 
@@ -116,6 +131,7 @@
 \include{Contents}
 \include{gabor/Contents}
 \include{fourier/Contents}
+\include{wavelets/Contents}
 \include{filterbank/Contents}
 \include{nonstatgab/Contents}
 \include{frames/Contents}

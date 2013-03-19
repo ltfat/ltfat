@@ -31,7 +31,6 @@
 %  
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients
-%      PLOTWAVINFO       - Plot wavelet characteristics
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions

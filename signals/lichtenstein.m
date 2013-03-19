@@ -33,7 +33,7 @@ end;
 
 f=mfilename('fullpath');
 
-s=double(imread([f,'.png']));
+s=imread([f,'.png']);
 
 
 
