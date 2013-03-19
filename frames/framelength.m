@@ -6,9 +6,9 @@ function L=framelength(F,Ls);
 %   *F* is long enough to expand a signal of length *Ls*.
 %
 %   If the frame length is longer than the signal length, the signal will be
-%   zero-padded by |frana|_.
+%   zero-padded by |frana|.
 %
-%   If instead a set of coefficients are given, call |framelengthcoef|_.
+%   If instead a set of coefficients are given, call |framelengthcoef|.
 %
 %   See also: frame, framelengthcoef
   

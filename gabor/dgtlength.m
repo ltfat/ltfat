@@ -5,10 +5,10 @@ function [L,tfr]=dgtlength(Ls,a,M,varargin);
 %
 %   `dgtlength(Ls,a,M)` returns the length of a Gabor system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
-%   |dgt|_ for an explanation of the parameters *a* and *M*.
+%   |dgt| for an explanation of the parameters *a* and *M*.
 %
 %   If the returned length is longer than the signal length, the signal
-%   will be zero-padded by |dgt|_.
+%   will be zero-padded by |dgt|.
 %
 %   A valid transform length must be divisable by both *a* and *M*. This
 %   means that the minumal admissable transform length is ::

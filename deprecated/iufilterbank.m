@@ -2,7 +2,7 @@ function f=iufilterbank(varargin);
 %IUFILTERBANK  Filter bank inversion, DEPRECATED
 %   Usage:  f=iufilterbank(c,g,a);
 %
-%   `iufilterbank` has been deprecated by |ifilterank|_. Call |ifilterbank|_
+%   `iufilterbank` has been deprecated by |ifilterank|. Call |ifilterbank|
 %   with the exact same parameters as the old call to `iufilterbank`.
 %
 %   See also: ifilterbank

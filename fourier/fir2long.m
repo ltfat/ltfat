@@ -4,7 +4,7 @@ function gout=fir2long(gin,Llong);
 %
 %   `fir2long(g,Llong)` will extend the FIR window *g* to a length *Llong*
 %   window by inserting zeros. Note that this is a slightly different
-%   behaviour than |middlepad|_.
+%   behaviour than |middlepad|.
 %
 %   `fir2long` can also be used to extend a FIR window to a longer FIR
 %   window, for instance in order to satisfy the usual requirement that the

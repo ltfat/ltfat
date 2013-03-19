@@ -4,19 +4,19 @@ function plotdwilt(coef,varargin)
 %          plotdwilt(coef,fs);
 %          plotdwilt(coef,fs,dynrange);
 %
-%   `plotdwilt(coef)` will plot coefficients from |dwilt|_.
+%   `plotdwilt(coef)` will plot coefficients from |dwilt|.
 %
 %   `plotdwilt(coef,fs)` will do the same assuming a sampling rate of *fs*
 %   Hz of the original signal. Because a Wilson representation does not
 %   contains coefficients for all positions on a rectangular TF-grid, there
 %   will be visible 'holes' among the lowest (DC) and highest (Nyquest rate)
-%   coefficients. See the help on |wil2rect|_.
+%   coefficients. See the help on |wil2rect|.
 %
 %   `plotdwilt(coef,fs,dynrange)` will additionally limit the dynamic
 %   range.
 %   
-%   `plotdwilt` supports all the optional parameters of |tfplot|_. Please
-%   see the help of |tfplot|_ for an exhaustive list.
+%   `plotdwilt` supports all the optional parameters of |tfplot|. Please
+%   see the help of |tfplot| for an exhaustive list.
 %
 %   See also:  dwilt, tfplot, sgram, wil2rect
 

@@ -10,7 +10,7 @@ function f=dctresample(f,L,dim)
 %   `dctresample(f,L,dim)` does the same along dimension *dim*.
 %
 %   If the input signal is not a periodic signal (or close to), this method
-%   will give much better results than |fftresample|_ at the endpoints, as
+%   will give much better results than |fftresample| at the endpoints, as
 %   this method assumes than the signal is even a the endpoints.
 %
 %   The algorithm uses a DCT type iii.

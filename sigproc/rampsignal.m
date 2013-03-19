@@ -17,8 +17,8 @@ function outsig=rampsignal(insig,varargin)
 %   `rampsignal(insig)` will use a ramp length of half the signal.
 %
 %   `rampsignal(insig,L,wintype)` will use another window for ramping. This
-%   may be any of the window types from |firwin|_. Please see the help on
-%   |firwin|_ for more information. The default is to use a piece of the
+%   may be any of the window types from |firwin|. Please see the help on
+%   |firwin| for more information. The default is to use a piece of the
 %   Hann window.
 %
 %   `rampsignal` accepts the following optional parameters:

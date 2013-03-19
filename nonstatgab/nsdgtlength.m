@@ -2,14 +2,14 @@ function L=nsdgtlength(Ls,a);
 %NSDGTLENGTH  Nsdgt length from signal
 %   Usage: L=nsdgtlength(Ls,a);
 %
-%   `nsdgtlength(Ls,a)` returns the length of an |nsdgt|_ with time shifts
+%   `nsdgtlength(Ls,a)` returns the length of an |nsdgt| with time shifts
 %   *a*, such that it is long enough to expand a
 %   signal of length *Ls*.
 %
 %   If the returned length is longer than the signal length, the signal
-%   will be zero-padded by |nsdgt|_ or |unsdgt|_.
+%   will be zero-padded by |nsdgt| or |unsdgt|.
 %
-%   If instead a set of coefficients are given, call |nsdgtlengthcoef|_.
+%   If instead a set of coefficients are given, call |nsdgtlengthcoef|.
 %
 %   See also: nsdgt, nsdgtlengthcoef
 

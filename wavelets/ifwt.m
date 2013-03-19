@@ -16,17 +16,17 @@ function f = ifwt(c,par,varargin)
 %   *c* using *J*-iteration synthesis filter bank build from the basic synthesis
 %   filterbank defined by *g*. The fast wavelet transform algorithm 
 %   (Mallat's algorithm) is employed. The format of *c* can be either
-%   packed, as returned by the |fwt|_ function or cell-array as returned by
-%   |wavpack2cell|_ function.
+%   packed, as returned by the |fwt| function or cell-array as returned by
+%   |wavpack2cell| function.
 %
 %   The *Ls* parameter is mandatory due to the ambiguity of lengths introduced
 %   by the subsampling operation and by boundary treatment methods.
 %
-%   `ifwt` supports the same boundary conditions as |fwt|_. Note that the
-%   same flag as in the |fwt|_ function have to be used, otherwise
+%   `ifwt` supports the same boundary conditions as |fwt|. Note that the
+%   same flag as in the |fwt| function have to be used, otherwise
 %   perfect reconstruction cannot be obtained.
 %
-%   Please see the help on |fwt|_ for a description of the parameters.
+%   Please see the help on |fwt| for a description of the parameters.
 %
 %   Examples:
 %   ---------

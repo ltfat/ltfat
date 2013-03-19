@@ -4,7 +4,7 @@ function outsig=frsyn(F,insig);
 %
 %   `f=frsyn(F,c)` constructs a signal *f* from the frame coefficients *c*
 %   using the frame *F*. The frame object *F* must have been created using
-%   |frame|_.
+%   |frame|.
 %
 %   See also: frame, frana, plotframe
   

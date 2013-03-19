@@ -6,7 +6,7 @@ function [L,tfr]=longpar(varargin)
 %           [L,tfr]=longpar('wmdct',Ls,M);
 %
 %   `[L,tfr]=longpar(Ls,a,M)` or `[L,tfr]=longpar('dgt',Ls,a,M)` calculates the 
-%   minimal transform length *L* for a |dgt|_ of a signal of length *Ls* with
+%   minimal transform length *L* for a |dgt| of a signal of length *Ls* with
 %   parameters *a* and *M*. *L* is always larger than *Ls*. The parameters *tfr*
 %   describes the time-to-frequency ratio of the chosen lattice.
 %

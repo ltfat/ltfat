@@ -9,7 +9,7 @@ function h=expwave(L,m,cent);
 %
 %   The wave has absolute value 1 everywhere. To get an exponential wave
 %   with unit $l^2$-norm, divide the wave by $\sqrt(L)$. This is the
-%   normalization used in the |dft|_ function.
+%   normalization used in the |dft| function.
 %
 %   `expwave(L,m,cent)` makes it possible to shift the sampling points by
 %   the amount *cent*. Default is $cent=0$.

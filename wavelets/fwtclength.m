@@ -4,7 +4,7 @@ function [Lc,L]=fwtclength(Ls,h,J,varargin)
 %          L=fwtlength(Ls,h,J,...);
 %
 %   `Lc=fwtclength(Ls,h,J)` returns the lengths of the wavelet coefficient
-%   subbands for a signal of length *Ls*. Please see the help on |fwt|_ for
+%   subbands for a signal of length *Ls*. Please see the help on |fwt| for
 %   an explanation of the parameters *h* and *J*. In addition, the function
 %   returns the next legal length of the input signal for the given extension
 %   type.

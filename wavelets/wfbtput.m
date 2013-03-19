@@ -8,7 +8,7 @@ function wt = wfbtput(d,k,w,wt,varargin)
 %           k   : Index of the node at level *d* (starting at 0).
 %           w   : Node, basic wavelet filterbank.
 %           wt  : Wavelet filterbank tree structure (as returned from
-%                 |wfbtinit|_).
+%                 |wfbtinit|).
 %
 %   Output parameters:
 %           wt : Modified filterbank structure.
@@ -17,8 +17,8 @@ function wt = wfbtput(d,k,w,wt,varargin)
 %   tree structure *wt* at level *d* and index *k*. The output is a
 %   modified tree structure. *d* and *k* have to specify unconnected output
 %   of the leaf node. Error is issued if *d* and *k* points to already
-%   existing node. For possible formats of parameter *w* see help of |fwt|_.
-%   Parameter *wt* has to be a structure returned by |wfbtinit|_.
+%   existing node. For possible formats of parameter *w* see help of |fwt|.
+%   Parameter *wt* has to be a structure returned by |wfbtinit|.
 %
 %   `wfbtput(d,k,w,wt,'force')` does the same but replaces node at *d* and *k*
 %   if it already exists. If the node to be replaced has any children, 

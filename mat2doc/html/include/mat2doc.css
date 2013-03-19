@@ -1,0 +1,211 @@
+/* *******************************
+ * CSS stylesheet for mat2doc
+ * Author: Nathanael Perraudin
+ * Date 11.03.2013
+ * 
+ * *******************************
+ * Color
+ * -----
+ * red : #ba0000
+ * light-pink:#ba9090
+ * grey: #CCCCCC
+ * grey 2: #eee
+ * 
+ * *******************************
+ * */
+
+
+
+
+
+/* ************************
+ * Body
+ * ***********************/
+
+body {
+	color: black;
+	background-color: white;
+	font-size: 100.01%;
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+	padding: 1em;
+}
+
+
+/* ************************
+ * Page
+ * ***********************/
+
+#container {
+	margin: 0 auto;
+	width: 960px;
+	text-align: left;
+
+    border-radius: 10px;
+}
+
+#header, #footer,#main_content {
+	width: 960px; 
+	border: 3px solid #CCCCCC;
+   border-radius: 10px;
+}
+
+/* ************************
+ * Header
+ * ***********************/
+
+#header {
+	min-height: 100px;
+	height: 100px;
+	background-image:-moz-linear-gradient(left,#ba9090, #eee );
+
+}
+
+#header h1 {
+	margin: 1.5em 0 0 3em;
+	color: black;
+	font-size: 110.01%;
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	max-width: 600px;
+}
+
+#header h2 {
+	margin: 0.5em 0 0 3.5em;
+	color: black;
+	font-size: 105.01%;
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: normal;
+}
+
+
+
+
+
+/* ************************
+ * Footer
+ * ***********************/
+#footer {
+	clear: both;
+	font-size: 0.8em;
+	text-align:center;
+	margin: 0;
+	background-color: #eee;
+
+}
+
+
+/* ************************
+ * content
+ * ***********************/
+#content {
+	border-left: 3px solid #CCCCCC;
+	margin-top: 15px;
+	margin-bottom:15px;
+	padding-right:15px;
+	padding-left:15px;
+	height: 100%;
+}
+
+
+
+
+/* ************************
+ * menu
+ * ***********************/
+
+
+#menu{
+	float: left;
+	margin: 15px;
+	
+}
+
+#menutitle{
+	width: 100%;
+	padding-bottom: 0px;
+	margin: 15px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#menu ul{
+	float: left;
+	width: 12em;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 2em;
+}
+
+#menu ul li {
+	list-style: none;
+	position: relative;
+	margin: 0;
+	padding: 0.5em;
+	z-index: 1;
+	height:24px;
+}
+
+#menu ul a {
+	display: block;
+	padding: 0.3em;
+	text-decoration: none;
+	font-weight: bold;
+	border: 0.1em solid silver;
+	border-radius: 5px;
+	height:20px;
+	
+}
+
+#menu ul a:link {
+	color: #ba0000;
+	background-color: #eee;
+}
+
+#menu ul a:visited {
+	color: #ba9090;
+	background-color: #eee;
+}
+
+#menu ul a:hover {
+	color: black;
+	background-color: #ba9090;
+	border: 0.1em solid silver;
+}
+
+#menu a:active {
+	color: #ba9090;
+	background-color: gray;
+}
+
+
+/* ************************
+ * Fonts
+ * ***********************/
+
+/* color of the links */
+a:link {
+	color: #ba0000;
+}
+
+a:visited {
+	color: #ba9090;
+}
+
+
+/* ************************
+ * Other
+ * ***********************/
+
+img {
+    border: 0;
+}
+
+#space{
+	padding:10px;
+}
+
+#portrait {
+  height: 160px;
+  width:  120px;
+}

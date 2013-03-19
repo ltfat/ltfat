@@ -27,7 +27,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %   one used to generate the coefficients.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %
 %   If *g* is a row vector, then the output will also be a row vector. If *c* is
 %   3-dimensional, then `idgt` will return a matrix consisting of one column
@@ -48,7 +48,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %
 %   `idgt(c,g,a,'lt',lt)` computes the Gabor expansion of the input
 %   coefficients *c* with respect to the window *g*, time shift *a* and
-%   lattice type *lt*. Please see the help of |matrix2latticetype|_ for a
+%   lattice type *lt*. Please see the help of |matrix2latticetype| for a
 %   precise description of the parameter *lt*.
 %
 %   Assume that `f=dgt(c,g,a,L,lt)` for an array *c* of size $M\times N$.

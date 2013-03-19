@@ -2,7 +2,7 @@ function [tc,relres,iter,xrec] = gablasso(x,g,a,M,lambda,varargin)
 %GABLASSO  LASSO regression in Gabor domain
 %   Usage: [tc,xrec] = gablasso(x,a,M,lambda,C,tol,maxit)
 %
-%   `gablasso` has been deprecated. Please use |framelasso|_ instead.
+%   `gablasso` has been deprecated. Please use |framelasso| instead.
 %
 %   A call to `gablasso(x,g,a,M,lambda)` can be replaced by ::
 %
@@ -10,7 +10,7 @@ function [tc,relres,iter,xrec] = gablasso(x,g,a,M,lambda,varargin)
 %     tc=framelasso(F,lambda);
 %
 %   Any additional parameters passed to `gablasso` can be passed to
-%   |framelasso|_ in the same manner.
+%   |framelasso| in the same manner.
 %
 %   See also: newframe, framelasso
 

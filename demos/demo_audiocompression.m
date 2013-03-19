@@ -1,9 +1,9 @@
 %DEMO_AUDIOCOMPRESSION  Audio compression using N-term approx
 %
 %   This demos shows how to do audio compression using best N-term
-%   approximation of an |wmdct|_ transform.
+%   approximation of an |wmdct| transform.
 %
-%   The signal is transformed using an orthonormal |wmdct|_ transform.
+%   The signal is transformed using an orthonormal |wmdct| transform.
 %   Then approximations with a fixed number *N* of coefficients are obtained
 %   by:
 %
@@ -13,7 +13,7 @@
 %     * Non-linear approximation: The *N* largest coefficients (in
 %       magnitude) are kept.
 %
-%   The corresponding approximated signal can be computed using |iwmdct|_.
+%   The corresponding approximated signal can be computed using |iwmdct|.
 %
 %   .. figure::
 %
@@ -24,7 +24,7 @@
 %
 %   Note: The inverse WMDCT is not needed for computing computing
 %   SNRs. Instead Parseval theorem states that the norm of a signal equals
-%   the norm of the sequence of its |wmdct|_ coefficients.
+%   the norm of the sequence of its |wmdct| coefficients.
 
 % Load audio signal
 % Use the 'glockenspiel' signal.

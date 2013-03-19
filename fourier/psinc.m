@@ -3,8 +3,8 @@ function f=psinc(L,n)
 %   Usage:  f=psinc(L,n);
 %
 %   `psinc(L,n)` computes the periodic Sinc function of length *L* with
-%   $n-1$ local extrema. The |dft|_ of the periodic Sinc function is the
-%   periodic rectangle, |prect|_, of length *n*.
+%   $n-1$ local extrema. The |dft| of the periodic Sinc function is the
+%   periodic rectangle, |prect|, of length *n*.
 %
 %   Examples:
 %   ---------

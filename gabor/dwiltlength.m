@@ -4,11 +4,11 @@ function [L,tfr]=dwiltlength(Ls,M);
 %
 %   `dwiltlength(Ls,M)` returns the length of a Wilson / WMDCT system with
 %   *M* channels system is long enough to expand a signal of length
-%   *Ls*. Please see the help on |dwilt|_ or |wmdct|_ for an explanation of the
+%   *Ls*. Please see the help on |dwilt| or |wmdct| for an explanation of the
 %   parameter *M*.
 %
 %   If the returned length is longer than the signal length, the signal will
-%   be zero-padded by |dwilt|_ or |wmdct|_.
+%   be zero-padded by |dwilt| or |wmdct|.
 %
 %   A valid transform length must be divisable by *2M*. This
 %   means that the minumal admissable transform length is ::

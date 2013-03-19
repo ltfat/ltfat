@@ -6,7 +6,7 @@ function gtout=filterbanktight(g,a,varargin);
 %   channel subsampling rate of *a* (hop-size).
 %
 %   The input and output format of the filters *g* are described in the
-%   help of |filterbank|_.
+%   help of |filterbank|.
 %
 %   `filterabanktight(g,a,L)` computes canonical tight filters for a system
 %   of length *L*. If *L* is not specified, the shortest possible transform

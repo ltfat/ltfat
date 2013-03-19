@@ -5,10 +5,10 @@ function L=wfbtlength(Ls,wt,varargin);
 %
 %   `fwtlength(Ls,wt)` returns the length of a Wavelet system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
-%   |wfbt|_ for an explanation of the parameter *wt*.
+%   |wfbt| for an explanation of the parameter *wt*.
 %
 %   If the returned length is longer than the signal length, the signal
-%   will be zero-padded by |wfbt|_ to length *L*.
+%   will be zero-padded by |wfbt| to length *L*.
 %
 %   See also: fwt
 

@@ -5,10 +5,10 @@ function L=fwtlength(Ls,h,J,varargin);
 %
 %   `fwtlength(Ls,h,J)` returns the length of a Wavelet system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
-%   |fwt|_ for an explanation of the parameters *h* and *J*.
+%   |fwt| for an explanation of the parameters *h* and *J*.
 %
 %   If the returned length is longer than the signal length, the signal
-%   will be zero-padded by |fwt|_ to length *L*.
+%   will be zero-padded by |fwt| to length *L*.
 %
 %   See also: fwt
 

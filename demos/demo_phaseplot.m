@@ -1,6 +1,6 @@
 %DEMO_PHASEPLOT  Give demos of nice phaseplots
 %
-%   This script creates a synthetic signal and then uses |phaseplot|_ on it,
+%   This script creates a synthetic signal and then uses |phaseplot| on it,
 %   using several of the possible options.
 % 
 %   For real-life signal only small parts should be analyzed. In the chosen

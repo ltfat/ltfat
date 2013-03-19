@@ -16,8 +16,8 @@ function f = ifwt2(c,g,J,varargin)
 %   *c* using a *J*-iteration synthesis filter bank build from the basic synthesis
 %   filterbank defined by *g*.
 %
-%   This function takes the same optional parameters as |fwt2|_. Please see
-%   the help on |fwt2|_ for a description of the parameters.
+%   This function takes the same optional parameters as |fwt2|. Please see
+%   the help on |fwt2| for a description of the parameters.
 %   
 %   See also:  fwt2, fwtinit
 %

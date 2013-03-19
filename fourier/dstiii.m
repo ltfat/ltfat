@@ -17,7 +17,7 @@ function c=dstiii(f,L,dim)
 %
 %   The transform is real (output is real if input is real) and orthonormal.
 %
-%   This is the inverse of |dstii|_.
+%   This is the inverse of |dstii|.
 %
 %   Let f be a signal of length *L*, let `c=dstiii(f)` and define the vector
 %   *w* of length *L* by  

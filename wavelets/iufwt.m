@@ -18,7 +18,7 @@ function f = iufwt(c,par,varargin)
 %
 %   Node that the same flag as in the `ufwt` function have to be used.
 %
-%   Please see the help on |ufwt|_ for a description of the parameters.
+%   Please see the help on |ufwt| for a description of the parameters.
 %
 %   Examples:
 %   ---------

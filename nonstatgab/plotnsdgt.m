@@ -8,8 +8,8 @@ function coef = plotnsdgt(coef,a,varargin)
 %         fs       : signal sample rate in Hz (optional)
 %         dynrange : Colorscale dynamic range in dB (optional).
 %
-%   `plotnsdgt(coef,a)` plots coefficients computed using |nsdgt|_ or
-%   |unsdgt|_. For more details on the format of the variables *coef* and *a*,
+%   `plotnsdgt(coef,a)` plots coefficients computed using |nsdgt| or
+%   |unsdgt|. For more details on the format of the variables *coef* and *a*,
 %   please read the function help for these functions.
 %
 %   `plotnsdgt(coef,a,fs)` does the same assuming a sampling rate of
@@ -22,8 +22,8 @@ function coef = plotnsdgt(coef,a,varargin)
 %   functions will create the plot. This is usefull for custom
 %   post-processing of the image data.
 %
-%   `plotnsdgt` supports all the optional parameters of |tfplot|_. Please
-%   see the help of |tfplot|_ for an exhaustive list. In addition, the
+%   `plotnsdgt` supports all the optional parameters of |tfplot|. Please
+%   see the help of |tfplot| for an exhaustive list. In addition, the
 %   following parameters may be specified:
 %
 %     'xres',xres  Approximate number of pixels along x-axis /time.

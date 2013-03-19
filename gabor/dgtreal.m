@@ -20,7 +20,7 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %   respect to the real-valued window `g` and parameters *a* and *M*. The
 %   output is a vector/matrix in a rectangular layout.
 %
-%   As opposed to |dgt|_ only the coefficients of the positive frequencies
+%   As opposed to |dgt| only the coefficients of the positive frequencies
 %   of the output are returned. `dgtreal` will refuse to work for complex
 %   valued input signals.
 %
@@ -31,7 +31,7 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %   `L=size(c,2)*a`.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |gabwin|_ for more details.
+%   cell array. See the help of |gabwin| for more details.
 %
 %   `dgtreal(f,g,a,M,L)` computes the Gabor coefficients as above, but does
 %   a transform of length *L*. *f* will be cut or zero-extended to length L before
@@ -51,7 +51,7 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %   transform. This is useful if the window was generated from a description
 %   in a string or cell array.
 %
-%   See the help on |dgt|_ for the definition of the discrete Gabor
+%   See the help on |dgt| for the definition of the discrete Gabor
 %   transform. This routine will return the coefficients for channel
 %   frequencies from 0 to `floor(M/2)`.
 %
@@ -59,7 +59,7 @@ function [c,Ls,g]=dgtreal(f,g,a,M,varargin)
 %   arguments:
 %
 %     'freqinv'  Compute a `dgtreal` using a frequency-invariant phase. This
-%                is the default convention described in the help for |dgt|_.
+%                is the default convention described in the help for |dgt|.
 %
 %     'timeinv'  Compute a `dgtreal` using a time-invariant phase. This
 %                convention is typically used in filter bank algorithms.

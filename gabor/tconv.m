@@ -20,7 +20,7 @@ function h=tconv(f,g)
 %   the numbers for *f* and *g*. Unless *f* and *g* are very sparse, it can be
 %   faster to convert them to full matrices before calling `tconv`. 
 %
-%   The routine |spreadinv|_ can be used to calculate an inverse convolution.
+%   The routine |spreadinv| can be used to calculate an inverse convolution.
 %   Define *h* and *r* by::
 %
 %     h=tconv(f,g);

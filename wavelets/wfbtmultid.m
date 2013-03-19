@@ -13,7 +13,7 @@ function [wfb,a] = wfbtmultid( filts, varargin)
 %   `wfbtmultid(filts)` calculates the impulse responses of non-iterated
 %   noble multirate-identity wavelet filterbank.
 %
-%   The function internally calls |wfbtinit|_ and passes all parameters to it.
+%   The function internally calls |wfbtinit| and passes all parameters to it.
 %   
 %   Examples:
 %   ---------

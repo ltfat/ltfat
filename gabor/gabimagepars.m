@@ -14,9 +14,9 @@ function [a,M,L,N,Ngood]=gabimagepars(Ls,x,y)
 %   zero-extension of the signal.
 %
 %   If you use this function to calculate a grid size for analysis of a
-%   real-valued signal (using |dgtreal|_), please input twice of the desired
-%   size *y*. This is because |DGTREAL|_ only returns half as many
-%   coefficients in the frequency direction as |dgt|_.
+%   real-valued signal (using |dgtreal|), please input twice of the desired
+%   size *y*. This is because |DGTREAL| only returns half as many
+%   coefficients in the frequency direction as |dgt|.
 %
 %   An example: We wish to compute a Gabor image of a real valued signal *f*
 %   of length $7500$. The image should have an approximate resolution of

@@ -3,7 +3,7 @@ function c = phaseunlock(c,a,varargin)
 %   Usage:  c=phaseunlock(c,a);
 %
 %   `phaseunlock(c,a)` removes phase locking from the Gabor coefficients *c*.
-%   The coefficient must have been obtained from a |dgt|_ with parameter *a*.
+%   The coefficient must have been obtained from a |dgt| with parameter *a*.
 %
 %   Phaselocking the coefficients modifies them so as if they were obtained
 %   from a time-invariant Gabor system. A filter bank produces phase locked

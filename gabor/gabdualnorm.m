@@ -20,7 +20,7 @@ function [o1,o2]=gabdualnorm(g,gamma,a,M,varargin);
 %   dual window of the Gabor frame with window *g* and parameters *a* and *M*.
 %
 %   The windows *g* and *gamma* may be vectors of numerical values, text strings
-%   or cell arrays. See the help of |gabwin|_ for more details.
+%   or cell arrays. See the help of |gabwin| for more details.
 %
 %   `[scal,res]=gabdualnorm(...)` computes two entities: *scal* determines
 %   if the windows are scaled correctly, it must be 1 for the windows to be
@@ -31,13 +31,13 @@ function [o1,o2]=gabdualnorm(g,gamma,a,M,varargin);
 %   length of *L*.
 %
 %   `gabdualnorm(g,gamma,a,M,'lt',lt)` does the same for a non-separable
-%   lattice specified by *lt*. Please see the help of |matrix2latticetype|_
+%   lattice specified by *lt*. Please see the help of |matrix2latticetype|
 %   for a precise description of the parameter *lt*.
 %
 %   `gabdualnorm` can be used to get the maximum relative reconstruction
 %   error when using the two specified windows. Consider the following code
 %   for some signal *f*, windows *g*, *gamma*, parameters *a* and *M* and 
-%   transform-length *L* (See help on |dgt|_ on how to obtain *L*)::
+%   transform-length *L* (See help on |dgt| on how to obtain *L*)::
 %
 %     fr=idgt(dgt(f,g,a,M),gamma,a); 
 %     er=norm(f-fr)/norm(f);

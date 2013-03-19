@@ -1,13 +1,13 @@
 %DEMO_NEXTFASTFFT  Next fast FFT number
 %
-%   This demo shows the behaviour of the |nextfastfft|_ function.
+%   This demo shows the behaviour of the |nextfastfft| function.
 %
 %   .. figure::
 %
 %      Benchmark of the FFT routine
 %
-%      The figure shows the sizes returned by the |nextfastfft|_ function
-%      compared to using `nextpow2`. As can be seen, the |nextfastfft|_
+%      The figure shows the sizes returned by the |nextfastfft| function
+%      compared to using `nextpow2`. As can be seen, the |nextfastfft|
 %      approach gives FFT sizes that are much closer to the input size.
 %
 %   .. figure::

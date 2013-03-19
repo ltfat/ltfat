@@ -5,7 +5,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %           [tgrad,fgrad]   = gabphasegrad('abs',s,g,a);
 %
 %   `[tgrad,fgrad]=gabphasegrad(method,...)` computes the time-frequency
-%   gradient of the phase of the |dgt|_ of a signal. The derivative in time
+%   gradient of the phase of the |dgt| of a signal. The derivative in time
 %   *tgrad* is the instantaneous frequency while the frequency derivative
 %   *fgrad* is the local group delay.
 %
@@ -38,9 +38,9 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   window *g* on the lattice specified by the time shift *a* and the number
 %   of channels *M*. The algorithm used to perform this calculation computes
 %   several DGTs, and therefore this routine takes the exact same input
-%   parameters as |dgt|_.
+%   parameters as |dgt|.
 %
-%   The window *g* may be specified as in |dgt|_. If the window used is
+%   The window *g* may be specified as in |dgt|. If the window used is
 %   'gauss', the computation will be done by a faster algorithm.
 %
 %   `[tgrad,fgrad,c]=gabphasegrad('dgt',f,g,a,M)` additionally returns the

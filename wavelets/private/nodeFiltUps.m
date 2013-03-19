@@ -10,7 +10,7 @@ function upsNo = nodeFiltUps(nodeNo,wt)
 %
 %   `nodeFiltUps(wt)` Returns upsampling factor, which can be used to
 %   upsample the node filters using the a-trous algorithm.
-%   For definition of the structure see |wfbinit|_.
+%   For definition of the structure see |wfbinit|.
 %
 %   See also: wfbtinit
 %

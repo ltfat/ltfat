@@ -17,7 +17,7 @@ function magresp(g,varargin);
 %
 %     'dynrange',r  Limit the dynamic range of the plot to r dB.
 %
-%     'fir'         Indicate that the input is an FIR window. |magresp|_ will
+%     'fir'         Indicate that the input is an FIR window. |magresp| will
 %                   zero-extend the window to display a smooth magnitude
 %                   response.
 %
@@ -32,7 +32,7 @@ function magresp(g,varargin);
 %                    the default.
 %
 %   In addition to these flags, it is possible to speficy any of the
-%   normalization flags from |normalize|_ to normalize the input before
+%   normalization flags from |normalize| to normalize the input before
 %   calculation of the magnitude response. Specifying `'1'` or `'area'` will
 %   display a magnitude response which peaks at 0 dB.
 %

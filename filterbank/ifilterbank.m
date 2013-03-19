@@ -5,13 +5,13 @@ function f=ifilterbank(c,g,a,varargin);
 %   `ifilterbank(c,g,a)` synthesizes a signal *f* from the coefficients *c*
 %   using the filters stored in *g* for a channel subsampling rate of *a* (the
 %   hop-size). The coefficients has to be in the format returned by
-%   either |filterbank|_ or |ufilterbank|_.
+%   either |filterbank| or |ufilterbank|.
 %
-%   The filter format for *g* is the same as for |filterbank|_.
+%   The filter format for *g* is the same as for |filterbank|.
 %
 %   If perfect reconstruction is desired, the filters must be the duals
 %   of the filters used to generate the coefficients. See the help on
-%   |filterbankdual|_.
+%   |filterbankdual|.
 %
 %   See also: filterbank, ufilterbank, filterbankdual
 %

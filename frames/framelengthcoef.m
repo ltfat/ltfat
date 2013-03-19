@@ -5,7 +5,7 @@ function L=framelengthcoef(F,Ncoef);
 %   `framelengthcoef(F,Ncoef)` returns the length of the frame *F*, such that
 %   *F* is long enough to expand the coefficients of length *Ncoef*.
 %
-%   If instead a signal is given, call |framelength|_.
+%   If instead a signal is given, call |framelength|.
 %
 %   See also: frame, framelength
   

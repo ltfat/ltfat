@@ -9,7 +9,7 @@
 %   nice plot, 4 channels per Erb has been used.
 %
 %   The filterbank covers only the positive frequencies, so we must use
-%   |filterbankrealdual|_ and |filterbankrealbounds|_.
+%   |filterbankrealdual| and |filterbankrealbounds|.
 %
 %   .. figure:: 
 %

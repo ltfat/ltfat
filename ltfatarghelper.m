@@ -33,7 +33,7 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %   The parameters are parsed in order, so parameters appearing later in varargin will override
 %   previously set values.
 %
-%   The following example for calling `ltfatarghelper` is taken from |dgt|_::
+%   The following example for calling `ltfatarghelper` is taken from |dgt|::
 %  
 %     definput.keyvals.L=[];
 %     definput.flags.phase={'freqinv','timeinv'};

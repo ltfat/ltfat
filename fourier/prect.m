@@ -3,8 +3,8 @@ function f=prect(L,n)
 %   Usage:  f=prect(L,n);
 %
 %   `psinc(L,n)` computes the periodic rectangle (or square) function of
-%   length *L* supported on *n* samples. The |dft|_ of the periodic
-%   rectangle function in the periodic sinc function, |psinc|_.
+%   length *L* supported on *n* samples. The |dft| of the periodic
+%   rectangle function in the periodic sinc function, |psinc|.
 %
 %   * If *n* is odd, the output will be supported on exactly *n* samples
 %     centered around the first sample.

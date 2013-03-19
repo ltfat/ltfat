@@ -24,7 +24,7 @@ function [c,info] = ufwt(f,h,J,varargin)
 %   in the basic wavelet filterbank. 
 %   The redundancy of the representanion is $J*(N-1)+1$.
 %
-%   For all accepted formats of the parameter *h* see the |fwt|_ function.
+%   For all accepted formats of the parameter *h* see the |fwt| function.
 %
 %   For one-dimensional input *f*, the coefficients *c* are stored as collumns of
 %   a matrix. The collumns are ordered with inceasing central frequency of the
@@ -45,7 +45,7 @@ function [c,info] = ufwt(f,h,J,varargin)
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |ufwt|_ function:::
+%   A simple example of calling the |ufwt| function:::
 % 
 %     f = gspi;
 %     J = 8;

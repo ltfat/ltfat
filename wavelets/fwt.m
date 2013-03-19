@@ -21,7 +21,7 @@ function [c,info] = fwt(f,h,J,varargin)
 %   channels. In such case, the transform have a different name.    
 %
 %   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
-%   The formats are the same as for the |fwtinit|_ function.
+%   The formats are the same as for the |fwtinit| function.
 %
 %     1) One option is passing a cell array whose first element is the
 %        name of the function defining the basic wavelet filters (`wfilt_`
@@ -37,10 +37,10 @@ function [c,info] = fwt(f,h,J,varargin)
 %        dimensional numerical vectors directly defining the wavelet filter
 %        impulse responses.  In this case, outputs of the filters are
 %        subsampled by a factor equal to the number of the filters. For
-%        creating completely custom filterbanks use the |fwtinit|_ function.
+%        creating completely custom filterbanks use the |fwtinit| function.
 %
 %     4) The fourth option is to pass a structure obtained from the
-%        |fwtinit|_ function.
+%        |fwtinit| function.
 %   
 %   If *f* is row/collumn vector, the subbands *c* are stored in a single
 %   collumn/row in a consecutive order with respect to the inceasing central frequency
@@ -94,7 +94,7 @@ function [c,info] = fwt(f,h,J,varargin)
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |fwt|_ function:::
+%   A simple example of calling the |fwt| function:::
 % 
 %     f = greasy;
 %     J = 10;

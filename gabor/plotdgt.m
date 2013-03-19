@@ -17,8 +17,8 @@ function coef=plotdgt(coef,a,varargin)
 %   functions will create the plot. This is usefull for custom
 %   post-processing of the image data.
 %
-%   `plotdgt` supports all the optional parameters of |tfplot|_. Please see
-%   the help of |tfplot|_ for an exhaustive list.
+%   `plotdgt` supports all the optional parameters of |tfplot|. Please see
+%   the help of |tfplot| for an exhaustive list.
 %
 %   See also:  dgt, tfplot, sgram, plotdgtreal
 

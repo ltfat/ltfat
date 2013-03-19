@@ -4,7 +4,7 @@ function g=long2fir(g,varargin);
 %
 %   `long2fir(g,L)` will cut the LONG window *g* to a length *L* FIR window by
 %   cutting out the middle part. Note that this is a slightly different
-%   behaviour than |middlepad|_.
+%   behaviour than |middlepad|.
 %
 %   `long2fir(g,L,'wp')` or `long2fir(g,L,'hp')` does the same assuming the
 %   input window is a whole-point even or half-point even window,

@@ -22,7 +22,7 @@ function wt = wfbtinit(wtdef,varargin)
 %        indexes of a parent node
 %
 %   `wfbt=wfbtinit({w,J,flag})` creates filterbank tree of depth *J*. Parameter *w* 
-%   defines basic wavelet filterbank. For all possible formats see |fwt|_.
+%   defines basic wavelet filterbank. For all possible formats see |fwt|.
 %   The following optional flags (still inside of the cell-array) are
 %   recognized:
 %

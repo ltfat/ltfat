@@ -8,10 +8,10 @@
 %
 %      Wilson and WMDCT basis
 %
-%      This right figure shows the image compressed using a |dwilt|_ basis with
+%      This right figure shows the image compressed using a |dwilt| basis with
 %      8 channels. This corresponds quite closely to JPEG compression,
 %      except that the borders between neigbouring blocs are smoother,
-%      since the |dwilt|_ uses a windowing function.
+%      since the |dwilt| uses a windowing function.
 %
 %      The left figure shows the same, now
 %      using a MDCT basis. The MDCT produces more visible artifacts, as the

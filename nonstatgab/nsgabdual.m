@@ -15,13 +15,13 @@ function gd=nsgabdual(g,a,M,varargin)
 %   non-stationary discrete Gabor frame defined by windows given in *g* an
 %   time-shifts given by *a*.
 %   
-%   `nsgabdual` is designed to be used with the functions |nsdgt|_ and
-%   |insdgt|_.  See the help on |nsdgt|_ for more details about the variables
+%   `nsgabdual` is designed to be used with the functions |nsdgt| and
+%   |insdgt|.  See the help on |nsdgt| for more details about the variables
 %   structure.
 %
 %   The computed dual windows are only valid for the 'painless case', that
 %   is to say that they ensure perfect reconstruction only if for each 
-%   window the number of frequency channels used for computation of |nsdgt|_ is
+%   window the number of frequency channels used for computation of |nsdgt| is
 %   greater than or equal to the window length. This correspond to cases
 %   for which the frame operator is diagonal.
 %

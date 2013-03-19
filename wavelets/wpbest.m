@@ -17,7 +17,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling |wpbest|_ :::
+%   A simple example of calling |wpbest| :::
 % 
 %     f = gspi;
 %     J = 6;

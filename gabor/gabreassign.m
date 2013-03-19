@@ -8,13 +8,13 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %   and *tgrad*. The lattice is determined by the time shift *a* and the number
 %   of channels deduced from the size of *s*.
 %
-%   *fgrad* and *tgrad* can be obtained by the routine |gabphasegrad|_.
+%   *fgrad* and *tgrad* can be obtained by the routine |gabphasegrad|.
 %
 %   Examples:
 %   ---------
 %
 %   The following example demonstrates how to manually create a
-%   reassigned spectrogram. An easier way is to just call |resgram|_:::
+%   reassigned spectrogram. An easier way is to just call |resgram|:::
 %
 %     % Create reassigned vector field of the bat signal.
 %     a=4;

@@ -4,11 +4,11 @@ function coef=framecoef2tf(F,coef);
 %
 %   `framecoef2tf(F,coef)` converts the frame coefficients *coef* into the
 %   time-frequency plane layout. The frame object *F* must have been
-%   created using |frame|_.
+%   created using |frame|.
 %
 %   The time-frequency plane layout is a matrix, where the first
 %   dimension indexes frequency and the second dimension time. This is
-%   similar to the output format from |dgt|_ and |wmdct|_.
+%   similar to the output format from |dgt| and |wmdct|.
 %
 %   Not all frame types support this coefficient layout. The supported frame
 %   types are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'` and

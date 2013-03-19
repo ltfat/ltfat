@@ -4,7 +4,7 @@ function [C] = plotwavelets(c,info,varargin)
 %           plotwavelets(c,info,fs,'dynrange',dynrange,...)
 %
 %   `plowavelets(c,g)` plots the wavelet coefficients *c* which were obtained
-%   from |fwt|_ with wavelet filters definition *g*. The input cell-array
+%   from |fwt| with wavelet filters definition *g*. The input cell-array
 %   *c* can have two formats:
 % 
 %      1) Two-element cell array {c,Lc}. The first element *c* is vector of
@@ -14,10 +14,10 @@ function [C] = plotwavelets(c,info,varargin)
 %      2) Coefficients in cell array format *c*. Each entry of the array is
 %      a single subband.
 %
-%   The formats are interchangable using |wavpack2cell|_ and |wavcell2pack|
+%   The formats are interchangable using |wavpack2cell| and |wavcell2pack|
 %   functions.
 %
-%   For possible formats of the parameter *g* see |fwt|_ function.
+%   For possible formats of the parameter *g* see |fwt| function.
 %
 %   `plowavelets(c,g,fs)` does the same plot assuming a sampling rate of *fs* Hz
 %   of the original signal.
@@ -29,8 +29,8 @@ function [C] = plotwavelets(c,info,varargin)
 %   will create the plot. This is usefull for custom post-processing of the
 %   image data.
 %
-%   `plowavelets` supports optional parameters of |tfplot|_. Please see
-%   the help of |tfplot|_ for an exhaustive list.
+%   `plowavelets` supports optional parameters of |tfplot|. Please see
+%   the help of |tfplot| for an exhaustive list.
 %
 %   See also: fwt, tfplot
 

@@ -24,7 +24,7 @@ function f=iuwpfbt(c,par,varargin)
 %         'freq','nat'
 %                Frequency or natural order of the coefficient subbands.
 %
-%   Please see the help on |fwt|_ for a description of the flags.
+%   Please see the help on |fwt| for a description of the flags.
 %
 %   Examples:
 %   ---------

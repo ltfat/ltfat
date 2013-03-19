@@ -24,7 +24,7 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,x,lambda,varargin)
 %   groups, no sparsity being imposed to the members of a given group. This
 %   is achieved by a regularization term composed of $l^2$ norm within a
 %   group, and $l^1$ norm with respect to groups. See the help on
-%   |groupthresh|_ for more information.
+%   |groupthresh| for more information.
 %
 %   `[tc,relres,iter] = franagrouplasso(...)` returns the residuals *relres* in
 %   a vector and the number of iteration steps done, *maxit*.
@@ -62,7 +62,7 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,x,lambda,varargin)
 %                iteration. Default value is 10;
 %
 %   In addition to these parameters, this function accepts all flags from
-%   the |groupthresh|_ and |thresh|_ functions. This makes it possible to
+%   the |groupthresh| and |thresh| functions. This makes it possible to
 %   switch the grouping mechanism or inner thresholding type.
 %
 %   The parameters *C*, *maxit* and *tol* may also be specified on the

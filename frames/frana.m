@@ -4,7 +4,7 @@ function outsig=frana(F,insig);
 %
 %   `c=frana(F,f)` computes the frame coefficients *c* of the input
 %   signal *f* using the frame *F*. The frame object *F* must have been
-%   created using |frame|_ or |framepair|_.
+%   created using |frame| or |framepair|.
 %
 %   If *f* is a matrix, the transform will be applied along the columns
 %   of *f*. If *f* is an N-D array, the transform will be applied along
@@ -12,8 +12,8 @@ function outsig=frana(F,insig);
 %
 %   The output coefficients are stored as columns. This is usually
 %   **not** the same format as the 'native' format of the frame. As an
-%   examples, the output from |frana|_ for a gabor frame cannot be
-%   passed to |idgt|_ without a reshape.
+%   examples, the output from |frana| for a gabor frame cannot be
+%   passed to |idgt| without a reshape.
 %
 %   See also: frame, framepair, frsyn, plotframe
   

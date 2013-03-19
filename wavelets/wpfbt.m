@@ -16,12 +16,12 @@ function [c,info]=wpfbt(f,wt,varargin)
 %   of the matrix.
 %
 %   This routine supports the same boundary conditions flags as
-%   |fwt|_. Please see the help on |fwt|_ for a description of the flags.
+%   |fwt|. Please see the help on |fwt| for a description of the flags.
 %
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |wpfbt|_ function using the "full
+%   A simple example of calling the |wpfbt| function using the "full
 %   decomposition" wavelet tree:::
 % 
 %     f = gspi;

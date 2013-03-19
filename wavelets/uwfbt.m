@@ -14,13 +14,13 @@ function [c,info]=uwfbt(f,wt,varargin)
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
 %   is applied to each of *W* columns. 
 %
-%   This routine accepts the same flags as |fwt|_ for specifying the boundary
-%   conditions. Please see the help on |fwt|_ for a description of the flags.
+%   This routine accepts the same flags as |fwt| for specifying the boundary
+%   conditions. Please see the help on |fwt| for a description of the flags.
 %
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |wfbt|_ function using the "full decomposition" wavelet tree:::
+%   A simple example of calling the |wfbt| function using the "full decomposition" wavelet tree:::
 % 
 %     f = greasy;
 %     J = 8;

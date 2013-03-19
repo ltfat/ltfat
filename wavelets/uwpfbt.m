@@ -18,7 +18,7 @@ function [c,info]=uwpfbt(f,wt,varargin)
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |uwpfbt|_ function using the "full
+%   A simple example of calling the |uwpfbt| function using the "full
 %   decomposition" wavelet tree:::
 % 
 %     f = greasy;

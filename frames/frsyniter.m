@@ -12,8 +12,8 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %         iter    : Number of iterations done.
 %
 %   `f=frsyniter(F,c)` iteratively inverts the analysis operator of *F*, so
-%   `frsyniter` always performs the inverse operation of |frana|_, even
-%   when a perfect reconstruction is not possible by using |frsyn|_.
+%   `frsyniter` always performs the inverse operation of |frana|, even
+%   when a perfect reconstruction is not possible by using |frsyn|.
 %
 %   `[f,relres,iter]=frsyniter(...)` additionally returns the relative
 %   residuals in a vector *relres* and the number of iteration steps *iter*.

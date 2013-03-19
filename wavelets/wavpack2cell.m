@@ -13,7 +13,7 @@ function [ccell,dim] = wavpack2cell(cvec,Lc,varargin)
 %         ccell    : Coefficients stored in a cell-array. Each element is
 %                    column or matrix.
 %         dim      : Return used dim. Usefull as an input of the
-%                    complementary function |wavcell2pack|_.
+%                    complementary function |wavcell2pack|.
 %
 %   This function transformes coefficients in vector/matrix *cvec* to the
 %   cell array *ccell* of collumn vectors/matrices.

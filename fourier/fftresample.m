@@ -10,7 +10,7 @@ function f=fftresample(f,L,dim)
 %   `fftresample(f,L,dim)` does the same along dimension *dim*.
 %
 %   If the input signal is **not** a periodic signal (or close to), the
-%   |dctresample|_ method gives much better results at the endpoints.
+%   |dctresample| method gives much better results at the endpoints.
 %
 %   See also:  dctresample, middlepad
 

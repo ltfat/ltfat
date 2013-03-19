@@ -3,7 +3,7 @@ function c = ref_phaselock(c,a)
 %   Usage:  c=phaselock(c,a);
 %
 %   `phaselock(c,a)` phaselocks the Gabor coefficients *c*. The coefficients
-%   must have been obtained from a |dgt|_ with parameter *a*.
+%   must have been obtained from a |dgt| with parameter *a*.
 
 %   AUTHOR:
 

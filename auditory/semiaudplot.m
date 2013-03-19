@@ -16,7 +16,7 @@ function h=semiaudplot(x,y,varargin)
 %               function.
 %
 %   In addition to these parameters, the auditory scale can be
-%   specified. All scales supported by |freqtoaud|_ are supported. The default
+%   specified. All scales supported by |freqtoaud| are supported. The default
 %   is to use the erb-scale.     
 %
 %   See also: freqtoaud

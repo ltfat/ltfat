@@ -24,7 +24,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %   `isgramreal(s,g,a,M,Ls)` does as above but cuts or extends *f* to length *Ls*.
 %
 %   If the phase of the spectrogram is known, it is much better to use
-%   |dgtreal|_
+%   |dgtreal|
 %
 %   `f,relres,iter]=isgramreal(...)` additionally returns the residuals in a
 %   vector *relres* and the number of iteration steps done.
@@ -38,7 +38,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %   input arguments:
 %
 %     'lt',lt      Specify the lattice type. See the help on
-%                  |matrix2latticetype|_. Only the rectangular or quinqux
+%                  |matrix2latticetype|. Only the rectangular or quinqux
 %                  lattices can be specified.
 %
 %     'zero'       Choose a starting phase of zero. This is the default

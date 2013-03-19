@@ -36,7 +36,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %   `isgram` takes the following parameters at the end of the line of input
 %   arguments:
 %
-%     'lt',lt      Specify the lattice type. See the help on |matrix2latticetype|_.
+%     'lt',lt      Specify the lattice type. See the help on |matrix2latticetype|.
 %
 %     'zero'       Choose a starting phase of zero. This is the default
 %

@@ -6,7 +6,7 @@ function ltfatstart()
 %   before using any of the functions in the toolbox.
 %
 %   To configure default options for functions, you can use the
-%   |ltfatsetdefaults|_ function in your startup script. A typical startup
+%   |ltfatsetdefaults| function in your startup script. A typical startup
 %   file could look like::
 %
 %     addpath('/path/to/my/work/ltfat');
@@ -14,7 +14,7 @@ function ltfatstart()
 %     ltfatsetdefaults('sgram','nocolorbar');
 %
 %   This will add the main LTFAT directory to you path, start the
-%   toolbox, and configure |sgram|_ to not display the colorbar.
+%   toolbox, and configure |sgram| to not display the colorbar.
 %
 %   See also:  ltfatsetdefaults, ltfatmex, ltfathelp
 

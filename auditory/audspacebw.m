@@ -11,7 +11,7 @@ function [y,n] = audspacebw(flow,fhigh,varargin)
 %   distance between two consecutive values is *bw* on the selected scale,
 %   and the points will be centered on the scale between *flow* and *fhigh*.
 %
-%   See the help on |freqtoaud|_ to get a list of the supported values of the
+%   See the help on |freqtoaud| to get a list of the supported values of the
 %   *scale* parameter.
 %  
 %   `audspacebw(flow,fhigh,bw,hitme,scale)` will do as above, but one of

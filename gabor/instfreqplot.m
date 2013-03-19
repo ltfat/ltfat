@@ -3,7 +3,7 @@ function []=instfreqplot(f,varargin)
 %   Usage: instfreqplot(f,op1,op2, ... );
 %          instfreqplot(f,fs,op1,op2, ... );
 %
-%   `instfreqplot(f)` plots the instantaneous frequency of *f* using a |dgt|_.
+%   `instfreqplot(f)` plots the instantaneous frequency of *f* using a |dgt|.
 %
 %   `instfreqplot(f,fs)` does the same for a signal with sampling rate
 %   *fs* Hz.
@@ -17,7 +17,7 @@ function []=instfreqplot(f,varargin)
 %
 %     instfreqplot(greasy,16000,'thr',.03,'climsym',100);
 %
-%   will produce a nice instantaneous frequency plot of the |greasy|_
+%   will produce a nice instantaneous frequency plot of the |greasy|
 %   signal.
 %
 %   `instfreqplot` accepts the following optional arguments:
@@ -28,7 +28,7 @@ function []=instfreqplot(f,varargin)
 %                 resolution. A value of $0<v<1$ will do the opposite.
 %  
 %     'wlen',s    Window length. Specifies the length of the window
-%                 measured in samples. See help of |pgauss|_ on the exact
+%                 measured in samples. See help of |pgauss| on the exact
 %                 details of the window length.
 %  
 %     'thr',r     Keep the coefficients with a magnitude larger than *r*

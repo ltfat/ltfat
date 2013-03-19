@@ -3,7 +3,7 @@ function []=phaseplot(f,varargin)
 %   Usage: phaseplot(f,op1,op2, ... );
 %          phaseplot(f,fs,op1,op2, ... );
 %
-%   `phaseplot(f)` plots the phase of f using a |dgt|_.
+%   `phaseplot(f)` plots the phase of f using a |dgt|.
 %
 %   `phaseplot(f,fs)` does the same for a signal with sampling rate *fs* Hz.
 %
@@ -11,7 +11,7 @@ function []=phaseplot(f,varargin)
 %   resolution of the screen), as there will otherwise be some visual
 %   aliasing, such that very fast changing areas will look very smooth.
 %   `phaseplot` always calculates the phase of the full time/frequency plane
-%   (as opposed to |sgram|_), and you therefore risk running out of memory
+%   (as opposed to |sgram|), and you therefore risk running out of memory
 %   for long signals.
 %
 %   `phaseplot` takes the following flags at the end of the line of input
@@ -23,7 +23,7 @@ function []=phaseplot(f,varargin)
 %                 resolution. A value of $0<v<1$ will do the opposite.
 %  
 %     'wlen',s    Window length. Specifies the length of the window
-%                 measured in samples. See help of |pgauss|_ on the exact
+%                 measured in samples. See help of |pgauss| on the exact
 %                 details of the window length.
 %  
 %     'nf'        Display negative frequencies, with the zero-frequency
@@ -41,10 +41,10 @@ function []=phaseplot(f,varargin)
 %                 amplitude the phase values can be meaningless.
 %  
 %     'timeinv'   Display the phase as computed by a time-invariant
-%                 |dgt|_. This is the default.
+%                 |dgt|. This is the default.
 %  
 %     'freqinv'   Display the phase as computed by a frequency-invariant
-%                 |dgt|_.
+%                 |dgt|.
 %  
 %     'fmax',y    Display y as the highest frequency.
 %

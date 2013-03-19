@@ -1,7 +1,7 @@
 %DEMO_PBSPLINE  How to use PBSPLINE
 %
 %   This script illustrates various properties of the
-%   |pbspline|_ function.
+%   |pbspline| function.
 %
 %   .. figure::
 %

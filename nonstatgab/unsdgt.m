@@ -55,10 +55,10 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   end of the signal.
 %
 %   The phaselocking convention used in `unsdgt` is different from the
-%   convention used in the |dgt|_ function. `unsdgt` results are phaselocked
-%   (a phase reference moving with the window is used), whereas |dgt|_ results
+%   convention used in the |dgt| function. `unsdgt` results are phaselocked
+%   (a phase reference moving with the window is used), whereas |dgt| results
 %   are not phaselocked (a fixed phase reference corresponding to time 0 of
-%   the signal is used). See the help on |phaselock|_ for more details on
+%   the signal is used). See the help on |phaselock| for more details on
 %   phaselocking conventions.
 %
 %   See also:  insdgt, nsgabdual, nsgabtight, phaselock

@@ -4,7 +4,7 @@ function [s,fs]=ltfatlogo()
 %
 %   `ltfatlogo` loads the 'ltfatlogo' signal. This is a sound synthezised
 %   from an artificial spectrogram of the word 'LTFAT'. See the help of
-%   |ltfattext|_.
+%   |ltfattext|.
 %
 %   `[sig,fs]=ltfatlogo` additionally returns the sampling frequency *fs*.
 %

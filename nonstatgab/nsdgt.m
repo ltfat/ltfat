@@ -62,10 +62,10 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %   end of the signal.
 %
 %   The phaselocking convention used in `nsdgt` is different from the
-%   convention used in the |dgt|_ function. `nsdgt` results are phaselocked (a
-%   phase reference moving with the window is used), whereas |dgt|_ results are
+%   convention used in the |dgt| function. `nsdgt` results are phaselocked (a
+%   phase reference moving with the window is used), whereas |dgt| results are
 %   not phaselocked (a fixed phase reference corresponding to time 0 of the
-%   signal is used). See the help on |phaselock|_ for more details on
+%   signal is used). See the help on |phaselock| for more details on
 %   phaselocking conventions.
 %
 %   See also:  insdgt, nsgabdual, nsgabtight, phaselock

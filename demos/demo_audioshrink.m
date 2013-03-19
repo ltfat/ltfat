@@ -1,21 +1,21 @@
 %DEMO_AUDIOSHRINK  Decomposition into tonal and transient parts
 %
 %   This demos shows how to do audio coding and "tonal + transient"
-%   decomposition using group lasso shrinkage of two |wmdct|_ transforms
+%   decomposition using group lasso shrinkage of two |wmdct| transforms
 %   with different time-frequency resolutions.
 %
-%   The signal is transformed using two orthonormal |wmdct|_ bases.
+%   The signal is transformed using two orthonormal |wmdct| bases.
 %   Then group lasso shrinkage is applied to the two transforms
 %   in order to:
 %
-%     * select fixed frequency lines of large |wmdct|_ coefficients on the
-%       wide window |wmdct|_ transform
+%     * select fixed frequency lines of large |wmdct| coefficients on the
+%       wide window |wmdct| transform
 %
-%     * select fixed time lines of large |wmdct|_ coefficients on the
-%       narrow window |wmdct|_ transform
+%     * select fixed time lines of large |wmdct| coefficients on the
+%       narrow window |wmdct| transform
 % 
 %   The corresponding approximated signals are computed with the
-%   corresponding inverse, |iwmdct|_.
+%   corresponding inverse, |iwmdct|.
 %
 %   .. figure:: 
 %

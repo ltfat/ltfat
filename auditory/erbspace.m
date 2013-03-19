@@ -2,8 +2,8 @@ function [y,bw] = erbspace(flow,fhigh,n)
 %ERBSPACE  Equidistantly spaced points on erbscale
 %   Usage: y=erbspace(flow,fhigh,n);
 %
-%   This is a wrapper around |audspace|_ that selects the erb-scale. Please
-%   see the help on |audspace|_ for more information.
+%   This is a wrapper around |audspace| that selects the erb-scale. Please
+%   see the help on |audspace| for more information.
 %
 %   See also: audspace, freqtoaud
 

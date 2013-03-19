@@ -17,7 +17,7 @@ function [AF,BF]=wilbounds(g,M,varargin)
 %   just the ratio.
 %
 %   The window *g* may be a vector of numerical values, a text string or a
-%   cell array. See the help of |wilwin|_ for more details.
+%   cell array. See the help of |wilwin| for more details.
 %
 %   If the length of *g* is equal to $2\cdot M$ then the input window is
 %   assumed to be a FIR window. Otherwise the smallest possible transform

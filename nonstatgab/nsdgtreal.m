@@ -17,7 +17,7 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %   the form of a 2D matrix of size $Ls \times W$, with *Ls* the signal
 %   length and *W* the number of signal channels.
 %
-%   As opposed to |nsdgt|_ only the coefficients of the positive frequencies
+%   As opposed to |nsdgt| only the coefficients of the positive frequencies
 %   of the output are returned. `nsdgtreal` will refuse to work for complex
 %   valued input signals.
 %
@@ -66,10 +66,10 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %   end of the signal.
 %
 %   The phaselocking convention used in `nsdgtreal` is different from the
-%   convention used in the |dgt|_ function. `nsdgtreal` results are phaselocked (a
-%   phase reference moving with the window is used), whereas |dgt|_ results are
+%   convention used in the |dgt| function. `nsdgtreal` results are phaselocked (a
+%   phase reference moving with the window is used), whereas |dgt| results are
 %   not phaselocked (a fixed phase reference corresponding to time 0 of the
-%   signal is used). See the help on |phaselock|_ for more details on
+%   signal is used). See the help on |phaselock| for more details on
 %   phaselocking conventions.
 %
 %   See also:  nsdgt, insdgtreal, nsgabdual, nsgabtight, phaselock

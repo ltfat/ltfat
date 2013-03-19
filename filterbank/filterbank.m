@@ -4,7 +4,7 @@ function c=filterbank(f,g,a,varargin);
 %
 %   `filterbank(f,g,a)` applies the filters given in *g* to the signal
 %   *f*. Each subband will be subsampled by a factor of *a* (the
-%   hop-size). In contrast to |ufilterbank|_, *a* can be a vector so the
+%   hop-size). In contrast to |ufilterbank|, *a* can be a vector so the
 %   hop-size can be channel-dependant. If *f* is a matrix, the
 %   transformation is applied to each column.
 %

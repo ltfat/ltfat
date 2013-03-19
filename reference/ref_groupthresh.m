@@ -20,9 +20,9 @@ function [xo]=groupthresh(xi,lambda,varargin)
 %   calling `groupthresh(x,lambda,dim)`, where *dim* is the dimension to
 %   **not** group along.
 %
-%   `groupthresh` accepts all the flags of |thresh|_ to choose the
+%   `groupthresh` accepts all the flags of |thresh| to choose the
 %   thresholding type within each group and the output type (full / sparse
-%   matrix). Please see the help of |thresh|_ for the available
+%   matrix). Please see the help of |thresh| for the available
 %   options. Default is to use soft thresholding and full matrix output.
 %  
 %   See also:  thresh

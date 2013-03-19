@@ -10,23 +10,23 @@ function F=frame(ftype,varargin);
 %   ---------------------
 %
 %   `frame('dgt',g,a,M)` constructs a Gabor frame with window *g*,
-%   time-shift *a* and *M* channels. See the help on |dgt|_ for more
+%   time-shift *a* and *M* channels. See the help on |dgt| for more
 %   information.
 %
 %   `frame('dgtreal',g,a,M)` constructs a Gabor frame for real-valued
 %   signals with window *g*, time-shift *a* and *M* channels. See the help
-%   on |dgtreal|_ for more information.
+%   on |dgtreal| for more information.
 %
 %   `frame('dwilt',g,M)` constructs a Wilson basis with window *g* and *M*
-%   channels. See the help on |dwilt|_ for more information.
+%   channels. See the help on |dwilt| for more information.
 %
 %   `frame('wmdct',g,M)` constructs a windowed MDCT basis with window *g*
-%   and *M* channels. See the help on |wmdct|_ for more information.
+%   and *M* channels. See the help on |wmdct| for more information.
 %
 %   `frame('filterbank',g,a,M)` constructs a filterbank with filters *g*,
 %   time-shifts of *a* and *M* channels. For the ease of implementation, it
 %   is necessary to specify *M*, even though it strictly speaking could be
-%   deduced from the size of the windows. See the help on |filterbank|_ for
+%   deduced from the size of the windows. See the help on |filterbank| for
 %   more information on the parameters. Similarly, you can construct a
 %   uniform filterbank by selecting `'ufilterbank'`, a positive-frequency
 %   filterbank by selecting `'filterbankreal'` or a uniform
@@ -36,10 +36,10 @@ function F=frame(ftype,varargin);
 %   ---------------------
 %
 %   `frame('dft')` constructs a frame where the analysis operator is the
-%   |dft|_, and the synthesis operator is its inverse, |idft|_. Completely
+%   |dft|, and the synthesis operator is its inverse, |idft|. Completely
 %   similar to this, you can enter the name of any of the cosine or sine
-%   transforms |dcti|_, |dctii|_, |dctiii|_, |dctiv|_, |dsti|_, |dstii|_,
-%   |dstiii|_ or |dstiv|_.
+%   transforms |dcti|, |dctii|, |dctiii|, |dctiv|, |dsti|, |dstii|,
+%   |dstiii| or |dstiv|.
 %
 %   Special / general frames
 %   ------------------------

@@ -9,11 +9,11 @@
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
 %
 %   Compression
-%     DEMO_IMAGECOMPRESSION - Image compression using |dwilt|_ and |fwt|_
-%     DEMO_AUDIOCOMPRESSION - Audio compression using a |wmdct|_.
+%     DEMO_IMAGECOMPRESSION - Image compression using |dwilt| and |fwt|
+%     DEMO_AUDIOCOMPRESSION - Audio compression using a |wmdct|.
 %
 %   Denoising 
-%     DEMO_AUDIODENOISE     - Audio denoising using a |wmdct|_.
+%     DEMO_AUDIODENOISE     - Audio denoising using a |wmdct|.
 %
 %   Applications
 %     DEMO_OFDM             - Simple OFDM demo.
@@ -22,9 +22,9 @@
 %
 %   Aspects of particular functions
 %     DEMO_NSDGT            - Non-stationary Gabor systems
-%     DEMO_PGAUSS           - How to use |pgauss|_.
-%     DEMO_PBSPLINE         - How to use |pbspline|_.
-%     DEMO_GABMIXDUAL       - How to use |gabmixdual|_.
+%     DEMO_PGAUSS           - How to use |pgauss|.
+%     DEMO_PBSPLINE         - How to use |pbspline|.
+%     DEMO_GABMIXDUAL       - How to use |gabmixdual|.
 %     DEMO_GABMUL           - Time-frequency localization by Gabor multiplier.
 %     DEMO_PHASEPLOT        - Phaseplots.
 %     DEMO_ISGRAM           - Iterative spectrogram reconstruction.
