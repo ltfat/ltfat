@@ -33,11 +33,11 @@ cRunPtr = 2;
 for jj=1:J
    % Upsampling the filters.
    filtUps = a(1)^(J-jj); 
-   gMatUps = comp_ups(gMat,filtUps,1);
+   %gMatUps = comp_ups(gMat,filtUps,1);
    % Zero index position of the upsampled filetrs.
    skip = filtUps.*gDel - filtUps; 
    % Run the filterbank
-   ca=comp_iufilterbank_td([reshape(ca,size(ca,1),1,size(ca,2)),c(:,cRunPtr:cRunPtr+filtNo-2,:)],gMatUps,1,L,skip,'per'); 
+   ca=comp_iatrousfilterbank_td([reshape(ca,size(ca,1),1,size(ca,2)),c(:,cRunPtr:cRunPtr+filtNo-2,:)],gMat,filtUps,skip); 
    % Bookkeeping
    cRunPtr = cRunPtr + filtNo -1;
 end

@@ -40,7 +40,9 @@ c = cell(sum(cellfun(@(rEl) numel(rEl),rangeOut)),1);
     % Pick what goes directy to the output...
     c(rangeOut{jj}) = catmp(rangeLoc{jj});
     % and save the rest.
-    ca = [ca(2:end);catmp(setdiff(1:numel(hCell),rangeLoc{jj}))];
+    diffRange = 1:numel(hCell);
+    diffRange(rangeLoc{jj}) = [];
+    ca = [ca(2:end);catmp(diffRange)];
  end        
 
 

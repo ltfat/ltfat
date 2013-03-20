@@ -38,7 +38,8 @@ for jj=1:length(wtNodes)
     catmp = cell(filtNo,1);
     % Read data from subbands
     catmp(rangeLoc{jj}) = c(rangeOut{jj});
-    diffRange = setdiff(1:filtNo,rangeLoc{jj});
+    diffRange = 1:filtNo;
+    diffRange(rangeLoc{jj}) = [];
     % Read data from intermediate outputs (filters are taken in reverse order)
     catmp(diffRange(end:-1:1)) = ca(1:numel(diffRange));
     

@@ -9,10 +9,10 @@ Calling convention:
                       0      1  2  3   4      5    6
    f =  comp_ifwt_all(c, filts, J, a, Ls, flags, ext)
 */
-void mexFunction( int nlhs, mxArray *plhs[], 
+void mexFunction( int nlhs, mxArray *plhs[],
 		  int nrhs, const mxArray *prhs[] )
-     
-{ 
+
+{
 	double ** in; int* inLen; int inChan;
 	double * out; int outLen;
 	double ** filts; int fLen;
@@ -22,14 +22,14 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	int noOfFilts = 2;
 	J = (int) mxGetScalar(prhs[2]);
 
-	// prepare input poiner arrays 
+	// prepare input poiner arrays
 	int inCellElements = mxGetNumberOfElements(prhs[0]);
 	inChan = mxGetN(mxGetCell(prhs[0], 0));
 	in = (double **) mxMalloc(inCellElements*inChan*sizeof(double *));
 	inLen = (int *) mxMalloc(inCellElements*sizeof(int));
 	for(int ii=0;ii<inCellElements;ii++)
 	    {
-		   inLen[ii] = mxGetM(mxGetCell(prhs[0], ii)); 
+		   inLen[ii] = mxGetM(mxGetCell(prhs[0], ii));
 	    }
 
 	for(int ch=0;ch<inChan;ch++)
@@ -64,7 +64,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	outLen = mxGetScalar(prhs[4]);
 	plhs[0] = mxCreateDoubleMatrix(outLen, inChan, mxREAL);
 	out = mxGetPr(plhs[0]);
-	
+
 	bool doNonexp = false;
 
 	if(!strcmp(extStr,"zpd"))
@@ -88,7 +88,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 /*	if(!isPow2((int)a[0]))
 	{
-		mexErrMsgTxt("Upsampling factors not equal to power of two not supported yet.");	
+		mexErrMsgTxt("Upsampling factors not equal to power of two not supported yet.");
 	}
 	*/
 
@@ -101,7 +101,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	      {
 		    dyadic_idwt_per(&in[ch*inCellElements], inLen, out+ch*outLen, outLen, filts, fLen, noOfFilts, up,J);
 		  }
-	    
+
 	  }
 	  else
 	  {
@@ -126,9 +126,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	      {
 		  undec_idwt_exp(&in[ch*inCellElements], inLen, out+ch*outLen, outLen, filts, fLen, noOfFilts, up, J);
 		 }
-	   } 
-	
-	
+	   }
+
+
 	}
 
 

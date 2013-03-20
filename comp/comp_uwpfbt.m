@@ -36,13 +36,13 @@ for jj=1:numel(wtNodes)
    filtNo = size(hMat,2);
    
    % Upsampling the filters.
-   hMatUps = comp_ups(hMat,nodesUps(jj),1);
+   % hMatUps = comp_ups(hMat,nodesUps(jj),1);
    % Zero index position of the upsampled filters.
    skip = nodesUps(jj).*(hDel - 1);
 
    % Run filterbank
    c(:,cOutRunIdx:cOutRunIdx + filtNo-1,:)=...
-      comp_ufilterbank_td(squeeze(ca(:,1,:)),hMatUps,1,skip,'per');
+      comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),skip);
    
    % Bookkeeping
    cInRunIdxs = [cInRunIdxs(2:end),cOutRunIdx:cOutRunIdx+filtNo-1];

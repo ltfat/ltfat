@@ -31,12 +31,12 @@ L = size(c,1);
     gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.filts);
     
     % Upsampling the filters.
-    gMatUps = comp_ups(gMat,nodesUps(jj),1);
+    % gMatUps = comp_ups(gMat,nodesUps(jj),1);
     % Zero index position of the upsampled filters.
     skip = nodesUps(jj).*(gDel) - nodesUps(jj);
 
     % Run filterbank
-    ctmp = comp_iufilterbank_td(c(:,chOutIdxs{jj},:),gMatUps,1,L,skip,'per');
+    ctmp = comp_iatrousfilterbank_td(c(:,chOutIdxs{jj},:),gMat,nodesUps(jj),skip);
     
     if(pOutIdxs(jj))
        % Add to the existing subband

@@ -32,7 +32,7 @@ for jj=1:length(wtNodes)
     gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.filts);
     
     % Upsampling the filters.
-    gMatUps = comp_ups(gMat,nodesUps(jj),1);
+    % gMatUps = comp_ups(gMat,nodesUps(jj),1);
     % Zero index position of the upsampled filters.
     skip = nodesUps(jj).*(gDel) - nodesUps(jj);
      
@@ -45,14 +45,15 @@ for jj=1:length(wtNodes)
 
     % Read from input subbands
     catmp(:,rangeLoc{jj},:) = c(:,rangeOut{jj},:);
-    diffRange = setdiff(1:filtNo,rangeLoc{jj});
+    diffRange = 1:filtNo;
+    diffRange(rangeLoc{jj}) = [];
     % Read from intermediate outputs
     if(~isempty(diffRange))
        catmp(:,diffRange(end:-1:1),:) = ca(:,1:numel(diffRange),:);
     end
     
     %Run filterbank
-    catmp = comp_iufilterbank_td(catmp,gMatUps,1,L,skip,'per');
+    catmp = comp_iatrousfilterbank_td(catmp,gMat,nodesUps(jj),skip);
     %Save intermediate output
     ca = horzcat(ca(:,numel(diffRange)+1:end,:),reshape(catmp,size(catmp,1),1,size(catmp,2)));
 end

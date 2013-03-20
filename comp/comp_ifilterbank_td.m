@@ -39,7 +39,7 @@ if(~strcmp(ext,'per'))
     ext = 'zero';
 end
 
-skipOut = a.*(filtLen-1)+skip(:);
+skipOut = a(:).*(filtLen-1)+skip(:);
 
 % W channels are done simultaneously
 for m=1:M

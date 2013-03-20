@@ -34,11 +34,11 @@ ca = f;
 runPtr = size(c,2) - (filtNo-2);
 for jj=1:J
     % Upsampling the filters.
-    hMatUps = comp_ups(hMat,a(1)^(jj-1),1);
+    % hMatUps = comp_ups(hMat,a(1)^(jj-1),1);
     % Zero index position of the upsampled filters.
     skip = a(1)^(jj-1).*(hDel - 1);
     % Run filterbank.
-    ca=comp_ufilterbank_td(ca,hMatUps,1,skip,'per');
+    ca=comp_atrousfilterbank_td(ca,hMat,a(1)^(jj-1),skip);
     % Bookkeeping
     c(:,runPtr:runPtr+filtNo-2,:)=ca(:,2:end,:);
     ca = squeeze(ca(:,1,:));

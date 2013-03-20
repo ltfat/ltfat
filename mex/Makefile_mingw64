@@ -1,9 +1,9 @@
 CC=gcc
-CFLAGS=-shared -O3 -std=c99 -m64 -Wall -I../thirdparty -I../src
+CFLAGS=-shared -O -s -std=c99 -m64 -I../thirdparty -I../src
 
 
 #These variables are overwritten by the matlab script
-MATLABROOT="C:\Program Files\MATLAB\R2011b"
+MATLABROOT=C:\Program Files\MATLAB\R2011b
 EXT=mexw64
 MEXSC=\
 	comp_col2diag.c\
@@ -15,13 +15,12 @@ MEXSC=\
 	comp_dgtreal_ola.c \
 	comp_dwilt_long.c  \
 	comp_fftreal.c  \
-	comp_fwt_all.c \
+	comp_filterbank_td.c \
 	comp_gabreassign.c  \
 	comp_heapint.c  \
 	comp_idgt_fac.c  \
 	comp_idgt_fb.c  \
 	comp_ifftreal.c  \
-	comp_ifwt_all.c \
 	comp_iwfac.c \
 	comp_nonsepdgt_multi.c  \
 	comp_nonsepdgt_shear.c  \

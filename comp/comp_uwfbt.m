@@ -36,17 +36,19 @@ for jj=1:numel(wtNodes)
    hDel = cellfun(@(hEl) hEl.d,wtNodes{jj}.filts);
    
    % Upsampling the filters.
-   hMatUps = comp_ups(hMat,nodesUps(jj),1);
+   % hMatUps = comp_ups(hMat,nodesUps(jj),1);
    % Zero index position of the upsampled filters.
    skip = nodesUps(jj).*(hDel - 1);
    
    % Run filterbank.
-   catmp=comp_ufilterbank_td(squeeze(ca(:,1,:)),hMatUps,1,skip,'per');
+   catmp=comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),skip);
    % Bookkeeping
    % Copy what goes directly to the output...
    c(:,rangeOut{jj},:)=catmp(:,rangeLoc{jj},:);
    % ...and save the rest.
-   ca = horzcat(ca(:,2:end,:), catmp(:,setdiff(1:size(hMat,2),rangeLoc{jj}),:));
+   diffRange = 1:size(hMat,2);
+   diffRange(rangeLoc{jj}) = [];
+   ca = horzcat(ca(:,2:end,:), catmp(:,diffRange,:));
 end 
 
 

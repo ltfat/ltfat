@@ -36,7 +36,7 @@ else
    Lext = (L+filtLen-1);
    N = ceil((Lext-skip)./a); 
 end
-Lreq = a.*(N-1) + 1;
+Lreq = a(:).*(N-1) + 1;
 
 % Output memory allocation
 c=cell(M,1);

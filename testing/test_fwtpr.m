@@ -7,8 +7,8 @@ function test_failed = test_fwtpr(verbose)
 test_failed = 0;
 if(nargin>0)
    verbose = 1;
-   which comp_fwt -all
-   which comp_ifwt -all
+   which comp_filterbank_td -all
+   which comp_ifilterbank_td -all
 else
    verbose = 0;
 end
@@ -28,11 +28,11 @@ format = {'pack','cell'};
 
 
 test_filters = {
+               {'db',10}
                %{'apr',2} % complex filter values, odd length filters, no exact PR
                {'algmband',2} % 4 filters,
                {'db',1}
                %{'db',3}
-               {'db',10}
                {'spline',4,4}
                %{'lemaire',80} % not exact reconstruction
                {'hden',3} % only one with 3 filters and different
@@ -72,7 +72,7 @@ test_filters = {
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 
 
-J = 6;
+J = 5;
 %testLen = 4*2^J-1;%(2^J-1);
 testLen = 53;
 
@@ -84,7 +84,7 @@ extCur = ext{extIdx};
 %for inLenRound=0:2^J-1
 for inLenRound=0:0
 %f = randn(14576,1);
-f = randn(testLen+inLenRound,10);
+f = randn(testLen+inLenRound,1);
 %f = 1:testLen-1;f=f';
 %f = 0:30;f=f';
 % multiple channels
@@ -97,7 +97,7 @@ for typeIdx=1:length(type)
          %fname = strcat(prefix,actFilt{1});
          %w = fwtinit(test_filters{tt});  
 
-     for jj=4:J
+     for jj=J:J
            if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s, inLen=%d, format=%s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr); end; 
            
            if(strcmp(formatCurr,'pack'))
