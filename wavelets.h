@@ -1,81 +1,96 @@
 #ifndef WAVELETS_H
 #define WAVELETS_H
-
 #include <string.h>
-#include "config.h"
-#include "fftw3.h"
-#include "ltfat.h"
-
 
 #define ONEOVERSQRT2 0.707106781186548 \
 
-//#define WORDBITSM1 (sizeof(int)*8)-1
+enum ltfatWavExtType
+{
+PER,
+PERDEC,
+PPD,
+SYM,
+EVEN,
+SYMW,
+ASYM,
+ODD,
+ASYMW,
+SP0,
+ZPD,
+ZERO,
+BAD_TYPE
+};
 
-#define LTFAT_H_REAL double
-#define LTFAT_H_COMPLEX ltfat_complex
-#define LTFAT_H_NAME(name) name
-#define LTFAT_H_FFTW(name) fftw_ ## name  
+inline static enum ltfatWavExtType ltfatExtStringToEnum(char* extType)
+{
+    if(strcmp(extType,"per")==0)
+    {
+       return PER;
+    }
+    else if(strcmp(extType,"perdec")==0)
+    {
+       return PERDEC;
+    }
+    else if(strcmp(extType,"ppd")==0)
+    {
+       return PPD;
+    }
+    else if(strcmp(extType,"sym")==0)
+    {
+       return SYM;
+    }
+    else if(strcmp(extType,"even")==0)
+    {
+       return EVEN;
+    }
+    else if(strcmp(extType,"symw")==0)
+    {
+       return SYMW;
+    }
+    else if(strcmp(extType,"odd")==0)
+    {
+       return ODD;
+    }
+    else if(strcmp(extType,"asymw")==0)
+    {
+       return ASYMW;
+    }
+    else if(strcmp(extType,"sp0")==0)
+    {
+       return SP0;
+    }
+    else if(strcmp(extType,"zpd")==0)
+    {
+       return ZPD;
+    }
+    else if(strcmp(extType,"zero")==0)
+    {
+       return ZERO;
+    }
+    else
+    {
+       return BAD_TYPE;
+    }
+}
+
 
 // common basic routines
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(extend_left)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int buffLen, int filtLen, int type, int a);
+void LTFAT_H_NAME(extend_left)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int buffLen, int filtLen, enum ltfatWavExtType ext, int a);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(extend_right)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int filtLen, int type, int a);
+void LTFAT_H_NAME(extend_right)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int filtLen, enum ltfatWavExtType ext, int a);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(conv_td_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, int ext, int filtUps);
+void LTFAT_H_NAME(convsub_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(conv_td_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, enum ltfatWavExtType ext, int filtUps);
 
 
 LTFAT_EXTERN
 void LTFAT_H_NAME(up_conv_td)(LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext, int filtUps);
-
-// additional common basic routines
-
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(up_conv_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, int outLen, LTFAT_H_REAL *filt, int fLen, int up, int sub, int skip, int ext);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(up_conv_sub_1toN)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, int ext);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(up_conv_sub_Nto1)(const LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext);
-
-
-// execution routines
-// FORWARD TRANSFORMS
-LTFAT_EXTERN
-void LTFAT_H_NAME(dyadic_dwt_exp)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen[], const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J, int ext);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(dyadic_dwt_per)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen[], const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(undec_dwt_exp)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen[], const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J, int ext);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(undec_dwt_per)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int subFac, const int J);
-
-// execution routines
-// INVERSE TRANSFORMS
-LTFAT_EXTERN
-void LTFAT_H_NAME(dyadic_idwt_exp)(LTFAT_H_REAL *in[], int inLen[], LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(dyadic_idwt_per)(LTFAT_H_REAL *in[], int inLen[], LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(undec_idwt_exp)(LTFAT_H_REAL *in[], int inLen[], LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(undec_idwt_per)(LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, const int J);
-
-#undef LTFAT_H_REAL
-#undef LTFAT_H_COMPLEX
-#undef LTFAT_H_NAME
-#undef LTFAT_H_FFTW
 
 
 static inline int pow2(int x){
@@ -88,12 +103,12 @@ static inline int modPow2(int x,int pow2var){
 
 static inline int nextPow2(int x){
 	x--;
-	(x) = ((x)>>1)  | (x);   
-    (x) = ((x)>>2)  | (x);   
-	(x) = ((x)>>4)  | (x);   
-	(x) = ((x)>>8)  | (x);   
-	(x) = ((x)>>16) | (x);   
-	(x)++;   
+	(x) = ((x)>>1)  | (x);
+    (x) = ((x)>>2)  | (x);
+	(x) = ((x)>>4)  | (x);
+	(x) = ((x)>>8)  | (x);
+	(x) = ((x)>>16) | (x);
+	(x)++;
 	return x;
 }
 
@@ -101,7 +116,7 @@ static inline int isPow2(int x){
 	return x==nextPow2(x);
 }
 
-static inline int log2(int x){
+static inline int ilog2(int x){
 	int tmp = 0;
     while (x >>= 1) ++tmp;
 	return tmp;
