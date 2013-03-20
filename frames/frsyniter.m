@@ -103,7 +103,6 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   end;
 
 
-
 if 0
     
     % This code has been disabled, as the PCG algorithm is so much faster.

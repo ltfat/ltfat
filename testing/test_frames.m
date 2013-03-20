@@ -109,8 +109,13 @@ for ii=1:numel(Fr)
     
   end;
   
-  %% Test the frame multipliers: test framemul, framemuladj and framemulinv
-  m=1+1i+0.01*crand(size(c,1),1);
+  %% Test the frame multipliers: test framemul, framemuladj and
+  %% framemulinv
+  if F.realinput
+      m=1+0.01*rand(size(c,1),1);
+  else
+      m=1+1i+0.01*crand(size(c,1),1);
+  end;
   ff=framemul(f,F,Fd,m);
   fr=iframemul(ff,F,Fd,m,'tol',1e-13);
   res=norm(f-fr(1:L))/norm(f);

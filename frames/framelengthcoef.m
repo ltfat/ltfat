@@ -27,14 +27,12 @@ switch(F.type)
   case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     L=sum(F.a);
   otherwise
-    % handle all the bases
-    L=Ncoef;
+    L=Ncoef/framered(F);
 end;
 
-L
-L-round(L)
-
-if L~=round(L)
+% Verify the computed length
+if ~(L==framelength(F,L))
   error(['%s: The coefficient number given does not correspond to a valid ' ...
          'set of coefficients for this type of frame.'],upper(mfilename));
+    
 end;
