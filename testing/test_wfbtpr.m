@@ -4,7 +4,7 @@ function test_failed = test_wfbtpr(verbose)
 % Checks perfect reconstruction of the general wavelet transform of different
 % filters
 %
-
+disp('========= TEST WFBT ============');
 
 test_failed = 0;
 if(nargin>0)
@@ -72,7 +72,10 @@ for extIdx=1:length(ext)
         fhat = iwfbt(c,actFilt,size(f,1),extCur);
         
         %MSE
-            err = sum(f(:).^2-fhat(:).^2)/length(f(:));
+            err = norm(f-fhat,'fro');
+            if(~verbose)
+              if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d, %d \n',actFilt{2},actFilt{1},extCur,size(f,1),err); else fprintf('Custom, err=%d \n',err); end;
+            end
             if err>1e-6
                test_failed = 1; 
                if verbose

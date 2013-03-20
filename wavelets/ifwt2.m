@@ -1,6 +1,6 @@
-function f = ifwt2(c,g,J,varargin)
+function f = ifwt2(c,g,J,Ls,varargin)
 %IFWT2   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt2(c,g,J)
+%   Usage:  f = ifwt2(c,g,J,Ls)
 %           f = ifwt2(c,g,J,Ls,...)
 %
 %   Input parameters:
@@ -41,61 +41,24 @@ g = fwtinit(g,'syn');
 definput.keyvals.Ls=[];    
 definput.import = {'fwt','fwt2'};
 
-[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
-if 0
-  % Not sure what goes one here.
-  if isempty(Ls)
-    % Estimate output signal length from the number of coefficients
-    [rowsHalfLen,colsHalfLen] = size(c{end});
-    Ls = zeros(2,1);
-    if flags.do_per
-      % estimated Ls can be one sample more, if the original input
-      % signal length was odd
-      Ls(1) = g.a(end)*rowsHalfLen; 
-      Ls(2) = g.a(end)*colsHalfLen; 
-    else
-      % estimated Ls can be one sample more, if the original input
-      % signal length plus length(h{1})-1 was an even number
-      Ls(1) = g.a(end)*rowsHalfLen - (length(g.filts{end}.h)-2);
-      Ls(2) = g.a(end)*colsHalfLen - (length(g.filts{end}.h)-2);
-    end
-  else
-    if (length(Ls)==1)
-      Ls = [Ls,Ls];
-    end
-  end
-end;
-
-if isempty(Ls)
-  if flags.do_per
-    Ls=[size(c,1),size(c,2)];
-  else
-    % Estimate output signal length from the number of coefficients
-    [rowsHalfLen,colsHalfLen] = size(c{end});
-    Ls = zeros(2,1);
-    
-    % estimated Ls can be one sample more, if the original input
-    % signal length plus length(h{1})-1 was an even number
-    Ls(1) = g.a(end)*rowsHalfLen - (length(g.filts{end}.h)-2);
-    Ls(2) = g.a(end)*colsHalfLen - (length(g.filts{end}.h)-2);
-            
-  end;
-  
-end;
-  
-  
+if (numel(Ls)==1)
+  Ls = [Ls,Ls];
+end
 
 Lcrows = fwtclength(Ls(1),g,J,'per');
 Lccols = fwtclength(Ls(2),g,J,'per');
+nFilts = numel(g.filts);
 
 if flags.do_standard
   Jstep = 1;
   for jj=1:J-1
-    colRange = 1:Lcrows(jj+2);
-    rowRange = 1:Lccols(jj+2);
-    c(colRange,rowRange) = ifwt(c(colRange,rowRange),g,Jstep,Lcrows(jj+2),1,'per');
-    c(colRange,rowRange) = ifwt(c(colRange,rowRange),g,Jstep,Lccols(jj+2),2,'per');
+    LcIdx =  jj*(nFilts-1)+2;
+    colRange = 1:Lcrows(LcIdx);
+    rowRange = 1:Lccols(LcIdx);
+    c(colRange,rowRange) = ifwt(c(colRange,rowRange),g,Jstep,Lcrows(LcIdx),'dim',1,'per');
+    c(colRange,rowRange) = ifwt(c(colRange,rowRange),g,Jstep,Lccols(LcIdx),'dim',2,'per');
   end
 
   c = ifwt(c,g,Jstep,Ls(1),'dim',1,'per');

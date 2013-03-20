@@ -4,6 +4,8 @@ function test_failed = test_ufwtpr(verbose)
 % Checks perfect reconstruction of the wavelet transform of different
 % filters
 %
+disp('========= TEST UFWT ============');
+
 test_failed = 0;
 if(nargin>0)
    verbose = 1;
@@ -73,7 +75,7 @@ test_filters = {
 
 J = 4;
 %testLen = 10*2^J-1;%(2^J-1);
-testLen = 1589;
+testLen = 53;
 
 for extIdx=1:length(ext)  
 %for inLenRound=0:2^J-1
@@ -103,7 +105,10 @@ for typeIdx=1:length(type)
            %[cvec ,Lc] = cell2pack(c);
            %c = pack2cell(cvec,Lc);
             fhat = iufwt(c,test_filters{tt},jj);
-            err = norm(f(:)-fhat(:));
+            err = norm(f-fhat,'fro');
+            if(~verbose)
+              fprintf('J=%d, filt=%s, inLen=%d,  err=%d \n',jj,actFilt{1},length(f),err);
+            end
             if err>1e-6
                test_failed = 1; 
                if verbose

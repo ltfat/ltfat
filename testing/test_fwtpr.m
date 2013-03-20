@@ -4,6 +4,8 @@ function test_failed = test_fwtpr(verbose)
 % Checks perfect reconstruction of the wavelet transform of different
 % filters
 %
+disp('========= TEST FWT ============');
+
 test_failed = 0;
 if(nargin>0)
    verbose = 1;
@@ -52,15 +54,9 @@ test_filters = {
                %{'maxflat',11}
                %{'optfs',7} % bad precision of filter coefficients
                %{'remez',20,10,0.1} % no perfect reconstruction
-               {'dden',1}
                {'dden',2}
-               {'dden',3}
-               {'dden',4}
-               {'dden',5}
-               {'dden',6}
                {'dden',7}
                {'dgrid',1}
-               {'dgrid',2}
                {'dgrid',3}
                %{'algmband',1} 
                {'mband',1}
@@ -100,6 +96,7 @@ for typeIdx=1:length(type)
      for jj=J:J
            if verbose, fprintf('J=%d, filt=%s, type=%s, ext=%s, inLen=%d, format=%s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr); end; 
            
+           
            if(strcmp(formatCurr,'pack'))
               c = fwt(f,test_filters{tt},jj,extCur);
               fhat = ifwt(c,test_filters{tt},jj,size(f,1),extCur);
@@ -112,7 +109,10 @@ for typeIdx=1:length(type)
            end
            
             %MSE
-            err = sum(f(:).^2-fhat(:).^2)/length(f(:));
+            err = norm(f-fhat,'fro');
+            if(~verbose)
+              fprintf('J=%d, filt=%s, type=%s, ext=%s, inLen=%d, format=%s, err=%d \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err);
+            end
             if err>1e-6
                test_failed = 1; 
                if verbose
