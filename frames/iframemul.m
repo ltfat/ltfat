@@ -50,7 +50,19 @@ definput.flags.print={'quiet','print'};
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-% TODO: Check that the symbol length match the input signal length
+% Check for compatibility
+L1=framelength(Fa,size(f,1));
+L2=framelengthcoef(Fs,size(s,1));
+if L1~=L2
+    error(['%s: The symbol and signal lengths are incompatible.'],upper(mfilename));
+end;
+
+% This is not *strictly* necessary, but we cannot check that the symbol
+% is complex-valued in just the right way.
+if Fa.realinput && ~isreal(s)
+    error(['%s: For real-valued-input-only frames, the symbol must also ' ...
+           'be real.'],upper(mfilename));
+end;
 
 % The frame multiplier is not positive definite, so we cannot solve it
 % directly using pcg.

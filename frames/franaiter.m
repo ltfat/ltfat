@@ -77,9 +77,11 @@ function [c,relres,iter]=franaiter(F,f,varargin)
   
   % Determine L from the first vector, it must match for all of them.
   L=framelength(F,size(f,1));
-    
+       
   A=@(x) frsyn(F,frana(F,x));
-           
+
+  % An explicit postpad is needed for the pcg algorithm to not fail
+  f=postpad(f,L);
       
   if flags.do_pcg
       d=framediag(F,L);

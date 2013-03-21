@@ -15,12 +15,6 @@ function s=lichtenstein();
 %   See
 %   `<http://commons.wikimedia.org/wiki/File:Lichtenstein_img_processing_test.png>`_.
 %
-%   Examples:
-%   ---------
-%
-%   The following figures show the image split into the three colorplanes
-%   used by the JPEG standard:::
-%
 %   See also: cameraman  
 
 %   AUTHOR : Peter L. Søndergaard

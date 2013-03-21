@@ -105,13 +105,10 @@ def runcommand(todo,redomode='auto'):
         pass
 
     if todo=='gitstagemat':
-        printdoc.git_stageexport_mat(project)
         os.system('mat2doc mat '+projectdir)
 
     if todo=='gitrepomat':
-        printdoc.git_repoexport_mat(project)
-        printdoc.printdoc(project,'mat')
-
+        os.system('mat2doc mat '+projectdir)
 
     # Release for other developers to download
     if 'develmat' in todo:
@@ -127,7 +124,6 @@ def runcommand(todo,redomode='auto'):
         matdir=localconf.outputdir+project+'-mat'+os.sep
 
         # Remove unwanted files
-        os.system('rm -rf '+matdir+'mat2doc')
         os.system('rm -rf '+matdir+'testing')
         os.system('rm -rf '+matdir+'reference')
         os.system('rm -rf '+matdir+'timing')

@@ -95,14 +95,23 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   else
     opts.disp=0;
   end;
-  opts.isreal = false;
+  opts.isreal = Fa.realinput;
   opts.maxit  = kv.maxit;
   opts.tol    = kv.tol;
-  
-  if doV
-    [V,D] = eigs(@(x) frsyn(Fs,s.*frana(Fa,x)),L,K,'LM',opts);
+    
+  if 0
+      if doV
+          [V,D] = eigs(@(x) frsyn(Fs,s.*frana(Fa,x)),L,K,'LM',opts);
+      else
+          D     = eigs(@(x) frsyn(Fs,s.*frana(Fa,x)),L,K,'LM',opts);
+      end;
   else
-    D     = eigs(@(x) frsyn(Fs,s.*frana(Fa,x)),L,K,'LM',opts);
+      if doV
+          [V,D] = eigs(@(x) framemul(x,Fa,Fs,s),L,K,'LM',opts);
+      else
+          D     = eigs(@(x) framemul(x,Fa,Fs,s),L,K,'LM',opts);
+      end;
+      
   end;
 
 else

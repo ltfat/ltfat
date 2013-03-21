@@ -9,11 +9,12 @@ function RGB = jpeg2rgb(YCbCr)
 %   Output parameters:
 %         RGB   : 3d data-cube, containing RGB information of the image
 % 
-%   'jpeg2rgb(YCbCr)' performs a transformation of you 3d data-cube *YCbCr*,
-%   i.e. $\dim ($*YCbCr*$) = N \times M \times 3$, which contains
-%   information of "luminance", "chrominance blue" and "chrominance red".
-%   Your output variable *RGB* is also a 3d data-cube but containing
-%   information about the colours "red", "green" and "blue".
+%   'jpeg2rgb(YCbCr)' performs a transformation of the 3d data-cube *YCbCr* with
+%   dimensions $N \times M \times 3$, which contains information of
+%   "luminance", "chrominance blue" and "chrominance red".  The output
+%   variable *RGB* is a 3d data-cube of the same size containing information
+%   about the colours "red", "green" and "blue". The output will be of
+%   the `uint8` type.
 % 
 %   For more information, see
 %   `<http://en.wikipedia.org/wiki/YCbCr>`_ and `<http://de.wikipedia.org/wiki/JPEG>`_
