@@ -25,22 +25,33 @@ function YCbCr = rgb2jpeg(RGB)
 %   In the following example, the Lichtenstein test image is split into
 %   its three components. The very first subplot is the original image:::
 %
-%     f=lichtenstein;
-%
-%     f_jpeg=rgb2jpeg(f);
-%
-%     subplot(2,2,1);
-%     image(f);
-%     axis('image');
-%
-%     for ii=1:3
-%         work=zeros(512,512,3,'uint8');
-%         work(:,:,ii)=f_jpeg(:,:,ii);
-%         fmono=jpeg2rgb(work);
-%         subplot(2,2,ii+1);
-%         image(fmono);
-%         axis('image');
-%     end;
+%    f=lichtenstein;
+% 
+%    f_jpeg=rgb2jpeg(f);
+% 
+%    subplot(2,2,1);
+%    image(f);axis('image');
+% 
+%    Ymono=zeros(512,512,3,'uint8');
+%    Ymono(:,:,1)=f_jpeg(:,:,1);
+%    Ymono(:,:,2:3)=128;
+%    fmono=jpeg2rgb(Ymono);
+%    subplot(2,2,2);
+%    image(fmono);axis('image');
+% 
+%    Cbmono=zeros(512,512,3,'uint8');
+%    Cbmono(:,:,2)=f_jpeg(:,:,2);
+%    Cbmono(:,:,3)=128;
+%    fmono=jpeg2rgb(Cbmono);
+%    subplot(2,2,3);
+%    image(fmono);axis('image');
+% 
+%    Crmono=zeros(512,512,3,'uint8');
+%    Crmono(:,:,3)=f_jpeg(:,:,2);
+%    Crmono(:,:,2)=128;
+%    fmono=jpeg2rgb(Crmono);
+%    subplot(2,2,4);
+%    image(fmono);axis('image');
 %
 %   See also:   jpeg2rgb
  
