@@ -47,7 +47,7 @@ function YCbCr = rgb2jpeg(RGB)
 %    image(fmono);axis('image');
 % 
 %    Crmono=zeros(512,512,3,'uint8');
-%    Crmono(:,:,3)=f_jpeg(:,:,2);
+%    Crmono(:,:,3)=f_jpeg(:,:,3);
 %    Crmono(:,:,2)=128;
 %    fmono=jpeg2rgb(Crmono);
 %    subplot(2,2,4);
