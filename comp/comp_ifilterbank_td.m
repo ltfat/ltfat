@@ -1,6 +1,6 @@
 function f=comp_ifilterbank_td(c,g,a,Ls,skip,ext)  
-%COMP_UFILTERBANK_TD   Synthesis Uniform filterbank by conv2
-%   Usage:  f=comp_iufilterbank_fft(c,g,a,Ls,skip,ext);
+%COMP_IFILTERBANK_TD   Synthesis filterbank by conv2
+%   Usage:  f=comp_ifilterbank_td(c,g,a,Ls,skip,ext);
 %
 %   Input parameters:
 %         c    : Cell array of length M, each element is N(m)*W matrix.

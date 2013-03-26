@@ -1,8 +1,6 @@
-#ifndef WAVELETS_H
-#define WAVELETS_H
+#ifndef _WAVELETS_H
+#define _WAVELETS_H
 #include <string.h>
-
-#define ONEOVERSQRT2 0.707106781186548 \
 
 enum ltfatWavExtType
 {
@@ -73,26 +71,6 @@ inline static enum ltfatWavExtType ltfatExtStringToEnum(char* extType)
     }
 }
 
-
-// common basic routines
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(extend_left)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int buffLen, int filtLen, enum ltfatWavExtType ext, int a);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(extend_right)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int filtLen, enum ltfatWavExtType ext, int a);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(convsub_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(conv_td_sub)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out[], const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int sub, int skip, enum ltfatWavExtType ext, int filtUps);
-
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(up_conv_td)(LTFAT_H_REAL *in[], int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts[], int fLen, int noOfFilts, int up, int skip, int ext, int filtUps);
-
-
 static inline int pow2(int x){
 	return ((1)<<(x));
 }
@@ -145,9 +123,33 @@ static inline int ipow(int base, int exp)
 
     return result;
 }
-
-
 #endif
+
+// CAN BE INCLUDED MORE THAN ONCE
+
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(extend_left)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int buffLen, int filtLen, enum ltfatWavExtType ext, int a);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(extend_right)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int filtLen, enum ltfatWavExtType ext, int a);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(convsub_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(upconv_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int up, int skip, enum ltfatWavExtType ext);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(atrousconvsub_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
+
+LTFAT_EXTERN
+void LTFAT_H_NAME(atrousupconv_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
+
+
+
+
+
 
 
 

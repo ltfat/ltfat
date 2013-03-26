@@ -1,7 +1,7 @@
 function [c,info] = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
-%           c = fwt(f,h,J,'ext',ext,'dim',dim);
+%           [c,info] = fwt(f,h,J,'ext',ext,'dim',dim);
 %
 %   Input parameters:
 %         f     : Input data.
@@ -10,18 +10,23 @@ function [c,info] = fwt(f,h,J,varargin)
 %
 %   Output parameters:
 %         c      : Coefficients stored as matrix.
+%         info   : Transform parameters struct.
 %
 %   `c=fwt(f,h,J)` returns wavelet coefficients *c* of the input signal *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *h*.
 %   The fast wavelet transform algorithm (Mallat's algorithm) is employed.
+%   In addition, the function returns struct. `info` containing transform
+%   parameters. It can be conviniently used for the inverse transform 
+%   |ifwt| e.g. `fhat = ifwt(c,info)`. It is also required by the 
+%   |plotwavelets| function.
 %   
-%   The coefficents *c* are Discrete Wavelet transform of the input signal *f*,
-%   if *h* defines two-channel wavelet filterbank. The function can apply
-%   the Mallat's algorithm using basic filter banks with any number of the
-%   channels. In such case, the transform have a different name.    
+%   The coefficents *c* are Discrete Wavelet transform of the input signal
+%   *f*, if *h* defines two-channel wavelet filterbank. The function can 
+%   apply the Mallat's algorithm using basic filter banks with any number 
+%   of the channels. In such case, the transform have a different name.    
 %
-%   The basic analysis wavelet filterbank $h$ can be passed in several formats. 
-%   The formats are the same as for the |fwtinit| function.
+%   The basic analysis wavelet filterbank $h$ can be passed in several 
+%   formats. The formats are the same as for the |fwtinit| function.
 %
 %     1) One option is passing a cell array whose first element is the
 %        name of the function defining the basic wavelet filters (`wfilt_`
@@ -46,7 +51,7 @@ function [c,info] = fwt(f,h,J,varargin)
 %   collumn/row in a consecutive order with respect to the inceasing central frequency
 %   of the corresponding effective filter frequency responses or
 %   equivalently with decreasing wavelet scale. The lengths of subbands are
-%   stored in *Lc*.
+%   stored in *info.Lc*.
 %
 %   If the input *f* is matrix with *W* columns, the transform is applied to
 %   each collumn (*dim=1*) or row (*dim=2*) and the dimension is preserved

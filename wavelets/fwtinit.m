@@ -147,8 +147,6 @@ else
    tmpFile = wfiltFiles.name(1:end-2); 
 end
 
-tmpFile
-
 % Synthesis filters delay
 d = [];
 wfiltNargout = nargout(tmpFile);

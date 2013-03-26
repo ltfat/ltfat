@@ -9,24 +9,26 @@
 
 #include "fftw3.h"
 
+#include "ltfat_types.h"
+/*
 #ifdef LTFAT_DOUBLE
 #define LTFAT_COMPLEX fftw_complex
 #define LTFAT_REAL double
-#define LTFAT_NAME(name) name  
-#define LTFAT_FFTW(name) fftw_ ## name  
+#define LTFAT_NAME(name) name
+#define LTFAT_FFTW(name) fftw_ ## name
 #endif
 
 #ifdef LTFAT_SINGLE
 #define LTFAT_COMPLEX fftwf_complex
 #define LTFAT_REAL float
 #define LTFAT_NAME(name) s ## name
-#define LTFAT_FFTW(name) fftwf_ ## name  
+#define LTFAT_FFTW(name) fftwf_ ## name
 #endif
-
+*/
 
 static inline int ltfat_round(double x)
 {
-  return (int)(x+.5); 
+  return (int)(x+.5);
 }
 
 static inline int positiverem(int a,int b)
@@ -39,7 +41,7 @@ static inline int positiverem(int a,int b)
    case), which must not contain underscores, for linking with Fortran. */
 
 #ifdef MATLABFORTRAN
-#define F77_FUNC(name,NAME) NAME 
+#define F77_FUNC(name,NAME) NAME
 #else
 #define F77_FUNC(name,NAME) name ## _
 #endif

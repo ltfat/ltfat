@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "stddef.h"
+#include "string.h"
 #include "fftw3.h"
 
 void* ltfat_malloc (size_t n)
@@ -30,12 +31,20 @@ void* ltfat_realloc (void *ptr, size_t n)
 void* ltfat_calloc (size_t nmemb, size_t size)
 {
   void *outp;
-  outp = calloc(nmemb, size);
+  // DOES NOT PRODUCE MEMORY ALIGNED POINTER
+  // outp = calloc(nmemb, size);
+
+  // workaround
+  outp = fftw_malloc(nmemb*size);
+
   if (outp == NULL)
   {
      puts("ltfat_calloc failed.");
      exit(1);
   }
+  // workaround
+  memset(outp,0,nmemb*size);
+
   return outp;
 }
 

@@ -1,6 +1,6 @@
 function c=comp_filterbank_td(f,g,a,skip,ext)  
-%COMP_UFILTERBANK_TD   Non-uniform filterbank by conv2
-%   Usage:  c=comp_ufilterbank_fft(f,g,a,skip,ext);
+%COMP_FILTERBANK_TD   Non-uniform filterbank by conv2
+%   Usage:  c=comp_filterbank_td(f,g,a,skip,ext);
 %
 %   Input parameters:
 %         f   : Input data - L*W array.

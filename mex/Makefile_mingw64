@@ -1,6 +1,5 @@
 CC=gcc
-CFLAGS=-shared -O -s -std=c99 -m64 -I../thirdparty -I../src
-
+CFLAGS=-shared -O3 -Wall -s -std=c99 -m64 -I../thirdparty -I../src
 
 #These variables are overwritten by the matlab script
 MATLABROOT=C:\Program Files\MATLAB\R2011b
@@ -29,6 +28,10 @@ MEXSC=\
 	comp_pgauss.c  \
 	comp_ufilterbank_fft.c  \
 	comp_wfac.c \
+	comp_atrousfilterbank_td.c \
+	comp_iatrousfilterbank_td.c \
+	comp_filterbank_td.c \
+	comp_ifilterbank_td.c \
 #	comp_gabdual_long.c \
 #	comp_gabtight_long.c  \
 #	comp_idgtreal_fac.c \
@@ -47,7 +50,7 @@ all: $(MEXS)
 
 %.$(EXT): %.c 
 	echo EXPORTS > mex.def & echo mexFunction >> mex.def 
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ -lltfat_dll -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ -lltfat_dll -lltfatf_dll -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
 	del mex.def 
 
 clean:

@@ -21,11 +21,11 @@ extern "C"
 
 /* Handle Windows DLL files, not used */
 
-#if defined(LTFAT_DLL_NEVERUSED) && (defined(_WIN32) || defined(__WIN32__)) 
+#if defined(LTFAT_DLL_NEVERUSED) && (defined(_WIN32) || defined(__WIN32__))
 #  if defined(COMPILING_LTFAT) /* defined by Makefile when compiling LTFAT */
-#    define LTFAT_EXTERN extern __declspec(dllexport) 
+#    define LTFAT_EXTERN extern __declspec(dllexport)
 #  else /* user is calling LTFAT; import symbol */
-#    define LTFAT_EXTERN extern __declspec(dllimport) 
+#    define LTFAT_EXTERN extern __declspec(dllimport)
 #  endif
 #else
 #  define LTFAT_EXTERN extern
@@ -36,7 +36,7 @@ extern "C"
 #define LTFAT_H_REAL double
 #define LTFAT_H_COMPLEX ltfat_complex
 #define LTFAT_H_NAME(name) name
-#define LTFAT_H_FFTW(name) fftw_ ## name  
+#define LTFAT_H_FFTW(name) fftw_ ## name
 
 #include "ltfat_typeindependent.h"
 
@@ -50,7 +50,7 @@ extern "C"
 #define LTFAT_H_REAL float
 #define LTFAT_H_COMPLEX ltfat_scomplex
 #define LTFAT_H_NAME(name) s ## name
-#define LTFAT_H_FFTW(name) fftwf_ ## name  
+#define LTFAT_H_FFTW(name) fftwf_ ## name
 
 #include "ltfat_typeindependent.h"
 
@@ -60,7 +60,7 @@ extern "C"
 #undef LTFAT_H_FFTW
 
   /* -------- Define routines that do not change between single/double-- */
-  
+
 int gcd(const int a, const int b, int *r, int *s );
 
 void* ltfat_malloc (size_t n);
