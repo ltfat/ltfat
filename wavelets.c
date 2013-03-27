@@ -260,8 +260,8 @@ void LTFAT_NAME(convsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, co
    memset(buffer,0,buffLen*sizeof(LTFAT_REAL));
 
    // pointer for moving in the input data
-   const LTFAT_REAL *tmpIn = in;
-   LTFAT_REAL *tmpOut = out;
+   const LTFAT_REAL * tmpIn = in;
+   LTFAT_REAL * tmpOut = out;
    LTFAT_REAL *tmpFilts = filtRev;
    LTFAT_REAL *tmpBuffPtr = buffer;
 
