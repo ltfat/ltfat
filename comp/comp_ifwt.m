@@ -1,6 +1,6 @@
 function f = comp_ifwt(c,g,J,a,Ls,ext)
-%COMP_IFWT_ALL Compute Inverse DWT
-%   Usage:  f = comp_ifwt_all(c,g,J,Ls,type,ext);
+%COMP_IFWT Compute Inverse DWT
+%   Usage:  f = comp_ifwt(c,g,J,a,Ls,ext);
 %
 %   Input parameters:
 %         c     : Cell array of length M = J*(filtNo-1)+1. Each element is Lc(m)*W array

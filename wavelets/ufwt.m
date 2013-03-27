@@ -1,6 +1,7 @@
 function [c,info] = ufwt(f,h,J,varargin)
 %UFWT  Undecimated Fast Wavelet Transform 
 %   Usage:  c = ufwt(f,h,J);
+%           [c,info] = ...
 %
 %   Input parameters:
 %         f     : Input data.
@@ -8,39 +9,42 @@ function [c,info] = ufwt(f,h,J,varargin)
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
-%         c      : Coefficients.
+%         c     : Coefficients stored in $L \times J+1$ matrix.
+%         info  : Transform paramaters struct.
 %
 %   `c=ufwt(f,h,J)` computes redundant time (or shift) invariant
 %   wavelet representation *c* of the input signal *f* using the "a-trous"
-%   algorithm.
+%   algorithm. In addition, the function returns struct. `info` containing
+%   the transform parameters. It can be conviniently used for the inverse 
+%   transform |iufwt| e.g. `fhat = iufwt(c,info)`. It is also required by 
+%   the |plotwavelets| function.
 %
 %   The coefficents *c* are so called Undecimated Discrete Wavelet transform
 %   of the input signal *f*, if *h* defines two-channel wavelet filterbank.
 %   Other names for this version of the wavelet transform are: the
 %   time-invariant wavelet transform, the stationary wavelet transform, 
 %   maximal overlap discrete wavelet transform or even the "continuous" 
-%   wavelet transform (as the time step is one sample).
-%   However, the function accepts any number channels (further referred to as $N$)
-%   in the basic wavelet filterbank. 
-%   The redundancy of the representanion is $J*(N-1)+1$.
+%   wavelet transform (as the time step is one sample). However, the 
+%   function accepts any number filters (referred to as $M$) in the basic 
+%   wavelet filterbank and the number of columns of *c* is then $J(M-1)+1$.
 %
 %   For all accepted formats of the parameter *h* see the |fwt| function.
 %
-%   For one-dimensional input *f*, the coefficients *c* are stored as collumns of
-%   a matrix. The collumns are ordered with inceasing central frequency of the
-%   corresponding effective filter frequency response or equivalently with decreasing wavelet scale.
+%   For one-dimensional input *f* of length *L*, the coefficients *c* are 
+%   stored as columns of a matrix. The columns are ordered with inceasing
+%   central frequency of the corresponding effective filter frequency 
+%   response or equivalently with decreasing wavelet scale.
 %
-%   If the input *f* is matrix with *W* columns, the transform is applied to each collumn
-%   and the outputs are stacked along third dimension.
-%
+%   If the input *f* is $L \times W$ matrix, the transform is applied 
+%   to each column and the outputs are stacked along third dimension in the
+%   $L \times J(M-1)+1 \times W$ data cube.
 %
 %   Boundary handling:
 %   ------------------
 %
 %   `c=ufwt(f,h,J)` uses periodic boundary extension. The extensions are 
-%   done at each level of the transform internally rather than doing the 
+%   done internally at each level of the transform, rather than doing the 
 %   prior explicit padding.
-%   
 %
 %   Examples:
 %   ---------

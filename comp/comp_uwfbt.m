@@ -1,5 +1,5 @@
 function c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut)
-%COMP_WFBT Compute Undecimated Wavelet Filterbank Tree
+%COMP_UWFBT Compute Undecimated Wavelet Filterbank Tree
 %   Usage:  c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut);
 %
 %   Input parameters:
@@ -22,7 +22,7 @@ function c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut)
 M = sum(cellfun(@(rEl) numel(rEl),rangeOut));
 c = zeros(L,M,W);
 
-% Convinience input reshape
+% Convenience input reshape
 ca = reshape(f,size(f,1),1,size(f,2));
 % For each node in tree in the BF order...
 for jj=1:numel(wtNodes)
@@ -34,9 +34,6 @@ for jj=1:numel(wtNodes)
    hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
    % Node filters initial skips
    hDel = cellfun(@(hEl) hEl.d,wtNodes{jj}.filts);
-   
-   % Upsampling the filters.
-   % hMatUps = comp_ups(hMat,nodesUps(jj),1);
    % Zero index position of the upsampled filters.
    skip = nodesUps(jj).*(hDel - 1);
    

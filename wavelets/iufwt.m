@@ -4,19 +4,21 @@ function f = iufwt(c,par,varargin)
 %           f = iufwt(c,g,J);   
 %
 %   Input parameters:
-%         c     : Coefficients stored in a cell-array.
-%         g     : Synthesis wavelet filters.
-%         J     : Number of filterbank iterations.
+%         c      : Coefficients stored in $L \times J+1$ matrix.
+%         info/g : Transform parameters struct/Synthesis wavelet filters.
+%         J      : Number of filterbank iterations.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f = iufwt(c,g,J)` reconstruct signal *f* from the wavelet
-%   coefficients *c* using the wavelet filterbank consisting of the *J* levels
-%   of the basic synthesis filterbank defined by *g* using the "a-trous"
-%   algorithm.
+%   `f = iufwt(c,info)` reconstructs signal *f* from the wavelet 
+%   coefficients *c* using parameters from `info` struct. both returned by
+%   |ufwt| function.
 %
-%   Node that the same flag as in the `ufwt` function have to be used.
+%   `f = iufwt(c,g,J)` reconstructs signal *f* from the wavelet
+%   coefficients *c* using the wavelet filterbank consisting of the *J* 
+%   levels of the basic synthesis filterbank defined by *g* using the "a-trous"
+%   algorithm. Node that the same flag as in the `ufwt` function have to be used.
 %
 %   Please see the help on |ufwt| for a description of the parameters.
 %

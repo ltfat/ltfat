@@ -1,13 +1,16 @@
 function [Lc,L]=fwtclength(Ls,h,J,varargin) 
-%FWTCLENGTH FWT subbands length fom signal
+%FWTCLENGTH FWT subbands lengths from signal
 %   Usage: L=fwtclength(Ls,h,J);
-%          L=fwtclength(Ls,h,J,...);
+%          L=fwtclength(Ls,h,J,ext,'ext');
 %
 %   `Lc=fwtclength(Ls,h,J)` returns the lengths of the wavelet coefficient
 %   subbands for a signal of length *Ls*. Please see the help on |fwt| for
 %   an explanation of the parameters *h* and *J*. In addition, the function
 %   returns the next legal length of the input signal for the given extension
 %   type.
+%   
+%   The function support the same boundary-handling flags as the |fwt|
+%   does.
 %
 %   See also: fwt, fwtlength
 

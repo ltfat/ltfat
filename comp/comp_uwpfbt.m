@@ -18,7 +18,7 @@ function c=comp_uwpfbt(f,wtNodes,nodesUps)
 M = sum(cellfun(@(wtEl) numel(wtEl.filts),wtNodes));
 c = zeros(L,M,W);
 
-% Convinience input reshape
+% Convenience input reshape
 ca = reshape(f,size(f,1),1,size(f,2));
 cOutRunIdx = 1;
 cInRunIdxs = [1];
@@ -34,9 +34,6 @@ for jj=1:numel(wtNodes)
    hDel = cellfun(@(hEl) hEl.d,wtNodes{jj}.filts);
    % Number of filters of the current node
    filtNo = size(hMat,2);
-   
-   % Upsampling the filters.
-   % hMatUps = comp_ups(hMat,nodesUps(jj),1);
    % Zero index position of the upsampled filters.
    skip = nodesUps(jj).*(hDel - 1);
 

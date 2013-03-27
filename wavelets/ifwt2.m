@@ -4,7 +4,7 @@ function f = ifwt2(c,g,J,Ls,varargin)
 %           f = ifwt2(c,g,J,Ls,...)
 %
 %   Input parameters:
-%         c     : Coefficients stored in J+1 cell-array.
+%         c     : Coefficients stored in a matrix.
 %         g     : Synthesis wavelet filters.
 %         J     : Number of filterbank iterations.
 %         Ls    : Length of the reconstructed signal.

@@ -4,29 +4,31 @@ function f = ifwt(c,par,varargin)
 %           f = ifwt(c,g,J,Ls,...)
 %
 %   Input parameters:
-%         c     : Wavelet coefficients.
-%         g     : Synthesis wavelet filters.
-%         J     : Number of filterbank iterations.
-%         Ls    : Length of the reconstructed signal.
+%         c      : Wavelet coefficients.
+%         info/g : Transform parameters struct/Synthesis wavelet filters.
+%         J      : Number of filterbank iterations.
+%         Ls     : Length of the reconstructed signal.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f = ifwt(c,g,J)` reconstructs signal *f* from the wavelet coefficients
+%   `f = ifwt(c,info)` reconstructs signal *f* from the wavelet coefficients
+%   *c* using parameters from `info` struct. both returned by |fwt|
+%   function.
+%
+%   `f = ifwt(c,g,J,Ls)` reconstructs signal *f* from the wavelet coefficients
 %   *c* using *J*-iteration synthesis filter bank build from the basic synthesis
-%   filterbank defined by *g*. The fast wavelet transform algorithm 
-%   (Mallat's algorithm) is employed. The format of *c* can be either
-%   packed, as returned by the |fwt| function or cell-array as returned by
-%   |wavpack2cell| function.
+%   filterbank defined by *g*. The *Ls* parameter is mandatory due to the 
+%   ambiguity of lengths introduced by the subsampling operation and by
+%   boundary treatment methods. Note that the same flag as in the |fwt| 
+%   function have to be used, otherwise perfect reconstruction cannot be 
+%   obtained.
+%   
+%   In both cases, the fast wavelet transform algorithm (Mallat's algorithm)
+%   is employed. The format of *c* can be either packed, as returned by the
+%   |fwt| function or cell-array as returned by |wavpack2cell| function.
 %
-%   The *Ls* parameter is mandatory due to the ambiguity of lengths introduced
-%   by the subsampling operation and by boundary treatment methods.
-%
-%   `ifwt` supports the same boundary conditions as |fwt|. Note that the
-%   same flag as in the |fwt| function have to be used, otherwise
-%   perfect reconstruction cannot be obtained.
-%
-%   Please see the help on |fwt| for a description of the parameters.
+%   Please see the help on |fwt| for a detailed description of the parameters.
 %
 %   Examples:
 %   ---------

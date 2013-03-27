@@ -26,7 +26,7 @@
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
 %      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
 %      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
-%      WFBTMULTID        - Impulse responses of the analysis non-iterated multirate-identity wavelet filterbank
+%      WFBTMULTID        - Impulse responses of the non-iterated multirate-identity wavelet filterbank
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %  
 %   Plots

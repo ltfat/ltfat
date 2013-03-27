@@ -1,6 +1,6 @@
 function f=comp_iwfbt(c,wtNodes,outLens,rangeLoc,rangeOut,ext)
 %COMP_IWFBT Compute Inverse Wavelet Filter-Bank Tree
-%   Usage:  f=comp_iwfbt(c,wt,Ls,type,ext)
+%   Usage:  f=comp_iwfbt(c,wtNodes,outLens,rangeLoc,rangeOut,ext)
 %
 %   Input parameters:
 %         c        : Coefficients stored in the cell array.

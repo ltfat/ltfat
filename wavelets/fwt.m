@@ -1,7 +1,8 @@
 function [c,info] = fwt(f,h,J,varargin)
 %FWT   Fast Wavelet Transform 
 %   Usage:  c = fwt(f,h,J);
-%           [c,info] = fwt(f,h,J,'ext',ext,'dim',dim);
+%           c = fwt(f,h,J,'dim',dim,'ext',ext);
+%           [c,info] = fwt(...);
 %
 %   Input parameters:
 %         f     : Input data.
@@ -9,12 +10,12 @@ function [c,info] = fwt(f,h,J,varargin)
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
-%         c      : Coefficients stored as matrix.
+%         c      : Coefficient vector.
 %         info   : Transform parameters struct.
 %
 %   `c=fwt(f,h,J)` returns wavelet coefficients *c* of the input signal *f*
-%   using *J* iterations of the basic wavelet filterbank defined by *h*.
-%   The fast wavelet transform algorithm (Mallat's algorithm) is employed.
+%   using *J* iterations of the basic wavelet filterbank defined by *h*
+%   i.e. the fast wavelet transform algorithm (Mallat's algorithm) is used.
 %   In addition, the function returns struct. `info` containing transform
 %   parameters. It can be conviniently used for the inverse transform 
 %   |ifwt| e.g. `fhat = ifwt(c,info)`. It is also required by the 
@@ -47,15 +48,18 @@ function [c,info] = fwt(f,h,J,varargin)
 %     4) The fourth option is to pass a structure obtained from the
 %        |fwtinit| function.
 %   
-%   If *f* is row/collumn vector, the subbands *c* are stored in a single
-%   collumn/row in a consecutive order with respect to the inceasing central frequency
-%   of the corresponding effective filter frequency responses or
-%   equivalently with decreasing wavelet scale. The lengths of subbands are
-%   stored in *info.Lc*.
+%   If *f* is row/collumn vector of length *L*, the subbands *c* are stored
+%   in a single collumn/row in a consecutive order with respect to the 
+%   inceasing central frequency of the corresponding effective filter 
+%   frequency responses or equivalently with decreasing wavelet scale. The 
+%   lengths of subbands are stored in *info.Lc* so the subbands can be easily
+%   extracted using |wavpack2cell|.
 %
-%   If the input *f* is matrix with *W* columns, the transform is applied to
-%   each collumn (*dim=1*) or row (*dim=2*) and the dimension is preserved
-%   in the output coefficients.
+%   If the input *f* is a matrix, the transform is applied to each column 
+%   if `dim==1` (default) and `Ls=size(f,1)` and `W=size(f,2)`. If `dim==2`
+%   the transform is applied to each row `W=size(f,1)` and `Ls=size(f,2)`.
+%   The output is then a matrix and the input orientation is preserved in 
+%   the orientation of the output coefficients.
 %
 %   Boundary handling:
 %   ------------------
@@ -73,13 +77,12 @@ function [c,info] = fwt(f,h,J,varargin)
 %   coefficients near the boundaries due to the possible discontinuity
 %   introduced by the zero padding and periodic boundary treatment.
 %
-%   `fwt(f,h,J,ext)` with `ext` other than `'per'` computes a slightly
+%   `fwt(f,h,J,'ext',ext)` with `ext` other than `'per'` computes a slightly
 %   redundant wavelet representation of the input signal *f* with the chosen
 %   boundary extension *ext*. The redundancy (expansivity) of the
 %   represenation is the price to pay for using general filterbank and
 %   custom boundary treatment.  The extensions are done at each level of the
 %   transform internally rather than doing the prior explicit padding.
-%   
 %
 %   The supported possibilities are:
 %
@@ -94,7 +97,7 @@ function [c,info] = fwt(f,h,J,varargin)
 %     'odd'    Odd symmetric extension.
 %
 %   Note that the same flag has to be used in the call of the inverse transform
-%   function `ifwt`.
+%   function |ifwt| if the `info` struct is not used.
 %
 %   Examples:
 %   ---------

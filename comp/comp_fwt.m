@@ -1,6 +1,6 @@
 function c = comp_fwt(f,h,J,a,Lc,ext)
-%COMP_FWT_ALL Compute DWT
-%   Usage:  c=comp_fwt_all(f,h,J,type,ext);
+%COMP_FWT Compute DWT using FWT
+%   Usage:  c=comp_fwt(f,h,J,a,Lc,ext);
 %
 %   Input parameters:
 %         f     : Input data - L*W array.

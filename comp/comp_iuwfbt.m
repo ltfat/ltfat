@@ -1,5 +1,5 @@
 function f=comp_iuwfbt(c,wtNodes,nodesUps,rangeLoc,rangeOut)
-%COMP_IWFBT Compute Inverse Wavelet Filter-Bank Tree
+%COMP_IUWFBT Compute Inverse Undecimated Wavelet Filter-Bank Tree
 %   Usage:  f=comp_iuwfbt(c,wtNodes,nodesUps,rangeLoc,rangeOut)
 %
 %   Input parameters:
@@ -31,8 +31,6 @@ for jj=1:length(wtNodes)
     % Node filters initial skips
     gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.filts);
     
-    % Upsampling the filters.
-    % gMatUps = comp_ups(gMat,nodesUps(jj),1);
     % Zero index position of the upsampled filters.
     skip = nodesUps(jj).*(gDel) - nodesUps(jj);
      

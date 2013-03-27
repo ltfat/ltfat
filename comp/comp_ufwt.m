@@ -1,6 +1,6 @@
 function c = comp_ufwt(f,h,J,a)
-%COMP_UFWT Compute undecimated FWT
-%   Usage:  c=comp_ufwt(f,h,J);
+%COMP_UFWT Compute Undecimated DWT
+%   Usage:  c=comp_ufwt(f,h,J,a);
 %
 %   Input parameters:
 %         f     : Input data - L*W array.
@@ -33,8 +33,6 @@ c = zeros(L,M,W);
 ca = f;
 runPtr = size(c,2) - (filtNo-2);
 for jj=1:J
-    % Upsampling the filters.
-    % hMatUps = comp_ups(hMat,a(1)^(jj-1),1);
     % Zero index position of the upsampled filters.
     skip = a(1)^(jj-1).*(hDel - 1);
     % Run filterbank.

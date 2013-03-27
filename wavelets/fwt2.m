@@ -9,16 +9,20 @@ function c = fwt2(f,h,J,varargin)
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
-%         c      : Coefficients stored in a cell-array.
+%         c      : Coefficients stored in a matrix.
 %
 %   `c=fwt2(f,h,J)` returns wavelet coefficients *c* of the input matrix *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *h*.
 %
-%   'fwt2` supports the same boundary conditions as |fwt|, but in
-%   addition to these flags it is possible to specify how the algorithm
+%   `fwt2` supports just the non-expansive boundary condition 'per' and 
+%   critically subsampled filterbanks in order to be able to pack the
+%   coefficients in a matrix. Also the *J* is limited to some maximum value
+%   for the same reason. 
+%
+%   Additional flags make it possible to specify how the algorithm
 %   should subdivide the matrix:
 %
-%     'standard'  This is the standard behaviour of the JPEG 2000
+%     'standard'  (default) This is the standard behaviour of the JPEG 2000
 %                 standard
 %
 %     'tensor'    This corresponds to doing a |fwt| along each dimension
@@ -81,7 +85,7 @@ if(any(h.a(1)^J>size(f)))
 end
 
 %% ----- step 0 : Check inputs -------
-definput.import = {'fwt','fwt2'};
+definput.import = {'fwt2'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 nFilts = numel(h.filts);
 

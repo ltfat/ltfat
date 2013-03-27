@@ -1,34 +1,51 @@
 function [c,info]=wfbt(f,wt,varargin)
 %WFBT   Wavelet FilterBank Tree
-%   Usage:  c=wfbt(f,wt);
-%           c=wfbt(f,wt,...);
+%   Usage:  c=wfbt(f,wt,...);
+%           [c,info]=...
 %
 %   Input parameters:
 %         f   : Input data.
-%         wt  : Wavelet Filterbank tree
+%         wt  : Wavelet Filterbank tree definition.
 %
 %   Output parameters:
-%         c   : Coefficients stored in a cell-array.
+%         c    : Coefficients stored in a cell-array.
+%         info : Transform parameters struct.
 %
-%   `c=wfbt(f,wt)` returns coefficients *c* obtained applying wavelet filterbank tree
-%   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 
-%   is applied to each of *W* columns. The *wt* parameter can be structure
-%   obtained from the |wfbtinit| function and modified arbitrarily or it
-%   can be cell-array, which is used as a parameter in the internal call of
-%   the |wfbtinit| function.
+%   `c=wfbt(f,wt)` returns coefficients *c* obtained applying general wavelet 
+%   filterbank tree defined by *wt* to the input data *f*. In addition, the
+%   function returns struct. `info` containing transform parameters. It can
+%   be conviniently used for the inverse transform |iwfbt| e.g. 
+%   `fhat = iwfbt(c,info)`. It is also required by the |plotwavelets| function.
+%   If *f* is a matrix, the transformation is applied to each of *W* columns. 
 %
-%   The following flag groups are supported:
+%   The *wt* parameter can have two formats:
+%
+%      1) Cell array containing 3 elements `{w,J,treetype}`, where `w` is
+%         the basic wavelet filterbank definition as in |fwt| function, *J*
+%         stands for the depth of the tree and the flag `treetype` defines 
+%         the type of the tree to be used. Supported options are:
+%
+%            'dwt' - DWT tree. Just the low-pass output is decomposed
+%                    further.
+%
+%            'full' - Full decomposition tree. Each output is decomposed up to level *J*.
+%
+%      2) Structure returned by the |wfbtinit| function and possibly
+%         modified by |wfbtput| and |wfbtremove|.
+%
+%   In addition, the following flag groups are supported:
 %
 %         'per','zero','odd','even'
 %                Type of the boundary handling.
-%
-%         'dwt','full'
-%                Type of the tree to be used.
 %
 %         'freq','nat'
 %                Frequency or natural order of the coefficient subbands.
 %
 %   Please see the help on |fwt| for a description of the boundary condition flags.
+%
+%   The output coefficients are stored in a cell array. Each element is a
+%   2D matrix with *W* columns each of which respresents one output subband
+%   of the w'th input channel.
 %
 %   Examples:
 %   ---------
@@ -65,7 +82,6 @@ L = wfbtlength(Ls,wt,flags.ext);
 if(Ls~=L)
    f=postpad(f,L); 
 end
-
 
 %% ----- step 3 : Run computation
 wtPath = nodesBForder(wt);

@@ -16,9 +16,6 @@ function f=comp_iuwpfbt(c,wtNodes,nodesUps,pOutIdxs,chOutIdxs)
 %         f     : Reconstructed data in L*W array.
 %
 
-% Output length
-L = size(c,1);
-
 % For each node in tree in the BF order...
  for jj=1:length(wtNodes)
     % Node filters subs. factors
@@ -30,8 +27,6 @@ L = size(c,1);
     % Node filters initial skips
     gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.filts);
     
-    % Upsampling the filters.
-    % gMatUps = comp_ups(gMat,nodesUps(jj),1);
     % Zero index position of the upsampled filters.
     skip = nodesUps(jj).*(gDel) - nodesUps(jj);
 

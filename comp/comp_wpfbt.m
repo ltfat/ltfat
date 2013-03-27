@@ -1,6 +1,6 @@
 function c=comp_wpfbt(f,wtNodes,ext)
-%COMP_WPFBT Compute Wavelet Packet Coefficients given Filterbank Tree
-%   Usage:  c=comp_wpfbt(f,wt,type,ext);
+%COMP_WPFBT Compute Wavelet Packet Filterbank Tree
+%   Usage:  c=comp_wpfbt(f,wtNodes,ext);
 %
 %   Input parameters:
 %         f        : Input L*W array.
@@ -17,7 +17,6 @@ function c=comp_wpfbt(f,wtNodes,ext)
 doPer = strcmp(ext,'per');
 % Pre-allocated output
 c = cell(sum(cellfun(@(wtEl) numel(wtEl.filts),wtNodes)),1);
-
 
 ca = f;
 cOutRunIdx = 1;

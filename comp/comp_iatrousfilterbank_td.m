@@ -1,6 +1,6 @@
 function f=comp_iatrousfilterbank_td(c,g,a,skip)  
 %COMP_IATROUSFILTERBANK_TD   Synthesis Uniform filterbank by conv2
-%   Usage:  f=comp_iatrousfilterbank_fft(c,g,a,skip);
+%   Usage:  f=comp_iatrousfilterbank_td(c,g,a,skip);
 %
 %   Input parameters:
 %         c    : L*M*W array of coefficients.

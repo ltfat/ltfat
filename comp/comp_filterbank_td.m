@@ -18,7 +18,7 @@ L=size(f,1);
 W=size(f,2);
 %filter number
 M=numel(g);
-%filter length
+%filter lengths
 filtLen = cellfun(@(x) numel(x),g(:));
 % Allow filter delay only in the filter support range
 if(any(skip(:)>=filtLen) || any(skip)<0)
@@ -45,7 +45,6 @@ for m=1:M
 end;
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
-%fext = comp_extBoundary(f,filtLen-1,ext,'dim',1);
 % CONV2 with 'valid' does 2-D linear convolution and crops (filtLen-1) samples from both ends.  
 % length(fextconv2) = length(f) + (filtLen-1)
 % length(c{m}) = N(m)

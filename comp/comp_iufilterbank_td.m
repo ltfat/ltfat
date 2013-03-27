@@ -1,13 +1,13 @@
 function f=comp_iufilterbank_td(c,g,a,Ls,skip,ext)  
-%COMP_UFILTERBANK_TD   Synthesis Uniform filterbank by conv2
-%   Usage:  f=comp_iufilterbank_fft(c,g,a,Ls,skip,ext);
+%COMP_IUFILTERBANK_TD   Synthesis Uniform filterbank by conv2
+%   Usage:  f=comp_iufilterbank_td(c,g,a,Ls,skip,ext);
 %
 %   Input parameters:
 %         c    : N*M*W array of coefficients.
 %         g    : Filterbank filters - filtLen*M array. 
 %         a    : Upsampling factor - scalar.
-%         skip : Delay of the filters - scalar or array of length M.
 %         Ls   : Output length.
+%         skip : Delay of the filters - scalar or array of length M.
 %         ext  : Border exension technique.
 %
 %   Output parameters:
