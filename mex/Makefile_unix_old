@@ -11,12 +11,12 @@ MEXSC    = $(shell ls comp_*.c)
 MEXSBASE = $(basename $(MEXSC))
 MEXS     = $(addsuffix .$(EXT),$(MEXSBASE))
 
-CFLAGS=-I../thirdparty -I. -I../src -L../lib
+CFLAGS= -I../thirdparty -I. -I../src -L../lib
 
 
 all:	$(MEXS)
 
-%.$(EXT): %.c Makefile config.h ../src/libltfat.a ../src/ltfat.h mex-memalloc.o
+%.$(EXT): %.c Makefile config.h ../lib/libltfat-nomem.a ../src/ltfat.h mex-memalloc.o
 	mex $(CFLAGS) $< mex-memalloc.o -lfftw3 -lfftw3f -lblas -llapack -lltfat-nomem
 
 mex-memalloc.o:	mex-memalloc.c

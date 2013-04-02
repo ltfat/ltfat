@@ -1,0 +1,28 @@
+CC=gcc
+CFLAGS=-shared -O3 -Wall -s -std=c99 -m64 -I../thirdparty -I../src
+
+#These variables are overwritten by the matlab script
+MATLABROOT=C:\Program Files\MATLAB\R2011b
+EXT=mexw64
+
+include filedefs.mk
+
+MEXSBASE = $(basename $(MEXSC))
+MEXS     = $(addsuffix .$(EXT),$(MEXSBASE))
+
+MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include"
+MEXLIBS=-lmex -lmx
+MEXLINKFLAGS=-static-libgcc mex.def -L"$(MATLABROOT)\bin\win64" $(MEXLIBS)
+
+
+all: $(MEXS)
+
+%.$(EXT): %.c 
+	echo EXPORTS > mex.def & echo mexFunction >> mex.def 
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ -lltfat_dll -lltfatf_dll -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
+	del mex.def 
+
+clean:
+	del *.$(EXT)
+
+.PHONY: all clean

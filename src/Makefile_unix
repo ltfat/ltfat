@@ -18,6 +18,11 @@ libltfat.a: $(files_unix) c-safe-memalloc.o
 	ranlib libltfat.a
 	cp -f libltfat.a ../lib
 
+nomem: $(files_unix) 
+	ar rvu libltfat-nomem.a $(files_unix)
+	ranlib libltfat-nomem.a
+	cp -f libltfat-nomem.a ../lib
+
 sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
 	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
 

@@ -64,6 +64,17 @@ else
   ext=mexext;
 end;
 
+if ispc
+   makefilename='Makefile_mingw';
+   make_exe = 'mingw32-make';
+else
+   makefilename='Makefile_unix';
+   make_exe = 'make';
+end;
+
+fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
+
+
 % -------------- Handle cleaning --------------------------------
   
 if flags.do_clean
@@ -77,7 +88,7 @@ if flags.do_clean
   if do_lib
     disp('========= Cleaning libltfat ===============');
     cd([bp,'src']);
-    system('make clean');
+    system([make_exe,' -f ',makefilename,' clean']);
     disp('Done.');    
   end;
   
@@ -114,13 +125,9 @@ if flags.do_compile
     cd([bp,'src']);
     if isoctave
       [status,output]=system('mkoctfile -p CC');
-      system(['make CC=',output]);
+      system([make_exe,' CC=',output]);
     else
-      if ispc
-        system('make winnomem');
-      else
-        system('make unixnomem');
-      end;
+        system([make_exe,' -f ',makefilename,' nomem'])
     end;
     disp('Done.');
   end;
