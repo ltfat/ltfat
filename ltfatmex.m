@@ -43,7 +43,7 @@ if ~exist('ltfatarghelper','file')
 end;
 
 bp=mfilename('fullpath');
-bp=bp(1:end-8);
+bp=bp(1:end-length(mfilename));
 
 definput.flags.target={'auto','lib','mex','gpc'};
 definput.flags.command={'compile','clean','test'};
@@ -52,7 +52,7 @@ definput.flags.command={'compile','clean','test'};
 % Remember the current directory.
 curdir=pwd;
 
-do_lib  = flags.do_lib || (flags.do_auto && (isoctave || isunix));
+do_lib  = flags.do_lib || flags.do_auto;
 do_mex  = flags.do_mex || flags.do_auto;
 do_gpc  = flags.do_gpc || (flags.do_auto && ~isoctave);
 
@@ -65,7 +65,7 @@ else
 end;
 
 if ispc
-   makefilename='Makefile_mingw';
+   makefilename='Makefile_mingw64';
    make_exe = 'mingw32-make';
 else
    makefilename='Makefile_unix';
@@ -74,9 +74,8 @@ end;
 
 fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
 
-
+clear functions;
 % -------------- Handle cleaning --------------------------------
-  
 if flags.do_clean
     
   if ~isoctave
@@ -88,7 +87,8 @@ if flags.do_clean
   if do_lib
     disp('========= Cleaning libltfat ===============');
     cd([bp,'src']);
-    system([make_exe,' -f ',makefilename,' clean']);
+    [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
+    %system([make_exe,' -f ',makefilename,' clean']);
     disp('Done.');    
   end;
   
@@ -98,23 +98,29 @@ if flags.do_clean
       deletefiles([bp,'oct'],'*.oct');
       deletefiles([bp,'oct'],'*.o');
     else
-      deletefiles([bp,'mex'],['*.',mexext]);
-      if exist('ltfat_binary_notes.m','file')
-        fullname=which('ltfat_binary_notes');
-        delete(fullname);        
-      end;
+     cd([bp,'mex']);
+     [status,result]=system([make_exe, ' -f ',makefilename,' clean',...
+                     ' MEXEXT=',mexext]); 
+%       deletefiles([bp,'mex'],['*.',mexext]);
+%       if exist('ltfat_binary_notes.m','file')
+%         fullname=which('ltfat_binary_notes');
+%         delete(fullname);        
+%       end;
     end;
   end;
   
   if do_gpc
     disp('========== Cleaning GPC ==============');
-    deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
+    %deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
+    cd([bp,'thirdparty',filesep,'PolygonClip']);
+    [status,result]=system([make_exe, ' -f ',makefilename,' clean',' MEXEXT=',mexext]);
   end;
   
   if ~isoctave
     recycle(oldstate);
-  end;  
+  end;
   
+  cd(curdir);
 end;
 
 % -------------- Handle compiling  --------------------------------
@@ -127,26 +133,47 @@ if flags.do_compile
       [status,output]=system('mkoctfile -p CC');
       system([make_exe,' CC=',output]);
     else
-        system([make_exe,' -f ',makefilename,' nomem'])
+      filesExist(cellfun(@(fEl) [bp,'mex',filesep,fEl,'.dll'],fftw_lib_names,'UniformOutput',false));
+      cd([bp,'src']);
+      [status,result]=system([make_exe, ' -f ',makefilename,...
+                  ' MATLABROOT=','"',matlabroot,'"']);
+      if(~status)
+        disp('Done.');
+      else
+        error('Failed to build LTFAT libs:\n %s',result);
+      end
     end;
-    disp('Done.');
   end;
   
   if do_mex
     fprintf('========= Compiling %s interfaces ==========\n', extname);
-    if compile_ltfat(bp)>1;                
-      fprintf('ERROR: The %s interfaces was not built.\n', extname);
-    else
+    filesExist(cellfun(@(fEl) ['mex',filesep,fEl,'.dll'],fftw_lib_names,'UniformOutput',false));
+    cd([bp,'mex']);
+    [status,result]=system([make_exe, ' -f ',makefilename,...
+                  ' MATLABROOT=','"',matlabroot,'"',...
+                  ' MEXEXT=',mexext]);
+    if(~status)
       disp('Done.');
-    end;
+    else
+      error('Failed to build MEX interfaces: %s \n',result);
+    end
   end;
   
   if do_gpc
     disp('========= Compiling GPC ===============');
     % Compile the PolygonClip interface to GPC for use with mulaclab
+    %cd([bp,'thirdparty',filesep,'PolygonClip']);
+    %mex('-I../GPC','PolygonClip.c','../GPC/gpc.c');
+    %disp('Done.');
     cd([bp,'thirdparty',filesep,'PolygonClip']);
-    mex('-I../GPC','PolygonClip.c','../GPC/gpc.c');
-    disp('Done.');
+    [status,result]=system([make_exe, ' -f ',makefilename,...
+                     ' MATLABROOT=','"',matlabroot,'"',...
+                     ' MEXEXT=',mexext]);
+    if(~status)
+      disp('Done.');
+    else
+      error('Failed to build GPC:\n %s',result);
+    end
   end;
 end;
 
@@ -188,6 +215,17 @@ end;
 % Jump back to the original directory.
 cd(curdir);
 
+
+function status = filesExist(filenames)
+   if(~iscell(filenames))
+      filenames={filenames};
+   end
+   for ii=1:length(filenames)
+      filename = filenames{ii};
+      if(~exist(filename,'file'))
+         error('%s: File %s not found.',mfilename,filename);
+      end
+   end
 
 function deletefiles(base,files)
 
@@ -345,6 +383,7 @@ for ii=1:numel(L)
     end;        
     
 end;
+
 
 status=0;
 
