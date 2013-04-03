@@ -9,6 +9,10 @@ function [g,info]=firwin(name,M,varargin);
 %   filters. They can be used for the Wilson and WMDCT transform, except
 %   when noted otherwise.
 %
+%   `firwin(name,x)` where *x* is a vector will sample the window
+%   definition as the specified points. The normal sampling interval for
+%   the windows is $-.5\leq x<.5$.
+%
 %   In the following PSL means "Peak Sidelobe level", and the main lobe
 %   width is measured in normalized frequencies.
 %
@@ -154,46 +158,60 @@ if M==0
   return;
 end;
 
-% Deal with tapering
-if keyvals.taper<1
-  if keyvals.taper==0
-    % Window is only tapering, do this and bail out, because subsequent
-    % code may fail.
-    g=ones(M,1);
-    return;
-  end;
-
-  % Modify M to fit with tapering
-  Morig=M;
-  M=round(M*keyvals.taper);
-  Mtaper=Morig-M;
-
-  p1=round(Mtaper/2);
-  p2=Mtaper-p1;
-
-  % Switch centering if necessary
-  if cent==0 && p1~=p2
-    cent=0.5;
-  end;
-  
-  if cent==0.5 && p1~=p2
-    cent=1;
-  end;
+if numel(M)==1
     
+    % Deal with tapering
+    if keyvals.taper<1
+        if keyvals.taper==0
+            % Window is only tapering, do this and bail out, because subsequent
+            % code may fail.
+            g=ones(M,1);
+            return;
+        end;
+        
+        % Modify M to fit with tapering
+        Morig=M;
+        M=round(M*keyvals.taper);
+        Mtaper=Morig-M;
+        
+        p1=round(Mtaper/2);
+        p2=Mtaper-p1;
+        
+        % Switch centering if necessary
+        if cent==0 && p1~=p2
+            cent=0.5;
+        end;
+        
+        if cent==0.5 && p1~=p2
+            cent=1;
+        end;
+        
+    end;
+    
+    % This is the normally used sampling vector.
+    x   = ((0:M-1)'+cent)/M;
+
+    % Use this if window length must be odd or even
+    Modd   = M-mod(M+1,2);
+    Meven  = M-mod(M,2);
+    xodd   = ((0:Modd-1)'+cent)/Modd;
+    xeven  = ((0:Meven-1)'+cent)/Meven;
+
+    xoddnew=xodd-.5;
+    xevennew=xeven-.5;
+    
+    xnew=x-.5;
+
+else
+    % Use sampling vector specified by the user
+    xnew=M;
 end;
 
-% This is the normally used sampling vector.
-x   = ((0:M-1)'+cent)/M;
 
-% Use this if window length must be odd or even
-Modd   = M-mod(M+1,2);
-Meven  = M-mod(M,2);
-xodd   = ((0:Modd-1)'+cent)/Modd;
-xeven  = ((0:Meven-1)'+cent)/Meven;
 do_sqrt=0;
 switch name    
  case {'hanning','hann'}
-  g=(0.5+0.5*cos(2*pi*x));
+  g=(0.5-0.5*cos(2*pi*xnew));
   info.ispu=1;
   
  case {'sine','cosine','sqrthann'}
@@ -203,9 +221,9 @@ switch name
   
  case {'hamming'}  
   if cent==0
-    g=0.54-0.46*cos(2*pi*(xodd-.5));
+    g=0.54-0.46*cos(2*pi*(xoddnew));
   else
-    g=0.54-0.46*cos(2*pi*(xeven-.5));
+    g=0.54-0.46*cos(2*pi*(xevennew));
   end;
   
  case {'square','rect'} 
@@ -245,16 +263,16 @@ switch name
   %end;
   
  case {'blackman'}
-  g=0.42-0.5*cos(2*pi*(x-.5))+0.08*cos(4*pi*(x-.5));
+  g=0.42-0.5*cos(2*pi*(xnew))+0.08*cos(4*pi*(xnew));
 
  case {'blackman2'}
-  g=7938/18608-9240/18608*cos(2*pi*(x-.5))+1430/18608*cos(4*pi*(x-.5));
+  g=7938/18608-9240/18608*cos(2*pi*(xnew))+1430/18608*cos(4*pi*(xnew));
 
  case {'nuttall'}
-  g = 0.355768 - 0.487396*cos(2*pi*(x-.5)) + 0.144232*cos(4*pi*(x-.5)) -0.012604*cos(6*pi*(x-.5));
+  g = 0.355768 - 0.487396*cos(2*pi*(xnew)) + 0.144232*cos(4*pi*(xnew)) -0.012604*cos(6*pi*(xnew));
   
  case {'itersine','ogg'}
-  g=sin(pi/2*sin(pi*(x-.5)).^2);
+  g=sin(pi/2*sin(pi*(xnew)).^2);
   info.issqpu=1;
   
  otherwise
