@@ -83,7 +83,6 @@ persistent cachwDesc;
 % wavelet filters functions definition prefix
 wprefix = 'wfilt_';
 waveletsDir = 'wavelets';
-numDelimiter = ':';
 
 
 % output structure definition
@@ -120,8 +119,13 @@ end
 if ischar(wdef)
    % Process wdef in format 2)
    try
-    wname = parseNameValPair(wdef,wprefix);
-   catch err
+       wname = parseNameValPair(wdef,wprefix);
+       % Octave does not support the "catch err" stament, so use "lasterror"
+       % instead    
+       %catch err
+       
+   catch
+      err=lasterror;
       % If failed, clean the cache.
       cachwDesc = [];
       cachw = [];
@@ -178,6 +182,21 @@ end
 
 % Synthesis filters delay
 d = [];
+
+% There is a bug in nargout in version 3.6 of Octave, but not in later
+% stable versions
+if isoctave
+    octs=strsplit(version,'.');
+    octN=str2num(octs{1})*1000+str2num(octs{2});
+    if octN<3008
+        try
+            feval(tmpFile);
+        catch
+        end;
+    end;
+end;
+    
+    
 wfiltNargout = nargout(tmpFile);
 
 if(nargin(tmpFile)~=numel(wname)-1)
@@ -199,6 +218,8 @@ w = formatFilters(tmpg,0,d,w);
 w = updateTransDirect(flags.do_ana,w);
 
 cachw = w;
+
+end %END FWTINIT
 
 function w = formatFilters(cellh,do_ana,d,w)
    noFilts = numel(cellh);
@@ -255,9 +276,11 @@ function wcell = parseNameValPair(wchar,wprefix)
 %The output is cell array {wname,str2double(N1),str2double(N2),...}
 %The wfilt_ function name cannot contain numbers
 
+    numDelimiter = ':';
+
 wcharNoNum = wchar(1:find(isstrprop(wchar,'digit')~=0,1)-1);
 
-wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('%s/%s*',waveletsDir,wprefix)));
+wfiltFiles = dir(fullfile(ltfatbasepath,sprintf('%s/%s*','wavelets',wprefix)));
 wfiltNames = arrayfun(@(fEl) fEl.name(1+find(fEl.name=='_',1):find(fEl.name=='.',1,'last')-1),wfiltFiles,'UniformOutput',0);
 wcharMatch = cellfun(@(nEl) strcmpi(wcharNoNum,nEl),wfiltNames);
 wcharMatchIdx = find(wcharMatch~=0);
@@ -326,7 +349,6 @@ function d = findFiltDelays(cellh,do_ana,type)
   end
 end %END FINDFILTDELAYS
 
-end %END FWTINIT
 
 
 
