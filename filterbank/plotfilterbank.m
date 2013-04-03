@@ -72,12 +72,13 @@ if iscell(coef)
   delta_t=L/N;
 else
   a=a(1);
-  N=size(coef,1);
+  Nc=size(coef,1);
+  N=kv.xres;
   M=size(coef,2);
-
-  % Turn the coefficients as in DGT.
-  coef=coef.';
-  delta_t=a;
+  coef=interp1(linspace(0,1,Nc),coef,...
+       linspace(0,1,N),'nearest');
+  coef=coef.';  
+  delta_t=a*Nc/N;
 end;
 
 % Freq. pos is just number of the channel.
