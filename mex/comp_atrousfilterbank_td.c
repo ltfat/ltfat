@@ -1,7 +1,8 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-static const int PRHSTOCHECK[] = { 0, 1};
+#define NARGINEQ 4
+#define DATATYPECHECK 0, 1
 
 /* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
 //#define CHCOMPLEXFORMAT 1
