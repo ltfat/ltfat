@@ -11,11 +11,8 @@ DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -D_WIN32 -D_WINDOWS -D_USRDLL
 
 include filedefs.mk
 
-FILESBASE  = $(basename $(toCompile))
-FILESBASEO = $(addsuffix .o,$(FILESBASE))
-DFILES = $(addprefix d,$(FILESBASEO))
-SFILES = $(addprefix s,$(FILESBASEO))
-
+DFILES = $(addprefix d,$(files)) $(files_notypechange)
+SFILES = $(addprefix s,$(files))
 
 all: double single
 
