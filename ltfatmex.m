@@ -74,7 +74,6 @@ end;
 
 fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
 
-clear functions;
 % -------------- Handle cleaning --------------------------------
 if flags.do_clean
     
@@ -86,9 +85,9 @@ if flags.do_clean
   
   if do_lib
     disp('========= Cleaning libltfat ===============');
+    clear mex;  
     cd([bp,'src']);
     [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
-    %system([make_exe,' -f ',makefilename,' clean']);
     disp('Done.');    
   end;
   
@@ -98,14 +97,10 @@ if flags.do_clean
       deletefiles([bp,'oct'],'*.oct');
       deletefiles([bp,'oct'],'*.o');
     else
+     clear mex;  
      cd([bp,'mex']);
      [status,result]=system([make_exe, ' -f ',makefilename,' clean',...
-                     ' MEXEXT=',mexext]); 
-%       deletefiles([bp,'mex'],['*.',mexext]);
-%       if exist('ltfat_binary_notes.m','file')
-%         fullname=which('ltfat_binary_notes');
-%         delete(fullname);        
-%       end;
+                     ' EXT=',mexext]); 
     end;
   end;
   
@@ -113,7 +108,7 @@ if flags.do_clean
     disp('========== Cleaning GPC ==============');
     %deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
     cd([bp,'thirdparty',filesep,'PolygonClip']);
-    [status,result]=system([make_exe, ' -f ',makefilename,' clean',' MEXEXT=',mexext]);
+    [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
   
   if ~isoctave
@@ -168,13 +163,10 @@ if flags.do_compile
   if do_gpc
     disp('========= Compiling GPC ===============');
     % Compile the PolygonClip interface to GPC for use with mulaclab
-    %cd([bp,'thirdparty',filesep,'PolygonClip']);
-    %mex('-I../GPC','PolygonClip.c','../GPC/gpc.c');
-    %disp('Done.');
     cd([bp,'thirdparty',filesep,'PolygonClip']);
     [status,result]=system([make_exe, ' -f ',makefilename,...
                      ' MATLABROOT=','"',matlabroot,'"',...
-                     ' MEXEXT=',mexext]);
+                     ' EXT=',mexext]);
     if(~status)
       disp('Done.');
     else

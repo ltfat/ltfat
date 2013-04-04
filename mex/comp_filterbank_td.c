@@ -1,11 +1,11 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
-
-#define NARGINEQ 5
-#define DATATYPECHECK 0, 1
-
-/* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
-//#define CHCOMPLEXFORMAT 1
+/** ISNARGINEQ, ISNARGINLE, ISNARGINGE */
+#define ISNARGINEQ 5
+/** By defaut, only double version is created. Specifying SINGLEARGS creates second version of the funcntion. */
+#define SINGLEARGS 0, 1
+/** Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
+#define TOCOMPLEXFMT 0, 1
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -46,32 +46,34 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
   char* ext = mxArrayToString(prhs[4]);
 
   // input data length
-  unsigned int L = mxGetM(mxf);
+  mwSize L = mxGetM(mxf);
   // number of channels
-  unsigned int W = mxGetN(mxf);
+  mwSize W = mxGetN(mxf);
   // filter number
-  unsigned int M = mxGetNumberOfElements(mxg);
+  mwSize M = mxGetNumberOfElements(mxg);
   // filter lengths
-  unsigned int* filtLen = mxMalloc(M*sizeof(unsigned int));
+  mwSize filtLen[M];
+  //mwSize* filtLen = mxMalloc(M*sizeof(mwSize));
   for(unsigned int m=0;m<M;m++)
   {
-     filtLen[m] = (unsigned int) mxGetNumberOfElements(mxGetCell(mxg,m));
+     filtLen[m] = (mwSize) mxGetNumberOfElements(mxGetCell(mxg,m));
   }
 
   // output lengths
-  unsigned int* outLen = mxMalloc(M*sizeof(unsigned int));
+  mwSize outLen[M];
+  //mwSize* outLen = mxMalloc(M*sizeof(mwSize));
   if(!strcmp(ext,"per"))
   {
      for(unsigned int m = 0; m < M; m++)
      {
-        outLen[m] = (unsigned int) ceil( L/a[m] );
+        outLen[m] = (mwSize) ceil( L/a[m] );
      }
   }
   else
   {
      for(unsigned int m = 0; m < M; m++)
      {
-        outLen[m] = (unsigned int) ceil( (L + filtLen[m] - 1 - skip[m] )/a[m] );
+        outLen[m] = (mwSize) ceil( (L + filtLen[m] - 1 - skip[m] )/a[m] );
      }
   }
 
@@ -90,22 +92,25 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
      LTFAT_REAL* fPtr = (LTFAT_REAL*) mxGetData(prhs[0]);
 
      // POINTER TO THE FILTERS
-     LTFAT_REAL** gPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
-     for(unsigned int m=0;m<M;m++)
+     LTFAT_REAL* gPtrs[M];
+     // LTFAT_REAL** gPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+     for(mwIndex m=0;m<M;m++)
      {
         gPtrs[m] = (LTFAT_REAL*) mxGetPr(mxGetCell(mxg, m));
      }
 
      // POINTER TO OUTPUTS
-     LTFAT_REAL** cPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+     LTFAT_REAL* cPtrs[M]; // C99 feature
+     //LTFAT_REAL** cPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
      plhs[0] = mxCreateCellMatrix(M, 1);
-     for(unsigned int m=0;m<M;++m)
+     for(mwIndex m=0;m<M;++m)
      {
         mwSize ndim = 2;
-        mwSize dims[2];
+        mwSize dims[] = { outLen[m], W};
+        /*mwSize dims[2];
         dims[0] =  outLen[m];
-        dims[1] =  W;
-        mxSetCell(plhs[0], (mwIndex) m, mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,outComplFlag));
+        dims[1] =  W;*/
+        mxSetCell(plhs[0], m, mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,outComplFlag));
         cPtrs[m] = (LTFAT_REAL*) mxGetData(mxGetCell(plhs[0],m));
         memset(cPtrs[m],0,outLen[m]*W*sizeof(LTFAT_REAL));
      }
@@ -113,9 +118,9 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
      // over all channels
    //  #pragma omp parallel for private(m)
 
-        for(unsigned int m =0; m<M; m++)
+        for(mwIndex m =0; m<M; m++)
         {
-          for(unsigned int w =0; w<W; w++)
+          for(mwIndex w =0; w<W; w++)
           {
            // Obtain pointer to w-th column in input
            LTFAT_REAL *fPtrCol = fPtr + w*L;

@@ -3,7 +3,7 @@
 
 /*  Define which arguments are to be checked and cast to single if either of them is single. */
 #define NARGINEQ 4
-#define DATATYPECHECK 0, 1
+#define SINGLEARGS 0, 1
 
 /* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
 //#define CHCOMPLEXFORMAT 1

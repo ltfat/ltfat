@@ -6,6 +6,13 @@
 #ifndef _LTFAT_MEX_TEMPLATEHELPER_H
 #define _LTFAT_MEX_TEMPLATEHELPER_H 1
 
+/** Adds symbol exporting function decorator to mexFunction.
+    On windows, def file is no longer needed. For MinGW, it
+    suppresses the default "export-all-symbols" behavior. **/
+#if defined(_WIN32) || defined(__WIN32__)
+#  define DLL_EXPORT_SYM __declspec(dllexport)
+#endif
+
 /** General mex function name. */
 #define MEX_FUNC ltfat_mexFunction
 
@@ -28,10 +35,12 @@
 #include MEX_FILE
 #undef LTFAT_DOUBLE
 
-#define LTFAT_SINGLE
-#include "ltfat_mex_arg_helper.h"
-#include MEX_FILE
-#undef LTFAT_SINGLE
+#ifdef SINGLEARGS
+#  define LTFAT_SINGLE
+#  include "ltfat_mex_arg_helper.h"
+#  include MEX_FILE
+#  undef LTFAT_SINGLE
+#endif
 
 #include "mex.h"
 #include <stdio.h>
@@ -48,6 +57,7 @@
 #include <tgmath.h>
 */
 
+
 /** Function prototypes */
 bool checkIsSingle(const mxArray *prhsEl);
 mxArray* recastToSingle(mxArray* prhsEl);
@@ -55,22 +65,22 @@ void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]);
 
 void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 {
-    #ifdef NARGINEQ
-       if(nrhs!=NARGINEQ)
+    #ifdef ISNARGINEQ
+       if(nrhs!=ISNARGINEQ)
        {
-          LTFAT_MEXERRMSG("Expected %i input arguments. Only %i passed.",NARGINEQ,nrhs);
+          LTFAT_MEXERRMSG("Expected %i input arguments. Only %i passed.",ISNARGINEQ,nrhs);
        }
     #endif
-    #if defined(NARGINLE)&&!defined(NARGINEQ)
-       if(nrhs<=NARGINLE)
+    #if defined(ISNARGINLE)&&!defined(ISNARGINEQ)
+       if(nrhs<=ISNARGINLE)
        {
-          LTFAT_MEXERRMSG("Too many input arguments. Expected %i or less input arguments. Passed %i arg.",NARGINLE,nrhs);
+          LTFAT_MEXERRMSG("Too many input arguments. Expected %i or less input arguments. Passed %i arg.",ISNARGINLE,nrhs);
        }
     #endif
-    #if defined(NARGINGE)&&!defined(NARGINEQ)
-       if(nrhs>=NARGINLE)
+    #if defined(ISNARGINGE)&&!defined(ISNARGINEQ)
+       if(nrhs>=ISNARGINLE)
        {
-          LTFAT_MEXERRMSG("Too few input arguments. Expected %i or more input arguments. Passed %i arg.",NARGINLE,nrhs);
+          LTFAT_MEXERRMSG("Too few input arguments. Expected %i or more input arguments. Passed %i arg.",ISNARGINLE,nrhs);
        }
     #endif
 
@@ -98,19 +108,19 @@ mxArray* recastToSingle(mxArray* prhsEl)
 
    if(mxIsStruct(prhsEl))
    {
-      int nfields = mxGetNumberOfFields(prhsEl);
+      mwSize nfields = mxGetNumberOfFields(prhsEl);
       const mwSize *dims = mxGetDimensions(prhsEl);
       mwSize ndim = mxGetNumberOfDimensions(prhsEl);
 
       const char **fieldnames = mxMalloc(nfields*sizeof(const char *));
-      for(int ii=0;ii<nfields;ii++)
+      for(mwSize ii=0;ii<nfields;ii++)
       {
          fieldnames[ii] = mxGetFieldNameByNumber(prhsEl,ii);
       }
       mxArray* tmpStructArr = mxCreateStructArray(ndim,dims,nfields,fieldnames);
-      for(unsigned int jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
+      for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
-         for(int ii=0;ii<nfields;ii++)
+         for(mwIndex ii=0;ii<nfields;ii++)
          {
             mxSetFieldByNumber(prhsEl,jj,ii,recastToSingle(mxGetFieldByNumber(prhsEl,jj,ii)));
          }
@@ -141,7 +151,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
 
    double* prhsElPtr = (double*) mxGetData(prhsEl);
    float* tmpElPtr = (float*) mxGetData(tmpEl);
-   for(unsigned int jj=0;jj<elToCopy;jj++)
+   for(mwIndex jj=0;jj<elToCopy;jj++)
    {
       *(tmpElPtr++) = (float)( *(prhsElPtr++) );
    }
@@ -152,7 +162,7 @@ bool checkIsSingle(const mxArray *prhsEl)
 {
    if(mxIsCell(prhsEl))
    {
-      for(unsigned int jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
+      for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
          if(checkIsSingle(mxGetCell(prhsEl, jj)))
             return true;
@@ -177,8 +187,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
  {
     checkArgs(nlhs, plhs,nrhs,prhs);
     bool isAnySingle = false;
-    #ifdef DATATYPECHECK
-    const int PRHSTOCHECK[] = { DATATYPECHECK };
+    #ifdef SINGLEARGS
+    const int PRHSTOCHECK[] = { SINGLEARGS };
     unsigned int PRHSTOCHECKlen = sizeof(PRHSTOCHECK)/sizeof(PRHSTOCHECK[0]);
     for(unsigned int ii=0;ii<PRHSTOCHECKlen;ii++)
     {

@@ -6,8 +6,8 @@
 /* Function headers */
 void TEMPLATE(preMexFn,LTFAT_REAL)(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]);
 void TEMPLATE(postMexFn,LTFAT_REAL)(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]);
-void TEMPLATE(split2combined,LTFAT_REAL)(const int L, const mxArray *parg, LTFAT_COMPLEX *outc);
-void TEMPLATE(combined2split,LTFAT_REAL)(const int L, const LTFAT_COMPLEX *inc, mxArray *parg);
+void TEMPLATE(split2combined,LTFAT_REAL)(const mwSize L, const mxArray *parg, LTFAT_COMPLEX *outc);
+void TEMPLATE(combined2split,LTFAT_REAL)(const mwSize L, const LTFAT_COMPLEX *inc, mxArray *parg);
 
 /* Casting functions */
 //mxArray* TEMPLATE(mexSplit2combined(mxArray* prhsEl);
@@ -31,9 +31,9 @@ void TEMPLATE(postMexFn,LTFAT_REAL)(int nlhs, mxArray *plhs[],int nrhs, const mx
 #endif
 }
 
-void TEMPLATE(split2combined,LTFAT_REAL)(const int L, const mxArray *parg, LTFAT_COMPLEX *outc)
+void TEMPLATE(split2combined,LTFAT_REAL)(const mwSize L, const mxArray *parg, LTFAT_COMPLEX *outc)
 {
-   int ii;
+   mwIndex ii;
    LTFAT_REAL *i_r, *i_i;
 
 
@@ -60,10 +60,10 @@ void TEMPLATE(split2combined,LTFAT_REAL)(const int L, const mxArray *parg, LTFAT
    }
 }
 
-void TEMPLATE(combined2split,LTFAT_REAL)(const int L, const LTFAT_COMPLEX *inc, mxArray *parg)
+void TEMPLATE(combined2split,LTFAT_REAL)(const mwSize L, const LTFAT_COMPLEX *inc, mxArray *parg)
 {
-   int ii;
-   double *outr, *outi;
+   mwIndex ii;
+   LTFAT_REAL *outr, *outi;
 
    outr=mxGetPr(parg);
    outi=mxGetPi(parg);

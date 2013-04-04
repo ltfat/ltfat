@@ -2,6 +2,13 @@
 	                               Includes
 	===========================================================================*/
 
+/** Adds symbol exporting function decorator to mexFunction.
+    On windows, def file is no longer needed. For MinGW, it
+    suppresses the default "export-all-symbols" behavior. **/
+#if defined(_WIN32) || defined(__WIN32__)
+#  define DLL_EXPORT_SYM __declspec(dllexport)
+#endif
+
 #include "mex.h"
 #include "PolygonClip.h"
 #include "gpc.h"
