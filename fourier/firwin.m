@@ -2,7 +2,8 @@ function [g,info]=firwin(name,M,varargin);
 %FIRWIN  FIR window
 %   Usage:  g=firwin(name,M);
 %           g=firwin(name,M,...);
-%
+%           g=firwin(name,x);
+%           
 %   `firwin(name,M)` will return an FIR window of length *M* of type *name*.
 %
 %   All windows are symmetric and generate zero delay and zero phase
@@ -56,7 +57,7 @@ function [g,info]=firwin(name,M,varargin);
 %                  a Wilson basis, as a reconstruction window cannot be
 %                  found by WILDUAL.
 %
-%     'blackman'   Blackman window. The Hamming window has a
+%     'blackman'   Blackman window. The Blackman window has a
 %                  mainlobe width of 12/M, a PSL of -58.1 dB and decay
 %                  rate of 18 dB/Octave.
 %
@@ -72,6 +73,39 @@ function [g,info]=firwin(name,M,varargin);
 %                  Wilson/WMDCT basis. This window is described in 
 %                  Wesfreid and Wickerhauser (1993) and is used in  the
 %                  ogg sound codec. Alias: `'ogg'`
+%
+%     'nuttall10'  2-term Nuttall window with 1 continuous derivative. 
+%                  Alias: `'hann'`, `'hanning'`.
+%
+%     'nuttall01'  2-term Nuttall window with 0 continuous derivatives. 
+%                  Alias: `'hamming'`.
+%
+%     'nuttall20'  3-term Nuttall window with 3 continuous derivatives. 
+%                  The window has a mainlobe width of 12/M, a PSL of 
+%                  -46.74 dB and decay rate of 30 dB/Octave.
+%
+%     'nuttall11'  3-term Nuttall window with 1 continuous derivative. 
+%                  The window has a mainlobe width of 12/M, a PSL of 
+%                  -64.19 dB and decay rate of 18 dB/Octave.
+%
+%     'nuttall02'  3-term Nuttall window with 0 continuous derivatives. 
+%                  The window has a mainlobe width of 12/M, a PSL of 
+%                  -71.48 dB and decay rate of 6 dB/Octave.
+%
+%     'nuttall30'  4-term Nuttall window with 5 continuous derivatives. 
+%                  The window has a mainlobe width of 16/M, a PSL of 
+%                  -60.95 dB and decay rate of 42 dB/Octave.
+%
+%     'nuttall21'  4-term Nuttall window with 3 continuous derivatives. 
+%                  The window has a mainlobe width of 16/M, a PSL of 
+%                  -82.60 dB and decay rate of 30 dB/Octave.
+%
+%     'nuttall12'  4-term Nuttall window with 1 continuous derivatives. 
+%                  Alias: `'nuttall'`.
+%
+%     'nuttall03'  4-term Nuttall window with 0 continuous derivatives. 
+%                  The window has a mainlobe width of 16/M, a PSL of 
+%                  -98.17 dB and decay rate of 6 dB/Octave.
 %
 %   FIRWIN understands the following flags at the end of the list of input
 %   parameters:
@@ -204,13 +238,14 @@ if numel(M)==1
 
 else
     % Use sampling vector specified by the user
-    xnew=M;
+    xnew=M+.5;
+    xoddnew=M+.5;
 end;
 
 
 do_sqrt=0;
 switch name    
- case {'hanning','hann'}
+ case {'hanning','hann','nuttall10'}
   g=(0.5-0.5*cos(2*pi*xnew));
   info.ispu=1;
   
@@ -219,7 +254,7 @@ switch name
   info.issqpu=1;
   do_sqrt=1;
   
- case {'hamming'}  
+ case {'hamming','nuttall01'}  
   if cent==0
     g=0.54-0.46*cos(2*pi*(xoddnew));
   else
@@ -228,29 +263,30 @@ switch name
   
  case {'square','rect'} 
   if cent==0
-    g=ones(Modd,1);
+    g=ones(numel(xoddnew),1);
   else
-    g=ones(Meven,1);
+    g=ones(numel(xevennew),1);
   end;
 
  case {'halfsquare','halfrect'} 
-  g=ones(Meven/2,1);
+  g=ones(numel(xevennew)/2,1);
   info.ispu=1;
   
  case {'sqrthalfsquare','sqrthalfrect'}
-  g=ones(Meven/2,1);
+  g=ones(numel(xevennew)/2,1);
   info.issqpu=1;
   do_sqrt=1;
   
  case {'tria','triangular','bartlett'}
-  if flags.do_wp
-    gw=linspace(1,0,Meven/2+1).';
-    g=[gw;flipud(gw(2:end-1))];
-  %g=pbspline(M,1,Meven/2,flags.centering);
-  else
-    gw=((0:Meven/2-1)/(Meven/2)+0.5).';
-    g=[gw;flipud(gw)];
-  end;
+  %if flags.do_wp
+    g = 2*abs(xnew);
+%     gw=linspace(1,0,Meven/2+1).';
+%     g=[gw;flipud(gw(2:end-1))];
+%   %g=pbspline(M,1,Meven/2,flags.centering);
+%   else
+%     gw=((0:Meven/2-1)/(Meven/2)+0.5).';
+%     g=[gw;flipud(gw)];
+%   end;
   info.ispu=1;
   
  case {'sqrttria'}
@@ -268,31 +304,69 @@ switch name
  case {'blackman2'}
   g=7938/18608-9240/18608*cos(2*pi*(xnew))+1430/18608*cos(4*pi*(xnew));
 
- case {'nuttall'}
-  g = 0.355768 - 0.487396*cos(2*pi*(xnew)) + 0.144232*cos(4*pi*(xnew)) -0.012604*cos(6*pi*(xnew));
+ case {'nuttall','nuttall12'}
+  g = 0.355768 - 0.487396*cos(2*pi*(xnew)) + 0.144232*cos(4*pi*(xnew)) ...
+      - 0.012604*cos(6*pi*(xnew));
   
  case {'itersine','ogg'}
   g=sin(pi/2*sin(pi*(xnew)).^2);
   info.issqpu=1;
   
+ case {'nuttall20'}
+  g=3/8-4/8*cos(2*pi*(xnew))+1/8*cos(4*pi*(xnew));
+
+ case {'nuttall11'}
+  g=0.40897-0.5*cos(2*pi*(xnew))+0.09103*cos(4*pi*(xnew));
+  
+ case {'nuttall02'}
+   if cent==0
+     g=0.4243801 - 0.4973406*cos(2*pi*(xoddnew)) ...
+         + 0.0782793*cos(4*pi*(xoddnew));
+   else
+     g=0.4243801-0.4973406*cos(2*pi*(xevennew)) ... 
+         + 0.0782793*cos(4*pi*(xevennew));
+   end;  
+
+ case {'nuttall30'}
+  g = 10/32 - 15/32*cos(2*pi*(xnew)) + 6/32*cos(4*pi*(xnew)) ... 
+      - 1/32*cos(6*pi*(xnew));
+  
+ case {'nuttall21'}
+  g = 0.338946 - 0.481973*cos(2*pi*(xnew)) + 0.161054*cos(4*pi*(xnew)) ... 
+      - 0.018027*cos(6*pi*(xnew));
+
+ case {'nuttall03'}
+   if cent==0
+     g=0.3635819 - 0.4891775*cos(2*pi*(xoddnew)) ...
+         + 0.1365995*cos(4*pi*(xoddnew)) -0.0106411*cos(6*pi*(xoddnew));
+   else
+     g=0.3635819 - 0.4891775*cos(2*pi*(xevennew)) ...
+         + 0.1365995*cos(4*pi*(xevennew)) -0.0106411*cos(6*pi*(xevennew));
+   end;
+  
  otherwise
   error('Unknown window: %s.',name);
 end;
 
-% Add zeros if needed.
-if length(g)<M
-  g=middlepad(g,M,flags.centering);
+if numel(M) == 1
+  % Add zeros if needed.
+  if length(g)<M
+    g=middlepad(g,M,flags.centering);
+  end;
+
+  if keyvals.taper<1
+    % Perform the actual tapering.
+    g=[ones(p1,1);g;ones(p2,1)];  
+  end;
+
+else    
+  g = g.*(xnew > 0).*(xnew < 1);    
 end;
 
 % Do sqrt if needed. This must be done /after/ middlepad, so do it at
 % this point.
 if do_sqrt
   g=sqrt(g);
-end;
-
-if keyvals.taper<1
-  % Perform the actual tapering.
-  g=[ones(p1,1);g;ones(p2,1)];  
 end;
 
 g=normalize(g,flags.norm);
