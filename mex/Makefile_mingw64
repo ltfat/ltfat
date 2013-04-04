@@ -1,13 +1,13 @@
+# To run this makefile, you must provide the EXT and MATLABROOT
+# variables on the command line, i.e. as in
+#
+# make -f Makefile_unix MATLABROOT="C:\Program Files\MATLAB\R2011b"  EXT=mexw64
+
 CC=gcc
 CFLAGS=-shared -O3 -Wall -s -std=c99 -m64 -I../thirdparty -I../src
 
-#These variables are overwritten by the matlab script
-MATLABROOT=C:\Program Files\MATLAB\R2011b
-EXT=mexw64
-#defines MEXSC
 include filedefs.mk
 
-MEXSBASE = $(basename $(MEXSC))
 MEXS     = $(addsuffix .$(EXT),$(MEXSBASE))
 
 MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include"

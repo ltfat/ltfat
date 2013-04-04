@@ -12,7 +12,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		  int nrhs, const mxArray *prhs[] )
    
 { 
-   int M, N, L, W, ii;
+   int M, N, L, W;
 
    ltfat_complex *f_combined, *g_combined, *cout_combined;
    mwSize ndim;
