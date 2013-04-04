@@ -36,7 +36,7 @@ if(flags.do_stem)
    error('%s: Flag %s not supported yet.',upper(mfilename),flags.fwtplottype);
 end
 
-maxSubLen = [];
+maxSubLen = 800;
 draw_ticks = 1;
 
 if(strcmpi(info.fname,'fwt'))

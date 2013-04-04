@@ -45,7 +45,7 @@ for jj=1:numel(wtNodes)
    % ...and save the rest.
    diffRange = 1:size(hMat,2);
    diffRange(rangeLoc{jj}) = [];
-   ca = horzcat(ca(:,2:end,:), catmp(:,diffRange,:));
+   ca = [ca(:,2:end,:), catmp(:,diffRange,:)];
 end 
 
 

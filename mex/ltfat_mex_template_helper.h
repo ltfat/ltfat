@@ -23,17 +23,25 @@
 
 /** Include mex source code for each template data type */
 
-#define LTFAT_DOUBLE    
+#define LTFAT_DOUBLE
 #include "ltfat_mex_arg_helper.h"
 #include MEX_FILE
 #undef LTFAT_DOUBLE
 
-#define LTFAT_SINGLE  
+#define LTFAT_SINGLE
 #include "ltfat_mex_arg_helper.h"
 #include MEX_FILE
 #undef LTFAT_SINGLE
 
 #include "mex.h"
+#include <stdio.h>
+#include <string.h>
+
+#define LTFAT_MEXERRMSG(s,...)                 \
+        char sChars[256];                      \
+        snprintf(sChars,256,(s),__VA_ARGS__);  \
+        mexErrMsgTxt(sChars)
+
 
 /** C99 headers for a generic complex number manipulations
 #include <complex.h>
@@ -43,6 +51,30 @@
 /** Function prototypes */
 bool checkIsSingle(const mxArray *prhsEl);
 mxArray* recastToSingle(mxArray* prhsEl);
+void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]);
+
+void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
+{
+    #ifdef NARGINEQ
+       if(nrhs!=NARGINEQ)
+       {
+          LTFAT_MEXERRMSG("Expected %i input arguments. Only %i passed.",NARGINEQ,nrhs);
+       }
+    #endif
+    #if defined(NARGINLE)&&!defined(NARGINEQ)
+       if(nrhs<=NARGINLE)
+       {
+          LTFAT_MEXERRMSG("Too many input arguments. Expected %i or less input arguments. Passed %i arg.",NARGINLE,nrhs);
+       }
+    #endif
+    #if defined(NARGINGE)&&!defined(NARGINEQ)
+       if(nrhs>=NARGINLE)
+       {
+          LTFAT_MEXERRMSG("Too few input arguments. Expected %i or more input arguments. Passed %i arg.",NARGINLE,nrhs);
+       }
+    #endif
+
+}
 
 /* Helper recasting functions */
 mxArray* recastToSingle(mxArray* prhsEl)
@@ -143,8 +175,11 @@ bool checkIsSingle(const mxArray *prhsEl)
  */
 void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
  {
-    unsigned int PRHSTOCHECKlen = sizeof(PRHSTOCHECK)/sizeof(PRHSTOCHECK[0]);
+    checkArgs(nlhs, plhs,nrhs,prhs);
     bool isAnySingle = false;
+    #ifdef DATATYPECHECK
+    const int PRHSTOCHECK[] = { DATATYPECHECK };
+    unsigned int PRHSTOCHECKlen = sizeof(PRHSTOCHECK)/sizeof(PRHSTOCHECK[0]);
     for(unsigned int ii=0;ii<PRHSTOCHECKlen;ii++)
     {
       if(checkIsSingle(prhs[PRHSTOCHECK[ii]]))
@@ -153,6 +188,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           break;
       }
     }
+    #endif
 
 
     if(isAnySingle)

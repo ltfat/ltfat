@@ -18,8 +18,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
    ltfat_complex *f_combined, *g_combined;
    ltfat_complex *out_combined;
    
-   int ii;
-   
    /* Get matrix dimensions.*/
    L  = mxGetM(prhs[0]); 
    W  = mxGetN(prhs[0]);

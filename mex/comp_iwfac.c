@@ -12,7 +12,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
      
 { 
 
-  int L, R, a, M, N;
+  int L, R, a, M;
   ltfat_complex *g_combined, *gf_combined;
 
   L=(int)mxGetScalar(prhs[1]);

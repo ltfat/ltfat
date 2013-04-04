@@ -1,4 +1,4 @@
-function [] = mulaclab()
+function [] = mulaclab(file)
 %MULACLAB Graphical interface for audio processing using frame multipliers
 %   Usage: mulaclab;
 % 
@@ -62,7 +62,7 @@ function [] = mulaclab()
 %   alongside LTFAT, but under different licensing conditions. Please see
 %   the `ltfat/thirdparty/gpc/GPC-README.pdf` file for the exact conditions.
 %
-
+%
 % questions : do we want to :
 % - have the possibility to use Gaussian window? (any window?)
 % - be able to export the symbol? 
@@ -74,7 +74,7 @@ function [] = mulaclab()
 % load symbol.mat
 % coeff = coeff.*symbol;
 % res = idgt(coeff, ...);
-
+%
 % Known bugs:
 % - visualization bug when the signal is zero everywhere
 % - there might be a bug with noise level when using hole filling with
@@ -84,7 +84,7 @@ function [] = mulaclab()
 % nicely with a slightly modified version of the selection.
 % - when using undo it seems that parameters of the type of layer are not
 % updated
-
+%
 % todo:
 % - reorder the functions in this file to improve consistency
 % - check the interface with matlab r14
@@ -108,16 +108,14 @@ function [] = mulaclab()
 %   currently selected properties
 % - see if I put a limit in the number of levels of undo
 % - add possibility to modify afterward polygons
-
-
+%
 % Acronym used in the comments:
 % PI: possible improvement, used to specify things that could be done to
 % improve the current version of mulaclab. In particular, it can be 
 % efficiency improvements or suitable functionnality addition.
-
-
+%
 % _____________________ Description of shared data ________________________
-
+%
 % To share data between the different components of the Graphical User 
 % Interface (GUI), nested functions are used
 % (search for 'Sharing Data Among a GUI's Callbacks' in matlab's
@@ -125,9 +123,9 @@ function [] = mulaclab()
 % So all the functionnalities of the GUI are implemented using nested
 % functions, and to share data, a set of variables are defined at the top 
 % level of the function (ie in the workspace of the function mulaclab).
-
+%
 % Here is a list of these variables with their description:
-
+%
 % sig: (struct) data describing the processed signal
 %
 % - sig.ori: (vector) samples of the original signal
@@ -142,8 +140,7 @@ function [] = mulaclab()
 %
 % - sig.real: (bool) boolean to know if the signal is real (true)
 %   or complex (false)
-
-
+%
 % frame: (struct) data describing the frame
 %
 % - frame.type: (string) type of the frame (currently only Gabor frames are 
@@ -165,8 +162,7 @@ function [] = mulaclab()
 %
 %   - frame.def.nbFreq: (scalar) number of frequency bins (parameter 'M' 
 %     of LTFAT dgt function)
-
-
+%
 % coeff: (struct) coefficients obtained by decomposition of the signal 
 % on the frame
 %
@@ -175,7 +171,7 @@ function [] = mulaclab()
 %
 % - coeff.mod: (matrix, dimension 1: frequency, dimension 2:time)
 %   coefficients for the modified signal sig.mod
-
+%
 % sel: (struct) data describing the graphical selection
 % The graphical selection contains several layers, each layer containing
 % several polygons defining a region of the time-frequency that must be 
@@ -282,7 +278,7 @@ function [] = mulaclab()
 %   - sel.lay.label: (string) layer label as displayed in the layer list in
 %     the GUI
 %
-
+%
 % visu: (struct) data defining parameters of the visualizations
 % visu is a struct array, visu(ind) contains data for the visualization
 % number ind.
@@ -337,7 +333,7 @@ function [] = mulaclab()
 %
 % - visu.axesId: (graphics object handle) handle of the axes of the
 %   visualization
-
+%
 % gui: (struct) graphical user interface data 
 % gui contains data used to define properties of certain graphics object
 % (in particular their position) and data used to dynamically handle the
@@ -503,7 +499,7 @@ function [] = mulaclab()
 %
 % - gui.toolPanelId: (graphics object handle) uipanel handle of the 'Tools'
 %   subpanel
-    
+%    
 % link: (struct) data for linking of axes of the different visualization
 %
 % - link.CLim: (linkprop object) link object used to link the colorscale 
@@ -517,7 +513,7 @@ function [] = mulaclab()
 % - link.YLim: (linkprop object) link object used to link the frequency axe 
 %   (through the YLim property) of the visualizations having their 
 %   parameter visu.linkYLim set to true
-
+%
 % player: (struct) data used for audio playing
 % 
 % - player.ori: (audioplayer object) audioplayer used to play the original
@@ -542,7 +538,7 @@ function [] = mulaclab()
 % - player.positionPlotId: (graphics object handle vector) contains handles
 %   to the moving vertical white lines that are displayed on the 
 %   visualizations to show the current position when playing
-
+%
 % default default data for some variables
 % PI: This could be used more systematically to define the default value
 % of all the parameters of the interface. It could then be used to
@@ -560,21 +556,19 @@ function [] = mulaclab()
 %
 % - default.frame: (struct) default frame variable (see the description of
 %   frame)     
-
-
+%
 % undoData: (cell) data for undo functionnality
 % Each cell of undoData contain a copy of the sel variable as it was at a
 % preceding state
-
-
+%
 % redoData: (cell) data for redo functionnality
 % Each cell of redoData contain a copy of the sel variable as it was at a
 % preceding state
-
+%
 % ___________________ End of description of shared data ___________________
-
+%
 % __________________________ Beginning of code ____________________________
-
+%
 % define the variables that will be used to share data between
 % interface components. They are defined at the top level of the function
 % so that they are usable by all the functions used by the interface (as
@@ -591,46 +585,101 @@ sig = struct;
 undoData = {};
 visu = struct;
 
+frameGabor.type = 'Gabor';
+frameGabor.def.winType = 'hann';
+frameGabor.def.winLen = 256;
+frameGabor.def.hop = round(frameGabor.def.winLen / 4);
+frameGabor.def.nbFreq = frameGabor.def.winLen;
+
+frameGabReal.type = 'Gabreal';
+frameGabReal.def.winType = 'hann';
+frameGabReal.def.winLen = 256;
+frameGabReal.def.hop = round(frameGabReal.def.winLen / 4);
+frameGabReal.def.nbFreq = frameGabReal.def.winLen;
+
+frameDWT.type = 'DWT';
+frameDWT.def.wavelet = 'sym10';
+frameDWT.def.J = 8;
+
+frameUDWT.type = 'UDWT';
+frameUDWT.def.wavelet = 'sym10';
+frameUDWT.def.J = 7;
+
+frameWFBT.type = 'WFBT';
+frameWFBT.def.wavelet = 'sym10';
+frameWFBT.def.J = 7;
+
+frameUWFBT.type = 'UWFBT';
+frameUWFBT.def.wavelet = 'sym10';
+frameUWFBT.def.J = 4;
+
+% Dictionary of structures field names string expansions
+mulaclabDict = struct('winType','Window type',...
+                      'nbFreq','Number of frequency bins',...
+                      'hop','Hop size',...
+                      'winLen','Window length',...
+                      'wavelet','Wavelet type',...
+                      'J','Decomposition depth');
+                  
+
+supportedFrames = {frameGabReal, frameGabor, frameDWT,frameWFBT,frameUDWT,frameUWFBT};
+supportedFramesIdx = 1;
+hop = frameGabReal.def.hop;
+
 iconpath=[ltfatbasepath,'mulaclab',filesep,'icons',filesep];
 
 % initialize the interface
-initialize;
+if(nargin<1)
+   file = [];
+end
+initialize(file);
 
 % end of main function, from here everything is handled with the callbacks
 % using the following nested functions
 
 % __________________________ INITIALIZATION _______________________________
-  function initialize()
+  function initialize(file)
 
     % check that we have all the toolboxes and functions that we need
     checkToolbox;
     
     % Display spash screen
+    warningText = ['\newline{\color{red}\bf PLEASE NOTE: When using a free-hand selection tool, do not \newline hold down the mouse button, but click on the corner points. }\newline'];
+    msgboxText = [' MulacLab: Matlab GUI to manipulate the short-time Fourier ' ...
+               'transform of a signal \newline using Gabor multipliers. '...
+              '\newline MulacLab makes use of the GPC Polygon Clipping library ' ...
+               'available from \newline http://www.cs.man.ac.uk/~toby/alan/software/'...
+             'GPC and mulaclab are free for \newline non-commercial use only. Please see the ' ...
+               'GPC homepage for the exact licensing \newline conditions.'];
     
-    h=msgbox({['MulacLab: Matlab GUI to manipulate the short-time Fourier ' ...
-               'transform of a signal using Gabor multipliers.'],[],...
-              ['MulacLab makes use of the GPC Polygon Clipping library ' ...
-               'available from http://www.cs.man.ac.uk/~toby/alan/software/'],[]...
-              ['GPC and mulaclab are free for non-commercial use only. Please see the ' ...
-               'GPC homepage for the exact licensing conditions.']},...
-             'MulacLab licensing','modal');
-    
-    uiwait(h,5);
+    h=msgbox(msgboxText,'MulacLab licensing','modal');
+    posh = get(h,'Position');
+    posh(end) = 120;
+    set(h,'Position',posh);
+    set(findall(h,'type','text'), 'Interpreter','tex', 'string', [msgboxText,warningText]); 
+    uiwait(h,16);
     if ishandle(h)
-      % Timeout occured, we close the box automatically.
+       % Timeout occured, we close the box automatically.
       close(h);
     end;
+
             
-    
-    % get an original signal or decomposition to have something to show
-    [fileName, pathName, filterIndex] = uigetfile('*.wav;*.mat',...
-      'Open original signal or decomposition'); 
-    
-    if fileName == 0
-      % the user pressed cancel, we stop here
-      return;
+    if(isempty(file))
+       % get an original signal or decomposition to have something to show
+       [fileName, pathName, filterIndex] = uigetfile('*.wav;*.mat',...
+         'Open original signal or decomposition'); 
+
+       if fileName == 0
+         % the user pressed cancel, we stop here
+         return;
+       end
     else
-      [pathStr, name, ext] = fileparts(fileName);
+       fileName = file;
+       pathName = '';
+    end
+    
+
+      [~, ~, ext] = fileparts(fileName);
       switch ext
         case '.wav'
           % read the orginal signal in a wave file
@@ -653,7 +702,7 @@ initialize;
             return;
           end
       end
-    end 
+
     sig.mod = sig.ori;
     
     % intialize the different parameters of the application
@@ -661,14 +710,14 @@ initialize;
     
     % initialize the frame definition and the coefficients
     frame = default.frame;
-    updateCoeffOri;
-    coeff.mod = coeff.ori;
+    %coeff.ori = calculateCoeff(sig.ori);
+    %coeff.mod = coeff.ori;
     
     % initialize selection
     resetSel;
     
     % intialize audioplayers
-    initializePlayer;
+    %initializePlayer;
     
     % create main window
     gui.mainFigId = figure(...
@@ -719,8 +768,18 @@ initialize;
       'enable', 'off',...
       'Callback',@redo);
     
+   
+   
     menuFrameId = uimenu(gui.mainFigId,...
       'Label','Frame');
+    menuFrameTypeId = uimenu(menuFrameId,...
+      'Label','Choose frame type');
+    for ind=1:length(supportedFrames)
+       uimenu(menuFrameTypeId,...
+      'Label',supportedFrames{ind}.type,...
+      'Callback',@changeFrameType,...
+      'UserData',ind);
+    end
     uimenu(menuFrameId,...
       'Label','Edit frame parameters',...
       'Callback',@changeFrameDef);
@@ -746,7 +805,7 @@ initialize;
       'Callback',@toggleOverviewVisu);
      
     % intialize visualization
-    updateVisu(true);
+    %updateVisu(true);
 
     % create gui panels
     currentY = 1;
@@ -771,12 +830,12 @@ initialize;
     drawSelectionTool(gui.panelId(3));
 
     % activate the current tool
-    changeTool([], [], gui.curTool);
+    % changeTool([], [], gui.curTool);
 
     % end of initialization, show the interface to the user
     set(gui.mainFigId, 'Visible', 'on');
+    resetMulaclab();
   end
-
 
   function initializeParameter()
     % set default values
@@ -803,11 +862,15 @@ initialize;
     default.sel.lay.label = 'Layer';
 
     % default frame definition
-    default.frame.type = 'Gabor';
-    default.frame.def.winType = 'hann';
-    default.frame.def.winLen = 256;
-    default.frame.def.hop = round(default.frame.def.winLen / 4);
-    default.frame.def.nbFreq = default.frame.def.winLen;
+    % default.frame = frameGabor;
+    default.frame = supportedFrames{supportedFramesIdx};
+%     default.frame.type = 'Gabor';
+%     default.frame.funcAna = @dgt;
+%     default.frame.funcSyn = @idgt;
+%     default.frame.def.winType = 'hann';
+%     default.frame.def.winLen = 256;
+%     default.frame.def.hop = round(default.frame.def.winLen / 4);
+%     default.frame.def.nbFreq = default.frame.def.winLen;
     
     % define parameters for the gui (graphical user interface)
 
@@ -934,45 +997,124 @@ initialize;
 
 % ___________________ COMPUTATIONAL FUNCTIONS _____________________________
 
-
-  function updateCoeffOri()
-    %!!! modify to work with any type of frame and with multiple frames
-    
-    % compute analysis window
-    win = firwin(frame.def.winType,frame.def.winLen);
-    % compute Gabor coefficients
-    coeff.ori = dgt(sig.ori, win, frame.def.hop, frame.def.nbFreq);
+  function coef = calculateCoeff(f)
+     switch lower(frame.type)
+       case 'gabreal'
+          win = firwin(frame.def.winType,frame.def.winLen);
+          coef = dgtreal(f, win, frame.def.hop, frame.def.nbFreq);
+       case 'gabor'
+          win = firwin(frame.def.winType,frame.def.winLen);
+          coef = dgt(f, win, frame.def.hop, frame.def.nbFreq);
+       case 'dwt'
+          [coef, coeff.info] = fwt(f,frame.def.wavelet,frame.def.J);
+       case 'wfbt'
+          [coef, coeff.info] = wfbt(f,{frame.def.wavelet,frame.def.J,'full'});
+       case 'uwfbt'
+          [coef, coeff.info] = uwfbt(f,{frame.def.wavelet,frame.def.J,'full'});
+       case 'udwt'
+          [coef, coeff.info] = ufwt(f,frame.def.wavelet,frame.def.J);
+       otherwise
+          error('%s: Unrecognized frame type',upper(mfilename));
+     end
   end
 
-
-  function updateCoeffMod()
-    %!!! modify to work with any type of frame and with multiple frames
-    
-    % compute analysis window
-    win = firwin(frame.def.winType,frame.def.winLen);
-    % compute Gabor coefficien
-    coeff.mod = dgt(sig.mod, win, frame.def.hop, frame.def.nbFreq);
+  function fhat = recFromCoeff(coef)
+     switch lower(frame.type)
+       case 'gabreal'
+          win = gabdual(firwin(frame.def.winType,frame.def.winLen), ...
+          frame.def.hop, frame.def.nbFreq);
+          fhat = idgtreal(coef, win, frame.def.hop,frame.def.nbFreq, length(sig.ori));
+       case 'gabor'
+          win = gabdual(firwin(frame.def.winType,frame.def.winLen), ...
+          frame.def.hop, frame.def.nbFreq);
+          fhat = idgt(coef, win, frame.def.hop,length(sig.ori));
+       case 'dwt'
+          fhat = ifwt(coef,coeff.info);
+       case 'wfbt'
+          fhat = iwfbt(coef,{frame.def.wavelet,frame.def.J,'full'},length(sig.ori));
+       case 'uwfbt'
+          fhat = iuwfbt(coef,{frame.def.wavelet,frame.def.J,'full'});
+       case 'udwt'
+          fhat = iufwt(coef,coeff.info);
+       otherwise
+          error('%s: Unrecognized frame type',upper(mfilename)); 
+    end
   end
 
+  function C = plotCoeff(coef,axesId,key,value)
+    switch lower(frame.type)
+       case 'gabreal'
+          C = plotdgtreal(coef,frame.def.hop,frame.def.nbFreq,sig.sampFreq,key,value);
+       case 'gabor'
+          C = plotdgt(coef,frame.def.hop,sig.sampFreq,key,value);
+       case {'dwt','udwt','wfbt','uwfbt','ufwt'}
+          C = plotwavelets(coef,coeff.info,sig.sampFreq,key,value);
+       otherwise
+          error('%s: Unrecognized frame type',upper(mfilename));
+    end
+  end
 
-  function updateSigMod()
-    % compute synthesis window
-    win = gabdual(firwin(frame.def.winType,frame.def.winLen), ...
-      frame.def.hop, frame.def.nbFreq);
-    % compute modified signal
-    sig.mod = idgt(coeff.mod, win, frame.def.hop, length(sig.ori));
+  function mult = convSymbToCoefFormat(symb)
+     switch lower(frame.type)
+        % Classical gabor coeff format 
+        case {'gabreal','gabor'}
+           mult = symb;
+        % Cell array containing column vectors format
+        case 'wfbt'
+           M = numel(coeff.ori);
+           Lplot = size(symb,2);
+           Lc = cellfun(@(cEl) size(cEl,1),coeff.ori);
+           mult = cell(size(coeff.ori));
+           for m=1:M
+              mult{m} = interp1(1:Lplot,symb(m,:),linspace(1,Lplot,Lc(m)),'nearest').';
+           end
+        % FWT specific coefficient format
+        case 'dwt'
+           Lc = coeff.info.Lc;
+           Lcstart = cumsum([1;Lc(1:end-1)]);
+           Lcend = cumsum(Lc);
+           mult = zeros(sum(Lc),1);
+           M = numel(Lc);
+           Lplot = size(symb,2);
+           for m=1:M
+              mult(Lcstart(m):Lcend(m)) = interp1(1:Lplot,symb(m,:),linspace(1,Lplot,Lc(m)),'nearest').';
+           end  
+        % ufilterbak and all wavelet functions beginning with u
+        case {'udwt','uwfbt'}
+           M = size(coeff.ori,2);
+           L = size(coeff.ori,1);
+           Lplot = size(symb,2);
+           mult = zeros(size(coeff.ori));
+           for m=1:M
+              mult(:,m) = interp1(1:Lplot,symb(m,:),linspace(1,Lplot,L),'nearest').';
+           end
+        otherwise
+          error('%s: Unrecognized frame type',upper(mfilename));
+     end
+
+  end
+
+  function cmod = applyMultiplier(c,symb)
+     if(isnumeric(c)&&isnumeric(symb))
+        cmod = c.*symb;
+     elseif(iscell(c)&&iscell(symb))
+        cmod = cellfun(@(x,y) x.*y,c,symb,'UniformOutput',false);
+     else
+        error('%s: Unrecognized frame type',upper(mfilename));
+     end
   end
 
   function applySel(objId, eventData)    
     % convert the selection to get the symbol of the multiplier and apply 
     % the multiplier
     
-    symb = convSelToSymb;
-    coeff.mod = coeff.ori .* symb;
+    % symb = convSelToSymb;
+    coeff.mod = applyMultiplier(coeff.ori, convSelToSymb());
+    %coeff.mod = coeff.ori .* symb;
     
-    updateSigMod;    
+    sig.mod  = recFromCoeff(coeff.mod);    
     updatePlayerMod;
-    updateCoeffMod;
+    coeff.mod = calculateCoeff(sig.mod);
     modInd = find(strcmp('modified', {visu.label}), 1);
     if ~visu(modInd).visible
       toggleModVisu;
@@ -980,8 +1122,24 @@ initialize;
     updateVisu;
   end
 
+  function mult = convSelToSymb()
+     symb = ones(size(coeff.oriC));
+    
+    for indLay = 1:length(sel.lay)
+      if ~isempty(sel.lay(indLay).poly)
+        mask = convPolyToMask(sel.lay(indLay).poly);
+        symbCurr = convMaskToSymb(mask, indLay);
+        symb = symb.*symbCurr;
+      else
+        warning(['Selection layer ' num2str(indLay)...
+          ' is currently empty']);
+      end
+    end
+    mult = convSymbToCoefFormat(symb);
+  end
+
   function mask = convPolyToMask(poly)
-    mask = zeros(size(coeff.ori)); 
+    mask = zeros(size(coeff.oriC)); 
     % !!! Note: type of data for the mask might be optmized (bool, uint8?)
 
     % !!! could be optimized by doing the conversion in smaller boxes 
@@ -1001,10 +1159,10 @@ initialize;
 
     % !!! modifiy this: don't do the symetrisation on the mask, but on the
     % symbol to insure that the results is real
-    if sig.real
-      temp = ceil(size(mask, 1)/2);
-      mask(end:-1:end-temp+2,:) = mask(2:temp,:);
-    end
+%     if sig.real
+%       temp = ceil(size(mask, 1)/2);
+%       mask(end:-1:end-temp+2,:) = mask(2:temp,:);
+%     end
   end
 
   function symb = convMaskToSymb(mask, indLay)
@@ -1129,9 +1287,9 @@ initialize;
         noiseLen = (max(ind2Mask) - min(ind2Mask) + 1) * frame.def.hop ;
         noise = rand(noiseLen, 1) - 0.5;
 
-        win = firwin(frame.def.winType, frame.def.winLen); 
-        coeffNoise = dgt(noise, win, frame.def.hop, frame.def.nbFreq);
-
+        % win = firwin(frame.def.winType, frame.def.winLen); 
+        % coeffNoise = frame.funcAna(noise, win, frame.def.hop, frame.def.nbFreq);
+        coeffNoise = calculateCoeff(noise);
         % !!! test figure(100); imagesc(20*log10(abs(coeffNoise)))
         
         % !!! there will be division by zero problem in the following
@@ -1190,6 +1348,36 @@ initialize;
     
   end
 
+  function xData = convIndToAxesX(ind)
+    % convert scale from image index to scale used by axes along X axe
+    % xData = (ind-1) * (frame.def.hop / sig.sampFreq);
+    xData = (ind-1) * (hop / sig.sampFreq);
+  end
+
+  function ind = convAxesToIndX(xData)
+    % !!! there is no round (on purpose), should be added if we really want
+    % an integer index
+    % convert scale from scale used by axes to image index along X axe
+    % ind = xData * (sig.sampFreq / frame.def.hop) + 1;
+    ind = xData * (sig.sampFreq / hop) + 1;
+  end
+
+  function yData = convIndToAxesY(ind)
+    % convert scale from image index to scale used by axes along Y axe
+    % yData = (ind-1) * (sig.sampFreq / frame.def.nbFreq);
+    Ylim = coeff.oriYlim;
+    yData = (ind-1) * ((Ylim(2)-Ylim(1)) / size(coeff.oriC,1));
+  end
+
+  function ind = convAxesToIndY(yData)
+    % !!! there is no round (on purpose), should be added if we really want
+    % an integer index
+    % convert scale from scale used by axes to image index along Y axe
+    Ylim = coeff.oriYlim;
+    ind = yData * (size(coeff.oriC,1) / (Ylim(2)-Ylim(1)) );% + 1;
+  end
+
+
   function ellipse =computeEllipse(dim1Radius, dim2Radius)
     ellipse = zeros(2*dim1Radius+1, 2*dim2Radius+1);
     ellipse(dim1Radius+1, :) = 1;
@@ -1205,45 +1393,6 @@ initialize;
       end
     end
   end
-
-  function symb = convSelToSymb()
-    symb = ones(size(coeff.mod));
-    for indLay = 1:length(sel.lay)
-      if ~isempty(sel.lay(indLay).poly)
-        mask = convPolyToMask(sel.lay(indLay).poly);
-        curSymb = convMaskToSymb(mask, indLay);
-        symb = symb .* curSymb;
-      else
-        warning(['Selection layer ' num2str(indLay)...
-          ' is currently empty']);
-      end
-    end
-  end
-
-  function xData = convIndToAxesX(ind)
-    % convert scale from image index to scale used by axes along X axe
-    xData = (ind-1) * (frame.def.hop / sig.sampFreq);
-  end
-
-  function ind = convAxesToIndX(xData)
-    % !!! there is no round (on purpose), should be added if we really want
-    % an integer index
-    % convert scale from scale used by axes to image index along X axe
-    ind = xData * (sig.sampFreq / frame.def.hop) + 1;
-  end
-
-  function yData = convIndToAxesY(ind)
-    % convert scale from image index to scale used by axes along Y axe
-    yData = (ind-1) * (sig.sampFreq / frame.def.nbFreq);
-  end
-
-  function ind = convAxesToIndY(yData)
-    % !!! there is no round (on purpose), should be added if we really want
-    % an integer index
-    % convert scale from scale used by axes to image index along Y axe
-    ind = yData * (frame.def.nbFreq / sig.sampFreq) + 1;
-  end
-
 % _____________________ GENERAL FUNCTIONS FOR UI __________________________
 
   function matlabVersion = getMatlabVersion()
@@ -1259,6 +1408,25 @@ initialize;
       matlabVersion = matlabVersion([1:temp(ind)-1, temp(ind)+1:end]);
     end
     matlabVersion = str2num(matlabVersion);
+  end
+
+  function resetMulaclab()
+    initializePlayer;
+    coeff.ori = calculateCoeff(sig.ori);
+    sig.mod = sig.ori;
+    coeff.mod = coeff.ori;
+    resetSel;
+    undoData = {};
+    modInd = find(strcmp('modified', {visu.label}), 1);
+    if visu(modInd).visible
+       toggleModVisu();
+    end
+    updateVisu(true); % update visualization with reset of axes limits
+    
+    oriInd = find(strcmp('originalMain', {visu.label}), 1);
+    coeff.oriYlim = get(visu(oriInd).axesId,'Ylim');
+    % activate the current tool
+    changeTool([], [], gui.curTool);
   end
 
   function openOriSig(objId, eventData)   
@@ -1279,15 +1447,7 @@ initialize;
     sig.mod = newSig;
     sig.real = true;
     
-    initializePlayer;
-    
-    updateCoeffOri;
-    coeff.mod = coeff.ori;
-    resetSel;
-    undoData = {};
-    updateVisu(true); % update visualization with reset of axes limits
-    % activate the current tool
-    changeTool([], [], gui.curTool);
+    resetMulaclab();
   end
 
   function saveModSig(objId, eventData)
@@ -1315,16 +1475,7 @@ initialize;
     sig = data.savedSig;
     sig.mod = sig.ori;
     
-    initializePlayer;
-    
-    updateCoeffOri;
-    coeff.mod = coeff.ori;
-    resetSel;
-    
-    undoData = {};
-    updateVisu(true); % update visualization with reset of axes limits
-    % activate the current tool
-    changeTool([], [], gui.curTool);
+    resetMulaclab();
   end
 
   function saveOriDecompo(objId, eventData)
@@ -1391,19 +1542,27 @@ initialize;
     drawAllSel;
   end
 
+  % Menu callback function. When frame parameters are changed.
   function changeFrameDef(objId, eventData)
-    newFrame = changeGaborFrameDialog(frame);
+    newFrame = changeFrameDialog(frame);
     if ~isempty(newFrame)
       frame = newFrame;
-      updateCoeffOri;
-      updateCoeffMod;
-      updateVisu; 
+      resetMulaclab();
     end
   end
 
+  % When frame type is changed
+  function changeFrameType(objId, eventData)
+    supportedFramesIdx = get(objId,'UserData'); 
+    newFrame = supportedFrames{supportedFramesIdx};
+    %newFrame = changeGaborFrameDialog(frame);
+    if ~isempty(newFrame)
+      frame = newFrame;
+      resetMulaclab(); 
+    end
+  end
 
-
-  function newFrame = changeGaborFrameDialog(oldFrame)
+  function newFrame = changeFrameDialog(oldFrame)
     newFrame = [];
     
     margin = [10, 10];
@@ -1411,13 +1570,13 @@ initialize;
     editSize = [80, 20];
     spaceSize = [10, 10];
     
-    nbParam = 4;
+    nbParam = numel(fieldnames(oldFrame.def));
     dialogPosition = [200, 200, ...
       2*margin(1)+textSize(1)+editSize(1)+spaceSize(1),...
       2*margin(2)+(nbParam+1)*textSize(2)+nbParam*spaceSize(1)];
     
     dialogId = dialog(...
-      'Name', 'Frame parameters',...
+      'Name', [oldFrame.type,' frame parameters'],...
       'Position', dialogPosition);
     
     buttonWidth = 50;
@@ -1439,101 +1598,55 @@ initialize;
       'Callback', @callbackCancel,...
       'Position', [buttonX+buttonWidth+spaceSize(1), margin(2),...
         buttonWidth, textSize(2)]);
-    
-    
-    ind = 1;
-    posText = [margin+[0, ind*(spaceSize(2)+textSize(2))], textSize];
-    posEdit = [margin+[0,...
-      ind*(spaceSize(2)+textSize(2))]+[textSize(1)+spaceSize(1), 0],...
-      editSize];
-    
-    textNbFreqId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'text',...
-      'String', 'Number of frequency bins',...
-      'Position', posText);
-    
-    editNbFreqId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'edit',...
-      'String', num2str(frame.def.nbFreq),...
-      'Position', posEdit);
-    
-    ind = 2;
-    posText = [margin+[0, ind*(spaceSize(2)+textSize(2))], textSize];
-    posEdit = [margin+[0,...
-      ind*(spaceSize(2)+textSize(2))]+[textSize(1)+spaceSize(1), 0],...
-      editSize];
      
-    textHopId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'text',...
-      'String', 'Hop size',...
-      'Position', posText);
+    oldFramedef = oldFrame.def;
+    fieldNames = fieldnames(oldFramedef);
+    fieldNames = fieldNames(end:-1:1);
+    objIds = zeros(size(fieldNames));
     
-    editHopId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'edit',...
-      'String', num2str(frame.def.hop),...
-      'Position', posEdit);
-    
-    ind = 3;
-    posText = [margin+[0, ind*(spaceSize(2)+textSize(2))], textSize];
-    posEdit = [margin+[0,...
-      ind*(spaceSize(2)+textSize(2))]+[textSize(1)+spaceSize(1), 0],...
-      editSize];
-    
-    textWinLenId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'text',...
-      'String', 'Window length',...
-      'Position', posText);
-    
-    editWinLenId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'edit',...
-      'String', num2str(frame.def.winLen),...
-      'Position', posEdit);
-    
-    
-    ind = 4;
-    posText = [margin+[0, ind*(spaceSize(2)+textSize(2))], textSize];
-    posEdit = [margin+[0,...
-      ind*(spaceSize(2)+textSize(2))]+[textSize(1)+spaceSize(1), 0],...
-      editSize];
-    
-    textWinTypeId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'text',...
-      'String', 'Window type',...
-      'Position', posText);
-    
-    editWinTypeId = uicontrol(...
-      'Parent', dialogId,...
-      'Style', 'edit',...
-      'String', frame.def.winType,...
-      'Position', posEdit);
+    for ind = 1:length(fieldNames)
+       posText = [margin+[0, ind*(spaceSize(2)+textSize(2))], textSize];
+       posEdit = [margin+[0,...
+          ind*(spaceSize(2)+textSize(2))]+[textSize(1)+spaceSize(1), 0],...
+          editSize];
+       
+       propLabel = fieldNames{ind};
+       if(exist('mulaclabDict','var')&&isfield(mulaclabDict,propLabel))
+          propLabel = getfield(mulaclabDict,propLabel);
+       end
+          
+        uicontrol(...
+       'Parent', dialogId,...
+       'Style', 'text',...
+       'String', propLabel,...
+       'Position', posText);
+   
+      strVal = getfield(oldFramedef,fieldNames{ind});
+      if(isnumeric(strVal))
+         strVal = num2str(strVal);
+      end
+       objIds(ind) = uicontrol(...
+       'Parent', dialogId,...
+       'Style', 'edit',...
+       'String', strVal,...
+       'Position', posEdit);
+    end
         
     uiwait(dialogId);
     
-    
     function callbackOk(objId, eventData)
-      newFrame.type = 'Gabor';
-      newFrame.def.winType = get(editWinTypeId, 'string');
-      newFrame.def.winLen = round(str2num(get(editWinLenId, 'string')));
-      if isempty(newFrame.def.winLen)
-        errordlg('Window length parameter is invalid');
-        return;
-      end
-      newFrame.def.hop = round(str2num(get(editHopId, 'string')));
-      if isempty(newFrame.def.hop)
-        errordlg('Hop size parameter is invalid');
-        return;
-      end
-      newFrame.def.nbFreq = round(str2num(get(editNbFreqId, 'string')));
-      if isempty(newFrame.def.nbFreq)
-        errordlg('Number of frequency bins is invalid');
-        return;
+      newFrame = oldFrame;
+      for ind2 = 1:length(fieldNames)
+         val = get(objIds(ind2),'string');
+          if isempty(val)
+            errordlg(sprintf('%s parameter is invalid.',fieldNames{ind2}));
+            return;
+          end
+          if(isnumeric(getfield(oldFramedef,fieldNames{ind2})))
+             newFrame.def = setfield(newFrame.def,fieldNames{ind2},round(str2num(val)));
+          else
+             newFrame.def = setfield(newFrame.def,fieldNames{ind2},val);
+          end
       end
       close(dialogId);
     end
@@ -1557,8 +1670,8 @@ initialize;
       return;
     end
     frame = data.frame;
-    updateCoeffOri;
-    updateCoeffMod;
+    coeff.ori = calculateCoeff(sig.ori);
+    coeff.mod = calculateCoeff(sig.mod);
     updateVisu;
   end
 
@@ -1592,13 +1705,13 @@ initialize;
   end
 
   function [nbFreq] = nbPlottedFreq()
-    if sig.real
-      nbFreq = floor(size(coeff.ori, 1)/2)+1;
-    else
-      nbFreq = size(coeff.ori, 1);
-    end
+     nbFreq = size(coeff.oriC, 1);
+%     if sig.real
+%       nbFreq = floor(size(coeff.ori, 1)/2)+1;
+%     else
+%       nbFreq = size(coeff.ori, 1);
+%     end
   end
-
 
   function [] = resize(objId, eventData)
     figPos = get(gui.mainFigId, 'Position');
@@ -1721,43 +1834,57 @@ initialize;
         visu(ind).uipanelId = uipanel(gui.mainFigId, ...
           'Units', 'normalized', ...
           'Position', visu(ind).position);
-        visu(ind).axesId = visu(ind).updateFcn(visu(ind));
-            
-    
-        % plot for the visualisation of play position during playback
-        lim = axis(visu(ind).axesId);
-        xPos = convIndToAxesX((player.position-1) / frame.def.hop);
-        hold(visu(ind).axesId, 'on');
-        player.positionPlotId(ind) = plot(visu(ind).axesId, [xPos xPos],...
-          lim(3:4), 'w'); % !!! give possibility to change color ?
-        set(player.positionPlotId(ind), 'Visible', 'off', 'LineWidth', 2);
-        hold(visu(ind).axesId, 'off');
-        
+ 
         if visu(ind).linkX
-          linkXId = [linkXId visu(ind).axesId];
+          linkXId = [linkXId ind];
         end
         if visu(ind).linkY
-          linkYId = [linkYId visu(ind).axesId];
+          linkYId = [linkYId ind];
         end
         if visu(ind).linkCLim
-          linkCLimId = [linkCLimId visu(ind).axesId];
+          linkCLimId = [linkCLimId ind];
         end
-        
-        % the following insures the possibility to zoom out
-        % completely even if we are already zoomed in
-        axes(visu(ind).axesId);
-        zoom(gui.mainFigId, 'reset');
-        
       end
     end
+    
+    function updateOneVisu(ind)
+         if visu(ind).visible
+           visu(ind).axesId = visu(ind).updateFcn(visu(ind));
+
+           % plot for the visualisation of play position during playback
+           lim = axis(visu(ind).axesId);
+           % xPos = convIndToAxesX((player.position-1) / frame.def.hop);
+            xPos = convIndToAxesX((player.position-1) / hop);
+           hold(visu(ind).axesId, 'on');
+           player.positionPlotId(ind) = plot(visu(ind).axesId, [xPos xPos],...
+             lim(3:4), 'w'); % !!! give possibility to change color ?
+           set(player.positionPlotId(ind), 'Visible', 'off', 'LineWidth', 2);
+           hold(visu(ind).axesId, 'off');
+
+           % the following insures the possibility to zoom out
+           % completely even if we are already zoomed in
+           axes(visu(ind).axesId);
+           zoom(gui.mainFigId, 'reset');
+        end
+    end
+    
+    oriInd = find(strcmp('originalMain', {visu.label}), 1);
+    updateOneVisu(oriInd);
+    
+    if length(linkCLimId) > 1
+      link.CLim = get(visu(oriInd).axesId,'CLim');
+    end
+    range = 1:length(visu);
+    range(oriInd) = [];
+    for ind = range
+       updateOneVisu(ind);
+    end
+     
     if length(linkXId) > 1
-      link.XLim = linkprop(linkXId,'XLim');
+      link.XLim = linkprop(arrayfun(@(vEl) vEl.axesId,visu(linkXId)),'XLim');
     end
     if length(linkYId) > 1
-      link.YLim = linkprop(linkYId,'YLim');
-    end
-    if length(linkCLimId) > 1
-      link.CLim = linkprop(linkCLimId,'CLim');
+      link.YLim = linkprop(arrayfun(@(vEl) vEl.axesId,visu(linkYId)),'YLim');
     end
     
     
@@ -1800,58 +1927,62 @@ initialize;
     resize;    
   end
 
+  function [axesId,C] = updateVisuCommon(coef,lim,visuData) 
+    axesId = axes('Parent',visuData.uipanelId);
+    if(lim)
+       C = plotCoeff(coef,axesId,'clim',link.CLim);
+    else
+       C = plotCoeff(coef,axesId,'dynrange',visuData.dynamic);
+    end   
+    colorbar off;
+  end
 
   function [axesId] = updateVisuOriSpec(visuData)
-    axesId = axes('Parent',visuData.uipanelId);
-    
-    % update the spectrogram of the original signal
-    spec = abs(coeff.ori(1:nbPlottedFreq,:)).^2; % spectrogram coefficients
-    maxSpec = max(spec(:));
-    imageId = imagesc(...
-      convIndToAxesX([1,size(spec,2)]),...
-      convIndToAxesY([1,size(spec,1)]),...
-      10*log10(spec+eps),...
-      'Parent', axesId, ...
-      10*log10(maxSpec)+[-visuData.dynamic 0]);
-    axis(axesId, 'xy');
-    xlabel('Time (s)');
-    ylabel('Frequency (Hz)');
+    [axesId, coeff.oriC] = updateVisuCommon(coeff.ori,false,visuData);
+    hop = round(numel(sig.ori)/size(coeff.oriC,2)); 
     title('Original signal');
   end
 
-
   function [axesId] = updateVisuModSpec(visuData)
-    axesId = axes('parent',visuData.uipanelId);
+   [axesId, coeff.modC] = updateVisuCommon(coeff.mod,visuData.linkCLim,visuData); 
+%     if(visuData.linkCLim && ~strcmpi('originalOverview', {visu.label}))
+%        plotCoeff(coeff.mod,axesId,'clim',link.CLim);
+%     else
+%        plotCoeff(coeff.mod,axesId,'dynrange',visuData.dynamic);
+%     end
+    %plotCoeff(coeff.mod,axesId,visuData.dynamic);
     % update the spectrogram of the original signal
-    spec = abs(coeff.mod(1:nbPlottedFreq,:)).^2; % spectrogram coefficients
-    maxSpec = max(spec(:));
-    imagesc(...
-      convIndToAxesX([1,size(spec,2)]),...
-      convIndToAxesY([1,size(spec,1)]),...
-      10*log10(spec+eps),...
-      'Parent', axesId, ...
-      10*log10(maxSpec)+[-visuData.dynamic 0]);
-    axis(axesId, 'xy');
-    xlabel('Time (s)');
-    ylabel('Frequency (Hz)');
+%     spec = abs(coeff.mod(1:nbPlottedFreq,:)).^2; % spectrogram coefficients
+%     maxSpec = max(spec(:));
+%     imagesc(...
+%       convIndToAxesX([1,size(spec,2)]),...
+%       convIndToAxesY([1,size(spec,1)]),...
+%       10*log10(spec+eps),...
+%       'Parent', axesId, ...
+%       10*log10(maxSpec)+[-visuData.dynamic 0]);
+%     axis(axesId, 'xy');
+%     xlabel('Time (s)');
+%     ylabel('Frequency (Hz)');
     title('Modified signal');
   end
 
-
   function [axesId] = updateVisuOriOverview(visuData)
-    axesId = axes('parent',visuData.uipanelId);
+   axesId = updateVisuCommon(coeff.ori,visuData.linkCLim,visuData); 
+   %axesId = updateVisuOriSpec(visuData);  
+   % axesId = axes('parent',visuData.uipanelId);
+   % plotCoeff(coeff.ori,axesId,visuData.dynamic);
     % update the spectrogram of the original signal
-    spec = abs(coeff.ori(1:nbPlottedFreq,:)).^2; %  spectrogram coefficients
-    maxSpec = max(spec(:));
-    imageId = imagesc(...
-      convIndToAxesX([1,size(spec,2)]),...
-      convIndToAxesY([1,size(spec,1)]),...
-      10*log10(spec+eps),...
-      'Parent', axesId, ...
-      10*log10(maxSpec)+[-visuData.dynamic 0]);
-    axis(axesId, 'xy');
-    xlabel('Time (s)');
-    ylabel('Frequency (Hz)');
+%     spec = abs(coeff.ori(1:nbPlottedFreq,:)).^2; %  spectrogram coefficients
+%     maxSpec = max(spec(:));
+%     imageId = imagesc(...
+%       convIndToAxesX([1,size(spec,2)]),...
+%       convIndToAxesY([1,size(spec,1)]),...
+%       10*log10(spec+eps),...
+%       'Parent', axesId, ...
+%       10*log10(maxSpec)+[-visuData.dynamic 0]);
+%     axis(axesId, 'xy');
+%     xlabel('Time (s)');
+%     ylabel('Frequency (Hz)');
     title('Overview of original signal');
   end
 
@@ -2154,7 +2285,8 @@ initialize;
   end
 
   function updatePlayPosition(objId, eventData)
-    pos = convIndToAxesX((get(objId, 'CurrentSample')-1) / frame.def.hop);
+    % pos = convIndToAxesX((get(objId, 'CurrentSample')-1) / frame.def.hop);
+    pos = convIndToAxesX((get(objId, 'CurrentSample')-1) / hop);
     
     for ind = 1:length(player.positionPlotId)
       if visu(ind).visible
@@ -2372,6 +2504,7 @@ initialize;
     
     poly.x = [];
     poly.y = [];
+
     
     init = true; % boolean to know if we are drawing the first point or not
     
@@ -2381,6 +2514,7 @@ initialize;
       if strcmp(get(figId,'SelectionType'),'normal')
         if init
           point = get(axesId,'CurrentPoint');
+          %disp(sprintf('[%d,%d]\n',point(1,1),point(1,2)));
           poly.x = [point(1,1)];
           poly.y = [point(1,2)];
           poly.hole = false;
@@ -2398,6 +2532,7 @@ initialize;
           set(figId,'WindowButtonUpFcn',@selecFreeHandButtonUp);
         else
           point = get(axesId,'CurrentPoint');
+          %disp(sprintf('[%d,%d]\n',point(1,1),point(1,2)));
           poly.x = [poly.x; point(1,1)];
           poly.y = [poly.y; point(1,2)];
           set(lineId, 'XData',poly.x , 'YData', poly.y);
@@ -2409,6 +2544,7 @@ initialize;
 
     function selecFreeHandMotionDown(objId, eventData)
       point = get(axesId,'CurrentPoint');
+      % disp(sprintf('[%d,%d]\n',point(1,1),point(1,2)));
       poly.x = [poly.x; point(1,1)];
       poly.y = [poly.y; point(1,2)];
       set(lineId, 'XData', poly.x, 'YData', poly.y);
@@ -2458,7 +2594,7 @@ initialize;
       indFreq = round(convAxesToIndY(point(1,2)));
 
       % !!! sometime log of 0, do something here
-      spec = 20*log10(abs(coeff.ori(1:nbPlottedFreq,:)));
+      spec = 20*log10(abs(coeff.ori(1:nbPlottedFreq,:))+eps);
 
       refLevel = spec(indFreq, indTime);
 
@@ -3100,7 +3236,7 @@ initialize;
     % compute a polygon corresponding to the whole signal
     temp = convIndToAxesX([1, 2]);
     temp = (temp(2) - temp(1)) / 2;
-    tempX = convIndToAxesX([1, size(coeff.ori, 2)]);
+    tempX = convIndToAxesX([1, size(coeff.oriC, 2)]);
     tempX = [tempX(1) - temp, tempX(2) + temp]; 
     temp = convIndToAxesY([1, 2]);
     temp = (temp(2) - temp(1)) / 2;

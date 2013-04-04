@@ -133,7 +133,10 @@ if flags.do_compile
       [status,output]=system('mkoctfile -p CC');
       system([make_exe,' CC=',output]);
     else
-      filesExist(cellfun(@(fEl) [bp,'mex',filesep,fEl,'.dll'],fftw_lib_names,'UniformOutput',false));
+        if ispc
+            filesExist(cellfun(@(fEl) [bp,'mex',filesep,fEl,'.dll'], ...
+                               fftw_lib_names,'UniformOutput',false));
+        end;
       cd([bp,'src']);
       [status,result]=system([make_exe, ' -f ',makefilename,...
                   ' MATLABROOT=','"',matlabroot,'"']);
@@ -147,11 +150,14 @@ if flags.do_compile
   
   if do_mex
     fprintf('========= Compiling %s interfaces ==========\n', extname);
-    filesExist(cellfun(@(fEl) ['mex',filesep,fEl,'.dll'],fftw_lib_names,'UniformOutput',false));
+    if ispc
+        filesExist(cellfun(@(fEl) ['mex',filesep,fEl,'.dll'], ...
+                           fftw_lib_names,'UniformOutput',false));
+    end;
     cd([bp,'mex']);
     [status,result]=system([make_exe, ' -f ',makefilename,...
                   ' MATLABROOT=','"',matlabroot,'"',...
-                  ' MEXEXT=',mexext]);
+                  ' EXT=',mexext]);
     if(~status)
       disp('Done.');
     else

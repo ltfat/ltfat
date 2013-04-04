@@ -13,8 +13,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
    int L;
    double *cin_r,*cin_i, *cout_r,*cout_i;
    
-   int ii;
-   
    /* Get matrix dimensions.*/
    L = mxGetM(prhs[0]); 
 

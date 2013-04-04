@@ -8,20 +8,25 @@ DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DLTFAT_BACKEND_EXPORTS
 
 include filedefs.mk
 
-files_unix = $(addprefix d,$(allfiles)) $(addprefix s,$(allfiles)) dltfat_blaslapack.o sltfat_blaslapack.o
-files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
+toCompile = $(files) $(files_blaslapack)
 
-all: libltfat.a
+DFILES = $(addprefix d,$(files)) $(files_notypechange)
+SFILES = $(addprefix s,$(files))
 
-libltfat.a: $(files_unix) c-safe-memalloc.o 
-	ar rvu libltfat.a $(files_unix) c-safe-memalloc.o
+files_unix = $(addprefix d,$(toCompile)) $(addprefix s,$(toCompile)) $(files_notypechange)
+#files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
+
+all: double single
+
+double: $(DFILES) Makefile_unix
+	ar rvu libltfat.a $(DFILES) 
 	ranlib libltfat.a
 	cp -f libltfat.a ../lib
 
-nomem: $(files_unix) 
-	ar rvu libltfat-nomem.a $(files_unix)
-	ranlib libltfat-nomem.a
-	cp -f libltfat-nomem.a ../lib
+single: $(SFILES) Makefile_unix
+	ar rvu libltfatf.a $(SFILES) 
+	ranlib libltfatf.a
+	cp -f libltfatf.a ../lib
 
 sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
 	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
