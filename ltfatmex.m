@@ -124,8 +124,8 @@ if flags.do_compile
     disp('========== Compiling libltfat ==============');
     cd([bp,'src']);
     if isoctave
-      [status,output]=system('mkoctfile -p CC');
-      system([make_exe,' CC=',output]);
+        %[status,output]=system('mkoctfile -p CC');
+      system([make_exe,' -f ',makefilename])
     else
         if ispc
             filesExist(cellfun(@(fEl) [bp,'mex',filesep,fEl,'.dll'], ...
@@ -149,15 +149,21 @@ if flags.do_compile
         filesExist(cellfun(@(fEl) ['mex',filesep,fEl,'.dll'], ...
                            fftw_lib_names,'UniformOutput',false));
     end;
-    cd([bp,'mex']);
     clear mex; 
-    [status,result]=system([make_exe, ' -f ',makefilename,...
-                  ' MATLABROOT=','"',matlabroot,'"',...
-                  ' EXT=',mexext]);
+
+    if isoctave
+        cd([bp,'oct']);
+        [status,result]=system([make_exe, ' -f ',makefilename])
+    else
+        cd([bp,'mex']);
+        [status,result]=system([make_exe, ' -f ',makefilename,...
+                            ' MATLABROOT=','"',matlabroot,'"',...
+                            ' EXT=',mexext]);
+    end;
     if(~status)
       disp('Done.');
     else
-      error('Failed to build MEX interfaces: %s \n',result);
+      error('Failed to build %s interfaces: %s \n',upper(extname),result);
     end
   end;
   
