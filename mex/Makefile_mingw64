@@ -18,6 +18,7 @@ CFLAGS=-shared -O3 -Wall -s -std=c99 -m64 -I../thirdparty -I../src
 
 include filedefs.mk
 
+MEXBASE = $(MEXBASESAFE)
 MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 
 MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include" -DMATLAB_MEX_FILE

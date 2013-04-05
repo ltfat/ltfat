@@ -1,4 +1,4 @@
-MEXBASE=\
+MEXBASESAFE=\
 	comp_col2diag\
 	comp_dgt_fb \
 	comp_dgt_long \
@@ -26,7 +26,9 @@ MEXBASE=\
 	comp_iatrousfilterbank_td \
 	comp_filterbank_td \
 	comp_ifilterbank_td \
-#	comp_gabdual_long \
-#	comp_gabtight_long  \
-#	comp_idgtreal_fac \
-#	comp_idgtreal_fb	
+
+MEXBASEMORE =\
+	comp_gabdual_long \
+	comp_gabtight_long  \
+	comp_idgtreal_fac \
+	comp_idgtreal_fb	

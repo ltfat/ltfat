@@ -3,10 +3,21 @@
 #
 # make -f Makefile_unix MATLABROOT=/usr/local/MATLAB/R2011a  EXT=$(mexext)
 
+ifndef MATLABROOT
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
+  MATLABROOT=/usr/local/MATLAB/R2011a/
+endif
+
+ifndef EXT
+  $(warning EXT variable is udefined. Using default EXT=mexa64)
+  EXT=mexa64
+endif
+
 CFLAGS=-shared -O3 -Wall -s -std=c99 -I../thirdparty -I../src -I$(MATLABROOT)/extern/include -L../lib
 
 include filedefs.mk
 
+MEXBASE = $(MEXBASESAFE) 
 MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 
 MEXLIBS=-lmex -lmx

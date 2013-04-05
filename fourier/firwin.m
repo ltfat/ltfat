@@ -12,7 +12,7 @@ function [g,info]=firwin(name,M,varargin);
 %
 %   `firwin(name,x)` where *x* is a vector will sample the window
 %   definition as the specified points. The normal sampling interval for
-%   the windows is $-.5\leq x<.5$.
+%   the windows is $-.5< x <.5$.
 %
 %   In the following PSL means "Peak Sidelobe level", and the main lobe
 %   width is measured in normalized frequencies.
@@ -149,7 +149,7 @@ function [g,info]=firwin(name,M,varargin);
 %
 %   References: opsc89 harris1978 nuttall1981 wesfreid1993
  
-%   AUTHOR : Peter L. Søndergaard.
+%   AUTHORS : Peter L. Søndergaard, Nicki Holighaus.
 %   REFERENCE: NA
   
 if nargin<2
@@ -213,40 +213,35 @@ if numel(M)==1
         
         % Switch centering if necessary
         if cent==0 && p1~=p2
-            cent=0.5;
+            cent=.5;
         end;
         
-        if cent==0.5 && p1~=p2
+        if cent~=0 && p1~=p2
             cent=1;
         end;
         
     end;
     
     % This is the normally used sampling vector.
-    x   = ((0:M-1)'+cent)/M;
-
-    % Use this if window length must be odd or even
-    Modd   = M-mod(M+1,2);
-    Meven  = M-mod(M,2);
-    xodd   = ((0:Modd-1)'+cent)/Modd;
-    xeven  = ((0:Meven-1)'+cent)/Meven;
-
-    xoddnew=xodd-.5;
-    xevennew=xeven-.5;
     
-    xnew=x-.5;
-
+    if mod(M,2) == 0 % For even M the sampling interval is [-.5,.5-1/M]
+        x = [0:1/M:.5-1/M,-.5:1/M:-1/M]';
+    else % For odd M the sampling interval is [-.5+1/(2M),.5-1/(2M)]
+        x = [0:1/M:.5-.5/M,-.5+.5/M:1/M:-1/M]';
+    end
+    
+    x = x+cent/M;
+    
 else
     % Use sampling vector specified by the user
-    xnew=M+.5;
-    xoddnew=M+.5;
+    x=M;
 end;
 
 
 do_sqrt=0;
 switch name    
  case {'hanning','hann','nuttall10'}
-  g=(0.5-0.5*cos(2*pi*xnew));
+  g=(0.5+0.5*cos(2*pi*x));
   info.ispu=1;
   
  case {'sine','cosine','sqrthann'}
@@ -255,116 +250,79 @@ switch name
   do_sqrt=1;
   
  case {'hamming','nuttall01'}  
-  if cent==0
-    g=0.54-0.46*cos(2*pi*(xoddnew));
-  else
-    g=0.54-0.46*cos(2*pi*(xevennew));
-  end;
+  g=0.54+0.46*cos(2*pi*(x));
   
  case {'square','rect'} 
-  if cent==0
-    g=ones(numel(xoddnew),1);
-  else
-    g=ones(numel(xevennew),1);
-  end;
-
+  g=double(abs(x) < .5);
+  
  case {'halfsquare','halfrect'} 
-  g=ones(numel(xevennew)/2,1);
+  g=double(abs(x) < .25);
+  g(abs(x) == .25) = .5;
   info.ispu=1;
   
  case {'sqrthalfsquare','sqrthalfrect'}
-  g=ones(numel(xevennew)/2,1);
+  g=firwin('halfsquare',M,varargin{:});
   info.issqpu=1;
   do_sqrt=1;
   
  case {'tria','triangular','bartlett'}
-  %if flags.do_wp
-    g = 2*abs(xnew);
-%     gw=linspace(1,0,Meven/2+1).';
-%     g=[gw;flipud(gw(2:end-1))];
-%   %g=pbspline(M,1,Meven/2,flags.centering);
-%   else
-%     gw=((0:Meven/2-1)/(Meven/2)+0.5).';
-%     g=[gw;flipud(gw)];
-%   end;
+  g=1-2*abs(x);
   info.ispu=1;
   
  case {'sqrttria'}
   g=firwin('tria',M,flags.centering);
   info.issqpu=1;
   do_sqrt=1;
-  %if flags.do_hp && rem(M,2)==1
-  %  % Remove small error in this case
-  %  g((M+1)/2)=0;
-  %end;
-  
+
  case {'blackman'}
-  g=0.42-0.5*cos(2*pi*(xnew))+0.08*cos(4*pi*(xnew));
+  g=0.42+0.5*cos(2*pi*(x))+0.08*cos(4*pi*(x));
 
  case {'blackman2'}
-  g=7938/18608-9240/18608*cos(2*pi*(xnew))+1430/18608*cos(4*pi*(xnew));
+  g=7938/18608+9240/18608*cos(2*pi*(x))+1430/18608*cos(4*pi*(x));
 
  case {'nuttall','nuttall12'}
-  g = 0.355768 - 0.487396*cos(2*pi*(xnew)) + 0.144232*cos(4*pi*(xnew)) ...
-      - 0.012604*cos(6*pi*(xnew));
+  g = 0.355768+0.487396*cos(2*pi*(x))+0.144232*cos(4*pi*(x)) ...
+      +0.012604*cos(6*pi*(x));
   
  case {'itersine','ogg'}
-  g=sin(pi/2*sin(pi*(xnew)).^2);
+  g=sin(pi/2*cos(pi*x).^2);
   info.issqpu=1;
   
  case {'nuttall20'}
-  g=3/8-4/8*cos(2*pi*(xnew))+1/8*cos(4*pi*(xnew));
+  g=3/8+4/8*cos(2*pi*(x))+1/8*cos(4*pi*(x));
 
  case {'nuttall11'}
-  g=0.40897-0.5*cos(2*pi*(xnew))+0.09103*cos(4*pi*(xnew));
+  g=0.40897+0.5*cos(2*pi*(x))+0.09103*cos(4*pi*(x));
   
  case {'nuttall02'}
-   if cent==0
-     g=0.4243801 - 0.4973406*cos(2*pi*(xoddnew)) ...
-         + 0.0782793*cos(4*pi*(xoddnew));
-   else
-     g=0.4243801-0.4973406*cos(2*pi*(xevennew)) ... 
-         + 0.0782793*cos(4*pi*(xevennew));
-   end;  
-
+   g=0.4243801+0.4973406*cos(2*pi*(x))+0.0782793*cos(4*pi*(x));
+   
  case {'nuttall30'}
-  g = 10/32 - 15/32*cos(2*pi*(xnew)) + 6/32*cos(4*pi*(xnew)) ... 
-      - 1/32*cos(6*pi*(xnew));
+  g = 10/32+15/32*cos(2*pi*(x))+6/32*cos(4*pi*(x))+1/32*cos(6*pi*(x));
   
  case {'nuttall21'}
-  g = 0.338946 - 0.481973*cos(2*pi*(xnew)) + 0.161054*cos(4*pi*(xnew)) ... 
-      - 0.018027*cos(6*pi*(xnew));
+  g = 0.338946+0.481973*cos(2*pi*(x))+0.161054*cos(4*pi*(x)) ... 
+      +0.018027*cos(6*pi*(x));
 
  case {'nuttall03'}
-   if cent==0
-     g=0.3635819 - 0.4891775*cos(2*pi*(xoddnew)) ...
-         + 0.1365995*cos(4*pi*(xoddnew)) -0.0106411*cos(6*pi*(xoddnew));
-   else
-     g=0.3635819 - 0.4891775*cos(2*pi*(xevennew)) ...
-         + 0.1365995*cos(4*pi*(xevennew)) -0.0106411*cos(6*pi*(xevennew));
-   end;
+  g=0.3635819+0.4891775*cos(2*pi*(x))+0.1365995*cos(4*pi*(x)) ...
+      +0.0106411*cos(6*pi*(x));
   
  otherwise
   error('Unknown window: %s.',name);
 end;
 
-if numel(M) == 1
-  % Add zeros if needed.
-  if length(g)<M
-    g=middlepad(g,M,flags.centering);
-  end;
+% Force the window to 0 outside (-.5,.5)
+g = g.*(abs(x) < .5);    
 
-  if keyvals.taper<1
+if numel(M) == 1 && keyvals.taper<1
+
     % Perform the actual tapering.
     g=[ones(p1,1);g;ones(p2,1)];  
-  end;
+    
+end;   
 
-else    
-  g = g.*(xnew > 0).*(xnew < 1);    
-end;
-
-% Do sqrt if needed. This must be done /after/ middlepad, so do it at
-% this point.
+% Do sqrt if needed. 
 if do_sqrt
   g=sqrt(g);
 end;
