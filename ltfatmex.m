@@ -73,7 +73,7 @@ else
 end;
 
 fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
-
+clear mex;
 % -------------- Handle cleaning --------------------------------
 if flags.do_clean
     
@@ -85,7 +85,6 @@ if flags.do_clean
   
   if do_lib
     disp('========= Cleaning libltfat ===============');
-    clear mex;  
     cd([bp,'src']);
     [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
     disp('Done.');    
@@ -97,7 +96,6 @@ if flags.do_clean
       deletefiles([bp,'oct'],'*.oct');
       deletefiles([bp,'oct'],'*.o');
     else
-     clear mex;  
      cd([bp,'mex']);
      [status,result]=system([make_exe, ' -f ',makefilename,' clean',...
                      ' EXT=',mexext]); 
@@ -108,6 +106,7 @@ if flags.do_clean
     disp('========== Cleaning GPC ==============');
     %deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
     cd([bp,'thirdparty',filesep,'PolygonClip']);
+    clear mex; 
     [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
   
@@ -133,6 +132,7 @@ if flags.do_compile
                                fftw_lib_names,'UniformOutput',false));
         end;
       cd([bp,'src']);
+      clear mex; 
       [status,result]=system([make_exe, ' -f ',makefilename,...
                   ' MATLABROOT=','"',matlabroot,'"']);
       if(~status)
@@ -150,6 +150,7 @@ if flags.do_compile
                            fftw_lib_names,'UniformOutput',false));
     end;
     cd([bp,'mex']);
+    clear mex; 
     [status,result]=system([make_exe, ' -f ',makefilename,...
                   ' MATLABROOT=','"',matlabroot,'"',...
                   ' EXT=',mexext]);
@@ -164,6 +165,7 @@ if flags.do_compile
     disp('========= Compiling GPC ===============');
     % Compile the PolygonClip interface to GPC for use with mulaclab
     cd([bp,'thirdparty',filesep,'PolygonClip']);
+    clear mex; 
     [status,result]=system([make_exe, ' -f ',makefilename,...
                      ' MATLABROOT=','"',matlabroot,'"',...
                      ' EXT=',mexext]);
