@@ -1,6 +1,6 @@
-function f = ifwt2(c,g,J,Ls,varargin)
+function f = ifwt2(c,g,J,varargin)
 %IFWT2   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt2(c,g,J,Ls)
+%   Usage:  f = ifwt2(c,g,J)
 %           f = ifwt2(c,g,J,Ls,...)
 %
 %   Input parameters:
@@ -29,7 +29,7 @@ if nargin<3
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~(iscell(c)||isnumeric(c))
+if ~isnumeric(c)
   error('%s: Unrecognized coefficient format.',upper(mfilename));
 end;
 
@@ -40,8 +40,11 @@ g = fwtinit(g,'syn');
 %% PARSE INPUT
 definput.keyvals.Ls=[];    
 definput.import = {'fwt','fwt2'};
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+if (isempty(Ls))
+   Ls = size(c);
+end
 
 if (numel(Ls)==1)
   Ls = [Ls,Ls];
@@ -67,8 +70,8 @@ if flags.do_standard
 end;
 
 if flags.do_tensor
-  f = ifwt(c,g,J,Ls(1),1,'per');
-  f = ifwt(f,g,J,Ls(2),2,'per');
+  f = ifwt(c,g,J,Ls(1),'dim',1,'per');
+  f = ifwt(f,g,J,Ls(2),'dim',2,'per');
 end;
 
 %% ----- step 1 : Run calc -----------

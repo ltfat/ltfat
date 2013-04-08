@@ -80,7 +80,11 @@ else
    ext = flags.ext;
    %If dim is not specified use first non-singleton dimension.
    if(isempty(dim))
-       dim=find(size(c)>1,1);
+      dim=find(size(c)>1,1);
+   else
+      if(~any(dim==[1,2]))
+         error('%s: Parameter *dim* should be 1 or 2.',upper(mfilename));
+      end
    end
    
    % Initialize the wavelet filters structure
@@ -95,6 +99,10 @@ end
 
    %% ----- Change c to correct shape according to the dim.
    if(isnumeric(c))
+      %Check *Lc*
+       if(sum(Lc)~=size(c,dim))
+         error('%s: Coefficient subband lengths does not comply with parameter *Ls*.',upper(mfilename));
+       end
       %Change format
       c =  wavpack2cell(c,Lc,dim);
    elseif(iscell(c))

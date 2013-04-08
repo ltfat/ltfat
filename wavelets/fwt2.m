@@ -106,7 +106,7 @@ elseif(flags.do_tensor)
    c = fwt(f,h,J,'dim',1,'per');
    c = fwt(c,h,J,'dim',2,'per');
 else
-    error('%s: Should not get here. Bug somewhere else.',upper(mfilename))
+    error('%s: Should not get here. Bug somewhere else.',upper(mfilename));
 end
 
 
