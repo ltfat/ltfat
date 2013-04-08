@@ -1,7 +1,7 @@
 function [c,info] = ufwt(f,h,J,varargin)
 %UFWT  Undecimated Fast Wavelet Transform 
 %   Usage:  c = ufwt(f,h,J);
-%           [c,info] = ...
+%           [c,info] = ufwt(...);
 %
 %   Input parameters:
 %         f     : Input data.

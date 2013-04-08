@@ -62,7 +62,7 @@ function [] = mulaclab(file)
 %   alongside LTFAT, but under different licensing conditions. Please see
 %   the `ltfat/thirdparty/gpc/GPC-README.pdf` file for the exact conditions.
 %
-%
+
 % questions : do we want to :
 % - have the possibility to use Gaussian window? (any window?)
 % - be able to export the symbol? 

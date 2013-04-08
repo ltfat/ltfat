@@ -1,7 +1,7 @@
 function [c,info]=wfbt(f,wt,varargin)
 %WFBT   Wavelet FilterBank Tree
 %   Usage:  c=wfbt(f,wt,...);
-%           [c,info]=...
+%           [c,info]=wfbt(...);
 %
 %   Input parameters:
 %         f   : Input data.
