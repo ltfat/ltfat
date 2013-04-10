@@ -1,4 +1,4 @@
-function [] = mulaclab(file)
+function [] = mulaclab(file,varargin)
 %MULACLAB Graphical interface for audio processing using frame multipliers
 %   Usage: mulaclab;
 % 
@@ -62,9 +62,9 @@ function [] = mulaclab(file)
 %   alongside LTFAT, but under different licensing conditions. Please see
 %   the `ltfat/thirdparty/gpc/GPC-README.pdf` file for the exact conditions.
 %
-
+%
 % questions : do we want to :
-% - have the possibility to use Gaussian window? (any window?)
+% - have the possibility to use Gaussian window? (any window?) - check
 % - be able to export the symbol? 
 % - be able to export the coeff? 
 % - automatically generate a matlab file applying the corresponding gabor
@@ -171,6 +171,12 @@ function [] = mulaclab(file)
 %
 % - coeff.mod: (matrix, dimension 1: frequency, dimension 2:time)
 %   coefficients for the modified signal sig.mod
+%
+% - coeff.oriC: (matrix, dimension 1: frequency, dimension 2:time)
+%   plotted spectrogram as image in DB
+%
+% - coeff.info: (struct)
+%   additonal data necesary for the reconstruction
 %
 % sel: (struct) data describing the graphical selection
 % The graphical selection contains several layers, each layer containing
@@ -584,34 +590,12 @@ sel = struct;
 sig = struct;
 undoData = {};
 visu = struct;
-
-frameGabor.type = 'Gabor';
-frameGabor.def.winType = 'hann';
-frameGabor.def.winLen = 256;
-frameGabor.def.hop = round(frameGabor.def.winLen / 4);
-frameGabor.def.nbFreq = frameGabor.def.winLen;
-
-frameGabReal.type = 'Gabreal';
-frameGabReal.def.winType = 'hann';
-frameGabReal.def.winLen = 256;
-frameGabReal.def.hop = round(frameGabReal.def.winLen / 4);
-frameGabReal.def.nbFreq = frameGabReal.def.winLen;
-
-frameDWT.type = 'DWT';
-frameDWT.def.wavelet = 'sym10';
-frameDWT.def.J = 8;
-
-frameUDWT.type = 'UDWT';
-frameUDWT.def.wavelet = 'sym10';
-frameUDWT.def.J = 7;
-
-frameWFBT.type = 'WFBT';
-frameWFBT.def.wavelet = 'sym10';
-frameWFBT.def.J = 7;
-
-frameUWFBT.type = 'UWFBT';
-frameUWFBT.def.wavelet = 'sym10';
-frameUWFBT.def.J = 4;
+symbol = struct;
+visucommon = struct;
+export = struct;
+export.xLim = 800;
+export.limitXaxesRes = true;
+export.symbol = {};
 
 % Dictionary of structures field names string expansions
 mulaclabDict = struct('winType','Window type',...
@@ -620,11 +604,31 @@ mulaclabDict = struct('winType','Window type',...
                       'winLen','Window length',...
                       'wavelet','Wavelet type',...
                       'J','Decomposition depth');
-                  
-
-supportedFrames = {frameGabReal, frameGabor, frameDWT,frameWFBT,frameUDWT,frameUWFBT};
+                   
+% Cellaray of supported frames                  
 supportedFramesIdx = 1;
-hop = frameGabReal.def.hop;
+supportedFrames = ...
+{...
+  struct('type','Gabreal','def',...
+    struct('winType','hann','winLen',256,'hop',round(256 / 4),...
+           'nbFreq',256)),... 
+  ...
+  struct('type','Gabor','def',...
+    struct('winType','hann','winLen',256,'hop',round(256 / 4),...
+           'nbFreq',256)),...
+  ...
+  struct('type','DWT','def',...
+    struct('wavelet','sym10','J',8)),...
+  ...
+  struct('type','UDWT','def',...
+    struct('wavelet','sym10','J',8)),...
+  ...
+  struct('type','WFBT','def',...
+    struct('wavelet','sym10','J',7)),... 
+  ...
+  struct('type','UWFBT','def',...
+    struct('wavelet','sym10','J',4)),...   
+};
 
 iconpath=[ltfatbasepath,'mulaclab',filesep,'icons',filesep];
 
@@ -662,49 +666,70 @@ initialize(file);
        % Timeout occured, we close the box automatically.
       close(h);
     end;
-
-            
-    if(isempty(file))
-       % get an original signal or decomposition to have something to show
-       [fileName, pathName, filterIndex] = uigetfile('*.wav;*.mat',...
-         'Open original signal or decomposition'); 
-
-       if fileName == 0
-         % the user pressed cancel, we stop here
-         return;
-       end
-    else
-       fileName = file;
-       pathName = '';
-    end
     
+    loadFile = 0;
+    if nargin==0 || isempty(file)
+         % get an original signal or decomposition to have something to show
+          [fileName, pathName, filterIndex] = uigetfile('*.wav;*.mat',...
+            'Open original signal or decomposition'); 
 
+          if fileName == 0
+            % the user pressed cancel, we stop here
+            return;
+          end
+          loadFile = 1;
+     elseif(ischar(file))
+          fileName = file;
+          pathName = '';
+          loadFile = 1;
+    end     
+
+    if loadFile
       [~, ~, ext] = fileparts(fileName);
       switch ext
         case '.wav'
           % read the orginal signal in a wave file
           [sig.ori, sig.sampFreq, sig.nbBit] =...
             wavread([pathName, fileName]);
-          if size(sig.ori, 2) > 1
-            % multichannel wave, we keep only the first channel
-            sig.ori = sig.ori(:, 1);
-          end
           sig.real = true;
         case '.mat'
-          % read the original signal decomposition in a mat file
+           % read the original signal decomposition in a mat file
           data = load([pathName, fileName]);
           if isfield(data, 'frame') && isfield(data, 'savedSig')
-            frame = data.frame;
-            sig = data.savedSig;
+           frame = data.frame;
+           sig = data.savedSig;
           else
-            errordlg(...
-              [fileName ' is not a valid signal decomposition file']);
-            return;
+           errordlg(...
+             [fileName ' is not a valid signal decomposition file']);
+           return;
           end
       end
+    elseif(nargin>=1)
+       definput.keyvals.Fs=[];
+       [flags,kv,Fs]=ltfatarghelper({'Fs'},definput,varargin);
+       if(isempty(Fs))
+          error('%s: Second parameter: sampling frequency is missing. ',upper(mfilename));
+       end
+       
+       if(numel(find(size(file)>1))>1)
+          error('%s: Input has to be one channel signal.',upper(mfilename));
+       end
+       %normalize and change to column vector
+       sig.ori=file(:)/max(abs(file));
+       sig.real=isreal(file);
+       sig.sampFreq = Fs;
+       sig.nbBit = 16;
+    else
+        errordlg(sprintf('%s: Unrecognized input parameters.',upper(mfilename))   );
+           return;
+    end
 
-    sig.mod = sig.ori;
+    if size(sig.ori, 2) > 1
+       % multichannel wave, we keep only the first channel
+       sig.ori = sig.ori(:, 1);
+    end
     
+    sig.mod = sig.ori;
     % intialize the different parameters of the application
     initializeParameter;
     
@@ -712,9 +737,6 @@ initialize(file);
     frame = default.frame;
     %coeff.ori = calculateCoeff(sig.ori);
     %coeff.mod = coeff.ori;
-    
-    % initialize selection
-    resetSel;
     
     % intialize audioplayers
     %initializePlayer;
@@ -736,11 +758,14 @@ initialize(file);
       'Label','Open original signal',...
       'Callback',@openOriSig);
     uimenu(menuFileId,...
-      'Label','Open original signal decomposition',...
+      'Label','Import original signal decomposition',...
       'Callback',@openOriDecompo);
     uimenu(menuFileId,...
       'Label','Import selection',...
       'Callback',@importSel);
+    uimenu(menuFileId,...
+      'Label','Import symbol',...
+      'Callback',@importSymbol);
     uimenu(menuFileId,...
       'Label','Save modified signal',...
       'Callback',@saveModSig,...
@@ -752,8 +777,11 @@ initialize(file);
       'Label','Save modified signal decomposition',...
       'Callback',@saveModDecompo);
     uimenu(menuFileId,...
-      'Label','Export selection',...
+      'Label','Export selection as ...',...
       'Callback',@exportSel);
+    uimenu(menuFileId,...
+      'Label','Export symbol as ...',...
+      'Callback',@exportSymbol);
 
     menuEditId = uimenu(gui.mainFigId,...
       'Label','Edit');
@@ -767,9 +795,7 @@ initialize(file);
       'Accelerator', 'y',...
       'enable', 'off',...
       'Callback',@redo);
-    
-   
-   
+
     menuFrameId = uimenu(gui.mainFigId,...
       'Label','Frame');
     menuFrameTypeId = uimenu(menuFrameId,...
@@ -820,14 +846,14 @@ initialize(file);
     end
 
     % create audioplayers panel
-    drawAudioplayer(gui.panelId(1));
-
-
-    % create visualization tools panel
-    drawVisualizationTool(gui.panelId(2));
-
-    % create selection tools panel
-    drawSelectionTool(gui.panelId(3));
+     drawAudioplayer(gui.panelId(1));
+% 
+% 
+%     % create visualization tools panel
+     drawVisualizationTool(gui.panelId(2));
+% 
+%     % create selection tools panel
+     drawSelectionTool(gui.panelId(3));
 
     % activate the current tool
     % changeTool([], [], gui.curTool);
@@ -835,6 +861,8 @@ initialize(file);
     % end of initialization, show the interface to the user
     set(gui.mainFigId, 'Visible', 'on');
     resetMulaclab();
+    resetSel();
+    resetSymbol();
   end
 
   function initializeParameter()
@@ -860,17 +888,15 @@ initialize(file);
     default.sel.lay.lineStyle = '-';
     default.sel.lay.poly = [];
     default.sel.lay.label = 'Layer';
-
-    % default frame definition
-    % default.frame = frameGabor;
     default.frame = supportedFrames{supportedFramesIdx};
-%     default.frame.type = 'Gabor';
-%     default.frame.funcAna = @dgt;
-%     default.frame.funcSyn = @idgt;
-%     default.frame.def.winType = 'hann';
-%     default.frame.def.winLen = 256;
-%     default.frame.def.hop = round(default.frame.def.winLen / 4);
-%     default.frame.def.nbFreq = default.frame.def.winLen;
+    
+    default.symbol.data.name = 'Selection';
+    default.symbol.data.val = [];
+    default.symbol.data.invert = false;
+    default.symbol.curSymb = 1;
+
+    
+    default.zerotodb = -40;
     
     % define parameters for the gui (graphical user interface)
 
@@ -897,7 +923,7 @@ initialize(file);
     gui.panelHeight(1) = 91;
     gui.panelTitle{1} = 'Audioplayer';
 
-    gui.panelHeight(2) = 163;
+    gui.panelHeight(2) = 220;
     gui.panelTitle{2} = 'Visualization';
 
     gui.panelHeight(3) = 260;
@@ -994,7 +1020,6 @@ initialize(file);
     % !!! check if some other toolboxes are needed (signal processing?)
   end
 
-
 % ___________________ COMPUTATIONAL FUNCTIONS _____________________________
 
   function coef = calculateCoeff(f)
@@ -1052,13 +1077,25 @@ initialize(file);
        otherwise
           error('%s: Unrecognized frame type',upper(mfilename));
     end
+    if export.limitXaxesRes
+        C=interp1(linspace(0,1,size(C,2)),C.',linspace(0,1,export.xLim),'nearest');
+        C=C.';
+    end
   end
 
   function mult = convSymbToCoefFormat(symb)
      switch lower(frame.type)
         % Classical gabor coeff format 
         case {'gabreal','gabor'}
-           mult = symb;
+            if export.limitXaxesRes
+              L = size(coeff.ori,2);
+              Lplot = size(symb,2);
+              mult=interp1(linspace(0,1,Lplot),symb.',linspace(0,1,L),'nearest');
+              mult = mult.';
+            else
+              mult = symb;
+           end
+           
         % Cell array containing column vectors format
         case 'wfbt'
            M = numel(coeff.ori);
@@ -1066,7 +1103,7 @@ initialize(file);
            Lc = cellfun(@(cEl) size(cEl,1),coeff.ori);
            mult = cell(size(coeff.ori));
            for m=1:M
-              mult{m} = interp1(1:Lplot,symb(m,:),linspace(1,Lplot,Lc(m)),'nearest').';
+              mult{m} = interp1(linspace(0,1,Lplot),symb(m,:),linspace(0,1,Lc(m)),'nearest').';
            end
         % FWT specific coefficient format
         case 'dwt'
@@ -1094,35 +1131,86 @@ initialize(file);
 
   end
 
-  function cmod = applyMultiplier(c,symb)
-     if(isnumeric(c)&&isnumeric(symb))
-        cmod = c.*symb;
-     elseif(iscell(c)&&iscell(symb))
-        cmod = cellfun(@(x,y) x.*y,c,symb,'UniformOutput',false);
+  function symb = convCoefFormatToSymb(mult)
+     switch lower(frame.type)
+        % Classical gabor coeff format 
+        case {'gabreal','gabor'}
+            if export.limitXaxesRes
+              L = size(coeff.ori,2);
+              Lmult = size(mult,2);
+              symb=interp1(linspace(0,1,Lmult),mult.',linspace(0,1,L),'nearest');
+              symb = symb.';
+            else
+              symb=mult;
+           end
+
+        % Cell array containing column vectors format
+        case 'wfbt'
+           M = numel(coeff.ori);
+           Lsymb = size(coeff.oriC,2);
+           Lc = cellfun(@(cEl) size(cEl,1),mult);
+           symb = zeros(size(coeff.oriC));
+           for m=1:M
+              symb(m,:) = interp1(linspace(0,1,Lc(m)),mult{m},linspace(0,1,Lsymb),'nearest');
+           end
+        % FWT specific coefficient format
+        case 'dwt'
+           Lc = coeff.info.Lc;
+           Lcstart = cumsum([1;Lc(1:end-1)]);
+           Lcend = cumsum(Lc);
+           symb = zeros(size(coeff.oriC));
+           %mult = zeros(sum(Lc),1);
+           M = numel(Lc);
+           Lplot = size(symb,2);
+           for m=1:M
+             symb(m,:) = interp1(linspace(1,Lplot,Lc(m)),mult(Lcstart(m):Lcend(m)),1:Lplot,'nearest');
+           end  
+        % ufilterbak and all wavelet functions beginning with u
+        case {'udwt','uwfbt'}
+           L = size(coeff.oriC,2);
+           M = size(coeff.ori,2);
+           Lmult = size(mult,1);
+           symb = zeros(size(coeff.oriC));
+           for m=1:M
+              symb(m,:) = interp1(1:Lmult,mult(:,m),linspace(1,Lmult,L),'nearest');
+           end
+        otherwise
+          error('%s: Unrecognized frame type',upper(mfilename));
+     end
+
+  end
+
+  function applyMultiplier(c,mult)
+     if(isnumeric(c)&&isnumeric(mult))
+        coeff.mod = c.*mult;
+     elseif(iscell(c)&&iscell(mult))
+        coeff.mod = cellfun(@(x,y) x.*y,c,mult,'UniformOutput',false);
      else
         error('%s: Unrecognized frame type',upper(mfilename));
      end
+     
+     sig.mod  = recFromCoeff(coeff.mod);    
+     updatePlayerMod;
+     coeff.mod = calculateCoeff(sig.mod);
+     modInd = find(strcmp('modified', {visu.label}), 1);
+     if ~visu(modInd).visible
+       toggleModVisu;
+     end
+     updateVisu;
   end
 
   function applySel(objId, eventData)    
     % convert the selection to get the symbol of the multiplier and apply 
     % the multiplier
-    
-    % symb = convSelToSymb;
-    coeff.mod = applyMultiplier(coeff.ori, convSelToSymb());
-    %coeff.mod = coeff.ori .* symb;
-    
-    sig.mod  = recFromCoeff(coeff.mod);    
-    updatePlayerMod;
-    coeff.mod = calculateCoeff(sig.mod);
-    modInd = find(strcmp('modified', {visu.label}), 1);
-    if ~visu(modInd).visible
-      toggleModVisu;
+    if isempty(symbol.data(symbol.curSymb).val)    
+      mult = convSymbToCoefFormat(convSelToSymb());
+    else
+      mult = convSymbToCoefFormat(symbol.data(symbol.curSymb).val);
     end
-    updateVisu;
+     applyMultiplier(coeff.ori, mult);
   end
 
-  function mult = convSelToSymb()
+  function symb = convSelToSymb()
      symb = ones(size(coeff.oriC));
     
     for indLay = 1:length(sel.lay)
@@ -1135,7 +1223,7 @@ initialize(file);
           ' is currently empty']);
       end
     end
-    mult = convSymbToCoefFormat(symb);
+
   end
 
   function mask = convPolyToMask(poly)
@@ -1147,12 +1235,12 @@ initialize(file);
     % and also working with a smaller mask when signal is real
     for ind = 1:length(poly)
       if poly(ind).hole
-        mask = mask - poly2mask(convAxesToIndX(poly(ind).x),...
-          convAxesToIndY(poly(ind).y),...
+        mask = mask - poly2mask(round(convAxesToIndX(poly(ind).x)),...
+          round(convAxesToIndY(poly(ind).y)),...
           size(mask,1), size(mask,2));
       else
-        mask = mask + poly2mask(convAxesToIndX(poly(ind).x),...
-          convAxesToIndY(poly(ind).y),...
+        mask = mask + poly2mask(round(convAxesToIndX(poly(ind).x)),...
+          round(convAxesToIndY(poly(ind).y)),...
           size(mask,1), size(mask,2));
       end
     end
@@ -1176,8 +1264,9 @@ initialize(file);
       case 'smoothBorder'
         gain = sel.lay(indLay).param(1).val;
         threshold = sel.lay(indLay).param(2).val;
-        symb = bwdist(~mask);
-        symb(find(symb > threshold)) = threshold;
+        % bwdist returns single
+        symb = double(bwdist(~mask));
+        symb(symb > threshold) = threshold;
         symb = symb * (gain-1)/threshold + 1;
       case 'fill'
         % !!! first filling test, just interpolating in 3D the modulus
@@ -1198,8 +1287,9 @@ initialize(file);
         % create the matrix defining the neighbourhood
         mat = computeEllipse(freqRadius, timeRadius); 
         % !!! this could be a more general filter if we want
-        
-        temp1 = roifilt2(mat, abs(coeff.ori).^2 .* (1-mask), neighbour);
+        %mat  = mat./norm(mat);
+        %temp1 = roifilt2(mat, abs(coeff.ori).^2 .* (1-mask), neighbour);
+        temp1 = roifilt2(mat, 10.^(coeff.oriC/20) .* (1-mask), neighbour);
         temp2 = roifilt2(mat, 1-mask, neighbour);
         
         % !!! specifiy in comment that we have to do this to take into
@@ -1226,15 +1316,15 @@ initialize(file);
         % !!! there will be division by zero problem in the following
         % solve this problem
         symb(sub2ind(size(symb), ind1Mask, ind2Mask)) = valInterp ./...
-          abs(coeff.ori(sub2ind(size(coeff.ori), ind1Mask, ind2Mask)));
+          abs(coeff.oriC(sub2ind(size(coeff.oriC), ind1Mask, ind2Mask)));
 
         % !!! temporary modif: should be removed when modification are done
         % so that symetrisation is done on symbol and not mask when signal
         % is real
-        if sig.real
-          temp = ceil(size(symb, 1)/2);
-          symb(end:-1:end-temp+2,:) = conj(symb(2:temp,:));
-        end
+%         if sig.real
+%           temp = ceil(size(symb, 1)/2);
+%           symb(end:-1:end-temp+2,:) = conj(symb(2:temp,:));
+%         end
       case 'fillNoise'
         % other hole filling test, using coefficients taken from a noise
         % estimation of the level in the neighbourhood of the selection
@@ -1253,7 +1343,7 @@ initialize(file);
         mat = computeEllipse(freqRadius, timeRadius);
         % !!! this could be a more general filter if we want
         
-        temp1 = roifilt2(mat, abs(coeff.ori).^2 .* (1-mask), neighbour);
+        temp1 = roifilt2(mat, 10.^(coeff.oriC/20).* (1-mask), neighbour);
         temp2 = roifilt2(mat, 1-mask, neighbour);
         
         % !!! specifiy in comment that we have to do this to take into
@@ -1284,8 +1374,8 @@ initialize(file);
         % compute the transform of a noise
         % !!! should be done in a nicer way with an external function 
         % so that it works with any kind of frame
-        noiseLen = (max(ind2Mask) - min(ind2Mask) + 1) * frame.def.hop ;
-        noise = rand(noiseLen, 1) - 0.5;
+        %noiseLen = (max(ind2Mask) - min(ind2Mask) + 1) * ( numel(sig.ori)/size(coeff.oriC,2)) ;
+        noise = rand(numel(sig.ori), 1) - 0.5;
 
         % win = firwin(frame.def.winType, frame.def.winLen); 
         % coeffNoise = frame.funcAna(noise, win, frame.def.hop, frame.def.nbFreq);
@@ -1309,8 +1399,8 @@ initialize(file);
         % absolute value of the  coefficients, it could be more meaningfull
         % to work with the sqaure of the modulus due to its possible
         % intepretation a energy ditribution
-        
-        meanLevelNoise = sum(abs(coeffNoise(sub2ind(size(coeffNoise), ...
+        coeffNoiseSymb = convCoefFormatToSymb(coeffNoise);
+        meanLevelNoise = sum(abs(coeffNoiseSymb(sub2ind(size(coeffNoiseSymb), ...
           ind1Mask, ind2Mask-min(ind2Mask)+1)))) / length(ind1Mask);
         
         % !!! tests
@@ -1323,9 +1413,9 @@ initialize(file);
 %           meanLevelNoise);
 
         symb(sub2ind(size(symb), ind1Mask, ind2Mask)) = valInterp .*...
-          coeffNoise(sub2ind(size(coeffNoise), ind1Mask,...
+          coeffNoiseSymb(sub2ind(size(coeffNoiseSymb), ind1Mask,...
           ind2Mask-min(ind2Mask)+1)) ./...
-          (coeff.ori(sub2ind(size(coeff.ori), ind1Mask, ind2Mask)) *...
+          (coeffNoiseSymb(sub2ind(size(coeffNoiseSymb), ind1Mask, ind2Mask)) *...
           meanLevelNoise);
 
 %         meanLevelOri = sum(abs(coeff.ori(sub2ind(size(coeff.ori), ...
@@ -1339,10 +1429,10 @@ initialize(file);
         % !!! temporary modif: should be removed when modification are done
         % so that symetrisation is done on symbol and not mask when signal 
         % is real
-        if sig.real
-          temp = ceil(size(symb, 1)/2);
-          symb(end:-1:end-temp+2,:) = conj(symb(2:temp,:));
-        end
+%         if sig.real
+%           temp = ceil(size(symb, 1)/2);
+%           symb(end:-1:end-temp+2,:) = conj(symb(2:temp,:));
+%         end
         
     end % of switch
     
@@ -1351,7 +1441,8 @@ initialize(file);
   function xData = convIndToAxesX(ind)
     % convert scale from image index to scale used by axes along X axe
     % xData = (ind-1) * (frame.def.hop / sig.sampFreq);
-    xData = (ind-1) * (hop / sig.sampFreq);
+    hop = numel(sig.ori)/size(coeff.oriC,2);
+    xData = (ind) * (hop / sig.sampFreq);
   end
 
   function ind = convAxesToIndX(xData)
@@ -1359,24 +1450,24 @@ initialize(file);
     % an integer index
     % convert scale from scale used by axes to image index along X axe
     % ind = xData * (sig.sampFreq / frame.def.hop) + 1;
-    ind = xData * (sig.sampFreq / hop) + 1;
+    hop = numel(sig.ori)/size(coeff.oriC,2);
+    ind = xData * (sig.sampFreq / hop);
   end
 
   function yData = convIndToAxesY(ind)
     % convert scale from image index to scale used by axes along Y axe
     % yData = (ind-1) * (sig.sampFreq / frame.def.nbFreq);
-    Ylim = coeff.oriYlim;
-    yData = (ind-1) * ((Ylim(2)-Ylim(1)) / size(coeff.oriC,1));
+    Ylim = visucommon.oriYlim;
+    yData = (ind) * ((Ylim(2)-Ylim(1)) / (size(coeff.oriC,1))) +Ylim(1);
   end
 
   function ind = convAxesToIndY(yData)
     % !!! there is no round (on purpose), should be added if we really want
     % an integer index
     % convert scale from scale used by axes to image index along Y axe
-    Ylim = coeff.oriYlim;
-    ind = yData * (size(coeff.oriC,1) / (Ylim(2)-Ylim(1)) );% + 1;
+    Ylim = visucommon.oriYlim;
+    ind = (yData-Ylim(1)) * (size(coeff.oriC,1) / (Ylim(2)-Ylim(1)) );
   end
-
 
   function ellipse =computeEllipse(dim1Radius, dim2Radius)
     ellipse = zeros(2*dim1Radius+1, 2*dim2Radius+1);
@@ -1415,7 +1506,7 @@ initialize(file);
     coeff.ori = calculateCoeff(sig.ori);
     sig.mod = sig.ori;
     coeff.mod = coeff.ori;
-    resetSel;
+    resetSel();
     undoData = {};
     modInd = find(strcmp('modified', {visu.label}), 1);
     if visu(modInd).visible
@@ -1424,9 +1515,11 @@ initialize(file);
     updateVisu(true); % update visualization with reset of axes limits
     
     oriInd = find(strcmp('originalMain', {visu.label}), 1);
-    coeff.oriYlim = get(visu(oriInd).axesId,'Ylim');
+    visucommon.oriYlim = get(visu(oriInd).axesId,'Ylim');
+    
     % activate the current tool
     changeTool([], [], gui.curTool);
+    
   end
 
   function openOriSig(objId, eventData)   
@@ -1510,6 +1603,33 @@ initialize(file);
     save([pathName, fileName], 'sel');
   end
 
+  function exportSymbol(objId, eventData)
+    [fileName, pathName] = uiputfile('*.png', 'Export symbol as...');
+    if fileName == 0
+      % user pressed cancel, stop here
+      return;
+    end
+    cm = get(gui.mainFigId,'Colormap');
+    oriInd = find(strcmp('originalMain', {visu.label}), 1);
+    Clim = get(visu(oriInd).axesId,'CLim');
+    oriIdx = round((flipud(coeff.oriC)-Clim(1))/(Clim(2)-Clim(1))*255)+1;
+    oriExt = zeros([size(coeff.oriC),3]);
+    oriExt(:,:,1) = reshape(cm(oriIdx,1),size(coeff.oriC));
+    oriExt(:,:,2) = reshape(cm(oriIdx,2),size(coeff.oriC));
+    oriExt(:,:,3) = reshape(cm(oriIdx,3),size(coeff.oriC));
+    
+% exporting imported symbols is not supported (does not make sence)   
+%     symb = symbol.data(symbol.curSymb).val;
+%     if(isempty(symb))
+%        absSymb = flipud(abs(convSelToSymb()));
+%     else
+%        absSymb = flipud(abs(symb)); 
+%     end
+
+    absSymb = flipud(abs(convSelToSymb()));
+    imwrite(oriExt,[pathName, fileName],'png','Alpha',absSymb,'bitdepth',16);
+  end
+
   function importSel(objId, eventData)
     [fileName, pathName] = uigetfile('*.mat', 'Import selection');
     if fileName == 0
@@ -1542,6 +1662,39 @@ initialize(file);
     drawAllSel;
   end
 
+ function importSymbol(objId, eventData)
+    [fileName, pathName] = uigetfile('*.png', 'Import symbol');
+    if fileName == 0
+      % user pressed cancel, stop here
+      return;
+    end
+    [imag, ~, alpha] = imread([ pathName,fileName]);
+    if(size(imag,3)>1)
+      if isempty(alpha)
+        errordlg(sprintf('%s does not contain alpha channel.',fileName));
+        return;
+      end
+      mask = double(alpha)/double(max(alpha(:)));
+    else
+      mask = double(imag)/double(max(imag(:)));
+    end
+
+    if any(size(coeff.oriC)~=size(mask))
+      errordlg([fileName ' is not a valid symbol image. The dimensions are different.']);
+      return;
+    end
+    
+    %limit
+    mmss = 10^(default.zerotodb/20);
+    mask(abs(mask)<mmss) = mmss;
+
+    addSymbolListItem(flipud(mask));
+    symbol.curSymb = numel(symbol.data);
+    set(gui.symbListId, 'Value',symbol.curSymb);
+    updateSymbolList();
+    handleSymb();
+  end
+
   % Menu callback function. When frame parameters are changed.
   function changeFrameDef(objId, eventData)
     newFrame = changeFrameDialog(frame);
@@ -1553,6 +1706,8 @@ initialize(file);
 
   % When frame type is changed
   function changeFrameType(objId, eventData)
+    resetSymbol(); 
+     
     supportedFramesIdx = get(objId,'UserData'); 
     newFrame = supportedFrames{supportedFramesIdx};
     %newFrame = changeGaborFrameDialog(frame);
@@ -1854,6 +2009,7 @@ initialize(file);
            % plot for the visualisation of play position during playback
            lim = axis(visu(ind).axesId);
            % xPos = convIndToAxesX((player.position-1) / frame.def.hop);
+            hop = numel(sig.ori)/size(coeff.oriC,2);
             xPos = convIndToAxesX((player.position-1) / hop);
            hold(visu(ind).axesId, 'on');
            player.positionPlotId(ind) = plot(visu(ind).axesId, [xPos xPos],...
@@ -1939,7 +2095,6 @@ initialize(file);
 
   function [axesId] = updateVisuOriSpec(visuData)
     [axesId, coeff.oriC] = updateVisuCommon(coeff.ori,false,visuData);
-    hop = round(numel(sig.ori)/size(coeff.oriC,2)); 
     title('Original signal');
   end
 
@@ -2286,6 +2441,7 @@ initialize(file);
 
   function updatePlayPosition(objId, eventData)
     % pos = convIndToAxesX((get(objId, 'CurrentSample')-1) / frame.def.hop);
+    hop = numel(sig.ori)/size(coeff.oriC,2);
     pos = convIndToAxesX((get(objId, 'CurrentSample')-1) / hop);
     
     for ind = 1:length(player.positionPlotId)
@@ -2405,7 +2561,7 @@ initialize(file);
       'Value', false,...
       'BackgroundColor', gui.buttonBackgroundColor,...
       'Position', buttonPos(1, 1,...
-        gui.marginSub+[round(gui.buttonWidth/2),...
+        gui.marginSub+[0,...
         gui.marginSub(2)+gui.textHeight]),...
       'CallBack', {@changeTool, 'freehand'});
     
@@ -2427,7 +2583,7 @@ initialize(file);
       'Value', false,...
       'BackgroundColor', gui.buttonBackgroundColor,...
       'Position', buttonPos(2, 1,...
-        gui.marginSub+[round(gui.buttonWidth/2),...
+        gui.marginSub+[0,...
         gui.marginSub(2)+gui.textHeight]),...
       'CallBack', {@changeTool, 'level'});
     
@@ -2436,6 +2592,29 @@ initialize(file);
     gui.tool(end).function = @selecLevel;
     gui.tool(end).param.name = 'Tolerance';
     gui.tool(end).param.val = '10'; % value of the tolerance in dB
+    
+    
+    freeHandIcon = imread([iconpath,'subbandsel.png']);
+    
+    buttonSubbandId = uicontrol(...
+      'Parent', gui.toolPanelId,...
+      'HandleVisibility', 'off',...
+      'Style', 'togglebutton',...
+      'String', '',...
+      'TooltipString', 'Subband selection',...
+      'CData', freeHandIcon,...
+      'Min', false,...
+      'Max', true,...
+      'Value', false,...
+      'BackgroundColor', gui.buttonBackgroundColor,...
+      'Position', buttonPos(3, 1,...
+        gui.marginSub+[0,...
+        gui.marginSub(2)+gui.textHeight]),...
+      'CallBack', {@changeTool, 'subband'});
+    
+    gui.tool(end+1).buttonId = buttonSubbandId;
+    gui.tool(end).name = 'subband';
+    gui.tool(end).function = @selecSubband;
   end
 
   function changeTool(objId, eventData, toolName)
@@ -2457,7 +2636,6 @@ initialize(file);
     gui.tool(curInd).function(curInd);
     drawToolParam(curInd);
   end
-
 
   function drawToolParam(toolInd)    
     
@@ -2591,12 +2769,13 @@ initialize(file);
       point = get(visu(oriInd).axesId,'CurrentPoint');
 
       indTime = round(convAxesToIndX(point(1,1)));
-      indFreq = round(convAxesToIndY(point(1,2)));
+      indFreq = ceil(convAxesToIndY(point(1,2)));
+      %disp(sprintf('%i, %i',point(1,2),indFreq));
 
       % !!! sometime log of 0, do something here
-      spec = 20*log10(abs(coeff.ori(1:nbPlottedFreq,:))+eps);
+      %spec = 20*log10(abs(coeff.ori(1:nbPlottedFreq,:))+eps);
 
-      refLevel = spec(indFreq, indTime);
+      refLevel = coeff.oriC(indFreq, indTime);
 
       levelTol = str2num(gui.tool(toolInd).param.val);
       if isempty(levelTol) || levelTol < 0
@@ -2608,7 +2787,7 @@ initialize(file);
       lowLevel = refLevel - levelTol;
       highLevel = refLevel + levelTol;
 
-      mask = (spec >= lowLevel) & (spec <= highLevel);
+      mask = (coeff.oriC >= lowLevel) & (coeff.oriC <= highLevel);
       mask = bwselect(mask, indTime, indFreq, 4);
 
       poly = mask2poly(mask, indTime, indFreq);
@@ -2616,14 +2795,83 @@ initialize(file);
       % !!! see if we simplify the selection or not
       
       for ind = 1:length(poly)
-        poly(ind).x = convIndToAxesX(poly(ind).x);
-        poly(ind).y = convIndToAxesY(poly(ind).y);
+        poly(ind).x = convIndToAxesX(floor(poly(ind).x));
+        poly(ind).y = convIndToAxesY(floor(poly(ind).y));
       end
 
       combineSel(poly);
       drawCurSel;
     end
     
+  end
+
+  function selecSubband(toolInd)
+    oldShowSymb = [];
+
+
+    oriInd = find(strcmp('originalMain', {visu.label}), 1);
+    imageId = findobj(visu(oriInd).axesId, 'Type', 'Image');
+    figId = gui.mainFigId;
+    
+    set(imageId, 'ButtonDownFcn', @selecSubbandButtonDown);
+    
+    selectedInFreq = zeros(size(coeff.oriC,1));
+    startInFreq = 0;
+    function selecSubbandButtonDown(objId, eventData)
+      oldShowSymb =  gui.showSymb;
+      gui.showSymb = false;
+      handleSymb();
+      point = get(visu(oriInd).axesId,'CurrentPoint');
+      startInFreq = ceil(convAxesToIndY(point(1,2)));
+      selecSubbandMotionDown(objId, eventData);
+      set(figId, 'WindowButtonMotionFcn', @selecSubbandMotionDown);
+      set(figId,'WindowButtonUpFcn',@selecSubbandButtonUp);
+    end
+    
+    function selecSubbandMotionDown(objId, eventData)
+      point = get(visu(oriInd).axesId,'CurrentPoint');
+      indFreq = ceil(convAxesToIndY(point(1,2)));
+       if(indFreq>size(coeff.oriC,1) || indFreq<1 )
+         return;
+      end
+
+      selDif = indFreq - startInFreq;
+      if selDif>0
+         range = startInFreq:indFreq;
+      else
+         range = indFreq:startInFreq;
+         range = range(end:-1:1);
+      end
+      if(all(selectedInFreq(range)==1))
+      return;
+      end
+      
+
+         poly.x = [1; size(coeff.oriC,2); size(coeff.oriC,2); 1];
+         poly.y = [range(1)+0.5;range(1)+0.5;range(end)-0.5;range(end)-0.5];
+         poly.hole = false;
+      
+         for ind = 1:length(poly)
+           poly(ind).x = convIndToAxesX(floor(poly(ind).x));
+           poly(ind).y = convIndToAxesY(floor(poly(ind).y));
+         end
+
+      combineSel(poly);
+      drawCurSel;
+      selectedInFreq(range) = 1;
+    end
+    
+    function selecSubbandButtonUp(objId, eventData)
+       gui.showSymb = oldShowSymb;
+       handleSymb();
+       set(figId,'WindowButtonMotionFcn','');
+       set(figId,'WindowButtonUpFcn','');
+       selectedInFreq = zeros(size(coeff.oriC,1));
+    end
+    
+    set(figId,'WindowButtonMotionFcn','');
+    set(figId,'WindowButtonUpFcn','');
+
   end
 
   function [poly] = mask2poly(mask, indTime, indFreq)
@@ -2843,6 +3091,7 @@ initialize(file);
   end
 
   function drawAllSel()
+     
     handleSymb;
     oriInd = find(strcmp('originalMain', {visu.label}), 1);
     hold(visu(oriInd).axesId, 'on');
@@ -2870,8 +3119,8 @@ initialize(file);
     delete(gui.symbImageId);
     gui.symbImageId = [];
     if gui.showSymb
-      showSymb;
-      gui.showSymb = false;
+      showSymb();
+      %gui.showSymb = false;
     end
   end
 
@@ -2880,7 +3129,22 @@ initialize(file);
     oriInd = find(strcmp('originalMain', {visu.label}), 1);
     axesId = visu(oriInd).axesId;
     hold(axesId, 'on');
-    absSymb = abs(convSelToSymb);
+    
+    symb = symbol.data(symbol.curSymb).val;
+    if(isempty(symb))
+       absSymb = abs(convSelToSymb());
+    else
+%        if export.limitXaxesRes
+%         absSymb=interp1(linspace(0,1,size(symb,2)),abs(symb).',linspace(0,1,export.xLim),'nearest');
+%         absSymb=absSymb.';
+%        else
+         absSymb = abs(symb); 
+%       end
+    end
+
+     if(symbol.data(symbol.curSymb).invert)
+       absSymb = max([1,max(absSymb(:))])-absSymb;
+    end
     
     % Symbol is represented using transparency, with two different
     % colors for absolute values of the symbol in [0,1] and for values > 1. 
@@ -2893,8 +3157,9 @@ initialize(file);
     
     % !!! I should probably use a dB scale for transparency
     
-    nbTime = size(coeff.ori, 2);
+    nbTime = size(coeff.oriC, 2);
     % construct the image with white for value > 1 and black in other parts
+   
     tempIm = repmat(reshape(color1, [1 1 3]), [nbPlottedFreq nbTime 1]);
     [ind1, ind2] = find(absSymb(1:nbPlottedFreq, :) > 1);
     
@@ -2915,8 +3180,8 @@ initialize(file);
     tempAlpha(ind1, ind2) = 1 - 1./absSymb(ind1, ind2);
     
     gui.symbImageId = image(...
-      convIndToAxesX([1, nbTime]),...
-      convIndToAxesY([1, nbPlottedFreq]),...
+      convIndToAxesX([0, nbTime]),...
+      convIndToAxesY([0.5, nbPlottedFreq-0.5]),...
       tempIm,...
       'alphaData',gui.symbOpacity * tempAlpha,...
       'Parent', axesId);
@@ -2925,7 +3190,6 @@ initialize(file);
     changeTool([], [], gui.curTool);
   end
   
-
   function switchSelMode(objId, eventData)
     sel.mode = get(get(objId, 'SelectedObject'),'Tag');
   end
@@ -3141,10 +3405,12 @@ initialize(file);
 
   function updateLayerList()
     layCell = {};
-    for ind = 1:length(sel.lay)
-      layCell{end+1} = sel.lay(ind).label;
+    if isfield(sel,'lay')
+      for ind = 1:length(sel.lay)
+        layCell{end+1} = sel.lay(ind).label;
+      end
+      set(gui.layListId, 'String', layCell);
     end
-    set(gui.layListId, 'String', layCell);
   end
   
   function changeSelLayColor(objId, eventData)
@@ -3236,11 +3502,11 @@ initialize(file);
     % compute a polygon corresponding to the whole signal
     temp = convIndToAxesX([1, 2]);
     temp = (temp(2) - temp(1)) / 2;
-    tempX = convIndToAxesX([1, size(coeff.oriC, 2)]);
+    tempX = convIndToAxesX([0, size(coeff.oriC, 2)]);
     tempX = [tempX(1) - temp, tempX(2) + temp]; 
     temp = convIndToAxesY([1, 2]);
     temp = (temp(2) - temp(1)) / 2;
-    tempY = convIndToAxesY([1, nbPlottedFreq]);
+    tempY = convIndToAxesY([0, size(coeff.oriC, 1)]);
     tempY = [tempY(1) - temp, tempY(2) + temp]; 
     poly.x = [tempX(1); tempX(2); tempX(2); tempX(1)];
     poly.y = [tempY(1); tempY(1); tempY(2); tempY(2)];
@@ -3262,7 +3528,6 @@ initialize(file);
     sel.lay(sel.curLay).poly = [];
     drawAllSel;
   end
-
 
   function delSelLay(objId, eventData)
     % check that we leave at least one layer
@@ -3286,13 +3551,15 @@ initialize(file);
     updateLayerList;
   end
 
-
   function changeSelLay(objId, eventData)
     sel.curLay = get(gui.layListId, 'Value');
     drawLayParam(sel.curLay);
   end
 
   function drawLayParam(layInd)
+    if ~isfield(sel,'lay')
+       return;
+    end
     child = findobj(gui.layPanelId);
     child = setdiff(child, gui.layPanelId);
     delete(child);
@@ -3339,6 +3606,7 @@ initialize(file);
       return;
     end
     gui.symbOpacity = temp;
+    handleSymb();
   end
 
 % __________________ VISUALIZATION TOOLS FUNCTIONS ________________________
@@ -3346,20 +3614,41 @@ initialize(file);
   function drawVisualizationTool(uipanelId)
     subPanelHeight = gui.margin(2) + gui.buttonHeight +...
       gui.textHeight + gui.fontSize + 4;
-    
+   
+    visPanelPos = get(uipanelId,'Position');
+  
+    symbolPanelHeight = 2*subPanelHeight;
+
+     currPos = 0;
     symbolPanelId = uipanel(...
       'Parent', uipanelId,...
       'Title', 'Symbol',...
       'TitlePosition', 'centertop',...
       'FontSize', gui.fontSize, ...
       'Units', 'pixels',...
-      'Position', [1, 1, gui.panelWidth-4 , subPanelHeight]);
+      'Position', [1, currPos+1, gui.panelWidth-4 , symbolPanelHeight]);
+    currPos = currPos + symbolPanelHeight;
     
+     gui.symbListId = uicontrol(...
+      'Parent', uipanelId,...
+      'HandleVisibility', 'off',...
+      'Style', 'listbox',...
+      'Fontsize', gui.fontSize,...
+      'String', '',...
+      'BackgroundColor', [1 1 1],...
+      'Position', [gui.marginSub(1),...
+        gui.marginSub(2)+2*gui.textHeight+2*gui.vertDist+6,...
+        gui.panelWidth-2*gui.margin(1)-1, 50],...
+      'CallBack',@changeSelSymb);
+    
+
+    % draw layer panel
+    % drawLayerPanel(symbolPanelId);
+   
     showSymbolIcon = imread([iconpath,'showsymbol.png']);
-    
     symbId = uicontrol(...
       'Parent', symbolPanelId,...
-      'Style', 'pushbutton',...
+      'Style', 'togglebutton',...
       'String', '',...
       'TooltipString', 'Show multiplier symbol',...
       'CData', showSymbolIcon,...
@@ -3390,6 +3679,9 @@ initialize(file);
         gui.editWidth,...
         gui.textHeight],...
       'CallBack',@changeOpacity);
+   
+   
+   
     
     colormapPanelId = uipanel(...
       'Parent', uipanelId,...
@@ -3397,8 +3689,9 @@ initialize(file);
       'TitlePosition', 'centertop',...
       'FontSize', gui.fontSize, ...
       'Units', 'pixels',...
-      'Position', [1, subPanelHeight+1,...
+      'Position', [1, currPos+1,...
         gui.panelWidth-4 , subPanelHeight]);
+     currPos = currPos + subPanelHeight;
     
     colormapIcon = imread([iconpath,'colormap.png']);
     
@@ -3440,7 +3733,7 @@ initialize(file);
       'TitlePosition', 'centertop',...
       'FontSize', gui.fontSize, ...
       'Units', 'pixels',...
-      'Position', [1, 2*subPanelHeight+1, subpanelSize(1)]);
+      'Position', [1, currPos+1, subpanelSize(1)]);
     
     zoomInIcon = imread([iconpath,'zoomin.png']);
     
@@ -3502,9 +3795,17 @@ initialize(file);
   end
 
   function clicSymb(objId, eventData)
-    delSel;
-    gui.showSymb = true;
-    drawAllSel;
+    button_state = get(objId,'Value');
+    if button_state == get(objId,'Max')
+       delSel;
+       gui.showSymb = true;
+       drawAllSel;
+    elseif button_state == get(objId,'Min')
+       delSel;
+       gui.showSymb = false;
+       drawAllSel;
+    end 
+
   end
 
   function switchZoomIn(toolInd)
@@ -3566,7 +3867,6 @@ initialize(file);
     exploreSetRect(get(visu(oriInd).axesId, 'XLim'),...
       get(visu(oriInd).axesId, 'YLim'));
   end
-
 
   function editColormap(objId, eventData)
     colormapeditor(gui.mainFigId);
@@ -3725,6 +4025,51 @@ initialize(file);
         'YData', yLim(indYData));
     end
   end
+
+  function changeSelSymb(objId, eventData)
+    symbol.curSymb = get(gui.symbListId, 'Value');
+    handleSymb();
+  end
+
+  function resetSymbol() % erase sel and put it to default value
+    symbol = default.symbol;
+    if isfield(gui, 'symbListId')
+      if ishandle(gui.symbListId)
+        set(gui.symbListId, 'Value', symbol.curSymb);
+        drawSymbolParam(symbol.curSymb);
+        updateSymbolList;
+      end
+    end
+  end
+
+  function updateSymbolList()
+    symCell = {};
+    if isfield(symbol,'data')
+       for ind = 1:length(symbol.data)
+         symCell{end+1} = symbol.data(ind).name;
+       end
+       set(gui.symbListId, 'String', symCell);
+    end
+  end
+
+  function drawSymbolParam(symbInd)
+  % nothing to do yet
+  end
+
+  function addSymbolListItem(symb)
+    symbol.data(end+1).val = symb;
+    symbol.data(end).name = 'Imported';
+    updateSymbolList();
+  end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% HELPER FUNCTIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
 
 end
 
