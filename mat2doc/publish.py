@@ -5,6 +5,7 @@ cwd=os.getcwd()+os.sep
 
 tbwww='/home/peter/nw/ltfatwww'
 
+versionstring='0.9.1'
 # ------- do not edit below this line ----------
 
 # Import the localconf file, it should be placed in the same directory
@@ -13,12 +14,14 @@ tbwww='/home/peter/nw/ltfatwww'
 sys.path.append(cwd)
 import localconf
 
+outputdir=localconf.outputdir
+
 sys.path.append(localconf.mat2docdir)
 import mat2doc
 import printdoc
 
 # Safely create directories if they are missing
-printdoc.safe_mkdir(localconf.outputdir)
+printdoc.safe_mkdir(outputdir)
 printdoc.safe_mkdir(localconf.tmpdir)
 
 # This is run if the file is called from the command line
@@ -31,18 +34,8 @@ if len(sys.argv)>3:
 projectdir=localconf.projects[project]
 host=localconf.webserver[project]
 remotedir=localconf.remotedir[project]
-projectname=project # For mat2docconf
-outputdir=localconf.outputdir # For mat2docconf
 
-#sys.path.append(projectdir+'mat2doc')
-#from mat2docconf import *
-
-conffile=projectdir+'mat2doc/mat2docconf.py'
-newlocals=locals()
-execfile(conffile,globals(),newlocals)
-
-
-filesdir=localconf.outputdir+project+'-files'+os.sep
+filesdir=outputdir+project+'-files'+os.sep
 printdoc.safe_mkdir(filesdir)
 
 def createcompressedfile(srcdir,fname,target):
@@ -52,7 +45,7 @@ def createcompressedfile(srcdir,fname,target):
     # mac  - Unix lineendings, 8859 encoding and zip compression
     tmpworkdir=localconf.tmpdir+project
     fname=filesdir+fname
-    srcdir=localconf.outputdir+srcdir+os.sep
+    srcdir=outputdir+srcdir+os.sep
 
     printdoc.safe_mkdir(tmpworkdir)
     printdoc.rmrf(tmpworkdir)
@@ -69,17 +62,17 @@ def createcompressedfile(srcdir,fname,target):
     if target=='win':
         os.system('rm '+fname+'.zip')
         printdoc.unix2dos(tmpworkdir)
-        printdoc.convertencoding(tmpworkdir,'ISO-8859-1')
+        #printdoc.convertencoding(tmpworkdir,'ISO-8859-1')
         os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+project)
 
     if target=='mac':
         os.system('rm '+fname+'.zip')
-        printdoc.convertencoding(tmpworkdir,'ISO-8859-1')
+        #printdoc.convertencoding(tmpworkdir,'ISO-8859-1')
         os.system('cd '+localconf.tmpdir+'; zip -r '+fname+'.zip '+project)
     
 def createbinaryfile(filename,ext,target):
-    tmpworkdir=localconf.outputdir+project+'-mat'        
-    bdir=localconf.outputdir+project+'-'+ext
+    tmpworkdir=outputdir+project+'-mat'        
+    bdir=outputdir+project+'-'+ext
 
     printdoc.safe_mkdir(bdir)
     printdoc.rmrf(bdir)
@@ -87,7 +80,7 @@ def createbinaryfile(filename,ext,target):
     s='cp -r '+tmpworkdir+'/* '+bdir
     os.system(s)
 
-    s='cp -r '+localconf.outputdir+project+'-'+ext+'-addon/* '+bdir
+    s='cp -r '+outputdir+project+'-'+ext+'-addon/* '+bdir
     os.system(s)
 
     createcompressedfile(project+'-'+ext,project+'-'+versionstring+'-'+ext,target)
@@ -121,7 +114,7 @@ def runcommand(todo,redomode='auto'):
     if 'releasemat' in todo:
         runcommand('gitrepomat')
 
-        matdir=localconf.outputdir+project+'-mat'+os.sep
+        matdir=outputdir+project+'-mat'+os.sep
 
         # Remove unwanted files
         os.system('rm -rf '+matdir+'testing')
@@ -135,7 +128,7 @@ def runcommand(todo,redomode='auto'):
         printdoc.printdoc(project,'tex',redomode)
 
     if 'texmake'==todo:
-        s=localconf.outputdir+project+'-tex/'
+        s=outputdir+project+'-tex/'
         os.system('cp '+projectdir+'mat2doc/tex/* '+s)
 
         os.system('cd '+s+'; make')
@@ -143,12 +136,12 @@ def runcommand(todo,redomode='auto'):
         printdoc.printdoc(project,'tex',redomode)
 
     if 'texupload'==todo:
-        texdir=localconf.outputdir+project+'-tex'+os.sep
+        texdir=outputdir+project+'-tex'+os.sep
         s='rsync -av '+texdir+'ltfat.pdf '+host+':'+remotedir
         os.system(s)
 
     if todo=='php':
-        phpdir=localconf.outputdir+project+'-php'+os.sep
+        phpdir=outputdir+project+'-php'+os.sep
         os.system('mat2doc php '+projectdir)
         s='rsync -av '+phpdir+' '+host+':'+remotedir
         os.system(s)    
@@ -165,14 +158,14 @@ def runcommand(todo,redomode='auto'):
     
     if 'stagewww'==todo:
         www='/home/project-web/ltfat/htdocs/'
-        publishwww=localconf.outputdir+'ltfatwww/'
+        publishwww=outputdir+'ltfatwww/'
         printdoc.git_stageexport(tbwww,publishwww)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'releasewww'==todo:
         www='/home/project-web/ltfat/htdocs/'
-        publishwww=localconf.outputdir+'ltfatwww/'
-        printdoc.git_repoexport(tbwww,'master','ltfatwww',localconf.outputdir)
+        publishwww=outputdir+'ltfatwww/'
+        printdoc.git_repoexport(tbwww,'master','ltfatwww',outputdir)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'binary'==todo:
@@ -185,7 +178,7 @@ def runcommand(todo,redomode='auto'):
 
 
     #if 'upload' in todo:
-    #    ddir=localconf.outputdir+'ltfat_sourceforge/ltfat/'
+    #    ddir=outputdir+'ltfat_sourceforge/ltfat/'
     #    os.system('rsync -av '+ddir+
     #              ' soender,ltfat@frs.sourceforge.net:/home/frs/project/l/lt/ltfat/ltfat/')
 

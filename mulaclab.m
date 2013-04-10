@@ -61,7 +61,7 @@ function [] = mulaclab(file,varargin)
 %   `<http://www.cs.man.ac.uk/~toby/gpc/>`_. This library is distributed
 %   alongside LTFAT, but under different licensing conditions. Please see
 %   the `ltfat/thirdparty/gpc/GPC-README.pdf` file for the exact conditions.
-%
+
 %
 % questions : do we want to :
 % - have the possibility to use Gaussian window? (any window?) - check
