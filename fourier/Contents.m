@@ -4,14 +4,14 @@
 %
 %  Basic Fourier analysis
 %    DFT            -  Unitary discrete Fourier transform.
-%    IDFT           -  Inverse of DFT.
+%    IDFT           -  Inverse of |dft|.
 %    FFTREAL        -  FFT for real valued signals.
-%    IFFTREAL       -  Inverse of FFTREAL.
+%    IFFTREAL       -  Inverse of |fftreal|.
 %    FFTINDEX       -  Index of positive and negative frequencies.
 %    NEXTFASTFFT    -  Next efficient FFT size.
 %    MODCENT        -  Centered modulo operation.
 %    PLOTFFT        -  Plot FFT coefficients.
-%    PLOTFFTREAL    -  Plot FFTREAL coefficients.
+%    PLOTFFTREAL    -  Plot |fftreal| coefficients.
 %    CONVOLVE       -  Fast, non-periodic convolution.
 %
 %  Simple operations on periodic functions

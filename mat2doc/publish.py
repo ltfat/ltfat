@@ -3,8 +3,6 @@
 import sys,os
 cwd=os.getcwd()+os.sep
 
-tbwww='/home/peter/nw/ltfatwww'
-
 versionstring='0.9.1'
 # ------- do not edit below this line ----------
 
@@ -37,6 +35,16 @@ remotedir=localconf.remotedir[project]
 
 filesdir=outputdir+project+'-files'+os.sep
 printdoc.safe_mkdir(filesdir)
+
+if project=='ltfat':
+    publishwww=outputdir+'ltfatwww/'
+    www='/home/project-web/ltfat/htdocs/'
+    tbwww='/home/peter/nw/ltfatwww'
+
+if project=='amtoolbox':
+    publishwww=outputdir+'amtwww/'
+    www='/home/project-web/amtoolbox/htdocs/'
+    tbwww='/home/peter/nw/amtwww'
 
 def createcompressedfile(srcdir,fname,target):
     # The following targets are supported:
@@ -157,14 +165,10 @@ def runcommand(todo,redomode='auto'):
         runcommand('texupload')
     
     if 'stagewww'==todo:
-        www='/home/project-web/ltfat/htdocs/'
-        publishwww=outputdir+'ltfatwww/'
         printdoc.git_stageexport(tbwww,publishwww)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 
     if 'releasewww'==todo:
-        www='/home/project-web/ltfat/htdocs/'
-        publishwww=outputdir+'ltfatwww/'
         printdoc.git_repoexport(tbwww,'master','ltfatwww',outputdir)
         os.system('rsync -av '+publishwww+' '+host+':'+www);
 

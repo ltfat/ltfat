@@ -18,7 +18,7 @@
 %    ISGRAMREAL     -  Iterative reconstruction from spectrogram (real signal)
 %    DGT2           -  2D Discrete Gabor transform
 %    IDGT2          -  2D Inverse discrete Gabor transform
-%    DGTREAL        -  DGT for real-valued signals
+%    DGTREAL        -  |dgt| for real-valued signals
 %    IDGTREAL       -  |idgt| for real-valued signals
 %    GABWIN         -  Evaluate Gabor window
 %    DGTLENGTH      -  Length of Gabor system to expand a signal
@@ -29,11 +29,11 @@
 %    DWILT2         -  2-D Discrete Wilson transform
 %    IDWILT2        -  2-D inverse discrete Wilson transform
 %    WMDCT          -  Modified Discrete Cosine transform
-%    IWMDCT         -  Inverse MDCT
-%    WMDCT2         -  2-D MDCT
-%    IWMDCT2        -  2-D inverse MDCT
+%    IWMDCT         -  Inverse |wmdct|
+%    WMDCT2         -  2-D |wmdct|
+%    IWMDCT2        -  2-D inverse |wmdct|
 %    WIL2RECT       -  Rectangular layout of Wilson coefficients
-%    RECT2WIL       -  Inverse of WIL2RECT
+%    RECT2WIL       -  Inverse of |wil2rect|
 %    WILWIN         -  Evaluate Wilson window
 %    DWILTLENGTH    -  Length of Wilson/WMDCT system to expand a signal
 %
@@ -78,12 +78,12 @@
 %
 %  Plots
 %    TFPLOT         -  Plot coefficients on the time-frequency plane
-%    PLOTDGT        -  Plot DGT coefficients
-%    PLOTDGTREAL    -  Plot DGTREAL coefficients
-%    PLOTDWILT      -  Plot DWILT coefficients
-%    PLOTWMDCT      -  Plot WMDCT coefficients
-%    SGRAM          -  Spectrogram based on DGT
-%    GABIMAGEPARS   -  Choose paramets for nice Gabor image
+%    PLOTDGT        -  Plot |dgt| coefficients
+%    PLOTDGTREAL    -  Plot |dgtreal| coefficients
+%    PLOTDWILT      -  Plot |dwilt| coefficients
+%    PLOTWMDCT      -  Plot |wmdct| coefficients
+%    SGRAM          -  Spectrogram based on |dgt|
+%    GABIMAGEPARS   -  Choose parameters for nice Gabor image
 %    RESGRAM        -  Reassigned spectrogram
 %    INSTFREQPLOT   -  Plot of the instantaneous frequency
 %    PHASEPLOT      -  Plot of STFT phase

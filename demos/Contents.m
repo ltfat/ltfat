@@ -5,7 +5,7 @@
 %   This page documents the demos.
 %
 %   Basic demos
-%     DEMO_DGT              - DGT and comparison to SGRAM
+%     DEMO_DGT              - |dgt| and comparison to |sgram|
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
 %
 %   Compression
