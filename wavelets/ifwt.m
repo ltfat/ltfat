@@ -5,7 +5,7 @@ function f = ifwt(c,par,varargin)
 %
 %   Input parameters:
 %         c      : Wavelet coefficients.
-%         info/g : Transform parameters struct/Synthesis wavelet filters.
+%         info,g : Transform parameters struct/Synthesis wavelet filters.
 %         J      : Number of filterbank iterations.
 %         Ls     : Length of the reconstructed signal.
 %

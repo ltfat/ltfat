@@ -7,17 +7,17 @@
 %
 %   .. figure::
 %
-%     Windows + dual windows
+%      Windows + dual windows
 % 
-%     This figure shows the window functions used and the corresponding
-%     canonical dual windows. 
+%      This figure shows the window functions used and the corresponding
+%      canonical dual windows. 
 %
 %   .. figure::
 %
-%     Spectrogram (absolute value of coefficients in dB)
+%      Spectrogram (absolute value of coefficients in dB)
 %
-%     This figure shows a (color coded) image of the nsdgt coefficient
-%     modulus. 
+%      This figure shows a (color coded) image of the nsdgt coefficient
+%      modulus. 
 %
 %   See also:  nsdgt, insdgt, nsgabdual
 

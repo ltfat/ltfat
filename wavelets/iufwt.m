@@ -5,7 +5,7 @@ function f = iufwt(c,par,varargin)
 %
 %   Input parameters:
 %         c      : Coefficients stored in $L \times J+1$ matrix.
-%         info/g : Transform parameters struct/Synthesis wavelet filters.
+%         info,g : Transform parameters struct/Synthesis wavelet filters.
 %         J      : Number of filterbank iterations.
 %
 %   Output parameters:

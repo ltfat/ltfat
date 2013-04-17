@@ -107,7 +107,7 @@ function [g,info]=firwin(name,M,varargin);
 %                  The window has a mainlobe width of 16/M, a PSL of 
 %                  -98.17 dB and decay rate of 6 dB/Octave.
 %
-%   FIRWIN understands the following flags at the end of the list of input
+%   `firwin` understands the following flags at the end of the list of input
 %   parameters:
 %
 %     'wp'         Output is whole point even. This is the default.

@@ -36,13 +36,13 @@
 %
 %   .. figure::
 %
-%     Received coefficients.
+%      Received coefficients.
 %
-%     This figure shows the distribution in the complex plane of the 
-%     received coefficients. If the channel was perfect, all the points
-%     should appear at the complex roots of unity (1,i,-1 and -i). This
-%     demo is random, so everytime it is run it produces a new plot, and
-%     the error rate may vary.
+%      This figure shows the distribution in the complex plane of the 
+%      received coefficients. If the channel was perfect, all the points
+%      should appear at the complex roots of unity (1,i,-1 and -i). This
+%      demo is random, so everytime it is run it produces a new plot, and
+%      the error rate may vary.
 %
 
 disp('Type "help demo_ofdm" to see a description of how this demo works.');

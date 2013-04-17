@@ -5,7 +5,7 @@ function f=iwfbt(c,par,varargin)
 %
 %   Input parameters:
 %         c       : Coefficients stored in a cell-array.
-%         info/wt : Transform parameters struct/Wavelet Filterbank tree
+%         info,wt : Transform parameters struct/Wavelet Filterbank tree
 %         Ls      : Length of the reconstructed signal.
 %
 %   Output parameters:
