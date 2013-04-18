@@ -154,7 +154,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
    const int Nr = plan.L/ar;
 
 
-   if (!plan.s1==0)
+   if (!s1==0)
    {
       for (int w=0;w<plan.W;w++)
       {
@@ -167,14 +167,14 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
    }
 
    const int cc1=ar/a;
-   const int cc2=-plan.s0*plan.br/a;
+   const int cc2=-s0*plan.br/a;
    const int twoN=2*N;
    const int cc6=(s0*s1+1)*plan.br;
 
-   if (!plan.s0==0)
+   if (!s0==0)
    {
 
-      const int cc3=a*plan.s1*(L+1);
+      const int cc3=a*s1*(L+1);
       const int cc4=cc2*plan.br*(L+1);
       const int cc5=2*cc1*plan.br;
 
@@ -218,16 +218,20 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
    else
    {
       const int cc3 = s1*(L+1);
-      const int cc4 = s0*plan.br*plan.br*(L+1);
 
       LTFAT_NAME(dgt_long_execute)(plan.rect_plan);
 
       for (int k=0;k<Nr;k++)
       {
+	 const double tmp1=(ar/a)*cc3*ar;
+
+	 /* This integer becomes so large that we do it in double precision */	 
+	 const int phsidx= (int)(fmod(tmp1*k*k,twoN)+.5);
+
+	 /*printf("%i\n",phsidx);*/
+
       	 for (int m=0;m<Mr;m++)
       	 {
-	    const int sq1=k*ar-s0*m*plan.br;
-	    const int phsidx= positiverem((cc3*sq1*sq1+cc4*m*m)/a,twoN);
                 
 	    const int idx1 = positiverem(k*cc1+cc2*m,N);
 	    
