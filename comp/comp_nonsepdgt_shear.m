@@ -21,6 +21,60 @@ ar = a*b/br;
 Mr = L/br;
 Nr = L/ar;
 
+            
+if s1 ~= 0
+    p = comp_pchirp(L,s1);
+    g = p.*g;
+    f = bsxfun(@times,p,f);
+end
+
+cc1=ar/a;
+cc2=-s0*br/a;
+
+if s0 ~= 0
+    p = comp_pchirp(L,-s0);
+    g = p.*fft(g)/L;
+    f = bsxfun(@times,p,fft(f));
+    
+    c_rect = comp_dgt_long(f,g,br,Nr);
+    
+    for k=0:Nr-1   
+        for m=0:Mr-1
+            phs = mod(((a*s1*(k*cc1+cc2*m).^2-cc2*m*m*br)*(L+1)-2*(k*cc1*m*br)),2*N);
+            phs = exp(pi*1i*phs/N);
+            
+            idx1 =       mod(    k*cc1       +cc2*m,N);
+            idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
+            
+            for w=0:W-1                    
+                c(idx2+1,idx1+1,w+1) = c_rect(mod(-k,Nr)+1,m+1,w+1).*phs;
+            end;
+        end;
+    end;                    
+else 
+    
+    c_rect = comp_dgt_long(f,g,ar,Mr);
+
+    %[s0,s1,ar,br,N,Mr,Nr]
+    
+    for k=0:Nr-1   
+        phs= mod((s1*(k*ar).^2)*(L+1)/a,2*N);
+        phs
+        phs = exp(pi*1i*phs/N);
+        for m=0:Mr-1                        
+            idx1 =       mod(   cc1*k + cc2*m,N);
+            idx2 = floor(mod(-s1*ar*k +  br*m,L)/b);
+            
+            for w=0:W-1    
+                c(idx2+1,idx1+1,w+1) = c_rect(m+1,k+1,w+1).*phs;
+            end;
+        end;
+    end;
+end;
+
+
+% This is some old code just kept around for historical/documentational
+% purposes
 if 0
 
     ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar), ...
@@ -73,60 +127,7 @@ if 0
                 c_rect(ind(2,:)/br+1+(ind(1,:)/ar)*Mr+w*M*N);
         end;
     end;
-    
-    
-else
-            
-    if s1 ~= 0
-        p = comp_pchirp(L,s1);
-        g = p.*g;
-        f = bsxfun(@times,p,f);
-    end
-
-    cc1=ar/a;
-    cc2=-s0*br/a;
-
-    if s0 ~= 0
-        p = comp_pchirp(L,-s0);
-        g = p.*fft(g)/L;
-        f = bsxfun(@times,p,fft(f));
         
-        c_rect = comp_dgt_long(f,g,br,Nr);
-            
-        for k=0:Nr-1   
-            for m=0:Mr-1
-                phs = mod(((a*s1*(k*cc1+cc2*m).^2-cc2*m*m*br)*(L+1)-2*(k*cc1*m*br)),2*N);
-                phs = exp(pi*1i*phs/N);
-                
-                idx1 =       mod(    k*cc1       +cc2*m,N);
-                idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
-                                                
-                for w=0:W-1                    
-                    c(idx2+1,idx1+1,w+1) = c_rect(mod(-k,Nr)+1,m+1,w+1).*phs;
-                end;
-            end;
-        end;                    
-    else 
-        
-        c_rect = comp_dgt_long(f,g,ar,Mr);
-
-        for k=0:Nr-1   
-            for m=0:Mr-1
-
-                phs= mod((s1*(k*ar-s0*m*br).^2+s0*(m*br).^2)*(L+1)/a,2*N);
-                phs = exp(pi*1i*phs/N);
-                
-                idx1 =       mod(    k*cc1        +cc2*m,N);
-                idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
-                
-                for w=0:W-1    
-                    c(idx2+1,idx1+1,w+1) = c_rect(m+1,k+1,w+1).*phs;
-                end;
-            end;
-        end;
-    end;
-    
-    
 end;
 
 
