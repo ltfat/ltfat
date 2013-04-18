@@ -6,16 +6,37 @@
 
 #define PI 3.1415926535897932384626433832795
 
+static inline int positiverem_long(long int a,int b)
+{
+  const long c = a%b;
+  return(c<0 ? c+b : c);
+}
+
+
 LTFAT_EXTERN void
 LTFAT_NAME(pchirp)(const int L, const int n, LTFAT_COMPLEX *g)
 { 
+
+   /* const long LL=2*L; */
+   /* const long Lpone=L+1; */
+   
+   /* for (int m=0;m<L;m++) */
+   /* { */
+   /*    const long idx = positiverem_long( */
+   /* 	 positiverem_long( */
+   /* 	    positiverem_long(Lpone*n,LL)*m,LL)*m,LL); */
+
+   /*    g[m] = cexp(1.0*I*PI*idx/L); */
+   /* } */
+ 
 
    const LTFAT_REAL LL=2.0*L;
    const LTFAT_REAL Lpone=L+1;
    
    for (int m=0;m<L;m++)
    {
-      g[m] = cexp(I*PI*fmod(Lpone*n*m*m,LL)/L);
+      //g[m] = cexp(I*PI*fmod(Lpone*n*m*m,LL)/L);
+      g[m] = cexp(I*PI*fmod(fmod(fmod(Lpone*n,LL)*m,LL)*m,LL)/L);
    }
   
 }
@@ -166,17 +187,51 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
       
    }
 
-   const int cc1=ar/a;
-   const int cc2=-s0*plan.br/a;
-   const int twoN=2*N;
-   const int cc6=(s0*s1+1)*plan.br;
 
-   if (!s0==0)
+   if (s0==0)
    {
 
-      const int cc3=a*s1*(L+1);
-      const int cc4=cc2*plan.br*(L+1);
-      const int cc5=2*cc1*plan.br;
+      const int twoN=2*N;
+      
+      /* In this case, cc1=1 */
+
+      const long cc3 = positiverem_long(s1*(L+1),twoN);
+
+      const long tmp1=positiverem_long(cc3*a,twoN);
+
+      LTFAT_NAME(dgt_long_execute)(plan.rect_plan);
+
+      for (int k=0;k<N;k++)
+      {
+	 const int phsidx= positiverem_long(
+	    positiverem_long(tmp1*k,twoN)*k,twoN);
+
+      	 for (int m=0;m<M;m++)
+      	 {                
+	    /* The line below has a hidden floor operation by diving with the last b */
+	    const int idx2 = positiverem_long(-s1*k*a+b*m,L)/b;
+            	    
+      	    for (int w=0;w<plan.W;w++)
+      	    {
+      	       const int inidx  =    m+k*M+w*M*N;
+      	       const int outidx = idx2+k*M+w*M*N;
+      	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
+      	    }
+      	 }
+      }
+
+
+   }
+   else
+   {
+
+      const int twoN=2*N;
+      const long cc1=ar/a;
+      const long cc2=positiverem_long(-s0*plan.br/a,twoN);
+      const long cc3=positiverem_long(a*s1*(L+1),twoN);
+      const long cc4=positiverem_long(cc2*plan.br*(L+1),twoN);
+      const long cc5=positiverem_long(2*cc1*plan.br,twoN);
+      const long cc6=positiverem_long((s0*s1+1)*plan.br,L);
 
       LTFAT_FFTW(execute)(plan.f_plan);
 
@@ -195,14 +250,17 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
       {
       	 for (int m=0;m<Mr;m++)
       	 {      	    
-	    const int sq1 = k*cc1+cc2*m;
-	    
-	    const int phsidx = positiverem(cc3*sq1*sq1-m*(cc4*m+k*cc5),twoN);
+	    const long sq1 = k*cc1+cc2*m;
+
+	    const int phsidx = positiverem_long(
+	       positiverem_long(cc3*sq1*sq1,twoN)-
+	       positiverem_long(m*(cc4*m+k*cc5),twoN),
+	       twoN);
                 
-	    const int idx1 = positiverem(k*cc1+cc2*m,N);
+	    const int idx1 = positiverem_long(k*cc1+cc2*m,N);
 	    
 	    /* The line below has a hidden floor operation by diving with the last b */
-	    const int idx2 = positiverem(-s1*k*ar+cc6*m,L)/b;
+	    const int idx2 = positiverem_long(-s1*k*ar+cc6*m,L)/b;
 
 	    for (int w=0;w<plan.W;w++) 
 	    {
@@ -211,39 +269,6 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
 
 	    }
-      	 }
-      }
-
-   }
-   else
-   {
-      const int cc3 = s1*(L+1);
-
-      LTFAT_NAME(dgt_long_execute)(plan.rect_plan);
-
-      for (int k=0;k<Nr;k++)
-      {
-	 const double tmp1=(ar/a)*cc3*ar;
-
-	 /* This integer becomes so large that we do it in double precision */	 
-	 const int phsidx= (int)(fmod(tmp1*k*k,twoN)+.5);
-
-	 /*printf("%i\n",phsidx);*/
-
-      	 for (int m=0;m<Mr;m++)
-      	 {
-                
-	    const int idx1 = positiverem(k*cc1+cc2*m,N);
-	    
-	    /* The line below has a hidden floor operation by diving with the last b */
-	    const int idx2 = positiverem(-s1*k*ar+cc6*m,L)/b;
-            	    
-      	    for (int w=0;w<plan.W;w++)
-      	    {
-      	       const int inidx  = m+k*Mr+w*M*N;
-      	       const int outidx = idx2+idx1*M+w*M*N;
-      	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
-      	    }
       	 }
       }
 
