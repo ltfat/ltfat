@@ -190,6 +190,13 @@ LTFAT_H_NAME(dgtreal_ola)(const LTFAT_H_REAL *f, const LTFAT_H_REAL *g,
 			  const int W, const int a, const int M, const int bl,
 			  LTFAT_H_COMPLEX *cout);
 
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_shearola)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
+			 const int L, const int gl, const int W, const int a, const int M,
+			 const int s0, const int s1, const int br, const int bl,
+			 LTFAT_H_COMPLEX *cout);
+
+
 /* --------- filterbank codes ------------*/
 LTFAT_EXTERN void
 LTFAT_H_NAME(ufilterbank_fft)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
@@ -453,4 +460,34 @@ LTFAT_H_NAME(dgtreal_ola_done)(LTFAT_H_NAME(dgtreal_ola_plan) plan);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(dgtreal_walnut_plan)(LTFAT_H_NAME(dgtreal_long_plan) plan);
+
+/* -----  dgt_shearola class definition ------ */
+
+typedef struct
+{
+   LTFAT_H_NAME(dgt_shear_plan) plan;
+   int bl;
+   int gl;
+   int W;
+   LTFAT_H_COMPLEX *buf;
+   LTFAT_H_COMPLEX *gext;
+   LTFAT_H_COMPLEX *cbuf;
+
+} LTFAT_H_NAME(dgt_shearola_plan);
+
+
+LTFAT_EXTERN LTFAT_H_NAME(dgt_shearola_plan)
+LTFAT_H_NAME(dgt_shearola_init)(const LTFAT_H_COMPLEX *g, const int gl,
+			   const int W, const int a, const int M, 
+			   const int s0, const int s1, const int br,
+			   const int bl,
+			   unsigned flags);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_shearola_execute)(const LTFAT_H_NAME(dgt_shearola_plan) plan,
+			    const LTFAT_H_COMPLEX *f, const int L,
+			    LTFAT_H_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(dgt_shearola_done)(LTFAT_H_NAME(dgt_shearola_plan) plan);
 
