@@ -116,7 +116,7 @@ for ii=1:length(Lr);
               % -------- test reconstruction using canonical dual -------
               
               r=idgt(cc,gd,a,'lt',lt);
-              res=norm(f-r,'fro');
+              res=norm(f-r,'fro')/norm(f,'fro');
               
               stext=sprintf(['REC D %s L:%3i W:%2i LW:%3i a:%3i M:%3i ' ...
                              'lt1:%2i lt2:%2i %0.5g'], rname,L,W,Lw,a,M, ...
@@ -126,7 +126,7 @@ for ii=1:length(Lr);
               % -------- test reconstruction using canonical dual, multiwin algorithm -------
               
               r=comp_idgt(cc,gdsafe,a,lt,0,1);  
-              res=norm(f-r,'fro');
+              res=norm(f-r,'fro')/norm(f,'fro');
               
               stext=sprintf(['REC MULTIW D %s L:%3i W:%2i LW:%3i a:%3i ' ...
                              'M:%3i lt1:%2i lt2:%2i %0.5g ' ], rname,L,W, ...
@@ -136,7 +136,7 @@ for ii=1:length(Lr);
               % -------- test reconstruction using canonical dual, shear algorithm -------
               
               r=comp_idgt(cc,gdsafe,a,lt,0,2);  
-              res=norm(f-r,'fro');
+              res=norm(f-r,'fro')/norm(f,'fro');
               
               stext=sprintf(['REC SHEAR D %s L:%3i W:%2i LW:%3i a:%3i ' ...
                              'M:%3i lt1:%2i lt2:%2i %0.5g ' ], rname,L,W, ...
@@ -148,7 +148,7 @@ for ii=1:length(Lr);
               
               cc_t = dgt(f,gt,a,M,'lt',lt);
               r=idgt(cc_t,gt,a,'lt',lt);  
-              res=norm(f-r,'fro');
+              res=norm(f-r,'fro')/norm(f,'fro');
               
               stext=sprintf(['REC T %s L:%3i W:%2i LW:%3i a:%3i M:%3i ' ...
                              'lt1:%2i lt2:%2i %0.5g ' ], rname,L,W,Lw,a, ...
@@ -162,7 +162,7 @@ for ii=1:length(Lr);
                   
                   cc_r = dgtreal(f,g,a,M,'lt',lt);
                   res=cc_r-cc(1:M2,:,:);
-                  res=norm(res(:));
+                  res=norm(res(:))/norm(cc_r(:));;
 
                   stext=sprintf(['REFREAL L:%3i W:%2i LW:%3i a:%3i ' ...
                                  'M:%3i lt1:%2i lt2:%2i %0.5g' ], ...
@@ -172,7 +172,7 @@ for ii=1:length(Lr);
                   
                   r_real = idgtreal(cc_r,gd,a,M,'lt',lt);
                   
-                  res=norm(f-r_real,'fro');
+                  res=norm(f-r_real,'fro')/norm(f,'fro');
                   
                   stext=sprintf(['RECREAL L:%3i W:%2i LW:%3i a:%3i ' ...
                                  'M:%3i lt1:%2i lt2:%2i %0.5g '], ...

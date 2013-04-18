@@ -1,6 +1,6 @@
 ar=2:10;
 Mr=3:10;
-Lmodr=1:3;
+Lmodr=[1 3 10 100];
 lt1r=0:9;
 lt2r=1:10;
 
@@ -22,7 +22,7 @@ for lt2=lt2r
                 for Lmod=Lmodr
                     
                     
-                    L=dgtlength(1,a,M,[lt1,lt2]);
+                    L=dgtlength(1,a,M,[lt1,lt2])*Lmod;
                     lt=[lt1,lt2];
 
                     [s0,s1,br] = shearfind(L,a,M,lt);
@@ -30,20 +30,21 @@ for lt2=lt2r
                     f=crand(L,1);                                        
                     g=crand(L,1);
                     
-                    gd       = gabdual(g,a,M,'lt',lt);
-                    gd_shear = gabdual(g,a,M,'lt',lt,'nsalg',2);
-                    
-                    res=norm(gd-gd_shear)/norm(g);
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                    stext=sprintf(['DUAL SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                                   '%s'], L,a,M,lt(1),lt(2),res,fail);
-                    disp(stext)
-
-                    
-                    if numel(fail)>0
-                        error('Failed test');
+                    if 0
+                        gd       = gabdual(g,a,M,'lt',lt);
+                        gd_shear = gabdual(g,a,M,'lt',lt,'nsalg',2);
+                        
+                        res=norm(gd-gd_shear)/norm(g);
+                        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                        stext=sprintf(['DUAL SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                                       '%s'], L,a,M,lt(1),lt(2),res,fail);
+                        disp(stext)
+                        
+                        
+                        if numel(fail)>0
+                            error('Failed test');
+                        end;
                     end;
-
                     
                     cc = comp_nonsepdgt_multi(f,g,a,M,lt);
                     
@@ -61,21 +62,21 @@ for lt2=lt2r
 
 
                     
-                    
-                    r=comp_idgt(cc_shear,gd,a,lt,0,1);  
-                    res=norm(f-r,'fro');
-                    
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                    stext=sprintf(['REC  SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                                   '%s'], L,a,M,lt(1),lt(2),res,fail);
-                    disp(stext)
-
-                    
-                    if numel(fail)>0
-                        error('Failed test');
+                    if 0
+                        r=comp_idgt(cc_shear,gd,a,lt,0,1);  
+                        res=norm(f-r,'fro')/norm(f,'fro');
+                        
+                        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                        stext=sprintf(['REC  SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                                       '%s'], L,a,M,lt(1),lt(2),res,fail);
+                        disp(stext)
+                        
+                        
+                        if numel(fail)>0
+                            error('Failed test');
+                        end;
                     end;
-                    
-                    
+                        
                     
                 end;
             end;

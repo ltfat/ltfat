@@ -33,7 +33,7 @@ function [s0,s1,X] = shearfind(L,a,M,lt)
          
         B = prod(Labfac(1,:).^max(Labfac(4,:)-Labfac(3,:),0));
         if abs(s1) > B/2
-            s1 = s1-sign(alpha)*B;            
+            s1 = s1+sign(alpha)*B;            
         end
         X = b;
     elseif ones(1,lenLabfac) == (Labfac(3,:) < sfac(2,1:end-1))
@@ -89,6 +89,9 @@ function [s0,s1,X] = shearfind(L,a,M,lt)
             s0 = 0; 
         end
     end
+    
+    s0=rem(s0,L);
+    s1=rem(s1,L);
     
 end
 

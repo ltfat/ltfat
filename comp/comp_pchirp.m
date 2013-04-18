@@ -14,5 +14,5 @@ function g=comp_pchirp(L,n)
 %   REFERENCE: OK
 
 l= (0:L-1).';
-X = mod(n*l.^2*(L+1),2*L);
+X = mod(mod(mod(n*l,2*L).*l,2*L)*(L+1),2*L);
 g = exp(pi*1i*X/L);
