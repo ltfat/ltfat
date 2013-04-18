@@ -30,8 +30,8 @@ for lt2=lt2r
                     f=crand(L,1);                                        
                     g=crand(L,1);
                     
-                    gd       = gabdual(g,a,M,[],lt);
-                    gd_shear = gabdual(g,a,M,[],lt,'nsalg',2);
+                    gd       = gabdual(g,a,M,'lt',lt);
+                    gd_shear = gabdual(g,a,M,'lt',lt,'nsalg',2);
                     
                     res=norm(gd-gd_shear)/norm(g);
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -62,7 +62,7 @@ for lt2=lt2r
 
                     
                     
-                    r=comp_inonsepdgt(cc_shear,gd,a,lt,0,2);  
+                    r=comp_idgt(cc_shear,gd,a,lt,0,1);  
                     res=norm(f-r,'fro');
                     
                     [test_failed,fail]=ltfatdiditfail(res,test_failed);

@@ -67,10 +67,19 @@ end;
 if ispc
    makefilename='Makefile_mingw64';
    make_exe = 'mingw32-make';
-else
+end;
+
+if isunix
    makefilename='Makefile_unix';
    make_exe = 'make';
 end;
+
+if ismac
+   makefilename='Makefile_mac';
+   make_exe = 'make';
+end;
+
+
 
 fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
 clear mex;

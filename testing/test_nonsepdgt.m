@@ -12,11 +12,11 @@ function test_failed=test_nonsepdgt
 %  Use TEST_WFAC and TEST_DGT_FAC for more specific testing
 %  of the DGT backend.
 
-Lr =[24,24,30,36,36,48];
-ar =[ 4, 4, 3, 4, 4, 4];
-Mr =[ 6, 6, 5, 6, 6, 6];
-lt1=[ 0, 1, 1, 1, 2, 1];
-lt2=[ 1, 2, 2, 3, 3, 4];
+Lr =[24,24,30,36,36,48,72];
+ar =[ 4, 4, 3, 4, 4, 4, 4];
+Mr =[ 6, 6, 5, 6, 6, 6, 6];
+lt1=[ 0, 1, 1, 1, 2, 1, 1];
+lt2=[ 1, 2, 2, 3, 3, 4, 2];
     
 test_failed=0;
 testmode=0;
@@ -108,7 +108,7 @@ for ii=1:length(Lr);
               cc = comp_dgt(f,gsafe,a,M,lt,0,0,2);
               
               res = norm(cc(:)-cc_ref(:))/norm(cc(:));
-              stext=sprintf(['DGT SHREAR   %s L:%3i W:%2i LW:%3i a:%3i ' ...
+              stext=sprintf(['DGT SHEAR   %s L:%3i W:%2i LW:%3i a:%3i ' ...
                              'M:%3i lt1:%2i lt2:%2i %0.5g'], rname,L,W, ...
                             Lw,a,M,lt(1),lt(2),res);
               test_failed=ltfatchecktest(res,stext,test_failed,testmode);
