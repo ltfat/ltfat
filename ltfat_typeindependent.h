@@ -1,7 +1,6 @@
 #include "dgt_long.h"
 #include "dgt_multi.h"
 #include "dgt_shear.h"
-#include "wavelets.h"
 
 /*  --------- factorizations --------------- */
 

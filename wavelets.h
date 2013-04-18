@@ -129,22 +129,22 @@ static inline int ipow(int base, int exp)
 
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(extend_left)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int buffLen, int filtLen, enum ltfatWavExtType ext, int a);
+void LTFAT_H_NAME(extend_left)(const LTFAT_H_TYPE *in,int inLen, LTFAT_H_TYPE *buffer, int buffLen, int filtLen, enum ltfatWavExtType ext, int a);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(extend_right)(const LTFAT_H_REAL *in,int inLen, LTFAT_H_REAL *buffer, int filtLen, enum ltfatWavExtType ext, int a);
+void LTFAT_H_NAME(extend_right)(const LTFAT_H_TYPE *in,int inLen, LTFAT_H_TYPE *buffer, int filtLen, enum ltfatWavExtType ext, int a);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(convsub_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext);
+void LTFAT_H_NAME(convsub_td)(const LTFAT_H_TYPE *in, int inLen, LTFAT_H_TYPE *out, const int outLen, const LTFAT_H_TYPE *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(upconv_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int up, int skip, enum ltfatWavExtType ext);
+void LTFAT_H_NAME(upconv_td)(const LTFAT_H_TYPE *in, int inLen, LTFAT_H_TYPE *out, const int outLen, const LTFAT_H_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(atrousconvsub_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
+void LTFAT_H_NAME(atrousconvsub_td)(const LTFAT_H_TYPE *in, int inLen, LTFAT_H_TYPE *out, const int outLen, const LTFAT_H_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
 
 LTFAT_EXTERN
-void LTFAT_H_NAME(atrousupconv_td)(const LTFAT_H_REAL *in, int inLen, LTFAT_H_REAL *out, const int outLen, const LTFAT_H_REAL *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
+void LTFAT_H_NAME(atrousupconv_td)(const LTFAT_H_TYPE *in, int inLen, LTFAT_H_TYPE *out, const int outLen, const LTFAT_H_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
 
 
 

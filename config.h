@@ -1,6 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H 1
 
+#ifndef __cplusplus
+#include <complex.h>
+#define FFTW_NO_Complex
+#endif //__cplusplus
+
 #define HAVE_BLAS 1
 #define HAVE_LAPACK 1
 
@@ -8,8 +13,17 @@
 #include "stddef.h"
 
 #include "fftw3.h"
+/*
+#ifdef LTFAT_COMPLEXTYPE
+#  undef LTFAT_COMPLEXTYPE
+#endif
 
+#define LTFAT_COMPLEXTYPE
 #include "ltfat_types.h"
+#undef LTFAT_COMPLEXTYPE
+*/
+#include "ltfat_types.h"
+
 /*
 #ifdef LTFAT_DOUBLE
 #define LTFAT_COMPLEX fftw_complex

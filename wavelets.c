@@ -1,19 +1,21 @@
+/* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
+#ifdef LTFAT_TYPE
 #include <string.h>
 #include <math.h>
 #include "config.h"
 #include "ltfat.h"
 
 LTFAT_EXTERN
-void LTFAT_NAME(atrousconvsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext)
+void LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext)
 {
-    LTFAT_REAL *filtRev = (LTFAT_REAL *) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
+    LTFAT_TYPE *filtRev = (LTFAT_TYPE *) ltfat_malloc(fLen*sizeof(LTFAT_TYPE));
     for(unsigned int ii=0;ii<fLen;ii++)
     {
        *(filtRev+ii) = *(filts + fLen-1 - ii);
     }
     int fLenUps = filtUp*fLen-(filtUp-1);
 
-	LTFAT_REAL *righExtbuff = 0;
+	LTFAT_TYPE *righExtbuff = 0;
 	// number of output samples that can be calculated "painlessly"
     int outLenN = imax((inLen - skip),0);
 
@@ -23,14 +25,14 @@ void LTFAT_NAME(atrousconvsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *o
    int buffPtr = 0;
 
    // allocating and initializing the cyclic buffer
-   LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
-   memset(buffer,0,buffLen*sizeof(LTFAT_REAL));
+   LTFAT_TYPE *buffer = (LTFAT_TYPE *) ltfat_malloc(buffLen*sizeof(LTFAT_TYPE));
+   memset(buffer,0,buffLen*sizeof(LTFAT_TYPE));
 
    // pointer for moving in the input data
-   const LTFAT_REAL *tmpIn = in;
-   LTFAT_REAL *tmpOut = out;
-   LTFAT_REAL *tmpFilts = filtRev;
-   LTFAT_REAL *tmpBuffPtr = buffer;
+   const LTFAT_TYPE *tmpIn = in;
+   LTFAT_TYPE *tmpOut = out;
+   LTFAT_TYPE *tmpFilts = filtRev;
+   LTFAT_TYPE *tmpBuffPtr = buffer;
 
    // fill buffer with the initial values from the input signal according to the boundary treatment
    // last fLenUps buffer samples are filled to keep buffPtr=0
@@ -39,8 +41,8 @@ void LTFAT_NAME(atrousconvsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *o
    if(outLenN<outLen)
    {
    	   // right extension is necessary, additional buffer from where to copy
-	   righExtbuff = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
-       memset(righExtbuff,0,buffLen*sizeof(LTFAT_REAL));
+	   righExtbuff = (LTFAT_TYPE *) ltfat_malloc(buffLen*sizeof(LTFAT_TYPE));
+       memset(righExtbuff,0,buffLen*sizeof(LTFAT_TYPE));
 	   // store extension in the buffer (must be done now to avoid errors when inplace calculation is done)
 	   LTFAT_NAME(extend_right)(in,inLen,righExtbuff,fLenUps,ext,1);
    }
@@ -60,8 +62,8 @@ void LTFAT_NAME(atrousconvsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *o
 
 #define READNEXTDATA(samples,wherePtr)                                              \
 	   buffOver = imax(buffPtr+(samples)-buffLen, 0);                               \
-   	   memcpy(buffer + buffPtr, wherePtr, ((samples)-buffOver)*sizeof(LTFAT_REAL)); \
-	   memcpy(buffer,wherePtr+(samples)-buffOver,buffOver*sizeof(LTFAT_REAL));      \
+   	   memcpy(buffer + buffPtr, wherePtr, ((samples)-buffOver)*sizeof(LTFAT_TYPE)); \
+	   memcpy(buffer,wherePtr+(samples)-buffOver,buffOver*sizeof(LTFAT_TYPE));      \
 	   buffPtr = modPow2(buffPtr += (samples),buffLen);
 
 #define READNEXTSAMPLE(wherePtr)                               \
@@ -135,17 +137,17 @@ if(outLenN>0)
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(atrousupconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext)
+void LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext)
 {
    int fLenUps = filtUp*fLen-(filtUp-1);
    // Running output pointer
-   LTFAT_REAL* tmpOut = out;
+   LTFAT_TYPE* tmpOut = out;
    // Running input pointer
-   LTFAT_REAL* tmpIn =  (LTFAT_REAL*) in;
+   LTFAT_TYPE* tmpIn =  (LTFAT_TYPE*) in;
 
    /** prepare cyclic buffer */
    int buffLen = nextPow2(fLenUps);
-   LTFAT_REAL* buffer = (LTFAT_REAL *) ltfat_calloc(buffLen,sizeof(LTFAT_REAL));
+   LTFAT_TYPE* buffer = (LTFAT_TYPE *) ltfat_calloc(buffLen,sizeof(LTFAT_TYPE));
    int buffPtr = 0;
 
    int iiLoops = 0;
@@ -163,8 +165,8 @@ void LTFAT_NAME(atrousupconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *ou
       remainsOutSamp = outLen - (iiLoops-1);
    }
 
-   LTFAT_REAL *rightBuffer = (LTFAT_REAL *) ltfat_calloc(buffLen,sizeof(LTFAT_REAL));
-   LTFAT_REAL *rightBufferTmp = rightBuffer;
+   LTFAT_TYPE *rightBuffer = (LTFAT_TYPE *) ltfat_calloc(buffLen,sizeof(LTFAT_TYPE));
+   LTFAT_TYPE *rightBufferTmp = rightBuffer;
 
    if(ext==PER) // if periodic extension
    {
@@ -174,12 +176,12 @@ void LTFAT_NAME(atrousupconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *ou
 
    int iniStoCopy = imin(skip,buffLen);
    int tmpInSkip = imax(0,skip-buffLen);
-   memcpy(buffer,tmpIn+tmpInSkip,iniStoCopy*sizeof(LTFAT_REAL));
+   memcpy(buffer,tmpIn+tmpInSkip,iniStoCopy*sizeof(LTFAT_TYPE));
    tmpIn += (iniStoCopy+tmpInSkip);
    buffPtr = modPow2(buffPtr += iniStoCopy,buffLen);
 
 
- //LTFAT_REAL* filtTmp = filts;
+ //LTFAT_TYPE* filtTmp = filts;
  #define ONEOUTSAMPLE(filtTmp,jjLoops)                                   \
 	    for(int jj=0;jj<(jjLoops);jj++)                                  \
 		    {                                                            \
@@ -238,15 +240,15 @@ void LTFAT_NAME(atrousupconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *ou
 
 
 LTFAT_EXTERN
-void LTFAT_NAME(convsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext)
+void LTFAT_NAME(convsub_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext)
 {
-    LTFAT_REAL *filtRev = (LTFAT_REAL *) ltfat_malloc(fLen*sizeof(LTFAT_REAL));
+    LTFAT_TYPE *filtRev = (LTFAT_TYPE *) ltfat_malloc(fLen*sizeof(LTFAT_TYPE));
     for(unsigned int ii=0;ii<fLen;ii++)
     {
        *(filtRev+ii) = *(filts + fLen-1 - ii);
     }
 
-	LTFAT_REAL *righExtbuff = 0;
+	LTFAT_TYPE *righExtbuff = 0;
 	// number of output samples that can be calculated "painlessly"
     int outLenN = imax((inLen - skip + sub -1)/sub,0);
 
@@ -256,14 +258,14 @@ void LTFAT_NAME(convsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, co
    int buffPtr = 0;
 
    // allocating and initializing the cyclic buffer
-   LTFAT_REAL *buffer = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
-   memset(buffer,0,buffLen*sizeof(LTFAT_REAL));
+   LTFAT_TYPE *buffer = (LTFAT_TYPE *) ltfat_malloc(buffLen*sizeof(LTFAT_TYPE));
+   memset(buffer,0,buffLen*sizeof(LTFAT_TYPE));
 
    // pointer for moving in the input data
-   const LTFAT_REAL * tmpIn = in;
-   LTFAT_REAL * tmpOut = out;
-   LTFAT_REAL *tmpFilts = filtRev;
-   LTFAT_REAL *tmpBuffPtr = buffer;
+   const LTFAT_TYPE * tmpIn = in;
+   LTFAT_TYPE * tmpOut = out;
+   LTFAT_TYPE *tmpFilts = filtRev;
+   LTFAT_TYPE *tmpBuffPtr = buffer;
 
    // fill buffer with the initial values from the input signal according to the boundary treatment
    // last fLenUps buffer samples are filled to keep buffPtr=0
@@ -272,8 +274,8 @@ void LTFAT_NAME(convsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, co
    if(outLenN<outLen)
    {
    	   // right extension is necessary, additional buffer from where to copy
-	   righExtbuff = (LTFAT_REAL *) ltfat_malloc(buffLen*sizeof(LTFAT_REAL));
-       memset(righExtbuff,0,buffLen*sizeof(LTFAT_REAL));
+	   righExtbuff = (LTFAT_TYPE *) ltfat_malloc(buffLen*sizeof(LTFAT_TYPE));
+       memset(righExtbuff,0,buffLen*sizeof(LTFAT_TYPE));
 	   // store extension in the buffer (must be done now to avoid errors when inplace calculation is done)
 	   LTFAT_NAME(extend_right)(in,inLen,righExtbuff,fLen,ext,sub);
    }
@@ -296,8 +298,8 @@ void LTFAT_NAME(convsub_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, co
 
 #define READNEXTDATA(samples,wherePtr)                                              \
 	   buffOver = imax(buffPtr+(samples)-buffLen, 0);                               \
-   	   memcpy(buffer + buffPtr, wherePtr, ((samples)-buffOver)*sizeof(LTFAT_REAL)); \
-	   memcpy(buffer,wherePtr+(samples)-buffOver,buffOver*sizeof(LTFAT_REAL));      \
+   	   memcpy(buffer + buffPtr, wherePtr, ((samples)-buffOver)*sizeof(LTFAT_TYPE)); \
+	   memcpy(buffer,wherePtr+(samples)-buffOver,buffOver*sizeof(LTFAT_TYPE));      \
 	   buffPtr = modPow2(buffPtr += (samples),buffLen);
 
 
@@ -366,16 +368,16 @@ if(outLenN>0)
 
 
 LTFAT_EXTERN
-void LTFAT_NAME(upconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
+void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
 {
    // Running output pointer
-   LTFAT_REAL* tmpOut = out;
+   LTFAT_TYPE* tmpOut = out;
    // Running input pointer
-   LTFAT_REAL* tmpIn =  (LTFAT_REAL*) in;
+   LTFAT_TYPE* tmpIn =  (LTFAT_TYPE*) in;
 
    /** prepare cyclic buffer */
    int buffLen = nextPow2(fLen);
-   LTFAT_REAL* buffer = (LTFAT_REAL *) ltfat_calloc(buffLen,sizeof(LTFAT_REAL));
+   LTFAT_TYPE* buffer = (LTFAT_TYPE *) ltfat_calloc(buffLen,sizeof(LTFAT_TYPE));
    int buffPtr = 0;
 
 
@@ -404,8 +406,8 @@ void LTFAT_NAME(upconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, con
       remainsOutSamp = outLen - (uuLoops + (iiLoops-1)*up);
    }
 
-   LTFAT_REAL *rightBuffer = (LTFAT_REAL *) ltfat_calloc(buffLen,sizeof(LTFAT_REAL));
-   LTFAT_REAL *rightBufferTmp = rightBuffer;
+   LTFAT_TYPE *rightBuffer = (LTFAT_TYPE *) ltfat_calloc(buffLen,sizeof(LTFAT_TYPE));
+   LTFAT_TYPE *rightBufferTmp = rightBuffer;
 
    if(ext==PER) // if periodic extension
    {
@@ -415,12 +417,12 @@ void LTFAT_NAME(upconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, con
 
    int iniStoCopy = imin(inSkip,buffLen);
    int tmpInSkip = imax(0,inSkip-buffLen);
-   memcpy(buffer,tmpIn+tmpInSkip,iniStoCopy*sizeof(LTFAT_REAL));
+   memcpy(buffer,tmpIn+tmpInSkip,iniStoCopy*sizeof(LTFAT_TYPE));
    tmpIn += (iniStoCopy+tmpInSkip);
    buffPtr = modPow2(buffPtr += iniStoCopy,buffLen);
 
 
- //LTFAT_REAL* filtTmp = filts;
+ //LTFAT_TYPE* filtTmp = filts;
  #define ONEOUTSAMPLE(filtTmp,jjLoops)                                   \
 	    for(int jj=0;jj<(jjLoops);jj++)                                  \
 		    {                                                            \
@@ -480,7 +482,8 @@ void LTFAT_NAME(upconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, con
 		  ONEOUTSAMPLE((filts+ii%up),((fLen-ii%up+up-1)/up))
 	   }
 
-
+    #undef ONEOUTSAMPLE
+    #undef READNEXTSAMPLE
 	ltfat_free(buffer);
 	ltfat_free(rightBuffer);
 }
@@ -489,10 +492,10 @@ void LTFAT_NAME(upconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, con
 
 // fills last buffer samples
 LTFAT_EXTERN
-void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer,int buffLen, int filtLen, enum ltfatWavExtType ext, int a){
+void LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *buffer,int buffLen, int filtLen, enum ltfatWavExtType ext, int a){
 		int legalExtLen = (filtLen-1)%inLen;
 		int inLenTimes = (filtLen-1)/inLen;
-		LTFAT_REAL *buffTmp = buffer + buffLen - legalExtLen;
+		LTFAT_TYPE *buffTmp = buffer + buffLen - legalExtLen;
 	switch (ext) {
 		case SYM: // half-point symmetry
 		case EVEN:
@@ -520,7 +523,7 @@ void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer
 		 case PPD: // periodic padding
          case PER:
              {
-               LTFAT_REAL *bufferPtr = buffer + buffLen - (filtLen-1);
+               LTFAT_TYPE *bufferPtr = buffer + buffLen - (filtLen-1);
                for(int ii=0;ii<legalExtLen;ii++)
                {
   			      *(bufferPtr) = in[inLen-1-(legalExtLen-1)+ii];
@@ -572,7 +575,7 @@ void LTFAT_NAME(extend_left)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *buffer
 	}
 }
 
-void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer, int filtLen, enum ltfatWavExtType ext, int a){
+void LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,int inLen, LTFAT_TYPE *buffer, int filtLen, enum ltfatWavExtType ext, int a){
 	int legalExtLen = (filtLen-1)%inLen;
 	int inLenTimes = (filtLen-1)/inLen;
 	switch (ext) {
@@ -599,7 +602,7 @@ void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer
 		 case PPD: // periodic padding
          case PER:
              {
-              LTFAT_REAL *bufferPtr = buffer;
+              LTFAT_TYPE *bufferPtr = buffer;
               for(int ii=0;ii<inLenTimes;ii++)
               {
                 for(int jj=0;jj<inLen;jj++)
@@ -650,7 +653,7 @@ void LTFAT_NAME(extend_right)(const LTFAT_REAL *in,int inLen, LTFAT_REAL *buffer
 
 }
 
-
+#endif // LTFAT_TYPE
 
 
 

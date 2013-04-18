@@ -1,8 +1,6 @@
 #ifndef LTFAT_H
 #define LTFAT_H 1
 
-/* #include <common.h> */
-
 #include "fftw3.h"
 #include "cblas.h"
 
@@ -34,30 +32,72 @@ extern "C"
   /* -------- Define the double precision routines ----- */
 
 #define LTFAT_H_REAL double
-#define LTFAT_H_COMPLEX ltfat_complex
+#define LTFAT_H_COMPLEX fftw_complex
+#define LTFAT_H_COMPLEXH _Complex double
+#define LTFAT_H_TYPE LTFAT_H_REAL
 #define LTFAT_H_NAME(name) name
+#define LTFAT_H_COMPLEXNAME(name) c ## name
 #define LTFAT_H_FFTW(name) fftw_ ## name
-
+/*
+#define PLOT(...) __VA__ARGS__
+#define LTFAT_H_NAMEVAR(name,...) template <class LTFAT_H_REAL, class LTFAT_H_COMPLEX> PLOT(name)(__VA_ARGS__);
+#define LTFAT_H_NAMEVAR(name,...) template <class LTFAT_H_TYPE> PLOT(name)(__VA_ARGS__);
+#define LTFAT_H_NAMEVAR(name,...) template <> PLOT(name)<double>(__VA_ARGS__)  \
+{                                                                               \
+PLOT(name)();                                                                   \
+}
+*/
 #include "ltfat_typeindependent.h"
+#undef LTFAT_H_COMPLEX
+#define LTFAT_H_COMPLEX LTFAT_H_COMPLEXH
+#include "ltfat_typecomplexindependent.h"
+
+#undef LTFAT_H_TYPE
+#undef LTFAT_H_NAME
+#define LTFAT_H_TYPE LTFAT_H_COMPLEX
+#define LTFAT_H_NAME(name) LTFAT_H_COMPLEXNAME(name)
+
+
+#include "ltfat_typecomplexindependent.h"
 
 #undef LTFAT_H_REAL
 #undef LTFAT_H_COMPLEX
+#undef LTFAT_H_COMPLEXH
 #undef LTFAT_H_NAME
 #undef LTFAT_H_FFTW
+#undef LTFAT_H_TYPE
+#undef LTFAT_H_COMPLEXNAME
 
   /* -------- Define the single precision routines ----- */
 
 #define LTFAT_H_REAL float
-#define LTFAT_H_COMPLEX ltfat_scomplex
+#define LTFAT_H_COMPLEX fftwf_complex
+#define LTFAT_H_COMPLEXH _Complex float
 #define LTFAT_H_NAME(name) s ## name
+#define LTFAT_H_COMPLEXNAME(name) cs ## name
 #define LTFAT_H_FFTW(name) fftwf_ ## name
+#define LTFAT_H_TYPE LTFAT_H_REAL
 
 #include "ltfat_typeindependent.h"
+#undef LTFAT_H_COMPLEX
+#define LTFAT_H_COMPLEX LTFAT_H_COMPLEXH
+#include "ltfat_typecomplexindependent.h"
+
+#undef LTFAT_H_TYPE
+#undef LTFAT_H_NAME
+#define LTFAT_H_TYPE LTFAT_H_COMPLEX
+#define LTFAT_H_NAME(name) LTFAT_H_COMPLEXNAME(name)
+
+#include "ltfat_typecomplexindependent.h"
 
 #undef LTFAT_H_REAL
 #undef LTFAT_H_COMPLEX
+#undef LTFAT_H_COMPLEXH
+#undef LTFAT_H_TYPE
 #undef LTFAT_H_NAME
 #undef LTFAT_H_FFTW
+#undef LTFAT_H_COMPLEXNAME
+
 
   /* -------- Define routines that do not change between single/double-- */
 
