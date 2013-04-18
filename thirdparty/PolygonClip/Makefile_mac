@@ -1,0 +1,25 @@
+# This line gets the MEX extension for the platform. If the shell
+# command 'mexext' is not available on your Matlab installation,
+# please execute the 'mexext' command within Matlab, and put the
+# answer into the line below (remember to uncomment).
+EXT = $(shell mexext)
+#EXT = $(glnx86)
+
+ifndef MATLABROOT
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="Applications/MATLAB_R2013a.app/")
+  MATLABROOT=Applications/MATLAB_R2013a.app/
+endif
+
+ifndef EXT
+  $(warning EXT variable is udefined. Using default EXT=mexa64)
+  EXT=mexmaci64
+endif
+
+MEXLIBS=-lmex -lmx
+MEXLINKFLAGS=-L"$(MATLABROOT)/bin/maci64" $(MEXLIBS)
+
+all:
+	mex -I../GPC $(MEXLINKFLAGS) PolygonClip.c ../GPC/gpc.c
+
+clean:
+	rm PolygonClip.$(EXT)
