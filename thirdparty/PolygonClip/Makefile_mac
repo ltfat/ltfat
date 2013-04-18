@@ -15,11 +15,14 @@ ifndef EXT
   EXT=mexmaci64
 endif
 
-MEXLIBS=-lmex -lmx
-MEXLINKFLAGS=-L"$(MATLABROOT)/bin/maci64" $(MEXLIBS)
+CC=gcc
+MEXTGT=PolygonClip.$(EXT)
+MEXSRC=PolygonClip.c ../GPC/gpc.c
+LIBS= -L"$(MATLABROOT)/bin/maci64" -lmex -lmx
+INCLUDES= -I"$(MATLABROOT)/extern/include" -I../GPC
 
-all:
-	mex -I../GPC $(MEXLINKFLAGS) PolygonClip.c ../GPC/gpc.c
+all: $(MEXSRC) 
+	$(CC) -std=c99 -Wall -m64 -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT)
 
 clean:
 	rm PolygonClip.$(EXT)

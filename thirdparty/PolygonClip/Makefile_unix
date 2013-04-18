@@ -5,7 +5,7 @@
 EXT = $(shell mexext)
 #EXT = $(glnx86)
 
-mex:
+all:
 	mex -I../GPC PolygonClip.c ../GPC/gpc.c
 
 clean:
