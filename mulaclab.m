@@ -1063,7 +1063,8 @@ initialize(file);
           fhat = iufwt(coef,coeff.info);
        otherwise
           error('%s: Unrecognized frame type',upper(mfilename)); 
-    end
+     end
+    fhat = real(fhat);
   end
 
   function C = plotCoeff(coef,axesId,key,value)

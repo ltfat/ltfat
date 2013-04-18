@@ -1,11 +1,43 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
-/** ISNARGINEQ, ISNARGINLE, ISNARGINGE */
+
+/** ISNARGINEQ, ISNARGINLE, ISNARGINGE
+    AT COMPILE-TIME:
+    AT RUNTIME: Ensures correct number of the input parameters.
+    WHEN MISSING: No input argument checks ale included in the final code.
+*/
 #define ISNARGINEQ 5
-/** By defaut, only double version is created. Specifying SINGLEARGS creates second version of the funcntion. */
-#define SINGLEARGS 0, 1
-/** Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
-#define TOCOMPLEXFMT 0, 1
+/** TYPEDEPARGS
+    AT COMPILE-TIME: Defines integer array from the specified values.
+    AT RUNTIME: The array is used to identify input arguments to be checked/reformated. Accepted inputs are numeric arrays,
+                cell arrays containing only numeric arrays, structures having at least one field beeing numeric array.
+    WHEN MISSING: No input modifications/checks are included in the code.
+*/
+#define TYPEDEPARGS 0, 1
+/** SINGLEARGS
+    AT COMPILE-TIME: Includes this file for the second time with TYPEDEPARGS input args. recast to float arrays (cells, structs).
+    AT RUNTIME: If at least one of the TYPEDEPARGS input args. is float (single in MatLab), all TYPEDEPARGS are recast to floats.
+    WHEN MISSING: TYPEDEPARGS input args can be only double arrays.
+*/
+#define SINGLEARGS
+/** COMPLEXARGS, REALARGS
+    AT COMPILE-TIME: (COMPLEXARGS) adds code for on-the-fly conversion from the Matlab complex number format to the
+                     complex.h (interleaved) complex data format.
+                     (REALARGS) and (COMPLEXARGS) allows both real and complex inputs. Have to be handled here.
+    AT RUNTIME: (COMPLEXARGS) TYPEDEPARGS input args are recast to complex format even in they are real.
+                (REALARGS) TYPEDEPARGS args are accepted only if they are real.
+                (REALARGS) and (COMPLEXARGS) If at least one of the TYPEDEPARGS is complex do as (COMPLEXARGS), otherwise let
+                the inputs untouched.
+    WHEN MISSING: Real/Complex are not checked. No complex data format change.
+*/
+
+/** COMPLEXINDEPENDENT
+    AT COMPILE-TIME: As if both COMPLEXARGS, REALARGS were defined.
+    AT RUNTIME: As if both COMPLEXARGS, REALARGS were defined plus it is assumed that the called functions from the LTFAT
+                backend are from ltfat_typecomplexindependent.h, e.i. there are
+    WHEN MISSING: No input checks REAL/COMPLEX checks are included in the final code.
+*/
+#define COMPLEXINDEPENDENT
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -13,14 +45,13 @@
 #if defined(__GNUC__) || defined(__ICC)
   #define MEX_FILE __BASE_FILE__
 #endif
-
-
 #include "ltfat_mex_template_helper.h"
+
+
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "mex.h"
-#include "math.h"
-#include "ltfat.h"
 #include "ltfat_types.h"
+/** USER DEFINED HEADERS **/
+//#include "math.h"
 
 /*
 %COMP_FILTERBANK_TD   Non-uniform filterbank by conv2
@@ -37,7 +68,7 @@
 %         c  : Cell array of length M. Each element is N(m)*W array.
 */
 
-void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
   const mxArray* mxf = prhs[0];
   const mxArray* mxg = prhs[1];
@@ -77,42 +108,26 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
      }
   }
 
-  if(mxIsComplex(mxf) || mxIsComplex(mxGetCell(mxg,0)))
-  {
-     mexErrMsgTxt("Complex inputs not supported yet in a MEX function.");
-   //  mxComplexity outComplFlag = mxCOMPLEX;
-  }
-  else
-  {
-
-     mxComplexity outComplFlag = mxREAL;
-     //mxClassID outClassID = mxDOUBLE_CLASS;
-
      // POINTER TO THE INPUT
-     LTFAT_REAL* fPtr = (LTFAT_REAL*) mxGetData(prhs[0]);
+     LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(prhs[0]);
 
      // POINTER TO THE FILTERS
-     LTFAT_REAL* gPtrs[M];
-     // LTFAT_REAL** gPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+     LTFAT_TYPE* gPtrs[M];
+     // LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
      for(mwIndex m=0;m<M;m++)
      {
-        gPtrs[m] = (LTFAT_REAL*) mxGetPr(mxGetCell(mxg, m));
+        gPtrs[m] = (LTFAT_TYPE*) mxGetPr(mxGetCell(mxg, m));
      }
 
      // POINTER TO OUTPUTS
-     LTFAT_REAL* cPtrs[M]; // C99 feature
-     //LTFAT_REAL** cPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+     LTFAT_TYPE* cPtrs[M]; // C99 feature
+     //LTFAT_TYPE** cPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
      plhs[0] = mxCreateCellMatrix(M, 1);
      for(mwIndex m=0;m<M;++m)
      {
-        mwSize ndim = 2;
-        mwSize dims[] = { outLen[m], W};
-        /*mwSize dims[2];
-        dims[0] =  outLen[m];
-        dims[1] =  W;*/
-        mxSetCell(plhs[0], m, mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,outComplFlag));
-        cPtrs[m] = (LTFAT_REAL*) mxGetData(mxGetCell(plhs[0],m));
-        memset(cPtrs[m],0,outLen[m]*W*sizeof(LTFAT_REAL));
+        mxSetCell(plhs[0], m, ltfatCreateMatrix(outLen[m], W,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY));
+        cPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(plhs[0],m));
+        memset(cPtrs[m],0,outLen[m]*W*sizeof(LTFAT_TYPE));
      }
 
      // over all channels
@@ -123,14 +138,13 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
           for(mwIndex w =0; w<W; w++)
           {
            // Obtain pointer to w-th column in input
-           LTFAT_REAL *fPtrCol = fPtr + w*L;
+           LTFAT_TYPE *fPtrCol = fPtr + w*L;
            // Obtaing pointer to w-th column in m-th element of output cell-array
-           LTFAT_REAL *cPtrCol = cPtrs[m] + w*outLen[m];
+           LTFAT_TYPE *cPtrCol = cPtrs[m] + w*outLen[m];
            //conv_td_sub(fPtrCol,L,&cPtrCol,outLen[m],(const double**)&gPtrs[m],filtLen[m],1,a[m],skip[m],ltfatExtStringToEnum(ext),0);
            LTFAT_NAME(convsub_td)(fPtrCol,L,cPtrCol,outLen[m],gPtrs[m],filtLen[m],a[m],skip[m],ltfatExtStringToEnum(ext));
           }
         }
-  }
 }
 #endif
 

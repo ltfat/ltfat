@@ -18,29 +18,29 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const int gl,
 
    const int Lext    = bl+gl;
    const int Nblocke = Lext/a;
-   
-   plan.buf  = ltfat_malloc(Lext*W*sizeof(LTFAT_COMPLEX));
-   plan.gext = ltfat_malloc(Lext*sizeof(LTFAT_COMPLEX));   
-   plan.cbuf = ltfat_malloc(M*Nblocke*W*sizeof(LTFAT_COMPLEX));
-   
+
+   plan.buf  = (LTFAT_COMPLEX*) ltfat_malloc(Lext*W*sizeof(LTFAT_COMPLEX));
+   plan.gext = (LTFAT_COMPLEX*) ltfat_malloc(Lext*sizeof(LTFAT_COMPLEX));
+   plan.cbuf = (LTFAT_COMPLEX*) ltfat_malloc(M*Nblocke*W*sizeof(LTFAT_COMPLEX));
+
    LTFAT_NAME(fir2long_c)(g, gl, Lext, plan.gext);
-   
+
    /* Zero the last part of the buffer, it will always be zero. */
    for (int w=0; w<W; w++)
-   {      
+   {
       for (int jj=bl; jj<Lext;jj++)
       {
 	 plan.buf[jj+w*Lext][0]=0.0;
 	 plan.buf[jj+w*Lext][1]=0.0;
       }
    }
-   
+
    plan.plan =
       LTFAT_NAME(dgt_long_init)((const LTFAT_COMPLEX*)plan.buf,
 				(const LTFAT_COMPLEX*)plan.gext,
 				Lext, W, a, M,
 				plan.cbuf, flags);
-   
+
    return (plan);
 
 }
@@ -70,7 +70,7 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
       cout[ii][0]=0.0;
       cout[ii][1]=0.0;
    }
-   
+
    for (int ii=0; ii<Nb; ii++)
    {
       int s_ii;
@@ -80,7 +80,7 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
       {
 	 memcpy(plan.buf+Lext*w,f+ii*bl+w*L,sizeof(LTFAT_COMPLEX)*bl);
       }
-      
+
       /* Execute the short DGT */
       LTFAT_NAME(dgt_long_execute)(plan.plan);
 
@@ -115,7 +115,7 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 	    }
 	 }
 
-	 
+
 	 /* Small block - */
 	 s_ii=positiverem(ii-1,Nb)+1;
 	 cout_p = cout + M*(s_ii*Nblock-b2)+w*M*N ;
@@ -128,12 +128,12 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 	       cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
 	    }
 	 }
-	 
+
       }
-             
+
    }
 
-   
+
 }
 
 LTFAT_EXTERN void
@@ -164,28 +164,28 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const int gl,
 
    const int Lext    = bl+gl;
    const int Nblocke = Lext/a;
-   
-   plan.buf  = ltfat_malloc(Lext*W*sizeof(LTFAT_REAL));
-   plan.gext = ltfat_malloc(Lext*sizeof(LTFAT_REAL));   
-   plan.cbuf = ltfat_malloc(M2*Nblocke*W*sizeof(LTFAT_COMPLEX));
-   
+
+   plan.buf  = (LTFAT_REAL*) ltfat_malloc(Lext*W*sizeof(LTFAT_REAL));
+   plan.gext = (LTFAT_REAL*) ltfat_malloc(Lext*sizeof(LTFAT_REAL));
+   plan.cbuf = (LTFAT_COMPLEX*) ltfat_malloc(M2*Nblocke*W*sizeof(LTFAT_COMPLEX));
+
    LTFAT_NAME(fir2long_r)(g, gl, Lext, plan.gext);
-   
+
    /* Zero the last part of the buffer, it will always be zero. */
    for (int w=0; w<W; w++)
-   {      
+   {
       for (int jj=bl; jj<Lext;jj++)
       {
 	 plan.buf[jj+w*Lext]=0.0;
       }
    }
-   
+
    plan.plan =
       LTFAT_NAME(dgtreal_long_init)((const LTFAT_REAL*)plan.buf,
 				(const LTFAT_REAL*)plan.gext,
 				Lext, W, a, M,
 				plan.cbuf, flags);
-   
+
    return (plan);
 
 }
@@ -222,7 +222,7 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
       cout[ii][1]=0.0;
    }
 
-   
+
    for (int ii=0; ii<Nb; ii++)
    {
       int s_ii;
@@ -232,7 +232,7 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
       {
 	 memcpy(plan.buf+Lext*w,f+ii*bl+w*L,sizeof(LTFAT_REAL)*bl);
       }
-      
+
       /* Execute the short DGTREAL */
       LTFAT_NAME(dgtreal_long_execute)(plan.plan);
 
@@ -267,7 +267,7 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 	    }
 	 }
 
-	 
+
 	 /* Small block - */
 	 s_ii=positiverem(ii-1,Nb)+1;
 	 cout_p = cout + M2*(s_ii*Nblock-b2)+w*M2*N ;
@@ -280,9 +280,9 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 	       cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
 	    }
 	 }
-	 
+
       }
-             
+
    }
 }
 

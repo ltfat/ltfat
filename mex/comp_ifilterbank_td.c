@@ -3,7 +3,9 @@
 
 /*  Define which arguments are to be checked and cast to single if either of them is single. */
 #define NARGINEQ 6
-#define SINGLEARGS 0, 1
+#define TYPEDEPARGS 0, 1
+#define SINGLEARGS
+#define COMPLEXINDEPENDENT
 
 /* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
 //#define CHCOMPLEXFORMAT 1
@@ -17,21 +19,10 @@
 //#define MEX_FILE "comp_ifilterbank_td.c"
 #endif
 
-/* The following header includes this file twice setting either LTFAT_SINGLE or LTFAT_DOUBLE.
-    At the end of the header, LTFAT_SINGLE or LTFAT_DOUBLE is unset. */
+
 #include "ltfat_mex_template_helper.h"
-/* Do not allow processing this file further unless LTFAT_SINGLE or LTFAT_DOUBLE is specified. */
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 
-
-/** From now on, it is like ordinary mexFunction but params prhs[PRHSTOCHECK[i]], i=0:length(PRHSTOCHECK) are now of type LTFAT_REAL.
-    Complex array still has to be processed separatelly.
-    Enclose calls to the ltfat backend in LTFAT_NAME() macro.
-    Enclose calls to the fftw in LTFAT_FFTW() macro.
-    Avoid using mx functions working with concrete data type.
-    e.g. use mxGetData intead of mxGetPr (or recast to LTFAT_REAL*)
-         mxCreateNumericArray with macro LTFAT_MX_CLASSID instead of createDoubleMatrix
- */
 #include "mex.h"
 #include "math.h"
 #include "ltfat.h"
@@ -60,7 +51,7 @@
 %         f  : Output Ls*W array.
 %
 */
-void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
   // printf("Filename: %s, Function name %s, %d \n.",__FILE__,__func__,mxIsDouble(prhs[0]));
   const mxArray* mxc = prhs[0];
@@ -91,41 +82,27 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
      filtLen[m] = (unsigned int) mxGetNumberOfElements(mxGetCell(mxg,m));
   }
 
-  if(mxIsComplex(mxc) || mxIsComplex(mxGetCell(mxg,0)))
-  {
-     mexErrMsgTxt("Complex inputs not supported yet in a MEX function.");
-   //  mxComplexity outComplFlag = mxCOMPLEX;
-  }
-  else
-  {
-     mxComplexity outComplFlag = mxREAL;
-     //mxClassID outClassID = mxDOUBLE_CLASS;
-
      // POINTER TO THE INPUT
-     LTFAT_REAL** cPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+     LTFAT_TYPE** cPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
      for(unsigned int m=0;m<M;++m)
      {
-        cPtrs[m] = (LTFAT_REAL*) mxGetData(mxGetCell(mxc,m));
+        cPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxc,m));
      }
 
      // allocate output
-     mwSize ndim = 2;
-     mwSize dims[2];
-     dims[0] =  Ls;
-     dims[1] =  W;
-     plhs[0] = mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,outComplFlag);
+     plhs[0] = ltfatCreateMatrix(Ls, W,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
 
       // POINTER TO OUTPUT
-     LTFAT_REAL* fPtr = (LTFAT_REAL*) mxGetData(plhs[0]);
+     LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);
      // Set to zeros
-     memset(fPtr,0,Ls*W*sizeof(LTFAT_REAL));
+     memset(fPtr,0,Ls*W*sizeof(LTFAT_TYPE));
 
      // POINTER TO THE FILTERS
-     LTFAT_REAL** gPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+     LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
      for(unsigned int m=0;m<M;m++)
      {
-        gPtrs[m] = (LTFAT_REAL*) mxGetData(mxGetCell(mxg, m));
+        gPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxg, m));
      }
 
      // over all channels
@@ -136,13 +113,13 @@ void TEMPLATE(MEX_FUNC,LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mx
           for(unsigned int w =0; w<W; w++)
           {
            // Obtain pointer to w-th column in input
-           LTFAT_REAL *fPtrCol = fPtr + w*Ls;
+           LTFAT_TYPE *fPtrCol = fPtr + w*Ls;
            // Obtaing pointer to w-th column in m-th element of output cell-array
-           LTFAT_REAL *cPtrCol = cPtrs[m] + w*Lc[m];
-           //(upconv_td)(const LTFAT_REAL *in, int inLen, LTFAT_REAL *out, const int outLen, const LTFAT_REAL *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
+           LTFAT_TYPE *cPtrCol = cPtrs[m] + w*Lc[m];
+           //(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
            LTFAT_NAME(upconv_td)(cPtrCol,Lc[m],fPtrCol,Ls,gPtrs[m],filtLen[m],a[m],skip[m],ltfatExtStringToEnum(ext));
           }
        }
-  }
+
 }
 #endif

@@ -15,6 +15,7 @@ DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED
 
 include filedefs.mk
 
+
 DFILES = $(addprefix d,$(files)) $(files_notypechange)
 SFILES = $(addprefix s,$(files))
 

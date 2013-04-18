@@ -2,7 +2,9 @@
 #define _LTFAT_MEX_FILE
 
 #define NARGINEQ 4
-#define SINGLEARGS 0, 1
+#define TYPEDEPARGS 0, 1
+#define SINGLEARGS
+#define COMPLEXINDEPENDENT
 
 /* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
 //#define CHCOMPLEXFORMAT 1
@@ -38,7 +40,7 @@
 %         c  : L*M*W array of coefficients
 %
 */
-void TEMPLATE(MEX_FUNC, LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
     const mxArray* mxf = prhs[0];
     const mxArray* mxg = prhs[1];
@@ -66,13 +68,13 @@ void TEMPLATE(MEX_FUNC, LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const m
         mxComplexity outComplFlag = mxREAL;
 
         // POINTER TO THE INPUT
-        LTFAT_REAL* fPtr = (LTFAT_REAL*) mxGetPr(prhs[0]);
+        LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetPr(prhs[0]);
 
         // POINTER TO THE FILTERS
-        LTFAT_REAL** gPtrs = (LTFAT_REAL**) mxMalloc(M*sizeof(LTFAT_REAL*));
+        LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
         for(unsigned int m=0; m<M; m++)
         {
-            gPtrs[m] = ((LTFAT_REAL*) mxGetData(mxg)) + m*filtLen;
+            gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
         }
 
         mwSize ndim = 3;
@@ -89,10 +91,10 @@ void TEMPLATE(MEX_FUNC, LTFAT_REAL)( int nlhs, mxArray *plhs[],int nrhs, const m
             for(unsigned int w =0; w<W; w++)
             {
                 // Obtain pointer to w-th column in input
-                LTFAT_REAL *fPtrCol = fPtr + w*L;
-                LTFAT_REAL *cPtrPlane = ((LTFAT_REAL*) mxGetData(plhs[0])) + w*L*M;
+                LTFAT_TYPE *fPtrCol = fPtr + w*L;
+                LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(plhs[0])) + w*L*M;
                 // Obtaing pointer to w-th column in m-th element of output cell-array
-                LTFAT_REAL *cPtrCol = cPtrPlane + m*L;
+                LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
                 LTFAT_NAME(atrousconvsub_td)(fPtrCol, L, cPtrCol, L, gPtrs[m], filtLen, (int)*a, skip[m], ltfatExtStringToEnum("per"));
             }
         }
