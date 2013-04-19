@@ -94,52 +94,7 @@ else
       
         [s0,s1,br] = shearfind(L,a,M,lt);
         
-        b=L/M;
-        ar = a*b/br;
-        Mr = L/br;
-        Nr = L/ar;
-        
-        ind = [ar 0; 0 br]*[kron((0:L/ar-1),ones(1,L/br));kron(ones(1,L/ar), ...
-                                                          (0:L/br-1))];
-        phs = reshape(mod((s1*(ind(1,:)-s0*ind(2,:)).^2+s0*ind(2,:).^2)*(L+1) ...
-                          -2*(s0 ~= 0)*ind(1,:).*ind(2,:),2*L),L/br,L/ar);    
-        phs = exp(-pi*1i*phs/L);
-
-        ind_final = [1 0;-s1 1]*[1 -s0;0 1]*ind;
-        ind_final = mod(ind_final,L);
-        
-        if s1 ~= 0
-            g = comp_pchirp(L,s1).*g;
-        end
-        
-        if s0 ~= 0
-            
-            c_rect = zeros(Nr,Mr,W);
-            g = comp_pchirp(L,-s0).*fft(g);
-            for w=0:W-1
-                c_rect(ind(1,[1:Mr,end:-1:Mr+1])/ar+1+(ind(2,:)/br)*Nr+w*M*N) = ...
-                    coef(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M+w*M* ...
-                         N).*phs(ind(2,:)/br+1+(ind(1,:)/ar)*Mr);
-            end;
-            f = comp_idgt(c_rect,g,br,[0 1],0,0);
-            f = ifft(bsxfun(@times,comp_pchirp(L,s0),f));   
-            
-        else
-            
-            c_rect = zeros(Mr,Nr,W);
-            for w=0:W-1
-                c_rect(ind(2,:)/br+1+(ind(1,:)/ar)*Mr+w*M*N) = ... 
-                    coef(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M+w*M*N);       
-                c_rect(:,:,w+1) = phs.*c_rect(:,:,w+1);
-            end;
-            f = comp_idgt(c_rect,g,ar,[0 1],0,0);
-            
-        end
-        
-        if s1 ~= 0
-            f = bsxfun(@times,comp_pchirp(L,-s1),f);
-        end            
-        
+        f=comp_inonsepdgt_shear(coef,g,a,s0,s1,br);
     end;
 
 end;    

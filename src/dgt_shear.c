@@ -6,7 +6,7 @@
 
 #define PI 3.1415926535897932384626433832795
 
-static inline int positiverem_long(long int a,int b)
+static inline long positiverem_long(long int a,int b)
 {
   const long c = a%b;
   return(c<0 ? c+b : c);
@@ -14,40 +14,39 @@ static inline int positiverem_long(long int a,int b)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(pchirp)(const int L, const int n, LTFAT_COMPLEX *g)
+LTFAT_NAME(pchirp)(const long L, const long n, LTFAT_COMPLEX *g)
 { 
 
-   /* const long LL=2*L; */
-   /* const long Lpone=L+1; */
+   const long LL=2*L;
+   const long Lponen=positiverem_long((L+1)*n,LL);
+   
+   for (long m=0;m<L;m++)
+   {
+      const long idx = positiverem_long(
+   	 positiverem_long(Lponen*m,LL)*m,LL);
+
+      g[m] = cexp(1.0*I*PI*idx/L);
+   }
+ 
+
+   /* const LTFAT_REAL LL=2.0*L; */
+   /* const LTFAT_REAL Lpone=L+1; */
    
    /* for (int m=0;m<L;m++) */
    /* { */
-   /*    const long idx = positiverem_long( */
-   /* 	 positiverem_long( */
-   /* 	    positiverem_long(Lpone*n,LL)*m,LL)*m,LL); */
-
-   /*    g[m] = cexp(1.0*I*PI*idx/L); */
+   /*    //g[m] = cexp(I*PI*fmod(Lpone*n*m*m,LL)/L); */
+   /*    g[m] = cexp(I*PI*fmod(fmod(fmod(Lpone*n,LL)*m,LL)*m,LL)/L); */
    /* } */
- 
-
-   const LTFAT_REAL LL=2.0*L;
-   const LTFAT_REAL Lpone=L+1;
-   
-   for (int m=0;m<L;m++)
-   {
-      //g[m] = cexp(I*PI*fmod(Lpone*n*m*m,LL)/L);
-      g[m] = cexp(I*PI*fmod(fmod(fmod(Lpone*n,LL)*m,LL)*m,LL)/L);
-   }
   
 }
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_shear_plan)
 LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-				 const int L, const int W, const int a, const int M,
-				 const int s0, const int s1, const int br,
-				 LTFAT_COMPLEX *cout,
-				 unsigned flags)
+			   const int L, const int W, const int a, const int M,
+			   const int s0, const int s1, const int br,
+			   LTFAT_COMPLEX *cout,
+			   unsigned flags)
 { 
    LTFAT_NAME(dgt_shear_plan) plan;
    
@@ -77,14 +76,14 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    LTFAT_COMPLEX *f_before_fft = (LTFAT_COMPLEX *)f;
    LTFAT_COMPLEX *g_before_fft = (LTFAT_COMPLEX *)g;
 
-   if ((!s0==0) || (!s1==0))
+   if ((s0) || (s1))
    {
       plan.fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
       plan.gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));	 
    }
 
             
-   if (!s1==0)
+   if (s1)
    {
       plan.p1 = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
@@ -103,8 +102,18 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
    }
    
-   if (!s0==0)
+   if (s0==0)
    {
+
+      /* Call the rectangular computation in the time domain */
+      /* LTFAT_NAME(dgt_long)(plan.fwork,plan.gwork,L,W,ar,Mr,plan.c_rect); */
+
+      plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, 
+						 L, W, ar, Mr, plan.c_rect, flags);      
+   }
+   else 
+   {     
+
       /* Allocate memory and compute the pchirp */
       plan.p0 = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
       LTFAT_NAME(pchirp)(L,-s0,plan.p0);
@@ -134,16 +143,6 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
       /* Call the rectangular computation in the frequency domain*/
       plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, L, W, br, Nr, plan.c_rect, flags);
 
-   }
-   else 
-   {     
-
-      /* Call the rectangular computation in the time domain */
-      /* LTFAT_NAME(dgt_long)(plan.fwork,plan.gwork,L,W,ar,Mr,plan.c_rect); */
-
-      plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, 
-						 L, W, ar, Mr, plan.c_rect, flags);      
-
    }  
 
    plan.finalmod = ltfat_malloc(2*N*sizeof(LTFAT_COMPLEX));
@@ -167,8 +166,8 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
    const int b=plan.L/plan.M;
    const int N=plan.L/plan.a;
-   const int s0 = plan.s0;
-   const int s1 = plan.s1;
+   const long s0 = plan.s0;
+   const long s1 = plan.s1;
 
    const int ar = plan.a*b/plan.br;
    const int Mr = plan.L/plan.br;
@@ -264,7 +263,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
 	    for (int w=0;w<plan.W;w++) 
 	    {
-	       const int inidx  = positiverem(-k,Nr)+m*Nr+w*plan.M*N;
+	       const int inidx  = positiverem(-k,Nr)+m*Nr+w*M*N;
 	       const int outidx = idx2+idx1*M+w*M*N;
 	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
 
@@ -285,21 +284,22 @@ LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
   
    ltfat_free(plan.c_rect);
 
-   if (!plan.s0==0)
-   {
-      ltfat_free(plan.p0);
-   }
-
-   if (!plan.s1==0)
-   {
-      ltfat_free(plan.p1);
-   }
-
-   if ((!plan.s0==0) || (!plan.s1==0))
+   if (plan.s0 || plan.s1)
    {
       ltfat_free(plan.fwork);
       ltfat_free(plan.gwork);
    }
+
+   if (plan.s0)
+   {
+      ltfat_free(plan.p0);
+   }
+
+   if (plan.s1)
+   {
+      ltfat_free(plan.p1);
+   }
+
    
 }
 

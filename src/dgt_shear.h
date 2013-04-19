@@ -50,4 +50,4 @@ LTFAT_H_NAME(dgt_shear)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g,
 			LTFAT_H_COMPLEX *c);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(pchirp)(const int L, const int n, LTFAT_H_COMPLEX *g);
+LTFAT_H_NAME(pchirp)(const long L, const long n, LTFAT_H_COMPLEX *g);
