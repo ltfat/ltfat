@@ -90,12 +90,9 @@ LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
       /* Place the results */
       for (int w=0; w<W; w++)
       {
-	 LTFAT_COMPLEX *cout_p;
-	 LTFAT_COMPLEX *cbuf_p;
-
 	 /* Place large block */
-	 cout_p = cout + ii*M*Nblock+w*M*N ;
-	 cbuf_p = plan.cbuf +             w*M*Nblocke;
+	 LTFAT_COMPLEX *cout_p = cout +      ii*M*Nblock+w*M*N ;
+	 LTFAT_COMPLEX *cbuf_p = plan.cbuf +  w*M*Nblocke;
 	 for (int m=0; m<M; m++)
 	 {
 	    for (int n=0;n<Nblock;n++)
@@ -146,7 +143,7 @@ LTFAT_NAME(dgt_shearola_done)(LTFAT_NAME(dgt_shearola_plan) plan)
 
    ltfat_free(plan.cbuf);
    ltfat_free(plan.gext);
-   ltfat_free(plan.buf);
+   ltfat_free(plan.buf);z
 
 }
 
