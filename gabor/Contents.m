@@ -45,16 +45,6 @@
 %    WILORTH        -  Window of Wilson/WMDCT orthonormal basis
 %    WILDUAL        -  Riesz dual window of Wilson/WMDCT basis 
 %
-%  Time/Frequency operators
-%    GABMUL         -  Gabor multiplier
-%    GABMULEIGS     -  Eigenpairs of Gabor multiplier
-%    GABMULAPPR     -  Best approximation by a Gabor mult.
-%    SPREADOP       -  Spreading operator
-%    SPREADINV      -  Apply inverse spreading operator
-%    SPREADADJ      -  Symbol of adjoint spreading operator
-%    SPREADFUN      -  Symbol of operator expressed as a matrix
-%    SPREADEIGS     -  Eigenpairs of spreading operator
-%
 %  Conditions numbers
 %    GABFRAMEBOUNDS -  Frame bounds of Gabor system
 %    GABRIESZBOUNDS -  Riesz sequence/basis bounds of Gabor system

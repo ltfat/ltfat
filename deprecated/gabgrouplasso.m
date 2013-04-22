@@ -6,7 +6,7 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %
 %   A call to `gabgrouplasso(x,g,a,M,lambda)` can be replaced by ::
 %
-%     F=newframe('dgt',[],g,a,M);
+%     F=frame('dgt',g,a,M);
 %     tc=framegrouplasso(F,lambda);
 %
 %   Any additional parameters passed to `gabgrouplasso` can be passed to

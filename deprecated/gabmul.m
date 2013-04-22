@@ -14,6 +14,17 @@ function h=gabmul(f,c,p3,p4,p5)
 %   Output parameters:
 %         h     : Output signal
 %
+%   `gabmul` has been deprecated. Please use construct a frame multiplier
+%   and use |framemul| instead.
+%
+%   A call to `gabmul(f,c,ga,gs,a)` can be replaced by ::
+%
+%     [Fa,Fs]=framepair('dgt',ga,gs,a,M);
+%     fout=framemul(f,Fa,Fs,s);
+%
+%   Original help:
+%   --------------
+%
 %   `gabmul(f,c,g,a)` filters *f* by a Gabor multiplier determined by
 %   the symbol *c* over the rectangular time-frequency lattice determined by
 %   *a* and *M*, where *M* is deduced from the size of *c*. The rows of *c*
@@ -33,6 +44,8 @@ function h=gabmul(f,c,p3,p4,p5)
 %
 %   Demos: demo_gabmul
 
+warning(['LTFAT: GABMUL has been deprecated, please use FRAMEMUL ' ...
+         'instead. See the help on GABMUL for more details.']);   
 
 error(nargchk(3,5,nargin));
 

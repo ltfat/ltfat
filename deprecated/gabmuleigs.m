@@ -15,6 +15,17 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %         V     : Matrix containing eigenvectors.
 %         D     : Eigenvalues.
 %
+%   `gabmuleigs` has been deprecated. Please use construct a frame multiplier
+%   and use |framemuleigs| instead.
+%
+%   A call to `gabmuleigs(K,c,ga,gs,a)` can be replaced by ::
+%
+%     [Fa,Fs]=framepair('dgt',ga,gs,a,M);
+%     [V,D]=framemuleigs(Fa,Fs,s,K);
+%
+%   Original help:
+%   --------------
+%
 %   `gabmuleigs(K,c,g,a)` computes the *K* largest eigenvalues and eigen-
 %   vectors of the Gabor multiplier with symbol *c* and time shift *a*.  The
 %   number of channels is deduced from the size of the symbol *c*.  The
