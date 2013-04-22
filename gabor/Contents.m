@@ -9,7 +9,6 @@
 %    IZAK           -  Inverse Zak transform
 %    COL2DIAG       -  Move columns of a matrix to diagonals
 %    S0NORM         -  Compute the S0-norm
-%    TFMAT          -  Matrix of transform or operator in LTFAT
 %
 %  Gabor systems
 %    dgt            -  Discrete Gabor transform

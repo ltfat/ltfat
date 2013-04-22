@@ -2,17 +2,17 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %GABGROUPLASSO  Group LASSO regression in Gabor domain
 %   Usage: [tc,xrec] = gabgrouplasso(x,g,a,M,group,lambda,C,maxit,tol)
 %
-%   `gabgrouplasso` has been deprecated. Please use |framegrouplasso| instead.
+%   `gabgrouplasso` has been deprecated. Please use |franagrouplasso| instead.
 %
 %   A call to `gabgrouplasso(x,g,a,M,lambda)` can be replaced by ::
 %
 %     F=frame('dgt',g,a,M);
-%     tc=framegrouplasso(F,lambda);
+%     tc=franagrouplasso(F,lambda);
 %
 %   Any additional parameters passed to `gabgrouplasso` can be passed to
-%   |framegrouplasso| in the same manner.
+%   |franagrouplasso| in the same manner.
 %
-%   See also: newframe, framegrouplasso
+%   See also: frame, franagrouplasso
 
 warning(['LTFAT: GABGROUPLASSO has been deprecated, please use FRAMEGROUPLASSO ' ...
          'instead. See the help on GABGROUPLASSO for more details.']);   

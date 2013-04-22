@@ -2,6 +2,15 @@
 %
 %  Peter L. Søndergaard, 2013.
 %
+%  General operator framework
+%    OPERATORNEW       - Construct a new operator
+%    OPERATOR          - Apply an operator
+%    IOPERATOR         - Apply the inverse of an operator
+%    OPERATORADJ       - Apply the adjoint of an operator
+%    OPERATORAPPR      - Best approx. by operator
+%    OPERATOREIGS      - Eigenpairs of an operator
+%    OPERATORMATRIX    - Matrix representation of an operator
+%
 %  Frame multipliers
 %    FRAMEMUL          - Apply frame multiplier
 %    IFRAMEMUL         - Apply the inverse of a frame multipllier
