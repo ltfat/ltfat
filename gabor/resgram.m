@@ -1,4 +1,4 @@
-function []=resgram(f,varargin)
+function varargout=resgram(f,varargin)
 %RESGRAM  Reassigned spectrogram plot
 %   Usage: resgram(f,op1,op2, ... );
 %          resgram(f,fs,op1,op2, ... );
@@ -16,6 +16,11 @@ function []=resgram(f,varargin)
 %
 %   This will produce a reassigned spectrogram of the |greasy| signal
 %   without drowning the interesting features in noise.
+%
+%   `C=sgram(f, ... )` returns the image to be displayed as a matrix. Use this
+%   in conjunction with `imwrite` etc. These coefficients are **only** intended to
+%   be used by post-processing image tools. Reassignment should be done
+%   using the |gabreassign| function instead.
 %
 %   `resgram` accepts the following additional arguments:
 %
