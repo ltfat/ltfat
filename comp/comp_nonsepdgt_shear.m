@@ -28,7 +28,7 @@ if s1 ~= 0
     f = bsxfun(@times,p,f);
 end
 
-if s0 == 0'
+if s0 == 0
 
     c_rect = comp_dgt_long(f,g,ar,Mr);
     tmp1=mod(s1*a*(L+1),2*N);

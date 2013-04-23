@@ -9,7 +9,7 @@ disp(' ===============  TEST_INVOLUTE ===========');
 for ii=1:length(Lr)
   
   L=Lr(ii);
-  f=crand(L,1);
+  f=tester_crand(L,1);
   
   r1=conj(dft(f));
   r2=dft(involute(f));

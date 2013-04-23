@@ -1,0 +1,48 @@
+# Use GNU Make to process this file.
+# mingw32-make -f Makefile_mingw32
+
+ifndef OCTAVEROOT
+  $(warning OCTAVEROOT variable is udefined. Using default (probably wrong) OCTAVEROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
+  OCTAVEROOT=c:\Octave\Octave3.6.4_gcc4.6.2
+endif
+
+
+OCTSCC   = \
+    comp_col2diag\
+	comp_dgt_fb \
+	comp_dgt_long \
+	comp_dgt_ola  \
+	comp_dgtreal_fb \
+	comp_dgtreal_long \
+	comp_dgtreal_ola \
+	comp_dwilt_long  \
+	comp_fftreal  \
+	comp_gabreassign  \
+	comp_heapint  \
+	comp_idgt_fac  \
+	comp_idgt_fb  \
+	comp_ifftreal  \
+	comp_iwfac \
+	comp_nonsepdgt_multi  \
+	comp_nonsepdgt_shear  \
+	comp_nonsepwin2multi  \
+	comp_pchirp  \
+	comp_pgauss  \
+	comp_ufilterbank_fft  \
+	comp_wfac \
+	
+OCTSBASE = $(basename $(OCTSCC))
+OCTS     = $(addsuffix .oct,$(OCTSBASE))
+OCTAVEBIN = $(OCTAVEROOT)\bin
+ADDITIONALIBS = -L. -lltfat -lltfatf -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3
+
+all:	$(OCTS)
+
+%.oct: %.cc
+	mkoctfile -v -Wall -g -I../thirdparty -I. -I../src $(ADDITIONALIBS)  $<
+	del *.o
+
+clean:
+	del *.o *.oct
+
+.PHONY: all clean

@@ -9,7 +9,6 @@
 %    IZAK           -  Inverse Zak transform
 %    COL2DIAG       -  Move columns of a matrix to diagonals
 %    S0NORM         -  Compute the S0-norm
-%    TFMAT          -  Matrix of transform or operator in LTFAT
 %
 %  Gabor systems
 %    dgt            -  Discrete Gabor transform
@@ -44,16 +43,6 @@
 %    GABMIXDUAL     -  Dual window by mixing windows
 %    WILORTH        -  Window of Wilson/WMDCT orthonormal basis
 %    WILDUAL        -  Riesz dual window of Wilson/WMDCT basis 
-%
-%  Time/Frequency operators
-%    GABMUL         -  Gabor multiplier
-%    GABMULEIGS     -  Eigenpairs of Gabor multiplier
-%    GABMULAPPR     -  Best approximation by a Gabor mult.
-%    SPREADOP       -  Spreading operator
-%    SPREADINV      -  Apply inverse spreading operator
-%    SPREADADJ      -  Symbol of adjoint spreading operator
-%    SPREADFUN      -  Symbol of operator expressed as a matrix
-%    SPREADEIGS     -  Eigenpairs of spreading operator
 %
 %  Conditions numbers
 %    GABFRAMEBOUNDS -  Frame bounds of Gabor system

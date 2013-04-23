@@ -30,11 +30,11 @@ for ii=1:length(Lr);
 	
 	if ftype==1
 	  % Complex-valued test case
-	  f=crand(L,W);
+	  f=tester_crand(L,W);
 	  S='CMPLX';
 	else
 	  % Real-valued tes
-	  f=rand(L,W);
+	  f=tester_rand(L,W);
 	  S='REAL ';
 	end;
 	

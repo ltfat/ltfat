@@ -1,4 +1,4 @@
-function [s,TA]=framemulappr(Fa,Fs,T,D,Ds)
+function [s,TA]=framemulappr(Fa,Fs,T)
 %FRAMEMULAPPR  Best Approximation of a matrix by a frame multiplier
 %   Usage: s=framemulappr(Fa,Fs,T);
 %         [s,TA]=framemulappr(Fa,Fs,T);

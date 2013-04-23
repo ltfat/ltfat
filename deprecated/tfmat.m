@@ -9,6 +9,13 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %           F=tfmat('gabmul',sym,a);
 %           F=tfmat('spread',c);
 %
+%   `tfmat` has been deprecated. Please construct a frame (using |frame|)
+%   and use |framematrix|, or construct an operator (using |operatornew|)
+%   and use |operatormatrix| instead.
+%
+%   Original help
+%   -------------
+%
 %   `tfmat` returns a matrix *F* containing the basis functions / atoms of
 %   one of the transforms in the toolbox. The atoms are placed as column
 %   vectors in the matrix. A forward transform (analysis) can be done by::
@@ -55,7 +62,10 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %   experimenting with systems, as the generated matrix can
 %   become very large.
 %
-%   See also: dft, dcti, dsti, dgt, dwilt, wmdct, gabmul, spreadop
+%   See also: framematrix, operatormatrix
+
+warning(['LTFAT: TFMAT has been deprecated, please use FRAMEMATRIX ' ...
+         'or OPERATORMATRIX instead.']);   
 
 if (nargin<1) || ~ischar(ttype)
   error('You must specify the transform type')

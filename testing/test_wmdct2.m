@@ -14,7 +14,7 @@ M=8;
 Lf=63;
 W=3;
 
-f=rand(Lf,Lf,W);
+f=tester_rand(Lf,Lf,W);
 
 g=pgauss(L,1);
 gd=wildual(g,M);
@@ -42,7 +42,7 @@ M1=16;
 M2=32;
 W=1;
 
-f=rand(L,L,1);
+f=tester_rand(L,L,1);
 
 g=pgauss(L,1);
 

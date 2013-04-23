@@ -16,7 +16,7 @@ Lf=71;
 L=72;
 W=3;
 
-f=rand(Lf,Lf,W);
+f=tester_rand(Lf,Lf,W);
 
 g=pgauss(L,a*M/L);
 gd=gabdual(g,a,M);
@@ -50,7 +50,7 @@ L2=a2*M2;
 
 W=1;
 
-f=rand(L1,L2,W);
+f=tester_rand(L1,L2,W);
 
 g1=pgauss(L1,a1*M1/L1);
 g2=pgauss(L2,a2*M2/L2);

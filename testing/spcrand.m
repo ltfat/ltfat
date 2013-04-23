@@ -1,6 +1,6 @@
 function f=spcrand(n1,n2,p);
-%CRAND   Sparse Random complex numbers for testing.
-%   Usage: f=spcrand(n1,n2,p);
+%SPCRAND   Sparse Random complex numbers for testing.
+%   Usage: f=sptester_crand(n1,n2,p);
 
 % Make a random real valued matrix, extract the indices, put complex
 % numbers in and recollect.

@@ -38,12 +38,5 @@
 %    FRSYNITER         - Iterative perfect reconstruction synthesis
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %
-%  Frame multipliers
-%    FRAMEMUL          - Apply frame multiplier
-%    IFRAMEMUL         - Apply the inverse of a frame multipllier
-%    FRAMEMULADJ       - Apply the adjoint of a frame multiplier
-%    FRAMEMULAPPR      - Best approx. by frame multiplier
-%    FRAMEMULEIGS      - Eigenpairs of a frame multiplier
-%
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

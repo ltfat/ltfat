@@ -15,7 +15,7 @@ for ii=1:length(Lr)
   L=Lr(ii);
   K=Kr(ii);
 
-  f=rand(L,W)+i*rand(L,W)-.5-i*.5;
+  f=tester_rand(L,W)+i*rand(L,W)-.5-i*.5;
       
   ccref=ref_zak(f,K);
   cc=zak(f,K);

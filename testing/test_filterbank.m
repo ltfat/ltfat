@@ -21,7 +21,7 @@ L=a*N;
 
 g=cell(1,M);
 for ii=1:M
-  g{ii}=crand(L,1);
+  g{ii}=tester_crand(L,1);
 end;
 
 gd = filterbankdual(g,a);
@@ -53,7 +53,7 @@ disp(s)
 
 for w=1:3
 
-    f=crand(L,w);
+    f=tester_crand(L,w);
     
     c_u      = ufilterbank(f,g,a);
     c_u_ref  = ref_ufilterbank(f,g,a);
@@ -115,7 +115,7 @@ for w=1:3
         
     %% Check the real valued systems, dual
     
-    fr=rand(L,1);
+    fr=tester_rand(L,1);
     
     gdreal=filterbankrealdual(g,a);
     

@@ -20,13 +20,13 @@ shalf=s;
 
 shalf(1)=floor(shalf(1)/2);
 
-f=rand(shalf)-.5;
+f=tester_rand(shalf)-.5;
 
 if rem(s(1),2)==0
   f=[f;flipud(f)];
 else
   f=[f; ...
-     rand([1 s(2:end)])-.5; ...
+     tester_rand([1 s(2:end)])-.5; ...
      flipud(f)];
 end;
 

@@ -46,8 +46,8 @@ for ii=1:length(Lr);
 
       else
         rname='CMPLX';	
-        f=crand(L,W);
-        g=crand(gl,1);
+        f=tester_crand(L,W);
+        g=tester_crand(gl,1);
 
         c1 = comp_dgt_ola(f,g,a,M,bl);
         c2 = dgt(f,g,a,M);

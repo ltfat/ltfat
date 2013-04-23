@@ -1,6 +1,6 @@
-ar=2:10;
-Mr=3:10;
-Lmodr=[1 3 10 100];
+ar=2:2:20;
+Mr=3:2:20;
+Lmodr=[1 3 10 100 143];
 lt1r=0:9;
 lt2r=1:10;
 
@@ -27,8 +27,8 @@ for lt2=lt2r
 
                     [s0,s1,br] = shearfind(L,a,M,lt);
 
-                    f=crand(L,1);                                        
-                    g=crand(L,1);
+                    f=tester_crand(L,1);                                        
+                    g=tester_crand(L,1);
                     
                     if 0
                         gd       = gabdual(g,a,M,'lt',lt);

@@ -6,7 +6,7 @@
 
 #define PI 3.1415926535897932384626433832795
 
-static inline int positiverem_long(long int a,int b)
+static inline long positiverem_long(long a,long b)
 {
   const long c = a%b;
   return(c<0 ? c+b : c);
@@ -18,21 +18,24 @@ static inline int positiverem_long(long int a,int b)
 void mexFunction( int nlhs, mxArray *plhs[], 
 		  int nrhs, const mxArray *prhs[] )
 { 
-   const int L=(int)mxGetScalar(prhs[0]);
-   const int n=(int)mxGetScalar(prhs[1]);
+   const long L=(long)mxGetScalar(prhs[0]);
+   const long n=(long)mxGetScalar(prhs[1]);
 
    plhs[0] = mxCreateDoubleMatrix(L, 1, mxCOMPLEX);
    double *gr = mxGetPr(plhs[0]);
    double *gi = mxGetPi(plhs[0]);
 
-   const double LL=2.0*L;
-   const double Lpone=L+1;
+
+   const long LL=2*L;
+   const long Lponen=positiverem_long((L+1)*n,LL);
    
-   for (int m=0;m<L;m++)
+   for (long m=0;m<L;m++)
    {
-      const double work = PI*fmod(fmod(fmod(Lpone*n,LL)*m,LL)*m,LL)/L;
-      gr[m] = cos(work);
-      gi[m] = sin(work);
+      const long idx = positiverem_long(
+   	 positiverem_long(Lponen*m,LL)*m,LL);
+
+      gr[m] = cos(PI*idx/L);
+      gi[m] = sin(PI*idx/L);
    }
 
    return;

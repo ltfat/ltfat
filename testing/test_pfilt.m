@@ -21,12 +21,12 @@ for jj=1:length(Lr)
     for rtype=1:2
       if rtype==1
         rname='REAL ';	
-        f=rand(L,W);
-        g=rand(Lg,1);
+        f=tester_rand(L,W);
+        g=tester_rand(Lg,1);
       else
         rname='CMPLX';	
-        f=crand(L,W);
-        g=crand(Lg,1);
+        f=tester_crand(L,W);
+        g=tester_crand(Lg,1);
       end;
                  
       h1=pfilt(f,g,a);

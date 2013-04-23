@@ -5,7 +5,7 @@ test_failed=0;
 
 disp(' ===============  TEST_RANGECOMPRESS ================');
 
-x=crand(5,11);
+x=tester_crand(5,11);
 
 y=rangecompress(x,'mulaw');
 x_r=rangeexpand(y,'mulaw');

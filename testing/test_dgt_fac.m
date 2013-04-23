@@ -41,12 +41,12 @@ for ii=1:length(Lr);
       for rtype=1:2
 	if rtype==1
 	  rname='REAL ';	
-	  f=rand(L,W);
-	  g=rand(L,R);
+	  f=tester_rand(L,W);
+	  g=tester_rand(L,R);
 	else
 	  rname='CMPLX';	
-	  f=crand(L,W);
-	  g=crand(L,R);
+	  f=tester_crand(L,W);
+	  g=tester_crand(L,R);
 	end;
 	
 	gf=comp_wfac(g,a,M);            
@@ -70,13 +70,13 @@ for ii=1:length(Lr);
       for rtype=1:2
 	if rtype==1
 	  rname='REAL ';	
-	  g=rand(L,R);
+	  g=tester_rand(L,R);
 	else
 	  rname='CMPLX';	
-	  g=crand(L,R);
+	  g=tester_crand(L,R);
 	end;
 
-	cc=crand(M,N*R*W);
+	cc=tester_crand(M,N*R*W);
 	
 	gf=comp_wfac(g,a,M);            
 	f=comp_idgt_fac(ifft(cc)*sqrt(M),gf,L,a,M);

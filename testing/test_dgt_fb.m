@@ -43,10 +43,10 @@ for ii=1:length(Lr);
           
     if rtype==1
       rname='REAL ';	
-      g=rand(gl,1);
+      g=tester_rand(gl,1);
     else
       rname='CMPLX';	
-      g=crand(gl,1);
+      g=tester_crand(gl,1);
     end;
     
     % Test following test only makes sense if the dual is also
@@ -72,10 +72,10 @@ for ii=1:length(Lr);
                 
       if rtype==1
 	rname='REAL ';	
-	f=rand(L,W);
+	f=tester_rand(L,W);
       else
 	rname='CMPLX';	
-	f=crand(L,W);
+	f=tester_crand(L,W);
       end;
       
       cc  = dgt(f,g,a,M);  

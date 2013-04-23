@@ -45,7 +45,7 @@ for funpair=ref_funs
 	%b=L/M;
 	N=L/a;
     
-	f=rand(L,W);
+	f=tester_rand(L,W);
 	g=ref_win(funpair{1}{1},'test',L,a,M);
     
 	c1=feval(funpair{1}{1},f,g,a,M);
@@ -83,7 +83,7 @@ for funpair=refinv_funs
 	%b=L/M;
 	N=L/a;
     
-	c=rand(M*N,W);
+	c=tester_rand(M*N,W);
 	g=ref_win(funpair{1}{1},'test',L,a,M);
     
 	f1=feval(funpair{1}{1},c,g,a,M);
@@ -121,7 +121,7 @@ for funpair=inv_funs
 	%b=L/M;
 	N=L/a;
     
-	f=rand(L,W);
+	f=tester_rand(L,W);
 	g=ref_win(funpair{1}{1},'test',L,a,M);
 	gamma=ref_tgabdual(funpair{1}{1},g,L,a,M);
     

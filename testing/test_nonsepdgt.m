@@ -55,10 +55,10 @@ for ii=1:length(Lr);
           
           if rtype==1
               rname='REAL';
-              g=rand(Lw,1);
+              g=tester_rand(Lw,1);
           else
               rname='CMPLX';	
-              g=crand(Lw,1);
+              g=tester_crand(Lw,1);
           end;
                     
           gd=gabdual(g,a,M,'lt',lt);
@@ -77,9 +77,9 @@ for ii=1:length(Lr);
           for W=1:3
               
               if rtype==1
-                  f=rand(L,W);
+                  f=tester_rand(L,W);
               else
-                  f=crand(L,W);
+                  f=tester_crand(L,W);
               end;      
               
               % --------- test reference comparison ------------
