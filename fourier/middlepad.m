@@ -162,6 +162,5 @@ if L~=Ls
   
 end;
 
-
 f=assert_sigreshape_post(f,dim,permutedsize,order);
 

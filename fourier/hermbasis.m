@@ -1,10 +1,12 @@
-function [V]=hermbasis(L)
+function [V,H]=hermbasis(L,p)
 %HERMBASIS  Orthonormal basis of discrete Hermite functions
-%   Usage:  V=hermbasis(L);
+%   Usage:  V=hermbasis(L,p);
+%           V=hermbasis(L);
 %
-%   `hermbasis(L)` computes an orthonormal basis of discrete Hermite
+%   `hermbasis(L,p)` computes an orthonormal basis of discrete Hermite
 %   functions of length *L*. The vectors are returned as columns in the
-%   output.
+%   output. *p* is the order of approximation used to construct the
+%   position and difference operator.
 %
 %   All the vectors in the output are eigenvectors of the discrete Fourier
 %   transform, and resemble samplings of the continuous Hermite functions
@@ -32,44 +34,77 @@ function [V]=hermbasis(L)
 %
 %   See also:  dft, pherm
 %
-%   References: ozzaku01
+%   References: ozzaku01,buma04
 
-%   AUTHOR : Peter L. Søndergaard
+%   AUTHOR : Christoph Wiesmeyr, A. Bultheel 
 %   TESTING: TEST_HERMBASIS
-%   REFERENCE: OK
+ 
+if nargin==1
+    p=2;
+end
 
-% Create tridiagonal sparse matrix
-A=ones(L,3);
-A(:,2)=(2*cos((0:L-1)*2*pi/L)-4).';
-H=spdiags(A,-1:1,L,L);
+% compute vector with values for side diagonals
 
-H(1,L)=1;
-H(L,1)=1;
-
-H=H*pi/(i*2*pi)^2;
-
-% This seem to be the only way to compute the eigenvalues of a tridiagonal
-% matrix in Matlab/Octave. The "eigs" routine refuses to work for the
-% case when all eigenvalues are requisted.
-[V,D]=eig(full(H));
-
-% FIXME: The speed could be greatly optimized by writing a C interface to
-% the DSTEV routine in LAPACK.
-
-% If L is not a factor of 4, then all the eigenvalues of the tridiagonal
-% matrix are distinct. If L IS a factor of 4, then one eigenvalue has
-% multiplicity 2, and we must split the eigenspace belonging to this
-% eigenvalue into a an even and an odd subspace.
-if mod(L,4)==0
-  x=V(:,L/2);
-  x_e=(x+involute(x))/2;
-  x_o=(x-involute(x))/2;
-
-  x_e=x_e/norm(x_e);
-  x_o=x_o/norm(x_o);
-
-  V(:,L/2)=x_o;
-  V(:,L/2+1)=x_e;
-
+d2 = [1 -2 1]; 
+d_p = 1; 
+s = 0; 
+st = zeros(1,L);
+for k = 1:p/2,
+    d_p = conv(d2,d_p);
+    st([L-k+1:L,1:k+1]) = d_p; st(1) = 0;
+    temp = [1:k;1:k]; temp = temp(:)'./[1:2*k];
+    s = s + (-1)^(k-1)*prod(temp)*2/k^2*st;       
 end;
+
+% build discrete Hamiltonian
+
+P2=toeplitz(s);
+X2=diag(real(fft(s)));
+H =P2+X2; 
+
+% Construct transformation matrix V (even and odd vectors)
+
+r = floor(L/2);
+even = ~rem(L,2);
+T1 = (eye(L-1) + flipud(eye(L-1))) / sqrt(2);
+T1(L-r:end,L-r:end) = -T1(L-r:end,L-r:end);
+if (even), T1(r,r) = 1; end
+T = eye(L); T(2:L,2:L) = T1;
+
+% Compute eigenvectors of two banded matrices
+
+THT = T*H*T';
+E = zeros(L);
+Ev = THT(1:r+1,1:r+1);
+[ve,ee] = eig(Ev);
+Od = THT(r+2:L,r+2:L);
+[vo,eo] = eig(Od); 
+%
+% malab eig returns sorted eigenvalues
+% if different routine gives unsorted eigvals, then sort first
+%
+% [d,inde] = sort(diag(ee));      [d,indo] = sort(diag(eo));
+% ve = ve(:,inde');               vo = vo(:,indo');
+%
+
+V(1:r+1,1:r+1) = fliplr(ve);
+V(r+2:L,r+2:L) = fliplr(vo);
+V = T*V;
+
+% shuffle eigenvectors
+
+ind = [1:r+1;r+2:2*r+2]; 
+ind = ind(:);
+if (even)
+    ind([L,L+2]) = [];
+else 
+    ind(L+1) = []; 
+end
+
+cor=2*floor(L/4)+1;
+for k=(cor+1):2:(L-even)
+    ind([k,k+1])=ind([k+1,k]);
+end
+
+V = V(:,ind');
 

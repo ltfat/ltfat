@@ -10,6 +10,13 @@
 %    FILTERBANKLENGTH       - Length of filterbank to expand signal
 %    FILTERBANKLENGTHCOEF   - Length of filterbank to expand coefficients
 %
+%  Auditory inspired filterbanks
+%    CQT                    - Constant Q transform
+%    ICQT                   - Inverse constant Q transform
+%    ERBLETT                - Erb-let transform
+%    IERBLETT               - Inverse Erb-let transform
+%    INSDGFB                - Say what?
+%
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters
 %    FILTERBANKTIGHT        - Canonical tight filters
