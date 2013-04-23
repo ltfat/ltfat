@@ -1,0 +1,53 @@
+# Use MinGW Make to process this file
+# make -f Makefile_mingw32
+#
+#Following variables are not used. They could be used for linking the lapack and blas 
+#libs shipped with Matlab.
+#MATLABROOT=C:\Program Files\MATLAB\R2011b
+#MATLABLIBS=-lmwlapack -lmwblas
+#MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\win64" $(MATLABLIBS)
+
+ifndef OCTAVEROOT
+  $(warning OCTAVEROOT variable is udefined. Using default (probably wrong) OCTAVEROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
+  OCTAVEROOT=c:\Octave\Octave3.6.4_gcc4.6.2
+endif
+OCTAVEBIN = $(OCTAVEROOT)\bin
+
+#CC = i686-pc-mingw32-gcc 
+CC=gcc
+
+CFLAGS=-O3 -s -Wall -std=c99 -m32 -I../thirdparty -I./
+DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED
+
+include filedefs.mk
+
+DFILES = $(addprefix d,$(files)) $(files_notypechange)
+SFILES = $(addprefix s,$(files))
+
+all: double single
+
+double: $(DFILES) Makefile_mingw32
+	$(CC) -m32 -shared -Wl,--dll $(DFILES) \
+	-o ../oct/ltfat.dll ltfat_notdllexport.def -static-libgcc -L$(OCTAVEBIN) -lfftw3-3
+	del *.o *.a
+	copy /Y ..\oct\ltfat.dll ..\lib\
+  
+single: $(SFILES) Makefile_mingw32  
+	$(CC) -m32 -shared -Wl,--dll $(SFILES) \
+	-o ../oct/ltfatf.dll -static-libgcc -L../oct -lltfat -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3 
+	del *.o *.a
+	copy /Y ..\oct\ltfatf.dll ..\lib\
+
+s%.o: %.c config.h
+	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_SINGLE  -c $< -o s$*.o
+
+d%.o: %.c config.h
+	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $< -o d$*.o
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(DIRECTIVES) -c $<
+
+clean:
+	del ..\mex\ltfat.dll
+	del ..\mex\ltfatf.dll
+	del *.o *.a
