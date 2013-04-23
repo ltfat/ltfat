@@ -34,7 +34,7 @@ for ii=1:length(Lr);
         g=randn(L,R);
         rname='REAL ';
        case 2
-        g=crand(L,R);
+        g=tester_crand(L,R);
         rname='CMPLX';
       end;
       
@@ -44,7 +44,7 @@ for ii=1:length(Lr);
       
       gd=gabdual(g,a,M);
       
-      f=crand(L,1);
+      f=tester_crand(L,1);
       r=zeros(L,1);
       for ii=1:R
         c=dgt(f,g(:,ii),a,M);
@@ -60,7 +60,7 @@ for ii=1:length(Lr);
       
       gt=gabtight(g,a,M);
       
-      f=crand(L,1);
+      f=tester_crand(L,1);
       r=zeros(L,1);
       for ii=1:R
         c=dgt(f,gt(:,ii),a,M);

@@ -37,18 +37,18 @@ for ii=1:length(Lr);
           
     if rtype==1
       rname='REAL ';	
-      g=rand(gl,1);
+      g=tester_rand(gl,1);
     else
       rname='CMPLX';	
-      g=crand(gl,1);
+      g=tester_crand(gl,1);
     end;
     
     if rtype==1
       rname='REAL ';	
-      f=rand(L,1);
+      f=tester_rand(L,1);
     else
       rname='CMPLX';	
-      f=crand(L,1);
+      f=tester_crand(L,1);
     end;
     
     cc = dgt(f,fir2long(g,L),a,M);

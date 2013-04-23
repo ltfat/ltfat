@@ -51,10 +51,10 @@ for ii=1:length(Lr);
       
     if rtype==1
       rname='REAL ';	
-      g=rand(L,1);
+      g=tester_rand(L,1);
     else
       rname='CMPLX';	
-      g=crand(L,1);
+      g=tester_crand(L,1);
     end;
     
     gd=gabdual(g,a,M);
@@ -92,9 +92,9 @@ for ii=1:length(Lr);
     for W=1:3
           
       if rtype==1
-        f=rand(L,W);
+        f=tester_rand(L,W);
       else
-        f=crand(L,W);
+        f=tester_crand(L,W);
       end;
 
       

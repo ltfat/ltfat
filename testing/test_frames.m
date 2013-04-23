@@ -13,13 +13,13 @@ Fr{1}  = frame('dgt','gauss',10,20);
 Fr{2}  = frame('dgtreal','gauss',10,20);
 Fr{3}  = frame('dwilt','gauss',20);
 Fr{4}  = frame('wmdct','gauss',20);
-Fr{5}  = frame('gen',crand(200,300),20);
+Fr{5}  = frame('gen',tester_crand(200,300),20);
 
 Fr{6}  = frametight(frame('dgt','gauss',10,20));
 Fr{7}  = frametight(frame('dgtreal','gauss',10,20));
 Fr{8}  = frametight(frame('dwilt','gauss',20));
 Fr{9}  = frametight(frame('wmdct','gauss',20));
-Fr{10} = frametight(frame('gen',crand(200,300),20));
+Fr{10} = frametight(frame('gen',tester_crand(200,300),20));
 
 Fr{11} = frame('dft');
 Fr{12} = frame('dcti');
@@ -112,9 +112,9 @@ for ii=1:numel(Fr)
   %% Test the frame multipliers: test framemul, framemuladj and
   %% framemulinv
   if F.realinput
-      m=1+0.01*rand(size(c,1),1);
+      m=1+0.01*tester_rand(size(c,1),1);
   else
-      m=1+1i+0.01*crand(size(c,1),1);
+      m=1+1i+0.01*tester_crand(size(c,1),1);
   end;
   ff=framemul(f,F,Fd,m);
   fr=iframemul(ff,F,Fd,m,'tol',1e-13);

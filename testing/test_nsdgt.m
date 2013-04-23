@@ -197,8 +197,8 @@ N=8;
 a=a1*ones(1,N);
 M=M1*ones(1,N);
 L=a1*N;
-f=crand(L,1);
-g1=crand(L,1);
+f=tester_crand(L,1);
+g1=tester_crand(L,1);
 for ii=1:N
   g{ii}=g1;
 end;

@@ -13,11 +13,11 @@ SNRtv=63; % signal to noise ratio of change rate of time-variant system
 % take an initial vector and multiply by random vector close to one
 A = [];
 c1=(1:L/2); c2=(L/2:-1:1); c=[c1 c2].^(-1); % weight of decay x^(-1)
-A(1,:)=(rand(1,L)-0.5).*c;  % convolution kernel
+A(1,:)=(tester_rand(1,L)-0.5).*c;  % convolution kernel
 Nlvl = exp(-SNRtv/10);
 Slvl = 1-Nlvl;
 for ii=2:L;
-     A(ii,:)=(Slvl*circshift(A(ii-1,:),[0 1]))+(Nlvl*(rand(1,L)-0.5)); 
+     A(ii,:)=(Slvl*circshift(A(ii-1,:),[0 1]))+(Nlvl*(tester_rand(1,L)-0.5)); 
 end;
 A = A/norm(A)*0.99; % normalize matrix
 
@@ -37,7 +37,7 @@ norm(sym1-reshape(sym2,M,N))
 
 % Test for exactness
 
-testsym=crand(M,N);
+testsym=tester_crand(M,N);
 FT=framematrix(F,L);
 
 T=FT*diag(testsym(:))*FT';

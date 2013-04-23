@@ -1,4 +1,4 @@
-function [V,H]=hermbasis(L,p)
+function V=hermbasis(L,p)
 %HERMBASIS  Orthonormal basis of discrete Hermite functions
 %   Usage:  V=hermbasis(L,p);
 %           V=hermbasis(L);

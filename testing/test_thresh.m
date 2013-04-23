@@ -12,11 +12,11 @@ ttypes={'hard','soft','wiener'};
 for ii=1:2
   
   if ii==1
-    g=rand(3,4);
+    g=tester_rand(3,4);
     field='REAL  ';
     g(2,2)=lambda;
   else
-    g=crand(3,4);
+    g=tester_crand(3,4);
     field='CMPLX ';
     g(2,2)=lambda;
   end;

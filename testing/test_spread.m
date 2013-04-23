@@ -38,23 +38,23 @@ for rtype=1:2
 
     if rtype==1
       if sptype==1
-        coef=rand(L,L);
-        T=rand(L,L);
-        coef2=rand(L,L);
+        coef=tester_rand(L,L);
+        T=tester_rand(L,L);
+        coef2=tester_rand(L,L);
       else
-        coef=sprand(L,L,spfraction);
-        T=sprand(L,L,spfraction);
-        coef2=sprand(L,L,spfraction);          
+        coef=tester_sprand(L,L,spfraction);
+        T=tester_sprand(L,L,spfraction);
+        coef2=tester_sprand(L,L,spfraction);          
       end;
     else
       if sptype==1
-        coef=crand(L,L);
-        T=crand(L,L);
-        coef2=crand(L,L);
+        coef=tester_crand(L,L);
+        T=tester_crand(L,L);
+        coef2=tester_crand(L,L);
       else
-        coef=spcrand(L,L,spfraction);
-        T=spcrand(L,L,spfraction);
-        coef2=spcrand(L,L,spfraction);          
+        coef=tester_spcrand(L,L,spfraction);
+        T=tester_spcrand(L,L,spfraction);
+        coef2=tester_spcrand(L,L,spfraction);          
       end;
     end;
 
@@ -62,9 +62,9 @@ for rtype=1:2
     for W=1:3
       
       if rtype==1
-        f=rand(L,W);
+        f=tester_rand(L,W);
       else
-        f=crand(L,W);
+        f=tester_crand(L,W);
       end;
       
       

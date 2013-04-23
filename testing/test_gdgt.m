@@ -42,8 +42,8 @@ for ii=1:length(Lr);
 	
 	%g=(1:L)';
 	%g=i*gabtight(a,b,L);
-	f=crand(L,W);
-	g=crand(L,R);
+	f=tester_crand(L,W);
+	g=tester_crand(L,R);
 	
 	gd=gabdual(g,a,M);
 	gt=gabtight(g,a,M);

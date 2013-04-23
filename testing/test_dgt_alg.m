@@ -16,8 +16,8 @@ for ii=1:length(Lr);
   p=a/c;
   q=M/c;
   
-  f=crand(L,1);
-  g=crand(L,1);
+  f=tester_crand(L,1);
+  g=tester_crand(L,1);
   
   %gd=gabdual(g,a,M);
   

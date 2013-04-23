@@ -37,7 +37,7 @@ for ii=1:length(ar);
   minL=dgtlength(1,a,M,lt);
   gl=minL;
   
-  g=crand(gl,1);
+  g=tester_crand(gl,1);
 
   Lext=minL*10;
 
@@ -58,7 +58,7 @@ for ii=1:length(ar);
 
       for W=1:3                              
           
-          f=crand(L,W);
+          f=tester_crand(L,W);
           
           % --------- test reference comparison ------------
           

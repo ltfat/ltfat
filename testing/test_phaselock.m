@@ -8,7 +8,7 @@ disp(' ===============  TEST_PHASELOCK ================');
 
 % set up parameters
 L=420;
-f=rand(L,1);
+f=tester_rand(L,1);
 g=pgauss(L);
 a=10;b=30;M=L/b;
 

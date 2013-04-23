@@ -28,10 +28,10 @@ for ii=1:length(Lr);
   N=L/a;
   
   % Random matrix
-  T=crand(L,L);
+  T=tester_crand(L,L);
   
   % Random multiplier symbol.
-  sym=crand(M,N);
+  sym=tester_crand(M,N);
   
   % ---- Reference test, tight Gaussian window ------------
   
@@ -56,7 +56,7 @@ for ii=1:length(Lr);
   
   % ---- Reference test, same window for analysis and synthesis ------------
   
-  g=crand(L,1);
+  g=tester_crand(L,1);
   
   sym1=ref_gabmulappr(T,g,a,M);
   sym2=gabmulappr(T,g,a,M);
@@ -83,8 +83,8 @@ for ii=1:length(Lr);
 
   % ---- Reference test, two different windows for analysis and synthesis ------------
     
-  ga=crand(L,1);
-  gs=crand(L,1);
+  ga=tester_crand(L,1);
+  gs=tester_crand(L,1);
 
   sym1=ref_gabmulappr(T,ga,gs,a,M);
   sym2=gabmulappr(T,ga,gs,a,M);

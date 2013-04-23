@@ -103,8 +103,8 @@ ref_failed=0;
 
 for funpair=ref_funs
   for ii=1:size(ref_sizes,1);
-    %a=rand(ref_sizes(ii,:));
-    a=crand(ref_sizes(ii,1),ref_sizes(ii,2));
+    %a=tester_rand(ref_sizes(ii,:));
+    a=tester_crand(ref_sizes(ii,1),ref_sizes(ii,2));
 
     c1=feval(funpair{1}{1},a);
     c2=feval(funpair{1}{2},a);
@@ -130,7 +130,7 @@ ref_failed=0;
 
 for funpair=ref_realfuns
   for ii=1:size(ref_sizes,1);
-    a=rand(ref_sizes(ii,1),ref_sizes(ii,2));
+    a=tester_rand(ref_sizes(ii,1),ref_sizes(ii,2));
 
     c1=feval(funpair{1}{1},a);
     c2=feval(funpair{1}{2},a);
@@ -155,8 +155,8 @@ inv_failed=0;
 
 for funpair=inv_funs
   for ii=1:size(ref_sizes,1);
-    %a=rand(ref_sizes(ii,:));
-    a=crand(ref_sizes(ii,1),ref_sizes(ii,2));
+    %a=tester_rand(ref_sizes(ii,:));
+    a=tester_crand(ref_sizes(ii,1),ref_sizes(ii,2));
 
     ar=feval(funpair{1}{2},feval(funpair{1}{1},a));
 
@@ -206,7 +206,7 @@ realinv_failed=0;
 
 for funpair=realinv_funs
   for ii=1:size(ref_sizes,1);
-    a=rand(ref_sizes(ii,1),ref_sizes(ii,2));
+    a=tester_rand(ref_sizes(ii,1),ref_sizes(ii,2));
 
     ar=ifftreal(fftreal(a),ref_sizes(ii,1));
 

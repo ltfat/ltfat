@@ -30,7 +30,7 @@ for ii=1:length(Lr);
     p=a/c;
     q=M/c;
     
-    g=crand(L,R);
+    g=tester_crand(L,R);
     
     gf1=comp_wfac(g,a,M);
     gf2=ref_wfac(g,a,M);
@@ -47,7 +47,7 @@ for ii=1:length(Lr);
     disp(s)
     
     
-    gf=crand(p*q*R,c*d);
+    gf=tester_crand(p*q*R,c*d);
     
     g1=comp_iwfac(gf,L,a,M);
     g2=ref_iwfac(gf,L,a,M);
