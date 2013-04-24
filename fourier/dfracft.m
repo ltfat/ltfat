@@ -2,7 +2,6 @@ function frf=dfracft(f,a,varargin)
 %DFRACFT  Discrete Fractional Fourier transform
 %   Usage:  V=dfracft(f,a,p);
 %           V=dfracft(f,a);
-%           V=dfracft(f);
 %
 %   `dfracft(f,a)` computes the discrete fractional Fourier Transform of the
 %   signal *f* to the power *a*. For *a=1* it corresponds to the ordinary

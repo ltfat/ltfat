@@ -15,8 +15,6 @@ function fr = icqt(c,g,shift,Ls,dual)
 %         fr        : Synthesized signal (Channels are stored in the 
 %                     columns)
 %
-%   This is just a dummy routine calling |insdgfb|.
-%
 %   Given the cell array *c* of non-stationary Gabor coefficients, and a 
 %   set of filters *g* and frequency shifts *shift* this function computes 
 %   the corresponding constant-Q synthesis.
@@ -26,6 +24,8 @@ function fr = icqt(c,g,shift,Ls,dual)
 %   of the vectors in *c*. This provides perfect reconstruction in the 
 %   painless case, see the references for more information.
 % 
+%   This is just a dummy routine calling |insdgfb|.
+%
 %   See also:  cqt
 % 
 %   References:  dogrhove11 dogrhove12

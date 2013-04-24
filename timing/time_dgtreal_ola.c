@@ -28,16 +28,16 @@ int main( int argc, char *argv[] )
   g  = ltfat_malloc(L*W*sizeof(double));
   c  = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
 
-  dgtreal_ola_plan plan = dgtreal_ola_init((const double*)g, gl, W, a, M, bl, FFTW_PATIENT);
+  d_dgtreal_ola_plan plan = d_dgtreal_ola_init((const double*)g, gl, W, a, M, bl, FFTW_PATIENT);
   
   s0 = ltfat_time();
   for (ii=0;ii<nrep;ii++)
   {
-     dgtreal_ola_execute(plan,(const double*)f,L,c);
+     d_dgtreal_ola_execute(plan,(const double*)f,L,c);
   }
   s1 = ltfat_time();
 
-  dgtreal_ola_done(plan);
+  d_dgtreal_ola_done(plan);
 
   printf("%i %i %i %i %i %i %f\n",a,M,L,W,gl,bl,(s1-s0)/nrep); 
 

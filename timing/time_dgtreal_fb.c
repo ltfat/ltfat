@@ -30,16 +30,16 @@ int main( int argc, char *argv[] )
    g  = ltfat_malloc(L*W*sizeof(double));
    c  = ltfat_malloc(M2*N*W*sizeof(ltfat_complex));
 
-   dgtreal_fb_plan plan = dgtreal_fb_init((const double*)g, gl, a, M, FFTW_PATIENT);
+   d_dgtreal_fb_plan plan = d_dgtreal_fb_init((const double*)g, gl, a, M, FFTW_PATIENT);
    
    s0 = ltfat_time();
    for (ii=0;ii<nrep;ii++)
    {
-      dgtreal_fb_execute(plan,(const double*)f,L,W,c);
+      d_dgtreal_fb_execute(plan,(const double*)f,L,W,c);
    }
    s1 = ltfat_time();
 
-   dgtreal_fb_done(plan);
+   d_dgtreal_fb_done(plan);
    
    printf("%i %i %i %i %i %f\n",a,M,L,W,gl,(s1-s0)/nrep); 
    

@@ -3,7 +3,7 @@ function frf=ffracft(f,a,varargin)
 %   Usage:  frf=ffracft(f,a)
 %           frf=ffracft(f)
 %
-%   'ffracft(f,a)' computes an approximation of the fractional Fourier
+%   `ffracft(f,a)` computes an approximation of the fractional Fourier
 %   transform of the signal *f* to the power *a*. If *f* is
 %   multi-dimensional, the transformation is applied along the first
 %   non-singleton dimension.

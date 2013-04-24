@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "complex.h"
 #include "ltfat.h"
 #include "ltfat_time.h"
 
@@ -26,16 +27,16 @@ int main( int argc, char *argv[] )
    const ltfat_complex *g = ltfat_malloc(L*W*sizeof(ltfat_complex));
    ltfat_complex       *c = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
    
-   dgt_shear_plan plan = dgt_shear_init(f, g, L, W, a, M, s0, s1, br, c, FFTW_ESTIMATE);
+   d_dgt_shear_plan plan = d_dgt_shear_init(f, g, L, W, a, M, s0, s1, br, c, FFTW_ESTIMATE);
    
    st0 = ltfat_time();
    for (int ii=0;ii<nrep;ii++)
    {
-      dgt_shear_execute(plan);
+      d_dgt_shear_execute(plan);
    }
    st1 = ltfat_time();
    
-   dgt_shear_done(plan);
+   d_dgt_shear_done(plan);
    
    printf("%i %i %i %i %i %i %i %f\n",a,M,L,W,s0,s1,br,(st1-st0)/nrep); 
    

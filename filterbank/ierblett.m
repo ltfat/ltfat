@@ -14,9 +14,6 @@ function fr = ierblett(c,g,shift,Ls,dual)
 %   Output parameters:
 %         fr        : Synthesized signal (Channels are stored in the 
 %                     columns)
-%
-%   This is just a dummy routine calling |insdgfb|.
-%
 %   Given the cell array *c* of non-stationary Gabor coefficients, and a 
 %   set of filters *g* and frequency shifts *shift* this function computes 
 %   the corresponding ERBlet synthesis.
@@ -25,6 +22,8 @@ function fr = ierblett(c,g,shift,Ls,dual)
 %   canonical dual frame for the system given by *g*, *shift* and the size 
 %   of the vectors in *c*. This provides perfect reconstruction in the 
 %   painless case, see the references for more information.
+%
+%   This is just a dummy routine calling |insdgfb|.
 % 
 %   See also:  erblett
 % 
