@@ -2,7 +2,7 @@
 
 CC=gcc
 
-CFLAGS=-O3 -Wall -fpic -std=c99 -m64 -I../thirdparty 
+CFLAGS=-O3 -Wall -fpic -std=c99 -m64 -I../thirdparty -g
 DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DLTFAT_BACKEND_EXPORTS
 #CFLAGS=-O2 -fPIC -std=c99 -I../thirdparty -L../thirdparty
 

@@ -1,3 +1,4 @@
+#include <complex.h>
 #include <string.h>
 #include "config.h"
 #include "fftw3.h"
@@ -143,7 +144,7 @@ LTFAT_NAME(dgt_shearola_done)(LTFAT_NAME(dgt_shearola_plan) plan)
 
    ltfat_free(plan.cbuf);
    ltfat_free(plan.gext);
-   ltfat_free(plan.buf);z
+   ltfat_free(plan.buf);
 
 }
 
