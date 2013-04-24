@@ -126,6 +126,7 @@ for funpair=inv_funs
 	
 	res=norm(f(:)-fr(:));
 
+	[test_failed,fail]=ltfatdiditfail(nres,test_failed);
 	if abs(res)>1e-10
 	  fail='FAILED';
 	else

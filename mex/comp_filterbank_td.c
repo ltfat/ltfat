@@ -51,7 +51,7 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include "ltfat_types.h"
 /** USER DEFINED HEADERS **/
-//#include "math.h"
+#include "math.h"
 
 /*
 %COMP_FILTERBANK_TD   Non-uniform filterbank by conv2

@@ -63,10 +63,11 @@ for ii=1:length(Lr);
   
   res=norm(sym1-sym2,'fro');
   
-  if res>10e-10
-    disp('FAILED');
-    test_failed=test_failed+1;
-  end;
+  [test_failed,fail]=ltfatdiditfail(res,test_failed);
+  % if res>10e-10
+    % disp('FAILED');
+    % test_failed=test_failed+1;
+  % end;
       
   s=sprintf('REF 1 WIN L:%3i a:%3i M:%3i %0.5g',L,a,M,res);
   disp(s)

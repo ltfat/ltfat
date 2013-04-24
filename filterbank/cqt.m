@@ -226,7 +226,7 @@ for ii = 1:N
     if M(ii) < Lg % if the number of frequency channels is too small,
         % aliasing is introduced
         col = ceil(Lg/M(ii));
-        temp = zeros(col*M(ii),W);
+        temp = zeros(col*M(ii),W,assert_classname(f));
         
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = ...
             bsxfun(@times,f(win_range,:),g{ii}(idx));
@@ -238,7 +238,7 @@ for ii = 1:N
         % outside the loop instead does not provide speedup; instead it is
         % slower in most cases.
     else
-        temp = zeros(M(ii),W);
+        temp = zeros(M(ii),W,assert_classname(f));
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = ...
             bsxfun(@times,f(win_range,:),g{ii}(idx));
         

@@ -27,13 +27,14 @@ r=idgt2(c,gd,a,Ls);
 res=f-r;
 nres=norm(res(:));
 
-failed='';
-if nres>10e-10
-  failed='FAILED';
-  test_failed=test_failed+1;
-end;
+[test_failed,fail]=ltfatdiditfail(nres,test_failed);
+%failed='';
+%if nres>10e-10
+%  failed='FAILED';
+%  test_failed=test_failed+1;
+%end;
 
-s=sprintf('DGT2 Lf:%3i L:%3i %0.5g %s',Lf,L,nres,failed);
+s=sprintf('DGT2 Lf:%3i L:%3i %0.5g %s',Lf,L,nres,fail);
 disp(s)
 
 
@@ -64,13 +65,14 @@ c2=ref_dgt2(f,g1,g2,a1,a2,M1,M2);
 rc=c-c2;
 nres=norm(rc(:));
 
-failed='';
-if nres>10e-10
-  failed='FAILED';
-  test_failed=test_failed+1;
-end;
+[test_failed,fail]=ltfatdiditfail(nres,test_failed);
+%failed='';
+%if nres>10e-10
+%  failed='FAILED';
+%  test_failed=test_failed+1;
+%end;
 
-s=sprintf('DGT2 REF L1:%3i L2:%3i %0.5g %s',L1,L2,nres,failed);
+s=sprintf('DGT2 REF L1:%3i L2:%3i %0.5g %s',L1,L2,nres,fail);
 disp(s)
 
 
@@ -80,13 +82,14 @@ res=r-f;
 
 nres=norm(res(:));
 
-failed='';
-if nres>10e-10
-  failed='FAILED';
-  test_failed=test_failed+1;
-end;
+[test_failed,fail]=ltfatdiditfail(nres,test_failed);
+%failed='';
+%if nres>10e-10
+%  failed='FAILED';
+%  test_failed=test_failed+1;
+%end;
 
-s=sprintf('DGT2 INV L1:%3i L2:%3i %0.5g %s',L1,L2,nres,failed);
+s=sprintf('DGT2 INV L1:%3i L2:%3i %0.5g %s',L1,L2,nres,fail);
 disp(s)
 
 

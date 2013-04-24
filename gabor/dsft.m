@@ -38,7 +38,7 @@ else
   
   R1=size(F,1);
   R2=size(F,2);
-  Fo=zeros(R2,R1,W);
+  Fo=zeros(R2,R1,W,assert_classname(F));
   for w=1:W
     Fo(:,:,w)=dft(idft(F(:,:,w).'));
   end;

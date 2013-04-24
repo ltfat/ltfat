@@ -52,16 +52,16 @@ if iscell(c)
     
     N=length(c); % Number of time positions
     W=size(c{1},2); % Number of signal channels
-    
+    f=zeros(L,W,assert_classname(c{1})); % Initialisation of the result
 else
     % ---- invert the uniform case ----------------
     [M2, N, W]=size(c);
-    
+    f=zeros(L,W,assert_classname(c)); % Initialisation of the result
 end
 
 [g,info]=nsgabwin(g,a,M);
 
-f=zeros(L,W); % Initialisation of the result
+
 
 for ii = 1:N
     Lg = length(g{ii});

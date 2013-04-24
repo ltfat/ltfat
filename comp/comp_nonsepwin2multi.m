@@ -6,7 +6,7 @@ g=fir2long(g,L);
 Lg=size(g,1);
 
 b=L/M;
-mwin=zeros(Lg,lt(2));
+mwin=zeros(Lg,lt(2),assert_classname(g));
 l=long2fir((0:L-1).'/L,Lg);
 for ii=0:lt(2)-1
   wavenum=mod(ii*lt(1),lt(2))*b/lt(2);

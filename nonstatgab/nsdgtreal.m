@@ -117,13 +117,13 @@ for ii = 1:N
     if M(ii) < Lg 
         % if the number of frequency channels is too small, aliasing is introduced
         col = ceil(Lg/M(ii));
-        temp = zeros(col*M(ii),W);
+        temp = zeros(col*M(ii),W,assert_classname(f,g{1}));
         temp([col*M(ii)-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times,f(win_range,:),gt);
         temp = reshape(temp,M(ii),col,W);
         
         c{ii}=squeeze(fftreal(sum(temp,2)));
     else
-        temp = zeros(M(ii),W);
+        temp = zeros(M(ii),W,assert_classname(f,g{1}));
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times,f(win_range,:),gt);
         c{ii} = fftreal(temp);
     end       
@@ -132,7 +132,7 @@ end
 if 0
 for ii=1:N
   shift=floor(length(g{ii})/2);
-  temp=zeros(M(ii),W);
+  temp=zeros(M(ii),W,assert_classname(f,g{1}));
   
   % Windowing of the signal.
   % Possible improvements: The following could be computed faster by 
@@ -150,7 +150,7 @@ for ii=1:N
     % Possible improvements: the following could probably be computed 
     % faster using matrix manipulation (reshape, sum...)
     temp1=temp;
-    temp=zeros(M(ii),size(temp,2));
+    temp=zeros(M(ii),size(temp,2),assert_classname(f,g{1}));
     for jj=0:x-1
       temp=temp+temp1(jj*M(ii)+(1:M(ii)),:);
     end

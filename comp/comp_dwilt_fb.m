@@ -7,7 +7,7 @@ N=L/a;
 W=size(f,2);
 
 
-coef=zeros(2*M,N/2,W);
+coef=zeros(2*M,N/2,W,assert_classname(f,g));
 
 if (isreal(f) && isreal(g))
 

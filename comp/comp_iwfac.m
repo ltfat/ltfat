@@ -38,7 +38,7 @@ if d>1
   gf=ifft(gf,[],4);
 end;
 
-g=zeros(L,R);
+g=zeros(L,R,assert_classname(gf));
 
 % Set up the small matrices
 for w=0:R-1

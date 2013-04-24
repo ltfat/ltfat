@@ -36,7 +36,7 @@ end
 
 if s0 == 0
 
-    c_rect = zeros(Mr,Nr,W);
+    c_rect = zeros(Mr,Nr,W,assert_classname(coef,g));
     if 0
         
         for w=0:W-1
@@ -71,7 +71,7 @@ if s0 == 0
         
 else
 
-    c_rect = zeros(Nr,Mr,W);
+    c_rect = zeros(Nr,Mr,W,assert_classname(coef,g));
     p = comp_pchirp(L,-s0);
 
     g = p.*fft(g);

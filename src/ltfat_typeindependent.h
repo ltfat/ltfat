@@ -230,14 +230,6 @@ LTFAT_H_NAME(heapint)(const LTFAT_H_REAL *s,
 		      const LTFAT_H_REAL tol, LTFAT_H_REAL *phase);
 
 LTFAT_EXTERN void
-LTFAT_H_NAME(col2diag)(const LTFAT_H_COMPLEX *cin, const int L,
-		       LTFAT_H_COMPLEX *cout);
-
-LTFAT_EXTERN void
-LTFAT_H_NAME(col2diag_r)(const LTFAT_H_REAL *cin, const int L,
-			 LTFAT_H_REAL *cout);
-
-LTFAT_EXTERN void
 LTFAT_H_NAME(gabreassign)(const LTFAT_H_REAL *s, const LTFAT_H_REAL *tgrad,
 			  const LTFAT_H_REAL *fgrad, const int L, const int W,
 			  const int a, const int M, LTFAT_H_REAL *sr);
@@ -477,7 +469,7 @@ typedef struct
 
 LTFAT_EXTERN LTFAT_H_NAME(dgt_shearola_plan)
 LTFAT_H_NAME(dgt_shearola_init)(const LTFAT_H_COMPLEX *g, const int gl,
-			   const int W, const int a, const int M, 
+			   const int W, const int a, const int M,
 			   const int s0, const int s1, const int br,
 			   const int bl,
 			   unsigned flags);

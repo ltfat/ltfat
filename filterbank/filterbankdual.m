@@ -67,7 +67,7 @@ if all(a==a(1))
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=gd(:,m);
+    gdout{m}=cast(gd(:,m),assert_classname(g{1}));
   end;
   
 else

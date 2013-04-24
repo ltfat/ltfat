@@ -5,6 +5,12 @@ function test_failed = test_wfbtpr(verbose)
 % filters
 %
 disp('========= TEST WFBT ============');
+global LTFAT_TEST_TYPE;
+tolerance = 2e-8;
+if strcmpi(LTFAT_TEST_TYPE,'single')
+   tolerance = 1e-5;
+end
+
 
 test_failed = 0;
 if(nargin>0)
@@ -15,7 +21,6 @@ end
 
 type = {'dec'};
 ext = {'per','zero','odd','even'};
-format = {'pack','cell'};
 
 
 J = 4;
@@ -58,7 +63,7 @@ test_filters = {
 
 %testLen = 4*2^7-1;%(2^J-1);
 testLen = 53;
-f = randn(testLen,10);
+f = tester_rand(testLen,10);
 
 for extIdx=1:length(ext)  
    extCur = ext{extIdx};
@@ -73,24 +78,24 @@ for extIdx=1:length(ext)
         
         %MSE
             err = norm(f-fhat,'fro');
+            [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             if(~verbose)
-              if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d, %d \n',actFilt{2},actFilt{1},extCur,size(f,1),err); else fprintf('Custom, err=%d \n',err); end;
+              if(~isstruct(actFilt))fprintf('J=%d, %5.5s, ext=%s, L=%d, err=%d %s \n',actFilt{2},actFilt{1},extCur,size(f,1),err,fail); else fprintf('Custom, err=%d %s\n',err,fail); end;
             end
-            if err>1e-6
-               test_failed = 1; 
+            if strcmpi(fail,'FAILED')
                if verbose
                 if(~isstruct(actFilt)) fprintf('err=%d, filt=%s, ext=%s, inLen=%d \n',err,actFilt{1},extCur,testLen); else disp('Custom'); end;
                  figure(1);clf;stem([f,fhat]);
                  figure(2);clf;stem([f-fhat]);
+                 break; 
                end
-               break; 
             end
-            if test_failed, break; end;
+            if test_failed && verbose, break; end;
         
      end
-     if test_failed, break; end;
+     if test_failed && verbose, break; end;
    end
-   if test_failed, break; end;
+   if test_failed && verbose, break; end;
 end
 
 

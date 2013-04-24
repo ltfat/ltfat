@@ -50,15 +50,17 @@ if iscell(c)
     % ---- invert the non-uniform case ---------
     M=cellfun(@(x) size(x,1),c);
     N=length(c);
-    W=size(c{1},2);    
+    W=size(c{1},2);   
+    f=zeros(L,W,assert_classname(c{1}));
 else
     % ---- invert the uniform case ----------------
-    [M, N, W]=size(c);    
+    [M, N, W]=size(c);   
+    f=zeros(L,W,assert_classname(c));
 end
 
 [g,info]=nsgabwin(g,a,M);
 
-f=zeros(L,W);
+
 
 for ii = 1:N
     Lg = length(g{ii});

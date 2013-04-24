@@ -59,7 +59,7 @@ if all(a==a(1))
   
   gtout=cell(1,M);
   for m=1:M
-    gtout{m}=gt(:,m);
+    gtout{m}=cast(gt(:,m),assert_classname(g{1}));
   end;
   
 else

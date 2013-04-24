@@ -30,7 +30,7 @@ if(numel(skip)==1)
 end
 
 % Output memory allocation
-f=zeros(Ls,W);
+f=zeros(Ls,W,assert_classname(c,g));
 
 if(~strcmp(ext,'per'))
     ext = 'zero';

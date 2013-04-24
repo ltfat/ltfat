@@ -30,7 +30,7 @@ if(numel(skip)==1)
 end
 
 % Output memory allocation
-f=zeros(L,W);
+f=zeros(L,W,assert_classname(c,g));
 
 skipOut = (filtLen-1)+skip;
 

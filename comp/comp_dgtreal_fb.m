@@ -20,7 +20,7 @@ M2=floor(M/2)+1;
 % Conjugate the window here.
 g=conj(fftshift(g));
 
-coef=zeros(M,N,W);
+coef=zeros(M,N,W,assert_classname(f,g));
 
 % Replicate g when multiple columns should be transformed.
 gw=repmat(g,1,W);

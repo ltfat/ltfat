@@ -60,7 +60,7 @@ end;
 
 if iscell(c)
          
-  f=zeros(L,W);
+  f=zeros(L,W,assert_classname(c{1},g{1}));
   for m=1:M
      for w=1:W
         
@@ -75,7 +75,7 @@ else
  
   a=a(1);
   
-  G=zeros(L,M);
+  G=zeros(L,M,assert_classname(c,g{1}));
   for ii=1:M
     G(:,ii)=fft(fir2long(g{ii},L));
   end;

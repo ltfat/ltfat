@@ -54,7 +54,7 @@ if (alg==1) || (alg==0 && lt(2)<=2)
     
     % simple algorithm: split into sublattices and add the result from eacg
     % sublattice.
-    f=zeros(L,W);
+    f=zeros(L,W,assert_classname(coef,g));
     for ii=0:lt(2)-1
         % Extract sublattice
         sub=coef(:,ii+1:lt(2):end);
@@ -85,7 +85,7 @@ else
     
     if s0 ~= 0
         
-        c_rect = zeros(Nr,Mr,W);
+        c_rect = zeros(Nr,Mr,W,assert_classname(coef,g));
         g = comp_pchirp(L,-s0).*fft(g);
         for w=0:W-1
             c_rect(ind(1,[1:Mr,end:-1:Mr+1])/ar+1+(ind(2,:)/br)*Nr+w*M*N) = ...
@@ -97,7 +97,7 @@ else
         
     else
         
-        c_rect = zeros(Mr,Nr,W);
+        c_rect = zeros(Mr,Nr,W,assert_classname(coef,g));
         for w=0:W-1
             c_rect(ind(2,:)/br+1+(ind(1,:)/ar)*Mr+w*M*N) = ... 
                 coef(floor(ind_final(2,:)/b)+1+(ind_final(1,:)/a)*M+w*M*N);       

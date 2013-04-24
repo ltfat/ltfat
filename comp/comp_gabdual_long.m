@@ -20,9 +20,9 @@ d=gcd(b,N);
 p=b/d;
 q=N/d;
 
-gdf=zeros(p*q*R,c*d);
+gdf=zeros(p*q*R,c*d,assert_classname(g));
 
-G=zeros(p,q*R);
+G=zeros(p,q*R,assert_classname(g));
 for ii=1:c*d
   % This essentially computes pinv of each block.
 

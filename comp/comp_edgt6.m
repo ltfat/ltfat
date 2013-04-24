@@ -6,7 +6,7 @@ M=size(cin,1);
 N=size(cin,2)/2;
 W=size(cin,3);
 
-cout=zeros(M,N,W);
+cout=zeros(M,N,W,assert_classname(cin));
 
 cout=cin(:,1:N,:);
 

@@ -37,9 +37,9 @@ coef=reshape(coef,M,N,W);
 % The fftshift actually makes some things easier.
 g=fftshift(g);
 
-f=zeros(L,W);
+f=zeros(L,W,assert_classname(coef,g));
 
-ff=zeros(gl,1);
+ff=zeros(gl,1,assert_classname(coef,g));
 
 % Rotate the coefficients, duplicate them until they have same
 % length as g, and multiply by g.

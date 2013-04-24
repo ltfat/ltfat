@@ -113,11 +113,12 @@ for funpair=ref_funs
 
     s=sprintf('REF %7s L:%2i W:%2i %0.5g',funpair{1}{2},ref_sizes(ii,1),ref_sizes(ii,2),res);
     disp(s)
-
-    if res>10e-10
-      disp('FAILED');
-      ref_failed=ref_failed+1;
-    end;
+	
+    [ref_failed,fail]=ltfatdiditfail(res,ref_failed);
+    % if res>10e-10
+      % disp('FAILED');
+      % ref_failed=ref_failed+1;
+    % end;
 
   end;
 end;
@@ -139,11 +140,12 @@ for funpair=ref_realfuns
 
     s=sprintf('REA %7s L:%2i W:%2i %0.5g',funpair{1}{2},ref_sizes(ii,1),ref_sizes(ii,2),res);
     disp(s)
-
-    if res>10e-10
-      disp('FAILED');
-      ref_failed=ref_failed+1;
-    end;
+	
+    [ref_failed,fail]=ltfatdiditfail(res,ref_failed);
+    % if res>10e-10
+      % disp('FAILED');
+      % ref_failed=ref_failed+1;
+    % end;
 
   end;
 end;
@@ -164,11 +166,11 @@ for funpair=inv_funs
 
     s=sprintf('INV %7s L:%2i W:%2i %0.5g',funpair{1}{1},ref_sizes(ii,1),ref_sizes(ii,2),res);
     disp(s)
-
-    if res>10e-10
-      disp('FAILED');
-      inv_failed=inv_failed+1;
-    end;
+    [inv_failed,fail]=ltfatdiditfail(res,inv_failed);
+    % if res>10e-10
+      % disp('FAILED');
+      % inv_failed=inv_failed+1;
+    % end;
 
   end;
 end;
@@ -192,10 +194,11 @@ for funname=nrm_funs
     s=sprintf('NRM %7s L:%2i %0.5g',funname{1},ref_sizes(ii,1),res);
     disp(s)
 
-    if res>10e-10
-      disp('FAILED');
-      nrm_failed=nrm_failed+1;
-    end;
+	[nrm_failed,fail]=ltfatdiditfail(res,nrm_failed);
+    % if res>10e-10
+      % disp('FAILED');
+      % nrm_failed=nrm_failed+1;
+    % end;
   end;
 end;
 
@@ -215,10 +218,11 @@ for funpair=realinv_funs
     s=sprintf('RIN %7s L:%2i W:%2i %0.5g',funpair{1}{1},ref_sizes(ii,1),ref_sizes(ii,2),res);
     disp(s)
 
-    if res>10e-10
-      disp('FAILED');
-      inv_failed=inv_failed+1;
-    end;
+	[realinv_failed,fail]=ltfatdiditfail(res,realinv_failed);
+    % if res>10e-10
+      % disp('FAILED');
+      % inv_failed=inv_failed+1;
+    % end;
 
   end;
 end;

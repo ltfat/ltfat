@@ -18,6 +18,7 @@ function [g]=comp_pgauss(L,w,c_t,c_f)
 % c_t - time centering
 % c_f - frequency centering
 
+% Input data type cannot be determined
 g=zeros(L,1);
 
 if L==0

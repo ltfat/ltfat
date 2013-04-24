@@ -28,7 +28,7 @@ hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
 % Allocate output
 [L, W] = size(f);
 M = J*(filtNo-1)+1;
-c = zeros(L,M,W);
+c = zeros(L,M,W,assert_classname(f,hMat));
 
 ca = f;
 runPtr = size(c,2) - (filtNo-2);

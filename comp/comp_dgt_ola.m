@@ -33,7 +33,7 @@ end;
 % Extend window to length of extended block.
 gpad=fir2long(g,Lext);
 
-coef=zeros(M,N,W);
+coef=zeros(M,N,W,assert_classname(f,g));
 
 for ii=0:Nb-1
   

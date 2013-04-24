@@ -15,7 +15,7 @@ W=size(f,2);
 b=L/M;
 N=L/a;
 
-c=zeros(M,N,W);
+c=zeros(M,N,W,assert_classname(f,g));
 
 ar = a*b/br;
 Mr = L/br;

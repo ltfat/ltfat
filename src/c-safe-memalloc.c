@@ -4,6 +4,7 @@
 #include "string.h"
 #include "fftw3.h"
 
+
 void* ltfat_malloc (size_t n)
 {
   void *outp;
@@ -52,4 +53,5 @@ void ltfat_free(void *ptr)
 {
   fftw_free(ptr);
 }
+
 

@@ -40,7 +40,7 @@ p=a/c;
 q=M/c;
 d=N/q;
 
-ff=zeros(p,q*W,c,d);
+ff=zeros(p,q*W,c,d,assert_classname(f,gf));
 
 if p==1
   % --- integer oversampling ---
@@ -81,7 +81,7 @@ if d>1
   ff=fft(ff,[],4);
 end;
 
-C=zeros(q*R,q*W,c,d);
+C=zeros(q*R,q*W,c,d,assert_classname(f,gf));
 
 for r=0:c-1    
   for s=0:d-1
@@ -99,7 +99,7 @@ end;
 
 % Place the result
 
-cout=zeros(M,N,R,W);
+cout=zeros(M,N,R,W,assert_classname(f,gf));
 
 if p==1
   % --- integer oversampling ---

@@ -18,7 +18,7 @@ M=size(cin,1)-1;
 N=size(cin,2);
 W=size(cin,3);
 
-cout=zeros(2*M,N/2,W);
+cout=zeros(2*M,N/2,W,assert_classname(cin));
 
 if rem(M,2)==0
   for ii=0:N/2-1

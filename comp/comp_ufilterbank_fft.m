@@ -9,7 +9,7 @@ M=size(g,2);
 
 N=L/a;
 
-c=zeros(N,M,W);
+c=zeros(N,M,W,assert_classname(f,g));
 
 % This routine does not yet use FFTREAL, because it must be able to
 % handle downsampling, which is much easier to express in the FFT case.

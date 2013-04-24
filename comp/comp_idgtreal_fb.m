@@ -37,12 +37,12 @@ coef=reshape(coef,M,N,W);
 % The fftshift actually makes some things easier.
 g=fftshift(g);
 
-f=zeros(L,W);
+f=zeros(L,W,assert_classname(coef,g));
 
 % Make multicolumn g by replication.
 gw=repmat(g,1,W);
 
-ff=zeros(gl,1);
+ff=zeros(gl,1,assert_classname(coef,g));
 
 % Rotate the coefficients, duplicate them until they have same
 % length as g, and multiply by g.

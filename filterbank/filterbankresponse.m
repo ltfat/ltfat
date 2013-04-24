@@ -21,7 +21,7 @@ definput.flags.ctype={'complex','real'};
 definput.flags.plottype={'plot','noplot'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-gf=zeros(L,1);
+gf=zeros(L,1,assert_classname(g));
 M=numel(g);
   
 for m=1:M

@@ -19,7 +19,7 @@ glh=floor(gl/2);  % gl-half
 % Conjugate the window here.
 g=conj(fftshift(g));
 
-coef=zeros(M,N,W);
+coef=zeros(M,N,W,assert_classname(f,g));
 
 % ----- Handle the first boundary using periodic boundary conditions. ---
 for n=0:ceil(glh/a)-1

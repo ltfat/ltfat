@@ -15,7 +15,7 @@ function cout=comp_col2diag(cin);
 %   REFERENCE: OK
 
 L=size(cin,1);
-cout=zeros(L);
+cout=zeros(L,assert_classname(cin));
 
 jj=(0:L-1).';
 for ii=0:L-1

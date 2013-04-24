@@ -75,7 +75,7 @@ if rem(N,1)~=0
   error('The parameter for ZAK must divide the length of the signal.');
 end;
 
-c=zeros(a,N,W);
+c=zeros(a,N,W,assert_classname(f));
 
 for ii=1:W
   % Compute it, it can be done in one line!

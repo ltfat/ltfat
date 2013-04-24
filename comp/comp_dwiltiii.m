@@ -6,7 +6,7 @@ a=M;
 N=L/a;
 W=size(f,2);
 
-coef=zeros(M,N,W);
+coef=zeros(M,N,W,assert_classname(f,g));
 
 fwasreal=isreal(f);
 

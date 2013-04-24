@@ -29,18 +29,20 @@ for ii=1:length(Lr)
   s=sprintf('REF L:%3i K:%3i %0.5g',L,K,nres);
   disp(s)
 
-  if nres>10e-10
-    disp('FAILED');
-    ref_failed=ref_failed+1;
-  end;
+  [ref_failed,fail]=ltfatdiditfail(nres,ref_failed);
+  % if nres>10e-10
+    % disp('FAILED');
+    % ref_failed=ref_failed+1;
+  % end;
 
   s=sprintf('INV L:%3i K:%3i %0.5g',L,K,ninv);
   disp(s)
 
-  if nres>10e-10
-    disp('FAILED');
-    inv_failed=inv_failed+1;
-  end;
+  [inv_failed,fail]=ltfatdiditfail(ninv,inv_failed);
+  % if nres>10e-10
+    % disp('FAILED');
+    % inv_failed=inv_failed+1;
+  % end;
 
 end;
 

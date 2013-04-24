@@ -51,7 +51,7 @@ end;
 glong2=abs(fir2long(g,L)).^2;
 N=L/a;
 
-d=zeros(L,1);
+d=zeros(L,1,assert_classname(glong2));
 
 % The diagonal is a-periodic, so compute a single period by summing up
 % glong2 in slices. 

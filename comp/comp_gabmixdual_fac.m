@@ -35,10 +35,10 @@ d=gcd(b,N);
 p=b/d;
 q=N/d;
 
-gammaf=zeros(p*q*R,c*d);
+gammaf=zeros(p*q*R,c*d,assert_classname(gf1,gf2));
 
-G1=zeros(p,q*R);
-G2=zeros(p,q*R);
+G1=zeros(p,q*R,assert_classname(gf1,gf2));
+G2=zeros(p,q*R,assert_classname(gf1,gf2));
 for ii=1:c*d
 
   G1(:)=gf1(:,ii);

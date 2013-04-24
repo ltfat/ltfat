@@ -19,7 +19,7 @@ p=a/c;
 q=M/c;
 d=N/q;
 
-gf=zeros(p,q*R,c,d);
+gf=zeros(p,q*R,c,d,assert_classname(g));
 
 % Set up the small matrices
 % The w loop is only used for multiwindows, which should be a rare occurence.

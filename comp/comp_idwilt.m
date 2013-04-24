@@ -15,7 +15,7 @@ a=M;
 
 L=N*a;
 
-coef2=zeros(2*M,N,W);
+coef2=zeros(2*M,N,W,assert_classname(coef,g));
 
 % First and middle modulation are transferred unchanged.
 coef2(1,1:2:N,:) = coef(1,:,:);

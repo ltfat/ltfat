@@ -65,8 +65,8 @@ if ~isempty(L)
   f=postpad(f,L);
 end;
 
-s1=zeros(2*L,W);
-c=zeros(L,W);
+s1=zeros(2*L,W,assert_classname(f));
+c=zeros(L,W,assert_classname(f));
 
 m1=1/sqrt(2)*exp(-(0:L-1)*pi*i/(2*L)).';
 m2=-1/sqrt(2)*exp((1:L)*pi*i/(2*L)).';

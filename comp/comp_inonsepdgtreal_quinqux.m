@@ -26,7 +26,7 @@ N=size(coef,2);
 W=size(coef,3);
 L=N*a;
 
-coef2=zeros(M,N,W);
+coef2=zeros(M,N,W,assert_classname(coef,g));
 
 coef2(1:M2,:,:)=coef;
 if rem(M,2)==0
@@ -52,7 +52,7 @@ coef = bsxfun(@times,coef,E);
 
 % simple algorithm: split into sublattices and add the result from eacg
 % sublattice.
-f=zeros(L,W);
+f=zeros(L,W,assert_classname(coef,g));
 for ii=0:2-1
     % Extract sublattice
     sub=coef(:,ii+1:2:end,:);

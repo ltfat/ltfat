@@ -43,9 +43,9 @@ p=a/c;
 q=M/c;
 d=N/q;
 
-ff=zeros(p,q*W,c,d);
-C=zeros(q*R,q*W,c,d);
-f=zeros(L,W);
+ff=zeros(p,q*W,c,d,assert_classname(coef,gf));
+C=zeros(q*R,q*W,c,d,assert_classname(coef,gf));
+f=zeros(L,W,assert_classname(coef,gf));
 
 % Apply ifft to the coefficients.
 coef=ifftreal(coef,M)*sqrt(M);

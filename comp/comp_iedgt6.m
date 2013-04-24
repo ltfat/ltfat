@@ -8,7 +8,7 @@ L=N*a;
 
 cin=reshape(cin,M,N,W);
 
-cout=zeros(M,2*N,W);
+cout=zeros(M,2*N,W,assert_classname(cin));
 cout(:,1:N,:)=cin;
 
 % Copy the non modulated coefficients.

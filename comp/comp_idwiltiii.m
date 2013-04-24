@@ -15,7 +15,7 @@ a=M;
 
 L=N*M;
 
-coef2=zeros(2*M,N,W);
+coef2=zeros(2*M,N,W,assert_classname(coef,g));
 
 coef2(1:2:M,1:2:N,:)        = exp( i*pi/4)*coef(1:2:M,1:2:N,:);
 coef2(2*M:-2:M+1,1:2:N,:)   = exp(-i*pi/4)*coef(1:2:M,1:2:N,:);

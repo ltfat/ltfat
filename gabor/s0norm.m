@@ -42,7 +42,7 @@ definput.keyvals.dim=[];
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim, ...
                                                   upper(mfilename));
 permutedsize(1)=1;
-y=zeros(permutedsize);
+y=zeros(permutedsize,assert_classname(f));
 
 g=pgauss(L);
 

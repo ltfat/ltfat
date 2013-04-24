@@ -31,7 +31,7 @@ definput.keyvals.dim = [];
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim,upper(mfilename));
 
 
-fout = zeros(size(f,1) + 2*extLen,size(f,2));
+fout = zeros(size(f,1) + 2*extLen,size(f,2),assert_classname(f));
 fout(extLen+1:end-extLen,:) = f;
 
 legalExtLen = min([size(f,1),extLen]);

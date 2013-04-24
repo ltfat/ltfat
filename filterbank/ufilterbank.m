@@ -51,7 +51,7 @@ N=L/a;
 
 f=postpad(f,L);
 
-gw=zeros(L,M);
+gw=zeros(L,M,assert_classname(f));
 for ii=1:M
   gw(:,ii)=fir2long(g{ii},L);
 end;

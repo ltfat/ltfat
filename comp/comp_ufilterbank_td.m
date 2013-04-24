@@ -45,7 +45,7 @@ end
 Lreq = a*(N-1) + 1;
 
 % Output memory allocation
-c=zeros(N,M,W);
+c=zeros(N,M,W,assert_classname(f,g));
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
 fext = comp_extBoundary(f,filtLen-1,ext,'dim',1);

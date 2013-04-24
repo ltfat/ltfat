@@ -92,7 +92,7 @@ f=postpad(f,L);
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions
-c=zeros(M,N,W); % Initialisation of the result
+c=zeros(M,N,W,assert_classname(f,g{1})); % Initialisation of the result
 
    
 for ii = 1:N
@@ -102,13 +102,13 @@ for ii = 1:N
     if M < Lg 
         % if the number of frequency channels is too small, aliasing is introduced
         col = ceil(Lg/M);
-        temp = zeros(col*M,W);
+        temp = zeros(col*M,W,assert_classname(f,g{1}));
         temp([col*M-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times,f(win_range,:),gt);
         temp = reshape(temp,M,col,W);
         
         c(:,ii,:)=fft(sum(temp,2));
     else
-        temp = zeros(M,W);
+        temp = zeros(M,W,assert_classname(f,g{1}));
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, ...
                                                           f(win_range,:),gt);
         c(:,ii,:)=fft(temp);

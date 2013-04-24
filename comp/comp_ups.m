@@ -75,25 +75,25 @@ end
 
 
 if(~isempty(L))
-    fups=zeros(L,size(f,2)); 
+    fups=zeros(L,size(f,2),assert_classname(f)); 
     fbound = min(ceil((L-type)/a),Ls);
     fups(1+type:a:fbound*a+type,:)=f(1:fbound); 
 else
     if(type==0)
       % Include just tailing zeros.
-      fups=zeros(a*Ls,size(f,2));    
+      fups=zeros(a*Ls,size(f,2),assert_classname(f));    
       fups(1:a:end,:)=f; 
     elseif(type==1)
       % Do not include beginning nor tailing zeros.
-      fups=zeros(a*Ls-(a-1),size(f,2));    
+      fups=zeros(a*Ls-(a-1),size(f,2),assert_classname(f));    
       fups(1:a:end,:)=f;    
     elseif(type==2)
       % Include just beginning zeros.
-      fups=zeros(a*Ls,size(f,2));    
+      fups=zeros(a*Ls,size(f,2),assert_classname(f));    
       fups(a:a:end,:)=f;  
     elseif(type==3)
       % Include both beginning and tailing zeros.
-      fups=zeros(a*Ls+a-1,size(f,2));    
+      fups=zeros(a*Ls+a-1,size(f,2),assert_classname(f));    
       fups(a:a:end,:)=f;   
     end
 end

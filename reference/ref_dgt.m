@@ -5,6 +5,9 @@ function [c]=ref_dgt(f,g,a,M)
 %   Linear algebra version of the algorithm. Create big matrix
 %   containing all the basis functions and multiply with the transpose.
 
+
+g = double(g);
+f = double(f);
 % Calculate the parameters that was not specified.
 L=size(g,1);
 

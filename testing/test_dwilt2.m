@@ -26,13 +26,14 @@ res=r-f;
 
 nres=norm(res(:));
 
-failed='';
-if nres>10e-10
-  failed='FAILED';
-  test_failed=test_failed+1;
-end;
+[test_failed,fail]=ltfatdiditfail(nres,test_failed);
+% failed='';
+% if nres>10e-10
+  % failed='FAILED';
+  % test_failed=test_failed+1;
+% end;
 
-s=sprintf('DWILT2 Lf:%3i L:%3i %0.5g %s',Lf,L,nres,failed);
+s=sprintf('DWILT2 Lf:%3i L:%3i %0.5g %s',Lf,L,nres,fail);
 disp(s)
 
 
@@ -54,14 +55,14 @@ c2=ref_dwilt2(f,g,g,M1,M2);
 
 rc=c-c2;
 nres=norm(rc(:));
+[test_failed,fail]=ltfatdiditfail(nres,test_failed);
+% failed='';
+% if nres>10e-10
+  % failed='FAILED';
+  % test_failed=test_failed+1;
+% end;
 
-failed='';
-if nres>10e-10
-  failed='FAILED';
-  test_failed=test_failed+1;
-end;
-
-s=sprintf('DWILT2 REF M1:%3i M2:%3i %0.5g %s',M1,M2,nres,failed);
+s=sprintf('DWILT2 REF M1:%3i M2:%3i %0.5g %s',M1,M2,nres,fail);
 disp(s)
 
 
@@ -71,14 +72,14 @@ r=idwilt2(c,gd1,gd2);
 res=r-f;
 
 nres=norm(res(:));
+[test_failed,fail]=ltfatdiditfail(nres,test_failed);
+% failed='';
+% if nres>10e-10
+  % failed='FAILED';
+  % test_failed=test_failed+1;
+% end;
 
-failed='';
-if nres>10e-10
-  failed='FAILED';
-  test_failed=test_failed+1;
-end;
-
-s=sprintf('DWILT2 INV M1:%3i M2:%3i %0.5g %s',M1,M2,nres,failed);
+s=sprintf('DWILT2 INV M1:%3i M2:%3i %0.5g %s',M1,M2,nres,fail);
 disp(s)
 
 

@@ -33,7 +33,7 @@ N=length(a);
 a=info.a;
 M=info.M;
 
-d=zeros(L,1);
+d=zeros(L,1,assert_classname(g{1}));
 for ii=1:N
     shift=floor(length(g{ii})/2);
     temp=abs(circshift(g{ii},shift)).^2*M(ii);

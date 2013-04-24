@@ -41,7 +41,7 @@ Lreq = a(:).*(N-1) + 1;
 % Output memory allocation
 c=cell(M,1);
 for m=1:M
-  c{m}=zeros(N(m),W);
+  c{m}=zeros(N(m),W,assert_classname(f));
 end;
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)

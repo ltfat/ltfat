@@ -3,7 +3,7 @@ function test_failed=test_spread
 %
 %  This script runs a throrough test of the SPREADOP routine,
 %  testing it on a range of input parameters.
-
+global LTFAT_TEST_TYPE;
 disp(' ===============  TEST_SPREAD ================');
 
 disp('--- Used subroutines ---');
@@ -42,6 +42,10 @@ for rtype=1:2
         T=tester_rand(L,L);
         coef2=tester_rand(L,L);
       else
+        if ~strcmpi(LTFAT_TEST_TYPE,'double')
+          disp(sprintf('Skipping. Cannot work with sparse matrices of type %s.',LTFAT_TEST_TYPE));
+          break;
+        end
         coef=tester_sprand(L,L,spfraction);
         T=tester_sprand(L,L,spfraction);
         coef2=tester_sprand(L,L,spfraction);          
@@ -52,9 +56,12 @@ for rtype=1:2
         T=tester_crand(L,L);
         coef2=tester_crand(L,L);
       else
-        coef=tester_spcrand(L,L,spfraction);
-        T=tester_spcrand(L,L,spfraction);
-        coef2=tester_spcrand(L,L,spfraction);          
+        if ~strcmpi(LTFAT_TEST_TYPE,'double')
+           break;
+        end
+        coef=tester_sprand(L,L,spfraction);
+        T=tester_sprand(L,L,spfraction);
+        coef2=tester_sprand(L,L,spfraction);          
       end;
     end;
 

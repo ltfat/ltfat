@@ -14,7 +14,7 @@ cin=reshape(cin,M,N,W);
 
 Mhalf=floor(M/2);
 
-cout=zeros(M,N,W);
+cout=zeros(M,N,W,assert_classname(cin));
 
 for m=0:Mhalf-1
   cout(m+1,:,:)=1/sqrt(2)*(cin(2*m+1,:,:)-i*cin(2*m+2,:,:));

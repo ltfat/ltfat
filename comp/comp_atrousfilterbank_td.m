@@ -33,7 +33,7 @@ if(numel(skip)==1)
 end
 
 % Output memory allocation
-c=zeros(L,M,W);
+c=zeros(L,M,W,assert_classname(f,g));
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
 fext = comp_extBoundary(f,filtLen-1,'per','dim',1);

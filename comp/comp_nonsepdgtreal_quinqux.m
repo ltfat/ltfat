@@ -17,7 +17,7 @@ M2=floor(M/2)+1;
 
 % ----- algorithm starts here, split into sub-lattices ---------------
 
-c=zeros(M,N,W);
+c=zeros(M,N,W,assert_classname(f,g));
 
 mwin=comp_nonsepwin2multi(g,a,M,[1 2],L);
 
@@ -28,7 +28,7 @@ for ii=0:1
 end;
 
 % Phase factor correction 
-E = zeros(1,N);
+E = zeros(1,N,assert_classname(f,g));
 for win=0:1
     for n=0:N/2-1
         E(win+n*2+1) = exp(-2*pi*i*a*n*rem(win,2)/M);

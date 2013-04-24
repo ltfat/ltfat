@@ -54,7 +54,7 @@ timepos = cumsum(shift);        % Calculate positions from shift vector
 NN = timepos(end);              % Reconstruction length before truncation
 timepos = timepos-shift(1);     % Adjust positions
 
-fr = zeros(NN,CH); % Initialize output
+fr = zeros(NN,CH,assert_classname(c{1},g{1})); % Initialize output
 
 if nargin < 4
     Ls = NN; % If original signal length is not given do not truncate

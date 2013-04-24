@@ -22,7 +22,7 @@ W=size(c,3);
 L=a*N;
 
 % Create output matrix.
-f=zeros(L,W);
+f=zeros(L,W,assert_classname(c));
 
 for ii=1:W
   % Iterate through third dimension of c.

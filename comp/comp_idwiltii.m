@@ -12,7 +12,7 @@ L=N*a;
 
 coef=reshape(coef,M*2,N/2,W);
 
-coef2=zeros(2*M,N,W);
+coef2=zeros(2*M,N,W,,assert_classname(coef));
 
 % First and middle modulation are transferred unchanged.
 coef2(1,1:2:N,:) = coef(1,:,:);

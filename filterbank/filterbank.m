@@ -67,10 +67,10 @@ N=L./a;
 
 c=cell(M,1);
 for m=1:M
-  c{m}=zeros(N(m),W);
+  c{m}=zeros(N(m),W,assert_classname(f,g{1}));
 end;
   
-G=zeros(L,M);
+G=zeros(L,M,assert_classname(f,g{1}));
 for ii=1:M
   G(:,ii)=fft(fir2long(g{ii},L));
 end;

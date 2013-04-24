@@ -9,7 +9,7 @@ LTFAT_EXTERN
 void LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext)
 {
     LTFAT_TYPE *filtRev = (LTFAT_TYPE *) ltfat_malloc(fLen*sizeof(LTFAT_TYPE));
-    for(unsigned int ii=0;ii<fLen;ii++)
+    for(int ii=0;ii<fLen;ii++)
     {
        *(filtRev+ii) = *(filts + fLen-1 - ii);
     }
@@ -243,7 +243,7 @@ LTFAT_EXTERN
 void LTFAT_NAME(convsub_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int sub, int skip, enum ltfatWavExtType ext)
 {
     LTFAT_TYPE *filtRev = (LTFAT_TYPE *) ltfat_malloc(fLen*sizeof(LTFAT_TYPE));
-    for(unsigned int ii=0;ii<fLen;ii++)
+    for(int ii=0;ii<fLen;ii++)
     {
        *(filtRev+ii) = *(filts + fLen-1 - ii);
     }
@@ -653,7 +653,6 @@ void LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,int inLen, LTFAT_TYPE *buffer
 
 }
 
+
+
 #endif // LTFAT_TYPE
-
-
-

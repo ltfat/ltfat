@@ -2,8 +2,12 @@ function test_failed=test_thresh
 %TEST_THRESH  Compare sparse and full thesholding
 
 test_failed=0;
-
 disp(' ===============  TEST_THRESH ================');
+global LTFAT_TEST_TYPE;
+if ~strcmpi(LTFAT_TEST_TYPE,'double')
+   disp(sprintf('Skipping. Cannot work with sparse matrices of type %s.',LTFAT_TEST_TYPE));
+   return;
+end
 
 lambda=0.1;
 

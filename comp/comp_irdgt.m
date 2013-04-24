@@ -10,7 +10,7 @@ cin=reshape(cin,M,N,W);
 Mhalf=ceil(M/2);
 Mend=Mhalf*2-1;
 
-cout=zeros(M,N,W);
+cout=zeros(M,N,W,assert_classname(cin));
 
 % Copy the first coefficient, it is real
 cout(1,:,:)=cin(1,:,:);

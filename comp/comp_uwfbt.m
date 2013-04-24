@@ -20,7 +20,7 @@ function c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut)
 % Pre-allocated output
 [L, W] = size(f);
 M = sum(cellfun(@(rEl) numel(rEl),rangeOut));
-c = zeros(L,M,W);
+c = zeros(L,M,W,assert_classname(f,wtNodes{1}.filts{1}.h));
 
 % Convenience input reshape
 ca = reshape(f,size(f,1),1,size(f,2));

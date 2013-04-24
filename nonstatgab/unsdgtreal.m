@@ -100,11 +100,11 @@ timepos=cumsum(a)-a(1);
 N=length(a); % Number of time positions
 
 M2=floor(M/2)+1;
-c=zeros(M2,N,W); % Initialisation of the result
+c=zeros(M2,N,W,assert_classname(f,g{1})); % Initialisation of the result
 
 for ii=1:N
   shift=floor(length(g{ii})/2);
-  temp=zeros(M,W);
+  temp=zeros(M,W,assert_classname(f,g{1}));
   
   % Windowing of the signal.
   % Possible improvements: The following could be computed faster by 
@@ -122,7 +122,7 @@ for ii=1:N
     % Possible improvements: the following could probably be computed 
     % faster using matrix manipulation (reshape, sum...)
     temp1=temp;
-    temp=zeros(M,size(temp,2));
+    temp=zeros(M,size(temp,2),assert_classname(f,g{1}));
     for jj=0:x-1
       temp=temp+temp1(jj*M+(1:M),:);
     end

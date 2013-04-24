@@ -27,7 +27,7 @@ AF=Inf;
 BF=0;
 
 % Holds subsubmatrix.
-C=zeros(p,q*R);
+C=zeros(p,q*R,assert_classname(gf));
 
 lambdas=zeros(p,c*d);
 

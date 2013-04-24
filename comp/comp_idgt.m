@@ -81,7 +81,7 @@ else
         
         % simple algorithm: split into sublattices and add the result from each
         % sublattice.
-        f=zeros(L,W);
+        f=zeros(L,W,assert_classname(coef,g));
         for ii=0:lt(2)-1
             % Extract sublattice
             sub=coef(:,ii+1:lt(2):end,:);

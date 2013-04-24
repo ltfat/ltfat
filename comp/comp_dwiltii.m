@@ -7,7 +7,7 @@ N=size(coef2,2);
 W=size(coef2,3);
 L=N*a;
 
-coef=zeros(2*M,N/2,W);
+coef=zeros(2*M,N/2,W,assert_classname(coef2));
 
 
 % ---- m is zero ---------

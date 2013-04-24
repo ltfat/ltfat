@@ -39,7 +39,7 @@ ADDITIONALIBS = -L. -lltfat -lltfatf -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3
 all:	$(OCTS)
 
 %.oct: %.cc
-	mkoctfile -v -Wall -g -I../thirdparty -I. -I../src $(ADDITIONALIBS)  $<
+	mkoctfile -v -Wall -I../thirdparty -I. -I../src $(ADDITIONALIBS)  $<
 	del *.o
 
 clean:

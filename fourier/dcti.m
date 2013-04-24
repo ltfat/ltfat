@@ -85,7 +85,7 @@ if L==1
  
 else
 
-  c=zeros(L,W);
+  c=zeros(L,W,assert_classname(f));
   
   f2=[f;flipud(f(2:L-1,:))]/sqrt(2);
   f2(1,:)=f2(1,:)*sqrt(2);

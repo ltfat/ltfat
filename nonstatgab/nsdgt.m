@@ -123,7 +123,7 @@ for ii = 1:N
         % if the number of frequency channels is too small, aliasing is introduced
         col = ceil(Lg/M(ii));
         
-        temp = zeros(col*M(ii),W);
+        temp = zeros(col*M(ii),W,assert_classname(f,g{1}));
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@ ...
                                                           times,f(win_range,:),g{ii}(idx));
         
@@ -133,7 +133,7 @@ for ii = 1:N
         c{ii}=X;
     else
         
-        temp = zeros(M(ii),W);
+        temp = zeros(M(ii),W,assert_classname(f,g{1}));
         temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, ...
                                                           f(win_range,:),g{ii}(idx));
         

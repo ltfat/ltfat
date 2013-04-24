@@ -31,7 +31,7 @@ fgrad=round(fgrad);
 tgrad=mod(tgrad,M);
 fgrad=mod(fgrad,N);  
   
-sr=zeros(M,N,W);
+sr=zeros(M,N,W,assert_classname(s,tgrad,fgrad));
 
 fgrad=fgrad+1;
 tgrad=tgrad+1;

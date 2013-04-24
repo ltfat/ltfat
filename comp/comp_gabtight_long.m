@@ -20,7 +20,7 @@ d=gcd(b,N);
 p=b/d;
 q=N/d;
 
-G=zeros(p,q*R);
+G=zeros(p,q*R,assert_classname(g));
 
 
 

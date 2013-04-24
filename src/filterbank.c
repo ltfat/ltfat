@@ -20,11 +20,11 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
    const int N=L/a;
 
-   LTFAT_COMPLEX *gwork = ltfat_malloc(L*M*sizeof(LTFAT_COMPLEX));
+   LTFAT_COMPLEX *gwork = (LTFAT_COMPLEX*)ltfat_malloc(L*M*sizeof(LTFAT_COMPLEX));
 
-   LTFAT_COMPLEX *work = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+   LTFAT_COMPLEX *work = (LTFAT_COMPLEX*)ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
-   LTFAT_FFTW(plan) plan_g = 
+   LTFAT_FFTW(plan) plan_g =
       LTFAT_FFTW(plan_many_dft)(1, &L, M,
 				gwork, NULL,
 				1, L,
@@ -34,12 +34,12 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
       LTFAT_FFTW(plan_dft_1d)(L, gwork, gwork,
 			      FFTW_FORWARD, FFTW_ESTIMATE);
-   
+
    LTFAT_FFTW(plan) plan_w =
        LTFAT_FFTW(plan_dft_1d)(L, work, work,
 			      FFTW_FORWARD, FFTW_ESTIMATE);
 
-   LTFAT_FFTW(plan) plan_c = 
+   LTFAT_FFTW(plan) plan_c =
       LTFAT_FFTW(plan_many_dft)(1, &N, M*W,
 				cout, NULL,
 				1, N,
@@ -60,12 +60,12 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    LTFAT_FFTW(execute)(plan_g);
 
    for (int w=0; w<W; w++)
-   {      
+   {
       memcpy(work,f+L*w,sizeof(LTFAT_COMPLEX)*L);
       LTFAT_FFTW(execute)(plan_w);
-	 
+
       for (int m=0; m<M; m++)
-      {	 
+      {
 	 for (int n=0; n<N; n++)
 	 {
 	    cout[n+m*N+w*N*M][0]=0.0;
@@ -82,10 +82,10 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
       }
    }
 
-   
+
    LTFAT_FFTW(execute)(plan_c);
 
-   
+
 
    ltfat_free(work);
    ltfat_free(gwork);
