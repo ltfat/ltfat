@@ -1,7 +1,9 @@
+/* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
+#ifdef LTFAT_TYPE
 #include "config.h"
 #include <math.h>
 #include "ltfat.h"
-
+/*
 LTFAT_EXTERN void
 LTFAT_NAME(col2diag)(const LTFAT_COMPLEX *cin, const int L,
 			  LTFAT_COMPLEX *cout)
@@ -30,18 +32,18 @@ LTFAT_NAME(col2diag)(const LTFAT_COMPLEX *cin, const int L,
 	 pcout+=2;
 	 pcin+=Lp1;
       }
-   }   
+   }
 }
-
+*/
 LTFAT_EXTERN void
-LTFAT_NAME(col2diag_r)(const LTFAT_REAL *cin, const int L,
-			    LTFAT_REAL *cout)
+LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const int L,
+			    LTFAT_TYPE *cout)
 {
    int ii;
- 
-   LTFAT_REAL *pcout;
-   const LTFAT_REAL *pcin;
-   
+
+   LTFAT_TYPE *pcout;
+   const LTFAT_TYPE *pcin;
+
    pcout=cout;
    const int Lp1=L+1;
    for (int jj=0;jj<L;jj++)
@@ -61,5 +63,7 @@ LTFAT_NAME(col2diag_r)(const LTFAT_REAL *cin, const int L,
 	 pcin+=Lp1;
       }
    }
-   
+
 }
+
+#endif

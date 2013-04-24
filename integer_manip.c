@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <math.h>
 
+
+
 void fftindex(const int N, int *indexout)
 {
    int ii;
@@ -53,7 +55,7 @@ int makelarger(const int L, const int K)
       o += K;
    }
 
-   return o;   
+   return o;
 }
 
 /* Extended Euclid algorithm. */
@@ -66,7 +68,7 @@ int gcd (const int a, const int b, int *r, int *s )
   int a3 = 0;
   int b3 = 1;
   int c, d;
-  while ( b1 != 0 ) 
+  while ( b1 != 0 )
   {
       d=a1/b1;
       c = a1;
@@ -76,13 +78,13 @@ int gcd (const int a, const int b, int *r, int *s )
       c = a2;
       a2 = b2;
       b2 = c-d*b2;
-      
+
       c = a3;
       a3 = b3;
       b3 = c-d*b3;
-      
+
   }
-   
+
   *r=a2;
   *s=a3;
   return a1;
@@ -106,7 +108,7 @@ void gabimagepars(const int Ls, const int x, const int y,
 
   *M = int_min(y,Ls);
   *N = int_max(x,Ls);
-  
+
   /* Determine the minimum transform size. */
   int K = lcm(*M,*N);
 
@@ -115,14 +117,14 @@ void gabimagepars(const int Ls, const int x, const int y,
 
   /* Fix a from the long L */
   *a=Llong/(*N);
-  
+
   /* Now we have fixed a and M, so we can use the standard method of choosing L. */
   int Lsmallest=lcm(*a,*M);
   *L = makelarger(Ls, Lsmallest);
 
   /* We did not get N as desired. */
   *N=*L/(*a);
-	 
+
   /* Number of columns to display */
   *Ngood=(Ls/(*a));
 }
@@ -131,7 +133,7 @@ void gabimagepars(const int Ls, const int x, const int y,
 int wfacreal_size(const int L, const int a, const int M)
 {
 
-   int h_a, h_m;   
+   int h_a, h_m;
 
    const int b=L/M;
    const int c=gcd(a, M,&h_a, &h_m);
@@ -144,3 +146,5 @@ int wfacreal_size(const int L, const int a, const int M)
    return d2*p*M;
 
 }
+
+
