@@ -1,4 +1,4 @@
-function g=pherm(L,order,tfr)
+function g=pherm(L,order,varargin)
 %PHERM  Periodized Hermite function
 %   Usage: g=pherm(L,order);
 %          g=pherm(L,order,tfr);
@@ -26,11 +26,17 @@ function g=pherm(L,order,tfr)
 %   If *order* is a vector, `pherm` will return a matrix, where each column
 %   is a Hermite function with the corresponding *order*.
 %
-%   If *tfr* is a vector, `pherm` will return a matrix, where each column
-%   is a Hermite function with the corresponding *tfr*.
+%   `pherm` takes the following flags at the end of the line of input
+%   arguments:
 %
-%   If both *order* and *tfr* are vectors, they must have the same length,
-%   and their values will be paired.
+%     'accurate'  Use a numerically very accurate that computes each
+%                 Hermite function individually. This is the default.
+%
+%     'fast'      Use a less accurate algorithm that calculates all the
+%                 Hermite up to a given order at once.
+%
+%   If you just need to compute a single Hermite function, there is no
+%   speed difference between the two algorithms.
 %
 %   Examples:
 %   ---------
@@ -55,12 +61,14 @@ function g=pherm(L,order,tfr)
 % AUTHORs: Thomasz Hrycak and Peter L. Søndergaard.
 % 
 
-error(nargchk(1,3,nargin));
-  
-if nargin==2
-  tfr=1;
+if nargin<2
+  error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+definput.keyvals.tfr=1;
+definput.flags.phase={'accurate','fast'};
+[flags,kv,tfr]=ltfatarghelper({'tfr'},definput,varargin);
+  
 if size(L,1)>1 || size(L,2)>1
   error('L must be a scalar');
 end;
@@ -78,64 +86,77 @@ if sum(1-(size(order)==1))>1
   error('"order" must be a scalar or vector');
 end;
 
-Ltfr=length(tfr);
-Lorder=length(order);
+W=length(order);
 
-if Ltfr>1 && Lorder>1 && Ltfr~=Lorder
-  error('order and tfr must be vectors of same length');
-end;
-
-% Figure out how many vectors to compute: W
-W=max(Ltfr,Lorder);
-tfr=tfr(:);
 order=order(:);
 
-% Repeat tfr and order so they both have length W
-if Ltfr==1
-  tfr=repmat(tfr,1,W);
-end;
-
-if Lorder==1
-  order=repmat(order,1,W);
-end;
 
 % Calculate W windows.
-g=zeros(L,W);
-for w=1:W
-  
-  thisorder=order(w);
-  thisw=tfr(w);
-    
-  % These numbers have been computed numerically.
-  if thisorder<=6
-    safe=4;
-  else if thisorder<=18
-      safe=5;
-    else if thisorder<=31
-	safe=6;
-      else if thisorder<=46
-	  safe=7;
-	else
-	  % Anything else, use a high number.
-	  safe=12;
-	end;
-      end;
+if flags.do_accurate
+    % Calculate W windows.
+    g=zeros(L,W);
+    for w=1:W
+        
+        thisorder=order(w);
+        safe=get_safe(thisorder);
+
+        % Outside the interval [-safe,safe] then H(thisorder) is numerically zero.
+        nk=ceil(safe/sqrt(L/sqrt(tfr)));
+        
+        sqrtl=sqrt(L);
+        
+        lr=(0:L-1).';
+        for k=-nk:nk
+            xval=(lr/sqrtl-k*sqrtl)/sqrt(tfr);
+            g(:,w)=g(:,w)+comp_hermite(thisorder, sqrt(2*pi)*xval);
+        end;
+        
     end;
-  end;
-  
-  % Outside the interval [-safe,safe] then H(thisorder) is numerically zero.
-  nk=ceil(safe/sqrt(L/sqrt(thisw)));
-  
-  sqrtl=sqrt(L);
-  
-  lr=(0:L-1).';
-  for k=-nk:nk
-    xval=(lr/sqrtl-k*sqrtl)/sqrt(thisw);
-    g(:,w)=g(:,w)+comp_hermite(thisorder, sqrt(2*pi)*xval);
-  end;
-  
-  % Normalize it.
-  g(:,w)=g(:,w)/norm(g(:,w));
-  
+    
+else
+    
+    highestorder=max(order);
+    safe=get_safe(highestorder);
+
+    % Outside the interval [-safe,safe] then H(thisorder) is numerically zero.
+    nk=ceil(safe/sqrt(L/sqrt(tfr)));
+
+    g=zeros(L,highestorder+1);
+    sqrtl=sqrt(L);
+        
+    lr=(0:L-1).';
+    for k=-nk:nk
+        xval=(lr/sqrtl-k*sqrtl)/sqrt(tfr);
+        g=g+comp_hermite_all(highestorder+1, sqrt(2*pi)*xval);
+    end;
+
+    g=g(:,order+1);
+    
 end;
 
+% Normalize it.
+g=normalize(g);
+
+
+
+function safe=get_safe(order)
+% These numbers have been computed numerically.
+    if order<=6
+        safe=4;
+    else 
+        if order<=18
+            safe=5;
+        else 
+            if order<=31
+                safe=6;                
+            else 
+                if order<=46
+                    safe=7;
+                else
+                    % Anything else, use a high number.
+                    safe=12;
+                end;
+            end;
+        end;
+    end;
+    
