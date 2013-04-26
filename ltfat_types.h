@@ -1,4 +1,5 @@
   //#include "fftw3.h"
+#include "ltfat.h"
 
 #ifdef LTFAT_COMPLEX
    #undef LTFAT_COMPLEX
@@ -36,14 +37,14 @@
 #    define LTFAT_COMPLEX double _Complex
 #    define LTFAT_COMPLEXH LTFAT_COMPLEX
 #    define LTFAT_TYPE LTFAT_COMPLEX
-#    define LTFAT_NAME(name) cd_ ## name
+#    define LTFAT_NAME(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 #    define LTFAT_MX_COMPLEXITY mxCOMPLEX
 #  else
 //#    define LTFAT_COMPLEX double _Complex
 #    define LTFAT_COMPLEX fftw_complex
 #    define LTFAT_COMPLEXH double _Complex
 #    define LTFAT_TYPE LTFAT_REAL
-#    define LTFAT_NAME(name) d_ ## name
+#    define LTFAT_NAME(name) LTFAT_NAME_DOUBLE(name)
 #    define LTFAT_MX_COMPLEXITY mxREAL
 #  endif
 #endif
@@ -56,14 +57,14 @@
 #    define LTFAT_COMPLEX float _Complex
 #    define LTFAT_COMPLEXH LTFAT_COMPLEX
 #    define LTFAT_TYPE LTFAT_COMPLEX
-#    define LTFAT_NAME(name) cs_ ## name
+#    define LTFAT_NAME(name) LTFAT_NAME_COMPLEXSINGLE(name)
 #    define LTFAT_MX_COMPLEXITY mxCOMPLEX
 #  else
 #    define LTFAT_COMPLEX fftwf_complex
 //#    define LTFAT_COMPLEX float _Complex
 #    define LTFAT_COMPLEXH float _Complex
 #    define LTFAT_TYPE LTFAT_REAL
-#    define LTFAT_NAME(name) s_ ## name
+#    define LTFAT_NAME(name) LTFAT_NAME_SINGLE(name)
 #    define LTFAT_MX_COMPLEXITY mxREAL
 #  endif
 #endif

@@ -263,13 +263,14 @@ LTFAT_H_NAME(complexprod)(LTFAT_H_COMPLEX *c, const LTFAT_H_COMPLEX a,
 
 /* ----- internal routines for calling BLAS and LAPACK ----- */
 
-/* LAPACK overwrites the input argument. */
+/*
+// LAPACK overwrites the input argument.
 int
 LTFAT_H_NAME(ltfat_posv)(const int N, const int NRHS,
 			 LTFAT_H_COMPLEX *A, const int lda,
 			 LTFAT_H_COMPLEX *B, const int ldb);
 
-/* LAPACK overwrites the input argument. */
+// LAPACK overwrites the input argument.
 int
 LTFAT_H_NAME(ltfat_gesvd)(const int M, const int N,
 			  LTFAT_H_COMPLEX *A, const int lda,
@@ -285,8 +286,31 @@ LTFAT_H_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 			 const LTFAT_H_COMPLEX *B, const int ldb,
 			 const LTFAT_H_COMPLEX *beta,
 			 LTFAT_H_COMPLEX *C, const int ldc);
+*/
 
 
+// LAPACK overwrites the input argument.
+int
+LTFAT_H_NAME(ltfat_posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
+			 LTFAT_H_COMPLEX *A, const ptrdiff_t lda,
+			 LTFAT_H_COMPLEX *B, const ptrdiff_t ldb);
+
+// LAPACK overwrites the input argument.
+int
+LTFAT_H_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
+			  LTFAT_H_COMPLEX *A, const ptrdiff_t lda,
+			  LTFAT_H_REAL *S, LTFAT_H_COMPLEX *U, const ptrdiff_t ldu,
+			  LTFAT_H_COMPLEX *VT, const ptrdiff_t ldvt);
+
+void
+LTFAT_H_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
+			 const enum CBLAS_TRANSPOSE TransB,
+			 const ptrdiff_t M, const ptrdiff_t N, const ptrdiff_t K,
+			 const LTFAT_H_COMPLEX *alpha,
+			 const LTFAT_H_COMPLEX *A, const ptrdiff_t lda,
+			 const LTFAT_H_COMPLEX *B, const ptrdiff_t ldb,
+			 const LTFAT_H_COMPLEX *beta,
+			 LTFAT_H_COMPLEX *C, const ptrdiff_t ldc);
 
 /*   --- dgtreal_long class definition  --- */
 typedef struct

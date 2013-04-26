@@ -10,6 +10,12 @@ typedef fftw_complex  ltfat_complex;
 typedef fftwf_complex ltfat_scomplex;
 #endif
 
+#define LTFAT_MAKENAME(name,type,comp) name ## _ ## comp ## type
+#define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,d,)
+#define LTFAT_NAME_SINGLE(name) LTFAT_MAKENAME(name,s,)
+#define LTFAT_NAME_COMPLEXDOUBLE(name) LTFAT_MAKENAME(name,d,c)
+#define LTFAT_NAME_COMPLEXSINGLE(name) LTFAT_MAKENAME(name,s,c)
+
 /* BEGIN_C_DECLS */
 
 #ifdef __cplusplus
@@ -41,12 +47,11 @@ extern "C"
 #define LTFAT_H_REAL double
 #define LTFAT_H_COMPLEX fftw_complex
 //#define LTFAT_H_COMPLEX _Complex double
-#define LTFAT_H_COMPLEX_ARR complexAsArr
 #define LTFAT_H_COMPLEXH double _Complex
 #define LTFAT_H_TYPE LTFAT_H_REAL
-#define LTFAT_H_NAME(name) d_ ## name
+#define LTFAT_H_NAME(name) LTFAT_NAME_DOUBLE(name)
 #define LTFAT_H_STRUCTNAME(name) LTFAT_H_NAME(name)
-#define LTFAT_H_COMPLEXNAME(name) cd_ ## name
+#define LTFAT_H_COMPLEXNAME(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 #define LTFAT_H_FFTW(name) fftw_ ## name
 
 #include "ltfat_typeindependent.h"
@@ -68,7 +73,6 @@ extern "C"
 #undef LTFAT_H_FFTW
 #undef LTFAT_H_TYPE
 #undef LTFAT_H_COMPLEXNAME
-#undef LTFAT_H_COMPLEX_ARR
 
 
   /* -------- Define the single precision routines ----- */
@@ -77,9 +81,8 @@ extern "C"
 #define LTFAT_H_COMPLEX fftwf_complex
 //#define LTFAT_H_COMPLEX _Complex float
 #define LTFAT_H_COMPLEXH float _Complex
-#define LTFAT_H_COMPLEX_ARR scomplexAsArr
-#define LTFAT_H_NAME(name) s_ ## name
-#define LTFAT_H_COMPLEXNAME(name) cs_ ## name
+#define LTFAT_H_NAME(name) LTFAT_NAME_SINGLE(name)
+#define LTFAT_H_COMPLEXNAME(name) LTFAT_NAME_COMPLEXSINGLE(name)
 #define LTFAT_H_FFTW(name) fftwf_ ## name
 #define LTFAT_H_TYPE LTFAT_H_REAL
 
@@ -105,7 +108,6 @@ extern "C"
 #undef LTFAT_H_NAME
 #undef LTFAT_H_FFTW
 #undef LTFAT_H_COMPLEXNAME
-#undef LTFAT_H_COMPLEX_ARR
 
 
   /* -------- Define routines that do not change between single/double-- */
