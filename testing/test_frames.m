@@ -4,7 +4,11 @@ function test_failed=test_frames
 test_failed=0;
   
 disp(' ===============  TEST_FRAMES ================');
-
+global LTFAT_TEST_TYPE;
+tolerance = 1e-6;
+if strcmpi(LTFAT_TEST_TYPE,'single')
+   tolerance = 2e-4;
+end
 
 Fr=cell(1,26);
 
@@ -82,13 +86,13 @@ for ii=1:numel(Fr)
   r=frsyniter(F,c);
   
   res=norm(r(1:L)-f);
-  [test_failed,fail]=ltfatdiditfail(res,test_failed,1e-6);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
   s=sprintf(['FRSYNITER             frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);
   
   c2=franaiter(Fd,f);
   res=norm(c2-c);
-  [test_failed,fail]=ltfatdiditfail(res,test_failed,1e-6);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
   s=sprintf(['FRANAITER             frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);  
   

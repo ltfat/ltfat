@@ -26,12 +26,12 @@
 #if defined(LTFAT_DOUBLE)
 static inline void LTFAT_NAME(fwd_col2diag)(const double* cin, const int L, double* cout)
 {
-   d_col2diag(cin,L,cout);
+   col2diag_d(cin,L,cout);
 }
 #elif defined(LTFAT_SINGLE)
 static inline void LTFAT_NAME(fwd_col2diag)(const float* cin, const int L, float* cout)
 {
-   s_col2diag(cin,L,cout);
+   col2diag_s(cin,L,cout);
 }
 #endif
 

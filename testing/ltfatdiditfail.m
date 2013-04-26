@@ -8,7 +8,7 @@ global LTFAT_TEST_TYPE;
 if nargin<3
   tolerance=1e-10;
   if strcmpi(LTFAT_TEST_TYPE,'single')
-     tolerance=1e-5;
+     tolerance=2e-4;
   end
 end;
   

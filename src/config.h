@@ -1,6 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H 1
 
+//#include "blas.h"
+//#include "lapack.h"
+
 #ifndef __cplusplus
 #include <complex.h>
 #define FFTW_NO_Complex

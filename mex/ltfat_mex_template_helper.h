@@ -29,17 +29,26 @@
 #endif
 
 
-#include "mex.h"
+
 #include "ltfat.h"
 #include <stdio.h>
 #include <string.h>
+#include "mex.h"
 /** C99 headers for a generic complex number manipulations */
 #if (defined(COMPLEXINDEPENDENT)||defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
 #  include <complex.h>
 //#  include <tgmath.h>
 #endif
 
-/** Helper function headers */
+/** Helper MACROS */
+#ifdef _DEBUG
+#define DEBUGINFO  mexPrintf("File: %s, func: %s \n",__BASE_FILE__,__func__);
+#else
+#define DEBUGINFO
+#endif
+
+
+/** Helper function headers, to allow them to be used in the MEX_FILE */
 mxArray *ltfatCreateMatrix(mwSize M, mwSize N,mxClassID classid,mxComplexity complexFlag);
 mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,mxComplexity complexFlag);
 
@@ -145,7 +154,7 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
    if(complexFlag==mxREAL)
      return mxCreateNumericArray(ndim,dims,classid,mxREAL);
 
-   #if (!defined(COMPLEXINDEPENDENT) && !defined(COMPLEXARGS)) || defined(NOCOMPLEXFMTCHANGE)
+   #if (!defined(COMPLEXINDEPENDENT) && !defined(COMPLEXARGS) && !defined(REALARGS)) || defined(NOCOMPLEXFMTCHANGE)
    if(complexFlag==mxCOMPLEX)
      return mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
    #else
@@ -249,23 +258,36 @@ mxArray* recastToSingle(mxArray* prhsEl)
    mwSize ndim = mxGetNumberOfDimensions(prhsEl);
    const mwSize* dims = mxGetDimensions(prhsEl);
    mxArray* tmpEl = 0;
-   unsigned int elToCopy = mxGetNumberOfElements(prhsEl);
+   mwSize elToCopy = mxGetNumberOfElements(prhsEl);
+
    if(mxIsComplex(prhsEl))
    {
       tmpEl = mxCreateNumericArray(ndim,dims,mxSINGLE_CLASS,mxCOMPLEX);
-      elToCopy *= 2;
    }
    else
    {
       tmpEl = mxCreateNumericArray(ndim,dims,mxSINGLE_CLASS,mxREAL);
    }
 
-   double* prhsElPtr = (double*) mxGetData(prhsEl);
-   float* tmpElPtr = (float*) mxGetData(tmpEl);
+   double* prhsElPtr = (double*) mxGetPr(prhsEl);
+   float* tmpElPtr = (float*) mxGetPr(tmpEl);
+
    for(mwIndex jj=0;jj<elToCopy;jj++)
    {
       *(tmpElPtr++) = (float)( *(prhsElPtr++) );
    }
+
+   if(mxIsComplex(prhsEl))
+   {
+      double* prhsElPtr_i = (double*) mxGetPi(prhsEl);
+      float* tmpElPtr_i = (float*) mxGetPi(tmpEl);
+
+      for(mwIndex jj=0;jj<elToCopy;jj++)
+      {
+         *(tmpElPtr_i++) = (float)( *(prhsElPtr_i++) );
+      }
+   }
+
    return tmpEl;
 }
 
@@ -308,7 +330,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
      checkArgs(nlhs, plhs,nrhs,prhs);
    #endif
    #ifndef TYPEDEPARGS
-       ltfatMexFnc(nlhs,plhs,nrhs,prhs); // pass trough
+       LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhs); // pass trough
    #else
       // Create array of indexes to be checked
       int prhsToCheck[] = { TYPEDEPARGS };
@@ -365,7 +387,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
         for(int ii=0;ii<nrhs;ii++)
            if(recastToComplexIndArr[ii])
-              prhsAlt[ii] = LTFAT_TEMPLATE(s_,mexSplit2combined)(prhsAlt[ii]);
+              prhsAlt[ii] = LTFAT_NAME_SINGLE(mexSplit2combined)(prhsAlt[ii]);
         #endif
 
         #if defined(COMPLEXINDEPENDENT)
@@ -383,16 +405,16 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
            mexErrMsgTxt("Template subsystem error. My bad .");
 
         if(isAllReal)
-           LTFAT_TEMPLATE(s_,ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
+           LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
         else if(isAllComplex)
-           LTFAT_TEMPLATE(cs_,ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
+           LTFAT_NAME_COMPLEXSINGLE(ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
         #else
-        LTFAT_TEMPLATE(s,ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
+        LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
         #endif //COMPLEXINDEPENDENT
 
-        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
+        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE)
         if(!checkIsReal(plhs[0]))
-        plhs[0] = LTFAT_TEMPLATE(s_,mexCombined2split(plhs[0]));
+        plhs[0] = LTFAT_NAME_SINGLE(mexCombined2split)(plhs[0]);
         #endif
       }
       #endif // SINGLEARGS
@@ -402,7 +424,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
         for(int ii=0;ii<nrhs;ii++)
            if(recastToComplexIndArr[ii])
-              prhsAlt[ii] = LTFAT_TEMPLATE(d_,mexSplit2combined(prhsAlt[ii]));
+              prhsAlt[ii] = LTFAT_NAME_DOUBLE(mexSplit2combined)(prhsAlt[ii]);
 
         #endif
 
@@ -422,18 +444,18 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
            mexErrMsgTxt("Template subsystem error. My bad...");
 
         if(isAllReal)
-           LTFAT_TEMPLATE(d_,ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
+           LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
         else if(isAllComplex)
-           LTFAT_TEMPLATE(cd_,ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
+           LTFAT_NAME_COMPLEXDOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
 
         #else
-          LTFAT_TEMPLATE(d_,ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
+          LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
         #endif
 
 
-        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
+        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE)
         if(!checkIsReal(plhs[0]))
-          plhs[0] = LTFAT_TEMPLATE(d_,mexCombined2split(plhs[0]));
+          plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);
 
         #endif
 

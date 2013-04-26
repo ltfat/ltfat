@@ -13,14 +13,14 @@
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include "ltfat_types.h"
-
+/*
 #if defined(LTFAT_DOUBLE) && !defined(LTFAT_COMPLEXTYPE)
 static inline void LTFAT_NAME(fwd_dgt_fb)(const double *f, const double *g,
 		       const int L, const int gl,
 		       const int W,  const int a, const int M,
 		       double _Complex *cout)
 {
-   dgt_fb_r(f,g,L,gl,W,a,M,(double (*)[2])cout);
+   dgt_fb_r_d(f,g,L,gl,W,a,M,(double (*)[2])cout);
 }
 #elif defined(LTFAT_DOUBLE) && defined(LTFAT_COMPLEXTYPE)
 static inline void LTFAT_NAME(fwd_dgt_fb)(const double _Complex *f, const double _Complex *g,
@@ -28,7 +28,7 @@ static inline void LTFAT_NAME(fwd_dgt_fb)(const double _Complex *f, const double
 		       const int W,  const int a, const int M,
 		       double _Complex *cout)
 {
-   dgt_fb((const double (*)[2])f,(const double (*)[2])g,L,gl,W,a,M,(double (*)[2])cout);
+   dgt_fb_d((const double (*)[2])f,(const double (*)[2])g,L,gl,W,a,M,(double (*)[2])cout);
 }
 #elif defined(LTFAT_SINGLE) && !defined(LTFAT_COMPLEXTYPE)
 static inline void LTFAT_NAME(fwd_dgt_fb)(const float *f, const float *g,
@@ -36,7 +36,7 @@ static inline void LTFAT_NAME(fwd_dgt_fb)(const float *f, const float *g,
 		       const int W,  const int a, const int M,
 		       float _Complex *cout)
 {
-   sdgt_fb_r(f,g,L,gl,W,a,M,(float (*)[2])cout);
+   dgt_fb_r_s(f,g,L,gl,W,a,M,(float (*)[2])cout);
 }
 #elif defined(LTFAT_SINGLE) && defined(LTFAT_COMPLEXTYPE)
 static inline void LTFAT_NAME(fwd_dgt_fb)(const float _Complex *f, const float _Complex *g,
@@ -44,15 +44,24 @@ static inline void LTFAT_NAME(fwd_dgt_fb)(const float _Complex *f, const float _
 		       const int W,  const int a, const int M,
 		       float _Complex *cout)
 {
-   sdgt_fb((const float (*)[2])f,(const float (*)[2])g,L,gl,W,a,M,(float (*)[2])cout);
+   dgt_fb_s((const float (*)[2])f,(const float (*)[2])g,L,gl,W,a,M,(float (*)[2])cout);
 }
 #endif
-
+*/
 // Calling convention:
 //  comp_dgt_fb(f,g,a,M);
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
+   // UGLY, but there function naming does not coerrespond
+   // Other option is to use forwarder functions (see commented code above)
+   #undef LTFAT_NAME
+   #ifdef LTFAT_SINGLE
+   #  define LTFAT_NAME(name) LTFAT_NAME_SINGLE(name)
+   #else
+   #  define LTFAT_NAME(name) LTFAT_NAME_DOUBLE(name)
+   #endif
+
    int L  = mxGetM(prhs[0]);
    int W  = mxGetN(prhs[0]);
    int gl = mxGetM(prhs[1]);
@@ -74,7 +83,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[1]);
    LTFAT_REAL _Complex* out_combined = (LTFAT_REAL _Complex*) mxGetData(plhs[0]);
 
-   LTFAT_NAME(fwd_dgt_fb)(f_combined, g_combined,L,gl,W,a,M,out_combined);
+   #if defined(LTFAT_COMPLEXTYPE)
+   LTFAT_NAME(dgt_fb)((const LTFAT_REAL (*)[2])f_combined,
+                      (const LTFAT_REAL (*)[2]) g_combined,
+                      L,gl,W,a,M,(LTFAT_REAL (*)[2])out_combined);
+   #else
+   LTFAT_NAME(dgt_fb_r)(f_combined, g_combined,L,gl,W,a,M,(LTFAT_REAL (*)[2])out_combined);
+   #endif
 
    return;
 }

@@ -8,6 +8,54 @@
 mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg);
 mxArray* LTFAT_NAME(mexCombined2split)( const mxArray *parg);
 
+mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg);
+
+mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg)
+{
+   if(mxIsCell(parg))
+   {
+      mxArray* tmpCell = mxCreateCellMatrix(mxGetM(parg), mxGetN(parg));
+      for(unsigned int jj=0;jj<mxGetNumberOfElements(parg);jj++)
+      {
+         mxSetCell(tmpCell, (mwIndex) jj, LTFAT_NAME(mexReal2Complex)(mxGetCell(parg, jj)));
+      }
+      return tmpCell;
+   }
+
+   // just copy pointer if the element is not numeric
+   if(!mxIsNumeric(parg))
+   {
+      return (mxArray*)parg;
+   }
+
+   mwIndex ndim = mxGetNumberOfDimensions(parg);
+   const mwSize *dims = mxGetDimensions(parg);
+
+   mxArray* out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
+   mwSize L = mxGetNumberOfElements(parg);
+
+   #if (!defined(COMPLEXINDEPENDENT) && !defined(COMPLEXARGS) && !defined(REALARGS)) || defined(NOCOMPLEXFMTCHANGE)
+    LTFAT_REAL *i_r = (LTFAT_REAL*)mxGetPr(parg);
+    LTFAT_REAL *o_r = (LTFAT_REAL*)mxGetPr(out);
+    LTFAT_REAL *o_i = (LTFAT_REAL*)mxGetPi(out);
+    for(mwIndex jj=0;jj<L;jj++)
+    {
+        o_r[jj]= i_r[jj];
+        o_i[jj]= (LTFAT_REAL )0.0;
+    }
+   #else
+    LTFAT_REAL *i_r = (LTFAT_REAL*)mxGetPr(parg);
+    LTFAT_REAL *o_r = (LTFAT_REAL*)mxGetPr(out);
+    for(mwIndex jj=0;jj<L;jj++)
+    {
+        o_r[2*jj]= i_r[jj];
+        o_r[2*jj+1]= (LTFAT_REAL )0.0;
+    }
+   #endif
+
+   return out;
+}
+
 
 mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg)
 {

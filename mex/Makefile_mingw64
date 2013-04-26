@@ -1,15 +1,15 @@
 # To run this makefile, you must provide your system specific EXT and MATLABROOT
-# variables on the command line, i.e. as in
+# variables on the command line e.g.:
 #
 # make -f Makefile_mingw64 MATLABROOT="C:\Program Files\MATLAB\R2011b"  EXT=mexw64
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="C:\Program Files\MATLAB\R2011b")
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="C:\Program Files\MATLAB\R2011b" )
   MATLABROOT=C:\Program Files\MATLAB\R2011b
 endif
 
 ifndef EXT
-  $(warning EXT variable is udefined. Using default EXT=mexw64)
+  $(warning EXT variable is udefined. Using default EXT=mexw64 )
   EXT=mexw64
 endif
 
@@ -18,7 +18,7 @@ CFLAGS=-shared -O3 -Wall -s -std=c99 -m64 -I../thirdparty -I../src
 
 include filedefs.mk
 
-MEXBASE = $(MEXBASESAFE)
+MEXBASE = $(MEXBASESAFE) $(MEXBASEMORE)
 MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 
 MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include" -DMATLAB_MEX_FILE
