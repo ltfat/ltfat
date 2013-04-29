@@ -35,7 +35,7 @@ void LTFAT_NAME(dgtreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_NAME_COMPLEX(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 		     const int L, const int gl,
 		     const int W,  const int a, const int M,
 		     LTFAT_COMPLEX *cout)
