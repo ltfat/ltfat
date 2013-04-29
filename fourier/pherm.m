@@ -35,6 +35,12 @@ function g=pherm(L,order,varargin)
 %     'fast'      Use a less accurate algorithm that calculates all the
 %                 Hermite up to a given order at once.
 %
+%     'noorth'    No orthonormalization of the Hermite functions. This is
+%                 the default.
+%
+%     'polar'     Orthonormalization of the Hermite functions using the
+%                 polar decomposition orthonormalization method.
+%
 %   If you just need to compute a single Hermite function, there is no
 %   speed difference between the two algorithms.
 %
@@ -67,6 +73,7 @@ end;
 
 definput.keyvals.tfr=1;
 definput.flags.phase={'accurate','fast'};
+definput.flags.orthtype={'noorth','polar'};
 [flags,kv,tfr]=ltfatarghelper({'tfr'},definput,varargin);
   
 if size(L,1)>1 || size(L,2)>1
@@ -134,8 +141,20 @@ else
     
 end;
 
-% Normalize it.
-g=normalize(g);
+if flags.do_polar
+    % Orthonormalize within each of the 4 eigenspaces
+    for ii=0:3
+        subidx=(rem(order,4)==ii);
+        gsub=g(:,subidx);
+        [U,S,V]=svd(gsub,0);
+        gsub=U*V';
+        g(:,subidx)=gsub;        
+    end;
+        
+else
+    % Just normalize it, no orthonormalization
+    g=normalize(g);
+end;
 
 
 
