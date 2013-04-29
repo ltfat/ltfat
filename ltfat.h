@@ -1,6 +1,9 @@
 #ifndef LTFAT_H
 #define LTFAT_H 1
 
+#include <stdlib.h>
+#include <stddef.h>
+
 #include "fftw3.h"
 #include "cblas.h"
 
@@ -50,8 +53,7 @@ extern "C"
 #define LTFAT_H_COMPLEXH double _Complex
 #define LTFAT_H_TYPE LTFAT_H_REAL
 #define LTFAT_H_NAME(name) LTFAT_NAME_DOUBLE(name)
-#define LTFAT_H_STRUCTNAME(name) LTFAT_H_NAME(name)
-#define LTFAT_H_COMPLEXNAME(name) LTFAT_NAME_COMPLEXDOUBLE(name)
+#define LTFAT_H_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 #define LTFAT_H_FFTW(name) fftw_ ## name
 
 #include "ltfat_typeindependent.h"
@@ -62,7 +64,7 @@ extern "C"
 #undef LTFAT_H_TYPE
 #undef LTFAT_H_NAME
 #define LTFAT_H_TYPE LTFAT_H_COMPLEX
-#define LTFAT_H_NAME(name) LTFAT_H_COMPLEXNAME(name)
+#define LTFAT_H_NAME(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 
 #include "ltfat_typecomplexindependent.h"
 
@@ -72,7 +74,7 @@ extern "C"
 #undef LTFAT_H_NAME
 #undef LTFAT_H_FFTW
 #undef LTFAT_H_TYPE
-#undef LTFAT_H_COMPLEXNAME
+#undef LTFAT_H_NAME_COMPLEX
 
 
   /* -------- Define the single precision routines ----- */
@@ -82,7 +84,7 @@ extern "C"
 //#define LTFAT_H_COMPLEX _Complex float
 #define LTFAT_H_COMPLEXH float _Complex
 #define LTFAT_H_NAME(name) LTFAT_NAME_SINGLE(name)
-#define LTFAT_H_COMPLEXNAME(name) LTFAT_NAME_COMPLEXSINGLE(name)
+#define LTFAT_H_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXSINGLE(name)
 #define LTFAT_H_FFTW(name) fftwf_ ## name
 #define LTFAT_H_TYPE LTFAT_H_REAL
 
@@ -96,7 +98,7 @@ extern "C"
 #undef LTFAT_H_TYPE
 #undef LTFAT_H_NAME
 #define LTFAT_H_TYPE LTFAT_H_COMPLEX
-#define LTFAT_H_NAME(name) LTFAT_H_COMPLEXNAME(name)
+#define LTFAT_H_NAME(name) LTFAT_NAME_COMPLEXSINGLE(name)
 
 
 #include "ltfat_typecomplexindependent.h"
@@ -107,7 +109,7 @@ extern "C"
 #undef LTFAT_H_TYPE
 #undef LTFAT_H_NAME
 #undef LTFAT_H_FFTW
-#undef LTFAT_H_COMPLEXNAME
+#undef LTFAT_H_NAME_COMPLEX
 
 
   /* -------- Define routines that do not change between single/double-- */

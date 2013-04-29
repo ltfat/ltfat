@@ -12,8 +12,7 @@
 #define HAVE_BLAS 1
 #define HAVE_LAPACK 1
 
-#include <stdlib.h>
-#include "stddef.h"
+
 
 #include "fftw3.h"
 /*
