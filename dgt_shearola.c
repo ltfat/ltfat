@@ -142,7 +142,7 @@ LTFAT_NAME(dgt_shearola_done)(LTFAT_NAME(dgt_shearola_plan) plan)
 {
    LTFAT_NAME(dgt_shear_done)(plan.plan);
 
-   ltfat_free(plan.cbuf);
+   /* ltfat_free(plan.cbuf); */
    ltfat_free(plan.gext);
    ltfat_free(plan.buf);
 
