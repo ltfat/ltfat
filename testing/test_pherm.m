@@ -3,45 +3,27 @@
 % There seem to be some numerical problems for ii>66
 
 L=200;
+H=pherm(L,0:159,'fast','qr');
 
-rsym=zeros(L,1);
-  
-if 0
-  rnan=zeros(L,1);
-  
-  for ii=0:L-1
-    g=pherm(L,ii);
-    rnan(ii+1)=any(isnan(g));
-    if mod(ii,2)==0
-      rsym(ii+1)=norm(imag(fft(g)));
-    else
-      rsym(ii+1)=norm(real(fft(g)));
-    end;
-  end;
-  
-else
 
-  [V,D]=pherm3(L);
+H1=H(:,1:4:end);
+H2=H(:,2:4:end);
+H3=H(:,3:4:end);
+H4=H(:,4:4:end);
 
-  for ii=0:floor(L/2-1)
-    if mod(ii,2)==0
-      rsym(ii+1)=norm(imag(fft(V(:,ii+1))));
-    else
-      rsym(ii+1)=norm(real(fft(V(:,ii+1))));
-    end;
-  end;
+norm(H1'*H1)
+norm(H2'*H2)
+norm(H3'*H3)
+norm(H4'*H4)
 
-  for ii=floor(L/2-1)+1:L-1
-    if mod(ii,2)==1
-      rsym(ii+1)=norm(imag(fft(V(:,ii+1))));
-    else
-      rsym(ii+1)=norm(real(fft(V(:,ii+1))));
-    end;
-  end;
+norm(H1'*H2)
+norm(H1'*H3)
+norm(H1'*H4)
 
-  
-end;
+norm(H2'*H3)
+norm(H2'*H4)
 
-semilogy(rsym);
+norm(H3'*H4)
 
+norm(abs(H./dft(H))-1)
 

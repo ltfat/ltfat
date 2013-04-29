@@ -41,6 +41,9 @@ function g=pherm(L,order,varargin)
 %     'polar'     Orthonormalization of the Hermite functions using the
 %                 polar decomposition orthonormalization method.
 %
+%     'qr'        Orthonormalization of the Hermite functions using the
+%                 Gram-Schmidt orthonormalization method (usign `qr`).
+
 %   If you just need to compute a single Hermite function, there is no
 %   speed difference between the two algorithms.
 %
@@ -73,7 +76,7 @@ end;
 
 definput.keyvals.tfr=1;
 definput.flags.phase={'accurate','fast'};
-definput.flags.orthtype={'noorth','polar'};
+definput.flags.orthtype={'noorth','polar','qr'};
 [flags,kv,tfr]=ltfatarghelper({'tfr'},definput,varargin);
   
 if size(L,1)>1 || size(L,2)>1
@@ -151,7 +154,19 @@ if flags.do_polar
         g(:,subidx)=gsub;        
     end;
         
-else
+end;
+
+if flags.do_qr
+    % Orthonormalize within each of the 4 eigenspaces
+    for ii=0:3
+        subidx=(rem(order,4)==ii);
+        gsub=g(:,subidx);
+        [Q,R]=qr(gsub,0);
+        g(:,subidx)=Q;        
+    end;       
+end;
+
+if flags.do_noorth
     % Just normalize it, no orthonormalization
     g=normalize(g);
 end;
