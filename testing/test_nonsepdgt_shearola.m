@@ -39,14 +39,13 @@ for ii=1:length(ar);
   
   g=tester_crand(gl,1);
 
-  Lext=minL*10;
+  bl=minL*10;
+  Lext=bl+gl;
 
   % sanity check
   if Lext~=dgtlength(Lext,a,M,lt)
       error('Incorrect parameters.'); 
   end
-
-  bl=Lext-gl;
 
   for Lidx=2:3
 
@@ -65,16 +64,17 @@ for ii=1:length(ar);
 
           cc_ref = dgt(f,g,a,M,'lt',lt);
           
-          [s0,s1,br]=shearfind(Lext,a,M,lt);
-          
-          
-          
-          %cc_ola = comp_dgt_ola(f,g,a,M,bl);
-          cc_ola = comp_nonsepdgt_shearola(f,g,a,M,s0,s1,br,bl);
+          if 1
+              [s0,s1,br]=shearfind(Lext,a,M,lt);
+              cc_ola = comp_nonsepdgt_shearola(f,g,a,M,s0,s1,br,bl);
+          else
+              [s0,s1,br]=shearfind(L,a,M,lt);                                  
+              cc_ola = comp_nonsepdgt_shear(f,fir2long(g,L),a,M,s0,s1,br);
+          end;
           
           res = norm(cc_ref(:)-cc_ola(:))/norm(cc_ref(:));
           stext=sprintf(['REF   L:%3i W:%2i gl:%3i a:%3i M:%3i lt1:%2i lt2:%2i' ...
-                         ' s0:%2i s1:%2i bl:%2i %0.5g'], L,W,gl,a,M,lt(1),lt(2),s0,s1,bl,res);
+                         ' s0:%2i s1:%2i bl:%2i Lext:%2i %0.5g'], L,W,gl,a,M,lt(1),lt(2),s0,s1,bl,Lext,res);
           test_failed=ltfatchecktest(res,stext,test_failed,testmode);
           
       end;      

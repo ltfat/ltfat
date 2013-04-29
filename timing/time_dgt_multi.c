@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdlib.h>
 #include "complex.h"
 #include "ltfat.h"
@@ -23,20 +24,20 @@ int main( int argc, char *argv[] )
    
    const int N=L/a;
    
-   const ltfat_complex *f = ltfat_malloc(L*W*sizeof(ltfat_complex));
-   const ltfat_complex *g = ltfat_malloc(L*W*sizeof(ltfat_complex));
+   ltfat_complex *f = ltfat_malloc(L*W*sizeof(ltfat_complex));
+   ltfat_complex *g = ltfat_malloc(L*W*sizeof(ltfat_complex));
    ltfat_complex       *c = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
    
-   d_dgt_multi_plan plan = d_dgt_multi_init(f, g, L, Lg, W, a, M, lt1, lt2, c, FFTW_PATIENT);
+   LTFAT_NAME(dgt_multi_plan) plan = LTFAT_NAME(dgt_multi_init)(f, g, L, Lg, W, a, M, lt1, lt2, c, FFTW_PATIENT);
    
    st0 = ltfat_time();
    for (int ii=0;ii<nrep;ii++)
    {
-      d_dgt_multi_execute(plan);
+      LTFAT_NAME(dgt_multi_execute)(plan);
    }
    st1 = ltfat_time();
    
-   d_dgt_multi_done(plan);
+   LTFAT_NAME(dgt_multi_done)(plan);
    
    printf("%i %i %i %i %i %i %i %f\n",a,M,L,Lg,W,lt1,lt2,(st1-st0)/nrep); 
    

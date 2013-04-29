@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdlib.h>
 #include "ltfat.h"
 #include "ltfat_time.h"
@@ -26,19 +27,19 @@ int main( int argc, char *argv[] )
    g  = ltfat_malloc(L*W*sizeof(double));
    c  = ltfat_malloc(M2*N*W*sizeof(ltfat_complex));
    
-   d_dgtreal_long_plan plan = d_dgtreal_long_init((const double*)f, (const double*)g, 
+   LTFAT_NAME(dgtreal_long_plan) plan = LTFAT_NAME(dgtreal_long_init)((const double*)f, (const double*)g, 
 					      L, W, a, M, c, FFTW_PATIENT);
    
    s0 = ltfat_time();
    for (ii=0;ii<nrep;ii++)
    {
       
-      d_dgtreal_long_execute(plan);
+      LTFAT_NAME(dgtreal_long_execute)(plan);
       
    }
    s1 = ltfat_time();
    
-   d_dgtreal_long_done(plan);
+   LTFAT_NAME(dgtreal_long_done)(plan);
    
    printf("%i %i %i %i %f\n",a,M,L,W,(s1-s0)/nrep); 
    

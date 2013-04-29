@@ -17,6 +17,7 @@ MEXBASESAFE=\
 	comp_iwfac \
 	comp_nonsepdgt_multi  \
 	comp_nonsepdgt_shear  \
+	comp_nonsepdgt_shearola \
 	comp_nonsepwin2multi  \
 	comp_pchirp  \
 	comp_pgauss  \
