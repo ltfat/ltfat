@@ -1,9 +1,23 @@
+#include "fftw3.h"
+#include "stdlib.h"
+
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
 #define ISNARGINEQ 2
 #define TYPEDEPARGS 0
 #define SINGLEARGS
+
+static fftw_plan* p_old = 0;
+
+static void ifftrealAtExit(void)
+{
+  if(p_old!=0)
+  {
+     fftw_destroy_plan(*p_old);
+     free(p_old);
+  }
+}
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -20,6 +34,12 @@
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
+  #ifdef LTFAT_DOUBLE
+  if(p_old==0)
+  {
+      mexAtExit(ifftrealAtExit);
+  }
+  #endif
   mwSize ii, L, W, L2;
   LTFAT_FFTW(plan) p;
   LTFAT_REAL *f, s;
@@ -82,10 +102,19 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 				   1, howmanydims,
 				   fin_r,fin_i,f, FFTW_OPTITYPE);
 
+  if(p_old!=0)
+  {
+    fftw_destroy_plan(*p_old);
+    free(p_old);
+  }
+  p_old = malloc(sizeof(p));
+  memcpy(p_old,&p,sizeof(p));
+
+
   // Real IFFT.
   LTFAT_FFTW(execute)(p);
 
-  LTFAT_FFTW(destroy_plan)(p);
+  //LTFAT_FFTW(destroy_plan)(p);
 
   // Scale, because FFTW's normalization is different.
   s  = (LTFAT_REAL) (1.0/((LTFAT_REAL)L));

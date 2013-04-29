@@ -41,7 +41,7 @@ for (int m=0;m<M;m++) \
 { \
    coefsum[2*m] = sbuf[2*m]; \
    coefsum[2*m+1] = sbuf[2*m+1]; \
-}} 
+}}
 
 #define THE_SUM_REAL { \
 for (int m=0;m<M;m++) \
@@ -68,11 +68,11 @@ for (int m=0;m<M2;m++) \
 
 LTFAT_EXTERN LTFAT_NAME(dgt_fb_plan)
 LTFAT_NAME(dgt_fb_init)(const LTFAT_COMPLEX *g,
-   const int gl, const int a, const int M, 
+   const int gl, const int a, const int M,
    unsigned flags)
 {
    LTFAT_NAME(dgt_fb_plan) plan;
-  
+
    plan.a=a;
    plan.M=M;
    plan.gl=gl;
@@ -89,11 +89,11 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_COMPLEX *g,
    /* This is a floor operation. */
    const int glh=gl/2;
 
-  
+
    /* Do the fftshift of g to place the center in the middle and
     * conjugate it.
     */
-   
+
    for (int l=0;l<glh;l++)
    {
       plan.gw[l][0]=g[l+(gl-glh)][0];
@@ -112,9 +112,9 @@ LTFAT_EXTERN void
 LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan) plan)
 {
 
-   ltfat_free(plan.sbuf);    
+   ltfat_free(plan.sbuf);
    ltfat_free(plan.gw);
-   ltfat_free(plan.fw);    
+   ltfat_free(plan.fw);
 
    LTFAT_FFTW(destroy_plan)(plan.p_small);
 
@@ -123,7 +123,7 @@ LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan) plan)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f, 
+LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	      const int L, const int W,  LTFAT_COMPLEX *cout)
 {
    /*  --------- initial declarations -------------- */
@@ -131,7 +131,7 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
    const int a=plan.a;
    const int M=plan.M;
    const int N=L/a;
- 
+
    const int gl=plan.gl;
    LTFAT_REAL *sbuf=plan.sbuf;
    LTFAT_REAL *fw=plan.fw;
@@ -146,8 +146,8 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 
    LTFAT_COMPLEX *gb;
    LTFAT_REAL *coefsum, *fbd;
-   
-      
+
+
    /*  ---------- main body ----------- */
 
    /*----- Handle the first boundary using periodic boundary conditions.*/
@@ -156,7 +156,7 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
       gb=plan.gw;
       for (int w=0;w<W;w++)
       {
-	 
+
 	 fbd=(LTFAT_REAL*)f+2*(L-(glh-n*a)+L*w);
 	 for (int l=0;l<glh-n*a;l++)
 	 {
@@ -169,12 +169,12 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
 	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
 	 }
-	 
+
 	 THE_SUM
 
-      }	     
+      }
    }
-   
+
    /* ----- Handle the middle case. --------------------- */
    for (int n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
    {
@@ -187,13 +187,13 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
 	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
 	 }
-	 
+
 	 THE_SUM
       }
 
    }
-   
-   /* Handle the last boundary using periodic boundary conditions. */   
+
+   /* Handle the last boundary using periodic boundary conditions. */
    for (int n=(L-(gl+1)/2)/a+1; n<N; n++)
    {
       gb=plan.gw;
@@ -207,11 +207,11 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	 }
 	 fbd=(LTFAT_REAL*)f-2*(L-n*a+glh)+2*L*w;
 	 for (int l=L-n*a+glh;l<gl;l++)
-	 {	
+	 {
 	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
 	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
 	 }
-	 
+
 	 THE_SUM
       }
    }
@@ -241,13 +241,13 @@ for (int m=0;m<M;m++) \
 { \
    coefsum[2*m]   = sbuf[2*m]; \
    coefsum[2*m+1] = sbuf[2*m+1]; \
-}} 
+}}
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+LTFAT_NAME(dgt_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	      const int L, const int gl,
-	      const int W, const int a, const int M, 
+	      const int W, const int a, const int M,
 	      LTFAT_COMPLEX *cout)
 {
    /*  --------- initial declarations -------------- */
@@ -262,12 +262,12 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    LTFAT_REAL *sbuf,*coefsum, *fw;
 
    const LTFAT_REAL *fbd;
-   
 
-   const int R = 1; 
+
+   const int R = 1;
 
    /*  ----------- calculation of parameters and plans -------- */
-   
+
    const int N=L/a;
 
    /* This is a floor operation. */
@@ -275,7 +275,7 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
    /* This is a ceil operation. */
    const int glh_d_a=(int)ceil((glh*1.0)/(a));
-   
+
    gw   = (LTFAT_REAL*)ltfat_malloc(gl*R*sizeof(LTFAT_REAL));
    fw   = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
    sbuf = (LTFAT_REAL*)ltfat_malloc(2*M*sizeof(LTFAT_REAL));
@@ -284,13 +284,13 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_COMPLEX*)sbuf,
 				     (LTFAT_COMPLEX*)sbuf,
 				     FFTW_FORWARD, FFTW_MEASURE);
-   
+
    /*  ---------- main body ----------- */
-  
+
    /* Do the fftshift of g to place the center in the middle and
     * conjugate it.
     */
-   
+
    for (r=0;r<R;r++)
    {
       for (int l=0;l<glh;l++)
@@ -325,11 +325,11 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
 	    THE_SUM_R
 
-	 }	       
+	 }
 
-      }	     
+      }
    }
-   
+
    /* ----- Handle the middle case. --------------------- */
    for (int n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
    {
@@ -351,8 +351,8 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
       }
 
    }
-   
-   /* Handle the last boundary using periodic boundary conditions. */   
+
+   /* Handle the last boundary using periodic boundary conditions. */
    for (int n=(L-(gl+1)/2)/a+1; n<N; n++)
    {
       for (int r=0;r<R;r++)
@@ -367,7 +367,7 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	    }
 	    fbd=f-(L-n*a+glh)+L*w;
 	    for (int l=L-n*a+glh;l<gl;l++)
-	    {	
+	    {
 	       fw[l]  =fbd[l]*gb[l];
 	    }
 
@@ -376,10 +376,10 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
       }
    }
 
-    /* -----------  Clean up ----------------- */   
-   ltfat_free(sbuf);    
+    /* -----------  Clean up ----------------- */
+   ltfat_free(sbuf);
    ltfat_free(gw);
-   ltfat_free(fw);    
+   ltfat_free(fw);
 
    LTFAT_FFTW(destroy_plan)(p_small);
 }
@@ -393,11 +393,11 @@ LTFAT_NAME(dgt_fb_r)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
 LTFAT_EXTERN LTFAT_NAME(dgtreal_fb_plan)
 LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
-   const int gl, const int a, const int M, 
+   const int gl, const int a, const int M,
    unsigned flags)
 {
    LTFAT_NAME(dgtreal_fb_plan) plan;
-  
+
    plan.a=a;
    plan.M=M;
    const int M2=M/2+1;
@@ -418,7 +418,7 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
    /* This is a floor operation. */
    const int glh=gl/2;
 
-  
+
    /* Do the fftshift of g to place the center in the middle and
     * conjugate it.
     */
@@ -430,7 +430,7 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
    for (int l=glh;l<gl;l++)
    {
       plan.gw[l]=g[l-glh];
-   }   
+   }
 
    return (plan);
 }
@@ -442,7 +442,7 @@ LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan) plan)
    ltfat_free(plan.sbuf);
    ltfat_free(plan.cbuf);
    ltfat_free(plan.gw);
-   ltfat_free(plan.fw);    
+   ltfat_free(plan.fw);
 
    LTFAT_FFTW(destroy_plan)(plan.p_small);
 
@@ -451,7 +451,7 @@ LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan) plan)
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTFAT_REAL *f,
-			       const int L, const int W, 
+			       const int L, const int W,
 			       LTFAT_COMPLEX *cout)
 {
    /*  --------- initial declarations -------------- */
@@ -459,7 +459,7 @@ LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTF
    const int a=plan.a;
    const int M=plan.M;
    const int N=L/a;
- 
+
    const int gl=plan.gl;
    LTFAT_REAL    *sbuf=plan.sbuf;
    LTFAT_COMPLEX *cbuf=plan.cbuf;
@@ -487,7 +487,7 @@ LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTF
       gb=plan.gw;
       for (int w=0;w<W;w++)
       {
-	 
+
 	 fbd=f+L-(glh-n*a)+L*w;
 	 for (int l=0;l<glh-n*a;l++)
 	 {
@@ -498,12 +498,12 @@ LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTF
 	 {
 	    fw[l]  =fbd[l]*gb[l];
 	 }
-	 
+
 	 THE_SUM_REAL
 
-      }	     
+      }
    }
-   
+
    /* ----- Handle the middle case. --------------------- */
    for (int n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
    {
@@ -516,13 +516,13 @@ LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTF
 	 {
 	    fw[l]  =fbd[l]*gb[l];
 	 }
-	 
+
 	 THE_SUM_REAL
       }
 
    }
-   
-   /* Handle the last boundary using periodic boundary conditions. */   
+
+   /* Handle the last boundary using periodic boundary conditions. */
    for (int n=(L-(gl+1)/2)/a+1; n<N; n++)
    {
       gb=plan.gw;
@@ -535,10 +535,10 @@ LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTF
 	 }
 	 fbd=f-(L-n*a+glh)+L*w;
 	 for (int l=L-n*a+glh;l<gl;l++)
-	 {	
+	 {
 	    fw[l]  =fbd[l]*gb[l];
 	 }
-	 
+
          THE_SUM_REAL
       }
    }
