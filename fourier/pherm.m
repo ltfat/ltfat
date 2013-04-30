@@ -1,7 +1,8 @@
-function g=pherm(L,order,varargin)
+function [g,D]=pherm(L,order,varargin)
 %PHERM  Periodized Hermite function
 %   Usage: g=pherm(L,order);
 %          g=pherm(L,order,tfr);
+%          [g,D]=pherm(...);
 % 
 %   Input parameters:
 %      L     : Length of vector.
@@ -25,6 +26,9 @@ function g=pherm(L,order,varargin)
 %
 %   If *order* is a vector, `pherm` will return a matrix, where each column
 %   is a Hermite function with the corresponding *order*.
+%
+%   `[g,D]=pherm(...)` also returns the eigenvalues *D* of the Discrete
+%   Fourier Transform corresponding to the Hermite functions.
 %
 %   `pherm` takes the following flags at the end of the line of input
 %   arguments:
@@ -171,6 +175,10 @@ if flags.do_noorth
     g=normalize(g);
 end;
 
+if nargout>1
+    % set up the eigenvalues
+    D = exp(-1i*order*pi/2);
+end;
 
 
 function safe=get_safe(order)

@@ -1,7 +1,8 @@
-function V=hermbasis(L,p)
+function [V,D]=hermbasis(L,p)
 %HERMBASIS  Orthonormal basis of discrete Hermite functions
 %   Usage:  V=hermbasis(L,p);
 %           V=hermbasis(L);
+%           [V,D]=hermbasis(...);
 %
 %   `hermbasis(L,p)` computes an orthonormal basis of discrete Hermite
 %   functions of length *L*. The vectors are returned as columns in the
@@ -11,6 +12,9 @@ function V=hermbasis(L,p)
 %   All the vectors in the output are eigenvectors of the discrete Fourier
 %   transform, and resemble samplings of the continuous Hermite functions
 %   to some degree (for low orders).
+%
+%   `[V,D]=hermbasis(...)` also returns the eigenvalues *D* of the Discrete
+%   Fourier Transform corresponding to the Hermite functions.
 %
 %   Examples:
 %   ---------
@@ -108,3 +112,22 @@ end
 
 V = V(:,ind');
 
+if nargout>1
+    % set up the eigenvalues
+    k=0:L-1;
+    D = exp(-1i*k*pi/2);
+    D=D(:);
+    
+    % correction for even signal lengths
+    if ~rem(L,2)
+        D(end)=exp(-1i*L*pi/2);
+    end
+
+    % shuffle the eigenvalues in the right order
+    even=~mod(L,2);
+    cor=2*floor(L/4)+1;
+    for k=(cor+1):2:(L-even)
+        D([k,k+1])=D([k+1,k]);
+    end
+
+end;
