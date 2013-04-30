@@ -28,7 +28,7 @@ MEXLINKFLAGS=-static-libgcc -L"$(MATLABROOT)\bin\win64" $(MEXLIBS)
 all: $(MEXS)
 
 %.$(EXT): %.c 
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ -lltfat -lltfatf -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L../lib -lltfat -lltfatf -L./ -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
 
 clean:
 	del *.$(EXT)

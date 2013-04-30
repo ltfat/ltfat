@@ -15,14 +15,14 @@ DEFUN_DLD (comp_pgauss, args, ,
   if (c_f==0.0)
   {
      Matrix g(L,1);
-     pgauss(L, w, c_t, g.fortran_vec());
+     pgauss_d(L, w, c_t, g.fortran_vec());
      
      return octave_value (g);
   }
   else
   {
      ComplexMatrix g(L,1);
-     pgauss_cmplx(L, w, c_t, c_f, (ltfat_complex*)g.fortran_vec());
+     pgauss_cmplx_d(L, w, c_t, c_f, (double (*)[2])g.fortran_vec());
   
      return octave_value (g);
   }

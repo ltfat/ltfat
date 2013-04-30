@@ -83,6 +83,10 @@ assert_squarelat(a,M,'GABMUL',0);
 
 [coef,Ls]=dgt(f,ga,a,M);
 
+if(~strcmp(class(c),'double'))
+   coef = cast(coef,class(c));
+end
+
 for ii=1:W
   coef(:,:,ii)=coef(:,:,ii).*c;
 end;

@@ -15,7 +15,7 @@ else
   % Make it an orthonal transform.
   c=c*sqrt(L/2);
   
-  cc=zeros(size(c));
+  cc=zeros(size(c),assert_classname(c));
   
   % Copy the first coefficient, it is real
   cc(1,:)=c(1,:)*sqrt(2);

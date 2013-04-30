@@ -81,22 +81,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     // filter length
     unsigned int filtLen = mxGetM(mxg);
 
-    if(mxIsComplex(mxc) || mxIsComplex(mxg))
-    {
-        mexErrMsgTxt("Complex inputs not supported yet in a MEX function.");
-        //  mxComplexity outComplFlag = mxCOMPLEX;
-    }
-    else
-    {
-        mxComplexity outComplFlag = mxREAL;
-        //mxClassID outClassID = mxDOUBLE_CLASS;
-
         // allocate output
-        mwSize ndim = 2;
-        mwSize dims[2];
-        dims[0] =  L;
-        dims[1] =  W;
-        plhs[0] = mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,outComplFlag);
+        mwSize ndim2 = 2;
+        mwSize dims2[2];
+        dims2[0] =  L;
+        dims2[1] =  W;
+        plhs[0] = mxCreateNumericArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
         // POINTER TO OUTPUT
         LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);
@@ -126,6 +116,6 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
                 LTFAT_NAME(atrousupconv_td)(cPtrCol,L,fPtrCol,L,gPtrs[m],filtLen,(int)*a,skip[m],ltfatExtStringToEnum("per"));
             }
         }
-    }
+
 }
 #endif

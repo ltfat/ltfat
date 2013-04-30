@@ -21,19 +21,35 @@ include filedefs.mk
 DFILES = $(addprefix d,$(files)) $(addprefix d,$(files_blaslapack)) $(files_notypechange)
 SFILES = $(addprefix s,$(files)) $(addprefix s,$(files_blaslapack))
 
-all: double single
+all: shared
 
-double: $(DFILES) Makefile_mingw64
+shared: double_shared single_shared
+
+static: double_static single_static
+
+double_shared: $(DFILES) Makefile_mingw64
 	$(CC) -shared -Wl,--dll $(DFILES) \
-	-o ../mex/ltfat.dll ltfat_notdllexport.def -static-libgcc -L../mex -lfftw3-3 $(MATLABLINKFLAGS)
+	-o ../lib/ltfat.dll ltfat_notdllexport.def -static-libgcc -L../mex -lfftw3-3 $(MATLABLINKFLAGS)
 	del *.o *.a
-	copy /Y ..\mex\ltfat.dll ..\lib\
+	copy /Y ..\lib\ltfat.dll ..\mex\
   
-single: $(SFILES) Makefile_mingw64  
+single_shared: $(SFILES) Makefile_mingw64  
 	$(CC) -shared -Wl,--dll $(SFILES) \
-	-o ../mex/ltfatf.dll -static-libgcc -L../mex -lfftw3-3 -lfftw3f-3 -lltfat $(MATLABLINKFLAGS)
+	-o ../lib/ltfatf.dll -static-libgcc -L../mex -lfftw3-3 -lfftw3f-3 -lltfat $(MATLABLINKFLAGS)
 	del *.o *.a
-	copy /Y ..\mex\ltfatf.dll ..\lib\
+	copy /Y ..\lib\ltfatf.dll ..\mex\
+	
+double_static: $(DFILES) Makefile_mingw64
+	ar rvu libltfat.a $(DFILES) 
+	ranlib libltfat.a
+	copy /Y libltfat.a ..\lib
+	del *.o *.a	
+	
+single_static: $(SFILES) Makefile_mingw64
+	ar rvu libltfatf.a $(SFILES) 
+	ranlib libltfatf.a
+	copy /Y libltfatf.a ..\lib
+	del *.o *.a	
 
 s%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_SINGLE  -c $< -o s$*.o
@@ -45,6 +61,10 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -c $<
 
 clean:
+	del ..\lib\ltfat.dll
+	del ..\lib\ltfatf.dll
+	del ..\lib\libltfat.a
+	del ..\lib\libltfatf.a
 	del ..\mex\ltfat.dll
 	del ..\mex\ltfatf.dll
 	del *.o *.a

@@ -1,42 +1,57 @@
 # Use MinGW Make to process this file
 # make -f Makefile_mingw32
 #
-#Following variables are not used. They could be used for linking the lapack and blas 
-#libs shipped with Matlab.
-#MATLABROOT=C:\Program Files\MATLAB\R2011b
-#MATLABLIBS=-lmwlapack -lmwblas
-#MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\win64" $(MATLABLIBS)
+#
+
+
 
 ifndef OCTAVEROOT
   $(warning OCTAVEROOT variable is udefined. Using default (probably wrong) OCTAVEROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
   OCTAVEROOT=c:\Octave\Octave3.6.4_gcc4.6.2
 endif
-OCTAVEBIN = $(OCTAVEROOT)\bin
+OCTAVELIBS=-lfftw3-3 -lfftw3f-3 -lblas -llapack
+OCTAVELINKFLAGS=-L$(OCTAVEROOT)\bin $(OCTAVELIBS)
 
 #CC = i686-pc-mingw32-gcc 
 CC=gcc
 
 CFLAGS=-O3 -s -Wall -std=c99 -m32 -I../thirdparty -I./
-DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED
+DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DMATLABFORTRAN
 
 include filedefs.mk
 
-DFILES = $(addprefix d,$(files)) $(files_notypechange)
-SFILES = $(addprefix s,$(files))
+DFILES = $(addprefix d,$(files)) $(addprefix d,$(files_blaslapack)) $(files_notypechange)
+SFILES = $(addprefix s,$(files)) $(addprefix s,$(files_blaslapack))
 
-all: double single
+all: static
 
-double: $(DFILES) Makefile_mingw32
+static: double_static single_static
+
+shared: double_shared single_shared
+
+double_shared: $(DFILES) Makefile_mingw32
 	$(CC) -m32 -shared -Wl,--dll $(DFILES) \
-	-o ../oct/ltfat.dll ltfat_notdllexport.def -static-libgcc -L$(OCTAVEBIN) -lfftw3-3
+	-o ../lib/ltfat.dll ltfat_notdllexport.def -static-libgcc $(OCTAVELINKFLAGS) 
 	del *.o *.a
-	copy /Y ..\oct\ltfat.dll ..\lib\
+	copy /Y ..\lib\ltfat.dll ..\oct
   
-single: $(SFILES) Makefile_mingw32  
+single_shared: $(SFILES) Makefile_mingw32  
 	$(CC) -m32 -shared -Wl,--dll $(SFILES) \
-	-o ../oct/ltfatf.dll -static-libgcc -L../oct -lltfat -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3 
+	-o ../lib/ltfatf.dll -static-libgcc -L../oct -lltfat $(OCTAVELINKFLAGS)
 	del *.o *.a
-	copy /Y ..\oct\ltfatf.dll ..\lib\
+	copy /Y ..\lib\ltfatf.dll ..\oct
+
+double_static: $(DFILES) Makefile_mingw32
+	ar rvu libltfat.a $(DFILES) 
+	ranlib libltfat.a
+	copy /Y libltfat.a ..\lib
+	del *.o *.a	
+	
+single_static: $(SFILES) Makefile_mingw32
+	ar rvu libltfatf.a $(SFILES) 
+	ranlib libltfatf.a
+	copy /Y libltfatf.a ..\lib
+	del *.o *.a	
 
 s%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_SINGLE  -c $< -o s$*.o
@@ -48,6 +63,8 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -c $<
 
 clean:
-	del ..\mex\ltfat.dll
-	del ..\mex\ltfatf.dll
+	del ..\lib\ltfat.dll
+	del ..\lib\ltfatf.dll
+	del ..\lib\libltfat.a
+	del ..\lib\libltfatf.a
 	del *.o *.a

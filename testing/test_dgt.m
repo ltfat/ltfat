@@ -103,7 +103,7 @@ for ii=1:length(Lr);
       cc=dgt(f,g,a,M);  
       cc2=ref_dgt(f,g,a,M);
       
-      cdiff=cc-cc2;
+      cdiff=cc-cast(cc2,class(cc));
       res=norm(cdiff(:));      
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
       s=sprintf(['REF %s L:%3i W:%2i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i '...

@@ -11,7 +11,7 @@ function c=ref_dft_1(f)
 L=size(f,1);
 W=size(f,2);
 
-flong=zeros(2*L,W);
+flong=zeros(2*L,W,assert_classname(f));
 flong(1:2:end-1)=f;
 
 fflong=fft(flong)/sqrt(L);

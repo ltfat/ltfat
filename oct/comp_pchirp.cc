@@ -12,7 +12,7 @@ DEFUN_DLD (comp_pchirp, args, ,
 
    ComplexMatrix g(L,1);
 
-   pchirp(L, n, (ltfat_complex*)g.fortran_vec());
+   pchirp_d(L, n, (double _Complex *)g.fortran_vec());
 
    return octave_value (g);
 

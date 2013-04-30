@@ -37,13 +37,13 @@ if all(a==a(1))
   
   N=L/a;
 
-  G=zeros(L,M);
+  G=zeros(L,M,assert_classname(g{1}));
   for ii=1:M
     G(:,ii)=fft(fir2long(g{ii},L));
   end;
   
-  Ha=zeros(a,M);
-  Hb=zeros(a,M);
+  Ha=zeros(a,M,assert_classname(g{1}));
+  Hb=zeros(a,M,assert_classname(g{1}));
   
   for w=0:N-1
     idx_a = mod(w-(0:a-1)*N,L)+1;

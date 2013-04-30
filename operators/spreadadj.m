@@ -63,7 +63,7 @@ else
   %   computation time
   %    
   
-  cadj=zeros(L);
+  cadj=zeros(L,assert_classname(coef));
   
   % Proceesing for ii==0 or jj==0
   cadj(1,1)=conj(coef(1,1));

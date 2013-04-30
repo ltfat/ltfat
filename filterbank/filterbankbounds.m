@@ -34,12 +34,12 @@ if all(a==a(1))
 
   N=L/a;
   
-  G=zeros(L,M);
+  G=zeros(L,M,assert_classname(g{1}));
   for ii=1:M
     G(:,ii)=fft(fir2long(g{ii},L));
   end;
   
-  H=zeros(a,M);
+  H=zeros(a,M,assert_classname(g{1}));
     
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;

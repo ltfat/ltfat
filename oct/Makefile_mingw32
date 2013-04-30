@@ -8,6 +8,10 @@ endif
 
 
 OCTSCC   = \
+    comp_filterbank_td \
+	comp_ifilterbank_td \
+	comp_atrousfilterbank_td \
+	comp_iatrousfilterbank_td \
     comp_col2diag\
 	comp_dgt_fb \
 	comp_dgt_long \
@@ -16,11 +20,15 @@ OCTSCC   = \
 	comp_dgtreal_long \
 	comp_dgtreal_ola \
 	comp_dwilt_long  \
+	comp_gabdual_long  \
+	comp_gabtight_long  \
 	comp_fftreal  \
 	comp_gabreassign  \
 	comp_heapint  \
 	comp_idgt_fac  \
 	comp_idgt_fb  \
+	comp_idgtreal_fac  \
+	comp_idgtreal_fb  \
 	comp_ifftreal  \
 	comp_iwfac \
 	comp_nonsepdgt_multi  \
@@ -34,12 +42,12 @@ OCTSCC   = \
 OCTSBASE = $(basename $(OCTSCC))
 OCTS     = $(addsuffix .oct,$(OCTSBASE))
 OCTAVEBIN = $(OCTAVEROOT)\bin
-ADDITIONALIBS = -L. -lltfat -lltfatf -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3
+ADDITIONALIBS = -L../lib -lltfat -lltfatf -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3 -llapack -lblas
 
 all:	$(OCTS)
 
 %.oct: %.cc
-	mkoctfile -v -Wall -I../thirdparty -I. -I../src $(ADDITIONALIBS)  $<
+	mkoctfile --strip -v -Wall "-Wl,-rpath,." -I../thirdparty -I. -I../src $(ADDITIONALIBS)  $<
 	del *.o
 
 clean:

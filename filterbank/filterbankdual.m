@@ -41,14 +41,14 @@ if all(a==a(1))
   % Uniform filterbank, use polyphase representation
   a=a(1);
   
-  G=zeros(L,M);
+  G=zeros(L,M,assert_classname(g{1}));
   for ii=1:M
     G(:,ii)=fft(fir2long(g{ii},L));
   end;
   
   N=L/a;
   
-  gd=zeros(N,M);
+  gd=zeros(N,M,assert_classname(g{1}));
   
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;

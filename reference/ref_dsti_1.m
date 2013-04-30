@@ -12,10 +12,10 @@ if L==1
   return;
 end;
 
-R=1/sqrt(2)*[zeros(1,L);...
+R=1/sqrt(2)*[zeros(1,L,assert_classname(f));...
 	     eye(L);
-	     zeros(1,L);...
-	     -flipud(eye(L))];
+	     zeros(1,L,assert_classname(f));...
+	     -flipud(cast(eye(L),assert_classname(f)))];
 
 c=i*R'*dft(R*f);
 

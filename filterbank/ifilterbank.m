@@ -80,7 +80,7 @@ else
     G(:,ii)=fft(fir2long(g{ii},L));
   end;
     
-  f=zeros(L,W);
+  f=zeros(L,W,assert_classname(c,g{1}));
   for w=1:W
     for m=1:M
         % This repmat cannot be replaced by bsxfun

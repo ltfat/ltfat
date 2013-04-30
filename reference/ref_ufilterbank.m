@@ -15,7 +15,7 @@ L=ceil(max(Ls,longestfilter)/lcm_a)*lcm_a;
 
 N=L/a;
 
-c=zeros(N,M,W);
+c=zeros(N,M,W,assert_classname(f));
   
 for w=1:W
   for m=1:M

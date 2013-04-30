@@ -8,7 +8,7 @@ M=size(c,1);
 N=size(c,2);
 L=N*a;
 
-fout=zeros(L,W);
+fout=zeros(L,W,assert_classname(f,c));
 
 for l=0:L-1
   for m=0:M-1

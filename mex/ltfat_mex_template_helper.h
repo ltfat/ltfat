@@ -297,10 +297,10 @@ bool checkIsSingle(const mxArray *prhsEl)
    {
       for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
-         if(checkIsSingle(mxGetCell(prhsEl, jj)))
-            return true;
+         if(!checkIsSingle(mxGetCell(prhsEl, jj)))
+            return false;
       }
-      return false;
+      return true;
    }
    return mxIsSingle(prhsEl);
 }

@@ -11,6 +11,9 @@
 #define DEBUGINFO
 #endif
 
+bool checkIsSingle(const octave_value& ov);
+octave_value recastToSingle(const octave_value& ov);
+
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout);
 
@@ -80,6 +83,57 @@ LTFAT_ARRAY_SPECIALIZED_COMPLEX(FloatComplex)
 #undef LTFAT_ARRAY_SPECIALIZED_REAL
 #undef LTFAT_ARRAY_SPECIALIZED_COMPLEX
 
+bool checkIsSingle(const octave_value& ov)
+{
+   if(ov.is_cell())
+   {
+      Cell ov_cell = ov.cell_value();
+      for(int jj=0;jj<ov_cell.numel();jj++)
+      {
+         if(!checkIsSingle(ov_cell.elem(jj)))
+            return false;
+      }
+      return true;
+   }
+   return ov.is_single_type();
+}
+
+octave_value recastToSingle(const octave_value& ov)
+{
+   if(checkIsSingle(ov))
+   {
+      return ov;
+   }
+
+   if(ov.is_cell())
+   {
+      Cell ov_cell = ov.cell_value();
+      Cell ovtmp_cell(ov.dims());
+      for(int jj=0;jj<ovtmp_cell.nelem();jj++)
+      {
+         ovtmp_cell(jj) = recastToSingle(ov_cell.elem(jj));
+      }
+      return ovtmp_cell;
+   }
+   /*
+   TODO: ov is struct
+   */
+   // just copy pointer if the element is not numeric
+   if(!ov.is_numeric_type())
+   {
+      return ov;
+   }
+
+   if(ov.is_complex_type())
+   {
+      return ltfatOctArray<FloatComplex>(ov);
+   }
+   else
+   {
+      return ltfatOctArray<float>(ov);
+   }
+}
+
 
 DEFUN_DLD (OCTFILENAME, args, nargout, OCTFILEHELP)
 {
@@ -106,7 +160,7 @@ for(int ii=0;ii<typedepArgs.length();ii++)
 
 
 for(int ii=0;ii<typedepArgs.length();ii++)
-    if((isAnySingle=typedepArgs(ii).is_single_type())) break;
+    if((isAnySingle=checkIsSingle(typedepArgs(ii)))) break;
 
 for(int ii=0;ii<typedepArgs.length();ii++)
     if((isAnyComplex=typedepArgs(ii).is_complex_type())) break;
@@ -114,47 +168,94 @@ for(int ii=0;ii<typedepArgs.length();ii++)
 // just if the reference was changed
 for(int ii=0;ii<phrsToCheckLen;ii++)
    argsCopy(prhsToCheck[ii])=typedepArgs(ii);
-#if defined(SINGLEARGS)
-if(isAnySingle&&!isAnyComplex)
+
+#if defined(REALARGS)&& !(defined(COMPLEXARGS) || defined(COMPLEXINDEPENDENT)) 
+if(isAnyComplex)
 {
+   error("Only real inputs are accepted.");
+   return octave_value_list();
+}
+#endif
+ 
 
+ 
+#if defined(COMPLEXINDEPENDENT)
+if(isAnySingle)
+{   
+   if(isAnyComplex)
+   {
+      for(int ii=0;ii<typedepArgs.length();ii++)
+         typedepArgs(ii) = octave_value(recastToSingle(argsCopy(ii)));
+		 
+      return octFunction<FloatComplex,float,FloatComplex>(argsCopy,nargout);
+   }
+   else
+   {
+      for(int ii=0;ii<typedepArgs.length();ii++)
+         typedepArgs(ii) = octave_value(recastToSingle(argsCopy(ii)));
+		 
+      return octFunction<float,float,FloatComplex>(argsCopy,nargout); 
+   } 
+}
+else
+{
+   if(isAnyComplex)
+   {
+      for(int ii=0;ii<typedepArgs.length();ii++)
+         typedepArgs(ii) = octave_value(ltfatOctArray<Complex>(argsCopy(ii)));
+		 
+      return octFunction<Complex,double,Complex>(argsCopy,nargout);
+   }
+   else
+   {
+      return octFunction<double,double,Complex>(argsCopy,nargout);      
+   }
+}
+#elif defined(COMPLEXARGS) && !defined(REALARGS)
+if(isAnySingle)
+{   
+   for(int ii=0;ii<typedepArgs.length();ii++)
+      typedepArgs(ii) = octave_value(recastToSingle(argsCopy(ii)));
+	 
+   return octFunction<FloatComplex,float,FloatComplex>(argsCopy,nargout);
+
+}
+else
+{
+   for(int ii=0;ii<typedepArgs.length();ii++)
+      typedepArgs(ii) = octave_value(ltfatOctArray<Complex>(argsCopy(ii)));
+		 
+   return octFunction<Complex,double,Complex>(argsCopy,nargout);
+}
+#elif defined(REALARGS)
+if(isAnySingle)
+{   
+   #if defined(COMPLEXARGS)
     for(int ii=0;ii<typedepArgs.length();ii++)
-       typedepArgs(ii) = octave_value(ltfatOctArray<float>(argsCopy(ii)));
-
+      typedepArgs(ii) = octave_value(recastToSingle(argsCopy(ii)));
+   #endif
 
    return octFunction<float,float,FloatComplex>(argsCopy,nargout);
 }
-#endif
-
-#if defined(SINGLEARGS) && (defined(COMPLEXARGS) || defined(COMPLEXINDEPENDENT))
-if(isAnySingle&&isAnyComplex)
+else
 {
-    for(int ii=0;ii<typedepArgs.length();ii++)
-       typedepArgs(ii) = octave_value(ltfatOctArray<FloatComplex>(argsCopy(ii)));
-
-    return octFunction<FloatComplex,float,FloatComplex>(argsCopy,nargout);
+   #if defined(COMPLEXARGS)
+   for(int ii=0;ii<typedepArgs.length();ii++)
+      typedepArgs(ii) = octave_value(ltfatOctArray<Complex>(argsCopy(ii)));
+   #endif
+   
+   return octFunction<double,double,Complex>(argsCopy,nargout);
 }
-#endif
+#else
+error("Something wrong in the template system. My bad....\n");
+#endif 
 
-#if defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)
-if(!isAnySingle && isAnyComplex)
-{
-    for(int ii=0;ii<typedepArgs.length();ii++)
-       typedepArgs(ii) = octave_value(ltfatOctArray<Complex>(argsCopy(ii)));
 
-    return octFunction<Complex,double,Complex>(argsCopy,nargout);
-}
-#endif
-
-if(!isAnySingle && !isAnyComplex)
-{
-    return octFunction<double,double,Complex>(argsCopy,nargout);
-}
 
 #endif // TYPEDEPARGS
 
 
-error("Something fishy is going on...\n");
+error("Something fishy is going on in...\n");
 
 return octave_value_list();
 
