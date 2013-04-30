@@ -19,7 +19,7 @@ ZERO,
 BAD_TYPE
 };
 
-inline static enum ltfatWavExtType ltfatExtStringToEnum(char* extType)
+inline static enum ltfatWavExtType ltfatExtStringToEnum(const char* extType)
 {
     if(strcmp(extType,"per")==0)
     {
