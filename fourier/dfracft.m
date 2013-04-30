@@ -13,7 +13,7 @@ function frf=dfracft(f,a,varargin)
 %   `dfracft(f,a,[],p)` or `dfracft(f,a,dim,p)` allows to choose the order
 %   of approximation of the second difference operator (default: *p=2*).
 %
-%   See also:  dft, hermbasis 
+%   See also:  ffracft, dft, hermbasis, pherm
 %
 %   References: ozzaku01,buma04
 

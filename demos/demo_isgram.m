@@ -43,9 +43,9 @@ sig_lin = idgtreal(sqrt(s),'gauss',8,800);
 sgram(sig_lin,'dynrange',100);
 
 figure(3);
-sig_iter = isgramreal(s,'gauss',8,800);
-sgram(sig_iter,'dynrange',100);
+sig_grimlim = isgramreal(s,'gauss',8,800);
+sgram(sig_griflim,'dynrange',100);
 
 figure(4);
-sig_iter = isgramreal(s,'gauss',8,800,'bfgs');
-sgram(sig_iter,'dynrange',100);
+sig_bfgs = isgramreal(s,'gauss',8,800,'bfgs');
+sgram(sig_bfgs,'dynrange',100);

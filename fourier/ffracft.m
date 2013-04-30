@@ -10,7 +10,27 @@ function frf=ffracft(f,a,varargin)
 %
 %   `ffracft(f,a,dim)` does the same along dimension *dim*.   
 %
-%   See also:  dfracft
+%   `ffracft` takes the following flags at the end of the line of input
+%   arguments:
+%
+%     'origin'    Rotate around the origin of the signal. This is the
+%                 same action as the |dft|, but the signal will split in
+%                 the middle, which may not be the correct action for
+%                 data signals. This is the default.
+%
+%     'middle'    Rotate around the middle of the signal. This will not
+%                 break the signal in the middle, but the |dft| cannot be
+%                 obtained in this way.
+%
+%   Examples:
+%   ---------
+%
+%   The following example shows a rotation of the |ltfatlogo| test
+%   signal:::
+%
+%      sgram(ffracft(ltfatlogo,.3,'middle'),'lin','nf');
+%
+%   See also:  dfracft, hermbasis, pherm
 %
 %   References: buma04
 
@@ -21,14 +41,19 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.keyvals.p   = 2;
-definput.keyvals.dim = [];
+definput.keyvals.p      = 2;
+definput.keyvals.dim    = [];
+definput.flags.center = {'origin','middle'};
 [flags,keyvals,dim,p]=ltfatarghelper({'dim','p'},definput,varargin);
 
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
 
 % correct input
 a=mod(a,4);
+
+if flags.do_middle
+    f=fftshift(f);
+end;
 
 % special cases
 switch(a)
@@ -84,5 +109,9 @@ switch(a)
     frf=normalize(frf)*m;
     
 end;
-    
+
+if flags.do_middle
+    frf=ifftshift(frf);
+end;
+
 frf=assert_sigreshape_post(frf,dim,permutedsize,order);
