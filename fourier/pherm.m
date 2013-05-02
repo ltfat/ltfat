@@ -28,7 +28,7 @@ function [g,D]=pherm(L,order,varargin)
 %   Fourier Transform corresponding to the Hermite functions.
 %
 %   The returned functions are eigenvectors of the DFT. The Hermite
-%   functions are are orthogonal to all other Hermite functions with a
+%   functions are orthogonal to all other Hermite functions with a
 %   different eigenvalue, but eigenvectors with the same eigenvalue are
 %   not orthogonal (but see the flags below).
 %

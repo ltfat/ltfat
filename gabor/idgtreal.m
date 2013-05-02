@@ -64,9 +64,9 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %
 %     % ... do interesting stuff to c at this point ...
 %  
-%     r=idgtreal(c,{'dual',ga},a,M); % synthesis
+%     r=idgtreal(c,{'dual',ga},a,M,Ls); % synthesis
 %
-%     norm(f-r(1:Ls))                % test
+%     norm(f-r)                % test
 %
 %   The following example does the same as the previous one, with an
 %   explicit construction of the analysis and synthesis windows:::
@@ -87,9 +87,9 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %
 %     % ... do interesting stuff to c at this point ...
 %  
-%     r=idgtreal(c,gs,a,M); % synthesis
+%     r=idgtreal(c,gs,a,M,Ls); % synthesis
 %
-%     norm(f-r(1:Ls))       % test
+%     norm(f-r)       % test
 %
 %   See also:  idgt, gabwin, gabdual, dwilt
 

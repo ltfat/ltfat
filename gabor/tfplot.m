@@ -153,7 +153,7 @@ if flags.do_display
         % Call imagesc explicitly with clim. This is necessary for the
         % situations where the data (is by itself limited (from above or
         % below) to within the specified range. Setting clim explicitly
-        % avoids the the colormap moves in the top or bottom.
+        % avoids the colormap moves in the top or bottom.
 	if isempty(kv.clim)
           imagesc(xr,yr,coef);
         else

@@ -87,9 +87,9 @@ function [f,g]=idgt(coef,g,a,varargin)
 %
 %     % ... do interesting stuff to c at this point ...
 %  
-%     r=idgt(c,{'dual',ga},a); % synthesis
+%     r=idgt(c,{'dual',ga},a,Ls); % synthesis
 %
-%     norm(f-r(1:Ls))          % test
+%     norm(f-r)          % test
 %
 %   The following example does the same as the previous one, with an
 %   explicit construction of the analysis and synthesis windows:::
@@ -110,9 +110,9 @@ function [f,g]=idgt(coef,g,a,varargin)
 %
 %     % ... do interesting stuff to c at this point ...
 %  
-%     r=idgt(c,gs,a);  % synthesis
+%     r=idgt(c,gs,a,Ls);  % synthesis
 %
-%     norm(f-r(1:Ls))  % test
+%     norm(f-r)  % test
 %
 %   See also:  dgt, gabwin, dwilt, gabtight
 
