@@ -72,6 +72,48 @@ function [f,g]=idgt(coef,g,a,varargin)
 %     'timeinv'  Compute an IDGT using a time-invariant phase. This
 %                convention is typically used in filter bank algorithms.
 %
+%   Examples:
+%   ---------
+%
+%   The following example demostrates the basic pricinples for getting
+%   perfect reconstruction (short version):::
+%
+%     f=greasy;            % test signal
+%     a=32;                % time shift
+%     M=64;                % frequency shift
+%     ga={'blackman',128}; % analysis window
+%
+%     [c,Ls]=dgt(f,ga,a,M);    % analysis
+%
+%     % ... do interesting stuff to c at this point ...
+%  
+%     r=idgt(c,{'dual',ga},a); % synthesis
+%
+%     norm(f-r(1:Ls))          % test
+%
+%   The following example does the same as the previous one, with an
+%   explicit construction of the analysis and synthesis windows:::
+%
+%     f=greasy;     % test signal
+%     a=32;         % time shift
+%     M=64;         % frequency shift
+%     Ls=length(f); % signal length
+%
+%     % Length of transform to do
+%     L=dgtlength(Ls,a,M);
+%
+%     % Analysis and synthesis window
+%     ga=firwin('blackman',128);
+%     gs=gabdual(ga,a,M,L);
+%
+%     c=dgt(f,ga,a,M); % analysis
+%
+%     % ... do interesting stuff to c at this point ...
+%  
+%     r=idgt(c,gs,a);  % synthesis
+%
+%     norm(f-r(1:Ls))  % test
+%
 %   See also:  dgt, gabwin, dwilt, gabtight
 
 %   AUTHOR : Peter L. Søndergaard.

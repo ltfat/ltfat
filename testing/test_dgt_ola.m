@@ -5,11 +5,11 @@ function test_failed=test_dgt_ola
 %  testing it on a range of input parameters.
 %
       
-Lr  = [48,420, 4, 8];
-ar  = [ 2,  3, 2, 2];
-Mr  = [ 4,  4, 4, 4];
-glr = [ 8, 24, 4, 4];
-blr = [16, 60, 4, 4];
+Lr  = [48,420, 4, 8,240];
+ar  = [ 2,  3, 2, 2,  4];
+Mr  = [ 4,  4, 4, 4,  6];
+glr = [ 8, 24, 4, 4, 12];
+blr = [16, 60, 4, 4,120];
 
 test_failed=0;
 

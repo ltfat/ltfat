@@ -49,6 +49,48 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %     'timeinv'  Use a time-invariant phase. This convention is typically 
 %                used in filter bank algorithms.
 %
+%   Examples:
+%   ---------
+%
+%   The following example demostrates the basic pricinples for getting
+%   perfect reconstruction (short version):::
+%
+%     f=greasy;            % test signal
+%     a=32;                % time shift
+%     M=64;                % frequency shift
+%     ga={'blackman',128}; % analysis window
+%
+%     [c,Ls]=dgtreal(f,ga,a,M);      % analysis
+%
+%     % ... do interesting stuff to c at this point ...
+%  
+%     r=idgtreal(c,{'dual',ga},a,M); % synthesis
+%
+%     norm(f-r(1:Ls))                % test
+%
+%   The following example does the same as the previous one, with an
+%   explicit construction of the analysis and synthesis windows:::
+%
+%     f=greasy;     % test signal
+%     a=32;         % time shift
+%     M=64;         % frequency shift
+%     Ls=length(f); % signal length
+%
+%     % Length of transform to do
+%     L=dgtlength(Ls,a,M);
+%
+%     % Analysis and synthesis window
+%     ga=firwin('blackman',128);
+%     gs=gabdual(ga,a,M,L);
+%
+%     c=dgtreal(f,ga,a,M);  % analysis
+%
+%     % ... do interesting stuff to c at this point ...
+%  
+%     r=idgtreal(c,gs,a,M); % synthesis
+%
+%     norm(f-r(1:Ls))       % test
+%
 %   See also:  idgt, gabwin, gabdual, dwilt
 
 %   AUTHOR : Peter L. Søndergaard.
