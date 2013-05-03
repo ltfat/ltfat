@@ -30,20 +30,17 @@ end
 
 if s0 == 0
 
-    c_rect = comp_dgt_long(f,g,ar,Mr);
+    c_rect = comp_dgt_long(f,g,a,M);
     tmp1=mod(s1*a*(L+1),2*N);
 
     for k=0:Nr-1   
         phsidx= mod(mod(tmp1*k,2*N)*k,2*N);
-
-        for m=0:Mr-1
-            phs = exp(pi*1i*phsidx/N);
-            
-            idx1 =       mod(    k        ,N);
+        phs = exp(pi*1i*phsidx/N);
+        for m=0:Mr-1                        
             idx2 = floor(mod(-s1*k*a+m*b,L)/b);
             
             for w=0:W-1    
-                c(idx2+1,idx1+1,w+1) = c_rect(m+1,k+1,w+1).*phs;
+                c(idx2+1,k+1,w+1) = c_rect(m+1,k+1,w+1).*phs;
             end;
         end;
     end;
@@ -69,8 +66,8 @@ else
             phsidx = mod(mod(cc3*sq1.^2,twoN)-mod(m*(cc4*m+k*cc5),twoN),twoN);            
             phs = exp(pi*1i*phsidx/N);
             
-            idx1 =       mod(    k*cc1       +cc2*m,N);
-            idx2 = floor(mod(-s1*k*ar+(s0*s1+1)*m*br,L)/b);
+            idx1 =       mod(   cc1*k+cc2*m,N);
+            idx2 = floor(mod(-s1*ar*k+cc6*m,L)/b);
             
             for w=0:W-1                    
                 c(idx2+1,idx1+1,w+1) = c_rect(mod(-k,Nr)+1,m+1,w+1).*phs;
