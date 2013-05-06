@@ -76,7 +76,7 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
    LTFAT_COMPLEXH *f_before_fft = (LTFAT_COMPLEXH *)f;
    LTFAT_COMPLEXH *g_before_fft = (LTFAT_COMPLEXH *)g;
 
-   if ((s0) || (s1))
+   if ((s0!=0) || (s1!=0))
    {
       plan.fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEXH));
       plan.gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
@@ -86,9 +86,6 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
    if (s1)
    {
       plan.p1 = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
-
-      plan.fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEXH));
-      plan.gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
 
       LTFAT_NAME(pchirp)(L,s1,plan.p1);
 
@@ -174,7 +171,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
    const int Nr = plan.L/ar;
 
 
-   if (!s1==0)
+   if (s1)
    {
       for (int w=0;w<plan.W;w++)
       {
@@ -202,19 +199,18 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
       for (int k=0;k<N;k++)
       {
-	 const int phsidx= positiverem_long(
-	    positiverem_long(tmp1*k,twoN)*k,twoN);
-
+	 const int phsidx= positiverem_long((tmp1*k)%twoN*k,twoN);
+	 const long part1= positiverem_long(-s1*k*a,L);
       	 for (int m=0;m<M;m++)
       	 {
-	    /* The line below has a hidden floor operation by diving with the last b */
-	    const int idx2 = positiverem_long(-s1*k*a+b*m,L)/b;
+	    /* The line below has a hidden floor operation when dividing with the last b */
+	    const int idx2 = ((part1+b*m)%L)/b;
 
+	    const int inidx  =    m+k*M;
+	    const int outidx = idx2+k*M;
       	    for (int w=0;w<plan.W;w++)
       	    {
-      	       const int inidx  =    m+k*M+w*M*N;
-      	       const int outidx = idx2+k*M+w*M*N;
-      	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
+      	       plan.cout[outidx+w*M*N] = plan.c_rect[inidx+w*M*N]*plan.finalmod[phsidx];
       	    }
       	 }
       }
@@ -247,25 +243,22 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
       for (int k=0;k<Nr;k++)
       {
+	 const long part1 = positiverem_long(-s1*k*ar,L);
       	 for (int m=0;m<Mr;m++)
       	 {
 	    const long sq1 = k*cc1+cc2*m;
 
 	    const int phsidx = positiverem_long(
-	       positiverem_long(cc3*sq1*sq1,twoN)-
-	       positiverem_long(m*(cc4*m+k*cc5),twoN),
-	       twoN);
+	       (cc3*sq1*sq1)%twoN-(m*(cc4*m+k*cc5))%twoN,twoN);
 
-	    const int idx1 = positiverem_long(k*cc1+cc2*m,N);
+	    /* The line below has a hidden floor operation when dividing with the last b */
+	    const int idx2 = ((part1+cc6*m)%L)/b;
 
-	    /* The line below has a hidden floor operation by diving with the last b */
-	    const int idx2 = positiverem_long(-s1*k*ar+cc6*m,L)/b;
-
+	    const int inidx  = positiverem(-k,Nr)+m*Nr;
+	    const int outidx = idx2+(sq1%N)*M;
 	    for (int w=0;w<plan.W;w++)
 	    {
-	       const int inidx  = positiverem(-k,Nr)+m*Nr+w*M*N;
-	       const int outidx = idx2+idx1*M+w*M*N;
-	       plan.cout[outidx] = plan.c_rect[inidx]*plan.finalmod[phsidx];
+	       plan.cout[outidx+w*M*N] = plan.c_rect[inidx+w*M*N]*plan.finalmod[phsidx];
 
 	    }
       	 }

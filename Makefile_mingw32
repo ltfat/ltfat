@@ -68,3 +68,4 @@ clean:
 	del ..\lib\libltfat.a
 	del ..\lib\libltfatf.a
 	del *.o *.a
+
