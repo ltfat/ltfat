@@ -9,14 +9,14 @@ ifndef OCTAVEROOT
   $(warning OCTAVEROOT variable is udefined. Using default (probably wrong) OCTAVEROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
   OCTAVEROOT=c:\Octave\Octave3.6.4_gcc4.6.2
 endif
-OCTAVELIBS=-lfftw3-3 -lfftw3f-3 -lblas -llapack
-OCTAVELINKFLAGS=-L$(OCTAVEROOT)\bin $(OCTAVELIBS)
+OCTAVELIBS=-lfftw3 -lfftw3f -lblas -llapack
+OCTAVELINKFLAGS=-L$(OCTAVEROOT)\lib $(OCTAVELIBS)
 
 #CC = i686-pc-mingw32-gcc 
 CC=gcc
 
 CFLAGS=-O3 -s -Wall -std=c99 -m32 -I../thirdparty -I./
-DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DMATLABFORTRAN
+DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED
 
 include filedefs.mk
 

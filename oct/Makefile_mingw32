@@ -42,7 +42,8 @@ OCTSCC   = \
 OCTSBASE = $(basename $(OCTSCC))
 OCTS     = $(addsuffix .oct,$(OCTSBASE))
 OCTAVEBIN = $(OCTAVEROOT)\bin
-ADDITIONALIBS = -L../lib -lltfat -lltfatf -L$(OCTAVEBIN) -lfftw3-3 -lfftw3f-3 -llapack -lblas
+OCTAVELIB = $(OCTAVEROOT)\lib
+ADDITIONALIBS = -L../lib -lltfat -lltfatf  -L$(OCTAVELIB) -lblas -lfftw3 -lfftw3f -llapack 
 
 all:	$(OCTS)
 
