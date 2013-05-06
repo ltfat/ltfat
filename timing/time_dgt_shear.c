@@ -28,7 +28,7 @@ int main( int argc, char *argv[] )
    ltfat_complex *g = ltfat_malloc(L*W*sizeof(ltfat_complex));
    ltfat_complex       *c = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
    
-   LTFAT_NAME(dgt_shear_plan) plan = LTFAT_NAME(dgt_shear_init)(f, g, L, W, a, M, s0, s1, br, c, FFTW_ESTIMATE);
+   LTFAT_NAME(dgt_shear_plan) plan = LTFAT_NAME(dgt_shear_init)(f, g, L, W, a, M, s0, s1, br, c, FFTW_PATIENT);
    
    st0 = ltfat_time();
    for (int ii=0;ii<nrep;ii++)

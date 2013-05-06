@@ -15,9 +15,6 @@ function [g,D]=pherm(L,order,varargin)
 %   of order *order*. *order* is counted from 0, so the zero'th order
 %   Hermite function is the Gaussian.
 %
-%   The returned functions are eigenvectors of the DFT. The first four 
-%   Hermite functions are orthonormal, but in general they are not.    
-%
 %   The parameter *tfr* determines the ratio between the effective support
 %   of *g* and the effective support of the DFT of *g*. If $tfr>1$ then *g*
 %   has a wider support than the DFT of *g*.
@@ -29,6 +26,11 @@ function [g,D]=pherm(L,order,varargin)
 %
 %   `[g,D]=pherm(...)` also returns the eigenvalues *D* of the Discrete
 %   Fourier Transform corresponding to the Hermite functions.
+%
+%   The returned functions are eigenvectors of the DFT. The Hermite
+%   functions are orthogonal to all other Hermite functions with a
+%   different eigenvalue, but eigenvectors with the same eigenvalue are
+%   not orthogonal (but see the flags below).
 %
 %   `pherm` takes the following flags at the end of the line of input
 %   arguments:
@@ -49,7 +51,7 @@ function [g,D]=pherm(L,order,varargin)
 %                 Gram-Schmidt orthonormalization method (usign `qr`).
 
 %   If you just need to compute a single Hermite function, there is no
-%   speed difference between the two algorithms.
+%   speed difference between the `'accurate'` and `'fast'` algorithm.
 %
 %   Examples:
 %   ---------

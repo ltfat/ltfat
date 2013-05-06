@@ -48,7 +48,7 @@ Fr{24} = frame('fusion',[1 1],Fr{1},Fr{1});
 
 
 
-f=randn(L,1);
+f=tester_rand(L,1);
 
 for ii=1:numel(Fr)
   F=Fr{ii};

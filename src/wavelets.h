@@ -147,13 +147,3 @@ LTFAT_EXTERN
 void LTFAT_H_NAME(atrousupconv_td)(const LTFAT_H_TYPE *in, int inLen, LTFAT_H_TYPE *out, const int outLen, const LTFAT_H_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext);
 
 
-
-
-
-
-
-
-
-
-
-

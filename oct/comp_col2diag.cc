@@ -2,7 +2,7 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_col2diag // change to filename
-#define OCTFILEHELP "Computes spreading permutation.\n Usage: cout=comp_col2diag(cin);\n Yeah." 
+#define OCTFILEHELP "Computes spreading permutation.\n Usage: cout=comp_col2diag(cin);\n Yeah."
 
 #include "ltfat_oct_template_helper.h"
 
@@ -41,7 +41,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
      const octave_idx_type L = cin.rows();
 
      fwd_col2diag(cin.data(),L,cout.fortran_vec());
-	 
+
      return octave_value(cout);
 }
 
@@ -60,11 +60,11 @@ DEFUN_DLD (comp_col2diag, args, ,
   {
      const ComplexMatrix cin = args(0).complex_matrix_value();
      const int L = cin.rows();
-     
+
      ComplexMatrix cout(L,L);
-     
+
      col2diag((ltfat_complex*)cin.data(),L,(ltfat_complex*)cout.data());
-     
+
      return octave_value (cout);
 
   }
@@ -73,11 +73,11 @@ DEFUN_DLD (comp_col2diag, args, ,
 
      const Matrix cin = args(0).matrix_value();
      const int L = cin.rows();
-     
+
      Matrix cout(L,L);
-     
+
      col2diag_r((double*)cin.data(),L,(double*)cout.data());
-     
+
      return octave_value (cout);
 
 
@@ -85,3 +85,5 @@ DEFUN_DLD (comp_col2diag, args, ,
   }
 }
 */
+
+

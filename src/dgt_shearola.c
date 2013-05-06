@@ -1,6 +1,6 @@
-#include <complex.h>
-#include <string.h>
 #include "config.h"
+#include <string.h>
+#include <complex.h>
 #include "fftw3.h"
 #include "ltfat.h"
 
