@@ -1,0 +1,17 @@
+*.oct
+
+*.mexw64
+
+*.dll
+
+*.o
+
+*.a
+
+*.lib
+
+*.workspace
+*.layout
+*.cbp
+*.depend
+*.cscope_file_list
