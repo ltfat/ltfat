@@ -43,7 +43,7 @@ sig_lin = idgtreal(sqrt(s),'gauss',8,800);
 sgram(sig_lin,'dynrange',100);
 
 figure(3);
-sig_grimlim = isgramreal(s,'gauss',8,800);
+sig_griflim = isgramreal(s,'gauss',8,800);
 sgram(sig_griflim,'dynrange',100);
 
 figure(4);

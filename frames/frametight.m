@@ -3,7 +3,22 @@ function Ft=frametight(F);
 %   Usage: F=frametight(F);
 %          F=frametight(F,L);
 %
-%   `Ft=frame(F)` returns the canonical tight frame of *F*.
+%   `Ft=frametight(F)` returns the canonical tight frame of *F*.
+%
+%   The canonical tight frame can be used to get perfect reconstruction if
+%   it is used for both analysis and synthesis. This is demonstrated in the
+%   following example:::
+%
+%     % Create a frame and its canonical tight
+%     F=frame('dgt','hamming',32,64);
+%     Ft=frametight(F);
+%
+%     % Compute the frame coefficients and test for perfect
+%     % reconstruction
+%     f=gspi;
+%     c=frana(Ft,f);
+%     r=frsyn(Ft,c);
+%     norm(r(1:length(f))-f)
 %
 %   See also: frame, framepair, framedual
   

@@ -3,7 +3,21 @@ function Fd=framedual(F);
 %   Usage: F=framedual(F);
 %          F=framedual(F,L);
 %
-%   `Fd=frame(F)` returns the canonical dual frame of *F*.
+%   `Fd=framedual(F)` returns the canonical dual frame of *F*.
+%
+%   The canonical dual frame can be used to get perfect reconstruction as in
+%   the following example:::
+%
+%     % Create a frame and its canonical dual
+%     F=frame('dgt','hamming',32,64);
+%     Fd=framedual(F);
+%
+%     % Compute the frame coefficients and test for perfect
+%     % reconstruction
+%     f=gspi;
+%     c=frana(F,f);
+%     r=frsyn(Fd,c);
+%     norm(r(1:length(f))-f)
 %
 %   See also: frame, framepair, frametight
   

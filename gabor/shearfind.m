@@ -1,5 +1,23 @@
 function [s0,s1,X] = shearfind(L,a,M,lt)
-
+%SHEARFIND  Shears for transformation of a general lattice to separable
+%   Usage:  [s0,s1,br] = shearfind(L,a,M,lt);
+%
+%   `[s0,s1,br]=shearfind(L,a,M,lt)` computes three numbers, the first two
+%   represent a frequency and time shear respectively. With the returned
+%   choices of $s_0$ and $s_1$ one can transform an initial lattice given by
+%   *a*, *M* and *lt* into a separable (rectangular) lattice given by 
+%
+%   ..  ar = a*L/(br*M)  and  Mr = L/br.
+%
+%   .. math:: a_r = \frac{aL}{b_rM},\quad M_r=\frac{L}{b_r}.
+%
+%   If $s_0$ is non-zero, the transformation from general to separable
+%   lattice requires a frequency-side shear. Similarly, if $s_1$ is
+%   non-zero, a time-side shear is required.
+%
+%   See also: pchirp, matrix2latticetype
+    
+    
     if nargin < 4 
         error('Too few input arguments');
     end

@@ -64,6 +64,7 @@
 %  Support for non-separable lattices
 %    MATRIX2LATTICETYPE - Matrix form to standard lattice description
 %    LATTICETYPE2MATRIX - Standard lattice description to matrix form
+%    SHEARFIND      -  Shears to transform a general lattice to a separable
 %
 %  Plots
 %    TFPLOT         -  Plot coefficients on the time-frequency plane
