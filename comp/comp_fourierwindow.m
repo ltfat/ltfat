@@ -17,11 +17,9 @@ info.gauss=0;
 info.wasrow=0;
 info.isfir=0;
 
-firwinnames =  {'hanning','hann','sine','cosine','sqrthan','sqrthann','hamming',...
-                'sqrtham','square','rect','sqrtsquare','sqrtrect',...
-                'tria','triangular','sqrttria','blackman','blackman2',...
-                'nuttall','nuttall03','nuttall12','nuttall21','nuttall30',...
-		'ogg','itersine'};
+% Manually get the list of window names
+definput=arg_firwin(struct);
+firwinnames =  definput.flags.wintype;
 
 % Create window if string was given as input.
 if ischar(g)

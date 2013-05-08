@@ -73,9 +73,12 @@ else
   doV=0;
 end;
 
+tolchooser.double=1e-9;
+tolchooser.single=1e-5;
+
 definput.keyvals.K=6;
 definput.keyvals.maxit=100;
-definput.keyvals.tol=1e-9;
+definput.keyvals.tol=tolchooser.(class(f));
 definput.keyvals.crossover=200;
 definput.flags.print={'quiet','print'};
 definput.flags.method={'auto','iter','full'};

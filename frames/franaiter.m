@@ -28,7 +28,7 @@ function [c,relres,iter]=franaiter(F,f,varargin)
 %   input arguments:
 %
 %     'tol',t      Stop if relative residual error is less than the
-%                  specified tolerance. Default is 1e-9 
+%                  specified tolerance. Default is 1e-9 (1e-5 for single precision)
 %
 %     'maxit',n    Do at most n iterations.
 %
@@ -65,9 +65,12 @@ function [c,relres,iter]=franaiter(F,f,varargin)
   if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));
   end;
-  
+
+  tolchooser.double=1e-9;
+  tolchooser.single=1e-5;
+    
   definput.keyvals.Ls=[];
-  definput.keyvals.tol=1e-9;
+  definput.keyvals.tol=tolchooser.(class(f));
   definput.keyvals.maxit=100;
   definput.flags.alg={'cg','pcg'};
   definput.keyvals.printstep=10;

@@ -43,7 +43,10 @@ if nargin < 4
     error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.keyvals.tol=1e-9;
+tolchooser.double=1e-9;
+tolchooser.single=1e-5;
+
+definput.keyvals.tol=tolchooser.(class(f));
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'quiet','print'};

@@ -116,6 +116,6 @@ definput.flags.phase={'freqinv','timeinv'};
 
 if (info.isfir)  
   if info.istight
-    g=g/sqrt(2);
+      %g=g/sqrt(2);
   end;  
 end;

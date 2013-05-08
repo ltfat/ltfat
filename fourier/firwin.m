@@ -65,14 +65,14 @@ function [g,info]=firwin(name,M,varargin);
 %                  mainlobe width of 12/M, a PSL of -68.24 dB and decay
 %                  rate of 6 dB/Octave.
 %
-%     'nuttall'    Nuttall window. The Nuttall window has a
-%                  mainlobe width of 16/M, a PSL of -93.32 dB and decay
-%                  rate of 18 dB/Octave.
-%
 %     'itersine'   Iterated sine window. Generates an orthonormal
 %                  Wilson/WMDCT basis. This window is described in 
 %                  Wesfreid and Wickerhauser (1993) and is used in  the
 %                  ogg sound codec. Alias: `'ogg'`
+%
+%     'nuttall'    Nuttall window. The Nuttall window has a
+%                  mainlobe width of 16/M, a PSL of -93.32 dB and decay
+%                  rate of 18 dB/Octave.
 %
 %     'nuttall10'  2-term Nuttall window with 1 continuous derivative. 
 %                  Alias: `'hann'`, `'hanning'`.

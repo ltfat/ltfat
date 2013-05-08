@@ -1,4 +1,6 @@
- tests_todo={
+global LTFAT_TEST_TYPE;
+
+tests_todo={
               'dgt','dwilt','wmdct',...
                'dgt_fb','multiwin',...
               'purefreq','zak',...
@@ -22,12 +24,18 @@
 total_tests_failed=0;
 list_of_failed_tests={};
 
-for ii=1:length(tests_todo)
-  test_failed=feval(['test_',tests_todo{ii}]);
-  total_tests_failed=total_tests_failed+test_failed;
-  if test_failed>0
-    list_of_failed_tests{end+1}=['test_',tests_todo{ii}];
-  end;
+precarray={'double','single'}
+for precidx=1:numel(precarray)
+    prec=precarray{precidx};
+    LTFAT_TEST_TYPE=prec;
+
+    for ii=1:length(tests_todo)
+        test_failed=feval(['test_',tests_todo{ii}]);
+        total_tests_failed=total_tests_failed+test_failed;
+        if test_failed>0
+            list_of_failed_tests{end+1}=['test_',tests_todo{ii},' ',prec];
+        end;
+    end;
 end;
 
 disp(' ');

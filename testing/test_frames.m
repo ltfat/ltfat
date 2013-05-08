@@ -5,10 +5,10 @@ test_failed=0;
   
 disp(' ===============  TEST_FRAMES ================');
 global LTFAT_TEST_TYPE;
-tolerance = 1e-6;
-if strcmpi(LTFAT_TEST_TYPE,'single')
-   tolerance = 2e-4;
-end
+
+tolchooser.double=1e-7;
+tolchooser.single=1e-2;
+tolerance = tolchooser.(LTFAT_TEST_TYPE);
 
 Fr=cell(1,26);
 
@@ -42,6 +42,8 @@ Fr{21} = frame('ufilterbankreal',gfilt,3,4);
 Fr{22} = frame('dgt','gauss',4,6,'lt',[1 2]);
 Fr{23} = frame('identity');
 Fr{24} = frame('fusion',[1 1],Fr{1},Fr{1});
+Fr{25} = frametight(frame('dgt','hamming',10,20));
+Fr{26} = frametight(frame('wmdct','hamming',20));
 
 %Fr{25} = frame('filterbank',     gfilt,[4 3 2 2],4);
 %Fr{26} = frame('filterbankreal', gfilt,[4 3 2 2],4);
@@ -114,17 +116,17 @@ for ii=1:numel(Fr)
   end;
   
   %% Test the frame multipliers: test framemul, framemuladj and
-  %% framemulinv
+  %% iframemul
   if F.realinput
       m=1+0.01*tester_rand(size(c,1),1);
   else
       m=1+1i+0.01*tester_crand(size(c,1),1);
   end;
   ff=framemul(f,F,Fd,m);
-  fr=iframemul(ff,F,Fd,m,'tol',1e-13);
+  fr=iframemul(ff,F,Fd,m);
   res=norm(f-fr(1:L))/norm(f);
-  [test_failed,fail]=ltfatdiditfail(res,test_failed);
-  s=sprintf('FRAMEMUL INV          frameno:%3i %s %0.5g %s',ii, ...
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
+  s=sprintf('IFRAMEMUL             frameno:%3i %s %0.5g %s',ii, ...
             F.type,res,fail);
   disp(s);
   
