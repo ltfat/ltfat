@@ -31,6 +31,9 @@ function magresp(g,varargin);
 %                    otherwise show also the negative frequencies. This is
 %                    the default.
 %
+%     'opts',op     Pass options onto the plot command. The extra options
+%                   *op* are specified as a cell array
+%
 %   In addition to these flags, it is possible to speficy any of the
 %   normalization flags from |normalize| to normalize the input before
 %   calculation of the magnitude response. Specifying `'1'` or `'area'` will
@@ -40,14 +43,19 @@ function magresp(g,varargin);
 %   ---------
 %
 %   The following will display the magnitude response of a Hann window
-%   of length 20:::
+%   of length 20 normalized to a peak of 0 dB:::
 %
-%     magresp({'hann',20});
+%     magresp({'hann',20},'1');
 %
 %   The following will display the magnitude response of a Gaussian window
 %   of length 100:::
 %
-%     magresp('gauss','L',100);
+%     magresp('gauss','L',100)
+%
+%   The following passes additional options to the plot command to draw
+%   in red:::
+%
+%     magresp({'nuttall11',30},'opts',{'r'});
 %
 %   Demos: demo_gabfir     
 
