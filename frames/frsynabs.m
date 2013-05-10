@@ -69,9 +69,10 @@ definput.keyvals.Ls=[];
 definput.keyvals.tol=1e-6;
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
+definput.keyvals.alpha=0.99;
 definput.flags.print={'quiet','print'};
 definput.flags.startphase={'zero','rand'};
-definput.flags.method={'griflim','bfgs'};
+definput.flags.method={'griflim','bfgs','fgriflim'};
 
 [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
 
@@ -105,8 +106,9 @@ if flags.do_griflim
     
     relres(iter)=norm(abs(c)-s,'fro')/norm_s;
     
-    c=s.*exp(i*angle(c));
-    
+    c=s.*exp(i*angle(c));        
+
+
     if flags.do_print
       if mod(iter,kv.printstep)==0
         fprintf('FRSYNABS: Iteration %i, residual = %f.\n',iter,relres(iter));
@@ -120,7 +122,39 @@ if flags.do_griflim
     
   end;
 end;
- 
+
+if flags.do_fgriflim
+  
+  Fs=framedual(F);
+
+  told=s;
+
+  for iter=1:kv.maxit
+    f=frsyn(Fs,c);
+    tnew=frana(F,f);
+
+    relres(iter)=norm(abs(tnew)-s,'fro')/norm_s;
+
+    tnew=s.*exp(i*angle(tnew));
+    c=tnew+kv.alpha*(tnew-told);
+    
+
+    if flags.do_print
+      if mod(iter,kv.printstep)==0
+        fprintf('FRSYNABS: Iteration %i, residual = %f.\n',iter,relres(iter));
+      end;    
+    end;
+    
+    if relres(iter)<kv.tol
+      relres=relres(1:iter);
+      break;
+    end;
+    
+    told=tnew;
+    
+  end;
+end;
+
     
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
