@@ -26,7 +26,14 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %   `frsyn`.
 %
 %   `[f,relres,iter]=frsynabs(...)` additionally returns the residuals in a
-%   vector *relres* and the number of iteration steps *iter*.
+%   vector *relres* and the number of iteration steps *iter*. The
+%   residuals are computed as:
+%
+%   .. relres = norm(abs(cn)-s,'fro')/norm(s,'fro') 
+%
+%   .. math:: relres=\frac{\left\Vert \left|c_{n}\right|-s\right\Vert _{fro}}{\left\Vert s\right\Vert _{fro}},
+%
+%   where $c_n$ is the Gabor coefficients of the signal in iteration *n*.
 %
 %   Generally, if the absolute value of the frame coefficients has not been
 %   modified, the iterative algorithm will converge slowly to the correct

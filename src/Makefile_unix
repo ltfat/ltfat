@@ -10,8 +10,8 @@ include filedefs.mk
 
 toCompile = $(files) $(files_blaslapack)
 
-DFILES = $(addprefix d,$(files)) $(files_notypechange)
-SFILES = $(addprefix s,$(files))
+DFILES = $(addprefix d,$(toCompile)) $(files_notypechange)
+SFILES = $(addprefix s,$(toCompile))
 
 files_unix = $(addprefix d,$(toCompile)) $(addprefix s,$(toCompile)) $(files_notypechange)
 #files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
@@ -44,4 +44,4 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $<
 
 clean:
-	-rm *.o
+	-rm *.o *.a
