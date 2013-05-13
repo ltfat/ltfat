@@ -188,26 +188,27 @@ else
         [s0,s1,br] = shearfind(L,a,M,kv.lt);        
         
         if s1 ~= 0
-            g = comp_pchirp(L,s1).*g;
+            p1 = comp_pchirp(L,s1);
+            g = p1.*g;                
         end
         
-        if s0 ~= 0
-            g = ifft(comp_pchirp(L,-s0).*fft(g));
-        end
-
         b=L/M;
         Mr = L/br;
         ar = a*b/br;
         
-        gt=comp_gabtight_long(g,ar,Mr);
-        
-        if s0 ~= 0
-            gt = ifft(comp_pchirp(L,s0).*fft(gt));
+        if s0 == 0
+            gt=comp_gabtight_long(g,ar,Mr);
+        else                
+            p0=comp_pchirp(L,-s0);
+            g = p0.*fft(g);
+            gt=comp_gabtight_long(g,L/Mr,L/ar)*sqrt(L);
+            gt = ifft(conj(p0).*gt);                                 
         end
         
         if s1 ~= 0
-            gt = comp_pchirp(L,-s1).*gt;
+            gt = conj(p1).*gt;
         end
+        
     end;
     
     if (info.gl<=M) && (R==1)

@@ -155,30 +155,57 @@ else
             
     else        
         
-        [s0,s1,br] = shearfind(L,a,M,kv.lt);        
-        
-        if s1 ~= 0
-            g = comp_pchirp(L,s1).*g;
-        end
-        
-        if s0 ~= 0
-            g = ifft(comp_pchirp(L,-s0).*fft(g));
-        end
-        
-        b=L/M;
-        Mr = L/br;
-        ar = a*b/br;
-        
-        gd=comp_gabdual_long(g,ar,Mr);
-        
-        if s0 ~= 0
-            gd = ifft(comp_pchirp(L,s0).*fft(gd));
-        end
-        
-        if s1 ~= 0
-            gd = comp_pchirp(L,-s1).*gd;
-        end
+        if 0
+            [s0,s1,br] = shearfind(L,a,M,kv.lt);        
+            
+            if s1 ~= 0
+                g = comp_pchirp(L,s1).*g;
+            end
+            
+            if s0 ~= 0
+                g = ifft(comp_pchirp(L,-s0).*fft(g));
+            end
+            
+            b=L/M;
+            Mr = L/br;
+            ar = a*b/br;
+            
+            gd=comp_gabdual_long(g,ar,Mr);
+            
+            if s0 ~= 0
+                gd = ifft(comp_pchirp(L,s0).*fft(gd));
+            end
+            
+            if s1 ~= 0
+                gd = comp_pchirp(L,-s1).*gd;
+            end
 
+        else
+            [s0,s1,br] = shearfind(L,a,M,kv.lt);        
+            
+            if s1 ~= 0
+                p1 = comp_pchirp(L,s1);
+                g = p1.*g;                
+            end
+
+            b=L/M;
+            Mr = L/br;
+            ar = a*b/br;
+            
+            if s0 == 0
+                gd=comp_gabdual_long(g,ar,Mr);
+            else                
+                p0=comp_pchirp(L,-s0);
+                g = p0.*fft(g);
+                gd=comp_gabdual_long(g,L/Mr,L/ar)*L;
+                gd = ifft(conj(p0).*gd);                                 
+            end
+                        
+            if s1 ~= 0
+                gd = conj(p1).*gd;
+            end
+
+        end;
     end;
 
     if (info.gl<=M) && (R==1)
