@@ -117,26 +117,6 @@ LTFAT_H_NAME(gabtightreal_fac)(const LTFAT_H_COMPLEX *gf, const int L, const int
 			   const int a, const int M,
 			   LTFAT_H_COMPLEX *gtightf);
 
-LTFAT_EXTERN
-void LTFAT_H_NAME(gabdual_long)(const LTFAT_H_COMPLEX *g,
-				const int L, const int R, const int a,
-				const int M, LTFAT_H_COMPLEX *gd);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(gabdualreal_long)(const LTFAT_H_REAL *g,
-				    const int L, const int R, const int a,
-				    const int M, LTFAT_H_REAL *gd);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(gabtight_long)(const LTFAT_H_COMPLEX *g,
-				const int L, const int R, const int a,
-				const int M, LTFAT_H_COMPLEX *gd);
-
-LTFAT_EXTERN
-void LTFAT_H_NAME(gabtightreal_long)(const LTFAT_H_REAL *g,
-				    const int L, const int R, const int a,
-				    const int M, LTFAT_H_REAL *gd);
-
 
 /* --------- filter bank DGTs ---------------- */
 
