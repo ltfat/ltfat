@@ -39,7 +39,7 @@ switch(F.type)
   case {'nsdgt','unsdgt'}
     outsig=insdgt(framecoef2native(F,insig),F.g,F.a);   
   case {'nsdgtreal','unsdgtreal'}
-    outsig=insdgtreal(framecoef2native(F,insig),F.g,F.a);
+    outsig=insdgtreal(framecoef2native(F,insig),F.g,F.a,F.M);
     
   case {'dcti','dctiv','dsti','dstiv'}
     outsig=feval(F.type,insig);

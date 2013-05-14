@@ -37,6 +37,8 @@ switch(F.type)
     red=sum(1./F.a);
   case {'ufilterbankreal','filterbankreal'}
     red=2*sum(1./F.a);
+  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}   
+    red=sum(F.M)/sum(F.a);    
   case 'fusion'
     red=sum(cellfun(@framered,F.frames));
  case 'tensor'

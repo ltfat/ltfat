@@ -24,6 +24,9 @@ N2=floor(N/2)+1;
 
 [c,N2,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(c,N2,dim,'IFFTREAL');
 
+% Clean for safety
+c(1,:)=real(c(1,:));
+
 f=comp_ifftreal(c,N);
 
 % Restore the full size in the first dimension.

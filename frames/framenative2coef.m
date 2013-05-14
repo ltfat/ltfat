@@ -16,10 +16,11 @@ if ~isstruct(F)
 end;
 
 switch(F.type)
-  case {'dgt','dgtreal','dwilt','wmdct','ufilterbank','ufilterbankreal'}
+  case {'dgt','dgtreal','dwilt','wmdct',...
+        'ufilterbank','ufilterbankreal','unsdgt','unsdgtreal'}
     [M,N,W]=size(coef);
     coef=reshape(coef,[M*N,W]); 
-  case {'filterbank','filterbankreal'}
+  case {'filterbank','filterbankreal','nsdgt','nsdgtreal'}
     coef=cell2mat(coef(:));
   case {'fwt'}
     coef=wavcell2pack(coef);

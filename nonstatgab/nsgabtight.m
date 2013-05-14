@@ -16,7 +16,7 @@ function gt=nsgabtight(g,a,M,varargin)
 %   time-shifts given by *a*.
 %   
 %   `nsgabtight` is designed to be used with functions |nsdgt| and
-%   |insdgt|.  Read the help on |NSDGT| for more details about the variables
+%   |insdgt|.  Read the help on |nsdgt| for more details about the variables
 %   structure.
 %
 %   The computed tight windows are only valid for the 'painless case', that
@@ -60,7 +60,7 @@ M=info.M;
 if info.isfac
     if info.ispainless
         f=zeros(L,1); % Diagonal of the frame operator
-        
+
         % Compute the diagonal of the frame operator:
         f=nsgabframediag(g,a,M);
         

@@ -72,13 +72,12 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   REFERENCE: 
 
 if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+  error('%s: a must be numeric.',upper(mfilename));
 end;
 
 if ~isnumeric(M)
-  error('%s: M must be numeric.',upper(callfun));
+  error('%s: M must be numeric.',upper(mfilename));
 end;
-
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
@@ -88,6 +87,11 @@ L=nsdgtlength(Ls,a);
 f=postpad(f,L);
 
 [g,info]=nsgabwin(g,a,M);
+
+if ~info.isuniform
+    error('%s: M must be a scalar or a constant vector.',upper(mfilename));    
+end;
+M=M(1);
 
 timepos=cumsum(a)-a(1);
 

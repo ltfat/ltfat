@@ -69,7 +69,8 @@ ref_sizes=[1 1;...
 	   2 1;...
 	   3 2;...
 	   4 3;...
-	   5 3];
+	   5 3
+           100 1];
 	   
 % As ref_funs, these functions should be inverses of each other.
 inv_funs={{'dcti','dcti'},...
@@ -83,7 +84,7 @@ inv_funs={{'dcti','dcti'},...
 	  };
 
 % As ref_funs, these functions should be inverses of each other.
-realinv_funs={{'fftreal','ifftreal'}}
+realinv_funs={{'fftreal','ifftreal'}};
   
   %	  {'ref_rdftiii','ref_irdftiii'},...
 %	  {'ref_dftii','ref_idftii'},...
@@ -111,15 +112,11 @@ for funpair=ref_funs
 
     res=norm(c1(:)-c2(:));
 
-    s=sprintf('REF %7s L:%2i W:%2i %0.5g',funpair{1}{2},ref_sizes(ii,1),ref_sizes(ii,2),res);
+    [ref_failed,fail]=ltfatdiditfail(res,ref_failed);
+
+    s=sprintf('REF %7s L:%2i W:%2i %0.5g %s',funpair{1}{2},ref_sizes(ii,1),ref_sizes(ii,2),res,fail);
     disp(s)
 	
-    [ref_failed,fail]=ltfatdiditfail(res,ref_failed);
-    % if res>10e-10
-      % disp('FAILED');
-      % ref_failed=ref_failed+1;
-    % end;
-
   end;
 end;
 
@@ -138,15 +135,9 @@ for funpair=ref_realfuns
 
     res=norm(c1(:)-c2(:));
 
-    s=sprintf('REA %7s L:%2i W:%2i %0.5g',funpair{1}{2},ref_sizes(ii,1),ref_sizes(ii,2),res);
-    disp(s)
-	
     [ref_failed,fail]=ltfatdiditfail(res,ref_failed);
-    % if res>10e-10
-      % disp('FAILED');
-      % ref_failed=ref_failed+1;
-    % end;
-
+    s=sprintf('REA %7s L:%2i W:%2i %0.5g %s',funpair{1}{2},ref_sizes(ii,1),ref_sizes(ii,2),res,fail);
+    disp(s)
   end;
 end;
 
@@ -164,14 +155,9 @@ for funpair=inv_funs
 
     res=norm(a(:)-ar(:));
 
-    s=sprintf('INV %7s L:%2i W:%2i %0.5g',funpair{1}{1},ref_sizes(ii,1),ref_sizes(ii,2),res);
-    disp(s)
     [inv_failed,fail]=ltfatdiditfail(res,inv_failed);
-    % if res>10e-10
-      % disp('FAILED');
-      % inv_failed=inv_failed+1;
-    % end;
-
+    s=sprintf('INV %7s L:%2i W:%2i %0.5g %s',funpair{1}{1},ref_sizes(ii,1),ref_sizes(ii,2),res,fail);
+    disp(s)
   end;
 end;
 
@@ -191,18 +177,14 @@ for funname=nrm_funs
 
     res=norm(F*F'-eye(L));
 
-    s=sprintf('NRM %7s L:%2i %0.5g',funname{1},ref_sizes(ii,1),res);
+    [nrm_failed,fail]=ltfatdiditfail(res,nrm_failed);
+    s=sprintf('NRM %7s L:%2i %0.5g %s',funname{1},ref_sizes(ii,1),res,fail);
     disp(s)
 
-	[nrm_failed,fail]=ltfatdiditfail(res,nrm_failed);
-    % if res>10e-10
-      % disp('FAILED');
-      % nrm_failed=nrm_failed+1;
-    % end;
   end;
 end;
 
-%------------ test fftreal inverseion ----------------
+%------------ test fftreal inversion ----------------
 % Test that the transforms are invertible
 
 realinv_failed=0;
@@ -215,18 +197,13 @@ for funpair=realinv_funs
 
     res=norm(a(:)-ar(:));
 
-    s=sprintf('RIN %7s L:%2i W:%2i %0.5g',funpair{1}{1},ref_sizes(ii,1),ref_sizes(ii,2),res);
+    [realinv_failed,fail]=ltfatdiditfail(res,realinv_failed);
+    s=sprintf('RIN %7s L:%2i W:%2i %0.5g %s',funpair{1}{1},ref_sizes(ii,1),ref_sizes(ii,2),res,fail);
     disp(s)
 
-	[realinv_failed,fail]=ltfatdiditfail(res,realinv_failed);
-    % if res>10e-10
-      % disp('FAILED');
-      % inv_failed=inv_failed+1;
-    % end;
-
+    
   end;
 end;
-
 
 test_failed=ref_failed+inv_failed+nrm_failed;
 

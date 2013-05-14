@@ -32,5 +32,5 @@ end;
 L=sum(a);
 
 if Ls>L
-    error('%s: The signal must have fewer than %i samples.',upper(mfilename),L);
+    error('%s: The signal must have at most %i samples.',upper(mfilename),L);
 end;

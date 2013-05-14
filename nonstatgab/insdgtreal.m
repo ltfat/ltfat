@@ -47,6 +47,8 @@ definput.keyvals.Ls=[];
 timepos=cumsum(a)-a(1);
 L=sum(a);
 
+[g,info]=nsgabwin(g,a,M);
+
 if iscell(c)
     % ---- invert the non-uniform case ---------
     
@@ -57,11 +59,12 @@ else
     % ---- invert the uniform case ----------------
     [M2, N, W]=size(c);
     f=zeros(L,W,assert_classname(c)); % Initialisation of the result
+    
+    if ~info.isuniform
+        error('%s: M must be a scalar or a constant vector.',upper(mfilename));    
+    end;
+    M=M(1);       
 end
-
-[g,info]=nsgabwin(g,a,M);
-
-
 
 for ii = 1:N
     Lg = length(g{ii});

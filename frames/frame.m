@@ -32,6 +32,13 @@ function F=frame(ftype,varargin);
 %   filterbank by selecting `'filterbankreal'` or a uniform
 %   positive-frequency filterbank by selecting `'ufilterbankreal'`.
 %
+%   `frame('nsdgt',g,a,M)` constructs a non-stationary Gabor frame with
+%   filters *g*, time-shifts of *a* and *M* channels. See the help on
+%   |nsdgt| for more information on the parameters. Similarly, you can
+%   construct a uniform NSDGT by selecting `'unsdgt'`, an NSDGT for
+%   real-valued signals only by selecting `'nsdgtreal'` or a
+%   uniform NSDGT for real-valued signals by selecting `'unsdgtreal'`.
+%
 %   Pure frequency frames
 %   ---------------------
 %

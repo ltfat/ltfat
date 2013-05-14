@@ -45,6 +45,15 @@ Fr{24} = frame('fusion',[1 1],Fr{1},Fr{1});
 Fr{25} = frametight(frame('dgt','hamming',10,20));
 Fr{26} = frametight(frame('wmdct','hamming',20));
 
+g={randn(30,1),randn(50,1),randn(70,1),randn(90,1)};
+a=[20,40,60,80];
+M=[30,50,70,100];
+
+Fr{27} = frametight(frame('nsdgt',g,a,M));
+Fr{28} = frametight(frame('unsdgt',g,a,100));
+Fr{29} = frametight(frame('nsdgtreal',g,a,M));
+Fr{30} = frametight(frame('unsdgtreal',g,a,100));
+
 %Fr{25} = frame('filterbank',     gfilt,[4 3 2 2],4);
 %Fr{26} = frame('filterbankreal', gfilt,[4 3 2 2],4);
 

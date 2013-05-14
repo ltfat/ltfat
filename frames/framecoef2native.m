@@ -19,40 +19,54 @@ end;
 [MN,W]=size(coef);
 
 switch(F.type)
- case 'dgt'
-  N=MN/F.M;
-  coef=reshape(coef,[F.M,N,W]);
-  
- case 'dgtreal'
-  M2=floor(F.M/2)+1;
-  N=MN/M2;
-  coef=reshape(coef,[M2,N,W]);
-  
- case 'dwilt'
-  N=MN/F.M;
-  coef=reshape(coef,[2*F.M,N/2,W]);
-  
- case 'wmdct'
-  N=MN/F.M;
-  coef=reshape(coef,[F.M,N,W]);
-  
- case {'ufilterbank','ufilterbankreal'}
-  N=MN/F.M;
-  coef=reshape(coef,[N,F.M,W]);
-  
- case {'filterbank','filterbankreal'}
-  L=framelengthcoef(F,MN);
-  N=L./F.a
-  coef=mat2cell(coef,N,W);
-  
+  case 'dgt'
+    N=MN/F.M;
+    coef=reshape(coef,[F.M,N,W]);
+    
+  case 'dgtreal'
+    M2=floor(F.M/2)+1;
+    N=MN/M2;
+    coef=reshape(coef,[M2,N,W]);
+    
+  case 'dwilt'
+    N=MN/F.M;
+    coef=reshape(coef,[2*F.M,N/2,W]);
+    
+  case 'wmdct'
+    N=MN/F.M;
+    coef=reshape(coef,[F.M,N,W]);
+    
+  case {'ufilterbank','ufilterbankreal'}
+    N=MN/F.M;
+    coef=reshape(coef,[N,F.M,W]);
+    
+  case {'filterbank','filterbankreal'}
+    L=framelengthcoef(F,MN);
+    N=L./F.a
+    coef=mat2cell(coef,N,W);
+
+  case 'unsdgt'
+    N=MN/F.M(1);
+    coef=reshape(coef,[F.M(1),N,W]);
+    
+  case 'unsdgtreal'
+    M2=floor(F.M(1)/2)+1;
+    N=MN/M2;
+    coef=reshape(coef,[M2,N,W]);
+    
+  case 'nsdgt'
+    coef=mat2cell(coef,F.M,W);
+    
+  case 'nsdgtreal'
+    M2=floor(F.M/2)+1;
+    coef=mat2cell(coef,M2,W);
+    
   case {'fwt'}
     Lc = zeros(JJtotal,1);
     for jj=1:JJtotal
         Lc(jj) =  length(ccell{jj});
     end;
-    
-
-    
+        
  otherwise
   % No conversion necessary, formats are the same.
   cout=coef;
