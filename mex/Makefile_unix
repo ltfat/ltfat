@@ -13,7 +13,7 @@ ifndef EXT
   EXT=mexa64
 endif
 
-CFLAGS=-shared -O3 -Wall -s -std=c99 -I../thirdparty -I../src -I$(MATLABROOT)/extern/include -L../lib
+CFLAGS=-shared -O3 -Wall -std=c99 -I../thirdparty -I../src -I$(MATLABROOT)/extern/include -L../lib
 
 include filedefs.mk
 

@@ -53,6 +53,7 @@ extern "C"
 #define LTFAT_H_COMPLEXH double _Complex
 #define LTFAT_H_TYPE LTFAT_H_REAL
 #define LTFAT_H_NAME(name) LTFAT_NAME_DOUBLE(name)
+#define LTFAT_H_NAME_REAL(name) LTFAT_NAME_DOUBLE(name)
 #define LTFAT_H_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 #define LTFAT_H_FFTW(name) fftw_ ## name
 

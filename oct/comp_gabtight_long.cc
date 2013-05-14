@@ -15,9 +15,9 @@ static inline void fwd_gabtight_long(const Complex *g,
 		                      const octave_idx_type a, const octave_idx_type M,
 							  Complex *gd)
 {
-   gabtight_long_d(reinterpret_cast<const double (*)[2]>(g),
+   gabtight_long_cd(reinterpret_cast<const _Complex double*>(g),
              L,R,a,M,
-			 reinterpret_cast<double (*)[2]>(gd));
+			 reinterpret_cast<_Complex double*>(gd));
 }
 
 static inline void fwd_gabtight_long(const FloatComplex *g,
@@ -25,9 +25,9 @@ static inline void fwd_gabtight_long(const FloatComplex *g,
 		                      const octave_idx_type a, const octave_idx_type M,
 							  FloatComplex *gd)
 {
-   gabtight_long_s(reinterpret_cast<const float (*)[2]>(g),
+   gabtight_long_cs(reinterpret_cast<const _Complex float*>(g),
              L,R,a,M,
-			 reinterpret_cast<float (*)[2]>(gd));
+			 reinterpret_cast<_Complex float*>(gd));
 }
 
 static inline void fwd_gabtight_long(const double *g,
@@ -35,7 +35,7 @@ static inline void fwd_gabtight_long(const double *g,
 		                      const octave_idx_type a, const octave_idx_type M,
 							  double *gd)
 {
-   gabtightreal_long_d(g,L,R,a,M,gd);
+   gabtight_long_d(g,L,R,a,M,gd);
 }
 
 static inline void fwd_gabtight_long(const float *g,
@@ -43,7 +43,7 @@ static inline void fwd_gabtight_long(const float *g,
 		                      const octave_idx_type a, const octave_idx_type M,
 							  float *gd)
 {
-   gabtightreal_long_s(g,L,R,a,M,gd);
+   gabtight_long_s(g,L,R,a,M,gd);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -64,53 +64,3 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	 
      return octave_value(gd);
 }
-
-/*
-#include <octave/oct.h>
-#include "config.h"
-#include "ltfat.h"
-
-DEFUN_DLD (comp_gabtight_long, args, ,
-  "This function calls the C-library\n\
-  gd=comp_gabtight_long(g,a,M);\n\
-  Yeah.")
-{
-
-  if (args(0).is_complex_type())
-  {
-
-     const ComplexMatrix g = args(0).complex_matrix_value();
-     const int L = g.rows();
-     const int R = g.columns();
-     const int a = args(1).int_value();
-     const int M = args(2).int_value();
-
-     ComplexMatrix gd(L,R);
-     
-     gabtight_long((const ltfat_complex*)g.fortran_vec(),
-		   L,R,a,M,
-		   (ltfat_complex*)gd.data());
-
-     return octave_value (gd);
-
-  }
-  else
-  {
-
-     const Matrix g = args(0).matrix_value();
-     const int L = g.rows();
-     const int R = g.columns();
-     const int a = args(1).int_value();
-     const int M = args(2).int_value();
-
-     Matrix gd(L,R);
-  
-     gabtightreal_long((double*)g.fortran_vec(),
-		       L,R,a,M,
-		       (double*)gd.fortran_vec());
-
-     return octave_value (gd);
-
-  }
-}
-*/
