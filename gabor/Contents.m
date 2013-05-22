@@ -65,6 +65,7 @@
 %    MATRIX2LATTICETYPE - Matrix form to standard lattice description
 %    LATTICETYPE2MATRIX - Standard lattice description to matrix form
 %    SHEARFIND      -  Shears to transform a general lattice to a separable
+%    NOSHEARLENGTH  -  Next transform side not requiring a frequency side shear
 %
 %  Plots
 %    TFPLOT         -  Plot coefficients on the time-frequency plane

@@ -55,14 +55,8 @@ function [g,info]=firwin(name,M,varargin);
 %                  mainlobe width of 8/M, a  PSL of -42.7 dB and decay
 %                  rate of 6 dB/Octave. This window should not be used for
 %                  a Wilson basis, as a reconstruction window cannot be
-%                  found by WILDUAL.
+%                  found by |wildual|.
 %
-%     'hammnutt'   Hamming-Nuttall window. Forms a PU that sums to 1.08 instead
-%                  of 1.0 as usual. The Hamming-Nuttall window has a
-%                   This window should not be used for
-%                  a Wilson basis, as a reconstruction window cannot be
-%                  found by WILDUAL.
-
 %     'blackman'   Blackman window. The Blackman window has a
 %                  mainlobe width of 12/M, a PSL of -58.1 dB and decay
 %                  rate of 18 dB/Octave.
@@ -260,6 +254,10 @@ switch name
  case 'hamming'
   g=0.54+0.46*cos(2*pi*(x));
 
+  % This is the definition taken from the Harris paper
+  %case 'hammingacc'
+  %g=25/46+21/46*cos(2*pi*(x));
+
  case 'nuttall01'
   g=0.53836+0.46164*cos(2*pi*(x));
 
@@ -285,6 +283,7 @@ switch name
   info.issqpu=1;
   do_sqrt=1;
 
+  % Rounded version of blackman2
  case {'blackman'}
   g=0.42+0.5*cos(2*pi*(x))+0.08*cos(4*pi*(x));
 

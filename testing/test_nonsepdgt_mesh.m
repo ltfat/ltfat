@@ -1,12 +1,13 @@
-ar=2:2:20;
-Mr=3:2:20;
-Lmodr=[1 3 10 100 143];
-lt1r=0:9;
-lt2r=1:10;
+ar=1:1:20;
+Mr=1:1:20;
+Lmodr=1:20; %[1 3 10 100 143];
+lt1r=0:10;
+lt2r=1:15;
 
 test_failed=0;
 
 for lt2=lt2r
+    lt2
     for lt1=lt1r
         if lt1>=lt2
             continue;
@@ -46,20 +47,22 @@ for lt2=lt2r
                         end;
                     end;
                     
-                    cc = comp_nonsepdgt_multi(f,g,a,M,lt);
-                    
-                    cc_shear = comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
-                    
-                    res = norm(cc(:)-cc_shear(:))/norm(cc(:));
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                    stext=sprintf(['DGT  SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
-                                   '%s'], L,a,M,lt(1),lt(2),res,fail);
-                    disp(stext)
-
-                    if numel(fail)>0
-                        error('Failed test');
+                    if 1
+                        cc = comp_nonsepdgt_multi(f,g,a,M,lt);
+                        
+                        cc_shear = comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
+                        
+                        res = norm(cc(:)-cc_shear(:))/norm(cc(:));
+                        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                        stext=sprintf(['DGT  SHEAR L:%3i a:%3i M:%3i lt1:%2i lt2:%2i %0.5g ' ...
+                                       '%s'], L,a,M,lt(1),lt(2),res,fail);
+                        disp(stext)
+                        
+                        if numel(fail)>0
+                            error('Failed test');
+                        end;
+                        
                     end;
-
 
                     
                     if 0
@@ -75,6 +78,15 @@ for lt2=lt2r
                         if numel(fail)>0
                             error('Failed test');
                         end;
+                    end;
+                    
+                    if 0
+                        s0test=(L==noshearlength(L,a,M,lt));
+                        s0inv=(s0==0);
+                        if s0inv~=s0test
+                            [L,a,M,s0==0, s0test]
+                        end;
+                        
                     end;
                         
                     

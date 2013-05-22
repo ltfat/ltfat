@@ -26,7 +26,7 @@ int main( int argc, char *argv[] )
    
    ltfat_complex *f = ltfat_malloc(L*W*sizeof(ltfat_complex));
    ltfat_complex *g = ltfat_malloc(L*W*sizeof(ltfat_complex));
-   ltfat_complex       *c = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
+   ltfat_complex *c = ltfat_malloc(M*N*W*sizeof(ltfat_complex));
    
    LTFAT_NAME(dgt_multi_plan) plan = LTFAT_NAME(dgt_multi_init)(f, g, L, Lg, W, a, M, lt1, lt2, c, FFTW_PATIENT);
    
