@@ -43,6 +43,8 @@ extern "C"
     suppresses the default "export-all-symbols" behavior. **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
+#else
+#  define DLL_EXPORT_SYM    
 #endif
 
 #include "mex.h"

@@ -13,11 +13,14 @@ ifndef EXT
   EXT=mexa64
 endif
 
+ifndef PORTAUDIO
+  PORTAUDIO=portaudio
+endif
 
-MEXTGT=PolygonClip.$(EXT)
-MEXSRC=PolygonClip.c ../GPC/gpc.c
-LIBS= -L. -L"$(MATLABROOT)/bin/glnxa64" -lmex -lmx
-INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../GPC
+MEXTGT=playrec.$(EXT)
+MEXSRC=mex_dll_core.c pa_dll_playrec.c
+LIBS= -L. -L"$(MATLABROOT)/bin/glnxa64" -lmex -lmx -l$(PORTAUDIO)
+INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I..
 
 CC=gcc
 
@@ -28,3 +31,4 @@ clean:
 	-rm $(MEXTGT)
 
 .PHONY: all clean
+
