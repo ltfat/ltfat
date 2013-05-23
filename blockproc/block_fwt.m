@@ -1,6 +1,6 @@
 function c = block_fwt( f, h, J)
 %BLOCK_FWT FWT func. wrapper for a block processing
-%   Usage: 
+%   Usage: c = block_fwt( f, h, J);
 %
 %   Input parameters:
 %         f     : Input data.
@@ -12,17 +12,17 @@ function c = block_fwt( f, h, J)
 %   Output parameters:
 %         c      : Coefficient vector.
 %
-% `c = block_fwt(f,h,J,Lb, Sb)` acceppts suitably extended block of data *f*
-% and produces correct coefficients. *f* is expected to be a collumn vector
-% or a matrix and the processing is done columnwise.
+%   `c = block_fwt(f,h,J,Lb, Sb)` acceppts suitably extended block of data *f*
+%   and produces correct coefficients. *f* is expected to be a collumn vector
+%   or a matrix and the processing is done columnwise.
 %
-% From 
+%   From 
 %
-% Function should be independent of block_interface.
+%   Function should be independent of block_interface.
 %
-% See also: block, blockread, blockplay, plotblock
+%   See also: block, blockread, blockplay
 %
-% References: 
+%   References: 
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

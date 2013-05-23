@@ -1,7 +1,7 @@
 function [fs,classid] = block(source,varargin)
-%BLOCKINIT Initialize block stream
-%   Usage: block(source)
-%          block(source,'fs',fs,'nbuf',nbuf,'fmt',fmt)  
+%BLOCK  Initialize block stream
+%   Usage: block(source);
+%          block(source,'fs',fs,'nbuf',nbuf,'fmt',fmt);
 %
 %   Input parameters:
 %      source    : Block stream input.

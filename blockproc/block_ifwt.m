@@ -1,10 +1,6 @@
 function f = block_ifwt(c,g,J,Lb)
 %BLOCK_IFWT IFWT wrapper for blockstream processing
-%   Usage:
-%
-%   Input parameters:
-%
-%   Output parameters:
+%   Usage: f=block_ifwt(c,g,J,Lb);
 %
 %   `f = block_ifwt(c,g,J,Lb)`
 
