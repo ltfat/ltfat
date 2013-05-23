@@ -92,7 +92,7 @@ elseif(strcmp(ext,'asymw'))
 elseif(strcmp(ext,'sp0'))
     fout(1:extLen,:) = f(1,:);
     fout(end-extLen+1:end,:) = f(end,:);
-elseif(strcmp(ext,'zpd')||strcmp(ext,'zero'))
+elseif(strcmp(ext,'zpd')||strcmp(ext,'zero')||strcmp(ext,'valid'))
     % do nothing
 else
     error('%s: Unsupported flag.',upper(mfilename));

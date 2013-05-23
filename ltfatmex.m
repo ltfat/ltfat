@@ -24,6 +24,9 @@ function ltfatmex(varargin)
 %
 %     'gpc'      Perform action on the GPC code for use with MULACLAB
 %
+%     'playrec'  Perform action on the playrec code for use with real-time
+%                block streaming framework.
+%
 %     'auto'     Choose automatically which targets to work on based on
 %                the operation system etc. This is the default.
 %
@@ -45,7 +48,7 @@ end;
 bp=mfilename('fullpath');
 bp=bp(1:end-length(mfilename));
 
-definput.flags.target={'auto','lib','mex','gpc'};
+definput.flags.target={'auto','lib','mex','gpc','playrec'};
 definput.flags.command={'compile','clean','test'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -55,6 +58,7 @@ curdir=pwd;
 do_lib  = flags.do_lib || flags.do_auto;
 do_mex  = flags.do_mex || flags.do_auto;
 do_gpc  = flags.do_gpc || (flags.do_auto && ~isoctave);
+do_playrec  = flags.do_playrec && (~isoctave);
 
 if isoctave
   extname='oct';
@@ -80,6 +84,12 @@ if ismac
 end;
 
 
+portaudioLib = 'libportaudio';
+if ispc
+   sharedExt = 'dll';
+else
+   sharedExt = 'so';
+end
 
 fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
 clear mex;
@@ -96,11 +106,11 @@ if flags.do_clean
     disp('========= Cleaning libltfat ===============');
     cd([bp,'src']);
     [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
-    disp('Done.');    
+    %disp('Done.');    
   end;
   
   if do_mex
-    fprintf('========= Cleaning %s interfaces ==========\n', extname);
+    fprintf('========= Cleaning %s interfaces =========\n', upper(extname));
     if isoctave
       deletefiles([bp,'oct'],'*.oct');
       deletefiles([bp,'oct'],'*.o');
@@ -112,9 +122,17 @@ if flags.do_clean
   end;
   
   if do_gpc
-    disp('========== Cleaning GPC ==============');
+    disp('========= Cleaning GPC ====================');
     %deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
     cd([bp,'thirdparty',filesep,'PolygonClip']);
+    clear mex; 
+    [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
+  end;
+  
+  if do_playrec
+    disp('========= Cleaning PLAYREC ================');
+    %deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
+    cd([bp,'thirdparty',filesep,'Playrec']);
     clear mex; 
     [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
@@ -130,7 +148,7 @@ end;
 
 if flags.do_compile
   if do_lib
-    disp('========== Compiling libltfat ==============');
+    disp('========= Compiling libltfat ==============');
     cd([bp,'src']);
     if isoctave
         %[status,output]=system('mkoctfile -p CC');
@@ -153,7 +171,7 @@ if flags.do_compile
   end;
   
   if do_mex
-    fprintf('========= Compiling %s interfaces ==========\n', extname);
+    fprintf('========= Compiling %s interfaces ========\n', upper(extname));
     if ispc
         filesExist(cellfun(@(fEl) ['mex',filesep,fEl,'.dll'], ...
                            fftw_lib_names,'UniformOutput',false));
@@ -177,7 +195,7 @@ if flags.do_compile
   end;
   
   if do_gpc
-    disp('========= Compiling GPC ===============');
+    disp('========= Compiling GPC ===================');
     % Compile the PolygonClip interface to GPC for use with mulaclab
     cd([bp,'thirdparty',filesep,'PolygonClip']);
     clear mex; 
@@ -188,6 +206,58 @@ if flags.do_compile
       disp('Done.');
     else
       error('Failed to build GPC:\n %s',result);
+    end
+  end;
+  if do_playrec
+    disp('========= Compiling PLAYREC ===============');
+    % Compile the Playrec (interface to portaudio) for the real-time block-
+    % stream processing
+    % Check if portaudio library is present in the Matlab instalation
+    binArchPath = [matlabroot,filesep,'bin',filesep,computer('arch')];
+    playrecPath = [bp,'thirdparty',filesep,'Playrec'];
+    foundPAuser = dir([playrecPath,filesep,'*portaudio*',sharedExt]);
+    foundPAmatlab = dir([binArchPath,filesep,'*portaudio*',sharedExt]);
+
+    if ~isempty(foundPAuser)
+       if numel(foundPAuser)>2
+          error('Ambiguous portaudio libraries in %s. Please leave just one.',playrecPath);
+       end
+       portaudioLib = foundPAuser(1).name;
+       fprintf('Using %s.\n',portaudioLib);
+    elseif ~isempty(foundPAmatlab)
+       if numel(foundPAmatlab)>2
+          error('Ambiguous portaudio libraries in %s.',binArchPath);
+       end
+       portaudioLib = foundPAmatlab(1).name;
+       fprintf('Using %s.\n',portaudioLib);
+    else
+       error(['Portaudio not found. Please download Portaudio http://www.portaudio.com\n',...
+              'and build it as a shared library and copy it to the\n',...
+              '%s directory. \n'],playrecPath);
+    end
+
+    cd([bp,'thirdparty',filesep,'Playrec']);
+    clear mex; 
+    
+    % Crop library filename
+    if numel(portaudioLib)>3
+      if strcmp(portaudioLib(1:3),'lib')
+        portaudioLib = portaudioLib(4:end);
+      end
+      dotsInPath = strfind(portaudioLib,'.');
+      if ~isempty(dotsInPath) 
+        portaudioLib = portaudioLib(1:dotsInPath(1)-1);
+      end
+    end
+    
+    [status,result]=system([make_exe, ' -f ',makefilename,...
+                     ' MATLABROOT=','"',matlabroot,'"',...
+                     ' EXT=',mexext,...
+                     ' PORTAUDIO=',portaudioLib]);
+    if(~status)
+      disp('Done.');
+    else
+      error('Failed to build PLAYREC:\n %s',result);
     end
   end;
 end;

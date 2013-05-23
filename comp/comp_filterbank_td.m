@@ -29,8 +29,11 @@ end
 % Determine output lengths
 % Lext -- length of the signal after convolution before subsampling
 % N -- after subsampling
-if(strcmp(ext,'per'))
+if strcmp(ext,'per')
    Lext = L;
+   N = ceil(Lext./a);
+elseif strcmp(ext,'valid')
+   Lext = L-(filtLen-1);
    N = ceil(Lext./a);
 else
    Lext = (L+filtLen-1);

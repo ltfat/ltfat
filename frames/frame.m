@@ -107,7 +107,7 @@ F.realinput=0;
 % Handle the windowed transforms
 switch(ftype)
  case {'dgt','dwilt','wmdct','filterbank','ufilterbank',...
-       'nsdgt','unsdgt','fwt'}
+       'nsdgt','unsdgt'}
   F.g=varargin{1};
   
  case {'dgtreal','filterbankreal','ufilterbankreal',...
@@ -143,6 +143,7 @@ switch(ftype)
     
   case {'fwt'}
     F.J=varargin{2};
+    F.g=fwtinit(varargin{1});
     
   case 'gen'
     F.g=varargin{1};

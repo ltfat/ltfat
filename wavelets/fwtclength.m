@@ -16,7 +16,7 @@ function [Lc,L]=fwtclength(Ls,h,J,varargin)
 
 
 h = fwtinit(h,'ana');
-definput.import = {'fwt'};
+definput.import = {'fwtext'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Get the next legal length
@@ -27,7 +27,7 @@ subbNo = (filtNo-1)*J+1;
 Lc = zeros(subbNo,1);
 runPtr = 0; 
 levelLen = L;
-if(flags.do_per)
+if flags.do_per
   % Non-expansive case
   for jj=1:J
      for ff=filtNo:-1:2
@@ -36,6 +36,16 @@ if(flags.do_per)
      end
      levelLen = ceil(levelLen/h.a(1));
   end
+elseif flags.do_valid
+  % Valid coef. case
+  filts = h.filts;
+  for jj=1:J
+     for ff=filtNo:-1:2
+        Lc(end-runPtr) = floor((levelLen-(length(filts{ff}.h)-1))/h.a(ff));
+        runPtr = runPtr + 1;
+     end
+     levelLen = floor((levelLen-(length(filts{1}.h)-1))/h.a(1));
+  end  
 else
   % Expansive case
   filts = h.filts;

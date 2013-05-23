@@ -22,10 +22,12 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 filtNo = numel(g);
 gCell = cellfun(@(gEl) gEl.h(:),g,'UniformOutput',0);
 
-if(strcmp(ext,'per'))
+if strcmp(ext,'per')
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay reconstruction is produced.
    skip = cellfun(@(gEl) gEl.d-1,g); 
+elseif strcmp(ext,'valid')
+   skip = zeros(numel(gCell),1);
 else
    % -1 + 1 = 0 is used for better readability and to be consistent
    % with the shift in comp_fwt.

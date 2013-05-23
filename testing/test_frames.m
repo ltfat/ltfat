@@ -35,7 +35,7 @@ Fr{17} = frame('dstii');
 Fr{18} = frame('dstiii');
 Fr{19} = frame('dstiv');
 
-gfilt={randn(30,1),randn(20,1),randn(15,1),randn(10,1)};
+gfilt={tester_rand(30,1),tester_rand(20,1),tester_rand(15,1),tester_rand(10,1)};
 Fr{20} = frame('ufilterbank',    gfilt,3,4);
 Fr{21} = frame('ufilterbankreal',gfilt,3,4);
 

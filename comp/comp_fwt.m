@@ -26,6 +26,8 @@ if(strcmp(ext,'per'))
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay transform is produced
    skip = cellfun(@(hEl) hEl.d-1,h); 
+elseif strcmp(ext,'valid')
+   skip = cellfun(@(hEl) numel(hEl.h)-1,h);
 else
    % No compensation for the filter delay (filters are made causal with respect to the output sequences).
    % This creates relative shift between levels of coefficients.

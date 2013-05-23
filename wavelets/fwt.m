@@ -129,9 +129,11 @@ end
 % Initialize the wavelet filters structure
 h = fwtinit(h,'ana');
 
+
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt'};
 definput.keyvals.dim = [];
+definput.flags.cfmt = {'pack','cell'};
 [flags,~,dim]=ltfatarghelper({'dim'},definput,varargin);
 
 
@@ -152,7 +154,9 @@ end
 c = comp_fwt(f,h.filts,J,h.a,Lc,flags.ext);
 
 %% ----- FINALIZE: Change format of coefficients.
-c = wavcell2pack(c,dim);
+if flags.do_pack
+   c = wavcell2pack(c,dim);
+end
 
 %% ----- FILL INFO STRUCT ----------------------
 if nargout>1
@@ -163,6 +167,6 @@ if nargout>1
    info.J = J;
    info.dim = dim;
    info.Ls = Ls;
-   info.isPacked = 1;
+   info.isPacked = flags.do_pack;
 end
 %END FWT

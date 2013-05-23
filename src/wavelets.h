@@ -16,6 +16,7 @@ ASYMW,
 SP0,
 ZPD,
 ZERO,
+VALID,
 BAD_TYPE
 };
 
@@ -64,6 +65,10 @@ inline static enum ltfatWavExtType ltfatExtStringToEnum(const char* extType)
     else if(strcmp(extType,"zero")==0)
     {
        return ZERO;
+    }
+    else if(strcmp(extType,"valis")==0)
+    {
+       return VALID;
     }
     else
     {

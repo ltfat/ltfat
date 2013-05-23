@@ -54,6 +54,8 @@ switch(F.type)
     outsig=dstii(insig);
   case 'dft'
     outsig=idft(insig);
+  case 'fwt'
+    outsig = ifwt(insig,F.g,F.J,size(insig,1));
   case 'fusion'
     W=size(insig,2);
     L=size(insig,1)/framered(F);

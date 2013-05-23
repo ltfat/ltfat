@@ -98,6 +98,7 @@ if nargin<1
   return;
 end;
 
+
 % process other parameters
 
 definput.import = {'fwtcommon'};
@@ -105,6 +106,7 @@ definput.import = {'fwtcommon'};
 % definput.flags.ansy = {'ana','syn'};
 % definput.keyvals.a = [];
 [flags,kv]=ltfatarghelper({},definput,varargin);
+
 
 % Was the function called before with the same parameters?
 % if yes, return the chached one

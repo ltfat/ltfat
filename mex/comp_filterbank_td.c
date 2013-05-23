@@ -100,6 +100,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
         outLen[m] = (mwSize) ceil( L/a[m] );
      }
   }
+  else if(!strcmp(ext,"valid"))
+  {
+     for(unsigned int m = 0; m < M; m++)
+     {
+        outLen[m] = (mwSize) ceil( (L-(filtLen[m]-1))/a[m] );
+     }
+  }
   else
   {
      for(unsigned int m = 0; m < M; m++)

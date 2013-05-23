@@ -570,6 +570,7 @@ void LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *buffer
            break;
 		case ZPD: // zero-padding by default
 		case ZERO:
+		case VALID:
 		default:
 			break;
 	}
@@ -645,6 +646,7 @@ void LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,int inLen, LTFAT_TYPE *buffer
             }
 		case ZPD: // zero-padding by default
 		case ZERO:
+		case VALID:
 		default:
 			break;
 	}

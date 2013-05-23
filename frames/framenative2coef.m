@@ -22,7 +22,7 @@ switch(F.type)
     coef=reshape(coef,[M*N,W]); 
   case {'filterbank','filterbankreal','nsdgt','nsdgtreal'}
     coef=cell2mat(coef(:));
-  case {'fwt'}
-    coef=wavcell2pack(coef);
+  otherwise
+   % No conversion necessary, formats are the same.
 end;
 

@@ -15,12 +15,18 @@ function L=fwtlength(Ls,h,J,varargin);
 % Initialize the wavelet filters structure
 h = fwtinit(h,'ana');
 
-definput.import = {'fwt'};
+definput.import = {'fwtext'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-if(flags.do_per)
+if flags.do_per
    blocksize=h.a(1)^J;
    L=ceil(Ls/blocksize)*blocksize;
+elseif flags.do_valid
+   m = numel(h.filts{1}.h);
+   a = h.a(1);
+   rred = (a^J-1)/(a-1)*(m-a);
+   blocksize=h.a(1)^J;
+   L=rred+floor((Ls-rred)/blocksize)*blocksize;
 else
    L = Ls;
 end
