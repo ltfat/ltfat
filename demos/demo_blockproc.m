@@ -36,7 +36,7 @@ end
 % execution.
 p = blockpanel({
                {'GdB','Gain',-20,20,0,21},...
-               {'Thr','Treshold',0,0.1,0,1000}
+               {'Thr','Treshold',0,0.1,0,1000},
                });
     
 % Buffer length
@@ -47,11 +47,11 @@ p = blockpanel({
 bufLen = 1024;
 
 % Setup blocktream
-fs = block(source,'single',varargin{:});
+fs = block(source,'nbuf',1,'single',varargin{:});
 
 % Choose a frame and contruct the dual
 %F = frame('dgtreal','gauss',10,100);
-F = frame('fwt','db8',6);
+F = frame('fwt','db8',1);
 Fdual = framedual(F);
 
 flag = 1;

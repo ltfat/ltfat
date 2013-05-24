@@ -4,9 +4,11 @@
  */
 package net.sourceforge.ltfat;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +34,7 @@ public class ContFrame {
     public double dArray[] = new double[10];
     
     // Components
-    private int defXPad = 5;
+    private int defXPad = 3;
     private int defYPad = 10;
     private int namePrefferedSize = 70;
     private int sliderPrefferedSize = 170;
@@ -110,7 +112,7 @@ public class ContFrame {
     }
 
     private JFrame initFrame() {
-        final JFrame buildJF = new JFrame("LTFAT Control Pannel");
+        final JFrame buildJF = new JFrame("LTFAT Control Panel");
         buildJF.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         buildJF.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -141,20 +143,21 @@ public class ContFrame {
        sliderConst.gridx = 1;
        sliderConst.gridy = 0;
        sliderConst.fill = GridBagConstraints.HORIZONTAL;
-       sliderConst.ipadx = 0;
+       sliderConst.ipadx = defXPad;
        sliderConst.ipady = defYPad;
        sliderConst.anchor = GridBagConstraints.CENTER;
-       sliderConst.weightx = 0.85;
+       sliderConst.weightx = 0.7;
        sliderConst.weighty = 1.0/params.size();
        
        valConst.gridx = 2;
        valConst.gridy = 0;
-       valConst.fill = GridBagConstraints.VERTICAL;
+       valConst.fill = GridBagConstraints.BOTH;
        valConst.ipadx = defXPad;
        valConst.ipady = defYPad;
-       valConst.anchor = GridBagConstraints.CENTER;
-       valConst.weightx = 0.05;
+       valConst.anchor = GridBagConstraints.LINE_START;
+       valConst.weightx = 0.1;
        valConst.weighty = 1.0/params.size();
+       valConst.insets = new Insets(10, 0, 0, 0);
        
        
        
@@ -185,8 +188,8 @@ public class ContFrame {
            
            JLabel jname = new JLabel(label);
            JSlider jval = new JSlider(0, noVal-1, defValSlider);
-           final JLabel jvalTxt = new JLabel(String.format("%.3f",slider2val(jval.getValue(),minVal,maxVal,noVal)));
-
+           final JLabel jvalTxt = new JLabel(String.format("%.3g    ",slider2val(jval.getValue(),minVal,maxVal,noVal)));
+           jvalTxt.setPreferredSize(new Dimension(50, 15));
            jval.addChangeListener(new ChangeListener() {
                @Override
                public void stateChanged(ChangeEvent e) {
@@ -195,7 +198,11 @@ public class ContFrame {
                   double sliMinVal = ((SliderBounds)sliderBoundsMap.get(jslider)).getMinVal();
                   double sliMaxVal = ((SliderBounds)sliderBoundsMap.get(jslider)).getMaxVal();
                   double sliVal = slider2val(sliIntVal, sliMinVal, sliMaxVal, jslider.getMaximum()+1);
-                  jvalTxt.setText(String.format("%.3f",sliVal));
+                  
+                  final Dimension jvalTxtDim = jvalTxt.getPreferredSize();
+                  jvalTxt.setMinimumSize(jvalTxtDim);
+                  jvalTxt.setMaximumSize(jvalTxtDim);
+                  jvalTxt.setText(String.format("%.3g",sliVal));
                   paramMap.put(sliderParamMap.get(jslider), sliVal );
                }
            });
@@ -208,7 +215,7 @@ public class ContFrame {
            valConst.gridy += 1;
            
            
-           paramMap.put(name, (double)jval.getValue());
+           paramMap.put(name, defaultVal);
            sliderParamMap.put(jval, name);
            sliderBoundsMap.put(jval, new SliderBounds(minVal,maxVal));
        }
