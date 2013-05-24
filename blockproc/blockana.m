@@ -1,6 +1,6 @@
 function c = blockana(F, f)
 %BLOCKANA Blockwise analysis interface
-%   Usage: blockana(F, f)
+%   Usage: c=blockana(F, f)
 %
 %   Input parameters:
 %      F  : Frame object.
@@ -32,6 +32,9 @@ switch(F.type)
       w = F.g;
       m = numel(w.h{1}.h);
       a = w.a(1);
+      if Lb<a^J
+         error('%s: Minimum block length is %i.',upper(mfilename),a^J);
+      end
       rred = (a^J-1)/(a-1)*(m-a);
       Sbolen = rred + mod(Sb,a^J);
       nextSbolen = rred + mod(nextSb,a^J);
@@ -47,43 +50,44 @@ switch(F.type)
       fext = [loadOverlap(Lb);f];
       % Save the current block
       storeOverlap(fext,Lb);
-      % Multyply by the slicing window (all channels)
+      % Multiply by the slicing window (all channels)
       fwin = bsxfun(@times,g,fext);
       % Apply transform
       c = frana(F,fwin);
 end
 
 function overlap = loadOverlap(L)
-   % Load stored overlap
-   overlap = block_interface('getAnaOverlap');
-   % Supply zeros if it is empty
-   if isempty(overlap)
-     overlap = zeros(L,size(f,2),block_interface('getClassId'));
-   end
-   Lo = size(overlap,1);
-   if nargin<1
-      L = Lo;
-   end
-   % If required more than stored, do zero padding
-   if L>Lo
-      oTmp = zeros(L,size(overlap,2));
-      oTmp(end-Lo+1:end) = oTmp(end-Lo+1:end)+overlap;
-      overlap = oTmp;
-   else
-      overlap = overlap(end-L+1:end,:);
-   end
-
+%LOADOVERLAP Loads overlap
+%
+%
+overlap = block_interface('getAnaOverlap');
+% Supply zeros if it is empty
+if isempty(overlap)
+   overlap = zeros(L,size(f,2),block_interface('getClassId'));
 end
+Lo = size(overlap,1);
+if nargin<1
+   L = Lo;
+end
+% If required more than stored, do zero padding
+if L>Lo
+   oTmp = zeros(L,size(overlap,2));
+   oTmp(end-Lo+1:end) = oTmp(end-Lo+1:end)+overlap;
+   overlap = oTmp;
+else
+   overlap = overlap(end-L+1:end,:);
+end
+
+end % LOADOVERLAP
 
 function storeOverlap(fext,L)
-   if L>size(fext,1)
-       error('%s: Storing more samples than passed.',upper(mfilename));
-   end
-   block_interface('setAnaOverlap',fext(end-L+1:end,:)); 
+%STOREOVERLAP Stores overlap
+%
+%
+if L>size(fext,1)
+   error('%s: Storing more samples than passed.',upper(mfilename));
 end
+block_interface('setAnaOverlap',fext(end-L+1:end,:)); 
+end % STOREOVERLAP
 
-
-
-
-
-end
+end % BLOCKANA

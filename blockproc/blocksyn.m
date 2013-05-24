@@ -1,6 +1,15 @@
 function fhat = blocksyn( F, c , Lb)
-%BLOCKSYN Blockwise processing interface
-%   Yada
+%BLOCKSYN Blockwise synthesis interface
+%   Usage: blocksyn(F, c, Lb)
+%
+%   Input parameters:
+%      F    : Frame object.
+%      c    : Coefficients of a block.
+%   Output parameters:
+%      fhat : Reconstructed block.
+%
+%   `c=blocksyn(F, c, Lb)` reconstructs block `fhat` from coefficients `c`
+%   using frame defined by `F`.
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

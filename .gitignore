@@ -1,6 +1,7 @@
 *.oct
 
 *.mexw64
+*.mexa64
 
 *.dll
 

@@ -16,8 +16,9 @@ function [f,valid] = blockread(L)
 
 persistent Lwav;
 persistent clearStr;
-global delayLog;
-global delayLog2;
+persistent readTime;
+%global delayLog;
+%global delayLog2;
 
 
 
@@ -25,8 +26,8 @@ if block_interface('getPageNo')>0
    procTime = toc;
    res = 2;
 fs= playrec('getSampleRate');
-delayLog = [delayLog, procTime];
-load = floor(100*(procTime+delayLog2(end))/(L/fs));
+%delayLog = [delayLog, procTime];
+load = floor(100*(procTime+readTime)/(L/fs));
 msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
 droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
 fprintf([clearStr,msg,droppedStr]);
@@ -38,15 +39,11 @@ end
    
 else
    clearStr = '';
-   delayLog = [];
-   delayLog2 = [0];
+   %delayLog = [];
+   %delayLog2 = [0];
    procTime = 0;
 end
 tic;
-
-
-
-
 
 
 valid = 1;
@@ -65,6 +62,8 @@ block_interface('setPos',pos+L-1); % convert back the Matlab indexing
 
 if strcmp(source,'rec')
    recChanList = block_interface('getRecChanList');
+   
+   readTime = toc;
    % Issue reading buffers up to max
    while block_interface('getEnqBufCount') <= block_interface('getBufCount')
       block_interface('pushPage', playrec('rec', L, recChanList));
@@ -101,6 +100,7 @@ elseif strcmp(source,'playrec')
    % Play and record
    block_interface('pushPage',playrec('playrec', fhat, chanList, -1, recChanList));
 
+  readTime = toc;
    pageList = block_interface('getPageList');
    % Playback is block_interface('getBufCount') behind the input
    if block_interface('getPageNo') <= block_interface('getBufCount')
@@ -161,7 +161,7 @@ elseif strcmp(source(end-3:end),'.wav')
    % queue
    block_interface('pushPage', playrec('play', fhat, chanList));
 
-   delayLog2 = [delayLog2, toc];
+   readTime = toc;
    % If enough buffers are enqued, block the execution here until the 
    % first one is finished.
    if block_interface('getEnqBufCount') > block_interface('getBufCount')
