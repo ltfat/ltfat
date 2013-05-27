@@ -70,7 +70,7 @@ function [f,g]=idgt(coef,g,a,varargin)
 %                is the default convention described above.
 %
 %     'timeinv'  Compute an IDGT using a time-invariant phase. This
-%                convention is typically used in filter bank algorithms.
+%                convention is typically used in FIR-filter algorithms.
 %
 %   Examples:
 %   ---------
