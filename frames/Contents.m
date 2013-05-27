@@ -14,6 +14,8 @@
 %    FRSYN             - Frame synthesis
 %    FRAMEMATRIX       - Frame analysis operator matrix
 %    FRAMEDIAG         - Diagonal of frame operator
+%    FRANAITER         - Iterative perfect reconstruction analysis
+%    FRSYNITER         - Iterative perfect reconstruction synthesis
 %
 %  Visualization
 %    PLOTFRAME         - Plot frame coefficients
@@ -32,10 +34,8 @@
 %    FRAMETF2COEF      - Convert TF-plane layout to native
 %
 %  Non-linear analysis and synthesis
-%    FRANAITER         - Iterative perfect reconstruction analysis
 %    FRANALASSO        - LASSO threshholding using Landweber iterations.
 %    FRANAGROUPLASSO   - Group LASSO threshholding.
-%    FRSYNITER         - Iterative perfect reconstruction synthesis
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %
 %  For help, bug reports, suggestions etc. please send email to

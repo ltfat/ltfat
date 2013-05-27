@@ -16,7 +16,14 @@ function outsig=frana(F,insig);
 %   passed to |idgt| without a reshape.
 %
 %   See also: frame, framepair, frsyn, plotframe
-  
+
+% Note to future developer / self: It would be tempting to dispose of
+% this function, and simply create F.frana in "frame" and then call that
+% function. This does not work, because the parameters get bound when
+% F.frana gets created and not when it is called. This makes it
+% impossible to change the other fields in F, for instance to instantiate
+% a new window for a new signal length, breaking "frameaccel". 
+
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;

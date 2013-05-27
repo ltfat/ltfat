@@ -24,7 +24,7 @@ tests_todo={
 total_tests_failed=0;
 list_of_failed_tests={};
 
-precarray={'double','single'}
+precarray={'double','single'};
 for precidx=1:numel(precarray)
     prec=precarray{precidx};
     LTFAT_TEST_TYPE=prec;
