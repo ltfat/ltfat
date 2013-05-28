@@ -36,13 +36,9 @@ if s0 == 0
     for k=0:Nr-1   
         phsidx= mod(mod(tmp1*k,2*N)*k,2*N);
         phs = exp(pi*1i*phsidx/N);
-        for m=0:Mr-1                        
-            idx2 = floor(mod(-s1*k*a+m*b,L)/b);
+        idx2 = floor(mod(-s1*k*a+(0:Mr-1)*b,L)/b);
             
-            for w=0:W-1    
-                c(idx2+1,k+1,w+1) = c_rect(m+1,k+1,w+1).*phs;
-            end;
-        end;
+        c(idx2+1,k+1,:) = c_rect(:,k+1,:).*phs;
     end;
     
 else 
@@ -69,9 +65,7 @@ else
             idx1 =       mod(   cc1*k+cc2*m,N);
             idx2 = floor(mod(-s1*ar*k+cc6*m,L)/b);
             
-            for w=0:W-1                    
-                c(idx2+1,idx1+1,w+1) = c_rect(mod(-k,Nr)+1,m+1,w+1).*phs;
-            end;
+            c(idx2+1,idx1+1,:) = c_rect(mod(-k,Nr)+1,m+1,:).*phs;
         end;
     end;                    
 end;
