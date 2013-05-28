@@ -11,8 +11,17 @@ function [c,info] = wpbest(f,w,J,varargin)
 %         c   : Coefficients stored in a cell-array.
 %         wt  : Structure defining the best tree.
 %
-%   `[c,wt]=wpbest(f,w,J)` select the best tree *wt* with max. depth *J*, which minimises
-%   the coefficient entropy. 
+%   `[c,wt]=wpbest(f,w,J)` selects the best sub-tree *wt* from the full
+%   tree with max. depth *J*, which minimises the coefficient entropy.
+%   First, the depth *J* wavelet packet decomposition is performed. Then
+%   the nodes are traversed in the reverse breadth-first and entropy of
+%   the node input and combined entropy of the node outputs is compared.
+%   If the node input entropy is less than the combined output entropy,
+%   the current node and all possible descendant nodes are marked to be 
+%   deleted, if not, the input is assigned the combidend output entropy.
+%   At the end, the marked nodes are removed and the resulting tree is
+%   considered to be a best bases in the chosen entropy sense.
+%   
 %  
 %   Examples:
 %   ---------
