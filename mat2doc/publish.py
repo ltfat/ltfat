@@ -15,7 +15,7 @@ import localconf
 outputdir=localconf.outputdir
 
 sys.path.append(localconf.mat2docdir)
-import mat2doc
+#import mat2doc
 import printdoc
 
 # Safely create directories if they are missing

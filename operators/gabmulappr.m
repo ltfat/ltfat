@@ -32,7 +32,7 @@ function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
 %   upper Riesz bounds of the rank one operators, the projections resulting
 %   from the tensor products of the analysis and synthesis frames.
 %
-%   See also: gabmul
+%   See also: framemulappr
 %
 %   Demos: demo_gabmulappr
 %
