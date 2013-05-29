@@ -1,15 +1,20 @@
-function fhat = blocksyn( F, c , Lb)
+function fhat = blocksyn(F, c , Lb)
 %BLOCKSYN Blockwise synthesis interface
 %   Usage: blocksyn(F, c, Lb)
 %
 %   Input parameters:
-%      F    : Frame object.
+%      Fs   : Synthesis frame object.
 %      c    : Coefficients of a block.
 %   Output parameters:
-%      fhat : Reconstructed block.
+%      fhat : Reconstructed block of signal.
 %
-%   `c=blocksyn(F, c, Lb)` reconstructs block `fhat` from coefficients `c`
-%   using frame defined by `F`.
+%   `c=blocksyn(Fs,c,Lb)` reconstructs the signal block *fhat* from the coefficients *c*
+%   using the frame defined by *Fs*.
+%
+%   *Note:* To get perfect reconstruction, the synthesis frame *Fs* must
+%   be a dual frame of the analysis frame used in |blockana|.
+%
+%   See also: block, blockana, framedual   
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));

@@ -3,13 +3,15 @@ function c = blockana(F, f)
 %   Usage: c=blockana(F, f)
 %
 %   Input parameters:
-%      F  : Frame object.
-%      f  : Analyzed block.
+%      Fa : Analysis frame object.    
+%      f  : Block of signal.
 %   Output parameters:
 %      c  : Block coefficients.
 %
-%   `c=blockana(F, f)` calculates coefficients `c` of block `f` using 
-%   frame defined by `F`.
+%   `c=blockana(Fa,f)` calculates the coefficients *c* of the signal block *f* using 
+%   the frame defined by *Fa*.
+%
+%   See also: block, blocksyn, blockplay
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

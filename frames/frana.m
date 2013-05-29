@@ -32,19 +32,30 @@ if ~isstruct(F)
   error('%s: First agument must be a frame definition structure.',upper(mfilename));
 end;
 
+
+%% ----- step 1 : Verify f and determine its length -------
+% Change f to correct shape.
+[insig,~,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(insig,[],[],upper(mfilename));
+ 
+F=frameaccel(F,Ls);
+
+insig=postpad(insig,F.L);
+
+%% ----- do the computation ----
+
 switch(F.type)
   case 'identity'
     outsig=insig;
   case 'gen'
     outsig=F.g'*insig;  
   case 'dgt'
-    outsig=framenative2coef(F,dgt(insig,F.g,F.a,F.M,F.vars{:}));
+    outsig=framenative2coef(F,comp_dgt(insig,F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv,0,0));
   case 'dgtreal'
-    outsig=framenative2coef(F,dgtreal(insig,F.g,F.a,F.M,F.vars{:}));
+    outsig=framenative2coef(F,comp_dgtreal(insig,F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv));
   case 'dwilt'
-    outsig=framenative2coef(F,dwilt(insig,F.g,F.M));
+    outsig=framenative2coef(F,comp_dwilt(insig,F.g,F.M,F.L));
   case 'wmdct'
-    outsig=framenative2coef(F,wmdct(insig,F.g,F.M));
+    outsig=framenative2coef(F,comp_dwiltiii(insig,F.g,F.M,F.L));
     
   case 'filterbank'
     outsig=framenative2coef(F,filterbank(insig,F.g,F.a));
@@ -90,5 +101,11 @@ switch(F.type)
     end;
     outsig=permute(outsig,perm);
 end;
+
+%% --- cleanup -----
+
+permutedsize=[size(outsig,1),permutedsize(2:end)];
+
+outsig=assert_sigreshape_post(outsig,dim,permutedsize,order);
 
   

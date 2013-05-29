@@ -16,6 +16,10 @@ if ~isstruct(F)
   error('%s: First agument must be a frame definition structure.',upper(mfilename));
 end;
 
+L=framelengthcoef(F,size(insig,1));
+
+F=frameaccel(F,L);
+
 switch(F.type)
   case 'identity'
     outsig=insig;    
@@ -23,13 +27,13 @@ switch(F.type)
     outsig=F.g*insig;
     
   case 'dgt'
-    outsig=idgt(framecoef2native(F,insig),F.g,F.a,F.vars{:});  
+    outsig=comp_idgt(framecoef2native(F,insig),F.g,F.a,F.kv.lt,F.flags.do_timeinv,0);  
   case 'dgtreal'
-    outsig=idgtreal(framecoef2native(F,insig),F.g,F.a,F.M,F.vars{:});  
+    outsig=comp_idgtreal(framecoef2native(F,insig),F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv);  
   case 'dwilt'
-    outsig=idwilt(framecoef2native(F,insig),F.g);  
+    outsig=comp_idwilt(framecoef2native(F,insig),F.g);  
   case 'wmdct'
-    outsig=iwmdct(framecoef2native(F,insig),F.g);  
+    outsig=comp_idwiltiii(framecoef2native(F,insig),F.g);  
     
   case {'filterbank','ufilterbank'}
     outsig=ifilterbank(framecoef2native(F,insig),F.g,F.a);   

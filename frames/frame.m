@@ -117,11 +117,19 @@ switch(ftype)
   
 end;
 
+% For parsing optional parameters to the transforms.
+vargs={};
+definput=struct();
+
 switch(ftype)
   case {'dgt','dgtreal'}
     F.a=varargin{2};
     F.M=varargin{3};
-    F.vars=varargin(4:end);    
+    
+    vargs=varargin(4:end);
+    definput.keyvals.lt=[0 1];
+    definput.flags.phase={'freqinv','timeinv'};   
+
   case {'dwilt','wmdct'}
     F.M=varargin{2};
   case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
@@ -173,5 +181,7 @@ switch(ftype)
   otherwise
     error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
 end;
+
+[F.flags,F.kv]=ltfatarghelper({},definput,vargs);
 
 F.type=ftype;
