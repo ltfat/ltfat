@@ -121,6 +121,16 @@ end;
 vargs={};
 definput=struct();
 
+% Note to future developer / self: Only frames that do not require any
+% parameters can express their analysis/synthesis operator as an anonynous
+% function. It does not work, because the parameters get bound when F.frana
+% gets created and not when it is called. This makes it impossible to change
+% the other fields in F, for instance to instantiate a new window for a new
+% signal length, breaking "frameaccel", or for "framedual" or
+% "frametight" to return 
+
+
+%% ---- Pre-optional parameters
 switch(ftype)
   case {'dgt','dgtreal'}
     F.a=varargin{2};
@@ -128,7 +138,7 @@ switch(ftype)
     
     vargs=varargin(4:end);
     definput.keyvals.lt=[0 1];
-    definput.flags.phase={'freqinv','timeinv'};   
+    definput.flags.phase={'freqinv','timeinv'};    
 
   case {'dwilt','wmdct'}
     F.M=varargin{2};
@@ -155,12 +165,52 @@ switch(ftype)
     
   case 'gen'
     F.g=varargin{1};
+    F.frana=@(insig) F.g'*insig;
+    F.frsyn=@(insig) F.g*insig;
     
   case 'identity'
+    F.frana=@(insig) insig;
+    F.frsyn=@(insig) insig;
     
-  case {'dft',...
-        'dcti','dctii','dctiii','dctiv',...
-        'dsti','dstii','dstiii','dstiv'}
+  case 'dft'
+    F.frana=@(insig) dft(insig,[],1);
+    F.frsyn=@(insig) idft(insig,[],1);
+
+  case 'dcti'
+    F.frana=@(insig) dcti(insig,[],1);
+    F.frsyn=@(insig) dcti(insig,[],1);
+
+  case 'dctii'
+    F.frana=@(insig) dctii(insig,[],1);
+    F.frsyn=@(insig) dctiii(insig,[],1);
+
+  case 'dctiii'
+    F.frana=@(insig) dctiii(insig,[],1);
+    F.frsyn=@(insig) dctii(insig,[],1);
+
+  case 'dctiv'
+    F.frana=@(insig) dctiv(insig,[],1);
+    F.frsyn=@(insig) dctiv(insig,[],1);
+
+  case 'dft'
+    F.frana=@(insig) dft(insig,[],1);
+    F.frsyn=@(insig) idft(insig,[],1);
+
+  case 'dsti'
+    F.frana=@(insig) dsti(insig,[],1);
+    F.frsyn=@(insig) dsti(insig,[],1);
+
+  case 'dstii'
+    F.frana=@(insig) dstii(insig,[],1);
+    F.frsyn=@(insig) dstiii(insig,[],1);
+
+  case 'dstiii'
+    F.frana=@(insig) dstiii(insig,[],1);
+    F.frsyn=@(insig) dstii(insig,[],1);
+
+  case 'dstiv'
+    F.frana=@(insig) dstiv(insig,[],1);
+    F.frsyn=@(insig) dstiv(insig,[],1);
     
   case 'fusion'
     F.w=varargin{1};
@@ -183,5 +233,26 @@ switch(ftype)
 end;
 
 [F.flags,F.kv]=ltfatarghelper({},definput,vargs);
+
+%% ------ Post optional parameters
+switch(ftype)
+  case 'dgt'
+    F.framelength=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
+    F.framelengthcoef=@(Ncoef) Ncoef/F.M*F.a;
+  case 'dgtreal'
+    F.framelength=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
+    F.framelengthcoef=@(Ncoef) Ncoef/(floor(F.M/2)+1)*F.a;
+  case {'dwilt','wmdct'}
+    F.framelength=@(Ls) dwiltlength(Ls,F.M);
+  case {'gen'}
+    F.framelength=@(Ls) size(F.g,1);
+  case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
+    F.framelength=@(Ls) filterbanklength(Ls,F.a);
+    F.framelengthcoef=@(Ncoef) round(Ncoef/sum(1./F.a));
+  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+    F.framelength=@(Ncoef) sum(F.a);
+    F.framelengthcoef=@(Ncoef) sum(F.a);
+
+end;
 
 F.type=ftype;

@@ -39,7 +39,7 @@ switch(F.type)
     Fd.g={'realdual',F.g};  
     
   case 'gen'
-    Fd.g=pinv(F.g)';
+    Fd=frame('gen',pinv(F.g)');
         
   case 'fusion'
     Fd.w=1./(F.Nframes*F.w);

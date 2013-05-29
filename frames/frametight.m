@@ -41,7 +41,7 @@ switch(F.type)
     
   case 'gen'
     [U,sv,V] = svd(F.g,'econ');    
-    Ft.g=U*V'; 
+    Ft=frame('gen',U*V');
         
   case 'fusion'
     Ft.w=1./F.w;
