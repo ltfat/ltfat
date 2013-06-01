@@ -21,7 +21,7 @@ wt = wfbtinit(wt,flags.forder,'ana');
 
 
 if(flags.do_per)
-   blocksize=max(treeSub(wt));
+   blocksize=maxTreeSub(wt);
    L=ceil(Ls/blocksize)*blocksize;
 else
    L = Ls;
