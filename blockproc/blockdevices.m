@@ -1,8 +1,12 @@
 function devs = blockdevices()
 %BLOCKDEVICES Lists audio devices
+%   Usage: devs = blockdevices();
 %
-% Function lists available audio input and output devices. ID can be used
-% in the |block| function to specify which device should be used.
+%   `blockdevices` lists the available audio input and output devices. The
+%   ID can be used in the |block| function to specify which device should
+%   be used.
+%
+%   See also: block
 
 devs = playrec('getDevices');
 

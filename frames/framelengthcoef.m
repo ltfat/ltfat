@@ -7,7 +7,7 @@ function L=framelengthcoef(F,Ncoef);
 %
 %   If instead a signal is given, call |framelength|.
 %
-%   See also: frame, framelenggth
+%   See also: frame, framelength
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

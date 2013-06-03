@@ -4,6 +4,7 @@
 %
 %  Basic methods
 %    BLOCK          - Create a new block
+%    BLOCKDEVICES   - List available devices
 %    BLOCKREAD      - Read samples from file/device
 %    BLOCKANA       - Block analysis
 %    BLOCKSYN       - Block synthesis
