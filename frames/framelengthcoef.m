@@ -7,7 +7,7 @@ function L=framelengthcoef(F,Ncoef);
 %
 %   If instead a signal is given, call |framelength|.
 %
-%   See also: frame, framelength
+%   See also: frame, framelenggth
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -17,22 +17,11 @@ if ~isscalar(Ncoef)
   error('%s: Ncoef must be a scalar.',upper(mfilename));
 end;
 
-switch(F.type)
-  case 'dgt'
-    L=Ncoef/F.M*F.a;
-  case 'dgtreal'
-    L=Ncoef/(floor(F.M/2)+1)*F.a;
-  case {'filterbank','ufilterbank','ufilterbank','ufilterbankreal'}
-    L=round(Ncoef/sum(1./F.a));
-  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
-    L=sum(F.a);
-  otherwise
-    L=Ncoef/framered(F);
-end;
-
+L=F.framelengthcoef(Ncoef);
+    
 % Verify the computed length
 if ~(L==framelength(F,L))
-  error(['%s: The coefficient number given does not correspond to a valid ' ...
-         'set of coefficients for this type of frame.'],upper(mfilename));
+    error(['%s: The coefficient number given does not correspond to a valid ' ...
+           'set of coefficients for this type of frame.'],upper(mfilename));
     
 end;

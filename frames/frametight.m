@@ -26,7 +26,7 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-% Default operation, work for a lot of frames
+% Default operation, works for a lot of frames
 Ft=F;
 
 % Handle the windowed transforms
@@ -34,18 +34,26 @@ switch(F.type)
   case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
         'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     
-    Ft.g={'tight',F.g};
+    Ft=frame(F.type,{'tight',F.g},F.origargs{2:end});
     
   case {'filterbankreal','ufilterbankreal'}
-    Ft.g={'realtight',F.g};  
+    Ft=frame(F.type,{'realtight',F.g},F.origargs{2:end});
     
   case 'gen'
     [U,sv,V] = svd(F.g,'econ');    
     Ft=frame('gen',U*V');
-        
-  case 'fusion'
-    Ft.w=1./F.w;
+
+  case 'tensor'
     for ii=1:F.Nframes
-        Ft.frames{ii}=frametight(F.frames{ii});
+        tight_frames{ii}=frametight(F.frames{ii});
     end;
+    F=frame('tensor',tight_frames{:});
+
+  case 'fusion'
+    tight_w=1./F.w;
+    for ii=1:F.Nframes
+        tight_frames{ii}=frametight(F.frames{ii});
+    end;
+    Ft=frame('fusion',tight_w,tight_frames{:});
+
 end;

@@ -89,11 +89,9 @@ definput.flags.startphase={'zero','rand','int'};
 %   solution is obtained by applying soft thresholding cyclically on the
 %   basis coefficients (BCR algorithm)
 
-% Determine transform length, and calculate the window.
-L = framelength(F,size(x,1));
-
 % Accelerate frame, we will need it repeatedly
-F=frameaccel(F,L);  
+F=frameaccel(F,L);
+L=F.L;
 
 % Initialization of thresholded coefficients
 c0 = frana(F,x);
@@ -111,7 +109,7 @@ iter = 0;
 
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - frana(F,frsyn(F,tc0));
+    tc = c0 - F.frana(F.frsyn(tc0));
     tc = tc0 + tc/kv.C;
     tc = thresh(tc,threshold,'soft');
     relres = norm(tc(:)-tc0(:))/norm(tc0(:));
@@ -126,5 +124,5 @@ end
 
 % Reconstruction
 if nargout>3
-  xrec = frsyn(F,tc);
+  xrec = F.frsyn(tc);
 end;

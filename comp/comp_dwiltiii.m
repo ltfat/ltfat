@@ -1,9 +1,8 @@
-function [coef]=comp_dwiltiii(f,g,M,L)
+function [coef]=comp_dwiltiii(f,g,M)
 %COMP_DWILTIII  Compute Discrete Wilson transform type III.
 %   
 
-% XXX This function should not take L as an input
-
+L=size(f,1);
 a=M;
 N=L/a;
 W=size(f,2);

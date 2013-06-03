@@ -23,27 +23,5 @@ function red=framered(F);
 %
 %   See also: frame, frana, framebounds
 
-% Default value: works for all the bases.
-red=1;
-
-switch(F.type)
-  case 'gen'
-    red=size(F.g,2)/size(F.g,1);
-  case 'dgt'
-    red=F.M/F.a;
-  case 'dgtreal'
-    red=F.M/F.a;
-  case {'ufilterbank','filterbank'}
-    red=sum(1./F.a);
-  case {'ufilterbankreal','filterbankreal'}
-    red=2*sum(1./F.a);
-  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}   
-    red=sum(F.M)/sum(F.a);    
-  case 'fusion'
-    red=sum(cellfun(@framered,F.frames));
- case 'tensor'
-    red=prod(cellfun(@framered,F.frames));
-    
-end;
-
+red=F.framered;
   

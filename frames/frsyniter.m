@@ -77,8 +77,10 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   
   % Determine L from the first vector, it must match for all of them.
   L=framelengthcoef(F,size(c,1));
-    
-  A=@(x) frsyn(F,frana(F,x));
+
+  F=frameaccel(F,L);
+  
+  A=@(x) F.frsyn(F.frana(x));
 
   % It is possible to specify the initial guess, but this is not
   % currently done
@@ -87,10 +89,10 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
       d=framediag(F,L);
       M=spdiags(d,0,L,L);
       
-      [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit,M);
+      [f,flag,~,iter,relres]=pcg(A,F.frsyn(c),kv.tol,kv.maxit,M);
   else
       
-      [f,flag,~,iter,relres]=pcg(A,frsyn(F,c),kv.tol,kv.maxit);          
+      [f,flag,~,iter,relres]=pcg(A,F.frsyn(c),kv.tol,kv.maxit);          
   end;
   
   if nargout>1

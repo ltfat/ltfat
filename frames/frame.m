@@ -42,11 +42,15 @@ function F=frame(ftype,varargin);
 %   Pure frequency frames
 %   ---------------------
 %
-%   `frame('dft')` constructs a frame where the analysis operator is the
+%   `frame('dft')` constructs a bais where the analysis operator is the
 %   |dft|, and the synthesis operator is its inverse, |idft|. Completely
 %   similar to this, you can enter the name of any of the cosine or sine
 %   transforms |dcti|, |dctii|, |dctiii|, |dctiv|, |dsti|, |dstii|,
 %   |dstiii| or |dstiv|.
+%
+%   `frame('dftreal')` constructs a normalized |fftreal| basis for
+%   real-valued signals of even length only. The basis is normalized the
+%   |dft| to ensure that is it orthonormal.
 %
 %   Special / general frames
 %   ------------------------
@@ -131,6 +135,8 @@ definput=struct();
 
 
 %% ---- Pre-optional parameters
+% Common operations to deal with the input parameters.
+
 switch(ftype)
   case {'dgt','dgtreal'}
     F.a=varargin{2};
@@ -159,15 +165,30 @@ switch(ftype)
     F.N=numel(F.a);
     F.M=bsxfun(@times,F.M(:),ones(F.N,1));
     
-  case {'fwt'}
-    F.J=varargin{2};
-    F.g=fwtinit(varargin{1});
-    
+end;
+
+[F.flags,F.kv]=ltfatarghelper({},definput,vargs);
+
+F.type=ftype;
+F.origargs=varargin;
+
+
+%% ------ Post optional parameters
+
+% Default value, works for all bases
+F.framered=1;
+
+% Default value, frame works for all lengths
+F.framelength=@(Ls) Ls;
+
+switch(ftype)
   case 'gen'
     F.g=varargin{1};
     F.frana=@(insig) F.g'*insig;
     F.frsyn=@(insig) F.g*insig;
-    
+    F.framelength = @(Ls) size(F.g,1);
+    F.framered = size(F.g,2)/size(F.g,1);
+      
   case 'identity'
     F.frana=@(insig) insig;
     F.frsyn=@(insig) insig;
@@ -211,48 +232,141 @@ switch(ftype)
   case 'dstiv'
     F.frana=@(insig) dstiv(insig,[],1);
     F.frsyn=@(insig) dstiv(insig,[],1);
+
+  case 'dftreal'
+    F.frana=@(insig) fftreal(insig,[],1)/sqrt(size(insig,1));
+    F.frsyn=@(insig) ifftreal(insig,(size(insig,1)-1)*2,1)*sqrt((size(insig,1)-1)*2);
+    F.framelength=@(Ls) ceil(Ls/2)*2;
+    F.framelengthcoef=@(Ncoef) (Ncoef-1)*2;
+    F.realinput=1;
+
+  case 'dgt'
+    F.frana=@(insig) framenative2coef(F,comp_dgt(insig,F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv,0,0));
+    F.frsyn=@(insig) comp_idgt(framecoef2native(F,insig),F.g,F.a,F.kv.lt,F.flags.do_timeinv,0);    
+    F.framelength=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
+    F.framered=F.M/F.a;
     
+  case 'dgtreal'
+    F.frana=@(insig) framenative2coef(F,comp_dgtreal(insig,F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv));
+    F.frsyn=@(insig) comp_idgtreal(framecoef2native(F,insig),F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv);  
+    F.framelength=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
+    f.framered=F.M/F.a;
+    F.framelengthcoef=@(Ncoef) Ncoef/(floor(F.M/2)+1)*F.a;
+    
+  case 'dwilt'
+    F.frana=@(insig) framenative2coef(F,comp_dwilt(insig,F.g,F.M));
+    F.frsyn=@(insig) comp_idwilt(framecoef2native(F,insig),F.g);  
+    F.framelength=@(Ls) dwiltlength(Ls,F.M);
+    
+  case 'wmdct'
+    F.frana=@(insig) framenative2coef(F,comp_dwiltiii(insig,F.g,F.M));
+    F.frsyn=@(insig) comp_idwiltiii(framecoef2native(F,insig),F.g);  
+    F.framelength=@(Ls) dwiltlength(Ls,F.M);        
+    
+  case 'filterbank'
+    F.frana=@(insig) framenative2coef(F,filterbank(insig,F.g,F.a));
+    F.frsyn=@(insig) ifilterbank(framecoef2native(F,insig),F.g,F.a);
+    F.framelength=@(Ls) filterbanklength(Ls,F.a);
+    F.framelengthcoef=@(Ncoef) round(Ncoef/sum(1./F.a));
+    F.framered=sum(1./F.a);
+    
+  case 'filterbankreal'
+    F.frana=@(insig) framenative2coef(F,filterbank(insig,F.g,F.a));
+    F.frsyn=@(insig) 2*real(ifilterbank(framecoef2native(F,insig),F.g, ...
+                                        F.a));
+    F.framelength=@(Ls) filterbanklength(Ls,F.a);
+    F.framelengthcoef=@(Ncoef) round(Ncoef/sum(1./F.a));
+    F.framered=2*sum(1./F.a);
+    
+  case 'ufilterbank'
+    F.frana=@(insig) framenative2coef(F,ufilterbank(insig,F.g,F.a));
+    F.frsyn=@(insig) ifilterbank(framecoef2native(F,insig),F.g,F.a);   
+    F.framelength=@(Ls) filterbanklength(Ls,F.a);
+    F.framelengthcoef=@(Ncoef) round(Ncoef/sum(1./F.a));
+    F.framered=sum(1./F.a);
+    
+  case 'ufilterbankreal'
+    F.frana=@(insig) framenative2coef(F,ufilterbank(insig,F.g,F.a));
+    F.frsyn=@(insig) 2*real(ifilterbank(framecoef2native(F,insig),F.g, ...
+                                        F.a));
+    F.framelength=@(Ls) filterbanklength(Ls,F.a);
+    F.framelengthcoef=@(Ncoef) round(Ncoef/sum(1./F.a));
+    F.framered=2*sum(1./F.a);
+    
+  case 'nsdgt'
+    F.frana=@(insig) framenative2coef(F,nsdgt(insig,F.g,F.a,F.M));
+    F.frsyn=@(insig) insdgt(framecoef2native(F,insig),F.g,F.a);
+    F.framelength=@(Ncoef) sum(F.a);
+    F.framelengthcoef=@(Ncoef) sum(F.a);
+    F.framered=sum(F.M)/sum(F.a);    
+    
+  case 'unsdgt'
+    F.frana=@(insig) framenative2coef(F,unsdgt(insig,F.g,F.a,F.M));
+    F.frsyn=@(insig) insdgt(framecoef2native(F,insig),F.g,F.a);
+    F.framelength=@(Ncoef) sum(F.a);
+    F.framelengthcoef=@(Ncoef) sum(F.a);
+    F.framered=sum(F.M)/sum(F.a);    
+
+  case 'nsdgtreal'
+    F.frana=@(insig) framenative2coef(F,nsdgtreal(insig,F.g,F.a,F.M));
+    F.frsyn=@(insig) insdgtreal(framecoef2native(F,insig),F.g,F.a,F.M);
+    F.framelength=@(Ncoef) sum(F.a);
+    F.framelengthcoef=@(Ncoef) sum(F.a);
+    F.framered=sum(F.M)/sum(F.a);    
+    
+  case 'unsdgtreal'
+    F.frana=@(insig) framenative2coef(F,unsdgtreal(insig,F.g,F.a,F.M));
+    F.frsyn=@(insig) insdgtreal(framecoef2native(F,insig),F.g,F.a,F.M);
+    F.framelength=@(Ncoef) sum(F.a);
+    F.framelengthcoef=@(Ncoef) sum(F.a);
+    F.framered=sum(F.M)/sum(F.a);    
+                
   case 'fusion'
     F.w=varargin{1};
     F.frames=varargin(2:end);
     F.Nframes=numel(F.frames);
-    F.w=bsxfun(@times,F.w(:),ones(F.Nframes,1));
+    F.w=bsxfun(@times,F.w(:),ones(F.Nframes,1));    
+    F.framelength = @(Ls) comp_framelength_fusion(F,Ls);
+    F.framered=sum(cellfun(@framered,F.frames));
+    
+    % These definitions binds F itself, so they must execute last
+    F.frana=@(insig) comp_frana_fusion(F,insig);
+    F.frsyn=@(insig) comp_frsyn_fusion(F,insig);
 
- case 'tensor'
+    
+  case 'tensor'
+    % This frame type is currently broken. It must be reworked to reshape
+    % to the standard layout in order not to break all the assumptions.
     F.frames=varargin;
     F.Nframes=numel(F.frames);
     for ii=1:F.Nframes
-      if F.frames{ii}.realinput
-        error(['It is not safe to embed a real-valued-input-only frame ' ...
-               'into the tensor frame.']);
-      end;
+        if F.frames{ii}.realinput
+            error(['It is not safe to embed a real-valued-input-only frame ' ...
+                   'into the tensor frame.']);
+        end;
     end;
+    
+    F.frana=@(insig) comp_frana_tensor(F,insig);
+    F.frsyn=@(insig) comp_frsyn_tensor(F,insig);
+    
+    F.framelength=@(Ls) comp_framelength_tensor(F,Ls);
+
+    F.framered=prod(cellfun(@framered,F.frames));
+    
+  case {'fwt'}
+    F.J=varargin{2};
+    F.g=fwtinit(varargin{1});
+    F.frana=@(insig) fwt(insig,F.g,F.J);
+    F.frsyn=@(insig) ifwt(insig,F.g,F.J,size(insig,1));
+    F.framelength=@(Ls) fwtlength(Ls,F.g,F.J);
     
   otherwise
     error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
-end;
-
-[F.flags,F.kv]=ltfatarghelper({},definput,vargs);
-
-%% ------ Post optional parameters
-switch(ftype)
-  case 'dgt'
-    F.framelength=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
-    F.framelengthcoef=@(Ncoef) Ncoef/F.M*F.a;
-  case 'dgtreal'
-    F.framelength=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
-    F.framelengthcoef=@(Ncoef) Ncoef/(floor(F.M/2)+1)*F.a;
-  case {'dwilt','wmdct'}
-    F.framelength=@(Ls) dwiltlength(Ls,F.M);
-  case {'gen'}
-    F.framelength=@(Ls) size(F.g,1);
-  case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
-    F.framelength=@(Ls) filterbanklength(Ls,F.a);
-    F.framelengthcoef=@(Ncoef) round(Ncoef/sum(1./F.a));
-  case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
-    F.framelength=@(Ncoef) sum(F.a);
-    F.framelengthcoef=@(Ncoef) sum(F.a);
 
 end;
 
-F.type=ftype;
+% This one is placed at the end, to allow for F.framered to be defined
+% first.
+if ~isfield(F,'framelengthcoef')
+    F.framelengthcoef=@(Ncoef) Ncoef/framered(F);
+end;

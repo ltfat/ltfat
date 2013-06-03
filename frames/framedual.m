@@ -33,17 +33,24 @@ switch(F.type)
   case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
         'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     
-    Fd.g={'dual',F.g};
+    Fd=frame(F.type,{'dual',F.g},F.origargs{2:end});
     
   case {'filterbankreal','ufilterbankreal'}
-    Fd.g={'realdual',F.g};  
+    Fd=frame(F.type,{'realdual',F.g},F.origargs{2:end});
     
   case 'gen'
     Fd=frame('gen',pinv(F.g)');
+    
+  case 'tensor'
+    for ii=1:F.Nframes
+        dual_frames{ii}=framedual(F.frames{ii});        
+    end;
+    F=frame('tensor',dual_frames{:});
         
   case 'fusion'
-    Fd.w=1./(F.Nframes*F.w);
+    dual_w=1./(F.Nframes*F.w);
     for ii=1:F.Nframes
-        Fd.frames{ii}=framedual(F.frames{ii});
+        dual_frames{ii}=framedual(F.frames{ii});        
     end;
+    Fd=frame('fusion',dual_w,dual_frames{:});
 end;

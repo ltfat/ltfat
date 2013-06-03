@@ -142,7 +142,7 @@ if isa(f,'single')
 end;
 
 %% ----- Call the computational subroutines.
-c  = comp_dwiltiii(f,g,M,L);
+c  = comp_dwiltiii(f,g,M);
 
 %% ----- reorder coefficients to correct final layout
 order=assert_groworder(order);

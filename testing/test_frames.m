@@ -54,6 +54,13 @@ Fr{28} = frametight(frame('unsdgt',g,a,100));
 Fr{29} = frametight(frame('nsdgtreal',g,a,M));
 Fr{30} = frametight(frame('unsdgtreal',g,a,100));
 
+Fr{31} = frametight(frame('dftreal'));
+Fr{32} = frame('fwt','db4',5);
+
+% The tensor frame implementation is currenly broken
+%Fr{33} = frame('tensor',Fr{11});
+
+
 %Fr{31} = frame('filterbank',     gfilt,[4 3 2 2],4);
 %Fr{32} = frame('filterbankreal', gfilt,[4 3 2 2],4);
 

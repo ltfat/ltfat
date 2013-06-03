@@ -1,4 +1,4 @@
-function [c,relres,iter]=franaiter(F,f,varargin)
+function [outsig,relres,iter]=franaiter(F,insig,varargin)
 %FRANAITER  Iterative analysis
 %   Usage:  c=franaiter(F,f);
 %           [c,relres,iter]=franaiter(F,f,...);
@@ -62,47 +62,56 @@ function [c,relres,iter]=franaiter(F,f,varargin)
   
 % AUTHORS: Peter L. Søndergaard
     
-  if nargin<2
+if nargin<2
     error('%s: Too few input parameters.',upper(mfilename));
-  end;
+end;
 
-  tolchooser.double=1e-9;
-  tolchooser.single=1e-5;
+tolchooser.double=1e-9;
+tolchooser.single=1e-5;
+
+definput.keyvals.Ls=[];
+definput.keyvals.tol=tolchooser.(class(insig));
+definput.keyvals.maxit=100;
+definput.flags.alg={'cg','pcg'};
+definput.keyvals.printstep=10;
+definput.flags.print={'quiet','print'};
+
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+
+%% ----- step 1 : Verify f and determine its length -------
+% Change f to correct shape.
+[insig,~,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(insig,[],[],upper(mfilename));
+
+F=frameaccel(F,Ls);
+L=F.L;
+
+%% -- run the iteration 
+
+A=@(x) F.frsyn(F.frana(x));
+
+% An explicit postpad is needed for the pcg algorithm to not fail
+insig=postpad(insig,L);
+
+if flags.do_pcg
+    d=framediag(F,L);
+    M=spdiags(d,0,L,L);
     
-  definput.keyvals.Ls=[];
-  definput.keyvals.tol=tolchooser.(class(f));
-  definput.keyvals.maxit=100;
-  definput.flags.alg={'cg','pcg'};
-  definput.keyvals.printstep=10;
-  definput.flags.print={'quiet','print'};
-
-  [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
-  
-  % Determine L from the first vector, it must match for all of them.
-  L=framelength(F,size(f,1));
-       
-  A=@(x) frsyn(F,frana(F,x));
-
-  % An explicit postpad is needed for the pcg algorithm to not fail
-  f=postpad(f,L);
-      
-  if flags.do_pcg
-      d=framediag(F,L);
-      M=spdiags(d,0,L,L);
-      
-      [fout,flag,~,iter,relres]=pcg(A,f,kv.tol,kv.maxit,M);
-  else
-      
-      [fout,flag,~,iter,relres]=pcg(A,f,kv.tol,kv.maxit);          
-  end;
-
-  c=frana(F,fout);
-
-  if nargout>1
-      relres=relres/norm(fout(:));
-  end;
-
-end
-
-
+    [fout,flag,~,iter,relres]=pcg(A,insig,kv.tol,kv.maxit,M);
+else
     
+    [fout,flag,~,iter,relres]=pcg(A,insig,kv.tol,kv.maxit);          
+end;
+
+outsig=F.frana(fout);
+
+if nargout>1
+    relres=relres/norm(fout(:));
+end;
+
+
+%% --- cleanup -----
+
+permutedsize=[size(outsig,1),permutedsize(2:end)];
+
+outsig=assert_sigreshape_post(outsig,dim,permutedsize,order);
+

@@ -1,9 +1,8 @@
-function [coef]=comp_dwilt(f,g,M,L)
+function [coef]=comp_dwilt(f,g,M)
 %COMP_DWILT  Compute Discrete Wilson transform.
 %   
 
-% XXX This function should not take L as an input
-
+L=size(f,1);
 Lwindow=size(g,1);
 
 if Lwindow<L

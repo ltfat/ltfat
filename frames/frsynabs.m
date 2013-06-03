@@ -108,8 +108,8 @@ if flags.do_griflim
   Fs=framedual(F);
   
   for iter=1:kv.maxit
-    f=frsyn(Fs,c);
-    c=frana(F,f);
+    f=Fs.frsyn(c);
+    c=F.frana(f);
     
     relres(iter)=norm(abs(c)-s,'fro')/norm_s;
     
@@ -137,8 +137,8 @@ if flags.do_fgriflim
   told=s;
 
   for iter=1:kv.maxit
-    f=frsyn(Fs,c);
-    tnew=frana(F,f);
+    f=Fs.frsyn(c);
+    tnew=F.frana(f);
 
     relres(iter)=norm(abs(tnew)-s,'fro')/norm_s;
 

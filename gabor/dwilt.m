@@ -164,7 +164,7 @@ if isa(f,'single')
 end;
 
 %% ----- Call the computational subroutines.
-c=comp_dwilt(f,g,M,L);
+c=comp_dwilt(f,g,M);
 
 %% ----- reorder coefficients to correct final layout
 order=assert_groworder(order);
