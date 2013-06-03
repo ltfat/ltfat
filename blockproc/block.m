@@ -35,7 +35,7 @@ function [fs,classid] = block(source,varargin)
 %                        For the `'playrec'` option the `devId` should be a
 %                        two element vector [playDevid, recDevid]. List
 %                        of the installed devices ant their ids can be 
-%                        obtained by |block_devices|.
+%                        obtained by |blockdevices|.
 %      
 %      `'playch',playch`: If device supports more output channels, `'playch'`
 %                         can be used to specify which should be used. E.g.

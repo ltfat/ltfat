@@ -1,4 +1,8 @@
-function devs = block_devices()
+function devs = blockdevices()
+%BLOCKDEVICES Lists audio devices
+%
+% Function lists available audio input and output devices. ID can be used
+% in the |block| function to specify which device should be used.
 
 devs = playrec('getDevices');
 
