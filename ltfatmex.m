@@ -69,7 +69,7 @@ else
 end;
 
 if ispc
-   makefilename='Makefile_mingw64';
+   makefilename='Makefile_mingw';
    make_exe = 'mingw32-make';
 end;
 
@@ -161,7 +161,8 @@ if flags.do_compile
       cd([bp,'src']);
       clear mex; 
       [status,result]=system([make_exe, ' -f ',makefilename,...
-                  ' MATLABROOT=','"',matlabroot,'"']);
+                  ' MATLABROOT=','"',matlabroot,'"',...
+                  ' ARCH=',computer('arch')]);
       if(~status)
         disp('Done.');
       else
@@ -185,7 +186,8 @@ if flags.do_compile
         cd([bp,'mex']);
         [status,result]=system([make_exe, ' -f ',makefilename,...
                             ' MATLABROOT=','"',matlabroot,'"',...
-                            ' EXT=',mexext]);
+                            ' EXT=',mexext,...
+                            ' ARCH=',computer('arch')]);
     end;
     if(~status)
       disp('Done.');
@@ -201,7 +203,8 @@ if flags.do_compile
     clear mex; 
     [status,result]=system([make_exe, ' -f ',makefilename,...
                      ' MATLABROOT=','"',matlabroot,'"',...
-                     ' EXT=',mexext]);
+                     ' EXT=',mexext,...
+                     ' ARCH=',computer('arch')]);
     if(~status)
       disp('Done.');
     else
@@ -253,7 +256,8 @@ if flags.do_compile
     [status,result]=system([make_exe, ' -f ',makefilename,...
                      ' MATLABROOT=','"',matlabroot,'"',...
                      ' EXT=',mexext,...
-                     ' PORTAUDIO=',portaudioLib]);
+                     ' PORTAUDIO=',portaudioLib,...
+                     ' ARCH=',computer('arch')]);
     if(~status)
       disp('Done.');
     else
