@@ -13,7 +13,6 @@
 %    LTFATARGHELPER   -  Handle optional parameters of functions.
 %    LTFATGETDEFAULTS -  Get the default values for a function.
 %    LTFATSETDEFAULTS -  Get the default values for a function.
-%    SCALARDISTRIBUTE -  Distibute scalar to array shape.
 %
 %  Graphical user interfaces
 %    MULACLAB         -  Short Time-Fourier transform modification in Matlab

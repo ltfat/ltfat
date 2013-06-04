@@ -2,6 +2,17 @@ function varargout=scalardistribute(varargin)
 %SCALARDISTRIBUTE  Copy scalar to array shape for parameter handling
 %   Usage:  [...] = scalardistribute(...);
 %
+%   `scalardistribute` has been deprecated. Please rewrite your code
+%   using `bsxfun` instead.
+%
+%   A call to `[a,b]=scalardistribute(a,b)` can be replaced by ::
+%
+%      a=bsxfun(@times,a(:),ones(size(b(:))));
+%      b=bsxfun(@times,b(:),ones(size(a(:))));
+%   
+%   Original help:
+%   --------------
+%
 %   `[...]=scalardistribute(...)` copies the input parameters to the
 %   output parameters.
 %

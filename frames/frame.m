@@ -125,14 +125,6 @@ end;
 vargs={};
 definput=struct();
 
-% Note to future developer / self: Only frames that do not require any
-% parameters can express their analysis/synthesis operator as an anonynous
-% function. It does not work, because the parameters get bound when F.frana
-% gets created and not when it is called. This makes it impossible to change
-% the other fields in F, for instance to instantiate a new window for a new
-% signal length, breaking "frameaccel", or for "framedual" or
-% "frametight" to return 
-
 
 %% ---- Pre-optional parameters
 % Common operations to deal with the input parameters.
