@@ -30,7 +30,7 @@ INCLUDES= -I"$(MATLABROOT)\extern\include" -I. -I..
 CC=gcc
 
 all: $(SOURCE) 
-	$(CC) -std=c99 -s -O3 -Wall -m64 -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) -static-libgcc 
+	$(CC) -std=c99 -s -O3 -Wall -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) -static-libgcc 
 
 clean:
 	del $(MEXTGT)
