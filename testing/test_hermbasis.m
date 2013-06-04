@@ -23,7 +23,7 @@ for ii=1:length(Lr)
         s=sprintf('HERMBASIS orth L:%3i n:%3i %0.5g %s',L,n,res,fail);
         disp(s);
         
-        f=crand(L,1);
+        f=tester_crand(L,1);
                
         res=norm(dft(f)-H*diag(D)*H'*f);
         [test_failed,fail]=ltfatdiditfail(res,test_failed);

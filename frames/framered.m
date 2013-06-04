@@ -23,5 +23,5 @@ function red=framered(F);
 %
 %   See also: frame, frana, framebounds
 
-red=F.framered;
+red=F.red;
   

@@ -12,4 +12,4 @@ function L=framelength(F,Ls);
 %
 %   See also: frame, framelengthcoef
   
-L=F.framelength(Ls);
+L=F.length(Ls);

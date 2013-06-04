@@ -1,7 +1,7 @@
 function outsig=comp_frana_fusion(F,insig)
 
 % All frames must use the same length signal.
-L=F.framelength(size(insig,1));
+L=F.length(size(insig,1));
 insig=postpad(insig,L);
 
 coefs = cell(F.Nframes,1);

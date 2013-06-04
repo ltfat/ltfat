@@ -3,7 +3,7 @@
 import sys,os
 cwd=os.getcwd()+os.sep
 
-versionstring='0.9.1'
+versionstring='1.4.0'
 # ------- do not edit below this line ----------
 
 # Import the localconf file, it should be placed in the same directory

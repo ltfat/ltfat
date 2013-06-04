@@ -15,14 +15,4 @@ if ~isstruct(F)
   error('%s: First agument must be a frame definition structure.',upper(mfilename));
 end;
 
-switch(F.type)
-  case {'dgt','dgtreal','dwilt','wmdct',...
-        'ufilterbank','ufilterbankreal','unsdgt','unsdgtreal'}
-    [M,N,W]=size(coef);
-    coef=reshape(coef,[M*N,W]); 
-  case {'filterbank','filterbankreal','nsdgt','nsdgtreal'}
-    coef=cell2mat(coef(:));
-  otherwise
-   % No conversion necessary, formats are the same.
-end;
-
+coef=F.native2coef(coef);
