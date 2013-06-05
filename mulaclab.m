@@ -686,7 +686,7 @@ initialize(file);
 
     if loadFile
       [~, ~, ext] = fileparts(fileName);
-      switch ext
+      switch lower(ext)
         case '.wav'
           % read the orginal signal in a wave file
           [sig.ori, sig.sampFreq, sig.nbBit] =...
