@@ -178,6 +178,7 @@ def runcommand(todo,redomode='auto'):
         # directory
 
         createbinaryfile(project+'-'+versionstring,'win64','win')
+        createbinaryfile(project+'-'+versionstring,'win32','win')
         createbinaryfile(project+'-'+versionstring,'mac','mac')
 
 

@@ -59,35 +59,68 @@ if ~(M==Mcoef)
 end;
 
 if iscell(c)
-         
-  f=zeros(L,W,assert_classname(c{1},g{1}));
-  for m=1:M
-     for w=1:W
-        
-        G=fft(fir2long(g{m},L));
-
-        % This repmat cannot be replaced by bsxfun
-        f(:,w)=f(:,w)+ifft(bsxfun(@times,repmat(fft(c{m}(:,w)),a(m),1),conj(G)));
-    end;
-  end;
-  
+    f=zeros(L,W,assert_classname(c{1}));
 else
- 
-  a=a(1);
-  
-  G=zeros(L,M,assert_classname(c,g{1}));
-  for ii=1:M
-    G(:,ii)=fft(fir2long(g{ii},L));
-  end;
-    
-  f=zeros(L,W,assert_classname(c,g{1}));
-  for w=1:W
-    for m=1:M
-        % This repmat cannot be replaced by bsxfun
-        f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a,1).*conj(G(:,m)));
+    a=a(1);
+    f=zeros(L,W,assert_classname(c));
+end;
+
+l=(0:L-1).'/L;
+for m=1:M
+    if isfield(g{m},'h')
+        g_time=circshift(postpad(g{m}.h,L),g{m}.offset).*...
+               exp(2*pi*1i*round(g{m}.centre*L/2)*l);
+        conjG=conj(fft(g_time));
+    else
+        conjG=conj(circshift(postpad(g{m}.H(L),L),g{m}.foff(L)).*exp(-2*pi*1i*round(g{m}.delay)*l));
     end;
-  end;
-  
+    
+    if iscell(c)
+        for w=1:W                        
+            % This repmat cannot be replaced by bsxfun
+            f(:,w)=f(:,w)+ifft(bsxfun(@times,repmat(fft(c{m}(:,w)),a(m),1),conjG));
+        end;                
+    else
+        for w=1:W
+            % This repmat cannot be replaced by bsxfun
+            f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a,1).*conjG);
+        end;        
+    end;
+end;
+
+% Old stuff from before the struct filters
+if 0
+    if iscell(c)
+        
+        for m=1:M
+            for w=1:W
+                
+                G=fft(fir2long(g{m},L));
+                
+                % This repmat cannot be replaced by bsxfun
+                f(:,w)=f(:,w)+ifft(bsxfun(@times,repmat(fft(c{m}(:,w)),a(m),1),conj(G)));
+            end;
+        end;
+        
+    else
+        
+        a=a(1);
+        
+        G=zeros(L,M,assert_classname(c,g{1}));
+        for ii=1:M
+            G(:,ii)=fft(fir2long(g{ii},L));
+        end;
+        
+        f=zeros(L,W,assert_classname(c,g{1}));
+        for w=1:W
+            for m=1:M
+                % This repmat cannot be replaced by bsxfun
+                f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a,1).*conj(G(:,m)));
+            end;
+        end;
+        
+    end;
+    
 end;
   
 % Cut or extend f to the correct length, if desired.

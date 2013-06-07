@@ -19,27 +19,32 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
-
 definput.keyvals.L=[];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-if isempty(L)
-  L=ceil(longestfilter/lcm_a)*lcm_a;
-else
-  if rem(L,lcm_a)>0
-    error(['%s: Specified length L is incompatible with the length of ' ...
-           'the time shifts. L = %i, lcm_a = %i'],upper(mfilename),L,lcm_a);
-  end;
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
+
+if (~isempty(L)) && (L~=filterbanklength(L,a))
+        error(['%s: Specified length L is incompatible with the length of ' ...
+               'the time shifts.'],upper(mfilename));
 end;
 
 if all(a==a(1))
+        
   % Uniform filterbank, use polyphase representation
+  if isempty(L)
+      error('%s: You need to specify L.',upper(mfilename));
+  end;
   a=a(1);
-  
-  G=zeros(L,M,assert_classname(g{1}));
-  for ii=1:M
-    G(:,ii)=fft(fir2long(g{ii},L));
+
+  % G1 is done this way just so that we can determine the data type.
+  G1=comp_transferfunction(g{1},L);
+  thisclass=assert_classname(G1);
+  G=zeros(L,M,thisclass);
+  G(:,1)=G1;
+  for ii=2:M
+    G(:,ii)=comp_transferfunction(g{ii},L);
   end;
   
   N=L/a;
@@ -50,7 +55,7 @@ if all(a==a(1))
   %  Hb(k+1,:) = conj(G(mod(k*N-w,L)+1,:));
   %end;
   
-  gd=zeros(N,M,assert_classname(g{1}));
+  gd=zeros(N,M,thisclass);
   
   for w=0:N-1
     idx_a = mod(w-(0:a-1)*N,L)+1;
@@ -71,7 +76,7 @@ if all(a==a(1))
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=cast(gd(:,m),assert_classname(g{1}));
+    gdout{m}=cast(gd(:,m),thisclass);
   end;
   
 else

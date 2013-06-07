@@ -17,7 +17,7 @@ function [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,callfun
   
   
 if ~isnumeric(f)
-  error('%s: f must numeric.',callfun);
+  error('%s: The input must be numeric.',callfun);
 end;
 
 D=ndims(f);

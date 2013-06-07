@@ -86,47 +86,45 @@ definput.flags.realtype={'normal','real'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 if ischar(g{1})
-  winname=lower(g{1});
-  switch(winname)
-   case {'dual'}
-    [g,info.auxinfo] = filterbankwin(g{2},a,L);
-      g = filterbankdual(g,a,L);
-      info.isdual=1;
-   
-   case {'realdual'}
-    [g,info.auxinfo] = filterbankwin(g{2},a,L);
-    g = filterbankrealdual(g,a,L);
-    info.isdual=1;
-   
-   case {'tight'}
-    [g,info.auxinfo] = filterbankwin(g{2},a,L);    
-    g = filterbanktight(g,a,L);
-    info.istight=1;
-   
-   case {'realtight'}
-    [g,info.auxinfo] = filterbankwin(g{2},a,L);    
-    g = filterbankrealtight(g,a,L);        
-    info.istight=1;
-    
-otherwise
-    error('%s: Unsupported window type %s.',winname,upper(mfilename));
-  end;
+    winname=lower(g{1});
+    switch(winname)
+      case {'dual'}
+        [g,info.auxinfo] = filterbankwin(g{2},a,L);
+        g = filterbankdual(g,a,L);
+        info.isdual=1;
+        
+      case {'realdual'}
+        [g,info.auxinfo] = filterbankwin(g{2},a,L);
+        g = filterbankrealdual(g,a,L);
+        info.isdual=1;
+        
+      case {'tight'}
+        [g,info.auxinfo] = filterbankwin(g{2},a,L);    
+        g = filterbanktight(g,a,L);
+        info.istight=1;
+        
+      case {'realtight'}
+        [g,info.auxinfo] = filterbankwin(g{2},a,L);    
+        g = filterbankrealtight(g,a,L);        
+        info.istight=1;
+        
+      otherwise
+        error('%s: Unsupported window type %s.',winname,upper(mfilename));
+    end;
 end;
 
 info.M=numel(g);
 
+info.gl=zeros(info.M,1);
+
 for m=1:info.M
-    if isvector(g{m})
-        g{m}=g{m}(:);
-    else
-        error('Window no. %i must be a vector.',m);
-    end;
-    
+    [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
+    %info_win.gl
+    %ingo.gl(m)=info_win.gl;
 end;
 
-info.gl=cellfun(@numel,g);
-
 info.longestfilter=max(info.gl);
+
 
 info.isfac=1;
 % The generated frame does not have a factorization if it is not uniform

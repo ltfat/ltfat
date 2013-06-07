@@ -24,12 +24,12 @@ for ii=1:M
   g{ii}=tester_crand(L,1);
 end;
 
-gd = filterbankdual(g,a);
-gt = filterbanktight(g,a);
-gtreal=filterbankrealtight(g,a);
+gd = filterbankdual(g,a,L);
+gt = filterbanktight(g,a,L);
+gtreal=filterbankrealtight(g,a,L);
 
 %% Check that filterbankbounds detect the tight frame
-[AF,BF]=filterbankbounds(gt,a);
+[AF,BF]=filterbankbounds(gt,a,L);
 
 [test_failed,fail]=ltfatdiditfail(BF-1,test_failed);
 s=sprintf(['FB FB B   %0.5g %s'],BF-1,fail);
@@ -41,7 +41,7 @@ disp(s)
 
 %% check filterbankrealbounds
 
-[AF,BF]=filterbankrealbounds(gtreal,a);
+[AF,BF]=filterbankrealbounds(gtreal,a,L);
 
 [test_failed,fail]=ltfatdiditfail(BF-1,test_failed);
 s=sprintf(['FB FBR B  %0.5g %s'],BF-1,fail);
@@ -117,7 +117,7 @@ for w=1:3
     
     fr=tester_rand(L,1);
     
-    gdreal=filterbankrealdual(g,a);
+    gdreal=filterbankrealdual(g,a,L);
     
     c_ur=ufilterbank(fr,g,a);
     rreal=2*real(ifilterbank(c_ur,gdreal,a));

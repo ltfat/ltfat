@@ -10,7 +10,7 @@ tolchooser.double=1e-7;
 tolchooser.single=1e-2;
 tolerance = tolchooser.(LTFAT_TEST_TYPE);
 
-Fr=cell(1,26);
+Fr=cell(1,32);
 
 L=200;
 Fr{1}  = frame('dgt','gauss',10,20);

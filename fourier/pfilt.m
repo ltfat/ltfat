@@ -12,6 +12,23 @@ function h=pfilt(f,g,varargin)
 %   `pfilt(f,g,a,dim)` filters along dimension dim. The default value of
 %   [] means to filter along the first non-singleton dimension.
 %
+%   The filter *g* can be a vector, in which case the vector is treated
+%   as a zero-delay FIR filter.
+%
+%   The filter *g* can be a cell array. The following options are
+%   possible:
+%
+%     * If the first element of the cell array is the name of one of the
+%       windows from |firwin|, the whole cell array is passed onto
+%       |firfilter|.
+%
+%     * If the first element of the cell array is `'bl'`, the rest of the
+%       cell array is passed onto |blfilter|.
+%
+%     * If the first element of the cell array is `'pgauss'`, `'psech'`,
+%       the rest of the parameters is passed onto the respective
+%       function. Note that you do not need to specify the length *L*.
+%
 %   The coefficients obtained from filtering a signal *f* by a filter *g* are
 %   defined by
 %
@@ -31,41 +48,19 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+definput.import={'pfilt'};
 definput.keyvals.a=1;
 definput.keyvals.dim=[];
 [flags,kv,a,dim]=ltfatarghelper({'a','dim'},definput,varargin);
 
 L=[];
 
-[f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,'PFILT');
+[g,info] = comp_fourierwindow(g,L,upper(mfilename));
 
-if ~isstruct(g)
-    [g,info] = comp_fourierwindow(g,L,'PFILT');
-    
-    h=squeeze(comp_ufilterbank_fft(f,g,a));
+[f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,upper(mfilename));
 
-    % FIXME: This check should be removed when comp_ufilterbank_fft{.c/.cc}
-    % have been fixed.
-    if isreal(f) && isreal(g)
-        h=real(h);
-    end;
 
-else
-    N=L/a;
-    G=middlepad(g.filter(L),L);
-
-    for w=1:W
-        F=fft(f(:,w));
-        h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
-    end;
-    
-    % Insert check for window being
-    if isreal(f) && g.isreal
-        h=real(h);
-    end;
-        
-end;
-
+h=comp_pfilt(f,g,a,info.gl<kv.crossover);
 
 
 permutedsize(1)=size(h,1);

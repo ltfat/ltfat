@@ -1,15 +1,15 @@
-function gdout=filterbankdual(g,a,varargin);
+function gdout=filterbankdual(g,a,L,varargin);
 %FILTERBANKDUAL  Dual filters
 %   Usage:  gd=filterbankdual(g,a);
 %           gd=filterbankdual(g,a,L);
 %
-%   `filterabankdual(g,a)` computes the canonical dual filters of *g* for a
+%   `filterbankdual(g,a)` computes the canonical dual filters of *g* for a
 %   channel subsampling rate of *a* (hop-size).
 %
 %   The input and output format of the filters *g* are described in the
 %   help of |filterbank|.
 %
-%   `filterabankdual(g,a,L)` computes canonical dual filters for a system
+%   `filterbankdual(g,a,L)` computes canonical dual filters for a system
 %   of length *L*. If *L* is not specified, the shortest possible
 %   transform length is choosen.
 %
@@ -22,33 +22,38 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
+%definput.keyvals.L=[];
+%[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-definput.keyvals.L=[];
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
 
-if isempty(L)
-  L=ceil(longestfilter/lcm_a)*lcm_a;
-else
-  if rem(L,lcm_a)>0
+if (~isempty(L)) && (L~=filterbanklength(L,a))
     error(['%s: Specified length L is incompatible with the length of ' ...
-           'the time shifts. L = %i, lcm_a = %i'],upper(mfilename),L,lcm_a);
-  end;
+           'the time shifts.'],upper(mfilename));
 end;
 
-
 if all(a==a(1))
+    
   % Uniform filterbank, use polyphase representation
+  if isempty(L)
+      error('%s: You need to specify L.',upper(mfilename));
+  end;
+
   a=a(1);
   
-  G=zeros(L,M,assert_classname(g{1}));
-  for ii=1:M
-    G(:,ii)=fft(fir2long(g{ii},L));
+  % G1 is done this way just so that we can determine the data type.
+  G1=comp_transferfunction(g{1},L);
+  thisclass=assert_classname(G1);
+  G=zeros(L,M,thisclass);
+  G(:,1)=G1;
+  for ii=2:M
+    G(:,ii)=comp_transferfunction(g{ii},L);
   end;
   
   N=L/a;
   
-  gd=zeros(N,M,assert_classname(g{1}));
+  gd=zeros(N,M,thisclass);
   
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;
@@ -67,11 +72,22 @@ if all(a==a(1))
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=cast(gd(:,m),assert_classname(g{1}));
+    gdout{m}=cast(gd(:,m),thisclass);
   end;
   
 else
-  
-  error('Not implemented yet.');
-  
+    
+    F=filterbankframediag(g,a,L);
+    
+    gdout=cell(1,M);
+    for m=1:M
+        thisgd=struct();
+        thisgd.H=comp_transferfunction(g{m},L)./F;
+        thisgd.foff=@(L) 0;
+        thisgd.realonly=0;
+        thisgd.delay=0;
+        
+        gdout{m}=thisgd;
+    end;
+    
 end;

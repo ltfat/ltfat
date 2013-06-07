@@ -112,10 +112,15 @@ function [g,info]=firwin(name,M,varargin);
 %   `firwin` understands the following flags at the end of the list of input
 %   parameters:
 %
-%     'wp'         Output is whole point even. This is the default.
+%     'shift',s    Shift the window by $s$ samples. The value can be a
+%                  fractional number.
+%
+%     'wp'         Output is whole point even. This is the default. It
+%                  corresponds to a shift of $s=0$.
 %
 %     'hp'         Output is half point even, as most Matlab filter
-%                  routines.
+%                  routines. This corresponds to a shift of $s=-.5$
+%                   
 %
 %     'taper',t    Extend the window by a flat section in the middle. The
 %                  argument t is the ratio of the rising and falling
@@ -175,18 +180,19 @@ name=lower(name);
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
 definput.importdefaults={'null'};
-definput.flags.centering={'wp','hp'};
-%definput.flags.delay={'nodelay','delay','causal'};
+definput.flags.centering={'wp','hp','shift'};
+definput.keyvals.shift=0;
 
 definput.keyvals.taper=1;
-%definput.keyvals.delay=0;
 
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 if flags.do_wp
-  cent=0;
-else
-  cent=0.5;
+  kv.shift=0;
+end;
+
+if flags.do_hp
+  kv.shift=0.5;
 end;
 
 if M==0
@@ -197,8 +203,8 @@ end;
 if numel(M)==1
     
     % Deal with tapering
-    if keyvals.taper<1
-        if keyvals.taper==0
+    if kv.taper<1
+        if kv.taper==0
             % Window is only tapering, do this and bail out, because subsequent
             % code may fail.
             g=ones(M,1);
@@ -207,19 +213,19 @@ if numel(M)==1
         
         % Modify M to fit with tapering
         Morig=M;
-        M=round(M*keyvals.taper);
+        M=round(M*kv.taper);
         Mtaper=Morig-M;
         
         p1=round(Mtaper/2);
         p2=Mtaper-p1;
         
         % Switch centering if necessary
-        if cent==0 && p1~=p2
-            cent=.5;
+        if flags.do_wp && p1~=p2
+            kv.shift=.5;
         end;
         
-        if cent~=0 && p1~=p2
-            cent=1;
+        if flags.do_hp && p1~=p2
+            kv.shift=1;
         end;
         
     end;
@@ -232,7 +238,7 @@ if numel(M)==1
         x = [0:1/M:.5-.5/M,-.5+.5/M:1/M:-1/M]';
     end
     
-    x = x+cent/M;
+    x = x+kv.shift/M;
     
 else
     % Use sampling vector specified by the user
@@ -325,7 +331,7 @@ end;
 % Force the window to 0 outside (-.5,.5)
 g = g.*(abs(x) < .5);    
 
-if numel(M) == 1 && keyvals.taper<1
+if numel(M) == 1 && kv.taper<1
 
     % Perform the actual tapering.
     g=[ones(p1,1);g;ones(p2,1)];  

@@ -2,7 +2,7 @@ function [g,info] = comp_fourierwindow(g,L,callfun);
 %COMP_FOURIERWINDOW  Compute the window from numeric, text or cell array.
 %   Usage: [g,info] = comp_fourierwindow(g,a,M,L,wilson,callfun);
 %
-%   [g,info]=COMP_FOURIERWINDOW(g,L,callfun) will compute the window
+%   `[g,info]=comp_fourierwindow(g,L,callfun)` will compute the window
 %   from a text description or a cell array containing additional
 %   parameters.
 %
@@ -14,7 +14,6 @@ function [g,info] = comp_fourierwindow(g,L,callfun);
   
 % Default values.
 info.gauss=0;
-info.wasrow=0;
 info.isfir=0;
 
 % Manually get the list of window names
@@ -69,19 +68,40 @@ if isnumeric(g)
     else
       % g was a row vector.
       g=g(:);
-      info.wasrow=1;
     end;
   end;
+  g_time=g;
+  g=struct();
+  g.h=fftshift(g_time);
+  info.gl=numel(g_time);
+  g.offset=-floor(info.gl/2);  
+  g.centre=0;
+  g.realonly=0;
+  info.wasreal=isreal(g.h);
+else
+
+    if isstruct(g)
+        if isfield(g,'h')
+            info.wasreal=isreal(g.h);
+            info.gl=length(g.h);
+            info.isfir=1;
+        else
+            info.wasreal=g.realonly;
+            info.gl=[];        
+        end;    
+    else
+        % Information to be determined post creation.
+        info.wasreal = isreal(g);
+        info.gl      = length(g);
+        
+        if (~isempty(L) && (info.gl<L))
+            info.isfir=1;
+        end;
+            
+    end;
+    
 end;
-
-% Information to be determined post creation.
-info.wasreal = isreal(g);
-info.gl      = length(g);
-
-if (~isempty(L) && (info.gl<L))
-  info.isfir=1;
-end;
-
+    
 function complain_L(L,callfun)
   
   if isempty(L)

@@ -12,15 +12,14 @@
 %    MODCENT        -  Centered modulo operation.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot |fftreal| coefficients.
-%    CONVOLVE       -  Fast, non-periodic convolution.
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.
 %    PEVEN          -  Even part of periodic function.
 %    PODD           -  Odd part of periodic function.
 %    PCONV          -  Periodic convolution.
+%    CONVOLVE       -  Fast, non-periodic convolution.
 %    PXCORR         -  Periodic cross correlation.
-%    PFILT          -  Apply filter with periodic boundary conditions.
 %    ISEVENFUNCTION -  Test if function is even.
 %    MIDDLEPAD      -  Cut or extend even function.
 %
@@ -40,7 +39,13 @@
 %    FIRKAISER      -  FIR Kaiser-Bessel window.
 %    FIR2LONG       -  Extend FIR window to LONG window.
 %    LONG2FIR       -  Cut LONG window to FIR window.
+%
+%  Filtering
+%    FIRFILTER      -  Construct an FIR filter.
+%    BLFILTER       -  Construct a band-limited filter.
+%    PFILT          -  Apply filter with periodic boundary conditions.
 %    MAGRESP        -  Magnitude response plot.
+%    TRANSFERFUNCTION - Computer the transfer function of a filter.
 %
 %  Hermite functions and fractional Fourier transforms
 %    PHERM          -  Periodic Hermite functions.

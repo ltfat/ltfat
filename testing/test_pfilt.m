@@ -1,7 +1,23 @@
 function test_failed=test_pfilt
-Lr =[9,9,10,10,10,12];
-Lgr=[9,4,10, 7,10,12];
-ar =[3,3, 5, 5, 1, 3];
+Lr =[27,100,213];
+
+gr{1}=randn(20,1);
+gr{2}=randn(21,1);
+gr{3}=firfilter('hanning',19);
+gr{4}=firfilter('hanning',20);
+gr{5}=randn(4,1);
+gr{6}=firfilter('hanning',20,'causal');
+gr{7}=firfilter('hanning',20,'delay',13);
+gr{8}=firfilter('hamming',19,.3);
+gr{9}=firfilter('hamming',19,.3,'real');
+gr{10}=blfilter('hanning',19);
+gr{11}=blfilter('hanning',.2);
+gr{12}=blfilter('hanning',.132304);
+gr{13}=blfilter('hanning',.23,'delay',13);
+gr{14}=blfilter('hamming',.23,.3);
+gr{15}=blfilter('hamming',.23,.3,'real');
+
+
 
 test_failed=0;
 
@@ -9,35 +25,38 @@ disp(' ===============  TEST_PFILT ==============');
 
 disp('--- Used subroutines ---');
 
-which comp_pfilt
+for ii=1:numel(gr)
+  g=gr{ii};
 
-for jj=1:length(Lr)
-  L=Lr(jj);
-  Lg=Lgr(jj);
-  a=ar(jj);
-  
-  for W=1:3
-  
-    for rtype=1:2
-      if rtype==1
-        rname='REAL ';	
-        f=tester_rand(L,W);
-        g=tester_rand(Lg,1);
-      else
-        rname='CMPLX';	
-        f=tester_crand(L,W);
-        g=tester_crand(Lg,1);
-      end;
-                 
-      h1=pfilt(f,g,a);
-      h2=ref_pfilt(f,g,a);
+
+  for a=1:3
+
+      for jj=1:length(Lr)
+          L=ceil(Lr(jj)/a)*a;
       
-      res=norm(h1-h2);
-      [test_failed,fail]=ltfatdiditfail(res,test_failed);        
-      s=sprintf('PFILT %3s  L:%3i W:%3i Lg:%3i a:%3i %0.5g %s',rname,L,W,Lg,a,res,fail);
-      disp(s);
-    end;
+          for W=1:3
+              
+              for rtype=1:2
+                  if rtype==1
+                      rname='REAL ';	
+                      f=tester_rand(L,W);
+                  else
+                      rname='CMPLX';	
+                      f=tester_crand(L,W);
+                  end;
+                  
+                  h1=pfilt(f,g,a);
+                  h2=ref_pfilt(f,g,a);
+                  
+                  res=norm(h1-h2);
+                  [test_failed,fail]=ltfatdiditfail(res,test_failed);        
+                  s=sprintf('PFILT %3s  filtno:%3i L:%3i W:%3i a:%3i %0.5g %s',rname,ii,L,W,a,res,fail);
+                  disp(s);
+              end;
+          end;
+      end;
+      
   end;
+  
 end;
-
 

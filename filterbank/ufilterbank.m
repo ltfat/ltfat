@@ -33,6 +33,7 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+definput.import={'pfilt'};
 definput.keyvals.L=[];
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
@@ -46,14 +47,24 @@ end;
 
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
-
 N=L/a;
 
 f=postpad(f,L);
 
-gw=zeros(L,M,assert_classname(f));
-for ii=1:M
-  gw(:,ii)=fir2long(g{ii},L);
+c=zeros(N,M,W,assert_classname(f));
+for m=1:M
+  c(:,m,:)=comp_pfilt(f,g{m},a,info.gl(m)<kv.crossover);
+  %zeros(N(m),W,assert_classname(f,g{1}));
 end;
 
-c=comp_ufilterbank_fft(f,gw,a);
+
+% Old, but more efficient code from before the struct filters
+if 0
+
+    gw=zeros(L,M,assert_classname(f));
+    for ii=1:M
+        gw(:,ii)=fir2long(g{ii},L);
+    end;
+    
+    c=comp_ufilterbank_fft(f,gw,a);
+end;
