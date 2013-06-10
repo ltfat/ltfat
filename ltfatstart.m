@@ -119,18 +119,6 @@ end;
 %  end;
 %end;
 
-% Add entry to the dynamic classpath if JVM is present.
-if ~isempty(which('javaaddpath')) 
-   try
-      javaaddpath([basepath,filesep,'blockproc',filesep,'java',filesep]);
-   catch err
-      warning('%s: JVM support not present.',upper(mfilename));
-   end
-else
-   warning('%s: Java toolbox not present.',upper(mfilename));
-end
-
-
 if printbanner
   s=which('comp_pgauss');
   if isempty(s)

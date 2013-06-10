@@ -34,7 +34,7 @@ doPer = strcmp(ext,'per');
     if(pOutIdxs(jj))
        % Run filterbank and add to the existing subband.
        ctmp = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,size(c{pOutIdxs(jj)},1),skip,ext);
-       c{pOutIdxs(jj)} = 0.5*c{pOutIdxs(jj)}+0.5*ctmp;
+       c{pOutIdxs(jj)} = (1/sqrt(2))*(c{pOutIdxs(jj)}+ctmp);
     else
        % We are at the root.
        f = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,Ls,skip,ext);

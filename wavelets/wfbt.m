@@ -94,7 +94,7 @@ if nargout>1
    info.fname = 'wfbt';
    info.wt = wt;
    info.ext = flags.ext;
-   info.Lc = cellfun(@(cEl) size(c,1),c);
+   info.Lc = cellfun(@(cEl) size(cEl,1),c);
    info.dim = dim;
    info.Ls = Ls;
    info.fOrder = flags.forder;

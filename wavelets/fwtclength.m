@@ -1,5 +1,5 @@
 function [Lc,L]=fwtclength(Ls,h,J,varargin) 
-%FWTCLENGTH FWT subbands lengths from signal
+%FWTCLENGTH FWT subbands lengths from a signal length
 %   Usage: L=fwtclength(Ls,h,J);
 %          L=fwtclength(Ls,h,J,ext,'ext');
 %

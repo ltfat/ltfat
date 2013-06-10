@@ -57,15 +57,16 @@ if(Ls~=L)
 end
 
 %% ----- step 3 : Run computation
-treePath = nodesBForder(wt);
-c = comp_wpfbt(f,wt.nodes(treePath),flags.ext);
+wtPath = nodesBForder(wt);
+rangeLoc = rangeInLocalOutputs(wtPath,wt);
+c = comp_wpfbt(f,wt.nodes(wtPath),rangeLoc,flags.ext);
 
 %% ----- Optional : Fill the info struct. -----
 if nargout>1
    info.fname = 'wpfbt';
    info.wt = wt;
    info.ext = flags.ext;
-   info.Lc = cellfun(@(cEl) size(c,1),c);
+   info.Lc = cellfun(@(cEl) size(cEl,1),c);
    info.Ls = Ls;
    info.fOrder = flags.forder;
    info.isPacked = 0;

@@ -1,4 +1,4 @@
-function c=comp_uwpfbt(f,wtNodes,nodesUps)
+function c=comp_uwpfbt(f,wtNodes,rangeLoc,nodesUps)
 %COMP_UWPFBT Compute Undecimated Wavelet Packet Filterbank Tree
 %   Usage:  c=comp_uwpfbt(f,wtNodes,nodesUps);
 %
@@ -42,11 +42,17 @@ for jj=1:numel(wtNodes)
       comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),skip);
    
    % Bookkeeping
-   cInRunIdxs = [cInRunIdxs(2:end),cOutRunIdx:cOutRunIdx+filtNo-1];
+   outRange = cOutRunIdx:cOutRunIdx+filtNo-1;
+   outRange(rangeLoc{jj}) = [];
+   cInRunIdxs = [cInRunIdxs(2:end),outRange];
+   
    cOutRunIdx = cOutRunIdx + filtNo;
    
    % Prepare input for the next iteration
-   ca = c(:,cInRunIdxs(1),:);
+   if ~isempty(cInRunIdxs)
+      c(:,cInRunIdxs(1),:) = c(:,cInRunIdxs(1),:)/sqrt(2);
+      ca = c(:,cInRunIdxs(1),:);
+   end
 end   
 
 

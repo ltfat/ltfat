@@ -90,6 +90,7 @@ definput.flags.startphase={'zero','rand','int'};
 %   basis coefficients (BCR algorithm)
 
 % Accelerate frame, we will need it repeatedly
+L = numel(x);
 F=frameaccel(F,L);
 L=F.L;
 

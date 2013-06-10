@@ -1,4 +1,4 @@
-function c=comp_wpfbt(f,wtNodes,ext)
+function c=comp_wpfbt(f,wtNodes,rangeLoc,ext)
 %COMP_WPFBT Compute Wavelet Packet Filterbank Tree
 %   Usage:  c=comp_wpfbt(f,wtNodes,ext);
 %
@@ -34,17 +34,25 @@ for jj=1:numel(wtNodes)
       skip = a-1;
    end
    filtNo = numel(hCell);
-
+   
    % Run filterbank
    c(cOutRunIdx:cOutRunIdx + filtNo-1)=...
                                comp_filterbank_td(ca,hCell,a,skip,ext);
    
    % Bookeeping. Store idxs of just computed outputs.
-   cInRunIdxs = [cInRunIdxs(2:end),cOutRunIdx:cOutRunIdx+filtNo-1];
+   outRange = cOutRunIdx:cOutRunIdx+filtNo-1;
+   % Omit those, which are not decomposed further
+   outRange(rangeLoc{jj}) = [];
+   cInRunIdxs = [cInRunIdxs(2:end),outRange];
+   
    cOutRunIdx = cOutRunIdx + filtNo;
    
    % Prepare input for the next iteration
-   ca = c{cInRunIdxs(1)};
+   % Scaling introduced in order to preserve energy (tight frame)
+   if ~isempty(cInRunIdxs)
+      c{cInRunIdxs(1)} = c{cInRunIdxs(1)}/sqrt(2);
+      ca = c{cInRunIdxs(1)};
+   end
 end   
 
 

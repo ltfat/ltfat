@@ -8,7 +8,7 @@ function [c,info]=uwfbt(f,wt,varargin)
 %         wt  : Wavelet Filterbank tree
 %
 %   Output parameters:
-%         c   : Coefficients stored in a cell-array.
+%         c     : Coefficients stored in $L \times M$ matrix.
 %
 %   `c=uwfbt(f,wt)` returns coefficients *c* obtained by applying wavelet filterbank tree
 %   defined by *wt* to the input data *f*. If *f* is a matrix, the transformation 

@@ -35,7 +35,7 @@ function f=comp_iuwpfbt(c,wtNodes,nodesUps,pOutIdxs,chOutIdxs)
     
     if(pOutIdxs(jj))
        % Add to the existing subband
-       c(:,pOutIdxs(jj),:) = 0.5*c(:,pOutIdxs(jj),:)+0.5*reshape(ctmp,size(ctmp,1),1,size(ctmp,2));
+       c(:,pOutIdxs(jj),:) = (1/sqrt(2))*(c(:,pOutIdxs(jj),:)+reshape(ctmp,size(ctmp,1),1,size(ctmp,2)));
     else
        % We are at the root.
        f = ctmp;

@@ -21,8 +21,9 @@ filtNo = length(g);
 gDel = cellfun(@(gEl) gEl.d,g(:));
 %Change format to a matrix
 gMat = cell2mat(cellfun(@(gEl) gEl.h(:),g(:)','UniformOutput',0));
-%Divide each column (filter) by a
-gMat = bsxfun(@rdivide,gMat,sqrt(a(:)'));
+%Scale all filters
+%gMat = bsxfun(@times,gMat,sqrt(1/(J+1)));
+gMat = bsxfun(@times,gMat,sqrt(1./(a(:)')));
 
 % Read top-level appr. coefficients.
 ca = squeeze(c(:,1,:));

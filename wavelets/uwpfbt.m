@@ -48,7 +48,8 @@ end
 %% ----- step 3 : Run computation
 wtPath = nodesBForder(wt);
 nodesUps = nodeFiltUps(wtPath,wt);
-c = comp_uwpfbt(f,wt.nodes(wtPath),nodesUps);
+rangeLoc = rangeInLocalOutputs(wtPath,wt);
+c = comp_uwpfbt(f,wt.nodes(wtPath),rangeLoc,nodesUps);
 
 %% ----- Optional : Fill the info struct. -----
 if nargout>1
