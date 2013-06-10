@@ -117,10 +117,22 @@ info.M=numel(g);
 
 info.gl=zeros(info.M,1);
 
+info.ispainless=1;
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
-    %info_win.gl
-    %ingo.gl(m)=info_win.gl;
+    
+    if isfield(g{m},'H') 
+        if ~isnumeric(g{m}.H)
+            g{m}.H=g{m}.H(L);
+            g{m}.foff=g{m}.foff(L);
+        end;
+        if numel(g{m}.H)>L/a(m)
+            info.ispainless=0;
+        end;
+    else
+        info.ispainless=0;
+    end;
+
 end;
 
 info.longestfilter=max(info.gl);

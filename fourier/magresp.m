@@ -115,26 +115,7 @@ if (isstruct(g)) && isfield(g,'fs') && (~isempty(g.fs)) && (isempty(fs))
     fs=g.fs;
 end;
 
-if 0
-    if isstruct(g)
-        if isfield(g,'h')
-            g=circshift(postpad(g.h,kv.L),g.offset);
-        else
-            G=circshift(postpad(g.H(kv.L),kv.L),g.foff(kv.L));
-            if g.realonly
-                g=ifft(G);
-                g=(g+conj(g))/2;
-            else
-                g=ifft(G);
-            end;
-        end;
-    else
-        g=fir2long(g,kv.L);
-    end;
-else
-    g=pfilt([1;zeros(kv.L-1,1)],g);
-end;
-
+g=pfilt([1;zeros(kv.L-1,1)],g);
 
 g=normalize(g,flags.norm);
 if do_real

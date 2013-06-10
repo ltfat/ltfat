@@ -53,12 +53,9 @@ definput.keyvals.a=1;
 definput.keyvals.dim=[];
 [flags,kv,a,dim]=ltfatarghelper({'a','dim'},definput,varargin);
 
-L=[];
+[f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
 
 [g,info] = comp_fourierwindow(g,L,upper(mfilename));
-
-[f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,L,dim,upper(mfilename));
-
 
 h=comp_pfilt(f,g,a,info.gl<kv.crossover);
 

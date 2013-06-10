@@ -81,6 +81,24 @@ if all(a==a(1))
   
 else
 
-  error('Not implemented yet.');
-  
+    if info.ispainless
+        F=filterbankresponse(g,a,L,'real');
+        
+        gdout=cell(1,M);
+        for m=1:M
+            thisgd=struct();
+            thisgd.H=comp_transferfunction(g{m},L)./F;
+            thisgd.foff=0;
+            thisgd.realonly=0;
+            thisgd.delay=0;
+            
+            gdout{m}=thisgd;
+        end;
+    else
+        error(['%s: The canonical dual frame of this system is not a ' ...
+               'filterbank. You must call an iterative ' ...
+               'method to perform the desired inverstion. Please see ' ...
+               'FRANAITER or FRSYNITER.'],upper(mfilename));                
+        
+    end;  
 end;

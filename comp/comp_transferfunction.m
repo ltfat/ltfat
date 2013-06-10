@@ -16,9 +16,10 @@ if isfield(g,'h')
 else
     if ~isnumeric(g.H)
         g.H=g.H(L);
+        g.foff=g.foff(L);
     end;
-
-    H=circshift(postpad(g.H,L),g.foff(L)).*exp(-2*pi*1i*round(g.delay)*l);
+    
+    H=circshift(postpad(g.H,L),g.foff).*exp(-2*pi*1i*round(g.delay)*l);
     
     if g.realonly
         H=(H+involute(H))/2;

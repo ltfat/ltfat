@@ -30,7 +30,7 @@ if ischar(g)
     info.gauss=1;
     info.tfr=1;
    case {'psech','sech'}
-    complain_L(L,callfun)
+    complain_L(L,callfun);
     g=psech(L,1);
     info.tfr=1;
    otherwise
@@ -87,8 +87,15 @@ else
             info.isfir=1;
         else
             info.wasreal=g.realonly;
-            info.gl=[];        
-        end;    
+            info.gl=[];
+            
+            if ~isempty(L)
+                if ~isnumeric(g.H)
+                    g.H=g.H(L);
+                    g.foff=g.foff(L);
+                end;
+            end;
+        end;
     else
         % Information to be determined post creation.
         info.wasreal = isreal(g);

@@ -22,9 +22,6 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-%definput.keyvals.L=[];
-%[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
-
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
@@ -76,18 +73,27 @@ if all(a==a(1))
   end;
   
 else
-    
-    F=filterbankframediag(g,a,L);
-    
-    gdout=cell(1,M);
-    for m=1:M
-        thisgd=struct();
-        thisgd.H=comp_transferfunction(g{m},L)./F;
-        thisgd.foff=@(L) 0;
-        thisgd.realonly=0;
-        thisgd.delay=0;
+
+    if info.ispainless
+        F=filterbankresponse(g,a,L);
         
-        gdout{m}=thisgd;
+        gdout=cell(1,M);
+        for m=1:M
+            thisgd=struct();
+            thisgd.H=comp_transferfunction(g{m},L)./F;
+            thisgd.foff=0;
+            thisgd.realonly=0;
+            thisgd.delay=0;
+            
+            gdout{m}=thisgd;
+        end;
+        
+    else
+        error(['%s: The canonical dual frame of this system is not a ' ...
+               'filterbank. You must call an iterative ' ...
+               'method to perform the desired inverstion. Please see ' ...
+               'FRANAITER or FRSYNITER.'],upper(mfilename));        
+
     end;
     
 end;

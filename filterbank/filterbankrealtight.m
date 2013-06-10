@@ -75,7 +75,28 @@ if all(a==a(1))
   end;
   
 else
+        
+    if info.ispainless
+                
+        Fsqrt=sqrt(filterbankresponse(g,a,L,'real'));
+        
+        gdout=cell(1,M);
+        for m=1:M
+            thisgt=struct();
+            thisgt.H=comp_transferfunction(g{m},L)./Fsqrt;
+            thisgt.foff=0;
+            thisgt.realonly=0;
+            thisgt.delay=0;
+            
+            gtout{m}=thisgt;
+        end;
+        
+    else
+        error(['%s: The canonical dual frame of this system is not a ' ...
+               'filterbank. You must call an iterative ' ...
+               'method to perform the desired inverstion. Please see ' ...
+               'FRANAITER or FRSYNITER.'],upper(mfilename));        
 
-  error('Not implemented yet.');
+    end;
   
 end;

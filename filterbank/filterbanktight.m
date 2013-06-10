@@ -1,4 +1,4 @@
-function gtout=filterbanktight(g,a,varargin);
+function gtout=filterbanktight(g,a,L);
 %FILTERBANKTIGHT  Tight filters
 %   Usage:  gt=filterbanktight(g,a);
 %
@@ -18,13 +18,12 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a);
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
 
-definput.keyvals.L=[];
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
-
-if isempty(L)
-  L=ceil(longestfilter/lcm_a)*lcm_a;
+if (~isempty(L)) && (L~=filterbanklength(L,a))
+    error(['%s: Specified length L is incompatible with the length of ' ...
+           'the time shifts.'],upper(mfilename));
 end;
 
 [g,info]=filterbankwin(g,a,L,'normal');
@@ -74,7 +73,26 @@ if all(a==a(1))
   end;
   
 else
-
-  error('Not implemented yet.');  
+    
+    if info.ispainless
+        Fsqrt=sqrt(filterbankresponse(g,a,L));
+        
+        gdout=cell(1,M);
+        for m=1:M
+            thisgt=struct();
+            thisgt.H=comp_transferfunction(g{m},L)./Fsqrt;
+            thisgt.foff=0;
+            thisgt.realonly=0;
+            thisgt.delay=0;
+            
+            gtout{m}=thisgt;
+        end;
+        
+    else
+        error(['%s: The canonical dual frame of this system is not a ' ...
+               'filterbank. You must call an iterative ' ...
+               'method to perform the desired inverstion. Please see ' ...
+               'FRANAITER or FRSYNITER.'],upper(mfilename));                
+    end;
   
 end;

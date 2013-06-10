@@ -3,15 +3,7 @@ function c=ref_ufilterbank(f,g,a);
 %   Usage:  c=ref_ufilterbank(f,g,a);
 %
   
-if nargin<3
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-[a,M,longestfilter,lcm_a]=assert_filterbankinput(g,a,1);
-
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UFILTERBANK',0);
-
-L=ceil(max(Ls,longestfilter)/lcm_a)*lcm_a;
+L=size(f,1);
 
 N=L/a;
 

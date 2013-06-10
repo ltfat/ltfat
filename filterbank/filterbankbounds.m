@@ -61,8 +61,19 @@ if all(a==a(1))
 
 else
 
-  error('Not implemented yet.');
-  
+    if info.ispainless
+        % Compute the diagonal of the frame operator.
+        f=filterbankresponse(g,a,L);
+        
+        AF=min(f);
+        BF=max(f);
+    else
+        error(['%s: There is no fast method to find the frame bounds of ' ...
+               'this filterbank as it is neither uniform nor painless. ' ...
+               'Please see FRAMEBOUNDS for an iterative method that can ' ...
+               'solve the problem.'],upper(mfilename));                
+
+    end;    
 end;
   
 if nargout<2

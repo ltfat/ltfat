@@ -35,21 +35,9 @@ function [AF,BF]=nsgabframebounds(g,a,Ls)
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions
-f=zeros(Ls,1); % Diagonal of the frame operator
 
-% Compute the diagonal of the frame operator:
-% sum up in time (overlap-add) all the contributions of the windows as if 
-% we where using windows in g as analysis and synthesis windows
-for ii=1:N
-  shift=floor(length(g{ii})/2);
-  temp=abs(circshift(g{ii},shift)).^2*length(g{ii});
-  tempind=mod((1:length(g{ii}))+timepos(ii)-shift-1,Ls)+1;
-  f(tempind)=f(tempind)+temp;
-end
-
-% Initialize the result with g
-gd=g;
-
+% Compute the diagonal of the frame operator.
+f=nsgabframediag(g,a,M)M
 
 AF=min(f);
 BF=max(f);
