@@ -65,7 +65,7 @@ definput.keyvals.dynrange=[];
 definput.keyvals.opts={};
 
 definput.keyvals.N=2*(length(coef)-1);
-[flags,kv,fs,]=ltfatarghelper({'fs','dynrange'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 N=kv.N;
 

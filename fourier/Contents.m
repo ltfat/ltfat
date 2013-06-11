@@ -2,14 +2,18 @@
 %
 %  Peter L. Søndergaard, 2008 - 2013.
 %
+%  Support routines
+%    FFTINDEX       -  Index of positive and negative frequencies.
+%    MODCENT        -  Centered modulo operation.
+%    NEXT23         -  Next number with only 2,3 factors
+%    NEXT235        -  Next number with only 2,3,5 factors
+%    NEXTFASTFFT    -  Next efficient FFT size (2,3,5,7).
+%  
 %  Basic Fourier analysis
 %    DFT            -  Unitary discrete Fourier transform.
 %    IDFT           -  Inverse of |dft|.
 %    FFTREAL        -  FFT for real valued signals.
 %    IFFTREAL       -  Inverse of |fftreal|.
-%    FFTINDEX       -  Index of positive and negative frequencies.
-%    NEXTFASTFFT    -  Next efficient FFT size.
-%    MODCENT        -  Centered modulo operation.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot |fftreal| coefficients.
 %

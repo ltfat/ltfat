@@ -35,8 +35,7 @@ function gout=firfilter(name,M,varargin)
 %
 %   It is possible to normalize the impulse response of the filter by
 %   passing any of the flags from the |normalize| function. The default
-%   normalization is `'area'`, ensuring that the filter has 0dB
-%   attenuation at its centre frequency.
+%   normalization is `'energy'`.
 %
 %   The filter can be used in the |pfilt| routine to filter a signal, or
 %   in can be placed in a cell-array for use with |filterbank| or |ufilterbank|.
@@ -47,7 +46,7 @@ function gout=firfilter(name,M,varargin)
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
-definput.importdefaults={'area'};
+definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.centre=0;
 definput.keyvals.fs=[];

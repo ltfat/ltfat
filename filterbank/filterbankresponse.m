@@ -18,7 +18,7 @@ function gf=filterbankresponse(g,a,L,varargin)
 %   See also: filterbank, filterbankbounds
   
 definput.flags.ctype={'complex','real'};
-definput.flags.plottype={'plot','noplot'};
+definput.flags.plottype={'noplot','plot'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 
@@ -39,5 +39,9 @@ end;
 gf=gf/L;
 
 if flags.do_plot
-  plotfft(gf,'lin');
+    if flags.do_real
+        plotfftreal(gf(1:floor(L/2)+1),'lin');
+    else
+        plotfft(gf,'lin');
+    end;
 end;

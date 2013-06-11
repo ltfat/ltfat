@@ -33,17 +33,52 @@ function gout=blfilter(name,fsupp,varargin)
 %
 %   It is possible to normalize the transfer function of the filter by
 %   passing any of the flags from the |normalize| function. The default
-%   normalization is `'peak'`, ensuring that the filter has 0dB
-%   attenuation at its centre frequency.
+%   normalization is `'energy'`.
 %
 %   The filter can be used in the |pfilt| routine to filter a signal, or
-%   in can be placed in a cell-array for use with |filterbank| or |ufilterbank|.
+%   in can be placed in a cell-array for use with |filterbank| or
+%   |ufilterbank|.
+%
+%   Output format:
+%   --------------
+%
+%   The output from `blfilter` is a structure. This type of structure can
+%   be used to describe any bandlimited filter defined in terms of its
+%   transfer function. The structure contains the following fields:
+%
+%     `H`
+%        This is an anonymous function taking the transform length *L* as
+%        input and producing the bandlimited transfer function in the form of a
+%        vector.
+%
+%     `foff`
+%        This is an anonymous function taking the transform length *L* as
+%        input and procing the frequency offset of *H* as an integer. The
+%        offset is the value of the lowest frequency of *H* measured in
+%        frequency samples. *foff* is used to position the bandlimited
+%        tranfer function stored in *H* correctly when multiplying in the
+%        frequency domain.
+%
+%     `delay`
+%        This is the desired delay of the filter measured in samples.
+%
+%     `realonly`
+%        This is an integer with value *1* if the filter defined a
+%        real-valued filter. In this case, the bandlimited transfer
+%        function *H* will be mirrored from the positive frequencies to
+%        the negative frequencies. If the filter is a natural lowpass
+%        filter correctly centered around *0*, `realonly` does not need
+%        to be *1*.
+%
+%     `fs`
+%        The intended sampling frequency. This is an optional parameter
+%        that is **only** used for plotting and visualization.
 %
 %   See also: blfilter, firwin, pfilt, filterbank
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
-definput.importdefaults={'peak'};
+definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.centre=0;
 definput.keyvals.fs=[];
