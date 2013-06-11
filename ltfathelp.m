@@ -19,8 +19,8 @@ function op1=ltfathelp(varargin)
 
 
   
-% Verify that ltfatarghelper is in path
-if ~exist('ltfatarghelper','file')
+% Verify that comp_pgauss is in path
+if ~exist('comp_pgauss','file')
   disp(' ');
   disp('--- LTFAT - The Linear Time Frequency Analysis toolbox. ---');
   disp(' ')
