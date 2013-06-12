@@ -78,7 +78,7 @@ else
         
     if info.ispainless
                 
-        Fsqrt=sqrt(filterbankresponse(g,a,L,'real'));
+        Fsqrt=sqrt(comp_filterbankresponse(g,a,L,1));
         
         gdout=cell(1,M);
         for m=1:M

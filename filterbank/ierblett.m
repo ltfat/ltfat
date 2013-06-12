@@ -27,7 +27,7 @@ function fr = ierblett(c,g,shift,Ls,dual)
 % 
 %   See also:  erblett
 % 
-%   References:  bahoneso13
+%   References:  ltfatnote027
 
 % Author: Nicki Holighaus
 % Date: 10.04.13

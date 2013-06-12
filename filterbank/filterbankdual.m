@@ -75,7 +75,7 @@ if all(a==a(1))
 else
 
     if info.ispainless
-        F=filterbankresponse(g,a,L);
+        F=comp_filterbankresponse(g,a,L,0);
         
         gdout=cell(1,M);
         for m=1:M

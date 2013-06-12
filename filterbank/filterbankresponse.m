@@ -21,22 +21,10 @@ definput.flags.ctype={'complex','real'};
 definput.flags.plottype={'noplot','plot'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
 
-% G1 is done this way just so that we can determine the data type.
-G1=comp_transferfunction(g{1},L);
-gf=abs(G1).^2*(L/a(1));
-
-M=numel(g);
-  
-for m=2:M
-  gf=gf+abs(comp_transferfunction(g{m},L)).^2*(L/a(m));
-end;
-  
-if flags.do_real
-  gf=gf+involute(gf);   
-end;
-
-gf=gf/L;
+gf=comp_filterbankresponse(g,info.a,L,flags.do_real);
 
 if flags.do_plot
     if flags.do_real

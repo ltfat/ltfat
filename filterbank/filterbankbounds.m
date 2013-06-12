@@ -63,7 +63,7 @@ else
 
     if info.ispainless
         % Compute the diagonal of the frame operator.
-        f=filterbankresponse(g,a,L);
+        f=comp_filterbankresponse(g,a,L,0);
         
         AF=min(f);
         BF=max(f);

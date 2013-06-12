@@ -114,10 +114,10 @@ if ischar(g{1})
 end;
 
 info.M=numel(g);
-
 info.gl=zeros(info.M,1);
-
 info.ispainless=1;
+[info.a,~]=scalardistribute(a(:),ones(info.M,1));
+
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
     
@@ -126,7 +126,7 @@ for m=1:info.M
             g{m}.H=g{m}.H(L);
             g{m}.foff=g{m}.foff(L);
         end;
-        if numel(g{m}.H)>L/a(m)
+        if numel(g{m}.H)>L/info.a(m)
             info.ispainless=0;
         end;
     else

@@ -61,7 +61,7 @@ function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %
 %   See also:  ierblett, firwin
 % 
-%   References:  bahoneso13
+%   References:  ltfatnote027
 
 % Authors: Thibaud Necciari, Nicki Holighaus
 % Date: 10.04.13

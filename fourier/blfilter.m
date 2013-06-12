@@ -31,6 +31,9 @@ function gout=blfilter(name,fsupp,varargin)
 %
 %     'delay',d   Set the delay of the filter. Default value is zero.
 %
+%     'scal',s    Scale the filter by the constant *s*. This can be
+%                 useful to equalize channels in a filterbank.
+%
 %   It is possible to normalize the transfer function of the filter by
 %   passing any of the flags from the |normalize| function. The default
 %   normalization is `'energy'`.
@@ -82,11 +85,12 @@ definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.centre=0;
 definput.keyvals.fs=[];
+definput.keyvals.scal=1;
 definput.flags.real={'complex','real'};
 
 [flags,kv]=ltfatarghelper({'centre'},definput,varargin);
 
-[fsupp,kv.centre,kv.delay]=scalardistribute(fsupp,kv.centre,kv.delay);
+[fsupp,kv.centre,kv.delay,kv.scal]=scalardistribute(fsupp,kv.centre,kv.delay,kv.scal);
 
 if ~isempty(kv.fs)
     fsupp=fsupp/kv.fs*2;
@@ -100,7 +104,7 @@ Nfilt=numel(fsupp);
 gout=cell(1,Nfilt);
 for ii=1:Nfilt
     g=struct();
-    g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)),flags.norm));
+    g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)),flags.norm))*kv.scal(ii);
     g.foff=@(L) round(L/2*kv.centre(ii))-floor(round(L/2*fsupp(ii))/2);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);

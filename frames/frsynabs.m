@@ -43,7 +43,10 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %   `frsynabs` takes the following parameters at the end of the line of input
 %   arguments:
 %
-%     'zero'       Choose a starting phase of zero. This is the default
+%     'input'      Choose the starting phase as the phase of the input
+%                  *s*. This is the default
+%
+%     'zero'       Choose a starting phase of zero.
 %
 %     'rand'       Choose a random starting phase.
 %
@@ -78,7 +81,7 @@ definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.keyvals.alpha=0.99;
 definput.flags.print={'quiet','print'};
-definput.flags.startphase={'zero','rand'};
+definput.flags.startphase={'input','zero','rand'};
 definput.flags.method={'griflim','bfgs','fgriflim'};
 
 [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
@@ -90,13 +93,19 @@ W=size(s,2);
 % Initialize windows to speed up computation
 F=frameaccel(F,L);
 
-if flags.do_zero
-  % Start with a phase of zero.
+
+if flags.do_input
+  % Start with the phase given by the input.
   c=s;
 end;
 
+if flags.do_zero
+  % Start with a phase of zero.
+  c=abs(s);
+end;
+
 if flags.do_rand
-  c=s.*exp(2*pi*i*rand(size(s)));
+  c=abs(s).*exp(2*pi*i*rand(size(s)));
 end;
 
 % For normalization purposes
