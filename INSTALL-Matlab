@@ -15,52 +15,31 @@ compiled and you should not need to do anything else.
 
 The Mex-files links to certain libraries, most importantly to the
 LTFAT C-library. In order to compile the Mex-interfaces, you must
-first compile the C library.  On Unix and MacOS, the "ltfatmex" will
+first compile the C library.  The "ltfatmex" will
 automatically build the library if you have installed the correct
 libraries.
-
-Currently, lcc is the only supported compiler on Windows XP (32 bit),
-if you use some variant of Microsoft Visual Studio, the compilation
-will most likely fail.
 
 --------- Compiling on MacOS -------------------------------------------
 
 On MacOS, you must have the gcc compiler and the FFTW libraries
 installed. Then just type "ltfatmex" and everything should work.
 
---------- Compiling libltfat on Microsoft windows, 32 bit --------------
+--------- Compiling on Microsoft Windows -------------------------------
 
-If you wish to compile libltfat youself, do the following:
+On Windows, you will need to do the following: 
 
-- Download and install Mingw and MSYS from http://www.mingw.org. This
-  will give you a minimal GNU environment just large enough to compile the library.
+- Download and unpack binaries of the FFTW library from
+  http://www.fftw.org/install/windows.html. Copy all *.dll files to the 
+  ltfat/mex directory.
+  
+- Download and install TDM-GCC compiler suite from
+  http://tdm-gcc.tdragon.net/download. Ensure that the [MinGW]/bin 
+  directory is in the system PATH, where [MinGW] stands for instalation direcory.
+  
+- Run "ltfatmex".
 
-- Open an MSYS shell. All the following commands should be typed into the MSYS shell.
-
-- Make sure that 'gcc' is in the path. Type 'which gcc'. You should
-  get a message that gcc has been found and where it is. If it is not
-  found, you will need to manually add it to the path. Execute a
-  command similarly to the following:
-
-     export PATH=$PATH:/c/MinGW/bin/
-
-- Change to the ltfat/src/ directory (use the 'cd' command).
-
-- Edit the 'Makefile' using your favorite editor. On of the first
-  lines of this file is a path to the 'lcclib.exe' program shipped
-  with Matlab. Make sure this path is correct.
-
-- Type 'make winnomem' to compile the library.
-
-The mex interfaces must be linked to some external libraries, some of
-which are shipped with Matlab. However, if you have not downloaded the
-binary release, you need to download the binary release of FFTW from
-http://www.fftw.org/install/windows.html, and place the two .dll files
-in ltfat/mex.
-
-To finally compile the mex-interfaces, you have to type the 'ltfatmex'
-command TWICE in the Matlab command window. This is because the system
-path needs to be updated, which happens in between the two calls.
+Both 32bit and 64bit Windows are supported. Please use appropriate versions
+of FFTW and TDM-GCC.
 
 --------- Compiling libltfat on Linux ------------------------------------
 
