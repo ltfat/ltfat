@@ -40,7 +40,7 @@ switch(F.type)
       rred = (a^J-1)/(a-1)*(m-a);
       Sbolen = rred + mod(Sb,a^J);
       nextSbolen = rred + mod(nextSb,a^J);
-      fext = [loadOverlap(Sbolen);f];
+      fext = [loadOverlap(Sbolen,size(f,2));f];
       c = block_fwt(fext,w,J);
       storeOverlap(fext,nextSbolen);
    otherwise
@@ -49,23 +49,23 @@ switch(F.type)
       % Slicing window
       g = fftshift(firwin('hann',2*Lb));
       % Append the previous block
-      fext = [loadOverlap(Lb);f];
+      fext = [loadOverlap(Lb,size(f,2));f];
       % Save the current block
       storeOverlap(fext,Lb);
       % Multiply by the slicing window (all channels)
       fwin = bsxfun(@times,g,fext);
       % Apply transform
-      c = frana(F,fwin);
+      c = F.frana(fwin);
 end
 
-function overlap = loadOverlap(L)
+function overlap = loadOverlap(L,chan)
 %LOADOVERLAP Loads overlap
 %
 %
 overlap = block_interface('getAnaOverlap');
 % Supply zeros if it is empty
 if isempty(overlap)
-   overlap = zeros(L,size(f,2),block_interface('getClassId'));
+   overlap = zeros(L,chan,block_interface('getClassId'));
 end
 Lo = size(overlap,1);
 if nargin<1

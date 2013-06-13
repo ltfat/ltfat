@@ -8,6 +8,7 @@ if nargin<4
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+
 %g = fwtinit(g,'syn');
 
 %Lc = fwtclength(Lb,g,J,'per');
@@ -24,7 +25,6 @@ levelLen = Lb;
      levelLen = ceil(levelLen/g.a(1));
   end
 Lc(1)=levelLen; 
-
 c = mat2cell(c,Lc);
 
 m = numel(g.g{1}.h);

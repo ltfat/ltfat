@@ -113,11 +113,12 @@ public class ContFrame {
 
     private JFrame initFrame() {
         final JFrame buildJF = new JFrame("LTFAT Control Panel");
-        buildJF.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        buildJF.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         buildJF.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 flag = 0;
+                close();
             }
         });
 

@@ -371,6 +371,7 @@ switch(ftype)
     
   case {'fwt'}
     F.J=varargin{2};
+    % fwtinit twice to set the cahce properly
     F.g=fwtinit(fwtinit(varargin{1}));
     F.red= 1/(F.g.a(1)^(F.J)) + sum(1./(F.g.a(1).^(0:F.J-1))*sum(1./F.g.a(2:end)));
     F.frana=@(insig) fwt(insig,F.g,F.J);

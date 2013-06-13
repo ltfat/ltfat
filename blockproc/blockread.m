@@ -21,30 +21,32 @@ persistent readTime;
 %global delayLog2;
 
 
+if block_interface('getDispLoad') 
+   if block_interface('getPageNo')>0
+      procTime = toc;
+      res = 2;
 
-if block_interface('getPageNo')>0
-   procTime = toc;
-   res = 2;
-fs= playrec('getSampleRate');
-%delayLog = [delayLog, procTime];
-load = floor(100*(procTime+readTime)/(L/fs));
-msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
-droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
-fprintf([clearStr,msg,droppedStr]);
-clearStr = repmat(sprintf('\b'), 1, length(msg)+length(droppedStr));
-block_interface('setSkipped',playrec('getSkippedSampleCount'));
-if playrec('getSkippedSampleCount') > block_interface('getSkipped')
+
+   fs= playrec('getSampleRate');
+   %delayLog = [delayLog, procTime];
+   load = floor(100*(procTime+readTime)/(L/fs));
+   msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
+   droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
+   fprintf([clearStr,msg,droppedStr]);
+   clearStr = repmat(sprintf('\b'), 1, length(msg)+length(droppedStr));
    block_interface('setSkipped',playrec('getSkippedSampleCount'));
-end
-   
-else
-   clearStr = '';
-   %delayLog = [];
-   %delayLog2 = [0];
-   procTime = 0;
-end
-tic;
+   if playrec('getSkippedSampleCount') > block_interface('getSkipped')
+      block_interface('setSkipped',playrec('getSkippedSampleCount'));
+   end
 
+   else
+      clearStr = '';
+      %delayLog = [];
+      %delayLog2 = [0];
+      procTime = 0;
+   end
+   tic;
+end
 
 valid = 1;
 source = block_interface('getSource');
@@ -177,6 +179,7 @@ if pageNo<=1
    playrec('resetSkippedSampleCount');
 end
 
-
-tic;
+if block_interface('getDispLoad')
+   tic;
+end
 

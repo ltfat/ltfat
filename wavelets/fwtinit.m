@@ -62,7 +62,7 @@ function [w] = fwtinit(wdef,varargin)
 %   taken into account.
 %   
 %   orthogonality/biorthogonality/frame
-%   number of vanishing moments psi
+%   number of vanishing moments of psi
 %   symmetry/linear phase
 %
 %   support of psi

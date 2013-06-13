@@ -55,7 +55,6 @@ static inline void fwd_convsub_td(const float *in, const octave_idx_type inLen,
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
-	 //DEBUGINFO;
 	 // Input data
 	 MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
 	 // Cell aray containing impulse responses
@@ -100,6 +99,13 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
            outLen[m] = (octave_idx_type) ceil( L/a(m) );
         }
      }
+	 else if(ext=="valid")
+	 {
+	    for(octave_idx_type m = 0; m < M; m++)
+        {
+           outLen[m] = (octave_idx_type) ceil( (L-(filtLen[m]-1))/a(m) );
+        }
+	 }
      else
      {
         for(octave_idx_type m = 0; m < M; m++)

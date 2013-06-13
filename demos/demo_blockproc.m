@@ -25,10 +25,11 @@ function demo_blockproc(source,varargin)
 % run priority.
 
 if nargin<1
-   error(['%s: To run the demo, use one of the following:\n',...
+   fprintf(['%s: To run the demo, use one of the following:\n',...
           'demo_blockproc(''gspi.wav'') to play gspi.wav (any wav file will do).\n',...
-          'demo_blockproc(''playrec'') to record from a mic and play processed simultaneously.']...
+          'demo_blockproc(''playrec'') to record from a mic and play processed simultaneously.\n']...
           ,upper(mfilename));
+    return;
 end
 
 % Control pannel (Java object)
@@ -36,8 +37,10 @@ end
 % execution.
 p = blockpanel({
                {'GdB','Gain',-20,20,0,21},...
-               {'Thr','Treshold',0,0.1,0,1000},
+               {'Thr','Treshold',0,0.1,0,1000}
                });
+            
+%fobj = blockfigure();
     
 % Buffer length
 % Larger the number the higher the processing delay. 1024 with fs=44100Hz
@@ -50,28 +53,35 @@ bufLen = 1024;
 fs = block(source,'nbuf',1,'single',varargin{:});
 
 % Choose a frame and contruct the dual
-%F = frame('dgtreal','gauss',10,100);
-F = frame('fwt','db8',1);
-Fdual = framedual(F);
+F = frameaccel(frame('dgtreal','hann',32,100),2*bufLen);
+Fdual = frameaccel(framedual(F),2*bufLen);
+
+%F = frame('fwt','sym10',10);
+%Fdual = frame('fwt','sym10',10);
+
 
 flag = 1;
 %Loop until end of the stream (flag) and until panel is opened
 while flag && p.flag
+   
   % Obtain parameters from the control panel
   gain = 10^(p.getParam('GdB')/20); % dB -> val
   thres = p.getParam('Thr');
+  %bufLen = floor(p.getParam('bufLen'));
+
   % Read block of length bufLen
   [f,flag] = blockread(bufLen);
-  % Apply gain
-  f = f*gain;
   % Apply analysis frame
-  c = blockana(F, f); 
+  c = blockana(F, f*gain); 
+  % Plot
+  % blockplot(fobj,F,c);
   % Apply thresholding
   c = thresh(c,thres,'soft');
   % Apply synthesis frame
-  fhat = real(blocksyn(Fdual, c, bufLen));
+  fhat = real(blocksyn(Fdual, c, size(f,1)));
   % Play the block
   blockplay(fhat);
 end
 % Close the control panel
 p.close();
+%fobj.close();

@@ -31,6 +31,7 @@ Sb = nextSb-Lb;
 
 switch(F.type)
    case 'fwt'
+      % The SegDWT algorithm
       J = F.J;
       w = F.g;
       m = numel(w.g{1}.h);
@@ -41,7 +42,7 @@ switch(F.type)
       rSb = (a^J-1)/(a-1)*(m-a) + mod(Sb,a^J);
       over = r - rSb;
       f = block_ifwt(c,w,J,Lbrec);
-      ol = loadOverlap(r-mod(Sb, a^J));
+      ol = loadOverlap(r-mod(Sb, a^J),size(c,2));
       olLen = size(ol,1);
       f(1:olLen-over,:) = f(1:olLen-over,:) + ol(1+over:end,:);
       f = [ol(1:over,:);f];
@@ -51,11 +52,11 @@ switch(F.type)
       % General processing
       % Equal block length assumtion
       % Reconstruct
-      f = frsyn(F,c);
+      f = F.frsyn(c);
       % Result should not be longer than 2*Lb
       f = f(1:2*Lb,:);
       % Load and add overlap (first half)
-      ol = loadOverlap(Lb);
+      ol = loadOverlap(Lb,size(c,2));
       olLen = size(ol,1);
       f(1:olLen,:) = f(1:olLen,:) + ol;
       % Store overlap (second half)
@@ -64,10 +65,10 @@ switch(F.type)
       fhat = f(1:Lb,:);
 end
 
-function overlap = loadOverlap(L)
+function overlap = loadOverlap(L,chan)
    overlap = block_interface('getSynOverlap');
    if isempty(overlap)
-     overlap = zeros(L,size(c,2));
+     overlap = zeros(L,chan);
    end
    Lo = size(overlap,1);
    if nargin<1

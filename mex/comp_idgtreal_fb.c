@@ -2,9 +2,12 @@
 #define _LTFAT_MEX_FILE
 
 #define ISNARGINEQ 5
+
 #define TYPEDEPARGS 0
 #define SINGLEARGS
 #define COMPLEXARGS
+
+#define MATCHEDARGS 1
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 

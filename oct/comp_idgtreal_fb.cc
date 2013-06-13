@@ -1,5 +1,6 @@
 #define TYPEDEPARGS 0
 #define SINGLEARGS
+#define MATCHEDARGS 1
 #define COMPLEXARGS
 #define OCTFILENAME comp_idgtreal_fb // change to filename
 #define OCTFILEHELP "This function calls the C-library\n\

@@ -94,7 +94,7 @@ elseif(strcmpi(info.fname,'wpfbt'))
    if(size(c{1},2)>1)
       error('%s: Multichannel input not supported.',upper(mfilename));
    end
-   maxSubLen = max(cellfun(@(cEl) size(c,1),c));
+   maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
    aCell = nodeSub(nodesBForder(info.wt),info.wt);
    a = cell2mat(cellfun(@(aEl) aEl(:)',aCell,'UniformOutput',0));
    draw_ticks = 0;

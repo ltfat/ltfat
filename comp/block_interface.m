@@ -24,11 +24,10 @@ persistent recChanList;
 persistent skipCounter;
 
 persistent classid;
-
 persistent toPlayBlock;
-
 persistent anaOverlap;
 persistent synOverlap;
+persistent dispLoad;
 
 % DEFAULTS
 persistent defaultBufLen;
@@ -56,6 +55,7 @@ switch command
       anaOverlap = [];
       synOverlap = [];
       toPlayBlock = [];
+      dispLoad = 1;
 %% SETTERS %%%
    case 'setPos'
       pos = varargin{2};
@@ -77,6 +77,8 @@ switch command
       anaOverlap = varargin{2};
    case 'setSynOverlap'
       synOverlap = varargin{2};
+   case 'setDispLoad'
+      dispLoad = varargin{2};
 %% GETTERS %%%
    case 'getPos'
       varargout{1}=pos;
@@ -108,6 +110,8 @@ switch command
       varargout{1}=anaOverlap;
    case 'getSynOverlap'
       varargout{1}=synOverlap;
+   case 'getDispLoad'
+      varargout{1}=dispLoad;
    case 'getEnqueuedToPlay'
       varargout{1}=toPlayBlock; 
       toPlayBlock = [];

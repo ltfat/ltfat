@@ -26,6 +26,7 @@ function [fs,classid] = block(source,varargin)
 %      `data`          : input data as columns of a matrix for each input 
 %                        channel
 %
+%
 %   `block` accepts the following optional flags and key-value pairs:
 %
 %   Optional key-value pairs:
@@ -34,7 +35,7 @@ function [fs,classid] = block(source,varargin)
 %                        your system, `'devid'` can be used to specify one.
 %                        For the `'playrec'` option the `devId` should be a
 %                        two element vector [playDevid, recDevid]. List
-%                        of the installed devices ant their ids can be 
+%                        of the installed devices and their IDs can be 
 %                        obtained by |blockdevices|.
 %      
 %      `'playch',playch`: If device supports more output channels, `'playch'`
@@ -47,6 +48,11 @@ function [fs,classid] = block(source,varargin)
 %
 %      `'outfile','file.wav'`: Processed sound data is stored in a new wav
 %                              file.
+%
+%   Optional flag groups:
+%
+%      'nobar'         : Suppresses command line load bar. 
+
 
 
 definput.keyvals.devid=[];
@@ -56,13 +62,18 @@ definput.keyvals.playch=[];
 definput.keyvals.recch=[];
 definput.keyvals.outfile=[];
 definput.flags.fmt={'double','single'};
+definput.flags.bar={'bar','nobar'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 playChannels = 0;
 recChannels = 0;
 play = 0;
 record = 0;
-paBufsize = 256;
+% Here we can define priority list of the host APIs.
+% If none of the prefered API devices is presnent, the first one is taken.
+hostAPIpriorityList = {};
+% Force portaudio to use buffer of the following size
+pa_bufLen = -1;
 
 if ~isempty(kv.outfile)
    error('%s: TO DO: Writing to the output wav file is not supported yet.',upper(mfielname));
@@ -136,10 +147,40 @@ if isempty(devs)
 end
 
 block_interface('reset');
+
+prioriryPlayID = -1;
+priorityRecID = -1;
+
 % Get all installed play devices
-playDevIds = arrayfun(@(dEl) dEl.deviceID,devs(arrayfun(@(dEl) dEl.outputChans,devs)>0));
+playDevStructs = devs(arrayfun(@(dEl) dEl.outputChans,devs)>0);
+
+% Search for priority play device
+for ii=1:numel(hostAPIpriorityList)
+   hostAPI = hostAPIpriorityList{ii};
+   priorityHostNo = find(arrayfun(@(dEl) ~isempty(strfind(lower(dEl.hostAPI),lower(hostAPI))),playDevStructs)>0);
+   if ~isempty(priorityHostNo)
+      prioriryPlayID = playDevStructs(priorityHostNo(1)).deviceID;
+      break;
+   end
+end
+
+% Get IDs of all play devices
+playDevIds = arrayfun(@(dEl) dEl.deviceID, playDevStructs);
+
 % Get all installed recording devices
-recDevIds = arrayfun(@(dEl) dEl.deviceID,devs(arrayfun(@(dEl) dEl.inputChans,devs)>0));
+recDevStructs = devs(arrayfun(@(dEl) dEl.inputChans,devs)>0);
+% Search for priority rec device
+for ii=1:numel(hostAPIpriorityList)
+   hostAPI = hostAPIpriorityList{ii};
+   priorityHostNo = find(arrayfun(@(dEl) ~isempty(strfind(lower(dEl.hostAPI),lower(hostAPI))),recDevStructs)>0);
+   if ~isempty(priorityHostNo)
+      priorityRecID = recDevStructs(priorityHostNo(1)).deviceID;
+      break;
+   end
+end
+
+% Get IDs of all rec devices
+recDevIds = arrayfun(@(dEl) dEl.deviceID,recDevStructs);
 
 if play && record
    if ~isempty(kv.devid)
@@ -153,9 +194,18 @@ if play && record
          error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid(2));
       end
    else
-      kv.devid = [playDevIds(1), recDevIds(1)];
+      % Use asio device if present
+      if prioriryPlayID~=-1 && priorityRecID~=-1
+         kv.devid = [prioriryPlayID, priorityRecID];
+      else
+         kv.devid = [playDevIds(1), recDevIds(1)];
+      end
    end
-   playrec('init', kv.fs, kv.devid(1), kv.devid(2), numel(kv.playch),numel(kv.recch),paBufsize);
+   if pa_bufLen~=-1
+      playrec('init', kv.fs, kv.devid(1), kv.devid(2), max(kv.playch),max(kv.recch),pa_bufLen);
+   else
+      playrec('init', kv.fs, kv.devid(1), kv.devid(2));
+   end
    if numel(kv.recch) >1
       error('%s: Using more than one input channel.',upper(mfilename));
    end
@@ -170,10 +220,19 @@ elseif play && ~record
          error('%s: There is no play device with id = %i.',upper(mfilename),kv.devid);
       end
    else
-      % Use the first (hopefully default) device
-      kv.devid = playDevIds(1);
+      % Use asio device if present
+      if prioriryPlayID~=-1
+         kv.devid = prioriryPlayID;
+      else
+         % Use the first (hopefully default) device
+         kv.devid = playDevIds(1);
+      end
    end
-   playrec('init', kv.fs, kv.devid, -1,numel(kv.playch),-1,paBufsize);
+   if pa_bufLen~=-1
+      playrec('init', kv.fs, kv.devid, -1,max(kv.playch),-1,pa_bufLen);
+   else
+      playrec('init', kv.fs, kv.devid, -1);
+   end
    block_interface('setPlayChanList',kv.playch);
    if(playrec('getPlayMaxChannel')<numel(kv.playch))
        error ('%s: Selected device does not support %d output channels.\n',upper(mfilename), max(chanList));
@@ -184,10 +243,19 @@ elseif ~play && record
          error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid);
       end
    else
-      % Use the first (hopefully default) device
-      kv.devid = recDevIds(1);
+      % Use asio device if present
+      if priorityRecID~=-1
+         kv.devid = priorityRecID;
+      else
+         % Use the first (hopefully default) device
+         kv.devid = recDevIds(1);
+      end
    end
-   playrec('init', kv.fs, -1, kv.devid,-1,numel(kv.recch),paBufsize);
+   if pa_bufLen~=-1
+      playrec('init', kv.fs, -1, kv.devid,-1,max(kv.recch),pa_bufLen);
+   else
+      playrec('init', kv.fs, -1, kv.devid);
+   end
    block_interface('setRecChanList',kv.recch);
 else
    error('%s: Play or record should have been set.',upper(mfilename));
@@ -224,6 +292,26 @@ block_interface('setClassId',flags.fmt);
 classid = flags.fmt;
 fs = kv.fs;
 
+if play
+chanString = sprintf('%d,',kv.playch);
+dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(1),devs)));
+fprintf('Play device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
+        dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowOutputLatency),...
+        floor(1000*dev.defaultHighOutputLatency));
+end
+
+if record
+chanString = sprintf('%d,',kv.recch);
+dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(end),devs)));
+fprintf('Rec. device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
+        dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowInputLatency),...
+        floor(1000*dev.defaultHighInputLatency));
+end
+
+% Supress load bar
+if flags.do_nobar
+   block_interface('setDispLoad',0);
+end
    
 
       
