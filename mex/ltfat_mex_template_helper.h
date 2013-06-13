@@ -7,7 +7,7 @@
 #define _LTFAT_MEX_TEMPLATEHELPER_H 1
 
 /** Adds symbol exporting function decorator to mexFunction.
-    On windows, def file is no longer needed. For MinGW, it
+    On Windows, def file is no longer needed. For MinGW, it
     suppresses the default "export-all-symbols" behavior. **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
@@ -29,7 +29,14 @@
 #endif
 
 
+/** Helper MACROS */
+#ifdef _DEBUG
+#define DEBUGINFO  mexPrintf("File: %s, func: %s \n",__BASE_FILE__,__func__);
+#else
+#define DEBUGINFO
+#endif
 
+/** HEADERS */
 #include "ltfat.h"
 #include <stdio.h>
 #include <string.h>
@@ -39,14 +46,6 @@
 #  include <complex.h>
 //#  include <tgmath.h>
 #endif
-
-/** Helper MACROS */
-#ifdef _DEBUG
-#define DEBUGINFO  mexPrintf("File: %s, func: %s \n",__BASE_FILE__,__func__);
-#else
-#define DEBUGINFO
-#endif
-
 
 /** Helper function headers, to allow them to be used in the MEX_FILE */
 mxArray *ltfatCreateMatrix(mwSize M, mwSize N,mxClassID classid,mxComplexity complexFlag);
@@ -333,11 +332,17 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
        LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhs); // pass trough
    #else
       // Create array of indexes to be checked
-      int prhsToCheck[] = { TYPEDEPARGS };
+      int prhsToCheckIfComplex[] = { TYPEDEPARGS };
+	  #ifndef MATCHEDARGS
+	     int prhsToCheckIfSingle[] = { TYPEDEPARGS };
+	  #else
+	     int prhsToCheckIfSingle[] = { TYPEDEPARGS, MATCHEDARGS };
+	  #endif
+
 
       // Check if any of the indexes is less than nrhs
       int maxPrhsToCheck = 0;
-      FOREACH(int* valPr,prhsToCheck)
+      FOREACH(int* valPr, prhsToCheckIfSingle)
          if(*valPr+1>maxPrhsToCheck)
             maxPrhsToCheck = *valPr;
 
@@ -349,11 +354,11 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
       memset(recastToComplexIndArr,0,sizeof(recastToComplexIndArr));
 
       bool isAnyComplex = false;
-      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheck)
+      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfComplex)
         if( (isAnyComplex = !checkIsReal(*prhsElPtr))) break;
 
       #if !defined(COMPLEXARGS) && defined(REALARGS) && !defined(COMPLEXINDEPENDENT)
-      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheck)
+      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfComplex)
          if( !checkIsReal(*prhsElPtr))
          {
             mexErrMsgTxt("Complex input arguments are not alowed.");
@@ -361,27 +366,28 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
          }
       #endif
       #if (defined(COMPLEXARGS) && !defined(REALARGS)) && !defined(COMPLEXINDEPENDENT)
-      FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheck)
+      FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheckIfComplex)
          recastToComplexIndArr[*prhsElIdx]=true;
       #endif
 
       #if (defined(COMPLEXARGS) && defined(REALARGS)) || defined(COMPLEXINDEPENDENT)
       if(isAnyComplex)
-      FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheck)
+      FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheckIfComplex)
           recastToComplexIndArr[*prhsElIdx]=true;
       #endif
 
+      // Copy input parameters
       const mxArray **prhsAlt = mxMalloc(nrhs*sizeof(mxArray *));
       memcpy((void *)prhsAlt,(void *)prhs,nrhs*sizeof(mxArray *));
 
       bool isAnySingle = false;
       #ifdef SINGLEARGS
-      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheck)
+      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfSingle)
         if( (isAnySingle = checkIsSingle(*prhsElPtr))) break;
 
       if(isAnySingle)
       {
-        FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheck)
+        FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheckIfSingle)
            prhsAlt[*prhsElIdx] = recastToSingle((mxArray *)prhs[*prhsElIdx]);
 
         #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
@@ -395,10 +401,10 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         bool isAllReal = false;
         bool isAllComplex = false;
 
-        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheck)
+        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
           if( !(isAllReal = checkIsReal(*prhsElPtr))) break;
 
-        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheck)
+        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
           if( !(isAllComplex = !checkIsReal(*prhsElPtr))) break;
 
         if(!(isAllReal ^ isAllComplex))
@@ -434,10 +440,10 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         bool isAllReal = false;
         bool isAllComplex = false;
 
-        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheck)
+        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
           if( !(isAllReal = checkIsReal(*prhsElPtr))) break;
 
-        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheck)
+        FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
           if( !(isAllComplex = !checkIsReal(*prhsElPtr))) break;
 
         if((isAllReal == isAllComplex))
@@ -469,3 +475,5 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 
 #endif // _LTFAT_MEX_TEMPLATEHELPER_H
 #endif // defined(MEX_FILE)
+
+
