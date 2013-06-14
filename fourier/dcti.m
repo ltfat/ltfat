@@ -82,28 +82,27 @@ end;
 
 if L==1
   c=f;
- 
 else
-
-  c=zeros(L,W,assert_classname(f));
-  
-  f2=[f;flipud(f(2:L-1,:))]/sqrt(2);
-  f2(1,:)=f2(1,:)*sqrt(2);
-  f2(L,:)=f2(L,:)*sqrt(2);
-  
-  % Do DFT.
-  s1=fft(f2)/sqrt(2*L-2);
-
-  % This could be done by a repmat instead.
-  for w=1:W
-    c(:,w)=s1(1:L,w)+[0;s1(2*L-2:-1:L+1,w);0];
-  end;
-
-  c(2:L-1,:)=c(2:L-1,:)/sqrt(2);
-  
-  if isreal(f)
-    c=real(c);
-  end;
+  c = comp_dct(f,1);
+%   c=zeros(L,W,assert_classname(f));
+%   
+%   f2=[f;flipud(f(2:L-1,:))]/sqrt(2);
+%   f2(1,:)=f2(1,:)*sqrt(2);
+%   f2(L,:)=f2(L,:)*sqrt(2);
+%   
+%   % Do DFT.
+%   s1=fft(f2)/sqrt(2*L-2);
+% 
+%   % This could be done by a repmat instead.
+%   for w=1:W
+%     c(:,w)=s1(1:L,w)+[0;s1(2*L-2:-1:L+1,w);0];
+%   end;
+% 
+%   c(2:L-1,:)=c(2:L-1,:)/sqrt(2);
+%   
+%   if isreal(f)
+%     c=real(c);
+%   end;
 
 end;
 

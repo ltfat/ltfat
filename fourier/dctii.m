@@ -71,22 +71,22 @@ end;
 if ~isempty(L)
   f=postpad(f,L);
 end;
-
-c=zeros(L,W,assert_classname(f));
-
-m1=1/sqrt(2)*exp(-(0:L-1)*pi*i/(2*L)).';
-m1(1)=1;
-
-m2=1/sqrt(2)*exp((1:L-1)*pi*i/(2*L)).';
-
-s1=fft([f;flipud(f)]);
-
-% This could be done by a repmat instead.
-for w=1:W
-  c(:,w)=s1(1:L,w).*m1+[0;s1(2*L:-1:L+2,w).*m2];
-end;
-
-c=c/sqrt(L)/2;
+  c=comp_dct(f,2);
+% c=zeros(L,W,assert_classname(f));
+% 
+% m1=1/sqrt(2)*exp(-(0:L-1)*pi*i/(2*L)).';
+% m1(1)=1;
+% 
+% m2=1/sqrt(2)*exp((1:L-1)*pi*i/(2*L)).';
+% 
+% s1=fft([f;flipud(f)]);
+% 
+% % This could be done by a repmat instead.
+% for w=1:W
+%   c(:,w)=s1(1:L,w).*m1+[0;s1(2*L:-1:L+2,w).*m2];
+% end;
+% 
+% c=c/sqrt(L)/2;
 
 if isreal(f)
   c=real(c);
