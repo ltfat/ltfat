@@ -6,6 +6,8 @@ disp('--- Used subroutines ---');
 
 which comp_fftreal
 which comp_ifftreal
+which comp_dct
+which comp_dst
 
 % This script test all the pure frequency routines.
 

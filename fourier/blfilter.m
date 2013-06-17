@@ -104,7 +104,24 @@ Nfilt=numel(fsupp);
 gout=cell(1,Nfilt);
 for ii=1:Nfilt
     g=struct();
-    g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)),flags.norm))*kv.scal(ii);
+    
+    
+    if flags.do_1 || flags.do_area 
+        g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)), ...
+                                    flags.norm))*kv.scal(ii)*L;        
+    end;
+    
+    if  flags.do_2 || flags.do_energy
+        g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)), ...
+                                    flags.norm))*kv.scal(ii)*sqrt(L);                
+    end;
+        
+    if flags.do_inf || flags.do_peak
+        g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)), ...
+                                    flags.norm))*kv.scal(ii);        
+        
+    end;
+        
     g.foff=@(L) round(L/2*kv.centre(ii))-floor(round(L/2*fsupp(ii))/2);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
