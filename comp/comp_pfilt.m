@@ -6,7 +6,13 @@ function h=comp_pfilt(f,g,a,do_time);
 %   frequency domain.
 
 [L,W]=size(f);
-N=L/a;
+
+if numel(a)==1
+    N=L/a;
+else
+    N=L/a(1)*a(2);    
+end;
+
 
 h=zeros(N,W,assert_classname(f));
 
@@ -25,50 +31,31 @@ if isfield(g,'h') && do_time
     end;
     
 else
+    
         
     % Zero-extend and use a full length fft algorithm
     % This case can be further optimized
+
     G=comp_transferfunction(g,L);
-    
-    for w=1:W
-        F=fft(f(:,w));
-        h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
-    end;
-    
-end;
 
-
-% Old code
-if 0
-    if ~isstruct(g)
-        [g,info] = comp_fourierwindow(g,L,'PFILT');
-        
-        h=squeeze(comp_ufilterbank_fft(f,g,a));
-        
-        % FIXME: This check should be removed when comp_ufilterbank_fft{.c/.cc}
-        % have been fixed.
-        if isreal(f) && isreal(g)
-            h=real(h);
-        end;
-        
-    else
-        N=L/a;
-        G=fir2long(g.filter(L),L);
-        
+    if numel(a)==1
         for w=1:W
             F=fft(f(:,w));
             h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
         end;
+    else
+        Llarge=ceil(L/N)*N;
+        amod=Llarge/N;
         
-        % Insert check for window being
-        if isreal(f) && g.isreal
-            h=real(h);
+        for w=1:W
+            
+            F=fft(f(:,w));
+            h(:,w)=ifft(sum(reshape(middlepad(F.*G,Llarge),N,amod),2))/amod;
+            
         end;
-        
     end;
+    
 end;
-
-
 
 
 
