@@ -49,7 +49,7 @@ function [g,D]=pherm(L,order,varargin)
 %
 %     'qr'        Orthonormalization of the Hermite functions using the
 %                 Gram-Schmidt orthonormalization method (usign `qr`).
-
+%
 %   If you just need to compute a single Hermite function, there is no
 %   speed difference between the `'accurate'` and `'fast'` algorithm.
 %

@@ -1,7 +1,7 @@
 function frf=ffracft(f,a,varargin)
 %FFRACFT Approximate fast fractional Fourier transform
 %   Usage:  frf=ffracft(f,a)
-%           frf=ffracft(f)
+%           frf=ffracft(f,a,dim)
 %
 %   `ffracft(f,a)` computes an approximation of the fractional Fourier
 %   transform of the signal *f* to the power *a*. If *f* is
