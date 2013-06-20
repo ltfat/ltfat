@@ -25,13 +25,17 @@ if ~isnumeric(a)
   error('%s: a must be numeric.',upper(mfilename));
 end;
 
-if ~isvector(a) || any(a<=0)
-  error('%s: "a" must be a vector of positive numbers.',upper(mfilename));
+%if ~isvector(a)
+%    
+%end;
+
+if any(a<=0)
+      error('%s: "a" must consists of positive numbers only.',upper(mfilename));
 end;
 
 lcm_a=a(1);
 for m=2:length(a)
-  lcm_a=lcm(lcm_a,a(m));
+  lcm_a=lcm(lcm_a,a(m,1));
 end;
 
 L=ceil(Ls/lcm_a)*lcm_a;

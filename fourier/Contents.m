@@ -5,8 +5,10 @@
 %  Support routines
 %    FFTINDEX       -  Index of positive and negative frequencies.
 %    MODCENT        -  Centered modulo operation.
-%    NEXT23         -  Next number with only 2,3 factors
-%    NEXT235        -  Next number with only 2,3,5 factors
+%    FLOOR23        -  Previous number with only 2,3 factors
+%    FLOOR235       -  Previous number with only 2,3,5 factors
+%    CEIL23         -  Next number with only 2,3 factors
+%    CEIL235        -  Next number with only 2,3,5 factors
 %    NEXTFASTFFT    -  Next efficient FFT size (2,3,5,7).
 %  
 %  Basic Fourier analysis

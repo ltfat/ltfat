@@ -24,9 +24,10 @@ end;
 definput.keyvals.Ls=[];
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
-if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
-end;
+L=filterbanklengthcoef(c,a);
+
+[g,info]=filterbankwin(g,a,L,'normal');
+M=info.M;
 
 if iscell(c)
   Mcoef=numel(c);
@@ -34,23 +35,6 @@ if iscell(c)
 else
   Mcoef=size(c,2);
   W=size(c,3);    
-end;
-
-mustbeuniform=isnumeric(c);
-
-L=filterbanklengthcoef(c,a);
-
-[g,info]=filterbankwin(g,a,L,'normal');
-
-M=info.M;
-
-if length(a)>1 
-  if  length(a)~=M
-    error(['%s: The number of entries in "a" must match the number of ' ...
-           'filters.'],upper(callfun));
-  end;
-else
-  a=a*ones(M,1);
 end;
 
 if ~(M==Mcoef)
@@ -70,9 +54,13 @@ for m=1:M
     conjG=conj(comp_transferfunction(g{m},L));
     
     if iscell(c)
+        N=size(c{m},1);
+        Llarge=ceil(L/N)*N;
+        amod=Llarge/N;
+        
         for w=1:W                        
             % This repmat cannot be replaced by bsxfun
-            f(:,w)=f(:,w)+ifft(bsxfun(@times,repmat(fft(c{m}(:,w)),a(m),1),conjG));
+            f(:,w)=f(:,w)+ifft(bsxfun(@times,postpad(repmat(fft(c{m}(:,w)),amod,1),L),conjG));
         end;                
     else
         for w=1:W

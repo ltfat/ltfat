@@ -116,8 +116,26 @@ end;
 info.M=numel(g);
 info.gl=zeros(info.M,1);
 info.ispainless=1;
-[info.a,~]=scalardistribute(a(:),ones(info.M,1));
+info.isfractional=0;
+info.isuniform=0;
 
+% FIXME: Not sufficiently safe
+if isvector(a)
+    [info.a,~]=scalardistribute(a(:),ones(info.M,1));
+    
+    if all(a==a(1))
+        info.isuniform=1;
+    end;
+
+    info.a=[info.a,ones(info.M,1)];
+else
+    info.isfractional=1;
+    info.a=a;
+end;
+
+if size(info.a,2)==1
+end;
+    
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
     
@@ -126,7 +144,7 @@ for m=1:info.M
             g{m}.H=g{m}.H(L);
             g{m}.foff=g{m}.foff(L);
         end;
-        if numel(g{m}.H)>L/info.a(m)
+        if numel(g{m}.H)>L/info.a(m,1)*info.a(m,2);
             info.ispainless=0;
         end;
     else
@@ -135,14 +153,15 @@ for m=1:info.M
 
 end;
 
+info.isfac=info.isuniform || info.ispainless;
+
 info.longestfilter=max(info.gl);
 
-
-info.isfac=1;
-% The generated frame does not have a factorization if it is not uniform
-if ~all(a==a(1))
-  info.isfac=0;
+if info.isfractional && info.isuniform
+    error('%s: The uniform algorithms cannot handle fractional downsampling.', ...
+          upper(mfilename));
 end;
+
   
 if L<info.longestfilter
   error('%s: One of the windows is longer than the transform length.',upper(mfilename));

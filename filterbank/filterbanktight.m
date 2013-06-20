@@ -29,7 +29,7 @@ end;
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
-if all(a==a(1))
+if info.isuniform
   % Uniform filterbank, use polyphase representation
   if isempty(L)
       error('%s: You need to specify L.',upper(mfilename));
@@ -75,7 +75,7 @@ if all(a==a(1))
 else
     
     if info.ispainless
-        Fsqrt=sqrt(comp_filterbankresponse(g,a,L,0));
+        Fsqrt=sqrt(comp_filterbankresponse(g,info.a,L,0));
         
         gdout=cell(1,M);
         for m=1:M

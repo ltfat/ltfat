@@ -30,7 +30,7 @@ if (~isempty(L)) && (L~=filterbanklength(L,a))
            'the time shifts.'],upper(mfilename));
 end;
 
-if all(a==a(1))
+if info.isuniform
     
   % Uniform filterbank, use polyphase representation
   if isempty(L)
@@ -75,7 +75,7 @@ if all(a==a(1))
 else
 
     if info.ispainless
-        F=comp_filterbankresponse(g,a,L,0);
+        F=comp_filterbankresponse(g,info.a,L,0);
         
         gdout=cell(1,M);
         for m=1:M

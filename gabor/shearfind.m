@@ -54,13 +54,15 @@ function [s0,s1,X] = shearfind(L,a,M,lt)
             s1 = s1+sign(alpha)*B;            
         end
         X = b;
+        s1 = mod(s1,b);
     elseif ones(1,lenLabfac) == (Labfac(3,:) < sfac(2,1:end-1))
         s1 = 0;
         [X,alpha,temp] = gcd(s,b);
         if alpha < 0
             alpha = b/X + alpha;
         end
-        s0 = alpha*a/X;    
+        s0 = mod(alpha*a/X,a*lt(2));
+        
     else
         s1fac = (Labfac(3,:) == sfac(2,1:end-1)).*(Labfac(3,:) < Labfac(4,:));
         s1 = prod(Labfac(1,:).^s1fac);

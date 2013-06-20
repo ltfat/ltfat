@@ -64,26 +64,7 @@ else
   a=a*ones(M,1);
 end;
 
-N=L./a;
-
 c=cell(M,1);
 for m=1:M
-  c{m}=comp_pfilt(f,g{m},a(m),info.gl(m)<kv.crossover);
-  %zeros(N(m),W,assert_classname(f,g{1}));
-end;
-  
-% Old, but more efficient code from before the struct filters
-if 0
-    G=zeros(L,M,assert_classname(f,g{1}));
-    for ii=1:M
-        G(:,ii)=fft(fir2long(g{ii},L));
-    end;
-    
-    for w=1:W
-        F=fft(f(:,w),L);
-        for m=1:M
-            c{m}(:,w)=ifft(sum(reshape(F.*G(:,m),N(m),a(m)),2))/a(m);
-        end;
-    end;
-
+  c{m}=comp_pfilt(f,g{m},info.a(m,:),info.gl(m)<kv.crossover);
 end;

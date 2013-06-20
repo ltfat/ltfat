@@ -29,7 +29,7 @@ M=info.M;
 AF=Inf;
 BF=0;
   
-if all(a==a(1))
+if info.isuniform
   % Uniform filterbank, use polyphase representation
   a=a(1);
   
@@ -68,7 +68,7 @@ if all(a==a(1))
 else
     if info.ispainless
         % Compute the diagonal of the frame operator.
-        f=comp_filterbankresponse(g,a,L,1);
+        f=comp_filterbankresponse(g,info.a,L,1);
         
         AF=min(f);
         BF=max(f);

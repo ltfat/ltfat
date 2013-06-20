@@ -18,13 +18,20 @@ else
   cl=ones(1,Mcoef)*size(coef,1);    
 end;
 
-a=a(:);
 cl=cl(:);
 
 % Make 'a' have the length of '
-a=bsxfun(@times,a,ones(numel(cl),1));
+if isvector(a)
+    a=bsxfun(@times,a,ones(numel(cl),1));
+    a=a(:);
 
-L=a.*cl;
+    L=a.*cl;
+else
+    [a,cl]
+    L=a(:,1).*cl./a(:,2);
+    L
+end;
+
 
 if var(L)>0
   error(['%s: Invalid set of coefficients. The product of the no. of ' ...

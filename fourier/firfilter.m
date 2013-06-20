@@ -62,23 +62,25 @@ if ~isempty(kv.fs)
     kv.centre=kv.centre/kv.fs*2;
 end;
 
-if flags.do_causal
-    g.offset=0;
-    smallshift=0;
-else
-    d=floor(kv.delay);
-    smallshift=d-floor(d);
-    g.offset=d-floor(M/2);
-end;
-
 Nfilt=numel(M);
 gout=cell(1,Nfilt);
 for ii=1:Nfilt
     g=struct();
+    
+    if flags.do_causal
+        g.offset=0;
+        smallshift=0;
+    else
+        d=floor(kv.delay);
+        smallshift=d-floor(d);
+        g.offset=d-floor(M/2);
+    end;
+
     g.h=fftshift(firwin(name,M(ii),'shift',smallshift(ii),flags.norm));
     g.centre=kv.centre(ii);
     g.realonly=flags.do_real;
     g.fs=kv.fs;
+        
     gout{ii}=g;
 end;
 if Nfilt==1

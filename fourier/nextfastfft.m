@@ -8,7 +8,7 @@ function [nfft,tableout]=nextfastfft(n)
 %
 %   `nextfastfft` is intended as a replacement of `nextpow2`, which is often
 %   used for the same purpose. However, a modern FFT implementation (like
-%   FFTW) usually performs well for sizes which are powers or $2,3,5$ and $7$,
+%   FFTW) usually performs well for sizes which are powers or *2,3,5* and *7*,
 %   and not only just for powers of *2*.
 %
 %   The algorithm will look up the best size in a table, which is computed
@@ -19,7 +19,7 @@ function [nfft,tableout]=nextfastfft(n)
 %   `[n,nfft]=nextfastfft(n)` additionally returns the table used for
 %   lookup.
 %
-%   See also: next23, next235
+%   See also: ceil23, ceil235
 %
 %   Demos: demo_nextfastfft
 %

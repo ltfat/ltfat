@@ -1,8 +1,8 @@
-function [nfft,tableout]=next235(n)
-%NEXT235  Next number with only 2,3 and 5 factors
-%   Usage: nfft=next235(n);
+function [nfft,tableout]=floor235(n)
+%FLOOR235  Previous number with only 2,3 and 5 factors
+%   Usage: nfloor=floor235(n);
 %
-%   `next235(n)`  returns the next number greater than or equal to *n*,
+%   `floor235(n)`  returns the next number greater than or equal to *n*,
 %   which can be written as a product of powers of *2*, *3* and *5*.
 %
 %   The algorithm will look up the best size in a table, which is computed
@@ -10,9 +10,17 @@ function [nfft,tableout]=next235(n)
 %   largest value in the table, the input size will be reduced by factors of
 %   *2*, until it is in range.
 %
-%   `[n,nfft]=next235(n)` additionally returns the table used for lookup.
+%   `[nfloor,table]=floor235(n)` additionally returns the table used for lookup.
 %
-%   See also: next23, nextfastfft
+%   Examples:
+%   ---------
+%
+%   Return the first number smaller or equal to *26* that can be written
+%   solely as products of powers of *2*, *3* and *5*:::
+% 
+%     floor235(26)
+%
+%   See also: floor235, ceil23, nextfastfft
   
 %   AUTHOR: Peter L. Søndergaard
     
@@ -70,7 +78,9 @@ for ii=1:numel(n)
       to=mid-1;                       
     end
   end
-  nfft(ii)=table(from);
+  if nfft(ii)~=table(from)
+      nfft(ii)=table(from-1);
+  end;
   
   % Add back the missing factors of 2 (if any)
   nfft(ii)=nfft(ii)*2^n2reduce;

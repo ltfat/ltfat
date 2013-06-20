@@ -247,7 +247,7 @@ switch(ftype)
     F.frana=@(insig) F.native2coef(comp_dgtreal(insig,F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv));
     F.frsyn=@(insig) comp_idgtreal(F.coef2native(insig,size(insig)),F.g,F.a,F.M,F.kv.lt,F.flags.do_timeinv);  
     F.length=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
-    f.red=F.M/F.a;
+    F.red=F.M/F.a;
     F.lengthcoef=@(Ncoef) Ncoef/(floor(F.M/2)+1)*F.a;
     
   case 'dwilt'
@@ -303,11 +303,11 @@ switch(ftype)
   case 'nsdgt'
     F.coef2native=@(coef,s) mat2cell(coef,F.M,s(2));
     F.native2coef=@(coef) cell2mat(coef(:));
-    F.frana=@(insig) F.native2coef(nsdgt(insig,F.g,F.a,F.M));
-    F.frsyn=@(insig) insdgt(F.coef2native(insig,size(insig)),F.g,F.a);
     F.length=@(Ncoef) sum(F.a);
     F.lengthcoef=@(Ncoef) sum(F.a);
-    F.red=sum(F.M)/sum(F.a);    
+    F.red=sum(F.M)/sum(F.a);
+    F.frana=@(insig) F.native2coef(nsdgt(insig,F.g,F.a,F.M));
+    F.frsyn=@(insig) insdgt(F.coef2native(insig,size(insig)),F.g,F.a);
     
   case 'unsdgt'
     F.coef2native=@(coef,s) reshape(coef,[F.M(1),s(1)/F.M(1),s(2)]);

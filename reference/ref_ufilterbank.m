@@ -3,9 +3,10 @@ function c=ref_ufilterbank(f,g,a);
 %   Usage:  c=ref_ufilterbank(f,g,a);
 %
   
-L=size(f,1);
+[L,W]=size(f);
 
 N=L/a;
+M=numel(g);
 
 c=zeros(N,M,W,assert_classname(f));
   
