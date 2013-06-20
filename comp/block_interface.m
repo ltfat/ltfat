@@ -50,7 +50,7 @@ switch command
       recChanList = [];
       pageNo = 0;
       skipCounter = 0;
-      defaultBufLen = 512;
+      defaultBufLen = 1024;
       classid = 'double';
       anaOverlap = [];
       synOverlap = [];

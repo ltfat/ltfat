@@ -20,6 +20,10 @@ persistent readTime;
 %global delayLog;
 %global delayLog2;
 
+if nargin<1
+   L = block_interface('getDefaultBufLen'); 
+end
+
 
 if block_interface('getDispLoad') 
    if block_interface('getPageNo')>0

@@ -50,14 +50,14 @@ p = blockpanel({
 bufLen = 1024;
 
 % Setup blocktream
-fs = block(source,'nbuf',1,'single',varargin{:});
+fs = block(source,varargin{:});
 
 % Choose a frame and contruct the dual
-F = frameaccel(frame('dgtreal','hann',32,100),2*bufLen);
-Fdual = frameaccel(framedual(F),2*bufLen);
+%F = frameaccel(frame('dgtreal','hann',32,100),2*bufLen);
+%Fdual = frameaccel(framedual(F),2*bufLen);
 
-%F = frame('fwt','sym10',10);
-%Fdual = frame('fwt','sym10',10);
+F = frame('fwt','apr1',3);
+Fdual = frame('fwt','apr1',3);
 
 
 flag = 1;

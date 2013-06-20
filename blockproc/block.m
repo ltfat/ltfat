@@ -56,12 +56,12 @@ function [fs,classid] = block(source,varargin)
 
 
 definput.keyvals.devid=[];
-definput.keyvals.nbuf=[3];
+definput.keyvals.nbuf=[];
 definput.keyvals.fs=44100;
 definput.keyvals.playch=[];
 definput.keyvals.recch=[];
 definput.keyvals.outfile=[];
-definput.flags.fmt={'double','single'};
+definput.flags.fmt={'single','double'};
 definput.flags.bar={'bar','nobar'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -83,11 +83,17 @@ if ischar(source)
    if(strcmpi(source,'rec'))
       recChannels = 1;
       record = 1;
+      if isempty(kv.nbuf)
+         kv.nbuf = 3;
+      end
    elseif strcmpi(source,'playrec')
       playChannels = 2;
       recChannels = 1;
       record = 1;   
       play = 1;
+      if isempty(kv.nbuf)
+         kv.nbuf = 1;
+      end
    elseif strcmpi(source,'dialog')
       error('%s: TO DO: Open dialog for a sound file.',upper(mfilename));
    elseif(numel(source)>4)
@@ -102,7 +108,9 @@ if ischar(source)
       else
          error('%s: "%s" is not valid wav filename.',upper(mfilename),source);
       end
-
+      if isempty(kv.nbuf)
+         kv.nbuf = 3;
+      end
    else
       error('%s: Unrecognized command "%s".',upper(mfilename),source);
    end
