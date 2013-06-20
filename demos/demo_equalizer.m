@@ -1,12 +1,12 @@
 function demo_equalizer(source,varargin)
-%DEMO_EQUALIZER Real-time block processing demonstration
-% Usage: demo_equalizer('gspi.wav')
-%        demo_equalizer('playrec')
+%DEMO_EQUALIZER Real-time equalizer demonstration
+%   Usage: demo_equalizer('gspi.wav')
+%          demo_equalizer('playrec')
 %
-% This demonstration shows an example of a octave parametric
-% equalizer. See chapter 5.2 in the following book:
+%   This demonstration shows an example of a octave parametric
+%   equalizer. See chapter 5.2 in the book by Zolzer.
 % 
-% References: zolz08
+%   References: zolz08
 
 if nargin<1
    fprintf(['%s: To run the demo, use one of the following:\n',...

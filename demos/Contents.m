@@ -33,8 +33,12 @@
 %  Auditory scales and filters
 %     DEMO_AUDSCALES        - Different auditory scales.
 %     DEMO_AUDITORYFILTERBANK - Erb-spaced auditory filterbank.
-% 
+%
+%  Block-processing demos
+%     DEMO_BLOCKPROC        - Variable noise-reduction.
+%     DEMO_EQUALIZER        - Parametric equalizer.
+%
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net
-%
+
 
