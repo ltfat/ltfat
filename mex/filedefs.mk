@@ -1,6 +1,7 @@
 MEXBASESAFE=\
 	comp_col2diag\
 	comp_dct\
+	comp_dst\
 	comp_dgt_fb \
 	comp_dgt_long \
 	comp_dgt_ola  \

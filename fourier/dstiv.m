@@ -65,26 +65,7 @@ if ~isempty(L)
   f=postpad(f,L);
 end;
 
-s1=zeros(2*L,W,assert_classname(f));
-c=zeros(L,W,assert_classname(f));
-
-m1=1/sqrt(2)*exp(-(0:L-1)*pi*i/(2*L)).';
-m2=-1/sqrt(2)*exp((1:L)*pi*i/(2*L)).';
-
-for w=1:W
-  s1(:,w)=[m1.*f(:,w);flipud(m2).*f(L:-1:1,w)];
-end;
-  
-s1=i*exp(-pi*i/(4*L))*fft(s1)/sqrt(2*L);
-
-% This could be done by a repmat instead.
-for w=1:W
-  c(:,w)=s1(1:L,w).*m1+s1(2*L:-1:L+1,w).*m2;
-end;
-
-if isreal(f)
-  c=real(c);
-end;
+c = comp_dst(f,4);
 
 c=assert_sigreshape_post(c,dim,permutedsize,order);
 

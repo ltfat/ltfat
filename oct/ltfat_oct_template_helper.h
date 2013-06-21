@@ -265,9 +265,18 @@ if(isAnySingle)
 
 /****************** HANDLING COMPLEXINDEPENDENT *************************/ 
 #if defined(COMPLEXINDEPENDENT) || (defined(COMPLEXARGS)&&defined(REALARGS))
-if(isAnySingle) ENSURESINGLE
-
 if(isAnyComplex) ENSURECOMPLEX
+#  ifndef SINGLEARGS
+if(isAnyComplex)
+{
+   return octFunction<Complex,double,Complex>(argsCopy,nargout);
+}
+else
+{
+   return octFunction<double,double,Complex>(argsCopy,nargout);
+}
+#  else
+if(isAnySingle) ENSURESINGLE
 
 if(isAnyComplex&&isAnySingle)
 {
@@ -285,9 +294,13 @@ else
 {
     return octFunction<double,double,Complex>(argsCopy,nargout);      
 }
+#  endif
 /****************** HANDLING ONLY COMPLEX *************************/ 
 #elif defined(COMPLEXARGS) && !defined(REALARGS)
 ENSURECOMPLEX
+#  ifndef SINGLEARGS
+   return octFunction<Complex,double,Complex>(argsCopy,nargout); 
+#  else
 if(isAnySingle)
 {
    ENSURESINGLE
@@ -297,8 +310,12 @@ else
 {
    return octFunction<Complex,double,Complex>(argsCopy,nargout); 
 }
+#  endif
 /****************** HANDLING ONLY REAL *************************/ 
 #elif !defined(COMPLEXARGS) && defined(REALARGS)
+#  ifndef SINGLEARGS
+   return octFunction<double,double,Complex>(argsCopy,nargout);
+#  else
 if(isAnySingle) 
 {   
    ENSURESINGLE
@@ -308,6 +325,7 @@ else
 {
    return octFunction<double,double,Complex>(argsCopy,nargout);
 }
+#  endif
 #else
 error("Something wrong in the template system. My bad....\n");
 #endif 

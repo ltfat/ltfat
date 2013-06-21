@@ -73,23 +73,7 @@ if ~isempty(L)
   f=postpad(f,L);
 end;
 
-c=zeros(2*L,W,assert_classname(f));
-  
-m1=1/sqrt(2)*exp((1:L)*pi*i/(2*L)).';
-m1(L)=i;
-  
-m2=-1/sqrt(2)*exp(-(L-1:-1:1)*pi*i/(2*L)).';
-  
-for w=1:W
-  c(:,w)=[0;m1.*f(:,w);m2.*f(L-1:-1:1,w)];
-end;
-
-c=-sqrt(L)*2*i*ifft(c);
-c=c(1:L,:);
-
-if isreal(f)
-  c=real(c);
-end;
+c = comp_dst(f,3);
 
 c=assert_sigreshape_post(c,dim,permutedsize,order);
 

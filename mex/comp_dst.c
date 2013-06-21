@@ -37,12 +37,12 @@ static void fftrealAtExit(void)
 
 
 // Calling convention:
-//  comp_dct(f,type);
+//  comp_dst(f,type);
 /*
-FFTW_REDFT00 computes an REDFT00 transform, i.e. a DCT-I. (Logical N=2*(n-1), inverse is FFTW_REDFT00.)
-FFTW_REDFT10 computes an REDFT10 transform, i.e. a DCT-II (sometimes called “the” DCT). (Logical N=2*n, inverse is FFTW_REDFT01.)
-FFTW_REDFT01 computes an REDFT01 transform, i.e. a DCT-III (sometimes called “the” IDCT, being the inverse of DCT-II). (Logical N=2*n, inverse is FFTW_REDFT=10.)
-FFTW_REDFT11 computes an REDFT11 transform, i.e. a DCT-IV. (Logical N=2*n, inverse is FFTW_REDFT11.)
+FFTW_RODFT00 computes an RODFT00 transform, i.e. a DST-I. (Logical N=2*(n+1), inverse is FFTW_RODFT00.)
+FFTW_RODFT10 computes an RODFT10 transform, i.e. a DST-II. (Logical N=2*n, inverse is FFTW_RODFT01.)
+FFTW_RODFT01 computes an RODFT01 transform, i.e. a DST-III. (Logical N=2*n, inverse is FFTW_RODFT=10.)
+FFTW_RODFT11 computes an RODFT11 transform, i.e. a DST-IV. (Logical N=2*n, inverse is FFTW_RODFT11.) 
 */
 
 
@@ -94,26 +94,18 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   LTFAT_REAL postScale = (LTFAT_REAL) 1.0/sqrt2;
   LTFAT_REAL scale = (LTFAT_REAL) sqrt2*(1.0/(double)N)*sqrt((double)L);
 
-  // Re-allocate and prescale input
-  if(type==1||type==3)
-  {
-     for(mwIndex ii=0;ii<W;ii++)
-     {
-	    f_r[ii*L] *= sqrt2;
-     }
-     if(mxIsComplex(prhs[0]))
-     {
-        for(mwIndex ii=0;ii<W;ii++)
-        {
-           f_i[ii*L] *= sqrt2;
-        }
-     }
-  }
-
   switch(type)
   {
 	 case 1:
-		N -= 2;
+		N += 2;
+		scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L+1);
+        kind[0] = FFTW_RODFT00;
+     break;
+	 case 2:
+        kind[0] = FFTW_RODFT10;
+     break;
+	 case 3:
+	 
 		for(mwIndex ii=0;ii<W;ii++)
         {
 	       f_r[(ii+1)*L-1] *= sqrt2;
@@ -125,25 +117,15 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
            {
               f_i[(ii+1)*L-1] *= sqrt2;
            }
-        }
-
-		scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L-1);
-        kind[0] = FFTW_REDFT00;
-     break;
-	 case 2:
-        kind[0] = FFTW_REDFT10;
-     break;
-	 case 3:
-        kind[0] = FFTW_REDFT01;
+        }	 
+        kind[0] = FFTW_RODFT01;
      break;
 	 case 4:
-        kind[0] = FFTW_REDFT11;
+        kind[0] = FFTW_RODFT11;
      break;
      default:
 		 mexErrMsgTxt("Unknown type.");
   }
-
-
 
   // The calling prototype
   //fftw_plan fftw_plan_guru_split_dft_r2c(
@@ -186,16 +168,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 	  f_r[ii] *= scale;
   }
 
-  if(type==1||type==2)
-  {
-     // Scale DC component
-     for(int ii=0;ii<W;ii++)
-     {
-	    f_r[ii*L] *= postScale;
-     }
-  }
-
-  if(type==1)
+  if(type==2)
   {
      // Scale AC component
      for(int ii=0;ii<W;ii++)
@@ -209,19 +182,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   {
 	  LTFAT_FFTW(execute_r2r)(p,f_i,f_i);
 	    // Do the normalization
-      for(int ii=0;ii<L*W;ii++)
+      
+	  for(int ii=0;ii<L*W;ii++)
       {
 	     f_i[ii] *= scale;
       }
-      if(type==1||type==2)
-      {
-         // Scale DC component
-         for(int ii=0;ii<W;ii++)
-         {
-	        f_i[ii*L] *= postScale;
-         }
-      }
-      if(type==1)
+
+      if(type==2)
       {
          // Scale AC component
          for(int ii=0;ii<W;ii++)
@@ -229,11 +196,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 	        f_i[(ii+1)*L-1] *= postScale;
          }
       }
-  }
 
-  // LTFAT_FFTW(destroy_plan)(p);
+  }
 
   return;
 }
 #endif
-

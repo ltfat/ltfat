@@ -1,4 +1,10 @@
 function c = comp_dct(f,type)
+%COMP_DCT Calculates DCT
+%   Input parameters:
+%         f     : Input data.
+%         type  : DCT version.
+%
+
 
 [L,W] = size(f);
 

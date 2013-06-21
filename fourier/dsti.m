@@ -76,24 +76,7 @@ if L==1
  
 else
 
-  c=zeros(L,W,assert_classname(f));
-
-  s1=dft([zeros(1,W,assert_classname(f));...
-	      f;...
-	      zeros(1,W,assert_classname(f));...
-	      -flipud(f)]);
-
-
-  % This could be done by a repmat instead.
-  for w=1:W
-    c(:,w)=s1(2:L+1,w)-s1(2*L+2:-1:L+3,w);
-  end;
-
-  c=c*i/2;
-  
-  if isreal(f)
-    c=real(c);
-  end;
+  c = comp_dst(f,1);
 
 end;
 
