@@ -29,10 +29,10 @@ function c=dstiii(f,L,dim)
 %   Then 
 %
 %   ..                     L-1
-%     c(n+1) = sqrt(2/L) * sum w(n+1)*f(m+1)*sin(pi*(n+.5)*m/L) 
+%     c(n+1) = sqrt(2/L) * sum w(m+1)*f(m+1)*sin(pi*(n+.5)*m/L) 
 %                          m=0 
 %
-%   .. math::  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(n\right)f\left(m+1\right)\sin\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)m\right)
+%   .. math::  c\left(n+1\right)=\sqrt{\frac{2}{L}}\sum_{m=0}^{L-1}w\left(m\right)f\left(m+1\right)\sin\left(\frac{\pi}{L}\left(n+\frac{1}{2}\right)m\right)
 %
 %   See also:  dctii, dstii, dstiv
 %
