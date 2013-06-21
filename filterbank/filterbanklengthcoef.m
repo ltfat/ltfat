@@ -27,9 +27,7 @@ if isvector(a)
 
     L=a.*cl;
 else
-    [a,cl]
     L=a(:,1).*cl./a(:,2);
-    L
 end;
 
 

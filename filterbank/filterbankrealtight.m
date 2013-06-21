@@ -82,8 +82,10 @@ else
         
         gdout=cell(1,M);
         for m=1:M
+            gl=numel(g{m}.H);
             thisgt=struct();
-            thisgt.H=comp_transferfunction(g{m},L)./Fsqrt;
+            H=circshift(comp_transferfunction(g{m},L)./Fsqrt,-g{m}.foff);
+            thisgt.H=H(1:gl);
             thisgt.foff=0;
             thisgt.realonly=0;
             thisgt.delay=0;

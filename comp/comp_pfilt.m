@@ -10,7 +10,8 @@ function h=comp_pfilt(f,g,a,do_time);
 if numel(a)==1
     N=L/a;
 else
-    N=L/a(1)*a(2);    
+    N=L/a(1)*a(2);
+    afrac=a(1)/a(2);
 end;
 
 
@@ -44,13 +45,13 @@ else
             h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
         end;
     else
-        Llarge=ceil(L/N)*N;
+        Llarge=ceil(L/N+1)*N;
         amod=Llarge/N;
         
         for w=1:W
             
             F=fft(f(:,w));
-            h(:,w)=ifft(sum(reshape(middlepad(F.*G,Llarge),N,amod),2))/amod;
+            h(:,w)=ifft(sum(reshape(fir2long(F.*G,Llarge),N,amod),2))/afrac;
             
         end;
     end;

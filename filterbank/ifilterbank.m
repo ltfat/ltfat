@@ -60,7 +60,8 @@ for m=1:M
         
         for w=1:W                        
             % This repmat cannot be replaced by bsxfun
-            f(:,w)=f(:,w)+ifft(bsxfun(@times,postpad(repmat(fft(c{m}(:,w)),amod,1),L),conjG));
+            innerstuff=middlepad(circshift(repmat(fft(c{m}(:,w)),amod,1),-g{m}.foff),L);
+            f(:,w)=f(:,w)+ifft(circshift(bsxfun(@times,innerstuff,circshift(conjG,-g{m}.foff)),g{m}.foff));
         end;                
     else
         for w=1:W
