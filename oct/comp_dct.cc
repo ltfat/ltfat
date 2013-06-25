@@ -16,7 +16,7 @@ static inline void fwd_dct(double *f,
 {
   fftw_iodim dims[1], howmanydims[1];
   fftw_plan p;
-  
+
   dims[0].n = L;
   dims[0].is = 1;
   dims[0].os = 1;
@@ -24,16 +24,16 @@ static inline void fwd_dct(double *f,
   howmanydims[0].n = W;
   howmanydims[0].is = L;
   howmanydims[0].os = L;
-  
+
   p = fftw_plan_guru_r2r(1, dims,
 				   1, howmanydims,
 				   f, f,
 				   kind,
 				   FFTW_OPTITYPE);
 
-  // Real FFT. 
-  fftw_execute(p);   
-  
+  // Real FFT.
+  fftw_execute(p);
+
   fftw_destroy_plan(p);
 }
 
@@ -44,7 +44,7 @@ static inline void fwd_dct(float *f,
 {
   fftwf_iodim dims[1], howmanydims[1];
   fftwf_plan p;
-  
+
   dims[0].n = L;
   dims[0].is = 1;
   dims[0].os = 1;
@@ -52,16 +52,16 @@ static inline void fwd_dct(float *f,
   howmanydims[0].n = W;
   howmanydims[0].is = L;
   howmanydims[0].os = L;
-  
+
   p = fftwf_plan_guru_r2r(1, dims,
 				   1, howmanydims,
 				   f, f,
 				   kind,
 				   FFTW_OPTITYPE);
 
-  // Real FFT. 
-  fftwf_execute(p);   
-  
+  // Real FFT.
+  fftwf_execute(p);
+
   fftwf_destroy_plan(p);
 }
 
@@ -81,20 +81,20 @@ static inline void fwd_dct(Complex *f,
   howmanydims[0].n = W;
   howmanydims[0].is = 2*L;
   howmanydims[0].os = 2*L;
-  
+
   p = fftw_plan_guru_r2r(1, dims,
 				   1, howmanydims,
 				   f_ptr, f_ptr,
 				   kind,
 				   FFTW_OPTITYPE|FFTW_UNALIGNED);
 
-  fftw_execute(p); 
-  fftw_execute_r2r(p,f_ptr+1,f_ptr+1); 
-  
-  fftw_destroy_plan(p);
-  
+  fftw_execute(p);
+  fftw_execute_r2r(p,f_ptr+1,f_ptr+1);
 
-  
+  fftw_destroy_plan(p);
+
+
+
 }
 
 static inline void fwd_dct(FloatComplex *f,
@@ -105,7 +105,7 @@ static inline void fwd_dct(FloatComplex *f,
   fftwf_iodim dims[1], howmanydims[1];
   fftwf_plan p;
   float *f_ptr = reinterpret_cast<float*>(f);
-  
+
   dims[0].n = L;
   dims[0].is = 2;
   dims[0].os = 2;
@@ -113,18 +113,18 @@ static inline void fwd_dct(FloatComplex *f,
   howmanydims[0].n = W;
   howmanydims[0].is = 2*L;
   howmanydims[0].os = 2*L;
-  
+
   p = fftwf_plan_guru_r2r(1, dims,
 				   1, howmanydims,
 				   f_ptr, f_ptr,
 				   kind,
 				   FFTW_OPTITYPE|FFTW_UNALIGNED);
 
-  // Real FFT. 
-  fftwf_execute(p); 
-  fftwf_execute_r2r(p,f_ptr+1,f_ptr+1); 
+  // Real FFT.
+  fftwf_execute(p);
+  fftwf_execute_r2r(p,f_ptr+1,f_ptr+1);
 
-  
+
   fftwf_destroy_plan(p);
 }
 
@@ -141,13 +141,13 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	 LTFAT_REAL sqrt2 = (LTFAT_REAL) sqrt(2.0);
 	 LTFAT_REAL postScale = (LTFAT_REAL) 1.0/sqrt2;
      LTFAT_REAL scale = (LTFAT_REAL) sqrt2*(1.0/(double)N)*sqrt((double)L);
-	 
+
 	 LTFAT_TYPE* f_ptr = f.fortran_vec();
-	 
+
 	 // Pre-scaling
 	 if(type==1||type==3)
-     { 
-       for(mwIndex ii=0;ii<W;ii++)
+     {
+       for(octave_idx_type ii=0;ii<W;ii++)
        {
 	      f_ptr[ii*L] *= sqrt2;
        }
@@ -157,10 +157,10 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
      {
 	    case 1:
 		   N -= 2;
-		   for(mwIndex ii=0;ii<W;ii++)
+		   for(octave_idx_type ii=0;ii<W;ii++)
            {
 	          f_ptr[(ii+1)*L-1] *= sqrt2;
-           } 
+           }
 
 		   scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L-1);
            kind[0] = FFTW_REDFT00;
@@ -177,9 +177,9 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
         default:
 		   error("Unknown type.");
      }
-	 
+
 	 fwd_dct(f_ptr,L,W,kind);
-	 
+
 	 // Post-scaling
 	 for(int ii=0;ii<L*W;ii++)
      {
@@ -203,7 +203,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	       f_ptr[(ii+1)*L-1] *= postScale;
         }
      }
-	 
+
      return octave_value(f);
 }
 

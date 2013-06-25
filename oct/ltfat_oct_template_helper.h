@@ -30,6 +30,63 @@ MArray<LTFAT_TYPE> ltfatOctArray(const octave_value& ov)
    return MArray<LTFAT_TYPE>();
 }
 
+template <>
+MArray<double> ltfatOctArray(const octave_value& ov)
+{
+    if(ov.is_double_type())
+    {
+       return (ov.array_value());
+    }
+    else
+    {
+       error("Unsupported data type..");
+    }
+    return MArray<double>();
+}
+
+template <>
+MArray<float> ltfatOctArray(const octave_value& ov)
+{
+    if(ov.is_float_type())
+    {
+       return (ov.float_array_value());
+    }
+    else
+    {
+       error("Unsupported data type..");
+    }
+    return MArray<float>();
+}
+
+template <>
+MArray<Complex> ltfatOctArray(const octave_value& ov)
+{
+    if(ov.is_double_type())
+    {
+       return (ov.complex_array_value());
+    }
+    else
+    {
+       error("Unsupported data type..");
+    }
+    return MArray<Complex>();
+}
+
+template <>
+MArray<FloatComplex> ltfatOctArray(const octave_value& ov)
+{
+    if(ov.is_float_type())
+    {
+       return (ov.float_complex_array_value());
+    }
+    else
+    {
+       error("Unsupported data type..");
+    }
+    return MArray<FloatComplex>();
+}
+
+/*
 #define LTFAT_ARRAY_SPECIALIZED_REAL(real_type)               \
 template <>                                                   \
 MArray<real_type> ltfatOctArray(const octave_value& ov)           \
@@ -82,6 +139,7 @@ LTFAT_ARRAY_SPECIALIZED_REAL(double)
 LTFAT_ARRAY_SPECIALIZED_REAL(float)
 LTFAT_ARRAY_SPECIALIZED_COMPLEX(Complex)
 LTFAT_ARRAY_SPECIALIZED_COMPLEX(FloatComplex)
+*/
 
 #undef LTFAT_ARRAY_SPECIALIZED_REAL
 #undef LTFAT_ARRAY_SPECIALIZED_COMPLEX
@@ -199,7 +257,7 @@ octave_value_list argsCopy(args);
 
 #define ENSURECOMPLEX                                               \
 for(int ii=0;ii<tdArgsIfComplex.length();ii++)                      \
-    tdArgsIfComplex(ii) = octave_value(recastToComplex(tdArgsIfComplex(ii)));		
+    tdArgsIfComplex(ii) = octave_value(recastToComplex(tdArgsIfComplex(ii)));
 
 
 bool isAnySingle = false;
@@ -246,7 +304,7 @@ for(int ii=0;ii<tdArgsIfSingle.length();ii++)
 for(int ii=0;ii<tdArgsIfComplex.length();ii++)
     if((isAnyComplex=checkIsComplex(tdArgsIfComplex(ii)))) break;
 
-#if defined(REALARGS)&& !(defined(COMPLEXARGS) || defined(COMPLEXINDEPENDENT)) 
+#if defined(REALARGS)&& !(defined(COMPLEXARGS) || defined(COMPLEXINDEPENDENT))
 if(isAnyComplex)
 {
    error("Only real inputs are accepted.");
@@ -263,7 +321,7 @@ if(isAnySingle)
 #endif
 
 
-/****************** HANDLING COMPLEXINDEPENDENT *************************/ 
+/****************** HANDLING COMPLEXINDEPENDENT *************************/
 #if defined(COMPLEXINDEPENDENT) || (defined(COMPLEXARGS)&&defined(REALARGS))
 if(isAnyComplex) ENSURECOMPLEX
 #  ifndef SINGLEARGS
@@ -284,22 +342,22 @@ if(isAnyComplex&&isAnySingle)
 }
 else if(!isAnyComplex&&isAnySingle)
 {
-    return octFunction<float,float,FloatComplex>(argsCopy,nargout); 
-} 
+    return octFunction<float,float,FloatComplex>(argsCopy,nargout);
+}
 else if(isAnyComplex&&!isAnySingle)
 {
     return octFunction<Complex,double,Complex>(argsCopy,nargout);
 }
 else
 {
-    return octFunction<double,double,Complex>(argsCopy,nargout);      
+    return octFunction<double,double,Complex>(argsCopy,nargout);
 }
 #  endif
-/****************** HANDLING ONLY COMPLEX *************************/ 
+/****************** HANDLING ONLY COMPLEX *************************/
 #elif defined(COMPLEXARGS) && !defined(REALARGS)
 ENSURECOMPLEX
 #  ifndef SINGLEARGS
-   return octFunction<Complex,double,Complex>(argsCopy,nargout); 
+   return octFunction<Complex,double,Complex>(argsCopy,nargout);
 #  else
 if(isAnySingle)
 {
@@ -308,16 +366,16 @@ if(isAnySingle)
 }
 else
 {
-   return octFunction<Complex,double,Complex>(argsCopy,nargout); 
+   return octFunction<Complex,double,Complex>(argsCopy,nargout);
 }
 #  endif
-/****************** HANDLING ONLY REAL *************************/ 
+/****************** HANDLING ONLY REAL *************************/
 #elif !defined(COMPLEXARGS) && defined(REALARGS)
 #  ifndef SINGLEARGS
    return octFunction<double,double,Complex>(argsCopy,nargout);
 #  else
-if(isAnySingle) 
-{   
+if(isAnySingle)
+{
    ENSURESINGLE
    return octFunction<float,float,FloatComplex>(argsCopy,nargout);
 }
@@ -328,7 +386,7 @@ else
 #  endif
 #else
 error("Something wrong in the template system. My bad....\n");
-#endif 
+#endif
 
 
 
