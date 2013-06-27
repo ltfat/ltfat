@@ -30,14 +30,13 @@ function [AF,BF]=nsgabframebounds(g,a,Ls)
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGT
-%   REFERENCE:
 
 timepos=cumsum(a)-a(1);
 
 N=length(a); % Number of time positions
 
 % Compute the diagonal of the frame operator.
-f=nsgabframediag(g,a,M)M
+f=nsgabframediag(g,a,M);
 
 AF=min(f);
 BF=max(f);

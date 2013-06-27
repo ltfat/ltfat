@@ -1,5 +1,5 @@
-function fout=ref_spreadfun_1(f,c,a);
-%REF_SPREADFUN_1  Ref. Spreading function
+function fout=ref_spreadop_1(f,c,a);
+%REF_SPREADOP_1  Ref. Spreading function
 %   Usage: h=ref_spreadfun_1(f,c,a);
 %
 

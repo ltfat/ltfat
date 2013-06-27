@@ -1,0 +1,2 @@
+ltfatstart;
+addpath(which('ltfatstart')(1:end-12));

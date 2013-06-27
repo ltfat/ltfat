@@ -1,5 +1,5 @@
-function h=ref_pfilt(f,g,a)
-%REF_PFILT  Reference PFILT implementation by FFT
+function h=ref_pfilt_1(f,g,a)
+%REF_PFILT_1  Reference PFILT implementation by FFT
 %
 %   This is the old reference pfilt from before the struct filters where
 %   introduced.

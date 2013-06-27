@@ -1,0 +1,13 @@
+Name: LTFAT
+Version: 1.4.0
+Date: 2013-18-04
+Author: Peter L. Soendergaard (and possibly peter@sonderport.dk)
+Maintainer: Zdenek Prusa
+Title: The Large Time-Frequency Analysis Toolbox
+Description: A short description of the package.  If this
+ description gets too long for one line it can continue
+ on the next by adding a space to the beginning of the
+ following lines.
+License: GPLv3+
+BuildRequires: fftw3, lapack, blas, portaudio 
+Categories: SIgnal processing

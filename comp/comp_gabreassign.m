@@ -2,10 +2,10 @@ function sr=comp_gabreassign(s,tgrad,fgrad,a);
 %COMP_GABREASSIGN  Reassign time-frequency distribution.
 %   Usage:  sr = comp_gabreassign(s,tgrad,fgrad,a);
 %
-%   COMP_GABREASSIGN(s,tgrad,fgrad,a) will reassign the values of the positive
-%   time-frequency distribution s using the instantaneous time and frequency
-%   fgrad and ifdummy. The lattice is determined by the time shift _a and
-%   the number of channels deduced from the size of s.
+%   `comp_gabreassign(s,tgrad,fgrad,a)` will reassign the values of the positive
+%   time-frequency distribution *s* using the instantaneous time and frequency
+%   *fgrad* and *ifdummy*. The lattice is determined by the time shift *a* and
+%   the number of channels deduced from the size of *s*.
 %
 %   See also: gabreassign
 %

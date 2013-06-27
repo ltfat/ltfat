@@ -12,5 +12,5 @@ function f=podd(f,dim)
 if nargin==1 
   f=(f-involute(f))/2;
 else
-  f=(f-involute(f),dim)/2;
+  f=(f-involute(f,dim))/2;
 end;
