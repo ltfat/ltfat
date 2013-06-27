@@ -65,7 +65,42 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %   To use the BFGS method, please install the minFunc software from
 %   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
-%   See also:  dgt, idgt
+%   Examples:
+%   ---------
+%
+%   To reconstruct the phase of 'greasy', use the following:::
+%
+%     % Setup the problem and the coefficients
+%     f=greasy;
+%     g='gauss';
+%     a=20; M=200;
+%     c=dgt(f,g,a,M);
+%     s=abs(c).^2;
+%     theta=angle(c);
+%
+%     % Reconstruct and get spectrogram and angle
+%     r=isgram(s,g,a);
+%     c_r=dgt(r,g,a,M);
+%     s_r=abs(c_r).^2;
+%     theta_r=angle(c_r);
+%
+%     % Compute the angular difference
+%     d1=abs(theta-theta_r);
+%     d2=2*pi-d1;
+%     anglediff=min(d1,d2);
+%
+%     % Plot the difference in spectrogram and phase
+%     figure(1);
+%     plotdgt(s./s_r,a,16000,'clim',[-50,50]);
+%     colormap([bone;flipud(bone)])
+%     title('Relative difference in spectrogram');
+%
+%     figure(2);
+%     plotdgt(anglediff,a,16000,'lin');
+%     colormap(bone);
+%     title('Difference in angle');
+%
+%   See also:  isgramreal, frsynabs, dgt
 %
 %   Demos: demo_isgram
 %
@@ -95,9 +130,9 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
   
   [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
 
-  M=size(coef,1);
-  N=size(coef,2);
-  W=size(coef,3);
+  M=size(s,1);
+  N=size(s,2);
+  W=size(s,3);
   
   if ~isnumeric(a) || ~isscalar(a)
       error('%s: "a" must be a scalar',upper(mfilename));
@@ -117,8 +152,6 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
             upper(mfilename))
   end;
   
-  g=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
-    
   
   sqrt_s=sqrt(s);
   
@@ -139,7 +172,12 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
           
       c=constructphase(s,g,a);
   end;
+
+  % gabwin is called after constructphase above, because constructphase
+  % needs the window as a string/cell
+  g=gabwin(g,a,M,L,kv.lt,'callfun',upper(mfilename));
     
+  
   gd = gabdual(g,a,M,L);
     
   % For normalization purposes
@@ -210,7 +248,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
     Ls=L;
   end;
   
-  f=comp_sigreshape_post(f,Ls,wasrow,[0; W]);
+  f=comp_sigreshape_post(f,Ls,0,[0; W]);
 
 %  Subfunction to compute the objective function for the BFGS method.
 function [f,df]=objfun(x,g,a,M,s,lt);

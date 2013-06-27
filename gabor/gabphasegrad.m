@@ -249,9 +249,13 @@ switch(lower(method))
   
   L=N*a;
   tfr=1;
-    
-  [g,info]=gabwin(g,a,M,L,'GABPHASEGRAD');
 
+  g
+  
+  [g,info]=gabwin(g,a,M,L,'callfun','GABPHASEGRAD');
+
+  info
+  
   if ~info.gauss
     error(['The window must be a Gaussian window (specified as a string or ' ...
            'as a cell arrray).']);
