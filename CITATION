@@ -1,9 +1,17 @@
 To cite LTFAT in publications please use:
 
-    XXX
-    XXX
+    Peter L. Søndergaard, Bruno Torrésani, Peter Balazs. The Linear Time-Frequency Analysis Toolbox.
+    International Journal of Wavelets, Multiresolution Analysis and Information Processing, 10(4), 2012.
 
 A BibTex entry for LaTex users:
 
-   
-
+  @article{ltfatnote015,
+    author = "Peter L. S{\o}ndergaard and Bruno Torr\'esani and Peter Balazs",
+    title = {{The Linear Time Frequency Analysis Toolbox}},
+    journal = "International Journal of Wavelets, Multiresolution Analysis and Information Processing",
+    year = 2012,
+    volume = 10,
+    number = 4,
+    doi = "10.1142/S0219691312500324"
+  }
+ 

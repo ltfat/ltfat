@@ -1,2 +1,5 @@
-ltfatstart;
-addpath(which('ltfatstart')(1:end-12));
+# Only execute it if it exists on the path. PKG_ADD also gets called from the directory
+# where the binaries are installed, and here ltfatstart should not be called.
+if exist("ltfatstart","file")   
+  ltfatstart;
+end;

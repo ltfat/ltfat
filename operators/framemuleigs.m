@@ -4,9 +4,9 @@ function varargout=framemuleigs(Fa,Fs,s,varargin)
 %           D=framemuleigs(Fa,Fs,s,K,...);
 %
 %   Input parameters:
-%         Fa    : Frame analysis definition
-%         Fs    : Frame analysis definition
-%         s     : symbol of Gabor multiplier
+%         Fa    : Analysis frame
+%         Fs    : Synthesis frame
+%         s     : Symbol of Gabor multiplier
 %         K     : Number of eigenvectors to compute.
 %   Output parameters:
 %         V     : Matrix containing eigenvectors.

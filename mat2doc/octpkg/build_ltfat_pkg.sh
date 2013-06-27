@@ -23,12 +23,11 @@ mv CITATION ..
 mv NEWS ..
 cd ..
 
-cp ~/nw/ltfat/mat2doc/PKG_ADD .
-cp ../DESCRIPTION .
-cp -R ../src .
+cp ~/nw/ltfat/mat2doc/octpkg/PKG_ADD .
+cp ~/nw/ltfat/mat2doc/octpkg/DESCRIPTION .
+cp -R ~/nw/ltfat/mat2doc/octpkg/src .
 cp ~/nw/ltfat/src/configure.ac src
 cp ~/nw/ltfat/src/bootstrap src
-
 
 cd ..
 

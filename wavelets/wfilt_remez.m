@@ -87,7 +87,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%% STEP 2' %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Daubechies factor
 % PK(z)=((1+z^(-1))/2)^2*K QK(z)
-if computeroots & K>0
+if computeroots && K>0
    QK=binom(2*K,1:K);
    QK=QK.*abs(QK);
    QK=cumsum(QK);

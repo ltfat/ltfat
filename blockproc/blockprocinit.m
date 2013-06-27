@@ -4,8 +4,10 @@ status=1;
 if ~isempty(which('javaaddpath')) 
    try
       javaaddpath([basepath,filesep,'blockproc',filesep,'java',filesep]);
-   catch err
-      warning('%s: JVM support not present.',upper(mfilename));
+   catch 
+       % Use lasterr for Octave compatibility
+       err=lasterr;
+       warning('%s: JVM support not present.',upper(mfilename));
    end
 else
    warning('%s: Java toolbox not present.',upper(mfilename));
