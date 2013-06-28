@@ -1,13 +1,16 @@
 Name: LTFAT
-Version: 1.4.0
-Date: 2013-18-04
-Author: Peter L. Soendergaard (and possibly peter@sonderport.dk)
+Version: {VERSION}
+Date: {DATE}
+Author: Peter L. Soendergaard <soender@users.sourceforge.net>
 Maintainer: Zdenek Prusa
 Title: The Large Time-Frequency Analysis Toolbox
-Description: A short description of the package.  If this
- description gets too long for one line it can continue
- on the next by adding a space to the beginning of the
- following lines.
+Description: The Large Time/Frequency Analysis Toolbox (LTFAT) is a
+ Matlab/Octave toolbox for working with time-frequency analysis,
+ wavelets and signal processing. It is intended both as an educational
+ and a computational tool. The toolbox provides a large number of
+ linear transforms including Gabor and wavelet transforms along with
+ routines for constructing windows (filter prototypes) and routines
+ for manipulating coefficients.
 License: GPLv3+
 BuildRequires: fftw3, lapack, blas, portaudio 
-Categories: SIgnal processing
+Url: http://ltfat.sourceforge.net/

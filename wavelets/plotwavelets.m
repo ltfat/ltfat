@@ -30,7 +30,7 @@ definput.import={'tfplot'};
 definput.flags.fwtplottype = {'tfplot','stem'};
 definput.keyvals.fs = [];
 definput.keyvals.dynrange = [];
-[flags,kv]=ltfatarghelper({'fs'},definput,varargin);
+[flags,kv]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 if(flags.do_stem)
    error('%s: Flag %s not supported yet.',upper(mfilename),flags.fwtplottype);
