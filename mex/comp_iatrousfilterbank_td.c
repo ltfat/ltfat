@@ -86,7 +86,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
         mwSize dims2[2];
         dims2[0] =  L;
         dims2[1] =  W;
-        plhs[0] = mxCreateNumericArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+        plhs[0] = ltfatCreateNdimArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
         // POINTER TO OUTPUT
         LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);

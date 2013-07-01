@@ -72,7 +72,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
         dims[0] =  L;
         dims[1] =  M;
         dims[2] =  W;
-        plhs[0] = mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+        plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
         // over all filters
         for(unsigned int m =0; m<M; m++)
