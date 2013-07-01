@@ -1,6 +1,7 @@
-function [g,a]=erbfilters(fs,varargin)
+function [g,a,fc]=erbfilters(fs,varargin)
 
 definput.keyvals.L=[];
+definput.keyvals.N=[];
 definput.flags.uniform  = {'nonuniform','uniform'};
 definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','fractional'};
@@ -8,7 +9,12 @@ definput.flags.sampling = {'regsampling','fractional'};
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 % Construct the Erb filterbank
-N=ceil(freqtoerb(fs/2))+1;
+
+N=kv.N;
+if isempty(N)
+    N=ceil(freqtoerb(fs/2))+1;
+end;
+
 fc=erbspace(0,fs/2,N);
 % "*3" is just a heuristic, no justification
 fsupp=round(audfiltbw(fc)*4);

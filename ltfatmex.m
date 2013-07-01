@@ -274,7 +274,7 @@ if flags.do_test
     
     fprintf('========= Testing %s interfaces ==========\n', extname);
     fprintf('1.: Test if comp_pgauss.%s was compiled: ',ext);
-    fname=[bp,extname,filesep,'comp_pgauss.',ext];
+    fname=['comp_pgauss.',ext];
     if exist(fname,'file')
       disp('SUCCESS.');
     else

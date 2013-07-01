@@ -27,11 +27,22 @@ function [c,info] = wpbest(f,w,J,varargin)
 %   ---------
 %   
 %   A simple example of calling |wpbest| :::
-% 
+%     
 %     f = gspi;
-%     J = 6;
-%     [c,info] = wpbest(f,'sym10',J,'entropy',{'wlpnorm',1.3});;
-%     plotwavelets(c,info,44100,'dynrange',90);
+%     J = 8;
+%     [c,info] = wpbest(f,'sym10',J,'entropy',{'wlpnorm',1.3});
+%
+%     % Use 2/3 of the space for the first plot, 1/3 for the second.
+%     subplot(3,3,[1 2 4 5 7 8]);
+%     plotwavelets(c,info,44100,90);
+%
+%     subplot(3,3,[3 6 9]);
+%     N=cellfun(@numel,c); L=sum(N); a=L./N;
+%     plot(a,'o');
+%     xlim([1,numel(N)]);
+%     view(90,-90);
+%     xlabel('Channel no.');
+%     ylabel('Subsampling rate / samples');
 %
 %   References: wick92lecton tas94near-bestbasis   
 

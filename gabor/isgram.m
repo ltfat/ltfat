@@ -91,7 +91,7 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %     % Plot the difference in spectrogram and phase
 %     figure(1);
-%     plotdgt(s./s_r,a,16000,'clim',[-50,50]);
+%     plotdgt(s./s_r,a,16000,'clim',[-10,10]);
 %     colormap([bone;flipud(bone)])
 %     title('Relative difference in spectrogram');
 %

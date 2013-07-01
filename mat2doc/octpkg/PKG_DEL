@@ -1,0 +1,3 @@
+if exist('ltfatstop','file')
+   ltfatstop;
+end;

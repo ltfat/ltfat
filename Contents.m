@@ -4,6 +4,7 @@
 %
 %  Basic routines
 %    LTFATSTART       -  Start the toolbox
+%    LTFATSTOP        -  Stop the toolbox
 %    LTFATHELP        -  Help
 %    LTFATMEX         -  Compile Mex/Oct interfaces
 %    LTFATBASEPATH    -  Return the base path
