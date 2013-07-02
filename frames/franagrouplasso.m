@@ -1,4 +1,4 @@
-function [tc,relres,iter,xrec] = franagrouplasso(F,x,lambda,varargin)
+function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
 %FRANAGROUPLASSO  Group LASSO regression in the TF-domain
 %   Usage: [tc,xrec] = franagrouplasso(F,x,group,lambda,C,maxit,tol)
 %
@@ -81,7 +81,7 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isvector(x)
+if ~isvector(insig)
     error('Input signal must be a vector.');
 end
 
@@ -97,7 +97,7 @@ definput.flags.print={'quiet','print'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
-L=framelength(F,length(x));
+L=framelength(F,length(insig));
 
 F=frameaccel(F,L);
 
@@ -105,11 +105,8 @@ if isempty(kv.C)
   [A_dummy,kv.C] = framebounds(F,L);
 end;
 
-% Various parameter initializations
-threshold = lambda/kv.C;
-
 % Initialization of thresholded coefficients
-c0 = frana(F,x);
+c0 = frana(F,insig);
 
 % We have to convert the coefficients to time-frequency layout to
 % discover their size
@@ -123,6 +120,11 @@ else
   lambda = lambda*sqrt(M);
 end
 
+% Various parameter initializations
+threshold = lambda/kv.C;
+
+
+
 tc0 = c0;
 relres = 1e16;
 iter = 0;
@@ -134,29 +136,43 @@ else
   kv.dim=1;
 end;
   
-% Main loop
-while ((iter < kv.maxit)&&(relres >= kv.tol))
-  tc = c0 - frana(F,frsyn(F,tc0));
-  tc = tc0 + tc/kv.C;
-  
-  %  ------------ Convert to TF-plane ---------
-  tc = framecoef2tf(F,tc);
-  
-  tc = groupthresh(tc,threshold,'argimport',flags,kv);
-  
-  % Convert back from TF-plane
-  tc=frametf2coef(F,tc);
-  % -------------------------------------------
-  
-  relres = norm(tc(:)-tc0(:))/norm(tc0(:));
-  tc0 = tc;
-  iter = iter + 1;
-  if flags.do_print
-    if mod(iter,kv.printstep)==0        
-      fprintf('Iteration %d: relative error = %f\n',iter,relres);
-    end;
-  end;
-end
+kv.dim
+
+if F.red==1
+    
+    %  ------------ Convert to TF-plane ---------
+    tc = groupthresh(tc,threshold,'argimport',flags,kv);
+
+    % Convert back from TF-plane
+    tc=frametf2coef(F,tc);
+
+else
+
+    % Main loop
+    while ((iter < kv.maxit)&&(relres >= kv.tol))
+        tc = c0 - frana(F,frsyn(F,tc0));
+        tc = tc0 + tc/kv.C;
+        
+        %  ------------ Convert to TF-plane ---------
+        tc = framecoef2tf(F,tc);
+        
+        tc = groupthresh(tc,threshold,'argimport',flags,kv);
+        
+        % Convert back from TF-plane
+        tc=frametf2coef(F,tc);
+        % -------------------------------------------
+        
+        relres = norm(tc(:)-tc0(:))/norm(tc0(:));
+        tc0 = tc;
+        iter = iter + 1;
+        if flags.do_print
+            if mod(iter,kv.printstep)==0        
+                fprintf('Iteration %d: relative error = %f\n',iter,relres);
+            end;
+        end;
+    end
+    
+end;
 
 % Reconstruction
 if nargout>3

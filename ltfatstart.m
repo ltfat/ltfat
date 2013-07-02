@@ -16,11 +16,10 @@ function ltfatstart()
 %   This will add the main LTFAT directory to you path, start the
 %   toolbox, and configure |sgram| to not display the colorbar.
 %
-%   See also:  ltfatsetdefaults, ltfatmex, ltfathelp
+%   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
 
 %   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
-%   REFERENCE: NA
 
 %% ------- Settings: ----------------------------------
 

@@ -38,8 +38,8 @@ sig=gspi;
 fs=44100;
 
 % Shorten signal
-SigLength = 2^16;
-sig = sig(1:SigLength);
+siglen = 2^16;
+sig = sig(1:siglen);
 
 % Add Gaussian white noise
 nsig = sig + 0.01*randn(size(sig));
@@ -54,7 +54,7 @@ F1=frametight(frame('wmdct','gauss',256));
 c1 = frana(F1,nsig);
 
 % Group lasso and invert
-[c1s,N1] = franagrouplasso(F1,c1,0.8,'soft','freq');
+c1s = franagrouplasso(F1,c1,0.8,'soft','freq');
 rec1 = frsyn(F1,c1s);
 
 % Transient layer
@@ -66,7 +66,7 @@ F2=frametight(frame('wmdct','gauss',32));
 % Compute wmdct coefficients
 c2 = frana(F2,nsig);
 
-[c2s,N2] = franagrouplasso(F2,c2,0.5,'time','soft');
+c2s = franagrouplasso(F2,c2,0.5,'soft','time');
 rec2 = frsyn(F2,c2s);
 
 % Plots
@@ -74,24 +74,35 @@ rec2 = frsyn(F2,c2s);
 
 % Dynamic range for plotting
 dr=50;
+xplot=(0:siglen-1)/fs;
 
 figure(1);
 subplot(2,2,1);
-plot(rec1);
+plot(xplot,rec1);
+xlabel('Time (s)');
 axis tight;
 
 subplot(2,2,2);
-plotframe(F1,c1,fs,dr);
+imagesc(log(abs(framecoef2tf(F1,c1)+0.00001)));
+set(gca,'ydir','normal');
+%plotframe(F1,c1,fs,dr);
 
 subplot(2,2,3);
-plot(rec2);
+plot(xplot,rec2);
+xlabel('Time (s)');
 axis tight;
 
 subplot(2,2,4);
-plotframe(F2,c2,fs,dr);
+imagesc(log(abs(framecoef2tf(F2,c2)+0.00001)));
+set(gca,'ydir','normal');
+%plotframe(F2,c2,fs,dr);
 
-p1 = 100*N1/SigLength;
-p2 = 100*N2/SigLength;
+% Count the number of non-zero coefficients
+N1=sum(abs(c1s)>0);
+N2=sum(abs(c2s)>0);
+
+p1 = 100*N1/siglen;
+p2 = 100*N2/siglen;
 p=p1+p2;
 
 fprintf('Percentage of retained coefficients: %f + %f = %f\n',p1,p2,p);

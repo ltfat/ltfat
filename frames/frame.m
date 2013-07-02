@@ -42,7 +42,7 @@ function F=frame(ftype,varargin);
 %   Pure frequency frames
 %   ---------------------
 %
-%   `frame('dft')` constructs a bais where the analysis operator is the
+%   `frame('dft')` constructs a basis where the analysis operator is the
 %   |dft|, and the synthesis operator is its inverse, |idft|. Completely
 %   similar to this, you can enter the name of any of the cosine or sine
 %   transforms |dcti|, |dctii|, |dctiii|, |dctiv|, |dsti|, |dstii|,

@@ -40,7 +40,6 @@ function [s,fs]=greasy()
 
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
-%   REFERENCE: OK
   
 if nargin>0
   error('This function does not take input arguments.')

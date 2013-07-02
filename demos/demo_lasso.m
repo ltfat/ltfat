@@ -1,9 +1,9 @@
 %DEMO_GABLASSO  Sparse regression by Lasso method
 
 % Signals
-t=(0:511)/512;
+siglen=512;
+t=((0:siglen-1)/siglen).';
 x0 = sin(2*pi*64*t);
-x=x0';
 x=x+randn(size(x))/2;
 
 % DCGT parameters
@@ -25,10 +25,29 @@ F=frametight(frame('dgtreal','gauss',a,M));
 
 % Displays
 figure(1);
-subplot(2,2,1);plot(x0); axis tight; grid; title('Original')
-subplot(2,2,2);plot(x); axis tight; grid; title('Noisy')
-subplot(2,2,3);plot(real(xrecl)); axis tight; grid; title('LASSO')
-subplot(2,2,4);plot(real(xrecgl)); axis tight; grid; title('GLASSO')
+subplot(2,2,1);
+plot(x0); 
+axis tight; 
+grid; 
+title('Original')
+
+subplot(2,2,2);
+plot(x);
+axis tight; 
+grid; 
+title('Noisy')
+
+subplot(2,2,3);
+plot(real(xrecl)); 
+axis tight; 
+grid; 
+title('LASSO')
+
+subplot(2,2,4);
+plot(real(xrecgl)); 
+axis tight; 
+grid; 
+title('GLASSO')
 
 dr=80;
 

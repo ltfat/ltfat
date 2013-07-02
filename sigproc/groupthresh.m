@@ -35,6 +35,7 @@ function [xo]=groupthresh(xi,lambda,varargin)
 %   AUTHOR : Kai Siedenburg, Bruno Torresani.
 %   REFERENCE: OK
  
+
 if nargin<2
   error('Too few input parameters.');k
 end;
@@ -50,6 +51,7 @@ definput.keyvals.dim=2;
 
 [flags,keyvals,dim]=ltfatarghelper({'dim'},definput,varargin);
 
+% kv.dim (the time or frequency selector) is handled by assert_sigreshape_pre
 [xi,L,NbMembers,NbGroups,dim,permutedsize,order]=assert_sigreshape_pre(xi,[],dim,'GROUPTHRESH');
 
 if flags.do_sparse
@@ -62,6 +64,8 @@ if flags.do_group
   
   groupnorm = sqrt(sum(abs(xi).^2));
   w = thresh(groupnorm, lambda, flags.iofun,flags.outclass)./groupnorm;
+  
+  w(1)
   
   % Clean w for NaN. NaN appears if the input has a group with norm
   % exactly 0.
