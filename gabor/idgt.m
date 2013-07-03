@@ -81,13 +81,14 @@ function [f,g]=idgt(coef,g,a,varargin)
 %     f=greasy;            % test signal
 %     a=32;                % time shift
 %     M=64;                % frequency shift
-%     ga={'blackman',128}; % analysis window
+%     gs={'blackman',128}; % synthesis window
+%     ga={'dual',gs};      % analysis window
 %
 %     [c,Ls]=dgt(f,ga,a,M);    % analysis
 %
 %     % ... do interesting stuff to c at this point ...
 %  
-%     r=idgt(c,{'dual',ga},a,Ls); % synthesis
+%     r=idgt(c,gs,a,Ls); % synthesis
 %
 %     norm(f-r)          % test
 %
@@ -103,8 +104,8 @@ function [f,g]=idgt(coef,g,a,varargin)
 %     L=dgtlength(Ls,a,M);
 %
 %     % Analysis and synthesis window
-%     ga=firwin('blackman',128);
-%     gs=gabdual(ga,a,M,L);
+%     gs=firwin('blackman',128);
+%     ga=gabdual(gs,a,M,L);
 %
 %     c=dgt(f,ga,a,M); % analysis
 %

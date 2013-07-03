@@ -65,8 +65,6 @@ if flags.do_group
   groupnorm = sqrt(sum(abs(xi).^2));
   w = thresh(groupnorm, lambda, flags.iofun,flags.outclass)./groupnorm;
   
-  w(1)
-  
   % Clean w for NaN. NaN appears if the input has a group with norm
   % exactly 0.
   w(isnan(w)) = 0;

@@ -76,6 +76,8 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
 %     xrec = frsyn(F,tc);
 %
 %   See also: franalasso, framebounds
+%
+%   References: Kowalski08sparsity kowalski2009mixed
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -102,7 +104,7 @@ L=framelength(F,length(insig));
 F=frameaccel(F,L);
 
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F,L);
+  [~,kv.C] = framebounds(F,L);
 end;
 
 % Initialization of thresholded coefficients
@@ -114,11 +116,11 @@ tc = framecoef2tf(F,c0);
 [M,N]=size(tc);
 
 % Normalization to turn lambda to a value comparable to lasso
-if flags.do_time
-  lambda = lambda*sqrt(N);
-else
-  lambda = lambda*sqrt(M);
-end
+%if flags.do_time
+%  lambda = lambda*sqrt(N);
+%else
+%  lambda = lambda*sqrt(M);
+%end
 
 % Various parameter initializations
 threshold = lambda/kv.C;
@@ -135,16 +137,13 @@ if flags.do_freq
 else
   kv.dim=1;
 end;
-  
-kv.dim
 
 if F.red==1
-    
-    %  ------------ Convert to TF-plane ---------
-    tc = groupthresh(tc,threshold,'argimport',flags,kv);
+        
+    tc=groupthresh(tc,threshold,kv.dim,flags.iofun);
 
     % Convert back from TF-plane
-    tc=frametf2coef(F,tc);
+    tc=frametf2coef(F,tc);        
 
 else
 

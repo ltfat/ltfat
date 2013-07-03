@@ -1,5 +1,5 @@
 
-for testcase=1:3
+for testcase=1:4
 
     isuniform=0;
     switch testcase
@@ -20,6 +20,13 @@ for testcase=1:3
         L=filterbanklength(L,a);
         isreal=1;
         isuniform=1;
+      case 4
+        % Fails for L=5699
+        L=5700
+        [g,a]=erbfilters(10000,L,'fractional');
+        L=filterbanklength(L,a);
+        isreal=1;
+
     end;
     
     disp('testcase')

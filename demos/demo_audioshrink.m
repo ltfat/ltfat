@@ -50,12 +50,9 @@ nsig = sig + 0.01*randn(size(sig));
 % Create a WMDCT basis with 256 channels
 F1=frametight(frame('wmdct','gauss',256));
 
-% Compute wmdct coefficients
-c1 = frana(F1,nsig);
-
 % Group lasso and invert
-c1s = franagrouplasso(F1,c1,0.8,'soft','freq');
-rec1 = frsyn(F1,c1s);
+c1 = franagrouplasso(F1,nsig,0.8,'soft','freq');
+rec1 = frsyn(F1,c1);
 
 % Transient layer
 % ---------------
@@ -63,11 +60,8 @@ rec1 = frsyn(F1,c1s);
 % Create a WMDCT basis with 32 channels
 F2=frametight(frame('wmdct','gauss',32));
 
-% Compute wmdct coefficients
-c2 = frana(F2,nsig);
-
-c2s = franagrouplasso(F2,c2,0.5,'soft','time');
-rec2 = frsyn(F2,c2s);
+c2 = franagrouplasso(F2,nsig,0.5,'soft','time');
+rec2 = frsyn(F2,c2);
 
 % Plots
 % -----
@@ -83,9 +77,7 @@ xlabel('Time (s)');
 axis tight;
 
 subplot(2,2,2);
-imagesc(log(abs(framecoef2tf(F1,c1)+0.00001)));
-set(gca,'ydir','normal');
-%plotframe(F1,c1,fs,dr);
+plotframe(F1,c1,fs,dr);
 
 subplot(2,2,3);
 plot(xplot,rec2);
@@ -93,13 +85,11 @@ xlabel('Time (s)');
 axis tight;
 
 subplot(2,2,4);
-imagesc(log(abs(framecoef2tf(F2,c2)+0.00001)));
-set(gca,'ydir','normal');
-%plotframe(F2,c2,fs,dr);
+plotframe(F2,c2,fs,dr);
 
 % Count the number of non-zero coefficients
-N1=sum(abs(c1s)>0);
-N2=sum(abs(c2s)>0);
+N1=sum(abs(c1)>0);
+N2=sum(abs(c2)>0);
 
 p1 = 100*N1/siglen;
 p2 = 100*N2/siglen;

@@ -29,7 +29,6 @@ function [f,g]=iwmdct(c,g,Ls)
 
 %   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_WMDCT
-%   REFERNCE: OK
 
 error(nargchk(2,3,nargin));
 

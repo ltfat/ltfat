@@ -14,12 +14,18 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %   equidistantly spaced on the ERB-scale (see |freqtoerb|) with bandwidths
 %   that are proportional to the width of the auditory filters
 %   |audfiltbw|. The filters are intended to work with signals with a
-%   sampling rate of *fs*
+%   sampling rate of *fs*.
+%
+%   Because the downsampling rates of the channels must all divide the
+%   signal length, |filterbank| will only work for multiples of the
+%   least common multiple of the downsampling rates. See the help of
+%   |filterbanklength|.
 %
 %   `[g,a,fc]=erbfilters(fs,L,'fractional')` constructs a filterbank with
 %   fractional downsampling rates *a*. The rates are constructed such
 %   that the filterbank can handle signal length that are multiples of
-%   *L*.
+%   *L*, so the benefit of the fractional downsampling is that you get to
+%   choose the value returned by |filterbanklength|.
 %
 %   `[g,a,fc]=erbfilters(fs,'uniform')` constructs a uniform filterbank
 %   where the downsampling rate is the same for all channels.

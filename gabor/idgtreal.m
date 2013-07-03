@@ -58,13 +58,14 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %     f=greasy;            % test signal
 %     a=32;                % time shift
 %     M=64;                % frequency shift
-%     ga={'blackman',128}; % analysis window
+%     gs={'blackman',128}; % synthesis window
+%     ga={'dual',gs};      %  analysis window
 %
-%     [c,Ls]=dgtreal(f,ga,a,M);      % analysis
+%     [c,Ls]=dgtreal(f,ga,a,M); % analysis
 %
 %     % ... do interesting stuff to c at this point ...
 %  
-%     r=idgtreal(c,{'dual',ga},a,M,Ls); % synthesis
+%     r=idgtreal(c,gs,a,M,Ls); % synthesis
 %
 %     norm(f-r)                % test
 %
@@ -80,8 +81,8 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %     L=dgtlength(Ls,a,M);
 %
 %     % Analysis and synthesis window
-%     ga=firwin('blackman',128);
-%     gs=gabdual(ga,a,M,L);
+%     gs=firwin('blackman',128);
+%     ga=gabdual(gs,a,M,L);
 %
 %     c=dgtreal(f,ga,a,M);  % analysis
 %
