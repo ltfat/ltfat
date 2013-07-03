@@ -25,17 +25,16 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-
-definput.import       = {'freqtoaud'};
+definput.import       = {'ltfattranslate','freqtoaud'};
 definput.flags.plotdir= {'x','y'};
 definput.keyvals.tick = [0,100,250,500,1000,2000,4000,8000,16000];
 definput.keyvals.res  = 500;
 definput.keyvals.opts = {};
 
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 n=500;
-tickpos=freqtoaud(keyvals.tick,flags.audscale);
+tickpos=freqtoaud(kv.tick,flags.audscale);
     
 if flags.do_x
   xmin=min(x);
@@ -43,9 +42,10 @@ if flags.do_x
   audminmax=freqtoaud([xmin,xmax],flags.audscale);
   
   plotval=spline(x,y,audspace(xmin,xmax,n,flags.audscale));
-  plot(linspace(audminmax(1),audminmax(2),n),plotval,keyvals.opts{:});
+  plot(linspace(audminmax(1),audminmax(2),n),plotval,kv.opts{:});
   set(gca,'XTick',tickpos);
-  set(gca,'XTickLabel',num2str(keyvals.tick(:)));
+  set(gca,'XTickLabel',num2str(kv.tick(:)));
+  xlabel(sprintf('%s (Hz)',kv.frequency));
  
 end;
 
@@ -54,9 +54,10 @@ if flags.do_y
   ymax=max(y);
   audminmax=freqtoaud([ymin,ymax],flags.audscale);
   
-  plot(x,freqtoerb(y),keyvals.opts{:});
+  plot(x,freqtoerb(y),kv.opts{:});
   set(gca,'YTick',tickpos);
   set(gca,'YTickLabel',num2str(tick(:)));
   
+  ylabel(sprintf('%s (Hz)',kv.frequency));
 end;
 

@@ -28,6 +28,7 @@ L=filterbanklengthcoef(c,a);
 
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
+a=info.a;
 
 if iscell(c)
   Mcoef=numel(c);
@@ -45,15 +46,23 @@ end;
 if iscell(c)
     f=zeros(L,W,assert_classname(c{1}));
 else
-    a=a(1);
     f=zeros(L,W,assert_classname(c));
 end;
+
+% This routine must handle the following cases
+%
+%   * Time-side or frequency-side filters (test for  isfield(g,'H'))
+%
+%   * Cell array or matrix input (test for iscell(c))
+%
+%   * Regular or fractional subsampling (test for info.isfractional)
 
 l=(0:L-1).'/L;
 for m=1:M
     conjG=conj(comp_transferfunction(g{m},L));
-    
-    if iscell(c)
+        
+    % Handle fractional subsampling (this implies frequency side filters)
+    if info.isfractional
         N=size(c{m},1);
         Llarge=ceil(L/N)*N;
         amod=Llarge/N;
@@ -64,10 +73,17 @@ for m=1:M
             f(:,w)=f(:,w)+ifft(circshift(bsxfun(@times,innerstuff,circshift(conjG,-g{m}.foff)),g{m}.foff));
         end;                
     else
-        for w=1:W
-            % This repmat cannot be replaced by bsxfun
-            f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a,1).*conjG);
-        end;        
+        if iscell(c)
+            for w=1:W
+                % This repmat cannot be replaced by bsxfun
+                f(:,w)=f(:,w)+ifft(repmat(fft(c{m}(:,w)),a(m),1).*conjG);
+            end;
+        else
+            for w=1:W
+                % This repmat cannot be replaced by bsxfun
+                f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a(m),1).*conjG);
+            end;            
+        end;
     end;
 end;
   

@@ -20,6 +20,13 @@ function [nfft,tableout]=floor23(n)
 % 
 %     floor23(26)
 %
+%   This plot shows the behaviour of |floor23| and |ceil23| for numbers
+%   up to 100:::
+%
+%     x=1:100;
+%     plot(x,floor23(x),x,ceil23(x));
+%     legend('floor23','ceil23','Location','Northwest');
+%
 %   See also: ceil23, floor235, nextfastfft
   
 %   AUTHOR: Peter L. Søndergaard

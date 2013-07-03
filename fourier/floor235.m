@@ -20,7 +20,14 @@ function [nfft,tableout]=floor235(n)
 % 
 %     floor235(26)
 %
-%   See also: floor235, ceil23, nextfastfft
+%   This plot shows the behaviour of |floor235| and |ceil235| for numbers
+%   up to 100:::
+%
+%     x=1:100;
+%     plot(x,floor235(x),x,ceil235(x));
+%     legend('floor235','ceil235','Location','Northwest');
+%
+%   See also: floor23, ceil235, nextfastfft
   
 %   AUTHOR: Peter L. Søndergaard
     

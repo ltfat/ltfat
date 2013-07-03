@@ -17,6 +17,9 @@
 %    IERBLETT               - Inverse Erb-let transform
 %    INSDGFB                - Say what?
 %
+%  Filter generators
+%    ERBFILTERS             - ERB-spaced filters
+%  
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters
 %    FILTERBANKTIGHT        - Canonical tight filters
@@ -27,7 +30,7 @@
 %    FILTERBANKRESPONSE     - Total frequency response
 %
 %  Plots
-%    PLOTFILTERBANK       - Plot normal/uniform filter bank coefficients
+%    PLOTFILTERBANK         - Plot normal/uniform filter bank coefficients
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
