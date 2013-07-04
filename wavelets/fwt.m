@@ -29,24 +29,24 @@ function [c,info] = fwt(f,h,J,varargin)
 %   The basic analysis wavelet filterbank $h$ can be passed in several 
 %   formats. The formats are the same as for the |fwtinit| function.
 %
-%     1) One option is passing a cell array whose first element is the
-%        name of the function defining the basic wavelet filters (`wfilt_`
-%        prefix) and the other elements are the parameters of the
-%        function. e.g. `{'db',10}` calls `wfilt_db(10)` internally.
+%   1) One option is passing a cell array whose first element is the
+%      name of the function defining the basic wavelet filters (`wfilt_`
+%      prefix) and the other elements are the parameters of the
+%      function. e.g. `{'db',10}` calls `wfilt_db(10)` internally.
 %
-%     2) Character string as concatenation of the name of the wavelet
-%        filters defining function (as above) and the numeric parameters
-%        delimited by ':' character, e.g. 'db10' has the same effect as above,
-%        'spline4:4' calls `wfilt_spline(4,4)` internally.
+%   2) Character string as concatenation of the name of the wavelet
+%      filters defining function (as above) and the numeric parameters
+%      delimited by ':' character, e.g. 'db10' has the same effect as above,
+%      'spline4:4' calls `wfilt_spline(4,4)` internally.
 %
-%     3) The third possible format of $h$ is to pass cell array of one
-%        dimensional numerical vectors directly defining the wavelet filter
-%        impulse responses.  In this case, outputs of the filters are
-%        subsampled by a factor equal to the number of the filters. For
-%        creating completely custom filterbanks use the |fwtinit| function.
+%   3) The third possible format of $h$ is to pass cell array of one
+%      dimensional numerical vectors directly defining the wavelet filter
+%      impulse responses.  In this case, outputs of the filters are
+%      subsampled by a factor equal to the number of the filters. For
+%      creating completely custom filterbanks use the |fwtinit| function.
 %
-%     4) The fourth option is to pass a structure obtained from the
-%        |fwtinit| function.
+%   4) The fourth option is to pass a structure obtained from the
+%      |fwtinit| function.
 %   
 %   If *f* is row/collumn vector of length *L*, the subbands *c* are stored
 %   in a single collumn/row in a consecutive order with respect to the 

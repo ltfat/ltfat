@@ -12,27 +12,27 @@ function wt = wfbtinit(wtdef,varargin)
 %   `wfbtinit()` creates empty structure. The structure describing the 
 %   tree has the following fields:
 %
-%     `wtree.nodes`
-%        actual impulse responses
-%     
-%     `wtree.children`
-%        indexes of children nodes
+%   `wtree.nodes`
+%      actual impulse responses
+%   
+%   `wtree.children`
+%      indexes of children nodes
 % 
-%     `wtree.parents`
-%        indexes of a parent node
+%   `wtree.parents`
+%      indexes of a parent node
 %
 %   `wfbt=wfbtinit({w,J,flag})` creates filterbank tree of depth *J*. Parameter *w* 
 %   defines basic wavelet filterbank. For all possible formats see |fwt|.
 %   The following optional flags (still inside of the cell-array) are
 %   recognized:
 %
-%            'dwt','full'
-%                Type of the tree to be created.
+%   'dwt','full'
+%     Type of the tree to be created.
 %
 %   The following additional flag groups are supported:
 %
-%         'freq','nat'
-%                Frequency or natural order of the coefficient subbands.
+%   'freq','nat'
+%     Frequency or natural order of the coefficient subbands.
 %
 
 % TO DO: Do some caching

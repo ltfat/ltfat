@@ -17,21 +17,22 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %   parsing input parameters for a function in LTFAT. Parameters come in
 %   four categories:
 %  
-%     * Position dependant parameters. These must not be strings. These are
-%       the first parameters passed to a function, and they are really just a short way
-%       of specifying key/value pairs. See below.
+%   * Position dependant parameters. These must not be strings. These are
+%     the first parameters passed to a function, and they are really just a
+%     short way of specifying key/value pairs. See below.
 %
-%     * Flags. These are single string appearing after the position dependant
-%       parameters.
+%   * Flags. These are single string appearing after the position dependant
+%     parameters.
 %
-%     * Key/value pairs. The key is always a string followed by the value, which can be
-%       anything.
+%   * Key/value pairs. The key is always a string followed by the value,
+%     which can be anything.
 %
-%     * Expansions. These appear as flags, that expand into a pre-defined list of parameters.
-%       This is a short-hand way of specifying standard sets of flags and key/value pairs.
+%   * Expansions. These appear as flags, that expand into a pre-defined list
+%     of parameters.  This is a short-hand way of specifying standard sets of
+%     flags and key/value pairs.
 %
-%   The parameters are parsed in order, so parameters appearing later in varargin will override
-%   previously set values.
+%   The parameters are parsed in order, so parameters appearing later in
+%   varargin will override previously set values.
 %
 %   The following example for calling `ltfatarghelper` is taken from |dgt|::
 %  
@@ -39,8 +40,8 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %     definput.flags.phase={'freqinv','timeinv'};
 %     [flags,kv]=ltfatarghelper({'L'},definput,varargin);
 %
-%   The first line defines a key/value pair with the key `'L'` having an initial value of `[]`
-%   (the empty matrix).
+%   The first line defines a key/value pair with the key `'L'` having an
+%   initial value of `[]` (the empty matrix).
 %
 %   The second line defines a group of flags by the name of `phase`.  The
 %   group `phase` contains the flags `'freqinv'` and `'timeinv'`, which can
@@ -55,8 +56,8 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %   the parameter `'L'` can also be given as the very first value in
 %   varargin.
 %
-%   The output struct `kv` contains the key/value pairs, so the value associated to `'L'` is
-%   stored in `kv.L`.
+%   The output struct `kv` contains the key/value pairs, so the value
+%   associated to `'L'` is stored in `kv.L`.
 %
 %   The output struct `flags` contains information about the flags choosen
 %   by the user. The value of `flags.phase` will be set to the selected flag

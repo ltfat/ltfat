@@ -15,14 +15,14 @@ function f=iuwpfbt(c,par,varargin)
 %
 %   The following flag groups are supported:
 %
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
+%   'per','zpd','sym','symw','asym','asymw','ppd','sp0'
+%          Type of the boundary handling.
 %
-%         'full','dwt'
-%                Type of the tree to be used.
+%   'full','dwt'
+%          Type of the tree to be used.
 %
-%         'freq','nat'
-%                Frequency or natural order of the coefficient subbands.
+%   'freq','nat'
+%          Frequency or natural order of the coefficient subbands.
 %
 %   Please see the help on |fwt| for a description of the flags.
 %

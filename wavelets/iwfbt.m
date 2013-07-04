@@ -24,11 +24,11 @@ function f=iwfbt(c,par,varargin)
 %
 %   In addition, the following flag groups are supported:
 %
-%         'per','zero','odd','even'
-%                Type of the boundary handling.
+%   'per','zero','odd','even'
+%      Type of the boundary handling.
 %
-%         'freq','nat'
-%                Frequency or natural order of the coefficient subbands.
+%   'freq','nat'
+%      Frequency or natural order of the coefficient subbands.
 %
 %   Please see the help on |fwt| for a description of the flags.
 %
@@ -46,7 +46,7 @@ function f=iwfbt(c,par,varargin)
 %     norm(f-fhat)
 %
 %   See also: wfbt, wfbtinit
-%
+
 
 if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));

@@ -57,6 +57,8 @@ sgram(f,fs,dynrange_for_plotting);
 
 %% ---------------  Gammatone filters ----------------------------
 
+if 0
+
 g_gam=gammatonefir(fc,fs,filterlength,'peakphase');
 
 % In production code, it is not necessary to call 'filterbankrealbounds',
@@ -86,4 +88,4 @@ Ls=length(f);
 [r_iter,relres,iter] = frsyniter(F,c2,Ls);
 norm(f-r_iter)/norm(f)
 
-
+end;

@@ -20,26 +20,27 @@ function [c,info]=wfbt(f,wt,varargin)
 %
 %   The *wt* parameter can have two formats:
 %
-%      1) Cell array containing 3 elements `{w,J,treetype}`, where `w` is
-%         the basic wavelet filterbank definition as in |fwt| function, *J*
-%         stands for the depth of the tree and the flag `treetype` defines 
-%         the type of the tree to be used. Supported options are:
+%   1) Cell array containing 3 elements `{w,J,treetype}`, where `w` is
+%      the basic wavelet filterbank definition as in |fwt| function, *J*
+%      stands for the depth of the tree and the flag `treetype` defines 
+%      the type of the tree to be used. Supported options are:
 %
-%            'dwt' - DWT tree. Just the low-pass output is decomposed
-%                    further.
+%      `'dwt'`  
+%        DWT tree. Just the low-pass output is decomposed further.
 %
-%            'full' - Full decomposition tree. Each output is decomposed up to level *J*.
+%      `'full'`
+%        Full decomposition tree. Each output is decomposed up to level *J*.
 %
-%      2) Structure returned by the |wfbtinit| function and possibly
-%         modified by |wfbtput| and |wfbtremove|.
+%   2) Structure returned by the |wfbtinit| function and possibly
+%      modified by |wfbtput| and |wfbtremove|.
 %
 %   In addition, the following flag groups are supported:
 %
-%         'per','zero','odd','even'
-%                Type of the boundary handling.
+%   `'per'`,`'zero'`,`'odd'`,`'even'`
+%     Type of the boundary handling.
 %
-%         'freq','nat'
-%                Frequency or natural order of the coefficient subbands.
+%   `'freq'`,`'nat'`
+%     Frequency or natural order of the coefficient subbands.
 %
 %   Please see the help on |fwt| for a description of the boundary condition flags.
 %
@@ -58,7 +59,6 @@ function [c,info]=wfbt(f,wt,varargin)
 %     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: iwfbt, wfbtinit
-%
 
 
 if(nargin<2)

@@ -84,7 +84,7 @@ function F=frame(ftype,varargin);
 %   Examples
 %   --------
 %
-%   The following example creates a Gabor frame for real-valued signals,
+%   The following example creates a Modified Discrete Cosine Transfor frame,
 %   analyses an input signal and plots the frame coefficients:::
 %
 %      F=frame('wmdct','gauss',40);

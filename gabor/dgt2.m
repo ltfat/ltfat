@@ -48,15 +48,15 @@ function [c,Ls]=dgt2(f,g1,p3,p4,p5,p6)
 %   The output *c* has *4* or *5* dimensions. The dimensions index the
 %   following properties:
 %
-%      1. Number of translation along 1st dimension of input.
+%   1. Number of translation along 1st dimension of input.
 %
-%      2. Number of channel along 1st dimension  of input
+%   2. Number of channel along 1st dimension  of input
 %
-%      3. Number of translation along 2nd dimension of input.
+%   3. Number of translation along 2nd dimension of input.
 %
-%      4. Number of channel along 2nd dimension  of input
+%   4. Number of channel along 2nd dimension  of input
 %
-%      5. Plane number, corresponds to 3rd dimension of input. 
+%   5. Plane number, corresponds to 3rd dimension of input. 
 % 
 %   See also:  dgt, idgt2, gabdual
 
