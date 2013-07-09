@@ -49,6 +49,12 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %    
 %     'uniform'       Construct a uniform filterbank.
 %
+%     'symmetric'     Create filters that are symmetric around their centre
+%                     frequency. This is the default.
+%
+%     'warped'        Create asymmetric filters that are symmetric on the
+%                     Erb-scale.
+%
 %     'real'          Construct a filterbank that works for real-valued
 %                     signals only (the filters cover only the positive
 %                     frequencies). This is the default.
@@ -156,8 +162,8 @@ else
     % The scaling is incorrect, it does not account for the warping
     fsupp=1/winbw*kv.bwmul;
     
-    g=warpedblfilter(flags.wintype,fsupp,fc,fs,@freqtoerb,'scal',scal,scaltype); ...
-      
+    g=warpedblfilter(flags.wintype,fsupp,fc,fs,@freqtoerb,@erbtofreq, ...
+                     'scal',scal,scaltype); 
     % Convert fsupp into the correct widths in Hz, necessary to compute
     % "a" in the next if-statement
     fsupp=erbtofreq(freqtoerb(fc)+fsupp/2)-erbtofreq(freqtoerb(fc)-fsupp/2);

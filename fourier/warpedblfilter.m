@@ -1,4 +1,4 @@
-function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,varargin)
+function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq,varargin)
 %WARPEDBLFILTER  Construct a warped band-limited filter
 %   Usage:  g=warpedblfilter(winname,fsupp,fc,fs,freqtoscale);
 %           g=warpedblfilter(winname,fsupp,fc,...);
@@ -9,6 +9,7 @@ function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,varargin)
 %      fc          : Centre frequency (in Hz).
 %      fs          : Sampling rate
 %      freqtoscale : Function handle to convert Hz to scale units
+%      scaletofreq : Function to convert scale units into Hz.
 %
 %   Output parameters:
 %      g           : Filter definition, see |blfilter|.
@@ -71,24 +72,24 @@ for ii=1:Nfilt
     
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    comp_warpedfreqresponse(winname,freqtoscale(fc(ii)), ...
-                                            fsupp(ii),fs,L,freqtoscale, ...
-                                            flags.norm)*kv.scal(ii)*L;
+        g.H=@(L)    comp_warpedfreqresponse( winname,freqtoscale(fc(ii)), ...
+                                             fsupp(ii),fs,L,freqtoscale, ...
+                                             scaletofreq, flags.norm)*kv.scal(ii)*L;
     end;
     
     if  flags.do_2 || flags.do_energy
         g.H=@(L)    comp_warpedfreqresponse(winname,freqtoscale(fc(ii)), ...
-                                            fsupp(ii),fs,L,freqtoscale, ...
+                                            fsupp(ii),fs,L,freqtoscale,scaletofreq, ...
                                             flags.norm)*kv.scal(ii)*sqrt(L);
     end;
         
     if flags.do_inf || flags.do_peak
         g.H=@(L)    comp_warpedfreqresponse(winname,freqtoscale(fc(ii)), ...
-                                            fsupp(ii),fs,L,freqtoscale, ...
+                                            fsupp(ii),fs,L,freqtoscale,scaletofreq, ...
                                             flags.norm)*kv.scal(ii);
     end;
         
-    g.foff=@(L) 0;
+    g.foff=@(L) comp_warpedfoff(freqtoscale(fc(ii)),fsupp(ii),fs,L,scaletofreq);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
     g.fs=fs;

@@ -44,10 +44,11 @@ if ~(M==Mcoef)
 end;
 
 if iscell(c)
-    f=zeros(L,W,assert_classname(c{1}));
+    classname=assert_classname(c{1});
 else
-    f=zeros(L,W,assert_classname(c));
+    classname=assert_classname(c);
 end;
+f=zeros(L,W,classname);
 
 % This routine must handle the following cases
 %
@@ -61,6 +62,9 @@ l=(0:L-1).'/L;
 for m=1:M
     conjG=conj(comp_transferfunction(g{m},L));
         
+    % For Octave 3.6 compatibility
+    conjG=cast(conjG,classname);
+    
     % Handle fractional subsampling (this implies frequency side filters)
     if info.isfractional
         N=size(c{m},1);
