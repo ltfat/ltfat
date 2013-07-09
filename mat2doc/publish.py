@@ -106,10 +106,10 @@ def runcommand(todo,redomode='auto'):
         pass
 
     if todo=='gitstagemat':
-        os.system('mat2doc mat '+projectdir)
+        os.system('mat2doc '+projectdir+' mat')
 
     if todo=='gitrepomat':
-        os.system('mat2doc mat '+projectdir)
+        os.system('mat2doc '+projectdir+' mat')
 
     # Release for other developers to download
     if 'develmat' in todo:
@@ -150,7 +150,7 @@ def runcommand(todo,redomode='auto'):
 
     if todo=='php':
         phpdir=outputdir+project+'-php'+os.sep
-        os.system('mat2doc php '+projectdir)
+        os.system('mat2doc '+projectdir+' php')
         s='rsync -av '+phpdir+' '+host+':'+remotedir
         os.system(s)    
 

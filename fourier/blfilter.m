@@ -1,15 +1,18 @@
-function gout=blfilter(name,fsupp,varargin)
+function gout=blfilter(winname,fsupp,varargin)
 %BLFILTER  Construct a band-limited filter
-%   Usage:  g=blfilter(name,fsupp,centre);
-%           g=blfilter(name,fsupp,centre,...);
+%   Usage:  g=blfilter(winname,fsupp,centre);
+%           g=blfilter(winname,fsupp,centre,...);
 %
-%   `blfilter(name,fsupp)` construct a band-limited filter. The
-%   parameter *name* specifies the shape of the frequency response. The
-%   name must be one of the shapes accepted by |firwin|. The support of
-%   the frequency response measured in normalized frequencies is
-%   specified by *fsupp*.
+%   Input parameters:
+%      winname  : Name of prototype
+%      fsupp    : Support length of the prototype
 %
-%   `blfilter(name,fsupp,centre)` constructs a filter with a centre
+%   `blfilter(winname,fsupp)` constructs a band-limited filter. The parameter
+%   *winname* specifies the shape of the frequency response. The name must be
+%   one of the shapes accepted by |firwin|. The support of the frequency
+%   response measured in normalized frequencies is specified by *fsupp*.
+%
+%   `blfilter(winname,fsupp,centre)` constructs a filter with a centre
 %   frequency of *centre* measured in normalized frequencies.
 %
 %   If one of the inputs is a vector, the output will be a cell array
@@ -102,22 +105,23 @@ kv.centre=modcent(kv.centre,2);
 
 Nfilt=numel(fsupp);
 gout=cell(1,Nfilt);
+
 for ii=1:Nfilt
     g=struct();
     
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(winname,round(L/2*fsupp(ii)), ...
                                     flags.norm))*kv.scal(ii)*L;        
     end;
     
     if  flags.do_2 || flags.do_energy
-        g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(winname,round(L/2*fsupp(ii)), ...
                                     flags.norm))*kv.scal(ii)*sqrt(L);                
     end;
         
     if flags.do_inf || flags.do_peak
-        g.H=@(L)    fftshift(firwin(name,round(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(winname,round(L/2*fsupp(ii)), ...
                                     flags.norm))*kv.scal(ii);        
         
     end;

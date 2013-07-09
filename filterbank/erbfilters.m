@@ -56,7 +56,7 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %     'complex'       Construct a filterbank that covers the entire
 %                     frequency range.
 %
-%     'refsampling'   Choose the downsampling rates to be products of 2
+%     'regsampling'   Choose the downsampling rates to be products of 2
 %                     and 3 (see |floor23| and |ceil23|). This is the
 %                     default.
 %
@@ -131,20 +131,40 @@ if isempty(N)
 end;
 
 fc=erbspace(0,fs/2,N);
-% "*3" is just a heuristic, no justification
-fsupp=round(audfiltbw(fc)/winbw*kv.bwmul);
 
 % Improve the scaling of the first and last channel
 scal=ones(1,N);
 scal(1)=scal(1)/sqrt(2);
 scal(N)=scal(N)/sqrt(2);
 
+if flags.do_nonuniform    
+    % Energy scaling works best
+    scaltype='2';
+else
+    % Peak-frequency scaling works best
+    scaltype='inf';
+end;
+    
+
+if flags.do_symmetric
+    % fsupp is measured in Hz
+    fsupp=round(audfiltbw(fc)/winbw*kv.bwmul);
+
+    g=blfilter(flags.wintype,fsupp,fc,'fs',fs,'scal',scal,scaltype);    
+else
+    % fsupp is measured in Erbs
+    % The scaling is incorrect, it does not account for the warping
+    fsupp=1/winbw*kv.bwmul;
+    
+    g=warpedblfilter(flags.wintype,fsupp,fc,fs,@freqtoerb,'scal',scal,scaltype); ...
+      
+    % Convert fsupp into the correct widths in Hz, necessary to compute
+    % "a" in the next if-statement
+    fsupp=erbtofreq(freqtoerb(fc)+fsupp/2)-erbtofreq(freqtoerb(fc)-fsupp/2);
+    
+end;
 
 if flags.do_nonuniform
-    % Do the non-uniform case
-    % Energy scaling works best
-    g=blfilter('hanning',fsupp,fc,'fs',fs,'scal',scal,'2');
-    
     % Find suitable channel subsampling rates
     aprecise=round(fs./fsupp/2); % "/2" is just a heuristic, no justification
     aprecise=aprecise(:);
@@ -155,17 +175,13 @@ if flags.do_nonuniform
         
     else
         a=ceil23(aprecise); % Grow "a" to the next composite number
-    
+        
         % Determine the minimal transform length
         L=filterbanklength(1,a);
     end;
-
+    
 else
-    % Do the uniform case
-    % Peak-frequency scaling works best
-    g=blfilter('hanning',fsupp,fc,'fs',fs,'scal',scal,'inf');
-    a=3;
-
+    % Totally heuristic, no justification for this choice
+    a=4;
+    
 end;
-
-

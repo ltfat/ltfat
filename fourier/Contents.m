@@ -49,6 +49,7 @@
 %  Filtering
 %    FIRFILTER      -  Construct an FIR filter.
 %    BLFILTER       -  Construct a band-limited filter.
+%    WARPEDBLFILTER -  Warped, band-limited filter.
 %    PFILT          -  Apply filter with periodic boundary conditions.
 %    MAGRESP        -  Magnitude response plot.
 %    TRANSFERFUNCTION - Computer the transfer function of a filter.
