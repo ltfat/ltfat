@@ -16,6 +16,10 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %   |audfiltbw|. The filters are intended to work with signals with a
 %   sampling rate of *fs*.
 %
+%   By default, a Hann window on the frequency side is choosen, but the
+%   window can be changed by passing any of the window types from
+%   |firwin| as an optional parameter.
+%
 %   Because the downsampling rates of the channels must all divide the
 %   signal length, |filterbank| will only work for multiples of the
 %   least common multiple of the downsampling rates. See the help of
@@ -103,15 +107,21 @@ function [g,a,fc]=erbfilters(fs,varargin)
 
 % Authors: Peter L. Søndergaard
 
+definput.import = {'firwin'};
 
 definput.keyvals.L=[];
 definput.keyvals.N=[];
 definput.keyvals.bwmul=1;
+
+definput.flags.warp     = {'symmetric','warped'};
 definput.flags.uniform  = {'nonuniform','uniform'};
 definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','fractional'};
 
 [flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+
+% Get the bandwidth of the choosen window by doing a probe
+winbw=norm(firwin(flags.wintype,1000)).^2/1000;
 
 % Construct the Erb filterbank
 
@@ -122,7 +132,7 @@ end;
 
 fc=erbspace(0,fs/2,N);
 % "*3" is just a heuristic, no justification
-fsupp=round(audfiltbw(fc)*4*kv.bwmul);
+fsupp=round(audfiltbw(fc)/winbw*kv.bwmul);
 
 % Improve the scaling of the first and last channel
 scal=ones(1,N);

@@ -9,6 +9,7 @@
 %    LTFATMEX         -  Compile Mex/Oct interfaces
 %    LTFATBASEPATH    -  Return the base path
 %    ISOCTAVE         -  True if interpreter is Octave
+%    DEMO_WEIGHTED_L1 -  Test
 %
 %  Parameter handling
 %    LTFATARGHELPER   -  Handle optional parameters of functions
