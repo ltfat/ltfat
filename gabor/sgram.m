@@ -94,12 +94,12 @@ function varargout=sgram(f,varargin)
 %   ---------
 %
 %   The |greasy| signal is sampled using a sampling rate of 16 kHz. To
-%   display a spectrogram of |greasy| with a dynamic range of 90 dB, use::
+%   display a spectrogram of |greasy| with a dynamic range of 90 dB, use:::
 %
 %     sgram(greasy,16000,90);
 %
 %   To create a spectrogram with a window length of 20ms (which is
-%   typically used in speech analysis) use ::
+%   typically used in speech analysis) use :::
 %
 %     fs=16000;
 %     sgram(greasy,fs,90,'wlen',round(20/1000*fs));

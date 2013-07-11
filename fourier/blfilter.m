@@ -48,39 +48,35 @@ function gout=blfilter(winname,fsupp,varargin)
 %   Output format:
 %   --------------
 %
-%   The output from `blfilter` is a structure. This type of structure can
+%   The output *g* from `blfilter` is a structure. This type of structure can
 %   be used to describe any bandlimited filter defined in terms of its
 %   transfer function. The structure contains the following fields:
 %
-%     `H`
-%        This is an anonymous function taking the transform length *L* as
-%        input and producing the bandlimited transfer function in the form of a
-%        vector.
+%     g.H     This is an anonymous function taking the transform length *L* as
+%             input and producing the bandlimited transfer function in the
+%             form of a vector.
 %
-%     `foff`
-%        This is an anonymous function taking the transform length *L* as
-%        input and procing the frequency offset of *H* as an integer. The
-%        offset is the value of the lowest frequency of *H* measured in
-%        frequency samples. *foff* is used to position the bandlimited
-%        tranfer function stored in *H* correctly when multiplying in the
-%        frequency domain.
+%     g.foff  This is an anonymous function taking the transform length *L* as
+%             input and procing the frequency offset of *H* as an integer. The
+%             offset is the value of the lowest frequency of *H* measured in
+%             frequency samples. *foff* is used to position the bandlimited
+%             tranfer function stored in *H* correctly when multiplying in the
+%             frequency domain.
 %
-%     `delay`
-%        This is the desired delay of the filter measured in samples.
+%     g.delay  This is the desired delay of the filter measured in samples.
 %
-%     `realonly`
-%        This is an integer with value *1* if the filter defined a
-%        real-valued filter. In this case, the bandlimited transfer
-%        function *H* will be mirrored from the positive frequencies to
-%        the negative frequencies. If the filter is a natural lowpass
-%        filter correctly centered around *0*, `realonly` does not need
-%        to be *1*.
+%     g.realonly
+%             This is an integer with value *1* if the filter defined a
+%             real-valued filter. In this case, the bandlimited transfer
+%             function *H* will be mirrored from the positive frequencies to
+%             the negative frequencies. If the filter is a natural lowpass
+%             filter correctly centered around *0*, `realonly` does not need
+%             to be *1*.
 %
-%     `fs`
-%        The intended sampling frequency. This is an optional parameter
-%        that is **only** used for plotting and visualization.
+%     g.fs    The intended sampling frequency. This is an optional parameter
+%             that is **only** used for plotting and visualization.
 %
-%   See also: blfilter, firwin, pfilt, filterbank
+%   See also: firfilter, firwin, pfilt, filterbank
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};

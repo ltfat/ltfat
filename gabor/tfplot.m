@@ -43,8 +43,8 @@ function coef=tfplot(coef,step,yr,varargin)
 %     'tc'     Time centering. Move the beginning of the signal to the
 %              middle of the plot. 
 %
-%     'clim',clim  Use a colormap ranging from $clim(1)$ to $clim(2)$. These
-%                  values are passed to `imagesc`. See the help on `imagesc`.
+%     'clim',clim   Use a colormap ranging from $clim(1)$ to $clim(2)$. These
+%                   values are passed to `imagesc`. See the help on `imagesc`.
 %
 %     'image'       Use `imagesc` to display the plot. This is the default.
 %
