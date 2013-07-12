@@ -1,4 +1,4 @@
-function test_failed = test_uwfbtpr(verbose)
+function test_failed = test_uwpfbtpr(verbose)
 %TEST_WFBTPR
 %
 % Checks perfect reconstruction of the general wavelet transform of different

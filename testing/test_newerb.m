@@ -1,98 +1,89 @@
-warpname={'symmetric','warped'};
+warpname={'warped','symmetric'};
 
 test_failed=0;
 
 for warpidx=1:2
     warping=warpname{warpidx};
     
-    for testcase=1:4
-        
-        isuniform=0;
-        switch testcase
-          case 1
-            % Fails for L=5699
-            L=5700
-            [g,a]=erbfilters(16000,L,'fractional',warping);
-            L=filterbanklength(L,a);
-            isreal=1;
-          case 2
-            L=4000;
-            [g,a]=erbfilters(16000,warping);
-            L=filterbanklength(L,a);
-            isreal=1;
-          case 3
-            L=6000;
-            [g,a]=erbfilters(16000,'uniform',warping);
-            L=filterbanklength(L,a);
-            isreal=1;
-            isuniform=1;
-          case 4
-            % Fails for L=5699
-            L=5700
-            [g,a]=erbfilters(10000,L,'fractional',warping);
-            L=filterbanklength(L,a);
-            isreal=1;
-            
+    for fracidx=1:2
+        if fracidx==1
+            fractional={'regsampling'};
+            fracname='regsamp';
+        else
+            fractional={'fractional','L',10000};
+            fracname='fractional';
         end;
         
-        disp('testcase')
-        testcase
-        
-        % Test it
-        if 0
-            f=greasy+randn(L,1);
-        else        
-            f=[1;zeros(L-1,1)];
+        for uniformidx=1:2
+            if uniformidx==1                
+                isuniform=0;
+                uniform='nonuniform';
+            else
+                isuniform=1;
+                uniform='uniform';
+            end;
+            
+            [g,a]=erbfilters(16000,fractional{:},warping,uniform,'redmul',1);
+            L=filterbanklength(5000,a);
+            isreal=1;
+            
+            
+            f=randn(L,1);
+            % Test it
             if 0
+                f=[1;zeros(L-1,1)];
                 ff=fft(f);
                 ff(1999:2003)=0;
                 f=ifft(ff);
             end;
+            
+            if 0
+                % Inspect it: Dual windows, frame bounds and the response
+                disp('Frame bounds:')
+                [A,B]=filterbankrealbounds(g,a,L);
+                A
+                B
+                B/A
+                filterbankresponse(g,a,L,'real','plot');
+            end;
+            
+            gd=filterbankrealdual(g,a,L);
+            
+            if isuniform
+                c=ufilterbank(f,g,a);
+            else
+                c=filterbank(f,g,a);
+            end;
+            r=ifilterbank(c,gd,a);
+            if isreal
+                r=2*real(r);
+            end;
+            
+            res=norm(f-r);
+            
+            [test_failed,fail]=ltfatdiditfail(res,test_failed);
+            s=sprintf(['ERBFILTER DUAL  %s %s %s L:%3i %0.5g %s'],warping,fracname,uniform,L,res,fail);    
+            disp(s);
+            
+            
+            gt=filterbankrealtight(g,a,L);
+            if isuniform
+                ct=ufilterbank(f,gt,a);
+            else
+                ct=filterbank(f,gt,a);
+            end;
+            rt=ifilterbank(ct,gt,a);
+            if isreal
+                rt=2*real(rt);
+            end;
+            
+            res=norm(f-r);
+            
+            [test_failed,fail]=ltfatdiditfail(res,test_failed);
+            s=sprintf(['ERBFILTER TIGHT %s %s %s L:%3i %0.5g %s'],warping,fracname,uniform,L,res,fail);    
+            disp(s);
+            
         end;
-        
-        % Inspect it: Dual windows, frame bounds and the response
-        disp('Frame bounds:')
-        [A,B]=filterbankrealbounds(g,a,L);
-        A
-        B
-        B/A
-        filterbankresponse(g,a,L,'real','plot');
-        gd=filterbankrealdual(g,a,L);
-        
-        if isuniform
-            c=ufilterbank(f,g,a);
-        else
-            c=filterbank(f,g,a);
-        end;
-        r=ifilterbank(c,gd,a);
-        if isreal
-            r=2*real(r);
-        end;
-        
-        disp('Reconstruction:')
-        res=norm(f-r);
-    
-        [test_failed,fail]=ltfatdiditfail(res,test_failed);
-        s=sprintf(['ERBFILTER DUAL  %s testcase: %3i L:%3i %0.5g %s'],warping,testcase,L,res,fail);    
-        disp(s);
-        
-        
-        gt=filterbankrealtight(g,a,L);
-        if isuniform
-            ct=ufilterbank(f,gt,a);
-        else
-            ct=filterbank(f,gt,a);
-        end;
-        rt=ifilterbank(ct,gt,a);
-        if isreal
-            rt=2*real(rt);
-        end;
-
-        res=norm(f-r)
-
-        [test_failed,fail]=ltfatdiditfail(res,test_failed);
-        s=sprintf(['ERBFILTER TIGHT %s testcase: %3i L:%3i %0.5g %s'],warping,testcase,L,res,fail);    
-        disp(s);
         
     end;
     

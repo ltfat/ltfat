@@ -1,7 +1,7 @@
 function gout=blfilter(winname,fsupp,varargin)
 %BLFILTER  Construct a band-limited filter
-%   Usage:  g=blfilter(winname,fsupp,centre);
-%           g=blfilter(winname,fsupp,centre,...);
+%   Usage:  g=blfilter(winname,fsupp,fc);
+%           g=blfilter(winname,fsupp,fc,...);
 %
 %   Input parameters:
 %      winname  : Name of prototype
@@ -12,8 +12,8 @@ function gout=blfilter(winname,fsupp,varargin)
 %   one of the shapes accepted by |firwin|. The support of the frequency
 %   response measured in normalized frequencies is specified by *fsupp*.
 %
-%   `blfilter(winname,fsupp,centre)` constructs a filter with a centre
-%   frequency of *centre* measured in normalized frequencies.
+%   `blfilter(winname,fsupp,fc)` constructs a filter with a centre
+%   frequency of *fc* measured in normalized frequencies.
 %
 %   If one of the inputs is a vector, the output will be a cell array
 %   with one entry in the cell array for each element in the vector. If
@@ -24,7 +24,7 @@ function gout=blfilter(winname,fsupp,varargin)
 %   `blfilter` accepts the following optional parameters:
 %
 %     'fs',fs     If the sampling frequency *fs* is specified then the support
-%                 *fsupp* and the centre frequency *centre* is specified in Hz.
+%                 *fsupp* and the centre frequency *fc* is specified in Hz.
 %
 %     'complex'   Make the filter complex valued if the centre frequency
 %                 is non-zero.necessary. This is the default.
@@ -82,22 +82,22 @@ function gout=blfilter(winname,fsupp,varargin)
 definput.import={'normalize'};
 definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
-definput.keyvals.centre=0;
+definput.keyvals.fc=0;
 definput.keyvals.fs=[];
 definput.keyvals.scal=1;
 definput.flags.real={'complex','real'};
 
-[flags,kv]=ltfatarghelper({'centre'},definput,varargin);
+[flags,kv]=ltfatarghelper({'fc'},definput,varargin);
 
-[fsupp,kv.centre,kv.delay,kv.scal]=scalardistribute(fsupp,kv.centre,kv.delay,kv.scal);
+[fsupp,kv.fc,kv.delay,kv.scal]=scalardistribute(fsupp,kv.fc,kv.delay,kv.scal);
 
 if ~isempty(kv.fs)
     fsupp=fsupp/kv.fs*2;
-    kv.centre=kv.centre/kv.fs*2;
+    kv.fc=kv.fc/kv.fs*2;
 end;
 
 % Sanitize
-kv.centre=modcent(kv.centre,2);
+kv.fc=modcent(kv.fc,2);
 
 Nfilt=numel(fsupp);
 gout=cell(1,Nfilt);
@@ -107,22 +107,22 @@ for ii=1:Nfilt
     
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    fftshift(firwin(winname,round(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(winname,floor(L/2*fsupp(ii)), ...
                                     flags.norm))*kv.scal(ii)*L;        
     end;
     
     if  flags.do_2 || flags.do_energy
-        g.H=@(L)    fftshift(firwin(winname,round(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(winname,floor(L/2*fsupp(ii)), ...
                                     flags.norm))*kv.scal(ii)*sqrt(L);                
     end;
         
     if flags.do_inf || flags.do_peak
-        g.H=@(L)    fftshift(firwin(winname,round(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(winname,floor(L/2*fsupp(ii)), ...
                                     flags.norm))*kv.scal(ii);        
         
     end;
         
-    g.foff=@(L) round(L/2*kv.centre(ii))-floor(round(L/2*fsupp(ii))/2);
+    g.foff=@(L) round(L/2*kv.fc(ii))-floor(floor(L/2*fsupp(ii))/2);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
     g.fs=kv.fs;

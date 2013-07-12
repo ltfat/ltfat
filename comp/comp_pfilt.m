@@ -19,10 +19,12 @@ h=zeros(N,W,assert_classname(f));
 
 l=(0:L-1).'/L;
 
+realoutput = isreal(f) && isfield(g,'h') && isreal(g.h) && g.fc==0;
+
 if isfield(g,'h') && do_time
     % Use a direct algorithm
     g_time=circshift(postpad(g.h,L),g.offset).*...
-           exp(2*pi*1i*round(g.centre*L/2)*l);            
+           exp(2*pi*1i*round(g.fc*L/2)*l);            
     if g.realonly
         g_time=real(g_time);
     end;
@@ -56,6 +58,10 @@ else
         end;
     end;
     
+end;
+
+if realoutput
+    h=real(h);
 end;
 
 

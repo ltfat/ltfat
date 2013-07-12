@@ -7,8 +7,8 @@ function gout=firfilter(name,M,varargin)
 %   exactly the same as calling |firwin|. The name must be one of the
 %   accepted window types of |firwin|.
 %
-%   `firfilter(name,M,centre)` constructs a filter with a centre
-%   frequency of *centre* measured in normalized frequencies.
+%   `firfilter(name,M,fc)` constructs a filter with a centre
+%   frequency of *fc* measured in normalized frequencies.
 %
 %   If one of the inputs is a vector, the output will be a cell array
 %   with one entry in the cell array for each element in the vector. If
@@ -20,7 +20,7 @@ function gout=firfilter(name,M,varargin)
 %
 %     'fs',fs     If the sampling frequency *fs* is specified then the length
 %                 *M* is specified in seconds and the centre frequency
-%                 *centre* in Hz.
+%                 *fc* in Hz.
 %
 %     'complex'   Make the filter complex valued if the centre frequency
 %                 is non-zero. This is the default.
@@ -48,18 +48,18 @@ function gout=firfilter(name,M,varargin)
 definput.import={'normalize'};
 definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
-definput.keyvals.centre=0;
+definput.keyvals.fc=0;
 definput.keyvals.fs=[];
 definput.flags.delay={'delay','causal'};
 definput.flags.real={'complex','real'};
 
-[flags,kv]=ltfatarghelper({'centre'},definput,varargin);
+[flags,kv]=ltfatarghelper({'fc'},definput,varargin);
 
-[M,kv.centre,kv.delay]=scalardistribute(M,kv.centre,kv.delay);
+[M,kv.fc,kv.delay]=scalardistribute(M,kv.fc,kv.delay);
 
 if ~isempty(kv.fs)
     M=round(M*kv.fs);
-    kv.centre=kv.centre/kv.fs*2;
+    kv.fc=kv.fc/kv.fs*2;
 end;
 
 Nfilt=numel(M);
@@ -77,7 +77,7 @@ for ii=1:Nfilt
     end;
 
     g.h=fftshift(firwin(name,M(ii),'shift',smallshift(ii),flags.norm));
-    g.centre=kv.centre(ii);
+    g.fc=kv.fc(ii);
     g.realonly=flags.do_real;
     g.fs=kv.fs;
         

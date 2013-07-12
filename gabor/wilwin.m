@@ -129,7 +129,7 @@ if ischar(g)
     info.gauss=1;
     info.tfr=2*M*M/L;
    case {'psech','sech'}
-    complain_L(L,callfun)
+    complain_L(L,callfun);
     g=psech(L,2*M*M/L);
     info.tfr=a*M/L;
    case {'dualgauss','gaussdual'}

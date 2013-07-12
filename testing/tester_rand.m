@@ -5,7 +5,7 @@ function f=tester_rand(varargin);
 global LTFAT_TEST_TYPE
 
 if isempty(LTFAT_TEST_TYPE)
-    LTFAT_TEST_TYPE='double'
+    LTFAT_TEST_TYPE='double';
 end;
 
 f=rand(varargin{:});

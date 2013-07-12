@@ -51,7 +51,7 @@ end;
 l=(0:L-1).'/L;
 if isstruct(g)
     if isfield(g,'h')
-        g_time=circshift(postpad(g.h,L),g.offset).*exp(2*pi*1i*(round(g.centre*L/2))*l);
+        g_time=circshift(postpad(g.h,L),g.offset).*exp(2*pi*1i*(round(g.fc*L/2))*l);
         G=fft(g_time);
     else
         G=circshift(postpad(g.H(L),L),g.foff(L)).*exp(-2*pi*1i*round(g.delay)*l);        

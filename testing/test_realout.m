@@ -60,8 +60,12 @@ function test_failed=test_realout
   
 function test_failed=realhelper(test_failed,funname,varargin)
   
-  res=~isreal(feval(funname,varargin{:}));
+  outres=feval(funname,varargin{:});
+  res=~isreal(outres);
   
+  if res>0
+      outres
+  end;
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
 
   fprintf('REAL %s %i %s\n',funname,res,fail);

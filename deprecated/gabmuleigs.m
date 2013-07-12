@@ -135,7 +135,7 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
   opts.tol    = kv.tol;
   
   % Setup afun
-  afun(1,c,ga,gs,a,M,L)
+  afun(1,c,ga,gs,a,M,L);
   
   if doV
     [V,D] = eigs(@afun,L,K,'LM',opts);

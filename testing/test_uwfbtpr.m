@@ -1,5 +1,5 @@
 function test_failed = test_uwfbtpr(verbose)
-%TEST_WFBTPR
+%TEST_UWFBTPR
 %
 % Checks perfect reconstruction of the general wavelet transform of different
 % filters

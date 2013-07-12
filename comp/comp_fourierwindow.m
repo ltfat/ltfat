@@ -75,7 +75,7 @@ if isnumeric(g)
   g.h=fftshift(g_time);
   info.gl=numel(g_time);
   g.offset=-floor(info.gl/2);  
-  g.centre=0;
+  g.fc=0;
   g.realonly=0;
   info.wasreal=isreal(g.h);
 else

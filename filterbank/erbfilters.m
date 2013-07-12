@@ -41,8 +41,14 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %
 %     'N',N           Specify the number of filters, *N*. If this
 %                     parameter is specified, it overwrites the
-%                     `'spacing'`
-%                     parameter.
+%                     `'spacing'` parameter.
+%
+%     'redmul',redmul  Redundancy multiplier. Increasing the value of this
+%                      will make the system more redundant by lowering the
+%                      channel downsampling rates. It is only used if the
+%                      filterbank is a non-uniform filterbank. Default
+%                      value is *1*. If the value is less than one, the
+%                      system may no longer be painless.
 %
 %     'nonuniform'    Construct a non-uniform filterbank. This is the
 %                     default.
@@ -118,6 +124,7 @@ definput.import = {'firwin'};
 definput.keyvals.L=[];
 definput.keyvals.N=[];
 definput.keyvals.bwmul=1;
+definput.keyvals.redmul=1;
 
 definput.flags.warp     = {'symmetric','warped'};
 definput.flags.uniform  = {'nonuniform','uniform'};
@@ -172,15 +179,15 @@ end;
 
 if flags.do_nonuniform
     % Find suitable channel subsampling rates
-    aprecise=round(fs./fsupp/2); % "/2" is just a heuristic, no justification
+    aprecise=fs./fsupp/kv.redmul; 
     aprecise=aprecise(:);
     
     if flags.do_fractional
-        Nfilts=round(L./aprecise);
+        Nfilts=ceil(L./aprecise);
         a=[repmat(L,N,1),Nfilts];                
         
     else
-        a=ceil23(aprecise); % Grow "a" to the next composite number
+        a=floor23(aprecise); % Shrink "a" to the next composite number
         
         % Determine the minimal transform length
         L=filterbanklength(1,a);

@@ -47,28 +47,17 @@ for ii=1:length(Lr);
 	
 	res=norm(c(:)-c2(:));
 	
-   [test_failed,fail]=ltfatdiditfail(res,test_failed);
-%         fail='';
-%         if res>10e-10
-% 	  fail='FAILED';
-% 	  test_failed=test_failed+1;
-%         end;
-        
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);        
 	s=sprintf('REF  %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
-	disp(s)
+	disp(s);
 	
 	rdiff=f-r;
 	res=norm(rdiff(:));
 	
-   [test_failed,fail]=ltfatdiditfail(res,test_failed);
-%         fail='';
-%         if res>10e-10
-% 	  fail='FAILED';
-% 	  test_failed=test_failed+1;
-%         end;
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
         
 	s=sprintf('REC  %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
-	disp(s)
+	disp(s);
         
         g=wilorth(M,L);
         c=wmdct(f,g,M);  
@@ -77,15 +66,9 @@ for ii=1:length(Lr);
         
 	res=norm(rdiff(:));
 	
-   [test_failed,fail]=ltfatdiditfail(res,test_failed);
-%         fail='';
-%         if res>10e-10
-% 	  fail='FAILED';
-% 	  test_failed=test_failed+1;
-%         end;
-       
+        [test_failed,fail]=ltfatdiditfail(res,test_failed);
 	s=sprintf('ORTH %s %s L:%3i W:%2i a:%3i M:%3i %0.5g %s',S,wtype,L,W,a,M,res,fail);
-	disp(s)
+	disp(s);
 
 	
       end;

@@ -34,7 +34,7 @@ Luser=dgtlength(L,a,M,kv.lt);
 if Luser~=L
     error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
            'is L=%i. See the help of DGTLENGTH for the requirements.'],...
-          upper(mfilename),L,Luser)
+          upper(mfilename),L,Luser);
 end;
 
 

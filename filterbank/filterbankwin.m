@@ -119,22 +119,7 @@ info.ispainless=1;
 info.isfractional=0;
 info.isuniform=0;
 
-% FIXME: Not sufficiently safe
-if isvector(a)
-    [info.a,~]=scalardistribute(a(:),ones(info.M,1));
-    
-    if all(a==a(1))
-        info.isuniform=1;
-    end;
-
-    info.a=[info.a,ones(info.M,1)];
-else
-    info.isfractional=1;
-    info.a=a;
-end;
-
-if size(info.a,2)==1
-end;
+[~,info]=comp_filterbank_a(a,info.M,info);
     
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
@@ -145,6 +130,7 @@ for m=1:info.M
             g{m}.foff=g{m}.foff(L);
         end;
         if numel(g{m}.H)>L/info.a(m,1)*info.a(m,2);
+            [m,numel(g{m}.H),L/info.a(m,1)*info.a(m,2)]
             info.ispainless=0;
         end;
     else
@@ -166,5 +152,3 @@ end;
 if L<info.longestfilter
   error('%s: One of the windows is longer than the transform length.',upper(mfilename));
 end;
-  
-
