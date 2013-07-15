@@ -1,6 +1,6 @@
 function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 % WAVFUN  Wavelet Function
-%    Usage: [w,s,xvals] = wavfun(g) 
+%   Usage: [w,s,xvals] = wavfun(g) 
 %           [w,s,xvals] = wavfun(g,N) 
 %
 %   Input parameters:
@@ -19,8 +19,6 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %   *wfunc*, last one to the *sfunc*.
 %   
 %   The following flag groups are supported (first is default):
-%
-%   'ana','syn' - Which filters to use for generating the wavelet and scaling functions.
 %   
 %   'fft','conv' - How to do the computations. What is faster depends on
 %   the speed of the conv2 function.
@@ -47,18 +45,17 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %
 
 definput.keyvals.N = 6;
-definput.flags.ansy = {'syn','ana'};
 definput.flags.howcomp = {'conv','fft'};
 [flags,kv,N]=ltfatarghelper({'N'},definput,varargin);
-w = fwtinit(w,flags.ansy);
+w = fwtinit({'strict',w});
 a = w.a(1);
-filtNo = length(w.filts);
+filtNo = length(w.g);
 
 % Copy impulse responses as columns of a single matrix.
-lo = w.filts{1}.h(:);
+lo = w.g{1}.h(:);
 wtemp = zeros(length(lo),filtNo);
 for ff=1:filtNo
-    wtemp(:,ff) =  w.filts{ff}.h(:);
+    wtemp(:,ff) =  w.g{ff}.h(:);
 end
 
 filtsAreReal = isreal(wtemp);
@@ -98,12 +95,12 @@ end
 if(nargout>2)
     % Calculate xvals
     xvals = zeros(length(sfunc),filtNo);
-    zeroPos = findFuncZeroPos(w.filts{1}.d,a,N);
+    zeroPos = findFuncZeroPos(w.g{1}.d,a,N);
     sxvals = -zeroPos + (1:length(sfunc));
     xvals(:,end)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
 
     for ii=1:filtNo-1 
-       zeroPos = findFuncZeroPos(w.filts{ii+1}.d,a,N);
+       zeroPos = findFuncZeroPos(w.g{ii+1}.d,a,N);
        sxvals = -zeroPos + (1:length(sfunc));
        xvals(:,ii)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
     end

@@ -63,8 +63,13 @@ if iscell(coef)
   M=numel(coef);
   N=kv.xres;
   coef2=zeros(M,N);
+  
   for ii=1:M
     row=coef{ii};
+    if numel(row)==1
+       coef2(ii,:) = row;
+       continue;
+    end
     coef2(ii,:)=interp1(linspace(0,1,numel(row)),row,...
                        linspace(0,1,N),'nearest');
   end;

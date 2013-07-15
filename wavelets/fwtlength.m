@@ -1,4 +1,4 @@
-function L=fwtlength(Ls,h,J,varargin);
+function L=fwtlength(Ls,w,J,varargin);
 %FWTLENGTH  FWT length from signal
 %   Usage: L=fwtlength(Ls,h,J);
 %          L=fwtlength(Ls,h,J,...);
@@ -13,19 +13,19 @@ function L=fwtlength(Ls,h,J,varargin);
 %   See also: fwt
 
 % Initialize the wavelet filters structure
-h = fwtinit(h,'ana');
+w = fwtinit(w);
 
 definput.import = {'fwtext'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 if flags.do_per
-   blocksize=h.a(1)^J;
+   blocksize=w.a(1)^J;
    L=ceil(Ls/blocksize)*blocksize;
 elseif flags.do_valid
-   m = numel(h.filts{1}.h);
-   a = h.a(1);
+   m = numel(w.g{1}.h);
+   a = w.a(1);
    rred = (a^J-1)/(a-1)*(m-a);
-   blocksize=h.a(1)^J;
+   blocksize=w.a(1)^J;
    L=rred+floor((Ls-rred)/blocksize)*blocksize;
 else
    L = Ls;

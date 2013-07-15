@@ -1,7 +1,7 @@
 function [fs,classid] = block(source,varargin)
 %BLOCK  Initialize block stream
 %   Usage: block(source);
-%          block(source,'fs',fs,'nbuf',nbuf,'fmt',fmt);
+%          block(source,'L',L,'fs',fs,'nbuf',nbuf,'fmt',fmt);
 %
 %   Input parameters:
 %      source    : Block stream input.
@@ -31,6 +31,8 @@ function [fs,classid] = block(source,varargin)
 %
 %   Optional key-value pairs:
 %
+%      `'L',L`         : Block length- Default is 1024.
+%
 %      `'devid',dev`   : Whenever more input/output devices are present in
 %                        your system, `'devid'` can be used to specify one.
 %                        For the `'playrec'` option the `devId` should be a
@@ -49,9 +51,22 @@ function [fs,classid] = block(source,varargin)
 %      `'outfile','file.wav'`: Processed sound data is stored in a new wav
 %                              file.
 %
+%      `'nbuf',nbuf`    : Max number of buffers to be preloaded.
+%
+%      `'loadind',loadind`   : How to show the load indicator. loadind can 
+%                              be the following:
+%              
+%                              'nobar' - Suppresses any load display.
+%          
+%                              'bar' - Displays ascii load bar in command
+%                                      line (Does not work in Octave).
+%
+%                               obj - Java object which have a public
+%                                     method updateBar(double).                           
+%
 %   Optional flag groups:
 %
-%      'nobar'         : Suppresses command line load bar. 
+%      'loop'          : Plays the input in a loop. 
 
 
 
@@ -61,9 +76,26 @@ definput.keyvals.fs=44100;
 definput.keyvals.playch=[];
 definput.keyvals.recch=[];
 definput.keyvals.outfile=[];
+definput.keyvals.L=1024;
+definput.keyvals.loadind= 'nobar';
 definput.flags.fmt={'single','double'};
-definput.flags.bar={'bar','nobar'};
+definput.flags.loop={'noloop','loop'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
+
+
+if isoctave && ~strcmp(k.loadin,'nobar')
+   error('%s: Currently, it is possible to use  only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
+end
+
+if ischar(kv.loadind)
+   if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
+      error('%s: Incorrect value parameter for the key ''loadin''.',upper(mfilename));
+   end
+elseif isjava(kv.loadind)
+      if ~any(cellfun(@(mEl)~isempty(strfind(mEl,'updateBar(double)')),methods(kv.loadind,'-full')))
+         error('%s: The Java object does not contain the updateBar(double) method.',upper(mfilename));
+      end
+end
 
 playChannels = 0;
 recChannels = 0;
@@ -101,9 +133,9 @@ if ischar(source)
          if exist(source)~=2
             error('%s: File "%s" does not exist.',upper(mfilename),source);
          end
-         [kv.L, kv.fs] = wavread(source, 'size');
+         [Ls, kv.fs] = wavread(source, 'size');
          playChannels = 2;
-         kv.L = kv.L(1);
+         Ls = Ls(1);
          play = 1;
       else
          error('%s: "%s" is not valid wav filename.',upper(mfilename),source);
@@ -116,7 +148,7 @@ if ischar(source)
    end
 elseif(isnumeric(source))
    error('%s: TO DO: Accept samples as a vector or matrix.',upper(mfilename));
-   kv.L = size(source,1);
+   Ls = size(source,1);
    playChannels = 2;
    play = 1;
 else
@@ -316,10 +348,20 @@ fprintf('Rec. device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--
         floor(1000*dev.defaultHighInputLatency));
 end
 
-% Supress load bar
-if flags.do_nobar
-   block_interface('setDispLoad',0);
-end
+
+% Store option for displaying the load bar
+block_interface('setDispLoad',kv.loadind);
+
+% Store option for displaying the loop playback
+block_interface('setLoop',flags.do_loop);
+
+% Set block length
+block_interface('setBufLen',kv.L);
+
+% Another slight delay to allow printing all messages prior to the playback
+% start. 
+pause(0.1); 
+
    
 
       

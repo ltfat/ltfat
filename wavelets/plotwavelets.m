@@ -53,9 +53,9 @@ if(strcmpi(info.fname,'fwt'))
    end
 
    subbNo = numel(c);
-   g = fwtinit(info.fwtstruct,'syn');
-   aBase = g.a;
-   filtNo = numel(g.filts);
+   w = fwtinit(info.wt);
+   aBase = w.a;
+   filtNo = numel(w.h);
    J = info.J;
    a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
 elseif(strcmpi(info.fname,'ufwt'))
@@ -68,8 +68,8 @@ elseif(strcmpi(info.fname,'ufwt'))
    subbNo = size(c,2);
    a = ones(subbNo,1);
 
-   g = fwtinit(info.fwtstruct,'syn');
-   filtNo = numel(g.filts);
+   w = fwtinit(info.wt);
+   filtNo = numel(w.h);
    J = info.J; 
 elseif(strcmpi(info.fname,'wfbt'))
    % Only one channel signals can be plotted.

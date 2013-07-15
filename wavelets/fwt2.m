@@ -1,17 +1,17 @@
-function c = fwt2(f,h,J,varargin)
+function c = fwt2(f,w,J,varargin)
 %FWT2   Fast Wavelet Transform 2D
-%   Usage:  c = fwt2(f,h,J);
-%           c = fwt2(f,h,J,...);
+%   Usage:  c = fwt2(f,w,J);
+%           c = fwt2(f,w,J,...);
 %
 %   Input parameters:
 %         f     : Input data.
-%         h     : Analysis Wavelet Filterbank. 
+%         w     : Wavelet Filterbank definition. 
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
 %         c      : Coefficients stored in a matrix.
 %
-%   `c=fwt2(f,h,J)` returns wavelet coefficients *c* of the input matrix *f*
+%   `c=fwt2(f,w,J)` returns wavelet coefficients *c* of the input matrix *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *h*.
 %
 %   `fwt2` supports just the non-expansive boundary condition 'per' and 
@@ -72,39 +72,39 @@ if(M==1||N==1)
 end
 
 % Initialize the wavelet filters structure
-h = fwtinit(h,'ana');
+w = fwtinit(w);
 
-if(~all(h.a==length(h.filts)))
+if(~all(w.a==length(w.h)))
    error('%s: Non-critically subsampled filterbanks not supported.',upper(mfilename));  
 end
 
 
 %Do not allow single wavelet coefficient at two consecutive levels
-if(any(h.a(1)^J>size(f)))
-   error('%s: %d-level decomposition of the input is not possible. Maximum J is %d.',upper(mfilename),J,floor(log(max(size(f)))/log(h.a(1))));
+if(any(w.a(1)^J>size(f)))
+   error('%s: %d-level decomposition of the input is not possible. Maximum J is %d.',upper(mfilename),J,floor(log(max(size(f)))/log(w.a(1))));
 end
 
 %% ----- step 0 : Check inputs -------
 definput.import = {'fwt2'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
-nFilts = numel(h.filts);
+nFilts = numel(w.h);
 
-Lcrows = fwtclength(size(f,1),h,J);
-Lccols = fwtclength(size(f,2),h,J);
+Lcrows = fwtclength(size(f,1),w,J);
+Lccols = fwtclength(size(f,2),w,J);
 
 if(flags.do_standard)
    Jstep = 1;
-   c = fwt(f,h,Jstep,'dim',1,'per');
-   c = fwt(c,h,Jstep,'dim',2,'per');
+   c = fwt(f,w,Jstep,'dim',1,'per');
+   c = fwt(c,w,Jstep,'dim',2,'per');
    for jj=1:J-1
       colRange = 1:Lcrows(end-jj*(nFilts-1)+1);
       rowRange = 1:Lccols(end-jj*(nFilts-1)+1);
-      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,'dim',1,'per');
-      c(colRange,rowRange) = fwt(c(colRange,rowRange),h,Jstep,'dim',2,'per');
+      c(colRange,rowRange) = fwt(c(colRange,rowRange),w,Jstep,'dim',1,'per');
+      c(colRange,rowRange) = fwt(c(colRange,rowRange),w,Jstep,'dim',2,'per');
    end
 elseif(flags.do_tensor)
-   c = fwt(f,h,J,'dim',1,'per');
-   c = fwt(c,h,J,'dim',2,'per');
+   c = fwt(f,w,J,'dim',1,'per');
+   c = fwt(c,w,J,'dim',2,'per');
 else
     error('%s: Should not get here. Bug somewhere else.',upper(mfilename));
 end

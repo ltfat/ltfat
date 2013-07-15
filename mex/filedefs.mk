@@ -29,6 +29,7 @@ MEXBASESAFE=\
 	comp_iatrousfilterbank_td \
 	comp_filterbank_td \
 	comp_ifilterbank_td \
+	comp_cellcoef2tf \
 
 MEXBASEMORE =\
 	comp_gabdual_long \

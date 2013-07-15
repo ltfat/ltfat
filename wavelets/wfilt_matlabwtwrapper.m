@@ -6,18 +6,6 @@ function [h,g,a] = wfilt_matlabwtwrapper(wname)
 %   function wfilters and passes the parameter *wname*. This function
 %   requires the Matlab Wavelet Toolbox.
 %
-%   Examples:
-%   ---------
-%
-%   Check if the official Matlab Wavelet Toolbox is present then plot frequency 
-%   responses of the `'coif4'` analysis filters:::  
-%
-%      v = ver;
-%      if(any(strcmp('Wavelet Toolbox', {v.Name})))
-%         w = fwtinit({'matlabwtwrapper','coif4'});
-%         wtfftfreqz(w.h);
-%      end
-%
 
 a = [2,2];
 [lo,hi,lo_s,hi_s] = wfilters(wname);

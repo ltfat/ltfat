@@ -52,7 +52,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    if ~strcmpi(par.fname,'uwpfbt')
       error('%s: Wrong func name in info struct. The info parameter was created by %s.',upper(mfilename),par.fname);
    end
-   wt = wfbtinit(par.wt,par.fOrder,'syn');
+   wt = wfbtinit({'dual',par.wt},par.fOrder,'syn');
 else
    %% PARSE INPUT
    definput.import = {'wfbtcommon'};
@@ -63,7 +63,7 @@ else
    [flags,kv]=ltfatarghelper({},definput,varargin);
 
    % Initialize the wavelet tree structure
-   wt = wfbtinit(par,flags.forder,'syn');
+   wt = wfbtinit(par,flags.forder);
 end
 
 wtPath = nodesBForder(wt,'rev');

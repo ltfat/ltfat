@@ -1,7 +1,7 @@
 function f=iwfbt(c,par,varargin)
 %IWFBT   Inverse Wavelet Filterbank Tree
 %   Usage:  f=iwfbt(c,info);
-%           f=iwfbt(c,wt,Ls,...);
+%           f=iwfbt(c,wt,Ls);
 %
 %   Input parameters:
 %         c       : Coefficients stored in a cell-array.
@@ -20,17 +20,8 @@ function f=iwfbt(c,par,varargin)
 %   ambiguity of reconstruction lengths introduced by the subsampling 
 %   operation and by boundary treatment methods. Note that the same flag as
 %   in the |wfbt| function have to be used, otherwise perfect reconstruction
-%   cannot be obtained. 
-%
-%   In addition, the following flag groups are supported:
-%
-%   'per','zero','odd','even'
-%      Type of the boundary handling.
-%
-%   'freq','nat'
-%      Frequency or natural order of the coefficient subbands.
-%
-%   Please see the help on |fwt| for a description of the flags.
+%   cannot be obtained. Please see help for |wfbt| for description of the
+%   flags.
 %
 %   Examples:
 %   ---------
@@ -60,7 +51,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    if nargin>2
       error('%s: Too many input parameters.',upper(mfilename));
    end
-   wt = wfbtinit(par.wt,par.fOrder,'syn');
+   wt = wfbtinit({'dual',par.wt},par.fOrder);
    Ls = par.Ls;
    ext = par.ext;
    L = wfbtlength(Ls,wt,ext);
@@ -71,12 +62,13 @@ else
 
    %% PARSE INPUT
    definput.keyvals.Ls=[];    
+   definput.keyvals.dim=1; 
    definput.import = {'fwt','wfbtcommon'};
 
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
    ext = flags.ext;
    % Initialize the wavelet tree structure
-   wt = wfbtinit(par,flags.forder,'syn');
+   wt = wfbtinit(par,flags.forder);
    % Determine next legal input data length.
    L = wfbtlength(Ls,wt,ext);
 end
@@ -88,6 +80,3 @@ outLengths(end) = Ls;
 rangeLoc = rangeInLocalOutputs(wtPath,wt);
 rangeOut = rangeInOutputs(wtPath,wt);
 f = comp_iwfbt(c,wt.nodes(wtPath),outLengths,rangeLoc,rangeOut,ext);
-
-
-

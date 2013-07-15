@@ -1,13 +1,15 @@
 function f = ifwt(c,par,varargin)
 %IFWT   Inverse Fast Wavelet Transform 
 %   Usage:  f = ifwt(c,info)
-%           f = ifwt(c,g,J,Ls,...)
+%           f = ifwt(c,w,J,Ls)
+%           f = ifwt(c,w,J,Ls,dim)
 %
 %   Input parameters:
 %         c      : Wavelet coefficients.
-%         info,g : Transform parameters struct/Synthesis wavelet filters.
+%         info,w : Transform parameters struct/Wavelet filters definition.
 %         J      : Number of filterbank iterations.
 %         Ls     : Length of the reconstructed signal.
+%         dim    : Dimension to along which to apply the transform.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
@@ -16,9 +18,9 @@ function f = ifwt(c,par,varargin)
 %   *c* using parameters from `info` struct. both returned by |fwt|
 %   function.
 %
-%   `f = ifwt(c,g,J,Ls)` reconstructs signal *f* from the wavelet coefficients
-%   *c* using *J*-iteration synthesis filter bank build from the basic synthesis
-%   filterbank defined by *g*. The *Ls* parameter is mandatory due to the 
+%   `f = ifwt(c,w,J,Ls)` reconstructs signal *f* from the wavelet coefficients
+%   *c* using *J*-iteration synthesis filter bank build from the basic
+%   filterbank defined by *w*. The *Ls* parameter is mandatory due to the 
 %   ambiguity of lengths introduced by the subsampling operation and by
 %   boundary treatment methods. Note that the same flag as in the |fwt| 
 %   function have to be used, otherwise perfect reconstruction cannot be 
@@ -42,7 +44,7 @@ function f = ifwt(c,par,varargin)
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %   
-%   See also:  fwt, fwtinit
+%   See also:  fwt, wavpack2cell, wavcell2pack
 %
 %   References: ma98
 
@@ -50,7 +52,7 @@ if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if  ~(iscell(c) || isnumeric(c))
+if  ~(iscell(c) || isnumeric(c)) || isempty(c)
   error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
@@ -59,7 +61,7 @@ if(isstruct(par)&&isfield(par,'fname'))
       error('%s: Too many input parameters.',upper(mfilename));
    end
    % process info struct
-   g = fwtinit(par.fwtstruct,'syn');
+   w = fwtinit({'dual',par.wt});
    J = par.J;
    Lc = par.Lc;
    Ls = par.Ls;
@@ -78,7 +80,7 @@ else
    [flags,~,J,Ls,dim]=ltfatarghelper({'J','Ls','dim'},definput,varargin);
  
    ext = flags.ext;
-   %If dim is not specified use first non-singleton dimension.
+   %If dim is not specified use the first non-singleton dimension.
    if(isempty(dim))
       dim=find(size(c)>1,1);
    else
@@ -88,13 +90,13 @@ else
    end
    
    % Initialize the wavelet filters structure
-   g = fwtinit(par,'syn');
+   w = fwtinit(par);
 
    %% ----- Determine input data length.
-   L = fwtlength(Ls,g,J,ext);
+   L = fwtlength(Ls,w,J,ext);
 
    %% ----- Determine number of ceoefficients in each subband
-   Lc = fwtclength(L,g,J,ext);
+   Lc = fwtclength(L,w,J,ext);
 end
 
    %% ----- Change c to correct shape according to the dim.
@@ -115,7 +117,7 @@ end
    end;
 
    %% ----- Run computation 
-   f = comp_ifwt(c,g.filts,J,g.a,Ls,ext);
+   f = comp_ifwt(c,w.g,J,w.a,Ls,ext);
 
    %% ----- FINALIZE: Reshape back according to the dim.
    if(dim==2)

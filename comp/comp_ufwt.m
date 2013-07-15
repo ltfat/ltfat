@@ -17,13 +17,14 @@ function c = comp_ufwt(f,h,J,a)
 % wavelet filters? If your filterbank has different subsampling factors after first two filters, please send a feature request.
 assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterbank is not suported.');
 
-% For holding the impulse responses.
+% For holding the time-reversed, complex conjugate impulse responses.
 filtNo = length(h);
-hDel = cellfun(@(hEl) hEl.d,h(:));
 %Change format to a matrix
-hMat = cell2mat(cellfun(@(hEl) hEl.h(:),h(:)','UniformOutput',0));
+hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h(:)','UniformOutput',0));
 %Divide each column (filter) by a element of a
 hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
+%Delays
+hDel = cellfun(@(hEl) numel(hEl.h)-hEl.d,h(:));
 
 % Allocate output
 [L, W] = size(f);
@@ -34,7 +35,7 @@ ca = f;
 runPtr = size(c,2) - (filtNo-2);
 for jj=1:J
     % Zero index position of the upsampled filters.
-    skip = a(1)^(jj-1).*(hDel - 1);
+    skip = a(1)^(jj-1).*(hDel);
     % Run filterbank.
     ca=comp_atrousfilterbank_td(ca,hMat,a(1)^(jj-1),skip);
     % Bookkeeping

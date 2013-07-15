@@ -1,11 +1,11 @@
 function f = iufwt(c,par,varargin)
 %IUFWT   Inverse Undecimated Fast Wavelet Transform 
 %   Usage:  f = iufwt(c,info)
-%           f = iufwt(c,g,J);   
+%           f = iufwt(c,w,J);   
 %
 %   Input parameters:
 %         c      : Coefficients stored in $L \times J+1$ matrix.
-%         info,g : Transform parameters struct/Synthesis wavelet filters.
+%         info,w : Transform parameters struct/Wavelet filters definition.
 %         J      : Number of filterbank iterations.
 %
 %   Output parameters:
@@ -15,7 +15,7 @@ function f = iufwt(c,par,varargin)
 %   coefficients *c* using parameters from `info` struct. both returned by
 %   |ufwt| function.
 %
-%   `f = iufwt(c,g,J)` reconstructs signal *f* from the wavelet
+%   `f = iufwt(c,w,J)` reconstructs signal *f* from the wavelet
 %   coefficients *c* using the wavelet filterbank consisting of the *J* 
 %   levels of the basic synthesis filterbank defined by *g* using the "a-trous"
 %   algorithm. Node that the same flag as in the `ufwt` function have to be used.
@@ -34,7 +34,7 @@ function f = iufwt(c,par,varargin)
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
-%   See also:  ufwt, fwtinit
+%   See also:  ufwt, plotwavelets
 %
 %   References: ma98
 
@@ -47,7 +47,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    if nargin>2
       error('%s: Too many input parameters.',upper(mfilename));
    end
-   g = fwtinit(par.fwtstruct,'syn');
+   w = fwtinit({'dual',par.wt},'syn');
    J = par.J;
 else
    if nargin<3
@@ -65,12 +65,12 @@ else
    end
    
    % Initialize the wavelet filters structure
-   g = fwtinit(par,'syn');
+   w = fwtinit(par);
 end
 
 
 %%  Run computation
-f = comp_iufwt(c,g.g,J,g.a);
+f = comp_iufwt(c,w.g,J,w.a);
 
 
 

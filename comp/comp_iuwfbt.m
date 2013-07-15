@@ -25,11 +25,11 @@ for jj=1:length(wtNodes)
     % Node filters subs. factors
     a = wtNodes{jj}.a;
     % Node filters to a matrix
-    gMat = cell2mat(cellfun(@(gEl) gEl.h(:),wtNodes{jj}.filts(:)','UniformOutput',0));
+    gMat = cell2mat(cellfun(@(gEl) gEl.h(:),wtNodes{jj}.g(:)','UniformOutput',0));
     % Normalize each filter
     gMat = bsxfun(@rdivide,gMat,sqrt(a(:)'));
     % Node filters initial skips
-    gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.filts);
+    gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.g);
     
     % Zero index position of the upsampled filters.
     skip = nodesUps(jj).*(gDel) - nodesUps(jj);

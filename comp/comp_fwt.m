@@ -18,14 +18,14 @@ function c = comp_fwt(f,h,J,a,Lc,ext)
 % wavelet filters? If your filterbank has different subsampling factors following the first two filters, please send a feature request.
 assert(a(1)==a(2),'First two elements of *a* are not equal. Such wavelet filterbank is not suported.');
 
-% Impulse responses.
+% Time-reversed, complex conjugate impulse responses.
 filtNo = length(h);
-hCell = cellfun(@(hEl) hEl.h(:),h,'UniformOutput',0);
+hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),h,'UniformOutput',0);
 
 if(strcmp(ext,'per'))
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay transform is produced
-   skip = cellfun(@(hEl) hEl.d-1,h); 
+   skip = cellfun(@(hEl) numel(hEl.h)-hEl.d,h); 
 elseif strcmp(ext,'valid')
    skip = cellfun(@(hEl) numel(hEl.h)-1,h);
 else

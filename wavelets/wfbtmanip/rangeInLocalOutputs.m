@@ -25,7 +25,7 @@ nodesCount = length(nodeNo);
 outRange = cell(nodesCount,1); 
 
 
-nodeChans = cellfun(@(nEl) numel(nEl.filts), wt.nodes(nodeNo));
+nodeChans = cellfun(@(nEl) numel(nEl.g), wt.nodes(nodeNo));
 chIdx = cellfun(@(chEl) find(chEl~=0), wt.children(nodeNo),'UniformOutput',0);
 
 

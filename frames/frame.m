@@ -370,33 +370,36 @@ switch(ftype)
     
   case {'fwt'}
     F.J=varargin{2};
-    % fwtinit twice to set the cahce properly
-    F.g=fwtinit(fwtinit(varargin{1}));
+    F.g=fwtinit({'strict',varargin{1}});
     F.red= 1/(F.g.a(1)^(F.J)) + sum(1./(F.g.a(1).^(0:F.J-1))*sum(1./F.g.a(2:end)));
     F.frana=@(insig) fwt(insig,F.g,F.J);
     F.frsyn=@(insig) ifwt(insig,F.g,F.J,size(insig,1)/F.red);
     F.length=@(Ls) fwtlength(Ls,F.g,F.J);
   case {'wfbt'}
-    F.g=wfbtinit(varargin{1});
-    F.coef2native = @(coef,s) wavpack2cell(coef,wfbtclength(s,F.g));
-    F.native2coef = @(coef) wavcell2pack(coef);
+    F.g=wfbtinit({'strict',varargin{1}});
     F.red = sum(1./treeSub(F.g));
-    F.frana=@(insig) F.native2coef(wfbt(insig,F.g));
-    F.frsyn=@(insig) iwfbt(F.coef2native(insig,size(insig,1)/F.red),F.g,size(insig,1)/F.red);
+    F.wtPath = nodesBForder(F.g);
+    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
+    F.rangeOut = rangeInOutputs(F.wtPath,F.g);
+    F.coef2native = @(coef,s) wavpack2cell(coef,wfbtclength(s(1)/F.red,F.g));
+    F.native2coef = @(coef) wavcell2pack(coef);
+    F.frana=@(insig) F.native2coef(comp_wfbt(insig,F.g.nodes(F.wtPath),F.rangeLoc,F.rangeOut,'per'));
+    F.frsyn=@(insig) iwfbt(F.coef2native(insig,size(insig)),F.g,size(insig,1)/F.red);
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'wpfbt'}
-    F.g=wfbtinit(varargin{1});
-    F.coef2native = @(coef,s) wavpack2cell(coef,...
-                    s./cell2mat(cellfun(@(aEl) aEl(:),...
-                    reshape(nodeSub(nodesBForder(F.g),F.g),[],1),'UniformOutput',0)));
-    F.native2coef = @(coef) wavcell2pack(coef);
+    F.g=wfbtinit({'strict',varargin{1}});
     F.red = sum(cellfun(@(aEl) sum(1./aEl),nodeSub(nodesBForder(F.g),F.g)));
+    F.coef2native = @(coef,s) wavpack2cell(coef,...
+                    s(1)./cell2mat(cellfun(@(aEl) aEl(:),...
+                    reshape(nodeSub(nodesBForder(F.g),F.g),[],1),'UniformOutput',0))./F.red);
+    F.native2coef = @(coef) wavcell2pack(coef);
+
     F.frana=@(insig) F.native2coef(wpfbt(insig,F.g));
-    F.frsyn=@(insig) iwpfbt(F.coef2native(insig,size(insig,1)/F.red),F.g,size(insig,1)/F.red);
+    F.frsyn=@(insig) iwpfbt(F.coef2native(insig,size(insig)),F.g,size(insig,1)/F.red);
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'ufwt'}
     F.J=varargin{2};
-    F.g=fwtinit(fwtinit(varargin{1}));
+    F.g=fwtinit({'strict',varargin{1}});
     F.coef2native = @(coef,s) reshape(coef,[s(1)/(F.J*(numel(F.g.a)-1)+1),F.J*(numel(F.g.a)-1)+1,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
     F.frana=@(insig) F.native2coef(ufwt(insig,F.g,F.J));
@@ -404,7 +407,7 @@ switch(ftype)
     F.length=@(Ls) Ls;
     F.red=(F.J*(numel(F.g.a)-1)+1);
   case {'uwfbt'}
-    F.g=wfbtinit(varargin{1});
+    F.g=wfbtinit({'strict',varargin{1}});
     F.red = noOfOutputs(F.g);
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
@@ -412,15 +415,15 @@ switch(ftype)
     F.frsyn=@(insig) iuwfbt(F.coef2native(insig,size(insig)),F.g);
     F.length=@(Ls) Ls;
   case {'uwpfbt'}
-    F.g=wfbtinit(varargin{1});
-    F.red = sum(cellfun(@(fEl) numel(fEl.filts),F.g.nodes));
+    F.g= wfbtinit({'strict',varargin{1}});
+    F.red = sum(cellfun(@(fEl) numel(fEl.g),F.g.nodes));
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
     F.frana=@(insig) F.native2coef(uwpfbt(insig,F.g));
     F.frsyn=@(insig) iuwpfbt(F.coef2native(insig,size(insig)),F.g);
     F.length=@(Ls) Ls;
   otherwise
-    error('%s: Unknows frame type: %s',upper(mfilename),ftype);  
+    error('%s: Unknown frame type: %s',upper(mfilename),ftype);  
 
 end;
 

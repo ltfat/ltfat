@@ -29,8 +29,10 @@ persistent anaOverlap;
 persistent synOverlap;
 persistent dispLoad;
 
+persistent loop;
+
 % DEFAULTS
-persistent defaultBufLen;
+persistent bufLen;
 
 
 
@@ -56,6 +58,7 @@ switch command
       synOverlap = [];
       toPlayBlock = [];
       dispLoad = 1;
+      loop = 0;
 %% SETTERS %%%
    case 'setPos'
       pos = varargin{2};
@@ -79,6 +82,10 @@ switch command
       synOverlap = varargin{2};
    case 'setDispLoad'
       dispLoad = varargin{2};
+   case 'setLoop'
+      loop = varargin{2};
+    case 'setBufLen'
+      bufLen = varargin{2}; 
 %% GETTERS %%%
    case 'getPos'
       varargout{1}=pos;
@@ -102,8 +109,8 @@ switch command
       varargout{1}=pageNo; 
    case 'getSkipped'
       varargout{1}=skipCounter; 
-   case 'getDefaultBufLen'
-      varargout{1}=defaultBufLen; 
+   case 'getBufLen'
+      varargout{1}=bufLen; 
    case 'getClassId'
       varargout{1}=classid; 
    case 'getAnaOverlap'
@@ -119,6 +126,8 @@ switch command
    case 'popPage'
       varargout{1}=pageList(1);
       pageList = pageList(2:end);
+   case 'isLoop'
+      varargout{1}=loop;
    case 'enqueueToPlay'
       toPlayBlock=varargin{2};
    case 'pushPage'

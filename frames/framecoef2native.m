@@ -27,12 +27,6 @@ else
         L=framelengthcoef(F,MN);
         N=L./F.a
         coef=mat2cell(coef,N,W);
-                                        
-      case {'fwt'}
-        Lc = zeros(JJtotal,1);
-        for jj=1:JJtotal
-            Lc(jj) =  length(ccell{jj});
-        end;            
-        
+  
     end;
 end;

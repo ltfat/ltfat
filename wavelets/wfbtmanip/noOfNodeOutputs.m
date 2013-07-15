@@ -21,7 +21,7 @@ if(any(nodeNo>numel(wt.nodes)))
 end
 
 %This is slow..
-noOut = cellfun(@(nEl) numel(nEl.filts), wt.nodes(nodeNo)) -...
+noOut = cellfun(@(nEl) numel(nEl.g), wt.nodes(nodeNo)) -...
         cellfun(@(chEl) numel(chEl(chEl~=0)), wt.children(nodeNo));
 
 %This is even slower

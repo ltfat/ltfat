@@ -8,12 +8,22 @@ function [c,info]=uwpfbt(f,wt,varargin)
 %         wt  : Wavelet Filterbank tree
 %
 %   Output parameters:
-%         c   : Coefficients in a 3D matrix.
+%         c   : Coefficients in a $L \times M$ matrix.
 %
-%   `c=uwpfbt(f,wt)` returns wavelet packet coefficients *c* obtained by
-%   applying an undecimated wavelet filterbank tree defined by *wt* to the
-%   input data *f*. If *f* is a matrix, the transformation is applied to 
-%   each of column of the matrix.
+%   `c=uwpfbt(f,wt)` returns coefficients *c* obtained by applying the 
+%   undecimated wavelet filterbank tree defined by *wt* to the input data 
+%   *f* using the "a-trous" algorithm. Number of columns in *c* (*M*) is 
+%   defined by the total number of outputs of each node. The outputs `c(:,jj)`
+%   are ordered in the breadth-first node order manner.
+%   In addition, the function returns struct. `info` containing the transform
+%   parameters. It can be conviniently used for the inverse transform |iuwpfbt|
+%   e.g. `fhat = iuwpfbt(c,info)`. It is also required by the |plotwavelets|
+%   function.
+%
+%   If *f* is a matrix, the transformation is applied to each of *W* columns
+%   and the coefficients in *c* are stacked along the third dimension.
+%
+%   Please see help for |wfbt| description of possible formats of *wt*.
 %
 %   Examples:
 %   ---------
@@ -37,7 +47,7 @@ definput.import = {'wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.forder,'ana');
+wt = wfbtinit(wt,flags.forder);
     
 %% ----- step 1 : Verify f and determine its length -------
 [f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);

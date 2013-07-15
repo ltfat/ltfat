@@ -1,22 +1,26 @@
 function [c,info]=wfbt(f,wt,varargin)
 %WFBT   Wavelet FilterBank Tree
-%   Usage:  c=wfbt(f,wt,...);
+%   Usage:  c=wfbt(f,wt);
 %           [c,info]=wfbt(...);
 %
 %   Input parameters:
-%         f   : Input data.
-%         wt  : Wavelet Filterbank tree definition.
+%         f     : Input data.
+%         wt    : Wavelet Filterbank tree definition.
 %
 %   Output parameters:
 %         c    : Coefficients stored in a cell-array.
 %         info : Transform parameters struct.
 %
-%   `c=wfbt(f,wt)` returns coefficients *c* obtained applying general wavelet 
+%   `c=wfbt(f,wt)` returns coefficients *c* obtained by applying a wavelet 
 %   filterbank tree defined by *wt* to the input data *f*. In addition, the
 %   function returns struct. `info` containing transform parameters. It can
 %   be conviniently used for the inverse transform |iwfbt| e.g. 
 %   `fhat = iwfbt(c,info)`. It is also required by the |plotwavelets| function.
-%   If *f* is a matrix, the transformation is applied to each of *W* columns. 
+%
+%   *wt* defines a tree shaped filterbank structure build from the 
+%   elementary two (or more) channel wavelet filters. The tree can have any
+%   shape and thus provide a flexible frequency covering. The outputs of the
+%   tree leaves are stored in *c*.
 %
 %   The *wt* parameter can have two formats:
 %
@@ -34,19 +38,23 @@ function [c,info]=wfbt(f,wt,varargin)
 %   2) Structure returned by the |wfbtinit| function and possibly
 %      modified by |wfbtput| and |wfbtremove|.
 %
+%   If *f* is row/column vector, the coefficient vectors `c{jj}` are columns.
+%   
+%   If *f* is a matrix, the transformation is by default applied to each of
+%   *W* columns `[Ls, W]=size(f)`.
+%
 %   In addition, the following flag groups are supported:
 %
 %   `'per'`,`'zero'`,`'odd'`,`'even'`
 %     Type of the boundary handling.
 %
 %   `'freq'`,`'nat'`
-%     Frequency or natural order of the coefficient subbands.
+%     Frequency or natural ordering of the coefficient subbands. The direct
+%     usage of the wavelet tree ('nat' option) does not produce coefficient
+%     subbans ordered according to the frequency. To achieve that, some 
+%     filter shuffling has to be done ('freq' option).  
 %
 %   Please see the help on |fwt| for a description of the boundary condition flags.
-%
-%   The output coefficients are stored in a cell array. Each element is a
-%   2D matrix with *W* columns each of which respresents one output subband
-%   of the w'th input channel.
 %
 %   Examples:
 %   ---------
@@ -67,13 +75,13 @@ end
 
 definput.import = {'fwt','wfbtcommon'};
 definput.keyvals.dim = [];
-[flags,kv,dim]=ltfatarghelper({'dim'},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.forder,'ana');
+wt = wfbtinit(wt,flags.forder);
     
 %% ----- step 1 : Verify f and determine its length -------
-[f,~,Ls]=assert_sigreshape_pre(f,[],dim,upper(mfilename));
+[f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);
 
 % Determine next legal input data length.
 L = wfbtlength(Ls,wt,flags.ext);
@@ -95,7 +103,6 @@ if nargout>1
    info.wt = wt;
    info.ext = flags.ext;
    info.Lc = cellfun(@(cEl) size(cEl,1),c);
-   info.dim = dim;
    info.Ls = Ls;
    info.fOrder = flags.forder;
    info.isPacked = 0;

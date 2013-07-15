@@ -13,6 +13,11 @@ ifndef EXT
   EXT=mexmaci64
 endif
 
+ifndef ARCH
+  $(warning ARCH variable is udefined. Using default ARCH=maci64 )
+  ARCH=maci64
+endif
+
 CFLAGS=-shared -O3 -Wall -s -std=c99 -I../thirdparty -I../src -I$(MATLABROOT)/extern/include -L../lib
 
 include filedefs.mk
@@ -22,7 +27,7 @@ MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 
 
 MEXLIBS=-lmex -lmx
-MEXLINKFLAGS=-L"$(MATLABROOT)/bin/mac64" $(MEXLIBS)
+MEXLINKFLAGS=-L"$(MATLABROOT)/bin/$(ARCH)" $(MEXLIBS)
 
 all: $(MEXS)
 

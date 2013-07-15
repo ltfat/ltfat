@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_dden(N)
+function [h,g,a,info] = wfilt_dden(N)
 %WFILT_DDEN  Double-DENsity DWT filters (tight frame)
 %   Usage: [h,g,a] = wfilt_dden(N);
 %
@@ -7,20 +7,13 @@ function [h,g,a] = wfilt_dden(N)
 %
 %   References: selesnick2001double
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters::: 
-%
-%     w = fwtinit({'dden',2});
-%     wtfftfreqz(w.h);
-%
 
-a= [2;2;2];
+
+
 switch(N)
     case 1
 % from the software package filters1.m
-harr = [
+garr = [
   0.14301535070442  -0.01850334430500  -0.04603639605741
   0.51743439976158  -0.06694572860103  -0.16656124565526
   0.63958409200212  -0.07389654873135   0.00312998080994
@@ -31,7 +24,7 @@ harr = [
 
     case 2
 % from the software package filters2.m
-harr = [
+garr = [
   0.00069616789827  -0.00014203017443   0.00014203017443
  -0.02692519074183   0.00549320005590  -0.00549320005590
  -0.04145457368920   0.01098019299363  -0.00927404236573
@@ -48,7 +41,7 @@ harr = [
 
     case 3
 % from the paper Table 2.2.
-harr = [
+garr = [
   0.14301535070442  -0.08558263399002  -0.43390145071794
   0.51743439976158  -0.30964087862262   0.73950431733582
   0.63958409200212   0.56730336474330  -0.17730428251781
@@ -59,7 +52,7 @@ harr = [
 
     case 4
 % from the paper Table 2.3.
-harr = [
+garr = [
   0.14301535070442  -0.04961575871056  -0.06973280238342
   0.51743439976158  -0.17951150139240  -0.25229564915399
   0.63958409200212  -0.02465426871823   0.71378970545825
@@ -70,7 +63,7 @@ harr = [
 
     case 5
 % from the paper Table 2.4.
-harr = [
+garr = [
   0.14301535070442  -0.01850334430500  -0.04603639605741
   0.51743439976158  -0.06694572860103  -0.16656124565526
   0.63958409200212  -0.07389654873135   0.00312998080994
@@ -81,7 +74,7 @@ harr = [
 
     case 6
 % from the paper Table 2.5.
-harr = [
+garr = [
                  0                  0                  0
   0.05857000614054  -0.01533062192062   0.00887131217814
   0.30400518363062  -0.07957295618112  -0.33001182554443
@@ -96,7 +89,7 @@ harr = [
 
     case 7
 % from the paper Table 2.6.
-harr = [
+garr = [
                  0                  0                  0
   0.05857000614054   0.00194831075352   0.00699621691962
   0.30400518363062   0.01011262602523   0.03631357326930
@@ -112,8 +105,7 @@ harr = [
         error('%s: No such Double Density DWT filter',upper(mfilename));
 end;
 
-h=mat2cell(harr.',[1,1,1],length(harr));
-if(nargout>1)
-    garr = harr(end:-1:1, :);
-    g=mat2cell(garr.',[1,1,1],length(harr));
-end
+g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+h = g;
+a= [2;2;2];
+info.istight=1;

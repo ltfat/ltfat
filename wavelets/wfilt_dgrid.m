@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_dgrid(N)
+function [h,g,a,info] = wfilt_dgrid(N)
 %WFILT_DGRID  Dense GRID framelets (tight frame, symmetric)
 %   Usage: [h,g,a] = wfilt_dgrid(N);
 %
@@ -7,20 +7,12 @@ function [h,g,a] = wfilt_dgrid(N)
 %
 %   References: abdelnour2007dense
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters::: 
-%
-%     w = fwtinit({'dgrid',3});
-%     wtfftfreqz(w.h);
 %
 
 
-a = [2;2;2;2];
+
 switch(N)
 case 1
-% from the software package filters1.m
 harr = [
   0              0               0              0   
   -sqrt(2)/32    -sqrt(2)/32     0.0104677975   0
@@ -60,8 +52,8 @@ harr = [
         error('%s: No such Dense Grid Framelet filters.',upper(mfilename));
 end;
 
-h=mat2cell(harr.',[1,1,1,1],length(harr));
-if(nargout>1)
-    garr = harr(end:-1:1, :);
-    g=mat2cell(garr.',[1,1,1,1],length(harr));
-end
+garr = flipud(harr);
+g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+h = g;
+a = [2;2;2;2];
+info.istight=1;

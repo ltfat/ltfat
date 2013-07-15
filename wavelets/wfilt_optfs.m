@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_optfs(N)
+function [h,g,a,info] = wfilt_optfs(N)
 %WFILT_OPTFS Improved frequency separation filters 
 %   Usage: [h,g,a] = wfilt_optfs(N);
 %
@@ -8,13 +8,6 @@ function [h,g,a] = wfilt_optfs(N)
 %
 %   References:  paiva2012opt
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters:::  
-%
-%      w = fwtinit({'optfs',7});
-%      wtfftfreqz(w.h);
 %
 a = [2,2];
 h = cell(2,1);
@@ -129,10 +122,8 @@ switch(N)
         error('%s: No such optimized orthonormal wavelet filter.',upper(mfilename));
 end;
 
+
 flen = length(h{1});
 h{2} = (-1).^(1:flen).'.*h{1}(end:-1:1);
-if(nargout>1)
-    g = cell(2,1);
-    g{1} = h{1}(end:-1:1);
-    g{2} = -(-1).^(1:flen).'.*h{1};
-end
+g = h;
+info.istight = 1;

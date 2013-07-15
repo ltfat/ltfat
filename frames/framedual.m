@@ -31,7 +31,8 @@ Fd=F;
 % Handle the windowed transforms
 switch(F.type)
   case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
-        'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
+        'nsdgt','unsdgt','nsdgtreal','unsdgtreal',...
+        'fwt','ufwt','wfbt','uwfbt','wpfbt','uwpfbt'}
     
     Fd=frame(F.type,{'dual',F.g},F.origargs{2:end});
     
@@ -53,4 +54,6 @@ switch(F.type)
         dual_frames{ii}=framedual(F.frames{ii});        
     end;
     Fd=frame('fusion',dual_w,dual_frames{:});
+    
+      
 end;

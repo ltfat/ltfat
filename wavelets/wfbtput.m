@@ -30,10 +30,9 @@ if(nargin<4)
    error('%s: Too few input parameters.',upper(mfilename)); 
 end
 definput.flags.force = {'noforce','force'};
-definput.import = {'fwtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-node = fwtinit(w,'a',kv.a,flags.ansy);
+node = fwtinit(w);
 
 [nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wt);
 
@@ -64,7 +63,7 @@ end
 childrenIdx = find(wt.children{nodeNo}~=0);
 found = find(childrenIdx==nodeChildIdx,1);
 if(~isempty(found))
-   if(doForce)
+   if(flags.do_force)
      %check if childrenIdx has any children
      tmpnode = wt.children{nodeNo}(found);  
      if(~isempty(find(wt.children{tmpnode}~=0, 1)))

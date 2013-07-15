@@ -6,16 +6,6 @@ function [h,g,a] = wfilt_apr(N)
 %   filter bank for non-redundant, approximately shift-invariant,
 %   Complex Wavelet Transforms. Critically subsampled. 
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters::: 
-%
-%     w = fwtinit({'apr',2});
-%     figure(1);
-%     wtfftfreqz(w.h);
-%     figure(2);
-%     wtfftfreqz(w.g);
 %
 %   References: hosseini2008almost
 

@@ -1,16 +1,16 @@
-function [wfb,a] = wfbtmultid( filts, varargin)
+function [wfb,a] = wfbtmultid( wtdef, varargin)
 %WFBTMULTID  WFBT equivalent non-iterated filterbank
-%   Usage: [out,a] = wfbtmultid(filts)
+%   Usage: [wfb,a] = wfbtmultid(wtdef)
 %
 %   Input parameters:
-%         filts : Wavelet filter tree definition or basic filters
+%         wtdef : Wavelet filter tree definition or basic filters
 %                 definition.
 %
 %   Output parameters:
 %         wfb   : Cell array containing impulse responses
 %         a     : Array of sub-/upsampling factors
 %
-%   `wfbtmultid(filts)` calculates the impulse responses of non-iterated
+%   `wfbtmultid(wtdef)` calculates the impulse responses of non-iterated
 %   noble multirate-identity wavelet filterbank.
 %
 %   The function internally calls |wfbtinit| and passes all parameters to it.
@@ -45,7 +45,7 @@ definput.import = {'fwtcommon','wfbtcommon'};
 nodePredecesorsMultId();
 
 % build the tree
-filtTree = wfbtinit(filts,varargin{:});
+filtTree = wfbtinit(wtdef,varargin{:});
 
 % number of outputs of the tree
 treeOutputs = noOfOutputs(filtTree);
@@ -60,10 +60,11 @@ a = zeros(treeOutputs,1);
             outRange = rangeInOutputs(ii,filtTree);
             for jj = 1:length(locRange{1})
                 tmpUpsFac = nodeFiltUps(ii,filtTree);
-                tmpFilt = filtTree.nodes{ii}.filts{locRange{1}(jj)};
-                wfb{outRange{1}(jj)} = wfiltstruct('FIR');
-                wfb{outRange{1}(jj)}.h = conv2(hmi,comp_ups(tmpFilt.h,tmpUpsFac,1));
-                wfb{outRange{1}(jj)}.d = nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
+                tmpFilt = filtTree.nodes{ii}.g{locRange{1}(jj)};
+                wfb{outRange{1}(jj)} = struct('fc',0,'realonly',0);
+                % 
+                wfb{outRange{1}(jj)}.h = flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1)));
+                wfb{outRange{1}(jj)}.offset = -nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
             end
             atmp = nodeSub(ii,filtTree);
             a(outRange{1}) = atmp{1}(locRange{1});
@@ -105,7 +106,7 @@ pre = pre(end:-1:1);
 
 for ii=startIdx:length(pre)-1
     id = pre(ii);
-    hcurr = treeStruct.nodes{id}.filts{treeStruct.children{id}==pre(ii+1)}.h;
+    hcurr = treeStruct.nodes{id}.g{treeStruct.children{id}==pre(ii+1)}.h(:);
     hcurr = comp_ups(hcurr,nodeFiltUps(id,treeStruct),1);
     hmi = conv2(hmi,hcurr);
 end

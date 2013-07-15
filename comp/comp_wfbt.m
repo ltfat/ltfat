@@ -25,14 +25,14 @@ c = cell(sum(cellfun(@(rEl) numel(rEl),rangeOut)),1);
  % Go over all nodes in breadth-first order
  for jj=1:numel(wtNodes)
     % Load current filterbank
-    wtNode = wtNodes{jj}.filts(:);
+    wtNode = wtNodes{jj}.h(:);
     % Node filters to a cell array
-    hCell = cellfun(@(hEl) hEl.h(:),wtNode,'UniformOutput',0);
+    hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNode,'UniformOutput',0);
     % Node filters subs. factors
     a = wtNodes{jj}.a;
     % Node filters initial skips
     if(doPer)
-       skip = cellfun(@(hEl) hEl.d-1,wtNode);
+       skip = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNode);
     else
        skip = a-1;
     end

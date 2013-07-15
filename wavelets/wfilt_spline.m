@@ -1,4 +1,4 @@
-function [h,g,a]=wfilt_spline(m,n)
+function [h,g,a,info]=wfilt_spline(m,n)
 % WFILT_SPLINE  Birthogonal spline wavelets
 %   Usage: [h,g,a]=wfilt_spline(m,n);
 %
@@ -10,20 +10,6 @@ function [h,g,a]=wfilt_spline(m,n)
 %   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters
 %   corresponding to a biortoghonal scheme with spline wavelets of compact
 %   support.
-%
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters::: 
-%
-%      w = fwtinit({'spline',4,4});
-%      wtfftfreqz(w.h);
-%
-%   Frequency responses of the synthesis filters::: 
-%
-%      w = fwtinit({'spline',4,4});
-%      wtfftfreqz(w.g);
-%
 %
 %   Original copyright goes to:
 %   Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 
@@ -117,8 +103,9 @@ if(rem(length(h{1}),2))
     g{2}= [0, g{2}];
 end
 
-
+h = cellfun(@(hEl) hEl(end:-1:1),h,'UniformOutput',0);
 a= [2;2];
+info.istight = 0;
 
 
 function c=binewton(N)

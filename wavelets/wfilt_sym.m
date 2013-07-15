@@ -1,4 +1,4 @@
-function [h,g,a]=wfilt_sym(N)
+function [h,g,a,info]=wfilt_sym(N)
 %WFILT_SYM Symlet filters 
 %   Usage: [h,g,a]=wfilt_sym(N);    
 %
@@ -7,14 +7,6 @@ function [h,g,a]=wfilt_sym(N)
 %   filters of are selected alternatingly inside and outside the unit
 %   circle.
 %   
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters:::  
-%
-%      w = fwtinit({'sym',10});
-%      wtfftfreqz(w.h);
-%
 %   References: daub98tenlectures
 
 % Original copyright goes to:
@@ -23,12 +15,13 @@ function [h,g,a]=wfilt_sym(N)
 % e-mail: Uvi_Wave@tsc.uvigo.es
 
 num_coefs = 2*N;
+a = [2;2];
+info.istight = 1;
 
 if num_coefs==2	    % Haar filters
 	g{1} = 0.5*[sqrt(2) sqrt(2)];
     g{2} = 0.5*[sqrt(2) -sqrt(2)];
- 	h{1} = 0.5*[sqrt(2) sqrt(2)];
-    h{2} = 0.5*[-sqrt(2) sqrt(2)];
+    h = g;
 	return
 end
 
@@ -154,9 +147,8 @@ fLen = length(rh);
 g{1} = rh;
 g{2} = -(-1).^(1:fLen).*g{1}(end:-1:1);
  
-h{1}=g{1}(fLen:-1:1);
-h{2}=g{2}(fLen:-1:1);
-a = [2;2];
+h = g;
+
 
 
 function  bin=dec2bina(num,bits)

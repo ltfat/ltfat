@@ -34,6 +34,7 @@ ext = {'per','zero','odd','even'};
 format = {'pack','cell'};
 
 
+
 test_filters = {
                {'db',10}
                %{'apr',2} % complex filter values, odd length filters, no exact PR
@@ -65,7 +66,7 @@ test_filters = {
                {'dgrid',3}
                %{'algmband',1} 
                {'mband',1}
-               {'hden',3}
+               {'hden',4}
                %{'hden',2}
                %{'hden',1}
                %{'algmband',2}

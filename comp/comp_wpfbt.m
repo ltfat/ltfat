@@ -16,7 +16,7 @@ function c=comp_wpfbt(f,wtNodes,rangeLoc,ext)
 % Do non-expansve transform if ext=='per'
 doPer = strcmp(ext,'per');
 % Pre-allocated output
-c = cell(sum(cellfun(@(wtEl) numel(wtEl.filts),wtNodes)),1);
+c = cell(sum(cellfun(@(wtEl) numel(wtEl.h),wtNodes)),1);
 
 ca = f;
 cOutRunIdx = 1;
@@ -24,12 +24,12 @@ cInRunIdxs = [1];
 % Go over all nodes in breadth-first order
 for jj=1:numel(wtNodes)
    % Node filters to a cell array
-   hCell = cellfun(@(hEl) hEl.h(:),wtNodes{jj}.filts(:),'UniformOutput',0);
+   hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:),'UniformOutput',0);
    % Node filters subs. factors
    a = wtNodes{jj}.a;
    % Node filters initial skips
    if(doPer)
-      skip = cellfun(@(hEl) hEl.d-1,wtNodes{jj}.filts);
+      skip = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNodes{jj}.h);
    else
       skip = a-1;
    end

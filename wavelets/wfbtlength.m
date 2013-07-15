@@ -13,11 +13,11 @@ function L=wfbtlength(Ls,wt,varargin);
 %   See also: wfbt, fwt
 
 
-definput.import = {'fwt','wfbtcommon'};
+definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet filters structure
-wt = wfbtinit(wt,flags.forder,'ana');
+wt = wfbtinit(wt);
 
 
 if(flags.do_per)

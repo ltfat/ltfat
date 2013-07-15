@@ -32,7 +32,7 @@
 f=cameraman;
 
 % Ratio to keep
-r=0.05;
+r=0.001;
 
 %% Parameters for the Wilson systems
 % Analysis window
@@ -46,10 +46,10 @@ M=8;
 
 %% Parameters for the Wavelet system
 % Analysis filters
-wa={'db',2};
+wa={'ana','db',6};
 
 % Synthesis filters
-ws={'db',2};
+ws={'syn','db',6};
 
 % No. of levels 
 J=5;

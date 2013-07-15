@@ -20,8 +20,8 @@ function [ccell,dim] = wavpack2cell(cvec,Lc,varargin)
 %
 %   *cvec* is vector or matrix containing coefficients in the packed format.
 %   For dim==1, the coefficients are expected to be stored as columns::
-%   cvec(1:Lc(1),w) - approximation coefficients at level *J* of the channel *w*,
-%   cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w) for *j>1*, for dim==2 as rows in
+%   ccel_1=cvec(1:Lc(1),w) - approximation coefficients at level *J* of the channel *w*,
+%   ccel_j=cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w) for *j>1*, for dim==2 as rows in
 %   the similar manner. 
 %
 %   The resulting *ccell* has `length(Lc)` elements.

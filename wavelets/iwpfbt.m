@@ -1,31 +1,27 @@
 function f=iwpfbt(c,par,varargin)
 %IWPFBT   Inverse Wavelet Packet Filterbank Tree
 %   Usage:  f=iwpfbt(c,info);
-%           f=iwpfbt(c,wt,Ls,...);
+%           f=iwpfbt(c,wt,Ls);
 %
 %   Input parameters:
-%         c     : Coefficients stored in a cell-array.
-%         wt    : Wavelet Filterbank tree
-%         Ls    : Length of the reconstructed signal.
+%         c       : Coefficients stored in a cell-array.
+%         info,wt : Transform parameters struct/Wavelet Filterbank tree.
+%         Ls      : Length of the reconstructed signal.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f=iwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
-%   wavelet filterbank tree *wt*. 
+%   `f = iwpfbt(c,info)` reconstructs signal *f* from the coefficients *c* 
+%   using parameters from `info` struct. both returned by |wfbt| function.
 %
-%   The following flag groups are supported:
-%
-%         'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%                Type of the boundary handling.
-%
-%         'full','dwt'
-%                Type of the tree to be used.
-%
-%         'freq','nat'
-%                Frequency or natural order of the coefficient subbands.
-%
-%   Please see the help on |fwt| for a description of the flags.
+%   `f = iwpfbt(c,wt,Ls)` reconstructs signal *f* from the coefficients *c*
+%   using filter bank tree defined by *wt*. Plese see |wfbt| function for
+%   possible formats of *wt*. The *Ls* parameter is mandatory due to the 
+%   ambiguity of reconstruction lengths introduced by the subsampling 
+%   operation and by boundary treatment methods. Note that the same flag as
+%   in the |wfbt| function have to be used, otherwise perfect reconstruction
+%   cannot be obtained. Please see help for |wfbt| for description of the
+%   flags.
 %
 %   Examples:
 %   ---------
@@ -40,7 +36,7 @@ function f=iwpfbt(c,par,varargin)
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
-%   See also: wfbt, wfbtinit
+%   See also: wpfbt, wfbtinit
 %
 if nargin<2
    error('%s: Too few input parameters.',upper(mfilename));
@@ -54,7 +50,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    if nargin>2
       error('%s: Too many input parameters.',upper(mfilename));
    end
-   wt = wfbtinit(par.wt,par.fOrder,'syn');
+   wt = wfbtinit({'dual',par.wt},par.fOrder);
    Ls = par.Ls;
    ext = par.ext;
 else
@@ -67,7 +63,7 @@ else
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
    ext = flags.ext;
    % Initialize the wavelet tree structure
-   wt = wfbtinit(par,flags.forder,'syn');
+   wt = wfbtinit(par,flags.forder);
 end
 
 wtPath = nodesBForder(wt,'rev');

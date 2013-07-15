@@ -1,22 +1,33 @@
 function [c,info]=wpfbt(f,wt,varargin)
 %WPFBT   Wavelet Packet FilterBank Tree
 %   Usage:  c=wpfbt(f,wt);
-%           c=wpfbt(f,wt,...);
+%           [c,info]=wpfbt(...);
 %
 %   Input parameters:
 %         f   : Input data.
-%         wt  : Wavelet Filterbank tree
+%         wt  : Wavelet Filterbank tree definition.
 %
 %   Output parameters:
-%         c   : Coefficients stored in a cell-array.
+%         c    : Coefficients stored in a cell-array.
+%         info : Transform parameters struct.
 %
 %   `c=wpfbt(f,wt)` returns wavelet packet coefficients *c* obtained by
 %   applying a wavelet filterbank tree defined by *wt* to the input data
-%   *f*. If *f* is a matrix, the transformation is applied to each of column
-%   of the matrix.
+%   *f*. In addition, the function returns struct. `info` containing transform
+%   parameters. It can be conviniently used for the inverse transform |iwpfbt|
+%   e.g. `fhat = iwpfbt(c,info)`. It is also required by the |plotwavelets| 
+%   function.
 %
-%   This routine supports the same boundary conditions flags as
-%   |fwt|. Please see the help on |fwt| for a description of the flags.
+%   In contrast to the |wfbt|, the *c* contain every intermediate output
+%   of each node in the tree. The `c{jj}` are ordered in the breadth-first
+%   node order manner.
+%
+%   If *f* is row/column vector, the coefficient vectors `c{jj}` are 
+%   columns. If *f* is a matrix, the transformation is applied to each of 
+%   column of the matrix.
+%
+%   Please see help for |wfbt| description of possible formats of *wt* and
+%   of the additional flags.
 %
 %   Examples:
 %   ---------
@@ -29,7 +40,7 @@ function [c,info]=wpfbt(f,wt,varargin)
 %     [c,info] = wpfbt(f,{'sym10',J,'full'});
 %     plotwavelets(c,info,44100,'dynrange',90);
 %
-%   See also: iwfbt, wfbtinit
+%   See also: wfbt, iwpfbt, wfbtinit, plotwavelets, wpbest
 
 
 if(nargin<2)
@@ -40,7 +51,7 @@ definput.import = {'fwt','wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
-wt = wfbtinit(wt,flags.forder,'ana');
+wt = wfbtinit(wt,flags.forder);
     
 %% ----- step 1 : Verify f and determine its length -------
 [f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);

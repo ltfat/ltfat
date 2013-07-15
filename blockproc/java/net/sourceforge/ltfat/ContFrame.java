@@ -4,6 +4,7 @@
  */
 package net.sourceforge.ltfat;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,6 +15,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -22,7 +25,7 @@ import javax.swing.event.ChangeListener;
  * @author zprusa
  */
 public class ContFrame {
-
+    volatile private boolean showLoadInd = false;
     private JFrame jf = null;
     private Map paramMap = null;
     private Map sliderParamMap = null;
@@ -32,6 +35,11 @@ public class ContFrame {
     public double shared = 1;
     public double flag = 1;
     public double dArray[] = new double[10];
+    private ExecutorService executor=Executors.newSingleThreadExecutor();
+    
+    JLabel loadLabel;
+    JProgressBar loadBar;
+    JLabel loadTxt;
     
     // Components
     private int defXPad = 3;
@@ -41,11 +49,26 @@ public class ContFrame {
     private int valuePrefferedSize = 30;
     
     
-    public double getParam(String key){
-        if(paramMap==null){
-
-        }
+    public double getParam(String key) throws NoSuchFieldException {
+       Double d = (Double) paramMap.get(key);
+       if(d==null){
+          throw new NoSuchFieldException("Parameter "+key+" not found."); 
+       }
        return (Double)paramMap.get(key);
+    }
+    
+     public double[] getParams(String... key) throws NoSuchFieldException {
+       int keyLen = key.length;
+       double[] out = new double[keyLen]; 
+       for(int ii=0;ii<keyLen;ii++){
+          try{ 
+             out[ii]=getParam(key[ii]); 
+          }
+          catch(NoSuchFieldException err){
+              throw(err);
+          }
+       }
+       return out;
     }
 
     public void addControlElements(final List params) {
@@ -79,6 +102,30 @@ public class ContFrame {
             jf.dispose();
         }
     }
+    
+   public void updateBar(final double val) {
+       executor.execute(new Runnable() {
+           public void run() {
+               if(!showLoadInd){
+                   loadLabel.setVisible(true);
+                   loadBar.setVisible(true); 
+                   loadTxt.setVisible(true);
+               }
+               loadBar.setValue((int)val);
+               loadTxt.setText(String.format(" %d%%",((int)val)));
+               if((int)val>80){
+                   loadTxt.setForeground(Color.red);
+               }
+               else{
+                   loadTxt.setForeground(Color.black);
+               }
+               
+               showLoadInd = true;
+               loadBar.repaint();
+               loadTxt.repaint();
+           }
+       });
+   }
 
     public ContFrame() {
         Runnable r = new Runnable() {
@@ -86,8 +133,7 @@ public class ContFrame {
             public void run() {
                 try {
                     // Set System L&F
-                    UIManager.setLookAndFeel(
-                            UIManager.getSystemLookAndFeelClassName());
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (UnsupportedLookAndFeelException e) {
                     // handle exception
                 } catch (ClassNotFoundException e) {
@@ -208,6 +254,7 @@ public class ContFrame {
                }
            });
            
+           
            jf.add(jname,labelConst);
            labelConst.gridy += 1;
            jf.add(jval,sliderConst);
@@ -220,6 +267,19 @@ public class ContFrame {
            sliderParamMap.put(jval, name);
            sliderBoundsMap.put(jval, new SliderBounds(minVal,maxVal));
        }
+       
+
+       loadTxt = new JLabel("0%");
+       loadTxt.setPreferredSize(new Dimension(50, 15));
+       loadLabel = new JLabel("Load:");
+       loadBar = new JProgressBar();
+
+       jf.add(loadLabel,labelConst);
+       jf.add(loadBar,sliderConst);
+       jf.add(loadTxt,valConst);
+       loadLabel.setVisible(false);
+       loadBar.setVisible(false);
+       loadTxt.setVisible(false);
     }
     
     private int val2slider(double val, double minVal, double maxVal, int noVal){

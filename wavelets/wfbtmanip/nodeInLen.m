@@ -27,7 +27,7 @@ for nn=1:length(nodeNo)
        parentNo = wt.parents(tmpNodeNo);
        tmpIdx = find(wt.children{parentNo}==tmpNodeNo);
        subPat(end+1) = wt.nodes{parentNo}.a(tmpIdx);
-       filtLenPat(end+1) = length(wt.nodes{parentNo}.filts{tmpIdx}.h);
+       filtLenPat(end+1) = length(wt.nodes{parentNo}.g{tmpIdx}.h);
        tmpNodeNo=parentNo;
     end
 

@@ -56,8 +56,8 @@ fs = block(source,varargin{:});
 %F = frameaccel(frame('dgtreal','hann',32,100),2*bufLen);
 %Fdual = frameaccel(framedual(F),2*bufLen);
 
-F = frame('fwt','apr1',3);
-Fdual = frame('fwt','apr1',3);
+F = frame('fwt','ana:spline4:4',7);
+Fdual = frame('fwt','syn:spline4:4',7);
 
 
 flag = 1;
@@ -80,6 +80,7 @@ while flag && p.flag
   % Apply synthesis frame
   fhat = real(blocksyn(Fdual, c, size(f,1)));
   % Play the block
+  %fhat = f;
   blockplay(fhat);
 end
 % Close the control panel

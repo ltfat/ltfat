@@ -8,7 +8,7 @@ pRunIdx = [0];
 chRunIdx = 1;
 % do trough tree and look for nodeNo and its parrent
 for ii=1:trLen
-    tmpfiltNo = length(wt.nodes{treePath(ii)}.filts);
+    tmpfiltNo = length(wt.nodes{treePath(ii)}.g);
     locRange = rangeInLocalOutputs(treePath(ii),wt);
     diffRange = 1:tmpfiltNo;
     diffRange(locRange{1})=[];

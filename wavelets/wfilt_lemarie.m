@@ -1,4 +1,4 @@
-function [h,g,a]=wfilt_lemarie(N)
+function [h,g,a,info]=wfilt_lemarie(N)
 %WFILT_LEMARIE  Battle and Lemarie filters
 %   Usage: [h,g,a]=wfilt_lemarie(N)
 %
@@ -9,13 +9,6 @@ function [h,g,a]=wfilt_lemarie(N)
 %   Battle-Lemarie wavelets. Filter coefficients are obtainded by
 %   frequency domain sampling and trunctating the impulse response.
 %   
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters:::  
-%
-%      w = fwtinit({'lemarie',40});
-%      wtfftfreqz(w.h);
 %
 %   References: mallat89atheory
 
@@ -29,15 +22,15 @@ L = 1024;
 H = wfreq_lemarie(L);
 hh=real(ifft(H{1},L));
 hh=[ hh(L-floor(num_coefs/2)+1:L) hh(1:ceil(num_coefs/2))];
-hh=sqrt(2)/sum(hh)*hh;
+hh=hh/norm(hh);
 
 g{1} = fliplr(hh);
 g{2} = -(-1).^(1:length(hh)).*g{1}(end:-1:1);
  
-h{1}=g{1}(length(g{1}):-1:1);
-h{2}=g{2}(length(g{2}):-1:1);
+h=g;
 
 a= [2;2];
+info.istight = 1;
 
 
 

@@ -1,4 +1,4 @@
-function [h,g,a]=wfilt_remez(L,K,B)
+function [h,g,a,info]=wfilt_remez(L,K,B)
 %WFILT_REMEZ Filters designed using Remez exchange algorithm
 %   Usage: [h,g,a]=wfilt_remez(L,K,B)
 %
@@ -11,14 +11,6 @@ function [h,g,a]=wfilt_remez(L,K,B)
 %   can control regularity, frequency selectivity, and length of the
 %   filters.  It works performing a factorization based on the complex
 %   cepstrum of the polynomial.
-%
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters:::  
-%
-%      w = fwtinit({'remez',40,4,0.1});
-%      wtfftfreqz(w.h);
 %
 %   References: rioul94remez
 
@@ -38,10 +30,10 @@ rh=fc_cceps(poly);
 g{1} = rh;
 g{2} = -(-1).^(1:length(rh)).*g{1}(end:-1:1);
  
-h{1}=g{1}(length(g{1}):-1:1);
-h{2}=g{2}(length(g{2}):-1:1);
+h = g;
 
 a= [2;2];
+info.istight = 1;
 
 function [p,r]=remezwav(L,K,B)
 

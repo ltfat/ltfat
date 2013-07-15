@@ -1,4 +1,62 @@
-//#define MEX_FILE
+/***********************************************************************************
+This file serves as a helper for the MEX files. It helps with the following issues:
+
+   1) Avoids code repetition by introducing type-independent code.
+   2) Handles Matlab complex numbers arrays format conversion (split to interleaved)
+      on-the-fly.
+
+This header is meant to be included from a MEX file having MEX_FILE macro set to
+
+#define MEX_FILE __BASE_FILE__
+
+The MEX source file itself is not processed directly, but it is included from this
+header possibly more than once. How the MEX file is treated depends on a control 
+macros which are set in the MEX source file. The supported are:
+
+ ISNARGINEQ, ISNARGINLE, ISNARGINGE
+    AT COMPILE-TIME:
+    AT RUNTIME: Ensures correct number of the input parameters.
+    WHEN MISSING: No input argument checks ale included in the final code.
+
+#define ISNARGINEQ 5
+ TYPEDEPARGS
+ MATCHEDARGS
+    AT COMPILE-TIME: Defines integer array from the specified values.
+    AT RUNTIME: The array is used to identify input arguments to be checked/reformated. Accepted inputs are numeric arrays,
+                cell arrays containing only numeric arrays, structures having at least one field beeing numeric array.
+    WHEN MISSING: No input modifications/checks are included in the code.
+
+#define TYPEDEPARGS 0, 1
+ SINGLEARGS
+    AT COMPILE-TIME: Includes this file for the second time with TYPEDEPARGS input args. recast to float arrays (cells, structs).
+    AT RUNTIME: If at least one of the TYPEDEPARGS input args. is float (single in MatLab), all TYPEDEPARGS are recast to floats.
+    WHEN MISSING: TYPEDEPARGS input args can be only double arrays.
+
+#define SINGLEARGS
+ COMPLEXARGS, REALARGS
+    AT COMPILE-TIME: (COMPLEXARGS) adds code for on-the-fly conversion from the Matlab complex number format to the
+                     complex.h (interleaved) complex data format.
+                     (REALARGS) and (COMPLEXARGS) allows both real and complex inputs. Have to be handled here.
+    AT RUNTIME: (COMPLEXARGS) TYPEDEPARGS input args are recast to complex format even in they are real.
+                (REALARGS) TYPEDEPARGS args are accepted only if they are real.
+                (REALARGS) and (COMPLEXARGS) If at least one of the TYPEDEPARGS is complex do as (COMPLEXARGS), otherwise let
+                the inputs untouched.
+    WHEN MISSING: Real/Complex are not checked. No complex data format change.
+
+
+ COMPLEXINDEPENDENT
+    AT COMPILE-TIME: As if both COMPLEXARGS, REALARGS were defined.
+    AT RUNTIME: As if both COMPLEXARGS, REALARGS were defined plus it is assumed that the called functions from the LTFAT
+                backend are from ltfat_typecomplexindependent.h, e.i. there are
+    WHEN MISSING: No input checks REAL/COMPLEX checks are included in the final code.
+
+
+#define COMPLEXINDEPENDENT 
+  
+NOCOMPLEXFMTCHANGE
+  
+************************************************************************************/
+
 /** Allow including this file only if MEX_FILE is defined */
 #if defined(MEX_FILE)
 
@@ -7,7 +65,7 @@
 #define _LTFAT_MEX_TEMPLATEHELPER_H 1
 
 /** Adds symbol exporting function decorator to mexFunction.
-    On Windows, def file is no longer needed. For MinGW, it
+    On Windows, a separate def file is no longer needed. For MinGW, it
     suppresses the default "export-all-symbols" behavior. **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
@@ -48,10 +106,43 @@
 #endif
 
 /** Helper function headers, to allow them to be used in the MEX_FILE */
+/*
+Replacement for:
+mxArray *mxCreateNumericMatrix(mwSize m, mwSize n, mxClassID classid, mxComplexity ComplexFlag);
+*/
 mxArray *ltfatCreateMatrix(mwSize M, mwSize N,mxClassID classid,mxComplexity complexFlag);
+/*
+Replacement for:
+mxArray *mxCreateNumericArray(mwSize ndim, const mwSize *dims, mxClassID classid, mxComplexity ComplexFlag);
+*/
 mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,mxComplexity complexFlag);
 
-/** Include mex source code for each template data type */
+/** 
+Include MEX source code (MEX_FILE) for each template data type according to the control macros:
+
+    TYPEDEPARGS
+	COMPLEXARGS
+	REALARGS
+	COMPLEXINDEPENDENT
+
+For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
+
+    MACRO SETS (from ltfat_types.h)
+          MACRO                                     EXPANDS TO
+                         (double)           (single)           (complex double)      (complex single)
+    ------------------------------------------------------------------------------------------------------
+    LTFAT_REAL           double             float              double                float
+    LTFAT_COMPLEX        fftw_complex       fftwf_complex      fftw_complex          fftwf_complex
+    LTFAT_COMPLEXH       double _Complex    float _Complex     double _Complex       float _Complex
+    LTFAT_TYPE           LTFAT_REAL         LTFAT_REAL         LTFAT_COMPLEXH        LTFAT_COMPLEXH
+    LTFAT_MX_CLASSID     mxDOUBLE_CLASS     mxSINGLE_CLASS     mxDOUBLE_CLASS        mxSINGLE_CLASS
+    LTFAT_MX_COMPLEXITY  mxREAL             mxREAL             mxCOMPLEX             mxCOMPLEX
+    LTFAT_FFTW(name)     fftw_##name        fftw_##name        fftw_##name           fftw_##name
+    LTFAT_NAME(name)     name               s##name            c##name               cs##name
+
+    By default, a macro set (double) is used.
+*/
+
 
 #define LTFAT_DOUBLE
 #include "ltfat_mex_typeindependent.h"
@@ -170,8 +261,11 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
       mxFree(mxGetPr(out));
       mxFree(mxGetPi(out));
       mxSetData(out,(void*)mxCalloc(L,2*sizeofClassid(classid)));
+	  /*
+	  Allocate array of length 1 to keep the array complex and to avoid automatic deallocation
+	  issue. 
+	  */
       mxSetImagData(out,mxCalloc(1,1));
-      // To avoid automatic deallocation by the MEX memory manager
 
       return out;
    }
@@ -225,6 +319,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
       return tmpCell;
    }
 
+   // if the input is struct, find all numeric fields and cast them to single
    if(mxIsStruct(prhsEl))
    {
       mwSize nfields = mxGetNumberOfFields(prhsEl);
@@ -236,6 +331,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
       {
          fieldnames[ii] = mxGetFieldNameByNumber(prhsEl,ii);
       }
+	  // Create duplicate struct
       mxArray* tmpStructArr = mxCreateStructArray(ndim,dims,nfields,fieldnames);
       for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
@@ -248,7 +344,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
    }
 
 
-   // just copy pointer if the element is not numeric
+   // Just copy pointer if the element is not numeric.
    if(!mxIsNumeric(prhsEl))
    {
       return prhsEl;

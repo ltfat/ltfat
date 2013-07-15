@@ -37,7 +37,13 @@ function outsig=plotframe(F,insig,varargin);
 %              is usually done by adjusting the colormap. See the help on `imagesc`.
 %
 %   See also: frame, frana
-  
+
+switch(F.type)
+   case {'fwt','ufwt','wfbt','wpfbt','uwfbt','uwpfbt'}
+      info.fname = F.type;
+      info.wt = F.g;
+end;
+
 switch(F.type)
  case 'dgt'
   plotdgt(framecoef2native(F,insig),F.a,varargin{:}); 
@@ -59,6 +65,18 @@ switch(F.type)
   % FIXME : This is not strictly correct, as half the transforms use an
   % odd frequency centering.
   plotfftreal(insig,varargin{:});
+ case 'fwt'
+    info.Lc = fwtclength(size(insig,1)/F.red,F.g,F.J);
+    info.J = F.J;
+    info.dim = 1;
+    plotwavelets(insig,info,varargin{:});  
+ case 'ufwt'
+    info.J = F.J;
+    plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
+ case {'wfbt','wpfbt'}
+    plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
+ case {'uwfbt','uwpfbt'}
+    plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
 end;
 
   

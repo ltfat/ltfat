@@ -79,8 +79,9 @@ if ~isempty(F.g)
         F.isfac=F.g_info.isfac;
       case 'fwt'
         F.isfac=1;
-  end;
+    end;
   
 end;
 
 F.L=L;
+%F.winlen

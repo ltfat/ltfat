@@ -15,7 +15,7 @@ function outRange = rangeInNodeOutputs(nodeNo,treeStruct)
 %   See also: wfbtinit
 %
 chIdx = find(treeStruct.children{nodeNo}~=0);
-chan = numel(treeStruct.nodes{nodeNo}.filts);
+chan = numel(treeStruct.nodes{nodeNo}.g);
 outNodes = zeros(chan,1);
 outNodes(chIdx) = treeStruct.children{nodeNo}(chIdx);
 

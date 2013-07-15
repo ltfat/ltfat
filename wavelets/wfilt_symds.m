@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_symds(N)
+function [h,g,a,info] = wfilt_symds(N)
 %WFILT_SYMDS  Symmetric wavelets dyadic sibling
 %   Usage: [h,g,a] = wfilt_symds(N);
 %
@@ -7,20 +7,8 @@ function [h,g,a] = wfilt_symds(N)
 %
 %   References: abdelnour2012sib
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters:::  
-%
-%      w = fwtinit({'symds',2});
-%      wtfftfreqz(w.h);
-%
-%   Frequency responses of the synthesis filters:::  
-%
-%      w = fwtinit({'symds',2});
-%      wtfftfreqz(w.g);
-%
 
+info.istight = 0;
 a = [2;2;2;2];
 
 switch(N)
@@ -203,10 +191,6 @@ case 5
 
 end
 
-        [hR hC]=size(harr); 
-        h=mat2cell(harr.',ones(1,hC),hR);
-        if(nargout>1)
-           [gR gC]=size(garr);
-           g=mat2cell(garr.',ones(1,gC),gR);
-        end
+g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+h=mat2cell(flipud(harr),size(harr,1),ones(1,size(harr,2)));
 

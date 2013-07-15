@@ -33,7 +33,14 @@ if ~iscell(params{1})
     params = {params};
 end
 
-p = javaObject('net.sourceforge.ltfat.ContFrame');
+try
+  p = javaObject('net.sourceforge.ltfat.ContFrame');
+catch% err
+   error(['%s: Could not load net.sourceforge.ltfat.ContFrame. It is not ',...
+          'compiled or it is not in Matlab classpath. In the latter case, ',...
+          'ltfatstart should do the trick.'],upper(mfilename));
+end
+
 paramList = javaObject('java.util.LinkedList');
     
 
@@ -48,3 +55,7 @@ for ii = 1:numel(params)
    
 end
  javaMethod('addControlElements',p,paramList);
+ 
+ % Give the object time to inilialize properly.
+ pause(0.1);
+ 

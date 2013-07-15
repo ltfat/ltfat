@@ -1,4 +1,4 @@
-function c = block_fwt( f, h, J)
+function c = block_fwt( f, w, J)
 %BLOCK_FWT FWT func. wrapper for a block processing
 %   Usage: c = block_fwt( f, h, J);
 %
@@ -31,34 +31,35 @@ end;
 % Initialize the wavelet filters structure
 %h = fwtinit(h,'ana');
 
-if any(h.a~=h.a(1))
+if any(w.a~=w.a(1))
    error('%s: Non-equal subsampling factors are not supported.',upper(mfilename));
 end
 
+w = fwtinit(w);
 % Extended block length 
 Ls = size(f,1);
 % Low-pass filter length
-m = numel(h.h{1}.h);
+m = numel(w.h{1}.h);
 % Low-pass subsampling factor
-a = h.a(1);
+a = w.a(1);
 % Extension length
 rred = (a^J-1)/(a-1)*(m-a);
 % Block boundaries
-blocksize=h.a(1)^J;
+blocksize=w.a(1)^J;
 % Input signal samples to be processed
 L=rred+floor((Ls-rred)/blocksize)*blocksize;
 
 levelLen = L;
-filtNo = length(h.h);
+filtNo = length(w.h);
 subbNo = (filtNo-1)*J+1;
 Lc = zeros(subbNo,1);
 runPtr = 0; 
 for jj=1:J
    for ff=filtNo:-1:2
-      Lc(end-runPtr) = floor((levelLen-m-1)/h.a(ff));
+      Lc(end-runPtr) = floor((levelLen-m-1)/w.a(ff));
       runPtr = runPtr + 1;
    end
-   levelLen = floor((levelLen-m-1)/h.a(1));
+   levelLen = floor((levelLen-m-1)/w.a(1));
 end
 Lc(1)=levelLen; 
 
@@ -70,17 +71,13 @@ if(Ls>L)
    f=postpad(f,L); 
 end
 
-m = numel(h.h{1}.h);
-a = h.a(1);
-rred = (a^J-1)/(a-1)*(m-a);
 if Ls<rred+a^J
    error('%s: Insufficient input signal length for the %s flag. Minimum is %i.',upper(mfilename),'''valid''',rred+a^J);
 end
 
-c = comp_fwt(f,h.h,J,h.a,Lc,'valid');
+c = comp_fwt(f,w.h,J,w.a,Lc,'valid');
 
 % Do the cropping 
-filtNo = length(h.h);
 runPtr = 0; 
 for jj=1:J-1
    for ff=filtNo:-1:2

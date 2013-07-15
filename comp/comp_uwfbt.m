@@ -20,7 +20,7 @@ function c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut)
 % Pre-allocated output
 [L, W] = size(f);
 M = sum(cellfun(@(rEl) numel(rEl),rangeOut));
-c = zeros(L,M,W,assert_classname(f,wtNodes{1}.filts{1}.h));
+c = zeros(L,M,W,assert_classname(f,wtNodes{1}.h{1}.h));
 
 % Convenience input reshape
 ca = reshape(f,size(f,1),1,size(f,2));
@@ -29,13 +29,13 @@ for jj=1:numel(wtNodes)
    % Node filters subs. factors
    a = wtNodes{jj}.a;
    % Node filters to a matrix
-   hMat = cell2mat(cellfun(@(hEl) hEl.h(:),wtNodes{jj}.filts(:)','UniformOutput',0));
+   hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:)','UniformOutput',0));
    % Normalize each filter
    hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
    % Node filters initial skips
-   hDel = cellfun(@(hEl) hEl.d,wtNodes{jj}.filts);
+   hDel = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNodes{jj}.h);
    % Zero index position of the upsampled filters.
-   skip = nodesUps(jj).*(hDel - 1);
+   skip = nodesUps(jj).*(hDel);
    
    % Run filterbank.
    catmp=comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),skip);

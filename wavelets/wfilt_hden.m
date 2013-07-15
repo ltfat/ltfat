@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_hden(N)
+function [h,g,a,info] = wfilt_hden(N)
 %WFILT_HDEN  Higher DENsity dwt filters (tight frame, frame)
 %   Usage: [h,g,a] = wfilt_hden(N);
 %
@@ -6,17 +6,10 @@ function [h,g,a] = wfilt_hden(N)
 %
 %   References: selesnick2006higher
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters:::  
-%
-%      w = fwtinit({'hden',3});
-%      wtfftfreqz(w.h);
 %
 
 a= [2;2;1];
-
+info.istight = 1;
 switch(N)
 case 1
 % from the paper Example 1.
@@ -56,6 +49,7 @@ harr = [
 ];
 
 case 4
+    info.istight = 0;
     % from the paper Example 5. Is not a tight frame!
     harr = [
        0          0           0 
@@ -71,8 +65,9 @@ case 4
        0.011217   0           0 
        0.027222   0           0  
     ];
-    h=mat2cell(harr.',[1,1,1],length(harr));
-    if(nargout>1)
+    harr = flipud(harr);
+    h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
+
 
         garr = [
             0          0          0
@@ -89,19 +84,18 @@ case 4
             0          0          0
         ];   
 
-        g=mat2cell(garr.',[1,1,1],length(harr));
-    end;
+        g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
 
-    return
+
+    return;
 
 
 otherwise
         error('%s: No such Higher Density Wavelet Transform Filters..',upper(mfilename));
 end
 
-h=mat2cell(harr.',[1,1,1],length(harr));
+garr = flipud(harr);
+g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+h = g;
 
-if(nargout>1)
-    garr = harr(end:-1:1, :);
-    g=mat2cell(garr.',[1,1,1],length(harr));
-end
+

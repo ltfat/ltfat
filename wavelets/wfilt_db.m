@@ -1,4 +1,4 @@
-function [H, G, a] = wfilt_db(N)
+function [h, g, a, info] = wfilt_db(N)
 %WFILT_DB    Daubechies FIR filterbank
 %   Usage:  [h,g] = wfilt_db(N);
 %
@@ -37,13 +37,6 @@ function [H, G, a] = wfilt_db(N)
 %
 %   References: daub98tenlectures
 %
-%   Examples:
-%   ---------
-%
-%   Frequency responses of the analysis filters::: 
-%
-%     w = fwtinit({'db',8});
-%     wtfftfreqz(w.h);
 %
 
 if(nargin<1)
@@ -58,7 +51,7 @@ if(N>20)
 end
 
 
-H = cell(2,1);
+h = cell(2,1);
 flen = 2*N;
 
 % Calculating Lagrange interpolator coefficients
@@ -73,32 +66,22 @@ P(1:2:end) = a;
 P = [P(end:-1:1),1,P];
 
 R = roots(P);
-R = R(abs(R)>1 & real(R)>0);
+R = R(abs(R)<1 & real(R)>0);
 
 % roots of the 2*conv(lo_a,lo_r) filter
 hroots = [R(:);-ones(N,1)];
 
 
 % building synthetizing low-pass filter from roots
-H{1}= real(poly(hroots));
-% normalize to norm(H{1})=sqrt(2)
-H{1}= sqrt(2)*H{1}/sum(H{1});
+h{1}= real(poly(hroots));
+% normalize
+h{1}= h{1}/norm(h{1});
 % QMF modulation low-pass -> highpass
-H{2}= (-1).^(1:flen).*H{1}(end:-1:1);
+h{2}= (-1).^(1:flen).*h{1}(end:-1:1);
 
-
-if(nargout>1)
-   % Building reconstruction filterbank
-   G = cell(2,1); 
-   % flip
-   G{1} = H{1}(end:-1:1);
-   % modulation
-   G{2} = -(-1).^(1:flen).*H{1};
-
-   if(nargout>2)
-       a = [2;2];
-   end
-end
+g=h;
+a = [2;2];
+info.istight=1;
 
 
 

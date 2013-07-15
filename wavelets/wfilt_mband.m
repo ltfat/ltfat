@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_mband(N)
+function [h,g,a,info] = wfilt_mband(N)
 %WFILT_MBAND  Generates M-Band coders
 %   Usage: [h,g,a] = wfilt_mband(N);
 %
@@ -6,10 +6,6 @@ function [h,g,a] = wfilt_mband(N)
 %
 %   References:  alkin95mband
 %
-%   Frequency responses of the analysis filters:::
-%
-%     w = fwtinit({'mband',1});
-%     wtfftfreqz(w.h);
 %
 a= [4;4;4;4];
 
@@ -93,9 +89,7 @@ otherwise
         error('%s: No such M-Band filters.',upper(mfilename));
 end
 
-h=mat2cell(harr.',ones(length(a),1),length(harr));
+g=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
+h = g;
 
-if(nargout>1)
-    garr = harr(end:-1:1, :);
-    g=mat2cell(garr.',ones(length(a),1),length(harr));
-end
+info.istight = 1;

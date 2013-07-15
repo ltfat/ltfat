@@ -4,6 +4,7 @@
 
 #include "ltfat_types.h"
 #include "wavelets.c"
+//#include "goertzel.c"
 #include "spread.c"
 #include "gabdual.c"
 #include "gabtight.c"
@@ -11,6 +12,7 @@
 #define LTFAT_COMPLEXTYPE
 #include "ltfat_types.h"
 #include "wavelets.c"
+//#include "goertzel.c"
 #include "spread.c"
 #include "gabdual.c"
 #include "gabtight.c"

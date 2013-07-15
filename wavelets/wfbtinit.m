@@ -1,7 +1,6 @@
 function wt = wfbtinit(wtdef,varargin)
 %WFBTINIT Initialize Filterbank Tree
-%   Usage:  wt = wfbtinit();
-%           wt = wfbtinit(wtdef,...);
+%   Usage:  wt = wfbtinit(wtdef);
 %
 %   Input parameters:
 %         wtdef : Filterbank tree definition.
@@ -21,6 +20,9 @@ function wt = wfbtinit(wtdef,varargin)
 %   `wtree.parents`
 %      indexes of a parent node
 %
+%   `wtree.forder`
+%      Frequency ordering of the resultant frequency bands.
+%
 %   `wfbt=wfbtinit({w,J,flag})` creates filterbank tree of depth *J*. Parameter *w* 
 %   defines basic wavelet filterbank. For all possible formats see |fwt|.
 %   The following optional flags (still inside of the cell-array) are
@@ -32,128 +34,135 @@ function wt = wfbtinit(wtdef,varargin)
 %   The following additional flag groups are supported:
 %
 %   'freq','nat'
-%     Frequency or natural order of the coefficient subbands.
+%     Frequency or natural ordering of the coefficient subbands. The direct
+%     usage of the wavelet tree ('nat' option) does not produce coefficient
+%     subbans ordered according to the frequency. To achieve that, some 
+%     filter shuffling has to be done ('freq' option).  
 %
+%   See also: wfbtput, wfbtremove
 
 % TO DO: Do some caching
 
-% output structure definition
+% Output structure definition.
+% Effectively, it describes a ADT tree.
+% .nodes, .children, .parents ale all arrays of the same length and the j-th
+% node in the tree is desribed by wt.nodes{j}, wt.children{j} and
+% wt.parents(j). wt.nodes{j} is the actual data stored in the tree node 
+% (a structure returned form fwtinit) and wt.parents(j) and wt.children{j}
+% define relationship to other nodes. wt.parents(j) is an index of the
+% parent in the arrays. wt.children{j} is an array of indexes of the
+% children nodes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-wt.nodes = {};
+wt.nodes = {}; 
 wt.children = {};
 wt.parents = [];
+wt.freqOrder = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % return empty struct if no argument was passed
-if(nargin==0)
+if(nargin<1)
     return;
 end
 
 
-definput.import = {'wfbtcommon','fwtcommon'};
-% Contents of the arg_fwtcommon:
-% definput.flags.ansy = {'ana','syn'};
-% definput.keyvals.a = [];
+do_strict = 0;
+do_dual = 0;
 
-% Contents of the arg_wfbtcommon:
-% definput.flags.treetype = {'full','dwt'};
-% definput.flags.forder = {'freq','nat'};
+% Check 'strict'
+if iscell(wtdef) && ischar(wtdef{1}) && strcmpi(wtdef{1},'strict')
+   do_strict = 1;
+   wtdef = wtdef{2:end};
+end
+% Check 'dual'
+if iscell(wtdef) && ischar(wtdef{1}) && strcmpi(wtdef{1},'dual')
+   do_dual = 1;
+   wtdef = wtdef{2:end};
+end
+
+definput.import = {'wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-% if filts is a structure describing filterbank tree
-if((isstruct(wtdef)&&isfield(wtdef,'nodes')))
+% If wtdef is already a structure
+if (isstruct(wtdef)&&isfield(wtdef,'nodes'))
     wt = wtdef;
-    % set analysis or synthesis filters as the active ones
-    for ii=1:numel(wt.nodes)
-        if(flags.do_ana)
-           wt.nodes{ii}.filts = wt.nodes{ii}.h;
-        else
-           wt.nodes{ii}.filts = wt.nodes{ii}.g;
-        end
+    
+    if do_dual || do_strict
+       nodesArg = wt.nodes;
+       if do_dual
+          nodesArg = cellfun(@(nEl) {'dual',nEl},nodesArg,'UniformOutput',0);
+       end
+       if do_strict
+          nodesArg = cellfun(@(nEl) {'strict',nEl},nodesArg,'UniformOutput',0);
+       end
+       wt.nodes = cellfun(@(nEl) fwtinit(nEl),nodesArg,'UniformOutput',0);
+       % Do the filter frequency shuffling again, since the filters were
+       % overwritten in fwtinit.
+       if wt.freqOrder
+          wt = nat2freqOrder(wt); 
+       end
     end
-    % Do filter shuffling if frequency ordering is required,
-    % otherwise, the outputs of the tree will be in the natural order.
+
+    % Do filter shuffling if flags.do_freq differs from the wt.freqOrder.
     % Frequency and natural oreding coincide for DWT.
-    if(flags.do_freq)
+    if wt.freqOrder ~= flags.do_freq
        wt = nat2freqOrder(wt); 
+       wt.freqOrder = ~wt.freqOrder;
     end
-    % return modified input structure
     return;
 end
 
 % break if the input parameter is not in the correct format
-if ~(iscell(wtdef)&&numel(wtdef)>=2&&isnumeric(wtdef{2}))
+if ~(iscell(wtdef)) || isempty(wtdef)
     error('%s: Unsupported filterbank tree definition.',upper(mfilename));
 end
 
+% Creating new tree
+% Now wtdef is this {w,J,flag}
+wdef = wtdef{1};
+definput = [];
+definput.flags.treetype = {'full','dwt','root'};
+definput.keyvals.J = [];
+[flags2,kv2,J]=ltfatarghelper({'J'},definput,wtdef(2:end));
 
-J = wtdef{2};
-
-if(numel(wtdef)>=3)
-   varargin2 = wtdef(3);
-else
-   varargin2 = [];
+if do_dual
+   wdef = {'dual',wdef};
 end
 
-definput = [];
-definput.flags.treetype = {'full','dwt'};
-flags2=ltfatarghelper({},definput,varargin2);
+if do_strict
+   wdef = {'strict',wdef};
+end
 
-filtsStruct = fwtinit(wtdef{1},flags.ansy);
-filtsNo = numel(filtsStruct.filts);
+w = fwtinit(wdef);
 
-if(flags2.do_dwt || J==1)
-   % fill the structure to represent DWT tree
-   for jj=1:J
-      wt.nodes{jj} = filtsStruct;
+% Doing one-node tree
+if flags2.do_root
+   J = 1;
+end
+
+if isempty(J)
+   error('%s: Unspecified J.',upper(mfilename));
+end
+
+if flags2.do_dwt || J==1
+   % fill the structure to represent a DWT tree
+   for jj=0:J-1
+      wt = wfbtput(jj,0,w,wt);
    end
-   for jj=1:J-1
-      wt.children{jj} = [jj+1];
-   end
-      wt.children{J}  = 0;
-      wt.parents = [0,1:J-1]; 
-elseif(flags2.do_full)
-   % fill the structure to represent full wavelet tree
-   for jj=1:J
-      for ii=1:filtsNo^(jj-1)
-         wt.nodes{end+1} = filtsStruct;
+elseif flags2.do_full
+   % fill the structure to represent a full wavelet tree
+   for jj=0:J-1
+      for ii=0:numel(w.g)^(jj)-1
+         wt = wfbtput(jj,ii,w,wt);
       end
    end
-     
-   wt.parents = zeros(filtsNo, 1);
-   wt.parents(1) = 0;
-   wt.children{1} = 2:filtsNo+1;
-     
-   firstfIdx = 2;
-   nextfIdx = firstfIdx + filtsNo;
-   for jj=2:J
-      for ii=1:filtsNo^(jj-1)
-         idx = firstfIdx + ii -1;
-         wt.parents(idx) = ceil((idx-1)/filtsNo);
-         wt.children{idx} = [((ii-1)*filtsNo+nextfIdx):((ii-1)*filtsNo+nextfIdx +filtsNo-1)];
-      end
-      firstfIdx = nextfIdx;
-      nextfIdx = nextfIdx + filtsNo^(jj);
-   end
-      
-   for jj=1:filtsNo^(J-1)
-      wt.children{end+1-jj} = [];
-   end
-     
-   % I messed something here
-   wt.children = wt.children(:)'; 
-   wt.parents = wt.parents(:)';
-     
-else
-    %just root node
-     wt.nodes{1} = filtsStruct;
-     wt.children{1} = zeros(filtsNo,1);
-     wt.parents(1) = 0;
 end
 
 % Do filter shuffling if frequency ordering is required,
-if(flags.do_freq)
+if flags.do_freq
    wt = nat2freqOrder(wt); 
+   wt.freqOrder = 1;
+else
+   wt.freqOrder = 0;
 end
 
 

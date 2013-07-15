@@ -24,15 +24,8 @@ end
 % Note that the processing itself can introduce additional delay.
 bufLen = 1024;
 
-
-% Setup blocktream
-fs = block(source,varargin{:});
-
 % Quality parameter of the peaking filters
 Q = sqrt(2);
-
-% Cutoff/center frequency
-feq = [0.0060, 0.0156, 0.0313, 0.0625, 0.1250, 0.2600]*fs;
 
 % Filters 
 filts = [
@@ -55,6 +48,12 @@ for ii=1:numel(filts)
 end
 p = blockpanel(pcell); 
 
+% Setup blocktream
+fs = block(source,varargin{:},'loadind',p);
+
+% Cutoff/center frequency
+feq = [0.0060, 0.0156, 0.0313, 0.0625, 0.1250, 0.2600]*fs;
+
 % To allow the Java object initialize properly
 pause(0.1);
 
@@ -71,8 +70,7 @@ flag = 1;
 while flag && p.flag
    
   % Obtain gains of the respective filters
-  G = [p.getParam('band1'),p.getParam('band2'),p.getParam('band3'),...
-       p.getParam('band4'),p.getParam('band5'),p.getParam('band6')];
+  G = blockpanelget(p,'band1','band2','band3','band4','band5','band6');
   
   % Check if any of the user-defined gains is different from the actual ones
   % and do recomputauion.

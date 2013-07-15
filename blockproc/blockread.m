@@ -17,31 +17,53 @@ function [f,valid] = blockread(L)
 persistent Lwav;
 persistent clearStr;
 persistent readTime;
+persistent t1;
+persistent t2;
 %global delayLog;
 %global delayLog2;
 
 if nargin<1
-   L = block_interface('getDefaultBufLen'); 
+   L = block_interface('getBufLen'); 
 end
 
+do_updateGUI = 0;
+do_updateBAR = 0;
 
-if block_interface('getDispLoad') 
+loadind = block_interface('getDispLoad');
+
+if ischar(loadind)
+   if strcmp('bar',loadind)
+      do_updateBAR = 1;
+   end
+elseif isjava(loadind)
+   do_updateGUI = 1;
+else
+   error('%s: Something went wrong. Should not ever get here.',upper(mfilename));
+end
+
+if do_updateBAR || do_updateGUI 
    if block_interface('getPageNo')>0
-      procTime = toc;
+      procTime = toc(t1);
       res = 2;
 
-
-   fs= playrec('getSampleRate');
-   %delayLog = [delayLog, procTime];
-   load = floor(100*(procTime+readTime)/(L/fs));
-   msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
-   droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
-   fprintf([clearStr,msg,droppedStr]);
-   clearStr = repmat(sprintf('\b'), 1, length(msg)+length(droppedStr));
-   block_interface('setSkipped',playrec('getSkippedSampleCount'));
-   if playrec('getSkippedSampleCount') > block_interface('getSkipped')
+      fs= playrec('getSampleRate');
+      load = floor(100*(procTime+readTime)/(L/fs));
+      
+      if do_updateBAR
+         msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
+         droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
+         fprintf([clearStr,msg,droppedStr]);
+         clearStr = repmat(sprintf('\b'), 1, length(msg)+length(droppedStr));
+      elseif do_updateGUI
+         javaMethod('updateBar',loadind,load);
+      else
+         error('%s: Something went wrong. Should not ever get here.',upper(mfilename));
+      end
+   
       block_interface('setSkipped',playrec('getSkippedSampleCount'));
-   end
+      if playrec('getSkippedSampleCount') > block_interface('getSkipped')
+         block_interface('setSkipped',playrec('getSkippedSampleCount'));
+      end
 
    else
       clearStr = '';
@@ -49,7 +71,7 @@ if block_interface('getDispLoad')
       %delayLog2 = [0];
       procTime = 0;
    end
-   tic;
+   t2 = tic;
 end
 
 valid = 1;
@@ -69,7 +91,9 @@ block_interface('setPos',pos+L-1); % convert back the Matlab indexing
 if strcmp(source,'rec')
    recChanList = block_interface('getRecChanList');
    
-   readTime = toc;
+   if do_updateBAR || do_updateGUI
+      readTime = toc;
+   end
    % Issue reading buffers up to max
    while block_interface('getEnqBufCount') <= block_interface('getBufCount')
       block_interface('pushPage', playrec('rec', L, recChanList));
@@ -105,8 +129,10 @@ elseif strcmp(source,'playrec')
    fhat = repmat(fhat,1,numel(chanList));
    % Play and record
    block_interface('pushPage',playrec('playrec', fhat, chanList, -1, recChanList));
-
-  readTime = toc;
+   
+   if do_updateBAR || do_updateGUI
+      readTime = toc;
+   end
    pageList = block_interface('getPageList');
    % Playback is block_interface('getBufCount') behind the input
    if block_interface('getPageNo') <= block_interface('getBufCount')
@@ -146,28 +172,38 @@ elseif strcmp(source(end-3:end),'.wav')
       Lwav = wavread(source,'size'); 
    end
 
-   if pos>Lwav(1)
-      % Produce zeros when outside of the wav
-      f = zeros(L,Lwav(2),classid);
-      valid = 0;
-   else
-      % Determine valid samples
-      endSample = min(pos + L - 1, Lwav(1));
-      f = cast(wavread(source,[pos, endSample]),block_interface('getClassId')); 
-      % Pad with zeros if some samples are missing
-      if (pos + L - 1) > Lwav(1)
-         ftmp = zeros(L,Lwav(2),classid);
-         ftmp(1:size(f,1),:) = f;
-         f = ftmp;
+   % Determine valid samples
+   endSample = min(pos + L - 1, Lwav(1));
+   f = cast(wavread(source,[pos, endSample]),block_interface('getClassId'));
+   % Pad with zeros if some samples are missing
+   if (pos + L - 1) >= Lwav(1)
+      ftmp = zeros(L,Lwav(2),classid);
+      ftmp(1:size(f,1),:) = f;
+      f = ftmp;
+      % Rewind if loop option was set.
+      if block_interface('isLoop')
+         block_interface('setPos',0);
+         % Throw away stored overlaps.
+         if ~isempty(block_interface('getAnaOverlap'))
+            block_interface('setAnaOverlap',[]);
+         end
+         if ~isempty(block_interface('getSynOverlap'))
+            block_interface('setSynOverlap',[]);
+         end
+      else
+         valid = 0;
       end
    end
+
 
    % playrec('play',... - enques fhat to be played
    % block_interface('pushPage', - stores page number in an inner FIFO
    % queue
    block_interface('pushPage', playrec('play', fhat, chanList));
 
-   readTime = toc;
+   if do_updateBAR || do_updateGUI
+      readTime = toc(t2);
+   end
    % If enough buffers are enqued, block the execution here until the 
    % first one is finished.
    if block_interface('getEnqBufCount') > block_interface('getBufCount')
@@ -183,7 +219,7 @@ if pageNo<=1
    playrec('resetSkippedSampleCount');
 end
 
-if block_interface('getDispLoad')
-   tic;
+if do_updateBAR || do_updateGUI
+   t1=tic;
 end
 

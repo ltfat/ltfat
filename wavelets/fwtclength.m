@@ -1,4 +1,4 @@
-function [Lc,L]=fwtclength(Ls,h,J,varargin) 
+function [Lc,L]=fwtclength(Ls,w,J,varargin) 
 %FWTCLENGTH FWT subbands lengths from a signal length
 %   Usage: L=fwtclength(Ls,h,J);
 %          L=fwtclength(Ls,h,J,ext,'ext');
@@ -15,14 +15,15 @@ function [Lc,L]=fwtclength(Ls,h,J,varargin)
 %   See also: fwt, fwtlength
 
 
-h = fwtinit(h,'ana');
+w = fwtinit(w);
+
 definput.import = {'fwtext'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Get the next legal length
-L = fwtlength(Ls,h,J,flags.ext);
+L = fwtlength(Ls,w,J,flags.ext);
 
-filtNo = length(h.filts);
+filtNo = length(w.g);
 subbNo = (filtNo-1)*J+1;
 Lc = zeros(subbNo,1);
 runPtr = 0; 
@@ -31,32 +32,32 @@ if flags.do_per
   % Non-expansive case
   for jj=1:J
      for ff=filtNo:-1:2
-        Lc(end-runPtr) = ceil(levelLen/h.a(ff));
+        Lc(end-runPtr) = ceil(levelLen/w.a(ff));
         runPtr = runPtr + 1;
      end
-     levelLen = ceil(levelLen/h.a(1));
+     levelLen = ceil(levelLen/w.a(1));
   end
 elseif flags.do_valid
   % Valid coef. case
-  filts = h.filts;
+  filts = w.filts;
   for jj=1:J
      for ff=filtNo:-1:2
-        Lc(end-runPtr) = floor((levelLen-(length(filts{ff}.h)-1))/h.a(ff));
+        Lc(end-runPtr) = floor((levelLen-(length(filts{ff}.h)-1))/w.a(ff));
         runPtr = runPtr + 1;
      end
-     levelLen = floor((levelLen-(length(filts{1}.h)-1))/h.a(1));
+     levelLen = floor((levelLen-(length(filts{1}.h)-1))/w.a(1));
   end  
 else
   % Expansive case
-  filts = h.filts;
+  filts = w.g;
   for jj=1:J
     for ff=filtNo:-1:2
-       skip = h.a(ff) - 1;
-       Lc(end-runPtr) = ceil((levelLen+(length(filts{ff}.h)-1)-skip)/h.a(ff));
+       skip = w.a(ff) - 1;
+       Lc(end-runPtr) = ceil((levelLen+(length(filts{ff}.h)-1)-skip)/w.a(ff));
        runPtr = runPtr + 1;
     end
-    skip = h.a(1) - 1;
-    levelLen = ceil((levelLen+(length(filts{1}.h)-1)-skip)/h.a(1));
+    skip = w.a(1) - 1;
+    levelLen = ceil((levelLen+(length(filts{1}.h)-1)-skip)/w.a(1));
  end
 end
 Lc(1)=levelLen; 

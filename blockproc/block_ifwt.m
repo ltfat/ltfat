@@ -1,4 +1,4 @@
-function f = block_ifwt(c,g,J,Lb)
+function f = block_ifwt(c,w,J,Lb)
 %BLOCK_IFWT IFWT wrapper for blockstream processing
 %   Usage: f=block_ifwt(c,g,J,Lb);
 %
@@ -9,29 +9,29 @@ if nargin<4
 end;
 
 
-%g = fwtinit(g,'syn');
+w = fwtinit(w);
 
 %Lc = fwtclength(Lb,g,J,'per');
-filtNo = length(g.g);
+filtNo = length(w.g);
 subbNo = (filtNo-1)*J+1;
 Lc = zeros(subbNo,1);
 runPtr = 0; 
 levelLen = Lb;
   for jj=1:J
      for ff=filtNo:-1:2
-        Lc(end-runPtr) = floor(levelLen/g.a(ff));
+        Lc(end-runPtr) = floor(levelLen/w.a(ff));
         runPtr = runPtr + 1;
      end
-     levelLen = ceil(levelLen/g.a(1));
+     levelLen = ceil(levelLen/w.a(1));
   end
 Lc(1)=levelLen; 
 c = mat2cell(c,Lc);
 
-m = numel(g.g{1}.h);
-a = g.a(1);
+m = numel(w.g{1}.h);
+a = w.a(1);
 % Do the extension 
 cstartZeros = zeros(numel(Lc),1);
-filtNo = length(g.g);
+filtNo = length(w.g);
 runPtr = 0; 
 for jj=1:J-1
    for ff=filtNo:-1:2
@@ -49,4 +49,4 @@ end
 Ls = Lb + (a^(J)-1)/(a-1)*(m-a);
 
 %% ----- Run computation 
-f = comp_ifwt(cext,g.g,J,g.a,Ls,'valid');
+f = comp_ifwt(cext,w.g,J,w.a,Ls,'valid');

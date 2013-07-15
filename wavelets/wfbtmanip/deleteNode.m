@@ -1,4 +1,14 @@
 function wt = deleteNode(nodeNo,wt)
+%DELETENODE Removes specified node from the tree
+%   Usage:  wt = deleteNode(nodeNo,wt)
+%
+%   Input parameters:
+%         nodeNo   : Node index.
+%         wt       : Structure containing description of the filter tree.
+%
+%   Output parameters:
+%         wt       : Modified wt.
+
 if(~isempty(find(wt.children{nodeNo}~=0)))
     error('Deleting non-leaf node!');
 end

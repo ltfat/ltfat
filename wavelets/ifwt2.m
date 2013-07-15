@@ -1,11 +1,11 @@
-function f = ifwt2(c,g,J,varargin)
+function f = ifwt2(c,w,J,varargin)
 %IFWT2   Inverse Fast Wavelet Transform 
-%   Usage:  f = ifwt2(c,g,J)
-%           f = ifwt2(c,g,J,Ls,...)
+%   Usage:  f = ifwt2(c,w,J)
+%           f = ifwt2(c,w,J,Ls,...)
 %
 %   Input parameters:
 %         c     : Coefficients stored in a matrix.
-%         g     : Synthesis wavelet filters.
+%         g     : Wavelet filters definition.
 %         J     : Number of filterbank iterations.
 %         Ls    : Length of the reconstructed signal.
 %
@@ -34,7 +34,7 @@ if ~isnumeric(c)
 end;
 
 % Initialize the wavelet filters structure
-g = fwtinit(g,'syn');
+w = fwtinit(w);
 
 
 %% PARSE INPUT
@@ -50,9 +50,9 @@ if (numel(Ls)==1)
   Ls = [Ls,Ls];
 end
 
-Lcrows = fwtclength(Ls(1),g,J,'per');
-Lccols = fwtclength(Ls(2),g,J,'per');
-nFilts = numel(g.filts);
+Lcrows = fwtclength(Ls(1),w,J,'per');
+Lccols = fwtclength(Ls(2),w,J,'per');
+nFilts = numel(w.filts);
 
 if flags.do_standard
   Jstep = 1;
@@ -60,18 +60,18 @@ if flags.do_standard
     LcIdx =  jj*(nFilts-1)+2;
     colRange = 1:Lcrows(LcIdx);
     rowRange = 1:Lccols(LcIdx);
-    c(colRange,rowRange) = ifwt(c(colRange,rowRange),g,Jstep,Lcrows(LcIdx),'dim',1,'per');
-    c(colRange,rowRange) = ifwt(c(colRange,rowRange),g,Jstep,Lccols(LcIdx),'dim',2,'per');
+    c(colRange,rowRange) = ifwt(c(colRange,rowRange),w,Jstep,Lcrows(LcIdx),'dim',1,'per');
+    c(colRange,rowRange) = ifwt(c(colRange,rowRange),w,Jstep,Lccols(LcIdx),'dim',2,'per');
   end
 
-  c = ifwt(c,g,Jstep,Ls(1),'dim',1,'per');
-  f = ifwt(c,g,Jstep,Ls(2),'dim',2,'per');
+  c = ifwt(c,w,Jstep,Ls(1),'dim',1,'per');
+  f = ifwt(c,w,Jstep,Ls(2),'dim',2,'per');
   
 end;
 
 if flags.do_tensor
-  f = ifwt(c,g,J,Ls(1),'dim',1,'per');
-  f = ifwt(f,g,J,Ls(2),'dim',2,'per');
+  f = ifwt(c,w,J,Ls(1),'dim',1,'per');
+  f = ifwt(f,w,J,Ls(2),'dim',2,'per');
 end;
 
 %% ----- step 1 : Run calc -----------
