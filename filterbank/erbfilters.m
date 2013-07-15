@@ -1,4 +1,4 @@
-function [g,a,fc]=erbfilters(fs,varargin)
+function [g,a,fc,L]=erbfilters(fs,varargin)
 %ERBFILTERS   ERB-spaced filters
 %   Usage:  [g,a,fc]=erbfilters(fs);
 %           [g,a,fc]=erbfilters(fs,...);
@@ -39,7 +39,7 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %     'spacing',b     Specify the spacing in ERBS between the
 %                     filters. Default value is *b=1*.
 %
-%     'N',N           Specify the number of filters, *N*. If this
+%     'M',M           Specify the number of filters, *M*. If this
 %                     parameter is specified, it overwrites the
 %                     `'spacing'` parameter.
 %
@@ -88,7 +88,7 @@ function [g,a,fc]=erbfilters(fs,varargin)
 %   filterbank and visualize the result:::
 %
 %     [f,fs]=greasy;  % Get the test signal
-%     [g,a,fc]=erbfilters(fs,'uniform','N',100);
+%     [g,a,fc]=erbfilters(fs,'uniform','M',100);
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90,'audtick');
 %
@@ -122,7 +122,7 @@ function [g,a,fc]=erbfilters(fs,varargin)
 definput.import = {'firwin'};
 
 definput.keyvals.L=[];
-definput.keyvals.N=[];
+definput.keyvals.M=[];
 definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
 
@@ -138,53 +138,57 @@ winbw=norm(firwin(flags.wintype,1000)).^2/1000;
 
 % Construct the Erb filterbank
 
-N=kv.N;
-if isempty(N)
-    N=ceil(freqtoerb(fs/2))+1;
-end;
 
-fc=erbspace(0,fs/2,N);
-
-% Improve the scaling of the first and last channel
-scal=ones(1,N);
-scal(1)=scal(1)/sqrt(2);
-scal(N)=scal(N)/sqrt(2);
-
-if flags.do_nonuniform    
-    % Energy scaling works best
-    scaltype='2';
+if flags.do_real
+    if isempty(kv.M)
+        M2=ceil(freqtoerb(fs/2))+1;
+        M=M2;
+    else
+        M=kv.M;
+        M2=M;
+    end;
 else
-    % Peak-frequency scaling works best
-    scaltype='inf';
-end;
+    if isempty(kv.M)
+        M2=ceil(freqtoerb(fs/2))+1;
+        M=2*(M2-1);
+    else
+        M=kv.M;
+        if rem(M,2)>0
+            error(['%s: M must be even for full frequency range ' ...
+                   'filterbanks.',upper(mfilename)]);
+        end;
+        M2=M/2+1;
+    end;
     
+end;
 
+fc=erbspace(0,fs/2,M2).';
+
+    
+%% Compute the frequency support
 if flags.do_symmetric
     % fsupp is measured in Hz
     fsupp=round(audfiltbw(fc)/winbw*kv.bwmul);
-
-    g=blfilter(flags.wintype,fsupp,fc,'fs',fs,'scal',scal,scaltype);    
 else
-    % fsupp is measured in Erbs
+    % fsupp_erb is measured in Erbs
     % The scaling is incorrect, it does not account for the warping
-    fsupp=1/winbw*kv.bwmul;
+    fsupp_erb=1/winbw*kv.bwmul;
     
-    g=warpedblfilter(flags.wintype,fsupp,fc,fs,@freqtoerb,@erbtofreq, ...
-                     'scal',scal,scaltype); 
     % Convert fsupp into the correct widths in Hz, necessary to compute
     % "a" in the next if-statement
-    fsupp=erbtofreq(freqtoerb(fc)+fsupp/2)-erbtofreq(freqtoerb(fc)-fsupp/2);
+    fsupp=erbtofreq(freqtoerb(fc)+fsupp_erb/2)-erbtofreq(freqtoerb(fc)-fsupp_erb/2);
     
 end;
 
+%% Compute the downsampling rate
 if flags.do_nonuniform
     % Find suitable channel subsampling rates
     aprecise=fs./fsupp/kv.redmul; 
     aprecise=aprecise(:);
     
     if flags.do_fractional
-        Nfilts=ceil(L./aprecise);
-        a=[repmat(L,N,1),Nfilts];                
+        N=ceil(L./aprecise);
+        a=[repmat(L,M2,1),N];                
         
     else
         a=floor23(aprecise); % Shrink "a" to the next composite number
@@ -195,6 +199,45 @@ if flags.do_nonuniform
     
 else
     % Totally heuristic, no justification for this choice
-    a=4;
+    a=4;    
+end;
+
+% Get an expanded "a"
+afull=comp_filterbank_a(a,M2,struct());
+
+%% Compute the scaling of the filters
+% Improve the scaling of the first and last channel
+scal=ones(M2,1);
+for ii=1:M2
+    scal(ii)=sqrt(afull(ii,1)/afull(ii,2));
+end;
+
+%% Construct the real or complex filterbank
+
+if flags.do_real
+    % Scale the first and last channels
+    scal(1)=scal(1)/sqrt(2);
+    scal(M2)=scal(M2)/sqrt(2);
+else
+    % Replicate the centre frequencies and sampling rates, except the first and
+    % last
+    if flags.do_nonuniform
+        a=[a;flipud(a(2:M2-1,:))];
+    end;
+    scal=[scal;flipud(scal(2:M2-1))];
+    fc  =[fc; -flipud(fc(2:M2-1))];
+    if flags.do_symmetric
+        fsupp=[fsupp;flipud(fsupp(2:M2-1))];
+    end;
     
 end;
+
+
+%% Compute the filters
+if flags.do_symmetric
+    g=blfilter(flags.wintype,fsupp,fc,'fs',fs,'scal',scal,'inf');    
+else
+    g=warpedblfilter(flags.wintype,fsupp_erb,fc,fs,@freqtoerb,@erbtofreq, ...
+                     'scal',scal,'inf'); 
+end;
+

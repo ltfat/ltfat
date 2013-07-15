@@ -75,6 +75,11 @@ if info.isuniform
 else
 
     if info.ispainless
+                
+        if isempty(L)
+            error('%s: You need to specify L.',upper(mfilename));
+        end;
+
         F=comp_filterbankresponse(g,info.a,L,0);
         
         gdout=cell(1,M);
@@ -82,7 +87,7 @@ else
             thisgd=struct();
             H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
             thisgd.H=H(1:numel(g{m}.H));
-            thisgd.foff=0;
+            thisgd.foff=g{m}.foff;
             thisgd.realonly=0;
             thisgd.delay=0;
             

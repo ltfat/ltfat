@@ -104,7 +104,7 @@ if isempty(kv.L)
   else
       if isempty(info.gl)
           % Default value
-          kv.L=419;
+          kv.L=4177;
       else          
           kv.L=info.gl;
       end;
