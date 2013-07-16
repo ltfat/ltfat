@@ -52,7 +52,7 @@ end
 
 Lcrows = fwtclength(Ls(1),w,J,'per');
 Lccols = fwtclength(Ls(2),w,J,'per');
-nFilts = numel(w.filts);
+nFilts = numel(w.g);
 
 if flags.do_standard
   Jstep = 1;

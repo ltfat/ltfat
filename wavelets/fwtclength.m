@@ -39,7 +39,7 @@ if flags.do_per
   end
 elseif flags.do_valid
   % Valid coef. case
-  filts = w.filts;
+  filts = w.g;
   for jj=1:J
      for ff=filtNo:-1:2
         Lc(end-runPtr) = floor((levelLen-(length(filts{ff}.h)-1))/w.a(ff));
