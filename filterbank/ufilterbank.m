@@ -52,6 +52,6 @@ N=L/a;
 f=postpad(f,L);
 
 c=zeros(N,M,W,assert_classname(f));
-for m=1:M
-  c(:,m,:)=comp_pfilt(f,g{m},a,info.gl(m)<kv.crossover);
+for m=1:M    
+    c(:,m,:)=comp_pfilt(f,g{m},a,info.gl(m)<kv.crossover);
 end;

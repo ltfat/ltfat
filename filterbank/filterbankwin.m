@@ -129,14 +129,10 @@ for m=1:info.M
             g{m}.H=g{m}.H(L);
             g{m}.foff=g{m}.foff(L);
         end;
-        if numel(g{m}.H)>L/info.a(m,1)*info.a(m,2);
-            [m,numel(g{m}.H),L/info.a(m,1)*info.a(m,2)]
-            info.ispainless=0;
-        end;
     else
         info.ispainless=0;
+        info.gl(m)=numel(g{m}.h);
     end;
-
 end;
 
 info.isfac=info.isuniform || info.ispainless;
