@@ -41,7 +41,7 @@ for jj=1:fNo
       htemp = zeros(Ls,1);
       htemp(1:hlen) = h{jj}.h(:);
       %H{jj}.H = fft(circshift(htemp,-(h{jj}.d-1)));
-      H(:,jj) = fft(circshift(htemp,-(h{jj}.d-1)));
+      H(:,jj) = fft(circshift(htemp,(h{jj}.offset)));
    else
       %periodic wraparound of the filter impulse response
       ratio = hlen/Ls;
