@@ -1,6 +1,6 @@
 # Mandatory settings
 outputdir='~/publish'
-plotengine='octave'
+plotengine='matlab'
 versionfile="ltfat_version"
 
 # Optional global settings

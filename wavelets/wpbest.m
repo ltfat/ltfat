@@ -302,7 +302,7 @@ function E = wcost_log(x)
 % It may be interpreted as the entropy of a Gauss-Markov process, composed
 % of numel(x) uncorrelated Gaussian random variables of variences
 % x(1),..,x(end). Minimizing the function finds the best approximation to
-% the Karhuen-loéve basis for the process.
+% the Karhuen-loÃ©ve basis for the process.
 
 x = x(x~=0);
 E = sum(log(x(:).^2));
