@@ -1,3 +1,16 @@
+Version 1.4.1
+
+* Major change in the output format from the wfilt_ functions
+
+* Experimental filter backend added to handle filters defined on the
+  frequency side.
+
+* Bugs fixed for mex interfaces compilation on Mac
+
+---------- LTFAT 1.4 ------------------------------------------
+
+The major feature of the 1.4 series is that the backend now also works
+in single precision. Work on the wavelet toolbox is still ongoing.
 
 ---------- LTFAT 1.3 ------------------------------------------
 
@@ -7,81 +20,15 @@ contents of the "wavelets" subdirectory is in development, and the
 interfaces described herein may change during the 1.3 development
 cycle.
 
----------- LTFAT 1.1 ------------------------------------------
+---------- LTFAT 1.2 ------------------------------------------
 
-Version 1.1 is backwards comptatible with the 1.0 series, but
-introduces some new stuff. The "new stuff" is the "frames" framework,
-which is an object-oriented interface to the various frames in
-LTFAT. It does not actually use the object oriented features in
-Matlab, instead it uses a simple struct to keep track of things.
-
-Strictly speaking, the object returned by "newframe" contains both an
-analysis and a synthesis frame, so it represents TWO frames and not
-one. They do not need to be duals of each other.
-
-The external interface of "frames" are expected to change during the
-1.1 development cycle, and when we think that we have reached the
-right implementation, the interfaces will be stabilized and released
-as LTFAT 1.2, so LTFAT 1.2 will be the next "stable" version of LTFAT
-to which everything must be backwards compatible.
-
-The frames framework is tested by the test_frames routine, and
-currently passes all tests. Through the framework, you can access the
-following types of frames:
-
-* unstructured, general frames
-* dgt
-* dgtreal
-* dwilt
-* wmdct
-* filterbank
-* ufilterbank
-* filterbankreal
-* ufilterbankreal
-* dft
-* fft
-* fftreal
-* dcti, dctii, dctiii, dctiv
-* dsti, dstii, dstiii, dstiv
-
-Absent from this list are the non-stationary Gabor frames. The only
-reason for this is that I have not had time to implement them.
-
-The framework supports the following basic operators for each frame:
-
-* Analysis, frana
-* Synthesis, frsyn
-* Adjoint analysis, franaadj (synthesis using the analysis window)
-* Adjoint synthesis, frsynadj (analysis using the synthesis window)
-
-The coefficient layout for all the frames are simple column vectors,
-and *not* the layout that is "native" to each type of frame. It is
-possible to convert back and forth between the representations using
-framecoef2native and framenative2coef. The reason for this is that it
-would otherwise be impossible to do simple things like adding or
-scaling coefficients, without checking for their type.
-
-Some frame types support that their coefficients be laid out on a
-rectangular grid in the TF-plane. This includes the following types:
-dgt, dgtreal, dwilt, wmdct, ufilterbank, ufilterbankreal (and to come:
-unsgab and unsgabreal). For these transforms you can use framecoef2tf
-and frametf2coef to convert back and forth between column layout and a
-standardized layout on the TF-plane.
-
-The following advanced methods have already been implemented using this framework:
-
-* frsynabs: Iterative synthesis for absolute value of coefficients.
-* frsyniter: Iterative reconstruction of frame coefficients (useful if a dual frame is unknown or not possible to calculate)
-* framemuleigs: eigenvector pairs of frame multipliers
-* framelasso:  LASSO threshholding using Landweber iterations.
-* framegrouplasso: Group LASSO threshholding
-
-
+Version 1.2 is backwards comptatible with the 1.0 series, but
+introduces the "frames" framework, which is an object-oriented
+interface to the various frames in LTFAT. It does not actually use the
+object oriented features in Octave / Matlab, instead it uses a simple
+struct to keep track of things.
 
 -------- LTFAT 1.0 ---------------------------
-
-LTFAT version 1.0 was released on June 18. 2011 after more than 7
-years of development.
 
 The Linear Time-Frequency Analysis Toolbox (LTFAT) is a free software
 toolbox (GPLv3) written in the Matlab/Octave scripting language. It
@@ -93,61 +40,3 @@ The toolbox can be downloaded from http://ltfat.sourceforge.net.
 The toolbox can be used for both educational, research and
 computational purposes. It has a backend implemented in C, which can
 be compiled to speed up all computational intensive functions.
-
-The following is a list of the current major functionality in LTFAT:
-
-Fourier analysis:
-* FFT for real valued signals (fftreal) and its inverse.
-* 8 different discrete cosine and sine transforms.
-* Next fast FFT size (modern nextpow2 replacement).
-* Periodic, zero-delay filtering.
-* Periodic, discrete function (chirp, heaviside, sinc etc.)
-* 2 different classes of discrete Hermite functions.
-* Periodic Gauss function.
-* Long list of classic FIR window functions (Hann, Hamming, Blackman,
-  iterated sine, Nuttall etc.),
-
-Time-frequency analysis:
-* The discrete Gabor transform (DGT) and its inverse.
-* Wilson and windowed MDCT bases.
-* Methods for constructing dual and tight windows (perfect and
-  paraunitary filter prototypes).
-* GUI (Matlab-only) to modify signals in the time-frequency domain.
-* Spectrogram and reassigned spectrogram plots.
-* Accurate computation of localized instantaneous frequency and group
-  delay.
-* Twisted convolution and discrete, symplectic Fourier transform.
-* Zak transform and its inverse.
-* TF-multiplier operators with adjoint and best approximation
-  function.
-* Spreading operators with inverse and adjoint.
-* Reconstruction from the magnitude of the DGT.
-
-Filterbanks:
-* Uniform filterbanks and inverse.
-* Non-uniform filterbanks and inverse.
-* Methods for constructing dual and tight filterbanks (perfect reconstruction
-  and paraunitary filterbanks).
-
-Time-evolving TF-systems:
-* Non-stationary Gabor systems (NSDGT) and inverse.
-* Methods for constructing dual and tight NSDGTs.
-
-Auditory functions:
-* Perceptual frequency scales: Erb, Bark and Mel scales.
-* Gammatone filters.
-* Range compression (mu-law and A-law).
-
-Signal processing:
-* Levels of signals: RMS-norm, gain and crest factor.
-* Ramping of signals based on FIR windows.
-* Simple tools for working with coefficients (thresholding, N-term
-  approx. etc)
-* Group and elitist threshholding.
-* Sparse regression in the Gabor and WMDCT domain.
-* Uniform quantization.
-
-and not forgetting:
-* Demos demonstrating the use of the toolbox.
-* Test signals: sounds, images and noise generators (white, pink,
-  red/brown noise).

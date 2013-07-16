@@ -1,3 +1,28 @@
+Version 1.4.1
+	* Major change in the output format from the wfilt_ functions. If
+	a wfilt_ function generates a tigth frames, its two outputs are
+	now identical.
+
+	* Close #67, #68, Mex compilation now works on Mac
+
+	* Experimental filter backend added to handle filters defined on
+	the frequency side and on the time side using structs and
+	anonymous functions
+
+	* Limited support for fractional downsampling in filters and filterbanks
+
+	* erbfilters routine added to generate Erb-spaced filterbanks
+
+	* Fixed bug #6, demo_audioshrink now works again
+
+	* All DCT and DST routines now call FFTW directly.
+
+	* Fixed bug #55, FWT on Octave can now handle complex values
+
+	* Added floor23, floor234, ceil23 and ceil235 to find the next
+	nice number. Useful for constructing downsampling rates in
+	filterbanks.
+
 Version 1.4.0 3/6 2013
 	* All routines calling the C backend now support single precision
 
