@@ -11,13 +11,18 @@ function [cvec,Lc] = wavcell2pack(ccell,varargin)
 %         cvec     : Coefficients in packed format.
 %         Lc       : Vector containing coefficients lengths.
 %
-%   This function transformes coefficients stored as elements of cell-array *ccell*
-%   collumns/matrices to a single vector/matrix.
+%   This function transforms coefficients stored as elements of the cell-array *ccell*
+%   columns/matrices to a single vector/matrix.
 %   *cvec* is vector or matrix containing coefficients in the packed format.
-%   For dim==1, the coefficients are stored as collumns:
-%   cvec(1:Lc(1),w) - approximation coefficients at level *J* of the channel *w*,
-%   cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w) for *j>1*. For dim==2 as rows in
-%   the similar manner.
+%   For $dim=1$, the coefficients are stored as columns::
+%
+%     cvec(1:Lc(1),w)
+%
+%   is the approximation coefficients at level *J* of the channel *w*, ::
+%
+%     cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w)
+%
+%   for *j>1*. For *dim=2* as rows in the similar manner.
 %
 
 if(nargin<1)

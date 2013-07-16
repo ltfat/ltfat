@@ -18,20 +18,21 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %   contains correct x-axis values. All but alst collumns belong to the
 %   *wfunc*, last one to the *sfunc*.
 %   
-%   The following flag groups are supported (first is default):
+%   The following flags are supported (first is default):
 %   
-%   'fft','conv' - How to do the computations. What is faster depends on
-%   the speed of the conv2 function.
+%   `'fft'`, `'conv'`
+%     How to do the computations. Whatever is faster depends on
+%     the speed of the `conv2` function.
 %
-%   WARNING! The output array lengths *L* depend on *N* exponentially like:
+%   **WARNING**: The output array lengths *L* depend on *N* exponentially like:
 %   
 %   .. L=(m-1)*(a^N-1)/(a-1) + 1
 %
 %   .. math:: L=\frac{a^N-1}{a-1}(m-1)+1
 %
 %   where *a* is subsamling factor after the lowpass filter in the wavelet
-%   filterbank and *m* is length of the filters. Expect isues for
-%   high N e.g. 'db10' (m=20) and N=20 yeld ~150MB array.
+%   filterbank and *m* is length of the filters. Expect issues for
+%   high *N* e.g. `'db10'` ($m=20$) and $N=20$ yields a ~150MB array.
 %
 %   Examples:
 %   ---------

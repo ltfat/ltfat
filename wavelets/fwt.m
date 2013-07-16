@@ -30,26 +30,26 @@ function [c,info] = fwt(f,w,J,varargin)
 %   The basic analysis wavelet filterbank $w$ can be passed in several 
 %   formats. The formats are the same as for the |fwtinit| function.
 %
-%     1) Cell array whose first element is the name of the function defining
-%        the basic wavelet filters (`wfilt_` prefix) and the other elements
-%        are the parameters of the function. e.g. `{'db',10}` calls 
-%        `wfilt_db(10)` internally.
+%   1) Cell array whose first element is the name of the function defining
+%      the basic wavelet filters (`wfilt_` prefix) and the other elements
+%      are the parameters of the function. e.g. `{'db',10}` calls 
+%      `wfilt_db(10)` internally.
 %
-%     2) Character string as concatenation of the name of the wavelet
-%        filters defining function (as above) and the numeric parameters
-%        delimited by ':' character, e.g. 'db10' has the same effect as above,
-%        'spline4:4' calls `wfilt_spline(4,4)` internally.
+%   2) Character string as concatenation of the name of the wavelet
+%      filters defining function (as above) and the numeric parameters
+%      delimited by ':' character, e.g. 'db10' has the same effect as above,
+%      'spline4:4' calls `wfilt_spline(4,4)` internally.
 %
-%     3) Cell array of one dimensional numerical vectors directly defining
-%        the wavelet filter impulse responses.  By default, outputs of the 
-%        filters are subsampled by a factor equal to the number of the 
-%        filters. One can pass additional key-value pair 'a',a (still inside
-%        of the cell array) to define the custom subsampling factors, e.g.: 
-%        {h1,h2,'a',[2,2]}.
+%   3) Cell array of one dimensional numerical vectors directly defining
+%      the wavelet filter impulse responses.  By default, outputs of the 
+%      filters are subsampled by a factor equal to the number of the 
+%      filters. One can pass additional key-value pair 'a',a (still inside
+%      of the cell array) to define the custom subsampling factors, e.g.: 
+%      {h1,h2,'a',[2,2]}.
 %
-%     4) The fourth option is to pass the structure obtained from the
-%        |fwtinit| function. The structure is checked whether it has a valid
-%        format.
+%   4) The fourth option is to pass the structure obtained from the
+%      |fwtinit| function. The structure is checked whether it has a valid
+%      format.
 %   
 %   If *f* is row/collumn vector, the subbands *c* are stored
 %   in a single row/collumn in a consecutive order with respect to the 

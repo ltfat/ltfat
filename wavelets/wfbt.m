@@ -50,9 +50,9 @@ function [c,info]=wfbt(f,wt,varargin)
 %
 %   `'freq'`,`'nat'`
 %     Frequency or natural ordering of the coefficient subbands. The direct
-%     usage of the wavelet tree ('nat' option) does not produce coefficient
+%     usage of the wavelet tree (`'nat'` option) does not produce coefficient
 %     subbans ordered according to the frequency. To achieve that, some 
-%     filter shuffling has to be done ('freq' option).  
+%     filter shuffling has to be done (`'freq'` option).  
 %
 %   Please see the help on |fwt| for a description of the boundary condition flags.
 %

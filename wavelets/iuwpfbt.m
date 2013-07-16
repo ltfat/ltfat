@@ -13,7 +13,7 @@ function f=iuwpfbt(c,par,varargin)
 %   `f=iuwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
 %   wavelet filterbank tree *wt*. 
 %
-%   The following flag groups are supported:
+%   The following flags are supported:
 %
 %   'per','zpd','sym','symw','asym','asymw','ppd','sp0'
 %          Type of the boundary handling.

@@ -11,33 +11,27 @@ function wt = wfbtinit(wtdef,varargin)
 %   `wfbtinit()` creates empty structure. The structure describing the 
 %   tree has the following fields:
 %
-%   `wtree.nodes`
-%      actual impulse responses
+%     .nodes     Actual impulse responses
 %   
-%   `wtree.children`
-%      indexes of children nodes
+%     .children  Indexes of children nodes
 % 
-%   `wtree.parents`
-%      indexes of a parent node
+%     .parents   Indexes of a parent node
 %
-%   `wtree.forder`
-%      Frequency ordering of the resultant frequency bands.
+%     .forder    Frequency ordering of the resultant frequency bands.
 %
-%   `wfbt=wfbtinit({w,J,flag})` creates filterbank tree of depth *J*. Parameter *w* 
-%   defines basic wavelet filterbank. For all possible formats see |fwt|.
-%   The following optional flags (still inside of the cell-array) are
-%   recognized:
+%   `wfbt=wfbtinit({w,J,flag})` creates a filterbank tree of depth *J*. The
+%   parameter *w* defines a basic wavelet filterbank. For all possible formats
+%   see |fwt|.  The following optional flags (still inside of the
+%   cell-array) are recognized:
 %
 %   'dwt','full'
 %     Type of the tree to be created.
 %
-%   The following additional flag groups are supported:
-%
 %   'freq','nat'
 %     Frequency or natural ordering of the coefficient subbands. The direct
-%     usage of the wavelet tree ('nat' option) does not produce coefficient
+%     usage of the wavelet tree (`'nat'` option) does not produce coefficient
 %     subbans ordered according to the frequency. To achieve that, some 
-%     filter shuffling has to be done ('freq' option).  
+%     filter shuffling has to be done (`'freq'` option).  
 %
 %   See also: wfbtput, wfbtremove
 

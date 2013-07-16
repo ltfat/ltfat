@@ -9,53 +9,53 @@ function [w] = fwtinit(wdef)
 %         w    : Structure defining the filterbank.
 %   
 %   `w=fwtinit(wdef)` produces a structure describing the analysis 
-%   (field .h) synthesis (field .g) parts of a one level wavelet-type 
+%   (field `.h`) synthesis (field `.g`) parts of a one level wavelet-type 
 %   filterbank. The function is a wrapper for calling all the functions 
 %   starting with `wfilt_` defined in the LTFAT wavelets directory.
 %
 %   The possible formats of the `wdef` are the following:
 %
-%     1) Cell array whose first element is the name of the function defining
-%        the basic wavelet filters (`wfilt_` prefix) and the other elements
-%        are the parameters of the function. e.g. `{'db',10}` calls 
-%        `wfilt_db(10)` internally.
+%   1) Cell array whose first element is the name of the function defining
+%      the basic wavelet filters (`wfilt_` prefix) and the other elements
+%      are the parameters of the function. e.g. `{'db',10}` calls 
+%      `wfilt_db(10)` internally.
 %
-%     2) Character string as concatenation of the name of the wavelet
-%        filters defining function (as above) and the numeric parameters
-%        delimited by ':' character, e.g. 'db10' has the same effect as above,
-%        'spline4:4' calls `wfilt_spline(4,4)` internally.
+%   2) Character string as concatenation of the name of the wavelet
+%      filters defining function (as above) and the numeric parameters
+%      delimited by ':' character, e.g. `'db10'` has the same effect as above,
+%      `'spline4:4'` calls `wfilt_spline(4,4)` internally.
 %
-%     3) Cell array of one dimensional numerical vectors directly defining
-%        the wavelet filter impulse responses.  By default, outputs of the 
-%        filters are subsampled by a factor equal to the number of the 
-%        filters. Pass additional key-value pair 'a',a (still inside of the
-%        cell array) to define the custom subsampling factors, e.g.: 
-%        {h1,h2,'a',[2,2]}.
+%   3) Cell array of one dimensional numerical vectors directly defining
+%      the wavelet filter impulse responses.  By default, outputs of the 
+%      filters are subsampled by a factor equal to the number of the 
+%      filters. Pass additional key-value pair 'a',a (still inside of the
+%      cell array) to define the custom subsampling factors, e.g.: 
+%      {h1,h2,'a',[2,2]}.
 %
-%     4) The fourth option is to pass again the structure obtained from the
-%        |fwtinit| function. The structure is checked whether it has a valid
-%        format.
+%   4) The fourth option is to pass again the structure obtained from the
+%      |fwtinit| function. The structure is checked whether it has a valid
+%      format.
 %
-%    [5)] Two element cell array. First element is string 'dual' and the
-%         second one is in format 1), 2) or 4). This returns dual of whatever
-%         is passed.
+%   5) Two element cell array. First element is the string `'dual'` and the
+%      second one is in format 1), 2) or 4). This returns dual of whatever
+%      is passed.
 %
-%    [6)] Two element cell array. First element is string 'strict' and the
-%         second one is in format 1), 2), 4) or 5). This ensures the wavelet
-%         filters not forming a tight frame, has to be explicitly defined.
+%   6) Two element cell array. First element is the string `'strict'` and the
+%      second one is in format 1), 2), 4) or 5). This ensures the wavelet
+%      filters not forming a tight frame, has to be explicitly defined.
 %
 %   Using synthesis filters for analysis and vice versa makes a difference
-%   in case of birtoghonal filters (e.g. 'spline4:4') and filters which 
-%   constructs a general frame (e.g. 'symds2'), in other cases, the analysis
+%   in case of birtoghonal filters (e.g. `'spline4:4'`) and filters which 
+%   constructs a general frame (e.g. `'symds2'`), in other cases, the analysis
 %   filters are just time-reversed version of synthesis filters. To specify
 %   which filters should be used, one can re-use the items 1) and 2) in the
 %   following way:
 %
-%     1) Add 'ana' or 'syn' as the first element in the cell array e.g. 
-%        `{'ana','spline',4,4}` or `{'syn','spline',4,4}`.
+%   1) Add `'ana'` or `'syn'` as the first element in the cell array e.g. 
+%      `{'ana','spline',4,4}` or `{'syn','spline',4,4}`.
 %
-%     2) Add 'ana:' or 'syn:' to the beginning of the string e.g. 
-%        'ana:spline4:4' or 'syn:spline4:4'.
+%   2) Add `'ana:'` or `'syn:'` to the beginning of the string e.g. 
+%      `'ana:spline4:4'` or `'syn:spline4:4'`.
 %
 %   Please note that using e.g. `c=fwt(f,'ana:spline4:4',J)` and 
 %   `fhat=ifwt(c,'ana:spline4:4',J,size(f,1))` will not give a perfect
@@ -63,34 +63,28 @@ function [w] = fwtinit(wdef)
 %
 %   The output structure has the following fields:
 %
-%     `w.h`
-%        Cell array of structures defining the original analysis filter bank.
+%     w.h  Cell array of structures defining the original analysis filter bank.
 %     
-%     `w.g`
-%        Cell array of structures defining the original synthesis filter bank.
+%     w.g  Cell array of structures defining the original synthesis filter bank.
 %
-%     `w.a`
-%        Subsampling factors.
+%     w.a  Subsampling factors.
 %
-%     `w.origArgs` 
-%        Original parameters in format 1).
+%     w.origArgs 
+%          Original parameters in format 1).
 %
 %
-%   `w.h`,`w.g` are cell-arrays of structures defined in `wfiltstruct`. Each
+%   `w.h`, `w.g` are cell-arrays of structures defined in `wfiltstruct`. Each
 %   structure represents one filter in the filterbank and it has the following
 %   fields:
 %
-%   `w.filts{1}.type`
-%     Type of the filter. 'FIR' is used.
+%     .type  Type of the filter. `'FIR'` is used.
 %
-%   `w.filts{1}.d`
-%     Filter delay in samples.
+%     .d     Filter delay in samples.
 %
-%   `w.filts{1}.h`
-%     Actual filter impulse response values.
+%     .h     Actual filter impulse response values.
 % 
-%   Remark: Function names with the `wfilt_` prefix cannot contain numbers
-%           and cannot start with 'ana' or 'syn'! 
+%   **Remark:** Function names with the `wfilt_` prefix cannot contain numbers
+%   and cannot start with 'ana' or 'syn'! 
 %
 %   Choosing wavelet filters
 %   ------------------------

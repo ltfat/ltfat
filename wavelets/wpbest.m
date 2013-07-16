@@ -35,7 +35,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %   The possible formats are listed in the following text.
 %
 %   Additive costs:
-%   --------------
+%   ---------------
 %
 %   The additive cost *E* of a vector *x* is a real valued cost function
 %   such that:
@@ -46,15 +46,16 @@ function [c,info] = wpbest(f,w,J,varargin)
 %
 %   .. math:: E(x)=\sum_{k} E(x(k))
 %  
-%   and *E(0)=0*. Given a collection of vectors *x_i* being coefficients in
-%   orthonormal bases *B_i*, the best basis relative to *E* is the one for 
-%   which the *E(x_i)* is minimal. 
+%   and $E(0)=0$. Given a collection of vectors $x_i$ being coefficients in
+%   orthonormal bases $B_i$, the best basis relative to *E* is the one for 
+%   which the $E(x_i)$ is minimal. 
 %
 %   Additive cost functions allows using the fast best-basis search algorithm
 %   since the costs can be precomputed and combined cost of two vectors is 
 %   just a sum of their costs.
 %
-%   `{'shannon'}` - A cost function derived from the Shannon entropy:
+%   `{'shannon'}`
+%      A cost function derived from the Shannon entropy:
 %
 %      ..               
 %         E_sh(x) = -sum |x(k)|^2 log(|x(k)|^2), 
@@ -62,7 +63,8 @@ function [c,info] = wpbest(f,w,J,varargin)
 %
 %      .. math:: E_{sh}(x) = -\sum_{k:x(k)\neq 0} \left|x(k)\right|^2 \log \left|x(k)\right|^2
 %
-%   `{'log'}` - A logarithm of energy:
+%   `{'log'}`
+%      A logarithm of energy:
 %
 %      ..               
 %         E_log(x) = sum log(|x(k)|^2), 
@@ -70,7 +72,8 @@ function [c,info] = wpbest(f,w,J,varargin)
 %
 %      .. math:: E_{log}(x) = \sum_{k:x(k)\neq 0} \ln \left|x(k)\right|^2
 %
-%   `{'lpnorm',p}` - Concentration in *l^p* norm:
+%   `{'lpnorm',p}`
+%      Concentration in $l^p$ norm:
 %
 %      ..               
 %         E_lp(x) = ( sum (|x(k)|^p) ), 
@@ -78,7 +81,8 @@ function [c,info] = wpbest(f,w,J,varargin)
 %
 %      .. math:: E_{lp}(x) = \left( \sum_{k} \left|x(k)\right|^p \right)
 %
-%   `{'thre',th}` - Number of coefficients above a threshold *th*.
+%   `{'thre',th}`
+%      Number of coefficients above a threshold *th*.
 %
 %
 %   Non-additive costs:
@@ -90,17 +94,19 @@ function [c,info] = wpbest(f,w,J,varargin)
 %   cost cannot guarantee the selection of a best basis relative to the 
 %   cost function.
 %
-%   `{'wlpnorm',p}` - the weak-l^p norm cost function:
+%   `{'wlpnorm',p}`
+%      The weak-$l^p$ norm cost function:
 %
 %      ..               
 %         E_wlp(x) = max k^(1/p)v_k(x), 
 %
 %      .. math:: E_{wlp}(x) = \max k^(1/p)v_k(x),
 %
-%      where *0<p<=2* and *v_k(x)* denotes the *k*-th largest absolute value
+%      where $0<p\leq 2$ and $v_k(x)$ denotes the *k*-th largest absolute value
 %      of *x*.
 %
-%   `{'compn',p,f}` - compression number cost:
+%   `{'compn',p,f}`
+%      Compression number cost:
 %
 %      ..               
 %         E_cn(x) = arg min |w_k(x,p) - f|, 
@@ -108,7 +114,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %                   
 %      .. math:: E_{cn}(x) =  \arg\min_{k} \left|w_k(x,p) - f\right|, 
 %
-%      where *0<p<=2*, *0<f<1* and *w_k(u,p)* denotes decreasingly sorted,
+%      where $0<p\leq 2$, $0<f<1$ and $w_k(u,p)$ denotes decreasingly sorted,
 %      powered, cumulateively summed and renormalized vector:
 %
 %      ..             k              N
@@ -120,7 +126,8 @@ function [c,info] = wpbest(f,w,J,varargin)
 %      where *v_k(x)* denotes the *k*-th largest absolute value of *x* and
 %      *N* is the number of elements of *x*.
 %
-%   `{'compa',p}` - compression area cost:
+%   `{'compa',p}`
+%      Compression area cost:
 %
 %      ..               
 %         E_ca(x) = N - sum w_k(x,p), 
@@ -128,7 +135,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %                   
 %      .. math:: E_{ca}(x) =  N - \sum_k w_k(x,p), 
 %
-%      where *0<p<=2* and *w_k(u,p)* and *N* as in the previous case.
+%      where $0<p\leq 2$ and $w_k(u,p)$ and *N* as in the previous case.
 %
 %   Examples:
 %   ---------
@@ -151,7 +158,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %     xlabel('Channel no.');
 %     ylabel('Subsampling rate / samples');
 %
-%   References: wick92lecton tas94near-bestbasis  
+%   References: wickerhauser1991lectures tas94near-bestbasis  
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
