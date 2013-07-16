@@ -115,7 +115,7 @@ for typeIdx=1:length(type)
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             
             if(~verbose)
-              fprintf('J=%d, %5.5s, L=%d, err=%.4d %s \n',jj,actFilt{1},length(f),err,fail);
+              fprintf('J=%d, %5.5s, L=%d, err=%.4e %s \n',jj,actFilt{1},length(f),err,fail);
             end
             if strcmpi(fail,'FAILED')
                if verbose

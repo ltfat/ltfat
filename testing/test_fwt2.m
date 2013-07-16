@@ -22,7 +22,7 @@ for ii=1:numel(dims)
          fhat = ifwt2(c,filt{ff}{1},filt{ff}{2},dims{ii},flags{jj});
          err = norm(f-fhat,'fro');
          [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
-         fprintf('J=%d, %5.5s, dim=[%3.d,%3.d], flag=%8.8s, err=%d %s\n',filt{ff}{2},filt{ff}{1},size(f,1),size(f,2),flags{jj},err,fail);
+         fprintf('J=%d, %5.5s, dim=[%3.d,%3.d], flag=%8.8s, err=%.4e %s\n',filt{ff}{2},filt{ff}{1},size(f,1),size(f,2),flags{jj},err,fail);
       end
    end
 end

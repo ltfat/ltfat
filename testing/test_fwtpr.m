@@ -66,7 +66,7 @@ test_filters = {
                {'dgrid',3}
                %{'algmband',1} 
                {'mband',1}
-               {'hden',4}
+               %{'hden',4}
                %{'hden',2}
                %{'hden',1}
                %{'algmband',2}
@@ -118,7 +118,7 @@ for typeIdx=1:length(type)
             err = norm(f-fhat,'fro');
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             if(~verbose)
-              fprintf('J=%d, %4.4s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4d %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
+              fprintf('J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
             end
             
             if strcmpi(fail,'FAILED')

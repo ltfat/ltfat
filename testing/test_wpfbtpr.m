@@ -80,7 +80,7 @@ for extIdx=1:length(ext)
             err = norm(f-fhat,'fro');
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             if(~verbose)
-              if(~isstruct(actFilt))fprintf('J=%d, %5.5s, ext=%4.4s, L=%d, err=%d %s \n',actFilt{2},actFilt{1},extCur,size(f,1),err,fail); else fprintf('Custom, err=%d %s \n',err,fail); end;
+              if(~isstruct(actFilt))fprintf('J=%d, %5.5s, ext=%4.4s, L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,size(f,1),err,fail); else fprintf('Custom, err=%.4e %s \n',err,fail); end;
             end
             if strcmpi(fail,'FAILED')
                if verbose
