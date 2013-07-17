@@ -1,4 +1,4 @@
-Version 1.4.1
+Version 1.4.1 17/7 2013
 	* Major change in the output format from the wfilt_ functions. If
 	a wfilt_ function generates a tigth frames, its two outputs are
 	now identical.

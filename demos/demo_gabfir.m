@@ -86,7 +86,7 @@ plot(fftshift(g));
 title('itersine FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
-% the window on a Db scale).
+% the window on a dB scale).
 subplot(2,1,2);
 magresp(g,'fir','dynrange',100);
 title('Magnitude response of itersine window.');
@@ -115,7 +115,7 @@ plot(fftshift(g));
 title('Kaiser window.');
 
 % Plot the magnitude response of the window (the frequency representation of
-% the window on a Db scale).
+% the window on a dB scale).
 subplot(2,2,2);
 magresp(g,'fir','dynrange',100);
 title('Magnitude response of Kaiser window.');
@@ -126,7 +126,7 @@ plot(fftshift(gd));
 title('Dual of Kaiser window.');
 
 % Plot the magnitude response of the window (the frequency representation of
-% the window on a Db scale).
+% the window on a dB scale).
 subplot(2,2,4);
 magresp(gd,'fir','dynrange',100);
 title('Magnitude response of dual Kaiser window.');
@@ -162,7 +162,7 @@ disp('Reconstruction error using cutted dual window.');
 recerr = gabdualnorm(gfir,gd_fir,a,M,LLong)
 
 disp('');
-disp('or expressed in Db:');
+disp('or expressed in dB:');
 10*log10(recerr)
 
 figure(3);
@@ -173,7 +173,7 @@ plot(fftshift(gfir));
 title('Gaussian FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
-% the window on a Db scale).
+% the window on a dB scale).
 subplot(2,2,2);
 magresp(gfir,'fir','dynrange',100);
 title('Magnitude response of FIR Gaussian.')
@@ -184,7 +184,7 @@ plot(fftshift(gd_fir));
 title('Dual of Gaussian FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
-% the window on a Db scale).
+% the window on a dB scale).
 subplot(2,2,4);
 magresp(gd_fir,'fir','dynrange',100);
 title('Magnitude response.');
@@ -205,7 +205,7 @@ disp('Reconstruction error using cutted tight window.');
 recerr = gabdualnorm(gt_fir,gt_fir,a,M,LLong)
 
 disp('');
-disp('or expressed in Db:');
+disp('or expressed in dB:');
 10*log10(recerr)
 
 figure(4);
@@ -216,7 +216,7 @@ plot(fftshift(gt_fir));
 title('Almost tight FIR window.');
 
 % Plot the magnitude response of the window (the frequency representation of
-% the window on a Db scale).
+% the window on a dB scale).
 subplot(2,1,2);
 magresp(gt_fir,'fir','dynrange',100);
 title('Magnitude response.');
