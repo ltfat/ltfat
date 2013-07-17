@@ -7,29 +7,31 @@ function [ccell,dim] = wavpack2cell(cvec,Lc,varargin)
 %   Input parameters:
 %         cvec     : Coefficients in packed format.
 %         Lc       : Vector containing coefficients lengths.
-%         dim      : Identifies dimension along which the data were transformed. 
+%         dim      : Dimension along which the data were transformed. 
 %
 %   Output parameters:
 %         ccell    : Coefficients stored in a cell-array. Each element is
-%                    column or matrix.
+%                    a column vector or a matrix.
 %         dim      : Return used dim. Usefull as an input of the
 %                    complementary function |wavcell2pack|.
 %
-%   This function transformes coefficients in vector/matrix *cvec* to the
-%   cell array *ccell* of collumn vectors/matrices.
+%   `ccell = wavpack2cell(cvec,Lc)` copies coefficients from a single column
+%   vector or collumns of a matrix *cvec* of size `[sum(Lc), W]` to the cell
+%   array *ccell* of length `length(Lc)`. Size of *j*-th element of *ccell*
+%   is `[Lc(j), W]` and it is obtained by::
+% 
+%      ccell{j}=cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),:);
 %
-%   *cvec* is vector or matrix containing coefficients in the packed format.
-%   For *dim=1*, the coefficients are expected to be stored as columns::
+%   `ccell = wavpack2cell(cvec,Lc,dim)` allows specifying along which
+%   dimension the coefficients are stored in *cvec*. *dim==1* (default)
+%   considers columns (as above) and *dim==2* rows to be coefficients 
+%   belonging to separate channels. Other values are not supported. For 
+%   *dim=2*, *cvec* size is `[W, sum(Lc)]`, Size of *j*-th element of *ccell*
+%   is `[Lc(j), W]` and it is obtained by::
+% 
+%      ccell{j}=cvec(:,1+sum(Lc(1:j-1)):sum(Lc(1:j)).';
 %
-%     ccel_1=cvec(1:Lc(1),w)
-%   
-%   is the approximation coefficients at level *J* of the channel *w*,
-%
-%     ccel_j=cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w)
-%
-%   for *j>1*, for dim=2 as rows in the similar manner. 
-%
-%   The resulting *ccell* has `length(Lc)` elements.
+%   See also: wavcell2pack, fwt, wfbt, wpfbt
 
 
 if(nargin<2)

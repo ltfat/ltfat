@@ -5,25 +5,25 @@ function [cvec,Lc] = wavcell2pack(ccell,varargin)
 %
 %   Input parameters:
 %         ccell    : Coefficients stored in a collumn cell-array.
-%         dim      : Identifies dimension along which the data were transformed. 
+%         dim      : Dimension along which the data were transformed. 
 %
 %   Output parameters:
 %         cvec     : Coefficients in packed format.
 %         Lc       : Vector containing coefficients lengths.
 %
-%   This function transforms coefficients stored as elements of the cell-array *ccell*
-%   columns/matrices to a single vector/matrix.
-%   *cvec* is vector or matrix containing coefficients in the packed format.
-%   For $dim=1$, the coefficients are stored as columns::
+%   `[cvec,Lc] = wavcell2pack(ccell)` assembles a column vector or a matrix
+%   *cvec* using elements of the cell-array *ccell* in the following
+%   manner::
 %
-%     cvec(1:Lc(1),w)
+%      cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),:)=ccell{j};
 %
-%   is the approximation coefficients at level *J* of the channel *w*, ::
+%   where *Lc* is a vector of length `numel(ccell)` containing number of
+%   rows of each element of *ccell*.
 %
-%     cvec(1+sum(Lc(1:j-1)):sum(Lc(1:j),w)
+%   `[cvec,Lc] = wavcell2pack(ccell,dim)` with *dim==2* returns a
+%   transposition of the previous.
 %
-%   for *j>1*. For *dim=2* as rows in the similar manner.
-%
+%   See also: wavpack2cell, fwt, wfbt, wpfbt
 
 if(nargin<1)
     error('%s: Too few input parameters.',upper(mfilename));
