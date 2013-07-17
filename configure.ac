@@ -6,10 +6,6 @@ AC_PROG_CXX
 
 AC_CONFIG_MACRO_DIR([m4/])
 
-dnl Checks for standard programs.
-AC_PROG_F77
-AC_PROG_LIBTOOL
-
 dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
 AX_BLAS
