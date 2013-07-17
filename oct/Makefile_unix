@@ -7,7 +7,7 @@ OCTS     = $(addsuffix .oct,$(OCTSBASE))
 all:	$(OCTS)
 
 %.oct: %.cc config.h
-	mkoctfile -g -I../thirdparty -I. -I../src -L../lib -lltfat -lltfatf $<
+	mkoctfile -Wall -I../thirdparty -I. -I../src -L../lib -lltfat -lltfatf $<
 
 clean:
 	rm *.o *.oct
