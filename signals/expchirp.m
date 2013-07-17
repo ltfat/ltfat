@@ -1,6 +1,6 @@
 function outsig=expchirp(L,fstart,fend,varargin)
 %EXPCHIRP  Exponential chirp
-%   USAGE: outsig=expchirp(L,fstart,fend)
+%   Usage: outsig=expchirp(L,fstart,fend)
 % 
 %   `expchirp(L,fstart,fend)` computes an exponential chirp of length *L*
 %   starting at normalized frequency *fstart* and ending at frequency *fend*.

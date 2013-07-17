@@ -7,8 +7,12 @@ if ~isempty(which('javaaddpath'))
    catch 
        % Use lasterr for Octave compatibility
        err=lasterr;
-       warning('%s: JVM support not present.',upper(mfilename));
+       if ltfatstartprint
+           warning('%s: JVM support not present.',upper(mfilename));
+       end;
    end
 else
-   warning('%s: Java toolbox not present.',upper(mfilename));
+    if ltfatstartprint
+        warning('%s: Java toolbox not present.',upper(mfilename));
+    end;
 end

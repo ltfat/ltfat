@@ -12,7 +12,8 @@ if exist('dgt','file')
     % Strip the cell array container away
     thispath=line{1};
     if numel(thispath)>=bplen && strcmp(thispath(1:bplen),bp)
-      disp(thispath)
+      disp(["PKGDEL",thispath])
+      %rmpath(thispath);
     end;    
   end;
 end;

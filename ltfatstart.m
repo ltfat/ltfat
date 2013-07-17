@@ -1,4 +1,4 @@
-function ltfatstart()
+function ltfatstart(ltfatstartprint)
 %LTFATSTART   Start the LTFAT toolbox
 %   Usage:  ltfatstart;
 %
@@ -21,16 +21,9 @@ function ltfatstart()
 %   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
 
-%% ------- Settings: ----------------------------------
-
-% --- general settings ---
-% Print the banner at startup?
-printbanner=1;
-
-
-% ----------------------------------------------------
-% -------   do not edit below this line   ------------
-%%----------------------------------------------------
+if nargin==0
+    ltfatstartprint=1;
+end;
 
 % Get the basepath as the directory this function resides in.
 % The 'which' solution below is more portable than 'mfilename'
@@ -118,7 +111,7 @@ end;
 %  end;
 %end;
 
-if printbanner
+if ltfatstartprint
   s=which('comp_pgauss');
   if isempty(s)
     error('comp_pgauss not found, something is wrong.')

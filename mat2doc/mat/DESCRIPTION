@@ -14,3 +14,4 @@ Description: The Large Time/Frequency Analysis Toolbox (LTFAT) is a
 License: GPLv3+
 BuildRequires: fftw3, lapack, blas, portaudio 
 Url: http://ltfat.sourceforge.net/
+Autoload: yes
