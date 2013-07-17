@@ -4,7 +4,9 @@ AC_INIT([LTFAT], [1.4.0], [http://ltfat.sourceforge.net/contact.php], [ltfat])
 AC_PROG_CC
 AC_PROG_CXX
 
-AC_CONFIG_MACRO_DIR([m4/])
+#AC_CONFIG_MACRO_DIR([m4/])
+m4_include([m4/ax_blas.m4])
+m4_include([m4/ax_lapack.m4])
 
 dnl Check for BLAS libraries
 sinclude(ax_blas.m4)
@@ -20,11 +22,13 @@ if test "$ax_lapack_ok" = "no"; then
    AC_MSG_ERROR([Cannot find LAPACK libraries])
 fi
 
-# Put in check for MKOCTFILE
+dnl Check for MKOCTFILE
+AC_CHECK_PROG(MKOCTFILE_CHECK,mkoctfile,"yes")
+if test "$MKOCTFILE_CHECK" != "yes" ; then
+    AC_MSG_ERROR([Please install mkoctfile.])
+fi
 
 AC_CHECK_HEADERS([fftw3.h],[],[AC_MSG_ERROR([fftw was not found])])
-# Put in check for blas
-# Put in check for lapack
 # Put in check for portaudio
 
 AC_OUTPUT
