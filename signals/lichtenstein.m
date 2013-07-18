@@ -5,12 +5,11 @@ function s=lichtenstein();
 %   `lichtenstein` loads a $512 \times 512$ color image of a castle
 %   Lichtenstein, `<http://en.wikipedia.org/wiki/Lichtenstein_Castle>`_.
 % 
-%   The returned matrix `s` consists of integers between 0 and 255,
-%   which have been converted to double precision.
+%   The returned matrix `s` consists of integers between 0 and 255.
 % 
-%   To display the image, scale it first:::
+%   To display the image, simply use `image`:::
 % 
-%     image(lichtenstein/255); axis('image');
+%     image(lichtenstein); axis('image');
 % 
 %   See
 %   `<http://commons.wikimedia.org/wiki/File:Lichtenstein_img_processing_test.png>`_.
@@ -19,7 +18,6 @@ function s=lichtenstein();
 
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
-%   REFERENCE: OK
 
 if nargin>0
   error('This function does not take input arguments.')
