@@ -1,7 +1,7 @@
 #define TYPEDEPARGS 0, 1, 2
 #define SINGLEARGS
 #define REALARGS
-#define OCTFILENAME gabreassign // change to filename
+#define OCTFILENAME comp_gabreassign // change to filename
 #define OCTFILEHELP "Computes spreading permutation.\n\
                      Usage: sr=comp_gabreassign(s,itime,ifreq,a);\n\
                      Yeah."

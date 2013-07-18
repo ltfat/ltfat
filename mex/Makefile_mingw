@@ -19,7 +19,7 @@ ifndef ARCH
 endif
 
 CC=gcc
-CFLAGS=-shared -O3 -Wall -s -std=c99 -I../thirdparty -I../src
+CFLAGS=-shared -O3 -Wall -s -std=c99 -I../src/thirdparty -I../src
 
 include filedefs.mk
 

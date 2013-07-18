@@ -18,7 +18,7 @@ ifndef ARCH
   ARCH=maci64
 endif
 
-CFLAGS=-shared -O3 -Wall -s -std=c99 -I../thirdparty -I../src -I$(MATLABROOT)/extern/include -L../lib -L/opt/local/lib/
+CFLAGS=-shared -O3 -Wall -s -std=c99 -I../src/thirdparty -I../src -I$(MATLABROOT)/extern/include -L../lib -L/opt/local/lib/
 
 include filedefs.mk
 
