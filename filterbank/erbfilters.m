@@ -125,6 +125,7 @@ definput.keyvals.L=[];
 definput.keyvals.M=[];
 definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
+definput.keyvals.spacing=1;
 
 definput.flags.warp     = {'symmetric','warped'};
 definput.flags.uniform  = {'nonuniform','uniform'};
@@ -141,7 +142,7 @@ winbw=norm(firwin(flags.wintype,1000)).^2/1000;
 
 if flags.do_real
     if isempty(kv.M)
-        M2=ceil(freqtoerb(fs/2))+1;
+        M2=ceil(freqtoerb(fs/2)/kv.spacing)+1;
         M=M2;
     else
         M=kv.M;
@@ -149,7 +150,7 @@ if flags.do_real
     end;
 else
     if isempty(kv.M)
-        M2=ceil(freqtoerb(fs/2))+1;
+        M2=ceil(freqtoerb(fs/2)/kv.spacing)+1;
         M=2*(M2-1);
     else
         M=kv.M;

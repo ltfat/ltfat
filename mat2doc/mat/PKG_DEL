@@ -1,19 +1,24 @@
-if exist('dgt','file')
+% Get the directory
+bp=mfilename('fullpath')(1:end-7);
+
+bp
+
+if exist([bp,filesep,'ltfatstart.m'],'file')
   % Tricky situation, the base directory has already been killed by
   % pkg, but we still need to remove the subdirectories. We get the
   % base path from dgt
 
   fullpath=strsplit(path,pathsep);
 
-  bp=which('dgt.m')(1:end-11);
   bplen=numel(bp);
   
   for line=fullpath
     % Strip the cell array container away
     thispath=line{1};
     if numel(thispath)>=bplen && strcmp(thispath(1:bplen),bp)
+      % Function does nothing because the rmpath is commented
       disp(["PKGDEL",thispath])
-      %rmpath(thispath);
+      rmpath(thispath);
     end;    
   end;
 end;
