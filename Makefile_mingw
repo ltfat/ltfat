@@ -18,7 +18,7 @@ MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\$(ARCH)" $(MATLABLIBS)
 
 CC=gcc
 
-CFLAGS=-O3 -s -Wall -std=c99 -I../thirdparty -I./
+CFLAGS=-O3 -s -Wall -std=c99 -Ithirdparty -I./
 DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DMATLABFORTRAN
 
 include filedefs.mk
