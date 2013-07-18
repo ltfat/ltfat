@@ -66,7 +66,4 @@ end;
 
 f=postpad(f,L);
 
-c=cell(M,1);
-for m=1:M
-  c{m}=comp_pfilt(f,g{m},info.a(m,:),info.gl(m)<kv.crossover);
-end;
+c=comp_filterbank(f,g,info.a,kv.crossover);

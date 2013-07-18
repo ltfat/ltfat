@@ -52,6 +52,9 @@ N=L/a;
 f=postpad(f,L);
 
 c=zeros(N,M,W,assert_classname(f));
+
+ctmp=comp_filterbank(f,g,info.a,kv.crossover);
+
 for m=1:M    
-    c(:,m,:)=comp_pfilt(f,g{m},a,info.gl(m)<kv.crossover);
+    c(:,m,:)=ctmp{m};
 end;
