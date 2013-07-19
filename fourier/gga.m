@@ -1,4 +1,4 @@
-function c = gga(f,indvec)
+function c = gga(f,indvec,dim)
 %GGA Generalized Goertzel algorithm
 %   Usage:  y = gga(x,indvec)
 %
@@ -9,22 +9,58 @@ function c = gga(f,indvec)
 %   Output parameters:
 %         c      : Coefficient vector.
 %
-% `gga(f,indvec)` computes DTFT of one-dimensional signal *f* at 'indices'
-% contained in `indvec`, using the generalized second-order Goertzel algorithm.
-% Thanks to the generalization, the 'indices' can be non-integer valued
-% in the range 0 to N-1, where N is the length of vector X.
-% (Index 0 corresponds to the DC component.)
-% Integers in INDVEC result in the classical DFT coefficients.
+% `c=gga(f,indvec)` computes the discrete-time fourier transform DTFT of
+% *f* at 'indices' contained in `indvec`, using the generalized second-order
+% Goertzel algorithm. Thanks to the generalization, the 'indices' can be 
+% non-integer valued in the range 0 to *Ls-1*, where *Ls* is the length of
+% the first non-singleton dimension of *f*. Index 0 corresponds to the
+% DC component and integers in `indvec` result in the classical DFT
+% coefficients. If `indvec` is empty or ommited, `indvec` is assumed to be
+% `0:Ls-1`.
 %
-% The output *c* is a column complex vector of length LENGTH(INDVEC) containing
-% the desired DTFT values.
-%
-% If the *f* is a matrix, the Goertzel algorithm is applied to each of *W*
-% columns. 
+% `c=gga(f,indvec,dim)` computes the DTFT samples along the dimension `dim`.
 %
 % Remark:
 % Besides the generalization the algorithm is also shortened by one
 % iteration compared to the conventional Goertzel.
+%
+%   Examples:
+%   ---------
+%   
+%   Calculating DTFT samples of interest:::
+% 
+%     % Generate input signal
+%     k = 0:2^10-1;
+%     f = 5 * sin(2*pi*k*0.05 + pi/4) + 2 * sin(2*pi*k*0.1031 - pi/3);
+%
+%     % Non-integer indices of interest
+%     kgga = 102.9:0.05:109.1;
+%     % For the purposes of plot, remove the integer-valued elements
+%     kgga = setdiff(kgga,k);
+%
+%     % This is equal to fft(f)
+%     ck = gga(f,k);
+%
+%     fprintf('GGA to FFT error: %d\n',norm(ck-fft(f)));
+%
+%     % DTFT samples just for non-integer indices
+%     ckgga = gga(f,kgga);
+%
+%     % Plot modulus of coefficients
+%     figure(f1);
+%     hold on;
+%     stem(k,abs(ck),'k');
+%     stem(kgga,abs(ckgga),'r:');
+%     limX = [102.9 109.1];
+%     set(gca,'XLim',limX);
+%     set(gca,'YLim',[0 1065]);
+%
+%     figure(f2);
+%     hold on;
+%     stem(k,angle(ck),'k');
+%     stem(kgga,angle(ckgga),'r:');
+%     set(gca,'XLim',limX);
+%     set(gca,'YLim',[-pi pi]);
 %
 % References: syra2012goertzel
        
@@ -33,31 +69,31 @@ function c = gga(f,indvec)
 
 
 %% Check the input arguments
-if nargin < 2
-    error('%s: Not enough input arguments',upper(mfilename))
+if nargin < 1
+    error('%s: Not enough input arguments.',upper(mfilename))
 end
 
 if isempty(f)
-    error('%s: X must be a nonempty vector or a matrix',upper(mfilename))
+    error('%s: X must be a nonempty vector or a matrix.',upper(mfilename))
 end
 
-if ~isvector(indvec) || isempty(indvec)
-    error('%s: INDVEC must be a nonempty vector',upper(mfilename))
+if nargin<3
+  dim=[];  
+end;
+
+[f,~,Ls,~,dim,permutedsize,order]=assert_sigreshape_pre(f,[],dim,'GGA');
+
+if nargin > 1 && ~isempty(indvec)
+   if ~isreal(indvec) || ~isvector(indvec)
+      error('%s: INDVEC must be a real vector.',upper(mfilename))
+   end
+else
+   indvec = 0:Ls-1;
 end
-
-if ~isreal(indvec)
-    error('%s: INDVEC must contain real numbers',upper(mfilename))
-end
-
-% if isinteger(indvec)
-%     disp('Warning: The traditional Goertzel algorithm is a bit more effective in case of INDVEC being integer-valued')
-% end
-
-[f,L] =comp_sigreshape_pre(f,upper(mfilename),0);
-
-% if any(indvec>L)
-%     error('%s: INDVEC must contain real numbers less than %i.',upper(mfilename),L)
-% end
 
 c = comp_gga(f,indvec);
+
+permutedsize(1)=numel(indvec);
+
+c=assert_sigreshape_post(c,dim,permutedsize,order);
 

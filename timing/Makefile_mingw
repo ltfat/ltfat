@@ -1,0 +1,23 @@
+CC = gcc
+CFLAGS= -O3 -s -Wall -std=c99 -I../src -I../src/thirdparty -L../lib -L../mex
+LIBS=-static-libgcc -lltfat -lltfatf -lfftw3-3 -lfftw3f-3 -lm
+
+include filedefs.mk
+
+all: 	$(timers) copyLibs
+
+time_%:	time_%.o ltfat_time.o
+	$(CC) $(CFLAGS) $< ltfat_time.o $(LIBS) -o $@
+
+%.o: %.c Makefile config.h
+	$(CC) $(CFLAGS) -c $<
+	
+copyLibs:
+	copy /Y ..\mex\libfftw3-3.dll .
+	copy /Y ..\mex\libfftw3f-3.dll .
+	copy /Y ..\mex\ltfat.dll .
+	copy /Y ..\mex\ltfatf.dll .
+
+clean:
+	del *.o $(addsuffix .exe,$(timers))
+	del libfftw3-3.dll libfftw3f-3.dll ltfat.dll ltfatf.dll

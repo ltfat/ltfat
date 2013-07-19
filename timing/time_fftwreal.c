@@ -32,12 +32,13 @@ int main( int argc, char *argv[] )
       
    LTFAT_FFTW(plan) p;
    
-   LTFAT_REAL (*f)[2] = (LTFAT_REAL (*)[2])ltfat_malloc(L*2*sizeof(LTFAT_REAL));
+   LTFAT_REAL *f = (LTFAT_REAL*)ltfat_malloc(L*sizeof(LTFAT_REAL));
+   LTFAT_REAL (*c)[2] = (LTFAT_REAL (*)[2])ltfat_malloc((L/2+1)*2*sizeof(LTFAT_REAL));
    
-   p = LTFAT_FFTW(plan_dft_1d)(L, f, f, FFTW_FORWARD, FFTW_MEASURE);
+   p = LTFAT_FFTW(plan_dft_r2c_1d)(L, f, c, FFTW_MEASURE);
    
    
-   LTFAT_NAME_COMPLEX(fillRand)((double _Complex*)f,L);
+   LTFAT_NAME_REAL(fillRand)(f,L);
       
    const double st0=ltfat_time();
    for (int jj=0;jj<nrep;jj++)
@@ -45,8 +46,8 @@ int main( int argc, char *argv[] )
       LTFAT_FFTW(execute)(p);
    }
    const double st1=ltfat_time();
+   //printf("Length: %i, avr. %f ms \n",L,(st1-st0)/((double)nrep));
    printf("%i, %f\n",L,(st1-st0)/((double)nrep));
-   
    LTFAT_FFTW(destroy_plan)(p);
   
    ltfat_free(f);
