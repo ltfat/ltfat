@@ -6,9 +6,14 @@ test_failed=0;
 disp(' ===============  TEST_FRAMES ================');
 global LTFAT_TEST_TYPE;
 
-tolchooser.double=1e-7;
-tolchooser.single=1e-2;
+tolchooser.double=1e-9;
+tolchooser.single=2e-4;
 tolerance = tolchooser.(LTFAT_TEST_TYPE);
+
+% Iterative algorithms need a bigger tolerance
+tolchooseriter.double=1e-1;
+tolchooseriter.single=1e-1;
+toleranceiter = tolchooseriter.(LTFAT_TEST_TYPE);
 
 Fr=cell(1,32);
 
@@ -104,13 +109,13 @@ for ii=1:numel(Fr)
   r=frsyniter(F,c);
   
   res=norm(r(1:L)-f);
-  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,toleranceiter);
   s=sprintf(['FRSYNITER             frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);
   
   c2=franaiter(Fd,f);
   res=norm(c2-c);
-  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,toleranceiter);
   s=sprintf(['FRANAITER             frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);  
   
