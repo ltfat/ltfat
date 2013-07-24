@@ -29,6 +29,8 @@ persistent anaOverlap;
 persistent synOverlap;
 persistent dispLoad;
 
+persistent Ls;
+
 persistent loop;
 
 % DEFAULTS
@@ -59,6 +61,7 @@ switch command
       toPlayBlock = [];
       dispLoad = 1;
       loop = 0;
+      Ls = -1;
 %% SETTERS %%%
    case 'setPos'
       pos = varargin{2};
@@ -84,11 +87,15 @@ switch command
       dispLoad = varargin{2};
    case 'setLoop'
       loop = varargin{2};
-    case 'setBufLen'
+   case 'setBufLen'
       bufLen = varargin{2}; 
+   case 'setLs'
+      Ls = varargin{2};
 %% GETTERS %%%
    case 'getPos'
       varargout{1}=pos;
+   case 'getLs'
+      varargout{1}=Ls;
    case 'getSource'
       if isnumeric(sourceName)
          varargout{1}='numeric';

@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -22,6 +24,7 @@ import java.util.concurrent.Executors;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -30,28 +33,37 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author zprusa
  */
 public class SpectFrame {
-
-    
-    
+    // Default image dimensions
     static final int defWidth = 800;
     static final int defHeight = 400;
+    // Actual image dimensions
     private int height = defHeight;
     private int width = defWidth;
     private JFrame jf = null;
+    // Spectrogram has its own pannel
     SpectPanel spectPanel = null;
     private ExecutorService executor=Executors.newSingleThreadExecutor();
-    private final Object bfLock = new Object();
+    // Default colormap length
     private int cmapLen = 256; 
     private byte[] colormap = null;
     IndexColorModel cm = null;
-    private int sidx = 1;
+    private int sidx = 0;
     private int spectStep = width/200;
     
-    private double climMax = 0;
-    private double climMin = -40;
+    private double climMax = 20;
+    private double climMin = -70;
+    private final Object graphicsLock = new Object();
+    private final Timer slideTimer = new Timer(20, new ActionListener() {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            spectPanel.repaint();
+        }
+    });
     
+   
     public SpectFrame(final int width, final int height) {
+        
       colormap = new byte[cmapLen*3];  
       for(int yy=0;yy<cmapLen;yy++){
          colormap[3*yy] = (byte) yy;
@@ -158,15 +170,22 @@ public class SpectFrame {
                BufferedImage image = new BufferedImage(cm, raster, false, null);
            
              
-               Graphics2D g2 = spectPanel.getGraphics2D();
-               g2.drawImage(image,(sidx-1)*spectStep,0, sidx*spectStep,height,0,0,colWidth,colHeight,  null);
-               if( (++sidx)*spectStep > width ){
-                   sidx = 1;
+               Graphics2D g2 = (Graphics2D) spectPanel.getGraphics2D();
+               
+               //synchronized(graphicsLock)
+               {
+                  if( (++sidx)*spectStep > width ){
+                      sidx = 1;
+                  } 
+                   
+                  g2.drawImage(image,(sidx-1)*spectStep,0, sidx*spectStep,height,0,0,colWidth,colHeight,  null);
                }
               
-                   
                //spectPanel.setImage(image);
                spectPanel.repaint();
+              /* if(!slideTimer.isRunning()){
+                  slideTimer.start();
+               }*/
             }
         });
     }
@@ -213,23 +232,22 @@ public class SpectFrame {
         }
 
         @Override
-        public void paint(Graphics g) {
-            super.paint(g);
+        public void paintComponent(Graphics g) {
+            //super.paint(g);
             Dimension thisSize = this.getSize();
             Graphics2D g2d = (Graphics2D) g;
             
             if (spectbf != null) {
                //synchronized(bfLock){
-               g2d.drawImage(spectbf,0,0,thisSize.width,thisSize.height,
-                                     0,spectbf.getHeight(),spectbf.getWidth(),0, null);
-              /* int winIdx = (int) (thisSize.width * spectIdx/((float)spectbf.getWidth()));
-               g2d.drawImage(spectbf,thisSize.width-winIdx,0,winIdx,thisSize.height,
-                                     spectIdx,0, spectbf.getWidth(),spectbf.getHeight(), null);
-               g2d.drawImage(spectbf,winIdx,0,thisSize.width-winIdx,thisSize.height,
-                                     0,0, spectIdx,spectbf.getHeight(), null);
-                                     * 
-                                     */
-              //}
+               //synchronized(graphicsLock)
+               { 
+                  int winIdx = (int) (thisSize.width * sidx*spectStep/((float)spectbf.getWidth()));
+                  g2d.drawImage(spectbf,thisSize.width-winIdx,0,thisSize.width,thisSize.height,
+                                        0,spectbf.getHeight(), sidx*spectStep,0, null);
+                  g2d.drawImage(spectbf,0,0,thisSize.width-winIdx,thisSize.height,
+                                        sidx*spectStep,spectbf.getHeight(),spectbf.getWidth() ,0, null);
+               }
+
             }
         }
         

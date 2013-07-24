@@ -54,3 +54,12 @@ if flags.do_freq
   freq=aud;
 end;
 
+if flags.do_log10
+   freq = 10^(aud);
+end
+
+if flags.do_semitone
+   freq = 10^(aud);
+end
+
+

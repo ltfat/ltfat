@@ -1,7 +1,7 @@
 function [fs,classid] = block(source,varargin)
 %BLOCK  Initialize block stream
 %   Usage: block(source);
-%          block(source,'L',L,'fs',fs,'nbuf',nbuf,'fmt',fmt);
+%          block(source,'L',L,'fs',fs,'nbuf',nbuf,'loadind',loadind);
 %
 %   Input parameters:
 %      source    : Block stream input.
@@ -31,7 +31,7 @@ function [fs,classid] = block(source,varargin)
 %
 %   Optional key-value pairs:
 %
-%      `'L',L`         : Block length- Default is 1024.
+%      `'L',L`         : Block length - default is 1024.
 %
 %      `'devid',dev`   : Whenever more input/output devices are present in
 %                        your system, `'devid'` can be used to specify one.
@@ -51,31 +51,37 @@ function [fs,classid] = block(source,varargin)
 %      `'outfile','file.wav'`: Processed sound data is stored in a new wav
 %                              file.
 %
-%      `'nbuf',nbuf`    : Max number of buffers to be preloaded.
+%      `'nbuf',nbuf`    : Max number of buffers to be preloaded. Helps
+%                         avoiding glitches, but increases delay.
 %
-%      `'loadind',loadind`   : How to show the load indicator. loadind can 
-%                              be the following:
+%      `'loadind',loadind`  : How to show the load indicator. `loadind` can 
+%                             be the following:
 %              
-%                              'nobar' - Suppresses any load display.
+%                             'nobar' - Suppresses any load display.
 %          
-%                              'bar' - Displays ascii load bar in command
-%                                      line (Does not work in Octave).
+%                             'bar' - Displays ascii load bar in command
+%                                     line (Does not work in Octave).
 %
-%                               obj - Java object which have a public
-%                                     method updateBar(double).                           
+%                              obj - Java object which have a public
+%                                    method updateBar(double).  
 %
 %   Optional flag groups:
 %
-%      'loop'          : Plays the input in a loop. 
+%      'noloop', 'loop'     : Plays the input in a loop. 
+%
+%      'single', 'double'   : Data type to be used.
+%
+% 
 
 
 
 definput.keyvals.devid=[];
 definput.keyvals.nbuf=[];
-definput.keyvals.fs=44100;
+definput.keyvals.fs=[];
 definput.keyvals.playch=[];
 definput.keyvals.recch=[];
 definput.keyvals.outfile=[];
+definput.keyvals.sliwin=[];
 definput.keyvals.L=1024;
 definput.keyvals.loadind= 'nobar';
 definput.flags.fmt={'single','double'};
@@ -83,7 +89,7 @@ definput.flags.loop={'noloop','loop'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 
-if isoctave && ~strcmp(k.loadin,'nobar')
+if isoctave && ~strcmp(kv.loadind,'nobar')
    error('%s: Currently, it is possible to use  only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
 end
 
@@ -102,7 +108,7 @@ recChannels = 0;
 play = 0;
 record = 0;
 % Here we can define priority list of the host APIs.
-% If none of the prefered API devices is presnent, the first one is taken.
+% If none of the prefered API devices is present, the first one is taken.
 hostAPIpriorityList = {};
 % Force portaudio to use buffer of the following size
 pa_bufLen = -1;
@@ -112,6 +118,9 @@ if ~isempty(kv.outfile)
 end
 
 if ischar(source)
+   if isempty(kv.fs)
+      kv.fs = 44100;
+   end
    if(strcmpi(source,'rec'))
       recChannels = 1;
       record = 1;
@@ -127,15 +136,20 @@ if ischar(source)
          kv.nbuf = 1;
       end
    elseif strcmpi(source,'dialog')
-      error('%s: TO DO: Open dialog for a sound file.',upper(mfilename));
+      [fileName,pathName] = uigetfile('*.wav','Select the *.wav file'); 
+      if fileName == 0
+         error('%s: No file chosen.',upper(mfilename));
+      end
+      source = fullfile(pathName,fileName);
+      [fs,classid] = block(source,varargin{:});
+      return;
    elseif(numel(source)>4)
-      if(strcmp(source(end-3:end),'.wav'))
+      if(strcmpi(source(end-3:end),'.wav'))
          if exist(source)~=2
             error('%s: File "%s" does not exist.',upper(mfilename),source);
          end
          [Ls, kv.fs] = wavread(source, 'size');
          playChannels = 2;
-         Ls = Ls(1);
          play = 1;
       else
          error('%s: "%s" is not valid wav filename.',upper(mfilename),source);
@@ -147,10 +161,16 @@ if ischar(source)
       error('%s: Unrecognized command "%s".',upper(mfilename),source);
    end
 elseif(isnumeric(source))
-   error('%s: TO DO: Accept samples as a vector or matrix.',upper(mfilename));
-   Ls = size(source,1);
+   %error('%s: TO DO: Accept samples as a vector or matrix.',upper(mfilename));
+    if isempty(kv.fs)
+      kv.fs = 44100;
+      warning('%s: Sampling rate not specified. Using default value %i Hz.',upper(mfilename),kv.fs); 
+   end
    playChannels = 2;
    play = 1;
+   if isempty(kv.nbuf)
+      kv.nbuf = 3;
+   end
 else
    error('%s: Unrecognized input.',upper(mfilename));
 end
@@ -260,7 +280,7 @@ elseif play && ~record
          error('%s: There is no play device with id = %i.',upper(mfilename),kv.devid);
       end
    else
-      % Use asio device if present
+      % Use prefered device if present
       if prioriryPlayID~=-1
          kv.devid = prioriryPlayID;
       else
@@ -358,8 +378,18 @@ block_interface('setLoop',flags.do_loop);
 % Set block length
 block_interface('setBufLen',kv.L);
 
+% Handle sources with known input length
+if strcmpi(source(end-3:end),'.wav') 
+   Ls = wavread(source, 'size');
+   block_interface('setLs',Ls);
+   block_interface('setSource',@(pos,endSample) cast(wavread(source,[pos, endSample]),block_interface('getClassId')) );
+elseif isnumeric(source)
+   block_interface('setLs',size(source));
+   block_interface('setSource',@(pos,endSample) cast(source(pos:endSample,:),block_interface('getClassId')) );
+end
+
 % Another slight delay to allow printing all messages prior to the playback
-% start. 
+% starts. 
 pause(0.1); 
 
    
