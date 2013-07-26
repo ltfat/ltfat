@@ -17,7 +17,7 @@ if ~isscalar(Ncoef)
   error('%s: Ncoef must be a scalar.',upper(mfilename));
 end;
 
-L=F.lengthcoef(Ncoef);
+L=round(F.lengthcoef(Ncoef));
     
 % Verify the computed length
 if ~(L==framelength(F,L))

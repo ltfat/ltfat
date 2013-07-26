@@ -60,7 +60,7 @@ else
     
   % Generic code handles all frames where there are no extra coefficients
   % in the representation
-  Ncoef=framered(F)*L;
+  Ncoef=round(framered(F)*L);
   coef=eye(Ncoef);
   G = frsyn(F,coef);  
 end;
