@@ -15,7 +15,7 @@ OCTAVELINKFLAGS=-L$(OCTAVEROOT)\lib $(OCTAVELIBS)
 #CC = i686-pc-mingw32-gcc 
 CC=gcc
 
-CFLAGS=-O3 -s -Wall -std=c99 -m32 -I../thirdparty -I./
+CFLAGS=-O3 -s -Wall -std=c99 -m32 -I../src/thirdparty -I./
 DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED
 
 include filedefs.mk
