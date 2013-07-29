@@ -11,8 +11,4 @@
 
 *.lib
 
-*.workspace
-*.layout
-*.cbp
-*.depend
-*.cscope_file_list
+*.class

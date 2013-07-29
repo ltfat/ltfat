@@ -17,6 +17,8 @@ if ~isscalar(Ncoef)
   error('%s: Ncoef must be a scalar.',upper(mfilename));
 end;
 
+L = F.lengthcoef(Ncoef);
+assert(abs(L-round(L))<1e-3,'%s: There is a bug. L=%d should be an integer.',upper(mfilename),L);
 L=round(F.lengthcoef(Ncoef));
     
 % Verify the computed length

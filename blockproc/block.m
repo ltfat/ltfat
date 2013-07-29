@@ -90,7 +90,7 @@ definput.flags.loop={'noloop','loop'};
 
 
 if isoctave && ~strcmp(kv.loadind,'nobar')
-   error('%s: Currently, it is possible to use  only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
+   error('%s: Currently, it is possible to use only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
 end
 
 if ischar(kv.loadind)

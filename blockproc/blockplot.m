@@ -10,9 +10,11 @@ function blockplot(p,F,c)
 %   `blockplot(p,F,c)` appends the block coefficients `c` to the running 
 %   coefficient plot in `p`.
 
+if size(c,2)>1
+   error('%s: Only one channel input is supported.',upper(mfilename));
+end
 
-
-ctf = framecoef2tf(F,c);
+ctf = framecoef2tf(F,c(:,1));
 
 javaMethod('append',p,ctf);
 

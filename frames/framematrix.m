@@ -60,7 +60,10 @@ else
     
   % Generic code handles all frames where there are no extra coefficients
   % in the representation
-  Ncoef=round(framered(F)*L);
+  Ncoef = framered(F)*L;
+  
+  assert(abs(Ncoef-round(Ncoef))<1e-3,'%s: There is a bug. Ncoef=%d should be an integer.',upper(mfilename),Ncoef);
+  Ncoef=round(Ncoef);
   coef=eye(Ncoef);
   G = frsyn(F,coef);  
 end;

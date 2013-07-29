@@ -53,11 +53,11 @@ bufLen = 1024;
 fs = block(source,varargin{:});
 
 % Choose a frame and contruct the dual
-%F = frameaccel(frame('dgtreal','hann',32,100),2*bufLen);
-%Fdual = frameaccel(framedual(F),2*bufLen);
+F = frameaccel(frame('dgtreal','hann',32,100),2*bufLen);
+Fdual = frameaccel(framedual(F),2*bufLen);
 
-F = frame('fwt','ana:spline4:4',7);
-Fdual = frame('fwt','syn:spline4:4',7);
+%F = frame('fwt','ana:spline4:4',7);
+%Fdual = frame('fwt','syn:spline4:4',7);
 
 
 flag = 1;

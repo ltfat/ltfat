@@ -210,6 +210,9 @@ if(flags.do_bottomup)
    % Nodes to be removed
    removeNodes = [];
 
+   % Energy normalization
+   % totalE = sum(cellfun(@(cEl) sum(cEl.^2),c));
+   % c = cellfun(@(cEl) cEl.^2/totalE,c,'UniformOutput',0);
    
    if do_additive
        % pre-calculate entropy of all subbands

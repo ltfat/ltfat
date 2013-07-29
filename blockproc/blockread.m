@@ -87,12 +87,11 @@ block_interface('setPos',pos+L-1); % convert back the Matlab indexing
 %%%
 %% REC, source is a mic/aux, no loopback
 %
-
 if strcmp(source,'rec')
    recChanList = block_interface('getRecChanList');
    
    if do_updateBAR || do_updateGUI
-      readTime = toc;
+      readTime = toc(t2);
    end
    % Issue reading buffers up to max
    while block_interface('getEnqBufCount') <= block_interface('getBufCount')
@@ -131,7 +130,7 @@ elseif strcmp(source,'playrec')
    block_interface('pushPage',playrec('playrec', fhat, chanList, -1, recChanList));
    
    if do_updateBAR || do_updateGUI
-      readTime = toc;
+      readTime = toc(t2);
    end
    pageList = block_interface('getPageList');
    % Playback is block_interface('getBufCount') behind the input
@@ -151,7 +150,7 @@ elseif strcmp(source,'playrec')
 %%%   
 %% PLAY: Source is a *.wav file
 %
-elseif strcmp(source(end-3:end),'.wav')
+elseif isa(source,'function_handle')
    % Get play channel list (could be chached) 
    chanList = block_interface('getPlayChanList');
    % Get already processed (from blockplay)
@@ -168,13 +167,13 @@ elseif strcmp(source(end-3:end),'.wav')
    end
 
    % Number of wav samples (is chached, since it is disk read operation)
-   if pageNo<=1
-      Lwav = wavread(source,'size'); 
-   end
+   Lwav = block_interface('getLs');
+
 
    % Determine valid samples
    endSample = min(pos + L - 1, Lwav(1));
-   f = cast(wavread(source,[pos, endSample]),block_interface('getClassId'));
+   %f = cast(wavread(source,[pos, endSample]),block_interface('getClassId'));
+   f = source(pos,endSample);
    % Pad with zeros if some samples are missing
    if (pos + L - 1) >= Lwav(1)
       ftmp = zeros(L,Lwav(2),classid);

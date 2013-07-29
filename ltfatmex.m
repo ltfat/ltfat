@@ -48,7 +48,7 @@ end;
 bp=mfilename('fullpath');
 bp=bp(1:end-length(mfilename));
 
-definput.flags.target={'auto','lib','mex','gpc','playrec'};
+definput.flags.target={'auto','lib','mex','gpc','playrec','java'};
 definput.flags.command={'compile','clean','test'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -59,6 +59,7 @@ do_lib  = flags.do_lib || flags.do_auto;
 do_mex  = flags.do_mex || flags.do_auto;
 do_gpc  = flags.do_gpc || (flags.do_auto && ~isoctave);
 do_playrec  = flags.do_playrec && (~isoctave);
+do_java  = flags.do_java;
 
 if isoctave
   extname='oct';
@@ -135,6 +136,14 @@ if flags.do_clean
     cd([bp,'thirdparty',filesep,'Playrec']);
     clear mex; 
     [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
+  end;
+  
+  if do_java
+    disp('========= Cleaning JAVA ================');
+    %deletefiles([bp,'thirdparty',filesep,'PolygonClip'],['PolygonClip.',mexext]);
+    cd([bp,'blockproc',filesep,'java']);
+    %clear java; 
+    [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
   end;
   
   if ~isoctave
@@ -262,6 +271,19 @@ if flags.do_compile
       disp('Done.');
     else
       error('Failed to build PLAYREC:\n %s',result);
+    end
+  end;
+  
+  if do_java
+    disp('========= Compiling JAVA classes ===================');
+    % Compile the JAVA classes
+    cd([bp,'blockproc',filesep,'java']);
+    clear mex; 
+    [status,result]=system([make_exe, ' -f ',makefilename]);
+    if(~status)
+      disp('Done.');
+    else
+      error('Failed to build JAVA classes:\n %s',result);
     end
   end;
 end;

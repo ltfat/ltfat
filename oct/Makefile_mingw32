@@ -8,6 +8,7 @@ endif
 
 
 OCTSCC   = \
+    comp_gga \
     comp_filterbank_td \
 	comp_ifilterbank_td \
 	comp_atrousfilterbank_td \
@@ -50,7 +51,7 @@ ADDITIONALIBS = -L../lib -lltfat -lltfatf  -L$(OCTAVELIB) -lblas -lfftw3 -lfftw3
 all:	$(OCTS)
 
 %.oct: %.cc
-	mkoctfile --strip -v -Wall "-Wl,-rpath,." -I../thirdparty -I. -I../src $(ADDITIONALIBS)  $<
+	mkoctfile --strip -v -Wall "-Wl,-rpath,." -I../src/thirdparty -I. -I../src $(ADDITIONALIBS)  $<
 	del *.o
 
 clean:
