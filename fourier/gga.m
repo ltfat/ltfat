@@ -9,20 +9,20 @@ function c = gga(f,indvec,dim)
 %   Output parameters:
 %         c      : Coefficient vector.
 %
-% `c=gga(f,indvec)` computes the discrete-time fourier transform DTFT of
-% *f* at 'indices' contained in `indvec`, using the generalized second-order
-% Goertzel algorithm. Thanks to the generalization, the 'indices' can be 
-% non-integer valued in the range 0 to *Ls-1*, where *Ls* is the length of
-% the first non-singleton dimension of *f*. Index 0 corresponds to the
-% DC component and integers in `indvec` result in the classical DFT
-% coefficients. If `indvec` is empty or ommited, `indvec` is assumed to be
-% `0:Ls-1`.
+%   `c=gga(f,indvec)` computes the discrete-time fourier transform DTFT of
+%   *f* at 'indices' contained in `indvec`, using the generalized second-order
+%   Goertzel algorithm. Thanks to the generalization, the 'indices' can be 
+%   non-integer valued in the range 0 to *Ls-1*, where *Ls* is the length of
+%   the first non-singleton dimension of *f*. Index 0 corresponds to the
+%   DC component and integers in `indvec` result in the classical DFT
+%   coefficients. If `indvec` is empty or ommited, `indvec` is assumed to be
+%   `0:Ls-1`.
 %
-% `c=gga(f,indvec,dim)` computes the DTFT samples along the dimension `dim`.
+%   `c=gga(f,indvec,dim)` computes the DTFT samples along the dimension `dim`.
 %
-% Remark:
-% Besides the generalization the algorithm is also shortened by one
-% iteration compared to the conventional Goertzel.
+%   **Remark:**
+%   Besides the generalization the algorithm is also shortened by one
+%   iteration compared to the conventional Goertzel.
 %
 %   Examples:
 %   ---------
@@ -62,7 +62,7 @@ function c = gga(f,indvec,dim)
 %     set(gca,'XLim',limX);
 %     set(gca,'YLim',[-pi pi]);
 %
-% References: syra2012goertzel
+%   References: syra2012goertzel
        
 % The original copyright goes to
 % 2013 Pavel Rajmic, Brno University of Technology, Czech Rep.

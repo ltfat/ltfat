@@ -25,7 +25,7 @@ endif
 MEXTGT=playrec.$(EXT)
 MEXSRC=mex_dll_core.c pa_dll_playrec.c
 LIBS= -L. -L"$(MATLABROOT)\bin\$(ARCH)" -lmex -lmx -l$(PORTAUDIO)
-INCLUDES= -I"$(MATLABROOT)\extern\include" -I. -I..
+INCLUDES= -I"$(MATLABROOT)\extern\include" -I. -I../../src/thirdparty
 
 CC=gcc
 

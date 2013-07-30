@@ -118,6 +118,7 @@ info.gl=zeros(info.M,1);
 info.ispainless=1;
 info.isfractional=0;
 info.isuniform=0;
+info.isfir=1;
 
 [~,info]=comp_filterbank_a(a,info.M,info);
     
@@ -133,6 +134,13 @@ for m=1:info.M
         info.ispainless=0;
         info.gl(m)=numel(g{m}.h);
     end;
+    
+    % info.isfir==1 only if all filters are FIR
+    if isfield(info_win,'is_fir')
+       if ~info_win.is_fir && info.isfir
+          info.isfir = 0;
+       end
+    end
 end;
 
 info.isfac=info.isuniform || info.ispainless;
