@@ -6,7 +6,7 @@ FLAGS=-source 1.6 -target 1.6
 
 default:
 	$(JC) $(FLAGS) net/sourceforge/ltfat/*.java
-#	jar cf blockproc.jar net/sourceforge/ltfat/*.class
+	jar cf blockproc.jar net/sourceforge/ltfat/*.class
 
 clean:
 	rm -f net\sourceforge\ltfat\*.class
