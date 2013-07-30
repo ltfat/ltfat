@@ -1,9 +1,6 @@
 #!/bin/bash
 
 cd {INST}
-rm -Rf reference
-rm -Rf testing
-rm -Rf timing
 rm -Rf mex
 rm -Rf mulaclab
 rm -Rf thirdparty/GPC
@@ -28,5 +25,3 @@ cd src/
 mv Makefile_octpkg Makefile
 ./bootstrap
 cd ..
-
-

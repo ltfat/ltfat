@@ -1,3 +1,6 @@
+function test_failed=test_erbfilters
+%TEST_ERBFILTERS  Test the erbfilters filter generator
+
 warpname={'warped','symmetric'};
 
 test_failed=0;

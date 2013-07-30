@@ -8,7 +8,9 @@ default:
 	$(JC) $(FLAGS) net/sourceforge/ltfat/*.java
 	jar cf blockproc.jar net/sourceforge/ltfat/*.class
 
-clean:
-	rm -f net\sourceforge\ltfat\*.class
+classclean:
+	find -name "*.class" | xargs rm 
+
+clean: classclean
 	rm -f *.jar
 
