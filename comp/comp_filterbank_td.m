@@ -39,6 +39,7 @@ else
    Lext = (L+filtLen-1);
    N = ceil((Lext-skip)./a); 
 end
+N = N(:);
 Lreq = a(:).*(N-1) + 1;
 
 % Output memory allocation
