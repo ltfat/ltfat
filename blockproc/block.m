@@ -379,7 +379,7 @@ block_interface('setLoop',flags.do_loop);
 block_interface('setBufLen',kv.L);
 
 % Handle sources with known input length
-if strcmpi(source(end-3:end),'.wav') 
+if ischar(source) && numel(source)>4 && strcmpi(source(end-3:end),'.wav') 
    Ls = wavread(source, 'size');
    block_interface('setLs',Ls);
    block_interface('setSource',@(pos,endSample) cast(wavread(source,[pos, endSample]),block_interface('getClassId')) );

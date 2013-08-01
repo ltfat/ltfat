@@ -70,13 +70,28 @@ public class ContFrame {
        }
        return out;
     }
+     
+     public double[] getParams() {
+       int outLen = paramMap.size();
+       if(outLen==0){
+          throw new NullPointerException("Parameter map is empty");
+       }
+       Iterator it = paramMap.entrySet().iterator();
+       double[] out = new double[outLen]; 
+       int ii=0;
+       while (it.hasNext()) {
+          Map.Entry act = (Map.Entry) it.next(); 
+          out[ii++] = (Double) act.getValue();
+       }
+       return out;
+     } 
 
     public void addControlElements(final List params) {
         // Ensure everything is done in the EDT
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                paramMap = new HashMap<String,Double>();
+                paramMap = new LinkedHashMap<String,Double>();
                 sliderParamMap = new HashMap<JSlider,String>();
                 sliderBoundsMap = new HashMap<JSlider,SliderBounds>();
                 initFrameComponents(params);

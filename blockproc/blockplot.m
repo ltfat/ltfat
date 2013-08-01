@@ -16,6 +16,10 @@ end
 
 ctf = framecoef2tf(F,c(:,1));
 
+if strcmp(F.blokalg,'sliced')
+   % DO the coefficient overlapping or cropping
+end
+
 javaMethod('append',p,ctf);
 
 

@@ -16,15 +16,22 @@ if ~isempty(which('javaaddpath'))
       % and MEX-functions from memory.
 
       jarFile = 'blockproc.jar';
-      jarPath = [basepath,filesep,'blockproc',filesep,'java',filesep,jarFile];
+      javaDirPath = [basepath,filesep,'blockproc',filesep,'java'];
+      jarPath = [javaDirPath,filesep,jarFile];
+      
       if exist(jarPath,'file')
+         if any(cellfun(@(cpEl)strcmp(cpEl,javaDirPath),javaclasspath))
+            javarmpath(javaDirPath);
+         end
          % Adding a jar file. Once added to the classpath, it cannot be
          % deleted. Removing it from the classpath issues again the 'clear
-         % java' command.
+         % java' command, but the jar canot be romeved while Matlab is
+         % running.
+         % http://www.mathworks.com/support/solutions/en/data/1-37JYLQ/?product=ML&solution=1-37JYLQ
          javaaddpath([basepath,filesep,'blockproc',filesep,'java',filesep,jarFile]);
       else
          % Adding directory with *.class files. Does not block.
-         javaaddpath([basepath,filesep,'blockproc',filesep,'java',filesep]);
+         javaaddpath([basepath,filesep,'blockproc',filesep,'java']);
       end
    catch 
        % Use lasterr for Octave compatibility

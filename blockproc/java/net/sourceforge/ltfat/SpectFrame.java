@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -19,6 +21,8 @@ import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JFrame;
@@ -48,12 +52,20 @@ public class SpectFrame {
     private byte[] colormap = null;
     IndexColorModel cm = null;
     private int sidx = 0;
-    private int spectStep = width/200;
+    private int spectStep = width/400;
+
+ 
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     
     private double climMax = 20;
     private double climMin = -70;
     private final Object graphicsLock = new Object();
-    private final Timer slideTimer = new Timer(20, new ActionListener() {
+    private final Timer slideTimer = new Timer(10, new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -171,21 +183,24 @@ public class SpectFrame {
            
              
                Graphics2D g2 = (Graphics2D) spectPanel.getGraphics2D();
-               
-               //synchronized(graphicsLock)
+               g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+               //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+               g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+               synchronized(graphicsLock)
                {
                   if( (++sidx)*spectStep > width ){
                       sidx = 1;
                   } 
                    
-                  g2.drawImage(image,(sidx-1)*spectStep,0, sidx*spectStep,height,0,0,colWidth,colHeight,  null);
+                  g2.drawImage(image,(sidx-1)*spectStep,height, sidx*spectStep,0,0,0,colWidth,colHeight,  null);
                }
               
                //spectPanel.setImage(image);
                spectPanel.repaint();
               /* if(!slideTimer.isRunning()){
                   slideTimer.start();
-               }*/
+               }
+               */
             }
         });
     }
@@ -236,16 +251,19 @@ public class SpectFrame {
             //super.paint(g);
             Dimension thisSize = this.getSize();
             Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
             
             if (spectbf != null) {
                //synchronized(bfLock){
-               //synchronized(graphicsLock)
+               synchronized(graphicsLock)
                { 
                   int winIdx = (int) (thisSize.width * sidx*spectStep/((float)spectbf.getWidth()));
                   g2d.drawImage(spectbf,thisSize.width-winIdx,0,thisSize.width,thisSize.height,
-                                        0,spectbf.getHeight(), sidx*spectStep,0, null);
+                                        0,0, sidx*spectStep,spectbf.getHeight(), null);
                   g2d.drawImage(spectbf,0,0,thisSize.width-winIdx,thisSize.height,
-                                        sidx*spectStep,spectbf.getHeight(),spectbf.getWidth() ,0, null);
+                                        sidx*spectStep,0,spectbf.getWidth() ,spectbf.getHeight(), null);
                }
 
             }

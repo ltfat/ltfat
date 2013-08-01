@@ -46,3 +46,4 @@ end
 
 % Set the colormap.
 javaMethod('setColormap',p,kv.cm{1});
+

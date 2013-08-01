@@ -58,15 +58,19 @@ end;
 % From this point and on, we are sure that F.g exists
 
 if ~isempty(F.g)
-    
+    info = [];
     switch(F.type)
       case 'gen'
         F.isfac=~issparse(F.g);  
       case {'dgt','dgtreal'}
-        F = frame(F.type,gabwin(F.g,F.a,F.M,L,F.kv.lt),F.origargs{2:end});
+        [g, info] =  gabwin(F.g,F.a,F.M,L,F.kv.lt);
+        F = frame(F.type,g,F.origargs{2:end});
+        F.g_info = info;
         F.isfac=1;
       case {'dwilt','wmdct'}
-        F = frame(F.type,wilwin(F.g,F.M,L,upper(mfilename)),F.origargs{2:end});
+        [g, info] = wilwin(F.g,F.M,L,upper(mfilename));
+        F = frame(F.type,g,F.origargs{2:end});
+        F.g_info = info;
         F.isfac=1;
       case {'filterbank','ufilterbank'}
         [F.g,F.g_info]  = filterbankwin(F.g,F.a,L);
@@ -78,9 +82,17 @@ if ~isempty(F.g)
         [F.g,F.g_info]  = nsgabwin(F.g,F.a,F.M);
         F.isfac=F.g_info.isfac;
       case 'fwt'
+        F.winLen = (F.g.a(1)^F.J-1)/(F.g.a(1)-1)*(numel(F.g.g{1}.h)-1)+1; 
         F.isfac=1;
     end;
   
+   if isfield(F,'g_info') && isfield(F.g_info,'isfir') && F.g_info.isfir
+      if isfield(F.g_info,'longestfilter')
+         F.winLen = F.g_info.longestfilter;
+      else
+         F.winLen = max(F.g_info.gl);
+      end
+   end
 end;
 
 F.L=L;

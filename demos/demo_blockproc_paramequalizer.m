@@ -1,7 +1,5 @@
-function demo_equalizer(source,varargin)
+function demo_blockproc_paramequalizer(source,varargin)
 %DEMO_EQUALIZER Real-time equalizer demonstration
-%   Usage: demo_equalizer('gspi.wav')
-%          demo_equalizer('playrec')
 %
 %   This demonstration shows an example of a octave parametric
 %   equalizer. See chapter 5.2 in the book by Zolzer.
@@ -10,10 +8,23 @@ function demo_equalizer(source,varargin)
 
 if nargin<1
    fprintf(['%s: To run the demo, use one of the following:\n',...
-          'demo_equalizer(''gspi.wav'') to play gspi.wav (any wav file will do).\n',...
-          'demo_equalizer(''playrec'') to record from a mic and play processed simultaneously.\n']...
+          'demo_blockproc_paramequalizer(''gspi.wav'') to play gspi.wav (any wav file will do).\n',...
+          'demo_blockproc_paramequalizer(''dialog'') to choose the wav file via file chooser dialog GUI.\n',...
+          'demo_blockproc_paramequalizer(f,''fs'',fs) to play from a column vector f using sampling frequency fs.\n',...
+          'demo_blockproc_paramequalizer(''playrec'') to record from a mic and play simultaneously.\n',...
+          'Avalable input and output devices can be listed by |blockdevices|.\n',...
+          'Particular device can be chosen by passing additional key-value pair ''devid'',devid.\n',...
+          'Output channels of the device cen be selected by additional key-value pair ''playch'',[ch1,ch2].\n',...
+          'Input channels of the device cen be selected by additional key-value pair ''recch'',[ch1].\n',...
+          ]...
           ,upper(mfilename));
     return;
+end
+
+try
+   playrec('isInitialised');
+catch
+   error('%s: playrec or portaudio are not properly compiled. ',mfilename);
 end
 
 
@@ -58,12 +69,12 @@ feq = [0.0060, 0.0156, 0.0313, 0.0625, 0.1250, 0.2600]*fs;
 pause(0.1);
 
 % Build the filters
-[filts(1).Ha, filts(1).Hb] = parlsf(feq(1),p.getParam('band1'),fs);
-[filts(2).Ha, filts(2).Hb] = parpeak(feq(2),Q,p.getParam('band2'),fs);
-[filts(3).Ha, filts(3).Hb] = parpeak(feq(3),Q,p.getParam('band3'),fs);
-[filts(4).Ha, filts(4).Hb] = parpeak(feq(4),Q,p.getParam('band4'),fs);
-[filts(5).Ha, filts(5).Hb] = parpeak(feq(5),Q,p.getParam('band5'),fs);
-[filts(6).Ha, filts(6).Hb] = parhsf(feq(6),p.getParam('band6'),fs);
+[filts(1).Ha, filts(1).Hb] = parlsf(feq(1),blockpanelget(p,'band1'),fs);
+[filts(2).Ha, filts(2).Hb] = parpeak(feq(2),Q,blockpanelget(p,'band2'),fs);
+[filts(3).Ha, filts(3).Hb] = parpeak(feq(3),Q,blockpanelget(p,'band3'),fs);
+[filts(4).Ha, filts(4).Hb] = parpeak(feq(4),Q,blockpanelget(p,'band4'),fs);
+[filts(5).Ha, filts(5).Hb] = parpeak(feq(5),Q,blockpanelget(p,'band5'),fs);
+[filts(6).Ha, filts(6).Hb] = parhsf(feq(6),blockpanelget(p,'band6'),fs);
 
 flag = 1;
 %Loop until end of the stream (flag) and until panel is opened
@@ -93,7 +104,7 @@ while flag && p.flag
   [f,flag] = blockread(bufLen);
  
   % Do the filtering. Output of one filter is passed to the input of the
-  % following filter. Internal conditions are used. 
+  % following filter. Internal conditions are used and stored. 
   for ii=1:numel(filts)
     [f,filts(ii).Z] = filter(filts(ii).Ha,filts(ii).Hb,f,filts(ii).Z);
   end

@@ -22,21 +22,30 @@ function [par,varargout] = blockpanelget(p,varargin)
 
 nout = nargout();
 
-if nargin<2
+if nargin<1
    error('%s: Too few input arguments.',upper(mfilename));
 end
 
-if nout~=1 && nout ~= numel(varargin)
-   error('%s: Number of inputs does not match with number of outputs.',upper(mfilename));
-end
+assert(nout==1&&nargin==1,...
+   ['%s: Ambiguous output. When no parameter is explicitly defined,',...
+    ' the function cannot return more tha one output parameter.'],mfilename);
 
 
-res = javaMethod('getParams',p,varargin);
+if nargin>1 
+   if nout~=1 && nout ~= numel(varargin)
+      error('%s: Number of inputs does not match with number of outputs.',upper(mfilename));
+   end
 
-if nout == 1
-   par = res;
+   res = javaMethod('getParams',p,varargin);
+
+   if nout == 1
+      par = res;
+   else
+      par = res(1);
+      varargout = num2cell(res(2:end));
+   end
 else
-   par = res(1);
-   varargout = mat2cell(res(2:end),nout-1,1);
+   par = javaMethod('getParams',p);
 end
+   
 
