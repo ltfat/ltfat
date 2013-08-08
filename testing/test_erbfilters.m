@@ -96,7 +96,7 @@ for realcomplexidx=1:2
                     rt=2*real(rt);
                 end;
                 
-                res=norm(f-r);
+                res=norm(f-rt);
                 
                 [test_failed,fail]=ltfatdiditfail(res,test_failed);
                 s=sprintf(['ERBFILTER TIGHT %s %s %s %s L:%3i %0.5g %s'],realcomplex,warping,fracname,uniform,L,res,fail);    

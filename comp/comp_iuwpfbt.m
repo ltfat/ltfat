@@ -25,13 +25,13 @@ function f=comp_iuwpfbt(c,wtNodes,nodesUps,pOutIdxs,chOutIdxs)
     % Normalize each filter
     gMat = bsxfun(@rdivide,gMat,sqrt(a(:)'));
     % Node filters initial skips
-    gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.g);
+    gOffset = cellfun(@(gEl) gEl.offset,wtNodes{jj}.g);
     
     % Zero index position of the upsampled filters.
-    skip = nodesUps(jj).*(gDel) - nodesUps(jj);
+    offset = nodesUps(jj).*(gOffset);% + nodesUps(jj);
 
     % Run filterbank
-    ctmp = comp_iatrousfilterbank_td(c(:,chOutIdxs{jj},:),gMat,nodesUps(jj),skip);
+    ctmp = comp_iatrousfilterbank_td(c(:,chOutIdxs{jj},:),gMat,nodesUps(jj),offset);
     
     if(pOutIdxs(jj))
        % Add to the existing subband

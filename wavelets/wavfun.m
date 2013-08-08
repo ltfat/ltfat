@@ -96,12 +96,12 @@ end
 if(nargout>2)
     % Calculate xvals
     xvals = zeros(length(sfunc),filtNo);
-    zeroPos = findFuncZeroPos(w.g{1}.d,a,N);
+    zeroPos = findFuncZeroPos(-w.g{1}.offset,a,N);
     sxvals = -zeroPos + (1:length(sfunc));
     xvals(:,end)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
 
     for ii=1:filtNo-1 
-       zeroPos = findFuncZeroPos(w.g{ii+1}.d,a,N);
+       zeroPos = findFuncZeroPos(-w.g{ii+1}.offset,a,N);
        sxvals = -zeroPos + (1:length(sfunc));
        xvals(:,ii)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
     end

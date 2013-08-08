@@ -42,7 +42,7 @@ function [w] = fwtinit(wdef)
 %
 %   6) Two element cell array. First element is the string `'strict'` and the
 %      second one is in format 1), 2), 4) or 5). This ensures the wavelet
-%      filters not forming a tight frame, has to be explicitly defined.
+%      filters not forming a tight frame has to be explicitly defined.
 %
 %   Using synthesis filters for analysis and vice versa makes a difference
 %   in case of birtoghonal filters (e.g. `'spline4:4'`) and filters which 
@@ -72,17 +72,13 @@ function [w] = fwtinit(wdef)
 %     w.origArgs 
 %          Original parameters in format 1).
 %
+%   `w.h`, `w.g` are cell-arrays of structures. Each structure represents 
+%   one filter in the filterbank and it has the following fields:
 %
-%   `w.h`, `w.g` are cell-arrays of structures defined in `wfiltstruct`. Each
-%   structure represents one filter in the filterbank and it has the following
-%   fields:
+%     .offset  Filter delay in samples.
 %
-%     .type  Type of the filter. `'FIR'` is used.
+%     .h       Actual filter impulse response values.
 %
-%     .d     Filter delay in samples.
-%
-%     .h     Actual filter impulse response values.
-% 
 %   **Remark:** Function names with the `wfilt_` prefix cannot contain numbers
 %   and cannot start with 'ana' or 'syn'! 
 %
@@ -99,7 +95,7 @@ function [w] = fwtinit(wdef)
 %   symmetry/linear phase
 %
 %   support of psi
-%   smoothnes and regularity of psi
+%   smoothnes/regularity of psi
 %   
 %
 %   See also: fwt, ifwt, wfilt_db
@@ -281,7 +277,7 @@ if(nargin(tmpFile)~=numel(wname)-1)
    error('%s: Incorrect number of parameters to be passed to the %s func.',upper(mfilename),tmpFile);
 end
 
-
+info = [];
 if(wfiltNargout==3)
    [tmph, tmpg, w.a] = feval(tmpFile,wname{2:end});
 elseif(wfiltNargout==4) 
@@ -290,7 +286,8 @@ else
    error('%s: Function %s does not return 3 or 4 arguments.',upper(mfilename),upper(tmpFile));
 end
 
-if isfield(info,'istight')
+
+if ~isempty(info)&&isfield(info,'istight')
    is_tight = info.istight;
 end
 
@@ -336,9 +333,9 @@ function filts = formatFilters(cellf,d)
    end
 
    for ff=1:noFilts
-      filts{ff} = wfiltstruct('FIR');
-      filts{ff}.h = cellf{ff};
-      filts{ff}.d = d(ff);
+      %filts{ff} = wfiltstruct('FIR');
+      filts{ff}.h = cellf{ff}(:);
+      filts{ff}.offset = -d(ff);
    end
 
 end %END FORMATFILTERS

@@ -27,6 +27,8 @@ function wt = wfbtinit(wtdef,varargin)
 %   'dwt','full'
 %     Type of the tree to be created.
 %
+%   Additional flags:
+%
 %   'freq','nat'
 %     Frequency or natural ordering of the coefficient subbands. The direct
 %     usage of the wavelet tree (`'nat'` option) does not produce coefficient

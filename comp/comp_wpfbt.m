@@ -29,15 +29,15 @@ for jj=1:numel(wtNodes)
    a = wtNodes{jj}.a;
    % Node filters initial skips
    if(doPer)
-      skip = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNodes{jj}.h);
+      offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
    else
-      skip = a-1;
+      offset = -(a-1);
    end
    filtNo = numel(hCell);
    
    % Run filterbank
    c(cOutRunIdx:cOutRunIdx + filtNo-1)=...
-                               comp_filterbank_td(ca,hCell,a,skip,ext);
+                               comp_filterbank_td(ca,hCell,a,offset,ext);
    
    % Bookeeping. Store idxs of just computed outputs.
    outRange = cOutRunIdx:cOutRunIdx+filtNo-1;

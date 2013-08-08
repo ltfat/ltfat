@@ -7,16 +7,18 @@ gr{3}=firfilter('hanning',19);
 gr{4}=firfilter('hanning',20);
 gr{5}=randn(4,1);
 gr{6}=firfilter('hanning',20,'causal');
-gr{7}=firfilter('hanning',20,'delay',13);
-gr{8}=firfilter('hamming',19,.3);
-gr{9}=firfilter('hamming',19,.3,'real');
-gr{10}=blfilter('hanning',19);
-gr{11}=blfilter('hanning',.2);
-gr{12}=blfilter('hanning',.132304);
-gr{13}=blfilter('hanning',.23,'delay',13);
-gr{14}=blfilter('hamming',.23,.3);
-gr{15}=blfilter('hamming',.23,.3,'real');
-
+gr{7}=firfilter('hanning',20,'delay',13); 
+gr{8}=firfilter('hanning',20,'delay',-13); 
+gr{7}=firfilter('hanning',20,'delay',14); 
+gr{8}=firfilter('hanning',20,'delay',-14); 
+gr{9}=firfilter('hamming',19,.3);        
+gr{10}=firfilter('hamming',19,.3,'real');
+gr{11}=blfilter('hanning',.19);
+gr{12}=blfilter('hanning',.2);
+gr{13}=blfilter('hanning',.132304);
+gr{14}=blfilter('hanning',.23,'delay',13);
+gr{15}=blfilter('hamming',.23,.3);
+gr{16}=blfilter('hamming',.23,.3,'real');
 
 
 test_failed=0;
@@ -45,8 +47,10 @@ for ii=1:numel(gr)
                       f=tester_crand(L,W);
                   end;
                   
-                  h1=pfilt(f,g,a);
+                                   
                   h2=ref_pfilt(f,g,a);
+                  h1=pfilt(f,g,a);
+
                   
                   res=norm(h1-h2);
                   [test_failed,fail]=ltfatdiditfail(res,test_failed);        

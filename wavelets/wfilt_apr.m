@@ -1,4 +1,4 @@
-function [h,g,a] = wfilt_apr(N)
+function [h,g,a,info] = wfilt_apr(N)
 %WFILT_APR Almost Perfect Reconstruction Filter Bank for Non-redundant, Approximately Shift-Invariant, ComplexWavelet Transforms
 %   Usage: [h,g,a] = wfilt_apr(N);
 %
@@ -60,7 +60,5 @@ harr = [
 end;
 
 h=mat2cell(harr.',[1,1,1],length(harr));
-if(nargout>1)
-    garr = conj(harr(end:-1:1, :));
-    g=mat2cell(garr.',[1,1,1],length(harr));
-end
+g = h;
+info.istight = 1;

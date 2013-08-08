@@ -31,15 +31,15 @@ for jj=1:numel(wtNodes)
    % Normalize each each filter
    hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
    % Node filters initial skips
-   hDel = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNodes{jj}.h);
+   hOffet = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
    % Number of filters of the current node
    filtNo = size(hMat,2);
    % Zero index position of the upsampled filters.
-   skip = nodesUps(jj).*(hDel);
+   offset = nodesUps(jj).*(hOffet);
 
    % Run filterbank
    c(:,cOutRunIdx:cOutRunIdx + filtNo-1,:)=...
-      comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),skip);
+      comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),offset);
    
    % Bookkeeping
    outRange = cOutRunIdx:cOutRunIdx+filtNo-1;

@@ -27,7 +27,7 @@ end;
 switch(F.type)
    case 'fwt'
     coef = wavpack2cell(coef,fwtclength(floor(size(coef,1)/F.red),F.g,F.J));
-   case {'wfbt','wpfbt'}
+   case {'wfbt','wpfbt','filterbank','filterbankreal'}
     coef = F.coef2native(coef,size(coef));   
 end
 
@@ -57,7 +57,7 @@ switch(F.type)
   coef=permute(reshape(coef,[N,M,W]),[2,1,3]); 
  case {'ufwt','uwfbt','uwpfbt'}
   coef = permute(F.coef2native(coef,size(coef)),[2,1,3]); 
- case {'fwt','wfbt','wpfbt'}
+ case {'fwt','wfbt','wpfbt','filterbank','filterbankreal'}
   coef = comp_cellcoef2tf(coef,1);
  otherwise
   error('%s: TF-plane layout not supported for this transform.',upper(mfilename));

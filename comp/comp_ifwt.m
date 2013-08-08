@@ -25,9 +25,9 @@ gCell = cellfun(@(gEl) gEl.h(:),g,'UniformOutput',0);
 if strcmp(ext,'per')
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay reconstruction is produced.
-   skip = cellfun(@(gEl) gEl.d-1,g); 
+   offset = cellfun(@(gEl) gEl.offset,g); 
 elseif strcmp(ext,'valid')
-   skip = zeros(numel(gCell),1);
+   offset = zeros(numel(gCell),1);
 else
    % -1 + 1 = 0 is used for better readability and to be consistent
    % with the shift in comp_fwt.
@@ -36,7 +36,7 @@ else
    % analysis filters. 
    % Instead, we could have used causal filters here and do the
    % delay compensation at the end (cropping f).
-   skip = cellfun(@(gEl) numel(gEl),gCell) - (a -1) -1;
+   offset = -cellfun(@(gEl) numel(gEl),gCell) + (a -1) +1;
 end
 
 
@@ -45,7 +45,7 @@ Lc(end+1) = Ls;
 tempca = c(1);
 cRunPtr = 2;
 for jj=1:J
-   tempca=comp_ifilterbank_td([tempca;c(cRunPtr:cRunPtr+filtNo-2)],gCell,a,Lc(cRunPtr+filtNo-1),skip,ext); 
+   tempca=comp_ifilterbank_td([tempca;c(cRunPtr:cRunPtr+filtNo-2)],gCell,a,Lc(cRunPtr+filtNo-1),offset,ext); 
    cRunPtr = cRunPtr + filtNo -1;
 end
 % Save reconstructed data.

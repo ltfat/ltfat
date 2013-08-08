@@ -1,19 +1,26 @@
-function [wfb,a] = wfbtmultid( wtdef, varargin)
+function [g,a] = wfbt2filterbank( wtdef, varargin)
 %WFBTMULTID  WFBT equivalent non-iterated filterbank
-%   Usage: [wfb,a] = wfbtmultid(wtdef)
+%   Usage: [g,a] = wfbt2filterbank(wtdef)
 %
 %   Input parameters:
-%         wtdef : Wavelet filter tree definition or basic filters
-%                 definition.
+%         wtdef : Wavelet filter tree definition
 %
 %   Output parameters:
-%         wfb   : Cell array containing impulse responses
-%         a     : Array of sub-/upsampling factors
+%         g   : Cell array containing filters
+%         a   : Vector of sub-/upsampling factors
 %
-%   `wfbtmultid(wtdef)` calculates the impulse responses of non-iterated
-%   noble multirate-identity wavelet filterbank.
+%   `wfbtmultid(wtdef)` calculates the impulse responses *g* and the 
+%   subsampling factors *a* of non-iterated filterbank, which is equivalent
+%   to the wavelet filterbank tree described by *wtdef*. The returned 
+%   parameters can be used directly in |filterbank|, |ufilterbank| or 
+%   |filterbank| . 
+%   The function internally calls |wfbtinit| and passes *wtdef* and all 
+%   additional parameters to it.    
+%   
+%   The filters are scaled if *a* is not returned. 
 %
-%   The function internally calls |wfbtinit| and passes all parameters to it.
+%   The function internally calls |wfbtinit| and passes *wtdef* and all 
+%   additional parameters to it.   
 %   
 %   Examples:
 %   ---------
@@ -22,14 +29,13 @@ function [wfb,a] = wfbtmultid( wtdef, varargin)
 %   using a tree of depth 3. In the first example, the filterbank is
 %   identical to the DWT tree:::
 %
-%     [wfb,a] = wfbtmultid({'db10',3,'dwt'});
-%     wtfftfreqz(wfb);
+%     [g,a] = wfbt2filterbank({'db10',3,'dwt'});
+%     
 %
 %   In the second example, the filterbank is identical to the full
 %   wavelet tree:::
 %
-%    [wfb,a] = wfbtmultid({'db10',3,'full'});
-%    wtfftfreqz(wfb);
+%     [g,a] = wfbt2filterbank({'db10',3,'full'});
 %
 %   See also: wfbtinit
 
@@ -38,18 +44,15 @@ if(nargin<1)
     error('%s: Not enough input arguments',upper(mfilename));
 end
 
-definput.import = {'fwtcommon','wfbtcommon'};
-[flags,kv]=ltfatarghelper({},definput,varargin);  
-
 %clean cache
 nodePredecesorsMultId();
 
 % build the tree
-filtTree = wfbtinit(wtdef,varargin{:});
+filtTree = wfbtinit({'strict',wtdef},varargin{:});
 
 % number of outputs of the tree
 treeOutputs = noOfOutputs(filtTree);
-wfb = cell(treeOutputs,1);
+g = cell(treeOutputs,1);
 a = zeros(treeOutputs,1);
         
         for ii = 1:length(filtTree.nodes)
@@ -61,15 +64,21 @@ a = zeros(treeOutputs,1);
             for jj = 1:length(locRange{1})
                 tmpUpsFac = nodeFiltUps(ii,filtTree);
                 tmpFilt = filtTree.nodes{ii}.g{locRange{1}(jj)};
-                wfb{outRange{1}(jj)} = struct('fc',0,'realonly',0);
+                g{outRange{1}(jj)} = struct();
                 % 
-                wfb{outRange{1}(jj)}.h = flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1)));
-                wfb{outRange{1}(jj)}.offset = -nodePredecesorsOrig(tmpFilt.d,ii,filtTree);
+                g{outRange{1}(jj)}.h = conj(flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1))));
+                g{outRange{1}(jj)}.offset = 1-numel(g{outRange{1}(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,ii,filtTree);
             end
             atmp = nodeSub(ii,filtTree);
             a(outRange{1}) = atmp{1}(locRange{1});
         end
 
+if nargout<2
+   % Scale filters if a is not returned
+   for nn=1:numel(g)
+       g{nn}.h = g{nn}.h/sqrt(a(nn));
+   end
+end
 % clean the cache
 nodePredecesorsMultId();
 % END WFBTMULTID

@@ -1,13 +1,13 @@
-function c=comp_filterbank_td(f,g,a,skip,ext)  
+function c=comp_filterbank_td(f,g,a,offset,ext)  
 %COMP_FILTERBANK_TD   Non-uniform filterbank by conv2
 %   Usage:  c=comp_filterbank_td(f,g,a,skip,ext);
 %
 %   Input parameters:
-%         f   : Input data - L*W array.
-%         g   : Filterbank filters - length M cell-array of vectors of lengths filtLen(m).
-%         a   : Subsampling factors - array of length M.
-%         skip: Delay of the filters - scalar or array of length M. 
-%         ext : Border exension technique.
+%         f     : Input data - L*W array.
+%         g     : Filterbank filters - length M cell-array of vectors of lengths filtLen(m).
+%         a     : Subsampling factors - array of length M.
+%         offset: Offset of the filters - scalar or array of length M. 
+%         ext   : Border exension technique.
 %
 %   Output parameters:
 %         c  : Cell array of length M. Each element is N(m)*W array.
@@ -20,8 +20,9 @@ W=size(f,2);
 M=numel(g);
 %filter lengths
 filtLen = cellfun(@(x) numel(x),g(:));
+skip = -offset;
 % Allow filter delay only in the filter support range
-if(any(skip(:)>=filtLen) || any(skip)<0)
+if any(skip(:)>=filtLen) || any(skip<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  
 end
 
@@ -42,11 +43,12 @@ end
 N = N(:);
 Lreq = a(:).*(N-1) + 1;
 
-% Output memory allocation
+% Output cell allocation
 c=cell(M,1);
-for m=1:M
-  c{m}=zeros(N(m),W,assert_classname(f));
-end;
+
+% for m=1:M
+%   c{m}=zeros(N(m),W,assert_classname(f));
+% end;
 
 % Explicitly extend the input. length(fext) = length(f) + 2*(filtLen-1)
 % CONV2 with 'valid' does 2-D linear convolution and crops (filtLen-1) samples from both ends.  

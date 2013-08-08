@@ -8,7 +8,7 @@
 
 #include "ltfat_oct_template_helper.h"
 // octave_idx_type 32 or 64 bit signed integer
- 
+
 
 static inline void fwd_atrousupconv_td(const Complex *in, const octave_idx_type inLen,
                                   Complex *out, const octave_idx_type outLen,
@@ -62,8 +62,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	 MArray<LTFAT_TYPE> g = ltfatOctArray<LTFAT_TYPE>(args(1));
 	 // Subsampling factors
 	 Matrix a = args(2).matrix_value();
-	 Matrix skip = args(3).matrix_value();
-	 
+	 Matrix offset = args(3).matrix_value();
+
 	 const octave_idx_type L = c.dim1();
 	 const octave_idx_type M = c.dim2();
 	 octave_idx_type W = 1;
@@ -73,16 +73,16 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	 }
 
      const octave_idx_type filtLen = g.rows();
-	 
+
 	 //octave_stdout << L << ", "<< M << ", "<< W << ", "<< filtLen << "\n";
-	 
+
 	 OCTAVE_LOCAL_BUFFER (const LTFAT_TYPE*, gPtrs, M);
 
 	 for(octave_idx_type m=0;m<M;m++)
      {
 	    gPtrs[m] = g.data() +  m*filtLen;
      }
-	 
+
 	 MArray<LTFAT_TYPE> f(dim_vector(L,W));
 	 f.fill(0);
 
@@ -95,7 +95,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 		   const LTFAT_TYPE *cPtrPlane = c.data() + w*L*M;
            // Obtaing pointer to w-th column in m-th element of output cell-array
            const LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-           fwd_atrousupconv_td(cPtrCol,L,fPtrCol,L,gPtrs[m],filtLen,a(0),skip(m),ltfatExtStringToEnum("per"));
+           fwd_atrousupconv_td(cPtrCol,L,fPtrCol,L,gPtrs[m],filtLen,a(0),-offset(m),ltfatExtStringToEnum("per"));
           }
         }
 

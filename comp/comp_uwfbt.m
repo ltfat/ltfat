@@ -33,12 +33,12 @@ for jj=1:numel(wtNodes)
    % Normalize each filter
    hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
    % Node filters initial skips
-   hDel = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNodes{jj}.h);
+   hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
    % Zero index position of the upsampled filters.
-   skip = nodesUps(jj).*(hDel);
+   offset = nodesUps(jj).*(hOffset);
    
    % Run filterbank.
-   catmp=comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),skip);
+   catmp=comp_atrousfilterbank_td(squeeze(ca(:,1,:)),hMat,nodesUps(jj),offset);
    % Bookkeeping
    % Copy what goes directly to the output...
    c(:,rangeOut{jj},:)=catmp(:,rangeLoc{jj},:);

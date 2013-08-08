@@ -12,6 +12,8 @@ test_failed=0;
 disp(' ===============  TEST_FILTERBANK ================');
 
 which comp_ufilterbank_fft
+which comp_filterbank_td
+which comp_filterbank
 
 M=6;
 a=3;
@@ -55,14 +57,17 @@ for w=1:3
 
     f=tester_crand(L,w);
     
-    c_u      = ufilterbank(f,g,a);
+    c_u_td      = ufilterbank(f,g,a,'crossover',0);
     c_u_ref  = ref_ufilterbank(f,g,a);
-    c_nu     = filterbank(f,g,a);
+    c_nu_td     = filterbank(f,g,a,'crossover',0);
+    
+    c_u_fft      = ufilterbank(f,g,a,'crossover',1e20);
+    c_nu_fft     = filterbank(f,g,a,'crossover',1e20);
     
     %% check that filterbank and ufilterbank produce the same results.
     res=0;
     for m=1:M
-        res=res+norm(c_nu{m}-squeeze(c_u(:,m,:)));  
+        res=res+norm(c_nu_td{m}-squeeze(c_u_td(:,m,:)));  
     end;
     
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
@@ -70,16 +75,30 @@ for w=1:3
     disp(s)
     
     %% check that ufilterbank match its reference
-    res=c_u-c_u_ref;
+    res=c_u_td-c_u_ref;
     res=norm(res(:));
     
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
     s=sprintf(['FB RES    W:%2i %0.5g %s'],w,res,fail);
     disp(s)
     
+    %% check that filterbank in time-side and frequency side match
+    res=norm(cell2mat(c_nu_fft)-cell2mat(c_nu_td));
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['FB TD FD  W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
+    %% check that ufilterbank in time-side and frequency side match
+    res=norm(c_u_fft(:)-c_u_td(:));
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['UFB TD FD W:%2i %0.5g %s'],w,res,fail);
+    disp(s)
+    
     
     %% Check that ufilterbank is invertible using dual window
-    r=ifilterbank(c_u,gd,a);
+    r=ifilterbank(c_u_td,gd,a);
     
     res=norm(f-r);
     
@@ -90,10 +109,15 @@ for w=1:3
     
     %% Test that ifilterbank returns the same for the uniform and non-uniform
     %% case
-    c_nu=mat2cell(c_u,size(c_u,1),ones(1,M),w);
-    c_nu=cellfun(@squeeze,c_nu,'UniformOutput',false);
+    %To avoid warning whrn w==1
+    if w==1
+       c_nu_td=mat2cell(c_u_td,size(c_u_td,1),ones(1,M));
+    else
+       c_nu_td=mat2cell(c_u_td,size(c_u_td,1),ones(1,M),w);
+    end
+    c_nu_td=cellfun(@squeeze,c_nu_td,'UniformOutput',false);
     
-    r_nu=ifilterbank(c_nu,gd,a);
+    r_nu=ifilterbank(c_nu_td,gd,a);
     
     res=norm(r_nu-r);
     
@@ -140,7 +164,7 @@ for w=1:3
         
     %% check filterbankwin
     
-    r=ifilterbank(c_u,{'dual',g},a);
+    r=ifilterbank(c_u_td,{'dual',g},a);
     
     res=norm(f-r);
     

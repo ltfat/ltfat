@@ -28,17 +28,17 @@
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
 %      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
 %      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
-%      WFBTMULTID        - Impulse responses of the non-iterated multirate-identity wavelet filterbank
+%      WFBT2FILTERBANK   - Creates a non-iterated filterbank using the multirate identity
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %  
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients
+%      WFILTINFO         - Plot wavelet filters impulse and frequency responses and approximation of scaling and wavelet functions
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
 %      WAVCELL2PACK      - Changes wavelet coefficient storing format
 %      WAVPACK2CELL      - Changes wavelet coefficient storing format back
-%
 %
 %   Filters defined in the time-domain
 %      WFILT_ALGMBAND    - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction

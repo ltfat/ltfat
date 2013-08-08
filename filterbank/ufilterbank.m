@@ -53,7 +53,8 @@ f=postpad(f,L);
 
 c=zeros(N,M,W,assert_classname(f));
 
-ctmp=comp_filterbank(f,g,info.a,kv.crossover);
+g = comp_filterbank_pre(g,info.a,L,kv.crossover);
+ctmp=comp_filterbank(f,g,info.a);
 
 for m=1:M    
     c(:,m,:)=ctmp{m};

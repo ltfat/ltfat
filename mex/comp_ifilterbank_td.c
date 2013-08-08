@@ -36,14 +36,14 @@
 #include "ltfat_types.h"
 
 /*
-%COMP_IFILTERBANK_TD   Synthesis filterbank by conv2
-%   Usage:  f=comp_ifilterbank_fft(c,g,a,Ls,skip,ext);
+%COMP_IFILTERBANK_TD   Synthesis filterbank
+%   Usage:  f=comp_ifilterbank_fft(c,g,a,Ls,offset,ext);
 %
 %   Input parameters:
 %         c    : Cell array of length M, each element is N(m)*W matrix.
 %         g    : Filterbank filters - length M cell-array, each element is vector of length filtLen(m)
 %         a    : Upsampling factors - array of length M.
-%         skip : Delay of the filters - scalar or array of length M.
+%         offset : Delay of the filters - scalar or array of length M.
 %         Ls   : Output length.
 %         ext  : Border exension technique.
 %
@@ -59,7 +59,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   double* a = mxGetPr(prhs[2]);
   double* Lsdouble = mxGetPr(prhs[3]);
   unsigned int Ls = (unsigned int) *Lsdouble;
-  double* skip = mxGetPr(prhs[4]);
+  double* offset = mxGetPr(prhs[4]);
   char* ext = mxArrayToString(prhs[5]);
 
   // number of channels
@@ -117,7 +117,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
            // Obtaing pointer to w-th column in m-th element of output cell-array
            LTFAT_TYPE *cPtrCol = cPtrs[m] + w*Lc[m];
            //(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
-           LTFAT_NAME(upconv_td)(cPtrCol,Lc[m],fPtrCol,Ls,gPtrs[m],filtLen[m],a[m],skip[m],ltfatExtStringToEnum(ext));
+           LTFAT_NAME(upconv_td)(cPtrCol,Lc[m],fPtrCol,Ls,gPtrs[m],filtLen[m],a[m],-offset[m],ltfatExtStringToEnum(ext));
           }
        }
 

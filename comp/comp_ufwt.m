@@ -24,7 +24,7 @@ hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h(:)','UniformOutput',0));
 %Divide each column (filter) by a element of a
 hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
 %Delays
-hDel = cellfun(@(hEl) numel(hEl.h)-hEl.d,h(:));
+hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h(:));
 
 % Allocate output
 [L, W] = size(f);
@@ -35,9 +35,9 @@ ca = f;
 runPtr = size(c,2) - (filtNo-2);
 for jj=1:J
     % Zero index position of the upsampled filters.
-    skip = a(1)^(jj-1).*(hDel);
+    offset = a(1)^(jj-1).*(hOffset);
     % Run filterbank.
-    ca=comp_atrousfilterbank_td(ca,hMat,a(1)^(jj-1),skip);
+    ca=comp_atrousfilterbank_td(ca,hMat,a(1)^(jj-1),offset);
     % Bookkeeping
     c(:,runPtr:runPtr+filtNo-2,:)=ca(:,2:end,:);
     ca = squeeze(ca(:,1,:));

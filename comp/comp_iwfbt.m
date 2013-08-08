@@ -28,9 +28,9 @@ for jj=1:length(wtNodes)
     a = wtNodes{jj}.a;
     % Node filters initial skips
     if(doPer)
-       skip = cellfun(@(gEl) gEl.d-1,wtNodes{jj}.g);
+       offset = cellfun(@(gEl) gEl.offset,wtNodes{jj}.g);
     else
-       skip = cellfun(@(gEl) numel(gEl),gCell) - 1 - (a - 1);
+       offset = -cellfun(@(gEl) numel(gEl),gCell) + 1 + (a - 1);
     end
     filtNo = numel(gCell);
     
@@ -44,7 +44,7 @@ for jj=1:length(wtNodes)
     catmp(diffRange(end:-1:1)) = ca(1:numel(diffRange));
     
     %Run filterbank
-    catmp = comp_ifilterbank_td(catmp,gCell,a,outLens(jj),skip,ext);
+    catmp = comp_ifilterbank_td(catmp,gCell,a,outLens(jj),offset,ext);
     %Save intermediate output
     ca = [ca(numel(diffRange)+1:end);catmp];
 end

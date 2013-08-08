@@ -8,7 +8,7 @@
 
 #include "ltfat_oct_template_helper.h"
 // octave_idx_type 32 or 64 bit signed integer
- 
+
 
 static inline void fwd_convsub_td(const Complex *in, const octave_idx_type inLen,
                                   Complex *out, const octave_idx_type outLen,
@@ -62,7 +62,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	 // Subsampling factors
 	 Matrix a = args(2).matrix_value();
 	 // Skips
-	 Matrix skip = args(3).matrix_value();
+	 Matrix offset = args(3).matrix_value();
 	 charMatrix ext = args(4).char_matrix_value ();
 	 // Input length
 	 const octave_idx_type L  = f.rows();
@@ -70,7 +70,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
      const octave_idx_type W  = f.columns();
 	 // Number of filters
      const octave_idx_type M = g.nelem();
-	 
+
 	 // Allocating temporary arrays
 	 // Filter lengts
 	 OCTAVE_LOCAL_BUFFER (octave_idx_type, filtLen, M);
@@ -84,14 +84,14 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 	 OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, c_elems, M);
 	 //
 	 OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, g_elems, M);
-	 
+
 	 for(octave_idx_type m=0;m<M;m++)
      {
 	    g_elems[m] = ltfatOctArray<LTFAT_TYPE>(g.elem(m));
 	    gPtrs[m] = g_elems[m].data();
         filtLen[m] = g_elems[m].numel();
      }
-	 
+
 	 if(ext=="per")
      {
         for(octave_idx_type m = 0; m < M; m++)
@@ -110,10 +110,10 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
      {
         for(octave_idx_type m = 0; m < M; m++)
         {
-           outLen[m] = (octave_idx_type) ceil( (L + filtLen[m] - 1 - skip(m) )/a(m) );
+           outLen[m] = (octave_idx_type) ceil( (L + filtLen[m] - 1 + offset(m) )/a(m) );
         }
      }
-	 
+
 
 	 for(octave_idx_type m=0;m<M;++m)
      {
@@ -121,7 +121,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 		c_elems[m].fill(0);
 		cPtrs[m] = c_elems[m].fortran_vec();
      }
-	 
+
 	 for(octave_idx_type m =0; m<M; m++)
         {
           for(octave_idx_type w =0; w<W; w++)
@@ -131,7 +131,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
            // Obtaing pointer to w-th column in m-th element of output cell-array
            LTFAT_TYPE *cPtrCol = cPtrs[m] + w*outLen[m];
            //conv_td_sub(fPtrCol,L,&cPtrCol,outLen[m],(const double**)&gPtrs[m],filtLen[m],1,a[m],skip[m],ltfatExtStringToEnum(ext),0);
-           fwd_convsub_td(fPtrCol,L,cPtrCol,outLen[m],gPtrs[m],filtLen[m],a(m),skip(m),ltfatExtStringToEnum(ext.row_as_string(0).c_str()));
+           fwd_convsub_td(fPtrCol,L,cPtrCol,outLen[m],gPtrs[m],filtLen[m],a(m),-offset(m),ltfatExtStringToEnum(ext.row_as_string(0).c_str()));
           }
         }
 

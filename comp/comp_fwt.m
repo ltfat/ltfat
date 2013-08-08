@@ -25,16 +25,16 @@ hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),h,'UniformOutput',0);
 if(strcmp(ext,'per'))
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay transform is produced
-   skip = cellfun(@(hEl) numel(hEl.h)-hEl.d,h); 
+   offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h); 
 elseif strcmp(ext,'valid')
-   skip = cellfun(@(hEl) numel(hEl.h)-1,h);
+   offset = -cellfun(@(hEl) numel(hEl.h)-1,h);
 else
    % No compensation for the filter delay (filters are made causal with respect to the output sequences).
    % This creates relative shift between levels of coefficients.
    % Initial shift determines type of subsampling. 
    % This is even subsampling. e.g. subs. [1,2,3,4,5,6] by a factor 3 becomes [3,6]
    % The number of output coefficients depends on it.
-   skip = a-1;
+   offset = -(a-1);
    % For odd subsampling skip = 0; but it requires slight touches
    % elsewhere.
 end
@@ -45,7 +45,7 @@ runPtr = numel(Lc)-filtNo+2;
 ctmp = f;
 for jj=1:J
     % Run filterbank
-    ctmp = comp_filterbank_td(ctmp,hCell,a,skip,ext);
+    ctmp = comp_filterbank_td(ctmp,hCell,a,offset,ext);
     % Bookkeeping
     c(runPtr:runPtr+filtNo-2) = ctmp(2:end);
     ctmp = ctmp{1};

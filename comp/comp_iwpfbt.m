@@ -26,18 +26,18 @@ doPer = strcmp(ext,'per');
     a = wtNodes{jj}.a;
     % Node filters initial skips
     if(doPer)
-       skip = cellfun(@(gEl) gEl.d-1,wtNodes{jj}.g);
+       offset = cellfun(@(gEl) gEl.offset,wtNodes{jj}.g);
     else
-       skip = cellfun(@(gEl) numel(gEl),gCell) - 1 - (a - 1);
+       offset = -cellfun(@(gEl) numel(gEl),gCell) + 1 + (a - 1);
     end
     
     if(pOutIdxs(jj))
        % Run filterbank and add to the existing subband.
-       ctmp = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,size(c{pOutIdxs(jj)},1),skip,ext);
+       ctmp = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,size(c{pOutIdxs(jj)},1),offset,ext);
        c{pOutIdxs(jj)} = (1/sqrt(2))*(c{pOutIdxs(jj)}+ctmp);
     else
        % We are at the root.
-       f = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,Ls,skip,ext);
+       f = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,Ls,offset,ext);
     end
  end
      

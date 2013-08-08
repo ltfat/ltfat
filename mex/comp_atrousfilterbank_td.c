@@ -28,13 +28,13 @@
 
 /*
 %COMP_ATROUSFILTERBANK_TD   Uniform filterbank by conv2
-%   Usage:  c=comp_atrousfilterbank_fft(f,g,a,skip);
+%   Usage:  c=comp_atrousfilterbank_fft(f,g,a,offset);
 %
 %   Input parameters:
 %         f   : Input data - L*W array.
 %         g   : Filterbank filters - filtLen*M array.
 %         a   : Filter upsampling factor - scalar.
-%         skip: Delay of the filters - scalar or array of length M.
+%         offset: Delay of the filters - scalar or array of length M.
 %
 %   Output parameters:
 %         c  : L*M*W array of coefficients
@@ -45,7 +45,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     const mxArray* mxf = prhs[0];
     const mxArray* mxg = prhs[1];
     double* a = mxGetPr(prhs[2]);
-    double* skip = mxGetPr(prhs[3]);
+    double* offset = mxGetPr(prhs[3]);
 
     // input data length
     unsigned int L = mxGetM(mxf);
@@ -85,7 +85,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
                 LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(plhs[0])) + w*L*M;
                 // Obtaing pointer to w-th column in m-th element of output cell-array
                 LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-                LTFAT_NAME(atrousconvsub_td)(fPtrCol, L, cPtrCol, L, gPtrs[m], filtLen, (int)*a, skip[m], ltfatExtStringToEnum("per"));
+                LTFAT_NAME(atrousconvsub_td)(fPtrCol, L, cPtrCol, L, gPtrs[m], filtLen, (int)*a, -offset[m], ltfatExtStringToEnum("per"));
             }
         }
 }

@@ -94,6 +94,9 @@ definput.flags.real={'complex','real'};
 if ~isempty(kv.fs)
     fsupp=fsupp/kv.fs*2;
     kv.fc=kv.fc/kv.fs*2;
+else
+   %If fs is not specified, allow fsupp to be in range 0-2
+  % assert(all(fsupp>0) && all(fsupp<=2),'%s: Filter support is not valid.',upper(mfilename));
 end;
 
 % Sanitize

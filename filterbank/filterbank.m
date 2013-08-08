@@ -66,4 +66,5 @@ end;
 
 f=postpad(f,L);
 
-c=comp_filterbank(f,g,info.a,kv.crossover);
+g = comp_filterbank_pre(g,info.a,L,kv.crossover);
+c=comp_filterbank(f,g,info.a);

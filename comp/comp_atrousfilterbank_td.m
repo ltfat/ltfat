@@ -1,4 +1,4 @@
-function c=comp_atrousfilterbank_td(f,g,a,skip)  
+function c=comp_atrousfilterbank_td(f,g,a,offset)  
 %COMP_ATROUSFILTERBANK_TD   Uniform filterbank by conv2
 %   Usage:  c=comp_atrousfilterbank_fft(f,g,a,skip);
 %
@@ -6,7 +6,7 @@ function c=comp_atrousfilterbank_td(f,g,a,skip)
 %         f   : Input data - L*W array.
 %         g   : Filterbank filters - filtLen*M array. 
 %         a   : Filter upsampling factor - scalar.
-%         skip: Delay of the filters - scalar or array of length M. 
+%         offset: Delay of the filters - scalar or array of length M. 
 %
 %   Output parameters:
 %         c  : L*M*W array of coefficients
@@ -23,6 +23,7 @@ g = comp_ups(g,a,1);
 
 %length of filters
 filtLen = size(g,1);
+skip = -offset;
 % Allow filter delay only in the filter support range
 if(all(skip>=filtLen) || all(skip<0))
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  

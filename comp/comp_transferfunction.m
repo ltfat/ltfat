@@ -4,10 +4,13 @@ function H=comp_transferfunction(g,L)
 l=(0:L-1).'/L;
 if isfield(g,'h')
         
-    g_time=circshift(postpad(g.h,L),g.offset).*...
-           exp(2*pi*1i*round(g.fc*L/2)*l);
+    g_time=circshift(postpad(g.h,L),g.offset);
+    
+    if isfield(g,'fc')
+       g_time = g_time.*exp(2*pi*1i*round(g.fc*L/2)*l);
+    end
         
-    if g.realonly
+    if isfield(g,'realonly') && g.realonly
         g_time=real(g_time);
     end;
         
@@ -19,9 +22,13 @@ else
         g.foff=g.foff(L);
     end;
     
-    H=circshift(postpad(g.H,L),g.foff).*exp(-2*pi*1i*round(g.delay)*l);
+    H=circshift(postpad(g.H,L),g.foff);
     
-    if g.realonly
+    if isfield(g,'delay')
+       H = H.*exp(-2*pi*1i*round(g.delay)*l);
+    end
+    
+    if isfield(g,'realonly') && g.realonly
         H=(H+involute(H))/2;
     end;
         

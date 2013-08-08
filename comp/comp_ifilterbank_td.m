@@ -1,4 +1,4 @@
-function f=comp_ifilterbank_td(c,g,a,Ls,skip,ext)  
+function f=comp_ifilterbank_td(c,g,a,Ls,offset,ext)  
 %COMP_IFILTERBANK_TD   Synthesis filterbank by conv2
 %   Usage:  f=comp_ifilterbank_td(c,g,a,Ls,skip,ext);
 %
@@ -21,7 +21,7 @@ M=numel(g);
 %length of filters
 filtLen = cellfun(@(x) numel(x),g(:));
 
-
+skip = -offset;
 % Allow filter delay only in the filter support range
 if(any(skip(:)>=filtLen) || any(skip)<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  

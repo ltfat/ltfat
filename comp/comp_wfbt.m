@@ -32,13 +32,13 @@ c = cell(sum(cellfun(@(rEl) numel(rEl),rangeOut)),1);
     a = wtNodes{jj}.a;
     % Node filters initial skips
     if(doPer)
-       skip = cellfun(@(hEl) numel(hEl.h)-hEl.d,wtNode);
+       offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNode);
     else
-       skip = a-1;
+       offset = -(a-1);
     end
 
     % Run filterbank
-    catmp=comp_filterbank_td(ca{1},hCell,a,skip,ext);
+    catmp=comp_filterbank_td(ca{1},hCell,a,offset,ext);
     % Pick what goes directy to the output...
     c(rangeOut{jj}) = catmp(rangeLoc{jj});
     % and save the rest.

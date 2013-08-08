@@ -22,10 +22,15 @@ function [c,info] = fwt(f,w,J,varargin)
 %   |ifwt| e.g. `fhat = ifwt(c,info)`. It is also required by the 
 %   |plotwavelets| function.
 %   
-%   The coefficents *c* are the Discrete Wavelet transform of the input signal
-%   *f*, if *w* defines two-channel wavelet filterbank. The function can 
-%   apply the Mallat's algorithm using basic filter banks with any number 
-%   of the channels. In such case, the transform have a different name. 
+%   The coefficents *c* are the Discrete Wavelet transform (DWT) of the input
+%   signal *f*, if *w* defines two-channel wavelet filterbank. The following
+%   figure shows DWT with *J=3*.
+%
+%   .. image:: ../images/fwttree.png
+%
+%   The function can apply the Mallat's algorithm using basic filter banks
+%   with any number of the channels. In such case, the transform have a 
+%   different name. 
 %
 %   The basic analysis wavelet filterbank $w$ can be passed in several 
 %   formats. The formats are the same as for the |fwtinit| function.

@@ -37,7 +37,7 @@ format = {'pack','cell'};
 
 test_filters = {
                {'db',10}
-               %{'apr',2} % complex filter values, odd length filters, no exact PR
+%               {'apr',2} % complex filter values, odd length filters, no exact PR
                {'algmband',2} % 4 filters,
                {'db',1}
                %{'db',3}

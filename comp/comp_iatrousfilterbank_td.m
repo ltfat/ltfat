@@ -1,4 +1,4 @@
-function f=comp_iatrousfilterbank_td(c,g,a,skip)  
+function f=comp_iatrousfilterbank_td(c,g,a,offset)  
 %COMP_IATROUSFILTERBANK_TD   Synthesis Uniform filterbank by conv2
 %   Usage:  f=comp_iatrousfilterbank_td(c,g,a,skip);
 %
@@ -20,6 +20,7 @@ g = comp_ups(g,a,1);
 %length of filters
 filtLen = size(g,1);
 L=size(c,1);
+skip = -offset;
 % Allow filter delay only in the filter support range
 if(all(skip>=filtLen) || all(skip<0))
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  

@@ -29,10 +29,10 @@ for jj=1:length(wtNodes)
     % Normalize each filter
     gMat = bsxfun(@rdivide,gMat,sqrt(a(:)'));
     % Node filters initial skips
-    gDel = cellfun(@(gEl) gEl.d,wtNodes{jj}.g);
+    gOffset = cellfun(@(gEl) gEl.offset,wtNodes{jj}.g);
     
     % Zero index position of the upsampled filters.
-    skip = nodesUps(jj).*(gDel) - nodesUps(jj);
+    offset = nodesUps(jj).*(gOffset) ;%- nodesUps(jj);
      
     % Re-allocate catmp if the filtNo differs from the one used in previous
     % iteration.
@@ -51,7 +51,7 @@ for jj=1:length(wtNodes)
     end
     
     %Run filterbank
-    catmp = comp_iatrousfilterbank_td(catmp,gMat,nodesUps(jj),skip);
+    catmp = comp_iatrousfilterbank_td(catmp,gMat,nodesUps(jj),offset);
     %Save intermediate output
     ca = horzcat(ca(:,numel(diffRange)+1:end,:),reshape(catmp,size(catmp,1),1,size(catmp,2)));
 end

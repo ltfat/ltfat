@@ -55,13 +55,13 @@
 
 /*
 %COMP_FILTERBANK_TD   Non-uniform filterbank by conv2
-%   Usage:  c=comp_filterbank_td(f,g,a,skip,ext);
+%   Usage:  c=comp_filterbank_td(f,g,a,offset,ext);
 %
 %   Input parameters:
 %         f   : Input data - L*W array.
 %         g   : Filterbank filters - length M cell-array of vectors of lengths filtLen(m).
 %         a   : Subsampling factors - array of length M.
-%         skip: Delay of the filters - scalar or array of length M.
+%         offset: Offset of the filters - scalar or array of length M.
 %         ext : Border exension technique.
 %
 %   Output parameters:
@@ -73,8 +73,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   const mxArray* mxf = prhs[0];
   const mxArray* mxg = prhs[1];
   double* a = (double*) mxGetData(prhs[2]);
-  double* skip = (double*) mxGetData(prhs[3]);
+  double* offset = (double*) mxGetData(prhs[3]);
   char* ext = mxArrayToString(prhs[4]);
+
 
   // input data length
   mwSize L = mxGetM(mxf);
@@ -111,7 +112,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   {
      for(unsigned int m = 0; m < M; m++)
      {
-        outLen[m] = (mwSize) ceil( (L + filtLen[m] - 1 - skip[m] )/a[m] );
+        outLen[m] = (mwSize) ceil( (L + filtLen[m] - 1 + offset[m] )/a[m] );
      }
   }
 
@@ -149,7 +150,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
            // Obtaing pointer to w-th column in m-th element of output cell-array
            LTFAT_TYPE *cPtrCol = cPtrs[m] + w*outLen[m];
            //conv_td_sub(fPtrCol,L,&cPtrCol,outLen[m],(const double**)&gPtrs[m],filtLen[m],1,a[m],skip[m],ltfatExtStringToEnum(ext),0);
-           LTFAT_NAME(convsub_td)(fPtrCol,L,cPtrCol,outLen[m],gPtrs[m],filtLen[m],a[m],skip[m],ltfatExtStringToEnum(ext));
+           LTFAT_NAME(convsub_td)(fPtrCol,L,cPtrCol,outLen[m],gPtrs[m],filtLen[m],a[m],-offset[m],ltfatExtStringToEnum(ext));
           }
         }
 }

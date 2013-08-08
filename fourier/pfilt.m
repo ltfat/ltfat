@@ -57,8 +57,9 @@ definput.keyvals.dim=[];
 
 [g,info] = comp_fourierwindow(g,L,upper(mfilename));
 
-h=comp_filterbank(f,{g},a,kv.crossover);
-h=h{1};
+g = comp_filterbank_pre({g},a,L,kv.crossover);
+h = comp_filterbank(f,g,a);
+h = h{1};
 
 permutedsize(1)=size(h,1);
   
