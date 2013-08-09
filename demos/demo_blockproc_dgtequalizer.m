@@ -61,8 +61,8 @@ end
 
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)
-[F,Fdual] = framepair('dgtreal',{'hann',floor(fs*winLenms/1e3)},'dual',200,M);
-[Fa,Fs] = blockframepairaccel(F,Fdual, bufLen,'sliced');
+[F,Fdual] = framepair('dgtreal',{'hann',floor(fs*winLenms/1e3)},'dual',40,M);
+[Fa,Fs] = blockframepairaccel(F,Fdual, bufLen,'segola');
 
 flag = 1;
 ola = [];
