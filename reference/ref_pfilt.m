@@ -53,8 +53,10 @@ if isstruct(g)
     if isfield(g,'h')
         g_time=circshift(postpad(g.h,L),g.offset).*exp(2*pi*1i*(round(g.fc*L/2))*l);
         G=fft(g_time);
+    elseif isfield(g,'H')
+        G=circshift(postpad(g.H(L),L),g.foff(L)).*exp(-2*pi*1i*round(g.delay)*l);  
     else
-        G=circshift(postpad(g.H(L),L),g.foff(L)).*exp(-2*pi*1i*round(g.delay)*l);        
+       error('%s: Unknown filter definition.',upper(mfilename));
     end;
     
     if g.realonly

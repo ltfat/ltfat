@@ -26,9 +26,10 @@ if nargin<1
    error('%s: Too few input arguments.',upper(mfilename));
 end
 
-assert(nout==1&&nargin==1,...
-   ['%s: Ambiguous output. When no parameter is explicitly defined,',...
+if nout~=1 && nargin==1
+   error(['%s: Ambiguous output. When no parameter is explicitly defined,',...
     ' the function cannot return more tha one output parameter.'],mfilename);
+end
 
 
 if nargin>1 

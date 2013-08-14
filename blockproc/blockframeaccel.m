@@ -48,7 +48,12 @@ elseif flags.do_segola
          Fo = frameaccel(F,Lb+Fo.winLen-1+Fo.a);
          assert(Fo.a <= Lb ,['%s: Time step is bigger than the',...
       ' block length.'],mfilename);
-
+      case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
+         Fo = frameaccel(F,Lb+Fo.winLen-1+max(Fo.a(:,1)));
+         assert(all(Fo.a(:,2)==1), '%s: Fractional subsampling is not supported',upper(mfilename) );
+         assert(max(Fo.a(:,1)) <= Lb ,['%s: Time step is bigger than the',...
+      ' block length.'],upper(mfilename));
+         Fo.lcma =  filterbanklength(1,F.a);
       case {'dwilt'}
          Fo = frameaccel(F,Lb+Fao.winLen-1+2*Fo.M);
          Fo.a = 2*Fo.M;

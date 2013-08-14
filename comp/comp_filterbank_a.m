@@ -8,10 +8,21 @@ function [a,info]=comp_filterbank_a(a,M,info)
 % FIXME: Not sufficiently safe in the case where there is only one
 % channel, or when attempting to specify a uniform filterbank with
 % fractional downsampling.
+%
+
 
 info.isfractional=0;
 info.isuniform=0;
-if isvector(a)
+
+if M==1 && size(a,1)~=1
+   error('%s: One channel, but more a.',upper(mfilename));
+end
+
+if M==1 && size(a,2)<2
+   a = [a,1];
+end
+
+if isvector(a) && M~=1
     [a,~]=scalardistribute(a(:),ones(M,1));
     
     if all(a==a(1))

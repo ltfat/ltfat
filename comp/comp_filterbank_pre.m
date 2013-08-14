@@ -47,7 +47,7 @@ for mId=1:numel(mTime)
 end
 
 % Prepare frequency-domain filters
-l=(0:L-1).'/L;
+%l=(0:L-1).'/L;
 for mId=1:numel(mFreq)
     m = mFreq(mId);
     if isfield(g{m},'h')
@@ -65,23 +65,26 @@ for mId=1:numel(mFreq)
     
     if isfield(g{m},'H') && isfield(g{m},'delay') && g{m}.delay~=0
        % handle .delay parameter
-       lrange = mod(g{m}.foff:g{m}.foff+numel(g{m}.H)-1,L)+1;
-       g{m}.H=g{m}.H.*exp(-2*pi*1i*round(g{m}.delay)*l(lrange)); 
+       lrange = mod(g{m}.foff:g{m}.foff+numel(g{m}.H)-1,L).'/L;
+       g{m}.H=g{m}.H.*exp(-2*pi*1i*round(g{m}.delay)*lrange); 
        g{m}.delay = 0;
     end
 
-    if isfield(g{m},'foff') && g{m}.foff~=0 && numel(g{m}.H)==L
-       % handle .foff parameter for full-length freq. resp.
-       g{m}.H = circshift(g{m}.H,g{m}.foff);
-       % to avoid any other moving
-       g{m}.foff = 0;
-    end
+    % Treat full-length .H
+    if numel(g{m}.H)==L
+       if isfield(g{m},'foff') && g{m}.foff~=0 
+          % handle .foff parameter for full-length freq. resp.
+          g{m}.H = circshift(g{m}.H,g{m}.foff);
+          % to avoid any other moving
+          g{m}.foff = 0;
+       end
 
-    if isfield(g{m},'realonly') && g{m}.realonly && numel(g{m}.H)==L
-       % handle .realonly parameter for full-length freq. resp.
-        g{m}.H=(g{m}.H+involute(g{m}.H))/2;
-        g{m}.realonly = 0;
-    end;
+       if isfield(g{m},'realonly') && g{m}.realonly
+          % handle .realonly parameter for full-length freq. resp.
+          g{m}.H=(g{m}.H+involute(g{m}.H))/2;
+          g{m}.realonly = 0;
+       end;
+    end
 end;
 
 

@@ -17,6 +17,8 @@ function [c, fola] = blockana(F, f, fola)
 %   automatically.    
 %
 %   See also: block, blocksyn, blockplay
+%
+%   References: dogrhove12 ltfatnote026
     
     if nargin<2
         error('%s: Too few input parameters.',upper(mfilename));
@@ -37,92 +39,105 @@ function [c, fola] = blockana(F, f, fola)
     % Block index start (from a global point of view, starting with zero)
     Sb = nextSb-Lb;
     
-    if strcmp(F.blokalg,'sliced')
-        % General processing
-        % Equal block length assumtion
-        % Append the previous block
-        fext = [loadOverlap(Lb,size(f,2),fola);f];
-        % Save the current block
-        if nargout>1
-           fola = storeOverlap(fext,Lb);
-        else
-           storeOverlap(fext,Lb);
-        end
-        % Multiply by the slicing window (all channels)
-        fwin = bsxfun(@times,F.sliwin,fext);
-        fwin = [fwin; zeros(F.L-size(fwin,1),size(fwin,2))];
-        % Apply transform
-        c = F.frana(fwin);
-    elseif strcmp(F.blokalg,'segola')
-      if ~isfield(F,'winLen') 
-         error('%s: Frame does not have FIR windows.',upper(mfilename));
-      end
-      Lw = F.winLen;
-      
-      switch(F.type)
-         case 'fwt'
-           J = F.J;
-           w = F.g;
-           m = numel(w.h{1}.h);
-           a = w.a(1);
-           if Lb<a^J
-               error('%s: Minimum block length is %i.',upper(mfilename),a^J);
-           end
-           rred = (a^J-1)/(a-1)*(m-a);
-           Sbolen = rred + mod(Sb,a^J);
-           nextSbolen = rred + mod(nextSb,a^J);
-           
-           % Extend from the left side
-           fext = [loadOverlap(Sbolen,size(f,2),fola);f];
-           % Save the overlap for the next block
-           if nargout>1
-              fola = storeOverlap(fext,nextSbolen);
-           else
-              storeOverlap(fext,nextSbolen);
-           end
-           
-           c = block_fwt(fext,w,J);
-         % Uniform window lengths  
-         case {'dgtreal','dgt'}
-%            if Lb<F.a
-%                error('%s: Minimum block length is %i.',upper(mfilename),F.a);
-%            end 
-           a = F.a; 
-           Lwl = floor(Lw/2);
-
-           % Overlap length 
-           Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
-           % Next block overlap length
-           nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
-           Lext = Sbolen + Lb - nextSbolen + Lwl;
-           startc = ceil(Lwl/a)+1;
-           endc = ceil((Lext)/a);
-           
-           
-           % Extend from the left side
-           fext = [loadOverlap(Sbolen,size(f,2),fola);f];
-           % Save the overlap for the next block
-           if nargout>1
-              fola = storeOverlap(fext,nextSbolen);
-           else
-              storeOverlap(fext,nextSbolen);
-           end
-
-           % Pad with zeros to comply with the frame requirements
-           fext = [fext; zeros(F.L-size(fext,1),size(fext,2))];
-           c = F.frana(fext(1:F.L,:));
-           % Pick just valid coefficients
-           cc = F.coef2native(c,size(c));
-           cc = cc(:,startc:endc,:);
-           c = F.native2coef(cc);
-         case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
-            
-         otherwise
-           error('%s: Unsupported frame.',upper(mfilename));
-      end
-    elseif strcmp(F.blokalg,'naive')
+    do_sliced = strcmp(F.blokalg,'sliced');
+    do_segola = strcmp(F.blokalg,'segola');
+    
+    if strcmp(F.blokalg,'naive')
+       % Most general. Should work for anything.
+       % Produces awful block artifacts when coefficients are altered.
        f = [f; zeros(F.L-size(f,1),size(f,2))];
        c = F.frana(f);
+    elseif do_sliced || do_segola
+
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       %% STEP 1) Determine overlap lengths 
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       if do_sliced
+          % Sliced real-time block processing
+          % Equal block length assumtion
+          Sbolen = Lb;
+          nextSbolen = Lb;
+       else
+             if ~isfield(F,'winLen') 
+                error('%s: Frame does not have FIR windows.',upper(mfilename));
+             end
+             % Window length
+             Lw = F.winLen;
+          switch(F.type)
+             case 'fwt'
+                J = F.J;
+                w = F.g;
+                m = numel(w.h{1}.h);
+                a = w.a(1);
+                if Lb<a^J
+                   error('%s: Minimum block length is %i.',upper(mfilename),a^J);
+                end
+                rred = (a^J-1)/(a-1)*(m-a);
+                Sbolen = rred + mod(Sb,a^J);
+                nextSbolen = rred + mod(nextSb,a^J);
+             case {'dgtreal','dgt'}
+                a = F.a; 
+                Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
+                nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
+             case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
+                a = F.lcma;
+                Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
+                nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
+             otherwise
+                error('%s: Unsupported frame.',upper(mfilename));
+          end
+       end
+       
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       %% STEP 2) Common overlap handling 
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       % Append the previous block
+       fext = [loadOverlap(Sbolen,size(f,2),fola);f];
+       % Save the current block
+       if nargout>1
+          fola = storeOverlap(fext,nextSbolen);
+       else
+          storeOverlap(fext,nextSbolen);
+       end
+       
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       %% STEP 3) Do the rest
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       if do_sliced
+          % Multiply by the slicing window (all channels)
+          fwin = bsxfun(@times,F.sliwin,fext);
+          fwin = [fwin; zeros(F.L-size(fwin,1),size(fwin,2))];
+          % Apply transform
+          c = F.frana(fwin);
+       else
+          switch(F.type)
+             case 'fwt'
+                c = block_fwt(fext,w,J);
+             case {'dgtreal','dgt'}
+                Lwl = floor(Lw/2);
+                Lext = Sbolen + Lb - nextSbolen + Lwl;
+                startc = ceil(Lwl/a)+1;
+                endc = ceil((Lext)/a);
+                % Pad with zeros to comply with the frame requirements
+                fext = [fext; zeros(F.L-size(fext,1),size(fext,2))];
+                c = F.frana(fext(1:F.L,:));
+                % Pick just valid coefficients
+                cc = F.coef2native(c,size(c));
+                cc = cc(:,startc:endc,:);
+                c = F.native2coef(cc);
+             case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
+                a = F.a(:,1);
+                Lwl = floor(Lw/2);
+                Lext = Sbolen + Lb - nextSbolen + Lwl;
+                startc = ceil(Lwl./a)+1;
+                endc = ceil((Lext)./a);
+                fext = [fext; zeros(F.L-size(fext,1),size(fext,2))];
+                c = F.frana(fext(1:F.L,:));
+                cc = F.coef2native(c,size(c));
+                cc = cellfun(@(cEl,sEl,eEl) cEl(sEl:eEl,:),cc,num2cell(startc),num2cell(endc),'UniformOutput',0);
+                c = F.native2coef(cc);
+          end
+       end
     else
        error('%s: Frame was not created with blockaccel.',upper(mfilename));
     end

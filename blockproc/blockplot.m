@@ -20,6 +20,7 @@ if strcmp(F.blokalg,'sliced')
    % DO the coefficient overlapping or cropping
 end
 
+ctf = cast(ctf,'single');
 javaMethod('append',p,ctf);
 
 

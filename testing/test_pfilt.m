@@ -11,7 +11,7 @@ gr{7}=firfilter('hanning',20,'delay',13);
 gr{8}=firfilter('hanning',20,'delay',-13); 
 gr{7}=firfilter('hanning',20,'delay',14); 
 gr{8}=firfilter('hanning',20,'delay',-14); 
-gr{9}=firfilter('hamming',19,.3);        
+gr{9}=firfilter('hamming',19,.3);   
 gr{10}=firfilter('hamming',19,.3,'real');
 gr{11}=blfilter('hanning',.19);
 gr{12}=blfilter('hanning',.2);
@@ -19,7 +19,7 @@ gr{13}=blfilter('hanning',.132304);
 gr{14}=blfilter('hanning',.23,'delay',13);
 gr{15}=blfilter('hamming',.23,.3);
 gr{16}=blfilter('hamming',.23,.3,'real');
-
+gr{17}=blfilter('hanning',2);
 
 test_failed=0;
 
@@ -50,9 +50,8 @@ for ii=1:numel(gr)
                                    
                   h2=ref_pfilt(f,g,a);
                   h1=pfilt(f,g,a);
-
-                  
-                  res=norm(h1-h2);
+				  
+                   res=norm(h1-h2);
                   [test_failed,fail]=ltfatdiditfail(res,test_failed);        
                   s=sprintf('PFILT %3s  filtno:%3i L:%3i W:%3i a:%3i %0.5g %s',rname,ii,L,W,a,res,fail);
                   disp(s);

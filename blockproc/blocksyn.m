@@ -1,12 +1,14 @@
-function [fhat,fola] = blocksyn(F, c , Lb, fola)
+function [fhat, fola] = blocksyn(F, c , Lb, fola)
 %BLOCKSYN Blockwise synthesis interface
 %   Usage: blocksyn(F, c, Lb)
 %
 %   Input parameters:
 %      Fs   : Synthesis frame object.
 %      c    : Coefficients of a block.
+%      fola : Explicitly defined overlap.
 %   Output parameters:
 %      fhat : Reconstructed block of signal.
+%      fola : Stored overlap.
 %
 %   `c=blocksyn(F,c,Lb)` reconstructs the signal block *fhat* from the coefficients *c*
 %   using the frame defined by *F*.
@@ -15,6 +17,8 @@ function [fhat,fola] = blocksyn(F, c , Lb, fola)
 %   be a dual frame of the analysis frame used in |blockana|.
 %
 %   See also: block, blockana, framedual   
+%
+%   References: dogrhove12 ltfatnote026
 
     if nargin<3
         error('%s: Too few input parameters.',upper(mfilename));
@@ -33,7 +37,12 @@ function [fhat,fola] = blocksyn(F, c , Lb, fola)
     % Block index start (from a global point of view, starting with zero)
     Sb = nextSb-Lb;
     
-    if strcmp(F.blokalg,'sliced')
+    if strcmp(F.blokalg,'naive')
+       % Most general. Should work for anything.
+       % Produces awful block artifacts when coefficients are altered.
+       fhat = F.frsyn(c);
+       fhat = fhat(1:Lb,:);
+    elseif strcmp(F.blokalg,'sliced')
         % General processing
         % Equal block length assumtion
         % Reconstruct
@@ -121,9 +130,7 @@ function [fhat,fola] = blocksyn(F, c , Lb, fola)
           otherwise
            error('%s: Unsupported frame.',upper(mfilename));
         end
-    elseif strcmp(F.blokalg,'naive')
-       fhat = F.frsyn(c);
-       fhat = fhat(1:Lb,:);
+
     else
        error('%s: Frame was not created with blockaccel.',upper(mfilename));
     end

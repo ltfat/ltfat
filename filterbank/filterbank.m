@@ -53,16 +53,17 @@ if isempty(L)
 end;
 
 [g,info]=filterbankwin(g,a,L,'normal');
-M=info.M;
+% M=info.M;
 
-if length(a)>1 
-  if  length(a)~=M
-    error(['%s: The number of entries in "a" must match the number of ' ...
-           'filters.'],upper(callfun));
-  end;
-else
-  a=a*ones(M,1);
-end;
+% DOES not make sence to do the checking here
+% if length(a)>1 
+%   if  length(a)~=M
+%     error(['%s: The number of entries in "a" must match the number of ' ...
+%            'filters.'],upper(callfun));
+%   end;
+% else
+%   a=a*ones(M,1);
+% end;
 
 f=postpad(f,L);
 

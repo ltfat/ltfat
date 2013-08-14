@@ -2,6 +2,7 @@ function test_failed=test_erbfilters
 %TEST_ERBFILTERS  Test the erbfilters filter generator
 
 warpname={'warped','symmetric'};
+%warpname={'symmetric'};
 
 test_failed=0;
 
@@ -17,7 +18,7 @@ for realcomplexidx=1:2
     for warpidx=1:2
         warping=warpname{warpidx};
         
-        for fracidx=1:2
+        for fracidx=2:-1:1
             if fracidx==1
                 fractional={'regsampling'};
                 fracname='regsamp';
@@ -79,28 +80,22 @@ for realcomplexidx=1:2
                 s=sprintf(['ERBFILTER DUAL  %s %s %s %s L:%3i %0.5g %s'],realcomplex,warping,fracname,uniform,L,res,fail);    
                 disp(s);
                 
-                if isreal
-                    gt=filterbankrealtight(g,a,L);
-                else
-                    gt=filterbanktight(g,a,L);
-                end;
-                
-                if isuniform
-                    ct=ufilterbank(f,gt,a);
-                else
-                    ct=filterbank(f,gt,a);
-                end;
-                
-                rt=ifilterbank(ct,gt,a);
-                if isreal
-                    rt=2*real(rt);
-                end;
-                
-                res=norm(f-rt);
-                
-                [test_failed,fail]=ltfatdiditfail(res,test_failed);
-                s=sprintf(['ERBFILTER TIGHT %s %s %s %s L:%3i %0.5g %s'],realcomplex,warping,fracname,uniform,L,res,fail);    
-                disp(s);
+                  if isreal
+                     gt=filterbankrealtight(g,a,L);
+                 else
+                     gt=filterbanktight(g,a,L);
+                 end;
+                 
+                 rt=ifilterbank(c,gt,a);
+                 if isreal
+                     rt=2*real(rt);
+                 end;
+                 
+                 res=norm(f-rt);
+                 
+                 [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                 s=sprintf(['ERBFILTER TIGHT %s %s %s %s L:%3i %0.5g %s'],realcomplex,warping,fracname,uniform,L,res,fail);    
+                 disp(s);
                 
             end;
             

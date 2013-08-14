@@ -1,7 +1,7 @@
 function classname = assert_classname(varargin)
 % ASSERT_CLASSNAME 
 %
-% Returns name of the "simplest" data type.
+% Returns name of the least "simplest" common data type.
 
 % Array of data types to be checked. Ordered from the "simplest" to the
 % most "complex".

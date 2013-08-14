@@ -74,12 +74,14 @@ if ~isempty(F.g)
         F.isfac=1;
       case {'filterbank','ufilterbank'}
         [g, info]  = filterbankwin(F.g,F.a,L);
+        kv = arg_pfilt();
         g = comp_filterbank_pre(g,F.a,L,1000);
         F = frame(F.type,g,F.origargs{2:end});
         F.g_info = info;
         F.isfac=F.g_info.isfac;
       case {'filterbankreal','ufilterbankreal'}
         [g,info]  = filterbankwin(F.g,F.a,L,'real');
+        kv = arg_pfilt();
         g = comp_filterbank_pre(g,F.a,L,1000);
         F = frame(F.type,g,F.origargs{2:end});
         F.g_info = info;

@@ -34,7 +34,7 @@ if any(a<=0)
 end;
 
 lcm_a=a(1);
-for m=2:length(a)
+for m=2:size(a,1)
   lcm_a=lcm(lcm_a,a(m,1));
 end;
 
