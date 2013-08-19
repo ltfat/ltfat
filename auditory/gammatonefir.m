@@ -90,7 +90,7 @@ if isempty(n)
   n=5000;
 end;
 
-b={};
+b=cell(nchannels,1);
 
 for ii = 1:nchannels
 
@@ -126,9 +126,9 @@ for ii = 1:nchannels
 
   
   % Insert zeros before the start of the signal.
-  b{ii}=[bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)];
+  bwork = fftshift([bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)]);
     
-  b{ii}=normalize(b{ii},flags.norm);  
-  
+  bwork = normalize(bwork,flags.norm);  
+  b{ii} = struct('h',bwork,'offset',-floor(numel(bwork)/2),'realonly',0);
 end;
 

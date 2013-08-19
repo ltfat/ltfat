@@ -28,7 +28,7 @@ if ~isempty(mFreq)
    gfreq = g(mFreq);
    mFreqFullL = 1:numel(gfreq);
    amFreqCell = mat2cell(a(mFreq,:).',size(a,2),ones(1,numel(mFreq)));
-   mFreqBL = mFreqFullL(cellfun(@(gEl,aEl) numel(gEl)~=L || (numel(aEl)>1 && aEl(2) ~=1), gfreq,amFreqCell)>0);
+   mFreqBL = mFreqFullL(cellfun(@(gEl,aEl) numel(gEl.H)~=L || (numel(aEl)>1 && aEl(2) ~=1), gfreq(:),amFreqCell(:))>0);
    mFreqFullL(mFreqBL) = [];
    
    mFreqFullL = mFreq(mFreqFullL);

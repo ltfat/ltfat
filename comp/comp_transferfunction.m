@@ -16,7 +16,7 @@ if isfield(g,'h')
         
     H=fft(g_time);
     
-else
+elseif isfield(g,'H')
     if ~isnumeric(g.H)
         g.H=g.H(L);
         g.foff=g.foff(L);
@@ -31,5 +31,6 @@ else
     if isfield(g,'realonly') && g.realonly
         H=(H+involute(H))/2;
     end;
-        
+else
+    error('%s: Unrecognized filter format. The struct should have either .h or .H field.',upper(mfilename));    
 end;

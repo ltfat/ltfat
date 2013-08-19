@@ -2,7 +2,7 @@ function g = comp_filterbank_pre(g,a,L,crossover)
 %COMP_FILTERBANK_PRE Return sanitized filterbank
 %
 %   The purpose of this function is to evauate all parameters of the
-%   filters, which can be evaluared knowing L.
+%   filters, which can be evaluated knowing L.
 %
 %   This function ensures that g will be in the following format:
 %
