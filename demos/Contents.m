@@ -35,8 +35,13 @@
 %     DEMO_AUDITORYFILTERBANK - Erb-spaced auditory filterbank.
 %
 %  Block-processing demos
-%     DEMO_BLOCKPROC        - Variable noise-reduction.
-%     DEMO_EQUALIZER        - Parametric equalizer.
+%     DEMO_BLOCKPROC_BASICLOOP        - Simple audio playback loop.
+%     DEMO_BLOCKPROC_PARAMEQUALIZER   - Parametric equalizer.
+%     DEMO_BLOCKPROC_DENOISING        - Variable noise-reduction.
+%     DEMO_BLOCKPROC_SLIDINGSGRAM     - Sliding spectrogram plot.
+%     DEMO_BLOCKPROC_PITCHSHIFT       - Simple pich shifting.
+%     DEMO_BLOCKPROC_DGTEQUALIZER     - Variable Gabor Multiplier as equalizer.
+%     
 %
 %   For help, bug reports, suggestions etc. send email to 
 %   ltfat-help@lists.sourceforge.net

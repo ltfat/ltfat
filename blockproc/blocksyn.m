@@ -37,12 +37,12 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
     % Block index start (from a global point of view, starting with zero)
     Sb = nextSb-Lb;
     
-    if strcmp(F.blokalg,'naive')
+    if strcmp(F.blockalg,'naive')
        % Most general. Should work for anything.
        % Produces awful block artifacts when coefficients are altered.
        fhat = F.frsyn(c);
        fhat = fhat(1:Lb,:);
-    elseif strcmp(F.blokalg,'sliced')
+    elseif strcmp(F.blockalg,'sliced')
         % General processing
         % Equal block length assumtion
         % Reconstruct
@@ -63,7 +63,7 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
         end
         % Return first half
         fhat = f(1:Lb,:);
-    elseif strcmp(F.blokalg,'segola')
+    elseif strcmp(F.blockalg,'segola')
        Lw = F.winLen;
        switch(F.type)
          case 'fwt'

@@ -1,15 +1,16 @@
 function c=comp_filterbank(f,g,a);
 %COMP_FILTERBANK  Compute filtering
 %
-%   If numel(g.h)<=crossover, the routine will use the time-side algorithm for
-%   FIR filters, otherwise it will always do the multiplication in the
-%   frequency domain.
+%   Function groups filters in g according to a presence of .h and .H
+%   fields. If .H is present, it is further decided whether it is a full
+%   frequency response or a band-limited freq. resp.
+%
 
 [L,W]=size(f);
 M=numel(g);
 c = cell(M,1);
 
-% Divide filters to time domain and frequency domain groups
+% Divide filters into time domain and frequency domain groups
 mFreq = 1:M;
 mTime = mFreq(cellfun(@(gEl) isfield(gEl,'h') ,g)>0); 
 mFreq(mTime) = [];
@@ -24,8 +25,11 @@ if ~isempty(mTime)
 end
 
 if ~isempty(mFreq)
+   % Filtering in the frequency domain
    F=fft(f);
+   % Pick frequency domain filters
    gfreq = g(mFreq);
+   % Divide filters into the full-length and band-limited groups
    mFreqFullL = 1:numel(gfreq);
    amFreqCell = mat2cell(a(mFreq,:).',size(a,2),ones(1,numel(mFreq)));
    mFreqBL = mFreqFullL(cellfun(@(gEl,aEl) numel(gEl.H)~=L || (numel(aEl)>1 && aEl(2) ~=1), gfreq(:),amFreqCell(:))>0);
@@ -33,7 +37,7 @@ if ~isempty(mFreq)
    
    mFreqFullL = mFreq(mFreqFullL);
    mFreqBL = mFreq(mFreqBL);
-
+   
    if ~isempty(mFreqFullL)
       G = cellfun(@(gEl) gEl.H, g(mFreqFullL),'UniformOutput',0);
       c(mFreqFullL) = comp_filterbank_fft(F,G,a(mFreqFullL));

@@ -1,32 +1,17 @@
 function demo_blockproc_paramequalizer(source,varargin)
-%DEMO_EQUALIZER Real-time equalizer demonstration
+%DEMO_BLOCKPROC_PARAMEQUALIZER Real-time equalizer demonstration
+%   Usage: demo_blockproc_paramequalizer('gspi.wav')
+%
+%   For additional help call |demo_blockproc_paramequalizer| without arguments.
 %
 %   This demonstration shows an example of a octave parametric
 %   equalizer. See chapter 5.2 in the book by Zolzer.
 % 
 %   References: zolz08
 
-if nargin<1
-   fprintf(['%s: To run the demo, use one of the following:\n',...
-          'demo_blockproc_paramequalizer(''gspi.wav'') to play gspi.wav (any wav file will do).\n',...
-          'demo_blockproc_paramequalizer(''dialog'') to choose the wav file via file chooser dialog GUI.\n',...
-          'demo_blockproc_paramequalizer(f,''fs'',fs) to play from a column vector f using sampling frequency fs.\n',...
-          'demo_blockproc_paramequalizer(''playrec'') to record from a mic and play simultaneously.\n',...
-          'Avalable input and output devices can be listed by |blockdevices|.\n',...
-          'Particular device can be chosen by passing additional key-value pair ''devid'',devid.\n',...
-          'Output channels of the device cen be selected by additional key-value pair ''playch'',[ch1,ch2].\n',...
-          'Input channels of the device cen be selected by additional key-value pair ''recch'',[ch1].\n',...
-          ]...
-          ,upper(mfilename));
-    return;
+if demo_blockproc_header(mfilename,nargin)
+   return;
 end
-
-try
-   playrec('isInitialised');
-catch
-   error('%s: playrec or portaudio are not properly compiled. ',mfilename);
-end
-
 
 % Buffer length
 % Larger the number the higher the processing delay. 1024 with fs=44100Hz

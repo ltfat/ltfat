@@ -77,7 +77,7 @@ else
     if info.ispainless
         Fsqrt=sqrt(comp_filterbankresponse(g,info.a,L,0));
         
-        gdout=cell(1,M);
+        gtout=cell(1,M);
         for m=1:M
             thisgt=struct();
             H=circshift(comp_transferfunction(g{m},L)./Fsqrt,-g{m}.foff);

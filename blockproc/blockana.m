@@ -39,10 +39,10 @@ function [c, fola] = blockana(F, f, fola)
     % Block index start (from a global point of view, starting with zero)
     Sb = nextSb-Lb;
     
-    do_sliced = strcmp(F.blokalg,'sliced');
-    do_segola = strcmp(F.blokalg,'segola');
+    do_sliced = strcmp(F.blockalg,'sliced');
+    do_segola = strcmp(F.blockalg,'segola');
     
-    if strcmp(F.blokalg,'naive')
+    if strcmp(F.blockalg,'naive')
        % Most general. Should work for anything.
        % Produces awful block artifacts when coefficients are altered.
        f = [f; zeros(F.L-size(f,1),size(f,2))];

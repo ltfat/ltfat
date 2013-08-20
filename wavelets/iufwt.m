@@ -47,7 +47,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    if nargin>2
       error('%s: Too many input parameters.',upper(mfilename));
    end
-   w = fwtinit({'dual',par.wt},'syn');
+   w = fwtinit({'dual',par.wt});
    J = par.J;
 else
    if nargin<3

@@ -114,7 +114,7 @@ norm_s=norm(s,'fro');
 relres=zeros(kv.maxit,1);
 if flags.do_griflim
   
-  Fs=framedual(F);
+  Fs=frameaccel(framedual(F),L);
   
   for iter=1:kv.maxit
     f=Fs.frsyn(c);
@@ -141,7 +141,7 @@ end;
 
 if flags.do_fgriflim
   
-  Fs=framedual(F);
+  Fs=frameaccel(framedual(F),L);
 
   told=s;
 

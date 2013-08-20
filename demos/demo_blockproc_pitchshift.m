@@ -1,31 +1,16 @@
 function demo_blockproc_pitchshift(source,varargin)
 %DEMO_BLOCKPROC_PITCHSHIFT Pitch shift by Gabor coefficient bands shift
+%   Usage: demo_blockproc_pitchshift('gspi.wav')
+%
+%   For additional help call |demo_blockproc_pitchshift| without arguments.
 %
 %   This script demonstrates a real-time Gabor coefficient manipulation.
 %   Frequency bands are shifted up or down according to the slider
 %   position.
 %
 
-
-if nargin<1
-   fprintf(['\n%s: To run the demo, use one of the following:\n',...
-          '%s(''gspi.wav'') to play gspi.wav (any wav file will do).\n',...
-          '%s(''dialog'') to choose the wav file via file chooser dialog GUI.\n',...
-          '%s(f,''fs'',fs) to play from a column vector f using sampling frequency fs.\n',...
-          '%s(''playrec'') to record from a mic and play simultaneously.\n',...
-          'Avalable input and output devices can be listed by |blockdevices|.\n',...
-          'Particular device can be chosen by passing additional key-value pair ''devid'',devid.\n',...
-          'Output channels of the device cen be selected by additional key-value pair ''playch'',[ch1,ch2].\n',...
-          'Input channels of the device cen be selected by additional key-value pair ''recch'',[ch1].\n\n',...
-          ]...
-          ,upper(mfilename),mfilename,mfilename,mfilename,mfilename);
-    return;
-end
-
-try
-   playrec('isInitialised');
-catch
-   error('%s: playrec or portaudio are not properly compiled. ',mfilename);
+if demo_blockproc_header(mfilename,nargin)
+   return;
 end
 
 M = 1000;
@@ -63,6 +48,7 @@ while flag && p.flag
    shift = fix(blockpanelget(p,'Shi'));
 
    [f,flag] = blockread();
+   % Noise gate
    f=f*gain;
    
    c = blockana(Fa, f);

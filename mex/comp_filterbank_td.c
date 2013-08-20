@@ -1,3 +1,4 @@
+
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
@@ -38,6 +39,7 @@
     WHEN MISSING: No input checks REAL/COMPLEX checks are included in the final code.
 */
 #define COMPLEXINDEPENDENT
+#define EXPORTALIAS comp_filterbank_td
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 

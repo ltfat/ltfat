@@ -57,7 +57,7 @@ sgram(f,fs,dynrange_for_plotting);
 
 %% ---------------  Gammatone filters ----------------------------
 
-if 0
+if 1
 
 g_gam=gammatonefir(fc,fs,filterlength,'peakphase');
 
@@ -86,6 +86,7 @@ c2 = frana(F,f);
 Ls=length(f);
 
 [r_iter,relres,iter] = frsyniter(F,c2,Ls);
+disp('Relative error in interative reconstruction, should be close to zero.');
 norm(f-r_iter)/norm(f)
 
 end;

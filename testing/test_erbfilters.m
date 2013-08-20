@@ -2,6 +2,7 @@ function test_failed=test_erbfilters
 %TEST_ERBFILTERS  Test the erbfilters filter generator
 
 warpname={'warped','symmetric'};
+Ls = 10000;
 %warpname={'symmetric'};
 
 test_failed=0;
@@ -23,7 +24,7 @@ for realcomplexidx=1:2
                 fractional={'regsampling'};
                 fracname='regsamp';
             else
-                fractional={'fractional','L',10000};
+                fractional={'fractional','L',Ls};
                 fracname='fractional';
             end;
             
@@ -37,7 +38,7 @@ for realcomplexidx=1:2
                 end;
                 
                 [g,a]=erbfilters(16000,fractional{:},warping,uniform,'redmul',1,realcomplex);
-                L=filterbanklength(5000,a);
+                L=filterbanklength(Ls,a);
                 
                 f=randn(L,1);
                 % Test it
@@ -85,6 +86,12 @@ for realcomplexidx=1:2
                  else
                      gt=filterbanktight(g,a,L);
                  end;
+                 
+                if isuniform
+                    c=ufilterbank(f,gt,a);
+                else
+                    c=filterbank(f,gt,a);
+                end;
                  
                  rt=ifilterbank(c,gt,a);
                  if isreal
