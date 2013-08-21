@@ -183,6 +183,28 @@ LTFAT_H_NAME(ufilterbank_fft)(const LTFAT_H_COMPLEX *f, const LTFAT_H_COMPLEX *g
 			      const int W, const int a, const int M,
 			      LTFAT_H_COMPLEX *cout);
 
+LTFAT_EXTERN void
+LTFAT_H_NAME(convsub_fft)(const LTFAT_H_COMPLEXH *F, const LTFAT_H_COMPLEXH *G,
+                          const size_t L, const size_t a, LTFAT_H_COMPLEXH *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(convsub_fft_plan)(const LTFAT_H_COMPLEXH *F, const LTFAT_H_COMPLEXH *G,
+                               const size_t L, const size_t a, LTFAT_H_COMPLEXH *cout,
+                               LTFAT_H_FFTW(plan) *p);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(convsub_fftbl)(const LTFAT_H_COMPLEXH *F, const size_t L,
+                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const int foff,
+                            const double a, const double realonly, LTFAT_H_COMPLEXH *cout);
+
+LTFAT_EXTERN void
+LTFAT_H_NAME(convsub_fftbl_plan)(const LTFAT_H_COMPLEXH *F, const size_t L,
+                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const int foff,
+                            const double a, const double realonly, LTFAT_H_COMPLEXH *cout,
+                            LTFAT_H_FFTW(plan) *p);
+
+
+
 /* -------- windows ------------------------------ */
 
 LTFAT_EXTERN void
