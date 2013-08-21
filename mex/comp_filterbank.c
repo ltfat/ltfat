@@ -1,4 +1,5 @@
 #include "mex.h"
+#include "fftw3.h"
 
 void comp_filterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_filterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
@@ -10,6 +11,7 @@ void comp_filterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *pr
 void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
    const mxArray* mxf = prhs[0];
+   mxArray* mxF = NULL;
    const mxArray* mxg = prhs[1];
    const mxArray* mxa = prhs[2];
 
@@ -64,7 +66,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 
       if(mxGetField(gEl,0,"H")!=NULL)
       {
-          if(acols==1&&L==mxGetNumberOfElement(mxGetField(gEl,0,"H")))
+          if(acols==1&&L==mxGetNumberOfElements(mxGetField(gEl,0,"H")))
           {
              fftArgsIdx[fftCount++] = m;
              continue;
@@ -125,8 +127,123 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
     }
 
 
+    if(fftCount>0 || fftblCount>0)
+    {
+        // Need to do FFT of mxf
+        mwIndex ndim = mxGetNumberOfDimensions(mxf);
+        const mwSize* dims = mxGetDimensions(mxf);
+        mxClassID classid = mxDOUBLE_CLASS;
+        if(mxIsSingle(mxf))
+            classid = mxSINGLE_CLASS;
+
+        mxF = mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
+
+
+        fftw_iodim fftw_dims[1];
+        fftw_iodim howmanydims[1];
+        fftw_plan p;
+        fftw_dims[0].n = L;
+        fftw_dims[0].is = 1;
+        fftw_dims[0].os = 1;
+
+        howmanydims[0].n = W;
+        howmanydims[0].is = L;
+        howmanydims[0].os = L;
+
+        if(mxIsDouble(mxf))
+        {
+        p = fftw_plan_guru_split_dft(
+          1, fftw_dims,
+          1, howmanydims,
+          mxGetPr(mxF), mxGetPi(mxF), mxGetPr(mxF), mxGetPi(mxF),
+          FFTW_ESTIMATE);
+          memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(double));
+          if(mxIsComplex(mxf))
+            memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(double));
+        }
+        else if(mxIsSingle(mxf))
+        {
+          p = fftwf_plan_guru_split_dft(
+          1, dims,
+          1, howmanydims,
+          (float*)mxGetPr(mxF), (float*)mxGetPi(mxF),
+          (float*) mxGetPr(mxF), (float*)mxGetPi(mxF),
+          FFTW_ESTIMATE);
+          memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(float));
+          if(mxIsComplex(mxf))
+            memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(float));
+        }
+
+        fftw_execute(p);
+        fftw_destroy_plan(p);
+
+    }
+
     if(fftCount>0)
     {
+        mxArray* plhs_fft[1];
+        const mxArray* prhs_fft[3];
+        prhs_fft[0] = mxF;
+        prhs_fft[1] = mxCreateCellMatrix(fftCount,1);
+        prhs_fft[2] = mxCreateDoubleMatrix(fftCount,1,mxREAL);
+        double* aPtr = (double*)mxGetPr(prhs_fft[2]);
+
+        for(mwIndex m=0;m<fftCount;m++)
+        {
+           mxArray * gEl = mxGetCell(mxg, fftArgsIdx[m]);
+           mxSetCell((mxArray*)prhs_fft[1],m,mxGetField(gEl,0,"H"));
+           // This has overhead
+           //mxSetCell((mxArray*)prhs_td[1],m,mxDuplicateArray(mxGetField(gEl,0,"h")));
+           aPtr[m] = a[fftArgsIdx[m]];
+        }
+
+        comp_filterbank_fft(1,plhs_fft,3, prhs_fft);
+
+        for(mwIndex m=0;m<fftCount;m++)
+        {
+          mxSetCell(plhs[0],fftArgsIdx[m],mxGetCell(plhs_fft[0],m));
+          mxSetCell(plhs_fft[0],m,NULL);
+          mxSetCell((mxArray*)prhs_fft[1],m,NULL);
+        }
+
+    }
+
+    if(fftblCount>0)
+    {
+        mxArray* plhs_fftbl[1];
+        const mxArray* prhs_fftbl[5];
+        prhs_fftbl[0] = mxF;
+        prhs_fftbl[1] = mxCreateCellMatrix(fftblCount,1);
+        prhs_fftbl[2] = mxCreateDoubleMatrix(fftblCount,1,mxREAL);
+        prhs_fftbl[3] = mxCreateDoubleMatrix(fftblCount,2,mxREAL);
+        prhs_fftbl[4] = mxCreateDoubleMatrix(fftblCount,1,mxREAL);
+        double* foffPtr = (double*)mxGetPr(prhs_fftbl[2]);
+        double* aPtr = (double*)mxGetPr(prhs_fftbl[3]);
+        double* realonlyPtr = (double*)mxGetPr(prhs_fftbl[3]);
+
+        for(mwIndex m=0;m<fftCount;m++)
+        {
+           mxArray * gEl = mxGetCell(mxg, fftblArgsIdx[m]);
+           mxSetCell((mxArray*)prhs_fftbl[1],m,mxGetField(gEl,0,"H"));
+           foffPtr[m] = mxGetScalar(mxGetField(gEl,0,"foff"));
+           aPtr[m] = a[fftblArgsIdx[m]];
+
+           if(acols>1)
+              aPtr[m+fftblCount] = a[fftblArgsIdx[m]+M];
+           else
+              aPtr[m+fftblCount] = 1;
+
+           realonlyPtr[m] = mxGetScalar(mxGetField(gEl,0,"realonly"));
+        }
+
+        comp_filterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
+
+        for(mwIndex m=0;m<fftblCount;m++)
+        {
+          mxSetCell(plhs[0],fftblArgsIdx[m],mxGetCell(plhs_fftbl[0],m));
+          mxSetCell(plhs_fftbl[0],m,NULL);
+          mxSetCell((mxArray*)prhs_fftbl[1],m,NULL);
+        }
 
     }
 

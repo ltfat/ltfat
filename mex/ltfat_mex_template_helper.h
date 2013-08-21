@@ -19,11 +19,11 @@ macros which are set in the MEX source file. The supported are:
     WHEN MISSING: No input argument checks ale included in the final code.
 
 #define ISNARGINEQ 5
- TYPEDEPARGS
- MATCHEDARGS
+ TYPEDEPARGS -- used when determining the data type (float, double, float _Complex, double _Complex)
+ MATCHEDARGS -- used when determining the data type but only float and double
     AT COMPILE-TIME: Defines integer array from the specified values.
     AT RUNTIME: The array is used to identify input arguments to be checked/reformated. Accepted inputs are numeric arrays,
-                cell arrays containing only numeric arrays, structures having at least one field beeing numeric array.
+                cell arrays containing only numeric arrays, structures having at least one field beeing a numeric array.
     WHEN MISSING: No input modifications/checks are included in the code.
 
 #define TYPEDEPARGS 0, 1
@@ -54,6 +54,7 @@ macros which are set in the MEX source file. The supported are:
 #define COMPLEXINDEPENDENT 
   
 NOCOMPLEXFMTCHANGE
+    Macro overrides the default complex number format change. 
   
 ************************************************************************************/
 
@@ -69,7 +70,11 @@ NOCOMPLEXFMTCHANGE
     suppresses the default "export-all-symbols" behavior. **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
+#else
+#  define DLL_EXPORT_SYM __attribute__((visibility("public")))
 #endif
+
+
 
 /** Template macros */
 #define LTFAT_CAT(prefix,name) prefix##name
@@ -105,7 +110,20 @@ NOCOMPLEXFMTCHANGE
 //#  include <tgmath.h>
 #endif
 
-/** Helper function headers, to allow them to be used in the MEX_FILE */
+
+#ifdef EXPORTALIAS
+DLL_EXPORT_SYM
+void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
+
+void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+{
+   mexFunction(nlhs,plhs,nrhs,prhs);
+}
+#endif
+
+
+/** Helper function headers.
+    Defined here to allow them to be used in the MEX_FILE */
 /*
 Replacement for:
 mxArray *mxCreateNumericMatrix(mwSize m, mwSize n, mxClassID classid, mxComplexity ComplexFlag);
@@ -137,8 +155,8 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
     LTFAT_TYPE           LTFAT_REAL         LTFAT_REAL         LTFAT_COMPLEXH        LTFAT_COMPLEXH
     LTFAT_MX_CLASSID     mxDOUBLE_CLASS     mxSINGLE_CLASS     mxDOUBLE_CLASS        mxSINGLE_CLASS
     LTFAT_MX_COMPLEXITY  mxREAL             mxREAL             mxCOMPLEX             mxCOMPLEX
-    LTFAT_FFTW(name)     fftw_##name        fftw_##name        fftw_##name           fftw_##name
-    LTFAT_NAME(name)     name               s##name            c##name               cs##name
+    LTFAT_FFTW(name)     fftw_##name        fftwf_##name       fftw_##name           fftwf_##name
+    LTFAT_NAME(name)     name_d             name_s             name_cd               name_cs
 
     By default, a macro set (double) is used.
 */
@@ -147,10 +165,12 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 #define LTFAT_DOUBLE
 #include "ltfat_mex_typeindependent.h"
 #include "ltfat_mex_typecomplexindependent.h"
+// Including the MEX source file
 #include MEX_FILE
 #ifdef COMPLEXINDEPENDENT
 #  define LTFAT_COMPLEXTYPE
 #  include "ltfat_mex_typecomplexindependent.h"
+// Including the MEX source file
 #  include MEX_FILE
 #  undef LTFAT_COMPLEXTYPE
 #endif
@@ -160,10 +180,12 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 #  define LTFAT_SINGLE
 #  include "ltfat_mex_typeindependent.h"
 #  include "ltfat_mex_typecomplexindependent.h"
+// Including the MEX source file
 #  include MEX_FILE
 #  ifdef COMPLEXINDEPENDENT
 #    define LTFAT_COMPLEXTYPE
 #    include "ltfat_mex_typecomplexindependent.h"
+// Including the MEX source file
 #    include MEX_FILE
 #    undef LTFAT_COMPLEXTYPE
 #  endif
@@ -262,7 +284,7 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
       mxFree(mxGetPi(out));
       mxSetData(out,(void*)mxCalloc(L,2*sizeofClassid(classid)));
 	  /*
-	  Allocate array of length 1 to keep the array complex and to avoid automatic deallocation
+	  Allocate array of length 1 to keep the array beeing identified as complex and to avoid automatic deallocation
 	  issue. 
 	  */
       mxSetImagData(out,mxCalloc(1,1));
@@ -302,6 +324,7 @@ void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 /* Helper recasting functions */
 mxArray* recastToSingle(mxArray* prhsEl)
 {
+
    // return the input pointer if the input parameter already contains single prec. data
    if(checkIsSingle(prhsEl))
    {
@@ -333,14 +356,26 @@ mxArray* recastToSingle(mxArray* prhsEl)
       }
 	  // Create duplicate struct
       mxArray* tmpStructArr = mxCreateStructArray(ndim,dims,nfields,fieldnames);
+	  
       for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
          for(mwIndex ii=0;ii<nfields;ii++)
          {
-            mxSetFieldByNumber(prhsEl,jj,ii,recastToSingle(mxGetFieldByNumber(prhsEl,jj,ii)));
+		    bool fieldnameMatch = 0;
+		    #if defined(STRUCTFIELD1)
+		       fieldnameMatch = fieldnameMatch || !strcmp(fieldnames[ii],STRUCTFIELD1);
+			#endif
+			
+			#if defined(STRUCTFIELD2)
+			   fieldnameMatch = fieldnameMatch || !strcmp(fieldnames[ii],STRUCTFIELD2);
+			#endif
+            
+ 		   mxSetFieldByNumber(tmpStructArr,jj,ii,recastToSingle(mxGetFieldByNumber(prhsEl,jj,ii)));
+
          }
       }
-         return tmpStructArr;
+	  
+      return tmpStructArr;
    }
 
 
@@ -388,6 +423,22 @@ mxArray* recastToSingle(mxArray* prhsEl)
 
 bool checkIsSingle(const mxArray *prhsEl)
 {
+#define STRUCTFIELDCHECK(NO)                                        \
+                                                                    \
+ 	  gfield = mxGetField(prhsEl,0,NO);                             \
+	  if(gfield!=NULL)                                              \
+	  {                                                             \
+         for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)    \
+	     {                                                          \
+            if(!checkIsSingle(mxGetField(prhsEl,jj,NO)))            \
+            {                                                       \
+               return false;                                        \
+            }			                                            \
+	     }                                                          \
+      }		 
+
+
+
    if(mxIsCell(prhsEl))
    {
       for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
@@ -397,6 +448,25 @@ bool checkIsSingle(const mxArray *prhsEl)
       }
       return true;
    }
+   
+   if(mxIsStruct(prhsEl))
+   {
+      mxArray* gfield = NULL;
+      #ifdef STRUCTFIELD1
+	     STRUCTFIELDCHECK(STRUCTFIELD1)
+	  #endif
+	  
+	  #ifdef STRUCTFIELD2
+	     STRUCTFIELDCHECK(STRUCTFIELD2)
+	  #endif
+	  
+	  if(gfield==NULL)
+	     return true;
+	  else
+		 return false;
+   }
+   
+   #undef STRUCTFIELDCHECK  
    return mxIsSingle(prhsEl);
 }
 
@@ -413,7 +483,7 @@ bool checkIsReal(const mxArray *prhsEl)
       return isAllReal;
    }
 
-    return !mxIsComplex(prhsEl);
+   return !mxIsComplex(prhsEl);
 }
 
 /** MEX entry function
@@ -561,7 +631,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 
         #endif
 
-
+        mxFree(prhsAlt);
       }
 
 

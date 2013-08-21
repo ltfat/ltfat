@@ -68,4 +68,4 @@ elseif flags.do_naive
    Fo = frameaccel(F,Lb);
 end
 
-Fo.blokalg = flags.blockalg;
+Fo.blockalg = flags.blockalg;

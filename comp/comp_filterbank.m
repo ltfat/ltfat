@@ -46,7 +46,8 @@ if ~isempty(mFreq)
    if ~isempty(mFreqBL)
       G = cellfun(@(gEl) gEl.H, g(mFreqBL),'UniformOutput',0);
       foff = cellfun(@(gEl) gEl.foff, g(mFreqBL));
-      realonly = cellfun(@(gEl) isfield(gEl,'realonly') && gEl.realonly, g(mFreqBL));
+      % Cast from logical to double.
+      realonly = cellfun(@(gEl) cast(isfield(gEl,'realonly') && gEl.realonly,'double'), g(mFreqBL));
       c(mFreqBL) = comp_filterbank_fftbl(F,G,foff,a(mFreqBL,:),realonly);
    end
 end

@@ -26,10 +26,11 @@ for m=1:M
         Ftmp = F(fsuppRangeSmall{m},w).*G{m};
         postpadL = ceil(max([N(m),numel(G{m})])/N(m))*N(m);
         Ftmp = postpad(Ftmp,postpadL);
-        
-        Ftmp = circshift(Ftmp,foff(m));
    
         Ftmp = sum(reshape(Ftmp,N(m),numel(Ftmp)/N(m)),2);
+        
+        Ftmp = circshift(Ftmp,foff(m));
+        
         c{m}(:,w)=ifft(Ftmp)/afrac(m);
     end;
 end

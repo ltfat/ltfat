@@ -19,23 +19,39 @@ ifndef ARCH
 endif
 
 CC=gcc
-CFLAGS=-shared -O3 -Wall -s -std=c99 -I../src/thirdparty -I../src
+CFLAGS=-O3 -shared -Wall -s -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
 
 include filedefs.mk
 
+SHAREDEXT = dll
+
 MEXBASE = $(MEXBASESAFE) $(MEXBASEMORE)
-MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
+MEXS    = $(addsuffix .$(EXT),$(MEXBASE))
+MEXLINKS  = $(addsuffix .$(SHAREDEXT),$(MEXSOFTLINKS))
+MEXDEPEND = $(addsuffix .$(EXT),$(MEXDEPENDFILES))
+
 
 MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include" -DMATLAB_MEX_FILE
-MEXLIBS=-lmex -lmx
-MEXLINKFLAGS=-static-libgcc -L"$(MATLABROOT)\bin\$(ARCH)" $(MEXLIBS)
+MEXLIBS=-lmex -lmx 
+MEXLINKFLAGS=-static-libgcc -Wl,--dll -L"$(MATLABROOT)\bin\$(ARCH)" $(MEXLIBS)
 
-all: $(MEXS)
 
-%.$(EXT): %.c 
+
+all: $(MEXS) $(MEXLINKS) $(MEXDEPEND) killlinks
+
+$(MEXS): %.$(EXT): %.c 
 	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L../lib -lltfat -lltfatf -L./ -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
 
-clean:
+$(MEXLINKS): %.$(SHAREDEXT): %.$(EXT)
+	copy /Y $< $(addprefix lib,$@)
+
+$(MEXDEPEND): %.$(EXT): %.c
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L../lib -lltfat -lltfatf -L./ $(addprefix -l,$(MEXSOFTLINKS)) -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS) 
+
+killlinks:
+	del $(addprefix lib, $(MEXLINKS))
+	
+clean: killlinks
 	del *.$(EXT)
 
 .PHONY: all clean

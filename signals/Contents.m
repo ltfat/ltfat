@@ -26,6 +26,7 @@
 %
 %    http://sound.media.mit.edu/mpeg4/audio/sqam/
 %    http://www.dogstar.dantimax.dk/testwavs/
+%    (currently not available)
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

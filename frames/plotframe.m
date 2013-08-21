@@ -48,7 +48,7 @@ switch(F.type)
  case 'dgt'
   plotdgt(framecoef2native(F,insig),F.a,varargin{:}); 
  case 'dgtreal'
-  plotdgtreal(framecoef2native(F,insig),F.a,F.M,varargin{:}); 
+  outsig = plotdgtreal(framecoef2native(F,insig),F.a,F.M,varargin{:}); 
  case 'dwilt'
   plotdwilt(framecoef2native(F,insig),varargin{:}); 
  case 'wmdct'

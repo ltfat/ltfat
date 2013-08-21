@@ -10,7 +10,6 @@ MEXBASESAFE=\
 	comp_dgtreal_ola \
 	comp_dwilt_long  \
 	comp_fftreal  \
-	comp_filterbank_td \
 	comp_gabreassign  \
 	comp_heapint  \
 	comp_idgt_fac  \
@@ -31,9 +30,21 @@ MEXBASESAFE=\
 	comp_ifilterbank_td \
 	comp_cellcoef2tf \
 	comp_gga \
+	comp_filterbank_fft \
+	comp_filterbank_fftbl \
 
 MEXBASEMORE =\
 	comp_gabdual_long \
 	comp_gabtight_long  \
 	comp_idgtreal_fac \
-	comp_idgtreal_fb	
+	comp_idgtreal_fb\
+
+MEXSOFTLINKS =\
+	comp_filterbank_td \
+	comp_filterbank_fft \
+	comp_filterbank_fftbl \
+	
+MEXDEPENDFILES =\
+
+
+
