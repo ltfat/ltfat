@@ -58,21 +58,29 @@ NOCOMPLEXFMTCHANGE
   
 ************************************************************************************/
 
-/** Allow including this file only if MEX_FILE is defined */
+/** Allow including this file further only if MEX_FILE is defined */
 #if defined(MEX_FILE)
 
 /** Allow including this file only once */
 #ifndef _LTFAT_MEX_TEMPLATEHELPER_H
 #define _LTFAT_MEX_TEMPLATEHELPER_H 1
 
-/** Adds symbol exporting function decorator to mexFunction.
-    On Windows, a separate def file is no longer needed. For MinGW, it
-    suppresses the default "export-all-symbols" behavior. **/
+/** 
+    __delspec(dllexport)
+       Adds symbol exporting function decorator to mexFunction.
+       On Windows, a separate def file is no longer needed. For MinGW, it
+       suppresses the default "export-all-symbols" behavior.
+
+    __attribute__((visibility("default")))
+       Only for Linux. In conjuction with compiler flag -fvisibility=hidden
+       export symbols of functions only with EXPORT_EXTERN_C 
+ **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
 #else
 #  define EXPORT_EXTERN_C __attribute__((visibility("default")))
 #endif
+
 
 
 
@@ -170,12 +178,14 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 #define LTFAT_DOUBLE
 #include "ltfat_mex_typeindependent.h"
 #include "ltfat_mex_typecomplexindependent.h"
-// Including the MEX source file
+#include "ltfat_types.h"
+void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #include MEX_FILE
 #ifdef COMPLEXINDEPENDENT
 #  define LTFAT_COMPLEXTYPE
 #  include "ltfat_mex_typecomplexindependent.h"
-// Including the MEX source file
+#  include "ltfat_types.h"
+void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #  include MEX_FILE
 #  undef LTFAT_COMPLEXTYPE
 #endif
@@ -185,12 +195,14 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 #  define LTFAT_SINGLE
 #  include "ltfat_mex_typeindependent.h"
 #  include "ltfat_mex_typecomplexindependent.h"
-// Including the MEX source file
+#include "ltfat_types.h"
+void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);// Including the MEX source file
 #  include MEX_FILE
 #  ifdef COMPLEXINDEPENDENT
 #    define LTFAT_COMPLEXTYPE
 #    include "ltfat_mex_typecomplexindependent.h"
-// Including the MEX source file
+#include "ltfat_types.h"
+void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);// Including the MEX source file
 #    include MEX_FILE
 #    undef LTFAT_COMPLEXTYPE
 #  endif
@@ -234,10 +246,15 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 
 
 /** Function prototypes */
+
 bool checkIsReal(const mxArray *prhsEl);
+
 bool checkIsSingle(const mxArray *prhsEl);
+
 mxArray* recastToSingle(mxArray* prhsEl);
+
 void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]);
+
 mwSize sizeofClassid(mxClassID classid);
 
 
@@ -347,9 +364,11 @@ mxArray* recastToSingle(mxArray* prhsEl)
       return tmpCell;
    }
 
-   // if the input is struct, find all numeric fields and cast them to single
+   // Structures are not s upported
    if(mxIsStruct(prhsEl))
    {
+     mexErrMsgTxt("Structures are not supported!");
+     /*
       mwSize nfields = mxGetNumberOfFields(prhsEl);
       const mwSize *dims = mxGetDimensions(prhsEl);
       mwSize ndim = mxGetNumberOfDimensions(prhsEl);
@@ -381,6 +400,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
       }
 	  
       return tmpStructArr;
+     */
    }
 
 
@@ -428,6 +448,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
 
 bool checkIsSingle(const mxArray *prhsEl)
 {
+  /*
 #define STRUCTFIELDCHECK(NO)                                        \
                                                                     \
  	  gfield = mxGetField(prhsEl,0,NO);                             \
@@ -440,7 +461,8 @@ bool checkIsSingle(const mxArray *prhsEl)
                return false;                                        \
             }			                                            \
 	     }                                                          \
-      }		 
+      }	
+  */	 
 
 
 
@@ -456,6 +478,8 @@ bool checkIsSingle(const mxArray *prhsEl)
    
    if(mxIsStruct(prhsEl))
    {
+     mexErrMsgTxt("Structures are not supported!");
+     /*
       mxArray* gfield = NULL;
       #ifdef STRUCTFIELD1
 	     STRUCTFIELDCHECK(STRUCTFIELD1)
@@ -469,9 +493,10 @@ bool checkIsSingle(const mxArray *prhsEl)
 	     return true;
 	  else
 		 return false;
+     */
    }
    
-   #undef STRUCTFIELDCHECK  
+   //#undef STRUCTFIELDCHECK  
    return mxIsSingle(prhsEl);
 }
 
