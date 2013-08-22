@@ -71,7 +71,7 @@ NOCOMPLEXFMTCHANGE
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
 #else
-#  define DLL_EXPORT_SYM __attribute__((visibility("public")))
+#  define EXPORT_EXTERN_C __attribute__((visibility("default")))
 #endif
 
 
@@ -112,7 +112,12 @@ NOCOMPLEXFMTCHANGE
 
 
 #ifdef EXPORTALIAS
+#  ifdef DLL_EXPORT_SYM
 DLL_EXPORT_SYM
+#  endif
+#  ifdef EXPORT_EXTERN_C
+EXPORT_EXTERN_C       
+#  endif  
 void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 
 void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )

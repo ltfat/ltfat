@@ -106,10 +106,9 @@ for ii = 1:nchannels
            'at least %i samples.'],upper(mfilename),nfirst*2);
   end;
   
-  nlast = n/2;
+  nlast = floor(n/2);
 
-  t=[(0:nlast-1)/fs+delay,...
-     (0:nfirst-1)/fs-nfirst/fs+delay].';  
+  t=[(0:nfirst-1)/fs-nfirst/fs+delay,(0:nlast-1)/fs+delay].';  
 
   % g(t) = a*t^(n-1)*cos(2*pi*fc*t)*exp(-2*pi*beta*t)
   if flags.do_real
@@ -126,9 +125,9 @@ for ii = 1:nchannels
 
   
   % Insert zeros before the start of the signal.
-  bwork = fftshift([bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)]);
+  %bwork = fftshift([bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)]);
     
   bwork = normalize(bwork,flags.norm);  
-  b{ii} = struct('h',bwork,'offset',-floor(numel(bwork)/2),'realonly',0);
+  b{ii} = struct('h',bwork,'offset',-nfirst,'realonly',0);
 end;
 
