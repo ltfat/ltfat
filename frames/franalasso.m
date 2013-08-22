@@ -75,6 +75,7 @@ definput.keyvals.tol=1e-2;
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
+definput.flags.algorithm={'ista','fista'};
 definput.flags.startphase={'zero','rand','int'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
@@ -94,12 +95,12 @@ L = numel(x);
 F=frameaccel(F,L);
 L=F.L;
 
-% Initialization of thresholded coefficients
-c0 = frana(F,x);
-
 if isempty(kv.C)
   [A_dummy,kv.C] = framebounds(F,L);
 end;
+
+% Initialization of thresholded coefficients
+c0 = F.frana(x);
 
 % Various parameter initializations
 threshold = lambda/kv.C;
@@ -108,19 +109,42 @@ tc0 = c0;
 relres = 1e16;
 iter = 0;
 
-% Main loop
-while ((iter < kv.maxit)&&(relres >= kv.tol))
-    tc = c0 - F.frana(F.frsyn(tc0));
-    tc = tc0 + tc/kv.C;
-    tc = thresh(tc,threshold,'soft');
-    relres = norm(tc(:)-tc0(:))/norm(tc0(:));
-    tc0 = tc;
-    iter = iter + 1;
-    if flags.do_print
-      if mod(iter,kv.printstep)==0        
-        fprintf('Iteration %d: relative error = %f\n',iter,relres);
-      end;
-    end;
+if flags.do_ista
+   % Main loop
+   while ((iter < kv.maxit)&&(relres >= kv.tol))
+       tc = c0 - F.frana(F.frsyn(tc0));
+       tc = tc0 + tc/kv.C;
+       tc = thresh(tc,threshold,'soft');
+       relres = norm(tc(:)-tc0(:))/norm(tc0(:));
+       tc0 = tc;
+       iter = iter + 1;
+       if flags.do_print
+         if mod(iter,kv.printstep)==0        
+           fprintf('Iteration %d: relative error = %f\n',iter,relres);
+         end;
+       end;
+   end
+elseif flags.do_fista
+   tz0 = c0;
+   tau0 = 1;
+   % Main loop
+   while ((iter < kv.maxit)&&(relres >= kv.tol))
+       tc = c0 - F.frana(F.frsyn(tz0));
+       tc = tz0 + tc/kv.C;
+       tc = thresh(tc,threshold,'soft');
+       
+       tau = 1/2*(1+sqrt(1+4*tau0^2));
+       tz0 = tc + (tau0-1)/tau*(tc-tc0);
+       relres = norm(tc(:)-tc0(:))/norm(tc0(:));
+       tc0 = tc;
+       tau0 = tau;
+       iter = iter + 1;
+       if flags.do_print
+         if mod(iter,kv.printstep)==0        
+           fprintf('Iteration %d: relative error = %f\n',iter,relres);
+         end;
+       end;
+   end   
 end
 
 % Reconstruction
