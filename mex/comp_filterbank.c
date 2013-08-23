@@ -1,5 +1,6 @@
 #include "mex.h"
 #include "fftw3.h"
+#include <string.h>
 
 void comp_filterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_filterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
@@ -130,18 +131,15 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
     if(fftCount>0 || fftblCount>0)
     {
         // Need to do FFT of mxf
-        mwIndex ndim = mxGetNumberOfDimensions(mxf);
-        const mwSize* dims = mxGetDimensions(mxf);
-        mxClassID classid = mxDOUBLE_CLASS;
-        if(mxIsSingle(mxf))
-            classid = mxSINGLE_CLASS;
+        mwIndex ndim = 2;
+        const mwSize dims[] = {L,W};
 
-        mxF = mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
-
-
+        if(mxIsDouble(mxf))
+        {
+        mxF = mxCreateNumericArray(ndim,dims,mxDOUBLE_CLASS,mxCOMPLEX);
         fftw_iodim fftw_dims[1];
         fftw_iodim howmanydims[1];
-        fftw_plan p;
+
         fftw_dims[0].n = L;
         fftw_dims[0].is = 1;
         fftw_dims[0].os = 1;
@@ -150,9 +148,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         howmanydims[0].is = L;
         howmanydims[0].os = L;
 
-        if(mxIsDouble(mxf))
-        {
-        p = fftw_plan_guru_split_dft(
+        fftw_plan p = fftw_plan_guru_split_dft(
           1, fftw_dims,
           1, howmanydims,
           mxGetPr(mxF), mxGetPi(mxF), mxGetPr(mxF), mxGetPi(mxF),
@@ -160,11 +156,27 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(double));
           if(mxIsComplex(mxf))
             memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(double));
+
+          fftw_execute(p);
+          fftw_destroy_plan(p);
         }
         else if(mxIsSingle(mxf))
         {
-          p = fftwf_plan_guru_split_dft(
-          1, dims,
+          mxF = mxCreateNumericArray(ndim,dims,mxSINGLE_CLASS,mxCOMPLEX);
+         // mexPrintf("M= %i, N= %i\n",mxGetM(mxF),mxGetN(mxF));
+          fftwf_iodim fftw_dims[1];
+          fftwf_iodim howmanydims[1];
+
+          fftw_dims[0].n = L;
+          fftw_dims[0].is = 1;
+          fftw_dims[0].os = 1;
+
+          howmanydims[0].n = W;
+          howmanydims[0].is = L;
+          howmanydims[0].os = L;
+
+          fftwf_plan p = fftwf_plan_guru_split_dft(
+          1, fftw_dims,
           1, howmanydims,
           (float*)mxGetPr(mxF), (float*)mxGetPi(mxF),
           (float*) mxGetPr(mxF), (float*)mxGetPi(mxF),
@@ -172,10 +184,10 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(float));
           if(mxIsComplex(mxf))
             memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(float));
-        }
 
-        fftw_execute(p);
-        fftw_destroy_plan(p);
+          fftwf_execute(p);
+          fftwf_destroy_plan(p);
+        }
 
     }
 
@@ -219,9 +231,9 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         prhs_fftbl[4] = mxCreateDoubleMatrix(fftblCount,1,mxREAL);
         double* foffPtr = (double*)mxGetPr(prhs_fftbl[2]);
         double* aPtr = (double*)mxGetPr(prhs_fftbl[3]);
-        double* realonlyPtr = (double*)mxGetPr(prhs_fftbl[3]);
+        double* realonlyPtr = (double*)mxGetPr(prhs_fftbl[4]);
 
-        for(mwIndex m=0;m<fftCount;m++)
+        for(mwIndex m=0;m<fftblCount;m++)
         {
            mxArray * gEl = mxGetCell(mxg, fftblArgsIdx[m]);
            mxSetCell((mxArray*)prhs_fftbl[1],m,mxGetField(gEl,0,"H"));

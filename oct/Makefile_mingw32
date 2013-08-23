@@ -41,6 +41,8 @@ OCTSCC   = \
 	comp_pgauss  \
 	comp_ufilterbank_fft  \
 	comp_wfac \
+	comp_filterbank_fft \
+	comp_filterbank_fftbl \
 	
 OCTSBASE = $(basename $(OCTSCC))
 OCTS     = $(addsuffix .oct,$(OCTSBASE))

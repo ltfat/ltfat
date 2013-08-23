@@ -25,8 +25,8 @@ if ~isempty(which('javaaddpath'))
          end
          % Adding a jar file. Once added to the classpath, it cannot be
          % deleted. Removing it from the classpath issues again the 'clear
-         % java' command, but the jar canot be romeved while Matlab is
-         % running.
+         % java' command, but the jar cannot be removed while Matlab is
+         % running at all.
          % http://www.mathworks.com/support/solutions/en/data/1-37JYLQ/?product=ML&solution=1-37JYLQ
          javaaddpath([basepath,filesep,'blockproc',filesep,'java',filesep,jarFile]);
       else

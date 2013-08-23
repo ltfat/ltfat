@@ -127,6 +127,9 @@ void* ltfat_calloc (size_t nmemb, size_t size);
 void* ltfat_realloc (void *ptr, size_t n);
 
 //LTFAT_EXTERN_NOTYPE
+void* ltfat_realloc_and_copy (void *ptr, size_t nold, size_t nnew);
+
+//LTFAT_EXTERN_NOTYPE
 void  ltfat_free(void *ptr);
 
 //LTFAT_EXTERN_NOTYPE

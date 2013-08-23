@@ -20,12 +20,46 @@ void* ltfat_malloc (size_t n)
 void* ltfat_realloc (void *ptr, size_t n)
 {
   void *outp;
-  outp = realloc(ptr, n);
+  // DOES NOT PRODUCE MEMORY ALIGNED POINTER
+  // outp = realloc(ptr, n);
+  outp = fftw_malloc(n);
+
   if (outp == NULL)
   {
      puts("ltfat_realloc failed.");
      exit(1);
   }
+
+  if(ptr!=NULL)
+  {
+     ltfat_free(ptr);
+  }
+
+  return outp;
+}
+
+void* ltfat_realloc_and_copy (void *ptr, size_t nold, size_t nnew)
+{
+  if (ptr == NULL)
+  {
+     puts("Null pointer.");
+     exit(1);
+  }
+
+  void *outp;
+
+  outp = fftw_malloc(nnew);
+
+  if (outp == NULL)
+  {
+     puts("ltfat_realloc_and_copy failed.");
+     exit(1);
+  }
+
+  memcpy(outp,ptr,nold<nnew?nold:nnew);
+
+  ltfat_free(ptr);
+
   return outp;
 }
 

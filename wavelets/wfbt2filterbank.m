@@ -14,8 +14,6 @@ function [g,a] = wfbt2filterbank( wtdef, varargin)
 %   to the wavelet filterbank tree described by *wtdef*. The returned 
 %   parameters can be used directly in |filterbank|, |ufilterbank| or 
 %   |filterbank| . 
-%   The function internally calls |wfbtinit| and passes *wtdef* and all 
-%   additional parameters to it.    
 %   
 %   The filters are scaled if *a* is not returned. 
 %
@@ -23,7 +21,7 @@ function [g,a] = wfbt2filterbank( wtdef, varargin)
 %   additional parameters to it.   
 %   
 %   Examples:
-%   ---------
+%   --------- 
 %   
 %   The following two examples create a multirate identity filterbank
 %   using a tree of depth 3. In the first example, the filterbank is
