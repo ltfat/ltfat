@@ -2,7 +2,7 @@
 
 CC=gcc
 
-CFLAGS=-w -O3 -fpic -std=c99 -Ithirdparty
+CFLAGS=-w -O3 -fpic -std=c99 -Ithirdparty -fvisibility=hidden
 DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DLTFAT_BACKEND_EXPORTS
 #CFLAGS=-O2 -fPIC -std=c99 -Ithirdparty 
 

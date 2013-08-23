@@ -1,3 +1,9 @@
+#if defined(_WIN32) || defined(__WIN32__)
+#  define DLL_EXPORT_SYM __declspec(dllexport)
+#else
+#  define EXPORT_EXTERN_C __attribute__((visibility("default")))
+#endif
+
 #include "mex.h"
 #include "config.h"
 #include "ltfat.h"

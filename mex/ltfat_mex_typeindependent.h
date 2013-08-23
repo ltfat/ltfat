@@ -6,6 +6,7 @@
 
 
 mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg);
+
 mxArray* LTFAT_NAME(mexCombined2split)( const mxArray *parg);
 
 mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg);
