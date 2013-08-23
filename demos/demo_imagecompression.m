@@ -32,7 +32,7 @@
 f=cameraman;
 
 % Ratio to keep
-r=0.001;
+r=0.05;
 
 %% Parameters for the Wilson systems
 % Analysis window
@@ -77,7 +77,7 @@ figure(2);
 
 subplot(1,2,1);
 c_fwt =fwt2(f,wa,J);
-cc_fwt=largestr(c_fwt,r);
+[cc_fwt,n]=largestr(c_fwt,r);
 r_fwt =ifwt2(cc_fwt,ws,J);
 imagesc(r_fwt);
 colormap(gray), axis('image');

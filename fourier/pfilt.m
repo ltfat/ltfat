@@ -57,9 +57,13 @@ definput.keyvals.dim=[];
 
 [g,info] = comp_fourierwindow(g,L,upper(mfilename));
 
-resultIsReal = isreal(f) && (isfield(g,'h') && isreal(g.h) || isfield(g,'H') && g.realonly);
+
+outIsReal = isreal(f) &&...
+              (isfield(g,'h') && isreal(g.h) && ~(isfield(g,'fc') && g.fc~=0) || isfield(g,'H') && g.realonly);
 
 g = comp_filterbank_pre({g},a,L,kv.crossover);
+
+
 c = comp_filterbank(f,g,a);
 c = c{1};
 
@@ -67,7 +71,7 @@ permutedsize(1)=size(c,1);
   
 c=assert_sigreshape_post(c,dim,permutedsize,order);
 
-if resultIsReal
+if outIsReal
    c = real(c);
 end
 
