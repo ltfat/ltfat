@@ -1,4 +1,4 @@
-function h=pfilt(f,g,varargin)
+function c=pfilt(f,g,varargin)
 %PFILT  Apply filter with periodic boundary conditions
 %   Usage:  h=pfilt(f,g);
 %           h=pfilt(f,g,a,dim);
@@ -57,11 +57,17 @@ definput.keyvals.dim=[];
 
 [g,info] = comp_fourierwindow(g,L,upper(mfilename));
 
-g = comp_filterbank_pre({g},a,L,kv.crossover);
-h = comp_filterbank(f,g,a);
-h = h{1};
+resultIsReal = isreal(f) && (isfield(g,'h') && isreal(g.h) || isfield(g,'H') && g.realonly);
 
-permutedsize(1)=size(h,1);
+g = comp_filterbank_pre({g},a,L,kv.crossover);
+c = comp_filterbank(f,g,a);
+c = c{1};
+
+permutedsize(1)=size(c,1);
   
-h=assert_sigreshape_post(h,dim,permutedsize,order);
+c=assert_sigreshape_post(c,dim,permutedsize,order);
+
+if resultIsReal
+   c = real(c);
+end
 
