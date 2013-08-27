@@ -1,0 +1,35 @@
+# Use MinGW Make to process this file. Y must provide your sytem system specific MATLABROOT
+# variable on the command line e.g.:
+#
+## make -f Makefile_unix MATLABROOT=/usr/local/MATLAB/R2011a  EXT=$(mexext)
+
+ifndef MATLABROOT
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
+  MATLABROOT=/usr/local/MATLAB/R2011a/
+endif
+
+
+
+MEXCOMPFLAGS=-I"$(MATLABROOT)extern/include"
+MATLABLIBS=-L"$(MATLABROOT)bin/glnxa64" -lmat -lmx -ldl
+MATLABLINKFLAGS=$(MATLABLIBS)
+
+CFLAGS=-O3 -Wall -pg -s -std=c99 -I../../src/thirdparty -I../../src/ -I./
+
+EXEFILES=mexExecuter
+
+all:
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) mexExecuter.c -o mexExecuter -fPIC $(MATLABLINKFLAGS)
+
+copyLibs:
+	cp ../../mex/libfftw3-3.dll .
+	cp ../../mex/libfftw3f-3.dll .
+	cp ../../mex/ltfat.dll .
+	cp ../../mex/ltfatf.dll .	
+	
+	
+clean:
+
+.PHONY: all clean
+
+
