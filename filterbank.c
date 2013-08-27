@@ -143,9 +143,11 @@ LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEXH *F, const size_t L,
    LTFAT_FFTW(plan) plan_c =  LTFAT_FFTW(plan_dft_1d)(Lc, (LTFAT_COMPLEX*)cout, (LTFAT_COMPLEX*) cout,
                                                        FFTW_BACKWARD, FFTW_ESTIMATE);
 
+//LTFAT_FFTW(plan) plan_c = NULL;
    LTFAT_NAME(convsub_fftbl_plan)(F,L,G, Lg, foff, a, realonly, cout, &plan_c);
 
    LTFAT_FFTW(destroy_plan)(plan_c);
+
 
 }
 
@@ -201,6 +203,7 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
          tmp[ii] += tmp[jj*Lc+ii];
       }
    }
+
 
    // Do the circshift
    int Lcint = (int) Lc;
