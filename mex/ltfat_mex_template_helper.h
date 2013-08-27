@@ -4,13 +4,14 @@ This file serves as a helper for the MEX files. It helps with the following issu
    1) Avoids code repetition by introducing type-independent code.
    2) Handles Matlab complex numbers arrays format conversion (split to interleaved)
       on-the-fly.
+   3) (optionally) Exports alias for the mexFunction to avoid function names colision when working with several MEXs at once.
 
 This header is meant to be included from a MEX file having MEX_FILE macro set to
 
 #define MEX_FILE __BASE_FILE__
 
 The MEX source file itself is not processed directly, but it is included from this
-header possibly more than once. How the MEX file is treated depends on a control 
+header possibly more than once. How the MEX file is treated depends on a control
 macros which are set in the MEX source file. The supported are:
 
  ISNARGINEQ, ISNARGINLE, ISNARGINGE
@@ -51,11 +52,11 @@ macros which are set in the MEX source file. The supported are:
     WHEN MISSING: No input checks REAL/COMPLEX checks are included in the final code.
 
 
-#define COMPLEXINDEPENDENT 
-  
+#define COMPLEXINDEPENDENT
+
 NOCOMPLEXFMTCHANGE
-    Macro overrides the default complex number format change. 
-  
+    Macro overrides the default complex number format change.
+
 ************************************************************************************/
 
 /** Allow including this file further only if MEX_FILE is defined */
@@ -65,23 +66,21 @@ NOCOMPLEXFMTCHANGE
 #ifndef _LTFAT_MEX_TEMPLATEHELPER_H
 #define _LTFAT_MEX_TEMPLATEHELPER_H 1
 
-/** 
+/**
     __delspec(dllexport)
-       Adds symbol exporting function decorator to mexFunction.
+       Adds symbol exporting function decorator to mexFunction (see mex.h).
        On Windows, a separate def file is no longer needed. For MinGW, it
        suppresses the default "export-all-symbols" behavior.
 
     __attribute__((visibility("default")))
        Only for Linux. In conjuction with compiler flag -fvisibility=hidden
-       export symbols of functions only with EXPORT_EXTERN_C 
+       export symbols of functions only with EXPORT_EXTERN_C (used also in mex.h).
  **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
 #else
 #  define EXPORT_EXTERN_C __attribute__((visibility("default")))
 #endif
-
-
 
 
 /** Template macros */
@@ -99,7 +98,6 @@ NOCOMPLEXFMTCHANGE
 #  undef LTFAT_COMPLEXTYPE
 #endif
 
-
 /** Helper MACROS */
 #ifdef _DEBUG
 #define DEBUGINFO  mexPrintf("File: %s, func: %s \n",__BASE_FILE__,__func__);
@@ -112,6 +110,8 @@ NOCOMPLEXFMTCHANGE
 #include <stdio.h>
 #include <string.h>
 #include "mex.h"
+/* This is just for the case when we want to skip registration of the atExit function */
+inline void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 /** C99 headers for a generic complex number manipulations */
 #if (defined(COMPLEXINDEPENDENT)||defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
 #  include <complex.h>
@@ -119,18 +119,53 @@ NOCOMPLEXFMTCHANGE
 #endif
 
 
+// Storing function pointers to exitFunctions
+#define MEXEXITFNCCOUNT 4
+static void (*exitFncPtr[MEXEXITFNCCOUNT])(void) = {0};
+
+void ltfatMexAtExitGlobal(void)
+{
+   for(int ii=0;ii<MEXEXITFNCCOUNT;ii++)
+   {
+    if(exitFncPtr[ii]!=0)
+      (*exitFncPtr[ii])();
+   }
+}
+
 #ifdef EXPORTALIAS
+/*
+  If EXPORTALIAS macro is set, a wrapper function for the mexFunction is created.
+  This allows to call the MEX function from another MEX function without having to
+  deal with which mexFunction to call.
+*/
 #  ifdef DLL_EXPORT_SYM
 DLL_EXPORT_SYM
 #  endif
 #  ifdef EXPORT_EXTERN_C
-EXPORT_EXTERN_C       
-#  endif  
+EXPORT_EXTERN_C
+#  endif
 void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 
 void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   mexFunction(nlhs,plhs,nrhs,prhs);
+   mexFunctionInner(nlhs,plhs,nrhs,prhs);
+}
+
+#  ifdef DLL_EXPORT_SYM
+DLL_EXPORT_SYM
+#  endif
+#  ifdef EXPORT_EXTERN_C
+EXPORT_EXTERN_C
+#  endif
+
+#define STR_EXPAND(tok) tok##_atexit
+#define STR(tok) STR_EXPAND(tok)
+
+void STR(EXPORTALIAS)();
+
+void STR(EXPORTALIAS)()
+{
+   ltfatMexAtExitGlobal();
 }
 #endif
 
@@ -148,7 +183,7 @@ mxArray *mxCreateNumericArray(mwSize ndim, const mwSize *dims, mxClassID classid
 */
 mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,mxComplexity complexFlag);
 
-/** 
+/**
 Include MEX source code (MEX_FILE) for each template data type according to the control macros:
 
     TYPEDEPARGS
@@ -179,13 +214,13 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 #include "ltfat_mex_typeindependent.h"
 #include "ltfat_mex_typecomplexindependent.h"
 #include "ltfat_types.h"
-void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
+ void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #include MEX_FILE
 #ifdef COMPLEXINDEPENDENT
 #  define LTFAT_COMPLEXTYPE
 #  include "ltfat_mex_typecomplexindependent.h"
 #  include "ltfat_types.h"
-void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
+   void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #  include MEX_FILE
 #  undef LTFAT_COMPLEXTYPE
 #endif
@@ -195,14 +230,14 @@ void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *pr
 #  define LTFAT_SINGLE
 #  include "ltfat_mex_typeindependent.h"
 #  include "ltfat_mex_typecomplexindependent.h"
-#include "ltfat_types.h"
-void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);// Including the MEX source file
+#  include "ltfat_types.h"
+   void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #  include MEX_FILE
 #  ifdef COMPLEXINDEPENDENT
 #    define LTFAT_COMPLEXTYPE
 #    include "ltfat_mex_typecomplexindependent.h"
-#include "ltfat_types.h"
-void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);// Including the MEX source file
+#    include "ltfat_types.h"
+     void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #    include MEX_FILE
 #    undef LTFAT_COMPLEXTYPE
 #  endif
@@ -245,7 +280,7 @@ void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *pr
         for(itemIdx=&(subset)[count]; keep; keep = !keep)
 
 
-/** Function prototypes */
+/** Private Function prototypes */
 
 bool checkIsReal(const mxArray *prhsEl);
 
@@ -255,6 +290,7 @@ mxArray* recastToSingle(mxArray* prhsEl);
 
 void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]);
 
+// Returns size of datatype defined by classid in bytes
 mwSize sizeofClassid(mxClassID classid);
 
 
@@ -307,7 +343,7 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
       mxSetData(out,(void*)mxCalloc(L,2*sizeofClassid(classid)));
 	  /*
 	  Allocate array of length 1 to keep the array beeing identified as complex and to avoid automatic deallocation
-	  issue. 
+	  issue.
 	  */
       mxSetImagData(out,mxCalloc(1,1));
 
@@ -380,7 +416,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
       }
 	  // Create duplicate struct
       mxArray* tmpStructArr = mxCreateStructArray(ndim,dims,nfields,fieldnames);
-	  
+
       for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
          for(mwIndex ii=0;ii<nfields;ii++)
@@ -389,16 +425,16 @@ mxArray* recastToSingle(mxArray* prhsEl)
 		    #if defined(STRUCTFIELD1)
 		       fieldnameMatch = fieldnameMatch || !strcmp(fieldnames[ii],STRUCTFIELD1);
 			#endif
-			
+
 			#if defined(STRUCTFIELD2)
 			   fieldnameMatch = fieldnameMatch || !strcmp(fieldnames[ii],STRUCTFIELD2);
 			#endif
-            
+
  		   mxSetFieldByNumber(tmpStructArr,jj,ii,recastToSingle(mxGetFieldByNumber(prhsEl,jj,ii)));
 
          }
       }
-	  
+
       return tmpStructArr;
      */
    }
@@ -461,8 +497,8 @@ bool checkIsSingle(const mxArray *prhsEl)
                return false;                                        \
             }			                                            \
 	     }                                                          \
-      }	
-  */	 
+      }
+  */
 
 
 
@@ -475,7 +511,7 @@ bool checkIsSingle(const mxArray *prhsEl)
       }
       return true;
    }
-   
+
    if(mxIsStruct(prhsEl))
    {
      mexErrMsgTxt("Structures are not supported!");
@@ -484,19 +520,19 @@ bool checkIsSingle(const mxArray *prhsEl)
       #ifdef STRUCTFIELD1
 	     STRUCTFIELDCHECK(STRUCTFIELD1)
 	  #endif
-	  
+
 	  #ifdef STRUCTFIELD2
 	     STRUCTFIELDCHECK(STRUCTFIELD2)
 	  #endif
-	  
+
 	  if(gfield==NULL)
 	     return true;
 	  else
 		 return false;
      */
    }
-   
-   //#undef STRUCTFIELDCHECK  
+
+   //#undef STRUCTFIELDCHECK
    return mxIsSingle(prhsEl);
 }
 
@@ -521,6 +557,22 @@ bool checkIsReal(const mxArray *prhsEl)
  */
 void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
  {
+   static int exitFncRegistered = 0;
+   if(!exitFncRegistered)
+   {
+       // This fails when mexFunction is not called directly from Matlab or another MEX function
+       //mexAtExit(ltfatMexAtExitGlobal);
+       exitFncRegistered = 1;
+   }
+
+  mexFunctionInner(nlhs,plhs,nrhs,prhs);
+ }
+
+inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) 
+{
+   #ifdef MEX_BEGINNING_HOOK
+   MEX_BEGINNING_HOOK
+   #endif
    #if defined(ISNARGINEQ) || defined(ISNARGINLE) || defined(ISNARGINGE)
      checkArgs(nlhs, plhs,nrhs,prhs);
    #endif
@@ -667,8 +719,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 
 
     #endif // TYPEDEPARGS
- }
-
+}
 #endif // _LTFAT_MEX_TEMPLATEHELPER_H
 #endif // defined(MEX_FILE)
 

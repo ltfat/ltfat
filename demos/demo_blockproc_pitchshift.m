@@ -55,6 +55,13 @@ while flag && p.flag
    
    % Actual coefficient shift
    cc = Fa.coef2native(c,size(c));
+   
+   
+   if(strcmpi(source,'playrec'))
+      % Hum removal (aka low-pass filter)
+      cc(1:2,:,:) = 0;
+   end
+   
    if shift<0
       cc = [cc(-shift+1:end,:,:); zeros(-shift,size(cc,2),size(cc,3))];
    else

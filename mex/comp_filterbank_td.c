@@ -70,8 +70,25 @@
 %         c  : Cell array of length M. Each element is N(m)*W array.
 */
 
+void LTFAT_NAME(tdMexAtExitFnc)()
+{
+   #ifdef _DEBUG
+   mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
+   #endif
+}
+
+
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
+  #ifdef _DEBUG
+  static int atExitFncRegistered = 0;
+  if(!atExitFncRegistered)
+  {
+     LTFAT_NAME(ltfatMexAtExit)(LTFAT_NAME(tdMexAtExitFnc));
+     atExitFncRegistered = 1;
+  }
+  #endif
+
   const mxArray* mxf = prhs[0];
   const mxArray* mxg = prhs[1];
   double* a = (double*) mxGetData(prhs[2]);

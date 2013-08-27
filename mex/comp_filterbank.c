@@ -6,8 +6,26 @@ void comp_filterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[
 void comp_filterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_filterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 
+void comp_filterbank_fftbl_atexit();
+void comp_filterbank_fft_atexit();
+void comp_filterbank_td_atexit();
+
 // Calling convention:
 //  comp_filterbank(f,g,a);
+
+
+/*
+  MEX exit fnc. are not called by Matlab
+*/
+void filterbankAtExit()
+{
+   #ifdef _DEBUG
+   mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
+   #endif
+   comp_filterbank_fftbl_atexit();
+   comp_filterbank_fft_atexit();
+   comp_filterbank_td_atexit();
+}
 
 void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
@@ -258,6 +276,10 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         }
 
     }
+
+    /* This should overwrite function registered by mexAtExit in any of the previously
+    called MEX files */
+    mexAtExit(filterbankAtExit);
 
 
 }

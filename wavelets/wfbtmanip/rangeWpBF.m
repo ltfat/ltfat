@@ -6,7 +6,7 @@ pOutIdxs = zeros(1,trLen);
 chOutIdxs = cell(1,trLen);
 pRunIdx = [0];
 chRunIdx = 1;
-% do trough tree and look for nodeNo and its parrent
+% do trough tree and look for nodeNo and its parent
 for ii=1:trLen
     tmpfiltNo = length(wt.nodes{treePath(ii)}.g);
     locRange = rangeInLocalOutputs(treePath(ii),wt);

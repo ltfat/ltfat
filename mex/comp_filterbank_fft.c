@@ -19,8 +19,24 @@
 // Calling convention:
 // c = comp_filterbank_fft(F,G,a)
 
+void LTFAT_NAME(fftMexAtExitFnc)()
+{
+   #ifdef _DEBUG
+   mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
+   #endif
+}
+
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
+  #ifdef _DEBUG
+  static int atExitFncRegistered = 0;
+  if(!atExitFncRegistered)
+  {
+     LTFAT_NAME(ltfatMexAtExit)(LTFAT_NAME(fftMexAtExitFnc));
+     atExitFncRegistered = 1;
+  }
+  #endif
+
   const mxArray* mxF = prhs[0];
   const mxArray* mxG = prhs[1];
   double* a = (double*) mxGetData(prhs[2]);

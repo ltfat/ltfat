@@ -1,4 +1,4 @@
-function f=ifilterbank(c,g,a,varargin);  
+function [f,Ls]=ifilterbank(c,g,a,varargin);  
 %IFILTERBANK  Filter bank inversion
 %   Usage:  f=ifilterbank(c,g,a);
 %
@@ -21,75 +21,49 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+definput.import={'pfilt'};
 definput.keyvals.Ls=[];
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 L=filterbanklengthcoef(c,a);
 
+
+if iscell(c)
+  M=numel(c);
+else
+  M=size(c,2);
+end;
+
 [g,info]=filterbankwin(g,a,L,'normal');
-M=info.M;
-a=info.a;
+a = info.a;
 
-if iscell(c)
-  Mcoef=numel(c);
-  W=size(c{1},2);
-else
-  Mcoef=size(c,2);
-  W=size(c,3);    
-end;
+if info.M~=M
+  error(['%s: Number of filters must be equal to the number of channels ' ...
+            'of coefficients.'],upper(callfun));
+end
 
-if ~(M==Mcoef)
-  error(['Mismatch between the size of the input coefficients and the ' ...
-         'number of filters.']);
-end;
+ if size(a,1)>1 
+   if  size(a,1)~=M
+     error(['%s: The number of entries in "a" must match the number of ' ...
+            'filters.'],upper(callfun));
+   end;
+ else
+   a=a*ones(M,1);
+ end;
 
-if iscell(c)
-    classname=assert_classname(c{1});
-else
-    classname=assert_classname(c);
-end;
-f=zeros(L,W,classname);
+g = comp_filterbank_pre(g,info.a,L,kv.crossover);
 
-% This routine must handle the following cases
-%
-%   * Time-side or frequency-side filters (test for  isfield(g,'H'))
-%
-%   * Cell array or matrix input (test for iscell(c))
-%
-%   * Regular or fractional subsampling (test for info.isfractional)
+% Handle ufilterbank output format here
+if isnumeric(c)
+   ctmp = c;
+   c = cell(M,1);
+   for m=1:M    
+      c{m}=squeeze(ctmp(:,m,:));
+   end;
+end
 
-l=(0:L-1).'/L;
-for m=1:M
-    conjG=conj(comp_transferfunction(g{m},L));
-        
-    % For Octave 3.6 compatibility
-    conjG=cast(conjG,classname);
-    
-    % Handle fractional subsampling (this implies frequency side filters)
-    if info.isfractional
-        N=size(c{m},1);
-        Llarge=ceil(L/N)*N;
-        amod=Llarge/N;
-        
-        for w=1:W                        
-            % This repmat cannot be replaced by bsxfun
-            innerstuff=middlepad(circshift(repmat(fft(c{m}(:,w)),amod,1),-g{m}.foff),L);
-            f(:,w)=f(:,w)+ifft(circshift(bsxfun(@times,innerstuff,circshift(conjG,-g{m}.foff)),g{m}.foff));
-        end;                
-    else
-        if iscell(c)
-            for w=1:W
-                % This repmat cannot be replaced by bsxfun
-                f(:,w)=f(:,w)+ifft(repmat(fft(c{m}(:,w)),a(m),1).*conjG);
-            end;
-        else
-            for w=1:W
-                % This repmat cannot be replaced by bsxfun
-                f(:,w)=f(:,w)+ifft(repmat(fft(c(:,m,w)),a(m),1).*conjG);
-            end;            
-        end;
-    end;
-end;
+
+f = comp_ifilterbank(c,g,a,L);
   
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
