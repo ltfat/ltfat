@@ -48,7 +48,10 @@ for jj=1:numel(wtNodes)
    cOutRunIdx = cOutRunIdx + filtNo;
    
    % Prepare input for the next iteration
-   % Scaling introduced in order to preserve energy (tight frame)
+   % Scaling introduced in order to preserve energy 
+   % (parseval tight frame)
+   % TO DO: Investigate how this scaling influences the |wpbest| 
+   % algorithms.
    if ~isempty(cInRunIdxs)
       c{cInRunIdxs(1)} = c{cInRunIdxs(1)}/sqrt(2);
       ca = c{cInRunIdxs(1)};

@@ -14,6 +14,11 @@ gt = {};
 gt{1} = {'db4',1,'dwt'};
 gt{2} = {'db4',4,'full'};
 gt{3} = {{'ana:spline4:4',3,'dwt'},{'syn:spline4:4',3,'dwt'}};
+gt{4} = wfbtinit(gt{2});
+gt{4} = wfbtremove(3,0,gt{4});
+gt{4} = wfbtremove(3,1,gt{4});
+
+
 
 for jj=1:numel(gt)
 
@@ -21,11 +26,12 @@ for jj=1:numel(gt)
    for ii=1:numel(L)
       f = tester_rand(L(ii),1);
       gttmp = gt(jj);
-      if iscell(gt{jj}{1})
-         gttmp = gt{jj}{1};
-      else
-         gttmp = gttmp{1};
-      end
+         if iscell(gt{jj}) && iscell(gt{jj}{1})
+           gttmp = gt{jj}{1};
+         else
+           gttmp = gttmp{1};
+         end
+
       
       refc = wfbt(f,gttmp);
 
@@ -38,10 +44,10 @@ for jj=1:numel(gt)
       if ~isstruct(gt{jj})
          fprintf('FILT %d, COEF         L= %d, W= %d, err=%.4e %s \n',jj,L(ii),W(ww),err,fail); 
       else
-         fprintf('FILT %d, COEF         L= %d, W= %d, COEF err=%.4e %s\n',jj,L(ii),W(ww),err,fail); 
+         fprintf('FILT %d, COEF         L= %d, W= %d, err=%.4e %s\n',jj,L(ii),W(ww),err,fail); 
       end;
       
-      if iscell(gt{jj}{2})
+      if iscell(gt{jj}) && iscell(gt{jj}{2})
          gttmp = gt{jj}{2};
          [g,a] = wfbt2filterbank(gttmp);
       end
@@ -58,7 +64,7 @@ for jj=1:numel(gt)
       
       
       gttmp = gt(jj);
-      if iscell(gt{jj}{1})
+      if iscell(gt{jj}) && iscell(gt{jj}{1})
          gttmp = gt{jj}{1};
       else
          gttmp = gttmp{1};
@@ -76,10 +82,10 @@ for jj=1:numel(gt)
       if ~isstruct(gt{jj})
          fprintf('FILT %d, COEF, UNDEC, L= %d, W= %d, err=%.4e %s \n',jj,L(ii),W(ww),err,fail); 
       else
-         fprintf('FILT %d, COEF, UNDEC, L= %d, W= %d, COEF err=%.4e %s\n',jj,L(ii),W(ww),err,fail); 
+         fprintf('FILT %d, COEF, UNDEC, L= %d, W= %d, err=%.4e %s\n',jj,L(ii),W(ww),err,fail); 
       end;
       
-      if iscell(gt{jj}{2})
+      if iscell(gt{jj}) && iscell(gt{jj}{2})
          gttmp = gt{jj};
          g = wfbt2filterbank(gttmp{2});
       end

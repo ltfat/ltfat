@@ -40,7 +40,7 @@ for i=1:numel(kk)
        rootNo = find(wt.parents==0);
        % check for any children of the root
        if(isempty(find(wt.children{rootNo}~=0,1)))
-           wt = wtree_init();
+           wt = wfbtinit();
        else
            if(flags.do_force)
                wt = wfbtinit();

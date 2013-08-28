@@ -1,6 +1,17 @@
 function [g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,wt)
 %NODESMULTID Filter tree multirate identity filterbank
+%   Usage:  [g,a]=nodesMultid(wtPath,rangeLoc,rangeOut,wt);
 %
+%   Input parameters:
+%         wtPath   : Indexes of nodes to be processed in that order.
+%         rangeLoc : Idxs of each node terminal outputs. Length  
+%                    cell array of vectors.
+%         rangeOut : Output subband idxs of each node terminal outputs.
+%         wt       : Filter-Tree defining structure.
+%
+%   Output parameters:
+%         g   : Cell array containing filters
+%         a   : Vector of subsampling factors
 
 %clean cache
 nodePredecesorsMultId();
@@ -13,18 +24,19 @@ g = cell(treeOutputs,1);
 a = zeros(treeOutputs,1);
 
 for ii = 1:numel(wtPath)
-   hmi = nodePredecesorsMultId(ii,wt);
+   iiNode = wtPath(ii);
+   hmi = nodePredecesorsMultId(iiNode,wt);
    locRange = rangeLoc{ii};
    outRange = rangeOut{ii};
    for jj = 1:length(locRange)
-      tmpUpsFac = nodeFiltUps(ii,wt);
-      tmpFilt = wt.nodes{ii}.g{locRange(jj)};
+      tmpUpsFac = nodeFiltUps(iiNode,wt);
+      tmpFilt = wt.nodes{iiNode}.g{locRange(jj)};
       g{outRange(jj)} = struct();
                 % 
       g{outRange(jj)}.h = conj(flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1))));
-      g{outRange(jj)}.offset = 1-numel(g{outRange(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,ii,wt);
+      g{outRange(jj)}.offset = 1-numel(g{outRange(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
    end
-   atmp = nodeSub(ii,wt);
+   atmp = nodeSub(iiNode,wt);
    a(outRange) = atmp{1}(locRange);
 end
         

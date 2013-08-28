@@ -45,10 +45,13 @@ end
 % build the tree
 wt = wfbtinit({'strict',wtdef},varargin{:});
 
+% Pick just nodes with outputs
 wtPath = 1:numel(wt.nodes);
 wtPath(noOfNodeOutputs(1:numel(wt.nodes),wt)==0)=[];
+
+
 rangeLoc = rangeInLocalOutputs(wtPath,wt);
-rangeOut = rangeInOutputs(wtPath,wt); % very slow
+rangeOut = rangeInOutputs(wtPath,wt); 
 
 [g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,wt);
 
