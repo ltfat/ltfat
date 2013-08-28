@@ -5,7 +5,8 @@ function c = comp_gga(f,indvec)
 L = size(f,1);
 W = size(f,2);
 no_freq = length(indvec); %number of frequencies to compute
-c = zeros(no_freq,W,assert_classname(f)); %memory allocation for the output coefficients
+classname = assert_classname(f);
+c = zeros(no_freq,W,classname); %memory allocation for the output coefficients
 
 %% Computation via second-order system
 % loop over the particular frequencies
@@ -17,9 +18,9 @@ for cnt_freq = 1:no_freq
     cos_pik_term2 = cos(pik_term) * 2;
     cc = exp(-1i*pik_term); % complex constant
     %b/ state variables
-    s0 = zeros(1,W);
-    s1 = zeros(1,W);
-    s2 = zeros(1,W);
+    s0 = zeros(1,W,classname);
+    s1 = zeros(1,W,classname);
+    s2 = zeros(1,W,classname);
     %c/ 'main' loop
     for ind = 1:L-1 %number of iterations is (by one) less than the length of signal
         %new state
