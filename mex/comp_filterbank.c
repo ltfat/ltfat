@@ -10,8 +10,21 @@ void comp_filterbank_fftbl_atexit();
 void comp_filterbank_fft_atexit();
 void comp_filterbank_td_atexit();
 
+
+static fftw_plan* p_double = NULL;
+static fftwf_plan* p_float = NULL;
+
+/*
+Since the array is store for the lifetime of the MEX, we introduce limit od the array length.
+2^20 ~ 16 MB of complex double
+*/
+#define MAXARRAYLEN 1048576
+// Static pointer for holding the array the FFTW plan is
+static mxArray* mxF = NULL;
+
 // Calling convention:
 //  comp_filterbank(f,g,a);
+
 
 
 /*
@@ -25,12 +38,26 @@ void filterbankAtExit()
    comp_filterbank_fftbl_atexit();
    comp_filterbank_fft_atexit();
    comp_filterbank_td_atexit();
+   if(mxF!=NULL)
+      mxDestroyArray(mxF);
+
+   if(p_double!=NULL)
+   {
+       fftw_destroy_plan(*p_double);
+       free(p_double);
+   }
+
+   if(p_float!=NULL)
+   {
+       fftw_destroy_plan(*p_float);
+       free(p_float);
+   }
+
 }
 
 void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
    const mxArray* mxf = prhs[0];
-   mxArray* mxF = NULL;
    const mxArray* mxg = prhs[1];
    const mxArray* mxa = prhs[2];
 
@@ -96,7 +123,6 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
              continue;
           }
       }
-
    }
 
    if(tdCount>0)
@@ -143,6 +169,11 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           mxSetCell(plhs_td[0],m,NULL);
           mxSetCell((mxArray*)prhs_td[1],m,NULL);
       }
+      mxDestroyArray((mxArray*)plhs_td[0]);
+      mxDestroyArray((mxArray*)prhs_td[1]);
+      mxDestroyArray((mxArray*)prhs_td[2]);
+      mxDestroyArray((mxArray*)prhs_td[3]);
+      mxDestroyArray((mxArray*)prhs_td[4]);
     }
 
 
@@ -151,6 +182,16 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         // Need to do FFT of mxf
         mwIndex ndim = 2;
         const mwSize dims[] = {L,W};
+
+        if(mxF==NULL || mxGetM(mxF)!=L || mxGetN(mxF)!=W)
+        {
+            if(mxF!=NULL)
+            {
+               mxDestroyArray(mxF);
+               mxF = NULL;
+               printf("Should be called just once\n");
+            }
+
 
         if(mxIsDouble(mxf))
         {
@@ -166,17 +207,18 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         howmanydims[0].is = L;
         howmanydims[0].os = L;
 
-        fftw_plan p = fftw_plan_guru_split_dft(
+        if(p_double==NULL)
+            p_double = (fftw_plan*) malloc(sizeof(fftw_plan));
+         else
+            fftw_destroy_plan(*p_double);
+
+
+        *p_double = fftw_plan_guru_split_dft(
           1, fftw_dims,
           1, howmanydims,
           mxGetPr(mxF), mxGetPi(mxF), mxGetPr(mxF), mxGetPi(mxF),
-          FFTW_ESTIMATE);
-          memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(double));
-          if(mxIsComplex(mxf))
-            memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(double));
+          FFTW_MEASURE);
 
-          fftw_execute(p);
-          fftw_destroy_plan(p);
         }
         else if(mxIsSingle(mxf))
         {
@@ -193,20 +235,42 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           howmanydims[0].is = L;
           howmanydims[0].os = L;
 
-          fftwf_plan p = fftwf_plan_guru_split_dft(
+          if(p_float==NULL)
+             p_float = (fftwf_plan*) malloc(sizeof(fftwf_plan));
+          else
+             fftwf_destroy_plan(*p_float);
+
+          *p_float = fftwf_plan_guru_split_dft(
           1, fftw_dims,
           1, howmanydims,
           (float*)mxGetPr(mxF), (float*)mxGetPi(mxF),
           (float*) mxGetPr(mxF), (float*)mxGetPi(mxF),
           FFTW_ESTIMATE);
+
+        }
+
+
+        }
+
+        if(mxIsDouble(mxf))
+        {
+          memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(double));
+          memset(mxGetPi(mxF),0,L*W*sizeof(double));
+          if(mxIsComplex(mxf))
+            memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(double));
+
+          fftw_execute(*p_double);
+
+        }
+        else if(mxIsSingle(mxf))
+        {
           memcpy(mxGetPr(mxF),mxGetPr(mxf),L*W*sizeof(float));
+          memset(mxGetPi(mxF),0,L*W*sizeof(float));
           if(mxIsComplex(mxf))
             memcpy(mxGetPi(mxF),mxGetPi(mxf),L*W*sizeof(float));
 
-          fftwf_execute(p);
-          fftwf_destroy_plan(p);
+          fftwf_execute(*p_float);
         }
-
     }
 
     if(fftCount>0)
@@ -235,7 +299,9 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           mxSetCell(plhs_fft[0],m,NULL);
           mxSetCell((mxArray*)prhs_fft[1],m,NULL);
         }
-
+        mxDestroyArray((mxArray*)plhs_fft[0]);
+        mxDestroyArray((mxArray*)prhs_fft[1]);
+        mxDestroyArray((mxArray*)prhs_fft[2]);
     }
 
     if(fftblCount>0)
@@ -266,6 +332,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
            realonlyPtr[m] = mxGetScalar(mxGetField(gEl,0,"realonly"));
         }
 
+
         comp_filterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
 
         for(mwIndex m=0;m<fftblCount;m++)
@@ -274,12 +341,25 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           mxSetCell(plhs_fftbl[0],m,NULL);
           mxSetCell((mxArray*)prhs_fftbl[1],m,NULL);
         }
-
+        mxDestroyArray((mxArray*)plhs_fftbl[0]);
+        mxDestroyArray((mxArray*)prhs_fftbl[1]);
+        mxDestroyArray((mxArray*)prhs_fftbl[2]);
+        mxDestroyArray((mxArray*)prhs_fftbl[3]);
+        mxDestroyArray((mxArray*)prhs_fftbl[4]);
     }
 
     /* This should overwrite function registered by mexAtExit in any of the previously
     called MEX files */
-    mexAtExit(filterbankAtExit);
+   mexAtExit(filterbankAtExit);
+   mexMakeArrayPersistent(mxF);
+
+   if(L*W>MAXARRAYLEN)
+   {
+       //printf("Damn. Should not get here\n");
+       mxDestroyArray(mxF);
+       mxF = NULL;
+   }
 
 
+//int prd = 0;
 }

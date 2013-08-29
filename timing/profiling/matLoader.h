@@ -6,7 +6,7 @@ int getNoOfArgsFromMAT(const char* file)
   MATFile *pmat;
   const char **dir;
   int	  ndir;
-  
+
   pmat = matOpen(file, "r");
   if (pmat == NULL) {
     printf("Error opening file %s\n", file);
@@ -15,7 +15,7 @@ int getNoOfArgsFromMAT(const char* file)
 
   dir = (const char **)matGetDir(pmat, &ndir);
   mxFree(dir);
-  
+
   if (matClose(pmat) != 0) {
     printf("Error closing file %s\n",file);
     return(1);
@@ -23,7 +23,7 @@ int getNoOfArgsFromMAT(const char* file)
   return ndir;
 }
 
-void getArgsFromMAT(const char* file, mxArray* prhs[], int ndir)
+int getArgsFromMAT(const char* file, mxArray* prhs[], int ndir)
 {
   MATFile *pmat;
   const char *name;
@@ -43,29 +43,30 @@ void getArgsFromMAT(const char* file, mxArray* prhs[], int ndir)
 	  if(strncmp(name,"arg",3))
 	  {
 	     printf("Variable name shoud be in the following format: arg## \n");
-		 return;
+		 return -1;
 	  }
-	  
+
 	  char buf[4];
-	  
+
 	  memcpy(buf,name+3,strlen(name)-3);
 	  int idx = atoi(buf);
-	  
-	  if(!idx<ndir)
+
+	  if(!(idx<ndir))
 	  {
 	     printf("Variable name shoud be in the following format: arg##, where ## is argument number less than total arg. count. \n");
-		 return;
+		 return -1;
 	  }
-	  
+
       if (pa == NULL) {
 	  printf("Error reading in file %s\n", file);
-	  return;
-      } 
+	  return -1;
+      }
 	  prhs[idx] = pa;
   }
 
   if (matClose(pmat) != 0) {
       printf("Error closing file %s\n",file);
-	  return;
+	  return -1;
   }
+  return 0;
 }

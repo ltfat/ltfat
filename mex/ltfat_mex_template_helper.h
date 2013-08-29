@@ -111,7 +111,7 @@ NOCOMPLEXFMTCHANGE
 #include <string.h>
 #include "mex.h"
 /* This is just for the case when we want to skip registration of the atExit function */
-inline void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
+static inline void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 /** C99 headers for a generic complex number manipulations */
 #if (defined(COMPLEXINDEPENDENT)||defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
 #  include <complex.h>
@@ -561,14 +561,14 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
    if(!exitFncRegistered)
    {
        // This fails when mexFunction is not called directly from Matlab or another MEX function
-       //mexAtExit(ltfatMexAtExitGlobal);
+       mexAtExit(ltfatMexAtExitGlobal);
        exitFncRegistered = 1;
    }
 
   mexFunctionInner(nlhs,plhs,nrhs,prhs);
  }
 
-inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) 
+static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) 
 {
    #ifdef MEX_BEGINNING_HOOK
    MEX_BEGINNING_HOOK

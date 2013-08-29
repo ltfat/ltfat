@@ -53,13 +53,24 @@ int main(int argc,char* argv[])
    getArgsFromMAT(argv[2],(mxArray**)prhs,argCount);
    mxArray* plhs[1];
 
+   for(int ii=0;ii<10;ii++)
+{
+
    mexfunction(1,plhs,1,prhs);
 
-   for(int ii=0;ii<argCount;ii++)
-      mxDestroyArray((mxArray*)prhs[ii]);
-   //Free the library:
-   BOOL freeResult = FreeLibrary(dllHandle);
+   mxDestroyArray((mxArray*)plhs[0]);
 
+}
+
+  for(int ii=0;ii<argCount;ii++)
+      mxDestroyArray((mxArray*)prhs[ii]);
+
+
+
+   //Free the library:
+  // BOOL freeResult = FreeLibrary(dllHandle);
+
+//int prd = 0;
 }
 #else
 

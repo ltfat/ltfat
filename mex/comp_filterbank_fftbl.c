@@ -137,7 +137,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 		if(LTFAT_NAME(oldLc)[m]!=outLen[m])
 		{
 		   LTFAT_NAME(oldLc)[m] = outLen[m];
-		   LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],(LTFAT_REAL (*)[2]) cPtrs[m],(LTFAT_REAL (*)[2]) cPtrs[m], FFTW_BACKWARD, FFTW_ESTIMATE);
+		   LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],(LTFAT_REAL (*)[2]) cPtrs[m],(LTFAT_REAL (*)[2]) cPtrs[m], FFTW_BACKWARD, FFTW_MEASURE);
 		   
 		   if(LTFAT_NAME(oldPlans)[m]!=0)
 		   {
@@ -152,7 +152,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
 
      // over all channels
-   // #pragma omp parallel for
+    #pragma omp parallel for
         for(mwIndex m =0; m<M; m++)
         {
           for(mwIndex w =0; w<W; w++)
