@@ -46,6 +46,38 @@ else
     fclose(FID);
 end
 
+%% --- Check for old versions of Octave and Matlab
+if isoctave
+   major_rq=3;
+   minor_rq=6;
+   intp='Octave';
+   req_versionname='3.6.0';
+else
+   major_rq=7;
+   minor_rq=9;
+   intp='Matlab';
+   req_versionname='2009b';
+end;
+
+% Split into major and minor version
+s=version;
+stops=find(s=='.');
+major_no  = str2num(s(1:stops(1)));
+if numel(stops)==1
+  minor_no  = str2num(s(stops(1)+1:end));
+  bugfix_no = 0;
+else
+  minor_no  = str2num(s(stops(1)+1:stops(2)));
+  bugfix_no = str2num(s(stops(2)+1:end));
+end;
+
+% Do the check, multiply by some big number to make the check easy
+if major_rq*1000+minor_rq>major_no*1000+minor_no
+  warning(['Your version of %s is too old for this version of LTFAT ' ...
+         'to function proberly. Your need at least version %s of %s.'],...
+	  intp,req_versionname,intp);
+end;
+
 
 %% -----------  install the modules -----------------
 
@@ -112,20 +144,24 @@ end;
 %end;
 
 if ltfatstartprint
-  s=which('comp_pgauss');
-  if isempty(s)
-    error('comp_pgauss not found, something is wrong.')
-  end;
-  
-  if strcmp(s(end-1:end),'.m')
-    backend = 'LTFAT is using the script language backend.';
-  else
-    if isoctave
-      backend = 'LTFAT is using the C++ Octave backend.';
-    else
-      backend = 'LTFAT is using the MEX backend.';
+  try
+    s=which('comp_pgauss');
+    if isempty(s)
+      error('comp_pgauss not found, something is wrong.')
     end;
-  end;
+  
+    if strcmp(s(end-1:end),'.m')
+      backend = 'LTFAT is using the script language backend.';
+    else
+      if isoctave
+        backend = 'LTFAT is using the C++ Octave backend.';
+      else
+        backend = 'LTFAT is using the MEX backend.';
+      end;
+    end;
+  catch
+    backend = 'Error with backend, consider running "ltfatmex clean" immidiatly.';
+  end; 
   
   banner = sprintf(['LTFAT version %s. Copyright 2005-2013 Peter L. Søndergaard. ' ...
                     'For help, please type "ltfathelp". %s'], ...
@@ -150,3 +186,4 @@ ltfatsetdefaults('ltfathelp','versiondata',ltfat_version,...
 % Force the loading of FFTW, necessary for Matlab 64 bit on Linux. Thanks
 % to NFFT for this trick.
 fft([1,2,3,4]);
+
