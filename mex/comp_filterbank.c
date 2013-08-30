@@ -174,6 +174,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
       mxDestroyArray((mxArray*)prhs_td[2]);
       mxDestroyArray((mxArray*)prhs_td[3]);
       mxDestroyArray((mxArray*)prhs_td[4]);
+
     }
 
 
@@ -351,9 +352,11 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
     /* This should overwrite function registered by mexAtExit in any of the previously
     called MEX files */
    mexAtExit(filterbankAtExit);
-   mexMakeArrayPersistent(mxF);
 
-   if(L*W>MAXARRAYLEN)
+   if(mxF!=NULL)
+      mexMakeArrayPersistent(mxF);
+
+   if(L*W>MAXARRAYLEN && mxF!=NULL)
    {
        //printf("Damn. Should not get here\n");
        mxDestroyArray(mxF);
