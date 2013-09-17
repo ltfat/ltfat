@@ -1,3 +1,11 @@
+Version 1.4.2
+Version 1.4.2 17/9 2013
+* The filterbanks algorithms are now much faster because all the algorithms have been implemented in the C backend
+  
+* franalasso can now use the the FISTA algorithm
+
+* A generalization of the Goertzel algorithm "gga" has been added". 
+
 Version 1.4.1
 
 * Major change in the output format from the wfilt_ functions
