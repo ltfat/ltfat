@@ -1,5 +1,5 @@
 AC_PREREQ([2.62])
-AC_INIT([LTFAT], [1.4.0], [http://ltfat.sourceforge.net/contact.php], [ltfat])
+AC_INIT([LTFAT], [1.4.2], [http://ltfat.sourceforge.net/contact.php], [ltfat])
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -8,19 +8,22 @@ AC_PROG_CXX
 m4_include([m4/ax_blas.m4])
 m4_include([m4/ax_lapack.m4])
 
-dnl Check for BLAS libraries
-sinclude(ax_blas.m4)
-AX_BLAS
-if test "$ax_blas_ok" = "no"; then
-   AC_MSG_ERROR([Cannot find BLAS libraries])
-fi
+# The checks for BLAS and Lapack have been disabled because they
+# provoke an error about a missing install-sh
 
-dnl Check for LAPACK libraries
-sinclude(ax_lapack.m4)
-AX_LAPACK
-if test "$ax_lapack_ok" = "no"; then
-   AC_MSG_ERROR([Cannot find LAPACK libraries])
-fi
+#dnl Check for BLAS libraries
+#sinclude(ax_blas.m4)
+#AX_BLAS
+#if test "$ax_blas_ok" = "no"; then
+#   AC_MSG_ERROR([Cannot find BLAS libraries])
+#fi
+
+#dnl Check for LAPACK libraries
+#sinclude(ax_lapack.m4)
+#AX_LAPACK
+#if test "$ax_lapack_ok" = "no"; then
+#   AC_MSG_ERROR([Cannot find LAPACK libraries])
+#fi
 
 dnl Check for MKOCTFILE
 AC_CHECK_PROG(MKOCTFILE_CHECK,mkoctfile,"yes")
