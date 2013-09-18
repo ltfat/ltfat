@@ -1,12 +1,12 @@
-function [AF,BF]=nsgabframebounds(g,a,Ls)
+function [AF,BF]=nsgabframebounds(g,a,M)
 %NSGABFRAMEBOUNDS  Frame bounds of nonstationnary Gabor frame
-%   Usage:  fcond=nsgabframebounds(g,a,Ls);
-%           [A,B]=nsgabframebounds(g,a,Ls);
+%   Usage:  fcond=nsgabframebounds(g,a,M);
+%           [A,B]=nsgabframebounds(g,a,M);
 %
 %   Input parameters:
 %         g     : Cell array of windows
 %         a     : Vector of time positions of windows.
-%         Ls    : Length of analyzed signal.
+%         M     : Vector of numbers of frequency channels.
 %   Output parameters:
 %         fcond : Frame condition number ($B/A$)
 %         A,B   : Frame bounds.
@@ -30,10 +30,6 @@ function [AF,BF]=nsgabframebounds(g,a,Ls)
   
 %   AUTHOR : Florent Jaillet
 %   TESTING: TEST_NSDGT
-
-timepos=cumsum(a)-a(1);
-
-N=length(a); % Number of time positions
 
 % Compute the diagonal of the frame operator.
 f=nsgabframediag(g,a,M);
