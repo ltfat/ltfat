@@ -188,6 +188,9 @@ if flags.do_nonuniform
     aprecise=aprecise(:);
     
     if flags.do_fractional
+       if isempty(L)
+          error('%s: ''fractional'' flag refuires L to be specified.',upper(mfilename));
+       end
         N=ceil(L./aprecise);
         a=[repmat(L,M2,1),N];                
         

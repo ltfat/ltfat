@@ -1,19 +1,19 @@
 function G=framematrix(F,L);
-%FRAMEMATRIX  Frame analysis operator matrix
+%FRAMEMATRIX  Frame synthesis operator matrix
 %   Usage: G=framematrix(F,L);
 %
 %   `G=framematrix(F,L)` returns the matrix representation *G* of the frame
-%   analysis operator for a frame *F* of length *L*. The frame object *F*
+%   synthesis operator for a frame *F* of length *L*. The frame object *F*
 %   must have been created using |frame|.
 %
-%   The frame analysis operator matrix contains all the frame atoms as
+%   The frame synthesis operator matrix contains all the frame atoms as
 %   column vectors. It has dimensions $L \times Ncoef$, where $Ncoef$ is the
 %   number of coefficients. The number of coefficients can be found as
-%   `Ncoef=framered(F)*L`. This means than the frame matrix is usually
+%   `Ncoef=framered(F)*L`. This means that the frame matrix is usually
 %   **very** large, and this routine should only be used for small values of
 %   *L*.
 %
-%   The action of the frame transform operator |frana| is equal to
+%   The action of the frame analysis operator |frana| is equal to
 %   multiplication with the Hermitean transpose of the frame
 %   matrix. Consider the following simple example:::
 %
@@ -61,8 +61,8 @@ else
   % Generic code handles all frames where there are no extra coefficients
   % in the representation
   Ncoef = framered(F)*L;
-  
-  assert(abs(Ncoef-round(Ncoef))<1e-3,'%s: There is a bug. Ncoef=%d should be an integer.',upper(mfilename),Ncoef);
+  % sprintf for Octave compatibility
+  assert(abs(Ncoef-round(Ncoef))<1e-3,sprintf('%s: There is a bug. Ncoef=%d should be an integer.',upper(mfilename),Ncoef));
   Ncoef=round(Ncoef);
   coef=eye(Ncoef);
   G = frsyn(F,coef);  

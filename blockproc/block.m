@@ -13,63 +13,61 @@ function [fs,classid] = block(source,varargin)
 %      classid   : Data type.
 %
 %   `block(source)` initializes block data stream from `source` which
-%   can be (the letter-case is ignored for strings):
+%   can be (the letter-case is ignored for strings)
 %
-%      `'file.wav'`    : name of a wav file
+%      `'file.wav'`      name of a wav file
 %
-%      `'dialog'`      : shows the file dialog to choose a wav file.
+%      `'dialog'`        shows the file dialog to choose a wav file.
 %
-%      `'rec'`         : input is taken from a microfone/auxilary input
+%      `'rec'`           input is taken from a microfone/auxilary input
 %
-%      `'playrec'`     : loopbacks the input to the output
+%      `'playrec'`       loopbacks the input to the output
 %
-%      `data`          : input data as columns of a matrix for each input 
+%      `data`            input data as columns of a matrix for each input 
 %                        channel
 %
+%   `block` accepts the following optional flags and key-value pairs
 %
-%   `block` accepts the following optional flags and key-value pairs:
+%      `'L',L`                Block length - default is 1024.
 %
-%   Optional key-value pairs:
-%
-%      `'L',L`         : Block length - default is 1024.
-%
-%      `'devid',dev`   : Whenever more input/output devices are present in
-%                        your system, `'devid'` can be used to specify one.
-%                        For the `'playrec'` option the `devId` should be a
-%                        two element vector [playDevid, recDevid]. List
-%                        of the installed devices and their IDs can be 
-%                        obtained by |blockdevices|.
+%      `'devid',dev`          Whenever more input/output devices are present
+%                             in your system, `'devid'` can be used to 
+%                             specify one. For the `'playrec'` option the 
+%                             `devId` should be a two element vector 
+%                             [playDevid, recDevid]. List of the installed
+%                             devices and their IDs can be obtained by 
+%                             |blockdevices|.
 %      
-%      `'playch',playch`: If device supports more output channels, `'playch'`
-%                         can be used to specify which should be used. E.g.
-%                         for two channel device, [1,2] is used to specify 
-%                         both channels. 
+%      `'playch',playch`      If device supports more output channels, `'playch'`
+%                             can be used to specify which should be used. E.g.
+%                             for two channel device, [1,2] is used to specify 
+%                             both channels. 
 %
-%      `'recch',recch`  : If device supports more input channels, `'recch'`
-%                         can be used to specify which should be used.
+%      `'recch',recch`        If device supports more input channels, `'recch'`
+%                             can be used to specify which should be used.
 %
-%      `'outfile','file.wav'`: Processed sound data is stored in a new wav
-%                              file.
+%      `'outfile','file.wav'` Processed sound data is stored in a new wav
+%                             file.
 %
-%      `'nbuf',nbuf`    : Max number of buffers to be preloaded. Helps
-%                         avoiding glitches, but increases delay.
+%      `'nbuf',nbuf`          Max number of buffers to be preloaded. Helps
+%                             avoiding glitches, but increases delay.
 %
-%      `'loadind',loadind`  : How to show the load indicator. `loadind` can 
-%                             be the following:
+%      `'loadind',loadind`    How to show the load indicator. `loadind` can 
+%                             be the following
 %              
-%                             'nobar' - Suppresses any load display.
+%                              'nobar'   Suppresses any load display.
 %          
-%                             'bar' - Displays ascii load bar in command
-%                                     line (Does not work in Octave).
+%                              'bar'     Displays ascii load bar in command
+%                                        line (Does not work in Octave).
 %
-%                              obj - Java object which have a public
-%                                    method updateBar(double).  
+%                              obj       Java object which have a public
+%                                        method updateBar(double).  
 %
-%   Optional flag groups:
+%   Optional flag groups
 %
-%      'noloop', 'loop'     : Plays the input in a loop. 
+%      'noloop', 'loop'     Plays the input in a loop. 
 %
-%      'single', 'double'   : Data type to be used.
+%      'single', 'double'   Data type to be used.
 %
 % 
 

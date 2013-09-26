@@ -1,5 +1,5 @@
 function c=comp_filterbank_fft(F,G,a)
-%COMP_FILTERBANK  Compute filtering in FD
+%COMP_FILTERBANK_FFT  Compute filtering in FD
 %
 %
 
