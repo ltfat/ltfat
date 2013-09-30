@@ -19,7 +19,7 @@ MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\$(ARCH)" $(MATLABLIBS)
 
 CC=gcc
 
-CFLAGS=-O3 -pg -s -std=c99 -I../../src/thirdparty -I../../src/ -I./
+CFLAGS=-g -std=c99 -I../../src/thirdparty -I../../src/ -I./
 
 EXEFILES=mexExecuter.exe
 

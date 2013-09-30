@@ -16,6 +16,7 @@
 %    IDFT           -  Inverse of |dft|.
 %    FFTREAL        -  FFT for real valued signals.
 %    IFFTREAL       -  Inverse of |fftreal|.
+%    GGA            -  Generalized Goertzel Algorithm.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot |fftreal| coefficients.
 %

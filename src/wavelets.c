@@ -412,7 +412,7 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
    if(ext==PER) // if periodic extension
    {
          LTFAT_NAME(extend_left)(in,inLen,buffer,buffLen,fLen,PER,0); // extension as a last (tmpfLen-1) samples of the buffer -> pointer dont have to be moved
-		 LTFAT_NAME(extend_right)(in,inLen,rightBuffer,buffLen,PER,0);
+		 LTFAT_NAME(extend_right)(in,inLen,rightBuffer,fLen,PER,0);
    }
 
    int iniStoCopy = imin(inSkip,buffLen);
@@ -439,7 +439,7 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
    /** STEP 1: Deal with the shift - upsampling misaligment */
    for(int uu=0;uu<uuLoops;uu++)
    {
-       ONEOUTSAMPLE((filts + skipModUp+uu),((fLen-(skipModUp-uu)+up-1)/up))
+       ONEOUTSAMPLE((filts + skipModUp+uu),((fLen-(skipModUp+uu)+up-1)/up))
    }
 
    /** STEP 2: MAIN LOOP */

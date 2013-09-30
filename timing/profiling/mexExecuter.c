@@ -9,8 +9,10 @@ http://msdn.microsoft.com/en-us/library/ms810279.aspx
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <math.h>
 #include "mat.h"
 #include "matLoader.h"
+#include "fftw3.h"
 
 
 
@@ -20,9 +22,16 @@ There is probably not a multiplatform way of hand loading of shared libraries, t
 */
 #if defined(_WIN32) || defined(__WIN32__)
 #include <windows.h>
-#include <tchar.h>
+#else
+#include <dlfcn.h>
+#endif
 
 typedef void (*mexFunction_t)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
+
+double compMSE_d(const mxArray* a,const mxArray* b);
+
+
+
 
 int main(int argc,char* argv[])
 {
@@ -33,6 +42,13 @@ int main(int argc,char* argv[])
       return -1;
    }
 
+   void* tmp = fftw_malloc(1);
+   fftw_free(tmp);
+   tmp = fftwf_malloc(1);
+   fftwf_free(tmp);
+
+   mexFunction_t mexfunction = NULL;
+#if defined(_WIN32) || defined(__WIN32__)
 // NOTE: When specifying a path, be sure to use backslashes (\), not forward slashes (/).
    HINSTANCE dllHandle = NULL;
    dllHandle = LoadLibrary((argv[1]));
@@ -41,37 +57,107 @@ int main(int argc,char* argv[])
       return -1;
    }
 
-   mexFunction_t mexfunction = NULL;
+
    mexfunction = (mexFunction_t)GetProcAddress(dllHandle,"mexFunction");
    if(mexfunction==NULL){
       fprintf(stderr, "MEX file does not contain mexFunction\n");
       return -1;
    }
+#else
+  void *handle = dlopen(argv[1], RTLD_NOW);
+  if(!handle){
+    fprintf(stderr, "Error loading MEX file: %s\n", strerror(errno));
+    return -1;
+  }
 
+  mexfunction = (mexFunction_t)dlsym(handle, "mexFunction");
+  if(!mexfunction){
+    fprintf(stderr, "MEX file does not contain mexFunction\n");
+    return -1;
+  }
+#endif
+
+   mxArray* res[1];
+   res[0] = NULL;
    int argCount = getNoOfArgsFromMAT(argv[2]);
    const mxArray* prhs[argCount];
-   getArgsFromMAT(argv[2],(mxArray**)prhs,argCount);
+   getArgsFromMAT(argv[2],(mxArray**)prhs,(mxArray**)res, argCount);
    mxArray* plhs[1];
 
-   for(int ii=0;ii<10;ii++)
-{
 
-   mexfunction(1,plhs,1,prhs);
+   if(res!=NULL)
+   {
+       argCount--;
+   }
 
-   mxDestroyArray((mxArray*)plhs[0]);
+   mexfunction(1,plhs,argCount,prhs);
 
-}
+   if(res!=NULL)
+   {
+     if(mxGetClassID(plhs[0])!=mxDOUBLE_CLASS)
+     {
+       fprintf(stderr, "Currently working with doubles only.\n");
+       return -1;
+     }
+     double err=compMSE_d(res[0],plhs[0]);
+     fprintf(stdout, "Error: %e\n", err);
+     mxDestroyArray(res[0]);
+   }
 
-  for(int ii=0;ii<argCount;ii++)
+
+   for(int ii=0;ii<argCount;ii++)
       mxDestroyArray((mxArray*)prhs[ii]);
 
-
+   mxDestroyArray(plhs[0]);
 
    //Free the library:
-  // BOOL freeResult = FreeLibrary(dllHandle);
-
-//int prd = 0;
-}
+#if defined(_WIN32) || defined(__WIN32__)
+   //  BOOL freeResult = FreeLibrary(dllHandle);
 #else
-
+   dlclose(handle);
 #endif
+
+}
+
+double compMSE_d(const mxArray* a,const mxArray* b)
+{
+   if(a==NULL || b == NULL)
+   {
+       fprintf(stderr, "NULL pointer\n");
+       return -1;
+   }
+
+   if(mxIsNumeric(a) && mxIsNumeric(b))
+   {
+     double* fr = mxGetPr(a);
+     double* fhatr = mxGetPr(b);
+     mwSize L = mxGetM(a)*mxGetN(a);
+     double err = 0;
+     for(mwIndex n=0;n<L;n++)
+     {
+        err += pow(fr[n]-fhatr[n],2);
+     }
+     err = sqrt(err);
+
+
+     if(mxIsComplex(a) && mxIsComplex(b))
+     {
+        double* fi = mxGetPi(a);
+        double* fhati = mxGetPi(b);
+        for(mwIndex n=0;n<L;n++)
+        {
+           err += pow(fi[n]-fhati[n],2);
+        }
+     }
+     return err;
+   }
+   else
+   {
+       fprintf(stderr, "Arrays are not numeric.\n");
+       return -1;
+   }
+
+
+}
+
+
