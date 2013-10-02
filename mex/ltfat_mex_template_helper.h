@@ -121,7 +121,9 @@ static inline void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const m
 
 // Storing function pointers to exitFunctions
 #define MEXEXITFNCCOUNT 4
+void ltfatMexAtExitGlobal(void);
 static void (*exitFncPtr[MEXEXITFNCCOUNT])(void) = {0};
+
 
 void ltfatMexAtExitGlobal(void)
 {
@@ -130,6 +132,10 @@ void ltfatMexAtExitGlobal(void)
     if(exitFncPtr[ii]!=0)
       (*exitFncPtr[ii])();
    }
+
+#ifdef _DEBUG
+   mexPrintf("Global Exit fnc called: %s\n",__PRETTY_FUNCTION__);
+#endif
 }
 
 #ifdef EXPORTALIAS
@@ -404,39 +410,6 @@ mxArray* recastToSingle(mxArray* prhsEl)
    if(mxIsStruct(prhsEl))
    {
      mexErrMsgTxt("Structures are not supported!");
-     /*
-      mwSize nfields = mxGetNumberOfFields(prhsEl);
-      const mwSize *dims = mxGetDimensions(prhsEl);
-      mwSize ndim = mxGetNumberOfDimensions(prhsEl);
-
-      const char **fieldnames = mxMalloc(nfields*sizeof(const char *));
-      for(mwSize ii=0;ii<nfields;ii++)
-      {
-         fieldnames[ii] = mxGetFieldNameByNumber(prhsEl,ii);
-      }
-	  // Create duplicate struct
-      mxArray* tmpStructArr = mxCreateStructArray(ndim,dims,nfields,fieldnames);
-
-      for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
-      {
-         for(mwIndex ii=0;ii<nfields;ii++)
-         {
-		    bool fieldnameMatch = 0;
-		    #if defined(STRUCTFIELD1)
-		       fieldnameMatch = fieldnameMatch || !strcmp(fieldnames[ii],STRUCTFIELD1);
-			#endif
-
-			#if defined(STRUCTFIELD2)
-			   fieldnameMatch = fieldnameMatch || !strcmp(fieldnames[ii],STRUCTFIELD2);
-			#endif
-
- 		   mxSetFieldByNumber(tmpStructArr,jj,ii,recastToSingle(mxGetFieldByNumber(prhsEl,jj,ii)));
-
-         }
-      }
-
-      return tmpStructArr;
-     */
    }
 
 
@@ -484,24 +457,6 @@ mxArray* recastToSingle(mxArray* prhsEl)
 
 bool checkIsSingle(const mxArray *prhsEl)
 {
-  /*
-#define STRUCTFIELDCHECK(NO)                                        \
-                                                                    \
- 	  gfield = mxGetField(prhsEl,0,NO);                             \
-	  if(gfield!=NULL)                                              \
-	  {                                                             \
-         for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)    \
-	     {                                                          \
-            if(!checkIsSingle(mxGetField(prhsEl,jj,NO)))            \
-            {                                                       \
-               return false;                                        \
-            }			                                            \
-	     }                                                          \
-      }
-  */
-
-
-
    if(mxIsCell(prhsEl))
    {
       for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
@@ -515,24 +470,8 @@ bool checkIsSingle(const mxArray *prhsEl)
    if(mxIsStruct(prhsEl))
    {
      mexErrMsgTxt("Structures are not supported!");
-     /*
-      mxArray* gfield = NULL;
-      #ifdef STRUCTFIELD1
-	     STRUCTFIELDCHECK(STRUCTFIELD1)
-	  #endif
-
-	  #ifdef STRUCTFIELD2
-	     STRUCTFIELDCHECK(STRUCTFIELD2)
-	  #endif
-
-	  if(gfield==NULL)
-	     return true;
-	  else
-		 return false;
-     */
    }
 
-   //#undef STRUCTFIELDCHECK
    return mxIsSingle(prhsEl);
 }
 
@@ -568,7 +507,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
   mexFunctionInner(nlhs,plhs,nrhs,prhs);
  }
 
-static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[]) 
+static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 {
    #ifdef MEX_BEGINNING_HOOK
    MEX_BEGINNING_HOOK

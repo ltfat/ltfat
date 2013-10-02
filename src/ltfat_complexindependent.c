@@ -12,6 +12,8 @@
 #include "gabdual.c"
 #include "gabtight.c"
 
+#include "ciutils.c"
+
 #define LTFAT_COMPLEXTYPE
 #include "ltfat_types.h"
 #include "wavelets.c"
@@ -19,6 +21,7 @@
 #include "spread.c"
 #include "gabdual.c"
 #include "gabtight.c"
+#include "ciutils.c"
 
 #undef LTFAT_COMPLEXTYPE
 

@@ -14,7 +14,8 @@
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include "ltfat_types.h"
-#include "math.h"
+#include <math.h>
+#include "config.h"
 
 static LTFAT_FFTW(plan)** LTFAT_NAME(oldPlans) = 0;
 static mwSize* LTFAT_NAME(oldLc) = 0;
@@ -79,7 +80,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   //
   mwSize acols = mxGetN(prhs[3]);
 
-  double* afrac = mxMalloc(M*sizeof(double));
+  double afrac[M];
   memcpy(afrac,a,M*sizeof(double));
   if(acols>1)
   {
@@ -137,7 +138,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 		if(LTFAT_NAME(oldLc)[m]!=outLen[m])
 		{
 		   LTFAT_NAME(oldLc)[m] = outLen[m];
-		   LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],(LTFAT_REAL (*)[2]) cPtrs[m],(LTFAT_REAL (*)[2]) cPtrs[m], FFTW_BACKWARD, FFTW_MEASURE);
+		   LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],(LTFAT_REAL (*)[2]) cPtrs[m],(LTFAT_REAL (*)[2]) cPtrs[m], FFTW_BACKWARD, FFTW_OPTITYPE);
 		   
 		   if(LTFAT_NAME(oldPlans)[m]!=0)
 		   {
@@ -150,21 +151,32 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 		
      }
 
+	 /*
+	 When W>1, the coefficients are stored as matrices in a cell array. The matrix itself is properly memory aligned, but the  
+	 adresses of individial cols do not have to be. Since convsub_fftbl_plan uses new-array execute function http://www.fftw.org/doc/New_002darray-Execute-Functions.html
+     all arrays have to be properly memory aligned. We go around it by using the first col as a buffer for all other cols.	 
+	 
+	 Maybe using the plan_many_dft could be used, but it is not clear whether it supports the new-array execution (since we store the plans between mex calls).
+	 */
 
      // over all channels
     #pragma omp parallel for
         for(mwIndex m =0; m<M; m++)
         {
-          for(mwIndex w =0; w<W; w++)
+          for(mwIndex w =1; w<W; w++)
           {
            // Obtain pointer to w-th column in input
            LTFAT_REAL _Complex *FPtrCol = FPtr + w*L;
-           // Obtaing pointer to w-th column in m-th element of output cell-array
-           LTFAT_REAL _Complex *cPtrCol = cPtrs[m] + w*outLen[m];
+		   
+		   // Using the first col of c as a temp array.
+           LTFAT_NAME(convsub_fftbl_plan)(FPtrCol,L,GPtrs[m],filtLen[m],(int)foff[m],afrac[m],realonly[m],cPtrs[m],LTFAT_NAME(oldPlans)[m]);
 
-           LTFAT_NAME(convsub_fftbl_plan)(FPtrCol,L,GPtrs[m],filtLen[m],(int)foff[m],afrac[m],realonly[m],cPtrCol,LTFAT_NAME(oldPlans)[m]);
-
+		   // Copy to an appropriate position
+		   memcpy(cPtrs[m] + w*outLen[m],cPtrs[m],outLen[m]*sizeof(LTFAT_REAL _Complex));
           }
+		  
+		  // Working with the first col only.
+		  LTFAT_NAME(convsub_fftbl_plan)(FPtr,L,GPtrs[m],filtLen[m],(int)foff[m],afrac[m],realonly[m],cPtrs[m],LTFAT_NAME(oldPlans)[m]);
         }
 }
 #endif

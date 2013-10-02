@@ -32,6 +32,8 @@ MEXBASESAFE=\
 	comp_gga \
 	comp_filterbank_fft \
 	comp_filterbank_fftbl \
+	comp_ifilterbank_fft \
+	comp_ifilterbank_fftbl \
 
 MEXBASEMORE =\
 	comp_gabdual_long \
@@ -43,8 +45,12 @@ MEXSOFTLINKS =\
 	comp_filterbank_td \
 	comp_filterbank_fft \
 	comp_filterbank_fftbl \
+	comp_ifilterbank_td \
+	comp_ifilterbank_fft \
+	comp_ifilterbank_fftbl \
 	
 MEXDEPENDFILES =\
-
+    #comp_filterbank \
+	#comp_ifilterbank \
 
 

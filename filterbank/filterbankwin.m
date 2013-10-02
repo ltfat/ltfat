@@ -136,8 +136,8 @@ for m=1:info.M
     end;
     
     % info.isfir==1 only if all filters are FIR
-    if isfield(info_win,'is_fir')
-       if ~info_win.is_fir && info.isfir
+    if isfield(info_win,'isfir')
+       if ~info_win.isfir && info.isfir
           info.isfir = 0;
        end
     end
@@ -154,5 +154,5 @@ end;
 
   
 if L<info.longestfilter
-  error('%s: One of the windows is longer than the transform length.',upper(mfilename));
+  error('%s: One of the windows is longer than the transform length= %i.',upper(mfilename),info.longestfilter);
 end;

@@ -9,6 +9,7 @@
 
 /* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
 //#define CHCOMPLEXFORMAT 1
+#define EXPORTALIAS comp_ifilterbank_td
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -58,33 +59,33 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   const mxArray* mxg = prhs[1];
   double* a = mxGetPr(prhs[2]);
   double* Lsdouble = mxGetPr(prhs[3]);
-  unsigned int Ls = (unsigned int) *Lsdouble;
+  mwSize Ls = (mwSize) *Lsdouble;
   double* offset = mxGetPr(prhs[4]);
   char* ext = mxArrayToString(prhs[5]);
 
   // number of channels
-  unsigned int W = mxGetN(mxGetCell(mxc,0));
+  mwSize W = mxGetN(mxGetCell(mxc,0));
 
   // filter number
-  unsigned int M = mxGetNumberOfElements(mxg);
+  mwSize M = mxGetNumberOfElements(mxg);
 
   // input data length
-  unsigned int* Lc = mxMalloc(M*sizeof(unsigned int));
-  for(unsigned int m=0;m<M;m++)
+  mwSize* Lc = mxMalloc(M*sizeof(mwSize));
+  for(mwIndex m=0;m<M;m++)
   {
-     Lc[m] = (unsigned int) mxGetM(mxGetCell(mxc,m));
+     Lc[m] = (mwSize) mxGetM(mxGetCell(mxc,m));
   }
 
   // filter lengths
-  unsigned int* filtLen = mxMalloc(M*sizeof(unsigned int));
-  for(unsigned int m=0;m<M;m++)
+  mwSize* filtLen = mxMalloc(M*sizeof(mwSize));
+  for(mwIndex m=0;m<M;m++)
   {
-     filtLen[m] = (unsigned int) mxGetNumberOfElements(mxGetCell(mxg,m));
+     filtLen[m] = (mwSize) mxGetNumberOfElements(mxGetCell(mxg,m));
   }
 
      // POINTER TO THE INPUT
      LTFAT_TYPE** cPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
-     for(unsigned int m=0;m<M;++m)
+     for(mwIndex m=0;m<M;++m)
      {
         cPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxc,m));
      }
@@ -100,7 +101,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
      // POINTER TO THE FILTERS
      LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
-     for(unsigned int m=0;m<M;m++)
+     for(mwIndex m=0;m<M;m++)
      {
         gPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxg, m));
      }
@@ -108,9 +109,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
      // over all channels
    //  #pragma omp parallel for private(m)
 
-        for(unsigned int m =0; m<M; m++)
+        for(mwIndex m =0; m<M; m++)
         {
-          for(unsigned int w =0; w<W; w++)
+          for(mwIndex w =0; w<W; w++)
           {
            // Obtain pointer to w-th column in input
            LTFAT_TYPE *fPtrCol = fPtr + w*Ls;

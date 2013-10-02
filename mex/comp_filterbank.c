@@ -49,7 +49,7 @@ void filterbankAtExit()
 
    if(p_float!=NULL)
    {
-       fftw_destroy_plan(*p_float);
+       fftwf_destroy_plan(*p_float);
        free(p_float);
    }
 
@@ -184,13 +184,13 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         mwIndex ndim = 2;
         const mwSize dims[] = {L,W};
 
-        if(mxF==NULL || mxGetM(mxF)!=L || mxGetN(mxF)!=W)
+        if(mxF==NULL || mxGetM(mxF)!=L || mxGetN(mxF)!=W || mxGetClassID(mxF)!=mxGetClassID(mxf))
         {
             if(mxF!=NULL)
             {
                mxDestroyArray(mxF);
                mxF = NULL;
-               printf("Should be called just once\n");
+              // printf("Should be called just once\n");
             }
 
 

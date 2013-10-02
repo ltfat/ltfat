@@ -47,7 +47,7 @@ function c = gga(f,indvec,dim)
 %     ckgga = gga(f,kgga);
 %
 %     % Plot modulus of coefficients
-%     figure(f1);
+%     figure(1);
 %     hold on;
 %     stem(k,abs(ck),'k');
 %     stem(kgga,abs(ckgga),'r:');
@@ -55,7 +55,7 @@ function c = gga(f,indvec,dim)
 %     set(gca,'XLim',limX);
 %     set(gca,'YLim',[0 1065]);
 %
-%     figure(f2);
+%     figure(2);
 %     hold on;
 %     stem(k,angle(ck),'k');
 %     stem(kgga,angle(ckgga),'r:');

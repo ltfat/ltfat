@@ -18,7 +18,7 @@ if ~isempty(mTime)
 
    % Call the routine
    gskip = cellfun(@(gEl) 1-numel(gEl.h)-gEl.offset ,g(mTime));
-   f = comp_ifilterbank_td(c,gtime,a(mTime),L,gskip,'per');
+   f = comp_ifilterbank_td(c(mTime),gtime,a(mTime),L,gskip,'per');
 end
 
 if ~isempty(mFreq)

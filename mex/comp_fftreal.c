@@ -83,11 +83,11 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
   /* We are violating this here:
   You must create the plan before initializing the input, because FFTW_MEASURE overwrites the in/out arrays.
-  (Technically, FFTW_ESTIMATE does not touch your arrays, but you should always create plans first just to be sure.) 
+  (Technically, FFTW_ESTIMATE does not touch your arrays, but you should always create plans first just to be sure.)
   */
   p = LTFAT_FFTW(plan_guru_split_dft_r2c)(1, dims,
 				   1, howmanydims,
-				   f, cout_r, cout_i, FFTW_OPTITYPE);
+				   f, cout_r, cout_i, FFTW_ESTIMATE);
   /*
   FFTW documentation qote http://www.fftw.org/fftw3_doc/New_002darray-Execute-Functions.html#New_002darray-Execute-Functions:
   ...

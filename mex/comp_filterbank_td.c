@@ -56,7 +56,7 @@
 #include "math.h"
 
 /*
-%COMP_FILTERBANK_TD   Non-uniform filterbank by conv2
+%COMP_FILTERBANK_TD   Non-uniform filterbank
 %   Usage:  c=comp_filterbank_td(f,g,a,offset,ext);
 %
 %   Input parameters:

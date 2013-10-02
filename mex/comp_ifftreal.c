@@ -100,7 +100,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
   p = LTFAT_FFTW(plan_guru_split_dft_c2r)(1, dims,
 				   1, howmanydims,
-				   fin_r,fin_i,f, FFTW_OPTITYPE);
+				   fin_r,fin_i,f, FFTW_ESTIMATE);
 
   if(p_old!=0)
   {

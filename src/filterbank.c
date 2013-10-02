@@ -127,7 +127,7 @@ LTFAT_NAME(convsub_fft_plan)(const LTFAT_COMPLEXH *F, const LTFAT_COMPLEXH *G,
        cout[ii] *= scalconst;
     }
 
-    LTFAT_FFTW(execute_dft)(*p,cout,cout);
+    LTFAT_FFTW(execute_dft)(*p,(LTFAT_REAL (*)[2])cout,(LTFAT_REAL (*)[2])cout);
 
 }
 
@@ -140,7 +140,7 @@ LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEXH *F, const size_t L,
 
 
    const size_t Lc = (size_t) floor(L/a + 0.5);
-   LTFAT_FFTW(plan) plan_c =  LTFAT_FFTW(plan_dft_1d)(Lc, (LTFAT_COMPLEX*)cout, (LTFAT_COMPLEX*) cout,
+   LTFAT_FFTW(plan) plan_c =  LTFAT_FFTW(plan_dft_1d)(Lc, (LTFAT_REAL (*)[2])cout, (LTFAT_REAL (*)[2]) cout,
                                                        FFTW_BACKWARD, FFTW_ESTIMATE);
 
 //LTFAT_FFTW(plan) plan_c = NULL;
@@ -204,20 +204,7 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
       }
    }
 
-
-   // Do the circshift
-   int Lcint = (int) Lc;
-   int foffMod = foff%Lcint;
-   if(foffMod<0)
-   {
-       memcpy(cout,tmp-foffMod,(Lc+foffMod)*sizeof(LTFAT_COMPLEXH));
-       memcpy(cout+(Lc+foffMod),tmp,-foffMod*sizeof(LTFAT_COMPLEXH));
-   }
-   else
-   {
-       memcpy(cout+foffMod,tmp,(Lc-foffMod)*sizeof(LTFAT_COMPLEXH));
-       memcpy(cout,tmp+Lc-foffMod,foffMod*sizeof(LTFAT_COMPLEXH));
-   }
+   LTFAT_NAME_COMPLEX(circshift)(tmp,cout,Lc,foff);
 
 
     for(size_t ii=0;ii<Lc;ii++)
@@ -226,7 +213,7 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
     }
 
    // ifft
-   LTFAT_FFTW(execute_dft)(*p,cout,cout);
+   LTFAT_FFTW(execute_dft)(*p,(LTFAT_REAL (*)[2])cout,(LTFAT_REAL (*)[2])cout);
 
 
    if(realonly>1e-3)
@@ -247,4 +234,125 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
    }
 
    ltfat_free(tmp);
+}
+
+
+// Inverse
+LTFAT_EXTERN void
+LTFAT_NAME(upconv_fft)(const LTFAT_COMPLEXH *c, const size_t Lc,
+                       const LTFAT_COMPLEXH *G, const size_t a,
+                       LTFAT_COMPLEXH *Fout)
+{
+    LTFAT_COMPLEXH* cbuffer = ltfat_malloc(Lc*sizeof(LTFAT_COMPLEXH));
+    LTFAT_FFTW(plan) plan_c =  LTFAT_FFTW(plan_dft_1d)(Lc, (LTFAT_COMPLEX*)cbuffer, (LTFAT_COMPLEX*) cbuffer,
+                                                       FFTW_FORWARD, FFTW_ESTIMATE);
+
+    LTFAT_NAME(upconv_fft_plan)(c,Lc,G,a,Fout,&plan_c,cbuffer);
+    LTFAT_FFTW(destroy_plan)(plan_c);
+    ltfat_free(cbuffer);
+}
+
+LTFAT_EXTERN void
+LTFAT_NAME(upconv_fft_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
+                            const LTFAT_COMPLEXH *G, const size_t a,
+                            LTFAT_COMPLEXH *Fout, LTFAT_FFTW(plan) *p,
+                            LTFAT_COMPLEXH *cbuffer
+                            )
+{
+   memcpy(cbuffer,c,Lc*sizeof(LTFAT_COMPLEXH));
+   LTFAT_FFTW(execute_dft)(*p,(LTFAT_REAL (*)[2])cbuffer,(LTFAT_REAL (*)[2])cbuffer);
+
+   LTFAT_COMPLEXH* GPtrTmp = (LTFAT_COMPLEXH*) G;
+   LTFAT_COMPLEXH* FPtrTmp = (LTFAT_COMPLEXH*) Fout;
+
+   for(size_t jj=0;jj<a;jj++)
+   {
+      for(size_t ii=0;ii<Lc;ii++)
+      {
+         // Really readable ;)
+         *FPtrTmp++ += *GPtrTmp++*cbuffer[ii];
+      }
+   }
+}
+
+LTFAT_EXTERN void
+LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEXH *c, const size_t Lc,
+                            const LTFAT_COMPLEXH *G, const size_t Lg, const int foff,
+                            const double a, const double realonly, LTFAT_COMPLEXH *Fout)
+{
+    LTFAT_COMPLEXH* cbuffer = ltfat_malloc(Lc*sizeof(LTFAT_COMPLEXH));
+    LTFAT_FFTW(plan) plan_c =  LTFAT_FFTW(plan_dft_1d)(Lc, (LTFAT_COMPLEX*)cbuffer, (LTFAT_COMPLEX*) cbuffer,
+                                                       FFTW_FORWARD, FFTW_ESTIMATE);
+
+    LTFAT_NAME(upconv_fftbl_plan)(c,Lc,G,Lg,foff,a,realonly,Fout,&plan_c,cbuffer);
+    LTFAT_FFTW(destroy_plan)(plan_c);
+    ltfat_free(cbuffer);
+}
+
+LTFAT_EXTERN void
+LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
+                            const LTFAT_COMPLEXH *G, const size_t Lg, const int foff,
+                            const double a, const double realonly, LTFAT_COMPLEXH *Fout,
+                            LTFAT_FFTW(plan) *p,LTFAT_COMPLEXH *cbuffer)
+{
+   memcpy(cbuffer,c,Lc*sizeof(LTFAT_COMPLEXH));
+   LTFAT_FFTW(execute_dft)(*p,(LTFAT_REAL (*)[2])cbuffer,(LTFAT_REAL (*)[2])cbuffer);
+
+   size_t L = (size_t) floor(Lc*a + 0.5); // round
+
+   LTFAT_NAME_COMPLEX(circshift)(cbuffer,cbuffer,Lc,-foff);
+
+   LTFAT_COMPLEXH* GPtrTmp = (LTFAT_COMPLEXH*) G;
+   LTFAT_COMPLEXH* FPtrTmp = (LTFAT_COMPLEXH*) Fout;
+   LTFAT_COMPLEXH* CPtrTmp = (LTFAT_COMPLEXH*) cbuffer;
+
+   // Determine range of G
+   ptrdiff_t foffTmp = foff;
+   ptrdiff_t tmpLg = Lc<Lg?Lc:Lg;
+   ptrdiff_t over = 0;
+   if(foffTmp+tmpLg>(ptrdiff_t)L)
+   {
+      over = foffTmp+tmpLg - (ptrdiff_t)L;
+   }
+
+
+   if(foffTmp<0)
+   {
+      size_t toCopy = (-foffTmp)<tmpLg?-foffTmp:tmpLg;
+      FPtrTmp = Fout+L+foffTmp;
+      for(size_t ii=0;ii<toCopy;ii++)
+      {
+         FPtrTmp[ii]+=*CPtrTmp++ * *GPtrTmp++;
+      }
+
+      tmpLg-=toCopy;
+      FPtrTmp = Fout;
+      foffTmp = 0;
+   }
+
+   FPtrTmp = (LTFAT_COMPLEXH*) Fout+foffTmp;
+   for(size_t ii=0;ii<tmpLg-over;ii++)
+   {
+      FPtrTmp[ii]+=*CPtrTmp++ * *GPtrTmp++;
+   }
+
+   for(size_t ii=0;ii<over;ii++)
+   {
+      Fout[ii]+=*CPtrTmp++ * *GPtrTmp++;
+   }
+
+
+   if(realonly>1e-3)
+   {
+      const int foffconj = positiverem(L-foff-Lg,L)+1;
+      LTFAT_COMPLEXH *Gconj = (LTFAT_COMPLEXH*)ltfat_malloc(Lg*sizeof(LTFAT_COMPLEXH));
+      for(size_t ii=0;ii<Lg;ii++)
+      {
+         Gconj[ii] = (LTFAT_COMPLEXH) conj((double _Complex)G[Lg-1-ii]);
+      }
+
+      LTFAT_NAME(upconv_fftbl_plan)(c, Lc, Gconj, Lg, foffconj, a, 0, Fout, p, cbuffer);
+      ltfat_free(Gconj);
+   }
+
 }
