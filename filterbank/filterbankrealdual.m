@@ -76,7 +76,7 @@ if info.isuniform
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=cast(gd(:,m),thisclass);
+    gdout{m}=struct('h',cast(gd(:,m),thisclass),'offset',0);
   end;
   
 else

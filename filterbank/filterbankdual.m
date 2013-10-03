@@ -18,7 +18,7 @@ function gdout=filterbankdual(g,a,L,varargin);
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
-if nargin<2
+if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
@@ -69,7 +69,7 @@ if info.isuniform
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=cast(gd(:,m),thisclass);
+    gdout{m}=struct('h',cast(gd(:,m),thisclass),'offset',0);
   end;
   
 else
