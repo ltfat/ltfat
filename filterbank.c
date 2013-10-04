@@ -270,7 +270,7 @@ LTFAT_NAME(upconv_fft_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
       for(size_t ii=0;ii<Lc;ii++)
       {
          // Really readable ;)
-         *FPtrTmp++ += *GPtrTmp++*cbuffer[ii];
+         *FPtrTmp++ += LTFAT_COMPLEXH_NAME(conj)(*GPtrTmp++)*cbuffer[ii];
       }
    }
 }
@@ -322,7 +322,7 @@ LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
       FPtrTmp = Fout+L+foffTmp;
       for(size_t ii=0;ii<toCopy;ii++)
       {
-         FPtrTmp[ii]+=*CPtrTmp++ * *GPtrTmp++;
+         FPtrTmp[ii]+=*CPtrTmp++ * LTFAT_COMPLEXH_NAME(conj)(*GPtrTmp++);
       }
 
       tmpLg-=toCopy;
@@ -333,12 +333,12 @@ LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
    FPtrTmp = (LTFAT_COMPLEXH*) Fout+foffTmp;
    for(size_t ii=0;ii<tmpLg-over;ii++)
    {
-      FPtrTmp[ii]+=*CPtrTmp++ * *GPtrTmp++;
+      FPtrTmp[ii]+=*CPtrTmp++ * LTFAT_COMPLEXH_NAME(conj)(*GPtrTmp++);
    }
 
    for(size_t ii=0;ii<over;ii++)
    {
-      Fout[ii]+=*CPtrTmp++ * *GPtrTmp++;
+      Fout[ii]+=*CPtrTmp++ * LTFAT_COMPLEXH_NAME(conj)(*GPtrTmp++);
    }
 
 
@@ -346,10 +346,8 @@ LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
    {
       const int foffconj = positiverem(L-foff-Lg,L)+1;
       LTFAT_COMPLEXH *Gconj = (LTFAT_COMPLEXH*)ltfat_malloc(Lg*sizeof(LTFAT_COMPLEXH));
-      for(size_t ii=0;ii<Lg;ii++)
-      {
-         Gconj[ii] = (LTFAT_COMPLEXH) conj((double _Complex)G[Lg-1-ii]);
-      }
+      LTFAT_NAME(reverse_array)(G,Gconj,Lg);
+      LTFAT_NAME(conjugate_array)(Gconj,Gconj,Lg);
 
       LTFAT_NAME(upconv_fftbl_plan)(c, Lc, Gconj, Lg, foffconj, a, 0, Fout, p, cbuffer);
       ltfat_free(Gconj);

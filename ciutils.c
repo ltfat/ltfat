@@ -1,5 +1,6 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
+#include <complex.h>
 #include "config.h"
 #include "ltfat.h"
 
@@ -59,8 +60,46 @@ void LTFAT_NAME(circshift)(LTFAT_TYPE *in, LTFAT_TYPE *out, const ptrdiff_t L, c
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(reverse_array)(LTFAT_TYPE *in, LTFAT_TYPE *out, size_t L)
+void LTFAT_NAME(reverse_array)(LTFAT_TYPE *in, LTFAT_TYPE *out,const size_t L)
 {
+
+   if(in==out)
+   {
+      LTFAT_TYPE tmpVar = (LTFAT_TYPE) 0.0;
+      for(size_t ii=0;ii<L/2;ii++)
+      {
+        tmpVar = in[L-1-ii];
+        in[L-1-ii] = in[ii];
+        in[ii] = tmpVar;
+      }
+   }
+   else
+   {
+      for(size_t ii=0;ii<L;ii++)
+      {
+        out[ii] = in[L-1-ii];
+      }
+   }
+}
+
+LTFAT_EXTERN
+void LTFAT_NAME(conjugate_array)(LTFAT_TYPE *in, LTFAT_TYPE *out,const size_t L)
+{
+#ifdef LTFAT_COMPLEXTYPE
+for(size_t ii=0;ii<L;ii++)
+{
+    out[ii] = LTFAT_COMPLEXH_NAME(conj)(in[ii]);
+}
+#else
+if(in==out)
+{
+    return;
+}
+else
+{
+    memcpy(out,in,L*sizeof(LTFAT_TYPE));
+}
+#endif
 
 }
 

@@ -370,6 +370,13 @@ if(outLenN>0)
 LTFAT_EXTERN
 void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
 {
+   // Copy, reverse and conjugate the imp resp.
+   LTFAT_TYPE *filtsInv = (LTFAT_TYPE *) ltfat_malloc(fLen*sizeof(LTFAT_TYPE));
+   memcpy(filtsInv,filts,fLen*sizeof(LTFAT_TYPE));
+   LTFAT_NAME(reverse_array)(filtsInv,filtsInv,fLen);
+   LTFAT_NAME(conjugate_array)(filtsInv,filtsInv,fLen);
+   skip = -(1 - fLen + skip);
+
    // Running output pointer
    LTFAT_TYPE* tmpOut = out;
    // Running input pointer
@@ -439,7 +446,7 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
    /** STEP 1: Deal with the shift - upsampling misaligment */
    for(int uu=0;uu<uuLoops;uu++)
    {
-       ONEOUTSAMPLE((filts + skipModUp+uu),((fLen-(skipModUp+uu)+up-1)/up))
+       ONEOUTSAMPLE((filtsInv + skipModUp+uu),((fLen-(skipModUp+uu)+up-1)/up))
    }
 
    /** STEP 2: MAIN LOOP */
@@ -451,7 +458,7 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
 	     tmpIn++;
 		 for(int uu=0;uu<up;uu++)
 	     {
-			ONEOUTSAMPLE((filts+uu),((fLen-uu+up-1)/up))
+			ONEOUTSAMPLE((filtsInv+uu),((fLen-uu+up-1)/up))
 		 }
 	 }
 	 READNEXTSAMPLE(tmpIn)
@@ -479,13 +486,14 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
 		    READNEXTSAMPLE((rightBufferTmp))
 		    rightBufferTmp++;
 		  }
-		  ONEOUTSAMPLE((filts+ii%up),((fLen-ii%up+up-1)/up))
+		  ONEOUTSAMPLE((filtsInv+ii%up),((fLen-ii%up+up-1)/up))
 	   }
 
     #undef ONEOUTSAMPLE
     #undef READNEXTSAMPLE
 	ltfat_free(buffer);
 	ltfat_free(rightBuffer);
+	ltfat_free(filtsInv);
 }
 
 
