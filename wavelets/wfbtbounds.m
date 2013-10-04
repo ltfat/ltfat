@@ -47,7 +47,8 @@ for m=1:numel(g)
    pk = maxa/a(m);
    
    for ii=0:pk-1
-      gnew{end+1} = struct('h',g{m}.h,'offset',g{m}.offset-a(m)*ii);
+      gnew{end+1} = g{m};
+      gnew{end+1}.offset = gnew{end+1}.offset-a(m)*ii;
    end
 end
 

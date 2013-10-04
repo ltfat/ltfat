@@ -1,9 +1,9 @@
 function L=fwtlength(Ls,w,J,varargin);
 %FWTLENGTH  FWT length from signal
-%   Usage: L=fwtlength(Ls,h,J);
-%          L=fwtlength(Ls,h,J,...);
+%   Usage: L=fwtlength(Ls,w,J);
+%          L=fwtlength(Ls,w,J,...);
 %
-%   `fwtlength(Ls,h,J)` returns the length of a Wavelet system that is long
+%   `fwtlength(Ls,w,J)` returns the length of a Wavelet system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
 %   |fwt| for an explanation of the parameters *h* and *J*.
 %

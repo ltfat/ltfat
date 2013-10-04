@@ -21,14 +21,14 @@ doPer = strcmp(ext,'per');
 % For each node in tree in the BF order...
  for jj=1:length(wtNodes)
     % Node filters to a cell array
-    gCell = cellfun(@(gEl) gEl.h(:),wtNodes{jj}.g(:),'UniformOutput',0);
+    gCell = cellfun(@(gEl)conj(flipud(gEl.h(:))),wtNodes{jj}.g(:),'UniformOutput',0);
     % Node filters subs. factors
     a = wtNodes{jj}.a;
     % Node filters initial skips
     if(doPer)
-       offset = cellfun(@(gEl) gEl.offset,wtNodes{jj}.g);
+       offset = cellfun(@(gEl) 1-numel(gEl.h)-gEl.offset,wtNodes{jj}.g);
     else
-       offset = -cellfun(@(gEl) numel(gEl),gCell) + 1 + (a - 1);
+       offset = -(a-1);
     end
     
     if(pOutIdxs(jj))

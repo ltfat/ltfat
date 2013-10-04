@@ -14,10 +14,10 @@ f = [];
 
 if ~isempty(mTime)
    % Pick imp. resp.
-   gtime = cellfun(@(gEl) conj(flipud(gEl.h(:))), g(mTime),'UniformOutput',0);
+   gtime = cellfun(@(gEl) gEl.h, g(mTime),'UniformOutput',0);
 
    % Call the routine
-   gskip = cellfun(@(gEl) 1-numel(gEl.h)-gEl.offset ,g(mTime));
+   gskip = cellfun(@(gEl) gEl.offset ,g(mTime));
    f = comp_ifilterbank_td(c(mTime),gtime,a(mTime),L,gskip,'per');
 end
 
@@ -35,7 +35,7 @@ if ~isempty(mFreq)
    
    F = [];
    if ~isempty(mFreqBL)
-      conjG = cellfun(@(gEl) cast(conj(gEl.H),classname), g(mFreqBL),'UniformOutput',0);
+      conjG = cellfun(@(gEl) cast(gEl.H,classname), g(mFreqBL),'UniformOutput',0);
       foff = cellfun(@(gEl) gEl.foff, g(mFreqBL));
       % Cast from logical to double.
       realonly = cellfun(@(gEl) cast(isfield(gEl,'realonly') && gEl.realonly,'double'), g(mFreqBL));
@@ -43,7 +43,7 @@ if ~isempty(mFreq)
    end   
    
    if ~isempty(mFreqFullL)
-      conjG = cellfun(@(gEl) cast(conj(gEl.H),classname), g(mFreqFullL),'UniformOutput',0);
+      conjG = cellfun(@(gEl) cast(gEl.H,classname), g(mFreqFullL),'UniformOutput',0);
       
       % In case some of the filters were BL
       if isempty(F)

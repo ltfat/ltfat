@@ -21,7 +21,7 @@ M=numel(g);
 %length of filters
 filtLen = cellfun(@(x) numel(x),g(:));
 
-skip = -offset;
+skip = -(1-filtLen-offset(:));
 % Allow filter delay only in the filter support range
 if(any(skip(:)>=filtLen) || any(skip)<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  
@@ -44,6 +44,6 @@ skipOut = a(:).*(filtLen-1)+skip(:);
 % W channels are done simultaneously
 for m=1:M
    cext = comp_extBoundary(c{m},filtLen(m)-1,ext,'dim',1); 
-   ftmp = conv2(g{m}(:),comp_ups(cext,a(m)));
+   ftmp = conv2(conj(flipud(g{m}(:))),comp_ups(cext,a(m)));
    f = f + ftmp(1+skipOut(m):Ls+skipOut(m),:); 
 end

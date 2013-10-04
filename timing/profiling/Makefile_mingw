@@ -19,14 +19,14 @@ MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\$(ARCH)" $(MATLABLIBS)
 
 CC=gcc
 
-CFLAGS=-g -std=c99 -I../../src/thirdparty -I../../src/ -I./
+CFLAGS=-g -std=c99 -I../../src/thirdparty -I../../src/ -I./ -L../../mex/
 
 EXEFILES=mexExecuter.exe
 
 all: $(EXEFILES) copyLibs
 
 %.exe: %.c
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -static-libgcc $(MATLABLINKFLAGS)
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -static-libgcc $(MATLABLINKFLAGS) -lfftw3-3 -lfftw3f-3
 
 copyLibs:
 	copy /Y ..\..\mex\libfftw3-3.dll .

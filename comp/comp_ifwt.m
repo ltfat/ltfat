@@ -20,14 +20,15 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 
 % Impulse responses to a correct format.
 filtNo = numel(g);
-gCell = cellfun(@(gEl) gEl.h(:),g,'UniformOutput',0);
+gCell = cellfun(@(gEl) conj(flipud(gEl.h(:))),g,'UniformOutput',0);
 
 if strcmp(ext,'per')
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay reconstruction is produced.
-   offset = cellfun(@(gEl) gEl.offset,g); 
+   % offset = cellfun(@(gEl) gEl.offset,g); 
+   offset = cellfun(@(gEl) 1-numel(gEl.h)-gEl.offset,g); 
 elseif strcmp(ext,'valid')
-   offset = zeros(numel(gCell),1);
+   offset = -cellfun(@(gEl) numel(gEl.h)-1,g);
 else
    % -1 + 1 = 0 is used for better readability and to be consistent
    % with the shift in comp_fwt.
@@ -36,7 +37,8 @@ else
    % analysis filters. 
    % Instead, we could have used causal filters here and do the
    % delay compensation at the end (cropping f).
-   offset = -cellfun(@(gEl) numel(gEl),gCell) + (a -1) +1;
+   % offset = -cellfun(@(gEl) numel(gEl),gCell) + (a -1) +1;
+   offset = -(a-1);
 end
 
 

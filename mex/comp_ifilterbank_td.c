@@ -38,7 +38,7 @@
 
 /*
 %COMP_IFILTERBANK_TD   Synthesis filterbank
-%   Usage:  f=comp_ifilterbank_fft(c,g,a,Ls,offset,ext);
+%   Usage:  f=comp_ifilterbank_td(c,g,a,Ls,offset,ext);
 %
 %   Input parameters:
 %         c    : Cell array of length M, each element is N(m)*W matrix.
@@ -70,21 +70,21 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   mwSize M = mxGetNumberOfElements(mxg);
 
   // input data length
-  mwSize* Lc = mxMalloc(M*sizeof(mwSize));
+  mwSize Lc[M];// = mxMalloc(M*sizeof(mwSize));
   for(mwIndex m=0;m<M;m++)
   {
      Lc[m] = (mwSize) mxGetM(mxGetCell(mxc,m));
   }
 
   // filter lengths
-  mwSize* filtLen = mxMalloc(M*sizeof(mwSize));
+  mwSize filtLen[M];// = mxMalloc(M*sizeof(mwSize));
   for(mwIndex m=0;m<M;m++)
   {
      filtLen[m] = (mwSize) mxGetNumberOfElements(mxGetCell(mxg,m));
   }
 
      // POINTER TO THE INPUT
-     LTFAT_TYPE** cPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
+     LTFAT_TYPE* cPtrs[M];// = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
      for(mwIndex m=0;m<M;++m)
      {
         cPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxc,m));
@@ -100,10 +100,17 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
      memset(fPtr,0,Ls*W*sizeof(LTFAT_TYPE));
 
      // POINTER TO THE FILTERS
-     LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
+     LTFAT_TYPE* gPtrs[M];// = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
+
+     //double skip[M];
      for(mwIndex m=0;m<M;m++)
      {
-        gPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxg, m));
+        gPtrs[m] = mxGetData(mxGetCell(mxg, m));
+        //gPtrs[m] = (LTFAT_TYPE*) mxMalloc(filtLen[m]*sizeof(LTFAT_TYPE));
+        //memcpy(gPtrs[m],mxGetData(mxGetCell(mxg, m)),filtLen[m]*sizeof(LTFAT_TYPE));
+        //LTFAT_NAME(reverse_array)(gPtrs[m],gPtrs[m],filtLen[m]);
+        //LTFAT_NAME(conjugate_array)(gPtrs[m],gPtrs[m],filtLen[m]);
+        //skip[m] = -(1.0-filtLen[m]-offset[m]);
      }
 
      // over all channels
@@ -120,6 +127,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
            //(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
            LTFAT_NAME(upconv_td)(cPtrCol,Lc[m],fPtrCol,Ls,gPtrs[m],filtLen[m],a[m],-offset[m],ltfatExtStringToEnum(ext));
           }
+
        }
 
 }

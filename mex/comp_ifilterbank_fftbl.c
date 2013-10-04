@@ -48,7 +48,7 @@ void LTFAT_NAME(fftblMexAtExitFnc)()
   #ifdef _DEBUG
    mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
   #endif
-  
+
 }
 
 
@@ -103,17 +103,26 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   {
      cPtrs[m] = (LTFAT_REAL _Complex*) mxGetData(mxGetCell(mxc,m));
      inLen[m] = (mwSize) mxGetM(mxGetCell(mxc, m));
+
 	 GPtrs[m] = (LTFAT_REAL _Complex*) mxGetData(mxGetCell(mxG, m));
+	 LTFAT_NAME_COMPLEX(conjugate_array);
      filtLen[m] = (mwSize) mxGetNumberOfElements(mxGetCell(mxG, m));
   }
 
   // output data length
   mwSize L = (mwSize) floor(afrac[0]*inLen[0] + 0.5);
-  mxArray* mxF = ltfatCreateMatrix(L, W, LTFAT_MX_CLASSID, mxCOMPLEX);
-  plhs[0] = mxF;
-  // POINTER TO THE OUTPUT
+
+  /*
+  WOW. You really check for that?
+  */
+ // if(plhs[0]==NULL || ~mxIsNumeric(plhs[0]))
+ // {
+     plhs[0] = ltfatCreateMatrix(L, W, LTFAT_MX_CLASSID, mxCOMPLEX);
+     memset(mxGetData(plhs[0]),0,L*W*sizeof(LTFAT_REAL _Complex*));
+ // }
+
+  mxArray* mxF = plhs[0];
   LTFAT_REAL _Complex* FPtr = (LTFAT_REAL _Complex*) mxGetData(mxF);
-  memset(FPtr,0,L*W*sizeof(LTFAT_REAL _Complex*));
 
 
 	 if(M!=LTFAT_NAME(oldM))

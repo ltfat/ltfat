@@ -4,7 +4,7 @@
 siglen=512;
 t=((0:siglen-1)/siglen).';
 x0 = sin(2*pi*64*t);
-x=x+randn(size(x))/2;
+x=x0+randn(size(x0))/2;
 
 % DCGT parameters
 a=2;

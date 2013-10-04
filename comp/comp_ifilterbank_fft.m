@@ -11,6 +11,6 @@ F = zeros(L,W);
 for m=1:M
    for w=1:W
       % This repmat cannot be replaced by bsxfun
-      F(:,w)=F(:,w)+repmat(fft(c{m}(:,w)),a(m),1).*G{m};
+      F(:,w)=F(:,w)+repmat(fft(c{m}(:,w)),a(m),1).*conj(G{m});
    end;
 end

@@ -17,6 +17,8 @@ overwrites the in/out arrays. (Technically, FFTW_ESTIMATE does not touch your ar
 but you should always create plans first just to be sure.) 
 */
 
+#define FFTW_OPTIM FFTW_MEASURE
+
 int main( int argc, char *argv[] )
 {
 
@@ -34,8 +36,10 @@ int main( int argc, char *argv[] )
    
    LTFAT_REAL (*f)[2] = (LTFAT_REAL (*)[2])ltfat_malloc(L*2*sizeof(LTFAT_REAL));
    
-   p = LTFAT_FFTW(plan_dft_1d)(L, f, f, FFTW_FORWARD, FFTW_MEASURE);
-   
+   const double pt0=ltfat_time();
+   p = LTFAT_FFTW(plan_dft_1d)(L, f, f, FFTW_FORWARD, FFTW_OPTIM);
+   const double pt1=ltfat_time();
+   printf("Plan: %f\n",(pt1-pt0)/((double)nrep));
    
    LTFAT_NAME_COMPLEX(fillRand)((double _Complex*)f,L);
       
@@ -48,7 +52,23 @@ int main( int argc, char *argv[] )
    printf("%i, %f\n",L,(st1-st0)/((double)nrep));
    
    LTFAT_FFTW(destroy_plan)(p);
+   
+   LTFAT_FFTW(plan) p2;
+   const double p2t0=ltfat_time();
+   p2 = LTFAT_FFTW(plan_dft_1d)(L/2, f, f, FFTW_FORWARD, FFTW_OPTIM);
+   const double p2t1=ltfat_time();
+   printf("Plan2: %f\n",(p2t1-p2t0)/((double)nrep));
   
+   LTFAT_FFTW(destroy_plan)(p2);
+   
+   LTFAT_FFTW(plan) p3;
+   const double p3t0=ltfat_time();
+   p3 = LTFAT_FFTW(plan_dft_1d)(L, f, f, FFTW_FORWARD, FFTW_OPTIM);
+   const double p3t1=ltfat_time();
+   printf("Plan2: %f\n",(p3t1-p3t0)/((double)nrep));
+  
+   LTFAT_FFTW(destroy_plan)(p3);
+ 
    ltfat_free(f);
    
 }

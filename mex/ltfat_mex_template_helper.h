@@ -109,7 +109,7 @@ NOCOMPLEXFMTCHANGE
 #include "ltfat.h"
 #include <stdio.h>
 #include <string.h>
-#include "mex.h"
+#include <mex.h>
 /* This is just for the case when we want to skip registration of the atExit function */
 static inline void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 /** C99 headers for a generic complex number manipulations */
@@ -139,6 +139,10 @@ void ltfatMexAtExitGlobal(void)
 }
 
 #ifdef EXPORTALIAS
+
+#define STR_EXPAND(tok) tok##_atexit
+#define STR(tok) STR_EXPAND(tok)
+
 /*
   If EXPORTALIAS macro is set, a wrapper function for the mexFunction is created.
   This allows to call the MEX function from another MEX function without having to
@@ -163,9 +167,6 @@ DLL_EXPORT_SYM
 #  ifdef EXPORT_EXTERN_C
 EXPORT_EXTERN_C
 #  endif
-
-#define STR_EXPAND(tok) tok##_atexit
-#define STR(tok) STR_EXPAND(tok)
 
 void STR(EXPORTALIAS)();
 
@@ -505,6 +506,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
    }
 
   mexFunctionInner(nlhs,plhs,nrhs,prhs);
+  
  }
 
 static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
@@ -644,12 +646,10 @@ static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mx
         #else
           LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
         #endif
-
-
-        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE)
+		
+		#if defined(TYPEDEPARGS) && ((defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE))
         if(!checkIsReal(plhs[0]))
-          plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);
-
+           plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);
         #endif
 
         mxFree(prhsAlt);

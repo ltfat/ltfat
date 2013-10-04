@@ -269,17 +269,20 @@ switch(ftype)
     F.lengthcoef=@(Ncoef) Ncoef/F.red;
     F.native2coef=@(coef) cell2mat(coef(:));
     F.coef2native=@(coef,s) mat2cell(coef,round(s(1)/F.red*F.a(:,2)./F.a(:,1)));
-    F.frana=@(insig) framenative2coef(F,comp_filterbank(insig,F.g,F.a));
-    F.frsyn=@(insig) comp_ifilterbank(F.coef2native(insig,size(insig)),F.g,F.a,round(size(insig,1)/F.red));
+    F.frana=@(insig) F.native2coef(F,comp_filterbank(insig,F.g,F.a));
+    F.frsyn=@(insig) comp_ifilterbank(F.coef2native(insig,size(insig)),...
+                                      F.g,F.a,round(size(insig,1)/F.red));
     
   case 'filterbankreal'
     F.red=2*sum(F.a(:,2)./F.a(:,1));
     F.length=@(Ls) filterbanklength(Ls,F.a);
-    F.lengthcoef=@(Ncoef) round(Ncoef/F.red*2);
+    F.lengthcoef=@(Ncoef) 2*Ncoef/(F.red);
     F.native2coef=@(coef) cell2mat(coef(:));
-    F.frana=@(insig) F.native2coef(filterbank(insig,F.g,F.a));
-    F.frsyn=@(insig) 2*real(ifilterbank(F.coef2native(insig,size(insig)),F.g, ...
-                                        F.a));
+    F.coef2native=@(coef,s) mat2cell(coef,round(2*s(1)/F.red*F.a(:,2)./F.a(:,1)));
+    F.frana=@(insig) F.native2coef(comp_filterbank(insig,F.g,F.a));
+    F.frsyn=@(insig) 2*real(comp_ifilterbank(F.coef2native(insig,size(insig)),...
+                                             2*round(size(insig,1)/F.red)));
+
     
   case 'ufilterbank'
     F.red=sum(F.a(:,2)./F.a(:,1));

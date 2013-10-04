@@ -50,7 +50,7 @@ MEXSOFTLINKS =\
 	comp_ifilterbank_fftbl \
 	
 MEXDEPENDFILES =\
-    #comp_filterbank \
-	#comp_ifilterbank \
+    comp_filterbank \
+	comp_ifilterbank \
 
 

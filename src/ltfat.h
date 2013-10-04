@@ -3,9 +3,13 @@
 
 #include <stdlib.h>
 #include <stddef.h>
-
 #include "fftw3.h"
 #include "cblas.h"
+
+// SAFE SIGNED AND UNSIGNED INTEGERS
+typedef size_t    ltfatSize;
+typedef size_t    ltfatIndex;
+typedef ptrdiff_t ltfatDiff;
 
 /* Allow using arbitrary complex types. Assumes identical memory layout. */
 #ifndef LTFAT_USER_COMPLEX

@@ -52,7 +52,7 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
         % Multiply by a slicing window
         f = bsxfun(@times,F.sliwin,f);
         % Load and add overlap (first half)
-        ol = loadOverlap(Lb,size(c,2),fola);
+        ol = loadOverlap(Lb,size(f,2),fola);
         olLen = size(ol,1);
         f(1:olLen,:) = f(1:olLen,:) + ol;
         % Store overlap (second half)

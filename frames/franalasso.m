@@ -75,7 +75,7 @@ definput.keyvals.tol=1e-2;
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
-definput.flags.algorithm={'ista','fista'};
+definput.flags.algorithm={'fista','ista'};
 definput.flags.startphase={'zero','rand','int'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);

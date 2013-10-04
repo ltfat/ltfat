@@ -51,11 +51,15 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   // input lengths
   mwSize cLen[M];
  
-  plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxCOMPLEX);
+  //if(plhs[0]==NULL || ~mxIsNumeric(plhs[0]))
+ // {
+     plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxCOMPLEX);
+     memset(mxGetData(plhs[0]),0,L*W*sizeof(LTFAT_REAL _Complex));
+ // }
 
   // POINTER TO THE OUTPUT
   LTFAT_REAL _Complex* FPtr = (LTFAT_REAL _Complex*) mxGetData(plhs[0]);
-  memset(FPtr,0,L*W*sizeof(LTFAT_REAL _Complex));
+
 
   // POINTERS TO THE FILTERS
   LTFAT_REAL _Complex* GPtrs[M];
