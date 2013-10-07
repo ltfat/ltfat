@@ -31,7 +31,7 @@ function c = gga(f,indvec,dim)
 % 
 %     % Generate input signal
 %     k = 0:2^10-1;
-%     f = 5 * sin(2*pi*k*0.05 + pi/4) + 2 * sin(2*pi*k*0.1031 - pi/3);
+%     f = 5*sin(2*pi*k*0.05 + pi/4) + 2*sin(2*pi*k*0.1031 - pi/3);
 %
 %     % Non-integer indices of interest
 %     kgga = 102.9:0.05:109.1;
@@ -41,7 +41,8 @@ function c = gga(f,indvec,dim)
 %     % This is equal to fft(f)
 %     ck = gga(f,k);
 %
-%     fprintf('GGA to FFT error: %d\n',norm(ck-fft(f)));
+%     %GGA to FFT error:
+%     norm(ck-fft(f))
 %
 %     % DTFT samples just for non-integer indices
 %     ckgga = gga(f,kgga);
@@ -55,6 +56,7 @@ function c = gga(f,indvec,dim)
 %     set(gca,'XLim',limX);
 %     set(gca,'YLim',[0 1065]);
 %
+%     % Plot phase of coefficients
 %     figure(2);
 %     hold on;
 %     stem(k,angle(ck),'k');
