@@ -190,5 +190,5 @@ c=comp_dgt(f,g,a,M,kv.lt,flags.do_timeinv,0,0);
 order=assert_groworder(order);
 permutedsize=[M,L/a,permutedsize(2:end)];
 
-c=assert_sigreshape_post(c,dim,permutedsize,order);
+c=squeeze(assert_sigreshape_post(c,dim,permutedsize,order));
 
