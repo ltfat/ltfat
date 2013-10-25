@@ -4,22 +4,17 @@
 
 #include "ltfat_types.h"
 
-#include "goertzel.c"
 
-#include "wavelets.c"
+#include "gabdual.c"
+#include "gabtight.c"
 
-#include "spread.c"
-
-
-#include "ciutils.c"
 
 #define LTFAT_COMPLEXTYPE
 #include "ltfat_types.h"
-#include "wavelets.c"
-#include "goertzel.c"
-#include "spread.c"
 
-#include "ciutils.c"
+#include "gabdual.c"
+#include "gabtight.c"
+
 
 #undef LTFAT_COMPLEXTYPE
 

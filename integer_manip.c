@@ -147,4 +147,42 @@ int wfacreal_size(const int L, const int a, const int M)
 
 }
 
+size_t nextPow2_st(size_t x)
+{
+    size_t bits = sizeof(x)*8;
+
+    if(x==0)
+        return 1;
+
+     x--;
+	(x) = ((x)>>1)  | (x);
+    (x) = ((x)>>2)  | (x);
+	(x) = ((x)>>4)  | (x);
+	(x) = ((x)>>8)  | (x);
+	(x) = ((x)>>16) | (x);
+	if(bits>32)
+       (x) = ((x)>>32) | (x);
+
+	(x)++;
+	return x;
+}
+
+size_t nextfastfft(size_t x)
+{
+  while (1) {
+    ptrdiff_t m = x;
+
+    while ((m % 2) == 0)
+      m /= 2;
+    while ((m % 3) == 0)
+      m /= 3;
+    while ((m % 5) == 0)
+      m /= 5;
+    if (m <= 1)
+      break;                    /* n is completely factorable by twos, threes, and fives */
+    x++;
+  }
+  return x;
+}
+
 
