@@ -14,7 +14,14 @@ http://msdn.microsoft.com/en-us/library/ms810279.aspx
 #include "matLoader.h"
 #include "fftw3.h"
 
+/*
+Requires Matlab libraries to be installed -lmat and -lmx.
 
+BEWARE! Any function from MEX API working with Matlab runtime is some way will crash this executer.
+This is the case for functions with the mex prefix i.e. mexAtExit, mexPrintf etc.
+
+Use saveargsfor.m to store data from Matlab in a format which can be read by this executer.
+*/
 
 
 /*
@@ -57,11 +64,16 @@ int main(int argc,char* argv[])
       return -1;
    }
 
-
-   mexfunction = (mexFunction_t)GetProcAddress(dllHandle,"mexFunction");
+ /*
+ Preferably use the mexFunctionInner, which skips registering mexAtExit which causes crashes.
+ */
+   mexfunction = (mexFunction_t)GetProcAddress(dllHandle,"mexFunctionInner");
    if(mexfunction==NULL){
-      fprintf(stderr, "MEX file does not contain mexFunction\n");
-      return -1;
+      mexfunction = (mexFunction_t)GetProcAddress(dllHandle,"mexFunction");
+      if(mexfunction==NULL){
+         fprintf(stderr, "MEX file does not contain mexFunction\n");
+         return -1;
+      }
    }
 #else
   void *handle = dlopen(argv[1], RTLD_NOW);
@@ -70,10 +82,13 @@ int main(int argc,char* argv[])
     return -1;
   }
 
-  mexfunction = (mexFunction_t)dlsym(handle, "mexFunction");
+  mexfunction = (mexFunction_t)dlsym(handle, "mexFunctionInner");
   if(!mexfunction){
-    fprintf(stderr, "MEX file does not contain mexFunction\n");
-    return -1;
+    mexfunction = (mexFunction_t)dlsym(handle, "mexFunction");
+    if(!mexfunction){
+       fprintf(stderr, "MEX file does not contain mexFunction\n");
+       return -1;
+    }
   }
 #endif
 
@@ -85,7 +100,7 @@ int main(int argc,char* argv[])
    mxArray* plhs[1];
 
 
-   if(res!=NULL)
+   if(res[0]!=NULL)
    {
        argCount--;
    }

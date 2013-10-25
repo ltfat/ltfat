@@ -26,7 +26,7 @@ int main( int argc, char *argv[] )
       return(1);
    }
    
-   const int L = atoi(argv[1]);
+   const size_t L = atoi(argv[1]);
    const int nrep = atoi(argv[2]);
    
       

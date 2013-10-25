@@ -1,10 +1,11 @@
 function c = gga(f,indvec,dim)
 %GGA Generalized Goertzel algorithm
-%   Usage:  y = gga(x,indvec)
+%   Usage:  c = gga(x,indvec)
 %
 %   Input parameters:
 %         x      : Input data.
 %         indvec : Indices to calculate. 
+%         fs     : Sampling frequency.
 %
 %   Output parameters:
 %         c      : Coefficient vector.

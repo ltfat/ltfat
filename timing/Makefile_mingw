@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS= -O3 -s -Wall -std=c99 -I../src -I../src/thirdparty -L../lib -L../mex
-LIBS=-static-libgcc -lltfat -lltfatf -lfftw3-3 -lfftw3f-3 -lm
+LIBS=-static-libgcc -lltfat -lltfatf -lfftw3-3 -lfftw3f-3
 
 include filedefs.mk
 

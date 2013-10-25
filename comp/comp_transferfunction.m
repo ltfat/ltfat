@@ -3,8 +3,12 @@ function H=comp_transferfunction(g,L)
 
 l=(0:L-1).'/L;
 if isfield(g,'h')
-        
+    
+    % This is not safe when already having imp. resp. of length L
+    % with zero delay (periodically wrapped).
+ 
     g_time=circshift(postpad(g.h,L),g.offset);
+
     
     if isfield(g,'fc')
        g_time = g_time.*exp(2*pi*1i*round(g.fc*L/2)*l);

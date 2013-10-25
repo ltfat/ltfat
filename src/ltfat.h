@@ -159,6 +159,15 @@ void gabimagepars(const int Ls, const int x, const int y,
 int wfacreal_size(const int L, const int a, const int M);
 
 
+size_t nextPow2_st(size_t x);
+
+size_t nextfastfft(size_t x);
+
+
+#define CZT_NEXTPOW2 0x0000
+#define CZT_NEXTFASTFFT 0x0001
+
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

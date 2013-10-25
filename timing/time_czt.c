@@ -5,13 +5,18 @@
 #include "ltfat_types.h"
 #include "ltfat_time.h"
 
-//#define GGA_WITH_PLAN
+
+#ifndef PI
+#   define PI 3.141592653589793
+#endif
+
+//#define CZT_WITH_PLAN
 
 int main( int argc, char *argv[] )
 {
    if (argc<3)
    {
-      printf("Correct parameters: L, M, nrep\n");     
+      printf("Correct parameters: L, K, nrep\n");     
       return(1);
    }
    int nrep = 1;
@@ -21,38 +26,35 @@ int main( int argc, char *argv[] )
    }
    
    const size_t L = atoi(argv[1]);
-   const size_t M = atoi(argv[2]);
+   const size_t K = atoi(argv[2]);
    
-   LTFAT_COMPLEXH *f = (LTFAT_COMPLEXH*)ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
-   LTFAT_COMPLEXH *c = (LTFAT_COMPLEXH*)ltfat_malloc(M*sizeof(LTFAT_COMPLEXH));
-   double *indVec = (double*)ltfat_malloc(M*sizeof(double));
-   
+   LTFAT_REAL *f = (LTFAT_REAL*)ltfat_malloc(L*sizeof(LTFAT_REAL));
+   LTFAT_COMPLEXH *c = (LTFAT_COMPLEXH*)ltfat_malloc(K*sizeof(LTFAT_COMPLEXH));
+
    LTFAT_NAME_COMPLEX(fillRand)(f,L);
    
-   for(size_t m=0;m<M;m++)
-   {
-      indVec[m]=m;
-   }
-      
+ 
+   double o = 0.1;
+   double deltao = 2.0*PI/100.0;
 
 
    double st0,st1;
-   #ifndef GGA_WITH_PLAN
+   #ifndef CZT_WITH_PLAN
    st0=ltfat_time();
    for (int jj=0;jj<nrep;jj++)
    {
-      LTFAT_NAME_COMPLEX(gga)((const LTFAT_COMPLEXH*)f,(const double *)indVec,L,1,M,c);
+      LTFAT_NAME(chzt)(f,L,1,K,deltao,o,c);
    }
    st1=ltfat_time();
    #else
-   LTFAT_NAME_COMPLEX(gga_plan) p = LTFAT_NAME_COMPLEX(create_gga_plan)(indVec,M,L);
+   LTFAT_NAME(chzt_plan) p = LTFAT_NAME(create_chzt_plan)(K,L);
    st0=ltfat_time();
    for (int jj=0;jj<nrep;jj++)
    {
-      LTFAT_NAME_COMPLEX(gga_with_plan)(p,f,c,1);
+      LTFAT_NAME(chzt_with_plan)(p,f,1,deltao,o,c);
    }
    st1=ltfat_time();
-   LTFAT_NAME_COMPLEX(destroy_gga_plan)(p);
+   LTFAT_NAME(destroy_chzt_plan)(p);
    #endif
    
    //printf("Length: %i, avr. %f ms \n",L,(st1-st0)/((double)nrep));
@@ -60,6 +62,5 @@ int main( int argc, char *argv[] )
   
    ltfat_free(f);
    ltfat_free(c);
-   ltfat_free(indVec);
    
 }

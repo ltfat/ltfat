@@ -135,7 +135,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
 
      // over all channels
-    // #pragma omp parallel for
+
         for(mwIndex m =0; m<M; m++)
         {
 		  LTFAT_REAL _Complex* buffer = (LTFAT_REAL _Complex*) ltfat_malloc(inLen[m]*sizeof(LTFAT_REAL _Complex));

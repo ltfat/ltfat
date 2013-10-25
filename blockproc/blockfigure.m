@@ -6,7 +6,7 @@ function p = blockfigure(varargin)
 %   Output parameters:
 %         p     : JAVA object of the class net.sourceforge.ltfat.SpectFrame
 %
-%   `p=blockfigure()` initializes a JAVA object for the |plotblock|
+%   `p=blockfigure()` initializes a JAVA object for the |blockplot|
 %   routine. 
 %
 %   Optional key-value pairs:

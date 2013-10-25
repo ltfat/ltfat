@@ -1,11 +1,12 @@
-function blockdone(B)
+function blockdone()
 %BLOCKDONE  Destroy the block object
 %   Usage: blockdone(B);
 %
-%   `blockdone(B)` closes the block interface.
+%   `blockdone()` closes the current block interface.
 %
 %   See also: block
 
 % TO DO: Process additional zeros to compensate for the delay 
 
-block_interface('free');
+block_interface('reset');
+playrec('reset');

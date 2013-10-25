@@ -78,8 +78,10 @@ NOCOMPLEXFMTCHANGE
  **/
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
+#  define EXPORT_SYM __declspec(dllexport)
 #else
 #  define EXPORT_EXTERN_C __attribute__((visibility("default")))
+#  define EXPORT_SYM __attribute__((visibility("default")))
 #endif
 
 
@@ -111,7 +113,8 @@ NOCOMPLEXFMTCHANGE
 #include <string.h>
 #include <mex.h>
 /* This is just for the case when we want to skip registration of the atExit function */
-static inline void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
+EXPORT_SYM
+void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 /** C99 headers for a generic complex number manipulations */
 #if (defined(COMPLEXINDEPENDENT)||defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
 #  include <complex.h>
@@ -148,12 +151,7 @@ void ltfatMexAtExitGlobal(void)
   This allows to call the MEX function from another MEX function without having to
   deal with which mexFunction to call.
 */
-#  ifdef DLL_EXPORT_SYM
-DLL_EXPORT_SYM
-#  endif
-#  ifdef EXPORT_EXTERN_C
-EXPORT_EXTERN_C
-#  endif
+EXPORT_SYM
 void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 
 void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
@@ -161,13 +159,7 @@ void EXPORTALIAS( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
    mexFunctionInner(nlhs,plhs,nrhs,prhs);
 }
 
-#  ifdef DLL_EXPORT_SYM
-DLL_EXPORT_SYM
-#  endif
-#  ifdef EXPORT_EXTERN_C
-EXPORT_EXTERN_C
-#  endif
-
+EXPORT_SYM
 void STR(EXPORTALIAS)();
 
 void STR(EXPORTALIAS)()
@@ -506,10 +498,10 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
    }
 
   mexFunctionInner(nlhs,plhs,nrhs,prhs);
-  
+
  }
 
-static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
+void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 {
    #ifdef MEX_BEGINNING_HOOK
    MEX_BEGINNING_HOOK
@@ -646,7 +638,7 @@ static inline void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mx
         #else
           LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
         #endif
-		
+
 		#if defined(TYPEDEPARGS) && ((defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE))
         if(!checkIsReal(plhs[0]))
            plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);

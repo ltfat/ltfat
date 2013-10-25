@@ -30,6 +30,7 @@ MEXBASESAFE=\
 	comp_ifilterbank_td \
 	comp_cellcoef2tf \
 	comp_gga \
+	comp_chirpzt \
 	comp_filterbank_fft \
 	comp_filterbank_fftbl \
 	comp_ifilterbank_fft \

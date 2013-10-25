@@ -1,4 +1,4 @@
-function blockplot(p,F,c)
+function cola=blockplot(p,F,c,cola)
 %BLOCKPLOT Plot block coefficients
 %   Usage: blockplot(p,F,c);
 %
@@ -18,7 +18,21 @@ ctf = framecoef2tf(F,c(:,1));
 
 if strcmp(F.blockalg,'sliced')
    % DO the coefficient overlapping or cropping
+   %ctf = ctf(:,floor(end*3/8):floor(end*5/8)+1);
+   
+   if nargin>3 
+      olLen = ceil(size(ctf,2)/2);
+      if isempty(cola)
+         cola = zeros(size(ctf,1),olLen);
+      end
+         
+      ctf(:,1:olLen) = ctf(:,1:olLen) + cola;
+      cola = ctf(:,end+1-olLen:end);
+      ctf = ctf(:,1:olLen);
+   end
 end
+
+
 
 ctf = cast(ctf,'single');
 javaMethod('append',p,ctf);

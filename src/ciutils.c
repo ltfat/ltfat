@@ -104,4 +104,34 @@ else
 }
 
 
+LTFAT_EXTERN
+void LTFAT_NAME(array2complex)(LTFAT_TYPE *in, LTFAT_COMPLEXH *out, const size_t L)
+{
+#ifdef LTFAT_COMPLEXTYPE
+if(in==out)
+{
+    return;
+}
+else
+{
+    memcpy(out,in,L*sizeof(LTFAT_COMPLEXH));
+}
+#else
+if(in==out)
+{
+    // This should produce an error
+}
+else
+{
+   LTFAT_REAL (*outTmp)[2] = (LTFAT_REAL(*)[2])  out;
+   for(size_t ii=0;ii<L;ii++)
+   {
+      outTmp[ii][0] = in[ii];
+      outTmp[ii][1] = (LTFAT_TYPE) 0.0;
+   }
+}
+#endif
+}
+
+
 #endif // LTFAT_TYPE

@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 2
+#define ISNARGINEQ 4
 #define TYPEDEPARGS 0
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
@@ -19,29 +19,24 @@
 
 
 // Calling convention:
-//  c = comp_gga(f,indvec)
+//  c = comp_chirpcz(f,K,deltao,o)
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
 
    mwSize L  = mxGetM(prhs[0]);
    mwSize W  = mxGetN(prhs[0]);
-   mwSize M = mxGetNumberOfElements(prhs[1]);
+   mwSize K = (mwSize) mxGetScalar(prhs[1]);
+   double deltao = mxGetScalar(prhs[2]);
+   double o = mxGetScalar(prhs[3]);
 
-   const LTFAT_TYPE* fPtr = (const LTFAT_TYPE*) mxGetPr(prhs[0]);
-   const double* indVecPtr = (const double*) mxGetPr(prhs[1]);
+   const LTFAT_TYPE* fPtr = (const LTFAT_TYPE*) mxGetData(prhs[0]);
 
-   plhs[0] = ltfatCreateMatrix(M,W,LTFAT_MX_CLASSID,mxCOMPLEX);
+   plhs[0] = ltfatCreateMatrix(K,W,LTFAT_MX_CLASSID,mxCOMPLEX);
    LTFAT_REAL _Complex* cPtr = (LTFAT_REAL _Complex*) mxGetPr(plhs[0]);
 
-   #ifndef GGA_WITH_PLAN
-   LTFAT_NAME(gga)(fPtr,indVecPtr,L,W,M,cPtr);
-   #else
-   LTFAT_NAME(gga_plan) p = LTFAT_NAME(create_gga_plan)(indVecPtr,M,L);
-   LTFAT_NAME(gga_with_plan)(p,fPtr,cPtr,W);
-   LTFAT_NAME(destroy_gga_plan)(p);
-   #endif
-
+   LTFAT_NAME(chzt)(fPtr,L,W,K,deltao,o,cPtr);
+   //LTFAT_NAME(chzt_fact)(fPtr,L,W,K,deltao,o,cPtr);
 
    return;
 }

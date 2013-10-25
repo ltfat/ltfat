@@ -11,3 +11,5 @@ ltfat_malloc
 ltfat_calloc
 ltfat_realloc
 ltfat_free
+nextPow2_st
+nextfastfft

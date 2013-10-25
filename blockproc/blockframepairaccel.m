@@ -1,16 +1,14 @@
 function [Fao,Fso] = blockframepairaccel(Fa, Fs, Lb, varargin)
-%BLOCKACCEL Precompute structures for block processing
-%   Usage: F = blockaccel(F,Lb);
+%BLOCKFRAMEPAIRACCEL Precompute structures for block processing
+%   Usage: F = blockframepairaccel(Fa,Fs,Lb);
 %
-%   `F=blockaccel(F,Lb)` have to be called for each frame object prior 
-%   entering the main loop where |blockana| and |blocksyn| are called.
-%   The function calls |frameaccel| and prepares structures for the
-%   processing of a consecutive stream of blocks.
-%
-%
+%   `[Fao,Fso]=blockframepairaccel(Fa,Fs,Lb)` works similar to 
+%   |blockframeaccel| with a pair of frames. The only difference from
+%   calling |blockframeaccel| separatelly for each frame is correct
+%   default choice of the slicing windows.   
 %
 %      `'sliwin',sliwin`   : Slicing window. `sliwin` have to be a window
-%                            of length *2L*. It is used in the slicing
+%                            of length *2Lb*. It is used in the slicing
 %                            window approach.
 
 definput.flags.blockalg = {'naive','sliced','segola'};
@@ -27,7 +25,7 @@ if flags.do_sliced
    end
    
    if isempty(kv.synsliwin)
-      kv.anasliwin = 'rect';
+      kv.synsliwin = 'rect';
    end
 
    Fao = blockframeaccel(Fa,Lb,'sliced','sliwin',kv.anasliwin);

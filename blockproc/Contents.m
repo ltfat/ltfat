@@ -3,13 +3,23 @@
 %  Zdenek Prusa, 2013.
 %
 %  Basic methods
-%    BLOCK          - Create a new block
-%    BLOCKDEVICES   - List available devices
+%    BLOCK          - Setup a new block-stream
+%    BLOCKDEVICES   - List available audio I/O devices
 %    BLOCKREAD      - Read samples from file/device
-%    BLOCKANA       - Block analysis
-%    BLOCKSYN       - Block synthesis
 %    BLOCKPLAY      - Play block (sound output)
-%    BLOCKDONE      - Destroy the block object
+%    BLOCKPANEL     - Block-stream control GUI
+%    BLOCKPANELGET   - Obtain parameter(s) from GUI
+%    BLOCKDONE      - Closes block-stream and frees resources
+%
+%  Block-adapted transforms
+%    BLOCKFRAMEACCEL     - Prepare a frame for a block-stream processing
+%    BLOCKFRAMEPAIRACCEL - Prepare a pair of frames for a block-stream processing
+%    BLOCKANA            - Block analysis
+%    BLOCKSYN            - Block synthesis
+%
+%  Running visualisation
+%    BLOCKFIGURE   - Initialize figure for redrawing
+%    BLOCKPLOT     - Append coefficients to the running plot
 %
 %  Helper functions
 %    BLOCK_FWT      - |fwt| processing
