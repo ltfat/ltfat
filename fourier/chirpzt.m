@@ -13,7 +13,7 @@ function c = chirpzt(f,K,deltao,o,dim)
 %
 %   `c = chirpzt(f,o0,deltao,K)` computes *K* samples of the discrete-time 
 %   fourier transform DTFT *c* of *f* at values $c(k)=F(o0+k*deltao)$ 
-%   for $k=0,\dots,K-1$.
+%   for $k=0,\dots,K-1$. The values are computed along dimension *dim*.
 
 %% Check the input arguments
 if nargin < 1

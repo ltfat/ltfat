@@ -53,8 +53,6 @@ switch(F.type)
   plotdwilt(framecoef2native(F,insig),varargin{:}); 
  case 'wmdct'
   plotwmdct(framecoef2native(F,insig),varargin{:});
- case 'dgt'
-  plotfilterbank(framecoef2native(F,insig),F.a,varargin{:});  
  case 'gen'
   error(['%s: There is no default way of visualizing general frame ' ...
          'coefficients.'],upper(mfilename));
@@ -77,6 +75,9 @@ switch(F.type)
     plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
  case {'uwfbt','uwpfbt'}
     plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
+    
+case {'filterbank','filterbankreal'}
+    plotfilterbank(framecoef2native(F,insig),F.a,[],varargin{:});
 end;
 
   

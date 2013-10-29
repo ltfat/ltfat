@@ -59,8 +59,18 @@ definput.keyvals.xres=800;
 [flags,kv]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
 
 if iscell(coef)
-  L=a(1)*size(coef{1},1);
   M=numel(coef);
+  a = comp_filterbank_a(a,M);
+  
+  if any(a(:,2)~=1)
+  % Fractional case   
+    L = a(1);
+  else
+  % Non-fractional case
+    L=a(1)*size(coef{1},1);
+  end
+  
+
   N=kv.xres;
   coef2=zeros(M,N);
   

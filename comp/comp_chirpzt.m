@@ -5,7 +5,7 @@ Ls = size(f,1);
 W = size(f,2);
 
 q = 1;
-if 1
+if 0
     %Use the decimation scheme
     % q fft of length
     q = ceil(Ls/K);
