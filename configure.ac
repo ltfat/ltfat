@@ -31,7 +31,7 @@ if test "$MKOCTFILE_CHECK" != "yes" ; then
     AC_MSG_ERROR([Please install mkoctfile.])
 fi
 
-AC_CHECK_HEADERS([fftw3.h],[],[AC_MSG_ERROR([fftw was not found])])
+#AC_CHECK_HEADERS([fftw3.h],[],[AC_MSG_ERROR([fftw was not found])])
 # Put in check for portaudio
 
 AC_OUTPUT
