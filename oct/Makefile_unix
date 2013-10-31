@@ -4,10 +4,23 @@ OCTSCC   = $(shell ls comp_*.cc)
 OCTSBASE = $(basename $(OCTSCC))
 OCTS     = $(addsuffix .oct,$(OCTSBASE))
 
+MKOCTFILE ?= mkoctfile
+
+ifndef LAPACK_LIBS
+LAPACK_LIBS := $(shell $(MKOCTFILE) -p LAPACK_LIBS)
+endif
+ifndef BLAS_LIBS
+BLAS_LIBS := $(shell $(MKOCTFILE) -p BLAS_LIBS)
+endif
+ifndef FLIBS
+FLIBS := $(shell $(MKOCTFILE) -p FLIBS)
+endif
+LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
 all:	$(OCTS)
 
 %.oct: %.cc config.h
-	mkoctfile -Wall -I../thirdparty -I. -I../src -L../lib -lltfat -lltfatf $<
+	$(MKOCTFILE) -Wall -I../thirdparty -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
 
 clean:
 	rm *.o *.oct
