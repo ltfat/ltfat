@@ -1,4 +1,4 @@
-function Op=operatornew(ftype,varargin);
+function Op=operatornew(otype,varargin);
 %OPERATORNEW  Construct a new operator
 %   Usage: F=operatornew(ftype,...);
 %
@@ -48,7 +48,7 @@ switch(otype)
     Op.Fa=varargin{1};
     Op.Fs=varargin{2};
     Op.s =varargin{3};
-    Op.L =framelengthcoef(Fs,size(Op.s,1));
+    Op.L =framelengthcoef(Op.Fs,size(Op.s,1));
   case 'spread'
     Op.s =varargin{1};
     Op.L =length(Op.s);
