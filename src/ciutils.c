@@ -108,7 +108,7 @@ LTFAT_EXTERN
 void LTFAT_NAME(array2complex)(LTFAT_TYPE *in, LTFAT_COMPLEXH *out, const size_t L)
 {
 #ifdef LTFAT_COMPLEXTYPE
-if(in==out)
+if(in==(LTFAT_TYPE*)out)
 {
     return;
 }
@@ -117,7 +117,7 @@ else
     memcpy(out,in,L*sizeof(LTFAT_COMPLEXH));
 }
 #else
-if(in==out)
+if(in==(LTFAT_TYPE*)out)
 {
     // This should produce an error
 }

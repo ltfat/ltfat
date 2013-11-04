@@ -1,6 +1,6 @@
 function Op=operatornew(otype,varargin);
 %OPERATORNEW  Construct a new operator
-%   Usage: F=operatornew(ftype,...);
+%   Usage: F=operatornew(otype,...);
 %
 %   `Op=operatornew(otype,...)` constructs a new operator object *Op* of type
 %   *otype*. Arguments following *otype* are specific to the type of operator

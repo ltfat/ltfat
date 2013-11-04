@@ -1,3 +1,12 @@
+Version 1.4.3
+   * Fixed bug in nsgabframebounds.m
+
+   * Added chirpzt
+
+   * Added timing and comparison of gga and chirpzt in C
+
+   * New target in backend makefiles not linking BLAS and LAPACK.
+
 Version 1.4.2 17/9 2013
 	* Added mexExecuter to speed up cell array handling in the backends
 
@@ -7,7 +16,8 @@ Version 1.4.2 17/9 2013
 
 	* More block processing demos: pitch shifting
 
-	* Added the generalized Goertzel  algorithm
+	* Added the generalized Goertzel algorithm
+
 Version 1.4.1 18/7 2013
 	* Major change in the output format from the wfilt_ functions. If
 	a wfilt_ function generates a tigth frames, its two outputs are

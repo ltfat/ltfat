@@ -63,7 +63,7 @@ function [tc,relres,iter,xrec] = franalasso(F,x,lambda,varargin)
 %  
 %   See also: frame, frsyn, framebounds, franagrouplasso
 %
-%   References: dademo04
+%   References: dademo04 beck09
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));

@@ -17,6 +17,7 @@
 %    FFTREAL        -  FFT for real valued signals.
 %    IFFTREAL       -  Inverse of |fftreal|.
 %    GGA            -  Generalized Goertzel Algorithm.
+%    CHIRPZT        -  Chirped Z-transform.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot |fftreal| coefficients.
 %
