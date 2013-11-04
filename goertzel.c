@@ -43,9 +43,9 @@ return plan;
 LTFAT_EXTERN
 void LTFAT_NAME(destroy_gga_plan)(LTFAT_NAME(gga_plan) plan)
 {
-   ltfat_free(plan.cos_term);
-   ltfat_free(plan.cc_term);
-   ltfat_free(plan.cc2_term);
+   ltfat_free((void*)plan.cos_term);
+   ltfat_free((void*)plan.cc_term);
+   ltfat_free((void*)plan.cc2_term);
 }
 
 
@@ -334,7 +334,7 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
     for(size_t w = 0;w<W;w++)
     {
        memset(fbuffer,0,Lfft*sizeof(LTFAT_COMPLEXH));
-       LTFAT_NAME(array2complex)(fPtr+w*L,fbuffer,L);
+       LTFAT_NAME(array2complex)((LTFAT_TYPE *)(fPtr+w*L),fbuffer,L);
 
        //1) Premultiply by a chirp
 
@@ -491,7 +491,7 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
       // 1) Read and reorganize input data
       // *********************************
        memset(fbuffer,0,q*Lfft*sizeof(LTFAT_COMPLEXH));
-       LTFAT_TYPE* fPtrTmp = fPtr + w*L;
+       LTFAT_TYPE* fPtrTmp = ((LTFAT_TYPE *)fPtr) + w*L;
 
        for(size_t k=0;k<lastK;k++)
        {
