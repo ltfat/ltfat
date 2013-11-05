@@ -43,8 +43,6 @@ command = varargin{1};
 
 
 switch command
-   case 'incPageNo'
-      pageNo = pageNo +1;
    case 'reset'
       pos = 0; 
       sourceName = [];
@@ -63,20 +61,22 @@ switch command
       loop = 0;
       Ls = -1;
 %% SETTERS %%%
+   case 'setLs'
+      Ls = varargin{2};
    case 'setPos'
       pos = varargin{2};
-   case 'setPageNo'
-      pos = varargin{2};
-   case 'setSource'
-      sourceName = varargin{2};
    case 'setBufCount'
       maxBufCount = varargin{2};
    case 'setPlayChanList'
       playChanList = varargin{2};
    case 'setRecChanList'
       recChanList = varargin{2};
+   case 'setPageNo'
+      pos = varargin{2};
    case 'setSkipped'
       skipCounter = varargin{2};
+   case 'setBufLen'
+      bufLen = varargin{2}; 
    case 'setClassId'
       classid = varargin{2};
    case 'setAnaOverlap'
@@ -87,25 +87,15 @@ switch command
       dispLoad = varargin{2};
    case 'setLoop'
       loop = varargin{2};
-   case 'setBufLen'
-      bufLen = varargin{2}; 
-   case 'setLs'
-      Ls = varargin{2};
+   case 'setSource'
+      sourceName = varargin{2};
 %% GETTERS %%%
-   case 'getPos'
-      varargout{1}=pos;
    case 'getLs'
       varargout{1}=Ls;
-   case 'getSource'
-      if isnumeric(sourceName)
-         varargout{1}='numeric';
-      else
-         varargout{1}=sourceName;
-      end
+   case 'getPos'
+      varargout{1}=pos;
    case 'getBufCount'
       varargout{1}= maxBufCount;
-   case 'getEnqBufCount'
-      varargout{1}= numel(pageList);
    case 'getPlayChanList'
       varargout{1}=playChanList;
    case 'getRecChanList'
@@ -129,7 +119,18 @@ switch command
    case 'getEnqueuedToPlay'
       varargout{1}=toPlayBlock; 
       toPlayBlock = [];
+   case 'getSource'
+      if isnumeric(sourceName)
+         varargout{1}='numeric';
+      else
+         varargout{1}=sourceName;
+      end
+   case 'getEnqBufCount'
+      varargout{1}= numel(pageList);
+
 %% OTHER %%%
+   case 'incPageNo'
+      pageNo = pageNo +1;
    case 'popPage'
       varargout{1}=pageList(1);
       pageList = pageList(2:end);
