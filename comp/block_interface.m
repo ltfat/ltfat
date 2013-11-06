@@ -52,7 +52,6 @@ switch command
       recChanList = [];
       pageNo = 0;
       skipCounter = 0;
-      defaultBufLen = 1024;
       classid = 'double';
       anaOverlap = [];
       synOverlap = [];
@@ -85,7 +84,9 @@ switch command
       synOverlap = varargin{2};
    case 'setDispLoad'
       dispLoad = varargin{2};
-   case 'setLoop'
+   case 'setToPlay'
+      toPlayBlock=varargin{2};
+   case 'setIsLoop'
       loop = varargin{2};
    case 'setSource'
       sourceName = varargin{2};
@@ -116,9 +117,11 @@ switch command
       varargout{1}=synOverlap;
    case 'getDispLoad'
       varargout{1}=dispLoad;
-   case 'getEnqueuedToPlay'
+   case 'getToPlay'
       varargout{1}=toPlayBlock; 
       toPlayBlock = [];
+   case 'getIsLoop'
+      varargout{1}=loop;
    case 'getSource'
       if isnumeric(sourceName)
          varargout{1}='numeric';
@@ -134,17 +137,15 @@ switch command
    case 'popPage'
       varargout{1}=pageList(1);
       pageList = pageList(2:end);
-   case 'isLoop'
-      varargout{1}=loop;
-   case 'enqueueToPlay'
-      toPlayBlock=varargin{2};
    case 'pushPage'
-      pageList = [pageList, varargin{2}];
-   case 'incSkipped'
-      skipCounter = skipCounter + varargin{2};
-   case 'readNumericBlock'
-      L = varargin{2};
-      varargout{1}=sourceName(pos+1:pos+1+L,:); 
+      pageList = [pageList, varargin{2}];   
+
+
+%   case 'incSkipped'
+%      skipCounter = skipCounter + varargin{2};
+%   case 'readNumericBlock'
+%      L = varargin{2};
+%      varargout{1}=sourceName(pos+1:pos+1+L,:); 
    otherwise
       error('%s: Unrecognized command.',upper(mfilename));
 end

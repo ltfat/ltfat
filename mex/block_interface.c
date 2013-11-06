@@ -1,17 +1,22 @@
 #include "block_interface.h"
+#include <string.h>
+
 
 void defaultSetter(biEntry* obj,mxArray* in)
 {
    if(obj->var!=NULL)
-      mxFree(obj->var);
+      mxDestroyArray(obj->var);
 	  
    obj->var=mxDuplicateArray(in);
-   mxMakeArrayPersistent(obj->var);
+   mexMakeArrayPersistent(obj->var);
 }
 
 mxArray* defaultGetter(biEntry* obj)
 {
-   return obj->var;
+   if(obj->var!=NULL)  	
+	return obj->var;
+   else
+	return mxCreateDoubleMatrix(0,0,mxREAL); 
 }
 
 
@@ -31,29 +36,130 @@ static biEntry vars[] =
    {.name="AnaOverlap",.var=NULL,.setter=defaultSetter,.getter=defaultGetter},
    {.name="SynOverlap",.var=NULL,.setter=defaultSetter,.getter=defaultGetter},
    {.name="DispLoad",.var=NULL,.setter=defaultSetter,.getter=defaultGetter},
+   {.name="IsLoop",.var=NULL,.setter=defaultSetter,.getter=defaultGetter},
    // Default setters and custom getters
-   {.name="Source",.var=NULL,.setter=defaultSetter,.getter=defaultGetter},
-   {.name="",.var=NULL,.setter=defaultSetter,.getter=defaultGetter},
+   {.name="Source",.var=NULL,.setter=defaultSetter,.getter=getSource},
+   {.name="EnqBufCount",.var=NULL,.setter=NULL,.getter=getEnqBufCount},
+   {.name="ToPlay",.var=NULL,.setter=defaultSetter,.getter=getToPlay},
+};
+
+
+mxArray* getSource(biEntry* obj)
+{
+   if(obj->var==NULL || mxIsNumeric(obj->var))
+      return mxCreateString("numeric");
+   else
+      return obj->var;
+}
+
+mxArray* getEnqBufCount(biEntry* obj)
+{
+   double retVal = 0.0;	
+   biEntry* cmdStruct = lookupEntry("PageList",vars,sizeof(vars)/sizeof(*vars));
+   if(cmdStruct->var!=NULL)
+      retVal = mxGetNumberOfElements(cmdStruct->var);
+  
+   return mxCreateDoubleScalar(retVal);	
+}
+
+void incPageNo()
+{
+   biEntry* cmdStruct = lookupEntry("PageNo",vars,sizeof(vars)/sizeof(*vars));
+   if(cmdStruct->var==NULL)
+   {
+      cmdStruct->var = mxCreateDoubleScalar(1.0);
+      mexMakeArrayPersistent(cmdStruct->var);
+   }
+   else
+   {
+      double* pageNo = mxGetPr(cmdStruct->var);
+      *pageNo = *pageNo + 1.0;
+   }
+}
+
+mxArray* getToPlay(biEntry* obj)
+{
+   if(obj->var!=NULL)
+   {  
+      mxArray* duplicate = mxDuplicateArray(obj->var);	   
+      mxDestroyArray(obj->var);
+      obj->var = NULL;
+      return duplicate;
+   }
 }
 
 
+
+biEntry* lookupEntry(const char* name, biEntry* dict,size_t dictLen)
+{	
+   for(size_t ii=0;ii<dictLen;ii++)
+   {
+      if(!strncmp(name,dict[ii].name,strlen(dict[ii].name)))
+      {
+         return &dict[ii];
+      }
+   }
+   return NULL;
+}
+
 void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 {
-   if(nlhs<1)
+   static int atExitRegistered = 0;
+   if(!atExitRegistered)
    {
-     mexErrMsgText("BLOCK_INTERFACE: Not enough input arguments.");
+  //    mexAtExit();
+   }   
+   if(nrhs<1)
+   {
+     mexErrMsgTxt("BLOCK_INTERFACE: Not enough input arguments.");
    }
 
    mxArray* mxCmd = prhs[0];
    char command[COMMAND_LENGTH];
-   size_t comStrLen = mxGetNumberOfElement(mxCmd);
+   size_t comStrLen = mxGetNumberOfElements(mxCmd);
    mxGetString(mxCmd,command,comStrLen+1);
 
-   if(!strcmp(command,"set"))
+   if(!strncmp(command,"set",3))
    {
+      if(nrhs<2)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Not enough arguments for the set method.");
+      }
+      biEntry* cmdStruct = lookupEntry(command+3,vars,sizeof(vars)/sizeof(*vars));       
+         
+      if(cmdStruct==NULL)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized set command.");
+      }
+      cmdStruct->setter(cmdStruct,prhs[1]);
+      return;
    }
-   else if(!strcmp(command,"get"))
+   else if(!strncmp(command,"get",3))
    {
+      if(nrhs>1)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Too many input arguments for get method.");
+      }
+      biEntry* cmdStruct = lookupEntry(command+3,vars,sizeof(vars)/sizeof(*vars));       
+      if(cmdStruct==NULL)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized get command.");
+      }
+      plhs[0]=cmdStruct->getter(cmdStruct);
+      return;
+   }
+   else if(!strcmp(command,"reset"))
+   {
+        
+
+
    } 
+   else if(!strcmp(command,"incPageNo"))
+   {
+      incPageNo();
+      return;
+   } 
+
+   mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized command.");
  
 }
