@@ -2,7 +2,7 @@
 #include <string.h>
 
 
-void defaultSetter(biEntry* obj,mxArray* in)
+void defaultSetter(biEntry* obj,const mxArray* in)
 {
    if(obj->var!=NULL)
       mxDestroyArray(obj->var);
@@ -19,7 +19,9 @@ mxArray* defaultGetter(biEntry* obj)
 	return mxCreateDoubleMatrix(0,0,mxREAL); 
 }
 
-
+/*
+ * Filling the attributes dictionary
+ * */
 static biEntry vars[] = 
 {
    // Default setters and getters
@@ -44,6 +46,155 @@ static biEntry vars[] =
 };
 
 
+
+
+biEntry* lookupEntry(const char* name, biEntry* dict,size_t dictLen)
+{	
+   for(size_t ii=0;ii<dictLen;ii++)
+   {
+      if(!strncmp(name,dict[ii].name,strlen(dict[ii].name)))
+      {
+         return &dict[ii];
+      }
+   }
+   return NULL;
+}
+
+void resetAll(biEntry* dict,size_t dictLen)
+{
+   clearAll(dict,dictLen);
+   for(size_t ii=0;ii<dictLen;ii++)
+   {
+      if(!strcmp(dict[ii].name,"Ls"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(-1.0));
+      }
+      else if(!strcmp(dict[ii].name,"Pos"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(0.0));
+      }
+      else if(!strcmp(dict[ii].name,"BufCount"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(3.0));
+      }
+      else if(!strcmp(dict[ii].name,"PageNo"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(0.0));
+      }
+      else if(!strcmp(dict[ii].name,"Skipped"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(0.0));
+      }
+      else if(!strcmp(dict[ii].name,"DispLoad"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(1.0));
+      }
+      else if(!strcmp(dict[ii].name,"IsLoop"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateDoubleScalar(0.0));
+      }
+      else if(!strcmp(dict[ii].name,"ClassId"))
+      {
+         dict[ii].setter(&dict[ii],mxCreateString("double"));
+      }
+   }
+}
+
+void clearAllWrapper()
+{
+   clearAll(vars,ARRAYLEN(vars));
+}
+
+void clearAll(biEntry* dict, size_t dictLen)
+{
+
+   for(size_t ii=0;ii<dictLen;ii++)
+   {
+      if(dict[ii].var!=NULL)
+      {
+         mxDestroyArray(dict[ii].var);
+         dict[ii].var=NULL;
+      }
+   }
+}
+void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
+{
+   static int atExitRegistered = 0;
+   if(!atExitRegistered)
+   {
+      atExitRegistered = 1;
+      mexAtExit(clearAllWrapper);
+   }   
+   if(nrhs<1)
+   {
+     mexErrMsgTxt("BLOCK_INTERFACE: Not enough input arguments.");
+   }
+
+   const mxArray* mxCmd = prhs[0];
+   char command[COMMAND_LENGTH];
+   size_t comStrLen = mxGetNumberOfElements(mxCmd);
+   mxGetString(mxCmd,command,comStrLen+1);
+
+   if(!strncmp(command,"set",3))
+   {
+      if(nrhs<2)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Not enough arguments for the set method.");
+      }
+      biEntry* cmdStruct = lookupEntry(command+3,vars,ARRAYLEN(vars));       
+         
+      if(cmdStruct==NULL)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized set command.");
+      }
+      cmdStruct->setter(cmdStruct,prhs[1]);
+      return;
+   }
+   else if(!strncmp(command,"get",3))
+   {
+      if(nrhs>1)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Too many input arguments for get method.");
+      }
+      biEntry* cmdStruct = lookupEntry(command+3,vars,ARRAYLEN(vars));       
+      if(cmdStruct==NULL)
+      {
+         mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized get command.");
+      }
+      plhs[0]=cmdStruct->getter(cmdStruct);
+      return;
+   }
+   else if(!strcmp(command,"reset"))
+   {
+      resetAll(vars,ARRAYLEN(vars));  
+      return;
+
+   } 
+   else if(!strcmp(command,"incPageNo"))
+   {
+      incPageNo();
+      return;
+   } 
+   else if(!strcmp(command,"popPage"))
+   {
+      plhs[0] = popPage();
+      return;
+   } 
+   else if(!strcmp(command,"pushPage"))
+   {
+      pushPage(prhs[1]);
+      return;
+   } 
+   else if(!strcmp(command,"clearAll"))
+   {
+      clearAllWrapper();
+      return;
+   } 
+
+   mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized command.");
+ 
+}
+
 mxArray* getSource(biEntry* obj)
 {
    if(obj->var==NULL || mxIsNumeric(obj->var))
@@ -55,7 +206,7 @@ mxArray* getSource(biEntry* obj)
 mxArray* getEnqBufCount(biEntry* obj)
 {
    double retVal = 0.0;	
-   biEntry* cmdStruct = lookupEntry("PageList",vars,sizeof(vars)/sizeof(*vars));
+   biEntry* cmdStruct = lookupEntry("PageList",vars,ARRAYLEN(vars));
    if(cmdStruct->var!=NULL)
       retVal = mxGetNumberOfElements(cmdStruct->var);
   
@@ -64,7 +215,7 @@ mxArray* getEnqBufCount(biEntry* obj)
 
 void incPageNo()
 {
-   biEntry* cmdStruct = lookupEntry("PageNo",vars,sizeof(vars)/sizeof(*vars));
+   biEntry* cmdStruct = lookupEntry("PageNo",vars,ARRAYLEN(vars));
    if(cmdStruct->var==NULL)
    {
       cmdStruct->var = mxCreateDoubleScalar(1.0);
@@ -86,80 +237,48 @@ mxArray* getToPlay(biEntry* obj)
       obj->var = NULL;
       return duplicate;
    }
-}
-
-
-
-biEntry* lookupEntry(const char* name, biEntry* dict,size_t dictLen)
-{	
-   for(size_t ii=0;ii<dictLen;ii++)
+   else
    {
-      if(!strncmp(name,dict[ii].name,strlen(dict[ii].name)))
-      {
-         return &dict[ii];
-      }
+     return defaultGetter(obj);
    }
-   return NULL;
 }
 
-void mexFunction(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
+void pushPage(const mxArray* in)
 {
-   static int atExitRegistered = 0;
-   if(!atExitRegistered)
+   biEntry* cmdStruct = lookupEntry("PageList",vars,ARRAYLEN(vars));
+   if(cmdStruct->var==NULL)
    {
-  //    mexAtExit();
-   }   
-   if(nrhs<1)
-   {
-     mexErrMsgTxt("BLOCK_INTERFACE: Not enough input arguments.");
+      cmdStruct->setter(cmdStruct,in);
    }
-
-   mxArray* mxCmd = prhs[0];
-   char command[COMMAND_LENGTH];
-   size_t comStrLen = mxGetNumberOfElements(mxCmd);
-   mxGetString(mxCmd,command,comStrLen+1);
-
-   if(!strncmp(command,"set",3))
+   else
    {
-      if(nrhs<2)
-      {
-         mexErrMsgTxt("BLOCK_INTERFACE: Not enough arguments for the set method.");
-      }
-      biEntry* cmdStruct = lookupEntry(command+3,vars,sizeof(vars)/sizeof(*vars));       
-         
-      if(cmdStruct==NULL)
-      {
-         mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized set command.");
-      }
-      cmdStruct->setter(cmdStruct,prhs[1]);
-      return;
+      size_t M = mxGetM(cmdStruct->var);
+      size_t N = mxGetN(cmdStruct->var);
+      size_t maxMN = M>N?M:N;
+      mxArray* tmp = mxCreateDoubleMatrix(1,maxMN+1,mxREAL);
+      memcpy(mxGetPr(tmp),mxGetPr(cmdStruct->var),maxMN*sizeof(double));
+      memcpy(mxGetPr(tmp)+maxMN,mxGetPr(in),sizeof(double));
+      cmdStruct->setter(cmdStruct,tmp);   
    }
-   else if(!strncmp(command,"get",3))
-   {
-      if(nrhs>1)
-      {
-         mexErrMsgTxt("BLOCK_INTERFACE: Too many input arguments for get method.");
-      }
-      biEntry* cmdStruct = lookupEntry(command+3,vars,sizeof(vars)/sizeof(*vars));       
-      if(cmdStruct==NULL)
-      {
-         mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized get command.");
-      }
-      plhs[0]=cmdStruct->getter(cmdStruct);
-      return;
-   }
-   else if(!strcmp(command,"reset"))
-   {
-        
-
-
-   } 
-   else if(!strcmp(command,"incPageNo"))
-   {
-      incPageNo();
-      return;
-   } 
-
-   mexErrMsgTxt("BLOCK_INTERFACE: Unrecognized command.");
- 
 }
+
+mxArray* popPage()
+{
+   biEntry* cmdStruct = lookupEntry("PageList",vars,ARRAYLEN(vars));
+   if(cmdStruct->var==NULL)
+   {
+      return cmdStruct->getter(cmdStruct);
+   }
+   else
+   {
+      double retVal = mxGetScalar(cmdStruct->var);
+      size_t M = mxGetM(cmdStruct->var);
+      size_t N = mxGetN(cmdStruct->var);
+      size_t maxMN = M>N?M:N;
+      mxArray* tmp = mxCreateDoubleMatrix(1,maxMN-1,mxREAL);
+      memcpy(mxGetPr(tmp),mxGetPr(cmdStruct->var)+1,(maxMN-1)*sizeof(double));
+      cmdStruct->setter(cmdStruct,tmp);   
+      return mxCreateDoubleScalar(retVal);
+   }
+}
+

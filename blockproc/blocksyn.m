@@ -64,6 +64,9 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
         % Return first half
         fhat = f(1:Lb,:);
     elseif strcmp(F.blockalg,'segola')
+       if ~isfield(F,'winLen') 
+          error('%s: Frame does not have FIR windows.',upper(mfilename));
+       end
        Lw = F.winLen;
        switch(F.type)
          case 'fwt'
@@ -88,13 +91,11 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
               storeOverlap(f,r-mod(nextSb, a^J));
            end
            fhat = f(1:Lb,:);
-          case {'dgt','dgtreal'}
+          case {'dgt','dgtreal','dwilt','wmdct'}
            % Time step 
            a = F.a; 
            % Length of the left half of the window
            Lwl = floor(Lw/2);
-           % Length of the right part of the window
-           Lwr = floor(Lw/2);
 
            Sbonelmax =  ceil((Lw-1)/a)*a + a-1;
            Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
@@ -105,15 +106,13 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
            
            startc = ceil(Lwl/a)+1;
            endc = ceil((Lextc)/a);
-
            
            cc = F.coef2native(c,size(c));
-           chat = zeros(size(cc,1),ceil(Lext/a),size(cc,3));
+           chat = zeros(size(cc,1),ceil(F.L/a),size(cc,3));
            chat(:,startc:endc,:) = cc;
            chat = F.native2coef(chat); 
            f = F.frsyn(chat);
-           %startIdx = Sbcolen*a-Lwr;
-           %f = f(1+startIdx:startIdx+Lext,:);
+           f = f(1:Lext,:);
            over = Sbonelmax - Sbolen;
            
            ol = loadOverlap(Sbonelmax-mod(Sb,a),size(c,2),fola);
@@ -126,7 +125,45 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
               storeOverlap(f,Sbonelmax-mod(nextSb,a));
            end
            fhat = f(1:Lb,:);
-             
+          case {'filterbank','filterbankreal'} 
+           lcma = F.lcma;
+           % Time step 
+           a = F.a(:,1); 
+           % Length of the left half of the window
+           Lwl = max(-F.g_info.offset);
+
+           Sbonelmax =  ceil((Lw-1)/lcma)*lcma + lcma-1;
+           Sbolen = ceil((Lw-1)/lcma)*lcma + mod(Sb,lcma);
+           % Next block overlap length
+           nextSbolen = ceil((Lw-1)/lcma)*lcma + mod(nextSb,lcma);
+           Lext = Sbolen + Lb - mod(nextSb,lcma);
+           Lextc = Sbolen + Lb - nextSbolen + Lwl;
+           
+           startc = ceil(Lwl./a)+1;
+           endc = ceil((Lextc)./a);
+           
+           cc = F.coef2native(c,size(c));
+           
+           chat = cell(numel(cc),1);
+           for ii=1:numel(cc)
+              chat{ii} = zeros(ceil(Lext./a(ii)),size(cc{ii},2));
+              chat{ii}(startc(ii):endc(ii),:) = cc{ii};
+           end
+           
+           chat = F.native2coef(chat); 
+           f = F.frsyn(chat);
+           over = Sbonelmax - Sbolen;
+           
+           ol = loadOverlap(Sbonelmax-mod(Sb,lcma),size(c,2),fola);
+           olLen = size(ol,1);
+           f(1:olLen-over,:) = f(1:olLen-over,:) + ol(1+over:end,:);
+           f = [ol(1:over,:);f];
+           if nargout>1
+              fola=storeOverlap(f,Sbonelmax-mod(nextSb,a));
+           else
+              storeOverlap(f,Sbonelmax-mod(nextSb,a));
+           end
+           fhat = f(1:Lb,:);             
           otherwise
            error('%s: Unsupported frame.',upper(mfilename));
         end

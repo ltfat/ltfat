@@ -88,20 +88,33 @@ if iscell(g)
     complain_L(L,callfun);
     [g,info.tfr]=psech(L,g{2:end});    
    case {'dual'}
-    [g,info.auxinfo] = comp_window(g{2},a,M,L,lt,callfun);    
+    gorig = g{2};   
+    [g,info.auxinfo] = comp_window(gorig,a,M,L,lt,callfun);    
     if isrect
       g = gabdual(g,a,M,L);
     else
       g = gabdual(g,a,M,L,'lt',lt);
     end;
+    % gorig can be string or cell array
+    if info.auxinfo.isfir 
+    % Original window is FIR, dual window is FIR if length of the original
+    % window is <= M. This is true if the length was not explicitly
+    % defined (gorig{2}).
+      if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=M...
+         || ischar(gorig)   
+        info.isfir = 1; 
+      end
+    end
     info.isdual=1;
    case {'tight'}
-    [g,info.auxinfo] = comp_window(g{2},a,M,L,lt,callfun);    
+    gorig = g{2};
+    [g,info.auxinfo] = comp_window(gorig,a,M,L,lt,callfun);    
     if isrect
       g = gabtight(g,a,M,L);
     else
       g = gabtight(g,a,M,L,'lt',lt);
     end;
+    % The same as in dual?
     info.istight=1;
    case firwinnames
     g=firwin(winname,g{2},'energy',g{3:end});

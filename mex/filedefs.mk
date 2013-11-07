@@ -1,4 +1,5 @@
 MEXBASESAFE=\
+	block_interface\
 	comp_col2diag\
 	comp_dct\
 	comp_dst\

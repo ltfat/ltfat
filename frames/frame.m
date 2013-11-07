@@ -265,7 +265,7 @@ switch(ftype)
     F.lengthcoef=@(Ncoef) Ncoef/F.red;
     F.native2coef=@(coef) cell2mat(coef(:));
     F.coef2native=@(coef,s) mat2cell(coef,round(s(1)/F.red*F.a(:,2)./F.a(:,1)));
-    F.frana=@(insig) F.native2coef(F,comp_filterbank(insig,F.g,F.a));
+    F.frana=@(insig) F.native2coef(comp_filterbank(insig,F.g,F.a));
     F.frsyn=@(insig) comp_ifilterbank(F.coef2native(insig,size(insig)),...
                                       F.g,F.a,round(size(insig,1)/F.red));
     

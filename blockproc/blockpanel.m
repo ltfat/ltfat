@@ -25,8 +25,8 @@ if nargin<1
     error('%s: Too few input parameters.',upper(mfilename));
 end
 
-if ~iscell(params)
-    error('%s: Input should be cell array.',upper(mfilename));
+if ~iscell(params) || isempty(params)
+    error('%s: Input should be a nonempty cell array.',upper(mfilename));
 end
 
 if ~iscell(params{1})
@@ -41,11 +41,29 @@ catch% err
           'ltfatstart should do the trick.'],upper(mfilename));
 end
 
+% Using Java LinkedList class for passing the cell-array
+% (since there is no way how to pass the cell-array directly)
 paramList = javaObject('java.util.LinkedList');
     
 
 for ii = 1:numel(params)
    param = params{ii};
+   if numel(param)<6
+      error('%s: Parameter %i is not in format {''var'',''label'',minVal,maxVal,defVal,valCount}.',upper(mfilename),ii);
+   end
+   if param{3}>=param{4}
+      error('%s: In parameter %i: minVal cannot be greater or equal to maxVal.',upper(mfilename),ii);
+   end
+   
+   if param{5}<param{3} || param{5}>param{4}
+      error('%s: In parameter %i: defVal is not in range minVal-maxVal.',upper(mfilename),ii);
+   end
+   
+   if param{6}<=1
+      error('%s: In parameter %i: valCount has to be >=2.',upper(mfilename),ii);
+   end
+   
+   % Each element of the linked list paramList is again a linked list
    paramListEl = javaObject('java.util.LinkedList');
    for jj=1:numel(param)
         javaMethod('add',paramListEl,param{jj});
@@ -54,8 +72,10 @@ for ii = 1:numel(params)
     
    
 end
- javaMethod('addControlElements',p,paramList);
+
+% Pass the data
+javaMethod('addControlElements',p,paramList);
  
- % Give the object time to inilialize properly.
- pause(0.1);
+% Give the object time to inilialize properly.
+pause(0.1);
  

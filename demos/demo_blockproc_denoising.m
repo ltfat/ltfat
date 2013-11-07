@@ -63,6 +63,7 @@ while flag && p.flag
   %fhat = f;
   blockplay(fhat);
 end
+blockdone();
 % Close the control panel
 p.close();
 %fobj.close();

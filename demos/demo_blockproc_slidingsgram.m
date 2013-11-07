@@ -59,5 +59,6 @@ while flag && p.flag
    % Enqueue to play
    blockplay(f);
 end
+blockdone();
 p.close();
 fobj.close();

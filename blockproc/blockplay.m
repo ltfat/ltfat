@@ -10,4 +10,4 @@ if strcmp(source,'rec')
    error('%s: Blocks cannot be played in the rec only mode.',upper(mfilename));
 end
 
-block_interface('enqueueToPlay',f);
+block_interface('setToPlay',f);

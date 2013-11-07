@@ -33,4 +33,5 @@ while flag && p.flag
    [f,flag] = blockread();
    blockplay(f*gain);
 end
+blockdone();
 p.close();

@@ -50,9 +50,6 @@ fs = block(source,varargin{:},'loadind',p);
 % Cutoff/center frequency
 feq = [0.0060, 0.0156, 0.0313, 0.0625, 0.1250, 0.2600]*fs;
 
-% To allow the Java object initialize properly
-pause(0.1);
-
 % Build the filters
 [filts(1).Ha, filts(1).Hb] = parlsf(feq(1),blockpanelget(p,'band1'),fs);
 [filts(2).Ha, filts(2).Hb] = parpeak(feq(2),Q,blockpanelget(p,'band2'),fs);
@@ -97,6 +94,7 @@ while flag && p.flag
   % Play the block
   blockplay(f);
 end
+blockdone();
 % Close the control panel
 p.close();
 %fobj.close();

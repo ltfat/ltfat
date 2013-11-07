@@ -371,7 +371,7 @@ end
 block_interface('setDispLoad',kv.loadind);
 
 % Store option for displaying the loop playback
-block_interface('setLoop',flags.do_loop);
+block_interface('setIsLoop',flags.do_loop);
 
 % Set block length
 block_interface('setBufLen',kv.L);

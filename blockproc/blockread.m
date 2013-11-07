@@ -118,7 +118,7 @@ elseif strcmp(source,'playrec')
    end
    
    % Enqueue already processed
-   fhat = block_interface('getEnqueuedToPlay');
+   fhat = block_interface('getToPlay');
    if isempty(fhat)
       fhat = zeros(L,numel(recChanList),classid);
    end
@@ -154,7 +154,7 @@ elseif isa(source,'function_handle')
    % Get play channel list (could be chached) 
    chanList = block_interface('getPlayChanList');
    % Get already processed (from blockplay)
-   fhat = block_interface('getEnqueuedToPlay');
+   fhat = block_interface('getToPlay');
 
    % Create something if blockplay was not called
    if isempty(fhat)
@@ -180,7 +180,7 @@ elseif isa(source,'function_handle')
       ftmp(1:size(f,1),:) = f;
       f = ftmp;
       % Rewind if loop option was set.
-      if block_interface('isLoop')
+      if block_interface('getIsLoop')
          block_interface('setPos',0);
          % Throw away stored overlaps.
          if ~isempty(block_interface('getAnaOverlap'))

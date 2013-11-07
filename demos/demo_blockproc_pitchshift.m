@@ -37,7 +37,9 @@ end
 
 % Window length in ms
 winLenms = 20; 
-[F,Fdual] = framepair('dgtreal',{'hann',floor(fs*winLenms/1e3)},'dual',100,M);
+F = frame('dgtreal',{'hann',floor(fs*winLenms/1e3)},100,M);
+Fdual = F;
+[F,Fdual] = framepair('dgtreal',{'hann',floor(fs*winLenms/1e3)},'dual',128,M);
 [Fa,Fs] = blockframepairaccel(F,Fdual, bufLen,'segola');
 
 flag = 1;
@@ -75,5 +77,6 @@ while flag && p.flag
 
    blockplay(fhat);
 end
+blockdone();
 p.close();
 fobj.close();

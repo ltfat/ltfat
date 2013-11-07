@@ -80,5 +80,6 @@ while flag && p.flag
    [c2, ola2] = blockana(Fa, fhat, ola2);
    blockplot(fobj,Fa,c2(:,1));
 end
+blockdone();
 p.close();
 fobj.close();

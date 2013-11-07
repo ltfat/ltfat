@@ -75,7 +75,7 @@ function [c, fola] = blockana(F, f, fola)
                 rred = (a^J-1)/(a-1)*(m-a);
                 Sbolen = rred + mod(Sb,a^J);
                 nextSbolen = rred + mod(nextSb,a^J);
-             case {'dgtreal','dgt'}
+             case {'dgtreal','dgt','dwilt','wmdct'}
                 a = F.a; 
                 Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
                 nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
@@ -113,7 +113,7 @@ function [c, fola] = blockana(F, f, fola)
           switch(F.type)
              case 'fwt'
                 c = block_fwt(fext,w,J);
-             case {'dgtreal','dgt'}
+             case {'dgtreal','dgt','dwilt','wmdct'}
                 Lwl = floor(Lw/2);
                 Lext = Sbolen + Lb - nextSbolen + Lwl;
                 startc = ceil(Lwl/a)+1;
@@ -125,12 +125,17 @@ function [c, fola] = blockana(F, f, fola)
                 cc = F.coef2native(c,size(c));
                 cc = cc(:,startc:endc,:);
                 c = F.native2coef(cc);
-             case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
+             case {'filterbank','filterbankreal'}
+                % Subsampling factors
                 a = F.a(:,1);
-                Lwl = floor(Lw/2);
+                % Filter lengths
+                gl = F.g_info.gl;
+                % Filter offsets
+                Lwl = max(-F.g_info.offset);
                 Lext = Sbolen + Lb - nextSbolen + Lwl;
                 startc = ceil(Lwl./a)+1;
                 endc = ceil((Lext)./a);
+                
                 fext = [fext; zeros(F.L-size(fext,1),size(fext,2))];
                 c = F.frana(fext(1:F.L,:));
                 cc = F.coef2native(c,size(c));

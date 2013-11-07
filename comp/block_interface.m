@@ -43,7 +43,7 @@ command = varargin{1};
 
 
 switch command
-   case 'reset'
+   case {'reset','clearAll'}
       pos = 0; 
       sourceName = [];
       maxBufCount = 3;

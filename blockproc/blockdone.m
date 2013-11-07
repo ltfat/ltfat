@@ -8,5 +8,5 @@ function blockdone()
 
 % TO DO: Process additional zeros to compensate for the delay 
 
-block_interface('reset');
+block_interface('clearAll');
 playrec('reset');

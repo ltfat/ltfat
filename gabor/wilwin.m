@@ -170,12 +170,26 @@ if iscell(g)
     complain_L(L,callfun);
     [g,info.tfr]=psech(L,g{2:end});    
    case {'dual'}
-    [g,info.auxinfo] = wilwin(g{2},M,L,callfun);    
+    gorig = g{2};  
+    [g,info.auxinfo] = wilwin(gorig,M,L,callfun);    
     g = wildual(g,M,L);
+    
+    % gorig can be string or cell array
+    if info.auxinfo.isfir 
+    % Original window is FIR, dual window is FIR if length of the original
+    % window is <= M. This is true if the length was not explicitly
+    % defined (gorig{2}).
+      if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=2*M...
+         || ischar(gorig)   
+        info.isfir = 1; 
+      end
+    end
+    
     info.isdual=1;
    case {'tight'}
     [g,info.auxinfo] = wilwin(g{2},M,L,callfun);    
-    g = wilorth(g,M,L);    
+    g = wilorth(g,M,L);  
+    % The same as for dual?
     info.istight=1;
    case firwinnames
     g=firwin(winname,g{2},'energy',g{3:end});
