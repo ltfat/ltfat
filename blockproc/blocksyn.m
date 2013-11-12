@@ -108,7 +108,7 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
            endc = ceil((Lextc)/a);
            
            cc = F.coef2native(c,size(c));
-           chat = zeros(size(cc,1),ceil(F.L/a),size(cc,3));
+           chat = zeros(size(cc,1),ceil(F.L/a),size(cc,3),class(cc));
            chat(:,startc:endc,:) = cc;
            chat = F.native2coef(chat); 
            f = F.frsyn(chat);

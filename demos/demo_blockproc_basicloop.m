@@ -18,7 +18,7 @@ p = blockpanel({
 
 bufLen = 1024;
 % Setup blocktream
-if isoctave
+if ~isoctave
    block(source,varargin{:},'L',bufLen);
 else
    block(source,varargin{:},'loadind',p,'L',bufLen);

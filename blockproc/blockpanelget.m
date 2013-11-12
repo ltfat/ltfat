@@ -40,7 +40,11 @@ if nargin>1
    res = javaMethod('getParams',p,varargin);
 
    if nout == 1
-      par = res;
+      if numel(res)==1
+         par = res(1);
+      else
+         par = res;
+      end
    else
       par = res(1);
       varargout = num2cell(res(2:end));

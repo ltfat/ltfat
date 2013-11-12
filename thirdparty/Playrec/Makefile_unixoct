@@ -1,0 +1,16 @@
+# Use GNU Make to process this file.
+
+OCTSCC   = $(shell ls comp_*.cc)
+OCTSBASE = $(basename $(OCTSCC))
+OCTS     = $(addsuffix .oct,$(OCTSBASE))
+
+MKOCTFILE ?= mkoctfile
+
+
+all:
+	$(MKOCTFILE) -mex -Wall -I../src/thirdparty -I. -lportaudio mex_dll_core.c pa_dll_playrec.c -o playrec.mex
+
+clean:
+	rm *.o *.oct
+
+.PHONY: all clean

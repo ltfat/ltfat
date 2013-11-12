@@ -87,18 +87,24 @@ definput.flags.loop={'noloop','loop'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 
-if isoctave && ~strcmp(kv.loadind,'nobar')
-   error('%s: Currently, it is possible to use only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
-end
+%if isoctave && ~strcmp(kv.loadind,'nobar')
+%   error('%s: Currently, it is possible to use only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
+%end
 
 if ischar(kv.loadind)
    if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
       error('%s: Incorrect value parameter for the key ''loadin''.',upper(mfilename));
    end
 elseif isjava(kv.loadind)
-      if ~any(cellfun(@(mEl)~isempty(strfind(mEl,'updateBar(double)')),methods(kv.loadind,'-full')))
-         error('%s: The Java object does not contain the updateBar(double) method.',upper(mfilename));
-      end
+   try
+      javaMethod('updateBar',kv.loadind,0);
+   catch
+      error('%s: Java object does not contain updateBar method.',upper(mfilename))
+   end
+% Instead of this:
+%      if ~any(cellfun(@(mEl)~isempty(strfind(mEl,'updateBar(double)')),methods(kv.loadind,'-full')))
+%         error('%s: The Java object does not contain the updateBar(double) method.',upper(mfilename));
+%      end
 end
 
 playChannels = 0;
@@ -146,7 +152,10 @@ if ischar(source)
          if exist(source)~=2
             error('%s: File "%s" does not exist.',upper(mfilename),source);
          end
-         [Ls, kv.fs] = wavread(source, 'size');
+         if isoctave
+            warning('off','Octave:fopen-file-in-path');
+         end
+         [~, kv.fs] = wavread(source, [1,1]);
          playChannels = 2;
          play = 1;
       else
@@ -379,7 +388,8 @@ block_interface('setBufLen',kv.L);
 % Handle sources with known input length
 if ischar(source) && numel(source)>4 && strcmpi(source(end-3:end),'.wav') 
    Ls = wavread(source, 'size');
-   block_interface('setLs',Ls);
+   tmpf = wavread(source,[1,1]); % Workaround for Octave
+   block_interface('setLs',[Ls(1),size(tmpf,2)]);
    block_interface('setSource',@(pos,endSample) cast(wavread(source,[pos, endSample]),block_interface('getClassId')) );
 elseif isnumeric(source)
    block_interface('setLs',size(source));
