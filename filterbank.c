@@ -134,7 +134,7 @@ LTFAT_NAME(convsub_fft_plan)(const LTFAT_COMPLEXH *F, const LTFAT_COMPLEXH *G,
 
 LTFAT_EXTERN void
 LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEXH *F, const size_t L,
-                          const LTFAT_COMPLEXH *G, const size_t Lg, const int foff,
+                          const LTFAT_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                           const double a, const double realonly, LTFAT_COMPLEXH *cout)
 {
 
@@ -148,12 +148,11 @@ LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEXH *F, const size_t L,
 
    LTFAT_FFTW(destroy_plan)(plan_c);
 
-
 }
 
 LTFAT_EXTERN void
 LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
-                          const LTFAT_COMPLEXH *G, const size_t Lg, const int foff,
+                          const LTFAT_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                           const double a, const double realonly, LTFAT_COMPLEXH *cout, LTFAT_FFTW(plan)* p)
 {
 
@@ -167,13 +166,13 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
    memset(tmp,0,tmpLen*sizeof(LTFAT_COMPLEXH));
 
    LTFAT_COMPLEXH *tmpPtr = tmp;
-   int foffTmp = foff;
+   ptrdiff_t foffTmp = foff;
    size_t tmpLg = Lg;
 
    // Copy samples of F according to range of G
    if(foffTmp<0)
    {
-       size_t toCopy = imin(-foffTmp,tmpLg);
+       size_t toCopy = min_pt(-foffTmp,tmpLg);
        memcpy(tmpPtr,F+L+foffTmp,toCopy*sizeof(LTFAT_COMPLEXH));
        tmpPtr+=toCopy;
        tmpLg-=toCopy;
@@ -182,7 +181,7 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
 
    if(foffTmp+tmpLg>L)
    {
-       int over = foffTmp+tmpLg - L;
+       ptrdiff_t over = foffTmp+tmpLg - L;
        memcpy(tmpPtr+Lg-over,F,over*sizeof(LTFAT_COMPLEXH));
        tmpLg -=over;
    }
@@ -218,7 +217,7 @@ LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEXH *F, const size_t L,
 
    if(realonly>1e-3)
    {
-      const int foffconj = positiverem(L-foff-Lg,L)+1;
+      const ptrdiff_t foffconj = positiverem(L-foff-Lg,L)+1;
       LTFAT_COMPLEXH *Gconj = (LTFAT_COMPLEXH*)ltfat_malloc(Lg*sizeof(LTFAT_COMPLEXH));
       for(size_t ii=0;ii<Lg;ii++)
       {
@@ -277,7 +276,7 @@ LTFAT_NAME(upconv_fft_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
 
 LTFAT_EXTERN void
 LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEXH *c, const size_t Lc,
-                            const LTFAT_COMPLEXH *G, const size_t Lg, const int foff,
+                            const LTFAT_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                             const double a, const double realonly, LTFAT_COMPLEXH *Fout)
 {
     LTFAT_COMPLEXH* cbuffer = ltfat_malloc(Lc*sizeof(LTFAT_COMPLEXH));
@@ -291,7 +290,7 @@ LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEXH *c, const size_t Lc,
 
 LTFAT_EXTERN void
 LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
-                            const LTFAT_COMPLEXH *G, const size_t Lg, const int foff,
+                            const LTFAT_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                             const double a, const double realonly, LTFAT_COMPLEXH *Fout,
                             LTFAT_FFTW(plan) *p,LTFAT_COMPLEXH *cbuffer)
 {
@@ -344,10 +343,10 @@ LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEXH *c, const size_t Lc,
 
    if(realonly>1e-3)
    {
-      const int foffconj = positiverem(L-foff-Lg,L)+1;
+      const ptrdiff_t foffconj = positiverem(L-foff-Lg,L)+1;
       LTFAT_COMPLEXH *Gconj = (LTFAT_COMPLEXH*)ltfat_malloc(Lg*sizeof(LTFAT_COMPLEXH));
-      LTFAT_NAME(reverse_array)(G,Gconj,Lg);
-      LTFAT_NAME(conjugate_array)(Gconj,Gconj,Lg);
+      LTFAT_NAME_COMPLEX(reverse_array)((LTFAT_COMPLEXH *)G,Gconj,Lg);
+      LTFAT_NAME_COMPLEX(conjugate_array)(Gconj,Gconj,Lg);
 
       LTFAT_NAME(upconv_fftbl_plan)(c, Lc, Gconj, Lg, foffconj, a, 0, Fout, p, cbuffer);
       ltfat_free(Gconj);

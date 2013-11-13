@@ -165,6 +165,11 @@ size_t nextfastfft(size_t x);
 
 
 
+size_t max_st(const size_t a, const size_t b);
+size_t min_st(const size_t a, const size_t b);
+
+ptrdiff_t max_pt(const ptrdiff_t a, const ptrdiff_t b);
+ptrdiff_t min_pt(const ptrdiff_t a, const ptrdiff_t b);
 
 
 #ifdef __cplusplus

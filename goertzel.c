@@ -24,8 +24,8 @@ LTFAT_COMPLEXH* cc_term = (LTFAT_COMPLEXH*) ltfat_malloc(M*sizeof(LTFAT_COMPLEXH
 LTFAT_COMPLEXH* cc2_term = (LTFAT_COMPLEXH*) ltfat_malloc(M*sizeof(LTFAT_COMPLEXH));
 
 LTFAT_REAL pik_term_pre = (LTFAT_REAL) (2.0*PI/((double) L));
-LTFAT_REAL _Complex cc2_pre = (LTFAT_REAL _Complex) (-1.0*I*((double)(L-1)));
-LTFAT_REAL _Complex cc_pre =  (LTFAT_REAL _Complex) (-1.0*I*((double)(L)));
+LTFAT_REAL _Complex cc2_pre = (LTFAT_REAL _Complex) (-1.0*_Complex_I*((double)(L-1)));
+LTFAT_REAL _Complex cc_pre =  (LTFAT_REAL _Complex) (-1.0*_Complex_I*((double)(L)));
 
 for(size_t m=0;m<M;m++)
 {
@@ -169,8 +169,8 @@ void LTFAT_NAME(gga)(const LTFAT_TYPE *fPtr, const double *indVecPtr,
 {
 
 double pik_term_pre = 2.0*PI/((double) L);
-double _Complex cc2_pre = -1.0*I*((double)(L-1));
-double _Complex cc_pre = -1.0*I*((double)(L));
+double _Complex cc2_pre = -1.0*_Complex_I*((double)(L-1));
+double _Complex cc_pre = -1.0*_Complex_I*((double)(L));
 
 #ifndef GGA_UNROLL
 
@@ -601,18 +601,18 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const size_t K, const si
     const LTFAT_FFTW(iodim) dims = {.n = Lfft, .is = 1, .os = 1};
     const LTFAT_FFTW(iodim) howmany_dims = {.n = q,.is = Lfft, .os = Lfft};
     LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
-                                                         (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
+                                                         (LTFAT_COMPLEXH*)fbuffer, (LTFAT_COMPLEXH*) fbuffer,
                                                          FFTW_FORWARD, fftw_flags);
 
     LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
-                                                         (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
+                                                         (LTFAT_COMPLEXH*)fbuffer, (LTFAT_COMPLEXH*) fbuffer,
                                                          FFTW_BACKWARD, fftw_flags);
 
     LTFAT_COMPLEXH* W2 = ltfat_malloc(K*sizeof(LTFAT_COMPLEXH));
     LTFAT_COMPLEXH* chirpF = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEXH));
     LTFAT_COMPLEXH* Wo = ltfat_malloc(q*K*sizeof(LTFAT_COMPLEXH));
 
-    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)chirpF, (LTFAT_COMPLEX*) chirpF,
+    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEXH*)chirpF, (LTFAT_COMPLEXH*) chirpF,
                                                        FFTW_FORWARD, fftw_flags);
 
 

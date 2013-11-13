@@ -13,3 +13,7 @@ ltfat_realloc
 ltfat_free
 nextPow2_st
 nextfastfft
+max_st
+max_pt
+min_st
+min_pt

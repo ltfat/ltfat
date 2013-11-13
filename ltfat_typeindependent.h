@@ -194,12 +194,12 @@ LTFAT_H_NAME(convsub_fft_plan)(const LTFAT_H_COMPLEXH *F, const LTFAT_H_COMPLEXH
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(convsub_fftbl)(const LTFAT_H_COMPLEXH *F, const size_t L,
-                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const int foff,
+                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                             const double a, const double realonly, LTFAT_H_COMPLEXH *cout);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(convsub_fftbl_plan)(const LTFAT_H_COMPLEXH *F, const size_t L,
-                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const int foff,
+                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                             const double a, const double realonly, LTFAT_H_COMPLEXH *cout,
                             LTFAT_H_FFTW(plan) *p);
 
@@ -217,12 +217,12 @@ LTFAT_H_NAME(upconv_fft_plan)(const LTFAT_H_COMPLEXH *c, const size_t Lc,
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(upconv_fftbl)(const LTFAT_H_COMPLEXH *c, const size_t Lc,
-                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const int foff,
+                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                             const double a, const double realonly, LTFAT_H_COMPLEXH *Fout);
 
 LTFAT_EXTERN void
 LTFAT_H_NAME(upconv_fftbl_plan)(const LTFAT_H_COMPLEXH *c, const size_t Lc,
-                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const int foff,
+                            const LTFAT_H_COMPLEXH *G, const size_t Lg, const ptrdiff_t foff,
                             const double a, const double realonly, LTFAT_H_COMPLEXH *Fout,
                             LTFAT_H_FFTW(plan) *p,LTFAT_H_COMPLEXH *cbuffer);
 
