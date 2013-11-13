@@ -101,12 +101,14 @@ function [AF,BF]=framebounds(F,varargin);
       op    = @frana;
       opadj = @frsyn;
   end;
+
+  F_isfac = isfield(F,'isfac') && F.isfac;
   
-  if flags.do_fac && ~F.isfac
+  if flags.do_fac && ~F_isfac
     error('%s: The type of frame has no factorization algorithm.',upper(mfilename));
   end;
-  
-  if (flags.do_auto && F.isfac) || flags.do_fac
+    
+  if (flags.do_auto && F_isfac) || flags.do_fac
     switch(F.type)
      case 'gen'
       V=svd(g);
@@ -120,10 +122,14 @@ function [AF,BF]=framebounds(F,varargin);
       [AF,BF]=filterbankbounds(g,F.a,L);
      case {'filterbankreal','ufilterbankreal'}
       [AF,BF]=filterbankrealbounds(g,F.a,L); 
+     case 'fwt'
+      [AF,BF]=fwtbounds(g,F.J,L);
+     case 'wfbt'
+      [AF,BF]=wfbtbounds(g,L);
     end;  
   end;
   
-  if (flags.do_auto && ~F.isfac && F.L>kv.crossover) || flags.do_iter
+  if (flags.do_auto && ~F_isfac && F.L>kv.crossover) || flags.do_iter
     
     if flags.do_print
       opts.disp=1;

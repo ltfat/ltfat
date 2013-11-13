@@ -125,7 +125,9 @@ elseif strcmp(source,'playrec')
    chanList = block_interface('getPlayChanList');
 
    % Copy input channel to all output chanels.
-   fhat = repmat(fhat,1,numel(chanList));
+   if size(fhat,2)==1
+      fhat = repmat(fhat,1,numel(chanList));
+   end
    % Play and record
    block_interface('pushPage',playrec('playrec', fhat, chanList, -1, recChanList));
    

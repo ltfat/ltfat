@@ -131,11 +131,18 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
            a = F.a(:,1); 
            % Length of the left half of the window
            Lwl = max(-F.g_info.offset);
-
+           
+                if Lw-1 < a
+           Sbonelmax =   lcma-1;
+           Sbolen =  mod(Sb,lcma);
+           nextSbolen = mod(nextSb,lcma);
+                else
            Sbonelmax =  ceil((Lw-1)/lcma)*lcma + lcma-1;
            Sbolen = ceil((Lw-1)/lcma)*lcma + mod(Sb,lcma);
-           % Next block overlap length
            nextSbolen = ceil((Lw-1)/lcma)*lcma + mod(nextSb,lcma);
+                end
+
+
            Lext = Sbolen + Lb - mod(nextSb,lcma);
            Lextc = Sbolen + Lb - nextSbolen + Lwl;
            
@@ -146,22 +153,24 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
            
            chat = cell(numel(cc),1);
            for ii=1:numel(cc)
-              chat{ii} = zeros(ceil(Lext./a(ii)),size(cc{ii},2));
+              chat{ii} = zeros(ceil(F.L./a(ii)),size(cc{ii},2));
               chat{ii}(startc(ii):endc(ii),:) = cc{ii};
            end
            
            chat = F.native2coef(chat); 
            f = F.frsyn(chat);
+           f = f(1:Lext,:);
            over = Sbonelmax - Sbolen;
+           
            
            ol = loadOverlap(Sbonelmax-mod(Sb,lcma),size(c,2),fola);
            olLen = size(ol,1);
            f(1:olLen-over,:) = f(1:olLen-over,:) + ol(1+over:end,:);
            f = [ol(1:over,:);f];
            if nargout>1
-              fola=storeOverlap(f,Sbonelmax-mod(nextSb,a));
+              fola=storeOverlap(f,Sbonelmax-mod(nextSb,lcma));
            else
-              storeOverlap(f,Sbonelmax-mod(nextSb,a));
+              storeOverlap(f,Sbonelmax-mod(nextSb,lcma));
            end
            fhat = f(1:Lb,:);             
           otherwise

@@ -2,58 +2,68 @@
 
 The toolbox should work and compile on all versions of Matlab later than 2009b.
 
--------- Compiling the MEX interfaces  ------------------
+-------- What can be compiled -------------------------------
 
-LTFAT comes with C Mex interfaces written for all computationally
-intensitive function in the toolbox.
+- Static backend libraries libltfat.a, libltfatf.a
+                   OR
+  Shared backend libraries ltfat.dll, ltfatf.dll on Windows.
+
+- Fast Mex-interfaces linking to the backend libs.
+
+- Mex-interface PolygonClip using Generic Polygon Clipper
+
+Block processing framework (optional)
+
+- Mex-interface playrec
+
+- Java classes for blockproc GUI
+
+-------- Compiling backend libs and the MEX interfaces  ----------------
+
+LTFAT comes with C Mex interfaces to replace (shadow) all computationally
+intensitive functions in the toolbox.
 
 To compile the Mex-interfaces, type "ltfatmex" on the Matlab command
-prompt. This will compile all the available mex-functions.
+prompt. This will compile the backend libraries and all the available
+mex-functions and also the PoligonClip mex function.
 
 If you have downloaded a binary release, everything is already
 compiled and you should not need to do anything else.
 
-The Mex-files links to certain libraries, most importantly to the
-LTFAT C-library. In order to compile the Mex-interfaces, you must
-first compile the C library.  The "ltfatmex" will
-automatically build the library if you have installed the correct
-libraries.
+The Mex-files and the backend libs links to certain additional libraries,
+which has to be present at your system. The library management varies between
+OS see below. 
+The depending libraries are:  FFTW3, BLAS, LAPACK
 
 --------- Compiling on MacOS -------------------------------------------
 
 On MacOS, you must have the gcc compiler and the FFTW libraries
-installed. Then just type "ltfatmex" and everything should work.
+installed. Then just type "ltfatmex" and everything should work, because
+BLAS and LAPACK libraries are taken directly from Matlab.
 
 --------- Compiling on Microsoft Windows -------------------------------
 
-On Windows, you will need to do the following: 
+On Windows we rely on the MinGW compiler system: 
 
-- Download and unpack binaries of the FFTW library from
-  http://www.fftw.org/install/windows.html. Copy all *.dll files to the 
-  ltfat/mex directory.
+- Install MinGW compiler system. The easiest is to download and install
+  TDM-GCC compiler suite from http://tdm-gcc.tdragon.net/download. 
+  After instalation, ensure that the [MinGW]/bin directory is in the 
+  system PATH, where [MinGW] stands for instalation direcory.
   
-- Download and install TDM-GCC compiler suite from
-  http://tdm-gcc.tdragon.net/download. Ensure that the [MinGW]/bin 
-  directory is in the system PATH, where [MinGW] stands for instalation direcory.
+- Manually install binaries of FFTW. The easiest way is to download 
+  them from http://www.fftw.org/install/windows.html. Copy all *.dll files
+  to the ltfat/mex directory.
   
 - Run "ltfatmex".
 
-Both 32bit and 64bit Windows are supported. Please use appropriate versions
-of FFTW and TDM-GCC.
+BLAS and LAPACK libraries are taken directly from the Matlab instalation.
+Both 32bit and 64bit versions of Matlab are supported. Please use appropriate
+versions of FFTW and TDM-GCC.
 
---------- Compiling libltfat on Linux ------------------------------------
+--------- Compiling on Linux ------------------------------------
 
-On Linux / Unix, the "ltfatmex" script will automatically compile the
-ltfat C library. You can also perform this step manually by doing the
-following steps:
-
-- Open a terminal, and change to the ltfat/src directory (using 'cd')
-
-- Type 'make'
-
-The mex interfaces must be linked to some external libraries, which
-are all standard packages in most Linux distributions. This is the
-FFTW, LAPACK and BLAS libraries:
+The dependencies are all standard packages in most Linux distributions.
+They have to be installed prior to running "ltfatmex".
 
 - On Redhat / Fedora, install the packages 'fftw-devel',
   'lapack-devel' and 'blas-devel' and their dependcies.
@@ -61,3 +71,42 @@ FFTW, LAPACK and BLAS libraries:
 - On Debian / Ubuntu, install the packages 'libfftw3-dev',
   'libblas-dev' and 'liblapack-dev'.
 
+
+--------- Compiling parts for block processing framework -----------
+
+Everything should be already compiled if you have downloaded the binary release.
+
+In order to get the block processing framework working from the source, one
+has to compile the MEX interface playrec and the JAVA GUI classes. This can be
+done by typing
+
+"ltfatmex playrec" and "ltfatmex java".
+
+Playrec MEX depends on the PORTAUDIO library, which has to be installed on your
+system prior running the commnad. Compiling JAVA classes requires Java Development
+Kit to be installed.
+NOTE: Compiled Java classes (packed in blockproc.jar) are platform independent
+so compiling it and installing JDK can be avoided by taking the archive from any
+binary LTFAT package (from ltfat/blockproc/java).
+
+
+--------- Compiling on Mac ------------
+
+TBD
+
+--------- Compiling on Microsoft Windows --------------------------
+
+Unfortunatelly, portaution on Windows is not ditributed in a binary package.
+One can follow instructions on http://www.portaudio.com/ to compile the library
+from the source with support for different sound APIs like DirectSound, MME, WASAPI, ASIO.
+Build a shared (dynamically linked) library (dll) and copy it to the ltfat/thirdparty/Playrec
+directory.
+
+Alternativelly, when no such library is found in ltfat/thirdparty/Playrec, ltfatmex attempts
+to link portaudio library shipped with Matlab. Expect much worse audio performace in this case.
+
+--------- Compiling on Linux ------------------------------------
+
+- On Redhat / Fedora TBD
+
+- On Debian / Ubuntu, install the packages 'portaudio19-dev', 'openjdk-7-jdk' 

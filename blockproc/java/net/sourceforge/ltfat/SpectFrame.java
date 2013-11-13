@@ -13,6 +13,8 @@ import java.awt.RenderingHints;
 import java.awt.RenderingHints.Key;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -114,6 +116,23 @@ public class SpectFrame {
         this(defWidth,defHeight);
     }
     
+    public void setColormap(double[] cmMat, double cMatLen, double cols){
+    if (colormap==null ){
+       colormap = new byte[cmapLen*3];   
+    }
+    int cmIdx = 0;
+    float ratio = ((float)cMatLen)/((float)cmapLen);
+    for(int yy=0;yy<cmapLen;yy++){
+          for(int xx=0;xx<cols;xx++){
+             double tmpVal = 255.0*cmMat[(int)(Math.floor(yy*ratio)*cmMat.length+xx)];
+             tmpVal = Math.min(tmpVal, 255.0);
+             tmpVal = Math.max(tmpVal, 0.0);
+             colormap[cmIdx++] = (byte) tmpVal;
+          }
+    }
+        cm = new IndexColorModel(8, cmapLen, colormap, 0, false);
+    }
+    
     public void setColormap(double[][] cmMat){
     if (colormap==null ){
        colormap = new byte[cmapLen*3];   
@@ -149,6 +168,7 @@ public class SpectFrame {
         spectPanel = new SpectPanel(width,height);
         
         buildJF.add(spectPanel);
+        spectPanel.addWheelListener();
         return buildJF;
     }
 
@@ -156,9 +176,56 @@ public class SpectFrame {
       return this.height;
     }
 
+    
+    
     /*
      * Col is passed by value from Matlab
      */
+      public void append(final float[] col, final double colHeight, final double colWidth) {
+
+
+       runInPool(new Runnable() {
+            @Override
+            public void run() {
+               Utils.pow(col);
+               Utils.db(col);
+               Float mindb = new Float(climMin);
+               Float maxdb = new Float(climMax);
+               Utils.clipToRange(col, mindb, maxdb);
+               byte[] pixels = new byte[col.length];
+               Utils.toByte(col, pixels, mindb, maxdb);
+
+              //System.out.println(pixels);
+               DataBuffer dbuf = new DataBufferByte(pixels, col.length, 0);
+               SampleModel smod = new MultiPixelPackedSampleModel( DataBuffer.TYPE_BYTE,(int) colWidth,(int)colHeight, 8);
+               WritableRaster raster = Raster.createWritableRaster(smod, dbuf, null);
+               BufferedImage image = new BufferedImage(cm, raster, false, null);
+           
+             
+               Graphics2D g2 = (Graphics2D) spectPanel.getGraphics2D();
+               g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+               //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+               g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+               synchronized(graphicsLock)
+               {
+                  if( (++sidx)*spectStep > width ){
+                      sidx = 1;
+                  } 
+                   
+                  g2.drawImage(image,(sidx-1)*spectStep,height, sidx*spectStep,0,0,0,(int)colWidth,(int)colHeight,  null);
+               }
+              
+               //spectPanel.setImage(image);
+               spectPanel.repaint();
+              /* if(!slideTimer.isRunning()){
+                  slideTimer.start();
+               }
+               */
+            }
+        });
+    }
+    
+    
     public void append(final float[][] col) {
 
        final int colWidth = col[0].length;
@@ -228,7 +295,27 @@ public class SpectFrame {
      
     private class SpectPanel extends JPanel{
         private BufferedImage spectbf = null;
+        private float zoom = 1.0f;
 
+        public void addWheelListener(){
+        
+            this.addMouseWheelListener(new MouseWheelListener() {
+
+                @Override
+                public void mouseWheelMoved(MouseWheelEvent e) {
+                    if(e.getWheelRotation()>0){
+                       zoom+=0.05;
+                       zoom = Math.min(zoom,1.0f);
+                    }
+                    else{
+                       zoom-=0.05;
+                       zoom = Math.max(zoom,0.1f);
+                    }
+                        
+                }
+            });
+        
+        }
 
         public SpectPanel(int width, int height) {
             Dimension dim = new Dimension(width, height);
@@ -245,6 +332,11 @@ public class SpectFrame {
         public void setImage(BufferedImage bf){
           spectbf = bf;
         }
+        
+        protected void setZoom(float zoom)
+        {
+            this.zoom = zoom;
+        }
 
         @Override
         public void paintComponent(Graphics g) {
@@ -260,10 +352,11 @@ public class SpectFrame {
                synchronized(graphicsLock)
                { 
                   int winIdx = (int) (thisSize.width * sidx*spectStep/((float)spectbf.getWidth()));
+                  int sbfH=(int)((1.0f-zoom)*spectbf.getHeight());
                   g2d.drawImage(spectbf,thisSize.width-winIdx,0,thisSize.width,thisSize.height,
-                                        0,0, sidx*spectStep,spectbf.getHeight(), null);
+                                        0,sbfH, sidx*spectStep,spectbf.getHeight(), null);
                   g2d.drawImage(spectbf,0,0,thisSize.width-winIdx,thisSize.height,
-                                        sidx*spectStep,0,spectbf.getWidth() ,spectbf.getHeight(), null);
+                                        sidx*spectStep,sbfH,spectbf.getWidth() , spectbf.getHeight(), null);
                }
 
             }

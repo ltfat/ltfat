@@ -1,7 +1,7 @@
 function [AF,BF]=wfbtbounds(wt,L)
-%FWTBOUNDS Frame bounds of DWT
-%   Usage: fcond=fwtbounds(wt,L);
-%          [A,B]=fwtbounds(wt,L);
+%WFBTBOUNDS Frame bounds of WFBT
+%   Usage: fcond=wfbtbounds(wt,L);
+%          [A,B]=wfbtbounds(wt,L);
 %
 %   `wfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the filterbank specified by *wt* for a system of length
@@ -32,31 +32,18 @@ for ii=1:numel(wt.nodes)
    assert(all(a==a(1)),'%s: One of the basic wavelet filterbanks is not uniform.',upper(mfilename));
 end
 
-% Do the equivalent filterbank
-[g,a] = wfbt2filterbank(wt);
+% Do the equivalent filterbank using multirate identity property
+[gmultid,amultid] = wfbt2filterbank(wt);
 
-maxGlen = max(cellfun(@(gEl) numel(gEl.h),g));
-% maxa is also lcm(a)
-maxa = max(a);
+% Check L
+%maxGlen = max(cellfun(@(gEl) numel(gEl.h),gmultid));
+%assert(L>=maxGlen,'%s: One of the filters is longer than L.',upper(mfilename));
 
-assert(L>=maxGlen,'%s: One of the filters is longer than L.',upper(mfilename));
-
-gnew = {};
-
-for m=1:numel(g)
-   pk = maxa/a(m);
-   
-   for ii=0:pk-1
-      gnew{end+1} = g{m};
-      gnew{end+1}.offset = gnew{end+1}.offset-a(m)*ii;
-   end
-end
-
-anew = maxa*ones(numel(gnew),1);
-
+% Do the equivalent uniform filterbank
+[gu,au] = nonu2ufilterbank(gmultid,amultid);
 
 if nargout<2
-   AF = filterbankbounds(gnew,anew,L);
+   AF = filterbankbounds(gu,au,L);
 elseif nargout == 2
-   [AF, BF] = filterbankbounds(gnew,anew,L);
+   [AF, BF] = filterbankbounds(gu,au,L);
 end

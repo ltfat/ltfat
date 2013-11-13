@@ -1,49 +1,76 @@
-
 -------- Compatibility ----------------------------------
 
 The toolbox should work and compile on all versions of Octave later
 than version 3.0, but it is generally recommended to upgrade to the
 latest stable release of Octave. For demos etc. to work, you will need
-to install the Octave-forge packages.
+to install some of the Octave-forge packages.
 
--------- Compiling the Octave interfaces  ------------------
+LTFAT >=1.4.2 is also itself an Octave-forge package and the easiest
+way to install everything by typing
 
-LTFAT comes with C++ Octave interfaces written for all computationally
+pkg install -forge ltfat
+
+on the octave prompt, which downloads ltfat directly from the 
+Octave-forge and compiles all. This however was tested only on Linux.
+Since you are reading this you have probably downloaded ltfat from
+elsewhere and you want to compile sources by yourself. 
+
+-------- What can be compiled -------------------------------
+
+- Static backend libraries libltfat.a, libltfatf.a
+
+- Fast Oct-interfaces linking to the backend libs.
+
+Block processing framework (optional, experimental, only on Linux)
+
+- Mex-interface playrec
+
+- Java classes for blockproc GUI
+
+-------- Compiling backend libs and the Octave interfaces  -------------
+
+LTFAT comes with C++ Octave interfaces to replace (shadow) all computationally
 intensitive function in the toolbox.
 
 To compile the Octave interfaces, type "ltfatmex" on the Octave
 command prompt. This will compile the ltfat C library and all the
 available oct-functions.
 
-For this to work, you will need to install the Octave development
-packages (the 'mkoctfile' script must be available).
+LTFAT backend lib and Oct-interfaces depends on the following
+libraries: FFTW3, BLAS, LAPACK, which are usually distribuded with
+Octave itself, so there is no need for installing them separatelly.
 
-------- Necessary packages -----------------------------
+--------- Compiling on MacOS ------------------------------------------
+
+TBD
+
+--------- Compiling on Microsoft Windows ------------------------------
+
+Presently, Octave binary distribution for Windows comes in 32bit version only.
+We recommend using the package with the MinGW installer. It comes with the 32bit
+MinGW compiler system. It is importatnt to add the following two entries to the PATH 
+variable:
+
+[OCTAVE]\bin\;[OCTAVE]\mingw\bin\; 
+
+where [OCTAVE] stands for the Octave instalation directory.
+
+Then typing "ltfatmex" should compile the Oct-interfaces. 
+
+--------- Compiling on Linux ----------------------------------------
 
 To compile, you must have installed the Octave development package and
-all its dependencies. This will also install all necessary libraries
-and header files needed for compilation.
+all its dependencies (the 'mkoctfile' script must be available).
+This will also install all necessary libraries and header files needed
+for compilation.
 
 * On Fedora / Redhat this package is called "octave-devel"
 
 * On Debian / Ubuntu this package is called "octave-headers"
 
-* On Windows, install the full binary release of Octave with all packages.
-
 Install the octave-forge packages to add extra toolboxes available for
 Octave.
 
---------- Compiling manually on Linux / Unix ------------------------
+-------- Compiling parts for the block processing framework on Linux ----
 
-As an alternative to typing "ltfatmex" at the Octave command prompt,
-you make also perform the process manually
-
-- Open a terminal, and change to the ltfat/src directory (using 'cd')
-
-- Type 'make'. This will build the ltfat C library.
-
-- Change to the ltfat/oct directory
-
-- Type 'make' again. This will build the Octave C++ interfaces.
-
-
+Please follow instructions in the INSTALL-Matlab.

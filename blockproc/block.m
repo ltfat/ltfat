@@ -69,6 +69,9 @@ function [fs,classid] = block(source,varargin)
 %
 %      'single', 'double'   Data type to be used.
 %
+%      'online', 'offline'  Allows offline processing for data or wav
+%                           inputs.
+%
 % 
 
 
@@ -84,12 +87,8 @@ definput.keyvals.L=1024;
 definput.keyvals.loadind= 'nobar';
 definput.flags.fmt={'single','double'};
 definput.flags.loop={'noloop','loop'};
+definput.flags.onoff={'online','offline'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
-
-
-%if isoctave && ~strcmp(kv.loadind,'nobar')
-%   error('%s: Currently, it is possible to use only the ''nobar'' value for key ''loadind'' in Octave.',upper(mfilename));
-%end
 
 if ischar(kv.loadind)
    if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
@@ -149,7 +148,7 @@ if ischar(source)
       return;
    elseif(numel(source)>4)
       if(strcmpi(source(end-3:end),'.wav'))
-         if exist(source)~=2
+         if exist(source,'file')~=2
             error('%s: File "%s" does not exist.',upper(mfilename),source);
          end
          if isoctave
@@ -168,7 +167,6 @@ if ischar(source)
       error('%s: Unrecognized command "%s".',upper(mfilename),source);
    end
 elseif(isnumeric(source))
-   %error('%s: TO DO: Accept samples as a vector or matrix.',upper(mfilename));
     if isempty(kv.fs)
       kv.fs = 44100;
       warning('%s: Sampling rate not specified. Using default value %i Hz.',upper(mfilename),kv.fs); 
@@ -273,7 +271,7 @@ if play && record
    else
       playrec('init', kv.fs, kv.devid(1), kv.devid(2));
    end
-   if numel(kv.recch) >1
+   if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
       error('%s: Using more than one input channel.',upper(mfilename));
    end
    block_interface('setPlayChanList',kv.playch);

@@ -70,6 +70,7 @@ if ~isempty(F.g)
         [g, info] = wilwin(F.g,F.M,L,upper(mfilename));
         F = frame(F.type,g,F.origargs{2:end});
         F.g_info = info;
+        F.isfac=1;
       case {'filterbank','ufilterbank'}
         [g, info]  = filterbankwin(F.g,F.a,L);
         kv = arg_pfilt();
@@ -87,6 +88,8 @@ if ~isempty(F.g)
       case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
         [F.g,F.g_info]  = nsgabwin(F.g,F.a,F.M);
         F.isfac=F.g_info.isfac;
+      case {'fwt','wfbt'}
+        F.isfac = 1; 
     end;
 end;
 

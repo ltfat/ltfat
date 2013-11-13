@@ -23,11 +23,8 @@ fobj = blockfigure();
 %
 bufLen = 1024;
 % Setup blocktream
-if isoctave
-   fs=block(source,varargin{:},'L',bufLen);
-else
-   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
-end
+fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+
 
 % Using dgtreal with 20ms hann window, hop factor 80, 1000 channels.
 % Redundancy factor 12.5

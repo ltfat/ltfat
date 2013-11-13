@@ -81,8 +81,15 @@ function [c, fola] = blockana(F, f, fola)
                 nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
              case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
                 a = F.lcma;
-                Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
-                nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
+                if Lw-1 < a
+                   Sbolen = mod(Sb,a);
+                   nextSbolen = mod(nextSb,a);
+                else
+                   Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
+                   nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
+                end
+                %Sbolen = ceil((Lw-1)/a)*a + mod(Sb,a);
+                %nextSbolen = ceil((Lw-1)/a)*a + mod(nextSb,a);
              otherwise
                 error('%s: Unsupported frame.',upper(mfilename));
           end
@@ -131,7 +138,7 @@ function [c, fola] = blockana(F, f, fola)
                 % Filter lengths
                 gl = F.g_info.gl;
                 % Filter offsets
-                Lwl = max(-F.g_info.offset);
+                Lwl = max(gl+F.g_info.offset-1);
                 Lext = Sbolen + Lb - nextSbolen + Lwl;
                 startc = ceil(Lwl./a)+1;
                 endc = ceil((Lext)./a);

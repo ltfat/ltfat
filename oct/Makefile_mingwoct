@@ -1,13 +1,19 @@
 # Use GNU Make to process this file.
 # mingw32-make -f Makefile_mingw32
 
-ifndef OCTAVEROOT
-  $(warning OCTAVEROOT variable is udefined. Using default (probably wrong) OCTAVEROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
-  OCTAVEROOT=c:\Octave\Octave3.6.4_gcc4.6.2
+ifndef MATLABROOT
+  $(warning MATLABROOT variable is udefined. Using default (probably wrong) MATLABROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
+  MATLABROOT=c:\Octave\Octave3.6.4_gcc4.6.2
 endif
 
+ifndef EXT
+  EXT=oct
+endif
+
+include ../src/ostools.mk
 
 OCTSCC   = \
+    comp_chirpzt \
     comp_gga \
     comp_filterbank_td \
 	comp_ifilterbank_td \
@@ -43,20 +49,24 @@ OCTSCC   = \
 	comp_wfac \
 	comp_filterbank_fft \
 	comp_filterbank_fftbl \
+	comp_ifilterbank_fft \
+	comp_ifilterbank_fftbl \
+
 	
 OCTSBASE = $(basename $(OCTSCC))
-OCTS     = $(addsuffix .oct,$(OCTSBASE))
-OCTAVEBIN = $(OCTAVEROOT)\bin
-OCTAVELIB = $(OCTAVEROOT)\lib
+OCTS     = $(addsuffix .$(EXT),$(OCTSBASE))
+OCTAVEBIN = $(MATLABROOT)\bin
+OCTAVELIB = $(MATLABROOT)\lib
 ADDITIONALIBS = -L../lib -lltfat -lltfatf  -L$(OCTAVELIB) -lblas -lfftw3 -lfftw3f -llapack 
+
 
 all:	$(OCTS)
 
-%.oct: %.cc
+%.$(EXT): %.cc
 	mkoctfile --strip -v -Wall "-Wl,-rpath,." -I../src/thirdparty -I. -I../src $(ADDITIONALIBS)  $<
 	del *.o
 
 clean:
-	del *.o *.oct
+	del *.o *.$(EXT)
 
 .PHONY: all clean

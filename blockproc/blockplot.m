@@ -31,7 +31,7 @@ if strcmp(F.blockalg,'sliced')
    if nargin>3 
       olLen = ceil(size(ctf,2)/2);
       if isempty(cola)
-         cola = zeros(size(ctf,1),olLen);
+         cola = zeros(size(ctf,1),olLen,class(ctf));
       end
          
       ctf(:,1:olLen) = ctf(:,1:olLen) + cola;
@@ -40,7 +40,12 @@ if strcmp(F.blockalg,'sliced')
    end
 end
 
-ctf = cast(ctf,'single');
-javaMethod('append',p,ctf);
+ctf = abs(cast(ctf,'single'));
+
+if isoctave
+   javaMethod('append',p,ctf(:),size(ctf,1),size(ctf,2));
+else
+   javaMethod('append',p,ctf);
+end
 
 

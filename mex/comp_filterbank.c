@@ -15,7 +15,7 @@ static fftw_plan* p_double = NULL;
 static fftwf_plan* p_float = NULL;
 
 /*
-Since the array is store for the lifetime of the MEX, we introduce limit od the array length.
+Since the array is stored for the lifetime of the MEX, we introduce limit od the array length.
 2^20 ~ 16 MB of complex double
 */
 #define MAXARRAYLEN 1048576
@@ -24,8 +24,6 @@ static mxArray* mxF = NULL;
 
 // Calling convention:
 //  comp_filterbank(f,g,a);
-
-
 
 /*
   MEX exit fnc. are not called by Matlab
@@ -363,6 +361,4 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
        mxF = NULL;
    }
 
-
-//int prd = 0;
 }

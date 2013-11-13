@@ -46,7 +46,7 @@ switch(F.type)
     for ii=1:F.Nframes
         dual_frames{ii}=framedual(F.frames{ii});        
     end;
-    F=frame('tensor',dual_frames{:});
+    Fd=frame('tensor',dual_frames{:});
         
   case 'fusion'
     dual_w=1./(F.Nframes*F.w);

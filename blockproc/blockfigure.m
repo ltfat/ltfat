@@ -45,5 +45,12 @@ elseif iscell(kv.cm)
 end
 
 % Set the colormap.
-javaMethod('setColormap',p,kv.cm{1});
+if isoctave
+   javaMethod('setColormap',p,kv.cm{1}(:),size(kv.cm{1},1),size(kv.cm{1},2));
+else
+   javaMethod('setColormap',p,kv.cm{1});
+end
+
+
+
 

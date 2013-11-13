@@ -18,11 +18,8 @@ p = blockpanel({
 
 bufLen = 1024;
 % Setup blocktream
-if ~isoctave
-   block(source,varargin{:},'L',bufLen);
-else
-   block(source,varargin{:},'loadind',p,'L',bufLen);
-end
+block(source,varargin{:},'loadind',p,'L',bufLen);
+
 
 flag = 1;
 %Loop until end of the stream (flag) and until panel is opened

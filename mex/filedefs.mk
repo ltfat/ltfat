@@ -1,4 +1,5 @@
 MEXBASESAFE=\
+	vect2cell\
 	block_interface\
 	comp_col2diag\
 	comp_dct\

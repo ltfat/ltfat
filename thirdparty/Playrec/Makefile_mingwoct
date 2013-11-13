@@ -1,0 +1,23 @@
+# Use GNU Make to process this file.
+# mingw32-make -f Makefile_mingw32
+
+ifndef EXT
+  EXT=mex
+endif
+
+ifndef PORTAUDIO
+  PORTAUDIO=portaudio
+endif
+
+include ../../src/ostools.mk
+
+ADDITIONALFLAGS = -L. -l$(PORTAUDIO) -I. -I../../src/thirdparty
+
+all:
+	mkoctfile -mex --strip -v -Wall $(ADDITIONALFLAGS) mex_dll_core.c pa_dll_playrec.c -o playrec.$(EXT)
+	$(RM) *.o
+
+clean:
+	$(RM) *.o *.$(EXT)
+
+.PHONY: all clean

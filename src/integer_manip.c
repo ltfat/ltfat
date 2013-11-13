@@ -33,7 +33,7 @@ void fftindex(const int N, int *indexout)
    }
 
 }
-
+/*
 int int_max(const int a, const int b)
 {
    return (a > b ? a : b);
@@ -43,6 +43,32 @@ int int_min(const int a, const int b)
 {
    return (a < b ? a : b);
 }
+*/
+
+#define MAXFNC(T,prefix,suffix) \
+T prefix##max##suffix(const T a, const T b) \
+{                                    \
+   return (a > b ? a : b);           \
+}
+
+MAXFNC(size_t,,_st)
+MAXFNC(ptrdiff_t,,_pt)
+MAXFNC(int,int_,)
+
+#undef MAXFNC
+
+#define MINFNC(T,prefix,suffix) \
+T prefix##min##suffix(const T a, const T b) \
+{                                    \
+   return (a < b ? a : b);           \
+}
+
+MINFNC(size_t,,_st)
+MINFNC(ptrdiff_t,,_pt)
+MINFNC(int,int_,)
+
+#undef MINFNC
+
 
 int makelarger(const int L, const int K)
 {

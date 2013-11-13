@@ -35,7 +35,9 @@
 #include "portaudio.h"
 #include "mex_dll_core.h"
 #include "pa_dll_playrec.h"
+#include <stdio.h>
 #include <string.h>
+
 
 /*
  * States are used to ensure code is only run when it will not cause problems
@@ -43,7 +45,7 @@
  * If required more states can be used by adding an additional #define and
  * an additional element in _stateOpts[] for each state required.
 
-/*
+ *
  * BASIC_INIT = The exit function has been registered with mexAtExit.
  *              PortAudio has been succesfully initialised
  *              The state to return to on reset.
@@ -1904,7 +1906,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
                     const mxArray *precChans) {
     StreamPageStruct *psps;
     ChanBufStruct *pcbs;
-    unsigned int dataChanCount, playSamplePerChan, recSamplePerChan;
+    unsigned int dataChanCount, playSamplePerChan=0, recSamplePerChan;
     unsigned int i, chansCopied;
 
     validateState(BASIC_INIT | FULL_INIT, 0);
@@ -3069,7 +3071,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
  * TODO:
  */
 bool doGetSampleRate(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-    PaStreamInfo *streamInfo;
+    const PaStreamInfo *streamInfo;
 
     if(!_pstreamInfo) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3339,7 +3341,7 @@ bool doGetRecMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs
  * TODO:
  */
 bool doGetPlayLatency(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-    PaStreamInfo *streamInfo;
+    const PaStreamInfo *streamInfo;
 
     if(!_pstreamInfo || (_pstreamInfo->playDeviceID == paNoDevice)) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3390,7 +3392,7 @@ bool doGetPlayLatency(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
  * TODO:
  */
 bool doGetRecLatency(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-    PaStreamInfo *streamInfo;
+    const PaStreamInfo *streamInfo;
 
     if(!_pstreamInfo || (_pstreamInfo->recDeviceID == paNoDevice)) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3744,9 +3746,6 @@ bool doGetSkippedSampleCount(int nlhs, mxArray *plhs[], int nrhs, const mxArray 
  * TODO:
  */
 bool doResetSkippedSampleCount(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
-    unsigned int elapsedTime = 0;
-    unsigned int loopCount = 0;
-
     if(!_pstreamInfo) {
         return true;
     }
