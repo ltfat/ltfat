@@ -33,15 +33,11 @@ for ii=1:eqbands
 end
 
 p = blockpanel(parg);
-            
+    
 
 bufLen = 1024;
 % Setup blocktream
-if isoctave
-   fs=block(source,varargin{:},'L',bufLen);
-else
-   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
-end
+fs=block(source,varargin{:},'loadind',p,'L',bufLen);
 
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)
@@ -56,11 +52,9 @@ while flag && p.flag
    gain = blockpanelget(p);
    gain = 10.^(gain/20);
 
-
    [f,flag] = blockread();
    f=f*gain(1);
    gain = gain(2:end);
-   
    
    [c, ola] = blockana(Fa, f, ola);
    
@@ -80,6 +74,5 @@ while flag && p.flag
    [c2, ola2] = blockana(Fa, fhat, ola2);
    blockplot(fobj,Fa,c2(:,1));
 end
-blockdone();
-p.close();
-fobj.close();
+blockdone(p,fobj);
+

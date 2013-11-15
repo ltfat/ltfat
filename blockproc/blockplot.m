@@ -40,11 +40,14 @@ if strcmp(F.blockalg,'sliced')
    end
 end
 
-ctf = abs(cast(ctf,'single'));
+
+ctf = abs(ctf);
 
 if isoctave
+   ctf = cast(ctf,'double');
    javaMethod('append',p,ctf(:),size(ctf,1),size(ctf,2));
 else
+   ctf = cast(ctf,'single');
    javaMethod('append',p,ctf);
 end
 

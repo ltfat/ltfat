@@ -19,8 +19,6 @@ p = blockpanel({
                {'GdB','Gain',-20,20,0,21},...
                {'Thr','Treshold',0,0.1,0,1000}
                });
-            
-%fobj = blockfigure();
     
 % Buffer length
 bufLen = 1024;
@@ -28,11 +26,7 @@ bufLen = 1024;
 M = 1000;
 
 % Setup blocktream
-if isoctave
-   fs=block(source,varargin{:},'L',bufLen);
-else
-   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
-end
+fs=block(source,varargin{:},'loadind',p,'L',bufLen);
 
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)
@@ -50,7 +44,7 @@ while flag && p.flag
   %bufLen = floor(p.getParam('bufLen'));
 
   % Read block of length bufLen
-  [f,flag] = blockread(bufLen);
+  [f,flag] = blockread();
   % Apply analysis frame
   c = blockana(Fa, f*gain); 
   % Plot
@@ -63,7 +57,5 @@ while flag && p.flag
   %fhat = f;
   blockplay(fhat);
 end
-blockdone();
-% Close the control panel
-p.close();
-%fobj.close();
+blockdone(p);
+

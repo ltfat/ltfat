@@ -22,8 +22,21 @@ persistent t2;
 %global delayLog;
 %global delayLog2;
 
-if nargin<1
-   L = block_interface('getBufLen'); 
+Lbuf = block_interface('getBufLen'); 
+if nargin==1
+   if Lbuf>0 && Lbuf~=L
+      error('%s: Buffer length was fixed to %i, but now requiring %i.',...
+            upper(mfilename),Lbuf,L);
+   end
+   if L<256
+      error('%s: Minimum buffer length is 256.',upper(mfilename));
+   end
+else
+   if Lbuf<0
+      L = 1024;
+   else
+      L = Lbuf;
+   end
 end
 
 do_updateGUI = 0;

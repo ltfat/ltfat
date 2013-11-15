@@ -66,7 +66,7 @@ while flag && p.flag
   G = blockpanelget(p,'band1','band2','band3','band4','band5','band6');
   
   % Check if any of the user-defined gains is different from the actual ones
-  % and do recomputauion.
+  % and do recomputation.
    for ii=1:numel(filts)
      if G(ii)~=filts(ii).G
         filts(ii).G = G(ii);
@@ -94,10 +94,7 @@ while flag && p.flag
   % Play the block
   blockplay(f);
 end
-blockdone();
-% Close the control panel
-p.close();
-%fobj.close();
+blockdone(p);
 
 function [Ha,Hb]=parlsf(fc,G,Fs)
 % PARLSF Parametric Low-Shelwing filter

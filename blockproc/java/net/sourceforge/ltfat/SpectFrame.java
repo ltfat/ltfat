@@ -42,6 +42,7 @@ public class SpectFrame {
     // Default image dimensions
     static final int defWidth = 800;
     static final int defHeight = 400;
+    static final int heightRed = 4;
     // Actual image dimensions
     private int height = defHeight;
     private int width = defWidth;
@@ -124,7 +125,7 @@ public class SpectFrame {
     float ratio = ((float)cMatLen)/((float)cmapLen);
     for(int yy=0;yy<cmapLen;yy++){
           for(int xx=0;xx<cols;xx++){
-             double tmpVal = 255.0*cmMat[(int)(Math.floor(yy*ratio)*cmMat.length+xx)];
+             double tmpVal = 255.0*cmMat[(int)(Math.floor(yy*ratio)+cMatLen*xx)];
              tmpVal = Math.min(tmpVal, 255.0);
              tmpVal = Math.max(tmpVal, 0.0);
              colormap[cmIdx++] = (byte) tmpVal;
@@ -181,7 +182,7 @@ public class SpectFrame {
     /*
      * Col is passed by value from Matlab
      */
-      public void append(final float[] col, final double colHeight, final double colWidth) {
+      public void append(final double[] col, final double colHeight, final double colWidth) {
 
 
        runInPool(new Runnable() {
@@ -212,15 +213,10 @@ public class SpectFrame {
                       sidx = 1;
                   } 
                    
-                  g2.drawImage(image,(sidx-1)*spectStep,height, sidx*spectStep,0,0,0,(int)colWidth,(int)colHeight,  null);
+                  g2.drawImage(image,(sidx-1)*spectStep,heightRed*height, sidx*spectStep,0,0,0,(int)colWidth,(int)colHeight,  null);
                }
               
-               //spectPanel.setImage(image);
                spectPanel.repaint();
-              /* if(!slideTimer.isRunning()){
-                  slideTimer.start();
-               }
-               */
             }
         });
     }
@@ -250,8 +246,8 @@ public class SpectFrame {
            
              
                Graphics2D g2 = (Graphics2D) spectPanel.getGraphics2D();
-               g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-               //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+               g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+               g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
                synchronized(graphicsLock)
                {
@@ -259,7 +255,7 @@ public class SpectFrame {
                       sidx = 1;
                   } 
                    
-                  g2.drawImage(image,(sidx-1)*spectStep,height, sidx*spectStep,0,0,0,colWidth,colHeight,  null);
+                  g2.drawImage(image,(sidx-1)*spectStep,heightRed*height, sidx*spectStep,0,0,0,colWidth,colHeight,  null);
                }
               
                //spectPanel.setImage(image);
@@ -317,15 +313,16 @@ public class SpectFrame {
         
         }
 
+
         public SpectPanel(int width, int height) {
             Dimension dim = new Dimension(width, height);
             setSize(dim);
             setPreferredSize(dim);
-            spectbf = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+            spectbf = new BufferedImage(width, heightRed*height, BufferedImage.TYPE_4BYTE_ABGR);
 
             Graphics2D bfGraphics = (Graphics2D) spectbf.getGraphics();
             bfGraphics.setColor(Color.LIGHT_GRAY);
-            bfGraphics.fillRect(0, 0, width, height);
+            bfGraphics.fillRect(0, 0, width, heightRed*height);
             
         }
         
@@ -344,8 +341,9 @@ public class SpectFrame {
             Dimension thisSize = this.getSize();
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             
             if (spectbf != null) {
                //synchronized(bfLock){

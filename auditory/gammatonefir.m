@@ -11,7 +11,7 @@ function b=gammatonefir(fc,fs,varargin);
 %      beta  :  bandwidth of the filter.
 %
 %   Output parameters:
-%      b     :  FIR filters as columns
+%      b     :  FIR filters as an cell-array of structs.
 %
 %   `gammatonefir(fc,fs,n,betamul)` computes the filter coefficients of a
 %   digital FIR gammatone filter of length *n* with center frequency *fc*,

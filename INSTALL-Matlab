@@ -83,7 +83,7 @@ done by typing
 "ltfatmex playrec" and "ltfatmex java".
 
 Playrec MEX depends on the PORTAUDIO library, which has to be installed on your
-system prior running the commnad. Compiling JAVA classes requires Java Development
+system prior running the commnads. Compiling JAVA classes requires Java Development
 Kit to be installed.
 NOTE: Compiled Java classes (packed in blockproc.jar) are platform independent
 so compiling it and installing JDK can be avoided by taking the archive from any

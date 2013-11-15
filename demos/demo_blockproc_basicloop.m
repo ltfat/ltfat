@@ -16,10 +16,8 @@ p = blockpanel({
                {'GdB','Gain',-20,20,0,21},...
                });
 
-bufLen = 1024;
 % Setup blocktream
-block(source,varargin{:},'loadind',p,'L',bufLen);
-
+block(source,varargin{:},'loadind',p);
 
 flag = 1;
 %Loop until end of the stream (flag) and until panel is opened
@@ -30,5 +28,4 @@ while flag && p.flag
    [f,flag] = blockread();
    blockplay(f*gain);
 end
-blockdone();
-p.close();
+blockdone(p);

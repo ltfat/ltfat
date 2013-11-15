@@ -28,7 +28,9 @@ function [fs,classid] = block(source,varargin)
 %
 %   `block` accepts the following optional flags and key-value pairs
 %
-%      `'L',L`                Block length - default is 1024.
+%      `'L',L`                Block length - default is 1024. Specifying L
+%                             fixes the buffer length, which cannot be
+%                             changed in the loop.
 %
 %      `'devid',dev`          Whenever more input/output devices are present
 %                             in your system, `'devid'` can be used to 
@@ -83,7 +85,7 @@ definput.keyvals.playch=[];
 definput.keyvals.recch=[];
 definput.keyvals.outfile=[];
 definput.keyvals.sliwin=[];
-definput.keyvals.L=1024;
+definput.keyvals.L=[];
 definput.keyvals.loadind= 'nobar';
 definput.flags.fmt={'single','double'};
 definput.flags.loop={'noloop','loop'};
@@ -381,7 +383,14 @@ block_interface('setDispLoad',kv.loadind);
 block_interface('setIsLoop',flags.do_loop);
 
 % Set block length
-block_interface('setBufLen',kv.L);
+if isempty(kv.L)
+   block_interface('setBufLen',-1);
+else
+   if kv.L<256
+      error('%s: Minimum buffer length is 256.',upper(mfilename))
+   end
+   block_interface('setBufLen',kv.L);
+end
 
 % Handle sources with known input length
 if ischar(source) && numel(source)>4 && strcmpi(source(end-3:end),'.wav') 

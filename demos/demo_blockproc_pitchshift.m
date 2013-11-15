@@ -16,7 +16,6 @@ end
 M = 1000;
 
 fobj = blockfigure();
-            
 
 % Basic Control pannel (Java object)
 parg = {
@@ -25,20 +24,13 @@ parg = {
        };
 
 p = blockpanel(parg);
-            
 
 bufLen = 1024;
 % Setup blocktream
-if isoctave
-   fs=block(source,varargin{:},'L',bufLen);
-else
-   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
-end
+fs=block(source,varargin{:},'loadind',p,'L',bufLen);
 
 % Window length in ms
 winLenms = 20; 
-F = frame('dgtreal',{'hann',floor(fs*winLenms/1e3)},100,M);
-Fdual = F;
 [F,Fdual] = framepair('dgtreal',{'hann',floor(fs*winLenms/1e3)},'dual',128,M);
 [Fa,Fs] = blockframepairaccel(F,Fdual, bufLen,'segola');
 
@@ -49,15 +41,17 @@ while flag && p.flag
    gain = 10.^(gain/20);
    shift = fix(blockpanelget(p,'Shi'));
 
+   % Read block of data
    [f,flag] = blockread();
-   % Noise gate
+
+   % Apply gain
    f=f*gain;
    
+   % Obtain DGT coefficients
    c = blockana(Fa, f);
    
-   % Actual coefficient shift
+   % Do the actual coefficient shift
    cc = Fa.coef2native(c,size(c));
-   
    
    if(strcmpi(source,'playrec'))
       % Hum removal (aka low-pass filter)
@@ -71,12 +65,14 @@ while flag && p.flag
    end
    c = Fa.native2coef(cc);
    
+   % Plot the transposed coefficients
    blockplot(fobj,Fa,c(:,1));
    
+   % Reconstruct from the modified coefficients
    fhat = blocksyn(Fs, c, size(f,1));
 
+   % Enqueue to be played
    blockplay(fhat);
 end
-blockdone();
-p.close();
-fobj.close();
+% Clear and close all
+blockdone(p,fobj);
