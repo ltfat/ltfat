@@ -1,46 +1,16 @@
 #ifndef CONFIG_H
 #define CONFIG_H 1
 
-//#include "blas.h"
-//#include "lapack.h"
 
 #ifndef __cplusplus
 #include <complex.h>
-#define FFTW_NO_Complex
 #endif //__cplusplus
 
 #define HAVE_BLAS 1
 #define HAVE_LAPACK 1
 
-
-
 #include "fftw3.h"
-/*
-#ifdef LTFAT_COMPLEXTYPE
-#  undef LTFAT_COMPLEXTYPE
-#endif
 
-#define LTFAT_COMPLEXTYPE
-#include "ltfat_types.h"
-#undef LTFAT_COMPLEXTYPE
-*/
-#include "ltfat_types.h"
-
-/*
-#ifdef LTFAT_DOUBLE
-#define LTFAT_COMPLEX fftw_complex
-#define LTFAT_REAL double
-#define LTFAT_NAME(name) name
-#define LTFAT_FFTW(name) fftw_ ## name
-#endif
-
-#ifdef LTFAT_SINGLE
-#define LTFAT_COMPLEX fftwf_complex
-#define LTFAT_REAL float
-#define LTFAT_NAME(name) s ## name
-#define LTFAT_FFTW(name) fftwf_ ## name
-#endif
-*/
 
 static inline int ltfat_round(double x)
 {

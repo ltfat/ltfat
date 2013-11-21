@@ -1,9 +1,6 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
-#include <math.h>
-#include <complex.h>
-#include "config.h"
-#include "ltfat.h"
+
 
 
 #ifndef GGA_UNROLL
@@ -20,8 +17,8 @@ LTFAT_EXTERN
 LTFAT_NAME(gga_plan) LTFAT_NAME(create_gga_plan)(const double *indVecPtr, const size_t M, const size_t L)
 {
 LTFAT_REAL* cos_term = (LTFAT_REAL*) ltfat_malloc(M*sizeof(LTFAT_REAL));
-LTFAT_COMPLEXH* cc_term = (LTFAT_COMPLEXH*) ltfat_malloc(M*sizeof(LTFAT_COMPLEXH));
-LTFAT_COMPLEXH* cc2_term = (LTFAT_COMPLEXH*) ltfat_malloc(M*sizeof(LTFAT_COMPLEXH));
+LTFAT_COMPLEX* cc_term = (LTFAT_COMPLEX*) ltfat_malloc(M*sizeof(LTFAT_COMPLEX));
+LTFAT_COMPLEX* cc2_term = (LTFAT_COMPLEX*) ltfat_malloc(M*sizeof(LTFAT_COMPLEX));
 
 LTFAT_REAL pik_term_pre = (LTFAT_REAL) (2.0*PI/((double) L));
 LTFAT_REAL _Complex cc2_pre = (LTFAT_REAL _Complex) (-1.0*_Complex_I*((double)(L-1)));
@@ -31,8 +28,8 @@ for(size_t m=0;m<M;m++)
 {
    LTFAT_REAL pik_term = pik_term_pre*indVecPtr[m];
    cos_term[m] = (LTFAT_REAL) cos(pik_term)*2.0;
-   cc_term[m] = (LTFAT_COMPLEXH) cexp(cc_pre*pik_term);
-   cc2_term[m] = (LTFAT_COMPLEXH) cexp(cc2_pre*pik_term);
+   cc_term[m] = (LTFAT_COMPLEX) cexp(cc_pre*pik_term);
+   cc2_term[m] = (LTFAT_COMPLEX) cexp(cc2_pre*pik_term);
 }
 
 
@@ -52,14 +49,14 @@ void LTFAT_NAME(destroy_gga_plan)(LTFAT_NAME(gga_plan) plan)
 LTFAT_EXTERN
 void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
                                const LTFAT_TYPE *fPtr,
-                               LTFAT_COMPLEXH *cPtr,
+                               LTFAT_COMPLEX *cPtr,
                                const size_t W )
 {
 #ifndef GGA_UNROLL
 
 for(int w=0;w<W;w++)
 {
-LTFAT_COMPLEXH *cPtrTmp = (LTFAT_COMPLEXH*) cPtr+w*p.M;
+LTFAT_COMPLEX *cPtrTmp = (LTFAT_COMPLEX*) cPtr+w*p.M;
 
 for(int m=0;m<p.M;m++)
 {
@@ -80,22 +77,22 @@ for(int m=0;m<p.M;m++)
    }
 }
 #else
-for(int w=0;w<W;w++)
+for(size_t w=0;w<W;w++)
 {
-   LTFAT_COMPLEXH *cPtrTmp = (LTFAT_COMPLEXH*) cPtr+w*p.M;
-   int unrollRem = p.M%GGA_UNROLL;
+   LTFAT_COMPLEX *cPtrTmp = (LTFAT_COMPLEX*) cPtr+w*p.M;
+   size_t unrollRem = p.M%GGA_UNROLL;
 
    const LTFAT_REAL* cos_term = p.cos_term;
-   const LTFAT_COMPLEXH* cc_term = p.cc_term;
-   const LTFAT_COMPLEXH* cc2_term = p.cc2_term;
+   const LTFAT_COMPLEX* cc_term = p.cc_term;
+   const LTFAT_COMPLEX* cc2_term = p.cc2_term;
 //#pragma omp parallel for
-   for(int m=0;m<p.M-unrollRem;m+=GGA_UNROLL)
+   for(size_t m=0;m<p.M-unrollRem;m+=GGA_UNROLL)
    {
       LTFAT_TYPE s0[GGA_UNROLL];
       LTFAT_TYPE s1[GGA_UNROLL];
       LTFAT_TYPE s2[GGA_UNROLL];
 
-      for(int un=0;un<GGA_UNROLL;un++)
+      for(size_t un=0;un<GGA_UNROLL;un++)
       {
          s0[un] = 0.0;
          s1[un] = 0.0;
@@ -104,9 +101,9 @@ for(int w=0;w<W;w++)
 
       LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*p.L;
 
-      for(int ii=0;ii<p.L-1;ii++)
+      for(size_t ii=0;ii<p.L-1;ii++)
       {
-         for(int un=0;un<GGA_UNROLL;un++)
+         for(size_t un=0;un<GGA_UNROLL;un++)
          {
             s0[un] = *fPtrTmp + cos_term[un]*s1[un] - s2[un];
             s2[un]=s1[un];
@@ -114,7 +111,7 @@ for(int w=0;w<W;w++)
          }
          fPtrTmp++;
       }
-      for(int un=0;un<GGA_UNROLL;un++)
+      for(size_t un=0;un<GGA_UNROLL;un++)
       {
          s0[un] = *fPtrTmp + cos_term[un]*s1[un] - s2[un];
          cPtrTmp[m+un] = (s0[un]*cc2_term[un] - s1[un]*cc_term[un]);
@@ -124,14 +121,14 @@ for(int w=0;w<W;w++)
       cc2_term+=GGA_UNROLL;
    }
 
-   int m= p.M-unrollRem;
+   size_t m= p.M-unrollRem;
 
 
       LTFAT_TYPE s0[GGA_UNROLL];
       LTFAT_TYPE s1[GGA_UNROLL];
       LTFAT_TYPE s2[GGA_UNROLL];
 
-   for(int un=0;un<unrollRem;un++)
+   for(size_t un=0;un<unrollRem;un++)
    {
        s0[un] = 0.0;
        s1[un] = 0.0;
@@ -140,9 +137,9 @@ for(int w=0;w<W;w++)
 
       LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*p.L;
 
-      for(int ii=0;ii<p.L-1;ii++)
+      for(size_t ii=0;ii<p.L-1;ii++)
       {
-         for(int un=0;un<unrollRem;un++)
+         for(size_t un=0;un<unrollRem;un++)
          {
             s0[un] = *fPtrTmp + cos_term[un]*s1[un] - s2[un];
             s2[un]=s1[un];
@@ -151,7 +148,7 @@ for(int w=0;w<W;w++)
          fPtrTmp++;
       }
 
-      for(int un=0;un<unrollRem;un++)
+      for(size_t un=0;un<unrollRem;un++)
       {
          s0[un] = *fPtrTmp + cos_term[un]*s1[un] - s2[un];
          cPtrTmp[m+un] = (s0[un]*cc2_term[un] - s1[un]*cc_term[un]);
@@ -165,7 +162,7 @@ for(int w=0;w<W;w++)
 
 LTFAT_EXTERN
 void LTFAT_NAME(gga)(const LTFAT_TYPE *fPtr, const double *indVecPtr,
-                const size_t L, const size_t W, const size_t M, LTFAT_COMPLEXH *cPtr)
+                const size_t L, const size_t W, const size_t M, LTFAT_COMPLEX *cPtr)
 {
 
 double pik_term_pre = 2.0*PI/((double) L);
@@ -176,14 +173,14 @@ double _Complex cc_pre = -1.0*_Complex_I*((double)(L));
 
 for(int w=0;w<W;w++)
 {
-LTFAT_COMPLEXH *cPtrTmp = (LTFAT_COMPLEXH*) cPtr+w*M;
+LTFAT_COMPLEX *cPtrTmp = (LTFAT_COMPLEX*) cPtr+w*M;
 
 for(int m=0;m<M;m++)
 {
    double pik_term = pik_term_pre*indVecPtr[m];
    LTFAT_REAL cos_pik_term2 = (LTFAT_REAL) cos(pik_term)*2.0;
-   LTFAT_COMPLEXH cc = (LTFAT_COMPLEXH) cexp(cc_pre*pik_term);
-   LTFAT_COMPLEXH cc2 = (LTFAT_COMPLEXH) cexp(cc2_pre*pik_term);
+   LTFAT_COMPLEX cc = (LTFAT_COMPLEX) cexp(cc_pre*pik_term);
+   LTFAT_COMPLEX cc2 = (LTFAT_COMPLEX) cexp(cc2_pre*pik_term);
 
 
       LTFAT_TYPE s0 =  0.0;
@@ -203,29 +200,29 @@ for(int m=0;m<M;m++)
    }
 }
 #else
-for(int w=0;w<W;w++)
+for(size_t w=0;w<W;w++)
 {
-   LTFAT_COMPLEXH *cPtrTmp = (LTFAT_COMPLEXH*) cPtr+w*M;
+   LTFAT_COMPLEX *cPtrTmp = (LTFAT_COMPLEX*) cPtr+w*M;
    int unrollRem = M%GGA_UNROLL;
 
 //#pragma omp parallel for
-   for(int m=0;m<M-unrollRem;m+=GGA_UNROLL)
+   for(size_t m=0;m<M-unrollRem;m+=GGA_UNROLL)
    {
       double pik_term[GGA_UNROLL];
       LTFAT_REAL cos_pik_term2[GGA_UNROLL];
-      LTFAT_COMPLEXH cc[GGA_UNROLL];
-      LTFAT_COMPLEXH cc2[GGA_UNROLL];
+      LTFAT_COMPLEX cc[GGA_UNROLL];
+      LTFAT_COMPLEX cc2[GGA_UNROLL];
 
       LTFAT_TYPE s0[GGA_UNROLL];
       LTFAT_TYPE s1[GGA_UNROLL];
       LTFAT_TYPE s2[GGA_UNROLL];
 
-      for(int un=0;un<GGA_UNROLL;un++)
+      for(size_t un=0;un<GGA_UNROLL;un++)
       {
          pik_term[un] = pik_term_pre*indVecPtr[m+un];
          cos_pik_term2[un] = (LTFAT_REAL) cos(pik_term[un])*2.0;
-         cc[un] = (LTFAT_COMPLEXH) cexp(cc_pre*pik_term[un]);
-         cc2[un] = (LTFAT_COMPLEXH) cexp(cc2_pre*pik_term[un]);
+         cc[un] = (LTFAT_COMPLEX) cexp(cc_pre*pik_term[un]);
+         cc2[un] = (LTFAT_COMPLEX) cexp(cc2_pre*pik_term[un]);
          s0[un] = 0.0;
          s1[un] = 0.0;
          s2[un] = 0.0;
@@ -233,9 +230,9 @@ for(int w=0;w<W;w++)
 
       LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*L;
 
-      for(int ii=0;ii<L-1;ii++)
+      for(size_t ii=0;ii<L-1;ii++)
       {
-         for(int un=0;un<GGA_UNROLL;un++)
+         for(size_t un=0;un<GGA_UNROLL;un++)
          {
             s0[un] = *fPtrTmp + cos_pik_term2[un]*s1[un] - s2[un];
             s2[un]=s1[un];
@@ -243,19 +240,19 @@ for(int w=0;w<W;w++)
          }
          fPtrTmp++;
       }
-      for(int un=0;un<GGA_UNROLL;un++)
+      for(size_t un=0;un<GGA_UNROLL;un++)
       {
          s0[un] = *fPtrTmp + cos_pik_term2[un]*s1[un] - s2[un];
          cPtrTmp[m+un] = (s0[un]*cc2[un] - s1[un]*cc[un]);
       }
    }
 
-   int m= M-unrollRem;
+   size_t m= M-unrollRem;
 
       double pik_term[GGA_UNROLL];
       LTFAT_REAL cos_pik_term2[GGA_UNROLL];
-      LTFAT_COMPLEXH cc[GGA_UNROLL];
-      LTFAT_COMPLEXH cc2[GGA_UNROLL];
+      LTFAT_COMPLEX cc[GGA_UNROLL];
+      LTFAT_COMPLEX cc2[GGA_UNROLL];
 
       LTFAT_TYPE s0[GGA_UNROLL];
       LTFAT_TYPE s1[GGA_UNROLL];
@@ -265,8 +262,8 @@ for(int w=0;w<W;w++)
    {
        pik_term[un] = pik_term_pre*indVecPtr[m+un];
        cos_pik_term2[un] = (LTFAT_REAL) cos(pik_term[un])*2.0;
-       cc[un] = (LTFAT_COMPLEXH) cexp(cc_pre*pik_term[un]);
-       cc2[un] = (LTFAT_COMPLEXH) cexp(cc2_pre*pik_term[un]);
+       cc[un] = (LTFAT_COMPLEX) cexp(cc_pre*pik_term[un]);
+       cc2[un] = (LTFAT_COMPLEX) cexp(cc2_pre*pik_term[un]);
        s0[un] = 0.0;
        s1[un] = 0.0;
        s2[un] = 0.0;
@@ -274,7 +271,7 @@ for(int w=0;w<W;w++)
 
       LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*L;
 
-      for(int ii=0;ii<L-1;ii++)
+      for(size_t ii=0;ii<L-1;ii++)
       {
          for(int un=0;un<unrollRem;un++)
          {
@@ -301,11 +298,11 @@ for(int w=0;w<W;w++)
 
 LTFAT_EXTERN
 void LTFAT_NAME(chzt)(const LTFAT_TYPE *fPtr, const size_t L, const size_t W, const size_t K,
-                      const double deltao, const double o, LTFAT_COMPLEXH *cPtr)
+                      const double deltao, const double o, LTFAT_COMPLEX *cPtr)
 {
 LTFAT_NAME(chzt_plan) p = LTFAT_NAME(create_chzt_plan)(K,L,deltao, o,FFTW_ESTIMATE,CZT_NEXTFASTFFT);
 
-LTFAT_NAME(chzt_with_plan)(p, fPtr, W,deltao, o, cPtr);
+LTFAT_NAME(chzt_with_plan)(p, fPtr, W, cPtr);
 
 LTFAT_NAME(destroy_chzt_plan)(p);
 }
@@ -313,27 +310,27 @@ LTFAT_NAME(destroy_chzt_plan)(p);
 
 LTFAT_EXTERN
 void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr, const size_t W,
-                        const double deltao, const double o, LTFAT_COMPLEXH *cPtr)
+                         LTFAT_COMPLEX *cPtr)
 {
 
     size_t L = p.L;
     size_t K = p.K;
     size_t Lfft = p.Lfft;
-    LTFAT_COMPLEXH* fbuffer = p.fbuffer;
+    LTFAT_COMPLEX* fbuffer = p.fbuffer;
     LTFAT_FFTW(plan) plan_f = p.plan;
     LTFAT_FFTW(plan) plan_fi = p.plan2;
-    LTFAT_COMPLEXH* W2 = p.W2;
-    LTFAT_COMPLEXH* Wo = p.Wo;
-    LTFAT_COMPLEXH* chirpF = p.chirpF;
+    LTFAT_COMPLEX* W2 = p.W2;
+    LTFAT_COMPLEX* Wo = p.Wo;
+    LTFAT_COMPLEX* chirpF = p.chirpF;
 
 
     // Temporal storage of the post chirp as a last channel of the output
-    //LTFAT_COMPLEXH *cPtrLast = cPtr+K*(W-1);
-    //memcpy(cPtrLast,W2,K*sizeof(LTFAT_COMPLEXH));
+    //LTFAT_COMPLEX *cPtrLast = cPtr+K*(W-1);
+    //memcpy(cPtrLast,W2,K*sizeof(LTFAT_COMPLEX));
 
     for(size_t w = 0;w<W;w++)
     {
-       memset(fbuffer,0,Lfft*sizeof(LTFAT_COMPLEXH));
+       memset(fbuffer,0,Lfft*sizeof(LTFAT_COMPLEX));
        LTFAT_NAME(array2complex)((LTFAT_TYPE *)(fPtr+w*L),fbuffer,L);
 
        //1) Premultiply by a chirp
@@ -349,7 +346,7 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
 /*
        LTFAT_NAME_COMPLEX(conjugate_array)(W2,W2,L);
        LTFAT_NAME_COMPLEX(reverse_array)(W2,W2,L);
-       memcpy(W2+L,cPtrLast+1,(K-1)*sizeof(LTFAT_COMPLEXH));
+       memcpy(W2+L,cPtrLast+1,(K-1)*sizeof(LTFAT_COMPLEX));
        LTFAT_NAME_COMPLEX(conjugate_array)(W2+L,W2+L,K-1);
 
        // FFT of the chirp filter
@@ -363,14 +360,14 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
 
 
        // Inverse FFT using forward FFT plan
-       LTFAT_COMPLEXH *fPtrTmp = fbuffer;
+       LTFAT_COMPLEX *fPtrTmp = fbuffer;
        //LTFAT_NAME_COMPLEX(conjugate_array)(fbuffer,fbuffer,Lfft);
        LTFAT_FFTW(execute)(plan_fi);
        //LTFAT_NAME_COMPLEX(conjugate_array)(fPtrTmp,fPtrTmp,K);
 
 
        // Final chirp multiplication and normalization
-       LTFAT_COMPLEXH *cPtrTmp = cPtr + w*K;
+       LTFAT_COMPLEX *cPtrTmp = cPtr + w*K;
        for(size_t ii=0;ii<K;ii++)
        {
            cPtrTmp[ii]=fPtrTmp[ii]*W2[ii];
@@ -390,7 +387,7 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan)(const size_t K, size_t L, con
     else
      Lfft = nextfastfft(Lfft);
 
-    LTFAT_COMPLEXH* fbuffer = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEXH));
+    LTFAT_COMPLEX* fbuffer = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEX));
     LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
                                                        FFTW_FORWARD, fftw_flags);
         LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
@@ -398,37 +395,37 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan)(const size_t K, size_t L, con
 
     // Pre and post chirp
     size_t N = L>K?L:K;
-    LTFAT_COMPLEXH* W2 = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEXH));
-    LTFAT_COMPLEXH* chirpF = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEXH));
-    LTFAT_COMPLEXH* Wo = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
+    LTFAT_COMPLEX* W2 = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX* chirpF = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX* Wo = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
 
     for(size_t ii=0;ii<N;ii++)
     {
-        W2[ii] = (LTFAT_COMPLEXH) cexp(-1.0*I*deltao*ii*ii/2.0);
+        W2[ii] = (LTFAT_COMPLEX) cexp(-1.0*I*deltao*ii*ii/2.0);
     }
 
     for(size_t ii=0;ii<L;ii++)
     {
-        Wo[ii] = (LTFAT_COMPLEXH) cexp(-1.0*I*o*ii)*W2[ii];
+        Wo[ii] = (LTFAT_COMPLEX) cexp(-1.0*I*o*ii)*W2[ii];
     }
     // Set the rest to zero
-    memset(W2+N,0,(Lfft-N)*sizeof(LTFAT_COMPLEXH));
+    memset(W2+N,0,(Lfft-N)*sizeof(LTFAT_COMPLEX));
 
     LTFAT_NAME_COMPLEX(conjugate_array)(W2,chirpF,K);
     //LTFAT_NAME_COMPLEX(reverse_array)(chirpF,chirpF,L);
-    // memcpy(chirpF+Lfft-L,W2+1,(K-1)*sizeof(LTFAT_COMPLEXH));
+    // memcpy(chirpF+Lfft-L,W2+1,(K-1)*sizeof(LTFAT_COMPLEX));
     //LTFAT_NAME_COMPLEX(conjugate_array)(chirpF+L,chirpF+L,K-1);
     LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,chirpF+Lfft-L+1,L-1);
     LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-L+1,chirpF+Lfft-L+1,L-1);
-    memset(chirpF+K,0,(Lfft-(L+K-1))*sizeof(LTFAT_COMPLEXH));
+    memset(chirpF+K,0,(Lfft-(L+K-1))*sizeof(LTFAT_COMPLEX));
 
     LTFAT_FFTW(execute_dft)(plan_f,chirpF,chirpF);
 
 
     for(size_t ii=0;ii<K;ii++)
     {
-        W2[ii] = (LTFAT_COMPLEXH) cexp(-1.0*I*deltao*ii*ii/2.0)/((LTFAT_REAL) Lfft);
+        W2[ii] = (LTFAT_COMPLEX) cexp(-1.0*I*deltao*ii*ii/2.0)/((LTFAT_REAL) Lfft);
     }
 
 
@@ -457,30 +454,30 @@ void LTFAT_NAME(destroy_chzt_plan)(LTFAT_NAME(chzt_plan) p)
 
 LTFAT_EXTERN
 void LTFAT_NAME(chzt_fact)(const LTFAT_TYPE *fPtr, const size_t L, const size_t W, const size_t K,
-                        const double deltao, const double o, LTFAT_COMPLEXH *cPtr)
+                        const double deltao, const double o, LTFAT_COMPLEX *cPtr)
 {
 LTFAT_NAME(chzt_plan) p = LTFAT_NAME(create_chzt_plan_fact)(K,L,deltao, o,FFTW_ESTIMATE, CZT_NEXTFASTFFT);
 
-LTFAT_NAME(chzt_with_plan_fact)(p, fPtr, W,deltao, o, cPtr);
+LTFAT_NAME(chzt_with_plan_fact)(p, fPtr, W, cPtr);
 
 LTFAT_NAME(destroy_chzt_plan)(p);
 }
 
 LTFAT_EXTERN
 void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr, const size_t W,
-                        const double deltao, const double o, LTFAT_COMPLEXH *cPtr)
+                                     LTFAT_COMPLEX *cPtr)
 {
     size_t L = p.L;
     size_t K = p.K;
     size_t Lfft = p.Lfft;
-    LTFAT_COMPLEXH* fbuffer = p.fbuffer;
+    LTFAT_COMPLEX* fbuffer = p.fbuffer;
     LTFAT_FFTW(plan) plan_f = p.plan;
     LTFAT_FFTW(plan) plan_fi = p.plan2;
-    LTFAT_COMPLEXH* W2 = p.W2;
-    LTFAT_COMPLEXH* Wo = p.Wo;
-    LTFAT_COMPLEXH* chirpF = p.chirpF;
+    LTFAT_COMPLEX* W2 = p.W2;
+    LTFAT_COMPLEX* Wo = p.Wo;
+    LTFAT_COMPLEX* chirpF = p.chirpF;
 
-    LTFAT_COMPLEXH* fBufTmp;
+    LTFAT_COMPLEX* fBufTmp;
     size_t q = (size_t) ceil(((double)L)/((double)K));
 
     size_t lastK = (L/q);
@@ -490,7 +487,7 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
       // *********************************
       // 1) Read and reorganize input data
       // *********************************
-       memset(fbuffer,0,q*Lfft*sizeof(LTFAT_COMPLEXH));
+       memset(fbuffer,0,q*Lfft*sizeof(LTFAT_COMPLEX));
        LTFAT_TYPE* fPtrTmp = ((LTFAT_TYPE *)fPtr) + w*L;
 
        for(size_t k=0;k<lastK;k++)
@@ -499,7 +496,7 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
           fBufTmp = fbuffer + k;
           for(size_t jj=0;jj<q;jj++)
           {
-            *fBufTmp = (LTFAT_COMPLEXH) fTmp[jj];
+            *fBufTmp = (LTFAT_COMPLEX) fTmp[jj];
             fBufTmp+=Lfft;
           }
        }
@@ -508,7 +505,7 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
        fBufTmp = fbuffer + lastK;
        for(size_t jj=0;jj<L-lastK*q;jj++)
        {
-         *fBufTmp = (LTFAT_COMPLEXH) fTmp[jj];
+         *fBufTmp = (LTFAT_COMPLEX) fTmp[jj];
          fBufTmp+=Lfft;
        }
 
@@ -555,7 +552,7 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
       // 6) Postmultiply
       // *********************************
        fBufTmp = fbuffer;
-       LTFAT_COMPLEXH* Wotmp = Wo;
+       LTFAT_COMPLEX* Wotmp = Wo;
        for(size_t jj=0;jj<q;jj++)
        {
           for(size_t k=0;k<K;k++)
@@ -569,11 +566,11 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
       // *********************************
       // 7) Sum cols
       // *********************************
-       LTFAT_COMPLEXH *cPtrTmp = cPtr + w*K;
+       LTFAT_COMPLEX *cPtrTmp = cPtr + w*K;
        for(size_t k=0;k<K;k++)
        {
            fBufTmp = fbuffer + k;
-           cPtrTmp[k] = (LTFAT_COMPLEXH) 0.0;
+           cPtrTmp[k] = (LTFAT_COMPLEX) 0.0;
            for(size_t jj=0;jj<q;jj++)
            {
               cPtrTmp[k]+= *fBufTmp;
@@ -596,23 +593,23 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const size_t K, const si
 
     size_t q = (size_t) ceil(((double)L)/((double)K));
 
-    LTFAT_COMPLEXH* fbuffer = ltfat_malloc(q*Lfft*sizeof(LTFAT_COMPLEXH));
+    LTFAT_COMPLEX* fbuffer = ltfat_malloc(q*Lfft*sizeof(LTFAT_COMPLEX));
 
     const LTFAT_FFTW(iodim) dims = {.n = Lfft, .is = 1, .os = 1};
     const LTFAT_FFTW(iodim) howmany_dims = {.n = q,.is = Lfft, .os = Lfft};
     LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
-                                                         (LTFAT_COMPLEXH*)fbuffer, (LTFAT_COMPLEXH*) fbuffer,
+                                                         (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
                                                          FFTW_FORWARD, fftw_flags);
 
     LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
-                                                         (LTFAT_COMPLEXH*)fbuffer, (LTFAT_COMPLEXH*) fbuffer,
+                                                         (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
                                                          FFTW_BACKWARD, fftw_flags);
 
-    LTFAT_COMPLEXH* W2 = ltfat_malloc(K*sizeof(LTFAT_COMPLEXH));
-    LTFAT_COMPLEXH* chirpF = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEXH));
-    LTFAT_COMPLEXH* Wo = ltfat_malloc(q*K*sizeof(LTFAT_COMPLEXH));
+    LTFAT_COMPLEX* W2 = ltfat_malloc(K*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX* chirpF = ltfat_malloc(Lfft*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX* Wo = ltfat_malloc(q*K*sizeof(LTFAT_COMPLEX));
 
-    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEXH*)chirpF, (LTFAT_COMPLEXH*) chirpF,
+    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)chirpF, (LTFAT_COMPLEX*) chirpF,
                                                        FFTW_FORWARD, fftw_flags);
 
 
@@ -621,13 +618,13 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const size_t K, const si
 
     for(size_t k=0;k<K;k++)
     {
-        W2[k] = (LTFAT_COMPLEXH) cexp(-1.0*q*I*deltao*k*k/2.0);
+        W2[k] = (LTFAT_COMPLEX) cexp(-1.0*q*I*deltao*k*k/2.0);
     }
 
     LTFAT_NAME_COMPLEX(conjugate_array)(W2,chirpF,K);
     LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,chirpF+Lfft-K+1,K-1);
     LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-K+1,chirpF+Lfft-K+1,K-1);
-    memset(chirpF+K,0,(Lfft-(2*K-1))*sizeof(LTFAT_COMPLEXH));
+    memset(chirpF+K,0,(Lfft-(2*K-1))*sizeof(LTFAT_COMPLEX));
     LTFAT_FFTW(execute)(plan_chirpF);
     LTFAT_FFTW(destroy_plan)(plan_chirpF);
 
@@ -635,16 +632,16 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const size_t K, const si
 
     for(size_t jj=0;jj<q;jj++)
     {
-       LTFAT_COMPLEXH* Wotmp = Wo + jj*K;
+       LTFAT_COMPLEX* Wotmp = Wo + jj*K;
        for(size_t k=0;k<K;k++)
        {
-          Wotmp[k] = (LTFAT_COMPLEXH) cexp(-1.0*I*jj*(k*deltao+o))*W2[k]*oneoverLfft;
+          Wotmp[k] = (LTFAT_COMPLEX) cexp(-1.0*I*jj*(k*deltao+o))*W2[k]*oneoverLfft;
        }
     }
 
     for(size_t k=0;k<K;k++)
     {
-       W2[k] *= (LTFAT_COMPLEXH) cexp(-1.0*I*k*q*o);
+       W2[k] *= (LTFAT_COMPLEX) cexp(-1.0*I*k*q*o);
     }
 
 

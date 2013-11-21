@@ -1,10 +1,9 @@
-#include <complex.h>
 #include "config.h"
-#include <math.h>
 #include "ltfat.h"
-#include <stdio.h>
+#include "ltfat_types.h"
 
-#define PI 3.1415926535897932384626433832795
+
+
 
 static inline long positiverem_long(long int a,int b)
 {
@@ -14,7 +13,7 @@ static inline long positiverem_long(long int a,int b)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(pchirp)(const long L, const long n, LTFAT_COMPLEXH *g)
+LTFAT_NAME(pchirp)(const long L, const long n, LTFAT_COMPLEX *g)
 {
 
    const long LL=2*L;
@@ -42,10 +41,10 @@ LTFAT_NAME(pchirp)(const long L, const long n, LTFAT_COMPLEXH *g)
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_shear_plan)
-LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
+LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 			   const int L, const int W, const int a, const int M,
 			   const int s0, const int s1, const int br,
-			   LTFAT_COMPLEXH *cout,
+			   LTFAT_COMPLEX *cout,
 			   unsigned flags)
 {
    LTFAT_NAME(dgt_shear_plan) plan;
@@ -66,26 +65,26 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
    const int Mr = L/br;
    const int Nr = L/ar;
 
-   plan.f     = (LTFAT_COMPLEXH *)f;
-   plan.fwork = (LTFAT_COMPLEXH *)f;
-   plan.gwork = (LTFAT_COMPLEXH *)g;
+   plan.f     = (LTFAT_COMPLEX *)f;
+   plan.fwork = (LTFAT_COMPLEX *)f;
+   plan.gwork = (LTFAT_COMPLEX *)g;
    plan.cout  = cout;
 
-   plan.c_rect = ltfat_malloc(M*N*W*sizeof(LTFAT_COMPLEXH));
+   plan.c_rect = ltfat_malloc(M*N*W*sizeof(LTFAT_COMPLEX));
 
-   LTFAT_COMPLEXH *f_before_fft = (LTFAT_COMPLEXH *)f;
-   LTFAT_COMPLEXH *g_before_fft = (LTFAT_COMPLEXH *)g;
+   LTFAT_COMPLEX *f_before_fft = (LTFAT_COMPLEX *)f;
+   LTFAT_COMPLEX *g_before_fft = (LTFAT_COMPLEX *)g;
 
    if ((s0!=0) || (s1!=0))
    {
-      plan.fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEXH));
-      plan.gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
+      plan.fwork = ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
+      plan.gwork = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
    }
 
 
    if (s1)
    {
-      plan.p1 = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
+      plan.p1 = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
 
       LTFAT_NAME(pchirp)(L,s1,plan.p1);
 
@@ -112,7 +111,7 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
    {
 
       /* Allocate memory and compute the pchirp */
-      plan.p0 = ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
+      plan.p0 = ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
       LTFAT_NAME(pchirp)(L,-s0,plan.p0);
 
       /* if data has already been copied to the working arrays, use
@@ -142,7 +141,7 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
 
    }
 
-   plan.finalmod = ltfat_malloc(2*N*sizeof(LTFAT_COMPLEXH));
+   plan.finalmod = ltfat_malloc(2*N*sizeof(LTFAT_COMPLEX));
 
    for (int n=0;n<2*N;n++)
    {
@@ -298,10 +297,10 @@ LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
+LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 		      const int L, const int W, const int a, const int M,
 		      const int s0, const int s1, const int br,
-		      LTFAT_COMPLEXH *cout)
+		      LTFAT_COMPLEX *cout)
 {
 
    LTFAT_NAME(dgt_shear_plan) plan = LTFAT_NAME(dgt_shear_init)(

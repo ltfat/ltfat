@@ -1,8 +1,5 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
-#include <complex.h>
-#include "config.h"
-#include "ltfat.h"
 
 LTFAT_EXTERN
 void LTFAT_NAME(circshift)(LTFAT_TYPE *in, LTFAT_TYPE *out, const ptrdiff_t L, const ptrdiff_t shift)
@@ -105,7 +102,7 @@ else
 
 
 LTFAT_EXTERN
-void LTFAT_NAME(array2complex)(LTFAT_TYPE *in, LTFAT_COMPLEXH *out, const size_t L)
+void LTFAT_NAME(array2complex)(LTFAT_TYPE *in, LTFAT_COMPLEX *out, const size_t L)
 {
 #ifdef LTFAT_COMPLEXTYPE
 if(in==(LTFAT_TYPE*)out)
@@ -114,7 +111,7 @@ if(in==(LTFAT_TYPE*)out)
 }
 else
 {
-    memcpy(out,in,L*sizeof(LTFAT_COMPLEXH));
+    memcpy(out,in,L*sizeof(LTFAT_COMPLEX));
 }
 #else
 if(in==(LTFAT_TYPE*)out)

@@ -7,6 +7,7 @@
 #include <math.h>
 #include "fftw3.h"
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 
 
@@ -92,8 +93,9 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	       for (int s=0;s<d;s++)
 	       {
 		  const int rem = r+l*c+positiverem(u+s*q-l*h_a,N)*M+w*ld4c;
-		  cbuf[s][0] = cwork[rem][0];
-		  cbuf[s][1] = cwork[rem][1];
+		  cbuf[s] = cwork[rem];
+		  //cbuf[s][0] = cwork[rem][0];
+		  //cbuf[s][1] = cwork[rem][1];
 	       }
 
 	       /* Do inverse fft of length d */
@@ -101,8 +103,9 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
 	       for (int s=0;s<d;s++)
 	       {
-		  cfp[s*ld3b][0] = cbuf[s][0];
-		  cfp[s*ld3b][1] = cbuf[s][1];
+	          cfp[s*ld3b] =  cbuf[s];
+		 // cfp[s*ld3b][0] = cbuf[s][0];
+		 // cfp[s*ld3b][1] = cbuf[s][1];
 	       }
 	       /* Advance the cf pointer. This is only done in this
 		* one place, because the loops are placed such that
@@ -130,7 +133,7 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	 {
 	    for (int km=0;km<p;km++)
 	    {
-#ifdef HAVE_COMPLEX_H
+
 	       fbase[km+nm*p]=0.0;
 	       for (int mm=0;mm<q;mm++)
 	       {
@@ -138,7 +141,7 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	       }
 	       /* Scale because of FFTWs normalization. */
 	       fbase[km+nm*p]=fbase[km+nm*p]*scalconst;
-#else
+/*
 	       fbase[km+nm*p][0]=0.0;
 	       fbase[km+nm*p][1]=0.0;
 	       for (int mm=0;mm<q;mm++)
@@ -146,10 +149,10 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 		 fbase[km+nm*p][0]+=gbase[km+mm*p][0]*cbase[mm+nm*q][0]-gbase[km+mm*p][1]*cbase[mm+nm*q][1];
 		 fbase[km+nm*p][1]+=gbase[km+mm*p][0]*cbase[mm+nm*q][1]+gbase[km+mm*p][1]*cbase[mm+nm*q][0];
 	       }
-	       /* Scale because of FFTWs normalization. */
+	       // Scale because of FFTWs normalization.
 	       fbase[km+nm*p][0]=fbase[km+nm*p][0]*scalconst;
 	       fbase[km+nm*p][1]=fbase[km+nm*p][1]*scalconst;
-#endif
+*/
 	    }
 	 }
       }
@@ -171,8 +174,9 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	    {
 	       for (int s=0;s<d;s++)
 	       {
-		  cbuf[s][0] = ffp[s*ld2ff][0];
-		  cbuf[s][1] = ffp[s*ld2ff][1];
+	           cbuf[s] = ffp[s*ld2ff];
+		  //cbuf[s][0] = ffp[s*ld2ff][0];
+		  //cbuf[s][1] = ffp[s*ld2ff][1];
 	       }
 
 	       LTFAT_FFTW(execute)(p_before);
@@ -180,8 +184,9 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	       for (int s=0;s<d;s++)
 	       {
 		  const int rem = positiverem(k*M+s*p*M-l*h_a*a, L);
-		  fp[rem][0] = cbuf[s][0];
-		  fp[rem][1] = cbuf[s][1];
+		  fp[rem] = cbuf[s];
+		  //fp[rem][0] = cbuf[s][0];
+		  //fp[rem][1] = cbuf[s][1];
 	       }
 
 	       /* Advance the ff pointer. This is only done in this
@@ -312,8 +317,9 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
 	       for (int s=0;s<d2;s++)
 	       {
-		  cfp[s*ld3b][0] = cbuf[s][0];
-		  cfp[s*ld3b][1] = cbuf[s][1];
+	           cfp[s*ld3b] = cbuf[s];
+		  //cfp[s*ld3b][0] = cbuf[s][0];
+		  //cfp[s*ld3b][1] = cbuf[s][1];
 	       }
 	       /* Advance the cf pointer. This is only done in this
 		* one place, because the loops are placed such that
@@ -339,7 +345,7 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	 {
 	    for (int km=0;km<p;km++)
 	    {
-#ifdef HAVE_COMPLEX_H
+//#ifdef HAVE_COMPLEX_H
 	       fbase[km+nm*p]=0.0;
 	       for (int mm=0;mm<q;mm++)
 	       {
@@ -347,7 +353,7 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	       }
 	       /* Scale because of FFTWs normalization. */
 	       fbase[km+nm*p]=fbase[km+nm*p]*scalconst;
-#else
+/*#else
 	       fbase[km+nm*p][0]=0.0;
 	       fbase[km+nm*p][1]=0.0;
 	       for (int mm=0;mm<q;mm++)
@@ -355,10 +361,10 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 		 fbase[km+nm*p][0]+=gbase[km+mm*p][0]*cbase[mm+nm*q][0]-gbase[km+mm*p][1]*cbase[mm+nm*q][1];
 		 fbase[km+nm*p][1]+=gbase[km+mm*p][0]*cbase[mm+nm*q][1]+gbase[km+mm*p][1]*cbase[mm+nm*q][0];
 	       }
-	       /* Scale because of FFTWs normalization. */
+	       // Scale because of FFTWs normalization.
 	       fbase[km+nm*p][0]=fbase[km+nm*p][0]*scalconst;
 	       fbase[km+nm*p][1]=fbase[km+nm*p][1]*scalconst;
-#endif
+#endif*/
 	    }
 	 }
       }
@@ -377,8 +383,9 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 	    {
 	       for (int s=0;s<d2;s++)
 	       {
-		  cbuf[s][0] = ffp[s*ld2ff][0];
-		  cbuf[s][1] = ffp[s*ld2ff][1];
+	           cbuf[s] = ffp[s*ld2ff];
+		  //cbuf[s][0] = ffp[s*ld2ff][0];
+		  //cbuf[s][1] = ffp[s*ld2ff][1];
 	       }
 
 	       LTFAT_FFTW(execute)(p_before);

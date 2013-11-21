@@ -1,12 +1,8 @@
 #include "config.h"
-#ifdef HAVE_COMPLEX_H
-#include <complex.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <fftw3.h>
 #include "ltfat.h"
+#include "ltfat_types.h"
+
+#define CH(name) LTFAT_COMPLEXH_NAME(name)
 
 /* The following macro adds the coefficients together performing the
  * last part of the Poisson summation, executes the FFT on the summed
@@ -19,6 +15,8 @@
  *
  * The macro is called in three different places in the dgt_fb function.
  */
+
+
 #define THE_SUM { \
 for (int m=0;m<M;m++) \
 { \
@@ -61,8 +59,8 @@ for (int m=0;m<M;m++) \
 coefsum=(LTFAT_REAL*)cout+2*(n*M2+w*M2*N); \
 for (int m=0;m<M2;m++) \
 { \
-   coefsum[2*m]   = cbuf[m][0]; \
-   coefsum[2*m+1] = cbuf[m][1]; \
+   coefsum[2*m]   = CH(creal)(cbuf[m]); \
+   coefsum[2*m+1] = CH(cimag)(cbuf[m]); \
 }}
 
 
@@ -96,13 +94,15 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_COMPLEX *g,
 
    for (int l=0;l<glh;l++)
    {
-      plan.gw[l][0]=g[l+(gl-glh)][0];
-      plan.gw[l][1]=-g[l+(gl-glh)][1];
+       plan.gw[l]=CH(conj)(g[l+(gl-glh)]);
+   //   plan.gw[l][0]=g[l+(gl-glh)][0];
+   //   plan.gw[l][1]=-g[l+(gl-glh)][1];
    }
    for (int l=glh;l<gl;l++)
    {
-      plan.gw[l][0]=g[l-glh][0];
-      plan.gw[l][1]=-g[l-glh][1];
+       plan.gw[l]=CH(conj)(g[l-glh]);
+     // plan.gw[l][0]=g[l-glh][0];
+     // plan.gw[l][1]=-g[l-glh][1];
    }
 
    return (plan);
@@ -160,14 +160,14 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	 fbd=(LTFAT_REAL*)f+2*(L-(glh-n*a)+L*w);
 	 for (int l=0;l<glh-n*a;l++)
 	 {
-	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	    fw[2*l]  =fbd[2*l]*CH(creal)(gb[l])-fbd[2*l+1]*CH(cimag)(gb[l]);
+	    fw[2*l+1]=fbd[2*l+1]*CH(creal)(gb[l])+fbd[2*l]*CH(cimag)(gb[l]);
 	 }
 	 fbd=(LTFAT_REAL*)f-2*(glh-n*a)+2*L*w;
 	 for (int l=glh-n*a;l<gl;l++)
 	 {
-	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	    fw[2*l]  =fbd[2*l]*CH(creal)(gb[l])-fbd[2*l+1]*CH(cimag)(gb[l]);
+	    fw[2*l+1]=fbd[2*l+1]*CH(creal)(gb[l])+fbd[2*l]*CH(cimag)(gb[l]);
 	 }
 
 	 THE_SUM
@@ -184,8 +184,8 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	 fbd=(LTFAT_REAL*)f+2*(n*a-glh+L*w);
 	 for (int l=0;l<gl;l++)
 	 {
-	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	    fw[2*l]  =fbd[2*l]*CH(creal)(gb[l])-fbd[2*l+1]*CH(cimag)(gb[l]);
+	    fw[2*l+1]=fbd[2*l+1]*CH(creal)(gb[l])+fbd[2*l]*CH(cimag)(gb[l]);
 	 }
 
 	 THE_SUM
@@ -202,14 +202,14 @@ LTFAT_NAME(dgt_fb_execute)(LTFAT_NAME(dgt_fb_plan) plan, const LTFAT_COMPLEX *f,
 	 fbd=(LTFAT_REAL*)f+2*(n*a-glh+L*w);
 	 for (int l=0;l<L-n*a+glh;l++)
 	 {
-	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	    fw[2*l]  =fbd[2*l]*CH(creal)(gb[l])-fbd[2*l+1]*CH(cimag)(gb[l]);
+	    fw[2*l+1]=fbd[2*l+1]*CH(creal)(gb[l])+fbd[2*l]*CH(cimag)(gb[l]);
 	 }
 	 fbd=(LTFAT_REAL*)f-2*(L-n*a+glh)+2*L*w;
 	 for (int l=L-n*a+glh;l<gl;l++)
 	 {
-	    fw[2*l]  =fbd[2*l]*gb[l][0]-fbd[2*l+1]*gb[l][1];
-	    fw[2*l+1]=fbd[2*l+1]*gb[l][0]+fbd[2*l]*gb[l][1];
+	    fw[2*l]  =fbd[2*l]*CH(creal)(gb[l])-fbd[2*l+1]*CH(cimag)(gb[l]);
+	    fw[2*l+1]=fbd[2*l+1]*CH(creal)(gb[l])+fbd[2*l]*CH(cimag)(gb[l]);
 	 }
 
 	 THE_SUM
@@ -544,3 +544,6 @@ LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan, const LTF
    }
 
 }
+
+#undef THE_SUM
+#undef CH

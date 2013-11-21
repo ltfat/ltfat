@@ -16,12 +16,11 @@ endif
 MATLABLIBS=-lmwlapack -lmwblas
 MATLABLINKFLAGS=-L"$(MATLABROOT)\bin\$(ARCH)" $(MATLABLIBS)
 
-CC=gcc
-
 CFLAGS=-O3 -s -std=c99 -I./thirdparty -I./
-DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DMATLABFORTRAN
+DIRECTIVES=-DMATLABFORTRAN -DDLL_EXPORT_SYMBOLS 
 
 include filedefs.mk
+include ostools.mk
 
 DFILES = $(addprefix d,$(files)) $(files_notypechange)
 DFILES_BLASLAPACK = $(addprefix d,$(files_blaslapack))
@@ -35,40 +34,40 @@ shared: double_shared single_shared
 static: double_static single_static
 
 double_shared: $(DFILES) $(DFILES_BLASLAPACK) Makefile_mingw
-	$(CC) -shared -Wl,--dll $(DFILES) $(DFILES_BLASLAPACK) \
+	$(CC) -shared -Wl,--dll $(DFILES) $(DFILES_BLASLAPACK)  \
 	-o ../lib/ltfat.dll ltfat_notdllexport.def -static-libgcc -L../mex -lfftw3-3 $(MATLABLINKFLAGS)
-	del *.o *.a
-	copy /Y ..\lib\ltfat.dll ..\mex\
+	$(RM) *.o *.a
+	$(CP) ..\lib\ltfat.dll ..\mex\
   
 single_shared: $(SFILES) $(SFILES_BLASLAPACK) Makefile_mingw  
-	$(CC) -shared -Wl,--dll $(SFILES) $(SFILES_BLASLAPACK) \
+	$(CC) -shared -Wl,--dll $(SFILES) $(SFILES_BLASLAPACK)  \
 	-o ../lib/ltfatf.dll -static-libgcc -L../mex -lfftw3-3 -lfftw3f-3 -lltfat $(MATLABLINKFLAGS)
-	del *.o *.a
-	copy /Y ..\lib\ltfatf.dll ..\mex\
+	$(RM) *.o *.a
+	$(CP) ..\lib\ltfatf.dll ..\mex\
 	
 double_shared_noblaslapack: $(DFILES) Makefile_mingw
 	$(CC) -shared -Wl,--dll $(DFILES) \
 	-o ../lib/ltfat.dll ltfat_notdllexport.def -static-libgcc -L../mex -lfftw3-3
-	del *.o *.a
-	copy /Y ..\lib\ltfat.dll ..\mex\
+	$(RM) *.o *.a
+	$(CP) ..\lib\ltfat.dll ..\mex\
   
 single_shared_noblaslapack: $(SFILES) Makefile_mingw  
 	$(CC) -shared -Wl,--dll $(SFILES) \
 	-o ../lib/ltfatf.dll -static-libgcc -L../mex -lfftw3-3 -lfftw3f-3 -lltfat
-	del *.o *.a
-	copy /Y ..\lib\ltfatf.dll ..\mex\
+	$(RM) *.o *.a
+	$(CP) ..\lib\ltfatf.dll ..\mex\
 	
 double_static: $(DFILES) $(DFILES_BLASLAPACK) Makefile_mingw
-	ar rvu libltfat.a $(DFILES) 
+	ar rvu libltfat.a $(DFILES) $(DFILES_BLASLAPACK)
 	ranlib libltfat.a
-	copy /Y libltfat.a ..\lib
-	del *.o *.a	
+	$(CP) libltfat.a ..\lib
+	$(RM) *.o *.a	
 	
 single_static: $(SFILES) $(SFILES_BLASLAPACK) Makefile_mingw
-	ar rvu libltfatf.a $(SFILES) 
+	ar rvu libltfatf.a $(SFILES) $(SFILES_BLASLAPACK)
 	ranlib libltfatf.a
-	copy /Y libltfatf.a ..\lib
-	del *.o *.a	
+	$(CP) libltfatf.a ..\lib
+	$(RM) *.o *.a	
 
 s%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_SINGLE  -c $< -o s$*.o
@@ -80,11 +79,11 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -c $<
 
 clean:
-	del ..\lib\ltfat.dll
-	del ..\lib\ltfatf.dll
-	del ..\lib\libltfat.a
-	del ..\lib\libltfatf.a
-	del ..\mex\ltfat.dll
-	del ..\mex\ltfatf.dll
-	del *.o *.a
+	$(RM) ..\lib\ltfat.dll
+	$(RM) ..\lib\ltfatf.dll
+	$(RM) ..\lib\libltfat.a
+	$(RM) ..\lib\libltfatf.a
+	$(RM) ..\mex\ltfat.dll
+	$(RM) ..\mex\ltfatf.dll
+	$(RM) *.o *.a
 
