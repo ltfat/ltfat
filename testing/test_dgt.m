@@ -57,6 +57,10 @@ for ii=1:length(Lr);
       g=tester_crand(L,1);
     end;
     
+    % TO DO: 
+    C = gabframebounds(g,a,M);
+    
+    
     gd=gabdual(g,a,M);
     gt=gabtight(g,a,M);
     

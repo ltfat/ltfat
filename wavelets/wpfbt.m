@@ -26,8 +26,14 @@ function [c,info]=wpfbt(f,wt,varargin)
 %   columns. If *f* is a matrix, the transformation is applied to each of 
 %   column of the matrix.
 %
+%   By default, the function scales all intermediate outputs in the tree
+%   which are not terminal ones in order to preserve energy. Passing a 
+%   `'noscale'` flag overrides this behavior. This is necessary for the
+%   |wpbest| function to correctly work with the cost measures.
+%
 %   Please see help for |wfbt| description of possible formats of *wt* and
 %   of the additional flags.
+%
 %
 %   Examples:
 %   ---------
@@ -48,6 +54,7 @@ if(nargin<2)
 end
 
 definput.import = {'fwt','wfbtcommon'};
+definput.flags.scale = {'scale','noscale'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
@@ -70,7 +77,7 @@ end
 %% ----- step 3 : Run computation
 wtPath = nodesBForder(wt);
 rangeLoc = rangeInLocalOutputs(wtPath,wt);
-c = comp_wpfbt(f,wt.nodes(wtPath),rangeLoc,flags.ext);
+c = comp_wpfbt(f,wt.nodes(wtPath),rangeLoc,flags.ext,flags.do_scale);
 
 %% ----- Optional : Fill the info struct. -----
 if nargout>1
@@ -81,4 +88,5 @@ if nargout>1
    info.Ls = Ls;
    info.fOrder = flags.forder;
    info.isPacked = 0;
+   info.isNotScaled = ~flags.do_scale;
 end

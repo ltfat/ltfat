@@ -29,13 +29,11 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    W = mxGetN(prhs[0])/N;
 
    plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxREAL);
-   const LTFAT_REAL _Complex* c_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[0]);
-   const LTFAT_REAL _Complex* gf_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[1]);
+   const LTFAT_COMPLEX* c_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
+   const LTFAT_COMPLEX* gf_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[1]);
    LTFAT_REAL* f_r = (LTFAT_REAL*) mxGetData(plhs[0]);
 
-   LTFAT_NAME(idgtreal_fac)((const LTFAT_REAL (*)[2])c_combined,
-                            (const LTFAT_REAL (*)[2])gf_combined,
-                            L,W,a,M,f_r);
+   LTFAT_NAME(idgtreal_fac)(c_combined,gf_combined,L,W,a,M,f_r);
 
 
    return;

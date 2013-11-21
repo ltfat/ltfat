@@ -44,9 +44,11 @@ end
 ctf = abs(ctf);
 
 if isoctave
-   ctf = cast(ctf,'double');
-   javaMethod('append',p,ctf(:),size(ctf,1),size(ctf,2));
+   % The JAVA 2D-array handling is row-major
+   ctf = cast(ctf,'double').';
+   javaMethod('append',p,ctf(:),size(ctf,2),size(ctf,1));
 else
+   % Matlab casts correctly
    ctf = cast(ctf,'single');
    javaMethod('append',p,ctf);
 end

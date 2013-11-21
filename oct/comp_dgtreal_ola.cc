@@ -19,7 +19,7 @@ static inline void fwd_dgtreal_ola(const double *f, const double *g,
 							      const octave_idx_type M, const octave_idx_type bl,
 								  Complex *cout)
 {
-   dgtreal_ola_d(f,g,L,gl,W,a,M,bl,reinterpret_cast<double (*)[2]>(cout));
+   dgtreal_ola_d(f,g,L,gl,W,a,M,bl,reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void fwd_dgtreal_ola(const float *f, const float *g,
@@ -28,7 +28,7 @@ static inline void fwd_dgtreal_ola(const float *f, const float *g,
 							    const octave_idx_type M, const octave_idx_type bl,
 								FloatComplex *cout)
 {
-   dgtreal_ola_s(f,g,L,gl,W,a,M,bl,reinterpret_cast<float (*)[2]>(cout));
+   dgtreal_ola_s(f,g,L,gl,W,a,M,bl,reinterpret_cast<float _Complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

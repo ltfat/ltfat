@@ -1,4 +1,4 @@
-function f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext)
+function f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext,do_scale)
 %COMP_IWFBT Compute Inverse Wavelet Packet Filter-Bank Tree
 %   Usage:  f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext)
 %
@@ -34,7 +34,10 @@ doPer = strcmp(ext,'per');
     if(pOutIdxs(jj))
        % Run filterbank and add to the existing subband.
        ctmp = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,size(c{pOutIdxs(jj)},1),offset,ext);
-       c{pOutIdxs(jj)} = (1/sqrt(2))*(c{pOutIdxs(jj)}+ctmp);
+       c{pOutIdxs(jj)} = c{pOutIdxs(jj)}+ctmp;
+       if do_scale
+           c{pOutIdxs(jj)} = (1/sqrt(2))*c{pOutIdxs(jj)};
+       end
     else
        % We are at the root.
        f = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,Ls,offset,ext);

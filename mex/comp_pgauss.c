@@ -1,3 +1,4 @@
+/*
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
 #else
@@ -8,19 +9,27 @@
 #include "config.h"
 #include "ltfat.h"
 #include "ltfat-mex-helper.h"
+*/
+
+
+#define MEX_FILE __BASE_FILE__
+#include "ltfat_mex_template_helper.h"
+
+#if defined(LTFAT_DOUBLE)
+#include "ltfat_types.h"
+
 
 /* Calling convention:
  *  comp_pgauss(L,w,c_t,c_f);
  */
 
-void mexFunction( int nlhs, mxArray *plhs[],
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 		  int nrhs, const mxArray *prhs[] )
 
 {
    int L;
    double w, c_t, c_f;
    double *g;
-   ltfat_complex *gc;
 
    L=(int)mxGetScalar(prhs[0]);
    w=(double)mxGetScalar(prhs[1]);
@@ -36,19 +45,15 @@ void mexFunction( int nlhs, mxArray *plhs[],
   }
   else
   {
-    gc = mxMalloc(L*sizeof(ltfat_complex));
-
+    plhs[0] = ltfatCreateMatrix(L, 1, mxDOUBLE_CLASS, mxCOMPLEX);
+    LTFAT_COMPLEX *gc = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
     pgauss_cmplx_d(L, w, c_t,c_f,gc);
-
-    plhs[0] = mxCreateDoubleMatrix(L, 1, mxCOMPLEX);
-
-    combined2split(L, (const ltfat_complex*)gc, plhs[0]);
-
-    mxFree(gc);
   }
 
   return;
 
 }
+
+#endif
 
 

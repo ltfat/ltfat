@@ -35,7 +35,7 @@ mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg)
    mxArray* out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
    mwSize L = mxGetNumberOfElements(parg);
 
-   #if (!defined(COMPLEXINDEPENDENT) && !defined(COMPLEXARGS) && !defined(REALARGS)) || defined(NOCOMPLEXFMTCHANGE)
+   #ifdef NOCOMPLEXFMTCHANGE
     LTFAT_REAL *i_r = (LTFAT_REAL*)mxGetPr(parg);
     LTFAT_REAL *o_r = (LTFAT_REAL*)mxGetPr(out);
     LTFAT_REAL *o_i = (LTFAT_REAL*)mxGetPi(out);
@@ -82,7 +82,7 @@ mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg)
    mxArray* out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
    mwSize L = mxGetNumberOfElements(parg);
 
-   LTFAT_COMPLEXH* outc = (LTFAT_COMPLEXH*) mxGetData(out);
+   LTFAT_COMPLEX* outc = (LTFAT_COMPLEX*) mxGetData(out);
 
    LTFAT_REAL *i_r= (LTFAT_REAL*) mxGetPr(parg);
 
@@ -118,13 +118,13 @@ mxArray* LTFAT_NAME(mexCombined2split)( const mxArray *parg)
       return tmpCell;
    }
 
-   // just copy pointer if the element is not numeric
-   if(!mxIsNumeric(parg))
+   // just copy pointer if the element is not numeric or is real
+   if(!mxIsNumeric(parg) || !mxIsComplex(parg))
    {
       return (mxArray*)parg;
    }
 
-   LTFAT_COMPLEXH *pargc = (LTFAT_COMPLEXH *) mxGetData(parg);
+   LTFAT_COMPLEX *pargc = (LTFAT_COMPLEX *) mxGetData(parg);
    mwIndex ndim = mxGetNumberOfDimensions(parg);
    const mwSize *dims = mxGetDimensions(parg);
    mxArray*out = mxCreateNumericArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);

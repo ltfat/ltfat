@@ -6,7 +6,6 @@
 #define TYPEDEPARGS 0
 #define SINGLEARGS
 #define COMPLEXARGS
-
 #define MATCHEDARGS 1
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
@@ -34,12 +33,11 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
 
    plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxREAL);
-   const LTFAT_REAL _Complex* c_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[0]);
+   const LTFAT_COMPLEX* c_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
    const LTFAT_REAL * gf = (const LTFAT_REAL *) mxGetData(prhs[1]);
    LTFAT_REAL* f_r = (LTFAT_REAL*) mxGetData(plhs[0]);
 
-   LTFAT_NAME(idgtreal_fb)((const LTFAT_REAL (*)[2])c_combined,
-                            gf,L,gl,W,a,M,f_r);
+   LTFAT_NAME(idgtreal_fb)(c_combined,gf,L,gl,W,a,M,f_r);
 
 
    return;

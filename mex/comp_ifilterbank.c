@@ -58,8 +58,8 @@ do{                               \
        mexErrMsgTxt("COMP_IFILTERBANK: Number of dimensions of arrays are not equal.");
    }
 
-   mwSize* dimsTO = mxGetDimensions(to);
-   mwSize* dimsFROM = mxGetDimensions(from);
+   const mwSize* dimsTO = mxGetDimensions(to);
+   const mwSize* dimsFROM = mxGetDimensions(from);
    mwSize L = 1;
 
    for(mwIndex ii=0;ii<nDimTO;ii++)
@@ -156,7 +156,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
    const mxArray* mxc = prhs[0];
    const mxArray* mxg = prhs[1];
    const mxArray* mxa = prhs[2];
-   const mxArray* tmpF = NULL;
+   mxArray* tmpF = NULL;
    plhs[0] = NULL;
 
    // input data length

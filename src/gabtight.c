@@ -15,9 +15,9 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
    LTFAT_COMPLEX *gf = ltfat_malloc(L*R*sizeof(LTFAT_COMPLEX));
    LTFAT_COMPLEX *gdf = ltfat_malloc(L*R*sizeof(LTFAT_COMPLEX));
 
-   LTFAT_NAME_REAL(wfac)(g, L, R, a, M, gf);
+   LTFAT_NAME(wfac)(g, L, R, a, M, gf);
    LTFAT_NAME_REAL(gabtight_fac)((const LTFAT_COMPLEX *)gf,L,R,a,M,gdf);
-   LTFAT_NAME_REAL(iwfac)((const LTFAT_COMPLEX *)gdf,L,R,a,M,gd);
+   LTFAT_NAME(iwfac)((const LTFAT_COMPLEX *)gdf,L,R,a,M,gd);
 
 #else
 

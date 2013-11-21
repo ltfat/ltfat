@@ -1,5 +1,13 @@
+Version 1.4.3
+
+* Added chirped Z-transform
+
+* Block processing demos now work in Octave (on Linux)
+
+* New zoomig features for blockplot
+
 Version 1.4.2
-Version 1.4.2 17/9 2013
+
 * The filterbanks algorithms are now much faster because all the algorithms have been implemented in the C backend
   
 * franalasso can now use the the FISTA algorithm

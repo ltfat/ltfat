@@ -1,4 +1,4 @@
-function c=comp_wpfbt(f,wtNodes,rangeLoc,ext)
+function c=comp_wpfbt(f,wtNodes,rangeLoc,ext,do_scale)
 %COMP_WPFBT Compute Wavelet Packet Filterbank Tree
 %   Usage:  c=comp_wpfbt(f,wtNodes,ext);
 %
@@ -53,7 +53,9 @@ for jj=1:numel(wtNodes)
    % TO DO: Investigate how this scaling influences the |wpbest| 
    % algorithms.
    if ~isempty(cInRunIdxs)
-      c{cInRunIdxs(1)} = c{cInRunIdxs(1)}/sqrt(2);
+      if do_scale
+         c{cInRunIdxs(1)} = c{cInRunIdxs(1)}/sqrt(2);
+      end
       ca = c{cInRunIdxs(1)};
    end
 end   

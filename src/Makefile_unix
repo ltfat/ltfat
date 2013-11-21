@@ -2,9 +2,7 @@
 
 CC=gcc
 
-CFLAGS=-w -O3 -fpic -std=c99 -Ithirdparty -fvisibility=hidden
-DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED -DLTFAT_BACKEND_EXPORTS
-#CFLAGS=-O2 -fPIC -std=c99 -Ithirdparty 
+CFLAGS=-O3 -fpic -std=c99 -Ithirdparty -fvisibility=hidden
 
 include filedefs.mk
 
@@ -41,7 +39,7 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) -DLTFAT_DOUBLE  -c $< -o d$*.o
 
 %.o: %.c Makefile config.h
-	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $<
+	$(CC) $(CFLAGS) -c $<
 
 clean:
 	-rm *.o *.a

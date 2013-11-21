@@ -3,6 +3,9 @@ function coef = comp_cellcoef2tf(coef,maxLen)
 %   Usage: coef = comp_cellcoef2tf(coef,dim)
 %
 
+% TO DO: This does not work in octave, because interp1 does not work with
+% TO DO: complex data and always returns double.
+
 
 coefLenMax = max(cellfun(@(cEl)size(cEl,1),coef));
 coefTmp = zeros(coefLenMax,numel(coef),size(coef{1},2),class(coef{1}));

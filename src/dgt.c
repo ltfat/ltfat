@@ -1,7 +1,6 @@
-#include <string.h>
 #include "config.h"
-#include "fftw3.h"
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 
 LTFAT_EXTERN

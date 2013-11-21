@@ -42,13 +42,11 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    }
 
    plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
-   const LTFAT_REAL _Complex* f_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[0]);
-   const LTFAT_REAL _Complex* g_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[1]);
-   LTFAT_REAL _Complex* out_combined = (LTFAT_REAL _Complex*) mxGetData(plhs[0]);
+   const LTFAT_COMPLEX* f_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
+   const LTFAT_COMPLEX* g_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[1]);
+   LTFAT_COMPLEX* out_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
 
-   LTFAT_NAME(dgt_long)((const LTFAT_REAL (*)[2])f_combined,
-                        (const LTFAT_REAL (*)[2])g_combined,
-                         L,W,a,M,(LTFAT_REAL (*)[2])out_combined);
+   LTFAT_NAME(dgt_long)(f_combined,g_combined,L,W,a,M,out_combined);
 
    return;
 }

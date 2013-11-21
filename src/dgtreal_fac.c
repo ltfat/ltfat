@@ -1,19 +1,13 @@
 #include "config.h"
-#ifdef HAVE_COMPLEX_H
-#include <complex.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include "fftw3.h"
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 
 LTFAT_EXTERN LTFAT_NAME(dgtreal_long_plan)
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 			  const int L, const int W,
 			  const int a, const int M, LTFAT_COMPLEX *cout,
-			  unsigned flags)		      
+			  unsigned flags)
 {
 
    LTFAT_NAME(dgtreal_long_plan) plan;
@@ -52,9 +46,9 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
    /* Get factorization of window */
    LTFAT_NAME(wfacreal)(g, L, 1, a, M, plan.gf);
-   
+
   /* Create plans. In-place. */
-   plan.p_veryend = 
+   plan.p_veryend =
       LTFAT_FFTW(plan_many_dft_r2c)(1, &plan.M, N*W,
                                   plan.cwork, NULL,
                                   1, M,
@@ -62,12 +56,12 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 				  1, M2,
 				  flags);
 
-   plan.p_before = 
+   plan.p_before =
       LTFAT_FFTW(plan_dft_r2c_1d)(d, plan.sbuf, plan.cbuf, flags);
-   
-   plan.p_after  = 
-      LTFAT_FFTW(plan_dft_c2r_1d)(d, plan.cbuf, plan.sbuf, flags);         
-   
+
+   plan.p_after  =
+      LTFAT_FFTW(plan_dft_c2r_1d)(d, plan.cbuf, plan.sbuf, flags);
+
    return plan;
 }
 
@@ -79,9 +73,9 @@ LTFAT_NAME(dgtreal_long_execute)(const LTFAT_NAME(dgtreal_long_plan) plan)
 {
 
    LTFAT_NAME(dgtreal_walnut_plan)(plan);
-      
+
    /* FFT to modulate the coefficients. */
-   LTFAT_FFTW(execute)(plan.p_veryend);   
+   LTFAT_FFTW(execute)(plan.p_veryend);
 
 }
 

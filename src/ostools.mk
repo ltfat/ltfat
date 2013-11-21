@@ -19,3 +19,5 @@ else
 RM = rm -rf
 CP = cp -f
 endif
+
+CC=gcc

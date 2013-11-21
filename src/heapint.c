@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <math.h>
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 #define PI 3.1415926535897932384626433832795
 
-typedef struct 
+typedef struct
 {
       int *h;
       int heapsize;
@@ -15,10 +16,11 @@ typedef struct
 }
 LTFAT_NAME(heap);
 
+LTFAT_EXTERN
 void LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const int key)
 {
    int pos,pos2, swap;
-   
+
    /*printf("Grow heap: heapsize %i, totalheapsize %i\n",h->heapsize,h->totalheapsize);*/
 
    /* Grow heap if necessary */
@@ -26,15 +28,15 @@ void LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const int key)
    {
       (h->totalheapsize)*=2;
       h->h = (int*)realloc(h->h,h->totalheapsize*sizeof(int));
-   }  
+   }
 
    pos=h->heapsize;
    h->heapsize++;
 
    /*printf("heap: heapsize %i, pos %i\n",h->heapsize,pos);*/
 
-   h->h[h->heapsize-1]=key;  
-     
+   h->h[h->heapsize-1]=key;
+
    /* printf("before heapint main loop\n"); */
 
    while (pos>0)
@@ -53,31 +55,31 @@ void LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const int key)
 	 break;
       }
    }
-   
+
    /* { */
 /*       printf("C INSERT heapsize: %i\n",h->heapsize); */
 /*       for (ii=0; ii<h->heapsize; ii++) */
 /* 	 printf("    %i\n",h->h[ii]); */
-/*    } */   
+/*    } */
 
 }
-
+LTFAT_EXTERN
 int LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 {
-   
+
    int pos, maxchildpos, swap, key;
    LTFAT_REAL maxchildkey;
-   
+
    /* Extract first element */
    key=h->h[0];
-   
+
    /* Put last element on first elements place, and make the heap smaller. */
    h->h[0]=h->h[h->heapsize-1];
    h->heapsize--;
-   
+
    /* Fix the just introduced problem. */
    pos=0;
-   
+
    /*  %%%%%%%%%%%%%%
     * %
     * %  Is maxchildpos 0 or 1 indexed!
@@ -94,7 +96,7 @@ int LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 	 maxchildkey=h->s[h->h[2*pos+1]];
 	 maxchildpos=1;
       }
-      else    
+      else
       {
 	 if (h->s[h->h[2*pos+1]]>=h->s[h->h[2*pos+2]])
 	 {
@@ -107,7 +109,7 @@ int LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 	    maxchildpos=2;
 	 }
       }
-      
+
       if (maxchildkey>h->s[h->h[pos]])
       {
 	 swap=h->h[2*pos+maxchildpos];
@@ -132,7 +134,7 @@ int LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 }
 
 
-
+LTFAT_EXTERN
 void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 			 const LTFAT_REAL *tgrad,
 			 const LTFAT_REAL *fgrad,
@@ -158,7 +160,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
   h.h              = (int*)ltfat_malloc(h.totalheapsize*sizeof(int));
   h.s              = s;
   h.heapsize       = 0;
-    
+
   donemask = (int*)ltfat_malloc(M*N*W*sizeof(int));
 
   LTFAT_REAL *tgradw = (LTFAT_REAL*)ltfat_malloc(M*N*sizeof(LTFAT_REAL));
@@ -204,9 +206,9 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
      else
 	donemask[ii]=0;
   }
-  
 
-  domainloop=1;  
+
+  domainloop=1;
 
 
   while (domainloop)
@@ -214,12 +216,12 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
      /* printf("Main loop, Imax: %i\n",Imax); */
 
      h.heapsize=0;
-  
+
      /* Put maximal element onto the heap and mark that it is done. It
       * will get zero phase.
       */
      LTFAT_NAME(heap_insert)(&h,Imax);
-     
+
      /* printf("after heap_insert, Imax %i, h.heapize %i\n", Imax,h.heapsize); */
 
      donemask[Imax]=6;
@@ -228,10 +230,10 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 
      while (h.heapsize>0)
      {
-	
+
 	/* printf("Inner loop, heapsize: %i\n",h.heapsize); */
 	/* Extract largest element from heap and delete it. */
-	
+
        w = LTFAT_NAME(heap_delete)(&h);
 
 	/* Try and put the four neighbours onto the heap.
@@ -276,12 +278,12 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 	   donemask[w_W]=4;
 	   LTFAT_NAME(heap_insert)(&h,w_W);
 	}
-            
+
      }
 
-     /* Find the new maximal element 
+     /* Find the new maximal element
       *
-      * This code is currently missing  
+      * This code is currently missing
       *
       */
 
@@ -299,11 +301,11 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 
 
   }
-  
+
   ltfat_free(tgradw);
   ltfat_free(fgradw);
   ltfat_free(donemask);
   ltfat_free(h.h);
 
 }
-      
+

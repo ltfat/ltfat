@@ -6,7 +6,6 @@ function [h,g,a,info] = wfilt_apr(N)
 %   filter bank for non-redundant, approximately shift-invariant,
 %   Complex Wavelet Transforms. Critically subsampled. 
 %
-%
 %   References: hosseini2008almost
 
 a= [3;3;3];

@@ -1,12 +1,6 @@
 #include "config.h"
-#ifdef HAVE_COMPLEX_H
-#include <complex.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <fftw3.h>
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 
 LTFAT_EXTERN void
@@ -25,9 +19,9 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    LTFAT_REAL fw;
 
    const LTFAT_REAL *fbd;
-   
+
    /*  ----------- calculation of parameters and plans -------- */
-   
+
    const int N=L/a;
 
    /* These are floor operations. */
@@ -35,15 +29,15 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
    /* This is a ceil operation. */
    const int glh_d_a=(int)ceil((glh*1.0)/(a));
-   
+
    gw   = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
-   
+
    /*  ---------- main body ----------- */
-  
+
    /* Do the fftshift of g to place the center in the middle and
     * conjugate it.
     */
-   
+
    for (l=0;l<glh;l++)
    {
       gw[l]=g[l+(gl-glh)];
@@ -54,7 +48,7 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    }
 
    for (w=0;w<W;w++)
-   {	 
+   {
       /*----- Handle the first boundary using periodic boundary conditions.*/
       for (n=0; n<glh_d_a; n++)
       {
@@ -71,8 +65,8 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	    fw +=fbd[l]*gb[l];
 	 }
 	 cout[n+w*N]=fw;
-      }	     
-   
+      }
+
       /* ----- Handle the middle case. --------------------- */
       for (n=glh_d_a; n<(L-(gl+1)/2)/a+1; n++)
       {
@@ -83,10 +77,10 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	 {
 	    fw +=fbd[l]*gb[l];
 	 }
-	 cout[n+w*N]=fw;	 
+	 cout[n+w*N]=fw;
       }
-      
-      /* Handle the last boundary using periodic boundary conditions. */   
+
+      /* Handle the last boundary using periodic boundary conditions. */
       for (n=(L-(gl+1)/2)/a+1; n<N; n++)
       {
 	 gb=gw;
@@ -98,14 +92,14 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 	 }
 	 fbd=f-(L-n*a+glh)+L*w;
 	 for (l=L-n*a+glh;l<gl;l++)
-	 {	
+	 {
 	    fw +=fbd[l]*gb[l];
 	 }
 	 cout[n+w*N]=fw;
       }
    }
 
-    /* -----------  Clean up ----------------- */   
+    /* -----------  Clean up ----------------- */
    ltfat_free(gw);
 
 }

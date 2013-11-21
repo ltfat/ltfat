@@ -6,9 +6,14 @@ function [h,g,a,info] = wfilt_algmband(N)
 %   orthonormal m-band wavelets with perfect reconstruction. Critically
 %   subsampled.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('algmband2');   
+%
 %   References:  lin2006algebraic  
-%
-%
+
+
 
 
 switch(N)

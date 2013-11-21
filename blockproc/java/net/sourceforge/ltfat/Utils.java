@@ -171,7 +171,7 @@ public class Utils {
     {
        int height = in.length;
        for(int yy=0;yy<height;yy++){
-             in[yy] = (float) (20*Math.log10(in[yy]+1e-10));
+             in[yy] = 20.0*Math.log10(in[yy]+1e-10);
        }
     }
     

@@ -1,7 +1,6 @@
-#include <string.h>
 #include "config.h"
-#include "fftw3.h"
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
@@ -30,8 +29,9 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const int gl,
    {
       for (int jj=bl; jj<Lext;jj++)
       {
-	 plan.buf[jj+w*Lext][0]=0.0;
-	 plan.buf[jj+w*Lext][1]=0.0;
+          plan.buf[jj+w*Lext] = (LTFAT_COMPLEX) 0.0;
+	// plan.buf[jj+w*Lext][0]=0.0;
+	// plan.buf[jj+w*Lext][1]=0.0;
       }
    }
 
@@ -67,8 +67,9 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
    /* Zero the output array, as we will be adding to it */
    for (int ii=0; ii<M*N*W; ii++)
    {
-      cout[ii][0]=0.0;
-      cout[ii][1]=0.0;
+       cout[ii] = (LTFAT_COMPLEX) 0.0;
+   //   cout[ii][0]=0.0;
+   //   cout[ii][1]=0.0;
    }
 
    for (int ii=0; ii<Nb; ii++)
@@ -97,8 +98,9 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 	 {
 	    for (int n=0;n<Nblock;n++)
 	    {
-	       cout_p[m+n*M][0] += cbuf_p[m+n*M][0];
-	       cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
+	        cout_p[m+n*M] += cbuf_p[m+n*M];
+	    //   cout_p[m+n*M][0] += cbuf_p[m+n*M][0];
+	    //   cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
 	    }
 	 }
 
@@ -110,8 +112,9 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 	 {
 	    for (int n=0;n<b2;n++)
 	    {
-	       cout_p[m+n*M][0] += cbuf_p[m+n*M][0];
-	       cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
+	      cout_p[m+n*M] += cbuf_p[m+n*M];
+	     //  cout_p[m+n*M][0] += cbuf_p[m+n*M][0];
+	     //  cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
 	    }
 	 }
 
@@ -124,8 +127,9 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 	 {
 	    for (int n=0;n<b2;n++)
 	    {
-	       cout_p[m+n*M][0] += cbuf_p[m+n*M][0];
-	       cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
+	        cout_p[m+n*M] += cbuf_p[m+n*M];
+	      // cout_p[m+n*M][0] += cbuf_p[m+n*M][0];
+	      // cout_p[m+n*M][1] += cbuf_p[m+n*M][1];
 	    }
 	 }
 
@@ -218,8 +222,9 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
    /* Zero the output array, as we will be adding to it */
    for (int ii=0; ii<M2*N*W; ii++)
    {
-      cout[ii][0]=0.0;
-      cout[ii][1]=0.0;
+       cout[ii] = (LTFAT_COMPLEX) 0.0;
+  //    cout[ii][0]=0.0;
+  //    cout[ii][1]=0.0;
    }
 
 
@@ -249,8 +254,9 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 	 {
 	    for (int n=0;n<Nblock;n++)
 	    {
-	       cout_p[m+n*M2][0] += cbuf_p[m+n*M2][0];
-	       cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
+	       cout_p[m+n*M2] += cbuf_p[m+n*M2];
+	      // cout_p[m+n*M2][0] += cbuf_p[m+n*M2][0];
+	      // cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
 	    }
 	 }
 
@@ -262,8 +268,9 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 	 {
 	    for (int n=0;n<b2;n++)
 	    {
-	       cout_p[m+n*M2][0] += cbuf_p[m+n*M2][0];
-	       cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
+	       cout_p[m+n*M2] += cbuf_p[m+n*M2];
+	       //cout_p[m+n*M2][0] += cbuf_p[m+n*M2][0];
+	       //cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
 	    }
 	 }
 
@@ -276,8 +283,9 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 	 {
 	    for (int n=0;n<b2;n++)
 	    {
-	       cout_p[m+n*M2][0] += cbuf_p[m+n*M2][0];
-	       cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
+	       cout_p[m+n*M2] += cbuf_p[m+n*M2];
+	       //cout_p[m+n*M2][0] += cbuf_p[m+n*M2][0];
+	       //cout_p[m+n*M2][1] += cbuf_p[m+n*M2][1];
 	    }
 	 }
 

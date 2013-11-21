@@ -19,15 +19,6 @@
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   // UGLY, but there are no cd_dwilt_long cs_dwilt_long functions
-   // Other option is to use forwarder functions
-   #undef LTFAT_NAME
-   #ifdef LTFAT_SINGLE
-   #  define LTFAT_NAME(name) LTFAT_NAME_SINGLE(name)
-   #else
-   #  define LTFAT_NAME(name) LTFAT_NAME_DOUBLE(name)
-   #endif
-
    int M, N, L, W;
 
    mwSize ndim;
@@ -59,15 +50,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    const LTFAT_TYPE* g = (const LTFAT_TYPE*) mxGetData(prhs[1]);
    LTFAT_TYPE* cout = (LTFAT_TYPE*) mxGetData(plhs[0]);
 
+   LTFAT_NAME(dwilt_long)(f,g,L, W, M, cout);
 
-   #ifdef LTFAT_COMPLEXTYPE
-      LTFAT_NAME(dwilt_long)((const LTFAT_REAL (*)[2])f,
-                             (const LTFAT_REAL (*)[2])g,
-                              L, W, M,
-                             (LTFAT_REAL (*)[2]) cout);
-   #else
-      LTFAT_NAME(dwiltreal_long)(f,g,L, W, M, cout);
-   #endif
 
 
    return;

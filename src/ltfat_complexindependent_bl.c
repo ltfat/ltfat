@@ -2,6 +2,8 @@
 #  undef LTFAT_COMPLEXTYPE
 #endif // LTFAT_COMPLEXTYPE
 
+#include "config.h"
+#include "ltfat.h"
 #include "ltfat_types.h"
 
 

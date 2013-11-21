@@ -76,22 +76,22 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   mwSize inLen[M];
  
   plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxCOMPLEX);
-  memset(mxGetData(plhs[0]),0,L*W*sizeof(LTFAT_REAL _Complex));
+  memset(mxGetData(plhs[0]),0,L*W*sizeof(LTFAT_COMPLEX));
 
   // POINTER TO THE OUTPUT
-  LTFAT_REAL _Complex* FPtr = (LTFAT_REAL _Complex*) mxGetData(plhs[0]);
+  LTFAT_COMPLEX* FPtr = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
 
 
   // POINTERS TO THE FILTERS
-  LTFAT_REAL _Complex* GPtrs[M];
+  LTFAT_COMPLEX* GPtrs[M];
 	 
   // POINTER TO INPUTS
-  LTFAT_REAL _Complex* cPtrs[M]; // C99 feature
+  LTFAT_COMPLEX* cPtrs[M]; // C99 feature
 
   for(mwIndex m=0;m<M;m++)
   {
-     GPtrs[m] = (LTFAT_REAL _Complex*) mxGetData(mxGetCell(mxG, m));
-     cPtrs[m] = (LTFAT_REAL _Complex*) mxGetData(mxGetCell(mxc,m));
+     GPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(mxG, m));
+     cPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(mxc,m));
      inLen[m] = mxGetM(mxGetCell(mxc,m));
   }
 
@@ -108,12 +108,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
   for(mwIndex m =0; m<M; m++)
   {
-     LTFAT_REAL _Complex* buffer = (LTFAT_REAL _Complex*) ltfat_malloc(inLen[m]*sizeof(LTFAT_REAL _Complex));
+     LTFAT_COMPLEX* buffer = (LTFAT_COMPLEX*) ltfat_malloc(inLen[m]*sizeof(LTFAT_COMPLEX));
 
      if(LTFAT_NAME(oldLc)[m]!=inLen[m])
      {
         LTFAT_NAME(oldLc)[m] = inLen[m];
-        LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(inLen[m],(LTFAT_REAL (*)[2]) buffer,(LTFAT_REAL (*)[2]) buffer, FFTW_FORWARD, FFTW_OPTITYPE);
+        LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(inLen[m], buffer, buffer, FFTW_FORWARD, FFTW_OPTITYPE);
 
         if(LTFAT_NAME(oldPlans)[m]!=0)
         {
@@ -126,9 +126,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     for(mwIndex w =0; w<W; w++)
     {
        // Obtain pointer to w-th column in output
-       LTFAT_REAL _Complex *FPtrCol = FPtr + w*L;
+       LTFAT_COMPLEX *FPtrCol = FPtr + w*L;
        // Obtaing pointer to w-th column in m-th element of input cell-array
-       LTFAT_REAL _Complex *cPtrCol = cPtrs[m] + w*inLen[m];
+       LTFAT_COMPLEX *cPtrCol = cPtrs[m] + w*inLen[m];
           
        LTFAT_NAME(upconv_fft_plan)(cPtrCol,inLen[m],GPtrs[m],(size_t)a[m],FPtrCol,LTFAT_NAME(oldPlans)[m],buffer);
     }

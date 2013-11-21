@@ -30,14 +30,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    W  = mxGetM(prhs[0])*mxGetN(prhs[0])/(M*N);
 
    plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID, mxCOMPLEX);
-   const LTFAT_REAL _Complex* c_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[0]);
-   const LTFAT_REAL _Complex* g_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[1]);
-   LTFAT_REAL _Complex* f_combined = (LTFAT_REAL _Complex*) mxGetData(plhs[0]);
+   const LTFAT_COMPLEX* c_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
+   const LTFAT_COMPLEX* g_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[1]);
+   LTFAT_COMPLEX* f_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
 
    //#ifdef LTFAT_COMPLEXTYPE
-   LTFAT_NAME(idgt_fb)((const LTFAT_REAL (*)[2])c_combined,
-                       (const LTFAT_REAL (*)[2])g_combined,
-                       L,gl,W,a,M, (LTFAT_REAL (*)[2]) f_combined);
+   LTFAT_NAME(idgt_fb)(c_combined,g_combined, L,gl,W,a,M, f_combined);
 
   /* #else
    NOT CALLING idgt_fb_r:

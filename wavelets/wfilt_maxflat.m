@@ -1,10 +1,14 @@
-function [h,g,a]=wfilt_maxflat(N)
+function [h,g,a,info]=wfilt_maxflat(N)
 %WFILT_MAXFLAT Generates maximally flat FIR filters
 %   Usage: [h,g,a] = wfilt_maxflat(N);
 %
 %   `[h,g,a]=wfilt_maxflat(N)` calculates half-band maximally flat FIR filters,
 %   where $(N-1)$ is the degree of flatness at $w=0$ and $w=\pi$ radians. 
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('maxflat6');
 %
 %   References: vaidy93mult
 
@@ -98,6 +102,7 @@ g{2} = -(-1).^(1:length(rh)).*g{1}(end:-1:1);
 h = g;
 
 a= [2;2];
+info.istight= 1;
 
 function y=numcomb(n,k)
 

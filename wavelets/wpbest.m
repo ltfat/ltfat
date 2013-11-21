@@ -144,7 +144,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %     
 %     f = gspi;
 %     J = 8;
-%     [c,info] = wpbest(f,'sym10',J,'cost',{'compn',1,0.99});
+%     [c,info] = wpbest(f,'sym10',J,'cost','shannon');
 %
 %     % Use 2/3 of the space for the first plot, 1/3 for the second.
 %     subplot(3,3,[1 2 4 5 7 8]);
@@ -201,7 +201,7 @@ do_additive = isAdditive(kv.cost);
 if(flags.do_bottomup)
    % Do full-tree Wavelet Packet decomposition beforehand and prune.
    wt = wfbtinit({w,J,'full'},'nat');
-   [c,info ]= wpfbt(f,wt,'nat',flags.ext);
+   c = wpfbt(f,wt,'nat',flags.ext,'noscale');
     
    % Nodes in the reverse BF order
    treePath = nodesBForder(wt,'rev');
@@ -259,7 +259,8 @@ if(flags.do_bottomup)
 
 end
 
-% Finally do the analysis using the created best tree.
+% Finally do the analysis using the created best tree. with correct
+% frequency bands order
 [c,info] = wfbt(f,wt,flags.ext,'freq'); 
 %END WPBEST
 

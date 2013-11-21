@@ -74,11 +74,11 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    // output lengths
    mwSize outLen[M];
    // Filter pointer array
-   LTFAT_REAL _Complex* GPtrs[M];
+   LTFAT_COMPLEX* GPtrs[M];
    // POINTER TO THE INPUT
-   LTFAT_REAL _Complex* FPtr = (LTFAT_REAL _Complex*) mxGetData(prhs[0]);
+   LTFAT_COMPLEX* FPtr = (LTFAT_COMPLEX*) mxGetData(prhs[0]);
    // POINTER TO OUTPUTS
-   LTFAT_REAL _Complex* cPtrs[M]; // C99 feature
+   LTFAT_COMPLEX* cPtrs[M]; // C99 feature
    plhs[0] = mxCreateCellMatrix(M, 1);
 
    if(M!=LTFAT_NAME(oldM))
@@ -92,15 +92,15 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    for(mwIndex m=0;m<M;++m)
    {
       outLen[m] = (mwSize) ceil( L/a[m] );
-      GPtrs[m] = (LTFAT_REAL _Complex*) mxGetPr(mxGetCell(mxG, m));
+      GPtrs[m] = (LTFAT_COMPLEX*) mxGetPr(mxGetCell(mxG, m));
       mxSetCell(plhs[0], m, ltfatCreateMatrix(outLen[m], W,LTFAT_MX_CLASSID,mxCOMPLEX));
-      cPtrs[m] = (LTFAT_REAL _Complex*) mxGetData(mxGetCell(plhs[0],m));
-      memset(cPtrs[m],0,outLen[m]*W*sizeof(LTFAT_REAL _Complex)); // Unnecessary memset to 0
+      cPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(plhs[0],m));
+      memset(cPtrs[m],0,outLen[m]*W*sizeof(LTFAT_COMPLEX)); // Unnecessary memset to 0
        
       if(LTFAT_NAME(oldLc)[m]!=outLen[m])
       {
          LTFAT_NAME(oldLc)[m] = outLen[m];
-	 LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],(LTFAT_REAL (*)[2]) cPtrs[m],(LTFAT_REAL (*)[2]) cPtrs[m], FFTW_BACKWARD, FFTW_OPTITYPE);
+	 LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],cPtrs[m],cPtrs[m], FFTW_BACKWARD, FFTW_OPTITYPE);
 		   
 	 if(LTFAT_NAME(oldPlans)[m]!=0)
 	 {
@@ -121,7 +121,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
       for(mwIndex w =1; w<W; w++)
       {
          LTFAT_NAME(convsub_fft_plan)(FPtr+w*L,GPtrs[m],L,(size_t)a[m],cPtrs[m],LTFAT_NAME(oldPlans)[m]);
-         memcpy(cPtrs[m] + w*outLen[m], cPtrs[m], outLen[m]*sizeof(LTFAT_REAL _Complex));
+         memcpy(cPtrs[m] + w*outLen[m], cPtrs[m], outLen[m]*sizeof(LTFAT_COMPLEX));
       }
 
       LTFAT_NAME(convsub_fft_plan)(FPtr,GPtrs[m],L,(size_t)a[m],cPtrs[m],LTFAT_NAME(oldPlans)[m]);

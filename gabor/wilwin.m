@@ -175,21 +175,19 @@ if iscell(g)
     g = wildual(g,M,L);
     
     % gorig can be string or cell array
-    if info.auxinfo.isfir 
-    % Original window is FIR, dual window is FIR if length of the original
-    % window is <= M. This is true if the length was not explicitly
-    % defined (gorig{2}).
-      if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=2*M...
-         || ischar(gorig)   
+    if info.auxinfo.isfir && test_isfir(gorig,M)
         info.isfir = 1; 
-      end
     end
     
     info.isdual=1;
    case {'tight'}
+    gorig = g{2};
     [g,info.auxinfo] = wilwin(g{2},M,L,callfun);    
     g = wilorth(g,M,L);  
-    % The same as for dual?
+    % gorig can be string or cell array
+    if info.auxinfo.isfir && test_isfir(gorig,M)
+        info.isfir = 1; 
+    end
     info.istight=1;
    case firwinnames
     g=firwin(winname,g{2},'energy',g{3:end});
@@ -228,4 +226,15 @@ function complain_L(L,callfun)
     error(['%s: You must specify a length L if a window is represented as a ' ...
            'text string or cell array.'],callfun);
   end;
+  
+  function isfir=test_isfir(gorig,M)
+    % Original window is FIR, dual window is FIR if length of the original
+    % window is <= M. This is true if the length was not explicitly
+    % defined (gorig{2}).
+    if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=2*M...
+         || ischar(gorig)   
+        isfir = 1; 
+    else
+       isfir = 0;
+    end
 

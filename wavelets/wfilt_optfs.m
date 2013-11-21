@@ -6,6 +6,11 @@ function [h,g,a,info] = wfilt_optfs(N)
 %   band sepparation (compared to Daubeschies filters of the same length)
 %   having at least two vanishing moments.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('optfs4');
+%
 %   References:  paiva2012opt
 %
 %

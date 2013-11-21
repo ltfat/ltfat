@@ -5,6 +5,11 @@ function [h,g,a,info] = wfilt_dgrid(N)
 %   `[h,g,a]=wfilt_dgrid(N)` computes Dense GRID framelets. Redundancy
 %   equal to 2.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('dgrid3');
+%
 %   References: abdelnour2007dense
 %
 %

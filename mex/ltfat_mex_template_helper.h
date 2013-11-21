@@ -112,14 +112,11 @@ NOCOMPLEXFMTCHANGE
 #include <stdio.h>
 #include <string.h>
 #include <mex.h>
+#include <complex.h>
 /* This is just for the case when we want to skip registration of the atExit function */
 EXPORT_SYM
 void mexFunctionInner( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 /** C99 headers for a generic complex number manipulations */
-#if (defined(COMPLEXINDEPENDENT)||defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
-#  include <complex.h>
-//#  include <tgmath.h>
-#endif
 
 
 // Storing function pointers to exitFunctions
@@ -198,8 +195,8 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
     ------------------------------------------------------------------------------------------------------
     LTFAT_REAL           double             float              double                float
     LTFAT_COMPLEX        fftw_complex       fftwf_complex      fftw_complex          fftwf_complex
-    LTFAT_COMPLEXH       double _Complex    float _Complex     double _Complex       float _Complex
-    LTFAT_TYPE           LTFAT_REAL         LTFAT_REAL         LTFAT_COMPLEXH        LTFAT_COMPLEXH
+    LTFAT_COMPLEX       double _Complex    float _Complex     double _Complex       float _Complex
+    LTFAT_TYPE           LTFAT_REAL         LTFAT_REAL         LTFAT_COMPLEX        LTFAT_COMPLEX
     LTFAT_MX_CLASSID     mxDOUBLE_CLASS     mxSINGLE_CLASS     mxDOUBLE_CLASS        mxSINGLE_CLASS
     LTFAT_MX_COMPLEXITY  mxREAL             mxREAL             mxCOMPLEX             mxCOMPLEX
     LTFAT_FFTW(name)     fftw_##name        fftwf_##name       fftw_##name           fftwf_##name
@@ -210,15 +207,15 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 
 
 #define LTFAT_DOUBLE
+#include "ltfat_types.h"
 #include "ltfat_mex_typeindependent.h"
 #include "ltfat_mex_typecomplexindependent.h"
-#include "ltfat_types.h"
  void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #include MEX_FILE
 #ifdef COMPLEXINDEPENDENT
 #  define LTFAT_COMPLEXTYPE
-#  include "ltfat_mex_typecomplexindependent.h"
 #  include "ltfat_types.h"
+#  include "ltfat_mex_typecomplexindependent.h"
    void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #  include MEX_FILE
 #  undef LTFAT_COMPLEXTYPE
@@ -227,15 +224,15 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 
 #ifdef SINGLEARGS
 #  define LTFAT_SINGLE
+#  include "ltfat_types.h"
 #  include "ltfat_mex_typeindependent.h"
 #  include "ltfat_mex_typecomplexindependent.h"
-#  include "ltfat_types.h"
    void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #  include MEX_FILE
 #  ifdef COMPLEXINDEPENDENT
 #    define LTFAT_COMPLEXTYPE
-#    include "ltfat_mex_typecomplexindependent.h"
 #    include "ltfat_types.h"
+#    include "ltfat_mex_typecomplexindependent.h"
      void LTFAT_NAME(ltfatMexFnc)(int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[]);
 #    include MEX_FILE
 #    undef LTFAT_COMPLEXTYPE
@@ -323,7 +320,7 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
    if(complexFlag==mxREAL)
      return mxCreateNumericArray(ndim,dims,classid,mxREAL);
 
-   #if (!defined(COMPLEXINDEPENDENT) && !defined(COMPLEXARGS) && !defined(REALARGS)) || defined(NOCOMPLEXFMTCHANGE)
+   #ifdef NOCOMPLEXFMTCHANGE
    if(complexFlag==mxCOMPLEX)
      return mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
    #else
@@ -571,7 +568,7 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         FORSUBSETIDX(int*  prhsElIdx,prhs, prhsToCheckIfSingle)
            prhsAlt[*prhsElIdx] = recastToSingle((mxArray *)prhs[*prhsElIdx]);
 
-        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
+        #ifndef NOCOMPLEXFMTCHANGE
         for(int ii=0;ii<nrhs;ii++)
            if(recastToComplexIndArr[ii])
               prhsAlt[ii] = LTFAT_NAME_SINGLE(mexSplit2combined)(prhsAlt[ii]);
@@ -599,16 +596,12 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs,plhs,nrhs, prhsAlt);
         #endif //COMPLEXINDEPENDENT
 
-        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE)
-        if(!checkIsReal(plhs[0]))
-        plhs[0] = LTFAT_NAME_SINGLE(mexCombined2split)(plhs[0]);
-        #endif
       }
       #endif // SINGLEARGS
       if(!isAnySingle)
       {
 
-        #if (defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS)) && !defined(NOCOMPLEXFMTCHANGE)
+        #ifndef NOCOMPLEXFMTCHANGE
         for(int ii=0;ii<nrhs;ii++)
            if(recastToComplexIndArr[ii])
               prhsAlt[ii] = LTFAT_NAME_DOUBLE(mexSplit2combined)(prhsAlt[ii]);
@@ -639,10 +632,6 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
           LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhsAlt);
         #endif
 
-		#if defined(TYPEDEPARGS) && ((defined(COMPLEXINDEPENDENT) || defined(COMPLEXARGS) || defined(REALARGS)) && !defined(NOCOMPLEXFMTCHANGE))
-        if(!checkIsReal(plhs[0]))
-           plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);
-        #endif
 
         mxFree(prhsAlt);
       }
@@ -650,6 +639,21 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 
 
     #endif // TYPEDEPARGS
+
+      #ifndef NOCOMPLEXFMTCHANGE
+      if(checkIsSingle(plhs[0]))
+      {
+        #ifdef SINGLEARGS
+        if(!checkIsReal(plhs[0]))
+        plhs[0] = LTFAT_NAME_SINGLE(mexCombined2split)(plhs[0]);
+        #endif
+      }
+      else
+      {
+        if(!checkIsReal(plhs[0]))
+           plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);
+      }
+      #endif
 }
 #endif // _LTFAT_MEX_TEMPLATEHELPER_H
 #endif // defined(MEX_FILE)

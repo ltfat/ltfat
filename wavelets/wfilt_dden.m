@@ -5,6 +5,11 @@ function [h,g,a,info] = wfilt_dden(N)
 %   `[h,g,a]=wfilt_dden(N)` computes oversampled dyadic double-density DWT
 %   filters. The redundancy is equal to 2.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('dden5');
+%
 %   References: selesnick2001double
 %
 

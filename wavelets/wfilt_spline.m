@@ -10,6 +10,14 @@ function [h,g,a,info]=wfilt_spline(m,n)
 %   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters
 %   corresponding to a biortoghonal scheme with spline wavelets of compact
 %   support.
+%
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('ana:spline4:4');
+%
+%     wfiltinfo('syn:spline4:4');
+%
 
 %   Original copyright goes to:
 %   Copyright (C) 1994, 1995, 1996, by Universidad de Vigo 

@@ -19,14 +19,6 @@
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   // UGLY, will go away as soon as ltfat backend is unified to a naming convenion
-   // Other option is to use forwarder functions
-   #undef LTFAT_NAME
-   #ifdef LTFAT_SINGLE
-   #  define LTFAT_NAME(name) LTFAT_NAME_SINGLE(name)
-   #else
-   #  define LTFAT_NAME(name) LTFAT_NAME_DOUBLE(name)
-   #endif
    int L, R, a, M, N, c, d, p, q,h_a,h_m;
 
    // Get matrix dimensions.
@@ -44,15 +36,10 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    d=N/q;
 
   plhs[0] = ltfatCreateMatrix(p*q*R, c*d,LTFAT_MX_CLASSID,mxCOMPLEX);
-  LTFAT_REAL _Complex* gf_combined = (LTFAT_REAL _Complex*) mxGetData(plhs[0]);
+  LTFAT_COMPLEX* gf_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+  const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[0]);
 
-  #ifdef LTFAT_COMPLEXTYPE
-  const LTFAT_REAL _Complex* g_combined = (const LTFAT_REAL _Complex*) mxGetData(prhs[0]);
-  LTFAT_NAME(wfac)((const LTFAT_REAL (*)[2])g_combined, L, R, a, M, (LTFAT_REAL (*)[2])gf_combined);
-  #else
-  const LTFAT_REAL* g_combined = (const LTFAT_REAL*) mxGetData(prhs[0]);
-  LTFAT_NAME(wfac_r)(g_combined, L, R, a, M, (LTFAT_REAL (*)[2])gf_combined);
-  #endif
+  LTFAT_NAME(wfac)(g_combined, L, R, a, M, gf_combined);
 
 
   return;

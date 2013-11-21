@@ -18,7 +18,7 @@ static inline void fwd_dgtreal_long(const double *f, const double *g,
 							      const octave_idx_type W, const octave_idx_type a,
 							      const octave_idx_type M, Complex *cout)
 {
-   dgtreal_long_d(f,g,L,W,a,M,reinterpret_cast<double (*)[2]>(cout));
+   dgtreal_long_d(f,g,L,W,a,M,reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void fwd_dgtreal_long(const float *f, const float *g,
@@ -26,7 +26,7 @@ static inline void fwd_dgtreal_long(const float *f, const float *g,
 							    const octave_idx_type W, const octave_idx_type a,
 							    const octave_idx_type M, FloatComplex *cout)
 {
-   dgtreal_long_s(f,g,L,W,a,M,reinterpret_cast<float (*)[2]>(cout));
+   dgtreal_long_s(f,g,L,W,a,M,reinterpret_cast<float _Complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

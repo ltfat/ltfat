@@ -1,4 +1,10 @@
+function test_all_ltfat(varargin)
+
 global LTFAT_TEST_TYPE;
+
+definput.flags.prec={'all','double','single'};
+definput.keyvals.tests=[];
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 tests_todo={
     'dgt','dwilt','wmdct',...
@@ -19,14 +25,24 @@ tests_todo={
     'frames', 'frft'
            };
 
+if ~isempty(kv.tests)
+   if ischar(kv.tests)
+     kv.tests = {kv.tests};
+   end
+   tests_todo = kv.tests;
+end
 
+precarray={'double','single'};
+if ~flags.do_all
+  precarray={flags.prec}; 
+end
 
 % Testing of pbspline has been removed, as it causes too much trouble.
 
 total_tests_failed=0;
 list_of_failed_tests={};
 
-precarray={'double','single'};
+
 for precidx=1:numel(precarray)
     prec=precarray{precidx};
     LTFAT_TEST_TYPE=prec;

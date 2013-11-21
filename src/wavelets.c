@@ -1,9 +1,8 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
-#include <string.h>
-#include <math.h>
 #include "config.h"
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 LTFAT_EXTERN
 void LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int filtUp, int skip, enum ltfatWavExtType ext)

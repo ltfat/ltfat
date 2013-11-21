@@ -62,6 +62,8 @@ Fr{30} = frametight(frame('unsdgtreal',g,a,100));
 Fr{31} = frametight(frame('dftreal'));
 Fr{32} = frame('fwt','db4',5);
 
+Fr{33} = frame('wfbt',{'db4',5});
+
 % The tensor frame implementation is currenly broken
 %Fr{33} = frame('tensor',Fr{11});
 

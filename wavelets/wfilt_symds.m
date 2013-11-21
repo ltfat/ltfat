@@ -5,6 +5,13 @@ function [h,g,a,info] = wfilt_symds(N)
 %   `[h,g,a]=wfilt_symds(N)` Returns symmetric dyadic sibling wavelet filters.
 %   The redundancy is equal to 2.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('ana:symds3');
+%
+%     wfiltinfo('syn:symds3');
+% 
 %   References: abdelnour2012sib
 %
 

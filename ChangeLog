@@ -1,11 +1,15 @@
-Version 1.4.3
-   * Fixed bug in nsgabframebounds.m
+Version 1.4.3 22/11 2013
+    * Fixed bug in nsgabframebounds.m
 
-   * Added chirpzt
+    * Added chirped Z-transform
 
-   * Added timing and comparison of gga and chirpzt in C
+    * Block processing demos now work in Octave (on Linux)
 
-   * New target in backend makefiles not linking BLAS and LAPACK.
+    * Backend library now uses C99 complex number format only
+
+    * Faster block processing via block_interface MEX function
+
+    * New zoomig features for blockplot
 
 Version 1.4.2 17/9 2013
 	* Added mexExecuter to speed up cell array handling in the backends

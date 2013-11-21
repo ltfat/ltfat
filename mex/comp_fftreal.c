@@ -10,18 +10,6 @@
 #define REALARGS
 #define NOCOMPLEXFMTCHANGE
 
-static fftw_plan* p_old = 0;
-
-static void fftrealAtExit(void)
-{
-  if(p_old!=0)
-  {
-     fftw_destroy_plan(*p_old);
-     free(p_old);
-  }
-}
-
-
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
 #define MEX_FILE __BASE_FILE__
@@ -31,20 +19,29 @@ static void fftrealAtExit(void)
 #include "ltfat_types.h"
 #include "config.h"
 
+static LTFAT_FFTW(plan)* LTFAT_NAME(p_old) = 0;
+
+void LTFAT_NAME(fftrealAtExit)()
+{
+   if(LTFAT_NAME(p_old)!=0)
+   {
+     LTFAT_FFTW(destroy_plan)(*LTFAT_NAME(p_old));
+     free(LTFAT_NAME(p_old));
+   }
+}
+
 
 // Calling convention:
 //  comp_fftreal(f);
 
-
-
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-  #ifdef LTFAT_DOUBLE
-  if(p_old==0)
+  static int atExitRegistered = 0;
+  if(!atExitRegistered)
   {
-      mexAtExit(fftrealAtExit);
+      LTFAT_NAME(ltfatMexAtExit)(LTFAT_NAME(fftrealAtExit));
+      atExitRegistered = 1;
   }
-  #endif
 
   int L, W, L2;
   LTFAT_REAL *f, *cout_r, *cout_i;
@@ -97,13 +94,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   */
 
 
-  if(p_old!=0)
-  {
-    fftw_destroy_plan(*p_old);
-    free(p_old);
-  }
-  p_old = malloc(sizeof(p));
-  memcpy(p_old,&p,sizeof(p));
+  LTFAT_NAME(fftrealAtExit)();
+  LTFAT_NAME(p_old) = malloc(sizeof(p));
+  memcpy(LTFAT_NAME(p_old),&p,sizeof(p));
 
 
   // Real FFT.

@@ -16,10 +16,10 @@ static inline void fwd_idgt_fb(const Complex *coef, const Complex *gf,
 							   const octave_idx_type a, const octave_idx_type M,
 							   Complex *f)
 {
-   idgt_fb_d(reinterpret_cast<const double (*)[2]>(coef),
-              reinterpret_cast<const double (*)[2]>(gf),
+   idgt_fb_d(reinterpret_cast<const double _Complex*>(coef),
+              reinterpret_cast<const double _Complex*>(gf),
               L,gl,W,a,M,
-			  reinterpret_cast<double (*)[2]>(f));
+			  reinterpret_cast<double _Complex*>(f));
 }
 
 static inline void fwd_idgt_fb(const FloatComplex *coef, const FloatComplex *gf,
@@ -28,10 +28,10 @@ static inline void fwd_idgt_fb(const FloatComplex *coef, const FloatComplex *gf,
 							   const octave_idx_type a, const octave_idx_type M,
 							   FloatComplex *f)
 {
-   idgt_fb_s(reinterpret_cast<const float (*)[2]>(coef),
-              reinterpret_cast<const float (*)[2]>(gf),
+   idgt_fb_s(reinterpret_cast<const float _Complex*>(coef),
+              reinterpret_cast<const float _Complex*>(gf),
               L,gl,W,a,M,
-			  reinterpret_cast<float (*)[2]>(f));
+			  reinterpret_cast<float _Complex*>(f));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

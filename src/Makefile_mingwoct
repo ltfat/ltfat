@@ -19,7 +19,7 @@ OCTAVELINKFLAGS=-L$(MATLABROOT)\lib $(OCTAVELIBS)
 CC=gcc
 
 CFLAGS=-O3 -s -Wall -std=c99 -m32 -I../src/thirdparty -I./
-DIRECTIVES=-DCOMPILING_LTFAT -DLTFAT_DLL_NEVERUSED
+DIRECTIVES=
 
 
 DFILES = $(addprefix d,$(files)) $(addprefix d,$(files_blaslapack)) $(files_notypechange)

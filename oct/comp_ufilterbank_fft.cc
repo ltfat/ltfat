@@ -16,10 +16,10 @@ static inline void fwd_ufilterbank_fft( const Complex *f, const Complex *g,
 							   const octave_idx_type M, Complex *cout)
 {
    ufilterbank_fft_d(
-           reinterpret_cast<const double (*)[2]>(f),
-           reinterpret_cast<const double (*)[2]>(g),
+           reinterpret_cast<const double _Complex*>(f),
+           reinterpret_cast<const double _Complex*>(g),
            L,gl,W,a,M,
-		   reinterpret_cast<double (*)[2]>(cout));
+		   reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void fwd_ufilterbank_fft( const FloatComplex *f, const FloatComplex *g,
@@ -28,10 +28,10 @@ static inline void fwd_ufilterbank_fft( const FloatComplex *f, const FloatComple
 							   const octave_idx_type M, FloatComplex *cout)
 {
    ufilterbank_fft_s(
-           reinterpret_cast<const float (*)[2]>(f),
-           reinterpret_cast<const float (*)[2]>(g),
+           reinterpret_cast<const float _Complex*>(f),
+           reinterpret_cast<const float _Complex*>(g),
            L,gl,W,a,M,
-		   reinterpret_cast<float (*)[2]>(cout));
+		   reinterpret_cast<float _Complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

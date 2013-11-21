@@ -1,11 +1,11 @@
 #include "config.h"
-#include <math.h>
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
-			     const LTFAT_REAL *fgrad, const int L, const int W, 
+			     const LTFAT_REAL *fgrad, const int L, const int W,
 			     const int a, const int M, LTFAT_REAL *sr)
 {
 
@@ -17,7 +17,7 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
 
    int *timepos = (int*)ltfat_malloc(N*sizeof(int));
    int *freqpos = (int*)ltfat_malloc(M*sizeof(int));
-   
+
    fftindex(N,timepos);
    fftindex(M,freqpos);
 
@@ -25,7 +25,7 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
    for (ii=0;ii<M*N*W;ii++)
    {
       sr[ii]=0.0;
-   }      
+   }
 
    for (int w=0;w<W;w++)
    {
@@ -41,7 +41,7 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
 	   posj=positiverem(ltfat_round(fgrad[ii+jj*M]/a+timepos[jj]),N);
 
 
-	    
+
 	    sr[posi+posj*M]+=s[ii+jj*M];
 	 }
       }

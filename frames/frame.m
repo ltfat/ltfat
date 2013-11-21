@@ -268,6 +268,7 @@ switch(ftype)
     F.frana=@(insig) F.native2coef(comp_filterbank(insig,F.g,F.a));
     F.frsyn=@(insig) comp_ifilterbank(F.coef2native(insig,size(insig)),...
                                       F.g,F.a,round(size(insig,1)/F.red));
+    F.destructor=@() clear('comp_filterbank','comp_ifilterbank');
     
   case 'filterbankreal'
     F.red=2*sum(F.a(:,2)./F.a(:,1));
@@ -278,6 +279,7 @@ switch(ftype)
     F.frana=@(insig) F.native2coef(comp_filterbank(insig,F.g,F.a));
     F.frsyn=@(insig) 2*real(comp_ifilterbank(F.coef2native(insig,size(insig)),F.g,F.a,...
                                              2*round(size(insig,1)/F.red)));
+    F.destructor=@() clear('comp_filterbank','comp_ifilterbank');
 
     
   case 'ufilterbank'

@@ -1,6 +1,6 @@
 #include "config.h"
 #include "ltfat.h"
-#include "cblas.h"
+#include "ltfat_types.h"
 
 #ifdef LTFAT_DOUBLE
 #define LTFAT_POSV F77_FUNC(zposv,ZPOSV)

@@ -1,24 +1,19 @@
-#include <complex.h>
 #include "config.h"
-#include <math.h>
 #include "ltfat.h"
-#include <stdio.h>
-
-#define PI 3.1415926535897932384626433832795
-
+#include "ltfat_types.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEXH *g,
+LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
 			    const int L, const int Lg, const int a, const int M,
 			    const int lt1, const int lt2,
-			    LTFAT_COMPLEXH *mwin)
+			    LTFAT_COMPLEX *mwin)
 {
 
   const int b=L/M;
 
   const LTFAT_REAL scal = 2*PI/L;
 
-  LTFAT_COMPLEXH *gwork = (LTFAT_COMPLEXH *)ltfat_malloc(L*sizeof(LTFAT_COMPLEXH));
+  LTFAT_COMPLEX *gwork = (LTFAT_COMPLEX *)ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
   LTFAT_NAME(fir2long_c)((const LTFAT_COMPLEX*)g,Lg,L,(LTFAT_COMPLEX*)gwork);
 
   for (int w=0;w<lt2;w++)
@@ -35,10 +30,10 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEXH *g,
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_multi_plan)
-LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
+LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 			   const int L, const int Lg, const int W, const int a, const int M,
 			   const int lt1, const int lt2,
-			   LTFAT_COMPLEXH *cout,unsigned flags)
+			   LTFAT_COMPLEX *cout,unsigned flags)
 {
 
    LTFAT_NAME(dgt_multi_plan) plan;
@@ -52,14 +47,14 @@ LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
    plan.lt1=lt1;
    plan.lt2=lt2;
 
-   plan.f     = (LTFAT_COMPLEXH *)f;
+   plan.f     = (LTFAT_COMPLEX *)f;
    plan.cout  = cout;
 
    const int N   = L/a;
    const int Ns  = N/lt2;
 
-   plan.mwin = (LTFAT_COMPLEXH *)ltfat_malloc(L*lt2*sizeof(LTFAT_COMPLEXH));
-   plan.c_scratch = (LTFAT_COMPLEXH *)ltfat_malloc(M*Ns*W*sizeof(LTFAT_COMPLEXH));
+   plan.mwin = (LTFAT_COMPLEX *)ltfat_malloc(L*lt2*sizeof(LTFAT_COMPLEX));
+   plan.c_scratch = (LTFAT_COMPLEX *)ltfat_malloc(M*Ns*W*sizeof(LTFAT_COMPLEX));
 
 
    LTFAT_NAME(nonsepwin2multi)(g,L,Lg,a,M,lt1,lt2,plan.mwin);
@@ -72,7 +67,7 @@ LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
 							 (LTFAT_COMPLEX*)plan.c_scratch,flags);
    }
 
-   plan.mod = (LTFAT_COMPLEXH*) ltfat_malloc(N*sizeof(LTFAT_COMPLEXH));
+   plan.mod = (LTFAT_COMPLEX*) ltfat_malloc(N*sizeof(LTFAT_COMPLEX));
 
    for (int win=0;win<plan.lt2;win++)
    {
@@ -130,10 +125,10 @@ LTFAT_NAME(dgt_multi_done)(LTFAT_NAME(dgt_multi_plan) plan)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_multi)(const LTFAT_COMPLEXH *f, const LTFAT_COMPLEXH *g,
+LTFAT_NAME(dgt_multi)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 		      const int L, const int Lg, const int W, const int a, const int M,
 		      const int lt1, const int lt2,
-		      LTFAT_COMPLEXH *cout)
+		      LTFAT_COMPLEX *cout)
 {
 
    LTFAT_NAME(dgt_multi_plan) plan = LTFAT_NAME(dgt_multi_init)(

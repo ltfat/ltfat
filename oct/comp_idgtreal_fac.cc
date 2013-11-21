@@ -15,8 +15,8 @@ static inline void fwd_idgtreal_fac(const Complex *coef, const Complex *gf,
 							   const octave_idx_type a, const octave_idx_type M,
 							   double *f)
 {
-   idgtreal_fac_d(reinterpret_cast<const double (*)[2]>(coef),
-              reinterpret_cast<const double (*)[2]>(gf),
+   idgtreal_fac_d(reinterpret_cast<const double _Complex*>(coef),
+              reinterpret_cast<const double _Complex*>(gf),
               L,W,a,M,f);
 }
 
@@ -25,8 +25,8 @@ static inline void fwd_idgtreal_fac(const FloatComplex *coef, const FloatComplex
 							   const octave_idx_type a, const octave_idx_type M,
 							   float *f)
 {
-   idgtreal_fac_s(reinterpret_cast<const float (*)[2]>(coef),
-              reinterpret_cast<const float (*)[2]>(gf),
+   idgtreal_fac_s(reinterpret_cast<const float _Complex*>(coef),
+              reinterpret_cast<const float _Complex*>(gf),
               L,W,a,M,f);
 }
 

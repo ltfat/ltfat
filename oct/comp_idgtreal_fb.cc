@@ -17,7 +17,7 @@ static inline void fwd_idgtreal_fb(const Complex *coef, const double *gf,
 							   const octave_idx_type a, const octave_idx_type M,
 							   double *f)
 {
-   idgtreal_fb_d(reinterpret_cast<const double (*)[2]>(coef),
+   idgtreal_fb_d(reinterpret_cast<const double _Complex*>(coef),
                  gf,L,gl,W,a,M,f);
 }
 
@@ -27,7 +27,7 @@ static inline void fwd_idgtreal_fb(const FloatComplex *coef, const float *gf,
 							   const octave_idx_type a, const octave_idx_type M,
 							   float *f)
 {
-   idgtreal_fb_s(reinterpret_cast<const float (*)[2]>(coef),
+   idgtreal_fb_s(reinterpret_cast<const float _Complex*>(coef),
                  gf,L,gl,W,a,M,f);
 }
 

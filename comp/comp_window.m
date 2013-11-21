@@ -96,14 +96,8 @@ if iscell(g)
       g = gabdual(g,a,M,L,'lt',lt);
     end;
     % gorig can be string or cell array
-    if info.auxinfo.isfir 
-    % Original window is FIR, dual window is FIR if length of the original
-    % window is <= M. This is true if the length was not explicitly
-    % defined (gorig{2}).
-      if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=M...
-         || ischar(gorig)   
-        info.isfir = 1; 
-      end
+    if info.auxinfo.isfir && test_isfir(gorig,M) 
+       info.isfir = 1; 
     end
     info.isdual=1;
    case {'tight'}
@@ -115,6 +109,9 @@ if iscell(g)
       g = gabtight(g,a,M,L,'lt',lt);
     end;
     % The same as in dual?
+    if info.auxinfo.isfir && test_isfir(gorig,M) 
+       info.isfir = 1; 
+    end
     info.istight=1;
    case firwinnames
     g=firwin(winname,g{2},'energy',g{3:end});
@@ -153,5 +150,18 @@ function complain_L(L,callfun)
     error(['%s: You must specify a length L if a window is represented as a ' ...
            'text string or cell array.'],callfun);
   end;
+  
+  
+function isfir=test_isfir(gorig,M)
+    % Original window is FIR, dual window is FIR if length of the original
+    % window is <= M. This is true if the length was not explicitly
+    % defined (gorig{2}).
+      if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=M...
+         || ischar(gorig)   
+        isfir = 1; 
+      else
+         isfir = 0;
+      end
+
 
 

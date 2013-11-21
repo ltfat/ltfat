@@ -30,7 +30,7 @@ Block processing framework (optional, experimental, only on Linux)
 -------- Compiling backend libs and the Octave interfaces  -------------
 
 LTFAT comes with C++ Octave interfaces to replace (shadow) all computationally
-intensitive function in the toolbox.
+intensitive functions in the toolbox.
 
 To compile the Octave interfaces, type "ltfatmex" on the Octave
 command prompt. This will compile the ltfat C library and all the

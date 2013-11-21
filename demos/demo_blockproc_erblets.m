@@ -55,7 +55,7 @@ while flag && p.flag
 
   blockplay(fhat);
 end
-blockdone(p,fobj);
+blockdone(p,fobj,Fa,Fs);
 
 
 

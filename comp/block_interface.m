@@ -59,6 +59,7 @@ switch command
       dispLoad = 1;
       loop = 0;
       Ls = -1;
+      bufLen = 1024;
 %% SETTERS %%%
    case 'setLs'
       Ls = varargin{2};

@@ -16,7 +16,7 @@ static inline void fwd_dgtreal_fb(const double *f, const double *g,
 							      const octave_idx_type W, const octave_idx_type a,
 							      const octave_idx_type M, Complex *cout)
 {
-   dgtreal_fb_d(f,g,L,gl,W,a,M,reinterpret_cast<double (*)[2]>(cout));
+   dgtreal_fb_d(f,g,L,gl,W,a,M,reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void fwd_dgtreal_fb(const float *f, const float *g,
@@ -24,7 +24,7 @@ static inline void fwd_dgtreal_fb(const float *f, const float *g,
 							    const octave_idx_type W, const octave_idx_type a,
 							    const octave_idx_type M, FloatComplex *cout)
 {
-   dgtreal_fb_s(f,g,L,gl,W,a,M,reinterpret_cast<float (*)[2]>(cout));
+   dgtreal_fb_s(f,g,L,gl,W,a,M,reinterpret_cast<float _Complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

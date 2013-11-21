@@ -28,7 +28,7 @@
 
 /*
 %COMP_ATROUSFILTERBANK_TD   Uniform filterbank by conv2
-%   Usage:  c=comp_atrousfilterbank_fft(f,g,a,offset);
+%   Usage:  c=comp_atrousfilterbank_td(f,g,a,offset);
 %
 %   Input parameters:
 %         f   : Input data - L*W array.
@@ -85,7 +85,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
                 LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(plhs[0])) + w*L*M;
                 // Obtaing pointer to w-th column in m-th element of output cell-array
                 LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-                LTFAT_NAME(atrousconvsub_td)(fPtrCol, L, cPtrCol, L, gPtrs[m], filtLen, (int)*a, -offset[m], ltfatExtStringToEnum("per"));
+                LTFAT_NAME(atrousconvsub_td)(fPtrCol, L, cPtrCol, L, gPtrs[m],
+                                             filtLen, (int)*a, -offset[m],
+                                             ltfatExtStringToEnum("per"));
             }
         }
 }

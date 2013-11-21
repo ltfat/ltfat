@@ -46,6 +46,8 @@ if(~iscell(c))
     error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
+
+
 if(isstruct(par)&&isfield(par,'fname'))
    if nargin>2
       error('%s: Too many input parameters.',upper(mfilename));
@@ -53,6 +55,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    wt = wfbtinit({'dual',par.wt},par.fOrder);
    Ls = par.Ls;
    ext = par.ext;
+   do_scale = ~par.isNotScaled;
 else
    if nargin<3
       error('%s: Too few input parameters.',upper(mfilename));
@@ -60,12 +63,15 @@ else
    %% PARSE INPUT
    definput.keyvals.Ls=[];    
    definput.import = {'fwt','wfbtcommon'};
+   definput.flags.scale = {'scale','noscale'};
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+
    ext = flags.ext;
+   do_scale = flags.scale;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
 end
 
 wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,Ls,ext);
+f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,Ls,ext,do_scale);

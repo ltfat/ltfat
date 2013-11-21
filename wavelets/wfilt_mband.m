@@ -4,9 +4,14 @@ function [h,g,a,info] = wfilt_mband(N)
 %
 %   `[h,g,a]=wfilt_mband(N)` returns linear-phase M-band wavelet filters. 
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('mband4');
+%
 %   References:  alkin95mband
 %
-%
+
 a= [4;4;4;4];
 
 switch(N)

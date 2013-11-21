@@ -12,6 +12,11 @@ function [h,g,a,info]=wfilt_remez(L,K,B)
 %   filters.  It works performing a factorization based on the complex
 %   cepstrum of the polynomial.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('remez50:2:0.1');
+%
 %   References: rioul94remez
 
 % Original copyright goes to:

@@ -1,23 +1,11 @@
-#include "fftw3.h"
-#include "stdlib.h"
-
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
 #define ISNARGINEQ 2
 #define TYPEDEPARGS 0
 #define SINGLEARGS
+#define NOCOMPLEXFMTCHANGE
 
-static fftw_plan* p_old = 0;
-
-static void ifftrealAtExit(void)
-{
-  if(p_old!=0)
-  {
-     fftw_destroy_plan(*p_old);
-     free(p_old);
-  }
-}
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -27,19 +15,31 @@ static void ifftrealAtExit(void)
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include "ltfat_types.h"
 #include "config.h"
-#include "fftw3.h"
+
+static LTFAT_FFTW(plan)* LTFAT_NAME(p_old) = 0;
+
+void LTFAT_NAME(ifftrealAtExit)()
+{
+   if(LTFAT_NAME(p_old)!=0)
+   {
+     LTFAT_FFTW(destroy_plan)(*LTFAT_NAME(p_old));
+     free(LTFAT_NAME(p_old));
+   }
+}
+
 
 // Calling convention:
 //  comp_ifftreal(f,N);
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-  #ifdef LTFAT_DOUBLE
-  if(p_old==0)
+  static int atExitRegistered = 0;
+  if(!atExitRegistered)
   {
-      mexAtExit(ifftrealAtExit);
+      LTFAT_NAME(ltfatMexAtExit)(LTFAT_NAME(ifftrealAtExit));
+      atExitRegistered = 1;
   }
-  #endif
+
   mwSize ii, L, W, L2;
   LTFAT_FFTW(plan) p;
   LTFAT_REAL *f, s;
@@ -52,7 +52,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
 
   if(L/2+1!=L2)
-    mexErrMsgTxt("Invalid output length");
+    mexErrMsgTxt("IFFTREAL: Invalid output length.");
 
   fin_r = (LTFAT_REAL*)mxGetPr(prhs[0]);
   fin_i = (LTFAT_REAL*)mxGetPi(prhs[0]);
@@ -73,10 +73,6 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   // Create output and get pointer
   plhs[0] = ltfatCreateMatrix(L, W, LTFAT_MX_CLASSID , mxREAL);
   f= (LTFAT_REAL*) mxGetPr(plhs[0]);
-
-  // This section is not being compiled. It contains a segmentation
-  // faults. The idea is to pass Matlab's split memory layout directly
-  // to FFTW
 
   LTFAT_FFTW(iodim) dims[1], howmanydims[1];
 
@@ -102,13 +98,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 				   1, howmanydims,
 				   fin_r,fin_i,f, FFTW_ESTIMATE);
 
-  if(p_old!=0)
-  {
-    fftw_destroy_plan(*p_old);
-    free(p_old);
-  }
-  p_old = malloc(sizeof(p));
-  memcpy(p_old,&p,sizeof(p));
+  LTFAT_NAME(ifftrealAtExit)();
+  LTFAT_NAME(p_old) = malloc(sizeof(p));
+  memcpy(LTFAT_NAME(p_old),&p,sizeof(p));
 
 
   // Real IFFT.

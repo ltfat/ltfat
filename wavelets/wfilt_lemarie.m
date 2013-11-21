@@ -8,7 +8,11 @@ function [h,g,a,info]=wfilt_lemarie(N)
 %   `[h,g,a]=wfilt_lemarie(N)` calculates coeficients of orthonormal
 %   Battle-Lemarie wavelets. Filter coefficients are obtainded by
 %   frequency domain sampling and trunctating the impulse response.
-%   
+%
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('lemarie50');
 %
 %   References: mallat89atheory
 

@@ -4,9 +4,14 @@ function [h,g,a,info] = wfilt_hden(N)
 %
 %   `[h,g,a]=wfilt_hden(N)` computes Higher DENsity dwt filters (tight frame, frame).
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('hden3');
+%
 %   References: selesnick2006higher
 %
-%
+
 
 a= [2;2;1];
 info.istight = 1;

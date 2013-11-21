@@ -35,9 +35,13 @@ function [h, g, a, info] = wfilt_db(N)
 %
 %   making them an orthogonal causal perfect-reconstruction QMF.
 %
+%   Examples:
+%   ---------
+%
+%     wfiltinfo('db8');
+%
 %   References: daub98tenlectures
-%
-%
+
 
 if(nargin<1)
    error('%s: Too few input parameters.',upper(mfilename));
