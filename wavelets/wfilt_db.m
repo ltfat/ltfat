@@ -37,6 +37,7 @@ function [h, g, a, info] = wfilt_db(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('db8');
 %

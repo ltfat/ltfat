@@ -7,9 +7,10 @@ function [h,g,a,info] = wfilt_symds(N)
 %
 %   Examples:
 %   ---------
-%
+%   :::
+%     figure(1);
 %     wfiltinfo('ana:symds3');
-%
+%     figure(2);
 %     wfiltinfo('syn:symds3');
 % 
 %   References: abdelnour2012sib

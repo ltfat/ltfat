@@ -92,7 +92,7 @@ switch(a)
     
     c = pi/L/sina/4;
     chrp2=fftshift(exp(i*c*((-2*L):(2*L-1))'.^2));
-    frf=(cconv(middlepad(chrp2,8*L),middlepad(f,8*L),8*L));
+    frf=(pconv(middlepad(chrp2,8*L),middlepad(f,8*L)));
     frf(2*L+1:6*L)=[];
     
     % chirp multiplication

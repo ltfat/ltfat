@@ -144,7 +144,7 @@ if flags.do_clean
   if do_java
     disp('========= Cleaning JAVA ================');
     cd([bp,'blockproc',filesep,'java']);
-    [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
+    [status,result]=system([make_exe,' clean']);
   end;
 
   cd(curdir);

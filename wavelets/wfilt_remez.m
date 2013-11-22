@@ -14,6 +14,7 @@ function [h,g,a,info]=wfilt_remez(L,K,B)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('remez50:2:0.1');
 %

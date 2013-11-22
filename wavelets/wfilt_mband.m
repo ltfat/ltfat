@@ -6,8 +6,9 @@ function [h,g,a,info] = wfilt_mband(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
-%     wfiltinfo('mband4');
+%     wfiltinfo('mband1');
 %
 %   References:  alkin95mband
 %

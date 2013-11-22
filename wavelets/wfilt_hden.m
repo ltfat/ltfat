@@ -6,6 +6,7 @@ function [h,g,a,info] = wfilt_hden(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('hden3');
 %

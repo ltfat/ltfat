@@ -11,6 +11,7 @@ function [h,g,a,info]=wfilt_lemarie(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('lemarie50');
 %

@@ -98,7 +98,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %      The weak-$l^p$ norm cost function:
 %
 %      ..               
-%         E_wlp(x) = max k^(1/p)v_k(x), 
+%         E_wlp(x) = max k^{\frac{1}{p}}v_k(x), 
 %
 %      .. math:: E_{wlp}(x) = \max k^(1/p)v_k(x),
 %

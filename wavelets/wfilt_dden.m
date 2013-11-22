@@ -7,6 +7,7 @@ function [h,g,a,info] = wfilt_dden(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('dden5');
 %

@@ -29,6 +29,7 @@
 %      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
 %      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
 %      WFBT2FILTERBANK   - Creates a non-iterated filterbank using the multirate identity
+%      FWT2FILTERBANK    - Creates a non-iterated filterbank using the multirate identity
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %  
 %   Plots

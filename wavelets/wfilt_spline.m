@@ -13,9 +13,10 @@ function [h,g,a,info]=wfilt_spline(m,n)
 %
 %   Examples:
 %   ---------
-%
+%   :::
+%     figure(1);
 %     wfiltinfo('ana:spline4:4');
-%
+%     figure(2);
 %     wfiltinfo('syn:spline4:4');
 %
 

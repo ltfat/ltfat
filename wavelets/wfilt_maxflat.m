@@ -7,6 +7,7 @@ function [h,g,a,info]=wfilt_maxflat(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('maxflat6');
 %

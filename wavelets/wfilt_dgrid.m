@@ -7,6 +7,7 @@ function [h,g,a,info] = wfilt_dgrid(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('dgrid3');
 %

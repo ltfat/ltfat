@@ -8,6 +8,7 @@ function [h,g,a,info] = wfilt_algmband(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('algmband2');   
 %

@@ -15,15 +15,15 @@ function c = chirpzt(f,K,fdiff,foff,fs,dim)
 %         c      : Coefficient vector.
 %
 %   `c = chirpzt(f,K,fdiff,foff)` computes *K* samples of the discrete-time 
-%   fourier transform DTFT *c* of *f* at values $c(k+1)=F(2*pi*(foff+k*fdiff))$
+%   fourier transform DTFT *c* of *f* at values $c(k+1)=F(2\pi(f_{off}+kf_{diff}))$
 %   for $k=0,\dots,K-1$ where $F=DTFT(f)$. Values `foff` and `fdiff` should
 %   be in range of $0-1$. If `foff` is ommited or empty, it is considered to
 %   be 0. If `fdiff` is ommited or empty, *K* equidistant values 
-%   $c(k+1)=F(2*pi*k/K)$ are computed. If even *K* is ommited or empty, 
+%   $c(k+1)=F(2\pi k/K)$ are computed. If even *K* is ommited or empty, 
 %   input length is used instead resulting in the same values as `fft` does.
 %
 %   `c = chirpzt(f,K,fdiff,foff,fs)` computes coefficients using frequency 
-%   values relative to *fs* $c(k+1)=F(2*pi*(foff+k*fdiff)/fs)$ for $k=0,\dots,K-1$.
+%   values relative to *fs* $c(k+1)=F(2\pi(f_{off}+kf_{diff})/fs)$ for $k=0,\dots,K-1$.
 %
 %   The input *f* is processed along the first non-singleton dimension or
 %   along dimension *dim* if specified.

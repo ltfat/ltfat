@@ -1,6 +1,7 @@
 function c = gga(f,fvec,fs,dim)
 %GGA Generalized Goertzel algorithm
-%   Usage:  c = gga(x,indvec)
+%   Usage:  c = gga(x,fvec)
+%           c = gga(x,fvec,fs)
 %
 %   Input parameters:
 %         x      : Input data.
@@ -11,14 +12,14 @@ function c = gga(f,fvec,fs,dim)
 %         c      : Coefficient vector.
 %
 %   `c=gga(f,fvec)` computes the discrete-time fourier transform DTFT of
-%   *f* at frequencies in `fvec` as $c(k)=F(2*pi*fvec(k))$ where
-%   $F=DTFT(f)$, $k=1,\dots\K$ and `K=length(fvec)` using the generalized
+%   *f* at frequencies in `fvec` as $c(k)=F(2\pi f_{vec}(k))$ where
+%   $F=DTFT(f)$, $k=1,\dots K$ and `K=length(fvec)` using the generalized
 %   second-order Goertzel algorithm. Thanks to the generalization, values
 %   in `fvec` can be arbitrary numbers in range $0-1$ and not restricted to
-%   $l/Ls$, $l=0,\dots\Ls-1$ (usual DFT samples) as the original Goertzel 
+%   $l/Ls$, $l=0,\dots Ls-1$ (usual DFT samples) as the original Goertzel 
 %   algorithm is. *Ls* is the length of the first non-singleton dimension
 %   of *f*. If `indvec` is empty or ommited, `indvec` is assumed to be
-%   `(0:Ls-1)/L` and results in the same output as `fft`.
+%   `(0:Ls-1)/Ls` and results in the same output as `fft`.
 %
 %   `c=gga(f,fvec,fs)` computes the same with frequencies relative to *fs*.
 %

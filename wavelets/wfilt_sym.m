@@ -9,6 +9,7 @@ function [h,g,a,info]=wfilt_sym(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('sym8');
 %   

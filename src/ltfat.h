@@ -14,7 +14,10 @@
 #define PI 3.1415926535897932384626433832795
 #endif
 
-// SAFE SIGNED AND UNSIGNED INTEGERS
+/*
+SAFE SIGNED AND UNSIGNED INTEGERS
+Currently not used anywhere.
+*/
 typedef size_t    ltSize;
 typedef size_t    ltIndex;
 typedef ptrdiff_t ltInt;
@@ -33,8 +36,8 @@ extern "C"
 #endif
 
 
-/* Handle Windows DLL files, not used */
- /* defined by Makefile when compiling LTFAT */
+/* Handle Windows DLL files */
+/* defined by Makefile when compiling LTFAT */
 #if defined(DLL_EXPORT_SYMBOLS) && (defined(_WIN32) || defined(__WIN32__))
 #  define LTFAT_EXTERN extern __declspec(dllexport)
 #else
@@ -42,7 +45,7 @@ extern "C"
 #endif
 
 
-/* -------- Define the single precision routines ----- */
+/* -------- Create the single precision routines headers ----- */
 
 #ifndef LTFAT_DOUBLE
 #ifndef LTFAT_SINGLE
@@ -68,7 +71,7 @@ extern "C"
 #endif
 
 
-/* -------- Define the double precision routines ----- */
+/* -------- Create the single precision routines headers ----- */
 #ifndef LTFAT_SINGLE
 #ifndef LTFAT_DOUBLE
 #   define LTFAT_DOUBLE_WASNOTDEFINED
@@ -92,6 +95,8 @@ extern "C"
 #   endif
 #endif
 
+
+// Undef all
 #undef LTFAT_COMPLEX
 #undef LTFAT_REAL
 #undef LTFAT_TYPE

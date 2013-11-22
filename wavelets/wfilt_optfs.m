@@ -8,6 +8,7 @@ function [h,g,a,info] = wfilt_optfs(N)
 %
 %   Examples:
 %   ---------
+%   :::
 %
 %     wfiltinfo('optfs4');
 %
