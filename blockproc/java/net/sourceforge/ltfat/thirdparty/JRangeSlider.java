@@ -1,4 +1,4 @@
-package net.sourceforge.ltfat.thidrparty;
+package net.sourceforge.ltfat.thirdparty;
 
 /*
   This code is part of the prefuse project: http://prefuse.org/, which

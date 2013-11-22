@@ -35,7 +35,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import net.sourceforge.ltfat.thidrparty.JRangeSlider;
+import net.sourceforge.ltfat.thirdparty.JRangeSlider;
 
 /**
  *

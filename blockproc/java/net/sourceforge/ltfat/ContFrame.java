@@ -119,8 +119,11 @@ public class ContFrame {
     }
     
    public void updateBar(final double val) {
-       executor.execute(new Runnable() {
+       Runnable updateBarTask = new Runnable() {
            public void run() {
+               if(loadLabel==null||loadBar==null||loadTxt==null)
+                   return;
+               
                if(!showLoadInd){
                    loadLabel.setVisible(true);
                    loadBar.setVisible(true); 
@@ -139,7 +142,9 @@ public class ContFrame {
                loadBar.repaint();
                loadTxt.repaint();
            }
-       });
+       };
+       if(updateBarTask!=null)
+            executor.execute(updateBarTask);
    }
 
     public ContFrame() {
