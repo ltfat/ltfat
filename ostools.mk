@@ -7,6 +7,8 @@
 ifeq ($(OS),Windows_NT) 
 RM = del /Q /F
 CP = copy /Y
+PS2 = \\
+PS = $(strip $(PS2))
 ifdef ComSpec
 SHELL := $(ComSpec)
 endif
@@ -18,6 +20,7 @@ else
 #If not on Windows
 RM = rm -rf
 CP = cp -f
+PS = /
 endif
 
 CC=gcc
