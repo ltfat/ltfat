@@ -1,6 +1,6 @@
 targets = oct
 
-ifdef HAVE_LIBPORTAUDIO
+ifeq (@have_libportaudio@,1)
    targets += playrec 
 endif
 
