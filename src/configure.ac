@@ -1,7 +1,7 @@
 AC_PREREQ([2.62])
-AC_INIT([LTFAT], [1.4.2], [http://ltfat.sourceforge.net/contact.php], [ltfat])
+AC_INIT([LTFAT], [1.4.3], [http://ltfat.sourceforge.net/contact.php], [ltfat])
 
-AC_PROG_CC
+AC_PROG_CC_C99
 AC_PROG_CXX
 
 #AC_CONFIG_MACRO_DIR([m4/])
@@ -32,6 +32,14 @@ if test "$MKOCTFILE_CHECK" != "yes" ; then
 fi
 
 #AC_CHECK_HEADERS([fftw3.h],[],[AC_MSG_ERROR([fftw was not found])])
-# Put in check for portaudio
+# Checking for portaudio
+AC_CHECK_HEADER(portaudio.h)
+AC_CHECK_LIB(portaudio,Pa_Initialize,
+[have_libportaudio=1],
+[echo "Portaudio lib not found. Disabling support of the block processing framework." 
+ have_libportaudio=0
+ ])
 
-AC_OUTPUT
+
+AC_SUBST(have_libportaudio)
+AC_OUTPUT(Makefile)

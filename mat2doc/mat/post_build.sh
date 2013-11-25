@@ -9,6 +9,7 @@ rm mulaclab.m
 mv src ..
 mv oct ..
 mv lib ..
+mv thirdparty/Playrec ..
 
 # Remove Unicode characters, makeinfo in Octave cannot currenyly handle them
 find -name "*.m" | xargs -n1 sed -i s/ø/oe/g
@@ -22,6 +23,6 @@ find -name "*.m" | xargs -n1 sed -i s/í/i/g
 cd ..
 
 cd src/
-mv Makefile_octpkg Makefile
+mv Makefile_octpkg.in Makefile.in
 ./bootstrap
 cd ..

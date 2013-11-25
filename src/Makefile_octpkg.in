@@ -1,0 +1,19 @@
+targets = oct
+
+ifdef HAVE_LIBPORTAUDIO
+   targets += playrec 
+endif
+
+
+all: $(targets)
+
+
+oct:
+	$(MAKE) -f Makefile_unix
+	$(MAKE) -C ../oct -f Makefile_unix
+	mv ../oct/*.oct .
+	ls -1 *.oct | cut -d . -f 1 | xargs -i rm -f ../inst/comp/{}.m
+
+playrec:
+	$(MAKE) -C ../Playrec -f Makefile_unixoct
+	mv ../Playrec/playrec.mex .

@@ -9,6 +9,9 @@
 *.h text
 *.cc text
 *.txt text
+# 
+*.sh text eol=lf
+*.py text eol=lf
 Makefile* text
 
 # Denote all files that are truly binary and should not be modified.
