@@ -10,6 +10,7 @@ mv src ..
 mv oct ..
 mv lib ..
 mv thirdparty/Playrec ..
+rm -Rf thirdparty
 
 # Remove Unicode characters, makeinfo in Octave cannot currenyly handle them
 find -name "*.m" | xargs -n1 sed -i s/ø/oe/g

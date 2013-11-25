@@ -51,6 +51,13 @@ if nargin>1
    end
 else
    par = javaMethod('getParams',p);
+   if isoctave
+      parTmp = par; 
+      par = zeros(numel(parTmp));
+      for ii=1:numel(numel(parTmp))
+          par(ii) = parTmp(ii);
+      end
+   end
 end
    
 
