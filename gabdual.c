@@ -31,8 +31,9 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
 
 #endif
 
-   ltfat_free(gdf);
-   ltfat_free(gf);
+   LTFAT_SAFEFREEALL(gdf,gf);
+   //ltfat_free(gdf);
+   //ltfat_free(gf);
 
 }
 

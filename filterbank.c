@@ -81,9 +81,9 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
    LTFAT_FFTW(execute)(plan_c);
 
 
-
-   ltfat_free(work);
-   ltfat_free(gwork);
+   LTFAT_SAFEFREEALL(work,gwork);
+   //ltfat_free(work);
+   //ltfat_free(gwork);
 
 }
 

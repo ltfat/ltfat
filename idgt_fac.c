@@ -1,11 +1,4 @@
 #include "config.h"
-#ifdef HAVE_COMPLEX_H
-#include <complex.h>
-#endif
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include "fftw3.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -209,11 +202,12 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    LTFAT_FFTW(destroy_plan)(p_after);
    LTFAT_FFTW(destroy_plan)(p_before);
 
-   ltfat_free(cwork);
+   LTFAT_SAFEFREEALL(cwork,ff,cf,cbuf);
+/* ltfat_free(cwork);
    ltfat_free(ff);
    ltfat_free(cf);
-
    ltfat_free(cbuf);
+   */
 
 
 }
@@ -416,11 +410,12 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
    LTFAT_FFTW(destroy_plan)(p_after);
    LTFAT_FFTW(destroy_plan)(p_before);
 
-   ltfat_free(cwork);
+   LTFAT_SAFEFREEALL(cwork,ff,cf,cbuf,sbuf);
+/* ltfat_free(cwork);
    ltfat_free(ff);
    ltfat_free(cf);
-
    ltfat_free(cbuf);
    ltfat_free(sbuf);
+   */
 
 }

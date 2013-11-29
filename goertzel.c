@@ -40,9 +40,10 @@ return plan;
 LTFAT_EXTERN
 void LTFAT_NAME(destroy_gga_plan)(LTFAT_NAME(gga_plan) plan)
 {
-   ltfat_free((void*)plan.cos_term);
+LTFAT_SAFEFREEALL(plan.cos_term,plan.cc_term,plan.cc2_term);
+/*   ltfat_free((void*)plan.cos_term);
    ltfat_free((void*)plan.cc_term);
-   ltfat_free((void*)plan.cc2_term);
+   ltfat_free((void*)plan.cc2_term);*/
 }
 
 
@@ -323,11 +324,6 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
     LTFAT_COMPLEX* Wo = p.Wo;
     LTFAT_COMPLEX* chirpF = p.chirpF;
 
-
-    // Temporal storage of the post chirp as a last channel of the output
-    //LTFAT_COMPLEX *cPtrLast = cPtr+K*(W-1);
-    //memcpy(cPtrLast,W2,K*sizeof(LTFAT_COMPLEX));
-
     for(size_t w = 0;w<W;w++)
     {
        memset(fbuffer,0,Lfft*sizeof(LTFAT_COMPLEX));
@@ -343,15 +339,6 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
        // 2) FFT of input
        LTFAT_FFTW(execute)(plan_f);
 
-/*
-       LTFAT_NAME_COMPLEX(conjugate_array)(W2,W2,L);
-       LTFAT_NAME_COMPLEX(reverse_array)(W2,W2,L);
-       memcpy(W2+L,cPtrLast+1,(K-1)*sizeof(LTFAT_COMPLEX));
-       LTFAT_NAME_COMPLEX(conjugate_array)(W2+L,W2+L,K-1);
-
-       // FFT of the chirp filter
-       LTFAT_FFTW(execute_dft)(plan_f,W2,W2);
-*/
        // Frequency domain filtering
        for(size_t ii=0;ii<Lfft;ii++)
        {
@@ -361,10 +348,7 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
 
        // Inverse FFT using forward FFT plan
        LTFAT_COMPLEX *fPtrTmp = fbuffer;
-       //LTFAT_NAME_COMPLEX(conjugate_array)(fbuffer,fbuffer,Lfft);
        LTFAT_FFTW(execute)(plan_fi);
-       //LTFAT_NAME_COMPLEX(conjugate_array)(fPtrTmp,fPtrTmp,K);
-
 
        // Final chirp multiplication and normalization
        LTFAT_COMPLEX *cPtrTmp = cPtr + w*K;
@@ -413,9 +397,6 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan)(const size_t K, size_t L, con
     memset(W2+N,0,(Lfft-N)*sizeof(LTFAT_COMPLEX));
 
     LTFAT_NAME_COMPLEX(conjugate_array)(W2,chirpF,K);
-    //LTFAT_NAME_COMPLEX(reverse_array)(chirpF,chirpF,L);
-    // memcpy(chirpF+Lfft-L,W2+1,(K-1)*sizeof(LTFAT_COMPLEX));
-    //LTFAT_NAME_COMPLEX(conjugate_array)(chirpF+L,chirpF+L,K-1);
     LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,chirpF+Lfft-L+1,L-1);
     LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-L+1,chirpF+Lfft-L+1,L-1);
     memset(chirpF+K,0,(Lfft-(L+K-1))*sizeof(LTFAT_COMPLEX));
@@ -441,10 +422,11 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan)(const size_t K, size_t L, con
 LTFAT_EXTERN
 void LTFAT_NAME(destroy_chzt_plan)(LTFAT_NAME(chzt_plan) p)
 {
-   ltfat_free(p.fbuffer);
+   LTFAT_SAFEFREEALL(p.fbuffer,p.W2,p.Wo,p.chirpF);
+/* ltfat_free(p.fbuffer);
    ltfat_free(p.W2);
    ltfat_free(p.Wo);
-   ltfat_free(p.chirpF);
+   ltfat_free(p.chirpF);*/
    LTFAT_FFTW(destroy_plan)(p.plan);
    LTFAT_FFTW(destroy_plan)(p.plan2);
 }
@@ -611,10 +593,6 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const size_t K, const si
 
     LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)chirpF, (LTFAT_COMPLEX*) chirpF,
                                                        FFTW_FORWARD, fftw_flags);
-
-
-    // Pre and post chirp
-    //size_t N = L>K?L:K;
 
     for(size_t k=0;k<K;k++)
     {

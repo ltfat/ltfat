@@ -88,11 +88,14 @@ LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan) plan)
    LTFAT_FFTW(destroy_plan)(plan.p_before);
    LTFAT_FFTW(destroy_plan)(plan.p_after);
 
-   ltfat_free(plan.sbuf);
+   LTFAT_SAFEFREEALL(plan.sbuf,plan.cbuf,plan.cwork,plan.gf,plan.ff,plan.cf);
+
+ /*  ltfat_free(plan.sbuf);
    ltfat_free(plan.cbuf);
    ltfat_free(plan.cwork);
    ltfat_free(plan.gf);
    ltfat_free(plan.ff);
    ltfat_free(plan.cf);
+   */
 
 }
