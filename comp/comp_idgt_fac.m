@@ -47,7 +47,8 @@ C=zeros(q*R,q*W,c,d,assert_classname(coef,gf));
 f=zeros(L,W,assert_classname(coef,gf));
 
 % Apply ifft to the coefficients.
-coef=ifft(reshape(coef,M,N*W))*sqrt(M);
+%coef=ifft(reshape(coef,M,N*W))*sqrt(M);
+coef=ifft(coef)*sqrt(M);
   
 % Set up the small matrices
 

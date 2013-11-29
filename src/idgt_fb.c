@@ -173,9 +173,10 @@ LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
       }
    }
 
-   ltfat_free(cbuf);
+   LTFAT_SAFEFREEALL(cbuf,ff,gw);
+/*   ltfat_free(cbuf);
    ltfat_free(ff);
-   ltfat_free(gw);
+   ltfat_free(gw);*/
 
    LTFAT_FFTW(destroy_plan)(p_small);
 
@@ -348,9 +349,11 @@ LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
       }
    }
 
-   ltfat_free(cbuf);
+   LTFAT_SAFEFREEALL(cbuf,ff,gw);
+/*   ltfat_free(cbuf);
    ltfat_free(ff);
    ltfat_free(gw);
+   */
 
    LTFAT_FFTW(destroy_plan)(p_small);
 
@@ -490,10 +493,11 @@ LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
       }
    }
 
-   ltfat_free(cbuf);
+   LTFAT_SAFEFREEALL(cbuf,crbuf,ff,gw);
+/*   ltfat_free(cbuf);
    ltfat_free(crbuf);
    ltfat_free(ff);
-   ltfat_free(gw);
+   ltfat_free(gw); */
 
    LTFAT_FFTW(destroy_plan)(p_small);
 

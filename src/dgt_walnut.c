@@ -462,9 +462,10 @@ LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
    LTFAT_FFTW(destroy_plan)(p_before);
    LTFAT_FFTW(destroy_plan)(p_after);
 
-   ltfat_free(sbuf);
+   LTFAT_SAFEFREEALL(sbuf,ff,cf);
+  /* ltfat_free(sbuf);
    ltfat_free(ff);
-   ltfat_free(cf);
+   ltfat_free(cf);*/
 
 }
 
@@ -472,9 +473,6 @@ LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 {
-
-
-
    /*  --------- initial declarations -------------- */
 
    const int a=plan.a;

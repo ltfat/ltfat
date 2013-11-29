@@ -30,7 +30,12 @@ coef2(2:2:M,2:2:N,:)        = exp( i*pi/4)*coef(2:2:M,2:2:N,:);
 coef2(2*M-1:-2:M+1,2:2:N,:) = exp(-i*pi/4)*coef(2:2:M,2:2:N,:);
 
 % Apply the generalized DGT and scale.
-f=comp_igdgt(coef2,g,a,2*M,L,0,.5,0,0)/sqrt(2);
+%f=comp_igdgt(coef2,g,a,2*M,L,0,.5,0,0)/sqrt(2);
+
+f = comp_isepdgt(coef2,g,L,a,2*M);
+
+halfmod=exp(pi*i*(0:L-1).'/(2*M))/sqrt(2);
+f=f.*repmat(halfmod,1,W);
 
 if isreal(coef) && isreal(g)
   f=real(f);

@@ -4,18 +4,18 @@ MEXBASESAFE=\
 	comp_col2diag\
 	comp_dct\
 	comp_dst\
-	comp_dgt_fb \
-	comp_dgt_long \
+	comp_sepdgt \
 	comp_dgt_ola  \
-	comp_dgtreal_fb \
-	comp_dgtreal_long \
+	comp_sepdgtreal \
 	comp_dgtreal_ola \
-	comp_dwilt_long  \
+	comp_dwilt \
+	comp_idwilt \
+	comp_dwiltiii \
+	comp_idwiltiii \
 	comp_fftreal  \
 	comp_gabreassign  \
 	comp_heapint  \
-	comp_idgt_fac  \
-	comp_idgt_fb  \
+	comp_isepdgt  \
 	comp_ifftreal  \
 	comp_iwfac \
 	comp_nonsepdgt_multi  \
@@ -41,8 +41,7 @@ MEXBASESAFE=\
 MEXBASEMORE =\
 	comp_gabdual_long \
 	comp_gabtight_long  \
-	comp_idgtreal_fac \
-	comp_idgtreal_fb\
+	comp_isepdgtreal \
 
 MEXSOFTLINKS =\
 	comp_filterbank_td \

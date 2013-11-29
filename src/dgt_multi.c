@@ -109,18 +109,17 @@ LTFAT_NAME(dgt_multi_execute)(const LTFAT_NAME(dgt_multi_plan) plan)
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_multi_done)(LTFAT_NAME(dgt_multi_plan) plan)
 {
-
-   ltfat_free(plan.mod);
-
    for (int ii=0;ii<plan.lt2;ii++)
    {
       LTFAT_NAME(dgt_long_done)(plan.rect_plan_array[ii]);
    }
-
+/*
+   ltfat_free(plan.mod);
    ltfat_free(plan.rect_plan_array);
-
    ltfat_free(plan.c_scratch);
    ltfat_free(plan.mwin);
+*/
+   LTFAT_SAFEFREEALL(plan.mod,plan.rect_plan_array,plan.c_scratch,plan.mwin);
 }
 
 

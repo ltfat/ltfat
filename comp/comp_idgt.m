@@ -27,41 +27,14 @@ W=size(coef,3);
 
 L=N*a;
 
-Lwindow=size(g,1);
-
 % FIXME : Calls non-comp function 
 if phasetype==1
     coef=phaseunlock(coef,a,'lt',lt);
 end;
 
 if lt(2)==1
+    f = comp_isepdgt(coef,g,L,a,M); 
 
-    if L==Lwindow
-        % Do full-window algorithm.
-        
-        % Get the factorization of the window.
-        gf = comp_wfac(g,a,M);      
-
-        % FIXME: This line is necessary because the mex and oct interfaces expect
-        % a matrix as input.
-        coef=reshape(coef,M,prod(size(coef))/M);
-
-        
-        % Call the computational subroutine.
-        f  = comp_idgt_fac(coef,gf,L,a,M);
-        
-    else
-        
-        % Do filter bank algorithm.
-        % Call the computational subroutine.
-
-        % FIXME: This line is necessary because the mex and oct interfaces expect
-        % a matrix as input.
-        coef=reshape(coef,M,prod(size(coef))/M);
-
-        f=comp_idgt_fb(coef,g,L,a,M);
-        
-    end;
     
 else
     

@@ -49,12 +49,14 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L,const int R,
 
    }
 
+/*
    ltfat_free(gfwork);
    ltfat_free(Sf);
    ltfat_free(S);
    ltfat_free(U);
    ltfat_free(VT);
-
+*/
+LTFAT_SAFEFREEALL(gfwork,Sf,S,U,VT);
 
 }
 
@@ -107,10 +109,12 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
 			     &zzero,gtightf+rs*p*q*R, p);
    }
 
-   ltfat_free(gfwork);
+ /*  ltfat_free(gfwork);
    ltfat_free(Sf);
    ltfat_free(S);
    ltfat_free(U);
    ltfat_free(VT);
+   */
+   LTFAT_SAFEFREEALL(gfwork,Sf,S,U,VT);
 }
 

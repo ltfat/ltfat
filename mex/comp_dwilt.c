@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 4
+#define ISNARGINEQ 3
 #define TYPEDEPARGS 0, 1
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
@@ -15,18 +15,19 @@
 #include "ltfat_types.h"
 
 // Calling convention:
-//  comp_dwilt_long(f,g,M,L);
+//  comp_dwilt(f,g,M);
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   int M, N, L, W;
+   int M, N, L, gl, W;
 
    mwSize ndim;
    mwSize dims[3];
 
    // Get matrix dimensions.
    M=(int)mxGetScalar(prhs[2]);
-   L=(int)mxGetScalar(prhs[3]);
+   L=(int)mxGetM(prhs[0]);
+   gl=(int) mxGetM(prhs[1]);
    W = mxGetN(prhs[0]);
 
    N=L/M;
@@ -50,10 +51,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    const LTFAT_TYPE* g = (const LTFAT_TYPE*) mxGetData(prhs[1]);
    LTFAT_TYPE* cout = (LTFAT_TYPE*) mxGetData(plhs[0]);
 
-   LTFAT_NAME(dwilt_long)(f,g,L, W, M, cout);
-
-
-
-   return;
+   if(gl<L)
+   {
+      LTFAT_NAME(dwilt_fb)(f,g,L,gl, W, M, cout);
+   }
+   else
+   {
+      LTFAT_NAME(dwilt_long)(f,g,L,W,M,cout);
+   }
 }
 #endif

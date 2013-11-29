@@ -20,8 +20,8 @@ N=size(coef,2);
 L=N*a;
 b=L/M;
 
-Lwindow=size(g,1);
-W=size(coef,3);
+
+
 M2=floor(M/2)+1;
 M2short=ceil(M/2);
 
@@ -38,22 +38,7 @@ if lt(2)==1
         
     end;
     
-    if L==Lwindow
-        % Do full-window algorithm.
-        
-        % Get the factorization of the window.
-        gf = comp_wfac(g,a,M);      
-        
-        % Call the computational subroutine.
-        % FIXME old input format
-        f = comp_idgtreal_fac(reshape(coef,M2,N*W),gf,L,a,M);
-        
-    else
-        % Do filter bank algorithm.
-        % Call the computational subroutine.
-        % FIXME old input format
-        f = comp_idgtreal_fb(reshape(coef,M2,N*W),g,L,a,M);
-    end;
+    f = comp_isepdgtreal(coef,g,L,a,M);
     
 else
     % Quinqux lattice

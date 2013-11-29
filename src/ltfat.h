@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "fftw3.h"
+//#include "config.h"
 #include "cblas.h"
 
 #ifndef PI
@@ -18,9 +19,9 @@
 SAFE SIGNED AND UNSIGNED INTEGERS
 Currently not used anywhere.
 */
-typedef size_t    ltSize;
-typedef size_t    ltIndex;
-typedef ptrdiff_t ltInt;
+typedef size_t    Lsize;
+typedef size_t    Lindex;
+typedef ptrdiff_t Lint;
 
 #define LTFAT_MAKENAME(name,type,comp) name ## _ ## comp ## type
 #define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,d,)
@@ -111,23 +112,24 @@ extern "C"
 
 
   /* -------- Define routines that do not change between single/double-- */
-//LTFAT_EXTERN_NOTYPE
+
 int gcd(const int a, const int b, int *r, int *s );
 
-//LTFAT_EXTERN_NOTYPE
+
 void* ltfat_malloc (size_t n);
 
-//LTFAT_EXTERN_NOTYPE
+
 void* ltfat_calloc (size_t nmemb, size_t size);
 
-//LTFAT_EXTERN_NOTYPE
+
 void* ltfat_realloc (void *ptr, size_t n);
 
-//LTFAT_EXTERN_NOTYPE
+
 void* ltfat_realloc_and_copy (void *ptr, size_t nold, size_t nnew);
 
-//LTFAT_EXTERN_NOTYPE
+
 void  ltfat_free(void *ptr);
+void  ltfat_safefree(void *ptr);
 
 //LTFAT_EXTERN_NOTYPE
 void fftindex(const int N, int *indexout);
@@ -169,6 +171,19 @@ ptrdiff_t min_pt(const ptrdiff_t a, const ptrdiff_t b);
 }  // extern "C"
 #endif
 
+/*
+MACRO-FU
+*/
+
+// "Vectorizes" function call
+#define LTFAT_APPLYFN(type,fn,...) do{ \
+   type* list = (type[]) {(type)0,__VA_ARGS__}; \
+   size_t len = sizeof(list)/sizeof(*list) - 1; \
+   for(size_t ii=0;ii<len;ii++) \
+      fn((type)list[ii+1]); \
+}while(0)
+
+#define LTFAT_SAFEFREEALL(...) LTFAT_APPLYFN(void*,ltfat_safefree,__VA_ARGS__)
 
 /* END_C_DECLS */
 

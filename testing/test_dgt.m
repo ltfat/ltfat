@@ -24,10 +24,10 @@ disp('--- Used subroutines ---');
 
 which comp_wfac
 which comp_iwfac
-which comp_dgt_long
-which comp_idgt_fac
-which comp_dgtreal_long
-which comp_idgtreal_fac
+which comp_sepdgt
+which comp_isepdgt
+which comp_sepdgtreal
+which comp_isepdgtreal
 which comp_gabdual_long
 which comp_gabtight_long
 

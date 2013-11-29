@@ -32,8 +32,9 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
 
 #endif
 
-   ltfat_free(gdf);
-   ltfat_free(gf);
+   //ltfat_free(gdf);
+   //ltfat_free(gf);
+   LTFAT_SAFEFREEALL(gdf,gf);
 
 
 }

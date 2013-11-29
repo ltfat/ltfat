@@ -15,7 +15,6 @@ function c=comp_dgtreal(f,g,a,M,lt,phasetype)
 %   AUTHOR : Peter L. Søndergaard.
 
 L=size(f,1);
-Lwindow=size(g,1);
 
 W=size(f,2);
 N=L/a;
@@ -23,19 +22,8 @@ N=L/a;
 M2=floor(M/2)+1;
 
 if lt(2)==1
-    if Lwindow<L
-        % Do the filter bank algorithm
-        % Periodic boundary conditions
-        c=comp_dgtreal_fb(f,g,a,M);
-        c=reshape(c,M2,N,W);
-        
-    else
-        % Do the factorization algorithm 
-        c=comp_dgtreal_long(f,g,a,M);
-        c=reshape(c,M2,N,W);
 
-    end;
-    
+    c = comp_sepdgtreal(f,g,a,M);
     
     if phasetype==1
         

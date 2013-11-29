@@ -178,30 +178,35 @@ Replacement for:
 mxArray *mxCreateNumericArray(mwSize ndim, const mwSize *dims, mxClassID classid, mxComplexity ComplexFlag);
 */
 mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,mxComplexity complexFlag);
-
+/*
+The following work exactly as size(in,2) in Matlab.
+The mxGetN(const mxArray *pm) has different behavior.
+It returns product of sizes of all dimensions >2.
+*/
+mwSize ltfatGetN(const mxArray* in);
 /**
 Include MEX source code (MEX_FILE) for each template data type according to the control macros:
 
     TYPEDEPARGS
-	COMPLEXARGS
-	REALARGS
-	COMPLEXINDEPENDENT
+    COMPLEXARGS
+    REALARGS
+    COMPLEXINDEPENDENT
 
 For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 
     MACRO SETS (from ltfat_types.h)
           MACRO                                     EXPANDS TO
-                         (double)           (single)           (complex double)      (complex single)
+                              (double)           (single)           (complex double)      (complex single)
     ------------------------------------------------------------------------------------------------------
-    LTFAT_REAL           double             float              double                float
-    LTFAT_COMPLEX        fftw_complex       fftwf_complex      fftw_complex          fftwf_complex
-    LTFAT_COMPLEX       double _Complex    float _Complex     double _Complex       float _Complex
-    LTFAT_TYPE           LTFAT_REAL         LTFAT_REAL         LTFAT_COMPLEX        LTFAT_COMPLEX
-    LTFAT_MX_CLASSID     mxDOUBLE_CLASS     mxSINGLE_CLASS     mxDOUBLE_CLASS        mxSINGLE_CLASS
-    LTFAT_MX_COMPLEXITY  mxREAL             mxREAL             mxCOMPLEX             mxCOMPLEX
-    LTFAT_FFTW(name)     fftw_##name        fftwf_##name       fftw_##name           fftwf_##name
-    LTFAT_NAME(name)     name_d             name_s             name_cd               name_cs
-
+    LTFAT_REAL                double             float              double                float
+    LTFAT_COMPLEX             double _Complex    float _Complex     double _Complex       float _Complex
+    LTFAT_TYPE                LTFAT_REAL         LTFAT_REAL         LTFAT_COMPLEX        LTFAT_COMPLEX
+    LTFAT_MX_CLASSID          mxDOUBLE_CLASS     mxSINGLE_CLASS     mxDOUBLE_CLASS        mxSINGLE_CLASS
+    LTFAT_MX_COMPLEXITY       mxREAL             mxREAL             mxCOMPLEX             mxCOMPLEX
+    LTFAT_FFTW(name)          fftw_##name        fftwf_##name       fftw_##name           fftwf_##name
+    LTFAT_NAME(name)          name_d             name_s             name_cd               name_cs
+    LTFAT_COMPLEXH_NAME(name) name               namef              name                  namef
+    LTFAT_NAME_COMPLEX(name)  name_cd            name_cs            name_cd               name_cs
     By default, a macro set (double) is used.
 */
 
@@ -307,6 +312,12 @@ mwSize sizeofClassid(mxClassID classid)
        return 0;
     break;
  }
+}
+
+mwSize ltfatGetN(const mxArray* in)
+{
+  // mxGetN returns product of sizes of all dimensions > 2 
+  return mxGetDimensions(in)[1];
 }
 
 mxArray *ltfatCreateMatrix(mwSize M, mwSize N,mxClassID classid,mxComplexity complexFlag)

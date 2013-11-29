@@ -1,5 +1,8 @@
 function test_failed=test_dwilt
 
+which comp_dwilt
+which comp_idwilt
+
 Lr=[4, 6, 8,12,16,12,18,32,30];
 Mr=[2, 3, 2, 3, 4, 2, 3, 4, 3];
 

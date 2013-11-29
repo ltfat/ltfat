@@ -37,20 +37,9 @@ function c=comp_dgt(f,g,a,M,lt,phasetype,algfir,algns)
 %   REFERENCE: OK
 
 L=size(f,1);
-Lwindow=size(g,1);
 
 if lt(2)==1
-
-    if Lwindow<L
-        % Do the filter bank algorithm
-        c=comp_dgt_fb(f,g,a,M);
-        
-    else
-        % Do the factorization algorithm
-        c=comp_dgt_long(f,g,a,M);
-        
-    end;
-    
+        c=comp_sepdgt(f,g,a,M);
 else
         
     g=fir2long(g,L);

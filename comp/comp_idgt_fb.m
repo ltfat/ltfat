@@ -17,7 +17,8 @@ function [f]=comp_idgt_fb(coef,g,L,a,M)
 N=L/a;
 b=L/M;
 
-W=prod(size(coef))/(M*N);
+%W=prod(size(coef))/(M*N);
+W = size(coef,3);
 
 N=L/a;
 b=L/M;
@@ -25,14 +26,14 @@ b=L/M;
 gl=length(g);
 glh=floor(gl/2);  % gl-half
 
-if ndims(coef)>2
-  error('Reshape to M x N*W');
-end;
+%if ndims(coef)>2
+%  error('Reshape to M x N*W');
+%end;
 
 % Apply ifft to the coefficients.
 coef=ifft(coef)*sqrt(M);
 
-coef=reshape(coef,M,N,W);
+%coef=reshape(coef,M,N,W);
 
 % The fftshift actually makes some things easier.
 g=fftshift(g);

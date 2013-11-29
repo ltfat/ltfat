@@ -270,9 +270,10 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
 {
-   ltfat_free(plan.finalmod);
-
    LTFAT_NAME(dgt_long_done)(plan.rect_plan);
+   LTFAT_SAFEFREEALL(plan.finalmod,plan.c_rect,plan.fwork,plan.gwork,plan.p0,plan.p1);
+/*
+   ltfat_free(plan.finalmod);
 
    ltfat_free(plan.c_rect);
 
@@ -291,7 +292,7 @@ LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
    {
       ltfat_free(plan.p1);
    }
-
+*/
 
 }
 

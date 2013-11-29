@@ -1,6 +1,9 @@
 function test_failed=test_wmdct
 % Test the algorithm using LONG windows.
 
+which comp_dwiltiii
+which comp_idwiltiii
+
 disp(' ===============  TEST_WMDCT ================');
 
 Lr=[4, 6, 8,12,16,12,18,32,30];

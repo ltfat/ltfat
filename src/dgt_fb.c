@@ -111,15 +111,9 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_COMPLEX *g,
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan) plan)
 {
-
-   ltfat_free(plan.sbuf);
-   ltfat_free(plan.gw);
-   ltfat_free(plan.fw);
-
+   LTFAT_SAFEFREEALL(plan.sbuf,plan.gw,plan.fw);
    LTFAT_FFTW(destroy_plan)(plan.p_small);
-
 }
-
 
 
 LTFAT_EXTERN void
@@ -377,10 +371,11 @@ LTFAT_NAME(dgt_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
    }
 
     /* -----------  Clean up ----------------- */
-   ltfat_free(sbuf);
+   /*ltfat_free(sbuf);
    ltfat_free(gw);
-   ltfat_free(fw);
+   ltfat_free(fw);*/
 
+   LTFAT_SAFEFREEALL(sbuf,gw,fw);
    LTFAT_FFTW(destroy_plan)(p_small);
 }
 
@@ -438,11 +433,11 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan) plan)
 {
-
-   ltfat_free(plan.sbuf);
+   LTFAT_SAFEFREEALL(plan.sbuf,plan.cbuf,plan.gw,plan.fw);
+/*   ltfat_free(plan.sbuf);
    ltfat_free(plan.cbuf);
    ltfat_free(plan.gw);
-   ltfat_free(plan.fw);
+   ltfat_free(plan.fw);*/
 
    LTFAT_FFTW(destroy_plan)(plan.p_small);
 

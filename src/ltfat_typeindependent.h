@@ -71,31 +71,19 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 			   const int a, const int M,
 			   LTFAT_REAL *f);
 
-
-/* --------- Wilson and WMDCT bases ---------*/
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(dwilt_long)(const LTFAT_COMPLEX *f,
-			     const LTFAT_COMPLEX *g,
-			     const int L, const int W, const int M,
-			     LTFAT_COMPLEX *cout);
+LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
+			  const int L, const int W,
+			  const int a, const int M,
+			  LTFAT_COMPLEX *f);
 
-LTFAT_EXTERN void
-LTFAT_NAME_REAL(dwilt_long)(const LTFAT_REAL *f,
-			     const LTFAT_REAL *g,
-			     const int L, const int W, const int M,
-			     LTFAT_REAL *cout);
 
 LTFAT_EXTERN void
-LTFAT_NAME(wmdct_long)(const LTFAT_COMPLEX *f,
-			     const LTFAT_COMPLEX *g,
-			     const int L, const int W, const int M,
-			     LTFAT_COMPLEX *cout);
+LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
+			      const int L, const int W,
+			      const int a, const int M,
+			      LTFAT_REAL *f);
 
-LTFAT_EXTERN void
-LTFAT_NAME(wmdctreal_long)(const LTFAT_REAL *f,
-			     const LTFAT_REAL *g,
-			     const int L, const int W, const int M,
-			     LTFAT_REAL *cout);
 
 /* --------- dual windows etc. --------------- */
 
@@ -122,7 +110,7 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
 
 LTFAT_EXTERN void
 LTFAT_NAME_COMPLEX(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-		     const int L, const int Lg,
+		     const int L, const int gl,
 		     const int W,  const int a, const int M,
 		     LTFAT_COMPLEX *cout);
 

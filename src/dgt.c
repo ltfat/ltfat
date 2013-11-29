@@ -4,19 +4,33 @@
 
 
 LTFAT_EXTERN
-void LTFAT_NAME(dgt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+void LTFAT_NAME_COMPLEX(dgt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 			 const int L, const int W, const int a,
 			 const int M, LTFAT_COMPLEX *cout)
 {
-
   LTFAT_NAME(dgt_long_plan) plan =
     LTFAT_NAME(dgt_long_init)(f, g, L, W, a, M, cout, FFTW_ESTIMATE);
 
   LTFAT_NAME(dgt_long_execute)(plan);
 
   LTFAT_NAME(dgt_long_done)(plan);
-
 }
+
+LTFAT_EXTERN
+void LTFAT_NAME(dgt_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+			 const int L, const int W, const int a,
+			 const int M, LTFAT_COMPLEX *cout)
+{
+  LTFAT_COMPLEX* gf = (LTFAT_COMPLEX*) ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+
+  LTFAT_NAME_REAL(wfac)(g, L, 1, a, M,gf);
+
+  LTFAT_NAME(dgt_fac_r)(f, (const LTFAT_COMPLEX*)gf,L,W, a,M, cout);
+
+
+  ltfat_free(gf);
+}
+
 
 LTFAT_EXTERN
 void LTFAT_NAME(dgtreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
@@ -41,12 +55,11 @@ LTFAT_NAME_COMPLEX(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 {
 
   LTFAT_NAME(dgt_fb_plan) plan =
-    LTFAT_NAME(dgt_fb_init)(g, gl, a, M, FFTW_ESTIMATE);
+  LTFAT_NAME(dgt_fb_init)(g, gl, a, M, FFTW_ESTIMATE);
 
   LTFAT_NAME(dgt_fb_execute)(plan, f, L, W, cout);
 
   LTFAT_NAME(dgt_fb_done)(plan);
-
 }
 
 

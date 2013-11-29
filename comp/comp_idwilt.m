@@ -11,6 +11,7 @@ function [f]=comp_idwilt(coef,g)
 M=size(coef,1)/2;
 N=2*size(coef,2);
 W=size(coef,3);
+
 a=M;
 
 L=N*a;
@@ -44,9 +45,11 @@ coef2(2*M:-2:M+2,1:2:N,:)   =  1/sqrt(2)*i*coef(2:2:M,:,:);
 coef2(2:2:M,2:2:N,:)        = 1/sqrt(2)*coef(M+2:2:2*M,:,:);
 coef2(2*M:-2:M+2,2:2:N,:)   = 1/sqrt(2)*coef(M+2:2:2*M,:,:);
 
+f = comp_isepdgt(coef2,g,L,a,2*M);
+
 
 % Apply the final DGT
-f=comp_idgt(coef2,g,a,[0 1],0,0);
+%f=comp_idgt(coef2,g,a,[0 1],0,0);
 
 % Clean signal if it is known to be real
 if (isreal(coef) && isreal(g))

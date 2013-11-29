@@ -84,4 +84,8 @@ void ltfat_free(void *ptr)
   fftw_free(ptr);
 }
 
-
+void ltfat_safefree(void *ptr)
+{
+  if(ptr!=NULL)
+     ltfat_free((void *)ptr);
+}

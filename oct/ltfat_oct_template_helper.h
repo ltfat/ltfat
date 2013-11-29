@@ -1,9 +1,9 @@
 #if defined(OCTFILENAME) && defined(OCTFILEHELP)
 #ifndef _LTFAT_OCT_TEMPLATE_HELPER_H
 #define _LTFAT_OCT_TEMPLATE_HELPER_H
+#include "ltfat.h"
 #include <octave/oct.h>
 
-#include "ltfat.h"
 
 #ifdef _DEBUG
 #define DEBUGINFO  octave_stdout << __PRETTY_FUNCTION__ << "\n"

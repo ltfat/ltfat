@@ -32,7 +32,8 @@ M2=floor(M/2)+1;
 
 R=prod(size(gf))/L;
 
-W=size(coef,2)/(N*R);
+%W=size(coef,2)/(N*R);
+W = size(coef,3);
 
 N=L/a;
 b=L/M;

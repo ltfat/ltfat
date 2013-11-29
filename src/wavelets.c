@@ -130,9 +130,11 @@ if(outLenN>0)
 #undef READNEXTDATA
 #undef READNEXTSAMPLE
 #undef ONEOUTSAMPLE
-  if(righExtbuff)ltfat_free(righExtbuff);
+   LTFAT_SAFEFREEALL(buffer,filtRev,righExtbuff);
+
+ /* if(righExtbuff)ltfat_free(righExtbuff);
    ltfat_free(buffer);
-   ltfat_free(filtRev);
+   ltfat_free(filtRev); */
 }
 
 LTFAT_EXTERN
@@ -233,8 +235,9 @@ void LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *ou
 
 #undef READNEXTDATA
 #undef ONEOUTSAMPLE
-	ltfat_free(buffer);
-	ltfat_free(rightBuffer);
+LTFAT_SAFEFREEALL(buffer,rightBuffer);
+/*	ltfat_free(buffer);
+	ltfat_free(rightBuffer);*/
 }
 
 
@@ -279,9 +282,6 @@ void LTFAT_NAME(convsub_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, co
 	   LTFAT_NAME(extend_right)(in,inLen,righExtbuff,fLen,ext,sub);
    }
 
-
-
-//int idx = modPow2((-(jj*filtUpsPow2)+buffPtr-1),buffLen);
 #define ONEOUTSAMPLE                                                    \
           tmpFilts = filtRev;                                           \
           int revBufPtr = modPow2(buffPtr-fLen,buffLen);                \
@@ -360,9 +360,10 @@ if(outLenN>0)
 
 #undef READNEXTDATA
 #undef ONEOUTSAMPLE
-  if(righExtbuff)ltfat_free(righExtbuff);
+LTFAT_SAFEFREEALL(buffer,filtRev,righExtbuff);
+/*  if(righExtbuff)ltfat_free(righExtbuff);
    ltfat_free(buffer);
-   ltfat_free(filtRev);
+   ltfat_free(filtRev);*/
 }
 
 
@@ -428,7 +429,7 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
    buffPtr = modPow2(buffPtr += iniStoCopy,buffLen);
 
 
- //LTFAT_TYPE* filtTmp = filts;
+
  #define ONEOUTSAMPLE(filtTmp,jjLoops)                                   \
 	    for(int jj=0;jj<(jjLoops);jj++)                                  \
 		    {                                                            \
@@ -490,9 +491,10 @@ void LTFAT_NAME(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, con
 
     #undef ONEOUTSAMPLE
     #undef READNEXTSAMPLE
-	ltfat_free(buffer);
+    LTFAT_SAFEFREEALL(buffer,rightBuffer,filtsInv);
+/*	ltfat_free(buffer);
 	ltfat_free(rightBuffer);
-	ltfat_free(filtsInv);
+	ltfat_free(filtsInv); */
 }
 
 

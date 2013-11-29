@@ -144,10 +144,10 @@ LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan)
 {
    LTFAT_NAME(dgt_long_done)(plan.plan);
-
-   ltfat_free(plan.cbuf);
+   LTFAT_SAFEFREEALL(plan.cbuf,plan.gext,plan.buf);
+  /* ltfat_free(plan.cbuf);
    ltfat_free(plan.gext);
-   ltfat_free(plan.buf);
+   ltfat_free(plan.buf);*/
 
 }
 
@@ -299,9 +299,9 @@ LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola_done)(LTFAT_NAME(dgtreal_ola_plan) plan)
 {
    LTFAT_NAME(dgtreal_long_done)(plan.plan);
-
-   ltfat_free(plan.cbuf);
+   LTFAT_SAFEFREEALL(plan.cbuf,plan.gext,plan.buf);
+  /* ltfat_free(plan.cbuf);
    ltfat_free(plan.gext);
-   ltfat_free(plan.buf);
+   ltfat_free(plan.buf);*/
 
 }

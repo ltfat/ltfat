@@ -202,8 +202,9 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const int L, const int R,
    }
 
    /* Clear the work-array. */
-   ltfat_free(cbuf);
-   ltfat_free(sbuf);
+   LTFAT_SAFEFREEALL(cbuf,sbuf);
+//   ltfat_free(cbuf);
+//   ltfat_free(sbuf);
 
    LTFAT_FFTW(destroy_plan)(p_before);
 }

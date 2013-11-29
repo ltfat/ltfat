@@ -47,7 +47,8 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
       }
    }
 
-   ltfat_free(freqpos);
-   ltfat_free(timepos);
+   LTFAT_SAFEFREEALL(freqpos,timepos);
+//   ltfat_free(freqpos);
+//   ltfat_free(timepos);
 
 }
