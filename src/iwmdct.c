@@ -53,13 +53,13 @@ LTFAT_NAME_COMPLEX(idwiltiii_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *
    LTFAT_COMPLEX *f2 = (LTFAT_COMPLEX*)ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
 
 
-   LTFAT_COMPLEX *pcoef  = c;
+   const LTFAT_COMPLEX *pcoef  = c;
    LTFAT_COMPLEX *pcoef2 = coef2;
 
    PREPROC_COMPLEX
 
    LTFAT_NAME(idgt_long)(coef2, g, L, W, M, 2*M, f2);
-   
+
    POSTPROC_COMPLEX
 
    LTFAT_SAFEFREEALL(coef2,f2);
@@ -84,7 +84,7 @@ LTFAT_NAME_REAL(idwiltiii_long)(const LTFAT_REAL *c, const LTFAT_REAL *g,
        g2[ii]=g[ii];
 
 
-   LTFAT_REAL *pcoef  = c;
+   const LTFAT_REAL *pcoef  = c;
    LTFAT_COMPLEX *pcoef2 = coef2;
 
    PREPROC_COMPLEX
@@ -113,13 +113,13 @@ LTFAT_NAME_COMPLEX(idwiltiii_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
    LTFAT_COMPLEX *f2 = (LTFAT_COMPLEX*)ltfat_malloc(L*W*sizeof(LTFAT_COMPLEX));
 
 
-   LTFAT_COMPLEX *pcoef  = c;
+   const LTFAT_COMPLEX *pcoef  = c;
    LTFAT_COMPLEX *pcoef2 = coef2;
 
    PREPROC_COMPLEX
-   
+
    LTFAT_NAME(idgt_fb)(coef2, g, L, gl, W, M, 2*M, f2);
-   
+
    POSTPROC_COMPLEX
 
    LTFAT_SAFEFREEALL(coef2,f2);
@@ -145,15 +145,15 @@ LTFAT_NAME_REAL(idwiltiii_fb)(const LTFAT_REAL *c, const LTFAT_REAL *g,
        g2[ii]=g[ii];
 
 
-   LTFAT_REAL* pcoef  = c;
+   const LTFAT_REAL* pcoef  = c;
    LTFAT_COMPLEX* pcoef2 = coef2;
 
    PREPROC_COMPLEX
-   
+
    LTFAT_NAME(idgt_fb)(coef2, g2, L, gl, W, M, 2*M, f2);
-   
+
    POSTPROC_REAL
-   
+
    LTFAT_SAFEFREEALL(coef2,f2,g2);
 }
 
