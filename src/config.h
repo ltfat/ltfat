@@ -14,7 +14,10 @@
 
 static inline int ltfat_round(double x)
 {
-  return (int)(x+.5);
+    if (x < 0.0)
+        return (int)(x - 0.5);
+    else
+        return (int)(x + 0.5);
 }
 
 static inline int positiverem(int a,int b)
