@@ -22,10 +22,12 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
    fftindex(M,freqpos);
 
    /* Zero the output array. */
-   for (ii=0;ii<M*N*W;ii++)
+  /* for (ii=0;ii<M*N*W;ii++)
    {
       sr[ii]=0.0;
    }
+   */
+   memset(sr,0,M*N*W*sizeof(LTFAT_REAL));
 
    for (int w=0;w<W;w++)
    {
@@ -37,12 +39,10 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
 	     * present in all libraries, so use trunc(x+.5) instead */
 	    /*posi=positiverem((int)trunc(tgrad[ii+jj*M]/b+freqpos[ii]+.5),M);
 	      posj=positiverem((int)trunc(fgrad[ii+jj*M]/a+timepos[jj]+.5),N);*/
-	   posi=positiverem(ltfat_round(tgrad[ii+jj*M]/b+freqpos[ii]),M);
-	   posj=positiverem(ltfat_round(fgrad[ii+jj*M]/a+timepos[jj]),N);
+	   posi=positiverem(ltfat_round(tgrad[ii+jj*M]/b+freqpos[ii]),M-1);
+	   posj=positiverem(ltfat_round(fgrad[ii+jj*M]/a+timepos[jj]),N-1);
 
-
-
-	    sr[posi+posj*M]+=s[ii+jj*M];
+        sr[posi+posj*M]+=s[ii+jj*M];
 	 }
       }
    }

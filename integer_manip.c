@@ -12,24 +12,24 @@ void fftindex(const int N, int *indexout)
 
    if (N%2==0)
    {
-      for (ii=0;ii<N/2;ii++)
+      for (ii=0;ii<N/2+1;ii++)
       {
 	 indexout[ii]=ii;
       }
-      for (ii=N/2;ii<N;ii++)
+      for (ii=N/2;ii<N-1;ii++)
       {
-	 indexout[ii]=-N+ii+1;
+	 indexout[ii+1]=-N+ii+1;
       }
    }
    else
    {
-      for (ii=0;ii<(N-1)/2;ii++)
+      for (ii=0;ii<(N-1)/2+1;ii++)
       {
 	 indexout[ii]=ii;
       }
-      for (ii=(N-1)/2;ii<N;ii++)
+      for (ii=(N-1)/2;ii<N-1;ii++)
       {
-	 indexout[ii]=-N+ii+1;
+	 indexout[ii+1]=-N+ii+1;
       }
    }
 
