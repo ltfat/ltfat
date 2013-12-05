@@ -1,18 +1,18 @@
-function [tc,relres,iter,xrec] = franalasso(F,x,lambda,varargin)
+function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %FRANALASSO  Frame LASSO regression
-%   Usage: [tc,xrec] = franalasso(F,x,lambda,C,tol,maxit)
+%   Usage: [tc,xrec] = franalasso(F,f,lambda,C,tol,maxit)
 %
 %   Input parameters:
 %       F        : Frame definition
-%       x        : Input signal
+%       f        : Input signal
 %       lambda   : Regularization parameter, controls sparsity of the solution
 %   Output parameters:
 %       tc       : Thresholded coefficients
 %       relres   : Vector of residuals.
 %       iter     : Number of iterations done.  
-%       xrec     : Reconstructed signal
+%       frec     : Reconstructed signal
 %
-%   `franalasso(F,x,lambda)` solves the LASSO (or basis pursuit denoising)
+%   `franalasso(F,f,lambda)` solves the LASSO (or basis pursuit denoising)
 %   regression problem for a general frame: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with
@@ -24,13 +24,13 @@ function [tc,relres,iter,xrec] = franalasso(F,x,lambda,varargin)
 %   `[tc,relres,iter] = franalasso(...)` return thes residuals *relres* in a vector
 %   and the number of iteration steps done, *maxit*.
 %
-%   `[tc,relres,iter,xrec] = franalasso(...)` returns the reconstructed
-%   signal from the coefficients, *xrec*. Note that this requires additional
+%   `[tc,relres,iter,frec] = franalasso(...)` returns the reconstructed
+%   signal from the coefficients, *frec*. Note that this requires additional
 %   computations.
 %
 %   The relationship between the output coefficients is given by ::
 %
-%     xrec = frsyn(F,tc);
+%     frec = frsyn(F,tc);
 %
 %   The function takes the following optional parameters at the end of
 %   the line of input arguments:
@@ -65,9 +65,25 @@ function [tc,relres,iter,xrec] = franalasso(F,x,lambda,varargin)
 %
 %   References: dademo04 beck09
 
+%   AUTHOR : Bruno Torresani.  
+%   TESTING: OK
+
+%   XXX Removed Remark: When the frame is an orthonormal basis, the solution
+%   is obtained by soft thresholding of the basis coefficients, with
+%   threshold lambda.  When the frame is a union of orthonormal bases, the
+%   solution is obtained by applying soft thresholding cyclically on the
+%   basis coefficients (BCR algorithm)
+%
+%   TO DO: Investigate necessity of equal norm atoms in F.
+
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
+
+if sum(size(f)>1)>1
+  error('%s: Too many input channels.',upper(mfilename));    
+end
+
 
 % Define initial value for flags and key/value pairs.
 definput.keyvals.C=[];
@@ -80,27 +96,20 @@ definput.flags.startphase={'zero','rand','int'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
-  
-%   AUTHOR : Bruno Torresani.  
-%   TESTING: OK
-
-%   XXX Removed Remark: When the frame is an orthonormal basis, the solution
-%   is obtained by soft thresholding of the basis coefficients, with
-%   threshold lambda.  When the frame is a union of orthonormal bases, the
-%   solution is obtained by applying soft thresholding cyclically on the
-%   basis coefficients (BCR algorithm)
 
 % Accelerate frame, we will need it repeatedly
-L = numel(x);
-F=frameaccel(F,L);
+Ls = size(f,1);
+F=frameaccel(F,Ls);
 L=F.L;
 
+% Use the upper framebound as C
 if isempty(kv.C)
-  [A_dummy,kv.C] = framebounds(F,L);
+  [~,kv.C] = framebounds(F,L);
 end;
 
 % Initialization of thresholded coefficients
-c0 = F.frana(x);
+% frana is used instead of F.frana to get the correct zero padding of f
+c0 = frana(F,f);
 
 % Various parameter initializations
 threshold = lambda/kv.C;
@@ -149,5 +158,6 @@ end
 
 % Reconstruction
 if nargout>3
-  xrec = F.frsyn(tc);
+  frec = F.frsyn(tc);
+  frec = frec(1:Ls,:);
 end;

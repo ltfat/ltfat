@@ -6,7 +6,7 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -42,14 +42,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    {
       LTFAT_NAME(idgt_long)(c_combined,g_combined, L,W,a,M, f_combined); 
    }
-  /* #else
+  /* 
    NOT CALLING idgt_fb_r:
-   TO DO: Do it better.
-   LTFAT_NAME(idgt_fb_r)((const LTFAT_REAL (*)[2])c_combined,
-                         g_combined,
-                         L,gl,W,a,M,(LTFAT_REAL (*)[2]) f_combined);
-   #endif
    */
    return;
 }
-#endif
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

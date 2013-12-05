@@ -79,12 +79,12 @@ void* ltfat_calloc (size_t nmemb, size_t size)
   return outp;
 }
 
-void ltfat_free(void *ptr)
+void ltfat_free(const void *ptr)
 {
-  fftw_free(ptr);
+  fftw_free((void*)ptr);
 }
 
-void ltfat_safefree(void *ptr)
+void ltfat_safefree(const void *ptr)
 {
   if(ptr!=NULL)
      ltfat_free((void *)ptr);

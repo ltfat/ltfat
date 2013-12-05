@@ -8,7 +8,7 @@
 #define COMPLEXARGS
 #define MATCHEDARGS 1
 
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -46,8 +46,5 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    {
       LTFAT_NAME(idgtreal_long)(c_combined,g,L,W,a,M,f_r);
    }
-
-
-   return;
 }
-#endif
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

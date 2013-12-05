@@ -10,55 +10,55 @@
 // octave_idx_type 32 or 64 bit signed integer
 
 
-static inline void fwd_atrousconvsub_td(
-      const Complex *in, const octave_idx_type inLen,
-      Complex *out, const octave_idx_type outLen,
-      const Complex *filt, const octave_idx_type fLen,
-      const octave_idx_type sub, const octave_idx_type skip,
-      enum ltfatWavExtType ext)
+static inline void 
+fwd_atrousconvsub_td(const Complex *in, const octave_idx_type inLen,
+                     Complex *out, const octave_idx_type outLen,
+                     const Complex *filt, const octave_idx_type fLen,
+                     const octave_idx_type sub, const octave_idx_type skip,
+                     enum ltfatWavExtType ext)
 {
-   atrousconvsub_td_cd(
-         reinterpret_cast<const double _Complex *>(in),inLen,
-         reinterpret_cast<double _Complex *>(out),outLen,
-         reinterpret_cast<const double _Complex *>(filt),fLen,
-         sub,skip,ext);
+   atrousconvsub_td_cd(reinterpret_cast<const double _Complex *>(in),inLen,
+                       reinterpret_cast<double _Complex *>(out),outLen,
+                       reinterpret_cast<const double _Complex *>(filt),fLen,
+                       sub,skip,ext);
 }
 
-static inline void fwd_atrousconvsub_td(
-      const FloatComplex *in, const octave_idx_type inLen,
-      FloatComplex *out, const octave_idx_type outLen,
-      const FloatComplex *filt, const octave_idx_type fLen,
-      const octave_idx_type sub, const octave_idx_type skip,
-      enum ltfatWavExtType ext)
+static inline void 
+fwd_atrousconvsub_td(const FloatComplex *in, const octave_idx_type inLen,
+                     FloatComplex *out, const octave_idx_type outLen,
+                     const FloatComplex *filt, const octave_idx_type fLen,
+                     const octave_idx_type sub, const octave_idx_type skip,
+                     enum ltfatWavExtType ext)
 {
    atrousconvsub_td_cs(reinterpret_cast<const float _Complex *>(in),inLen,
-         reinterpret_cast<float _Complex *>(out),outLen,
-         reinterpret_cast<const float _Complex *>(filt),fLen,
-         sub,skip,ext);
+                       reinterpret_cast<float _Complex *>(out),outLen,
+                       reinterpret_cast<const float _Complex *>(filt),fLen,
+                       sub,skip,ext);
 }
 
-static inline void fwd_atrousconvsub_td(
-      const double *in, const octave_idx_type inLen,
-      double *out, const octave_idx_type outLen,
-      const double *filt, const octave_idx_type fLen,
-      const octave_idx_type sub, const octave_idx_type skip,
-      enum ltfatWavExtType ext)
+static inline void 
+fwd_atrousconvsub_td(const double *in, const octave_idx_type inLen,
+                     double *out, const octave_idx_type outLen,
+                     const double *filt, const octave_idx_type fLen,
+                     const octave_idx_type sub, const octave_idx_type skip,
+                     enum ltfatWavExtType ext)
 {
    atrousconvsub_td_d(in,inLen,out,outLen,filt,fLen,sub,skip,ext);
 }
 
-static inline void fwd_atrousconvsub_td(
-      const float *in, const octave_idx_type inLen,
-      float *out, const octave_idx_type outLen,
-      const float *filt, const octave_idx_type fLen,
-      const octave_idx_type sub, const octave_idx_type skip,
-      enum ltfatWavExtType ext)
+static inline void 
+fwd_atrousconvsub_td(const float *in, const octave_idx_type inLen,
+                     float *out, const octave_idx_type outLen,
+                     const float *filt, const octave_idx_type fLen,
+                     const octave_idx_type sub, const octave_idx_type skip,
+                     enum ltfatWavExtType ext)
 {
    atrousconvsub_td_s(in,inLen,out,outLen,filt,fLen,sub,skip,ext);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
-octave_value_list octFunction(const octave_value_list& args, int nargout)
+octave_value_list
+octFunction(const octave_value_list& args, int nargout)
 {
    //DEBUGINFO;
    // Input data
@@ -96,7 +96,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
          LTFAT_TYPE *cPtrPlane = c.fortran_vec() + w*L*M;
          // Obtaing pointer to w-th column in m-th element of output cell-array
          LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-         fwd_atrousconvsub_td(fPtrCol,L,cPtrCol,L,gPtrs[m],filtLen,a(0),-offset(m),ltfatExtStringToEnum("per"));
+         fwd_atrousconvsub_td(fPtrCol,L,cPtrCol,L,gPtrs[m],filtLen,a(0),
+                              -offset(m),ltfatExtStringToEnum("per"));
       }
    }
 

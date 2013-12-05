@@ -40,7 +40,7 @@ return plan;
 LTFAT_EXTERN
 void LTFAT_NAME(destroy_gga_plan)(LTFAT_NAME(gga_plan) plan)
 {
-LTFAT_SAFEFREEALL(plan.cos_term,plan.cc_term,plan.cc2_term);
+LTFAT_SAFEFREEALL((void*)plan.cos_term,(void*)plan.cc_term,(void*)plan.cc2_term);
 /*   ltfat_free((void*)plan.cos_term);
    ltfat_free((void*)plan.cc_term);
    ltfat_free((void*)plan.cc2_term);*/

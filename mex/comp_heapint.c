@@ -6,7 +6,7 @@
 #define SINGLEARGS
 #define REALARGS
 
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */ 
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -25,7 +25,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    const LTFAT_REAL *s, *tgrad, *fgrad;
    LTFAT_REAL *phase;
 
-      // Get inputs
+   // Get inputs
    s     = (const LTFAT_REAL*) mxGetPr(prhs[0]);
    tgrad = (const LTFAT_REAL*) mxGetPr(prhs[1]);
    fgrad = (const LTFAT_REAL*) mxGetPr(prhs[2]);
@@ -45,10 +45,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    phase= (LTFAT_REAL*) mxGetPr(plhs[0]);
 
    LTFAT_NAME(heapint)(s,tgrad,fgrad, a, M, L, W,tol, phase);
-
-   return;
 }
-#endif
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */
 
 
 

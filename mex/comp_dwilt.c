@@ -6,7 +6,7 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -21,9 +21,6 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 {
    int M, N, L, gl, W;
 
-   mwSize ndim;
-   mwSize dims[3];
-
    // Get matrix dimensions.
    M=(int)mxGetScalar(prhs[2]);
    L=(int)mxGetM(prhs[0]);
@@ -32,19 +29,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
    N=L/M;
 
-   dims[0]=2*M;
-   dims[1]=N/2;
-
-   if (W==1)
-   {
-      ndim=2;
-   }
-   else
-   {
-      ndim=3;
-      dims[2]=W;
-   }
-
+   mwSize dims[] = {2*M, N/2, W};
+   mwSize ndim = W>1?3:2;
    plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
    const LTFAT_TYPE* f = (const LTFAT_TYPE*) mxGetData(prhs[0]);
@@ -60,4 +46,4 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
       LTFAT_NAME(dwilt_long)(f,g,L,W,M,cout);
    }
 }
-#endif
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

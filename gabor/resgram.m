@@ -156,7 +156,7 @@ if ~isempty(kv.fmax)
   end;
 
   f=fftresample(f,round(length(f)*resamp));
-  kv.fs=2*kv.fmax;1
+  kv.fs=2*kv.fmax;
 end;
 
 Ls=length(f);

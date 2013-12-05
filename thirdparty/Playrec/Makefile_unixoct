@@ -3,7 +3,7 @@ MKOCTFILE ?= mkoctfile
 
 
 all:
-	$(MKOCTFILE) -mex -Wall -I../../src/thirdparty -I. -lportaudio mex_dll_core.c pa_dll_playrec.c -o playrec.mex
+	$(MKOCTFILE) -Wall -mex -I../../src/thirdparty -I. -lportaudio mex_dll_core.c pa_dll_playrec.c -o playrec.mex
 
 clean:
 	rm *.o *.mex

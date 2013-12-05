@@ -25,6 +25,10 @@ if ~isstruct(F)
   error('%s: First agument must be a frame definition structure.',upper(mfilename));
 end;
 
+if size(insig,1) == 1
+    error('%s: Currently only column vectors are supported. See bug #59.',upper(mfilename));    
+end
+
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.

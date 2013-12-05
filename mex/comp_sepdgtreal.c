@@ -6,7 +6,7 @@
 #define SINGLEARGS
 #define REALARGS
 
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -31,13 +31,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    M2=M/2+1;
    N=L/a;
    
-   mwSize ndim = 3;
-   if(W==1)
-   {
-      ndim = 2;
-   }
-
    mwSize dims[] = {M2, N, W};
+   mwSize ndim = W>1?3:2;
    plhs[0] = ltfatCreateNdimArray(ndim, dims,LTFAT_MX_CLASSID,mxCOMPLEX);
    const LTFAT_REAL * f = (const LTFAT_REAL *) mxGetData(prhs[0]);
    const LTFAT_REAL * g = (const LTFAT_REAL *) mxGetData(prhs[1]);
@@ -53,5 +48,5 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    }
    return;
 }
-#endif
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */
 

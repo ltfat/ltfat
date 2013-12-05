@@ -7,10 +7,7 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 
-/* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
-//#define CHCOMPLEXFORMAT 1
-
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 /* Obtain this filename. */
 #if defined(__GNUC__) || defined(__ICC)
@@ -24,7 +21,7 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 
 
-/** From now on, it is like ordinary mexFunction but params prhs[PRHSTOCHECK[i]], i=0:length(PRHSTOCHECK) are now of type LTFAT_TYPE.
+/** From now on, it is like ordinary mexFunction but params prhs[PRHSTOCHECK[i]], i=0:length(PRHSTOCHECK)-1 are now of type LTFAT_TYPE.
     Complex array still has to be processed separatelly.
     Enclose calls to the ltfat backend in LTFAT_NAME() macro.
     Enclose calls to the fftw in LTFAT_FFTW() macro.
@@ -59,64 +56,57 @@
 */
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-    // printf("Filename: %s, Function name %s, %d \n.",__FILE__,__func__,mxIsDouble(prhs[0]));
-    const mxArray* mxc = prhs[0];
-    const mxArray* mxg = prhs[1];
-    double* a = mxGetPr(prhs[2]);
-    double* offset = mxGetPr(prhs[3]);
+   const mxArray* mxc = prhs[0];
+   const mxArray* mxg = prhs[1];
+   double* a = mxGetPr(prhs[2]);
+   double* offset = mxGetPr(prhs[3]);
 
-    // number of channels
-    const mwSize *dims = mxGetDimensions(mxc);
-    unsigned int L = dims[0];
-    unsigned int M = dims[1];
-    unsigned int W = 1;
-    if(mxGetNumberOfDimensions(mxc)>2)
-    {
-        W = dims[2];
-    }
+   const mwSize *dims = mxGetDimensions(mxc);
+   unsigned int L = dims[0];
+   // number of channels
+   unsigned int M = dims[1];
+   unsigned int W = 1;
+   if(mxGetNumberOfDimensions(mxc)>2)
+   {
+      W = dims[2];
+   }
 
-    // filter number
-    //unsigned int M = mxGetNumberOfElements(mxg);
+   // filter length
+   unsigned int filtLen = mxGetM(mxg);
 
-    // filter length
-    unsigned int filtLen = mxGetM(mxg);
+   // allocate output
+   mwSize ndim2 = 2;
+   mwSize dims2[2];
+   dims2[0] =  L;
+   dims2[1] =  W;
+   plhs[0] = ltfatCreateNdimArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
-        // allocate output
-        mwSize ndim2 = 2;
-        mwSize dims2[2];
-        dims2[0] =  L;
-        dims2[1] =  W;
-        plhs[0] = ltfatCreateNdimArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+   // POINTER TO OUTPUT
+   LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);
+   // Set to zeros
+   memset(fPtr,0,L*W*sizeof(LTFAT_TYPE));
 
-        // POINTER TO OUTPUT
-        LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);
-        // Set to zeros
-        memset(fPtr,0,L*W*sizeof(LTFAT_TYPE));
+   // POINTER TO THE FILTERS
+   LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
+   for(unsigned int m=0; m<M; m++)
+   {
+      gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
+   }
 
-        // POINTER TO THE FILTERS
-        LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
-        for(unsigned int m=0; m<M; m++)
-        {
-            gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
-        }
+   // over all channels
+   //  #pragma omp parallel for private(m)
+   for(unsigned int m =0; m<M; m++)
+   {
+      for(unsigned int w =0; w<W; w++)
+      {
+         // Obtain pointer to w-th column in input
+         LTFAT_TYPE *fPtrCol = fPtr + w*L;
+         LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(mxc)) + w*L*M;
 
-        // over all channels
-        //  #pragma omp parallel for private(m)
-        for(unsigned int m =0; m<M; m++)
-        {
-            for(unsigned int w =0; w<W; w++)
-            {
-                // Obtain pointer to w-th column in input
-                LTFAT_TYPE *fPtrCol = fPtr + w*L;
-                LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(mxc)) + w*L*M;
-
-                // Obtaing pointer to w-th column in m-th element of output cell-array
-                LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-                //(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
-                LTFAT_NAME(atrousupconv_td)(cPtrCol,L,fPtrCol,L,gPtrs[m],filtLen,(int)*a,-offset[m],ltfatExtStringToEnum("per"));
-            }
-        }
-
+         // Obtaing pointer to w-th column in m-th element of output cell-array
+         LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
+         LTFAT_NAME(atrousupconv_td)(cPtrCol,L,fPtrCol,L,gPtrs[m],filtLen,(int)*a,-offset[m],ltfatExtStringToEnum("per"));
+      }
+   }
 }
-#endif
-
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

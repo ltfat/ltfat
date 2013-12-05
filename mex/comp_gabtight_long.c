@@ -6,7 +6,7 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -19,23 +19,18 @@
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-
    int L, R, a, M;
 
    // Get matrix dimensions.
-
    L=(int)mxGetM(prhs[0]);
    R=(int)mxGetN(prhs[0]);
    a=(int)mxGetScalar(prhs[1]);
    M=(int)mxGetScalar(prhs[2]);
 
-  plhs[0] = ltfatCreateMatrix(L, R,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
-  LTFAT_TYPE* gd_combined = (LTFAT_TYPE*) mxGetData(plhs[0]);
-  const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[0]);
+   plhs[0] = ltfatCreateMatrix(L, R,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+   LTFAT_TYPE* gd_combined = (LTFAT_TYPE*) mxGetData(plhs[0]);
+   const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[0]);
 
-  LTFAT_NAME(gabtight_long)(g_combined, L, R, a, M, gd_combined);
-
-  return;
+   LTFAT_NAME(gabtight_long)(g_combined, L, R, a, M, gd_combined);
 }
 #endif
-

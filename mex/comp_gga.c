@@ -5,18 +5,13 @@
 #define TYPEDEPARGS 0
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
-//#define NOCOMPLEXFMTCHANGE
 
-
-#define GGA_WITH_PLAN
-#endif // _LTFAT_MEX_FILE - INCLUDED ONCE
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-
-
 
 // Calling convention:
 //  c = comp_gga(f,indvec)
@@ -34,15 +29,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    plhs[0] = ltfatCreateMatrix(M,W,LTFAT_MX_CLASSID,mxCOMPLEX);
    LTFAT_REAL _Complex* cPtr = (LTFAT_REAL _Complex*) mxGetPr(plhs[0]);
 
-   #ifndef GGA_WITH_PLAN
    LTFAT_NAME(gga)(fPtr,indVecPtr,L,W,M,cPtr);
-   #else
+   /*
+   // Alternative call doing the same
    LTFAT_NAME(gga_plan) p = LTFAT_NAME(create_gga_plan)(indVecPtr,M,L);
    LTFAT_NAME(gga_with_plan)(p,fPtr,cPtr,W);
    LTFAT_NAME(destroy_gga_plan)(p);
-   #endif
-
-
-   return;
+   */
 }
-#endif
+#endif /* LTFAT_SINGLE or LTFAT_DOUBLE */
