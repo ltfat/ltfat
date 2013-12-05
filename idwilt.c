@@ -67,7 +67,7 @@ LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
   const int nyquestadd = (M%2)*M2;
 
-  LTFAT_COMPLEX *pcoef  = c;
+  const LTFAT_COMPLEX *pcoef  = c;
   LTFAT_COMPLEX *pcoef2 = coef2;
 
   PREPROC_COMPLEX
@@ -90,7 +90,7 @@ LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 
    LTFAT_COMPLEX *coef2 = (LTFAT_COMPLEX*)ltfat_calloc((M+1)*N*W,sizeof(LTFAT_COMPLEX));
 
-  LTFAT_REAL *pcoef  = c;
+  const LTFAT_REAL *pcoef  = c;
   LTFAT_COMPLEX *pcoef2 = coef2;
 
   PREPROC_REAL
@@ -115,7 +115,7 @@ LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
   const int nyquestadd = (M%2)*M2;
 
-  LTFAT_COMPLEX *pcoef  = c;
+  const LTFAT_COMPLEX *pcoef  = c;
   LTFAT_COMPLEX *pcoef2 = coef2;
 
   PREPROC_COMPLEX
@@ -138,7 +138,7 @@ LTFAT_NAME_REAL(idwilt_fb)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 
    LTFAT_COMPLEX *coef2 = (LTFAT_COMPLEX*)ltfat_calloc((M+1)*N*W,sizeof(LTFAT_COMPLEX));
 
-   LTFAT_REAL* pcoef  = c;
+   const LTFAT_REAL* pcoef  = c;
    LTFAT_COMPLEX* pcoef2 = coef2;
 
    PREPROC_REAL

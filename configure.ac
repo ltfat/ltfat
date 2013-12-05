@@ -32,9 +32,9 @@ if test "$MKOCTFILE_CHECK" != "yes" ; then
 fi
 
 #AC_CHECK_HEADERS([fftw3.h],[],[AC_MSG_ERROR([fftw was not found])])
-# Checking for portaudio
-AC_CHECK_HEADER(portaudio.h)
-AC_CHECK_LIB(portaudio,Pa_Initialize,
+# Checking for portaudio, we pack portaudio.h with LTFAT
+# AC_CHECK_HEADER(portaudio.h)
+AC_CHECK_LIB(portaudio,Pa_GetHostApiCount,
 [have_libportaudio=1],
 [echo "Portaudio lib not found. Disabling support of the block processing framework." 
  have_libportaudio=0

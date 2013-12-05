@@ -15,5 +15,5 @@ oct:
 	ls -1 *.oct | cut -d . -f 1 | xargs -i rm -f ../inst/comp/{}.m
 
 playrec:
-	$(MAKE) -C ../Playrec -f Makefile_unixoct
-	mv ../Playrec/playrec.mex .
+	$(MAKE) -C ../thirdparty/Playrec -f Makefile_unixoct
+	mv ../thirdparty/Playrec/playrec.mex .
