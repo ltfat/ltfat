@@ -11,6 +11,7 @@ ltfat_malloc
 ltfat_calloc
 ltfat_realloc
 ltfat_free
+ltfat_safefree
 nextPow2_st
 nextfastfft
 max_st

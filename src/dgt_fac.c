@@ -77,18 +77,18 @@ LTFAT_EXTERN void
 LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan) plan)
 {
 
-/*
+
    LTFAT_FFTW(destroy_plan)(plan.p_veryend);
    LTFAT_FFTW(destroy_plan)(plan.p_before);
    LTFAT_FFTW(destroy_plan)(plan.p_after);
-
+/*
    ltfat_free(plan.sbuf);
    ltfat_free(plan.gf);
    ltfat_free(plan.ff);
    ltfat_free(plan.cf);
 */
 
-   LTFAT_APPLYFN(LTFAT_FFTW(plan),LTFAT_FFTW(destroy_plan),plan.p_veryend,plan.p_before,plan.p_after);
+
    LTFAT_SAFEFREEALL(plan.sbuf,plan.gf,plan.ff,plan.cf);
 }
 

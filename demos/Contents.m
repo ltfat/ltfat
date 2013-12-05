@@ -25,9 +25,9 @@
 %     DEMO_PGAUSS           - How to use |pgauss|.
 %     DEMO_PBSPLINE         - How to use |pbspline|.
 %     DEMO_GABMIXDUAL       - How to use |gabmixdual|.
-%     DEMO_GABMUL           - Time-frequency localization by Gabor multiplier.
+%     DEMO_FRAMEMUL         - Time-frequency localization by Gabor multiplier.
 %     DEMO_PHASEPLOT        - Phaseplots.
-%     DEMO_ISGRAM           - Iterative spectrogram reconstruction.
+%     DEMO_FRSYNABS         - Iterative spectrogram reconstruction.
 %     DEMO_NEXTFASTFFT      - Next fast FFT size.
 %
 %  Auditory scales and filters

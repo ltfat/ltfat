@@ -23,6 +23,12 @@ if nargin < 4
     error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+if size(s,2)>1
+    error(['%s: Symbol should be a column vecor i.e. ',... 
+           'in the common Frames framework coefficient format. ',...
+           'See FRAMENATIVE2COEF and FRAMECOEF2NATIVE.' ],upper(mfilename));
+end
+
 % Check for compatibility
 L1=framelength(Fa,size(f,1));
 L2=framelengthcoef(Fs,size(s,1));
@@ -38,9 +44,5 @@ if Fa.realinput && ~isreal(s)
 end;
 
 h=frsyn(Fs,s.*frana(Fa,f));
-
-
-
-
 
 

@@ -1,4 +1,4 @@
-%DEMO_GABMUL  Time-frequency localization by a Gabor multiplier
+%DEMO_FRAMEMUL  Time-frequency localization by a Gabor multiplier
 %
 %   This script creates several different time-frequency symbols
 %   and demonstrate their effect on a random, real input signal.
@@ -25,7 +25,7 @@
 %      the input random signal (bottom) and the output signal (middle).
 %
 
-disp('Type "help demo_gabmul" to see a description of how this demo works.');
+disp('Type "help demo_framemul" to see a description of how this demo works.');
 
 % Setup some suitable parameters for the Gabor system
 L=480;
@@ -46,7 +46,10 @@ ylabel_angle = -11;
 
 % Create a tight window, so it can be used for both analysis and
 % synthesis.
-g=gabtight(a,M,L);
+
+% Frames framework equivalent g=gabtight(a,M,L);
+F = frametight(frame('dgt','gauss',a,M));
+
 
 % Create the random signal.
 f=randn(L,1);
@@ -70,7 +73,8 @@ symbol1=fftshift(symbol1,1);
 
 
 % Do the actual filtering
-ff1=gabmul(f,symbol1,g,a);
+% Frames framework equivalent to ff1=gabmul(f,symbol1,g,a);
+ff1 = framemul(f,F,F,framenative2coef(F,symbol1));
 
 
 % plotting
@@ -101,8 +105,8 @@ t2=pgauss(N);
 symbol2=fftshift(t1*t2',2);
 
 % Do the actual filtering
-ff2=gabmul(f,symbol2,g,a);
-
+% Frames framework equivalent to ff2=gabmul(f,symbol2,g,a);
+ff2 = framemul(f,F,F,framenative2coef(F,symbol2));
 
 figure(2);
 
@@ -130,8 +134,8 @@ t2=pgauss(N);
 symbol3=fftshift(t1*t2',2);
 
 % Do the actual filtering
-ff3=gabmul(f,symbol3,g,a);
-
+% Frames framework equivalent to ff3=gabmul(f,symbol3,g,a);
+ff3 = framemul(f,F,F,framenative2coef(F,symbol3));
 
 figure(3);
 

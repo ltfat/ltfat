@@ -108,22 +108,24 @@ if flags.do_rand
   c=abs(s).*exp(2*pi*i*rand(size(s)));
 end;
 
+% Use only abs(s) in the residum evaluations
+s = abs(s);
+
 % For normalization purposes
 norm_s=norm(s,'fro');
 
 relres=zeros(kv.maxit,1);
+
+Fs=frameaccel(framedual(F),L);
+
 if flags.do_griflim
-  
-  Fs=frameaccel(framedual(F),L);
-  
   for iter=1:kv.maxit
     f=Fs.frsyn(c);
     c=F.frana(f);
     
     relres(iter)=norm(abs(c)-s,'fro')/norm_s;
-    
-    c=s.*exp(i*angle(c));        
 
+    c=s.*exp(1i*angle(c));
 
     if flags.do_print
       if mod(iter,kv.printstep)==0
@@ -140,9 +142,6 @@ if flags.do_griflim
 end;
 
 if flags.do_fgriflim
-  
-  Fs=frameaccel(framedual(F),L);
-
   told=s;
 
   for iter=1:kv.maxit
@@ -151,7 +150,7 @@ if flags.do_fgriflim
 
     relres(iter)=norm(abs(tnew)-s,'fro')/norm_s;
 
-    tnew=s.*exp(i*angle(tnew));
+    tnew=s.*exp(1i*angle(tnew));
     c=tnew+kv.alpha*(tnew-told);
     
 
@@ -171,6 +170,30 @@ if flags.do_fgriflim
   end;
 end;
 
+if flags.do_bfgs
+    if exist('minFunc')~=2
+      error(['To use the BFGS method in ISGRAMREAL, please install the minFunc ' ...
+             'software from http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html.']);
+    end;
+    
+    % Setting up the options for minFunc
+    opts = struct;
+    opts.display = kv.printstep;
+    opts.maxiter = kv.maxit;
+    
+    % Don't limit the number of function evaluations, just the number of
+    % time-steps.
+    opts.MaxFunEvals = 1e9;
+    opts.usemex = 0;
+    
+    f0 = Fs.frsyn(c);
+    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,F,s);
+    % First entry of output.trace.fval is the objective function
+    % evaluated on the initial input. Skip it to be consistent.
+    relres = output.trace.fval(2:end)/norm_s;
+    iter = output.iterations;
+end;
+
     
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
@@ -180,4 +203,15 @@ else
 end;
 
 f=comp_sigreshape_post(f,Ls,0,[0; W]);
+
+%  Subfunction to compute the objective function for the BFGS method.
+function [f,df]=objfun(x,F,s)
+  c=F.frana(x);
+  
+  inner = abs(c)-s;
+  f=norm(inner,'fro')^2;
+  
+  df = 4*real(conj(F.frsyn(inner.*c)));
+  
+
 

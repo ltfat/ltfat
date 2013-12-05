@@ -204,6 +204,6 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L, const int R,
       }
    }
 
-   ltfat_free(sbuf);
+   LTFAT_SAFEFREEALL(sbuf,cbuf);
    LTFAT_FFTW(destroy_plan)(p_before);
 }

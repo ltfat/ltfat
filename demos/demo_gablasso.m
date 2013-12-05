@@ -13,7 +13,7 @@ M=128;
 % Regression parameters
 lambda = 0.08;
 maxit=500;
-tol=1e-4;
+tol=1e-1;
 
 F=frametight(frame('dgtreal','gauss',a,M));
 

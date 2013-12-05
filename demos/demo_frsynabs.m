@@ -39,13 +39,15 @@ colormap(gray);
 axis('xy');
 
 figure(2);
-sig_lin = idgtreal(sqrt(s),'gauss',8,800);
+F = frame('dgtreal','gauss',8,800); 
+scoef = framenative2coef(F,s);
+sig_lin = frsyn(F,sqrt(scoef));
 sgram(sig_lin,'dynrange',100);
 
 figure(3);
-sig_griflim = isgramreal(s,'gauss',8,800);
+sig_griflim = frsynabs(F,scoef);
 sgram(sig_griflim,'dynrange',100);
 
 figure(4);
-sig_bfgs = isgramreal(s,'gauss',8,800,'bfgs');
+sig_bfgs = frsynabs(F,scoef,'bfgs');
 sgram(sig_bfgs,'dynrange',100);

@@ -110,47 +110,55 @@ extern "C"
 #undef LTFAT_COMPLEXH_NAME
 
 
+#ifdef LTFAT_DOUBLE
+#define LTFAT_EXTERN_TOO LTFAT_EXTERN
+#else
+#define LTFAT_EXTERN_TOO
+#endif
+
 
   /* -------- Define routines that do not change between single/double-- */
-
+LTFAT_EXTERN_TOO
 int gcd(const int a, const int b, int *r, int *s );
 
-
+LTFAT_EXTERN_TOO
 void* ltfat_malloc (size_t n);
 
-
+LTFAT_EXTERN_TOO
 void* ltfat_calloc (size_t nmemb, size_t size);
 
-
+LTFAT_EXTERN_TOO
 void* ltfat_realloc (void *ptr, size_t n);
 
-
+LTFAT_EXTERN_TOO
 void* ltfat_realloc_and_copy (void *ptr, size_t nold, size_t nnew);
 
+LTFAT_EXTERN_TOO
+void  ltfat_free(const void *ptr);
 
-void  ltfat_free(void *ptr);
-void  ltfat_safefree(void *ptr);
+LTFAT_EXTERN_TOO
+void  ltfat_safefree(const void *ptr);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 void fftindex(const int N, int *indexout);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 int makelarger(const int L, const int K);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 int int_max(const int a, const int b);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 int int_min(const int a, const int b);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 int lcm(const int a, const int b);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 void gabimagepars(const int Ls, const int x, const int y,
 		  int *a, int *M, int *L, int *N, int *Ngood);
 
-//LTFAT_EXTERN_NOTYPE
+LTFAT_EXTERN_TOO
 int wfacreal_size(const int L, const int a, const int M);
 
 
@@ -177,10 +185,10 @@ MACRO-FU
 
 // "Vectorizes" function call
 #define LTFAT_APPLYFN(type,fn,...) do{ \
-   type* list = (type[]) {(type)0,__VA_ARGS__}; \
+   const type list[] = {(const type)0,__VA_ARGS__}; \
    size_t len = sizeof(list)/sizeof(*list) - 1; \
    for(size_t ii=0;ii<len;ii++) \
-      fn((type)list[ii+1]); \
+      fn((const type)list[ii+1]); \
 }while(0)
 
 #define LTFAT_SAFEFREEALL(...) LTFAT_APPLYFN(void*,ltfat_safefree,__VA_ARGS__)
