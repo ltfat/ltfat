@@ -1,8 +1,6 @@
 function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %ERBLETT  ERBlet nonstationary Gabor filterbank
-%   Usage: [c,Ls,g,shift,M] = erblett(f,fmin,fmax,bins,fs,M,varargin)
-%          [c,Ls,g,shift,M] = erblett(f,fmin,fmax,bins,fs,varargin)
-%          [c,Ls,g,shift,M] = erblett(f,fmin,fmax,bins,fs)
+%   Usage: [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %          [c,Ls,g,shift] = erblett(...)
 %          [c,Ls] = erblett(...)
 %          c = erblett(...)
@@ -54,10 +52,12 @@ function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %   |ierblett|:::
 %
 %       f = gspi;
-%       [c,Ls,g,shift,M] = erblett(f,4,44100);
+%       fs = 44100;
+%       binsPerERB = 4;
+%       [c,Ls,g,shift,M] = erblett(f,binsPerERB,fs);
 %       fr = ierblett(c,g,shift,Ls);
 %       rel_err = norm(f-fr)/norm(f)
-%       plotfilterbank(c,shift,'dynrange',60);
+%       plotfilterbank(c,Ls./M,[],fs,'dynrange',60);
 %
 %   See also:  ierblett, firwin
 % 
@@ -180,5 +180,5 @@ if max(M) == min(M)
 end
 
 if nargout > 3
-    shift = [Ls-posit(end); diff(posit)];% Hop sizes in samples
+    shift = [Ls-posit(end); diff(posit)];% Frequency hop sizes in samples
 end

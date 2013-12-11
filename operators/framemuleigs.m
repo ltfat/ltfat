@@ -110,7 +110,7 @@ if (flags.do_iter) || (flags.do_auto && L>kv.crossover)
 
 else
   % Compute the transform matrix.
-  bigM=framematrix(Fs,L)*diag(s)*framematrix(Fa,L)'; 
+  bigM=frsynmatrix(Fs,L)*diag(s)*frsynmatrix(Fa,L)'; 
 
   if doV
     [V,D]=eig(bigM);

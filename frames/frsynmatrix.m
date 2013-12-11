@@ -1,8 +1,8 @@
-function G=framematrix(F,L);
-%FRAMEMATRIX  Frame synthesis operator matrix
-%   Usage: G=framematrix(F,L);
+function G=frsynmatrix(F,L);
+%FRSYNMATRIX  Frame synthesis operator matrix
+%   Usage: G=frsynmatrix(F,L);
 %
-%   `G=framematrix(F,L)` returns the matrix representation *G* of the frame
+%   `G=frsynmatrix(F,L)` returns the matrix representation *G* of the frame
 %   synthesis operator for a frame *F* of length *L*. The frame object *F*
 %   must have been created using |frame|.
 %
@@ -19,7 +19,7 @@ function G=framematrix(F,L);
 %
 %     L=200;
 %     F=frame('dgt','gauss',10,20);
-%     G=framematrix(F,L);
+%     G=frsynmatrix(F,L);
 %     testsig = randn(L,1);
 %     res = frana(F,testsig)-G'*testsig;
 %     norm(res)
@@ -44,7 +44,7 @@ if F.realinput
     %  analysis operator, but not of the synthesis.
     %
     %    F2=frame('dgt',F.g,F.a,F.M);
-    %    G2=framematrix(F2,L);
+    %    G2=frsynmatrix(F2,L);
     %    M2=floor(F.M/2)+1;
     %    N=L/F.a;
     %    G=zeros(L,M2*N);

@@ -20,13 +20,4 @@ end;
 
 if isfield(F,'coef2native')
     coef=F.coef2native(coef,size(coef));
-else
-    
-    switch(F.type)                                
-      case {'filterbank','filterbankreal'}
-        L=framelengthcoef(F,MN);
-        N=L./F.a
-        coef=mat2cell(coef,N,W);
-  
-    end;
 end;

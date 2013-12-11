@@ -62,10 +62,13 @@ function [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs,varargin)
 %   The following example shows analysis and synthesis with |cqt| and |icqt|:::
 %
 %     f = gspi;
-%     [c,Ls,g,shift,M] = cqt(f,50,20000,12,44100);
+%     fs = 44100;
+%     fmin = 200;
+%     fmax = fs/2;
+%     [c,Ls,g,shift,M] = cqt(f,fmin,fmax,48,fs);
 %     fr = icqt(c,g,shift,Ls);
-%     rel_err = norm(f-fr)/norm(f)
-%     plotfilterbank(c,shift,'dynrange',60);
+%     rel_err = norm(f-fr)/norm(f);
+%     plotfilterbank(c,Ls./M,[],fs,'dynrange',60);
 %
 %   See also:  icqt, firwin
 % 

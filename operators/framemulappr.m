@@ -47,8 +47,8 @@ end;
 Mfix=M;
 
 % Bootstrap the code
-D=framematrix(Fa,Mfix);
-Ds=framematrix(Fs,Mfix);
+D=frsynmatrix(Fa,Mfix);
+Ds=frsynmatrix(Fs,Mfix);
 
 [Nd Kd] = size(D);
 

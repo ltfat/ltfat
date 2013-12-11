@@ -62,12 +62,16 @@ if iscell(coef)
   M=numel(coef);
   a = comp_filterbank_a(a,M);
   
-  if any(a(:,2)~=1)
-  % Fractional case   
+  if all(rem(a(:,1),1)==0) && any(a(:,2)~=1)
+    % Well behaved fractional case   
+    % a(:,1) = L
+    % a(:,2) = cellfun(@(cEl) size(cEl,1),c);
     L = a(1);
   else
-  % Non-fractional case
+    % Non-fractional case and non-integer hop factors
     L=a(1)*size(coef{1},1);
+    % Sanity check
+    assert(rem(L,1)<1e-3,sprintf('%s: Invalid hop size.',upper(mfilename)));
   end
   
 

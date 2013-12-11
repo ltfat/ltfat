@@ -38,7 +38,7 @@ norm(sym1-reshape(sym2,M,N))
 % Test for exactness
 
 testsym=tester_crand(M,N);
-FT=framematrix(F,L);
+FT=frsynmatrix(F,L);
 
 T=FT*diag(testsym(:))*FT';
 

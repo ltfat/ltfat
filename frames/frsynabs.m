@@ -90,10 +90,6 @@ definput.flags.method={'griflim','bfgs','fgriflim'};
 L=framelengthcoef(F,size(s,1));   
 W=size(s,2);
 
-% Initialize windows to speed up computation
-F=frameaccel(F,L);
-
-
 if flags.do_input
   % Start with the phase given by the input.
   c=s;
@@ -117,6 +113,9 @@ norm_s=norm(s,'fro');
 relres=zeros(kv.maxit,1);
 
 Fs=frameaccel(framedual(F),L);
+
+% Initialize windows to speed up computation
+F=frameaccel(F,L);
 
 if flags.do_griflim
   for iter=1:kv.maxit

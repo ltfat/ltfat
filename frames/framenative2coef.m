@@ -15,4 +15,6 @@ if ~isstruct(F)
   error('%s: First agument must be a frame definition structure.',upper(mfilename));
 end;
 
-coef=F.native2coef(coef);
+if isfield(F,'native2coef')
+   coef=F.native2coef(coef);
+end

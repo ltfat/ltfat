@@ -124,7 +124,7 @@ for ii=1:numel(Fr)
   %% Test matrix representations
   if (~F.realinput)
     LL=framelength(F,L);
-    G=framematrix(F,LL);
+    G=frsynmatrix(F,LL);
     res=norm(c-G'*postpad(f,LL));
     
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
