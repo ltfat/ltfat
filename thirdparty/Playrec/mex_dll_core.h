@@ -44,7 +44,7 @@ extern "C"
 #if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
 #else
-#  define DLL_EXPORT_SYM    
+#  define EXPORT_SYM __attribute__((visibility("default")))
 #endif
 
 #include "mex.h"

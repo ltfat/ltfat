@@ -1,9 +1,4 @@
-/*
- * This mex file serves as an object-like storage of data for the
- * block processing framework. The data is made persistent between
- * calls.
- * */
-
+#include "ltfat_mex_template_helper.h"
 #include "mex.h"
 
 #define COMMAND_LENGTH 20

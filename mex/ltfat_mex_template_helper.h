@@ -58,6 +58,15 @@ NOCOMPLEXFMTCHANGE
     Macro overrides the default complex number format change.
 
 ************************************************************************************/
+#if defined(_WIN32) || defined(__WIN32__)
+#  define DLL_EXPORT_SYM __declspec(dllexport)
+#  define EXPORT_SYM __declspec(dllexport)
+#else
+#  define EXPORT_EXTERN_C __attribute__((visibility("default")))
+#  define EXPORT_SYM __attribute__((visibility("default")))
+#  define DLL_EXPORT_SYM EXPORT_SYM
+#endif
+
 
 /** Allow including this file further only if MEX_FILE is defined */
 #if defined(MEX_FILE)
@@ -76,14 +85,6 @@ NOCOMPLEXFMTCHANGE
        Only for Linux. In conjuction with compiler flag -fvisibility=hidden
        export symbols of functions only with EXPORT_EXTERN_C (used also in mex.h).
  **/
-#if defined(_WIN32) || defined(__WIN32__)
-#  define DLL_EXPORT_SYM __declspec(dllexport)
-#  define EXPORT_SYM __declspec(dllexport)
-#else
-#  define EXPORT_EXTERN_C __attribute__((visibility("default")))
-#  define EXPORT_SYM __attribute__((visibility("default")))
-#endif
-
 
 /** Template macros */
 #define LTFAT_CAT(prefix,name) prefix##name
@@ -495,6 +496,7 @@ bool checkIsReal(const mxArray *prhsEl)
 /** MEX entry function
     Handles recasting all defined inputs to a defined data type
  */
+
 void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
  {
    static int exitFncRegistered = 0;

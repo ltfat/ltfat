@@ -92,21 +92,36 @@ definput.flags.loop={'noloop','loop'};
 definput.flags.onoff={'online','offline'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-if ischar(kv.loadind)
-   if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
-      error('%s: Incorrect value parameter for the key ''loadin''.',upper(mfilename));
-   end
-elseif isjava(kv.loadind)
-   try
-      javaMethod('updateBar',kv.loadind,0);
-   catch
-      error('%s: Java object does not contain updateBar method.',upper(mfilename))
-   end
+% Octave version check
+skipLoadin = 0;
+if isoctave
+    octs=strsplit(version,'.');
+    octN=str2num(octs{1})*1000+str2num(octs{2});
+    if octN<3007
+      warning('%s: Using Octave < 3.7. Disabling load indicator.',mfilename);
+      skipLoadin = 1; 
+    end
+end
+
+
+if ~skipLoadin
+   if ischar(kv.loadind)
+      if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
+         error('%s: Incorrect value parameter for the key ''loadin''.',upper(mfilename));
+      end
+   elseif isjava(kv.loadind)
+      try
+         javaMethod('updateBar',kv.loadind,0);
+      catch
+         error('%s: Java object does not contain updateBar method.',upper(mfilename))
+      end
 % Instead of this:
 %      if ~any(cellfun(@(mEl)~isempty(strfind(mEl,'updateBar(double)')),methods(kv.loadind,'-full')))
 %         error('%s: The Java object does not contain the updateBar(double) method.',upper(mfilename));
 %      end
+   end
 end
+
 
 playChannels = 0;
 recChannels = 0;
@@ -114,7 +129,7 @@ play = 0;
 record = 0;
 % Here we can define priority list of the host APIs.
 % If none of the prefered API devices is present, the first one is taken.
-hostAPIpriorityList = {};
+hostAPIpriorityList = {'ASIO'};
 % Force portaudio to use buffer of the following size
 pa_bufLen = -1;
 
