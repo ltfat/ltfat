@@ -224,7 +224,11 @@ public class SpectFrame {
        runInPool(new Runnable() {
             @Override
             public void run() {
-               Utils.pow(col);
+               if(spectPanel==null){
+                  return;
+	       }
+
+	       Utils.pow(col);
                Utils.db(col);
                Float mindb = new Float(climMin);
                Float maxdb = new Float(climMax);
