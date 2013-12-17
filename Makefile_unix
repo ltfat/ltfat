@@ -1,6 +1,5 @@
 # Use GNU Make to process this file
 
-CC=gcc
 
 CFLAGS=-O3 -fpic -std=c99 -Ithirdparty -fvisibility=hidden
 
