@@ -135,7 +135,6 @@ typedef struct {
 } FuncLookupStruct;
 
 /* Function prototypes */
-void DLL_EXPORT_SYM mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool showHelp(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 unsigned int linewrapString( const char *pdisplayStr, unsigned int maxLineLength,
                              unsigned int blockIndent, int firstLineIndent,
