@@ -25,7 +25,13 @@ function f=normalize(f,varargin)
 %
 %     's0'      Normalize the S0-norm to be *1*.
 %
+%     'wav'     Normalize to the $l^{\inf}$ norm to be *0.99* to avoid 
+%               possible clipping introduced by the quantization procedure 
+%               when saving as a wav file. This only works with floating
+%               point data types.
+%
 %     'null'    Do NOT normalize, output is identical to input.
+%
 %
 %   It is possible to specify the dimension:
 %
@@ -51,11 +57,14 @@ if flags.do_null || isempty(f);
   return
 end;
 
+if isa(f,'integer') && ~flags.do_wav
+   error('%s: Integer data types are unsupported.',upper(mfilename)); 
+end
+
 %% ------ Computation --------------------------
  
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim, ...
                                                   upper(mfilename));
-y=zeros(permutedsize,assert_classname(f));
 
 for ii=1:W  
   
@@ -63,7 +72,7 @@ for ii=1:W
     f(:,ii)=f(:,ii)/norm(f(:,ii),1);
   end;
 
-  if flags.do_2 || flags.do_energy
+  if flags.do_2 || flags.do_energy 
     f(:,ii)=f(:,ii)/norm(f(:,ii),2);
   end;
 
@@ -78,7 +87,16 @@ for ii=1:W
   if flags.do_s0 
     f(:,ii)=f(:,ii)/s0norm(f(:,ii));
   end;
-
+  
+  if flags.do_wav
+    if isa(f,'float')    
+       f(:,ii)=0.99*f(:,ii)/norm(f(:,ii),Inf);
+    else
+       error(['%s: TO DO: Normalizing integer data types not supported ',...
+              'yet.'],upper(mfilename));
+    end
+  end;
+  
 end;
 
 

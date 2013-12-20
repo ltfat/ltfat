@@ -12,11 +12,12 @@ function y = rms(f,varargin)
 %
 %   The RMS value of a signal *x* of length *N* is computed by
 %
-%   ..                     N
-%      rms(f) = 1/sqrt(N) sum |f(n)|^2
-%                         n=1
+%   ..                       N
+%      rms(f) = 1/sqrt(N) ( sum |f(n)|^2 )^(1/2)
+%                           n=1
 %
-%   .. math:: rms(f) = \frac{1}{\sqrt N} \sum_{n=1}^N |f(n)|^2
+%   .. math:: rms(f) = \frac{1}{\sqrt N} \left( \sum_{n=1}^N |f(n)|^2
+%      \right)^{\frac{1}{2}}
 %
 %   `RMS` takes the following flags at the end of the line of input
 %   parameters:
