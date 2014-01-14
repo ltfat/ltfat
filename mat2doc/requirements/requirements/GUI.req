@@ -1,0 +1,10 @@
+Name: Graphical User Interface
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} have a simple GUI
+Rationale: There must be an easy way for new users to get started
+Solved by: GPC
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: UserFriendlyTop
+Status: finished

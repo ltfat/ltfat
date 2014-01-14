@@ -1,0 +1,10 @@
+Name: Usable
+Type: requirement
+Description: The user must be able to use \textsl{LTFAT}
+Rationale: The user must be able to use \textsl{LTFAT}
+Solved by: UserFriendly Working
+Invented on: 2013-11-02
+Invented by: soender
+Owner: soender
+Topic: PropertiesTop
+Status: finished

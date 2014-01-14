@@ -1,0 +1,12 @@
+Name: Frame analysis
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include a frame analysis framework
+Rationale: An object-oriented framework implementing frames will make
+ it easy for the user to try out different frames in an application,
+ and it will make it easier for LTFAT developers to formulate
+ high-level algorithms that work for all (or just some) frames.
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

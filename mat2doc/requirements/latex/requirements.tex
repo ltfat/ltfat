@@ -1,0 +1,84 @@
+\documentclass{report}
+\usepackage{longtable}
+\usepackage{graphicx}
+% When latex aborts with
+%  pdfTeX error (ext4): \pdfendlink ended up in different nesting level than \pd
+%  fstartlink.
+% Comment that line with draft out and inpect the errornous page
+\usepackage[pdfauthor={flonatel},%
+%draft,%
+pdftitle={Requirement for LTFAT},%
+pdfsubject={Requirements for LTFAT},%
+pdfkeywords={placeholder for some keywords},%
+pagebackref=true,%
+pdftex, bookmarks=true, colorlinks=true]{hyperref}
+
+\usepackage[a4paper]{geometry}
+
+\usepackage[titles]{tocloft}
+\usepackage{fancyhdr}
+
+\setlength{\cftsubsecnumwidth}{4em}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[L]{\rightmark}
+\fancyfoot[R]{\thepage}
+%\fancyfoot[L]{Version \input{../artifacts/reqs-version.txt}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\parindent0em
+
+\begin{document}
+\thispagestyle{empty}
+
+\mbox{}
+
+\vfill
+
+{\LARGE\textbf{Requirements for LTFAT}}
+
+\vfill
+
+{\Large\textbf{written by Peter L. S{\o}ndergaard}}
+
+\vfill
+
+\date{\today}
+
+\vfill
+
+%Requirements Version: \input{../artifacts/reqs-version.txt}
+
+\vfill
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+%\chapter{Status}
+%\input{../artifacts/reqsprios.tex}
+
+\input{../artifacts/requirements.tex}
+
+%\chapter{Statistics}
+%\section{Requirements Count Statistics}
+%\includegraphics{../artifacts/stats_reqs_cnt.pdf}
+\chapter{Graphical overview}
+\section{Figure 1}
+The following figure shows a graphical overview of the relationships
+between the LTFAT requirements.
+
+\includegraphics[width=\textwidth]{../artifacts/req-graph1.png}
+
+\section{Figure 2 - grouped}
+This following figure shows the LTFAT requirements grouped by
+topics. The graph is identical to the one on Figure 1, only the layout is
+different.
+
+\includegraphics[width=\textwidth]{../artifacts/req-graph2.png}
+
+\end{document}

@@ -1,0 +1,11 @@
+Name: Requirements for LTFAT
+Text: These are the top-level requirements for LTFAT.
+IncludeRequirements: full
+SubTopic: PropertiesTop
+SubTopic: UserFriendlyTop
+SubTopic: OpenSourceTop
+SubTopic: FunctionalityTop
+SubTopic: AcademicTop
+SubTopic: InfraTop
+SubTopic: PlatformTop
+SubTopic: SoftwareTop

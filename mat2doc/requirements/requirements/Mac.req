@@ -1,0 +1,10 @@
+Name: Mac
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work on Mac
+Rationale: LTFAT must work on Mac because this operating system is
+ used by many researchers on their laptops
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: finished

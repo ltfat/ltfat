@@ -1,0 +1,9 @@
+Name: Gabor analysis
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include Gabor analysis
+Rationale: LTFAT should cover a subset of Gabor analysis:
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

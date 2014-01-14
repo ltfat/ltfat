@@ -1,0 +1,9 @@
+Name: Octave newest version
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work in Octave 3.8
+Rationale: This is the current stable Octave version
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: finished

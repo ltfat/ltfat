@@ -1,0 +1,9 @@
+Name: Fourier analysis
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include Fourier analysis
+Rationale: LTFAT should cover a subset of Fourier analysis:
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

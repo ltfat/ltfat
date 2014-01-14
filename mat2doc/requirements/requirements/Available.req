@@ -1,0 +1,10 @@
+Name: Available
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} be available
+Rationale: LTFAT must be available for the users on the platforms they work on.
+Solved by: Homepage PlatformSupport
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: PropertiesTop
+Status: finished

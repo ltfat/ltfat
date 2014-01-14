@@ -1,0 +1,3 @@
+Name: Platforms requirements
+Text: These are the supported platforms that LTFAT must always work on
+IncludeRequirements: full

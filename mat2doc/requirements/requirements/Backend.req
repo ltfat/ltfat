@@ -1,0 +1,10 @@
+Name: Backend
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} be upon a backend in C or C++.
+Rationale: If it is not fast, it will not be used.
+Solved by: FFTW Lapack Portaudio
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: InfraTop
+Status: finished

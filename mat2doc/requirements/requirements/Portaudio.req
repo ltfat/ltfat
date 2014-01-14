@@ -1,0 +1,10 @@
+Name: Portaudio
+Type: requirement
+Description: The \textsl{backend} \textbf{must} use \textsl{Portaudio}
+Rationale: Portaudio is the best cross-platform, open-source audio
+ library available.
+Invented on: 2014-1-10
+Invented by: soender
+Owner: soender
+Topic: SoftwareTop
+Status: finished

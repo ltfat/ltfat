@@ -1,0 +1,11 @@
+Name: GNU Public Licence
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} be licenced under the 
+ GNU Public License
+Rationale: Good reasons are listed here
+ https://www.gnu.org/licenses/why-not-lgpl.html. Octave and FFTW are also GPL.
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: OpenSourceTop
+Status: finished

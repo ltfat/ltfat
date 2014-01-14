@@ -1,0 +1,10 @@
+Name: Octave
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work on Linux
+Rationale: LTFAT must work on Linux because it is the most used, free
+ operating system.
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: finished

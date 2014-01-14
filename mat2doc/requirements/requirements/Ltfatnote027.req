@@ -1,0 +1,11 @@
+Name: Paper about the Erblet-transform
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} contain the algorithms in ltfatnote027
+Rationale: LTFAT must contain the algorithms about the Erblet-transform
+ from the paper "The ERBlet transform: An auditory-based
+ time-frequency representation with perfect reconstruction"
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: AcademicTop
+Status: finished

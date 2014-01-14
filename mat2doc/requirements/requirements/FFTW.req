@@ -1,0 +1,11 @@
+Name: FFTW
+Type: requirement
+Description: The \textsl{backend} \textbf{must} use \textsl{FFTW}
+Rationale: FFTW is the fastest, open source, cross-platform FFT
+ library available.
+Solved by: GPL
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: SoftwareTop
+Status: finished

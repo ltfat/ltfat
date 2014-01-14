@@ -1,0 +1,9 @@
+Name: BLAS
+Type: requirement
+Description: \textsl{LAPACK} \textbf{requires} \textsl{BLAS}
+Rationale: BLAS is a requirement for LAPACK
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: SoftwareTop
+Status: finished

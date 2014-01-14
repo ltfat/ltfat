@@ -1,0 +1,10 @@
+Name: Working
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work.
+Rationale: It is useless if it does not work.
+Solved by: TestSuite TestBot
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: InfraTop
+Status: finished

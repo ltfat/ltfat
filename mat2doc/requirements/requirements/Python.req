@@ -1,0 +1,9 @@
+Name: Python
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work in Python
+Rationale: Python is the next big thing in numerical computations
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: not done

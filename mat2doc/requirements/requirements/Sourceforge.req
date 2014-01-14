@@ -1,0 +1,10 @@
+Name: Sourceforge
+Type: requirement
+Description: The \textsl{homepage} \textbf{must} use Sourceforge
+Rationale: The development and download part of the homepage should be
+ available on a publically accesible server 
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: OpenSourceTop
+Status: finished

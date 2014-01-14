@@ -1,0 +1,11 @@
+Name: Lapack
+Type: requirement
+Description: The \textsl{backend} \textbf{must} use \textsl{LAPACK}
+Rationale: LAPACK is the fastest, open source, cross-platform linear
+ algebra available.
+Solved by: BLAS
+Invented on: 2014-1-10
+Invented by: soender
+Owner: soender
+Topic: SoftwareTop
+Status: finished

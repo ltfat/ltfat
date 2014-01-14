@@ -1,0 +1,10 @@
+Name: GPC
+Type: requirement
+Description: The \textsl{GUI} \textbf{must} use \textsl{GPC}
+Rationale: GPC (General Polygon Clipper) is an open-source (but not
+ GPL) that can compute set interesection etc. It is used by the GUI
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: SoftwareTop
+Status: finished

@@ -1,0 +1,10 @@
+Name: Platform Support
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} support common computing platforms
+Rationale: LTFAT must be available for the users on the platforms they work on.
+Solved by: Linux Windows Mac Matlab Octave Python
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: finished

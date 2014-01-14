@@ -1,0 +1,11 @@
+Name: Matlab
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work in Matlab
+Rationale: Many people use Matlab and it is generally faster than
+ Octave
+Solved by: Matlab2009b
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: finished

@@ -1,0 +1,10 @@
+Name: YAWTB
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include selected function
+ from YAWTB
+Rationale: It has been agreed to merge selected parts of YAWTB into LTFAT
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: not done

@@ -1,0 +1,12 @@
+Name: Reliable timings
+Type: requirement
+Description: \textsl{Selected algorithms} \textbf{must} be accuratly timeable.
+Rationale: Certain papers make statements about the speed of
+ algorithms included in LTFAT. There must be a timing framework to
+ accuratly time these algorithms
+Solved by: Backend
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: InfraTop
+Status: finished

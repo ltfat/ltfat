@@ -1,0 +1,12 @@
+Name: Octave
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} work in Octave
+Rationale: Many people cannot afford a commercial software solution.
+ We should support the growth of Octave by expanding the software available
+ for Octave.
+Solved by: GPL Octave3.6 Octave3.8
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: PlatformTop
+Status: finished

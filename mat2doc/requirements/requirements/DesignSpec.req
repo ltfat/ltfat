@@ -1,0 +1,9 @@
+Name: Design Specification
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} have a design specification
+Rationale: A design specification ensures a uniform user interface
+Invented on: 2014-01-14
+Invented by: soender
+Owner: soender
+Topic: UserFriendlyTop
+Status: finished

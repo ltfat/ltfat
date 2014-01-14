@@ -1,0 +1,10 @@
+Name: Fast
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} be fast.
+Rationale: If it is not fast, it will not be used.
+Solved by: Backend
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: PropertiesTop
+Status: finished

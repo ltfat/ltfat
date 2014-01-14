@@ -1,0 +1,11 @@
+Name: Homepage
+Type: requirement
+Description: The \textsl{LTFAT} \textbf{must} have a homepage
+Rationale: It must be possible to find everything about LTFAT from one
+ homepage (or at least links from there)
+Solved by: Sourceforge Mat2doc
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: OpenSourceTop
+Status: finished

@@ -1,0 +1,10 @@
+Name: Testing Suite
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} have a testing suite
+Rationale: A testing suite that covers all functions helps find bugs,
+ regressions and makes it easier to port to new architectures.
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: InfraTop
+Status: finished

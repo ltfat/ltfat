@@ -1,0 +1,12 @@
+Name: Streaming framework
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include a streaming framework
+Rationale: An simple set of methods using the frames framework and
+ interfacing to the sound processing capabilities of the underlying
+ system in a platform independent way will make it much simpler for
+ students and researchers to experiment with streaming algorithms.
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

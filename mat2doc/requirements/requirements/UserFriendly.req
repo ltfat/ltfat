@@ -1,0 +1,10 @@
+Name: User friendly
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} be user friendly.
+Rationale: If it is not user friendly, it will not be used.
+Solved by: Documented Tutorial GUI DesignSpec
+Invented on: 2013-11-02
+Invented by: soender
+Owner: soender
+Topic: UserFriendlyTop
+Status: finished

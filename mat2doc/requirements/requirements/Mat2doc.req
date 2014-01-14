@@ -1,0 +1,9 @@
+Name: Mat2doc
+Type: requirement
+Description: The \textsl{LTFAT} \textbf{must} use \textsl{mat2doc}
+Rationale: mat2doc creates beautiful documentation
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: SoftwareTop
+Status: finished

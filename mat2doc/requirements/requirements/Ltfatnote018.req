@@ -1,0 +1,10 @@
+Name: Paper about nonstationary Gabor systems
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} contain the algorithms in ltfatnote018
+Rationale: LTFAT must contain the algorithms about non-stationary
+ Gabor systems from the paper "Nonstationary Gabor frames"
+Invented on: 2014-01-10
+Invented by: soender
+Owner: soender
+Topic: AcademicTop
+Status: finished

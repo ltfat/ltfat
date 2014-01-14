@@ -1,0 +1,10 @@
+Name: Wavelet analysis
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include Wavelet analysis
+Rationale: LTFAT should cover a subset of Wavelet analysis:
+Invented on: 2014-01-13
+Invented by: soender
+Solved by: YAWTB
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

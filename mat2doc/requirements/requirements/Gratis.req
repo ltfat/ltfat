@@ -1,0 +1,11 @@
+Name: Gratis / Free as in beer
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} be available for free.
+Rationale: Good mathematics software must be available for people that
+ cannot pay any amount of money for the software.
+Solved by: GPL Octave Linux
+Invented on: 2013-10-31
+Invented by: soender
+Owner: soender
+Topic: PropertiesTop
+Status: finished

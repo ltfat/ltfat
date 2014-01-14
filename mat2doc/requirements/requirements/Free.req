@@ -1,0 +1,11 @@
+Name: Free as in speech
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} free as in speech.
+Rationale: LTFAT should be used to benefit other free and open source
+ software projects 
+Solved by: GPL
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: PropertiesTop
+Status: finished

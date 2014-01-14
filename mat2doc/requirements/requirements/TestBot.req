@@ -1,0 +1,10 @@
+Name: Testing Robot
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} have a testing robot
+Rationale: A automated system that runs the test suite on all the
+ supported platforms saves a lot of very tedious work.
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: InfraTop
+Status: not done
