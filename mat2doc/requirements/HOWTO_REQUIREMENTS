@@ -1,0 +1,44 @@
+This file explains howto install the necessary software to process the
+requirements and how to do it
+
+Install RMTOO
+-------------
+
+1) Download rmtoo from their homepage, and unpack the files.
+
+2) Move the bin/ directory from rmtoo-23 and into
+ltfat/mat2doc/requirements so that it becomes
+ltfat/mat2doc/requirements/bin
+
+3) Recursively copy the rmtoo subdirectory of rmtoo-23 into
+ltfat/mat2doc/requirements so that it becomes
+ltfat/mat2doc/requirements/rmtoo . Note that there is already a rmtoo
+directory with files in it.
+
+4) If you have overwritten the existing file(s) in rmtoo, change into
+the directory and use "git checkout --" on the overwritten files to
+restore them (yes, I should have made a patch, but this was easier)
+
+Know you should have succesfully installed rmtoo
+
+Running RMTOO
+-------------
+
+Change to ltfat/mat2doc/requirements . This is the basic directory to work in.
+
+1) Run the command "source setenv.sh param"
+
+From now you can use "make" to generate the files or "make clean" to clean up.
+
+The output can be found in ltfat/mat2doc/requirements/artifacts . Look for the
+generated .png files and requirements.pdf
+
+Editing the requirements
+------------------------
+
+The files containing the requirements can be found in
+ltfat/mat2doc/requirements/requirements .
+
+If you add a new topic, you must also add a file in
+ltfat/mat2doc/requirements/topics and edit TopLevel.tic in this
+directory.

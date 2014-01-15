@@ -2,7 +2,7 @@ Name: Selected Topics
 Type: requirement
 Description: \textsl{LTFAT} \textbf{must} cover selected topics
 Rationale: LTFAT should cover certain topics
-Solved by: Fourier Gabor Wavelet Frames Streaming
+Solved by: Fourier Gabor Wavelet Quadratic Frames Streaming
 Invented on: 2014-01-13
 Invented by: soender
 Owner: soender

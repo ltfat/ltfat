@@ -42,7 +42,7 @@ artifacts/req-graph2.png: artifacts/req-graph2.dot
 
 # Two calls are needed: one for the requirements converting and one for
 # backlog creation.
-artifacts/requirements.pdf: ${REQS_LATEX2} latex/requirements.tex
+artifacts/requirements.pdf: ${REQS_LATEX2} latex/requirements.tex artifacts/req-graph1.png artifacts/req-graph2.png
 	(cd artifacts && \
 	   gnuplot ../contrib/gnuplot_stats_reqs_cnt.inc && \
 	   epstopdf stats_reqs_cnt.eps)
