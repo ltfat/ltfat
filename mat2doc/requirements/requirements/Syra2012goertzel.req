@@ -1,0 +1,11 @@
+Name: Paper about the generalized Goertzel transform
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} contain the algorithms in Syra2012goertzel
+Rationale: LTFAT must contain the algorithms about the generalized
+ Goertzel transform from the paper "Goertzel algorithm generalized to
+ non-integer multiples of fundamental frequency" by P. Sysel and P. Rajmic.
+Invented on: 2014-01-16
+Invented by: soender
+Owner: soender
+Topic: AcademicTop
+Status: finished

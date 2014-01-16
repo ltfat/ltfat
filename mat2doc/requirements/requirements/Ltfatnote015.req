@@ -1,0 +1,13 @@
+Name: LTFAT 1.0 paper
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} contain the functionality
+ from Ltfatnote015
+Rationale: LTFAT must containg all the functionality mentioned in the
+ LTFAT 1.0 paper: "The Linear Time Frequency Analysis Toolbox" by
+ Soendergaard, Torresani and Balazs.
+Solved by: Ltfatnote011
+Invented on: 2014-01-16
+Invented by: soender
+Owner: soender
+Topic: AcademicTop
+Status: finished

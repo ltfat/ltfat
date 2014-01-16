@@ -42,3 +42,11 @@ ltfat/mat2doc/requirements/requirements .
 If you add a new topic, you must also add a file in
 ltfat/mat2doc/requirements/topics and edit TopLevel.tic in this
 directory.
+
+Deleting a requirement
+----------------------
+
+The Makefile gets confused if you remove or rename a
+requirement. Manually delete
+ltfat/mat2doc/requirements/artifacts/.rmtoo_dependencies and do a
+"make"
