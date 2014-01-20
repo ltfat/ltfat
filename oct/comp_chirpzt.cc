@@ -57,7 +57,6 @@ octFunction(const octave_value_list& args, int nargout)
 
    //dims_out.chop_trailing_singletons();
    MArray<LTFAT_COMPLEX> c(dim_vector(K,W));
-   c.fill(0);
    
    fwd_chzt(f.data(),L,W,K,deltao,o,c.fortran_vec());
    

@@ -108,7 +108,6 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
    dims_out.chop_trailing_singletons();
 
    MArray<LTFAT_TYPE> cout(dims_out); 
-   cout.fill(0);
 
    if(gl<L)
    {     

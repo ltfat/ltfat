@@ -22,7 +22,8 @@ DEFUN_DLD (comp_pgauss, args, ,
   else
   {
      ComplexMatrix g(L,1);
-     pgauss_cmplx_d(L, w, c_t, c_f, (double _Complex*)g.fortran_vec());
+     pgauss_cmplx_d(L, w, c_t, c_f, 
+             reinterpret_cast<double _Complex*>(g.fortran_vec()));
   
      return octave_value (g);
   }

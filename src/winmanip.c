@@ -20,21 +20,21 @@
  */
 
 LTFAT_EXTERN void
-LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
+LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h)
 {
 
-   int ii;
+    ltfatInt ii;
 
-   const div_t domod=div(L,2);
+    const div_t domod=div(L,2);
 
-   for (ii=0; ii<domod.quot; ii++)
-   {
-      h[ii]=f[ii+domod.quot+domod.rem];
-   }
-   for (ii=0; ii<domod.quot+domod.rem; ii++)
-   {
-      h[ii+domod.quot]=f[ii];
-   }
+    for (ii=0; ii<domod.quot; ii++)
+    {
+        h[ii]=f[ii+domod.quot+domod.rem];
+    }
+    for (ii=0; ii<domod.quot+domod.rem; ii++)
+    {
+        h[ii+domod.quot]=f[ii];
+    }
 }
 
 
@@ -54,22 +54,22 @@ LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
  *
  */
 LTFAT_EXTERN void
-LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
+LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h)
 {
 
-   int ii;
-   div_t domod;
+    ltfatInt ii;
+    div_t domod;
 
-   domod=div(L,2);
+    domod=div(L,2);
 
-   for (ii=0; ii<domod.quot+domod.rem; ii++)
-   {
-      h[ii]=f[ii+domod.quot];
-   }
-   for (ii=0; ii<domod.quot; ii++)
-   {
-      h[ii+domod.quot+domod.rem]=f[ii];
-   }
+    for (ii=0; ii<domod.quot+domod.rem; ii++)
+    {
+        h[ii]=f[ii+domod.quot];
+    }
+    for (ii=0; ii<domod.quot; ii++)
+    {
+        h[ii+domod.quot+domod.rem]=f[ii];
+    }
 }
 
 
@@ -82,26 +82,26 @@ LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h)
  *  h     : Output array
  */
 LTFAT_EXTERN void
-LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Llong,
-	       LTFAT_REAL *h)
+LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const ltfatInt Lfir, const ltfatInt Llong,
+                       LTFAT_REAL *h)
 {
-   const div_t domod=div(Lfir,2);
+    const div_t domod=div(Lfir,2);
 
-   /* ---- In the odd case, the additional element is kept in the first half. ---*/
+    /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
-   for (int ii=0; ii<domod.quot+domod.rem; ii++)
-   {
-      h[ii]=f[ii];
-   }
-   for (int ii=domod.quot+domod.rem; ii<Llong-domod.quot;ii++)
-   {
-      h[ii]=0.0;
-   }
-   const int ss=Llong-Lfir;
-   for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-   {
-      h[ii+ss]=f[ii];
-   }
+    for (ltfatInt ii=0; ii<domod.quot+domod.rem; ii++)
+    {
+        h[ii]=f[ii];
+    }
+    for (ltfatInt ii=domod.quot+domod.rem; ii<Llong-domod.quot; ii++)
+    {
+        h[ii]=0.0;
+    }
+    const ltfatInt ss=Llong-Lfir;
+    for (ltfatInt ii=domod.quot+domod.rem; ii<Lfir; ii++)
+    {
+        h[ii+ss]=f[ii];
+    }
 
 }
 
@@ -114,32 +114,26 @@ LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Llong,
  *  h     : Output array
  */
 LTFAT_EXTERN void
-LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Llong,
-		       LTFAT_COMPLEX *h)
+LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const ltfatInt Lfir, const ltfatInt Llong,
+                       LTFAT_COMPLEX *h)
 {
-   const div_t domod=div(Lfir,2);
+    const div_t domod=div(Lfir,2);
 
-   /* ---- In the odd case, the additional element is kept in the first half. ---*/
+    /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
-   for (int ii=0; ii<domod.quot+domod.rem; ii++)
-   {
-       h[ii]=f[ii];
-      //h[ii][0]=f[ii][0];
-      //h[ii][1]=f[ii][1];
-   }
-   for (int ii=domod.quot+domod.rem; ii<Llong-domod.quot;ii++)
-   {
-       h[ii] = (LTFAT_COMPLEX) 0.0;
-      //h[ii][0]=0.0;
-      //h[ii][1]=0.0;
-   }
-   const int ss=Llong-Lfir;
-   for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-   {
-       h[ii+ss]=f[ii];
-      //h[ii+ss][0]=f[ii][0];
-      //h[ii+ss][1]=f[ii][1];
-   }
+    for (ltfatInt ii=0; ii<domod.quot+domod.rem; ii++)
+    {
+        h[ii]=f[ii];
+    }
+    for (ltfatInt ii=domod.quot+domod.rem; ii<Llong-domod.quot; ii++)
+    {
+        h[ii] = (LTFAT_COMPLEX) 0.0;
+    }
+    const ltfatInt ss=Llong-Lfir;
+    for (ltfatInt ii=domod.quot+domod.rem; ii<Lfir; ii++)
+    {
+        h[ii+ss]=f[ii];
+    }
 
 }
 
@@ -154,45 +148,41 @@ LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f, const int Lfir, const int Llong,
  *  h     : Output array
  */
 LTFAT_EXTERN void
-LTFAT_NAME(long2fir_r)(const LTFAT_REAL *f, const int Llong, const int Lfir, LTFAT_REAL *h)
+LTFAT_NAME(long2fir_r)(const LTFAT_REAL *f, const ltfatInt Llong, const ltfatInt Lfir, LTFAT_REAL *h)
 {
-  const div_t domod=div(Lfir,2);
+    const div_t domod=div(Lfir,2);
 
-  /* ---- In the odd case, the additional element is kept in the first half. ---*/
+    /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
-  for (int ii=0; ii<domod.quot+domod.rem; ii++)
-  {
-     h[ii]=f[ii];
-  }
-  const int ss=Llong-Lfir;
-  for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-  {
-     h[ii]=f[ii+ss];
-  }
+    for (ltfatInt ii=0; ii<domod.quot+domod.rem; ii++)
+    {
+        h[ii]=f[ii];
+    }
+    const ltfatInt ss=Llong-Lfir;
+    for (ltfatInt ii=domod.quot+domod.rem; ii<Lfir; ii++)
+    {
+        h[ii]=f[ii+ss];
+    }
 
 }
 
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(long2fir_c)(const LTFAT_COMPLEX *f, const int Llong, const int Lfir, LTFAT_COMPLEX *h)
+LTFAT_NAME(long2fir_c)(const LTFAT_COMPLEX *f, const ltfatInt Llong, const ltfatInt Lfir, LTFAT_COMPLEX *h)
 {
-  const div_t domod=div(Lfir,2);
+    const div_t domod=div(Lfir,2);
 
-  /* ---- In the odd case, the additional element is kept in the first half. ---*/
+    /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
-  for (int ii=0; ii<domod.quot+domod.rem; ii++)
-  {
-      h[ii]=f[ii];
-     //h[ii][0]=f[ii][0];
-     //h[ii][1]=f[ii][1];
-  }
-  const int ss=Llong-Lfir;
-  for (int ii=domod.quot+domod.rem; ii<Lfir;ii++)
-  {
-     h[ii]=f[ii+ss];
-     //h[ii][0]=f[ii+ss][0];
-     //h[ii][1]=f[ii+ss][1];
-  }
+    for (ltfatInt ii=0; ii<domod.quot+domod.rem; ii++)
+    {
+        h[ii]=f[ii];
+    }
+    const ltfatInt ss=Llong-Lfir;
+    for (ltfatInt ii=domod.quot+domod.rem; ii<Lfir; ii++)
+    {
+        h[ii]=f[ii+ss];
+    }
 
 }

@@ -5,17 +5,17 @@
 #define CH(name) LTFAT_COMPLEXH_NAME(name)
 
 #define POSTPROC_REAL \
-  for (int n=0;n<N*W;n+=2) \
+  for (ltfatInt n=0;n<N*W;n+=2) \
   { \
      pcoef[0]=CH(creal)(pcoef2[0]); \
 \
-     for (int m=1;m<M;m+=2) \
+     for (ltfatInt m=1;m<M;m+=2) \
      { \
        pcoef[m]=-scalconst*CH(cimag)(pcoef2[m]); \
        pcoef[m+M]=scalconst*CH(creal)(pcoef2[m+coef2_ld]); \
      } \
  \
-     for (int m=2;m<M;m+=2) \
+     for (ltfatInt m=2;m<M;m+=2) \
      { \
        pcoef[m]=scalconst*CH(creal)(pcoef2[m]); \
        pcoef[m+M]=-scalconst*CH(cimag)(pcoef2[m+coef2_ld]); \
@@ -27,17 +27,17 @@
   }
 
 #define POSTPROC_COMPLEX \
-  for (int n=0;n<N*W;n+=2) \
+  for (ltfatInt n=0;n<N*W;n+=2) \
   { \
      pcoef[0] = pcoef2[0]; \
  \
-     for (int m=1;m<M;m+=2) \
+     for (ltfatInt m=1;m<M;m+=2) \
      { \
        pcoef[m] = scalconst*I*(pcoef2[m]-pcoef2[M2-m]); \
        pcoef[m+M]=scalconst*(pcoef2[m+M2]+pcoef2[M4-m]); \
      } \
  \
-     for (int m=2;m<M;m+=2) \
+     for (ltfatInt m=2;m<M;m+=2) \
      { \
          pcoef[m] = scalconst*(pcoef2[m]+pcoef2[M2-m]); \
          pcoef[m+M] = scalconst*I*(pcoef2[m+M2]-pcoef2[M4-m]); \
@@ -51,100 +51,100 @@
 
 LTFAT_EXTERN void
 LTFAT_NAME_COMPLEX(dwilt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-			   const int L, const int W, const int M,
-			   LTFAT_COMPLEX *cout)
+                               const ltfatInt L, const ltfatInt W, const ltfatInt M,
+                               LTFAT_COMPLEX *cout)
 {
-   const int N=L/M;
-   const int M2=2*M;
-   const int M4=4*M;
-   const LTFAT_REAL scalconst = 1.0/sqrt(2.0);
+    const ltfatInt N=L/M;
+    const ltfatInt M2=2*M;
+    const ltfatInt M4=4*M;
+    const LTFAT_REAL scalconst = 1.0/sqrt(2.0);
 
-   LTFAT_COMPLEX *coef2 = (LTFAT_COMPLEX*)ltfat_malloc(2*M*N*W*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *coef2 = ltfat_malloc(2*M*N*W*sizeof*coef2);
 
-  /* coef2=comp_dgt(f,g,a,2*M,L); */
-  LTFAT_NAME_COMPLEX(dgt_long)(f, g, L, W, M, 2*M, coef2);
+    /* coef2=comp_dgt(f,g,a,2*M,L); */
+    LTFAT_NAME_COMPLEX(dgt_long)(f, g, L, W, M, 2*M, coef2);
 
-  const int nyquestadd = (M%2)*M2;
+    const ltfatInt nyquestadd = (M%2)*M2;
 
-  LTFAT_COMPLEX *pcoef  = cout;
-  LTFAT_COMPLEX *pcoef2 = coef2;
+    LTFAT_COMPLEX *pcoef  = cout;
+    LTFAT_COMPLEX *pcoef2 = coef2;
 
-  POSTPROC_COMPLEX
+    POSTPROC_COMPLEX
 
-  ltfat_free(coef2);
+    ltfat_free(coef2);
 
 }
 
 LTFAT_EXTERN void
 LTFAT_NAME_REAL(dwilt_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-			   const int L, const int W, const int M,
-			   LTFAT_REAL *cout)
+                            const ltfatInt L, const ltfatInt W, const ltfatInt M,
+                            LTFAT_REAL *cout)
 {
-   const int N=L/M;
-   const int coef2_ld = M+1;
-   const LTFAT_REAL scalconst = sqrt(2.0);
-   const int nyquestadd = (M%2)*coef2_ld;
+    const ltfatInt N=L/M;
+    const ltfatInt coef2_ld = M+1;
+    const LTFAT_REAL scalconst = sqrt(2.0);
+    const ltfatInt nyquestadd = (M%2)*coef2_ld;
 
-   LTFAT_COMPLEX *coef2 = (LTFAT_COMPLEX*)ltfat_malloc((M+1)*N*W*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *coef2 = ltfat_malloc((M+1)*N*W*sizeof*coef2);
 
-  /* coef2=comp_dgt(f,g,a,2*M,L); */
-  LTFAT_NAME(dgtreal_long)(f, g, L, W, M, 2*M, coef2);
+    /* coef2=comp_dgt(f,g,a,2*M,L); */
+    LTFAT_NAME(dgtreal_long)(f, g, L, W, M, 2*M, coef2);
 
 
-  LTFAT_REAL *pcoef  = cout;
-  LTFAT_COMPLEX *pcoef2 = coef2;
+    LTFAT_REAL *pcoef  = cout;
+    LTFAT_COMPLEX *pcoef2 = coef2;
 
-  POSTPROC_REAL
+    POSTPROC_REAL
 
-  ltfat_free(coef2);
+    ltfat_free(coef2);
 
 }
 
 LTFAT_EXTERN void
 LTFAT_NAME_COMPLEX(dwilt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-			    const Lint L, const Lint gl, const Lint W, const Lint M,
-			   LTFAT_COMPLEX *cout)
+                             const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
+                             LTFAT_COMPLEX *cout)
 {
-   const int N=L/M;
-   const int M2=2*M;
-   const int M4=4*M;
-   const LTFAT_REAL scalconst = 1.0/sqrt(2.0);
+    const ltfatInt N=L/M;
+    const ltfatInt M2=2*M;
+    const ltfatInt M4=4*M;
+    const LTFAT_REAL scalconst = 1.0/sqrt(2.0);
 
-   LTFAT_COMPLEX *coef2 = (LTFAT_COMPLEX*)ltfat_malloc(2*M*N*W*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *coef2 = ltfat_malloc(2*M*N*W*sizeof*coef2);
 
-  /* coef2=comp_dgt(f,g,a,2*M,L); */
-  LTFAT_NAME_COMPLEX(dgt_fb)(f, g, L, gl, W, M, 2*M, coef2);
+    /* coef2=comp_dgt(f,g,a,2*M,L); */
+    LTFAT_NAME_COMPLEX(dgt_fb)(f, g, L, gl, W, M, 2*M, coef2);
 
-  const int nyquestadd = (M%2)*M2;
+    const ltfatInt nyquestadd = (M%2)*M2;
 
-  LTFAT_COMPLEX *pcoef  = cout;
-  LTFAT_COMPLEX *pcoef2 = coef2;
+    LTFAT_COMPLEX *pcoef  = cout;
+    LTFAT_COMPLEX *pcoef2 = coef2;
 
-  POSTPROC_COMPLEX
+    POSTPROC_COMPLEX
 
-  ltfat_free(coef2);
+    ltfat_free(coef2);
 
 }
 
 LTFAT_EXTERN void
 LTFAT_NAME_REAL(dwilt_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-			   const Lint L, const Lint gl, const Lint W, const Lint M,
-			   LTFAT_REAL *cout)
+                          const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
+                          LTFAT_REAL *cout)
 {
-   const Lint N = L/M;
-   const Lint coef2_ld = M + 1;
-   const Lint nyquestadd = (M%2)*coef2_ld;
-   const LTFAT_REAL scalconst = (LTFAT_REAL) sqrt(2.0);
+    const ltfatInt N = L/M;
+    const ltfatInt coef2_ld = M + 1;
+    const ltfatInt nyquestadd = (M%2)*coef2_ld;
+    const LTFAT_REAL scalconst = (LTFAT_REAL) sqrt(2.0);
 
-   LTFAT_COMPLEX *coef2 = (LTFAT_COMPLEX*)ltfat_malloc((M+1)*N*W*sizeof(LTFAT_COMPLEX));
-   LTFAT_NAME(dgtreal_fb)(f, g, L, gl, W, M, 2*M, coef2);
+    LTFAT_COMPLEX *coef2 = ltfat_malloc((M+1)*N*W*sizeof*coef2);
+    LTFAT_NAME(dgtreal_fb)(f, g, L, gl, W, M, 2*M, coef2);
 
-   LTFAT_REAL* pcoef  = cout;
-   LTFAT_COMPLEX* pcoef2 = coef2;
+    LTFAT_REAL* pcoef  = cout;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
-   POSTPROC_REAL
+    POSTPROC_REAL
 
-   ltfat_free(coef2);
+    ltfat_free(coef2);
 }
 
 #undef CH

@@ -8,6 +8,7 @@ function devs = blockdevices()
 %
 %   See also: block
 
+
 devs = playrec('getDevices');
 
 fprintf('\nAvailable output devices:\n');

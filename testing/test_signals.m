@@ -4,6 +4,8 @@ function test_failed=test_signals;
 %  The script ensures that all files are correctly included by loading
 %  the singals and checking their sizes.
   
+disp(' ===============  TEST_SIGNALS ===========');
+
 test_failed=0;
   
 [test_failed,fail]=ltfatdiditfail(numel(bat)-400,test_failed);

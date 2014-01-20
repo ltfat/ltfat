@@ -1,4 +1,4 @@
-function c = comp_fwt(f,h,J,a,Lc,ext)
+function c = comp_fwt(f,h,J,a,ext)
 %COMP_FWT Compute DWT using FWT
 %   Usage:  c=comp_fwt(f,h,J,a,Lc,ext);
 %
@@ -7,7 +7,6 @@ function c = comp_fwt(f,h,J,a,Lc,ext)
 %         h     : Analysis Wavelet filters - cell-array of length *filtNo*.
 %         J     : Number of filterbank iterations.
 %         a     : Subsampling factors - array of length *filtNo*. 
-%         Lc    : Output subband lengths - array of length M = J*(filtNo-1)+1
 %         ext   : 'per','zero','even','odd' Type of the forward transform boundary handling.
 %
 %   Output parameters:
@@ -39,9 +38,9 @@ else
    % elsewhere.
 end
 
-
-c = cell(numel(Lc),1);
-runPtr = numel(Lc)-filtNo+2;
+M = (filtNo-1)*J+1;
+c = cell(M,1);
+runPtr = M-filtNo+2;
 ctmp = f;
 for jj=1:J
     % Run filterbank

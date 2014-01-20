@@ -35,51 +35,47 @@
 %         c  : L*M*W array of coefficients
 %
 */
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
    const mxArray* mxf = prhs[0];
    const mxArray* mxg = prhs[1];
-   double* a = mxGetPr(prhs[2]);
-   double* offset = mxGetPr(prhs[3]);
+   double* aDouble = mxGetPr(prhs[2]);
+   double* offsetDouble = mxGetPr(prhs[3]);
 
    // input data length
-   unsigned int L = mxGetM(mxf);
+   mwSize L = mxGetM(mxf);
    // number of channels
-   unsigned int W = mxGetN(mxf);
+   mwSize W = mxGetN(mxf);
    // filter number
-   unsigned int M = mxGetN(mxg);
+   mwSize M = mxGetN(mxg);
    // filter length
-   unsigned int filtLen = mxGetM(mxg);
+   mwSize filtLen = mxGetM(mxg);
 
    // POINTER TO THE INPUT
-   LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetPr(prhs[0]);
+   LTFAT_TYPE* fPtr = mxGetData(prhs[0]);
 
    // POINTER TO THE FILTERS
-   LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
-   for(unsigned int m=0; m<M; m++)
+   const LTFAT_TYPE* gPtrs[M];
+   ltfatInt offset[M];
+   ltfatInt a[M];
+   ltfatInt filtLens[M];
+   for(mwSize m=0; m<M; m++)
    {
+      filtLens[m] = filtLen;
+      a[m] = *aDouble;
+      offset[m] = offsetDouble[m];
       gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
    }
 
    mwSize ndim = 3;
    mwSize dims[]= {L, M, W};
-   plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+   plhs[0] = ltfatCreateNdimArray(ndim,dims,
+                 LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+   LTFAT_TYPE* cPtr = mxGetData(plhs[0]);
 
-   // over all filters
-   for(unsigned int m =0; m<M; m++)
-   {
-      // over all channels
-      for(unsigned int w =0; w<W; w++)
-      {
-         // Obtain pointer to w-th column in input
-         LTFAT_TYPE *fPtrCol = fPtr + w*L;
-         LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(plhs[0])) + w*L*M;
-         // Obtaing pointer to w-th column in m-th element of output cell-array
-         LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-         LTFAT_NAME(atrousconvsub_td)(fPtrCol, L, cPtrCol, L, gPtrs[m],
-                                      filtLen, (int)*a, -offset[m],
-                                      ltfatExtStringToEnum("per"));
-       }
-    }
+   LTFAT_NAME(atrousfilterbank_td)(fPtr, gPtrs, L, filtLens,
+                                   W, a, offset, M, cPtr, PER);
+
 }
 #endif /* LTFAT_DOUBLE or LTFAT_SINGLE */

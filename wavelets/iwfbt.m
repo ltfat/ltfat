@@ -76,7 +76,8 @@ end
 %% ----- step 3 : Run computation
 wtPath = nodesBForder(wt,'rev');
 outLengths = nodeInLen(wtPath,L,strcmpi(ext,'per'),wt);
-outLengths(end) = Ls;
+outLengths(end) = L;
 rangeLoc = rangeInLocalOutputs(wtPath,wt);
 rangeOut = rangeInOutputs(wtPath,wt);
 f = comp_iwfbt(c,wt.nodes(wtPath),outLengths,rangeLoc,rangeOut,ext);
+f = postpad(f,Ls);

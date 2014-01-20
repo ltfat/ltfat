@@ -161,7 +161,7 @@ if(Ls~=L)
 end
 
 %% ----- step 3 : Run computation. 
-c = comp_fwt(f,w.h,J,w.a,Lc,flags.ext);
+c = comp_fwt(f,w.h,J,w.a,flags.ext);
 
 %% ----- FINALIZE: Change format of coefficients.
 if flags.do_pack

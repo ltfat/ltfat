@@ -6,7 +6,7 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 
-#endif /* _LTFAT_MEX_FILE */ 
+#endif /* _LTFAT_MEX_FILE */
 
 #define MEX_FILE __BASE_FILE__
 #include "ltfat_mex_template_helper.h"
@@ -17,33 +17,36 @@
 // Calling convention:
 //  comp_dwiltiii(f,g,M);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void
+LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                         int nrhs, const mxArray *prhs[] )
 {
-   int M, N, L, gl, W;
+    mwSignedIndex M, N, L, gl, W;
 
-   // Get matrix dimensions.
-   M=(int)mxGetScalar(prhs[2]);
-   L=(int)mxGetM(prhs[0]);
-   gl=(int) mxGetM(prhs[1]);
-   W = mxGetN(prhs[0]);
+    // Get matrix dimensions.
+    M=(mwSignedIndex)mxGetScalar(prhs[2]);
+    L=(mwSignedIndex)mxGetM(prhs[0]);
+    gl=(mwSignedIndex) mxGetM(prhs[1]);
+    W = mxGetN(prhs[0]);
 
-   N=L/M;
+    N=L/M;
 
-   mwSize dims[]={M, N, W};
-   mwSize ndim = W>1?3:2;
-   plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+    mwSize dims[]= {M, N, W};
+    mwSize ndim = W>1?3:2;
+    plhs[0] = ltfatCreateNdimArray(ndim,dims,
+                                   LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
-   const LTFAT_TYPE* f = (const LTFAT_TYPE*) mxGetData(prhs[0]);
-   const LTFAT_TYPE* g = (const LTFAT_TYPE*) mxGetData(prhs[1]);
-   LTFAT_TYPE* cout = (LTFAT_TYPE*) mxGetData(plhs[0]);
+    const LTFAT_TYPE* f = mxGetData(prhs[0]);
+    const LTFAT_TYPE* g = mxGetData(prhs[1]);
+    LTFAT_TYPE* cout = mxGetData(plhs[0]);
 
-   if(gl<L)
-   {
-      LTFAT_NAME(dwiltiii_fb)(f,g,L,gl, W, M, cout);
-   }
-   else
-   {
-      LTFAT_NAME(dwiltiii_long)(f,g,L,W,M,cout);
-   }
+    if(gl<L)
+    {
+        LTFAT_NAME(dwiltiii_fb)(f,g,L,gl, W, M, cout);
+    }
+    else
+    {
+        LTFAT_NAME(dwiltiii_long)(f,g,L,W,M,cout);
+    }
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

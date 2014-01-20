@@ -10,7 +10,7 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %           F=tfmat('spread',c);
 %
 %   `tfmat` has been deprecated. Please construct a frame (using |frame|)
-%   and use |framematrix|, or construct an operator (using |operatornew|)
+%   and use |frsynmatrix|, or construct an operator (using |operatornew|)
 %   and use |operatormatrix| instead.
 %
 %   Original help
@@ -62,9 +62,9 @@ function F=tfmat(ttype,p2,p3,p4,p5)
 %   experimenting with systems, as the generated matrix can
 %   become very large.
 %
-%   See also: framematrix, operatormatrix
+%   See also: frsynmatrix, operatormatrix
 
-warning(['LTFAT: TFMAT has been deprecated, please use FRAMEMATRIX ' ...
+warning(['LTFAT: TFMAT has been deprecated, please use FRSYNMATRIX ' ...
          'or OPERATORMATRIX instead.']);   
 
 if (nargin<1) || ~ischar(ttype)

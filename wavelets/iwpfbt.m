@@ -65,13 +65,17 @@ else
    definput.import = {'fwt','wfbtcommon'};
    definput.flags.scale = {'scale','noscale'};
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
-
+   
    ext = flags.ext;
    do_scale = flags.scale;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
 end
 
+% Determine next legal input data length.
+L = wfbtlength(Ls,wt,ext);
+
 wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,Ls,ext,do_scale);
+f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,L,ext,do_scale);
+f = postpad(f,Ls);

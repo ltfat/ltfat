@@ -15,43 +15,21 @@
 static inline void fwd_fftreal(const double *f,
                                const octave_idx_type L,
                                const octave_idx_type W,
-                               const octave_idx_type L2,
                                Complex *cout)
 {
-  fftw_plan p;
-  // Create plan. Copy data from f to cout. 
-  p = fftw_plan_many_dft_r2c(1, &L, W,
-                             const_cast<double*>(f), NULL,
-                             1, L,
-                             reinterpret_cast<fftw_complex*>(cout), NULL,
-                             1, L2,
-                             FFTW_OPTITYPE);
-
-  // Real FFT. 
-  fftw_execute(p);   
-  
-  fftw_destroy_plan(p);
+   fftreal_d( const_cast<double*>(f),
+            L,W,
+            reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void fwd_fftreal(const float *f,
                                const octave_idx_type L,
                                const octave_idx_type W,
-                               const octave_idx_type L2,
                                FloatComplex *cout)
 {
-  fftwf_plan p;
-  // Create plan. Copy data from f to cout. 
-  p = fftwf_plan_many_dft_r2c(1, &L, W,
-                             const_cast<float*>(f), NULL,
-                             1, L,
-                             reinterpret_cast<fftwf_complex*>(cout), NULL,
-                             1, L2,
-                             FFTW_OPTITYPE);
-
-  // Real FFT. 
-  fftwf_execute(p);   
-  
-  fftwf_destroy_plan(p);
+  fftreal_s( const_cast<float*>(f),
+            L,W,
+            reinterpret_cast<float _Complex*>(cout));  
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -65,9 +43,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
      const octave_idx_type L2 = (L/2)+1;
 
      MArray<LTFAT_COMPLEX> cout(dim_vector(L2,W)); 
-     cout.fill(0);
 
-     fwd_fftreal(f.data(),L,W,L2,cout.fortran_vec());
+     fwd_fftreal(f.data(),L,W,cout.fortran_vec());
 
      return octave_value(cout);
 }

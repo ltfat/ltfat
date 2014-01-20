@@ -15,7 +15,7 @@
 
 /* Obtain this filename. */
 #if defined(__GNUC__) || defined(__ICC)
-  #define MEX_FILE __BASE_FILE__
+#define MEX_FILE __BASE_FILE__
 //#else
 //#define MEX_FILE "comp_ifilterbank_td.c"
 #endif
@@ -44,8 +44,8 @@
 %         c    : Cell array of length M, each element is N(m)*W matrix.
 %         g    : Filterbank filters - length M cell-array, each element is vector of length filtLen(m)
 %         a    : Upsampling factors - array of length M.
-%         offset : Delay of the filters - scalar or array of length M.
 %         Ls   : Output length.
+%         offset : Delay of the filters - scalar or array of length M.
 %         ext  : Border exension technique.
 %
 %   Output parameters:
@@ -54,81 +54,50 @@
 */
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-  // printf("Filename: %s, Function name %s, %d \n.",__FILE__,__func__,mxIsDouble(prhs[0]));
-  const mxArray* mxc = prhs[0];
-  const mxArray* mxg = prhs[1];
-  double* a = mxGetPr(prhs[2]);
-  double* Lsdouble = mxGetPr(prhs[3]);
-  mwSize Ls = (mwSize) *Lsdouble;
-  double* offset = mxGetPr(prhs[4]);
-  char* ext = mxArrayToString(prhs[5]);
+    // printf("Filename: %s, Function name %s, %d \n.",__FILE__,__func__,mxIsDouble(prhs[0]));
+    const mxArray* mxc = prhs[0];
+    const mxArray* mxg = prhs[1];
+    double* aDouble = mxGetPr(prhs[2]);
+    double* Lsdouble = mxGetPr(prhs[3]);
+    mwSize L = (mwSize) *Lsdouble;
+    double* offsetDouble = mxGetPr(prhs[4]);
+    ltfatExtType ext = ltfatExtStringToEnum( mxArrayToString(prhs[5]) );
 
-  // number of channels
-  mwSize W = mxGetN(mxGetCell(mxc,0));
+    // number of channels
+    mwSize W = mxGetN(mxGetCell(mxc,0));
 
-  // filter number
-  mwSize M = mxGetNumberOfElements(mxg);
+    // filter number
+    mwSize M = mxGetNumberOfElements(mxg);
 
-  // input data length
-  mwSize Lc[M];// = mxMalloc(M*sizeof(mwSize));
-  for(mwIndex m=0;m<M;m++)
-  {
-     Lc[m] = (mwSize) mxGetM(mxGetCell(mxc,m));
-  }
-
-  // filter lengths
-  mwSize filtLen[M];// = mxMalloc(M*sizeof(mwSize));
-  for(mwIndex m=0;m<M;m++)
-  {
-     filtLen[m] = (mwSize) mxGetNumberOfElements(mxGetCell(mxg,m));
-  }
-
-     // POINTER TO THE INPUT
-     LTFAT_TYPE* cPtrs[M];// = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
-     for(mwIndex m=0;m<M;++m)
-     {
-        cPtrs[m] = (LTFAT_TYPE*) mxGetData(mxGetCell(mxc,m));
-     }
-
-     // allocate output
-     plhs[0] = ltfatCreateMatrix(Ls, W,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+    const LTFAT_TYPE* cPtrs[M];
 
 
-      // POINTER TO OUTPUT
-     LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);
-     // Set to zeros
-     memset(fPtr,0,Ls*W*sizeof(LTFAT_TYPE));
+    // filter lengths
+    ltfatInt filtLen[M];
+    ltfatInt a[M];
+    ltfatInt offset[M];
 
-     // POINTER TO THE FILTERS
-     LTFAT_TYPE* gPtrs[M];// = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
+    // allocate output
+    plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
-     //double skip[M];
-     for(mwIndex m=0;m<M;m++)
-     {
+
+    // POINTER TO OUTPUT
+    LTFAT_TYPE* fPtr = mxGetData(plhs[0]);
+
+    // POINTER TO THE FILTERS
+    const LTFAT_TYPE* gPtrs[M];
+
+    //double skip[M];
+    for(mwSize m=0; m<M; m++)
+    {
+        a[m] = (ltfatInt) aDouble[m];
+        offset[m] = (ltfatInt) offsetDouble[m];
+        filtLen[m] = (ltfatInt) mxGetNumberOfElements(mxGetCell(mxg,m));
         gPtrs[m] = mxGetData(mxGetCell(mxg, m));
-        //gPtrs[m] = (LTFAT_TYPE*) mxMalloc(filtLen[m]*sizeof(LTFAT_TYPE));
-        //memcpy(gPtrs[m],mxGetData(mxGetCell(mxg, m)),filtLen[m]*sizeof(LTFAT_TYPE));
-        //LTFAT_NAME(reverse_array)(gPtrs[m],gPtrs[m],filtLen[m]);
-        //LTFAT_NAME(conjugate_array)(gPtrs[m],gPtrs[m],filtLen[m]);
-        //skip[m] = -(1.0-filtLen[m]-offset[m]);
-     }
+        cPtrs[m] = mxGetData(mxGetCell(mxc, m));
+    }
 
-     // over all channels
-   //  #pragma omp parallel for private(m)
-
-        for(mwIndex m =0; m<M; m++)
-        {
-          for(mwIndex w =0; w<W; w++)
-          {
-           // Obtain pointer to w-th column in input
-           LTFAT_TYPE *fPtrCol = fPtr + w*Ls;
-           // Obtaing pointer to w-th column in m-th element of output cell-array
-           LTFAT_TYPE *cPtrCol = cPtrs[m] + w*Lc[m];
-           //(upconv_td)(const LTFAT_TYPE *in, int inLen, LTFAT_TYPE *out, const int outLen, const LTFAT_TYPE *filts, int fLen, int up, int skip, enum ltfatWavExtType ext)
-           LTFAT_NAME(upconv_td)(cPtrCol,Lc[m],fPtrCol,Ls,gPtrs[m],filtLen[m],a[m],-offset[m],ltfatExtStringToEnum(ext));
-          }
-
-       }
+    LTFAT_NAME(ifilterbank_td)(cPtrs,gPtrs,L,filtLen,W,a,offset,M,fPtr,ext);
 
 }
 #endif

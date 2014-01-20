@@ -317,7 +317,7 @@ mwSize sizeofClassid(mxClassID classid)
 
 mwSize ltfatGetN(const mxArray* in)
 {
-  // mxGetN returns product of sizes of all dimensions > 2 
+  // mxGetN returns product of sizes of all dimensions > 2
   return mxGetDimensions(in)[1];
 }
 
@@ -329,39 +329,52 @@ mxArray *ltfatCreateMatrix(mwSize M, mwSize N,mxClassID classid,mxComplexity com
 
 mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid, mxComplexity complexFlag)
 {
+   mxArray* out;
+   mwIndex dummyndim = 1;
+   const mwSize dummyDims[] = {0};
+
    if(complexFlag==mxREAL)
-     return mxCreateNumericArray(ndim,dims,classid,mxREAL);
+   {
+      out = mxCreateNumericArray(dummyndim,dummyDims,classid,mxREAL);
+      mxSetDimensions(out,dims,ndim);
+      mwSize L = mxGetNumberOfElements(out);
+      mxSetData(out,mxMalloc(L*sizeofClassid(classid)));
+   }
 
    #ifdef NOCOMPLEXFMTCHANGE
    if(complexFlag==mxCOMPLEX)
-     return mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
+   {
+      //out = mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
+      out = mxCreateNumericArray(dummyndim,dummyDims,classid,mxCOMPLEX);
+      mxSetDimensions(out,dims,ndim);
+      mwSize L = mxGetNumberOfElements(out);
+      mxSetData(out,mxMalloc(L*sizeofClassid(classid)));
+      mxSetImagData(out,mxMalloc(L*sizeofClassid(classid)));
+   }
    #else
    if(complexFlag==mxCOMPLEX)
    {
       // Ugly...
-      mwIndex dummyndim = 1;
-      const mwSize dummyDims[] = {1};
-      mxArray* out = mxCreateNumericArray(dummyndim,dummyDims,classid,mxCOMPLEX);
+      out = mxCreateNumericArray(dummyndim,dummyDims,classid,mxCOMPLEX);
       // Set correct dimensions
       mxSetDimensions(out,dims,ndim);
       mwSize L = mxGetNumberOfElements(out);
 
-      mxFree(mxGetPr(out));
-      mxFree(mxGetPi(out));
-      mxSetData(out,(void*)mxCalloc(L,2*sizeofClassid(classid)));
+      mwSize LL = L*2*sizeofClassid(classid);
+      void* data = mxMalloc(LL);
+      mxSetData(out,data);
 	  /*
 	  Allocate array of length 1 to keep the array beeing identified as complex and to avoid automatic deallocation
 	  issue.
 	  */
-      mxSetImagData(out,mxCalloc(1,1));
 
-      return out;
+      mxSetImagData(out,(void*)mxCalloc(1,sizeofClassid(classid)));
    }
    #endif
 
 
-   mexErrMsgTxt("Error in ltfatCreateNumericArray. Very strange...");
-   return NULL;
+
+   return out;
 }
 
 void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
@@ -401,7 +414,7 @@ mxArray* recastToSingle(mxArray* prhsEl)
    if(mxIsCell(prhsEl))
    {
       mxArray* tmpCell = mxCreateCellMatrix(mxGetM(prhsEl), mxGetN(prhsEl));
-      for(unsigned int jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
+      for(mwIndex jj=0;jj<mxGetNumberOfElements(prhsEl);jj++)
       {
          mxSetCell(tmpCell, (mwIndex) jj, recastToSingle(mxGetCell(prhsEl, jj)));
       }
@@ -513,15 +526,21 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 
 void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
 {
+
    #ifdef MEX_BEGINNING_HOOK
    MEX_BEGINNING_HOOK
    #endif
    #if defined(ISNARGINEQ) || defined(ISNARGINLE) || defined(ISNARGINGE)
      checkArgs(nlhs, plhs,nrhs,prhs);
    #endif
+
+
+
    #ifndef TYPEDEPARGS
        LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs,plhs,nrhs,prhs); // pass trough
    #else
+      plhs[0] = 0;
+
       // Create array of indexes to be checked
       int prhsToCheckIfComplex[] = { TYPEDEPARGS };
 	  #ifndef MATCHEDARGS
@@ -544,16 +563,18 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
       bool recastToComplexIndArr[nrhs];
       memset(recastToComplexIndArr,0,sizeof(recastToComplexIndArr));
 
+
       bool isAnyComplex = false;
       FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfComplex)
         if( (isAnyComplex = !checkIsReal(*prhsElPtr))) break;
 
+
+
       #if !defined(COMPLEXARGS) && defined(REALARGS) && !defined(COMPLEXINDEPENDENT)
-      FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfComplex)
-         if( !checkIsReal(*prhsElPtr))
+         if(isAnyComplex)
          {
             mexErrMsgTxt("Complex input arguments are not alowed.");
-            break;
+            return;
          }
       #endif
       #if (defined(COMPLEXARGS) && !defined(REALARGS)) && !defined(COMPLEXINDEPENDENT)
@@ -575,6 +596,7 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
       #ifdef SINGLEARGS
       FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfSingle)
         if( (isAnySingle = checkIsSingle(*prhsElPtr))) break;
+
 
       if(isAnySingle)
       {
@@ -650,10 +672,12 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
       }
 
 
+#endif // TYPEDEPARGS
 
-    #endif // TYPEDEPARGS
 
       #ifndef NOCOMPLEXFMTCHANGE
+if(plhs[0]!=0)
+{
       if(checkIsSingle(plhs[0]))
       {
         #ifdef SINGLEARGS
@@ -666,7 +690,10 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         if(!checkIsReal(plhs[0]))
            plhs[0] = LTFAT_NAME_DOUBLE(mexCombined2split)(plhs[0]);
       }
+}
+
       #endif
+
 }
 #endif // _LTFAT_MEX_TEMPLATEHELPER_H
 #endif // defined(MEX_FILE)

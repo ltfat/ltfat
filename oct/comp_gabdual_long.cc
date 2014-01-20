@@ -61,7 +61,6 @@ octFunction(const octave_value_list& args, int nargout)
    const octave_idx_type M = args(2).int_value();
   
    MArray<LTFAT_TYPE> gd(dim_vector(L,R)); 
-   gd.fill(0);
     
    fwd_gabdual_long(g.data(),L, R, a, M,gd.fortran_vec());
     

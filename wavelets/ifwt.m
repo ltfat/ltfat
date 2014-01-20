@@ -117,7 +117,9 @@ end
    end;
 
    %% ----- Run computation 
-   f = comp_ifwt(c,w.g,J,w.a,Ls,ext);
+   f = comp_ifwt(c,w.g,J,w.a,L,ext);
+ 
+   f = postpad(f,Ls);
 
    %% ----- FINALIZE: Reshape back according to the dim.
    if(dim==2)

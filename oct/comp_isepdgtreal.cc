@@ -67,7 +67,6 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
    const octave_idx_type gl = gf.rows();
 
    MArray<LTFAT_REAL> f(dim_vector(L,W)); 
-   f.fill(0);
    
    if(gl<L)
    {

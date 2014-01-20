@@ -82,13 +82,13 @@ mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg)
    mxArray* out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
    mwSize L = mxGetNumberOfElements(parg);
 
-   LTFAT_COMPLEX* outc = (LTFAT_COMPLEX*) mxGetData(out);
+   LTFAT_COMPLEX* outc = mxGetData(out);
 
-   LTFAT_REAL *i_r= (LTFAT_REAL*) mxGetPr(parg);
+   LTFAT_REAL *i_r= mxGetData(parg);
 
    if (mxIsComplex(parg))
    {
-      LTFAT_REAL *i_i= (LTFAT_REAL*) mxGetPi(parg);
+      LTFAT_REAL *i_i= mxGetImagData(parg);
 
       for (mwIndex ii=0;ii<L; ii++)
       {

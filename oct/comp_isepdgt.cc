@@ -59,8 +59,6 @@ fwd_idgt_long(const FloatComplex *coef, const FloatComplex *gf,
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
-   DEBUGINFO;
-
    MArray<LTFAT_TYPE> coef = ltfatOctArray<LTFAT_TYPE>(args(0));
    MArray<LTFAT_TYPE> gf = ltfatOctArray<LTFAT_TYPE>(args(1));
    const octave_idx_type L = args(2).int_value();

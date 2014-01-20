@@ -17,25 +17,28 @@
 // Calling convention:
 //  comp_dwilt(f,g,M);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void 
+LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                         int nrhs, const mxArray *prhs[] )
 {
-   int M, N, L, gl, W;
+   mwSignedIndex M, N, L, gl, W;
 
    // Get matrix dimensions.
-   M=(int)mxGetScalar(prhs[2]);
-   L=(int)mxGetM(prhs[0]);
-   gl=(int) mxGetM(prhs[1]);
+   M=(mwSignedIndex)mxGetScalar(prhs[2]);
+   L=(mwSignedIndex)mxGetM(prhs[0]);
+   gl=(mwSignedIndex) mxGetM(prhs[1]);
    W = mxGetN(prhs[0]);
 
    N=L/M;
 
    mwSize dims[] = {2*M, N/2, W};
    mwSize ndim = W>1?3:2;
-   plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+   plhs[0] = ltfatCreateNdimArray(ndim,dims,
+                 LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
-   const LTFAT_TYPE* f = (const LTFAT_TYPE*) mxGetData(prhs[0]);
-   const LTFAT_TYPE* g = (const LTFAT_TYPE*) mxGetData(prhs[1]);
-   LTFAT_TYPE* cout = (LTFAT_TYPE*) mxGetData(plhs[0]);
+   const LTFAT_TYPE* f = mxGetData(prhs[0]);
+   const LTFAT_TYPE* g = mxGetData(prhs[1]);
+   LTFAT_TYPE* cout = mxGetData(plhs[0]);
 
    if(gl<L)
    {

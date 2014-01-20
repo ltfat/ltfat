@@ -70,28 +70,28 @@ do_java  = flags.do_java || flags.do_blockproc;
 
 
 if isoctave && flags.do_gpc
-   error('%s: Compiling GPC is not relevant for Octave.',upper(mfilename));
+    error('%s: Compiling GPC is not relevant for Octave.',upper(mfilename));
 end
 
 if isoctave
-  extname='oct';
-  ext='oct';
+	extname='oct';
+    ext='oct';
 else
-  extname='mex';
-  ext=mexext;
+    extname='mex';
+    ext=mexext;
 end;
 
 % Check if we are on Windows
 if ispc
-   makefilename='Makefile_mingw';
-   make_exe = 'mingw32-make';
-   sharedExt = 'dll';
-   fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
-   % The pre-compiled Octave for Windows comes only in 32bit version (3.6.4)
-   % We use different Makefiles
-   if isoctave
+    makefilename='Makefile_mingw';
+    make_exe = 'mingw32-make';
+    sharedExt = 'dll';
+    fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
+    % The pre-compiled Octave for Windows comes only in 32bit version (3.6.4)
+    % We use different Makefiles
+    if isoctave
       makefilename='Makefile_mingwoct';      
-   end
+    end
 end;
 
 % Check if we are on Unix-type system

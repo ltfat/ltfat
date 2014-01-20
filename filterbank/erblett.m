@@ -51,8 +51,7 @@ function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %   The following example shows analysis and synthesis with |erblett| and
 %   |ierblett|:::
 %
-%       f = gspi;
-%       fs = 44100;
+%       [f,fs] = gspi;
 %       binsPerERB = 4;
 %       [c,Ls,g,shift,M] = erblett(f,binsPerERB,fs);
 %       fr = ierblett(c,g,shift,Ls);

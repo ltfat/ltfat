@@ -30,8 +30,6 @@ static inline void fwd_heapint(const float *s, const float *tgrad, const float *
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
-     DEBUGINFO;
-	 
 	 MArray<LTFAT_TYPE> s = ltfatOctArray<LTFAT_TYPE>(args(0));
 	 MArray<LTFAT_TYPE> tgrad = ltfatOctArray<LTFAT_TYPE>(args(1));
 	 MArray<LTFAT_TYPE> fgrad = ltfatOctArray<LTFAT_TYPE>(args(2));
@@ -43,41 +41,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
      const octave_idx_type L = N*a;
 
      MArray<LTFAT_TYPE> phase(dim_vector(M,N)); 
-     phase.fill(0);
 	 
 	 fwd_heapint(s.data(),tgrad.data(),fgrad.data(),a,M,L,1,tol,phase.fortran_vec());
 	 
      return octave_value(phase);
 }
-
-/*
-#include <octave/oct.h>
-#include "config.h"
-#include "ltfat.h"
-
-DEFUN_DLD (comp_heapint, args, ,
-  "Computes heapint.\n\
-  Usage: c = comp_heapint(s, itime, ifreq, a, tol);\n\
-  Yeah.")
-{
-
-  const Matrix s     = args(0).matrix_value();
-  const Matrix tgrad = args(1).matrix_value();
-  const Matrix fgrad = args(2).matrix_value();
-  const int a        = args(3).int_value();
-  const double tol   = args(4).double_value();
-
-  const int M = args(0).rows();
-  const int N = args(0).columns();
-  const int L = N*a;
-
-  Matrix phase(M,N);
-  
-  heapint((double*)s.data(),
-	  (double*)tgrad.data(),
-	  (double*)fgrad.data(),a,M,L,1,tol,
-	  (double*)phase.data());
-  
-  return octave_value (phase);
-}
-*/

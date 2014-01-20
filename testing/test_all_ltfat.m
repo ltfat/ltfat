@@ -1,10 +1,10 @@
-function test_all_ltfat(varargin)
+function test_all_ltfat(prec,varargin)
 
 global LTFAT_TEST_TYPE;
 
-definput.flags.prec={'all','double','single'};
 definput.keyvals.tests=[];
-[flags,kv]=ltfatarghelper({},definput,varargin);
+definput.keyvals.ignore={};
+[flags,kv]=ltfatarghelper({'tests'},definput,varargin);
 
 tests_todo={
     'dgt','dwilt','wmdct',...
@@ -32,9 +32,50 @@ if ~isempty(kv.tests)
    tests_todo = kv.tests;
 end
 
+if ~isempty(kv.ignore)
+    if ischar(kv.ignore)
+        kv.ignore = {kv.ignore};
+    end
+    if ~iscell(kv.ignore)
+        error('%s: Ignored tests list is incorrect.',upper(mfilename));
+    end
+        
+    ignoreList = [];
+    ignoreUsed = [];
+    ignoreCell = kv.ignore;
+    for ii=1:numel(tests_todo)
+       res = cellfun(@(iEl) strcmpi(tests_todo{ii},iEl) , ignoreCell);
+       if any(res)
+           ignoreList(end+1) = ii;
+           disp(sprintf('Ignoring test: %s',tests_todo{ii}))
+       end
+       [~,idx]=find(res>0);
+       ignoreUsed(end+1:end+numel(idx)) = idx;
+    end
+    
+    if ~isempty(ignoreList)
+       tests_todo(ignoreList) = []; 
+    end
+    
+    if numel(ignoreUsed)~=numel(ignoreCell)
+        ignoreCell(ignoreUsed) = [];
+        strToPlot = cellfun(@(iEl) [iEl,', '],ignoreCell,'UniformOutput',0);
+        strToPlot = cell2mat(strToPlot);  
+        
+        error('%s: The following ignored tests were not found: %s',...
+              upper(mfilename),strToPlot(1:end-2));
+
+    end
+   
+end
+
 precarray={'double','single'};
-if ~flags.do_all
-  precarray={flags.prec}; 
+if nargin >0 && ~strcmpi(prec,'all')
+  if any(cellfun(@(pEl)strcmpi(pEl,prec),precarray))  
+    precarray={prec}; 
+  else
+    error('%s: Unknown data precision.',upper(mfilename));  
+  end
 end
 
 % Testing of pbspline has been removed, as it causes too much trouble.

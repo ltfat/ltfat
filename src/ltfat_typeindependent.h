@@ -5,353 +5,421 @@
 /*  --------- factorizations --------------- */
 
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(wfac)(const LTFAT_COMPLEX *g, const int L, const int R,
-		 const int a, const int M, LTFAT_COMPLEX *gf);
+LTFAT_NAME_COMPLEX(wfac)(const LTFAT_COMPLEX *g, const ltfatInt L, const ltfatInt R,
+                         const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gf);
 
 LTFAT_EXTERN void
-LTFAT_NAME_REAL(wfac)(const LTFAT_REAL *g, const int L, const int R,
-		   const int a, const int M, LTFAT_COMPLEX *gf);
+LTFAT_NAME_REAL(wfac)(const LTFAT_REAL *g, const ltfatInt L, const ltfatInt R,
+                      const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gf);
 
 LTFAT_EXTERN void
-LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const int L, const int R,
-		       const int a, const int M, LTFAT_COMPLEX *gf);
+LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const ltfatInt L, const ltfatInt R,
+                     const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gf);
 
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(iwfac)(const LTFAT_COMPLEX *gf, const int L, const int R,
-		  const int a, const int M, LTFAT_COMPLEX *g);
+LTFAT_NAME_COMPLEX(iwfac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
+                          const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *g);
 
 LTFAT_EXTERN void
-LTFAT_NAME_REAL(iwfac)(const LTFAT_COMPLEX *gf, const int L, const int R,
-		    const int a, const int M, LTFAT_REAL *g);
+LTFAT_NAME_REAL(iwfac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
+                       const ltfatInt a, const ltfatInt M, LTFAT_REAL *g);
 
 LTFAT_EXTERN void
-LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const int L, const int R,
-		    const int a, const int M, LTFAT_REAL *g);
+LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
+                      const ltfatInt a, const ltfatInt M, LTFAT_REAL *g);
 
 /* --------- DGT by factorization ------------ */
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_fac)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *gf,
-		      const int L, const int W,  const int a,
-		      const int M, LTFAT_COMPLEX *cout);
+                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+                    const ltfatInt M, LTFAT_COMPLEX *cout);
 
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-		      const int L, const int W,  const int a,
-		      const int M, LTFAT_COMPLEX *cout);
+                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+                         const ltfatInt M, LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_fac_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
-			const int L,
-			const int W,  const int a,
-			const int M, LTFAT_COMPLEX *cout);
+                      const ltfatInt L,
+                      const ltfatInt W,  const ltfatInt a,
+                      const ltfatInt M, LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN
 void LTFAT_NAME(dgtreal_fac)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
-			       const int L,
-			       const int W,  const int a,
-			       const int M, LTFAT_COMPLEX *cout);
+                             const ltfatInt L,
+                             const ltfatInt W,  const ltfatInt a,
+                             const ltfatInt M, LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
-			 const int L, const int W,
-			  const int a, const int M, LTFAT_COMPLEX *cout);
+                         const ltfatInt L, const ltfatInt W,
+                         const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *cout);
 
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *gf,
-		       const int L,
-		       const int W,const int a, const int M,
-		       LTFAT_COMPLEX *f);
+                     const ltfatInt L,
+                     const ltfatInt W,const ltfatInt a, const ltfatInt M,
+                     LTFAT_COMPLEX *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
-			   const int L, const int W,
-			   const int a, const int M,
-			   LTFAT_REAL *f);
+                         const ltfatInt L, const ltfatInt W,
+                         const ltfatInt a, const ltfatInt M,
+                         LTFAT_REAL *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
-			  const int L, const int W,
-			  const int a, const int M,
-			  LTFAT_COMPLEX *f);
+                      const ltfatInt L, const ltfatInt W,
+                      const ltfatInt a, const ltfatInt M,
+                      LTFAT_COMPLEX *f);
 
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
-			      const int L, const int W,
-			      const int a, const int M,
-			      LTFAT_REAL *f);
+                          const ltfatInt L, const ltfatInt W,
+                          const ltfatInt a, const ltfatInt M,
+                          LTFAT_REAL *f);
 
 
 /* --------- dual windows etc. --------------- */
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *g, const int L, const int R,
-			const int a, const int M, LTFAT_COMPLEX *gdualf);
+LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *g, const ltfatInt L, const ltfatInt R,
+                        const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gdualf);
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *g, const int L, const int R,
-			const int a, const int M, LTFAT_COMPLEX *gdualf);
+LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *g, const ltfatInt L, const ltfatInt R,
+                            const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gdualf);
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
-			   const int a, const int M,
-			   LTFAT_COMPLEX *gtightf);
+LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
+                         const ltfatInt a, const ltfatInt M,
+                         LTFAT_COMPLEX *gtightf);
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const int L, const int R,
-			   const int a, const int M,
-			   LTFAT_COMPLEX *gtightf);
+LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
+                             const ltfatInt a, const ltfatInt M,
+                             LTFAT_COMPLEX *gtightf);
 
 
 /* --------- filter bank DGTs ---------------- */
 
 LTFAT_EXTERN void
 LTFAT_NAME_COMPLEX(dgt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-		     const int L, const int gl,
-		     const int W,  const int a, const int M,
-		     LTFAT_COMPLEX *cout);
+                           const ltfatInt L, const ltfatInt gl,
+                           const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+                           LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-		       const int L, const int gl,
-		       const int W,  const int a, const int M,
-		       LTFAT_COMPLEX *cout);
+                   const ltfatInt L, const ltfatInt gl,
+                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+                   LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-		       const int L, const int gl,
-		       const int W,  const int a, const int M,
-		       LTFAT_COMPLEX *cout);
+                       const ltfatInt L, const ltfatInt gl,
+                       const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+                       LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
-		      const int L, const int gl,
-		      const int W, const int a, const int M,
-		      LTFAT_COMPLEX *f);
+                    const ltfatInt L, const ltfatInt gl,
+                    const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                    LTFAT_COMPLEX *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
-		      const int L, const int gl,
-		      const int W, const int a, const int M,
-		      LTFAT_COMPLEX *f);
+                      const ltfatInt L, const ltfatInt gl,
+                      const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                      LTFAT_COMPLEX *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
-			  const int L, const int gl, const int W,
-			  const int a, const int M,
-			  LTFAT_REAL *f);
+                        const ltfatInt L, const ltfatInt gl, const ltfatInt W,
+                        const ltfatInt a, const ltfatInt M,
+                        LTFAT_REAL *f);
 
 /* ---------- OLA DGTs ------------- */
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-			  const int L, const int gl,
-			  const int W, const int a, const int M, const int bl,
-			  LTFAT_COMPLEX *cout);
+                    const ltfatInt L, const ltfatInt gl,
+                    const ltfatInt W, const ltfatInt a, const ltfatInt M, const ltfatInt bl,
+                    LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-			  const int L, const int gl,
-			  const int W, const int a, const int M, const int bl,
-			  LTFAT_COMPLEX *cout);
+                        const ltfatInt L, const ltfatInt gl,
+                        const ltfatInt W, const ltfatInt a, const ltfatInt M, const ltfatInt bl,
+                        LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_shearola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-			 const int L, const int gl, const int W, const int a, const int M,
-			 const int s0, const int s1, const int br, const int bl,
-			 LTFAT_COMPLEX *cout);
+                         const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                         const ltfatInt s0, const ltfatInt s1, const ltfatInt br, const ltfatInt bl,
+                         LTFAT_COMPLEX *cout);
+
+/* --------- FFT ------------------*/
+LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_NAME(fftreal_plan)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+                         LTFAT_COMPLEX *cout, unsigned flag);
+
+LTFAT_EXTERN void
+LTFAT_NAME(fftreal)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+                    LTFAT_COMPLEX *cout);
+
+LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_NAME(ifftreal_plan)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
+                          LTFAT_REAL *f, unsigned flag);
+
+LTFAT_EXTERN void
+LTFAT_NAME(ifftreal)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
+                     LTFAT_REAL *f);
 
 
 /* --------- filterbank codes ------------*/
 LTFAT_EXTERN void
 LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                              const int L, const int gl,
-			      const int W, const int a, const int M,
-			      LTFAT_COMPLEX *cout);
+                            const ltfatInt L, const ltfatInt gl,
+                            const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                            LTFAT_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_NAME(filterbank_fft)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
+                           const ltfatInt L, const ltfatInt W, const ltfatInt a[], const ltfatInt M,
+                           LTFAT_COMPLEX *cout[]);
+
+LTFAT_EXTERN void
+LTFAT_NAME(filterbank_fft_plans)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
+                                 const ltfatInt L, const ltfatInt W, const ltfatInt a[], const ltfatInt M,
+                                 LTFAT_COMPLEX *cout[], LTFAT_FFTW(plan) p[]);
 
 LTFAT_EXTERN void
 LTFAT_NAME(convsub_fft)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G,
-                          const size_t L, const size_t a, LTFAT_COMPLEX *cout);
+                        const ltfatInt L, const ltfatInt a, LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(convsub_fft_plan)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G,
-                               const size_t L, const size_t a, LTFAT_COMPLEX *cout,
+                             const ltfatInt L, const ltfatInt a, LTFAT_COMPLEX *cout,
+                             LTFAT_FFTW(plan) *p);
+
+LTFAT_EXTERN void
+LTFAT_NAME(filterbank_fftbl)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
+                             const ltfatInt L, const ltfatInt Gl[],
+                             const ltfatInt W, const double a[], const ltfatInt M,
+                             const ptrdiff_t foff[], const int realonly[],
+                             LTFAT_COMPLEX *cout[]);
+
+LTFAT_EXTERN void
+LTFAT_NAME(filterbank_fftbl_plans)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
+                                   const ltfatInt L, const ltfatInt Gl[],
+                                   const ltfatInt W, const double a[], const ltfatInt M,
+                                   const ptrdiff_t foff[], const int realonly[],
+                                   LTFAT_COMPLEX *cout[],LTFAT_FFTW(plan) p[]);
+
+
+LTFAT_EXTERN void
+LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEX *F,  const LTFAT_COMPLEX *G,
+                          const ltfatInt L, const ltfatInt Gl, const double a,
+                          const ptrdiff_t foff, const int realonly, LTFAT_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEX *F,  const LTFAT_COMPLEX *G,
+                               const ltfatInt L, const ltfatInt Gl, const double a,
+                               const ptrdiff_t foff, const int realonly, LTFAT_COMPLEX *cout,
                                LTFAT_FFTW(plan) *p);
-
-LTFAT_EXTERN void
-LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEX *F, const size_t L,
-                            const LTFAT_COMPLEX *G, const size_t Lg, const ptrdiff_t foff,
-                            const double a, const double realonly, LTFAT_COMPLEX *cout);
-
-LTFAT_EXTERN void
-LTFAT_NAME(convsub_fftbl_plan)(const LTFAT_COMPLEX *F, const size_t L,
-                            const LTFAT_COMPLEX *G, const size_t Lg, const ptrdiff_t foff,
-                            const double a, const double realonly, LTFAT_COMPLEX *cout,
-                            LTFAT_FFTW(plan) *p);
 
 // Inverse
 LTFAT_EXTERN void
-LTFAT_NAME(upconv_fft)(const LTFAT_COMPLEX *c, const size_t Lc,
-                         const LTFAT_COMPLEX *G, const size_t a,
-                         LTFAT_COMPLEX *Fout);
+LTFAT_NAME(ifilterbank_fft)(const LTFAT_COMPLEX *cin[], const LTFAT_COMPLEX *G[],
+                            const ltfatInt L, const ltfatInt W, const ltfatInt a[], const ltfatInt M,
+                            LTFAT_COMPLEX *F);
 
 LTFAT_EXTERN void
-LTFAT_NAME(upconv_fft_plan)(const LTFAT_COMPLEX *c, const size_t Lc,
-                              const LTFAT_COMPLEX *G, const size_t a,
-                              LTFAT_COMPLEX *Fout, LTFAT_FFTW(plan) *p,
-                              LTFAT_COMPLEX *cbuffer);
+LTFAT_NAME(ifilterbank_fft_plans)(const LTFAT_COMPLEX *cin[], const LTFAT_COMPLEX *G[],
+                                  const ltfatInt L, const ltfatInt W, const ltfatInt a[], const ltfatInt M,
+                                  LTFAT_COMPLEX *F, LTFAT_FFTW(plan) p[], LTFAT_COMPLEX *cbuf[]);
+
 
 LTFAT_EXTERN void
-LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEX *c, const size_t Lc,
-                            const LTFAT_COMPLEX *G, const size_t Lg, const ptrdiff_t foff,
-                            const double a, const double realonly, LTFAT_COMPLEX *Fout);
+LTFAT_NAME(upconv_fft)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
+                       const ltfatInt L, const ltfatInt a, LTFAT_COMPLEX *F);
 
 LTFAT_EXTERN void
-LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEX *c, const size_t Lc,
-                            const LTFAT_COMPLEX *G, const size_t Lg, const ptrdiff_t foff,
-                            const double a, const double realonly, LTFAT_COMPLEX *Fout,
-                            LTFAT_FFTW(plan) *p,LTFAT_COMPLEX *cbuffer);
+LTFAT_NAME(upconv_fft_plan)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
+                            const ltfatInt L, const ltfatInt a,
+                            LTFAT_COMPLEX *F, LTFAT_FFTW(plan) *p,
+                            LTFAT_COMPLEX *cbuf);
+
+
+LTFAT_EXTERN void
+LTFAT_NAME(ifilterbank_fftbl)(const LTFAT_COMPLEX *cin[], const LTFAT_COMPLEX *G[],
+                              const ltfatInt L, const ltfatInt Gl[], const ltfatInt W, const double a[], const ltfatInt M,
+                              const ptrdiff_t foff[], const int realonly[],
+                              LTFAT_COMPLEX *F);
+
+LTFAT_EXTERN void
+LTFAT_NAME(ifilterbank_fftbl_plans)(const LTFAT_COMPLEX *cin[], const LTFAT_COMPLEX *G[],
+                                    const ltfatInt L, const ltfatInt Gl[], const ltfatInt W, const double a[], const ltfatInt M,
+                                    const ptrdiff_t foff[], const int realonly[],
+                                    LTFAT_COMPLEX *F, LTFAT_FFTW(plan) p[], LTFAT_COMPLEX *cbuf[]);
+
+
+
+LTFAT_EXTERN void
+LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
+                         const ltfatInt L, const ltfatInt Gl, const double a,
+                         const ptrdiff_t foff, const int realonly,
+                         LTFAT_COMPLEX *F);
+
+LTFAT_EXTERN void
+LTFAT_NAME(upconv_fftbl_plan)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
+                              const ltfatInt L, const ltfatInt Gl, const double a,
+                              const ptrdiff_t foff, const int realonly, LTFAT_COMPLEX *F,
+                              LTFAT_FFTW(plan) *p,LTFAT_COMPLEX *cbuf);
 
 
 
 /* -------- windows ------------------------------ */
 
 LTFAT_EXTERN void
-LTFAT_NAME(pgauss)(const int L, const double w, const double c_t,
-		     LTFAT_REAL *g);
+LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
+                   LTFAT_REAL *g);
 
 LTFAT_EXTERN void
-LTFAT_NAME(pgauss_cmplx)(const int L, const double w, const double c_t,
-		     const double c_f, LTFAT_COMPLEX *g);
+LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
+                         const double c_f, LTFAT_COMPLEX *g);
 
 
 /* --------- pfilt and filterbanks ------------- */
 LTFAT_EXTERN void
 LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-			   const int L, const int gl,
-			   const int W, const int a,
-			   LTFAT_REAL *cout);
+                         const ltfatInt L, const ltfatInt gl,
+                         const ltfatInt W, const ltfatInt a,
+                         LTFAT_REAL *cout);
 
 /* --------- other stuff -------- */
 LTFAT_EXTERN void
 LTFAT_NAME(heapint)(const LTFAT_REAL *s,
-		      const LTFAT_REAL *tgrad,
-		      const LTFAT_REAL *fgrad,
-		      const int a, const int M, const int L, const int W,
-		      const LTFAT_REAL tol, LTFAT_REAL *phase);
+                    const LTFAT_REAL *tgrad,
+                    const LTFAT_REAL *fgrad,
+                    const ltfatInt a, const ltfatInt M, const ltfatInt L, const ltfatInt W,
+                    const LTFAT_REAL tol, LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
-			  const LTFAT_REAL *fgrad, const int L, const int W,
-			  const int a, const int M, LTFAT_REAL *sr);
+                        const LTFAT_REAL *fgrad, const ltfatInt L, const ltfatInt W,
+                        const ltfatInt a, const ltfatInt M, LTFAT_REAL *sr);
 
 LTFAT_EXTERN void
-LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h);
+LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h);
 
 LTFAT_EXTERN void
-LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const int L, LTFAT_REAL *h);
+LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h);
 
 LTFAT_EXTERN void
-LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const int Lfir, const int Llong,
-			LTFAT_REAL *h);
+LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const ltfatInt Lfir, const ltfatInt Llong,
+                       LTFAT_REAL *h);
 
 LTFAT_EXTERN void
 LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f,
-			 const int Lfir, const int Llong,
-			 LTFAT_COMPLEX *h);
+                       const ltfatInt Lfir, const ltfatInt Llong,
+                       LTFAT_COMPLEX *h);
 
 LTFAT_EXTERN void
-LTFAT_NAME(long2fir_r)(const LTFAT_REAL *f, const int Llong,
-			const int Lfir, LTFAT_REAL *h);
+LTFAT_NAME(long2fir_r)(const LTFAT_REAL *f, const ltfatInt Llong,
+                       const ltfatInt Lfir, LTFAT_REAL *h);
 
 LTFAT_EXTERN void
-LTFAT_NAME(long2fir_c)(const LTFAT_COMPLEX *f, const int Llong,
-			const int Lfir, LTFAT_COMPLEX *h);
+LTFAT_NAME(long2fir_c)(const LTFAT_COMPLEX *f, const ltfatInt Llong,
+                       const ltfatInt Lfir, LTFAT_COMPLEX *h);
 
-int
+ltfatInt
 LTFAT_NAME(complexprod)(LTFAT_COMPLEX *c, const LTFAT_COMPLEX a,
-			  const LTFAT_COMPLEX b);
+                        const LTFAT_COMPLEX b);
 
 /* ----- internal routines for calling BLAS and LAPACK ----- */
 
 /*
 // LAPACK overwrites the input argument.
-int
-LTFAT_NAME(ltfat_posv)(const int N, const int NRHS,
-			 LTFAT_COMPLEX *A, const int lda,
-			 LTFAT_COMPLEX *B, const int ldb);
+ltfatInt
+LTFAT_NAME(ltfat_posv)(const ltfatInt N, const ltfatInt NRHS,
+			 LTFAT_COMPLEX *A, const ltfatInt lda,
+			 LTFAT_COMPLEX *B, const ltfatInt ldb);
 
 // LAPACK overwrites the input argument.
-int
-LTFAT_NAME(ltfat_gesvd)(const int M, const int N,
-			  LTFAT_COMPLEX *A, const int lda,
-			  LTFAT_REAL *S, LTFAT_COMPLEX *U, const int ldu,
-			  LTFAT_COMPLEX *VT, const int ldvt);
+ltfatInt
+LTFAT_NAME(ltfat_gesvd)(const ltfatInt M, const ltfatInt N,
+			  LTFAT_COMPLEX *A, const ltfatInt lda,
+			  LTFAT_REAL *S, LTFAT_COMPLEX *U, const ltfatInt ldu,
+			  LTFAT_COMPLEX *VT, const ltfatInt ldvt);
 
 void
 LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 			 const enum CBLAS_TRANSPOSE TransB,
-			 const int M, const int N, const int K,
+			 const ltfatInt M, const ltfatInt N, const ltfatInt K,
 			 const LTFAT_COMPLEX *alpha,
-			 const LTFAT_COMPLEX *A, const int lda,
-			 const LTFAT_COMPLEX *B, const int ldb,
+			 const LTFAT_COMPLEX *A, const ltfatInt lda,
+			 const LTFAT_COMPLEX *B, const ltfatInt ldb,
 			 const LTFAT_COMPLEX *beta,
-			 LTFAT_COMPLEX *C, const int ldc);
+			 LTFAT_COMPLEX *C, const ltfatInt ldc);
 */
 
 
 // LAPACK overwrites the input argument.
-int
+ltfatInt
 LTFAT_NAME(ltfat_posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
-			 LTFAT_COMPLEX *A, const ptrdiff_t lda,
-			 LTFAT_COMPLEX *B, const ptrdiff_t ldb);
+                       LTFAT_COMPLEX *A, const ptrdiff_t lda,
+                       LTFAT_COMPLEX *B, const ptrdiff_t ldb);
 
 // LAPACK overwrites the input argument.
-int
+ltfatInt
 LTFAT_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
-			  LTFAT_COMPLEX *A, const ptrdiff_t lda,
-			  LTFAT_REAL *S, LTFAT_COMPLEX *U, const ptrdiff_t ldu,
-			  LTFAT_COMPLEX *VT, const ptrdiff_t ldvt);
+                        LTFAT_COMPLEX *A, const ptrdiff_t lda,
+                        LTFAT_REAL *S, LTFAT_COMPLEX *U, const ptrdiff_t ldu,
+                        LTFAT_COMPLEX *VT, const ptrdiff_t ldvt);
 
 void
 LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
-			 const enum CBLAS_TRANSPOSE TransB,
-			 const ptrdiff_t M, const ptrdiff_t N, const ptrdiff_t K,
-			 const LTFAT_COMPLEX *alpha,
-			 const LTFAT_COMPLEX *A, const ptrdiff_t lda,
-			 const LTFAT_COMPLEX *B, const ptrdiff_t ldb,
-			 const LTFAT_COMPLEX *beta,
-			 LTFAT_COMPLEX *C, const ptrdiff_t ldc);
+                       const enum CBLAS_TRANSPOSE TransB,
+                       const ptrdiff_t M, const ptrdiff_t N, const ptrdiff_t K,
+                       const LTFAT_COMPLEX *alpha,
+                       const LTFAT_COMPLEX *A, const ptrdiff_t lda,
+                       const LTFAT_COMPLEX *B, const ptrdiff_t ldb,
+                       const LTFAT_COMPLEX *beta,
+                       LTFAT_COMPLEX *C, const ptrdiff_t ldc);
 
 /*   --- dgtreal_long class definition  --- */
 typedef struct
 {
-  int a;
-  int M;
-  int L;
-  int W;
-  int c;
-  int h_a;
-  LTFAT_FFTW(plan) p_before;
-  LTFAT_FFTW(plan) p_after;
-  LTFAT_FFTW(plan) p_veryend;
-  LTFAT_REAL *sbuf;
-  LTFAT_COMPLEX *cbuf;
-  const LTFAT_REAL *f;
-  LTFAT_COMPLEX *gf;
-  LTFAT_REAL *cwork;
-  LTFAT_COMPLEX *cout;
-  LTFAT_REAL *ff, *cf;
+    ltfatInt a;
+    ltfatInt M;
+    ltfatInt L;
+    ltfatInt W;
+    ltfatInt c;
+    ltfatInt h_a;
+    LTFAT_FFTW(plan) p_before;
+    LTFAT_FFTW(plan) p_after;
+    LTFAT_FFTW(plan) p_veryend;
+    LTFAT_REAL *sbuf;
+    LTFAT_COMPLEX *cbuf;
+    const LTFAT_REAL *f;
+    LTFAT_COMPLEX *gf;
+    LTFAT_REAL *cwork;
+    LTFAT_COMPLEX *cout;
+    LTFAT_REAL *ff, *cf;
 } LTFAT_NAME(dgtreal_long_plan);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgtreal_long_plan)
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-		       const int L, const int W, const int a,
-		       const int M, LTFAT_COMPLEX *cout,
-		       unsigned flags);
+                              const ltfatInt L, const ltfatInt W, const ltfatInt a,
+                              const ltfatInt M, LTFAT_COMPLEX *cout,
+                              unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_long_execute)(const LTFAT_NAME(dgtreal_long_plan) plan);
@@ -368,27 +436,27 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan);
 /*   --- dgt_fb class definition  --- */
 typedef struct
 {
-  int a;
-  int M;
-  int gl;
+    ltfatInt a;
+    ltfatInt M;
+    ltfatInt gl;
 
-  LTFAT_FFTW(plan) p_small;
-  LTFAT_REAL *sbuf;
-  LTFAT_REAL *fw;
-  LTFAT_COMPLEX *gw;
-  LTFAT_COMPLEX *cout;
+    LTFAT_FFTW(plan) p_small;
+    LTFAT_REAL *sbuf;
+    LTFAT_REAL *fw;
+    LTFAT_COMPLEX *gw;
+    LTFAT_COMPLEX *cout;
 } LTFAT_NAME(dgt_fb_plan);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_fb_plan)
 LTFAT_NAME(dgt_fb_init)(const LTFAT_COMPLEX *g,
-   const int gl, const int a, const int M,
-   unsigned flags);
+                        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                        unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan) plan,
-			     const LTFAT_COMPLEX *f, const int L, const int W,
-			     LTFAT_COMPLEX *cout);
+                           const LTFAT_COMPLEX *f, const ltfatInt L, const ltfatInt W,
+                           LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan) plan);
@@ -399,28 +467,28 @@ LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan) plan);
 
 typedef struct
 {
-  int a;
-  int M;
-  int gl;
+    ltfatInt a;
+    ltfatInt M;
+    ltfatInt gl;
 
-  LTFAT_FFTW(plan) p_small;
-  LTFAT_REAL    *sbuf;
-  LTFAT_COMPLEX *cbuf;
-  LTFAT_REAL *fw;
-  LTFAT_REAL *gw;
-  LTFAT_COMPLEX *cout;
+    LTFAT_FFTW(plan) p_small;
+    LTFAT_REAL    *sbuf;
+    LTFAT_COMPLEX *cbuf;
+    LTFAT_REAL *fw;
+    LTFAT_REAL *gw;
+    LTFAT_COMPLEX *cout;
 } LTFAT_NAME(dgtreal_fb_plan);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgtreal_fb_plan)
 LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
-   const int gl, const int a, const int M,
-   unsigned flags);
+                            const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                            unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan,
-			     const LTFAT_REAL *f, const int L, const int W,
-			     LTFAT_COMPLEX *cout);
+                               const LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+                               LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan) plan);
@@ -429,26 +497,26 @@ LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan) plan);
 /*   --- dgt_ola class definition  --- */
 typedef struct
 {
-   LTFAT_NAME(dgt_long_plan) plan;
-   int bl;
-   int gl;
-   int W;
-   LTFAT_COMPLEX *buf;
-   LTFAT_COMPLEX *gext;
-   LTFAT_COMPLEX *cbuf;
+    LTFAT_NAME(dgt_long_plan) plan;
+    ltfatInt bl;
+    ltfatInt gl;
+    ltfatInt W;
+    LTFAT_COMPLEX *buf;
+    LTFAT_COMPLEX *gext;
+    LTFAT_COMPLEX *cbuf;
 
 } LTFAT_NAME(dgt_ola_plan);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
-LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const int gl,
-			   const int W, const int a, const int M, const int bl,
-			   unsigned flags);
+LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
+                         const ltfatInt W, const ltfatInt a, const ltfatInt M, const ltfatInt bl,
+                         unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
-			    const LTFAT_COMPLEX *f, const int L,
-			    LTFAT_COMPLEX *cout);
+                            const LTFAT_COMPLEX *f, const ltfatInt L,
+                            LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan);
@@ -461,26 +529,26 @@ LTFAT_NAME(dgt_walnut_plan)(LTFAT_NAME(dgt_long_plan) plan);
 /*   --- dgtreal_ola class definition  --- */
 typedef struct
 {
-   LTFAT_NAME(dgtreal_long_plan) plan;
-   int bl;
-   int gl;
-   int W;
-   LTFAT_REAL *buf;
-   LTFAT_REAL *gext;
-   LTFAT_COMPLEX *cbuf;
+    LTFAT_NAME(dgtreal_long_plan) plan;
+    ltfatInt bl;
+    ltfatInt gl;
+    ltfatInt W;
+    LTFAT_REAL *buf;
+    LTFAT_REAL *gext;
+    LTFAT_COMPLEX *cbuf;
 
 } LTFAT_NAME(dgtreal_ola_plan);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgtreal_ola_plan)
-LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const int gl,
-			       const int W, const int a, const int M, const int bl,
-			       unsigned flags);
+LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
+                             const ltfatInt W, const ltfatInt a, const ltfatInt M, const ltfatInt bl,
+                             unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
-				  const LTFAT_REAL *f, const int L,
-				  LTFAT_COMPLEX *cout);
+                                const LTFAT_REAL *f, const ltfatInt L,
+                                LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola_done)(LTFAT_NAME(dgtreal_ola_plan) plan);
@@ -493,29 +561,31 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan);
 
 typedef struct
 {
-   LTFAT_NAME(dgt_shear_plan) plan;
-   int bl;
-   int gl;
-   int W;
-   LTFAT_COMPLEX *buf;
-   LTFAT_COMPLEX *gext;
-   LTFAT_COMPLEX *cbuf;
+    LTFAT_NAME(dgt_shear_plan) plan;
+    ltfatInt bl;
+    ltfatInt gl;
+    ltfatInt W;
+    LTFAT_COMPLEX *buf;
+    LTFAT_COMPLEX *gext;
+    LTFAT_COMPLEX *cbuf;
 
 } LTFAT_NAME(dgt_shearola_plan);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_shearola_plan)
-LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX *g, const int gl,
-			   const int W, const int a, const int M,
-			   const int s0, const int s1, const int br,
-			   const int bl,
-			   unsigned flags);
+LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
+                              const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                              const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
+                              const ltfatInt bl,
+                              unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
-			    const LTFAT_COMPLEX *f, const int L,
-			    LTFAT_COMPLEX *cout);
+                                 const LTFAT_COMPLEX *f, const ltfatInt L,
+                                 LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_shearola_done)(LTFAT_NAME(dgt_shearola_plan) plan);
+
+
 

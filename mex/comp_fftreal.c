@@ -19,14 +19,13 @@
 #include "ltfat_types.h"
 #include "config.h"
 
-static LTFAT_FFTW(plan)* LTFAT_NAME(p_old) = 0;
+static LTFAT_FFTW(plan) LTFAT_NAME(p_old) = 0;
 
 void LTFAT_NAME(fftrealAtExit)()
 {
    if(LTFAT_NAME(p_old)!=0)
    {
-     LTFAT_FFTW(destroy_plan)(*LTFAT_NAME(p_old));
-     free(LTFAT_NAME(p_old));
+     LTFAT_FFTW(destroy_plan)(LTFAT_NAME(p_old));
    }
 }
 
@@ -34,7 +33,9 @@ void LTFAT_NAME(fftrealAtExit)()
 // Calling convention:
 //  comp_fftreal(f);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void 
+LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                         int nrhs, const mxArray *prhs[] )
 {
   static int atExitRegistered = 0;
   if(!atExitRegistered)
@@ -43,7 +44,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
       atExitRegistered = 1;
   }
 
-  int L, W, L2;
+  mwSignedIndex L, W, L2;
   LTFAT_REAL *f, *cout_r, *cout_i;
   LTFAT_FFTW(iodim) dims[1], howmanydims[1];
   LTFAT_FFTW(plan) p;
@@ -54,13 +55,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
   L2 = (L/2)+1;
 
   // Get pointer to input.
-  f= (LTFAT_REAL*) mxGetPr(prhs[0]);
+  f= mxGetData(prhs[0]);
 
   plhs[0] = ltfatCreateMatrix(L2, W, LTFAT_MX_CLASSID, mxCOMPLEX);
 
   // Get pointer to output.
-  cout_r = (LTFAT_REAL*) mxGetPr(plhs[0]);
-  cout_i = (LTFAT_REAL*) mxGetPi(plhs[0]);
+  cout_r = mxGetData(plhs[0]);
+  cout_i = mxGetImagData(plhs[0]);
 
   // Create plan. Copy data from f to cout.
   dims[0].n = L;
@@ -86,7 +87,6 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 				   1, howmanydims,
 				   f, cout_r, cout_i, FFTW_ESTIMATE);
   /*
-  FFTW documentation qote http://www.fftw.org/fftw3_doc/New_002darray-Execute-Functions.html#New_002darray-Execute-Functions:
   ...
   creating a new plan is quick once one exists for a given size
   ...
@@ -95,8 +95,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
 
 
   LTFAT_NAME(fftrealAtExit)();
-  LTFAT_NAME(p_old) = malloc(sizeof(p));
-  memcpy(LTFAT_NAME(p_old),&p,sizeof(p));
+  LTFAT_NAME(p_old) = p;
 
 
   // Real FFT.

@@ -46,7 +46,6 @@ octFunction(const octave_value_list& args, int nargout)
    const octave_idx_type L  = N*a;
 
    MArray<LTFAT_TYPE> sr(dim_vector(M,N)); 
-   sr.fill(0);
     
    fwd_gabreassign(s.data(),tgrad.data(),fgrad.data(),L,1,a,M,sr.fortran_vec());
     

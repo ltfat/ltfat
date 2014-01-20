@@ -22,7 +22,7 @@ if M==1 && size(a,2)<2
    a = [a,1];
 end
 
-if isvector(a) && M~=1
+if isvector(a) && M~=1 && size(a,2)<2
     [a,~]=scalardistribute(a(:),ones(M,1));
     
     if all(a==a(1))

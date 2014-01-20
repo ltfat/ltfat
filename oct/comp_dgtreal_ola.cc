@@ -56,7 +56,6 @@ octFunction(const octave_value_list& args, int nargout)
    dims_out.chop_trailing_singletons();
 
    MArray<LTFAT_COMPLEX> cout(dims_out); 
-   cout.fill(0);
     
    fwd_dgtreal_ola(f.data(),g.data(),L,gl,W,a,M,bl,cout.fortran_vec());
     

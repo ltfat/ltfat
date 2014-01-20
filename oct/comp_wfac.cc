@@ -64,14 +64,13 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
    const octave_idx_type b = L/M;
 
-   int h_a, h_m;    
+   ltfatInt h_a, h_m;    
    const octave_idx_type c=gcd(a, M,&h_a, &h_m);
    const octave_idx_type p=a/c;
    const octave_idx_type q=M/c;
    const octave_idx_type d=b/p;
 
    MArray<LTFAT_COMPLEX> cout(dim_vector(p*q*R,c*d)); 
-   cout.fill(0);
 
    fwd_comp_wfac(g.data(),L,R,a,M,cout.fortran_vec());
 

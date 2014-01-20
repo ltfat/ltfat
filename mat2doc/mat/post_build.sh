@@ -9,7 +9,7 @@ rm mulaclab.m
 mv src ..
 mv oct ..
 mv lib ..
-mv thirdparty/Playrec ..
+mv thirdparty/Playrec ../thirdparty/
 rm -Rf thirdparty
 
 # Remove Unicode characters, makeinfo in Octave cannot currenyly handle them

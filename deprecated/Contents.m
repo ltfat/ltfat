@@ -12,10 +12,11 @@
 %    GABLASSO          - Use |franalasso|
 %    GABMULEIGS        - Use |framemuleigs|
 %    GABMUL            - Use |framemul|
+     FRAMEMATRIX       - Use |frsynmatrix|
 %    IUFILTERBANK      - Use |ifilterbank|
 %    IUNSDGT           - Use |insdgt|
 %    IUNSDGTREAL       - Use |insdgtreal|
-%    TFMAT             - Use |framematrix| or |operatormatrix|
+%    TFMAT             - Use |frsynmatrix| or |operatormatrix|
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

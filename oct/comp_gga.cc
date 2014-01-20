@@ -66,7 +66,6 @@ octFunction(const octave_value_list& args, int nargout)
 
    //dims_out.chop_trailing_singletons();
    MArray<LTFAT_COMPLEX> c(dim_vector(M,W));
-   c.fill(0);
     
    fwd_gga(f.data(),indVec.data(),L,W,M,c.fortran_vec());
 

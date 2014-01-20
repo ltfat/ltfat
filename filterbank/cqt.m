@@ -61,8 +61,7 @@ function [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs,varargin)
 %
 %   The following example shows analysis and synthesis with |cqt| and |icqt|:::
 %
-%     f = gspi;
-%     fs = 44100;
+%     [f,fs] = gspi;
 %     fmin = 200;
 %     fmax = fs/2;
 %     [c,Ls,g,shift,M] = cqt(f,fmin,fmax,48,fs);
@@ -99,24 +98,28 @@ definput.flags.fractype = {'nofractional','fractional'};
 
 %% Create the CQ-NSGT dictionary
 
+% Nyquist frequency
 nf = fs/2;
 
+% Limit fmax
 if fmax > nf
     fmax = nf;
 end
 
+% Number of octaves
 b = ceil(log2(fmax/fmin))+1;
 
 if length(bins) == 1;
+    % Constant number of bins in each octave
     bins = bins*ones(b,1);
 elseif length(bins) < b
-    if size(bins,1) == 1
-        bins=bins.';
-    end
+    % Pick bins for octaves for which it was not specified.
+    bins = bins(:);
     bins( bins<=0 ) = 1;
     bins = [bins ; bins(end)*ones(b-length(bins),1)];
 end
 
+% Prepare frequency centers in Hz
 fbas = zeros(sum(bins),1);
 
 ll = 0;
@@ -126,6 +129,7 @@ for kk = 1:length(bins);
     ll = ll+bins(kk);
 end
 
+% Get rid of filters with frequency centers >=fmax and nf
 temp = find(fbas>=fmax,1);
 if fbas(temp) >= nf
     fbas = fbas(1:temp-1);
@@ -135,16 +139,20 @@ end
 
 Lfbas = length(fbas);
 
-fbas = [0;fbas];
-fbas(Lfbas+2) = nf;
+% Add filter at zero and nf frequencies
+fbas = [0;fbas;nf];
+
+% Mirror other filters
+% Length of fbas is now 2*(Lfbas+1)
 fbas(Lfbas+3:2*(Lfbas+1)) = fs-fbas(Lfbas+1:-1:2);
 
+% Convert frequency to samples
 fbas = fbas*(Ls/fs);
 
 % Set bandwidths
-
 bw = zeros(2*Lfbas+2,1);
 
+% Bandwidth of the low-pass filter around 0
 bw(1) = 2*fmin*(Ls/fs);
 bw(2) = (fbas(2))*(2^(1/bins(1))-2^(-1/bins(1)));
 
@@ -152,27 +160,37 @@ for k = [3:Lfbas , Lfbas+2]
     bw(k) = (fbas(k+1)-fbas(k-1));
 end
 
+% Bandwidth of last filter before the one at the nf
 bw(Lfbas+1) = (fbas(Lfbas+1))*(2^(1/bins(end))-2^(-1/bins(end)));
+
+% Mirror bandwidths
 bw(Lfbas+3:2*Lfbas+2) = bw(Lfbas+1:-1:2);
 
+% Make frequency centers integers
 posit = zeros(size(fbas));
 posit(1:Lfbas+2) = floor(fbas(1:Lfbas+2));
 posit(Lfbas+3:end) = ceil(fbas(Lfbas+3:end));
 
+% Keeping center frequency and changing bandwidth => Q=fbas/bw
 bw = keyvals.Qvar*bw;
 
+% M - number of coefficients in output bands (number of time channels).
 if flags.do_fractional
+    % Be pedantic about center frequencies by
+    % sub-sample precision positioning of the frequency window.
     warning(['Fractional sampling might lead to a warning when ', ...
         'computing the dual system']);
     fprintf('');
     corr_shift = fbas-posit;
     M = ceil(bw+1);
 else
+    % Using the integer frequency window position.
     bw = round(bw);
     M = bw;
 end
 
-for ii = 1:2*(Lfbas+1)
+% Do not allow lower bandwidth than keyvals.min_win
+for ii = 1:numel(bw)
     if bw(ii) < keyvals.min_win;
         bw(ii) = keyvals.min_win;
         M(ii) = bw(ii);
@@ -180,17 +198,26 @@ for ii = 1:2*(Lfbas+1)
 end
 
 if flags.do_fractional
+    % Generate windows, while providing the x values.
+    % x - shift correction
+    % y - window length
+    % z - 'safe' window length
     g = arrayfun(@(x,y,z) ...
         firwin(keyvals.winfun,([0:ceil(z/2),-floor(z/2):-1]'-x)/y)/sqrt(y),corr_shift,...
         bw,M,'UniformOutput',0);
 else
+    % Generate window, normalize to
     g = arrayfun(@(x) firwin(keyvals.winfun,x)/sqrt(x),...
         bw,'UniformOutput',0);
 end
 
+% keyvals.M_fac is granularity of output bands lengths
+% Round M to next integer multiple of keyvals.M_fac
 M = keyvals.M_fac*ceil(M/keyvals.M_fac);
 
-% Setup Tukey window for 0- and Nyquist-frequency
+% Middle-pad windows at 0 and Nyquist frequencies
+% with constant region (tapering window) if the bandwidth is larger than
+% of the next in line window.
 for kk = [1,Lfbas+2]
     if M(kk) > M(kk+1);
         g{kk} = ones(M(kk),1);
@@ -200,13 +227,18 @@ for kk = [1,Lfbas+2]
     end
 end
 
-N = length(posit);  % The number of frequency channels
+% The number of frequency channels
+N = length(posit);  
 
+% Handle the user defined output bands lengths.
 if ~isempty(usrM)
     if numel(usrM) == 1
         M = usrM*ones(N,1);
-    else
+    elseif numel(usrM)==N
         M = usrM;
+    else
+        error(['%s: Number of enties of parameter M does not comply ',...
+               'with the number of frequency channels.'],upper(mfilename));
     end    
 end
 
@@ -250,11 +282,15 @@ for ii = 1:N
     end
 end
 
+% Reshape to a matrix if coefficient bands have uniform lengths.
+% This is maybe too confuzing.
 if max(M) == min(M)
     c = cell2mat(c);
     c = reshape(c,M(1),N,W);
 end
 
+% Return relative shifts between filters in frequency in samples
+% This does not correctly handle the fractional frequency positioning.
 if nargout > 3
     shift = [mod(-posit(end),Ls); diff(posit)];
 end

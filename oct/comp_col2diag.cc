@@ -13,13 +13,15 @@
 static inline void
 fwd_col2diag(const Complex *cin, const octave_idx_type L,Complex *cout)
 {
-   col2diag_cd(reinterpret_cast<const double _Complex*>(cin),L,reinterpret_cast<double _Complex*>(cout));
+   col2diag_cd(reinterpret_cast<const double _Complex*>(cin),L,
+               reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void
 fwd_col2diag(const FloatComplex *cin, const octave_idx_type L, FloatComplex *cout)
 {
-   col2diag_cs(reinterpret_cast<const float _Complex*>(cin),L,reinterpret_cast<float _Complex*>(cout));
+   col2diag_cs(reinterpret_cast<const float _Complex*>(cin),L,
+               reinterpret_cast<float _Complex*>(cout));
 }
 
 static inline void 
@@ -38,7 +40,6 @@ template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list 
 octFunction(const octave_value_list& args, int nargout)
 {
-   DEBUGINFO;
    MArray<LTFAT_TYPE> cin = ltfatOctArray<LTFAT_TYPE>(args(0));
    MArray<LTFAT_TYPE> cout(cin.dims());
    cout.fill(0);

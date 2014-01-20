@@ -18,10 +18,10 @@ function c = gga(f,fvec,fs,dim)
 %   in `fvec` can be arbitrary numbers in range $0-1$ and not restricted to
 %   $l/Ls$, $l=0,\dots Ls-1$ (usual DFT samples) as the original Goertzel 
 %   algorithm is. *Ls* is the length of the first non-singleton dimension
-%   of *f*. If `indvec` is empty or ommited, `indvec` is assumed to be
+%   of *f*. If `fvec` is empty or ommited, `fvec` is assumed to be
 %   `(0:Ls-1)/Ls` and results in the same output as `fft`.
 %
-%   `c=gga(f,fvec,fs)` computes the same with frequencies relative to *fs*.
+%   `c=gga(f,fvec,fs)` computes the same with `fvec` in Hz relative to *fs*.
 %
 %   The input *f* is processed along the first non-singleton dimension or
 %   along dimension *dim* if specified.

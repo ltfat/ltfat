@@ -32,13 +32,6 @@
 #include "mex.h"
 #include "math.h"
 #include "ltfat.h"
-/**  The following defines single and double versions for the types and macros:
-  LTFAT_COMPLEX - fftw_complex or fftwf_complex
-  LTFAT_TYPE - double or float
-  LTFAT_NAME(name) - for LTFAT_SINGLE add "s" to the beginning of the function name
-  LTFAT_FFTW(name) - adds "fftw_" or "fftwf_" to the beginning of the function name
-  LTFAT_MX_CLASSID - mxDOUBLE_CLASS or mxSINGLE_CLASS
-**/
 #include "ltfat_types.h"
 /*
 %COMP_IATROUSFILTERBANK_TD   Synthesis Uniform filterbank by conv2
@@ -56,57 +49,50 @@
 */
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   const mxArray* mxc = prhs[0];
-   const mxArray* mxg = prhs[1];
-   double* a = mxGetPr(prhs[2]);
-   double* offset = mxGetPr(prhs[3]);
+    const mxArray* mxc = prhs[0];
+    const mxArray* mxg = prhs[1];
+    double* aDouble = mxGetPr(prhs[2]);
+    double* offsetDouble = mxGetPr(prhs[3]);
 
-   const mwSize *dims = mxGetDimensions(mxc);
-   unsigned int L = dims[0];
-   // number of channels
-   unsigned int M = dims[1];
-   unsigned int W = 1;
-   if(mxGetNumberOfDimensions(mxc)>2)
-   {
-      W = dims[2];
-   }
+    const mwSize *dims = mxGetDimensions(mxc);
+    mwSize L = dims[0];
+    // number of channels
+    mwSize M = dims[1];
+    mwSize W = 1;
+    if(mxGetNumberOfDimensions(mxc)>2)
+    {
+        W = dims[2];
+    }
 
-   // filter length
-   unsigned int filtLen = mxGetM(mxg);
+    // filter length
+    mwSize filtLen = mxGetM(mxg);
 
-   // allocate output
-   mwSize ndim2 = 2;
-   mwSize dims2[2];
-   dims2[0] =  L;
-   dims2[1] =  W;
-   plhs[0] = ltfatCreateNdimArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+    // allocate output
+    mwSize ndim2 = 2;
+    mwSize dims2[] = {L, W};
+    plhs[0] = ltfatCreateNdimArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
 
-   // POINTER TO OUTPUT
-   LTFAT_TYPE* fPtr = (LTFAT_TYPE*) mxGetData(plhs[0]);
-   // Set to zeros
-   memset(fPtr,0,L*W*sizeof(LTFAT_TYPE));
+    // POINTER TO OUTPUT
+    LTFAT_TYPE* fPtr = mxGetData(plhs[0]);
 
-   // POINTER TO THE FILTERS
-   LTFAT_TYPE** gPtrs = (LTFAT_TYPE**) mxMalloc(M*sizeof(LTFAT_TYPE*));
-   for(unsigned int m=0; m<M; m++)
-   {
-      gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
-   }
+    // POINTER TO THE FILTERS
+    const LTFAT_TYPE* gPtrs[M];
+    ltfatInt offset[M];
+    ltfatInt a[M];
+    ltfatInt filtLens[M];
 
-   // over all channels
-   //  #pragma omp parallel for private(m)
-   for(unsigned int m =0; m<M; m++)
-   {
-      for(unsigned int w =0; w<W; w++)
-      {
-         // Obtain pointer to w-th column in input
-         LTFAT_TYPE *fPtrCol = fPtr + w*L;
-         LTFAT_TYPE *cPtrPlane = ((LTFAT_TYPE*) mxGetData(mxc)) + w*L*M;
+    for(mwSize m=0; m<M; m++)
+    {
+        offset[m] = offsetDouble[m];
+        a[m] = *aDouble;
+        filtLens[m] = filtLen;
+        gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
+    }
 
-         // Obtaing pointer to w-th column in m-th element of output cell-array
-         LTFAT_TYPE *cPtrCol = cPtrPlane + m*L;
-         LTFAT_NAME(atrousupconv_td)(cPtrCol,L,fPtrCol,L,gPtrs[m],filtLen,(int)*a,-offset[m],ltfatExtStringToEnum("per"));
-      }
-   }
+    LTFAT_TYPE* cPtr = mxGetData(mxc);
+
+    LTFAT_NAME(iatrousfilterbank_td)(cPtr, gPtrs, L, filtLens, W, a, offset, M, fPtr, PER);
+
+
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

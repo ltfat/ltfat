@@ -86,64 +86,6 @@ MArray<FloatComplex> ltfatOctArray(const octave_value& ov)
     return MArray<FloatComplex>();
 }
 
-/*
-#define LTFAT_ARRAY_SPECIALIZED_REAL(real_type)               \
-template <>                                                   \
-MArray<real_type> ltfatOctArray(const octave_value& ov)           \
-{                                                             \
-    if(ov.is_complex_type())                                  \
-    {                                                         \
-        error("Casting from complex to real is forbidden (for now).");  \
-    }                                                         \
-    if(ov.is_single_type())                                   \
-    {                                                         \
-         return (ov.float_array_value());                     \
-    }                                                         \
-    else if(ov.is_double_type())                              \
-    {                                                         \
-         return (ov.array_value());                           \
-    }                                                         \
-    else                                                      \
-    {                                                         \
-       error("Unsupported data type..");                      \
-    }                                                         \
-    return MArray<real_type>();                                \
-}
-
-#define LTFAT_ARRAY_SPECIALIZED_COMPLEX(complex_type)               \
-template <>                                                         \
-MArray<complex_type> ltfatOctArray(const octave_value& ov)          \
-{                                                                   \
-    if(ov.is_single_type())                                         \
-    {                                                               \
-       if(ov.is_complex_type())                                     \
-         return (ov.float_complex_array_value());                   \
-       else                                                         \
-         return (ov.float_array_value());                           \
-    }                                                               \
-    else if(ov.is_double_type())                                    \
-    {                                                               \
-       if(ov.is_complex_type())                                     \
-          return (ov.complex_array_value());                        \
-       else                                                         \
-          return (ov.array_value());                                \
-    }                                                               \
-    else                                                            \
-    {                                                               \
-       error("Unsupported data type..");                            \
-    }                                                               \
-    return MArray<complex_type>();                                   \
-}
-
-LTFAT_ARRAY_SPECIALIZED_REAL(double)
-LTFAT_ARRAY_SPECIALIZED_REAL(float)
-LTFAT_ARRAY_SPECIALIZED_COMPLEX(Complex)
-LTFAT_ARRAY_SPECIALIZED_COMPLEX(FloatComplex)
-*/
-
-#undef LTFAT_ARRAY_SPECIALIZED_REAL
-#undef LTFAT_ARRAY_SPECIALIZED_COMPLEX
-
 bool checkIsSingle(const octave_value& ov)
 {
    if(ov.is_cell())

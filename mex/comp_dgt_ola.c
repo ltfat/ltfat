@@ -17,9 +17,11 @@
 // Calling convention:
 //  comp_dgt_ola(f,g,a,M,bl);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void
+LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                         int nrhs, const mxArray *prhs[] )
 {
-   int L, gl,W, a, M, N, bl;
+   mwSignedIndex L, gl,W, a, M, N, bl;
    mwSize ndim;
    mwSize dims[3];
 
@@ -28,9 +30,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    W = mxGetN(prhs[0]);
    gl = mxGetM(prhs[1]);
 
-   a=(int)mxGetScalar(prhs[2]);
-   M=(int)mxGetScalar(prhs[3]);
-   bl=(int)mxGetScalar(prhs[4]);
+   a=(mwSignedIndex) mxGetScalar(prhs[2]);
+   M=(mwSignedIndex) mxGetScalar(prhs[3]);
+   bl=(mwSignedIndex) mxGetScalar(prhs[4]);
 
    N=L/a;
 
@@ -44,9 +46,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    }
 
    plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
-   const LTFAT_COMPLEX* f_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
-   const LTFAT_COMPLEX* g_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[1]);
-   LTFAT_COMPLEX* out_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+   const LTFAT_COMPLEX* f_combined = mxGetData(prhs[0]);
+   const LTFAT_COMPLEX* g_combined = mxGetData(prhs[1]);
+   LTFAT_COMPLEX* out_combined = mxGetData(plhs[0]);
 
    LTFAT_NAME(dgt_ola)(f_combined,g_combined,L,gl,W,a,M,bl,out_combined);
 

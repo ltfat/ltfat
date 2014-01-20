@@ -11,7 +11,7 @@ gr{7}=firfilter('hanning',20,'delay',13);
 gr{8}=firfilter('hanning',20,'delay',-13); 
 gr{7}=firfilter('hanning',20,'delay',14); 
 gr{8}=firfilter('hanning',20,'delay',-14); 
-gr{9}=firfilter('hamming',19,.3);   
+gr{9}=firfilter('hamming',19,.3); 
 gr{10}=firfilter('hamming',19,.3,'real');
 gr{11}=blfilter('hanning',.19);
 gr{12}=blfilter('hanning',.2);
@@ -29,6 +29,9 @@ disp('--- Used subroutines ---');
 
 for ii=1:numel(gr)
   g=gr{ii};
+  if isempty(g)
+      continue;
+  end
 
 
   for a=1:3

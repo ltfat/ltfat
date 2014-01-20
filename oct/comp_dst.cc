@@ -9,184 +9,79 @@
 #include "config.h"
 // octave_idx_type is 32 or 64 bit signed integer
 
-static inline void fwd_dst(double *f,
+static inline void fwd_dst(const double *f,
                            const octave_idx_type L,
-						   const octave_idx_type W,
-						   const fftw_r2r_kind *kind)
+                           const octave_idx_type W,
+                           const dst_kind kind,
+                           double *c)
 {
-  fftw_iodim dims[1], howmanydims[1];
-  fftw_plan p;
-  
-  dims[0].n = L;
-  dims[0].is = 1;
-  dims[0].os = 1;
-
-  howmanydims[0].n = W;
-  howmanydims[0].is = L;
-  howmanydims[0].os = L;
-  
-  p = fftw_plan_guru_r2r(1, dims,
-				   1, howmanydims,
-				   f, f,
-				   kind,
-				   FFTW_OPTITYPE);
-
-  // Real FFT. 
-  fftw_execute(p);   
-  
-  fftw_destroy_plan(p);
+    dst_d(f,L,W,kind,c);
 }
 
-static inline void fwd_dst(float *f,
+static inline void fwd_dst(const float *f,
                            const octave_idx_type L,
-						   const octave_idx_type W,
-						   const fftw_r2r_kind *kind)
+                           const octave_idx_type W,
+                           const dst_kind kind,
+                           float *c)
 {
-  fftwf_iodim dims[1], howmanydims[1];
-  fftwf_plan p;
-  
-  dims[0].n = L;
-  dims[0].is = 1;
-  dims[0].os = 1;
-
-  howmanydims[0].n = W;
-  howmanydims[0].is = L;
-  howmanydims[0].os = L;
-  
-  p = fftwf_plan_guru_r2r(1, dims,
-				   1, howmanydims,
-				   f, f,
-				   kind,
-				   FFTW_OPTITYPE);
-
-  // Real FFT. 
-  fftwf_execute(p);   
-  
-  fftwf_destroy_plan(p);
+    dst_s(f,L,W,kind,c);
 }
 
-static inline void fwd_dst(Complex *f,
+static inline void fwd_dst(const Complex *f,
                            const octave_idx_type L,
-						   const octave_idx_type W,
-						   const fftw_r2r_kind *kind)
+                           const octave_idx_type W,
+                           const dst_kind kind,
+                           Complex *c)
 {
-  fftw_iodim dims[1], howmanydims[1];
-  fftw_plan p;
-  double *f_ptr = reinterpret_cast<double*>(f);
-
-  dims[0].n = L;
-  dims[0].is = 2;
-  dims[0].os = 2;
-
-  howmanydims[0].n = W;
-  howmanydims[0].is = 2*L;
-  howmanydims[0].os = 2*L;
-  
-  p = fftw_plan_guru_r2r(1, dims,
-				   1, howmanydims,
-				   f_ptr, f_ptr,
-				   kind,
-				   FFTW_OPTITYPE|FFTW_UNALIGNED);
-
-  fftw_execute(p); 
-  fftw_execute_r2r(p,f_ptr+1,f_ptr+1); 
-  
-  fftw_destroy_plan(p);
-  
-
-  
+    dst_cd(reinterpret_cast<const double _Complex *>(f),
+           L,W,kind,
+           reinterpret_cast<double _Complex *>(c));
 }
 
-static inline void fwd_dst(FloatComplex *f,
+static inline void fwd_dst(const FloatComplex *f,
                            const octave_idx_type L,
-						   const octave_idx_type W,
-						   const fftw_r2r_kind *kind)
+                           const octave_idx_type W,
+                           const dst_kind kind,
+                           FloatComplex* c)
 {
-  fftwf_iodim dims[1], howmanydims[1];
-  fftwf_plan p;
-  float *f_ptr = reinterpret_cast<float*>(f);
-  
-  dims[0].n = L;
-  dims[0].is = 2;
-  dims[0].os = 2;
-
-  howmanydims[0].n = W;
-  howmanydims[0].is = 2*L;
-  howmanydims[0].os = 2*L;
-  
-  p = fftwf_plan_guru_r2r(1, dims,
-				   1, howmanydims,
-				   f_ptr, f_ptr,
-				   kind,
-				   FFTW_OPTITYPE|FFTW_UNALIGNED);
-
-  // Real FFT. 
-  fftwf_execute(p); 
-  fftwf_execute_r2r(p,f_ptr+1,f_ptr+1); 
-
-  
-  fftwf_destroy_plan(p);
+    dst_cs(reinterpret_cast<const float _Complex *>(f),
+           L,W,kind,
+           reinterpret_cast<float _Complex *>(c));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
-     DEBUGINFO;
-	 fftw_r2r_kind kind[1];
-	 const octave_idx_type type = args(1).int_value();
-	 MArray<LTFAT_TYPE> f = MArray<LTFAT_TYPE>(ltfatOctArray<LTFAT_TYPE>(args(0)));
-	 const octave_idx_type L  = f.rows();
-     const octave_idx_type W  = f.columns();
-     octave_idx_type N = 2*L;
-	 LTFAT_REAL sqrt2 = (LTFAT_REAL) sqrt(2.0);
-	 LTFAT_REAL postScale = (LTFAT_REAL) 1.0/sqrt2;
-     LTFAT_REAL scale = (LTFAT_REAL) sqrt2*(1.0/(double)N)*sqrt((double)L);
-	 
-	 LTFAT_TYPE* f_ptr = f.fortran_vec();
-	 
-     switch(type)
-     {
-	    case 1:
-		   N += 2;
-		   scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L+1);
-           kind[0] = FFTW_RODFT00;
-        break;
-	    case 2:
-           kind[0] = FFTW_RODFT10;
-        break;
-	    case 3:
-			 // Pre-scaling
-            for(octave_idx_type ii=0;ii<W;ii++)
-            {
-	          f_ptr[(ii+1)*L-1] *= sqrt2;
-            }
-           kind[0] = FFTW_RODFT01;
-        break;
-	    case 4:
-           kind[0] = FFTW_RODFT11;
-        break;
-        default:
-		   error("Unknown type.");
-     }
-	 
-	 fwd_dst(f_ptr,L,W,kind);
-	 
-	 // Post-scaling
-	 for(octave_idx_type ii=0;ii<L*W;ii++)
-     {
-	    f_ptr[ii] *= scale;
-     }
+    DEBUGINFO;
+    dst_kind kind = DSTI;
+    const octave_idx_type type = args(1).int_value();
+    MArray<LTFAT_TYPE> f = MArray<LTFAT_TYPE>(ltfatOctArray<LTFAT_TYPE>(args(0)));
+    const octave_idx_type L  = f.rows();
+    const octave_idx_type W  = f.columns();
+    MArray<LTFAT_TYPE> c(dim_vector(L,W));
 
-     if(type==2)
-     {
-        // Scale AC component
-        for(octave_idx_type ii=0;ii<W;ii++)
-        {
-	       f_ptr[(ii+1)*L-1] *= postScale;
-        }
-     }
-	 
-     return octave_value(f);
+    switch(type)
+    {
+    case 1:
+        kind = DSTI;
+        break;
+    case 2:
+        kind = DSTII;
+        break;
+    case 3:
+        kind = DSTIII;
+        break;
+    case 4:
+        kind = DSTIV;
+        break;
+    default:
+        error("Unknown type.");
+    }
+
+    fwd_dst(f.data(),L,W,kind,c.fortran_vec());
+
+    return octave_value(c);
 }
+
 
 

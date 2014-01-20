@@ -11,9 +11,12 @@ test_failed=0;
 
 disp(' ===============  TEST_FILTERBANK ================');
 
-which comp_ufilterbank_fft
 which comp_filterbank_td
+which comp_filterbank_fft
 which comp_filterbank
+which comp_ifilterbank_td
+which comp_ifilterbank_fft
+which comp_ifilterbank
 
 M=6;
 a=3;

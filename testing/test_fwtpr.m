@@ -88,9 +88,9 @@ inLenRound = 0;
 for realComplex=0:1
 %f = randn(14576,1);
 if realComplex
-f = tester_rand(testLen+inLenRound,1);
-else
 f = tester_crand(testLen+inLenRound,1);
+else
+f = tester_rand(testLen+inLenRound,1);
 end
 %f = 1:testLen-1;f=f';
 %f = 0:30;f=f';

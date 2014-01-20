@@ -21,6 +21,10 @@ BEWARE! Any function from MEX API working with Matlab runtime is some way will c
 This is the case for functions with the mex prefix i.e. mexAtExit, mexPrintf etc.
 
 Use saveargsfor.m to store data from Matlab in a format which can be read by this executer.
+
+Calling convention:
+
+mexExecuter m.mexw64 mat.mat
 */
 
 

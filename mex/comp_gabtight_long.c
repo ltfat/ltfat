@@ -17,19 +17,20 @@
 // Calling convention:
 // comp_gabtight_long(g,a,M);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
-   int L, R, a, M;
+   mwSignedIndex L, R, a, M;
 
    // Get matrix dimensions.
-   L=(int)mxGetM(prhs[0]);
-   R=(int)mxGetN(prhs[0]);
-   a=(int)mxGetScalar(prhs[1]);
-   M=(int)mxGetScalar(prhs[2]);
+   L=(mwSignedIndex)mxGetM(prhs[0]);
+   R=(mwSignedIndex)mxGetN(prhs[0]);
+   a=(mwSignedIndex)mxGetScalar(prhs[1]);
+   M=(mwSignedIndex)mxGetScalar(prhs[2]);
 
    plhs[0] = ltfatCreateMatrix(L, R,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
-   LTFAT_TYPE* gd_combined = (LTFAT_TYPE*) mxGetData(plhs[0]);
-   const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[0]);
+   LTFAT_TYPE* gd_combined = mxGetData(plhs[0]);
+   const LTFAT_TYPE* g_combined = mxGetData(prhs[0]);
 
    LTFAT_NAME(gabtight_long)(g_combined, L, R, a, M, gd_combined);
 }

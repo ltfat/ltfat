@@ -23,7 +23,7 @@ CFLAGS=-shared -O3 -Wall -s -std=c99 -I../src/thirdparty -I../src -I$(MATLABROOT
 
 include filedefs.mk
 
-MEXBASE = $(MEXBASESAFE) 
+MEXBASE = $(MEXBASESAFE) $(MEXBASEMORE) 
 MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 
 MEXLINKFLAGS=-L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx
