@@ -1,51 +1,48 @@
 #include "config.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <stddef.h>
-#include <math.h>
+#include "ltfat.h"
 
 
 
-void fftindex(const int N, int *indexout)
+void fftindex(const ltfatInt N, ltfatInt *indexout)
 {
-   int ii;
+    ltfatInt ii;
 
-   if (N%2==0)
-   {
-      for (ii=0;ii<N/2+1;ii++)
-      {
-	 indexout[ii]=ii;
-      }
-      for (ii=N/2;ii<N-1;ii++)
-      {
-	 indexout[ii+1]=-N+ii+1;
-      }
-   }
-   else
-   {
-      for (ii=0;ii<(N-1)/2+1;ii++)
-      {
-	 indexout[ii]=ii;
-      }
-      for (ii=(N-1)/2;ii<N-1;ii++)
-      {
-	 indexout[ii+1]=-N+ii+1;
-      }
-   }
+    if (N%2==0)
+    {
+        for (ii=0; ii<N/2+1; ii++)
+        {
+            indexout[ii]=ii;
+        }
+        for (ii=N/2; ii<N-1; ii++)
+        {
+            indexout[ii+1]=-N+ii+1;
+        }
+    }
+    else
+    {
+        for (ii=0; ii<(N-1)/2+1; ii++)
+        {
+            indexout[ii]=ii;
+        }
+        for (ii=(N-1)/2; ii<N-1; ii++)
+        {
+            indexout[ii+1]=-N+ii+1;
+        }
+    }
 
 }
-/*
-int int_max(const int a, const int b)
+
+ltfatInt imax(const ltfatInt a, const ltfatInt b)
 {
    return (a > b ? a : b);
 }
 
-int int_min(const int a, const int b)
+ltfatInt imin(const ltfatInt a, const ltfatInt b)
 {
    return (a < b ? a : b);
 }
-*/
 
+/*
 #define MAXFNC(T,prefix,suffix) \
 T prefix##max##suffix(const T a, const T b) \
 {                                    \
@@ -54,7 +51,7 @@ T prefix##max##suffix(const T a, const T b) \
 
 MAXFNC(size_t,,_st)
 MAXFNC(ptrdiff_t,,_pt)
-MAXFNC(int,int_,)
+MAXFNC(ltfatInt,int_,)
 
 #undef MAXFNC
 
@@ -66,150 +63,211 @@ T prefix##min##suffix(const T a, const T b) \
 
 MINFNC(size_t,,_st)
 MINFNC(ptrdiff_t,,_pt)
-MINFNC(int,int_,)
+MINFNC(ltfatInt,int_,)
 
 #undef MINFNC
+*/
 
-
-int makelarger(const int L, const int K)
+ltfatInt makelarger(const ltfatInt L, const ltfatInt K)
 {
-   /* This is a floor operation */
-   int o = (L/K)*K;
+    /* This is a floor operation */
+    ltfatInt o = (L/K)*K;
 
-   /* Make it a ceil */
-   if (L%K>0)
-   {
-      o += K;
-   }
+    /* Make it a ceil */
+    if (L%K>0)
+    {
+        o += K;
+    }
 
-   return o;
+    return o;
 }
 
 /* Extended Euclid algorithm. */
-int gcd (const int a, const int b, int *r, int *s )
+ltfatInt gcd (const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s )
 {
-  int a1 = a;
-  int b1 = b;
-  int a2 = 1;
-  int b2 = 0;
-  int a3 = 0;
-  int b3 = 1;
-  int c, d;
-  while ( b1 != 0 )
-  {
-      d=a1/b1;
-      c = a1;
-      a1 = b1;
-      b1 = c-d*b1;
+    ltfatInt a1 = a;
+    ltfatInt b1 = b;
+    ltfatInt a2 = 1;
+    ltfatInt b2 = 0;
+    ltfatInt a3 = 0;
+    ltfatInt b3 = 1;
+    ltfatInt c, d;
+    while ( b1 != 0 )
+    {
+        d=a1/b1;
+        c = a1;
+        a1 = b1;
+        b1 = c-d*b1;
 
-      c = a2;
-      a2 = b2;
-      b2 = c-d*b2;
+        c = a2;
+        a2 = b2;
+        b2 = c-d*b2;
 
-      c = a3;
-      a3 = b3;
-      b3 = c-d*b3;
+        c = a3;
+        a3 = b3;
+        b3 = c-d*b3;
 
-  }
+    }
 
-  *r=a2;
-  *s=a3;
-  return a1;
+    *r=a2;
+    *s=a3;
+    return a1;
 }
 
-int lcm(const int a, const int b)
+ltfatInt lcm(const ltfatInt a, const ltfatInt b)
 {
-  int junk_r, junk_s;
+    ltfatInt junk_r, junk_s;
 
-  int c = gcd(a, b, &junk_r, &junk_s);
+    ltfatInt c = gcd(a, b, &junk_r, &junk_s);
 
-  return (a*b/c);
+    return (a*b/c);
 }
 
 
 
-void gabimagepars(const int Ls, const int x, const int y,
-		  int *a, int *M, int *L, int *N, int *Ngood)
+void gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
+                  ltfatInt *a, ltfatInt *M, ltfatInt *L, ltfatInt *N, ltfatInt *Ngood)
 {
 
 
-  *M = int_min(y,Ls);
-  *N = int_max(x,Ls);
+    *M = imin(y,Ls);
+    *N = imax(x,Ls);
 
-  /* Determine the minimum transform size. */
-  int K = lcm(*M,*N);
+    /* Determine the minimum transform size. */
+    ltfatInt K = lcm(*M,*N);
 
-  /* This L is good, but is it not the same as DGT will choose. */
-  int Llong = makelarger(Ls,K);
+    /* This L is good, but is it not the same as DGT will choose. */
+    ltfatInt Llong = makelarger(Ls,K);
 
-  /* Fix a from the long L */
-  *a=Llong/(*N);
+    /* Fix a from the long L */
+    *a=Llong/(*N);
 
-  /* Now we have fixed a and M, so we can use the standard method of choosing L. */
-  int Lsmallest=lcm(*a,*M);
-  *L = makelarger(Ls, Lsmallest);
+    /* Now we have fixed a and M, so we can use the standard method of choosing L. */
+    ltfatInt Lsmallest=lcm(*a,*M);
+    *L = makelarger(Ls, Lsmallest);
 
-  /* We did not get N as desired. */
-  *N=*L/(*a);
+    /* We did not get N as desired. */
+    *N=*L/(*a);
 
-  /* Number of columns to display */
-  *Ngood=(Ls/(*a));
+    /* Number of columns to display */
+    *Ngood=(Ls/(*a));
 }
 
 /* Determine the size of the output array of wfacreal and iwfacreal */
-int wfacreal_size(const int L, const int a, const int M)
+ltfatInt wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
 {
 
-   int h_a, h_m;
+    ltfatInt h_a, h_m;
 
-   const int b=L/M;
-   const int c=gcd(a, M,&h_a, &h_m);
-   const int p=a/c;
-   const int d=b/p;
+    const ltfatInt b=L/M;
+    const ltfatInt c=gcd(a, M,&h_a, &h_m);
+    const ltfatInt p=a/c;
+    const ltfatInt d=b/p;
 
-   /* This is a floor operation. */
-   const int d2= d/2+1;
+    /* This is a floor operation. */
+    const ltfatInt d2= d/2+1;
 
-   return d2*p*M;
+    return d2*p*M;
 
 }
 
-size_t nextPow2_st(size_t x)
+ltfatInt nextPow2(ltfatInt x)
 {
-    size_t bits = sizeof(x)*8;
+    ltfatInt bits = sizeof(x)*8;
 
     if(x==0)
         return 1;
 
-     x--;
-	(x) = ((x)>>1)  | (x);
+    x--;
+    (x) = ((x)>>1)  | (x);
     (x) = ((x)>>2)  | (x);
-	(x) = ((x)>>4)  | (x);
-	(x) = ((x)>>8)  | (x);
-	(x) = ((x)>>16) | (x);
-	if(bits>32)
-       (x) = ((x)>>32) | (x);
+    (x) = ((x)>>4)  | (x);
+    (x) = ((x)>>8)  | (x);
+    (x) = ((x)>>16) | (x);
+    if(bits>32)
+        (x) = ((x)>>32) | (x);
 
-	(x)++;
-	return x;
+    (x)++;
+    return x;
 }
 
-size_t nextfastfft(size_t x)
+ltfatInt nextfastfft(const ltfatInt x)
 {
-  while (1) {
-    ptrdiff_t m = x;
+   ltfatInt xtmp = x;
+    while (1)
+    {
+        ltfatInt m = xtmp;
 
-    while ((m % 2) == 0)
-      m /= 2;
-    while ((m % 3) == 0)
-      m /= 3;
-    while ((m % 5) == 0)
-      m /= 5;
-    if (m <= 1)
-      break;                    /* n is completely factorable by twos, threes, and fives */
-    x++;
-  }
-  return x;
+        while ((m % 2) == 0)
+            m /= 2;
+        while ((m % 3) == 0)
+            m /= 3;
+        while ((m % 5) == 0)
+            m /= 5;
+        if (m <= 1)
+            break;                    /* n is completely factorable by twos, threes, and fives */
+        xtmp++;
+    }
+    return xtmp;
+}
+
+
+ltfatInt pow2(const ltfatInt x)
+{
+    return ((1)<<(x));
+}
+
+ltfatInt modPow2(const ltfatInt x, const ltfatInt pow2var)
+{
+    return ((x)&(pow2var-1));
+}
+
+int isPow2(ltfatInt x)
+{
+    return x==nextPow2(x);
+}
+
+ltfatInt ilog2(const ltfatInt x)
+{
+    ltfatInt tmp = 0;
+    ltfatInt xtmp = x;
+     while (xtmp >>= 1) ++tmp;
+    return tmp;
+}
+
+// integer power by squaring
+ltfatInt ipow(ltfatInt base, ltfatInt exp)
+{
+    ltfatInt result = 1;
+    while (exp)
+    {
+        if (exp & 1)
+            result *= base;
+        exp >>= 1;
+        base *= base;
+    }
+
+    return result;
+}
+
+
+ltfatInt filterbank_td_size(ltfatInt L, ltfatInt a, ltfatInt gl, ltfatInt offset, ltfatExtType ext)
+{
+    ltfatInt Lc = 0;
+    if(ext==PER)
+    {
+        Lc = (ltfatInt) ceil( L/((double)a) );
+    }
+    else if(ext==VALID)
+    {
+        Lc = (ltfatInt) ceil( (L-(gl-1))/((double)a) );
+
+    }
+    else
+    {
+        Lc = (ltfatInt) ceil( (L + gl - 1 + offset )/((double)a) );
+    }
+    return Lc;
 }
 
 

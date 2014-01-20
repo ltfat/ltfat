@@ -1,52 +1,52 @@
-  //#include "fftw3.h"
+//#include "fftw3.h"
 //#include "ltfat.h"
 
 #ifdef LTFAT_COMPLEX
-   #undef LTFAT_COMPLEX
+#undef LTFAT_COMPLEX
 #endif
 #ifdef LTFAT_REAL
-   #undef LTFAT_REAL
+#undef LTFAT_REAL
 #endif
 #ifdef LTFAT_TYPE
-   #undef LTFAT_TYPE
+#undef LTFAT_TYPE
 #endif
 #ifdef LTFAT_NAME
-   #undef LTFAT_NAME
+#undef LTFAT_NAME
 #endif
 #ifdef LTFAT_NAME_REAL
-   #undef LTFAT_NAME_REAL
+#undef LTFAT_NAME_REAL
 #endif
 #ifdef LTFAT_NAME_COMPLEX
-   #undef LTFAT_NAME_COMPLEX
+#undef LTFAT_NAME_COMPLEX
 #endif
 #ifdef LTFAT_FFTW
-   #undef LTFAT_FFTW
+#undef LTFAT_FFTW
 #endif
 
 #ifdef LTFAT_MX_CLASSID
-   #undef LTFAT_MX_CLASSID
+#undef LTFAT_MX_CLASSID
 #endif
 
 #ifdef LTFAT_MX_COMPLEXITY
-   #undef LTFAT_MX_COMPLEXITY
+#undef LTFAT_MX_COMPLEXITY
 #endif
 
 #ifdef LTFAT_COMPLEXH
-   #undef LTFAT_COMPLEXH
+#undef LTFAT_COMPLEXH
 #endif
 
 #ifdef LTFAT_COMPLEXH_NAME
-   #undef LTFAT_COMPLEXH_NAME
+#undef LTFAT_COMPLEXH_NAME
 #endif
 
 #ifdef LTFAT_DOUBLE
 #  define LTFAT_REAL double
-#  define LTFAT_MX_CLASSID mxDOUBLE_CLASS
+#  define LTFAT_COMPLEX double _Complex
 #  define LTFAT_FFTW(name) fftw_ ## name
 #  define LTFAT_NAME_REAL(name) LTFAT_NAME_DOUBLE(name)
 #  define LTFAT_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 #  define LTFAT_COMPLEXH_NAME(name) name
-#  define LTFAT_COMPLEX double _Complex
+#  define LTFAT_MX_CLASSID mxDOUBLE_CLASS
 #  if defined(LTFAT_COMPLEXTYPE)
 #    define LTFAT_TYPE LTFAT_COMPLEX
 #    define LTFAT_NAME(name) LTFAT_NAME_COMPLEXDOUBLE(name)
@@ -60,12 +60,12 @@
 
 #ifdef LTFAT_SINGLE
 #define LTFAT_REAL float
+#define LTFAT_COMPLEX float _Complex
 #define LTFAT_MX_CLASSID mxSINGLE_CLASS
 #define LTFAT_NAME_REAL(name) LTFAT_NAME_SINGLE(name)
 #define LTFAT_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXSINGLE(name)
 #define LTFAT_FFTW(name) fftwf_ ## name
 #define LTFAT_COMPLEXH_NAME(name) name ## f
-#define LTFAT_COMPLEX float _Complex
 #  if defined(LTFAT_COMPLEXTYPE)
 #    define LTFAT_TYPE LTFAT_COMPLEX
 #    define LTFAT_NAME(name) LTFAT_NAME_COMPLEXSINGLE(name)

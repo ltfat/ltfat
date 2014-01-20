@@ -3,43 +3,43 @@
 #include "ciutils.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const int L,
-		       LTFAT_TYPE *cout);
+LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
+                     LTFAT_TYPE *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
-				const int L, const int R, const int a,
-				const int M, LTFAT_TYPE *gd);
+                         const ltfatInt L, const ltfatInt R, const ltfatInt a,
+                         const ltfatInt M, LTFAT_TYPE *gd);
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
-				 const int L, const int R, const int a,
-				 const int M, LTFAT_TYPE *gd);
+                          const ltfatInt L, const ltfatInt R, const ltfatInt a,
+                          const ltfatInt M, LTFAT_TYPE *gd);
 
 
 /* --------- Wilson and WMDCT bases ---------*/
 LTFAT_EXTERN void
 LTFAT_NAME(dwilt_long)(const LTFAT_TYPE *f,
-			     const LTFAT_TYPE *g,
-			     const int L, const int W, const int M,
-			     LTFAT_TYPE *cout);
+                       const LTFAT_TYPE *g,
+                       const ltfatInt L, const ltfatInt W, const ltfatInt M,
+                       LTFAT_TYPE *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dwilt_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
-			    const Lint L, const Lint gl, const Lint W, const Lint M,
-			   LTFAT_TYPE *cout);
+                     const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
+                     LTFAT_TYPE *cout);
 
 
 LTFAT_EXTERN void
 LTFAT_NAME(dwiltiii_long)(const LTFAT_TYPE *f,
-			     const LTFAT_TYPE *g,
-			     const Lint L, const Lint W, const Lint M,
-			     LTFAT_TYPE *cout);
+                          const LTFAT_TYPE *g,
+                          const ltfatInt L, const ltfatInt W, const ltfatInt M,
+                          LTFAT_TYPE *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dwiltiii_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
-			    const Lint L, const Lint gl, const Lint W, const Lint M,
-			   LTFAT_TYPE *cout);
+                        const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
+                        LTFAT_TYPE *cout);
 
 
 /* --------- Wilson and WMDCT inverses ---------*/
@@ -47,24 +47,52 @@ LTFAT_NAME(dwiltiii_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
 
 LTFAT_EXTERN void
 LTFAT_NAME(idwilt_long)(const LTFAT_TYPE *cin,
-			     const LTFAT_TYPE *g,
-			     const int L, const int W, const int M,
-			     LTFAT_TYPE *f);
+                        const LTFAT_TYPE *g,
+                        const ltfatInt L, const ltfatInt W, const ltfatInt M,
+                        LTFAT_TYPE *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idwilt_fb)(const LTFAT_TYPE *cin, const LTFAT_TYPE *g,
-			    const Lint L, const Lint gl, const Lint W, const Lint M,
-			   LTFAT_TYPE *f);
+                      const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
+                      LTFAT_TYPE *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idwiltiii_long)(const LTFAT_TYPE *cin,
-			     const LTFAT_TYPE *g,
-			     const Lint L, const Lint W, const Lint M,
-			     LTFAT_TYPE *f);
+                           const LTFAT_TYPE *g,
+                           const ltfatInt L, const ltfatInt W, const ltfatInt M,
+                           LTFAT_TYPE *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idwiltiii_fb)(const LTFAT_TYPE *cin, const LTFAT_TYPE *g,
-			    const Lint L, const Lint gl, const Lint W, const Lint M,
-			   LTFAT_TYPE *f);
+                         const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
+                         LTFAT_TYPE *f);
+
+/* --------------- DCT -------------------*/
+
+LTFAT_EXTERN
+LTFAT_FFTW(plan)
+LTFAT_NAME(dct_init)( LTFAT_TYPE *cout, ltfatInt L, ltfatInt W, dct_kind kind);
+
+LTFAT_EXTERN
+void LTFAT_NAME(dct)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dct_kind kind,
+                     LTFAT_TYPE *cout);
+
+LTFAT_EXTERN
+void LTFAT_NAME(dct_plan)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dct_kind kind,
+                          LTFAT_TYPE *cout, LTFAT_FFTW(plan) p);
+
+/* --------------- DST -------------------*/
+
+LTFAT_EXTERN
+LTFAT_FFTW(plan)
+LTFAT_NAME(dst_init)( LTFAT_TYPE *cout, ltfatInt L, ltfatInt W, dst_kind kind);
+
+LTFAT_EXTERN
+void LTFAT_NAME(dst)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dst_kind kind,
+                     LTFAT_TYPE *cout);
+
+LTFAT_EXTERN
+void LTFAT_NAME(dst_plan)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dst_kind kind,
+                          LTFAT_TYPE *cout, LTFAT_FFTW(plan) p);
 
 

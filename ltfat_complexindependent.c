@@ -21,7 +21,6 @@
 #include "spread.c"
 #include "ciutils.c"
 
-
 #undef LTFAT_COMPLEXTYPE
 
 

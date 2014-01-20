@@ -2,8 +2,6 @@ EXPORTS
 gcd
 fftindex
 makelarger
-int_max
-int_min
 lcm
 gabimagepars
 wfacreal_size
@@ -12,9 +10,10 @@ ltfat_calloc
 ltfat_realloc
 ltfat_free
 ltfat_safefree
-nextPow2_st
+nextPow2
 nextfastfft
-max_st
-max_pt
-min_st
-min_pt
+modPow2
+imin
+imax
+filterbank_td_size
+

@@ -5,9 +5,9 @@
 /* Compute canonical dual/tight window. This last parameter
  * indicates the type: 0 = dual, 1 = tight.
  */
-void fircanon_r(const double *g, const int Lg, const int L, const int a,
-		const int M, double *gdual, const int Ldual, const int symm,
-		const int wintype)
+void fircanon_r(const double *g, const ltfatInt Lg, const ltfatInt L, const ltfatInt a,
+		const ltfatInt M, double *gdual, const ltfatInt Ldual, const ltfatInt symm,
+		const ltfatInt wintype)
 {
    
    double *tmp_fir, *tmp_iir;
@@ -57,8 +57,8 @@ void fircanon_r(const double *g, const int Lg, const int L, const int a,
  *          symm  : Symmetry of input window, see the help for iir2fir
  *
  */ 
-void firdual_r(const double *g, const int Lg, const int L, const int a,
-		const int M, double *gdual, const int Ldual, const int symm)
+void firdual_r(const double *g, const ltfatInt Lg, const ltfatInt L, const ltfatInt a,
+		const ltfatInt M, double *gdual, const ltfatInt Ldual, const ltfatInt symm)
 {
    /* The final 0 indicates that we want the dual window.*/
    fircanon_r(g, Lg, L, a, M, gdual, Ldual,  symm, 0);
@@ -68,8 +68,8 @@ void firdual_r(const double *g, const int Lg, const int L, const int a,
 /* Driver routine to calculate tight window of FIR window. Same input/output
  * parameters as firdual_r
  */
-void firtight_r(const double *g, const int Lg, const int L, const int a,
-		const int M, double *gdual, const int Ldual, const int symm)
+void firtight_r(const double *g, const ltfatInt Lg, const ltfatInt L, const ltfatInt a,
+		const ltfatInt M, double *gdual, const ltfatInt Ldual, const ltfatInt symm)
 {
    /* The final 1 indicates that we want the tight window.*/
    fircanon_r(g, Lg, L, a, M, gdual, Ldual,  symm, 1);
