@@ -1,4 +1,3 @@
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -14,7 +13,7 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L,const ltfatIn
     LTFAT_REAL *S;
 
     const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;//{0.0, 0.0 };
-    const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0+0.0*I;//{1.0, 0.0 };
+    const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) (1.0+0.0*I);//{1.0, 0.0 };
 
     const ltfatInt N=L/a;
 
@@ -23,16 +22,16 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L,const ltfatIn
     const ltfatInt q=M/c;
     const ltfatInt d=N/q;
 
-    S  = (LTFAT_REAL*)ltfat_malloc(p*sizeof(LTFAT_REAL));
-    Sf = (LTFAT_COMPLEX*)ltfat_malloc(p*p*sizeof(LTFAT_COMPLEX));
-    U  = (LTFAT_COMPLEX*)ltfat_malloc(p*p*sizeof(LTFAT_COMPLEX));
-    VT = (LTFAT_COMPLEX*)ltfat_malloc(p*q*R*sizeof(LTFAT_COMPLEX));
-    gfwork = (LTFAT_COMPLEX*)ltfat_malloc(L*R*sizeof(LTFAT_COMPLEX));
+    S  = ltfat_malloc(p*sizeof*S);
+    Sf = ltfat_malloc(p*p*sizeof*Sf);
+    U  = ltfat_malloc(p*p*sizeof*U);
+    VT = ltfat_malloc(p*q*R*sizeof*VT);
+    gfwork = ltfat_malloc(L*R*sizeof*gfwork);
 
     /* Copy the contents of gf to gfwork because LAPACK overwrites
      * the input.
      */
-    memcpy(gfwork,gf,sizeof(LTFAT_COMPLEX)*L*R);
+    memcpy(gfwork,gf,L*R*sizeof*gfwork);
 
     for (ltfatInt rs=0; rs<c*d; rs++)
     {
@@ -78,16 +77,16 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const lt
     /* This is a floor operation. */
     const ltfatInt d2= d/2+1;
 
-    S  = (LTFAT_REAL*)ltfat_malloc(p*sizeof(LTFAT_REAL));
-    Sf = (LTFAT_COMPLEX*)ltfat_malloc(p*p*sizeof(LTFAT_COMPLEX));
-    U  = (LTFAT_COMPLEX*)ltfat_malloc(p*p*sizeof(LTFAT_COMPLEX));
-    VT = (LTFAT_COMPLEX*)ltfat_malloc(p*q*R*sizeof(LTFAT_COMPLEX));
-    gfwork = (LTFAT_COMPLEX*)ltfat_malloc(L*R*sizeof(LTFAT_COMPLEX));
+    S  = ltfat_malloc(p*sizeof*S);
+    Sf = ltfat_malloc(p*p*sizeof*Sf);
+    U  = ltfat_malloc(p*p*sizeof*U);
+    VT = ltfat_malloc(p*q*R*sizeof*VT);
+    gfwork = ltfat_malloc(L*R*sizeof*gfwork);
 
     /* Copy the contents of gf to gfwork because LAPACK overwrites
      * the input.
      */
-    memcpy(gfwork,gf,sizeof(LTFAT_COMPLEX)*L*R);
+    memcpy(gfwork,gf,L*R*sizeof*gfwork);
 
     for (ltfatInt rs=0; rs<c*d2; rs++)
     {

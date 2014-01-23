@@ -1,6 +1,8 @@
 #include "ltfat.h"
 
 
+
+LTFAT_EXTERN_TOO
 void* ltfat_malloc (size_t n)
 {
     void *outp;
@@ -14,6 +16,7 @@ void* ltfat_malloc (size_t n)
     return outp;
 }
 
+LTFAT_EXTERN_TOO
 void* ltfat_realloc (void *ptr, size_t n)
 {
     void *outp;
@@ -60,6 +63,7 @@ void* ltfat_realloc_and_copy (void *ptr, size_t nold, size_t nnew)
     return outp;
 }
 
+LTFAT_EXTERN_TOO
 void* ltfat_calloc (size_t nmemb, size_t size)
 {
     void *outp;
@@ -80,6 +84,7 @@ void* ltfat_calloc (size_t nmemb, size_t size)
     return outp;
 }
 
+LTFAT_EXTERN_TOO
 void ltfat_free(const void *ptr)
 {
     fftw_free((void*)ptr);

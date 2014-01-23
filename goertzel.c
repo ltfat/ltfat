@@ -1,20 +1,35 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
 
-
-
 #ifndef GGA_UNROLL
 #   define GGA_UNROLL 8
 #endif
 
+struct LTFAT_NAME(gga_plan_struct)
+{
+    const LTFAT_REAL* cos_term;
+    const LTFAT_COMPLEX* cc_term;
+    const LTFAT_COMPLEX* cc2_term;
+    const ltfatInt M;
+    const ltfatInt L;
+};
 
-#ifndef PI
-#   define PI 3.141592653589793
-#endif
+struct LTFAT_NAME(chzt_plan_struct)
+{
+    LTFAT_COMPLEX* fbuffer;
+    LTFAT_COMPLEX* W2;
+    LTFAT_COMPLEX* Wo;
+    LTFAT_COMPLEX* chirpF;
+    const LTFAT_FFTW(plan) plan;
+    const LTFAT_FFTW(plan) plan2;
+    const ltfatInt L;
+    const ltfatInt K;
+    const ltfatInt Lfft;
+};
 
 
-LTFAT_EXTERN
-LTFAT_NAME(gga_plan) LTFAT_NAME(create_gga_plan)(const double *indVecPtr, const ltfatInt M, const ltfatInt L)
+LTFAT_EXTERN LTFAT_NAME(gga_plan)
+LTFAT_NAME(gga_init)(const LTFAT_REAL *indVecPtr, const ltfatInt M, const ltfatInt L)
 {
     LTFAT_REAL* cos_term = ltfat_malloc(M*sizeof*cos_term);
     LTFAT_COMPLEX* cc_term = ltfat_malloc(M*sizeof*cc_term);
@@ -32,23 +47,31 @@ LTFAT_NAME(gga_plan) LTFAT_NAME(create_gga_plan)(const double *indVecPtr, const 
         cc2_term[m] = (LTFAT_COMPLEX) cexp(cc2_pre*pik_term);
     }
 
+    // This is workaround for defining constant elements of the struct.
+    struct LTFAT_NAME(gga_plan_struct) plan_tmp =
+    {.cos_term=cos_term,.cc_term=cc_term,.cc2_term=cc2_term,.M=M,.L=L};
 
-    LTFAT_NAME(gga_plan) plan = {.cos_term=cos_term,.cc_term=cc_term,.cc2_term=cc2_term,.M=M,.L=L};
+    LTFAT_NAME(gga_plan) plan = ltfat_malloc(sizeof*plan);
+    memcpy(plan,&plan_tmp,sizeof*plan);
+
     return plan;
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(destroy_gga_plan)(LTFAT_NAME(gga_plan) plan)
+void LTFAT_NAME(gga_done)(LTFAT_NAME(gga_plan) plan)
 {
-    LTFAT_SAFEFREEALL((void*)plan.cos_term,(void*)plan.cc_term,(void*)plan.cc2_term);
+    LTFAT_SAFEFREEALL((void*)plan->cos_term,
+                      (void*)plan->cc_term,
+                      (void*)plan->cc2_term);
+    ltfat_free(plan);
 }
 
 
 LTFAT_EXTERN
-void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
-                               const LTFAT_TYPE *fPtr,
-                               LTFAT_COMPLEX *cPtr,
-                               const ltfatInt W )
+void LTFAT_NAME(gga_execute)(LTFAT_NAME(gga_plan) p,
+                             const LTFAT_TYPE *fPtr,
+                             const ltfatInt W,
+                             LTFAT_COMPLEX *cPtr)
 {
 #ifndef GGA_UNROLL
 
@@ -77,14 +100,14 @@ void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
 #else
     for(ltfatInt w=0; w<W; w++)
     {
-        LTFAT_COMPLEX *cPtrTmp = (LTFAT_COMPLEX*) cPtr+w*p.M;
-        ltfatInt unrollRem = p.M%GGA_UNROLL;
+        LTFAT_COMPLEX *cPtrTmp = (LTFAT_COMPLEX*) cPtr+w*p->M;
+        ltfatInt unrollRem = p->M%GGA_UNROLL;
 
-        const LTFAT_REAL* cos_term = p.cos_term;
-        const LTFAT_COMPLEX* cc_term = p.cc_term;
-        const LTFAT_COMPLEX* cc2_term = p.cc2_term;
+        const LTFAT_REAL* cos_term = p->cos_term;
+        const LTFAT_COMPLEX* cc_term = p->cc_term;
+        const LTFAT_COMPLEX* cc2_term = p->cc2_term;
 //#pragma omp parallel for
-        for(ltfatInt m=0; m<p.M-unrollRem; m+=GGA_UNROLL)
+        for(ltfatInt m=0; m<p->M-unrollRem; m+=GGA_UNROLL)
         {
             LTFAT_TYPE s0[GGA_UNROLL];
             LTFAT_TYPE s1[GGA_UNROLL];
@@ -97,9 +120,9 @@ void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
                 s2[un] = 0.0;
             }
 
-            LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*p.L;
+            LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*p->L;
 
-            for(ltfatInt ii=0; ii<p.L-1; ii++)
+            for(ltfatInt ii=0; ii<p->L-1; ii++)
             {
                 for(ltfatInt un=0; un<GGA_UNROLL; un++)
                 {
@@ -119,7 +142,7 @@ void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
             cc2_term+=GGA_UNROLL;
         }
 
-        ltfatInt m= p.M-unrollRem;
+        ltfatInt m= p->M-unrollRem;
 
 
         LTFAT_TYPE s0[GGA_UNROLL];
@@ -133,9 +156,9 @@ void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
             s2[un] = 0.0;
         }
 
-        LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*p.L;
+        LTFAT_TYPE *fPtrTmp = (LTFAT_TYPE*) fPtr+w*p->L;
 
-        for(ltfatInt ii=0; ii<p.L-1; ii++)
+        for(ltfatInt ii=0; ii<p->L-1; ii++)
         {
             for(ltfatInt un=0; un<unrollRem; un++)
             {
@@ -159,42 +182,45 @@ void LTFAT_NAME(gga_with_plan)(LTFAT_NAME(gga_plan) p,
 
 
 LTFAT_EXTERN
-void LTFAT_NAME(gga)(const LTFAT_TYPE *fPtr, const double *indVecPtr,
+void LTFAT_NAME(gga)(const LTFAT_TYPE *fPtr, const LTFAT_REAL *indVecPtr,
                      const ltfatInt L, const ltfatInt W, const ltfatInt M, LTFAT_COMPLEX *cPtr)
 {
-    LTFAT_NAME(gga_plan) p = LTFAT_NAME(create_gga_plan)(indVecPtr, M, L);
-    LTFAT_NAME(gga_with_plan)(p,fPtr,cPtr, W );
-    LTFAT_NAME(destroy_gga_plan)(p);
+    LTFAT_NAME(gga_plan) p = LTFAT_NAME(gga_init)(indVecPtr, M, L);
+    LTFAT_NAME(gga_execute)(p,fPtr,W,cPtr);
+    LTFAT_NAME(gga_done)(p);
 }
 
 
 
-LTFAT_EXTERN
-void LTFAT_NAME(chzt)(const LTFAT_TYPE *fPtr, const ltfatInt L, const ltfatInt W, const ltfatInt K,
-                      const double deltao, const double o, LTFAT_COMPLEX *cPtr)
+LTFAT_EXTERN void
+LTFAT_NAME(chzt)(const LTFAT_TYPE *fPtr, const ltfatInt L, const ltfatInt W,
+                 const ltfatInt K, const LTFAT_REAL deltao, const LTFAT_REAL o,
+                 LTFAT_COMPLEX *cPtr)
 {
-    LTFAT_NAME(chzt_plan) p = LTFAT_NAME(create_chzt_plan)(K,L,deltao, o,FFTW_ESTIMATE,CZT_NEXTFASTFFT);
+    LTFAT_NAME(chzt_plan) p = LTFAT_NAME(chzt_init)(K,L,deltao, o,
+                              FFTW_ESTIMATE,
+                              CZT_NEXTFASTFFT);
 
-    LTFAT_NAME(chzt_with_plan)(p, fPtr, W, cPtr);
+    LTFAT_NAME(chzt_execute)(p, fPtr, W, cPtr);
 
-    LTFAT_NAME(destroy_chzt_plan)(p);
+    LTFAT_NAME(chzt_done)(p);
 }
 
 
-LTFAT_EXTERN
-void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr, const ltfatInt W,
-                                LTFAT_COMPLEX *cPtr)
+LTFAT_EXTERN void
+LTFAT_NAME(chzt_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
+                         const ltfatInt W, LTFAT_COMPLEX *cPtr)
 {
 
-    ltfatInt L = p.L;
-    ltfatInt K = p.K;
-    ltfatInt Lfft = p.Lfft;
-    LTFAT_COMPLEX* fbuffer = p.fbuffer;
-    LTFAT_FFTW(plan) plan_f = p.plan;
-    LTFAT_FFTW(plan) plan_fi = p.plan2;
-    LTFAT_COMPLEX* W2 = p.W2;
-    LTFAT_COMPLEX* Wo = p.Wo;
-    LTFAT_COMPLEX* chirpF = p.chirpF;
+    ltfatInt L = p->L;
+    ltfatInt K = p->K;
+    ltfatInt Lfft = p->Lfft;
+    LTFAT_COMPLEX* fbuffer = p->fbuffer;
+    LTFAT_FFTW(plan) plan_f = p->plan;
+    LTFAT_FFTW(plan) plan_fi = p->plan2;
+    LTFAT_COMPLEX* W2 = p->W2;
+    LTFAT_COMPLEX* Wo = p->Wo;
+    LTFAT_COMPLEX* chirpF = p->chirpF;
 
     for(ltfatInt w = 0; w<W; w++)
     {
@@ -233,20 +259,22 @@ void LTFAT_NAME(chzt_with_plan)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
 
 }
 
-LTFAT_EXTERN
-LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan)(const ltfatInt K, ltfatInt L, const double deltao, const double o, const unsigned fftw_flags, const unsigned czt_flags)
+LTFAT_EXTERN LTFAT_NAME(chzt_plan)
+LTFAT_NAME(chzt_init)(const ltfatInt K, ltfatInt L, const LTFAT_REAL deltao,
+                      const LTFAT_REAL o, const unsigned fftw_flags,
+                      czt_ffthint hint)
 {
     ltfatInt Lfft = L+K-1;
 
-    if(czt_flags == 0)
+    if(hint == CZT_NEXTPOW2)
         Lfft = nextPow2(Lfft);
     else
         Lfft = nextfastfft(Lfft);
 
     LTFAT_COMPLEX* fbuffer = ltfat_malloc(Lfft*sizeof*fbuffer);
-    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
+    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfft, fbuffer, fbuffer,
                                FFTW_FORWARD, fftw_flags);
-    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfft, (LTFAT_COMPLEX*)fbuffer, (LTFAT_COMPLEX*) fbuffer,
+    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfft, fbuffer, fbuffer,
                                 FFTW_BACKWARD, fftw_flags);
 
     // Pre and post chirp
@@ -286,45 +314,53 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan)(const ltfatInt K, ltfatInt L,
     /*
     We could have shrinked the W2 to length K here.
     */
-    LTFAT_NAME(chzt_plan) p = {.fbuffer = fbuffer, .plan=plan_f,.plan2=plan_fi,.L=L,
-                               .K=K, .W2 = W2, .Wo=Wo,.chirpF=chirpF,.Lfft=Lfft
-                              };
+    struct LTFAT_NAME(chzt_plan_struct) p_struct =
+    {
+        .fbuffer = fbuffer, .plan=plan_f,.plan2=plan_fi,.L=L, .K=K, .W2 = W2,
+        .Wo=Wo,.chirpF=chirpF,.Lfft=Lfft
+    };
+
+    LTFAT_NAME(chzt_plan) p = ltfat_malloc(sizeof*p);
+    memcpy(p,&p_struct,sizeof*p);
+
     return  p;
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(destroy_chzt_plan)(LTFAT_NAME(chzt_plan) p)
+void LTFAT_NAME(chzt_done)(LTFAT_NAME(chzt_plan) p)
 {
-    LTFAT_SAFEFREEALL(p.fbuffer,p.W2,p.Wo,p.chirpF);
-    LTFAT_FFTW(destroy_plan)(p.plan);
-    LTFAT_FFTW(destroy_plan)(p.plan2);
+    LTFAT_SAFEFREEALL(p->fbuffer,p->W2,p->Wo,p->chirpF);
+    LTFAT_FFTW(destroy_plan)(p->plan);
+    LTFAT_FFTW(destroy_plan)(p->plan2);
+    ltfat_free(p);
 }
 
 
-LTFAT_EXTERN
-void LTFAT_NAME(chzt_fact)(const LTFAT_TYPE *fPtr, const ltfatInt L, const ltfatInt W, const ltfatInt K,
-                           const double deltao, const double o, LTFAT_COMPLEX *cPtr)
+LTFAT_EXTERN void
+LTFAT_NAME(chzt_fac)(const LTFAT_TYPE *fPtr, const ltfatInt L,
+                     const ltfatInt W, const ltfatInt K, const LTFAT_REAL deltao,
+                     const LTFAT_REAL o, LTFAT_COMPLEX *cPtr)
 {
-    LTFAT_NAME(chzt_plan) p = LTFAT_NAME(create_chzt_plan_fact)(K,L,deltao, o,FFTW_ESTIMATE, CZT_NEXTFASTFFT);
+    LTFAT_NAME(chzt_plan) p = LTFAT_NAME(chzt_fac_init)(K,L,deltao, o,FFTW_ESTIMATE, CZT_NEXTFASTFFT);
 
-    LTFAT_NAME(chzt_with_plan_fact)(p, fPtr, W, cPtr);
+    LTFAT_NAME(chzt_fac_execute)(p, fPtr, W, cPtr);
 
-    LTFAT_NAME(destroy_chzt_plan)(p);
+    LTFAT_NAME(chzt_done)(p);
 }
 
-LTFAT_EXTERN
-void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr, const ltfatInt W,
-                                     LTFAT_COMPLEX *cPtr)
+LTFAT_EXTERN void
+LTFAT_NAME(chzt_fac_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
+                             const ltfatInt W, LTFAT_COMPLEX *cPtr)
 {
-    ltfatInt L = p.L;
-    ltfatInt K = p.K;
-    ltfatInt Lfft = p.Lfft;
-    LTFAT_COMPLEX* fbuffer = p.fbuffer;
-    LTFAT_FFTW(plan) plan_f = p.plan;
-    LTFAT_FFTW(plan) plan_fi = p.plan2;
-    LTFAT_COMPLEX* W2 = p.W2;
-    LTFAT_COMPLEX* Wo = p.Wo;
-    LTFAT_COMPLEX* chirpF = p.chirpF;
+    ltfatInt L = p->L;
+    ltfatInt K = p->K;
+    ltfatInt Lfft = p->Lfft;
+    LTFAT_COMPLEX* fbuffer = p->fbuffer;
+    LTFAT_FFTW(plan) plan_f = p->plan;
+    LTFAT_FFTW(plan) plan_fi = p->plan2;
+    LTFAT_COMPLEX* W2 = p->W2;
+    LTFAT_COMPLEX* Wo = p->Wo;
+    LTFAT_COMPLEX* chirpF = p->chirpF;
 
     LTFAT_COMPLEX* fBufTmp;
     ltfatInt q = (ltfatInt) ceil(((double)L)/((double)K));
@@ -430,12 +466,14 @@ void LTFAT_NAME(chzt_with_plan_fact)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *
     }
 }
 
-LTFAT_EXTERN
-LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const ltfatInt K, const ltfatInt L, const double deltao, const double o, const unsigned fftw_flags, const unsigned czt_flags)
+LTFAT_EXTERN LTFAT_NAME(chzt_plan)
+LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
+                          const LTFAT_REAL deltao, const LTFAT_REAL o,
+                          const unsigned fftw_flags, czt_ffthint hint)
 {
 
     ltfatInt Lfft=2*K-1;
-    if(czt_flags == 0)
+    if(hint == CZT_NEXTPOW2)
         Lfft = nextPow2(Lfft);
     else
         Lfft = nextfastfft(Lfft);
@@ -490,10 +528,13 @@ LTFAT_NAME(chzt_plan) LTFAT_NAME(create_chzt_plan_fact)(const ltfatInt K, const 
     }
 
 
-    LTFAT_NAME(chzt_plan) p = {.fbuffer = fbuffer, .plan=plan_f, .plan2=plan_fi,.L=L,
-                               .K=K, .W2 = W2, .Wo=Wo,.chirpF=chirpF,.Lfft=Lfft
-                              };
-    return  p;
+    struct LTFAT_NAME(chzt_plan_struct) p_struct =
+    {.fbuffer = fbuffer, .plan=plan_f, .plan2=plan_fi,.L=L,.K=K, .W2 = W2,
+     .Wo=Wo,.chirpF=chirpF,.Lfft=Lfft};
+
+   LTFAT_NAME(chzt_plan) p = ltfat_malloc(sizeof*p);
+   memcpy(p,&p_struct,sizeof*p);
+   return  p;
 }
 
 

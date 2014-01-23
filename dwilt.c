@@ -1,4 +1,3 @@
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 

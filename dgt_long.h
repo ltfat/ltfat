@@ -1,13 +1,3 @@
-LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(dgt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                             const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-                             const ltfatInt M, LTFAT_COMPLEX *cout);
-
-LTFAT_EXTERN void
-LTFAT_NAME(dgt_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-                     const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-                     const ltfatInt M, LTFAT_COMPLEX *cout);
-
 typedef struct
 {
     ltfatInt a;
@@ -26,6 +16,18 @@ typedef struct
     LTFAT_REAL *ff, *cf;
 
 } LTFAT_NAME(dgt_long_plan);
+
+
+
+LTFAT_EXTERN void
+LTFAT_NAME_COMPLEX(dgt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+                             const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+                             const ltfatInt M, LTFAT_COMPLEX *cout);
+
+LTFAT_EXTERN void
+LTFAT_NAME(dgt_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+                     const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+                     const ltfatInt M, LTFAT_COMPLEX *cout);
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_long_plan)

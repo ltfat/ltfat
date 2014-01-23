@@ -42,17 +42,17 @@ void LTFAT_NAME(circshift)(LTFAT_TYPE *in, LTFAT_TYPE *out, const ltfatInt L, co
 
     if(shiftMod<0)
     {
-        memcpy(out,in-shiftMod,(L+shiftMod)*sizeof(LTFAT_TYPE));
-        memcpy(out+(L+shiftMod),in,-shiftMod*sizeof(LTFAT_TYPE));
+        memcpy(out,in-shiftMod,(L+shiftMod)*sizeof*out);
+        memcpy(out+(L+shiftMod),in,-shiftMod*sizeof*out);
     }
     else if(shiftMod>0)
     {
-        memcpy(out+shiftMod,in,(L-shiftMod)*sizeof(LTFAT_TYPE));
-        memcpy(out,in+L-shiftMod,shiftMod*sizeof(LTFAT_TYPE));
+        memcpy(out+shiftMod,in,(L-shiftMod)*sizeof*out);
+        memcpy(out,in+L-shiftMod,shiftMod*sizeof*out);
     }
     else
     {
-        memcpy(out,in,L*sizeof(LTFAT_TYPE));
+        memcpy(out,in,L*sizeof*out);
     }
 }
 

@@ -1,4 +1,3 @@
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -11,7 +10,7 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
                       const ltfatInt a, const ltfatInt M,
                       LTFAT_COMPLEX *f)
 {
-    LTFAT_COMPLEX *gf = (LTFAT_COMPLEX*) ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *gf = ltfat_malloc(L*sizeof*gf);
     LTFAT_NAME_COMPLEX(wfac)(g, L, 1, a, M, gf);
 
     LTFAT_NAME(idgt_fac)(cin, (const LTFAT_COMPLEX*) gf, L, W,a, M, f);
@@ -29,7 +28,7 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
 {
 // TO DO: Is it possible to use wfacreal? wfacreal_size(L,a,M)
 
-    LTFAT_COMPLEX *gf = (LTFAT_COMPLEX*) ltfat_malloc(L*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *gf = ltfat_malloc(L*sizeof*gf);
     LTFAT_NAME(wfac)(g, L, 1, a, M, gf);
 
     LTFAT_NAME(idgtreal_fac)(cin, (const LTFAT_COMPLEX*) gf, L, W,a, M, f);
