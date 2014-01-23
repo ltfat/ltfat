@@ -1,4 +1,3 @@
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -224,11 +223,11 @@ LTFAT_NAME(idgtreal_fac)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *gf,
 
     h_a=-h_a;
 
-    ff    = (LTFAT_COMPLEX*)ltfat_malloc(d2*p*q*W*sizeof(LTFAT_COMPLEX));
-    cf    = (LTFAT_COMPLEX*)ltfat_malloc(d2*q*q*W*sizeof(LTFAT_COMPLEX));
-    cwork = (LTFAT_REAL*)ltfat_malloc(M*N*W*sizeof(LTFAT_REAL));
-    cbuf  = (LTFAT_COMPLEX*)ltfat_malloc(d2*sizeof(LTFAT_COMPLEX));
-    sbuf  =    (LTFAT_REAL*)ltfat_malloc(d*sizeof(LTFAT_REAL));
+    ff    = ltfat_malloc(d2*p*q*W*sizeof*ff);
+    cf    = ltfat_malloc(d2*q*q*W*sizeof*cf);
+    cwork = ltfat_malloc(M*N*W*sizeof*cwork);
+    cbuf  = ltfat_malloc(d2*sizeof*cbuf);
+    sbuf  = ltfat_malloc(d*sizeof*sbuf);
 
     /* Scaling constant needed because of FFTWs normalization. */
     const LTFAT_REAL scalconst = 1.0/((LTFAT_REAL)d*sqrt((LTFAT_REAL)M));

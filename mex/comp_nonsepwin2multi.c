@@ -6,10 +6,12 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 
+/*
 int ltfat_round(double x)
 {
   return (int)(x+.5);
 }
+*/
 
 #endif /* _LTFAT_MEX_FILE */
 
@@ -24,15 +26,15 @@ int ltfat_round(double x)
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   int a, M, L, Lg, lt1, lt2;
+   ltfatInt a, M, L, Lg, lt1, lt2;
    double *lt;
 
    // Get matrix dimensions.
    Lg = mxGetM(prhs[0]);
 
-   a=(int)mxGetScalar(prhs[1]);
-   M=(int)mxGetScalar(prhs[2]);
-   L=(int)mxGetScalar(prhs[4]);
+   a=(ltfatInt)mxGetScalar(prhs[1]);
+   M=(ltfatInt)mxGetScalar(prhs[2]);
+   L=(ltfatInt)mxGetScalar(prhs[4]);
 
    // Read the values of lt and round them to integers.
    lt = mxGetPr(prhs[3]);

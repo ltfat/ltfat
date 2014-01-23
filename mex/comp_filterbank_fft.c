@@ -17,9 +17,10 @@
 #include "math.h"
 #include "config.h"
 
-static LTFAT_FFTW(plan)* LTFAT_NAME(oldPlans) = 0;
+static LTFAT_NAME(convsub_fft_plan)* LTFAT_NAME(oldPlans) = 0;
 static mwSize* LTFAT_NAME(oldLc) = 0;
 static mwSize LTFAT_NAME(oldM) = 0;
+static mwSize LTFAT_NAME(oldW) = 0;
 
 // Calling convention:
 // c = comp_filterbank_fft(F,G,a)
@@ -35,7 +36,7 @@ void LTFAT_NAME(fftMexAtExitFnc)()
         {
             if(LTFAT_NAME(oldPlans)[m]!=0)
             {
-                LTFAT_FFTW(destroy_plan)(LTFAT_NAME(oldPlans)[m]);
+                LTFAT_NAME(convsub_fft_done)(LTFAT_NAME(oldPlans)[m]);
             }
         }
         ltfat_free(LTFAT_NAME(oldPlans));
@@ -48,6 +49,7 @@ void LTFAT_NAME(fftMexAtExitFnc)()
         LTFAT_NAME(oldLc) = 0;
     }
     LTFAT_NAME(oldM) = 0;
+    LTFAT_NAME(oldW) = 0;
 }
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
@@ -76,47 +78,50 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     // Hop sizes
     mwSize a[M];
     // Filter pointer array
-    LTFAT_COMPLEX* GPtrs[M];
+    const LTFAT_COMPLEX* GPtrs[M];
     // POINTER TO THE INPUT
-    LTFAT_COMPLEX* FPtr = mxGetData(prhs[0]);
+    const LTFAT_COMPLEX* FPtr = mxGetData(prhs[0]);
     // POINTER TO OUTPUTS
     LTFAT_COMPLEX* cPtrs[M]; // C99 feature
     plhs[0] = mxCreateCellMatrix(M, 1);
 
-    if(M!=LTFAT_NAME(oldM))
+    if(M!=LTFAT_NAME(oldM) || W != LTFAT_NAME(oldW) )
     {
         LTFAT_NAME(fftMexAtExitFnc)();
         LTFAT_NAME(oldM) = M;
+        LTFAT_NAME(oldW) = W;
         LTFAT_NAME(oldLc) = ltfat_calloc(M,sizeof(mwSize));
-        LTFAT_NAME(oldPlans) = ltfat_calloc(M,sizeof(LTFAT_FFTW(plan)));
+        LTFAT_NAME(oldPlans) = ltfat_calloc(M,sizeof*LTFAT_NAME(oldPlans));
     }
 
     for(mwIndex m=0; m<M; ++m)
     {
         a[m] = (mwSize) aDouble[m];
         outLen[m] = (mwSize) ceil( L/a[m] );
-        GPtrs[m] = (LTFAT_COMPLEX*) mxGetPr(mxGetCell(mxG, m));
+        GPtrs[m] = mxGetData(mxGetCell(mxG, m));
         mxSetCell(plhs[0], m,
                   ltfatCreateMatrix(outLen[m], W, LTFAT_MX_CLASSID,mxCOMPLEX));
-        cPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(plhs[0],m));
+        cPtrs[m] = mxGetData(mxGetCell(plhs[0],m));
 
         if(LTFAT_NAME(oldLc)[m]!=outLen[m])
         {
             LTFAT_NAME(oldLc)[m] = outLen[m];
-            LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(
-                                        outLen[m],cPtrs[m],cPtrs[m],
-                                        FFTW_BACKWARD, FFTW_OPTITYPE);
+            LTFAT_NAME(convsub_fft_plan) ptmp =
+            LTFAT_NAME(convsub_fft_init)( L, W, a[m], cPtrs[m]);
 
             if(LTFAT_NAME(oldPlans)[m]!=0)
             {
-                LTFAT_FFTW(destroy_plan)(LTFAT_NAME(oldPlans)[m]);
+                LTFAT_NAME(convsub_fft_done)(LTFAT_NAME(oldPlans)[m]);
             }
             LTFAT_NAME(oldPlans)[m]=ptmp;
         }
     }
 
-    LTFAT_NAME(filterbank_fft_plans)(FPtr, GPtrs, L, W, a, M,
-                                     cPtrs, LTFAT_NAME(oldPlans));
+    LTFAT_NAME(filterbank_fft_execute)(LTFAT_NAME(oldPlans), FPtr, GPtrs,
+                                       M, cPtrs);
+//    LTFAT_NAME(filterbank_fft)(FPtr, GPtrs, L, W, a, M, cPtrs);
+
+
 }
 #endif
 

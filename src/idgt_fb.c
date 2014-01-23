@@ -1,8 +1,3 @@
-#include "config.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include "fftw3.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -48,13 +43,13 @@ LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
     const ltfatInt glh_d_a=(ltfatInt)ceil((glh*1.0)/(a));
     LTFAT_COMPLEX *fw;
 
-    LTFAT_COMPLEX *cbuf = (LTFAT_COMPLEX*)ltfat_malloc(M*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *cbuf = ltfat_malloc(M*sizeof*cbuf);
 
     /* Create plan. In-place. */
     LTFAT_FFTW(plan) p_small = LTFAT_FFTW(plan_dft_1d)(M, cbuf, cbuf, FFTW_BACKWARD, FFTW_MEASURE);
 
     /* % The fftshift actually makes some things easier. */
-    LTFAT_COMPLEX *gw  = (LTFAT_COMPLEX*)ltfat_malloc(gl*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *gw  = ltfat_malloc(gl*sizeof*gw);
     for (ltfatInt l=0; l<glh; l++)
     {
         gw[l] = g[l+(gl-glh)];
@@ -64,7 +59,7 @@ LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
         gw[l] = g[l-glh];
     }
 
-    LTFAT_COMPLEX *ff  = (LTFAT_COMPLEX*)ltfat_malloc(gl*sizeof(LTFAT_COMPLEX));
+    LTFAT_COMPLEX *ff  = ltfat_malloc(gl*sizeof*ff);
 
     for (ltfatInt w=0; w<W; w++)
     {
@@ -320,14 +315,14 @@ LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
     const ltfatInt glh_d_a=(ltfatInt)ceil((glh*1.0)/(a));
     LTFAT_REAL *fw;
 
-    LTFAT_COMPLEX *cbuf  = (LTFAT_COMPLEX*)ltfat_malloc(M2*sizeof(LTFAT_COMPLEX));
-    LTFAT_REAL    *crbuf =    (LTFAT_REAL*)ltfat_malloc( M*sizeof(LTFAT_REAL));
+    LTFAT_COMPLEX *cbuf  = ltfat_malloc(M2*sizeof*cbuf);
+    LTFAT_REAL    *crbuf = ltfat_malloc( M*sizeof*crbuf);
 
     /* Create plan. In-place. */
     LTFAT_FFTW(plan) p_small = LTFAT_FFTW(plan_dft_c2r_1d)(M, cbuf, crbuf, FFTW_MEASURE);
 
     /* % The fftshift actually makes some things easier. */
-    LTFAT_REAL *gw  = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
+    LTFAT_REAL *gw  = ltfat_malloc(gl*sizeof*gw);
     for (ltfatInt l=0; l<glh; l++)
     {
         gw[l] = g[l+(gl-glh)];
@@ -337,7 +332,7 @@ LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
         gw[l] = g[l-glh];
     }
 
-    LTFAT_REAL *ff  = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
+    LTFAT_REAL *ff  = ltfat_malloc(gl*sizeof*ff);
 
     for (ltfatInt w=0; w<W; w++)
     {

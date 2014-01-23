@@ -1,7 +1,6 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
 
-#include "config.h"
 #include "ltfat.h"
 
 LTFAT_EXTERN void

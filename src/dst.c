@@ -1,13 +1,12 @@
 /* NOT PROCESSED DIRECTLY, dst_ci.c */
 #ifdef LTFAT_TYPE
 
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
-LTFAT_EXTERN
-LTFAT_FFTW(plan)
-LTFAT_NAME(dst_init)( LTFAT_TYPE *cout, ltfatInt L, ltfatInt W, dst_kind kind)
+LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                      const dst_kind kind)
 {
     LTFAT_FFTW(iodim) dims, howmanydims;
     LTFAT_FFTW(plan) p;
@@ -45,21 +44,22 @@ LTFAT_NAME(dst_init)( LTFAT_TYPE *cout, ltfatInt L, ltfatInt W, dst_kind kind)
 
 
 // f and cout cannot be equal, because creating plan can tamper with the array
-LTFAT_EXTERN
-void LTFAT_NAME(dst)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dst_kind kind,
-                     LTFAT_TYPE *cout)
+LTFAT_EXTERN void
+LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+                LTFAT_TYPE *cout, const dst_kind kind)
 {
-    LTFAT_FFTW(plan) p = LTFAT_NAME(dst_init)( cout, L, W, kind);
+    LTFAT_FFTW(plan) p = LTFAT_NAME(dst_init)( L, W, cout, kind);
 
-    LTFAT_NAME(dst_plan)(f,  L,  W,  kind, cout, p);
+    LTFAT_NAME(dst_execute)(p, f,  L,  W, cout, kind);
 
     LTFAT_FFTW(destroy_plan)(p);
 }
 
 // f and cout can be equal, provided plan was already created
-LTFAT_EXTERN
-void LTFAT_NAME(dst_plan)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dst_kind kind,
-                          LTFAT_TYPE *cout, LTFAT_FFTW(plan) p)
+LTFAT_EXTERN void
+LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+                        const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                        const dst_kind kind)
 {
     // Copy input to the output
     if(cout!=f)

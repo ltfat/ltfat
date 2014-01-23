@@ -89,7 +89,7 @@ LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 
 
 
-    LTFAT_FFTW(plan) p = LTFAT_NAME(dct_init)( c_r, L, W, kind);
+    LTFAT_FFTW(plan) p = LTFAT_NAME(dct_init)( L, W, c_r, kind);
     /*
     The old plan is freed after the new one is cretaed.
     According to the FFTW doc. creating new plan is quick as long as there 
@@ -100,11 +100,11 @@ LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     LTFAT_NAME(dctMexAtExitFnc)();
     LTFAT_NAME(p_old) = p;
 
-    LTFAT_NAME(dct_plan)(f_r,L,W,kind,c_r,p);
+    LTFAT_NAME(dct_execute)(p,f_r,L,W,c_r,kind);
 
     if( mxIsComplex(prhs[0]))
     {
-        LTFAT_NAME(dct_plan)(f_i,L,W,kind,c_i,p);
+        LTFAT_NAME(dct_execute)(p,f_i,L,W,c_i,kind);
     }
 
 

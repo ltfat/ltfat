@@ -69,30 +69,33 @@ LTFAT_NAME(idwiltiii_fb)(const LTFAT_TYPE *cin, const LTFAT_TYPE *g,
 
 /* --------------- DCT -------------------*/
 
-LTFAT_EXTERN
-LTFAT_FFTW(plan)
-LTFAT_NAME(dct_init)( LTFAT_TYPE *cout, ltfatInt L, ltfatInt W, dct_kind kind);
+LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                      const dct_kind kind);
 
-LTFAT_EXTERN
-void LTFAT_NAME(dct)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dct_kind kind,
-                     LTFAT_TYPE *cout);
 
-LTFAT_EXTERN
-void LTFAT_NAME(dct_plan)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dct_kind kind,
-                          LTFAT_TYPE *cout, LTFAT_FFTW(plan) p);
+LTFAT_EXTERN void
+LTFAT_NAME(dct)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+                LTFAT_TYPE *cout, const dct_kind kind);
+
+LTFAT_EXTERN void
+LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+                        const ltfatInt L, const ltfatInt W,
+                        LTFAT_TYPE *cout, const dct_kind kind);
 
 /* --------------- DST -------------------*/
 
-LTFAT_EXTERN
-LTFAT_FFTW(plan)
-LTFAT_NAME(dst_init)( LTFAT_TYPE *cout, ltfatInt L, ltfatInt W, dst_kind kind);
+LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                      const dst_kind kind);
 
-LTFAT_EXTERN
-void LTFAT_NAME(dst)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dst_kind kind,
-                     LTFAT_TYPE *cout);
+LTFAT_EXTERN void
+LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+                LTFAT_TYPE *cout, const dst_kind kind);
 
-LTFAT_EXTERN
-void LTFAT_NAME(dst_plan)(const LTFAT_TYPE *f, ltfatInt L, ltfatInt W, dst_kind kind,
-                          LTFAT_TYPE *cout, LTFAT_FFTW(plan) p);
+LTFAT_EXTERN void
+LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+                        const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                        const dst_kind kind);
 
 

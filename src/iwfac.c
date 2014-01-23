@@ -1,4 +1,3 @@
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -58,8 +57,6 @@ LTFAT_NAME_COMPLEX(iwfac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfat
                         LTFAT_REAL* gTmp = (LTFAT_REAL*) &(g[r+rem+L*w]);
                         gTmp[0] = sbuf[2*s];
                         gTmp[1] = sbuf[2*s+1];
-                        //g[r+rem+L*w][0] = sbuf[2*s];
-                        //g[r+rem+L*w][1] = sbuf[2*s+1];
                     }
                     gfp+=2;
                 }

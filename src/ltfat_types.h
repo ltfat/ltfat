@@ -1,5 +1,6 @@
-//#include "fftw3.h"
-//#include "ltfat.h"
+/**
+*
+*/
 
 #ifdef LTFAT_COMPLEX
 #undef LTFAT_COMPLEX
@@ -77,12 +78,4 @@
 #  endif
 #endif
 
-/*
-  If compiled using C++
-*/
-/*
-#ifdef __cplusplus
-#  undef LTFAT_NAME
-#  define LTFAT_NAME(name) name
-#endif // __cplusplus
-*/
+

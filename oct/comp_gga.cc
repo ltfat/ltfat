@@ -1,4 +1,5 @@
 #define TYPEDEPARGS 0
+#define MATCHEDARGS 1
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_gga // change to filename
@@ -21,7 +22,7 @@ fwd_gga(const Complex *fPtr, const double*  indVecPtr,
 }
 
 static inline void
-fwd_gga(const FloatComplex *fPtr, const double*  indVecPtr,
+fwd_gga(const FloatComplex *fPtr, const float*  indVecPtr,
         const octave_idx_type L, const octave_idx_type W,
         const octave_idx_type M, FloatComplex *cPtr )
 {
@@ -40,7 +41,7 @@ fwd_gga(const double *fPtr, const double*  indVecPtr,
 }
 
 static inline void
-fwd_gga(const float *fPtr, const double*  indVecPtr,
+fwd_gga(const float *fPtr, const float*  indVecPtr,
         const octave_idx_type L, const octave_idx_type W,
         const octave_idx_type M, FloatComplex *cPtr )
 {
@@ -55,7 +56,7 @@ octFunction(const octave_value_list& args, int nargout)
    //DEBUGINFO;
    // Input data
    MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
-   MArray<double> indVec = ltfatOctArray<double>(args(1));
+   MArray<LTFAT_REAL> indVec = ltfatOctArray<LTFAT_REAL>(args(1));
     
    // Input length
    const octave_idx_type L  = f.rows();

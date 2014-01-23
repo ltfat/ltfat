@@ -1,7 +1,6 @@
 /* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
 #ifdef LTFAT_TYPE
 
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -32,9 +31,6 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
 #endif
 
     LTFAT_SAFEFREEALL(gdf,gf);
-    //ltfat_free(gdf);
-    //ltfat_free(gf);
-
 }
 
 #endif

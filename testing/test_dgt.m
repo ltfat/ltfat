@@ -56,9 +56,25 @@ for ii=1:length(Lr);
       rname='CMPLX';	
       g=tester_crand(L,1);
     end;
-    
-    % TO DO: 
-    C = gabframebounds(g,a,M);
+ 
+    global LTFAT_TEST_TYPE;
+    if strcmpi(LTFAT_TEST_TYPE,'single')
+        C = gabframebounds(g,a,M);
+        while C>1e4
+            warning(sprintf(['The frame is too badly conditioned '...
+                             'for single precision. Cond. num. %d. '...
+                             ' Trying again.'],C));
+                         
+                         if rtype==1
+                             rname='REAL ';
+                             g=tester_rand(L,1);
+                         else
+                             rname='CMPLX';
+                             g=tester_crand(L,1);
+                         end;
+                         C = gabframebounds(g,a,M);
+        end
+    end
     
     
     gd=gabdual(g,a,M);

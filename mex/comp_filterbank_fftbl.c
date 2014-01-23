@@ -17,9 +17,10 @@
 #include <math.h>
 #include "config.h"
 
-static LTFAT_FFTW(plan)* LTFAT_NAME(oldPlans) = 0;
+static LTFAT_NAME(convsub_fftbl_plan)* LTFAT_NAME(oldPlans) = 0;
 static mwSize* LTFAT_NAME(oldLc) = 0;
 static mwSize LTFAT_NAME(oldM) = 0;
+static mwSize LTFAT_NAME(oldW) = 0;
 
 void LTFAT_NAME(fftblMexAtExitFnc)()
 {
@@ -30,7 +31,7 @@ void LTFAT_NAME(fftblMexAtExitFnc)()
         {
             if(LTFAT_NAME(oldPlans)[m]!=0)
             {
-                LTFAT_FFTW(destroy_plan)(LTFAT_NAME(oldPlans)[m]);
+                LTFAT_NAME(convsub_fftbl_done)(LTFAT_NAME(oldPlans)[m]);
             }
         }
         ltfat_free(LTFAT_NAME(oldPlans));
@@ -43,6 +44,7 @@ void LTFAT_NAME(fftblMexAtExitFnc)()
         LTFAT_NAME(oldLc) = 0;
     }
     LTFAT_NAME(oldM) = 0;
+    LTFAT_NAME(oldW) = 0;
 #ifdef _DEBUG
     mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
 #endif
@@ -100,7 +102,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     LTFAT_COMPLEX* FPtr = mxGetData(prhs[0]);
 
     // POINTER TO THE FILTERS
-    LTFAT_COMPLEX* GPtrs[M];
+    const LTFAT_COMPLEX* GPtrs[M];
     // filter lengths
     mwSize Gl[M];
     // POINTER TO OUTPUTS
@@ -108,12 +110,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 
     plhs[0] = mxCreateCellMatrix(M, 1);
 
-    if(M!=LTFAT_NAME(oldM))
+    if(M!=LTFAT_NAME(oldM) || W != LTFAT_NAME(oldW))
     {
         LTFAT_NAME(fftblMexAtExitFnc)();
         LTFAT_NAME(oldM) = M;
+        LTFAT_NAME(oldW) = W;
         LTFAT_NAME(oldLc) = ltfat_calloc(M,sizeof(mwSize));
-        LTFAT_NAME(oldPlans) =  ltfat_calloc(M,sizeof(LTFAT_FFTW(plan)));
+        LTFAT_NAME(oldPlans) =  ltfat_calloc(M,sizeof*LTFAT_NAME(oldPlans));
     }
 
     for(mwIndex m=0; m<M; ++m)
@@ -121,21 +124,21 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
         foff[m] = (mwSignedIndex) foffDouble[m];
         realonly[m] = (realonlyDouble[m]>1e-3);
         outLen[m] = (mwSize) floor( L/afrac[m] +0.5);
-        GPtrs[m] = (LTFAT_COMPLEX*) mxGetPr(mxGetCell(mxG, m));
+        GPtrs[m] = mxGetData(mxGetCell(mxG, m));
         Gl[m] = mxGetNumberOfElements(mxGetCell(mxG, m));
         mxSetCell(plhs[0], m, ltfatCreateMatrix(outLen[m], W,
                                   LTFAT_MX_CLASSID,mxCOMPLEX));
-        cPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(plhs[0],m));
+        cPtrs[m] = mxGetData(mxGetCell(plhs[0],m));
 
         if(LTFAT_NAME(oldLc)[m]!=outLen[m])
         {
             LTFAT_NAME(oldLc)[m] = outLen[m];
-            LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(outLen[m],
-                             cPtrs[m],cPtrs[m], FFTW_BACKWARD, FFTW_OPTITYPE);
+            LTFAT_NAME(convsub_fftbl_plan) ptmp =
+            LTFAT_NAME(convsub_fftbl_init)( L, Gl[m], W, afrac[m], cPtrs[m]);
 
             if(LTFAT_NAME(oldPlans)[m]!=0)
             {
-                LTFAT_FFTW(destroy_plan)(LTFAT_NAME(oldPlans)[m]);
+                 LTFAT_NAME(convsub_fftbl_done)(LTFAT_NAME(oldPlans)[m]);
             }
             LTFAT_NAME(oldPlans)[m]=ptmp; 
         }
@@ -143,7 +146,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     }
 
 
-    LTFAT_NAME(filterbank_fftbl)(FPtr, GPtrs, L, Gl, W, afrac, M,
+    LTFAT_NAME(filterbank_fftbl_execute)( LTFAT_NAME(oldPlans),FPtr, GPtrs, M,
                                  foff, realonly, cPtrs);
 }
 #endif

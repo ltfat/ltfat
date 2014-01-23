@@ -1,11 +1,5 @@
-#include "config.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include "ltfat.h"
 #include "ltfat_types.h"
-
-#define PI 3.1415926535897932384626433832795
 
 typedef struct
 {

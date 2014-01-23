@@ -12,41 +12,43 @@
 static inline void fwd_dct(const double *f,
                            const octave_idx_type L,
                            const octave_idx_type W,
-                           const dct_kind kind,
-                           double *c)
+                           double *c,
+                           const dct_kind kind)
 {
-    dct_d(f,L,W,kind,c);
+    dct_d(f,L,W,c,kind);
 }
 
 static inline void fwd_dct(const float *f,
                            const octave_idx_type L,
                            const octave_idx_type W,
-                           const dct_kind kind,
-                           float *c)
+                           float *c,
+                           const dct_kind kind)
 {
-   dct_s(f,L,W,kind,c);
+   dct_s(f,L,W,c,kind);
 }
 
 static inline void fwd_dct(const Complex *f,
                            const octave_idx_type L,
                            const octave_idx_type W,
-                           const dct_kind kind,
-                           Complex *c)
+                           Complex *c,
+                           const dct_kind kind)
 {
    dct_cd(reinterpret_cast<const double _Complex *>(f),
-          L,W,kind,
-          reinterpret_cast<double _Complex *>(c));  
+          L,W,
+          reinterpret_cast<double _Complex *>(c),
+          kind);  
 }
 
 static inline void fwd_dct(const FloatComplex *f,
                            const octave_idx_type L,
                            const octave_idx_type W,
-                           const dct_kind kind,
-                           FloatComplex* c)
+                           FloatComplex* c,
+                           const dct_kind kind)
 {
     dct_cs(reinterpret_cast<const float _Complex *>(f),
-           L,W,kind,
-           reinterpret_cast<float _Complex *>(c));  
+           L,W,
+           reinterpret_cast<float _Complex *>(c),
+           kind);  
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -78,7 +80,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
          error("Unknown type.");
    }
 
-   fwd_dct(f.data(),L,W,kind,c.fortran_vec());
+   fwd_dct(f.data(),L,W,c.fortran_vec(),kind);
 
    return octave_value(c);
 }

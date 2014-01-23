@@ -35,7 +35,7 @@ static: double_static single_static
 
 double_shared: $(DFILES) $(DFILES_BLASLAPACK) Makefile_mingw
 	$(CC) -shared -Wl,--dll $(DFILES) $(DFILES_BLASLAPACK)  \
-	-o ../lib/ltfat.dll ltfat_notdllexport.def -static-libgcc -L../mex -lfftw3-3 $(MATLABLINKFLAGS)
+	-o ../lib/ltfat.dll -static-libgcc -L../mex -lfftw3-3 $(MATLABLINKFLAGS)
 	$(RM) *.o *.a
 	$(CP) ..\lib\ltfat.dll ..\mex\
   
@@ -47,7 +47,7 @@ single_shared: $(SFILES) $(SFILES_BLASLAPACK) Makefile_mingw
 	
 double_shared_noblaslapack: $(DFILES) Makefile_mingw
 	$(CC) -shared -Wl,--dll $(DFILES) \
-	-o ../lib/ltfat.dll ltfat_notdllexport.def -static-libgcc -L../mex -lfftw3-3
+	-o ../lib/ltfat.dll -static-libgcc -L../mex -lfftw3-3
 	$(RM) *.o *.a
 	$(CP) ..\lib\ltfat.dll ..\mex\
   
@@ -76,7 +76,7 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $< -o d$*.o
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(DIRECTIVES) -c $<
+	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $<
 
 clean:
 	$(RM) ..\lib\ltfat.dll

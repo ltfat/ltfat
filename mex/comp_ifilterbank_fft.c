@@ -20,10 +20,10 @@
 // Calling convention:
 // c = comp_ifilterbank_fft(c,G,a)
 
-static LTFAT_FFTW(plan)* LTFAT_NAME(oldPlans) = 0;
+static LTFAT_NAME(upconv_fft_plan)* LTFAT_NAME(oldPlans) = 0;
 static mwSize* LTFAT_NAME(oldLc) = 0;
-
 static mwSize LTFAT_NAME(oldM) = 0;
+static mwSize LTFAT_NAME(oldW) = 0;
 
 void LTFAT_NAME(ifftMexAtExitFnc)()
 {
@@ -33,7 +33,7 @@ void LTFAT_NAME(ifftMexAtExitFnc)()
         {
             if(LTFAT_NAME(oldPlans)[m]!=0)
             {
-                LTFAT_FFTW(destroy_plan)(LTFAT_NAME(oldPlans)[m]);
+                LTFAT_NAME(upconv_fft_done)(LTFAT_NAME(oldPlans)[m]);
             }
         }
         ltfat_free(LTFAT_NAME(oldPlans));
@@ -46,6 +46,7 @@ void LTFAT_NAME(ifftMexAtExitFnc)()
         LTFAT_NAME(oldLc) = 0;
     }
     LTFAT_NAME(oldM) = 0;
+    LTFAT_NAME(oldW) = 0;
 #ifdef _DEBUG
     mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
 #endif
@@ -63,7 +64,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 
     const mxArray* mxc = prhs[0];
     const mxArray* mxG = prhs[1];
-    double* aDouble = (double*) mxGetData(prhs[2]);
+    double* aDouble = mxGetData(prhs[2]);
 
     // input data length
     mwSize L = mxGetM(mxGetCell(mxG,0));
@@ -81,52 +82,51 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxCOMPLEX);
 
     // POINTER TO THE OUTPUT
-    LTFAT_COMPLEX* FPtr = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+    LTFAT_COMPLEX* FPtr = mxGetData(plhs[0]);
 
 
     // POINTERS TO THE FILTERS
-    LTFAT_COMPLEX* GPtrs[M];
+    const LTFAT_COMPLEX* GPtrs[M];
 
     // POINTER TO INPUTS
-    LTFAT_COMPLEX* cPtrs[M]; // C99 feature
-    LTFAT_COMPLEX* cbuf[M]; // C99 feature
+    const LTFAT_COMPLEX* cPtrs[M]; // C99 feature
 
-    if(M!=LTFAT_NAME(oldM))
+
+    if(M!=LTFAT_NAME(oldM) || W!=LTFAT_NAME(oldW))
     {
         LTFAT_NAME(ifftMexAtExitFnc)();
         LTFAT_NAME(oldM) = M;
-        LTFAT_NAME(oldLc) = (mwSize*) ltfat_calloc(M,sizeof(mwSize));
-        LTFAT_NAME(oldPlans) = ltfat_calloc(M,sizeof(LTFAT_FFTW(plan)));
+        LTFAT_NAME(oldLc) = ltfat_calloc(M,sizeof(mwSize));
+        LTFAT_NAME(oldPlans) = ltfat_calloc(M,sizeof*LTFAT_NAME(oldPlans));
     }
 
     for(mwIndex m =0; m<M; m++)
     {
         a[m] = (mwSize) aDouble[m];
-        GPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(mxG, m));
-        cPtrs[m] = (LTFAT_COMPLEX*) mxGetData(mxGetCell(mxc,m));
+        GPtrs[m] = mxGetData(mxGetCell(mxG, m));
+        cPtrs[m] = mxGetData(mxGetCell(mxc,m));
         inLen[m] = mxGetM(mxGetCell(mxc,m));
-        cbuf[m] = ltfat_malloc(inLen[m]*sizeof*cbuf[m]);
+
 
         if(LTFAT_NAME(oldLc)[m]!=inLen[m])
         {
             LTFAT_NAME(oldLc)[m] = inLen[m];
 
-            LTFAT_FFTW(plan) ptmp = LTFAT_FFTW(plan_dft_1d)(inLen[m], cbuf[m], cbuf[m], FFTW_FORWARD, FFTW_OPTITYPE);
+            LTFAT_NAME(upconv_fft_plan) ptmp =
+                LTFAT_NAME(upconv_fft_init)(L, W, a[m]);
 
             if(LTFAT_NAME(oldPlans)[m]!=0)
             {
-                LTFAT_FFTW(destroy_plan)(LTFAT_NAME(oldPlans)[m]);
+                LTFAT_NAME(upconv_fft_done)(LTFAT_NAME(oldPlans)[m]);
             }
             LTFAT_NAME(oldPlans)[m]=ptmp;
         }
     }
 
-    LTFAT_NAME(ifilterbank_fft_plans)(cPtrs,GPtrs, L, W, a, M, FPtr,  LTFAT_NAME(oldPlans), cbuf);
+    LTFAT_NAME(ifilterbank_fft_execute)(LTFAT_NAME(oldPlans),cPtrs,GPtrs,M, FPtr);
 
-    for(mwIndex m =0; m<M; m++)
-    {
-        ltfat_free(cbuf[m]);
-    }
+// LTFAT_NAME(ifilterbank_fft)(cPtrs,GPtrs,L,W,a,M, FPtr);
+
 
 }
 #endif

@@ -3,6 +3,7 @@
 
 #define ISNARGINEQ 2
 #define TYPEDEPARGS 0
+#define MATCHEDARGS 1
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 
@@ -23,18 +24,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    mwSize W  = mxGetN(prhs[0]);
    mwSize M = mxGetNumberOfElements(prhs[1]);
 
-   const LTFAT_TYPE* fPtr = (const LTFAT_TYPE*) mxGetPr(prhs[0]);
-   const double* indVecPtr = (const double*) mxGetPr(prhs[1]);
+   const LTFAT_TYPE* fPtr = mxGetData(prhs[0]);
+   const LTFAT_REAL* indVecPtr =mxGetData(prhs[1]);
 
    plhs[0] = ltfatCreateMatrix(M,W,LTFAT_MX_CLASSID,mxCOMPLEX);
-   LTFAT_REAL _Complex* cPtr = (LTFAT_REAL _Complex*) mxGetPr(plhs[0]);
+   LTFAT_COMPLEX* cPtr = mxGetData(plhs[0]);
 
    LTFAT_NAME(gga)(fPtr,indVecPtr,L,W,M,cPtr);
-   /*
-   // Alternative call doing the same
-   LTFAT_NAME(gga_plan) p = LTFAT_NAME(create_gga_plan)(indVecPtr,M,L);
-   LTFAT_NAME(gga_with_plan)(p,fPtr,cPtr,W);
-   LTFAT_NAME(destroy_gga_plan)(p);
-   */
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

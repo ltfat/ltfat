@@ -1,7 +1,6 @@
-#include "math.h"
-#include "complex.h"
+
 #include "mex.h"
-#include "config.h"
+
 #include "ltfat.h"
 
 #define PI 3.1415926535897932384626433832795

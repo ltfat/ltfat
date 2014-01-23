@@ -19,25 +19,26 @@
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   int L, R, a, M, N, c, d, p, q,h_a,h_m;
+   int L, R, N, c, d, p, q;
+   ltfatInt a,M,h_a,h_m;
 
    // Get matrix dimensions.
    L = mxGetM(prhs[0]);
    R = mxGetN(prhs[0]);
 
-   a=(int)mxGetScalar(prhs[1]);
-   M=(int)mxGetScalar(prhs[2]);
+   a=(ltfatInt)mxGetScalar(prhs[1]);
+   M=(ltfatInt)mxGetScalar(prhs[2]);
 
    N=L/a;
 
-   c=gcd(a, M,&h_a, &h_m);
+   c=gcd(a, M, &h_a, &h_m);
    p=a/c;
    q=M/c;
    d=N/q;
 
    plhs[0] = ltfatCreateMatrix(p*q*R, c*d,LTFAT_MX_CLASSID,mxCOMPLEX);
-   LTFAT_COMPLEX* gf_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
-   const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[0]);
+   LTFAT_COMPLEX* gf_combined = mxGetData(plhs[0]);
+   const LTFAT_TYPE* g_combined = mxGetData(prhs[0]);
    LTFAT_NAME(wfac)(g_combined, L, R, a, M, gf_combined);
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

@@ -6,10 +6,12 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 
+/*
 int ltfat_round(double x)
 {
   return (int)(x+.5);
 }
+*/
 
 #endif /* _LTFAT_MEX_FILE */
 
@@ -24,7 +26,7 @@ int ltfat_round(double x)
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
-   int a, M, N, L, W, Lg, lt1, lt2;
+   ltfatInt a, M, N, L, W, Lg, lt1, lt2;
 
    double *lt;
 
@@ -33,8 +35,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    W  = mxGetN(prhs[0]);
    Lg = mxGetM(prhs[1]);
 
-   a=(int)mxGetScalar(prhs[2]);
-   M=(int)mxGetScalar(prhs[3]);
+   a=(ltfatInt)mxGetScalar(prhs[2]);
+   M=(ltfatInt)mxGetScalar(prhs[3]);
 
    // Read the values of lt and round them to integers.
    lt = mxGetPr(prhs[4]);
@@ -47,9 +49,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    mwSize ndim=W>1?3:2;
 
    plhs[0] = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
-   const LTFAT_COMPLEX* f_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
-   const LTFAT_COMPLEX* g_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[1]);
-   LTFAT_COMPLEX* out_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+   const LTFAT_COMPLEX* f_combined = mxGetData(prhs[0]);
+   const LTFAT_COMPLEX* g_combined = mxGetData(prhs[1]);
+   LTFAT_COMPLEX* out_combined = mxGetData(plhs[0]);
 
    LTFAT_NAME(dgt_multi)(f_combined,g_combined,L,Lg,W,a,M,lt1,lt2, out_combined);
 }

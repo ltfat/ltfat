@@ -1,43 +1,12 @@
 #ifndef LTFAT_H
 #define LTFAT_H 1
-
-#include <complex.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <math.h>
-#include "fftw3.h"
-#include "cblas.h"
-
-#ifndef PI
-#define PI 3.1415926535897932384626433832795
-#endif /* defined(PI) */
-
-
-#define LTFAT_MAKENAME(name,type,comp) name ## _ ## comp ## type
-#define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,d,)
-#define LTFAT_NAME_SINGLE(name) LTFAT_MAKENAME(name,s,)
-#define LTFAT_NAME_COMPLEXDOUBLE(name) LTFAT_MAKENAME(name,d,c)
-#define LTFAT_NAME_COMPLEXSINGLE(name) LTFAT_MAKENAME(name,s,c)
-
-// "Vectorizes" a function call
-#define LTFAT_APPLYFN(type,fn,...) do{ \
-   const type list[] = {(const type)0,__VA_ARGS__}; \
-   size_t len = sizeof(list)/sizeof(*list) - 1; \
-   for(size_t ii=0;ii<len;ii++) \
-      fn((const type)list[ii+1]); \
-}while(0)
-
-// Vectorized free
-#define LTFAT_SAFEFREEALL(...) LTFAT_APPLYFN(void*,ltfat_safefree,__VA_ARGS__)
+#include "config.h"
 
 #ifdef LTFAT_COMPAT32
 typedef int       ltfatInt;
 #else
 typedef ptrdiff_t ltfatInt;
-#endif /* defined(PI) */
+#endif /* defined(LTFAT_COMPAT32) */
 
 typedef enum
 {
@@ -59,6 +28,12 @@ typedef enum
     DSTII=FFTW_RODFT10, DSTIV=FFTW_RODFT11
 } dst_kind;
 
+typedef enum
+{
+    CZT_NEXTFASTFFT,
+    CZT_NEXTPOW2
+} czt_ffthint;
+
 
 /* BEGIN_C_DECLS */
 
@@ -66,16 +41,6 @@ typedef enum
 extern "C"
 {
 #endif
-
-
-/* Handle Windows DLL files */
-/* defined by Makefile when compiling LTFAT */
-#if defined(DLL_EXPORT_SYMBOLS) && (defined(_WIN32) || defined(__WIN32__))
-#  define LTFAT_EXTERN extern __declspec(dllexport)
-#else
-#  define LTFAT_EXTERN
-#endif
-
 
 /* -------- Create the single precision routines headers ----- */
 
@@ -140,14 +105,6 @@ extern "C"
 #undef LTFAT_MX_COMPLEXITY
 #undef LTFAT_COMPLEXH_NAME
 
-
-#ifdef LTFAT_DOUBLE
-#define LTFAT_EXTERN_TOO LTFAT_EXTERN
-#else
-#define LTFAT_EXTERN_TOO
-#endif
-
-
 /* -------- Define routines that do not change between single/double-- */
 LTFAT_EXTERN_TOO
 ltfatInt gcd(const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s );
@@ -177,7 +134,9 @@ LTFAT_EXTERN_TOO
 ltfatInt makelarger(const ltfatInt L, const ltfatInt K);
 
 LTFAT_EXTERN_TOO
-ltfatInt filterbank_td_size(ltfatInt L, ltfatInt a, ltfatInt gl, ltfatInt offset, ltfatExtType ext);
+ltfatInt filterbank_td_size(const ltfatInt L,const ltfatInt a,
+                            const ltfatInt gl,const ltfatInt offset,
+                            const ltfatExtType ext);
 
 LTFAT_EXTERN_TOO
 ltfatInt imax(const ltfatInt a, const ltfatInt b);
@@ -196,16 +155,22 @@ LTFAT_EXTERN_TOO
 ltfatInt wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M);
 
 LTFAT_EXTERN_TOO
-ltfatInt nextPow2(ltfatInt x);
+ltfatInt nextPow2(const ltfatInt x);
 
 LTFAT_EXTERN_TOO
-ltfatInt nextfastfft(ltfatInt x);
+ltfatInt nextfastfft(const ltfatInt x);
 
 LTFAT_EXTERN_TOO
-ltfatInt pow2(ltfatInt x);
+ltfatInt pow2(const ltfatInt x);
 
 LTFAT_EXTERN_TOO
-ltfatInt modPow2(ltfatInt x,ltfatInt pow2var);
+ltfatInt modPow2(const ltfatInt x,const ltfatInt pow2var);
+
+LTFAT_EXTERN_TOO
+ltfatInt ltfat_round(const double x);
+
+LTFAT_EXTERN_TOO
+ltfatInt positiverem(const ltfatInt a,const ltfatInt b);
 
 
 #ifdef __cplusplus

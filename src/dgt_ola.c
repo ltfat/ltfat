@@ -1,4 +1,3 @@
-#include "config.h"
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -18,9 +17,9 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
     const ltfatInt Lext    = bl+gl;
     const ltfatInt Nblocke = Lext/a;
 
-    plan.buf  = (LTFAT_COMPLEX*) ltfat_malloc(Lext*W*sizeof(LTFAT_COMPLEX));
-    plan.gext = (LTFAT_COMPLEX*) ltfat_malloc(Lext*sizeof(LTFAT_COMPLEX));
-    plan.cbuf = (LTFAT_COMPLEX*) ltfat_malloc(M*Nblocke*W*sizeof(LTFAT_COMPLEX));
+    plan.buf  = ltfat_malloc(Lext*W*sizeof*plan.buf);
+    plan.gext = ltfat_malloc(Lext*sizeof*plan.gext);
+    plan.cbuf = ltfat_malloc(M*Nblocke*W*sizeof*plan.cbuf);
 
     LTFAT_NAME(fir2long_c)(g, gl, Lext, plan.gext);
 
