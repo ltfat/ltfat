@@ -1,6 +1,6 @@
 % LTFAT - Base routines
 %
-%  Peter L. Søndergaard, 2009 - 2013.
+%  Peter L. Søndergaard, 2009 - 2014.
 %
 %  Basic routines
 %    LTFATSTART       -  Start the toolbox

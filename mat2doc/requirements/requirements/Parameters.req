@@ -1,0 +1,14 @@
+Name: Parameter handling
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} handle parameters in a
+ userfriendly way
+Rationale: Learning and working with the toolbox is much easier if
+ there is a standardized and user friendly way of working with
+ optional parameters.
+
+ This is solved by the ltfatarghelper function in Matlab and Octave
+Invented on: 2014-01-17
+Invented by: soender
+Owner: soender
+Topic: UserFriendlyTop
+Status: finished

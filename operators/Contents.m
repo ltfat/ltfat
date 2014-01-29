@@ -1,6 +1,6 @@
 % LTFAT - Operators
 %
-%  Peter L. Søndergaard, 2013.
+%  Peter L. Søndergaard, 2013 - 2014.
 %
 %  General operator framework
 %    OPERATORNEW       - Construct a new operator

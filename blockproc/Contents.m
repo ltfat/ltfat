@@ -1,6 +1,6 @@
 % LTFAT - Block processing
 %
-%  Zdenek Prusa, 2013.
+%  Zdenek Prusa, 2013 - 2014.
 %
 %  Basic methods
 %    BLOCK          - Setup a new block-stream

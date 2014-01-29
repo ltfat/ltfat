@@ -5,7 +5,7 @@ versionfile="ltfat_version"
 
 # Optional global settings
 author=u'Peter L. S\xf8ndergaard'
-year="2013"
+year="2014"
 octtitle="ltfat >> Time-frequency analysis and Wavelets"
 addonbase='~/Dropbox'
 
