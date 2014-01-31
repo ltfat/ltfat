@@ -85,7 +85,7 @@ void LTFAT_NAME(conjugate_array)(LTFAT_TYPE *in, LTFAT_TYPE *out,const ltfatInt 
 #ifdef LTFAT_COMPLEXTYPE
     for(ltfatInt ii=0; ii<L; ii++)
     {
-        out[ii] = LTFAT_COMPLEXH_NAME(conj)(in[ii]);
+        out[ii] = LTFAT_COMPLEXH(conj)(in[ii]);
     }
 #else
     if(in==out)

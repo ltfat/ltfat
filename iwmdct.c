@@ -1,7 +1,7 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
 
-#define CH(name) LTFAT_COMPLEXH_NAME(name)
+#define CH(name) LTFAT_COMPLEXH(name)
 
 #define PREPROC_COMPLEX \
   for (ltfatInt n=0;n<N*W;n+=2) \

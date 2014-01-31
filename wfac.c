@@ -43,8 +43,8 @@ LTFAT_NAME_COMPLEX(wfac)(const LTFAT_COMPLEX *g, const ltfatInt L, const ltfatIn
                     for (s=0; s<d; s++)
                     {
                         rem = (negrem+s*p*M)%L;
-                        sbuf[2*s]   = LTFAT_COMPLEXH_NAME(creal)(sqrtM*g[r+rem+L*w]);
-                        sbuf[2*s+1] = LTFAT_COMPLEXH_NAME(cimag)(sqrtM*g[r+rem+L*w]);
+                        sbuf[2*s]   = LTFAT_COMPLEXH(creal)(sqrtM*g[r+rem+L*w]);
+                        sbuf[2*s+1] = LTFAT_COMPLEXH(cimag)(sqrtM*g[r+rem+L*w]);
                     }
 
                     LTFAT_FFTW(execute)(p_before);

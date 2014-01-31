@@ -528,8 +528,8 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 
                     for (ltfatInt s=0; s<d2; s++)
                     {
-                        ffp[s*ld2a]   = LTFAT_COMPLEXH_NAME(creal)(cbuf[s])*scalconst;
-                        ffp[s*ld2a+1] = LTFAT_COMPLEXH_NAME(cimag)(cbuf[s])*scalconst;
+                        ffp[s*ld2a]   = LTFAT_COMPLEXH(creal)(cbuf[s])*scalconst;
+                        ffp[s*ld2a+1] = LTFAT_COMPLEXH(cimag)(cbuf[s])*scalconst;
                     }
                     ffp+=2;
                 }
@@ -556,8 +556,8 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan) plan)
 
                         for (ltfatInt s=0; s<d2; s++)
                         {
-                            ffp[s*ld2a]   = LTFAT_COMPLEXH_NAME(creal)(cbuf[s])*scalconst;
-                            ffp[s*ld2a+1] = LTFAT_COMPLEXH_NAME(cimag)(cbuf[s])*scalconst;
+                            ffp[s*ld2a]   = LTFAT_COMPLEXH(creal)(cbuf[s])*scalconst;
+                            ffp[s*ld2a+1] = LTFAT_COMPLEXH(cimag)(cbuf[s])*scalconst;
                         }
                         ffp+=2;
                     }

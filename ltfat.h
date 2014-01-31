@@ -103,7 +103,7 @@ extern "C"
 #undef LTFAT_FFTW
 #undef LTFAT_MX_CLASSID
 #undef LTFAT_MX_COMPLEXITY
-#undef LTFAT_COMPLEXH_NAME
+#undef LTFAT_COMPLEXH
 
 /* -------- Define routines that do not change between single/double-- */
 LTFAT_EXTERN_TOO

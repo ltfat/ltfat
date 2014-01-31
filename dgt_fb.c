@@ -1,7 +1,7 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
 
-#define CH(name) LTFAT_COMPLEXH_NAME(name)
+#define CH(name) LTFAT_COMPLEXH(name)
 
 /* The following macro adds the coefficients together performing the
  * last part of the Poisson summation, executes the FFT on the summed
