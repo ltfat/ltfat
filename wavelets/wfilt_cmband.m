@@ -1,0 +1,85 @@
+function [h,g,a,info] = wfilt_cmband(M)
+%WFILT_CMBAND  Generates M-Band cosine modulated wavelet filters
+%   Usage: [h,g,a] = wfilt_cmband(M);
+%
+%   Input parameters:
+%         M     : Number of channels.
+%
+%   `[h,g,a]=wfilt_cmband(M,K)` returns smooth, *1*-regular Cosine modulated
+%   *M*-band wavelet filters. The length of the filters is *4M*.
+%
+%   Examples:
+%   ---------
+%   :::
+%
+%     wfiltinfo('cmband5');
+%
+%
+%   References:  gobu95
+%
+
+% if K<1 || rem(K,1) ~= 0
+%     error('%s: Regularity K has to be at least 1.',upper(mfilename));
+% end
+
+if M<2 || rem(M,1) ~= 0
+    error('%s: Number of channels M has to be at least 2.',upper(mfilename));
+end
+
+h = cell(M,1);
+
+if 0
+    N = 2*M;
+    n=0:N-1;
+    p = sin(pi*(2*n+1)/(2*N));
+    for m=0:M-1
+        c = zeros(1,N);
+        for n=0:N-1
+            c(n+1) = cos(pi*(2*m+1)*(n-(2*M-1)/2)/(2*M)+(-1)^m*pi/4);
+        end
+        h{m+1} = p.*c;
+    end
+    scal = sqrt(M)/sum(h{1});
+    h = cellfun(@(hEl) hEl*scal,h,'UniformOutput',0);
+else
+    N = 4*M;
+    gamma = 0.4717 + exp(-0.00032084024272*M^3 + 0.01619976915653*M^2 - ...
+            0.39479347799199*M - 2.24633148545678);
+    beta = zeros(1,M);
+    for n=0:M-1
+        beta(n+1) = gamma + n*(pi-4*gamma)/(2*(M-1));
+    end
+    beta = repmat([beta, beta(end:-1:1)],1,2);
+    n=0:N-1;
+    p = sqrt(1/(2*M))*(cos(beta)- cos(pi*(2*n+1)/(4*M)) );
+    
+    for m=0:M-1
+        c = zeros(1,N);
+        for n=0:N-1
+            c(n+1) = cos(pi*(2*m+1)*(n-(2*M-1)/2)/(2*M)+(-1)^m*pi/4);
+        end
+        h{m+1} = p.*c;
+    end
+    scal = sqrt(M)/sum(h{1});
+    h = cellfun(@(hEl) hEl*scal,h,'UniformOutput',0);
+end
+
+g = h;
+info.istight = 1;
+a = M*ones(M,1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+%g=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
+%h = g;
+%info.istight = 1;

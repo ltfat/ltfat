@@ -1,5 +1,4 @@
 #include <octave/oct.h>
-#include "config.h"
 #include "ltfat.h"
 
 DEFUN_DLD (comp_pchirp, args, ,

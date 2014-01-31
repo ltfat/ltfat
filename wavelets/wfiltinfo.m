@@ -98,6 +98,7 @@ end
 ylim([-30,max(plotH(:))])
 ylabel('|\itH|[dB]');
 xlabel('\omega [-]')
+hold off;
 
 subplot(4,filtNo,3*filtNo + (1:filtNo) );
 title('Phase frequency response');
@@ -109,7 +110,7 @@ end
 ylabel('arg H(\omega)[\pi rad]');
 xlabel('\omega [-]')
 
- axis tight;
+axis tight;
 % plot(unwrap(angle([H])));
 % axis tight;
-
+hold off;

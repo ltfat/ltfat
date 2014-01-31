@@ -6,7 +6,7 @@ function [c,info] = fwt(f,w,J,varargin)
 %
 %   Input parameters:
 %         f     : Input data.
-%         h     : Wavelet definition. 
+%         w     : Wavelet definition. 
 %         J     : Number of filterbank iterations.
 %         dim   : Dimension to along which to apply the transform.
 %
@@ -14,7 +14,7 @@ function [c,info] = fwt(f,w,J,varargin)
 %         c      : Coefficient vector.
 %         info   : Transform parameters struct.
 %
-%   `c=fwt(f,h,J)` returns wavelet coefficients *c* of the input signal *f*
+%   `c=fwt(f,w,J)` returns wavelet coefficients *c* of the input signal *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *w*
 %   i.e. the fast wavelet transform algorithm (Mallat's algorithm) is used.
 %   In addition, the function returns struct. `info` containing transform

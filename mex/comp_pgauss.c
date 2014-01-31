@@ -46,7 +46,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
   else
   {
     plhs[0] = ltfatCreateMatrix(L, 1, mxDOUBLE_CLASS, mxCOMPLEX);
-    LTFAT_COMPLEX *gc = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+    LTFAT_COMPLEX *gc =  mxGetData(plhs[0]);
     pgauss_cmplx_d(L, w, c_t,c_f,gc);
   }
 

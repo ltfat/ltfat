@@ -23,7 +23,7 @@ LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 
 all:	$(OCTS)
 
-%.$(EXT): %.cc config.h
+%.$(EXT): %.cc
 	$(MKOCTFILE) -strip -Wall -I../thirdparty -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
 
 clean:

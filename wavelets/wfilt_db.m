@@ -29,8 +29,8 @@ function [h, g, a, info] = wfilt_db(N)
 %   .. G_l(z)=H_l(z^-1)
 %   .. G_h(z)=-H_l(-z)
 %
-%   .. math:: H_h(z)=H_l((-z)^-1)
-%   .. math:: G_l(z)=H_l(z^-1)
+%   .. math:: H_h(z)=H_l((-z)^{-1})
+%   .. math:: G_l(z)=H_l(z^{-1})
 %   .. math:: G_h(z)=-H_l(-z)
 %
 %   making them an orthogonal causal perfect-reconstruction QMF.

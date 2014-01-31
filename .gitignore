@@ -1,9 +1,9 @@
 *.oct
-*~¡
+*~
 
 *.mexw64
 *.mexa64
-
+*.mex
 *.dll
 
 *.o

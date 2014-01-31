@@ -206,7 +206,7 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
     LTFAT_MX_COMPLEXITY       mxREAL             mxREAL             mxCOMPLEX             mxCOMPLEX
     LTFAT_FFTW(name)          fftw_##name        fftwf_##name       fftw_##name           fftwf_##name
     LTFAT_NAME(name)          name_d             name_s             name_cd               name_cs
-    LTFAT_COMPLEXH_NAME(name) name               namef              name                  namef
+    LTFAT_COMPLEXH(name) name               namef              name                  namef
     LTFAT_NAME_COMPLEX(name)  name_cd            name_cs            name_cd               name_cs
     By default, a macro set (double) is used.
 */
