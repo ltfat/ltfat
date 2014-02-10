@@ -233,6 +233,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
     {
 
         LTFAT_NAME_COMPLEX(circshift)(cbuf+w*N,cbuf+w*N,N,-foff);
+        //LTFAT_NAME_COMPLEX(circshift)(cbuf+w*N,cbuf+w*N,N,Gl/2);
 
         const LTFAT_COMPLEX* GPtrTmp = G;
         LTFAT_COMPLEX* FPtrTmp = F+w*L;
@@ -254,7 +255,8 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
             FPtrTmp = F+(w+1)*L+foffTmp;
             for(ltfatInt ii=0; ii<toCopy; ii++)
             {
-                FPtrTmp[ii]+=*CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++);
+                LTFAT_COMPLEX tmp = *CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++);
+                FPtrTmp[ii]+= tmp;
             }
 
             tmpLg-=toCopy;
@@ -264,13 +266,15 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
         FPtrTmp = F+w*L+foffTmp;
         for(ltfatInt ii=0; ii<tmpLg-over; ii++)
         {
-            FPtrTmp[ii]+=*CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++);
+            LTFAT_COMPLEX tmp = *CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++);
+            FPtrTmp[ii]+=tmp;
         }
 
         FPtrTmp = F+w*L;
         for(ltfatInt ii=0; ii<over; ii++)
         {
-            FPtrTmp[ii]+=*CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++);
+            LTFAT_COMPLEX tmp = (*CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++));
+            FPtrTmp[ii]+= tmp;
         }
     }
 
