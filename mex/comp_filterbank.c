@@ -211,12 +211,12 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
          else
             fftw_destroy_plan(*p_double);
 
-
+         // FFTW_MEASURE sometimes hangs here
         *p_double = fftw_plan_guru_split_dft(
           1, fftw_dims,
           1, howmanydims,
-          mxGetPr(mxF), mxGetPi(mxF), mxGetPr(mxF), mxGetPi(mxF),
-          FFTW_MEASURE);
+          mxGetData(mxF), mxGetImagData(mxF), mxGetData(mxF), mxGetImagData(mxF),
+          FFTW_ESTIMATE);
 
         }
         else if(mxIsSingle(mxf))
@@ -242,8 +242,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           *p_float = fftwf_plan_guru_split_dft(
           1, fftw_dims,
           1, howmanydims,
-          (float*)mxGetPr(mxF), (float*)mxGetPi(mxF),
-          (float*) mxGetPr(mxF), (float*)mxGetPi(mxF),
+          mxGetData(mxF), mxGetImagData(mxF),
+          mxGetData(mxF), mxGetImagData(mxF),
           FFTW_ESTIMATE);
 
         }

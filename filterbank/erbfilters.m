@@ -1,20 +1,23 @@
-function [g,a,fc,L]=erbfilters(fs,varargin)
+function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %ERBFILTERS   ERB-spaced filters
-%   Usage:  [g,a,fc]=erbfilters(fs);
-%           [g,a,fc]=erbfilters(fs,...);
+%   Usage:  [g,a,fc]=erbfilters(fs,Ls);
+%           [g,a,fc]=erbfilters(fs,Ls,...);
 %
 %   Input parameters:
 %      fs    : Sampling rate (in Hz).
+%      Ls    : Signal length.
 %   Output parameters:
 %      g     : Cell array of filters.
 %      a     : Downsampling rate for each channel.
 %      fc    : Center frequency of each channel.
+%      L     : Next admissible length suitable for the generated filters.
 % 
-%   `[g,a,fc]=erbfilters(fs)` constructs a set of filters *g* that are
+%   `[g,a,fc]=erbfilters(fs,Ls)` constructs a set of filters *g* that are
 %   equidistantly spaced on the ERB-scale (see |freqtoerb|) with bandwidths
 %   that are proportional to the width of the auditory filters
 %   |audfiltbw|. The filters are intended to work with signals with a
-%   sampling rate of *fs*.
+%   sampling rate of *fs*. The signal length *Ls* is mandatory, since we 
+%   need to avoid too narrow frequency windows.
 %
 %   By default, a Hann window on the frequency side is choosen, but the
 %   window can be changed by passing any of the window types from
@@ -50,20 +53,11 @@ function [g,a,fc,L]=erbfilters(fs,varargin)
 %                      value is *1*. If the value is less than one, the
 %                      system may no longer be painless.
 %
-%     'nonuniform'    Construct a non-uniform filterbank. This is the
-%                     default.
-%    
-%     'uniform'       Construct a uniform filterbank.
-%
 %     'symmetric'     Create filters that are symmetric around their centre
 %                     frequency. This is the default.
 %
 %     'warped'        Create asymmetric filters that are symmetric on the
 %                     Erb-scale.
-%
-%     'real'          Construct a filterbank that works for real-valued
-%                     signals only (the filters cover only the positive
-%                     frequencies). This is the default.
 %
 %     'complex'       Construct a filterbank that covers the entire
 %                     frequency range.
@@ -75,11 +69,12 @@ function [g,a,fc,L]=erbfilters(fs,varargin)
 %     'fractional'    Use fractional downsampling. If this flag is
 %                     specified, you must also specify the `'L'` parameter.
 %
-%     'L',L           Specify a transform length for which the fractional
-%                     sampling rates must match up.
-%
 %     'bwmul',bwmul   Bandwidth of the filters relative to the bandwidth
 %                     returned by |audfiltbw|. Default is $bwmul=1$.
+%
+%     'min_win',min_win     Minimum admissible window length (in samples).
+%                           Default is *4*. This restrict the windows not 
+%                           to become too narrow when *L* is low. 
 %
 %   Examples:
 %   ---------
@@ -119,20 +114,25 @@ function [g,a,fc,L]=erbfilters(fs,varargin)
 
 % Authors: Peter L. Søndergaard
 
+if nargin<2
+    error('%s: Not enough input argumets.',upper(mfilename))
+end
+
 definput.import = {'firwin'};
 
 definput.keyvals.L=[];
 definput.keyvals.M=[];
 definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
+definput.keyvals.min_win = 4;
 definput.keyvals.spacing=1;
 
 definput.flags.warp     = {'symmetric','warped'};
-definput.flags.uniform  = {'nonuniform','uniform'};
 definput.flags.real     = {'real','complex'};
-definput.flags.sampling = {'regsampling','fractional'};
+definput.flags.sampling = {'regsampling','uniform','fractional',...
+                           'fractionaluniform'};
 
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Get the bandwidth of the choosen window by doing a probe
 winbw=norm(firwin(flags.wintype,1000)).^2/1000;
@@ -181,40 +181,53 @@ else
     
 end;
 
+% Do not allow lower bandwidth than keyvals.min_win
+fsuppmin = kv.min_win/Ls*fs;
+for ii = 1:numel(fsupp)
+    if fsupp(ii) < fsuppmin;
+        fsupp(ii) = fsuppmin;
+    end
+end
+
+% Find suitable channel subsampling rates
+aprecise=fs./fsupp/kv.redmul; 
+aprecise=aprecise(:);
+
 %% Compute the downsampling rate
-if flags.do_nonuniform
-    % Find suitable channel subsampling rates
-    aprecise=fs./fsupp/kv.redmul; 
-    aprecise=aprecise(:);
-    
-    if flags.do_fractional
-       if isempty(L)
-          error('%s: ''fractional'' flag refuires L to be specified.',upper(mfilename));
-       end
-        N=ceil(L./aprecise);
-        a=[repmat(L,M2,1),N];                
+if flags.do_regsampling
+    % Shrink "a" to the next composite number       
+    a=floor23(aprecise); 
         
-    else
-        a=floor23(aprecise); % Shrink "a" to the next composite number
-        
-        % Determine the minimal transform length
-        L=filterbanklength(1,a);
-    end;
+    % Determine the minimal transform length
+    L=filterbanklength(Ls,a);
     
-else
-    % Totally heuristic, no justification for this choice
-    a=4;    
+    % Heuristic trying to reduce lcm(a)
+    while L>2*Ls && ~(all(a)==a(1))
+        maxa = max(a);
+        a(a==maxa) = 0;
+        a(a==0) = max(a);
+        L = filterbanklength(Ls,a);
+    end
+    
+elseif flags.do_fractional
+    L = Ls;
+    N=ceil(Ls./aprecise);
+    a=[repmat(Ls,M2,1),N];                
+elseif flags.do_fractionaluniform
+    L = Ls;
+    N=ceil(Ls./min(aprecise));
+    a= repmat([Ls,N],M2,1); 
+elseif flags.do_uniform
+    a=floor(min(aprecise));  
+    L=filterbanklength(Ls,a);
+    a = repmat(a,M2,1);
 end;
 
 % Get an expanded "a"
 afull=comp_filterbank_a(a,M2,struct());
 
 %% Compute the scaling of the filters
-% Improve the scaling of the first and last channel
-scal=ones(M2,1);
-for ii=1:M2
-    scal(ii)=sqrt(afull(ii,1)/afull(ii,2));
-end;
+scal=sqrt(afull(:,1)./afull(:,2));
 
 %% Construct the real or complex filterbank
 
@@ -239,7 +252,7 @@ end;
 
 %% Compute the filters
 if flags.do_symmetric
-    g=blfilter(flags.wintype,fsupp,fc,'fs',fs,'scal',scal,'inf');    
+    g=blfilter(flags.wintype,fsupp,fc,'fs',fs,'scal',scal,'inf','min_win',4);    
 else
     g=warpedblfilter(flags.wintype,fsupp_erb,fc,fs,@freqtoerb,@erbtofreq, ...
                      'scal',scal,'inf'); 

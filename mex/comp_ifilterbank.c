@@ -396,7 +396,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
           1, fftw_dims,
           1, howmanydims,
           mxGetPi(mxF), mxGetPr(mxF), mxGetPi(mxF), mxGetPr(mxF),
-          FFTW_MEASURE);
+          FFTW_ESTIMATE);
 
         }
         else if(mxIsSingle(tmpF))

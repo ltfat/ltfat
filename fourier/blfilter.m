@@ -37,6 +37,10 @@ function gout=blfilter(winname,fsupp,varargin)
 %     'scal',s    Scale the filter by the constant *s*. This can be
 %                 useful to equalize channels in a filterbank.
 %
+%     'pedantic'  Force window frequency offset (g.foff) to a subsample 
+%                 precision by a subsample shift of the firwin output.
+%                 
+%
 %   It is possible to normalize the transfer function of the filter by
 %   passing any of the flags from the |normalize| function. The default
 %   normalization is `'energy'`.
@@ -85,9 +89,16 @@ definput.keyvals.delay=0;
 definput.keyvals.fc=0;
 definput.keyvals.fs=[];
 definput.keyvals.scal=1;
+definput.keyvals.min_win=1;
+definput.flags.pedantic = {'nopedantic','pedantic'};
 definput.flags.real={'complex','real'};
 
 [flags,kv]=ltfatarghelper({'fc'},definput,varargin);
+
+if flags.do_pedantic
+    error('%s: TO DO: Pedantic option not implemented yet.',...
+          upper(mfilename));
+end
 
 [fsupp,kv.fc,kv.delay,kv.scal]=scalardistribute(fsupp,kv.fc,kv.delay,kv.scal);
 
@@ -105,27 +116,40 @@ kv.fc=modcent(kv.fc,2);
 Nfilt=numel(fsupp);
 gout=cell(1,Nfilt);
 
+if ischar(winname)
+    wn = {winname};
+elseif iscell(winname)
+    wn = winname;
+else
+    error('%s: Incorrect format of winname.',upper(mfilename));
+end
+
+
 for ii=1:Nfilt
     g=struct();
     
+
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    fftshift(firwin(winname,floor(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...
+                                    round(L/2*fsupp(ii))]),wn{2:end},...
                                     flags.norm))*kv.scal(ii)*L;        
     end;
     
     if  flags.do_2 || flags.do_energy
-        g.H=@(L)    fftshift(firwin(winname,floor(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...
+                                    round(L/2*fsupp(ii))]),wn{2:end},...
                                     flags.norm))*kv.scal(ii)*sqrt(L);                
     end;
         
     if flags.do_inf || flags.do_peak
-        g.H=@(L)    fftshift(firwin(winname,floor(L/2*fsupp(ii)), ...
+        g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...
+                                    round(L/2*fsupp(ii))]),wn{2:end},...
                                     flags.norm))*kv.scal(ii);        
         
     end;
         
-    g.foff=@(L) round(L/2*kv.fc(ii))-floor(floor(L/2*fsupp(ii))/2);
+    g.foff=@(L) floor(L/2*kv.fc(ii))-floor(max([kv.min_win,round(L/2*fsupp(ii))])/2);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
     g.fs=kv.fs;
@@ -135,3 +159,4 @@ end;
 if Nfilt==1
     gout=g;
 end;
+

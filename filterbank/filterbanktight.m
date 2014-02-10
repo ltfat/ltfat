@@ -29,6 +29,11 @@ end;
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
+% Prioritize painless over uniform algorithm
+if info.isuniform && info.ispainless
+    info.isuniform = 0;
+end
+
 if info.isuniform
   % Uniform filterbank, use polyphase representation
   if isempty(L)

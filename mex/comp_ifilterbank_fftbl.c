@@ -101,6 +101,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     {
         LTFAT_NAME(fftblMexAtExitFnc)();
         LTFAT_NAME(oldM) = M;
+        LTFAT_NAME(oldW) = W;
         LTFAT_NAME(oldLc) = ltfat_calloc(M,sizeof(mwSize));
         LTFAT_NAME(oldPlans) = ltfat_calloc(M,sizeof*LTFAT_NAME(oldPlans));
     }

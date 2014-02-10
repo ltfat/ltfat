@@ -29,8 +29,9 @@ fsuppRangeSmall = cellfun(@(fEl,GEl) mod([fEl:fEl+numel(GEl)-1].',L)+1 ,num2cell
 %
 for w=1:W 
    for m=1:M
-      Ctmp = postpad(circshift(fft(c{m}(:,w)),-foff(m)),numel(G{m}));
-      F(fsuppRangeSmall{m},w)=F(fsuppRangeSmall{m},w) + Ctmp.*conj(G{m});
+     Ctmp = postpad(circshift(fft(c{m}(:,w)),-foff(m)),numel(G{m}));
+     %Ctmp = postpad(fft(c{m}(:,w)),numel(G{m}));
+     F(fsuppRangeSmall{m},w)=F(fsuppRangeSmall{m},w) + Ctmp.*conj(G{m});
    end;
 end
 

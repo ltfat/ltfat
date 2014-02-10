@@ -122,7 +122,7 @@ info.isfractional=0;
 info.isuniform=0;
 info.isfir=1;
 
-[~,info]=comp_filterbank_a(a,info.M,info);
+[asan,info]=comp_filterbank_a(a,info.M,info);
     
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
@@ -132,6 +132,10 @@ for m=1:info.M
             g{m}.H=g{m}.H(L);
             g{m}.foff=g{m}.foff(L);
         end;
+        % Check the painless condition
+        if numel(g{m}.H) > L/asan(m,1)*asan(m,2);
+           info.ispainless=0; 
+        end
     else
         info.ispainless=0;
         info.gl(m)=numel(g{m}.h);
@@ -147,6 +151,7 @@ for m=1:info.M
 end;
 
 info.isfac=info.isuniform || info.ispainless;
+
 
 if info.isfractional && info.isuniform
     error('%s: The uniform algorithms cannot handle fractional downsampling.', ...

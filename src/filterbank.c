@@ -42,6 +42,7 @@ LTFAT_NAME(filterbank_fft_execute)(LTFAT_NAME(convsub_fft_plan) p[],
                                    const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
                                    const ltfatInt M, LTFAT_COMPLEX *cout[])
 {
+
     for(ltfatInt m =0; m<M; m++)
     {
         LTFAT_NAME(convsub_fft_execute)(p[m],F,G[m],cout[m]);
@@ -148,7 +149,6 @@ LTFAT_NAME(filterbank_fftbl_execute)(LTFAT_NAME(convsub_fftbl_plan) p[],
                                      const ltfatInt M, const ltfatInt foff[],
                                      const int realonly[], LTFAT_COMPLEX *cout[])
 {
-
     for(ltfatInt m =0; m<M; m++)
     {
         LTFAT_NAME(convsub_fftbl_execute)(p[m],F,G[m],foff[m],realonly[m],cout[m]);
@@ -261,7 +261,9 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
         }
 
         // Do the circshift
-        LTFAT_NAME_COMPLEX(circshift)(tmp,cout+w*N,N,foff);
+         LTFAT_NAME_COMPLEX(circshift)(tmp,cout+w*N,N,foff);
+        //LTFAT_NAME_COMPLEX(circshift)(tmp,cout+w*N,N,-Gl/2);
+        // memcpy(cout+w*N,tmp,N*sizeof*cout);
     }
 
     for(ltfatInt ii=0; ii<W*N; ii++)
