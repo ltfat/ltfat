@@ -6,9 +6,9 @@ function bw = audfiltbw(fc)
 %   auditory filter at center frequency *fc*. The function uses the
 %   relation
 %
-%   ..  bw = 24.7 + fc/9.265
+%   .. bw = 24.7 + fc/9.265
 %
-%   ..  math::  bw = 24.7 + \frac{fc}{9.265}
+%   .. math::  bw = 24.7 + \frac{fc}{9.265}
 %     
 %   as estimated in Glasberg and Moore (1990)
 %

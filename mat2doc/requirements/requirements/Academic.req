@@ -5,7 +5,7 @@ Rationale: Major parts of the software from these papers should be
  integrated into \textsl{LTFAT}, or \textsl{LTFAT} should containg
  certain functionality to support the software from these papers.
 Solved by: Ltfatnote015 Ltfatnote018 Ltfatnote019 Ltfatnote026
- Ltfatnote027 Syra2012goertzel
+ Ltfatnote027 Syra2012goertzel Ltfatnote029
 Invented on: 2014-01-10
 Invented by: soender
 Owner: soender

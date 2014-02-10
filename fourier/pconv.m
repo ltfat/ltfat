@@ -30,7 +30,7 @@ function h=pconv(f,g,varargin)
 %      h(l+1) = sum conj(f(-k+1)) * conj(g(k-l+1))
 %               k=0
 %     
-%    .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(-k+1\right)g\left(l-k+1\right)
+%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(-k+1\right)g\left(l-k+1\right)
 %
 %   In the above formulas, $l-k$, $k-l$ and $-k$ are computed modulo $L$.
 %
