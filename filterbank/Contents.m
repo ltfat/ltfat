@@ -18,6 +18,7 @@
 %    INSDGFB                - Say what?
 %
 %  Filter generators
+%    CQTFILTERS             - Logaritmically spaced filters
 %    ERBFILTERS             - ERB-spaced filters
 %  
 %  Window construction and bounds

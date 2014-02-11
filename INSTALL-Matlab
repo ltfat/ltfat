@@ -47,8 +47,8 @@ On Windows we rely on the MinGW compiler system:
 
 - Install MinGW compiler system. The easiest is to download and install
   TDM-GCC compiler suite from http://tdm-gcc.tdragon.net/download. 
-  After instalation, ensure that the [MinGW]/bin directory is in the 
-  system PATH, where [MinGW] stands for instalation direcory.
+  After installation, ensure that the [MinGW]/bin directory is in the 
+  system PATH, where [MinGW] stands for installation directory.
   
 - Manually install binaries of FFTW. The easiest way is to download 
   them from http://www.fftw.org/install/windows.html. Copy all *.dll files
@@ -56,7 +56,7 @@ On Windows we rely on the MinGW compiler system:
   
 - Run "ltfatmex".
 
-BLAS and LAPACK libraries are taken directly from the Matlab instalation.
+BLAS and LAPACK libraries are taken directly from the Matlab installation.
 Both 32bit and 64bit versions of Matlab are supported. Please use appropriate
 versions of FFTW and TDM-GCC.
 
@@ -83,7 +83,7 @@ done by typing
 "ltfatmex playrec" and "ltfatmex java".
 
 Playrec MEX depends on the PORTAUDIO library, which has to be installed on your
-system prior running the commnads. Compiling JAVA classes requires Java Development
+system prior running the commands. Compiling JAVA classes requires Java Development
 Kit to be installed.
 NOTE: Compiled Java classes (packed in blockproc.jar) are platform independent
 so compiling it and installing JDK can be avoided by taking the archive from any
@@ -96,14 +96,14 @@ TBD
 
 --------- Compiling on Microsoft Windows --------------------------
 
-Unfortunatelly, portaution on Windows is not ditributed in a binary package.
+Unfortunately, portaudio on Windows is not distributed in a binary package.
 One can follow instructions on http://www.portaudio.com/ to compile the library
 from the source with support for different sound APIs like DirectSound, MME, WASAPI, ASIO.
 Build a shared (dynamically linked) library (dll) and copy it to the ltfat/thirdparty/Playrec
 directory.
 
-Alternativelly, when no such library is found in ltfat/thirdparty/Playrec, ltfatmex attempts
-to link portaudio library shipped with Matlab. Expect much worse audio performace in this case.
+Alternatively, when no such library is found in ltfat/thirdparty/Playrec, ltfatmex attempts
+to link portaudio library shipped with Matlab. Expect much worse audio performance in this case.
 
 --------- Compiling on Linux ------------------------------------
 
