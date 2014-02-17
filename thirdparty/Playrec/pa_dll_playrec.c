@@ -79,14 +79,16 @@ int _currentState=0;
  * give feedback when a state has the wrong value.
  */
 const StateOptsStruct _stateOpts[] = {
-    {BASIC_INIT,
+    {   BASIC_INIT,
         "Basic initialisation",
         "This should have started automatically - something must be wrong.",
-        "This state connot be stopped without clearing the utility from memory."},
-    {FULL_INIT,
+        "This state connot be stopped without clearing the utility from memory."
+    },
+    {   FULL_INIT,
         "Full initialisation",
         "Call \"init\" command to run initialisation.",
-        "Call \"reset\" command."}
+        "Call \"reset\" command."
+    }
 };
 
 /* The number of elements in the above structure */
@@ -103,7 +105,7 @@ const int _stateOptsSize = sizeof(_stateOpts)/sizeof(StateOptsStruct);
  */
 const FuncLookupStruct _funcLookup[] = {
     HELP_FUNC_LOOKUP,   /* Add the help function provided in mex_dll_core */
-    {"about",
+    {   "about",
         doAbout,
         0, 0, 0, 1,
         "Displays information about the playrec utility",
@@ -113,13 +115,13 @@ const FuncLookupStruct _funcLookup[] = {
             {NULL}
         },
         {
-            {"aboutInfo", "String containing information about this build of "
+            {   "aboutInfo", "String containing information about this build of "
                 "playrec. If no output argument is specified then the information "
                 "is printed in the command window."
             }
         }
     },
-    {"overview",
+    {   "overview",
         doOverview,
         0, 0, 0, 1,
         "Displays an overview on using this playrec utility",
@@ -129,80 +131,80 @@ const FuncLookupStruct _funcLookup[] = {
             {NULL}
         },
         {
-            {"overviewInfo", "String containing information about how to use playrec. "
+            {   "overviewInfo", "String containing information about how to use playrec. "
                 "If no output argument is specified then the information is printed "
                 "in the command window."
             }
         }
     },
-    {"getDevices",
+    {   "getDevices",
         doGetDevices,
         0, 0, 0, 1,
         "Returns a list of available audio devices",
 
         "Returns information on the available devices within the system, including "
-            "ID, name, host API and number of channels supported.",
+        "ID, name, host API and number of channels supported.",
         {
             {NULL}
         },
         {
-            {"deviceList", "Structure array containing the following fields for "
+            {   "deviceList", "Structure array containing the following fields for "
                 "each device:\n"
                 "\t'deviceID' - ID used to refer to the device,\n"
                 "\t'name' - textual name of the device,\n"
                 "\t'hostAPI' - the host API used to access the device,\n"
                 "\t'defaultLowInputLatency' - device default input latency used "
-                    "for interactive performance.  This is the value suggested to "
-                    "the soundcard when the device is used for input.\n"
+                "for interactive performance.  This is the value suggested to "
+                "the soundcard when the device is used for input.\n"
                 "\t'defaultLowOutputLatency' - device default output latency used "
-                    "for interactive performance.  This is the value suggested to "
-                    "the soundcard when the device is used for output.\n"
+                "for interactive performance.  This is the value suggested to "
+                "the soundcard when the device is used for output.\n"
                 "\t'defaultHighInputLatency' - device default input latency for "
-                    "robust non-interactive applications (eg. playing sound files),\n"
+                "robust non-interactive applications (eg. playing sound files),\n"
                 "\t'defaultHighOutputLatency' - device default output latency for "
-                    "robust non-interactive applications (eg. playing sound files),\n"
+                "robust non-interactive applications (eg. playing sound files),\n"
                 "\t'defaultSampleRate' - device default sample rate,\n"
                 "\t'inputChans' - maximum number of input channels supported by the device\n"
                 "\t'outputChans' - maximum number of output channels supported by the device"
             }
         }
     },
-    {"init",
+    {   "init",
         doInit,
         3, 8, 0, 0,
         "Initialises the utility",
 
         "Configures the utility for audio input and/or output based on the specified "
-            "configuration.  If successful the chosen device(s) will be running in "
-            "the background waiting for the first pages to be received.  If unsuccessful "
-            "an error will be generated containing an error number and description.\n\n"
-            "All channel numbers are assumed to start at 1.  The maximum number of "
-            "channels support by the device will be used if the maximum channel number "
-            "is not specified.  Specifying a maximum number of channels verifies that the "
-            "device will support them and slightly reduces the utility's processor usage."
-            "\n\nIf an optional value is specified, all previous optional values must also "
-            "be specified.",
+        "configuration.  If successful the chosen device(s) will be running in "
+        "the background waiting for the first pages to be received.  If unsuccessful "
+        "an error will be generated containing an error number and description.\n\n"
+        "All channel numbers are assumed to start at 1.  The maximum number of "
+        "channels support by the device will be used if the maximum channel number "
+        "is not specified.  Specifying a maximum number of channels verifies that the "
+        "device will support them and slightly reduces the utility's processor usage."
+        "\n\nIf an optional value is specified, all previous optional values must also "
+        "be specified.",
         {
             {"sampleRate", "the sample rate at which both devices will operate"},
-            {"playDevice", "the ID of the device to be used for sample output (as "
+            {   "playDevice", "the ID of the device to be used for sample output (as "
                 "returned by 'getDevices'), or -1 for no device (ie output not required)"
             },
-            {"recDevice", "the ID of the device to be used for sample input (as "
+            {   "recDevice", "the ID of the device to be used for sample input (as "
                 "returned by 'getDevices'), or -1 for no device (ie input not required)"
             },
-            {"playMaxChannel", "a number greater than or equal to the maximum channel "
+            {   "playMaxChannel", "a number greater than or equal to the maximum channel "
                 "that will be used for output.  This must be less than or equal to the "
                 "maximum number of output channels that the device supports.  The value "
                 "is ignored if playDevice is -1.",
                 true
             },
-            {"recMaxChannel", "a number greater than or equal to the maximum channel "
+            {   "recMaxChannel", "a number greater than or equal to the maximum channel "
                 "that will be used for input.  This must be less than or equal to the "
                 "maximum number of input channels that the device supports.  The value "
                 "is ignored if recDevice is -1.",
                 true
             },
-            {"framesPerBuffer", "the number of samples to be processed in each callback "
+            {   "framesPerBuffer", "the number of samples to be processed in each callback "
                 "within the utility (ie the length of each block of samples transferred "
                 "between the utility and the soundcard).  The lower the value specified "
                 "the shorter the latency but also the greater the likelihood of glitches "
@@ -213,12 +215,12 @@ const FuncLookupStruct _funcLookup[] = {
                 "and so should only be used in exceptional circumstances.",
                 true
             },
-            {"playSuggestedLatency", "the play latency, in seconds, the device should try "
+            {   "playSuggestedLatency", "the play latency, in seconds, the device should try "
                 "to use where possible.  Defaults to the default low output latency for the "
                 "device.",
                 true
             },
-            {"recSuggestedLatency", "the record latency, in seconds, the device should try "
+            {   "recSuggestedLatency", "the record latency, in seconds, the device should try "
                 "to use where possible.  Defaults to the default low input latency for the "
                 "device.",
                 true
@@ -228,18 +230,18 @@ const FuncLookupStruct _funcLookup[] = {
             {NULL}
         }
     },
-    {"reset",
+    {   "reset",
         doReset,
         0, 0, 0, 0,
         "Resets the system to allow re-initialisation",
 
         "Resets the system to its state prior to initialisation through the 'init' "
-            "command.  This includes deleting all pages and stopping the connection "
-            "to the previously selected audio device(s).  Generates an error if the "
-            "utility is not already initialised - use 'isInitialised' to determine "
-            "if the utility is initialised.\n\n"
-            "Use with care as there is no way to recover previously recorded data "
-            "once this has been called.",
+        "command.  This includes deleting all pages and stopping the connection "
+        "to the previously selected audio device(s).  Generates an error if the "
+        "utility is not already initialised - use 'isInitialised' to determine "
+        "if the utility is initialised.\n\n"
+        "Use with care as there is no way to recover previously recorded data "
+        "once this has been called.",
         {
             {NULL}
         },
@@ -247,13 +249,13 @@ const FuncLookupStruct _funcLookup[] = {
             {NULL}
         }
     },
-    {"isInitialised",
+    {   "isInitialised",
         doIsInitialised,
         0, 0, 0, 1,
         "Indicates if the system is initialised",
 
         "Indicates if the system is currently initialised, and hence if 'reset' or 'init' "
-            "can be called without generating an error.",
+        "can be called without generating an error.",
         {
             {NULL}
         },
@@ -262,21 +264,21 @@ const FuncLookupStruct _funcLookup[] = {
         }
     },
 
-    {"playrec",
+    {   "playrec",
         doPlayrec,
         4, 4, 0, 1,
         "Adds a new page with simultaneous input and output",
 
         "Adds a new page containing both sample input (recording) and output (playing).  "
-            "Generates an error if the required memory cannot be allocated or if any "
-            "other problems are encountered.\n\n"
-            "The length of the page is equal to whichever is longer: the number of "
-            "samples to play or the number of samples to record.",
+        "Generates an error if the required memory cannot be allocated or if any "
+        "other problems are encountered.\n\n"
+        "The length of the page is equal to whichever is longer: the number of "
+        "samples to play or the number of samples to record.",
         {
-            {"playBuffer", "a MxN matrix containing the samples to be output.  M is "
+            {   "playBuffer", "a MxN matrix containing the samples to be output.  M is "
                 "the number of samples and N is the number of channels of data."
             },
-            {"playChanList", "a 1xN vector containing the channels on which the "
+            {   "playChanList", "a 1xN vector containing the channels on which the "
                 "playBuffer samples should be output.  N is the number of channels "
                 "of data, and should be the same as playBuffer (a warning is generated "
                 "if they are different, but the utility will still try and create the "
@@ -286,10 +288,10 @@ const FuncLookupStruct _funcLookup[] = {
                 "output zeros.  The maximum channel number cannot be greater than that "
                 "specified during initialisation."
             },
-            {"recDuration", "the number of samples that should be recorded in this "
+            {   "recDuration", "the number of samples that should be recorded in this "
                 "page, or -1 to record the same number of samples as in playBuffer."
             },
-            {"recChanList", "a row vector containing the channel numbers of all channels "
+            {   "recChanList", "a row vector containing the channel numbers of all channels "
                 "to be recorded.  Can only contain each channel number once, but the "
                 "channel order is not important and does not need to include all the "
                 "channels the device supports.  This order of channels is used when "
@@ -298,25 +300,25 @@ const FuncLookupStruct _funcLookup[] = {
             }
         },
         {
-            {"pageNumber", "a unique integer number identifying the page that has been "
+            {   "pageNumber", "a unique integer number identifying the page that has been "
                 "added - use this with all other functions that query specific pages, "
                 "such as 'isFinished'."
             }
         }
     },
-    {"play",
+    {   "play",
         doPlay,
         2, 2, 0, 1,
         "Adds a new output only page",
 
         "Adds a new page containing only sample output (playing).  Generates an error if "
-            "the required memory cannot be allocated or if any other problems are "
-            "encountered.\n\nThe page is the same length as that of playBuffer.",
+        "the required memory cannot be allocated or if any other problems are "
+        "encountered.\n\nThe page is the same length as that of playBuffer.",
         {
-            {"playBuffer", "a MxN matrix containing the samples to be output.  M is "
+            {   "playBuffer", "a MxN matrix containing the samples to be output.  M is "
                 "the number of samples and N is the number of channels of data."
             },
-            {"playChanList", "a 1xN vector containing the channels on which the "
+            {   "playChanList", "a 1xN vector containing the channels on which the "
                 "playBuffer samples should be output.  N is the number of channels "
                 "of data, and should be the same as playBuffer (a warning is generated "
                 "if they are different, but the utility will still try and create the "
@@ -328,25 +330,25 @@ const FuncLookupStruct _funcLookup[] = {
             },
         },
         {
-            {"pageNumber", "a unique integer number identifying the page that has been "
+            {   "pageNumber", "a unique integer number identifying the page that has been "
                 "added - use this with all other functions that query specific pages, "
                 "such as 'isFinished'."
             }
         }
     },
-    {"rec",
+    {   "rec",
         doRec,
         2, 2, 0, 1,
         "Adds a new input only page",
 
         "Adds a new page containing only sample input (recording).  Generates an error if "
-            "the required memory cannot be allocated or if any other problems are "
-            "encountered.\n\nThe page is recDuration samples long.",
+        "the required memory cannot be allocated or if any other problems are "
+        "encountered.\n\nThe page is recDuration samples long.",
         {
-            {"recDuration", "the number of samples that should be recorded on each channel "
+            {   "recDuration", "the number of samples that should be recorded on each channel "
                 "specified in recChanList."
             },
-            {"recChanList", "a row vector containing the channel numbers of all channels "
+            {   "recChanList", "a row vector containing the channel numbers of all channels "
                 "to be recorded.  Can only contain each channel number once, but the "
                 "channel order is not important and does not need to include all the "
                 "channels the device supports.  This order of channels is used when "
@@ -355,54 +357,54 @@ const FuncLookupStruct _funcLookup[] = {
             }
         },
         {
-            {"pageNumber", "a unique integer number identifying the page that has been "
+            {   "pageNumber", "a unique integer number identifying the page that has been "
                 "added - use this with all other functions that query specific pages, "
                 "such as 'isFinished'."
             }
         }
     },
-    {"pause",
+    {   "pause",
         doPause,
         0, 1, 0, 1,
         "Sets or queries the current pause state",
 
         "Queries or updates the current pause state of the utility.  If no argument is "
-            "supplied then just returns the current pause status, otherwise returns the "
-            "status after applying the change to newPause.",
+        "supplied then just returns the current pause status, otherwise returns the "
+        "status after applying the change to newPause.",
         {
-            {"newPause", "the new state of the utility: 1 to pause or 0 to resume the "
+            {   "newPause", "the new state of the utility: 1 to pause or 0 to resume the "
                 "stream.  This can be either a scalar or logical value.  If newState is "
                 "the same as the current state of the utility, no change occurs.",
                 true
             }
         },
         {
-            {"currentState", "the state of the utility (including the update to newPause "
+            {   "currentState", "the state of the utility (including the update to newPause "
                 "if newPause is specified): 1 if the utility is paused or otherwise 0."
             }
         }
     },
-    {"block",
+    {   "block",
         doBlock,
         0, 1, 0, 1,
         "Waits for the specified page to finish before returning",
 
         "Waits for the specified page to finish or, if no pageNumber is supplied, waits "
-            "until all pages have finish.  Note that the command returns immediately if "
-            "the utility is paused to avoid the system locking up.\n\n"
-            "This uses very little processing power whilst waiting for the page to finish, "
-            "although as a result will not necessarily return as soon as the page "
-            "specified finishes.  For a faster response to pages finishing use the "
-            "'isFinished' command in a tight while loop within MATLAB, such as\n\n"
-            "\twhile(playrec('isFinished', pageNumber) == 0);end;\n\n"
-            "This will run the processor at full power and will be very wasteful, "
-            "but it does reduce the delay between a page finishing and the MATLAB "
-            "code continuing, which is essential when trying to achieve very low latency.",
+        "until all pages have finish.  Note that the command returns immediately if "
+        "the utility is paused to avoid the system locking up.\n\n"
+        "This uses very little processing power whilst waiting for the page to finish, "
+        "although as a result will not necessarily return as soon as the page "
+        "specified finishes.  For a faster response to pages finishing use the "
+        "'isFinished' command in a tight while loop within MATLAB, such as\n\n"
+        "\twhile(playrec('isFinished', pageNumber) == 0);end;\n\n"
+        "This will run the processor at full power and will be very wasteful, "
+        "but it does reduce the delay between a page finishing and the MATLAB "
+        "code continuing, which is essential when trying to achieve very low latency.",
         {
             {"pageNumber", "the number of the page to wait until finished", true}
         },
         {
-            {"completionState", "1 if either pageNumber is a valid page and has finished "
+            {   "completionState", "1 if either pageNumber is a valid page and has finished "
                 "being processed or pageNumber was not specified and all pages have "
                 "finished being processed.  Note that page validity refers to when the "
                 "function was called and so now the page has finished it may no longer "
@@ -413,18 +415,18 @@ const FuncLookupStruct _funcLookup[] = {
             }
         }
     },
-    {"isFinished",
+    {   "isFinished",
         doIsFinished,
         0, 1, 0, 1,
         "Indicates if the specified page has finished",
 
         "Indicates if the specified page is finished or, if no pageNumber is supplied, "
-            "indicates if all pages have finished.",
+        "indicates if all pages have finished.",
         {
             {"pageNumber", "the number of the page being tested", true}
         },
         {
-            {"completionState", "1 if either pageNumber is a valid page that has finished "
+            {   "completionState", "1 if either pageNumber is a valid page that has finished "
                 "being processed or pageNumber was not specified and all pages have "
                 "finished being processed.\n\n"
                 "-1 if the specified page is invalid or no longer exists.  This includes "
@@ -434,84 +436,84 @@ const FuncLookupStruct _funcLookup[] = {
             }
         }
     },
-    {"getRec",
+    {   "getRec",
         doGetRec,
         1, 1, 0, 2,
         "Returns the samples recorded in a page",
 
         "Returns all the recorded data available for the page identified by pageNumber.  "
-            "If the page specified does not exist, was not specified to record any data, "
-            "or has not yet started to record any data then empty array(s) are returned.  "
-            "If the page is currently being processed, only the recorded data currently "
-            "available is returned.",
+        "If the page specified does not exist, was not specified to record any data, "
+        "or has not yet started to record any data then empty array(s) are returned.  "
+        "If the page is currently being processed, only the recorded data currently "
+        "available is returned.",
         {
             {"pageNumber", "used to identifying the page containing the required recorded data"}
         },
         {
-            {"recBuffer", "a MxN matrix where M is the number of samples that have been "
+            {   "recBuffer", "a MxN matrix where M is the number of samples that have been "
                 "recorded and N is the number of channels of data"
             },
-            {"recChanList", "a 1xN vector containing the channel numbers associated with "
+            {   "recChanList", "a 1xN vector containing the channel numbers associated with "
                 "each channel in recBuffer.  These channels are in the same order as that "
                 "specified when the page was added."
             }
         }
     },
-    {"delPage",
+    {   "delPage",
         doDelPage,
         0, 1, 0, 1,
         "Deletes the specified page or all pages",
 
         "Deletes either the specified page or, if no pageNumber is supplied, deletes all "
-            "pages.  Pages can be in any state when they are deleted - the do not have "
-            "to be finished and they can even be deleted part way through being processed "
-            "without any problems (in this case the utility will automatically continue "
-            "with the next page in the page list).",
+        "pages.  Pages can be in any state when they are deleted - the do not have "
+        "to be finished and they can even be deleted part way through being processed "
+        "without any problems (in this case the utility will automatically continue "
+        "with the next page in the page list).",
         {
             {"pageNumber", "the number of the page to be deleted.", true}
         },
         {
-            {"completionState", "0 if nothing is deleted (either there are no pages in "
+            {   "completionState", "0 if nothing is deleted (either there are no pages in "
                 "the page list or, if pageNumber was specified, no page with the "
                 "specified number exists), otherwise 1 is returned."
             }
         }
     },
-    {"getCurrentPosition",
+    {   "getCurrentPosition",
         doGetCurrentPosition,
         0, 0, 0, 2,
         "Returns the currently active page and sample number",
 
         "Returns the sample and page number for the last sample transferred to the "
-            "soundcard.  Due to sample buffering this will always be slightly further "
-            "through a page than the actual sample being output by the soundcard at that "
-            "point in time.  For pages that record input, the sample number shows how "
-            "many samples have been recorded by the page, up to the recording length limit "
-            "of the page.",
+        "soundcard.  Due to sample buffering this will always be slightly further "
+        "through a page than the actual sample being output by the soundcard at that "
+        "point in time.  For pages that record input, the sample number shows how "
+        "many samples have been recorded by the page, up to the recording length limit "
+        "of the page.",
         {
             {NULL}
         },
         {
-            {"currentPage", "the current page number, or -1 if either the utility is not "
+            {   "currentPage", "the current page number, or -1 if either the utility is not "
                 "initialised or no page is currently being processed (there are no pages "
                 "in the list or all pages are finished)."
             },
-            {"currentSample", "the current sample number within currentPage, or -1 if "
+            {   "currentSample", "the current sample number within currentPage, or -1 if "
                 "currentPage is also -1.  This is only accurate to maxFramesPerBuffer samples, "
                 "as returned by 'getFramesPerBuffer'."
             }
         }
     },
-    {"getLastFinishedPage",
+    {   "getLastFinishedPage",
         doGetLastFinishedPage,
         0, 0, 0, 1,
         "Returns the page number of the last completed page",
 
         "Returns the page number of the last finished page still resident in memory.  Due "
-            "to automatic condensing/removal of pages that are no longer required, such "
-            "as finished pages with only output data, this may not be the most recent page "
-            "to have finished.  Put another way, this returns the page number of the last "
-            "finished page in the pageList returned by 'getPageList'.",
+        "to automatic condensing/removal of pages that are no longer required, such "
+        "as finished pages with only output data, this may not be the most recent page "
+        "to have finished.  Put another way, this returns the page number of the last "
+        "finished page in the pageList returned by 'getPageList'.",
         {
             {NULL}
         },
@@ -519,53 +521,53 @@ const FuncLookupStruct _funcLookup[] = {
             {"lastPage", "pageNumber of the most recently finished page still resident in memory."}
         }
     },
-    {"getPageList",
+    {   "getPageList",
         doGetPageList,
         0, 0, 0, 1,
         "Returns an ordered list of all page numbers",
 
         "Returns a list of all the pages that are resident in memory.  The list is ordered "
-            "chronologically from the earliest to latest addition.\n\n"
-            "Due to automatic condensing/removal of pages that are no longer required, such "
-            "as finished pages with only output data, this will not be a complete list of "
-            "all pages that have ever been used with the utility.",
+        "chronologically from the earliest to latest addition.\n\n"
+        "Due to automatic condensing/removal of pages that are no longer required, such "
+        "as finished pages with only output data, this will not be a complete list of "
+        "all pages that have ever been used with the utility.",
         {
             {NULL}
         },
         {
-            {"pageList", "a 1xN vector containing the chronological list of pages, where N "
+            {   "pageList", "a 1xN vector containing the chronological list of pages, where N "
                 "is the number of pages resident in memory."
             }
         }
     },
-    {"getFramesPerBuffer",
+    {   "getFramesPerBuffer",
         doGetFramesPerBuffer,
         0, 0, 0, 3,
         "Returns internal number of frames per buffer",
 
         "Returns the number of frames (samples) that are processed by the callback "
-            "internally within the utility (ie the length of each block of samples "
-            "sent by the utility to the soundcard).  This is either the value specified "
-            "when using 'init', or the default value if the optional argument was not "
-            "specified. A value of 0 means the utility is using an optimal, but potentially "
-            "varying, value.",
+        "internally within the utility (ie the length of each block of samples "
+        "sent by the utility to the soundcard).  This is either the value specified "
+        "when using 'init', or the default value if the optional argument was not "
+        "specified. A value of 0 means the utility is using an optimal, but potentially "
+        "varying, value.",
         {
             {NULL}
         },
         {
-            {"suggestedFramesPerBuffer", "the number of frames returned by the utility internally "
+            {   "suggestedFramesPerBuffer", "the number of frames returned by the utility internally "
                 "during each callback as specified during initialisation, or -1 if the "
                 "utility is not initialised."
             },
-            {"minFramesPerBuffer", "the minimum number of frames actually processed by the "
+            {   "minFramesPerBuffer", "the minimum number of frames actually processed by the "
                 "utility internally during a callback, or -1 if the utility is not initialised."
             },
-            {"maxFramesPerBuffer", "the maximum number of frames actually proccessed by the "
+            {   "maxFramesPerBuffer", "the maximum number of frames actually proccessed by the "
                 "utility internally during a callback, or -1 if the utility is not initialised."
             }
         }
     },
-    {"getSampleRate",
+    {   "getSampleRate",
         doGetSampleRate,
         0, 0, 0, 2,
         "Returns the current sample rate",
@@ -575,150 +577,150 @@ const FuncLookupStruct _funcLookup[] = {
             {NULL}
         },
         {
-            {"suggestedSampleRate", "the sample rate used during initialisation or -1 if the utility "
+            {   "suggestedSampleRate", "the sample rate used during initialisation or -1 if the utility "
                 "is not initialised."
             },
-            {"sampleRate", "the current sample rate (obtained from the hardware if possible) "
+            {   "sampleRate", "the current sample rate (obtained from the hardware if possible) "
                 "or -1 if the utility is not initialised."
             }
         }
     },
-    {"getStreamStartTime",
+    {   "getStreamStartTime",
         doGetStreamStartTime,
         0, 0, 0, 1,
         "Returns the time at which the stream was started",
 
         "Returns the unix time when the stream was started (number of seconds since the "
-            "standard epoch of 01/01/1970).\n\n"
-            "This is included so that when using the utility to run experiments it is "
-            "possible to determine which tests are conducted as part of the same stream, "
-            "and so identify if restarting the stream (and hence the soundcard in some "
-            "scenarios) may have caused variations in results.",
+        "standard epoch of 01/01/1970).\n\n"
+        "This is included so that when using the utility to run experiments it is "
+        "possible to determine which tests are conducted as part of the same stream, "
+        "and so identify if restarting the stream (and hence the soundcard in some "
+        "scenarios) may have caused variations in results.",
         {
             {NULL}
         },
         {
-            {"streamStartTime", "time at which the stream was started (in seconds since "
+            {   "streamStartTime", "time at which the stream was started (in seconds since "
                 "the Epoch), or -1 if the utility is not initialised."
             }
         }
     },
-    {"getPlayDevice",
+    {   "getPlayDevice",
         doGetPlayDevice,
         0, 0, 0, 1,
         "Returns the current output (play) device",
 
         "Returns the deviceID (as returned by 'getDevices') for the currently selected "
-            "output device.",
+        "output device.",
         {
             {NULL}
         },
         {
-            {"playDevice", "the deviceID for the output (play) device or -1 if no device "
+            {   "playDevice", "the deviceID for the output (play) device or -1 if no device "
                 "was specified during initialisation or the utility is not initialised."
             }
         }
     },
-    {"getPlayMaxChannel",
+    {   "getPlayMaxChannel",
         doGetPlayMaxChannel,
         0, 0, 0, 1,
         "Returns the current maximum output (play) channel",
 
         "Returns the number of the maximum output (play) channel that can currently be "
-            "used.  This might be less than the number of channels that the device can "
-            "support if a lower limit was specified during initialisation.",
+        "used.  This might be less than the number of channels that the device can "
+        "support if a lower limit was specified during initialisation.",
         {
             {NULL}
         },
         {
-            {"playMaxChannel", "the maximum output (play) channel number that can "
+            {   "playMaxChannel", "the maximum output (play) channel number that can "
                 "currently be used, or -1 if either no play device was specified during "
                 "initialisation or the utility is not initialised."
             }
         }
     },
-    {"getPlayLatency",
+    {   "getPlayLatency",
         doGetPlayLatency,
         0, 0, 0, 2,
         "Returns the current output (play) device latency",
 
         "Returns the output latency for the currently selected output device as well as "
-            "the suggested output latency used during initialisation",
+        "the suggested output latency used during initialisation",
         {
             {NULL}
         },
         {
-            {"playSuggestedLatency", "the suggested latency for the output (play) device "
+            {   "playSuggestedLatency", "the suggested latency for the output (play) device "
                 "used during initialisation, or -1 if no device was specified during "
                 "initialisation or the utility is not initialised."
             },
-            {"playLatency", "the actual latency for the output (play) device or -1 if no device "
+            {   "playLatency", "the actual latency for the output (play) device or -1 if no device "
                 "was specified during initialisation or the utility is not initialised."
             }
         }
     },
-    {"getRecDevice",
+    {   "getRecDevice",
         doGetRecDevice,
         0, 0, 0, 1,
         "Returns the current input (record) device",
 
         "Returns the deviceID (as returned by 'getDevices') for the currently selected "
-            "input device.",
+        "input device.",
         {
             {NULL}
         },
         {
-            {"recDevice", "the deviceID for the input (record) device or -1 if no device "
+            {   "recDevice", "the deviceID for the input (record) device or -1 if no device "
                 "was specified during initialisation or the utility is not initialised."
             }
         }
     },
-    {"getRecMaxChannel",
+    {   "getRecMaxChannel",
         doGetRecMaxChannel,
         0, 0, 0, 1,
         "Returns the current maximum input (record) channel",
 
         "Returns the number of the maximum input (record) channel that can currently be "
-            "used.  This might be less than the number of channels that the device can "
-            "support if a lower limit was specified during initialisation.",
+        "used.  This might be less than the number of channels that the device can "
+        "support if a lower limit was specified during initialisation.",
         {
             {NULL}
         },
         {
-            {"recMaxChannel", "the maximum input (record) channel number that can "
+            {   "recMaxChannel", "the maximum input (record) channel number that can "
                 "currently be used, or -1 if either no record device was specified during "
                 "initialisation or the utility is not initialised."
             }
         }
     },
-    {"getRecLatency",
+    {   "getRecLatency",
         doGetRecLatency,
         0, 0, 0, 2,
         "Returns the current input (record) device latency",
 
         "Returns the input latency for the currently selected input device as well as "
-            "the suggested input latency used during initialisation",
+        "the suggested input latency used during initialisation",
         {
             {NULL}
         },
         {
-            {"recSuggestedLatency", "the suggested latency for the input (record) device "
+            {   "recSuggestedLatency", "the suggested latency for the input (record) device "
                 "used during initialisation, or -1 if no device was specified during "
                 "initialisation or the utility is not initialised."
             },
-            {"recLatency", "the actual latency for the input (record) device or -1 if no device "
+            {   "recLatency", "the actual latency for the input (record) device or -1 if no device "
                 "was specified during initialisation or the utility is not initialised."
             }
         }
     },
-    {"resetSkippedSampleCount",
+    {   "resetSkippedSampleCount",
         doResetSkippedSampleCount,
         0, 0, 0, 0,
         "Resets the skipped samples counter",
 
         "Resets the counter containing the number of samples that have been 'missed' due to "
-            "no new pages existing in the page list.  See the help on 'getSkippedSampleCount' "
-            "for more information.",
+        "no new pages existing in the page list.  See the help on 'getSkippedSampleCount' "
+        "for more information.",
         {
             {NULL}
         },
@@ -726,34 +728,34 @@ const FuncLookupStruct _funcLookup[] = {
             {NULL}
         }
     },
-    {"getSkippedSampleCount",
+    {   "getSkippedSampleCount",
         doGetSkippedSampleCount,
         0, 0, 0, 1,
         "Returns the number of skipped samples",
 
         "Returns the counter containing the number of samples that have been 'missed' due "
-            "to no new pages existing in the page list when the soundcard requires samples "
-            "to be transferred.  The term 'missed' is specifically referring to the case "
-            "where multiple consecutive pages are used to record a continuous audio stream "
-            "(and so input samples are missed), but is the same also for output samples "
-            "because the input and output samples within a page are always processed "
-            "simultaneously.\n\n"
-            "This value is incremented by one for every frame (ie one sample on every "
-            "input/output channel) of data communicated between the utility and soundcard "
-            "that occurred whilst there were no new pages in the page list.  Using this it "
-            "is possible to determine, from within MATLAB, if any glitches in the audio have "
-            "occurred through not adding a new page to the page list before all other pages "
-            "have finished, such as in the case where the code within MATLAB is trying to "
-            "play/record a continuous stream.\n\n"
-            "The counter can be reset using 'resetSkippedSampleCount' so to check for any "
-            "breaks in a continuous stream of pages: add the first page of the stream; reset "
-            "the counter; continue to add pages as required; if getSkippedSampleCount ever "
-            "returns a value greater than zero then there has been a break in the stream.",
+        "to no new pages existing in the page list when the soundcard requires samples "
+        "to be transferred.  The term 'missed' is specifically referring to the case "
+        "where multiple consecutive pages are used to record a continuous audio stream "
+        "(and so input samples are missed), but is the same also for output samples "
+        "because the input and output samples within a page are always processed "
+        "simultaneously.\n\n"
+        "This value is incremented by one for every frame (ie one sample on every "
+        "input/output channel) of data communicated between the utility and soundcard "
+        "that occurred whilst there were no new pages in the page list.  Using this it "
+        "is possible to determine, from within MATLAB, if any glitches in the audio have "
+        "occurred through not adding a new page to the page list before all other pages "
+        "have finished, such as in the case where the code within MATLAB is trying to "
+        "play/record a continuous stream.\n\n"
+        "The counter can be reset using 'resetSkippedSampleCount' so to check for any "
+        "breaks in a continuous stream of pages: add the first page of the stream; reset "
+        "the counter; continue to add pages as required; if getSkippedSampleCount ever "
+        "returns a value greater than zero then there has been a break in the stream.",
         {
             {NULL}
         },
         {
-            {"skippedSampleCount", "the number of frames (samples per channel) transferred "
+            {   "skippedSampleCount", "the number of frames (samples per channel) transferred "
                 "with the soundcard that have occurred when there are no unfinished pages in "
                 "the pageList, or -1 if the utility is not initialised"
             }
@@ -852,11 +854,11 @@ void validateState(int wantedStates, int rejectStates) {
         if(((wantedStates & _stateOpts[i].num)!=0) && !ISSTATE(_stateOpts[i].num)) {
             /* This is a wanted state which doesn't exist in _currentState */
             buffer = mxCalloc( strlen( _stateOpts[i].name) +
-                                + strlen( _stateOpts[i].startString ) + 60, sizeof( char ));
+                               + strlen( _stateOpts[i].startString ) + 60, sizeof( char ));
 
             if( buffer ) {
                 sprintf( buffer, "This command can only be called if in state \"%s\".\n%s",
-                            _stateOpts[i].name, _stateOpts[i].startString);
+                         _stateOpts[i].name, _stateOpts[i].startString);
 
                 mexErrMsgTxt( buffer );
                 /* No need to free memory here as execution will always stop at the error */
@@ -865,14 +867,14 @@ void validateState(int wantedStates, int rejectStates) {
                 mexErrMsgTxt( "Error allocating memory in validateState" );
             }
         }
-        if(((rejectStates & _stateOpts[i].num)!=0) && ISSTATE(_stateOpts[i].num)){
+        if(((rejectStates & _stateOpts[i].num)!=0) && ISSTATE(_stateOpts[i].num)) {
             /* This is a reject state which does exist in _currentState */
             buffer = mxCalloc( strlen( _stateOpts[i].name) +
-                                + strlen( _stateOpts[i].stopString ) + 60, sizeof( char ));
+                               + strlen( _stateOpts[i].stopString ) + 60, sizeof( char ));
 
             if( buffer ) {
                 sprintf( buffer, "This command cannot be called in state \"%s\".\n%s",
-                            _stateOpts[i].name, _stateOpts[i].stopString);
+                         _stateOpts[i].name, _stateOpts[i].stopString);
 
                 mexErrMsgTxt( buffer );
                 /* No need to free memory here as execution will always stop at the error */
@@ -1016,7 +1018,7 @@ void freeStreamInfoStruct(StreamInfoStruct **ppsis) {
                 mexPrintf("...Stopping PortAudio Stream...");
 #endif
                 while((Pa_IsStreamActive((*ppsis)->pstream) == 1)
-                        && (stopTime < 10000)){
+                        && (stopTime < 10000)) {
 
                     (*ppsis)->stopStream = true;
                     Pa_Sleep(2);
@@ -1351,8 +1353,8 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
                              * for loop never ending
                              */
                             for(ps = (pout + samplesProcessed * psis->playChanCount + chan);
-                                ps < (pout + (samplesProcessed + samplesFromPage) * psis->playChanCount);
-                                ps += psis->playChanCount) {
+                                    ps < (pout + (samplesProcessed + samplesFromPage) * psis->playChanCount);
+                                    ps += psis->playChanCount) {
 
                                 *ps = 0;
                             }
@@ -1366,9 +1368,9 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
                         tmpBufPos = pcurrentsps->pagePos;
 
                         if(pcbs->pbuffer
-                            && (tmpBufPos < pcbs->bufLen)
-                            && (pcbs->channel >= 0)
-                            && (pcbs->channel < psis->playChanCount)) {
+                                && (tmpBufPos < pcbs->bufLen)
+                                && (pcbs->channel >= 0)
+                                && (pcbs->channel < psis->playChanCount)) {
 
                             /* This chanBuf contains a valid buffer and has data left to use!
                              * Step through the frame copying data.
@@ -1380,8 +1382,8 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
                              */
 
                             for(ps = (pout + samplesProcessed * psis->playChanCount + pcbs->channel);
-                                ps < (pout + (samplesProcessed + samplesFromPage) * psis->playChanCount);
-                                ps += psis->playChanCount) {
+                                    ps < (pout + (samplesProcessed + samplesFromPage) * psis->playChanCount);
+                                    ps += psis->playChanCount) {
 
                                 if(tmpBufPos < pcbs->bufLen) {
                                     *ps = *(pcbs->pbuffer + tmpBufPos);
@@ -1402,8 +1404,8 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
                              * for loop never ending
                              */
                             for(ps = (pout + samplesProcessed * psis->playChanCount + pcbs->channel);
-                                ps < (pout + (samplesProcessed + samplesFromPage) * psis->playChanCount);
-                                ps += psis->playChanCount) {
+                                    ps < (pout + (samplesProcessed + samplesFromPage) * psis->playChanCount);
+                                    ps += psis->playChanCount) {
 
                                 *ps = 0;
                             }
@@ -1417,9 +1419,9 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
                         tmpBufPos = pcurrentsps->pagePos;
 
                         if(pcbs->pbuffer
-                            && (tmpBufPos < pcbs->bufLen)
-                            && (pcbs->channel >= 0)
-                            && (pcbs->channel < psis->recChanCount)) {
+                                && (tmpBufPos < pcbs->bufLen)
+                                && (pcbs->channel >= 0)
+                                && (pcbs->channel < psis->recChanCount)) {
 
                             /* This chanBuf contains a valid buffer and has space left to use!
                              * Channels without a valid buffer, or that have reached the end of
@@ -1429,8 +1431,8 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
                             /* Step through each frame copying data */
 
                             for(ps = (pin + samplesProcessed * psis->recChanCount + pcbs->channel);
-                                (ps < (pin + (samplesProcessed + samplesFromPage) * psis->recChanCount)) && (tmpBufPos < pcbs->bufLen);
-                                ps += psis->recChanCount)   {
+                                    (ps < (pin + (samplesProcessed + samplesFromPage) * psis->recChanCount)) && (tmpBufPos < pcbs->bufLen);
+                                    ps += psis->recChanCount)   {
 
                                 *(pcbs->pbuffer + tmpBufPos) = *ps;
                                 tmpBufPos++;
@@ -1477,8 +1479,8 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
              */
 
             for(ps = (pout + samplesProcessed * psis->playChanCount + chan);
-                ps < (pout + frameCount * psis->playChanCount);
-                ps += psis->playChanCount) {
+                    ps < (pout + frameCount * psis->playChanCount);
+                    ps += psis->playChanCount) {
 
                 *ps = 0;
             }
@@ -1510,13 +1512,13 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
     }
 
     if((psis->minFramesPerBuffer == paFramesPerBufferUnspecified)
-        || (frameCount < psis->minFramesPerBuffer)) {
+            || (frameCount < psis->minFramesPerBuffer)) {
 
         psis->minFramesPerBuffer = frameCount;
     }
 
     if((psis->maxFramesPerBuffer == paFramesPerBufferUnspecified)
-        || (frameCount > psis->maxFramesPerBuffer)) {
+            || (frameCount > psis->maxFramesPerBuffer)) {
 
         psis->maxFramesPerBuffer = frameCount;
     }
@@ -1720,11 +1722,11 @@ void abortIfPAErr(const char* msg) {
 
     if( lastPaError != paNoError ) {
         buffer = mxCalloc( strlen( Pa_GetErrorText( lastPaError ))
-                            + strlen( msg ) + 40, sizeof( char ));
+                           + strlen( msg ) + 40, sizeof( char ));
 
         if( buffer ) {
             sprintf( buffer, "%s \n{PortAudio Error [%d]: %s}",
-                        msg, lastPaError, Pa_GetErrorText( lastPaError ));
+                     msg, lastPaError, Pa_GetErrorText( lastPaError ));
 
             mexErrMsgTxt( buffer );
             /* No need to free memory here as execution will always stop at the error */
@@ -1945,7 +1947,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
 
     if(pplayData && pplayChans) {
         if(!mxIsNumeric(pplayData) || mxIsComplex(pplayData)
-            || (!mxIsSingle(pplayData) && !mxIsDouble(pplayData))) {
+                || (!mxIsSingle(pplayData) && !mxIsDouble(pplayData))) {
 
             mexWarnMsgTxt("Audio buffer must be non-complex numbers of type single or double.");
             freeStreamPageStruct(&psps);
@@ -2022,8 +2024,8 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
 
     if(precDataLength && precChans) {
         if(!mxIsNumeric(precDataLength) || mxIsComplex(precDataLength)
-            || (mxGetN(precDataLength)!=1) || (mxGetM(precDataLength)!=1)
-            || (mxGetScalar(precDataLength) != (int)mxGetScalar(precDataLength))) {
+                || (mxGetN(precDataLength)!=1) || (mxGetM(precDataLength)!=1)
+                || (mxGetScalar(precDataLength) != (int)mxGetScalar(precDataLength))) {
 
             mexWarnMsgTxt("Number of record samples must be a non-complex integer.");
             return false;
@@ -2175,9 +2177,9 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Get sample rate */
     if(!mxIsNumeric(prhs[0]) || mxIsComplex(prhs[0])
-        || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)
-        || (mxGetScalar(prhs[0]) != (int)mxGetScalar(prhs[0]))
-        || (mxGetScalar(prhs[0]) <= 0)) {
+            || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)
+            || (mxGetScalar(prhs[0]) != (int)mxGetScalar(prhs[0]))
+            || (mxGetScalar(prhs[0]) <= 0)) {
 
         mexWarnMsgTxt("Samplerate must be a non-complex scalar integer greater than zero.");
         freeStreamInfoStruct(&_pstreamInfo);
@@ -2188,8 +2190,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Get play device -  <0 is no device */
     if(!mxIsNumeric(prhs[1]) || mxIsComplex(prhs[1])
-        || (mxGetN(prhs[1])!=1) || (mxGetM(prhs[1])!=1)
-        || (mxGetScalar(prhs[1]) != (int)mxGetScalar(prhs[1]))) {
+            || (mxGetN(prhs[1])!=1) || (mxGetM(prhs[1])!=1)
+            || (mxGetScalar(prhs[1]) != (int)mxGetScalar(prhs[1]))) {
 
         mexWarnMsgTxt("Play DeviceID must be a non-complex integer.");
         freeStreamInfoStruct(&_pstreamInfo);
@@ -2209,8 +2211,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Get record device - <0 is no device */
     if(!mxIsNumeric(prhs[2]) || mxIsComplex(prhs[2])
-        || (mxGetN(prhs[2])!=1) || (mxGetM(prhs[2])!=1)
-        || (mxGetScalar(prhs[2]) != (int)mxGetScalar(prhs[2]))) {
+            || (mxGetN(prhs[2])!=1) || (mxGetM(prhs[2])!=1)
+            || (mxGetScalar(prhs[2]) != (int)mxGetScalar(prhs[2]))) {
 
         mexWarnMsgTxt("Record DeviceID must be a non-complex integer.");
         freeStreamInfoStruct(&_pstreamInfo);
@@ -2230,7 +2232,7 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Check there is at least a play or record device */
     if ((_pstreamInfo->playDeviceID == paNoDevice)
-        && (_pstreamInfo->recDeviceID == paNoDevice)) {
+            && (_pstreamInfo->recDeviceID == paNoDevice)) {
         mexWarnMsgTxt("playdevice < 0 and recdevice < 0. Nothing to be done - initialisation not complete.");
         freeStreamInfoStruct(&_pstreamInfo);
         return true;
@@ -2240,9 +2242,9 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     if (_pstreamInfo->playDeviceID != paNoDevice) {
         if(nrhs >= 4) {
             if(!mxIsNumeric(prhs[3]) || mxIsComplex(prhs[3])
-            || (mxGetN(prhs[3])!=1) || (mxGetM(prhs[3])!=1)
-            || (mxGetScalar(prhs[3]) != (int)mxGetScalar(prhs[3]))
-            || (mxGetScalar(prhs[3]) <= 0)) {
+                    || (mxGetN(prhs[3])!=1) || (mxGetM(prhs[3])!=1)
+                    || (mxGetScalar(prhs[3]) != (int)mxGetScalar(prhs[3]))
+                    || (mxGetScalar(prhs[3]) <= 0)) {
 
                 mexWarnMsgTxt("Maximum channel number for output must be a non-complex scalar integer greater than zero.");
                 freeStreamInfoStruct(&_pstreamInfo);
@@ -2273,13 +2275,13 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     if (_pstreamInfo->recDeviceID != paNoDevice) {
         if(nrhs >= 5) {
             if(!mxIsNumeric(prhs[4]) || mxIsComplex(prhs[4])
-                || (mxGetN(prhs[4])!=1) || (mxGetM(prhs[4])!=1)
-                || (mxGetScalar(prhs[4]) != (int)mxGetScalar(prhs[4]))
-                || (mxGetScalar(prhs[4]) <= 0)) {
+                    || (mxGetN(prhs[4])!=1) || (mxGetM(prhs[4])!=1)
+                    || (mxGetScalar(prhs[4]) != (int)mxGetScalar(prhs[4]))
+                    || (mxGetScalar(prhs[4]) <= 0)) {
 
-                    mexWarnMsgTxt("Maximum channel number for recording must be a non-complex scalar integer greater than zero.");
-                    freeStreamInfoStruct(&_pstreamInfo);
-                    return false;
+                mexWarnMsgTxt("Maximum channel number for recording must be a non-complex scalar integer greater than zero.");
+                freeStreamInfoStruct(&_pstreamInfo);
+                return false;
             }
 
             /* The supplied value is the channel number, base 1
@@ -2310,7 +2312,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
                 || (mxGetScalar(prhs[5]) < 0)) {
 
             /* Zero is used for 'Unspecified' ie let PortAudio choose */
-            mexWarnMsgTxt("Frame buffer size must be a non-complex scalar integer greater than or equal to zero.");
+            mexWarnMsgTxt("Frame buffer size must be a non-complex scalar integer "
+                          "greater than or equal to zero.");
             freeStreamInfoStruct(&_pstreamInfo);
             return false;
         }
@@ -2325,7 +2328,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
                     || (mxGetN(prhs[6])!=1) || (mxGetM(prhs[6])!=1)
                     || (mxGetScalar(prhs[6]) < 0)) {
 
-                mexWarnMsgTxt("Play suggested latency must be a non-complex scalar value greater than or equal to zero.");
+                mexWarnMsgTxt("Play suggested latency must be a non-complex "
+                              "scalar value greater than or equal to zero.");
                 freeStreamInfoStruct(&_pstreamInfo);
                 return false;
             }
@@ -2333,7 +2337,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             _pstreamInfo->playSuggestedLatency = (PaTime)mxGetScalar(prhs[6]);
         }
         else {
-            _pstreamInfo->playSuggestedLatency = Pa_GetDeviceInfo( _pstreamInfo->playDeviceID )->defaultLowOutputLatency;
+            _pstreamInfo->playSuggestedLatency =
+                Pa_GetDeviceInfo( _pstreamInfo->playDeviceID )->defaultLowOutputLatency;
         }
     }
 
@@ -2344,7 +2349,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
                     || (mxGetN(prhs[7])!=1) || (mxGetM(prhs[7])!=1)
                     || (mxGetScalar(prhs[7]) < 0)) {
 
-                mexWarnMsgTxt("Record suggested latency must be a non-complex scalar value greater than or equal to zero.");
+                mexWarnMsgTxt("Record suggested latency must be a non-complex "
+                              "scalar value greater than or equal to zero.");
                 freeStreamInfoStruct(&_pstreamInfo);
                 return false;
             }
@@ -2352,7 +2358,8 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             _pstreamInfo->recSuggestedLatency = (PaTime)mxGetScalar(prhs[7]);
         }
         else {
-            _pstreamInfo->recSuggestedLatency = Pa_GetDeviceInfo( _pstreamInfo->recDeviceID )->defaultLowInputLatency;
+            _pstreamInfo->recSuggestedLatency =
+                Pa_GetDeviceInfo( _pstreamInfo->recDeviceID )->defaultLowInputLatency;
         }
     }
 
@@ -2376,16 +2383,17 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Open an audio I/O stream. */
     if(checkPAErr(Pa_OpenStream(
-            &_pstreamInfo->pstream,
-            (_pstreamInfo->recDeviceID != paNoDevice) ? &inputParameters : NULL,
-            (_pstreamInfo->playDeviceID != paNoDevice) ? &outputParameters : NULL,
-            _pstreamInfo->suggestedSampleRate,
-            _pstreamInfo->suggestedFramesPerBuffer,
-            _pstreamInfo->streamFlags,
-            playrecCallback,
-            _pstreamInfo))!=paNoError) {
+                      &_pstreamInfo->pstream,
+                      (_pstreamInfo->recDeviceID != paNoDevice) ? &inputParameters : NULL,
+                      (_pstreamInfo->playDeviceID != paNoDevice) ? &outputParameters : NULL,
+                      _pstreamInfo->suggestedSampleRate,
+                      _pstreamInfo->suggestedFramesPerBuffer,
+                      _pstreamInfo->streamFlags,
+                      playrecCallback,
+                      _pstreamInfo))!=paNoError) {
 
-        /* the value of stream is invalid, so clear it before freeing the stream structure */
+        /* the value of stream is invalid, so clear it before freeing the stream
+         * structure */
         _pstreamInfo->pstream = NULL;
         freeStreamInfoStruct(&_pstreamInfo);
         abortIfPAErr("Init failed to open PortAudio stream");
@@ -2564,15 +2572,16 @@ bool doPause(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     validateState(BASIC_INIT | FULL_INIT, 0);
 
     if(!_pstreamInfo) {
-        mexErrMsgTxt("An error has occurred - in full initialisation yet _pstreamInfo is NULL.");
+        mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                     " _pstreamInfo is NULL.");
     }
 
     if(nrhs > 0) {
         if(!(mxIsNumeric(prhs[0]) || mxIsLogical(prhs[0]))
-        || mxIsComplex(prhs[0])
-        || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)
-        || ((mxGetScalar(prhs[0]) != 0)
-            && (mxGetScalar(prhs[0]) != 1))) {
+                || mxIsComplex(prhs[0])
+                || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)
+                || ((mxGetScalar(prhs[0]) != 0)
+                    && (mxGetScalar(prhs[0]) != 1))) {
 
             mexWarnMsgTxt("New pause state must be either 0 (off) or 1 (on).");
             return false;
@@ -2628,7 +2637,8 @@ bool doBlock(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     validateState(BASIC_INIT | FULL_INIT, 0);
 
     if(!_pstreamInfo) {
-        mexErrMsgTxt("An error has occurred - in full initialisation yet _pstreamInfo is NULL.");
+        mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                     "_pstreamInfo is NULL.");
     }
 
     if(!_pstreamInfo->pfirstStreamPage) {
@@ -2640,7 +2650,7 @@ bool doBlock(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     if(nrhs > 0) {
         if(!mxIsNumeric(prhs[0]) || mxIsComplex(prhs[0])
-        || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)) {
+                || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)) {
 
             plhs[0] = mxCreateDoubleScalar(-1);
             return true;
@@ -2727,7 +2737,8 @@ bool doIsFinished(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     validateState(BASIC_INIT | FULL_INIT, 0);
 
     if(!_pstreamInfo) {
-        mexErrMsgTxt("An error has occurred - in full initialisation yet _pstreamInfo is NULL.");
+        mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                     "_pstreamInfo is NULL.");
     }
 
     if(!_pstreamInfo->pfirstStreamPage) {
@@ -2741,7 +2752,7 @@ bool doIsFinished(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     if(nrhs > 0) {
         /* Page has been specified */
         if(!mxIsNumeric(prhs[0]) || mxIsComplex(prhs[0])
-        || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)) {
+                || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)) {
 
             plhs[0] = mxCreateDoubleScalar(-1);
             return true;
@@ -2851,7 +2862,8 @@ bool doDelPage(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     validateState(BASIC_INIT | FULL_INIT, 0);
 
     if(!_pstreamInfo) {
-        mexErrMsgTxt("An error has occurred - in full initialisation yet _pstreamInfo is NULL.");
+        mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                     "_pstreamInfo is NULL.");
     }
 
     if(nrhs==0) {
@@ -2869,7 +2881,7 @@ bool doDelPage(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     else  {
         /* Been supplied a argument */
         if(!mxIsNumeric(prhs[0]) || mxIsComplex(prhs[0])
-        || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)) {
+                || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)) {
 
             plhs[0] = mxCreateDoubleScalar(0);
             return true;
@@ -2947,7 +2959,8 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     validateState(BASIC_INIT | FULL_INIT, 0);
 
     if(!_pstreamInfo) {
-        mexErrMsgTxt("An error has occurred - in full initialisation yet _pstreamInfo is NULL.");
+        mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                     "_pstreamInfo is NULL.");
     }
 
     /* Configure return values to defaults, and then change if necessary */
@@ -2962,8 +2975,8 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* There must be one element on rhs before function is called */
     if(!mxIsNumeric(prhs[0]) || mxIsComplex(prhs[0])
-        || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)
-        || (mxGetScalar(prhs[0])!=(int)mxGetScalar(prhs[0]))) {
+            || (mxGetN(prhs[0])!=1) || (mxGetM(prhs[0])!=1)
+            || (mxGetScalar(prhs[0])!=(int)mxGetScalar(prhs[0]))) {
 
         return true;
     }
@@ -3010,8 +3023,9 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
         return true;
     }
 
-    /* This initialises all elements to zero, so for shorter channels no problems should arise.
-     * Although on exit MATLAB frees the arrays created above, do so here for completeness
+    /* This initialises all elements to zero, so for shorter channels no
+     * problems should arise. Although on exit MATLAB frees the arrays created
+     * above, do so here for completeness
      */
     mxDestroyArray(plhs[0]);
     plhs[0] = mxCreateNumericMatrix(recSamples,recChannels, mxSAMPLE, mxREAL);
@@ -3029,7 +3043,8 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
          */
         while(pcbs && (recChannels > 0)) {
             if(pcbs->pbuffer && (pcbs->bufLen > 0)) {
-                memcpy(poutBuf, pcbs->pbuffer, min(recSamples, pcbs->bufLen) * sizeof(SAMPLE));
+                memcpy(poutBuf, pcbs->pbuffer,
+                       min(recSamples, pcbs->bufLen) * sizeof(SAMPLE));
                 poutBuf += recSamples;
 
                 *pChanList++ = pcbs->channel + 1;   /* Add 1 for base 1 channels */
@@ -3119,7 +3134,8 @@ bool doGetSampleRate(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
  *
  * TODO:
  */
-bool doGetFramesPerBuffer(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetFramesPerBuffer(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     if(!_pstreamInfo) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3172,7 +3188,8 @@ bool doGetFramesPerBuffer(int nlhs, mxArray *plhs[], int nrhs, const mxArray *pr
  *
  * TODO:
  */
-bool doGetStreamStartTime(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetStreamStartTime(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     if(!_pstreamInfo) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3272,7 +3289,8 @@ bool doGetRecDevice(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) 
  *
  * TODO:
  */
-bool doGetPlayMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetPlayMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     if(!_pstreamInfo || (_pstreamInfo->playDeviceID == paNoDevice)) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3305,7 +3323,8 @@ bool doGetPlayMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prh
  *
  * TODO:
  */
-bool doGetRecMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetRecMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     if(!_pstreamInfo || (_pstreamInfo->recDeviceID == paNoDevice)) {
         plhs[0] = mxCreateDoubleScalar(-1);
@@ -3340,7 +3359,8 @@ bool doGetRecMaxChannel(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs
  *
  * TODO:
  */
-bool doGetPlayLatency(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetPlayLatency(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     const PaStreamInfo *streamInfo;
 
     if(!_pstreamInfo || (_pstreamInfo->playDeviceID == paNoDevice)) {
@@ -3506,7 +3526,8 @@ bool doGetPageList(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
  *
  * TODO:
  */
-bool doGetCurrentPosition(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetCurrentPosition(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     StreamPageStruct *psps;
 
     if(!_pstreamInfo || !_pstreamInfo->pfirstStreamPage) {
@@ -3559,12 +3580,14 @@ bool doGetCurrentPosition(int nlhs, mxArray *plhs[], int nrhs, const mxArray *pr
  *
  * TODO:
  */
-bool doGetLastFinishedPage(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+bool
+doGetLastFinishedPage(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     StreamPageStruct *psps;
     unsigned int finishedPage;
 
     /* Check there is at least one finished page */
-    if(!_pstreamInfo || !_pstreamInfo->pfirstStreamPage || !_pstreamInfo->pfirstStreamPage->pageFinished) {
+    if(!_pstreamInfo || !_pstreamInfo->pfirstStreamPage ||
+            !_pstreamInfo->pfirstStreamPage->pageFinished) {
         plhs[0] = mxCreateDoubleScalar(-1);
         return true;
     }
@@ -3606,7 +3629,8 @@ bool doReset(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     /* Should not get here if _pstreamInfo is null */
     if(!_pstreamInfo) {
-        mexErrMsgTxt("An error has occurred - in full initialisation yet _pstreamInfo is NULL.");
+        mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                     "_pstreamInfo is NULL.");
     }
 
     /* freeing the stream info structure also closes the stream */
@@ -3640,11 +3664,20 @@ bool doReset(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
  */
 bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     const char *fieldNames[] = {"deviceID", "name",
-                                 "hostAPI",
-                                 "defaultLowInputLatency", "defaultLowOutputLatency",
-                                 "defaultHighInputLatency", "defaultHighOutputLatency",
-                                 "defaultSampleRate",
-                                 "inputChans", "outputChans"};
+                                "hostAPI", "defaultLowInputLatency",
+                                "defaultLowOutputLatency",
+                                "defaultHighInputLatency",
+                                "defaultHighOutputLatency",
+                                "defaultSampleRate",
+                                "supportedSampleRates",
+                                "inputChans", "outputChans"
+                               };
+
+    const double samplingRates[] = { 8000.0, 11025.0, 16000.0, 22050.0,
+                                     32000.0, 44100.0, 48000.0
+                                   };
+    const int numSamplingRates = sizeof(samplingRates)/sizeof(samplingRates[0]);
+
     const PaDeviceInfo *pdi;
     PaDeviceIndex i;
     int numDevices;
@@ -3656,11 +3689,11 @@ bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     if( numDevices < 0 )
     {
         mexPrintf( "PortAudio Error, Pa_CountDevices returned 0x%x\n",
-                    numDevices );
+                   numDevices );
     }
 
     plhs[0] = mxCreateStructMatrix(1, numDevices,
-            sizeof(fieldNames)/sizeof(char*), fieldNames);
+                                   sizeof(fieldNames)/sizeof(char*), fieldNames);
 
     for( i = 0; i < numDevices; i++)
     {
@@ -3671,21 +3704,74 @@ bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             mxSetField(plhs[0],i,"deviceID", mxCreateDoubleScalar(i));
             mxSetField(plhs[0],i,"name",mxCreateString(pdi->name));
             mxSetField(plhs[0],i,"hostAPI",
-                    mxCreateString(Pa_GetHostApiInfo( pdi->hostApi )->name));
+                       mxCreateString(Pa_GetHostApiInfo( pdi->hostApi )->name));
             mxSetField(plhs[0],i,"defaultLowInputLatency",
-                    mxCreateDoubleScalar(pdi->defaultLowInputLatency));
+                       mxCreateDoubleScalar(pdi->defaultLowInputLatency));
             mxSetField(plhs[0],i,"defaultLowOutputLatency",
-                    mxCreateDoubleScalar(pdi->defaultLowOutputLatency));
+                       mxCreateDoubleScalar(pdi->defaultLowOutputLatency));
             mxSetField(plhs[0],i,"defaultHighInputLatency",
-                    mxCreateDoubleScalar(pdi->defaultHighInputLatency));
+                       mxCreateDoubleScalar(pdi->defaultHighInputLatency));
             mxSetField(plhs[0],i,"defaultHighOutputLatency",
-                    mxCreateDoubleScalar(pdi->defaultHighOutputLatency));
+                       mxCreateDoubleScalar(pdi->defaultHighOutputLatency));
             mxSetField(plhs[0],i,"defaultSampleRate",
-                    mxCreateDoubleScalar(pdi->defaultSampleRate));
+                       mxCreateDoubleScalar(pdi->defaultSampleRate));
             mxSetField(plhs[0],i,"inputChans",
-                    mxCreateDoubleScalar(pdi->maxInputChannels));
+                       mxCreateDoubleScalar(pdi->maxInputChannels));
             mxSetField(plhs[0],i,"outputChans",
-                    mxCreateDoubleScalar(pdi->maxOutputChannels));
+                       mxCreateDoubleScalar(pdi->maxOutputChannels));
+            /*
+             * This is a workaround how to obtain list of supported sampling
+             * frequencies. Only the ones in the samplingRates array are
+             * tested. The device might be actually capabe of more. 
+             * */
+            PaStreamParameters* dummyIn;
+            PaStreamParameters* dummyOut;
+            if(pdi->maxInputChannels>0)
+            {
+                dummyIn = calloc(1,sizeof(PaStreamParameters));
+                dummyIn->device = i;
+                dummyIn->channelCount = pdi->maxInputChannels;
+                dummyIn->sampleFormat = paFloat32;
+            }
+            else
+            {
+                dummyIn = NULL;
+            }
+            if(pdi->maxOutputChannels>0)
+            {
+                dummyOut = calloc(1,sizeof(PaStreamParameters));
+                dummyOut->device = i;
+                dummyOut->channelCount = pdi->maxOutputChannels;
+                dummyOut->sampleFormat = paFloat32;
+            }
+            else
+            {
+                dummyOut = NULL;
+            }
+            int numSupSampRates = 0;
+            double supSampRates[numSamplingRates];
+            for(int srIdx = 0; srIdx<numSamplingRates; srIdx++)
+            {
+                if(!Pa_IsFormatSupported(dummyIn,dummyOut,
+                                         samplingRates[srIdx]))
+                {
+                    supSampRates[numSupSampRates++] = samplingRates[srIdx];
+                }
+            }
+
+            if(dummyIn!=NULL)
+                free(dummyIn);
+            if(dummyOut!=NULL)
+                free(dummyOut);
+
+            mxArray* mxSubSampRates =
+                mxCreateDoubleMatrix(1,numSupSampRates,mxREAL);
+            memcpy(mxGetData(mxSubSampRates),supSampRates,
+                   numSupSampRates*sizeof(double));
+
+            mxSetField(plhs[0],i,"supportedSampleRates",mxSubSampRates);
+
+
         }
     }
 
@@ -3776,7 +3862,7 @@ bool doResetSkippedSampleCount(int nlhs, mxArray *plhs[], int nrhs, const mxArra
 bool doAbout(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     static const char *aboutString =
 
-"Playrec is a Matlab utility (MEX file) that provides simple yet versatile access to \
+        "Playrec is a Matlab utility (MEX file) that provides simple yet versatile access to \
 soundcards using PortAudio, a free, open-source audio I/O library. It can be used on \
 different platforms (Windows, Macintosh, Unix) and access the soundcard via different \
 host API including ASIO, WMME and DirectSound under Windows.\n\n\
@@ -3792,16 +3878,16 @@ The Swedish Foundation for International Cooperation in Research and Higher Educ
 Ambisonic Systems.\n\n\
 ASIO is a trademark and software of Steinberg Media Technologies GmbH\n\n\
 Version: " VERSION "\nDate: " DATE "\nAuthor: " AUTHOR "\nCompiled on: "
-__DATE__ " at " __TIME__ "\nBuilt with defines: "
+        __DATE__ " at " __TIME__ "\nBuilt with defines: "
 
 #ifdef CASE_INSENSITIVE_COMMAND_NAME
-    "CASE_INSENSITIVE_COMMAND_NAME, "
+        "CASE_INSENSITIVE_COMMAND_NAME, "
 #endif
 #ifdef DEBUG
-    "DEBUG, "
+        "DEBUG, "
 #endif
 
-"\nAvailable host API: ";
+        "\nAvailable host API: ";
 
     PaHostApiIndex apiCount = Pa_GetHostApiCount();
     PaHostApiIndex i;
@@ -3869,23 +3955,23 @@ bool doOverview(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     /* To do this line wrapping quickly can use "^(.{1,90} )" and "\1\\\n" as
        find and replace regular expressions in Textpad */
     static const char *overviewString =
-"This page provides a basic outline of how to use the Playrec utility. More information \
+        "This page provides a basic outline of how to use the Playrec utility. More information \
 on any command can be found by using \"playrec('help', 'command_name')\" or simply \
 \"playrec help command_name\".\n\n"
-"To simplify operation, all functionality is accessed through one function in Matlab.  \
+        "To simplify operation, all functionality is accessed through one function in Matlab.  \
 To achieve this the first argument in the function call is always the name of the \
 command/operation required, eg \"playrec('getDevices')\" or \"playrec('isInitialised')\". \
 If additional arguments are required then they are specified after this, eg \
 \"playrec('init', 48000, 1, -1)\". A list of all available commands can be displayed by \
 supplying no arguments.\n\n"
-"Before any audio can be played or recorded, the utility must be initialised to use the \
+        "Before any audio can be played or recorded, the utility must be initialised to use the \
 required sample rate and device(s).  Initialisation is achieved using the \"init\" \
 command, supplying the ID of the required audio device(s) as returned by \"getDevices\". \
 Once successfully initialised, the sample rate or device(s) to be used cannot be changed \
 without first resetting the utility using the \"reset\" command.  This clears all \
 previously recorded data so use it with care. To check if the utility is currently \
 initialised, use the \"isInitialised\" command.\n\n"
-"The utility divides time up into pages with no restrictions on the duration of any one \
+        "The utility divides time up into pages with no restrictions on the duration of any one \
 page, although with very short pages skipping in the audio may occur if they cannot be \
 supplied fast enough. There can be as many pages as required provided the utility can \
 allocate enough memory. Pages are joined together sequentially in the order they are \
@@ -3896,7 +3982,7 @@ longest channel contained within the page.  Therefore if, for example, the recor
 are 1000 samples long whilst output channels are only 900 samples long, the page will be \
 1000 samples long and the final 100 output samples of the page will automatically be set \
 to 0.\n\n"
-"When each page is added, the channels that are to be used for recording and/or output are \
+        "When each page is added, the channels that are to be used for recording and/or output are \
 specified (depending on the command used to add the page).  The channels used must be \
 within the range specified during initialisation and no channel can be duplicated within a \
 channel list.  Within these limits, the channel list for each page can be different and \
@@ -3904,7 +3990,7 @@ each list can contain as many or as few channels as required in any order.  All 
 channels not provided with any data within a page will output 0 for the duration of the \
 page.  Similarly, during any times when there are no further pages to process 0 will be \
 output on all channels.\n\n"
-"Each page has a unique number which is returned by any of the commands used to add pages \
+        "Each page has a unique number which is returned by any of the commands used to add pages \
 (\"playrec\", \"play\" or \"rec\").  When a page is added, the utility does not wait until \
 the page has completed before returning.  Instead, the page is queued up and the page \
 number can then be used to check if the page has finished, using \"isFinished\".  \
@@ -3916,25 +4002,25 @@ not contain any recorded data, the whole page is deleted during this page conden
 this reason if either \"isFinished\", \"block\" or \"delPage\" indicate the page number is \
 invalid this means the page either never existed or has already finished and then been \
 deleted during page condensing.\n\n"
-"For pages containing recorded data, the data can be accessed using the \"getRec\" command \
+        "For pages containing recorded data, the data can be accessed using the \"getRec\" command \
 once the page is finished (indicating the recording has completed).  This does not delete \
 the data so it can be accessed as many times as required.  To delete the recorded data, \
 the whole page must be deleted using the \"delPage\" command.  This command will delete \
 pages nomatter what their current state: waiting to start, currently active or finished.  \
 If no page number is supplied, all pages will be deleted, again regardless of their state \
 so use with care.\n\n"
-"To ascertain which pages are still left in memory, the \"getPageList\" command can be \
+        "To ascertain which pages are still left in memory, the \"getPageList\" command can be \
 used, returning a list of the pages in chronological order.  NOTE: there may have been \
 gaps of silence or other pages between consecutive pages in this list due to pages either \
 being automatically or explicitly deleted as detailed above.  To determine if there were \
 gaps between pages due to all pages finishing processing before new ones are added, the \
 commands \"getSkippedSampleCount\" and \"resetSkippedSampleCount\" can be used.\n\n"
-"The page that is currently being output is returned by \"getCurrentPosition\", along with \
+        "The page that is currently being output is returned by \"getCurrentPosition\", along with \
 an approximate sample position within the page.  Additionally, the page number of the last \
 completed page still resident in memory is returned by \"getLastFinishedPage\".  NOTE: \
 this might not be the most recent page to finish if that page has been deleted either \
 during page condensing (ie contained no recorded data) or through the use of \"delPage\".\n\n"
-"Finally, the utility can be paused and resumed using the \"pause\" command.  This will \
+        "Finally, the utility can be paused and resumed using the \"pause\" command.  This will \
 manipulate all output and recording channels simultaneously to ensure synchronisation is \
 always maintained.  This command can also be used to ascertain if the utility is currently \
 running or paused.";
