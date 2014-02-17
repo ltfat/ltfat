@@ -83,7 +83,7 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %   filterbank and visualize the result:::
 %
 %     [f,fs]=greasy;  % Get the test signal
-%     [g,a,fc]=erbfilters(fs,'uniform','M',100);
+%     [g,a,fc]=erbfilters(fs,length(f),'uniform','M',100);
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90,'audtick');
 %
@@ -95,7 +95,7 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %
 %     [f,fs]=greasy;  % Get the test signal
 %     L=length(f);
-%     [g,a,fc]=erbfilters(fs,'fractional','L',L);
+%     [g,a,fc]=erbfilters(fs,L,'fractional');
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     norm(f-r)
