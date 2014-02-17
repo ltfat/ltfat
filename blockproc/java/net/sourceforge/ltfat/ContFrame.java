@@ -4,21 +4,19 @@
  */
 package net.sourceforge.ltfat;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import javax.swing.*;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.util.List;
+import java.awt.event.KeyEvent;
+import java.lang.Override;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.lang.Throwable;
 
 /**
  *
@@ -30,12 +28,8 @@ public class ContFrame {
     private Map paramMap = null;
     private Map sliderParamMap = null;
     private Map sliderBoundsMap = null;
-    public double newOne = 1;
-    public double sharedNotTouch = 1;
-    public double shared = 1;
     public double flag = 1;
-    public double dArray[] = new double[10];
-    private ExecutorService executor=Executors.newSingleThreadExecutor();
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
     
     JLabel loadLabel;
     JProgressBar loadBar;
@@ -47,9 +41,33 @@ public class ContFrame {
     private int namePrefferedSize = 70;
     private int sliderPrefferedSize = 170;
     private int valuePrefferedSize = 30;
-    
-    
+
+    /*
+    Sanity check.
+    Attempt to close the window if there was an exeption in the Matlab code
+     */
+
+  @Override
+    public void finalize() throws Throwable{
+      //System.out.println("Finalize called on ContFrame");
+        try{
+            this.close();
+        }
+        catch(Throwable t){
+            throw t;
+        }
+        finally {
+            super.finalize();
+        }
+
+    }
+
+
+
     public double getParam(String key) throws NoSuchFieldException {
+       if(paramMap == null)
+           return 0;
+
        Double d = (Double) paramMap.get(key);
        if(d==null){
           throw new NoSuchFieldException("Parameter "+key+" not found."); 
@@ -88,7 +106,7 @@ public class ContFrame {
 
     public void addControlElements(final List params) {
         // Ensure everything is done in the EDT
-        Runnable r = new Runnable() {
+        runInEDT(new Runnable() {
             @Override
             public void run() {
                 paramMap = new LinkedHashMap<String,Double>();
@@ -96,19 +114,10 @@ public class ContFrame {
                 sliderBoundsMap = new HashMap<JSlider,SliderBounds>();
                 initFrameComponents(params);
                 jf.pack();
+                jf.validate();
                 jf.setVisible(true);
             }
-        };
-
-        if (SwingUtilities.isEventDispatchThread()) {
-            r.run();
-        } else {
-            SwingUtilities.invokeLater(r);
-        }
-    }
-
-    public double getShared() {
-        return shared;
+        });
     }
 
     public void close() {
@@ -117,9 +126,37 @@ public class ContFrame {
             jf.dispose();
         }
     }
-    
-   public void updateBar(final double val) {
-       Runnable updateBarTask = new Runnable() {
+
+    private void runInEDT(Runnable r){
+        if (SwingUtilities.isEventDispatchThread()) {
+            //   System.out.println("We are on on EDT. Strange....");
+            try{
+                r.run();
+            }
+            catch(Exception e){}
+            catch(Throwable t){}
+        } else {
+            try{
+                SwingUtilities.invokeLater(r);
+            }
+            catch(Exception e){}
+            catch(Throwable t){}
+        }
+    }
+
+    private void runInPool(Runnable r){
+        if (SwingUtilities.isEventDispatchThread()) {
+            System.out.println("Warning! We are on on EDT. Strange....");
+        }
+        try{
+            executor.execute(r);
+        }
+        catch(Exception e){}
+        catch(Throwable t){}
+    }
+
+    public void updateBar(final double val) {
+       runInPool( new Runnable() {
            public void run() {
                if(loadLabel==null||loadBar==null||loadTxt==null)
                    return;
@@ -142,13 +179,12 @@ public class ContFrame {
                loadBar.repaint();
                loadTxt.repaint();
            }
-       };
-       if(updateBarTask!=null)
-            executor.execute(updateBarTask);
+       });
+
    }
 
     public ContFrame() {
-        Runnable r = new Runnable() {
+        runInEDT( new Runnable() {
             @Override
             public void run() {
                 try {
@@ -165,17 +201,20 @@ public class ContFrame {
                 }
 
                 jf = initFrame();
-
             }
-        };
+        });
 
-        if (SwingUtilities.isEventDispatchThread()) {
-            //   System.out.println("We are on on EDT. Strange....");
-            r.run();
-        } else {
-            SwingUtilities.invokeLater(r);
-        }
     }
+
+    public void setLocation(final double x, final double y){
+        runInEDT( new Runnable() {
+            @Override
+            public void run() {
+                    jf.setLocation((int)x,(int)y);
+            }
+        });
+    }
+
 
     private JFrame initFrame() {
         final JFrame buildJF = new JFrame("LTFAT Control Panel");
@@ -185,6 +224,21 @@ public class ContFrame {
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 flag = 0;
                 close();
+            }
+        });
+
+        // Add a global Ctrc-C keyboard shortcut listener
+        KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        kfm.addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if(e.isControlDown() && e.getKeyCode()==KeyEvent.VK_C &&
+                   e.getID()==KeyEvent.KEY_PRESSED){
+                    // Ctrl-C does not hide the
+                    flag = 0;
+                }
+                // The Ctrl-C is consumed here. It is not passed further.
+                return false;
             }
         });
 

@@ -392,9 +392,9 @@ void checkArgs(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
        }
     #endif
     #if defined(ISNARGINGE)&&!defined(ISNARGINEQ)
-       if(nrhs>=ISNARGINLE)
+       if(nrhs<ISNARGINGE)
        {
-          LTFAT_MEXERRMSG("Too few input arguments. Expected %i or more input arguments. Passed %i arg.",ISNARGINLE,nrhs);
+          LTFAT_MEXERRMSG("Too few input arguments. Expected %i or more input arguments. Passed %i arg.",ISNARGINGE,nrhs);
        }
     #endif
 

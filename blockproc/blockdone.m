@@ -7,6 +7,7 @@ function blockdone(varargin)
 %
 %   `blockdone(p1,p2,...)` in addition tries to call close methods on
 %   all input arguments which are JAVA objects (which are passed by reference).
+%   
 %
 %   See also: block
 
@@ -21,9 +22,11 @@ for ii=1:numel(varargin)
       try
          javaMethod('close',p);
       catch
-         warning(sprintf('%s: Object %i does not have a close method.',upper(mfilename),ii));
+         warning(sprintf('%s: Object %i does not have a close method.',...
+         upper(mfilename),ii));
       end
-   elseif isstruct(p) && isfield(p,'destructor') && isa(p.destructor,'function_handle')
+   elseif isstruct(p) && isfield(p,'destructor') &&...
+          isa(p.destructor,'function_handle')
       p.destructor();
    end
 end

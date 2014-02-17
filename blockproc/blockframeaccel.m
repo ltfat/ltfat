@@ -8,33 +8,44 @@ function Fo = blockframeaccel(F, Lb, varargin)
 %   structures for the processing of a consecutive stream of blocks.
 %
 %      `'sliwin',sliwin`   : Slicing window. `sliwin` have to be a window
-%                            of length *2L*. It is used in the slicing
-%                            window approach.
+%                            of length *2Lb* or a string accepted
+%                            by the |firwin| function. It is used only in
+%                            the slicing window approach. The default is 
+%                            `'hann'`.
+%
+%      `'transa',transa`   : Transition area length. Number of zeros to be 
+%                            used to pad the slicing window to *2Lb* from
+%                            both sides. The option is used as padding
+%                            only in the slicing window approach using 
+%                            window defined as a string.
 
 
 
 definput.flags.blockalg = {'naive','sliced','segola'};
 definput.keyvals.sliwin = [];
+definput.keyvals.transa = [];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-assert(~(~flags.do_sliced && ~isempty(kv.sliwin)),...
-   '%s: Definig slicing window without setting the ''silced'' flag.',mfilename);
+assert(~(~flags.do_sliced && ~isempty(kv.sliwin) && ~isempty(kv.transa)),...
+   sprintf('%s: Definig slicing window without setting the ''silced'' flag.',...
+   mfilename));
 
 if flags.do_sliced 
    if isempty(kv.sliwin)
       kv.sliwin = 'hann';
    end
 
+   if isempty(kv.transa)
+      kv.transa = 0;
+    end
+   
    if ~isnumeric(kv.sliwin)
       kv.sliwin = fftshift(firwin(kv.sliwin,2*Lb));
-   else
-      if numel(kv.sliwin)~=2*Lb
-         error('%s: The slicing window length has to be 2*Lb=%i.',upper(mfilename),2*Lb);
-      end
    end
 
-   Fo = frameaccel(F,2*Lb);
+   Fo = frameaccel(F,2*Lb+2*kv.transa);
    Fo.sliwin = kv.sliwin;
+   Fo.transa = kv.transa;
 elseif flags.do_segola
    % Determine window length without calling frameaccel
    % Fo = frameaccel(F,Lb);

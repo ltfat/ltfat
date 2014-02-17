@@ -19,7 +19,7 @@ OCTSCC   = \
 	comp_ifilterbank_td \
 	comp_atrousfilterbank_td \
 	comp_iatrousfilterbank_td \
-        comp_col2diag\
+    comp_col2diag\
 	comp_sepdgt \
 	comp_dct \
 	comp_dst \
@@ -49,6 +49,7 @@ OCTSCC   = \
 	comp_filterbank_fftbl \
 	comp_ifilterbank_fft \
 	comp_ifilterbank_fftbl \
+	comp_cellcoef2tf \
 
 	
 OCTSBASE = $(basename $(OCTSCC))

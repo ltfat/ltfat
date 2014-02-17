@@ -5,6 +5,7 @@
 /*
   Outside functions
 */
+/*
 void comp_ifilterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_ifilterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_ifilterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
@@ -12,7 +13,7 @@ void comp_ifilterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *p
 void comp_ifilterbank_fftbl_atexit();
 void comp_ifilterbank_fft_atexit();
 void comp_ifilterbank_td_atexit();
-
+*/
 /*
   Inside functions
 */
@@ -131,9 +132,11 @@ void ifilterbankAtExit()
    #ifdef _DEBUG
    mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
    #endif
+ /*
    comp_ifilterbank_fftbl_atexit();
    comp_ifilterbank_fft_atexit();
    comp_ifilterbank_td_atexit();
+*/
    if(mxF!=NULL)
       mxDestroyArray(mxF);
 
@@ -256,7 +259,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
       }
 
       // Finally call it!
-      comp_ifilterbank_td(1,plhs_td,6, prhs_td);
+     // comp_ifilterbank_td(1,plhs_td,6, prhs_td);
+     mexCallMATLAB(1,plhs_td,6, prhs_td,"comp_ifilterbank_td");
 
 
       // Copy pointers to a proper index in the output + unset all duplicate cell elements
@@ -292,7 +296,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
            aPtr[m] = a[fftArgsIdx[m]];
         }
 
-        comp_ifilterbank_fft(1,plhs_fft,3, prhs_fft);
+       // comp_ifilterbank_fft(1,plhs_fft,3, prhs_fft);
+         mexCallMATLAB(1,plhs_fft,3, prhs_fft,"comp_ifilterbank_fft");
 
         for(mwIndex m=0;m<fftCount;m++)
         {
@@ -332,7 +337,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         }
 
 
-        comp_ifilterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
+        //comp_ifilterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
+        mexCallMATLAB(1,plhs_fftbl,5, prhs_fftbl,"comp_ifilterbank_fftbl");
 
         for(mwIndex m=0;m<fftblCount;m++)
         {

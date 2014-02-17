@@ -1,4 +1,4 @@
-function p = blockpanel(params)
+function p = blockpanel(params,varargin)
 %BLOCKPANEL Control panel
 %   Usage: blockpanel(params)
 %
@@ -19,10 +19,25 @@ function p = blockpanel(params)
 %   params = {
 %               {'G','Gain',-20,20,0,21}
 %            }
+% 
+%   The function takes in the additional optional arguments:
 %
+%       `'location',location`:   Window inital position. `location`
+%                                has to be 2 element row vector `[x,y]`
+%                                defining distance from the top-left
+%                                corner of the screen. 
 
 if nargin<1
     error('%s: Too few input parameters.',upper(mfilename));
+end
+
+definput.keyvals.location=[50,50];
+[flags,kv]=ltfatarghelper({},definput,varargin);
+
+if ~isvector(kv.location) || any(size(kv.location)~=[1,2]) ||...
+    any(kv.location<0) || ~isreal(kv.location)
+   error(['%s: Location has to be a 2 element row vector of ',...
+         ' positive numbers.'],upper(mfilename));  
 end
 
 if ~iscell(params) || isempty(params)
@@ -75,6 +90,8 @@ end
 
 % Pass the data
 javaMethod('addControlElements',p,paramList);
+
+javaMethod('setLocation',p,kv.location(1),kv.location(2));
  
 % Give the object time to inilialize properly.
 pause(0.1);

@@ -47,8 +47,12 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
         % Equal block length assumtion
         % Reconstruct
         f = F.frsyn(c);
+        % If the transform length differs from the 2*Lb,
+        % Pick the correct part from the result
+        pad = size(f,1) - 2*Lb;
+        sIdx = floor(pad/2);
         % Result should not be longer than 2*Lb
-        f = f(1:2*Lb,:);
+        f = f(1+sIdx:sIdx+2*Lb,:);
         % Multiply by a slicing window
         f = bsxfun(@times,F.sliwin,f);
         % Load and add overlap (first half)

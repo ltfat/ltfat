@@ -113,7 +113,12 @@ function [c, fola] = blockana(F, f, fola)
        if do_sliced
           % Multiply by the slicing window (all channels)
           fwin = bsxfun(@times,F.sliwin,fext);
-          fwin = [fwin; zeros(F.L-size(fwin,1),size(fwin,2))];
+          % If some padding is necessary, do it symmetrically
+          pad = F.L-size(fwin,1);
+          W = size(fwin,2);
+          fwin = [zeros(floor(pad/2),W);...
+                  fwin;...
+                  zeros(ceil(pad/2),W)];
           % Apply transform
           c = F.frana(fwin);
        else

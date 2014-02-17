@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 2
+#define ISNARGINGE 1
 #define TYPEDEPARGS 0
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
@@ -20,12 +20,19 @@
 
 /*
 COMP_CELLCOEF2TF Cell to a tf-layout
-   Usage: coef = comp_cellcoef2tf(coef,dim)
+   Usage: coef = comp_cellcoef2tf(coef,maxLen)
 */
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
 {
    const mxArray* mxCoef = prhs[0];
+
+   double maxLen = 0.0;
+   if(nrhs>1)
+   {
+       maxLen = mxGetScalar(prhs[1]);
+   }
+
 
    mwSize M = mxGetNumberOfElements(mxCoef);
    
@@ -37,7 +44,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
    for(mwIndex ii=0;ii<M;ii++)
    {
       mxArray* mxCoefEl = mxGetCell(mxCoef,ii); 
-      coefElPtr[ii] = (const LTFAT_TYPE*) mxGetPr(mxCoefEl);
+      coefElPtr[ii] = mxGetData(mxCoefEl);
       coefElLen[ii] = mxGetM(mxCoefEl);
       if(maxCoefElLen<coefElLen[ii])
       {
@@ -45,8 +52,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
       }
    }
 
+   if(maxLen>0.0)
+   {
+        maxCoefElLen = maxLen<maxCoefElLen?maxLen:maxCoefElLen;
+   }
+
    plhs[0] = ltfatCreateMatrix(M, maxCoefElLen ,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
-   coefOutPtr = (LTFAT_TYPE*) mxGetPr(plhs[0]);
+   coefOutPtr = mxGetData(plhs[0]);
   
    for(mwIndex m=0;m<M;m++)
    {

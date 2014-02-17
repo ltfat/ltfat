@@ -2,6 +2,7 @@
 #include "fftw3.h"
 #include <string.h>
 
+/*
 void comp_filterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_filterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
 void comp_filterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
@@ -9,7 +10,7 @@ void comp_filterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *pr
 void comp_filterbank_fftbl_atexit();
 void comp_filterbank_fft_atexit();
 void comp_filterbank_td_atexit();
-
+*/
 
 static fftw_plan* p_double = NULL;
 static fftwf_plan* p_float = NULL;
@@ -33,9 +34,9 @@ void filterbankAtExit()
    #ifdef _DEBUG
    mexPrintf("Exit fnc called: %s\n",__PRETTY_FUNCTION__);
    #endif
-   comp_filterbank_fftbl_atexit();
-   comp_filterbank_fft_atexit();
-   comp_filterbank_td_atexit();
+  // comp_filterbank_fftbl_atexit();
+  // comp_filterbank_fft_atexit();
+  // comp_filterbank_td_atexit();
    if(mxF!=NULL)
       mxDestroyArray(mxF);
 
@@ -156,9 +157,9 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
       }
 
       // Finally call it!
-      comp_filterbank_td(1,plhs_td,5, prhs_td);
+      // comp_filterbank_td(1,plhs_td,5, prhs_td);
       // This has overhead:
-      // mexCallMATLAB(1,plhs_td,5, prhs_td,"comp_filterbank_td");
+      mexCallMATLAB(1,plhs_td,5, prhs_td,"comp_filterbank_td");
 
       // Copy pointers to a proper index in the output + unset all duplicate cell elements
       for(mwIndex m=0;m<tdCount;m++)
@@ -290,7 +291,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
            aPtr[m] = a[fftArgsIdx[m]];
         }
 
-        comp_filterbank_fft(1,plhs_fft,3, prhs_fft);
+        //comp_filterbank_fft(1,plhs_fft,3, prhs_fft);
+        mexCallMATLAB(1,plhs_fft, 3, prhs_fft,"comp_filterbank_fft");
 
         for(mwIndex m=0;m<fftCount;m++)
         {
@@ -332,7 +334,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         }
 
 
-        comp_filterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
+       // comp_filterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
+        mexCallMATLAB(1,plhs_fftbl, 5, prhs_fftbl,"comp_filterbank_fftbl");
 
         for(mwIndex m=0;m<fftblCount;m++)
         {

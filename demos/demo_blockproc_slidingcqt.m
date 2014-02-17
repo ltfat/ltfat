@@ -26,19 +26,20 @@ fobj = blockfigure();
 % makes ~23ms.
 % Note that the processing itself can introduce additional delay.
 bufLen = 1024;
+transa = 0;
 
 % Setup blocktream
 fs=block(source,varargin{:},'loadind',p,'L',bufLen);
 
 % Prepare CQT filters in range 200Hz--20kHz, 48 bins per octave
 % 320 + 2 filters in total.
-[g,a]=cqtfilters(fs,200,20000,48,2*bufLen,'fractionaluniform');
+[g,a]=cqtfilters(fs,200,20000,48,2*bufLen+2*transa,'fractionaluniform');
 
 % Prepare a frame object representing the filterbank
 F = frame('filterbankreal',g,a,numel(a));
 % Accelerate the frame object to be used with the "sliced" block processing
 % handling.
-Fa = blockframeaccel(F,bufLen,'sliced');
+Fa = blockframeaccel(F,bufLen,'sliced','transa',transa);
 
 % This variable holds overlaps in coefficients needed in the sliced block
 % handling between consecutive loop iterations.

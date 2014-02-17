@@ -103,6 +103,17 @@ if nargin < 5
     error('%s: Not enough input arguments.',upper(mfilename));
 end
 
+complain_notposint(fs,'fs');
+complain_notposint(fmin,'fmin');
+complain_notposint(fmax,'fmax');
+complain_notposint(bins,'bins');
+complain_notposint(Ls,'Ls');
+
+if fmin>=fmax
+    error('%s: fmin has to be less than fmax.',upper(mfilename));
+end
+
+
 definput.import = {'firwin'};
 definput.keyvals.L=[];
 definput.keyvals.Qvar = 1;

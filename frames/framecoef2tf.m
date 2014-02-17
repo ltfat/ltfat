@@ -58,7 +58,7 @@ switch(F.type)
  case {'ufwt','uwfbt','uwpfbt'}
   coef = permute(F.coef2native(coef,size(coef)),[2,1,3]); 
  case {'fwt','wfbt','wpfbt','filterbank','filterbankreal'}
-  coef = comp_cellcoef2tf(coef,1);
+  coef = comp_cellcoef2tf(coef);
  otherwise
   error('%s: TF-plane layout not supported for this transform.',upper(mfilename));
 end;

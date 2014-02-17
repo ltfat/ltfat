@@ -24,20 +24,21 @@ for realcomplexidx=1:2
                 fractional={'regsampling'};
                 fracname='regsamp';
             else
-                fractional={'fractional','L',Ls};
+                fractional={'fractional'};
                 fracname='fractional';
             end;
             
             for uniformidx=1:2
                 if uniformidx==1                
                     isuniform=0;
-                    uniform='nonuniform';
+                    uniform='regsampling';
                 else
                     isuniform=1;
                     uniform='uniform';
                 end;
                 
-                [g,a]=erbfilters(16000,fractional{:},warping,uniform,'redmul',1,realcomplex);
+                [g,a]=erbfilters(16000,Ls,fractional{:},warping,uniform,...
+                      'redmul',1,realcomplex);
                 L=filterbanklength(Ls,a);
                 
                 f=randn(L,1);

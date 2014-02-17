@@ -118,15 +118,15 @@ if nargin<2
     error('%s: Not enough input argumets.',upper(mfilename))
 end
 
-definput.import = {'firwin'};
+complain_notposint(fs,'fs');
+complain_notposint(Ls,'Ls');
 
-definput.keyvals.L=[];
+definput.import = {'firwin'};
 definput.keyvals.M=[];
 definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
 definput.keyvals.min_win = 4;
 definput.keyvals.spacing=1;
-
 definput.flags.warp     = {'symmetric','warped'};
 definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','uniform','fractional',...
@@ -257,4 +257,6 @@ else
     g=warpedblfilter(flags.wintype,fsupp_erb,fc,fs,@freqtoerb,@erbtofreq, ...
                      'scal',scal,'inf'); 
 end;
+
+end
 

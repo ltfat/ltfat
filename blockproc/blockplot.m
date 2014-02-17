@@ -12,36 +12,53 @@ function cola=blockplot(p,F,c,cola)
 %         cola  : Overlap to the next block.
 %
 %   `blockplot(p,F,c)` appends the block coefficients `c` to the running 
-%   coefficient plot in `p`.
+%   coefficient plot in `p`. The coefficients must have been obtained by
+%   `c=blockana(F,...)`. The format of `c` is changed to a rectangular 
+%   layout according to the type of `F`.
 %
-%   `cola=blockplot(p,F,c,cola)` doest the same, but adds `cola` to the 
+%   `blockplot(p,[],c)` does the same, but expects `c` to be already
+%   formated matrix of real numbers. The matrix dimensions are not
+%   restricted, but it will be shrinked or expanded to a vertical
+%   strip in the sliding image.
+%
+%   `cola=blockplot(p,F,c,cola)` does the same, but adds `cola` to the 
 %   first respective coefficients in `c` and returns last coefficients from
 %   `c`. This is only relevant for the sliced window blocking approach.
+%
 
-if size(c,2)>1
-   error('%s: Only one channel input is supported.',upper(mfilename));
+
+
+if ~isempty(F)
+    ctf = framecoef2tf(F,c(:,1));
+    
+    if size(c,2)>1
+        error('%s: Only one channel input is supported.',upper(mfilename));
+    end
+
+    if strcmp(F.blockalg,'sliced')
+       % DO the coefficient overlapping or cropping
+       %ctf = ctf(:,floor(end*3/8):floor(end*5/8)+1);
+
+       if nargin>3 
+          olLen = ceil(size(ctf,2)/2);
+          if isempty(cola)
+             cola = zeros(size(ctf,1),olLen,class(ctf));
+          end
+
+          ctf(:,1:olLen) = ctf(:,1:olLen) + cola;
+          cola = ctf(:,end+1-olLen:end);
+          ctf = ctf(:,1:olLen);
+       end
+    end
+    
+    ctf = abs(ctf);
+else
+    if ~isreal(c)
+        error('%s: Complex values are not supported',upper(mfilename));
+    end
+    ctf = c;
 end
 
-ctf = framecoef2tf(F,c(:,1));
-
-if strcmp(F.blockalg,'sliced')
-   % DO the coefficient overlapping or cropping
-   %ctf = ctf(:,floor(end*3/8):floor(end*5/8)+1);
-   
-   if nargin>3 
-      olLen = ceil(size(ctf,2)/2);
-      if isempty(cola)
-         cola = zeros(size(ctf,1),olLen,class(ctf));
-      end
-         
-      ctf(:,1:olLen) = ctf(:,1:olLen) + cola;
-      cola = ctf(:,end+1-olLen:end);
-      ctf = ctf(:,1:olLen);
-   end
-end
-
-
-ctf = abs(ctf);
 
 if isoctave
    % The JAVA 2D-array handling is row-major

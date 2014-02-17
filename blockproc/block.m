@@ -377,9 +377,12 @@ fs = kv.fs;
 if play
 chanString = sprintf('%d,',kv.playch);
 dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(1),devs)));
+%fssup = sprintf('%d, ',dev.supportedSampleRates);
+%fssup = ['Supported sampling frequencies [',fssup(1:end-2),'].\n' ];
 fprintf('Play device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
         dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowOutputLatency),...
         floor(1000*dev.defaultHighOutputLatency));
+%fprintf(fssup);
 end
 
 if record

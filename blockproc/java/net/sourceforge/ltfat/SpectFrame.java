@@ -22,6 +22,9 @@ import java.awt.image.MultiPixelPackedSampleModel;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.lang.Override;
+import java.lang.Runnable;
+import java.lang.Throwable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JFrame;
@@ -67,6 +70,26 @@ public class SpectFrame {
     private String climUnit = "dB";
     private final Object graphicsLock = new Object();
 
+        /*
+    Sanity check.
+    Attempt to close the window if there was an exeption in the Matlab code
+     */
+
+    @Override
+    public void finalize() throws Throwable{
+        //System.out.println("Finalize called on SpectFrame");
+        try{
+            this.close();
+        }
+        catch(Throwable t){
+            throw t;
+        }
+        finally {
+            super.finalize();
+        }
+
+    }
+
     public SpectFrame(){
         this(defWidth,defHeight);
     }
@@ -101,11 +124,33 @@ public class SpectFrame {
                 //setColormap(cm);
                 jf = initFrame(width,height);
                 jf.pack();
-                jf.setVisible(true);
             }
         });
     }
-        
+
+    public void setLocation(final double x, final double y){
+        runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                if(jf != null){
+                    jf.setLocation((int)x,(int)y);
+                }
+            }
+        });
+    }
+
+    public void show(){
+        runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                if(jf!=null)
+                    jf.setVisible(true);
+            }
+        });
+
+    }
+
+
     /* Octave version */
     public void setColormap(double[] cmMat, double cMatLen, double cols){
     if (colormap==null ){
@@ -317,17 +362,29 @@ public class SpectFrame {
      private void runInEDT(Runnable r){
         if (SwingUtilities.isEventDispatchThread()) {
             //   System.out.println("We are on on EDT. Strange....");
-            r.run();
+            try{
+                r.run();
+            }
+            catch(Exception e){}
+            catch(Throwable t){}
         } else {
-            SwingUtilities.invokeLater(r);
+            try{
+                SwingUtilities.invokeLater(r);
+            }
+            catch(Exception e){}
+            catch(Throwable t){}
         }
     }
      
      private void runInPool(Runnable r){
         if (SwingUtilities.isEventDispatchThread()) {
             System.out.println("Warning! We are on on EDT. Strange....");
-        } 
-        executor.execute(r);
+        }
+        try{
+            executor.execute(r);
+        }
+        catch(Exception e){}
+        catch(Throwable t){}
     } 
      
     private class SpectPanel extends JPanel{
