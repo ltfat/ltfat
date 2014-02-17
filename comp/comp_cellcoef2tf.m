@@ -3,22 +3,33 @@ function coef = comp_cellcoef2tf(coef,maxLen)
 %   Usage: coef = comp_cellcoef2tf(coef,dim)
 %
 
-% TO DO: This does not work in octave, because interp1 does not work with
-% TO DO: complex data and always returns double.
+
 
 
 coefLenMax = max(cellfun(@(cEl)size(cEl,1),coef));
-coefTmp = zeros(coefLenMax,numel(coef),size(coef{1},2),class(coef{1}));
 
 if nargin>1
    coefLenMax = min([coefLenMax,maxLen]);
 end
+
+coefTmp = zeros(coefLenMax,numel(coef),size(coef{1},2),class(coef{1}));
 
 for ii=1:numel(coef)
    if size(coef{ii},1) == 1
       coefTmp(:,ii) = coef{ii};
       continue;
    end
-   coefTmp(:,ii) = interp1(coef{ii},linspace(1,size(coef{ii},1),coefLenMax),'nearest');
+   if ~isoctave
+       coefTmp(:,ii) = interp1(coef{ii},linspace(1,size(coef{ii},1),...
+                       coefLenMax),'nearest');
+   else
+       coefRe = interp1(real(coef{ii}),linspace(1,size(coef{ii},1),...
+                       coefLenMax),'nearest');
+                   
+        coefIm = interp1(imag(coef{ii}),linspace(1,size(coef{ii},1),...
+                       coefLenMax),'nearest');  
+                   
+        coefTmp(:,ii) = coefRe + 1i*coefIm;
+   end
 end
 coef = coefTmp';
