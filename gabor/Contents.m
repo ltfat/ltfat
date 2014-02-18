@@ -39,6 +39,11 @@
 %  Reconstructing windows
 %    GABDUAL        -  Canonical dual window
 %    GABTIGHT       -  Canonical tight window
+%    GABFIRDUAL     -  Compute a FIR optimized dual window 
+%    GABOPTDUAL     -  Compute an optimized dual window
+%    GABFIRTIGHT    -  Compute a FIR optimized tight window
+%    GABOPTTIGHT    -  Compute an optimized tight window
+%    GABCONVEXOPT   -  Compute an optimized window
 %    GABPROJDUAL    -  Dual window by projection
 %    GABMIXDUAL     -  Dual window by mixing windows
 %    WILORTH        -  Window of Wilson/WMDCT orthonormal basis
