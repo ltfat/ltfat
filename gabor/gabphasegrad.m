@@ -14,7 +14,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   equal to the center frequency of the considered channel.
 %
 %   *tgrad* is scaled such that distances are measured in samples. Similarly,
-%   *fgrad* is scaled such that the Nyquest frequency (this highest possible
+%   *fgrad* is scaled such that the Nyquist frequency (the highest possible
 %   frequency) corresponds to a value of L/2.
 %
 %   The computation of *tgrad* and *fgrad* is inaccurate when the absolute
@@ -58,7 +58,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %   `[tgrad,fgrad]=gabphasegrad('abs',s,g,a,difforder)` uses a centered finite
 %   diffence scheme of order *difforder* to perform the needed numerical
-%   differentiation. Default is to use a 4'th order scheme.
+%   differentiation. Default is to use a 4th order scheme.
 %
 %   Currently the `'abs'` method only works if the window *g* is a Gaussian
 %   window specified as a string or cell array.
@@ -258,7 +258,7 @@ switch(lower(method))
   
   if ~info.gauss
     error(['The window must be a Gaussian window (specified as a string or ' ...
-           'as a cell arrray).']);
+           'as a cell array).']);
   end;
   
   L=N*a;
@@ -270,7 +270,7 @@ switch(lower(method))
   logs=log(s+realmin);
   
   % XXX REMOVE Add a small constant to limit the dynamic range. This should
-  % lessen the problem of errors in the differentation for points close to
+  % lessen the problem of errors in the differentiation for points close to
   % (but not exactly) zeros points.
   maxmax=max(logs(:));
   tt=-11;

@@ -15,6 +15,21 @@ function outsig=frana(F,insig);
 %   examples, the output from |frana| for a gabor frame cannot be
 %   passed to |idgt| without a reshape.
 %
+%   Examples:
+%   ---------
+%
+%   In the following example the signal *bat* is analyzed through a wavelet 
+%   frame. The result are the frame coefficients associated with the input  
+%   signal *bat* and the analysis frame `’fwt’`.:::
+%
+%      f = bat;
+%      w = 'sym8';
+%      J = 7;
+%      F = frame('fwt', w, J); 
+%      c = frana(F, f);
+%      % A plot of the frame coefficients
+%      plotframe(F, c, 'dynrange', 100);
+%
 %   See also: frame, framepair, frsyn, plotframe
 
 if nargin<2
@@ -22,11 +37,13 @@ if nargin<2
 end;
 
 if ~isstruct(F)
-  error('%s: First agument must be a frame definition structure.',upper(mfilename));
+  error('%s: First argument must be a frame definition structure.',...
+        upper(mfilename));
 end;
 
 if size(insig,1) == 1
-    error('%s: Currently only column vectors are supported. See bug #59.',upper(mfilename));    
+    error('%s: Currently only column vectors are supported. See bug #59.',...
+          upper(mfilename));    
 end
 
 

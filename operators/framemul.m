@@ -15,6 +15,27 @@ function h=framemul(f,Fa,Fs,s,varargin)
 %   to the signal *f*. The frame *Fa* is used for analysis and the frame
 %   *Fs* for synthesis.
 %
+%   Examples:
+%   ---------
+%
+%   In the following example Gabor coefficients obtained through the DGT 
+%   of pink noise are multiplied by the symbol batmask before resynthesis. 
+%   The result of this operation is an output signal *h* that is constructed 
+%   through a Gabor expansion of the modified coefficients.:::
+%
+%      f = pinknoise(400);
+%      a = 10;
+%      M = 40;
+%      [Fa, Fs] = framepair('dgt', 'gauss', 'dual', a, M); 
+%      s = framenative2coef(Fa, batmask);
+%      fhat = framemul(f, Fa, Fs, s);
+%      figure(1);
+%      plotframe(Fa,frana(Fa,f),'clim',[-100,-20]);
+%      figure(2);
+%      plotframe(Fa,s,'lin');
+%      figure(3);
+%      plotframe(Fa,frana(Fa,fhat),'clim',[-100,-20]);
+%
 %   See also: iframemul, framemuladj
   
 % Author: Peter L. Søndergaard

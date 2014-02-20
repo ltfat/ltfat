@@ -150,7 +150,7 @@ function [AF,BF]=framebounds(F,varargin);
     
   end;
   
-  if (flags.do_auto && ~F.isfac && F.L<=kv.crossover) || flags.do_full
+  if (flags.do_auto && ~F_isfac && F.L<=kv.crossover) || flags.do_full
     % Compute thee transform matrix.
     bigM=opadj(F,op(F,eye(L)));
     

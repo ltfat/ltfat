@@ -62,7 +62,9 @@ else
   % in the representation
   Ncoef = framered(F)*L;
   % sprintf for Octave compatibility
-  assert(abs(Ncoef-round(Ncoef))<1e-3,sprintf('%s: There is a bug. Ncoef=%d should be an integer.',upper(mfilename),Ncoef));
+  assert(abs(Ncoef-round(Ncoef))<1e-3,...
+         sprintf('%s: There is a bug. Ncoef=%d should be an integer.',...
+         upper(mfilename),Ncoef));
   Ncoef=round(Ncoef);
   coef=eye(Ncoef);
   G = frsyn(F,coef);  
