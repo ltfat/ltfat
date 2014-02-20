@@ -2,27 +2,22 @@
 # command 'mexext' is not available on your Matlab installation,
 # please execute the 'mexext' command within Matlab, and put the
 # answer into the line below (remember to uncomment).
-EXT = $(shell mexext)
+#EXT = $(shell mexext)
 #EXT = $(glnx86)
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="Applications/MATLAB_R2013a.app/")
-  MATLABROOT=Applications/MATLAB_R2013a.app/
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/Applications/MATLAB_R2013a.app/")
+  MATLABROOT=/Applications/MATLAB_R2013a.app/
 endif
 
 ifndef EXT
-  $(warning EXT variable is udefined. Using default EXT=mexa64)
+  $(warning EXT variable is udefined. Using default EXT=mexmaci64)
   EXT=mexmaci64
 endif
 
-CC=gcc
-MEXTGT=PolygonClip.$(EXT)
-MEXSRC=PolygonClip.c ../GPC/gpc.c
-LIBS= -L"$(MATLABROOT)/bin/maci64" -lmex -lmx
-INCLUDES= -I"$(MATLABROOT)/extern/include" -I../GPC
+ifndef ARCH
+  $(warning ARCH variable is udefined. Using default ARCH=maci64 )
+  ARCH=maci64
+endif
 
-all: $(MEXSRC) 
-	$(CC) -std=c99 -Wall -m64 -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT)
-
-clean:
-	rm PolygonClip.$(EXT)
+include Makefile_unix

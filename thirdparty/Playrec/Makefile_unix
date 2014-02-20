@@ -19,21 +19,22 @@ ifndef ARCH
 endif
 
 ifndef PORTAUDIO
-  PORTAUDIO=portaudio
+  PORTAUDIO=-lportaudio
 endif
+
+include ../../src/ostools.mk
 
 MEXTGT=playrec.$(EXT)
 MEXSRC=mex_dll_core.c pa_dll_playrec.c
-LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -l$(PORTAUDIO)
+LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx $(PORTAUDIO)
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../../src/thirdparty
-
-CC=gcc
+CFLAGS=-static-libgcc -fPIC -std=c99 -O3 -Wall -shared -DMATLAB_MEX_FILE
 
 all:
-	$(CC) -fPIC -std=c99 -s -O3 -Wall -shared $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 
+	$(CC) $(CFLAGS) $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 
 
 clean:
-	-rm $(MEXTGT)
+	$(RM) $(MEXTGT)
 
 .PHONY: all clean
 

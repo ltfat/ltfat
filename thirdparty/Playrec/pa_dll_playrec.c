@@ -3680,6 +3680,7 @@ bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 
     const PaDeviceInfo *pdi;
     PaDeviceIndex i;
+    int ii;
     int numDevices;
 
     validateState(BASIC_INIT, 0);
@@ -3722,7 +3723,7 @@ bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             /*
              * This is a workaround how to obtain list of supported sampling
              * frequencies. Only the ones in the samplingRates array are
-             * tested. The device might be actually capabe of more. 
+             * tested. The device might be actually capabe of more.
              * */
             PaStreamParameters* dummyIn;
             PaStreamParameters* dummyOut;
@@ -3750,12 +3751,12 @@ bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
             }
             int numSupSampRates = 0;
             double supSampRates[numSamplingRates];
-            for(int srIdx = 0; srIdx<numSamplingRates; srIdx++)
+            for(ii = 0; ii<numSamplingRates; ii++)
             {
                 if(!Pa_IsFormatSupported(dummyIn,dummyOut,
-                                         samplingRates[srIdx]))
+                                         samplingRates[ii]))
                 {
-                    supSampRates[numSupSampRates++] = samplingRates[srIdx];
+                    supSampRates[numSupSampRates++] = samplingRates[ii];
                 }
             }
 

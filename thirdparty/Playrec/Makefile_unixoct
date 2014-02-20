@@ -1,11 +1,23 @@
 # Use GNU Make to process this file.
 MKOCTFILE ?= mkoctfile
 
+ifndef EXT
+  EXT=mex
+endif
+
+ifndef PORTAUDIO
+  PORTAUDIO=portaudio
+endif
+
+include ../../src/ostools.mk
+
+ADDITIONALFLAGS = -L. -l$(basename $(PORTAUDIO)) -I. -I../../src/thirdparty
 
 all:
-	$(MKOCTFILE) -Wall -mex -I../../src/thirdparty -I. -lportaudio mex_dll_core.c pa_dll_playrec.c -o playrec.mex
+	$(MKOCTFILE) -Wall -mex $(portaudio) mex_dll_core.c pa_dll_playrec.c \
+	             $(ADDITIONALFLAGS)	-o playrec.$(EXT)
 
 clean:
-	rm *.o *.mex
+	$(RM) *.o *.$(EXT)
 
 .PHONY: all clean

@@ -1,7 +1,9 @@
 # Use GNU Make to process this file
+#
+# REAMRK: No dependency is resolved here!
 
 
-CFLAGS=-O3 -fpic -std=c99 -Ithirdparty -fvisibility=hidden
+CFLAGS=-O3 -fPIC -std=c99 -Ithirdparty 
 
 include filedefs.mk
 
@@ -10,20 +12,28 @@ toCompile = $(files) $(files_blaslapack)
 DFILES = $(addprefix d,$(toCompile)) $(files_notypechange)
 SFILES = $(addprefix s,$(toCompile))
 
-files_unix = $(addprefix d,$(toCompile)) $(addprefix s,$(toCompile)) $(files_notypechange)
+#files_unix = $(addprefix d,$(toCompile)) $(addprefix s,$(toCompile)) $(files_notypechange)
 #files_matlab = $(files) $(files_blaslapack) dltfat_blaslapack_matlab.o sltfat_blaslapack_matlab.o
 
-all: double single
+all: double_static single_static
 
-double: $(DFILES) Makefile_unix
+double_static: $(DFILES) Makefile_unix
 	ar rvu libltfat.a $(DFILES) 
 	ranlib libltfat.a
 	cp -f libltfat.a ../lib
 
-single: $(SFILES) Makefile_unix
+single_static: $(SFILES) Makefile_unix
 	ar rvu libltfatf.a $(SFILES) 
 	ranlib libltfatf.a
 	cp -f libltfatf.a ../lib
+
+double_shared: $(DFILES) Makefile_unix
+	$(CC) -shared $(DFILES) -o libltfat.so
+	cp -f libltfat.so ../lib
+
+single_shared: $(SFILES) Makefile_unix
+	$(CC) -shared $(SFILES) -o libltfatf.so
+	cp -f libltfatf.so ../lib
 
 sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
 	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o

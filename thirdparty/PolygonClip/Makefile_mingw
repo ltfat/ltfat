@@ -18,16 +18,4 @@ ifndef ARCH
   ARCH=win64
 endif
 
-CC=gcc
-MEXTGT=PolygonClip.$(EXT)
-MEXSRC=PolygonClip.c ../GPC/gpc.c
-LIBS= -L"$(MATLABROOT)\bin\$(ARCH)" -lmex -lmx
-INCLUDES= -I"$(MATLABROOT)\extern\include" -I../GPC
-
-all: $(SOURCE) 
-	$(CC) -std=c99 -Wall -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) -static-libgcc 
-
-clean:
-	del $(MEXTGT)
-
-.PHONY: all clean
+include Makefile_unix

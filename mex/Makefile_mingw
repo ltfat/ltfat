@@ -18,41 +18,32 @@ ifndef ARCH
   ARCH=win64
 endif
 
+ifndef DFFTW
+   DFFTW=-lfftw3-3
+endif
+
+ifndef SFFTW
+   SFFTW=-lfftw3f-3
+endif
+
 CFLAGS=-O3 -shared -Wall -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
 
 include filedefs.mk
 include ../src/ostools.mk
 
-SHAREDEXT = dll
-
 MEXBASE = $(MEXBASESAFE) $(MEXBASEMORE)
 MEXS    = $(addsuffix .$(EXT),$(MEXBASE))
-MEXLINKS  = $(addsuffix .$(SHAREDEXT),$(MEXSOFTLINKS))
-MEXDEPEND = $(addsuffix .$(EXT),$(MEXDEPENDFILES))
 
+MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include" 
+MEXLINKFLAGS=-static-libgcc -Wl,--dll -L"$(MATLABROOT)\bin\$(ARCH)" \
+			 -lmex -lmx -lmwlapack -lmwblas 
 
-MEXCOMPFLAGS=-I"$(MATLABROOT)\extern\include" -DMATLAB_MEX_FILE
-MEXLIBS=-lmex -lmx -lmwlapack -lmwblas
-MEXLINKFLAGS=-static-libgcc -Wl,--dll -L"$(MATLABROOT)\bin\$(ARCH)" $(MEXLIBS)
-
-
-all: $(MEXS) $(MEXLINKS) $(MEXDEPEND) killlinks
-
-#all: $(MEXS) $(MEXLINKS) killlinks
+all: $(MEXS)
 
 $(MEXS): %.$(EXT): %.c 
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L../lib -lltfat -lltfatf -L./ -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS)
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ $(DFFTW) $(SFFTW) -lltfat -lltfatf $(MEXLINKFLAGS)
 
-$(MEXLINKS): %.$(SHAREDEXT): %.$(EXT)
-	$(CP) $< $(addprefix lib,$@)
-
-$(MEXDEPEND): %.$(EXT): %.c
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L../lib -lltfat -lltfatf -L./ $(addprefix -l,$(MEXSOFTLINKS)) -lfftw3-3 -lfftw3f-3 $(MEXLINKFLAGS) 
-
-killlinks:
-	$(RM) $(addprefix lib, $(MEXLINKS))
-	
-clean: killlinks
+clean: 
 	$(RM) *.$(EXT)
 
 .PHONY: all clean

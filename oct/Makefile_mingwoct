@@ -12,57 +12,18 @@ endif
 
 include ../src/ostools.mk
 
-OCTSCC   = \
-    comp_chirpzt \
-    comp_gga \
-    comp_filterbank_td \
-	comp_ifilterbank_td \
-	comp_atrousfilterbank_td \
-	comp_iatrousfilterbank_td \
-    comp_col2diag\
-	comp_sepdgt \
-	comp_dct \
-	comp_dst \
-	comp_sepdgtreal \
-	comp_dgtreal_ola \
-	comp_dwilt  \
-	comp_idwilt  \
-	comp_dwiltiii  \
-	comp_idwiltiii  \
-	comp_gabdual_long  \
-	comp_gabtight_long  \
-	comp_fftreal  \
-	comp_gabreassign  \
-	comp_heapint  \
-	comp_isepdgt  \
-	comp_isepdgtreal  \
-	comp_ifftreal  \
-	comp_iwfac \
-	comp_nonsepdgt_multi  \
-	comp_nonsepdgt_shear  \
-	comp_nonsepwin2multi  \
-	comp_pchirp  \
-	comp_pgauss  \
-	comp_ufilterbank_fft  \
-	comp_wfac \
-	comp_filterbank_fft \
-	comp_filterbank_fftbl \
-	comp_ifilterbank_fft \
-	comp_ifilterbank_fftbl \
-	comp_cellcoef2tf \
+OCTSCC   = $(shell ls comp_*.cc)
 
 	
 OCTSBASE = $(basename $(OCTSCC))
 OCTS     = $(addsuffix .$(EXT),$(OCTSBASE))
-OCTAVEBIN = $(MATLABROOT)\bin
-OCTAVELIB = $(MATLABROOT)\lib
-ADDITIONALIBS = -L../lib -lltfat -lltfatf  -L$(OCTAVELIB) -lblas -lfftw3 -lfftw3f -llapack 
+ADDITIONALIBS = -L../lib -lltfat -lltfatf -lblas -lfftw3 -lfftw3f -llapack 
 
 
 all:	$(OCTS)
 
 %.$(EXT): %.cc
-	mkoctfile --strip -v -Wall "-Wl,-rpath,." -I../src/thirdparty -I. -I../src $(ADDITIONALIBS)  $<
+	mkoctfile --strip -v -Wall -I../src/thirdparty -I. -I../src $(ADDITIONALIBS)  $<
 	del *.o
 
 clean:

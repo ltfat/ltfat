@@ -1,2 +1,1 @@
-# Use GNU Make to process this file.
 include Makefile_unixoct

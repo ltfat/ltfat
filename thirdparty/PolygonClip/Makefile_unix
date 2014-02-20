@@ -4,7 +4,7 @@
 # make -f Makefile_unix MATLABROOT="/usr/local/MATLAB/R2011a"  EXT=mexa64 
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="C:\Program Files\MATLAB\R2011b" )
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a" )
   MATLABROOT=/usr/local/MATLAB/R2011a
 endif
 
@@ -13,18 +13,24 @@ ifndef EXT
   EXT=mexa64
 endif
 
+ifndef ARCH
+  $(warning ARCH variable is udefined. Using default ARCH=glnxa64 )
+  ARCH=glnxa64
+endif
+
+include ../../src/ostools.mk
 
 MEXTGT=PolygonClip.$(EXT)
 MEXSRC=PolygonClip.c ../GPC/gpc.c
-LIBS= -L. -L"$(MATLABROOT)/bin/glnxa64" -lmex -lmx
+LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -static-libgcc 
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../GPC
+CFLAGS=-fPIC -std=c99 -s -O3 -Wall -shared -DMATLAB_MEX_FILE 
 
-CC=gcc
 
 all:
-	$(CC) -fPIC -std=c99 -s -O3 -Wall -shared $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 
+	$(CC) $(CFLAGS) $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 
 
 clean:
-	-rm $(MEXTGT)
+	$(RM) $(MEXTGT)
 
 .PHONY: all clean

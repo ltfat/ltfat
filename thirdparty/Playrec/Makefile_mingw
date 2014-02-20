@@ -18,22 +18,6 @@ ifndef ARCH
   ARCH=win64
 endif
 
-ifndef PORTAUDIO
-  PORTAUDIO=portaudio
-endif
+include Makefile_unix
 
-MEXTGT=playrec.$(EXT)
-MEXSRC=mex_dll_core.c pa_dll_playrec.c
-LIBS= -L. -L"$(MATLABROOT)\bin\$(ARCH)" -lmex -lmx -l$(PORTAUDIO)
-INCLUDES= -I"$(MATLABROOT)\extern\include" -I. -I../../src/thirdparty
-
-CC=gcc
-
-all: $(SOURCE) 
-	$(CC) -std=c99 -s -O3 -Wall -shared -DMATLAB_MEX_FILE $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) -static-libgcc 
-
-clean:
-	del $(MEXTGT)
-
-.PHONY: all clean
 

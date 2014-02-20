@@ -1,1 +1,16 @@
+ifndef MATLABROOT
+  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/Applications/MATLAB_R2013a.app/")
+  MATLABROOT=/Applications/MATLAB_R2013a.app/
+endif
+
+ifndef EXT
+  $(warning EXT variable is udefined. Using default EXT=mexmaci64)
+  EXT=mexmaci64
+endif
+
+ifndef ARCH
+  $(warning ARCH variable is udefined. Using default ARCH=maci64 )
+  ARCH=maci64
+endif
+
 include Makefile_unix

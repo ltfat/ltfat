@@ -81,12 +81,14 @@ else
     ext=mexext;
 end;
 
+fftw_lib_names = {'fftw3', 'fftw3f' };
+
 % Check if we are on Windows
 if ispc
     makefilename='Makefile_mingw';
     make_exe = 'mingw32-make';
     sharedExt = 'dll';
-    fftw_lib_names = {'libfftw3-3', 'libfftw3f-3' };
+    %fftw_lib_names = {'fftw3', 'fftw3f' };
     % The pre-compiled Octave for Windows comes only in 32bit version (3.6.4)
     % We use different Makefiles
     if isoctave
@@ -105,7 +107,7 @@ end;
 if ismac
    makefilename='Makefile_mac';
    make_exe = 'make';
-   sharedExt = 'so';
+   sharedExt = 'dylib';
 end;
 
 
@@ -116,35 +118,47 @@ if flags.do_clean
   if do_lib
     disp('========= Cleaning libltfat ===============');
     cd([bp,'src']);
-    [status,result]=system([make_exe, ' -f ',makefilename,' clean']);
+    callmake(make_exe,makefilename,'target','clean');
+    %[status,result]=system([make_exe, ' -f ',makefilename,' clean']);
     %disp('Done.');    
   end;
   
   if do_mex
     fprintf('========= Cleaning %s interfaces =========\n', upper(extname));
      cd([bp,extname]);
-     [status,result]=system([make_exe, ' -f ',makefilename,' clean',...
-                     ' EXT=',ext]); 
+     callmake(make_exe,makefilename,'target','clean','ext',ext);
+     %[status,result]=system([make_exe, ' -f ',makefilename,' clean',...
+     %                ' EXT=',ext]); 
   end;
   
   if do_gpc
     disp('========= Cleaning GPC ====================');
     cd([bp,'thirdparty',filesep,'PolygonClip']);
     clear mex; 
-    [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
+    callmake(make_exe,makefilename,'target','clean','ext',mexext);
+    %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
   
   if do_playrec
+     % Use the correct makefile 
+     if isoctave
+       if ~strcmpi(makefilename(end-2:end),ext)
+          makefilename = [makefilename,ext];
+       end
+    end 
+      
     disp('========= Cleaning PLAYREC ================');
     cd([bp,'thirdparty',filesep,'Playrec']);
     clear mex; 
-    [status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
+    %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
+    callmake(make_exe,makefilename,'target','clean','ext',mexext); 
   end;
   
   if do_java
     disp('========= Cleaning JAVA ================');
     cd([bp,'blockproc',filesep,'java']);
-    [status,result]=system([make_exe,' clean']);
+    %[status,result]=system([make_exe,' clean']);
+    callmake(make_exe,[],'target','clean');
   end;
 
   cd(curdir);
@@ -156,18 +170,25 @@ if flags.do_compile
   if do_lib
     disp('========= Compiling libltfat ==============');
     cd([bp,'src']);
-    %if isoctave
-    %  system([make_exe,' -f ',makefilename])
-    %else
-      if ispc
-         filesExist(cellfun(@(fEl) [bp,'mex',filesep,fEl,'.dll'], ...
-                               fftw_lib_names,'UniformOutput',false));
-      end;
-      cd([bp,'src']);
-      clear mex; 
-      [status,result]=system([make_exe, ' -f ',makefilename,...
-                  ' MATLABROOT=','"',matlabroot,'"',...
-                  ' ARCH=',computer('arch')]);
+    clear mex; 
+    
+    dfftw = ['-l',fftw_lib_names{1}];
+    sfftw = ['-l',fftw_lib_names{2}];
+    if ispc && ~isoctave
+        fftw_lib_found_names = searchfor(bp,fftw_lib_names,sharedExt);
+        if ~isempty(fftw_lib_found_names)
+           dfftw = ['-l',fftw_lib_found_names{1}(1:end-numel(sharedExt)-1)];
+           sfftw = ['-l',fftw_lib_found_names{2}(1:end-numel(sharedExt)-1)];
+       end
+    end
+      % DFFTW and SFFTW are not used in the unix_makefile
+      [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
+                       'dfftw',dfftw,'sfftw',sfftw);
+%       [status,result]=system([make_exe, ' -f ',makefilename,...
+%                   ' MATLABROOT=','"',matlabroot,'"',...
+%                   ' ARCH=',computer('arch'),'"',...
+%                   ' DFFTW=',dfftw,'"',...
+%                   ' SFFTW=',sfftw]);
       if(~status)
         disp('Done.');
       else
@@ -178,17 +199,29 @@ if flags.do_compile
   
   if do_mex
     fprintf('========= Compiling %s interfaces ========\n', upper(extname));
-    if ispc
-        filesExist(cellfun(@(fEl) ['mex',filesep,fEl,'.dll'], ...
-                           fftw_lib_names,'UniformOutput',false));
-    end;
     clear mex; 
-
     cd([bp,extname]);
-       [status,result]=system([make_exe, ' -f ',makefilename,...
-                            ' MATLABROOT=','"',matlabroot,'"',...
-                            ' EXT=',ext,...
-                            ' ARCH=',computer('arch')]);
+    
+    dfftw = ['-l',fftw_lib_names{1}];
+    sfftw = ['-l',fftw_lib_names{2}];
+    if ~isoctave
+        fftw_lib_found_names = searchfor(bp,fftw_lib_names,sharedExt);
+        if ~isempty(fftw_lib_found_names)
+           dfftw = fftw_lib_found_names{1};
+           sfftw = fftw_lib_found_names{2};
+           if isunix && ~strcmpi(dfftw(1:2),'"/')
+              dfftw = ['-l',dfftw(1:end-numel(sharedExt)-1)];
+              sfftw = ['-l',sfftw(1:end-numel(sharedExt)-1)];
+           end
+       end
+    end
+    
+    [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
+                      'ext',ext,'dfftw',dfftw,'sfftw',sfftw);
+%        [status,result]=system([make_exe, ' -f ',makefilename,...
+%                             ' MATLABROOT=','"',matlabroot,'"',...
+%                             ' EXT=',ext,...
+%                             ' ARCH=',computer('arch')]);
     if(~status)
       disp('Done.');
     else
@@ -201,10 +234,12 @@ if flags.do_compile
     % Compile the PolygonClip interface to GPC for use with mulaclab
     cd([bp,'thirdparty',filesep,'PolygonClip']);
     clear mex; 
-    [status,result]=system([make_exe, ' -f ',makefilename,...
-                     ' MATLABROOT=','"',matlabroot,'"',...
-                     ' EXT=',mexext,...
-                     ' ARCH=',computer('arch')]);
+    [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
+                      'ext',ext);
+%     [status,result]=system([make_exe, ' -f ',makefilename,...
+%                      ' MATLABROOT=','"',matlabroot,'"',...
+%                      ' EXT=',mexext,...
+%                      ' ARCH=',computer('arch')]);
     if(~status)
       disp('Done.');
     else
@@ -215,44 +250,71 @@ if flags.do_compile
     disp('========= Compiling PLAYREC ===============');
     % Compile the Playrec (interface to portaudio) for the real-time block-
     % stream processing
-    % On Unix, search the installed libraries instead
-    portaudioLib = 'portaudio';
-    if ispc
-       % Check if portaudio library is present in the Matlab instalation
+
+    if isoctave
+        % Because mkoctfile automatically adds -l
+       portaudioLib = 'portaudio';
+    else
+       portaudioLib = '-lportaudio';
+    end
+
        binArchPath = [matlabroot,filesep,'bin',filesep,computer('arch')];
        playrecPath = [bp,'thirdparty',filesep,'Playrec'];
-       foundPAuser = dir([playrecPath,filesep,'*portaudio*',sharedExt]);
-       foundPAmatlab = dir([binArchPath,filesep,'*portaudio*',sharedExt]);
-
+       % Check if portaudio is in thirdparty/Playrec/
+       foundPAuser = dir([playrecPath,filesep,'*portaudio*',sharedExt,'*']);
+       
+       foundPAmatlab = [];
+       if ~isoctave
+          % Check if portaudio library is present in the Matlab instalation
+          foundPAmatlab = dir([binArchPath,filesep,'*portaudio*',sharedExt,'*']);
+       end
+       
        if ~isempty(foundPAuser)
-          if numel(foundPAuser)>2
+          if numel(foundPAuser)>1
              error('Ambiguous portaudio libraries in %s. Please leave just one.',playrecPath);
           end
           portaudioLib = foundPAuser(1).name;
-          fprintf('Using %s.\n',portaudioLib);
-       elseif ~isempty(foundPAmatlab)
-          if numel(foundPAmatlab)>2
-             error('Ambiguous portaudio libraries in %s.',binArchPath);
+          if isunix
+              % Need full path
+              portaudioLib=[playrecPath,filesep,portaudioLib];
           end
-          portaudioLib = foundPAmatlab(1).name;
-          fprintf('Using %s.\n',portaudioLib);
+          fprintf('Using %s from thirdparty/Playrec.\n',portaudioLib);
+       elseif ~isempty(foundPAmatlab)
+          if numel(foundPAmatlab)>1
+             if ispc 
+                %This should not happen on Windows
+                %Use the first one on Linux
+                error('Ambiguous portaudio libraries in %s.',binArchPath);
+             end
+          end
+             portaudioLib = foundPAmatlab(1).name;
+             if isunix
+                portaudioLib = [binArchPath,filesep,portaudioLib];
+             end
+          
+          fprintf('Using %s from Matlab instalation.\n',foundPAmatlab(1).name);
        else
+          if ispc && isoctave || ispc
           error(['Portaudio not found. Please download Portaudio http://www.portaudio.com\n',...
                  'and build it as a shared library and copy it to the\n',...
                  '%s directory. \n'],playrecPath);
+          elseif ~isoctave
+              warning('Portaudio lib should be installed on your system.')
+              % Let us hope portaudio is installed on the system
+          end
        end
 
+
        % Crop library filename
-       if numel(portaudioLib)>3
-         if strcmp(portaudioLib(1:3),'lib')
-           portaudioLib = portaudioLib(4:end);
-         end
-         dotsInPath = strfind(portaudioLib,'.');
-         if ~isempty(dotsInPath) 
-           portaudioLib = portaudioLib(1:dotsInPath(1)-1);
-         end
-       end
-    end
+%        if numel(portaudioLib)>3
+%          if strcmp(portaudioLib(1:3),'lib')
+%            portaudioLib = portaudioLib(4:end);
+%          end
+%          dotsInPath = strfind(portaudioLib,'.');
+%          if ~isempty(dotsInPath) 
+%            portaudioLib = portaudioLib(1:dotsInPath(1)-1);
+%          end
+%        end
     
     if isoctave
        if ~strcmpi(makefilename(end-2:end),ext)
@@ -262,11 +324,13 @@ if flags.do_compile
     
     cd([bp,'thirdparty',filesep,'Playrec']);
     clear mex; 
-    [status,result]=system([make_exe, ' -f ',makefilename,...
-                     ' MATLABROOT=','"',matlabroot,'"',...
-                     ' EXT=',mexext,...
-                     ' PORTAUDIO=',portaudioLib,...
-                     ' ARCH=',computer('arch')]);
+    [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
+                      'ext',mexext,'portaudio',portaudioLib);
+%     [status,result]=system([make_exe, ' -f ',makefilename,...
+%                      ' MATLABROOT=','"',matlabroot,'"',...
+%                      ' EXT=',mexext,...
+%                      ' PORTAUDIO=',portaudioLib,...
+%                      ' ARCH=',computer('arch')]);
     if(~status)
       disp('Done.');
     else
@@ -279,7 +343,7 @@ if flags.do_compile
     % Compile the JAVA classes
     cd([bp,'blockproc',filesep,'java']);
     clear mex; 
-    [status,result]=system(make_exe);
+    [status,result] = callmake(make_exe);
     if(~status)
       disp('Done.');
     else
@@ -337,6 +401,111 @@ function status = filesExist(filenames)
          error('%s: File %s not found.',mfilename,filename);
       end
    end
+ 
+function found_files=searchfor(bp,files,sharedExt)
+
+      found_names = {};
+      if ispc 
+         for ii=1:numel(files) 
+            L = dir([bp,'mex',filesep,'*',files{ii},'*.',sharedExt]);
+            if isempty(L)
+                error(['%s: %s could not be found in ltfat/mex subdir.',...
+                       ' Please download the FFTW dlls and istall them.'],...
+                      upper(mfilename),files{ii});
+            end
+            found_files{ii} = L(1).name;
+            fprintf('   ...using %s from ltfat/mex.\n',L(1).name);
+         end
+      elseif isunix
+          
+          
+          binArchPath = [matlabroot,filesep,'bin',filesep,computer('arch')];
+          mexPath = [bp,'mex'];
+          
+          for ii=1:numel(files)
+             % First, try searching in mex dir
+             absPath = 1;
+             path = mexPath;
+             L = dir([mexPath,filesep,'*',files{ii},'*.',sharedExt,'*']); 
+             if isempty(L)
+                L = dir([binArchPath,filesep,'*',files{ii},'*.',sharedExt,'*']); 
+                absPath = 0;
+                path = binArchPath;
+             end
+             
+             
+             if isempty(L)
+                 error('%s: Matlab FFTW libs were not found. Strange.',...
+                      upper(mfilename));
+             end
+             fname = L(1).name;
+             if strcmpi(fname(end-2:end),['.',sharedExt]) && ~absPath
+             % This is a well behaved case.
+             % Just remove lib prefix
+             found_files{ii} = fname;
+             
+             if strcmpi(found_files{ii}(1:3),'lib')
+                 found_files{ii} = found_files{ii}(4:end);
+             end
+             
+             
+             else    
+             % We need a full path here !!
+             % Escaped for safety
+             found_files{ii} = ['"',path,filesep,fname,'"'];
+             end
+             fprintf('   ...using %s from Matlab instalation.\n',fname);
+          end
+          
+      end;
+
+   
+function [status,result]=callmake(make_exe,makefilename,varargin)
+  
+
+  if ~isempty(makefilename) || nargin < 2
+     systemCommand = [make_exe, ' -f ',makefilename];
+  else
+     systemCommand = make_exe; 
+  end
+  definput.flags.matlabroot={'none','matlabroot'};
+  definput.flags.arch={'none','arch'};
+  definput.keyvals.ext=[];
+  definput.keyvals.dfftw=[];
+  definput.keyvals.sfftw=[];
+  definput.keyvals.target=[];
+  definput.keyvals.portaudio=[];
+  [flags,kv]=ltfatarghelper({},definput,varargin);
+  
+  if flags.do_matlabroot
+     systemCommand = [systemCommand, ' MATLABROOT=','"',matlabroot,'"']; 
+  end
+  
+  if flags.do_arch
+     systemCommand = [systemCommand, ' ARCH=',computer('arch')]; 
+  end
+  
+  if ~isempty(kv.ext)
+     systemCommand = [systemCommand, ' EXT=',kv.ext]; 
+  end
+  
+  if ~isempty(kv.dfftw)
+     systemCommand = [systemCommand, ' DFFTW=',kv.dfftw]; 
+  end
+  
+  if ~isempty(kv.sfftw)
+     systemCommand = [systemCommand, ' SFFTW=',kv.sfftw]; 
+  end
+  
+  if ~isempty(kv.portaudio)
+     systemCommand = [systemCommand, ' PORTAUDIO=',kv.portaudio]; 
+  end
+  
+  if ~isempty(kv.target)
+     systemCommand = [systemCommand,' ',kv.target];  
+  end
+
+  [status,result]=system(systemCommand);
 % 
 % function deletefiles(base,files)
 % 

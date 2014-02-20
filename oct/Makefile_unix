@@ -27,6 +27,6 @@ all:	$(OCTS)
 	$(MKOCTFILE) -strip -Wall -I../thirdparty -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
 
 clean:
-	rm *.o *.$(EXT)
+	-rm *.o *.$(EXT)
 
 .PHONY: all clean
