@@ -50,8 +50,6 @@ for jj=1:numel(wtNodes)
    % Prepare input for the next iteration
    % Scaling introduced in order to preserve energy 
    % (parseval tight frame)
-   % TO DO: Investigate how this scaling influences the |wpbest| 
-   % algorithms.
    if ~isempty(cInRunIdxs)
       if do_scale
          c{cInRunIdxs(1)} = c{cInRunIdxs(1)}/sqrt(2);

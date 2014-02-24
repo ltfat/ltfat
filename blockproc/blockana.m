@@ -32,6 +32,10 @@ function [c, fola] = blockana(F, f, fola)
        fola = [];
     end
     
+    if ~isfield(F,'blockalg')
+        F.blockalg = 'naive';
+    end
+    
     % Block length
     Lb = size(f,1);
     % Next block index start (from a global point of view, starting with zero)

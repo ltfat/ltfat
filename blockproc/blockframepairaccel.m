@@ -5,7 +5,10 @@ function [Fao,Fso] = blockframepairaccel(Fa, Fs, Lb, varargin)
 %   `[Fao,Fso]=blockframepairaccel(Fa,Fs,Lb)` works similar to 
 %   |blockframeaccel| with a pair of frames. The only difference from
 %   calling |blockframeaccel| separatelly for each frame is correct
-%   default choice of the slicing windows.   
+%   default choice of the slicing windows. Frame objects `Fa,Fs` will be
+%   accelerated for length `2*Lb`.
+%
+%   The following optional arguments are recognized:
 %
 %      `'anasliwin',anasliwin`  : Analysis slicing window. `sliwin` have to
 %                                 be a window of length *2Lb* or a string 
@@ -16,18 +19,17 @@ function [Fao,Fso] = blockframepairaccel(Fa, Fs, Lb, varargin)
 %      `'synsliwin',synsliwin`  : Synthesis slicing window. The same as the
 %                                 previous one holds. The default is `'rect'`.
 %
-%      `'transa',transa`   : Transition area length. Number of zeros to be 
-%                            used to pad the slicing window to *2Lb* from
-%                            both sides. The option is used as padding
-%                            only in the slicing window approach using 
-%                            window defined as a string.
+%      `'zpad',zpad`   : Number of zero samples the block will be padded
+%                        after it is windowed by a slicing window. Note the
+%                        frames will be accelerated for length
+%                        `2*Lb+2*kv.zpad`. 
 %
 
 
 definput.flags.blockalg = {'naive','sliced','segola'};
 definput.keyvals.anasliwin = [];
 definput.keyvals.synsliwin = [];
-definput.keyvals.transa = [];
+definput.keyvals.zpad = [];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 assert(~(~flags.do_sliced && (~isempty(kv.anasliwin) || ...
@@ -41,13 +43,13 @@ if flags.do_sliced
    end
    
    if isempty(kv.synsliwin)
-      kv.synsliwin = 'rect';
+      kv.synsliwin = 'hann';
    end
 
    Fao = blockframeaccel(Fa,Lb,'sliced','sliwin',kv.anasliwin,...
-                         'transa',kv.transa);
+                         'zpad',kv.zpad);
    Fso = blockframeaccel(Fs,Lb,'sliced','sliwin',kv.synsliwin,...
-                         'transa',kv.transa);
+                         'zpad',kv.zpad);
 else
    Fao = blockframeaccel(Fa,Lb,flags.blockalg);
    Fso = blockframeaccel(Fs,Lb,flags.blockalg);

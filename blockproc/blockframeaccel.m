@@ -13,17 +13,14 @@ function Fo = blockframeaccel(F, Lb, varargin)
 %                            the slicing window approach. The default is 
 %                            `'hann'`.
 %
-%      `'transa',transa`   : Transition area length. Number of zeros to be 
-%                            used to pad the slicing window to *2Lb* from
-%                            both sides. The option is used as padding
-%                            only in the slicing window approach using 
-%                            window defined as a string.
+%      `'zpad',zpad`   : Number of zero samples the block will be padded
+%                        after it is windowed by a slicing window.
 
 
 
 definput.flags.blockalg = {'naive','sliced','segola'};
 definput.keyvals.sliwin = [];
-definput.keyvals.transa = [];
+definput.keyvals.zpad = [];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 assert(~(~flags.do_sliced && ~isempty(kv.sliwin) && ~isempty(kv.transa)),...
@@ -35,17 +32,17 @@ if flags.do_sliced
       kv.sliwin = 'hann';
    end
 
-   if isempty(kv.transa)
+   if isempty(kv.zpad)
       kv.transa = 0;
     end
    
    if ~isnumeric(kv.sliwin)
-      kv.sliwin = fftshift(firwin(kv.sliwin,2*Lb));
+      kv.sliwin = fftshift(sqrt(firwin(kv.sliwin,2*Lb)));
    end
 
-   Fo = frameaccel(F,2*Lb+2*kv.transa);
+   Fo = frameaccel(F,2*Lb+2*kv.zpad);
    Fo.sliwin = kv.sliwin;
-   Fo.transa = kv.transa;
+   Fo.zpad = kv.zpad;
 elseif flags.do_segola
    % Determine window length without calling frameaccel
    % Fo = frameaccel(F,Lb);

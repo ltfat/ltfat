@@ -35,22 +35,25 @@ include filedefs.mk
 MEXBASE = $(MEXBASESAFE) $(MEXBASEMORE) 
 MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 
+# Without -Wl,--no-undefined, the compilation is always sucessfull
+# but one can get into problems in runtime.
 LINKFLAGS=-Wl,--no-undefined -L"$(MATLABROOT)/bin/$(ARCH)" \
-		  -lmex -lmx -lmwblas -lmwlapack \
-          $(DFFTW) $(SFFTW)
+		  -lmex -lmx -lmwblas -lmwlapack $(DFFTW) $(SFFTW) 
+#          -Wl,-rpath-link='$$ORIGIN/../lib'  \
+		  -Wl,-rpath='$$ORIGIN/../lib'
 		  
 
-LTFATLIBSTATIC=../lib/libltfat.a ../lib/libltfatf.a 
+LTFATLIBSTATIC=-L../lib -l:libltfat.a -l:libltfatf.a 
 
 # Setting relative paths 
 #LTFATLIBDYNAMIC=-L../lib -lltfat -lltfatf -Wl,-R,'$$ORIGIN/../lib'
  
-LTFATLIB=$(LTFATLIBSTATIC) 
+LTFATLIB=$(LTFATLIBSTATIC) -lc -lm 
 
 all: $(MEXS)
 
 %.$(EXT): %.c Makefile_unix config.h
-	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ $< $(LTFATLIB) -lc -lm $(LINKFLAGS) 
+	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ $< $(LTFATLIB) $(LINKFLAGS) 
 
 
 clean:

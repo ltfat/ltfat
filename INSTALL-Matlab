@@ -92,21 +92,25 @@ binary LTFAT package (from ltfat/blockproc/java).
 
 --------- Compiling on Mac ------------
 
-TBD
+TBD.
 
 --------- Compiling on Microsoft Windows --------------------------
 
 Unfortunately, portaudio on Windows is not distributed in a binary package.
 One can follow instructions on http://www.portaudio.com/ to compile the library
-from the source with support for different sound APIs like DirectSound, MME, WASAPI, ASIO.
-Build a shared (dynamically linked) library (dll) and copy it to the ltfat/thirdparty/Playrec
-directory.
+from the source with support for different sound APIs like DirectSound, MME,
+WASAPI, ASIO. Build a shared (dynamically linked) library (dll) and copy it to
+the ltfat/thirdparty/Playrec directory.
 
-Alternatively, when no such library is found in ltfat/thirdparty/Playrec, ltfatmex attempts
-to link portaudio library shipped with Matlab. Expect much worse audio performance in this case.
+Alternatively, when no such library is found in ltfat/thirdparty/Playrec, 
+ltfatmex attempts to link portaudio library shipped with Matlab. Expect much 
+worse audio performance in this case.
 
 --------- Compiling on Linux ------------------------------------
 
 - On Redhat / Fedora TBD
 
 - On Debian / Ubuntu, install the packages 'portaudio19-dev', 'openjdk-7-jdk' 
+
+Recent versions of Matlab already contain the portaudio lib so there is no need
+for installing it. 

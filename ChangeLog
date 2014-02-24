@@ -1,3 +1,28 @@
+Version 1.4.4 25/2 2014
+	* Mostly bug fixes and doc updates. 
+
+	* Reworked build system on Linux and Mac OS.
+
+	* Most of the code moved from Mex/Oct interfaces to the backend.
+
+	* The C code was revised: consistence of argument naming and order,
+	                          introduced ltfatInt data type for array
+							  lengths.
+
+	* New block processing demos: real-time CQT and Erblets
+	  (fast enough only in Matlab).
+
+	* Added routines for calculating Gabor dual frames using convex optimization
+	  (requires UNLocBoX http://unlocbox.sourceforge.net/).
+
+	* Improved usability of the blockproc GUI: Added possibility to set initial 
+	  window positions, capturing Ctrl-C shortcut.
+
+	* Closed #22: Wilson and MDCT transforms are now completely implemented in C.
+
+	* Renamed framematrix to frsynmatrix
+
+
 Version 1.4.3 22/11 2013
     * Fixed bug in nsgabframebounds.m
 

@@ -16,7 +16,7 @@ end
 % execution.
 p = blockpanel({
                {'GdB','Gain',-20,20,0,21},...
-               {'cMult','C mult',0,80,40,81}
+               {'cMult','C mult',0,80,20,81}
                });
             
 fobj = blockfigure();

@@ -6,15 +6,15 @@ ifndef EXT
 endif
 
 ifndef PORTAUDIO
-  PORTAUDIO=portaudio
+  PORTAUDIO=-lportaudio
 endif
 
 include ../../src/ostools.mk
 
-ADDITIONALFLAGS = -L. -l$(basename $(PORTAUDIO)) -I. -I../../src/thirdparty
+ADDITIONALFLAGS = -L. $(PORTAUDIO) -I. -I../../src/thirdparty
 
 all:
-	$(MKOCTFILE) -Wall -mex $(portaudio) mex_dll_core.c pa_dll_playrec.c \
+	$(MKOCTFILE) -Wall -mex mex_dll_core.c pa_dll_playrec.c \
 	             $(ADDITIONALFLAGS)	-o playrec.$(EXT)
 
 clean:

@@ -28,6 +28,10 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
         error('%s: First agument must be a frame definition structure.',upper(mfilename));
     end;
     
+    if ~isfield(F,'blockalg')
+        F.blockalg = 'naive';
+    end
+    
     if nargin<4
        fola = [];
     end
