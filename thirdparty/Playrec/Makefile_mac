@@ -21,7 +21,7 @@ include ../../src/ostools.mk
 
 MEXTGT=playrec.$(EXT)
 MEXSRC=mex_dll_core.c pa_dll_playrec.c
-LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx 
+LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx $(PORTAUDIO) 
 	  
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../../src/thirdparty
 CFLAGS=-fPIC -std=c99 -O3 -Wall -shared -DMATLAB_MEX_FILE
