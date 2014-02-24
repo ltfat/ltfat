@@ -215,8 +215,14 @@ if flags.do_compile
     if ~isoctave
         fftw_lib_found_names = searchfor(bp,fftw_lib_names,sharedExt);
         if ~isempty(fftw_lib_found_names)
+            if ~ismac
                dfftw = ['-l:',fftw_lib_found_names{1}];
                sfftw = ['-l:',fftw_lib_found_names{2}];
+            else
+                % We need a full path here.
+               dfftw = [binDirPath(),filesep,fftw_lib_found_names{1}];
+               sfftw = [binDirPath(),filesep,fftw_lib_found_names{2}];               
+            end
        end
     end
     
@@ -253,7 +259,7 @@ if flags.do_compile
 
      portaudioLib = '-lportaudio';
 
-     binArchPath = [matlabroot,filesep,'bin',filesep,computer('arch')];
+     binArchPath = binDirPath();
        playrecRelPath = ['thirdparty',filesep,'Playrec'];
 
        foundPAuser = [];
@@ -300,7 +306,13 @@ if flags.do_compile
     doPAmatlab = ~isempty(foundPAmatlab) && ~doPAuser;
 
     if doPAmatlab 
-       portaudioLib = ['-l:',foundPAmatlab]; 
+       if ismac
+          % Full path is needed on MAC since 
+          % clang does not understand -l: prefix.
+          portaudioLib = [binArchPath,filesep,foundPAmatlab];    
+       else
+          portaudioLib = ['-l:',foundPAmatlab]; 
+       end
        fprintf('    ...using %s from Matlab instalation.\n',foundPAmatlab);          
     elseif doPAuser
         portaudioLib = ['-l:',foundPAuser]; 
@@ -397,9 +409,8 @@ found_names = {};
             fprintf('   ...using %s from ltfat/mex.\n',L(1).name);
          end
       elseif isunix
-          binArchPath = [matlabroot,filesep,'bin',filesep,computer('arch')];
           for ii=1:numel(files)
-             L = dir([binArchPath,filesep,'*',files{ii},'*.',sharedExt,'*']); 
+             L = dir([binDirPath(),filesep,'*',files{ii},'*.',sharedExt,'*']); 
              
              if isempty(L)
                  error('%s: Matlab FFTW libs were not found. Strange.',...
@@ -414,6 +425,8 @@ found_names = {};
           
       end;
 
+function path=binDirPath()
+path = [matlabroot,filesep,'bin',filesep,computer('arch')];
    
 function [status,result]=callmake(make_exe,makefilename,varargin)
 %CALLMAKE   
