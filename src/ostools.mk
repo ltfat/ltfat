@@ -23,4 +23,4 @@ CP = cp -f
 PS = /
 endif
 
-CC=gcc
+#CC=gcc

@@ -42,8 +42,8 @@ LINKFLAGS=-Wl,--no-undefined -L"$(MATLABROOT)/bin/$(ARCH)" \
 #          -Wl,-rpath-link='$$ORIGIN/../lib'  \
 		  -Wl,-rpath='$$ORIGIN/../lib'
 		  
-
-LTFATLIBSTATIC=-L../lib -l:libltfat.a -l:libltfatf.a 
+# -L../lib -l:libltfat.a does not work with clang
+LTFATLIBSTATIC=../lib/libltfat.a ../lib/libltfatf.a 
 
 # Setting relative paths 
 #LTFATLIBDYNAMIC=-L../lib -lltfat -lltfatf -Wl,-R,'$$ORIGIN/../lib'

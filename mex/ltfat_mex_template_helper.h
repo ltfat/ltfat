@@ -655,7 +655,7 @@ void mexFunctionInner(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[])
         FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
           if( !(isAllComplex = !checkIsReal(*prhsElPtr))) break;
 
-        if((isAllReal == isAllComplex))
+        if(isAllReal == isAllComplex)
            mexErrMsgTxt("Template subsystem error. My bad...");
 
         if(isAllReal)

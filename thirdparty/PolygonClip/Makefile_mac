@@ -20,4 +20,19 @@ ifndef ARCH
   ARCH=maci64
 endif
 
-include Makefile_unix
+include ../../src/ostools.mk
+
+MEXTGT=PolygonClip.$(EXT)
+MEXSRC=PolygonClip.c ../GPC/gpc.c
+LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx 
+INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../GPC
+CFLAGS=-fPIC -std=c99 -s -O3 -Wall -shared -DMATLAB_MEX_FILE 
+
+
+all:
+	$(CC) $(CFLAGS) $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 
+
+clean:
+	$(RM) $(MEXTGT)
+
+.PHONY: all clean
