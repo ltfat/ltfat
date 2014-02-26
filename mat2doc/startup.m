@@ -1,5 +1,5 @@
-addpath ~/dev/ltfat
-addpath ~/dev/minFunc/minFunc/
+addpath ~/LTFAT/ltfat
+addpath ~/LTFAT/minFunc_2012/minFunc/
 
 
 ltfatstart;

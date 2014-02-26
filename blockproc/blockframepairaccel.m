@@ -29,13 +29,13 @@ function [Fao,Fso] = blockframepairaccel(Fa, Fs, Lb, varargin)
 definput.flags.blockalg = {'naive','sliced','segola'};
 definput.keyvals.anasliwin = [];
 definput.keyvals.synsliwin = [];
-definput.keyvals.zpad = [];
+definput.keyvals.zpad = 0;
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-assert(~(~flags.do_sliced && (~isempty(kv.anasliwin) || ...
-         ~isempty(kv.synsliwin) || ~isempty(kv.transa))),...
-   sprintf('%s: Definig slicing window without setting the ''silced'' flag.',...
-   mfilename));
+isSliProp = ~isempty(kv.anasliwin) || ~isempty(kv.synsliwin) || kv.zpad~=0;
+assert(~(~flags.do_sliced && isSliProp),...
+   sprintf(['%s: Definig slicing window properties without setting the',...
+            ' ''sliced'' flag.'], mfilename));
 
 if flags.do_sliced 
    if isempty(kv.anasliwin)

@@ -18,8 +18,7 @@ function s=ltfattext();
 %     axis('xy');
 % 
 %   See also: ltfatlogo, dgtreal
-% 
-%   Demos: demo_isgram
+
 
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS

@@ -1,8 +1,8 @@
 function demo_blockproc_slidingcqt(source,varargin)
-%DEMO_BLOCKPROC_ERBLETS Basic real-time rolling CQT-spectrogram visualization
+%DEMO_BLOCKPROC_SLIDINGCQT Basic real-time rolling CQT-spectrogram visualization
 %   Usage: demo_blockproc_slidingcqt('gspi.wav')
 %
-%   For additional help call |demo_blockproc_erblets| without arguments.
+%   For additional help call |demo_blockproc_slidingcqt| without arguments.
 %
 %   This demo shows a simple rolling CQT-spectrogram of whatever is specified in
 %   source. 

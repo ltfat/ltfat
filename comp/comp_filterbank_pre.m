@@ -9,6 +9,10 @@ function g = comp_filterbank_pre(g,a,L,crossover)
 %      If g has field .h and it is a vector with length < crossover:
 %         Impulse response is modulated.
 
+if nargin<4
+   crossover = 0; 
+end
+
 M=numel(g);
 
 % Divide filters to time domain and frequency domain groups
@@ -48,8 +52,8 @@ end
 
 % Prepare frequency-domain filters
 %l=(0:L-1).'/L;
-for mId=1:numel(mFreq)
-    m = mFreq(mId);
+for m=mFreq
+
     if isfield(g{m},'h')
        g{m}.H=comp_transferfunction(g{m},L);
        g{m}=rmfield(g{m},'h');

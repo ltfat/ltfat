@@ -19,8 +19,6 @@ function [s,fs]=ltfatlogo()
 %     sgram(ltfatlogo,8000,90);
 %
 %   See also: ltfattext
-%
-%   Demos: demo_isgram
 
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS

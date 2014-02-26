@@ -1,5 +1,5 @@
 function G=framematrix(F,L);
-%FRSYNMATRIX  Frame synthesis operator matrix
+%FRAMEMATRIX  Frame synthesis operator matrix
 %   Usage: G=framematrix(F,L);
 %
 %   `G=frsynmatrix(F,L)` returns the matrix representation *G* of the frame

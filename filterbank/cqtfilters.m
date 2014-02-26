@@ -15,12 +15,12 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %      fc    : Center frequency of each channel.
 %      L     : Next admissible length suitable for the generated filters.
 %
-%   `[g,a,fc]=cqtfilters(fs,fmin,fmax,bins,L)` constructs a set of 
+%   `[g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls)` constructs a set of 
 %   band-limited filters *g* which cover the required frequency range 
 %   `fmin`-`fmax` with `bins` filters per octave starting at `fmin`. All
 %   filters have (approximately) equal $Q=f_c/f_b$, hence constant-Q. The
 %   remainding frequency intervals not covered by these filters are captured
-%   by two additional filters (low-pass, high-pass). The signal length *L*
+%   by two additional filters (low-pass, high-pass). The signal length *Ls*
 %   is mandatory, since we need to avoid too narrow frequency windows.
 %
 %   By default, a Hann window on the frequency side is choosen, but the

@@ -102,8 +102,6 @@ function [f,relres,iter]=isgram(s,g,a,varargin)
 %
 %   See also:  isgramreal, frsynabs, dgt
 %
-%   Demos: demo_isgram
-%
 %   References: griffin1984sem  decorsiere2011 liu1989limited
   
 %   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.

@@ -12,7 +12,7 @@
 %    GABLASSO          - Use |franalasso|
 %    GABMULEIGS        - Use |framemuleigs|
 %    GABMUL            - Use |framemul|
-     FRAMEMATRIX       - Use |frsynmatrix|
+%    FRAMEMATRIX       - Use |frsynmatrix|
 %    IUFILTERBANK      - Use |ifilterbank|
 %    IUNSDGT           - Use |insdgt|
 %    IUNSDGTREAL       - Use |insdgtreal|
