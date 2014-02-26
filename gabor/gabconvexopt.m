@@ -1,7 +1,7 @@
 function [gd,relres,iter] = gabconvexopt(g,a,M,varargin)
-%GABCONVEXOPTM Compute a dual window using convex optimization
-%   Usage: gd=gabfirdual(g,a,M);
-%          gd=gabfirdual(g,a,M, varagin);
+%GABCONVEXOPT Compute a window using convex optimization
+%   Usage: gout=gabconvexopt(g,a,M);
+%          gout=gabconvexopt(g,a,M, varagin);
 %
 %   Input parameters:
 %     g      : Window function /initial point (tight case)
@@ -9,11 +9,11 @@ function [gd,relres,iter] = gabconvexopt(g,a,M,varargin)
 %     M      : Number of Channels
 %
 %   Output parameters:
-%     gd     : Dual window
-%     iter   : Number of iteration
+%     gout   : Output window
+%     iter   : Number of iterations
 %     relres : Reconstruction error
 %
-%   `gabconvexopt(g,a,M)` computes an window *gd* which is the optimal
+%   `gabconvexopt(g,a,M)` computes a window *gout* which is the optimal
 %   solution of the convex optimization problem below
 %
 %   .. gd  = argmin_x    || alpha x||_1 +  || beta Fx||_1  
@@ -34,8 +34,8 @@ function [gd,relres,iter] = gabconvexopt(g,a,M,varargin)
 %
 %   * *x* is compactly supported on Ldual
 %
-%   WARNING: this function require the unlocbox! You can download it at
-%   unlocbox.sourceforge.net
+%   **Note**: This function require the unlocbox. You can download it at
+%   `<http://unlocbox.sourceforge.net>`_
 %
 %   The function uses an iterative algorithm to compute the approximate.
 %   The algorithm can be controlled by the following flags:

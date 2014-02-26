@@ -8,7 +8,7 @@
 %    ZAK            -  Zak transform
 %    IZAK           -  Inverse Zak transform
 %    COL2DIAG       -  Move columns of a matrix to diagonals
-%    S0NORM         -  Compute the S0-norm
+%    S0NORM         -  S0-norm
 %
 %  Gabor systems
 %    dgt            -  Discrete Gabor transform
@@ -39,11 +39,11 @@
 %  Reconstructing windows
 %    GABDUAL        -  Canonical dual window
 %    GABTIGHT       -  Canonical tight window
-%    GABFIRDUAL     -  Compute a FIR optimized dual window 
-%    GABOPTDUAL     -  Compute an optimized dual window
-%    GABFIRTIGHT    -  Compute a FIR optimized tight window
-%    GABOPTTIGHT    -  Compute an optimized tight window
-%    GABCONVEXOPT   -  Compute an optimized window
+%    GABFIRDUAL     -  FIR optimized dual window 
+%    GABOPTDUAL     -  Optimized dual window
+%    GABFIRTIGHT    -  FIR optimized tight window
+%    GABOPTTIGHT    -  Optimized tight window
+%    GABCONVEXOPT   -  Optimized window
 %    GABPROJDUAL    -  Dual window by projection
 %    GABMIXDUAL     -  Dual window by mixing windows
 %    WILORTH        -  Window of Wilson/WMDCT orthonormal basis

@@ -20,7 +20,7 @@ function outsig=frana(F,insig);
 %
 %   In the following example the signal *bat* is analyzed through a wavelet 
 %   frame. The result are the frame coefficients associated with the input  
-%   signal *bat* and the analysis frame `’fwt’`.:::
+%   signal *bat* and the analysis frame `'fwt'`:::
 %
 %      f = bat;
 %      w = 'sym8';

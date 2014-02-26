@@ -1,7 +1,7 @@
 function [gt,relres,iter]=gabfirtight(Lsupport,g,a,M,varargin)
 %GABFIRTIGHT  Compute FIR tight window
-%   Usage: gd=gabfirdual(Lsupport,g,a,M);
-%          gd=gabfirdual(Lsupport,g,a,M, varagin);
+%   Usage: gt=gabfirtight(Lsupport,g,a,M);
+%          gt=gabfirtight(Lsupport,g,a,M, varagin);
 %
 %   Input parameters:
 %     Lsupport  : Length of the tight window
@@ -28,8 +28,8 @@ function [gt,relres,iter]=gabfirtight(Lsupport,g,a,M,varargin)
 %
 %   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x   & \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ & & + \| \omega (x - g_l) \|_2^2  \\ & & \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &    \text{such that }& x \text{ is a tight FIR window} \end{split}
 %
-%   WARNING: this function require the unlocbox! You can download it at
-%   unlocbox.sourceforge.net
+%   **Note**: This function require the unlocbox. You can download it at
+%   `<http://unlocbox.sourceforge.net>`_
 %
 %   The function uses an iterative algorithm to compute the approximate
 %   FIR tight windows. Warning The algorithm solve a non convex problem and
@@ -54,7 +54,9 @@ function [gt,relres,iter]=gabfirtight(Lsupport,g,a,M,varargin)
 %                  avoid the the L1 norm proximal operator kill the signal.
 %                  No L1-frequency constraint: $\beta=0$
 %
-%     'omega',omega  Weight in time of the L2-norm. If it is a scalar, it represent the
+%     'omega',omega
+%                  Weight in time of the L2-norm. If it is a scalar,
+%                  it represent the
 %                  weights of the entire L2 function in time. If it is a 
 %                  vector, it is the associated weight assotiated to each
 %                  component of the L2 norm (length: Ldual).
@@ -66,14 +68,14 @@ function [gt,relres,iter]=gabfirtight(Lsupport,g,a,M,varargin)
 %                  automatically. To use option omega should be different
 %                  from 0. By default $g_d=0$.
 %
-%     'mu', mu     Weight of the smooth constraint Default value is 1. 
+%     'mu',mu      Weight of the smooth constraint Default value is 1. 
 %                  No smooth constraint: $\mu=0$
 %   
-%     'gamma', gamma  Weight of the smooth constraint in frequency. Default value is 1. 
-%                  No smooth constraint: $\gamma=0$
+%     'gamma',gamma  Weight of the smooth constraint in frequency.
+%                    Default value is 1. No smooth constraint: $\gamma=0$
 %   
-%     'delta', delta  Weight of the S0-norm. Default value is 0. 
-%                  No S0-norm: $\delta=0$
+%     'delta',delta  Weight of the S0-norm. Default value is 0. 
+%                    No S0-norm: $\delta=0$
 %
 %     'dual'       Look for a dual windows (default)
 %

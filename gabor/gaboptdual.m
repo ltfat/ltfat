@@ -28,8 +28,8 @@ function [gd,relres,iter]=gaboptdual(g,a,M,varargin)
 %
 %   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x    & \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ & & + \| \omega (x - g_l) \|_2^2  \\ & & \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &   \text{such that }& x \text{ is a dual windows of }g \end{split}
 %
-%   WARNING: this function require the unlocbox! You can download it at
-%   unlocbox.sourceforge.net
+%   **Note**: This function require the unlocbox. You can download it at
+%   `<http://unlocbox.sourceforge.net>`_
 %
 %   The function uses an iterative algorithm to compute the approximate
 %   optimized dual. The algorithm can be controlled by the following flags:
@@ -64,14 +64,14 @@ function [gd,relres,iter]=gaboptdual(g,a,M,varargin)
 %                  automatically. To use option omega should be different
 %                  from 0. By default $g_d=0$.
 %
-%     'mu', mu     Weight of the smooth constraint Default value is 1. 
+%     'mu',mu      Weight of the smooth constraint Default value is 1. 
 %                  No smooth constraint: $\mu=0$
 %   
-%     'gamma', gamma  Weight of the smooth constraint in frequency. Default value is 1. 
-%                  No smooth constraint: $\gamma=0$
+%     'gamma',gamma  Weight of the smooth constraint in frequency. Default value is 1. 
+%                    No smooth constraint: $\gamma=0$
 %   
-%     'delta', delta  Weight of the S0-norm. Default value is 0. 
-%                  No S0-norm: $\delta=0$
+%     'delta',delta  Weight of the S0-norm. Default value is 0. 
+%                    No S0-norm: $\delta=0$
 %
 %     'dual'       Look for a dual windows (default)
 %

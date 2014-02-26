@@ -1,7 +1,7 @@
 function [gt,relres,iter]=gabopttight(g,a,M,varargin)
 %GABOPTTIGHT  Compute a optimized tight window
-%   Usage: gd=gabfirdual(Ldual,g,a,M);
-%          gd=gabfirdual(Ldual,g,a,M, varagin);
+%   Usage: gt=gabopttight(Ltight,g,a,M);
+%          gt=gabopttight(Ltight,g,a,M, varagin);
 %
 %   Input parameters:
 %     g      : Initial window function
@@ -9,12 +9,12 @@ function [gt,relres,iter]=gabopttight(g,a,M,varargin)
 %     M      : Number of Channels
 %
 %   Output parameters:
-%     gt     : Dual window
+%     gt     : Tight window
 %
-%   `gaboptdual(g,a,M)` computes a tight window *gt* for a frame of
+%   `gabopttight(g,a,M)` computes a tight window *gt* for a frame of
 %   parameter a and M
 %
-%   This function solve a convex optimization problem that can be written
+%   This function solves a convex optimization problem that can be written
 %   as:
 %
 %   .. gd  = argmin_x    || alpha x||_1 +  || beta Fx||_1  
@@ -27,8 +27,8 @@ function [gt,relres,iter]=gabopttight(g,a,M,varargin)
 %
 %   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x    & \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ & & + \| \omega (x - g_l) \|_2^2  \\ & & \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &    \text{such that }& x \text{ is tight window}g \end{split}
 %
-%   WARNING: this function require the unlocbox! You can download it at
-%   unlocbox.sourceforge.net
+%   **Note**: This function require the unlocbox. You can download it at
+%   `<http://unlocbox.sourceforge.net>`_
 %
 %   The function uses an iterative algorithm to compute the approximate
 %   optimized tight window. Warning The algorithm solve a non convex
