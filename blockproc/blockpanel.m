@@ -10,7 +10,7 @@ function p = blockpanel(params,varargin)
 %
 %   `blockpanel(params)` creates a Java object containing GUI for changing
 %   parameters during the playback. `params` should be a cell-array, whose 
-%   elements are another cell array of the followong format:
+%   elements are another cell array of the following format:
 %
 %      {'var','label',minVal,maxVal,defVal,valCount}
 %
@@ -22,7 +22,7 @@ function p = blockpanel(params,varargin)
 % 
 %   The function takes in the additional optional arguments:
 %
-%       `'location',location`:   Window inital position. `location`
+%       `'location',location`:   Window initial position. `location`
 %                                has to be 2 element row vector `[x,y]`
 %                                defining distance from the top-left
 %                                corner of the screen. 
@@ -93,6 +93,6 @@ javaMethod('addControlElements',p,paramList);
 
 javaMethod('setLocation',p,kv.location(1),kv.location(2));
  
-% Give the object time to inilialize properly.
+% Give the object time to initialize properly.
 pause(0.1);
  

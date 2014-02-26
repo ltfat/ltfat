@@ -7,9 +7,9 @@ function plotdwilt(coef,varargin)
 %   `plotdwilt(coef)` will plot coefficients from |dwilt|.
 %
 %   `plotdwilt(coef,fs)` will do the same assuming a sampling rate of *fs*
-%   Hz of the original signal. Because a Wilson representation does not
-%   contains coefficients for all positions on a rectangular TF-grid, there
-%   will be visible 'holes' among the lowest (DC) and highest (Nyquest rate)
+%   Hz of the original signal. Since a Wilson representation does not
+%   contain coefficients for all positions on a rectangular TF-grid, there
+%   will be visible 'holes' among the lowest (DC) and highest (Nyquist rate)
 %   coefficients. See the help on |wil2rect|.
 %
 %   `plotdwilt(coef,fs,dynrange)` will additionally limit the dynamic

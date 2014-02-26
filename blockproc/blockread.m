@@ -9,7 +9,7 @@ function [f,valid] = blockread(L)
 %      valid : Input data valid flag.
 %
 %   Function also control the playback, so it does not have to rely on
-%   whether user called |blockplay|.
+%   whether the user called |blockplay|.
 % 
 %   Block streaming uses several buffers to compensate for the processing
 %   delay variation. 

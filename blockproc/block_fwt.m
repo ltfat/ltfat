@@ -6,17 +6,13 @@ function c = block_fwt( f, w, J)
 %         f     : Input data.
 %         h     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
-%         Lb    : Length of the block.
-%         Sb    : Starting index.
 %
 %   Output parameters:
 %         c      : Coefficient vector.
 %
-%   `c = block_fwt(f,h,J,Lb, Sb)` acceppts suitably extended block of data *f*
+%   `c = block_fwt(f,h,J)` acceppts suitably extended block of data *f*
 %   and produces correct coefficients. *f* is expected to be a collumn vector
-%   or a matrix and the processing is done columnwise.
-%
-%   From 
+%   or a matrix and the processing is done column-wise.
 %
 %   Function should be independent of block_interface.
 %

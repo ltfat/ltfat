@@ -5,7 +5,7 @@ function h=pheaviside(L)
 %   `pheaviside(L)` returns a periodic Heaviside function. The periodic
 %   Heaviside function takes on the value 1 for indices corresponding to
 %   positive frequencies, 0 corresponding to negative frequencies and the
-%   value .5 for the zero and Nyquest frequencies.
+%   value .5 for the zero and Nyquist frequencies.
 %
 %   To get a function that weights the negative frequencies by 1 and the
 %   positive by 0, use `involute(pheaviside(L))`
@@ -32,7 +32,7 @@ if L>0
   % Set positive frequencies to 1.
   h(2:ceil(L/2))=1;
  
-  % Last term (Nyquest frequency) is also .5, if it exists.
+  % Last term (Nyquist frequency) is also .5, if it exists.
   if rem(L,2)==0
     h(L/2+1)=.5;
   end;

@@ -5,7 +5,7 @@ function plotfft(coef,varargin)
 %
 %   `plotfft(coef)` plots the output from the `fft` function. The
 %   frequency axis will use normalized frequencies between 0 and 1 (the
-%   Nyquest frequency).
+%   Nyquist frequency).
 %
 %   `plotfft(coef,fs)` does the same for the FFT of a signal sampled at
 %   a sampling rate of *fs* Hz.
@@ -42,7 +42,7 @@ function plotfft(coef,varargin)
 %     'posfreq'    Display only the positive frequencies.
 %
 %
-%   In addition to these parameteres, `plotfft` accepts any of the flags
+%   In addition to these parameters, `plotfft` accepts any of the flags
 %   from |normalize|. The coefficients will be normalized as specified
 %   before plotting.
 %
@@ -109,7 +109,7 @@ end;
 if flags.do_nf
   if rem(N,2)==0
     xr=(-N/2+1:N/2)*2/N;  
-    % Subtract 1 in order to place the Nyquest frequency following the
+    % Subtract 1 in order to place the Nyquist frequency following the
     % positive frequencies. That is why we do not use fftshift.
     coef=circshift(coef,N/2-1);
   else

@@ -6,7 +6,7 @@ function n=fftindex(N,nyquestzero)
 %   length *N* as the are ordered in the output from the `fft` routine. The
 %   numbers returned are in the range `-ceil(N/2)+1:floor(N/2)`
 %
-%   `fftindex(N,0)` does as above, but sets the Nyquest frequency to zero.
+%   `fftindex(N,0)` does as above, but sets the Nyquist frequency to zero.
 %
 %   See also: dft
   

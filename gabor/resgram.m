@@ -74,13 +74,13 @@ function varargout=resgram(f,varargin)
 %                  set the rest to zero.
 %    
 %     'fmax',y     Display *y* as the highest frequency. Default value of `[]`
-%                  means to use the Nyquest frequency.
+%                  means to use the Nyquist frequency.
 %    
 %     'xres',xres  Approximate number of pixels along x-axis / time.
-%                  Default value is 800
+%                  The default value is 800
 %    
 %     'yres',yres  Approximate number of pixels along y-axis / frequency
-%                  Default value is 600
+%                  The default value is 600
 %    
 %     'contour'    Do a contour plot to display the spectrogram.
 %           
@@ -92,7 +92,7 @@ function varargout=resgram(f,varargin)
 %    
 %     'nocolorbar'  Do not display the colorbar.
 %
-%   In addition to these parameteres, `sgram` accepts any of the flags from
+%   In addition to these parameters, `sgram` accepts any of the flags from
 %   |normalize|. The window used to calculate the spectrogram will be
 %   normalized as specified.
 %

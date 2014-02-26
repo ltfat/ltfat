@@ -3,15 +3,22 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
 %   Usage: blocksyn(F, c, Lb)
 %
 %   Input parameters:
-%      Fs   : Synthesis frame object.
+%      F    : Synthesis frame object.
 %      c    : Coefficients of a block.
+%      Lb   : Length of the block.
 %      fola : Explicitly defined overlap.
 %   Output parameters:
 %      fhat : Reconstructed block of signal.
 %      fola : Stored overlap.
 %
-%   `c=blocksyn(F,c,Lb)` reconstructs the signal block *fhat* from the coefficients *c*
-%   using the frame defined by *F*.
+%   `fhat=blocksyn(F,c,Lb)` reconstructs the signal block *fhat* from the
+%   coefficients *c* using the frame defined by *F*. If some overlap is used,
+%   it is stored internally using |block_interface|. Nothe that the function is 
+%   capable of handling overlaps internally only for a single call
+%   to the function in the blockproc. loop.%   
+%
+%   `[fhat,fola]=blocksyn(F,c,Lb,fola)` does the same, but the block algorithm
+%   uses `fola` to read and store overlap explicitly. `fola` can be empty.
 %
 %   **Note:** To get perfect reconstruction, the synthesis frame *F* must
 %   be a dual frame of the analysis frame used in |blockana|.
@@ -25,7 +32,7 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
     end;
     
     if ~isstruct(F)
-        error('%s: First agument must be a frame definition structure.',upper(mfilename));
+        error('%s: First argument must be a frame definition structure.',upper(mfilename));
     end;
     
     if ~isfield(F,'blockalg')
@@ -48,7 +55,7 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
        fhat = fhat(1:Lb,:);
     elseif strcmp(F.blockalg,'sliced')
         % General processing
-        % Equal block length assumtion
+        % Equal block length assumption
         % Reconstruct
         f = F.frsyn(c);
         % If the transform length differs from the 2*Lb,

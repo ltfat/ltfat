@@ -1,12 +1,12 @@
 function coef = plotnsdgt(coef,a,varargin)
-%PLOTNSDGT Plot spectrogram from nonstationary Gabor coefficients
+%PLOTNSDGT Plot spectrogram from non-stationary Gabor coefficients
 %   Usage:  plotnsdgt(c,a,fs,dynrange);
 %
 %   Input parameters:
 %         coef     : Cell array of coefficients.
 %         a        : Vector of time positions of windows.
 %         fs       : signal sample rate in Hz (optional)
-%         dynrange : Colorscale dynamic range in dB (optional).
+%         dynrange : Color scale dynamic range in dB (optional).
 %
 %   `plotnsdgt(coef,a)` plots coefficients computed using |nsdgt| or
 %   |unsdgt|. For more details on the format of the variables *coef* and *a*,
@@ -19,18 +19,18 @@ function coef = plotnsdgt(coef,a,varargin)
 %
 %   `C=plotnsdgt(...)` returns the processed image data used in the
 %   plotting. Inputting this data directly to `imagesc` or similar
-%   functions will create the plot. This is usefull for custom
+%   functions will create the plot. This is useful for custom
 %   post-processing of the image data.
 %
 %   `plotnsdgt` supports all the optional parameters of |tfplot|. Please
 %   see the help of |tfplot| for an exhaustive list. In addition, the
 %   following parameters may be specified:
 %
-%     'xres',xres  Approximate number of pixels along x-axis /time.
-%                  Default value is 800
+%     'xres',xres  Approximate number of pixels along x-axis / time.
+%                  The default value is 800
 %
 %     'yres',yres  Approximate number of pixels along y-axis / frequency
-%                  Default value is 600
+%                  The default value is 600
 %
 %   See also: tfplot, nsdgt, unsdgt, nsdgtreal
 
@@ -70,7 +70,7 @@ aplot=timepos(end)/kv.xres;
 % Time positions where we want our pixels plotted (in samples)
 xr=(0:kv.xres-1)*aplot;
 
-% Move zero frequency to the center and Nyquest frequency to the top.
+% Move zero frequency to the center and Nyquist frequency to the top.
 if rem(kv.yres,2)==0
   coef=circshift(coef,kv.yres/2-1);
 else

@@ -1,25 +1,22 @@
 function [fs,classid] = block(source,varargin)
 %BLOCK  Initialize block stream
 %   Usage: block(source);
-%          block(source,'L',L,'fs',fs,'nbuf',nbuf,'loadind',loadind);
 %
 %   Input parameters:
 %      source    : Block stream input.
 %      fs        : Sampling rate.
-%      nbuf      : Number of buffers.
-%      fmt       : Data type
 %   Output parameters:
 %      fs        : Sampling rate.
 %      classid   : Data type.
 %
 %   `block(source)` initializes block data stream from `source` which
-%   can be (the letter-case is ignored for strings)
+%   can be one of the following (the letter-case is ignored for strings):
 %
 %      `'file.wav'`      name of a wav file
 %
 %      `'dialog'`        shows the file dialog to choose a wav file.
 %
-%      `'rec'`           input is taken from a microfone/auxilary input
+%      `'rec'`           input is taken from a microphone/auxilary input
 %
 %      `'playrec'`       loopbacks the input to the output
 %
@@ -49,10 +46,11 @@ function [fs,classid] = block(source,varargin)
 %                             can be used to specify which should be used.
 %
 %      `'outfile','file.wav'` Processed sound data is stored in a new wav
-%                             file.
+%                             file. NOT IMPLEMENTED YET!
 %
 %      `'nbuf',nbuf`          Max number of buffers to be preloaded. Helps
 %                             avoiding glitches, but increases delay.
+%
 %
 %      `'loadind',loadind`    How to show the load indicator. `loadind` can 
 %                             be the following
@@ -72,10 +70,9 @@ function [fs,classid] = block(source,varargin)
 %      'single', 'double'   Data type to be used.
 %
 %      'online', 'offline'  Allows offline processing for data or wav
-%                           inputs.
+%                           inputs. NOT IMPELMENTED YET!
 %
 % 
-
 
 
 definput.keyvals.devid=[];
@@ -84,7 +81,6 @@ definput.keyvals.fs=[];
 definput.keyvals.playch=[];
 definput.keyvals.recch=[];
 definput.keyvals.outfile=[];
-definput.keyvals.sliwin=[];
 definput.keyvals.L=[];
 definput.keyvals.loadind= 'nobar';
 definput.flags.fmt={'single','double'};
@@ -128,8 +124,8 @@ recChannels = 0;
 play = 0;
 record = 0;
 % Here we can define priority list of the host APIs.
-% If none of the prefered API devices is present, the first one is taken.
-hostAPIpriorityList = {'ASIO'};
+% If none of the preferred API devices is present, the first one is taken.
+hostAPIpriorityList = {};
 % Force portaudio to use buffer of the following size
 pa_bufLen = -1;
 

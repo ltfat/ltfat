@@ -165,7 +165,7 @@ if dodisc
     %case 0
       % Asymmeteric spline
       
-      % If a=3,7,11,... then the Nyquest frequency will have a negative
+      % If a=3,7,11,... then the Nyquist frequency will have a negative
       % coefficient, and generate a complex spline. 
 	
     %  if cent==0

@@ -5,7 +5,7 @@ function plotfftreal(coef,varargin)
 %
 %   `plotfftreal(coef)` plots the output from the |fftreal| function. The
 %   frequency axis will use normalized frequencies between 0 and 1 (the
-%   Nyquest frequency). It is assumed that the length of the original
+%   Nyquist frequency). It is assumed that the length of the original
 %   transform was even.
 %
 %   `plotfftreal(coef,fs)` does the same for the |fftreal| of a signal
@@ -40,7 +40,7 @@ function plotfftreal(coef,varargin)
 %     'N',N     Specify the transform length *N*. Use this if you are
 %               unsure if the original input signal was of even length.
 %
-%   In addition to these parameteres, `plotfftreal` accepts any of the flags
+%   In addition to these parameters, `plotfftreal` accepts any of the flags
 %   from |normalize|. The coefficients will be normalized as specified
 %   before plotting.
 %

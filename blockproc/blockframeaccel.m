@@ -2,9 +2,9 @@ function Fo = blockframeaccel(F, Lb, varargin)
 %BLOCKFRAMEACCEL Precompute structures for block processing
 %   Usage: F = blockframeaccel(F,Lb);
 %
-%   `F=blockframeaccel(F,Lb)` have to be called for each frame object prior 
+%   `F=blockframeaccel(F,Lb)` has to be called for each frame object prior to
 %   entering the main loop where |blockana| and |blocksyn| are called.
-%   The function work entirely like |frameaccel| but in addition, it prepares
+%   The function works entirely like |frameaccel| but in addition, it prepares
 %   structures for the processing of a consecutive stream of blocks.
 %
 %      `'sliwin',sliwin`   : Slicing window. `sliwin` have to be a window

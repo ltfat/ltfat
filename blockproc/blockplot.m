@@ -17,7 +17,7 @@ function cola=blockplot(p,F,c,cola)
 %   layout according to the type of `F`.
 %
 %   `blockplot(p,[],c)` does the same, but expects `c` to be already
-%   formated matrix of real numbers. The matrix dimensions are not
+%   formatted matrix of real numbers. The matrix dimensions are not
 %   restricted, but it will be shrinked or expanded to a vertical
 %   strip in the sliding image.
 %

@@ -5,7 +5,7 @@ function coef=plotdgt(coef,a,varargin)
 %          plotdgt(coef,a,fs,dynrange);
 %
 %   `plotdgt(coef,a)` plots the Gabor coefficients *coef*. The coefficients
-%   must have been produced with a timeshift of *a*.
+%   must have been produced with a time shift of *a*.
 %
 %   `plotdgt(coef,a,fs)` does the same assuming a sampling rate of
 %   *fs* Hz of the original signal.
@@ -18,7 +18,7 @@ function coef=plotdgt(coef,a,varargin)
 %   
 %   `C=plotdgt(...)` returns the processed image data used in the
 %   plotting. Inputting this data directly to `imagesc` or similar
-%   functions will create the plot. This is usefull for custom
+%   functions will create the plot. This is useful for custom
 %   post-processing of the image data.
 %
 %   `plotdgt` supports all the optional parameters of |tfplot|. Please see
@@ -40,7 +40,7 @@ definput.import={'ltfattranslate','tfplot'};
 
 M=size(coef,1);
 
-% Move zero frequency to the center and Nyquest frequency to the top.
+% Move zero frequency to the center and Nyquist frequency to the top.
 if rem(M,2)==0
   coef=circshift(coef,M/2-1);
   yr=[-1+2/M, 1];
