@@ -38,6 +38,18 @@ wt2 = wfbtput(3,1,'db10',wt2);
 wt2 = wfbtput(4,1,'dgrid2',wt2);
 wt2 = wfbtput(5,1,'db3',wt2);
 
+%! Another tree
+wt3 = wfbtinit();
+wt3 = wfbtput(0,0,'cmband4',wt3);
+wt3 = wfbtput(1,0,'cmband6',wt3);
+wt3 = wfbtput(1,1,'cmband6',wt3);
+wt3 = wfbtput(2,0,'cmband4',wt3);
+wt3 = wfbtput(2,1,'cmband4',wt3);
+wt3 = wfbtput(3,1,'cmband4',wt3);
+wt3 = wfbtput(3,2,'cmband4',wt3);
+wt3 = wfbtput(3,3,'cmband4',wt3);
+wt3 = wfbtput(3,4,'cmband4',wt3);
+
 % wt2 = wfbtinit();
 % wt2 = wfbtput(0,0,{'db',4},wt2);
 % wt2 = wfbtput(1,0,{'algmband',1},wt2);
@@ -55,6 +67,7 @@ test_filters = {
                {'dgrid1',J} % 4 filters. sub. fac. 2
                wt1
                wt2
+               wt3
                };
 
 

@@ -40,6 +40,11 @@ function plotfftreal(coef,varargin)
 %     'N',N     Specify the transform length *N*. Use this if you are
 %               unsure if the original input signal was of even length.
 %
+%     'dim',dim  If `coef` is multidimensional, `dim` indicates the 
+%                dimension along which are the individual channels oriented.
+%                Value 1 indicates columns, value 2 rows.
+%
+%
 %   In addition to these parameters, `plotfftreal` accepts any of the flags
 %   from |normalize|. The coefficients will be normalized as specified
 %   before plotting.
@@ -51,10 +56,6 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isvector(coef)>1
-  error('Input is multidimensional.');
-end;
-
 definput.import={'ltfattranslate','normalize'};
 definput.importdefaults={'null'};
 
@@ -64,13 +65,23 @@ definput.keyvals.fs=[];
 definput.keyvals.dynrange=[];
 definput.keyvals.opts={};
 
-definput.keyvals.N=2*(length(coef)-1);
+definput.keyvals.N=[];
+definput.keyvals.dim=[];
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
+% if ~isvector(coef)
+%   error('%s: Input is multidimensional.',upper(mfilename));
+% end;
+
+[coef,~,Lc]=assert_sigreshape_pre(coef,[],kv.dim,upper(mfilename));
+
 N=kv.N;
+if isempty(N)
+   N=2*(Lc-1);
+end
 
 N2=floor(N/2)+1;
-if N2~=length(coef)
+if N2~=Lc
   error('%s: Size mismatch.',upper(mfilename));
 end;
 

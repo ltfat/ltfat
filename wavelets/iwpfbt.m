@@ -56,6 +56,10 @@ if(isstruct(par)&&isfield(par,'fname'))
    Ls = par.Ls;
    ext = par.ext;
    do_scale = ~par.isNotScaled;
+
+   % Determine next legal input data length.
+   L = wfbtlength(Ls,wt,ext);
+
 else
    if nargin<3
       error('%s: Too few input parameters.',upper(mfilename));
@@ -70,10 +74,17 @@ else
    do_scale = flags.scale;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
+
+   [Lc,L]=wpfbtclength(Ls,wt,ext);
+   
+   % Do a sanity check
+   if ~isequal(Lc,cellfun(@(cEl) size(cEl,1),c))
+      error(['%s: The coefficients subband lengths do not comply with the'...
+             ' signal length *Ls*.'],upper(mfilename));
+   end
+
 end
 
-% Determine next legal input data length.
-L = wfbtlength(Ls,wt,ext);
 
 wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');

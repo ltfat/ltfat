@@ -41,6 +41,10 @@ function plotfft(coef,varargin)
 %
 %     'posfreq'    Display only the positive frequencies.
 %
+%     'dim',dim  If `coef` is multidimensional, `dim` indicates the 
+%                dimension along which are the individual channels oriented.
+%                Value 1 indicates columns, value 2 rows.
+%
 %
 %   In addition to these parameters, `plotfft` accepts any of the flags
 %   from |normalize|. The coefficients will be normalized as specified
@@ -52,9 +56,9 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isvector(coef)>1
-  error('Input is multidimensional.');
-end;
+% if ~isvector(coef)
+%   error('%s: Can only plot vectors.',upper(mfilename));
+% end;
 
 definput.import={'ltfattranslate','normalize'};
 definput.importdefaults={'null'};
@@ -66,15 +70,12 @@ definput.keyvals.fs=[];
 definput.keyvals.dynrange=[];
 
 definput.keyvals.opts={};
-
+definput.keyvals.dim=[];
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
-coef=normalize(coef,flags.norm);
+[coef,~,N]=assert_sigreshape_pre(coef,[],kv.dim,upper(mfilename));
 
-if ~isvector(coef)
-  error('%s: Can only plot vectors.',upper(mfilename));
-end;
-N=length(coef);
+coef=normalize(coef,flags.norm);
 
 % Apply transformation to coefficients.
 if flags.do_db
@@ -119,7 +120,7 @@ if flags.do_nf
 else
 
   N2=floor(N/2)+1;
-  coef=coef(1:N2);
+  coef=coef(1:N2,:);
   xr=(0:N2-1)*2/N;  
 end;
 

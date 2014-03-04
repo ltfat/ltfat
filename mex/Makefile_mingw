@@ -26,7 +26,7 @@ ifndef SFFTW
    SFFTW=-lfftw3f-3
 endif
 
-CFLAGS=-O3 -shared -Wall -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
+CFLAGS=-O3 -shared -s -Wall -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
 
 include filedefs.mk
 include ../src/ostools.mk

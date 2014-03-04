@@ -1,4 +1,4 @@
-function wt = wfbtinit(wtdef,varargin)
+ function wt = wfbtinit(wtdef,varargin)
 %WFBTINIT Initialize Filterbank Tree
 %   Usage:  wt = wfbtinit(wtdef);
 %
@@ -147,9 +147,9 @@ if flags2.do_dwt || J==1
 elseif flags2.do_full
    % fill the structure to represent a full wavelet tree
    for jj=0:J-1
-      for ii=0:numel(w.g)^(jj)-1
-         wt = wfbtput(jj,ii,w,wt);
-      end
+     % for ii=0:numel(w.g)^(jj)-1
+         wt = wfbtput(jj,0:numel(w.g)^(jj)-1,w,wt);
+     % end
    end
 end
 

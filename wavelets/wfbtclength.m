@@ -19,15 +19,15 @@ definput.import = {'fwt'};
 % Initialize the wavelet filters structure
 wt = wfbtinit(wt);
 
-a = treeSub(wt);
+
 
 if(flags.do_per)
-   blocksize=max(a);
-   L = ceil(Ls/blocksize)*blocksize;
+   a = treeSub(wt);
+   L = filterbanklength(Ls,a);
    Lc = L./a;
 else
-   error('%s:FIXME: Not implemented yet.',upper(mfilename));
    L = Ls;
+   Lc = treeOutLen(L,0,wt);
 end
 
 

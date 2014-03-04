@@ -37,13 +37,22 @@ function gf=filterbankresponse(g,a,L,varargin)
   
 definput.flags.ctype={'complex','real'};
 definput.flags.plottype={'noplot','plot'};
+definput.flags.type={'total','individual'};
 definput.keyvals.fs=[];
 [flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
-gf=comp_filterbankresponse(g,info.a,L,flags.do_real);
+gf = zeros(L,M);
+
+for m=1:M
+    gf(:,m) = comp_filterbankresponse(g(m),info.a(m),L,flags.do_real);
+end
+
+if flags.do_total
+    gf = sum(gf,2);
+end
 
 if flags.do_plot
     if flags.do_real

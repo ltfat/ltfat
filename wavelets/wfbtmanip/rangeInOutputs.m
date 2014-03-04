@@ -7,10 +7,10 @@ function outRange = rangeInOutputs(nodeNo,wt)
 %         wt         : Structure containing description of the filter tree.
 %
 %   Output parameters:
-%         outRange   : Coefficients stored in J+1 cell-array.
+%         outRange   : Subband idx range.
 %
 %   `rangeInOutputs(nodeNo,wt)` Returns index range in the global
-%   tree outputs associated with node `nodeNo`. Empty matrix is returned if
+%   tree subbands associated with node `nodeNo`. Empty matrix is returned if
 %   node has all outputs connected do children nodes. For definition of the
 %   structure see `wfbinit`.
 %

@@ -1,10 +1,11 @@
-function L=wfbtlength(Ls,wt,varargin);
-%WFBTLENGTH  WFBT length from signal
+function [Lc,L]=wpfbtclength(Ls,wt,varargin)
+%WFBTLENGTH  WPFBT subband length from a signal length
 %   Usage: L=wfbtlength(Ls,wt);
 %          L=wfbtlength(Ls,wt,...);
 %
-%   `wfbtlength(Ls,wt)` returns the length of a Wavelet system that is long
-%   enough to expand a signal of length *Ls*. Please see the help on
+%   `[Lc,L]=wpfbtclength(Ls,wt)` returns the length *L* of a wavelet system
+%   that is long enough to expand a signal of length *Ls* and associated
+%   vector subband lengths *Lc*. Please see the help on
 %   |wfbt| for an explanation of the parameter *wt*.
 %
 %   If the returned length is longer than the signal length, the signal
@@ -25,3 +26,8 @@ if(flags.do_per)
 else
    L = Ls;
 end
+
+wtPath = nodesBForder(wt);
+Lc = nodeOutLen(wtPath,L,[],flags.do_per,wt);
+
+

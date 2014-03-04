@@ -1,4 +1,4 @@
-function L = nodeInLen(nodeNo,inLen,doNoExt,wt,varargin)
+function L = nodeInLen(nodeNo,inLen,doNoExt,wt)
 %NODEINLEN Length of the node input signal
 %   Usage:  L = nodeInLen(nodeNo,inLen,doExt,treeStruct);
 %

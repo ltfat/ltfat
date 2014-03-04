@@ -26,7 +26,7 @@ elseif isfield(g,'H')
         g.foff=g.foff(L);
     end;
     
-    H=circshift(postpad(g.H,L),g.foff);
+    H=circshift(postpad(g.H(:),L),g.foff);
     
     if isfield(g,'delay')
        H = H.*exp(-2*pi*1i*round(g.delay)*l);

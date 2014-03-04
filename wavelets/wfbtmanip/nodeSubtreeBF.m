@@ -23,8 +23,8 @@ function nodesIdxs = nodeSubtreeBF(nodeNo,wt)
 toGoTrough = [nodeNo];
 nodesIdxs = [];
 while ~isempty(toGoTrough)
-   chtmp = find(wt.children{toGoTrough(1)}~=0);
-   chIdxtmp = wt.children{toGoTrough(1)}(chtmp);
+  % chtmp = find(wt.children{toGoTrough(1)}~=0);
+   chIdxtmp = wt.children{toGoTrough(1)}(wt.children{toGoTrough(1)}~=0);
    nodesIdxs = [nodesIdxs,chIdxtmp];
    toGoTrough = [toGoTrough(2:end),chIdxtmp];
 end

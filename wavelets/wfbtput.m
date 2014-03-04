@@ -1,11 +1,11 @@
-function wt = wfbtput(d,k,w,wt,varargin)
+function wt = wfbtput(d,k,w,wt,forceStr)
 %WFBTPUT  Put node to the filterbank tree
 %   Usage:  wt = wfbtput(d,k,w,wt);
 %           wt = wfbtput(d,k,w,wt,'force');
 %
 %   Input parameters:
 %           d   : Level in the tree (0 - root).
-%           k   : Index of the node at level *d* (starting at 0).
+%           k   : Index (array of indexes) of the node at level *d* (starting at 0).
 %           w   : Node, basic wavelet filterbank.
 %           wt  : Wavelet filterbank tree structure (as returned from
 %                 |wfbtinit|).
@@ -26,20 +26,35 @@ function wt = wfbtput(d,k,w,wt,varargin)
 %   outputs of the node beeing replaced.
 %
   
-if(nargin<4)
+if nargin<4
    error('%s: Too few input parameters.',upper(mfilename)); 
 end
-definput.flags.force = {'noforce','force'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+
+do_force = 0;
+if nargin==5
+    if ~ischar(forceStr)
+        error('%s: Fifth parameter should be a string.',upper(mfilename));
+    end
+    if strcmpi(forceStr,'force')
+        do_force = 1;
+    end
+end
+
+% This was replaced. Calling ltfatargheler was too slow.
+%definput.flags.force = {'noforce','force'};
+%[flags,kv]=ltfatarghelper({},definput,varargin);
 
 node = fwtinit(w);
 
-[nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wt);
+[nodeNoArray,nodeChildIdxArray] = depthIndex2NodeNo(d,k,wt);
 
+for ii=1:numel(nodeNoArray)
+ nodeNo = nodeNoArray(ii);
+ nodeChildIdx = nodeChildIdxArray(ii);
 if(nodeNo==0)
     % adding root 
     if(~isempty(find(wt.parents==0,1)))
-        if(flags.do_force)
+        if(do_force)
            rootId = find(wt.parents==0,1);
            % if root has children, check if the new root has the same
            % number of them
@@ -63,7 +78,7 @@ end
 childrenIdx = find(wt.children{nodeNo}~=0);
 found = find(childrenIdx==nodeChildIdx,1);
 if(~isempty(found))
-   if(flags.do_force)
+   if(do_force)
      %check if childrenIdx has any children
      tmpnode = wt.children{nodeNo}(found);  
      if(~isempty(find(wt.children{tmpnode}~=0, 1)))
@@ -84,3 +99,5 @@ wt.nodes{end+1} = node;
 wt.parents(end+1) = nodeNo;
 wt.children{end+1} = [];
 wt.children{nodeNo}(nodeChildIdx) = numel(wt.parents);
+
+end

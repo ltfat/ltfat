@@ -69,8 +69,14 @@ else
    ext = flags.ext;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
-   % Determine next legal input data length.
-   L = wfbtlength(Ls,wt,ext);
+
+   [Lc,L]=wfbtclength(Ls,wt,ext);
+   
+   % Do a sanity check
+   if ~isequal(Lc,cellfun(@(cEl) size(cEl,1),c))
+      error(['%s: The coefficient subband lengths do not comply with the'...
+             ' signal length *Ls*.'],upper(mfilename));
+   end
 end
 
 %% ----- step 3 : Run computation
