@@ -15,7 +15,7 @@ function [a,M,L,N,Ngood]=gabimagepars(Ls,x,y)
 %
 %   If you use this function to calculate a grid size for analysis of a
 %   real-valued signal (using |dgtreal|), please input twice of the desired
-%   size *y*. This is because |DGTREAL| only returns half as many
+%   size *y*. This is because |dgtreal| only returns half as many
 %   coefficients in the frequency direction as |dgt|.
 %
 %   An example: We wish to compute a Gabor image of a real valued signal *f*
@@ -67,7 +67,8 @@ else
   Ngood=ceil(Ls/a);
   
   if M<=a
-    error('Fixme: Generate better code, this is not a frame');
+    error('LTFAT:noframe',['Cannot generate a frame, the signal is too long as compared ' ...
+           'to the size of the image. Increase x and y.']);
   end;
   
 end;

@@ -160,7 +160,20 @@ if flags.do_posfreq
    kv.yres=2*kv.yres;
 end;
 
-[a,M,L,N,Ndisp]=gabimagepars(Ls,kv.xres,kv.yres);
+try
+  [a,M,L,N,Ndisp]=gabimagepars(Ls,kv.xres,kv.yres);
+catch
+  err=lasterror;
+  if strcmp(err.identifier,'LTFAT:noframe')
+    error(sprintf(['The signal is too long. SGRAM cannot visualize all the details.\n' ...
+                   'Try a shorter signal or increase the image resolution by calling:\n\n' ...
+                   '  sgram(...,''xres'',xres,''yres'',yres);\n\n' ...
+                   'for larger values of xres and yres.\n'...
+                   'The current values are:\n  xres=%i\n  yres=%i'],kv.xres,kv.yres));
+  else
+    rethrow(err);
+  end;
+end;
 
 % Set an explicit window length, if this was specified.
 if flags.do_wlen

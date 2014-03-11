@@ -1,5 +1,5 @@
-addpath ~/LTFAT/ltfat
-addpath ~/LTFAT/minFunc_2012/minFunc/
+addpath ~/nw/ltfat
+addpath ~/toolboxex/minFunc/
 
 
 ltfatstart;

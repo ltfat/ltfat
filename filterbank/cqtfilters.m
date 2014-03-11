@@ -91,7 +91,7 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %
 %   See also:  erbfilters, cqt, firwin, filterbank
 %
-%   References:  dogrhove11 dogrhove12
+%   References:  dogrhove11 dogrhove12 schorkhuber2014matlab
 
 % Authors: Nicki Holighaus, Gino Velasco
 % Date: 10.04.13
