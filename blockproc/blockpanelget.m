@@ -53,8 +53,8 @@ else
    par = javaMethod('getParams',p);
    if isoctave
       parTmp = par; 
-      par = zeros(numel(parTmp));
-      for ii=1:numel(numel(parTmp))
+      par = zeros(numel(parTmp),1);
+      for ii=1:numel(parTmp)
           par(ii) = parTmp(ii);
       end
    end
