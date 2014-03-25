@@ -45,7 +45,7 @@ definput.keyvals.L=[];
 mustbeuniform=0;
   
 if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(callfun));
+  error('%s: a must be numeric.',upper(mfilename));
 end;
   
 if isempty(L)
@@ -57,7 +57,7 @@ end;
  if size(a,1)>1 
    if  size(a,1)~=info.M
      error(['%s: The number of entries in "a" must match the number of ' ...
-            'filters.'],upper(callfun));
+            'filters.'],upper(mfilename));
    end;
  else
    info.a=a*ones(info.M,1);

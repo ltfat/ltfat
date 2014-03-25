@@ -39,13 +39,13 @@ a = info.a;
 
 if info.M~=M
   error(['%s: Number of filters must be equal to the number of channels ' ...
-            'of coefficients.'],upper(callfun));
+            'of coefficients.'],upper(mfilename));
 end
 
  if size(a,1)>1 
    if  size(a,1)~=M
      error(['%s: The number of entries in "a" must match the number of ' ...
-            'filters.'],upper(callfun));
+            'filters.'],upper(mfilename));
    end;
  else
    a=a*ones(M,1);
