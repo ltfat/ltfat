@@ -43,7 +43,7 @@ realonlyRange = realonlyRange(realonly>0);
 if ~isempty(realonlyRange)
    Gconj = cellfun(@(gEl) conj(gEl(end:-1:1)),G(realonlyRange),'UniformOutput',0);
    LG = cellfun(@(gEl) numel(gEl),Gconj);
-   foffconj = mod(L-foff(realonlyRange)-LG,L)+1;
+   foffconj = -L+mod(L-foff(realonlyRange)-LG,L)+1;
    aconj = a(realonlyRange,:);
 
    cconj = comp_filterbank_fftbl(F,Gconj,foffconj,aconj,0);

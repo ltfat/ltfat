@@ -47,8 +47,6 @@ end
      error(['%s: The number of entries in "a" must match the number of ' ...
             'filters.'],upper(mfilename));
    end;
- else
-   a=a*ones(M,1);
  end;
 
 g = comp_filterbank_pre(g,info.a,L,kv.crossover);

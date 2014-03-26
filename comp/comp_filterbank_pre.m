@@ -74,8 +74,12 @@ for m=mFreq
        g{m}.delay = 0;
     end
 
-    % Treat full-length .H
-    if numel(g{m}.H)==L
+    % Treat full-length .H, but only for non-fractional subsampling
+    % 
+    % Just find out whether we are working with fract. subsampling.
+    [~,info]=comp_filterbank_a(a,M,struct); 
+    
+    if numel(g{m}.H)==L && ~info.isfractional
        if isfield(g{m},'foff') && g{m}.foff~=0 
           % handle .foff parameter for full-length freq. resp.
           g{m}.H = circshift(g{m}.H,g{m}.foff);

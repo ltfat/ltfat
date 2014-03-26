@@ -59,18 +59,70 @@ if isstruct(g)
        error('%s: Unknown filter definition.',upper(mfilename));
     end;
     
-    if g.realonly
-        G=(G+involute(G))/2;
-    end;
-
 else
     G=fft(fir2long(g,L));
 end;
 
-N=L/a;
-h=zeros(N,W,assert_classname(f));
-for w=1:W
-    F=fft(f(:,w));
-    h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
-end;
+if numel(a) > 1
+    % This is possibly a fractional subsampling
+    
+    afrac = a(1)/a(2);
+    if a(1) ~= L
+        error('%s: The length in a(1) is not equal to L.',upper(mfilename));
+    end
+    N = L/afrac;
+    if abs(N-round(N))>1e-5
+        error('%s: Output length is not integer.',upper(mfilename));
+    else
+        N = round(N);
+    end
+    
+    foff = g.foff(L);
+    
+    h=zeros(N,W,assert_classname(f));
+    for w=1:W
+        h(:,w) = blfilt(f(:,w),G,N,foff,afrac);
+         
+        if isstruct(g) && isfield(g,'realonly') && g.realonly
+            G2 = involute(G);
+            supp = numel(g.H(L));
+            foff2 = -L+mod(L-foff-supp,L)+1;
+            h(:,w) = (h(:,w) + blfilt(f(:,w),G2,N,foff2,afrac))/2;
+        end;
+         
+    end;   
+    
+    
+
+    
+else
+    % This is regular subsampling case
+    if isstruct(g) && isfield(g,'realonly') && g.realonly
+        G=(G+involute(G))/2;
+    end;
+    
+    N=L/a;
+    h=zeros(N,W,assert_classname(f));
+    for w=1:W
+        F=fft(f(:,w));
+        h(:,w)=ifft(sum(reshape(F.*G,N,a),2))/a;
+    end;   
+end
+    
+
+function h = blfilt(f,G,N,foff,afrac)
+L = size(f,1);
+
+align = foff - floor(foff/N)*N;
+
+F = circshift(fft(f).*G,-foff);
+
+F = postpad(F,ceil(L/N)*N); 
+
+F = circshift(F,align);
+
+F = sum(reshape(F,N,numel(F)/N),2);
+
+h = ifft(F)/afrac;
+
 

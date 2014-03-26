@@ -1,4 +1,4 @@
-function c=filterbank(f,g,a,varargin);  
+function c=filterbank(f,g,a,varargin)  
 %FILTERBANK   Apply filterbank
 %   Usage:  c=filterbank(f,g,a);
 %
@@ -38,14 +38,12 @@ end;
 
 definput.import={'pfilt'};
 definput.keyvals.L=[];
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+[~,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'FILTERBANK',0);
-
-mustbeuniform=0;
+[f,Ls]=comp_sigreshape_pre(f,'FILTERBANK',0);
   
-if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(mfilename));
+if ~isnumeric(a) || isempty(a)
+  error('%s: a must be non-empty numeric.',upper(mfilename));
 end;
   
 if isempty(L)
@@ -59,13 +57,12 @@ end;
      error(['%s: The number of entries in "a" must match the number of ' ...
             'filters.'],upper(mfilename));
    end;
- else
-   info.a=a*ones(info.M,1);
  end;
+ 
 
 f=postpad(f,L);
 
-g = comp_filterbank_pre(g,info.a,L,kv.crossover);
+g=comp_filterbank_pre(g,info.a,L,kv.crossover);
 
 c=comp_filterbank(f,g,info.a);
 

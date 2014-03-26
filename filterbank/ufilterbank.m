@@ -1,4 +1,4 @@
-function c=ufilterbank(f,g,a,varargin);  
+function c=ufilterbank(f,g,a,varargin)  
 %UFILTERBANK   Apply Uniform filterbank
 %   Usage:  c=ufilterbank(f,g,a);
 %
@@ -8,7 +8,7 @@ function c=ufilterbank(f,g,a,varargin);
 %   column.
 %
 %   The filters *g* must be a cell-array, where each entry in the cell
-%   array corresponds to an FIR filter.
+%   array corresponds to a filter.
 %
 %   If *f* is a single vector, then the output will be a matrix, where each
 %   column in *f* is filtered by the corresponding filter in *g*. If *f* is
@@ -33,11 +33,17 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+if isempty(a) || ~all(a(:,1)==a(1)) ...
+   || ~isnumeric(a) || any(rem(a(:),1)~=0)
+    error(['%s: a has to be either scalar or a numel(g) vector of equal',...
+           ' integers.'], upper(mfilename));
+end
+
 definput.import={'pfilt'};
 definput.keyvals.L=[];
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+[~,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
-[f,Ls,W,wasrow,remembershape]=comp_sigreshape_pre(f,'UFILTERBANK',0);
+[f,Ls,W]=comp_sigreshape_pre(f,'UFILTERBANK',0);
 
 a=a(1);
 
@@ -46,17 +52,17 @@ if isempty(L)
 end;
 
 [g,info]=filterbankwin(g,a,L,'normal');
+
 M=info.M;
 N=L/a;
 
 f=postpad(f,L);
 
-c=zeros(N,M,W,assert_classname(f));
 g = comp_filterbank_pre(g,info.a,L,kv.crossover);
 
 ctmp=comp_filterbank(f,g,info.a);
 
-
+c=zeros(N,M,W,assert_classname(f));
 for m=1:M    
     c(:,m,:)=ctmp{m};
 end;

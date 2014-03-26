@@ -273,8 +273,8 @@ else
 end;
 
 % This is actually much faster than the vectorized call. 
-g = cell(1,M2);
-for m=1:M2
+g = cell(1,numel(fc));
+for m=1:numel(g)
   g{m} = blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),'inf');
 end
 

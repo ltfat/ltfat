@@ -5,7 +5,11 @@ function [f,fl,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,do_ndim)
 %   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK
 %   REFERENCE: OK
-    
+
+if ~isnumeric(f) || isempty(f)
+    error('%s: The input must be non-empty numeric.',upper(callfun));
+end
+
 wasrow=0;
 
 % Rember the shape if f is multidimensional.

@@ -238,9 +238,7 @@ if flags.do_real
 else
     % Replicate the centre frequencies and sampling rates, except the first and
     % last
-    if ~flags.do_uniform
-        a=[a;flipud(a(2:M2-1,:))];
-    end;
+    a=[a;flipud(a(2:M2-1,:))];
     scal=[scal;flipud(scal(2:M2-1))];
     fc  =[fc; -flipud(fc(2:M2-1))];
     if flags.do_symmetric

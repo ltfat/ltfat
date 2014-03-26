@@ -25,7 +25,8 @@ end
 
 F = zeros(L,W,assert_classname(c{1}));
 
-fsuppRangeSmall = cellfun(@(fEl,GEl) mod([fEl:fEl+numel(GEl)-1].',L)+1 ,num2cell(foff),G,'UniformOutput',0);
+fsuppRangeSmall = cellfun(@(fEl,GEl) mod([fEl:fEl+numel(GEl)-1].',L)+1,...
+                          num2cell(foff),G,'UniformOutput',0);
 %
 for w=1:W 
    for m=1:M
@@ -43,7 +44,7 @@ realonlyRange = realonlyRange(realonly>0);
 if ~isempty(realonlyRange)
    Gconj = cellfun(@(gEl) conj(gEl(end:-1:1)),G(realonlyRange),'UniformOutput',0);
    LG = cellfun(@(gEl) numel(gEl),Gconj);
-   foffconj = mod(L-foff(realonlyRange)-LG,L)+1;
+   foffconj = -L+mod(L-foff(realonlyRange)-LG,L)+1;
    aconj = a(realonlyRange,:);
 
    cconj = comp_ifilterbank_fftbl(F,Gconj,L,foffconj,aconj,0);

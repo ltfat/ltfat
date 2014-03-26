@@ -278,7 +278,7 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
     if(realonly)
     {
         // Involute the filter and call the function again
-        const ltfatInt foffconj = positiverem(L-foff-Gl,L)+1;
+        const ltfatInt foffconj = -L + positiverem(L-foff-Gl,L)+1;
         LTFAT_COMPLEX *Gconj = ltfat_malloc(Gl*sizeof*Gconj);
         LTFAT_COMPLEX *cout2 = ltfat_malloc(W*N*sizeof*cout2);
         for(ltfatInt ii=0; ii<Gl; ii++)
