@@ -4,7 +4,6 @@ function [fs,classid] = block(source,varargin)
 %
 %   Input parameters:
 %      source    : Block stream input.
-%      fs        : Sampling rate.
 %   Output parameters:
 %      fs        : Sampling rate.
 %      classid   : Data type.
@@ -24,6 +23,12 @@ function [fs,classid] = block(source,varargin)
 %                        channel
 %
 %   `block` accepts the following optional flags and key-value pairs
+%
+%      `'fs',fs`              Sampling rate - This is only relevant if
+%                             wav file is not used as a source. Some
+%                             devices might support only a limited range
+%                             of samp. frequencies. The default value is
+%                             44100 Hz. 
 %
 %      `'L',L`                Block length - default is 1024. Specifying L
 %                             fixes the buffer length, which cannot be
@@ -272,17 +277,21 @@ if play && record
          error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid(2));
       end
    else
-      % Use asio device if present
+      % Use the priority device if present
       if prioriryPlayID~=-1 && priorityRecID~=-1
          kv.devid = [prioriryPlayID, priorityRecID];
       else
          kv.devid = [playDevIds(1), recDevIds(1)];
       end
    end
-   if pa_bufLen~=-1
-      playrec('init', kv.fs, kv.devid(1), kv.devid(2), max(kv.playch),max(kv.recch),pa_bufLen);
-   else
-      playrec('init', kv.fs, kv.devid(1), kv.devid(2));
+   try
+       if pa_bufLen~=-1
+          playrec('init', kv.fs, kv.devid(1), kv.devid(2), max(kv.playch),max(kv.recch),pa_bufLen);
+       else 
+          playrec('init', kv.fs, kv.devid(1), kv.devid(2));
+       end
+   catch
+       failedInit(devs,kv);
    end
    if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
       error('%s: Using more than one input channel.',upper(mfilename));
@@ -306,10 +315,14 @@ elseif play && ~record
          kv.devid = playDevIds(1);
       end
    end
-   if pa_bufLen~=-1
-      playrec('init', kv.fs, kv.devid, -1,max(kv.playch),-1,pa_bufLen);
-   else
-      playrec('init', kv.fs, kv.devid, -1);
+   try
+       if pa_bufLen~=-1
+          playrec('init', kv.fs, kv.devid, -1,max(kv.playch),-1,pa_bufLen);
+       else
+          playrec('init', kv.fs, kv.devid, -1);
+       end
+   catch
+       failedInit(devs,kv);
    end
    block_interface('setPlayChanList',kv.playch);
    if(playrec('getPlayMaxChannel')<numel(kv.playch))
@@ -329,10 +342,14 @@ elseif ~play && record
          kv.devid = recDevIds(1);
       end
    end
-   if pa_bufLen~=-1
-      playrec('init', kv.fs, -1, kv.devid,-1,max(kv.recch),pa_bufLen);
-   else
-      playrec('init', kv.fs, -1, kv.devid);
+   try
+       if pa_bufLen~=-1
+          playrec('init', kv.fs, -1, kv.devid,-1,max(kv.recch),pa_bufLen);
+       else
+          playrec('init', kv.fs, -1, kv.devid);
+       end
+   catch
+       failedInit(devs,kv);
    end
    block_interface('setRecChanList',kv.recch);
 else
@@ -400,7 +417,7 @@ block_interface('setIsLoop',flags.do_loop);
 if isempty(kv.L)
    block_interface('setBufLen',-1);
 else
-   if kv.L<256
+   if kv.L<256 && flags.do_online
       error('%s: Minimum buffer length is 256.',upper(mfilename))
    end
    block_interface('setBufLen',kv.L);
@@ -421,6 +438,35 @@ end
 % starts. 
 pause(0.1); 
 
+
+function failedInit(devs,kv)
+errmsg = '';
+
+playFs = devs([devs.deviceID]==kv.devid(1)).supportedSampleRates;
+if ~isempty(playFs) && ~any(playFs==kv.fs) 
+  fsstr = sprintf('%d, ',playFs);
+  fsstr  = ['[',fsstr(1:end-2),']' ];
+  errmsg = [errmsg, sprintf(['Device %i does not ',...
+            'support the required fs. Supported are: %s \n'],...
+            kv.devid(1),fsstr)]; 
+end
+
+if numel(kv.devid)>1
+    recFs = devs([devs.deviceID]==kv.devid(2)).supportedSampleRates;
+    if ~isempty(recFs) && ~any(recFs==kv.fs) 
+      fsstr = sprintf('%d, ',recFs);
+      fsstr  = ['[',fsstr(1:end-2),']' ];
+      errmsg = [errmsg, sprintf(['Recording device %i does not ',...
+                'support the required fs. Supported are: %s \n'],...
+                kv.devid(2),fsstr)]; 
+    end
+end
+
+if isempty(errmsg)
+   error('%s',lasterror.message);
+else
+   error(errmsg);
+end
    
 
       

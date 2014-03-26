@@ -53,27 +53,27 @@ function c = gga(f,fvec,fs,dim)
 %     norm(ck-fft(f))
 % 
 %     % DTFT samples at 400,510,620,680,825 Hz
-%     ckchzt = gga(f,freq,fs);
+%     ckgga = gga(f,freq,fs);
 % 
 %     % Plot modulus of coefficients
-%     figure(1);
-%     hold on;
-%     stem(k/L*fs,abs(ck),'k');
-%     stem(freq,abs(ckchzt),'r:');
+%     figure(1);clf;hold on;
+%     stem(k/L*fs,2*abs(ck)/L,'k');
+%     stem(freq,2*abs(ckgga)/L,'r:');
 %     set(gca,'XLim',[freq(1)-50,freq(end)+50]);
-%     set(gca,'YLim',[0 3*L]);
+%     set(gca,'YLim',[0 6]);
 %     xlabel('f[Hz]');
-%     ylabel('|ck|');
+%     ylabel('|c(k)|');
+%     hold off;
 % 
 %     % Plot phase of coefficients
-%     figure(2);
-%     hold on;
+%     figure(2);clf;hold on;
 %     stem(k/L*fs,angle(ck),'k');
-%     stem(freq,angle(ckchzt),'r:');
+%     stem(freq,angle(ckgga),'r:');
 %     set(gca,'XLim',[freq(1)-50,freq(end)+50]);
 %     set(gca,'YLim',[-pi pi]);
 %     xlabel('f[Hz]');
-%     ylabel('angle(ck)');
+%     ylabel('angle(c(k))');
+%     hold off;
 %
 %   See also: chirpzt
 %

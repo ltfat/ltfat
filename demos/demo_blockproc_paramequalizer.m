@@ -174,7 +174,7 @@ if G>0
    Hb(3) = (1-K/Q+K*K)/den;
 elseif G<0
    V0=10^(-G/20);
-   den = 1 + V0*K/Q + V0*K*K;
+   den = 1 + V0*K/Q + K*K;
    % a0
    Ha(1) = (1+K/Q+K*K)/den;
    % a1

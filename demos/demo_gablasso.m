@@ -11,9 +11,9 @@ a=2;
 M=128;
 
 % Regression parameters
-lambda = 0.08;
+lambda = 0.1;
 maxit=500;
-tol=1e-1;
+tol=1e-2;
 
 F=frametight(frame('dgtreal','gauss',a,M));
 
@@ -21,7 +21,7 @@ F=frametight(frame('dgtreal','gauss',a,M));
 [tcl,relres,iter,xrecl] = franalasso(F,x,lambda,'maxit',maxit,'tol',tol);
 
 % GLASSO
-[tcgl,relres,iter,xrecgl] = franagrouplasso(F,x,lambda,'maxit',maxit,'tol',tol);
+[tcgl,relres,iter,xrecgl] = franagrouplasso(F,x,lambda*sqrt(M),'maxit',maxit,'tol',tol);
 
 % Displays
 figure(1);

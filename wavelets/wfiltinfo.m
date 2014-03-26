@@ -1,4 +1,4 @@
-function wfiltinfo(w)
+function wfiltinfo(w,varargin)
 %WFILTINFO Plots filters info
 %   Usage: wfiltinfo(w);
 %
@@ -8,6 +8,9 @@ function wfiltinfo(w)
 %   Plots impulse responses, frequency responses and approximation of
 %   the scaling of the wavelet function(s) associated withthe wavelet filters
 %   defined by *w* in a single figure. Format of *w* is the same as in |fwt|.
+%
+%   Optionally it is possible to define scaling of the y axis of the
+%   frequency seponses. By deault a dB scale is used.
 %
 %   Examples:
 %   ---------
@@ -22,10 +25,14 @@ function wfiltinfo(w)
 %
 %   See also: wfilt_db 
 
+definput.flags.freqzscale = {'db','lin'};
+[flags]=ltfatarghelper({},definput,varargin);
+
 
 w = fwtinit({'strict',w});
-filtNo = length(w.g);
+clf;
 
+filtNo = length(w.g);
 grayLevel = [0.6,0.6,0.6];
 
 
@@ -88,14 +95,22 @@ for ii=1:filtNo
 end
 
 %[H] = wtfftfreqz(w.g);
-plotH = 20*log10(abs(H));
+if flags.do_db
+   plotH = 20*log10(abs(H));
+elseif flags.do_lin
+   plotH = abs(H);   
+else
+    error('%s: Unknown parameter',upper(mfilaname));
+end
 xVals = linspace(0,1,numel(H(:,1)));
 hold on;
 for ff=1:filtNo
    plot(xVals,plotH(:,ff),colorAr(ff));
    axis tight;
 end
-ylim([-30,max(plotH(:))])
+if flags.do_db
+    ylim([-30,max(plotH(:))])
+end
 ylabel('|\itH|[dB]');
 xlabel('\omega [-]')
 hold off;

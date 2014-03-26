@@ -14,7 +14,8 @@ function Fo = blockframeaccel(F, Lb, varargin)
 %                            `'hann'`.
 %
 %      `'zpad',zpad`   : Number of zero samples the block will be padded
-%                        after it is windowed by a slicing window.
+%                        after it is windowed by a slicing window. This
+%                        does not affect the synthesis windowing.
 
 
 

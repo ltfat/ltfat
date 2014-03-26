@@ -10,7 +10,7 @@
 %      UFWT              - Undecimated Fast Wavelet Transform
 %      IUFWT             - Inverse Undecimated Fast Wavelet Transform 
 %      FWTLENGTH         - Length of Wavelet system to expand a signal
-%      FWTCLENGTH        - Lengths of the wavelet coefficients subbands
+%      FWTCLENGTH        - Lengths of the wavelet coefficient subbands
 %
 %   Advanced analysis/synthesis
 %      WFBT              - Transform using general Wavelet Filterbank Tree 
@@ -23,6 +23,8 @@
 %      IUWPFBT           - Inverse Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree
 %      WPBEST            - Best Tree selection
 %      WFBTLENGTH        - Length of Wavelet filterbank system to expand a signal
+%      WFBTCLENGTH       - Lengths of Wavelet filterbank coefficent subbands
+%      WPFBTCLENGTH      - Lengths of Wavelet Packet transform coefficent subbands
 %
 %   Wavelet Filterbank trees manipulation
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
@@ -44,6 +46,7 @@
 %   Filters defined in the time-domain
 %      WFILT_ALGMBAND    - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
 %      WFILT_APR         - Almost Perfect Reconstruction Filter Bank for Non-redundant, Approximately Shift-Invariant, ComplexWavelet Transforms
+%      WFILT_CMBAND      - M-Band cosine modulated wavelet filters
 %      WFILT_DB          - DauBechies orthogonal filters (ortonormal base)
 %      WFILT_DDEN        - Double-DENsity dwt filters (tight frame)
 %      WFILT_DGRID       - Dense GRID framelets (tight frame, symmetric)

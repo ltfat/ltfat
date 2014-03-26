@@ -9,7 +9,7 @@ function [g,a] = wfbt2filterbank( wtdef, varargin)
 %         g   : Cell array containing filters
 %         a   : Vector of sub-/upsampling factors
 %
-%   `wfbtmultid(wtdef)` calculates the impulse responses *g* and the 
+%   `wfbt2filterbank(wtdef)` calculates the impulse responses *g* and the 
 %   subsampling factors *a* of non-iterated filterbank, which is equivalent
 %   to the wavelet filterbank tree described by *wtdef*. The returned 
 %   parameters can be used directly in |filterbank|, |ufilterbank| or 
@@ -28,12 +28,14 @@ function [g,a] = wfbt2filterbank( wtdef, varargin)
 %   identical to the DWT tree:::
 %
 %     [g,a] = wfbt2filterbank({'db10',3,'dwt'});
+%     filterbankresponse(g,a,1024,'plot','individual');
 %     
 %
 %   In the second example, the filterbank is identical to the full
 %   wavelet tree:::
 %
 %     [g,a] = wfbt2filterbank({'db10',3,'full'});
+%     filterbankresponse(g,a,1024,'plot','individual');
 %
 %   See also: wfbtinit
 

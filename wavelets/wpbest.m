@@ -1,4 +1,4 @@
-function [c,info] = wpbest(f,w,J,varargin)
+function [c,info,wt] = wpbest(f,w,J,varargin)
 %WPBEST  Best Tree selection
 %   Usage: c = wpbest(f,w,J,cost);
 %          [c,info] = wpbest(...);
@@ -11,6 +11,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %   Output parameters:
 %         c     : Coefficients stored in a cell-array.
 %         info  : Transform parameters struct.
+%         wt    : The best subtree.
 %
 %   `[c,info]=wpbest(f,w,J,cost)` selects the best sub-tree `info.wt` from 
 %   the full tree with max. depth *J*, which minimizes the cost function.

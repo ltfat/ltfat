@@ -24,10 +24,18 @@
 %   see |fwt|.  The following optional flags (still inside of the
 %   cell-array) are recognized:
 %
-%   'dwt','full'
+%   'dwt','full','doubleband','quadband','octaband'
 %     Type of the tree to be created.
+% 
+%   `wfbt=wfbtinit({w,J,flag,'mod',mod})` creates a filterbank tree as before,
+%   but modified according to the value of `mod`. 
+%   Recognized options:
 %
-%   Additional flags:
+%   `'powshiftable'` 
+%      Changes subsampling factors of the root to 1. This results in redundant
+%      near-shift invariant representation.
+%
+%   Regular `wfbtinit` flags:
 %
 %   'freq','nat'
 %     Frequency or natural ordering of the coefficient subbands. The direct
@@ -116,7 +124,10 @@ end
 % Now wtdef is this {w,J,flag}
 wdef = wtdef{1};
 definput = [];
-definput.flags.treetype = {'full','dwt','root'};
+definput.flags.treetype = {'full','dwt','doubleband','quadband',...
+                           'octaband','root'};
+definput.keyvals.mod = [];
+definput.keyvals.overcomplete = [];
 definput.keyvals.J = [];
 [flags2,kv2,J]=ltfatarghelper({'J'},definput,wtdef(2:end));
 
@@ -127,6 +138,29 @@ end
 if do_strict
    wdef = {'strict',wdef};
 end
+
+do_powshiftable = 0;
+% Is the first level filterbank different?
+if ~isempty(kv2.mod)
+    if ischar(kv2.mod)
+        if strcmpi(kv2.mod,'powshiftable')
+           if ~flags2.do_dwt 
+              error('%s: powshiftable is only valid with the dwt flag.',...
+                    upper(mfilename));
+           end
+           do_powshiftable = 1;
+        else
+           error('%s: Not recognized value for the mod key.',upper(mfilename));
+        end
+    else
+        error('%s: Not recognized value for the first key.',upper(mfilename));
+    end
+end
+
+if ~isempty(kv2.overcomplete)
+     error('%s: TO DO: overcomplete.',upper(mfilename));
+end
+
 
 w = fwtinit(wdef);
 
@@ -139,7 +173,7 @@ if isempty(J)
    error('%s: Unspecified J.',upper(mfilename));
 end
 
-if flags2.do_dwt || J==1
+if flags2.do_dwt 
    % fill the structure to represent a DWT tree
    for jj=0:J-1
       wt = wfbtput(jj,0,w,wt);
@@ -151,6 +185,34 @@ elseif flags2.do_full
          wt = wfbtput(jj,0:numel(w.g)^(jj)-1,w,wt);
      % end
    end
+elseif flags2.do_doubleband
+   % fill the structure to represent a double band tree
+   for jj=0:J-1
+     % for ii=0:numel(w.g)^(jj)-1
+         wt = wfbtput(2*jj,0,w,wt);
+         wt = wfbtput(2*jj+1,0:1,w,wt);
+     % end
+   end 
+   
+elseif flags2.do_quadband
+   % fill the structure to represent a quad band tree
+   for jj=0:J-1
+     % for ii=0:numel(w.g)^(jj)-1
+         wt = wfbtput(3*jj,0,w,wt);
+         wt = wfbtput(3*jj+1,0:1,w,wt);
+         wt = wfbtput(3*jj+2,0:3,w,wt);
+     % end
+   end 
+elseif flags2.do_octaband
+   % fill the structure to represent a octa band tree
+   for jj=0:J-1
+     % for ii=0:numel(w.g)^(jj)-1
+         wt = wfbtput(4*jj,0,w,wt);
+         wt = wfbtput(4*jj+1,0:1,w,wt);
+         wt = wfbtput(4*jj+2,0:3,w,wt);
+         wt = wfbtput(4*jj+3,0:7,w,wt);
+     % end
+   end 
 end
 
 % Do filter shuffling if frequency ordering is required,
@@ -159,6 +221,11 @@ if flags.do_freq
    wt.freqOrder = 1;
 else
    wt.freqOrder = 0;
+end
+
+if do_powshiftable
+    % Change subsampling factors of the root to 1
+    wt.nodes{wt.parents==0}.a(:) = 1;
 end
 
 

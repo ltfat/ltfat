@@ -5,7 +5,7 @@ function [h,g,a,info] = wfilt_cmband(M)
 %   Input parameters:
 %         M     : Number of channels.
 %
-%   `[h,g,a]=wfilt_cmband(M,K)` returns smooth, *1*-regular Cosine modulated
+%   `[h,g,a]=wfilt_cmband(M)` returns smooth, *1*-regular Cosine modulated
 %   *M*-band wavelet filters. The length of the filters is *4M*.
 %
 %   Examples:
