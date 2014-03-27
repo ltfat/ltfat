@@ -27,5 +27,6 @@ while flag && p.flag
    
    [f,flag] = blockread();
    blockplay(f*gain);
+   blockwrite(f);
 end
 blockdone(p);

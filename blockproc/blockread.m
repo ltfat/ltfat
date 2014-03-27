@@ -22,13 +22,15 @@ persistent t2;
 %global delayLog;
 %global delayLog2;
 
+is_offline = block_interface('getOffline');
+
 Lbuf = block_interface('getBufLen'); 
 if nargin==1
    if Lbuf>0 && Lbuf~=L
       error('%s: Buffer length was fixed to %i, but now requiring %i.',...
             upper(mfilename),Lbuf,L);
    end
-   if L<256
+   if L<256 && ~is_offline
       error('%s: Minimum buffer length is 256.',upper(mfilename));
    end
 else
@@ -39,53 +41,55 @@ else
    end
 end
 
-do_updateGUI = 0;
-do_updateBAR = 0;
 
-loadind = block_interface('getDispLoad');
+    do_updateGUI = 0;
+    do_updateBAR = 0;
 
-if ischar(loadind)
-   if strcmp('bar',loadind)
-      do_updateBAR = 1;
-   end
-elseif isjava(loadind)
-   do_updateGUI = 1;
-else
-   error('%s: Something went wrong. Should not ever get here.',upper(mfilename));
-end
+    loadind = block_interface('getDispLoad');
 
-if do_updateBAR || do_updateGUI 
-   if block_interface('getPageNo')>0
-      procTime = toc(t1);
-      res = 2;
+    if ischar(loadind)
+       if strcmp('bar',loadind)
+          do_updateBAR = 1;
+       end
+    elseif isjava(loadind)
+       do_updateGUI = 1;
+    else
+       error('%s: Something went wrong. Should not ever get here.',upper(mfilename));
+    end
 
-      fs= playrec('getSampleRate');
-      load = floor(100*(procTime+readTime)/(L/fs));
-      
-      if do_updateBAR
-         msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
-         droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
-         fprintf([clearStr,msg,droppedStr]);
-         clearStr = repmat(sprintf('\b'), 1, length(msg)+length(droppedStr));
-      elseif do_updateGUI
-         javaMethod('updateBar',loadind,load);
-      else
-         error('%s: Something went wrong. Should not ever get here.',upper(mfilename));
-      end
-   
-      block_interface('setSkipped',playrec('getSkippedSampleCount'));
-      if playrec('getSkippedSampleCount') > block_interface('getSkipped')
-         block_interface('setSkipped',playrec('getSkippedSampleCount'));
-      end
+    if do_updateBAR || do_updateGUI 
+       if block_interface('getPageNo')>0
+          procTime = toc(t1);
+          res = 2;
 
-   else
-      clearStr = '';
-      %delayLog = [];
-      %delayLog2 = [0];
-      procTime = 0;
-   end
-   t2 = tic;
-end
+          fs= playrec('getSampleRate');
+          load = floor(100*(procTime+readTime)/(L/fs));
+
+          if do_updateBAR
+             msg = sprintf(['Load : |',repmat('*',1,ceil(min([load,100])/res)),repmat(' ',1,floor((100-min([load,100]))/res)),'| \n']);
+             droppedStr = sprintf('Dropped samples: %i\n',playrec('getSkippedSampleCount'));
+             fprintf([clearStr,msg,droppedStr]);
+             clearStr = repmat(sprintf('\b'), 1, length(msg)+length(droppedStr));
+          elseif do_updateGUI
+             javaMethod('updateBar',loadind,load);
+          else
+             error('%s: Something went wrong. Should not ever get here.',upper(mfilename));
+          end
+
+          block_interface('setSkipped',playrec('getSkippedSampleCount'));
+          if playrec('getSkippedSampleCount') > block_interface('getSkipped')
+             block_interface('setSkipped',playrec('getSkippedSampleCount'));
+          end
+
+       else
+          clearStr = '';
+          %delayLog = [];
+          %delayLog2 = [0];
+          procTime = 0;
+       end
+       t2 = tic;
+    end
+
 
 valid = 1;
 source = block_interface('getSource');
@@ -166,25 +170,9 @@ elseif strcmp(source,'playrec')
 %% PLAY: Source is a *.wav file
 %
 elseif isa(source,'function_handle')
-   % Get play channel list (could be chached) 
-   chanList = block_interface('getPlayChanList');
-   % Get already processed (from blockplay)
-   fhat = block_interface('getToPlay');
-
-   % Create something if blockplay was not called
-   if isempty(fhat)
-      fhat = zeros(L,numel(chanList),classid);
-   end
-
-   % Broadcast single input channel to all output chanels.
-   if size(fhat,2)==1
-      fhat = repmat(fhat,1,numel(chanList));
-   end
-
    % Number of wav samples (is chached, since it is disk read operation)
-   Lwav = block_interface('getLs');
-
-
+   Lwav = block_interface('getLs'); 
+    
    % Determine valid samples
    endSample = min(pos + L - 1, Lwav(1));
    %f = cast(wavread(source,[pos, endSample]),block_interface('getClassId'));
@@ -207,33 +195,52 @@ elseif isa(source,'function_handle')
       else
          valid = 0;
       end
-   end
+   end 
+   
+   if ~is_offline
+       % Get play channel list (could be chached) 
+       chanList = block_interface('getPlayChanList');
+       % Get already processed (from blockplay)
+       fhat = block_interface('getToPlay');
+
+       % Create something if blockplay was not called
+       if isempty(fhat)
+          fhat = zeros(L,numel(chanList),classid);
+       end
+
+       % Broadcast single input channel to all output chanels.
+       if size(fhat,2)==1
+          fhat = repmat(fhat,1,numel(chanList));
+       end
 
 
-   % playrec('play',... - enques fhat to be played
-   % block_interface('pushPage', - stores page number in an inner FIFO
-   % queue
-   block_interface('pushPage', playrec('play', fhat, chanList));
+       % playrec('play',... - enques fhat to be played
+       % block_interface('pushPage', - stores page number in an inner FIFO
+       % queue
+       block_interface('pushPage', playrec('play', fhat, chanList));
 
-   if do_updateBAR || do_updateGUI
-      readTime = toc(t2);
-   end
-   % If enough buffers are enqued, block the execution here until the 
-   % first one is finished.
-   if block_interface('getEnqBufCount') > block_interface('getBufCount')
-      pageId = block_interface('popPage');
-      % "Aggresive" chceking if page was played.
-      % Another (supposedly slower) option is:
-      % playrec('block',pageId);
-      while(playrec('isFinished', pageId) == 0), end;
+       if do_updateBAR || do_updateGUI
+          readTime = toc(t2);
+       end
+       % If enough buffers are enqued, block the execution here until the 
+       % first one is finished.
+       if block_interface('getEnqBufCount') > block_interface('getBufCount')
+          pageId = block_interface('popPage');
+          % "Aggresive" chceking if page was played.
+          % Another (supposedly slower) option is:
+          % playrec('block',pageId);
+          while(playrec('isFinished', pageId) == 0), end;
+       end
    end
 end
 
-if pageNo<=1
-   playrec('resetSkippedSampleCount');
-end
+if ~is_offline
+    if pageNo<=1
+       playrec('resetSkippedSampleCount');
+    end
 
-if do_updateBAR || do_updateGUI
-   t1=tic;
+    if do_updateBAR || do_updateGUI
+       t1=tic;
+    end
 end
 

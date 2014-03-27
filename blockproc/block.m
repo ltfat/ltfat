@@ -43,18 +43,22 @@ function [fs,classid] = block(source,varargin)
 %                             |blockdevices|.
 %      
 %      `'playch',playch`      If device supports more output channels, `'playch'`
-%                             can be used to specify which should be used. E.g.
+%                             can be used to specify which ones should be used. E.g.
 %                             for two channel device, [1,2] is used to specify 
 %                             both channels. 
 %
 %      `'recch',recch`        If device supports more input channels, `'recch'`
-%                             can be used to specify which should be used.
+%                             can be used to specify which ones should be used.
 %
-%      `'outfile','file.wav'` Processed sound data is stored in a new wav
-%                             file. NOT IMPLEMENTED YET!
+%      `'outfile','file.wav'` Creates a wav file header for on-the-fly
+%                             storing of block data using |blockwrite|.
+%                             Existing file will be overwritten.
+%                             Only 16bit fixed point precision is
+%                             supported in the files.
+%                         
 %
 %      `'nbuf',nbuf`          Max number of buffers to be preloaded. Helps
-%                             avoiding glitches, but increases delay.
+%                             avoiding glitches but increases delay.
 %
 %
 %      `'loadind',loadind`    How to show the load indicator. `loadind` can 
@@ -68,16 +72,24 @@ function [fs,classid] = block(source,varargin)
 %                              obj       Java object which have a public
 %                                        method updateBar(double).  
 %
-%   Optional flag groups
+%   Optional flag groups (first is default)
 %
 %      'noloop', 'loop'     Plays the input in a loop. 
 %
-%      'single', 'double'   Data type to be used.
+%      'single', 'double'   Data type to be used. In the offline mode (see
+%                           below) the flag is ignored and everything is
+%                           cast do double.
 %
-%      'online', 'offline'  Allows offline processing for data or wav
-%                           inputs. NOT IMPELMENTED YET!
+%      'online', 'offline'  Use offline flag for offline blockwise 
+%                           processing of data input or a wav
+%                           file without initializing and using the
+%                           playrec MEX.
 %
-% 
+
+%   The function uses the Playrec tool by Robert Humphrey 
+%   http://www.playrec.co.uk/ which in turn relies on 
+%   Portaudio lib 
+%   http://www.portaudio.com/
 
 
 definput.keyvals.devid=[];
@@ -93,36 +105,61 @@ definput.flags.loop={'noloop','loop'};
 definput.flags.onoff={'online','offline'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-% Octave version check
-skipLoadin = 0;
-if isoctave
-    octs=strsplit(version,'.');
-    octN=str2num(octs{1})*1000+str2num(octs{2});
-    if octN<3007
-      warning('%s: Using Octave < 3.7. Disabling load indicator.',mfilename);
-      skipLoadin = 1; 
+failIfNotPositiveInteger(kv.L,'L');
+failIfNotPositiveInteger(kv.fs,'fs');
+failIfNotPositiveInteger(kv.nbuf,'nbuf');
+
+% Reset all persistent data 
+block_interface('reset');
+
+if ~flags.do_offline
+    % Octave version check
+    skipLoadin = 0;
+    if isoctave
+        octs=strsplit(version,'.');
+        octN=str2num(octs{1})*1000+str2num(octs{2});
+        if octN<3007
+          warning('%s: Using Octave < 3.7. Disabling load indicator.',mfilename);
+          skipLoadin = 1; 
+        end
     end
+
+    if ~skipLoadin
+       if ischar(kv.loadind)
+          if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
+             error('%s: Incorrect value parameter for the key ''loadin''.',upper(mfilename));
+          end
+       elseif isjava(kv.loadind)
+          try
+             javaMethod('updateBar',kv.loadind,0);
+          catch
+             error('%s: Java object does not contain updateBar method.',upper(mfilename))
+          end
+    % Instead of this:
+    %      if ~any(cellfun(@(mEl)~isempty(strfind(mEl,'updateBar(double)')),methods(kv.loadind,'-full')))
+    %         error('%s: The Java object does not contain the updateBar(double) method.',upper(mfilename));
+    %      end
+       end
+    end
+    
+
+    % Store option for displaying the loop playback
+    block_interface('setIsLoop',flags.do_loop);
+else
+    % Check whether any of incompatible params are set
+    failIfInvalidOfflinePar(kv,'devid');
+    failIfInvalidOfflinePar(kv,'playch');
+    failIfInvalidOfflinePar(kv,'recch');
+    failIfInvalidOfflinePar(kv,'nbuf');
+    failIfInvalidOfflinePar(kv,'loadind',definput.keyvals.loadind);
+    failIfInvalidOfflinePar(flags,'loop',definput.flags.loop{1});
+    kv.loadind = 'nobar';
+    
+    % Different behavior for the fmt flag
+    flags.fmt = 'double';
+    % fs is maybe needed for setting fs for the output wav
+    block_interface('setOffline',1);
 end
-
-
-if ~skipLoadin
-   if ischar(kv.loadind)
-      if ~strcmpi(kv.loadind,'bar') && ~strcmpi(kv.loadind,'nobar')
-         error('%s: Incorrect value parameter for the key ''loadin''.',upper(mfilename));
-      end
-   elseif isjava(kv.loadind)
-      try
-         javaMethod('updateBar',kv.loadind,0);
-      catch
-         error('%s: Java object does not contain updateBar method.',upper(mfilename))
-      end
-% Instead of this:
-%      if ~any(cellfun(@(mEl)~isempty(strfind(mEl,'updateBar(double)')),methods(kv.loadind,'-full')))
-%         error('%s: The Java object does not contain the updateBar(double) method.',upper(mfilename));
-%      end
-   end
-end
-
 
 playChannels = 0;
 recChannels = 0;
@@ -133,10 +170,6 @@ record = 0;
 hostAPIpriorityList = {};
 % Force portaudio to use buffer of the following size
 pa_bufLen = -1;
-
-if ~isempty(kv.outfile)
-   error('%s: TO DO: Writing to the output wav file is not supported yet.',upper(mfielname));
-end
 
 if ischar(source)
    if isempty(kv.fs)
@@ -185,9 +218,10 @@ if ischar(source)
       error('%s: Unrecognized command "%s".',upper(mfilename),source);
    end
 elseif(isnumeric(source))
-    if isempty(kv.fs)
+    if isempty(kv.fs) && flags.do_online
       kv.fs = 44100;
-      warning('%s: Sampling rate not specified. Using default value %i Hz.',upper(mfilename),kv.fs); 
+      warning('%s: Sampling rate not specified. Using default value %i Hz.',...
+              upper(mfilename),kv.fs); 
    end
    playChannels = 2;
    play = 1;
@@ -198,220 +232,36 @@ else
    error('%s: Unrecognized input.',upper(mfilename));
 end
 
-isPlayrecInit = 0;
-try 
-   isPlayrecInit = playrec('isInitialised');
-catch
-   err = lasterror;
-   if ~isempty(strfind(err.message,'The specified module could not be found'))
-      error('%s: playrec found but portaudio cannot be found.', upper(mfilename));
-   end
-    if ~isempty(strfind(err.message,'Undefined function'))
-      error('%s: playrec could not be found.', upper(mfilename));
+
+is_wav = ischar(source) && numel(source)>4 && strcmpi(source(end-3:end),'.wav');
+is_numeric = isnumeric(source);
+
+if flags.do_offline
+    if ~is_wav && ~is_numeric
+        error(['%s: In the offline mode, only wav file or a data vector can ',...
+           ' be used as a source.'],upper(mfilename));
     end
-   error('%s: Error loading playrec.',upper(mfilename));
+
+    if isempty(kv.fs) && ~isempty(kv.outfile)
+        error('%s: Missing fs for the output file.',upper(mfilename));    
+    end
+    
 end
 
-if isPlayrecInit
-   playrec('reset');
-end
+% Store option for displaying the load bar
+block_interface('setDispLoad',kv.loadind);
 
-if isempty(kv.playch)
-  kv.playch = 1:playChannels; 
-end
-
-if isempty(kv.recch)
-  kv.recch = 1:recChannels; 
-end
-
-devs = playrec('getDevices');
-if isempty(devs)
-   error('%s: No sound devices available. portaudio lib is probably incorrectly built.',upper(mfilename));
-end
-
-block_interface('reset');
-
-prioriryPlayID = -1;
-priorityRecID = -1;
-
-% Get all installed play devices
-playDevStructs = devs(arrayfun(@(dEl) dEl.outputChans,devs)>0);
-
-% Search for priority play device
-for ii=1:numel(hostAPIpriorityList)
-   hostAPI = hostAPIpriorityList{ii};
-   priorityHostNo = find(arrayfun(@(dEl) ~isempty(strfind(lower(dEl.hostAPI),lower(hostAPI))),playDevStructs)>0);
-   if ~isempty(priorityHostNo)
-      prioriryPlayID = playDevStructs(priorityHostNo(1)).deviceID;
-      break;
-   end
-end
-
-% Get IDs of all play devices
-playDevIds = arrayfun(@(dEl) dEl.deviceID, playDevStructs);
-
-% Get all installed recording devices
-recDevStructs = devs(arrayfun(@(dEl) dEl.inputChans,devs)>0);
-% Search for priority rec device
-for ii=1:numel(hostAPIpriorityList)
-   hostAPI = hostAPIpriorityList{ii};
-   priorityHostNo = find(arrayfun(@(dEl) ~isempty(strfind(lower(dEl.hostAPI),lower(hostAPI))),recDevStructs)>0);
-   if ~isempty(priorityHostNo)
-      priorityRecID = recDevStructs(priorityHostNo(1)).deviceID;
-      break;
-   end
-end
-
-% Get IDs of all rec devices
-recDevIds = arrayfun(@(dEl) dEl.deviceID,recDevStructs);
-
-if play && record
-   if ~isempty(kv.devid)
-      if(numel(kv.devid)~=2)
-         error('%s: devid should be 2 element vector.',upper(mfilename));
-      end
-      if ~any(playDevIds==kv.devid(1))
-         error('%s: There is no play device with id = %i.',upper(mfilename),kv.devid(1));
-      end
-      if ~any(recDevIds==kv.devid(2))
-         error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid(2));
-      end
-   else
-      % Use the priority device if present
-      if prioriryPlayID~=-1 && priorityRecID~=-1
-         kv.devid = [prioriryPlayID, priorityRecID];
-      else
-         kv.devid = [playDevIds(1), recDevIds(1)];
-      end
-   end
-   try
-       if pa_bufLen~=-1
-          playrec('init', kv.fs, kv.devid(1), kv.devid(2), max(kv.playch),max(kv.recch),pa_bufLen);
-       else 
-          playrec('init', kv.fs, kv.devid(1), kv.devid(2));
-       end
-   catch
-       failedInit(devs,kv);
-   end
-   if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
-      error('%s: Using more than one input channel.',upper(mfilename));
-   end
-   block_interface('setPlayChanList',kv.playch);
-   block_interface('setRecChanList',kv.recch);
-elseif play && ~record
-   if ~isempty(kv.devid)
-      if numel(kv.devid) >1
-         error('%s: devid should be scalar.',upper(mfilename));
-      end
-      if ~any(playDevIds==kv.devid)
-         error('%s: There is no play device with id = %i.',upper(mfilename),kv.devid);
-      end
-   else
-      % Use prefered device if present
-      if prioriryPlayID~=-1
-         kv.devid = prioriryPlayID;
-      else
-         % Use the first (hopefully default) device
-         kv.devid = playDevIds(1);
-      end
-   end
-   try
-       if pa_bufLen~=-1
-          playrec('init', kv.fs, kv.devid, -1,max(kv.playch),-1,pa_bufLen);
-       else
-          playrec('init', kv.fs, kv.devid, -1);
-       end
-   catch
-       failedInit(devs,kv);
-   end
-   block_interface('setPlayChanList',kv.playch);
-   if(playrec('getPlayMaxChannel')<numel(kv.playch))
-       error ('%s: Selected device does not support %d output channels.\n',upper(mfilename), max(chanList));
-   end
-elseif ~play && record
-   if ~isempty(kv.devid)
-      if ~any(recDevIds==kv.devid)
-         error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid);
-      end
-   else
-      % Use asio device if present
-      if priorityRecID~=-1
-         kv.devid = priorityRecID;
-      else
-         % Use the first (hopefully default) device
-         kv.devid = recDevIds(1);
-      end
-   end
-   try
-       if pa_bufLen~=-1
-          playrec('init', kv.fs, -1, kv.devid,-1,max(kv.recch),pa_bufLen);
-       else
-          playrec('init', kv.fs, -1, kv.devid);
-       end
-   catch
-       failedInit(devs,kv);
-   end
-   block_interface('setRecChanList',kv.recch);
-else
-   error('%s: Play or record should have been set.',upper(mfilename));
-end
-
-% From the playrec author:
-% This slight delay is included because if a dialog box pops up during
-% initialisation (eg MOTU telling you there are no MOTU devices
-% attached) then without the delay Ctrl+C to stop playback sometimes
-% doesn't work.
-pause(0.1);   
-
-if(~playrec('isInitialised'))
-    error ('%s: Unable to initialise playrec correctly.',upper(mfilename));
-end
+% Store data type.
+block_interface('setClassId',flags.fmt);    
 
 
-if(playrec('pause'))
-    %fprintf('Playrec was paused - clearing all previous pages and unpausing.\n');
-    playrec('delPage');
-    playrec('pause', 0);
-end
-
-% Reset skipped samples
-playrec('resetSkippedSampleCount');
-
-% Store data
-block_interface('setSource',source);
+% Store length of the buffer circular queue
 block_interface('setBufCount',kv.nbuf);
-block_interface('setClassId',flags.fmt);
-
 
 % Return parameters
 classid = flags.fmt;
 fs = kv.fs;
 
-if play
-chanString = sprintf('%d,',kv.playch);
-dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(1),devs)));
-%fssup = sprintf('%d, ',dev.supportedSampleRates);
-%fssup = ['Supported sampling frequencies [',fssup(1:end-2),'].\n' ];
-fprintf('Play device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
-        dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowOutputLatency),...
-        floor(1000*dev.defaultHighOutputLatency));
-%fprintf(fssup);
-end
-
-if record
-chanString = sprintf('%d,',kv.recch);
-dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(end),devs)));
-fprintf('Rec. device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
-        dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowInputLatency),...
-        floor(1000*dev.defaultHighInputLatency));
-end
-
-
-% Store option for displaying the load bar
-block_interface('setDispLoad',kv.loadind);
-
-% Store option for displaying the loop playback
-block_interface('setIsLoop',flags.do_loop);
 
 % Set block length
 if isempty(kv.L)
@@ -423,23 +273,258 @@ else
    block_interface('setBufLen',kv.L);
 end
 
+% Store data
+block_interface('setSource',source);
 % Handle sources with known input length
-if ischar(source) && numel(source)>4 && strcmpi(source(end-3:end),'.wav') 
+if is_wav 
    Ls = wavread(source, 'size');
    tmpf = wavread(source,[1,1]); % Workaround for Octave
    block_interface('setLs',[Ls(1),size(tmpf,2)]);
    block_interface('setSource',@(pos,endSample) cast(wavread(source,[pos, endSample]),block_interface('getClassId')) );
-elseif isnumeric(source)
+elseif is_numeric
    block_interface('setLs',size(source));
    block_interface('setSource',@(pos,endSample) cast(source(pos:endSample,:),block_interface('getClassId')) );
 end
 
-% Another slight delay to allow printing all messages prior to the playback
-% starts. 
-pause(0.1); 
+
+% Not a single playrec call was done untill now
+
+if ~flags.do_offline
+
+    % From now on, playrec is called
+
+    isPlayrecInit = 0;
+    try 
+       isPlayrecInit = playrec('isInitialised');
+    catch
+       err = lasterror;
+       if ~isempty(strfind(err.message,'The specified module could not be found'))
+          error('%s: playrec found but portaudio cannot be found.', upper(mfilename));
+       end
+        if ~isempty(strfind(err.message,'Undefined function'))
+          error('%s: playrec could not be found.', upper(mfilename));
+        end
+       error('%s: Error loading playrec.',upper(mfilename));
+    end
+
+    if isPlayrecInit
+       playrec('reset');
+    end
+
+    if isempty(kv.playch)
+      kv.playch = 1:playChannels; 
+    end
+
+    if isempty(kv.recch)
+      kv.recch = 1:recChannels; 
+    end
+
+    devs = playrec('getDevices');
+    if isempty(devs)
+       error('%s: No sound devices available. portaudio lib is probably incorrectly built.',upper(mfilename));
+    end
+
+    prioriryPlayID = -1;
+    priorityRecID = -1;
+
+    % Get all installed play devices
+    playDevStructs = devs(arrayfun(@(dEl) dEl.outputChans,devs)>0);
+
+    % Search for priority play device
+    for ii=1:numel(hostAPIpriorityList)
+       hostAPI = hostAPIpriorityList{ii};
+       priorityHostNo = find(arrayfun(@(dEl) ~isempty(strfind(lower(dEl.hostAPI),lower(hostAPI))),playDevStructs)>0);
+       if ~isempty(priorityHostNo)
+          prioriryPlayID = playDevStructs(priorityHostNo(1)).deviceID;
+          break;
+       end
+    end
+
+    % Get IDs of all play devices
+    playDevIds = arrayfun(@(dEl) dEl.deviceID, playDevStructs);
+
+    % Get all installed recording devices
+    recDevStructs = devs(arrayfun(@(dEl) dEl.inputChans,devs)>0);
+    % Search for priority rec device
+    for ii=1:numel(hostAPIpriorityList)
+       hostAPI = hostAPIpriorityList{ii};
+       priorityHostNo = find(arrayfun(@(dEl) ~isempty(strfind(lower(dEl.hostAPI),lower(hostAPI))),recDevStructs)>0);
+       if ~isempty(priorityHostNo)
+          priorityRecID = recDevStructs(priorityHostNo(1)).deviceID;
+          break;
+       end
+    end
+
+    % Get IDs of all rec devices
+    recDevIds = arrayfun(@(dEl) dEl.deviceID,recDevStructs);
+
+    if play && record
+       if ~isempty(kv.devid)
+          if(numel(kv.devid)~=2)
+             error('%s: devid should be 2 element vector.',upper(mfilename));
+          end
+          if ~any(playDevIds==kv.devid(1))
+             error('%s: There is no play device with id = %i.',upper(mfilename),kv.devid(1));
+          end
+          if ~any(recDevIds==kv.devid(2))
+             error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid(2));
+          end
+       else
+          % Use the priority device if present
+          if prioriryPlayID~=-1 && priorityRecID~=-1
+             kv.devid = [prioriryPlayID, priorityRecID];
+          else
+             kv.devid = [playDevIds(1), recDevIds(1)];
+          end
+       end
+       try
+           if pa_bufLen~=-1
+              playrec('init', kv.fs, kv.devid(1), kv.devid(2), max(kv.playch),max(kv.recch),pa_bufLen);
+           else 
+              playrec('init', kv.fs, kv.devid(1), kv.devid(2));
+           end
+       catch
+           failedInit(devs,kv);
+       end
+       if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
+          error('%s: Using more than one input channel.',upper(mfilename));
+       end
+       block_interface('setPlayChanList',kv.playch);
+       block_interface('setRecChanList',kv.recch);
+    elseif play && ~record
+       if ~isempty(kv.devid)
+          if numel(kv.devid) >1
+             error('%s: devid should be scalar.',upper(mfilename));
+          end
+          if ~any(playDevIds==kv.devid)
+             error('%s: There is no play device with id = %i.',upper(mfilename),kv.devid);
+          end
+       else
+          % Use prefered device if present
+          if prioriryPlayID~=-1
+             kv.devid = prioriryPlayID;
+          else
+             % Use the first (hopefully default) device
+             kv.devid = playDevIds(1);
+          end
+       end
+       try
+           if pa_bufLen~=-1
+              playrec('init', kv.fs, kv.devid, -1,max(kv.playch),-1,pa_bufLen);
+           else
+              playrec('init', kv.fs, kv.devid, -1);
+           end
+       catch
+           failedInit(devs,kv);
+       end
+       block_interface('setPlayChanList',kv.playch);
+       if(playrec('getPlayMaxChannel')<numel(kv.playch))
+           error ('%s: Selected device does not support %d output channels.\n',upper(mfilename), max(chanList));
+       end
+    elseif ~play && record
+         if(numel(kv.devid)~=1)
+             error('%s: devid should be scalar.',upper(mfilename));
+          end
+        
+       if ~isempty(kv.devid)
+          if ~any(recDevIds==kv.devid)
+             error('%s: There is no rec device with id = %i.',upper(mfilename),kv.devid);
+          end
+       else
+          % Use asio device if present
+          if priorityRecID~=-1
+             kv.devid = priorityRecID;
+          else
+             % Use the first (hopefully default) device
+             kv.devid = recDevIds(1);
+          end
+       end
+       try
+           if pa_bufLen~=-1
+              playrec('init', kv.fs, -1, kv.devid,-1,max(kv.recch),pa_bufLen);
+           else
+              playrec('init', kv.fs, -1, kv.devid);
+           end
+       catch
+           failedInit(devs,kv);
+       end
+       block_interface('setRecChanList',kv.recch);
+    else
+       error('%s: Play or record should have been set.',upper(mfilename));
+    end
+
+    % From the playrec author:
+    % This slight delay is included because if a dialog box pops up during
+    % initialisation (eg MOTU telling you there are no MOTU devices
+    % attached) then without the delay Ctrl+C to stop playback sometimes
+    % doesn't work.
+    pause(0.1);   
+
+    if(~playrec('isInitialised'))
+        error ('%s: Unable to initialise playrec correctly.',upper(mfilename));
+    end
+
+
+    if(playrec('pause'))
+        %fprintf('Playrec was paused - clearing all previous pages and unpausing.\n');
+        playrec('delPage');
+        playrec('pause', 0);
+    end
+
+    % Reset skipped samples
+    playrec('resetSkippedSampleCount');
+
+
+    if play
+    chanString = sprintf('%d,',kv.playch);
+    dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(1),devs)));
+    %fssup = sprintf('%d, ',dev.supportedSampleRates);
+    %fssup = ['Supported sampling frequencies [',fssup(1:end-2),'].\n' ];
+    fprintf('Play device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
+            dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowOutputLatency),...
+            floor(1000*dev.defaultHighOutputLatency));
+    %fprintf(fssup);
+    end
+
+    if record
+    chanString = sprintf('%d,',kv.recch);
+    dev = devs(find(arrayfun(@(dEl) dEl.deviceID==kv.devid(end),devs)));
+    fprintf('Rec. device: ID=%d, name=%s, API=%s, channels=%s, default latency: %d--%d ms\n',...
+            dev.deviceID,dev.name,dev.hostAPI,chanString(1:end-1),floor(1000*dev.defaultLowInputLatency),...
+            floor(1000*dev.defaultHighInputLatency));
+    end
+
+
+    % Another slight delay to allow printing all messages prior to the playback
+    % starts. 
+    pause(0.1); 
+
+end
+
+
+% Handle output file
+if ~isempty(kv.outfile)
+   % Use number of recording channes only if mic is an input.
+   if (record && ~play) || (record && play)
+      blockreadChannels = numel(block_interface('getRecChanList'));
+   else
+      Ls = block_interface('getLs');
+      blockreadChannels = Ls(2);
+   end
+    
+   headerStruct = writewavheader(blockreadChannels,kv.fs,kv.outfile); 
+   block_interface('setOutFile',headerStruct);
+end
+
+%%%%%%%%%%%%%
+% END BLOCK %
+%%%%%%%%%%%%%
+
+
 
 
 function failedInit(devs,kv)
+% Common function for playrec initialization error messages 
 errmsg = '';
 
 playFs = devs([devs.deviceID]==kv.devid(1)).supportedSampleRates;
@@ -467,6 +552,96 @@ if isempty(errmsg)
 else
    error(errmsg);
 end
+
+
+function failIfInvalidOfflinePar(kv,field,defval)
+% Helper function for checking if field of kv is empty or not
+% equal to defval.
+failed = 0;
+if nargin<3
+    if ~isempty(kv.(field))
+        failed = 1;
+    end
+else
+    if ~isequal(kv.(field),defval)
+        failed = 1;
+    end
+end
+
+if failed
+     error('%s: ''%s'' is not a valid parameter in the offline mode',...
+            upper(mfilename),field);
+end
+
+function failIfNotPositiveInteger(par,name)
+if ~isempty(par)
+   if ~isscalar(par) || ~isnumeric(par) || rem(par,1)~=0 || par<=0 
+       error('%s: %s should be positive integer.',upper(mfilename),name);
+   end
+end
+
+
+
+
+function headerStruct = writewavheader(Nchan,fs,filename)
+%WRITE_WAV_HEADER(NCHAN, FS, TOTAL_NSAMP, FILENAME)
+%
+%Creates a new WAV File and writes only the header into it.
+%No audio data is written here.
+%
+%Note that this implementation is hardcoded to 16 Bits/sample.
+%
+%input parameters: 
+%   NCHAN - 1: Mono, 2: Stereo
+%   FS - Sampling rate in Hz
+%   FILENAME - Name of the WAVE File including the suffix '.wav'
+
+%---------------------------------------------------------------
+% Oticon A/S, Bjoern Ohl, March 9, 2012
+%---------------------------------------------------------------
+
+% predefined elements:
+bitspersample = 16;     % hardcoded in this implementation, as other 
+                        % quantizations do not seem relevant
+mainchunk = 'RIFF';
+chunktype = 'WAVE';
+subchunk = 'fmt ';
+subchunklen = 16;       % 16 for PCM
+format = 1;             % 1 = PCM (linear quantization)
+datachunk = 'data';
+
+% calculated elements:
+alignment = Nchan * bitspersample / 8;
+%dlength = Total_Nsamp*alignment;      % total amount of audio data in bytes
+dlength = 0;
+flength = dlength + 36;  % dlength + 44 bytes (header) - 8 bytes (definition)
+bytespersecond = fs*alignment;       % data rate in bytes/s
+         
+
+% write header into file:
+fid = fopen(filename,'w');  %writing access
+
+  fwrite(fid, mainchunk);
+  fwrite(fid, flength, 'long');
+  fwrite(fid, chunktype);
+  fwrite(fid, subchunk);
+  fwrite(fid, subchunklen, 'long');
+  fwrite(fid, format, 'short');
+  fwrite(fid, Nchan, 'short');
+  fwrite(fid, fs, 'long');
+  fwrite(fid, bytespersecond, 'long');
+  fwrite(fid, alignment, 'short');
+  fwrite(fid, bitspersample, 'short');
+  fwrite(fid, datachunk);
+  fwrite(fid, dlength, 'long');
+
+fclose(fid);    % close file
+
+headerStruct = struct('filename',filename,'Nchan',Nchan,...
+                      'alignment',alignment);
+
+
+
    
 
       

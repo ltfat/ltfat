@@ -36,7 +36,9 @@ persistent loop;
 % DEFAULTS
 persistent bufLen;
 
+persistent outFile;
 
+persistent offline;
 
 command = varargin{1};
 
@@ -60,9 +62,15 @@ switch command
       loop = 0;
       Ls = -1;
       bufLen = 1024;
+      outFile = [];
+      offline = 0;
 %% SETTERS %%%
    case 'setLs'
       Ls = varargin{2};
+   case 'setOutFile'
+      outFile = varargin{2};
+   case 'setOffline'
+      offline = varargin{2};
    case 'setPos'
       pos = varargin{2};
    case 'setBufCount'
@@ -94,6 +102,10 @@ switch command
 %% GETTERS %%%
    case 'getLs'
       varargout{1}=Ls;
+   case 'getOutFile'
+      varargout{1}=outFile;
+   case 'getOffline'
+      varargout{1}=offline;
    case 'getPos'
       varargout{1}=pos;
    case 'getBufCount'
