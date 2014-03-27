@@ -422,7 +422,7 @@ if ~flags.do_offline
            error ('%s: Selected device does not support %d output channels.\n',upper(mfilename), max(chanList));
        end
     elseif ~play && record
-         if(numel(kv.devid)~=1)
+         if(numel(kv.devid)>1)
              error('%s: devid should be scalar.',upper(mfilename));
           end
         
