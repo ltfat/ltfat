@@ -622,18 +622,18 @@ bytespersecond = fs*alignment;       % data rate in bytes/s
 fid = fopen(filename,'w');  %writing access
 
   fwrite(fid, mainchunk);
-  fwrite(fid, flength, 'long');
+  fwrite(fid, flength, 'uint32');
   fwrite(fid, chunktype);
   fwrite(fid, subchunk);
-  fwrite(fid, subchunklen, 'long');
-  fwrite(fid, format, 'short');
-  fwrite(fid, Nchan, 'short');
-  fwrite(fid, fs, 'long');
-  fwrite(fid, bytespersecond, 'long');
-  fwrite(fid, alignment, 'short');
-  fwrite(fid, bitspersample, 'short');
+  fwrite(fid, subchunklen, 'uint32');
+  fwrite(fid, format, 'uint16');
+  fwrite(fid, Nchan, 'uint16');
+  fwrite(fid, fs, 'uint32');
+  fwrite(fid, bytespersecond, 'uint32');
+  fwrite(fid, alignment, 'uint16');
+  fwrite(fid, bitspersample, 'uint16');
   fwrite(fid, datachunk);
-  fwrite(fid, dlength, 'long');
+  fwrite(fid, dlength, 'uint32');
 
 fclose(fid);    % close file
 

@@ -67,7 +67,7 @@ fid = fopen(filename,'r+');
 
 
 fseek(fid,40,-1);
-dataLenInBytes = fread(fid,1,'long');
+dataLenInBytes = fread(fid,1,'uint32');
 dataLenInBytes = dataLenInBytes + filestruct.alignment*L;
 fileLenInBytes = dataLenInBytes + 36;
 
@@ -75,14 +75,14 @@ try
     if fseek(fid,4,-1) ~= 0
         error('d');
     end
-    if fwrite(fid,fileLenInBytes,'long')<=0
+    if fwrite(fid,fileLenInBytes,'uint32')<=0
         error('d');
     end
     
     if fseek(fid,40,-1)~=0
          error('d');
     end
-    if fwrite(fid,dataLenInBytes,'long') <=0
+    if fwrite(fid,dataLenInBytes,'uint32') <=0
          error('d');
     end   
 catch

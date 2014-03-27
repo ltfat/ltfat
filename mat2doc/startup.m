@@ -1,4 +1,4 @@
-addpath ~/nw/ltfat
+addpath ~/dev/ltfat
 addpath ~/toolboxex/minFunc/
 
 
