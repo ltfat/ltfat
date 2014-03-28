@@ -548,7 +548,8 @@ if numel(kv.devid)>1
 end
 
 if isempty(errmsg)
-   error('%s',lasterror.message);
+   err = lasterror;
+   error('%s',err.message);
 else
    error(errmsg);
 end

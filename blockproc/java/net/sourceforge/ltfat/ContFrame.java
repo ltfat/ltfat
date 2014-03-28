@@ -27,6 +27,7 @@ public class ContFrame {
     private JFrame jf = null;
     private Map paramMap = null;
     private Map sliderParamMap = null;
+    private Map paramComponentsMap = null;
     private Map sliderBoundsMap = null;
     public double flag = 1;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -60,6 +61,25 @@ public class ContFrame {
             super.finalize();
         }
 
+    }
+
+
+    public void setVisibleParam(String param, boolean visible ) throws NoSuchFieldException {
+       // Do nothing if paramSliderMap has not been initlialized yet 
+       if(paramComponentsMap == null)
+           return;
+        
+       List<JComponent> s = (List<JComponent>) paramComponentsMap.get(param);
+       if(s==null){
+          throw new NoSuchFieldException("Parameter "+param+" not found."); 
+       }
+
+       for(JComponent c: s){
+             c.setVisible(visible);
+       }
+           
+       //s.disable();
+       //s.setVisible(false);
     }
 
 
@@ -111,6 +131,7 @@ public class ContFrame {
             public void run() {
                 paramMap = new LinkedHashMap<String,Double>();
                 sliderParamMap = new HashMap<JSlider,String>();
+                paramComponentsMap = new HashMap<String,List<JComponent>>();
                 sliderBoundsMap = new HashMap<JSlider,SliderBounds>();
                 initFrameComponents(params);
                 jf.pack();
@@ -309,7 +330,9 @@ public class ContFrame {
            
            JLabel jname = new JLabel(label);
            JSlider jval = new JSlider(0, noVal-1, defValSlider);
-           final JLabel jvalTxt = new JLabel(String.format("%.3g    ",slider2val(jval.getValue(),minVal,maxVal,noVal)));
+           final JLabel jvalTxt = new JLabel(String.format("%.3g    ",
+                                      slider2val(jval.getValue(),
+                                      minVal,maxVal,noVal)));
            jvalTxt.setPreferredSize(new Dimension(50, 15));
            jval.addChangeListener(new ChangeListener() {
                @Override
@@ -339,6 +362,11 @@ public class ContFrame {
            
            paramMap.put(name, defaultVal);
            sliderParamMap.put(jval, name);
+           ArrayList l = new ArrayList<JComponent>();
+           l.add(jname);
+           l.add(jval);
+           l.add(jvalTxt);
+           paramComponentsMap.put(name, l);
            sliderBoundsMap.put(jval, new SliderBounds(minVal,maxVal));
        }
        

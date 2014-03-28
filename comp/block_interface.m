@@ -147,6 +147,9 @@ switch command
 %% OTHER %%%
    case 'incPageNo'
       pageNo = pageNo +1;
+   case 'flushBuffers'
+      anaOverlap = [];
+      synOverlap = [];
    case 'popPage'
       varargout{1}=pageList(1);
       pageList = pageList(2:end);
