@@ -282,6 +282,7 @@ if is_wav
    block_interface('setLs',[Ls(1),size(tmpf,2)]);
    block_interface('setSource',@(pos,endSample) cast(wavread(source,[pos, endSample]),block_interface('getClassId')) );
 elseif is_numeric
+   source = comp_sigreshape_pre(source,'BLOCK'); 
    block_interface('setLs',size(source));
    block_interface('setSource',@(pos,endSample) cast(source(pos:endSample,:),block_interface('getClassId')) );
 end
@@ -292,6 +293,7 @@ end
 if ~flags.do_offline
 
     % From now on, playrec is called
+
 
     isPlayrecInit = 0;
     try 
@@ -310,6 +312,8 @@ if ~flags.do_offline
     if isPlayrecInit
        playrec('reset');
     end
+    
+    clear playrec; 
 
     if isempty(kv.playch)
       kv.playch = 1:playChannels; 

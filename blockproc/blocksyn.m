@@ -214,7 +214,15 @@ function overlap = loadOverlap(L,chan,overlap)
       L = Lo;
    end
    if L>Lo
-      error('%s: Required more samples than stored.',upper(mfilename));
+      % Required more samples than stored
+      if 0
+         error('%s: Required more samples than stored.',upper(mfilename));
+      else
+         % pad with zeros
+         overlapTmp = zeros(L,chan,block_interface('getClassId')); 
+         overlapTmp(end-Lo+1:end,:) = overlap;
+         overlap = overlapTmp;
+      end
    end
    overlap = overlap(end-L+1:end,:);
 end

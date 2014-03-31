@@ -24,14 +24,19 @@ bufLen = 1024;
 
 
 % Morphing params
-Fmorph = frametight(framepair('dgtreal',{'hann',882},'dual',128,1024,'timeinv'));
+Fmorph = frametight(frame('dgtreal',{'hann',512},128,512,'timeinv'));
 Fmorph = blockframeaccel(Fmorph, bufLen,'segola');
 
-ff = wavread('violin_m.wav');
+haveWav = 0;
+try
+ff = 0.4*wavread('beat.wav');
 %ff = 0.8*resample(ff,4,1);
 ffblocks = reshape(postpad(ff,ceil(numel(ff)/bufLen)*bufLen),bufLen,[]);
 cidx = 1;
-
+haveWav = 1;
+catch
+   warning('beat.wav not found. morphing effect wont work.'); 
+end
 
 % Plain analysis params
 Fana = frame('dgtreal',{'hann',882},300,3000);
@@ -51,9 +56,10 @@ Fwhis = blockframeaccel(Fwhis, bufLen,'segola');
 
 % Window length in ms
 M = 1024;
-a = 128;
-[F,Fdual] = framepair('dgtreal',{'hann',882},'dual',a,M);
-[Fa,Fs] = blockframepairaccel(F,Fdual, bufLen,'segola');
+a = 512;
+[F] = frametight(frame('dgtreal',{'hann',882},a,M));
+Fa = blockframeaccel(F, bufLen,'segola');
+Fs = Fa;
 
 Mhalf = floor(M/2) + 1;
 scale = (0:Mhalf-1)/Mhalf;
@@ -64,7 +70,11 @@ shiftRange = 12;
 scaleTable = round(scale*2.^(-(1:shiftRange)/12)*Mhalf)+1;
 scaleTable2 = round(scale*2.^((1:shiftRange)/12)*Mhalf)+1;
 scaleTable2(scaleTable2>Mhalf) = Mhalf;
+
+phaseCorr = exp(abs(bsxfun(@minus,scaleTable,(1:size(scaleTable,1))'))./M*2*pi*1i*a);
+phaseCorr2 = exp(abs(bsxfun(@minus,scaleTable2,(1:size(scaleTable2,1))'))./M*2*pi*1i*a);
 fola = 0;
+phasecorrVect = 1;
 
 
 % Basic Control pannel (Java object)
@@ -109,7 +119,6 @@ while flag && p.flag
        % Just plot spectrogram
        if effectChanged
           % Flush overlaps used in blockana and blocksyn
-          block_interface('flushBuffers');
           p.setVisibleParam('Shi',0);
           % Now we can merrily continue
        end
@@ -122,7 +131,6 @@ while flag && p.flag
    % Robotization
    if effectChanged
        % Flush overlaps used in blockana and blocksyn
-       block_interface('flushBuffers');
        p.setVisibleParam('Shi',0);
        % Now we can merrily continue
    end
@@ -151,8 +159,6 @@ while flag && p.flag
    elseif effect == 2
        % Whisperization
    if effectChanged
-       % Flush overlaps used in blockana and blocksyn
-       block_interface('flushBuffers');
        p.setVisibleParam('Shi',0);
        % Now we can merrily continue
    end
@@ -179,8 +185,6 @@ while flag && p.flag
     fhat = blocksyn(Fwhis, c, size(f,1));
    elseif effect == 3
    if effectChanged
-       % Flush overlaps used in blockana and blocksyn
-       block_interface('flushBuffers');
        p.setVisibleParam('Shi',1);
        % Now we can merrily continue
    end
@@ -191,16 +195,22 @@ while flag && p.flag
    
    % Do the actual coefficient shift
    cc = Fa.coef2native(c,size(c));
-  
-   
 
        cTmp = zeros(size(cc),class(c));
     if shift<0
-       cTmp(scaleTable(:,-shift),:,:) =... 
-       cc(1:numel(scaleTable(:,-shift)),:,:);
+       slices = size(cc,2);
+       for s = 1:slices
+          phasecorrVect = phasecorrVect.*phaseCorr(:,-shift);
+          cTmp(scaleTable(:,-shift),s,:) =... 
+          cc(1:numel(scaleTable(:,-shift)),s,:);
+       end
     elseif shift>0
-       cTmp(scaleTable2(:,shift),:,:) =... 
-       cc(1:numel(scaleTable2(:,shift)),:,:);
+       slices = size(cc,2);
+       for s = 1:slices
+          phasecorrVect = phasecorrVect.*phaseCorr2(:,shift);
+          cTmp(scaleTable2(:,shift),s,:) =... 
+          cc(1:numel(scaleTable2(:,shift)),s,:);
+       end
        %cc = [zeros(shift,size(cc,2),size(cc,3))];
     else
         cTmp = cc;
@@ -218,22 +228,20 @@ while flag && p.flag
    blockplot(fobj,Fa,c2(:,1));
    
    elseif effect == 4
+      if effectChanged
+       % Flush overlaps used in blockana and blocksyn
+       p.setVisibleParam('Shi',0);
+       % Now we can merrily continue
+     end
+       % Audio morphing effect
+       
+       
        [cff,ffola] = blockana(Fmorph, ffblocks(:,cidx), ffola);
-       cidx = mod(cidx+1,size(ffblocks,2)-10) + 1;
-        % Obtain DGT coefficients
-        c = blockana(Fmorph, f);
-   
-        if(strcmpi(source,'playrec'))
-            cc = Fmorph.coef2native(c,size(c));
-    
-            % Hum removal (aka low-pass filter)
-            cc(1:2,:,:) = 0;
-   
-            c = Fmorph.native2coef(cc);
-        end
-   
-
-       c = (abs(c)).*exp(i*(angle(cff)+angle(c)));
+       cidx = mod(cidx,size(ffblocks,2)) + 1;
+       % Obtain DGT coefficients
+       c = blockana(Fmorph, f);
+       
+       c = (abs(c)).*exp(1i*(angle(cff) ));
 
    
         % Plot the transposed coefficients

@@ -8,6 +8,7 @@ function devs = blockdevices()
 %
 %   See also: block
 
+clear playrec;
 
 devs = playrec('getDevices');
 
