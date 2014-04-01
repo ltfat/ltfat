@@ -15,6 +15,7 @@ function blockdone(varargin)
 
 block_interface('clearAll');
 playrec('reset');
+clear playrec;
 
 for ii=1:numel(varargin)
    p = varargin{ii};

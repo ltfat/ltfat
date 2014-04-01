@@ -215,7 +215,7 @@ if ischar(source)
          kv.nbuf = 3;
       end
    else
-      error('%s: Unrecognized command "%s".',upper(mfilename),source);
+      error('%s: Unrecognized source "%s".',upper(mfilename),source);
    end
 elseif(isnumeric(source))
     if isempty(kv.fs) && flags.do_online
@@ -229,7 +229,7 @@ elseif(isnumeric(source))
       kv.nbuf = 3;
    end
 else
-   error('%s: Unrecognized input.',upper(mfilename));
+   error('%s: Unrecognized source.',upper(mfilename));
 end
 
 
@@ -258,6 +258,11 @@ block_interface('setClassId',flags.fmt);
 % Store length of the buffer circular queue
 block_interface('setBufCount',kv.nbuf);
 
+% 
+if ~isempty(kv.outfile) && ~strcmpi(kv.outfile(end-3:end),'.wav')
+    error('%s: %s does not contain *.wav suffix.',upper(mfilename),kv.outfile);    
+end
+
 % Return parameters
 classid = flags.fmt;
 fs = kv.fs;
@@ -283,6 +288,9 @@ if is_wav
    block_interface('setSource',@(pos,endSample) cast(wavread(source,[pos, endSample]),block_interface('getClassId')) );
 elseif is_numeric
    source = comp_sigreshape_pre(source,'BLOCK'); 
+   if size(source,2)>8
+       error('%s: More than 8 channels not allowed.',upper(mfilename));
+   end
    block_interface('setLs',size(source));
    block_interface('setSource',@(pos,endSample) cast(source(pos:endSample,:),block_interface('getClassId')) );
 end
@@ -423,7 +431,8 @@ if ~flags.do_offline
        end
        block_interface('setPlayChanList',kv.playch);
        if(playrec('getPlayMaxChannel')<numel(kv.playch))
-           error ('%s: Selected device does not support %d output channels.\n',upper(mfilename), max(chanList));
+           error (['%s: Selected device does not support required output',...
+                   ' channels.\n'],upper(mfilename));
        end
     elseif ~play && record
          if(numel(kv.devid)>1)
@@ -588,6 +597,8 @@ end
 
 
 
+
+
 function headerStruct = writewavheader(Nchan,fs,filename)
 %WRITE_WAV_HEADER(NCHAN, FS, TOTAL_NSAMP, FILENAME)
 %
@@ -604,6 +615,8 @@ function headerStruct = writewavheader(Nchan,fs,filename)
 %---------------------------------------------------------------
 % Oticon A/S, Bjoern Ohl, March 9, 2012
 %---------------------------------------------------------------
+
+
 
 % predefined elements:
 bitspersample = 16;     % hardcoded in this implementation, as other 

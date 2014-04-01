@@ -26,7 +26,9 @@ while flag && p.flag
    gain = 10^(gain/20);
    
    [f,flag] = blockread();
+   % The following does nothing in the rec only mode.
    blockplay(f*gain);
+   % The following does nothing if 'outfile' was not specified 
    blockwrite(f);
 end
 blockdone(p);

@@ -28,14 +28,25 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %   least common multiple of the downsampling rates. See the help of
 %   |filterbanklength|.
 %
-%   `[g,a,fc]=erbfilters(fs,L,'fractional')` constructs a filterbank with
-%   fractional downsampling rates *a*. The rates are constructed such
-%   that the filterbank can handle signal length that are multiples of
-%   *L*, so the benefit of the fractional downsampling is that you get to
-%   choose the value returned by |filterbanklength|.
+%   `[g,a]=erbfilters(...,'regsampling')` constructs a non-uniform
+%   filterbank with integer subsampling factors.
 %
-%   `[g,a,fc]=erbfilters(fs,'uniform')` constructs a uniform filterbank
-%   where the downsampling rate is the same for all channels.
+%   `[g,a]=erbfilters(...,'uniform')` constructs a uniform filterbank
+%   where the downsampling rate is the same for all the channels. This 
+%   results in most redundant representation, which produces nice plots.
+%
+%   `[g,a]=erbfilters(...,'fractional')` constructs a filterbank with
+%   fractional downsampling rates *a*. The rates are constructed such
+%   that the filterbank can handle signal lengths that are multiples of
+%   *L*, so the benefit of the fractional downsampling is that you get to
+%   choose the value returned by |filterbanklength|. This results in the
+%   least redundant system.
+%
+%   `[g,a]=erbfilters(...,'fractionaluniform')` constructs a filterbank with
+%   fractional downsampling rates *a*, which are uniform for all filters 
+%   except the "filling" low-pass and high-pass filters can have different
+%   fractional downsampling rates. This is usefull when uniform subsampling
+%   and low redundancy at the same time are desirable.
 %
 %   `erbfilters` accepts the following optional parameters:
 %
@@ -62,12 +73,6 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %     'complex'       Construct a filterbank that covers the entire
 %                     frequency range.
 %
-%     'regsampling'   Choose the downsampling rates to be products of 2
-%                     and 3 (see |floor23| and |ceil23|). This is the
-%                     default.
-%
-%     'fractional'    Use fractional downsampling. If this flag is
-%                     specified, you must also specify the `'L'` parameter.
 %
 %     'bwmul',bwmul   Bandwidth of the filters relative to the bandwidth
 %                     returned by |audfiltbw|. Default is $bwmul=1$.
@@ -113,6 +118,8 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %   References: ltfatnote027
 
 % Authors: Peter L. Søndergaard
+% Modified by: Zdenek Prusa
+% Date: 01.04.14
 
 if nargin<2
     error('%s: Not enough input argumets.',upper(mfilename))

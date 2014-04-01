@@ -56,13 +56,7 @@ else
    definput.keyvals.J = [];
    [~,~,J]=ltfatarghelper({'J'},definput,varargin);
 
-   if ~isnumeric(J) || ~isscalar(J)
-     error('%s: "J" must be a scalar.',upper(mfilename));
-   end;
-
-   if(J<1 && rem(a,1)~=0)
-      error('%s: J must be a positive integer.',upper(mfilename)); 
-   end
+   complain_notposint(J,'J');
    
    % Initialize the wavelet filters structure
    w = fwtinit(par);

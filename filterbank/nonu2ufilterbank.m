@@ -29,7 +29,7 @@ end;
 
 if ~iscell(g) || ...
    ~all(cellfun(@(gEl) isstruct(gEl) && (isfield(gEl,'h')||isfield(gEl,'H')),g))
-  error('%s: a must be a cell array of structs containing filter definition.',upper(mfilename));
+  error('%s: g must be a cell array of structs containing filter definition.',upper(mfilename));
 end;
 
 a = comp_filterbank_a(a,numel(g));

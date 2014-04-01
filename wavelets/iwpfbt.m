@@ -47,7 +47,6 @@ if(~iscell(c))
 end
 
 
-
 if(isstruct(par)&&isfield(par,'fname'))
    if nargin>2
       error('%s: Too many input parameters.',upper(mfilename));
@@ -69,6 +68,7 @@ else
    definput.import = {'fwt','wfbtcommon'};
    definput.flags.scale = {'scale','noscale'};
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+   complain_notposint(Ls,'Ls');
    
    ext = flags.ext;
    do_scale = flags.scale;

@@ -141,12 +141,13 @@ elseif strcmp(source,'playrec')
    end
    chanList = block_interface('getPlayChanList');
 
-   % Copy input channel to all output chanels.
+   % Copy a single input channel to all output chanels.
    if size(fhat,2)==1
       fhat = repmat(fhat,1,numel(chanList));
    end
    % Play and record
-   block_interface('pushPage',playrec('playrec', fhat, chanList, -1, recChanList));
+   block_interface('pushPage',playrec('playrec', fhat, chanList, -1,...
+                   recChanList));
    
    if do_updateBAR || do_updateGUI
       readTime = toc(t2);
@@ -167,10 +168,10 @@ elseif strcmp(source,'playrec')
    end
 
 %%%   
-%% PLAY: Source is a *.wav file
+%% PLAY: Source is a *.wav file or a data vector
 %
 elseif isa(source,'function_handle')
-   % Number of wav samples (is chached, since it is disk read operation)
+   % Number of wav samples (is chached, since it is a disk read operation)
    Lwav = block_interface('getLs'); 
     
    % Determine valid samples

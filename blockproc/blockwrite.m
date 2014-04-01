@@ -59,12 +59,10 @@ if W == 2           % stereo
 end
 
 
-
 % flength = dlength + 36;
 % We need read field from the header and 
 % update two.
 fid = fopen(filename,'r+');
-
 
 fseek(fid,40,-1);
 dataLenInBytes = fread(fid,1,'uint32');
@@ -94,16 +92,17 @@ catch
 end
 fclose(fid);
 
+% And now we can append the actual data
 fid = fopen(filename,'a');
-
-
 %write data into file (amplified by 2^15 to suit int16-range (from -2^15 to +2^15):
 
 maxval = 1-(1/2^16);
 minval = -1;
 
+% Allow clipping since it is hard to do some sensible normalization.
 f(f >= maxval)  = maxval;
 f(f <= minval)  = minval;
+
 
 % clipping check:
 %if (max(tempvec) >= maxval) || (min(tempvec) <= minval)

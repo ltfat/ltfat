@@ -28,6 +28,11 @@ M=info.M;
 
 AF=Inf;
 BF=0;
+
+% Prioritize painless over uniform algorithm
+if info.isuniform && info.ispainless
+    info.isuniform = 0;
+end
   
 if info.isuniform
   % Uniform filterbank, use polyphase representation

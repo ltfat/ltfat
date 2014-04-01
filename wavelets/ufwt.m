@@ -64,13 +64,7 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isnumeric(J) || ~isscalar(J)
-  error('%s: "J" must be a scalar.',upper(mfilename));
-end;
-
-if(J<1 && rem(a,1)~=0)
-   error('%s: J must be a positive integer.',upper(mfilename)); 
-end
+complain_notposint(J,'J');
 
 % Initialize the wavelet filters structure
 w = fwtinit(w);

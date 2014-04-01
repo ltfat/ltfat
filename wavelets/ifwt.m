@@ -79,6 +79,9 @@ else
    definput.keyvals.J = [];
    [flags,~,J,Ls,dim]=ltfatarghelper({'J','Ls','dim'},definput,varargin);
  
+   complain_notposint(J,'J');
+   complain_notposint(Ls,'Ls');
+   
    ext = flags.ext;
    %If dim is not specified use the first non-singleton dimension.
    if(isempty(dim))

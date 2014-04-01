@@ -49,7 +49,7 @@ Frob = blockframeaccel(Frob, bufLen,'segola');
 
 % Whisperization params
 Mwhis = 512;
-Fwhis = frametight(frame('dgtreal',{'hann',512},128,Mwhis,'timeinv'));
+Fwhis = frametight(frame('dgtreal',{'hann',512},128,Mwhis));
 Fwhis = blockframeaccel(Fwhis, bufLen,'segola');
 
 % Pitch shift
@@ -57,7 +57,7 @@ Fwhis = blockframeaccel(Fwhis, bufLen,'segola');
 % Window length in ms
 M = 1024;
 a = 512;
-[F] = frametight(frame('dgtreal',{'hann',882},a,M));
+[F] = frametight(frame('dgtreal',{'hann',1024},a,M,'timeinv'));
 Fa = blockframeaccel(F, bufLen,'segola');
 Fs = Fa;
 
@@ -73,8 +73,8 @@ scaleTable2(scaleTable2>Mhalf) = Mhalf;
 
 phaseCorr = exp(abs(bsxfun(@minus,scaleTable,(1:size(scaleTable,1))'))./M*2*pi*1i*a);
 phaseCorr2 = exp(abs(bsxfun(@minus,scaleTable2,(1:size(scaleTable2,1))'))./M*2*pi*1i*a);
-fola = 0;
-phasecorrVect = 1;
+fola = [];
+phasecorrVect = ones(Mhalf,1,'single');
 
 
 % Basic Control pannel (Java object)
@@ -202,14 +202,14 @@ while flag && p.flag
        for s = 1:slices
           phasecorrVect = phasecorrVect.*phaseCorr(:,-shift);
           cTmp(scaleTable(:,-shift),s,:) =... 
-          cc(1:numel(scaleTable(:,-shift)),s,:);
+          bsxfun(@times,cc(1:numel(scaleTable(:,-shift)),s,:),phasecorrVect);
        end
     elseif shift>0
        slices = size(cc,2);
        for s = 1:slices
           phasecorrVect = phasecorrVect.*phaseCorr2(:,shift);
           cTmp(scaleTable2(:,shift),s,:) =... 
-          cc(1:numel(scaleTable2(:,shift)),s,:);
+          bsxfun(@times,cc(1:numel(scaleTable2(:,shift)),s,:),phasecorrVect);
        end
        %cc = [zeros(shift,size(cc,2),size(cc,3))];
     else
@@ -241,7 +241,7 @@ while flag && p.flag
        % Obtain DGT coefficients
        c = blockana(Fmorph, f);
        
-       c = (abs(c)).*exp(1i*(angle(cff) ));
+       c = bsxfun(@times,abs(c),exp(1i*(angle(cff) )));
 
    
         % Plot the transposed coefficients

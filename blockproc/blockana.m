@@ -102,6 +102,11 @@ function [c, fola] = blockana(F, f, fola)
        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        %% STEP 2) Common overlap handling 
        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+       if nargout>1 && isempty(fola)
+           % Avoiding case when empty fola means just uninitialized 
+           % custom overlap.
+           fola = 0;
+       end
        % Append the previous block
        fext = [loadOverlap(Sbolen,size(f,2),fola);f];
        % Save the current block
@@ -183,8 +188,8 @@ function overlap = loadOverlap(L,chan,overlap)
     end
     % If required more than stored, do zero padding
     if L>Lo
-        oTmp = zeros(L,size(overlap,2));
-        oTmp(end-Lo+1:end) = oTmp(end-Lo+1:end)+overlap;
+        oTmp = zeros(L,chan);
+        oTmp(end-Lo+1:end,:) = oTmp(end-Lo+1:end,:)+overlap;
         overlap = oTmp;
     else
         overlap = overlap(end-L+1:end,:);

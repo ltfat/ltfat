@@ -66,6 +66,8 @@ else
    definput.import = {'fwt','wfbtcommon'};
 
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+   complain_notposint(Ls,'Ls');
+   
    ext = flags.ext;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
