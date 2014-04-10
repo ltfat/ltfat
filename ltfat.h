@@ -14,6 +14,11 @@ typedef enum
    ltfatNoErr = 0
 } ltfatStatus;
 
+typedef enum
+{
+   FREQINV = 0,
+   TIMEINV = 1
+} dgt_phasetype;
 
 typedef enum
 {
