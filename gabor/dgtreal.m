@@ -99,15 +99,21 @@ definput.flags.phase={'freqinv','timeinv'};
 definput.keyvals.lt=[0 1];
 [flags,kv]=ltfatarghelper({'L'},definput,varargin);
 
-[f,g,L,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
+[f,g,~,Ls] = gabpars_from_windowsignal(f,g,a,M,kv.L);
 
 if ~isreal(g)
-  error('The window must be real-valued.');  
+    error('%s: The window must be real-valued.',upper(mfilename));  
 end;
 
 if kv.lt(2)>2
-  error('Only rectangular or quinqux lattices are supported.');  
+    error('%s: Only rectangular or quinqux lattices are supported.',...
+          upper(mfilename));  
 end;
+
+if kv.lt(2)~=1 && flags.do_timeinv
+    error(['%s: Time-invariant phase for quinqux lattice is not ',...
+           'supported.'],upper(mfilename));
+end
 
 c=comp_dgtreal(f,g,a,M,kv.lt,flags.do_timeinv);
 

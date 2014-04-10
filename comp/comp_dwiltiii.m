@@ -13,7 +13,7 @@ coef=zeros(M,N,W,assert_classname(f,g));
 halfmod=exp(-pi*i*(0:L-1).'/(2*M));
 f=f.*repmat(halfmod,1,W);
 
-coef2=comp_sepdgt(f,g,a,2*M);
+coef2=comp_sepdgt(f,g,a,2*M,0);
   
 if (isreal(g) && fwasreal)
    % --- m is even ---------

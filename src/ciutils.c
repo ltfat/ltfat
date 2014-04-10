@@ -130,5 +130,46 @@ void LTFAT_NAME(array2complex)(LTFAT_TYPE *in, LTFAT_COMPLEX *out, const ltfatIn
 #endif
 }
 
+LTFAT_EXTERN void
+LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
+                               const ltfatInt W, const ltfatInt a,
+                               const ltfatInt M, LTFAT_TYPE *cout)
+{
+    ltfatInt N=L/a;
+        for (ltfatInt w = 0; w < W; w++)
+        {
+            for (ltfatInt n = 0; n < N; n++)
+            {
+                ltfatInt offset = w * N * M + n * M;
+                LTFAT_TYPE* cintmp = cin + offset; 
+                LTFAT_TYPE* couttmp = cout + offset;
+                // circshift takes care of possible inplace operation
+                LTFAT_NAME(circshift)(cintmp, couttmp, M, -a * n);
+            }
+
+        }
+
+}
+
+LTFAT_EXTERN void
+LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
+                               const ltfatInt W, const ltfatInt a,
+                               const ltfatInt M, LTFAT_TYPE *cout)
+{
+    ltfatInt N=L/a;
+        for (ltfatInt w = 0; w < W; w++)
+        {
+            for (ltfatInt n = 0; n < N; n++)
+            {
+                ltfatInt offset = w * N * M + n * M;
+                LTFAT_TYPE* cintmp = cin + offset; 
+                LTFAT_TYPE* couttmp = cout + offset;
+                // circshift takes care of possible inplace operation
+                LTFAT_NAME(circshift)(cintmp, couttmp, M, a * n);
+            }
+
+        }
+
+}
 
 #endif // LTFAT_TYPE

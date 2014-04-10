@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 5
+#define ISNARGINEQ 6
 #define TYPEDEPARGS 0, 1
 #define SINGLEARGS
 #define COMPLEXARGS
@@ -33,6 +33,7 @@ LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
    a=(mwSignedIndex) mxGetScalar(prhs[2]);
    M=(mwSignedIndex) mxGetScalar(prhs[3]);
    bl=(mwSignedIndex) mxGetScalar(prhs[4]);
+   mwSignedIndex ptype=(mwSignedIndex) mxGetScalar(prhs[5]);
 
    N=L/a;
 
@@ -50,7 +51,7 @@ LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
    const LTFAT_COMPLEX* g_combined = mxGetData(prhs[1]);
    LTFAT_COMPLEX* out_combined = mxGetData(plhs[0]);
 
-   LTFAT_NAME(dgt_ola)(f_combined,g_combined,L,gl,W,a,M,bl,out_combined);
+   LTFAT_NAME(dgt_ola)(f_combined,g_combined,L,gl,W,a,M,bl,ptype,out_combined);
 
    return;
 }

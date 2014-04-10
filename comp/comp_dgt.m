@@ -39,7 +39,7 @@ function c=comp_dgt(f,g,a,M,lt,phasetype,algfir,algns)
 L=size(f,1);
 
 if lt(2)==1
-        c=comp_sepdgt(f,g,a,M);
+        c=comp_sepdgt(f,g,a,M,phasetype);
 else
         
     g=fir2long(g,L);
@@ -55,12 +55,14 @@ else
         c=comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
         
     end;
+    
+    % FIXME : Calls non-comp function 
+    if phasetype==1
+        c=phaselock(c,a,'lt',lt);
+    end;
 
 end;
 
-% FIXME : Calls non-comp function 
-if phasetype==1
-  c=phaselock(c,a,'lt',lt);
-end;
+
 
 

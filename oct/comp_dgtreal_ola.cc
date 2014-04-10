@@ -13,14 +13,16 @@
   dgtreal_ola forwarders
 */
 
-static inline void 
+static inline void
 fwd_dgtreal_ola(const double *f, const double *g,
                 const octave_idx_type L, const octave_idx_type gl,
                 const octave_idx_type W, const octave_idx_type a,
                 const octave_idx_type M, const octave_idx_type bl,
-                Complex *cout)
+                const octave_idx_type ptype, Complex *cout)
 {
-   dgtreal_ola_d(f,g,L,gl,W,a,M,bl,reinterpret_cast<double _Complex*>(cout));
+    dgtreal_ola_d(f, g, L, gl, W, a, M, bl,
+                  static_cast<dgt_phasetype>(ptype),
+                  reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void
@@ -28,36 +30,40 @@ fwd_dgtreal_ola(const float *f, const float *g,
                 const octave_idx_type L, const octave_idx_type gl,
                 const octave_idx_type W, const octave_idx_type a,
                 const octave_idx_type M, const octave_idx_type bl,
-                FloatComplex *cout)
+                const octave_idx_type ptype, FloatComplex *cout)
 {
-   dgtreal_ola_s(f,g,L,gl,W,a,M,bl,reinterpret_cast<float _Complex*>(cout));
+    dgtreal_ola_s(f, g, L, gl, W, a, M, bl,
+                  static_cast<dgt_phasetype>(ptype),
+                  reinterpret_cast<float _Complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list
 octFunction(const octave_value_list& args, int nargout)
 {
-   DEBUGINFO;
-   const octave_idx_type a  = args(2).int_value();
-   const octave_idx_type M  = args(3).int_value();
-   const octave_idx_type bl = args(4).int_value();
+    DEBUGINFO;
+    const octave_idx_type a  = args(2).int_value();
+    const octave_idx_type M  = args(3).int_value();
+    const octave_idx_type bl = args(4).int_value();
+    const octave_idx_type ptype = args(5).int_value();
 
-   MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
-   MArray<LTFAT_TYPE> g = ltfatOctArray<LTFAT_TYPE>(args(1));
-  
-   const octave_idx_type L  = f.rows();
-   const octave_idx_type W  = f.columns();
-   const octave_idx_type gl = g.rows();
-   const octave_idx_type N = L/a;
+    MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
+    MArray<LTFAT_TYPE> g = ltfatOctArray<LTFAT_TYPE>(args(1));
 
-   const octave_idx_type M2 = M/2+1;
-  
-   dim_vector dims_out(M2,N,W);  
-   dims_out.chop_trailing_singletons();
+    const octave_idx_type L  = f.rows();
+    const octave_idx_type W  = f.columns();
+    const octave_idx_type gl = g.rows();
+    const octave_idx_type N = L / a;
 
-   MArray<LTFAT_COMPLEX> cout(dims_out); 
-    
-   fwd_dgtreal_ola(f.data(),g.data(),L,gl,W,a,M,bl,cout.fortran_vec());
-    
-   return octave_value(cout);
+    const octave_idx_type M2 = M / 2 + 1;
+
+    dim_vector dims_out(M2, N, W);
+    dims_out.chop_trailing_singletons();
+
+    MArray<LTFAT_COMPLEX> cout(dims_out);
+
+    fwd_dgtreal_ola(f.data(), g.data(), L, gl, W, a, M, bl, ptype,
+                    cout.fortran_vec());
+
+    return octave_value(cout);
 }

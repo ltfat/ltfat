@@ -1,4 +1,4 @@
-function coef=comp_dgtreal_ola(f,g,a,M,Lb)
+function coef=comp_dgtreal_ola(f,g,a,M,Lb,phasetype)
 %
 %  This function implements periodic convolution using overlap-add. The
 %  window g is supposed to be extended by fir2iir.
@@ -37,7 +37,7 @@ coef=zeros(M2,N,W,assert_classname(f,g));
 
 for ii=0:Nb-1
   
-  block=dgtreal(postpad(f(ii*Lb+1:(ii+1)*Lb,:),Lext),gpad,a,M);
+  block=comp_sepdgtreal(postpad(f(ii*Lb+1:(ii+1)*Lb,:),Lext),gpad,a,M,phasetype);
 
   % Large block
   coef(:,ii*Nblock+1:(ii+1)*Nblock,:) = coef(:,ii*Nblock+1:(ii+1)*Nblock,:)+block(:,1:Nblock,:);  

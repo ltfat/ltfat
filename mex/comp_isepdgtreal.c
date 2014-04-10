@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 5
+#define ISNARGINEQ 6
 
 #define TYPEDEPARGS 0
 #define SINGLEARGS
@@ -19,32 +19,34 @@
 // Calling convention:
 //  comp_isepdgtreal(coef,g,L,a,M);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
-   int L, W, a, M, N, gl, M2;
+    int L, W, a, M, N, gl, M2;
 
-   // Get matrix dimensions.
-   L=(int)mxGetScalar(prhs[2]);
-   a=(int)mxGetScalar(prhs[3]);
-   M=(int)mxGetScalar(prhs[4]);
-   N=L/a;
-   M2 = M/2+1;
-   W = mxGetNumberOfElements(prhs[0])/(N*M2);
-   gl = mxGetM(prhs[1]);
+    // Get matrix dimensions.
+    L = (int)mxGetScalar(prhs[2]);
+    a = (int)mxGetScalar(prhs[3]);
+    M = (int)mxGetScalar(prhs[4]);
+    int ptype = (int)mxGetScalar(prhs[5]);
+    N = L / a;
+    M2 = M / 2 + 1;
+    W = mxGetNumberOfElements(prhs[0]) / (N * M2);
+    gl = mxGetM(prhs[1]);
 
 
-   plhs[0] = ltfatCreateMatrix(L, W,LTFAT_MX_CLASSID,mxREAL);
-   const LTFAT_COMPLEX* c_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
-   const LTFAT_REAL * g = (const LTFAT_REAL *) mxGetData(prhs[1]);
-   LTFAT_REAL* f_r = (LTFAT_REAL*) mxGetData(plhs[0]);
+    plhs[0] = ltfatCreateMatrix(L, W, LTFAT_MX_CLASSID, mxREAL);
+    const LTFAT_COMPLEX* c_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
+    const LTFAT_REAL * g = (const LTFAT_REAL *) mxGetData(prhs[1]);
+    LTFAT_REAL* f_r = (LTFAT_REAL*) mxGetData(plhs[0]);
 
-   if(gl<L)
-   {    
-      LTFAT_NAME(idgtreal_fb)(c_combined,g,L,gl,W,a,M,f_r);
-   }
-   else
-   {
-      LTFAT_NAME(idgtreal_long)(c_combined,g,L,W,a,M,f_r);
-   }
+    if (gl < L)
+    {
+        LTFAT_NAME(idgtreal_fb)(c_combined, g, L, gl, W, a, M, ptype, f_r);
+    }
+    else
+    {
+        LTFAT_NAME(idgtreal_long)(c_combined, g, L, W, a, M, ptype, f_r);
+    }
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

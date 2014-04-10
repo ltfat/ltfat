@@ -60,7 +60,7 @@ for ii=1:length(Lr);
     global LTFAT_TEST_TYPE;
     if strcmpi(LTFAT_TEST_TYPE,'single')
         C = gabframebounds(g,a,M);
-        while C>1e4
+        while C>1e3
             warning(sprintf(['The frame is too badly conditioned '...
                              'for single precision. Cond. num. %d. '...
                              ' Trying again.'],C));

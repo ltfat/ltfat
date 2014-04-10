@@ -1,4 +1,4 @@
-function [coef]=comp_sepdgt(f,g,a,M)
+function [coef]=comp_sepdgt(f,g,a,M,phasetype)
 %COMP_SEPDGT  Separable DGT
 %   Usage:  c=comp_sepdgt(f,g,a,M);
 %  
@@ -17,4 +17,10 @@ if Lwindow<L
 else
    % Do the factorization algorithm
    coef=comp_dgt_long(f,g,a,M);
+end;
+
+
+% FIXME : Calls non-comp function 
+if phasetype==1
+    coef=phaselock(coef,a);
 end;

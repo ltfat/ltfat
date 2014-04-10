@@ -10,7 +10,7 @@ W=size(f,2);
 
 coef=zeros(2*M,N/2,W,assert_classname(f,g));
 
-coef2=comp_sepdgt(f,g,a,2*M);
+coef2=comp_sepdgt(f,g,a,2*M,0);
 
 if (isreal(f) && isreal(g))
 

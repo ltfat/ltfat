@@ -26,7 +26,7 @@ which comp_idgt_fb
 which comp_dgtreal_fb
 which comp_idgtreal_fb
 
-
+for phase = {'freqinv','timeinv'}
 for ii=1:length(Lr);
 
   L=Lr(ii);
@@ -78,49 +78,49 @@ for ii=1:length(Lr);
 	f=tester_crand(L,W);
       end;
       
-      cc  = dgt(f,g,a,M);  
-      cc2 = dgt(f,fir2long(g,L),a,M);
+      cc  = dgt(f,g,a,M,phase{1});  
+      cc2 = dgt(f,fir2long(g,L),a,M,phase{1});
       
       cdiff=cc-cc2;
       res=norm(cdiff(:));      
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      s=sprintf('REF  %s L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',rname,L,W,a,M,gl,res,fail);
+      s=sprintf('REF  %s, %s L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',rname,phase{1},L,W,a,M,gl,res,fail);
       disp(s)
 
 
-      f1   = idgt(cc2,g,a);  
-      f2   = idgt(cc2,fir2long(g,L),a);
+      f1   = idgt(cc2,g,a,phase{1});  
+      f2   = idgt(cc2,fir2long(g,L),a,phase{1});
       
       cdiff=f1-f2;
       res=norm(cdiff(:));      
       [test_failed,fail]=ltfatdiditfail(res,test_failed);
-      s=sprintf('IREF %s L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',rname,L,W,a,M,gl,res,fail);
+      s=sprintf('IREF %s, %s L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',rname,phase{1},L,W,a,M,gl,res,fail);
       disp(s)
 
       % Test the real valued transform
       if rtype==1
         
         % --- Reference test ---
-        ccreal=dgtreal(f,g,a,M);
+        ccreal=dgtreal(f,g,a,M,phase{1});
         M2=floor(M/2)+1;
         
         cdiff=cc(1:M2,:,:)-ccreal;
         res=norm(cdiff(:));
         [test_failed,fail]=ltfatdiditfail(res,test_failed);
-        s=sprintf('REFREAL    L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',...
-                   L,W,a,M,gl,res,fail);
+        s=sprintf('REFREAL  %s  L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',...
+                   phase{1},L,W,a,M,gl,res,fail);
         disp(s);
         
         % --- Reconstruction test ---
         % Test following test only makes sense if the dual is also FIR.
         if gl<=M
           
-          rreal=idgtreal(ccreal,gd,a,M);
+          rreal=idgtreal(ccreal,gd,a,M,phase{1});
        
           res=norm(f-rreal,'fro');
           [test_failed,fail]=ltfatdiditfail(res,test_failed);
-          s=sprintf('RECREAL    L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',...
-                    L,W,a,M,gl,res,fail);
+          s=sprintf('RECREAL  %s   L:%3i W:%2i a:%3i M:%3i gl:%3i %0.5g %s',...
+                    phase{1},L,W,a,M,gl,res,fail);
           disp(s)
         end;
       end;
@@ -131,5 +131,6 @@ for ii=1:length(Lr);
   end;
 
 end;
+end
 
 

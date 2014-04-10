@@ -27,18 +27,18 @@ W=size(coef,3);
 
 L=N*a;
 
-% FIXME : Calls non-comp function 
-if phasetype==1
-    coef=phaseunlock(coef,a,'lt',lt);
-end;
+
 
 if lt(2)==1
-    f = comp_isepdgt(coef,g,L,a,M); 
-
-    
+    f = comp_isepdgt(coef,g,L,a,M,phasetype); 
 else
     
     if (algns==1) || (algns==0 && lt(2)<=2) 
+        % FIXME : Calls non-comp function 
+        if phasetype==1
+            coef=phaseunlock(coef,a,'lt',lt);
+        end;
+        
         
         % ----- algorithm starts here, split into sub-lattices ---------------
         

@@ -4,7 +4,7 @@
 #define COMPLEXARGS
 #define OCTFILENAME comp_isepdgtreal // change to filename
 #define OCTFILEHELP "This function calls the C-library\n\
-                    c=comp_idgtereal_fb(c,g,L,a,M);\n\
+                    c=comp_isepdgtreal(c,g,L,a,M,phasetype);\n\
                     Yeah.\n"
 
 
@@ -15,66 +15,79 @@ static inline void
 fwd_idgtreal_fb(const Complex *coef, const double *gf,
                 const octave_idx_type L, const octave_idx_type gl,
                 const octave_idx_type W, const octave_idx_type a,
-                const octave_idx_type M, double *f)
+                const octave_idx_type M, const octave_idx_type ptype,
+                double *f)
 {
-   idgtreal_fb_d(reinterpret_cast<const double _Complex*>(coef),
-                 gf,L,gl,W,a,M,f);
+    idgtreal_fb_d(reinterpret_cast<const double _Complex*>(coef),
+                  gf, L, gl, W, a, M,
+                  static_cast<const dgt_phasetype>(ptype),
+                  f);
 }
 
 static inline void
 fwd_idgtreal_fb(const FloatComplex *coef, const float *gf,
                 const octave_idx_type L, const octave_idx_type gl,
                 const octave_idx_type W, const octave_idx_type a,
-                const octave_idx_type M, float *f)
+                const octave_idx_type M, const octave_idx_type ptype,
+                float *f)
 {
-   idgtreal_fb_s(reinterpret_cast<const float _Complex*>(coef),
-                 gf,L,gl,W,a,M,f);
+    idgtreal_fb_s(reinterpret_cast<const float _Complex*>(coef),
+                  gf, L, gl, W, a, M,
+                  static_cast<const dgt_phasetype>(ptype),
+                  f);
 }
 
 static inline void
 fwd_idgtreal_long(const Complex *coef, const double *gf,
                   const octave_idx_type L, const octave_idx_type W,
                   const octave_idx_type a, const octave_idx_type M,
-                  double *f)
+                  const octave_idx_type ptype, double *f)
 {
-   idgtreal_long_d(reinterpret_cast<const double _Complex*>(coef),
-                   gf,L,W,a,M,f);
+    idgtreal_long_d(reinterpret_cast<const double _Complex*>(coef),
+                    gf, L, W, a, M,
+                    static_cast<const dgt_phasetype>(ptype),
+                    f);
 }
 
 static inline void
 fwd_idgtreal_long(const FloatComplex *coef, const float *gf,
-                  const octave_idx_type L, const octave_idx_type W, 
+                  const octave_idx_type L, const octave_idx_type W,
                   const octave_idx_type a, const octave_idx_type M,
-                  float *f)
+                  const octave_idx_type ptype, float *f)
 {
-   idgtreal_long_s(reinterpret_cast<const float _Complex*>(coef),
-                   gf,L,W,a,M,f);
+    idgtreal_long_s(reinterpret_cast<const float _Complex*>(coef),
+                    gf, L, W, a, M,
+                    static_cast<const dgt_phasetype>(ptype),
+                    f);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
-   DEBUGINFO;
+    DEBUGINFO;
 
-   MArray<LTFAT_TYPE> coef = ltfatOctArray<LTFAT_TYPE>(args(0));
-   MArray<LTFAT_REAL> gf = ltfatOctArray<LTFAT_REAL>(args(1));
-   const octave_idx_type L = args(2).int_value();
-   const octave_idx_type a = args(3).int_value();
-   const octave_idx_type M = args(4).int_value();
-   const octave_idx_type N = L/a;
-   const octave_idx_type M2 = M/2 +1;
-   const octave_idx_type W = coef.nelem()/(N*M2);
-   const octave_idx_type gl = gf.rows();
+    MArray<LTFAT_TYPE> coef = ltfatOctArray<LTFAT_TYPE>(args(0));
+    MArray<LTFAT_REAL> gf = ltfatOctArray<LTFAT_REAL>(args(1));
+    const octave_idx_type L = args(2).int_value();
+    const octave_idx_type a = args(3).int_value();
+    const octave_idx_type M = args(4).int_value();
+    const octave_idx_type ptype = args(5).int_value();
+    const octave_idx_type N = L / a;
+    const octave_idx_type M2 = M / 2 + 1;
+    const octave_idx_type W = coef.nelem() / (N * M2);
+    const octave_idx_type gl = gf.rows();
 
-   MArray<LTFAT_REAL> f(dim_vector(L,W)); 
-   
-   if(gl<L)
-   {
-      fwd_idgtreal_fb(coef.data(),gf.data(),L,gl,W,a,M,f.fortran_vec());
-   }
-   else
-   {
-      fwd_idgtreal_long(coef.data(),gf.data(),L,W,a,M,f.fortran_vec());
-   }
-   return octave_value(f);
+    MArray<LTFAT_REAL> f(dim_vector(L, W));
+
+    if (gl < L)
+    {
+        fwd_idgtreal_fb(coef.data(), gf.data(), L, gl, W, a, M, ptype,
+                        f.fortran_vec());
+    }
+    else
+    {
+        fwd_idgtreal_long(coef.data(), gf.data(), L, W, a, M, ptype,
+                          f.fortran_vec());
+    }
+    return octave_value(f);
 }

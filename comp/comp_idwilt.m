@@ -45,7 +45,7 @@ coef2(2*M:-2:M+2,1:2:N,:)   =  1/sqrt(2)*i*coef(2:2:M,:,:);
 coef2(2:2:M,2:2:N,:)        = 1/sqrt(2)*coef(M+2:2:2*M,:,:);
 coef2(2*M:-2:M+2,2:2:N,:)   = 1/sqrt(2)*coef(M+2:2:2*M,:,:);
 
-f = comp_isepdgt(coef2,g,L,a,2*M);
+f = comp_isepdgt(coef2,g,L,a,2*M,0);
 
 
 % Apply the final DGT

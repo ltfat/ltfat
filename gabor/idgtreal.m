@@ -137,6 +137,11 @@ if kv.lt(2)>2
   error('Only rectangular or quinqux lattices are supported.');  
 end;
 
+if kv.lt(2)~=1 && flags.do_timeinv
+    error(['%s: Time-invariant phase for quinqux lattice is not ',...
+           'supported.'],upper(mfilename));
+end
+
 
 %% ----- step 3 : Determine the window 
 
