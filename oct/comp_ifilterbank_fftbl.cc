@@ -2,12 +2,11 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 #define OCTFILENAME comp_ifilterbank_fftbl // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=upconv_fftbl(...);\n Yeah."
-
+#define OCTFILEHELP "This function calls the C-library \n\
+                     F = comp_ifilterbank_fftbl(c,G,foff,a,realonly) \n\
+                     Yeah."
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type 32 or 64 bit signed integer
-
 
 static inline void
 fwd_ifilterbank_fftbl(const Complex *c[], const Complex *G[],
@@ -36,7 +35,6 @@ fwd_ifilterbank_fftbl(const FloatComplex *c[], const FloatComplex *G[],
 }
 
 
-// Calling convention:
 // F = comp_ifilterbank_fftbl(c,G,foff,a,realonly)
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)

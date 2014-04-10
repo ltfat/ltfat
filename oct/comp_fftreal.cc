@@ -17,9 +17,9 @@ static inline void fwd_fftreal(const double *f,
                                const octave_idx_type W,
                                Complex *cout)
 {
-   fftreal_d( const_cast<double*>(f),
-            L,W,
-            reinterpret_cast<double _Complex*>(cout));
+    fftreal_d(const_cast<double*>(f),
+              L, W,
+              reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void fwd_fftreal(const float *f,
@@ -27,25 +27,25 @@ static inline void fwd_fftreal(const float *f,
                                const octave_idx_type W,
                                FloatComplex *cout)
 {
-  fftreal_s( const_cast<float*>(f),
-            L,W,
-            reinterpret_cast<float _Complex*>(cout));  
+    fftreal_s(const_cast<float*>(f),
+              L, W,
+              reinterpret_cast<float _Complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
-     DEBUGINFO;
-     MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
+    DEBUGINFO;
+    MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
 
-     const octave_idx_type L = f.rows();
-     const octave_idx_type W = f.columns();
-     const octave_idx_type L2 = (L/2)+1;
+    const octave_idx_type L = f.rows();
+    const octave_idx_type W = f.columns();
+    const octave_idx_type L2 = (L / 2) + 1;
 
-     MArray<LTFAT_COMPLEX> cout(dim_vector(L2,W)); 
+    MArray<LTFAT_COMPLEX> cout(dim_vector(L2, W));
 
-     fwd_fftreal(f.data(),L,W,cout.fortran_vec());
+    fwd_fftreal(f.data(), L, W, cout.fortran_vec());
 
-     return octave_value(cout);
+    return octave_value(cout);
 }
 

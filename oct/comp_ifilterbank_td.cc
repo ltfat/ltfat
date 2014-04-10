@@ -2,60 +2,58 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_ifilterbank_td // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=upconv_td(...);\n Yeah."
-#define _DEBUG
-
+#define OCTFILEHELP "This function calls the C-library\n\
+                     c=comp_ifilterbank_td(c,g,a,Ls,offset,ext);\n Yeah."
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type 32 or 64 bit signed integer
 
 
 static inline void
 fwd_ifilterbank_td(const Complex *c[],  const Complex *g[],
                    const ltfatInt L, const ltfatInt gl[],
                    const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[],const ltfatInt M,
+                   const ltfatInt offset[], const ltfatInt M,
                    Complex *f, ltfatExtType ext)
 {
     ifilterbank_td_cd(reinterpret_cast<const double _Complex **>(c),
-                        reinterpret_cast<const double _Complex **>(g),
-                        L,gl,W,a,offset,M,
-                        reinterpret_cast<double _Complex *>(f),
-                        ext);
+                      reinterpret_cast<const double _Complex **>(g),
+                      L, gl, W, a, offset, M,
+                      reinterpret_cast<double _Complex *>(f),
+                      ext);
 }
 
 static inline void
 fwd_ifilterbank_td(const FloatComplex *c[],  const FloatComplex *g[],
                    const ltfatInt L, const ltfatInt gl[],
                    const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[],const ltfatInt M,
+                   const ltfatInt offset[], const ltfatInt M,
                    FloatComplex *f, ltfatExtType ext)
 {
     ifilterbank_td_cs(reinterpret_cast<const float _Complex **>(c),
-                        reinterpret_cast<const float _Complex **>(g),
-                        L,gl,W,a,offset,M,
-                        reinterpret_cast<float _Complex *>(f),
-                        ext);
+                      reinterpret_cast<const float _Complex **>(g),
+                      L, gl, W, a, offset, M,
+                      reinterpret_cast<float _Complex *>(f),
+                      ext);
 }
 
 static inline void
 fwd_ifilterbank_td(const double *c[],  const double *g[],
                    const ltfatInt L, const ltfatInt gl[],
                    const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[],const ltfatInt M,
+                   const ltfatInt offset[], const ltfatInt M,
                    double *f, ltfatExtType ext)
 {
-    ifilterbank_td_d(c,g,L,gl,W,a,offset,M,f,ext);
+    ifilterbank_td_d(c, g, L, gl, W, a, offset, M, f, ext);
 }
 
 static inline void
 fwd_ifilterbank_td(const float *c[],  const float *g[],
                    const ltfatInt L, const ltfatInt gl[],
                    const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[],const ltfatInt M,
+                   const ltfatInt offset[], const ltfatInt M,
                    float *f, ltfatExtType ext)
 {
-    ifilterbank_td_s(c,g,L,gl,W,a,offset,M,f,ext);
+    ifilterbank_td_s(c, g, L, gl, W, a, offset, M, f, ext);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -91,7 +89,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     //
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, g_elems, M);
 
-    for(octave_idx_type m=0; m<M; m++)
+    for (octave_idx_type m = 0; m < M; m++)
     {
         a[m] = (ltfatInt) aDouble(m);
         offset[m] = (ltfatInt) offsetDouble(m);
@@ -104,9 +102,10 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     const octave_idx_type W  = c_elems[0].columns();
 
-    MArray<LTFAT_TYPE> f(dim_vector(L,W));
+    MArray<LTFAT_TYPE> f(dim_vector(L, W));
 
-    fwd_ifilterbank_td(cPtrs,gPtrs,L,filtLen,W,a,offset,M,f.fortran_vec(),ext);
+    fwd_ifilterbank_td(cPtrs, gPtrs, L, filtLen, W, a, offset, M,
+                       f.fortran_vec(), ext);
 
     return octave_value(f);
 }

@@ -47,7 +47,8 @@
 %         f  : Output L*W array.
 %
 */
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
     const mxArray* mxc = prhs[0];
     const mxArray* mxg = prhs[1];
@@ -59,7 +60,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     // number of channels
     mwSize M = dims[1];
     mwSize W = 1;
-    if(mxGetNumberOfDimensions(mxc)>2)
+    if (mxGetNumberOfDimensions(mxc) > 2)
     {
         W = dims[2];
     }
@@ -70,7 +71,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     // allocate output
     mwSize ndim2 = 2;
     mwSize dims2[] = {L, W};
-    plhs[0] = ltfatCreateNdimArray(ndim2,dims2,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
+    plhs[0] = ltfatCreateNdimArray(ndim2, dims2, LTFAT_MX_CLASSID,
+                                   LTFAT_MX_COMPLEXITY);
 
     // POINTER TO OUTPUT
     LTFAT_TYPE* fPtr = mxGetData(plhs[0]);
@@ -81,17 +83,18 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     ltfatInt a[M];
     ltfatInt filtLens[M];
 
-    for(mwSize m=0; m<M; m++)
+    for (mwSize m = 0; m < M; m++)
     {
         offset[m] = offsetDouble[m];
         a[m] = *aDouble;
         filtLens[m] = filtLen;
-        gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m*filtLen;
+        gPtrs[m] = ((LTFAT_TYPE*) mxGetData(mxg)) + m * filtLen;
     }
 
     LTFAT_TYPE* cPtr = mxGetData(mxc);
 
-    LTFAT_NAME(iatrousfilterbank_td)(cPtr, gPtrs, L, filtLens, W, a, offset, M, fPtr, PER);
+    LTFAT_NAME(iatrousfilterbank_td)(cPtr, gPtrs, L, filtLens, W, a, offset, M,
+                                     fPtr, PER);
 
 
 }

@@ -2,11 +2,11 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 #define OCTFILENAME comp_filterbank_fftbl // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=convsub_fftbl(...);\n Yeah."
+#define OCTFILEHELP "This function calls the C-library\n\
+                     c=comp_filterbank_fftbl(F,G,foff,a,realonly)\n Yeah."
 
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type 32 or 64 bit signed integer
 
 
 static inline void
@@ -18,7 +18,7 @@ fwd_filterbank_fftbl(const Complex *F, const Complex *G[],
 {
     filterbank_fftbl_d(reinterpret_cast<const double _Complex *>(F),
                        reinterpret_cast<const double _Complex **>(G),
-                       L,Gl,W,afrac,M,foff,realonly,
+                       L, Gl, W, afrac, M, foff, realonly,
                        reinterpret_cast<double _Complex **>(c));
 }
 
@@ -29,10 +29,10 @@ fwd_filterbank_fftbl(const FloatComplex *F, const FloatComplex *G[],
                      const ltfatInt M, const ltfatInt foff[],
                      const int realonly[], FloatComplex *c[])
 {
-    
+
     filterbank_fftbl_s(reinterpret_cast<const float _Complex *>(F),
                        reinterpret_cast<const float _Complex **>(G),
-                       L,Gl,W,afrac,M,foff,realonly,
+                       L, Gl, W, afrac, M, foff, realonly,
                        reinterpret_cast<float _Complex **>(c));
 }
 
@@ -56,14 +56,14 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
 
     OCTAVE_LOCAL_BUFFER (double, afrac, M);
-    if( a.columns()>1)
+    if ( a.columns() > 1)
     {
-        for(octave_idx_type m=0; m<M; m++)
-            afrac[m] = a(m)/a(m+M);
+        for (octave_idx_type m = 0; m < M; m++)
+            afrac[m] = a(m) / a(m + M);
     }
     else
     {
-        for(octave_idx_type m=0; m<M; m++)
+        for (octave_idx_type m = 0; m < M; m++)
             afrac[m] = a(m);
     }
 
@@ -81,22 +81,23 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, g_elems, M);
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, c_elems, M);
 
-    for(octave_idx_type m=0; m<M; m++)
+    for (octave_idx_type m = 0; m < M; m++)
     {
-        realonly[m] = (int) (realonlyDouble(m)>1e-3);
+        realonly[m] = (int) (realonlyDouble(m) > 1e-3);
         foff[m] = (ltfatInt) foffDouble(m);
         g_elems[m] = ltfatOctArray<LTFAT_TYPE>(G.elem(m));
         GPtrs[m] = g_elems[m].data();
         Gl[m] = (ltfatInt) g_elems[m].numel();
-        octave_idx_type outLen = (octave_idx_type) floor( L/afrac[m] + 0.5);
+        octave_idx_type outLen = (octave_idx_type) floor( L / afrac[m] + 0.5);
         c_elems[m] = MArray<LTFAT_TYPE>(dim_vector(outLen, W));
         cPtrs[m] = c_elems[m].fortran_vec();
     }
- 
-    fwd_filterbank_fftbl(F.data(),GPtrs,L,Gl,W,afrac,M,foff,realonly,cPtrs);
 
-    Cell c(dim_vector(M,1));
-    for(octave_idx_type m=0; m<M; ++m)
+    fwd_filterbank_fftbl(F.data(), GPtrs, L, Gl, W, afrac, M, foff,
+                         realonly, cPtrs);
+
+    Cell c(dim_vector(M, 1));
+    for (octave_idx_type m = 0; m < M; ++m)
     {
         c.elem(m) = c_elems[m];
     }

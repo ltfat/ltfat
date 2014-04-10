@@ -1,6 +1,6 @@
 function coef = comp_cellcoef2tf(coef,maxLen)
 %COMP_CELLCOEF2TF Cell to a tf-layout
-%   Usage: coef = comp_cellcoef2tf(coef,dim)
+%   Usage: coef = comp_cellcoef2tf(coef,maxLen)
 %
 
 

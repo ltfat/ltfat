@@ -15,7 +15,7 @@ static inline void fwd_dst(const double *f,
                            double *c,
                            const dst_kind kind)
 {
-    dst_d(f,L,W,c,kind);
+    dst_d(f, L, W, c, kind);
 }
 
 static inline void fwd_dst(const float *f,
@@ -24,7 +24,7 @@ static inline void fwd_dst(const float *f,
                            float *c,
                            const dst_kind kind)
 {
-    dst_s(f,L,W,c,kind);
+    dst_s(f, L, W, c, kind);
 }
 
 static inline void fwd_dst(const Complex *f,
@@ -34,7 +34,7 @@ static inline void fwd_dst(const Complex *f,
                            const dst_kind kind)
 {
     dst_cd(reinterpret_cast<const double _Complex *>(f),
-           L,W,
+           L, W,
            reinterpret_cast<double _Complex *>(c),
            kind);
 }
@@ -46,7 +46,7 @@ static inline void fwd_dst(const FloatComplex *f,
                            const dst_kind kind)
 {
     dst_cs(reinterpret_cast<const float _Complex *>(f),
-           L,W,
+           L, W,
            reinterpret_cast<float _Complex *>(c),
            kind);
 }
@@ -60,9 +60,9 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     MArray<LTFAT_TYPE> f = MArray<LTFAT_TYPE>(ltfatOctArray<LTFAT_TYPE>(args(0)));
     const octave_idx_type L  = f.rows();
     const octave_idx_type W  = f.columns();
-    MArray<LTFAT_TYPE> c(dim_vector(L,W));
+    MArray<LTFAT_TYPE> c(dim_vector(L, W));
 
-    switch(type)
+    switch (type)
     {
     case 1:
         kind = DSTI;
@@ -80,7 +80,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
         error("Unknown type.");
     }
 
-    fwd_dst(f.data(),L,W,c.fortran_vec(),kind);
+    fwd_dst(f.data(), L, W, c.fortran_vec(), kind);
 
     return octave_value(c);
 }

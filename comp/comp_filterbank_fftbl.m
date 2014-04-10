@@ -13,7 +13,7 @@ else
 end
 
 N = L./afrac;
-assert(all(rem(N,1))<1e-6,'%s: Bad output length. \n',upper(mfilename));
+assert(all(N-round(N)<1e-6),'%s: Bad output length. \n',upper(mfilename));
 N = round(N);
 
 fsuppRangeSmall = cellfun(@(fEl,GEl) mod([fEl:fEl+numel(GEl)-1].',L)+1 ,num2cell(foff),G,'UniformOutput',0);

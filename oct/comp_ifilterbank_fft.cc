@@ -2,7 +2,9 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 #define OCTFILENAME comp_ifilterbank_fft // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=upconv_fft(...);\n Yeah."
+#define OCTFILEHELP "This function calls the C-library \n\
+                     F = comp_ifilterbank_fft(c,G,a) \n\
+                     Yeah."
 
 
 #include "ltfat_oct_template_helper.h"
@@ -17,7 +19,7 @@ fwd_ifilterbank_fft(const Complex *c[], const Complex *filt[],
 {
     ifilterbank_fft_d(reinterpret_cast<const double _Complex **>(c),
                       reinterpret_cast<const double _Complex **>(filt),
-                      L,W,a,M,
+                      L, W, a, M,
                       reinterpret_cast<double _Complex *>(f));
 }
 
@@ -29,13 +31,10 @@ fwd_ifilterbank_fft(const FloatComplex *c[], const FloatComplex *filt[],
 {
     ifilterbank_fft_s(reinterpret_cast<const float _Complex **>(c),
                       reinterpret_cast<const float _Complex **>(filt),
-                      L,W,a,M,
+                      L, W, a, M,
                       reinterpret_cast<float _Complex *>(f));
 }
 
-
-// Calling convention:
-// F = comp_ifilterbank_fft(c,G,a)
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
@@ -54,7 +53,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type M = G.nelem();
 
     // Output signal
-    MArray<LTFAT_COMPLEX> F(dim_vector(L,W));
+    MArray<LTFAT_COMPLEX> F(dim_vector(L, W));
 
 
     // Allocating temporary arrays
@@ -69,9 +68,9 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, GElems, M);
     OCTAVE_LOCAL_BUFFER (ltfatInt, a, M);
 
-    for(octave_idx_type m=0; m<M; m++)
+    for (octave_idx_type m = 0; m < M; m++)
     {
-        a[m] = (ltfatInt) aDouble(m); 
+        a[m] = (ltfatInt) aDouble(m);
         GElems[m] = ltfatOctArray<LTFAT_COMPLEX>(G.elem(m));
         GPtrs[m] = GElems[m].data();
         cElems[m] = ltfatOctArray<LTFAT_COMPLEX>(c.elem(m));
@@ -79,7 +78,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     }
 
 
-    fwd_ifilterbank_fft(cPtrs,GPtrs,L,W,a,M,F.fortran_vec());
+    fwd_ifilterbank_fft(cPtrs, GPtrs, L, W, a, M, F.fortran_vec());
 
     return octave_value(F);
 }

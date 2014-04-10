@@ -3,13 +3,10 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_gga // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=gga(...);\n Yeah."
-//#define _DEBUG
-
+#define OCTFILEHELP "This function calls the C-library \n\
+                     c = comp_gga(f,indvec)\n Yeah."
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type 32 or 64 bit signed integer
- 
 
 static inline void
 fwd_gga(const Complex *fPtr, const double*  indVecPtr,
@@ -53,7 +50,6 @@ template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list
 octFunction(const octave_value_list& args, int nargout)
 {
-   //DEBUGINFO;
    // Input data
    MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
    MArray<LTFAT_REAL> indVec = ltfatOctArray<LTFAT_REAL>(args(1));

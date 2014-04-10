@@ -17,19 +17,19 @@
 // Calling convention:
 //  c = comp_gga(f,indvec)
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
+    mwSize L  = mxGetM(prhs[0]);
+    mwSize W  = mxGetN(prhs[0]);
+    mwSize M = mxGetNumberOfElements(prhs[1]);
 
-   mwSize L  = mxGetM(prhs[0]);
-   mwSize W  = mxGetN(prhs[0]);
-   mwSize M = mxGetNumberOfElements(prhs[1]);
+    const LTFAT_TYPE* fPtr = mxGetData(prhs[0]);
+    const LTFAT_REAL* indVecPtr = mxGetData(prhs[1]);
 
-   const LTFAT_TYPE* fPtr = mxGetData(prhs[0]);
-   const LTFAT_REAL* indVecPtr =mxGetData(prhs[1]);
+    plhs[0] = ltfatCreateMatrix(M, W, LTFAT_MX_CLASSID, mxCOMPLEX);
+    LTFAT_COMPLEX* cPtr = mxGetData(plhs[0]);
 
-   plhs[0] = ltfatCreateMatrix(M,W,LTFAT_MX_CLASSID,mxCOMPLEX);
-   LTFAT_COMPLEX* cPtr = mxGetData(plhs[0]);
-
-   LTFAT_NAME(gga)(fPtr,indVecPtr,L,W,M,cPtr);
+    LTFAT_NAME(gga)(fPtr, indVecPtr, L, W, M, cPtr);
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

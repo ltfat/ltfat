@@ -22,13 +22,12 @@ function [g,a] = fwt2filterbank( w, J)
 %   See also: wfbtinit, wfbt2filterbank, filterbank
 
 
-if(nargin<2)
-    error('%s: Not enough input arguments',upper(mfilename));
-end
+complain_notenoughargs(nargin, 2, mfilename);
+complain_notposint(J, 'J', mfilename);
 
 if nargout<2
-  g = wfbt2filterbank({w,J,'dwt'});
+  g = wfbt2filterbank({w, J, 'dwt'});
 elseif nargout == 2
-  [g,a] = wfbt2filterbank({w,J,'dwt'});   
+  [g,a] = wfbt2filterbank({w, J, 'dwt'});   
 end
 

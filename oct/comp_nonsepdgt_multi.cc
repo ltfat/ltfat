@@ -7,8 +7,6 @@
 
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type is 32 or 64 bit signed integer
-
 
 
 static inline void

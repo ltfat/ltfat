@@ -2,12 +2,10 @@
 #define SINGLEARGS
 #define COMPLEXARGS
 #define OCTFILENAME comp_filterbank_fft // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=convsub_fft(...);\n Yeah."
-
+#define OCTFILEHELP "This function calls the C-library\n\
+                     c=comp_filterbank_fft(F,G,a)\n Yeah."
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type 32 or 64 bit signed integer
-
 
 static inline void
 fwd_filterbank_fft(const Complex *F, const Complex *G[],
@@ -17,7 +15,7 @@ fwd_filterbank_fft(const Complex *F, const Complex *G[],
 {
     filterbank_fft_d(reinterpret_cast<const double _Complex *>(F),
                      reinterpret_cast<const double _Complex **>(G),
-                     L,W,a,M,
+                     L, W, a, M,
                      reinterpret_cast<double _Complex **>(c));
 }
 
@@ -29,7 +27,7 @@ fwd_filterbank_fft(const FloatComplex *F, const FloatComplex *G[],
 {
     filterbank_fft_s(reinterpret_cast<const float _Complex *>(F),
                      reinterpret_cast<const float _Complex **>(G),
-                     L,W,a,M,
+                     L, W, a, M,
                      reinterpret_cast<float _Complex **>(c));
 }
 
@@ -62,20 +60,20 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, gElems, M);
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, c_elems, M);
 
-    for(octave_idx_type m=0; m<M; m++)
+    for (octave_idx_type m = 0; m < M; m++)
     {
-        a[m]=(ltfatInt)aDouble(m);
+        a[m] = (ltfatInt)aDouble(m);
         gElems[m] = ltfatOctArray<LTFAT_TYPE>(G.elem(m));
         GPtrs[m] = gElems[m].data();
-        octave_idx_type outLen = (octave_idx_type) ceil( L/aDouble(m) );
+        octave_idx_type outLen = (octave_idx_type) ceil( L / aDouble(m) );
         c_elems[m] = MArray<LTFAT_TYPE>(dim_vector(outLen, W));
         cPtrs[m] = c_elems[m].fortran_vec();
     }
 
     fwd_filterbank_fft(F.data(), GPtrs, L, W, a, M, cPtrs);
 
-    Cell c(dim_vector(M,1));
-    for(octave_idx_type m=0; m<M; ++m)
+    Cell c(dim_vector(M, 1));
+    for (octave_idx_type m = 0; m < M; ++m)
     {
         c.elem(m) = c_elems[m];
     }

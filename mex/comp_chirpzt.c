@@ -15,23 +15,24 @@
 // Calling convention:
 //  c = comp_chirpcz(f,K,deltao,o)
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
 
-   mwSize L  = mxGetM(prhs[0]);
-   mwSize W  = mxGetN(prhs[0]);
-   mwSize K = (mwSize) mxGetScalar(prhs[1]);
-   double deltao = mxGetScalar(prhs[2]);
-   double o = mxGetScalar(prhs[3]);
-   const LTFAT_TYPE* fPtr = (const LTFAT_TYPE*) mxGetData(prhs[0]);
+    mwSize L  = mxGetM(prhs[0]);
+    mwSize W  = mxGetN(prhs[0]);
+    mwSize K = (mwSize) mxGetScalar(prhs[1]);
+    double deltao = mxGetScalar(prhs[2]);
+    double o = mxGetScalar(prhs[3]);
+    const LTFAT_TYPE* fPtr = (const LTFAT_TYPE*) mxGetData(prhs[0]);
 
-   plhs[0] = ltfatCreateMatrix(K,W,LTFAT_MX_CLASSID,mxCOMPLEX);
-   LTFAT_REAL _Complex* cPtr = (LTFAT_REAL _Complex*) mxGetPr(plhs[0]);
+    plhs[0] = ltfatCreateMatrix(K, W, LTFAT_MX_CLASSID, mxCOMPLEX);
+    LTFAT_REAL _Complex* cPtr = (LTFAT_REAL _Complex*) mxGetPr(plhs[0]);
 
-   LTFAT_NAME(chzt)(fPtr,L,W,K,deltao,o,cPtr);
-   // Alternative implementation
-   // LTFAT_NAME(chzt_fact)(fPtr,L,W,K,deltao,o,cPtr);
+    LTFAT_NAME(chzt)(fPtr, L, W, K, deltao, o, cPtr);
+    // Alternative implementation
+    // LTFAT_NAME(chzt_fact)(fPtr,L,W,K,deltao,o,cPtr);
 
-   return;
+    return;
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */

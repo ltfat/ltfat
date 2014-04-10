@@ -64,7 +64,7 @@ end;
 if isnumeric(g)
   if size(g,2)>1
     if size(g,1)>1
-      error('g must be a vector');
+      error('%s: g must be a vector',callfun);
     else
       % g was a row vector.
       g=g(:);
@@ -86,7 +86,7 @@ else
             info.gl=length(g.h);
             info.isfir=1;
         else
-            info.wasreal=g.realonly;
+            info.wasreal=isfield(g,'realonly') && g.realonly;
             info.gl=[];
             
             if ~isempty(L)

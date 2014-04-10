@@ -30,6 +30,11 @@
 %    FILTERBANKREALBOUNDS   - Frame bounds of filter bank for real signals
 %    FILTERBANKRESPONSE     - Total frequency response
 %
+%  Auxilary
+%    NONU2UFILTERBANK       - Non-uni. to uniform filterbank transformation
+%    U2NONUCFMT             - Change format of coefficients
+%    NONU2UCFMT             - Change format of coefficients back
+%
 %  Plots
 %    PLOTFILTERBANK         - Plot normal/uniform filter bank coefficients
 %

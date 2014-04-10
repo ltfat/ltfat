@@ -8,8 +8,9 @@
 %    BLOCKREAD      - Read samples from file/device
 %    BLOCKPLAY      - Play block (sound output)
 %    BLOCKPANEL     - Block-stream control GUI
-%    BLOCKPANELGET   - Obtain parameter(s) from GUI
+%    BLOCKPANELGET  - Obtain parameter(s) from GUI
 %    BLOCKDONE      - Closes block-stream and frees resources
+%    BLOCKWRITE     - Appends data to a wav file
 %
 %  Block-adapted transforms
 %    BLOCKFRAMEACCEL     - Prepare a frame for a block-stream processing

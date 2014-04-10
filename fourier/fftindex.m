@@ -1,9 +1,9 @@
-function n=fftindex(N,nyquestzero)
+function n=fftindex(N,nyquistzero)
 %FFTINDEX  Frequency index of FFT modulations
 %   Usage: n=fftindex(N);
 %
 %   `fftindex(N)` returns the index of the frequencies of the standard FFT of
-%   length *N* as the are ordered in the output from the `fft` routine. The
+%   length *N* as they are ordered in the output from the `fft` routine. The
 %   numbers returned are in the range `-ceil(N/2)+1:floor(N/2)`
 %
 %   `fftindex(N,0)` does as above, but sets the Nyquist frequency to zero.

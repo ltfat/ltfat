@@ -2,7 +2,8 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_col2diag // change to filename
-#define OCTFILEHELP "Computes spreading permutation.\n Usage: cout=comp_col2diag(cin);\n Yeah."
+#define OCTFILEHELP "Computes spreading permutation.\n\ 
+                     Usage: cout=comp_col2diag(cin);\n Yeah."
 
 #include "ltfat_oct_template_helper.h"
 
@@ -11,42 +12,43 @@
 */
 
 static inline void
-fwd_col2diag(const Complex *cin, const octave_idx_type L,Complex *cout)
+fwd_col2diag(const Complex *cin, const octave_idx_type L, Complex *cout)
 {
-   col2diag_cd(reinterpret_cast<const double _Complex*>(cin),L,
-               reinterpret_cast<double _Complex*>(cout));
+    col2diag_cd(reinterpret_cast<const double _Complex*>(cin), L,
+                reinterpret_cast<double _Complex*>(cout));
 }
 
 static inline void
-fwd_col2diag(const FloatComplex *cin, const octave_idx_type L, FloatComplex *cout)
+fwd_col2diag(const FloatComplex *cin, const octave_idx_type L,
+             FloatComplex *cout)
 {
-   col2diag_cs(reinterpret_cast<const float _Complex*>(cin),L,
-               reinterpret_cast<float _Complex*>(cout));
+    col2diag_cs(reinterpret_cast<const float _Complex*>(cin), L,
+                reinterpret_cast<float _Complex*>(cout));
 }
 
-static inline void 
-fwd_col2diag(const double *cin, const octave_idx_type L,double *cout)
+static inline void
+fwd_col2diag(const double *cin, const octave_idx_type L, double *cout)
 {
-   col2diag_d(cin,L,cout);
+    col2diag_d(cin, L, cout);
 }
 
-static inline void 
+static inline void
 fwd_col2diag(const float *cin, const octave_idx_type L, float *cout)
 {
-   col2diag_s(cin,L,cout);
+    col2diag_s(cin, L, cout);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
-octave_value_list 
+octave_value_list
 octFunction(const octave_value_list& args, int nargout)
 {
-   MArray<LTFAT_TYPE> cin = ltfatOctArray<LTFAT_TYPE>(args(0));
-   MArray<LTFAT_TYPE> cout(cin.dims());
-   cout.fill(0);
+    MArray<LTFAT_TYPE> cin = ltfatOctArray<LTFAT_TYPE>(args(0));
+    MArray<LTFAT_TYPE> cout(cin.dims());
+    cout.fill(0);
 
-   const octave_idx_type L = cin.rows();
+    const octave_idx_type L = cin.rows();
 
-   fwd_col2diag(cin.data(),L,cout.fortran_vec());
+    fwd_col2diag(cin.data(), L, cout.fortran_vec());
 
-   return octave_value(cout);
+    return octave_value(cout);
 }

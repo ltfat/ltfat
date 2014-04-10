@@ -2,13 +2,10 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_atrousfilterbank_td // change to filename
-#define OCTFILEHELP "This function calls the C-library\n c=atrousfilterbank_td(...);\n Yeah."
-#define _DEBUG
-
+#define OCTFILEHELP "This function calls the C-library\n\
+                     c=comp_atrousfilterbank_td(f,g,a,offset) \n Yeah."
 
 #include "ltfat_oct_template_helper.h"
-// octave_idx_type 32 or 64 bit signed integer
-
 
 static inline void
 fwd_atrousfilterbank_td(const Complex *f, const Complex *g[],
@@ -19,7 +16,7 @@ fwd_atrousfilterbank_td(const Complex *f, const Complex *g[],
 {
     atrousfilterbank_td_cd(reinterpret_cast<const double _Complex *>(f),
                            reinterpret_cast<const double _Complex **>(g),
-                           L,gl,W,a,offset,M,
+                           L, gl, W, a, offset, M,
                            reinterpret_cast<double _Complex *>(c),
                            ext);
 }
@@ -33,7 +30,7 @@ fwd_atrousfilterbank_td(const FloatComplex *f, const FloatComplex *g[],
 {
     atrousfilterbank_td_cs(reinterpret_cast<const float _Complex *>(f),
                            reinterpret_cast<const float _Complex **>(g),
-                           L,gl,W,a,offset,M,
+                           L, gl, W, a, offset, M,
                            reinterpret_cast<float _Complex *>(c),
                            ext);
 }
@@ -47,7 +44,7 @@ fwd_atrousfilterbank_td(const double *f, const double *g[],
 {
     atrousfilterbank_td_d(reinterpret_cast<const double *>(f),
                           reinterpret_cast<const double **>(g),
-                          L,gl,W,a,offset,M,
+                          L, gl, W, a, offset, M,
                           reinterpret_cast<double *>(c),
                           ext);
 }
@@ -61,7 +58,7 @@ fwd_atrousfilterbank_td(const float *f, const float *g[],
 {
     atrousfilterbank_td_s(reinterpret_cast<const float *>(f),
                           reinterpret_cast<const float **>(g),
-                          L,gl,W,a,offset,M,
+                          L, gl, W, a, offset, M,
                           reinterpret_cast<float *>(c),
                           ext);
 }
@@ -70,7 +67,6 @@ template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list
 octFunction(const octave_value_list& args, int nargout)
 {
-    //DEBUGINFO;
     // Input data
     MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));
     MArray<LTFAT_TYPE> g = ltfatOctArray<LTFAT_TYPE>(args(1));
@@ -91,20 +87,20 @@ octFunction(const octave_value_list& args, int nargout)
     OCTAVE_LOCAL_BUFFER (ltfatInt, offset, M);
     OCTAVE_LOCAL_BUFFER (ltfatInt, filtLens, M);
 
-    for(octave_idx_type m=0; m<M; m++)
+    for (octave_idx_type m = 0; m < M; m++)
     {
         a[m] = (ltfatInt) aDouble(0);
         offset[m] = (ltfatInt) offsetDouble(m);
         filtLens[m] = (ltfatInt) filtLen;
-        gPtrs[m] = g.data() +  m*filtLen;
+        gPtrs[m] = g.data() +  m * filtLen;
     }
 
-    dim_vector dims_out(L,M,W);
+    dim_vector dims_out(L, M, W);
     dims_out.chop_trailing_singletons();
     MArray<LTFAT_TYPE> c(dims_out);
 
-    fwd_atrousfilterbank_td(f.data(),gPtrs,L,
-                            filtLens,W,a,offset,M,c.fortran_vec(),PER);
+    fwd_atrousfilterbank_td(f.data(), gPtrs, L,
+                            filtLens, W, a, offset, M, c.fortran_vec(), PER);
 
     return octave_value(c);
 }

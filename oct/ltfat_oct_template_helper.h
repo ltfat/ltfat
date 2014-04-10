@@ -26,7 +26,9 @@ MArray<LTFAT_TYPE> ltfatOctArray(const octave_value& ov);
 template <class LTFAT_TYPE>
 MArray<LTFAT_TYPE> ltfatOctArray(const octave_value& ov)
 {
-   error("Casting to unknown type. Everything should be handled in the specialized functions.",__PRETTY_FUNCTION__);
+   error("Casting to unknown type. "
+         "Everything should be handled in the specialized functions."
+         ,__PRETTY_FUNCTION__);
    return MArray<LTFAT_TYPE>();
 }
 
