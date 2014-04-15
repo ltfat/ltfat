@@ -96,7 +96,8 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %   fractional sampling that works for this particular signal length, and
 %   test the reconstruction. The plot displays the response of the
 %   filterbank to verify that the filters are well-behaved both on a
-%   normal and an ERB-scale:::
+%   normal and an ERB-scale. The second plot shows frequency responses of
+%   filters used for analysis (top) and synthesis (bottom). :::
 %
 %     [f,fs]=greasy;  % Get the test signal
 %     L=length(f);
@@ -104,14 +105,25 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     norm(f-r)
-%
+% 
 %     % Plot the response
+%     figure(1);
 %     subplot(2,1,1);     
 %     R=filterbankresponse(g,a,L,fs,'real','plot');
-%
+% 
 %     subplot(2,1,2);
 %     semiaudplot(linspace(0,fs/2,L/2+1),R(1:L/2+1));
 %     ylabel('Magnitude');
+% 
+%     % Plot frequency responses of individual filters
+%     gd=filterbankrealdual(g,a,L);
+%     figure(2);
+%     subplot(2,1,1);     
+%     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
+% 
+%     subplot(2,1,2);
+%     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
+%
 %
 %   See also: filterbank, ufilterbank, ifilterbank, ceil23
 %
@@ -257,7 +269,12 @@ end;
 
 %% Compute the filters
 if flags.do_symmetric
-    g=blfilter(flags.wintype,fsupp,fc,'fs',fs,'scal',scal,'inf','min_win',4);    
+    % This is actually much faster than the vectorized call. 
+    g = cell(1,numel(fc));
+    for m=1:numel(g)
+        g{m}=blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
+                   'inf','min_win',kv.min_win);    
+    end
 else
     g=warpedblfilter(flags.wintype,fsupp_erb,fc,fs,@freqtoerb,@erbtofreq, ...
                      'scal',scal,'inf'); 

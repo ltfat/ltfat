@@ -14,10 +14,7 @@ function [AF,BF]=wfbtbounds(wt,L)
 %
 %   See also: wfbt, filterbankbounds
 
-
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complain_notenoughargs(nargin,2,'WFBTBOUNDS');
 
 wt = wfbtinit({'strict',wt},'nat');
 
@@ -26,7 +23,6 @@ if L~=wfbtlength(L,wt)
            'the time shifts.'],upper(mfilename));
 end;
 
-
 for ii=1:numel(wt.nodes)
    a = wt.nodes{ii}.a;
    assert(all(a==a(1)),'%s: One of the basic wavelet filterbanks is not uniform.',upper(mfilename));
@@ -34,10 +30,6 @@ end
 
 % Do the equivalent filterbank using multirate identity property
 [gmultid,amultid] = wfbt2filterbank(wt);
-
-% Check L
-%maxGlen = max(cellfun(@(gEl) numel(gEl.h),gmultid));
-%assert(L>=maxGlen,'%s: One of the filters is longer than L.',upper(mfilename));
 
 % Do the equivalent uniform filterbank
 [gu,au] = nonu2ufilterbank(gmultid,amultid);

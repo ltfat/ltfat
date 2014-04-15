@@ -44,7 +44,8 @@ function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %                1e-2.
 %
 %     'maxit',maxit
-%                Stopping criterion: maximal number of iterations to do. Default value is 100.
+%                Stopping criterion: maximal number of iterations to do.
+%                Default value is 100.
 %
 %     'print'    Display the progress.
 %

@@ -131,6 +131,8 @@ definput.keyvals.overcomplete = [];
 definput.keyvals.J = [];
 [flags2,kv2,J]=ltfatarghelper({'J'},definput,wtdef(2:end));
 
+complain_notposint(J,'J');
+
 if do_dual
    wdef = {'dual',wdef};
 end

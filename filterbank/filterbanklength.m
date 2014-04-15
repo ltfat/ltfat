@@ -1,4 +1,4 @@
-function L=filterbanklength(Ls,a);
+function L=filterbanklength(Ls,a)
 %FILTERBANKLENGTH  Filterbank length from signal
 %   Usage: L=filterbanklength(Ls,a);
 %
@@ -13,25 +13,14 @@ function L=filterbanklength(Ls,a);
 %
 %   See also: filterbank, filterbanklengthcoef
 
-if ~isnumeric(Ls)
-  error('%s: Ls must be numeric.',upper(mfilename));
+complain_notenoughargs(nargin,2,upper(mfilename));
+complain_notposint(Ls,'Ls',upper(mfilename));
+
+if ~isnumeric(a) || any(a(:)<=0)
+  error('%s: "a" must be numeric consisting of positive numbers ony.',...
+        upper(mfilename));
 end;
 
-if ~isscalar(Ls)
-  error('%s: Ls must a scalar.',upper(mfilename));
-end;
-
-if ~isnumeric(a)
-  error('%s: a must be numeric.',upper(mfilename));
-end;
-
-%if ~isvector(a)
-%    
-%end;
-
-if any(a<=0)
-      error('%s: "a" must consists of positive numbers only.',upper(mfilename));
-end;
 
 lcm_a=a(1);
 for m=2:size(a,1)

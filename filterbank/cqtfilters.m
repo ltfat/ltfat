@@ -264,9 +264,7 @@ if flags.do_real
 else
     % Replicate the centre frequencies and sampling rates, except the first and
     % last
-    if ~flags.do_uniform
-        a=[a;flipud(a(2:M2-1,:))];
-    end;
+    a=[a;flipud(a(2:M2-1,:))];
     scal=[scal;flipud(scal(2:M2-1))];
     fc  =[fc; -flipud(fc(2:M2-1))];
     fsupp=[fsupp;flipud(fsupp(2:M2-1))];
@@ -275,7 +273,8 @@ end;
 % This is actually much faster than the vectorized call. 
 g = cell(1,numel(fc));
 for m=1:numel(g)
-  g{m} = blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),'inf');
+  g{m} = blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
+                  'inf','min_win',kv.min_win);
 end
 
 

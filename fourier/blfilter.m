@@ -107,7 +107,9 @@ if ~isempty(kv.fs)
     kv.fc=kv.fc/kv.fs*2;
 else
    %If fs is not specified, allow fsupp to be in range 0-2
-   assert(all(fsupp>0) && all(fsupp<=2),'%s: Filter support should be in range ]0-2].',upper(mfilename));
+   assert(all(fsupp>0) && all(fsupp<=2),...
+          '%s: Filter support should be in range ]0-2].',...
+          upper(mfilename));
 end;
 
 % Sanitize

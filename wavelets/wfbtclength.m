@@ -1,4 +1,4 @@
-function [Lc,L]=wfbtclength(Ls,wt,varargin);
+function [Lc,L]=wfbtclength(Ls,wt,varargin)
 %WFBTLENGTH  WFBT subband lengthf from a signal length
 %   Usage: L=wfbtlength(Ls,wt);
 %          L=wfbtlength(Ls,wt,...);
@@ -12,13 +12,13 @@ function [Lc,L]=wfbtclength(Ls,wt,varargin);
 %
 %   See also: wfbt, fwt
 
+complain_notposint(Ls,'Ls','WFBTCLENGTH');
 
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet filters structure
 wt = wfbtinit(wt);
-
 
 
 if(flags.do_per)

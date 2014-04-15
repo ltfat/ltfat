@@ -14,6 +14,8 @@ function [Lc,L]=fwtclength(Ls,w,J,varargin)
 %
 %   See also: fwt, fwtlength
 
+complain_notposint(Ls,'Ls','FWTCLENGTH');
+complain_notposint(J,'J','FWTCLENGTH');
 
 w = fwtinit(w);
 

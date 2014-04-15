@@ -44,6 +44,8 @@ function plotfftreal(coef,varargin)
 %                dimension along which are the individual channels oriented.
 %                Value 1 indicates columns, value 2 rows.
 %
+%     'flog'  Use logarithmic scale for the frequency axis.
+%
 %
 %   In addition to these parameters, `plotfftreal` accepts any of the flags
 %   from |normalize|. The coefficients will be normalized as specified
@@ -60,6 +62,8 @@ definput.import={'ltfattranslate','normalize'};
 definput.importdefaults={'null'};
 
 definput.flags.log={'db','dbsq','lin','linsq','linabs'};
+definput.flags.freqscale={'flin','flog'};
+
 
 definput.keyvals.fs=[];
 definput.keyvals.dynrange=[];
@@ -122,7 +126,11 @@ if ~isempty(kv.fs)
   xr=xr*kv.fs/2;
 end;
 
-plot(xr,coef,kv.opts{:});
+if flags.do_flin
+   plot(xr,coef,kv.opts{:});
+elseif flags.do_flog
+   semilogx(xr,coef,kv.opts{:}); 
+end
 xlim([xr(1) xr(end)]);
 
 

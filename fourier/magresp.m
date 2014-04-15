@@ -159,7 +159,9 @@ end;
 
 plot(xrange,FF,kv.opts{:});
 set(gca,'yscale','linear');
-axis(axisvec);
+if ymax-ymin~=0
+    axis(axisvec);
+end
 ylabel('Magnitude response (dB)');
 
 if isempty(fs)

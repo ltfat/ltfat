@@ -40,9 +40,7 @@ function [g,a] = wfbt2filterbank( wtdef, varargin)
 %   See also: wfbtinit
 
 
-if(nargin<1)
-    error('%s: Not enough input arguments',upper(mfilename));
-end
+complain_notenoughargs(nargin,1,'WFBT2FILTERBANK');
 
 % build the tree
 wt = wfbtinit({'strict',wtdef},varargin{:});
@@ -51,10 +49,8 @@ wt = wfbtinit({'strict',wtdef},varargin{:});
 wtPath = 1:numel(wt.nodes);
 wtPath(noOfNodeOutputs(1:numel(wt.nodes),wt)==0)=[];
 
-
 rangeLoc = rangeInLocalOutputs(wtPath,wt);
 rangeOut = rangeInOutputs(wtPath,wt); 
-
 [g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,wt);
 
 if nargout<2

@@ -21,6 +21,16 @@ gt{4} = wfbtremove(3,1,gt{4});
 
 crossoverval = 10000;
 
+for hh=1:2
+
+    if hh==1
+        testWhat = 'wfbt';
+    elseif hh==2
+        testWhat = 'wpfbt';
+    end
+    fprintf(' ===============  Testing %s ===========\n',testWhat);
+        
+
 for jj=1:numel(gt)
 
    for ww=1:numel(W)
@@ -33,10 +43,14 @@ for jj=1:numel(gt)
            gttmp = gttmp{1};
          end
 
-      
-      refc = wfbt(f,gttmp);
 
-      [g,a] = wfbt2filterbank(gttmp);
+      if strcmp(testWhat,'wfbt')   
+        refc = wfbt(f,gttmp);
+        [g,a] = wfbt2filterbank(gttmp);
+      elseif strcmp(testWhat,'wpfbt') 
+        refc = wpfbt(f,gttmp);
+        [g,a] = wpfbt2filterbank(gttmp);
+      end
       
       
       c = filterbank(f,g,a,'crossover',1);
@@ -63,7 +77,12 @@ for jj=1:numel(gt)
       
       if iscell(gt{jj}) && iscell(gt{jj}{2})
          gttmp = gt{jj}{2};
-         [g,a] = wfbt2filterbank(gttmp);
+         if strcmp(testWhat,'wfbt')   
+            [g,a] = wfbt2filterbank(gttmp);
+         elseif strcmp(testWhat,'wpfbt') 
+            [g,a] = wpfbt2filterbank(gttmp);
+         end
+
       end
       
       
@@ -97,9 +116,16 @@ for jj=1:numel(gt)
          gttmp = gttmp{1};
       end
       
-      urefc = uwfbt(f,gttmp);
 
-      g = wfbt2filterbank(gttmp);
+      
+      if strcmp(testWhat,'wfbt') 
+          urefc = uwfbt(f,gttmp);
+          g = wfbt2filterbank(gttmp);
+      elseif strcmp(testWhat,'wpfbt') 
+          urefc = uwpfbt(f,gttmp);
+          g = wpfbt2filterbank(gttmp);
+      end
+
       
       uc = ufilterbank(f,g,1,'crossover',crossoverval);
       
@@ -114,7 +140,12 @@ for jj=1:numel(gt)
       
       if iscell(gt{jj}) && iscell(gt{jj}{2})
          gttmp = gt{jj};
-         g = wfbt2filterbank(gttmp{2});
+         if strcmp(testWhat,'wfbt')   
+            [g] = wfbt2filterbank(gttmp{2});
+         elseif strcmp(testWhat,'wpfbt') 
+            [g] = wpfbt2filterbank(gttmp{2});
+         end
+
       end
       fhat = ifilterbank(urefc,g,ones(numel(g),1),L(ii),'crossover',crossoverval);
       
@@ -129,4 +160,5 @@ for jj=1:numel(gt)
       
    end
    end
+end
 end

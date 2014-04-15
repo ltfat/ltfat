@@ -63,7 +63,8 @@ wt = wfbtinit(wt,flags.forder);
 %% ----- step 1 : Verify f and determine its length -------
 [f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);
 if(Ls<2)
-   error('%s: Input signal seems not to be a vector of length > 1.',upper(mfilename));  
+   error('%s: Input signal seems not to be a vector of length > 1.',...
+       upper(mfilename));  
 end
 
 % Determine next legal input data length.

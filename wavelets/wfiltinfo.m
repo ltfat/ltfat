@@ -5,9 +5,10 @@ function wfiltinfo(w,varargin)
 %   Input parameters:
 %         w     : Wavelet filterbank
 %
-%   Plots impulse responses, frequency responses and approximation of
-%   the scaling of the wavelet function(s) associated withthe wavelet filters
-%   defined by *w* in a single figure. Format of *w* is the same as in |fwt|.
+%   `wfiltinfo(w)` plots impulse responses, frequency responses and 
+%   approximation of the scaling and of the wavelet function(s) associated
+%   with the wavelet filters defined by *w* in a single figure. Format of 
+%   *w* is the same as in |fwt|.
 %
 %   Optionally it is possible to define scaling of the y axis of the
 %   frequency seponses. By deault a dB scale is used.

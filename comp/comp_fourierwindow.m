@@ -81,20 +81,39 @@ if isnumeric(g)
 else
 
     if isstruct(g)
-        if isfield(g,'h')
+        if isfield(g,'h') && isnumeric(g.h) && isvector(g.h)
             info.wasreal=isreal(g.h);
             info.gl=length(g.h);
             info.isfir=1;
-        else
+            
+            % In case a filter lacks .offset, treat it as if it was
+            % a zero delay FIR window.
+            if ~isfield(g,'offset')
+                g.h=fftshift(g.h);
+                g.offset=-floor(info.gl/2); 
+            end
+        elseif isfield(g,'H')  && ... 
+               ( isnumeric(g.H) && isvector(g.H) || isa(g.H,'function_handle') )
             info.wasreal=isfield(g,'realonly') && g.realonly;
             info.gl=[];
             
+            % In case a filter lacks .foff, make a low-pass filter off it.
+            if ~isfield(g,'foff')
+                g.foff= @(L) 0; 
+            end
+            
             if ~isempty(L)
-                if ~isnumeric(g.H)
+                if isa(g.H,'function_handle')
                     g.H=g.H(L);
-                    g.foff=g.foff(L);
                 end;
+                if isa(g.foff,'function_handle')
+                    g.foff=g.foff(L);
+                end
             end;
+        else
+            error(['%s: The struct. defining a filter must contain ',...
+                   'either .h (numeric vector) or .H (numeric vector, ',...
+                   'anonymous fcn) fields.'],callfun);
         end;
     else
         % Information to be determined post creation.

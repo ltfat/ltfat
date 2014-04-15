@@ -45,6 +45,9 @@ function plotfft(coef,varargin)
 %                dimension along which are the individual channels oriented.
 %                Value 1 indicates columns, value 2 rows.
 %
+%     'flog'     Use logarithmic scale for the frequency axis. This flag is
+%                only valid in conjuction with the 'posfreq' flag.
+%
 %
 %   In addition to these parameters, `plotfft` accepts any of the flags
 %   from |normalize|. The coefficients will be normalized as specified
@@ -62,16 +65,22 @@ end;
 
 definput.import={'ltfattranslate','normalize'};
 definput.importdefaults={'null'};
-
 definput.flags.log={'db','dbsq','lin','linsq','linabs'};
 definput.flags.posfreq={'nf','posfreq'};
+definput.flags.freqscale={'flin','flog'};
 
 definput.keyvals.fs=[];
 definput.keyvals.dynrange=[];
-
 definput.keyvals.opts={};
 definput.keyvals.dim=[];
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
+
+if flags.do_nf && flags.do_flog
+    warning(sprintf(['%s: Disabling the ''flog'' flag. It cannot be used ',...
+                    'in plot containing negative frequences.'],...
+                    upper(mfilename)));
+    flags.do_flog = 0;            
+end
 
 [coef,~,N]=assert_sigreshape_pre(coef,[],kv.dim,upper(mfilename));
 
@@ -128,7 +137,11 @@ if ~isempty(kv.fs)
   xr=xr*kv.fs/2;
 end;
 
-plot(xr,coef,kv.opts{:});
+if flags.do_flog
+    semilogx(xr,coef,kv.opts{:}); 
+else
+    plot(xr,coef,kv.opts{:});
+end
 xlim([xr(1) xr(end)]);
 
 if flags.do_db || flags.do_dbsq

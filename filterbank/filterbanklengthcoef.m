@@ -1,4 +1,4 @@
-function L=filterbanklengthcoef(coef,a);
+function L=filterbanklengthcoef(coef,a)
 %FILTERBANKLENGTHCOEF  Filterbank length from coefficients
 %   Usage: L=filterbanklengthcoef(coef,a);
 %
@@ -9,7 +9,10 @@ function L=filterbanklengthcoef(coef,a);
 %   If instead a signal is given, call |filterbanklength|.
 %
 %   See also: filterbank, filterbanklength
-  
+
+complain_notenoughargs(nargin,2,upper(mfilename));
+
+
 if iscell(coef)
   Mcoef=numel(coef);
   cl=cellfun(@(x) size(x,1),coef);

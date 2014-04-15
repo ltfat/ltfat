@@ -10,10 +10,10 @@ function [c,info]=uwfbt(f,wt,varargin)
 %   Output parameters:
 %         c     : Coefficients stored in $L \times M$ matrix.
 %
-%   `c=uwfbt(f,wt)` computes redundant time (or shift) representation *c* 
+%   `c=uwfbt(f,wt)` computes redundant time (or shift) invariant representation *c* 
 %   of the input signal *f* using the filterbank tree definition in *wt* and
 %   using the "a-trous" algorithm. Number of columns in *c* (*M*) is defined
-%   by the total number of outputs of the leaf nodes of the tree.
+%   by the total number of outputs of nodes of the tree.
 %   In addition, the function returns struct. `info` containing the transform
 %   parameters. It can be conviniently used for the inverse transform |iuwfbt|
 %   e.g. `fhat = iuwfbt(c,info)`. It is also required by the |plotwavelets|
