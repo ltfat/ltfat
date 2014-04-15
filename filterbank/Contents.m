@@ -28,9 +28,10 @@
 %    FILTERBANKREALTIGHT    - Canonical tight filters for real signals
 %    FILTERBANKBOUNDS       - Frame bounds of filter bank
 %    FILTERBANKREALBOUNDS   - Frame bounds of filter bank for real signals
-%    FILTERBANKRESPONSE     - Total frequency response
+%    FILTERBANKRESPONSE     - Total frequency response (a frame property)
 %
 %  Auxilary
+%    FILTERBANKFREQZ        - Frequency responses of filters
 %    NONU2UFILTERBANK       - Non-uni. to uniform filterbank transformation
 %    U2NONUCFMT             - Change format of coefficients
 %    NONU2UCFMT             - Change format of coefficients back
