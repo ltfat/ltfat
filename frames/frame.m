@@ -129,7 +129,7 @@ F.realinput=0;
 % Handle the windowed transforms
 switch(ftype)
  case {'dgt','dwilt','wmdct','filterbank','ufilterbank',...
-       'nsdgt','unsdgt'}
+       'nsdgt','unsdgt','wfbt','uwfbt','wpfbt'}
   F.g=varargin{1};
   
  case {'dgtreal','filterbankreal','ufilterbankreal',...
@@ -137,6 +137,9 @@ switch(ftype)
   F.g=varargin{1};
   F.realinput=1;
   
+ case {'fwt','ufwt'}
+  F.g=varargin{1};
+  F.J=varargin{2};
 end;
 
 % For parsing optional parameters to the transforms.
@@ -173,13 +176,26 @@ switch(ftype)
     F.a=F.a(:);
     F.N=numel(F.a);
     F.M=bsxfun(@times,F.M(:),ones(F.N,1));
-    
+  case {'ufwt'}
+    vargs=varargin(3:end);
+    definput.flags.scaling={'sqrt','noscale','scale'};
+  case {'uwfbt'}
+    vargs=varargin(2:end);
+    definput.flags.scaling={'sqrt','noscale','scale'};
+  case {'wpfbt'}
+    vargs=varargin(2:end);
+    definput.flags.interscaling={'intsqrt','intnoscale','intscale'};
+  case {'uwpfbt'}
+    vargs=varargin(2:end);
+    definput.flags.interscaling={'intsqrt','intnoscale','intscale'};
+    definput.flags.scaling={'sqrt','noscale','scale'};
 end;
 
 [F.flags,F.kv]=ltfatarghelper({},definput,vargs);
 
 F.type=ftype;
 F.origargs=varargin;
+F.vargs=vargs;
 
 
 %% ------ Post optional parameters
@@ -298,7 +314,6 @@ switch(ftype)
     F.frsyn=@(insig) 2*real(comp_ifilterbank(F.coef2native(insig,size(insig)),F.g,F.a,...
                                              2*round(size(insig,1)/F.red)));
     F.destructor=@() clear('comp_filterbank','comp_ifilterbank');
-
     
   case 'ufilterbank'
     F.red=sum(F.a(:,2)./F.a(:,1));
@@ -389,14 +404,14 @@ switch(ftype)
     F.red=prod(cellfun(@framered,F.frames));
     
   case {'fwt'}
-    F.J=varargin{2};
-    F.g=fwtinit({'strict',varargin{1}});
+    % We have to initialize F.g here already
+    F.g=fwtinit({'strict',F.g});
     F.red= 1/(F.g.a(1)^(F.J)) + sum(1./(F.g.a(1).^(0:F.J-1))*sum(1./F.g.a(2:end)));
     F.frana=@(insig) fwt(insig,F.g,F.J);
     F.frsyn=@(insig) ifwt(insig,F.g,F.J,size(insig,1)/F.red);
     F.length=@(Ls) fwtlength(Ls,F.g,F.J);
   case {'wfbt'}
-    F.g=wfbtinit({'strict',varargin{1}});
+    F.g=wfbtinit({'strict',F.g});
     F.red = sum(1./treeSub(F.g));
     F.wtPath = nodesBForder(F.g);
     F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
@@ -407,40 +422,43 @@ switch(ftype)
     F.frsyn=@(insig) iwfbt(F.coef2native(insig,size(insig)),F.g,size(insig,1)/F.red);
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'wpfbt'}
-    F.g=wfbtinit({'strict',varargin{1}});
+    F.g=wfbtinit({'strict',F.g});
     F.red = sum(cellfun(@(aEl) sum(1./aEl),nodeSub(nodesBForder(F.g),F.g)));
     F.coef2native = @(coef,s) wavpack2cell(coef,...
                     s(1)./cell2mat(cellfun(@(aEl) aEl(:),...
-                    reshape(nodeSub(nodesBForder(F.g),F.g),[],1),'UniformOutput',0))./F.red);
+                    reshape(nodeSub(nodesBForder(F.g),F.g),[],1),...
+                    'UniformOutput',0))./F.red);
     F.native2coef = @(coef) wavcell2pack(coef);
 
-    F.frana=@(insig) F.native2coef(wpfbt(insig,F.g));
-    F.frsyn=@(insig) iwpfbt(F.coef2native(insig,size(insig)),F.g,size(insig,1)/F.red);
+    F.frana=@(insig) F.native2coef(wpfbt(insig,F.g,F.flags.interscaling));
+    F.frsyn=@(insig) iwpfbt(F.coef2native(insig,size(insig)),F.g,...
+                            size(insig,1)/F.red, F.flags.interscaling);
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'ufwt'}
-    F.J=varargin{2};
-    F.g=fwtinit({'strict',varargin{1}});
+    F.g=fwtinit({'strict',F.g});
     F.coef2native = @(coef,s) reshape(coef,[s(1)/(F.J*(numel(F.g.a)-1)+1),F.J*(numel(F.g.a)-1)+1,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
-    F.frana=@(insig) F.native2coef(ufwt(insig,F.g,F.J));
-    F.frsyn=@(insig) iufwt(F.coef2native(insig,size(insig)),F.g,F.J);
+    F.frana=@(insig) F.native2coef(ufwt(insig,F.g,F.J,F.flags.scaling));
+    F.frsyn=@(insig) iufwt(F.coef2native(insig,size(insig)),F.g,F.J,F.flags.scaling);
     F.length=@(Ls) Ls;
     F.red=(F.J*(numel(F.g.a)-1)+1);
   case {'uwfbt'}
-    F.g=wfbtinit({'strict',varargin{1}});
+    F.g=wfbtinit({'strict',F.g});
     F.red = noOfOutputs(F.g);
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
-    F.frana=@(insig) F.native2coef(uwfbt(insig,F.g));
-    F.frsyn=@(insig) iuwfbt(F.coef2native(insig,size(insig)),F.g);
+    F.frana=@(insig) F.native2coef(uwfbt(insig,F.g,F.flags.scaling));
+    F.frsyn=@(insig) iuwfbt(F.coef2native(insig,size(insig)),F.g, F.flags.scaling);
     F.length=@(Ls) Ls;
   case {'uwpfbt'}
     F.g= wfbtinit({'strict',varargin{1}});
     F.red = sum(cellfun(@(fEl) numel(fEl.g),F.g.nodes));
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
-    F.frana=@(insig) F.native2coef(uwpfbt(insig,F.g));
-    F.frsyn=@(insig) iuwpfbt(F.coef2native(insig,size(insig)),F.g);
+    F.frana=@(insig) F.native2coef(...
+                        uwpfbt(insig,F.g,F.flags.interscaling,F.flags.scaling));
+    F.frsyn=@(insig) iuwpfbt(F.coef2native(insig,size(insig)),F.g,...
+                             F.flags.interscaling,F.flags.scaling);
     F.length=@(Ls) Ls;
   otherwise
     error('%s: Unknown frame type: %s',upper(mfilename),ftype);  

@@ -76,7 +76,7 @@ switch(F.type)
  case {'uwfbt','uwpfbt'}
     plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
     
-case {'filterbank','filterbankreal'}
+case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
     plotfilterbank(framecoef2native(F,insig),F.a,[],varargin{:});
 end;
 

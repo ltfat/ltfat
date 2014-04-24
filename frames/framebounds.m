@@ -23,8 +23,8 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %     'auto'       Choose the `fac` method if possible, otherwise
 %                  use the `full` method for small problems and the
-%                  `iter` method for larger problems. This is the
-%                  default. 
+%                  `iter` method for larger problems. 
+%                  This is the default. 
 %
 %     'crossover',c
 %                  Set the problem size for which the 'auto' method
@@ -123,9 +123,17 @@ function [AF,BF]=framebounds(F,varargin);
      case {'filterbankreal','ufilterbankreal'}
       [AF,BF]=filterbankrealbounds(g,F.a,L); 
      case 'fwt'
-      [AF,BF]=fwtbounds(g,F.J,L);
+      [AF,BF]=wfbtbounds({g,F.J,'dwt'},L);
      case 'wfbt'
       [AF,BF]=wfbtbounds(g,L);
+     case 'ufwt'
+      [AF,BF]=uwfbtbounds({g,F.J,'dwt'},L,F.flags.scaling);
+     case 'uwfbt'
+      [AF,BF]=uwfbtbounds(g,L,F.flags.scaling);
+     case 'wpfbt'
+      [AF,BF]=wpfbtbounds(g,L,F.flags.interscaling);
+     case 'uwpfbt'
+      [AF,BF]=uwpfbtbounds(g,L,F.flags.interscaling,F.flags.scaling);
     end;  
   end;
   

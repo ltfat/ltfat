@@ -26,19 +26,23 @@ switch(F.type)
     d=diag(F.g*F.g');
     
   case {'dgt','dgtreal'}
-    d=gabframediag(F.g,F.a,F.M,L,F.vars{:});  
+    d=gabframediag(F.g,F.a,F.M,L,F.vargs{:});  
   
   case {'dwilt','wmdct'}
     d=wilframediag(F.g,F.M,L);
     
   case {'filterbank','ufilterbank','filterbankreal','ufilterbankreal'}
-    error('Not implemented yet.');
+    error('%s: TO DO: Not supported yet',upper(mfilename));
 
   case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     d=nsgabframediag(F.g,F.a,F.M);
     
   case 'fusion'
     error('Not implemented yet.');
+    
+  case {'fwt','ufwt','wfbt','uwfbt','wpfbt','uwpfbt'}
+    error('%s: TO DO: Not supported yet',upper(mfilename));  
+  
 end;
 
 

@@ -31,7 +31,7 @@ Fd=F;
 switch(F.type)
   case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
         'nsdgt','unsdgt','nsdgtreal','unsdgtreal',...
-        'fwt','ufwt','wfbt','uwfbt','wpfbt','uwpfbt'}
+        'fwt','wfbt'}
     
     Fd=frame(F.type,{'dual',F.g},F.origargs{2:end});
     
@@ -54,5 +54,44 @@ switch(F.type)
     end;
     Fd=frame('fusion',dual_w,dual_frames{:});
     
+  case 'ufwt'
+    % The canonical dual of ufwt might not keep the iterated
+    % filterbank structure
+    [g, a] = wfbt2filterbank({F.g,F.J,'dwt'});
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Fd = framedual(frame('ufilterbank',g,1,numel(g)));
+    warning(sprintf(['%s: The canonical dual system does not preserve ',...
+                     'the iterated filterbank structure.'],...
+                     upper(mfilename)));
+    
+  case 'uwfbt'
+    % The canonical dual of uwfbt might not keep the iterated
+    % filterbank structure
+    [g, a] = wfbt2filterbank(F.g);
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Fd = framedual(frame('ufilterbank',g,1,numel(g)));
+    warning(sprintf(['%s: The canonical dual system does not preserve ',...
+                     'the iterated filterbank structure.'],...
+                     upper(mfilename))); 
+  case 'wpfbt'
+    % The canonical dual of wpfbt might not keep the iterated
+    % filterbank structure
+    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);      
+    [gu,au,p] = nonu2ufilterbank(g,a);
+    Fd = framedual(frame('ufilterbank',gu,au,numel(gu)));
+    
+    error('TO DO: ')
+  case 'uwpfbt'
+    % The canonical dual of uwfbt might not keep the iterated
+    % filterbank structure
+    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Fd = framedual(frame('ufilterbank',g,1,numel(g)));
+    warning(sprintf(['%s: The canonical dual system of frame type %s ',...
+                     'does not preserve iterated filterbank structure.'],...
+                     upper(mfilename),F.type));  
       
 end;

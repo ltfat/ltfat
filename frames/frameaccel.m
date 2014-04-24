@@ -88,10 +88,10 @@ if ~isempty(F.g)
       case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
         [F.g,F.g_info]  = nsgabwin(F.g,F.a,F.M);
         F.isfac=F.g_info.isfac;
-      case {'fwt','wfbt'}
+      case {'fwt','ufwt','wfbt','uwfbt','wpfbt','uwpfbt'}
         F.isfac = 1; 
     end;
 end;
 
-F.L=L;
 
+F.L=L;

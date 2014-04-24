@@ -1,7 +1,6 @@
 function Ft=frametight(F);
 %FRAMETIGHT  Construct the canonical tight frame
 %   Usage: F=frametight(F);
-%          F=frametight(F,L);
 %
 %   `Ft=frametight(F)` returns the canonical tight frame of *F*.
 %
@@ -55,5 +54,37 @@ switch(F.type)
         tight_frames{ii}=frametight(F.frames{ii});
     end;
     Ft=frame('fusion',tight_w,tight_frames{:});
-
+    
+  case 'ufwt'
+    % The canonical tight made from ufwt might not keep the iterated
+    % filterbank structure
+    [g,a] = wfbt2filterbank({F.g,F.J,'dwt'});
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Ft = frametight(frame('ufilterbank',g,1,numel(g)));
+    warning(sprintf(['%s: The canonical tight system does not preserve ',...
+                     'the iterated filterbank structure.'],...
+                     upper(mfilename)));
+  case 'uwfbt'
+    % The canonical tight made from ufwt might not keep the iterated
+    % filterbank structure
+    [g,a] = wfbt2filterbank(F.g,F.J);
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Ft = frametight(frame('ufilterbank',g,1,numel(g)));
+    warning(sprintf(['%s: The canonical tight system does not preserve ',...
+                     'the iterated filterbank structure.'],...
+                     upper(mfilename)));
+  case 'uwpfbt'               
+    % The canonical tight made from ufwt might not keep the iterated
+    % filterbank structure
+    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Ft = frametight(frame('ufilterbank',g,1,numel(g)));
+    warning(sprintf(['%s: The canonical tight system does not preserve ',...
+                     'the iterated filterbank structure.'],...
+                     upper(mfilename)));
+   case 'wpfbt'
+       error('TO DO:');
 end;
