@@ -46,6 +46,8 @@ end
 
 node = fwtinit(w);
 
+oldnodecount = numel(wt.nodes);
+
 [nodeNoArray,nodeChildIdxArray] = depthIndex2NodeNo(d,k,wt);
 
 for ii=1:numel(nodeNoArray)
@@ -67,12 +69,12 @@ if(nodeNo==0)
             error('%s: Root already defined. Use FORCE option to replace.',mfilename);  
         end
         wt.nodes{rootId} = node;
-        return;
+        continue;
     end
     wt.nodes{end+1} = node;
     wt.parents(end+1) = nodeNo;
     wt.children{end+1} = [];
-    return;
+    continue;
 end
 
 childrenIdx = find(wt.children{nodeNo}~=0);
@@ -88,16 +90,21 @@ if(~isempty(found))
      end
      wt.nodes{tmpnode} = node;
      %wtree.a{tmpnode} = a;
-     return;
+     continue;
    else
        error('%s: Such node (depth=%d, idx=%d) already exists. Use FORCE option to replace.',mfilename,d,k); 
    end
 end
 
-
 wt.nodes{end+1} = node;
 wt.parents(end+1) = nodeNo;
 wt.children{end+1} = [];
 wt.children{nodeNo}(nodeChildIdx) = numel(wt.parents);
-
 end
+
+% We have to correctly shuffle filters in the just added filters
+% if the tree was already defined as frequency ordered.
+if wt.freqOrder
+   wt = nat2freqOrder(wt,oldnodecount+(1:numel(k)));
+end
+

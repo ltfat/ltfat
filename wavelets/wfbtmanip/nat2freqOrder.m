@@ -1,4 +1,4 @@
-function wt = nat2freqOrder(wt)
+function wt = nat2freqOrder(wt,nodes)
 %NAT2FREQORDER Natural To Frequency Ordering
 %   Usage:  wt = nat2freqOrder(wt);
 %
@@ -13,12 +13,24 @@ function wt = nat2freqOrder(wt)
 %   ordering of the resultant identical filters. For definition of the
 %   structure see `wfbinit`.
 %
+%   `nat2freqOrder(wt,nodes)` does the same but works only with nodes
+%   listed in *nodes*.
+%
 %   See also: wfbtinit,  wfbtmultid, nodesBForder
 %
 
-treePath = nodesBForder(wt);
-%skip root
-treePath = treePath(2:end);
+complainif_notenoughargs(nargin,1,'NAT2FREQORDER');
+
+if nargin<2
+   treePath = nodesBForder(wt);
+   %skip root
+   treePath = treePath(2:end);
+else
+   % Omit root
+   nodes(wt.parents(nodes)==0) = [];
+   % Use the rest 
+   treePath = nodes;
+end
 
 for ii=1:length(treePath)
     % should not be zero
