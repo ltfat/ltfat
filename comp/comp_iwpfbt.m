@@ -1,4 +1,4 @@
-function f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext,do_scale)
+function f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext,interscaling)
 %COMP_IWFBT Compute Inverse Wavelet Packet Filter-Bank Tree
 %   Usage:  f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext)
 %
@@ -18,6 +18,14 @@ function f=comp_iwpfbt(c,wtNodes,pOutIdxs,chOutIdxs,Ls,ext,do_scale)
 % Do non-expansve transform if ext=='per'
 doPer = strcmp(ext,'per');
 
+interscalingfac = 1;
+if strcmp('intscale',interscaling)
+    interscalingfac = 1/2;
+elseif strcmp('intsqrt',interscaling)
+    interscalingfac = 1/sqrt(2);
+end
+
+
 % For each node in tree in the BF order...
  for jj=1:length(wtNodes)
     % Node filters to a cell array
@@ -35,9 +43,9 @@ doPer = strcmp(ext,'per');
        % Run filterbank and add to the existing subband.
        ctmp = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,size(c{pOutIdxs(jj)},1),offset,ext);
        c{pOutIdxs(jj)} = c{pOutIdxs(jj)}+ctmp;
-       if do_scale
-           c{pOutIdxs(jj)} = (1/sqrt(2))*c{pOutIdxs(jj)};
-       end
+    
+       c{pOutIdxs(jj)} = interscalingfac*c{pOutIdxs(jj)};
+       
     else
        % We are at the root.
        f = comp_ifilterbank_td(c(chOutIdxs{jj}),gCell,a,Ls,offset,ext);

@@ -1,4 +1,4 @@
-function c=comp_wpfbt(f,wtNodes,rangeLoc,ext,do_scale)
+function c=comp_wpfbt(f,wtNodes,rangeLoc,ext,interscaling)
 %COMP_WPFBT Compute Wavelet Packet Filterbank Tree
 %   Usage:  c=comp_wpfbt(f,wtNodes,ext);
 %
@@ -18,13 +18,31 @@ doPer = strcmp(ext,'per');
 % Pre-allocated output
 c = cell(sum(cellfun(@(wtEl) numel(wtEl.h),wtNodes)),1);
 
+interscalingfac = 1;
+if strcmp('intscale',interscaling)
+    interscalingfac = 1/2;
+elseif strcmp('intsqrt',interscaling)
+    interscalingfac = 1/sqrt(2);
+end
+
+%  OLD code doing the scaling directly on filters in the tree
+%  if do_scale
+%      for ii=1:numel(wtNodes)
+%          range = 1:numel(wtNodes{ii}.h);
+%          range(rangeLoc{ii}) = [];
+%          wtNodes{ii}.h(range) = cellfun(@(hEl) setfield(hEl,'h',hEl.h/sqrt(2)),wtNodes{ii}.h(range),...
+%                                         'UniformOutput',0); 
+%      end
+%  end
+
 ca = f;
 cOutRunIdx = 1;
 cInRunIdxs = [1];
 % Go over all nodes in breadth-first order
 for jj=1:numel(wtNodes)
    % Node filters to a cell array
-   hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:),'UniformOutput',0);
+   hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:),...
+                   'UniformOutput',0);
    % Node filters subs. factors
    a = wtNodes{jj}.a;
    % Node filters initial skips
@@ -51,9 +69,8 @@ for jj=1:numel(wtNodes)
    % Scaling introduced in order to preserve energy 
    % (parseval tight frame)
    if ~isempty(cInRunIdxs)
-      if do_scale
-         c{cInRunIdxs(1)} = c{cInRunIdxs(1)}/sqrt(2);
-      end
+      c{cInRunIdxs(1)} = c{cInRunIdxs(1)}*interscalingfac;
+
       ca = c{cInRunIdxs(1)};
    end
 end   

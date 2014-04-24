@@ -1,4 +1,4 @@
-function c = comp_ufwt(f,h,J,a)
+function c = comp_ufwt(f,h,J,a,scaling)
 %COMP_UFWT Compute Undecimated DWT
 %   Usage:  c=comp_ufwt(f,h,J,a);
 %
@@ -19,10 +19,11 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 
 % For holding the time-reversed, complex conjugate impulse responses.
 filtNo = length(h);
+% Optionally scale the filters
+h = comp_filterbankscale(h(:),a(:),scaling);
 %Change format to a matrix
 hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h(:)','UniformOutput',0));
-%Divide each column (filter) by a element of a
-hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
+
 %Delays
 hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h(:));
 

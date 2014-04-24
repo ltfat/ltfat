@@ -1,26 +1,24 @@
-function [AF,BF]=wfbtbounds(wt,L)
-%WFBTBOUNDS Frame bounds of WFBT
-%   Usage: fcond=wfbtbounds(wt,L);
-%          [A,B]=wfbtbounds(wt,L);
+function [AF,BF]=wpfbtbounds(wt,L,varargin)
+%WFBTBOUNDS Frame bounds of WPFBT
+%   Usage: fcond=wpfbtbounds(wt,L);
+%          [A,B]=wpfbtbounds(wt,L);
 %
-%   `wfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
-%   of the filterbank specified by *wt* for a system of length
+%   `wpfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
+%   of the wavelet packet filterbank specified by *wt* for a system of length
 %   *L*. The ratio is a measure of the stability of the system.
 %
-%   `wfbtbounds({w,J,'dwt'},L)` calculates the ratio $B/A$ of the frame
-%   bounds of the DWT (|FWT|) filterbank specified by *w* and *J* for a
-%   system of length *L*.
-%
-%   `[A,B]=wfbtbounds(...,L)` returns the lower and upper frame bounds
+%   `[A,B]=wpfbtbounds(wt,L)` returns the lower and upper frame bounds
 %   explicitly.
 %
-%   See |wfbt| for explanation of parameter *wt* and |fwt| for explanation
-%   of parameters *w* and *J*.
+%   See |wfbt| for explanation of parameter *wt*.
 %
-%
-%   See also: wfbt, fwt, filterbankbounds
+%   See also: wpfbt, filterbankbounds
 
-complainif_notenoughargs(nargin,2,'WFBTBOUNDS');
+
+complainif_notenoughargs(nargin,2,'WPFBTBOUNDS');
+
+definput.flags.interscaling = {'intsqrt', 'intscale', 'intnoscale'};
+[flags]=ltfatarghelper({},definput,varargin);
 
 wt = wfbtinit({'strict',wt},'nat');
 
@@ -29,6 +27,7 @@ if L~=wfbtlength(L,wt)
            'the time shifts.'],upper(mfilename));
 end;
 
+
 for ii=1:numel(wt.nodes)
    a = wt.nodes{ii}.a;
    assert(all(a==a(1)),sprintf(['%s: One of the basic wavelet ',...
@@ -36,8 +35,11 @@ for ii=1:numel(wt.nodes)
                                 upper(mfilename)));
 end
 
+% Scale the intermediate filters
+wt = comp_wpfbtscale(wt,flags.interscaling);
+
 % Do the equivalent filterbank using multirate identity property
-[gmultid,amultid] = wfbt2filterbank(wt);
+[gmultid,amultid] = wpfbt2filterbank(wt);
 
 % Do the equivalent uniform filterbank
 [gu,au] = nonu2ufilterbank(gmultid,amultid);

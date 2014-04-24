@@ -4,33 +4,72 @@ function f=iuwpfbt(c,par,varargin)
 %           f=iuwpfbt(c,wt,...);
 %
 %   Input parameters:
-%         c     : Coefficients stored in a cell-array.
-%         wt    : Wavelet Filterbank tree
+%         c       : Coefficients stored in $L \times M$ matrix.
+%         info/wt : Transform parameters struct/Wavelet tree definition.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f=iuwpfbt(c,wt)` reconstructs signal *f* from coefficients *c* using the
-%   wavelet filterbank tree *wt*. 
+%   `f = iuwpfbt(c,info)` reconstructs signal *f* from the wavelet packet
+%   coefficients *c* using parameters from `info` struct. both returned by
+%   the |uwpfbt| function.
 %
-%   The following flags are supported:
+%   `f = iuwpfbt(c,wt)` reconstructs signal *f* from the wavelet packet 
+%   coefficients *c* using the undecimated wavelet filterbank tree 
+%   described by *wt*.
 %
-%   'per','zpd','sym','symw','asym','asymw','ppd','sp0'
-%          Type of the boundary handling.
+%   Please see help for |uwpfbt| description of possible formats of *wt*.
 %
-%   'full','dwt'
-%          Type of the tree to be used.
+%   Filter scaling:
+%   ---------------
 %
-%   'freq','nat'
-%          Frequency or natural order of the coefficient subbands.
+%   As in |uwpfbt|, the function recognizes three flags controlling scaling
+%   of filters:
 %
-%   Please see the help on |fwt| for a description of the flags.
+%      'sqrt'
+%               Each filter is scaled by `1/sqrt(a)`, there *a* is the hop
+%               factor associated with it. If the original filterbank is
+%               orthonormal, the overall undecimated transform is a tight
+%               frame.
+%               This is the default.
+%
+%      'noscale'
+%               Uses filters without scaling.
+%
+%      'scale'
+%               Each filter is scaled by `1/a`.
+%
+%   If 'noscale' is used, 'scale' must have been used in |uwpfbt| (and vice
+%   versa) in order to obtain a perfect reconstruction.
+%
+%   Scaling of intermediate outputs:
+%   --------------------------------
+%
+%   The following flags control scaling of the intermediate coefficients.
+%   The intermediate coefficients are outputs of nodes which ale also
+%   inputs to nodes further in the tree.
+%
+%      'intsqrt'
+%               Each intermediate output is scaled by `1/sqrt(2)`.
+%               If the filterbank in each node is orthonormal, the overall
+%               undecimated transform is a tight frame.
+%               This is the default.
+%
+%      'intnoscale'
+%               No scaling of intermediate results is used.
+%
+%      'intscale'
+%               Each intermediate output is scaled by `1/2`.
+%
+%   If 'intnoscale' is used, 'intscale' must have been used in |uwpfbt|
+%   (and vice versa) in order to obtain a perfect reconstruction.
 %
 %   Examples:
 %   ---------
-%   
-%   A simple example showing perfect reconstruction using the "full decomposition" wavelet tree:::
-% 
+%
+%   A simple example showing perfect reconstruction using the "full 
+%   decomposition" wavelet tree:::
+%
 %     f = greasy;
 %     J = 7;
 %     wtdef = {'db10',J,'full'};
@@ -41,27 +80,47 @@ function f=iuwpfbt(c,par,varargin)
 %
 %   See also: wfbt, wfbtinit
 %
-if nargin<2
-   error('%s: Too few input parameters.',upper(mfilename));
-end;
+
+complainif_notenoughargs(nargin,2,'IUWPFBT');
+
+if isempty(c) || ~isnumeric(c)
+   error('%s: Unrecognized coefficient format.',upper(mfilename));
+end
 
 if(isstruct(par)&&isfield(par,'fname'))
-   if nargin>2
-      error('%s: Too many input parameters.',upper(mfilename));
-   end
+   complainif_toomanyargs(nargin,2,'IUWPFBT');
+
    if ~strcmpi(par.fname,'uwpfbt')
-      error('%s: Wrong func name in info struct. The info parameter was created by %s.',upper(mfilename),par.fname);
+      error(['%s: Wrong func name in info struct. The info parameter ',... 
+             'was created by %s.'],upper(mfilename),par.fname);
    end
-   wt = wfbtinit({'dual',par.wt},par.fOrder,'syn');
+   wt = wfbtinit({'dual',par.wt},par.fOrder);
+   
+   scaling = par.scaling;
+   interscaling = par.interscaling;
+   
+   % Use the "oposite" scaling of intermediate node outputs
+   if strcmp(interscaling,'intscale')
+      interscaling = 'intnoscale';
+   elseif strcmp(interscaling,'intnoscale')
+      interscaling = 'intscale';
+   end
+   
+   % Use the "oposite" scaling of filters
+   if strcmp(scaling,'scale')
+      scaling = 'noscale';
+   elseif strcmp(scaling,'noscale')
+      scaling = 'scale';
+   end
+   
 else
-   %% PARSE INPUT
    definput.import = {'wfbtcommon'};
-   if(~isnumeric(c))
-       error('%s: Unrecognized coefficient format.',upper(mfilename));
-   end
-
-   [flags,kv]=ltfatarghelper({},definput,varargin);
-
+   definput.flags.interscaling = {'intsqrt', 'intscale', 'intnoscale'};
+   definput.flags.scaling={'sqrt','scale','noscale'};
+   [flags]=ltfatarghelper({},definput,varargin);
+   
+   scaling = flags.scaling;
+   interscaling = flags.interscaling;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
 end
@@ -69,4 +128,5 @@ end
 wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
 nodesUps = nodeFiltUps(wtPath,wt);
-f = comp_iuwpfbt(c,wt.nodes(wtPath),nodesUps,pOutIdxs,chOutIdxs);
+f = comp_iuwpfbt(c,wt.nodes(wtPath),nodesUps,pOutIdxs,chOutIdxs,scaling,...
+                 interscaling);

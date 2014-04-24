@@ -8,13 +8,13 @@
 %   Output parameters:
 %         wt    : Structure describing the filter tree.
 %
-%   `wfbtinit()` creates empty structure. The structure describing the 
+%   `wfbtinit()` creates empty structure. The structure describing the
 %   tree has the following fields:
 %
 %     .nodes     Actual impulse responses
-%   
+%
 %     .children  Indexes of children nodes
-% 
+%
 %     .parents   Indexes of a parent node
 %
 %     .forder    Frequency ordering of the resultant frequency bands.
@@ -26,12 +26,12 @@
 %
 %   'dwt','full','doubleband','quadband','octaband'
 %     Type of the tree to be created.
-% 
+%
 %   `wfbt=wfbtinit({w,J,flag,'mod',mod})` creates a filterbank tree as before,
-%   but modified according to the value of `mod`. 
+%   but modified according to the value of `mod`.
 %   Recognized options:
 %
-%   `'powshiftable'` 
+%   `'powshiftable'`
 %      Changes subsampling factors of the root to 1. This results in redundant
 %      near-shift invariant representation.
 %
@@ -40,8 +40,8 @@
 %   'freq','nat'
 %     Frequency or natural ordering of the coefficient subbands. The direct
 %     usage of the wavelet tree (`'nat'` option) does not produce coefficient
-%     subbans ordered according to the frequency. To achieve that, some 
-%     filter shuffling has to be done (`'freq'` option).  
+%     subbans ordered according to the frequency. To achieve that, some
+%     filter shuffling has to be done (`'freq'` option).
 %
 %   See also: wfbtput, wfbtremove
 
@@ -51,13 +51,13 @@
 % Effectively, it describes a ADT tree.
 % .nodes, .children, .parents ale all arrays of the same length and the j-th
 % node in the tree is desribed by wt.nodes{j}, wt.children{j} and
-% wt.parents(j). wt.nodes{j} is the actual data stored in the tree node 
+% wt.parents(j). wt.nodes{j} is the actual data stored in the tree node
 % (a structure returned form fwtinit) and wt.parents(j) and wt.children{j}
 % define relationship to other nodes. wt.parents(j) is an index of the
 % parent in the arrays. wt.children{j} is an array of indexes of the
 % children nodes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-wt.nodes = {}; 
+wt.nodes = {};
 wt.children = {};
 wt.parents = [];
 wt.freqOrder = 0;
@@ -89,7 +89,7 @@ definput.import = {'wfbtcommon'};
 % If wtdef is already a structure
 if (isstruct(wtdef)&&isfield(wtdef,'nodes'))
     wt = wtdef;
-    
+
     if do_dual || do_strict
        nodesArg = wt.nodes;
        if do_dual
@@ -102,14 +102,14 @@ if (isstruct(wtdef)&&isfield(wtdef,'nodes'))
        % Do the filter frequency shuffling again, since the filters were
        % overwritten in fwtinit.
        if wt.freqOrder
-          wt = nat2freqOrder(wt); 
+          wt = nat2freqOrder(wt);
        end
     end
 
     % Do filter shuffling if flags.do_freq differs from the wt.freqOrder.
     % Frequency and natural oreding coincide for DWT.
     if wt.freqOrder ~= flags.do_freq
-       wt = nat2freqOrder(wt); 
+       wt = nat2freqOrder(wt);
        wt.freqOrder = ~wt.freqOrder;
     end
     return;
@@ -131,7 +131,7 @@ definput.keyvals.overcomplete = [];
 definput.keyvals.J = [];
 [flags2,kv2,J]=ltfatarghelper({'J'},definput,wtdef(2:end));
 
-complain_notposint(J,'J');
+complainif_notposint(J,'J');
 
 if do_dual
    wdef = {'dual',wdef};
@@ -146,7 +146,7 @@ do_powshiftable = 0;
 if ~isempty(kv2.mod)
     if ischar(kv2.mod)
         if strcmpi(kv2.mod,'powshiftable')
-           if ~flags2.do_dwt 
+           if ~flags2.do_dwt
               error('%s: powshiftable is only valid with the dwt flag.',...
                     upper(mfilename));
            end
@@ -175,7 +175,7 @@ if isempty(J)
    error('%s: Unspecified J.',upper(mfilename));
 end
 
-if flags2.do_dwt 
+if flags2.do_dwt
    % fill the structure to represent a DWT tree
    for jj=0:J-1
       wt = wfbtput(jj,0,w,wt);
@@ -194,8 +194,8 @@ elseif flags2.do_doubleband
          wt = wfbtput(2*jj,0,w,wt);
          wt = wfbtput(2*jj+1,0:1,w,wt);
      % end
-   end 
-   
+   end
+
 elseif flags2.do_quadband
    % fill the structure to represent a quad band tree
    for jj=0:J-1
@@ -204,7 +204,7 @@ elseif flags2.do_quadband
          wt = wfbtput(3*jj+1,0:1,w,wt);
          wt = wfbtput(3*jj+2,0:3,w,wt);
      % end
-   end 
+   end
 elseif flags2.do_octaband
    % fill the structure to represent a octa band tree
    for jj=0:J-1
@@ -214,12 +214,12 @@ elseif flags2.do_octaband
          wt = wfbtput(4*jj+2,0:3,w,wt);
          wt = wfbtput(4*jj+3,0:7,w,wt);
      % end
-   end 
+   end
 end
 
 % Do filter shuffling if frequency ordering is required,
 if flags.do_freq
-   wt = nat2freqOrder(wt); 
+   wt = nat2freqOrder(wt);
    wt.freqOrder = 1;
 else
    wt.freqOrder = 0;

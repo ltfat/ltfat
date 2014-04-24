@@ -12,6 +12,9 @@ if strcmpi(LTFAT_TEST_TYPE,'single')
 end
 
 
+scaling = {'scale','sqrt','noscale'};
+scalingInv = scaling(end:-1:1);
+
 test_failed = 0;
 if(nargin>0)
    verbose = 1;
@@ -65,7 +68,7 @@ test_filters = {
 %testLen = 4*2^7-1;%(2^J-1);
 testLen = 53;
 f = tester_rand(testLen,1);
-
+for scIdx = 1:numel(scaling)
 for extIdx=1:length(ext)  
    extCur = ext{extIdx};
 
@@ -74,15 +77,19 @@ for extIdx=1:length(ext)
         actFilt = test_filters{tt};
          if verbose, if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d \n',actFilt{2},actFilt{1},extCur,length(f)); else disp('Custom'); end; end;
 
-        c = uwfbt(f,actFilt);
+        c = uwfbt(f,actFilt,scaling{scIdx});
         
         
-        fhat = iuwfbt(c,actFilt);
+        fhat = iuwfbt(c,actFilt,scalingInv{scIdx});
         
             err = norm(f-fhat,'fro');
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             if(~verbose)
-              if(~isstruct(actFilt))fprintf('J=%d, %5.5s, ext=%s, L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,size(f,1),err,fail); else fprintf('Custom, err=%.4e %s\n',err,fail); end;
+              if(~isstruct(actFilt))
+                  fprintf('J=%d, %5.5s, ext=%s, %s L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,scaling{scIdx},size(f,1),err,fail);
+              else
+                  fprintf('Custom, %s, err=%.4e %s\n',scaling{scIdx},err,fail);
+              end;
             end
             if strcmpi(fail,'FAILED')
                if verbose
@@ -98,7 +105,7 @@ for extIdx=1:length(ext)
    end
    if test_failed && verbose, break; end;
 end
-
+end
 
 
 

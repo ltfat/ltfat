@@ -8,7 +8,7 @@ disp('========= TEST UWPFBT ============');
 global LTFAT_TEST_TYPE;
 tolerance = 1e-8;
 if strcmpi(LTFAT_TEST_TYPE,'single')
-   tolerance = 1e-6;
+   tolerance = 2e-6;
 end
 
 test_failed = 0;
@@ -57,10 +57,15 @@ test_filters = {
                wt2
                };
 
+scaling = {'scale','sqrt','noscale'};
+scalingInv = scaling(end:-1:1);
+
+interscaling = {'intscale','intsqrt','intnoscale'};
+interscalingInv = interscaling(end:-1:1);
 
 
-
-
+for scIdx = 1:numel(scaling)
+for iscIdx = 1:numel(interscaling)
 %testLen = 4*2^7-1;%(2^J-1);
 testLen = 53;
 f = tester_rand(testLen,1);
@@ -73,15 +78,17 @@ for extIdx=1:length(ext)
         actFilt = test_filters{tt};
          if verbose, if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d \n',actFilt{2},actFilt{1},extCur,length(f)); else disp('Custom'); end; end;
 
-        c = uwpfbt(f,actFilt);
-        
-        
-        fhat = iuwpfbt(c,actFilt);
+        [c,info] = uwpfbt(f,actFilt,scaling{scIdx},interscaling{iscIdx});
+        fhat = iuwpfbt(c,actFilt,scalingInv{scIdx},interscalingInv{iscIdx});
         
             err = norm(f-fhat,'fro');
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             if(~verbose)
-              if(~isstruct(actFilt))fprintf('J=%d, %5.5s, ext=%4.4s, L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,size(f,1),err,fail); else fprintf('Custom, err=%.4e %s\n',err,fail); end;
+              if(~isstruct(actFilt))
+                  fprintf('J=%d, %5.5s, ext=%4.4s, %s, %s, L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,scaling{scIdx},interscaling{iscIdx},size(f,1),err,fail); 
+              else
+                  fprintf('Custom, %s, %s, err=%.4e %s\n',scaling{scIdx},interscaling{iscIdx},err,fail); 
+              end;
             end
             if strcmpi(fail,'FAILED')
                if verbose
@@ -91,12 +98,27 @@ for extIdx=1:length(ext)
                  break; 
                end
             end
+            
+            
+            fhat2 = iuwpfbt(c,info);
+            err = norm(f-fhat2,'fro');
+            [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
+            
+            if(~isstruct(actFilt))
+                  fprintf('INFO J=%d, %5.5s, ext=%4.4s, %s, %s, L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,scaling{scIdx},interscaling{iscIdx},size(f,1),err,fail); 
+            else
+                  fprintf('INFO Custom, %s, %s, err=%.4e %s\n',scaling{scIdx},interscaling{iscIdx},err,fail); 
+            end;
+            
+            
             if test_failed && verbose, break; end;
         
      end
      if test_failed && verbose, break; end;
    end
    if test_failed && verbose, break; end;
+end
+end
 end
 
 

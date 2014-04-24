@@ -109,14 +109,15 @@ for typeIdx=1:length(type)
            
            
            if(strcmp(formatCurr,'pack'))
-              c = fwt(f,test_filters{tt},jj,extCur);
-            
-              
+              [c, info] = fwt(f,test_filters{tt},jj,extCur);
+   
               fhat = ifwt(c,test_filters{tt},jj,size(f,1),extCur);
+              fhat2 = ifwt(c,info);
            elseif(strcmp(formatCurr,'cell'))
               [c,info] = fwt(f,test_filters{tt},jj,extCur);
               ccell = wavpack2cell(c,info.Lc);
               fhat = ifwt(ccell,test_filters{tt},jj,size(f,1),extCur); 
+              fhat2 = ifwt(c,info);
            else
                error('Should not get here.');
            end
@@ -127,6 +128,10 @@ for typeIdx=1:length(type)
             if(~verbose)
               fprintf('J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
             end
+            
+            err = norm(f-fhat2,'fro');
+            [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
+            fprintf('INFO J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
             
             if strcmpi(fail,'FAILED')
                if verbose

@@ -30,13 +30,14 @@ J = 4;
  wt1 = wfbtremove(2,3,wt1,'force');
 
 % %! Hardcore tree
- wt2 = wfbtinit({'db3',1});
- wt2 = wfbtput(1,1,'mband1',wt2);
- wt2 = wfbtput(2,2,'mband1',wt2);
- wt2 = wfbtput(3,3,'mband1',wt2);
- wt2 = wfbtput(3,1,'db10',wt2);
- wt2 = wfbtput(4,1,'dgrid2',wt2);
- wt2 = wfbtput(5,1,'db3',wt2);
+wt2 = wfbtinit({'db3',1});
+wt2 = wfbtput(1,1,'mband1',wt2);
+  wt2 = wfbtput(2,2,'mband1',wt2);
+  wt2 = wfbtput(3,3,'mband1',wt2);
+  wt2 = wfbtput(3,1,'db10',wt2);
+  wt2 = wfbtput(4,1,'dgrid2',wt2);
+  wt2 = wfbtput(5,1,'db3',wt2);
+
 
 %! Another tree
 wt3 = wfbtinit();
@@ -61,7 +62,7 @@ wt3 = wfbtput(3,4,'cmband4',wt3);
 
 test_filters = {
                {'algmband2',J} % 4 filters, uniform, crit. sub.
-               {'db4',J}
+             %  {'db4',J}
               % {'algmband1',J} % 3 filters, uniform, crit. sub.
                %{{'hden',3},J} % 3 filters, non-uniform, no crit. sub. no correct
                {'dgrid1',J} % 4 filters. sub. fac. 2
@@ -86,7 +87,7 @@ for extIdx=1:length(ext)
         actFilt = test_filters{tt};
          if verbose, if(~isstruct(actFilt))fprintf('J=%d, filt=%s, ext=%s, inLen=%d \n',actFilt{2},actFilt{1},extCur,size(f,1)); else disp('Custom'); end; end;
 
-        c = wfbt(f,actFilt,extCur);
+        [c,info] = wfbt(f,actFilt,extCur);
         fhat = iwfbt(c,actFilt,size(f,1),extCur);
         
         %MSE
@@ -103,6 +104,16 @@ for extIdx=1:length(ext)
                  break; 
                end
             end
+            
+         fhat2 = iwfbt(c,info);
+         err = norm(f-fhat2,'fro');
+         [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);  
+         if(~isstruct(actFilt))
+             fprintf('INFO J=%d, %5.5s, ext=%s, L=%d, err=%.4e %s \n',actFilt{2},actFilt{1},extCur,size(f,1),err,fail); 
+         else
+             fprintf('INFO Custom, err=%.4e %s\n',err,fail); 
+         end;
+            
             if test_failed && verbose, break; end;
         
      end

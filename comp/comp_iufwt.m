@@ -1,4 +1,4 @@
-function f = comp_iufwt(c,g,J,a)
+function f = comp_iufwt(c,g,J,a,scaling)
 %COMP_IUFWT Compute Inverse Undecimated DWT
 %   Usage:  f = comp_iufwt(c,g,J,a);
 %
@@ -19,11 +19,12 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 % For holding the impulse responses.
 filtNo = length(g);
 gOffset = cellfun(@(gEl) gEl.offset,g(:));
+
+% Optionally scale the filters
+g = comp_filterbankscale(g(:),a(:),scaling);
+
 %Change format to a matrix
 gMat = cell2mat(cellfun(@(gEl) gEl.h(:),g(:)','UniformOutput',0));
-%Scale all filters
-%gMat = bsxfun(@times,gMat,sqrt(1/(J+1)));
-gMat = bsxfun(@times,gMat,sqrt(1./(a(:)')));
 
 % Read top-level appr. coefficients.
 ca = squeeze(c(:,1,:));

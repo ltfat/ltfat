@@ -1,4 +1,4 @@
-function c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut)
+function c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut,scaling)
 %COMP_UWFBT Compute Undecimated Wavelet Filterbank Tree
 %   Usage:  c=comp_uwfbt(f,wtNodes,nodesUps,rangeLoc,rangeOut);
 %
@@ -28,10 +28,13 @@ ca = reshape(f,size(f,1),1,size(f,2));
 for jj=1:numel(wtNodes)
    % Node filters subs. factors
    a = wtNodes{jj}.a;
+   
+   % Optionally scale the filters
+   h = comp_filterbankscale(wtNodes{jj}.h(:),a(:),scaling);
+   
    % Node filters to a matrix
-   hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:)','UniformOutput',0));
-   % Normalize each filter
-   hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
+   hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h','UniformOutput',0));
+
    % Node filters initial skips
    hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
    % Zero index position of the upsampled filters.

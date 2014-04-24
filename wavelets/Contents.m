@@ -30,9 +30,15 @@
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
 %      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
 %      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
-%      WFBT2FILTERBANK   - Creates a non-iterated filterbank using the multirate identity
-%      FWT2FILTERBANK    - Creates a non-iterated filterbank using the multirate identity
+%      WFBT2FILTERBANK   - WFBT or FWT non-iterated filterbank using the multirate identity
+%      WPFBT2FILTERBANK  - WPFBT non-iterated filterbank using the multirate identity
 %      FWTINIT           - Basic Wavelet Filters structure initialization
+%
+%   Frame properties of wavelet filterbanks:
+%      WFBTBOUNDS        - Frame bounds of WFBT or FWT
+%      WPFBTBOUNDS       - Frame bounds of WPFBT
+%      UWFBTBOUNDS       - Frame bounds of UWFBT or UFWT
+%      UWPFBTBOUNDS      - Frame bounds of UWPFBT
 %  
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients

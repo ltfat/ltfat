@@ -1,4 +1,4 @@
-function c=comp_uwpfbt(f,wtNodes,rangeLoc,nodesUps)
+function c=comp_uwpfbt(f,wtNodes,rangeLoc,nodesUps,scaling,interscaling)
 %COMP_UWPFBT Compute Undecimated Wavelet Packet Filterbank Tree
 %   Usage:  c=comp_uwpfbt(f,wtNodes,nodesUps);
 %
@@ -22,14 +22,25 @@ c = zeros(L,M,W,assert_classname(f,wtNodes{1}.h{1}.h));
 ca = reshape(f,size(f,1),1,size(f,2));
 cOutRunIdx = 1;
 cInRunIdxs = [1];
+
+interscalingfac = 1;
+if strcmp('intscale',interscaling)
+    interscalingfac = 1/2;
+elseif strcmp('intsqrt',interscaling)
+    interscalingfac = 1/sqrt(2);
+end
+
 % For each node in tree in the BF order...
 for jj=1:numel(wtNodes)
    % Node filters subs. factors
    a = wtNodes{jj}.a;
+   
+   % Optionally scale the filters
+   h = comp_filterbankscale(wtNodes{jj}.h(:),a(:),scaling);
+   
    % Node filters to a matrix
-   hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:)','UniformOutput',0));
-   % Normalize each each filter
-   hMat = bsxfun(@rdivide,hMat,sqrt(a(:)'));
+   hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h','UniformOutput',0));
+
    % Node filters initial skips
    hOffet = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
    % Number of filters of the current node
@@ -50,7 +61,7 @@ for jj=1:numel(wtNodes)
    
    % Prepare input for the next iteration
    if ~isempty(cInRunIdxs)
-      c(:,cInRunIdxs(1),:) = c(:,cInRunIdxs(1),:)/sqrt(2);
+      c(:,cInRunIdxs(1),:) = c(:,cInRunIdxs(1),:)*interscalingfac;
       ca = c(:,cInRunIdxs(1),:);
    end
 end   

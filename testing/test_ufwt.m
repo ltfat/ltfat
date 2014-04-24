@@ -60,10 +60,10 @@ test_filters = {
                %{'remez',20,10,0.1} % no perfect reconstruction
                {'dden',1}
                {'dden',2}
-               {'dden',3}
+%               {'dden',3}
                {'dden',4}
                {'dden',5}
-               {'dden',6}
+%               {'dden',6}
                {'dden',7}
                {'dgrid',1}
                {'dgrid',2}
@@ -78,10 +78,16 @@ test_filters = {
                };
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 
+scaling = {'scale','sqrt','noscale'};
+scalingInv = scaling(end:-1:1);
+
 
 J = 4;
 %testLen = 10*2^J-1;%(2^J-1);
 testLen = 53;
+
+
+for scIdx = 1:numel(scaling)
 
 for extIdx=1:length(ext)  
 %for inLenRound=0:2^J-1
@@ -107,15 +113,15 @@ for typeIdx=1:length(type)
      for jj=1:J
            if verbose, fprintf('J=%d, filt=%s, inLen=%d\n',jj,actFilt{1},length(f)); end; 
            
-           c = ufwt(f,test_filters{tt},jj);
+           [c,info] = ufwt(f,test_filters{tt},jj,scaling{scIdx});
            %[cvec ,Lc] = cell2pack(c);
            %c = pack2cell(cvec,Lc);
-            fhat = iufwt(c,test_filters{tt},jj);
+            fhat = iufwt(c,test_filters{tt},jj,scalingInv{scIdx});
             err = norm(f-fhat,'fro');
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             
             if(~verbose)
-              fprintf('J=%d, %5.5s, L=%d, err=%.4e %s \n',jj,actFilt{1},length(f),err,fail);
+              fprintf('J=%d, %5.5s, %s, L=%d, err=%.4e %s \n',jj,actFilt{1},scaling{scIdx},length(f),err,fail);
             end
             if strcmpi(fail,'FAILED')
                if verbose
@@ -126,6 +132,12 @@ for typeIdx=1:length(type)
                end
 
             end
+            
+            fhat2 = iufwt(c,info);
+            err = norm(f-fhat2,'fro');
+            [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
+            fprintf('INFO J=%d, %5.5s, %s, L=%d, err=%.4e %s \n',jj,actFilt{1},scaling{scIdx},length(f),err,fail);
+            
      end
       if test_failed && verbose, break; end;
      end
@@ -134,6 +146,7 @@ for typeIdx=1:length(type)
    if test_failed && verbose, break; end;
 end
  if test_failed && verbose, break; end;
+end
 end
 
  

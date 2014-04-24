@@ -11,23 +11,45 @@ function f=iwpfbt(c,par,varargin)
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f = iwpfbt(c,info)` reconstructs signal *f* from the coefficients *c* 
+%   `f = iwpfbt(c,info)` reconstructs signal *f* from the coefficients *c*
 %   using parameters from `info` struct. both returned by |wfbt| function.
 %
 %   `f = iwpfbt(c,wt,Ls)` reconstructs signal *f* from the coefficients *c*
 %   using filter bank tree defined by *wt*. Plese see |wfbt| function for
-%   possible formats of *wt*. The *Ls* parameter is mandatory due to the 
-%   ambiguity of reconstruction lengths introduced by the subsampling 
-%   operation and by boundary treatment methods. Note that the same flag as
-%   in the |wfbt| function have to be used, otherwise perfect reconstruction
-%   cannot be obtained. Please see help for |wfbt| for description of the
-%   flags.
+%   possible formats of *wt*. The *Ls* parameter is mandatory due to the
+%   ambiguity of reconstruction lengths introduced by the subsampling
+%   operation and by boundary treatment methods.
+%
+%   Please see help for |wfbt| description of possible formats of *wt* and
+%   of the additional flags.
+%
+%   Scaling of intermediate outputs:
+%   --------------------------------
+%
+%   The following flags control scaling of the intermediate coefficients.
+%   The intermediate coefficients are outputs of nodes which ale also
+%   inputs to nodes further in the tree.
+%
+%      'intsqrt'
+%               Each intermediate output is scaled by `1/sqrt(2)`.
+%               If the filterbank in each node is orthonormal, the overall
+%               undecimated transform is a tight frame.
+%               This is the default.
+%
+%      'intnoscale'
+%               No scaling of intermediate results is used.
+%
+%      'intscale'
+%               Each intermediate output is scaled by `1/2`.
+%
+%   If 'intnoscale' is used, 'intscale' must have been used in |wpfbt|
+%   (and vice versa) in order to obtain a perfect reconstruction.
 %
 %   Examples:
 %   ---------
-%   
+%
 %   A simple example showing perfect reconstruction using the "full decomposition" wavelet tree:::
-% 
+%
 %     f = gspi;
 %     J = 7;
 %     wtdef = {'db10',J,'full'};
@@ -38,9 +60,7 @@ function f=iwpfbt(c,par,varargin)
 %
 %   See also: wpfbt, wfbtinit
 %
-if nargin<2
-   error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'IWPFBT');
 
 if(~iscell(c))
     error('%s: Unrecognized coefficient format.',upper(mfilename));
@@ -48,35 +68,43 @@ end
 
 
 if(isstruct(par)&&isfield(par,'fname'))
-   if nargin>2
-      error('%s: Too many input parameters.',upper(mfilename));
+   complainif_toomanyargs(nargin,2,'IWPFBT');
+
+   if ~strcmpi(par.fname,'wpfbt')
+      error('%s: Wrong func name in info struct. The info parameter was created by %s.',upper(mfilename),par.fname);
    end
+
    wt = wfbtinit({'dual',par.wt},par.fOrder);
    Ls = par.Ls;
    ext = par.ext;
-   do_scale = ~par.isNotScaled;
+   interscaling = par.interscaling;
+   % Use the "oposite" scaling
+   if strcmp(interscaling,'intscale')
+      interscaling = 'intnoscale';
+   elseif strcmp(interscaling,'intnoscale')
+      interscaling = 'intscale';
+   end
 
    % Determine next legal input data length.
    L = wfbtlength(Ls,wt,ext);
-
 else
    if nargin<3
       error('%s: Too few input parameters.',upper(mfilename));
    end
    %% PARSE INPUT
-   definput.keyvals.Ls=[];    
+   definput.keyvals.Ls=[];
    definput.import = {'fwt','wfbtcommon'};
-   definput.flags.scale = {'scale','noscale'};
+   definput.flags.interscaling = {'intsqrt', 'intscale', 'intnoscale'};
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
-   complain_notposint(Ls,'Ls');
-   
+   complainif_notposint(Ls,'Ls');
+
    ext = flags.ext;
-   do_scale = flags.scale;
+   interscaling = flags.interscaling;
    % Initialize the wavelet tree structure
    wt = wfbtinit(par,flags.forder);
 
    [Lc,L]=wpfbtclength(Ls,wt,ext);
-   
+
    % Do a sanity check
    if ~isequal(Lc,cellfun(@(cEl) size(cEl,1),c))
       error(['%s: The coefficients subband lengths do not comply with the'...
@@ -88,5 +116,5 @@ end
 
 wtPath = nodesBForder(wt,'rev');
 [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,L,ext,do_scale);
+f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,L,ext,interscaling);
 f = postpad(f,Ls);

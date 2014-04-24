@@ -10,6 +10,7 @@ test_failed=0;
 
 L = [ 107, 211];
 W = [1,2,3];
+W = 1;
 gt = {};
 gt{1} = {'db4',1,'dwt'};
 gt{2} = {'db4',4,'full'};
@@ -18,8 +19,11 @@ gt{4} = wfbtinit(gt{2});
 gt{4} = wfbtremove(3,0,gt{4});
 gt{4} = wfbtremove(3,1,gt{4});
 
+scaling = {'scale','sqrt','noscale'};
+scalingInv = scaling(end:-1:1);
 
 crossoverval = 10000;
+    
 
 for hh=1:2
 
@@ -37,7 +41,11 @@ for jj=1:numel(gt)
    for ii=1:numel(L)
       f = tester_rand(L(ii),1);
       gttmp = gt(jj);
-         if iscell(gt{jj}) && iscell(gt{jj}{1})
+      if isempty(gttmp{1})
+          continue;
+      end
+       
+      if iscell(gt{jj}) && iscell(gt{jj}{1})
            gttmp = gt{jj}{1};
          else
            gttmp = gttmp{1};
@@ -77,13 +85,12 @@ for jj=1:numel(gt)
       
       if iscell(gt{jj}) && iscell(gt{jj}{2})
          gttmp = gt{jj}{2};
+      end
          if strcmp(testWhat,'wfbt')   
             [g,a] = wfbt2filterbank(gttmp);
          elseif strcmp(testWhat,'wpfbt') 
             [g,a] = wpfbt2filterbank(gttmp);
          end
-
-      end
       
       
       fhat = ifilterbank(refc,g,a,L(ii),'crossover',1);
@@ -108,7 +115,7 @@ for jj=1:numel(gt)
       
 
       
-      
+      for scIdx = 1:numel(scaling)
       gttmp = gt(jj);
       if iscell(gt{jj}) && iscell(gt{jj}{1})
          gttmp = gt{jj}{1};
@@ -119,12 +126,13 @@ for jj=1:numel(gt)
 
       
       if strcmp(testWhat,'wfbt') 
-          urefc = uwfbt(f,gttmp);
-          g = wfbt2filterbank(gttmp);
+          urefc = uwfbt(f,gttmp,scaling{scIdx});
+          [g,a] = wfbt2filterbank(gttmp);
       elseif strcmp(testWhat,'wpfbt') 
-          urefc = uwpfbt(f,gttmp);
-          g = wpfbt2filterbank(gttmp);
+          urefc = uwpfbt(f,gttmp,scaling{scIdx});
+          [g,a] = wpfbt2filterbank(gttmp);
       end
+      g = comp_filterbankscale(g,a,scaling{scIdx});
 
       
       uc = ufilterbank(f,g,1,'crossover',crossoverval);
@@ -133,32 +141,37 @@ for jj=1:numel(gt)
       [test_failed,fail]=ltfatdiditfail(err,test_failed);
       
       if ~isstruct(gt{jj})
-         fprintf('FILT %d, COEF, FFT, UNDEC, L= %d, W= %d, err=%.4e %s \n',jj,L(ii),W(ww),err,fail); 
+         fprintf('FILT %d, %s, COEF, FFT, UNDEC, L= %d, W= %d, err=%.4e %s \n',jj,scaling{scIdx},L(ii),W(ww),err,fail); 
       else
-         fprintf('FILT %d, COEF, FFT, UNDEC, L= %d, W= %d, err=%.4e %s\n',jj,L(ii),W(ww),err,fail); 
+         fprintf('FILT %d, %s, COEF, FFT, UNDEC, L= %d, W= %d, err=%.4e %s\n',jj,scaling{scIdx},L(ii),W(ww),err,fail); 
       end;
       
       if iscell(gt{jj}) && iscell(gt{jj}{2})
-         gttmp = gt{jj};
-         if strcmp(testWhat,'wfbt')   
-            [g] = wfbt2filterbank(gttmp{2});
-         elseif strcmp(testWhat,'wpfbt') 
-            [g] = wpfbt2filterbank(gttmp{2});
-         end
-
+          gttmp = gt{jj}{2};
       end
+      
+         if strcmp(testWhat,'wfbt')   
+            [g,a] = wfbt2filterbank(gttmp);
+         elseif strcmp(testWhat,'wpfbt') 
+            [g,a] = wpfbt2filterbank(gttmp);
+         end
+         g = comp_filterbankscale(g,a,scalingInv{scIdx});
+
       fhat = ifilterbank(urefc,g,ones(numel(g),1),L(ii),'crossover',crossoverval);
       
       err = norm(fhat-f);
       [test_failed,fail]=ltfatdiditfail(err,test_failed);
       
       if ~isstruct(gt{jj})
-         fprintf('FILT %d, INV,  FFT, UNDEC, L= %d, W= %d, err=%.4e %s \n',jj,L(ii),W(ww),err,fail); 
+         fprintf('FILT %d, %s, INV,  FFT, UNDEC, L= %d, W= %d, err=%.4e %s \n',jj,scaling{scIdx},L(ii),W(ww),err,fail); 
       else
-         fprintf('FILT %d, INV,  FFT, UNDEC, L= %d, W= %d, err=%.4e %s\n',jj,L(ii),W(ww),err,fail); 
+         fprintf('FILT %d, %s INV,  FFT, UNDEC, L= %d, W= %d, err=%.4e %s\n',jj,scaling{scIdx},L(ii),W(ww),err,fail); 
       end;
+      
+      end
       
    end
    end
+end
 end
 end

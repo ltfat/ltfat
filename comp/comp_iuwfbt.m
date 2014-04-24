@@ -1,4 +1,4 @@
-function f=comp_iuwfbt(c,wtNodes,nodesUps,rangeLoc,rangeOut)
+function f=comp_iuwfbt(c,wtNodes,nodesUps,rangeLoc,rangeOut,scaling)
 %COMP_IUWFBT Compute Inverse Undecimated Wavelet Filter-Bank Tree
 %   Usage:  f=comp_iuwfbt(c,wtNodes,nodesUps,rangeLoc,rangeOut)
 %
@@ -24,10 +24,13 @@ ca = [];
 for jj=1:length(wtNodes)
     % Node filters subs. factors
     a = wtNodes{jj}.a;
+    
+    % Optionally scale the filters
+    g = comp_filterbankscale(wtNodes{jj}.g(:),a(:),scaling);
+    
     % Node filters to a matrix
-    gMat = cell2mat(cellfun(@(gEl) gEl.h(:),wtNodes{jj}.g(:)','UniformOutput',0));
-    % Normalize each filter
-    gMat = bsxfun(@rdivide,gMat,sqrt(a(:)'));
+    gMat = cell2mat(cellfun(@(gEl) gEl.h(:),g','UniformOutput',0));
+
     % Node filters initial skips
     gOffset = cellfun(@(gEl) gEl.offset,wtNodes{jj}.g);
     
