@@ -22,7 +22,7 @@ function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %   iteration, involving iterative soft thresholdings.
 %  
 %   `[tc,relres,iter] = franalasso(...)` return thes residuals *relres* in a vector
-%   and the number of iteration steps done, *maxit*.
+%   and the number of iteration steps done *iter*.
 %
 %   `[tc,relres,iter,frec] = franalasso(...)` returns the reconstructed
 %   signal from the coefficients, *frec*. Note that this requires additional
@@ -75,7 +75,6 @@ function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %   solution is obtained by applying soft thresholding cyclically on the
 %   basis coefficients (BCR algorithm)
 %
-%   TO DO: Investigate necessity of equal norm atoms in F.
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
@@ -159,6 +158,5 @@ end
 
 % Reconstruction
 if nargout>3
-  frec = F.frsyn(tc);
-  frec = frec(1:Ls,:);
+  frec = postpad(F.frsyn(tc),Ls);
 end;
