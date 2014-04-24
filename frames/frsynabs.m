@@ -112,7 +112,13 @@ norm_s=norm(s,'fro');
 
 relres=zeros(kv.maxit,1);
 
-Fs=frameaccel(framedual(F),L);
+try
+   Fs=frameaccel(framedual(F),L);
+catch
+    % Dual frame cannot be creted explicitly
+    % TO DO: use pcg
+    error('%s: Dual frame is not available.',upper(mfilename));
+end
 
 % Initialize windows to speed up computation
 F=frameaccel(F,L);
@@ -171,7 +177,7 @@ end;
 
 if flags.do_bfgs
     if exist('minFunc')~=2
-      error(['To use the BFGS method in ISGRAMREAL, please install the minFunc ' ...
+      error(['To use the BFGS method in FRSYNABS, please install the minFunc ' ...
              'software from http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html.']);
     end;
     
