@@ -47,9 +47,7 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %   TESTING: OK
 %   REFERENCE: OK
 
-if nargin<2
-  error('Too few input parameters.');k
-end;
+complainif_notenoughargs(nargin,2,'THRESH');
 
 if (prod(size(lambda))~=1 || ~isnumeric(lambda))
   error('lambda must be a scalar.');
