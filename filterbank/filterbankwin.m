@@ -75,11 +75,11 @@ if nargin<2
 end;
 
 if ~iscell(g)
-  error('%s: Window g must be a cell array.',upper(mfilename));
+  error('%s: Window(s) g must be a cell array.',upper(mfilename));
 end;
 
-if isempty(g)
-  error('%s: Window g must not be empty.',upper(mfilename));
+if isempty(g) || any(cellfun(@isempty,g))
+  error('%s: Window(s) g must not be empty.',upper(mfilename));
 end;
 
 definput.keyvals.L=[];
@@ -123,6 +123,7 @@ info.isuniform=0;
 info.isfir=1;
 
 [asan,info]=comp_filterbank_a(a,info.M,info);
+
     
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
@@ -137,7 +138,10 @@ for m=1:info.M
            info.ispainless=0; 
         end
     else
-        info.ispainless=0;
+        % No subsampling means painless case for any filter
+        if ~(info.isuniform && asan(m,1) == 1)
+            info.ispainless=0;
+        end
         info.gl(m)=numel(g{m}.h);
         info.offset(m)=g{m}.offset;
     end;
@@ -161,6 +165,7 @@ end;
 if info.isfir
    info.longestfilter=max(info.gl);
 
+   % Does not evaluate as true if L is empty
    if L<info.longestfilter
      error('%s: One of the windows is longer than the transform length= %i.',upper(mfilename),info.longestfilter);
    end;

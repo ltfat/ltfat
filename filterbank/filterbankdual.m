@@ -1,4 +1,4 @@
-function gdout=filterbankdual(g,a,L,varargin);
+function gdout=filterbankdual(g,a,L);
 %FILTERBANKDUAL  Dual filters
 %   Usage:  gd=filterbankdual(g,a);
 %           gd=filterbankdual(g,a,L);
@@ -18,16 +18,20 @@ function gdout=filterbankdual(g,a,L,varargin);
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
-if nargin<3
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FILTERBANKDUAL');
 
-[g,info]=filterbankwin(g,a,L,'normal');
+if nargin<3
+   L = [];
+end
+
+[g,info] = filterbankwin(g,a,L,'normal'); 
 M=info.M;
 
+Lsut = filterbanklength(L,a);
 if (~isempty(L)) && (L~=filterbanklength(L,a))
     error(['%s: Specified length L is incompatible with the length of ' ...
-           'the time shifts.'],upper(mfilename));
+           'the time shifts. Next suitable L is %i; obtainable by ',...
+           'filterbanklength(a,L).'],upper(mfilename),Lsut);
 end;
 
 
@@ -85,26 +89,36 @@ else
         if isempty(L)
             error('%s: You need to specify L.',upper(mfilename));
         end;
-
-        F=comp_filterbankresponse(g,info.a,L,0);
         
-        gdout=cell(1,M);
-        for m=1:M
-            thisgd=struct();
-            H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
-            thisgd.H=H(1:numel(g{m}.H));
-            thisgd.foff=g{m}.foff;
-            thisgd.realonly=0;
-            thisgd.delay=0;
-            
-            gdout{m}=thisgd;
-        end;
+        gdout = comp_painlessfilterbank(g,info.a,L,'dual',0);
+
+%        F=comp_filterbankresponse(g,info.a,L,0);
+        
+%         gdout=cell(1,M);
+%         for m=1:M
+%             thisgd=struct();
+%             if isfield(g{m},'H')
+%                H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
+%                thisgd.H=H(1:numel(g{m}.H));
+%                thisgd.foff=g{m}.foff;
+%                thisgd.realonly=0;
+%                thisgd.delay=0;
+%             elseif isfield(g{m},'h')
+%                H=comp_transferfunction(g{m},L)./F; 
+%                thisgd.h = ifft(H);
+%                thisgd.offset = 0;
+%             end
+%             
+%             gdout{m}=thisgd;
+%         end;
         
     else
         error(['%s: The canonical dual frame of this system is not a ' ...
-               'filterbank. You must call an iterative ' ...
-               'method to perform the desired inverstion. Please see ' ...
-               'FRANAITER or FRSYNITER.'],upper(mfilename));        
+               'filterbank. You must either call an iterative ' ...
+               'method to perform the desired inverstion or transform ',...
+               'or transform the filterbank to uniform one. Please see ' ...
+               'FRANAITER or FRSYNITER for the former and ',...
+               'NONU2UFILTERBANK for the latter case.'],upper(mfilename));        
 
     end;
     

@@ -9,9 +9,8 @@ function gf=filterbankresponse(g,a,L,varargin)
 %   indicate that a frequency is overrepresented in the filterbank, while
 %   a dip indicates that it is not well represented.
 %
-%   CAUTION: This function does not calculate frequency responses of filters
-%   (Fourier transform of impulse responses) as understood in the signal
-%   processing community, instead, it computes the diagonal of the Fourier 
+%   CAUTION: This function computes a sum of squares of modulus of the 
+%   frequency responses, which is  also the diagonal of the Fourier 
 %   transform of the frame operator.
 %   Use |filterbankfreqz| for evaluation or plotting of frequency responses
 %   of filters.

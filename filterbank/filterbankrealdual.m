@@ -1,4 +1,4 @@
-function gdout=filterbankrealdual(g,a,varargin);
+function gdout=filterbankrealdual(g,a,L)
 %FILTERBANKREALDUAL  Dual filters of filterbank for real signals only 
 %   Usage:  gd=filterbankdual(g,a);
 %
@@ -15,12 +15,12 @@ function gdout=filterbankrealdual(g,a,varargin);
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FILTERBANKREALDUAL');
 
-definput.keyvals.L=[];
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+if nargin<3
+   L = [];
+end
+
 
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
@@ -87,20 +87,26 @@ if info.isuniform
 else
 
     if info.ispainless
-        F=comp_filterbankresponse(g,info.a,L,1);
-        
-        gdout=cell(1,M);
-        for m=1:M
-            gl=numel(g{m}.H);
-            thisgd=struct();
-            H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
-            thisgd.H=H(1:gl);
-            thisgd.foff=g{m}.foff;
-            thisgd.realonly=0;
-            thisgd.delay=0;
-            
-            gdout{m}=thisgd;
+        if isempty(L)
+           error('%s: You need to specify L.',upper(mfilename));
         end;
+        
+        gdout = comp_painlessfilterbank(g,info.a,L,'dual',1);
+        
+%         F=comp_filterbankresponse(g,info.a,L,1);
+%         
+%         gdout=cell(1,M);
+%         for m=1:M
+%             gl=numel(g{m}.H);
+%             thisgd=struct();
+%             H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
+%             thisgd.H=H(1:gl);
+%             thisgd.foff=g{m}.foff;
+%             thisgd.realonly=0;
+%             thisgd.delay=0;
+%             
+%             gdout{m}=thisgd;
+%         end;
     else
         error(['%s: The canonical dual frame of this system is not a ' ...
                'filterbank. You must call an iterative ' ...

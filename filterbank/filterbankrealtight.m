@@ -1,4 +1,4 @@
-function gtout=filterbankrealtight(g,a,varargin);
+function gtout=filterbankrealtight(g,a,L)
 %FILTERBANKREALTIGHT  Tight filters of filterbank for real signals only 
 %   Usage:  gd=filterbankrealtight(g,a);
 %
@@ -16,12 +16,11 @@ function gtout=filterbankrealtight(g,a,varargin);
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FILTERBANKREALTIGHT');
 
-definput.keyvals.L=[];
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+if nargin<3
+   L = [];
+end
 
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
@@ -82,21 +81,31 @@ if info.isuniform
 else
         
     if info.ispainless
-                
-        Fsqrt=sqrt(comp_filterbankresponse(g,info.a,L,1));
-        
-        gtout=cell(1,M);
-        for m=1:M
-            gl=numel(g{m}.H);
-            thisgt=struct();
-            H=circshift(comp_transferfunction(g{m},L)./Fsqrt,-g{m}.foff);
-            thisgt.H=H(1:gl);
-            thisgt.foff=g{m}.foff;
-            thisgt.realonly=0;
-            thisgt.delay=0;
-            
-            gtout{m}=thisgt;
+        if isempty(L)
+            error('%s: You need to specify L.',upper(mfilename));
         end;
+        
+        gtout = comp_painlessfilterbank(g,info.a,L,'tight',1);
+                
+%        Fsqrt=sqrt(comp_filterbankresponse(g,info.a,L,1));
+        
+%         gtout=cell(1,M);
+%         for m=1:M
+%             thisgt=struct();
+%             if isfield(g{m},'H')
+%                 gl=numel(g{m}.H);
+%                 H=circshift(comp_transferfunction(g{m},L)./Fsqrt,-g{m}.foff);
+%                 thisgt.H=H(1:gl);
+%                 thisgt.foff=g{m}.foff;
+%                 thisgt.realonly=0;
+%                 thisgt.delay=0;
+%             elseif isfield(g{m},'h')
+%                H=comp_transferfunction(g{m},L)./Fsqrt; 
+%                thisgt.H = ifft(H);
+%                thisgt.offset = 0;
+%             end
+%             gtout{m}=thisgt;
+%         end;
         
     else
         error(['%s: The canonical dual frame of this system is not a ' ...
