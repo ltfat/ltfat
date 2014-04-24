@@ -1,4 +1,4 @@
-function complain_notenoughargs(fnargin,limit,callfun)
+function complainif_notenoughargs(fnargin,limit,callfun)
 
 if nargin<3
     callfun = mfilename;

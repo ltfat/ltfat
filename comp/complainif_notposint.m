@@ -1,4 +1,4 @@
-function complain_notposint(var,varname,callfun)
+function complainif_notposint(var,varname,callfun)
 
 if nargin<3
     callfun = mfilename;
