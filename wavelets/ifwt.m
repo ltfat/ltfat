@@ -1,5 +1,5 @@
 function f = ifwt(c,par,varargin)
-%IFWT   Inverse Fast Wavelet Transform 
+%IFWT   Inverse Fast Wavelet Transform
 %   Usage:  f = ifwt(c,info)
 %           f = ifwt(c,w,J,Ls)
 %           f = ifwt(c,w,J,Ls,dim)
@@ -20,12 +20,12 @@ function f = ifwt(c,par,varargin)
 %
 %   `f = ifwt(c,w,J,Ls)` reconstructs signal *f* from the wavelet coefficients
 %   *c* using *J*-iteration synthesis filter bank build from the basic
-%   filterbank defined by *w*. The *Ls* parameter is mandatory due to the 
+%   filterbank defined by *w*. The *Ls* parameter is mandatory due to the
 %   ambiguity of lengths introduced by the subsampling operation and by
-%   boundary treatment methods. Note that the same flag as in the |fwt| 
-%   function have to be used, otherwise perfect reconstruction cannot be 
+%   boundary treatment methods. Note that the same flag as in the |fwt|
+%   function have to be used, otherwise perfect reconstruction cannot be
 %   obtained.
-%   
+%
 %   In both cases, the fast wavelet transform algorithm (Mallat's algorithm)
 %   is employed. The format of *c* can be either packed, as returned by the
 %   |fwt| function or cell-array as returned by |wavpack2cell| function.
@@ -34,32 +34,35 @@ function f = ifwt(c,par,varargin)
 %
 %   Examples:
 %   ---------
-%   
+%
 %   A simple example showing perfect reconstruction:::
-% 
+%
 %     f = gspi;
 %     J = 8;
 %     c = fwt(f,'db8',J);
 %     fhat = ifwt(c,'db8',J,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
-%   
+%
 %   See also:  fwt, wavpack2cell, wavcell2pack
 %
 %   References: ma98
 
-if nargin<2
-   error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'IFWT');
 
 if  ~(iscell(c) || isnumeric(c)) || isempty(c)
   error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
 if(isstruct(par)&&isfield(par,'fname'))
-   if nargin>2
-      error('%s: Too many input parameters.',upper(mfilename));
+   complainif_toomanyargs(nargin,2,'IFWT');
+   
+   if ~strcmpi(par.fname,'fwt')
+      error(['%s: Wrong func name in info struct. ',...
+             ' The info parameter was created by %s.'],...
+             upper(mfilename),par.fname);
    end
+   
    % process info struct
    w = fwtinit({'dual',par.wt});
    J = par.J;
@@ -67,21 +70,20 @@ if(isstruct(par)&&isfield(par,'fname'))
    Ls = par.Ls;
    dim = par.dim;
    ext = par.ext;
+   L = fwtlength(Ls,w,J,ext);
 else
-   if nargin<4
-      error('%s: Too few input parameters.',upper(mfilename));
-   end;
-   
+   complainif_notenoughargs(nargin,4,'IFWT');
+
    %% PARSE INPUT
    definput.import = {'fwt'};
    definput.keyvals.dim = [];
    definput.keyvals.Ls = [];
    definput.keyvals.J = [];
    [flags,~,J,Ls,dim]=ltfatarghelper({'J','Ls','dim'},definput,varargin);
- 
-   complain_notposint(J,'J');
-   complain_notposint(Ls,'Ls');
-   
+
+   complainif_notposint(J,'J');
+   complainif_notposint(Ls,'Ls');
+
    ext = flags.ext;
    %If dim is not specified use the first non-singleton dimension.
    if(isempty(dim))
@@ -91,7 +93,7 @@ else
          error('%s: Parameter *dim* should be 1 or 2.',upper(mfilename));
       end
    end
-   
+
    % Initialize the wavelet filters structure
    w = fwtinit(par);
 
@@ -116,12 +118,12 @@ end
          error('%s: Coefficient subband lengths does not comply with parameter *Ls*.',upper(mfilename));
       end
    else
-      error('%s: Unrecognized coefficient format.',upper(mfilename)); 
+      error('%s: Unrecognized coefficient format.',upper(mfilename));
    end;
 
-   %% ----- Run computation 
+   %% ----- Run computation
    f = comp_ifwt(c,w.g,J,w.a,L,ext);
- 
+
    f = postpad(f,Ls);
 
    %% ----- FINALIZE: Reshape back according to the dim.

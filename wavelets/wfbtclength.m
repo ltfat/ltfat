@@ -12,7 +12,7 @@ function [Lc,L]=wfbtclength(Ls,wt,varargin)
 %
 %   See also: wfbt, fwt
 
-complain_notposint(Ls,'Ls','WFBTCLENGTH');
+complainif_notposint(Ls,'Ls','WFBTCLENGTH');
 
 definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);

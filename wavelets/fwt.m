@@ -1,12 +1,12 @@
 function [c,info] = fwt(f,w,J,varargin)
-%FWT   Fast Wavelet Transform 
+%FWT   Fast Wavelet Transform
 %   Usage:  c = fwt(f,w,J);
 %           c = fwt(f,w,J,dim);
 %           [c,info] = fwt(...);
 %
 %   Input parameters:
 %         f     : Input data.
-%         w     : Wavelet definition. 
+%         w     : Wavelet definition.
 %         J     : Number of filterbank iterations.
 %         dim   : Dimension to along which to apply the transform.
 %
@@ -18,10 +18,10 @@ function [c,info] = fwt(f,w,J,varargin)
 %   using *J* iterations of the basic wavelet filterbank defined by *w*
 %   i.e. the fast wavelet transform algorithm (Mallat's algorithm) is used.
 %   In addition, the function returns struct. `info` containing transform
-%   parameters. It can be conviniently used for the inverse transform 
-%   |ifwt| e.g. `fhat = ifwt(c,info)`. It is also required by the 
+%   parameters. It can be conviniently used for the inverse transform
+%   |ifwt| e.g. `fhat = ifwt(c,info)`. It is also required by the
 %   |plotwavelets| function.
-%   
+%
 %   The coefficents *c* are the Discrete Wavelet transform (DWT) of the input
 %   signal *f*, if *w* defines two-channel wavelet filterbank. The following
 %   figure shows DWT with *J=3*.
@@ -29,15 +29,15 @@ function [c,info] = fwt(f,w,J,varargin)
 %   .. image:: ../images/fwttree.png
 %
 %   The function can apply the Mallat's algorithm using basic filter banks
-%   with any number of the channels. In such case, the transform have a 
-%   different name. 
+%   with any number of the channels. In such case, the transform have a
+%   different name.
 %
-%   The basic analysis wavelet filterbank $w$ can be passed in several 
+%   The basic analysis wavelet filterbank $w$ can be passed in several
 %   formats. The formats are the same as for the |fwtinit| function.
 %
 %   1) Cell array whose first element is the name of the function defining
 %      the basic wavelet filters (`wfilt_` prefix) and the other elements
-%      are the parameters of the function. e.g. `{'db',10}` calls 
+%      are the parameters of the function. e.g. `{'db',10}` calls
 %      `wfilt_db(10)` internally.
 %
 %   2) Character string as concatenation of the name of the wavelet
@@ -46,29 +46,29 @@ function [c,info] = fwt(f,w,J,varargin)
 %      'spline4:4' calls `wfilt_spline(4,4)` internally.
 %
 %   3) Cell array of one dimensional numerical vectors directly defining
-%      the wavelet filter impulse responses.  By default, outputs of the 
-%      filters are subsampled by a factor equal to the number of the 
+%      the wavelet filter impulse responses.  By default, outputs of the
+%      filters are subsampled by a factor equal to the number of the
 %      filters. One can pass additional key-value pair 'a',a (still inside
-%      of the cell array) to define the custom subsampling factors, e.g.: 
+%      of the cell array) to define the custom subsampling factors, e.g.:
 %      {h1,h2,'a',[2,2]}.
 %
 %   4) The fourth option is to pass the structure obtained from the
 %      |fwtinit| function. The structure is checked whether it has a valid
 %      format.
-%   
+%
 %   If *f* is row/collumn vector, the subbands *c* are stored
-%   in a single row/collumn in a consecutive order with respect to the 
-%   inceasing central frequency of the corresponding effective filter 
-%   frequency responses or equivalently with decreasing wavelet scale. The 
+%   in a single row/collumn in a consecutive order with respect to the
+%   inceasing central frequency of the corresponding effective filter
+%   frequency responses or equivalently with decreasing wavelet scale. The
 %   lengths of subbands are stored in *info.Lc* so the subbands can be easily
 %   extracted using |wavpack2cell|. Moreover, one can pass an additional
 %   flag `'cell'` to obtain the coefficient directly in a cell array. The
 %   cell array can be again converted to a packed format using |wavcell2pack|.
 %
-%   If the input *f* is a matrix, the transform is applied to each column 
+%   If the input *f* is a matrix, the transform is applied to each column
 %   if `dim==1` (default) and `[Ls, W]=size(f)`. If `dim==2`
 %   the transform is applied to each row `[W, Ls]=size(f)`.
-%   The output is then a matrix and the input orientation is preserved in 
+%   The output is then a matrix and the input orientation is preserved in
 %   the orientation of the output coefficients. The `dim` paramerer has to
 %   be passed to the |wavpack2cell| and |wavcell2pack|.
 %
@@ -83,7 +83,7 @@ function [c,info] = fwt(f,w,J,varargin)
 %   is critically subsampled, the total number of coefficients is equal to
 %   the input signal length. The input signal is padded with zeros to the
 %   next legal length *L* internally.
-%   
+%
 %   The default periodic extension can result in "false" high wavelet
 %   coefficients near the boundaries due to the possible discontinuity
 %   introduced by the zero padding and periodic boundary treatment.
@@ -101,7 +101,7 @@ function [c,info] = fwt(f,w,J,varargin)
 %              extension. This is the default.
 %
 %     'zero'   Zeros are considered outside of the signal (coefficient)
-%              support. 
+%              support.
 %
 %     'even'   Even symmetric extension.
 %
@@ -112,24 +112,21 @@ function [c,info] = fwt(f,w,J,varargin)
 %
 %   Examples:
 %   ---------
-%   
+%
 %   A simple example of calling the |fwt| function:::
-% 
+%
 %     f = greasy;
 %     J = 10;
 %     [c,info] = fwt(f,'db8',J);
 %     plotwavelets(c,info,44100,'dynrange',90);
 %
-%   See also: ifwt, plotwavelets, wavpack2cell, wavcell2pack, thresh 
+%   See also: ifwt, plotwavelets, wavpack2cell, wavcell2pack, thresh
 %
-%   References: ma98  
+%   References: ma98
 
 
-if nargin<3
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-complain_notposint(J,'J');
+complainif_notenoughargs(nargin,3,'FWT');
+complainif_notposint(J,'J');
 
 % Initialize the wavelet filters structure
 w = fwtinit(w);
@@ -151,10 +148,10 @@ definput.flags.cfmt = {'pack','cell'};
 
 % Pad with zeros if the safe length L differ from the Ls.
 if(Ls~=L)
-   f=postpad(f,L); 
+   f=postpad(f,L);
 end
 
-%% ----- step 3 : Run computation. 
+%% ----- step 3 : Run computation.
 c = comp_fwt(f,w.h,J,w.a,flags.ext);
 
 %% ----- FINALIZE: Change format of coefficients.

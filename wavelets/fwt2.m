@@ -5,7 +5,7 @@ function c = fwt2(f,w,J,varargin)
 %
 %   Input parameters:
 %         f     : Input data.
-%         w     : Wavelet Filterbank definition. 
+%         w     : Wavelet Filterbank definition.
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
@@ -14,10 +14,10 @@ function c = fwt2(f,w,J,varargin)
 %   `c=fwt2(f,w,J)` returns wavelet coefficients *c* of the input matrix *f*
 %   using *J* iterations of the basic wavelet filterbank defined by *h*.
 %
-%   `fwt2` supports just the non-expansive boundary condition 'per' and 
+%   `fwt2` supports just the non-expansive boundary condition 'per' and
 %   critically subsampled filterbanks in order to be able to pack the
 %   coefficients in a matrix. Also the *J* is limited to some maximum value
-%   for the same reason. 
+%   for the same reason.
 %
 %   Additional flags make it possible to specify how the algorithm
 %   should subdivide the matrix:
@@ -27,16 +27,16 @@ function c = fwt2(f,w,J,varargin)
 %
 %     'tensor'    This corresponds to doing a |fwt| along each dimension
 %                 of the matrix.
-%   
+%
 %   Examples:
 %   ---------
-%   
+%
 %   Some simple example of calling the |fwt2| function, compare with the
 %   |cameraman| image. Only the 70 dB largest coefficients are shown, to
 %   make the structures more visible.
 %
 %   The first example uses the standard layout:::
-% 
+%
 %     c = fwt2(cameraman,{'db',8},4);
 %     imagesc(dynlimit(20*log10(abs(c)),70));
 %     axis('image'); colormap(gray);
@@ -51,31 +51,34 @@ function c = fwt2(f,w,J,varargin)
 %
 %   Demos: demo_imagecompression
 %
-%   References: ma98  
+%   References: ma98
 
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-complain_notposint(J,'J');
+complainif_notposint(J,'J');
 
 [M,N]=size(f);
 if(M==1||N==1)
-   error('%s: The input data is vector.',upper(mfilename)); 
+   error('%s: The input data is vector.',upper(mfilename));
 end
 
 % Initialize the wavelet filters structure
 w = fwtinit(w);
 
 if(~all(w.a==length(w.h)))
-   error('%s: Non-critically subsampled filterbanks not supported.',upper(mfilename));  
+   error('%s: Non-critically subsampled filterbanks not supported.',...
+         upper(mfilename));
 end
 
 
 %Do not allow single wavelet coefficient at two consecutive levels
 if(any(w.a(1)^J>size(f)))
-   error('%s: %d-level decomposition of the input is not possible. Maximum J is %d.',upper(mfilename),J,floor(log(max(size(f)))/log(w.a(1))));
+   error(['%s: %d-level decomposition of the input is not possible. ',...
+          'Maximum J is %d.'],...
+          upper(mfilename),J,floor(log(max(size(f)))/log(w.a(1))));
 end
 
 %% ----- step 0 : Check inputs -------
@@ -112,16 +115,16 @@ end
 % cTmp = f;
 % for jj=1:J
 %      cCols = comp_fwt_all(cTmp,h.filts,1,h.a,'dec',flags.ext);
-%      [cColsPack,rows] = wavcell2pack(cCols); 
+%      [cColsPack,rows] = wavcell2pack(cCols);
 %      cRows = comp_fwt_all(cColsPack.',h.filts,1,h.a,'dec',flags.ext);
-%      [cRowsPack,cols] = wavcell2pack(cRows); 
+%      [cRowsPack,cols] = wavcell2pack(cRows);
 %      cTmp = cRowsPack(1:cols(1),1:rows(1)).';
-%      
+%
 %      cJidxTmp = cJidx - jj*subbNo+1;
-% 
+%
 %      for cc= 1:filtNo
 %         for rr = 1:filtNo
-%            if(cc==1&&rr==1), continue; end; 
+%            if(cc==1&&rr==1), continue; end;
 %            c{cJidxTmp} = cRowsPack(sum(cols(1:cc-1))+1:sum(cols(1:cc)),sum(rows(1:rr-1))+1:sum(rows(1:rr))).';
 %            cJidxTmp = cJidxTmp + 1;
 %         end

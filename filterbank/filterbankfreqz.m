@@ -3,7 +3,7 @@ function gf = filterbankfreqz(g,a,L,varargin)
 %   Usage: gf = filterbankfreqz(g,a,L)
 %
 %   `gf = filterbankfreqz(g,a,L)` calculates lengt *L* frequency sesponses
-%   of filters in *g* and returns them as columns of *gf*. 
+%   of filters in *g* and returns them as columns of *gf*.
 %
 %   If an optional parameters 'plot' is passed to `filterbankfreqz`,
 %   the frequency responses will be plotted using |plotfft|. Any
@@ -11,17 +11,17 @@ function gf = filterbankfreqz(g,a,L,varargin)
 %   to 'plot'.
 %
 
-complain_notenoughargs(nargin,3,'FILTERBANKFREQZ');
-complain_notposint(L,'L','FILTERBANKFREQZ');
+complainif_notenoughargs(nargin,3,'FILTERBANKFREQZ');
+complainif_notposint(L,'L','FILTERBANKFREQZ');
 
-% Wrap g if it is not a cell. The format of g will be checked 
+% Wrap g if it is not a cell. The format of g will be checked
 % further in filterbankwin.
 if ~iscell(g)
     g = {g};
 end
 
 % The only place we need a
-% It is necessary for cases when filterbank is given by e.g. 
+% It is necessary for cases when filterbank is given by e.g.
 % {'dual',g}
 % L is checked only in such cases.
 [g,info]=filterbankwin(g,a,L,'normal');

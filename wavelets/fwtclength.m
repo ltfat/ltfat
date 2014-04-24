@@ -1,4 +1,4 @@
-function [Lc,L]=fwtclength(Ls,w,J,varargin) 
+function [Lc,L]=fwtclength(Ls,w,J,varargin)
 %FWTCLENGTH FWT subbands lengths from a signal length
 %   Usage: L=fwtclength(Ls,h,J);
 %          L=fwtclength(Ls,h,J,ext,'ext');
@@ -8,14 +8,14 @@ function [Lc,L]=fwtclength(Ls,w,J,varargin)
 %   an explanation of the parameters *h* and *J*. In addition, the function
 %   returns the next legal length of the input signal for the given extension
 %   type.
-%   
+%
 %   The function support the same boundary-handling flags as the |fwt|
 %   does.
 %
 %   See also: fwt, fwtlength
 
-complain_notposint(Ls,'Ls','FWTCLENGTH');
-complain_notposint(J,'J','FWTCLENGTH');
+complainif_notposint(Ls,'Ls','FWTCLENGTH');
+complainif_notposint(J,'J','FWTCLENGTH');
 
 w = fwtinit(w);
 
@@ -28,7 +28,7 @@ L = fwtlength(Ls,w,J,flags.ext);
 filtNo = length(w.g);
 subbNo = (filtNo-1)*J+1;
 Lc = zeros(subbNo,1);
-runPtr = 0; 
+runPtr = 0;
 levelLen = L;
 if flags.do_per
   % Non-expansive case
@@ -48,7 +48,7 @@ elseif flags.do_valid
         runPtr = runPtr + 1;
      end
      levelLen = floor((levelLen-(length(filts{1}.h)-1))/w.a(1));
-  end  
+  end
 else
   % Expansive case
   filts = w.g;
@@ -62,4 +62,4 @@ else
     levelLen = ceil((levelLen+(length(filts{1}.h)-1)-skip)/w.a(1));
  end
 end
-Lc(1)=levelLen; 
+Lc(1)=levelLen;

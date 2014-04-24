@@ -15,8 +15,8 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %      fc    : Center frequency of each channel.
 %      L     : Next admissible length suitable for the generated filters.
 %
-%   `[g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls)` constructs a set of 
-%   band-limited filters *g* which cover the required frequency range 
+%   `[g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls)` constructs a set of
+%   band-limited filters *g* which cover the required frequency range
 %   `fmin`-`fmax` with `bins` filters per octave starting at `fmin`. All
 %   filters have (approximately) equal $Q=f_c/f_b$, hence constant-Q. The
 %   remainding frequency intervals not covered by these filters are captured
@@ -34,12 +34,12 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %
 %   `[g,a]=cqtfilters(...,'regsampling')` constructs a non-uniform
 %   filterbank. The downsampling rates are constant in the octaves but
-%   can differ among octaves. This approach was chosen in order to minimize 
+%   can differ among octaves. This approach was chosen in order to minimize
 %   the least common multiple of *a*, which determines a granularity of
 %   admissible input signal lengths.
 %
 %   `[g,a]=cqtfilters(...,'uniform')` constructs a uniform filterbank
-%   where the downsampling rate is the same for all the channels. This 
+%   where the downsampling rate is the same for all the channels. This
 %   results in most redundant representation, which produces nice plots.
 %
 %   `[g,a]=cqtfilters(...,'fractional')` constructs a filterbank with
@@ -50,21 +50,21 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   least redundant system.
 %
 %   `[g,a]=cqtfilters(...,'fractionaluniform')` constructs a filterbank with
-%   fractional downsampling rates *a*, which are uniform for all filters 
+%   fractional downsampling rates *a*, which are uniform for all filters
 %   except the "filling" low-pass and high-pass filters can have different
 %   fractional downsampling rates. This is usefull when uniform subsampling
 %   and low redundancy at the same time are desirable.
 %
 %   The filters are intended to work with signals with a sampling rate of
-%   *fs*.  
+%   *fs*.
 %
 %   `cqtfilters` accepts the following optional parameters:
 %
-%     'winfun',winfun       Filter prototype (see |firwin| for available 
+%     'winfun',winfun       Filter prototype (see |firwin| for available
 %                           filters). Default is `'hann'`.
 %
 %     'Qvar',Qvar           Bandwidth variation factor. Multiplies the
-%                           calculated bandwidth. Default value is *1*. 
+%                           calculated bandwidth. Default value is *1*.
 %                           If the value is less than one, the
 %                           system may no longer be painless.
 %
@@ -77,16 +77,16 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %                           frequencies are covered.
 %
 %     'min_win',min_win     Minimum admissible window length (in samples).
-%                           Default is *4*. This restrict the windows not 
+%                           Default is *4*. This restrict the windows not
 %                           to become too narrow when *L* is low. This
 %                           however brakes the constant-Q property for such
 %                           windows and creates rippling in the overall
-%                           frequency response.     
+%                           frequency response.
 %
-%     'redmul',redmul       Redundancy multiplier. Increasing the value of 
-%                           this will make the system more redundant by 
+%     'redmul',redmul       Redundancy multiplier. Increasing the value of
+%                           this will make the system more redundant by
 %                           lowering the channel downsampling rates. Default
-%                           value is *1*. If the value is less than one, 
+%                           value is *1*. If the value is less than one,
 %                           the system may no longer be painless.
 %
 %   See also:  erbfilters, cqt, firwin, filterbank
@@ -103,11 +103,11 @@ if nargin < 5
     error('%s: Not enough input arguments.',upper(mfilename));
 end
 
-complain_notposint(fs,'fs');
-complain_notposint(fmin,'fmin');
-complain_notposint(fmax,'fmax');
-complain_notposint(bins,'bins');
-complain_notposint(Ls,'Ls');
+complainif_notposint(fs,'fs');
+complainif_notposint(fmin,'fmin');
+complainif_notposint(fmax,'fmax');
+complainif_notposint(bins,'bins');
+complainif_notposint(Ls,'Ls');
 
 if fmin>=fmax
     error('%s: fmin has to be less than fmax.',upper(mfilename));
@@ -201,7 +201,7 @@ for ii = 1:numel(fsupp)
 end
 
 % Find suitable channel subsampling rates
-aprecise=fs./fsupp/kv.redmul; 
+aprecise=fs./fsupp/kv.redmul;
 aprecise=aprecise(:);
 if any(aprecise<1)
     error('%s: The maximum redundancy mult. for this setting is %5.2f',...
@@ -214,14 +214,14 @@ if flags.do_regsampling
         s = M-cumsum(bins);
         bins=bins(1:find(s<=0,1));
         bins(end) = bins(end)-(sum(bins)-M);
-        aocts = mat2cell(aprecise(2:end-1),bins); 
+        aocts = mat2cell(aprecise(2:end-1),bins);
         aocts{1} = [aprecise(1);aocts{1}];
         aocts{end} = [aocts{end};aprecise(end)];
         a=cellfun(@(aEl) floor23(min(aEl)),aocts);
-  
+
         % Determine the minimal transform length lcm(a)
         L = filterbanklength(Ls,a);
-        
+
         % Heuristic trying to reduce lcm(a)
         while L>2*Ls && ~(all(a)==a(1))
             maxa = max(a);
@@ -229,7 +229,7 @@ if flags.do_regsampling
             a(a==0) = max(a);
             L = filterbanklength(Ls,a);
         end
-        
+
         % Deal the integer subsampling factors
         a = cell2mat(cellfun(@(aoEl,aEl) ones(numel(aoEl),1)*aEl,...
             aocts,mat2cell(a,ones(numel(a),1)),'UniformOutput',0));
@@ -237,14 +237,14 @@ if flags.do_regsampling
 elseif flags.do_fractional
         L = Ls;
         N=ceil(Ls./aprecise);
-        a=[repmat(Ls,M2,1),N];  
+        a=[repmat(Ls,M2,1),N];
 elseif flags.do_fractionaluniform
     L = Ls;
     aprecise(2:end-1) = min(aprecise(2:end-1));
     N=ceil(Ls./aprecise);
-    a=[repmat(Ls,M2,1),N]; 
+    a=[repmat(Ls,M2,1),N];
 elseif flags.do_uniform
-    a=floor(min(aprecise));  
+    a=floor(min(aprecise));
     L=filterbanklength(Ls,a);
     a = repmat(a,M2,1);
 end;
@@ -270,7 +270,7 @@ else
     fsupp=[fsupp;flipud(fsupp(2:M2-1))];
 end;
 
-% This is actually much faster than the vectorized call. 
+% This is actually much faster than the vectorized call.
 g = cell(1,numel(fc));
 for m=1:numel(g)
   g{m} = blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...

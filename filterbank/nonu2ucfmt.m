@@ -6,11 +6,11 @@ function cu = nonu2ucfmt(c, p)
 %         c   : Non-uniform filterbank coefficients.
 %
 %   Output parameters:
-%         cu  : Uniform filterbank coefficients. 
+%         cu  : Uniform filterbank coefficients.
 %         p   : Numbers of copies of each filter.
 %
 %   `cu = nonu2ucfmt(c,p)` changes the coefficient format from
-%   non-uniform filterbank coefficients *c* (`M=numel(p)` channels) to 
+%   non-uniform filterbank coefficients *c* (`M=numel(p)` channels) to
 %   uniform coefficients *c* (`sum(p)` channels)  such that each
 %   channel of *cu* consinst of de-interleaved samples of channels of *c*.
 %
@@ -20,20 +20,20 @@ function cu = nonu2ucfmt(c, p)
 %
 %   References: akkva2003
 
-complain_notenoughargs(nargin,2,mfilename);
+complainif_notenoughargs(nargin,2,mfilename);
 
 if isempty(c)
    error('%s: c must be non-empty.',upper(mfilename));
 end
 
-if isempty(p) || ~isvector(p) 
-   error('%s: pk must be a non-empty vector.',upper(mfilename)); 
+if isempty(p) || ~isvector(p)
+   error('%s: pk must be a non-empty vector.',upper(mfilename));
 end
 
 if iscell(c)
     M = numel(c);
     Lc = cellfun(@(cEl) size(cEl,1),c);
-    if all(Lc==Lc(1)) 
+    if all(Lc==Lc(1))
         if ~all(p==1) || numel(p)~=M
            error('%s: Bad format of p for uniform coefficients.',...
               upper(mfilename));
@@ -51,7 +51,7 @@ elseif isnumeric(c)
     end
     % Just convert to cell-array and finish
     cu = cell(M,1);
-    for m=1:M    
+    for m=1:M
         cu{m}=squeeze(c(:,m,:));
     end;
     % End here, there is nothing else to do.
@@ -76,7 +76,7 @@ crange = arrayfun(@(pEl,pcEl)pcEl:pcEl+pEl-1,p,pkcumsum(1:end-1),...
 
 % c can be only cell array at this point
 for m=1:M
-   for k=1:p(m) 
+   for k=1:p(m)
       cu{crange{m}(k)} = c{m}(k:p(m):end,:);
    end
 end

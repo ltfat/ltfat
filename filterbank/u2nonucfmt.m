@@ -10,7 +10,7 @@ function c = u2nonucfmt(cu, p)
 %         p    : Numbers of copies of each filter.
 %
 %   `c = u2nonucfmt(cu,pk)` changes the coefficient format from
-%   uniform filterbank coefficients *cu* (`M=sum(p)` channels) to 
+%   uniform filterbank coefficients *cu* (`M=sum(p)` channels) to
 %   non-uniform coefficients *c* (`numel(p)` channels)  such that each
 %   channel of *c* consinst of `p(m)` interleaved channels of *cu*.
 %
@@ -20,7 +20,7 @@ function c = u2nonucfmt(cu, p)
 %
 %   References: akkva2003
 
-complain_notenoughargs(nargin,2,mfilename);
+complainif_notenoughargs(nargin,2,mfilename);
 
 if isempty(cu)
    error('%s: cu must be non-empty.',upper(mfilename));
@@ -30,10 +30,10 @@ if iscell(cu)
     if any(cellfun(@isempty,cu));
       error('%s: Elements of cu must be non-empty.',upper(mfilename));
     end
-    
+
     M = numel(cu);
     W = size(cu{1},2);
-    
+
     Lc = size(cu{1},1);
     if any(Lc~=cellfun(@(cEl)size(cEl,1),cu))
         error('%s: Coefficient subbands do not have an uniform length',...
@@ -47,8 +47,8 @@ else
     error('%s: cu must be a cell array or numeric.',upper(mfilename));
 end
 
-if isempty(p) || ~isvector(p) 
-   error('%s: p must be a non-empty vector.',upper(mfilename)); 
+if isempty(p) || ~isvector(p)
+   error('%s: p must be a non-empty vector.',upper(mfilename));
 end
 
 if sum(p) ~= M
@@ -73,7 +73,7 @@ else
         for w=1:W
             c{m}(:,w) = reshape(cu(:,crange{m},w).',1,[]);
         end
-    end    
+    end
 end
 
 % Post check whether there is the same number of coefficients

@@ -13,8 +13,8 @@ function L=filterbanklength(Ls,a)
 %
 %   See also: filterbank, filterbanklengthcoef
 
-complain_notenoughargs(nargin,2,upper(mfilename));
-complain_notposint(Ls,'Ls',upper(mfilename));
+complainif_notenoughargs(nargin,2,upper(mfilename));
+complainif_notposint(Ls,'Ls',upper(mfilename));
 
 if ~isnumeric(a) || any(a(:)<=0)
   error('%s: "a" must be numeric consisting of positive numbers ony.',...

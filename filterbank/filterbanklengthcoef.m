@@ -10,7 +10,7 @@ function L=filterbanklengthcoef(coef,a)
 %
 %   See also: filterbank, filterbanklength
 
-complain_notenoughargs(nargin,2,upper(mfilename));
+complainif_notenoughargs(nargin,2,upper(mfilename));
 
 
 if iscell(coef)
@@ -18,7 +18,7 @@ if iscell(coef)
   cl=cellfun(@(x) size(x,1),coef);
 else
   Mcoef=size(coef,2);
-  cl=ones(1,Mcoef)*size(coef,1);    
+  cl=ones(1,Mcoef)*size(coef,1);
 end;
 
 cl=cl(:);

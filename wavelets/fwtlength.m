@@ -11,8 +11,8 @@ function L=fwtlength(Ls,w,J,varargin);
 %   will be zero-padded by |fwt| to length *L*.
 %
 %   See also: fwt
-complain_notposint(Ls,'Ls','FWTLENGTH');
-complain_notposint(J,'J','FWTLENGTH');
+complainif_notposint(Ls,'Ls','FWTLENGTH');
+complainif_notposint(J,'J','FWTLENGTH');
 
 % Initialize the wavelet filters structure
 w = fwtinit(w);
