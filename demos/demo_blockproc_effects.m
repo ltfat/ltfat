@@ -1,27 +1,39 @@
-function demo_effects(source,varargin)
-%DEMO_BLOCKPROC_PITCHSHIFT Pitch shift by Gabor coefficient bands shift
-%   Usage: demo_blockproc_pitchshift('gspi.wav')
+function demo_blockproc_effects(source,varargin)
+%DEMO_BLOCKPROC_EFFECTS Various vocoder effects using DGT
+%   Usage: demo_blockproc_effects('gspi.wav')
 %
-%   For additional help call |demo_blockproc_pitchshift| without arguments.
+%   For additional help call |demo_blockproc_effects| without arguments.
 %
-%   This script demonstrates a real-time Gabor coefficient manipulation.
-%   Frequency bands are shifted up or down according to the slider
-%   position.
+%   This script demonstrates several real-time vocoder effects. Namely:
 %
+%      1) Robotization effect: Achieved by doing DGT reconstruction using
+%         absolute values of coefficients only.
+%
+%      2) Whisperization effect: Achieved by randomizing phase of DGT
+%         coefficients.
+%
+%      3) Pitch shifting effect: Achieved by stretching/compressing
+%         coefficients along frequency axis.
+%
+%      4) Audio morphing: Input is morphed with a background sound such
+%         that the phase of DGT coefficients is substituted by phase
+%         of DGT coefficients of the background signal. 
+%         File beat.wav (at 44,1kHz) (any sound will do) is expected to 
+%         be in the search path, oherwise the effect will fail.   
+%
+%   This demo was created for the Lange Nacht der Forschung 4.4.2014 event.
+%   
+
+% AUTHORS: Zdenek Prusa, Nicki Holighaus
 
 if demo_blockproc_header(mfilename,nargin)
    return;
 end
 
-
-
 fobj = blockfigure();
-
-
 
 % Common block setup
 bufLen = 1024;
-
 
 % Morphing params
 Fmorph = frametight(frame('dgtreal',{'hann',512},128,512,'timeinv'));
@@ -29,11 +41,11 @@ Fmorph = blockframeaccel(Fmorph, bufLen,'segola');
 
 haveWav = 0;
 try
-ff = 0.4*wavread('beat.wav');
-%ff = 0.8*resample(ff,4,1);
-ffblocks = reshape(postpad(ff,ceil(numel(ff)/bufLen)*bufLen),bufLen,[]);
-cidx = 1;
-haveWav = 1;
+   ff = 0.4*wavread('beat.wav');
+   %ff = 0.8*resample(ff,4,1);
+   ffblocks = reshape(postpad(ff,ceil(numel(ff)/bufLen)*bufLen),bufLen,[]);
+   cidx = 1;
+   haveWav = 1;
 catch
    warning('beat.wav not found. morphing effect wont work.'); 
 end

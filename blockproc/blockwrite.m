@@ -5,14 +5,14 @@ function blockwrite(f)
 %   Input parameters:
 %      f    : Block stream input.
 %
-%  Function appends *f* to a existing file. The file must have been
-%  explicitly defined as the 'outfile' parameter of |block| prior
-%  calling this function. If not, the function does nothing.
+%   Function appends *f* to a existing file. The file must have been
+%   explicitly defined as the 'outfile' parameter of |block| prior
+%   calling this function. If not, the function does nothing.
 %  
-%  The functon expect exactly the same format of *f* as is returned by 
-%  |blockread|.
+%   The functon expect exactly the same format of *f* as is returned by 
+%   |blockread|.
 %
-%  See also: block
+%   See also: block
 
 % Authors: Bjoern Ohl, Zdenek Prusa
 

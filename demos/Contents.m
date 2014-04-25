@@ -7,6 +7,7 @@
 %   Basic demos
 %     DEMO_DGT              - |dgt| and comparison to |sgram|
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
+%     DEMO_WAVELETS         - Wavelet representations using  |fwt| and |wfbt|.
 %
 %   Compression
 %     DEMO_IMAGECOMPRESSION - Image compression using |dwilt| and |fwt|
@@ -19,6 +20,8 @@
 %     DEMO_OFDM             - Simple OFDM demo.
 %     DEMO_AUDIOSHRINK      - Lasso shrinkage of audio signal.
 %     DEMO_GABMULAPPR       - Approx. of time-varying system.
+%     DEMO_BPFRAMEMUL       - A Gabor multiplier as a time-varying bandpass filter.
+%     DEMO_FRSYNABS         - Synthetic spectrogram iterative reconstruction.
 %
 %   Aspects of particular functions
 %     DEMO_NSDGT            - Non-stationary Gabor systems
@@ -27,12 +30,14 @@
 %     DEMO_GABMIXDUAL       - How to use |gabmixdual|.
 %     DEMO_FRAMEMUL         - Time-frequency localization by Gabor multiplier.
 %     DEMO_PHASEPLOT        - Phaseplots.
-%     DEMO_FRSYNABS         - Iterative spectrogram reconstruction.
+%     DEMO_PHASERET         - Spectrogram phase retrieval and phase difference
 %     DEMO_NEXTFASTFFT      - Next fast FFT size.
+%     DEMO_FILTERBANKS      - Non-stationary Gabor systems defined in frequency domain
 %
 %  Auditory scales and filters
-%     DEMO_AUDSCALES        - Different auditory scales.
+%     DEMO_AUDSCALES          - Different auditory scales.
 %     DEMO_AUDITORYFILTERBANK - Erb-spaced auditory filterbank.
+%     DEMO_WFBT               - Auditory filterbanks created using |wfbt|.
 %
 %  Block-processing demos
 %     DEMO_BLOCKPROC_BASICLOOP        - Simple audio playback loop.
@@ -43,6 +48,7 @@
 %     DEMO_BLOCKPROC_SLIDINGERBLETS   - Sliding Erblets plot.
 %     DEMO_BLOCKPROC_PITCHSHIFT       - Simple pich shifting.
 %     DEMO_BLOCKPROC_DGTEQUALIZER     - Variable Gabor Multiplier as equalizer.
+%     DEMO_BLOCKPROC_EFFECTS          - Real-time vocoder effects.
 %     
 %
 %   For help, bug reports, suggestions etc. send email to 
