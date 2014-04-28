@@ -88,3 +88,12 @@ switch(F.type)
    case 'wpfbt'
        error('TO DO:');
 end;
+
+
+
+% Treat the fixed length frames
+if isfield(F,'fixedlength') && F.fixedlength
+   Ft = frameaccel(Ft,F.L);
+   Ft.fixedlength = 1;
+end
+

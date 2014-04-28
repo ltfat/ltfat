@@ -60,7 +60,7 @@ switch(F.type)
     [g, a] = wfbt2filterbank({F.g,F.J,'dwt'});
     g = comp_filterbankscale(g,a,F.flags.scaling);
     
-    Fd = framedual(frame('ufilterbank',g,1,numel(g)));
+    Fd = framedual(frame('filterbank',g,ones(numel(g),1),numel(g)));
     warning(sprintf(['%s: The canonical dual system does not preserve ',...
                      'the iterated filterbank structure.'],...
                      upper(mfilename)));
@@ -71,10 +71,22 @@ switch(F.type)
     [g, a] = wfbt2filterbank(F.g);
     g = comp_filterbankscale(g,a,F.flags.scaling);
     
-    Fd = framedual(frame('ufilterbank',g,1,numel(g)));
+    Fd = framedual(frame('filterbank',g,ones(numel(g),1),numel(g)));
     warning(sprintf(['%s: The canonical dual system does not preserve ',...
                      'the iterated filterbank structure.'],...
                      upper(mfilename))); 
+                 
+  case 'uwpfbt'
+    % The canonical dual of uwfbt might not keep the iterated
+    % filterbank structure
+    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);
+    g = comp_filterbankscale(g,a,F.flags.scaling);
+    
+    Fd = framedual(frame('filterbank',g,ones(numel(g),1),numel(g)));
+    warning(sprintf(['%s: The canonical dual system of frame type %s ',...
+                     'does not preserve iterated filterbank structure.'],...
+                     upper(mfilename),F.type));  
+      
   case 'wpfbt'
     % The canonical dual of wpfbt might not keep the iterated
     % filterbank structure
@@ -83,15 +95,12 @@ switch(F.type)
     Fd = framedual(frame('ufilterbank',gu,au,numel(gu)));
     
     error('TO DO: ')
-  case 'uwpfbt'
-    % The canonical dual of uwfbt might not keep the iterated
-    % filterbank structure
-    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);
-    g = comp_filterbankscale(g,a,F.flags.scaling);
-    
-    Fd = framedual(frame('ufilterbank',g,1,numel(g)));
-    warning(sprintf(['%s: The canonical dual system of frame type %s ',...
-                     'does not preserve iterated filterbank structure.'],...
-                     upper(mfilename),F.type));  
-      
+
 end;
+
+% Treat the fixed length frames
+if isfield(F,'fixedlength') && F.fixedlength
+   Fd = frameaccel(Fd,F.L);
+   Fd.fixedlength = 1;
+end
+

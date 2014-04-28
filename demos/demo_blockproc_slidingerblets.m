@@ -27,15 +27,15 @@ fobj = blockfigure();
 % The value can be any positive integer.
 % Note that the processing itself can introduce additional delay.
 bufLen = 1024;
+zpad = bufLen/2;
 
 % Setup blocktream
 fs=block(source,varargin{:},'loadind',p,'L',bufLen);
 
 % Number of filters
 M = 200;
-[g,a]=erbfilters(fs,2*bufLen,'fractionaluniform','M',M);
-F = frame('filterbankreal',g,a,size(a,1));
-Fa = blockframeaccel(F,bufLen,'sliced');
+F = frame('erbletfb',fs,2*bufLen+2*zpad,'fractionaluniform','M',M);
+Fa = blockframeaccel(F,bufLen,'sliced','zpad',zpad);
 
 flag = 1;
 cola = [];

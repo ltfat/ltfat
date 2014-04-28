@@ -19,9 +19,14 @@ function F=frameaccel(F,Ls);
   
 L=framelength(F,Ls);
 
-if (isfield(F,'L') && (L==F.L))
-  % Quick return, we have already accelerated
-  return
+if isfield(F,'L')
+  if  L==F.L
+     % Quick return, we have already accelerated
+     return
+  elseif isfield(F,'fixedlength') && F.fixedlength
+     error(['%s: Incompatible signal length. The frame was specified for ',...
+            'fixed signal length L=%i.'],upper(mfilename),F.L); 
+  end
 end;
 
 F.L=L;

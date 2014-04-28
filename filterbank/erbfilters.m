@@ -157,8 +157,6 @@ definput.flags.sampling = {'regsampling','uniform','fractional',...
 winbw=norm(firwin(flags.wintype,1000)).^2/1000;
 
 % Construct the Erb filterbank
-
-
 if flags.do_real
     if isempty(kv.M)
         M2=ceil(freqtoerb(fs/2)/kv.spacing)+1;

@@ -33,10 +33,8 @@ fs=block(source,varargin{:},'loadind',p,'L',bufLen);
 
 % Prepare CQT filters in range 200Hz--20kHz, 48 bins per octave
 % 320 + 2 filters in total.
-[g,a]=cqtfilters(fs,200,20000,48,2*bufLen+2*zpad,'fractionaluniform');
-
-% Prepare a frame object representing the filterbank
-F = frame('filterbankreal',g,a,numel(a));
+% And a frame object representing the filterbank
+F = frame('cqtfb',fs,200,20000,48,2*bufLen+2*zpad,'fractionaluniform');
 % Accelerate the frame object to be used with the "sliced" block processing
 % handling.
 Fa = blockframeaccel(F,bufLen,'sliced','zpad',zpad);
