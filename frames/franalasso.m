@@ -1,4 +1,4 @@
-function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
+function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %FRANALASSO  Frame LASSO regression
 %   Usage: [tc,xrec] = franalasso(F,f,lambda,C,tol,maxit)
 %
@@ -24,9 +24,10 @@ function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %   `[tc,relres,iter] = franalasso(...)` return thes residuals *relres* in a vector
 %   and the number of iteration steps done *iter*.
 %
-%   `[tc,relres,iter,frec] = franalasso(...)` returns the reconstructed
-%   signal from the coefficients, *frec*. Note that this requires additional
-%   computations.
+%   `[tc,relres,iter,frec,cd] = franalasso(...)` returns the reconstructed
+%   signal from the coefficients, *frec* and coefficients *cd* obtained by
+%   analysing using the canonical dual system. 
+%   Note that this requires additional computations.
 %
 %   The relationship between the output coefficients is given by ::
 %
@@ -61,8 +62,42 @@ function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %   **Note**: If you do not specify *C*, it will be obtained as the upper
 %   framebound. Depending on the structure of the frame, this can be an
 %   expensive operation.
+%
+%   Examples:
+%   ---------
+%
+%   The following example shows how |franalasso| produces a sparse
+%   representation of a test signal *greasy*:::
+%
+%      f = greasy;
+%      % Gabor frame with redundancy 8
+%      F = frame('dgtreal','gauss',64,512);
+%      % Choosing lambda (weight of the sparse regularization param.)
+%      lambda = 0.1;
+%      % Solve the basis pursuit problem
+%      [c,~,~,frec,cd] = franalasso(F,f,lambda);
+%      % Plot sparse coefficients
+%      figure(1);
+%      plotframe(F,c,'dynrange',50);
+%
+%      % Plot coefficients obtained by applying an analysis operator of a
+%      % dual Gabor system to f
+%      figure(2);
+%      plotframe(F,cd,'dynrange',50);
+%
+%      % Check the (NON-ZERO) reconstruction error .
+%      % frec is obtained by applying the synthesis operator of frame F
+%      % to sparse coefficients c.
+%      norm(f-frec)
+%
+%      % Compare decay of coefficients sorted by absolute values
+%      % (compressibility of coefficients)
+%      figure(3);
+%      semilogx([sort(abs(c),'descend')/max(abs(c)),...
+%      sort(abs(cd),'descend')/max(abs(cd))]);
+%      legend({'sparsified coefficients','dual system coefficients'});
 %  
-%   See also: frame, frsyn, framebounds, franagrouplasso
+%   See also: frame, frsyn, framebounds, franabp, franagrouplasso
 %
 %   References: dademo04 beck09
 
@@ -76,9 +111,7 @@ function [tc,relres,iter,frec] = franalasso(F,f,lambda,varargin)
 %   basis coefficients (BCR algorithm)
 %
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRANALASSO');
 
 if sum(size(f)>1)>1
   error('%s: Too many input channels.',upper(mfilename));    
@@ -154,9 +187,25 @@ elseif flags.do_fista
          end;
        end;
    end   
+   
 end
 
-% Reconstruction
+% Optional reconstruction
 if nargout>3
-  frec = postpad(F.frsyn(tc),Ls);
+   frec = postpad(F.frsyn(tc),Ls);
 end;
+
+% Calculate coefficients using the canonical dual system
+% May be conviniently used for comparison
+if nargout>4
+  try  
+     Fd = framedual(F);
+     cd = frana(Fd,f);
+  catch
+     warning(sprintf(['%s: Dual frame is not available. Using franaiter'],...
+                     upper(mfilename)));
+     cd = franaiter(F,f);
+  end
+end;
+
+

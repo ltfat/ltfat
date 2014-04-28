@@ -1,9 +1,9 @@
 function [Lc,L]=wfbtclength(Ls,wt,varargin)
-%WFBTLENGTH  WFBT subband lengthf from a signal length
-%   Usage: L=wfbtlength(Ls,wt);
-%          L=wfbtlength(Ls,wt,...);
+%WFBTCLENGTH  WFBT subband lengths from a signal length
+%   Usage: L=wfbtclength(Ls,wt);
+%          L=wfbtclength(Ls,wt,...);
 %
-%   `wfbtlength(Ls,wt)` returns the length of a Wavelet system that is long
+%   `wfbtclength(Ls,wt)` returns the length of a Wavelet system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
 %   |wfbt| for an explanation of the parameter *wt*.
 %

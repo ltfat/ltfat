@@ -1,7 +1,7 @@
 function [Lc,L]=wpfbtclength(Ls,wt,varargin)
-%WFBTLENGTH  WPFBT subband length from a signal length
-%   Usage: L=wfbtlength(Ls,wt);
-%          L=wfbtlength(Ls,wt,...);
+%WPFBTCLENGTH  WPFBT subband length from a signal length
+%   Usage: L=wpfbtclength(Ls,wt);
+%          L=wpfbtclength(Ls,wt,...);
 %
 %   `[Lc,L]=wpfbtclength(Ls,wt)` returns the length *L* of a wavelet system
 %   that is long enough to expand a signal of length *Ls* and associated

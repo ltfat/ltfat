@@ -1,5 +1,5 @@
 function [AF,BF]=wpfbtbounds(wt,L,varargin)
-%WFBTBOUNDS Frame bounds of WPFBT
+%WPFBTBOUNDS Frame bounds of WPFBT
 %   Usage: fcond=wpfbtbounds(wt,L);
 %          [A,B]=wpfbtbounds(wt,L);
 %

@@ -34,6 +34,7 @@
 %    FRAMETF2COEF      - Convert TF-plane layout to native
 %
 %  Non-linear analysis and synthesis
+%    FRANABP           - Basis pursuit using the SALSA algorithm.
 %    FRANALASSO        - LASSO threshholding using Landweber iterations.
 %    FRANAGROUPLASSO   - Group LASSO threshholding.
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients

@@ -1,5 +1,5 @@
 function [AF,BF]=uwfbtbounds(wt,L,varargin)
-%WFBTBOUNDS Frame bounds of Undecimated WFBT
+%UWFBTBOUNDS Frame bounds of Undecimated WFBT
 %   Usage: fcond=uwfbtbounds(wt,L);
 %          [A,B]=uwfbtbounds(wt,L);
 %

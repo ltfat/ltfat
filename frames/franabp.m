@@ -24,20 +24,21 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %
 %   .. min lambda*||c||_1 subject to Fc = f
 %
-%   .. math:: \lambda||c||_1 \\ \text{subject to } Fc = f
+%   .. math:: \text{min} \ \lambda||c||_1 \\ \text{subject to } Fc = f
 %
 %   for a general frame *F* using SALSA (Split Augmented Lagrangian
 %   Srinkage algorithm) which is an appication of ADMM (Alternating
 %   Direction Method of Multipliers) to the basis pursuit problem.
 %
-%   The algorithm acts as follows:
+%   The algorithm given *F* and *f* and parameters *C*, `lambda` $>0$ acts
+%   as follows::
 %
-%   Initialize d,C>0
-%   repeat
-%      v <- soft(c+d,lambda/C) - d
-%      d <- F*(FF*)^(-1)(f - Fv)
-%      c <- d + v
-%   end
+%     Initialize c,d
+%     repeat
+%       v <- soft(c+d,lambda/C) - d
+%       d <- F*(FF*)^(-1)(f - Fv)
+%       c <- d + v
+%     end
 %
 %   For a quick execution, the function requires analysis operator of the
 %   canonical dual frame F*(FF*)^(-1). By default, the function attempts
@@ -62,19 +63,19 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %
 %   Key-value pairs:
 %
-%     `'Fd',Fd`
+%      `'Fd',Fd`
 %             A canonical dual frame object or an anonymous function 
 %             acting as the analysis operator of the canonical dual frame.
 %
-%     `'printstep',printstep`
+%      `'printstep',printstep`
 %             Print current status every `printstep` iteration.
 %
 %   Flag groups (first one listed is the default):
 %
-%     `'print','quiet'`
+%      `'print','quiet'`
 %             Enables/disables printing of notifications.
 %
-%     `'zeros','frana'`
+%      `'zeros','frana'`
 %             Starting point of the algorithm. With `'zeros'` enabled, the
 %             algorithm starts from coefficients set to zero, with `'frana'`
 %             the algorithm starts from `c=frana(F,f)`.             
@@ -102,7 +103,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   Examples:
 %   ---------
 %
-%   The following example shows how franabp produces a sparse
+%   The following example shows how |franabp| produces a sparse
 %   representation of a test signal *greasy* still maintaining a perfect
 %   reconstruction:::
 %
