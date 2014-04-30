@@ -80,10 +80,10 @@ function [c,info]=uwpfbt(f,wt,varargin)
 %   A simple example of calling the |uwpfbt| function using the "full
 %   decomposition" wavelet tree:::
 %
-%     f = greasy;
+%     [f,fs] = greasy;
 %     J = 6;
 %     [c,info] = uwpfbt(f,{'db10',J,'full'});
-%     plotwavelets(c,info,44100,'dynrange',90);
+%     plotwavelets(c,info,fs,'dynrange',90);
 %
 %   See also: iuwpfbt, wfbtinit
 
