@@ -60,9 +60,27 @@ Fr{29} = frametight(frame('nsdgtreal',g,a,M));
 Fr{30} = frametight(frame('unsdgtreal',g,a,100));
 
 Fr{31} = frametight(frame('dftreal'));
-Fr{32} = frame('fwt','db4',5);
 
+Fr{32} = frame('fwt','db4',5);
 Fr{33} = frame('wfbt',{'db4',5});
+%Fr{34} = frame('wpfbt',{'db4',5});
+%Fr{35} = frame('wpfbt',{'db4',5});
+%Fr{36} = frame('wpfbt',{'db4',5});
+
+Fr{37} = frame('ufwt','db4',4);
+Fr{38} = frame('ufwt','db4',4,'scale');
+Fr{39} = frame('ufwt','db4',4,'noscale');
+
+Fr{40} = frame('uwfbt',{'db4',4});
+Fr{41} = frame('uwfbt',{'db4',4},'scale');
+Fr{42} = frame('uwfbt',{'db4',4},'noscale');
+
+Fr{43} = frame('uwpfbt',{'db4',4});
+Fr{44} = frame('uwpfbt',{'db4',4},'scale');
+Fr{45} = frame('uwpfbt',{'db4',4},'noscale');
+
+%Fr{36} = frame('uwfbt',{'db4',5});
+%Fr{37} = frame('uwpfbt',{'db4',5});
 
 % The tensor frame implementation is currenly broken
 %Fr{33} = frame('tensor',Fr{11});
@@ -72,10 +90,30 @@ Fr{33} = frame('wfbt',{'db4',5});
 %Fr{32} = frame('filterbankreal', gfilt,[4 3 2 2],4);
 
 
+Fr{60} = frame('erbletfb',44100,L,'real','regsampling');
+Fr{61} = frame('erbletfb',44100,L,'complex','regsampling');
+
+Fr{62} = frame('erbletfb',44100,L,'real','fractional');
+Fr{63} = frame('erbletfb',44100,L,'complex','fractional');
+
+Fr{64} = frametight(Fr{60});
+Fr{65} = frametight(Fr{62});
+
+
+Fr{66} = frame('cqtfb',44100,200,20000,20,L,'real','regsampling');
+Fr{67} = frame('cqtfb',44100,200,20000,20,L,'complex','regsampling');
+
+Fr{68} = frame('cqtfb',44100,200,20000,20,L,'real','fractional');
+Fr{69} = frame('cqtfb',44100,200,20000,20,L,'complex','fractional');
+
+Fr{70} = frametight(Fr{66});
+Fr{71} = frametight(Fr{67});
+
 
 f=tester_rand(L,1);
 
 for ii=1:numel(Fr)
+  
   F=Fr{ii};
   
   if isempty(F)
@@ -87,6 +125,11 @@ for ii=1:numel(Fr)
   c=frana(F,f);
   r=frsyn(Fd,c);
   res=norm(r(1:L)-f);
+  
+  lendiff = size(c,1) - frameclength(F,L);
+  [test_failed,fail]=ltfatdiditfail(lendiff ,test_failed);
+  s=sprintf(['FRAMES CLENGTH        frameno:%3i %s %0.5g %s'],ii,F.type,lendiff,fail);    
+  disp(s);
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf(['FRAMES DUAL REC       frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
