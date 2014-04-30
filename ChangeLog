@@ -1,3 +1,24 @@
+Version 1.4.5 ? 2014
+    * Phase locking in DGT ('timeinv' flag) moved to the C backend. It
+      was too slow in Octave.
+
+    * Added franabp - solving a basis pursuit problem 
+                      argmin ||c||_1 s.t. Fc = f 
+                      for an arbitrary frame F.
+
+    * New demos to accompany the LTFAT 2.0 paper.
+	   
+    * New blockproc demo: demo_blockproc_effects
+
+    * blockproc framework can be now used offline without a single call to
+      playrec.
+
+    * Closed #49: blockwrite method. 
+
+    * All wavelet routines were correctly included in the frames framework.
+
+    * New wrapper frame types in the frames framework: erbletfb, cqtfb
+
 Version 1.4.4 25/2 2014
 	* Mostly bug fixes and doc updates. 
 
@@ -7,7 +28,7 @@ Version 1.4.4 25/2 2014
 
 	* The C code was revised: consistence of argument naming and order,
 	                          introduced ltfatInt data type for array
-							  lengths.
+							        lengths.
 
 	* New block processing demos: real-time CQT and Erblets
 	  (fast enough only in Matlab).
@@ -235,7 +256,7 @@ Version 0.97.2:
 	conditions.
 
 	* The algorithm for computing dgtreal with a FIR window is now
-          implemented in C.
+     implemented in C.
 
 Version 0.97.1:
 
