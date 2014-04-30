@@ -8,16 +8,13 @@ function coef=framecoef2native(F,coef);
 %
 %   See also: frame, framenative2coef, framecoef2tf
   
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if ~isstruct(F)
-  error('%s: First agument must be a frame definition structure.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRAMECOEF2NATIVE');
+complainif_notvalidframeobj(F,'FRAMECOEF2NATIVE');
 
 [MN,W]=size(coef);
 
+% .coef2native field is not mandatory since for some frames, both
+% coefficient formats are identical
 if isfield(F,'coef2native')
     coef=F.coef2native(coef,size(coef));
 end;

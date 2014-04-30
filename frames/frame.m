@@ -284,6 +284,7 @@ switch(ftype)
     F.length=@(Ls) ceil(Ls/2)*2;
     F.lengthcoef=@(Ncoef) (Ncoef-1)*2;
     F.realinput=1;
+    F.clength = @(L) floor(L/2)+1;
 
   case 'dgt'
     F.coef2native=@(coef,s) reshape(coef,[F.M,s(1)/F.M,s(2)]);
@@ -302,6 +303,7 @@ switch(ftype)
     F.length=@(Ls) dgtlength(Ls,F.a,F.M,F.kv.lt);
     F.red=F.M/F.a;
     F.lengthcoef=@(Ncoef) Ncoef/(floor(F.M/2)+1)*F.a;
+    F.clength = @(L) L/F.a*(floor(F.M/2)+1);
     
   case 'dwilt'
     F.coef2native=@(coef,s) reshape(coef,[2*F.M,s(1)/F.M/2,s(2)]);
@@ -383,7 +385,8 @@ switch(ftype)
     F.frsyn=@(insig) insdgtreal(F.coef2native(insig,size(insig)),F.g,F.a,F.M);
     F.length=@(Ncoef) sum(F.a);
     F.lengthcoef=@(Ncoef) sum(F.a);
-    F.red=sum(F.M)/sum(F.a);    
+    F.red=sum(F.M)/sum(F.a); 
+    F.clength=@(L) sum(floor(F.M/2)+1);
     
   case 'unsdgtreal'
     F.coef2native=@(coef,s) reshape(coef,floor(F.M(1)/2)+1,s(1)/ ...
@@ -393,7 +396,8 @@ switch(ftype)
     F.frsyn=@(insig) insdgtreal(F.coef2native(insig,size(insig)),F.g,F.a,F.M);
     F.length=@(Ncoef) sum(F.a);
     F.lengthcoef=@(Ncoef) sum(F.a);
-    F.red=sum(F.M)/sum(F.a);    
+    F.red=sum(F.M)/sum(F.a); 
+    F.clength=@(L) numel(F.M)*(floor(F.M(1)/2)+1);
                 
   case 'fusion'
     F.w=varargin{1};

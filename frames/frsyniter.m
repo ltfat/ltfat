@@ -59,9 +59,8 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
   
 % AUTHORS: Nicki Holighaus & Peter L. Søndergaard
     
-  if nargin<2
-    error('%s: Too few input parameters.',upper(mfilename));
-  end;
+complainif_notenoughargs(nargin,2,'FRSYNITER');
+complainif_notvalidframeobj(F,'FRSYNITER');
 
   tolchooser.double=1e-9;
   tolchooser.single=1e-5;

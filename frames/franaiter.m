@@ -62,9 +62,8 @@ function [outsig,relres,iter]=franaiter(F,insig,varargin)
   
 % AUTHORS: Peter L. Søndergaard
     
-if nargin<2
-    error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRANAITER');
+complainif_notvalidframeobj(F,'FRANAITER');
 
 tolchooser.double=1e-9;
 tolchooser.single=1e-5;

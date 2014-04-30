@@ -16,7 +16,12 @@ function F=frameaccel(F,Ls);
 %   additional computations will be done.
 %
 %   See also: frame, frana, framelength, framelengthcoef
-  
+
+callfun = upper(mfilename);
+complainif_notenoughargs(nargin,2,callfun);
+complainif_notposint(Ls,'Ls',callfun);
+complainif_notvalidframeobj(F,callfun);
+
 L=framelength(F,Ls);
 
 if isfield(F,'L')

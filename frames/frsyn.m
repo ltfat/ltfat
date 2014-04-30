@@ -8,13 +8,8 @@ function outsig=frsyn(F,insig);
 %
 %   See also: frame, frana, plotframe
   
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if ~isstruct(F)
-  error('%s: First agument must be a frame definition structure.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRSYN');
+complainif_notvalidframeobj(F,'FRSYN');
 
 L=framelengthcoef(F,size(insig,1));
 

@@ -21,9 +21,8 @@ function Ft=frametight(F);
 %
 %   See also: frame, framepair, framedual
   
-if nargin<1
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,1,'FRAMETIGHT');
+complainif_notvalidframeobj(F,'FRAMETIGHT');
 
 % Default operation, works for a lot of frames
 Ft=F;

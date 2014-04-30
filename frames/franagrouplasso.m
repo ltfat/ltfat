@@ -79,9 +79,8 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
 %
 %   References: Kowalski08sparsity kowalski2009mixed
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,3,'FRANAGROUPLASSO');
+complainif_notvalidframeobj(F,'FRANAGROUPLASSO');
 
 if ~isvector(insig)
     error('Input signal must be a vector.');

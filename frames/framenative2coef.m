@@ -7,14 +7,10 @@ function coef=framenative2coef(F,coef);
 %
 %   See also: frame, framecoef2native
   
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRAMENATIVE2COEF');
+complainif_notvalidframeobj(F,'FRAMENATIVE2COEF');
 
-if ~isstruct(F)
-  error('%s: First agument must be a frame definition structure.',upper(mfilename));
-end;
-
+% .native2coef is not a mandatory field
 if isfield(F,'native2coef')
    coef=F.native2coef(coef);
 end

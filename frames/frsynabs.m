@@ -71,9 +71,8 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 
 % Check input paramameters.
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRSYNABS');
+complainif_notvalidframeobj(F,'FRSYNABS');
   
 definput.keyvals.Ls=[];
 definput.keyvals.tol=1e-6;

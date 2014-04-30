@@ -26,13 +26,16 @@ function G=frsynmatrix(F,L);
 %
 %   See also: frame, frana, frsyn
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+callfun = upper(mfilename);
+complainif_notenoughargs(nargin,2,callfun);
+complainif_notposint(L,'L',callfun);
+complainif_notvalidframeobj(F,callfun);
 
 Lcheck=framelength(F,L);
+
 if Lcheck~=L
-    error('%s: Incompatible frame length.',upper(mfilename));
+    error('%s: Incompatible frame length. Next compatible one is %i.',...
+          upper(mfilename),Lcheck);
 end;
 
 if F.realinput
@@ -53,8 +56,9 @@ if F.realinput
     %    end;
         
     %  otherwise
-        error(['%s: The synthesis operator of real-valued-input frames does is ' ...
-               'non-linear and does not have a matrix represenation.']);
+     error(['%s: The synthesis operator of real-valued-input frames is ' ...
+            'non-linear and does not have a matrix represenation.'],...
+            upper(mfilename));
         %end;
 else
     

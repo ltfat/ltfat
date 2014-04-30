@@ -30,14 +30,7 @@ function [F1,F2]=framepair(ftype,g1,g2,varargin);
 %   See also: frame, framedual, frametight
 
   
-if nargin<1
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if ~ischar(ftype)
-  error(['%s: First agument must be a string denoting the type of ' ...
-         'frame.'],upper(mfilename));
-end;
+complainif_notenoughargs(nargin,3,'FRAMEPAIR');
 
 ftype=lower(ftype);
 

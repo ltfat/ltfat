@@ -16,13 +16,8 @@ function coef=framecoef2tf(F,coef);
 %
 %   See also: frame, frametf2coef, framecoef2native
   
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if ~isstruct(F)
-  error('%s: First agument must be a frame definition structure.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRAMECOEF2TF');
+complainif_notvalidframeobj(F,'FRAMECOEF2TF');
 
 switch(F.type)
    case 'fwt'

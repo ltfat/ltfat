@@ -8,18 +8,18 @@ function L=framelengthcoef(F,Ncoef);
 %   If instead a signal is given, call |framelength|.
 %
 %   See also: frame, framelength
-  
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
 
-if ~isscalar(Ncoef)
-  error('%s: Ncoef must be a scalar.',upper(mfilename));
-end;
+callfun = upper(mfilename);
+complainif_notenoughargs(nargin,2,callfun);
+complainif_notposint(Ncoef,'Ncoef',callfun);
+complainif_notvalidframeobj(F,callfun);
+
 
 L = F.lengthcoef(Ncoef);
 % sprintf for Octave compatibility
-assert(abs(L-round(L))<1e-3,sprintf('%s: There is a bug. L=%d should be an integer.',upper(mfilename),L));
+assert(abs(L-round(L))<1e-3,...
+       sprintf('%s: There is a bug. L=%d should be an integer.',...
+       upper(mfilename),L));
 L=round(L);
     
 % Verify the computed length

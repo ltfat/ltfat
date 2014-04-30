@@ -23,5 +23,9 @@ function red=framered(F);
 %
 %   See also: frame, frana, framebounds
 
+complainif_notenoughargs(nargin,1,'FRAMERED');
+complainif_notvalidframeobj(F,'FRAMERED');
+
+% .red field is mandatory so no checking here
 red=F.red;
   

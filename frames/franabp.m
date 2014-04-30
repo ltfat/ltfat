@@ -20,18 +20,18 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %       frec     : Reconstructed signal such that frec = frsyn(F,c)
 %       cd       : The min ||c||_2 solution using the canonical dual frame.
 %
-%   `c = franabp(F,f,lambda)` solves the Basis Pursuit problem
+%   `c = franabp(F,f)` solves the basis pursuit problem
 %
-%   .. min lambda*||c||_1 subject to Fc = f
+%   .. argmin ||c||_1 subject to Fc = f
 %
-%   .. math:: \text{min} \ \lambda||c||_1 \\ \text{subject to } Fc = f
+%   .. math:: \text{argmin}_c \ ||c||_1 \\ \text{subject to } Fc = f
 %
 %   for a general frame *F* using SALSA (Split Augmented Lagrangian
 %   Srinkage algorithm) which is an appication of ADMM (Alternating
 %   Direction Method of Multipliers) to the basis pursuit problem.
 %
-%   The algorithm given *F* and *f* and parameters *C*, `lambda` $>0$ acts
-%   as follows::
+%   The algorithm given *F* and *f* and parameters *C*$>0$, `lambda` $>0$ 
+%   (see below) acts as follows::
 %
 %     Initialize c,d
 %     repeat
@@ -48,18 +48,45 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   algorithm.
 %   Optionally, the canonical dual frame object or an anonymous function 
 %   acting as the analysis operator of the canonical dual frame can be 
-%   passed as a key-value pair `'Fd',Fd`.   
+%   passed as a key-value pair `'Fd',Fd` see below. 
 %
-%   REMARK: `tol` defines tolerance of `relres` which is norm or a relative
-%   difference of coefficients obtained in two consecutive iterations of the
-%   algorithm.
+%   Optional positional parameters (lambda,C,tol,maxit)
+%   ---------------------------------------------------
 %
-%   **Note**: If you do not specify *C*, it will be obtained as the upper
-%   framebound. Depending on the structure of the frame, this can be an
-%   expensive operation.
+%      `lambda`
+%          A parameter for weighting coefficients in the objective
+%          function. For lambda~=1 the basis pursuit problem changes to
 %
-%   Optional parameters:
-%   --------------------
+%          .. argmin ||lambda c||_1 subject to Fc = f
+%
+%          .. math:: \text{argmin}_c \ ||\lambda c||_1 \\ \text{subject to } Fc = f
+%          
+%          `lambda` can either be a scalar or a vector of the same length
+%          as *c*. One can obtain length of *c* from length of *f* by
+%          |frameclength|. |framecoef2native| and |framenative2coef| will
+%          help with defining weights specific to some regions of
+%          coefficients (e.g. channel-specific weighting can be achieved
+%          this way).           
+%          The default value of `lambda` is 1.
+%
+%      `C`
+%         A step parameter of the SALSA algoritm. 
+%         The default value of `C` is the upper frame bound of *F*. 
+%         Depending on the structure of the frame, this can be an expensive
+%         operation.
+%
+%      `tol`
+%         Defines tolerance of `relres` which is norm or a relative
+%         difference of coefficients obtained in two consecutive iterations
+%         of the algorithm.
+%         The default value 1e-2.
+%
+%      `maxit`
+%         Maximum number of iterations to do.
+%         The default value is 100.
+%
+%   Other optional parameters
+%   -------------------------
 %
 %   Key-value pairs:
 %
@@ -138,9 +165,11 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   References: se14 bopachupeec11
 
 %   AUTHOR: Zdenek Prusa
-
+%   TO DO: Detect when F is a tight frame and simplify the algorithm. 
+%   Maybe add a 'tight' flag to indicate the frame is already tight.
 
 complainif_notenoughargs(nargin,2,'FRANABP');
+complainif_notvalidframeobj(F,'FRANABP');
 
 % Define initial value for flags and key/value pairs.
 definput.keyvals.C=[];
@@ -157,8 +186,8 @@ if isempty(lambda)
     lambda = 1;
 end
 
-if ~isnumeric(lambda) || lambda<0
-    error('%s: ''lambda'' parameter must be a positive scalar.',...
+if ~isnumeric(lambda) || any(lambda)<0
+    error('%s: ''lambda'' parameter must be positive.',...
           upper(mfilename));
 end
 
@@ -175,12 +204,11 @@ end
 L = framelength(F,Ls);
 f = postpad(f,L);
 
-
 if isempty(C)
     % Use the upper framebound as C
    [~,C] = framebounds(F,L);
 else
-   if ~isnumeric(C) || C<0
+   if ~isnumeric(C) || C<=0
        error('%s: ''C'' parameter must be a positive scalar.',...
            upper(mfilename));
    end
@@ -230,16 +258,18 @@ elseif flags.do_zeros
 end
 c = tc0;
 
-% 1/C is the lower frame bound of the dual frame.
-threshold = lambda/C;
+threshold = lambda./C;
 relres = 1e16;
 iter = 0;
 
-% The main algorithm
+% Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
+   % Main part of the algorithm 
    v = thresh(c + d,threshold,'soft') - d;
    d = cd - Fdfrana(F.frsyn(v));
    c = d + v;
+   
+   % Bookkeeping
    relres = norm(c(:)-tc0(:))/norm(tc0(:));
    tc0 = c;
    iter = iter + 1;

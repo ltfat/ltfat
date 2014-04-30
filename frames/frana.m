@@ -32,14 +32,8 @@ function outsig=frana(F,insig);
 %
 %   See also: frame, framepair, frsyn, plotframe
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if ~isstruct(F)
-  error('%s: First argument must be a frame definition structure.',...
-        upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'FRANA');
+complainif_notvalidframeobj(F,'FRANA');
 
 if size(insig,1) == 1
     error('%s: Currently only column vectors are supported. See bug #59.',...

@@ -38,6 +38,9 @@ function outsig=plotframe(F,insig,varargin);
 %
 %   See also: frame, frana
 
+complainif_notenoughargs(nargin,2,'PLOTFRAME');
+complainif_notvalidframeobj(F,'PLOTFRAME');
+
 switch(F.type)
    case {'fwt','ufwt','wfbt','wpfbt','uwfbt','uwpfbt'}
       info.fname = F.type;

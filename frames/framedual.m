@@ -20,9 +20,8 @@ function Fd=framedual(F);
 %
 %   See also: frame, framepair, frametight
   
-if nargin<1
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,1,'FRAMEDUAL');
+complainif_notvalidframeobj(F,'FRAMEDUAL');
 
 % Default operation, work for a lot of frames
 Fd=F;

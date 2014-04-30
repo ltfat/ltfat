@@ -48,6 +48,9 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %   See also: frame, framered
 
+complainif_notenoughargs(nargin,1,'FRAMEBOUNDS');
+complainif_notvalidframeobj(F,'FRAMEBOUNDS');
+
 % We handle the container frames first
   if strcmp(F.type,'fusion')
       AF=0;
@@ -152,6 +155,7 @@ function [AF,BF]=framebounds(F,varargin);
     
     %afun(1,F,op,opadj); 
     % The inverse method does not work.
+    % AF could be obtained as 1/BF of a canonical dual frame.
     %AF = real(eigs(@afun,L,1,'SM',opts));
     %BF = real(eigs(@afun,L,1,'LM',opts));
     BF = real(eigs(@(x) opadj(F,op(F,x)),L,1,'LM',opts));
