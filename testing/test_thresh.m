@@ -44,6 +44,68 @@ for ii=1:2
     s=sprintf(['THRESH N %s %s %0.5g %s'],field,ttype,res2,fail);      
     disp(s);
     
+    % Extend lambda to:
+    % a) Vector
+    lambdavec = lambda*ones(numel(g),1);
+    
+    [xo_full2, Nfull2] = thresh(g,lambdavec,ttype,'full');
+    [xo_sparse2, Nsp2] = thresh(g,lambdavec,ttype,'sparse');
+    
+    res_full = xo_full2-xo_full;
+    res_sparse = xo_sparse2-xo_sparse;
+    res_full = norm(res_full(:));
+    res_sparse = norm(res_sparse(:));
+    
+    res_nfull = Nfull2-Nfull;
+    res_nsparse = Nfull2-Nfull;
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['THRESH VEC FULL  %s %s %0.5g %s'],field,ttype,res_full,fail);
+    disp(s);     
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['THRESH VEC SPARSE  %s %s %0.5g %s'],field,ttype,res_sparse,fail);
+    disp(s); 
+    
+    [test_failed,fail]=ltfatdiditfail(res2,test_failed);
+    s=sprintf(['THRESH VEC N FULL %s %s %0.5g %s'],field,ttype,res_nfull,fail);      
+    disp(s);
+
+    [test_failed,fail]=ltfatdiditfail(res2,test_failed);
+    s=sprintf(['THRESH VEC N SPARSE %s %s %0.5g %s'],field,ttype,res_nsparse,fail);      
+    disp(s);
+    
+    % b) Same shape as g 
+    lambdamat = lambda*ones(size(g));
+    
+    [xo_full3, Nfull3] = thresh(g,lambdamat,ttype,'full');
+    [xo_sparse3, Nsp3] = thresh(g,lambdamat,ttype,'sparse');
+    
+    res_full = xo_full3-xo_full;
+    res_sparse = xo_sparse3-xo_sparse;
+    res_full = norm(res_full(:));
+    res_sparse = norm(res_sparse(:));
+    
+    res_nfull = Nfull3-Nfull;
+    res_nsparse = Nfull3-Nfull;
+    
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['THRESH MAT FULL  %s %s %0.5g %s'],field,ttype,res_full,fail);
+    disp(s);   
+
+    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    s=sprintf(['THRESH MAT SPARSE %s %s %0.5g %s'],field,ttype,res_sparse,fail);
+    disp(s); 
+    
+    [test_failed,fail]=ltfatdiditfail(res2,test_failed);
+    s=sprintf(['THRESH MAT N FULL %s %s %0.5g %s'],field,ttype,res_nfull,fail);      
+    disp(s);
+    
+     [test_failed,fail]=ltfatdiditfail(res2,test_failed);
+    s=sprintf(['THRESH MAT N SPARSE %s %s %0.5g %s'],field,ttype,res_nsparse,fail);      
+    disp(s);
+    
+    
   end;
   
 end;

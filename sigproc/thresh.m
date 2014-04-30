@@ -4,11 +4,16 @@ function [xo,N]=thresh(xi,lambda,varargin);
 %           [x,N]=thresh(x,lambda,...);
 %
 %   `thresh(x,lambda)` will perform hard thresholding on *x*, i.e. all
-%   elements with absolute value less than *lambda* will be set to zero.
+%   elements with absolute value less than scalar *lambda* will be set to zero.
 %
 %   `thresh(x,lambda,'soft')` will perform soft thresholding on *x*,
 %   i.e. *lambda* will be subtracted from the absolute value of every element
 %   of *x*.
+%
+%   The *lambda* parameter can also be a vector with number of elements
+%   equal to `numel(xi)` or it can be a numeric array of the same shape 
+%   as *xi*. *lambda* is then applied element-wise and in a column major 
+%   order if *lambda* is a vector. 
 %
 %   `[x,N]=thresh(x,lambda)` additionally returns a number *N* specifying
 %   how many numbers where kept.
@@ -49,8 +54,15 @@ function [xo,N]=thresh(xi,lambda,varargin);
 
 complainif_notenoughargs(nargin,2,'THRESH');
 
-if (prod(size(lambda))~=1 || ~isnumeric(lambda))
-  error('lambda must be a scalar.');
+is_sameshape = ndims(lambda)==ndims(xi) && all(size(lambda)==size(xi));
+
+if ~isnumeric(lambda) || ...
+   ~isscalar(lambda) && ... % lambda is not scalar
+   numel(lambda)~=numel(xi) && ... % lambda does not have the same number of elements
+   ~(is_sameshape)    % lambda does not have the same shape
+  error(['%s: lambda must be a scalar, a vector with ',...
+         'numel(lambda)==numel(xi) or whatever shape xi has such that ',...
+         'all(size(lambda)==size(xi))'],upper(mfilename));
 end;
 
 % Define initial value for flags and key/value pairs.
@@ -59,48 +71,77 @@ definput.import={'thresh'};
 
 if flags.do_sparse
   if ndims(xi)>2
-    error('Sparse output is only supported for 1D/2D input. This is a limitation of Matlab/Octave.');
+    error(['%s: Sparse output is only supported for 1D/2D input. This ',...
+           'is a limitation of Matlab/Octave.'],upper(mfilename));
   end;
+  if ~isa(xi,'double')
+      error(['%s: Input is not double prec. data array and sparse output can,'...
+             'be double precision data type only. This is a ',... 
+             'Matlab/Octave limitation.'],upper(mfilename));
+  end
 end;
 
+% Reshape lambda if it is a vector
+if ~is_sameshape && ~isscalar(lambda)
+    lambda = reshape(lambda,size(xi));
+end
+
 if flags.do_sparse
-  xo=sparse(size(xi,1),size(xi,2));
     
+  xo=sparse(size(xi,1),size(xi,2));
+  
   if flags.do_hard
-    % Create a significance map pointing to the non-zero elements.
-    signifmap=find(abs(xi)>=lambda);
-   
-    xo(signifmap)=xi(signifmap);
-  end;
+     if isscalar(lambda)  
+        % Create a significance map pointing to the non-zero elements.
+        signifmap=find(abs(xi)>=lambda);
+     else
+        signifmap=abs(xi)>=lambda; 
+     end  
+      
+     xo(signifmap)=xi(signifmap); 
+  else
+      if isscalar(lambda)  
+        % Create a significance map pointing to the non-zero elements.
+        signifmap=find(abs(xi)>lambda);
+     else
+        signifmap=abs(xi)>lambda; 
+     end  
   
   if flags.do_wiener
-    signifmap=find(abs(xi)>lambda);
-    xo(signifmap) = 1 - (lambda./abs(xi(signifmap))).^2;
+    if isscalar(lambda)   
+       xo(signifmap) = 1 - (lambda./abs(xi(signifmap))).^2;
+    else
+       xo(signifmap) = 1 - (lambda(signifmap)./abs(xi(signifmap))).^2;
+    end
     xo(signifmap) = xi(signifmap).*xo(signifmap); 
   end;
   
   if flags.do_soft
-    % Create a significance map pointing to the non-zero elements.
-    signifmap=find(abs(xi)>lambda);
-    
-    %    xo(signifmap)=xi(signifmap) - sign(xi(signifmap))*lambda;
-    xo(signifmap)=(abs(xi(signifmap)) - lambda) .* ...
+    if isscalar(lambda) 
+      %    xo(signifmap)=xi(signifmap) - sign(xi(signifmap))*lambda;
+      xo(signifmap)=(abs(xi(signifmap)) - lambda) .* ...
         exp(i*angle(xi(signifmap)));
+    else
+      xo(signifmap)=(abs(xi(signifmap)) - lambda(signifmap)) .* ...
+        exp(i*angle(xi(signifmap)));
+        
+    end
     % The line above produces very small imaginary values when the input
     % is real-valued. The next line fixes this
     if isreal(xi)
       xo=real(xo);
     end;
-    
   end;
+  end
   
   if nargout==2
     N=numel(signifmap);
   end;
     
 else
-  xo=zeros(size(xi));
-  
+  % Dense case
+  xo=zeros(size(xi),assert_classname(xi));
+
   % Create a mask with a value of 1 for non-zero elements. For full
   % matrices, this is faster than the significance map.
 
