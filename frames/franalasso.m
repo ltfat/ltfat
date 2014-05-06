@@ -20,7 +20,7 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %
 %   .. argmin lambda||c||_1 + 1/2||Fc - f||_2^2
 %
-%   .. math:: \text{argmin}_c \ \lambda ||c||_1 +  \frac{1}{2}||Fc - f||_2^2
+%   .. math:: \arg\!\min_c \ \lambda ||c||_1 +  \frac{1}{2}||Fc - f||_2^2
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative soft thresholdings.

@@ -46,7 +46,6 @@
 %     DEMO_BLOCKPROC_SLIDINGSGRAM     - Sliding spectrogram plot.
 %     DEMO_BLOCKPROC_SLIDINGCQT       - Sliding CQT plot.
 %     DEMO_BLOCKPROC_SLIDINGERBLETS   - Sliding Erblets plot.
-%     DEMO_BLOCKPROC_PITCHSHIFT       - Simple pich shifting.
 %     DEMO_BLOCKPROC_DGTEQUALIZER     - Variable Gabor Multiplier as equalizer.
 %     DEMO_BLOCKPROC_EFFECTS          - Real-time vocoder effects.
 %     

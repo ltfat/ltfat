@@ -1,4 +1,4 @@
-function demo_bpframemul
+function demo_bpframemul %RUNASSCRIPT (a mat2doc mark) 
 %DEMO_BPFRAMEMUL Frame multiplier acting as a time-varying bandpass filter
 %
 %   This demo demonstrates creation and effect of a Gabor multiplier. The
@@ -11,18 +11,17 @@ function demo_bpframemul
 %
 %   .. figure::
 %
-%      The symbol of the multiplier
+%      The symbol of the multiplier.
 %
 %      This figure shows a symbol used in the Gabor multiplier.
 %
 %   .. figure::
 %
-%      Spectroram obtained by re-analysis of the test signal after applying the multiplier.
+%      Spectroram obtained by re-analysis of the test signal after applying the multiplier
 %
 %      This figure shows a spectrogram of the test signal after applying
 %      the estimated Gabor multiplier.
 %
-%   See also:  dgtreal
 
 % Sampling rate
 fs = 44100;

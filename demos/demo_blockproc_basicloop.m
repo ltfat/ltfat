@@ -1,11 +1,12 @@
-function demo_blockproc_basicloop(source,varargin)
+function demo_blockproc_basicloop(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_BASICLOOP Basic real-time audio manipulation
 %   Usage: demo_blockproc_basicloop('gspi.wav')
 %
 %   For additional help call |demo_blockproc_basicloop| without arguments.
 %
 %   The demo runs simple playback loop allowing to set gain in dB.
-%
+% 
+
 
 if demo_blockproc_header(mfilename,nargin)
    return;

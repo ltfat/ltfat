@@ -1,4 +1,4 @@
-function demo_blockproc_slidingsgram(source,varargin)
+function demo_blockproc_slidingsgram(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_SLIDINGSGRAM Basic real-time rolling spectrogram visualization
 %   Usage: demo_blockproc_slidingsgram('gspi.wav')
 %

@@ -1,4 +1,4 @@
-function demo_blockproc_effects(source,varargin)
+function demo_blockproc_effects(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_EFFECTS Various vocoder effects using DGT
 %   Usage: demo_blockproc_effects('gspi.wav')
 %

@@ -1,4 +1,4 @@
-function demo_blockproc_paramequalizer(source,varargin)
+function demo_blockproc_paramequalizer(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_PARAMEQUALIZER Real-time equalizer demonstration
 %   Usage: demo_blockproc_paramequalizer('gspi.wav')
 %

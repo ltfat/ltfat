@@ -1,4 +1,4 @@
-function demo_blockproc_slidingerblets(source,varargin)
+function demo_blockproc_slidingerblets(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_SLIDINGERBLETS Basic real-time rolling erblet-spectrogram visualization
 %   Usage: demo_blockproc_slidingerblets('gspi.wav')
 %

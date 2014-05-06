@@ -1,4 +1,4 @@
-function demo_blockproc_denoising(source,varargin)
+function demo_blockproc_denoising(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_DENOISING Variable coefficients thresholding
 %   Usage: demo_blockproc_denoising('gspi.wav')
 %

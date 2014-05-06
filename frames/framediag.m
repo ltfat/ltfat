@@ -15,11 +15,6 @@ complainif_notenoughargs(nargin,2,callfun);
 complainif_notposint(L,'L',callfun);
 complainif_notvalidframeobj(F,callfun);
 
-if ~isstruct(F)
-  error('%s: First agument must be a frame definition structure.',...
-        upper(mfilename));
-end;
-
 % Standard response, works for all tight and orthonormal systems
 d=ones(L,1);
 

@@ -1,4 +1,4 @@
-function demo_blockproc_dgtequalizer(source,varargin)
+function demo_blockproc_dgtequalizer(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_DGTEQUALIZER Real-time audio manipulation in the transform domain
 %   Usage: demo_blockproc_dgtequalizer('gspi.wav')
 %

@@ -24,7 +24,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %
 %   .. argmin ||c||_1 subject to Fc = f
 %
-%   .. math:: \text{argmin}_c \ ||c||_1 \\ \text{subject to } Fc = f
+%   .. math:: \arg\!\min_c \ ||c||_1 \\ \text{subject to } Fc = f
 %
 %   for a general frame *F* using SALSA (Split Augmented Lagrangian
 %   Srinkage algorithm) which is an appication of ADMM (Alternating

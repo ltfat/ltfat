@@ -1,4 +1,4 @@
-function demo_blockproc_slidingcqt(source,varargin)
+function demo_blockproc_slidingcqt(source,varargin) %RUNASSCRIPT
 %DEMO_BLOCKPROC_SLIDINGCQT Basic real-time rolling CQT-spectrogram visualization
 %   Usage: demo_blockproc_slidingcqt('gspi.wav')
 %

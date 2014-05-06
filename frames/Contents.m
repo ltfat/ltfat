@@ -26,6 +26,7 @@
 %    FRAMERED          - Redundancy of frame
 %    FRAMELENGTH       - Length of frame to expand signal
 %    FRAMELENGTHCOEF   - Length of frame given a set of coefficients
+%    FRAMECLENGTH      - Number of coefficients given input signal length
 %
 %  Coefficients conversions
 %    FRAMECOEF2NATIVE  - Convert to native transform format
