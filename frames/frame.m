@@ -431,62 +431,102 @@ switch(ftype)
 
     F.red=prod(cellfun(@framered,F.frames));
     
-  case {'fwt'}
+  case {'fwt','dwt'}
     % We have to initialize F.g here already
-    F.g=fwtinit({'strict',F.g});
+    [F.g, F.info]=fwtinit({'strict',F.g});
     F.red= 1/(F.g.a(1)^(F.J)) + sum(1./(F.g.a(1).^(0:F.J-1))*sum(1./F.g.a(2:end)));
-    F.frana=@(insig) fwt(insig,F.g,F.J);
-    F.frsyn=@(insig) ifwt(insig,F.g,F.J,size(insig,1)/F.red);
+    F.frana=@(insig) wavcell2pack(comp_fwt(insig,F.g.h,F.J,F.g.a,'per'));
+    F.frsyn=@(insig) comp_ifwt(...
+                        wavpack2cell(insig,fwtclength(size(insig,1)/F.red,F.g,F.J)),...
+                               F.g.g,F.J,F.g.a,size(insig,1)/F.red,'per');
     F.length=@(Ls) fwtlength(Ls,F.g,F.J);
   case {'wfbt'}
-    F.g=wfbtinit({'strict',F.g});
+    [F.g,F.info]=wfbtinit({'strict',F.g});
     F.red = sum(1./treeSub(F.g));
+    % comp_ specific
     F.wtPath = nodesBForder(F.g);
     F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
     F.rangeOut = rangeInOutputs(F.wtPath,F.g);
+    
     F.coef2native = @(coef,s) wavpack2cell(coef,wfbtclength(s(1)/F.red,F.g));
     F.native2coef = @(coef) wavcell2pack(coef);
-    F.frana=@(insig) F.native2coef(comp_wfbt(insig,F.g.nodes(F.wtPath),F.rangeLoc,F.rangeOut,'per'));
-    F.frsyn=@(insig) iwfbt(F.coef2native(insig,size(insig)),F.g,size(insig,1)/F.red);
+    F.frana=@(insig) F.native2coef(comp_wfbt(insig,F.g.nodes(F.wtPath),...
+                                             F.rangeLoc,F.rangeOut,'per'));
+    F.frsyn=@(insig) comp_iwfbt(F.coef2native(insig,size(insig)),...
+                                F.g.nodes(F.wtPath(end:-1:1)),...
+                                [nodeInLen(F.wtPath(end:-1:1),size(insig,1)/F.red,1,F.g);size(insig,1)/F.red],...
+                                F.rangeLoc(end:-1:1),F.rangeOut(end:-1:1),...
+                                'per');
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'wpfbt'}
     F.g=wfbtinit({'strict',F.g});
     F.red = sum(cellfun(@(aEl) sum(1./aEl),nodeSub(nodesBForder(F.g),F.g)));
+    % comp_ specific
+    F.wtPath = nodesBForder(F.g);
+    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
+    [F.pOutIdxs,F.chOutIdxs] = rangeWpBF(F.g,'rev');
+    
     F.coef2native = @(coef,s) wavpack2cell(coef,...
                     s(1)./cell2mat(cellfun(@(aEl) aEl(:),...
                     reshape(nodeSub(nodesBForder(F.g),F.g),[],1),...
                     'UniformOutput',0))./F.red);
     F.native2coef = @(coef) wavcell2pack(coef);
 
-    F.frana=@(insig) F.native2coef(wpfbt(insig,F.g,F.flags.interscaling));
-    F.frsyn=@(insig) iwpfbt(F.coef2native(insig,size(insig)),F.g,...
-                            size(insig,1)/F.red, F.flags.interscaling);
+    F.frana=@(insig) F.native2coef(...
+                        comp_wpfbt(insig,F.g.nodes(F.wtPath),...
+                                   F.rangeLoc,'per',F.flags.interscaling));
+    F.frsyn=@(insig) comp_iwpfbt(F.coef2native(insig,size(insig)),...
+                                 F.g.nodes(F.wtPath(end:-1:1)),...
+                                 F.pOutIdxs,F.chOutIdxs,...
+                                 size(insig,1)/F.red,...
+                                 'per',F.flags.interscaling);
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'ufwt'}
     F.g=fwtinit({'strict',F.g});
     F.coef2native = @(coef,s) reshape(coef,[s(1)/(F.J*(numel(F.g.a)-1)+1),F.J*(numel(F.g.a)-1)+1,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
-    F.frana=@(insig) F.native2coef(ufwt(insig,F.g,F.J,F.flags.scaling));
-    F.frsyn=@(insig) iufwt(F.coef2native(insig,size(insig)),F.g,F.J,F.flags.scaling);
+    F.frana=@(insig) F.native2coef(comp_ufwt(insig,F.g.h,F.J,F.g.a,F.flags.scaling));
+    F.frsyn=@(insig) comp_iufwt(F.coef2native(insig,size(insig)),F.g.g,F.J,F.g.a,F.flags.scaling);
     F.length=@(Ls) Ls;
     F.red=(F.J*(numel(F.g.a)-1)+1);
   case {'uwfbt'}
     F.g=wfbtinit({'strict',F.g});
     F.red = noOfOutputs(F.g);
+    % comp_ specific
+    F.wtPath = nodesBForder(F.g);
+    F.nodesUps = nodeFiltUps(F.wtPath,F.g);
+    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
+    F.rangeOut = rangeInOutputs(F.wtPath,F.g);
+    
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
-    F.frana=@(insig) F.native2coef(uwfbt(insig,F.g,F.flags.scaling));
-    F.frsyn=@(insig) iuwfbt(F.coef2native(insig,size(insig)),F.g, F.flags.scaling);
+    F.frana=@(insig) F.native2coef(...
+                        comp_uwfbt(insig,F.g.nodes(F.wtPath),F.nodesUps,...
+                                   F.rangeLoc,F.rangeOut,F.flags.scaling));
+    F.frsyn=@(insig) comp_iuwfbt(F.coef2native(insig,size(insig)),...
+                                 F.g.nodes(F.wtPath(end:-1:1)),...
+                                 F.nodesUps(end:-1:1),F.rangeLoc(end:-1:1),...
+                                 F.rangeOut(end:-1:1),F.flags.scaling);
     F.length=@(Ls) Ls;
   case {'uwpfbt'}
     F.g= wfbtinit({'strict',varargin{1}});
     F.red = sum(cellfun(@(fEl) numel(fEl.g),F.g.nodes));
+    % comp_ specific
+    F.wtPath = nodesBForder(F.g);
+    F.nodesUps = nodeFiltUps(F.wtPath,F.g);
+    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
+    [F.pOutIdxs,F.chOutIdxs] = rangeWpBF(F.g,'rev');
+    
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
     F.frana=@(insig) F.native2coef(...
-                        uwpfbt(insig,F.g,F.flags.interscaling,F.flags.scaling));
-    F.frsyn=@(insig) iuwpfbt(F.coef2native(insig,size(insig)),F.g,...
-                             F.flags.interscaling,F.flags.scaling);
+                        comp_uwpfbt(insig,F.g.nodes(F.wtPath),F.rangeLoc,...
+                                    F.nodesUps,F.flags.scaling,...
+                                    F.flags.interscaling));
+    F.frsyn=@(insig) comp_iuwpfbt(F.coef2native(insig,size(insig)),...
+                                  F.g.nodes(F.wtPath(end:-1:1)),...
+                                  F.nodesUps(end:-1:1),F.pOutIdxs,F.chOutIdxs,...
+                                  F.flags.scaling,F.flags.interscaling);
     F.length=@(Ls) Ls;
 
     

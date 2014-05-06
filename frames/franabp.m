@@ -230,7 +230,7 @@ if isempty(kv.Fd)
        Fdfrana = @(insig) franaiter(F,insig,'tol',1e-14);
     end
 else
-   if isstruct(kv.Fd) && isfield(kv.Fd,'type') 
+   if isstruct(kv.Fd) && isfield(kv.Fd,'frana') 
       % The canonical dual frame was passed explicitly as a frame object
       Fd = frameaccel(kv.Fd,L);
       Fdfrana = @(insig) Fd.frana(insig);

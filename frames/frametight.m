@@ -60,38 +60,69 @@ switch(F.type)
     [g,a] = wfbt2filterbank({F.g,F.J,'dwt'});
     g = comp_filterbankscale(g,a,F.flags.scaling);
     
-    Ft = frametight(frame('ufilterbank',g,1,numel(g)));
-    warning(sprintf(['%s: The canonical tight system does not preserve ',...
-                     'the iterated filterbank structure.'],...
-                     upper(mfilename)));
+    Ft = frametight(frame('filterbank',g,ones(numel(g),1),numel(g)));
+                 
   case 'uwfbt'
-    % The canonical tight made from ufwt might not keep the iterated
+    % The canonical tight made from uwfbt might not keep the iterated
     % filterbank structure
     [g,a] = wfbt2filterbank(F.g,F.J);
     g = comp_filterbankscale(g,a,F.flags.scaling);
     
-    Ft = frametight(frame('ufilterbank',g,1,numel(g)));
-    warning(sprintf(['%s: The canonical tight system does not preserve ',...
-                     'the iterated filterbank structure.'],...
-                     upper(mfilename)));
+    Ft = frametight(frame('filterbank',g,ones(numel(g),1),numel(g)));
+                 
   case 'uwpfbt'               
-    % The canonical tight made from ufwt might not keep the iterated
+    % The canonical tight made from uwpfbt might not keep the iterated
     % filterbank structure
     [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);
     g = comp_filterbankscale(g,a,F.flags.scaling);
     
-    Ft = frametight(frame('ufilterbank',g,1,numel(g)));
-    warning(sprintf(['%s: The canonical tight system does not preserve ',...
-                     'the iterated filterbank structure.'],...
-                     upper(mfilename)));
+    Ft = frametight(frame('filterbank',g,ones(numel(g),1),numel(g)));
+      
+  case 'fwt'
+    is_basis = abs(sum(1./F.g.a)-1)<1e-6;
+    is_tight = F.info.istight;
+
+    if is_basis && is_tight
+        Ft = F;
+    else
+        error(['%s: Cannot create the canonical tight frame with the ',...
+               'same structure. Consider casting the system to an ',...
+               'uniform filterbank.'],...
+               upper(mfilename)); 
+    end
+    
+  case 'wfbt'
+    is_basis = all(cellfun(@(nEl) abs(sum(1./nEl.a)-1)<1e-6,F.g.nodes));
+    is_tight = F.info.istight;               
+    
+    if is_basis && is_tight
+        Ft = F;
+    else
+        error(['%s: Cannot create the canonical tight frame with the ',...
+               'same structure. Consider casting the system to an ',...
+               'uniform filterbank.'],...
+               upper(mfilename)); 
+    end
+       
    case 'wpfbt'
-       error('TO DO:');
+     % WPFBT is too wierd.
+     error(['%s: Canonical tight frame of wpfbt might not keep the ',...
+           'same structure. '],upper(mfilename))
+
+      
 end;
 
 
+switch(F.type)
+    case {'ufwt','uwfbt','uwpfbt'}
+      warning(sprintf(['%s: The canonical tight system does not preserve ',...
+                     'the iterated filterbank structure.'],...
+                      upper(mfilename)));   
+end
+
 
 % Treat the fixed length frames
-if isfield(F,'fixedlength') && F.fixedlength
+if isfield(F,'fixedlength') && F.fixedlength && isfield(F,'L')
    Ft = frameaccel(Ft,F.L);
    Ft.fixedlength = 1;
 end

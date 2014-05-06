@@ -29,12 +29,12 @@ if L~=wfbtlength(L,wt)
            'the time shifts.'],upper(mfilename));
 end;
 
-for ii=1:numel(wt.nodes)
-   a = wt.nodes{ii}.a;
-   assert(all(a==a(1)),sprintf(['%s: One of the basic wavelet ',...
-                                'filterbanks is not uniform.'],...
-                                upper(mfilename)));
-end
+% for ii=1:numel(wt.nodes)
+%    a = wt.nodes{ii}.a;
+%    assert(all(a==a(1)),sprintf(['%s: One of the basic wavelet ',...
+%                                 'filterbanks is not uniform.'],...
+%                                 upper(mfilename)));
+% end
 
 % Do the equivalent filterbank using multirate identity property
 [gmultid,amultid] = wfbt2filterbank(wt);

@@ -1,4 +1,4 @@
- function wt = wfbtinit(wtdef,varargin)
+ function [wt,info] = wfbtinit(wtdef,varargin)
 %WFBTINIT Initialize Filterbank Tree
 %   Usage:  wt = wfbtinit(wtdef);
 %
@@ -62,6 +62,7 @@ wt.children = {};
 wt.parents = [];
 wt.freqOrder = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+info.istight = 0;
 
 % return empty struct if no argument was passed
 if(nargin<1)
@@ -98,7 +99,15 @@ if (isstruct(wtdef)&&isfield(wtdef,'nodes'))
        if do_strict
           nodesArg = cellfun(@(nEl) {'strict',nEl},nodesArg,'UniformOutput',0);
        end
-       wt.nodes = cellfun(@(nEl) fwtinit(nEl),nodesArg,'UniformOutput',0);
+       info.istight = 1;
+       wt.nodes = {};
+       for ii=1:numel(nodesArg)
+        % wt.nodes = cellfun(@(nEl) fwtinit(nEl),nodesArg,'UniformOutput',0);
+          [wt.nodes{ii},infotmp] = fwtinit(nodesArg{ii});
+          if info.istight
+              info.istight = infotmp.istight;
+          end
+       end
        % Do the filter frequency shuffling again, since the filters were
        % overwritten in fwtinit.
        if wt.freqOrder
@@ -164,7 +173,7 @@ if ~isempty(kv2.overcomplete)
 end
 
 
-w = fwtinit(wdef);
+[w, info] = fwtinit(wdef);
 
 % Doing one-node tree
 if flags2.do_root

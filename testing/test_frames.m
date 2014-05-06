@@ -61,8 +61,8 @@ Fr{30} = frametight(frame('unsdgtreal',g,a,100));
 
 Fr{31} = frametight(frame('dftreal'));
 
-Fr{32} = frame('fwt','db4',5);
-Fr{33} = frame('wfbt',{'db4',5});
+Fr{32} = frame('fwt','ana:spline2:2',5);
+Fr{33} = frame('wfbt',{'syn:spline2:2',5});
 %Fr{34} = frame('wpfbt',{'db4',5});
 %Fr{35} = frame('wpfbt',{'db4',5});
 %Fr{36} = frame('wpfbt',{'db4',5});

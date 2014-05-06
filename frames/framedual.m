@@ -1,4 +1,4 @@
-function Fd=framedual(F);
+function Fd=framedual(F)
 %FRAMEDUAL  Construct the canonical dual frame
 %   Usage: F=framedual(F);
 %
@@ -29,8 +29,7 @@ Fd=F;
 % Handle the windowed transforms
 switch(F.type)
   case {'dgt','dgtreal','dwilt','wmdct','filterbank','ufilterbank',...
-        'nsdgt','unsdgt','nsdgtreal','unsdgtreal',...
-        'fwt','wfbt'}
+        'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}
     
     Fd=frame(F.type,{'dual',F.g},F.origargs{2:end});
     
@@ -78,28 +77,56 @@ switch(F.type)
   case 'uwpfbt'
     % The canonical dual of uwfbt might not keep the iterated
     % filterbank structure
-    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);
-    g = comp_filterbankscale(g,a,F.flags.scaling);
+    [g, a] = wpfbt2filterbank(F.g, F.flags.interscaling);
+    g = comp_filterbankscale(g, a, F.flags.scaling);
     
     Fd = framedual(frame('filterbank',g,ones(numel(g),1),numel(g)));
     warning(sprintf(['%s: The canonical dual system of frame type %s ',...
                      'does not preserve iterated filterbank structure.'],...
                      upper(mfilename),F.type));  
-      
-  case 'wpfbt'
-    % The canonical dual of wpfbt might not keep the iterated
-    % filterbank structure
-    [g, a] = wpfbt2filterbank(F.g,F.flags.interscaling);      
-    [gu,au,p] = nonu2ufilterbank(g,a);
-    Fd = framedual(frame('ufilterbank',gu,au,numel(gu)));
+                 
+  case 'fwt'
+    is_basis = abs(sum(1./F.g.a)-1)<1e-6;
+    is_tight = F.info.istight;
     
-    error('TO DO: ')
+    % If the frame is a basis, there is only one dual frame.
+    % If the basic filterbank is a parseval tight frame, the overal repr.
+    % is also a tight frame.
+    if is_basis || is_tight
+        Fd = frame('fwt',{'dual',F.g},F.J);
+    else
+        error(['%s: Cannot create the canonical dual frame with the ',...
+               'same structure. Consider casting the system to an ',...
+               'uniform filterbank or using franaiter/frsyniter.'],...
+               upper(mfilename)); 
+    end
 
+  case 'wfbt'
+    is_basis = all(cellfun(@(nEl) abs(sum(1./nEl.a)-1)<1e-6,F.g.nodes));
+    is_tight = F.info.istight;               
+    
+    if is_basis || is_tight
+        Fd = frame('wfbt',{'dual',F.g});
+    else
+        error(['%s: Cannot create the canonical dual frame with the ',...
+               'same structure. Consider casting the system to an ',...
+               'uniform filterbank or using franaiter/frsyniter.'],...
+               upper(mfilename)); 
+    end
+    
+               
+  case 'wpfbt'
+     % WPFBT is too wierd.
+     error(['%s: Canonical dual frame of wpfbt might not keep the ',...
+           'same structure. Consider using franaiter/frsyniter.'],upper(mfilename));
+    
 end;
 
 % Treat the fixed length frames
-if isfield(F,'fixedlength') && F.fixedlength
+if isfield(F,'fixedlength') && F.fixedlength && isfield(F,'L')
    Fd = frameaccel(Fd,F.L);
    Fd.fixedlength = 1;
 end
+
+
 

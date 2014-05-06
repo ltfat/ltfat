@@ -16,7 +16,11 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %   regression problem for a general frame: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with
-%   a penalization coefficient *lambda*.
+%   a penalization coefficient *lambda* such that
+%
+%   .. argmin lambda||c||_1 + 1/2||Fc - f||_2^2
+%
+%   .. math:: \text{argmin}_c \ \lambda ||c||_1 +  \frac{1}{2}||Fc - f||_2^2
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative soft thresholdings.
@@ -112,6 +116,7 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %
 
 complainif_notenoughargs(nargin,2,'FRANALASSO');
+complainif_notvalidframeobj(F,'FRANALASSO');
 
 if sum(size(f)>1)>1
   error('%s: Too many input channels.',upper(mfilename));    

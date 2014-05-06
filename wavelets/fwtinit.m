@@ -1,4 +1,4 @@
-function [w] = fwtinit(wdef)
+function [w,info] = fwtinit(wdef)
 %FWTINIT  Wavelet Filterbank Structure Initialization
 %   Usage:  w = fwtinit(wdef);
 %
@@ -122,6 +122,7 @@ w.h = {};
 w.g = {};
 w.a = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+info.istight = 0;
 
 % return empty struct if no argument was passed
 if nargin<1
@@ -204,6 +205,7 @@ if iscell(wdef)
              end
              w.h = formatFilters(wname(1:apos-1),[]);
              w.g = formatFilters(wname(1:apos-1),[]);
+             w.origArgs = wname;
        else
           error('%s: Unrecognizer format of the filterbank definition.',upper(mfilename));
        end
@@ -277,7 +279,7 @@ if(nargin(tmpFile)~=numel(wname)-1)
    error('%s: Incorrect number of parameters to be passed to the %s func.',upper(mfilename),tmpFile);
 end
 
-info = [];
+
 if(wfiltNargout==3)
    [tmph, tmpg, w.a] = feval(tmpFile,wname{2:end});
 elseif(wfiltNargout==4) 
