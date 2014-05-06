@@ -6,18 +6,29 @@ Version 1.4.5 ? 2014
                       argmin ||c||_1 s.t. Fc = f 
                       for an arbitrary frame F.
 
-    * New demos to accompany the LTFAT 2.0 paper.
+    * The lambda parameter in franabp and franalasso can now be a vector.
+      => thresh acceps such lambda too.
+
+    * New demos to accompany the LTFAT 2.0 paper: demo_filterbanks,
+      demo_wavelets, demo_wfbt, demo_bpframemul, demo_phaseret
 	   
     * New blockproc demo: demo_blockproc_effects
 
     * blockproc framework can be now used offline without a single call to
-      playrec.
+      the playrec MEX.
 
-    * Closed #49: blockwrite method. 
+    * Closed #49: blockwrite method. Allows blockwise storage of audio data
+      to a wav file.  
 
     * All wavelet routines were correctly included in the frames framework.
+      Correct computation of canonical dual and tight frames for undecimated
+      wavelet filterbanks.
 
     * New wrapper frame types in the frames framework: erbletfb, cqtfb
+
+    * Removed demo_blockproc_pitchshift. It is now part of demo_blockproc_effects.
+
+    * Removed some esoteric wavelet filters. 
 
 Version 1.4.4 25/2 2014
 	* Mostly bug fixes and doc updates. 
@@ -28,7 +39,7 @@ Version 1.4.4 25/2 2014
 
 	* The C code was revised: consistence of argument naming and order,
 	                          introduced ltfatInt data type for array
-							        lengths.
+							  lengths.
 
 	* New block processing demos: real-time CQT and Erblets
 	  (fast enough only in Matlab).

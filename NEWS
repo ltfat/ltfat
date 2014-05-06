@@ -1,3 +1,17 @@
+Version 1.4.5
+
+* Added franabp - solving a basis pursuit problem 
+                  argmin ||c||_1 s.t. Fc = f 
+                  for an arbitrary frame 
+
+* Wavelet routines correctly included in the frames framework.
+
+* Added blockwrite method for a blockwise storage of audio data to a wav 
+  file.
+
+* New demos: demo_blockproc_effects, demo_filterbanks, demo_wavelets, 
+      demo_wfbt, demo_bpframemul, demo_phaseret
+
 Version 1.4.4
 
 * New routines for calculating Gabor dual widows using convex optimization
