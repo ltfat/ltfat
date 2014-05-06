@@ -25,6 +25,9 @@ function [Fao,Fso] = blockframepairaccel(Fa, Fs, Lb, varargin)
 %                        `2*Lb+2*kv.zpad`. 
 %
 
+complainif_notenoughargs(nargin,3,'BLOCKFRAMEPAIRACCEL');
+complainif_notvalidframeobj(Fa,'BLOCKFRAMEPAIRACCEL');
+complainif_notvalidframeobj(Fs,'BLOCKFRAMEPAIRACCEL');
 
 definput.flags.blockalg = {'naive','sliced','segola'};
 definput.keyvals.anasliwin = [];

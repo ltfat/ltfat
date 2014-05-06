@@ -27,13 +27,8 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
 %
 %   References: dogrhove12 ltfatnote026
 
-    if nargin<3
-        error('%s: Too few input parameters.',upper(mfilename));
-    end;
-    
-    if ~isstruct(F)
-        error('%s: First argument must be a frame definition structure.',upper(mfilename));
-    end;
+complainif_notenoughargs(nargin,3,'BLOCKSYN');
+complainif_notvalidframeobj(F,'BLOCKSYN');
     
     if ~isfield(F,'blockalg')
         F.blockalg = 'naive';

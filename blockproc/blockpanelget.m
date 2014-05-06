@@ -22,9 +22,8 @@ function [par,varargout] = blockpanelget(p,varargin)
 
 nout = nargout();
 
-if nargin<1
-   error('%s: Too few input arguments.',upper(mfilename));
-end
+complainif_notenoughargs(nargin,1,'BLOCKPANELGET');
+
 
 if nout~=1 && nargin==1
    error(['%s: Ambiguous output. When no parameter is explicitly defined,',...

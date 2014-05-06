@@ -17,7 +17,8 @@ function Fo = blockframeaccel(F, Lb, varargin)
 %                        after it is windowed by a slicing window. This
 %                        does not affect the synthesis windowing.
 
-
+complainif_notenoughargs(nargin,2,'BLOCKFRAMEACCEL');
+complainif_notvalidframeobj(F,'BLOCKFRAMEACCEL');
 
 definput.flags.blockalg = {'naive','sliced','segola'};
 definput.keyvals.sliwin = [];

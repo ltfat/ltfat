@@ -26,6 +26,8 @@ function cola=blockplot(p,F,c,cola)
 %   `c`. This is only relevant for the sliced window blocking approach.
 %
 
+complainif_notenoughargs(nargin,3,'BLOCKPLOT');
+complainif_notvalidframeobj(F,'BLOCKPLOT');
 
 
 if ~isempty(F)

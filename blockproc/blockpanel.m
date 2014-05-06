@@ -27,9 +27,7 @@ function p = blockpanel(params,varargin)
 %                                defining distance from the top-left
 %                                corner of the screen. 
 
-if nargin<1
-    error('%s: Too few input parameters.',upper(mfilename));
-end
+complainif_notenoughargs(nargin,1,'BLOCKPANEL');
 
 definput.keyvals.location=[50,50];
 [flags,kv]=ltfatarghelper({},definput,varargin);

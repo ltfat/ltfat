@@ -12,10 +12,7 @@ function blockplay(f)
 %   the function does nothing.
 
 
-if nargin<1
-    error('%s: Too few input arguments.',upper(mfilename));
-end
-
+complainif_notenoughargs(nargin,1,'BLOCKPLAY');
 
 source = block_interface('getSource');
 

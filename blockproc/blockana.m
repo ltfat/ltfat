@@ -20,13 +20,8 @@ function [c, fola] = blockana(F, f, fola)
 %
 %   References: dogrhove12 ltfatnote026
     
-    if nargin<2
-        error('%s: Too few input parameters.',upper(mfilename));
-    end;
-    
-    if ~isstruct(F)
-        error('%s: First agument must be a frame definition structure.',upper(mfilename));
-    end;
+complainif_notenoughargs(nargin,2,'BLOCKANA');
+complainif_notvalidframeobj(F,'BLOCKANA');
     
     if nargin<3
        fola = [];

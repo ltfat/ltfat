@@ -100,6 +100,7 @@ function [fs,classid] = block(source,varargin)
 %   http://www.playrec.co.uk/ which in turn relies on
 %   Portaudio lib  http://www.portaudio.com/
 
+complainif_notenoughargs(nargin,1,'BLOCK');
 
 definput.keyvals.devid=[];
 definput.keyvals.nbuf=[];

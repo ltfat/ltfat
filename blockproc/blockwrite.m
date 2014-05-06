@@ -8,27 +8,23 @@ function blockwrite(f)
 %   Function appends *f* to a existing file. The file must have been
 %   explicitly defined as the 'outfile' parameter of |block| prior
 %   calling this function. If not, the function does nothing.
-%  
-%   The functon expect exactly the same format of *f* as is returned by 
+%
+%   The function expect exactly the same format of *f* as is returned by
 %   |blockread|.
 %
 %   See also: block
 
 % Authors: Bjoern Ohl, Zdenek Prusa
 
-
-if nargin<1
-    error('%s: Too few input arguments.',upper(mfilename));
-end
-
+complainif_notenoughargs(nargin,1,'BLOCKWRITE');
 
 filestruct = block_interface('getOutFile');
 
 if isempty(filestruct)
    % Do nothing if the file was not setup in block.
-   return; 
+   return;
    %error('%s: Output file was not specified in block function.',...
-   %      upper(mfilename)); 
+   %      upper(mfilename));
 end
 
 filename = filestruct.filename;
@@ -54,13 +50,13 @@ end
 
 % prepare data depending on mono/stereo:
 if W == 2           % stereo
-  f = f.'; 
+  f = f.';
   f = f(:);
 end
 
 
 % flength = dlength + 36;
-% We need read field from the header and 
+% We need to read one field from the header and
 % update two.
 fid = fopen(filename,'r+');
 
@@ -76,19 +72,19 @@ try
     if fwrite(fid,fileLenInBytes,'uint32')<=0
         error('d');
     end
-    
+
     if fseek(fid,40,-1)~=0
          error('d');
     end
     if fwrite(fid,dataLenInBytes,'uint32') <=0
          error('d');
-    end   
+    end
 catch
     % We have to check whether the header was modified properly.
     error(['%s: An error has ocurred when modifying header of the ',...
           ' wav file. The file might be unreadable. Consider',...
           ' starting over.'],upper(mfilename));
-    
+
 end
 fclose(fid);
 
@@ -109,6 +105,6 @@ f(f <= minval)  = minval;
     %We have no way how to find out how to properly normalize in blocks
     %warning('Clipping! Audio data limited to [-1, +1)');
 %end
-    
+
 fwrite(fid, f*2^15, 'int16');
 fclose(fid);    %close file
