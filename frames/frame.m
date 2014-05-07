@@ -89,6 +89,12 @@ function F=frame(ftype,varargin);
 %   Container frames
 %   ----------------
 %
+%   **NOT IMPLEMENTED YET**
+%   `frame('concat',w,F1,F2,...)` constructs a new frame consisting of a
+%   weighted concatenation of several frames *F1*, *F2*,... The vector
+%   *w* contains a weight for each frame. If *w* is a scalar, this weight
+%   will be applied to all the sub-frames.
+%
 %   `frame('fusion',w,F1,F2,...)` constructs a fusion frame, which is
 %   the collection of the frames specified by *F1*, *F2*,... The vector
 %   *w* contains a weight for each frame. If *w* is a scalar, this weight
@@ -131,7 +137,7 @@ function F=frame(ftype,varargin);
 %
 %      F=frame('wmdct','gauss',40);
 %      c=frana(F,greasy);
-%      plotframe(F,c);
+%      plotframe(F,c,'dynrange',60);
 %
 %   See also: frana, frsyn, plotframe
 
@@ -167,13 +173,34 @@ switch(ftype)
   F.J=varargin{2};
 end;
 
+% Input param checking
+switch(ftype)
+  case 'fusion'
+     wtmp = varargin{1};
+     % Check w 
+     if ~isnumeric(varargin{1}) || ...
+        ~(isscalar(wtmp) || numel(wtmp) == numel(varargin) -1)
+       error('%s: Weights are not in a correct format.',upper(mfilename));
+     end
+     
+     % Check frame objects
+     for ii=2:numel(varargin)
+        complainif_notvalidframeobj(varargin{ii},'FRAME');
+     end
+  case 'tensor'
+     % Check frame objects
+     for ii=1:numel(varargin)
+        complainif_notvalidframeobj(varargin{ii},'FRAME');
+     end        
+end
+
+
 % For parsing optional parameters to the transforms.
 vargs={};
 definput=struct();
 
 %% ---- Pre-optional parameters
 % Common operations to deal with the input parameters.
-
 switch(ftype)
   case {'dgt','dgtreal'}
     F.a=varargin{2};
@@ -245,6 +272,14 @@ switch(ftype)
   case 'dft'
     F.frana=@(insig) dft(insig,[],1);
     F.frsyn=@(insig) idft(insig,[],1);
+    
+  case 'dftreal'
+    F.frana=@(insig) fftreal(insig,[],1)/sqrt(size(insig,1));
+    F.frsyn=@(insig) ifftreal(insig,(size(insig,1)-1)*2,1)*sqrt((size(insig,1)-1)*2);
+    F.length=@(Ls) ceil(Ls/2)*2;
+    F.lengthcoef=@(Ncoef) (Ncoef-1)*2;
+    F.realinput=1;
+    F.clength = @(L) floor(L/2)+1;
 
   case 'dcti'
     F.frana=@(insig) dcti(insig,[],1);
@@ -277,14 +312,6 @@ switch(ftype)
   case 'dstiv'
     F.frana=@(insig) dstiv(insig,[],1);
     F.frsyn=@(insig) dstiv(insig,[],1);
-
-  case 'dftreal'
-    F.frana=@(insig) fftreal(insig,[],1)/sqrt(size(insig,1));
-    F.frsyn=@(insig) ifftreal(insig,(size(insig,1)-1)*2,1)*sqrt((size(insig,1)-1)*2);
-    F.length=@(Ls) ceil(Ls/2)*2;
-    F.lengthcoef=@(Ncoef) (Ncoef-1)*2;
-    F.realinput=1;
-    F.clength = @(L) floor(L/2)+1;
 
   case 'dgt'
     F.coef2native=@(coef,s) reshape(coef,[F.M,s(1)/F.M,s(2)]);
@@ -560,3 +587,8 @@ end;
 if ~isfield(F,'lengthcoef')
     F.lengthcoef=@(Ncoef) Ncoef/framered(F);
 end;
+
+
+
+
+

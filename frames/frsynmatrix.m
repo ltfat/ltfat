@@ -23,6 +23,9 @@ function G=frsynmatrix(F,L);
 %     testsig = randn(L,1);
 %     res = frana(F,testsig)-G'*testsig;
 %     norm(res)
+%     % Show the matrix (real and imaginary parts)
+%     figure(1); imagesc(real(G));
+%     figure(2); imagesc(imag(G));
 %
 %   See also: frame, frana, frsyn
 

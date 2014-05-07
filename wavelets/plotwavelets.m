@@ -3,21 +3,21 @@ function [C] = plotwavelets(c,info,varargin)
 %   Usage:  plotwavelets(c,info,fs) 
 %           plotwavelets(c,info,fs,'dynrange',dynrange,...)
 %
-%   `plowavelets(c,info)` plots the wavelet coefficients *c* using
+%   `plotwavelets(c,info)` plots the wavelet coefficients *c* using
 %   additional parameters from struct. `info`. Both parameters are returned
 %   by any forward transform function in the wavelets directory.
 %
-%   `plowavelets(c,info,fs)` does the same plot assuming a sampling rate of *fs* Hz
+%   `plotwavelets(c,info,fs)` does the same plot assuming a sampling rate of *fs* Hz
 %   of the original signal.
 %
 %   `plowavelets(c,info,fs,'dynrange',dynrange)` additionally limits the dynamic range.
 %
-%   `C=plowavelets(...)` returns the processed image data used in the
+%   `C=plotwavelets(...)` returns the processed image data used in the
 %   plotting. Inputting this data directly to `imagesc` or similar functions
 %   will create the plot. This is usefull for custom post-processing of the
 %   image data.
 %
-%   `plowavelets` supports optional parameters of |tfplot|. Please see
+%   `plotwavelets` supports optional parameters of |tfplot|. Please see
 %   the help of |tfplot| for an exhaustive list.
 %
 %   See also: fwt, tfplot

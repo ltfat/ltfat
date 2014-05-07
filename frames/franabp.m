@@ -59,7 +59,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %
 %          .. argmin ||lambda c||_1 subject to Fc = f
 %
-%          .. math:: \text{argmin}_c \ ||\lambda c||_1 \\ \text{subject to } Fc = f
+%          .. math:: \arg\,\min_c \ ||\lambda c||_1 \\ \text{subject to } Fc = f
 %          
 %          `lambda` can either be a scalar or a vector of the same length
 %          as *c*. One can obtain length of *c* from length of *f* by

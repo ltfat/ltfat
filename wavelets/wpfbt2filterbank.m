@@ -26,14 +26,14 @@ function [g,a] = wpfbt2filterbank( wtdef, varargin)
 %   identical to the DWT tree:::
 %
 %     [g,a] = wpfbt2filterbank({'db10',3,'dwt'});
-%     filterbankresponse(g,a,1024,'plot','individual');
+%     filterbankfreqz(g,a,1024,'plot','linabs','posfreq');
 %
 %
 %   In the second example, the filterbank is identical to the full
 %   wavelet tree:::
 %
 %     [g,a] = wpfbt2filterbank({'db10',3,'full'});
-%     filterbankresponse(g,a,1024,'plot','individual');
+%     filterbankfreqz(g,a,1024,'plot','linabs','posfreq');
 %
 %   See also: wfbtinit
 

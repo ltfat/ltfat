@@ -12,8 +12,6 @@ function [Ncoef, L]=frameclength(F,Ls)
 %   If the frame length *L* is longer than the signal length *Ls*, the 
 %   signal will be zero-padded to *L* by |frana|.
 %
-%   If instead a set of coefficients are given, call |framelengthcoef|.
-%
 %   See also: frame, framelengthcoef
 
 callfun = upper(mfilename);
