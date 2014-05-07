@@ -14,9 +14,3 @@ for ii=1:nodesCount
    subNo{ii} = nodeNoUps(ii)*nodeNoa{ii};
 end
 
-% if(nodesCount==1)
-%    subNo = subNo{1};
-% end
-
-
-%subNo = nodeFiltUps(nodeNo,wt).*wt.nodes{nodeNo}.a;

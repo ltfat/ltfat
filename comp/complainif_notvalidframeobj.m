@@ -8,3 +8,4 @@ if ~isstruct(F) || ~isfield(F,'frana')
   error('%s: Agument F must be a frame definition structure.',...
         upper(callfun));
 end;
+

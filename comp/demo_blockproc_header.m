@@ -20,3 +20,4 @@ try
 catch
    error('%s: playrec or portaudio are not properly compiled. ',demo_name);
 end
+

@@ -4,10 +4,7 @@ function g = comp_filterbank_pre(g,a,L,crossover)
 %   The purpose of this function is to evauate all parameters of the
 %   filters, which can be evaluated knowing L.
 %
-%   This function ensures that g will be in the following format:
-%
-%      If g has field .h and it is a vector with length < crossover:
-%         Impulse response is modulated.
+
 
 if nargin<4
    crossover = 0; 

@@ -1,4 +1,5 @@
 function wt = comp_wpfbtscale(wt,interscaling)
+%COMP_WPFBTSCALE Scale filters in the filterbank tree
 
 
 % Here we handle scaling of intermediate outputs in the tree

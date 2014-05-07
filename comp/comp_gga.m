@@ -1,4 +1,6 @@
 function c = comp_gga(f,indvec)
+%COMP_GGA Generalized Goertzel Algorithm
+%
 
 
 %% Initialization

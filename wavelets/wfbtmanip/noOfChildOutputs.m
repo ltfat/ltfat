@@ -11,3 +11,4 @@ for nn=1:length(children)
    noOut = noOut + chan - child;
    noOut = noOut + noOfChildOutputs(chNodeNo,wt);
 end
+
