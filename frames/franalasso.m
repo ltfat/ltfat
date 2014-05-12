@@ -24,7 +24,15 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative soft thresholdings.
-%  
+%
+%   The basic (Iterative Soft Thresholding) algorithm given *F* and *f* 
+%   and parameters *C*$>0$, `lambda` $>0$ acts as follows::
+%
+%     Initialize c
+%     repeat until stopping criterion is met
+%        c <- soft(c + F*(f - Fc)/C,lambda/C)
+%     end
+%
 %   `[tc,relres,iter] = franalasso(...)` return thes residuals *relres* in a vector
 %   and the number of iteration steps done *iter*.
 %
