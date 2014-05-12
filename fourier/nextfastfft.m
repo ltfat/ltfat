@@ -3,7 +3,7 @@ function [nfft,tableout]=nextfastfft(n)
 %   Usage: nfft=nextfastfft(n);
 %
 %   `nextfastfft(n)` returns the next number greater than or equal to *n*,
-%   for which the computation of an FFT is fast. Such a number is solely
+%   for which the computation of a FFT is fast. Such a number is solely
 %   comprised of small prime-factors of *2*, *3*, *5* and *7*.
 %
 %   `nextfastfft` is intended as a replacement of `nextpow2`, which is often
