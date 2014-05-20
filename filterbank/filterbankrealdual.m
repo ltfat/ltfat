@@ -60,7 +60,8 @@ if info.isuniform
   %  Hb(k+1,:) = conj(G(mod(k*N-w,L)+1,:));
   %end;
   
-  gd=zeros(N,M,thisclass);
+  
+  gd=zeros(M,N,thisclass);
   
   for w=0:N-1
     idx_a = mod(w-(0:a-1)*N,L)+1;
@@ -70,8 +71,11 @@ if info.isuniform
     
     Ha=(Ha*Ha'+Hb*Hb')\Ha;
     
-    gd(idx_a,:)=Ha;
+    gd(:,idx_a)=Ha.';
   end;
+  % The gd was created transposed because the indexing gd(:,idx_a)
+  % is much faster than gd(idx_a,:)
+  gd=gd.';
   
   gd=ifft(gd)*a;
   
@@ -81,7 +85,9 @@ if info.isuniform
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=struct('h',cast(gd(:,m),thisclass),'offset',0);
+    % The filter is not formatted to a structure here, since the
+    % numeric vector is treated as a zero delay imp. resp.
+    gdout{m}=cast(gd(:,m),thisclass);
   end;
   
 else

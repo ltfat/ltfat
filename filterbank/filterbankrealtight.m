@@ -54,7 +54,7 @@ if info.isuniform
   
   N=L/a;
 
-  gt=zeros(N,M,thisclass);
+  gt=zeros(M,N,thisclass);
   
   for w=0:N-1
     idx_a = mod(w-(0:a-1)*N,L)+1;
@@ -64,8 +64,11 @@ if info.isuniform
     
     Ha=sqrtm(Ha*Ha'+Hb*Hb')\Ha;
     
-    gt(idx_a,:)=Ha;
+    gt(:,idx_a)=Ha.';
   end;
+  % gt was created transposed because the indexing gt(:,idx_a)
+  % is much faster than gt(idx_a,:)
+  gt =  gt.';
   
   gt=ifft(gt)*sqrt(a);
   

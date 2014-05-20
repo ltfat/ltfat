@@ -60,7 +60,7 @@ if info.isuniform
   
   N=L/a;
   
-  gd=zeros(N,M,thisclass);
+  gd=zeros(M,N,thisclass);
   
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;
@@ -68,8 +68,11 @@ if info.isuniform
     
     H=pinv(H)';
     
-    gd(idx,:)=H;
+    gd(:,idx)=H.';
   end;
+  % gd was created transposed because the indexing gd(:,idx_a)
+  % is much faster than gd(idx_a,:)
+  gd =  gd.';
   
   gd=ifft(gd)*a;
   
@@ -79,7 +82,7 @@ if info.isuniform
   
   gdout=cell(1,M);
   for m=1:M
-    gdout{m}=struct('h',cast(gd(:,m),thisclass),'offset',0);
+    gdout{m}= cast(gd(:,m),thisclass);
   end;
   
 else

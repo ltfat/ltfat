@@ -56,8 +56,7 @@ if info.isuniform
   
   N=L/a;
   
-  H=zeros(a,M,thisclass);
-  gt=zeros(N,M,thisclass);
+  gt=zeros(M,N,thisclass);
   
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;
@@ -66,8 +65,11 @@ if info.isuniform
     [U,S,V]=svd(H,'econ');
     H=U*V';  
     
-    gt(idx,:)=H;
+    gt(:,idx)=H.';
   end;
+  % gt was created transposed because the indexing gt(:,idx_a)
+  % is much faster than gt(idx_a,:)
+  gt =  gt.';
   
   gt=ifft(gt)*sqrt(a);  
 
