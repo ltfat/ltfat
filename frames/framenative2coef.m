@@ -2,7 +2,7 @@ function coef=framenative2coef(F,coef);
 %FRAMENATIVE2COEF  Convert coefficient from native format
 %   Usage: cout=framenative2coef(F,cin);
 %
-%   `framenative2coef(F,coef)` convert frame coefficients from the native
+%   `framenative2coef(F,coef)` converts the frame coefficients from the native
 %   format of the transform into the common column format.
 %
 %   See also: frame, framecoef2native

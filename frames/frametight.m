@@ -1,6 +1,6 @@
 function Ft=frametight(F);
 %FRAMETIGHT  Construct the canonical tight frame
-%   Usage: F=frametight(F);
+%   Usage: Ft=frametight(F);
 %
 %   `Ft=frametight(F)` returns the canonical tight frame of *F*.
 %

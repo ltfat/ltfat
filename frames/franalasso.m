@@ -5,7 +5,7 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %   Input parameters:
 %       F        : Frame definition
 %       f        : Input signal
-%       lambda   : Regularization parameter, controls sparsity of the solution
+%       lambda   : Regularisation parameter, controls sparsity of the solution
 %   Output parameters:
 %       tc       : Thresholded coefficients
 %       relres   : Vector of residuals.
@@ -33,7 +33,7 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %        c <- soft(c + F*(f - Fc)/C,lambda/C)
 %     end
 %
-%   `[tc,relres,iter] = franalasso(...)` return thes residuals *relres* in a vector
+%   `[tc,relres,iter] = franalasso(...)` returns the residuals *relres* in a vector
 %   and the number of iteration steps done *iter*.
 %
 %   `[tc,relres,iter,frec,cd] = franalasso(...)` returns the reconstructed

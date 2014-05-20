@@ -9,7 +9,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   Input parameters:
 %       F        : Frame definition
 %       f        : Input signal
-%       lambda   : Regularization parameter.
+%       lambda   : Regularisation parameter.
 %       C        : Step size of the algorithm.
 %       tol      : Reative error tolerance.
 %       maxit    : Maximum number of iterations.
@@ -30,7 +30,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   Srinkage algorithm) which is an appication of ADMM (Alternating
 %   Direction Method of Multipliers) to the basis pursuit problem.
 %
-%   The algorithm given *F* and *f* and parameters *C*$>0$, `lambda` $>0$ 
+%   The algorithm given *F* and *f* and parameters *C* $>0$, `lambda` $>0$ 
 %   (see below) acts as follows::
 %
 %     Initialize c,d
@@ -43,7 +43,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   For a quick execution, the function requires analysis operator of the
 %   canonical dual frame F*(FF*)^(-1). By default, the function attempts
 %   to call |framedual| to create the canonical dual frame explicitly.
-%   If it is not available, the conjugate cradient algorithm is
+%   If it is not available, the conjugate gradient method algorithm is
 %   used for inverting the frame operator in each iteration of the
 %   algorithm.
 %   Optionally, the canonical dual frame object or an anonymous function 
@@ -70,13 +70,13 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %          The default value of `lambda` is 1.
 %
 %      `C`
-%         A step parameter of the SALSA algoritm. 
+%         A step parameter of the SALSA algorithm. 
 %         The default value of `C` is the upper frame bound of *F*. 
 %         Depending on the structure of the frame, this can be an expensive
 %         operation.
 %
 %      `tol`
-%         Defines tolerance of `relres` which is norm or a relative
+%         Defines tolerance of `relres` which is a norm or a relative
 %         difference of coefficients obtained in two consecutive iterations
 %         of the algorithm.
 %         The default value 1e-2.
@@ -110,12 +110,12 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   Returned arguments:
 %   -------------------
 %
-%   `[c,relres,iter] = franabp(...)` return thes residuals *relres* in a
+%   `[c,relres,iter] = franabp(...)` returns the residuals *relres* in a
 %   vector and the number of iteration steps done *iter*.
 %
 %   `[tc,relres,iter,frec,cd] = franabp(...)` returns the reconstructed
 %   signal from the coefficients, *frec* (this requires additional
-%   computations) and a coefficients *cd* minimizing the ||c||_2 norm
+%   computations) and a coefficients *cd* minimising the ||c||_2 norm
 %   (this is a byproduct of the algorithm).
 %
 %   The relationship between the output coefficients *frec* and *c* is

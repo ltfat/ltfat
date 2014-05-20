@@ -37,7 +37,7 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %
 %   Generally, if the absolute value of the frame coefficients has not been
 %   modified, the iterative algorithm will converge slowly to the correct
-%   result. If the coeffficients have been modified, the algorithm is not
+%   result. If the coefficients have been modified, the algorithm is not
 %   guaranteed to converge at all.
 %
 %   `frsynabs` takes the following parameters at the end of the line of input

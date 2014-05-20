@@ -2,7 +2,7 @@ function [Ncoef, L]=frameclength(F,Ls)
 %FRAMECLENGTH  Number of coefficients from length of signal
 %   Usage: Ncoef=frameclength(F,Ls);
 %
-%   `Ncoef=frameclength(F,Ls)` returns total number of coefficients 
+%   `Ncoef=frameclength(F,Ls)` returns the total number of coefficients 
 %   obtained by applying the analysis operator of frame *F* to a signal
 %   of length *Ls* i.e. `size(frana(F,f),1)` for `Ls=length(f)`. 
 %
