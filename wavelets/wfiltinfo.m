@@ -43,7 +43,7 @@ subplot(4,filtNo,1);
 title('Scaling imp. response');
 loAna = w.g{1}.h;
 loShift = -w.g{1}.offset;
-xvals = -loShift + (1:length(loAna));
+xvals = -loShift + (0:length(loAna)-1);
 hold on;
 if ~isempty(loAna(loAna==0))
    stem(xvals(loAna==0),loAna(loAna==0),'Color',grayLevel);
@@ -59,7 +59,7 @@ for ff=2:filtNo
     title(sprintf('Wavelet imp. response no: %i',ff-1));
     filtAna = w.g{ff}.h;
     filtShift = -w.g{ff}.offset;
-    xvals = -filtShift + (1:length(filtAna));
+    xvals = -filtShift + (0:length(filtAna)-1);
     filtNZ = find(filtAna~=0);
     hold on;
     

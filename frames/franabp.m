@@ -40,6 +40,9 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %       c <- d + v
 %     end
 %
+%   When compared to other algorithms, *Fc = f* holds exactly (up to a num.
+%   prec) in each iteration.
+%
 %   For a quick execution, the function requires analysis operator of the
 %   canonical dual frame F*(FF*)^(-1). By default, the function attempts
 %   to call |framedual| to create the canonical dual frame explicitly.
