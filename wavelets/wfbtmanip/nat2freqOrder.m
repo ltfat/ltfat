@@ -48,6 +48,14 @@ for ii=1:length(treePath)
        wt.nodes{nodeId}.g = wt.nodes{nodeId}.g(chan:-1:1);
        wt.nodes{nodeId}.h = wt.nodes{nodeId}.h(chan:-1:1);
        wt.nodes{nodeId}.a = wt.nodes{nodeId}.a(chan:-1:1);
+       
+       % Do the same with the dual tree if it exists
+       if isfield(wt,'dualnodes')
+           chan = numel(wt.dualnodes{nodeId}.g);
+           wt.dualnodes{nodeId}.g = wt.dualnodes{nodeId}.g(chan:-1:1);
+           wt.dualnodes{nodeId}.h = wt.dualnodes{nodeId}.h(chan:-1:1);
+           wt.dualnodes{nodeId}.a = wt.dualnodes{nodeId}.a(chan:-1:1);
+       end
     end    
     
 end

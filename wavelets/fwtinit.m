@@ -1,9 +1,10 @@
-function [w,info] = fwtinit(wdef)
+function [w,info] = fwtinit(wdef,prefix)
 %FWTINIT  Wavelet Filterbank Structure Initialization
 %   Usage:  w = fwtinit(wdef);
 %
 %   Input parameters:
-%         wdef : Wavelet filters specification.
+%         wdef   : Wavelet filters specification.
+%         prefix : Function name prefix
 %
 %   Output parameters:
 %         w    : Structure defining the filterbank.
@@ -114,7 +115,6 @@ function [w,info] = fwtinit(wdef)
 wprefix = 'wfilt_';
 waveletsDir = 'wavelets';
 
-
 % output structure definition
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 w.origArgs = {};
@@ -131,6 +131,14 @@ end;
 
 if isempty(wdef)
     error('%s: Input argument is empty.',upper(mfilename)); 
+end
+
+if nargin>1 
+    if ischar(prefix) && ~isempty(prefix)
+       wprefix = prefix;
+    else
+       error('%s: Bad format of prefix.',upper(mfilename));
+    end
 end
 
 
@@ -378,7 +386,11 @@ wcharMatchIdx = find(wcharMatch~=0);
 % Handle faulty results.
 if(isempty(wcharMatchIdx))
    dirListStr = cell2mat(cellfun(@(wEl) sprintf('%s, ',wEl), wfiltNames(:)','UniformOutput',0));
-   error('%s: Unknown wavelet filter definition string: %s.\nAccepted are:\n%s',upper(mfilename),wcharNoNum,dirListStr(1:end-2));
+   if ~all(cellfun(@isempty,wfiltNames))
+      error('%s: Unknown wavelet filter definition string: %s.\nAccepted are:\n%s',upper(mfilename),wcharNoNum,dirListStr(1:end-2));
+   else
+      error('%s: Cannot find %s%s',upper(mfilename),wprefix,wcharNoNum); 
+   end
 end
 if(numel(wcharMatchIdx)>1)
    error('%s: Ambiguous wavelet filter definition string. Probably bug somewhere.',upper(mfilename));

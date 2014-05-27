@@ -70,6 +70,9 @@ test_filters = {
                %{'hden',2}
                %{'hden',1}
                %{'algmband',2}
+               {'symorth',1}
+               {'symorth',2}
+               {'symorth',3}
                };
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 
