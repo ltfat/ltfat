@@ -30,7 +30,7 @@ case 1
     harr = [hlp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];   
     garr = harr;   
     info.istight = 1;
-    %info.d = [2,2];
+    info.d = [2,2];
 
 case 2
     % Example 2. From the reference. Symmetric near-orthogonal
