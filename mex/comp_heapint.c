@@ -27,9 +27,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     LTFAT_REAL *phase;
 
     // Get inputs
-    s     = (const LTFAT_REAL*) mxGetPr(prhs[0]);
-    tgrad = (const LTFAT_REAL*) mxGetPr(prhs[1]);
-    fgrad = (const LTFAT_REAL*) mxGetPr(prhs[2]);
+    s     = mxGetData(prhs[0]);
+    tgrad = mxGetData(prhs[1]);
+    fgrad = mxGetData(prhs[2]);
     a     = (int)mxGetScalar(prhs[3]);
     tol   = mxGetScalar(prhs[4]);
 
@@ -37,7 +37,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     M = mxGetM(prhs[0]);
     N = mxGetN(prhs[0]);
     L = N * a;
-    W = 1;
+    W = 1;  
 
     // Create output matrix and zero it.
     plhs[0] = ltfatCreateMatrix(M, N, LTFAT_MX_CLASSID, mxREAL);
