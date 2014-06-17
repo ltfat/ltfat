@@ -82,7 +82,7 @@ h{1}= real(poly(hroots));
 % normalize
 h{1}= h{1}/norm(h{1});
 % QMF modulation low-pass -> highpass
-h{2}= (-1).^(1:flen).*h{1}(end:-1:1);
+h{2}= (-1).^(0:flen-1).*h{1}(end:-1:1);
 
 g=h;
 a = [2;2];
