@@ -1,4 +1,4 @@
- function [wt,info] = wfbtinit(wtdef,varargin)
+  function [wt,info] = wfbtinit(wtdef,varargin)
 %WFBTINIT Initialize Filterbank Tree
 %   Usage:  wt = wfbtinit(wtdef);
 %
@@ -180,10 +180,6 @@ if flags2.do_root
    J = 1;
 end
 
-if isempty(J)
-   error('%s: Unspecified J.',upper(mfilename));
-end
-
 if flags2.do_dwt
    % fill the structure to represent a DWT tree
    for jj=0:J-1
@@ -227,11 +223,9 @@ elseif flags2.do_octaband
 end
 
 % Do filter shuffling if frequency ordering is required,
+wt.freqOrder = flags.do_freq;
 if flags.do_freq
    wt = nat2freqOrder(wt);
-   wt.freqOrder = 1;
-else
-   wt.freqOrder = 0;
 end
 
 if do_powshiftable

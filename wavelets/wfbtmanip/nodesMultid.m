@@ -32,7 +32,8 @@ for ii = 1:numel(wtPath)
       tmpUpsFac = nodeFiltUps(iiNode,wt);
       tmpFilt = wt.nodes{iiNode}.g{locRange(jj)};
       g{outRange(jj)} = struct();
-                % 
+      % Involution is here because of the filterbank convention is
+      % different from the one used in wavelet filtering.
       g{outRange(jj)}.h = conj(flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1))));
       g{outRange(jj)}.offset = 1-numel(g{outRange(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
    end
@@ -82,18 +83,38 @@ for ii=startIdx:length(pre)-1
     hmi = conv2(hmi,hcurr);
 end
 
-function predori = nodePredecesorsOrig(baseOrig,nodeNo,treeStruct)
-pre = nodePredecesors(nodeNo,treeStruct);
+function predori = nodePredecesorsOrig(baseOrig,nodeNo,wt)
+% Calculate total offset of a filter identical to a path from root to 
+% node nodeNo in treeStruct. The last filter in the chain itself has
+% offset equal to baseOrig
+
+% Get nodes from the path from root to nodeNo
+pre = nodePredecesors(nodeNo,wt);
 pre = pre(end:-1:1);
+
+% Shortcut out if nodeNo is the root node
 if(isempty(pre))
  predori = baseOrig;
  return;
 end
 
+% Add the curernt node to the list
 pre(end+1) = nodeNo;
-predori = baseOrig;
-for ii=2:length(pre)
+predori = 0;
+% Do from root to nodeNo
+for ii=1:length(pre)-1
+    % Get node id
     id = pre(ii);
-    predori = nodeFiltUps(id,treeStruct)*baseOrig + predori;
+    % Find which path to go
+    childLogInd = wt.children{id}==pre(ii+1);
+    % Obtain offset
+    tmpOffset = -wt.nodes{id}.g{childLogInd}.offset;
+    % Update te current offset
+    predori = nodeFiltUps(id,wt)*tmpOffset + predori;
 end
+
+% We do not know here which filter from the node are we working with so
+% this line substitutes the last iteration of the previous loop
+predori = nodeFiltUps(nodeNo,wt)*baseOrig + predori;
+
 

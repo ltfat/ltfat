@@ -5,13 +5,13 @@
 
 ifndef MATLABROOT
   $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
-  MATLABROOT=/usr/local/MATLAB/R2011a/
+  MATLABROOT=/usr/local/MATLAB/MATLAB_Production_Server/R2013a/
 endif
 
 
 
 MEXCOMPFLAGS=-I"$(MATLABROOT)extern/include"
-MATLABLIBS=-L"$(MATLABROOT)bin/glnxa64" -lmat -lmx -ldl
+MATLABLIBS=-L"$(MATLABROOT)bin/glnxa64" -lfftw3 -lfftw3f  -lmat -lmx -ldl -lm -Wl,-rpath="$(MATLABROOT)bin/glnxa64"
 MATLABLINKFLAGS=$(MATLABLIBS)
 
 CFLAGS=-O3 -Wall -pg -s -std=c99 -I../../src/thirdparty -I../../src/ -I./

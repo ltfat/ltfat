@@ -60,55 +60,56 @@ switch info.fname
        J = info.J;
        a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
     case 'ufwt'
+
        % Only one channel signals can be plotted.
        if(ndims(c)>2)
           error('%s: Multichannel not supported.',upper(mfilename));
        end
 
-   subbNo = size(c,2);
-   a = ones(subbNo,1);
+       subbNo = size(c,2);
+       a = ones(subbNo,1);
 
-   w = fwtinit(info.wt);
-   filtNo = numel(w.h);
-   J = info.J; 
-elseif(strcmpi(info.fname,'wfbt'))
-   % Only one channel signals can be plotted.
-   if(size(c{1},2)>1)
-      error('%s: Multichannel input not supported.',upper(mfilename));
-   end
-   maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
-   a = treeSub(info.wt);
-   subbNo = numel(c);
-   draw_ticks = 0;
-elseif(strcmpi(info.fname,'uwfbt'))
-   % Only one channel signals can be plotted.
-   if(ndims(c)>2)
-      error('%s: Multichannel not supported.',upper(mfilename));
-   end
+       w = fwtinit(info.wt);
+       filtNo = numel(w.h);
+       J = info.J; 
+    case {'wfbt','dtwfbreal'}
+       % Only one channel signals can be plotted.
+       if(size(c{1},2)>1)
+          error('%s: Multichannel input not supported.',upper(mfilename));
+       end
+       maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
+       a = treeSub(info.wt);
+       subbNo = numel(c);
+       draw_ticks = 0;
+    case 'uwfbt'
+       % Only one channel signals can be plotted.
+       if(ndims(c)>2)
+          error('%s: Multichannel not supported.',upper(mfilename));
+       end
 
-   subbNo = size(c,2);
-   a = ones(subbNo,1);
-   draw_ticks = 0;
-elseif(strcmpi(info.fname,'wpfbt'))
-   % Only one channel signals can be plotted.
-   if(size(c{1},2)>1)
-      error('%s: Multichannel input not supported.',upper(mfilename));
-   end
-   maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
-   aCell = nodeSub(nodesBForder(info.wt),info.wt);
-   a = cell2mat(cellfun(@(aEl) aEl(:)',aCell,'UniformOutput',0));
-   draw_ticks = 0;
-elseif(strcmpi(info.fname,'uwpfbt'))
-   % Only one channel signals can be plotted.
-   if(ndims(c)>2)
-      error('%s: Multichannel not supported.',upper(mfilename));
-   end
+       subbNo = size(c,2);
+       a = ones(subbNo,1);
+       draw_ticks = 0;
+    case 'wpfbt'
+       % Only one channel signals can be plotted.
+       if(size(c{1},2)>1)
+          error('%s: Multichannel input not supported.',upper(mfilename));
+       end
+       maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
+       aCell = nodeSub(nodesBForder(info.wt),info.wt);
+       a = cell2mat(cellfun(@(aEl) aEl(:)',aCell,'UniformOutput',0));
+       draw_ticks = 0;
+    case 'uwpfbt'
+       % Only one channel signals can be plotted.
+       if(ndims(c)>2)
+          error('%s: Multichannel not supported.',upper(mfilename));
+       end
 
-   subbNo = size(c,2);
-   a = ones(subbNo,1);
-   draw_ticks = 0;
-else
-   error('%s: Unknown function name %s.',upper(mfilename),info.fname);
+       subbNo = size(c,2);
+       a = ones(subbNo,1);
+       draw_ticks = 0;
+    otherwise
+       error('%s: Unknown function name %s.',upper(mfilename),info.fname);
 end
 
 % Use plotfilterbank
