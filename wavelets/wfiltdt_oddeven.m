@@ -14,7 +14,7 @@ function [h,g,a,info] = wfiltdt_oddeven(N)
 %   References: kingsbury2000
 %
 
-info.istight = 1;
+
 a = [2;2;2;2];
 
 switch(N)
@@ -50,12 +50,20 @@ switch(N)
 
 end
     range = (0:size(garr,1)-1) - d;
+    
+    garr = [garr(:,3:4),garr(:,1:2)];
+    
     harr = bsxfun(@times,(-1).^range.',...
                   [garr(:,2),...
                    garr(:,1),...
                    garr(:,4),...
                    garr(:,3)
                   ]);
+              
+    harr = flipud(harr);
+    garr = flipud(garr);
+     
+info.d = [d,d,d,d];
 
 h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));

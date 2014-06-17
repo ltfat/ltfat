@@ -4,9 +4,8 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %           [c,info]=dtwfb(...);
 %
 %   Input parameters:
-%         f     : Input data.
+%         f      : Input data.
 %         wtr    : Real Wavelet Filterbank tree definition.
-%         wti    : Imaginary Wavelet Filterbank tree definition.
 %
 %   Output parameters:
 %         c    : Coefficients stored in a cell-array.

@@ -124,6 +124,7 @@ w.a = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 info.istight = 0;
 
+
 % return empty struct if no argument was passed
 if nargin<1
   return;
@@ -299,6 +300,8 @@ end
 
 if ~isempty(info)&&isfield(info,'istight')
    is_tight = info.istight;
+else
+   info.istight = 0;
 end
 
 d = [];

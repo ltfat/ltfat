@@ -19,4 +19,4 @@ tgrad = (tgrad_1+tgrad_2)/2;
 tgrad = tgrad/(2*pi)*L;
 
 
-plot(tgrad);
+%plot(tgrad);

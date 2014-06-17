@@ -39,31 +39,31 @@ end
 maxSubLen = 800;
 draw_ticks = 1;
 
-if(strcmpi(info.fname,'fwt'))
-%% FWT plot
-   % Change to the cell format
-   if(isnumeric(c))
-       c = wavpack2cell(c,info.Lc,info.dim);
-   end
-   maxSubLen = max(info.Lc);
-   
-   % Only one channel signals can be plotted.
-   if(size(c{1},2)>1)
-      error('%s: Multichannel input not supported.',upper(mfilename));
-   end
+switch info.fname
+    case 'fwt'
+    %% FWT plot
+       % Change to the cell format
+       if(isnumeric(c))
+           c = wavpack2cell(c,info.Lc,info.dim);
+       end
+       maxSubLen = max(info.Lc);
 
-   subbNo = numel(c);
-   w = fwtinit(info.wt);
-   aBase = w.a;
-   filtNo = numel(w.h);
-   J = info.J;
-   a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
-elseif(strcmpi(info.fname,'ufwt'))
-   
-   % Only one channel signals can be plotted.
-   if(ndims(c)>2)
-      error('%s: Multichannel not supported.',upper(mfilename));
-   end
+       % Only one channel signals can be plotted.
+       if(size(c{1},2)>1)
+          error('%s: Multichannel input not supported.',upper(mfilename));
+       end
+
+       subbNo = numel(c);
+       w = fwtinit(info.wt);
+       aBase = w.a;
+       filtNo = numel(w.h);
+       J = info.J;
+       a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
+    case 'ufwt'
+       % Only one channel signals can be plotted.
+       if(ndims(c)>2)
+          error('%s: Multichannel not supported.',upper(mfilename));
+       end
 
    subbNo = size(c,2);
    a = ones(subbNo,1);

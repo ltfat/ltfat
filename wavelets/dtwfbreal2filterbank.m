@@ -17,12 +17,9 @@ rangeOut = rangeInOutputs(wtPath,dtw);
 dtw.nodes = dtw.dualnodes;
 [g2,a2] = nodesMultid(wtPath,rangeLoc,rangeOut,dtw);
 
-info.g1 = g;
-info.g2 = g2;
-
-
-% Align filter offsets
+% Align filter offsets so they can be summed
 for ii = 1:numel(g)
+   % Sanity checks
    assert(g{ii}.offset<=0,sprintf('%s: Invalid wavelet filters.',upper(mfilename)));
    assert(g2{ii}.offset<=0,sprintf('%s: Invalid wavelet filters.',upper(mfilename)));
     
@@ -43,10 +40,14 @@ for ii = 1:numel(g)
    end
 end
 
-
-
+% Return the filterbanks only after they have been properly aligned
+info.g1 = g;
+info.g2 = g2;
 
 gpos = cellfun(@(gEl,g2El) setfield(gEl,'h',(gEl.h+1i*g2El.h)),g,g2,'UniformOutput',0);
+
+%gpos([1,end]) = cellfun(@(gEl) setfield(gEl,'h',conj(gEl.h)),gpos([1,end]),'UniformOutput',0);
+
 %gneg = cellfun(@(gEl,g2El) setfield(gEl,'h',(gEl.h-1i*g2El.h)),g,g2,'UniformOutput',0);
 gneg = [];
 g = [gpos;gneg(end:-1:1)];

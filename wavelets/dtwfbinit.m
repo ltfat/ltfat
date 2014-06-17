@@ -124,46 +124,34 @@ w2.h(1:end/2) = [];
 w2.g(1:end/2) = [];
 w2.a(1:end/2) = [];
 
-dtw = wfbtinit({w1,J,flags2.treetype},'nat');
+
+
+dtw  = wfbtinit({w1,J,flags2.treetype}, 'nat');
+dtw2 = wfbtinit({w2,J,flags2.treetype}, 'nat');
+
 
 % Replace the root node
- if ~isempty(kv2.first)
+if ~isempty(kv2.first)
      firstTmp = kv2.first;
-     %firstTmp.h=cellfun(@(hEl) setfield(hEl,'h',[hEl.h;0]),firstTmp.h,'UniformOutput',0);
-     %firstTmp.h{1}.h=[firstTmp.h{1}.h];
-     %firstTmp.h{2}.h=[0;firstTmp.h{2}.h];
-     firstTmp.h{1}.offset=firstTmp.h{1}.offset;
-     firstTmp.h{2}.offset=firstTmp.h{2}.offset;
      
-     %firstTmp.g=cellfun(@(gEl) setfield(gEl,'h',[gEl.h;0]),firstTmp.g,'UniformOutput',0);
-     %firstTmp.g{1}.h=[firstTmp.g{1}.h];
-     %firstTmp.g{2}.h=[0;firstTmp.g{2}.h];
-     firstTmp.g{1}.offset=firstTmp.g{1}.offset;
-     firstTmp.g{2}.offset=firstTmp.g{2}.offset;
+     firstTmp.h{1}.offset=firstTmp.h{1}.offset-1;
+     firstTmp.h{2}.offset=firstTmp.h{2}.offset-1;
+     firstTmp.g{1}.offset=firstTmp.g{1}.offset-1;
+     firstTmp.g{2}.offset=firstTmp.g{2}.offset-1;
      
      dtw = wfbtput(0,0,firstTmp,dtw,'force');
- end
 
-dtw2 = wfbtinit({w2,J,flags2.treetype},'nat');
-
- if ~isempty(kv2.first)
      firstTmp = kv2.first;
-     %firstTmp.h=cellfun(@(hEl) setfield(hEl,'h',[0;hEl.h]),firstTmp.h,'UniformOutput',0);
-     %firstTmp.h{1}.h=([0;firstTmp.h{1}.h]);
-     %firstTmp.h{2}.h=([firstTmp.h{2}.h]);
-     firstTmp.h{1}.offset=firstTmp.h{1}.offset+1;
-     firstTmp.h{2}.offset=firstTmp.h{2}.offset+1;
-     %firstTmp.g=cellfun(@(gEl) setfield(gEl,'h',[0;gEl.h]),firstTmp.g,'UniformOutput',0);
-     %firstTmp.g{1}.h=([0;firstTmp.g{1}.h]);
-     %firstTmp.g{2}.h=([firstTmp.g{2}.h]);
-     firstTmp.g{1}.offset=firstTmp.g{1}.offset+1;
-     firstTmp.g{2}.offset=firstTmp.g{2}.offset+1;
+     
+     firstTmp.h{1}.offset=firstTmp.h{1}.offset;
+     firstTmp.h{2}.offset=firstTmp.h{2}.offset;
+     firstTmp.g{1}.offset=firstTmp.g{1}.offset;
+     firstTmp.g{2}.offset=firstTmp.g{2}.offset;
      
      dtw2 = wfbtput(0,0,firstTmp,dtw2,'force');
  end
 
 dtw.dualnodes = dtw2.nodes;
-%dtw.dualnodes(1) = dtw.nodes(1);
 
 % Replace the 'packet leaf nodes' (see Bayram)
 if ~(flags2.do_dwt || flags2.do_root) && J>2

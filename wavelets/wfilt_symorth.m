@@ -9,9 +9,9 @@ function [h,g,a,info] = wfilt_symorth(N)
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('ana:symds1');
+%     wfiltinfo('ana:symorth2');
 %     figure(2);
-%     wfiltinfo('syn:symds1');
+%     wfiltinfo('syn:symorth2');
 % 
 %   References: abdelnour2004
 %
@@ -67,7 +67,7 @@ case 2
          ];   
     harr = [hlp, (-1).^(0:numel(glp)-1).'.*flipud(glp)];
     garr = [glp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];
-    
+    info.d = [6,6];
 case 3
     % Example 1. from the reference. Symmetric near-orthogonal
     % K=5 vanishing moments (both low and high pass)
@@ -116,7 +116,7 @@ case 3
     harr = [hlp, (-1).^(0:numel(glp)-1).'.*flipud(glp)];
     garr = [glp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];
     
-   
+    info.d = [9,9];
   otherwise
         error('%s: No such filters.',upper(mfilename)); 
 
