@@ -54,41 +54,21 @@ case 2
         -0.0000014745  0.0614116921  0            -0.0000103221  0.0087730988  0
     ];
 
-   
-case 3
-    
-      % Example 3. From the reference. 
-    hlp = [
-         0.00241187
-         0.00127756
-        -0.00257617
-        -0.00662879
-         0.03152638
-         0.01815649
-        -0.12018854
-         0.02455015
-         0.56580807
-         0.75281604
-         0.28090286
-        -0.11330589
-        -0.05327611
-         0.04436522
-         0.00128346
-        -0.01183479
-         0.00120989
-        -0.00228413
-    ];
-
-    d = 9;
-   
   otherwise
         error('%s: No such filters.',upper(mfilename)); 
 
 end
 
-
+harr = flipud(harr);
 garr = harr;  
 h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+
+
+% This filterbank is used as the first stage filterbank in the first tree,
+% delayed by one sample in the second tree.
+info.defaultfirst = 'symdden1';
+
+
 
 

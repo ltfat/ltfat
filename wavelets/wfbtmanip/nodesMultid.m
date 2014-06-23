@@ -46,7 +46,7 @@ end
 nodePredecesorsMultId();
 
 
-function hmi = nodePredecesorsMultId(nodeNo,treeStruct)
+function hmi = nodePredecesorsMultId(nodeNo,wt)
 % Build multirate identity of nodes preceeding nodeNo
 % chache of the intermediate multirate identities
 persistent multIdPre;
@@ -62,7 +62,7 @@ if(nargin==0),  multIdPre = {}; return; end
 
 startIdx = 1;
 hmi = [1];
-pre = nodePredecesors(nodeNo,treeStruct);
+pre = nodePredecesors(nodeNo,wt);
 pre = [nodeNo,pre];
 for jj = 1:length(pre)
   if(~isempty(multIdPre))
@@ -78,8 +78,8 @@ pre = pre(end:-1:1);
 
 for ii=startIdx:length(pre)-1
     id = pre(ii);
-    hcurr = treeStruct.nodes{id}.g{treeStruct.children{id}==pre(ii+1)}.h(:);
-    hcurr = comp_ups(hcurr,nodeFiltUps(id,treeStruct),1);
+    hcurr = wt.nodes{id}.g{wt.children{id}==pre(ii+1)}.h(:);
+    hcurr = comp_ups(hcurr,nodeFiltUps(id,wt),1);
     hmi = conv2(hmi,hcurr);
 end
 

@@ -33,8 +33,6 @@ type = {'dec'};
 ext = {'per','zero','odd','even'};
 format = {'pack','cell'};
 
-
-
 test_filters = {
                {'db',10}
 %               {'apr',2} % complex filter values, odd length filters, no exact PR
@@ -50,6 +48,8 @@ test_filters = {
                %{'sym',4}
                {'sym',9}
                {'symds',2}
+               {'symtight',1}
+               {'symtight',2}
 %               {'symds',3}
 %               {'symds',4}
 %               {'symds',5}
@@ -61,7 +61,7 @@ test_filters = {
                %{'optfs',7} % bad precision of filter coefficients
                %{'remez',20,10,0.1} % no perfect reconstruction
                {'dden',2}
-               {'dden',7}
+               {'dden',5}
                {'dgrid',1}
                {'dgrid',3}
                %{'algmband',1} 
@@ -73,6 +73,8 @@ test_filters = {
                {'symorth',1}
                {'symorth',2}
                {'symorth',3}
+               {'symdden',1}
+               {'symdden',2}
                };
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 

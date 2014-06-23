@@ -24,13 +24,21 @@ case 1
     % Example 3. From the reference. Orthogonal near-symmetric
     % K=2 wanishing moments
     A = -sqrt(2)/4+sqrt(30)/16;
-    hlp = [-sqrt(2)/16, sqrt(2)/16, A+sqrt(2)/2, A+sqrt(2)/2, sqrt(2)/16,...
-           -sqrt(2)/16, -A, -A].';
+    hlp = [-sqrt(2)/16,... 
+            sqrt(2)/16,...
+            A+sqrt(2)/2,...
+            A+sqrt(2)/2,... 
+            sqrt(2)/16,...
+           -sqrt(2)/16,...
+           -A,...
+           -A...
+           ].';
        
-    harr = [hlp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];   
+    harr = [hlp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];  
+    
     garr = harr;   
     info.istight = 1;
-    info.d = [2,2];
+    info.d = [3,5];
 
 case 2
     % Example 2. From the reference. Symmetric near-orthogonal
@@ -65,8 +73,8 @@ case 2
           0.0044852837
           0.0025454063
          ];   
-    harr = [hlp, (-1).^(0:numel(glp)-1).'.*flipud(glp)];
-    garr = [glp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];
+    harr = [hlp, (-1).^(1:numel(glp)).'.*flipud(glp)];
+    garr = [glp, (-1).^(1:numel(hlp)).'.*flipud(hlp)];
     info.d = [6,6];
 case 3
     % Example 1. from the reference. Symmetric near-orthogonal

@@ -7,14 +7,10 @@ function [dtw,info] = dtwfbinit(dtwdef,varargin)
 % but contains additional field .dualnodes containing
 % filters of the dual tree
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dtw.nodes = {};
+dtw = wfbtinit();
 dtw.dualnodes = {};
-dtw.children = {};
-dtw.parents = [];
-dtw.freqOrder = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 info.istight = 0;
-
 
 definput.import = {'wfbtcommon'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
@@ -83,37 +79,47 @@ end
 
 [w, info] = fwtinit(wdef,'wfiltdt_');
 
-firstinfo = info;
-if ~isempty(kv2.first)
-   if do_dual
-      kv2.first = {'dual',kv2.first};
-   end
-   if do_strict
-      kv2.first = {'strict',kv2.first};
-   end
-   [kv2.first, firstinfo] = fwtinit(kv2.first);
-else
-%   if abs(sum(1/w.a) - 1) < 1e-6
-      % Use symorth3 
-      [kv2.first, firstinfo] = fwtinit('db10');
-%   end
+% Determine the first-stage wavelet filters
+if ~isfield(info,'defaultfirst') && isempty(kv2.first)
+    error('%s: No first stage wavelet filters specified.',upper(mfilename));
 end
 
-% This is only relevant for packets
-leafinfo = info;
-if ~isempty(kv2.leaf) && ~(flags2.do_dwt || flags2.do_root)
-   if do_dual
-      kv2.leaf = {'dual',kv2.leaf};
-   end
-   if do_strict
-      kv2.leaf = {'strict',kv2.leaf};
-   end
-   [kv2.leaf, leafinfo] = fwtinit(kv2.leaf);
-else
-   [kv2.leaf, leafinfo] = fwtinit('db10');
+if isempty(kv2.first)
+    kv2.first = info.defaultfirst;
 end
+
+if do_dual
+   kv2.first = {'dual',kv2.first};
+end
+if do_strict
+   kv2.first = {'strict',kv2.first};
+end
+
+[kv2.first, firstinfo] = fwtinit(kv2.first);
+
+leafinfo = [];
+if ~(flags2.do_dwt || flags2.do_root)
+    % Determine leaf nodes (only valid for wavelet packets)
+    if ~isfield(info,'defaultleaf') && isempty(kv2.leaf) 
+        error('%s: No leaf wavelet filters specified.',...
+              upper(mfilename));
+    else
+       if isempty(kv2.leaf)
+          kv2.leaf = info.defaultleaf; 
+       end
+       if do_dual
+          kv2.leaf = {'dual',kv2.leaf};
+       end
+       if do_strict
+          kv2.leaf = {'strict',kv2.leaf};
+       end
+       [kv2.leaf, leafinfo] = fwtinit(kv2.leaf);
+    end
+end
+
 
 % Extract dual trees
+% This is a bit clumsy...
 w1 = w;
 w1.h(end/2+1:end) = [];
 w1.g(end/2+1:end) = [];
@@ -125,31 +131,21 @@ w2.g(1:end/2) = [];
 w2.a(1:end/2) = [];
 
 
-
+% Initialize both trees
 dtw  = wfbtinit({w1,J,flags2.treetype}, 'nat');
 dtw2 = wfbtinit({w2,J,flags2.treetype}, 'nat');
 
 
-% Replace the root node
+% Replace the root nodes
 if ~isempty(kv2.first)
-     firstTmp = kv2.first;
-     
-     firstTmp.h{1}.offset=firstTmp.h{1}.offset-1;
-     firstTmp.h{2}.offset=firstTmp.h{2}.offset-1;
-     firstTmp.g{1}.offset=firstTmp.g{1}.offset-1;
-     firstTmp.g{2}.offset=firstTmp.g{2}.offset-1;
-     
-     dtw = wfbtput(0,0,firstTmp,dtw,'force');
-
-     firstTmp = kv2.first;
-     
-     firstTmp.h{1}.offset=firstTmp.h{1}.offset;
-     firstTmp.h{2}.offset=firstTmp.h{2}.offset;
-     firstTmp.g{1}.offset=firstTmp.g{1}.offset;
-     firstTmp.g{2}.offset=firstTmp.g{2}.offset;
-     
-     dtw2 = wfbtput(0,0,firstTmp,dtw2,'force');
- end
+   firstTmp = kv2.first;
+   firstTmp.h = cellfun(@(hEl) setfield(hEl,'offset',hEl.offset+1),...
+                        firstTmp.h,'UniformOutput',0);
+   firstTmp.g = cellfun(@(gEl) setfield(gEl,'offset',gEl.offset+1),...
+                        firstTmp.g,'UniformOutput',0);
+   dtw = wfbtput(0,0,firstTmp,dtw,'force');
+   dtw2 = wfbtput(0,0,kv2.first,dtw2,'force');
+end
 
 dtw.dualnodes = dtw2.nodes;
 
@@ -173,8 +169,8 @@ if flags2.do_swap
     % We assume the nodes in dtw.nodes and dtw.dualnodes
     % to be ordered from root to highest level
     if J>2
-       [dtw.nodes(3:end), dtw.dualnodes(3:end)] = ...
-           deal(dtw.dualnodes(3:end), dtw.nodes(3:end));
+       [dtw.nodes(3:2:end), dtw.dualnodes(3:2:end)] = ...
+           deal(dtw.dualnodes(3:2:end), dtw.nodes(3:2:end));
     end
 end
 
@@ -185,7 +181,8 @@ if flags.do_freq
    dtw = nat2freqOrder(dtw); 
 end
 
-info.istight = firstinfo.istight && info.istight;
+info.istight = firstinfo.istight && info.istight && ...
+               ~isempty(leafinfo) && leafinfo.istight;
 
 
 

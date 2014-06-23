@@ -69,8 +69,10 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %   See also: iwfbt, wfbtinit
 
 
-if(nargin<2)
-   error('%s: Too few input parameters.',upper(mfilename));  
+complainif_notenoughargs(nargin,2,'DTWFBREAL');
+
+if ~isreal(f)
+  error('%s: Input signal must be real.',upper(mfilename));
 end
 
 definput.import = {'fwt','wfbtcommon'};
@@ -95,7 +97,7 @@ end
 %% ----- step 3 : Run computation
 wtPath = nodesBForder(dtw);
 rangeLoc = rangeInLocalOutputs(wtPath,dtw);
-rangeOut = rangeInOutputs(wtPath,dtw); % very slow
+rangeOut = rangeInOutputs(wtPath,dtw);
 
 cr = comp_wfbt(f,dtw.nodes(wtPath),rangeLoc,rangeOut,flags.ext);
 ci = comp_wfbt(f,dtw.dualnodes(wtPath),rangeLoc,rangeOut,flags.ext);
@@ -113,6 +115,8 @@ if nargout>1
    info.Ls = Ls;
    info.fOrder = flags.forder;
    info.isPacked = 0;
+   info.cr = cr;
+   info.ci = ci;
 end
 
 

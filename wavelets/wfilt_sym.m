@@ -4,8 +4,8 @@ function [h,g,a,info]=wfilt_sym(N)
 %
 %   `[h,g,a]=wfilt_sym(N)` generates the "least asymmetric" Daubechies'
 %   wavelets or "symlets".  Zeros of the trigonometrical polynomial the
-%   filters of are selected alternatingly inside and outside the unit
-%   circle.
+%   filters consist of are selected alternatingly inside and outside the 
+%   unit circle.
 %
 %   Examples:
 %   ---------
