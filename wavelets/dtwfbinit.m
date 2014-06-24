@@ -68,7 +68,6 @@ if flags2.do_swap && ~(flags2.do_dwt)
 end
 
 % Now dtwdef is this {dtw,J,flag,'first',w}
-% Isolate 
 
 if do_dual
    wdef = {'dual',wdef};
@@ -118,7 +117,7 @@ if ~(flags2.do_dwt || flags2.do_root)
 end
 
 
-% Extract dual trees
+% Extract filters for dual trees
 % This is a bit clumsy...
 w1 = w;
 w1.h(end/2+1:end) = [];
@@ -138,12 +137,15 @@ dtw2 = wfbtinit({w2,J,flags2.treetype}, 'nat');
 
 % Replace the root nodes
 if ~isempty(kv2.first)
+  
    firstTmp = kv2.first;
    firstTmp.h = cellfun(@(hEl) setfield(hEl,'offset',hEl.offset+1),...
                         firstTmp.h,'UniformOutput',0);
    firstTmp.g = cellfun(@(gEl) setfield(gEl,'offset',gEl.offset+1),...
                         firstTmp.g,'UniformOutput',0);
+   % First tree root (shifted by 1 sample)
    dtw = wfbtput(0,0,firstTmp,dtw,'force');
+   % Second tree root
    dtw2 = wfbtput(0,0,kv2.first,dtw2,'force');
 end
 

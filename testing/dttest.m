@@ -3,19 +3,19 @@ f = zeros(2000,1);
 f(149) = 1;
 
 
-wt =  {'ana:oddeven1',3};
+wt =  {'oddeven1',3};
 
 wt2 =  dtwfbinit(wt);
 
-[g,a,info] = dtwfb2filterbank( wt,'real','nat');
-c = filterbank(f,g,a);
+%[g,a,info] = dtwfb2filterbank( wt,'real','nat');
+%c = filterbank(f,g,a);
 
 
 
 %figure(1);plot(pgrpdelay(wt2.nodes{2}.g{1},1024))
 %figure(2);plot(pgrpdelay(wt2.dualnodes{2}.g{1},1024))
-figure(1);plot([pgrpdelay(info.g1{1},1024),pgrpdelay(info.g2{1},1024)]);
-figure(2);plot([pgrpdelay(info.g1{2},1024),pgrpdelay(info.g2{2},1024)]);
+%figure(1);plot([pgrpdelay(info.g1{1},1024),pgrpdelay(info.g2{1},1024)]);
+%figure(2);plot([pgrpdelay(info.g1{2},1024),pgrpdelay(info.g2{2},1024)]);
 
 
 figure(1);
@@ -29,7 +29,7 @@ F =filterbankfreqz(g,a,2*2048,'linabs','plot');
 %czero = cellfun(@(cEl) zeros(size(cEl)),cd,'UniformOutput',0);
 
 
-fhat = idtwfbreal(cd,{'dual',wt},numel(f),'nat');
+fhat = idtwfbreal(cd,wt,numel(f),'nat');
 
 
 fprintf('Rec. err.  %d\n',norm(f-fhat));
