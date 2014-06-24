@@ -201,11 +201,12 @@ for k=1:length(t)
     P0 = A0(i1:i2,:);
 
     % computation of pseudo-inverse matrix of P0
-    [P0inv,condP0] = my_pinv(P0);
+    
+    [P0inv] = pinv(P0);
     gamma(k-1+find(tt==0)-K*(i0-i1):K:k-1+find(tt==0)+K*(i2-i0)) = beta*P0inv(k0-k1+1,:); % row index k0-k1a+1
     % points to the "j=0" row of P0inv
     % record the condition number
-    cond(k) = condP0;
+    condlog(k) = cond(P0);
 
     % actualizing waitbar
     counter = k;
@@ -217,7 +218,7 @@ for k=1:length(t)
     end
 end
 
-cond0 = mean(cond);
+cond0 = mean(condlog);
 
 try
     close(wait);
