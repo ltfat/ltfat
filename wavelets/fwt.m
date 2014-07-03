@@ -115,10 +115,10 @@ function [c,info] = fwt(f,w,J,varargin)
 %
 %   A simple example of calling the |fwt| function:::
 %
-%     f = greasy;
+%     [f,fs] = greasy;
 %     J = 10;
 %     [c,info] = fwt(f,'db8',J);
-%     plotwavelets(c,info,44100,'dynrange',90);
+%     plotwavelets(c,info,fs,'dynrange',90);
 %
 %   See also: ifwt, plotwavelets, wavpack2cell, wavcell2pack, thresh
 %
@@ -152,7 +152,7 @@ if(Ls~=L)
 end
 
 %% ----- step 3 : Run computation.
-c = comp_fwt(f,w.h,J,w.a,flags.ext);
+c = comp_fwt(f,w.h,w.a,J,flags.ext);
 
 %% ----- FINALIZE: Change format of coefficients.
 if flags.do_pack

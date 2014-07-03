@@ -37,13 +37,13 @@ function c = fwt2(f,w,J,varargin)
 %
 %   The first example uses the standard layout:::
 %
-%     c = fwt2(cameraman,{'db',8},4);
+%     c = fwt2(cameraman,'db8',4);
 %     imagesc(dynlimit(20*log10(abs(c)),70));
 %     axis('image'); colormap(gray);
 %
 %   The second example uses the tensor product layout:::
 %
-%     c = fwt2(cameraman,{'db',8},4,'tensor');
+%     c = fwt2(cameraman,'db8',4,'tensor');
 %     imagesc(dynlimit(20*log10(abs(c)),70));
 %     axis('image'); colormap(gray);
 %

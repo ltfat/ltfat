@@ -71,7 +71,6 @@ function [c,info]=wfbt(f,wt,varargin)
 complainif_notenoughargs(nargin,2,'WFBT');
 
 definput.import = {'fwt','wfbtcommon'};
-definput.keyvals.dim = [];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure
@@ -89,10 +88,8 @@ if(Ls~=L)
 end
 
 %% ----- step 3 : Run computation
-wtPath = nodesBForder(wt);
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
-rangeOut = rangeInOutputs(wtPath,wt); % very slow
-c = comp_wfbt(f,wt.nodes(wtPath),rangeLoc,rangeOut,flags.ext);
+[nodesBF, rangeLoc, rangeOut] = treeBFranges(wt);
+c = comp_wfbt(f,wt.nodes(nodesBF),rangeLoc,rangeOut,flags.ext);
 
 %% ----- Optionally : Fill info struct ----
 if nargout>1

@@ -1,6 +1,6 @@
-function upsNo = nodeFiltUps(nodeNo,wt)
+function upsNo = nodesFiltUps(nodeNo,wt)
 %NODEFILTUPS  Node upsamplig factor
-%   Usage:  upsNo = nodeFiltUps(nodeNo,wt)
+%   Usage:  upsNo = nodesFiltUps(nodeNo,wt)
 %
 %   Input parameters:
 %         wt  : Structure containing description of the filter tree.
@@ -8,7 +8,7 @@ function upsNo = nodeFiltUps(nodeNo,wt)
 %   Output parameters:
 %         upsNo : Accumulated upsampling factor along path to root.
 %
-%   `nodeFiltUps(wt)` Returns upsampling factor, which can be used to
+%   `nodesFiltUps(wt)` Returns upsampling factor, which can be used to
 %   upsample the node filters using the a-trous algorithm.
 %   For definition of the structure see |wfbinit|.
 %

@@ -2,15 +2,15 @@ function a = treeSub(wt)
 %TREESUB
 
 % All nodes with at least one final output.
-termN = find(noOfNodeOutputs(1:numel(wt.nodes),wt)~=0);
+termN = find(nodesOutputsNo(1:numel(wt.nodes),wt)~=0);
 % Range in filter outputs
-outRangeTermN = rangeInLocalOutputs(termN,wt);
+outRangeTermN = nodesLocOutRange(termN,wt);
 
-cRangeTermN = rangeInOutputs(termN,wt);
+cRangeTermN = nodesOutRange(termN,wt);
 
-noOut = noOfOutputs(wt);
+noOut = sum(cellfun(@numel,cRangeTermN));
 % Subsampling factors of the terminal nodes
-subTermN = nodeSub(termN,wt);
+subTermN = nodesSub(termN,wt);
 
 a = zeros(noOut, 1);
 for ii=1:numel(termN)

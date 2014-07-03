@@ -33,10 +33,12 @@ for jj=1:numel(wtNodes)
    h = comp_filterbankscale(wtNodes{jj}.h(:),a(:),scaling);
    
    % Node filters to a matrix
-   hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h','UniformOutput',0));
+   % hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h','UniformOutput',0));
+   hMat = cell2mat(cellfun(@(hEl) hEl.h(:),h','UniformOutput',0));
 
    % Node filters initial skips
-   hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
+   % hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
+   hOffset = cellfun(@(hEl) hEl.offset,wtNodes{jj}.h);
    % Zero index position of the upsampled filters.
    offset = nodesUps(jj).*(hOffset);
    

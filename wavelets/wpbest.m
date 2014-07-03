@@ -1,4 +1,4 @@
-function [c,info,wt] = wpbest(f,w,J,varargin)
+function [c,info] = wpbest(f,w,J,varargin)
 %WPBEST  Best Tree selection
 %   Usage: c = wpbest(f,w,J,cost);
 %          [c,info] = wpbest(...);
@@ -11,7 +11,6 @@ function [c,info,wt] = wpbest(f,w,J,varargin)
 %   Output parameters:
 %         c     : Coefficients stored in a cell-array.
 %         info  : Transform parameters struct.
-%         wt    : The best subtree.
 %
 %   `[c,info]=wpbest(f,w,J,cost)` selects the best sub-tree `info.wt` from
 %   the full tree with max. depth *J*, which minimizes the cost function.
@@ -19,6 +18,8 @@ function [c,info,wt] = wpbest(f,w,J,varargin)
 %   Only one-dimensional input *f* is accepted. The supported formats of
 %   the parameter *w* can be found in help for |fwt|. The format of the
 %   coefficients *c* and the `info` struct is the same as in |wfbt|.
+%
+%   Please note that *w* should define orthonormal wavelet filters.
 %
 %   First, the depth *J* wavelet packet decomposition is performed using |wpfbt|.
 %   Then the nodes are traversed in the breadth-first and bottom-up order
@@ -161,17 +162,15 @@ function [c,info,wt] = wpbest(f,w,J,varargin)
 %
 %   References: wickerhauser1991lectures tas94near-bestbasis
 
-if nargin<3
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
 
-complainif_notposint(J,'J');
+complainif_notenoughargs(nargin,3,'WPBEST');
+complainif_notposint(J,'J','WPBEST');
 
 if numel(nonzeros(size(f)>1))>1
    error('%s: Function accepts only single channel inputs.',upper(mfilename));
 end
 
-definput.import = {'fwt'};
+definput.import = {'fwt','wfbtcommon'};
 definput.flags.buildOrder = {'bottomup','topdown'};
 definput.flags.bestWhat = {'tree','level'};
 definput.keyvals.cost = {'shannon'};
@@ -195,13 +194,12 @@ do_additive = isAdditive(kv.cost);
 
 if(flags.do_bottomup)
    % Do full-tree Wavelet Packet decomposition beforehand and prune.
-   wt = wfbtinit({w,J,'full'},'nat');
-   c = wpfbt(f,wt,'nat',flags.ext,'intnoscale');
+   [c,info] = wpfbt(normalize(f,'2'),{w,J,'full'},'nat',flags.ext,'intnoscale');
 
    % Nodes in the reverse BF order
-   treePath = nodesBForder(wt,'rev');
+   treePath = fliplr(nodeBForder(0,info.wt));
    % Relationships between nodes
-   [pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
+   [pOutIdxs,chOutIdxs] = treeWpBFrange(info.wt);
    % Nodes to be removed
    removeNodes = [];
 
@@ -249,14 +247,14 @@ if(flags.do_bottomup)
 
    % Do tree prunning.
    for ii=1:length(removeNodes)
-       wt = deleteSubtree(removeNodes(ii),wt);
+       [info.wt] = nodeSubtreeDelete(removeNodes(ii),info.wt);
    end
 
 end
 
 % Finally do the analysis using the created best tree. with correct
 % frequency bands order
-[c,info] = wfbt(f,wt,flags.ext,'freq');
+[c,info] = wfbt(f,info.wt,flags.ext,flags.forder);
 %END WPBEST
 
 function ad = isAdditive(entFunc)

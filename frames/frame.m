@@ -462,18 +462,16 @@ switch(ftype)
     % We have to initialize F.g here already
     [F.g, F.info]=fwtinit({'strict',F.g});
     F.red= 1/(F.g.a(1)^(F.J)) + sum(1./(F.g.a(1).^(0:F.J-1))*sum(1./F.g.a(2:end)));
-    F.frana=@(insig) wavcell2pack(comp_fwt(insig,F.g.h,F.J,F.g.a,'per'));
+    F.frana=@(insig) wavcell2pack(comp_fwt(insig,F.g.h,F.g.a,F.J,'per'));
     F.frsyn=@(insig) comp_ifwt(...
                         wavpack2cell(insig,fwtclength(size(insig,1)/F.red,F.g,F.J)),...
-                               F.g.g,F.J,F.g.a,size(insig,1)/F.red,'per');
+                               F.g.g,F.g.a,F.J,size(insig,1)/F.red,'per');
     F.length=@(Ls) fwtlength(Ls,F.g,F.J);
   case {'wfbt'}
     [F.g,F.info]=wfbtinit({'strict',F.g});
     F.red = sum(1./treeSub(F.g));
     % comp_ specific
-    F.wtPath = nodesBForder(F.g);
-    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
-    F.rangeOut = rangeInOutputs(F.wtPath,F.g);
+    [F.wtPath, F.rangeLoc, F.rangeOut] = treeBFranges(F.g);
     
     F.coef2native = @(coef,s) wavpack2cell(coef,wfbtclength(s(1)/F.red,F.g));
     F.native2coef = @(coef) wavcell2pack(coef);
@@ -481,21 +479,21 @@ switch(ftype)
                                              F.rangeLoc,F.rangeOut,'per'));
     F.frsyn=@(insig) comp_iwfbt(F.coef2native(insig,size(insig)),...
                                 F.g.nodes(F.wtPath(end:-1:1)),...
-                                [nodeInLen(F.wtPath(end:-1:1),size(insig,1)/F.red,1,F.g);size(insig,1)/F.red],...
+                                [nodesInLen(F.wtPath(end:-1:1),size(insig,1)/F.red,1,F.g);size(insig,1)/F.red],...
                                 F.rangeLoc(end:-1:1),F.rangeOut(end:-1:1),...
                                 'per');
     F.length=@(Ls) wfbtlength(Ls,F.g);
   case {'wpfbt'}
     F.g=wfbtinit({'strict',F.g});
-    F.red = sum(cellfun(@(aEl) sum(1./aEl),nodeSub(nodesBForder(F.g),F.g)));
+    F.red = sum(cellfun(@(aEl) sum(1./aEl),nodesSub(nodeBForder(0,F.g),F.g)));
     % comp_ specific
-    F.wtPath = nodesBForder(F.g);
-    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
-    [F.pOutIdxs,F.chOutIdxs] = rangeWpBF(F.g,'rev');
+    F.wtPath = nodeBForder(0,F.g);
+    F.rangeLoc = nodesLocOutRange(F.wtPath,F.g);
+    [F.pOutIdxs,F.chOutIdxs] = treeWpBFrange(F.g);
     
     F.coef2native = @(coef,s) wavpack2cell(coef,...
                     s(1)./cell2mat(cellfun(@(aEl) aEl(:),...
-                    reshape(nodeSub(nodesBForder(F.g),F.g),[],1),...
+                    reshape(nodesSub(nodeBForder(0,F.g),F.g),[],1),...
                     'UniformOutput',0))./F.red);
     F.native2coef = @(coef) wavcell2pack(coef);
 
@@ -512,18 +510,17 @@ switch(ftype)
     F.g=fwtinit({'strict',F.g});
     F.coef2native = @(coef,s) reshape(coef,[s(1)/(F.J*(numel(F.g.a)-1)+1),F.J*(numel(F.g.a)-1)+1,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
-    F.frana=@(insig) F.native2coef(comp_ufwt(insig,F.g.h,F.J,F.g.a,F.flags.scaling));
-    F.frsyn=@(insig) comp_iufwt(F.coef2native(insig,size(insig)),F.g.g,F.J,F.g.a,F.flags.scaling);
+    F.frana=@(insig) F.native2coef(comp_ufwt(insig,F.g.h,F.g.a,F.J,F.flags.scaling));
+    F.frsyn=@(insig) comp_iufwt(F.coef2native(insig,size(insig)),F.g.g,F.g.a,F.J,F.flags.scaling);
     F.length=@(Ls) Ls;
     F.red=(F.J*(numel(F.g.a)-1)+1);
   case {'uwfbt'}
     F.g=wfbtinit({'strict',F.g});
-    F.red = noOfOutputs(F.g);
+
     % comp_ specific
-    F.wtPath = nodesBForder(F.g);
-    F.nodesUps = nodeFiltUps(F.wtPath,F.g);
-    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
-    F.rangeOut = rangeInOutputs(F.wtPath,F.g);
+    [F.wtPath, F.rangeLoc, F.rangeOut] = treeBFranges(F.g);
+    F.nodesUps = nodesFiltUps(F.wtPath,F.g);
+    F.red = sum(cellfun(@numel,F.rangeOut));
     
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);
@@ -539,10 +536,10 @@ switch(ftype)
     F.g= wfbtinit({'strict',varargin{1}});
     F.red = sum(cellfun(@(fEl) numel(fEl.g),F.g.nodes));
     % comp_ specific
-    F.wtPath = nodesBForder(F.g);
-    F.nodesUps = nodeFiltUps(F.wtPath,F.g);
-    F.rangeLoc = rangeInLocalOutputs(F.wtPath,F.g);
-    [F.pOutIdxs,F.chOutIdxs] = rangeWpBF(F.g,'rev');
+    F.wtPath = nodeBForder(0,F.g);
+    F.nodesUps = nodesFiltUps(F.wtPath,F.g);
+    F.rangeLoc = nodesLocOutRange(F.wtPath,F.g);
+    [F.pOutIdxs,F.chOutIdxs] = treeWpBFrange(F.g);
     
     F.coef2native = @(coef,s) reshape(coef,[s(1)/F.red,F.red,s(2)]);
     F.native2coef = @(coef) reshape(coef,[size(coef,1)*size(coef,2),size(coef,3)]);

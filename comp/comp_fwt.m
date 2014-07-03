@@ -1,4 +1,4 @@
-function c = comp_fwt(f,h,J,a,ext)
+function c = comp_fwt(f,h,a,J,ext)
 %COMP_FWT Compute DWT using FWT
 %   Usage:  c=comp_fwt(f,h,J,a,Lc,ext);
 %
@@ -19,12 +19,14 @@ assert(a(1)==a(2),'First two elements of *a* are not equal. Such wavelet filterb
 
 % Time-reversed, complex conjugate impulse responses.
 filtNo = length(h);
-hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),h,'UniformOutput',0);
+%hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),h,'UniformOutput',0);
+hCell = cellfun(@(hEl) hEl.h(:),h,'UniformOutput',0);
 
 if(strcmp(ext,'per'))
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay transform is produced
-   offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h); 
+   % offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h); 
+   offset = cellfun(@(hEl) hEl.offset,h); 
 elseif strcmp(ext,'valid')
    offset = -cellfun(@(hEl) numel(hEl.h)-1,h);
 else

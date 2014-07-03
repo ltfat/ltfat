@@ -102,7 +102,7 @@ if(Ls<2)
 end
 
 %% ----- step 2 : Run computation
-c = comp_ufwt(f,w.h,J,w.a,flags.scaling);
+c = comp_ufwt(f,w.h,w.a,J,flags.scaling);
 
 %% ----- Optionally : Fill info struct ----
 if nargout>1

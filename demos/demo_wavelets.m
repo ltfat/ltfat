@@ -53,5 +53,10 @@ figure(3);
 plotwavelets(c3,info,fs,'dynrange',dr);
 
 
+figure(4);
+[c3,info]=wfbt(f,{'symorth3',8,'full'});
+plotwavelets(c3,info,fs,'dynrange',dr);
+
+
 
 

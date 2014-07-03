@@ -92,8 +92,8 @@ if(Ls~=L)
 end
 
 %% ----- step 3 : Run computation
-wtPath = nodesBForder(wt);
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
+wtPath = nodeBForder(0,wt);
+rangeLoc = nodesLocOutRange(wtPath,wt);
 c = comp_wpfbt(f,wt.nodes(wtPath),rangeLoc,flags.ext,flags.interscaling);
 
 %% ----- Optional : Fill the info struct. -----

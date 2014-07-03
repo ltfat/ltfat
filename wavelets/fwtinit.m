@@ -1,9 +1,10 @@
-function [w,info] = fwtinit(wdef)
+function [w,info] = fwtinit(wdef,prefix)
 %FWTINIT  Wavelet Filterbank Structure Initialization
 %   Usage:  w = fwtinit(wdef);
 %
 %   Input parameters:
-%         wdef : Wavelet filters specification.
+%         wdef   : Wavelet filters specification.
+%         prefix : Function name prefix
 %
 %   Output parameters:
 %         w    : Structure defining the filterbank.
@@ -63,9 +64,9 @@ function [w,info] = fwtinit(wdef)
 %
 %   The output structure has the following fields:
 %
-%     w.h  Cell array of structures defining the original analysis filter bank.
+%     w.h  Cell array of structures defining the original analysis filterbank.
 %     
-%     w.g  Cell array of structures defining the original synthesis filter bank.
+%     w.g  Cell array of structures defining the original synthesis filterbank.
 %
 %     w.a  Subsampling factors.
 %
@@ -114,15 +115,16 @@ function [w,info] = fwtinit(wdef)
 wprefix = 'wfilt_';
 waveletsDir = 'wavelets';
 
-
 % output structure definition
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 w.origArgs = {};
+w.wprefix = wprefix;
 w.h = {};
 w.g = {};
 w.a = [];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 info.istight = 0;
+
 
 % return empty struct if no argument was passed
 if nargin<1
@@ -131,6 +133,15 @@ end;
 
 if isempty(wdef)
     error('%s: Input argument is empty.',upper(mfilename)); 
+end
+
+if nargin>1 
+    if ischar(prefix) && ~isempty(prefix)
+       wprefix = prefix;
+       w.wprefix = wprefix;
+    else
+       error('%s: Bad format of prefix.',upper(mfilename));
+    end
 end
 
 
@@ -281,9 +292,9 @@ end
 
 
 if(wfiltNargout==3)
-   [tmph, tmpg, w.a] = feval(tmpFile,wname{2:end});
+   [w.h, w.g, w.a] = feval(tmpFile,wname{2:end});
 elseif(wfiltNargout==4) 
-   [tmph, tmpg, w.a, info] = feval(tmpFile,wname{2:end});
+   [w.h, w.g, w.a, info] = feval(tmpFile,wname{2:end});
 else
    error('%s: Function %s does not return 3 or 4 arguments.',upper(mfilename),upper(tmpFile));
 end
@@ -291,23 +302,27 @@ end
 
 if ~isempty(info)&&isfield(info,'istight')
    is_tight = info.istight;
+else
+   info.istight = 0;
 end
 
-d = [];
-if isfield(info,'d')
-   d = info.d;
-end
-
-if numel(tmph)~=numel(w.a) || numel(tmpg)~=numel(w.a)
-   error('%s: Variables returned by %s have different element counts.',upper(mfilename),upper(tmpFile));
-end
+% d = [];
+% if isfield(info,'d')
+%    d = info.d;
+% end
+% 
+% if numel(tmph)~=numel(w.a) || numel(tmpg)~=numel(w.a)
+%    error('%s: Variables returned by %s have different element counts.',upper(mfilename),upper(tmpFile));
+% end
 
 if ~is_tight && do_strict && isempty(do_forceAna)
-   error(['%s: %s filters does not form a tight frame. Choose either ''ana:%s'' or ''syn:%s'' '],upper(mfilename),tmpFile,wcell2str(wname),wcell2str(wname));
+   error(['%s: %s filters does not form a tight frame. Choose either ',...
+          '''ana:%s'' or ''syn:%s'' '],upper(mfilename),tmpFile,...
+                                       wcell2str(wname),wcell2str(wname));
 end
  
-w.h = formatFilters(tmph,d);
-w.g = formatFilters(tmpg,d);
+% w.h = formatFilters(tmph,d);
+% w.g = formatFilters(tmpg,d);
 
 w.origArgs = wname;
 
@@ -317,10 +332,28 @@ if ~isempty(do_forceAna)
    end
    if do_forceAna
       w.g = w.h;
-      w.origArgs = {'ana',w.origArgs{:}};
+      w.origArgs = [{'ana'}, w.origArgs];
+      % Hande the Dual-tree specific stuff
+      if ~isempty(info) && isfield(info,'defaultfirst')
+         info.defaultfirst.g = info.defaultfirst.h; 
+         info.defaultfirst.origArgs = [{'ana'},info.defaultfirst.origArgs];
+      end
+      if ~isempty(info) && isfield(info,'defaultleaf')
+         info.defaultleaf.g = info.defaultleaf.h; 
+         info.defaultleaf.origArgs = [{'ana'},info.defaultleaf.origArgs];
+      end
    else
       w.h = w.g;
-      w.origArgs = {'syn',w.origArgs{:}};
+      w.origArgs = [{'syn'}, w.origArgs];
+      % Hande the Dual-tree specific stuff
+      if ~isempty(info) && isfield(info,'defaultfirst')
+         info.defaultfirst.h = info.defaultfirst.g; 
+         info.defaultfirst.origArgs = [{'syn'},info.defaultfirst.origArgs];
+      end
+      if ~isempty(info) && isfield(info,'defaultleaf')
+         info.defaultleaf.h = info.defaultleaf.g; 
+         info.defaultleaf.origArgs = [{'syn'},info.defaultleaf.origArgs];
+      end
    end
 end
 
@@ -378,7 +411,11 @@ wcharMatchIdx = find(wcharMatch~=0);
 % Handle faulty results.
 if(isempty(wcharMatchIdx))
    dirListStr = cell2mat(cellfun(@(wEl) sprintf('%s, ',wEl), wfiltNames(:)','UniformOutput',0));
-   error('%s: Unknown wavelet filter definition string: %s.\nAccepted are:\n%s',upper(mfilename),wcharNoNum,dirListStr(1:end-2));
+   if ~all(cellfun(@isempty,wfiltNames))
+      error('%s: Unknown wavelet filter definition string: %s.\nAccepted are:\n%s',upper(mfilename),wcharNoNum,dirListStr(1:end-2));
+   else
+      error('%s: Cannot find %s%s',upper(mfilename),wprefix,wcharNoNum); 
+   end
 end
 if(numel(wcharMatchIdx)>1)
    error('%s: Ambiguous wavelet filter definition string. Probably bug somewhere.',upper(mfilename));
