@@ -1,17 +1,17 @@
 function [h,g,a,info] = wfiltdt_dden(N)
-%WFILT_SYMORTH  Improved Orthogonality and Symmetry properties 
+%WFILTDT_DDEN  Double-Density Dual-Tree DWT filters 
 %
-%   Usage: [h,g,a] = wfilt_symorth(N);
+%   Usage: [h,g,a] = wfiltdt_dden(N);
 %
-%   `[h,g,a]=wfilt_symorth(N)` with *N\in {1,2,3}*
+%   `[h,g,a]=wfiltdt_dden(N)` with *N\in {1,2}*
 %
 %   Examples:
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('ana:symds1');
+%     wfiltinfo('dden1');
 % 
-%   References: kingsbury2000
+%   References: se04
 %
 
 info.istight = 1;
@@ -19,7 +19,7 @@ a = [2;2;2;2;2;2];
 
 switch(N)
  case 1
-    % Example 1. from the reference. Symmetric near-orthogonal
+    % Example 1. from the reference. 
     harr = [
         0.0691158205  0.0000734237  0.0001621689  0.0138231641  0.0003671189  0.0008108446
         0.3596612703  0.0003820788  0.0008438861  0.1825175668  0.0048473455  0.0107061875
@@ -59,15 +59,17 @@ case 2
 
 end
 
-harr = flipud(harr);
-garr = harr;  
-h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
-g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+htmp=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
 
+h(1:3,1) = cellfun(@(hEl)struct('h',hEl,'offset',-size(harr,2)/2+1),htmp(1:3),...
+                   'UniformOutput',0);
+h(1:3,2) = cellfun(@(hEl)struct('h',hEl,'offset',-size(harr,2)/2+1),htmp(4:6),...
+                   'UniformOutput',0);
+g = h;
 
-% This filterbank is used as the first stage filterbank in the first tree,
-% delayed by one sample in the second tree.
-info.defaultfirst = 'symdden1';
+[info.defaultfirst, info.defaultfirstinfo] = fwtinit('symdden1');
+[info.defaultleaf, info.defaultleafinfo] = ...
+    deal(info.defaultfirst,info.defaultfirstinfo);
 
 
 

@@ -1,7 +1,7 @@
-function f=idtwfbreal(c,par,varargin)
-%IDTWFBREAL Inverse Dual-tree Filterbank for real-valued signals
-%   Usage:  f=dtwfbreal(c,info);
-%           f=dtwfbreal(c,dualwt,Ls);
+function f=idtwfb(c,par,varargin)
+%IDTWFB Inverse Dual-tree Filterbank
+%   Usage:  f=dtwfb(c,info);
+%           f=dtwfb(c,dualwt,Ls);
 %
 %   Input parameters:
 %         c           : Input coefficients.
@@ -11,15 +11,14 @@ function f=idtwfbreal(c,par,varargin)
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f = idtwfbreal(c,info)` reconstructs real-valued signal *f* from the 
-%   coefficients *c* using parameters from `info` struct. both returned by 
-%   |dtwfbreal| function.
+%   `f = idtwfb(c,info)` reconstructs signal *f* from the coefficients *c*
+%   using parameters from `info` struct. both returned by |dtwfb| function.
 %
-%   `f = idtwfbreal(c,dualwt,Ls)` reconstructs real-valued signal *f* from the
-%   coefficients *c* using dual-tree filterbank defined by `dualwt`. Plese 
-%   see |dtwfbreal| for supported formats. The *Ls* parameter is mandatory 
-%   due to the ambiguity of reconstruction lengths introduced by the 
-%   subsampling operation. 
+%   `f = idtwfb(c,dualwt,Ls)` reconstructs signal *f* from the coefficients
+%   *c* using dual-tree filterbank defined by `dualwt`. Plese see |dtwfb| 
+%   for supported formats. The *Ls* parameter is mandatory due to the
+%   ambiguity of reconstruction lengths introduced by the subsampling
+%   operation. 
 %   Note that the same flag as in the |dtwfbreal| function have to be used, 
 %   otherwise perfect reconstruction cannot be obtained. Please see help 
 %   for |dtwfbreal| for description of the flags.
@@ -40,16 +39,16 @@ function f=idtwfbreal(c,par,varargin)
 %   See also: dtwfbreal
 
 
-complainif_notenoughargs(nargin,2,'IDTWFBREAL');
+complainif_notenoughargs(nargin,2,'IDTWFB');
 
-if(~iscell(c))
+if ~iscell(c)
    error('%s: Unrecognized coefficient format.',upper(mfilename));
 end
 
 if(isstruct(par)&&isfield(par,'fname'))
-   complainif_toomanyargs(nargin,2,'IDTWFBREAL');
+   complainif_toomanyargs(nargin,2,'IDTWFB');
    
-   if ~strcmpi(par.fname,'dtwfbreal')
+   if ~strcmpi(par.fname,'dtwfb')
       error(['%s: Wrong func name in info struct. ',...
              ' The info parameter was created by %s.'],...
              upper(mfilename),par.fname);
@@ -60,11 +59,10 @@ if(isstruct(par)&&isfield(par,'fname'))
    ext = 'per';
    L = wfbtlength(Ls,dtw,ext);
 else
-   complainif_notenoughargs(nargin,3,'IDTWFBREAL');
+   complainif_notenoughargs(nargin,3,'IDTWFB');
 
    %% PARSE INPUT
    definput.keyvals.Ls=[];
-   definput.keyvals.dim=1;
    definput.import = {'wfbtcommon'};
 
    [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
@@ -75,6 +73,7 @@ else
    dtw = dtwfbinit(par,flags.forder);
 
    [Lc,L]=wfbtclength(Ls,dtw,ext);
+   Lc = [Lc;Lc(end:-1:1)];
 
    % Do a sanity check
    if ~isequal(Lc,cellfun(@(cEl) size(cEl,1),c))
@@ -89,5 +88,5 @@ outLengths = nodesInLen(nodesBF,L,strcmpi(ext,'per'),dtw);
 outLengths(end) = L;
 
 f = comp_idtwfb(c,dtw.nodes(nodesBF),dtw.dualnodes(nodesBF),outLengths,...
-                rangeLoc,rangeOut,ext,0);
+                rangeLoc,rangeOut,ext,1);
 f = postpad(f,Ls);

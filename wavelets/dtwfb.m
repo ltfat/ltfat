@@ -1,8 +1,8 @@
-function [c,info]=dtwfbreal(f,dualwt,varargin)
-%DTWFBREAL Dual-Tree Wavelet FilterBank for real-valued signals
-%   Usage:  c=dtwfbreal(f,dualwt);
-%           c=dtwfbreal(f,{dw,J});
-%           [c,info]=dtwfbreal(...);
+function [c,info]=dtwfb(f,dualwt,varargin)
+%DTWFB Dual-Tree Wavelet FilterBank
+%   Usage:  c=dtwfb(f,dualwt);
+%           c=dtwfb(f,{dw,J});
+%           [c,info]=dtwfb(...);
 %
 %   Input parameters:
 %         f      : Input data.
@@ -12,13 +12,12 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %         c    : Coefficients stored in a cell-array.
 %         info : Additional transform parameters struct.
 %
-%   `c=dtwfbtreal(f,dualwt)` computes dual-tree complex wavelet coefficients 
-%   of the real-valued signal *f*. The representation is approximately 
+%   `c=dtwfbt(f,dualwt)` computes dual-tree complex wavelet coefficients 
+%   of the signal *f*. The representation is approximately 
 %   time-invariant and provides analytic behavior. Due to these facts, 
 %   the resulting subbands are nearly aliasing free making them suitable 
 %   for severe coefficient modifications. The representation is two times
-%   redundant, provided critical subsampling of all involved filterbanks,
-%   but one half of the coefficients is complex conjugate of the other.
+%   redundant, provided critical subsampling of all involved filterbanks.
 %
 %   The shape of the filterbank tree and filters used is controlled by 
 %   `dualwt` (for possible formats see below). The output *c* is a 
@@ -114,17 +113,17 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %   Examples:
 %   ---------
 %   
-%   A simple example of calling the |dtwfbreal| function using the regular
+%   A simple example of calling the |dtwfb| function using the regular
 %   DWT iterated filterbank. The second figure shows a magnitude frequency
 %   response of an identical filterbank.:::
 % 
 %     [f,fs] = greasy;
 %     J = 6;
-%     [c,info] = dtwfbreal(f,{'qshift3',J});
+%     [c,info] = dtwfb(f,{'qshift3',J});
 %     figure(1);
 %     plotwavelets(c,info,fs,'dynrange',90);
 %     figure(2);
-%     [g,a] = dtwfb2filterbank({'qshift3',J},'real');
+%     [g,a] = dtwfb2filterbank({'qshift3',J});
 %     filterbankfreqz(g,a,1024,'plot','linabs');
 %
 %   The second example shows a decomposition using a full filterbank tree
@@ -132,26 +131,21 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %
 %     [f,fs] = greasy;
 %     J = 5;
-%     [c,info] = dtwfbreal(f,{'qshift4',J,'full'});
+%     [c,info] = dtwfb(f,{'qshift4',J,'full'});
 %     figure(1);
 %     plotwavelets(c,info,fs,'dynrange',90);
 %     figure(2);
-%     [g,a] = dtwfb2filterbank({'qshift4',J,'full'},'real');
+%     [g,a] = dtwfb2filterbank({'qshift4',J,'full'});
 %     filterbankfreqz(g,a,1024,'plot','linabs');
 %
-%   See also: idtwfbreal plotwavelets dtwfb2filterbank
+%   See also: idtwfb plotwavelets dtwfb2filterbank
 %
 %   References: king02 sebaki05 bayse08
 
 % Author: Zdenek Prusa
 % Date:   30.6.2014
 
-
-complainif_notenoughargs(nargin,2,'DTWFBREAL');
-
-if ~isreal(f)
-  error('%s: Input signal must be real.',upper(mfilename));
-end
+complainif_notenoughargs(nargin,2,'DTWFB');
 
 definput.import = {'wfbtcommon'};
 flags =ltfatarghelper({},definput,varargin);
@@ -174,12 +168,12 @@ end
 [nodesBF, rangeLoc, rangeOut] = treeBFranges(dtw);
 
 c = comp_dtwfb(f,dtw.nodes(nodesBF),dtw.dualnodes(nodesBF),rangeLoc,...
-               rangeOut,'per',0);
+               rangeOut,'per',1);
 
 %% ----- Optionally : Fill info struct ----
 if nargout>1
    % Transform name
-   info.fname = 'dtwfbreal';
+   info.fname = 'dtwfb';
    % Dual-Tree struct.
    info.wt = dtw;
    % Periodic boundary handling

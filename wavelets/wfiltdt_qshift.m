@@ -3,82 +3,117 @@ function [h,g,a,info] = wfiltdt_qshift(N)
 %
 %   Usage: [h,g,a] = wfilt_symorth(N);
 %
-%   `[h,g,a]=wfilt_qshift(N)` with *N\in {1,2,3}*
+%   `[h,g,a]=wfilt_qshift(N)` with *N\in {1,2,3,4,5,6,7}*. 
 %
 %   Examples:
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('ana:symds1');
+%     wfiltinfo('qshift3');
 % 
-%   References: kingsbury2000
+%   References: king00 king03
 %
 
 info.istight = 1;
-a = [2;2;2;2];
+a = [2;2];
 
 switch(N)
  case 1
-    % Example 1. from the reference. Symmetric near-orthogonal
+    % Example 1. from the reference 1. Symmetric near-orthogonal
+    % More precise values (more decimal places) were taken from
+    % the Python DTCWT package
     hlp = [
-          0.03516384   % z^4
-          0             
-         -0.08832942   % z^2    
-          0.23389032   % z^1
-          0.76027237   % z^0 <-- origin
-          0.58751830   % z^-1
-          0
-         -0.11430184   % z^-3
-          0
-          0
+        0.0351638365714947     % z^4
+        0                                 
+       -0.0883294244510729     % z^2    
+        0.233890320607236      % z^1
+        0.760272369066126      % z^0 <-- origin
+        0.587518297723561      % z^-1
+        0                    
+       -0.114301837144249      % z^-3
+        0                    
+        0                    
     ];
-
-    d = 4;
-
 case 2
-    % Example 2. From the reference. 
+    % 
     hlp = [
-          0.00325314
-         -0.00388321
-          0.03466035
-         -0.03887280
-         -0.11720389
-          0.27529538
-          0.75614564 % <-- origin
-          0.56881042
-          0.01186609
-         -0.10671180
-          0.02382538
-          0.01702522
-         -0.00543948
-         -0.00455690
-    ];
-case 3
-    
-      % Example 3. From the reference. 
-    hlp = [
-        -0.00228413   % z^8
-         0.00120989   % z^7  
-        -0.01183479   % z^6
-         0.00128346   % z^5
-         0.04436522   % z^4
-        -0.05327611   % z^3
-        -0.11330589   % z^2
-         0.28090286   % z^1
-         0.75281604   % z^0 <-- origin
-         0.56580807   % z^-1
-         0.02455015   % z^-2
-        -0.12018854   % z^-3
-         0.01815649   % z^-4
-         0.03152638   % z^-5
-        -0.00662879   % z^-6
-        -0.00257617   % z^-7
-         0.00127756   % z^-8
-         0.00241187   % z^-9
+       0.0511304052838317
+      -0.0139753702468888
+      -0.109836051665971
+       0.263839561058938
+       0.766628467793037
+       0.563655710127052
+       0.000873622695217097
+      -0.100231219507476
+      -0.00168968127252815
+      -0.00618188189211644
     ];
 
+
+case 3
+    % Example 2. From the reference 1. 
+    hlp = [
+        0.00325314276365318
+       -0.00388321199915849
+        0.0346603468448535
+       -0.0388728012688278
+       -0.117203887699115
+        0.275295384668882
+        0.756145643892523 % <-- origin
+        0.568810420712123
+        0.0118660920337970
+       -0.106711804686665
+        0.0238253847949203
+        0.0170252238815540
+       -0.00543947593727412
+       -0.00455689562847549
+    ];
 case 4
-    % Generated using sowtware by Prof. Nick Kingsbury
+    % 
+    hlp = [
+      -0.00476161193845591
+      -0.000446022789262285
+      -7.14419732796501e-05
+       0.0349146123068422
+      -0.0372738957998980
+      -0.115911457427441
+       0.276368643133032
+       0.756393765199037
+       0.567134484100133
+       0.0146374059644734
+      -0.112558884257522
+       0.0222892632669227
+       0.0184986827241562
+      -0.00720267787825835
+      -0.000227652205897772
+       0.00243034994514868
+    ];
+case 5
+    % Example 3. From the reference 1. 
+    hlp = [
+      -0.00228412744027053 % z^8
+       0.00120989416307344 % z^7  
+      -0.0118347945154308  % z^6
+       0.00128345699934440 % z^5
+       0.0443652216066170  % z^4
+      -0.0532761088030473  % z^3
+      -0.113305886362143   % z^2
+       0.280902863222187   % z^1
+       0.752816038087856   % z^0 <-- origin
+       0.565808067396459   % z^-1
+       0.0245501524336666  % z^-2
+      -0.120188544710795   % z^-3
+       0.0181564939455465  % z^-4
+       0.0315263771220847  % z^-5
+      -0.00662879461243006 % z^-6
+      -0.00257617430660079 % z^-7
+       0.00127755865380700 % z^-8
+       0.00241186945666628 % z^-9          
+    ];
+
+case 6
+    % From reference 2
+    % Generated using software by Prof. Nick Kingsbury
     % http://sigproc.eng.cam.ac.uk/foswiki/pub/Main/NGK/qshiftgen.zip
     % hlp = qshiftgen([26,1/3,1,1,1]); hlp = hlp/norm(hlp);
     hlp = [9.69366641745754e-05;3.27432154422329e-05;...
@@ -91,7 +126,7 @@ case 4
            0.00464728269258923;0.00156428519208473;-0.000193257944314871;...
            -0.000997377567082884;-4.77392249288136e-05;0.000126793092000602];
 
-case 5
+case 7
     % hlp = qshiftgen([38,1/3,1,1,1]); hlp = hlp/norm(hlp);
     hlp = [-5.60092763439975e-05;5.48406024854987e-05;...
            9.19038839527110e-05;-8.70402717115631e-05;...
@@ -113,34 +148,34 @@ case 5
 
 end
     % numel(hlp) must be even
-    d = numel(hlp)/2 - 1; 
-    range = (0:numel(hlp)-1) -d;
+    offset = -(numel(hlp)/2 - 1); 
+    range = (0:numel(hlp)-1) + offset;
     
     % Create the filters according to the reference paper.
-    % NOTE: We are using  
     %
     % REMARK: The phase of the alternating +1 and -1 is crucial here.
     %         
     harr = [...
-            flipud(hlp),...
-            (-1).^(range).'.*hlp,...
             hlp,...
             (-1).^(range).'.*flipud(hlp),...
+            flipud(hlp),...
+            (-1).^(range).'.*hlp,...
             ];
         
-        
-    % Reverese the filters to obtain the synthesis filters
-    % harr = flipud(harr);
 
-    % d gets changed
-    % info.d = [d, d, d, d] + 1;
+htmp=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
 
-garr = harr;  
-h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
-g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+h(1:2,1) = cellfun(@(hEl)struct('h',hEl,'offset',offset),htmp(1:2),...
+                   'UniformOutput',0);
+h(1:2,2) = cellfun(@(hEl)struct('h',hEl,'offset',offset),htmp(3:4),...
+                   'UniformOutput',0);
+g = h;
 
-
-info.defaultfirst = 'symorth1';
-info.defaultleaf = 'symorth1';
+% Default first and leaf filters
+% They are chosen to be orthonormal near-symmetric here in order not to
+% break the orthonormality of the overal representation.
+[info.defaultfirst, info.defaultfirstinfo] = fwtinit('symorth1');
+[info.defaultleaf, info.defaultleafinfo] = ...
+    deal(info.defaultfirst,info.defaultfirstinfo);
 
 
