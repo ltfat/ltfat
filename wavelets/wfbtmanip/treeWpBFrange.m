@@ -1,6 +1,6 @@
-function [pOutIdxs,chOutIdxs] = rangeWpBF(wt,varargin)
+function [pOutIdxs,chOutIdxs] = treeWpBFrange(wt)
 
-treePath = nodesBForder(wt);
+treePath = nodeBForder(0,wt);
 trLen = numel(treePath);
 pOutIdxs = zeros(1,trLen);
 chOutIdxs = cell(1,trLen);
@@ -9,7 +9,7 @@ chRunIdx = 1;
 % do trough tree and look for nodeNo and its parent
 for ii=1:trLen
     tmpfiltNo = length(wt.nodes{treePath(ii)}.g);
-    locRange = rangeInLocalOutputs(treePath(ii),wt);
+    locRange = nodesLocOutRange(treePath(ii),wt);
     diffRange = 1:tmpfiltNo;
     diffRange(locRange{1})=[];
     chOutIdxs{ii} = chRunIdx:chRunIdx+tmpfiltNo-1;
@@ -19,10 +19,8 @@ for ii=1:trLen
 end
 
 
-if(~isempty(varargin))
-    if(strcmpi(varargin{1},'rev'))
-       pOutIdxs = pOutIdxs(end:-1:1); 
-       chOutIdxs = chOutIdxs(end:-1:1);
-    end
-end
+
+pOutIdxs = pOutIdxs(end:-1:1); 
+chOutIdxs = chOutIdxs(end:-1:1);
+
 

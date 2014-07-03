@@ -1,3 +1,33 @@
+function nodesIdxs = nodeBForder(nodeNo,wt)
+%NODEBFORDER Nodes in the Breadth-First search order
+%  Usage:  nodesIdxs = nodeBForder(nodeNo,wt)
+%
+%   Input parameters:
+%         nodeNo : Id of a node.
+%         wt     : Structure containing description of the filter tree.
+%
+%   Output parameters:
+%         nodesIdxs   : Node indexes in the Breadth-First search order.
+%
+%   `nodeBForder(nodeNo,wt)` For definition of the structure see
+%   `wfbinit`. `nodeNo` defaults to the root node if it is empty or equal
+%   to 0.
+%
+%
+%   See also: wfbtinit
+%
+
+
+if isempty(nodeNo) || nodeNo==0 
+   %find root
+   nodeNo = find(wt.parents==0);
+end
+
+complainif_notposint(nodeNo,'NODEBFORDER');
+
+nodesIdxs = [nodeNo,nodeSubtreeBF(nodeNo,wt)];
+
+
 function nodesIdxs = nodeSubtreeBF(nodeNo,wt)
 %NODESUBTREEBF Node subtree nodes in Breath-First order
 %   Usage:  noOut = nodeSubtreeBF(nodeNo,wt);

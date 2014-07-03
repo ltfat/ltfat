@@ -8,7 +8,7 @@
 %   Output parameters:
 %         wt    : Structure describing the filter tree.
 %
-%   `wfbtinit()` creates empty structure. The structure describing the
+%   `wfbtinit()` creates an empty structure. The structure describing the
 %   tree has the following fields:
 %
 %     .nodes     Actual impulse responses

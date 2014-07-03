@@ -18,7 +18,9 @@ definput.import = {'fwt'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet filters structure
-wt = wfbtinit(wt);
+if ~isstruct(wt)
+   wt = wfbtinit(wt);
+end
 
 if(flags.do_per)
    a = treeSub(wt);

@@ -13,7 +13,7 @@ function wt = wfbtput(d,k,w,wt,forceStr)
 %   Output parameters:
 %           wt : Modified filterbank structure.
 %
-%   `wfbtput(d,k,w,wt)` puts the basic filterbank *filt* to the filter
+%   `wfbtput(d,k,w,wt)` puts the basic filterbank *w* to the filter
 %   tree structure *wt* at level *d* and index *k*. The output is a
 %   modified tree structure. *d* and *k* have to specify unconnected output
 %   of the leaf node. Error is issued if *d* and *k* points to already
@@ -29,6 +29,10 @@ function wt = wfbtput(d,k,w,wt,forceStr)
 if nargin<4
    error('%s: Too few input parameters.',upper(mfilename)); 
 end
+
+%if isfield(wt,'dualnodes')
+%    error('%s: Cannot modify the dual-tree struct.',upper(mfilename));
+%end
 
 do_force = 0;
 if nargin==5
@@ -103,6 +107,7 @@ if(~isempty(found))
      if isfield(wt,'dualnodes') 
          wt.dualnodes{tmpnode} = node; 
      end
+     % Since we are replacing a node, all links are already correct
      continue;
    else
        error('%s: Such node (depth=%d, idx=%d) already exists. Use FORCE option to replace.',mfilename,d,k); 

@@ -105,9 +105,9 @@ if(Ls<2)
 end
 
 %% ----- step 3 : Run computation
-wtPath = nodesBForder(wt);
-nodesUps = nodeFiltUps(wtPath,wt);
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
+wtPath = nodeBForder(0,wt);
+nodesUps = nodesFiltUps(wtPath,wt);
+rangeLoc = nodesLocOutRange(wtPath,wt);
 c = comp_uwpfbt(f,wt.nodes(wtPath),rangeLoc,nodesUps,flags.scaling,...
                 flags.interscaling);
 

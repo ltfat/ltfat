@@ -1,4 +1,4 @@
-function wt = nat2freqOrder(wt,nodes)
+function wt = nat2freqOrder(wt,varargin)
 %NAT2FREQORDER Natural To Frequency Ordering
 %   Usage:  wt = nat2freqOrder(wt);
 %
@@ -10,54 +10,91 @@ function wt = nat2freqOrder(wt,nodes)
 %
 %   `nat2freqOrder(wt)` Creates new wavelet filterbank tree definition
 %   with permuted order of some filters for purposes of the correct frequency
-%   ordering of the resultant identical filters. For definition of the
-%   structure see `wfbinit`.
+%   ordering of the resultant identical filters and coefficient subbands. 
+%   For definition of the structure see |wfbinit| and |dtwfbinit|.
 %
 %   `nat2freqOrder(wt,nodes)` does the same but works only with nodes
 %   listed in *nodes*.
 %
-%   See also: wfbtinit,  wfbtmultid, nodesBForder
+%   REMARK: The function is self invertible.
+%
+%   See also: wfbtinit,  wfbtmultid, nodeBForder
 %
 
 complainif_notenoughargs(nargin,1,'NAT2FREQORDER');
 
-if nargin<2
-   treePath = nodesBForder(wt);
+do_rev = ~isempty(varargin(strcmp('rev',varargin)));
+
+if do_rev
+    %Remove the 'rev' flag from varargin
+    varargin(strcmp('rev',varargin)) = [];
+end
+
+if isempty(varargin)
+   % Work with the whole tree
+   treePath = nodeBForder(0,wt);
    %skip root
    treePath = treePath(2:end);
 else
+   % Work with specified nodes only
+   nodes = varargin{1}; 
    % Omit root
    nodes(wt.parents(nodes)==0) = [];
    % Use the rest 
    treePath = nodes;
 end
 
-for ii=1:length(treePath)
-    % should not be zero
-    nodeId = treePath(ii);
-    parentId = wt.parents(nodeId);
-    % local index of the parent output connected to the treePath(ii) node,
-    % is in range 1:chan
-    locIdx = find(wt.children{parentId}==nodeId,1);
-    
-    % do nothing if the node is connected to the first (hopefully lowpass)
-    % output
-    if(rem(locIdx,2)~=1)
+% Dual-tree complex wavelet packets require some more tweaking.
+ if isfield(wt,'dualnodes')
+    locIdxs = arrayfun(@(tEl) find(wt.children{wt.parents(tEl)}==tEl,1),treePath);
+    treeNodes = treePath(rem(locIdxs,2)~=1);
+    % Root was removed so the following will not fail
+    jj = treeNodes(find(treeNodes(wt.parents(wt.parents(treeNodes))==0),1));
+ 
+    while ~isempty(jj) && ~isempty(wt.children{jj})
+        sanChild = postpad(wt.children{jj},numel(wt.nodes{jj}.g));
+        % Reverse child nodes
+        wt.children{jj} = sanChild(end:-1:1); 
+ 
+        if do_rev
+          jj = wt.children{jj}(1);
+        else
+          jj = wt.children{jj}(end);
+        end
+        
+    end
+ 
+ end
+
+
+% Get loc. index of nodes
+locIdxs = arrayfun(@(tEl) find(wt.children{wt.parents(tEl)}==tEl,1),treePath);
+
+% Get only nodes connected to a high-pass output
+treeNodes = treePath(rem(locIdxs,2)~=1);
+
+for nodeId=treeNodes
        % now for the filter reordering
-       chan = numel(wt.nodes{nodeId}.g);
-       wt.nodes{nodeId}.g = wt.nodes{nodeId}.g(chan:-1:1);
-       wt.nodes{nodeId}.h = wt.nodes{nodeId}.h(chan:-1:1);
-       wt.nodes{nodeId}.a = wt.nodes{nodeId}.a(chan:-1:1);
+       wt.nodes{nodeId}.g = wt.nodes{nodeId}.g(end:-1:1);
+       wt.nodes{nodeId}.h = wt.nodes{nodeId}.h(end:-1:1);
+       wt.nodes{nodeId}.a = wt.nodes{nodeId}.a(end:-1:1);
        
-       % Do the same with the dual tree if it exists
-       if isfield(wt,'dualnodes')
-           chan = numel(wt.dualnodes{nodeId}.g);
-           wt.dualnodes{nodeId}.g = wt.dualnodes{nodeId}.g(chan:-1:1);
-           wt.dualnodes{nodeId}.h = wt.dualnodes{nodeId}.h(chan:-1:1);
-           wt.dualnodes{nodeId}.a = wt.dualnodes{nodeId}.a(chan:-1:1);
-       end
-    end    
-    
+        % Do the same with the dual tree if it exists
+        if isfield(wt,'dualnodes')
+            wt.dualnodes{nodeId}.g = wt.dualnodes{nodeId}.g(end:-1:1);
+            wt.dualnodes{nodeId}.h = wt.dualnodes{nodeId}.h(end:-1:1);
+            wt.dualnodes{nodeId}.a = wt.dualnodes{nodeId}.a(end:-1:1);
+        end
 end
+
+
+
+
+
+
+
+
+
+
 
 

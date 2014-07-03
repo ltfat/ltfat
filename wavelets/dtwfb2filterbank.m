@@ -53,62 +53,71 @@ complainif_notenoughargs(nargin,1,'DTWFB2FILTERBANK');
 
 % Search for the 'real' flag
 do_real = ~isempty(varargin(strcmp('real',varargin)));
-
 if do_real
     %Remove the 'real' flag from varargin
     varargin(strcmp('real',varargin)) = [];
 end
+
+if ~isempty(varargin(strcmp('complex',varargin)))
+    %Remove the 'complex' flag from varargin
+    %It is not used elsewhere anyway
+    varargin(strcmp('complex',varargin)) = [];
+end
+
 
 % Initialize the dual-tree
 dtw = dtwfbinit({'strict',dualwt},varargin{:});
 
 % Determine relation between the tree nodes
 wtPath = 1:numel(dtw.nodes);
-wtPath(noOfNodeOutputs(1:numel(dtw.nodes),dtw)==0)=[];
-rangeLoc = rangeInLocalOutputs(wtPath,dtw);
-rangeOut = rangeInOutputs(wtPath,dtw);
+wtPath(nodesOutputsNo(1:numel(dtw.nodes),dtw)==0)=[];
+rangeLoc = nodesLocOutRange(wtPath,dtw);
+rangeOut = nodesOutRange(wtPath,dtw);
 
 % Multirate identity filters of the first tree
-[g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,dtw);
+[g1,a] = nodesMultid(wtPath,rangeLoc,rangeOut,dtw);
 
 % Multirate identity filters of the second tree
 dtw.nodes = dtw.dualnodes;
 g2 = nodesMultid(wtPath,rangeLoc,rangeOut,dtw);
 
-% Return the filterbanks before doing the alignment
-info.g1 = g;
-info.g2 = g2;
+if nargin>2
+   % Return the filterbanks before doing the alignment
+   info.g1 = cellfun(@(gEl) setfield(gEl,'h',gEl.h/2),g1,'UniformOutput',0);
+   info.g2 = cellfun(@(gEl) setfield(gEl,'h',gEl.h/2),g2,'UniformOutput',0);
+end
 
 % Align filter offsets so they can be summed
-for ii = 1:numel(g)
+for ii = 1:numel(g1)
    % Sanity checks
-   assert(g{ii}.offset<=0,sprintf('%s: Invalid wavelet filters.',upper(mfilename)));
+   assert(g1{ii}.offset<=0,sprintf('%s: Invalid wavelet filters.',upper(mfilename)));
    assert(g2{ii}.offset<=0,sprintf('%s: Invalid wavelet filters.',upper(mfilename)));
-    
-   offdiff = g{ii}.offset-g2{ii}.offset;
+   
+   % Insert zeros and update offsets
+   offdiff = g1{ii}.offset-g2{ii}.offset;
    if offdiff>0
-       g{ii}.offset = g{ii}.offset - offdiff;
-       g{ii}.h = [zeros(offdiff,1);g{ii}.h(:)];
+       g1{ii}.offset = g1{ii}.offset - offdiff;
+       g1{ii}.h = [zeros(offdiff,1);g1{ii}.h(:)];
    elseif offdiff<0
        g2{ii}.offset = g2{ii}.offset + offdiff;
        g2{ii}.h = [zeros(-offdiff,1);g2{ii}.h(:)];
    end
    
-   lendiff = numel(g{ii}.h) - numel(g2{ii}.h);
+   % Pad with zeros to a common length
+   lendiff = numel(g1{ii}.h) - numel(g2{ii}.h);
    if lendiff~=0
-       maxLen = max(cellfun(@(gEl) numel(gEl.h),g));
-       g{ii}.h = postpad(g{ii}.h,maxLen);
+       maxLen = max(numel(g1{ii}.h),numel(g2{ii}.h));
+       g1{ii}.h = postpad(g1{ii}.h,maxLen);
        g2{ii}.h = postpad(g2{ii}.h,maxLen);
    end
 end
 
-
 % Filters covering the positive frequencies
-g = cellfun(@(gEl,g2El) setfield(gEl,'h',(gEl.h+1i*g2El.h)),g,g2,'UniformOutput',0);
+g = cellfun(@(gEl,g2El) setfield(gEl,'h',(gEl.h+1i*g2El.h)/2),g1,g2,'UniformOutput',0);
 
 % Mirror the filters when negative frequency filters are required too
 if ~do_real
-   gneg = cellfun(@(gEl,g2El) setfield(gEl,'h',(gEl.h-1i*g2El.h)),g,g2,'UniformOutput',0);
+   gneg = cellfun(@(gEl,g2El) setfield(gEl,'h',(gEl.h-1i*g2El.h)/2),g1,g2,'UniformOutput',0);
    g = [g;gneg(end:-1:1)];
    a = [a;a(end:-1:1)];
 end
