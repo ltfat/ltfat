@@ -83,6 +83,9 @@ else
    error('%s: Unexpected flag.',upper(mfilename));
 end
 
+% Flipud because the impulse responses are time-reversed
+wtemp=flipud(wtemp);
+
 % Final fomating
 if filtsAreReal
    sfunc = real(wtemp(:,1));
@@ -91,6 +94,8 @@ else
    sfunc = wtemp(:,1);
    wfunc = wtemp(:,2:end);
 end
+
+
 
 
 if(nargout>2)
@@ -105,6 +110,10 @@ if(nargout>2)
        sxvals = -zeroPos + (1:length(sfunc));
        xvals(:,ii)= (length(lo)-1)*sxvals/length(sfunc);%linspace(0,length(lo)-1,length(s));
     end
+
+   % Flipud because the impulse responses are time-reversed
+   wtemp=flipud(wtemp);
+
 end
 %END WAVFUN
 

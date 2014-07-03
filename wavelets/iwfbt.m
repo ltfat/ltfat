@@ -26,13 +26,13 @@ function f=iwfbt(c,par,varargin)
 %   Examples:
 %   ---------
 %
-%   A simple example showing perfect reconstruction using the "full decomposition" wavelet tree:::
+%   A simple example showing perfect reconstruction using |idtwfb|:::
 %
 %     f = gspi;
 %     J = 7;
-%     wtdef = {'db10',J,'full'};
-%     c = wfbt(f,wtdef);
-%     fhat = iwfbt(c,wtdef,length(f));
+%     wtdef = {'oddeven1',J};
+%     c = dtwfb(f,wtdef);
+%     fhat = idtwfb(c,wtdef,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
@@ -83,10 +83,9 @@ else
 end
 
 %% ----- step 3 : Run computation
-wtPath = nodesBForder(wt,'rev');
-outLengths = nodeInLen(wtPath,L,strcmpi(ext,'per'),wt);
+[nodesBF, rangeLoc, rangeOut] = treeBFranges(wt,'rev');
+
+outLengths = nodesInLen(nodesBF,L,strcmpi(ext,'per'),wt);
 outLengths(end) = L;
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
-rangeOut = rangeInOutputs(wtPath,wt);
-f = comp_iwfbt(c,wt.nodes(wtPath),outLengths,rangeLoc,rangeOut,ext);
+f = comp_iwfbt(c,wt.nodes(nodesBF),outLengths,rangeLoc,rangeOut,ext);
 f = postpad(f,Ls);

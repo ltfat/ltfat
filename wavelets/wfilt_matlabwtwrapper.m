@@ -24,3 +24,5 @@ else
   info.istight = 0; 
 end
 
+g = cellfun(@(gEl) struct('h',gEl(:),'offset',-numel(gEl)/2),g,'UniformOutput',0);
+h = cellfun(@(hEl) struct('h',hEl(:),'offset',-numel(hEl)/2),h,'UniformOutput',0);

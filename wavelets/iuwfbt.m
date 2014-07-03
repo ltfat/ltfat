@@ -82,9 +82,8 @@ end
 
 
 %% ----- step 2 : Prepare input parameters
-wtPath = nodesBForder(wt,'rev');
-nodesUps = nodeFiltUps(wtPath,wt);
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
-rangeOut = rangeInOutputs(wtPath,wt);
+[nodesBF, rangeLoc, rangeOut] = treeBFranges(wt,'rev');
+nodesUps = nodesFiltUps(nodesBF,wt);
+
 %% ----- step 3 : Run computation
-f = comp_iuwfbt(c,wt.nodes(wtPath),nodesUps,rangeLoc,rangeOut,scaling);
+f = comp_iuwfbt(c,wt.nodes(nodesBF),nodesUps,rangeLoc,rangeOut,scaling);

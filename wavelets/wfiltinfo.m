@@ -11,7 +11,10 @@ function wfiltinfo(w,varargin)
 %   *w* is the same as in |fwt|.
 %
 %   Optionally it is possible to define scaling of the y axis of the
-%   frequency seponses. By deault a dB scale is used.
+%   frequency seponses. Supported are:
+%
+%   'db','lin'   
+%       dB or linear scale respectivelly. By deault a dB scale is used.
 %
 %   Examples:
 %   ---------
@@ -90,10 +93,7 @@ subplot(4,filtNo,2*filtNo + (1:filtNo) );
 title('Magnitude frequency response');
 maxLen=max(cellfun(@(gEl) numel(gEl.h),w.g));
 Ls = nextfastfft(max([maxLen,1024]));
-H = zeros(Ls,filtNo);
-for ii=1:filtNo
-   H(:,ii) = comp_transferfunction(w.g{ii},Ls);
-end
+H = filterbankfreqz(w.g,w.a,Ls);
 
 %[H] = wtfftfreqz(w.g);
 if flags.do_db

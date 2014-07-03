@@ -114,7 +114,7 @@ else
 end
 
 
-wtPath = nodesBForder(wt,'rev');
-[pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
+wtPath = fliplr(nodeBForder(0,wt));
+[pOutIdxs,chOutIdxs] = treeWpBFrange(wt);
 f = comp_iwpfbt(c,wt.nodes(wtPath),pOutIdxs,chOutIdxs,L,ext,interscaling);
 f = postpad(f,Ls);

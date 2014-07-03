@@ -8,7 +8,7 @@ disp(' ===============  TEST_WFBT2FILTERBANK ===========');
 
 test_failed=0;
 
-L = [ 107, 211];
+L = [ 135, 211];
 W = [1,2,3];
 W = 1;
 gt = {};
@@ -18,6 +18,16 @@ gt{3} = {{'ana:spline4:4',3,'dwt'},{'syn:spline4:4',3,'dwt'}};
 gt{4} = wfbtinit(gt{2});
 gt{4} = wfbtremove(3,0,gt{4});
 gt{4} = wfbtremove(3,1,gt{4});
+gt{5} = {{'ana:symorth3',3,'dwt'},{'ana:symorth3',3,'dwt'}};
+
+
+
+% This case tests different filters in nodes
+wt2 = wfbtinit({'db3',1});
+wt2 = wfbtput(1,1,'db10',wt2);
+
+gt{5} = wt2;
+
 
 scaling = {'scale','sqrt','noscale'};
 scalingInv = scaling(end:-1:1);

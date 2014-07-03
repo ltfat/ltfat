@@ -1,6 +1,6 @@
-function Lc = nodeOutLen(nodeNo,L,outRange,doNoExt,wt)
-%NODEINLEN Length of the node output
-%   Usage:  Lc = nodeInLen(nodeNo,inLen,doExt,wt);
+function Lc = nodesOutLen(nodeNo,L,outRange,doNoExt,wt)
+%NODESOUTLEN Length of the node output
+%   Usage:  Lc = nodesOutLen(nodeNo,inLen,doExt,wt);
 %
 %   Input parameters:
 %         nodeNo     : Node index(es).
@@ -13,7 +13,7 @@ function Lc = nodeOutLen(nodeNo,L,outRange,doNoExt,wt)
 %   Output parameters:
 %         Lin        : Length of the node input signal 
 %
-%   `nodeInLen(nodeNo,inLen,doExt,treeStruct)` return length of the input
+%   `nodesOutLen(nodeNo,inLen,doExt,treeStruct)` return length of the input
 %   signal of the node `nodeNo`. For definition of the structure see `wfbinit`.
 %
 %   See also: wfbtinit
@@ -24,7 +24,7 @@ end
 
 Lc = zeros(sum(cellfun(@numel,outRange)),1);
 
-inLens = nodeInLen(nodeNo,L,doNoExt,wt);
+inLens = nodesInLen(nodeNo,L,doNoExt,wt);
 
 Lcidx = 1;
 for ii=1:numel(inLens)

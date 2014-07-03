@@ -22,7 +22,7 @@
 %
 %      Wavelet
 %
-%      The Wavelet used is the DB2 with $J=8$ levels. On the right figure
+%      The Wavelet used is the DB6 with $J=5$ levels. On the right figure
 %      the standard layout has been used, on the left the tensor layout
 %      was used.
 
@@ -46,10 +46,10 @@ M=8;
 
 %% Parameters for the Wavelet system
 % Analysis filters
-wa={'ana','db',6};
+wa='db6';
 
 % Synthesis filters
-ws={'syn','db',6};
+ws='db6';
 
 % No. of levels 
 J=5;

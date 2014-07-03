@@ -2,7 +2,7 @@ function gf = filterbankfreqz(g,a,L,varargin)
 %FILTERBANKFREQZ  Filterbank frequency responses
 %   Usage: gf = filterbankfreqz(g,a,L)
 %
-%   `gf = filterbankfreqz(g,a,L)` calculates lengt *L* frequency sesponses
+%   `gf = filterbankfreqz(g,a,L)` calculates length *L* frequency responses
 %   of filters in *g* and returns them as columns of *gf*.
 %
 %   If an optional parameters 'plot' is passed to `filterbankfreqz`,
@@ -28,7 +28,6 @@ end
 M=info.M;
 
 gf = zeros(L,M);
-
 for m=1:M
     gf(:,m) = comp_transferfunction(g{m},L);
 end

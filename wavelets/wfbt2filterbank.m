@@ -46,9 +46,9 @@ wt = wfbtinit({'strict',wt},varargin{:});
 
 % Pick just nodes with outputs
 wtPath = 1:numel(wt.nodes);
-wtPath(noOfNodeOutputs(1:numel(wt.nodes),wt)==0)=[];
+wtPath(nodesOutputsNo(1:numel(wt.nodes),wt)==0)=[];
 
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
-rangeOut = rangeInOutputs(wtPath,wt);
+rangeLoc = nodesLocOutRange(wtPath,wt);
+rangeOut = nodesOutRange(wtPath,wt);
 [g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,wt);
 

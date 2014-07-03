@@ -96,6 +96,7 @@ otherwise
 end
 
 g=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
+g=cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2),g,'UniformOutput',0);
 h = g;
 
 info.istight = 1;

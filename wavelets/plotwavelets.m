@@ -36,6 +36,18 @@ if(flags.do_stem)
    error('%s: Flag %s not supported yet.',upper(mfilename),flags.fwtplottype);
 end
 
+switch info.fname
+    case {'ufwt','uwfbt','uwpfbt'}
+       % Only one channel signals can be plotted.
+       if(ndims(c)>2)
+          error('%s: Multichannel not supported.',upper(mfilename));
+       end  
+    case {'wfbt','dtwfbreal','dtwfb','wpfbt'}
+        if any(cellfun(@(cEl) size(cEl,2)>1,c))
+          error('%s: Multichannel input not supported.',upper(mfilename));
+       end
+end
+
 maxSubLen = 800;
 draw_ticks = 1;
 
@@ -60,56 +72,40 @@ switch info.fname
        J = info.J;
        a = [aBase(1).^J, reshape(aBase(2:end)*aBase(1).^(J-1:-1:0),1,[])]';
     case 'ufwt'
-
-       % Only one channel signals can be plotted.
-       if(ndims(c)>2)
-          error('%s: Multichannel not supported.',upper(mfilename));
-       end
-
        subbNo = size(c,2);
        a = ones(subbNo,1);
 
        w = fwtinit(info.wt);
        filtNo = numel(w.h);
        J = info.J; 
-    case {'wfbt','dtwfbreal'}
-       % Only one channel signals can be plotted.
-       if(size(c{1},2)>1)
-          error('%s: Multichannel input not supported.',upper(mfilename));
-       end
+    case {'wfbt','dtwfbreal','dtwfb'}
        maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
        a = treeSub(info.wt);
        subbNo = numel(c);
        draw_ticks = 0;
     case 'uwfbt'
-       % Only one channel signals can be plotted.
-       if(ndims(c)>2)
-          error('%s: Multichannel not supported.',upper(mfilename));
-       end
-
        subbNo = size(c,2);
        a = ones(subbNo,1);
        draw_ticks = 0;
     case 'wpfbt'
-       % Only one channel signals can be plotted.
-       if(size(c{1},2)>1)
-          error('%s: Multichannel input not supported.',upper(mfilename));
-       end
        maxSubLen = max(cellfun(@(cEl) size(cEl,1),c));
-       aCell = nodeSub(nodesBForder(info.wt),info.wt);
+       aCell = nodesSub(nodeBForder(0,info.wt),info.wt);
        a = cell2mat(cellfun(@(aEl) aEl(:)',aCell,'UniformOutput',0));
        draw_ticks = 0;
     case 'uwpfbt'
-       % Only one channel signals can be plotted.
-       if(ndims(c)>2)
-          error('%s: Multichannel not supported.',upper(mfilename));
-       end
-
        subbNo = size(c,2);
        a = ones(subbNo,1);
        draw_ticks = 0;
     otherwise
        error('%s: Unknown function name %s.',upper(mfilename),info.fname);
+end
+
+% POST optional operations
+switch info.fname
+    case 'dtwfb'
+        % Do subband equivalent of fftshift
+        [c(1:end/2), c(end/2+1:end)] = deal( c(end/2+1:end), c(1:end/2));
+        a = [a(end:-1:1);a];
 end
 
 % Use plotfilterbank

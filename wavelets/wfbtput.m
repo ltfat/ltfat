@@ -13,7 +13,7 @@ function wt = wfbtput(d,k,w,wt,forceStr)
 %   Output parameters:
 %           wt : Modified filterbank structure.
 %
-%   `wfbtput(d,k,w,wt)` puts the basic filterbank *filt* to the filter
+%   `wfbtput(d,k,w,wt)` puts the basic filterbank *w* to the filter
 %   tree structure *wt* at level *d* and index *k*. The output is a
 %   modified tree structure. *d* and *k* have to specify unconnected output
 %   of the leaf node. Error is issued if *d* and *k* points to already
@@ -29,6 +29,10 @@ function wt = wfbtput(d,k,w,wt,forceStr)
 if nargin<4
    error('%s: Too few input parameters.',upper(mfilename)); 
 end
+
+%if isfield(wt,'dualnodes')
+%    error('%s: Cannot modify the dual-tree struct.',upper(mfilename));
+%end
 
 do_force = 0;
 if nargin==5
@@ -47,6 +51,7 @@ end
 node = fwtinit(w);
 
 oldnodecount = numel(wt.nodes);
+nodeschanged = [];
 
 [nodeNoArray,nodeChildIdxArray] = depthIndex2NodeNo(d,k,wt);
 
@@ -61,19 +66,28 @@ if(nodeNo==0)
            % if root has children, check if the new root has the same
            % number of them
            if(~isempty(find(wt.children{rootId}~=0,1)))
-              if(length(w)~=length(wt.nodes{rootId}))
-                 error('%s: The replacing root have to have %d filters.',mfilename,length(wt.nodes{rootId})); 
+              if(length(w.g)~=length(wt.nodes{rootId}.g))
+                 error('%s: The replacing root have to have %d filters.',mfilename,length(wt.nodes{rootId}.g)); 
               end
            end
         else
             error('%s: Root already defined. Use FORCE option to replace.',mfilename);  
         end
         wt.nodes{rootId} = node;
+        nodeschanged(end+1) = rootId;
+        
+        if isfield(wt,'dualnodes') 
+            wt.dualnodes{rootId} = node; 
+        end
         continue;
     end
     wt.nodes{end+1} = node;
     wt.parents(end+1) = nodeNo;
     wt.children{end+1} = [];
+    
+    if isfield(wt,'dualnodes') 
+        wt.dualnodes{end+1} = node; 
+    end
     continue;
 end
 
@@ -84,12 +98,16 @@ if(~isempty(found))
      %check if childrenIdx has any children
      tmpnode = wt.children{nodeNo}(found);  
      if(~isempty(find(wt.children{tmpnode}~=0, 1)))
-         if(length(w)~=length(wt.nodes{tmpnode}))
-            error('%s: The replacing node have to have %d filters.',mfilename,length(wt.nodes{childrenIdx})); 
+         if length(w.g)~=length(wt.nodes{tmpnode}.g)
+            error('%s: The replacing node have to have %d filters.',mfilename,length(wt.nodes{tmpnode}.g)); 
          end
      end
      wt.nodes{tmpnode} = node;
-     %wtree.a{tmpnode} = a;
+     nodeschanged(end+1) = tmpnode;
+     if isfield(wt,'dualnodes') 
+         wt.dualnodes{tmpnode} = node; 
+     end
+     % Since we are replacing a node, all links are already correct
      continue;
    else
        error('%s: Such node (depth=%d, idx=%d) already exists. Use FORCE option to replace.',mfilename,d,k); 
@@ -100,11 +118,16 @@ wt.nodes{end+1} = node;
 wt.parents(end+1) = nodeNo;
 wt.children{end+1} = [];
 wt.children{nodeNo}(nodeChildIdx) = numel(wt.parents);
+
+if isfield(wt,'dualnodes') 
+    wt.dualnodes{end+1} = node; 
 end
 
-% We have to correctly shuffle filters in the just added filters
+end
+
+% We have to correctly shuffle filters in the just added (or modified) filters
 % if the tree was already defined as frequency ordered.
 if wt.freqOrder
-   wt = nat2freqOrder(wt,oldnodecount+(1:numel(k)));
+      wt = nat2freqOrder(wt,[nodeschanged,oldnodecount+1:numel(wt.nodes)]);
 end
 
