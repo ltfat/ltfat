@@ -18,6 +18,7 @@ gt{3} = {{'ana:spline4:4',3,'dwt'},{'syn:spline4:4',3,'dwt'}};
 gt{4} = wfbtinit(gt{2});
 gt{4} = wfbtremove(3,0,gt{4});
 gt{4} = wfbtremove(3,1,gt{4});
+gt{5} = {{'ana:symorth3',3,'dwt'},{'ana:symorth3',3,'dwt'}};
 
 
 

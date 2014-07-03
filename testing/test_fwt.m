@@ -75,6 +75,11 @@ test_filters = {
                {'symorth',3}
                {'symdden',1}
                {'symdden',2}
+               {[0.129409522551260,-0.224143868042013,-0.836516303737808,-0.482962913144534],...
+                [-0.482962913144534,0.836516303737808,-0.224143868042013,-0.129409522551260],...
+                'a',[2,2]}
+                {[0.129409522551260,-0.224143868042013,-0.836516303737808,-0.482962913144534],...
+                [-0.482962913144534,0.836516303737808,-0.224143868042013,-0.129409522551260]}
                };
 %ext = {'per','zpd','sym','symw','asym','asymw','ppd','sp0'};
 
@@ -117,12 +122,16 @@ for typeIdx=1:length(type)
               [c, info] = fwt(f,test_filters{tt},jj,extCur);
    
               fhat = ifwt(c,test_filters{tt},jj,size(f,1),extCur);
-              fhat2 = ifwt(c,info);
+              if ~isnumeric(test_filters{tt}{1})
+                 fhat2 = ifwt(c,info);
+              end
            elseif(strcmp(formatCurr,'cell'))
               [c,info] = fwt(f,test_filters{tt},jj,extCur);
               ccell = wavpack2cell(c,info.Lc);
               fhat = ifwt(ccell,test_filters{tt},jj,size(f,1),extCur); 
-              fhat2 = ifwt(c,info);
+              if ~isnumeric(test_filters{tt}{1})
+                 fhat2 = ifwt(c,info);
+              end
            else
                error('Should not get here.');
            end
@@ -131,12 +140,18 @@ for typeIdx=1:length(type)
             err = norm(f-fhat,'fro');
             [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
             if(~verbose)
-              fprintf('J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
+              if ~isnumeric(test_filters{tt}{1})
+                 fprintf('J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
+              else
+                 fprintf('J=%d, numeric, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,typeCur,extCur,length(f),formatCurr,err,fail); 
+              end
             end
             
-            err = norm(f-fhat2,'fro');
-            [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
-            fprintf('INFO J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
+            if ~isnumeric(test_filters{tt}{1})
+               err = norm(f-fhat2,'fro');
+               [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
+               fprintf('INFO J=%d, %6.6s, type=%s, ext=%4.4s, L=%d, fmt=%s, err=%.4e %s \n',jj,actFilt{1},typeCur,extCur,length(f),formatCurr,err,fail);
+            end
             
             if strcmpi(fail,'FAILED')
                if verbose
