@@ -19,7 +19,7 @@ info.istight = 1;
 switch(N)
 case 1
 % from the paper Example 1.
-harr = [
+garr = [
     0                   0                    0 
     0.353553390593274   0.353553390593274    0.5
     0.707106781186548   0                    -0.5
@@ -28,7 +28,7 @@ harr = [
 
 case 2
 % from the paper Example 2.
-harr = [
+garr = [
     0                 0                0 
     0.189604909379    0.025752563665   0.010167956157
     0.631450512121    0.075463998066   0.046750380120
@@ -41,7 +41,7 @@ harr = [
 
 case 3
 % from the paper Example 3.
-harr = [
+garr = [
    0                 0                0
    0.022033327573    0.048477254777   0.031294135831
    0.015381522616    0.019991451948   0.013248398005
@@ -73,6 +73,7 @@ case 4
     ];
     harr = flipud(harr);
     h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
+    h=cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2+1),h,'UniformOutput',0);
 
 
         garr = [
@@ -91,6 +92,7 @@ case 4
         ];   
 
         g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+        g=cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
 
 
     return;
@@ -100,8 +102,9 @@ otherwise
         error('%s: No such Higher Density Wavelet Transform Filters..',upper(mfilename));
 end
 
-garr = flipud(harr);
+%garr = flipud(harr);
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+g = cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2),g,'UniformOutput',0);
 h = g;
 
 

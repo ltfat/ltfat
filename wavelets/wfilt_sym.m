@@ -27,6 +27,7 @@ info.istight = 1;
 if num_coefs==2	    % Haar filters
 	g{1} = 0.5*[sqrt(2) sqrt(2)];
     g{2} = 0.5*[sqrt(2) -sqrt(2)];
+    g = cellfun(@(gEl) struct('h',gEl(:),'offset',0),g,'UniformOutput',0);
     h = g;
 	return
 end
@@ -152,6 +153,7 @@ fLen = length(rh);
 
 g{1} = rh;
 g{2} = -(-1).^(1:fLen).*g{1}(end:-1:1);
+g = cellfun(@(gEl) struct('h',gEl(:),'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
  
 h = g;
 

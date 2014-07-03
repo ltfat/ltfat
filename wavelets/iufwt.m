@@ -97,7 +97,7 @@ end
 
 
 %%  Run computation
-f = comp_iufwt(c,w.g,J,w.a,scaling);
+f = comp_iufwt(c,w.g,w.a,J,scaling);
 
 
 

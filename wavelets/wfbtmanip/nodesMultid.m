@@ -29,15 +29,17 @@ for ii = 1:numel(wtPath)
    locRange = rangeLoc{ii};
    outRange = rangeOut{ii};
    for jj = 1:length(locRange)
-      tmpUpsFac = nodeFiltUps(iiNode,wt);
+      tmpUpsFac = nodesFiltUps(iiNode,wt);
       tmpFilt = wt.nodes{iiNode}.g{locRange(jj)};
       g{outRange(jj)} = struct();
       % Involution is here because of the filterbank convention is
       % different from the one used in wavelet filtering.
-      g{outRange(jj)}.h = conj(flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1))));
-      g{outRange(jj)}.offset = 1-numel(g{outRange(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
+      %g{outRange(jj)}.h = conj(flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1))));
+      %g{outRange(jj)}.offset = 1-numel(g{outRange(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
+      g{outRange(jj)}.h = conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1));
+      g{outRange(jj)}.offset = -nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
    end
-   atmp = nodeSub(iiNode,wt);
+   atmp = nodesSub(iiNode,wt);
    a(outRange) = atmp{1}(locRange);
 end
         
@@ -79,7 +81,7 @@ pre = pre(end:-1:1);
 for ii=startIdx:length(pre)-1
     id = pre(ii);
     hcurr = wt.nodes{id}.g{wt.children{id}==pre(ii+1)}.h(:);
-    hcurr = comp_ups(hcurr,nodeFiltUps(id,wt),1);
+    hcurr = comp_ups(hcurr,nodesFiltUps(id,wt),1);
     hmi = conv2(hmi,hcurr);
 end
 
@@ -110,11 +112,21 @@ for ii=1:length(pre)-1
     % Obtain offset
     tmpOffset = -wt.nodes{id}.g{childLogInd}.offset;
     % Update te current offset
-    predori = nodeFiltUps(id,wt)*tmpOffset + predori;
+    predori = nodesFiltUps(id,wt)*tmpOffset + predori;
 end
 
 % We do not know here which filter from the node are we working with so
 % this line substitutes the last iteration of the previous loop
-predori = nodeFiltUps(nodeNo,wt)*baseOrig + predori;
+predori = nodesFiltUps(nodeNo,wt)*baseOrig + predori;
+
+
+function pred = nodePredecesors(nodeNo,treeStruct)
+
+pred = [];
+tmpNodeNo = nodeNo;
+while treeStruct.parents(tmpNodeNo)~=0
+   tmpNodeNo = treeStruct.parents(tmpNodeNo);
+   pred(end+1) = tmpNodeNo;
+end
 
 

@@ -19,6 +19,8 @@ function [h,g,a,info] = wfilt_symorth(N)
 info.istight = 0;
 a = [2;2];
 
+
+offset = [];
 switch(N)
 case 1
     % Example 3. From the reference. Orthogonal near-symmetric
@@ -38,7 +40,7 @@ case 1
     
     garr = harr;   
     info.istight = 1;
-    info.d = [3,5];
+    offset = [-2,-4];
 
 case 2
     % Example 2. From the reference. Symmetric near-orthogonal
@@ -73,9 +75,9 @@ case 2
           0.0044852837
           0.0025454063
          ];   
-    harr = [hlp, (-1).^(1:numel(glp)).'.*flipud(glp)];
-    garr = [glp, (-1).^(1:numel(hlp)).'.*flipud(hlp)];
-    info.d = [6,6];
+    harr = [hlp, (-1).^(0:numel(glp)-1).'.*flipud(glp)];
+    garr = [glp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];
+    offset = [-5,-5];
 case 3
     % Example 1. from the reference. Symmetric near-orthogonal
     % K=5 vanishing moments (both low and high pass)
@@ -121,16 +123,19 @@ case 3
         -0.0004607019
          0.0002809102
     ]; 
-    harr = [hlp, (-1).^(0:numel(glp)-1).'.*flipud(glp)];
-    garr = [glp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];
+    harr = [hlp, (-1).^(1:numel(glp)).'.*glp];
+    garr = [glp, (-1).^(1:numel(hlp)).'.*hlp];
     
-    info.d = [9,9];
+    offset = [-8,-8];
   otherwise
         error('%s: No such filters.',upper(mfilename)); 
 
 end
 
 h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
+h=cellfun(@(hEl,offEl) struct('h',hEl(:),'offset',offEl),h,num2cell(offset),'UniformOutput',0);
+
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+g=cellfun(@(gEl,offEl) struct('h',gEl(:),'offset',offEl),g,num2cell(offset),'UniformOutput',0);
 
 

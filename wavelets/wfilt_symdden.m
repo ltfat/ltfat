@@ -52,6 +52,7 @@ garr = [
 end;
 
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+g = cellfun(@(gEl) struct('h',gEl(:),'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
 h = g;
 a= [2;2;2];
 info.istight=1;

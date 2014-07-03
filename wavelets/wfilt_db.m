@@ -71,7 +71,8 @@ P(1:2:end) = a;
 P = [P(end:-1:1),1,P];
 
 R = roots(P);
-R = R(abs(R)<1 & real(R)>0);
+% Roots outside of the unit circle and in the right halfplane
+R = R(abs(R)>1 & real(R)>0);
 
 % roots of the 2*conv(lo_a,lo_r) filter
 hroots = [R(:);-ones(N,1)];
@@ -84,8 +85,15 @@ h{1}= h{1}/norm(h{1});
 % QMF modulation low-pass -> highpass
 h{2}= (-1).^(0:flen-1).*h{1}(end:-1:1);
 
+% Format filters
+h{1} = struct('h',h{1},'offset',-length(h{1})/2+1);
+h{2} = struct('h',h{2},'offset',-length(h{2})/2+1);
+
+
 g=h;
 a = [2;2];
+
+% This also means that g==h
 info.istight=1;
 
 

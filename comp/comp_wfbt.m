@@ -27,12 +27,14 @@ c = cell(sum(cellfun(@(rEl) numel(rEl),rangeOut)),1);
     % Load current filterbank
     wtNode = wtNodes{jj}.h(:);
     % Node filters to a cell array
-    hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNode,'UniformOutput',0);
+    % hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNode,'UniformOutput',0);
+    hCell = cellfun(@(hEl) hEl.h(:),wtNode,'UniformOutput',0);
     % Node filters subs. factors
     a = wtNodes{jj}.a;
     % Node filters initial skips
     if(doPer)
-       offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNode);
+       %offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNode);
+       offset = cellfun(@(hEl) hEl.offset,wtNode);
     else
        offset = -(a-1);
     end

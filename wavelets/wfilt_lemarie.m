@@ -3,7 +3,7 @@ function [h,g,a,info]=wfilt_lemarie(N)
 %   Usage: [h,g,a]=wfilt_lemarie(N)
 %
 %   Input parameters:
-%         N     : Filter length.
+%         N     : Filter length, must be even.
 %
 %   `[h,g,a]=wfilt_lemarie(N)` calculates coeficients of orthonormal
 %   Battle-Lemarie wavelets. Filter coefficients are obtainded by
@@ -22,6 +22,10 @@ function [h,g,a,info]=wfilt_lemarie(N)
 % Author: Jose Martin Garcia
 % e-mail: Uvi_Wave@tsc.uvigo.es
 
+if rem(N,2)~=0
+    error('%s: Filter length must be even.',upper(mfilename));
+end
+
 num_coefs = N;
 L = 1024;
 H = wfreq_lemarie(L);
@@ -31,9 +35,11 @@ hh=hh/norm(hh);
 
 g{1} = fliplr(hh);
 g{2} = -(-1).^(0:length(hh)-1).*g{1}(end:-1:1);
- 
-h = g;
 
+
+g = cellfun(@(gEl) struct('h',gEl,'offset',-floor(numel(gEl)/2)),g,'UniformOutput',0);
+
+h = g;
 a= [2;2];
 info.istight = 1;
 

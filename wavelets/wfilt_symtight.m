@@ -68,9 +68,11 @@ end
 harr = [hlp, ...
             (-1).^(0:size(hlp,1)-1).'.*hlp(:,2),...
             (-1).^(0:size(hlp,1)-1).'.*hlp(:,1)];
-garr = harr;
 
 h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
-g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+h=cellfun(@(hEl) struct('h',hEl(:),'offset',-numel(hEl)/2+1),h,'UniformOutput',0);
+
+g = h;
+
 
 

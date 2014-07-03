@@ -112,7 +112,9 @@ if(rem(length(h{1}),2))
     g{2}= [0, g{2}];
 end
 
-h = cellfun(@(hEl) hEl(end:-1:1),h,'UniformOutput',0);
+g = cellfun(@(gEl) struct('h',gEl(:),'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
+h = cellfun(@(hEl) struct('h',flipud(hEl(:)),'offset',-numel(hEl)/2+1),h,'UniformOutput',0);
+%h = cellfun(@(hEl) hEl(end:-1:1),h,'UniformOutput',0);
 a= [2;2];
 info.istight = 0;
 

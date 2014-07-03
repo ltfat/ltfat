@@ -52,6 +52,9 @@ switch(N)
   otherwise
         error('%s: No such orthonormal M-band wavelet filter bank.',upper(mfilename));
 end
-g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+
+g=mat2cell(flipud(garr),size(garr,1),ones(1,size(garr,2)));
+g = cellfun(@(gEl) struct('h',gEl,'offset',-floor((length(gEl)+1)/2)),g,'UniformOutput',0);
+
 h = g;
 info.istight=1;
