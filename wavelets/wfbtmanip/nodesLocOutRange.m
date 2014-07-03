@@ -1,6 +1,6 @@
-function outRange = rangeInLocalOutputs(nodeNo,wt)
-%RANGEINLOCALOUTPUTS Node output index range of the terminal outputs
-%   Usage:  outRange = rangeInLocalOutputs(nodeNo,wt);
+function outRange = nodesLocOutRange(nodeNo,wt)
+%NODESLOCOUTRANGE Node output index range of the terminal outputs
+%   Usage:  outRange = nodesLocOutRange(nodeNo,wt);
 %
 %   Input parameters:
 %         nodeNo     : Node index.
@@ -9,7 +9,7 @@ function outRange = rangeInLocalOutputs(nodeNo,wt)
 %   Output parameters:
 %         noOut      : Index range. 
 %
-%   `rangeInLocalOutputs(nodeNo,wt)` Return range of indexes of the
+%   `nodesLocOutRange(nodeNo,wt)` Return range of indexes of the
 %   terminal outputs of the node `nodeNo`. For definition of the structure
 %   see `wfbinit`.
 %

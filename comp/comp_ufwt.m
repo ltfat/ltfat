@@ -1,4 +1,4 @@
-function c = comp_ufwt(f,h,J,a,scaling)
+function c = comp_ufwt(f,h,a,J,scaling)
 %COMP_UFWT Compute Undecimated DWT
 %   Usage:  c=comp_ufwt(f,h,J,a);
 %
@@ -22,10 +22,12 @@ filtNo = length(h);
 % Optionally scale the filters
 h = comp_filterbankscale(h(:),a(:),scaling);
 %Change format to a matrix
-hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h(:)','UniformOutput',0));
+%hMat = cell2mat(cellfun(@(hEl) conj(flipud(hEl.h(:))),h(:)','UniformOutput',0));
+hMat = cell2mat(cellfun(@(hEl) hEl.h(:),h(:)','UniformOutput',0));
 
 %Delays
-hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h(:));
+%hOffset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,h(:));
+hOffset = cellfun(@(hEl) hEl.offset,h(:));
 
 % Allocate output
 [L, W] = size(f);

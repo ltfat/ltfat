@@ -77,12 +77,10 @@ if(Ls<2)
 end
 
 %% ----- step 2 : Prepare input parameters
-wtPath = nodesBForder(wt);
-nodesUps = nodeFiltUps(wtPath,wt);
-rangeLoc = rangeInLocalOutputs(wtPath,wt);
-rangeOut = rangeInOutputs(wtPath,wt);
+[nodesBF, rangeLoc, rangeOut] = treeBFranges(wt);
+nodesUps = nodesFiltUps(nodesBF,wt);
 %% ----- step 3 : Run computation
-c = comp_uwfbt(f,wt.nodes(wtPath),nodesUps,rangeLoc,rangeOut,flags.scaling);
+c = comp_uwfbt(f,wt.nodes(nodesBF),nodesUps,rangeLoc,rangeOut,flags.scaling);
 
 %% ----- Optional : Fill the info struct. -----
 if nargout>1

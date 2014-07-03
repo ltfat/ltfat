@@ -1,6 +1,6 @@
-function L = nodeInLen(nodeNo,inLen,doNoExt,wt)
-%NODEINLEN Length of the node input signal
-%   Usage:  L = nodeInLen(nodeNo,inLen,doExt,treeStruct);
+function L = nodesInLen(nodeNo,inLen,doNoExt,wt)
+%NODESINLEN Length of the node input signal
+%   Usage:  L = nodesInLen(nodeNo,inLen,doExt,treeStruct);
 %
 %   Input parameters:
 %         nodeNo     : Node index.
@@ -11,7 +11,7 @@ function L = nodeInLen(nodeNo,inLen,doNoExt,wt)
 %   Output parameters:
 %         Lin        : Length of the node input signal 
 %
-%   `nodeInLen(nodeNo,inLen,doExt,treeStruct)` return length of the input
+%   `nodesInLen(nodeNo,inLen,doExt,treeStruct)` return length of the input
 %   signal of the node `nodeNo`. For definition of the structure see `wfbinit`.
 %
 %   See also: wfbtinit

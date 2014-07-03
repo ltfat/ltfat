@@ -1,4 +1,4 @@
-function f = comp_iufwt(c,g,J,a,scaling)
+function f = comp_iufwt(c,g,a,J,scaling)
 %COMP_IUFWT Compute Inverse Undecimated DWT
 %   Usage:  f = comp_iufwt(c,g,J,a);
 %

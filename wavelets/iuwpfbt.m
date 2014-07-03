@@ -125,8 +125,8 @@ else
    wt = wfbtinit(par,flags.forder);
 end
 
-wtPath = nodesBForder(wt,'rev');
-[pOutIdxs,chOutIdxs] = rangeWpBF(wt,'rev');
-nodesUps = nodeFiltUps(wtPath,wt);
+wtPath = fliplr(nodeBForder(0,wt));
+[pOutIdxs,chOutIdxs] = treeWpBFrange(wt);
+nodesUps = nodesFiltUps(wtPath,wt);
 f = comp_iuwpfbt(c,wt.nodes(wtPath),nodesUps,pOutIdxs,chOutIdxs,scaling,...
                  interscaling);

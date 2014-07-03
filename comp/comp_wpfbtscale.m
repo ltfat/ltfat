@@ -10,8 +10,8 @@ if ~strcmpi(interscaling,'intnoscale')
         interscalingfac = 1/sqrt(2);
     end
     
-    wtPath = nodesBForder(wt);
-    rangeLoc = rangeInLocalOutputs(wtPath,wt);
+    wtPath = nodeBForder(0,wt);
+    rangeLoc = nodesLocOutRange(wtPath,wt);
     wtNodes = wt.nodes(wtPath);
 
     for ii=1:numel(wtPath)

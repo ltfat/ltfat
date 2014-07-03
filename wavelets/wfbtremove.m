@@ -1,5 +1,5 @@
 function wt = wfbtremove(d,kk,wt,varargin)
-%WFBTREMOVE Remove node from the filterbank tree
+%WFBTREMOVE Remove node(s) from the filterbank tree
 %   Usage:  wt = wbftremove(d,kk,wt);
 %           wt = wfbtremove(d,kk,wt,'force');
 %
@@ -15,38 +15,33 @@ function wt = wfbtremove(d,kk,wt,varargin)
 %   
 %   `wfbtremove(d,kk,wt)` removes existing node at level *d* and index *kk*
 %   from the filterbank tree structure *wt*. The function fails if the 
-%   node has any children (is not a leaf node).
+%   node has any children (it is not a leaf node).
 %
 %   `wfbtremove(d,k,wt,'force')` does the same, but any childern of the
 %   node are removed too.
 %
 
-if(nargin<3)
-   error('%s: Too few input parameters.',upper(mfilename)); 
-end
+complainif_notenoughargs(nargin,3,'WFBTREMOVE');
 
 definput.flags.force = {'noforce','force'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+flags=ltfatarghelper({},definput,varargin);
 
-if(isempty(wt.nodes))
+if isempty(wt.nodes)
    error('%s: Tree is empty.',mfilename); 
 end
 
-for i=1:numel(kk)
-   k=kk(i);
+for k=kk
    [nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wt);
    if(nodeNo==0)
        % removing root 
        rootNo = find(wt.parents==0);
        % check for any children of the root
-       if(isempty(find(wt.children{rootNo}~=0,1)))
-           wt = wfbtinit();
+       if any(wt.children{rootNo}~=0) && ~flags.do_force
+            error(['%s: Deleting root node. To delete the whole tree ',...
+                   'use FORCE option.'],mfilename,d,k); 
        else
-           if(flags.do_force)
-               wt = wfbtinit();
-           else
-               error('%s: Deleting root node. To delete the whole tree use FORCE option.',mfilename,d,k); 
-           end
+           wt = nodeSubtreeDelete(rootNo,wt);
+           continue;
        end
    end
 
@@ -58,18 +53,13 @@ for i=1:numel(kk)
         error('%s: Such node (depth=%d, idx=%d) does not exist.',mfilename,d,k); 
    end
 
-
    nodeToDelete = wt.children{nodeNo}(nodeChildIdx);
    % Check if it is a leaf (terminal node)
-   if(~isempty(find(wt.children{nodeToDelete}~=0,1)))
-       if(flags.do_force)
-           wt = deleteSubtree(nodeToDelete,wt);
-           return;
-       else
-           error('%s: Deleting non-leaf node. To delete whole subtree use FORCE option.',mfilename);
-       end
+   if any(wt.children{nodeToDelete}~=0) && ~flags.do_force
+       error(['%s: Deleting a non-leaf node. To delete whole subtree use ',...
+              'FORCE option.'],mfilename);
    else
-       wt = deleteNode(nodeToDelete,wt); 
+       wt = nodeSubtreeDelete(nodeToDelete,wt);
    end
 end
-%wtree = deleteNode(nodeToDelete,wtree);
+

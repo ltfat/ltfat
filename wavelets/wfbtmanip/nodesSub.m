@@ -1,4 +1,4 @@
-function subNo = nodeSub(nodeNo,wt)
+function subNo = nodesSub(nodeNo,wt)
 
 
 if(any(nodeNo>numel(wt.nodes)))
@@ -6,7 +6,7 @@ if(any(nodeNo>numel(wt.nodes)))
 end
 
 nodeNoa = cellfun(@(nEl) nEl.a,wt.nodes(nodeNo),'UniformOutput',0);
-nodeNoUps = nodeFiltUps(nodeNo,wt);
+nodeNoUps = nodesFiltUps(nodeNo,wt);
 
 nodesCount = numel(nodeNo);
 subNo = cell(1,nodesCount);

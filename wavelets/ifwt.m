@@ -122,7 +122,7 @@ end
    end;
 
    %% ----- Run computation
-   f = comp_ifwt(c,w.g,J,w.a,L,ext);
+   f = comp_ifwt(c,w.g,w.a,J,L,ext);
 
    f = postpad(f,Ls);
 

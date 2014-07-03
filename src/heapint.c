@@ -21,7 +21,9 @@ void LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key)
     if (h->totalheapsize==h->heapsize)
     {
         (h->totalheapsize)*=2;
-        h->h = (ltfatInt*)realloc(h->h,h->totalheapsize*sizeof(ltfatInt));
+        h->h = ltfat_realloc_and_copy(h->h,
+                                      h->totalheapsize*sizeof*h->h/2,
+                                      h->totalheapsize*sizeof*h->h);
     }
 
     pos=h->heapsize;
@@ -151,20 +153,21 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 
 
     h.totalheapsize  =(ltfatInt)(M*log((LTFAT_REAL)M));
-    h.h              = (ltfatInt*)ltfat_malloc(h.totalheapsize*sizeof(ltfatInt));
+    h.h              = ltfat_malloc(h.totalheapsize*sizeof*h.h);
     h.s              = s;
     h.heapsize       = 0;
 
-    donemask = (ltfatInt*)ltfat_malloc(M*N*W*sizeof(ltfatInt));
+    donemask = ltfat_malloc(M*N*W*sizeof*donemask);
 
-    LTFAT_REAL *tgradw = (LTFAT_REAL*)ltfat_malloc(M*N*sizeof(LTFAT_REAL));
-    LTFAT_REAL *fgradw = (LTFAT_REAL*)ltfat_malloc(M*N*sizeof(LTFAT_REAL));
+    LTFAT_REAL *tgradw = ltfat_malloc(M*N*sizeof*tgradw);
+    LTFAT_REAL *fgradw = ltfat_malloc(M*N*sizeof*fgradw);
 
     /* Set the phase to zero initially */
-    for (ii=0; ii<M*N*W; ii++)
-    {
-        phase[ii]=0.0;
-    }
+    memset(phase,0,M*N*W*sizeof*phase);
+    //for (ii=0; ii<M*N*W; ii++)
+    //{
+    //    phase[ii]=0.0;
+    //}
 
     /* Rescale the partial derivatives to a torus of length L. We copy
        to work arrays because the input is const. */

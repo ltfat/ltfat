@@ -222,8 +222,16 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
                             const ltfatInt ga, const ltfatInt skip,
                             LTFAT_TYPE *f, ltfatExtType ext)
 {
-    ltfatInt skipLoc = -skip;
     ltfatInt glUps = ga*gl-(ga-1);
+    ltfatInt skipLoc = -(1-glUps-skip);
+
+    // Copy, reverse and conjugate the imp resp.
+    LTFAT_TYPE *gInv = ltfat_malloc(gl*sizeof*gInv);
+    memcpy(gInv,g,gl*sizeof*gInv);
+    LTFAT_NAME(reverse_array)(gInv,gInv,gl);
+    LTFAT_NAME(conjugate_array)(gInv,gInv,gl);
+
+
     // Running output pointer
     LTFAT_TYPE* tmpOut = f;
     // Running input pointer
@@ -286,7 +294,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
         {
             READNEXTSAMPLE(tmpIn)
             tmpIn++;
-            ONEOUTSAMPLE(g,gl)
+            ONEOUTSAMPLE(gInv,gl)
         }
         READNEXTSAMPLE(tmpIn)
         //tmpIn++;
@@ -313,12 +321,12 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
             READNEXTSAMPLE((rightbufTmp))
             rightbufTmp++;
         }
-        ONEOUTSAMPLE((g),(gl))
+        ONEOUTSAMPLE((gInv),(gl))
     }
 
 #undef READNEXTDATA
 #undef ONEOUTSAMPLE
-    LTFAT_SAFEFREEALL(buf,rightbuf);
+    LTFAT_SAFEFREEALL(buf,rightbuf,gInv);
 }
 
 

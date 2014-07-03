@@ -86,6 +86,11 @@ else
             info.gl=length(g.h);
             info.isfir=1;
             
+            % g.h was a row vector
+            if size(g.h,2)>1
+                g.h = g.h(:);
+            end
+            
             % In case a filter lacks .offset, treat it as if it was
             % a zero delay FIR window.
             if ~isfield(g,'offset')
@@ -96,6 +101,11 @@ else
                ( isnumeric(g.H) && isvector(g.H) || isa(g.H,'function_handle') )
             info.wasreal=isfield(g,'realonly') && g.realonly;
             info.gl=[];
+            
+            % g.H was a row vector
+            if size(g.H,2)>1
+                g.H = g.H(:);
+            end
             
             % In case a filter lacks .foff, make a low-pass filter off it.
             if ~isfield(g,'foff')

@@ -56,7 +56,7 @@ if d==1
     return;
 end    
 
-nbf = nodesBForder(wt);
+nbf = nodeBForder(0,wt);
 nbfTmp = nbf;
 tempd = 0;
 while tempd<d

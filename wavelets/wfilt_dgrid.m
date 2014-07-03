@@ -19,7 +19,7 @@ function [h,g,a,info] = wfilt_dgrid(N)
 
 switch(N)
 case 1
-harr = [
+garr = [
   0              0               0              0   
   -sqrt(2)/32    -sqrt(2)/32     0.0104677975   0
   0              -2*sqrt(2)/32   0.0370823430   0.0104677975
@@ -29,8 +29,9 @@ harr = [
   0              2*sqrt(2)/32    0.3731682798   -0.575618139
   -sqrt(2)/32    sqrt(2)/32      0              0.3731682798
 ];
+offset = -4; 
 case 2
-harr = [
+garr = [
   -5*sqrt(2)/256       -5*sqrt(2)/256     0.0422028267     0
   -7*sqrt(2)/256       23*sqrt(2)/256     0.0784808462     0.0422028267 
   35*sqrt(2)/256       -13*sqrt(2)/256    0.0274495253     0.0784808462
@@ -40,8 +41,9 @@ harr = [
   -7*sqrt(2)/256       -23*sqrt(2)/256    -0.1084675382    0.5488035631 
   -5*sqrt(2)/256       5*sqrt(2)/256      0                -0.1084675382
 ]; 
+offset = -3; 
 case 3
-harr = [
+garr = [
   -7*sqrt(2)/1024       -7*sqrt(2)/1024     0.0019452732     0
   -27*sqrt(2)/1024       43*sqrt(2)/1024    -0.0020062621    0.0019452732  
   0                    -80*sqrt(2)/1024     0.0070362139     -0.0020062621
@@ -53,13 +55,13 @@ harr = [
   -27*sqrt(2)/1024      -43*sqrt(2)/1024    -0.4804470835    0.6026545312
   -7*sqrt(2)/1024       7*sqrt(2)/1024      0                -0.4804470835
 ]; 
-
+offset = -4; 
     otherwise
         error('%s: No such Dense Grid Framelet filters.',upper(mfilename));
 end;
 
-garr = flipud(harr);
-g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+g = mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+g = cellfun(@(gEl) struct('h',gEl,'offset',offset),g,'UniformOutput',0);
 h = g;
 a = [2;2;2;2];
 info.istight=1;

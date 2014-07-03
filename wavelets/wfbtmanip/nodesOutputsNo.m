@@ -1,6 +1,6 @@
-function noOut = noOfNodeOutputs(nodeNo,wt)
-%NOOFNODEOUTPUTS Number of node Outputs
-%   Usage:  noOut = noOfNodeOutputs(nodeNo,wt);
+function noOut = nodesOutputsNo(nodeNo,wt)
+%NODESOUTPUTSNO Number of node Outputs
+%   Usage:  noOut = nodesOutputsNo(nodeNo,wt);
 %
 %   Input parameters:
 %         nodeNo  : Node index.
@@ -9,7 +9,7 @@ function noOut = noOfNodeOutputs(nodeNo,wt)
 %   Output parameters:
 %         noOut      : Number of node outputs. 
 %
-%   `noOfNodeOutputs(nodeNo,wt)` Return number of the terminal 
+%   `nodesOutputsNo(nodeNo,wt)` Return number of the terminal 
 %   outputs of the node `nodeNo`. For definition of the structure
 %   see `wfbinit`.
 %

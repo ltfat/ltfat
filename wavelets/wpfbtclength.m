@@ -27,7 +27,7 @@ else
    L = Ls;
 end
 
-wtPath = nodesBForder(wt);
-Lc = nodeOutLen(wtPath,L,[],flags.do_per,wt);
+wtPath = nodeBForder(0,wt);
+Lc = nodesOutLen(wtPath,L,[],flags.do_per,wt);
 
 

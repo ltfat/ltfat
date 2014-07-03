@@ -200,5 +200,8 @@ case 5
 end
 
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
+g = cellfun(@(gEl) struct('h',gEl(:),'offset',-floor(numel(gEl)/2)+1),g,'UniformOutput',0);
+
 h=mat2cell(flipud(harr),size(harr,1),ones(1,size(harr,2)));
+h = cellfun(@(hEl) struct('h',hEl(:),'offset',-floor(numel(hEl)/2)+1),h,'UniformOutput',0);
 

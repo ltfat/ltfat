@@ -41,13 +41,15 @@ cInRunIdxs = [1];
 % Go over all nodes in breadth-first order
 for jj=1:numel(wtNodes)
    % Node filters to a cell array
-   hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:),...
-                   'UniformOutput',0);
+   %hCell = cellfun(@(hEl) conj(flipud(hEl.h(:))),wtNodes{jj}.h(:),...
+   %                'UniformOutput',0);
+   hCell = cellfun(@(hEl) hEl.h(:),wtNodes{jj}.h(:),'UniformOutput',0);
    % Node filters subs. factors
    a = wtNodes{jj}.a;
    % Node filters initial skips
    if(doPer)
-      offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
+      %offset = cellfun(@(hEl) 1-numel(hEl.h)-hEl.offset,wtNodes{jj}.h);
+      offset = cellfun(@(hEl) hEl.offset,wtNodes{jj}.h);
    else
       offset = -(a-1);
    end

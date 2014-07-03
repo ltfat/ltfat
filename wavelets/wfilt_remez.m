@@ -33,9 +33,12 @@ end
 poly=remezwav(L,K,B);
 rh=fc_cceps(poly);
 
-g{1} = rh;
-g{2} = -(-1).^(1:length(rh)).*g{1}(end:-1:1);
+g{1} = flipud(rh(:));
+g{2} = -(-1).^(1:length(rh)).'.*flipud(g{1});
  
+
+g = cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2),g,'UniformOutput',0);
+
 h = g;
 
 a= [2;2];

@@ -1,4 +1,4 @@
-function f = comp_ifwt(c,g,J,a,Ls,ext)
+function f = comp_ifwt(c,g,a,J,Ls,ext)
 %COMP_IFWT Compute Inverse DWT
 %   Usage:  f = comp_ifwt(c,g,J,a,Ls,ext);
 %
@@ -20,13 +20,15 @@ assert(a(1)==a(2),'First two elements of a are not equal. Such wavelet filterban
 
 % Impulse responses to a correct format.
 filtNo = numel(g);
-gCell = cellfun(@(gEl) conj(flipud(gEl.h(:))),g,'UniformOutput',0);
+%gCell = cellfun(@(gEl) conj(flipud(gEl.h(:))),g,'UniformOutput',0);
+gCell = cellfun(@(gEl) gEl.h(:),g,'UniformOutput',0);
 
 if strcmp(ext,'per')
    % Initial shift of the filter to compensate for it's delay.
    % "Zero" delay reconstruction is produced.
    % offset = cellfun(@(gEl) gEl.offset,g); 
-   offset = cellfun(@(gEl) 1-numel(gEl.h)-gEl.offset,g); 
+   %offset = cellfun(@(gEl) 1-numel(gEl.h)-gEl.offset,g); 
+   offset = cellfun(@(gEl) gEl.offset,g);
 elseif strcmp(ext,'valid')
    offset = -cellfun(@(gEl) numel(gEl.h)-1,g);
 else
