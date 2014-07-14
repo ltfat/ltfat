@@ -1,9 +1,9 @@
 function [h,g,a,info] = wfiltdt_qshift(N)
-%WFILT_SYMORTH  Improved Orthogonality and Symmetry properties 
+%WFILTDT_QSHIFT  Improved Orthogonality and Symmetry properties 
 %
-%   Usage: [h,g,a] = wfilt_symorth(N);
+%   Usage: [h,g,a] = wfiltdt_qshift(N);
 %
-%   `[h,g,a]=wfilt_qshift(N)` with *N\in {1,2,3,4,5,6,7}*. 
+%   `[h,g,a]=wfiltdt_qshift(N)` with *N\in {1,2,3,4,5,6,7}*. 
 %
 %   Examples:
 %   ---------
