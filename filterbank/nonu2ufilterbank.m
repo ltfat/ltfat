@@ -23,21 +23,29 @@ function [gu,au,p]=nonu2ufilterbank(g,a)
 %   in |filterbankdual| and |filterbankrealdual| which do not work 
 %   with non-uniform filterbanks.
 %
-%   One can chenge between the coefficient formats of `gu`, `au` and 
+%   One can change between the coefficient formats of `gu`, `au` and 
 %   `g`, `a` using |nonu2ucfmt| and |u2nonucfmt| in the reverse direction.
 %
 %   See also: ufilterbank, filterbank, filterbankbounds, filterbankdual
 %
 %   References: akkva2003
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,'NONU2UFILTERBANK');
 
-if ~isnumeric(a)
+if ~isnumeric(a) || isempty(a)
   error('%s: a must be numeric.',upper(mfilename));
 end;
 
+% Do not allow *g* in format {'dual',g} etc. since it requires L and
+% we want to work without it here.
+% This case is also captured by the next check, but we want a separate 
+% error message.
+if ischar(g{1})
+   error('%s: %s option is not supported in this function.',...
+         upper(mfilename),g{1}); 
+end
+
+% Allow only structs and numeric arrays as filters
 if ~iscell(g) || any(cellfun(@isempty,g)) || ...
    ~all(cellfun(@(gEl) isnumeric(gEl) || ...
    (isstruct(gEl) && (isfield(gEl,'h')||isfield(gEl,'H'))),g))
@@ -48,6 +56,7 @@ end;
 % Sanitize a
 a = comp_filterbank_a(a,numel(g));
 
+% This does not work for fractional subsampling
 if size(a,2)==2 && ~all(a(:,2)==1) && rem(a(:,1),1)~=0
    error(['%s: Filterbanks with fractional subsampling are not',...
           ' supported.'],upper(mfilename)); 
@@ -72,8 +81,8 @@ if any(gIdx)
     g(gIdx) = filterbankwin(g(gIdx),a,'normal');
 end
 
+% Do the actual filter copies
 gu=cell(sum(p),1);
-
 auIdx = 1;
 for m=1:numel(g)
    for ii=0:p(m)-1
