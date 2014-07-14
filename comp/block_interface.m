@@ -30,6 +30,7 @@ persistent synOverlap;
 persistent dispLoad;
 
 persistent Ls;
+persistent Fs;
 
 persistent loop;
 
@@ -64,9 +65,12 @@ switch command
       bufLen = 1024;
       outFile = [];
       offline = 0;
+      Fs = 0;
 %% SETTERS %%%
    case 'setLs'
       Ls = varargin{2};
+   case 'setFs'
+      Fs = varargin{2};
    case 'setOutFile'
       outFile = varargin{2};
    case 'setOffline'
@@ -102,6 +106,8 @@ switch command
 %% GETTERS %%%
    case 'getLs'
       varargout{1}=Ls;
+   case 'getFs'
+      varargout{1}=Fs;
    case 'getOutFile'
       varargout{1}=outFile;
    case 'getOffline'

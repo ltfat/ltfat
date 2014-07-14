@@ -29,9 +29,10 @@ function [fs,classid] = block(source,varargin)
 %   `block` accepts the following optional key-value pairs
 %
 %      `'fs',fs`
-%         Sampling rate - This is only relevant if wav file is not used as
-%         a source. Some devices might support only a limited range of samp.
-%         frequencies.
+%         Required sampling rate - Some devices might support only a 
+%         limited range of samp. frequencies. Use |blockdevices| to list
+%         supported sampling rates of individual devices. 
+%         This option overrides sampling rate read from a wav file.
 %
 %         The default value is 44100 Hz.
 %
@@ -212,7 +213,9 @@ if ischar(source)
          if isoctave
             warning('off','Octave:fopen-file-in-path');
          end
-         [~, kv.fs] = wavread(source, [1,1]);
+         if isempty(kv.fs)
+            [~, kv.fs] = wavread(source, [1,1]);
+         end
          playChannels = 2;
          play = 1;
       else
@@ -229,7 +232,7 @@ elseif(isnumeric(source))
       kv.fs = 44100;
       warning('%s: Sampling rate not specified. Using default value %i Hz.',...
               upper(mfilename),kv.fs);
-   end
+    end
    playChannels = 2;
    play = 1;
    if isempty(kv.nbuf)
@@ -278,14 +281,15 @@ fs = kv.fs;
 if isempty(kv.L)
    block_interface('setBufLen',-1);
 else
-   if kv.L<256 && flags.do_online
-      error('%s: Minimum buffer length is 256.',upper(mfilename))
+   if kv.L<32 && flags.do_online
+      error('%s: Minimum buffer length is 32.',upper(mfilename))
    end
    block_interface('setBufLen',kv.L);
 end
 
 % Store data
 block_interface('setSource',source);
+block_interface('setFs',fs);
 % Handle sources with known input length
 if is_wav
    Ls = wavread(source, 'size');

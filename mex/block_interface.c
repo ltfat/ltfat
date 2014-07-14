@@ -26,6 +26,7 @@ static biEntry vars[] =
 {
     // Default setters and getters
     {.name = "Ls", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
+    {.name = "Fs", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
     {.name = "OutFile", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
     {.name = "Offline", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
     {.name = "Pos", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
