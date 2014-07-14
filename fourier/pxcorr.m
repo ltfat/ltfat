@@ -18,30 +18,16 @@ function h=pxcorr(f,g,varargin)
 %
 %   See also: dft, pfilt, involute
 
-%   AUTHOR: Peter L. Søndergaard
-
-% Assert correct input.
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
-
-if ~all(size(f)==size(g))
-  error('f and g must have the same size.');
-end;
+%   AUTHOR: Peter L. Søndergaard, Jordy van Velthoven
 
 definput.flags.type={'nonormalize','normalize'};
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+flags = ltfatarghelper({},definput,varargin);
 
-L=length(f);
-
-if isreal(f) && isreal(g)
-  h = ifftreal(fftreal(f).*conj(fftreal(g)),L);
-else
-  h = ifft(fft(f).*conj(fft(g)));
-end;
+h = pconv(f, g, 'r');
 
 if flags.do_normalize
   h = h/(norm(f)*norm(g));  
-end;
+end
+
 
