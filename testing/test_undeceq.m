@@ -1,4 +1,4 @@
-function test_undeceq
+function test_failed=test_undeceq
 % This function test whether fwt is just a subsampled version of ufwt, wfbt
 % of uwfbt etc.
 test_failed = 0;
