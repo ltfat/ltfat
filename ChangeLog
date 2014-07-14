@@ -1,5 +1,22 @@
 Version X.X.X
-    * Fixed bug filterbankdual and filterbankrealdual for the uniform case.
+    * Fixed bug in filterbankdual and filterbankrealdual for the uniform case.
+      Also the routines are now much faster.
+
+    * Fixed bug in comp_ifilterbank MEX causing crashes for mixed type
+      filterbanks.
+
+    * Added implementation of dual-tree wavelet transform, general dual-tree
+      wavelet filterbank trees and *M*-band transforms.  
+
+    * New dual-tree wavelet filters: wfiltdt_qshift, wfiltdt_oddeven,
+                                     wfiltdt_optsym, wfiltdt_dden
+
+    * New regular DWT filters:  wfilt_symorth, wfilt_symtight
+
+    * wfilt_ functions now return filters in a format compatible with
+      LTFAT filter format (struct with .h and .offset fields).
+
+    * New demos: demo_introframes
 
 
 Version 1.4.5 7/5 2014
