@@ -55,6 +55,7 @@
 %    PFILT          -  Apply filter with periodic boundary conditions.
 %    MAGRESP        -  Magnitude response plot.
 %    TRANSFERFUNCTION - Computer the transfer function of a filter.
+%    PGRPDELAY      -  Periodic Group Delay
 %
 %  Hermite functions and fractional Fourier transforms
 %    PHERM          -  Periodic Hermite functions.
