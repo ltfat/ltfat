@@ -1,7 +1,7 @@
 function f=idtwfb(c,par,varargin)
 %IDTWFB Inverse Dual-tree Filterbank
-%   Usage:  f=dtwfb(c,info);
-%           f=dtwfb(c,dualwt,Ls);
+%   Usage:  f=idtwfb(c,info);
+%           f=idtwfb(c,dualwt,Ls);
 %
 %   Input parameters:
 %         c           : Input coefficients.
@@ -28,15 +28,16 @@ function f=idtwfb(c,par,varargin)
 %
 %   A simple example showing perfect reconstruction using |idtwfbreal|:::
 %
-%     f = gspi;
-%     J = 7;
-%     wtdef = {'qshift3',J};
-%     c = dtwfbreal(f,wtdef);
-%     fhat = idtwfbreal(c,wtdef,length(f));
-%     % The following should give (almost) zero
-%     norm(f-fhat)
+%      f = gspi;
+%      J = 7;
+%      wtdef = {'qshift3',J};
+%      c = dtwfbreal(f,wtdef);
+%      fhat = idtwfbreal(c,wtdef,length(f));
+%      % The following should give (almost) zero
+%      norm(f-fhat)
 %
-%   See also: dtwfbreal
+%
+%   See also: dtwfb
 
 
 complainif_notenoughargs(nargin,2,'IDTWFB');
