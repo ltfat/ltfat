@@ -1,4 +1,4 @@
-function gdout=filterbankdual(g,a,L);
+function gdout=filterbankdual(g,a,varargin)
 %FILTERBANKDUAL  Dual filters
 %   Usage:  gd=filterbankdual(g,a);
 %           gd=filterbankdual(g,a,L);
@@ -13,6 +13,10 @@ function gdout=filterbankdual(g,a,L);
 %   of length *L*. If *L* is not specified, the shortest possible
 %   transform length is choosen.
 %
+%   In addition, the funtion recognizes a 'forcepainless' flag which
+%   forces treating the filterbank *g* and *a* as a painless case
+%   filterbank.  
+%
 %   To actually invert the output of a filterbank, use the dual filters
 %   together with the |ifilterbank| function.
 %
@@ -20,18 +24,22 @@ function gdout=filterbankdual(g,a,L);
 
 complainif_notenoughargs(nargin,2,'FILTERBANKDUAL');
 
-if nargin<3
-   L = [];
-end
+definput.import={'filterbankdual'};
+[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
 [g,info] = filterbankwin(g,a,L,'normal'); 
 M=info.M;
 
-Lsut = filterbanklength(L,a);
+% Force usage of the painless algorithm 
+if flags.do_forcepainless
+    info.ispainless = 1;
+end
+
 if (~isempty(L)) && (L~=filterbanklength(L,a))
+    Lsut = filterbanklength(L,a);
     error(['%s: Specified length L is incompatible with the length of ' ...
            'the time shifts. Next suitable L is %i; obtainable by ',...
-           'filterbanklength(a,L).'],upper(mfilename),Lsut);
+           'filterbanklength(L,a).'],upper(mfilename),Lsut);
 end;
 
 
@@ -76,14 +84,18 @@ if info.isuniform
   
   gd=ifft(gd)*a;
   
-  if isreal(g)
-    gd=real(gd);
-  end;
+  % The following does not make any sense
+  %if isreal(g)
+  %  gd=real(gd);
+  %end;
   
-  gdout=cell(1,M);
-  for m=1:M
-    gdout{m}= cast(gd(:,m),thisclass);
-  end;
+  % Matrix cols to cell elements + cast
+  gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+                  'UniformOutput',0);
+%   gdout=cell(1,M);
+%   for m=1:M
+%     gdout{m}= cast(gd(:,m),thisclass);
+%   end;
   
 else
 
@@ -94,27 +106,7 @@ else
         end;
         
         gdout = comp_painlessfilterbank(g,info.a,L,'dual',0);
-
-%        F=comp_filterbankresponse(g,info.a,L,0);
-        
-%         gdout=cell(1,M);
-%         for m=1:M
-%             thisgd=struct();
-%             if isfield(g{m},'H')
-%                H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
-%                thisgd.H=H(1:numel(g{m}.H));
-%                thisgd.foff=g{m}.foff;
-%                thisgd.realonly=0;
-%                thisgd.delay=0;
-%             elseif isfield(g{m},'h')
-%                H=comp_transferfunction(g{m},L)./F; 
-%                thisgd.h = ifft(H);
-%                thisgd.offset = 0;
-%             end
-%             
-%             gdout{m}=thisgd;
-%         end;
-        
+       
     else
         error(['%s: The canonical dual frame of this system is not a ' ...
                'filterbank. You must either call an iterative ' ...

@@ -73,14 +73,9 @@ if info.isuniform
   
   gt=ifft(gt)*sqrt(a);  
 
-  if isreal(g)
-    gt=real(gt);
-  end;
-  
-  gtout=cell(1,M);
-  for m=1:M
-    gtout{m}=cast(gt(:,m),thisclass);
-  end;
+  % Matrix cols to cell elements + cast
+  gtout = cellfun(@(gtEl) cast(gtEl,thisclass), num2cell(gt,1),...
+                  'UniformOutput',0);
   
 else
     if info.ispainless
@@ -89,26 +84,6 @@ else
         end;
         
         gtout = comp_painlessfilterbank(g,info.a,L,'tight',0);
-%         Fsqrt=sqrt(comp_filterbankresponse(g,info.a,L,0));
-%         
-%         gtout=cell(1,M);
-%         for m=1:M
-%             thisgt=struct();
-%             
-%             if isfield(g{m},'H')
-%                H=circshift(comp_transferfunction(g{m},L)./Fsqrt,-g{m}.foff);
-%                thisgt.H=H(1:numel(g{m}.H));
-%                thisgt.foff=g{m}.foff;
-%                thisgt.realonly=0;
-%                thisgt.delay=0;
-%             elseif isfield(g{m},'h')
-%                H=comp_transferfunction(g{m},L)./Fsqrt; 
-%                thisgt.h = ifft(H);
-%                thisgt.offset = 0;
-%             end
-%             
-%             gtout{m}=thisgt;
-%         end;
         
     else
         error(['%s: The canonical dual frame of this system is not a ' ...

@@ -1,7 +1,8 @@
 function gout = comp_painlessfilterbank(g,a,L,type,do_real)
 %COMP_PAINLESSFILTERBANK
 % 
-%   Function computes filterbank dual or tight frame for the painless case
+%   Function computes filterbank dual or tight frame for the painless case.
+%   All g{ii}.H should already be numeric verctors.
 %
 
 M = numel(g);
@@ -28,8 +29,7 @@ for m=1:M
        thisgd.delay=0;
     elseif isfield(g{m},'h')
        H=comp_transferfunction(g{m},L)./F; 
-       thisgd.h = ifft(H);
-       thisgd.offset = 0;
+       thisgd = ifft(H);
     end
 
     gout{m}=thisgd;

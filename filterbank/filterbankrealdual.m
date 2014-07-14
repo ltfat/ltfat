@@ -1,6 +1,6 @@
-function gdout=filterbankrealdual(g,a,L)
+function gdout=filterbankrealdual(g,a,varargin)
 %FILTERBANKREALDUAL  Dual filters of filterbank for real signals only 
-%   Usage:  gd=filterbankdual(g,a);
+%   Usage:  gd=filterbankrealdual(g,a);
 %
 %   `filterabankdual(g,a)` computes the canonical dual filters of *g* for a
 %   channel subsampling rate of *a* (hop-size). The dual filters work only
@@ -10,6 +10,10 @@ function gdout=filterbankrealdual(g,a,L)
 %   The format of the filters *g* are described in the
 %   help of |filterbank|.
 %
+%   In addition, the funtion recognizes a 'forcepainless' flag which
+%   forces treating the filterbank *g* and *a* as a painless case
+%   filterbank.  
+%
 %   To actually invert the output of a filterbank, use the dual filters
 %   together with `2*real(ifilterbank(...))`.
 %
@@ -17,13 +21,16 @@ function gdout=filterbankrealdual(g,a,L)
 
 complainif_notenoughargs(nargin,2,'FILTERBANKREALDUAL');
 
-if nargin<3
-   L = [];
-end
-
+definput.import={'filterbankdual'};
+[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
 [g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
+
+% Force usage of the painless algorithm 
+if flags.do_forcepainless
+    info.ispainless = 1;
+end
 
 if (~isempty(L)) && (L~=filterbanklength(L,a))
         error(['%s: Specified length L is incompatible with the length of ' ...
@@ -79,16 +86,8 @@ if info.isuniform
   
   gd=ifft(gd)*a;
   
-  if isreal(g)
-    gd=real(gd);
-  end;
-  
-  gdout=cell(1,M);
-  for m=1:M
-    % The filter is not formatted to a structure here, since the
-    % numeric vector is treated as a zero delay imp. resp.
-    gdout{m}=cast(gd(:,m),thisclass);
-  end;
+  gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+                  'UniformOutput',0);
   
 else
 
@@ -98,21 +97,6 @@ else
         end;
         
         gdout = comp_painlessfilterbank(g,info.a,L,'dual',1);
-        
-%         F=comp_filterbankresponse(g,info.a,L,1);
-%         
-%         gdout=cell(1,M);
-%         for m=1:M
-%             gl=numel(g{m}.H);
-%             thisgd=struct();
-%             H=circshift(comp_transferfunction(g{m},L)./F,-g{m}.foff);
-%             thisgd.H=H(1:gl);
-%             thisgd.foff=g{m}.foff;
-%             thisgd.realonly=0;
-%             thisgd.delay=0;
-%             
-%             gdout{m}=thisgd;
-%         end;
     else
         error(['%s: The canonical dual frame of this system is not a ' ...
                'filterbank. You must call an iterative ' ...
