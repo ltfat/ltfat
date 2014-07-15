@@ -64,12 +64,13 @@ test_filters = {
                {'dden',4}
                {'dden',5}
 %               {'dden',6}
-               {'dden',7}
                {'dgrid',1}
                {'dgrid',2}
                {'dgrid',3}
                %{'algmband',1} 
                {'mband',1}
+               {'symorth',1}
+               {'symtight',2}
                %{'hden',3}
                %{'hden',2}
                %{'hden',1}
