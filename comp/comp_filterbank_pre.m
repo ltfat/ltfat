@@ -2,7 +2,12 @@ function g = comp_filterbank_pre(g,a,L,crossover)
 %COMP_FILTERBANK_PRE Return sanitized filterbank
 %
 %   The purpose of this function is to evauate all parameters of the
-%   filters, which can be evaluated knowing L.
+%   filters, which can be evaluated knowing L. The function can work only
+%   with *g* and *a* in proper formats i.e. processed by
+%   |filterbankwindow|.
+%
+%   This function expects all numeric g{ii}.H to be instantiated with a
+%   proper *L*.
 %
 
 
@@ -62,6 +67,7 @@ for m=mFreq
     elseif isfield(g{m},'H') && ~isnumeric(g{m}.H)
        g{m}.H=g{m}.H(L);
        g{m}.foff=g{m}.foff(L);
+       g{m}.L = L;
     end
     
     if isfield(g{m},'H') && isfield(g{m},'delay') && g{m}.delay~=0

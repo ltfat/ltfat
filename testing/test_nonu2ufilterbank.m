@@ -3,6 +3,8 @@ function test_failed = test_nonu2ufilterbank
 % an identical uniform filterbanks
 test_failed=0;
 
+disp('-------------TEST_NONU2UFILTERBANK-------------');
+
 for ftypeCell = {'time','freq'}
     ftype = ftypeCell{1};
     disp(sprintf('--------------- %s ------------',ftype));
@@ -22,7 +24,7 @@ for ii=1:M
 end;
 elseif strcmp(ftype,'freq')
  for ii=1:M
-  g{ii}=struct('H',tester_crand(L,1),'foff',0);
+  g{ii}=struct('H',tester_crand(L,1),'foff',0,'L',L);
 end;   
 end
 

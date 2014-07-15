@@ -1,6 +1,6 @@
 function [g,info] = comp_fourierwindow(g,L,callfun);
 %COMP_FOURIERWINDOW  Compute the window from numeric, text or cell array.
-%   Usage: [g,info] = comp_fourierwindow(g,a,M,L,wilson,callfun);
+%   Usage: [g,info] = comp_fourierwindow(g,L,callfun);
 %
 %   `[g,info]=comp_fourierwindow(g,L,callfun)` will compute the window
 %   from a text description or a cell array containing additional
@@ -62,6 +62,7 @@ if iscell(g)
 end;
 
 if isnumeric(g)
+  % The DGT window format to struct with .h field format
   if size(g,2)>1
     if size(g,1)>1
       error('%s: g must be a vector',callfun);
@@ -78,7 +79,8 @@ if isnumeric(g)
   g.fc=0;
   g.realonly=0;
   info.wasreal=isreal(g.h);
-else
+  % And continue processing this since it becomes a FIR filter.
+end
 
     if isstruct(g)
         if isfield(g,'h') && isnumeric(g.h) && isvector(g.h)
@@ -99,6 +101,7 @@ else
             end
         elseif isfield(g,'H')  && ... 
                ( isnumeric(g.H) && isvector(g.H) || isa(g.H,'function_handle') )
+
             info.wasreal=isfield(g,'realonly') && g.realonly;
             info.gl=[];
             
@@ -112,14 +115,38 @@ else
                 g.foff= @(L) 0; 
             end
             
-            if ~isempty(L)
-                if isa(g.H,'function_handle')
-                    g.H=g.H(L);
-                end;
-                if isa(g.foff,'function_handle')
-                    g.foff=g.foff(L);
+            if isa(g.H,'function_handle')
+                if isempty(L)
+                error(['%s: You must specify a length L if a window is ',...
+                       'represented in a fourier domain as a function ',...
+                       'handle'],upper(mfilename));
                 end
-            end;
+                g.H=g.H(L);
+                if ~isa(g.foff,'function_handle')
+                    error('%s: g.foff should be a function handle.',...
+                           upper(mfilename));
+                end
+                g.foff=g.foff(L);
+                % And store the length the freq. resp. was instantiated
+                % with.
+                g.L = L;
+            else
+                % If g.H is already numeric, we must handle transforming it to a
+                % different length.
+                if isfield(g,'L')
+                    if g.L~=L
+                        g.H = fft(middlepad(ifft(circshift(postpad(g.H(:),g.L),g.foff)),L));
+                        g.foff = 0;
+                        g.L = L;
+                    end
+                else
+                    % We do not know which L was g.H created with, there is no way
+                    % how to handle this properly.
+                    error('%s: No way of knowing which L was used for g.H.',...
+                          upper(mfilename));
+                end
+            end
+ 
         else
             error(['%s: The struct. defining a filter must contain ',...
                    'either .h (numeric vector) or .H (numeric vector, ',...
@@ -136,7 +163,7 @@ else
             
     end;
     
-end;
+
     
 function complain_L(L,callfun)
   

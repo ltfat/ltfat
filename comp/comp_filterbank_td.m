@@ -20,7 +20,7 @@ W=size(f,2);
 M=numel(g);
 %filter lengths
 filtLen = cellfun(@(x) numel(x),g(:));
-skip = -offset;
+skip = -offset(:);
 % Allow filter delay only in the filter support range
 if any(skip(:)>=filtLen) || any(skip<0)
   error('%s: The filter zero index position outside of the filter support.', upper(mfilename));  
@@ -38,7 +38,7 @@ elseif strcmp(ext,'valid')
    N = ceil(Lext./a);
 else
    Lext = (L+filtLen-1);
-   N = ceil((Lext-skip)./a); 
+   N = ceil((Lext(:)-skip(:))./a(:)); 
 end
 N = N(:);
 Lreq = a(:).*(N-1) + 1;
