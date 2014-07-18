@@ -30,6 +30,18 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     mwSize M = mxGetNumberOfElements(prhs[1]);
     double* Lc = mxGetData(prhs[1]);
 
+    
+    /* Sanity check */
+    mwSize sumLc = (mwSize) Lc[0];
+    for(mwIndex ii=1;ii<M;ii++)
+    {
+        sumLc += (mwSize) Lc[ii];
+    }
+    if (sumLc != L)
+    {
+       mexErrMsgTxt("VECT2CELL: Sizes do not comply.");
+    }
+
     plhs[0] = mxCreateCellMatrix(M,1);
     LTFAT_REAL* cPr[M];
     LTFAT_REAL* cPi[M];
@@ -38,12 +50,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
     {
         mxArray* tmpA = ltfatCreateMatrix((mwSize)Lc[ii], W,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
         mxSetCell(plhs[0],ii,tmpA);
-        cPr[ii] = (LTFAT_REAL*) mxGetPr(tmpA);
-        cPi[ii] = (LTFAT_REAL*) mxGetPi(tmpA);
+        cPr[ii] = mxGetData(tmpA);
+        cPi[ii] = mxGetImagData(tmpA);
     }
 
-    LTFAT_REAL* xPr = (LTFAT_REAL*) mxGetPr(prhs[0]);
-    LTFAT_REAL* xPi = (LTFAT_REAL*) mxGetPi(prhs[0]);
+    LTFAT_REAL* xPr = mxGetData(prhs[0]);
+    LTFAT_REAL* xPi = mxGetImagData(prhs[0]);
 
 
     for(mwIndex w=0;w<W;w++)
@@ -53,7 +65,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
        {
            mwSize LcTmp = (mwSize)Lc[ii];
            LTFAT_REAL* cTmp = cPr[ii] + w*LcTmp;
-           memcpy(cTmp,xTmp,LcTmp*sizeof(LTFAT_REAL));
+           memcpy(cTmp,xTmp,LcTmp*sizeof*cTmp);
            xTmp+=LcTmp;
        }
     }
@@ -66,7 +78,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray 
        {
            mwSize LcTmp = (mwSize)Lc[ii];
            LTFAT_REAL* cTmp = cPi[ii] + w*LcTmp;
-           memcpy(cTmp,xTmp,LcTmp*sizeof(LTFAT_REAL));
+           memcpy(cTmp,xTmp,LcTmp*sizeof*cTmp);
            xTmp+=LcTmp;
        }
     }
