@@ -2,6 +2,9 @@ Version X.X.X
     * Fixed bug in filterbankdual and filterbankrealdual for the uniform case.
       Also the routines are now much faster.
 
+    * Added possibility to force treatment os a filterbank as a painless
+      filterbank using 'forcepainless' flag in filterbank(real)dual routines.
+
     * Fixed bug in comp_ifilterbank MEX causing crashes for mixed type
       filterbanks.
 
@@ -15,9 +18,6 @@ Version X.X.X
 
     * wfilt_ functions now return filters in a format compatible with
       LTFAT filter format (struct with .h and .offset fields).
-
-    * New demos: demo_introframes
-
 
 Version 1.4.5 7/5 2014
     * Phase locking in DGT ('timeinv' flag) moved to the C backend. It
@@ -60,7 +60,7 @@ Version 1.4.4 25/2 2014
 
 	* The C code was revised: consistence of argument naming and order,
 	                          introduced ltfatInt data type for array
-							  lengths.
+							        lengths.
 
 	* New block processing demos: real-time CQT and Erblets
 	  (fast enough only in Matlab).
