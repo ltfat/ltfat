@@ -52,11 +52,13 @@ if isoctave
    minor_rq=6;
    intp='Octave';
    req_versionname='3.6.0';
+   ignore_dirs = {'mex'};
 else
    major_rq=7;
    minor_rq=9;
    intp='Matlab';
    req_versionname='2009b';
+   ignore_dirs = {'oct'};
 end;
 
 % Split into major and minor version
@@ -99,9 +101,14 @@ for ii=1:length(d)
     continue;
   end;
   
+  % Skip ignored directories
+  if any(cellfun(@(iEl) strcmp(d(ii).name,iEl),ignore_dirs))
+      continue;
+  end
+  
   % Skip directories without an init file
   name=d(ii).name;
-  % CThe file is a directory and it does not start with '.' This could
+  % The file is a directory and it does not start with '.' This could
   % be a module
   if ~exist([bp,name,filesep,name,'init.m'],'file')
     continue
