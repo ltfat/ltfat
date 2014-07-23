@@ -2,7 +2,7 @@ Version X.X.X
     * Fixed bug in filterbankdual and filterbankrealdual for the uniform case.
       Also the routines are now much faster.
 
-    * Added possibility to force treatment os a filterbank as a painless
+    * Added possibility to force treatment of a filterbank as a painless
       filterbank using 'forcepainless' flag in filterbank(real)dual routines.
 
     * Fixed bug in comp_ifilterbank MEX causing crashes for mixed type
