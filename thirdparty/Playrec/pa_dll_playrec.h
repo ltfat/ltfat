@@ -35,6 +35,7 @@ extern "C"
 #include <time.h>
 #include "mex.h"
 #include "portaudio.h"
+#include "config.h"
 
 #define VERSION "2.1.0"
 #define DATE "15 April 2008"

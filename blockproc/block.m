@@ -180,14 +180,14 @@ hostAPIpriorityList = {};
 pa_bufLen = -1;
 
 if ischar(source)
-   if isempty(kv.fs)
-      kv.fs = 44100;
-   end
    if(strcmpi(source,'rec'))
       recChannels = 1;
       record = 1;
       if isempty(kv.nbuf)
          kv.nbuf = 3;
+      end
+      if isempty(kv.fs)
+         kv.fs = 44100;
       end
    elseif strcmpi(source,'playrec')
       playChannels = 2;
@@ -196,6 +196,9 @@ if ischar(source)
       play = 1;
       if isempty(kv.nbuf)
          kv.nbuf = 1;
+      end
+      if isempty(kv.fs)
+         kv.fs = 44100;
       end
    elseif strcmpi(source,'dialog')
       [fileName,pathName] = uigetfile('*.wav','Select the *.wav file');

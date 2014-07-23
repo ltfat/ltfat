@@ -35,10 +35,9 @@
 #include "portaudio.h"
 #include "mex_dll_core.h"
 #include "pa_dll_playrec.h"
+#include "ltfatresample.h"
 #include <stdio.h>
 #include <string.h>
-
-//#include <samplerate.h>
 
 /*
  * States are used to ensure code is only run when it will not cause problems
@@ -851,9 +850,48 @@ StreamInfoStruct *_pstreamInfo;
 /* The last PortAudio error */
 PaError lastPaError;
 
-/* Resampling ratio */
-double resRat = 0.0;
-/* SRC_STATE* recResampler=0; */
+/* Resampling plans */
+
+static int playResChanCount = 0;
+static resample_plan* play_resplan = NULL;
+
+static int recResChanCount = 0;
+static resample_plan* rec_resplan = NULL;
+static resample_plan dummy_recplan = NULL;
+
+void clearResPlans()
+{
+   int ii;
+
+   if(dummy_recplan)
+      resample_done(&dummy_recplan);
+
+   if (rec_resplan)
+   {
+      if (recResChanCount > 0)
+      {
+         for (ii = 0; ii < recResChanCount; ii++)
+            resample_done(&rec_resplan[ii]);
+         recResChanCount = 0;
+      }
+      free(rec_resplan);
+      rec_resplan = NULL;
+   }
+   if (play_resplan)
+   {
+      if (playResChanCount > 0)
+      {
+         for (ii = 0; ii < playResChanCount; ii++)
+            resample_done(&play_resplan[ii]);
+
+         playResChanCount = 0;
+      }
+      free(play_resplan);
+      play_resplan = NULL;
+   }
+}
+
+
 
 /*
  * FUNCTION:    convDouble(double *oldBuf, int buflen)
@@ -1818,8 +1856,8 @@ void condensePages(void)
  */
 void exitFunc(void)
 {
-   /*if(recResampler)
-      src_delete(recResampler);*/
+   clearResPlans();
+
 #ifdef DEBUG
    mexPrintf("Running playrec exitFunc...\n");
 #endif
@@ -2084,11 +2122,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
    StreamPageStruct *psps;
    ChanBufStruct *pcbs;
    unsigned int dataChanCount, playSamplePerChan = 0, recSamplePerChan;
-   unsigned int i, chansCopied;
-   SAMPLE* buftmp;
-   unsigned int buftmpLen;
-   double resIdx;
-   unsigned int resIdxLow;
+   unsigned int i, chansCopied, playResPlanId = 0, bufTmpLen;
 
    validateState(BASIC_INIT | FULL_INIT, 0);
 
@@ -2178,9 +2212,13 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
          {
             /* Float32 input data */
             if (mxIsSingle(pplayData))
-               pcbs->pbuffer = convFloat((float *)mxGetData(pplayData) + chansCopied * playSamplePerChan, playSamplePerChan);
+               pcbs->pbuffer = convFloat((float *)mxGetData(pplayData) +
+                                         chansCopied * playSamplePerChan,
+                                         playSamplePerChan);
             else if (mxIsDouble(pplayData)) /* Double */
-               pcbs->pbuffer = convDouble((double *)mxGetData(pplayData) + chansCopied * playSamplePerChan, playSamplePerChan);
+               pcbs->pbuffer = convDouble((double *)mxGetData(pplayData) +
+                                          chansCopied * playSamplePerChan,
+                                          playSamplePerChan);
             else
             {
                /* This should never be called as the if statement above should
@@ -2190,39 +2228,27 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
                freeStreamPageStruct(&psps);
                return false;
             }
-            
-            /* XXX
-             * The resampling part
-             * Currently the following does only linear interpolation
-             * */
-            if(resRat!=0.0)
+
+            /* Do resampling if play resampler is present*/
+            if (play_resplan)
             {
-               buftmpLen = (unsigned int) (playSamplePerChan*resRat); 
-               buftmp = mxCalloc(buftmpLen,sizeof(SAMPLE));
-               /* Do not do the last sample */
-               for(i=0;i<buftmpLen-1;i++)
-               {
-                  resIdx = i/resRat;
-                  resIdxLow = (unsigned int) resIdx;
-
-                  if( (resIdxLow+1)>=playSamplePerChan)
-                      mexWarnMsgTxt("Overflow.");
-                     
-
-                  buftmp[i]=pcbs->pbuffer[resIdxLow] + 
-                            (pcbs->pbuffer[resIdxLow+1] - pcbs->pbuffer[resIdxLow])*
-                            (resIdx-resIdxLow);
-               }
-
+               bufTmpLen = resample_nextoutlen(
+                              play_resplan[playResPlanId], playSamplePerChan);
+               SAMPLE* buf = mxCalloc(bufTmpLen, sizeof * buf);
+               mexMakeMemoryPersistent(buf);
+               resample_execute(play_resplan[playResPlanId],
+                                pcbs->pbuffer, playSamplePerChan, buf);
                mxFree(pcbs->pbuffer);
-               pcbs->pbuffer = buftmp;
-               pcbs->bufLen = buftmpLen;
+               pcbs->pbuffer = buf;
+               pcbs->bufLen = bufTmpLen;
+               playResPlanId++;
             }
             else
             {
                pcbs->bufLen = playSamplePerChan;
             }
-               
+
+
 
             if (!pcbs->pbuffer)
             {
@@ -2274,7 +2300,14 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
       }
       else
       {
+         /* Number of recorded samples specified directly. */
          recSamplePerChan = (int)mxGetScalar(precDataLength);
+         
+         if(rec_resplan)
+         {
+           recSamplePerChan = resample_nextoutlen(dummy_recplan,recSamplePerChan);
+           resample_advanceby(dummy_recplan,(int)mxGetScalar(precDataLength));
+         }
       }
 
       if (recSamplePerChan > 0)
@@ -2403,8 +2436,10 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
  */
 bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+   int ii;
    PaStreamParameters inputParameters;
    PaStreamParameters outputParameters;
+   double resRat;
    validateState(BASIC_INIT, FULL_INIT );
 
    /* Completely clear out the previous stream */
@@ -2668,16 +2703,14 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                  playrecCallback,
                  _pstreamInfo));
 
+   clearResPlans();
+
    /* If the sampling rate is not supported, try initializing with fs=44,1kHz*/
    if ( lastPaError == paInvalidSampleRate )
    {
       lastPaError = paNoError;
       mexWarnMsgTxt("PLAYREC: Device does not support selected sampling rate. Will use 44,1 kHz and resample.");
       resRat = 44100.0 / _pstreamInfo->suggestedSampleRate;
-      /*int errorNo = 0; 
-      recResampler = src_new(SRC_SINC_FASTEST, _pstreamInfo->recChanCount, &errorNo);
-      src_set_ratio(recResampler,1.0/resRat);
-      */
       _pstreamInfo->suggestedSampleRate = 44100.0;
 
       checkPAErr(Pa_OpenStream(
@@ -2689,6 +2722,26 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                     _pstreamInfo->streamFlags,
                     playrecCallback,
                     _pstreamInfo));
+
+      /* Initialize record resampler(s) */
+      if (_pstreamInfo->recDeviceID != paNoDevice)
+      {
+         dummy_recplan = resample_init(RESAMPLING_TYPE,resRat);
+         recResChanCount = _pstreamInfo->recChanCount;
+         rec_resplan = malloc(recResChanCount * sizeof * rec_resplan);
+         for (ii = 0; ii < recResChanCount; ii++)
+            rec_resplan[ii] = resample_init( RESAMPLING_TYPE, 1.0 / resRat );
+      }
+
+      /* Initialize play resampler */
+      if (_pstreamInfo->playDeviceID != paNoDevice)
+      {
+         playResChanCount = _pstreamInfo->playChanCount;
+         play_resplan = malloc(playResChanCount * sizeof * play_resplan);
+         for (ii = 0; ii < playResChanCount; ii++)
+            play_resplan[ii] = resample_init( RESAMPLING_TYPE, resRat );
+      }
+
    }
 
    if (lastPaError != paNoError)
@@ -3298,7 +3351,9 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
    mxArray *mxChanList;
    unsigned int *pChanList;
    unsigned int recSamples;
-   unsigned int recChannels,i;
+   unsigned int recChannels;
+   unsigned int recResPlanId = 0;
+
    /* SRC_DATA recData;*/
 
    validateState(BASIC_INIT | FULL_INIT, 0);
@@ -3370,6 +3425,12 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
    recSamples = min(recSamples, psps->pagePos);
 
+   if (rec_resplan)
+   {
+      /* We will do resampling */
+      recSamples = resample_nextoutlen(rec_resplan[0], recSamples);
+   }
+
    /* If there are no samples recorded, no need to continue */
    if ((recSamples == 0) || (recChannels == 0))
    {
@@ -3382,25 +3443,8 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     */
    mxDestroyArray(plhs[0]);
 
-   /* Recorded samples 
-    *
-    */
-   if(resRat!=0.0)
-   {
-      recSamples = (unsigned int)(recSamples/resRat);
-   }
-
    plhs[0] = mxCreateNumericMatrix(recSamples, recChannels, mxSAMPLE, mxREAL);
    poutBuf = (SAMPLE*)mxGetData(plhs[0]);
-   /*recData.data_in = pcbs->pbuffer;
-   recData.data_out = poutBuf;
-   recData.input_frames = pcbs->bufLen;
-   recData.output_frames = recSamples;
-   recData.src_ratio = 1.0/resRat;
-   recData.end_of_input = 0;
-*/
-
-
 
    /* Create the channel list, but only return it if its required */
    mxChanList = mxCreateNumericMatrix(1, recChannels, mxUNSIGNED_INT, mxREAL);
@@ -3417,20 +3461,20 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       {
          if (pcbs->pbuffer && (pcbs->bufLen > 0))
          {
-            if(resRat==0.0)
+            if (!rec_resplan)
             {
+               /* Do just a copy if no resampling should be done*/
                memcpy(poutBuf, pcbs->pbuffer,
-                   min(recSamples, pcbs->bufLen) * sizeof(SAMPLE));
+                      min(recSamples, pcbs->bufLen) * sizeof(SAMPLE));
             }
             else
             {
-               for(i=0;i<recSamples;i++)
-               {
-                  poutBuf[i] = pcbs->pbuffer[(unsigned int)(i*resRat)]; 
-               }
-              /* src_process(recResampler,&recData); */
+               resample_execute(rec_resplan[recResPlanId],
+                                pcbs->pbuffer, pcbs->bufLen,
+                                poutBuf);
+               recResPlanId++;
             }
-            
+
             poutBuf += recSamples;
 
             *pChanList++ = pcbs->channel + 1;   /* Add 1 for base 1 channels */
@@ -4119,7 +4163,8 @@ bool doGetDevices(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                               };
 
    const double samplingRates[] = { 8000.0, 11025.0, 16000.0, 22050.0,
-                                    32000.0, 44100.0, 48000.0
+                                    32000.0, 44100.0, 48000.0, 88200.0,
+                                    96000.0, 192000.0
                                   };
    const int numSamplingRates = sizeof(samplingRates) / sizeof(samplingRates[0]);
 

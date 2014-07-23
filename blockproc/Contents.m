@@ -22,6 +22,9 @@
 %    BLOCKFIGURE   - Initialize figure for redrawing
 %    BLOCKPLOT     - Append coefficients to the running plot
 %
+%  Other
+%    LTFATPLAY     - Replacement for sound allowing selecting an output device.
+%
 %  Helper functions
 %    BLOCK_FWT      - |fwt| processing
 %    BLOCK_IFWT     - |ifwt| processing

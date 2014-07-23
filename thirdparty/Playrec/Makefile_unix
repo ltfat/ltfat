@@ -25,8 +25,8 @@ endif
 include ../../src/ostools.mk
 
 MEXTGT=playrec.$(EXT)
-MEXSRC=mex_dll_core.c pa_dll_playrec.c
-LIBS=-Wl,--no-undefined -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx $(PORTAUDIO)
+MEXSRC=mex_dll_core.c pa_dll_playrec.c ltfatresample.c
+LIBS=-Wl,--no-undefined -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -lm $(PORTAUDIO)
 	  
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../../src/thirdparty
 CFLAGS=-static-libgcc -fPIC -std=c99 -O3 -Wall -shared -DMATLAB_MEX_FILE
