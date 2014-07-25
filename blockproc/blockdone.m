@@ -14,7 +14,9 @@ function blockdone(varargin)
 % TO DO: Process additional zeros to compensate for the delay 
 
 block_interface('clearAll');
-playrec('reset');
+if playrec('isInitialised')
+   playrec('reset');
+end
 clear playrec;
 
 for ii=1:numel(varargin)
