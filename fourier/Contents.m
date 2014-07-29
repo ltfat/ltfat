@@ -20,6 +20,7 @@
 %    CHIRPZT        -  Chirped Z-transform.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot |fftreal| coefficients.
+%	 ENSPECDEN		-  Plot energy spectral density
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.
