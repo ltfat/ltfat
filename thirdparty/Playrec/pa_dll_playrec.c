@@ -863,7 +863,7 @@ void clearResPlans()
 {
    int ii;
 
-   if(dummy_recplan)
+   if (dummy_recplan)
       resample_done(&dummy_recplan);
 
    if (rec_resplan)
@@ -1305,6 +1305,7 @@ StreamPageStruct *newStreamPageStruct(unsigned int portAudioPlayChanCount, bool 
 
    pnewPage->pagePos = 0;
    pnewPage->pageLength = 0;
+   pnewPage->pageLengthRec = 0;
    pnewPage->pageNum = nextPageNum++;
 
    pnewPage->playChanCount = portAudioPlayChanCount;
@@ -2178,7 +2179,8 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
       /* Create a linked list of all the channels required, checking they're all
        * within the valid range of channel numbers
        */
-      if (!channelListToChanBufStructs(pplayChans, &psps->pfirstPlayChan, 0, _pstreamInfo->playChanCount - 1, true))
+      if (!channelListToChanBufStructs(pplayChans, &psps->pfirstPlayChan, 0,
+          _pstreamInfo->playChanCount - 1, true))
       {
          freeStreamPageStruct(&psps);
          return false;
@@ -2237,7 +2239,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
                SAMPLE* buf = mxCalloc(bufTmpLen, sizeof * buf);
                mexMakeMemoryPersistent(buf);
                resample_execute(play_resplan[playResPlanId],
-                                pcbs->pbuffer, playSamplePerChan, buf);
+                                pcbs->pbuffer, playSamplePerChan, buf, bufTmpLen);
                mxFree(pcbs->pbuffer);
                pcbs->pbuffer = buf;
                pcbs->bufLen = bufTmpLen;
@@ -2269,6 +2271,9 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
       }
 
       psps->pageLength = max(psps->pageLength, psps->pfirstPlayChan->bufLen);
+      /* This is only used if recording is also performed */
+      psps->pageLengthRec = max(psps->pageLengthRec, playSamplePerChan); 
+      
 
       /* Check to see if either there are more channels than required, or too few channels */
       if ((chansCopied < dataChanCount) && (playSamplePerChan > 0))
@@ -2302,11 +2307,14 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
       {
          /* Number of recorded samples specified directly. */
          recSamplePerChan = (int)mxGetScalar(precDataLength);
-         
-         if(rec_resplan)
+
+         psps->pageLengthRec = recSamplePerChan; 
+
+
+         if (rec_resplan)
          {
-           recSamplePerChan = resample_nextoutlen(dummy_recplan,recSamplePerChan);
-           resample_advanceby(dummy_recplan,(int)mxGetScalar(precDataLength));
+            recSamplePerChan = resample_nextinlen(dummy_recplan, recSamplePerChan);
+            resample_advanceby(dummy_recplan, (int)mxGetScalar(precDataLength));
          }
       }
 
@@ -2324,6 +2332,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
 
          pcbs = psps->pfirstRecChan;
          psps->pageLength = max(psps->pageLength, recSamplePerChan);
+
 
          while (pcbs)
          {
@@ -2726,7 +2735,7 @@ bool doInit(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       /* Initialize record resampler(s) */
       if (_pstreamInfo->recDeviceID != paNoDevice)
       {
-         dummy_recplan = resample_init(RESAMPLING_TYPE,resRat);
+         dummy_recplan = resample_init(RESAMPLING_TYPE, 1.0 / resRat);
          recResChanCount = _pstreamInfo->recChanCount;
          rec_resplan = malloc(recResChanCount * sizeof * rec_resplan);
          for (ii = 0; ii < recResChanCount; ii++)
@@ -3350,7 +3359,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
    SAMPLE *poutBuf;
    mxArray *mxChanList;
    unsigned int *pChanList;
-   unsigned int recSamples;
+   unsigned int recSamples,recSamplesTmp;
    unsigned int recChannels;
    unsigned int recResPlanId = 0;
 
@@ -3408,6 +3417,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     * This allows for different length buffers in the future.
     */
    recSamples = 0;
+   recSamplesTmp = 0;
    recChannels = 0;
 
    pcbs = psps->pfirstRecChan;
@@ -3417,18 +3427,29 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       /* Check for valid buffer */
       if (pcbs->pbuffer && (pcbs->bufLen > 0))
       {
-         recSamples = max(recSamples, pcbs->bufLen);
+         recSamplesTmp = max(recSamples, pcbs->bufLen);
          recChannels++;
       }
       pcbs = pcbs->pnextChanBuf;
    }
 
-   recSamples = min(recSamples, psps->pagePos);
 
    if (rec_resplan)
    {
       /* We will do resampling */
-      recSamples = resample_nextoutlen(rec_resplan[0], recSamples);
+      if(psps->pagePos != recSamplesTmp)
+      {
+         /* Page was not yet finished, do something harmless. */
+         recSamples = (unsigned int) ( psps->pageLengthRec*psps->pagePos/((double)recSamples));
+       }
+      else
+      {
+         recSamples = psps->pageLengthRec;
+      }
+   }
+   else
+   {
+      recSamples = recSamplesTmp;
    }
 
    /* If there are no samples recorded, no need to continue */
@@ -3471,7 +3492,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             {
                resample_execute(rec_resplan[recResPlanId],
                                 pcbs->pbuffer, pcbs->bufLen,
-                                poutBuf);
+                                poutBuf,recSamples);
                recResPlanId++;
             }
 

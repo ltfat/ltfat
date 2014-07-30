@@ -21,7 +21,8 @@ function [fs,classid] = block(source,varargin)
 %         input is taken from a microphone/auxilary input;
 %
 %      `'playrec'`
-%         loopbacks the input to the output
+%         loopbacks the input to the output. In this case, the block size
+%         (in |blockread|) cannot change during the playback.
 %
 %      `data`
 %         input data as columns of a matrix for each input channel
@@ -558,25 +559,26 @@ function failedInit(devs,kv)
 % Common function for playrec initialization error messages
 errmsg = '';
 
-playFs = devs([devs.deviceID]==kv.devid(1)).supportedSampleRates;
-if ~isempty(playFs) && ~any(playFs==kv.fs)
-  fsstr = sprintf('%d, ',playFs);
-  fsstr  = ['[',fsstr(1:end-2),']' ];
-  errmsg = [errmsg, sprintf(['Device %i does not ',...
-            'support the required fs. Supported are: %s \n'],...
-            kv.devid(1),fsstr)];
-end
 
-if numel(kv.devid)>1
-    recFs = devs([devs.deviceID]==kv.devid(2)).supportedSampleRates;
-    if ~isempty(recFs) && ~any(recFs==kv.fs)
-      fsstr = sprintf('%d, ',recFs);
-      fsstr  = ['[',fsstr(1:end-2),']' ];
-      errmsg = [errmsg, sprintf(['Recording device %i does not ',...
-                'support the required fs. Supported are: %s \n'],...
-                kv.devid(2),fsstr)];
-    end
-end
+% playFs = devs([devs.deviceID]==kv.devid(1)).supportedSampleRates;
+% if ~isempty(playFs) && ~any(playFs==kv.fs)
+%   fsstr = sprintf('%d, ',playFs);
+%   fsstr  = ['[',fsstr(1:end-2),']' ];
+%   errmsg = [errmsg, sprintf(['Device %i does not ',...
+%             'support the required fs. Supported are: %s \n'],...
+%             kv.devid(1),fsstr)];
+% end
+% 
+% if numel(kv.devid)>1
+%     recFs = devs([devs.deviceID]==kv.devid(2)).supportedSampleRates;
+%     if ~isempty(recFs) && ~any(recFs==kv.fs)
+%       fsstr = sprintf('%d, ',recFs);
+%       fsstr  = ['[',fsstr(1:end-2),']' ];
+%       errmsg = [errmsg, sprintf(['Recording device %i does not ',...
+%                 'support the required fs. Supported are: %s \n'],...
+%                 kv.devid(2),fsstr)];
+%     end
+% end
 
 if isempty(errmsg)
    err = lasterror;

@@ -1,92 +1,97 @@
 #include "ltfatresample.h"
-#include <stdlib.h>
-#include <stddef.h>
-#include <string.h>
 #include <math.h>
 
-/* This is actual structture used to hold info between consecutive blocks */
+/* This is an actual structure used to hold info between consecutive blocks */
 struct resample_plan_struct
 {
-   /* target to source sampking rates ratio */
+   /* target to source sampling rates ratio */
    const double ratio;
    /* Type of polynomial interpolation */
    const resample_type restype;
    /* First sample in block global index */
    size_t inPos;
-   /* Buffer for holding overlaps, length depend on interpoaltion technique */
+   /* Buffer for holding overlap, length depend on interpoaltion technique */
    SAMPLE* overlap;
+   /* Overlap length */
+   size_t oLen;
    /* Function pointer to the block interpolation functon */
    resample_error (*executer)(const resample_plan,
                               const SAMPLE*, const size_t,
-                              SAMPLE*);
+                              SAMPLE*, const size_t);
+
+   /* Function pointer to one sample interpolating function */
+   SAMPLE (*interp_sample)(const double, const SAMPLE *yin);
+
    /* Filters */
    EMQFfilters ef;
+
+   /* Buffer, maxlength ceil(ratio) */
+   SAMPLE* ebuf;
+
+   /* Number of samples to be used from ebuf  */
+   size_t ebufUsed;
 
 };
 
 resample_plan
 resample_init(const resample_type restype, const double ratio)
 {
-   SAMPLE* overlap;
-   struct resample_plan_struct rp = {ratio, restype, 0, NULL, NULL, NULL };
-   resample_plan rpret = malloc(sizeof * rpret);
-
+   resample_plan rp = calloc(1,sizeof * rp);
+   *(double*)&rp->ratio = ratio;
+   *(resample_type*)&rp->restype = restype;
 
    if (restype == LINEAR)
    {
-      overlap = calloc(1, sizeof(SAMPLE));
-      rp.executer = &resample_execute_linear;
+      rp->oLen = 1;
+      rp->executer = &resample_execute_polynomial;
+      rp->interp_sample = &linear_interp;
    }
    else if (restype == LAGRANGE)
    {
-      overlap = calloc(5, sizeof(SAMPLE));
-      rp.executer = &resample_execute_lagrange;
+      rp->oLen = 5;
+      rp->executer = &resample_execute_polynomial;
+      rp->interp_sample = &lagrange_interp;
    }
-   else if (restype == HERMITE)
+   else if (restype == BSPLINE)
    {
-      overlap = calloc(5, sizeof(SAMPLE));
-      rp.executer = &resample_execute_hermite;
+      rp->oLen = 5;
+      rp->executer = &resample_execute_polynomial;
+      rp->interp_sample = &bspline_interp;
    }
-
-   rp.overlap = overlap;
+   
+   rp->overlap = calloc(rp->oLen, sizeof(SAMPLE));
+   rp->ebuf = malloc(ceil(ratio)*sizeof(SAMPLE));
+   rp->ebufUsed = 0; /* This was actually already set. */
    /* When subsampling, do the antialiasing filtering. */
+   /* This is not exactly 1, because we do not want to filter when
+    * subsampling only a little or not at all. */
    if (ratio < 0.95)
    {
-      rp.ef = emqffilters_init(ratio / 2.0);
+      rp->ef = emqffilters_init(ratio * FPADJ);
    }
 
-
-   memcpy(rpret, &rp, sizeof * rpret);
-   return rpret;
+   return rp;
 }
 
-/*
- *
- * */
 resample_error
 resample_execute(const resample_plan rp,
-                 const SAMPLE* in, const size_t Lin,
-                 SAMPLE* out)
+                 SAMPLE* in, const size_t Lin,
+                 SAMPLE* out, const size_t Lout)
 {
-   const SAMPLE* tmpIn = in;
+   resample_error status;
+
    /* Do filtering if initialized */
    if (rp->ef)
    {
-
-      tmpIn = malloc(Lin * sizeof * tmpIn);
-      emqffilters_dofilter(rp->ef, in, Lin, (SAMPLE*) tmpIn);
-
+      /* Filtering is done inplace */
+         emqffilters_dofilter(rp->ef, in, Lin, in);
    }
 
    /* Execute the computation */
-   resample_error status = rp->executer(rp, tmpIn, Lin, out);
+   status = rp->executer(rp, in, Lin, out, Lout);
+
    /* Advance the "pointer" in data stream */
    resample_advanceby(rp, Lin);
-
-   if (rp->ef)
-   {
-      free((SAMPLE*)tmpIn);
-   }
 
    return status;
 }
@@ -102,11 +107,27 @@ resample_nextoutlen(const resample_plan rp, size_t Lin)
    return retval;
 }
 
+size_t
+resample_nextinlen(const resample_plan rp, size_t Lout)
+{
+   size_t retval = 0;
+   const double outSpos = ceil( (rp->inPos) / rp->ratio );
+   const double outEpos = ceil( (rp->inPos + Lout) / rp->ratio );
+   retval =  (size_t)( outEpos - outSpos);
+
+   return retval;
+}
+
 /*  Be carefull, rp is effectivelly a double pointer. */
 void
 resample_done(resample_plan *rp)
 {
+   if((*rp)->overlap) free((*rp)->overlap);
+   if((*rp)->ebuf) free((*rp)->ebuf);
+   if((*rp)->ef) emqffilters_done(&((*rp)->ef));
+
    free(*rp);
+   /* This is the reason why it is passed by a double pointer */
    *rp = NULL;
 }
 
@@ -119,106 +140,100 @@ resample_advanceby(const resample_plan rp, size_t Lin)
 
 
 /* INTERNALS */
+
+/* This can handle any type of polynomial resampling. */
 resample_error
-resample_execute_linear(const resample_plan rp,
-                        const SAMPLE* in, const size_t Lin,
-                        SAMPLE* out)
+resample_execute_polynomial(const resample_plan rp,
+                            const SAMPLE* in, const size_t Lin,
+                            SAMPLE* out, const size_t Lout)
 {
-   double truepos;
-   ptrdiff_t lowpos, highpos;
-   size_t ii, iiThre;
-   /* Just to avoid division further*/
-   const double oneOverRatio = 1.0 / rp->ratio;
-   /* Starting position in the output stream */
-   const double outSpos = ceil( (rp->inPos) * rp->ratio );
-   /* How many samples will this routine produce */
-   size_t Lout = resample_nextoutlen(rp, Lin);
+#define ONESAMPLE(outVal)\
+      truepos = (ii + outSpos) * oneOverRatio - rp->inPos;\
+      highpos = ceil(truepos);\
+      x = truepos - (highpos - 1);\
+      memcpy(buf, &in[highpos - (oLen + 1)], (oLen + 1) * sizeof * buf);\
+      (outVal) = rp->interp_sample(x, buf);
 
-   /* First handle all samples which need overlap */
-   iiThre = floor((rp->inPos + 1.0 ) * rp->ratio - outSpos) + 1;
-
-   for (ii = 0; ii < iiThre; ii++)
-   {
-      truepos = (ii + outSpos) * oneOverRatio - rp->inPos;
-      out[ii] = *(rp->overlap) * (1.0 - truepos) + *in * truepos;
-   }
-
-   /* All the rest */
-   for (ii = iiThre; ii < Lout; ii++)
-   {
-      truepos = (ii + outSpos) * oneOverRatio - rp->inPos;
-      highpos = ceil(truepos);
-      lowpos = highpos - 1;
-
-      out[ii] = in[lowpos - 1] * (highpos - truepos) +
-                in[lowpos] * (truepos - lowpos);
-
-   }
-
-   /* Store last input sample as overlap */
-   *(rp->overlap) = in[Lin - 1];
-
-}
-
-resample_error
-resample_execute_lagrange(const resample_plan rp,
-                          const SAMPLE* in, const size_t Lin,
-                          SAMPLE* out)
-{
    double truepos, x;
    ptrdiff_t highpos;
-   size_t ii, zz, *iiThre;
    SAMPLE* buf;
+   size_t ii, jj, zz, *iiThre;
+   size_t oLen = rp->oLen;
 
-   /* Just to avoid division further*/
    const double oneOverRatio = 1.0 / rp->ratio;
    /* Starting position in the output stream */
-   const double outSpos = ceil( (rp->inPos) * rp->ratio );
+   double outSpos = ceil( (rp->inPos) * rp->ratio );
    /* How many samples will this routine produce */
-   size_t Lout = resample_nextoutlen(rp, Lin);
+   size_t Louttrue = resample_nextoutlen(rp, Lin);
 
-   /* 6 thresholds plus leading zero */
-   iiThre = calloc(7, sizeof * iiThre);
-   buf = calloc(6, sizeof * buf);
+   /* Copy buffered samples + update out */
+   memcpy(out,rp->ebuf,rp->ebufUsed*sizeof*out);
+   out += rp->ebufUsed;
 
-   /* First handle all samples which need overlap */
-   for (ii = 1; ii < 7; ii++)
+   /* oLen +1 thresholds */
+   iiThre = calloc(oLen + 1, sizeof * iiThre);
+   /* Buffer for passing values to single sample interp. routine */
+   buf = calloc(oLen + 1, sizeof * buf);
+
+   /* First handle all samples which need overlap. */
+   for (ii = 0; ii < oLen + 1; ii++)
    {
-      iiThre[ii] = floor((rp->inPos + ((double) ii) ) * rp->ratio - outSpos) + 1;
+      iiThre[ii] = floor((rp->inPos + ((double) ii+1) ) * rp->ratio - outSpos) + 1;
    }
-
-
-   for (zz = 0; zz < 6; zz++)
+   /* ii starts here */
+   ii = 0;
+   for (zz = 0; zz < oLen +1; zz++)
    {
-      for (ii = iiThre[zz]; ii < iiThre[zz + 1]; ii++)
+      for (; ii < iiThre[zz]; ii++)
       {
          truepos = (ii + outSpos) * oneOverRatio - rp->inPos;
          x = truepos - zz;
-
-         memcpy(buf, rp->overlap + zz, (5 - zz)*sizeof * buf);
-         memcpy(buf + (5 - zz), in, (zz + 1)*sizeof * buf );
-         out[ii] = lagrange_interp(x, buf);
+         memcpy(buf, rp->overlap + zz, (oLen - zz)*sizeof * buf);
+         memcpy(buf + (oLen - zz), in, (zz +1)*sizeof * buf );
+         out[ii] = rp->interp_sample(x, buf);
       }
    }
 
-   for (ii = iiThre[6]; ii < Lout; ii++)
+   /* Handle samples safely inside. 
+    * ii continues */
+   for (; ii < Lout-rp->ebufUsed; ii++)
    {
-      truepos = (ii + outSpos) * oneOverRatio - rp->inPos;
-      highpos = ceil(truepos);
-      x = truepos - (highpos - 1);
-
-      memcpy(buf, &in[highpos - 6], 6 * sizeof * buf);
-      out[ii] = lagrange_interp(x, buf);
+      ONESAMPLE(out[ii]) 
    }
+   /* Handle samples overflowing the output buffer *
+    * ii still continues */
+   /* This is a higly tricky part. When Lout is not equal to Louttrue
+    * this might blow up and access an invalid memory. 
+    * This wont't happen when using a proper Lin for a fixed Lout. */
+   for (jj=0; ii<Louttrue; ii++,jj++ )
+   {
+      ONESAMPLE(rp->ebuf[jj])
+   }
+   rp->ebufUsed=jj;
 
-   /* Copy last 5 samples to overlap .*/
-   memcpy(rp->overlap, in + Lin - 5, 5 * sizeof * in);
+   assert(rp->ebufUsed<=ceil(rp->ratio));
+
+   /* Copy last oLen samples to overlap .*/
+   memcpy(rp->overlap, in + Lin - oLen, oLen * sizeof * in);
    free(iiThre);
    free(buf);
+
+   return RESAMPLE_OK;
+#undef ONESAMPLE
 }
 
+SAMPLE
+linear_interp(const double x, const SAMPLE* yin)
+{
+   const SAMPLE* y = yin;
+   return (SAMPLE) ( y[0] + x * (y[1] - y[0]));
+}
+
+
 /* y = [y(-2),y(-1),y(0),y(1),y(2),y(3)] */
-/*  */
+/* Taken from:
+ * Olli Niemitalo: Polynomial Interpolators for High-Quality Resampling of
+ * Oversampled Audio, URL: http://yehar.com/blog/?p=197  */
 SAMPLE
 lagrange_interp(const double x, const SAMPLE* yin)
 {
@@ -236,23 +251,34 @@ lagrange_interp(const double x, const SAMPLE* yin)
    c4 = 1 / 4.0 * y[0] - 1 / 6.0 * ym1py1 + twentyfourthym2py2;
    c5 = 1 / 120.0 * (y[3] - y[-2]) + 1 / 24.0 * (y[-1] - y[2]) +
         1 / 12.0 * (y[1] - y[0]);
+
    return (SAMPLE) ( ((((c5 * x + c4) * x + c3) * x + c2) * x + c1) * x + c0 );
 }
 
-resample_error
-resample_execute_hermite(const resample_plan rp,
-                         const SAMPLE* in, const size_t Lin,
-                         SAMPLE* out)
-{
 
-
-}
-
+/* y = [y(-2),y(-1),y(0),y(1),y(2),y(3)] */
+/* Taken from:
+ * Olli Niemitalo: Polynomial Interpolators for High-Quality Resampling of
+ * Oversampled Audio, URL: http://yehar.com/blog/?p=197  */
 SAMPLE
-hermite_interp(const double x, const SAMPLE* yin)
+bspline_interp(const double x, const SAMPLE* yin)
 {
+   SAMPLE ym2py2, ym1py1, y2mym2, y1mym1, sixthym1py1, c0, c1, c2, c3, c4, c5;
+   const SAMPLE* y = yin + 2;
+   ym1py1 = y[-1] + y[1];
+   y1mym1 = y[1]  - y[-1];
+   ym2py2 = y[-2] + y[2];
+   y2mym2 = y[2]  - y[-2];
+   sixthym1py1 = 1.0 / 6.0 * ym1py1;
+   c0 = 1 / 120.0 * ym2py2 + 13 / 60.0 * ym1py1 + 11 / 20.0 * y[0];
+   c1 = 1 / 24.0 * y2mym2 + 5 / 12.0 * y1mym1;
+   c2 = 1 / 12.0 * ym2py2 + sixthym1py1 - 1 / 2.0 * y[0];
+   c3 = 1 / 12.0 * y2mym2 - 1 / 6.0 * y1mym1;
+   c4 = 1 / 24.0 * ym2py2 - sixthym1py1 + 1 / 4.0 * y[0];
+   c5 = 1 / 120.0 * (y[3] - y[-2]) + 1 / 24.0 * (y[-1] - y[2]) +
+        1 / 12.0 * (y[1] - y[0]);
 
-
+   return (SAMPLE) (((((c5 * x + c4) * x + c3) * x + c2) * x + c1) * x + c0);
 }
 
 
@@ -260,17 +286,27 @@ hermite_interp(const double x, const SAMPLE* yin)
 /* This is actual structture used to hold info between consecutive blocks */
 struct EMQFfilters_struct
 {
+   /* Passband edge 0-1 (Nyquist)  */
    const double fc;
+   /* Branch 0 filters params */
    const SAMPLE* beta0;
    const SAMPLE* gamma0;
+   /* For holding state variables */
    SAMPLE** d0;
+   /* Number of 2nd order allpass filter in branch 0 */
    const size_t stages0;
    const SAMPLE* beta1;
    const SAMPLE* gamma1;
+   /* For holding state variables */
    SAMPLE** d1;
+   /* Number of 2nd order allpass filter in branch 1. */
    const size_t stages1;
+   /* Coefficient of the 1st order allpas filter in branch 1. */
    const SAMPLE alpha1;
 };
+
+
+
 
 EMQFfilters
 emqffilters_init(const double fc)
@@ -278,6 +314,7 @@ emqffilters_init(const double fc)
    double alpha, alpha1;
    size_t ii, stages0, stages1;
    SAMPLE *beta0, *gamma0, *beta1, *gamma1, **d0, **d1;
+   EMQFfilters rv;
    /* EMQFcoefs is a global variable, defined in filtcoefs.h
     * generated by a matlab script genfiltcoefs.m */
    const double* beta = EMQFcoefs;
@@ -313,9 +350,9 @@ emqffilters_init(const double fc)
 
    d1[stages1] = calloc(1, sizeof(SAMPLE));
 
-   EMQFfilters rv = malloc(sizeof * rv);
-   memcpy((double*)&rv->fc, &fc, sizeof(fc));
-   memcpy((double*)&rv->alpha1, &alpha1, sizeof(alpha1));
+   rv = malloc(sizeof * rv);
+   *(double*)&rv->fc = fc;
+   *(SAMPLE*)&rv->alpha1 = alpha1;
    rv->beta0 = beta0;
    rv->gamma0 = gamma0;
    rv->beta1 = beta1;
@@ -323,57 +360,60 @@ emqffilters_init(const double fc)
    rv->d0 = d0;
    rv->d1 = d1;
 
-   memcpy((double*)&rv->stages0, &stages0, sizeof(stages0));
-   memcpy((double*)&rv->stages1, &stages1, sizeof(stages1));
+   *(size_t*)&rv->stages0 = stages0;
+   *(size_t*)&rv->stages1 = stages1;
    return rv;
 }
 
+/* All 2nd order IIR filters are treated as type II transposed canonical struct.
+ * This can work inplace i.e. in==out */
 void
 emqffilters_dofilter(EMQFfilters ef, const SAMPLE* in, const size_t Lin,
                      SAMPLE* out)
 {
    size_t ii, jj;
-   SAMPLE x1, y1;
+   SAMPLE startx, x, y;
 
    for (ii = 0; ii < Lin; ii++)
    {
       /* Branch 0 */
       /* Feedig output of one stage to the input of the next stage */
-      x1 = in[ii];
-      y1 = x1;
+      startx = in[ii];
+      x = startx;
       for (jj = 0; jj < ef->stages0; jj++)
       {
-         y1 = x1 * ef->beta0[jj] + ef->d0[jj][0];
-         ef->d0[jj][0] = ef->gamma0[jj] * (x1 - y1) +
+         y = x * ef->beta0[jj] + ef->d0[jj][0];
+         ef->d0[jj][0] = ef->gamma0[jj] * (x - y) +
                          ef->d0[jj][1];
-         ef->d0[jj][1] = x1 - y1 * ef->beta0[jj];
-         x1 = y1;
+         ef->d0[jj][1] = x - y * ef->beta0[jj];
+         x = y;
       }
       /* Store the partial output */
-      out[ii] = y1;
+      out[ii] = y;
       /* And start over with the second branch */
-      x1 = in[ii];
+      x = startx;
 
       /* Branch 1 */
       for (jj = 0; jj < ef->stages1; jj++)
       {
-         y1 = x1 * ef->beta1[jj] + ef->d1[jj][0];
-         ef->d1[jj][0] = ef->gamma1[jj] * (x1 - y1) +
+         y = x * ef->beta1[jj] + ef->d1[jj][0];
+         ef->d1[jj][0] = ef->gamma1[jj] * (x - y) +
                          ef->d1[jj][1];
-         ef->d1[jj][1] = x1 - y1 * ef->beta1[jj];
-         x1 = y1;
+         ef->d1[jj][1] = x - y * ef->beta1[jj];
+         x = y;
       }
 
       /* Final all-pass filter in Branch 1  */
-      y1 = x1 * ef->alpha1 + ef->d1[ef->stages1][0];
-      ef->d1[ef->stages1][0] = x1 - y1 * ef->alpha1;
+      y = x * ef->alpha1 + ef->d1[ef->stages1][0];
+      ef->d1[ef->stages1][0] = x - y * ef->alpha1;
 
       /* Add output of the second branch to output */
-      out[ii] += y1;
+      out[ii] += y;
+      /* Normalize. Would it be faster to do it after for the whole array? */
       out[ii] /= 2.0;
    }
-}
 
+}
 
 void
 emqffilters_done(EMQFfilters* ef)
@@ -398,5 +438,5 @@ emqffilters_done(EMQFfilters* ef)
 
 
    free(*ef);
-   ef = NULL;
+   *ef = NULL;
 }

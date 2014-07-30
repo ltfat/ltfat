@@ -1,3 +1,14 @@
+/*
+ *   dbg.h -- Zed's awesome debug macros
+ *   
+ *   From http://c.learncodethehardway.org !/!4
+ *
+ *
+ *
+ *
+ */
+
+
 #ifndef __dbg_h__
 #define __dbg_h__
 

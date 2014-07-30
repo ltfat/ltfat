@@ -1,3 +1,15 @@
+/*
+ *   minunit.h -- A minimal unit test framework for C
+ *
+ *   Originally from Jara design http://www.jera.com/techinfo/jtns/jtn002.html
+ *   Modified by Zed Shaw in http://c.learncodethehardway.org
+ *
+ *
+ *   NOTE: The UNUSED(x) macro is used to mute the unused parameter warning.
+ *
+ */
+
+
 #undef NDEBUG
 #ifndef _minunit_h
 #define _minunit_h
@@ -5,6 +17,7 @@
 #include <stdio.h>
 #include "dbg.h"
 #include <stdlib.h>
+#include <time.h>
 
 #define UNUSED(x) (void)(x)
 
@@ -31,5 +44,7 @@
 
 
 int tests_run;
+
+
 
 #endif

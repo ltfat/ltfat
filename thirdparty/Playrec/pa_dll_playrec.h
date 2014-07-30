@@ -81,6 +81,7 @@ typedef struct StreamPageStruct_tag {
     ChanBufStruct *pfirstPlayChan;  /* First play channel within the page */
 
     unsigned int pageLength;        /* The maximum length of a channel in this page */
+    unsigned int pageLengthRec;    /* The max. length of a chan. before resampling */
     volatile unsigned int pagePos;  /* The current position within the page */
     unsigned int pageNum;           /* A unique id to identify the page */
 

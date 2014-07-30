@@ -133,6 +133,8 @@ if strcmp(source,'rec')
 elseif strcmp(source,'playrec')
    recChanList = block_interface('getRecChanList');
    if pageNo<=1
+      % "Fix" the buffer length to L passed to the first call to blockread 
+      block_interface('setBufLen',L); 
       blockplay(zeros(L,numel(recChanList),classid));
    end
    

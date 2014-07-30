@@ -1,3 +1,15 @@
+#   
+#   Makefile 
+#   
+#   A common makefile for managing compilation of all tests.
+#   By default, the makefile supplies only the basic flags,
+#   test-specific flags, files and libraries are read directly
+#   from a comment in test.
+#
+#   Usage:
+#
+#
+
 CFLAGS=-g -Wall -Wextra -DNDEBUG
 LIBS=
 
@@ -7,12 +19,12 @@ TESTS=$(patsubst %.c,%,$(TEST_SRC))
 all: $(TESTS)
 
 $(TESTS): % : %.c
-	$(CC) $(CFLAGS) $^ $(shell sed '2q;d' $^) -o $@
+	$(CC) $(CFLAGS) $^ $(shell sed '2q;d' $^) -o $@ $(LIBS)
 
 
 debug: CFLAGS=-g -Wall -Wextra
+debug: LIBS=-lprofiler
 debug: all
-
 
 
 clean:
@@ -24,3 +36,5 @@ tests: $(TESTS)
 
 valgrind:
 	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+
+
