@@ -30,7 +30,14 @@ bufLen = 1024;
 zpad = bufLen/2;
 
 % Setup blocktream
-fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+try
+    fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+catch
+    % Close the windows if initialization fails
+    blockdone(p,fobj);
+    err = lasterror;
+    error(err.message);
+end
 
 % Number of filters
 M = 200;

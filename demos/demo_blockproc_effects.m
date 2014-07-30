@@ -99,7 +99,14 @@ parg = {
 p = blockpanel(parg);
 
 % Setup blocktream
-fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+try
+   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+catch
+    % Close the windows if initialization fails
+    blockdone(p,fobj);
+    err = lasterror;
+    error(err.message);
+end
 
 p.setVisibleParam('Shi',0);
 

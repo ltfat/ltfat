@@ -18,7 +18,14 @@ p = blockpanel({
                });
 
 % Setup blocktream
-block(source,varargin{:},'loadind',p);
+try
+    block(source,varargin{:},'loadind',p);
+catch
+    % Close the windows if initialization fails
+    blockdone(p);
+    err = lasterror;
+    error(err.message);
+end
 
 flag = 1;
 %Loop until end of the stream (flag) and until panel is opened

@@ -45,7 +45,14 @@ end
 p = blockpanel(pcell); 
 
 % Setup blocktream
-fs = block(source,varargin{:},'loadind',p);
+try
+    fs = block(source,varargin{:},'loadind',p);
+catch
+    % Close the windows if initialization fails
+    blockdone(p);
+    err = lasterror;
+    error(err.message);
+end
 
 % Cutoff/center frequency
 feq = [0.0060, 0.0156, 0.0313, 0.0625, 0.1250, 0.2600]*fs;

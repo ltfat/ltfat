@@ -26,7 +26,14 @@ bufLen = 1024;
 M = 1000;
 
 % Setup blocktream
-fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+try
+    fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+catch
+    % Close the windows if initialization fails
+    blockdone(p);
+    err = lasterror;
+    error(err.message);
+end
 
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)

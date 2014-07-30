@@ -22,8 +22,17 @@ fobj = blockfigure();
 
 %
 bufLen = 1024;
-% Setup blocktream
-fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+bufLen = 1280;
+
+% Setup blockstream
+try
+   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+catch
+    % Close the windows if initialization fails
+    blockdone(p,fobj);
+    err = lasterror;
+    error(err.message);
+end
 
 
 % Using dgtreal with 20ms hann window, hop factor 80, 1000 channels.
