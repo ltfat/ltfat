@@ -20,24 +20,20 @@ p = blockpanel({
                });
             
 fobj = blockfigure();
-    
-% Buffer length
-% Larger the number the higher the processing delay. 1024 with fs=44100Hz
-% makes ~23ms.
-% The value can be any positive integer.
-% Note that the processing itself can introduce additional delay.
-bufLen = 1024;
-zpad = bufLen/2;
 
 % Setup blocktream
 try
-    fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+    fs=block(source,varargin{:},'loadind',p);
 catch
     % Close the windows if initialization fails
     blockdone(p,fobj);
     err = lasterror;
     error(err.message);
 end
+
+% Buffer length (30 ms)
+bufLen = floor(30e-3*fs);
+zpad = floor(bufLen/2);
 
 % Number of filters
 M = 200;
@@ -54,7 +50,7 @@ while flag && p.flag
   mult = 10^(mult/20);
 
   % Read block of length bufLen
-  [f,flag] = blockread();
+  [f,flag] = blockread(bufLen);
   f = f*gain;
   % Apply analysis frame
   c = blockana(Fa, f); 

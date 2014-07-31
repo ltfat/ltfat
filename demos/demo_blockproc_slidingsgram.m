@@ -20,13 +20,9 @@ p = blockpanel({
 % Basic sepctrogram figure (Java object)
 fobj = blockfigure();
 
-%
-bufLen = 1024;
-bufLen = 1280;
-
 % Setup blockstream
 try
-   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+   fs=block(source,varargin{:},'loadind',p);
 catch
     % Close the windows if initialization fails
     blockdone(p,fobj);
@@ -34,10 +30,12 @@ catch
     error(err.message);
 end
 
+% 30 ms
+bufLen = floor(30e-3*fs);
 
 % Using dgtreal with 20ms hann window, hop factor 80, 1000 channels.
 % Redundancy factor 12.5
-winLenms = 20;
+winLenms = 40;
 a = 100;
 M = 3000;
 
@@ -53,7 +51,7 @@ while flag && p.flag
    gain = 10^(gain/20);
 
    % Read the next block of samples
-   [f,flag] = blockread();
+   [f,flag] = blockread(bufLen);
    f=f*gain;
    
    % Do analysis using the specified frame. 

@@ -3,6 +3,7 @@ function demo_blockproc_effects(source,varargin) %RUNASSCRIPT
 %   Usage: demo_blockproc_effects('gspi.wav')
 %
 %   For additional help call |demo_blockproc_effects| without arguments.
+%   This demo works correctly only with the sampling rate equal to 44100 Hz.
 %
 %   This script demonstrates several real-time vocoder effects. Namely:
 %
@@ -106,6 +107,10 @@ catch
     blockdone(p,fobj);
     err = lasterror;
     error(err.message);
+end
+
+if fs~=44100
+    error('%s: This demo only works with fs=44100 Hz.',upper(mfilename));
 end
 
 p.setVisibleParam('Shi',0);

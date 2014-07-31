@@ -20,20 +20,24 @@ p = blockpanel({
                {'Thr','Treshold',0,0.1,0,1000}
                });
     
-% Buffer length
-bufLen = 1024;
+        
+
+
 % Number of frequency channels
 M = 1000;
 
 % Setup blocktream
 try
-    fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+    fs=block(source,varargin{:},'loadind',p);
 catch
     % Close the windows if initialization fails
     blockdone(p);
     err = lasterror;
     error(err.message);
 end
+
+% Buffer length (30 ms)
+bufLen = floor(30e-3*fs);
 
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)
@@ -51,7 +55,7 @@ while flag && p.flag
   %bufLen = floor(p.getParam('bufLen'));
 
   % Read block of length bufLen
-  [f,flag] = blockread();
+  [f,flag] = blockread(bufLen);
   % Apply analysis frame
   c = blockana(Fa, f*gain); 
   % Plot

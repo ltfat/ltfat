@@ -25,12 +25,12 @@ fobj = blockfigure();
 % Larger the number the higher the processing delay. 1024 with fs=44100Hz
 % makes ~23ms.
 % Note that the processing itself can introduce additional delay.
-bufLen = 1024;
-zpad = bufLen/2;
+
+
 
 % Setup blocktream
 try
-   fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+   fs=block(source,varargin{:},'loadind',p);
 catch
     % Close the windows if initialization fails
     blockdone(p,fobj);
@@ -38,10 +38,15 @@ catch
     error(err.message);
 end
 
-% Prepare CQT filters in range 200Hz--20kHz, 48 bins per octave
-% 320 + 2 filters in total.
+% Buffer length (30 ms)
+bufLen = floor(30e-3*fs);
+zpad = floor(bufLen/2);
+
+% Prepare CQT filters in range floor(fs/220),floor(fs/2.2) Hz, 
+% 48 bins per octave
+% 320 + 2 filters in total (for fs = 44100 Hz).
 % And a frame object representing the filterbank
-F = frame('cqtfb',fs,200,20000,48,2*bufLen+2*zpad,'fractionaluniform');
+F = frame('cqtfb',fs,floor(fs/220),floor(fs/2.2),48,2*bufLen+2*zpad,'fractionaluniform');
 % Accelerate the frame object to be used with the "sliced" block processing
 % handling.
 Fa = blockframeaccel(F,bufLen,'sliced','zpad',zpad);
@@ -63,7 +68,7 @@ while flag && p.flag
   mult = 10^(mult/20);
 
   % Read block of length bufLen
-  [f,flag] = blockread();
+  [f,flag] = blockread(bufLen);
   f = f*gain;
   % Apply analysis frame
   c = blockana(Fa, f); 

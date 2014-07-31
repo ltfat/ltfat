@@ -33,15 +33,17 @@ function [fs,classid] = block(source,varargin)
 %         Required sampling rate - Some devices might support only a 
 %         limited range of samp. frequencies. Use |blockdevices| to list
 %         supported sampling rates of individual devices. 
+%         When the target device does not support the chosen sampling rate,
+%         on-the-fly resampling will be performed in the background.
 %         This option overrides sampling rate read from a wav file.
 %
-%         The default value is 44100 Hz.
+%         The default value is 44100 Hz, min. 4000 Hz, max. 96000 Hz
 %
 %      `'L',L`
 %         Block length - Specifying L fixes the buffer length, which cannot be
 %         changed in the loop.
 %
-%         The default is 1024. In the online mode the minimum is 256.
+%         The default is 1024. In the online mode the minimum is 32.
 %
 %      `'devid',dev`
 %         Whenever more input/output devices are present in your system,
@@ -274,6 +276,10 @@ block_interface('setBufCount',kv.nbuf);
 %
 if ~isempty(kv.outfile) && ~strcmpi(kv.outfile(end-3:end),'.wav')
     error('%s: %s does not contain *.wav suffix.',upper(mfilename),kv.outfile);
+end
+
+if flags.do_online && kv.fs<4000 || kv.fs>96000
+    error('%s: Sampling rate must be in range 4-96 kHz ',upper(mfilename));
 end
 
 % Return parameters
