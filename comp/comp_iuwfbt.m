@@ -41,7 +41,7 @@ for jj=1:length(wtNodes)
     % iteration.
     filtNo = size(gMat,2);
     if(filtNo~=size(catmp,2))
-       catmp = zeros(L,filtNo,W);
+       catmp = zeros(L,filtNo,W,class(c));
     end
 
     % Read from input subbands
