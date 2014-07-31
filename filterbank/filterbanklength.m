@@ -21,6 +21,9 @@ if ~isnumeric(a) || any(a(:)<=0)
         upper(mfilename));
 end;
 
+if isvector(a)
+    a= a(:);
+end
 
 lcm_a=a(1);
 for m=2:size(a,1)

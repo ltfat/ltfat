@@ -14,7 +14,6 @@ complainif_notenoughargs(nargin,2,upper(mfilename));
 
 
 if iscell(coef)
-  Mcoef=numel(coef);
   cl=cellfun(@(x) size(x,1),coef);
 else
   Mcoef=size(coef,2);

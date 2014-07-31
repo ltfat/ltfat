@@ -110,7 +110,7 @@ end
                 g.H = g.H(:);
             end
             
-            % In case a filter lacks .foff, make a low-pass filter off it.
+            % In case a filter lacks .foff, make a low-pass filter of it.
             if ~isfield(g,'foff')
                 g.foff= @(L) 0; 
             end

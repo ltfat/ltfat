@@ -149,6 +149,17 @@ for m=1:info.M
         info.offset(m)=g{m}.offset;
     end;
     
+    if info_win.isfir && asan(m,2) ~=1
+        % FIR filter cannot have a fractional subsampling
+        if rem(asan(m,1)/asan(m,2),1)==0
+            % ... but this is still an integer subsampling
+            info.a(m,:) = [asan(m,1)/asan(m,2),1];
+        else
+            error(['%s: Fractional subsampling cannot be used with FIR '...
+                   'filters.'],upper(mfilename));
+        end
+    end
+    
     % info.isfir==1 only if all filters are FIR
     if isfield(info_win,'isfir')
        if ~info_win.isfir && info.isfir

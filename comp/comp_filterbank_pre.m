@@ -64,9 +64,13 @@ for m=mFreq
        % The following parameters have to be set to zeros, because they
        % have already been incorporated in the freq. resp. calculation.
        g{m}.foff = 0;
+       % Store the length used
+       g{m}.L = L;
     elseif isfield(g{m},'H') && ~isnumeric(g{m}.H)
        g{m}.H=g{m}.H(L);
        g{m}.foff=g{m}.foff(L);
+       % Store the length used
+       g{m}.L = L;
     end
     
     if isfield(g{m},'H') && isfield(g{m},'delay') && g{m}.delay~=0
@@ -75,8 +79,7 @@ for m=mFreq
        g{m}.H=g{m}.H.*exp(-2*pi*1i*round(g{m}.delay)*lrange); 
        g{m}.delay = 0;
     end
-    % Store the length used
-    g{m}.L = L;
+
 
     % Treat full-length .H, but only for non-fractional subsampling
     % 

@@ -17,6 +17,11 @@ info.isuniform=0;
 
 % Sanity checks
 
+%  All numers in a must be integers
+if ~isnumeric(a) || any(rem(a(:),1)~=0) || any(a(:)<=0)
+    error('%s: All subsampling factors must be positive integers.',upper(mfilename));
+end
+
 % Avoid a being scalar if M>1
 if isscalar(a)
    a = a*ones(M,1); 
