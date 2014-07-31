@@ -10,8 +10,9 @@
  * interpolation is used when doing upsampling (ratio > 1). An anti-aliasing
  * filter is used when doing subsampling (ratio<0.95) followed by a polynomial
  * interpolation. The antialiasing IIR filter is designed such that the overall
- * frequency response have almost linear phase freq. response and negligible
- * rippling in the passband.
+ * frequency response have almost linear phase freq. response (less so close to
+ * the passband-edge frequency) and negligible rippling in the passband (one over
+ * stopband attenuation).
  *
  * I opted for IIR filters over FIR because of two reasons:
  *
@@ -19,8 +20,9 @@
  *    all FIR filters already, since they require FFT implementation in
  *    order to be fast.
  * 2) IIR filters used require only a handfull of their coefficients to be
- *    stored. This is in sharp contrast with e.g. long sinc kernel techniques
- *    which require storing thousands of coefficients. See e.g. libsamplerate
+ *    stored (see "filtcoefs.h"). This is in sharp contrast with e.g. long
+ *    sinc kernel techniques which require storing thousands of coefficients.
+ *    See e.g. libsamplerate
  *
  * The IIR filter design used is taken from chapter V in this book:
  *
@@ -34,7 +36,7 @@
  * described in
  * Chapter: IIR STRUCTURES WITH TWO ALL-PASS SUBFILTERS: APPLICATIONS
  * OF EMQF FILTERS,
- * the prototype filter passband width can be changed while keeping (almost)
+ * the prototype filter passband edge frequency can be changed while keeping (almost)
  * the same structure (two branches, chains of allpass filters).
  *
  * The coefficients defining the prototype half-band filter are stored
@@ -43,7 +45,7 @@
  * defined as a macro in the same file. The coefficients are the beta
  * coefficients from (5.36) from the book.
  *
- * The passband width is set to FPADJ*fs_target/2. FPADJ macro is set in
+ * The passband edge frequency is set to FPADJ*fs_target/2. FPADJ macro is set in
  * "config.h".
  *
  *
@@ -84,16 +86,18 @@
 #endif
 
 #ifndef FPADJ
-#define FPADJ 0.92
+#  define FPADJ 0.92
 #endif
-/* Do the anti-aliasing filtering FILTERTIMES times. */
-#define FILTERTIMES 2
 
 /* Here we include a generated file containing prototype filters */
 /* We use elliptic minimal Q-factors IIR filters (EMQF) from
  * Multirate Filtering for DSP: MATLAB Applications by Ljiljana Milic, chapter V
  * */
 #include "filtcoefs.h"
+
+#if !defined(EMQFCOEFLEN) || EMQFCOEFLEN<1
+#  error Undefined EMQFCOEFLEN. Check filtcoefs.h
+#endif
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -118,7 +122,8 @@ typedef enum
 typedef enum
 {
    RESAMPLE_OK = 0,
-   RESAMPLE_INVALID_MEMORY
+   RESAMPLE_NULLPOINTER,
+   RESAMPLE_OVERFLOW
 } resample_error;
 
 typedef struct resample_plan_struct *resample_plan;
@@ -184,7 +189,7 @@ resample_nextoutlen(const resample_plan rp, size_t Lin);
 
 /*! \brief Get next input array length
  *
- *  Complementary to resample_nextoutlen.
+ *  Complementary to resample_nextoutlen. 
  *
  *  Use to get "compatible" input buffer length when Lout is required
  *
@@ -245,6 +250,8 @@ linear_interp(const double x, const SAMPLE *yin);
 typedef struct EMQFfilters_struct *EMQFfilters;
 
 /*! \brief Initialize EMQF filter structure
+ *
+ *  fc can be in range ]0,1[, otherwise the function returns NULL
  *
  *  @param fc passband edge frequency
  *  @return structure holding all partial filters (and their inner states)
