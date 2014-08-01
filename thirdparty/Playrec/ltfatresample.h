@@ -123,7 +123,8 @@ typedef enum
 {
    RESAMPLE_OK = 0,
    RESAMPLE_NULLPOINTER,
-   RESAMPLE_OVERFLOW
+   RESAMPLE_OVERFLOW,
+   RESAMPLE_UNDERFLOW
 } resample_error;
 
 typedef struct resample_plan_struct *resample_plan;
@@ -148,6 +149,14 @@ resample_plan
 resample_init(const resample_type restype,
               const double ratio);
 
+
+/*! \brief Reset resampling plan
+ *
+ *  @param restype polynomial interpolation type
+ */
+void
+resample_reset(const resample_plan rp);
+
 /*! \brief Execute resampling
  *
  *  in might get overwritten by a low-pass filtered version
@@ -155,7 +164,18 @@ resample_init(const resample_type restype,
  *  Either Lin or Lout should be fixed to a required value and the other
  *  one obtained by resample_nextoutlen, resample_nextinlen respectivelly.
  *
- *  Note: When using Lout fixed, the routine might internally store more values.
+ *  Note: When using Lout fixed, the routine might internally store more values. 
+ *
+ *  The function returns RESAMPLE_OVERFLOW if it could have produce more samples, but
+ *  Lout (plus internal storage buffer) is too small. The overflowing samples are
+ *  discarded.
+ *
+ *  The function returns RESAMPLE_UNDERFLOW if the number of input samples is not
+ *  enough to calculate all required output samples. The remaining output samples are set 
+ *  to zeros.
+ *
+ *  If one of the overflows occurs, the stream is reset to avoid problems in next
+ *  iterations.
  *
  *  @param rp resampling plan
  *  @param in input array
@@ -203,7 +223,7 @@ resample_nextinlen(const resample_plan rp, size_t Lout);
  *  @param Lin input array length
  */
 void
-resample_advanceby(const resample_plan rp, size_t Lin);
+resample_advanceby(const resample_plan rp, const size_t Lin, const size_t Lout);
 
 /*! Free all resources
  *

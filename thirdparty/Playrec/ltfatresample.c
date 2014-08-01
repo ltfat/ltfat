@@ -10,6 +10,7 @@ struct resample_plan_struct
    const resample_type restype;
    /* First sample in block global index */
    size_t inPos;
+   size_t outPos;
    /* Buffer for holding overlap, length depend on interpoaltion technique */
    SAMPLE* overlap;
    /* Overlap length */
@@ -34,6 +35,15 @@ struct resample_plan_struct
    size_t ebufUsed;
 
 };
+
+void
+resample_reset(const resample_plan rp)
+{
+   memset(rp->overlap,0,rp->oLen*sizeof*rp->overlap);
+   rp->inPos = 0;
+   rp->outPos = 0;
+   rp->ebufUsed = 0;
+}
 
 resample_plan
 resample_init(const resample_type restype, const double ratio)
@@ -64,7 +74,7 @@ resample_init(const resample_type restype, const double ratio)
    rp->overlap = calloc(rp->oLen, sizeof(SAMPLE));
    *(size_t*)&rp->ebufLen = ceil(ratio);
    rp->ebuf = malloc(rp->ebufLen * sizeof(SAMPLE));
-   rp->ebufUsed = 0; /* This was actually already set. */
+   /*rp->ebufUsed = 0;  This was actually already set. */
    /* When subsampling, do the antialiasing filtering. */
    /* This is not exactly 1, because we do not want to filter when
     * subsampling only a little or not at all. */
@@ -93,8 +103,16 @@ resample_execute(const resample_plan rp,
    /* Execute the computation */
    status = rp->executer(rp, in, Lin, out, Lout);
 
-   /* Advance the "pointer" in data stream */
-   resample_advanceby(rp, Lin);
+   if (status == RESAMPLE_OK)
+   {
+      /* All ok, advance both stream pointers */
+      resample_advanceby(rp, Lin, Lout);
+   }
+   else
+   {
+      /* Overflow or underflow occured, resetting the stream */
+      resample_reset(rp);
+   }
 
    return status;
 }
@@ -114,8 +132,8 @@ size_t
 resample_nextinlen(const resample_plan rp, size_t Lout)
 {
    size_t retval = 0;
-   const double outSpos = ceil( (rp->inPos) / rp->ratio );
-   const double outEpos = ceil( (rp->inPos + Lout) / rp->ratio );
+   const double outSpos = ceil( (rp->outPos) / rp->ratio );
+   const double outEpos = ceil( (rp->outPos + Lout) / rp->ratio );
    retval =  (size_t)( outEpos - outSpos);
 
    return retval;
@@ -136,9 +154,10 @@ resample_done(resample_plan *rp)
 
 
 void
-resample_advanceby(const resample_plan rp, size_t Lin)
+resample_advanceby(const resample_plan rp, const size_t Lin, const size_t Lout)
 {
    rp->inPos += Lin;
+   rp->outPos += Lout;
 }
 
 
@@ -158,18 +177,21 @@ resample_execute_polynomial(const resample_plan rp,
       (outVal) = rp->interp_sample(x, buf);
 
    double truepos, x;
-   ptrdiff_t highpos;
+   ptrdiff_t highpos = 0;
    SAMPLE* buf;
    size_t ii, jj, zz, *iiThre;
    resample_error retval = RESAMPLE_OK;
 
    size_t oLen = rp->oLen;
+   size_t Louttmp = Lout - rp->ebufUsed;
 
    const double oneOverRatio = 1.0 / rp->ratio;
    /* Starting position in the output stream */
-   double outSpos = ceil( (rp->inPos) * rp->ratio );
+   //double outSpos = ceil( (rp->inPos) * rp->ratio )  ;
+   double outSpos = rp->outPos + rp->ebufUsed  ;
    /* How many samples will this routine produce */
    size_t Louttrue = resample_nextoutlen(rp, Lin);
+   size_t Loutvalid = Louttrue < Louttmp ? Louttrue : Louttmp;
 
    /* Copy buffered samples + update out */
    memcpy(out, rp->ebuf, rp->ebufUsed * sizeof * out);
@@ -185,6 +207,8 @@ resample_execute_polynomial(const resample_plan rp,
    {
       iiThre[ii] = floor((rp->inPos + ((double) ii + 1) ) * rp->ratio - outSpos) + 1;
    }
+
+
    /* ii starts here */
    ii = 0;
    for (zz = 0; zz < oLen + 1; zz++)
@@ -201,31 +225,35 @@ resample_execute_polynomial(const resample_plan rp,
 
    /* Handle samples safely inside.
     * ii continues */
-   for (; ii < Lout - rp->ebufUsed; ii++)
+   for (; ii < Loutvalid ; ii++)
    {
       ONESAMPLE(out[ii])
    }
+
    /* Handle samples overflowing the output buffer *
     * ii still continues */
-   /* This is a higly tricky part. When using wrong Lin and Lout,
-    * the input and output streams might not be synchonised.
-    * In that case, output samples are dropped
-    */
-
    for (jj = 0; ii < Louttrue && jj < rp->ebufLen; ii++, jj++ )
    {
       ONESAMPLE(rp->ebuf[jj])
    }
    rp->ebufUsed = jj;
 
-   if (ii != Louttrue)
+   if (Louttrue>Louttmp+rp->ebufUsed)
    {
+      /* Some samples will be skipped.  */
       retval = RESAMPLE_OVERFLOW;
+   }
+
+   if (Louttrue < Louttmp)
+   {
+      /* Next iteration will probably access an uninitialized memory. */
+      retval = RESAMPLE_UNDERFLOW;
+      memset(out+Louttrue,0,(Louttmp-Louttrue)*sizeof*out);
    }
 
    /* Copy last oLen samples to overlap .*/
    memcpy(rp->overlap, in + Lin - oLen, oLen * sizeof * in);
-   
+
    free(iiThre);
    free(buf);
    return retval;

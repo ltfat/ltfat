@@ -2314,7 +2314,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
          if (rec_resplan)
          {
             recSamplePerChan = resample_nextinlen(dummy_recplan, recSamplePerChan);
-            resample_advanceby(dummy_recplan, (int)mxGetScalar(precDataLength));
+            resample_advanceby(dummy_recplan,recSamplePerChan, (int)mxGetScalar(precDataLength));
          }
       }
 

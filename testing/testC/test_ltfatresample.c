@@ -12,23 +12,24 @@ fillrand(SAMPLE* a, size_t L)
 {
    size_t m;
    srand (time(NULL));
-   for(m=0;m<L;m++)
+   for (m = 0; m < L; m++)
    {
-      a[m]=((SAMPLE) (rand()))/RAND_MAX;
+      a[m] = ((SAMPLE) (rand())) / RAND_MAX;
    }
 }
 
 
 char* test_filter()
 {
-   size_t L,ii;
-   SAMPLE *in, *out, *out2,err;
+   size_t L, ii;
+   SAMPLE *in, *out, *out2, err;
    EMQFfilters ef;
    size_t bufNo = 10;
    size_t bufLen = 65;
-   L = bufNo*bufLen;
+   L = bufNo * bufLen;
 
-   in = malloc(L * sizeof * in); fillrand(in,L);
+   in = malloc(L * sizeof * in);
+   fillrand(in, L);
    out = malloc(L * sizeof * out);
    out2 = malloc(L * sizeof * out);
 
@@ -36,76 +37,119 @@ char* test_filter()
    ef = emqffilters_init(0.1);
 
    /* Filter by blocks */
-   for(ii=0;ii<bufNo;ii++)
+   for (ii = 0; ii < bufNo; ii++)
    {
-      emqffilters_dofilter(ef,in+ii*bufLen,bufLen,out+ii*bufLen);
+      emqffilters_dofilter(ef, in + ii * bufLen, bufLen, out + ii * bufLen);
    }
-  
+
    emqffilters_done(&ef);
    ef = emqffilters_init(0.1);
    /* Filter */
-   emqffilters_dofilter(ef,in,L,out2);
+   emqffilters_dofilter(ef, in, L, out2);
 
 
    emqffilters_done(&ef);
 
    err = 0;
-   for(ii=0;ii<L;ii++)
+   for (ii = 0; ii < L; ii++)
    {
-      err += abs(out[ii]-out2[ii]);
+      err += abs(out[ii] - out2[ii]);
    }
    free(in);
    free(out);
    free(out2);
 
-   mu_assert(err<1e-10,"FILT BY BLOCKS")
+   mu_assert(err < 1e-10, "FILT BY BLOCKS")
 
    return NULL;
 }
 
-char* test_filter_signal()
+char* test_resample_fixedLin()
 {
-   size_t L,ii;
-   SAMPLE *in, *out, *out2,err;
-   EMQFfilters ef;
-   size_t bufNo = 10;
-   size_t bufLen = 65;
-   L = bufNo*bufLen;
+   size_t ii, bufNo = 1000, Lout, ratioId = 0, lInId = 0;
+   double ratio[] = { 44100.0 / 8001.0, 8001.0 / 44100.0, 1, 0 };
 
-   in = malloc(L * sizeof * in); fillrand(in,L);
-   out = malloc(L * sizeof * out);
-   out2 = malloc(L * sizeof * out);
+   size_t Lin[] = {896, 63, 10, 478, 966, 7563, 0};
+   SAMPLE* out, *in;
+   resample_error re;
+   resample_plan rp;
 
-
-   ef = emqffilters_init(0.1);
-
-   /* Filter by blocks */
-   for(ii=0;ii<bufNo;ii++)
+   while (Lin[lInId])
    {
-      emqffilters_dofilter(ef,in+ii*bufLen,bufLen,out+ii*bufLen);
+      while (ratio[ratioId])
+      {
+         in = malloc(Lin[lInId] * sizeof * in);
+
+         rp = resample_init(BSPLINE, ratio[ratioId]);
+
+         for (ii = 0; ii < bufNo; ii++)
+         {
+            Lout = resample_nextoutlen(rp, Lin[lInId]);
+            fillrand(in, Lin[lInId]);
+            out = malloc(Lout * sizeof * out);
+
+            re = resample_execute(rp, in, Lin[lInId], out, Lout);
+            mu_assert(re == RESAMPLE_OK, "Overflow or undeflow in fixed Lin")
+
+            free(out);
+         }
+
+         free(in);
+         resample_done(&rp);
+         ratioId++;
+      }
+      lInId++;
    }
-  
-   emqffilters_done(&ef);
-   ef = emqffilters_init(0.1);
-   /* Filter */
-   emqffilters_dofilter(ef,in,L,out2);
-
-
-   emqffilters_done(&ef);
-
-   err = 0;
-   for(ii=0;ii<L;ii++)
-   {
-      err += abs(out[ii]-out2[ii]);
-   }
-   free(in);
-   free(out);
-   free(out2);
-
-   mu_assert(err<1e-10,"FILT BY BLOCKS")
 
    return NULL;
+}
 
+char* test_resample_fixedLout()
+{
+   size_t ii, bufNo = 1000, Lin, ratioId = 0, lInId = 0;
+   double ratio[] = { 44100.0 / 8001.0, 8001.0 / 44100.0, 1, 0.99, 0.23, 3.333, 0 };
+
+   size_t Lout[] = {896, 63, 40, 478, 966, 7563, 0};
+   SAMPLE* out, *in;
+   resample_error re;
+   resample_plan rp;
+   resample_plan rp2;
+   resample_plan rp3;
+
+   while (Lout[lInId])
+   {
+      while (ratio[ratioId])
+      {
+         rp = resample_init(BSPLINE, ratio[ratioId]);
+         rp2 = resample_init(BSPLINE, ratio[ratioId]);
+         rp3 = resample_init(BSPLINE, ratio[ratioId]);
+
+         out = malloc(Lout[lInId] * sizeof * out);
+
+
+         for (ii = 0; ii < bufNo; ii++)
+         {
+            Lin = resample_nextinlen(rp, Lout[lInId]);
+            in = malloc(Lin * sizeof(SAMPLE));
+            fillrand(in, Lin);
+
+            re = resample_execute(rp, in, Lin, out, Lout[lInId]);
+            mu_assert(re == RESAMPLE_OK, "Overflow or undeflow in fixed Lout")
+
+
+            free(in);
+         }
+
+         free(out);
+         resample_done(&rp);
+         resample_done(&rp2);
+         resample_done(&rp3);
+         ratioId++;
+      }
+      lInId++;
+   }
+
+   return NULL;
 }
 
 char *all_tests()
@@ -113,7 +157,8 @@ char *all_tests()
    mu_suite_start();
 
    mu_run_test(test_filter);
-   mu_run_test(test_filter_signal);
+   mu_run_test(test_resample_fixedLin);
+   mu_run_test(test_resample_fixedLout);
 
    return NULL;
 }
