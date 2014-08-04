@@ -9,7 +9,7 @@ Version X.X.X
       filterbanks.
 
     * Added implementation of dual-tree wavelet transform, general dual-tree
-      wavelet filterbank trees and *M*-band transforms.  
+      wavelet filterbanks and *M*-band transforms.  
 
     * New dual-tree wavelet filters: wfiltdt_qshift, wfiltdt_oddeven,
                                      wfiltdt_optsym, wfiltdt_dden
@@ -19,9 +19,9 @@ Version X.X.X
     * wfilt_ functions now return filters in a format compatible with
       LTFAT filter format (struct with .h and .offset fields).
 
-	 * Closed #100 FEATURE: Add on-the-fly sample rate conversion to the 
-	   blockproc framework. Effectivelly allows recording and playback at 
-		arbitrary sampling rate.
+    * Closed #100 FEATURE: Add on-the-fly sample rate conversion to the 
+      blockproc framework. Effectivelly allows recording and playback at 
+      arbitrary sampling rate.
 
 Version 1.4.5 7/5 2014
     * Phase locking in DGT ('timeinv' flag) moved to the C backend. It
