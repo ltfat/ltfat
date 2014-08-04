@@ -1,9 +1,9 @@
 function [h,g,a,info] = wfiltdt_optsym(N)
-%WFILT_OPTSYM  Optimizatized Symmetric Self-Hilbertian Filters 
+%WFILTDT_OPTSYM  Optimizatized Symmetric Self-Hilbertian Filters 
 %
 %   Usage: [h,g,a] = wfiltdt_optsym(N);
 %
-%   `[h,g,a]=wfilt_wfiltdt_optsym(N)` with *N\in {1,2,3}*. 
+%   `[h,g,a]=wfiltdt_optsym(N)` with *N\in {1,2,3}*. 
 %
 %   Examples:
 %   ---------

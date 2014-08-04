@@ -1,10 +1,11 @@
 function enspecden(f, varargin)
 %ENSPECDEN Plot the energy spectral density
-% Usage: enspecden(f);
 %
-% ENSPECDEN(f) plots the energy spectral density of the function f.
+%   Usage: enspecden(f);
 %
-% Additional arguments for ENSPECDEN:
+%   `enspecden(f)` plots the energy spectral density of the function f.
+%
+%   Additional arguments for ENSPECDEN:
 %
 %     'db'      Plots the energy density on a dB scale.
 %
@@ -12,7 +13,7 @@ function enspecden(f, varargin)
 %
 %     'norm'    Normalizes the $l^2$-norm of the energy density to be 1.
 %
-% See also: paucorr, dft, plotfft
+%   See also: paucorr, dft, plotfft
 
 % AUTHOR: Jordy van Velthoven
 
