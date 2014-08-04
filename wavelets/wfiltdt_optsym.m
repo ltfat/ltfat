@@ -9,7 +9,7 @@ function [h,g,a,info] = wfiltdt_optsym(N)
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('optsym3');
+%     wfiltdtinfo('optsym3');
 % 
 %   References: dubase08
 %
@@ -79,7 +79,7 @@ case 3
 
 end
     % numel(hlp) must be even
-    offset = -(floor(numel(hlp)/2)); 
+    offset = -(floor(numel(hlp)/2))+1; 
     range = (0:numel(hlp)-1) + offset;
     
     % Create the filters according to the reference paper.

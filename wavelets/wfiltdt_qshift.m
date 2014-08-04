@@ -9,7 +9,7 @@ function [h,g,a,info] = wfiltdt_qshift(N)
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('qshift3');
+%     wfiltdtinfo('qshift3');
 % 
 %   References: king00 king03
 %

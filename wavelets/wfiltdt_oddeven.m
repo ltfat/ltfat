@@ -9,7 +9,7 @@ function [h,g,a,info] = wfiltdt_oddeven(N)
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('ana:oddeven1');
+%     wfiltdtinfo('ana:oddeven1');
 % 
 %   References: king02
 %

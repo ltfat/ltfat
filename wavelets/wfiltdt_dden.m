@@ -9,13 +9,13 @@ function [h,g,a,info] = wfiltdt_dden(N)
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('dden1');
+%     wfiltdtinfo('dden1');
 % 
 %   References: se04
 %
 
 info.istight = 1;
-a = [2;2;2;2;2;2];
+a = [2;2;2];
 
 switch(N)
  case 1

@@ -51,6 +51,7 @@
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients
 %      WFILTINFO         - Plot wavelet filters impulse and frequency responses and approximation of scaling and wavelet functions
+%      WFILTDTINFO       - Plot the same as WFILTINFO but for dual-tree wavelet transform
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
