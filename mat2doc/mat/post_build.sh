@@ -5,9 +5,6 @@ rm -Rf mex
 rm -Rf mulaclab
 rm -Rf thirdparty/GPC
 rm -Rf thirdparty/PolygonClip
-# This might not exist, but just to be sure.
-# Reported here http://savannah.gnu.org/bugs/?42278
-rm -Rf src/autom4te.cache
 rm mulaclab.m
 mv src ..
 mv oct ..
@@ -30,4 +27,6 @@ cd ..
 cd src/
 mv Makefile_octpkg.in Makefile.in
 ./bootstrap
+# Reported here http://savannah.gnu.org/bugs/?42278
+rm -Rf autom4te.cache/
 cd ..
