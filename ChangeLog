@@ -19,6 +19,10 @@ Version X.X.X
     * wfilt_ functions now return filters in a format compatible with
       LTFAT filter format (struct with .h and .offset fields).
 
+	 * Closed #100 FEATURE: Add on-the-fly sample rate conversion to the 
+	   blockproc framework. Effectivelly allows recording and playback at 
+		arbitrary sampling rate.
+
 Version 1.4.5 7/5 2014
     * Phase locking in DGT ('timeinv' flag) moved to the C backend. It
       was too slow in Octave.

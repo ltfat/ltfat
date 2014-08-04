@@ -21,7 +21,8 @@ function [fs,classid] = block(source,varargin)
 %         input is taken from a microphone/auxilary input;
 %
 %      `'playrec'`
-%         loopbacks the input to the output
+%         loopbacks the input to the output. In this case, the block size
+%         (in |blockread|) cannot change during the playback.
 %
 %      `data`
 %         input data as columns of a matrix for each input channel
@@ -29,17 +30,20 @@ function [fs,classid] = block(source,varargin)
 %   `block` accepts the following optional key-value pairs
 %
 %      `'fs',fs`
-%         Sampling rate - This is only relevant if wav file is not used as
-%         a source. Some devices might support only a limited range of samp.
-%         frequencies.
+%         Required sampling rate - Some devices might support only a 
+%         limited range of samp. frequencies. Use |blockdevices| to list
+%         supported sampling rates of individual devices. 
+%         When the target device does not support the chosen sampling rate,
+%         on-the-fly resampling will be performed in the background.
+%         This option overrides sampling rate read from a wav file.
 %
-%         The default value is 44100 Hz.
+%         The default value is 44100 Hz, min. 4000 Hz, max. 96000 Hz
 %
 %      `'L',L`
 %         Block length - Specifying L fixes the buffer length, which cannot be
 %         changed in the loop.
 %
-%         The default is 1024. In the online mode the minimum is 256.
+%         The default is 1024. In the online mode the minimum is 32.
 %
 %      `'devid',dev`
 %         Whenever more input/output devices are present in your system,
@@ -179,14 +183,14 @@ hostAPIpriorityList = {};
 pa_bufLen = -1;
 
 if ischar(source)
-   if isempty(kv.fs)
-      kv.fs = 44100;
-   end
    if(strcmpi(source,'rec'))
       recChannels = 1;
       record = 1;
       if isempty(kv.nbuf)
          kv.nbuf = 3;
+      end
+      if isempty(kv.fs)
+         kv.fs = 44100;
       end
    elseif strcmpi(source,'playrec')
       playChannels = 2;
@@ -195,6 +199,9 @@ if ischar(source)
       play = 1;
       if isempty(kv.nbuf)
          kv.nbuf = 1;
+      end
+      if isempty(kv.fs)
+         kv.fs = 44100;
       end
    elseif strcmpi(source,'dialog')
       [fileName,pathName] = uigetfile('*.wav','Select the *.wav file');
@@ -212,7 +219,9 @@ if ischar(source)
          if isoctave
             warning('off','Octave:fopen-file-in-path');
          end
-         [~, kv.fs] = wavread(source, [1,1]);
+         if isempty(kv.fs)
+            [~, kv.fs] = wavread(source, [1,1]);
+         end
          playChannels = 2;
          play = 1;
       else
@@ -229,7 +238,7 @@ elseif(isnumeric(source))
       kv.fs = 44100;
       warning('%s: Sampling rate not specified. Using default value %i Hz.',...
               upper(mfilename),kv.fs);
-   end
+    end
    playChannels = 2;
    play = 1;
    if isempty(kv.nbuf)
@@ -269,6 +278,10 @@ if ~isempty(kv.outfile) && ~strcmpi(kv.outfile(end-3:end),'.wav')
     error('%s: %s does not contain *.wav suffix.',upper(mfilename),kv.outfile);
 end
 
+if flags.do_online && kv.fs<4000 || kv.fs>96000
+    error('%s: Sampling rate must be in range 4-96 kHz ',upper(mfilename));
+end
+
 % Return parameters
 classid = flags.fmt;
 fs = kv.fs;
@@ -278,14 +291,15 @@ fs = kv.fs;
 if isempty(kv.L)
    block_interface('setBufLen',-1);
 else
-   if kv.L<256 && flags.do_online
-      error('%s: Minimum buffer length is 256.',upper(mfilename))
+   if kv.L<32 && flags.do_online
+      error('%s: Minimum buffer length is 32.',upper(mfilename))
    end
    block_interface('setBufLen',kv.L);
 end
 
 % Store data
 block_interface('setSource',source);
+block_interface('setFs',fs);
 % Handle sources with known input length
 if is_wav
    Ls = wavread(source, 'size');
@@ -551,25 +565,26 @@ function failedInit(devs,kv)
 % Common function for playrec initialization error messages
 errmsg = '';
 
-playFs = devs([devs.deviceID]==kv.devid(1)).supportedSampleRates;
-if ~isempty(playFs) && ~any(playFs==kv.fs)
-  fsstr = sprintf('%d, ',playFs);
-  fsstr  = ['[',fsstr(1:end-2),']' ];
-  errmsg = [errmsg, sprintf(['Device %i does not ',...
-            'support the required fs. Supported are: %s \n'],...
-            kv.devid(1),fsstr)];
-end
 
-if numel(kv.devid)>1
-    recFs = devs([devs.deviceID]==kv.devid(2)).supportedSampleRates;
-    if ~isempty(recFs) && ~any(recFs==kv.fs)
-      fsstr = sprintf('%d, ',recFs);
-      fsstr  = ['[',fsstr(1:end-2),']' ];
-      errmsg = [errmsg, sprintf(['Recording device %i does not ',...
-                'support the required fs. Supported are: %s \n'],...
-                kv.devid(2),fsstr)];
-    end
-end
+% playFs = devs([devs.deviceID]==kv.devid(1)).supportedSampleRates;
+% if ~isempty(playFs) && ~any(playFs==kv.fs)
+%   fsstr = sprintf('%d, ',playFs);
+%   fsstr  = ['[',fsstr(1:end-2),']' ];
+%   errmsg = [errmsg, sprintf(['Device %i does not ',...
+%             'support the required fs. Supported are: %s \n'],...
+%             kv.devid(1),fsstr)];
+% end
+% 
+% if numel(kv.devid)>1
+%     recFs = devs([devs.deviceID]==kv.devid(2)).supportedSampleRates;
+%     if ~isempty(recFs) && ~any(recFs==kv.fs)
+%       fsstr = sprintf('%d, ',recFs);
+%       fsstr  = ['[',fsstr(1:end-2),']' ];
+%       errmsg = [errmsg, sprintf(['Recording device %i does not ',...
+%                 'support the required fs. Supported are: %s \n'],...
+%                 kv.devid(2),fsstr)];
+%     end
+% end
 
 if isempty(errmsg)
    err = lasterror;
