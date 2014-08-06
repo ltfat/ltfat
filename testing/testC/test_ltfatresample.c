@@ -104,6 +104,46 @@ char* test_resample_fixedLin()
    return NULL;
 }
 
+char* test_resample_altLin()
+{
+   size_t ii, bufNo = 1000, Lout, ratioId = 0, lInId = 0;
+   double ratio[] = { 44100.0 / 8001.0, 8001.0 / 44100.0, 1, 0 };
+
+   size_t Lin[] = {896, 63, 10, 478, 966, 7563, 0};
+   SAMPLE* out, *in;
+   resample_error re;
+   resample_plan rp;
+
+      while (ratio[ratioId])
+      {
+         in = malloc(Lin[lInId] * sizeof * in);
+
+         rp = resample_init(BSPLINE, ratio[ratioId]);
+
+         for (ii = 0; ii < bufNo; ii++)
+         {
+            Lout = resample_nextoutlen(rp, Lin[lInId]);
+            fillrand(in, Lin[lInId]);
+            out = malloc(Lout * sizeof * out);
+
+            re = resample_execute(rp, in, Lin[lInId], out, Lout);
+            mu_assert(re == RESAMPLE_OK, "Overflow or undeflow in alternating Lin")
+
+            free(out);
+         }
+
+         free(in);
+         resample_done(&rp);
+         ratioId++;
+         if(Lin[++lInId]==0)
+         {
+            lInId = 0;
+         }
+      }
+
+   return NULL;
+}
+
 char* test_resample_fixedLout()
 {
    size_t ii, bufNo = 1000, Lin, ratioId = 0, lInId = 0;
@@ -113,16 +153,12 @@ char* test_resample_fixedLout()
    SAMPLE* out, *in;
    resample_error re;
    resample_plan rp;
-   resample_plan rp2;
-   resample_plan rp3;
 
    while (Lout[lInId])
    {
       while (ratio[ratioId])
       {
          rp = resample_init(BSPLINE, ratio[ratioId]);
-         rp2 = resample_init(BSPLINE, ratio[ratioId]);
-         rp3 = resample_init(BSPLINE, ratio[ratioId]);
 
          out = malloc(Lout[lInId] * sizeof * out);
 
@@ -142,14 +178,54 @@ char* test_resample_fixedLout()
 
          free(out);
          resample_done(&rp);
-         resample_done(&rp2);
-         resample_done(&rp3);
          ratioId++;
       }
       lInId++;
    }
 
    return NULL;
+}
+
+char* test_resample_altLout()
+{
+   size_t ii, bufNo = 1000, Lin, ratioId = 0, lInId = 0;
+   double ratio[] = { 44100.0 / 8001.0, 8001.0 / 44100.0, 1, 0.99, 0.23, 3.333, 0 };
+
+   size_t Lout[] = {896, 63, 40, 478, 966, 7563, 0};
+   SAMPLE* out, *in;
+   resample_error re;
+   resample_plan rp;
+
+      while (ratio[ratioId])
+      {
+         rp = resample_init(BSPLINE, ratio[ratioId]);
+
+         out = malloc(Lout[lInId] * sizeof * out);
+
+
+         for (ii = 0; ii < bufNo; ii++)
+         {
+            Lin = resample_nextinlen(rp, Lout[lInId]);
+            in = malloc(Lin * sizeof(SAMPLE));
+            fillrand(in, Lin);
+
+            re = resample_execute(rp, in, Lin, out, Lout[lInId]);
+            mu_assert(re == RESAMPLE_OK, "Overflow or undeflow in alternating Lout")
+
+
+            free(in);
+         }
+
+         free(out);
+         resample_done(&rp);
+         ratioId++;
+         if(Lout[++lInId]==0)
+         {
+            lInId = 0;
+         }
+      }
+      
+  return NULL;
 }
 
 char *all_tests()
@@ -159,6 +235,8 @@ char *all_tests()
    mu_run_test(test_filter);
    mu_run_test(test_resample_fixedLin);
    mu_run_test(test_resample_fixedLout);
+   mu_run_test(test_resample_altLout);
+   mu_run_test(test_resample_altLin);
 
    return NULL;
 }

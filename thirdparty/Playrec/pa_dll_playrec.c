@@ -2122,6 +2122,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
 {
    StreamPageStruct *psps;
    ChanBufStruct *pcbs;
+   resample_error rerr = RESAMPLE_OK;
    unsigned int dataChanCount, playSamplePerChan = 0, recSamplePerChan;
    unsigned int i, chansCopied, playResPlanId = 0, bufTmpLen;
 
@@ -2180,7 +2181,7 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
        * within the valid range of channel numbers
        */
       if (!channelListToChanBufStructs(pplayChans, &psps->pfirstPlayChan, 0,
-          _pstreamInfo->playChanCount - 1, true))
+                                       _pstreamInfo->playChanCount - 1, true))
       {
          freeStreamPageStruct(&psps);
          return false;
@@ -2238,8 +2239,8 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
                               play_resplan[playResPlanId], playSamplePerChan);
                SAMPLE* buf = mxCalloc(bufTmpLen, sizeof * buf);
                mexMakeMemoryPersistent(buf);
-               resample_execute(play_resplan[playResPlanId],
-                                pcbs->pbuffer, playSamplePerChan, buf, bufTmpLen);
+               rerr = resample_execute(play_resplan[playResPlanId],
+                                       pcbs->pbuffer, playSamplePerChan, buf, bufTmpLen);
                mxFree(pcbs->pbuffer);
                pcbs->pbuffer = buf;
                pcbs->bufLen = bufTmpLen;
@@ -2250,6 +2251,10 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
                pcbs->bufLen = playSamplePerChan;
             }
 
+            if (rerr != RESAMPLE_OK)
+            {
+               mexWarnMsgTxt("Resampling returned an error. This should not happened.");
+            }
 
 
             if (!pcbs->pbuffer)
@@ -2272,8 +2277,8 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
 
       psps->pageLength = max(psps->pageLength, psps->pfirstPlayChan->bufLen);
       /* This is only used if recording is also performed */
-      psps->pageLengthRec = max(psps->pageLengthRec, playSamplePerChan); 
-      
+      psps->pageLengthRec = max(psps->pageLengthRec, playSamplePerChan);
+
 
       /* Check to see if either there are more channels than required, or too few channels */
       if ((chansCopied < dataChanCount) && (playSamplePerChan > 0))
@@ -2308,13 +2313,13 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
          /* Number of recorded samples specified directly. */
          recSamplePerChan = (int)mxGetScalar(precDataLength);
 
-         psps->pageLengthRec = recSamplePerChan; 
+         psps->pageLengthRec = recSamplePerChan;
 
 
          if (rec_resplan)
          {
             recSamplePerChan = resample_nextinlen(dummy_recplan, recSamplePerChan);
-            resample_advanceby(dummy_recplan,recSamplePerChan, (int)mxGetScalar(precDataLength));
+            resample_advanceby(dummy_recplan, recSamplePerChan, (int)mxGetScalar(precDataLength));
          }
       }
 
@@ -3356,10 +3361,11 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
    StreamPageStruct *psps;
    ChanBufStruct *pcbs;
 
+   resample_error rerr = RESAMPLE_OK;
    SAMPLE *poutBuf;
    mxArray *mxChanList;
    unsigned int *pChanList;
-   unsigned int recSamples,recSamplesTmp;
+   unsigned int recSamples, recSamplesTmp;
    unsigned int recChannels;
    unsigned int recResPlanId = 0;
 
@@ -3437,11 +3443,11 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
    if (rec_resplan)
    {
       /* We will do resampling */
-      if(psps->pagePos != recSamplesTmp)
+      if (psps->pagePos != recSamplesTmp)
       {
          /* Page was not yet finished, do something harmless. */
-         recSamples = (unsigned int) ( psps->pageLengthRec*psps->pagePos/((double)recSamples));
-       }
+         recSamples = (unsigned int) ( psps->pageLengthRec * psps->pagePos / ((double)recSamples));
+      }
       else
       {
          recSamples = psps->pageLengthRec;
@@ -3490,9 +3496,14 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             }
             else
             {
-               resample_execute(rec_resplan[recResPlanId],
-                                pcbs->pbuffer, pcbs->bufLen,
-                                poutBuf,recSamples);
+               rerr = resample_execute(rec_resplan[recResPlanId],
+                                       pcbs->pbuffer, pcbs->bufLen,
+                                       poutBuf, recSamples);
+               if(rerr!=RESAMPLE_OK)
+               {
+                  mexWarnMsgTxt("Resampling returned an error. This should not happen.");
+               }
+
                recResPlanId++;
             }
 
