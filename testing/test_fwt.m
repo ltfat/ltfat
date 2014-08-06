@@ -66,7 +66,10 @@ test_filters = {
                {'dgrid',3}
                %{'algmband',1} 
                {'mband',1}
-               %{'hden',4}
+               {'coif',1}
+               {'coif',2}
+               {'coif',3}
+               {'coif',4}
                %{'hden',2}
                %{'hden',1}
                %{'algmband',2}
