@@ -18,7 +18,7 @@ function wfiltdtinfo(dw,varargin)
 %
 %   Examples:
 %   ---------
-%
+%   :::
 %      wfiltdtinfo('qshift4');
 %   
 

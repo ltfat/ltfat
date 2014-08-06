@@ -36,8 +36,10 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %   1) Cell array of parameters. First two elements of the array are 
 %      mandatory `{dt,J}`. 
 % 
-%         `dt`   : Basic dual-tree filters
-%          *J*   : Number of levels of the filterbank tree
+%         `dt`   
+%            Basic dual-tree filters
+%         *J*
+%            Number of levels of the filterbank tree
 %
 %      Possible formats of `dt` are the same as in |fwtinit| except the
 %      `wfiltdt_` prefix is used when searching for function specifying
@@ -65,9 +67,8 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %      `'doubleband'`,`'quadband'`,`'octaband'`
 %         The filterbank is designed such that it mimics 4-band, 8-band or
 %         16-band complex wavelet transform provided the basic filterbank
-%         is 2 channel. This allows 3,7 or 15 bands per octave. In this
-%         case, *J* is treated such that it defines number of levels of
-%         4-band, 8-band or 16-band transform.
+%         is 2 channel. In this case, *J* is treated such that it defines
+%         number of levels of 4-band, 8-band or 16-band transform.
 %
 %      The dual-tree wavelet filterbank can use any basic wavelet
 %      filterbank in the first stage of both trees, provided they are 

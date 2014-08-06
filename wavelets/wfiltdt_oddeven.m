@@ -3,7 +3,7 @@ function [h,g,a,info] = wfiltdt_oddeven(N)
 %
 %   Usage: [h,g,a] = wfiltdt_oddeven(N);
 %
-%   `[h,g,a]=wfilt_oddeven(N)` with *N\in {1}*
+%   `[h,g,a]=wfilt_oddeven(N)` with $N \in {1}$
 %
 %   Examples:
 %   ---------

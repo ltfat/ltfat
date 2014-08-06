@@ -3,7 +3,7 @@ function [h,g,a,info] = wfiltdt_qshift(N)
 %
 %   Usage: [h,g,a] = wfiltdt_qshift(N);
 %
-%   `[h,g,a]=wfiltdt_qshift(N)` with *N\in {1,2,3,4,5,6,7}*. 
+%   `[h,g,a]=wfiltdt_qshift(N)` with $N \in {1,2,3,4,5,6,7}$. 
 %
 %   Examples:
 %   ---------

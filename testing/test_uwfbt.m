@@ -8,7 +8,7 @@ disp('========= TEST UWPFBT ============');
 global LTFAT_TEST_TYPE;
 tolerance = 1e-8;
 if strcmpi(LTFAT_TEST_TYPE,'single')
-   tolerance = 1e-6;
+   tolerance = 4e-6;
 end
 
 

@@ -3,7 +3,7 @@ function [h,g,a,info] = wfiltdt_dden(N)
 %
 %   Usage: [h,g,a] = wfiltdt_dden(N);
 %
-%   `[h,g,a]=wfiltdt_dden(N)` with *N\in {1,2}*
+%   `[h,g,a]=wfiltdt_dden(N)` with $N \in {1,2}$
 %
 %   Examples:
 %   ---------

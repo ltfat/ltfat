@@ -5,7 +5,8 @@ function f=idtwfbreal(c,par,varargin)
 %
 %   Input parameters:
 %         c           : Input coefficients.
-%         info/dualwt : Transform params. struct/Dual-tree Wavelet Filterbank definition
+%         info        : Transform params. struct
+%         dualwt      : Dual-tree Wavelet Filterbank definition
 %         Ls          : Length of the reconstructed signal.
 %
 %   Output parameters:
