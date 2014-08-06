@@ -72,18 +72,25 @@ P = [P(end:-1:1),1,P];
 
 R = roots(P);
 % Roots outside of the unit circle and in the right halfplane
-R = R(abs(R)>1 & real(R)>0);
+R = R(abs(R)<1 & real(R)>0);
 
 % roots of the 2*conv(lo_a,lo_r) filter
 hroots = [R(:);-ones(N,1)];
 
 
 % building synthetizing low-pass filter from roots
-h{1}= real(poly(hroots));
+h{1}= real(poly(sort(hroots,'descend')));
 % normalize
 h{1}= h{1}/norm(h{1});
 % QMF modulation low-pass -> highpass
 h{2}= (-1).^(0:flen-1).*h{1}(end:-1:1);
+
+% The reverse is here, because we use different convention for
+% filterbanks than in Ten Lectures on Wavelets
+
+h{1} = fliplr(h{1});
+h{2} = fliplr(h{2});
+
 
 % Format filters
 h{1} = struct('h',h{1},'offset',-length(h{1})/2+1);
