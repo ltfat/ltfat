@@ -15,6 +15,7 @@ dualwt{7} = {dtwfbinit({'syn:oddeven1',2,'doubleband'}),dtwfbinit({'ana:oddeven1
 dualwt{8} = {{'dual',{'syn:oddeven1',2,'doubleband'}},{'syn:oddeven1',2,'doubleband'}};
 dualwt{9} = {dtwfbinit({'syn:oddeven1',3,'full'},'nat'),dtwfbinit({'ana:oddeven1',3,'full'},'nat')};
 dualwt{10} = {'dden2',3};
+dualwt{11} = {'optsym3',3};
 
 % Perfect reconstruction
 for ii = 1:numel(dualwt)

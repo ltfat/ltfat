@@ -133,7 +133,17 @@ for ii=1:numel(Fr)
   
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf(['FRAMES DUAL REC       frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
-  disp(s);  
+  disp(s); 
+  
+  % Checking equality F == framedual(framedual(F))
+  Fdd = framedual(framedual(F));
+  cdd = frana(Fdd,f);
+  res_dd = norm(cdd-c);
+  
+  [test_failed,fail]=ltfatdiditfail(res_dd,test_failed);
+  s=sprintf(['FRAMES DUAL DUAL      frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
+  disp(s); 
+  
   
   F2=frameaccel(F,L);
   F2d=frameaccel(Fd,L);
@@ -145,6 +155,16 @@ for ii=1:numel(Fr)
   [test_failed,fail]=ltfatdiditfail(res,test_failed);
   s=sprintf(['FRAMES ACCEL DUAL REC frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);
+  
+  % Checking equality F == framedual(framedual(F)) after acceleration
+  F2dd = framedual(framedual(F2));
+  c2dd = frana(Fdd,f);
+  res2_dd = norm(c2dd-c);
+  
+  [test_failed,fail]=ltfatdiditfail(res2_dd,test_failed);
+  s=sprintf(['FRAMES ACCEL DUAL DUAL      frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
+  disp(s); 
+  
 
   % Test that framebounds are able to run, not actual resting is done on
   % the values.

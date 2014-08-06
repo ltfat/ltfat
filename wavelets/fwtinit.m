@@ -185,7 +185,7 @@ if isstruct(wdef)
            if ~isempty(wdef.origArgs)
               wdef = wdef.origArgs;
            else
-              error('%s: The structure was not buit using compatible formats.',upper(mfilename));
+              error('%s: The structure was not built using compatible formats.',upper(mfilename));
            end
         end
     else

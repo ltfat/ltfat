@@ -348,8 +348,18 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
       out = mxCreateNumericArray(dummyndim,dummyDims,classid,mxCOMPLEX);
       mxSetDimensions(out,dims,ndim);
       mwSize L = mxGetNumberOfElements(out);
-      mxSetData(out,mxMalloc(L*sizeofClassid(classid)));
-      mxSetImagData(out,mxMalloc(L*sizeofClassid(classid)));
+      void* tmpData = mxMalloc(L*sizeofClassid(classid));
+      if(!tmpData)
+      {
+         mexErrMsgTxt("Memory allocation failed. The array is probably too large.");
+      }
+      mxSetData(out,tmpData);
+      tmpData = mxMalloc(L*sizeofClassid(classid));
+      if(!tmpData)
+      {
+         mexErrMsgTxt("Memory allocation failed. The array is probably too large.");
+      }
+      mxSetImagData(out,tmpData);
    }
    #else
    if(complexFlag==mxCOMPLEX)
@@ -362,6 +372,12 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims,mxClassID classid,
 
       mwSize LL = L*2*sizeofClassid(classid);
       void* data = mxMalloc(LL);
+
+      if(!data)
+      {
+         mexErrMsgTxt("Memory allocation failed. The array is probably too large.");
+      }
+
       mxSetData(out,data);
 	  /*
 	  Allocate array of length 1 to keep the array beeing identified as complex and to avoid automatic deallocation

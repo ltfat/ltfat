@@ -35,9 +35,19 @@ end
 p = blockpanel(parg);
     
 
-bufLen = 1024;
+
 % Setup blocktream
-fs=block(source,varargin{:},'loadind',p,'L',bufLen);
+try
+    fs=block(source,varargin{:},'loadind',p);
+catch
+    % Close the windows if initialization fails
+    blockdone(p,fobj);
+    err = lasterror;
+    error(err.message);
+end
+
+% Buffer length (30 ms)
+bufLen = floor(30e-3*fs);
 
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)
@@ -52,7 +62,7 @@ while flag && p.flag
    gain = blockpanelget(p);
    gain = 10.^(gain/20);
 
-   [f,flag] = blockread();
+   [f,flag] = blockread(bufLen);
    f=f*gain(1);
    gain = gain(2:end);
    

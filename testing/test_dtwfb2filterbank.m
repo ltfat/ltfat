@@ -22,6 +22,7 @@ tmp = wfbtremove(4,3,tmp,'force');
 tmp = wfbtremove(3,6,tmp,'force');
 dualwt{10} = {tmp,tmp};
 dualwt{11} = {'dden2',3};
+dualwt{12} = {'optsym3',3};
 
 
 for ii = 1:numel(dualwt)

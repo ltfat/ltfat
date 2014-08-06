@@ -90,13 +90,15 @@ if ischar(g{1})
     winname=lower(g{1});
     switch(winname)
       case {'dual'}
+        optArgs = g(3:end);
         [g,info.auxinfo] = filterbankwin(g{2},a,L);
-        g = filterbankdual(g,a,L);
+        g = filterbankdual(g,a,L,optArgs{:});
         info.isdual=1;
         
       case {'realdual'}
+        optArgs = g(3:end);
         [g,info.auxinfo] = filterbankwin(g{2},a,L);
-        g = filterbankrealdual(g,a,L);
+        g = filterbankrealdual(g,a,L,optArgs{:});
         info.isdual=1;
         
       case {'tight'}
@@ -129,10 +131,11 @@ for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
     
     if isfield(g{m},'H') 
-        if ~isnumeric(g{m}.H)
-            g{m}.H=g{m}.H(L);
-            g{m}.foff=g{m}.foff(L);
-        end;
+% Output of comp_fourierwindow is already numeric
+%         if ~isnumeric(g{m}.H)
+%             g{m}.H=g{m}.H(L);
+%             g{m}.foff=g{m}.foff(L);
+%         end;
         % Check the painless condition
         if numel(g{m}.H) > L/asan(m,1)*asan(m,2);
            info.ispainless=0; 
@@ -145,6 +148,17 @@ for m=1:info.M
         info.gl(m)=numel(g{m}.h);
         info.offset(m)=g{m}.offset;
     end;
+    
+    if info_win.isfir && asan(m,2) ~=1
+        % FIR filter cannot have a fractional subsampling
+        if rem(asan(m,1)/asan(m,2),1)==0
+            % ... but this is still an integer subsampling
+            info.a(m,:) = [asan(m,1)/asan(m,2),1];
+        else
+            error(['%s: Fractional subsampling cannot be used with FIR '...
+                   'filters.'],upper(mfilename));
+        end
+    end
     
     % info.isfir==1 only if all filters are FIR
     if isfield(info_win,'isfir')

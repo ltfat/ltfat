@@ -5,8 +5,11 @@
 * Constants
 * Macros, not changing
 */
-
-#include <complex.h>
+#ifdef __cplusplus
+   #include <complex>
+#else
+   #include <complex.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>

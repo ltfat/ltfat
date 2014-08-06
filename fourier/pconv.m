@@ -1,7 +1,7 @@
 function h=pconv(f,g,varargin)
 %PCONV  Periodic convolution
 %   Usage:  h=pconv(f,g)
-%           h=pconv(ptype,f,g); 
+%           h=pconv(f,g, ftype); 
 %
 %   `pconv(f,g)` computes the periodic convolution of *f* and *g*. The convolution
 %   is given by
@@ -12,7 +12,7 @@ function h=pconv(f,g,varargin)
 %
 %   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)
 % 
-%   `pconv('r',f,g)` computes the convolution where *g* is reversed
+%   `pconv(f,g,'r')` computes the convolution where *g* is reversed
 %   (involuted) given by
 %
 %   ..          L-1
@@ -23,7 +23,7 @@ function h=pconv(f,g,varargin)
 %
 %   This type of convolution is also known as cross-correlation.
 %
-%   `pconv('rr',f,g)` computes the alternative where both *f* and *g* are
+%   `pconv(f,g,'rr')` computes the alternative where both *f* and *g* are
 %   reversed given by
 %
 %   ..          L-1
@@ -36,37 +36,37 @@ function h=pconv(f,g,varargin)
 %
 %   See also: dft, involute
 
-%   AUTHOR: Peter L. Søndergaard
+%   AUTHOR: Peter L. Søndergaard, Jordy van Velthoven
 %   TESTING: TEST_PCONV
 %   REFERENCE: REF_PCONV
 
-% Assert correct input.
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+
+complainif_notenoughargs(nargin, 2, 'PCONV');
 
 if ~all(size(f)==size(g))
-  error('f and g must have the same size.');
+    error('%s: f and g must have the same size.',upper(mfilename));
 end;
 
 definput.flags.type={'default','r','rr'};
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+flags = ltfatarghelper({},definput,varargin);
+
+if isreal(f) && isreal(g)
+    fftfunc = @(x) fftreal(x);
+    ifftfunc = @(x) ifftreal(x, size(f,1));
+else
+    fftfunc = @(x) fft(x);
+    ifftfunc = @(x) ifft(x);
+end;
 
 if flags.do_default
-    h=ifft(fft(f).*fft(g));
+    h=ifftfunc(fftfunc(f).*fftfunc(g));
 end;
 
 if flags.do_r
-  h=ifft(fft(f).*conj(fft(g)));
+  h=ifftfunc(fftfunc(f).*conj(fftfunc(g)));
 end;
 
 if flags.do_rr
-  h=ifft(conj(fft(f)).*conj(fft(g)));
+  h=ifftfunc(conj(fftfunc(f)).*conj(fftfunc(g)));
 end;
-
-% Clean output if input was real-valued
-if isreal(f) && isreal(g)
-  h=real(h);
-end;
-

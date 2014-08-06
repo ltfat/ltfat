@@ -59,7 +59,7 @@ M=info.M;
 gf = zeros(L,M);
 
 for m=1:M
-    gf(:,m) = comp_filterbankresponse(g(m),info.a(m),L,flags.do_real);
+    gf(:,m) = comp_filterbankresponse(g(m),info.a(m,:),L,flags.do_real);
 end
 
 if flags.do_total

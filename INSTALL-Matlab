@@ -37,13 +37,13 @@ The depending libraries are:  FFTW3, BLAS, LAPACK
 
 --------- Compiling on MacOS -------------------------------------------
 
-On MacOS, you must have the gcc compiler and the FFTW libraries
-installed. Then just type "ltfatmex" and everything should work, because
-BLAS and LAPACK libraries are taken directly from Matlab.
+On MacOS, you must have the gcc compiler, although clang should work as well.
+Then just type "ltfatmex" and everything should work, because BLAS, 
+LAPACK and FFTW libraries are taken directly from the Matlab installation.
 
 --------- Compiling on Microsoft Windows -------------------------------
 
-On Windows we rely on the MinGW compiler system: 
+On Windows, we rely on the MinGW compiler system: 
 
 - Install MinGW compiler system. The easiest is to download and install
   TDM-GCC compiler suite from http://tdm-gcc.tdragon.net/download. 
@@ -52,7 +52,8 @@ On Windows we rely on the MinGW compiler system:
   
 - Manually install binaries of FFTW. The easiest way is to download 
   them from http://www.fftw.org/install/windows.html. Copy all *.dll files
-  to the ltfat/mex directory.
+  to the ltfat/mex directory. This step is necessary since the FFTW lib
+  shipped with Matlab does not contain some of the routines we need.
   
 - Run "ltfatmex".
 
@@ -62,15 +63,8 @@ versions of FFTW and TDM-GCC.
 
 --------- Compiling on Linux ------------------------------------
 
-The dependencies are all standard packages in most Linux distributions.
-They have to be installed prior to running "ltfatmex".
-
-- On Redhat / Fedora, install the packages 'fftw-devel',
-  'lapack-devel' and 'blas-devel' and their dependcies.
-
-- On Debian / Ubuntu, install the packages 'libfftw3-dev',
-  'libblas-dev' and 'liblapack-dev'.
-
+The dependencies are taken directly from Matlab installation and you should
+not need to install anything. Just typing "ltfatmex" should do the trick.
 
 --------- Compiling parts for block processing framework -----------
 
@@ -113,4 +107,4 @@ worse audio performance in this case.
 - On Debian / Ubuntu, install the packages 'portaudio19-dev', 'openjdk-7-jdk' 
 
 Recent versions of Matlab already contain the portaudio lib so there is no need
-for installing it. 
+for installing it.

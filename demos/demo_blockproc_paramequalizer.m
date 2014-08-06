@@ -18,7 +18,6 @@ end
 % makes ~23ms.
 % The value can be any positive integer.
 % Note that the processing itself can introduce additional delay.
-bufLen = 1024;
 
 % Quality parameter of the peaking filters
 Q = sqrt(2);
@@ -45,7 +44,17 @@ end
 p = blockpanel(pcell); 
 
 % Setup blocktream
-fs = block(source,varargin{:},'loadind',p);
+try
+    fs = block(source,varargin{:},'loadind',p);
+catch
+    % Close the windows if initialization fails
+    blockdone(p);
+    err = lasterror;
+    error(err.message);
+end
+
+% Buffer length (30 ms)
+bufLen = floor(30e-3*fs);
 
 % Cutoff/center frequency
 feq = [0.0060, 0.0156, 0.0313, 0.0625, 0.1250, 0.2600]*fs;

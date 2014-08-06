@@ -20,6 +20,7 @@
 %    CHIRPZT        -  Chirped Z-transform.
 %    PLOTFFT        -  Plot FFT coefficients.
 %    PLOTFFTREAL    -  Plot |fftreal| coefficients.
+%	 ENSPECDEN		-  Plot energy spectral density
 %
 %  Simple operations on periodic functions
 %    INVOLUTE       -  Involution.
@@ -28,6 +29,7 @@
 %    PCONV          -  Periodic convolution.
 %    CONVOLVE       -  Fast, non-periodic convolution.
 %    PXCORR         -  Periodic cross correlation.
+%    PAUCORR        -  Periodic autocorrelation.
 %    ISEVENFUNCTION -  Test if function is even.
 %    MIDDLEPAD      -  Cut or extend even function.
 %
@@ -55,6 +57,7 @@
 %    PFILT          -  Apply filter with periodic boundary conditions.
 %    MAGRESP        -  Magnitude response plot.
 %    TRANSFERFUNCTION - Computer the transfer function of a filter.
+%    PGRPDELAY      -  Periodic Group Delay
 %
 %  Hermite functions and fractional Fourier transforms
 %    PHERM          -  Periodic Hermite functions.

@@ -1,3 +1,12 @@
+Version 1.4.6
+
+* Added dual-tree complex wavelet transform, general dual-tree wavelet 
+  filterbanks and $M$-band transforms.
+
+* Blockproc. framework now supports any sampling rate form interval 4-96kHz
+  trough on-the-fly resampling in the background. 
+
+
 Version 1.4.5
 
 * Added franabp - solving a basis pursuit problem 

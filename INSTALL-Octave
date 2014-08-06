@@ -10,7 +10,7 @@ way to install everything is by typing
 
 pkg install -forge ltfat
 
-on the octave prompt, which downloads ltfat directly from the 
+on the Octave prompt, which downloads ltfat directly from the 
 Octave-forge and compiles all. This however was tested only on Linux.
 Since you are reading this you have probably downloaded ltfat from
 elsewhere and you want to compile sources by yourself. 

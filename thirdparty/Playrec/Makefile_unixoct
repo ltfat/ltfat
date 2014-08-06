@@ -14,7 +14,7 @@ include ../../src/ostools.mk
 ADDITIONALFLAGS = -L. $(PORTAUDIO) -I. -I../../src/thirdparty
 
 all:
-	$(MKOCTFILE) -Wall -mex mex_dll_core.c pa_dll_playrec.c \
+	$(MKOCTFILE) -Wall -mex mex_dll_core.c pa_dll_playrec.c ltfatresample.c \
 	             $(ADDITIONALFLAGS)	-o playrec.$(EXT)
 
 clean:

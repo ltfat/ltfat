@@ -2,7 +2,7 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_col2diag // change to filename
-#define OCTFILEHELP "Computes spreading permutation.\n\ 
+#define OCTFILEHELP "Computes spreading permutation.\n\
                      Usage: cout=comp_col2diag(cin);\n Yeah."
 
 #include "ltfat_oct_template_helper.h"

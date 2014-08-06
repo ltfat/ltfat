@@ -137,7 +137,7 @@ definput.keyvals.tol=1e-2;
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
-definput.flags.algorithm={'fista','ista'};
+definput.flags.algorithm={'fista','ista','amp'};
 definput.flags.startphase={'zero','rand','int'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
@@ -199,7 +199,28 @@ elseif flags.do_fista
            fprintf('Iteration %d: relative error = %f\n',iter,relres);
          end;
        end;
-   end   
+   end
+else flags.do_amp
+    f = postpad(f,L);
+    z = f;
+    tc = zeros(numel(c0),1);
+    n = norm(z)^2/L;
+    % Main loop
+    while ((iter < kv.maxit)&&(relres >= kv.tol))
+       tc = thresh(tc + F.frana(z),lambda*sqrt(n),'soft');
+       b = numel(tc(tc~=0))/L;
+       z = f - F.frsyn(tc) + z*b;
+       n = norm(z)^2/L;       
+
+       relres = norm(tc(:)-tc0(:))/norm(tc0(:));
+       tc0 = tc;
+       iter = iter + 1;
+       if flags.do_print
+         if mod(iter,kv.printstep)==0        
+           fprintf('Iteration %d: relative error = %f\n',iter,relres);
+         end;
+       end;
+   end
    
 end
 

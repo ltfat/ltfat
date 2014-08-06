@@ -177,10 +177,13 @@ if ~(ischar(wdef) || iscell(wdef))
 end
 
 % Get the dual-tree filters
-[w, info] = fwtinit(wdef,'wfiltdt_');
+[w, dtinfo] = fwtinit(wdef,'wfiltdt_');
+
+info.istight = dtinfo.istight;
+info.dw = w;
 
 % Determine the first-stage wavelet filters
-if ~isfield(info,'defaultfirst') && isempty(kv2.first)
+if ~isfield(dtinfo,'defaultfirst') && isempty(kv2.first)
     error('%s: No first stage wavelet filters specified.',upper(mfilename));
 end
 
@@ -196,8 +199,8 @@ if ~isempty(kv2.first)
    [kv2.first, firstinfo] = fwtinit(kv2.first);
    isfirsttight = firstinfo.istight;
 else
-   kv2.first = info.defaultfirst;
-   isfirsttight = info.defaultfirstinfo.istight;
+   kv2.first = dtinfo.defaultfirst;
+   isfirsttight = dtinfo.defaultfirstinfo.istight;
 end
 
 
@@ -205,13 +208,13 @@ end
 isleaftight = [];
 if ~(flags2.do_dwt || flags2.do_root)
     % Determine leaf nodes (only valid for wavelet packets)
-    if ~isfield(info,'defaultleaf') && isempty(kv2.leaf) 
+    if ~isfield(dtinfo,'defaultleaf') && isempty(kv2.leaf) 
         error('%s: No leaf wavelet filters specified.',...
               upper(mfilename));
     else
        if isempty(kv2.leaf)
-          kv2.leaf = info.defaultleaf; 
-          isleaftight = info.defaultleafinfo.istight;
+          kv2.leaf = dtinfo.defaultleaf; 
+          isleaftight = dtinfo.defaultleafinfo.istight;
        else
           if do_dual
              kv2.leaf = {'dual',kv2.leaf};

@@ -27,4 +27,6 @@ cd ..
 cd src/
 mv Makefile_octpkg.in Makefile.in
 ./bootstrap
+# Reported here http://savannah.gnu.org/bugs/?42278
+rm -Rf autom4te.cache/
 cd ..

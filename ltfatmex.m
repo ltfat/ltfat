@@ -269,7 +269,7 @@ if flags.do_compile
        
        foundPAmatlab = [];
        if ~isoctave
-          % Check if portaudio library is present in the Matlab instalation
+          % Check if portaudio library is present in the Matlab installation
           foundPAmatlab = dir([binArchPath,filesep,'*portaudio*',sharedExt,'*']);
        end
        
@@ -313,7 +313,7 @@ if flags.do_compile
        else
           portaudioLib = ['-l:',foundPAmatlab]; 
        end
-       fprintf('    ...using %s from Matlab instalation.\n',foundPAmatlab);          
+       fprintf('    ...using %s from Matlab installation.\n',foundPAmatlab);
     elseif doPAuser
         portaudioLib = ['-l:',foundPAuser]; 
         fprintf('   ...using %s from ltfat%s%s.\n',...
@@ -419,7 +419,7 @@ found_names = {};
 
              found_files{ii} = L(1).name;
 
-             fprintf('   ...using %s from Matlab instalation.\n',...
+             fprintf('   ...using %s from Matlab installation.\n',...
                      found_files{ii});
           end
           

@@ -3,19 +3,19 @@ function [h,g,a,info] = wfiltdt_dden(N)
 %
 %   Usage: [h,g,a] = wfiltdt_dden(N);
 %
-%   `[h,g,a]=wfiltdt_dden(N)` with *N\in {1,2}*
+%   `[h,g,a]=wfiltdt_dden(N)` with $N \in {1,2}$
 %
 %   Examples:
 %   ---------
 %   :::
 %     figure(1);
-%     wfiltinfo('dden1');
+%     wfiltdtinfo('dden1');
 % 
 %   References: se04
 %
 
 info.istight = 1;
-a = [2;2;2;2;2;2];
+a = [2;2;2];
 
 switch(N)
  case 1

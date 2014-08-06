@@ -26,12 +26,20 @@
 %      WFBTCLENGTH       - Lengths of Wavelet filterbank coefficent subbands
 %      WPFBTCLENGTH      - Lengths of Wavelet Packet transform coefficent subbands
 %
+%   Dual-tree complex wavelet transform
+%      DTWFB             - Dual-Tree Wavelet FilterBank
+%      IDTWFB            - Inverse Dual-Tree Wavelet FilterBank
+%      DTWFBREAL         - Dual-Tree Wavelet FilterBank for real signals
+%      IDTWFBREAL        - Inverse Dual-Tree Wavelet FilterBank for real signals
+%
 %   Wavelet Filterbank trees manipulation
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
+%      DTWFBINIT         - Dual-Tree wavelet filterbank structure initialization
 %      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
 %      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
 %      WFBT2FILTERBANK   - WFBT or FWT non-iterated filterbank using the multirate identity
 %      WPFBT2FILTERBANK  - WPFBT non-iterated filterbank using the multirate identity
+%      DTWFB2FILTERBANK  - DTWFB or DTWFBREAL non-iterated filterbank
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %
 %   Frame properties of wavelet filterbanks:
@@ -43,13 +51,14 @@
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients
 %      WFILTINFO         - Plot wavelet filters impulse and frequency responses and approximation of scaling and wavelet functions
+%      WFILTDTINFO       - Plot the same as WFILTINFO but for dual-tree wavelet transform
 %
 %   Auxilary
 %      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
 %      WAVCELL2PACK      - Changes wavelet coefficient storing format
 %      WAVPACK2CELL      - Changes wavelet coefficient storing format back
 %
-%   Filters defined in the time-domain
+%   Wavelet Filters defined in the time-domain
 %      WFILT_ALGMBAND    - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
 %      WFILT_CMBAND      - M-Band cosine modulated wavelet filters
 %      WFILT_DB          - DauBechies orthogonal filters (ortonormal base)
@@ -63,9 +72,17 @@
 %      WFILT_SYMDS           - SYMmetric wavelet Dyadic Siblings (frames)
 %      WFILT_SPLINE          - Biorthogonal spline wavelet filters
 %      WFILT_SYM             - Least asymmetric Daubechies wavelet filters
-%      
+%      WFILT_SYMORTH         - Symmetric nearly-orthogonal and orthogonal nearly-symmetric wav. filters
+%      WFILT_SYMTIGHT        - Symmetric nearly shift-invariant tight frame wavelets
+%
 %   Wavelet filters defined in the frequency-domain
 %      WFREQ_LEMARIE         - Battle and Lemarie filters sampled freq. resp.
+%
+%   Dual-Tree Filters
+%      WFILTDT_QSHIFT        - Kingsbury's quarter-shift filters
+%      WFILTDT_OPTSYM        - Optimizatized Symmetric Self-Hilbertian Filters
+%      WFILTDT_ODDEVEN       - Kingsbury's symmetric odd and even biorthogonal filters
+%      WFILTDT_DDEN          - Double-density dual-tree filters
 %
 %  For help, bug reports, suggestions etc. please send an email to
 %  ltfat-help@lists.sourceforge.net

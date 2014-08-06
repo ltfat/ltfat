@@ -1,11 +1,12 @@
 function f=idtwfbreal(c,par,varargin)
 %IDTWFBREAL Inverse Dual-tree Filterbank for real-valued signals
-%   Usage:  f=dtwfbreal(c,info);
-%           f=dtwfbreal(c,dualwt,Ls);
+%   Usage:  f=idtwfbreal(c,info);
+%           f=idtwfbreal(c,dualwt,Ls);
 %
 %   Input parameters:
 %         c           : Input coefficients.
-%         info/dualwt : Transform params. struct/Dual-tree Wavelet Filterbank definition
+%         info        : Transform params. struct
+%         dualwt      : Dual-tree Wavelet Filterbank definition
 %         Ls          : Length of the reconstructed signal.
 %
 %   Output parameters:
@@ -29,13 +30,13 @@ function f=idtwfbreal(c,par,varargin)
 %
 %   A simple example showing perfect reconstruction using |idtwfbreal|:::
 %
-%     f = gspi;
-%     J = 7;
-%     wtdef = {'qshift3',J};
-%     c = dtwfbreal(f,wtdef);
-%     fhat = idtwfbreal(c,wtdef,length(f));
-%     % The following should give (almost) zero
-%     norm(f-fhat)
+%      f = gspi;
+%      J = 7;
+%      wtdef = {'qshift3',J};
+%      c = dtwfbreal(f,wtdef);
+%      fhat = idtwfbreal(c,wtdef,length(f));
+%      % The following should give (almost) zero
+%      norm(f-fhat)
 %
 %   See also: dtwfbreal
 

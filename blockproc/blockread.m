@@ -30,8 +30,8 @@ if nargin==1
       error('%s: Buffer length was fixed to %i, but now requiring %i.',...
             upper(mfilename),Lbuf,L);
    end
-   if L<256 && ~is_offline
-      error('%s: Minimum buffer length is 256.',upper(mfilename));
+   if L<32 && ~is_offline
+      error('%s: Minimum buffer length is 32.',upper(mfilename));
    end
 else
    if Lbuf<0
@@ -61,8 +61,10 @@ end
        if block_interface('getPageNo')>0
           procTime = toc(t1);
           res = 2;
-
-          fs= playrec('getSampleRate');
+          % This returns the actual sampling rate value Portaudio was
+          % initialized with. We however want the Matlab side sampling rate.
+          % fs= playrec('getSampleRate');
+          fs= block_interface('getFs');
           load = floor(100*(procTime+readTime)/(L/fs));
 
           if do_updateBAR
@@ -131,6 +133,8 @@ if strcmp(source,'rec')
 elseif strcmp(source,'playrec')
    recChanList = block_interface('getRecChanList');
    if pageNo<=1
+      % "Fix" the buffer length to L passed to the first call to blockread 
+      block_interface('setBufLen',L); 
       blockplay(zeros(L,numel(recChanList),classid));
    end
    

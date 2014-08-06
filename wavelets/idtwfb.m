@@ -1,12 +1,13 @@
 function f=idtwfb(c,par,varargin)
 %IDTWFB Inverse Dual-tree Filterbank
-%   Usage:  f=dtwfb(c,info);
-%           f=dtwfb(c,dualwt,Ls);
+%   Usage:  f=idtwfb(c,info);
+%           f=idtwfb(c,dualwt,Ls);
 %
 %   Input parameters:
-%         c           : Input coefficients.
-%         info/dualwt : Transform params. struct/Dual-tree Wavelet Filterbank definition
-%         Ls          : Length of the reconstructed signal.
+%         c       : Input coefficients.
+%         info    : Transform params. struct
+%         dualwt  : Dual-tree Wavelet Filterbank definition
+%         Ls      : Length of the reconstructed signal.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
@@ -19,24 +20,25 @@ function f=idtwfb(c,par,varargin)
 %   for supported formats. The *Ls* parameter is mandatory due to the
 %   ambiguity of reconstruction lengths introduced by the subsampling
 %   operation. 
-%   Note that the same flag as in the |dtwfbreal| function have to be used, 
+%   Note that the same flag as in the |dtwfb| function have to be used, 
 %   otherwise perfect reconstruction cannot be obtained. Please see help 
-%   for |dtwfbreal| for description of the flags.
+%   for |dtwfb| for description of the flags.
 %
 %   Examples:
 %   ---------
 %
-%   A simple example showing perfect reconstruction using |idtwfbreal|:::
+%   A simple example showing perfect reconstruction using |idtwfb|:::
 %
-%     f = gspi;
-%     J = 7;
-%     wtdef = {'qshift3',J};
-%     c = dtwfbreal(f,wtdef);
-%     fhat = idtwfbreal(c,wtdef,length(f));
-%     % The following should give (almost) zero
-%     norm(f-fhat)
+%      f = gspi;
+%      J = 7;
+%      wtdef = {'qshift3',J};
+%      c = dtwfb(f,wtdef);
+%      fhat = idtwfb(c,wtdef,length(f));
+%      % The following should give (almost) zero
+%      norm(f-fhat)
 %
-%   See also: dtwfbreal
+%
+%   See also: dtwfb
 
 
 complainif_notenoughargs(nargin,2,'IDTWFB');

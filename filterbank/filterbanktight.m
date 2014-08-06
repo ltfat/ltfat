@@ -1,16 +1,23 @@
-function gtout=filterbanktight(g,a,L);
-%FILTERBANKTIGHT  Tight filters
-%   Usage:  gt=filterbanktight(g,a);
+function gtout=filterbanktight(g,a,L)
+%FILTERBANKTIGHT  Tight filterbank
+%   Usage:  gt=filterbanktight(g,a,L);
+%           gt=filterbanktight(g,a);
 %
-%   `filterabanktight(g,a)` computes the canonical tight filters of *g* for a
-%   channel subsampling rate of *a* (hop-size).
+%   `filterbanktight(g,a,L)` computes the canonical tight filters of *g* 
+%   for a channel subsampling rate of *a* (hop-size) and a system length *L*.
+%   *L* must be compatible with subsampling rate *a* as 
+%   `L==filterbanklength(L,a)`.
+%
+%   `filterbanktight(g,a,L)` does the same, but the filters must be FIR
+%   filters, as the transform length is unspecified. *L* will be set to 
+%   next suitable length equal or bigger than the longest impulse response.
 %
 %   The input and output format of the filters *g* are described in the
 %   help of |filterbank|.
 %
-%   `filterabanktight(g,a,L)` computes canonical tight filters for a system
-%   of length *L*. If *L* is not specified, the shortest possible transform
-%   length is choosen.
+%   REMARK: The resulting system is tight for length *L*. In some cases, 
+%   using tight system calculated for shorter *L* might work but check the
+%   reconstruction error. 
 %
 %   See also: filterbank, filterbankdual, ufilterbank, ifilterbank
 
@@ -20,17 +27,30 @@ if nargin<3
    L = [];
 end
 
-[g,info] = filterbankwin(g,a,L,'normal'); 
+if isempty(L)
+    if ~all(cellfun(@(gEl) isfield(gEl,'H'),g))
+        % All filters are FIR, therefore filterbankwin can be called without L
+        [~,info]=filterbankwin(g,a);
+        if ~info.isfir
+            % Just a sanity check
+            error('%s: Internal error. Filterbank should be FIR. ',...
+                  upper(mfilename));
+        end
+        % Use next suitable length
+        L = filterbanklength(info.longestfilter,a);
+    else
+        error(['%s: L must be specified when working with filters defined ',...
+           ' in frequency.'], upper(mfilename));
+   end
+end
 
+[g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
-if (~isempty(L)) && (L~=filterbanklength(L,a))
-    error(['%s: Specified length L is incompatible with the length of ' ...
-           'the time shifts.'],upper(mfilename));
+if L~=filterbanklength(L,a)
+     error(['%s: Specified length L is incompatible with the length of ' ...
+            'the time shifts.'],upper(mfilename));
 end;
-
-%[g,info]=filterbankwin(g,a,L,'normal');
-%M=info.M;
 
 % Prioritize painless over uniform algorithm
 if info.isuniform && info.ispainless
@@ -73,14 +93,13 @@ if info.isuniform
   
   gt=ifft(gt)*sqrt(a);  
 
-  if isreal(g)
-    gt=real(gt);
-  end;
-  
-  gtout=cell(1,M);
-  for m=1:M
-    gtout{m}=cast(gt(:,m),thisclass);
-  end;
+  % Matrix cols to cell elements + cast
+  gtout = cellfun(@(gtEl) cast(gtEl,thisclass), num2cell(gt,1),...
+                  'UniformOutput',0);
+              
+  % All filters in gdout will be treated as FIR of length L. Convert them
+  % to a struct with .h and .offset format.
+  gtout = filterbankwin(gtout,a); 
   
 else
     if info.ispainless
@@ -89,26 +108,6 @@ else
         end;
         
         gtout = comp_painlessfilterbank(g,info.a,L,'tight',0);
-%         Fsqrt=sqrt(comp_filterbankresponse(g,info.a,L,0));
-%         
-%         gtout=cell(1,M);
-%         for m=1:M
-%             thisgt=struct();
-%             
-%             if isfield(g{m},'H')
-%                H=circshift(comp_transferfunction(g{m},L)./Fsqrt,-g{m}.foff);
-%                thisgt.H=H(1:numel(g{m}.H));
-%                thisgt.foff=g{m}.foff;
-%                thisgt.realonly=0;
-%                thisgt.delay=0;
-%             elseif isfield(g{m},'h')
-%                H=comp_transferfunction(g{m},L)./Fsqrt; 
-%                thisgt.h = ifft(H);
-%                thisgt.offset = 0;
-%             end
-%             
-%             gtout{m}=thisgt;
-%         end;
         
     else
         error(['%s: The canonical dual frame of this system is not a ' ...
