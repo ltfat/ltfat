@@ -1,8 +1,17 @@
 function f = block_ifwt(c,w,J,Lb)
 %BLOCK_IFWT IFWT wrapper for blockstream processing
-%   Usage: f=block_ifwt(c,g,J,Lb);
+%   Usage: f=block_ifwt(c,w,J,Lb);
 %
-%   `f = block_ifwt(c,g,J,Lb)`
+%   `f = block_ifwt(c,w,J,Lb)` returns block of data reconstructed
+%   from coefficients *c* using the SegDWT algorithm (based on overlap-add
+%   block convolution) with wavelet filters *w* and *J* levels. The 
+%   reconstructed block contains overlap to the next block(s).
+%
+%   Function should be independent of block_interface.
+%
+%   See also: block, block_ifwt
+%
+%   References: ltfatnote026
 
 if nargin<4
    error('%s: Too few input parameters.',upper(mfilename));
@@ -49,4 +58,4 @@ end
 Ls = Lb + (a^(J)-1)/(a-1)*(m-a);
 
 %% ----- Run computation 
-f = comp_ifwt(cext,w.g,J,w.a,Ls,'valid');
+f = comp_ifwt(cext,w.g,w.a,J,Ls,'valid');

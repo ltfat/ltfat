@@ -53,6 +53,9 @@ elseif flags.do_segola
    end
     
    switch(F.type) 
+      case {'fwt'}
+         Fo = F; 
+         Fo.a = F.g.a(:);
       case {'dgt','dgtreal'}
          Fo = frameaccel(F,Lb+winLen-1+F.a);
       case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}

@@ -42,6 +42,8 @@ bufLen = floor(30e-3*fs);
 % Window length in ms
 winLenms = 20; %floor(fs*winLenms/1e3)
 [F,Fdual] = framepair('dgtreal',{'hann',floor(fs*winLenms/1e3)},'dual',40,M);
+% Or using fwt
+%[F,Fdual] = framepair('fwt','ana:symorth3','dual',7);
 [Fa,Fs] = blockframepairaccel(F,Fdual, bufLen,'segola');
 
 

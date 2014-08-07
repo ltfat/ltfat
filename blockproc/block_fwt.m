@@ -1,24 +1,26 @@
 function c = block_fwt( f, w, J)
 %BLOCK_FWT FWT func. wrapper for a block processing
-%   Usage: c = block_fwt( f, h, J);
+%   Usage: c = block_fwt( f, w, J);
 %
 %   Input parameters:
 %         f     : Input data.
-%         h     : Analysis Wavelet Filterbank. 
+%         w     : Analysis Wavelet Filterbank. 
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
 %         c      : Coefficient vector.
 %
-%   `c = block_fwt(f,h,J)` acceppts suitably extended block of data *f*
-%   and produces correct coefficients. *f* is expected to be a collumn vector
-%   or a matrix and the processing is done column-wise.
+%   `c = block_fwt(f,w,J)` accepts suitably extended block of data *f*
+%   and produces correct coefficients using the SegDWT algorithm (based on
+%   overlap-save block convolution) with wavelet filters defined by *w* 
+%   and *J* levels. *f* is expected to be a column vector or a matrix and 
+%   the processing is done column-wise.
 %
 %   Function should be independent of block_interface.
 %
-%   See also: block, blockread, blockplay
+%   See also: block, block_ifwt
 %
-%   References: 
+%   References: ltfatnote026
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
@@ -71,7 +73,7 @@ if Ls<rred+a^J
    error('%s: Insufficient input signal length for the %s flag. Minimum is %i.',upper(mfilename),'''valid''',rred+a^J);
 end
 
-c = comp_fwt(f,w.h,J,w.a,Lc,'valid');
+c = comp_fwt(f,w.h,w.a,J,'valid');
 
 % Do the cropping 
 runPtr = 0; 

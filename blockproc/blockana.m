@@ -69,7 +69,7 @@ complainif_notvalidframeobj(F,'BLOCKANA');
                 m = numel(w.h{1}.h);
                 a = w.a(1);
                 if Lb<a^J
-                   error('%s: Minimum block length is %i.',upper(mfilename),a^J);
+                   error('%s: Minimum block length is 2^%i=%i.',upper(mfilename),J,a^J);
                 end
                 rred = (a^J-1)/(a-1)*(m-a);
                 Sbolen = rred + mod(Sb,a^J);
