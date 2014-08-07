@@ -12,7 +12,7 @@ function ltfatplay(source,varargin)
 %   |blockdevices|.
 %
 %   `ltfatplay(data,'fs',fs,...)` works entirely similar, but `data` is
-%   expected to ve a vector of length $L$ or a $L \times W$ matrix with
+%   expected to be a vector of length $L$ or a $L\times W$ matrix with
 %   columns as individual channels and *fs* to be a sampling rate to be used.
 %   When no sampling rate is specified, 44.1 kHz is used.
 %

@@ -1,4 +1,6 @@
-Version X.X.X
+Version 1.99 7/8 2014
+    * This is a release candidate for 2.0
+
     * Fixed bug in filterbankdual and filterbankrealdual for the uniform case.
       Also the routines are now much faster.
 
