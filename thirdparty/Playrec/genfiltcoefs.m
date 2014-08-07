@@ -7,9 +7,14 @@ function genfiltcoefs(fp,As,varargin)
 %         fp      : Passband edge frequency
 %         As      : Stopband attenuation in dB [positive]
 %
-%  This function generates coefficients of a half-band IIR filter
-%  consisting of two branches of order 2 all-pass filters. The coefficients
-%  are written to filtcoefs.h to be used in resampling routines in playrec.
+%   This function generates coefficients of a half-band IIR filter
+%   consisting of two branches of order 2 all-pass filters. The coefficients
+%   are written to filtcoefs.h to be used in resampling routines in playrec.
+%
+%   Note this function uses code from 
+%
+%   EMF toolbox form Matlab version 2.1, Copyright (c) 2003 M. Lutovac and Lj. Milic
+%   see the halfbandiir function below.
 %   
 
 if nargin<1
