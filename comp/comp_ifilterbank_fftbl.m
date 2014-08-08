@@ -23,7 +23,7 @@ else
    L = afrac(1).*size(c{1},1);
 end
 
-F = zeros(L,W,assert_classname(c{1}));
+F = zeros(L,W,assert_classname(c{1},G{1}));
 
 fsuppRangeSmall = cellfun(@(fEl,GEl) mod([fEl:fEl+numel(GEl)-1].',L)+1,...
                           num2cell(foff),G,'UniformOutput',0);

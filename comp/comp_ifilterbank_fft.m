@@ -6,7 +6,7 @@ function F = comp_ifilterbank_fft(c,G,a)
 W = size(c{1},2);
 M = numel(G);
 L = numel(G{1});
-F = zeros(L,W);
+F = zeros(L,W,assert_classname(c{1},G{1}));
 
 for m=1:M
    for w=1:W
