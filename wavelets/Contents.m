@@ -74,6 +74,10 @@
 %      WFILT_SYM             - Least asymmetric Daubechies wavelet filters
 %      WFILT_SYMORTH         - Symmetric nearly-orthogonal and orthogonal nearly-symmetric wav. filters
 %      WFILT_SYMTIGHT        - Symmetric nearly shift-invariant tight frame wavelets
+%      WFILT_QSHIFTA         - First tree filters from WFILTDT_QSHIFT 
+%      WFILT_QSHIFTB         - Second tree filters from WFILTDT_QSHIFT 
+%      WFILT_ODDEVENA        - First tree filters from WFILTDT_ODDEVEN 
+%      WFILT_ODDEVENB        - Second tree filters from WFILTDT_ODDEVEN 
 %
 %   Wavelet filters defined in the frequency-domain
 %      WFREQ_LEMARIE         - Battle and Lemarie filters sampled freq. resp.
