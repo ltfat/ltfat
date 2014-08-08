@@ -1,5 +1,12 @@
 function test_failed = test_dtwfb()
 test_failed = 0;
+disp('========= TEST DTWFB ============');
+global LTFAT_TEST_TYPE;
+tolerance = 2e-8;
+if strcmpi(LTFAT_TEST_TYPE,'single')
+   tolerance = 1e-5;
+end
+
 
 Larray = [603];
 Warray = [1,3];
@@ -16,6 +23,10 @@ dualwt{8} = {{'dual',{'syn:oddeven1',2,'doubleband'}},{'syn:oddeven1',2,'doubleb
 dualwt{9} = {dtwfbinit({'syn:oddeven1',3,'full'},'nat'),dtwfbinit({'ana:oddeven1',3,'full'},'nat')};
 dualwt{10} = {'dden2',3};
 dualwt{11} = {'optsym3',3};
+
+tolerance = ones(numel(dualwt),1)*tolerance;
+% decrease the tolerance for oddeven filters
+tolerance([4,6,7,8,9]) = 1e-5;
 
 % Perfect reconstruction
 for ii = 1:numel(dualwt)
@@ -48,12 +59,12 @@ for ii = 1:numel(dualwt)
                     fhat2 = idtwfbreal(c,info);
                     
                     res = norm(f-fhat1);
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                    [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
                     s=sprintf(['DUAL-TREE REC         %i L:%i W:%i %s %s %0.5g %s'],ii,L,W,cmplx{1},order{1},  res,fail);
                     disp(s)
                     
                     res = norm(f-fhat2);
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                    [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
                     s=sprintf(['DUAL-TREE REC INFO    %i L:%i W:%i %s %s %0.5g %s'],ii,L,W,cmplx{1},order{1}, res,fail);
                     disp(s)
                 end
@@ -62,12 +73,12 @@ for ii = 1:numel(dualwt)
                     fhat2 = idtwfb(c,info);
                     
                     res = norm(f-fhat1);
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                    [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
                     s=sprintf(['DUAL-TREE REC         %i L:%i W:%i %s %s %0.5g %s'],ii,L,W,cmplx{1},order{1}, res,fail);
                     disp(s)
                     
                     res = norm(f-fhat2);
-                    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                    [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
                     s=sprintf(['DUAL-TREE REC INFO    %i L:%i W:%i %s %s %0.5g %s'],ii,L,W,cmplx{1},order{1}, res,fail);
                     disp(s)   
                     

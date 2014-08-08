@@ -1,6 +1,12 @@
 function test_failed = test_dtwfb2filterbank
 % This test only 
 test_failed = 0;
+disp('========= TEST DTWFB ============');
+global LTFAT_TEST_TYPE;
+tolerance = 3e-8;
+if strcmpi(LTFAT_TEST_TYPE,'single')
+   tolerance = 1e-5;
+end
 
 L = 1000;
 Larray = [1100,1701];
@@ -23,6 +29,10 @@ tmp = wfbtremove(3,6,tmp,'force');
 dualwt{10} = {tmp,tmp};
 dualwt{11} = {'dden2',3};
 dualwt{12} = {'optsym3',3};
+
+tolerance = ones(numel(dualwt),1)*tolerance;
+% decrease the tolerance for oddeven filters
+tolerance([4,6,7,8,9]) = 4e-5;
 
 
 for ii = 1:numel(dualwt)
@@ -67,7 +77,7 @@ for ii = 1:numel(dualwt)
                  break;
              end
             end
-             [test_failed,fail]=ltfatdiditfail(res,test_failed);
+             [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
              s=sprintf(['DUAL-TREE IS ANALYTIC %i %s %0.5g %s'],ii, order{1},res,fail);
              disp(s)
         end
@@ -79,7 +89,7 @@ for ii = 1:numel(dualwt)
         G2 = (Greal+1i*Ghilb);
 
         res = norm(G(:)-G2(:));
-        [test_failed,fail]=ltfatdiditfail(res,test_failed);
+        [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
         s=sprintf(['DUAL-TREE %i %s %0.5g %s'],ii, order{1},res,fail);
         disp(s)
 
@@ -102,14 +112,14 @@ for ii = 1:numel(dualwt)
            
            res = cell2mat(c)-cell2mat(cfb);
            res = norm(res(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE COEFF         %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
            
            
            fhat = 2*real(ifilterbank(c,gd,ad,LL));
            res= norm(f(:)-fhat(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE REC           %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
            
@@ -120,20 +130,20 @@ for ii = 1:numel(dualwt)
            
            res = cell2mat(cc)-cell2mat(cfbc);
            res = norm(res(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE COEFF COMPLEX %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
            
            fhat = ifilterbank(cc,gcd,acd,LL);
            res= norm(f(:)-fhat(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE REC  COMPLEX  %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
            
            
            res = cell2mat(c)-cell2mat(cc(1:end/2));
            res = norm(res(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE COEFF EQ      %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
         else
@@ -142,13 +152,13 @@ for ii = 1:numel(dualwt)
            
            res = cell2mat(c)-cell2mat(cfb);
            res = norm(res(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE COEFF         %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
            
            fhat = ifilterbank(c,gcd,acd,LL);
            res= norm(f(:)-fhat(:));
-           [test_failed,fail]=ltfatdiditfail(res,test_failed);
+           [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance(ii));
            s=sprintf(['DUAL-TREE REC           %i L:%i W:%i %s %s %0.5g %s'],ii,LL,W,cmplx{1}, order{1},res,fail);
            disp(s)
            
