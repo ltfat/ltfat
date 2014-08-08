@@ -70,6 +70,9 @@ test_filters = {
                {'coif',2}
                {'coif',3}
                {'coif',4}
+               {'qshifta',4}
+               {'qshiftb',4}
+               {'oddevenb',1}
                %{'hden',2}
                %{'hden',1}
                %{'algmband',2}
