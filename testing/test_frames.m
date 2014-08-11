@@ -40,9 +40,20 @@ Fr{17} = frame('dstii');
 Fr{18} = frame('dstiii');
 Fr{19} = frame('dstiv');
 
-gfilt={tester_rand(30,1),tester_rand(20,1),tester_rand(15,1),tester_rand(10,1)};
-Fr{20} = frame('ufilterbank',    gfilt,3,4);
-Fr{21} = frame('ufilterbankreal',gfilt,3,4);
+% Repeat generation of the filters until they have a nice condition number 
+condnum = 1e10;
+while condnum > 1e3
+   gfilt={cast(tester_rand(30,1),'double'),...
+          tester_rand(20,1),...
+          tester_rand(15,1),...
+          tester_rand(10,1)};
+   
+   % These two frames might be badly conditioned, 
+   Fr{20} = frame('ufilterbank',    gfilt,3,4);
+   Fr{21} = frame('ufilterbankreal',gfilt,3,4);
+   
+   condnum = framebounds(Fr{20},128);
+end 
 
 Fr{22} = frame('dgt','gauss',4,6,'lt',[1 2]);
 Fr{23} = frame('identity');
@@ -109,16 +120,27 @@ Fr{69} = frame('cqtfb',44100,200,20000,20,L,'complex','fractional');
 Fr{70} = frametight(Fr{66});
 Fr{71} = frametight(Fr{67});
 
+for cmpx = {'real','complex'}
 
-f=tester_rand(L,1);
+    if strcmp(cmpx{1},'real')
+        f=tester_rand(L,1);
+    else
+        f=tester_crand(L,1);
+    end
 
 for ii=1:numel(Fr)
   
   F=Fr{ii};
   
+  % To avoid holes in Fr
   if isempty(F)
     continue;
   end;
+  
+  % Do not test real-only frames with complex arrays
+  if strcmp(cmpx{1},'complex') && F.realinput
+      continue;
+  end
   
   Fd=framedual(F);
   
@@ -131,7 +153,7 @@ for ii=1:numel(Fr)
   s=sprintf(['FRAMES CLENGTH        frameno:%3i %s %0.5g %s'],ii,F.type,lendiff,fail);    
   disp(s);
   
-  [test_failed,fail]=ltfatdiditfail(res,test_failed);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
   s=sprintf(['FRAMES DUAL REC       frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s); 
   
@@ -140,8 +162,8 @@ for ii=1:numel(Fr)
   cdd = frana(Fdd,f);
   res_dd = norm(cdd-c);
   
-  [test_failed,fail]=ltfatdiditfail(res_dd,test_failed);
-  s=sprintf(['FRAMES DUAL DUAL      frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
+  [test_failed,fail]=ltfatdiditfail(res_dd,test_failed,tolerance);
+  s=sprintf(['FRAMES DUAL DUAL      frameno:%3i %s %0.5g %s'],ii,F.type,res_dd,fail);    
   disp(s); 
   
   
@@ -152,7 +174,7 @@ for ii=1:numel(Fr)
   r=frsyn(F2d,c);
   res=norm(r(1:L)-f);
   
-  [test_failed,fail]=ltfatdiditfail(res,test_failed);
+  [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
   s=sprintf(['FRAMES ACCEL DUAL REC frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
   disp(s);
   
@@ -161,8 +183,8 @@ for ii=1:numel(Fr)
   c2dd = frana(Fdd,f);
   res2_dd = norm(c2dd-c);
   
-  [test_failed,fail]=ltfatdiditfail(res2_dd,test_failed);
-  s=sprintf(['FRAMES ACCEL DUAL DUAL      frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
+  [test_failed,fail]=ltfatdiditfail(res2_dd,test_failed,tolerance);
+  s=sprintf(['FRAMES ACCEL DUAL DUAL      frameno:%3i %s %0.5g %s'],ii,F.type,res2_dd,fail);    
   disp(s); 
   
 
@@ -190,12 +212,15 @@ for ii=1:numel(Fr)
     G=frsynmatrix(F,LL);
     res=norm(c-G'*postpad(f,LL));
     
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
     s=sprintf(['FRAMES ANA MATRIX     frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
     disp(s);
     
-    res=norm(frsyn(F,c)-G*c);
-    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+    % We create a different set of coefficients here.
+    % The old code used c and failed the test for some filterbank frames
+    ctmp = tester_crand(numel(c),1);
+    res=norm(frsyn(F,ctmp)-G*ctmp);
+    [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
     s=sprintf(['FRAMES SYN MATRIX     frameno:%3i %s %0.5g %s'],ii,F.type,res,fail);    
     disp(s);
     
@@ -217,3 +242,4 @@ for ii=1:numel(Fr)
   disp(s);
   
 end;
+end
