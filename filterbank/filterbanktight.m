@@ -71,7 +71,7 @@ if info.isuniform
   G=zeros(L,M,thisclass);
   G(:,1)=G1;
   for ii=2:M
-    G(:,ii)=comp_transferfunction(g{ii},L);
+    G(:,ii)=cast(comp_transferfunction(g{ii},L),thisclass);
   end;
   
   N=L/a;

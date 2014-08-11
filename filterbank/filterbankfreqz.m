@@ -29,7 +29,7 @@ M=info.M;
 
 gf = zeros(L,M);
 for m=1:M
-    gf(:,m) = comp_transferfunction(g{m},L);
+    gf(:,m) = cast(comp_transferfunction(g{m},L),class(gf));
 end
 
 % Search for the 'plot' flag
