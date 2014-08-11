@@ -95,10 +95,10 @@ bool checkIsSingle(const octave_value& ov)
       Cell ov_cell = ov.cell_value();
       for(int jj=0;jj<ov_cell.numel();jj++)
       {
-         if(!checkIsSingle(ov_cell.elem(jj)))
-            return false;
+         if(checkIsSingle(ov_cell.elem(jj)))
+            return true;
       }
-      return true;
+      return false;
    }
    return ov.is_single_type();
 }
@@ -110,20 +110,16 @@ bool checkIsComplex(const octave_value& ov)
       Cell ov_cell = ov.cell_value();
       for(int jj=0;jj<ov_cell.numel();jj++)
       {
-         if(!checkIsComplex(ov_cell.elem(jj)))
-            return false;
+         if(checkIsComplex(ov_cell.elem(jj)))
+            return true;
       }
-      return true;
+      return false;
    }
    return ov.is_complex_type();
 }
 
 octave_value recastToSingle(const octave_value& ov)
 {
-   if(ov.is_single_type())
-   {
-      return ov;
-   }
 
    if(ov.is_cell())
    {
@@ -135,6 +131,12 @@ octave_value recastToSingle(const octave_value& ov)
       }
       return ovtmp_cell;
    }
+
+   if(ov.is_single_type())
+   {
+      return ov;
+   }
+
    /*
    TODO: ov is struct
    */
@@ -156,11 +158,6 @@ octave_value recastToSingle(const octave_value& ov)
 
 octave_value recastToComplex(const octave_value& ov)
 {
-   if(ov.is_complex_type())
-   {
-      return ov;
-   }
-
    if(ov.is_cell())
    {
       Cell ov_cell = ov.cell_value();
@@ -171,6 +168,12 @@ octave_value recastToComplex(const octave_value& ov)
       }
       return ovtmp_cell;
    }
+
+   if(ov.is_complex_type())
+   {
+      return ov;
+   }
+
    /*
    TODO: ov is struct
    */
