@@ -2,7 +2,7 @@ function h=pxcorr(f,g,varargin)
 %PXCORR  Periodic cross correlation
 %   Usage:  h=pxcorr(f,g)
 %
-%   `pxcorr(f,g)` computes the periodix cross correlation of the input
+%   `pxcorr(f,g)` computes the periodic cross correlation of the input
 %   signals *f* and *g*. The cross correlation is defined by
 %
 %   ..          L-1

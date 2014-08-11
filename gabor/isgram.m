@@ -1,7 +1,7 @@
 function [f,relres,iter]=isgram(s,g,a,varargin)
 %ISGRAM  Spectrogram inversion
-%   Usage:  f=isgram(s,g,a);
-%           f=isgram(s,g,a,Ls);
+%   Usage:  f=isgram(c,g,a);
+%           f=isgram(c,g,a,Ls);
 %           [f,relres,iter]=isgram(...);
 %
 %   Input parameters:

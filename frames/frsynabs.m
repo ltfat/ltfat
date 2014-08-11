@@ -50,6 +50,12 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %
 %     'rand'       Choose a random starting phase.
 %
+%     'griflim'    Use the Griffin-Lim iterative method. This is the
+%                  default.
+%
+%     'bfgs'       Use the limited-memory Broyden Fletcher Goldfarb
+%                  Shanno (BFGS) method.
+%
 %     'tol',t      Stop if relative residual error is less than the
 %                  specified tolerance.  
 %
