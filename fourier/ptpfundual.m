@@ -1,4 +1,4 @@
-function gamma=ptpfundual(w,a,M,L,increase)
+function gamma=ptpfundual(g,w,a,M,L,increase)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%       computes totally positive function g and dual                 %%%
 %%%      window gamma for the Gabor frame G(g,alpha,beta)               %%%
@@ -191,3 +191,6 @@ v = [v(tt0:end),v(1:tt0-1)];
 
 gamma = sum(reshape(v,nr,L),1);
 gamma = gamma(:);
+
+[scal,err]=gabdualnorm(g,gamma,a,M,L);
+gamma = gamma/scal;

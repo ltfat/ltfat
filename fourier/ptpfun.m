@@ -21,7 +21,7 @@ function g = ptpfun(L,w,varargin)
 %   .. math:: \hat{g}(\xi)=\prod_{i=1}^{m}\left(1+2\pi i j\xi /w(i)\right)^{-1},
 %
 %   where $m$=`numel(w)`$\geq 2$. The samples are obtained from the Zak
-%   transform of the function.
+%   transform of the function. 
 %   
 %   *w* controls the function decay in the time domain. More specifically
 %   the function decays as exp(max(w)x) for x->\infty and exp(min(w)x) for
@@ -38,6 +38,8 @@ function g = ptpfun(L,w,varargin)
 %   AUTHORS: Joachim Stoeckler, Tobias Kloos  2012, 2014
 
 complainif_notenoughargs(nargin,2,upper(mfilename));
+complainif_notposint(L,'L',upper(mfilename));
+
 
 if numel(w)<2
     error(['%s: The tp fun. finite type must be >=2 (number of ',...
