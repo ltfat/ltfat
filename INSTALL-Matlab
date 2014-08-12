@@ -37,9 +37,8 @@ The depending libraries are:  FFTW3, BLAS, LAPACK
 
 --------- Compiling on MacOS -------------------------------------------
 
-On MacOS, you must have the gcc compiler, although clang should work as well.
-Then just type "ltfatmex" and everything should work, because BLAS, 
-LAPACK and FFTW libraries are taken directly from the Matlab installation.
+The GCC compiler is needed to compile the LTFAT on Mac OS X. When the Xcode Command Line Tools are installed the compilation of the LTFAT should work without any problem. Alternatively, Clang could be used to compile the LTFAT.
+The BLAS, LAPACK and FFTW libraries are taken directly from the Matlab installation and doesn’t have to be installed separately.
 
 --------- Compiling on Microsoft Windows -------------------------------
 
@@ -71,7 +70,7 @@ not need to install anything. Just typing "ltfatmex" should do the trick.
 Everything should be already compiled if you have downloaded the binary release.
 
 In order to get the block processing framework working from the source, one
-has to compile the MEX interface playrec and the JAVA GUI classes. This can be
+has to compile the MEX-interface playrec and the JAVA GUI classes. This can be
 done by typing
 
 "ltfatmex playrec" and "ltfatmex java".
@@ -86,7 +85,9 @@ binary LTFAT package (from ltfat/blockproc/java).
 
 --------- Compiling on Mac ------------
 
-TBD.
+It is recommended to compile PortAudio v19 to use with the block processing framework. PortAudio v19 only compiles on OS X version 10.4 or later.
+Several versions of the Java Development Kit, which is needed to compile the JAVA classes, could be downloaded through the Apple Developer Downloads.
+
 
 --------- Compiling on Microsoft Windows --------------------------
 
@@ -102,7 +103,7 @@ worse audio performance in this case.
 
 --------- Compiling on Linux ------------------------------------
 
-- On Redhat / Fedora TBD
+- On Redhat / Fedora, TBD
 
 - On Debian / Ubuntu, install the packages 'portaudio19-dev', 'openjdk-7-jdk' 
 
