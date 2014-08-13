@@ -33,6 +33,12 @@ complainif_notvalidframeobj(F,'BLOCKANA');
     
     % Block length
     Lb = size(f,1);
+    
+    if ~isfield(F,'L')
+         error(['%s: The frame object was not accelerated. See ',...
+                'BLOCKFRAMEACCEL.'],upper(mfilename));
+    end
+    
     % Next block index start (from a global point of view, starting with zero)
     nextSb = block_interface('getPos');
     % Block index start (from a global point of view, starting with zero)
@@ -42,6 +48,11 @@ complainif_notvalidframeobj(F,'BLOCKANA');
     do_segola = strcmp(F.blockalg,'segola');
     
     if strcmp(F.blockalg,'naive')
+       if F.L < Lb
+          error(['%s: The frame object was accelerated with incompatible ',...
+                 'length. The block length is %i but the accelerated ',...
+                 'length is %i.'],upper(mfilename),Lb,F.L);
+       end
        % Most general. Should work for anything.
        % Produces awful block artifacts when coefficients are altered.
        f = [f; zeros(F.L-size(f,1),size(f,2))];
@@ -52,6 +63,12 @@ complainif_notvalidframeobj(F,'BLOCKANA');
        %% STEP 1) Determine overlap lengths 
        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        if do_sliced
+          if F.L < 2*Lb
+            error(['%s: The frame object was accelerated with incompatible ',...
+                 'length. The effective block length is %i but the accelerated ',...
+                 'length is %i.'],upper(mfilename),2*Lb,F.L);
+          end 
+           
           % Sliced real-time block processing
           % Equal block length assumtion
           Sbolen = Lb;

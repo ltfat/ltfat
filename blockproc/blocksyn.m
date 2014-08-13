@@ -34,6 +34,11 @@ complainif_notvalidframeobj(F,'BLOCKSYN');
         F.blockalg = 'naive';
     end
     
+    if ~isfield(F,'L')
+         error(['%s: The frame object was not accelerated. See ',...
+                'BLOCKFRAMEACCEL.'],upper(mfilename));
+    end
+    
     if nargin<4
        fola = [];
     end
@@ -44,11 +49,21 @@ complainif_notvalidframeobj(F,'BLOCKSYN');
     Sb = nextSb-Lb;
     
     if strcmp(F.blockalg,'naive')
+       if F.L < Lb
+          error(['%s: The frame object was accelerated with incompatible ',...
+                 'length. The block length is %i but the accelerated ',...
+                 'length is %i.'],upper(mfilename),Lb,F.L);
+       end 
        % Most general. Should work for anything.
        % Produces awful block artifacts when coefficients are altered.
        fhat = F.frsyn(c);
        fhat = fhat(1:Lb,:);
     elseif strcmp(F.blockalg,'sliced')
+        if F.L < 2*Lb
+          error(['%s: The frame object was accelerated with incompatible ',...
+                 'length. The block length is %i but the accelerated ',...
+                 'length is %i.'],upper(mfilename),Lb,F.L);
+        end
         % General processing
         % Equal block length assumption
         % Reconstruct
