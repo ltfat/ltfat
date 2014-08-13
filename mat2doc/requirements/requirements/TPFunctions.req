@@ -1,0 +1,10 @@
+Name: Totally Positive functions
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} totally positive window functions
+Rationale: It should be possible to create suitable totally positive
+ FIR windows and their dual windows to be used for Gabor analysis
+Invented on: 2014-08-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: not done

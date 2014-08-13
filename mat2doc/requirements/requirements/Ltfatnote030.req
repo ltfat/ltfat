@@ -1,0 +1,12 @@
+Name: LTFAT 2.0 book chapter
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} contain the functionality
+ from Ltfatnote030
+Rationale: LTFAT must containg all the functionality mentioned in the
+ LTFAT 2.0 book chapter: "The Large Time Frequency Analysis Toolbox 2.0" by
+ Prusa, Soendergaard, Holighaus, Wiesmeyr and Balazs.
+Invented on: 2014-08-13
+Invented by: soender
+Owner: soender
+Topic: AcademicTop
+Status: finished

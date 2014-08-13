@@ -1,0 +1,14 @@
+Name: Spectral Analysis
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} contain function for
+ classical spectral analysis
+Rationale: It should be possible to use LTFAT to perform an easy
+ spectral analysis of a signal by looking at its spectrum, power (or
+ energy) spectral density functions etc. Several classes of input
+ signals should be supported, both finite, discrete signals and also
+ sampled signals embedded in the finite, discrete seeting.
+Invented on: 2014-08-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: not done
