@@ -39,16 +39,16 @@ if flags.do_per
      end
      levelLen = ceil(levelLen/w.a(1));
   end
-elseif flags.do_valid
-  % Valid coef. case
-  filts = w.g;
-  for jj=1:J
-     for ff=filtNo:-1:2
-        Lc(end-runPtr) = floor((levelLen-(length(filts{ff}.h)-1))/w.a(ff));
-        runPtr = runPtr + 1;
-     end
-     levelLen = floor((levelLen-(length(filts{1}.h)-1))/w.a(1));
-  end
+% elseif flags.do_valid
+%   % Valid coef. case
+%   filts = w.g;
+%   for jj=1:J
+%      for ff=filtNo:-1:2
+%         Lc(end-runPtr) = floor((levelLen-(length(filts{ff}.h)-1))/w.a(ff));
+%         runPtr = runPtr + 1;
+%      end
+%      levelLen = floor((levelLen-(length(filts{1}.h)-1))/w.a(1));
+%   end
 else
   % Expansive case
   filts = w.g;

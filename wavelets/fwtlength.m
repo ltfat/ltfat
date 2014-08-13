@@ -23,12 +23,12 @@ definput.import = {'fwtext'};
 if flags.do_per
    blocksize=w.a(1)^J;
    L=ceil(Ls/blocksize)*blocksize;
-elseif flags.do_valid
-   m = numel(w.g{1}.h);
-   a = w.a(1);
-   rred = (a^J-1)/(a-1)*(m-a);
-   blocksize=w.a(1)^J;
-   L=rred+floor((Ls-rred)/blocksize)*blocksize;
+% elseif flags.do_valid
+%    m = numel(w.g{1}.h);
+%    a = w.a(1);
+%    rred = (a^J-1)/(a-1)*(m-a);
+%    blocksize=w.a(1)^J;
+%    L=rred+floor((Ls-rred)/blocksize)*blocksize;
 else
    L = Ls;
 end
