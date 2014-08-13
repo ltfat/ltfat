@@ -7,6 +7,10 @@ function f = block_ifwt(c,w,J,Lb)
 %   block convolution) with wavelet filters *w* and *J* levels. The 
 %   reconstructed block contains overlap to the next block(s).
 %
+%   Do not call this function directly. It is called from |blocksyn| when
+%   using 'fwt' frame type with 'segola' block transform handling (see 
+%   |blockframeaccel|).
+%
 %   Function should be independent of block_interface.
 %
 %   See also: block, block_ifwt

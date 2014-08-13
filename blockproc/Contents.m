@@ -25,9 +25,5 @@
 %  Other
 %    LTFATPLAY     - Replacement for the sound command allowing selecting an output device
 %
-%  Helper functions
-%    BLOCK_FWT      - |fwt| processing
-%    BLOCK_IFWT     - |ifwt| processing
-%
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

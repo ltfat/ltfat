@@ -16,6 +16,10 @@ function c = block_fwt( f, w, J)
 %   and *J* levels. *f* is expected to be a column vector or a matrix and 
 %   the processing is done column-wise.
 %
+%   Do not call this function directly. The function is called from 
+%   |blockana| when used with frame type 'fwt' and 'segola' block transform
+%   handling see |blockframeaccel|.
+%
 %   Function should be independent of block_interface.
 %
 %   See also: block, block_ifwt
@@ -45,6 +49,9 @@ rred = (a^J-1)/(a-1)*(m-a);
 % Block boundaries
 blocksize=w.a(1)^J;
 % Input signal samples to be processed
+
+% This is effectivelly the "negative" right extension described in chapter
+% 4.1.4 in the reference.
 L=rred+floor((Ls-rred)/blocksize)*blocksize;
 
 levelLen = L;
@@ -83,7 +90,7 @@ for jj=1:J-1
       c{end-runPtr} = c{end-runPtr}(cstart+1:end,:);
       runPtr = runPtr + 1;
    end
-end 
+end
 
 % To the pack format
 c = cell2mat(c);
