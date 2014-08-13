@@ -61,6 +61,8 @@ switch(F.type)
          'coefficients.'],upper(mfilename));
  case 'dft'
   plotfft(insig,varargin{:});
+ case 'dftreal'
+  plotfftreal(insig, varargin{:});
  case {'dcti','dctii','dctiii','dctiv',...
        'dsti','dstii','dstiii','dstiv'}
   % FIXME : This is not strictly correct, as half the transforms use an
@@ -78,8 +80,7 @@ switch(F.type)
     plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
  case {'uwfbt','uwpfbt'}
     plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
-    
-case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
+ case {'filterbank','filterbankreal','ufilterbank','ufilterbankreal'}
     plotfilterbank(framecoef2native(F,insig),F.a,[],varargin{:});
 end;
 
