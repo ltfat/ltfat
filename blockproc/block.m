@@ -278,10 +278,6 @@ if ~isempty(kv.outfile) && ~strcmpi(kv.outfile(end-3:end),'.wav')
     error('%s: %s does not contain *.wav suffix.',upper(mfilename),kv.outfile);
 end
 
-if flags.do_online && kv.fs<4000 || kv.fs>96000
-    error('%s: Sampling rate must be in range 4-96 kHz ',upper(mfilename));
-end
-
 % Return parameters
 classid = flags.fmt;
 fs = kv.fs;
@@ -322,6 +318,10 @@ end
 
 % Not a single playrec call has been done until now
 if ~flags.do_offline
+    if flags.do_online && kv.fs<4000 || kv.fs>96000
+        error('%s: Sampling rate must be in range 4-96 kHz ',upper(mfilename));
+    end
+    
 
     % From now on, playrec is called
     isPlayrecInit = 0;
