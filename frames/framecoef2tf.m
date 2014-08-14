@@ -1,4 +1,4 @@
-function coef=framecoef2tf(F,coef);
+function coef=framecoef2tf(F,coef)
 %FRAMECOEF2TF  Convert coefficients to time-frequency plane
 %   Usage: cout=framecoef2tf(F,cin);
 %
@@ -11,21 +11,13 @@ function coef=framecoef2tf(F,coef);
 %   similar to the output format from |dgt| and |wmdct|.
 %
 %   Not all frame types support this coefficient layout. The supported frame
-%   types are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'` and
-%   `'ufilterbank'`.
+%   types are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'`,`'ufilterbank'`,
+%   `'ufwt'`,`'uwfbt'` and `'uwpfbt'`.
 %
 %   See also: frame, frametf2coef, framecoef2native
   
 complainif_notenoughargs(nargin,2,'FRAMECOEF2TF');
 complainif_notvalidframeobj(F,'FRAMECOEF2TF');
-
-switch(F.type)
-   case 'fwt'
-    coef = wavpack2cell(coef,fwtclength(floor(size(coef,1)/F.red),F.g,F.J));
-   case {'wfbt','wpfbt','filterbank','filterbankreal'}
-    coef = F.coef2native(coef,size(coef));   
-end
-
 
 switch(F.type)
  case 'dgt'
@@ -47,13 +39,11 @@ switch(F.type)
   coef=reshape(coef,[F.M,N,W]);  
  case 'ufilterbank'
   [MN,W]=size(coef);
-  M=numel(F.gs);
+  M=numel(F.g);
   N=MN/M;
   coef=permute(reshape(coef,[N,M,W]),[2,1,3]); 
  case {'ufwt','uwfbt','uwpfbt'}
   coef = permute(F.coef2native(coef,size(coef)),[2,1,3]); 
- case {'fwt','wfbt','wpfbt','filterbank','filterbankreal'}
-  coef = comp_cellcoef2tf(coef);
  otherwise
   error('%s: TF-plane layout not supported for this transform.',upper(mfilename));
 end;

@@ -15,12 +15,14 @@ switch(F.type)
  case {'dgt','dgtreal','wmdct'}
   [M,N,W]=size(coef);
   coef=reshape(coef,[M*N,W]);
- case {'dwilt','ufilterbank'}
+ case {'dwilt'}
   coef=framenative2coef(F,rect2wil(coef));
  case {'ufilterbank'}
-  coef=permute(coef,[2,1,3]);
-  [M,N,W]=size(coef);
-  coef=reshape(coef,[M*N,W]);
+   coef=permute(coef,[2,1,3]);
+   [M,N,W]=size(coef);
+   coef=reshape(coef,[M*N,W]);
+ case {'ufwt','uwfbt','uwpfbt'}
+  coef = F.native2coef(permute(coef,[2,1,3])); 
  otherwise
   error('%s: TF-plane layout not supported for this transform.',upper(mfilename));
 end;

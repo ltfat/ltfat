@@ -31,11 +31,11 @@ complainif_notvalidframeobj(F,'BLOCKPLOT');
 
 
 if ~isempty(F)
-    ctf = framecoef2tf(F,c(:,1));
-    
     if size(c,2)>1
         error('%s: Only one channel input is supported.',upper(mfilename));
     end
+    
+    ctf = framecoef2tfplot(F,c(:,1));
 
     if strcmp(F.blockalg,'sliced')
        % DO the coefficient overlapping or cropping
