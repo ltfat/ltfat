@@ -4,17 +4,17 @@
 # make -f Makefile_unix MATLABROOT="/usr/local/MATLAB/R2011a"  EXT=mexa64 ARCH=glnxa64
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="C:\Program Files\MATLAB\R2011b" )
+  $(warning MATLABROOT variable is undefined. Using default MATLABROOT="C:\Program Files\MATLAB\R2011b" )
   MATLABROOT=/usr/local/MATLAB/R2011a
 endif
 
 ifndef EXT
-  $(warning EXT variable is udefined. Using default EXT=mexa64 )
+  $(warning EXT variable is undefined. Using default EXT=mexa64 )
   EXT=mexa64
 endif
 
 ifndef ARCH
-  $(warning ARCH variable is udefined. Using default ARCH=win64 )
+  $(warning ARCH variable is undefined. Using default ARCH=win64 )
   ARCH=glnxa64
 endif
 

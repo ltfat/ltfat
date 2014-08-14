@@ -2,7 +2,7 @@
 # mingw32-make -f Makefile_mingw32
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default (probably wrong) MATLABROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
+  $(warning MATLABROOT variable is undefined. Using default (probably wrong) MATLABROOT="c:\Octave\Octave3.6.4_gcc4.6.2")
   MATLABROOT=c:\Octave\Octave3.6.4_gcc4.6.2
 endif
 

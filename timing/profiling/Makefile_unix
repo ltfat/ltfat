@@ -4,7 +4,7 @@
 ## make -f Makefile_unix MATLABROOT=/usr/local/MATLAB/R2011a  EXT=$(mexext)
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
+  $(warning MATLABROOT variable is undefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
   MATLABROOT=/usr/local/MATLAB/MATLAB_Production_Server/R2013a/
 endif
 
