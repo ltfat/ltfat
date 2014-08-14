@@ -159,6 +159,7 @@ switch(ftype)
  case {'fwt','ufwt'}
   F.g=varargin{1};
   F.J=varargin{2};
+  complainif_notposint(F.J,'J','FRAME');
 end;
 
 % Input param checking
