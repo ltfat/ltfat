@@ -14,6 +14,9 @@ Lr=[12, 13 ];
 
 test_failed=0;
 
+condNoLim.('single') = 100;
+condNoLim.('double') = 1000;
+
 for ii=1:length(Lr);
 
 L=Lr(ii); 
@@ -34,18 +37,21 @@ for rtype=1:2
       spname='FULL  ';	
     else
       spname='SPARSE';	
+      if ~strcmpi(LTFAT_TEST_TYPE,'double')
+          disp(sprintf('Skipping. Cannot work with sparse matrices of type %s.',LTFAT_TEST_TYPE));
+          break;
+      end
     end;
 
+    
+    condNo = 1e10;
+    while condNo>condNoLim.(LTFAT_TEST_TYPE)
     if rtype==1
       if sptype==1
         coef=tester_rand(L,L);
         T=tester_rand(L,L);
         coef2=tester_rand(L,L);
       else
-        if ~strcmpi(LTFAT_TEST_TYPE,'double')
-          disp(sprintf('Skipping. Cannot work with sparse matrices of type %s.',LTFAT_TEST_TYPE));
-          break;
-        end
         coef=tester_sprand(L,L,spfraction);
         T=tester_sprand(L,L,spfraction);
         coef2=tester_sprand(L,L,spfraction);          
@@ -56,14 +62,18 @@ for rtype=1:2
         T=tester_crand(L,L);
         coef2=tester_crand(L,L);
       else
-        if ~strcmpi(LTFAT_TEST_TYPE,'double')
-           break;
-        end
         coef=tester_sprand(L,L,spfraction);
         T=tester_sprand(L,L,spfraction);
         coef2=tester_sprand(L,L,spfraction);          
       end;
     end;
+    
+      coeftmp=ifft(full(coef))*L;
+      % The following matrix is inverted in spreadinv. We want a nicer cond
+      % number in order not to fail
+      Ttmp=comp_col2diag(coeftmp);
+      condNo = cond(Ttmp); 
+    end
 
     
     for W=1:3
@@ -87,7 +97,7 @@ for rtype=1:2
       disp(s)
 
       % -------- Inversion testing -------------
-
+     
       r=spreadinv(fs,coef);
 
       rdiff=f-r;
