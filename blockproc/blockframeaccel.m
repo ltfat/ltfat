@@ -76,7 +76,7 @@ elseif flags.do_segola
    % This is important otherwise we would get 0 coefficients for some
    % blocks.
    assert(max(Fo.a(:,1)) <= Lb ,sprintf(['%s: Time step %i is bigger than the',...
-      ' block length %i.'],upper(mfilename),Fo.a,Lb));
+      ' block length %i.'],upper(mfilename),max(Fo.a(:,1)),Lb));
    
    Fo.winLen = winLen;
 
