@@ -2,7 +2,7 @@ Name: User friendly
 Type: requirement
 Description: \textsl{LTFAT} \textbf{must} be user friendly.
 Rationale: If it is not user friendly, it will not be used.
-Solved by: Documented Tutorial GUI DesignSpec Parameters
+Solved by: Documented Tutorial GUI DesignSpec Parameters Demos
 Invented on: 2013-11-02
 Invented by: soender
 Owner: soender

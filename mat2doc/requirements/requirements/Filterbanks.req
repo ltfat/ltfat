@@ -1,0 +1,15 @@
+Name: Filterbanks
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include a filterbank section
+Rationale: Filterbanks are a useful when Gabor or Wavelet analysis are
+ not sufficient, and the creating of good filterbanks is far from
+ trivial.
+
+ LTFAT must include easy to use functions to create dual and tight
+ filterbanks, and methods for easy creating of filters that are
+ correctly spaced and weighted.
+Invented on: 2014-08-15
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

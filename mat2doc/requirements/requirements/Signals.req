@@ -1,0 +1,11 @@
+Name: Signal processing utilitites
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include a limited set of
+ test signals
+Rationale: LTFAT should include a small subset of test signals to make
+ it possible to write interesting demos and examples
+Invented on: 2014-08-15
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

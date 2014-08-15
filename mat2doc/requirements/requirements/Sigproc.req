@@ -1,0 +1,12 @@
+Name: Signal processing utilitites
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include a limited set of
+ signal processing functions
+Rationale: LTFAT should include a small subset of signal manipulation
+ functions to make it possible to write demos and examples without
+ loosing the focus of the demo.
+Invented on: 2014-08-15
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

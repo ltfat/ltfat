@@ -1,0 +1,10 @@
+Name: Auditory functions
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include basic auditory functions
+Rationale: LTFAT should cover a limited subset of very basic auditory
+ models to be able to create Erb-scale filterbanks etc.
+Invented on: 2014-01-13
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished

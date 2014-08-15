@@ -1,0 +1,11 @@
+Name: Demos
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} include demos
+Rationale: Demos (demonstrationg scripts) gives the user a quick way
+ to get started on a topic
+Invented on: 2014-08-15
+Invented by: soender
+Owner: soender
+Topic: UserFriendlyTop
+Solved by: Sigproc Auditory Signals
+Status: finished

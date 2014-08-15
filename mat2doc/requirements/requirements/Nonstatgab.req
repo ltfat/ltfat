@@ -1,0 +1,17 @@
+Name: Non-stationary Gabor frames
+Type: requirement
+Description: \textsl{LTFAT} \textbf{must} non-stationary Gabor frames
+Rationale: Non-stationary Gabor frames are the generalization of Gabor
+ frames to non-equidistant time steps. LTFAT must include them to
+ support recent research and to make it possible to mature the field of
+ signal processing in this area, as the details of the construction are
+ far from trivial.
+
+ LTFAT must include easy to use functions to create dual and tight
+ non-stationery Gabor frames, and methods for easy creating of filters that are
+ correctly spaced and weighted.
+Invented on: 2014-08-15
+Invented by: soender
+Owner: soender
+Topic: FunctionalityTop
+Status: finished
