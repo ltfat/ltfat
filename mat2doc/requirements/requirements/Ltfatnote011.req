@@ -3,7 +3,7 @@ Type: requirement
 Description: \textsl{LTFAT} \textbf{must} contain the algorithms in ltfatnote011
 Rationale: LTFAT must containg the factorization algorithm for the DGT
  from "Efficient Algorithms for the Discrete Gabor
-Transform with a Long FIR Window" by Soendergaard
+ Transform with a Long FIR Window" by Soendergaard
 Solved by: Timing
 Invented on: 2014-01-16
 Invented by: soender

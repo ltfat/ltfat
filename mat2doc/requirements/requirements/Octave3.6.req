@@ -2,7 +2,7 @@ Name: Octave oldest version
 Type: requirement
 Description: \textsl{LTFAT} \textbf{must} work in Octave 3.6
 Rationale: This is the oldest Octave version we support. Older versions wil
- not work because we use ~ is output parameters
+ not work because we use the tilde symbol in output parameters.
 Invented on: 2014-01-10
 Invented by: soender
 Owner: soender

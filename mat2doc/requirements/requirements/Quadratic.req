@@ -1,7 +1,18 @@
 Name: Quadratic distributions
 Type: requirement
 Description: \textsl{LTFAT} \textbf{must} contain quadratic distributions
-Rationale: LTFAT should cover a subset of quadratic distributions:
+Rationale: LTFAT should cover a subset of quadratic
+ distributions. Candidates could be:
+ \begin{itemize}
+ \item The Wigner distribution
+ \item The Choi-Williams distribution
+ \end{itemize}
+ Different versions of the distributions should be created depending on
+ if they are considered in the purely finite, discrete case, or if
+ they are thought of as approximations of the continuous case.
+
+ Even though quadratic distributions are rarely used in application,
+ they are imporant instruments for teaching and visualizations.
 Invented on: 2014-01-14
 Invented by: soender
 Owner: soender

@@ -3,7 +3,7 @@ Type: requirement
 Description: \textsl{LTFAT} \textbf{must} contain the algorithms in ltfatnote019
 Rationale: LTFAT must contain the algorithms about non-separable
  lattices from the paper "Efficient algorithms for discrete Gabor
- transforms on a nonseparable lattice"
+ transforms on a nonseparable lattice".
 Solved by: Timing
 Invented on: 2014-01-10
 Invented by: soender
