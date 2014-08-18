@@ -1,4 +1,4 @@
-function coef = plotfilterbank(coef,a,varargin)
+function C = plotfilterbank(coef,a,varargin)
 %PLOTFILTERBANK Plot filterbank and ufilterbank coefficients
 %   Usage:  plotfilterbank(coef,a);
 %           plotfilterbank(coef,a,fc);
@@ -58,8 +58,11 @@ definput.keyvals.xres=800;
 
 [flags,kv]=ltfatarghelper({'fc','fs','dynrange'},definput,varargin);
 
-if iscell(coef)
-  M=numel(coef);
+
+C = coef;
+
+if iscell(C)
+  M=numel(C);
   a = comp_filterbank_a(a,M);
   
   if all(rem(a(:,1),1)==0) && any(a(:,2)~=1)
@@ -69,7 +72,7 @@ if iscell(coef)
     L = a(1);
   else
     % Non-fractional case and non-integer hop factors
-    L=a(1)*size(coef{1},1);
+    L=a(1)*size(C{1},1);
     % Sanity check
     assert(rem(L,1)<1e-3,sprintf('%s: Invalid hop size.',upper(mfilename)));
   end
@@ -79,7 +82,7 @@ if iscell(coef)
   coef2=zeros(M,N);
   
   for ii=1:M
-    row=coef{ii};
+    row=C{ii};
     if numel(row)==1
        coef2(ii,:) = row;
        continue;
@@ -87,45 +90,45 @@ if iscell(coef)
     coef2(ii,:)=interp1(linspace(0,1,numel(row)),row,...
                        linspace(0,1,N),'nearest');
   end;
-  coef=coef2;
+  C=coef2;
   delta_t=L/N;
 else
   a=a(1);
-  Nc=size(coef,1);
+  Nc=size(C,1);
   N=kv.xres;
-  M=size(coef,2);
-  coef=interp1(linspace(0,1,Nc),coef,...
+  M=size(C,2);
+  C=interp1(linspace(0,1,Nc),C,...
        linspace(0,1,N),'nearest');
-  coef=coef.';  
+  C=C.';  
   delta_t=a*Nc/N;
 end;
 
 % Freq. pos is just number of the channel.
 yr=1:M;
 
-if size(coef,3)>1
+if size(C,3)>1
   error('Input is multidimensional.');
 end;
 
 % Apply transformation to coefficients.
 if flags.do_db
-  coef=20*log10(abs(coef)+realmin);
+  C=20*log10(abs(C)+realmin);
 end;
 
 if flags.do_dbsq
-  coef=10*log10(abs(coef)+realmin);
+  C=10*log10(abs(C)+realmin);
 end;
 
 if flags.do_linsq
-  coef=abs(coef).^2;
+  C=abs(C).^2;
 end;
 
 if flags.do_linabs
-  coef=abs(coef);
+  C=abs(C);
 end;
 
 if flags.do_lin
-  if ~isreal(coef)
+  if ~isreal(C)
     error(['Complex valued input cannot be plotted using the "lin" flag.',...
            'Please use the "linsq" or "linabs" flag.']);
   end;
@@ -134,14 +137,14 @@ end;
 % 'dynrange' parameter is handled by converting it into clim
 % clim overrides dynrange, so do nothing if clim is already specified
 if  ~isempty(kv.dynrange) && isempty(kv.clim)
-  maxclim=max(coef(:));
+  maxclim=max(C(:));
   kv.clim=[maxclim-kv.dynrange,maxclim];
 end;
 
 % Handle clim by thresholding and cutting
 if ~isempty(kv.clim)
-  coef(coef<kv.clim(1))=kv.clim(1);
-  coef(coef>kv.clim(2))=kv.clim(2);
+  C(C<kv.clim(1))=kv.clim(1);
+  C(C>kv.clim(2))=kv.clim(2);
 end;
 
 if flags.do_tc
@@ -161,16 +164,16 @@ switch(flags.plottype)
     % below) to within the specified range. Setting clim explicitly
     % avoids the colormap moves in the top or bottom.
     if isempty(kv.clim)
-      imagesc(xr,yr,coef);
+      imagesc(xr,yr,C);
     else
-      imagesc(xr,yr,coef,kv.clim);
+      imagesc(xr,yr,C,kv.clim);
     end;   
   case 'contour'
-    contour(xr,yr,coef);
+    contour(xr,yr,C);
   case 'surf'
-    surf(xr,yr,coef,'EdgeColor','none');
+    surf(xr,yr,C,'EdgeColor','none');
   case 'pcolor'
-    pcolor(xr,yr,coef);
+    pcolor(xr,yr,C);
 end;
 
 if flags.do_colorbar
@@ -226,4 +229,10 @@ else
   ylabel(sprintf('%s (Hz)',kv.frequency),'fontsize',kv.fontsize);
   
 end;
+
+% To avoid printing all the coefficients in the command window when a
+% semicolon is forgotten
+if nargout == 0
+    clear C;
+end
 

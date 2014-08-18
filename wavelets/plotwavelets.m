@@ -1,4 +1,4 @@
-function [C] = plotwavelets(c,info,varargin)
+function C = plotwavelets(c,info,varargin)
 %PLOTWAVELETS  Plot wavelet coefficients
 %   Usage:  plotwavelets(c,info,fs) 
 %           plotwavelets(c,info,fs,'dynrange',dynrange,...)
@@ -7,10 +7,11 @@ function [C] = plotwavelets(c,info,varargin)
 %   additional parameters from struct. `info`. Both parameters are returned
 %   by any forward transform function in the wavelets directory.
 %
-%   `plotwavelets(c,info,fs)` does the same plot assuming a sampling rate of *fs* Hz
-%   of the original signal.
+%   `plotwavelets(c,info,fs)` does the same plot assuming a sampling rate
+%   *fs* Hz of the original signal.
 %
-%   `plowavelets(c,info,fs,'dynrange',dynrange)` additionally limits the dynamic range.
+%   `plowavelets(c,info,fs,'dynrange',dynrange)` additionally limits the 
+%   dynamic range.
 %
 %   `C=plotwavelets(...)` returns the processed image data used in the
 %   plotting. Inputting this data directly to `imagesc` or similar functions
@@ -21,11 +22,17 @@ function [C] = plotwavelets(c,info,varargin)
 %   the help of |tfplot| for an exhaustive list.
 %
 %   See also: fwt, tfplot
+complainif_notenoughargs(nargin,2,'PLOTWAVELETS');
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+if isempty(c) || ~(iscell(c) || isnumeric(c))
+    error('%s: c must be non-empty cell or numeric array.',upper(mfilename));
+end
 
+if ~isstruct(info) || ~isfield(info,'fname')
+    error(['%s: info must be struct obtained as the 2nd return param. ',... 
+           'of the comp. routine.'],upper(mfilename));
+end
+    
 definput.import={'tfplot'};
 definput.flags.fwtplottype = {'tfplot','stem'};
 definput.keyvals.fs = [];
@@ -124,6 +131,12 @@ if(draw_ticks)
    ylabel('Subbands','fontsize',kv.fontsize);
    set(gca,'ytick',1:subbNo);
    set(gca,'ytickLabel',yTickLabels,'fontsize',kv.fontsize);
+end
+
+% To avoid printing all the coefficients in the command window when a
+% semicolon is forgotten
+if nargout == 0
+    clear C;
 end
 
 
