@@ -1,4 +1,4 @@
-function gamma=ptpfundual(g,w,a,M,L,increase)
+function [gamma,nlen]=ptpfundual(g,w,a,M,L,increase)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%       computes totally positive function g and dual                 %%%
 %%%      window gamma for the Gabor frame G(g,alpha,beta)               %%%
@@ -16,30 +16,13 @@ function gamma=ptpfundual(g,w,a,M,L,increase)
 % OUTPUT:
 % gamma : periodized dual window for the discrete TP function g with given
 %         weihts w
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%   References:
-%     K. Groechenig and J. Stoeckler,
-%     Gabor Frames and Totally Positive Functions,
-%     Duke Mathematical Journal, Volume 162, pp.1003-1031, 2013.
 %
-%     T. Kloos,
-%     Gabor Frames total-positiver Funktionen endlicher Ordnung,
-%     Diploma thesis, University of Dortmund, 2012.
 %
-%     S. Bannert and K. Groechenig and J. Stoeckler,
-%     Discretized Gabor Frames of Totally Positive Functions,
-%     IEEE Transactions on Information Theory, Volume 60, pp.159-169, 2014.
-%
-%     T. Kloos and J. Stoeckler,
-%     Zak transforms and Gabor frames of totally positive functions and 
-%     exponential B-splines,
-%     Journal of Approximation Theory, Volume 184, pp.209-237, 2014.
+%   References: grst13 kl12 bagrst14 klst14
 
-%   (c) Joachim Stoeckler,
-%       Tobias Kloos, 2012-2014
+% AUTHORS: Joachim Stoeckler, Tobias Kloos, 2012-2014
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +167,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % periodization of gamma
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-nr = ceil(length(gamma)/L);
+nlen = length(gamma);
+nr = ceil(nLen/L);
 v = zeros(1,nr*L);
 v(1:length(gamma)) = gamma;
 v = [v(tt0:end),v(1:tt0-1)];
@@ -193,4 +177,21 @@ gamma = sum(reshape(v,L,nr),2);
 gamma = gamma(:);
 
 [scal,err]=gabdualnorm(g,gamma,a,M,L);
+assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
+                          ' dual window.'],upper(mfilename)));
+
 gamma = gamma/scal;
+
+nlen = min([L,nlen]);
+
+% TO DO: as gamma might have a compact support, nlen<L will indicate that.
+% Howewer, since it is symmetric only in special cases, we cannot
+% use middlepad(gamma,nlen) as in pbspline
+%
+% 2 options:
+%
+%    Either work with the offset as in struct('h',gamma,'offset',offset)
+%     (this would require refactoring all gabor routines)
+%
+%    or pad the shorter "tail" to length of the longer tail.
+
