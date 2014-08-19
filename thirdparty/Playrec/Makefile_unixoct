@@ -6,12 +6,17 @@ ifndef EXT
 endif
 
 ifndef PORTAUDIO
-  PORTAUDIO=-lportaudio
+  ifdef HAVE_PORTAUDIO
+    PORTAUDIO=-lportaudio
+  endif
 endif
 
 include ../../src/ostools.mk
 
-ADDITIONALFLAGS = -L. $(PORTAUDIO) -I. -I../../src/thirdparty
+ADDITIONALFLAGS = -L. $(PORTAUDIO) -I. -I../../src/thirdparty -DIS_OCTAVE
+ifdef HAVE_PORTAUDIO
+  ADDITIONALFLAGS += -DHAVE_PORTAUDIO
+endif
 
 all:
 	$(MKOCTFILE) -Wall -mex mex_dll_core.c pa_dll_playrec.c ltfatresample.c \

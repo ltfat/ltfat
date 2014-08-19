@@ -122,6 +122,16 @@ bool mexFunctionCalled(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[
  */
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+
+#ifndef HAVE_PORTAUDIO
+#ifdef IS_OCTAVE
+  const char id[] = "Octave:disabled_feature";
+#else
+  const char id[] = "Matlab:disabled_feature";
+#endif
+  mexErrMsgIdAndTxt (id, "support for the block processing framework was disabled when LTFAT was built");
+#else
+
     int i;
     bool validFuncName = false;
     bool validArgNumber;
@@ -306,7 +316,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
     else {
         mexErrMsgTxt("Error obtaining string from first argument");
     }
+#endif
 }
+
+#ifdef HAVE_PORTAUDIO
 
 /*
  * FUNCTION:    showHelp(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
@@ -650,4 +663,4 @@ unsigned int linewrapString( const char *pdisplayStr, unsigned int maxLineLength
 
     return lineNumber;
 }
-
+#endif
