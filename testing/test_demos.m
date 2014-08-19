@@ -10,7 +10,15 @@ function test_failed=test_demos
      
      disp(filename);
      
-     eval(filename(1:end-2));
+     % The demo is run in separate function to avoid 
+     % variable name clash
+     rundemo(filename(1:end-2));
+     
      
   end;
+  
+  
+function rundemo(demoname)
+   close all;
+   eval(demoname);
 
