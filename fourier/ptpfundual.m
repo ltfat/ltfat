@@ -189,7 +189,7 @@ v = zeros(1,nr*L);
 v(1:length(gamma)) = gamma;
 v = [v(tt0:end),v(1:tt0-1)];
 
-gamma = sum(reshape(v,nr,L),1);
+gamma = sum(reshape(v,L,nr),2);
 gamma = gamma(:);
 
 [scal,err]=gabdualnorm(g,gamma,a,M,L);

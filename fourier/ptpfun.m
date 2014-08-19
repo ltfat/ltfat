@@ -62,8 +62,10 @@ definput.import={'normalize'};
 
 w = sort(w(:))*sqrt(L);
 m = length(w);
-y = w*[0:L-1]/L;
-x = exp(-y) ./ repmat(1-exp(-w),1,L);
+%y = w*[0:L-1]/L;
+y = (repmat((1-sign(w))/2,1,L)-repmat([0:L-1]/L,length(w),1)).*repmat(w,1,L);
+%x = exp(-y) ./ repmat(1-exp(-w),1,L);
+x = exp(y) ./ repmat(sign(w).*(1-exp(-abs(w))),1,L);
 g = (-1)^(m-1) * prod(w) * divdiff_vector(w,x) * L^(-3/4);
 
 g = normalize(g(:),flags.norm);
