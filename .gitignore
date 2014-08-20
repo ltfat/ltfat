@@ -1,15 +1,37 @@
-*.oct
+# No backup files from vim
 *~
 
+# No compiled binaries
 *.mexw64
 *.mexa64
 *.mex
 *.dll
-
 *.o
-
 *.a
-
 *.lib
+*.oct
 
+# No Java bytecode
 *.class
+*.jar
+
+# Ignore all wav files in the tree except the ones residing 
+# in the signals subdirectory
+*.wav
+!/signals/*.wav
+
+# Ignore all png files except the ones residing in the 
+# signals subdirectory
+*.png
+!/signals/*.png
+
+# Ignore temporaty files
+*octave-workspace
+*.vim
+
+# Autotools cache filter
+/src/*.cache/
+
+# Ignore spurious files form testing/testC
+/testing/testC/*.out*
+/testing/testC/*.log
