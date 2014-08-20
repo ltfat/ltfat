@@ -6,17 +6,17 @@
 #EXT = $(glnx86)
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is udefined. Using default MATLABROOT="/Applications/MATLAB_R2013a.app/")
+  $(warning MATLABROOT variable is undefined. Using default MATLABROOT="/Applications/MATLAB_R2013a.app/")
   MATLABROOT=/Applications/MATLAB_R2013a.app/
 endif
 
 ifndef EXT
-  $(warning EXT variable is udefined. Using default EXT=mexmaci64)
+  $(warning EXT variable is undefined. Using default EXT=mexmaci64)
   EXT=mexmaci64
 endif
 
 ifndef ARCH
-  $(warning ARCH variable is udefined. Using default ARCH=maci64 )
+  $(warning ARCH variable is undefined. Using default ARCH=maci64 )
   ARCH=maci64
 endif
 
