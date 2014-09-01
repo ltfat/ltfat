@@ -31,6 +31,8 @@
  * map to commands in MATLAB. The latter begin 'do' to easily identify them.
  */
 
+#ifdef HAVE_PORTAUDIO
+
 #include "mex.h"
 #include "portaudio.h"
 #include "mex_dll_core.h"
@@ -4573,4 +4575,4 @@ running or paused.";
 
    return true;
 }
-
+#endif
