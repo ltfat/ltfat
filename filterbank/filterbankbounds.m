@@ -48,7 +48,7 @@ if info.isuniform
     G(:,ii)=cast(comp_transferfunction(g{ii},L),thisclass);
   end;
   
-  H=zeros(a,M,thisclass);
+  %H=zeros(a,M,thisclass);
     
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;

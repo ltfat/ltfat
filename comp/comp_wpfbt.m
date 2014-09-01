@@ -37,7 +37,7 @@ end
 
 ca = f;
 cOutRunIdx = 1;
-cInRunIdxs = [1];
+cInRunIdxs = [];
 % Go over all nodes in breadth-first order
 for jj=1:numel(wtNodes)
    % Node filters to a cell array
@@ -63,7 +63,7 @@ for jj=1:numel(wtNodes)
    outRange = cOutRunIdx:cOutRunIdx+filtNo-1;
    % Omit those, which are not decomposed further
    outRange(rangeLoc{jj}) = [];
-   cInRunIdxs = [cInRunIdxs(2:end),outRange];
+   cInRunIdxs = [cInRunIdxs,outRange];
    
    cOutRunIdx = cOutRunIdx + filtNo;
    
@@ -72,8 +72,9 @@ for jj=1:numel(wtNodes)
    % (parseval tight frame)
    if ~isempty(cInRunIdxs)
       c{cInRunIdxs(1)} = c{cInRunIdxs(1)}*interscalingfac;
-
+      
       ca = c{cInRunIdxs(1)};
+      cInRunIdxs(1) = [];
    end
 end   
 

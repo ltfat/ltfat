@@ -54,8 +54,12 @@ plotwavelets(c3,info,fs,'dynrange',dr);
 
 
 figure(4);
-[c3,info]=wfbt(f,{'symorth3',8,'full'});
-plotwavelets(c3,info,fs,'dynrange',dr);
+[c4,info]=wfbt(f,{'symorth3',8,'full'});
+plotwavelets(c4,info,fs,'dynrange',dr);
+
+figure(5);
+[c5,info]=dtwfbreal(f,{'qshift5',8,'full','first','symorth3'});
+plotwavelets(c5,info,fs,'dynrange',dr);
 
 
 

@@ -206,10 +206,10 @@ if(flags.do_bottomup)
    % Energy normalization
    % totalE = sum(cellfun(@(cEl) sum(cEl.^2),c));
    % c = cellfun(@(cEl) cEl.^2/totalE,c,'UniformOutput',0);
-
+   
+   % pre-calculate entropy of all subbands
+   cEnt = cellfun(@(cEl) wcostwrap(cEl,kv.cost,0),c);
    if do_additive
-       % pre-calculate entropy of all subbands
-       cEnt = cellfun(@(cEl) wcostwrap(cEl,kv.cost,0),c);
        for ii=1:length(pOutIdxs)-1
           pEnt = cEnt(pOutIdxs(ii));
           chEnt = sum(cEnt(chOutIdxs{ii}));
@@ -221,24 +221,21 @@ if(flags.do_bottomup)
           end
        end
    else
-       cEnt = cell(numel(c),1);
        for ii=1:length(pOutIdxs)-1
-
-          if isempty(cEnt{pOutIdxs(ii)})
-             pEnt = wcostwrap(c(pOutIdxs(ii)),kv.cost,0);
-             cEnt{pOutIdxs(ii)} = pEnt;
-          else
-             pEnt = cEnt(pOutIdxs(ii));
-          end
-
+          pEnt = cEnt(pOutIdxs(ii));
           chEnt = wcostwrap(c(chOutIdxs{ii}),kv.cost,0);
           % Set parent entropy to value obtanied by concatenating child
           % subbands.
           if(pEnt<=chEnt)
              removeNodes(end+1) = treePath(ii);
           else
-             % Set parent entropy to the concatenation of the children entropy.
-             cEnt{pOutIdxs(ii)} = chEnt;
+             % Search the pOutIdxs(ii) in chOutIdxs
+             % There should be the only one..
+             foundId = cellfun(@(chEl)find(chEl==pOutIdxs(ii)),chOutIdxs,...
+                               'UniformOutput',0);
+             chId = find(~cellfun(@isempty,foundId));
+             chOutIdxs{chId}(chOutIdxs{chId} == pOutIdxs(ii)) = [];
+             chOutIdxs{chId} = [chOutIdxs{chId},chOutIdxs{ii}];
           end
 
        end
