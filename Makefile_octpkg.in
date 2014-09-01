@@ -1,12 +1,10 @@
-targets = oct
+targets = oct playrec
 
 ifeq (@have_libportaudio@,1)
-   targets += playrec 
+  export HAVE_PORTAUDIO=1
 endif
 
-
 all: $(targets)
-
 
 oct:
 	$(MAKE) -f Makefile_unix
