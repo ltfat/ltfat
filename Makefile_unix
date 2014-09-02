@@ -4,12 +4,12 @@
 # make -f Makefile_unix MATLABROOT=/usr/local/MATLAB/R2011a ARCH=glnxa64
 
 ifndef MATLABROOT
-  $(warning MATLABROOT variable is undefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
+  #$(warning MATLABROOT variable is undefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
   MATLABROOT=/usr/local/MATLAB/R2011a/
 endif
 
 ifndef ARCH
-  $(warning ARCH variable is undefined. Using default ARCH=glnxa64 )
+  #$(warning ARCH variable is undefined. Using default ARCH=glnxa64 )
   ARCH=glnxa64
 endif
 
