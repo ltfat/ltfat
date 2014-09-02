@@ -78,7 +78,7 @@ MEXLINKFLAGS=-static-libgcc -Wl,--dll -L$(MATLIBS) \
 
 CFLAGS=-03 -s -std=c99 -I./thirdparty/ -I./ -DMATLABFORTRAN -DDLL_EXPORT_SYMBOLS
 
-all: makedirtree backlib $(MEXS) polygonclip playrec copyrest 
+all: clean makedirtree backlib $(MEXS) polygonclip playrec copyrest clean 
 
 backlib: CFLAGS=-O3 -s -std=c99 -I./thirdparty/ -I./ -DMATLABFORTRAN -DDLL_EXPORT_SYMBOLS
 backlib: backlib_double backlib_single
@@ -86,12 +86,10 @@ backlib: backlib_double backlib_single
 backlib_double: $(DFILES) $(DFILES_BLASLAPACK) Makefile_crossmingw
 	$(CC) -shared -Wl,--dll -L$(MATLIBS) -lfftw3-3 -lmwlapack -lmwblas $(DFILES) $(DFILES_BLASLAPACK)  \
 	-o $(OUTDIR)/mex/ltfat.dll -static-libgcc 
-	$(RM) *.o *.a
 
 backlib_single: $(SFILES) $(SFILES_BLASLAPACK) Makefile_crossmingw  
 	$(CC) -shared -Wl,--dll -L$(MATLIBS) -lfftw3-3 -lfftw3f-3 -lmwlapack -lmwblas -L$(OUTDIR)/mex -lltfat $(SFILES) $(SFILES_BLASLAPACK)  \
 	-o $(OUTDIR)/mex/ltfatf.dll -static-libgcc 
-	 $(RM) *.o *.a
 
 $(MEXS): CFLAGS=-O3 -shared -s -Wall -std=c99 -I./thirdparty -I./ -fvisibility=hidden 
 $(MEXS): %.$(EXT): ../mex/%.c 
@@ -104,7 +102,7 @@ polygonclip:
 		-L$(MATLIBS) -lmex -lmx -static-libgcc \
 	  	-o $(OUTDIR)/thirdparty/PolygonClip/PolygonClip.$(EXT)
 
-playrec: CFLAGS=-static-libgcc -std=c99 -O3 -Wall -shared -DMATLAB_MEX_FILE
+playrec: CFLAGS=-static-libgcc -std=c99 -O3 -Wall -shared -DMATLAB_MEX_FILE -DHAVE_PORTAUDIO
 playrec: 
 	$(CC) $(CFLAGS) -I../thirdparty/Playrec -I./thirdparty -I$(MATLIBS) \
 	  	../thirdparty/Playrec/mex_dll_core.c  ../thirdparty/Playrec/pa_dll_playrec.c \
@@ -135,6 +133,10 @@ d%.o: %.c config.h
 	$(CC) $(CFLAGS) $(DIRECTIVES) -DLTFAT_DOUBLE  -c $<
 
 clean: 
-	$(RM) *.$(EXT)
+	$(RM) ../mex/*.$(EXT)
+	$(RM) *.o
+	$(RM) *.a
+	$(RM) ../thirdparty/Playrec/*.o
+	$(RM) ../thirdparty/PolygonClip/*.o
 
 .PHONY: all clean makedirtree copyrest
