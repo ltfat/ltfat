@@ -321,7 +321,7 @@ if flags.do_compile
     end
 
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                      'ext',mexext,'portaudio',portaudioLib);
+                      'ext',mexext,'portaudio',portaudioLib,'extra','HAVE_PORTAUDIO');
     if(~status)
       disp('Done.');
     else
@@ -469,6 +469,7 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   definput.keyvals.sfftw=[];
   definput.keyvals.target=[];
   definput.keyvals.portaudio=[];
+  definput.keyvals.extra=[];
   [flags,kv]=ltfatarghelper({},definput,varargin);
   
   if flags.do_matlabroot
@@ -493,6 +494,10 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   
   if ~isempty(kv.portaudio)
      systemCommand = [systemCommand, ' PORTAUDIO=',kv.portaudio]; 
+  end
+
+  if ~isempty(kv.extra)
+     systemCommand = [systemCommand, ' ',kv.extra,'=1']; 
   end
   
   if ~isempty(kv.target)

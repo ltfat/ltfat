@@ -129,7 +129,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 #else
   const char id[] = "Matlab:disabled_feature";
 #endif
-  mexErrMsgIdAndTxt (id, "support for the block processing framework was disabled when LTFAT was built");
+  mexErrMsgIdAndTxt (id, "PLAYREC: Support for the block processing framework was disabled when LTFAT was built.");
 #else
 
     int i;
