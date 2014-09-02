@@ -15,7 +15,7 @@ Lr=[12, 13 ];
 test_failed=0;
 
 condNoLim.('single') = 100;
-condNoLim.('double') = 1000;
+condNoLim.('double') = 100;
 
 for ii=1:length(Lr);
 

@@ -23,66 +23,70 @@
 /* Calling convention:
  *  c=vect2cell(x,idx);
  */
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 {
-    mwSize L = mxGetM(prhs[0]);
-    mwSize W = mxGetN(prhs[0]);
-    mwSize M = mxGetNumberOfElements(prhs[1]);
-    double* Lc = mxGetData(prhs[1]);
-
-    
-    /* Sanity check */
-    mwSize sumLc = (mwSize) Lc[0];
-    for(mwIndex ii=1;ii<M;ii++)
-    {
-        sumLc += (mwSize) Lc[ii];
-    }
-    if (sumLc != L)
-    {
-       mexErrMsgTxt("VECT2CELL: Sizes do not comply.");
-    }
-
-    plhs[0] = mxCreateCellMatrix(M,1);
-    LTFAT_REAL* cPr[M];
-    LTFAT_REAL* cPi[M];
-
-    for(mwIndex ii=0;ii<M;ii++)
-    {
-        mxArray* tmpA = ltfatCreateMatrix((mwSize)Lc[ii], W,LTFAT_MX_CLASSID,LTFAT_MX_COMPLEXITY);
-        mxSetCell(plhs[0],ii,tmpA);
-        cPr[ii] = mxGetData(tmpA);
-        cPi[ii] = mxGetImagData(tmpA);
-    }
-
-    LTFAT_REAL* xPr = mxGetData(prhs[0]);
-    LTFAT_REAL* xPi = mxGetImagData(prhs[0]);
+   mwSize L = mxGetM(prhs[0]);
+   mwSize W = mxGetN(prhs[0]);
+   mwSize M = mxGetNumberOfElements(prhs[1]);
+   double* Lc = mxGetData(prhs[1]);
 
 
-    for(mwIndex w=0;w<W;w++)
-    {
-       LTFAT_REAL* xTmp = xPr + w*L;
-       for(mwIndex ii=0;ii<M;ii++)
-       {
-           mwSize LcTmp = (mwSize)Lc[ii];
-           LTFAT_REAL* cTmp = cPr[ii] + w*LcTmp;
-           memcpy(cTmp,xTmp,LcTmp*sizeof*cTmp);
-           xTmp+=LcTmp;
-       }
-    }
+   /* Sanity check */
+   mwSize sumLc = (mwSize) Lc[0];
+   for (mwIndex ii = 1; ii < M; ii++)
+   {
+      sumLc += (mwSize) Lc[ii];
+   }
+   if (sumLc != L)
+   {
+      mexErrMsgTxt("VECT2CELL: Sizes do not comply.");
+   }
 
-      #ifdef LTFAT_COMPLEXTYPE
-    for(mwIndex w=0;w<W;w++)
-    {
-       LTFAT_REAL* xTmp = xPi + w*L;
-       for(mwIndex ii=0;ii<M;ii++)
-       {
-           mwSize LcTmp = (mwSize)Lc[ii];
-           LTFAT_REAL* cTmp = cPi[ii] + w*LcTmp;
-           memcpy(cTmp,xTmp,LcTmp*sizeof*cTmp);
-           xTmp+=LcTmp;
-       }
-    }
-      #endif
+   plhs[0] = mxCreateCellMatrix(M, 1);
+   LTFAT_REAL* cPr[M];
+#ifdef LTFAT_COMPLEXTYPE
+   LTFAT_REAL* cPi[M];
+#endif
+
+   for (mwIndex ii = 0; ii < M; ii++)
+   {
+      mxArray* tmpA = ltfatCreateMatrix((mwSize)Lc[ii], W, LTFAT_MX_CLASSID, LTFAT_MX_COMPLEXITY);
+      mxSetCell(plhs[0], ii, tmpA);
+      cPr[ii] = mxGetData(tmpA);
+#ifdef LTFAT_COMPLEXTYPE
+      cPi[ii] = mxGetImagData(tmpA);
+#endif
+   }
+
+   LTFAT_REAL* xPr = mxGetData(prhs[0]);
+
+
+   for (mwIndex w = 0; w < W; w++)
+   {
+      LTFAT_REAL* xTmp = xPr + w * L;
+      for (mwIndex ii = 0; ii < M; ii++)
+      {
+         mwSize LcTmp = (mwSize)Lc[ii];
+         LTFAT_REAL* cTmp = cPr[ii] + w * LcTmp;
+         memcpy(cTmp, xTmp, LcTmp * sizeof * cTmp);
+         xTmp += LcTmp;
+      }
+   }
+
+#ifdef LTFAT_COMPLEXTYPE
+   LTFAT_REAL* xPi = mxGetImagData(prhs[0]);
+   for (mwIndex w = 0; w < W; w++)
+   {
+      LTFAT_REAL* xTmp = xPi + w * L;
+      for (mwIndex ii = 0; ii < M; ii++)
+      {
+         mwSize LcTmp = (mwSize)Lc[ii];
+         LTFAT_REAL* cTmp = cPi[ii] + w * LcTmp;
+         memcpy(cTmp, xTmp, LcTmp * sizeof * cTmp);
+         xTmp += LcTmp;
+      }
+   }
+#endif
 
 }
 #endif

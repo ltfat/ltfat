@@ -328,7 +328,7 @@ mxArray *ltfatCreateMatrix(mwSize M, mwSize N, mxClassID classid, mxComplexity c
 
 mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid, mxComplexity complexFlag)
 {
-   mxArray* out;
+   mxArray* out = NULL;
    mwIndex dummyndim = 1;
    const mwSize dummyDims[] = {0};
 
@@ -339,9 +339,8 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
       mwSize L = mxGetNumberOfElements(out);
       mxSetData(out, mxMalloc(L * sizeofClassid(classid)));
    }
-
 #ifdef NOCOMPLEXFMTCHANGE
-   if (complexFlag == mxCOMPLEX)
+   else if (complexFlag == mxCOMPLEX)
    {
       //out = mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
       out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxCOMPLEX);
@@ -361,7 +360,7 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
       mxSetImagData(out, tmpData);
    }
 #else
-   if (complexFlag == mxCOMPLEX)
+   else if (complexFlag == mxCOMPLEX)
    {
       // Ugly...
       out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxCOMPLEX);
@@ -386,8 +385,10 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
       mxSetImagData(out, (void*)mxCalloc(1, sizeofClassid(classid)));
    }
 #endif
-
-
+   else
+   {
+      mexErrMsgTxt("Sanity check failed. Complex flag is neither mxREAL or mxCOMPLEX");
+   }
 
    return out;
 }

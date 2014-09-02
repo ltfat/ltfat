@@ -195,7 +195,7 @@ void gpc_write_polygon_MATLAB(mxArray *plhs, gpc_polygon *p)
 	int dims[2];
     mxArray *field_x, *field_y, *field_hole;
 
-    const char *field_names[] = {"x","y","hole"};
+    /* const char *field_names[] = {"x","y","hole"}; */ /* Unused */ 
 
     dims[0]=1;
     dims[1]=p->num_contours;

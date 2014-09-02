@@ -13,8 +13,9 @@ function genfiltcoefs(fp,As,varargin)
 %
 %   Note this function uses code from 
 %
-%   EMF toolbox form Matlab version 2.1, Copyright (c) 2003 M. Lutovac and Lj. Milic
-%   see the halfbandiir function below.
+%   EMF toolbox for Matlab version 2.1, 
+%   Copyright (c) 2003 M. Lutovac and Lj. Milic see the halfbandiir 
+%   function below.
 %   
 
 if nargin<1

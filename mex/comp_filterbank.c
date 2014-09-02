@@ -136,8 +136,8 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
          NULL after they are used seems to solve it.
       */
       mxArray* plhs_td[1];
-      const mxArray* prhs_td[5];
-      prhs_td[0] = mxf;
+      mxArray* prhs_td[5];
+      prhs_td[0] = (mxArray*) mxf;
       prhs_td[1] = mxCreateCellMatrix(tdCount,1);
       prhs_td[2] = mxCreateDoubleMatrix(tdCount,1,mxREAL);
       double* aPtr = (double*)mxGetPr(prhs_td[2]);
@@ -148,7 +148,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
       for(mwIndex m=0;m<tdCount;m++)
       {
           mxArray * gEl = mxGetCell(mxg, tdArgsIdx[m]);
-          mxSetCell((mxArray*)prhs_td[1],m,mxGetField(gEl,0,"h"));
+          mxSetCell(prhs_td[1],m,mxGetField(gEl,0,"h"));
           // This has overhead
           //mxSetCell((mxArray*)prhs_td[1],m,mxDuplicateArray(mxGetField(gEl,0,"h")));
 
@@ -166,13 +166,13 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
       {
           mxSetCell(plhs[0],tdArgsIdx[m],mxGetCell(plhs_td[0],m));
           mxSetCell(plhs_td[0],m,NULL);
-          mxSetCell((mxArray*)prhs_td[1],m,NULL);
+          mxSetCell(prhs_td[1],m,NULL);
       }
-      mxDestroyArray((mxArray*)plhs_td[0]);
-      mxDestroyArray((mxArray*)prhs_td[1]);
-      mxDestroyArray((mxArray*)prhs_td[2]);
-      mxDestroyArray((mxArray*)prhs_td[3]);
-      mxDestroyArray((mxArray*)prhs_td[4]);
+      mxDestroyArray(plhs_td[0]);
+      mxDestroyArray(prhs_td[1]);
+      mxDestroyArray(prhs_td[2]);
+      mxDestroyArray(prhs_td[3]);
+      mxDestroyArray(prhs_td[4]);
 
     }
 
@@ -276,7 +276,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
     if(fftCount>0)
     {
         mxArray* plhs_fft[1];
-        const mxArray* prhs_fft[3];
+        mxArray* prhs_fft[3];
         prhs_fft[0] = mxF;
         prhs_fft[1] = mxCreateCellMatrix(fftCount,1);
         prhs_fft[2] = mxCreateDoubleMatrix(fftCount,1,mxREAL);
@@ -285,7 +285,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         for(mwIndex m=0;m<fftCount;m++)
         {
            mxArray * gEl = mxGetCell(mxg, fftArgsIdx[m]);
-           mxSetCell((mxArray*)prhs_fft[1],m,mxGetField(gEl,0,"H"));
+           mxSetCell(prhs_fft[1],m,mxGetField(gEl,0,"H"));
            // This has overhead
            //mxSetCell((mxArray*)prhs_td[1],m,mxDuplicateArray(mxGetField(gEl,0,"h")));
            aPtr[m] = a[fftArgsIdx[m]];
@@ -298,17 +298,17 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         {
           mxSetCell(plhs[0],fftArgsIdx[m],mxGetCell(plhs_fft[0],m));
           mxSetCell(plhs_fft[0],m,NULL);
-          mxSetCell((mxArray*)prhs_fft[1],m,NULL);
+          mxSetCell(prhs_fft[1],m,NULL);
         }
-        mxDestroyArray((mxArray*)plhs_fft[0]);
-        mxDestroyArray((mxArray*)prhs_fft[1]);
-        mxDestroyArray((mxArray*)prhs_fft[2]);
+        mxDestroyArray(plhs_fft[0]);
+        mxDestroyArray(prhs_fft[1]);
+        mxDestroyArray(prhs_fft[2]);
     }
 
     if(fftblCount>0)
     {
         mxArray* plhs_fftbl[1];
-        const mxArray* prhs_fftbl[5];
+        mxArray* prhs_fftbl[5];
         prhs_fftbl[0] = mxF;
         prhs_fftbl[1] = mxCreateCellMatrix(fftblCount,1);
         prhs_fftbl[2] = mxCreateDoubleMatrix(fftblCount,1,mxREAL);
@@ -321,7 +321,7 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         for(mwIndex m=0;m<fftblCount;m++)
         {
            mxArray * gEl = mxGetCell(mxg, fftblArgsIdx[m]);
-           mxSetCell((mxArray*)prhs_fftbl[1],m,mxGetField(gEl,0,"H"));
+           mxSetCell(prhs_fftbl[1],m,mxGetField(gEl,0,"H"));
            foffPtr[m] = mxGetScalar(mxGetField(gEl,0,"foff"));
            aPtr[m] = a[fftblArgsIdx[m]];
 
@@ -341,13 +341,13 @@ void mexFunction( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
         {
           mxSetCell(plhs[0],fftblArgsIdx[m],mxGetCell(plhs_fftbl[0],m));
           mxSetCell(plhs_fftbl[0],m,NULL);
-          mxSetCell((mxArray*)prhs_fftbl[1],m,NULL);
+          mxSetCell(prhs_fftbl[1],m,NULL);
         }
-        mxDestroyArray((mxArray*)plhs_fftbl[0]);
-        mxDestroyArray((mxArray*)prhs_fftbl[1]);
-        mxDestroyArray((mxArray*)prhs_fftbl[2]);
-        mxDestroyArray((mxArray*)prhs_fftbl[3]);
-        mxDestroyArray((mxArray*)prhs_fftbl[4]);
+        mxDestroyArray(plhs_fftbl[0]);
+        mxDestroyArray(prhs_fftbl[1]);
+        mxDestroyArray(prhs_fftbl[2]);
+        mxDestroyArray(prhs_fftbl[3]);
+        mxDestroyArray(prhs_fftbl[4]);
     }
 
     /* This should overwrite function registered by mexAtExit in any of the previously

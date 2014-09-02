@@ -238,7 +238,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
          NULL after they are used seems to solve it.
       */
       mxArray* plhs_td[1];
-      const mxArray* prhs_td[6];
+      mxArray* prhs_td[6];
       prhs_td[0] = mxCreateCellMatrix(tdCount, 1);
       prhs_td[1] = mxCreateCellMatrix(tdCount, 1);
       prhs_td[2] = mxCreateDoubleMatrix(tdCount, 1, mxREAL);
@@ -251,10 +251,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
       for (mwIndex m = 0; m < tdCount; m++)
       {
          // Pick related subbands
-         mxSetCell((mxArray*)prhs_td[0], m, mxGetCell(mxc, tdArgsIdx[m]));
+         mxSetCell(prhs_td[0], m, mxGetCell(mxc, tdArgsIdx[m]));
          // Pick related filters
          mxArray * gEl = mxGetCell(mxg, tdArgsIdx[m]);
-         mxSetCell((mxArray*)prhs_td[1], m, mxGetField(gEl, 0, "h"));
+         mxSetCell(prhs_td[1], m, mxGetField(gEl, 0, "h"));
          aPtr[m] = a[tdArgsIdx[m]];
          offsetPtr[m] = mxGetScalar(mxGetField(gEl, 0, "offset"));
       }
@@ -267,24 +267,24 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
       // Copy pointers to a proper index in the output + unset all duplicate cell elements
       for (mwIndex m = 0; m < tdCount; m++)
       {
-         mxSetCell((mxArray*)prhs_td[0], m, NULL);
-         mxSetCell((mxArray*)prhs_td[1], m, NULL);
+         mxSetCell(prhs_td[0], m, NULL);
+         mxSetCell(prhs_td[1], m, NULL);
       }
       // Copy pointer to output
       plhs[0] = plhs_td[0];
-      mxDestroyArray((mxArray*)prhs_td[0]);
-      mxDestroyArray((mxArray*)prhs_td[1]);
-      mxDestroyArray((mxArray*)prhs_td[2]);
-      mxDestroyArray((mxArray*)prhs_td[3]);
-      mxDestroyArray((mxArray*)prhs_td[4]);
-      mxDestroyArray((mxArray*)prhs_td[5]);
+      mxDestroyArray(prhs_td[0]);
+      mxDestroyArray(prhs_td[1]);
+      mxDestroyArray(prhs_td[2]);
+      mxDestroyArray(prhs_td[3]);
+      mxDestroyArray(prhs_td[4]);
+      mxDestroyArray(prhs_td[5]);
 
    }
 
    if (fftCount > 0)
    {
       mxArray* plhs_fft[1];
-      const mxArray* prhs_fft[3];
+      mxArray* prhs_fft[3];
       prhs_fft[0] = mxCreateCellMatrix(fftCount, 1);
       prhs_fft[1] = mxCreateCellMatrix(fftCount, 1);
       prhs_fft[2] = mxCreateDoubleMatrix(fftCount, 1, mxREAL);
@@ -293,10 +293,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
       for (mwIndex m = 0; m < fftCount; m++)
       {
          // Pick related subbands
-         mxSetCell((mxArray*)prhs_fft[0], m, mxGetCell(mxc, fftArgsIdx[m]));
+         mxSetCell(prhs_fft[0], m, mxGetCell(mxc, fftArgsIdx[m]));
 
          mxArray * gEl = mxGetCell(mxg, fftArgsIdx[m]);
-         mxSetCell((mxArray*)prhs_fft[1], m, mxGetField(gEl, 0, "H"));
+         mxSetCell(prhs_fft[1], m, mxGetField(gEl, 0, "H"));
          // This has overhead
          //mxSetCell((mxArray*)prhs_td[1],m,mxDuplicateArray(mxGetField(gEl,0,"h")));
          aPtr[m] = a[fftArgsIdx[m]];
@@ -307,19 +307,19 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
       for (mwIndex m = 0; m < fftCount; m++)
       {
-         mxSetCell((mxArray*)prhs_fft[0], m, NULL);
-         mxSetCell((mxArray*)prhs_fft[1], m, NULL);
+         mxSetCell(prhs_fft[0], m, NULL);
+         mxSetCell(prhs_fft[1], m, NULL);
       }
       tmpF = plhs_fft[0];
-      mxDestroyArray((mxArray*)prhs_fft[0]);
-      mxDestroyArray((mxArray*)prhs_fft[1]);
-      mxDestroyArray((mxArray*)prhs_fft[2]);
+      mxDestroyArray(prhs_fft[0]);
+      mxDestroyArray(prhs_fft[1]);
+      mxDestroyArray(prhs_fft[2]);
    }
 
    if (fftblCount > 0)
    {
       mxArray* plhs_fftbl[1];
-      const mxArray* prhs_fftbl[5];
+      mxArray* prhs_fftbl[5];
       prhs_fftbl[0] = mxCreateCellMatrix(fftblCount, 1);;
       prhs_fftbl[1] = mxCreateCellMatrix(fftblCount, 1);
       prhs_fftbl[2] = mxCreateDoubleMatrix(fftblCount, 1, mxREAL);
@@ -332,10 +332,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
       for (mwIndex m = 0; m < fftblCount; m++)
       {
          // Pick related subbands
-         mxSetCell((mxArray*)prhs_fftbl[0], m, mxGetCell(mxc, fftblArgsIdx[m]));
+         mxSetCell(prhs_fftbl[0], m, mxGetCell(mxc, fftblArgsIdx[m]));
 
          mxArray * gEl = mxGetCell(mxg, fftblArgsIdx[m]);
-         mxSetCell((mxArray*)prhs_fftbl[1], m, mxGetField(gEl, 0, "H"));
+         mxSetCell(prhs_fftbl[1], m, mxGetField(gEl, 0, "H"));
          foffPtr[m] = mxGetScalar(mxGetField(gEl, 0, "foff"));
          aPtr[m] = a[fftblArgsIdx[m]];
 
@@ -353,8 +353,8 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
       for (mwIndex m = 0; m < fftblCount; m++)
       {
-         mxSetCell((mxArray*)prhs_fftbl[0], m, NULL);
-         mxSetCell((mxArray*)prhs_fftbl[1], m, NULL);
+         mxSetCell(prhs_fftbl[0], m, NULL);
+         mxSetCell(prhs_fftbl[1], m, NULL);
       }
 
       if (tmpF == NULL)
@@ -366,11 +366,11 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
          addToArray(tmpF, plhs_fftbl[0]);
       }
 
-      mxDestroyArray((mxArray*)prhs_fftbl[0]);
-      mxDestroyArray((mxArray*)prhs_fftbl[1]);
-      mxDestroyArray((mxArray*)prhs_fftbl[2]);
-      mxDestroyArray((mxArray*)prhs_fftbl[3]);
-      mxDestroyArray((mxArray*)prhs_fftbl[4]);
+      mxDestroyArray(prhs_fftbl[0]);
+      mxDestroyArray(prhs_fftbl[1]);
+      mxDestroyArray(prhs_fftbl[2]);
+      mxDestroyArray(prhs_fftbl[3]);
+      mxDestroyArray(prhs_fftbl[4]);
    }
 
 

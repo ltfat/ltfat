@@ -46,9 +46,9 @@ LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
         atExitFncRegistered = 1;
     }
 
-    LTFAT_REAL *c_r, *c_i;
-    const LTFAT_REAL *f_r, *f_i;
-    dct_kind kind;
+    LTFAT_REAL *c_r, *c_i=NULL;
+    const LTFAT_REAL *f_r, *f_i=NULL;
+    dct_kind kind = DCTI; // This is overwritten
 
     mwIndex L = mxGetM(prhs[0]);
     mwIndex W = mxGetN(prhs[0]);
