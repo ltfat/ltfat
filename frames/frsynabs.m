@@ -53,8 +53,13 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %     'griflim'    Use the Griffin-Lim iterative method. This is the
 %                  default.
 %
+%     'fgriflim'   Use the Fast Griffin-Lim iterative method. 
+%
 %     'bfgs'       Use the limited-memory Broyden Fletcher Goldfarb
 %                  Shanno (BFGS) method.
+%
+%     'alpha',a    Parameter of the Fast Griffin-Lim algorithm. It is
+%                  ignored if not used together with 'fgriflim' flag.
 %
 %     'tol',t      Stop if relative residual error is less than the
 %                  specified tolerance.  
@@ -70,7 +75,7 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %
 %   See also:  dgt, idgt
 %
-%   References: griffin1984sem
+%   References: griffin1984sem pabaso13
   
 %   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
