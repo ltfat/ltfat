@@ -12,5 +12,8 @@ Description: The Large Time/Frequency Analysis Toolbox (LTFAT) is a
  routines for constructing windows (filter prototypes) and routines
  for manipulating coefficients.
 License: GPLv3+
-BuildRequires: fftw3, lapack, blas, portaudio 
+Depends: octave (>= 3.8.0)
+BuildRequires: fftw3 [Debian] libfftw3-3, lapack [Debian] liblapack3,
+               blas [Debian] libblas3, portaudio [Debian] portaudio19-dev
+               Java Runtime [Debian] default-jre 
 Url: http://ltfat.sourceforge.net/
