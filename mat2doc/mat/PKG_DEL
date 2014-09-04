@@ -1,25 +1,31 @@
-% Get the directory
-bp=mfilename('fullpath')(1:end-7);
+# We need to find ltfatstop, but the path to it was already removed.
+#
 
-bp
+# Get the full path
+dirname = fileparts (canonicalize_file_name (mfilename ("fullpath")));
 
-if exist([bp,filesep,'ltfatstart.m'],'file')
-  % Tricky situation, the base directory has already been killed by
-  % pkg, but we still need to remove the subdirectories. We get the
-  % base path from dgt
+pp = strsplit(dirname,filesep (), true);
 
-  fullpath=strsplit(path,pathsep);
+# Just to be sure
+if (! exist (fullfile (dirname, "inst"), "dir"))
+  # We assume that ltfatstop is one directory up
+  # Store the current path
+  currPath = pwd;
+  # We do not want the first empty string and the last filename
+  tbdir = [[strcat(filesep(),{pp{2:end-1}})]{:}];
+  # cd to directory with ltfatstop as functions cannot be called 
+  # with run in Octave
+  cd(tbdir);
+  try
+     feval('ltfatstop');
+  catch
+     disp('Call to ltfatstop failed. ');
+     disp(lasterror.message);
+     cd(currPath);
+  end
+  cd(currPath);
+endif
 
-  bplen=numel(bp);
-  
-  for line=fullpath
-    % Strip the cell array container away
-    thispath=line{1};
-    if numel(thispath)>=bplen && strcmp(thispath(1:bplen),bp)
-      % Function does nothing because the rmpath is commented
-      disp(["PKGDEL",thispath])
-      rmpath(thispath);
-    end;    
-  end;
-end;
+# Do a cleanup since this is a script
+clear dirname pp tbdir currPath
 
