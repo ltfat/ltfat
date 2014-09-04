@@ -3,7 +3,7 @@ function test_failed=test_demos
   
   test_failed=0;
   
-  s=dir([ltfatbasepath,filesep,'demos',filesep,'demo*.m']);
+  s=dir([ltfatbasepath,filesep,'demos',filesep,'demo_*.m']);
 
   for ii=1:numel(s)
      filename = s(ii).name;

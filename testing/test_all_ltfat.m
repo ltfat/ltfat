@@ -1,4 +1,4 @@
-function test_all_ltfat(prec,varargin)
+function [total_tests_failed,list_of_failed_tests]=test_all_ltfat(prec,varargin)
 
 global LTFAT_TEST_TYPE;
 
@@ -96,7 +96,9 @@ for precidx=1:numel(precarray)
         end;
     end;
 end;
-LTFAT_TEST_TYPE=precarray{1};
+
+clear -global LTFAT_TEST_TYPE;
+
 
 disp(' ');
 if total_tests_failed==0
