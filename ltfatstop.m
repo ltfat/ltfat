@@ -6,22 +6,72 @@ function ltfatstop()
 %
 %   See also:  ltfatstart
 
-%   AUTHOR : Peter L. Søndergaard.  
+%   AUTHOR : Peter L. Søndergaard, Zdenek Prusa 
 
-fullpath=strsplit(path,pathsep);
+dirlist = {};
+jarsubpath = ['blockproc', filesep(), 'java', filesep(), 'blockproc.jar'];
 
-bp=ltfatbasepath;
-% Remove the file separator at the end
-bp=bp(1:end-1);
-bplen=numel(bp);
+% Old versions of Matlab does not have "mfilename('fullpath')"
+pkg_folder = which(mfilename);
+% Kill the function name from the path. -3 for .m and /
+pkg_folder=pkg_folder(1:end-numel(mfilename)-3);   
 
-for line=fullpath
-    % Strip the cell array container away
-    thispath=line{1};
-    if numel(thispath)>=bplen && strcmp(thispath(1:bplen),bp)
-        rmpath(thispath);
-        disp(thispath)
-    end;    
-end;
-    
+d= dir(pkg_folder);
+% Take only valid directories
+d= {d(arrayfun(@(dEl) dEl.isdir && ~strcmp(dEl.name(1),'.'),d))};
+basedir = {filesep()};
+while ~isempty(d)
+   for ii=1:numel(d{1})
+      name = d{1}(ii).name;
   
+      dtmp = dir([pkg_folder basedir{1},name]);
+      dtmp = dtmp(arrayfun(@(dEl) dEl.isdir && ~strcmp(dEl.name(1),'.'),dtmp));
+   
+      if ~isempty(dtmp)
+         d{end+1} = dtmp;
+         basedir{end+1} = [basedir{1},name,filesep];
+      end
+         
+      if exist([pkg_folder,basedir{1},name,filesep(),lower(name),'init.m'],'file')
+          dirtmp = [pkg_folder,basedir{1},name];
+          pathCell = regexp(path, pathsep, 'split');
+          if ispc  % Windows is not case-sensitive
+              onPath = any(strcmpi(dirtmp, pathCell));
+          else
+              onPath = any(strcmp(dirtmp, pathCell));
+          end
+          
+          % Add to the list only if it is already in path
+          if onPath
+             dirlist{end+1} = [basedir{1},name];
+          end
+      end  
+   end
+   basedir(1) = [];
+   d(1) = []; 
+end
+
+% Remove directories from the path
+cellfun(@(dEl) rmpath([pkg_folder,dEl]),dirlist);
+
+% Remove the root dir
+pathCell = regexp(path, pathsep, 'split');
+if ispc  % Windows is not case-sensitive
+   onPath = any(strcmpi(pkg_folder, pathCell));
+else
+   onPath = any(strcmp(pkg_folder, pathCell));
+end
+
+% This can actually remove user hardcoded path to LTFAT's root.
+if onPath
+    rmpath(pkg_folder);
+end
+
+    
+% Clean the classpath  
+if ~isempty(which('javaclasspath')) 
+    jp = javaclasspath();
+    if any(strcmp([pkg_folder filesep() jarsubpath],jp))
+        javarmpath([pkg_folder, filesep(), jarsubpath]);
+    end
+end

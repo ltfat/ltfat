@@ -16,10 +16,18 @@ function ltfatstart(ltfatstartprint)
 %   This will add the main LTFAT directory to you path, start the
 %   toolbox, and configure |sgram| to not display the colorbar.
 %
+%   The function walks the directory tree and adds a subdirectory 
+%   directory to path if the directory contain a `[subdirectory,init.m]` 
+%   script setting a `status` variable to some value greater than 0.   
+%   `status==1` identifies a toolbox module any other value just a
+%   directory to be added to path.
+%
 %   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
 
 %   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
+
+
 
 if nargin==0
     ltfatstartprint=1;
@@ -35,10 +43,10 @@ basepath=basepath(1:end-13);
 % add the base path
 addpath(basepath);
 
-bp=[basepath,filesep];
+bp=basepath;
 
 % Load the version number
-[FID, MSG] = fopen ([bp,'ltfat_version'],'r');
+[FID, MSG] = fopen ([bp,filesep,'ltfat_version'],'r');
 if FID == -1
     error(MSG);
 else
@@ -52,13 +60,13 @@ if isoctave
    minor_rq=6;
    intp='Octave';
    req_versionname='3.6.0';
-   ignore_dirs = {'mex'};
+   ignore_dirs = {'/mex','/mat2doc','/src'};
 else
    major_rq=7;
    minor_rq=9;
    intp='Matlab';
    req_versionname='2009b';
-   ignore_dirs = {'oct'};
+   ignore_dirs = {'/oct','/mat2doc','/src'};
 end;
 
 % Split into major and minor version
@@ -89,54 +97,63 @@ nplug=0;
 % List all files in base directory
 d=dir(basepath);
 
-for ii=1:length(d)
+% Pick only valid directories and wrap it in a cell array
+d={d(arrayfun(@(dEl) dEl.isdir && ~strcmp(dEl.name(1),'.'),d))};
+basedir = {filesep};
+
+while ~isempty(d)
+  for ii=1:length(d{1})
+    name=d{1}(ii).name;
   
-  % We only look for directories
-  if ~d(ii).isdir
-    continue;
-  end;
-  
-  % Skip the default directories . and ..
-  if (d(ii).name(1)=='.')
-    continue;
-  end;
-  
-  % Skip ignored directories
-  if any(cellfun(@(iEl) strcmp(d(ii).name,iEl),ignore_dirs))
+    % Skip ignored directories
+    if any(cellfun(@(iEl) strcmp([basedir{1},name],iEl),ignore_dirs))
       continue;
-  end
+    end
+ 
+    % Store only valid subdirectories, we will go trough them later
+    dtmp = dir([bp,basedir{1},name]);
+    dtmp = dtmp(arrayfun(@(dEl) dEl.isdir && ~strcmp(dEl.name(1),'.'),dtmp));
+    if ~isempty(dtmp)
+      d{end+1} = dtmp;
+      % Store base directory too
+      basedir{end+1} = [basedir{1},name,filesep];
+    end
   
-  % Skip directories without an init file
-  name=d(ii).name;
-  % The file is a directory and it does not start with '.' This could
-  % be a module
-  if ~exist([bp,name,filesep,name,'init.m'],'file')
-    continue
-  end;
-    
-  % Now we know that we have found a module
-  
-  % Set 'status' to zero if the module forgets to define it.
-  status=0;
-  
-  module_version=ltfat_version;
-     
-  % Add the module dir to the path
-  addpath([bp,name])  
-  
-  % Execute the init file to see if the status is set.
-  eval([name,'init']);
-  if status>0
-    if status==1
-      nplug=nplug+1;
-      modules{nplug}.name=name;
-      modules{nplug}.version=module_version;
+    % The file is a directory and it does not start with '.' This could
+    % be a module
+    initfilename = [bp,basedir{1},name,filesep,lower(name),'init.m'];
+    if ~exist(initfilename,'file')
+      continue
     end;
-  else
-    % Something failed, restore the path
-    rmpath([bp,name]);
+    
+    % Now we know that we have found a module
+  
+    % Set 'status' to zero if the module forgets to define it.
+    status=0;
+  
+    module_version=ltfat_version;
+     
+    % Add the module dir to the path
+    addpath([bp,basedir{1},name])  
+  
+    % Execute the init file to see if the status is set.
+    run(initfilename(1:end-2));
+    if status>0
+      % Only store top-level modules
+      if status==1 && strcmp(basedir{1},filesep)
+        nplug=nplug+1;
+        modules{nplug}.name=name;
+        modules{nplug}.version=module_version;
+      end;
+    else
+      % Something failed, restore the path
+      rmpath([bp,basedir{1},name]);
+    end;
   end;
-end;
+  % Remove the just processed dir from the list
+  basedir(1) = [];
+  d(1) = []; 
+end
 
 
 % Check if Octave was called using 'silent'
