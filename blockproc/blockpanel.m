@@ -46,6 +46,8 @@ if ~iscell(params{1})
     params = {params};
 end
 
+complainif_isjavaheadless('BLOCKPANEL');
+
 try
   p = javaObject('net.sourceforge.ltfat.ContFrame');
 catch% err
@@ -53,6 +55,7 @@ catch% err
           'compiled or it is not in Matlab classpath. In the latter case, ',...
           'ltfatstart should do the trick.'],upper(mfilename));
 end
+
 
 % Using Java LinkedList class for passing the cell-array
 % (since there is no way how to pass the cell-array directly)

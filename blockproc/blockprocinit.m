@@ -37,11 +37,21 @@ if ~isempty(which('javaaddpath'))
        % Use lasterr for Octave compatibility
        err=lasterr;
        if ltfatstartprint
-           warning('%s: JVM support not present.',upper(mfilename));
+           warning(sprintf('%s: JVM support not present.',upper(mfilename)));
        end;
    end
+   
+   % Check if Java is not only in a headless state
+   % We are not using warning_isjavaheadless directly because it migh not
+   % yet be in the path
+ %  ge = javaMethod('getLocalGraphicsEnvironment','java.awt.GraphicsEnvironment');
+ %  if javaMethod('isHeadless',ge)
+ %      warning(sprintf(['%s: JRE is available in headless mode only. ',...
+ %              'Block processing GUI will not work. Consider ',...
+ %              'installing full JRE.'],upper(mfilename)));
+ %  end
 else
     if ltfatstartprint
-        warning('%s: Java toolbox not present.',upper(mfilename));
+        warning(sprintf('%s: Java toolbox not present.',upper(mfilename)));
     end;
 end

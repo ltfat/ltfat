@@ -25,15 +25,18 @@ definput.keyvals.cm=[];
 definput.keyvals.location=[50,120];
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
+complainif_isjavaheadless('BLOCKFIGURE');
 p = [];
 try
-p = javaObject('net.sourceforge.ltfat.SpectFrame');
-javaMethod('setLocation',p,kv.location(1),kv.location(2));
+   p = javaObject('net.sourceforge.ltfat.SpectFrame');
+   javaMethod('setLocation',p,kv.location(1),kv.location(2));
 catch% err
    error(['%s: Could not load net.sourceforge.ltfat.SpectFrame. It is not ',...
           'compiled or it is not in Matlab classpath. In the latter case, ',...
           'ltfatstart should do the trick.'],upper(mfilename));
 end
+
+
 
 if ~isvector(kv.location) || any(size(kv.location)~=[1,2]) ||...
     any(kv.location<0) || ~isreal(kv.location)
