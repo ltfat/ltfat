@@ -47,6 +47,8 @@
 %    PBSPLINE       -  Periodic B-splines.
 %    FIRWIN         -  FIR windows (Hanning,Hamming,Blackman,...).
 %    FIRKAISER      -  FIR Kaiser-Bessel window.
+%    PTPFUN         -  Periodic totally positive function of finite type
+%    PTPFUNDUAL     -  Dual totally positive window function of finite type
 %    FIR2LONG       -  Extend FIR window to LONG window.
 %    LONG2FIR       -  Cut LONG window to FIR window.
 %

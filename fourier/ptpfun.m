@@ -4,7 +4,7 @@ function g = ptpfun(L,w,varargin)
 %          g=ptpfun(L,w,...)
 %
 %   Input parameters:
-%         L    : Length of vector.
+%         L    : Window length.
 %         w    : Vector of reciprocals $w_j=1/\delta_j$ in Fourier representation of *g*
 %
 %   Output parameters:
@@ -20,17 +20,19 @@ function g = ptpfun(L,w,varargin)
 %
 %   .. math:: \hat{g}(\xi)=\prod_{i=1}^{m}\left(1+2\pi i j\xi /w(i)\right)^{-1},
 %
-%   where $m$=`numel(w)`$\geq 2$. The samples are obtained from the Zak
-%   transform of the function. 
+%   where $m$=`numel(w)`$\geq 2$. The samples are obtained by discretizing
+%   the Zak transform of the function. 
 %   
 %   *w* controls the function decay in the time domain. More specifically
-%   the function decays as exp(max(w)x) for x->\infty and exp(min(w)x) for
-%   x->-\infty assuming w contains both positive and negative numbers.
+%   the function decays as $exp(max(w)x)$ for $x->\infty$ and $exp(min(w)x)$
+%   for $x->-\infty$ assuming *w* contains both positive and negative 
+%   numbers.
 %
 %   In addition `ptpfun` accepts any of the flags from |normalize|. The 
-%   output will be normalized as specified.
+%   output will be normalized as specified. The default normalization flag
+%   is `'energy'`
 %
-%   See also: dgt
+%   See also: dgt, ptpfundual, gabdualnorm, normalize
 %
 %   References: grst13 kl12 bagrst14 klst14
 %
@@ -40,6 +42,9 @@ function g = ptpfun(L,w,varargin)
 complainif_notenoughargs(nargin,2,upper(mfilename));
 complainif_notposint(L,'L',upper(mfilename));
 
+if isempty(w) || ~isnumeric(w)
+    error('%s: w must be a nonempty numeric vector.', upper(mfilename));
+end
 
 if numel(w)<2
     error(['%s: The tp fun. finite type must be >=2 (number of ',...
@@ -48,6 +53,7 @@ end
 
 if any(w==0)
     error('%s: All weights w must be nonzero.', upper(mfilename));
+    % TO DO: Also add a warning if w is very small or big?
 end
 
 if all(w<0) || all(w>0)
