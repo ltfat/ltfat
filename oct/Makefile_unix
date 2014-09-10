@@ -13,13 +13,24 @@ MKOCTFILE ?= mkoctfile
 ifndef LAPACK_LIBS
 LAPACK_LIBS := $(shell $(MKOCTFILE) -p LAPACK_LIBS)
 endif
+
 ifndef BLAS_LIBS
 BLAS_LIBS := $(shell $(MKOCTFILE) -p BLAS_LIBS)
 endif
+
 ifndef FLIBS
 FLIBS := $(shell $(MKOCTFILE) -p FLIBS)
 endif
-LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
+ifndef FFTW_LIBS
+FFTW_LIBS := $(shell $(MKOCTFILE) -p FFTW_LIBS)
+endif
+
+# export is necessary, otherwise LFLAGS won't have any effect
+# at least on Windows and on Mac
+export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS)
+
+include ../src/ostools.mk
 
 all:	$(OCTS)
 
@@ -27,6 +38,7 @@ all:	$(OCTS)
 	$(MKOCTFILE) -strip -Wall -I../thirdparty -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
 
 clean:
-	-rm *.o *.$(EXT)
+	$(RM) *.o
+	$(RM) *.$(EXT)
 
 .PHONY: all clean
