@@ -54,19 +54,24 @@ else
     fclose(FID);
 end
 
+ignored_dirs_common = {[filesep(),'mat2doc'],...
+                       [filesep(),'src']};
+
 %% --- Check for old versions of Octave and Matlab
 if isoctave
    major_rq=3;
    minor_rq=6;
    intp='Octave';
    req_versionname='3.6.0';
-   ignore_dirs = {'/mex','/mat2doc','/src'};
+   ignore_dirs = [{[filesep(),'mex']},...
+                  ignored_dirs_common];
 else
    major_rq=7;
    minor_rq=9;
    intp='Matlab';
    req_versionname='2009b';
-   ignore_dirs = {'/oct','/mat2doc','/src'};
+   ignore_dirs = [{[filesep(),'oct']},...
+                  ignored_dirs_common];
 end;
 
 % Split into major and minor version
@@ -109,7 +114,7 @@ while ~isempty(d)
     if any(cellfun(@(iEl) strcmp([basedir{1},name],iEl),ignore_dirs))
       continue;
     end
- 
+    
     % Store only valid subdirectories, we will go trough them later
     dtmp = dir([bp,basedir{1},name]);
     dtmp = dtmp(arrayfun(@(dEl) dEl.isdir && ~strcmp(dEl.name(1),'.'),dtmp));
@@ -137,7 +142,7 @@ while ~isempty(d)
     addpath([bp,basedir{1},name])  
   
     % Execute the init file to see if the status is set.
-    run(initfilename(1:end-2));
+    run(initfilename);
     if status>0
       % Only store top-level modules
       if status==1 && strcmp(basedir{1},filesep)
