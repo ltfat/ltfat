@@ -1,10 +1,21 @@
-Version 1.4.6
+-------- LTFAT 2.0 ---------------------------------------------
+
+Main features of LTFAT 2.0 are the the wavelets module, the frames 
+framework and the real-time block processing framework.
+
+Actual news:
 
 * Added dual-tree complex wavelet transform, general dual-tree wavelet 
   filterbanks and $M$-band transforms.
 
-* Blockproc. framework now supports any sampling rate form interval 4-96kHz
+* Blockproc. framework now supports any sampling rate from interval 4-96kHz
   trough on-the-fly resampling in the background. 
+
+* Fixed compilation issue with gcc 4.7.
+
+* Warning is shown if portaudio is not found during package installation.
+
+* Warning is shown if JRE is run in a headless mode during package loading.
 
 
 Version 1.4.5
