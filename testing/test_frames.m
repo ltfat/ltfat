@@ -47,6 +47,8 @@ while condnum > 1e3
           tester_rand(20,1),...
           tester_rand(15,1),...
           tester_rand(10,1)};
+      
+   gfilt=cellfun(@(gEl) cast(gEl,'double'),gfilt,'UniformOutput',0);
    
    % These two frames might be badly conditioned, 
    Fr{20} = frame('ufilterbank',    gfilt,3,4);
