@@ -36,6 +36,14 @@ if ~isnumeric(a) || isempty(a)
   error('%s: a must be numeric.',upper(mfilename));
 end;
 
+% Allow only structs and numeric arrays as filters
+if isempty(g) || ~iscell(g) || any(cellfun(@isempty,g)) || ...
+   ~all(cellfun(@(gEl) isnumeric(gEl) || ...
+   (isstruct(gEl) && (isfield(gEl,'h')||isfield(gEl,'H'))),g))
+  error(['%s: g must be a cell array of structs containing filter',...
+         ' definition or numeric arrays.'],upper(mfilename));
+end;
+
 % Do not allow *g* in format {'dual',g} etc. since it requires L and
 % we want to work without it here.
 % This case is also captured by the next check, but we want a separate 
@@ -44,14 +52,6 @@ if ischar(g{1})
    error('%s: %s option is not supported in this function.',...
          upper(mfilename),g{1}); 
 end
-
-% Allow only structs and numeric arrays as filters
-if ~iscell(g) || any(cellfun(@isempty,g)) || ...
-   ~all(cellfun(@(gEl) isnumeric(gEl) || ...
-   (isstruct(gEl) && (isfield(gEl,'h')||isfield(gEl,'H'))),g))
-  error(['%s: g must be a cell array of structs containing filter',...
-         ' definition or numeric arrays.'],upper(mfilename));
-end;
 
 % Sanitize a
 a = comp_filterbank_a(a,numel(g));
