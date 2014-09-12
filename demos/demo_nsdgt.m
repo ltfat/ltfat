@@ -45,7 +45,7 @@ for ii=1:length(M)
 end
 
 % Compute corresponding dual windows
-gd=nsgabdual(g,a_new,Ls);
+gd=nsgabdual(g,a_new,M,Ls);
 
 % Plot them
 figure(1);
@@ -68,8 +68,8 @@ subplot(2,1,2);
 title('Dual synthesis windows');
 xlabel('Time index');
 
-% Define a sinus test signal.
-f=sin(2*pi*0.3*(0:Ls-1)');
+% Define a sinus test signal so it is periodic.
+f=sin(2*pi*(289/Ls)*(0:Ls-1)');
 
 % Calculate coefficients.
 c=nsdgt(f,g,a_new,M);
