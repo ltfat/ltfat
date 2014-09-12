@@ -87,3 +87,7 @@ yr=[-1+2/kv.yres,1];
 
 coef=tfplot(coef,aplot,yr,'argimport',flags,kv);
 
+if nargout<1
+    clear coef;
+end
+

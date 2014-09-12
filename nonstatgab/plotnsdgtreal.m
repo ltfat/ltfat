@@ -79,3 +79,7 @@ end;
 yr=[0,1];
 
 coef=tfplot(coef,aplot,yr,'argimport',flags,kv);
+
+if nargout<1
+    clear coef;
+end

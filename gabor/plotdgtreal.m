@@ -42,3 +42,7 @@ else
 end;
 
 coef=tfplot(coef,a,yr,'argimport',flags,kv);
+
+if nargout<1
+    clear coef;
+end

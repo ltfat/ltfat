@@ -232,7 +232,7 @@ end;
 
 % To avoid printing all the coefficients in the command window when a
 % semicolon is forgotten
-if nargout == 0
+if nargout < 1
     clear C;
 end
 

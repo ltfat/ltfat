@@ -1,4 +1,4 @@
-function plotdwilt(coef,varargin)
+function C=plotdwilt(coef,varargin)
 %PLOTDWILT  Plot DWILT coefficients
 %   Usage: plotdwilt(coef,);
 %          plotdwilt(coef,fs);
@@ -14,6 +14,11 @@ function plotdwilt(coef,varargin)
 %
 %   `plotdwilt(coef,fs,dynrange)` will additionally limit the dynamic
 %   range.
+%
+%   `C=plotdwilt(...)` returns the processed image data used in the
+%   plotting. Inputting this data directly to `imagesc` or similar
+%   functions will create the plot. This is useful for custom
+%   post-processing of the image data.
 %   
 %   `plotdwilt` supports all the optional parameters of |tfplot|. Please
 %   see the help of |tfplot| for an exhaustive list.
@@ -52,5 +57,9 @@ coef=wil2rect(coef);
 
 yr=[0,1];
 
-tfplot(coef,M,yr,'argimport',flags,kv);
+C=tfplot(coef,M,yr,'argimport',flags,kv);
+
+if nargout<1
+    clear C;
+end
 

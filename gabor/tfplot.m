@@ -181,3 +181,7 @@ if flags.do_display
     end;
     
 end;
+
+if nargout<1
+    clear coef;
+end
