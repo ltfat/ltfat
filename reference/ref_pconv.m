@@ -31,8 +31,5 @@ switch(lower(ctype))
     end;
 end;
 
-% Clean output if input was real-valued
-if isreal(f) && isreal(g)
-  h=real(h);
-end;
+
 
