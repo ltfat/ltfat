@@ -12,14 +12,18 @@ function [c,info] = ufwt(f,w,J,varargin)
 %         c     : Coefficients stored in $L \times J+1$ matrix.
 %         info  : Transform paramaters struct.
 %
-%   `c=ufwt(f,w,J)` computes redundant time (or shift) invariant
-%   wavelet representation *c* of the input signal *f* using the "a-trous"
-%   algorithm. In addition, the function returns struct. `info` containing
-%   the transform parameters. It can be conviniently used for the inverse
-%   transform |iufwt| e.g. `fhat = iufwt(c,info)`. It is also required by
-%   the |plotwavelets| function.
+%   `ufwt(f,w,J)` computes redundant time (or shift) invariant
+%   wavelet representation of the input signal *f* using wavelet filters
+%   defined by *w* in the "a-trous"  algorithm. 
 %
-%   The coefficents *c* are so called Undecimated Discrete Wavelet transform
+%   For all accepted formats of the parameter *w* see the |fwtinit| function.
+%
+%   `[c,info]=ufwt(f,w,J)` additionally returns the `info` struct. 
+%   containing the transform parameters. It can be conviniently used for 
+%   the inverse transform |iufwt| e.g. `fhat = iufwt(c,info)`. It is also 
+%   required by the |plotwavelets| function.
+%
+%   The coefficents *c* are so called undecimated Discrete Wavelet transform
 %   of the input signal *f*, if *w* defines two-channel wavelet filterbank.
 %   Other names for this version of the wavelet transform are: the
 %   time-invariant wavelet transform, the stationary wavelet transform,
@@ -28,12 +32,9 @@ function [c,info] = ufwt(f,w,J,varargin)
 %   function accepts any number filters (referred to as $M$) in the basic
 %   wavelet filterbank and the number of columns of *c* is then $J(M-1)+1$.
 %
-%   For all accepted formats of the parameter *w* see the |fwt| function.
-%
 %   For one-dimensional input *f* of length *L*, the coefficients *c* are
 %   stored as columns of a matrix. The columns are ordered with inceasing
-%   central frequency of the corresponding effective filter frequency
-%   response or equivalently with decreasing wavelet scale.
+%   central frequency of the respective subbands.
 %
 %   If the input *f* is $L \times W$ matrix, the transform is applied
 %   to each column and the outputs are stacked along third dimension in the
@@ -76,14 +77,16 @@ function [c,info] = ufwt(f,w,J,varargin)
 %
 %   A simple example of calling the |ufwt| function:::
 %
-%     f = greasy;
+%     [f,fs] = greasy;
 %     J = 8;
 %     [c,info] = ufwt(f,'db8',J);
-%     %plotwavelets(c,info,16000,'dynrange',90);
+%     plotwavelets(c,info,fs,'dynrange',90);
 %
 %   See also: iufwt, plotwavelets
 %
 %   References: holschneider1989real
+
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,3,'UFWT');
 complainif_notposint(J,'J');

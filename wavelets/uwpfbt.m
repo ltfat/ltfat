@@ -1,7 +1,7 @@
 function [c,info]=uwpfbt(f,wt,varargin)
 %UWPFBT Undecimated Wavelet Packet FilterBank Tree
 %   Usage:  c=uwpfbt(f,wt);
-%           c=uwpfbt(f,wt,...);
+%           [c,info]=uwpfbt(...);
 %
 %   Input parameters:
 %         f   : Input data.
@@ -15,10 +15,11 @@ function [c,info]=uwpfbt(f,wt,varargin)
 %   *f* using the "a-trous" algorithm. Number of columns in *c* (*M*) is
 %   defined by the total number of outputs of each node. The outputs `c(:,jj)`
 %   are ordered in the breadth-first node order manner.
-%   In addition, the function returns struct. `info` containing the transform
-%   parameters. It can be conviniently used for the inverse transform |iuwpfbt|
-%   e.g. `fhat = iuwpfbt(c,info)`. It is also required by the |plotwavelets|
-%   function.
+%
+%   `[c,info]=uwpfbt(f,wt)` additionally returns struct. `info` containing 
+%   the transform parameters. It can be conviniently used for the inverse 
+%   transform |iuwpfbt| e.g. `fhat = iuwpfbt(c,info)`. It is also required
+%   by the |plotwavelets| function.
 %
 %   If *f* is a matrix, the transformation is applied to each of *W* columns
 %   and the coefficients in *c* are stacked along the third dimension.

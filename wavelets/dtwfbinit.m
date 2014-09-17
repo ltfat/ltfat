@@ -1,12 +1,12 @@
-function [dtw,info] = dtwfbinit(dtwdef,varargin)
+function [dualwt,info] = dtwfbinit(dualwtdef,varargin)
 %DTWFBINIT Dual-Tree Wavelet Filterbank Initialization
-%   Usage:  dtw=dtwfbinit(dtwdef);
+%   Usage:  dualwt=dtwfbinit(dualwtdef);
 %
 %   Input parameters:
-%         dtwdef : Dual-tree filterbank definition.
+%         dualwtdef : Dual-tree filterbank definition.
 %
 %   Output parameters:
-%         dtw    : Dual-tree filtarbank structure.
+%         dualwt    : Dual-tree filtarbank structure.
 %
 %   `dtwfinit()` (a call without aguments) creates an empty structure. It
 %   has the same fields as the struct. returned from |wfbtinit| plus a field
@@ -22,21 +22,28 @@ function [dtw,info] = dtwfbinit(dtwdef,varargin)
 %
 %      .forder     Frequency ordering of the resultant frequency bands.   
 %
-%   `dtwfinit({dtw,J,flag})` creates a structure representing a dual-tree
+%   `dtwfinit({dualw,J,flag})` creates a structure representing a dual-tree
 %   wavelet filterbank of depth *J*, using dual-tree wavelet filters 
-%   specified by `dtw`. The shape of the tree is controlled by `flag`.
+%   specified by `dualw`. The shape of the tree is controlled by `flag`.
+%   Please see help on |dtwfb| or |dtwfbreal| for description of the
+%   parameters.
 %
+%   `[dualwt,info]=dtwfinit(...)` additionally returns `info` struct which
+%   provides some information about the computed window:
+%
+%   info.tight
+%      True if the overall tree construct a tight frame.
+%
+%   info.dw
+%      A structure containing basic dual-tree filters as returned from
+%      `fwtinit(dualwtdef,'wfiltdt_')`.
 %   
 %   Additional optional flags
 %   -------------------------
 %
 %   `'freq'`,`'nat'`
 %      Frequency or natural ordering of the resulting coefficient subbands.
-%      When working with wavelet packet filterbank trees, the subbands are
-%      
-%      This does not affect a 
 %      Default ordering is `'freq'`.
-
 
 
 % Output structure definition.
@@ -44,8 +51,8 @@ function [dtw,info] = dtwfbinit(dtwdef,varargin)
 % but contains additional field .dualnodes containing
 % filters of the dual tree
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-dtw = wfbtinit();
-dtw.dualnodes = {};
+dualwt = wfbtinit();
+dualwt.dualnodes = {};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 info.istight = 0;
 
@@ -64,27 +71,27 @@ do_strict = 0;
 do_dual = 0;
 
 % Check 'strict'
-if iscell(dtwdef) && ischar(dtwdef{1}) && strcmpi(dtwdef{1},'strict')
+if iscell(dualwtdef) && ischar(dualwtdef{1}) && strcmpi(dualwtdef{1},'strict')
    do_strict = 1;
-   dtwdef = dtwdef{2:end};
+   dualwtdef = dualwtdef{2:end};
 end
 % Check 'dual'
-if iscell(dtwdef) && ischar(dtwdef{1}) && strcmpi(dtwdef{1},'dual')
+if iscell(dualwtdef) && ischar(dualwtdef{1}) && strcmpi(dualwtdef{1},'dual')
    do_dual = 1;
-   dtwdef = dtwdef{2:end};
+   dualwtdef = dualwtdef{2:end};
 end
 
 % FIRST, check if dtwdef is already a struct
-if isstruct(dtwdef)
-   if isfield(dtwdef,'nodes') && isfield(dtwdef,'dualnodes')
-      dtw = dtwdef;
+if isstruct(dualwtdef)
+   if isfield(dualwtdef,'nodes') && isfield(dualwtdef,'dualnodes')
+      dualwt = dualwtdef;
    
        if do_dual || do_strict
-          nodesArg = dtw.nodes;
+          nodesArg = dualwt.nodes;
           
           % Undo the frequency ordering
-          if dtw.freqOrder
-             dtw = nat2freqOrder(dtw,'rev');
+          if dualwt.freqOrder
+             dualwt = nat2freqOrder(dualwt,'rev');
           end
           
           doDualTreeFilt = cellfun(@(nEl) strcmp(nEl.wprefix,'wfiltdt_'),...
@@ -100,49 +107,49 @@ if isstruct(dtwdef)
              
           end
           info.istight = 1;
-          dtw.nodes = {};
-          dtw.dualnodes = {};
+          dualwt.nodes = {};
+          dualwt.dualnodes = {};
       
          
           rangeRest = 1:numel(nodesArg);
-          rangeRest(dtw.parents==0) = []; 
+          rangeRest(dualwt.parents==0) = []; 
                     
           for ii=rangeRest
               if doDualTreeFilt(ii)
                 % This is dual-tree specific filterbank
-                [dtw.nodes{ii},infotmp] = fwtinit(nodesArg{ii},'wfiltdt_');
-                dtw.dualnodes{ii} = dtw.nodes{ii};
-                dtw.nodes{ii}.h(:,2) = [];
-                dtw.nodes{ii}.g(:,2) = [];
-                dtw.dualnodes{ii}.h(:,1) = [];
-                dtw.dualnodes{ii}.g(:,1) = [];
+                [dualwt.nodes{ii},infotmp] = fwtinit(nodesArg{ii},'wfiltdt_');
+                dualwt.dualnodes{ii} = dualwt.nodes{ii};
+                dualwt.nodes{ii}.h(:,2) = [];
+                dualwt.nodes{ii}.g(:,2) = [];
+                dualwt.dualnodes{ii}.h(:,1) = [];
+                dualwt.dualnodes{ii}.g(:,1) = [];
               else
-                [dtw.nodes{ii},infotmp] = fwtinit(nodesArg{ii}); 
-                dtw.dualnodes{ii} = dtw.nodes{ii};
+                [dualwt.nodes{ii},infotmp] = fwtinit(nodesArg{ii}); 
+                dualwt.dualnodes{ii} = dualwt.nodes{ii};
               end
               info.istight = info.istight && infotmp.istight;
           end
           
           % Treat root separately
-          [rootNode,infotmp] = fwtinit(nodesArg{dtw.parents==0}); 
-          dtw = replaceRoots(dtw,rootNode);
+          [rootNode,infotmp] = fwtinit(nodesArg{dualwt.parents==0}); 
+          dualwt = replaceRoots(dualwt,rootNode);
           info.istight = info.istight && infotmp.istight;
           
           % Do the filter frequency shuffling again, since the filters were
           % overwritten in fwtinit.
-          if dtw.freqOrder
-             dtw = nat2freqOrder(dtw);
+          if dualwt.freqOrder
+             dualwt = nat2freqOrder(dualwt);
           end
        end
 
        % Do filter shuffling if flags.do_freq differs from the wt.freqOrder.
        % Frequency and natural oreding coincide for DWT.
-       if dtw.freqOrder && ~flags.do_freq
-          dtw = nat2freqOrder(dtw,'rev');
-          dtw.freqOrder = ~dtw.freqOrder;
-       elseif ~dtw.freqOrder && flags.do_freq
-          dtw = nat2freqOrder(dtw);
-          dtw.freqOrder = ~dtw.freqOrder;
+       if dualwt.freqOrder && ~flags.do_freq
+          dualwt = nat2freqOrder(dualwt,'rev');
+          dualwt.freqOrder = ~dualwt.freqOrder;
+       elseif ~dualwt.freqOrder && flags.do_freq
+          dualwt = nat2freqOrder(dualwt);
+          dualwt.freqOrder = ~dualwt.freqOrder;
        end   
    else
        error('%s: Invalid dual-tree structure format.',upper(mfilename));
@@ -160,8 +167,8 @@ definput.keyvals.first = [];
 definput.keyvals.leaf = [];
 % Depth of the tree
 definput.keyvals.J = [];
-wdef = dtwdef{1};
-[flags2,kv2,J]=ltfatarghelper({'J'},definput,dtwdef(2:end));
+wdef = dualwtdef{1};
+[flags2,kv2,J]=ltfatarghelper({'J'},definput,dualwtdef(2:end));
 complainif_notposint(J,'J');
 
 % Now dtwdef is this {dtw,J,flag,'first',w}
@@ -241,11 +248,11 @@ w2.g = w2.g(:,2);
 
 
 % Initialize both trees
-dtw  = wfbtinit({w1,J,flags2.treetype}, 'nat');
+dualwt  = wfbtinit({w1,J,flags2.treetype}, 'nat');
 dtw2 = wfbtinit({w2,J,flags2.treetype}, 'nat');
 % Merge tree definitions to a single struct.
-dtw.dualnodes = dtw2.nodes;
-dtw = replaceRoots(dtw,kv2.first);
+dualwt.dualnodes = dtw2.nodes;
+dualwt = replaceRoots(dualwt,kv2.first);
 
 
 % Replace the 'packet leaf nodes' (see Bayram)
@@ -253,31 +260,31 @@ if ~(flags2.do_dwt || flags2.do_root)
     filtNo = numel(w1.g);
     if flags2.do_doubleband 
        for jj=1:J-1
-         dtw = wfbtput(2*(jj+1)-1,1:filtNo-1,kv2.leaf,dtw,'force');
+         dualwt = wfbtput(2*(jj+1)-1,1:filtNo-1,kv2.leaf,dualwt,'force');
        end
     elseif flags2.do_quadband
        idx = 1:filtNo-1;
        idx = [idx,idx+filtNo];
-       dtw = wfbtput(2,idx,kv2.leaf,dtw,'force');
+       dualwt = wfbtput(2,idx,kv2.leaf,dualwt,'force');
        for jj=1:J-1
-         dtw = wfbtput(3*(jj+1)-2,1:filtNo-1,kv2.leaf,dtw,'force');
-         dtw = wfbtput(3*(jj+1)-1,1:2*filtNo-1,kv2.leaf,dtw,'force');
+         dualwt = wfbtput(3*(jj+1)-2,1:filtNo-1,kv2.leaf,dualwt,'force');
+         dualwt = wfbtput(3*(jj+1)-1,1:2*filtNo-1,kv2.leaf,dualwt,'force');
        end 
     elseif flags2.do_octaband
        idx = 1:filtNo-1;idx = [idx,idx+filtNo];
-       dtw = wfbtput(2,idx,kv2.leaf,dtw,'force');
+       dualwt = wfbtput(2,idx,kv2.leaf,dualwt,'force');
        idx = 1:2*filtNo-1;idx = [idx,idx+2*filtNo];
-       dtw = wfbtput(3,idx,kv2.leaf,dtw,'force');
+       dualwt = wfbtput(3,idx,kv2.leaf,dualwt,'force');
        for jj=1:J-1
-         dtw = wfbtput(4*(jj+1)-3,1:filtNo-1,kv2.leaf,dtw,'force');
-         dtw = wfbtput(4*(jj+1)-2,1:2*filtNo-1,kv2.leaf,dtw,'force');
-         dtw = wfbtput(4*(jj+1)-1,1:4*filtNo-1,kv2.leaf,dtw,'force');
+         dualwt = wfbtput(4*(jj+1)-3,1:filtNo-1,kv2.leaf,dualwt,'force');
+         dualwt = wfbtput(4*(jj+1)-2,1:2*filtNo-1,kv2.leaf,dualwt,'force');
+         dualwt = wfbtput(4*(jj+1)-1,1:4*filtNo-1,kv2.leaf,dualwt,'force');
        end 
     elseif flags2.do_full
        for jj=2:J-1
           idx = 1:filtNo^jj-1;
           idx(filtNo^(jj-1))=[];
-          dtw = wfbtput(jj,idx,kv2.leaf,dtw,'force');
+          dualwt = wfbtput(jj,idx,kv2.leaf,dualwt,'force');
        end 
     else
         error('%s: Something is seriously wrong!',upper(mfilename));
@@ -286,9 +293,9 @@ end
 
 
 % Do filter shuffling if frequency ordering is required,
-dtw.freqOrder = flags.do_freq;
+dualwt.freqOrder = flags.do_freq;
 if flags.do_freq
-   dtw = nat2freqOrder(dtw); 
+   dualwt = nat2freqOrder(dualwt); 
 end
 
 % 

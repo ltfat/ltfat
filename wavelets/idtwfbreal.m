@@ -38,7 +38,7 @@ function f=idtwfbreal(c,par,varargin)
 %      % The following should give (almost) zero
 %      norm(f-fhat)
 %
-%   See also: dtwfbreal
+%   See also: dtwfbreal dtwfbinit
 
 
 complainif_notenoughargs(nargin,2,'IDTWFBREAL');

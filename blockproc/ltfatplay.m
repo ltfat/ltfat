@@ -22,10 +22,10 @@ function ltfatplay(source,varargin)
 %   `'playch',playch`
 %      A vector of channel indexes starting at 1.
 %
-%   This function has the advantage over sound and soundsc that one can 
+%   This function has the advantage over `sound` and `soundsc` that one can 
 %   directly specify output device chosen from |blockdevices|. Similar
-%   behavior can be achieved using audioplayer and audiodevinfo in Matlab
-%   only. Audioplayer is not yet supported in Octave.
+%   behavior can be achieved using `audioplayer` and `audiodevinfo` but
+%   only in Matlab. Audioplayer is not yet supported in Octave.
 %   
 
 %   Author: Zdenek Prusa

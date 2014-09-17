@@ -1,17 +1,21 @@
 function [Lc,L]=wpfbtclength(Ls,wt,varargin)
 %WPFBTCLENGTH  WPFBT subband length from a signal length
-%   Usage: L=wpfbtclength(Ls,wt);
-%          L=wpfbtclength(Ls,wt,...);
+%   Usage: Lc=wpfbtclength(Ls,wt);
+%          [Lc,L]=wpfbtclength(Ls,wt);
 %
-%   `[Lc,L]=wpfbtclength(Ls,wt)` returns the length *L* of a wavelet system
-%   that is long enough to expand a signal of length *Ls* and associated
-%   vector subband lengths *Lc*. Please see the help on
-%   |wfbt| for an explanation of the parameter *wt*.
+%   `Lc=wpfbtclength(Ls,wt)` returns the lengths of coefficient subbands 
+%   obtained from |wpfbt| for a signal of length *Ls*. Please see the help 
+%   on |wpfbt| for an explanation of the parameter *wt*. 
 %
-%   If the returned length is longer than the signal length, the signal
-%   will be zero-padded by |wfbt| to length *L*.
+%   `[Lc,L]=wpfbtclength(...)` additionally returns the next legal length 
+%   of the input signal for the given extension type.
 %
-%   See also: wfbt, fwt
+%   The function support the same boundary-handling flags as the |fwt|
+%   does.
+%
+%   See also: wpfbt
+
+% AUTHOR: Zdenek Prusa
 
 
 definput.import = {'fwt'};

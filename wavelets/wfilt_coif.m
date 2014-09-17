@@ -4,20 +4,23 @@ function [h,g,a,info] = wfilt_coif(K)
 %   Usage: [h,g,a] = wfilt_coif(K);
 %
 %   `[h,g,a]=wfilt_coif(K)` with $K \in {1,2,3,4,5}$ returns a Coiflet
-%   filters of order $L=2K$ the number of vanishing moments of both the
+%   filters of order $2K$ the number of vanishing moments of both the
 %   scaling and the wavelet functions.
 %
-%   Values are taken from table 8.1 from the reference.
-%
-%   REMARK: There is a typo in 2nd element for K==1 
-%   
+%   Values are taken from table 8.1 from the reference. REMARK: There is 
+%   a typo in 2nd element for $K==1$.
 %
 %   Examples:
 %   ---------
 %   :::
 %     wfiltinfo('coif2');
+%
+%   :::
+%     wfiltinfo('coif5');
 % 
 %   References: daub98tenlectures
+
+% AUTHOR: Zdenek Prusa
 
 info.istight = 1;
 a = [2;2];

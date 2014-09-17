@@ -12,7 +12,8 @@ function c = fwt2(f,w,J,varargin)
 %         c      : Coefficients stored in a matrix.
 %
 %   `c=fwt2(f,w,J)` returns wavelet coefficients *c* of the input matrix *f*
-%   using *J* iterations of the basic wavelet filterbank defined by *h*.
+%   using *J* iterations of the basic wavelet filterbank defined by *w*.
+%   Please see |fwt| for description of *w* and *J*.
 %
 %   `fwt2` supports just the non-expansive boundary condition 'per' and
 %   critically subsampled filterbanks in order to be able to pack the
@@ -22,11 +23,13 @@ function c = fwt2(f,w,J,varargin)
 %   Additional flags make it possible to specify how the algorithm
 %   should subdivide the matrix:
 %
-%     'standard'  (default) This is the standard behaviour of the JPEG 2000
-%                 standard
+%      'standard'  
+%         Standard behaviour of the JPEG 2000 standard.
+%         This is the default.
 %
-%     'tensor'    This corresponds to doing a |fwt| along each dimension
-%                 of the matrix.
+%      'tensor'
+%         This corresponds to doing a full |fwt| along each dimension of
+%         the matrix.
 %
 %   Examples:
 %   ---------
@@ -52,6 +55,8 @@ function c = fwt2(f,w,J,varargin)
 %   Demos: demo_imagecompression
 %
 %   References: ma98
+
+% AUTHOR: Zdenek Prusa
 
 
 if nargin<3
@@ -105,31 +110,4 @@ elseif(flags.do_tensor)
 else
     error('%s: Should not get here. Bug somewhere else.',upper(mfilename));
 end
-
-
-%% ----- step 1 : Run calc -----------
-% filtNo = length(h.filts);
-% subbNo = filtNo^2-1;
-% c = cell(J*subbNo+1,1);
-% cJidx = J*subbNo+1;
-% cTmp = f;
-% for jj=1:J
-%      cCols = comp_fwt_all(cTmp,h.filts,1,h.a,'dec',flags.ext);
-%      [cColsPack,rows] = wavcell2pack(cCols);
-%      cRows = comp_fwt_all(cColsPack.',h.filts,1,h.a,'dec',flags.ext);
-%      [cRowsPack,cols] = wavcell2pack(cRows);
-%      cTmp = cRowsPack(1:cols(1),1:rows(1)).';
-%
-%      cJidxTmp = cJidx - jj*subbNo+1;
-%
-%      for cc= 1:filtNo
-%         for rr = 1:filtNo
-%            if(cc==1&&rr==1), continue; end;
-%            c{cJidxTmp} = cRowsPack(sum(cols(1:cc-1))+1:sum(cols(1:cc)),sum(rows(1:rr-1))+1:sum(rows(1:rr))).';
-%            cJidxTmp = cJidxTmp + 1;
-%         end
-%      end
-% end
-% c{1} = cTmp;
-
 

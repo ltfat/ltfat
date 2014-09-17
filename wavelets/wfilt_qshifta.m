@@ -15,6 +15,8 @@ function [h,g,a,info] = wfilt_qshifta(N)
 %   References: king00 king03
 %
 
+% AUTHOR: Zdenek Prusa
+
 info.istight = 1;
 a = [2;2];
 

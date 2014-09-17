@@ -15,7 +15,7 @@ function f=iwfbt(c,par,varargin)
 %   using parameters from `info` struct. both returned by |wfbt| function.
 %
 %   `f = iwfbt(c,wt,Ls)` reconstructs signal *f* from the coefficients *c*
-%   using filter bank tree defined by *wt*. Plese see |wfbt| function for
+%   using filterbank tree defined by *wt*. Plese see |wfbt| function for
 %   possible formats of *wt*. The *Ls* parameter is mandatory due to the
 %   ambiguity of reconstruction lengths introduced by the subsampling
 %   operation and by boundary treatment methods. Note that the same flag as
@@ -30,13 +30,15 @@ function f=iwfbt(c,par,varargin)
 %
 %     f = gspi;
 %     J = 7;
-%     wtdef = {'oddeven1',J};
-%     c = dtwfb(f,wtdef);
-%     fhat = idtwfb(c,wtdef,length(f));
+%     wt = {'db6',J};
+%     c = wfbt(f,wt);
+%     fhat = iwfbt(c,wt,length(f));
 %     % The following should give (almost) zero
 %     norm(f-fhat)
 %
 %   See also: wfbt, wfbtinit
+
+% AUTHOR: Zdenek Prusa
 
 
 complainif_notenoughargs(nargin,2,'IWFBT');

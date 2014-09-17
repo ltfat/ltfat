@@ -10,9 +10,17 @@ function [AF,BF]=wpfbtbounds(wt,L,varargin)
 %   `[A,B]=wpfbtbounds(wt,L)` returns the lower and upper frame bounds
 %   explicitly.
 %
-%   See |wfbt| for explanation of parameter *wt*.
+%   See |wfbt| for explanation of parameter *wt*. 
+%
+%   Additionally, the function accepts the following flags:
+%
+%   `'intsqrt'`(default),`'intnoscale'`, `'intscale'`
+%       The filters in the filterbank tree are scaled to reflect the
+%       behavior of |wpfbt| and |iwpfbt| with the same flags.
 %
 %   See also: wpfbt, filterbankbounds
+
+% AUTHOR: Zdenek Prusa
 
 
 complainif_notenoughargs(nargin,2,'WPFBTBOUNDS');

@@ -102,7 +102,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %      ..
 %         E_wlp(x) = max k^{\frac{1}{p}}v_k(x),
 %
-%      .. math:: E_{wlp}(x) = \max k^(1/p)v_k(x),
+%      .. math:: E_{wlp}(x) = \max k^{1/p}v_k(x),
 %
 %      where $0<p\leq 2$ and $v_k(x)$ denotes the *k*-th largest absolute value
 %      of *x*.
@@ -162,6 +162,7 @@ function [c,info] = wpbest(f,w,J,varargin)
 %
 %   References: wickerhauser1991lectures tas94near-bestbasis
 
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,3,'WPBEST');
 complainif_notposint(J,'J','WPBEST');

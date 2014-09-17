@@ -1,22 +1,28 @@
-function [h,g,a,info] = wfilt_hden(N)
+function [h,g,a,info] = wfilt_hden(K)
 %WFILT_HDEN  Higher DENsity dwt filters (tight frame, frame)
-%   Usage: [h,g,a] = wfilt_hden(N);
+%   Usage: [h,g,a] = wfilt_hden(K);
 %
-%   `[h,g,a]=wfilt_hden(N)` computes Higher DENsity dwt filters (tight frame, frame).
+%   `[h,g,a]=wfilt_hden(K)` with $K \in {1,2,3,4}$ returns Higher DENsity 
+%   dwt filters (tight frame, frame) from the reference. The filterbanks 
+%   have 3 channels and unusual non-uniform subsamplig factors `[2,2,1]`.
 %
 %   Examples:
 %   ---------
 %   :::
-%
 %     wfiltinfo('hden3');
+%
+%   :::
+%     wfiltinfo('ana:hden4');
 %
 %   References: selesnick2006higher
 %
 
+% AUTHOR: Zdenek Prusa
+
 
 a= [2;2;1];
 info.istight = 1;
-switch(N)
+switch(K)
 case 1
 % from the paper Example 1.
 garr = [

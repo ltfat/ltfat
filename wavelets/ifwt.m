@@ -19,7 +19,7 @@ function f = ifwt(c,par,varargin)
 %   function.
 %
 %   `f = ifwt(c,w,J,Ls)` reconstructs signal *f* from the wavelet coefficients
-%   *c* using *J*-iteration synthesis filter bank build from the basic
+%   *c* using *J*-iteration synthesis filterbank build from the basic
 %   filterbank defined by *w*. The *Ls* parameter is mandatory due to the
 %   ambiguity of lengths introduced by the subsampling operation and by
 %   boundary treatment methods. Note that the same flag as in the |fwt|
@@ -47,6 +47,8 @@ function f = ifwt(c,par,varargin)
 %   See also:  fwt, wavpack2cell, wavcell2pack
 %
 %   References: ma98
+
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,2,'IFWT');
 

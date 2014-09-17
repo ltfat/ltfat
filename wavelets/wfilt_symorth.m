@@ -3,18 +3,25 @@ function [h,g,a,info] = wfilt_symorth(N)
 %
 %   Usage: [h,g,a] = wfilt_symorth(N);
 %
-%   `[h,g,a]=wfilt_symorth(N)` with *N\in {1,2,3}*
+%   `[h,g,a]=wfilt_symorth(N)` with $N\in {1,2,3}$ returns orthogonal
+%   near-symmetric ($N==1$) and symmetric near-orthogonal ($N==[2,3]$)
+%   wavelet filters from the reference.
+%
+%   The filters exhibit a coiflet-like behavior i.e. the scaling filter
+%   has vanishing moments too.    
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
 %     wfiltinfo('ana:symorth2');
-%     figure(2);
+%
+%   :::
 %     wfiltinfo('syn:symorth2');
 % 
 %   References: abdelnour2004
 %
+
+% AUTHOR: Zdenek Prusa
 
 info.istight = 0;
 a = [2;2];

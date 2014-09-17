@@ -37,8 +37,9 @@ function f=idtwfb(c,par,varargin)
 %      % The following should give (almost) zero
 %      norm(f-fhat)
 %
+%   See also: dtwfb dtwfbinit
 %
-%   See also: dtwfb
+%
 
 
 complainif_notenoughargs(nargin,2,'IDTWFB');

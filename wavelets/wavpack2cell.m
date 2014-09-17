@@ -16,7 +16,7 @@ function [ccell,dim] = wavpack2cell(cvec,Lc,varargin)
 %                    complementary function |wavcell2pack|.
 %
 %   `ccell = wavpack2cell(cvec,Lc)` copies coefficients from a single column
-%   vector or collumns of a matrix *cvec* of size `[sum(Lc), W]` to the cell
+%   vector or columns of a matrix *cvec* of size `[sum(Lc), W]` to the cell
 %   array *ccell* of length `length(Lc)`. Size of *j*-th element of *ccell*
 %   is `[Lc(j), W]` and it is obtained by::
 % 
@@ -32,6 +32,8 @@ function [ccell,dim] = wavpack2cell(cvec,Lc,varargin)
 %      ccell{j}=cvec(:,1+sum(Lc(1:j-1)):sum(Lc(1:j)).';
 %
 %   See also: wavcell2pack, fwt, wfbt, wpfbt
+
+% AUTHOR: Zdenek Prusa
 
 
 if(nargin<2)

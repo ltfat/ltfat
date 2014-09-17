@@ -3,16 +3,19 @@ function [h,g,a,info] = wfiltdt_optsym(N)
 %
 %   Usage: [h,g,a] = wfiltdt_optsym(N);
 %
-%   `[h,g,a]=wfiltdt_optsym(N)` with $N \in {1,2,3}$. 
+%   `[h,g,a]=wfiltdt_optsym(N)` with $N \in {1,2,3}$ returns filters
+%   suitable for dual-tree complex wavelet transform with optimized 
+%   symmetry.
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
 %     wfiltdtinfo('optsym3');
 % 
 %   References: dubase08
 %
+
+% AUTHOR: Zdenek Prusa
 
 info.istight = 1;
 a = [2;2];

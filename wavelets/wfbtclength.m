@@ -1,16 +1,21 @@
 function [Lc,L]=wfbtclength(Ls,wt,varargin)
 %WFBTCLENGTH  WFBT subband lengths from a signal length
-%   Usage: L=wfbtclength(Ls,wt);
-%          L=wfbtclength(Ls,wt,...);
+%   Usage: Lc=wfbtclength(Ls,wt);
+%          [Lc,L]=wfbtclength(...);
 %
-%   `wfbtclength(Ls,wt)` returns the length of a Wavelet system that is long
-%   enough to expand a signal of length *Ls*. Please see the help on
-%   |wfbt| for an explanation of the parameter *wt*.
+%   `Lc=wfbtclength(Ls,wt)` returns the lengths of coefficient subbands 
+%   obtained from |wfbt| for a signal of length *Ls*. Please see the help 
+%   on |wfbt| for an explanation of the parameters *wt*. 
 %
-%   If the returned length is longer than the signal length, the signal
-%   will be zero-padded by |wfbt| to length *L*.
+%   `[Lc,L]=wfbtclength(...)` additionally returns the next legal length 
+%   of the input signal for the given extension type.
 %
-%   See also: wfbt, fwt
+%   The function support the same boundary-handling flags as the |fwt|
+%   does.
+%
+%   See also: wfbt, wfbtlength
+
+% AUTHOR: Zdenek Prusa
 
 complainif_notposint(Ls,'Ls','WFBTCLENGTH');
 

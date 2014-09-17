@@ -4,20 +4,18 @@ function [h,g,a,info]=wfilt_spline(m,n)
 %
 %   Input parameters:
 %         m     : Number of zeros at $z=-1$ of the lowpass filter in `g{1}`
-%         n     : Number of zeros at $z=-1$ of the lowpass filter in
-%                 `h{1}`. $m+n$ must be even. 
+%         n     : Number of zeros at $z=-1$ of the lowpass filter in `h{1}`
 %
-%   `[h,g,a]=wfilt_spline(m,n)` returns the analysis and synthesis filters
-%   corresponding to a biortoghonal scheme with spline wavelets of compact
-%   support.
+%   `[h,g,a]=wfilt_spline(m,n)` with $m+n$ being even returns biorthogonal
+%   spline wavelet filters.  
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
-%     wfiltinfo('ana:spline4:4');
-%     figure(2);
-%     wfiltinfo('syn:spline4:4');
+%     wfiltinfo('ana:spline4:2');
+%
+%   :::
+%     wfiltinfo('syn:spline4:2');
 %
 
 %   Original copyright goes to:

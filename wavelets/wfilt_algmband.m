@@ -1,23 +1,25 @@
-function [h,g,a,info] = wfilt_algmband(N)
+function [h,g,a,info] = wfilt_algmband(K)
 %WFILT_ALGMBAND  An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
-%   Usage: [h,g,a] = wfilt_algmband(N);
+%   Usage: [h,g,a] = wfilt_algmband(K);
 %
-%   `[h,g,a]=wfilt_algmband(N)` computes an algebraic construction of
-%   orthonormal m-band wavelets with perfect reconstruction. Critically
-%   subsampled.
+%   `[h,g,a]=wfilt_algmband(K)` with $K \in {1,2}$ returns wavelet filters
+%   from the reference paper. The filters are 3-band ($K==1$) and 4-band 
+%   ($K==2$) with critical subsampling.
 %
 %   Examples:
 %   ---------
 %   :::
+%     wfiltinfo('algmband1');  
 %
+%   :::
 %     wfiltinfo('algmband2');   
 %
 %   References:  lin2006algebraic  
 
+% AUTHOR: Zdenek Prusa
 
 
-
-switch(N)
+switch(K)
    case 1
    % from the paper Example 1.
       garr = [

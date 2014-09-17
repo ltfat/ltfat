@@ -1,25 +1,30 @@
-function [h,g,a,info] = wfilt_symds(N)
+function [h,g,a,info] = wfilt_symds(K)
 %WFILT_SYMDS  Symmetric wavelets dyadic sibling
-%   Usage: [h,g,a] = wfilt_symds(N);
+%   Usage: [h,g,a] = wfilt_symds(K);
 %
-%   `[h,g,a]=wfilt_symds(N)` Returns symmetric dyadic sibling wavelet filters.
-%   The redundancy is equal to 2.
+%   `[h,g,a]=wfilt_symds(K)` with $K \in {1,2,3,4,5}$ returns symmetric 
+%   dyadic sibling wavelet frame filters from the reference.
+%
+%   The returned filterbank has redundancy equal to 2 and it does not form
+%   a tight frame.
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
 %     wfiltinfo('ana:symds3');
-%     figure(2);
+%
+%   :::
 %     wfiltinfo('syn:symds3');
 % 
 %   References: abdelnour2012sib
 %
 
+% AUTHOR: Zdenek Prusa
+
 info.istight = 0;
 a = [2;2;2;2];
 
-switch(N)
+switch(K)
  case 1
     % Example 1. Not a tight frame!
     harr = [

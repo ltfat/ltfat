@@ -10,6 +10,18 @@ function wfiltdtinfo(dw,varargin)
 %   with the dual-tree wavelet filters defined by *w* in a single figure. 
 %   Format of *dw* is the same as in |dtwfb|.
 %
+%   The figure is organized as follows:
+%
+%   First row shows impulse responses of the first (real) tree.
+%
+%   Second row shows impulse responses of the second (imag) tree.
+%
+%   Third row contains plots of real (green), imaginary (red) and absolute 
+%   (blue) parts of approximation of scaling and wavelet function(s).
+%
+%   Fourth and fifth row show magnitude and phase frequency responses 
+%   respectivelly of filters from rows 1 and 2 with matching colors.
+%
 %   Optionally it is possible to define scaling of the y axis of the
 %   frequency seponses. Supported are:
 %
@@ -21,6 +33,8 @@ function wfiltdtinfo(dw,varargin)
 %   :::
 %      wfiltdtinfo('qshift4');
 %   
+
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,1,'WFILTDTINFO');
 
@@ -36,7 +50,7 @@ filtNo = size(dw.g,1);
 grayLevel = [0.6,0.6,0.6];
 clf;
 
-colorAr = repmat('rbkcmg',1,filtNo);
+colorAr ={repmat('rbk',1,filtNo),repmat('cmg',1,filtNo)};
 
 for ii=1:2
     subplot(5,filtNo,filtNo*(ii-1)+1);
@@ -50,7 +64,7 @@ for ii=1:2
     end
 
     loAnaNZ = find(loAna~=0);
-    stem(xvals(loAnaNZ),loAna(loAnaNZ),colorAr(1));
+    stem(xvals(loAnaNZ),loAna(loAnaNZ),colorAr{ii}(1));
     axis tight;
     hold off;
 end
@@ -69,39 +83,40 @@ for ii=1:2
            stem(xvals(filtAna==0),filtAna(filtAna==0),'Color',grayLevel);
         end
 
-        stem(xvals(filtNZ),filtAna(filtNZ),colorAr(ff));
+        stem(xvals(filtNZ),filtAna(filtNZ),colorAr{ii}(ff));
         axis tight;
         hold off;
     end
 end
 
-L = 1024;
+L =  wfbtlength(1024,dwstruct,'per');
 Lc = wfbtclength(L,dwstruct,'per');
 c = wavpack2cell(zeros(sum([Lc;Lc(end:-1:1)]),1),...
                  [Lc;Lc(end:-1:1)]);
 c{1}(1) = 1;
-sfn = flipud(idtwfb(c,dwstruct,L));
-
+sfn = idtwfb(c,dwstruct,L);
 
 subplot(5,filtNo,[2*filtNo+1]);
 xvals = ((-floor(L/2)+1:floor(L/2)).');
-plot(xvals,fftshift([abs(sfn),real(sfn),imag(sfn)]));
+plot(xvals,fftshift([abs(sfn),real(sfn),imag(sfn)],1));
 axis tight;
 title('Scaling function');
-legend({'abs','real','imag'},'Location','west')
+
+%legend({'abs','real','imag'},'Location','south','Orientation','horizontal')
 
 for ff=2:filtNo
    subplot(5,filtNo,[2*filtNo+ff]);
    
    c{ff-1}(1) = 0;
    c{ff}(1) = 1;
-   wfn = flipud(idtwfb(c,dwstruct,L));
+   wfn = idtwfb(c,dwstruct,L);
    
-   plot(xvals,fftshift([abs(wfn),real(wfn),imag(wfn)]));
+   plot(xvals,fftshift([abs(wfn),real(wfn),imag(wfn)],1));
    axis tight;
-   legend({'abs','real','imag'},'Location','west')
+   %legend({'abs','real','imag'},'Location','south','Orientation','horizontal')
    title(sprintf('Wavelet function: %i',ff-1));
 end
+
 
 subplot(5,filtNo,3*filtNo + (1:filtNo) );
 title('Magnitude frequency response');
@@ -121,9 +136,11 @@ else
 end
 xVals = linspace(0,1,numel(H(:,1)));
 hold on;
-for ff=1:filtNo*2
-   plot(xVals,plotH(:,ff),colorAr(ff));
+for ii=1:2
+for ff=1:filtNo
+   plot(xVals,plotH(:,ff+(ii-1)*filtNo),colorAr{ii}(ff));
    axis tight;
+end
 end
 if flags.do_db
     ylim([-30,max(plotH(:))])
@@ -132,12 +149,14 @@ ylabel('|\itH|[dB]');
 xlabel('\omega [-]')
 hold off;
 
-subplot(4,filtNo,3*filtNo + (1:filtNo) );
+subplot(5,filtNo,4*filtNo + (1:filtNo) );
 title('Phase frequency response');
 hold on;
-for ff=1:filtNo*2
-   plot(xVals,unwrap(angle((H(:,ff))))/pi,colorAr(ff));
+for ii=1:2
+for ff=1:filtNo
+   plot(xVals,unwrap(angle((H(:,ff+(ii-1)*filtNo))))/pi,colorAr{ii}(ff));
    axis tight;
+end
 end
 ylabel('arg H(\omega)[\pi rad]');
 xlabel('\omega [-]')

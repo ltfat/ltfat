@@ -14,8 +14,8 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %   Iteratively generate (*N* iterations) a discrete approximation of wavelet
 %   and scaling functions using filters obtained from *w*. The possible formats of *w*
 %   are the same as for the |fwt| function. The algorithm is equal to the 
-%   DWT reconstruction of a single coefficient at level $N$ set to 1. *xvals*
-%   contains correct x-axis values. All but alst collumns belong to the
+%   DWT reconstruction of a single coefficient at level $N+1$ set to 1. *xvals*
+%   contains correct x-axis values. All but last columns belong to the
 %   *wfunc*, last one to the *sfunc*.
 %   
 %   The following flags are supported (first is default):
@@ -44,6 +44,8 @@ function [wfunc,sfunc,xvals] = wavfun(w,varargin)
 %     plot(xvals,[wfn,sfn]);
 %     legend('wavelet function','scaling function');
 %
+
+% AUTHOR: Zdenek Prusa
 
 definput.keyvals.N = 6;
 definput.flags.howcomp = {'conv','fft'};

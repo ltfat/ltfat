@@ -3,10 +3,12 @@ function [h,g,a,info] = wfilt_matlabwrapper(wname)
 %   Usage: [h,g,a] = wfilt_matlabwrapper(wname);
 %
 %   `[h,g,a]=wfilt_matlabwrapper(wname)` calls Matlab Wavelet Toolbox
-%   function `wfilters` and passes the parameter *wname*. 
+%   function `wfilters` and passes the parameter *wname* to it. 
 %
 %   This function requires the Matlab Wavelet Toolbox.
 %
+
+% AUTHOR: Zdenek Prusa
 
 if ~exist('wfilters',2)
     error('%s: Matlab Wavelet Toolbox is not present.',upper(mfilename));

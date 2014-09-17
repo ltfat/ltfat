@@ -17,6 +17,8 @@ function [h,g,a,info] = wfilt_oddevena(N)
 % 
 %   References: king02
 
+% AUTHOR: Zdenek Prusa
+
 info.istight = 0;
 
 a = [2;2];

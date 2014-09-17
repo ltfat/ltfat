@@ -5,18 +5,27 @@ function [h,g,a,info] = wfilt_cmband(M)
 %   Input parameters:
 %         M     : Number of channels.
 %
-%   `[h,g,a]=wfilt_cmband(M)` returns smooth, *1*-regular Cosine modulated
-%   *M*-band wavelet filters. The length of the filters is *4M*.
+%   `[h,g,a]=wfilt_cmband(M)` with $M\in {2,3,\dots}$ returns smooth, 
+%   1-regular cosine modulated *M*-band wavelet filters according to the 
+%   reference paper.
+%   The length of the filters is *4M*.
 %
 %   Examples:
 %   ---------
 %   :::
+%     wfiltinfo('cmband3');
 %
+%   :::
+%     wfiltinfo('cmband4');
+%
+%   :::
 %     wfiltinfo('cmband5');
 %
 %
 %   References:  gobu95
 %
+
+% AUTHOR: Zdenek Prusa
 
 % if K<1 || rem(K,1) ~= 0
 %     error('%s: Regularity K has to be at least 1.',upper(mfilename));

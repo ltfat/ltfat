@@ -14,17 +14,53 @@ function wt = wfbtput(d,k,w,wt,forceStr)
 %           wt : Modified filterbank structure.
 %
 %   `wfbtput(d,k,w,wt)` puts the basic filterbank *w* to the filter
-%   tree structure *wt* at level *d* and index *k*. The output is a
+%   tree structure *wt* at level *d* and index(es) *k*. The output is a
 %   modified tree structure. *d* and *k* have to specify unconnected output
 %   of the leaf node. Error is issued if *d* and *k* points to already
 %   existing node. For possible formats of parameter *w* see help of |fwt|.
 %   Parameter *wt* has to be a structure returned by |wfbtinit|.
-%
+%   
 %   `wfbtput(d,k,w,wt,'force')` does the same but replaces node at *d* and *k*
 %   if it already exists. If the node to be replaced has any children, 
 %   the number of outputs of the replacing node have to be equal to number of
 %   outputs of the node beeing replaced.
 %
+%   Examples:
+%   ---------
+%
+%   This example shows magnitude frequency responses of a tree build from
+%   the root:::
+%
+%      % Initialize empty struct
+%      wt = wfbtinit();
+%      % Put root node to the empty struct
+%      wt1 = wfbtput(0,0,'db8',wt);
+%      % Connect a different nodes to both outputs of the root
+%      wt2 = wfbtput(1,[0,1],'db10',wt1);
+%      % Connect another nodes just to high-pass outputs of nodes just added
+%      wt3 = wfbtput(2,[1,3],'db10',wt2);
+%      % Add another node at level 3
+%      wt4 = wfbtput(3,1,'db16',wt3);
+%      
+%      % Create identical filterbanks
+%      [g1,a1] = wfbt2filterbank(wt1,'freq');
+%      [g2,a2] = wfbt2filterbank(wt2,'freq');
+%      [g3,a3] = wfbt2filterbank(wt3,'freq');
+%      [g4,a4] = wfbt2filterbank(wt4,'freq');
+%
+%      % Plot frequency responses of the growing tree. Linear scale 
+%      % (both axis) is used and positive frequencies only are shown.
+%      subplot(4,1,1);
+%      filterbankfreqz(g1,a1,1024,'plot','linabs','posfreq');
+%      subplot(4,1,2);
+%      filterbankfreqz(g2,a2,1024,'plot','linabs','posfreq');
+%      subplot(4,1,3);
+%      filterbankfreqz(g3,a3,1024,'plot','linabs','posfreq');
+%      subplot(4,1,4);
+%      filterbankfreqz(g4,a4,1024,'plot','linabs','posfreq');
+%
+
+% AUTHOR: Zdenek Prusa
   
 if nargin<4
    error('%s: Too few input parameters.',upper(mfilename)); 
