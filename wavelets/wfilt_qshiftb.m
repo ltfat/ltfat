@@ -15,6 +15,8 @@ function [h,g,a,info] = wfilt_qshiftb(N)
 %   References: king00 king03
 %
 
+% AUTHOR: Zdenek Prusa
+
 [ha,~,a,info] = wfilt_qshifta(N);
 
 hlp = ha{1}.h;

@@ -3,7 +3,7 @@ function wfiltinfo(w,varargin)
 %   Usage: wfiltinfo(w);
 %
 %   Input parameters:
-%         w     : Wavelet filterbank
+%         w     : Basic wavelet filterbank.
 %
 %   `wfiltinfo(w)` plots impulse responses, frequency responses and 
 %   approximation of the scaling and of the wavelet function(s) associated
@@ -28,6 +28,8 @@ function wfiltinfo(w,varargin)
 %      wfiltinfo('ana:spline8:8');
 %
 %   See also: wfilt_db 
+
+% AUTHOR: Zdenek Prusa
 
 definput.flags.freqzscale = {'db','lin'};
 [flags]=ltfatarghelper({},definput,varargin);

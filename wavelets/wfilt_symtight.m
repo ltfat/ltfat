@@ -1,22 +1,30 @@
-function [h,g,a,info] = wfilt_symtight(N)
+function [h,g,a,info] = wfilt_symtight(K)
 %WFILT_SYMTIGHT Symmetric Nearly Shift-Invariant Tight Frame Wavelets
 %
-%   Usage: [h,g,a] = wfilt_symtight(N);
+%   Usage: [h,g,a] = wfilt_symtight(K);
 %
-%   `[h,g,a]=wfilt_symtight(N)` with *N\in {1,2}*
+%   `[h,g,a]=wfilt_symtight(K)` with $K \in {1,2}$ returns 4-band 
+%   symmetric nearly shift-invariant tight framelets.
+%
+%
 %
 %   Examples:
 %   ---------
 %   :::
-%     wfiltinfo('ana:symtight2');
+%     wfiltinfo('symtight1');
+%
+%   :::
+%     wfiltinfo('symtight2');
 % 
 %   References: abse05
 %
 
+% AUTHOR: Zdenek Prusa
+
 info.istight = 1;
 a = [2;2;2;2];
 
-switch(N)
+switch(K)
  case 1
     % Example 1. from the reference.   
     hlp = [

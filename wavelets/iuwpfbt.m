@@ -1,11 +1,11 @@
 function f=iuwpfbt(c,par,varargin)
 %IUWPFBT Inverse Undecimated Wavelet Packet Filterbank Tree
 %   Usage:  f=iuwpfbt(c,info);
-%           f=iuwpfbt(c,wt,...);
+%           f=iuwpfbt(c,wt);
 %
 %   Input parameters:
 %         c       : Coefficients stored in $L \times M$ matrix.
-%         info/wt : Transform parameters struct/Wavelet tree definition.
+%         info,wt : Transform parameters struct/Wavelet tree definition.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
@@ -18,7 +18,7 @@ function f=iuwpfbt(c,par,varargin)
 %   coefficients *c* using the undecimated wavelet filterbank tree 
 %   described by *wt*.
 %
-%   Please see help for |uwpfbt| description of possible formats of *wt*.
+%   Please see help for |wfbt| description of possible formats of *wt*.
 %
 %   Filter scaling:
 %   ---------------

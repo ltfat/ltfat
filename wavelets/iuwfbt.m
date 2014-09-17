@@ -5,24 +5,25 @@ function f=iuwfbt(c,par,varargin)
 %
 %   Input parameters:
 %         c       : Coefficients stored in $L \times M$ matrix.
-%         info/wt : Transform parameters struct/Wavelet tree definition.
+%         info,wt : Transform parameters struct/Wavelet tree definition.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
 %   `f = iuwfbt(c,info)` reconstructs signal *f* from the coefficients *c*
-%   using parameters from `info` struct. both returned by the |uwfbt| function.
+%   using parameters from `info` struct. both returned by the |uwfbt| 
+%   function.
 %
 %   `f = iuwfbt(c,wt)` reconstructs signal *f* from the wavelet coefficients
 %   *c* using the undecimated wavelet filterbank tree described by *wt*.
 %
-%   Please see help for |uwfbt| description of possible formats of *wt*.
+%   Please see help for |wfbt| description of possible formats of *wt*.
 %
 %   Filter scaling:
 %   ---------------
 %
-%   As in |uwfbt|, the function recognizes three flags controlling scaling of 
-%   the filters:
+%   As in |uwfbt|, the function recognizes three flags controlling scaling
+%   of the filters:
 %
 %      'sqrt'
 %               Each filter is scaled by `1/sqrt(a)`, there *a* is the hop

@@ -1,16 +1,22 @@
-function L=fwtlength(Ls,w,J,varargin);
+function L=fwtlength(Ls,w,J,varargin)
 %FWTLENGTH  FWT length from signal
 %   Usage: L=fwtlength(Ls,w,J);
-%          L=fwtlength(Ls,w,J,...);
 %
 %   `fwtlength(Ls,w,J)` returns the length of a Wavelet system that is long
 %   enough to expand a signal of length *Ls*. Please see the help on
-%   |fwt| for an explanation of the parameters *h* and *J*.
+%   |fwt| for an explanation of the parameters *w* and *J*.
 %
 %   If the returned length is longer than the signal length, the signal
 %   will be zero-padded by |fwt| to length *L*.
 %
+%   In addition, the function accepts flags defining boundary extension
+%   technique as in |fwt|. The returned length can be longer than the
+%   signal length only in case of `'per'` (periodic extension).
+%
 %   See also: fwt
+
+% AUTHOR: Zdenek Prusa
+
 complainif_notposint(Ls,'Ls','FWTLENGTH');
 complainif_notposint(J,'J','FWTLENGTH');
 

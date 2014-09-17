@@ -1,22 +1,27 @@
-function [h,g,a,info] = wfilt_symdden(N)
-%WFILT_DDEN  Symmetric Dual-Density DWT filters (tight frame)
-%   Usage: [h,g,a] = wfilt_symdden(N);
+function [h,g,a,info] = wfilt_symdden(K)
+%WFILT_SYMDDEN  Symmetric Double-Density DWT filters (tight frame)
+%   Usage: [h,g,a] = wfilt_symdden(K);
 %
-%   `[h,g,a]=wfilt_symdden(N)` computes oversampled symmetric 
-%   double-density DWT filters. The redundancy is equal to 2.
+%   `[h,g,a]=wfilt_symdden(K)` with $K \in {1,2}$ returns oversampled
+%   symmetric double-density DWT filters. 
+%   The redundancy of the basic filterbank is equal to 1.5.
 %
 %   Examples:
 %   ---------
 %   :::
-%
 %     wfiltinfo('symdden1');
+%
+%   :::
+%     wfiltinfo('symdden2');
 %
 %   References: seab04
 %
 
+% AUTHOR: Zdenek Prusa
 
 
-switch(N)
+
+switch(K)
     case 1
 garr = [
     0.00069616789827   0.00120643067872  -0.00020086099895

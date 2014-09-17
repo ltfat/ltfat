@@ -4,13 +4,15 @@ function [h,g,a,info]=wfilt_remez(L,K,B)
 %
 %   Input parameters:
 %         L     : Length of the filters.
-%         K     : Degree of flatness at $z=-1$. 
+%         K     : Degree of flatness (regularity) at $z=-1$. 
 %         B     : Normalized transition bandwidth.
 %
-%   `[h,g,a]=wfilt_remez(L,K,B)` calculates a set of wavelet filters. You
-%   can control regularity, frequency selectivity, and length of the
-%   filters.  It works performing a factorization based on the complex
-%   cepstrum of the polynomial.
+%   `[h,g,a]=wfilt_remez(L,K,B)` calculates a set of wavelet filters. 
+%   Regularity, frequency selectivity, and length of the filters can be
+%   controlled by *K*, *B* and *L* parameters respectivelly.
+%
+%   The filter desigh algorithm is based on a Remez algorithm and a 
+%   factorization of the complex cepstrum of the polynomial.
 %
 %   Examples:
 %   ---------

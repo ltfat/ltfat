@@ -61,26 +61,25 @@
 %   Wavelet Filters defined in the time-domain
 %      WFILT_ALGMBAND    - An ALGebraic construction of orthonormal M-BAND wavelets with perfect reconstruction
 %      WFILT_CMBAND      - M-Band cosine modulated wavelet filters
+%      WFILT_COIF        - Coiflets
 %      WFILT_DB          - DauBechies orthogonal filters (ortonormal base)
 %      WFILT_DDEN        - Double-DENsity dwt filters (tight frame)
 %      WFILT_DGRID       - Dense GRID framelets (tight frame, symmetric)
 %      WFILT_HDEN        - Higher DENsity dwt filters (tight frame, frame)  
-%      WFILT_LEMARIE         - Battle and Lemarie quadrature filters
-%      WFILT_MATLABWTWRAPPER - Wrapper of the wfilters function from the Matlab Wavelet Toolbox 
+%      WFILT_LEMARIE       - Battle and Lemarie quadrature filters
+%      WFILT_MATLABWRAPPER - Wrapper of the wfilters function from the Matlab Wavelet Toolbox 
 %      WFILT_MBAND           - M-band filters
 %      WFILT_REMEZ           - Wavelet orthonogal filters based on the Remez Exchange algorithm
 %      WFILT_SYMDS           - SYMmetric wavelet Dyadic Siblings (frames)
 %      WFILT_SPLINE          - Biorthogonal spline wavelet filters
 %      WFILT_SYM             - Least asymmetric Daubechies wavelet filters
+%      WFILT_SYMDDEN         - Symmetric Double-DENsity dwt filters (tight frame)
 %      WFILT_SYMORTH         - Symmetric nearly-orthogonal and orthogonal nearly-symmetric wav. filters
 %      WFILT_SYMTIGHT        - Symmetric nearly shift-invariant tight frame wavelets
 %      WFILT_QSHIFTA         - First tree filters from WFILTDT_QSHIFT 
 %      WFILT_QSHIFTB         - Second tree filters from WFILTDT_QSHIFT 
 %      WFILT_ODDEVENA        - First tree filters from WFILTDT_ODDEVEN 
 %      WFILT_ODDEVENB        - Second tree filters from WFILTDT_ODDEVEN 
-%
-%   Wavelet filters defined in the frequency-domain
-%      WFREQ_LEMARIE         - Battle and Lemarie filters sampled freq. resp.
 %
 %   Dual-Tree Filters
 %      WFILTDT_QSHIFT        - Kingsbury's quarter-shift filters

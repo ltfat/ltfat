@@ -3,16 +3,19 @@ function [h,g,a,info] = wfiltdt_oddeven(N)
 %
 %   Usage: [h,g,a] = wfiltdt_oddeven(N);
 %
-%   `[h,g,a]=wfilt_oddeven(N)` with $N \in {1}$
+%   `[h,g,a]=wfilt_oddeven(N)` with $N \in {1}$ returns the original odd
+%   and even symmetric filters suitable for dual-tree complex wavelet
+%   transform. The filters in individual trees are biorthogonal.
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
 %     wfiltdtinfo('ana:oddeven1');
 % 
 %   References: king02
 %
+
+% AUTHOR: Zdenek Prusa
 
 
 [h(:,1),g(:,1),a,info] = wfilt_oddevena(N);

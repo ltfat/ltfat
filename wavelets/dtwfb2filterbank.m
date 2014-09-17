@@ -1,7 +1,7 @@
 function [g,a,info] = dtwfb2filterbank( dualwt, varargin)
 %DTWFB2FILTERBANK DTWFB equivalent non-iterated filterbank
-%   Usage: [g,a,info] = dtwfb2filterbank(dualwt)
-%          [g,a,info] = dtwfb2filterbank(dualwt,...)
+%   Usage: [g,a] = dtwfb2filterbank(dualwt)
+%          [g,a,info] = dtwfb2filterbank(...)
 %
 %   Input parameters:
 %      dualwt : Dual-tree wavelet filterbank specification.
@@ -27,10 +27,15 @@ function [g,a,info] = dtwfb2filterbank( dualwt, varargin)
 %
 %   Additional parameters:
 %   ----------------------
-%   
-%   By default, the function returns a filtebank equivalent to |dtwfb|.
-%   The filters can be restricted to cover only the positive frequencies
-%   and to be equivivalent to |dtwfbreal| by passing a `'real'` flag.   
+%
+%   `'real'`
+%      By default, the function returns a filtebank equivalent to |dtwfb|.
+%      The filters can be restricted to cover only the positive frequencies
+%      and to be equivivalent to |dtwfbreal| by passing a `'real'` flag. 
+%
+%   `'freq'`(default),`'nat'`
+%     The filters are ordered to produce subbands in the same order as 
+%     |dtwfb| or |dtwfbreal| with the same flag.
 %
 %   Examples:
 %   ---------

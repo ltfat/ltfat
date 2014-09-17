@@ -25,6 +25,8 @@ function [cvec,Lc] = wavcell2pack(ccell,varargin)
 %
 %   See also: wavpack2cell, fwt, wfbt, wpfbt
 
+% AUTHOR: Zdenek Prusa
+
 if(nargin<1)
     error('%s: Too few input parameters.',upper(mfilename));
 end

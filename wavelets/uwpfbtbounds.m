@@ -13,7 +13,20 @@ function [AF,BF]=uwpfbtbounds(wt,L,varargin)
 %
 %   See |wfbt| for explanation of parameter *wt*.
 %
+%   Additionally, the function accepts the following flags:
+%
+%   `'intsqrt'`(default),`'intnoscale'`, `'intscale'`
+%       The filters in the filterbank tree are scaled to reflect the
+%       behavior of |uwpfbt| and |uiwpfbt| with the same flags.
+%
+%   `'sqrt'`(default),`'noscale'`,`'scale'`
+%       The filters in the filterbank tree are scaled to reflect the
+%       behavior of |uwpfbt| and |uiwpfbt| with the same flags.  
+%              
+%
 %   See also: uwpfbt, filterbankbounds
+
+% AUTHOR: Zdenek Prusa
 
 
 complainif_notenoughargs(nargin,2,'UWPFBTBOUNDS');

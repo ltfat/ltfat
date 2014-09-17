@@ -20,6 +20,8 @@ function [AF,BF]=wfbtbounds(wt,L)
 %
 %   See also: wfbt, fwt, filterbankbounds
 
+% AUTHOR: Zdenek Prusa
+
 complainif_notenoughargs(nargin,2,'WFBTBOUNDS');
 
 wt = wfbtinit({'strict',wt},'nat');

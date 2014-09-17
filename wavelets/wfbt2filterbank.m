@@ -12,13 +12,17 @@ function [g,a] = wfbt2filterbank( wt, varargin)
 %   `[g,a]=wfbt2filterbank(wt)` calculates the impulse responses *g* and the
 %   subsampling factors *a* of non-iterated filterbank, which is equivalent
 %   to the wavelet filterbank tree described by *wt*. The returned
-%   parameters can be used directly in |filterbank| ant other routines.
+%   parameters can be used directly in |filterbank| and other routines.
 %
-%   `[g,a]=wfbt2filterbank({w,J,'dwt'})` doest the same for the DWT (|FWT|)
+%   `[g,a]=wfbt2filterbank({w,J,'dwt'})` does the same for the DWT (|FWT|)
 %   filterbank tree.
 %
-%   The function internally calls |wfbtinit| and passes *wt* and all
-%   additional parameters to it.
+%   Please see help on |wfbt| for description of *wt*. The function
+%   additionally support the following flags:
+%
+%   `'freq'`(default),`'nat'`
+%     The filters are ordered to produce subbands in the same order as 
+%     |wfbt| with the same flag.
 %
 %   Examples:
 %   ---------
@@ -37,6 +41,8 @@ function [g,a] = wfbt2filterbank( wt, varargin)
 %      filterbankfreqz(g,a,1024,'plot','linabs','posfreq');
 %
 %   See also: wfbtinit
+
+% AUTHOR: Zdenek Prusa
 
 
 complainif_notenoughargs(nargin,1,'WFBT2FILTERBANK');

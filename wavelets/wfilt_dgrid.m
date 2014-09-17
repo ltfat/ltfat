@@ -15,6 +15,8 @@ function [h,g,a,info] = wfilt_dgrid(N)
 %
 %
 
+% AUTHOR: Zdenek Prusa
+
 
 
 switch(N)

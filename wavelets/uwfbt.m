@@ -10,14 +10,16 @@ function [c,info]=uwfbt(f,wt,varargin)
 %   Output parameters:
 %         c     : Coefficients stored in $L \times M$ matrix.
 %
-%   `c=uwfbt(f,wt)` computes redundant time (or shift) invariant representation *c*
-%   of the input signal *f* using the filterbank tree definition in *wt* and
-%   using the "a-trous" algorithm. Number of columns in *c* (*M*) is defined
-%   by the total number of outputs of nodes of the tree.
-%   In addition, the function returns struct. `info` containing the transform
-%   parameters. It can be conviniently used for the inverse transform |iuwfbt|
-%   e.g. `fhat = iuwfbt(c,info)`. It is also required by the |plotwavelets|
-%   function.
+%   `uwfbt(f,wt)` computes redundant time (or shift) invariant 
+%   representation of the input signal *f* using the filterbank tree 
+%   definition in *wt* and using the "a-trous" algorithm. 
+%   Number of columns in *c* (*M*) is defined by the total number of 
+%   outputs of nodes of the tree.
+%
+%   `[c,info]=uwfbt(f,wt)` additionally returns struct. `info` containing
+%   the transform parameters. It can be conviniently used for the inverse
+%   transform |iuwfbt| e.g. `fhat = iuwfbt(c,info)`. It is also required 
+%   by the |plotwavelets| function.
 %
 %   If *f* is a matrix, the transformation is applied to each of *W* columns
 %   and the coefficients in *c* are stacked along the third dimension.
@@ -60,6 +62,8 @@ function [c,info]=uwfbt(f,wt,varargin)
 %     plotwavelets(c,info,16000,'dynrange',90);
 %
 %   See also: iuwfbt, wfbtinit
+
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,2,'UWFBT');
 

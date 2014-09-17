@@ -1,8 +1,14 @@
 function [h,g,a,info] = wfilt_mband(N)
-%WFILT_MBAND  Generates M-Band coders
+%WFILT_MBAND  Generates 4-band coder
 %   Usage: [h,g,a] = wfilt_mband(N);
 %
-%   `[h,g,a]=wfilt_mband(N)` returns linear-phase M-band wavelet filters. 
+%   `[h,g,a]=wfilt_mband(1)` returns linear-phase 4-band filters
+%   from the reference.
+%
+%   The filters are not actually proper wavelet filters, because the
+%   scaling filter is not regular, therefore it is not stable under 
+%   iterations (does not converge to a scaling function). 
+%   
 %
 %   Examples:
 %   ---------
@@ -12,6 +18,8 @@ function [h,g,a,info] = wfilt_mband(N)
 %
 %   References:  alkin95mband
 %
+
+% AUTHOR: Zdenek Prusa
 
 a= [4;4;4;4];
 

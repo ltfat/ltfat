@@ -1,7 +1,7 @@
 function [c,info]=dtwfbreal(f,dualwt,varargin)
 %DTWFBREAL Dual-Tree Wavelet FilterBank for real-valued signals
 %   Usage:  c=dtwfbreal(f,dualwt);
-%           c=dtwfbreal(f,{dw,J});
+%           c=dtwfbreal(f,{dualw,J});
 %           [c,info]=dtwfbreal(...);
 %
 %   Input parameters:
@@ -23,7 +23,7 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %   The shape of the filterbank tree and filters used is controlled by 
 %   `dualwt` (for possible formats see below). The output *c* is a 
 %   cell-array with each element containing a single subband. The subbands 
-%   are ordered with increasing center frequency of the subband. 
+%   are ordered with increasing subband center frequency. 
 %
 %   In addition, the function returns struct. `info` containing transform 
 %   parameters. It can be conviniently used for the inverse transform
@@ -35,14 +35,14 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %   Two formats of `dualwt` are accepted:
 % 
 %   1) Cell array of parameters. First two elements of the array are 
-%      mandatory `{dt,J}`. 
+%      mandatory `{dualw,J}`. 
 % 
-%         `dt`
-%            Basic dual-tree filters
-%         *J*
-%            Number of levels of the filterbank tree
+%      `dualw`
+%         Basic dual-tree filters
+%      *J*
+%         Number of levels of the filterbank tree
 %
-%      Possible formats of `dt` are the same as in |fwtinit| except the
+%      Possible formats of `dualw` are the same as in |fwtinit| except the
 %      `wfiltdt_` prefix is used when searching for function specifying
 %      the actual impulse responses. These filters were designed specially
 %      for the dual-tree filterbank to achieve the half-sample shift 
@@ -140,7 +140,7 @@ function [c,info]=dtwfbreal(f,dualwt,varargin)
 %     [g,a] = dtwfb2filterbank({'qshift4',J,'full'},'real');
 %     filterbankfreqz(g,a,1024,'plot','linabs');
 %
-%   See also: idtwfbreal plotwavelets dtwfb2filterbank
+%   See also: dtwfb idtwfbreal plotwavelets dtwfb2filterbank
 %
 %   References: king02 sebaki05 bayse08
 

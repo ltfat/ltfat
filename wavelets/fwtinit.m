@@ -1,6 +1,8 @@
 function [w,info] = fwtinit(wdef,prefix)
 %FWTINIT  Wavelet Filterbank Structure Initialization
 %   Usage:  w = fwtinit(wdef);
+%           w = fwtinit(wdef,prefix);
+%           [w,info]=fwtinit(...)
 %
 %   Input parameters:
 %         wdef   : Wavelet filters specification.
@@ -9,22 +11,50 @@ function [w,info] = fwtinit(wdef,prefix)
 %   Output parameters:
 %         w    : Structure defining the filterbank.
 %   
-%   `w=fwtinit(wdef)` produces a structure describing the analysis 
-%   (field `.h`) synthesis (field `.g`) parts of a one level wavelet-type 
-%   filterbank. The function is a wrapper for calling all the functions 
-%   starting with `wfilt_` defined in the LTFAT wavelets directory.
+%   `fwtinit(wdef)` produces a structure describing the analysis 
+%   (field `w.h`) and synthesis (field `w.g`) filterbanks and a hop factors 
+%   (field `w.a`) of a basic wavelet-type filterbank defined by `wdef`.
+%
+%   The analysis filterbank `w.h` is by default used in |fwt| and the
+%   synthesis filterbank `w.g` in |ifwt|.
+%
+%   Both `w.h` and `w.g` are cell arrays of structs defining FIR filters
+%   compatible with |filterbank|, |ifilterbank| and related functions.
+%   More preciselly, each elemement of either cell array is a struct with
+%   fields `.h` and `.offset` defining impulse response and the initial 
+%   shift respectivelly.
+%   
+%   `[w,info]=fwtinit(...)` additionally returns a `info` struct which 
+%   provides some information about the wavelet filterbank:
+%
+%      `info.istight`
+%         Wavelet filterbank forms a tight frame. In such case, `w.h` and
+%         `w.g` are identical.
+%
+%   The function is a wrapper for calling all the functions with the 
+%   `wfilt_` prefix defined in the LTFAT wavelets directory.
 %
 %   The possible formats of the `wdef` are the following:
 %
-%   1) Cell array whose first element is the name of the function defining
+%   1) Cell array with first element being the name of the function defining
 %      the basic wavelet filters (`wfilt_` prefix) and the other elements
-%      are the parameters of the function. e.g. `{'db',10}` calls 
-%      `wfilt_db(10)` internally.
+%      are the parameters of the function. 
 %
 %   2) Character string as concatenation of the name of the wavelet
 %      filters defining function (as above) and the numeric parameters
-%      delimited by ':' character, e.g. `'db10'` has the same effect as above,
-%      `'spline4:4'` calls `wfilt_spline(4,4)` internally.
+%      delimited by ':' character. Examples:
+%
+%      `{'db',10}` or `'db10'`   
+%         Daubechies with 10 vanishing moments. It calls `wfilt_db(10)` 
+%         internally.
+%      
+%      `{'spline',4,4}` or `'spline4:4'`  
+%         Biorthogonal spline wavelet filters with 4 vanishing moments. 
+%         Calls `wfilt_spline(4,4)` internally.
+%      
+%      `{'dden',1}` or `'dden1'`
+%         Double density wavelet filters. Calls `wfilt_dden(1)` where
+%         the filters are stored as numerical vectors.
 %
 %   3) Cell array of one dimensional numerical vectors directly defining
 %      the wavelet filter impulse responses.  By default, outputs of the 
@@ -38,19 +68,17 @@ function [w,info] = fwtinit(wdef,prefix)
 %      format.
 %
 %   5) Two element cell array. First element is the string `'dual'` and the
-%      second one is in format 1), 2) or 4). This returns dual of whatever
-%      is passed.
+%      second one is in format 1), 2) or 4). This returns a dual of whatever
+%      is passed as the second argument.
 %
 %   6) Two element cell array. First element is the string `'strict'` and the
-%      second one is in format 1), 2), 4) or 5). This ensures the wavelet
-%      filters not forming a tight frame has to be explicitly defined.
-%
-%   Using synthesis filters for analysis and vice versa makes a difference
-%   in case of birtoghonal filters (e.g. `'spline4:4'`) and filters which 
-%   constructs a general frame (e.g. `'symds2'`), in other cases, the analysis
-%   filters are just time-reversed version of synthesis filters. To specify
-%   which filters should be used, one can re-use the items 1) and 2) in the
-%   following way:
+%      second one is in format 1), 2), 4) or 5). This in the non tight case
+%      the filters has to be defined explicitly using `'ana'` and `'syn'`
+%      identifiers. See below.
+%   
+%   One can interchange the filter in `w.h` and `w.g` and use the
+%   filterbank indended for synthesis in |fwt| and vice versa by
+%   re-using the items 1) and 2) in the following way:
 %
 %   1) Add `'ana'` or `'syn'` as the first element in the cell array e.g. 
 %      `{'ana','spline',4,4}` or `{'syn','spline',4,4}`.
@@ -58,56 +86,26 @@ function [w,info] = fwtinit(wdef,prefix)
 %   2) Add `'ana:'` or `'syn:'` to the beginning of the string e.g. 
 %      `'ana:spline4:4'` or `'syn:spline4:4'`.
 %
+%   This only makes difference if the filterbanks are biorthogonal 
+%   (e.g. `wfilt_spline`) or a general frame (e.g. `'symds2'`), in other 
+%   cases, the analysis and synthesis filters are identical. 
+%
 %   Please note that using e.g. `c=fwt(f,'ana:spline4:4',J)` and 
 %   `fhat=ifwt(c,'ana:spline4:4',J,size(f,1))` will not give a perfect
 %   reconstruction.
 %
-%   The output structure has the following fields:
+%   The output structure has the following additional field:
 %
-%     w.h  Cell array of structures defining the original analysis filterbank.
-%     
-%     w.g  Cell array of structures defining the original synthesis filterbank.
-%
-%     w.a  Subsampling factors.
-%
-%     w.origArgs 
+%      w.origArgs 
 %          Original parameters in format 1).
-%
-%   `w.h`, `w.g` are cell-arrays of structures. Each structure represents 
-%   one filter in the filterbank and it has the following fields:
-%
-%     .offset  Filter delay in samples.
-%
-%     .h       Actual filter impulse response values.
-%
-%   **Remark:** Function names with the `wfilt_` prefix cannot contain numbers
-%   and cannot start with 'ana' or 'syn'! 
-%
-%   Choosing wavelet filters
-%   ------------------------
-%   
-%   TO DO: Write something meaningfull.
-%   Determining which wavelet filters to use depends strongly on the type
-%   of the analyzed signal. There are several properties which should be
-%   taken into account.
-%   
-%   orthogonality/biorthogonality/frame
-%   number of vanishing moments of psi
-%   symmetry/linear phase
-%
-%   support of psi
-%   smoothnes/regularity of psi
-%   
 %
 %   See also: fwt, ifwt, wfilt_db
 %
 %   References: ma08wt
 
 
-% chached last filterbank
-% persistent cachw;
-% cached function parameters passed last
-% persistent cachwDesc;
+%   **Remark:** Function names with the `wfilt_` prefix cannot contain numbers
+%   and cannot start with 'ana' or 'syn'! 
 
 
 
@@ -157,18 +155,6 @@ if iscell(wdef) && ischar(wdef{1}) && strcmpi(wdef{1},'dual')
    do_dual = 1;
    wdef = wdef{2:end};
 end
-
-% Disabled caching
-% Was the function called before with the same parameters?
-% if yes, return the chached one
-%  if(isequal(cachwDesc,wdef))
-%     complaina(kv.a,'structure');
-%     w = cachw;
-%     w.filts = decideFilters(w.forceAna,ansyBool,w);
-%     return;
-%  else
-%     cachwDesc = wdef;
-%  end
 
 if isstruct(wdef)
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%

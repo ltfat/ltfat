@@ -1,22 +1,30 @@
-function [g,a] = wpfbt2filterbank( wtdef, varargin)
+function [g,a] = wpfbt2filterbank( wt, varargin)
 %WPFBT2FILTERBANK  WPFBT equivalent non-iterated filterbank
-%   Usage: [g,a] = wpfbt2filterbank(wtdef)
+%   Usage: [g,a] = wpfbt2filterbank(wt)
 %
 %   Input parameters:
-%         wtdef : Wavelet filter tree definition
+%         wt : Wavelet filter tree definition
 %
 %   Output parameters:
 %         g   : Cell array containing filters
 %         a   : Vector of sub-/upsampling factors
 %
-%   `wpfbt2filterbank(wtdef)` calculates the impulse responses *g* and the
+%   `wpfbt2filterbank(wt)` calculates the impulse responses *g* and the
 %   subsampling factors *a* of non-iterated filterbank, which is equivalent
-%   to the wavelet packet filterbank tree described by *wtdef*. The returned
+%   to the wavelet packet filterbank tree described by *wt*. The returned
 %   parameters can be used directly in |filterbank|, |ufilterbank| or
 %   |filterbank|.
 %
-%   The function internally calls |wfbtinit| and passes *wtdef* and all
-%   additional parameters to it.
+%   Please see help on |wfbt| for description of *wt*. The function
+%   additionally support the following flags:
+%
+%   `'freq'`(default),`'nat'`
+%      The filters are ordered to produce subbands in the same order as 
+%      |wpfbt| with the same flag.
+%
+%   `'intsqrt'`(default),`'intnoscale'`, `'intscale'`
+%      The filters in the filterbank tree are scaled to reflect the
+%      behavior of |wpfbt| and |iwpfbt| with the same flags.
 %
 %   Examples:
 %   ---------
@@ -37,6 +45,8 @@ function [g,a] = wpfbt2filterbank( wtdef, varargin)
 %
 %   See also: wfbtinit
 
+% AUTHOR: Zdenek Prusa
+
 
 complainif_notenoughargs(nargin,1,'WPFBT2FILTERBANK');
 
@@ -45,7 +55,7 @@ definput.flags.interscaling={'intsqrt','intnoscale','intscale'};
 [flags]=ltfatarghelper({},definput,varargin);
 
 % build the tree
-wt = wfbtinit({'strict',wtdef},flags.forder);
+wt = wfbtinit({'strict',wt},flags.forder);
 
 wt = comp_wpfbtscale(wt,flags.interscaling);
 

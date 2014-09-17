@@ -14,63 +14,50 @@ function [c,info] = fwt(f,w,J,varargin)
 %         c      : Coefficient vector.
 %         info   : Transform parameters struct.
 %
-%   `c=fwt(f,w,J)` returns wavelet coefficients *c* of the input signal *f*
-%   using *J* iterations of the basic wavelet filterbank defined by *w*
-%   i.e. the fast wavelet transform algorithm (Mallat's algorithm) is used.
-%   In addition, the function returns struct. `info` containing transform
-%   parameters. It can be conviniently used for the inverse transform
-%   |ifwt| e.g. `fhat = ifwt(c,info)`. It is also required by the
-%   |plotwavelets| function.
-%
-%   The coefficents *c* are the Discrete Wavelet transform (DWT) of the input
+%   `fwt(f,w,J)` returns discrete wavelet coefficients of the input signal 
+%   *f* using *J* iterations of the basic wavelet filterbank defined by
+%   *w* using the fast wavelet transform algorithm (Mallat's algorithm).
+%   The coefficients are the Discrete Wavelet transform (DWT) of the input 
 %   signal *f*, if *w* defines two-channel wavelet filterbank. The following
 %   figure shows DWT with *J=3*.
 %
 %   .. image:: ../images/fwttree.png
 %
-%   The function can apply the Mallat's algorithm using basic filter banks
+%   The function can apply the Mallat's algorithm using basic filterbanks
 %   with any number of the channels. In such case, the transform have a
 %   different name.
 %
-%   The basic analysis wavelet filterbank $w$ can be passed in several
-%   formats. The formats are the same as for the |fwtinit| function.
+%   Several formats of the basic filterbank definition *w* are recognized.
+%   One of them is a text string formed by a concatenation of a function 
+%   name with the `wfilt_` prefix followed by a list of numerical arguments
+%   delimited by `:`. For example `'db10'` will result in a call to 
+%   `wfilt_db(10)` or `'spline4:4'` in call to `wfilt_spline(4,4)` etc.
+%   All filter defining functions can be listed by running
+%   `dir([ltfatbasepath,filesep,'wavelets',filesep,'wfilt_*']);`
+%   Please see help of the respective functions and follow references
+%   therein.
 %
-%   1) Cell array whose first element is the name of the function defining
-%      the basic wavelet filters (`wfilt_` prefix) and the other elements
-%      are the parameters of the function. e.g. `{'db',10}` calls
-%      `wfilt_db(10)` internally.
+%   For other recognized formats of *w* please see |fwtinit|.
 %
-%   2) Character string as concatenation of the name of the wavelet
-%      filters defining function (as above) and the numeric parameters
-%      delimited by ':' character, e.g. 'db10' has the same effect as above,
-%      'spline4:4' calls `wfilt_spline(4,4)` internally.
+%   `[c,info]=fwt(f,w,J)` additionally returns struct. `info` containing 
+%   transform parameters. It can be conviniently used for the inverse 
+%   transform |ifwt| e.g. as `fhat = ifwt(c,info)`. It is also required 
+%   by the |plotwavelets| function.
 %
-%   3) Cell array of one dimensional numerical vectors directly defining
-%      the wavelet filter impulse responses.  By default, outputs of the
-%      filters are subsampled by a factor equal to the number of the
-%      filters. One can pass additional key-value pair 'a',a (still inside
-%      of the cell array) to define the custom subsampling factors, e.g.:
-%      {h1,h2,'a',[2,2]}.
-%
-%   4) The fourth option is to pass the structure obtained from the
-%      |fwtinit| function. The structure is checked whether it has a valid
-%      format.
-%
-%   If *f* is row/collumn vector, the subbands *c* are stored
-%   in a single row/collumn in a consecutive order with respect to the
-%   inceasing central frequency of the corresponding effective filter
-%   frequency responses or equivalently with decreasing wavelet scale. The
-%   lengths of subbands are stored in *info.Lc* so the subbands can be easily
-%   extracted using |wavpack2cell|. Moreover, one can pass an additional
-%   flag `'cell'` to obtain the coefficient directly in a cell array. The
-%   cell array can be again converted to a packed format using |wavcell2pack|.
+%   If *f* is row/column vector, the subbands *c* are stored
+%   in a single row/column in a consecutive order with respect to the
+%   inceasing central frequency. The lengths of subbands are stored in 
+%   *info.Lc* so the subbands can be easily extracted using |wavpack2cell|.
+%   Moreover, one can pass an additional flag `'cell'` to obtain the 
+%   coefficient directly in a cell array. The cell array can be again 
+%   converted to a packed format using |wavcell2pack|.
 %
 %   If the input *f* is a matrix, the transform is applied to each column
 %   if `dim==1` (default) and `[Ls, W]=size(f)`. If `dim==2`
 %   the transform is applied to each row `[W, Ls]=size(f)`.
 %   The output is then a matrix and the input orientation is preserved in
 %   the orientation of the output coefficients. The `dim` paramerer has to
-%   be passed to the |wavpack2cell| and |wavcell2pack|.
+%   be passed to the |wavpack2cell| and |wavcell2pack| when used.
 %
 %   Boundary handling:
 %   ------------------
@@ -97,9 +84,6 @@ function [c,info] = fwt(f,w,J,varargin)
 %
 %   The supported possibilities are:
 %
-%     'per'    Zero padding to the next legal length and periodic boundary
-%              extension. This is the default.
-%
 %     'zero'   Zeros are considered outside of the signal (coefficient)
 %              support.
 %
@@ -107,22 +91,31 @@ function [c,info] = fwt(f,w,J,varargin)
 %
 %     'odd'    Odd symmetric extension.
 %
-%   Note that the same flag has to be used in the call of the inverse transform
-%   function |ifwt| if the `info` struct is not used.
+%   Note that the same flag has to be used in the call of the inverse 
+%   transform function |ifwt| if the `info` struct is not used.
 %
 %   Examples:
 %   ---------
 %
-%   A simple example of calling the |fwt| function:::
+%   A simple example of calling the |fwt| function using 'db8' wavelet
+%   filters.:::
 %
 %     [f,fs] = greasy;
 %     J = 10;
 %     [c,info] = fwt(f,'db8',J);
 %     plotwavelets(c,info,fs,'dynrange',90);
 %
+%   Frequency bands of the transform with x-axis in a log scale and band
+%   peaks normalized to 1. Only positive frequency band is shown. :::
+%
+%     [g,a] = wfbt2filterbank({'db8',10,'dwt'});
+%     filterbankfreqz(g,a,20*1024,'linabs','posfreq','plot','inf','flog');
+%
 %   See also: ifwt, plotwavelets, wavpack2cell, wavcell2pack, thresh
 %
 %   References: ma98
+
+% AUTHOR: Zdenek Prusa
 
 
 complainif_notenoughargs(nargin,3,'FWT');

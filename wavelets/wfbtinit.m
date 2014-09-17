@@ -8,32 +8,39 @@
 %   Output parameters:
 %         wt    : Structure describing the filter tree.
 %
-%   `wfbtinit()` creates an empty structure. The structure describing the
-%   tree has the following fields:
-%
-%     .nodes     Actual impulse responses
-%
-%     .children  Indexes of children nodes
-%
-%     .parents   Indexes of a parent node
-%
-%     .forder    Frequency ordering of the resultant frequency bands.
-%
-%   `wfbt=wfbtinit({w,J,flag})` creates a filterbank tree of depth *J*. The
-%   parameter *w* defines a basic wavelet filterbank. For all possible formats
-%   see |fwt|.  The following optional flags (still inside of the
+%   `wfbtinit({w,J,flag})` creates a filterbank tree of depth *J*. The
+%   parameter *w* defines a basic wavelet filterbank. For all possible 
+%   formats see |fwt|.  The following optional flags (still inside of the
 %   cell-array) are recognized:
 %
 %   'dwt','full','doubleband','quadband','octaband'
 %     Type of the tree to be created.
 %
-%   `wfbt=wfbtinit({w,J,flag,'mod',mod})` creates a filterbank tree as before,
+%   `wfbtinit({w,J,flag,'mod',mod})` creates a filterbank tree as before,
 %   but modified according to the value of `mod`.
 %   Recognized options:
 %
 %   `'powshiftable'`
 %      Changes subsampling factors of the root to 1. This results in redundant
 %      near-shift invariant representation.
+%
+%   The returned structure *wt* has the following fields:
+%
+%   .nodes     
+%      Cell-array of structures obtained from |fwtinit|. Each element
+%      define a basic wavelet filterbank.
+%
+%   .children  
+%      Indexes of children nodes
+%
+%   .parents   
+%      Indexes of a parent node
+%
+%   .forder 
+%      Frequency ordering of the resultant frequency bands.
+%
+%   The structure together with functions from the `wfbtmanip` 
+%   subdirectory acts as an abstract data structure tree. 
 %
 %   Regular `wfbtinit` flags:
 %
@@ -44,6 +51,8 @@
 %     filter shuffling has to be done (`'freq'` option).
 %
 %   See also: wfbtput, wfbtremove
+
+% AUTHOR: Zdenek Prusa
 
 % TO DO: Do some caching
 
@@ -89,6 +98,10 @@ definput.import = {'wfbtcommon'};
 
 % If wtdef is already a structure
 if (isstruct(wtdef)&&isfield(wtdef,'nodes'))
+    if isempty(wtdef.nodes)
+        error('%s: The tree struct is empty.',upper(mfilename));
+    end
+    
     wt = wtdef;
 
     if do_dual || do_strict

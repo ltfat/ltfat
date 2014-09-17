@@ -3,16 +3,21 @@ function [h,g,a,info] = wfiltdt_dden(N)
 %
 %   Usage: [h,g,a] = wfiltdt_dden(N);
 %
-%   `[h,g,a]=wfiltdt_dden(N)` with $N \in {1,2}$
+%   `[h,g,a]=wfiltdt_dden(N)` with $N \in {1,2}$ returns filters suitable
+%   dor dual-tree double density complex wavelet transform. 
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
 %     wfiltdtinfo('dden1');
+%
+%   :::
+%     wfiltdtinfo('dden2');
 % 
 %   References: se04
 %
+
+% AUTHOR: Zdenek Prusa
 
 info.istight = 1;
 a = [2;2;2];
@@ -63,11 +68,13 @@ htmp=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
 
 h(:,1) = cellfun(@(hEl)struct('h',hEl,'offset',-size(harr,2)/2+1),htmp(1:3),...
                    'UniformOutput',0);
-h(:,2) = cellfun(@(hEl)struct('h',hEl,'offset',-size(harr,2)/2+1),htmp(4:6),...
+h(:,2) = cellfun(@(hEl)struct('h',hEl,'offset',-size(harr,2)/2+1),htmp((4:6)),...
                    'UniformOutput',0);
+               
+
 g = h;
 
-[info.defaultfirst, info.defaultfirstinfo] = fwtinit('symdden1');
+[info.defaultfirst, info.defaultfirstinfo] = fwtinit('symdden2');
 [info.defaultleaf, info.defaultleafinfo] = ...
     deal(info.defaultfirst,info.defaultfirstinfo);
 

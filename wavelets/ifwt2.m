@@ -5,16 +5,21 @@ function f = ifwt2(c,w,J,varargin)
 %
 %   Input parameters:
 %         c     : Coefficients stored in a matrix.
-%         g     : Wavelet filters definition.
+%         w     : Wavelet filters definition.
 %         J     : Number of filterbank iterations.
-%         Ls    : Length of the reconstructed signal.
+%         Ls    : Size of the reconstructed signal.
 %
 %   Output parameters:
 %         f     : Reconstructed data.
 %
-%   `f = ifwt2(c,g,J)` reconstructs signal *f* from the wavelet coefficients
-%   *c* using a *J*-iteration synthesis filter bank build from the basic synthesis
-%   filterbank defined by *g*.
+%   `f = ifwt2(c,w,J)` reconstructs signal *f* from the wavelet coefficients
+%   *c* using a *J*-iteration synthesis filterbank build from the basic 
+%   synthesis filterbank defined by *w*. *f* is a matrix with 
+%   `size(f)==size(c)`.
+%
+%   `f = ifwt2(c,w,J,Ls)` works as above but the result *f* is cut or
+%   extended to size *Ls* if *Ls* is a two-element vector or to `[Ls,Ls]`
+%   if *Ls* is a scalar.
 %
 %   This function takes the same optional parameters as |fwt2|. Please see
 %   the help on |fwt2| for a description of the parameters.
@@ -24,6 +29,8 @@ function f = ifwt2(c,w,J,varargin)
 %   Demos: demo_imagecompression
 %
 %   References: ma98
+
+% AUTHOR: Zdenek Prusa
 
 if nargin<3
    error('%s: Too few input parameters.',upper(mfilename));
@@ -73,34 +80,4 @@ if flags.do_tensor
   f = ifwt(c,w,J,Ls(1),'dim',1,'per');
   f = ifwt(f,w,J,Ls(2),'dim',2,'per');
 end;
-
-%% ----- step 1 : Run calc -----------
-% filtNo = length(g.filts);
-% subbNo = filtNo^2-1;
-% cTmp = cell(filtNo,1);
-% cTmp{1} = c{1};
-% cJidxTmp = 2;
-% for jj=1:J
-%    if (jj==J)
-%      cLs = Ls;
-%    else
-%      cLs = size(c{cJidxTmp+subbNo});  
-%    end
-% 
-%    cTmp{1} = comp_ifwt_all({cTmp{1},c{cJidxTmp:cJidxTmp+filtNo-1}},g.filts,1,g.a,cLs(1),'dec',flags.ext).'; 
-%    cJidxTmp = cJidxTmp+filtNo-1;
-%    for cc= 2:filtNo
-%       cTmp{cc} = comp_ifwt_all({c{cJidxTmp:cJidxTmp+filtNo-1}},g.filts,1,g.a,cLs(1),'dec',flags.ext).';
-%       cJidxTmp = cJidxTmp+filtNo;
-%    end
-%    
-%    cTmp{1} = comp_ifwt_all(cTmp,g.filts,1,g.a,cLs(2),'dec',flags.ext).';  
-% end
-% f = cTmp{1};
-
-
-
-
-
-
 

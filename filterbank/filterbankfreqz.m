@@ -42,3 +42,7 @@ if do_plot
     plotfft(gf,varargin{:});
 end;
 
+if nargout<1
+    clear gf;
+end
+

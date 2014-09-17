@@ -17,7 +17,7 @@ function f = iufwt(c,par,varargin)
 %
 %   `f = iufwt(c,w,J)` reconstructs signal *f* from the wavelet
 %   coefficients *c* using the wavelet filterbank consisting of the *J*
-%   levels of the basic synthesis filterbank defined by *g* using the "a-trous"
+%   levels of the basic synthesis filterbank defined by *w* using the "a-trous"
 %   algorithm. Node that the same flag as in the `ufwt` function have to be used.
 %
 %   Please see the help on |ufwt| for a description of the parameters.
@@ -59,6 +59,7 @@ function f = iufwt(c,par,varargin)
 %
 %   References: ma98
 
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,2,'IUFWT');
 

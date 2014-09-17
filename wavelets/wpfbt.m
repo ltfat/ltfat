@@ -13,14 +13,16 @@ function [c,info]=wpfbt(f,wt,varargin)
 %
 %   `c=wpfbt(f,wt)` returns wavelet packet coefficients *c* obtained by
 %   applying a wavelet filterbank tree defined by *wt* to the input data
-%   *f*. In addition, the function returns struct. `info` containing transform
-%   parameters. It can be conviniently used for the inverse transform |iwpfbt|
-%   e.g. `fhat = iwpfbt(c,info)`. It is also required by the |plotwavelets|
-%   function.
+%   *f*. 
+%    
+%   `[c,info]=wpfbt(f,wt)` additionally returns struct. `info` containing 
+%   transform parameters. It can be conviniently used for the inverse 
+%   transform |iwpfbt| e.g. `fhat = iwpfbt(c,info)`. It is also required 
+%   by the |plotwavelets| function.
 %
-%   In contrast to the |wfbt|, the *c* contain every intermediate output
-%   of each node in the tree. The `c{jj}` are ordered in the breadth-first
-%   node order manner.
+%   In contrast to |wfbt|, the cell array *c* contain every intermediate 
+%   output of each node in the tree. `c{jj}` are ordered according to
+%   nodes taken in the breadth-first order.
 %
 %   If *f* is row/column vector, the coefficient vectors `c{jj}` are
 %   columns. If *f* is a matrix, the transformation is applied to each of
@@ -66,6 +68,8 @@ function [c,info]=wpfbt(f,wt,varargin)
 %     plotwavelets(c,info,44100,'dynrange',90);
 %
 %   See also: wfbt, iwpfbt, wfbtinit, plotwavelets, wpbest
+
+% AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,2,'WPFBT');
 

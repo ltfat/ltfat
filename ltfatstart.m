@@ -17,7 +17,7 @@ function ltfatstart(ltfatstartprint)
 %   toolbox, and configure |sgram| to not display the colorbar.
 %
 %   The function walks the directory tree and adds a subdirectory 
-%   directory to path if the directory contain a `[subdirectory,init.m]` 
+%   to path if the directory contain a `[subdirectory,init.m]` 
 %   script setting a `status` variable to some value greater than 0.   
 %   `status==1` identifies a toolbox module any other value just a
 %   directory to be added to path.
