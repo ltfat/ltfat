@@ -1,23 +1,27 @@
-function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
+function [tc,relres,iter,frec] = franagrouplasso(F,f,lambda,varargin)
 %FRANAGROUPLASSO  Group LASSO regression in the TF-domain
-%   Usage: [tc,xrec] = franagrouplasso(F,x,group,lambda,C,maxit,tol)
+%   Usage: tc = franagrouplasso(F,f,lambda)
+%          tc = franagrouplasso(F,f,lambda,C,tol,maxit)
+%          [tc,relres,iter,frec] = franagrouplasso(...)
 %
 %   Input parameters:
-%       F        : Frame definition
-%       x        : Input signal
-%       lambda   : Regularization parameter, controls sparsity of the
-%                  solution
+%      F        : Frame definition
+%      f        : Input signal
+%      lambda   : Regularisation parameter, controls sparsity of the solution
+%      C        : Step size of the algorithm.
+%      tol      : Reative error tolerance.
+%      maxit    : Maximum number of iterations.
 %   Output parameters:
 %      tc        : Thresholded coefficients
 %      relres    : Vector of residuals.
 %      iter      : Number of iterations done.
-%      xrec      : Reconstructed signal
+%      frec      : Reconstructed signal
 %
-%   `franagrouplasso(F,x)` solves the group LASSO regression problem in the
-%   time-frequency domain: minimize a functional of the synthesis
+%   `franagrouplasso(F,f,lambda)` solves the group LASSO regression problem
+%   in the time-frequency domain: minimize a functional of the synthesis
 %   coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the mixed $l^1$ / $l^2$ norm of the coefficient
-%   sequence, with a penalization coefficient lambda.
+%   sequence, with a penalization coefficient `lambda`.
 %  
 %   The matrix of time-frequency coefficients is labelled in terms of groups
 %   and members.  By default, the obtained expansion is sparse in terms of
@@ -26,11 +30,14 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
 %   group, and $l^1$ norm with respect to groups. See the help on
 %   |groupthresh| for more information.
 %
+%   **Note** the involved frame *F* must support regular time-frequency
+%   layout of coefficients.   
+%
 %   `[tc,relres,iter] = franagrouplasso(...)` returns the residuals *relres* in
 %   a vector and the number of iteration steps done, *maxit*.
 %
-%   `[tc,relres,iter,xrec] = franagrouplasso(...)` returns the reconstructed
-%   signal from the coefficients, *xrec*. Note that this requires additional
+%   `[tc,relres,iter,frec] = franagrouplasso(...)` returns the reconstructed
+%   signal from the coefficients, *frec*. Note that this requires additional
 %   computations.
 %
 %   The function takes the following optional parameters at the end of
@@ -73,7 +80,7 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
 %
 %   The relationship between the output coefficients is given by ::
 %
-%     xrec = frsyn(F,tc);
+%     frec = frsyn(F,tc);
 %
 %   See also: franalasso, framebounds
 %
@@ -82,7 +89,7 @@ function [tc,relres,iter,xrec] = franagrouplasso(F,insig,lambda,varargin)
 complainif_notenoughargs(nargin,3,'FRANAGROUPLASSO');
 complainif_notvalidframeobj(F,'FRANAGROUPLASSO');
 
-if ~isvector(insig)
+if ~isvector(f)
     error('Input signal must be a vector.');
 end
 
@@ -98,7 +105,7 @@ definput.flags.print={'quiet','print'};
 
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
-L=framelength(F,length(insig));
+L=framelength(F,length(f));
 
 F=frameaccel(F,L);
 
@@ -107,13 +114,13 @@ if isempty(kv.C)
 end;
 
 % Initialization of thresholded coefficients
-c0 = frana(F,insig);
+c0 = frana(F,f);
 
 % We have to convert the coefficients to time-frequency layout to
 % discover their size
 tc = framecoef2tf(F,c0);
-[M,N]=size(tc);
 
+% [M,N]=size(tc);
 % Normalization to turn lambda to a value comparable to lasso
 %if flags.do_time
 %  lambda = lambda*sqrt(N);
@@ -174,6 +181,6 @@ end;
 
 % Reconstruction
 if nargout>3
-  xrec = frsyn(F,tc);
+  frec = frsyn(F,tc);
 end;
 

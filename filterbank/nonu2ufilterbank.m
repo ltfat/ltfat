@@ -14,8 +14,8 @@ function [gu,au,p]=nonu2ufilterbank(g,a)
 %   `[gu,au]=nonu2ufilterbank(g,a)` calculates uniform filterbank `gu`, 
 %   `au=lcm(a)` which is identical to the (possibly non-uniform) filterbank
 %   *g*, *a* in terms of the equal output coefficients. Each filter `g{k}` 
-%   is replaced by $p(k)=au/a(k)$ delayed versions of itself such that
-%   $z^{-ma(k)}G_k(z)$ for $m=0,\ldots,p-1$.
+%   is replaced by $p(k)=au/a(k)$ advanced versions of itself such that
+%   $z^{ma(k)}G_k(z)$ for $m=0,\ldots,p-1$.
 %
 %   This allows using the factorisation algorithm when determining
 %   filterbank frame bounds in |filterbankbounds| and

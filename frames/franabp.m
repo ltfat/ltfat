@@ -1,10 +1,8 @@
 function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %FRANABP Frame Analysis Basis Pursuit
 %   Usage: c = franabp(F,f)
-%          c = franabp(F,f,lambda)
-%          c = franabp(F,f,lambda,C)
-%          c = franabp(F,f,lambda,C,tol)
 %          c = franabp(F,f,lambda,C,tol,maxit)
+%          [c,relres,iter,frec,cd] = franabp(...)
 %
 %   Input parameters:
 %       F        : Frame definition
@@ -56,59 +54,60 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   Optional positional parameters (lambda,C,tol,maxit)
 %   ---------------------------------------------------
 %
-%      `lambda`
-%          A parameter for weighting coefficients in the objective
-%          function. For lambda~=1 the basis pursuit problem changes to
+%   `lambda`
+%       A parameter for weighting coefficients in the objective
+%       function. For lambda~=1 the basis pursuit problem changes to
 %
-%          .. argmin ||lambda c||_1 subject to Fc = f
+%       .. argmin ||lambda c||_1 subject to Fc = f
 %
-%          .. math:: \arg\,\min_c \ ||\lambda c||_1 \\ \text{subject to } Fc = f
+%       .. math:: \arg\,\min_c \ ||\lambda c||_1 \\ \text{subject to } Fc = f
 %          
-%          `lambda` can either be a scalar or a vector of the same length
-%          as *c*. One can obtain length of *c* from length of *f* by
-%          |frameclength|. |framecoef2native| and |framenative2coef| will
-%          help with defining weights specific to some regions of
-%          coefficients (e.g. channel-specific weighting can be achieved
-%          this way).           
-%          The default value of `lambda` is 1.
+%       `lambda` can either be a scalar or a vector of the same length
+%       as *c* (in such case the product is carried out elementwise). 
+%       One can obtain length of *c* from length of *f* by
+%       |frameclength|. |framecoef2native| and |framenative2coef| will
+%       help with defining weights specific to some regions of
+%       coefficients (e.g. channel-specific weighting can be achieved
+%       this way).           
+%       The default value of `lambda` is 1.
 %
-%      `C`
-%         A step parameter of the SALSA algorithm. 
-%         The default value of `C` is the upper frame bound of *F*. 
-%         Depending on the structure of the frame, this can be an expensive
-%         operation.
+%   `C`
+%      A step parameter of the SALSA algorithm. 
+%      The default value of `C` is the upper frame bound of *F*. 
+%      Depending on the structure of the frame, this can be an expensive
+%      operation.
 %
-%      `tol`
-%         Defines tolerance of `relres` which is a norm or a relative
-%         difference of coefficients obtained in two consecutive iterations
-%         of the algorithm.
-%         The default value 1e-2.
+%   `tol`
+%      Defines tolerance of `relres` which is a norm or a relative
+%      difference of coefficients obtained in two consecutive iterations
+%      of the algorithm.
+%      The default value 1e-2.
 %
-%      `maxit`
-%         Maximum number of iterations to do.
-%         The default value is 100.
+%   `maxit`
+%      Maximum number of iterations to do.
+%      The default value is 100.
 %
 %   Other optional parameters
 %   -------------------------
 %
 %   Key-value pairs:
 %
-%      `'Fd',Fd`
-%             A canonical dual frame object or an anonymous function 
-%             acting as the analysis operator of the canonical dual frame.
+%   `'Fd',Fd`
+%      A canonical dual frame object or an anonymous function 
+%      acting as the analysis operator of the canonical dual frame.
 %
-%      `'printstep',printstep`
-%             Print current status every `printstep` iteration.
+%   `'printstep',printstep`
+%      Print current status every `printstep` iteration.
 %
 %   Flag groups (first one listed is the default):
 %
-%      `'print','quiet'`
-%             Enables/disables printing of notifications.
+%   `'print','quiet'`
+%       Enables/disables printing of notifications.
 %
-%      `'zeros','frana'`
-%             Starting point of the algorithm. With `'zeros'` enabled, the
-%             algorithm starts from coefficients set to zero, with `'frana'`
-%             the algorithm starts from `c=frana(F,f)`.             
+%   `'zeros','frana'`
+%      Starting point of the algorithm. With `'zeros'` enabled, the
+%      algorithm starts from coefficients set to zero, with `'frana'`
+%      the algorithm starts from `c=frana(F,f)`.             
 %
 %   Returned arguments:
 %   -------------------
@@ -116,7 +115,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %   `[c,relres,iter] = franabp(...)` returns the residuals *relres* in a
 %   vector and the number of iteration steps done *iter*.
 %
-%   `[tc,relres,iter,frec,cd] = franabp(...)` returns the reconstructed
+%   `[c,relres,iter,frec,cd] = franabp(...)` returns the reconstructed
 %   signal from the coefficients, *frec* (this requires additional
 %   computations) and a coefficients *cd* minimising the ||c||_2 norm
 %   (this is a byproduct of the algorithm).

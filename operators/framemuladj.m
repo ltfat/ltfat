@@ -13,10 +13,9 @@ function h=framemuladj(f,Fa,Fs,s,varargin)
 %
 %   `framemuladj(f,Fa,Fs,s)` applies the adjoint of the frame multiplier
 %   with symbol *s* to the signal *f*. The frame *Fa* is used for analysis
-%   and the frame *Fs* for synthesis.
+%   and the frame *Fs* for synthesis. This is equivalent to calling
+%   `framemul(f,Fs,Fa,conj(s))`.
 %
-%   `framemuladj(f,Fa,Fs,s)` does the same using the frames *Fa* for
-%   analysis and *Fs* for synthesis.
 %
 %   See also: framemul, iframemul
   

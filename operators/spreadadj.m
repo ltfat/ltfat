@@ -1,4 +1,4 @@
-function cadj=spreadadj(coef);
+function cadj=spreadadj(coef)
 %SPREADADJ  Symbol of adjoint spreading function
 %   Usage: cadj=spreadadj(c);
 %

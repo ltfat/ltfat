@@ -1,10 +1,10 @@
-function coef=framecoef2native(F,coef);
+function coef=framecoef2native(F,coef)
 %FRAMECOEF2NATIVE  Convert coefficients to native format
-%   Usage: cout=framecoef2native(F,cin);
+%   Usage: coef=framecoef2native(F,coef);
 %
-%   `framecoef2native(F,coef)` converts the frame coefficients *coef* into the
-%   native coefficient format of the frame. The frame object *F* must have been
-%   created using |frame|.
+%   `framecoef2native(F,coef)` converts the frame coefficients *coef* into 
+%   the native coefficient format of the frame. The frame object *F* must 
+%   have been created using |frame|.
 %
 %   See also: frame, framenative2coef, framecoef2tf
   

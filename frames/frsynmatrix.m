@@ -9,7 +9,7 @@ function G=frsynmatrix(F,L);
 %   The frame synthesis operator matrix contains all the frame atoms as
 %   column vectors. It has dimensions $L \times Ncoef$, where $Ncoef$ is the
 %   number of coefficients. The number of coefficients can be found as
-%   `Ncoef=framered(F)*L`. This means that the frame matrix is usually
+%   `Ncoef=frameclength(L)`. This means that the frame matrix is usually
 %   **very** large, and this routine should only be used for small values of
 %   *L*.
 %

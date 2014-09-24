@@ -80,7 +80,7 @@ function [fs,classid] = block(source,varargin)
 %               Displays ascii load bar in command line (Does not work in Octave).
 %
 %            `obj`
-%               Java object which have a public method updateBar(double).
+%               Java object which has a public method updateBar(double).
 %
 %   Optional flag groups (first is default)
 %
