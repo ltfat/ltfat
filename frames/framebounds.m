@@ -2,12 +2,13 @@ function [AF,BF]=framebounds(F,varargin);
 %FRAMEBOUNDS  Frame bounds
 %   Usage: fcond=framebounds(F);
 %          [A,B]=framebounds(F);
+%          [...]=framebounds(F,Ls);
 %
 %   `framebounds(F)` calculates the ratio $B/A$ of the frame bounds of the
 %   frame given by *F*.
 %
 %   `framebounds(F,Ls)` additionally specifies a signal length for which
-%   the frame should work.
+%   the frame should work. 
 %
 %   `[A,B]=framebounds(F)` returns the frame bounds *A* and *B* instead of
 %   just their ratio.
