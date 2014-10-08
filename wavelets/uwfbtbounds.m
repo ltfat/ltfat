@@ -21,7 +21,7 @@ function [AF,BF]=uwfbtbounds(wt,L,varargin)
 %
 %   `'sqrt'`(default),`'noscale'`,`'scale'`
 %       The filters in the filterbank tree are scaled to reflect the
-%       behavior of |uwfbt| and |uiwfbt| with the same flags.  
+%       behavior of |uwfbt| and |iuwfbt| with the same flags.  
 %
 %   See also: uwfbt, filterbankbounds
 

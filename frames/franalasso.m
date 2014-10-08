@@ -36,8 +36,7 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %
 %   'ista'
 %     The basic (Iterative Soft Thresholding) algorithm given *F* and *f* 
-%     and parameters *C*$>0$, `lambda` $>0$ acts as follows
-%     ::
+%     and parameters *C*$>0$, `lambda` $>0$ acts as follows::
 %
 %        Initialize c
 %        repeat until stopping criterion is met

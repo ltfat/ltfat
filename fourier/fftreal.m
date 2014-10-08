@@ -6,8 +6,8 @@ function f=fftreal(f,N,dim);
 %   `fftreal(f)` computes the coefficients corresponding to the positive
 %   frequencies of the FFT of the real valued input signal *f*.
 %   
-%   The function takes exactly the same arguments as |fft|. See the help on
-%   |fft| for a thorough description.
+%   The function takes exactly the same arguments as fft. See the help on
+%   fft for a thorough description.
 %
 %   See also:  ifftreal, dft
 

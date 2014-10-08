@@ -14,7 +14,7 @@
 %    NSGABDUAL            - Non-stationary dual windows
 %    NSGABTIGHT           - Non-stationary tight windows
 %    NSGABFRAMEBOUNDS     - Frame bounds of an NSDGT system
-%    NSGABFRAMEDIAG       - Diagoal of non-stationary Gabor frame operator
+%    NSGABFRAMEDIAG       - Diagonal of non-stationary Gabor frame operator
 %
 %  Plots
 %    PLOTNSDGT            - Plot output coefficients from NSDGT

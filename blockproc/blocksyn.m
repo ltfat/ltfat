@@ -13,7 +13,7 @@ function [fhat, fola] = blocksyn(F, c , Lb, fola)
 %
 %   `fhat=blocksyn(F,c,Lb)` reconstructs the signal block *fhat* from the
 %   coefficients *c* using the frame defined by *F*. If some overlap is used,
-%   it is stored internally using |block_interface|. Nothe that the function is 
+%   it is stored internally using block_interface. Note that the function is 
 %   capable of handling overlaps internally only for a single call
 %   to the function in the blockproc. loop.%   
 %

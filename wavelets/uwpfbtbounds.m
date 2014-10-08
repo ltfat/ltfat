@@ -17,11 +17,11 @@ function [AF,BF]=uwpfbtbounds(wt,L,varargin)
 %
 %   `'intsqrt'`(default),`'intnoscale'`, `'intscale'`
 %       The filters in the filterbank tree are scaled to reflect the
-%       behavior of |uwpfbt| and |uiwpfbt| with the same flags.
+%       behavior of |uwpfbt| and |iuwpfbt| with the same flags.
 %
 %   `'sqrt'`(default),`'noscale'`,`'scale'`
 %       The filters in the filterbank tree are scaled to reflect the
-%       behavior of |uwpfbt| and |uiwpfbt| with the same flags.  
+%       behavior of |uwpfbt| and |iuwpfbt| with the same flags.  
 %              
 %
 %   See also: uwpfbt, filterbankbounds
