@@ -1,6 +1,4 @@
-Version 1.99 12/8 2014
-    * This is a release candidate for version 2.0.
-
+Version 2.0 7/10 2014
     * Fixed bug in filterbankdual and filterbankrealdual for the uniform case.
       Also the routines are now much faster.
 
@@ -28,6 +26,11 @@ Version 1.99 12/8 2014
     * Added support for cross-compilation (src/Makefile_crossmingw): Producing 
       Windows binaries on an Unix system using MXE (http://mxe.cc/). Works only
       with MEX files for Matlab.
+
+    * Blockproc. framework now supports any sampling rate from interval 4-96kHz
+      trough on-the-fly resampling in the background. 
+
+    * Fixed compilation issue with gcc 4.7.
 
 Version 1.4.5 7/5 2014
     * Phase locking in DGT ('timeinv' flag) moved to the C backend. It

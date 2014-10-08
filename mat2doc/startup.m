@@ -1,5 +1,5 @@
 addpath ~/dev/ltfat
-addpath ~/toolboxex/minFunc/
+addpath ~/dev/minFunc/
 
 
 ltfatstart;
