@@ -5,39 +5,40 @@ function h=lconv(f,g,varargin)
 %   `lconv(f,g)` computes the linear convolution of *f* and *g*. The linear 
 %   convolution is given by
 %
-%   ..          L-1
+%   ..          Lh-1
 %      h(l+1) = sum f(k+1) * g(l-k)+1)
 %               k=0
 %
-%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)g\left(l-k+1\right)
+%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L_{h}-1}f\left(k+1\right)g\left(l-k+1\right)
+%
+%   with $L_{h} = L_{f} + L_{g} - 1$ where $L_{f}$ and $L_{g}$ are the lengths of *f* and *g*, 
+%   respectively.
 %
 %   `lconv(f,g,'r')` computes the linear convolution of *f* and *g* where *g* is reversed.
 %   This type of convolution is also known as linear cross-correlation and is given by
 %
-%   ..          L-1
+%   ..          Lh-1
 %      h(l+1) = sum f(k+1) * conj(g(k-l+1))
 %               k=0
 %
-%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(k+1\right)\overline{g\left(k-l+1\right)}
+%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L_{h}-1}f\left(k+1\right)\overline{g\left(k-l+1\right)}
 %
 %   `lconv(f,g,'rr')` computes the alternative where both *f* and *g* are
 %   reversed given by
 %
-%   ..          L-1
+%   ..          Lh-1
 %      h(l+1) = sum conj(f(-k+1)) * conj(g(k-l+1))
 %               k=0
 %     
-%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L-1}f\left(-k+1\right)g\left(l-k+1\right)
+%   .. math:: h\left(l+1\right)=\sum_{k=0}^{L_{h}-1}f\left(-k+1\right)g\left(l-k+1\right)
 %
-%   Since all these types of convolution are linear, the output of `lconv` will have a length L ::
-%
-%     L = length(f)+length(g)-1;
-%
+%   In the above formulas, $l-k$, $k-l$ and $-k$ are computed modulo $L_{h}$.
+
 %   See also: pconv
 
 %   AUTHOR: Jordy van Velthoven
-%	TESTING: TEST_LCONV	
-%	REFERENCE: REF_LCONV
+%   TESTING: TEST_LCONV	
+%   REFERENCE: REF_LCONV
   
 complainif_notenoughargs(nargin, 2, 'LCONV');
 
