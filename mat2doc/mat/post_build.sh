@@ -35,9 +35,15 @@ find -name "*.m" | xargs -n1 sed -i s/é/e/g
 find -name "*.m" | xargs -n1 sed -i s/è/e/g
 find -name "*.m" | xargs -n1 sed -i s/í/i/g
 
-cd ..
+# Get current version
+ltfatversion=$(head -n 1 ltfat_version)
 
+cd ..
 cd src/
+
+# Update current version in configure.ac
+sed -i -e "s/\[2.0.0\]/\[$ltfatversion\]/" configure.ac
+
 mv Makefile_octpkg.in Makefile.in
 ./bootstrap
 # Reported here http://savannah.gnu.org/bugs/?42278
