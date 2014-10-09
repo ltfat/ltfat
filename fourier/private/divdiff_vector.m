@@ -1,23 +1,22 @@
-function f=divdiff_vector(x,y)
+function f=divdiff_vector(x,m,y)
 
-% f is the divided difference of the data in y
-% repeated x-values are allowed if x is increasing
-% then the data values in y are taken as function,
-% derivative and higher derivative values, respectively.
-% y may be a matrix, divdiff is taken per column
-
-x=x(:); % writes all x-values into a column-vector
-
-[x,i]=sort(x);
-y=y(i,:); % sorts the data vector/matrix the same way as the x-values
+% f is the divided difference of the columns in data matrix y
+% with knots in x. m is an integer vector of multiplicities in x.
+% x must be increasing.
+%
+% Repeated x-values are allowed.
+% The rows in y are function, derivative and higher 
+% derivative values, respectively.
+% 
+% Example of input parameters: 
+%  x=[1;5;5;5;7;8;8]; m=[0;0;1;2;0;0;1];
+%  y(k,:) contains the value of f^(m(k))(x(k))/(k!) 
 
 [l,l1]=size(y); % size of the columns and rows of y
 if (l ~= length(x))
    error('x and y must have the same dimension.')
 end
 
-%use the spline toolbox to find multiplicities
-[m,t]=myknt2mlt(x); % see description for knt2mlt
 index=find(m>0);
 ys=y; %save for derivative values
 y(index,:)=y(index-m(index),:); % fill function values
