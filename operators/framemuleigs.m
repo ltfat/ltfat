@@ -12,11 +12,11 @@ function varargout=framemuleigs(Fa,Fs,s,varargin)
 %         V     : Matrix containing eigenvectors.
 %         D     : Eigenvalues.
 %
-%   `[V,D]=framemuleigs(Fa,Fs,s,K)` computes the *K* largest eigenvalues and eigen-
-%   vectors of the frame multiplier with symbol *s*, analysis frame *Fa*
-%   and synthesis frame *Fs*. The eigenvectors are stored as column
-%   vectors in the matrix *V* and the corresponding eigenvalues in the
-%   vector *D*.
+%   `[V,D]=framemuleigs(Fa,Fs,s,K)` computes the *K* largest eigenvalues 
+%   and eigen-vectors of the frame multiplier with symbol *s*, analysis 
+%   frame *Fa* and synthesis frame *Fs*. The eigenvectors are stored as 
+%   column vectors in the matrix *V* and the corresponding eigenvalues in 
+%   the vector *D*.
 %
 %   If *K* is empty, then all eigenvalues/pairs will be returned.
 %

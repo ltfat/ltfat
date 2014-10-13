@@ -33,6 +33,7 @@
 %    FRAMENATIVE2COEF  - Convert native to column format
 %    FRAMECOEF2TF      - Convert to time-frequency plane layout
 %    FRAMETF2COEF      - Convert TF-plane layout to native
+%    FRAMECOEF2TFPLOT  - Convert to time-frequency plane layout for plotting
 %
 %  Non-linear analysis and synthesis
 %    FRANABP           - Basis pursuit using the SALSA algorithm.

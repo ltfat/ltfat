@@ -208,7 +208,7 @@ public class ContFrame {
         runInEDT( new Runnable() {
             @Override
             public void run() {
-                try {
+               /* try {
                     // Set System L&F
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (UnsupportedLookAndFeelException e) {
@@ -220,7 +220,7 @@ public class ContFrame {
                 } catch (IllegalAccessException e) {
                     // handle exception
                 }
-
+             */
                 jf = initFrame();
             }
         });

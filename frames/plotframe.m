@@ -1,6 +1,7 @@
-function outsig=plotframe(F,insig,varargin);
+function outsig=plotframe(F,insig,varargin)
 %PLOTFRAME  Plot frame coefficients
 %   Usage: plotframe(F,insig,...);
+%          C = plotframe(...);
 %
 %   `plotframe(F,c)` plots the frame coefficients *c* using the plot
 %   command associated to the frame *F*.

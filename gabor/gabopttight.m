@@ -25,7 +25,7 @@ function [gt,relres,iter]=gabopttight(g,a,M,varargin)
 %
 %   ..     such that  x is a tight window
 %
-%   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x    & \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ & & + \| \omega (x - g_l) \|_2^2  \\ & & \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &    \text{such that }& x \text{ is tight window}g \end{split}
+%   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x     \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ &  + \| \omega (x - g_l) \|_2^2  \\ &  \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &    \text{such that } x \text{ is tight window}g \end{split}
 %
 %   **Note**: This function require the unlocbox. You can download it at
 %   `<http://unlocbox.sourceforge.net>`_

@@ -418,6 +418,12 @@ switch(ftype)
   case 'fusion'
     F.w=varargin{1};
     F.frames=varargin(2:end);
+    
+    if any(cellfun(@(fEl) fEl.realinput,F.frames))
+        error(['%s: Real-valued-input-only frames are not currently ',...
+               'supported in the fusion frame.'],upper(mfilename));
+    end
+    
     F.Nframes=numel(F.frames);
     F.w=bsxfun(@times,F.w(:),ones(F.Nframes,1));    
     F.length = @(Ls) comp_framelength_fusion(F,Ls);

@@ -1,4 +1,4 @@
-function freq = audtofreq(aud,varargin);
+function freq = audtofreq(aud,varargin)
 %AUDTOFREQ  Converts auditory units to frequency (Hz)
 %   Usage: freq = audtofreq(aud);
 %  

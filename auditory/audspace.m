@@ -1,6 +1,6 @@
 function [y,bw] = audspace(flow,fhigh,n,varargin)
 %AUDSPACE  Equidistantly spaced points on auditory scale
-%   Usage: y=audspace(scale,flow,fhigh,n);
+%   Usage: y=audspace(flow,fhigh,n,scale);
 %
 %   `audspace(flow,fhigh,n,scale)` computes a vector of length *n*
 %   containing values equidistantly scaled on the selected auditory scale

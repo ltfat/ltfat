@@ -1,6 +1,6 @@
-function coef=frametf2coef(F,coef);
+function coef=frametf2coef(F,coef)
 %FRAMETF2COEF  Convert coefficients from TF-plane format
-%   Usage: cout=frametf2coef(F,cin);
+%   Usage: coef=frametf2coef(F,coef);
 %
 %   `frametf2coef(F,coef)` converts the frame coefficients from the
 %   time-frequency plane layout into the common column format.

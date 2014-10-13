@@ -1,4 +1,4 @@
-function Opout=operatorappr(Opin,T);
+function Opout=operatorappr(Op,T)
 %OPERATORAPPR  Best approximation by operator
 %   Usage: c=operatorappr(Op,K);
 %

@@ -1,22 +1,28 @@
 function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %FRANALASSO  Frame LASSO regression
-%   Usage: [tc,xrec] = franalasso(F,f,lambda,C,tol,maxit)
+%   Usage: tc = franalasso(F,f,lambda)
+%          tc = franalasso(F,f,lambda,C,tol,maxit)
+%          [tc,relres,iter,frec,cd] = franalasso(...)
 %
 %   Input parameters:
 %       F        : Frame definition
 %       f        : Input signal
 %       lambda   : Regularisation parameter, controls sparsity of the solution
+%       C        : Step size of the algorithm.
+%       tol      : Reative error tolerance.
+%       maxit    : Maximum number of iterations.
 %   Output parameters:
 %       tc       : Thresholded coefficients
 %       relres   : Vector of residuals.
 %       iter     : Number of iterations done.  
 %       frec     : Reconstructed signal
+%       cd       : The min ||c||_2 solution using the canonical dual frame.
 %
 %   `franalasso(F,f,lambda)` solves the LASSO (or basis pursuit denoising)
 %   regression problem for a general frame: minimize a functional of the
 %   synthesis coefficients defined as the sum of half the $l^2$ norm of the
 %   approximation error and the $l^1$ norm of the coefficient sequence, with
-%   a penalization coefficient *lambda* such that
+%   a penalization coefficient `lambda` such that
 %
 %   .. argmin lambda||c||_1 + 1/2||Fc - f||_2^2
 %
@@ -25,16 +31,32 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %   The solution is obtained via an iterative procedure, called Landweber
 %   iteration, involving iterative soft thresholdings.
 %
-%   The basic (Iterative Soft Thresholding) algorithm given *F* and *f* 
-%   and parameters *C*$>0$, `lambda` $>0$ acts as follows::
+%   The following flags determining an algorithm to be used are recognized
+%   at the end of the argument list:
 %
-%     Initialize c
-%     repeat until stopping criterion is met
-%        c <- soft(c + F*(f - Fc)/C,lambda/C)
-%     end
+%   'ista'
+%     The basic (Iterative Soft Thresholding) algorithm given *F* and *f* 
+%     and parameters *C*$>0$, `lambda` $>0$ acts as follows::
 %
-%   `[tc,relres,iter] = franalasso(...)` returns the residuals *relres* in a vector
-%   and the number of iteration steps done *iter*.
+%        Initialize c
+%        repeat until stopping criterion is met
+%          c <- soft(c + F*(f - Fc)/C,lambda/C)
+%        end
+%
+%   'fista'
+%     The fast version of the previous. This is the default option.
+%     ::
+%
+%        Initialize c(0),z,tau(0)=1,n=1
+%        repeat until stopping criterion is met
+%           c(n) <- soft(z + F*(f - Fz)/C,lambda/C)
+%           tau(n) <- (1+sqrt(1+4*tau(n-1)^2))/2
+%           z   <- c(n) + (c(n)-c(n-1))(tau(n-1)-1)/tau(n)
+%           n   <- n + 1
+%        end
+%
+%   `[tc,relres,iter] = franalasso(...)` returns the residuals *relres* in 
+%   a vector and the number of iteration steps done *iter*.
 %
 %   `[tc,relres,iter,frec,cd] = franalasso(...)` returns the reconstructed
 %   signal from the coefficients, *frec* and coefficients *cd* obtained by
@@ -48,25 +70,27 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %   The function takes the following optional parameters at the end of
 %   the line of input arguments:
 %
-%     'C',cval   Landweber iteration parameter: must be larger than
-%                square of upper frame bound. Default value is the upper
-%                frame bound.
+%   'C',cval   
+%      Landweber iteration parameter: must be larger than square of upper 
+%      frame bound. Default value is the upper frame bound.
 %
-%     'tol',tol  Stopping criterion: minimum relative difference between
-%                norms in two consecutive iterations. Default value is
-%                1e-2.
+%   'tol',tol  
+%      Stopping criterion: minimum relative difference between norms in 
+%      two consecutive iterations. Default value is 1e-2.
 %
-%     'maxit',maxit
-%                Stopping criterion: maximal number of iterations to do.
-%                Default value is 100.
+%   'maxit',maxit
+%      Stopping criterion: maximal number of iterations to do. Default 
+%      value is 100.
 %
-%     'print'    Display the progress.
+%   'print'    
+%      Display the progress.
 %
-%     'quiet'    Don't print anything, this is the default.
+%   'quiet'    
+%      Don't print anything, this is the default.
 %
-%     'printstep',p
-%                If 'print' is specified, then print every p'th
-%                iteration. Default value is 10;
+%   'printstep',p
+%      If 'print' is specified, then print every p'th iteration. Default 
+%      value is 10;
 %
 %   The parameters *C*, *itermax* and *tol* may also be specified on the
 %   command line in that order: `franalasso(F,x,lambda,C,tol,maxit)`.
@@ -137,9 +161,7 @@ definput.keyvals.tol=1e-2;
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
-definput.flags.algorithm={'fista','ista','amp'};
-definput.flags.startphase={'zero','rand','int'};
-
+definput.flags.algorithm={'fista','ista'};
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
 
@@ -200,28 +222,6 @@ elseif flags.do_fista
          end;
        end;
    end
-else flags.do_amp
-    f = postpad(f,L);
-    z = f;
-    tc = zeros(numel(c0),1);
-    n = norm(z)^2/L;
-    % Main loop
-    while ((iter < kv.maxit)&&(relres >= kv.tol))
-       tc = thresh(tc + F.frana(z),lambda*sqrt(n),'soft');
-       b = numel(tc(tc~=0))/L;
-       z = f - F.frsyn(tc) + z*b;
-       n = norm(z)^2/L;       
-
-       relres = norm(tc(:)-tc0(:))/norm(tc0(:));
-       tc0 = tc;
-       iter = iter + 1;
-       if flags.do_print
-         if mod(iter,kv.printstep)==0        
-           fprintf('Iteration %d: relative error = %f\n',iter,relres);
-         end;
-       end;
-   end
-   
 end
 
 % Optional reconstruction

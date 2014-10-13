@@ -1,7 +1,6 @@
 function ggd = pgrpdelay(g,L)
 %PGRPDELAY Group delay of a filter with periodic boundaries
 %   Usage:  ggd = pgrpdelay(g,L);
-%           ggd = pgrpdelay(g,L,'plot');
 %
 %   `pgrpdelay(g,L)` computes group delay of filter *g* as a negative
 %   derivative of the phase frequency response of filter *g* assuming

@@ -1,6 +1,8 @@
 function [f,relres,iter]=frsyniter(F,c,varargin)
 %FRSYNITER  Iterative synthesis
 %   Usage:  f=frsyniter(F,c);
+%           f=frsyniter(F,c,Ls);
+%           [f,relres,iter]=frsyniter(F,c,...);
 %
 %   Input parameters:
 %         F       : Frame   

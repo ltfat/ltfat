@@ -1,4 +1,4 @@
-function Op=operatornew(otype,varargin);
+function Op=operatornew(otype,varargin)
 %OPERATORNEW  Construct a new operator
 %   Usage: F=operatornew(otype,...);
 %
@@ -19,16 +19,6 @@ function Op=operatornew(otype,varargin);
 %   `operatornew('spread',s)` constructs a spreading operator with symbol
 %   *s*. See the help on |spreadop|.
 %  
-%   Examples
-%   --------
-%
-%   The following example creates a Gabor frame for real-valued signals,
-%   analyses an input signal and plots the frame coefficients:::
-%
-%      F=frame('wmdct','gauss',40);
-%      c=frana(F,greasy);
-%      plotframe(F,c);
-%
 %   See also: operator, ioperator
 
   

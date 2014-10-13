@@ -1,4 +1,4 @@
-function T=operatormatrix(F);
+function T=operatormatrix(Op)
 %OPERATORMATRIX  Matrix representation of an operator
 %   Usage: T=operatormatrix(Op);
 %

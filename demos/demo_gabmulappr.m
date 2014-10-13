@@ -61,8 +61,10 @@ As1=A*s1';
 Ae1=A*e1;
 
 % application of the Gabor multiplier
-Gs1=gabmul(s1,sym,a); 
-Ge1=gabmul(e1,sym,a);
+F = frametight(frame('dgt','gauss',a,M));
+Gs1=framemul(s1(:),F,F,framenative2coef(F,sym)); 
+Ge1=framemul(e1(:),F,F,framenative2coef(F,sym)); 
+
 
 % Plotting the results
 %% ------------- figure 1 ------------------------------------------

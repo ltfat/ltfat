@@ -24,7 +24,7 @@ function [gd,relres,iter] = gabconvexopt(g,a,M,varargin)
 %
 %   ..     such that  x satifies the constraints
 %
-%   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x   & \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ & & + \| \omega (x - g_l) \|_2^2  \\ & & \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &    \text{such that }& x \text{ satisfies the constraints} \end{split}
+%   .. math:: \begin{split}  \text{gd}  = & \text{arg} \min_x    \| \alpha x \|_1 +  \| \beta \mathcal{F}x\|_1  \\ &  + \| \omega (x - g_l) \|_2^2  \\ &  \delta \| x \|_{S0}+ \mu \| \nabla x \|_2^2 +\gamma \| \nabla \mathcal{F} x \|_2^2 \\ &    \text{such that } x \text{ satisfies the constraints} \end{split}
 %
 %   Three constraints are possible:
 %   

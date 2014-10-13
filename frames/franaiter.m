@@ -1,4 +1,4 @@
-function [outsig,relres,iter]=franaiter(F,insig,varargin)
+function [c,relres,iter]=franaiter(F,f,varargin)
 %FRANAITER  Iterative analysis
 %   Usage:  c=franaiter(F,f);
 %           [c,relres,iter]=franaiter(F,f,...);
@@ -69,7 +69,7 @@ tolchooser.double=1e-9;
 tolchooser.single=1e-5;
 
 definput.keyvals.Ls=[];
-definput.keyvals.tol=tolchooser.(class(insig));
+definput.keyvals.tol=tolchooser.(class(f));
 definput.keyvals.maxit=100;
 definput.flags.alg={'cg','pcg'};
 definput.keyvals.printstep=10;
@@ -79,7 +79,7 @@ definput.flags.print={'quiet','print'};
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
-[insig,~,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(insig,[],[],upper(mfilename));
+[f,~,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],[],upper(mfilename));
 
 F=frameaccel(F,Ls);
 L=F.L;
@@ -89,19 +89,19 @@ L=F.L;
 A=@(x) F.frsyn(F.frana(x));
 
 % An explicit postpad is needed for the pcg algorithm to not fail
-insig=postpad(insig,L);
+f=postpad(f,L);
 
 if flags.do_pcg
     d=framediag(F,L);
     M=spdiags(d,0,L,L);
     
-    [fout,flag,~,iter,relres]=pcg(A,insig,kv.tol,kv.maxit,M);
+    [fout,flag,~,iter,relres]=pcg(A,f,kv.tol,kv.maxit,M);
 else
     
-    [fout,flag,~,iter,relres]=pcg(A,insig,kv.tol,kv.maxit);          
+    [fout,flag,~,iter,relres]=pcg(A,f,kv.tol,kv.maxit);          
 end;
 
-outsig=F.frana(fout);
+c=F.frana(fout);
 
 if nargout>1
     relres=relres/norm(fout(:));
@@ -110,7 +110,7 @@ end;
 
 %% --- cleanup -----
 
-permutedsize=[size(outsig,1),permutedsize(2:end)];
+permutedsize=[size(c,1),permutedsize(2:end)];
 
-outsig=assert_sigreshape_post(outsig,dim,permutedsize,order);
+c=assert_sigreshape_post(c,dim,permutedsize,order);
 
