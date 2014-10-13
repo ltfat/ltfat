@@ -2,25 +2,19 @@ function c=ref_dft(f)
 %REF_DFT  Reference Discrete Fourier Transform
 %   Usage:  c=ref_dft(f);
 %
-%   REF_DFT(f) computes a normalized discrete Fourier transform of 
-%   f, so this is not the same as FFT(f).
+%   REF_DFT(f) computes the unitary discrete Fourier transform of f.
+%
+%   AUTHOR: Jordy van Velthoven
 
-L=size(f,1);
-W=size(f,2);
+L = length(f);
+c = zeros(L,1);
 
-% Create weights.
-w=sqrt(1/L);
-
-% Create transform matrix.
-F=zeros(L);
-
-for m=0:L-1
-  for n=0:L-1
-    F(m+1,n+1)=w*exp(2*pi*i*m*n/L);
+for k=0:L-1
+  for l=0:L-1
+    c(k+1) = c(k+1) + f(l+1) * exp(-2*pi*i*k*l/L);
   end;
 end;
 
-% Compute coefficients.
-c=F'*f;
+c = c/sqrt(L);
 
 

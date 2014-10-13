@@ -3,16 +3,26 @@ function f=dft(f,N,dim);
 %   Usage: f=dft(f);
 %          f=dft(f,N,dim);
 %
-%   `dft` computes a normalized discrete Fourier transform. This is nothing
-%   but a scaled version of the output from `fft`. The function takes exactly
-%   the same arguments as `fft`. See the help on `fft` for a thorough
-%   description.
+%   `dft` computes a normalized or unitary discrete Fourier transform. The 
+%   unitary discrete Fourier transform is computed by
+%   
+%   ..                     L-1
+%     c(k+1) = 1/sqrt(L) * sum f(l+1)*exp(-2*pi*i*k*l/L)
+%                          l=0
+%
+%   .. math:: c\left(k+1\right)=\frac{1}{\sqrt{L}}\sum_{l=0}^{L-1}f\left(l+1\right)e^{-2\pi ikl/L}
+%
+%   for $k=0,\ldots,L-1$.
+%
+%   The output of `dft` is a scaled version of the output from `fft`. The
+%   function takes exactly the same arguments as `fft`. See the help on `fft`
+%   for a thorough description.
 %
 %   See also:  idft
 
-%   AUTHOR: Peter L. Søndergaard
-%   TESTING: OK
-%   REFERENCE: OK
+%   AUTHOR: Peter L. Søndergaard, Jordy van Velthoven
+%   TESTING: TEST_DFT
+%   REFERENCE: REF_DFT
 
 error(nargchk(1,3,nargin));
 
