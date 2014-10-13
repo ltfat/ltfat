@@ -1,6 +1,8 @@
 function C=ref_dsft(F)
 %REF_DSFT Reference DSFT
 
+%   AUTHOR : Peter L. Søndergaard
+
 K=size(F,1);
 L=size(F,2);
 

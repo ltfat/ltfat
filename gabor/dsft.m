@@ -21,6 +21,10 @@ function F=dsft(F);
 %
 %   References: feichtinger2008metaplectic
 
+%   AUTHOR : Peter L. Søndergaard, Jordy van Velthoven (TESTING).
+%   TESTING: TEST_DSFT 
+%   REFERENCE: REF_DSFT
+
 error(nargchk(1,1,nargin));
 
 D=ndims(F);
