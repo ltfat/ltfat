@@ -1,5 +1,7 @@
 %DEMO_GABLASSO  Sparse regression by Lasso method
 
+warning('LTFAT: DEMO_GABLASSO has been deprecated.');
+
 % Signals
 siglen=512;
 t=((0:siglen-1)/siglen).';
