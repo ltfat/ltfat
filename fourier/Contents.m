@@ -26,8 +26,9 @@
 %    PEVEN          -  Even part of periodic function.
 %    PODD           -  Odd part of periodic function.
 %    PCONV          -  Periodic convolution.
-%    CONVOLVE       -  Fast, non-periodic convolution.
-%    PXCORR         -  Periodic cross correlation.
+%    PXCORR         -  Periodic crosscorrelation.
+%    LCONV          -  Linear convolution.
+%    LXCORR	    -  Linear crosscorrelation. 
 %    ISEVENFUNCTION -  Test if function is even.
 %    MIDDLEPAD      -  Cut or extend even function.
 %
@@ -54,7 +55,7 @@
 %    WARPEDBLFILTER -  Warped, band-limited filter.
 %    PFILT          -  Apply filter with periodic boundary conditions.
 %    MAGRESP        -  Magnitude response plot.
-%    TRANSFERFUNCTION - Computer the transfer function of a filter.
+%    TRANSFERFUNCTION - Compute the transfer function of a filter.
 %    PGRPDELAY      -  Periodic Group Delay
 %
 %  Hermite functions and fractional Fourier transforms
