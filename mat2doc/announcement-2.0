@@ -1,0 +1,72 @@
+LTFAT 2.0 was released on October 10, 2014, more than three years after LTFAT 1.0
+
+The Large Time/Frequency Analysis Toolbox (LTFAT) is a Matlab/Octave toolbox for
+working with time-frequency analysis, wavelets and signal processing. It is 
+intended both as an educational and a computational tool. The toolbox provides
+a large number of linear transforms including Gabor and wavelet transforms 
+along with routines for constructing windows (filter prototypes) and routines
+for manipulating coefficients. 
+
+The toolbox can be used for both educational, research and
+computational purposes. It has a backend implemented in C, which can
+be compiled to speed up all computational intensive functions.
+
+The toolbox can be downloaded from http://ltfat.sourceforge.net.
+For GNU Octave, it can also be installed from the Octave-Forge by running
+pkg install ltfat -forge
+but please first check the system requirements at http://octave.sourceforge.net/ltfat/index.html 
+Users of Debian "jessie" may search for octave-ltfat package in their repository.
+
+The main additions since 1.0:
+
+Frames:
+* Unified object-oriented framework for working with various types of frames in C^L.
+* Uses fast algorithms instead of creating explicit matrices.
+* Iterative algorithms where calculation of a dual frame is not feasible.
+* LASSO and basis pursuit algorithms for sparse regularization.
+* Reconstruction from magnitude of coefficients.
+
+Operators:
+* Object oriented framework for working with operators.
+* Frame multipliers.
+* Spreading operators.
+
+Wavelets:
+* Generalizations of MRA wavelet transforms.
+* Library of basic wavelet filters.
+* Discrete Wavelet Transform.
+* General Wavelet Filterbank trees and wavelet packets.
+* Undecimated versions of transform.
+* Dual-tree Complex wavelet transform.
+* Identical overall filterbanks.
+* Effective calculation of frame bounds of all transforms.
+* Canonical dual frames of undecimated transforms.
+
+Filterbanks:
+* Constant Q transform.
+* ERBlet transform.
+
+Gabor analysis:
+* Gabor systems with non-separable lattices.
+* Optimized dual and tight windows (requires UnlocBox, http://unlocbox.sourceforge.net).
+
+Fourier analysis:
+* Fractional Fourier transforms.
+* Generalized Goertzel algorithm.
+* Chirped Z tranform.
+
+Block processing:
+* Real-time audio capture and playback trough Playrec http://www.playrec.co.uk/ and
+  Portaudio http://www.portaudio.com/.
+* Blockwise analysis and synthesis using the frames framework.
+* Programmable GUI panel for changing parameters during playback.
+* Running spectrogram visualization.
+* On-the-fly resampling for unsupported sampling rates.
+
+And in general:
+* More code moved to the backend C library.
+* Compiles on Windows, Mac OS.
+
+On behalf of LTFAT developers
+Zdenek Prusa
+ 
