@@ -13,6 +13,7 @@
 %    FRANA             - Frame analysis
 %    FRSYN             - Frame synthesis
 %    FRSYNMATRIX       - Frame synthesis operator matrix
+%    FRGRAMIAN	       - Frame Gramian operator
 %    FRAMEDIAG         - Diagonal of frame operator
 %    FRANAITER         - Iterative perfect reconstruction analysis
 %    FRSYNITER         - Iterative perfect reconstruction synthesis
