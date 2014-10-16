@@ -72,6 +72,9 @@ function [tc,relres,iter,xrec] = gabelitistlasso(x,g,a,M,lambda,varargin)
 %
 %   See also: gablasso, gabframebounds
 
+warning(['LTFAT: GABELITISTLASSO has been deprecated, please use FRANAGROUPLASSO ' ...
+         'instead. See the help on FRANAGROUPLASSO for more details.']);
+
 if nargin<5
   error('%s: Too few input parameters.',upper(mfilename));
 end;

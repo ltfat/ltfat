@@ -7,7 +7,7 @@ function f=iufilterbank(varargin);
 %
 %   See also: ifilterbank
 
-warning(['LTFAT: IUFILTERBANK has been deprecated, used IFILTERBANK ' ...
+warning(['LTFAT: IUFILTERBANK has been deprecated, please use IFILTERBANK ' ...
          'instead.']);
   
 

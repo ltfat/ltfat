@@ -65,6 +65,9 @@ function [V,D]=gabmuleigs(K,c,p3,varargin)
 %
 %   See also: gabmul, dgt, idgt, gabdual, gabtight
 
+warning(['LTFAT: GABMULEIGS has been deprecated, please use FRAMEMULEIGS ' ...
+         'instead. See the help on FRAMEMULEIGS for more details.']);
+
 % Change this to 1 or 2 to see the iterative method in action.
 printopts=0;
 

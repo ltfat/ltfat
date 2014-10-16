@@ -14,8 +14,8 @@ function [tc,relres,iter,xrec] = gabgrouplasso(x,g,a,M,lambda,varargin)
 %
 %   See also: frame, franagrouplasso
 
-warning(['LTFAT: GABGROUPLASSO has been deprecated, please use FRAMEGROUPLASSO ' ...
-         'instead. See the help on GABGROUPLASSO for more details.']);   
+warning(['LTFAT: GABGROUPLASSO has been deprecated, please use FRANAGROUPLASSO ' ...
+          'instead. See the help on FRANAGROUPLASSO for more details.']);  
 
 F=newframe('dgt',[],g,a,M);
 [tc,relres,iter,xrec] = framegrouplasso(F,lambda,varargin{:});
