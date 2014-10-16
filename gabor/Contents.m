@@ -20,6 +20,7 @@
 %    DGTREAL        -  |dgt| for real-valued signals
 %    IDGTREAL       -  |idgt| for real-valued signals
 %    GABWIN         -  Evaluate Gabor window
+%    PROJKERN	    -  Projection of Gabor coefficients onto kernel space
 %    DGTLENGTH      -  Length of Gabor system to expand a signal
 %
 %  Wilson bases and WMDCT

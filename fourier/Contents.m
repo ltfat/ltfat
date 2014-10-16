@@ -68,6 +68,7 @@
 %    FFTRESAMPLE    -  Fourier interpolation.
 %    DCTRESAMPLE    -  Cosine interpolation.
 %    PDERIV         -  Derivative of periodic function.
+%    FFTANALYTIC    -  Analytic representation of a function.
 %
 %  Cosine and Sine transforms.
 %    DCTI           -  Discrete cosine transform type I
