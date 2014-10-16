@@ -1,9 +1,9 @@
 function z = comp_fftanalytic(f)
 %COMP_FFTANALYTIC Compute analytic representation
-%   Usage z = comp_fftanalytic(f, Ls);
+%   Usage z = comp_fftanalytic(f);
 %
-% `comp_fftanalytic(f)` computes the analytic representation of f.  
-% The analytic representation is computed through the FFT of f.
+%   `comp_fftanalytic(f)` computes the analytic representation of f.  
+%   The analytic representation is computed through the FFT of f.
 %
 
 % AUTHOR: Jordy van Velthoven

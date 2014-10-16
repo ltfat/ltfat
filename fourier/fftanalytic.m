@@ -22,7 +22,7 @@ function z = fftanalytic(f,varargin)
 %   `fftanalytic(f,L,dim)` in addition allows specifying the dimension 
 %   along which the computation should be done.
 %
-%   The real part of the analytic representation *z* equals the function 
+%   The real part of the analytic representation *z* equals the signal 
 %   *f* and the imaginary part is the Hilbert transform of *f*. 
 %
 %   The instananeous amplitude (a Hilbert envelope) of the signal *f* can 
@@ -38,7 +38,7 @@ function z = fftanalytic(f,varargin)
 %   AUTHOR: Jordy van Velthoven
 
 if ~isreal(f)
-  error('%s: The input should be real-valued numeric array.',...
+  error('%s: The input should be a real-valued numeric array.',...
       upper(mfilename));
 end;
 
