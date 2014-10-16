@@ -67,8 +67,8 @@ function F=frame(ftype,varargin);
 %   |dstiii| or |dstiv|.
 %
 %   `frame('dftreal')` constructs a normalized |fftreal| basis for
-%   real-valued signals of even length only. The basis is normalized the
-%   |dft| to ensure that is it orthonormal.
+%   real-valued signals of even length only. The basis is normalized
+%   to ensure that is it orthonormal.
 %
 %   Special / general frames
 %   ------------------------

@@ -63,7 +63,8 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %   analysing using the canonical dual system. 
 %   Note that this requires additional computations.
 %
-%   The relationship between the output coefficients is given by ::
+%   The relationship between the output coefficients and *frec* is 
+%   given by ::
 %
 %     frec = frsyn(F,tc);
 %
