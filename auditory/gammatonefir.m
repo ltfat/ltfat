@@ -7,17 +7,20 @@ function b=gammatonefir(fc,fs,varargin);
 %   Input parameters:
 %      fc    :  center frequency in Hz.
 %      fs    :  sampling rate in Hz.
-%      n     :  filter order.
+%      n     :  max. filter length.
 %      beta  :  bandwidth of the filter.
 %
 %   Output parameters:
 %      b     :  FIR filters as an cell-array of structs.
 %
 %   `gammatonefir(fc,fs,n,betamul)` computes the filter coefficients of a
-%   digital FIR gammatone filter of length *n* with center frequency *fc*,
-%   4th order rising slope, sampling rate *fs* and bandwith determined by
-%   *betamul*. The bandwidth *beta* of each filter is determined as *betamul*
-%   times |audfiltbw| of the center frequency of corresponding filter.
+%   digital FIR gammatone filter with length at most *n*, center 
+%   frequency *fc*, 4th order rising slope, sampling rate *fs* and 
+%   bandwith determined by *betamul*. The bandwidth *beta* of each filter
+%   is determined as *betamul* times |audfiltbw| of the center frequency
+%   of corresponding filter. The actual length of the inpulse response
+%   depends on *fc* (the filter is longer for low center frequencies),
+%   *fs* and *betamul* but it is never bigger than *n*.
 %
 %   `gammatonefir(fc,fs,n)` will do the same but choose a filter bandwidth
 %   according to Glasberg and Moore (1990).  *betamul* is choosen to be 1.0183.
@@ -31,9 +34,9 @@ function b=gammatonefir(fc,fs,varargin);
 %
 %   The inpulse response of the gammatone filter is given by
 %
-%   ..  g(t) = a*t^(n-1)*cos(2*pi*fc*t)*exp(-2*pi*beta*t)
+%   ..  g(t) = a*t^(4-1)*cos(2*pi*fc*t)*exp(-2*pi*beta*t)
 %
-%   .. math:: g(t) = at^{n-1}cos(2\pi\cdot fc\cdot t)e^{-2\pi \beta \cdot t}
+%   .. math:: g(t) = at^{4-1}cos(2\pi\cdot fc\cdot t)e^{-2\pi \beta \cdot t}
 %
 %   The gammatone filters as implemented by this function generate
 %   complex valued output, because the filters are modulated by the
