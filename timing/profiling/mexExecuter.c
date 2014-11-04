@@ -82,7 +82,7 @@ int main(int argc,char* argv[])
 #else
   void *handle = dlopen(argv[1], RTLD_NOW);
   if(!handle){
-    fprintf(stderr, "Error loading MEX file: %s\n", strerror(errno));
+    fprintf(stderr, "Error loading MEX file: %s\n", dlerror());
     return -1;
   }
 

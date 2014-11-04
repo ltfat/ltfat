@@ -11,10 +11,10 @@ endif
 
 
 MEXCOMPFLAGS=-I"$(MATLABROOT)extern/include"
-MATLABLIBS=-L"$(MATLABROOT)bin/glnxa64" -lfftw3 -lfftw3f  -lmat -lmx -ldl -lm -Wl,-rpath="$(MATLABROOT)bin/glnxa64"
+MATLABLIBS=-L"$(MATLABROOT)bin/glnxa64" -lfftw3 -lfftw3f  -lmat -lmx -ldl -lm -Wl,-rpath="$(MATLABROOT)bin/glnxa64" -Wl,-rpath=$ORIGIN
 MATLABLINKFLAGS=$(MATLABLIBS)
 
-CFLAGS=-O3 -Wall -pg -s -std=c99 -I../../src/thirdparty -I../../src/ -I./
+CFLAGS=-Wall -g -std=c99 -I../../src/thirdparty -I../../src/ -I./
 
 EXEFILES=mexExecuter
 
@@ -25,9 +25,9 @@ copyLibs:
 	cp ../../mex/libfftw3-3.dll .
 	cp ../../mex/libfftw3f-3.dll .
 	cp ../../mex/ltfat.dll .
-	cp ../../mex/ltfatf.dll .	
-	
-	
+	cp ../../mex/ltfatf.dll .
+
+
 clean:
 
 .PHONY: all clean
