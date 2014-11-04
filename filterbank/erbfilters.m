@@ -274,8 +274,11 @@ if flags.do_symmetric
                    'inf','min_win',kv.min_win);
     end
 else
-    g=warpedblfilter(flags.wintype,fsupp_erb,fc,fs,@freqtoerb,@erbtofreq, ...
-                     'scal',scal,'inf');
+    g = cell(1,numel(fc));
+    for m=1:numel(g)
+        g{m}=warpedblfilter(flags.wintype,fsupp_erb,fc(m),fs,@freqtoerb,@erbtofreq, ...
+                     'scal',scal(m),'inf');
+    end
 end;
 
 end
