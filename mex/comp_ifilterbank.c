@@ -69,7 +69,7 @@ do{                               \
          mexErrMsgTxt("COMP_IFILTERBANK: Dimensions of arrays are not equal.");
       }
    }
-   mwSize L = mxGetNumberOfElements(to); 
+   mwSize L = mxGetNumberOfElements(to);
 
    if (mxIsDouble(to))
    {
@@ -328,6 +328,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
       double* foffPtr = (double*)mxGetPr(prhs_fftbl[2]);
       double* aPtr = (double*)mxGetPr(prhs_fftbl[3]);
       double* realonlyPtr = (double*)mxGetPr(prhs_fftbl[4]);
+      memset(realonlyPtr, 0, fftblCount * sizeof * realonlyPtr);
 
       for (mwIndex m = 0; m < fftblCount; m++)
       {
@@ -344,7 +345,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
          else
             aPtr[m + fftblCount] = 1;
 
-         realonlyPtr[m] = mxGetScalar(mxGetField(gEl, 0, "realonly"));
+         mxArray* mxrealonly;
+         if (mxrealonly = mxGetField(gEl, 0, "realonly"))
+            realonlyPtr[m] = mxGetScalar(mxrealonly);
       }
 
 
