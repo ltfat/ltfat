@@ -27,10 +27,10 @@ function cola=blockplot(p,F,c,cola)
 %
 
 complainif_notenoughargs(nargin,3,'BLOCKPLOT');
-complainif_notvalidframeobj(F,'BLOCKPLOT');
 
 
 if ~isempty(F)
+    complainif_notvalidframeobj(F,'BLOCKPLOT');
     if size(c,2)>1
         error('%s: Only one channel input is supported.',upper(mfilename));
     end
