@@ -64,7 +64,7 @@ end
 info.a = comp_filterbank_a(info.a, info.M);
 
 % Precompute filters
-[hg, dg] = comp_phasegradfilters(g, info.a, L);
+[hg, dg, g] = comp_phasegradfilters(g, info.a, L);
 
 f=postpad(f,L);
 

@@ -1,4 +1,4 @@
-function [hg,dg]=comp_phasegradfilters(g,a,L)
+function [hg,dg,g]=comp_phasegradfilters(g,a,L)
 
 % Numbe rof filters
 M = numel(g);

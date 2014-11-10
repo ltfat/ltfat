@@ -1,9 +1,8 @@
-function [tgrad,fgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,a,minlvl)
+function [tgrad,fgrad,c_s] = comp_filterbankphasegrad(f,g,hg,dg,a,minlvl)
 
 L = size(f,1);
 
-% Compute filterbank coefficients
-c=comp_filterbank(f,g,a);
+c=comp_filterbank(f,g,a); 
 % Compute filterbank coefficients with frequency weighted window
 c_h=comp_filterbank(f,hg,a);
 % Compute filterbank coefficients with time weighted window
