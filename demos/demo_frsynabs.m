@@ -24,10 +24,14 @@
 %
 %   .. figure::
 %
-%      Iterative reconstruction using the BFGS method
+%      Iterative reconstruction using the BFGS method.
 %
 %      This figure shows a spectrogram of an iterative reconstruction of the
 %      target spectrogram using the BFGS method.
+%
+%   The BFGS method makes use of the minFunc software. To use the BFGS method, 
+%   please install the minFunc software from:
+%   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
 %   See also:  isgramreal, isgram
 

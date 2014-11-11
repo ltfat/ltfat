@@ -66,8 +66,9 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %                  If 'print' is specified, then print every p'th
 %                  iteration. Default value is p=10.
 %
-%   To use the BFGS method, please install the minFunc software from
-%   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_
+%   The BFGS method makes use of the minFunc software. To use the BFGS method, 
+%   please install the minFunc software from:
+%   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
 %   See also:  dgtreal, idgtreal
 %

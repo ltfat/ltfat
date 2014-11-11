@@ -73,6 +73,10 @@ function [f,relres,iter]=frsynabs(F,s,varargin)
 %     'printstep',p  If 'print' is specified, then print every p'th
 %                    iteration. Default value is p=10;
 %
+%   The BFGS method makes use of the minFunc software. To use the BFGS method, 
+%   please install the minFunc software from:
+%   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
+%
 %   See also:  dgt, idgt
 %
 %   References: griffin1984sem pabaso13
