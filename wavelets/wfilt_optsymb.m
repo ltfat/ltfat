@@ -1,23 +1,25 @@
-function [h,g,a,info] = wfilt_qshiftb(N)
-%WFILT_QSHIFTB  Improved Orthogonality and Symmetry properties 
+function [h,g,a,info] = wfilt_optsymb(N)
+%WFILT_OPTSYMB  Optimizatized Symmetric Self-Hilbertian Filters 
 %
-%   Usage: [h,g,a] = wfilt_qshiftb(N);
+%   Usage: [h,g,a] = wfilt_optsymb(N);
 %
-%   `[h,g,a]=wfilt_qshiftb(N)` with $N \in {1,2,3,4,5,6,7}$ returns
-%   Kingsbury's Q-shift wavelet filters for tree B.
+%   `[h,g,a]=wfiltdt_optsymb(N)` with $N \in {1,2,3}$ returns filters
+%   suitable with optimized symmetry suitable for for dual-tree complex 
+%   wavelet transform tree B.
 %
 %   Examples:
 %   ---------
 %   :::
-%     figure(1);
-%     wfiltinfo('qshiftb3');
+%     wfiltinfo('optsymb3');
 % 
-%   References: king00 king03
+%   References: dubase08
 %
 
 % AUTHOR: Zdenek Prusa
 
-[ha,~,a,info] = wfilt_qshifta(N);
+
+[ha,~,a,info] = wfilt_optsyma(N);
+
 
 hlp = ha{1}.h;
 offset = -(numel(hlp)/2); 
@@ -38,6 +40,3 @@ htmp=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
 h(1:2,1) = cellfun(@(hEl)struct('h',hEl,'offset',offset),htmp(1:2),...
                    'UniformOutput',0);
 g = h;
-
-
-

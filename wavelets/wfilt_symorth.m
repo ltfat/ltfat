@@ -43,11 +43,11 @@ case 1
            -A...
            ].';
        
-    harr = [hlp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];  
+    harr = [flipud(hlp), (-1).^(1:numel(hlp)).'.*hlp];  
     
     garr = harr;   
     info.istight = 1;
-    offset = [-2,-4];
+    offset = [-5,-3];
 
 case 2
     % Example 2. From the reference. Symmetric near-orthogonal
@@ -84,7 +84,7 @@ case 2
          ];   
     harr = [hlp, (-1).^(0:numel(glp)-1).'.*flipud(glp)];
     garr = [glp, (-1).^(0:numel(hlp)-1).'.*flipud(hlp)];
-    offset = [-5,-5];
+    offset = [-6,-6];
 case 3
     % Example 1. from the reference. Symmetric near-orthogonal
     % K=5 vanishing moments (both low and high pass)
@@ -133,7 +133,7 @@ case 3
     harr = [hlp, (-1).^(1:numel(glp)).'.*glp];
     garr = [glp, (-1).^(1:numel(hlp)).'.*hlp];
     
-    offset = [-8,-8];
+    offset = [-9,-9];
   otherwise
         error('%s: No such filters.',upper(mfilename)); 
 

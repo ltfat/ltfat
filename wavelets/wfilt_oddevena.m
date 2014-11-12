@@ -54,15 +54,15 @@ switch(N)
     garr = garr*sqrt(2);
     %garr = normalize(garr,'energy');
     
-    offset = -9;
+    offset = -10;
 
   otherwise
         error('%s: No such filters.',upper(mfilename)); 
 end
 
     %garr = [garr(:,3:4),garr(:,1:2)];
-    modrange = (-1).^((0:size(garr,1)-1) + offset).';
-    modrange2 = (-1).^((0:size(garr,1)-1) + offset+1).';
+    modrange = (-1).^((0:size(garr,1)-1) + offset+1).';
+    modrange2 = (-1).^((0:size(garr,1)-1) + offset).';
     
     harr =       [garr(:,2).*modrange2,...
                   garr(:,1).*modrange,...

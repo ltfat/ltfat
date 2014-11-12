@@ -29,10 +29,7 @@ a = [2;2];
 info.istight = 1;
 
 if num_coefs==2	    % Haar filters
-	g{1} = 0.5*[sqrt(2) sqrt(2)];
-    g{2} = 0.5*[sqrt(2) -sqrt(2)];
-    g = cellfun(@(gEl) struct('h',gEl(:),'offset',0),g,'UniformOutput',0);
-    h = g;
+	[h,g,a,info]=wfilt_db(1);
 	return
 end
 
@@ -155,10 +152,27 @@ cte=sqrt(2)/sum(rh);
 rh=cte*rh;
 fLen = length(rh);
 
-g{1} = rh;
-g{2} = -(-1).^(1:fLen).*g{1}(end:-1:1);
+% Some odd values of N produce flipped filters
+% Bigger N jut take forever to calculate.
+if any(N==[7,9]) || ( N>=13 && rem(N,2) == 1)
+    rh = rh(end:-1:1);
+end
 
-g = cellfun(@(gEl) struct('h',gEl(:),'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
+g{1} = rh;
+g{2} = -(-1).^(0:fLen-1).*g{1}(end:-1:1);
+Lh = numel(rh);
+d = cellfun(@(gEl) -length(gEl)/2,g);
+if N>2
+  % Do a filter alignment according to "center of mass"
+  d(1) = -find(abs(g{1})==max(abs(g{1})),1,'first')+1;
+  d(2) = -find(abs(g{2})==max(abs(g{2})),1,'first')+1;
+  if abs(rem(d(1)-d(2),2))==1
+      % Shift d(2) just a bit
+      d(2) = d(2) - 1;
+  end
+end
+
+g = cellfun(@(gEl,dEl) struct('h',gEl(:),'offset',dEl),g,num2cell(d),'UniformOutput',0);
  
 h = g;
 

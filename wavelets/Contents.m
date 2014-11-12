@@ -81,6 +81,10 @@
 %      WFILT_QSHIFTB         - Second tree filters from WFILTDT_QSHIFT 
 %      WFILT_ODDEVENA        - First tree filters from WFILTDT_ODDEVEN 
 %      WFILT_ODDEVENB        - Second tree filters from WFILTDT_ODDEVEN 
+%      WFILT_OPTSYMA         - First tree filters from WFILTDT_OPTSYM 
+%      WFILT_OPTSYMB         - Second tree filters from WFILTDT_OPTSYM 
+%      WFILT_DDENA           - First tree filters from WFILTDT_DDEN 
+%      WFILT_DDENB           - Second tree filters from WFILTDT_DDEN 
 %
 %   Dual-Tree Filters
 %      WFILTDT_QSHIFT        - Kingsbury's quarter-shift filters

@@ -40,9 +40,9 @@ switch(K)
     harr(:,1)=harr(:,1)*sqrt(2)/2^8;
     harr(:,2)=harr(:,2)/2^7;
     harr(:,3:4)=harr(:,3:4)/2^4;
+    
+    hoffset = [-4,-4,-4,-4];
 
-
-    if(nargout>1)
     garr = [
         0    0     0    0
         -3   -5    0    -1
@@ -56,7 +56,8 @@ switch(K)
     garr(:,1)=garr(:,1)*sqrt(2)/2^6;
     garr(:,2)=garr(:,2)/2^6;
     garr(:,3:4)=garr(:,3:4)/2^3;
-    end;
+    goffset = [-4,-4,-4,-4];
+
 case 2
     % Example 2. Not a tight frame!
     harr = [
@@ -71,8 +72,9 @@ case 2
        0                  -sqrt(2)/2^5       0           0
        -sqrt(2)/2^5       0                  0           0
     ];
+    hoffset = [-3,-5,-5,-5];
+    
 
-    if(nargout>1)
     garr = [
            -sqrt(2)/2^5       0                  0           1/2^6 
            0                  -sqrt(2)/2^5       1/2^6       2/2^6
@@ -85,7 +87,7 @@ case 2
            0                  0                  2/2^6       1/2^6
            0                  0                  1/2^6       0
          ];   
-    end;
+    goffset = [-3,-5,-5,-5];
     
 case 3
     % Example 3. Not a tight frame!
@@ -104,10 +106,10 @@ case 3
        0                       0                     -0.003385355341795   -0.011757930078244
        0                       0                     0                    -0.003385355341795
     ];
+    hoffset = [-7,-7,-7,-5];
 
-    if(nargout>1)
     garr = [
-%            0	                  0	                   0	                   0
+            0	                  0	                   0	                   0
             0	                  0	                   0	                   0
             35*sqrt(2)/2^12	      0	                   0	                   -0.043136204314165
             -45*sqrt(2)/2^12	  35*sqrt(2)/2^12	   -0.043136204314165	   -0.022725249453801
@@ -120,8 +122,10 @@ case 3
             -45*sqrt(2)/2^12	  -208*sqrt(2)/2^12	   0.043136204314165	   0
             35*sqrt(2)/2^12	      -185*sqrt(2)/2^12	   0	                   0
             0	                  -35*sqrt(2)/2^12	   0	                   0
-      ];   
-    end;
+%            0	                  0	                   0	                   0
+      ];  
+      goffset = [-7,-7,-7,-5];
+
 case 4
     % Example 4. Not a tight frame!
     harr = [
@@ -144,10 +148,10 @@ case 4
        0       0         0                   -0.0008317898274
   ];
    harr(:,1:2)=harr(:,1:2)*sqrt(2)/2^16;
+   hoffset = [-9,-9,-9,-7];
 
-    if(nargout>1)
     garr = [
-    %     0        0        0                  0 
+         0        0        0                  0 
          0        0        0                  0
          99       0        0                  -0.0054868984046
          351      99       -0.0054868984046   -0.03102895771555
@@ -167,7 +171,8 @@ case 4
 
       ];   
      garr(:,1:2)=garr(:,1:2)*sqrt(2)/2^16;
-    end;
+     goffset = [-9,-9,-9,-7];
+
 case 5
     % Example 5. Not a tight frame!
     harr = [
@@ -183,10 +188,11 @@ case 5
    ];
    harr(:,[1 4])=harr(:,[1 4])*sqrt(2)/2^8;
    harr(:,2:3)=harr(:,2:3)*sqrt(2)/2^12;
+   hoffset = [-5,-5,-5,-5];
 
-    if(nargout>1)
+
     garr = [
-      %  0    0    0     0
+        0    0    0     0
         -5   0    -1    -5
         -7   -1   -1    7
         35   -1   2     35
@@ -198,15 +204,18 @@ case 5
       ];   
      garr(:,[1 4])=garr(:,[1 4])*sqrt(2)/2^8;
      garr(:,2:3)=garr(:,2:3)*sqrt(2)/2^3;
-    end;
+     goffset = [-5,-5,-5,-5];
+
   otherwise
         error('%s: No such filters.',upper(mfilename)); 
 
 end
 
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
-g = cellfun(@(gEl) struct('h',gEl(:),'offset',-floor(numel(gEl)/2)+1),g,'UniformOutput',0);
+g = cellfun(@(gEl,ofEl) struct('h',gEl(:),'offset',ofEl),...
+            g,num2cell(goffset),'UniformOutput',0);
 
 h=mat2cell(flipud(harr),size(harr,1),ones(1,size(harr,2)));
-h = cellfun(@(hEl) struct('h',hEl(:),'offset',-floor(numel(hEl)/2)+1),h,'UniformOutput',0);
+h = cellfun(@(hEl,ofEl) struct('h',hEl(:),'offset',ofEl),...
+            h,num2cell(hoffset),'UniformOutput',0);
 

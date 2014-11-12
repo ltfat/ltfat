@@ -31,7 +31,7 @@ garr = [
   0              2*sqrt(2)/32    0.3731682798   -0.575618139
   -sqrt(2)/32    sqrt(2)/32      0              0.3731682798
 ];
-offset = -4; 
+offset = [-4,-4,-6,-6]; 
 case 2
 garr = [
   -5*sqrt(2)/256       -5*sqrt(2)/256     0.0422028267     0
@@ -43,7 +43,7 @@ garr = [
   -7*sqrt(2)/256       -23*sqrt(2)/256    -0.1084675382    0.5488035631 
   -5*sqrt(2)/256       5*sqrt(2)/256      0                -0.1084675382
 ]; 
-offset = -3; 
+offset = [-4,-4,-4,-4]; 
 case 3
 garr = [
   -7*sqrt(2)/1024       -7*sqrt(2)/1024     0.0019452732     0
@@ -57,13 +57,14 @@ garr = [
   -27*sqrt(2)/1024      -43*sqrt(2)/1024    -0.4804470835    0.6026545312
   -7*sqrt(2)/1024       7*sqrt(2)/1024      0                -0.4804470835
 ]; 
-offset = -4; 
+offset = [-5,-5,-7,-7]; 
     otherwise
         error('%s: No such Dense Grid Framelet filters.',upper(mfilename));
 end;
 
 g = mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
-g = cellfun(@(gEl) struct('h',gEl,'offset',offset),g,'UniformOutput',0);
+g = cellfun(@(gEl,ofEl) struct('h',gEl,'offset',ofEl),g,num2cell(offset),...
+            'UniformOutput',0);
 h = g;
 a = [2;2;2;2];
 info.istight=1;

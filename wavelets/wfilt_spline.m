@@ -31,6 +31,11 @@ if(rem(m+n,2)~=0)
     error('%s: M+N must be even.',upper(mfilename)); 
 end
 
+if m==1 && n==1
+   [h,g,a,info]=wfilt_db(1); 
+   return;
+end
+
 % Calculate rh coefficients, RH(z)=sqrt(2)*((1+z^-1)/2)^m;
 
 rh=sqrt(2)*(1/2)^m*binewton(m);
@@ -110,8 +115,19 @@ if(rem(length(h{1}),2))
     g{2}= [0, g{2}];
 end
 
-g = cellfun(@(gEl) struct('h',gEl(:),'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
-h = cellfun(@(hEl) struct('h',flipud(hEl(:)),'offset',-numel(hEl)/2+1),h,'UniformOutput',0);
+
+% Ajust the initial filter position
+if rem(m,2)==1
+   d = [-numel(h{1})/2, -numel(h{1})/2]; 
+else
+   d = [-numel(h{1})/2+1, -numel(h{1})/2-1];
+end
+
+
+g = cellfun(@(gEl,dEl) struct('h',gEl(:),'offset',dEl),g,num2cell(d),...
+            'UniformOutput',0);
+h = cellfun(@(hEl,dEl) struct('h',flipud(hEl(:)),'offset',dEl),h,num2cell(d),...
+            'UniformOutput',0);
 %h = cellfun(@(hEl) hEl(end:-1:1),h,'UniformOutput',0);
 a= [2;2];
 info.istight = 0;

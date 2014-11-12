@@ -31,7 +31,7 @@ garr = [
     0.707106781186548   0                    -0.5
     0.353553390593274   -0.353553390593274   0
 ];
-
+d = [-2,-2,-2];
 case 2
 % from the paper Example 2.
 garr = [
@@ -45,6 +45,7 @@ garr = [
     0.025752563665   -0.189604909379   0
 ];
 
+d = [-3,-5,-5];
 case 3
 % from the paper Example 3.
 garr = [
@@ -59,7 +60,7 @@ garr = [
   -0.076963057605    0.028685132531   0.009751852004
   -0.048477254777    0.022033327573   0
 ];
-
+ d = [-6,-4,-4];
 case 4
     info.istight = 0;
     % from the paper Example 5. Is not a tight frame!
@@ -77,9 +78,12 @@ case 4
        0.011217   0           0 
        0.027222   0           0  
     ];
+    d = [-5,-5,-5];
+
     harr = flipud(harr);
     h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
-    h=cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2+1),h,'UniformOutput',0);
+    h=cellfun(@(gEl,dEl) struct('h',gEl,'offset',dEl),h,num2cell(d),...
+              'UniformOutput',0);
 
 
         garr = [
@@ -98,7 +102,8 @@ case 4
         ];   
 
         g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
-        g=cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2+1),g,'UniformOutput',0);
+        g=cellfun(@(gEl,dEl) struct('h',gEl,'offset',dEl),g,num2cell(d),...
+                  'UniformOutput',0);
 
 
     return;
@@ -110,7 +115,7 @@ end
 
 %garr = flipud(harr);
 g=mat2cell(garr,size(garr,1),ones(1,size(garr,2)));
-g = cellfun(@(gEl) struct('h',gEl,'offset',-numel(gEl)/2),g,'UniformOutput',0);
+g = cellfun(@(gEl,dEl) struct('h',gEl,'offset',dEl),g,num2cell(d),'UniformOutput',0);
 h = g;
 
 

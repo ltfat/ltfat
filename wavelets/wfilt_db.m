@@ -93,10 +93,23 @@ h{2}= (-1).^(0:flen-1).*h{1}(end:-1:1);
 h{1} = fliplr(h{1});
 h{2} = fliplr(h{2});
 
+Lh = numel(h{1});
+% Default offset
+d = cellfun(@(hEl) -length(hEl)/2,h);
+if N>2
+  % Do a filter alignment according to "center of gravity"
+  d(1) = -floor(sum((1:Lh).*abs(h{1}).^2)/sum(abs(h{1}).^2));
+  d(2) = -floor(sum((1:Lh).*abs(h{2}).^2)/sum(abs(h{2}).^2));
+  if rem(d(1)-d(2),2)==1
+      % Shift d(2) just a bit
+      d(2) = d(2) + 1;
+  end
+end
 
 % Format filters
-h{1} = struct('h',h{1},'offset',-length(h{1})/2+1);
-h{2} = struct('h',h{2},'offset',-length(h{2})/2+1);
+h{1} = struct('h',h{1},'offset',d(1));
+h{2} = struct('h',h{2},'offset',d(2));
+
 
 
 g=h;

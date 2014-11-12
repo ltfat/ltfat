@@ -78,7 +78,7 @@ harr = [hlp, ...
             (-1).^(0:size(hlp,1)-1).'.*hlp(:,1)];
 
 h=mat2cell(harr,size(harr,1),ones(1,size(harr,2)));
-h=cellfun(@(hEl) struct('h',hEl(:),'offset',-numel(hEl)/2+1),h,'UniformOutput',0);
+h=cellfun(@(hEl) struct('h',hEl(:),'offset',-numel(hEl)/2),h,'UniformOutput',0);
 
 g = h;
 

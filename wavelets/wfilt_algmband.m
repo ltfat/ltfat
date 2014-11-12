@@ -31,6 +31,7 @@ switch(K)
              -0.14593600755399 0.42695403781698 0.24650202866523
              ];
       a= [3;3;3];
+      offset = [-3,-3,-3];
    case 2
       garr = [
               0.0857130200  -0.1045086525 0.2560950163  0.1839986022
@@ -51,12 +52,14 @@ switch(K)
              -0.0190928308 -0.1152813433 -0.0280987676 -0.0174753464
              ];
        a= [4;4;4;4];
+       offset = [-12,-8,-8,-12];
   otherwise
         error('%s: No such orthonormal M-band wavelet filter bank.',upper(mfilename));
 end
 
 g=mat2cell(flipud(garr),size(garr,1),ones(1,size(garr,2)));
-g = cellfun(@(gEl) struct('h',gEl,'offset',-floor((length(gEl)+1)/2)),g,'UniformOutput',0);
+g = cellfun(@(gEl,offEl) struct('h',gEl,'offset',offEl),g,num2cell(offset),...
+            'UniformOutput',0);
 
 h = g;
 info.istight=1;

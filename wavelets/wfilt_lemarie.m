@@ -35,11 +35,11 @@ hh=real(ifft(H{1},L));
 hh=[ hh(L-floor(num_coefs/2)+1:L) hh(1:ceil(num_coefs/2))];
 hh=hh/norm(hh);
 
-g{1} = fliplr(hh);
-g{2} = -(-1).^(0:length(hh)-1).*g{1}(end:-1:1);
+g{1} = (hh);
+g{2} = -(-1).^(1:length(hh)).*g{1}(end:-1:1);
 
 
-g = cellfun(@(gEl) struct('h',gEl,'offset',-floor(numel(gEl)/2)+1),g,'UniformOutput',0);
+g = cellfun(@(gEl) struct('h',gEl,'offset',-floor(numel(gEl)/2)),g,'UniformOutput',0);
 
 h = g;
 a= [2;2];

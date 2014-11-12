@@ -73,7 +73,7 @@ else
     h = cellfun(@(hEl) hEl*scal,h,'UniformOutput',0);
 end
 
-h = cellfun(@(gEl) struct('h',gEl,'offset',-floor((length(gEl)+1)/2)),h,'UniformOutput',0);
+h = cellfun(@(gEl) struct('h',gEl,'offset',-floor((length(gEl))/2)),h,'UniformOutput',0);
 g = h;
 info.istight = 1;
 a = M*ones(M,1);

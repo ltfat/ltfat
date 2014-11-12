@@ -150,8 +150,9 @@ case 7
         error('%s: No such filters.',upper(mfilename)); 
 
 end
+
     % numel(hlp) must be even
-    offset = -(numel(hlp)/2 - 1); 
+    offset = -(numel(hlp)/2); 
     range = (0:numel(hlp)-1) + offset;
     
     % Create the filters according to the reference paper.
