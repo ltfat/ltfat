@@ -1,4 +1,4 @@
-function [tgrad,fgrad,c_s] = comp_filterbankphasegrad(f,g,hg,dg,a,minlvl)
+function [tgrad,fgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,a,minlvl)
 
 L = size(f,1);
 
