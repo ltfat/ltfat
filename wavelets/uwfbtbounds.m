@@ -1,7 +1,8 @@
-function [AF,BF]=uwfbtbounds(wt,L,varargin)
+function [AF,BF]=uwfbtbounds(wt,varargin)
 %UWFBTBOUNDS Frame bounds of Undecimated WFBT
 %   Usage: fcond=uwfbtbounds(wt,L);
 %          [A,B]=uwfbtbounds(wt,L);
+%           ... =uwfbtbounds(wt);
 %
 %   `uwfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the undecimated filterbank specified by *wt* for a system of length
@@ -11,7 +12,10 @@ function [AF,BF]=uwfbtbounds(wt,L,varargin)
 %   bounds of the undecimated DWT (|UFWT|) filterbank specified by *w* and
 %   *J* for a system of length *L*.
 %
-%   `[A,B]=uwfbtbounds(...,L)` returns the lower and upper frame bounds
+%   `uwfbtbounds(wt)` does the same thing, but *L* is the length of the 
+%   longest filter in the identical filterbank.
+%
+%   `[A,B]=uwfbtbounds(...)` returns the lower and upper frame bounds
 %   explicitly.
 %
 %   See |wfbt| for explanation of parameter *wt* and |fwt| for explanation
@@ -26,10 +30,11 @@ function [AF,BF]=uwfbtbounds(wt,L,varargin)
 %   See also: uwfbt, filterbankbounds
 
 
-complainif_notenoughargs(nargin,2,'UWFBTBOUNDS');
+complainif_notenoughargs(nargin,1,'UWFBTBOUNDS');
 
+definput.keyvals.L = [];
 definput.flags.scaling={'sqrt','scale','noscale'};
-[flags]=ltfatarghelper({},definput,varargin);
+[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
 wt = wfbtinit({'strict',wt},'nat');
 
@@ -42,6 +47,10 @@ end
 
 % Do the equivalent filterbank using multirate identity property
 [gmultid, amultid] = wfbt2filterbank(wt);
+
+if isempty(L)
+   L = wfbtlength(max(cellfun(@(gEl) numel(gEl.h),gmultid)),wt);  
+end
 
 % Scale filters
 gmultid = comp_filterbankscale(gmultid, amultid, flags.scaling);

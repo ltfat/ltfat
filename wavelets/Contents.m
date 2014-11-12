@@ -47,6 +47,7 @@
 %      WPFBTBOUNDS       - Frame bounds of WPFBT
 %      UWFBTBOUNDS       - Frame bounds of UWFBT or UFWT
 %      UWPFBTBOUNDS      - Frame bounds of UWPFBT
+%      DTWFBBOUNDS       - Frame bounds of DTWFB
 %  
 %   Plots
 %      PLOTWAVELETS      - Plot wavelet coefficients

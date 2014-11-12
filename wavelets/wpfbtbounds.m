@@ -1,13 +1,18 @@
-function [AF,BF]=wpfbtbounds(wt,L,varargin)
+function [AF,BF]=wpfbtbounds(wt,varargin)
 %WPFBTBOUNDS Frame bounds of WPFBT
 %   Usage: fcond=wpfbtbounds(wt,L);
 %          [A,B]=wpfbtbounds(wt,L);
+%           ... =wpfbtbounds(wt);
 %
 %   `wpfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the wavelet packet filterbank specified by *wt* for a system of length
 %   *L*. The ratio is a measure of the stability of the system.
 %
-%   `[A,B]=wpfbtbounds(wt,L)` returns the lower and upper frame bounds
+%   `wpfbtbounds(wt)` does the same, except *L* is chosen to be the next 
+%   compatible length bigger than the longest filter from the identical
+%   filterbank.
+%
+%   `[A,B]=wpfbtbounds(...)` returns the lower and upper frame bounds
 %   explicitly.
 %
 %   See |wfbt| for explanation of parameter *wt*. 
@@ -23,17 +28,20 @@ function [AF,BF]=wpfbtbounds(wt,L,varargin)
 % AUTHOR: Zdenek Prusa
 
 
-complainif_notenoughargs(nargin,2,'WPFBTBOUNDS');
+complainif_notenoughargs(nargin,1,'WPFBTBOUNDS');
 
+definput.keyvals.L = [];
 definput.flags.interscaling = {'intsqrt', 'intscale', 'intnoscale'};
-[flags]=ltfatarghelper({},definput,varargin);
+[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
 wt = wfbtinit({'strict',wt},'nat');
 
-if L~=wfbtlength(L,wt)
-    error(['%s: Specified length L is incompatible with the length of ' ...
-           'the time shifts.'],upper(mfilename));
-end;
+if ~isempty(L)
+   if L~=wfbtlength(L,wt)
+       error(['%s: Specified length L is incompatible with the length of ' ...
+              'the time shifts.'],upper(mfilename));
+   end;
+end
 
 
 for ii=1:numel(wt.nodes)
@@ -43,11 +51,12 @@ for ii=1:numel(wt.nodes)
                                 upper(mfilename)));
 end
 
-% Scale the intermediate filters
-wt = comp_wpfbtscale(wt,flags.interscaling);
-
 % Do the equivalent filterbank using multirate identity property
-[gmultid,amultid] = wpfbt2filterbank(wt);
+[gmultid,amultid] = wpfbt2filterbank(wt,flags.interscaling);
+
+if isempty(L)
+   L = wfbtlength(max(cellfun(@(gEl) numel(gEl.h),gmultid)),wt);  
+end
 
 % Do the equivalent uniform filterbank
 [gu,au] = nonu2ufilterbank(gmultid,amultid);
