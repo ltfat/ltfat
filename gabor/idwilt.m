@@ -4,7 +4,7 @@ function [f,g]=idwilt(c,g,Ls)
 %           f=idwilt(c,g,Ls);
 %
 %   Input parameters:
-%      c     : $M \times N$ array of coefficients.
+%      c     : $2M \times N$ array of coefficients.
 %      g     : Window function.
 %      Ls    : Final length of function (optional)
 %   Output parameters:

@@ -11,8 +11,8 @@ function coef=framecoef2tfplot(F,coef)
 %
 %   See also: frame, frametf2coef, framecoef2native, blockplot
   
-complainif_notenoughargs(nargin,2,'FRAMECOEF2TF');
-complainif_notvalidframeobj(F,'FRAMECOEF2TF');
+complainif_notenoughargs(nargin,2,'FRAMECOEF2TFPLOT');
+complainif_notvalidframeobj(F,'FRAMECOEF2TFPLOT');
 
 switch(F.type)
    % We could have done a try-catch block here, but it is slow
@@ -20,7 +20,7 @@ switch(F.type)
     coef=framecoef2tf(F,coef);
     return;
    case 'fwt'
-    coef = comp_fwtpack2cell(F,c);
+    coef = comp_fwtpack2cell(F,coef);
    case {'wfbt','wpfbt','filterbank','filterbankreal'}
     coef = F.coef2native(coef,size(coef));   
 end
