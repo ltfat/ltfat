@@ -1,5 +1,11 @@
 targets = oct playrec
 
+CC=@CC@
+CXX=@CXX@
+
+export CC
+export CXX
+
 ifeq (@have_libportaudio@,1)
   export HAVE_PORTAUDIO=1
 endif
