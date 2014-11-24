@@ -2,7 +2,7 @@ function [AF,BF]=wfbtbounds(wt,L)
 %WFBTBOUNDS Frame bounds of WFBT
 %   Usage: fcond=wfbtbounds(wt,L);
 %          [A,B]=wfbtbounds(wt,L);
-%           ... =wfbtbounds(wt);
+%          [...]=wfbtbounds(wt);
 %
 %   `wfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the filterbank tree specified by *wt* for a system of length

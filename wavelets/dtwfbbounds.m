@@ -2,7 +2,7 @@ function [AF,BF]=dtwfbbounds(dualwt,L)
 %DTWFBBOUNDS Frame bounds of DTWFB
 %   Usage: fcond=dtwfbbounds(dualwt,L);
 %          [A,B]=dtwfbbounds(dualwt,L);
-%           ... =dtwfbbounds(dualwt);
+%          [...]=dtwfbbounds(dualwt);
 %
 %   `dtwfbbounds(dualwt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the dual-tree filterbank specified by *dualwt* for a system of 
@@ -17,6 +17,7 @@ function [AF,BF]=dtwfbbounds(dualwt,L)
 %   See |dtwfb| for explanation of parameter *dualwt*.
 %
 %   See also: dtwfb, filterbankbounds
+%
 
 % AUTHOR: Zdenek Prusa
 
@@ -51,3 +52,4 @@ if nargout<2
 elseif nargout == 2
    [AF, BF] = filterbankbounds(gu,au,L);
 end
+

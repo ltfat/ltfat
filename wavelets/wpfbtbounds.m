@@ -2,7 +2,7 @@ function [AF,BF]=wpfbtbounds(wt,varargin)
 %WPFBTBOUNDS Frame bounds of WPFBT
 %   Usage: fcond=wpfbtbounds(wt,L);
 %          [A,B]=wpfbtbounds(wt,L);
-%           ... =wpfbtbounds(wt);
+%          [...]=wpfbtbounds(wt);
 %
 %   `wpfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the wavelet packet filterbank specified by *wt* for a system of length

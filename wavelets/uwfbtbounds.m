@@ -2,7 +2,7 @@ function [AF,BF]=uwfbtbounds(wt,varargin)
 %UWFBTBOUNDS Frame bounds of Undecimated WFBT
 %   Usage: fcond=uwfbtbounds(wt,L);
 %          [A,B]=uwfbtbounds(wt,L);
-%           ... =uwfbtbounds(wt);
+%          [...]=uwfbtbounds(wt);
 %
 %   `uwfbtbounds(wt,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the undecimated filterbank specified by *wt* for a system of length
