@@ -21,8 +21,12 @@ ifndef SFFTW
    SFFTW=-lfftw3f
 endif
 
+CFLAGS+=-O3 -std=c99 -Ithirdparty
+# This is used for Octave mxe 
+ifneq ($(OS),Windows_NT)
+   CFLAGS+=-fPIC 
+endif
 
-CFLAGS=-O3 -fPIC -std=c99 -Ithirdparty 
 SHARED_FLAGS=-shared -Wl,--no-undefined -lc -lm -L"$(MATLABROOT)/bin/$(ARCH)" \
 			 -lmwblas -lmwlapack $(DFFTW) $(SFFTW)
 

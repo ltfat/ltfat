@@ -9,11 +9,13 @@ RM = del /Q /F
 CP = copy /Y
 PS2 = \\
 PS = $(strip $(PS2))
+ifndef SHELL
 ifdef ComSpec
 SHELL := $(ComSpec)
 endif
 ifdef COMSPEC
 SHELL := $(COMSPEC)
+endif
 endif
 CC = gcc
 else
