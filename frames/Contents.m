@@ -14,6 +14,7 @@
 %    FRSYN             - Frame synthesis
 %    FRSYNMATRIX       - Frame synthesis operator matrix
 %    FRGRAMIAN	       - Frame Gramian operator
+%    FRAMEOPERATOR     - Frame operator
 %    FRAMEDIAG         - Diagonal of frame operator
 %    FRANAITER         - Iterative perfect reconstruction analysis
 %    FRSYNITER         - Iterative perfect reconstruction synthesis
