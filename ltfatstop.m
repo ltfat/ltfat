@@ -69,9 +69,14 @@ end
 
     
 % Clean the classpath  
-if ~isempty(which('javaclasspath')) 
-    jp = javaclasspath();
-    if any(strcmp([pkg_folder filesep() jarsubpath],jp))
-        javarmpath([pkg_folder, filesep(), jarsubpath]);
-    end
+if ~isempty(which('javaclasspath'))
+   try 
+      jp = javaclasspath();
+      if any(strcmp([pkg_folder filesep() jarsubpath],jp))
+         javarmpath([pkg_folder, filesep(), jarsubpath]);
+      end
+   catch
+      % Do nothing. At this point, user is most probably aware that
+      % there is something wrong with the JAVA support.
+   end
 end

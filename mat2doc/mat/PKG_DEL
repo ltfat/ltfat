@@ -1,31 +1,42 @@
 # We need to find ltfatstop, but the path to it was already removed.
-#
+# Based on PKG_DEL from the geometry package
+# Removed the part which checks whether the package was already installed.
+# We cannot get into such situation. 
 
 # Get the full path
+## Get full path, with luck we can retireve the package name from here
 dirname = fileparts (canonicalize_file_name (mfilename ("fullpath")));
 
-pp = strsplit(dirname,filesep (), true);
+# Get the correct path
+# Search installed packages
+[local_packages, global_packages] = pkg("list");
+installed_pkgs_lst = {local_packages{:}, global_packages{:}};
+pkg_data = installed_pkgs_lst (cellfun(@(x) ismember (x.name, {"ltfat"}), ...
+                                             installed_pkgs_lst, "unif", true));
+if ~isempty(pkg_data)
+  # Run only if ltfat was already installed
+  pkg_folder = pkg_data{1}.dir;
 
-# Just to be sure
-if (! exist (fullfile (dirname, "inst"), "dir"))
-  # We assume that ltfatstop is one directory up
-  # Store the current path
-  currPath = pwd;
-  # We do not want the first empty string and the last filename
-  tbdir = [[strcat(filesep(),{pp{2:end-1}})]{:}];
-  # cd to directory with ltfatstop as functions cannot be called 
-  # with run in Octave
-  cd(tbdir);
-  try
-     feval('ltfatstop');
-  catch
-     disp('Call to ltfatstop failed. ');
-     disp(lasterror.message);
-     cd(currPath);
-  end
-  cd(currPath);
+  # Just to be sure
+  if (! exist (fullfile (dirname, "inst"), "dir"))
+    # We assume that ltfatstop is one directory up
+    # Store the current path
+    currPath = pwd;
+    # cd to directory with ltfatstop as functions cannot be called 
+    # with run in Octave
+    cd(pkg_folder);
+    try
+      feval('ltfatstop');
+    catch
+      disp('Call to ltfatstop failed. ');
+      disp(lasterror.message);
+      cd(currPath);
+    end
+    cd(currPath);
+    clear currPath 
+  endif
+  clear pkg_folder
 endif
-
 # Do a cleanup since this is a script
-clear dirname pp tbdir currPath
+clear dirname local_packages global_packages installed_pkgs_lst pkg_data
 
