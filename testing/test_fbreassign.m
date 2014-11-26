@@ -1,4 +1,6 @@
-function test_fbreassign
+function test_fbreassign(varargin)
+
+do_time = any(strcmp('time',varargin));
 
 L = 44100;
 
@@ -27,10 +29,16 @@ fs = 44100;
 if length(a) < length(g)
     a = [a;a(end-1:-1:2,:)];
 end
-tic; [tgrad,fgrad,cs0,c]=filterbankphasegrad(f,g,a,L); PGtime = toc
+if do_time, tic; end
+[tgrad,fgrad,cs0,c]=filterbankphasegrad(f,g,a); 
+if do_time, PGtime = toc; fprintf('PGtime=%d\n',PGtime); end
 
-tic; fc = cent_freqs(fs,fc); CFtime = toc
-tic; sr0=filterbankreassign(cs0,tgrad,fgrad,a,fc); RAtime = toc
+if do_time, tic; end
+fc = cent_freqs(fs,fc);
+if do_time, CFtime = toc; fprintf('CFtime=%d\n',CFtime); end 
+if do_time, tic; end
+sr0=filterbankreassign(cs0,tgrad,fgrad,a,fc); 
+if do_time, RAtime = toc; fprintf('RAtime=%d\n',RAtime); end 
 figure(1); clf;
 subplot(211);
 plotfilterbank(cs0,a,'fc',fs/2*fc,'db','dynrange',60);
@@ -44,7 +52,7 @@ colormap(flipud(gray));
 %% 
 clear g g2 g3
 Lg = 28;
-a0 = 7*ones(168,1);
+a0 = 8*ones(168,1);
 cfreq0 = [0:84,-83:-1].'/84;
 gg = fftshift(firwin('hann',Lg));
 
@@ -55,8 +63,12 @@ g{kk+1}.offset = -Lg/2;
 g{kk+1}.realonly = 0; 
 end
 
-tic; [tgrad,fgrad,c_s]=filterbankphasegrad(f,g,a0,L); PGtimeFIR = toc
-tic; sr=filterbankreassign(c_s,tgrad,fgrad,a0,cfreq0); RAtimeFIR = toc
+if do_time, tic; end
+[tgrad,fgrad,c_s]=filterbankphasegrad(f,g,a0,L); 
+if do_time, PGtimeFIR = toc; fprintf('PGtimeFIR=%d\n',PGtimeFIR); end
+if do_time, tic; end
+sr=filterbankreassign(c_s,tgrad,fgrad,a0,cfreq0);
+if do_time, RAtimeFIR = toc; fprintf('RAtimeFIR=%d\n',RAtimeFIR); end
 
 Lg = 882;
 a = 90*ones(882,1);
@@ -76,12 +88,20 @@ end
 figure(2); clf; subplot(311); 
 plotfilterbank(sr,a0,'fc',fs/2*cfreq0,'linabs');
 
-tic; [tgrad,fgrad,c_s2]=filterbankphasegrad(f,g2,a,L); PGtimeBL = toc
-tic; sr2=filterbankreassign(c_s2,tgrad,fgrad,a,cfreq1); RAtimeBL = toc
+if do_time, tic; end
+[tgrad,fgrad,c_s2]=filterbankphasegrad(f,g2,a,L);
+if do_time, PGtimeBL = toc; fprintf('PGtimeBL=%d\n',PGtimeBL); end
+if do_time, tic; end
+sr2=filterbankreassign(c_s2,tgrad,fgrad,a,cfreq1); 
+if do_time, RAtimeBL = toc; fprintf('RAtimeBL=%d\n',RAtimeBL); end
 figure(2); subplot(312); plotfilterbank(sr2,a,'fc',fs/2*cfreq1,'linabs');
 
-tic; [tgrad,fgrad,c_s3]=filterbankphasegrad(f,g3,a,L); PGtimeL = toc
-tic; sr3=filterbankreassign(c_s3,tgrad,fgrad,a,cfreq1); RAtimeL = toc
+if do_time, tic; end
+[tgrad,fgrad,c_s3]=filterbankphasegrad(f,g3,a,L); 
+if do_time, PGtimeL = toc; fprintf('PGtimeL=%d\n',PGtimeL); end
+if do_time, tic; end
+sr3=filterbankreassign(c_s3,tgrad,fgrad,a,cfreq1);
+if do_time, RAtimeL = toc; fprintf('RAtimeL=%d\n',RAtimeL); end 
 figure(2); subplot(313); plotfilterbank(sr3,a,'fc',fs/2*cfreq1,'linabs');
 % 
 % clear all

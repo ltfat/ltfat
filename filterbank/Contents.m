@@ -39,6 +39,11 @@
 %  Plots
 %    PLOTFILTERBANK         - Plot normal/uniform filter bank coefficients
 %
+%  Reassignment and phase gradient
+%    FILTERBANKPGASEGRAD    - Instantaneous time/frequency from signal
+%    FILTERBANKREASSIGN     - Reassign filterbank spectrogram
+%    
+%
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net
 

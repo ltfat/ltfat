@@ -1,4 +1,4 @@
-function [tgrad,fgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
+function [fgrad,tgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %FILTERBANKPHASEGRAD   Phase gradient of a filterbank representation
 %   Usage:  [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L,minlvl);
 %           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L);
@@ -14,8 +14,8 @@ function [tgrad,fgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %      L     : Signal length (optional).
 %      minlvl: Regularization parameter (optional, required < 1).
 %   Output parameters:
-%      tgrad : Group delay relative to original position.
 %      fgrad : Instantaneous frequency relative to original position.
+%      tgrad : Group delay relative to original position.
 %      c_s   : Filterbank spectrogram.
 %      c     : Filterbank coefficients.
 %
@@ -35,33 +35,46 @@ function [tgrad,fgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 
 %   AUTHOR : Nicki Holighaus.
 
-if nargin < 5 
-    if isempty(L) 
-        Ls = size(f,1);
-        L=filterbanklength(Ls,a);
-        minlvl = eps;
-    elseif L >= 1
-        minlvl = eps;
-    else
-        minlvl = L;
-    end;
-end;
-
-% Sanity checks
-complainif_notposint(L,'L','FILTERBANKPHASEGRAD');
+complainif_notenoughargs(nargin,3,'FILTERBANKPHASEGRAD');
 
 % Reshape input signal
 [f,~,W]=comp_sigreshape_pre(f,'FILTERBANKPHASEGRAD',0);
+Ls = size(f,1);
 
 if W>1
     error('%s: Only one-channel signals supported.',upper(mfilename));
 end
 
+if nargin < 5 
+    if nargin < 4
+        L = filterbanklength(Ls,a);
+        minlvl = eps;
+    else
+        if ~(isscalar(L) && isnumeric(L) ) && L>0
+            error('%s: Fourth argument shoud be a positive number.',...
+                  upper(mfilename));
+        end
+        if L >= 1
+            minlvl = eps;
+        else
+            minlvl = L;
+        end;
+    end
+end;
+
+complainif_notposint(L,'L','FILTERBANKPHASEGRAD');
+
+Luser = filterbanklength(L,a);
+if Luser~=L
+    error(['%s: Incorrect transform length L=%i specified. ', ...
+           'Next valid length is L=%i. See the help of ',...
+           'FILTERBANKLENGTH for the requirements.'],...
+           upper(mfilename),L,Luser);
+end
+
+
 % Unify format of coefficients
 [g,info]=filterbankwin(g,a,L,'normal');
-
-% Sanitize format of a
-info.a = comp_filterbank_a(info.a, info.M);
 
 % Precompute filters
 [hg, dg, g] = comp_phasegradfilters(g, info.a, L);
@@ -69,4 +82,4 @@ info.a = comp_filterbank_a(info.a, info.M);
 f=postpad(f,L);
 
 % Run the computation
-[tgrad,fgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,info.a,minlvl);
+[fgrad,tgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,info.a,minlvl);

@@ -26,9 +26,10 @@ function cfreq = cent_freqs(g,L)
 %   Note: If g.H contains full-length, numeric transfer functions, *L*
 %   must be specified for correct results.
 
+complainif_notenoughargs(nargin,1,'FILTERBANKCENTFREQS');
 
 if nargin > 1 % Try to determine cfreq from fc and fs in Hz
-    if numel(g) == 1 && numel(L) > 1
+    if numel(g) == 1 && isnumeric(g) && numel(L) > 1
         cfreq = modcent(2*L/g,2);
         return
     elseif numel(g) == numel(L) && ( numel(g) > 1 || isfield(g,'fs') ) 
@@ -38,6 +39,8 @@ if nargin > 1 % Try to determine cfreq from fc and fs in Hz
 else
     L = 10000; % Default value
 end
+
+g = filterbankwin(g,1,L,'normal');
 
 % Compute l1-normalized absolute value of the transfer functions 
 gH = cellfun(@(gEl) comp_transferfunction(gEl,L),g,'UniformOutput',false);

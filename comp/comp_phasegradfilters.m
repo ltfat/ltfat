@@ -1,6 +1,6 @@
 function [hg,dg,g]=comp_phasegradfilters(g,a,L)
 
-% Numbe rof filters
+% Number of filters
 M = numel(g);
 
 % Precompute filters for length L if not done already
