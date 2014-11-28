@@ -74,12 +74,12 @@ end
 
 
 % Unify format of coefficients
-[g,info]=filterbankwin(g,a,L,'normal');
+[g,asan]=filterbankwin(g,a,L,'normal');
 
 % Precompute filters
-[hg, dg, g] = comp_phasegradfilters(g, info.a, L);
+[hg, dg, g] = comp_phasegradfilters(g, asan, L);
 
 f=postpad(f,L);
 
 % Run the computation
-[fgrad,tgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,info.a,minlvl);
+[fgrad,tgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,asan,minlvl);

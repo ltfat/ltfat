@@ -64,7 +64,7 @@ g{kk+1}.realonly = 0;
 end
 
 if do_time, tic; end
-[tgrad,fgrad,c_s]=filterbankphasegrad(f,g,a0,L); 
+[tgrad,fgrad,c_s]=filterbankphasegrad(f,g,a0,filterbanklength(L,a0)); 
 if do_time, PGtimeFIR = toc; fprintf('PGtimeFIR=%d\n',PGtimeFIR); end
 if do_time, tic; end
 sr=filterbankreassign(c_s,tgrad,fgrad,a0,cfreq0);
