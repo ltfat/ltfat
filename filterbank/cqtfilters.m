@@ -99,20 +99,16 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 % Date: 10.02.14
 
 %% Check input arguments
-if nargin < 5
-    error('%s: Not enough input arguments.',upper(mfilename));
-end
-
-complainif_notposint(fs,'fs');
-complainif_notposint(fmin,'fmin');
-complainif_notposint(fmax,'fmax');
-complainif_notposint(bins,'bins');
-complainif_notposint(Ls,'Ls');
+complainif_notenoughargs(nargin,5,upper(mfilename));
+complainif_notposint(fs,'fs',upper(mfilename));
+complainif_notposint(fmin,'fmin',upper(mfilename));
+complainif_notposint(fmax,'fmax',upper(mfilename));
+complainif_notposint(bins,'bins',upper(mfilename));
+complainif_notposint(Ls,'Ls',upper(mfilename));
 
 if fmin>=fmax
     error('%s: fmin has to be less than fmax.',upper(mfilename));
 end
-
 
 definput.import = {'firwin'};
 definput.keyvals.L=[];
