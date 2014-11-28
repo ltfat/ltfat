@@ -36,4 +36,4 @@ if ~exist('dual','var')
     dual = 1;
 end
 
-fr = insdgfb(c,g,shift,Ls,dual);
+fr = comp_insdgfb(c,g,shift,Ls,dual);

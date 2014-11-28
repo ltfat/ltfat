@@ -15,7 +15,6 @@
 %    ICQT                   - Inverse constant Q transform
 %    ERBLETT                - Erb-let transform
 %    IERBLETT               - Inverse Erb-let transform
-%    INSDGFB                - Say what?
 %
 %  Filter generators
 %    CQTFILTERS             - Logaritmically spaced filters
