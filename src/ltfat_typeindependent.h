@@ -391,6 +391,14 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
                         const ltfatInt a, const ltfatInt M, LTFAT_REAL *sr);
 
 LTFAT_EXTERN void
+LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[], 
+                               const LTFAT_REAL *tgrad[],
+                               const LTFAT_REAL *fgrad[], 
+                               const ltfatInt N[], const double a[],
+                               const double cfreq[], 
+                               const ltfatInt M, LTFAT_REAL *sr[]);
+
+LTFAT_EXTERN void
 LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h);
 
 LTFAT_EXTERN void

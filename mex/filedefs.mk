@@ -39,6 +39,7 @@ MEXBASESAFE=\
 	comp_ifilterbank_fftbl \
     comp_filterbank \
 	comp_ifilterbank \
+    comp_filterbankreassign \
 
 MEXBASEMORE =\
 	comp_gabdual_long \
