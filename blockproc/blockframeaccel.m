@@ -101,9 +101,9 @@ switch(F.type)
       case {'dwilt','wmdct'}
         [~, info] = wilwin(F.g,F.M,[],upper(mfilename));
       case {'filterbank','ufilterbank'}
-        [~, info]  = filterbankwin(F.g,F.a);
+        [~, ~,info]  = filterbankwin(F.g,F.a);
       case {'filterbankreal','ufilterbankreal'}
-        [~, info]  = filterbankwin(F.g,F.a,'real');
+        [~, ~,info]  = filterbankwin(F.g,F.a,'real');
       case 'fwt' 
         winLen = (F.g.a(1)^F.J-1)/(F.g.a(1)-1)*(numel(F.g.g{1}.h)-1)+1; 
 end;

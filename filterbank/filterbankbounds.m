@@ -1,28 +1,45 @@
-function [AF,BF]=filterbankbounds(g,a,L);
-%FILTERBANKBOUNDS  Frame bounds of filter bank
-%   Usage: fcond=filterbankbounds(g,a);
-%          [A,B]=filterbankbounds(g,a);
+function [AF,BF]=filterbankbounds(g,a,L)
+%FILTERBANKBOUNDS  Frame bounds of a filterbank
+%   Usage: fcond=filterbankbounds(g,a,L);
+%          [A,B]=filterbankbounds(g,a,L);
+%          [...]=filterbankbounds(g,a);
 %
 %   `filterbankbounds(g,a,L)` calculates the ratio $B/A$ of the frame bounds
 %   of the filterbank specified by *g* and *a* for a system of length
 %   *L*. The ratio is a measure of the stability of the system.
 %
-%   `[A,B]=filterbankbounds(g,a,L)` returns the lower and upper frame bounds
+%   `filterbankbounds(g,a)` does the same, but the filters must be FIR
+%   filters, as the transform length is unspecified. *L* will be set to 
+%   next suitable length equal or bigger than the longest impulse response
+%   such that `L=filterbanklength(gl_longest,a)`.
+%
+%   `[A,B]=filterbankbounds(...)` returns the lower and upper frame bounds
 %   explicitly.
 %
 %   See also: filterbank, filterbankdual
   
+complainif_notenoughargs(nargin,2,'FILTERBANKBOUNDS');
 if nargin<3
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+    L = [];
+end
 
-if L~=filterbanklength(L,a)
+[g,asan,info]=filterbankwin(g,a,L,'normal');
+if isempty(L) 
+    if info.isfir
+        % Pick shortest possible length for FIR filterbank
+        L = filterbanklength(info.longestfilter,asan);
+    else
+        % Just thow an error, nothing reasonable can be done without L
+        error(['%s: L must be specified when not working with FIR ',...'
+               'filterbanks.'], upper(mfilename));
+    end
+end
+M=info.M;
+
+if L~=filterbanklength(L,asan)
     error(['%s: Specified length L is incompatible with the length of ' ...
            'the time shifts.'],upper(mfilename));
 end;
-
-[g,info]=filterbankwin(g,a,L,'normal');
-M=info.M;
 
 AF=Inf;
 BF=0;
@@ -69,7 +86,7 @@ else
 
     if info.ispainless
         % Compute the diagonal of the frame operator.
-        f=comp_filterbankresponse(g,info.a,L,0);
+        f=comp_filterbankresponse(g,asan,L,0);
         
         AF=min(f);
         BF=max(f);
@@ -84,7 +101,7 @@ end;
   
 if nargout<2
     % Avoid the potential warning about division by zero.
-    if AF==0
+  if AF==0
     AF=Inf;
   else
     AF=BF/AF;

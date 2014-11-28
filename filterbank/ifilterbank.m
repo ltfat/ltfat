@@ -34,10 +34,9 @@ else
   M=size(c,2);
 end;
 
-[g,info]=filterbankwin(g,a,L,'normal');
-a = info.a;
+[g,asan]=filterbankwin(g,a,L,'normal');
 
-if info.M~=M
+if numel(g)~=M
   error(['%s: Number of filters must be equal to the number of channels ' ...
             'of coefficients.'],upper(mfilename));
 end
@@ -49,7 +48,7 @@ end
    end;
  end;
 
-g = comp_filterbank_pre(g,info.a,L,kv.crossover);
+g = comp_filterbank_pre(g,asan,L,kv.crossover);
 
 % Handle ufilterbank output format here
 if isnumeric(c)
@@ -61,7 +60,7 @@ if isnumeric(c)
 end
 
 
-f = comp_ifilterbank(c,g,a,L);
+f = comp_ifilterbank(c,g,asan,L);
   
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)

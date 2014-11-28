@@ -34,24 +34,17 @@ complainif_notenoughargs(nargin,2,'FILTERBANKREALDUAL');
 definput.import={'filterbankdual'};
 [flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
-if isempty(L)
-    if ~all(cellfun(@(gEl) isfield(gEl,'H'),g))
-        % All filters are FIR, therefore filterbankwin can be called without L
-        [~,info]=filterbankwin(g,a);
-        if ~info.isfir
-            % Just a sanity check
-            error('%s: Internal error. Filterbank should be FIR. ',...
-                  upper(mfilename));
-        end
-        % Use next suitable length
-        L = filterbanklength(info.longestfilter,a);
+[g,asan,info]=filterbankwin(g,a,L,'normal');
+if isempty(L) 
+    if info.isfir
+        % Pick shortest possible length for FIR filterbank
+        L = filterbanklength(info.longestfilter,asan);
     else
-        error(['%s: L must be specified when working with filters defined ',...
-           ' in frequency.'], upper(mfilename));
-   end
+        % Just thow an error, nothing reasonable can be done without L
+        error(['%s: L must be specified when not working with FIR ',...'
+               'filterbanks.'], upper(mfilename));
+    end
 end
-
-[g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
 % Force usage of the painless algorithm 
@@ -74,14 +67,9 @@ if info.isuniform
     % Uniform filterbank, use polyphase representation
     a=a(1);
 
-    % G1 is done this way just so that we can determine the data type.
-    G1=comp_transferfunction(g{1},L);
-    thisclass=assert_classname(G1);
-    G=zeros(L,M,thisclass);
-    G(:,1)=G1;
-    for ii=2:M
-        G(:,ii)=cast(comp_transferfunction(g{ii},L),thisclass);
-    end;
+    % Transfer functions of individual filters as cols
+    G = filterbankfreqz(g,a,L);
+    thisclass = class(G);
 
     N=L/a;
 
@@ -115,7 +103,7 @@ if info.isuniform
     gdout = filterbankwin(gdout,a);            
   
 elseif info.ispainless
-    gdout = comp_painlessfilterbank(g,info.a,L,'dual',1);
+    gdout = comp_painlessfilterbank(g,asan,L,'dual',1);
 else
     error(['%s: The canonical dual frame of this system is not a ' ...
                'filterbank. You must call an iterative ' ...

@@ -7,11 +7,13 @@ function gdout=filterbankdual(g,a,varargin)
 %   `filterbankdual(g,a,L)` computes the canonical dual filters of *g* for a
 %   channel subsampling rate of *a* (hop-size) and system length *L*.
 %   *L* must be compatible with subsampling rate *a* as 
-%   `L==filterbanklength(L,a)`.
+%   `L==filterbanklength(L,a)`. This will create a dual frame valid for 
+%   signals of length *L*. 
 %
 %   `filterabankrealdual(g,a)` does the same, but the filters must be FIR
 %   filters, as the transform length is unspecified. *L* will be set to 
-%   next suitable length equal or bigger than the longest impulse response.
+%   next suitable length equal or bigger than the longest impulse response
+%   such that `L=filterbanklength(gl_longest,a)`.
 %
 %   The input and output format of the filters *g* are described in the
 %   help of |filterbank|.
@@ -23,9 +25,9 @@ function gdout=filterbankdual(g,a,varargin)
 %   To actually invert the output of a filterbank, use the dual filters
 %   together with the |ifilterbank| function.
 %
-%   REMARK: Perfect reconstruction can be obtained for signals of length
-%   *L*. In some cases, using dual system calculated for shorter *L* might
-%   work but check the reconstruction error.
+%   REMARK: In general, perfect reconstruction can be obtained for signals 
+%   of length *L*. In some cases, using dual system calculated for shorter
+%   *L* might work but check the reconstruction error.
 %
 %   See also: filterbank, ufilterbank, ifilterbank
 
@@ -34,24 +36,17 @@ complainif_notenoughargs(nargin,2,'FILTERBANKDUAL');
 definput.import={'filterbankdual'};
 [flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
-if isempty(L)
-    if ~all(cellfun(@(gEl) isfield(gEl,'H'),g))
-        % All filters are FIR, therefore filterbankwin can be called without L
-        [~,info]=filterbankwin(g,a);
-        if ~info.isfir
-            % Just a sanity check
-            error('%s: Internal error. Filterbank should be FIR. ',...
-                  upper(mfilename));
-        end
-        % Use next suitable length
-        L = filterbanklength(info.longestfilter,a);
+[g,asan,info]=filterbankwin(g,a,L,'normal');
+if isempty(L) 
+    if info.isfir
+        % Pick shortest possible length for FIR filterbank
+        L = filterbanklength(info.longestfilter,asan);
     else
-        error(['%s: L must be specified when working with filters defined ',...
-           ' in frequency.'], upper(mfilename));
-   end
+        % Just thow an error, nothing reasonable can be done without L
+        error(['%s: L must be specified when not working with FIR ',...'
+               'filterbanks.'], upper(mfilename));
+    end
 end
-
-[g,info]=filterbankwin(g,a,L,'normal');
 M=info.M;
 
 % Force usage of the painless algorithm 
@@ -59,32 +54,28 @@ if flags.do_forcepainless
     info.ispainless = 1;
 end
 
+% Check user defined L
 if L~=filterbanklength(L,a)
      error(['%s: Specified length L is incompatible with the length of ' ...
             'the time shifts.'],upper(mfilename));
 end;
 
-% Prioritize painless over uniform algorithm
+% Prioritize painless over uniform algorithm if both are suitable
 if info.isuniform && info.ispainless
     info.isuniform = 0;
 end
 
+% Factorization of frame operator to block-diagonal matrix
 if info.isuniform
   % Uniform filterbank, use polyphase representation
   a=a(1);
   
-  % G1 is done this way just so that we can determine the data type.
-  G1=comp_transferfunction(g{1},L);
-  thisclass=assert_classname(G1);
-  G=zeros(L,M,thisclass);
-  G(:,1)=G1;
-  for ii=2:M
-    G(:,ii)=cast(comp_transferfunction(g{ii},L),thisclass);
-  end;
+  % Transfer functions of individual filters as cols
+  G = filterbankfreqz(g,a,L);
   
   N=L/a;
   
-  gd=zeros(M,N,thisclass);
+  gd=zeros(M,N,class(G));
   
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;
@@ -101,14 +92,15 @@ if info.isuniform
   gd=ifft(gd)*a;
   
   % Matrix cols to cell elements + cast
-  gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+  gdout = cellfun(@(gdEl) cast(gdEl,class(G)), num2cell(gd,1),...
                   'UniformOutput',0);
   % All filters in gdout will be treated as FIR of length L. Convert them
   % to a struct with .h and .offset format.
   gdout = filterbankwin(gdout,a); 
   
 elseif info.ispainless
-   gdout = comp_painlessfilterbank(g,info.a,L,'dual',0);
+   % Factorized frame operator is diagonal.
+   gdout = comp_painlessfilterbank(g,asan,L,'dual',0);
 else
         error(['%s: The canonical dual frame of this system is not a ' ...
                'filterbank. You must either call an iterative ' ...

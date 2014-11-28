@@ -23,17 +23,18 @@ end
 % The only place we need a
 % It is necessary for cases when filterbank is given by e.g.
 % {'dual',g}
-% L is checked only in such cases.
-[g,info]=filterbankwin(g,a,L,'normal');
-M=info.M;
+g = filterbankwin(g,a,L,'normal');
+M = numel(g);
 
-gf = zeros(L,M);
-for m=1:M
-    gf(:,m) = cast(comp_transferfunction(g{m},L),class(gf));
+G1=comp_transferfunction(g{1},L);
+gf = zeros(L,M,class(G1));
+gf(:,1) = G1;
+for m=2:M
+    gf(:,m) = cast(comp_transferfunction(g{m},L),class(G1));
 end
 
 % Search for the 'plot' flag
-do_plot = ~isempty(varargin(strcmp('plot',varargin)));
+do_plot = any(strcmp('plot',varargin));
 
 if do_plot
     % First remove the 'plot' flag from the arguments

@@ -82,15 +82,15 @@ if ~isempty(F.g)
         F.g_info = info;
         F.isfac=1;
       case {'filterbank','ufilterbank'}
-        [g, info]  = filterbankwin(F.g,F.a,L);
-        g = comp_filterbank_pre(g,info.a,L,1000);
-        F = frame(F.type,g,info.a,numel(g));
+        [g, asan, info]  = filterbankwin(F.g,F.a,L);
+        g = comp_filterbank_pre(g,asan,L,1000);
+        F = frame(F.type,g,asan,numel(g));
         F.g_info = info;
         F.isfac=F.g_info.isfac;
       case {'filterbankreal','ufilterbankreal'}
-        [g,info]  = filterbankwin(F.g,F.a,L,'real');
-        g = comp_filterbank_pre(g,info.a,L,1000);
-        F = frame(F.type,g,info.a,numel(g));
+        [g,asan,info]  = filterbankwin(F.g,F.a,L,'real');
+        g = comp_filterbank_pre(g,asan,L,1000);
+        F = frame(F.type,g,asan,numel(g));
         F.g_info = info;
         F.isfac=F.g_info.isfac;
       case {'nsdgt','unsdgt','nsdgtreal','unsdgtreal'}

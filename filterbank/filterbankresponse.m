@@ -53,13 +53,12 @@ definput.flags.type={'total','individual'};
 definput.keyvals.fs=[];
 [flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
-[g,info]=filterbankwin(g,a,L,'normal');
-M=info.M;
+[g,asan]=filterbankwin(g,a,L,'normal');
+M=numel(g);
 
 gf = zeros(L,M);
-
 for m=1:M
-    gf(:,m) = comp_filterbankresponse(g(m),info.a(m,:),L,flags.do_real);
+    gf(:,m) = comp_filterbankresponse(g(m),asan(m,:),L,flags.do_real);
 end
 
 if flags.do_total

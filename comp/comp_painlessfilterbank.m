@@ -2,12 +2,12 @@ function gout = comp_painlessfilterbank(g,a,L,type,do_real)
 %COMP_PAINLESSFILTERBANK
 % 
 %   Function computes filterbank dual or tight frame for the painless case.
-%   All g{ii}.H should already be numeric verctors.
 %
 
 M = numel(g);
 
-F=comp_filterbankresponse(g,a,L,do_real);
+F = comp_filterbankresponse(g,a,L,do_real);
+g = comp_filterbank_pre(g,a,L,0);
 
 if strcmpi(type,'tight')
     F = sqrt(F);  

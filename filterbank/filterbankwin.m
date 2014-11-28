@@ -1,4 +1,4 @@
-function [g,info] = filterbankwin(g,a,varargin);
+function [g,asan,info] = filterbankwin(g,a,varargin);
 %FILTERBANKWIN  Compute set of filter bank windows from text or cell array
 %   Usage: [g,info] = filterbankwin(g,a,L);
 %
@@ -91,23 +91,23 @@ if ischar(g{1})
     switch(winname)
       case {'dual'}
         optArgs = g(3:end);
-        [g,info.auxinfo] = filterbankwin(g{2},a,L);
+        [g,~,info.auxinfo] = filterbankwin(g{2},a,L);
         g = filterbankdual(g,a,L,optArgs{:});
         info.isdual=1;
         
       case {'realdual'}
         optArgs = g(3:end);
-        [g,info.auxinfo] = filterbankwin(g{2},a,L);
+        [g,~,info.auxinfo] = filterbankwin(g{2},a,L);
         g = filterbankrealdual(g,a,L,optArgs{:});
         info.isdual=1;
         
       case {'tight'}
-        [g,info.auxinfo] = filterbankwin(g{2},a,L);    
+        [g,~,info.auxinfo] = filterbankwin(g{2},a,L);    
         g = filterbanktight(g,a,L);
         info.istight=1;
         
       case {'realtight'}
-        [g,info.auxinfo] = filterbankwin(g{2},a,L);    
+        [g,~,info.auxinfo] = filterbankwin(g{2},a,L);    
         g = filterbankrealtight(g,a,L);        
         info.istight=1;
         
@@ -115,6 +115,8 @@ if ischar(g{1})
         error('%s: Unsupported window type %s.',winname,upper(mfilename));
     end;
 end;
+
+do_info = nargout>2;
 
 info.M=numel(g);
 info.gl=zeros(info.M,1);
@@ -126,34 +128,50 @@ info.isfir=1;
 
 [asan,info]=comp_filterbank_a(a,info.M,info);
 
-    
 for m=1:info.M
     [g{m},info_win] = comp_fourierwindow(g{m},L,upper(mfilename));    
-    
-    if isfield(g{m},'H') 
-% Output of comp_fourierwindow is already numeric
-%         if ~isnumeric(g{m}.H)
-%             g{m}.H=g{m}.H(L);
-%             g{m}.foff=g{m}.foff(L);
-%         end;
-        % Check the painless condition
-        if numel(g{m}.H) > L/asan(m,1)*asan(m,2);
-           info.ispainless=0; 
-        end
-    else
-        % No subsampling means painless case for any filter
-        if ~(info.isuniform && asan(m,1) == 1)
-            info.ispainless=0;
-        end
-        info.gl(m)=numel(g{m}.h);
-        info.offset(m)=g{m}.offset;
-    end;
+    if do_info
+        if isfield(g{m},'H') 
+            % Here we only want to find out the frequency support 
+            if isa(g{m}.H,'function_handle')
+                if isempty(L)
+                    error(['L:undefined',...
+                           '%s: L is necessary for determining support ',...
+                           'of g.H',upper(mfilename)]);
+                end
+                tmpH=g{m}.H(L);
+            elseif isnumeric(g{m}.H)
+                tmpH=g{m}.H;
+                if isempty(L) || L == g{m}.L;
+                    % There has to be g{m}.L already present
+                    L = g{m}.L;
+                else
+                    % In case L ~= g{m}.L we cannot be sure whether g is
+                    % still band-limited 
+                    info.ispainless=0;
+                end
+            end;
+        
+            % Check the painless condition
+            if numel(tmpH) > L/asan(m,1)*asan(m,2);
+                info.ispainless=0; 
+            end
+        else
+            % No subsampling means painless case for any filter
+            if ~(info.isuniform && asan(m,1) == 1)
+                info.ispainless=0;
+            end
+            info.gl(m)=numel(g{m}.h);
+            info.offset(m)=g{m}.offset;
+        end;
+    end
     
     if info_win.isfir && asan(m,2) ~=1
         % FIR filter cannot have a fractional subsampling
         if rem(asan(m,1)/asan(m,2),1)==0
             % ... but this is still an integer subsampling
-            info.a(m,:) = [asan(m,1)/asan(m,2),1];
+            asan = [asan(m,1)/asan(m,2),1];
+            info.a(m,:) = asan;
         else
             error(['%s: Fractional subsampling cannot be used with FIR '...
                    'filters.'],upper(mfilename));
@@ -184,3 +202,5 @@ if info.isfir
      error('%s: One of the windows is longer than the transform length= %i.',upper(mfilename),info.longestfilter);
    end;
 end
+
+

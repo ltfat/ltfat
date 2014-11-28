@@ -47,23 +47,21 @@ if ~isnumeric(a) || isempty(a)
 end;
   
 if isempty(L)
-  L=filterbanklength(Ls,a);
+   L=filterbanklength(Ls,a);
 end;
 
-[g,info]=filterbankwin(g,a,L,'normal');
+[g,asan]=filterbankwin(g,a,L,'normal');
 
- if size(a,1)>1 
-   if  size(a,1)~=info.M
-     error(['%s: The number of entries in "a" must match the number of ' ...
-            'filters.'],upper(mfilename));
-   end;
- end;
- 
+%  if size(a,1)>1 
+%    if  size(a,1)~= numel(g);
+%      error(['%s: The number of entries in "a" must match the number of ' ...
+%             'filters.'],upper(mfilename));
+%    end;
+%  end;
 
 f=postpad(f,L);
 
-g=comp_filterbank_pre(g,info.a,L,kv.crossover);
-
-c=comp_filterbank(f,g,info.a);
+g=comp_filterbank_pre(g,asan,L,kv.crossover);
+c=comp_filterbank(f,g,asan);
 
 

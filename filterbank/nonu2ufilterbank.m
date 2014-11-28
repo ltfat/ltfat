@@ -32,56 +32,43 @@ function [gu,au,p]=nonu2ufilterbank(g,a)
 
 complainif_notenoughargs(nargin,2,'NONU2UFILTERBANK');
 
-if ~isnumeric(a) || isempty(a)
-  error('%s: a must be numeric.',upper(mfilename));
-end;
-
-% Allow only structs and numeric arrays as filters
-if isempty(g) || ~iscell(g) || any(cellfun(@isempty,g)) || ...
-   ~all(cellfun(@(gEl) isnumeric(gEl) || ...
-   (isstruct(gEl) && (isfield(gEl,'h')||isfield(gEl,'H'))),g))
-  error(['%s: g must be a cell array of structs containing filter',...
-         ' definition or numeric arrays.'],upper(mfilename));
-end;
-
-% Do not allow *g* in format {'dual',g} etc. since it requires L and
-% we want to work without it here.
-% This case is also captured by the next check, but we want a separate 
-% error message.
-if ischar(g{1})
-   error('%s: %s option is not supported in this function.',...
-         upper(mfilename),g{1}); 
+try
+    [g,asan] = filterbankwin(g,a,'normal');
+catch
+    err = lasterror;
+    if strcmp(err.identifier,'L:undefined')
+        % If it blotched because of the undefined L, explain that.
+        % This should capture only formats like {'dual',...} and {'gauss'}
+        error(['%s: Function cannot handle g in a format which ',...
+               'requires L. Consider pre-formatting the filterbank by ',...
+               'calling g = FILTERBANKWIN(g,a,L).'],upper(mfilename));
+    else
+        % Otherwise just rethrow the error
+        error(err.message);
+    end
 end
 
-% Sanitize a
-a = comp_filterbank_a(a,numel(g));
-
-% This does not work for fractional subsampling
-if size(a,2)==2 && ~all(a(:,2)==1) && rem(a(:,1),1)~=0
+% This function does not work for fractional subsampling
+if size(asan,2)==2 && ~all(asan(:,2)==1) && rem(asan(:,1),1)~=0
    error(['%s: Filterbanks with fractional subsampling are not',...
           ' supported.'],upper(mfilename)); 
 end
 
-% This does lcm(a)
-au=filterbanklength(1,a);
+% This is effectivelly lcm(a)
+au=filterbanklength(1,asan);
 
 % Numbers of copies of each filter
-p = au./a(:,1);
+p = au./asan(:,1);
 
-if all(a(:,1)==a(1,1))
+if all(asan(:,1)==asan(1,1))
     % Filterbank is already uniform, there is nothing to be done.
     gu = g;
-    au = a;
+    au = asan;
     return;
 end
 
-% Sanitize filters which come as numeric vertors.
-gIdx = cellfun(@isnumeric,g);
-if any(gIdx)
-    g(gIdx) = filterbankwin(g(gIdx),a,'normal');
-end
-
 % Do the actual filter copies
+% This only changes .delay or .offset
 gu=cell(sum(p),1);
 auIdx = 1;
 for m=1:numel(g)
@@ -91,14 +78,14 @@ for m=1:numel(g)
          if(~isfield(gu{auIdx},'delay'))
             gu{auIdx}.delay = 0;
          end
-         gu{auIdx}.delay = gu{auIdx}.delay-a(m)*ii;
+         gu{auIdx}.delay = gu{auIdx}.delay-asan(m)*ii;
       end
       
       if(isfield(gu{auIdx},'h'))
          if(~isfield(gu{auIdx},'offset'))
             gu{auIdx}.offset = 0;
          end
-         gu{auIdx}.offset = gu{auIdx}.offset-a(m)*ii;
+         gu{auIdx}.offset = gu{auIdx}.offset-asan(m)*ii;
       end
       auIdx = auIdx+1;
    end

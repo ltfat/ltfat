@@ -51,16 +51,16 @@ if isempty(L)
   L=filterbanklength(Ls,a);
 end;
 
-[g,info]=filterbankwin(g,a,L,'normal');
+[g,asan]=filterbankwin(g,a,L,'normal');
 
-M=info.M;
+M=numel(g);
 N=L/a;
 
 f=postpad(f,L);
 
-g = comp_filterbank_pre(g,info.a,L,kv.crossover);
+g = comp_filterbank_pre(g,asan,L,kv.crossover);
 
-ctmp=comp_filterbank(f,g,info.a);
+ctmp=comp_filterbank(f,g,asan);
 
 c=zeros(N,M,W,assert_classname(f));
 for m=1:M    

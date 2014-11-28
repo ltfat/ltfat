@@ -23,8 +23,7 @@ mTime = mFreq(cellfun(@(gEl,aEl) isfield(gEl,'h') && numel(gEl.h)<=crossover,g(:
 mFreq(mTime) = [];
 
 % Prepare time-domain filters
-for mId=1:numel(mTime)
-   m = mTime(mId);
+for m = mTime
    
    % Handle .fc parameter
    if isfield(g{m},'fc') && g{m}.fc~=0
@@ -41,12 +40,12 @@ for mId=1:numel(mTime)
    % Do zero padding when the offset is big enough so the initial imp. resp.
    % support no longer intersects with zero
    if g{m}.offset > 0
-      g{m}.h = [zeros(g{m}.offset,1);g{m}.h(:)];
+      g{m}.h = [zeros(g{m}.offset,1,class(g{m}.h));g{m}.h(:)];
       g{m}.offset = 0;
    end
    
    if g{m}.offset < -(numel(g{m}.h)-1)
-      g{m}.h = [g{m}.h(:);zeros(-g{m}.offset-numel(g{m}.h)+1,1)];
+      g{m}.h = [g{m}.h(:);zeros(-g{m}.offset-numel(g{m}.h)+1,1,class(g{m}.h))];
       g{m}.offset = -(numel(g{m}.h)-1);
    end
    
@@ -57,20 +56,43 @@ end
 for m=mFreq
 
     if isfield(g{m},'h')
-       g{m}.H=comp_transferfunction(g{m},L);
+       tmpg = circshift(postpad(g{m}.h,L),g{m}.offset);
        g{m}=rmfield(g{m},'h');
        g{m}=rmfield(g{m},'offset');
-       if isfield(g{m},'fc'), g{m}=rmfield(g{m},'fc'); end;
+       if isfield(g{m},'fc') 
+           l=(0:L-1).'/L;
+           tmpg = tmpg.*exp(2*pi*1i*round(g{m}.fc*L/2)*l);
+           g{m}=rmfield(g{m},'fc'); 
+       end;
+       g{m}.H = fft(tmpg);
        % The following parameters have to be set to zeros, because they
        % have already been incorporated in the freq. resp. calculation.
        g{m}.foff = 0;
        % Store the length used
        g{m}.L = L;
-    elseif isfield(g{m},'H') && ~isnumeric(g{m}.H)
-       g{m}.H=g{m}.H(L);
-       g{m}.foff=g{m}.foff(L);
-       % Store the length used
-       g{m}.L = L;
+    elseif isfield(g{m},'H') 
+       if isnumeric(g{m}.H)
+           if isfield(g{m},'L')
+              if g{m}.L~=L
+                 % middlepad in the time domain. This will break
+%                 g.H = fft(middlepad(ifft(circshift(postpad(g.H(:),g.L),g.foff)),L));
+%                 g.foff = 0;
+%                 g.L = L;
+                  error(['%s: g.H was already instantialized with L=%i, but ',...
+                         'it is now used with L=%i.'],upper(mfilename),g.L,L);
+              end
+           else
+              % We do not know which L was g.H created with, there is no way
+              % how to handle this properly.
+              error('%s:  g.H is already a numeric vector, but g.L was not specified.',...
+                    upper(mfilename));     
+           end
+       else
+          g{m}.H=g{m}.H(L);
+          g{m}.foff=g{m}.foff(L);
+          % Store the length used
+          g{m}.L = L;
+       end
     end
     
     if isfield(g{m},'H') && isfield(g{m},'delay') && g{m}.delay~=0
