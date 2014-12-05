@@ -506,6 +506,33 @@ const FuncLookupStruct _funcLookup[] =
       }
    },
    {
+      "getPlayrec",
+      doGetPlayrec,
+      1, 2, 0, 3,
+      "Returns the samples played and recorded in a page",
+
+      "Returns all the recorded data available for the page identified by pageNumber.  "
+      "If the page specified does not exist, was not specified to record any data, "
+      "or has not yet started to record any data then empty array(s) are returned.  "
+      "If the page is currently being processed, only the recorded data currently "
+      "available is returned.",
+      {
+         {"pageNumber", "used to identifying the page containing the required recorded data"}
+      },
+      {
+         {
+            "playrecBuffer", "a Mx(N+K) matrix where M is the number of samples that have been "
+            "recorded, N is the number of channels of recorded data, K is the number of channels "
+            "of played data."
+         },
+         {
+            "recChanList", "a 1xN vector containing the channel numbers associated with "
+            "each channel in recBuffer.  These channels are in the same order as that "
+            "specified when the page was added."
+         }
+      }
+   },
+   {
       "delPage",
       doDelPage,
       0, 1, 0, 1,
@@ -1822,8 +1849,9 @@ void condensePages(void)
                 * will reduce the number of function calls that just
                 * return immediately!
                 */
-               if ((*ppsps)->pfirstPlayChan)
-                  freeChanBufStructs(&(*ppsps)->pfirstPlayChan);
+              
+               // if ((*ppsps)->pfirstPlayChan)
+              // freeChanBufStructs(&(*ppsps)->pfirstPlayChan);
 
                if ((*ppsps)->pplayChansInUse)
                {
@@ -3323,6 +3351,241 @@ bool doDelPage(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 }
 
 /*
+ * FUNCTION:    doGetPlayrec(int nlhs, mxArray *plhs[],
+ *                      int nrhs, const mxArray *prhs[])
+ *
+ * Inputs:      nlhs - number of mexFunction output arguments
+ *              plhs - pointer to array of mexFunction output arguments
+ *              nrhs - number of mexFunction input arguments
+ *              prhs - pointer to array of mexFunction input arguments
+ *
+ *              The first element of plhs is always used and so must be valid
+ *              (this is not checked).  Additionally, if (nlhs >= 2) then the
+ *              second element of plhs must also be valid.  The first element
+ *              of prhs must also be valid and must point to an mxArray (the
+ *              type of mxArray is checked).
+ *
+ * Returns:     true, or aborts with an error if not in full initialisation
+ *              state.
+ *
+ * Description: Returns all recorded samples available for the page specified.
+ *              The page required is identified by its page number, supplied as
+ *              the first element of prhs.  An array is always returned in the
+ *              first element of plhs, and if (nlhs >= 2) then an array is also
+ *              returned in the second element of plhs.  The first of these
+ *              contains the recorded data in an MxN array where M is the
+ *              number of samples that have been recorded (if the page is
+ *              currently being processed this will be the number of valid
+ *              samples at the specific point in time) and N is the number
+ *              of channels of data.  The second array is a 1xN array
+ *              containing the channel number asssociated with each channel
+ *              of data in the first array.  If the page requested does not
+ *              exist, or contains no recorded data (either because there are
+ *              no channels set to record, or because the page is waiting to be
+ *              processed) then the array(s) returned are empty.
+ *
+ * TODO:
+ */
+bool doGetPlayrec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+{
+   StreamPageStruct *psps;
+   ChanBufStruct *pcbs;
+   ChanBufStruct *pcbsBoth[2];
+
+   resample_error rerr = RESAMPLE_OK;
+   SAMPLE *poutBuf;
+   mxArray *mxRecChanList;
+   mxArray *mxPlayChanList;
+   unsigned int *pChanListBoth[2];
+   unsigned int recSamples, recSamplesTmp;
+   unsigned int channels[2];
+   unsigned int recResPlanId = 0;
+   unsigned int ii;
+
+   /* SRC_DATA recData;*/
+
+   validateState(BASIC_INIT | FULL_INIT, 0);
+
+   if (!_pstreamInfo)
+   {
+      mexErrMsgTxt("An error has occurred - in full initialisation yet "
+                   "_pstreamInfo is NULL.");
+   }
+
+   /* Configure return values to defaults, and then change if necessary */
+   plhs[0] = mxCreateNumericMatrix(0, 0, mxSAMPLE, mxREAL);
+   if (nlhs > 1) plhs[1] = mxCreateNumericMatrix(0, 0, mxSAMPLE, mxREAL);
+   if (nlhs > 2) plhs[2] = mxCreateNumericMatrix(0, 0, mxSAMPLE, mxREAL);
+
+   /* No pages */
+   if (!_pstreamInfo->pfirstStreamPage)
+   {
+      return true;
+   }
+
+   /* There must be one element on rhs before function is called */
+   if (!mxIsNumeric(prhs[0]) || mxIsComplex(prhs[0])
+         || (mxGetN(prhs[0]) != 1) || (mxGetM(prhs[0]) != 1)
+         || (mxGetScalar(prhs[0]) != (int)mxGetScalar(prhs[0])))
+   {
+
+      return true;
+   }
+
+   /* Try and find requested stream. */
+   psps = _pstreamInfo->pfirstStreamPage;
+
+   while (psps)
+   {
+      if (psps->pageNum == (int)mxGetScalar(prhs[0]))
+         break;
+
+      psps = psps->pnextStreamPage;
+   }
+
+   if (!psps)
+   {
+      /* page does not exist, so return immediately */
+      return true;
+   }
+
+   /* Found the required page */
+
+   /* Determine the maximum number of samples recorded by finding the longest
+    * buffer, and then limiting to how far through the page we currently are.
+    * This allows for different length buffers in the future.
+    */
+   recSamples = 0;
+   recSamplesTmp = 0;
+   channels[0] = 0;
+   channels[1] = 0;
+
+   pcbsBoth[0] = psps->pfirstRecChan;
+   pcbsBoth[1] = psps->pfirstPlayChan;
+
+   pcbs = pcbsBoth[0];
+
+   while (pcbs)
+   {
+      /* Check for valid buffer */
+      if (pcbs->pbuffer && (pcbs->bufLen > 0))
+      {
+         recSamplesTmp = max(recSamples, pcbs->bufLen);
+         channels[0]++;
+      }
+      pcbs = pcbs->pnextChanBuf;
+   }
+
+   pcbs = pcbsBoth[1];
+
+   while (pcbs)
+   {
+      /* Check for valid buffer */
+      if (pcbs->pbuffer && (pcbs->bufLen > 0))
+      {
+         channels[1]++;
+      }
+      pcbs = pcbs->pnextChanBuf;
+   }
+
+   if (rec_resplan)
+   {
+      /* We will do resampling */
+      if (psps->pagePos != recSamplesTmp)
+      {
+         /* Page was not yet finished, do something harmless. */
+         recSamples = (unsigned int) ( psps->pageLengthRec * psps->pagePos / ((double)recSamples));
+      }
+      else
+      {
+         recSamples = psps->pageLengthRec;
+      }
+   }
+   else
+   {
+      recSamples = recSamplesTmp;
+   }
+
+
+   /* If there are no samples recorded, no need to continue */
+   if ((recSamples == 0) || (channels[0] == 0) || (channels[1] == 0))
+   {
+      return true;
+   }
+
+   /* This initialises all elements to zero, so for shorter channels no
+    * problems should arise. Although on exit MATLAB frees the arrays created
+    * above, do so here for completeness
+    */
+   mxDestroyArray(plhs[0]);
+
+   plhs[0] = mxCreateNumericMatrix(recSamples, channels[0] + channels[1], mxSAMPLE, mxREAL);
+   poutBuf = (SAMPLE*)mxGetData(plhs[0]);
+
+   /* Create the channel list, but only return it if its required */
+   mxRecChanList = mxCreateNumericMatrix(1, channels[0], mxUNSIGNED_INT, mxREAL);
+   mxPlayChanList = mxCreateNumericMatrix(1, channels[0], mxUNSIGNED_INT, mxREAL);
+   pChanListBoth[0] = (unsigned int*)mxGetData(mxRecChanList);
+   pChanListBoth[1] = (unsigned int*)mxGetData(mxPlayChanList);
+
+
+   if (poutBuf && pChanListBoth[0] && pChanListBoth[1])
+   {
+
+      for (ii = 0; ii < 2; ii++)
+      {
+         pcbs = pcbsBoth[ii];
+
+         /* Copy the data across, decrement recChannels to make sure
+          * the end of the buffer isn't overwritten
+          */
+         while (pcbs && (channels[ii] > 0))
+         {
+            if (pcbs->pbuffer && (pcbs->bufLen > 0))
+            {
+               if (!rec_resplan)
+               {
+                  /* Do just a copy if no resampling should be done*/
+                  memcpy(poutBuf, pcbs->pbuffer,
+                         min(recSamples, pcbs->bufLen) * sizeof(SAMPLE));
+               }
+               else
+               {
+                  rerr = resample_execute(rec_resplan[recResPlanId],
+                                          pcbs->pbuffer, pcbs->bufLen,
+                                          poutBuf, recSamples);
+                  if (rerr != RESAMPLE_OK)
+                  {
+                     mexWarnMsgTxt("Resampling returned an error. This should not happen.");
+                  }
+
+                  recResPlanId++;
+               }
+
+               poutBuf += recSamples;
+
+               *pChanListBoth[ii]++ = pcbs->channel + 1;   /* Add 1 for base 1 channels */
+               channels[ii]--;
+            }
+            pcbs = pcbs->pnextChanBuf;
+         }
+      }
+   }
+
+   if (nlhs > 1)
+   {
+      mxDestroyArray(plhs[1]);
+      plhs[1] = mxPlayChanList;
+   }
+   if (nlhs > 2)
+   {
+      mxDestroyArray(plhs[22]);
+      plhs[2] = mxRecChanList;
+   }
+
+   return true;
+}
+/*
  * FUNCTION:    doGetRec(int nlhs, mxArray *plhs[],
  *                      int nrhs, const mxArray *prhs[])
  *
@@ -3366,7 +3629,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
    resample_error rerr = RESAMPLE_OK;
    SAMPLE *poutBuf;
    mxArray *mxChanList;
-   unsigned int *pChanList;
+   unsigned int *pRecChanList;
    unsigned int recSamples, recSamplesTmp;
    unsigned int recChannels;
    unsigned int recResPlanId = 0;
@@ -3477,9 +3740,9 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
    /* Create the channel list, but only return it if its required */
    mxChanList = mxCreateNumericMatrix(1, recChannels, mxUNSIGNED_INT, mxREAL);
-   pChanList = (unsigned int*)mxGetData(mxChanList);
+   pRecChanList = (unsigned int*)mxGetData(mxChanList);
 
-   if (poutBuf && pChanList)
+   if (poutBuf && pRecChanList)
    {
       pcbs = psps->pfirstRecChan;
 
@@ -3501,7 +3764,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
                rerr = resample_execute(rec_resplan[recResPlanId],
                                        pcbs->pbuffer, pcbs->bufLen,
                                        poutBuf, recSamples);
-               if(rerr!=RESAMPLE_OK)
+               if (rerr != RESAMPLE_OK)
                {
                   mexWarnMsgTxt("Resampling returned an error. This should not happen.");
                }
@@ -3511,7 +3774,7 @@ bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
             poutBuf += recSamples;
 
-            *pChanList++ = pcbs->channel + 1;   /* Add 1 for base 1 channels */
+            *pRecChanList++ = pcbs->channel + 1;   /* Add 1 for base 1 channels */
             recChannels--;
          }
          pcbs = pcbs->pnextChanBuf;

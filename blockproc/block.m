@@ -17,15 +17,18 @@ function [fs,classid] = block(source,varargin)
 %      `'dialog'`
 %         shows the file dialog to choose a wav file.
 %
+%      `data`
+%         input data as columns of a matrix for each input channel
+%
 %      `'rec'`
 %         input is taken from a microphone/auxilary input;
+%
+%      `{'rec','file.wav'}` or `{'rec','dialog'}` or `{'rec',data}`
+%         does the same as `'rec'` but plays a chosen audio data simultaneously.
 %
 %      `'playrec'`
 %         loopbacks the input to the output. In this case, the block size
 %         (in |blockread|) cannot change during the playback.
-%
-%      `data`
-%         input data as columns of a matrix for each input channel
 %
 %   `block` accepts the following optional key-value pairs
 %
@@ -182,15 +185,25 @@ hostAPIpriorityList = {};
 % Force portaudio to use buffer of the following size
 pa_bufLen = -1;
 
+do_recaudio = 0;
+oldsource = source;
+% Handle {'rec',...} format
+if iscell(source) && strcmpi(source{1},'rec')
+   recChannels = 1;
+   record = 1;
+   source = source{2};
+   if isempty(kv.nbuf)
+      kv.nbuf = 3;
+   end
+   do_recaudio = 1;
+end
+
 if ischar(source)
    if(strcmpi(source,'rec'))
       recChannels = 1;
       record = 1;
       if isempty(kv.nbuf)
          kv.nbuf = 3;
-      end
-      if isempty(kv.fs)
-         kv.fs = 44100;
       end
    elseif strcmpi(source,'playrec')
       playChannels = 2;
@@ -200,17 +213,16 @@ if ischar(source)
       if isempty(kv.nbuf)
          kv.nbuf = 1;
       end
-      if isempty(kv.fs)
-         kv.fs = 44100;
-      end
    elseif strcmpi(source,'dialog')
       [fileName,pathName] = uigetfile('*.wav','Select the *.wav file');
       if fileName == 0
          error('%s: No file chosen.',upper(mfilename));
       end
       source = fullfile(pathName,fileName);
-      [fs,classid] = block(source,varargin{:});
-      return;
+      if isempty(kv.fs)
+          [~, kv.fs] = wavread(source, [1,1]);
+      end
+      play = 1;
    elseif(numel(source)>4)
       if(strcmpi(source(end-3:end),'.wav'))
          if exist(source,'file')~=2
@@ -222,13 +234,9 @@ if ischar(source)
          if isempty(kv.fs)
             [~, kv.fs] = wavread(source, [1,1]);
          end
-         playChannels = 2;
          play = 1;
       else
          error('%s: "%s" is not valid wav filename.',upper(mfilename),source);
-      end
-      if isempty(kv.nbuf)
-         kv.nbuf = 3;
       end
    else
       error('%s: Unrecognized source "%s".',upper(mfilename),source);
@@ -239,15 +247,21 @@ elseif(isnumeric(source))
       warning('%s: Sampling rate not specified. Using default value %i Hz.',...
               upper(mfilename),kv.fs);
     end
-   playChannels = 2;
-   play = 1;
-   if isempty(kv.nbuf)
-      kv.nbuf = 3;
-   end
+    play = 1;
 else
    error('%s: Unrecognized source.',upper(mfilename));
 end
 
+if play && ~record
+   playChannels = 2;
+   if isempty(kv.nbuf)
+      kv.nbuf = 3;
+   end
+end
+
+if isempty(kv.fs)
+    kv.fs = 44100;
+end
 
 is_wav = ischar(source) && numel(source)>4 && strcmpi(source(end-3:end),'.wav');
 is_numeric = isnumeric(source);
@@ -314,6 +328,14 @@ elseif is_numeric
                                cast(source(pos:endSample,:),...
                                block_interface('getClassId')));
 end
+
+% Modify the source just added to block_interface
+if do_recaudio
+    block_interface('setSource',{'rec',block_interface('getSource')});
+    % By default, we only want a single speaker to be active
+    playChannels = 1;
+end
+
 
 
 % Not a single playrec call has been done until now
@@ -427,8 +449,11 @@ if ~flags.do_offline
        catch
            failedInit(devs,kv);
        end
-       if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
-          error('%s: Using more than one input channel.',upper(mfilename));
+       
+       if ~do_recaudio
+          if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
+            error('%s: Using more than one input channel.',upper(mfilename));
+          end
        end
        block_interface('setPlayChanList',kv.playch);
        block_interface('setRecChanList',kv.recch);

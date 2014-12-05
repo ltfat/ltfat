@@ -16,7 +16,8 @@ complainif_notenoughargs(nargin,1,'BLOCKPLAY');
 
 source = block_interface('getSource');
 
-if strcmp(source,'rec')
+if ( iscell(source) && strcmp(source{1},'rec')) || ...
+   strcmp(source,'rec')
    % Do nothing in rec only mode.
    return; 
    % error('%s: Blocks cannot be played in the rec only mode.',upper(mfilename));

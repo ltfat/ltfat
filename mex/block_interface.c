@@ -30,6 +30,7 @@ static biEntry vars[] =
    {.name = "OutFile", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
    {.name = "Offline", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
    {.name = "Pos", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
+   {.name = "Datapos", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
    {.name = "BufCount", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
    {.name = "PlayChanList", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
    {.name = "RecChanList", .var = NULL, .setter = defaultSetter, .getter = defaultGetter},
@@ -75,6 +76,10 @@ void resetAll(biEntry* dict, size_t dictLen)
          dict[ii].setter(&dict[ii], mxCreateDoubleScalar(-1.0));
       }
       else if (!strcmp(dict[ii].name, "Pos"))
+      {
+         dict[ii].setter(&dict[ii], mxCreateDoubleScalar(0.0));
+      }
+      else if (!strcmp(dict[ii].name, "Datapos"))
       {
          dict[ii].setter(&dict[ii], mxCreateDoubleScalar(0.0));
       }

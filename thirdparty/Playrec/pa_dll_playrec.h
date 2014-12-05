@@ -218,6 +218,7 @@ bool doPlayrec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool doPlay(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool doRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool doGetRec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
+bool doGetPlayrec(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool doGetSampleRate(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool doGetFramesPerBuffer(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 bool doGetStreamStartTime(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);

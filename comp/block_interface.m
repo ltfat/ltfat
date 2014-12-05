@@ -15,6 +15,7 @@ end
 
 % Persistent data
 persistent pos;
+persistent datapos; % Second data pointer
 persistent pageNo;
 persistent sourceName;
 persistent maxBufCount;
@@ -48,6 +49,7 @@ command = varargin{1};
 switch command
    case {'reset','clearAll'}
       pos = 0; 
+      datapos = 0; 
       sourceName = [];
       maxBufCount = 3;
       pageList = [];
@@ -77,6 +79,8 @@ switch command
       offline = varargin{2};
    case 'setPos'
       pos = varargin{2};
+   case 'setDatapos'
+      datapos = varargin{2};
    case 'setBufCount'
       maxBufCount = varargin{2};
    case 'setPlayChanList'
@@ -114,6 +118,8 @@ switch command
       varargout{1}=offline;
    case 'getPos'
       varargout{1}=pos;
+   case 'getDatapos'
+      varargout{1}=datapos;
    case 'getBufCount'
       varargout{1}= maxBufCount;
    case 'getPlayChanList'

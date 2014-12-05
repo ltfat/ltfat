@@ -1,6 +1,6 @@
 function [f,valid] = blockread(L)
 %BLOCKREAD Read one block from input
-%   Usage: blockread(L)
+%   Usage: f=blockread(L)
 %       
 %   Input parameters:
 %      L    : Number of samples.
@@ -8,11 +8,24 @@ function [f,valid] = blockread(L)
 %      f     : Samples.
 %      valid : Input data valid flag.
 %
+%   `f=blockread(L)` reads next *L* audio samples according to *source* 
+%   specified in |block|. *f* is a $\L\times W$ matrix, where columns are
+%   channels in the stream. 
+%
+%   `[f,valid]=blockrad(...)` does the same and in addition it returns *valid*
+%   flag, which is set to 1, except for the last block of the stream (e.g.
+%   at the end of a file).
+%
 %   Function also control the playback, so it does not have to rely on
 %   whether the user called |blockplay|.
 % 
 %   Block streaming uses several buffers to compensate for the processing
 %   delay variation. 
+%
+%   See also: block, blockplay
+%
+
+% AUTHOR: Zdenek Prusa
 
 persistent Lwav;
 persistent clearStr;
@@ -177,11 +190,14 @@ elseif strcmp(source,'playrec')
 elseif isa(source,'function_handle')
    % Number of wav samples (is chached, since it is a disk read operation)
    Lwav = block_interface('getLs'); 
+   % Internal data pointer for audio data
+   pos = block_interface('getDatapos') +1; 
+   block_interface('setDatapos',pos+L-1);
     
    % Determine valid samples
    endSample = min(pos + L - 1, Lwav(1));
    %f = cast(wavread(source,[pos, endSample]),block_interface('getClassId'));
-   f = source(pos,endSample);
+   f = cast(source(pos,endSample),classid);
    % Pad with zeros if some samples are missing
    if (pos + L - 1) >= Lwav(1)
       ftmp = zeros(L,Lwav(2),classid);
@@ -189,7 +205,7 @@ elseif isa(source,'function_handle')
       f = ftmp;
       % Rewind if loop option was set.
       if block_interface('getIsLoop')
-         block_interface('setPos',0);
+         block_interface('setDatapos',0);
          % Throw away stored overlaps.
          if ~isempty(block_interface('getAnaOverlap'))
             block_interface('setAnaOverlap',[]);
@@ -237,6 +253,69 @@ elseif isa(source,'function_handle')
           while(playrec('isFinished', pageId) == 0), end;
        end
    end
+%%%
+%% {'rec',...} Recording while playing
+%
+elseif iscell(source)
+   recChanList = block_interface('getRecChanList');
+   playChanList = block_interface('getPlayChanList');
+   if do_updateBAR || do_updateGUI
+      readTime = toc(t2);
+   end
+   
+   source = source{2};
+   Lwav = block_interface('getLs'); 
+   
+   % Issue reading buffers up to max
+   while block_interface('getEnqBufCount') <= block_interface('getBufCount')
+       % Internal data pointer for audio data
+       pos = block_interface('getDatapos') +1; 
+       block_interface('setDatapos',pos+L-1);
+
+       % Determine valid samples
+       endSample = min(pos + L - 1, Lwav(1));
+       %f = cast(wavread(source,[pos, endSample]),block_interface('getClassId'));
+       fin = source(pos,endSample);
+       % Pad with zeros if some samples are missing
+       if (pos + L - 1) >= Lwav(1)
+          ftmp = zeros(L,Lwav(2),classid);
+          ftmp(1:size(fin,1),:) = fin;
+          fin = ftmp;
+          % Rewind if loop option was set.
+          if block_interface('getIsLoop')
+             block_interface('setDatapos',0);
+             % Throw away stored overlaps.
+             if ~isempty(block_interface('getAnaOverlap'))
+                block_interface('setAnaOverlap',[]);
+             end
+             if ~isempty(block_interface('getSynOverlap'))
+                block_interface('setSynOverlap',[]);
+             end
+          else
+             valid = 0;
+          end
+       end
+
+       % Broadcast single input channel to all output chanels.
+       if size(fin,2)==1
+          fin = repmat(fin,1,numel(playChanList));
+       end
+       % Play and record
+       block_interface('pushPage',playrec('playrec', fin, playChanList, -1,...
+                       recChanList));
+                   
+   end
+   
+   pageList = block_interface('getPageList');
+   % Block until the first page is loaded
+   while(playrec('isFinished', pageList(1)) == 0)
+   end
+   % Read the data. Cast to the specified type
+   f = cast(playrec('getPlayrec',pageList(1)),classid);
+   % Delete page
+   playrec('delPage', pageList(1));
+   % Throw away the page id
+   block_interface('popPage');
 end
 
 if ~is_offline
