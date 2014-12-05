@@ -128,6 +128,16 @@ public class SpectFrame {
         });
     }
 
+    public void requestFocus(){
+        runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                if(jf != null){
+                    jf.requestFocus();
+                }
+            }
+        });
+    }
     public void setLocation(final double x, final double y){
         runInEDT(new Runnable() {
             @Override
