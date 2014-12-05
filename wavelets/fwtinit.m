@@ -75,6 +75,10 @@ function [w,info] = fwtinit(wdef,prefix)
 %      second one is in format 1), 2), 4) or 5). This in the non tight case
 %      the filters has to be defined explicitly using `'ana'` and `'syn'`
 %      identifiers. See below.
+%
+%   7) Two element cell array. First element is a cell array of structures
+%      defining FIR filterbank (.h and .offset fields) as in |filterbankwin|
+%      and the second element is a numeric vector of subsampling factors.
 %   
 %   One can interchange the filter in `w.h` and `w.g` and use the
 %   filterbank indended for synthesis in |fwt| and vice versa by
@@ -203,6 +207,18 @@ if iscell(wdef)
              w.h = formatFilters(wname(1:apos-1),[]);
              w.g = formatFilters(wname(1:apos-1),[]);
              w.origArgs = wname;
+       elseif iscell(wname{1}) && numel(wname)==2 && numel(wname{1})>1
+            complainDual(do_dual,'filterbank cell array');
+            g = wname{1};
+            a = wname{2};
+            [g,asan,info]=filterbankwin(g,a,'normal');
+            if ~info.isfir
+                error('%s: Only FIR filters are supported.',upper(mfilename));
+            end
+            w.h = g;
+            w.g = g;
+            w.a = asan(:,1);
+            w.origArgs = wname;
        else
           error('%s: Unrecognizer format of the filterbank definition.',upper(mfilename));
        end
