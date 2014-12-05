@@ -1,6 +1,8 @@
-function cola=blockplot(p,F,c,cola)
+function cola=blockplot(p,arg0,arg1,cola)
 %BLOCKPLOT Plot block coefficients
-%   Usage: blockplot(p,F,c);
+%   Usage: blockplot(p,c);
+%          blockplot(p,F,c);
+%          blockplot(p,F,c,cola);
 %
 %   Input parameters:
 %         p     : JAVA object of the class net.sourceforge.ltfat.SpectFrame.
@@ -14,22 +16,25 @@ function cola=blockplot(p,F,c,cola)
 %   `blockplot(p,F,c)` appends the block coefficients `c` to the running 
 %   coefficient plot in `p`. The coefficients must have been obtained by
 %   `c=blockana(F,...)`. The format of `c` is changed to a rectangular 
-%   layout according to the type of `F`.
-%
-%   `blockplot(p,[],c)` does the same, but expects `c` to be already
-%   formatted matrix of real numbers. The matrix dimensions are not
-%   restricted, but it will be shrinked or expanded to a vertical
-%   strip in the sliding image.
+%   layout according to the type of `F`. `p` must be a Java object with a
+%   append method.  
 %
 %   `cola=blockplot(p,F,c,cola)` does the same, but adds `cola` to the 
 %   first respective coefficients in `c` and returns last coefficients from
 %   `c`. This is only relevant for the sliced window blocking approach.
 %
+%   `blockplot(p,c)` or `blockplot(p,[],c)` does the same, but expects `c` 
+%   to be already formatted matrix of real numbers. The data dimensions
+%   are not restricted, but it will be shrinked or expanded to fit with
+%   the running plot.
+%
 
-complainif_notenoughargs(nargin,3,'BLOCKPLOT');
+complainif_notenoughargs(nargin,2,'BLOCKPLOT');
 
-
-if ~isempty(F)
+if ~isempty(arg0) && isstruct(arg0) && isfield(arg0,'frana')
+    F = arg0;
+    c = arg1;
+    complainif_notenoughargs(nargin,3,'BLOCKPLOT');
     complainif_notvalidframeobj(F,'BLOCKPLOT');
     if size(c,2)>1
         error('%s: Only one channel input is supported.',upper(mfilename));
@@ -55,12 +60,12 @@ if ~isempty(F)
     
     ctf = abs(ctf);
 else
+    c = arg0;
     if ~isreal(c)
         error('%s: Complex values are not supported',upper(mfilename));
     end
     ctf = c;
 end
-
 
 if isoctave
    % The JAVA 2D-array handling is row-major
