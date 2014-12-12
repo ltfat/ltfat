@@ -1,7 +1,7 @@
 %DEMO_PHASERET Phase retrieval and phase difference
 %
 %   This demo demonstrates iterative reconstruction of a spectrogram and
-%   the pase difference.
+%   the phase difference.
 %
 %   .. figure::
 %
@@ -14,7 +14,7 @@
 %
 %      Phase difference
 %
-%      This figure shows a diffrence between the original phase and the 
+%      This figure shows a difference between the original phase and the 
 %      reconstructed using 100 iterations of a Fast Griffin-Lim algorithm.
 %      Note: The figure in the LTFAT 2.0 paper differs slightly because it
 %      is genarated using 1000 iterations.

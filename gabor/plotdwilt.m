@@ -1,6 +1,6 @@
 function C=plotdwilt(coef,varargin)
 %PLOTDWILT  Plot DWILT coefficients
-%   Usage: plotdwilt(coef,);
+%   Usage: plotdwilt(coef);
 %          plotdwilt(coef,fs);
 %          plotdwilt(coef,fs,dynrange);
 %
