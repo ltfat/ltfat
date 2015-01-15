@@ -26,6 +26,7 @@ function o = frgramian(c, Fa, Fs)
 %   If *Fa* and *Fs* are canonical dual frames, the Gramian operator is a 
 %   projection onto the range of the frame analysis operator.
 %
+
 % AUTHOR: Jordy van Velthoven
 
 complainif_notenoughargs(nargin, 2, 'FRGRAMIAN');

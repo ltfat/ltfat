@@ -1,5 +1,5 @@
 function sr=filterbankreassign(s,tgrad,fgrad,a,var)
-%FILTERBANKREASSIGN  Reassign filterbank spectrogram.
+%FILTERBANKREASSIGN  Reassign filterbank spectrogram
 %   Usage:  sr = filterbankreassign(s,a,tgrad,fgrad,cfreq);
 %           sr = filterbankreassign(s,a,tgrad,fgrad,g);
 %

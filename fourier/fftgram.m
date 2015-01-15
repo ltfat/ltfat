@@ -1,7 +1,7 @@
 function fftgram(f, varargin)
-%FFTGRAM Plot the energy of the discrete Fourier transform.
-%   Usage: fftgram(f);
-%		   fftgram(f, fs);
+%FFTGRAM Plot the energy of the discrete Fourier transform
+%   Usage:  fftgram(f)
+%           fftgram(f, fs)
 %
 %   `fftgram(f)` plots the energy of the discrete Fourier transform computed 
 %   from the function f. The function forms a Fourier pair with the periodic
@@ -16,14 +16,14 @@ function fftgram(f, varargin)
 %
 %   Additional arguments for `fftgram`:
 %
-%     'db'      Plots the energy on a dB scale. This is the default.
+%      'db'      Plots the energy on a dB scale. This is the default.
 %
-%     'lin'     Plots the energy on a linear scale.
+%      'lin'     Plots the energy on a linear scale.
 %
 %   In addition to these parameters, `fftgram` accepts any of the flags from
 %   |normalize|. The input signal will be normalized as specified.
 %
-%   See also: paucorr, dft, plotfft
+%   See also: dft, plotfft
 
 % AUTHOR: Jordy van Velthoven
 

@@ -17,7 +17,8 @@ function h = frameoperator(F, f);
 %   is an orthonormal basis, or more general a Parseval frame, then *h* equals 
 %   *f*. 
 %
-%
+
+
 % AUTHOR: Jordy van Velthoven
 
 complainif_notenoughargs(nargin, 2, 'FRAMEOPERATOR');

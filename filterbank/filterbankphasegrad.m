@@ -4,8 +4,8 @@ function [fgrad,tgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L);
 %           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,minlvl);
 %           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a);
-%           [tgrad,fgrad,c_s] = ...
-%           [tgrad,fgrad]  = ...
+%           [tgrad,fgrad,c_s] = filterbankphasegrad(...)
+%           [tgrad,fgrad]  = filterbankphasegrad(...)
 % 
 %   Input parameters:
 %      f     : Signal to be analyzed.

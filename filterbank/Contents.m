@@ -39,7 +39,7 @@
 %    PLOTFILTERBANK         - Plot normal/uniform filter bank coefficients
 %
 %  Reassignment and phase gradient
-%    FILTERBANKPGASEGRAD    - Instantaneous time/frequency from signal
+%    FILTERBANKPHASEGRAD    - Instantaneous time/frequency from signal
 %    FILTERBANKREASSIGN     - Reassign filterbank spectrogram
 %    
 %
