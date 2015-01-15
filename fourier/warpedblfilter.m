@@ -59,6 +59,7 @@ definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.scal=1;
 definput.flags.real={'complex','real'};
+definput.flags.symmetry = {'nonsymmetric','symmetric'};
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -72,24 +73,26 @@ for ii=1:Nfilt
     
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    comp_warpedfreqresponse( winname,freqtoscale(fc(ii)), ...
+        g.H=@(L)    comp_warpedfreqresponse( winname,fc(ii), ...
                                              fsupp(ii),fs,L,freqtoscale, ...
-                                             scaletofreq, flags.norm)*kv.scal(ii)*L;
+                                             scaletofreq, flags.norm,...
+                                             flags.symmetry)*kv.scal(ii)*L;
     end;
     
     if  flags.do_2 || flags.do_energy
-        g.H=@(L)    comp_warpedfreqresponse(winname,freqtoscale(fc(ii)), ...
+        g.H=@(L)    comp_warpedfreqresponse(winname,fc(ii), ...
                                             fsupp(ii),fs,L,freqtoscale,scaletofreq, ...
-                                            flags.norm)*kv.scal(ii)*sqrt(L);
+                                            flags.norm,flags.symmetry)*kv.scal(ii)*sqrt(L);
     end;
         
     if flags.do_inf || flags.do_peak
-        g.H=@(L)    comp_warpedfreqresponse(winname,freqtoscale(fc(ii)), ...
+        g.H=@(L)    comp_warpedfreqresponse(winname,fc(ii), ...
                                             fsupp(ii),fs,L,freqtoscale,scaletofreq, ...
-                                            flags.norm)*kv.scal(ii);
+                                            flags.norm,flags.symmetry)*kv.scal(ii);
     end;
         
-    g.foff=@(L) comp_warpedfoff(freqtoscale(fc(ii)),fsupp(ii),fs,L,scaletofreq);
+    g.foff=@(L) comp_warpedfoff(fc(ii),fsupp(ii),fs,L,freqtoscale,...
+                                scaletofreq,flags.do_symmetric);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
     g.fs=fs;
