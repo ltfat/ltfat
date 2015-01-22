@@ -1,7 +1,6 @@
 function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq,varargin)
 %WARPEDBLFILTER  Construct a warped band-limited filter
-%   Usage:  g=warpedblfilter(winname,fsupp,fc,fs,freqtoscale);
-%           g=warpedblfilter(winname,fsupp,fc,...);
+%   Usage:  g=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq);
 %
 %   Input parameters:
 %      winname     : Name of prototype.
@@ -14,13 +13,14 @@ function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq,varargi
 %   Output parameters:
 %      g           : Filter definition, see |blfilter|.
 %
-%   `warpedblfilter(winname,fsupp)` constructs a band-limited filter that is
-%   warped on a given frequency scale. The parameter *winname* specifies the basic
-%   shape of the frequency response. The name must be one of the shapes
-%   accepted by |firwin|. The support of the frequency response measured on
-%   the selected frequency scale is specified by *fsupp*, the centre
-%   frequency by *fc* and the scale by the function handle *freqtoscale*
-%   of a function that converts Hz into the choosen scale.
+%   `warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq)` constructs
+%   a band-limited filter that is warped on a given frequency scale. The 
+%   parameter *winname* specifies the basic shape of the frequency response.
+%   The name must be one of the shapes accepted by |firwin|. The support of
+%   the frequency response measured on the selected frequency scale is 
+%   specified by *fsupp*, the centre frequency by *fc* and the scale by the
+%   function handle *freqtoscale* of a function that converts Hz into the 
+%   choosen scale and *scaletofreq* doing the inverse.
 %
 %   If one of the inputs is a vector, the output will be a cell array
 %   with one entry in the cell array for each element in the vector. If
@@ -30,16 +30,21 @@ function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq,varargi
 %
 %   `warpedblfilter` accepts the following optional parameters:
 %
-%     'complex'   Make the filter complex valued if the centre frequency
-%                 is non-zero.necessary. This is the default.
+%     'complex'      Make the filter complex valued if the centre frequency
+%                    is non-zero. This is the default.
 %
-%     'real'      Make the filter real-valued if the centre frequency
-%                 is non-zero.
+%     'real'         Make the filter real-valued if the centre frequency
+%                    is non-zero.
 %
-%     'delay',d   Set the delay of the filter. Default value is zero.
+%     'symmetric'    The filters with fc<0 (or fc>fs/2) will be created
+%                    on the positive frequencies and mirrored. This allows
+%                    using *freqtoscale* defined only for the positive 
+%                    numbers.
 %
-%     'scal',s    Scale the filter by the constant *s*. This can be
-%                 useful to equalize channels in a filterbank.
+%     'delay',d      Set the delay of the filter. Default value is zero.
+%
+%     'scal',s       Scale the filter by the constant *s*. This can be
+%                    useful to equalize channels in a filterbank.
 %
 %   It is possible to normalize the transfer function of the filter by
 %   passing any of the flags from the |normalize| function. The default
@@ -53,6 +58,26 @@ function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq,varargi
 %
 %   See also: blfilter, firwin, pfilt, filterbank
 
+capmname = upper(mfilename);
+complainif_notenoughargs(nargin,6,capmname);
+complainif_notposint(fs,'fs',capmname);
+
+if isempty(freqtoscale) || ~isa(freqtoscale,'function_handle')
+    error('%s: freqtoscale must be a function handle',capmname);
+end
+
+if isempty(scaletofreq) || ~isa(scaletofreq,'function_handle')
+    error('%s: scaletofreq must be a function handle',capmname);
+end
+
+if isempty(fc) || ~isnumeric(fc)
+   error('%s: fc must be numeric',capmname);
+end
+
+if isempty(fsupp) || ~isnumeric(fsupp)
+   error('%s: fc must be numeric',capmname);
+end
+
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
 definput.importdefaults={'energy'};
@@ -62,6 +87,14 @@ definput.flags.real={'complex','real'};
 definput.flags.symmetry = {'nonsymmetric','symmetric'};
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
+
+if ~isscalar(kv.scal)
+    error('%s: scal must be a scalar',capmname);
+end
+
+if ~isscalar(kv.delay)
+    error('%s: delay must be a scalar',capmname);
+end
 
 [fsupp,fc,kv.delay,kv.scal]=scalardistribute(fsupp,fc,kv.delay,kv.scal);
 
@@ -94,7 +127,9 @@ for ii=1:Nfilt
     g.foff=@(L) comp_warpedfoff(fc(ii),fsupp(ii),fs,L,freqtoscale,...
                                 scaletofreq,flags.do_symmetric);
     g.realonly=flags.do_real;
-    g.delay=kv.delay(ii);
+    if kv.delay~=0
+       g.delay=kv.delay(ii);
+    end
     g.fs=fs;
     gout{ii}=g;
 end;

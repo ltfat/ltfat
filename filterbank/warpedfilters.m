@@ -1,7 +1,6 @@
 function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,varargin)
 %WARPEDFILTERS   Frequency-warped band-limited filters
-%   Usage:  [g,a,fc]=warpedfilters(fs);
-%           [g,a,fc]=warpedfilters(fs,...);
+%   Usage:  [g,a,fc]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls);
 %
 %   Input parameters:
 %      freqtoscale  : Function converting frequency (Hz) to scale units
@@ -32,8 +31,9 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %   necessary). The signal length `Ls` is required in order to obtain the 
 %   optimal normalization factors.
 %   
-%   *Attention: When using this function, the user needs to be aware of a 
+%   Attention: When using this function, the user needs to be aware of a 
 %   number of things: 
+%
 %       a)  Although the `freqtoscale` and `scaletofreq` can be chosen
 %           freely, it is assumed that `freqtoscale` is an invertible,
 %           increasing function from $\mathbb{R}$ or $\mathbb{R}^+$ onto
@@ -55,8 +55,9 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %           nicely out of the box, while the similar mel scale
 %           $2595\log_{10}(1+f/700)$ most likely has to be rescaled in
 %           order not to provide a filter bank with 1000s of channels.
+%
 %   If any of these guidelines are broken, this function is likely to break
-%   or give undesireable results.%   
+%   or give undesireable results.  
 % 
 %   By default, a Hann window is chosen as the transfer function prototype, 
 %   but the window can be changed by passing any of the window types from
@@ -95,120 +96,149 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %
 %   `warpedfilters` accepts the following optional parameters:
 %
-%     'winfun',winfun       Filter prototype (see |firwin| for available
+%       'winfun',winfun       
+%                           Filter prototype (see |firwin| for available
 %                           filters). Default is `'hann'`.
 %
-%     'bwmul',bwmul           Bandwidth variation factor. Multiplies the
+%       'bwmul',bwmul 
+%                           Bandwidth variation factor. Multiplies the
 %                           calculated bandwidth. Default value is *1*.
 %                           If the value is less than one, the
 %                           system may no longer be painless.
 %
-%      'complex'            Construct a filterbank that covers the entire
+%       'complex'            
+%                           Construct a filterbank that covers the entire
 %                           frequency range. When missing, only positive
 %                           frequencies are covered.
 %
-%      'redmul',redmul      Redundancy multiplier. Increasing the value of
+%       'redmul',redmul      
+%                           Redundancy multiplier. Increasing the value of
 %                           this will make the system more redundant by
 %                           lowering the channel downsampling rates. Default
 %                           value is *1*. If the value is less than one,
 %                           the system may no longer be painless.
 %
-%    Examples:
-%    ---------
+%   Examples:
+%   ---------
 %
-%    In the first example, we use the ERB scale functions `freqtoerb` and
-%    `erbtofreq` to construct a filter bank and visualize the result:::
+%   In the first example, we use the ERB scale functions `freqtoerb` and
+%   `erbtofreq` to construct a filter bank and visualize the result:::
 %
-%      [s,fs] = gspi; % Get a test signal
-%      Ls = numel(gspi);
+%     [s,fs] = gspi; % Get a test signal
+%     Ls = numel(gspi);
 %
-%      % Fix some parameters
-%      fmax = fs/2;
-%      bins = 1;
+%     % Fix some parameters
+%     fmax = fs/2;
+%     bins = 1;
 %
-%      % Compute filters, using fractional downsampling
-%      [g,a,fc]=warpedfilters(@freqtoerb,@erbtofreq,fs,0,fmax,bins,...
-%                             Ls,'bwmul',1.5,'real','fractional');
+%     % Compute filters, using fractional downsampling
+%     [g,a,fc]=warpedfilters(@freqtoerb,@erbtofreq,fs,0,fmax,bins,...
+%                            Ls,'bwmul',1.5,'real','fractional');
 %
-%      % Plot the filter transfer functions
-%      figure(1); 
-%      filterbankfreqz(g,a,Ls,'plot','linabs','posfreq');
-%      title('ERBlet filter transfer functions');
+%     % Plot the filter transfer functions
+%     figure(1); 
+%     filterbankfreqz(g,a,Ls,'plot','linabs','posfreq');
+%     title('ERBlet filter transfer functions');
 %
-%      % Compute the frame bounds
-%      gf=filterbankresponse(g,a,Ls,'real'); framebound_ratio = max(gf)/min(gf);
-%      disp(['Painless system frame bound ratio of ERBlets: ',...
-%           num2str(framebound_ratio)]);
+%     % Compute the frame bounds
+%     gf=filterbankresponse(g,a,Ls,'real'); framebound_ratio = max(gf)/min(gf);
+%     disp(['Painless system frame bound ratio of ERBlets: ',...
+%          num2str(framebound_ratio)]);
 %      
-%      % Plot the filter bank coefficients of the test signal
-%      figure(2);
-%      c=filterbank(s,g,a);
-%      plotfilterbank(c,a,fc,fs,60);
-%      title('ERBlet transform of the test signal');
+%     % Plot the filter bank coefficients of the test signal
+%     figure(2);
+%     c=filterbank(s,g,a);
+%     plotfilterbank(c,a,fc,fs,60);
+%     title('ERBlet transform of the test signal');
 %
-%    In the second example, we look at the same test signal using a 
-%    constant-Q filter bank with 4 bins per scale unit and the standard 
-%    (semi-regular) sampling scheme:::
+%   In the second example, we look at the same test signal using a 
+%   constant-Q filter bank with 4 bins per scale unit and the standard 
+%   (semi-regular) sampling scheme:::
 %
-%      % Define the frequency-to-scale and scale-to-frequency functions
-%      warpfun_log = @(x) 10*log(x);
-%      invfun_log = @(x) exp(x/10);
+%     [s,fs] = gspi; % Get a test signal
+%     Ls = numel(gspi);
 %
-%      bins_hi = 4; % Select bins/unit parameter
-%      fmin = 50; % The logarithm's derivative 1/x tends to Inf for x towards 0
+%     % Fix some parameters
+%     fmax = fs/2;
+%     bins = 1;
 %
-%      % Compute filters, using fractional downsampling
-%      [g,a,fc]=warpedfilters(warpfun_log,invfun_log,fs,fmin,fmax,bins_hi,Ls,'bwmul',1,'real');
+%     % Define the frequency-to-scale and scale-to-frequency functions
+%     warpfun_log = @(x) 10*log(x);
+%     invfun_log = @(x) exp(x/10);
 %
-%      % Plot the filter transfer functions
-%      figure(1); 
-%      filterbankfreqz(g,a,Ls,'plot','linabs','posfreq');
-%      title('constant-Q filter transfer functions (4 bins)');
+%     bins_hi = 4; % Select bins/unit parameter
+%     fmin = 50; % The logarithm's derivative 1/x tends to Inf for x towards 0
 %
-%      % Compute the frame bounds
-%      gf=filterbankresponse(g,a,Ls,'real'); framebound_ratio = max(gf)/min(gf);
-%      disp(['Painless system frame bound ratio (constant-Q - 4 bins): ', num2str(framebound_ratio)]);
+%     % Compute filters, using fractional downsampling
+%     [g,a,fc]=warpedfilters(warpfun_log,invfun_log,fs,fmin,fmax,bins_hi,Ls,'bwmul',1,'real');
 %
-%      % Plot the filter bank coefficients of the test signal
-%      figure(2); 
-%      c=filterbank(s,g,a);
-%      plotfilterbank(c,a,fc,fs,60);
-%      title('constant-Q transform of the test signal (4 bins)');
-% 
+%     % Plot the filter transfer functions
+%     figure(1); 
+%     filterbankfreqz(g,a,Ls,'plot','linabs','posfreq');
+%     title('constant-Q filter transfer functions (4 bins)');
 %
-% See also: erbfilters, cqtfilters, firwin, filterbank
+%     % Compute the frame bounds
+%     gf=filterbankresponse(g,a,Ls,'real'); framebound_ratio = max(gf)/min(gf);
+%     disp(['Painless system frame bound ratio (constant-Q - 4 bins): ', num2str(framebound_ratio)]);
 %
-% References: 
+%     % Plot the filter bank coefficients of the test signal
+%     figure(2); 
+%     c=filterbank(s,g,a);
+%     plotfilterbank(c,a,fc,fs,60);
+%     title('constant-Q transform of the test signal (4 bins)');
+%
+%   See also: erbfilters, cqtfilters, firwin, filterbank
+%
+%   References:
+%
 
 % Authors: Nicki Holighaus, Zdenek Prusa
 % Date: 14.01.15 
 
 %% Check input arguments
-if nargin < 7
-    error('%s: Not enough input arguments.',upper(mfilename));
+capmname = upper(mfilename);
+complainif_notenoughargs(nargin,7,capmname);
+complainif_notposint(fs,'fs',capmname);
+complainif_notposint(fmin+1,'fmin',capmname);
+complainif_notposint(fmax,'fmax',capmname);
+complainif_notposint(bins,'bins',capmname);
+complainif_notposint(Ls,'Ls',capmname);
+
+if ~isa(freqtoscale,'function_handle')
+    error('%s: freqtoscale must be a function handle',capmname)
 end
 
-complainif_notposint(fs,'fs');
-complainif_notposint(fmin+1,'fmin');
-complainif_notposint(fmax,'fmax');
-complainif_notposint(bins,'bins');
-complainif_notposint(Ls,'Ls');
+if ~isa(scaletofreq,'function_handle')
+    error('%s: scaletofreq must be a function handle',capmname)
+end
 
 if fmin>=fmax
-    error('%s: fmin has to be less than fmax.',upper(mfilename));
+    error('%s: fmin has to be less than fmax.',capmname);
 end
 
 
 definput.import = {'firwin'};
-definput.keyvals.L=[];
 definput.keyvals.bwmul = 1;
-definput.keyvals.redmul=1;
-definput.keyvals.min_win = 4;
+definput.keyvals.redmul = 1;
+definput.keyvals.min_win = 1;
 definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','uniform',...
                            'fractional','fractionaluniform'};
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
+
+if ~isscalar(kv.bwmul)
+    error('%s: bwmul must be scalar',capmname)
+end
+
+if ~isscalar(kv.redmul)
+    error('%s: redmul must be scalar',capmname)
+end
+
+if ~isscalar(kv.min_win)
+    error('%s: min_win must be scalar',capmname)
+end
+
 
 % Nyquist frequency
 nf = fs/2;
@@ -259,7 +289,7 @@ fsupp(fsuppIdx:M-1) = ceil(scaletofreq(scalevec+kv.bwmul)-scaletofreq(scalevec-k
 fsupp(M) = ceil(2*(nf-scaletofreq(chan_max+1/bins-kv.bwmul)))+2;
 
 % Find suitable channel subsampling rates
-aprecise=fs./fsupp;
+aprecise=fs./fsupp/kv.redmul;
 aprecise=aprecise(:);
 if any(aprecise<1)
     error('%s: The maximum redundancy mult. for this setting is %5.2f',...
@@ -275,7 +305,7 @@ if flags.do_regsampling
     L=filterbanklength(Ls,a);
 
     % Heuristic trying to reduce lcm(a)
-    while L>2*Ls && ~(all(a)==a(1))
+    while L>2*Ls && ~(all(a==a(1)))
         maxa = max(a);
         a(a==maxa) = 0;
         a(a==0) = max(a);
