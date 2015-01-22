@@ -3,7 +3,7 @@ function r = drihaczekdist(f);
 %   Usage r = drihaczekdist(f);
 %
 %
-%   `drihaczekdist(f)` computes a discrete discrete Rihaczek distribution.
+%   `drihaczekdist(f)` computes a discrete Rihaczek distribution.
 %   The discrete Rihaczek distribution is computed by
 %
 %   .. math:: r\left( k+1,\; l+1 \right)\; =\; f\left( l+1 \right)\; \overline{c\left( k+1 \right)}e^{-2\pi ikl/L}
