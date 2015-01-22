@@ -60,7 +60,13 @@ if ~isempty(arg0) && isstruct(arg0) && isfield(arg0,'frana')
     
     ctf = abs(ctf);
 else
-    c = arg0;
+    if ~isempty(arg0)
+        c = arg0;
+    elseif nargin>2
+        c = arg1;
+    else
+        error('%s: Not enough input arguments',upper(mfilename));
+    end
     if ~isreal(c)
         error('%s: Complex values are not supported',upper(mfilename));
     end
