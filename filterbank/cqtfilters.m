@@ -219,7 +219,7 @@ if flags.do_regsampling
         L = filterbanklength(Ls,a);
 
         % Heuristic trying to reduce lcm(a)
-        while L>2*Ls && ~(all(a)==a(1))
+        while L>2*Ls && ~(all(a==a(1)))
             maxa = max(a);
             a(a==maxa) = 0;
             a(a==0) = max(a);

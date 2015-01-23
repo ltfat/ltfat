@@ -13,12 +13,26 @@ function H=comp_warpedfreqresponse(wintype,fc,bw,fs,L,freqtoscale,scaletofreq,va
 %      scaletofreq : Function to convert scale units into Hz.
 %      normtype    : Normalization flag to pass to |normalize|.
 
+
 definput.import={'normalize'};
+definput.flags.symmetry = {'nonsymmetric','symmetric'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-% Compute the values in Aud of the channel frequencies of an FFT of
-% length L.
-bins_lo   = freqtoscale(modcent(fs*(0:L-1)/L,fs)).';
+fcwasnegative = fc < 0;
+
+if fcwasnegative && flags.do_symmetric
+   fc = -fc;
+end
+
+fcscale = freqtoscale(fc);
+
+if ~flags.do_symmetric
+   % Compute the values in Aud of the channel frequencies of an FFT of
+   % length L.
+   bins_lo   = freqtoscale(modcent(fs*(0:L-1)/L,fs)).';
+else
+   bins_lo   = freqtoscale(fs*(0:L-1)/L).';
+end
 
 % This one is necessary to represent the highest frequency filters, which
 % overlap into the negative frequencies.
@@ -27,25 +41,27 @@ bins_hi   = nyquest2+bins_lo;
 
 % firwin makes a window of width 1 centered around 0 on the scale, so we rescale the
 % bins in order to pass the correct width to firwin and subtract fc
-bins_lo=(bins_lo-fc)/bw;
-bins_hi=(bins_hi-fc)/bw;
+bins_lo=(bins_lo-fcscale)/bw;
+bins_hi=(bins_hi-fcscale)/bw;
 
-pos_lo=comp_warpedfoff(fc,bw,fs,L,scaletofreq);
+pos_lo=comp_warpedfoff(fc,bw,fs,L,freqtoscale,scaletofreq,flags.do_symmetric);
 % The "floor" below often cuts away a non-zero sample, but it makes
 % the support stay below the limit needed for the painless case. Same
 % deal 4 lines below.
-pos_hi=floor(scaletofreq(fc+.5*bw)/fs*L);
+pos_hi=floor(scaletofreq(fcscale+.5*bw)/fs*L);
 
 if pos_hi>L/2
     % Filter is high pass and spilling into the negative frequencies
-    pos_hi=floor(scaletofreq(fc+.5*bw-nyquest2)/fs*L);    
+    pos_hi=floor(scaletofreq(fcscale+.5*bw-nyquest2)/fs*L);
 end;
 
 win_lo=firwin(wintype,bins_lo);
 win_hi=firwin(wintype,bins_hi);
 
+
 H=win_lo+win_hi;
-   
+H(isnan(H)) = 0;
+ 
 H=normalize(H,flags.norm);
 
 H=circshift(H,-pos_lo);
@@ -65,3 +81,7 @@ if 0
 end;
 
 H=H(1:upidx);
+
+if fcwasnegative && flags.do_symmetric
+   H = H(end:-1:1);
+end

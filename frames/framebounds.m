@@ -5,13 +5,15 @@ function [AF,BF]=framebounds(F,varargin);
 %          [...]=framebounds(F,Ls);
 %
 %   `framebounds(F)` calculates the ratio $B/A$ of the frame bounds of the
-%   frame given by *F*.
+%   frame given by *F*. The length of the system the frame bounds are
+%   calculated for is given by `L=framelength(F,1)`.
 %
 %   `framebounds(F,Ls)` additionally specifies a signal length for which
-%   the frame should work. 
+%   the frame should work. The actual length used is `L=framelength(F,Ls)`.
 %
 %   `[A,B]=framebounds(F)` returns the frame bounds *A* and *B* instead of
 %   just their ratio.
+%
 %
 %   'framebounds` accepts the following optional parameters:
 %
@@ -33,15 +35,21 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %   The following parameters specifically related to the `iter` method: 
 %
-%     'tol',t      Stop if relative residual error is less than the
+%     'tol',t      Stop if relative residual error of eighs is less than the
 %                  specified tolerance. Default is 1e-9 
 %
-%     'maxit',n    Do at most n iterations.
+%     'maxit',n    Do at most n iterations in eigs. Default is 100.
+%
+%     'pcgtol',t   Stop if relative residual error of pcg is less than the
+%                  specified tolerance. Default is 1e-6 
+%
+%     'pcgmaxit',n Do at most n iterations in pcg. Default is 150.
 %
 %     'p',p        The number of Lanzcos basis vectors to use.  More vectors
 %                  will result in faster convergence, but a larger amount of
 %                  memory.  The optimal value of `p` is problem dependent and
-%                  should be less than *L*.  The default value is 2.
+%                  should be less than *L*.  The default value chosen 
+%                  automatically by eigs.
 % 
 %     'print'      Display the progress.
 %
@@ -82,8 +90,10 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
   definput.keyvals.Ls=1;
   definput.keyvals.maxit=100;
   definput.keyvals.tol=1e-9;
+  definput.keyvals.pcgmaxit=150;
+  definput.keyvals.pcgtol=1e-6;
   definput.keyvals.crossover=200;
-  definput.keyvals.p=4;
+  definput.keyvals.p=[];
   definput.flags.print={'quiet','print'};
   definput.flags.method={'auto','fac','iter','full'};
   
@@ -143,23 +153,44 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
   
   if (flags.do_auto && ~F_isfac && F.L>kv.crossover) || flags.do_iter
     
+  
     if flags.do_print
       opts.disp=1;
     else
       opts.disp=0;
     end;
-    opts.isreal = false;
+    opts.isreal = F.realinput;
     opts.maxit  = kv.maxit;
     opts.tol    = kv.tol;
-    %opts.issym  = 1;
-    opts.p      = kv.p;
+    opts.issym  = 0;
+    if ~isempty(kv.p)
+       opts.p      = kv.p;
+    end
     
-    %afun(1,F,op,opadj); 
-    % The inverse method does not work.
-    % AF could be obtained as 1/BF of a canonical dual frame.
-    %AF = real(eigs(@afun,L,1,'SM',opts));
-    %BF = real(eigs(@afun,L,1,'LM',opts));
-    BF = real(eigs(@(x) opadj(F,op(F,x)),L,1,'LM',opts));
+    pcgopts.maxit = kv.pcgmaxit;
+    pcgopts.tol = kv.pcgtol;
+
+    % Upper frame bound
+    frameop = @(x) F.frsyn(F.frana(x));
+    BF = real(eigs(frameop,L,1,'LM',opts));
+    
+    % Lower frame bound
+    frameop2 = @(x) F.frsyn(F.frana(x));
+    invfrop = @(x) pcg(frameop2,x,pcgopts.tol,pcgopts.maxit);
+    
+    % Test convergence of pcg
+    test = randn(L,1);
+    if ~F.realinput, test = test +1i*randn(L,1); end
+    [~,flag] = invfrop(test);
+    
+    % If PCG converges, estimate the smallest eigenvalue, otherwise assume
+    % AF = 0;
+    if ~flag
+        AF = real(eigs(invfrop,L,1,'SM',opts));
+    else 
+        AF = 0;
+    end
+
     
   end;
   

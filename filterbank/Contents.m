@@ -19,6 +19,7 @@
 %  Filter generators
 %    CQTFILTERS             - Logaritmically spaced filters
 %    ERBFILTERS             - ERB-spaced filters
+%    WARPEDFILTERS          - Frequency-warped band-limited filters 
 %  
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters
