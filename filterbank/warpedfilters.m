@@ -187,9 +187,9 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %     plotfilterbank(c,a,fc,fs,60);
 %     title('constant-Q transform of the test signal (4 bins)');
 %
-%   See also: erbfilters, cqtfilters, firwin, filterbank
+%   See also: erbfilters, cqtfilters, firwin, filterbank, warpedblfilter
 %
-%   References:
+%   References: ltfatnote039
 %
 
 % Authors: Nicki Holighaus, Zdenek Prusa
