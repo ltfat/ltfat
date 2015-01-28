@@ -86,7 +86,7 @@ else
    complainif_notenoughargs(nargin,3,'IUFWT');
 
    definput.keyvals.J = [];
-   definput.flags.scaling={'sqrt','scale','noscale'};
+   definput.import = {'uwfbtcommon'};
    [flags, ~, J]=ltfatarghelper({'J'},definput,varargin);
    complainif_notposint(J,'J');
 

@@ -1,4 +1,4 @@
-function [AF,BF]=wfbtbounds(wt,L)
+function [AF,BF]=wfbtbounds(wt,varargin)
 %WFBTBOUNDS Frame bounds of WFBT
 %   Usage: fcond=wfbtbounds(wt,L);
 %          [A,B]=wfbtbounds(wt,L);
@@ -22,19 +22,28 @@ function [AF,BF]=wfbtbounds(wt,L)
 %   See |wfbt| for explanation of parameter *wt* and |fwt| for explanation
 %   of parameters *w* and *J*.
 %
+%   The function supports the following flag groups:
+%
+%   `'scaling_notset'`(default),`'noscale'`,`'scale'`,`'sqrt'`
+%     Support for scaling flags as described in |uwfbt|. By default,
+%     the bounds are computed for |wfbt|, passing any of the non-default
+%     flags results in framebounds for |uwfbt|.
+%
 %   See also: wfbt, fwt, filterbankbounds
 
 % AUTHOR: Zdenek Prusa
 
 complainif_notenoughargs(nargin,1,'WFBTBOUNDS');
 
+% Frequency or natural ordering should not make a difference
 wt = wfbtinit({'strict',wt},'nat');
 
-if nargin<2 
-    L = [];
-end;
+definput.keyvals.L = [];
+definput.import = {'uwfbtcommon'};
+definput.importdefaults = {'scaling_notset'};
+[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
-if ~isempty(L)
+if ~isempty(L) && flags.do_scaling_notset
    if L~=wfbtlength(L,wt)
        error(['%s: Specified length L is incompatible with the length of ' ...
               'the time shifts.'],upper(mfilename));
@@ -42,14 +51,18 @@ if ~isempty(L)
 end
 
 % Do the equivalent filterbank using multirate identity property
-[gmultid,amultid] = wfbt2filterbank(wt);
+[gmultid,amultid] = wfbt2filterbank(wt,flags.scaling);
 
 if isempty(L)
    L = wfbtlength(max(cellfun(@(gEl) numel(gEl.h),gmultid)),wt);  
 end
 
 % Do the equivalent uniform filterbank
-[gu,au] = nonu2ufilterbank(gmultid,amultid);
+if any(amultid~=amultid(1))
+   [gu,au] = nonu2ufilterbank(gmultid,amultid);
+else
+   [gu,au] = deal(gmultid,amultid);
+end
 
 if nargout<2
    AF = filterbankbounds(gu,au,L);

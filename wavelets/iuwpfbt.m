@@ -114,9 +114,8 @@ if(isstruct(par)&&isfield(par,'fname'))
    end
    
 else
-   definput.import = {'wfbtcommon'};
+   definput.import = {'wfbtcommon','uwfbtcommon'};
    definput.flags.interscaling = {'intsqrt', 'intscale', 'intnoscale'};
-   definput.flags.scaling={'sqrt','scale','noscale'};
    [flags]=ltfatarghelper({},definput,varargin);
    
    scaling = flags.scaling;

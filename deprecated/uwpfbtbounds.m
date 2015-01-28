@@ -28,6 +28,7 @@ function [AF,BF]=uwpfbtbounds(wt,varargin)
 
 % AUTHOR: Zdenek Prusa
 
+warning('UWPFBTBOUNDS is deprecated. Instead, use WPFBTBOUNDS with appropriate flags');
 
 complainif_notenoughargs(nargin,1,'UWPFBTBOUNDS');
 
@@ -36,27 +37,8 @@ definput.flags.scaling={'sqrt','scale','noscale'};
 definput.flags.interscaling = {'intsqrt', 'intscale', 'intnoscale'};
 [flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
-wt = wfbtinit({'strict',wt},'nat');
-
-for ii=1:numel(wt.nodes)
-   a = wt.nodes{ii}.a;
-   assert(all(a==a(1)),sprintf(['%s: One of the basic wavelet ',...
-                                'filterbanks is not uniform.'],...
-                                upper(mfilename)));
-end
-
-% Do the equivalent filterbank using multirate identity property
-[gmultid,amultid] = wpfbt2filterbank(wt,flags.interscaling);
-
-if isempty(L)
-   L = wfbtlength(max(cellfun(@(gEl) numel(gEl.h),gmultid)),wt);  
-end
-
-% Scale filters 
-gmultid = comp_filterbankscale(gmultid, amultid, flags.scaling);
-
 if nargout<2
-   AF = filterbankbounds(gmultid,1,L);
+   AF = wpfbtbounds(wt,L,flags.scaling,flags.interscaling);
 elseif nargout == 2
-   [AF, BF] = filterbankbounds(gmultid,1,L);
+   [AF, BF] = wpfbtbounds(wt,L,flags.scaling,flags.interscaling);
 end

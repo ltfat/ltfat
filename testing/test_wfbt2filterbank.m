@@ -137,15 +137,15 @@ for jj=1:numel(gt)
       
       if strcmp(testWhat,'wfbt') 
           urefc = uwfbt(f,gttmp,scaling{scIdx});
-          [g,a] = wfbt2filterbank(gttmp);
+          [g,a] = wfbt2filterbank(gttmp,scaling{scIdx});
       elseif strcmp(testWhat,'wpfbt') 
           urefc = uwpfbt(f,gttmp,scaling{scIdx});
-          [g,a] = wpfbt2filterbank(gttmp);
+          [g,a] = wpfbt2filterbank(gttmp,scaling{scIdx});
       end
-      g = comp_filterbankscale(g,a,scaling{scIdx});
+      
 
       
-      uc = ufilterbank(f,g,1,'crossover',crossoverval);
+      uc = ufilterbank(f,g,a,'crossover',crossoverval);
       
       err = norm(uc-urefc);
       [test_failed,fail]=ltfatdiditfail(err,test_failed);

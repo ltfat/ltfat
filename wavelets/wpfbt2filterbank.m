@@ -26,6 +26,12 @@ function [g,a] = wpfbt2filterbank( wt, varargin)
 %      The filters in the filterbank tree are scaled to reflect the
 %      behavior of |wpfbt| and |iwpfbt| with the same flags.
 %
+%   `'scaling_notset'`(default),`'noscale'`,`'scale'`,`'sqrt'`
+%     Support for scaling flags as described in |upwfbt|. By default,
+%     the returned filterbank *g* and *a* is equivalent to |wpfbt|,
+%     passing any of the non-default flags results in a filterbank 
+%     equivalent to |upwfbt| i.e. scaled and with `a(:)=1`.
+%
 %   Examples:
 %   ---------
 %
@@ -50,7 +56,8 @@ function [g,a] = wpfbt2filterbank( wt, varargin)
 
 complainif_notenoughargs(nargin,1,'WPFBT2FILTERBANK');
 
-definput.import = {'wfbtcommon'};
+definput.import = {'wfbtcommon','uwfbtcommon'};
+definput.importdefaults = {'scaling_notset'};
 definput.flags.interscaling={'intsqrt','intnoscale','intscale'};
 [flags]=ltfatarghelper({},definput,varargin);
 
@@ -74,6 +81,11 @@ for ii=1:numel(nIdx)
 end
 g = g(:);
 a = a(:);
+
+if ~flags.do_scaling_notset
+   g = comp_filterbankscale(g,a,flags.scaling);
+   a = ones(numel(g),1);
+end
 
 
 function nodesIdxs = nodesLevelsBForder(treeStruct)
@@ -110,6 +122,8 @@ while ~isempty(toGoTrough)
        chIdxSum = 0;
    end
 end
+
+
 
 
 

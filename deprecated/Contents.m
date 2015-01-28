@@ -18,6 +18,8 @@
 %    IUNSDGT           - Use |insdgt|
 %    IUNSDGTREAL       - Use |insdgtreal|
 %    TFMAT             - Use |frsynmatrix| or |operatormatrix|
+%    UWFBTBOUNDS       - Use |wfbtbounds|
+%    UWPFBTBOUNDS      - Use |wpfbtbounds|
 %
 %  For help, bug reports, suggestions etc. please send email to
 %  ltfat-help@lists.sourceforge.net

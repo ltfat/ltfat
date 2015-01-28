@@ -72,8 +72,7 @@ if(isstruct(par)&&isfield(par,'fname'))
    end
 else
    %% PARSE INPUT
-   definput.import = {'wfbtcommon'};
-   definput.flags.scaling={'sqrt','scale','noscale'};
+   definput.import = {'wfbtcommon','uwfbtcommon'};
    flags=ltfatarghelper({},definput,varargin);
 
    % Initialize the wavelet tree structure

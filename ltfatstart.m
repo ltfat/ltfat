@@ -204,6 +204,7 @@ if ltfatstartprint
 
 end;
 
+clear ltfatarghelper;
 %% ---------- load information into ltfathelp ------------
 
 % As comp is now in the path, we can call ltfatarghelper

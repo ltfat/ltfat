@@ -43,10 +43,8 @@
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %
 %   Frame properties of wavelet filterbanks:
-%      WFBTBOUNDS        - Frame bounds of WFBT or FWT
-%      WPFBTBOUNDS       - Frame bounds of WPFBT
-%      UWFBTBOUNDS       - Frame bounds of UWFBT or UFWT
-%      UWPFBTBOUNDS      - Frame bounds of UWPFBT
+%      WFBTBOUNDS        - Frame bounds of WFBT and FWT (or UWFBT and UFWT)
+%      WPFBTBOUNDS       - Frame bounds of WPFBT or UWPFBT
 %      DTWFBBOUNDS       - Frame bounds of DTWFB
 %  
 %   Plots

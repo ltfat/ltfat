@@ -67,8 +67,7 @@ function [c,info]=uwfbt(f,wt,varargin)
 
 complainif_notenoughargs(nargin,2,'UWFBT');
 
-definput.import = {'wfbtcommon'};
-definput.flags.scaling={'sqrt','scale','noscale'};
+definput.import = {'wfbtcommon','uwfbtcommon'};
 flags=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet tree structure

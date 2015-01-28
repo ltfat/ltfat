@@ -29,34 +29,15 @@ function [AF,BF]=uwfbtbounds(wt,varargin)
 %
 %   See also: uwfbt, filterbankbounds
 
-
+warning('UWFBTBOUNDS is deprecated. Please use WFBTBOUNDS with a appropriate flag.');
 complainif_notenoughargs(nargin,1,'UWFBTBOUNDS');
 
 definput.keyvals.L = [];
-definput.flags.scaling={'sqrt','scale','noscale'};
+definput.import = {'uwfbtcommon'};
 [flags,~,L]=ltfatarghelper({'L'},definput,varargin);
 
-wt = wfbtinit({'strict',wt},'nat');
-
-for ii=1:numel(wt.nodes)
-   a = wt.nodes{ii}.a;
-   assert(all(a==a(1)),sprintf(['%s: One of the basic wavelet ',...
-                                'filterbanks is not uniform.'],...
-                                upper(mfilename)));
-end
-
-% Do the equivalent filterbank using multirate identity property
-[gmultid, amultid] = wfbt2filterbank(wt);
-
-if isempty(L)
-   L = wfbtlength(max(cellfun(@(gEl) numel(gEl.h),gmultid)),wt);  
-end
-
-% Scale filters
-gmultid = comp_filterbankscale(gmultid, amultid, flags.scaling);
-
 if nargout<2
-   AF = filterbankbounds(gmultid,1,L);
+   AF = wfbtbounds(wt,L,flags.scaling);
 elseif nargout == 2
-   [AF, BF] = filterbankbounds(gmultid,1,L);
+   [AF,BF] = wfbtbounds(wt,L,flags.scaling);
 end

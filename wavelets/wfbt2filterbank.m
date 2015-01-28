@@ -11,18 +11,26 @@ function [g,a] = wfbt2filterbank( wt, varargin)
 %
 %   `[g,a]=wfbt2filterbank(wt)` calculates the impulse responses *g* and the
 %   subsampling factors *a* of non-iterated filterbank, which is equivalent
-%   to the wavelet filterbank tree described by *wt*. The returned
-%   parameters can be used directly in |filterbank| and other routines.
+%   to the wavelet filterbank tree described by *wt* used in |wfbt|. The 
+%   returned parameters can be used directly in |filterbank| and other routines.
 %
 %   `[g,a]=wfbt2filterbank({w,J,'dwt'})` does the same for the DWT (|FWT|)
 %   filterbank tree.
 %
-%   Please see help on |wfbt| for description of *wt*. The function
-%   additionally support the following flags:
+%   Please see help on |wfbt| for description of *wt* and help on |fwt| for
+%   description of *w* and *J*. 
+%
+%   The function additionally support the following flags:
 %
 %   `'freq'`(default),`'nat'`
 %     The filters are ordered to produce subbands in the same order as 
 %     |wfbt| with the same flag.
+%
+%   `'scaling_notset'`(default),`'noscale'`,`'scale'`,`'sqrt'`
+%     Support for scaling flags as described in |uwfbt|. By default,
+%     the returned filterbank *g* and *a* is equivalent to |wfbt|,
+%     passing any of the non-default flags results in a filterbank 
+%     equivalent to |uwfbt| i.e. scaled and with `a(:)=1`.
 %
 %   Examples:
 %   ---------
@@ -47,8 +55,12 @@ function [g,a] = wfbt2filterbank( wt, varargin)
 
 complainif_notenoughargs(nargin,1,'WFBT2FILTERBANK');
 
+definput.import = {'uwfbtcommon', 'wfbtcommon'};
+definput.importdefaults = {'scaling_notset'};
+flags = ltfatarghelper({},definput,varargin);
+
 % build the tree
-wt = wfbtinit({'strict',wt},varargin{:});
+wt = wfbtinit({'strict',wt},flags.forder);
 
 % Pick just nodes with outputs
 wtPath = 1:numel(wt.nodes);
@@ -57,4 +69,9 @@ wtPath(nodesOutputsNo(1:numel(wt.nodes),wt)==0)=[];
 rangeLoc = nodesLocOutRange(wtPath,wt);
 rangeOut = nodesOutRange(wtPath,wt);
 [g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,wt);
+
+if ~flags.do_scaling_notset
+   g = comp_filterbankscale(g,a,flags.scaling);
+   a = ones(numel(g),1);
+end
 

@@ -91,7 +91,7 @@ function [c,info] = ufwt(f,w,J,varargin)
 complainif_notenoughargs(nargin,3,'UFWT');
 complainif_notposint(J,'J');
 
-definput.flags.scaling={'sqrt','scale','noscale'};
+definput.import = {'uwfbtcommon'};
 [flags]=ltfatarghelper({},definput,varargin);
 
 % Initialize the wavelet filters structure
