@@ -158,7 +158,8 @@ for kk = 1:length(bins);
 end
 
 % Get rid of filters with frequency centers >=fmax and nf
-temp = find(fc>=fmax,1);
+% This will leave the first bigger than fmax it it is lower than nf
+temp = find(fc>=fmax ,1);
 if fc(temp) >= nf
     fc = fc(1:temp-1);
 else
@@ -178,7 +179,7 @@ fsupp = zeros(M2,1);
 fsupp(1) = 2*fmin;
 fsupp(2) = (fc(2))*(2^(1/bins(1))-2^(-1/bins(1)));
 
-for k = [3:M , M+1]
+for k = [3:M , M]
     fsupp(k) = (fc(k+1)-fc(k-1));
 end
 
@@ -186,7 +187,10 @@ fsupp(M+1) = (fc(M+1))*(2^(1/bins(end))-2^(-1/bins(end)));
 fsupp(M+2) = 2*(nf-fc(end-1));
 
 % Keeping center frequency and changing bandwidth => Q=fbas/bw
-fsupp = kv.Qvar*fsupp;
+% Do that only for the constant Q filters
+fsupp(2:end-1) = kv.Qvar*fsupp(2:end-1);
+% Lowpass and highpass filters has to be treated differently 
+fsupp([1,end]) = fsupp([1,end]);
 
 % Do not allow lower bandwidth than keyvals.min_win
 fsuppmin = kv.min_win/Ls*fs;
@@ -197,8 +201,14 @@ for ii = 1:numel(fsupp)
 end
 
 % Find suitable channel subsampling rates
-aprecise=fs./fsupp/kv.redmul;
+aprecise=fs./fsupp;
 aprecise=aprecise(:);
+if any(aprecise<1)
+    error(['%s: Bandwidth of one of the filters is bigger than fs. ',...
+           'Check fmin and fmax, number of bins and Qval'],upper(mfilename));
+end
+
+aprecise=aprecise/kv.redmul;
 if any(aprecise<1)
     error('%s: The maximum redundancy mult. for this setting is %5.2f',...
          upper(mfilename), min(fs./fsupp));
@@ -211,8 +221,9 @@ if flags.do_regsampling
         bins=bins(1:find(s<=0,1));
         bins(end) = bins(end)-(sum(bins)-M);
         aocts = mat2cell(aprecise(2:end-1),bins);
-        aocts{1} = [aprecise(1);aocts{1}];
-        aocts{end} = [aocts{end};aprecise(end)];
+        aocts = [{aprecise(1)};aocts;aprecise(end)];
+        %aocts{1} = [aprecise(1);aocts{1}];
+        %aocts{end} = [aocts{end};aprecise(end)];
         a=cellfun(@(aEl) floor23(min(aEl)),aocts);
 
         % Determine the minimal transform length lcm(a)
