@@ -289,7 +289,10 @@ fsupp(fsuppIdx:M-1) = ceil(scaletofreq(scalevec+kv.bwmul)-scaletofreq(scalevec-k
 fsupp(M) = ceil(2*(nf-scaletofreq(chan_max+1/bins-kv.bwmul)))+2;
 
 % Find suitable channel subsampling rates
-aprecise=fs./fsupp/kv.redmul;
+% Do not apply redmul to channels 1 and M as it produces uneccesarily
+% badly conditioned frames
+aprecise=fs./fsupp;
+aprecise(2:end-1)=aprecise(2:end-1)/kv.redmul;
 aprecise=aprecise(:);
 if any(aprecise<1)
     error('%s: The maximum redundancy mult. for this setting is %5.2f',...
