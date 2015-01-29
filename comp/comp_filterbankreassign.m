@@ -1,4 +1,4 @@
-function sr = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq)
+function [sr,repos,chan_pos] = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq)
 
 N = cellfun(@numel,s);
 M = numel(s);
@@ -14,6 +14,9 @@ for mm = 1:M
     sr{mm} = zeros(N(mm),1);
     cfreq2(mm) = cfreq(mm) - floor(cfreq(mm)*oneover2)*2;
 end
+
+chan_pos = [0;cumsum(N)];
+repos = cell(sum(cellfun(@numel,sr)),1);
 
 %% Compute reassigned frequencies and times
 for mm = M:-1:1
@@ -156,9 +159,10 @@ for mm = M:-1:1
        tmpIdx = fgradIdx(jj);
        tgradIdx(jj) = mod(round((tgrad{mm}(jj) + a(mm)*(jj-1))./a(tmpIdx)),N(tmpIdx))+1;
     end
-           
+    
     for jj=1:N(mm)
        sr{fgradIdx(jj)}(tgradIdx(jj)) = sr{fgradIdx(jj)}(tgradIdx(jj))+s{mm}(jj);
+       repos{chan_pos(fgradIdx(jj))+tgradIdx(jj)}(end+1) = chan_pos(mm)+jj;
     end
   
 end
