@@ -1,4 +1,4 @@
-function sr=filterbankreassign(s,tgrad,fgrad,a,var)
+function [sr,repos,chan_pos]=filterbankreassign(s,tgrad,fgrad,a,var)
 %FILTERBANKREASSIGN  Reassign filterbank spectrogram
 %   Usage:  sr = filterbankreassign(s,a,tgrad,fgrad,cfreq);
 %           sr = filterbankreassign(s,a,tgrad,fgrad,g);
@@ -93,4 +93,4 @@ else
 end
 
 % Do the computations
-sr = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq);
+[sr,repos,chan_pos] = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq);
