@@ -1,6 +1,6 @@
 % LTFAT - Deprecated functions
 %
-%  Peter L. Søndergaard, 2012 - 2014.
+%  Peter L. Søndergaard, 2012 - 2015.
 %
 %  The functions in this directory are deprecated, and their use is
 %  no longer recommended. The help of each function provides a
