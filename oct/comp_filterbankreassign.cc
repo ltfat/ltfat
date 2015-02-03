@@ -2,8 +2,8 @@
 #define SINGLEARGS
 #define REALARGS
 #define OCTFILENAME comp_filterbankreassign // change to filename
-#define OCTFILEHELP "Computes reassigned spectrogra,.\n\
-                     Usage: sr=comp_gabreassign(s,itime,ifreq,a,cfreq);\n\
+#define OCTFILEHELP "Computes reassigned filterbank spectrogram.\n\
+                     Usage: sr=comp_filterbankreassign(s,itime,ifreq,a,cfreq);\n\
                      Yeah."
 
 
@@ -15,18 +15,21 @@
 static inline void
 fwd_filterbankreassign(const double *s[], const double *tgrad[], const double *fgrad[],
                        const ltfatInt N[], const double a[], const double cfreq[],
-                       const ltfatInt M, double *sr[])
+                       const ltfatInt M, double *sr[], fbreassOptOut* optout)
 {
-   filterbankreassign_d(s, tgrad, fgrad, N, a, cfreq, M, sr);
+   filterbankreassign_d(s, tgrad, fgrad, N, a, cfreq, M, sr, optout);
 }
 
 static inline void
 fwd_filterbankreassign(const float *s[], const float *tgrad[], const float *fgrad[],
                        const ltfatInt N[], const double a[], const double cfreq[],
-                       const ltfatInt M, float *sr[])
+                       const ltfatInt M, float *sr[], fbreassOptOut* optout)
 {
-   filterbankreassign_s(s, tgrad, fgrad, N, a, cfreq, M, sr);
+   filterbankreassign_s(s, tgrad, fgrad, N, a, cfreq, M, sr, optout);
 }
+
+
+
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list
@@ -70,6 +73,20 @@ octFunction(const octave_value_list& args, int nargout)
       srCell.elem(m) = stmp;
       aPtr[m] = aMat(m);
    }
+   octave_value_list retlist;
+   retlist(0) = srCell;
+
+   fbreassOptOut* optout = NULL;
+   Cell repos;
+   octave_idx_type sumN = 0;
+   if (nargout > 1)
+   {
+      for (octave_idx_type ii = 0; ii < M; ii++) sumN += NPtr[ii];
+
+      repos = Cell(dim_vector(sumN, 1));
+      optout = fbreassOptOut_init(sumN, 16 );
+   }
+
 
    // Adjust a
    if (aMat.columns() > 1)
@@ -81,13 +98,24 @@ octFunction(const octave_value_list& args, int nargout)
    }
 
    fwd_filterbankreassign(sPtr, tgradPtr, fgradPtr, NPtr, aPtr, cfreqMat.data(), M,
-                          srPtr);
+                          srPtr, optout);
 
-   /*for (octave_idx_type m = 0; m < M; ++m)
+   if (nargout > 1)
    {
-      sr_cell.elem(m) = sr[m];
-   }
-   */
+      for (ltfatInt ii = 0; ii < M; ii++)
+      {
+         octave_idx_type l = optout->reposl[ii];
+         MArray<double> cEl = MArray<double>(dim_vector(l, l > 0 ? 1 : 0));
+         repos.elem(ii) = cEl;
+         double* cElPtr = cEl.fortran_vec();
+         for (octave_idx_type jj = 0; jj < optout->reposl[ii]; jj++)
+         {
+            cElPtr[jj] = (double) (optout->repos[ii][jj] + 1.0);
+         }
+      }
 
-   return octave_value(srCell);
+      retlist(1) = repos;
+      fbreassOptOut_destroy(optout);
+   }
+   return retlist;
 }

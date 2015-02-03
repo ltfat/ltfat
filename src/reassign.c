@@ -1,5 +1,6 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
+#include "reassign_typeconstant.h"
 
 
 LTFAT_EXTERN void
@@ -44,18 +45,22 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
    LTFAT_SAFEFREEALL(freqpos, timepos);
 }
 
+
+
 LTFAT_EXTERN void
 LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
                                const LTFAT_REAL *tgrad[],
                                const LTFAT_REAL *fgrad[],
                                const ltfatInt N[], const double a[],
-                               const double cfreq[],
-                               const ltfatInt M, LTFAT_REAL *sr[])
+                               const double cfreq[], const ltfatInt M,
+                               LTFAT_REAL *sr[],
+                               fbreassOptOut  *repos)
 {
 #define CHECKZEROCROSSINGANDBREAK( CMP, SIGN) \
-        if ( tmpfgrad CMP 0.0 )\
+     { \
+        if ( (tmpfgrad) CMP 0.0 )\
         {\
-           if (abs(tmpfgrad) < abs(oldfgrad))\
+           if (fabs(tmpfgrad) < fabs(oldfgrad))\
            {\
               fgradIdx[jj] = ii;\
            }\
@@ -65,7 +70,21 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
            }\
            break;\
         }\
-        oldfgrad = tmpfgrad;
+        oldfgrad = tmpfgrad;\
+     }
+
+   ltfatInt* chan_pos = NULL;
+
+   if (repos)
+   {
+      chan_pos = ltfat_malloc((M + 1) * sizeof * chan_pos);
+
+      chan_pos[0] = 0.0;
+      for (ltfatInt ii = 0; ii < M; ii++)
+      {
+         chan_pos[ii + 1] = chan_pos[ii] + N[ii];
+      }
+   }
 
    /* Limit fgrad? */
 
@@ -116,7 +135,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
       for (ltfatInt jj = 0; jj < N[m]; jj++)
       {
          //
-         LTFAT_REAL tmpfgrad;
+         LTFAT_REAL tmpfgrad = 0.0;
          LTFAT_REAL fgradmjj = fgrad[m][jj] + cfreqm;
          LTFAT_REAL oldfgrad = 10; // 10 seems to be big enough
          // Zero this in case it falls trough, although it might not happen
@@ -133,18 +152,18 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
                tmpfgrad = cfreq2[ii] - fgradmjj;
                CHECKZEROCROSSINGANDBREAK( >= , -)
             }
-
-            if (ii == M - 1 && tmpfgrad < 0.0)
+            // If the previous for does not break, ii == M
+            if (ii == M  && tmpfgrad < 0.0)
             {
                for (ltfatInt ii = 0; ii < m ; ii++)
                {
                   tmpfgrad = cfreq2[ii] - fgradmjj + 2.0;
                   CHECKZEROCROSSINGANDBREAK( >= , -)
                }
-               if (fgradIdx[jj] < 0)
-               {
-                  fgradIdx[jj] = M - 1;
-               }
+            }
+            if (fgradIdx[jj] < 0)
+            {
+               fgradIdx[jj] = M - 1;
             }
          }
          else
@@ -155,17 +174,18 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
                tmpfgrad = cfreq2[ii] - fgradmjj;
                CHECKZEROCROSSINGANDBREAK( <= , +)
             }
-            if (ii == 0 && tmpfgrad > 0.0)
+            // If the previous for does not break, ii=-1
+            if (ii == -1 && tmpfgrad > 0.0)
             {
                for (ltfatInt ii = M - 1; ii >= m; ii--)
                {
                   tmpfgrad = cfreq2[ii] - fgradmjj - 2.0;
                   CHECKZEROCROSSINGANDBREAK( <= , +)
                }
-               if (fgradIdx[jj] >= M)
-               {
-                  fgradIdx[jj] = 0;
-               }
+            }
+            if (fgradIdx[jj] >= M)
+            {
+               fgradIdx[jj] = 0;
             }
          }
       }
@@ -184,13 +204,29 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
       }
 
 
-      for (ltfatInt ii = 0; ii < N[m]; ii++)
+      for (ltfatInt jj = 0; jj < N[m]; jj++)
       {
-         sr[fgradIdx[ii]][tgradIdx[ii]] += s[m][ii];
+         sr[fgradIdx[jj]][tgradIdx[jj]] += s[m][jj];
       }
+
+      if (repos && chan_pos)
+      {
+         for (ltfatInt jj = 0; jj < N[m]; jj++)
+         {
+            ltfatInt tmpIdx =  chan_pos[fgradIdx[jj]] + tgradIdx[jj] ;
+            ltfatInt* tmpl = &repos->reposl[tmpIdx];
+            repos->repos[tmpIdx][*tmpl] = chan_pos[m] + jj;
+            (*tmpl)++;
+            if (*tmpl >= repos->reposlmax[tmpIdx])
+            {
+               fbreassOptOut_expand(repos, tmpIdx);
+            }
+         }
+      }
+
    }
 
 
-   LTFAT_SAFEFREEALL(fgradIdx, tgradIdx, cfreq2);
+   LTFAT_SAFEFREEALL(fgradIdx, tgradIdx, cfreq2, chan_pos);
 #undef CHECKZEROCROSSINGANDBREAK
 }

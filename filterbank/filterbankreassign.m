@@ -1,7 +1,8 @@
-function [sr,repos,chan_pos]=filterbankreassign(s,tgrad,fgrad,a,var)
+function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %FILTERBANKREASSIGN  Reassign filterbank spectrogram
 %   Usage:  sr = filterbankreassign(s,a,tgrad,fgrad,cfreq);
 %           sr = filterbankreassign(s,a,tgrad,fgrad,g);
+%           [sr,repos,Lc] = filterbankreassign(...);
 %
 %   Input parameters:
 %      s     : Spectrogram to be reassigned.
@@ -12,19 +13,29 @@ function [sr,repos,chan_pos]=filterbankreassign(s,tgrad,fgrad,a,var)
 %      g     : Set of filters.
 %   Output parameters:
 %      sr    : Reassigned filterbank spectrogram.
+%      repos : Reassigned positions.
+%      Lc    : Subband lengths.
 %
 %   `filterbankreassign(s,a,fgrad,tgrad,cfreq)` will reassign the values of 
-%   the filterbank spectrogram *s* using the group *tgrad* delay and 
-%   instantaneous frequency  and *fgrad*. The time-frequency sampling 
+%   the filterbank spectrogram *s* using the group delay *tgrad* and 
+%   instantaneous frequency *fgrad*. The time-frequency sampling 
 %   pattern is determined from the time steps *a* and the center 
 %   frequencies *cfreq*. 
 %
 %   `filterbankreassign(s,a,fgrad,tgrad,g)` will do the same thing except
 %   the center frequencies are estimated from a set of filters *g*.
 %
+%   `[sr,repos,Lc]=filterbankreassign(...)` does the same thing, but in addition
+%   returns a vector of subband lengths *Lc* (`Lc = cellfun(@numel,s)`)
+%   and cell array *repos* with `sum(Lc)` elements. Each element corresponds 
+%   to a single coefficient obtained by `cell2mat(sr)` and it is a vector 
+%   of indices identifying coefficients from `cell2mat(s)` assigned to 
+%   the particular time-frequency position.
+%
 %   The arguments *s*, *tgrad* and *fgrad* must be cell-arrays of vectors
 %   of the same lengths. Arguments *a* and *cfreq* or *g* must have the
 %   same number of elements as the cell arrays with coefficients.
+%
 %   
 
 %   AUTHOR : Nicki Holighaus.
@@ -67,18 +78,18 @@ end
 M = numel(s);
 
 % Number of elements in channels
-N = cellfun(@(sEl)size(sEl,1),s);
+Lc = cellfun(@(sEl)size(sEl,1),s);
 
 % Sanitize a
 a=comp_filterbank_a(a,M);
 a = a(:,1)./a(:,2);
 
 % Check if a comply with subband lengths
-L = N.*a;
+L = Lc.*a;
 if any(abs(L-L(1))>1e-6)
    error(['%s: Subsampling factors and subband lengths do not ',...
           'comply.'],upper(mfilename));
-end    
+end
 
 % Determine center frequencies
 if isempty(var) || numel(var)~=M || ~isvector(var) && ~iscell(var)
@@ -93,4 +104,9 @@ else
 end
 
 % Do the computations
-[sr,repos,chan_pos] = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq);
+if nargout>1
+   [sr,repos] = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq);
+else
+   sr = comp_filterbankreassign(s,tgrad,fgrad,a,cfreq);
+end
+

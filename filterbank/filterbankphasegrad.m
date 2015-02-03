@@ -1,4 +1,4 @@
-function [fgrad,tgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
+function [tgrad,fgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %FILTERBANKPHASEGRAD   Phase gradient of a filterbank representation
 %   Usage:  [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L,minlvl);
 %           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L);
@@ -82,4 +82,4 @@ end
 f=postpad(f,L);
 
 % Run the computation
-[fgrad,tgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,asan,minlvl);
+[tgrad,fgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,asan,minlvl);
