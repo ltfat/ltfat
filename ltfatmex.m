@@ -58,6 +58,7 @@ bp=bp(1:end-length(mfilename));
 definput.flags.target={'auto','lib','mex','gpc','playrec','java','blockproc'};
 definput.flags.command={'compile','clean','test'};
 definput.flags.libs={'matlablibs','systemlibs'};
+definput.flags.verbosity={'noverbose','verbose'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 if flags.do_systemlibs && (isoctave)
@@ -196,7 +197,7 @@ if flags.do_compile
     end
       % DFFTW and SFFTW are not used in the unix_makefile
       [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                       'dfftw',dfftw,'sfftw',sfftw);
+                       'dfftw',dfftw,'sfftw',sfftw,flags.verbosity);
       if(~status)
         disp('Done.');
       else
@@ -227,7 +228,7 @@ if flags.do_compile
     end
     
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                      'ext',ext,'dfftw',dfftw,'sfftw',sfftw);
+                      'ext',ext,'dfftw',dfftw,'sfftw',sfftw,flags.verbosity);
 
     if(~status)
       disp('Done.');
@@ -242,7 +243,7 @@ if flags.do_compile
     cd([bp,'thirdparty',filesep,'PolygonClip']);
     clear mex; 
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                      'ext',ext);
+                      'ext',ext,flags.verbosity);
 
     if(~status)
       disp('Done.');
@@ -321,7 +322,8 @@ if flags.do_compile
     end
 
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                      'ext',mexext,'portaudio',portaudioLib,'extra','HAVE_PORTAUDIO');
+                      'ext',mexext,'portaudio',portaudioLib,'extra','HAVE_PORTAUDIO',...
+                      flags.verbosity);
     if(~status)
       disp('Done.');
     else
@@ -334,7 +336,7 @@ if flags.do_compile
     % Compile the JAVA classes
     cd([bp,'blockproc',filesep,'java']);
     clear mex; 
-    [status,result] = callmake(make_exe);
+    [status,result] = callmake(make_exe,flags.verbosity);
     if(~status)
       disp('Done.');
     else
@@ -470,6 +472,7 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   definput.keyvals.target=[];
   definput.keyvals.portaudio=[];
   definput.keyvals.extra=[];
+  definput.flags.verbosity={'noverbose','verbose'};
   [flags,kv]=ltfatarghelper({},definput,varargin);
   
   if flags.do_matlabroot
@@ -505,4 +508,9 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   end
 
   [status,result]=system(systemCommand);
+  
+  if flags.do_verbose && ~isoctave
+     disp(result); 
+  end
+      
 
