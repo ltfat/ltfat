@@ -1,4 +1,29 @@
-Version 2.0 7/10 2014
+Version 2.0.2 x/x  2015
+	 * New filterbank-generating function: warpedfilters
+
+	 * New filterbank spectrogram reassignment function: filterbankreassign
+
+	 * ltfatarghelper is now also implemented as a MEX file.
+
+	 * The block function can now handle synchronized simultaneous playback and 
+	   recording. E.g. {'rec','file.wav'} plays a wav file while recording. 
+		This is different from the option 'playrec', which works the "other way" 
+		i.e. it records and play the recorded.
+
+	 * Function framebounds(...,'iter') now uses pcg to represent the inverse of
+	   the frame operator when calculating the lowest eigenvalue using eigs.
+
+	 * Added implementation of some quadratic time-frequency representations: 
+	   Rihaczek,
+
+	 * Fixed #112: Octave package now compiles on Windows (mxe version).
+
+	 * Related to #111: Wavelet filters were hand-centered around the origin.
+
+Version 2.0.1 8/10 2014 (released only at Octave-Forge)
+	 * Included test suite.
+
+Version 2.0.0 7/10 2014
     * Fixed bug in filterbankdual and filterbankrealdual for the uniform case.
       Also the routines are now much faster.
 
