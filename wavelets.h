@@ -2,23 +2,7 @@
 #define _WAVELETS_H
 #include <string.h>
 
-typedef enum
-{
-    PER,
-    PERDEC,
-    PPD,
-    SYM,
-    EVEN,
-    SYMW,
-    ASYM,
-    ODD,
-    ASYMW,
-    SP0,
-    ZPD,
-    ZERO,
-    VALID,
-    BAD_TYPE
-} ltfatExtType;
+
 
 inline static ltfatExtType ltfatExtStringToEnum(const char* extType)
 {

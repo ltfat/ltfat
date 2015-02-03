@@ -38,6 +38,13 @@
 // Vectorized free
 #define LTFAT_SAFEFREEALL(...) LTFAT_APPLYFN(void*,ltfat_safefree,__VA_ARGS__)
 
+// To help muting the unused variable compiler warning
+// Only works for GCC and Clang
+#ifdef __GNUC__
+#  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#  define UNUSED(x) UNUSED_ ## x
+#endif
 
 #define LTFAT_MAKENAME(name,type,comp) name ## _ ## comp ## type
 #define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,d,)
