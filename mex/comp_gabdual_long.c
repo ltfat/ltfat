@@ -18,10 +18,10 @@
 //  comp_gabdual_long(g,a,M);
 
 void 
-LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                         int nrhs, const mxArray *prhs[] )
+LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                         int UNUSED(nrhs), const mxArray *prhs[] )
 {
-   
+
    mwSignedIndex L, R, a, M;
 
    // Get matrix dimensions.

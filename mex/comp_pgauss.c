@@ -23,8 +23,8 @@
  *  comp_pgauss(L,w,c_t,c_f);
  */
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-		  int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+		                        int UNUSED(nrhs), const mxArray *prhs[] )
 
 {
    int L;

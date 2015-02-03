@@ -18,8 +18,8 @@
 //  comp_dgt_ola(f,g,a,M,bl);
 
 void
-LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                         int nrhs, const mxArray *prhs[] )
+LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                         int UNUSED(nrhs), const mxArray *prhs[] )
 {
    mwSignedIndex L, gl,W, a, M, N, bl;
    mwSize ndim;

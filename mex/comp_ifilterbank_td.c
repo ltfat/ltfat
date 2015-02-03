@@ -7,9 +7,6 @@
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
 
-/* Specify whether to change the complex number storage format from split planes (Matlab) to interleaved (fftw, complex.h) */
-//#define CHCOMPLEXFORMAT 1
-#define EXPORTALIAS comp_ifilterbank_td
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -52,7 +49,8 @@
 %         f  : Output Ls*W array.
 %
 */
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
     // printf("Filename: %s, Function name %s, %d \n.",__FILE__,__func__,mxIsDouble(prhs[0]));
     const mxArray* mxc = prhs[0];

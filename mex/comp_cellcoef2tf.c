@@ -23,7 +23,8 @@ COMP_CELLCOEF2TF Cell to a tf-layout
    Usage: coef = comp_cellcoef2tf(coef,maxLen)
 */
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int nrhs, const mxArray *prhs[] )
 {
    const mxArray* mxCoef = prhs[0];
 

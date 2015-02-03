@@ -393,7 +393,7 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
    return out;
 }
 
-void checkArgs(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+void checkArgs(int UNUSED(nlhs), mxArray *UNUSED(plhs[]), int nrhs, const mxArray *UNUSED(prhs[]))
 {
 #ifdef ISNARGINEQ
    if (nrhs != ISNARGINEQ)
@@ -413,7 +413,8 @@ void checkArgs(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       LTFAT_MEXERRMSG("Too few input arguments. Expected %i or more input arguments. Passed %i arg.", ISNARGINGE, nrhs);
    }
 #endif
-
+   // If none of the previous applies, we want to avoid compiler warning
+   (void) nrhs;
 }
 
 /* Helper recasting functions */

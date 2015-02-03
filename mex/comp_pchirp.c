@@ -14,8 +14,8 @@ static inline long long positiverem_long(long long a,long long b)
 /* Calling convention:
  *  pchirp(L,n);
  */
-void mexFunction( int nlhs, mxArray *plhs[], 
-		  int nrhs, const mxArray *prhs[] )
+void mexFunction( int UNUSED(nlhs), mxArray *plhs[], 
+		            int UNUSED(nrhs), const mxArray *prhs[] )
 { 
    const long long L=(long long) mxGetScalar(prhs[0]);
    const long long n=(long long) mxGetScalar(prhs[1]);

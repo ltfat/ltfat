@@ -18,8 +18,8 @@
 //  comp_dwiltiii(f,g,M);
 
 void
-LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                         int nrhs, const mxArray *prhs[] )
+LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                         int UNUSED(nrhs), const mxArray *prhs[] )
 {
     mwSignedIndex M, N, L, gl, W;
 

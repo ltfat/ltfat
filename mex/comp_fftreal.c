@@ -34,8 +34,8 @@ void LTFAT_NAME(fftrealAtExit)()
 //  comp_fftreal(f);
 
 void 
-LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                         int nrhs, const mxArray *prhs[] )
+LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                         int UNUSED(nrhs), const mxArray *prhs[] )
 {
   static int atExitRegistered = 0;
   if(!atExitRegistered)

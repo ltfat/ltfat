@@ -1,6 +1,7 @@
 #include "mex.h"
 #include "fftw3.h"
 #include <string.h>
+#include "ltfat.h"
 
 /*
   Outside functions
@@ -152,7 +153,8 @@ void ifilterbankAtExit()
 
 }
 
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
+                  int UNUSED(nrhs), const mxArray *prhs[] )
 {
    const mxArray* mxc = prhs[0];
    const mxArray* mxg = prhs[1];
@@ -346,7 +348,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
             aPtr[m + fftblCount] = 1;
 
          mxArray* mxrealonly;
-         if (mxrealonly = mxGetField(gEl, 0, "realonly"))
+         if ((mxrealonly = mxGetField(gEl, 0, "realonly")))
             realonlyPtr[m] = mxGetScalar(mxrealonly);
       }
 

@@ -36,7 +36,7 @@ void clearAllWrapper();
  * Custom functions
  * */
 mxArray* getSource(biEntry* obj);
-mxArray* getEnqBufCount(biEntry* obj);
+mxArray* getEnqBufCount();
 mxArray* getToPlay(biEntry* obj);
 void incPageNo();
 void pushPage(const mxArray* in);

@@ -1,6 +1,7 @@
 #include "mex.h"
 #include "fftw3.h"
 #include <string.h>
+#include "ltfat.h"
 
 /*
 void comp_filterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
@@ -54,7 +55,8 @@ void filterbankAtExit()
 
 }
 
-void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
+void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
+                  int UNUSED(nrhs), const mxArray *prhs[] )
 {
    const mxArray* mxf = prhs[0];
    const mxArray* mxg = prhs[1];
@@ -334,7 +336,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
 
          // Only if realonly is specified
          mxArray* mxrealonly;
-         if (mxrealonly = mxGetField(gEl, 0, "realonly"))
+         if ((mxrealonly = mxGetField(gEl, 0, "realonly")))
             realonlyPtr[m] = mxGetScalar(mxrealonly);
       }
 

@@ -17,7 +17,8 @@
 // Calling convention:
 //  comp_dgt_ola(f,g,a,M,s0,s1,br,bl);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
 
    mwSize ndim;

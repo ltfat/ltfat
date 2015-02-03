@@ -17,8 +17,8 @@
 // Calling convention:
 //  cout=comp_gabreassign(s,itime,ifreq,a);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                              int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
    mwSignedIndex a, M, N, L;
    const LTFAT_REAL *s,*tgrad, *fgrad;

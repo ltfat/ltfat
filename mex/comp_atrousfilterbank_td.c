@@ -35,8 +35,8 @@
 %         c  : L*M*W array of coefficients
 %
 */
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                              int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
    const mxArray* mxf = prhs[0];
    const mxArray* mxg = prhs[1];

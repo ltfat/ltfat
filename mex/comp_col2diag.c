@@ -41,8 +41,8 @@ LTFAT_NAME(fwd_col2diag)(const float* cin, const int L, float* cout)
 /* Calling convention:
  *  cout=comp_col2diag(cin);
  */
-void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[],
-                             int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)(int UNUSED(nlhs), mxArray *plhs[],
+                             int UNUSED(nrhs), const mxArray *prhs[] )
 {
    mwSize L = mxGetM(prhs[0]);
    plhs[0] = ltfatCreateMatrix(L, L, LTFAT_MX_CLASSID, LTFAT_MX_COMPLEXITY);

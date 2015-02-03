@@ -17,7 +17,8 @@
 // Calling convention:
 // c=comp_nonsepdgt_shear(f,g,a,M,s0,s1,br);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
   int a, M, N, L, W, s0, s1, br;
 

@@ -24,7 +24,8 @@ int ltfat_round(double x)
 // Calling convention:
 //    c=comp_nonsepdgt_multi(f,g,a,M,lt);
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
    ltfatInt a, M, N, L, W, Lg, lt1, lt2;
 

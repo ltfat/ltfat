@@ -5,7 +5,6 @@
 #define TYPEDEPARGS 0, 1
 #define SINGLEARGS
 #define COMPLEXARGS
-#define EXPORTALIAS comp_filterbank_fft
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
@@ -52,8 +51,8 @@ void LTFAT_NAME(fftMexAtExitFnc)()
     LTFAT_NAME(oldW) = 0;
 }
 
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                              int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
     static int atExitFncRegistered = 0;
     if(!atExitFncRegistered)

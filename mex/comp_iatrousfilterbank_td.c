@@ -47,8 +47,8 @@
 %         f  : Output L*W array.
 %
 */
-void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
-                              int nrhs, const mxArray *prhs[] )
+void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+                              int UNUSED(nrhs), const mxArray *prhs[] )
 {
     const mxArray* mxc = prhs[0];
     const mxArray* mxg = prhs[1];

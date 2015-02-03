@@ -133,6 +133,7 @@ void clearAll(biEntry* dict, size_t dictLen)
 }
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
+   (void) nlhs; // To avoid the unused parameter warning
    static int atExitRegistered = 0;
    if (!atExitRegistered)
    {
@@ -235,7 +236,7 @@ mxArray* getSource(biEntry* obj)
       return obj->var;
 }
 
-mxArray* getEnqBufCount(biEntry* obj)
+mxArray* getEnqBufCount()
 {
    double retVal = 0.0;
    biEntry* cmdStruct = lookupEntry("PageList", vars, ARRAYLEN(vars));
