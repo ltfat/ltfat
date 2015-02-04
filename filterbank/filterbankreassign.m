@@ -1,7 +1,7 @@
 function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %FILTERBANKREASSIGN  Reassign filterbank spectrogram
-%   Usage:  sr = filterbankreassign(s,a,tgrad,fgrad,cfreq);
-%           sr = filterbankreassign(s,a,tgrad,fgrad,g);
+%   Usage:  sr = filterbankreassign(s,tgrad,fgrad,a,cfreq);
+%           sr = filterbankreassign(s,tgrad,fgrad,a,g);
 %           [sr,repos,Lc] = filterbankreassign(...);
 %
 %   Input parameters:
@@ -90,6 +90,7 @@ if any(abs(L-L(1))>1e-6)
    error(['%s: Subsampling factors and subband lengths do not ',...
           'comply.'],upper(mfilename));
 end
+L = L(1);
 
 % Determine center frequencies
 if isempty(var) || numel(var)~=M || ~isvector(var) && ~iscell(var)
@@ -97,7 +98,7 @@ if isempty(var) || numel(var)~=M || ~isvector(var) && ~iscell(var)
           'containg M filters.'],upper(mfilename)); 
 else
     if iscell(var)
-       cfreq = cent_freqs(g,L);
+       cfreq = cent_freqs(var,L);
     else
        cfreq = var;
     end
