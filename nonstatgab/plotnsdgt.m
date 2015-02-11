@@ -1,5 +1,5 @@
 function coef = plotnsdgt(coef,a,varargin)
-%PLOTNSDGT Plot spectrogram from non-stationary Gabor coefficients
+%PLOTNSDGT Plot nonstationary Gabor coefficients
 %   Usage:  plotnsdgt(c,a,fs,dynrange);
 %
 %   Input parameters:

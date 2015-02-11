@@ -11,7 +11,7 @@ function f=insdgtreal(c,g,a,M,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   `insdgt(c,g,a,Ls)` computes the inverse non-stationary Gabor transform
+%   `insdgt(c,g,a,Ls)` computes the inverse nonstationary Gabor transform
 %   of the input coefficients *c*.
 %
 %   `insdgt` is used to invert the functions |nsdgt| and |unsdgt|. Please

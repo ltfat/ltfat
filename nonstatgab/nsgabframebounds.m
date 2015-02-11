@@ -1,5 +1,5 @@
 function [AF,BF]=nsgabframebounds(g,a,M)
-%NSGABFRAMEBOUNDS  Frame bounds of nonstationnary Gabor frame
+%NSGABFRAMEBOUNDS  Frame bounds of nonstationary Gabor frame
 %   Usage:  fcond=nsgabframebounds(g,a,M);
 %           [A,B]=nsgabframebounds(g,a,M);
 %

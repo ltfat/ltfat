@@ -1,5 +1,5 @@
 function coef = plotnsdgtreal(coef,a,varargin)
-%PLOTNSDGTREAL Plot spectrogram from NSDGTREAL coefficients
+%PLOTNSDGTREAL Plot NSDGTREAL coefficients
 %   Usage:  plotnsdgtreal(c,a,fs,dynrange);
 %
 %   Input parameters:
@@ -19,7 +19,7 @@ function coef = plotnsdgtreal(coef,a,varargin)
 %
 %   `C=plotnsdgtreal(...)` returns the processed image data used in the
 %   plotting. Inputting this data directly to `imagesc` or similar
-%   functions will create the plot. This is usefull for custom
+%   functions will create the plot. This is useful for custom
 %   post-processing of the image data.
 %
 %   `plotnsdgtreal` supports all the optional parameters of |tfplot|. Please

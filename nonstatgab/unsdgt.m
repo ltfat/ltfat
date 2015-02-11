@@ -17,8 +17,8 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   given in the form of a 2D matrix of size $Ls \times W$, with *Ls* being
 %   the signal length and *W* the number of signal channels.
 %
-%   The non-stationary Gabor theory extends standard Gabor theory by
-%   enabling the evolution of the window over time. It is therefor necessary
+%   The nonstationary Gabor theory extends standard Gabor theory by
+%   enabling the evolution of the window over time. It is therefore necessary
 %   to specify a set of windows instead of a single window.  This is done by
 %   using a cell array for *g*. In this cell array, the n'th element `g{n}`
 %   is a row vector specifying the n'th window. However, the uniformity
@@ -28,7 +28,7 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %   array. `c(m,n,w)` is thus the value of the coefficient for time index *n*,
 %   frequency index *m* and signal channel *w*.
 %
-%   The variable *a* contains the distance in samples between two consequtive
+%   The variable *a* contains the distance in samples between two consecutive
 %   blocks of coefficients. *a* is a vectors of integers. The variables *g* and
 %   *a* must have the same length.
 %   

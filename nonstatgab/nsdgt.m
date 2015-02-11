@@ -1,5 +1,5 @@
 function [c,Ls] = nsdgt(f,g,a,M)
-%NSDGT  Non-stationary Discrete Gabor transform
+%NSDGT  Nonstationary Discrete Gabor transform
 %   Usage:  c=nsdgt(f,g,a,M);
 %           [c,Ls]=nsdgt(f,g,a,M);
 %
@@ -17,7 +17,7 @@ function [c,Ls] = nsdgt(f,g,a,M)
 %   the form of a 2D matrix of size $Ls \times W$, with *Ls* the signal
 %   length and *W* the number of signal channels.
 %
-%   The nonstationnary Gabor theory extends standard Gabor theory by
+%   The nonstationary Gabor theory extends standard Gabor theory by
 %   enabling the evolution of the window over time. It is therefor necessary
 %   to specify a set of windows instead of a single window.  This is done by
 %   using a cell array for *g*. In this cell array, the n'th element `g{n}`

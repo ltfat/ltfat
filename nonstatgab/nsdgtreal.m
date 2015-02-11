@@ -1,5 +1,5 @@
 function [c,Ls] = nsdgtreal(f,g,a,M)
-%NSDGTREAL  Non-stationary Discrete Gabor transform for real valued signals
+%NSDGTREAL  Nonstationary Discrete Gabor transform for real valued signals
 %   Usage:  c=nsdgtreal(f,g,a,M);
 %           [c,Ls]=nsdgtreal(f,g,a,M);
 %
@@ -21,7 +21,7 @@ function [c,Ls] = nsdgtreal(f,g,a,M)
 %   of the output are returned. `nsdgtreal` will refuse to work for complex
 %   valued input signals.
 %
-%   The nonstationnary Gabor theory extends standard Gabor theory by
+%   The nonstationary Gabor theory extends standard Gabor theory by
 %   enabling the evolution of the window over time. It is therefor necessary
 %   to specify a set of windows instead of a single window.  This is done by
 %   using a cell array for *g*. In this cell array, the n'th element `g{n}`

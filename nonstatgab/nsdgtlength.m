@@ -1,5 +1,5 @@
 function L=nsdgtlength(Ls,a);
-%NSDGTLENGTH  Nsdgt length from signal
+%NSDGTLENGTH  NSDGT length from signal
 %   Usage: L=nsdgtlength(Ls,a);
 %
 %   `nsdgtlength(Ls,a)` returns the length of an |nsdgt| with time shifts
