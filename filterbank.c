@@ -194,6 +194,7 @@ LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);
     ltfat_free(p->buf);
+    ltfat_free(p);
 }
 
 
