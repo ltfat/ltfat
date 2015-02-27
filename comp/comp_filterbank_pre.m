@@ -24,7 +24,7 @@ mFreq(mTime) = [];
 
 % Prepare time-domain filters
 for m = mTime
-   
+
    % Handle .fc parameter
    if isfield(g{m},'fc') && g{m}.fc~=0
       l = (g{m}.offset:g{m}.offset+numel(g{m}.h)-1).'/L;
@@ -36,19 +36,19 @@ for m = mTime
       g{m}.h = real(g{m}.h);
       g{m}.realonly = 0;
    end
-   
+
    % Do zero padding when the offset is big enough so the initial imp. resp.
    % support no longer intersects with zero
    if g{m}.offset > 0
       g{m}.h = [zeros(g{m}.offset,1,class(g{m}.h));g{m}.h(:)];
       g{m}.offset = 0;
    end
-   
+
    if g{m}.offset < -(numel(g{m}.h)-1)
       g{m}.h = [g{m}.h(:);zeros(-g{m}.offset-numel(g{m}.h)+1,1,class(g{m}.h))];
       g{m}.offset = -(numel(g{m}.h)-1);
    end
-   
+
 end
 
 % Prepare frequency-domain filters
@@ -75,26 +75,38 @@ for m=mFreq
            if isfield(g{m},'L')
               if g{m}.L~=L
                  % middlepad in the time domain. This will break
-%                 g.H = fft(middlepad(ifft(circshift(postpad(g.H(:),g.L),g.foff)),L));
-%                 g.foff = 0;
-%                 g.L = L;
-                  error(['%s: g.H was already instantialized with L=%i, but ',...
-                         'it is now used with L=%i.'],upper(mfilename),g.L,L);
+                 %g.H = fft(middlepad(ifft(circshift(postpad(g.H(:),g.L),g.foff)),L));
+                 %g.foff = 0;
+                 %g.L = L;
+                 error(['%s: g.H was already instantialized with L=%i, but ',...
+                 'it is now used with L=%i.'],upper(mfilename),g.L,L);
               end
            else
               % We do not know which L was g.H created with, there is no way
               % how to handle this properly.
               error('%s:  g.H is already a numeric vector, but g.L was not specified.',...
-                    upper(mfilename));     
+              upper(mfilename));
            end
-       else
+       elseif isa(g{m}.H,'function_handle')
           g{m}.H=g{m}.H(L);
-          g{m}.foff=g{m}.foff(L);
           % Store the length used
           g{m}.L = L;
+       else
+           error('%s: SENTINEL: Wrong format of g{ii}.H ',upper(mfilename));
        end
+       if isfield(g{m},'foff')
+           if isa(g{m}.foff,'function_handle') 
+              g{m}.foff=g{m}.foff(L);
+           elseif isscalar(g{m}.foff)
+               % Nothing
+           else
+              error('%s: SENTINEL: Wrong format of g{ii}.foff ',upper(mfilename));
+           end
+        else
+           g.foff = 0;
+        end
     end
-    
+
     if isfield(g{m},'H') && isfield(g{m},'delay') && g{m}.delay~=0
        % handle .delay parameter
        lrange = mod(g{m}.foff:g{m}.foff+numel(g{m}.H)-1,L).'/L;
@@ -107,7 +119,7 @@ for m=mFreq
     % 
     % Just find out whether we are working with fract. subsampling.
     [~,info]=comp_filterbank_a(a,M,struct); 
-    
+
     if numel(g{m}.H)==L && ~info.isfractional
        if isfield(g{m},'foff') && g{m}.foff~=0 
           % handle .foff parameter for full-length freq. resp.
