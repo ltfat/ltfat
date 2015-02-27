@@ -40,6 +40,7 @@ MEXBASESAFE=\
     comp_filterbank \
 	comp_ifilterbank \
     comp_filterbankreassign \
+    comp_filterbankphasegrad \
 
 MEXBASEMORE =\
 	comp_gabdual_long \

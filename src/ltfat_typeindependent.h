@@ -265,6 +265,10 @@ LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
                                 const ltfatInt W, const double a,
                                 const LTFAT_COMPLEX *cout);
 
+LTFAT_EXTERN LTFAT_NAME(convsub_fftbl_plan)
+LTFAT_NAME(convsub_fftbl_init_no_ifft_plan)( const ltfatInt L, const ltfatInt Gl,
+                                             const ltfatInt W, const double a);
+
 LTFAT_EXTERN void
 LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p);
 
@@ -398,6 +402,18 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
                                const double cfreq[],
                                const ltfatInt M,
                                LTFAT_REAL *sr[], fbreassOptOut* repos);
+
+LTFAT_EXTERN void
+LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
+                                const LTFAT_COMPLEX* ch[],
+                                const LTFAT_COMPLEX* cd[],
+                                const ltfatInt          M,
+                                const ltfatInt        N[],
+                                const ltfatInt          L,
+                                const LTFAT_REAL   minlvl,
+                                LTFAT_REAL*        tgrad[],
+                                LTFAT_REAL*        fgrad[],
+                                LTFAT_REAL*           cs[]);
 
 LTFAT_EXTERN void
 LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h);

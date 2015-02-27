@@ -1,10 +1,10 @@
-function [tgrad,fgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
+function [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %FILTERBANKPHASEGRAD   Phase gradient of a filterbank representation
-%   Usage:  [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L,minlvl);
-%           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,L);
-%           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a,minlvl);
-%           [tgrad,fgrad,c_s,c] = filterbankphasegrad(f,g,a);
-%           [tgrad,fgrad,c_s] = filterbankphasegrad(...)
+%   Usage:  [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,L,minlvl);
+%           [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,L);
+%           [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,minlvl);
+%           [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a);
+%           [tgrad,fgrad,cs] = filterbankphasegrad(...)
 %           [tgrad,fgrad]  = filterbankphasegrad(...)
 % 
 %   Input parameters:
@@ -16,12 +16,12 @@ function [tgrad,fgrad,c_s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %   Output parameters:
 %      fgrad : Instantaneous frequency relative to original position.
 %      tgrad : Group delay relative to original position.
-%      c_s   : Filterbank spectrogram.
+%      cs    : Filterbank spectrogram.
 %      c     : Filterbank coefficients.
 %
-%   `[fgrad,tgrad,c_s,c] = filterbankphasegrad(f,g,a,L)` computes the group
+%   `[fgrad,tgrad,cs,c] = filterbankphasegrad(f,g,a,L)` computes the group
 %   delay *tgrad* and instantaneous frequency *fgrad* of the filterbank
-%   spectrogram *c_s* obtained from the signal *f* and filterbank
+%   spectrogram *cs* obtained from the signal *f* and filterbank
 %   parameters *g* and *a*. Both quantities are specified relative to the
 %   original coefficient position. *tgrad* is given in samples, while
 %   *fgrad* is given as values on the unit circle, easily converted into 
@@ -77,9 +77,15 @@ end
 [g,asan]=filterbankwin(g,a,L,'normal');
 
 % Precompute filters
-[hg, dg, g] = comp_phasegradfilters(g, asan, L);
+[gh, gd, g] = comp_phasegradfilters(g, asan, L);
 
 f=postpad(f,L);
 
+c=comp_filterbank(f,g,asan); 
+% Compute filterbank coefficients with frequency weighted window
+ch=comp_filterbank(f,gh,asan);
+% Compute filterbank coefficients with time weighted window
+cd=comp_filterbank(f,gd,asan);
+
 % Run the computation
-[tgrad,fgrad,c_s,c] = comp_filterbankphasegrad(f,g,hg,dg,asan,minlvl);
+[tgrad,fgrad,cs] = comp_filterbankphasegrad(c,ch,cd,L,minlvl);
