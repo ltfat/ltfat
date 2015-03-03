@@ -8,8 +8,6 @@
 
 
 #include "ltfat_oct_template_helper.h"
-#include "config.h"
-#include "fftw3.h"
 // octave_idx_type is 32 or 64 bit signed integer
 
 static inline void fwd_fftreal(const double *f,
@@ -19,7 +17,7 @@ static inline void fwd_fftreal(const double *f,
 {
     fftreal_d(const_cast<double*>(f),
               L, W,
-              reinterpret_cast<double _Complex*>(cout));
+              reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void fwd_fftreal(const float *f,
@@ -29,7 +27,7 @@ static inline void fwd_fftreal(const float *f,
 {
     fftreal_s(const_cast<float*>(f),
               L, W,
-              reinterpret_cast<float _Complex*>(cout));
+              reinterpret_cast<fftwf_complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

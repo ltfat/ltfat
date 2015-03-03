@@ -15,10 +15,10 @@ fwd_ifilterbank_fftbl(const Complex *c[], const Complex *G[],
                       const ltfatInt M, const ltfatInt foff[],
                       const int realonly[], Complex *F)
 {
-    ifilterbank_fftbl_d(reinterpret_cast<const double _Complex **>(c),
-                        reinterpret_cast<const double _Complex **>(G),
+    ifilterbank_fftbl_d(reinterpret_cast<const fftw_complex **>(c),
+                        reinterpret_cast<const fftw_complex **>(G),
                         L,Gl,W,afrac,M,foff,realonly,
-                        reinterpret_cast<double _Complex *>(F));
+                        reinterpret_cast<fftw_complex *>(F));
 }
 
 static inline void
@@ -28,10 +28,10 @@ fwd_ifilterbank_fftbl(const FloatComplex *c[], const FloatComplex *G[],
                       const ltfatInt M, const ltfatInt foff[],
                       const int realonly[], FloatComplex *F)
 {
-    ifilterbank_fftbl_s(reinterpret_cast<const float _Complex **>(c),
-                        reinterpret_cast<const float _Complex **>(G),
+    ifilterbank_fftbl_s(reinterpret_cast<const fftwf_complex **>(c),
+                        reinterpret_cast<const fftwf_complex **>(G),
                         L,Gl,W,afrac,M,foff,realonly,
-                        reinterpret_cast<float _Complex *>(F));
+                        reinterpret_cast<fftwf_complex *>(F));
 }
 
 

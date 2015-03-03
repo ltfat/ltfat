@@ -22,7 +22,7 @@ fwd_dgtreal_ola(const double *f, const double *g,
 {
     dgtreal_ola_d(f, g, L, gl, W, a, M, bl,
                   static_cast<dgt_phasetype>(ptype),
-                  reinterpret_cast<double _Complex*>(cout));
+                  reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -34,7 +34,7 @@ fwd_dgtreal_ola(const float *f, const float *g,
 {
     dgtreal_ola_s(f, g, L, gl, W, a, M, bl,
                   static_cast<dgt_phasetype>(ptype),
-                  reinterpret_cast<float _Complex*>(cout));
+                  reinterpret_cast<fftwf_complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

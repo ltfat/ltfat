@@ -1,8 +1,10 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
+#include <complex.h>
+#include "fftw3.h"
 #include "ltfat_types.h"
 #include "mex.h"
-#include "fftw3.h"
-#include <complex.h>
+
+
 
 
 mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg);

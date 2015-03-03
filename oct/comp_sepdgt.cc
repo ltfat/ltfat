@@ -17,11 +17,11 @@ fwd_dgt_fb(const Complex *f, const Complex *g,
            const octave_idx_type M, const octave_idx_type ptype,
            Complex *cout)
 {
-    dgt_fb_cd(reinterpret_cast<const double _Complex*>(f),
-              reinterpret_cast<const double _Complex*>(g),
+    dgt_fb_cd(reinterpret_cast<const fftw_complex*>(f),
+              reinterpret_cast<const fftw_complex*>(g),
               L, gl, W, a, M,
               static_cast<const dgt_phasetype>(ptype),
-              reinterpret_cast<double _Complex*>(cout));
+              reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -31,11 +31,11 @@ fwd_dgt_fb(const FloatComplex *f, const FloatComplex *g,
            const octave_idx_type M, const octave_idx_type ptype,
            FloatComplex *cout)
 {
-    dgt_fb_cs(reinterpret_cast<const float _Complex*>(f),
-              reinterpret_cast<const float _Complex*>(g),
+    dgt_fb_cs(reinterpret_cast<const fftwf_complex*>(f),
+              reinterpret_cast<const fftwf_complex*>(g),
               L, gl, W, a, M,
               static_cast<const dgt_phasetype>(ptype),
-              reinterpret_cast<float _Complex*>(cout));
+              reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void
@@ -49,7 +49,7 @@ fwd_dgt_fb(const double *f, const double *g,
              reinterpret_cast<const double*>(g),
              L, gl, W, a, M,
              static_cast<const dgt_phasetype>(ptype),
-             reinterpret_cast<double _Complex*>(cout));
+             reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -63,7 +63,7 @@ fwd_dgt_fb(const float *f, const float *g,
              reinterpret_cast<const float*>(g),
              L, gl, W, a, M,
              static_cast<const dgt_phasetype>(ptype),
-             reinterpret_cast<float _Complex*>(cout));
+             reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void
@@ -72,11 +72,11 @@ fwd_dgt_long(const Complex *f, const Complex *g,
              const octave_idx_type a, const octave_idx_type M,
              const octave_idx_type ptype, Complex *cout)
 {
-    dgt_long_cd(reinterpret_cast<const double _Complex*>(f),
-                reinterpret_cast<const double _Complex*>(g),
+    dgt_long_cd(reinterpret_cast<const fftw_complex*>(f),
+                reinterpret_cast<const fftw_complex*>(g),
                 L, W, a, M,
                 static_cast<const dgt_phasetype>(ptype),
-                reinterpret_cast<double _Complex*>(cout));
+                reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -85,11 +85,11 @@ fwd_dgt_long(const FloatComplex *f, const FloatComplex *g,
              const octave_idx_type a, const octave_idx_type M,
              const octave_idx_type ptype, FloatComplex *cout)
 {
-    dgt_long_cs(reinterpret_cast<const float _Complex*>(f),
-                reinterpret_cast<const float _Complex*>(g),
+    dgt_long_cs(reinterpret_cast<const fftwf_complex*>(f),
+                reinterpret_cast<const fftwf_complex*>(g),
                 L, W, a, M,
                 static_cast<const dgt_phasetype>(ptype),
-                reinterpret_cast<float _Complex*>(cout));
+                reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void
@@ -100,7 +100,7 @@ fwd_dgt_long(const double *f, const double *g,
 {
     dgt_long_d(f, g, L, W, a, M,
                static_cast<const dgt_phasetype>(ptype),
-               reinterpret_cast<double _Complex*>(cout));
+               reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -111,7 +111,7 @@ fwd_dgt_long(const float *f, const float *g,
 {
     dgt_long_s(f, g, L, W, a, M,
                static_cast<const dgt_phasetype>(ptype),
-               reinterpret_cast<float _Complex*>(cout));
+               reinterpret_cast<fftwf_complex*>(cout));
 }
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)

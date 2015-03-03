@@ -21,7 +21,7 @@ fwd_dgtreal_fb(const double *f, const double *g,
 {
     dgtreal_fb_d(f, g, L, gl, W, a, M,
                  static_cast<dgt_phasetype>(phasetype),
-                 reinterpret_cast<double _Complex*>(cout));
+                 reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -33,7 +33,7 @@ fwd_dgtreal_fb(const float *f, const float *g,
 {
     dgtreal_fb_s(f, g, L, gl, W, a, M,
                  static_cast<dgt_phasetype>(phasetype),
-                 reinterpret_cast<float _Complex*>(cout));
+                 reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void
@@ -44,7 +44,7 @@ fwd_dgtreal_long(const double *f, const double *g, const octave_idx_type L,
 {
     dgtreal_long_d(f, g, L, W, a, M,
                    static_cast<dgt_phasetype>(phasetype),
-                   reinterpret_cast<double _Complex*>(cout));
+                   reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -55,7 +55,7 @@ fwd_dgtreal_long(const float *f, const float *g, const octave_idx_type L,
 {
     dgtreal_long_s(f, g, L, W, a, M,
                    static_cast<dgt_phasetype>(phasetype),
-                   reinterpret_cast<float _Complex*>(cout));
+                   reinterpret_cast<fftwf_complex*>(cout));
 }
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)

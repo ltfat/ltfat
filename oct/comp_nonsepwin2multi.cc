@@ -18,9 +18,9 @@ fwd_nonsepwin2multi(const Complex *g,
                     Complex *mwin)
 {
     nonsepwin2multi_d(
-        reinterpret_cast<const double _Complex *>(g),
+        reinterpret_cast<const fftw_complex *>(g),
         L,Lg,a,M,lt1,lt2,
-        reinterpret_cast<double _Complex *>(mwin));
+        reinterpret_cast<fftw_complex *>(mwin));
 }
 
 static inline void
@@ -31,9 +31,9 @@ fwd_nonsepwin2multi(const FloatComplex *g,
                     FloatComplex *mwin)
 {
     nonsepwin2multi_s(
-        reinterpret_cast<const float _Complex *>(g),
+        reinterpret_cast<const fftwf_complex *>(g),
         L,Lg,a,M,lt1,lt2,
-        reinterpret_cast<float _Complex *>(mwin));
+        reinterpret_cast<fftwf_complex *>(mwin));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

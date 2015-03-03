@@ -33,9 +33,9 @@ static inline void fwd_dst(const Complex *f,
                            Complex *c,
                            const dst_kind kind)
 {
-    dst_cd(reinterpret_cast<const double _Complex *>(f),
+    dst_cd(reinterpret_cast<const fftw_complex *>(f),
            L, W,
-           reinterpret_cast<double _Complex *>(c),
+           reinterpret_cast<fftw_complex *>(c),
            kind);
 }
 
@@ -45,9 +45,9 @@ static inline void fwd_dst(const FloatComplex *f,
                            FloatComplex* c,
                            const dst_kind kind)
 {
-    dst_cs(reinterpret_cast<const float _Complex *>(f),
+    dst_cs(reinterpret_cast<const fftwf_complex *>(f),
            L, W,
-           reinterpret_cast<float _Complex *>(c),
+           reinterpret_cast<fftwf_complex *>(c),
            kind);
 }
 

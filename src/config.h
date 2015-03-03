@@ -6,8 +6,14 @@
 * Macros, not changing
 */
 #ifdef __cplusplus
+   // C++ complex header
+   // fftw3.h will define:
+   // typedef double fftw_complex[2]
    #include <complex>
 #else
+   // C99 complex header
+   // fftw3.h will define:
+   // typedef double _Complex fftw_complex
    #include <complex.h>
 #endif
 #include <string.h>
@@ -21,7 +27,6 @@
 
 #define HAVE_BLAS 1
 #define HAVE_LAPACK 1
-
 
 #ifndef PI
 #define PI 3.1415926535897932384626433832795

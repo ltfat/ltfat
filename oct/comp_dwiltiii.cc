@@ -15,9 +15,9 @@ fwd_dwiltiii_fb(const Complex *f, const Complex *g,
                 const octave_idx_type W, const octave_idx_type M,
                 Complex *cout)
 {
-    dwiltiii_fb_cd(reinterpret_cast<const double _Complex*>(f),
-                   reinterpret_cast<const double _Complex*>(g),
-                   L, gl, W, M, reinterpret_cast<double _Complex*>(cout));
+    dwiltiii_fb_cd(reinterpret_cast<const fftw_complex*>(f),
+                   reinterpret_cast<const fftw_complex*>(g),
+                   L, gl, W, M, reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -26,9 +26,9 @@ fwd_dwiltiii_fb(const FloatComplex *f, const FloatComplex *g,
                 const octave_idx_type W, const octave_idx_type M,
                 FloatComplex *cout)
 {
-    dwiltiii_fb_cs(reinterpret_cast<const float _Complex*>(f),
-                   reinterpret_cast<const float _Complex*>(g),
-                   L, gl, W, M, reinterpret_cast<float _Complex*>(cout));
+    dwiltiii_fb_cs(reinterpret_cast<const fftwf_complex*>(f),
+                   reinterpret_cast<const fftwf_complex*>(g),
+                   L, gl, W, M, reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void
@@ -54,9 +54,9 @@ fwd_dwiltiii_long(const Complex *f, const Complex *g,
                   const octave_idx_type L, const octave_idx_type W,
                   const octave_idx_type M, Complex *cout)
 {
-    dwiltiii_long_cd(reinterpret_cast<const double _Complex*>(f),
-                     reinterpret_cast<const double _Complex*>(g),
-                     L, W, M, reinterpret_cast<double _Complex*>(cout));
+    dwiltiii_long_cd(reinterpret_cast<const fftw_complex*>(f),
+                     reinterpret_cast<const fftw_complex*>(g),
+                     L, W, M, reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -64,9 +64,9 @@ fwd_dwiltiii_long(const FloatComplex *f, const FloatComplex *g,
                   const octave_idx_type L, const octave_idx_type W,
                   const octave_idx_type M, FloatComplex *cout)
 {
-    dwiltiii_long_cs(reinterpret_cast<const float _Complex*>(f),
-                     reinterpret_cast<const float _Complex*>(g),
-                     L, W, M, reinterpret_cast<float _Complex*>(cout));
+    dwiltiii_long_cs(reinterpret_cast<const fftwf_complex*>(f),
+                     reinterpret_cast<const fftwf_complex*>(g),
+                     L, W, M, reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void

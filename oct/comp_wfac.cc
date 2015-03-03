@@ -17,9 +17,9 @@ fwd_comp_wfac(const Complex *g,
               const octave_idx_type a, const octave_idx_type M,
               Complex *cout)
 {
-    wfac_cd(reinterpret_cast<const double _Complex*>(g),
+    wfac_cd(reinterpret_cast<const fftw_complex*>(g),
             L, R, a, M,
-            reinterpret_cast<double _Complex*>(cout));
+            reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -28,9 +28,9 @@ fwd_comp_wfac(const FloatComplex *g,
               const octave_idx_type a, const octave_idx_type M,
               FloatComplex *cout)
 {
-    wfac_cs(reinterpret_cast<const float _Complex*>(g),
+    wfac_cs(reinterpret_cast<const fftwf_complex*>(g),
             L, R, a, M,
-            reinterpret_cast<float _Complex*>(cout));
+            reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void
@@ -41,7 +41,7 @@ fwd_comp_wfac(const double *g,
 {
     wfac_d(reinterpret_cast<const double*>(g),
            L, R, a, M,
-           reinterpret_cast<double _Complex*>(cout));
+           reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
@@ -52,7 +52,7 @@ fwd_comp_wfac(const float *g,
 {
     wfac_s(reinterpret_cast<const float*>(g),
            L, R, a, M,
-           reinterpret_cast<float _Complex*>(cout));
+           reinterpret_cast<fftwf_complex*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

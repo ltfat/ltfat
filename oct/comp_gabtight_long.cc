@@ -15,9 +15,9 @@ fwd_gabtight_long(const Complex *g, const octave_idx_type L,
                   const octave_idx_type R, const octave_idx_type a,
                   const octave_idx_type M, Complex *gd)
 {
-    gabtight_long_cd(reinterpret_cast<const _Complex double*>(g),
+    gabtight_long_cd(reinterpret_cast<const fftw_complex*>(g),
                      L, R, a, M,
-                     reinterpret_cast<_Complex double*>(gd));
+                     reinterpret_cast<fftw_complex*>(gd));
 }
 
 static inline void
@@ -25,9 +25,9 @@ fwd_gabtight_long(const FloatComplex *g, const octave_idx_type L,
                   const octave_idx_type R, const octave_idx_type a,
                   const octave_idx_type M, FloatComplex *gd)
 {
-    gabtight_long_cs(reinterpret_cast<const _Complex float*>(g),
+    gabtight_long_cs(reinterpret_cast<const fftwf_complex*>(g),
                      L, R, a, M,
-                     reinterpret_cast<_Complex float*>(gd));
+                     reinterpret_cast<fftwf_complex*>(gd));
 }
 
 static inline void

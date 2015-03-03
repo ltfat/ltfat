@@ -1,7 +1,3 @@
-#include "fftw3.h"
-#include <stdlib.h>
-#include <math.h>
-
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 

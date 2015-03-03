@@ -17,10 +17,10 @@ fwd_ifilterbank_fft(const Complex *c[], const Complex *filt[],
                     const ltfatInt a[], const ltfatInt M,
                     Complex *f)
 {
-    ifilterbank_fft_d(reinterpret_cast<const double _Complex **>(c),
-                      reinterpret_cast<const double _Complex **>(filt),
+    ifilterbank_fft_d(reinterpret_cast<const fftw_complex **>(c),
+                      reinterpret_cast<const fftw_complex **>(filt),
                       L, W, a, M,
-                      reinterpret_cast<double _Complex *>(f));
+                      reinterpret_cast<fftw_complex *>(f));
 }
 
 static inline void
@@ -29,10 +29,10 @@ fwd_ifilterbank_fft(const FloatComplex *c[], const FloatComplex *filt[],
                     const ltfatInt a[], const ltfatInt M,
                     FloatComplex *f)
 {
-    ifilterbank_fft_s(reinterpret_cast<const float _Complex **>(c),
-                      reinterpret_cast<const float _Complex **>(filt),
+    ifilterbank_fft_s(reinterpret_cast<const fftwf_complex **>(c),
+                      reinterpret_cast<const fftwf_complex **>(filt),
                       L, W, a, M,
-                      reinterpret_cast<float _Complex *>(f));
+                      reinterpret_cast<fftwf_complex *>(f));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

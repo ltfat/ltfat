@@ -17,10 +17,10 @@ fwd_dgt_multi( const Complex *f,const Complex *g,
                const octave_idx_type lt2, Complex *cout)
 {
     dgt_multi_d(
-        reinterpret_cast<const double _Complex *>(f),
-        reinterpret_cast<const double _Complex *>(g),
+        reinterpret_cast<const fftw_complex *>(f),
+        reinterpret_cast<const fftw_complex *>(g),
         L,Lg,W,a,M,lt1,lt2,
-        reinterpret_cast<double _Complex *>(cout));
+        reinterpret_cast<fftw_complex *>(cout));
 }
 
 static inline void
@@ -31,10 +31,10 @@ fwd_dgt_multi( const FloatComplex *f,const FloatComplex *g,
                const octave_idx_type lt2, FloatComplex *cout)
 {
     dgt_multi_s(
-        reinterpret_cast<const float _Complex *>(f),
-        reinterpret_cast<const float _Complex *>(g),
+        reinterpret_cast<const fftwf_complex *>(f),
+        reinterpret_cast<const fftwf_complex *>(g),
         L,Lg,W,a,M,lt1,lt2,
-        reinterpret_cast<float _Complex *>(cout));
+        reinterpret_cast<fftwf_complex *>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

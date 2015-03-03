@@ -16,8 +16,8 @@ static inline void fwd_ifftreal(const Complex *c,
                                 const octave_idx_type W,
                                 double *f)
 {
-    ifftreal_d(const_cast<double _Complex*>(
-                   reinterpret_cast<const double _Complex*>(c)),
+    ifftreal_d(const_cast<fftw_complex*>(
+                   reinterpret_cast<const fftw_complex*>(c)),
                L, W, f);
 }
 
@@ -26,8 +26,8 @@ static inline void fwd_ifftreal(const FloatComplex *c,
                                 const octave_idx_type W,
                                 float *f)
 {
-    ifftreal_s(const_cast<float _Complex*>(
-                   reinterpret_cast<const float _Complex*>(c)),
+    ifftreal_s(const_cast<fftwf_complex*>(
+                   reinterpret_cast<const fftwf_complex*>(c)),
                L, W, f);
 }
 

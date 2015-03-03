@@ -18,7 +18,7 @@ fwd_idgtreal_fb(const Complex *coef, const double *gf,
                 const octave_idx_type M, const octave_idx_type ptype,
                 double *f)
 {
-    idgtreal_fb_d(reinterpret_cast<const double _Complex*>(coef),
+    idgtreal_fb_d(reinterpret_cast<const fftw_complex*>(coef),
                   gf, L, gl, W, a, M,
                   static_cast<const dgt_phasetype>(ptype),
                   f);
@@ -31,7 +31,7 @@ fwd_idgtreal_fb(const FloatComplex *coef, const float *gf,
                 const octave_idx_type M, const octave_idx_type ptype,
                 float *f)
 {
-    idgtreal_fb_s(reinterpret_cast<const float _Complex*>(coef),
+    idgtreal_fb_s(reinterpret_cast<const fftwf_complex*>(coef),
                   gf, L, gl, W, a, M,
                   static_cast<const dgt_phasetype>(ptype),
                   f);
@@ -43,7 +43,7 @@ fwd_idgtreal_long(const Complex *coef, const double *gf,
                   const octave_idx_type a, const octave_idx_type M,
                   const octave_idx_type ptype, double *f)
 {
-    idgtreal_long_d(reinterpret_cast<const double _Complex*>(coef),
+    idgtreal_long_d(reinterpret_cast<const fftw_complex*>(coef),
                     gf, L, W, a, M,
                     static_cast<const dgt_phasetype>(ptype),
                     f);
@@ -55,7 +55,7 @@ fwd_idgtreal_long(const FloatComplex *coef, const float *gf,
                   const octave_idx_type a, const octave_idx_type M,
                   const octave_idx_type ptype, float *f)
 {
-    idgtreal_long_s(reinterpret_cast<const float _Complex*>(coef),
+    idgtreal_long_s(reinterpret_cast<const fftwf_complex*>(coef),
                     gf, L, W, a, M,
                     static_cast<const dgt_phasetype>(ptype),
                     f);

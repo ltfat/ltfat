@@ -1,5 +1,6 @@
 #include "ltfat_mex_template_helper.h"
 #include "mex.h"
+#include <string.h>
 
 #define COMMAND_LENGTH 20
 

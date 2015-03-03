@@ -1,5 +1,4 @@
 #include "block_interface.h"
-#include <string.h>
 
 
 void defaultSetter(biEntry* obj, const mxArray* in)

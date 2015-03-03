@@ -18,9 +18,9 @@ fwd_idwilt_fb(const Complex *c, const Complex *g,
               const octave_idx_type W, const octave_idx_type M,
               Complex *f)
 {
-    idwilt_fb_cd(reinterpret_cast<const double _Complex*>(c),
-                 reinterpret_cast<const double _Complex*>(g),
-                 L, gl, W, M, reinterpret_cast<double _Complex*>(f));
+    idwilt_fb_cd(reinterpret_cast<const fftw_complex*>(c),
+                 reinterpret_cast<const fftw_complex*>(g),
+                 L, gl, W, M, reinterpret_cast<fftw_complex*>(f));
 }
 
 static inline void
@@ -29,10 +29,10 @@ fwd_idwilt_fb(const FloatComplex *c, const FloatComplex *g,
               const octave_idx_type W, const octave_idx_type M,
               FloatComplex *f)
 {
-    idwilt_fb_cs(reinterpret_cast<const float _Complex*>(c),
-                 reinterpret_cast<const float _Complex*>(g),
+    idwilt_fb_cs(reinterpret_cast<const fftwf_complex*>(c),
+                 reinterpret_cast<const fftwf_complex*>(g),
                  L, gl, W, M,
-                 reinterpret_cast<float _Complex*>(f));
+                 reinterpret_cast<fftwf_complex*>(f));
 }
 
 static inline void
@@ -58,9 +58,9 @@ fwd_idwilt_long(const Complex *c, const Complex *g,
                 const octave_idx_type L, const octave_idx_type W,
                 const octave_idx_type M, Complex *f)
 {
-    idwilt_long_cd(reinterpret_cast<const double _Complex*>(c),
-                   reinterpret_cast<const double _Complex*>(g),
-                   L, W, M, reinterpret_cast<double _Complex*>(f));
+    idwilt_long_cd(reinterpret_cast<const fftw_complex*>(c),
+                   reinterpret_cast<const fftw_complex*>(g),
+                   L, W, M, reinterpret_cast<fftw_complex*>(f));
 }
 
 static inline void
@@ -68,9 +68,9 @@ fwd_idwilt_long(const FloatComplex *c, const FloatComplex *g,
                 const octave_idx_type L, const octave_idx_type W,
                 const octave_idx_type M, FloatComplex *f)
 {
-    idwilt_long_cs(reinterpret_cast<const float _Complex*>(c),
-                   reinterpret_cast<const float _Complex*>(g),
-                   L, W, M, reinterpret_cast<float _Complex*>(f));
+    idwilt_long_cs(reinterpret_cast<const fftwf_complex*>(c),
+                   reinterpret_cast<const fftwf_complex*>(g),
+                   L, W, M, reinterpret_cast<fftwf_complex*>(f));
 }
 
 static inline void

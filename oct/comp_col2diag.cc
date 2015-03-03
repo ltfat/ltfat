@@ -14,16 +14,16 @@
 static inline void
 fwd_col2diag(const Complex *cin, const octave_idx_type L, Complex *cout)
 {
-    col2diag_cd(reinterpret_cast<const double _Complex*>(cin), L,
-                reinterpret_cast<double _Complex*>(cout));
+    col2diag_cd(reinterpret_cast<const fftw_complex*>(cin), L,
+                reinterpret_cast<fftw_complex*>(cout));
 }
 
 static inline void
 fwd_col2diag(const FloatComplex *cin, const octave_idx_type L,
              FloatComplex *cout)
 {
-    col2diag_cs(reinterpret_cast<const float _Complex*>(cin), L,
-                reinterpret_cast<float _Complex*>(cout));
+    col2diag_cs(reinterpret_cast<const fftwf_complex*>(cin), L,
+                reinterpret_cast<fftwf_complex*>(cout));
 }
 
 static inline void

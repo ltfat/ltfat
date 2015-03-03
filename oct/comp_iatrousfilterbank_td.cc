@@ -16,10 +16,10 @@ fwd_iatrousfilterbank_td(const Complex *c, const Complex *g[],
                          const ltfatInt offset[], const ltfatInt M,
                          Complex *f, ltfatExtType ext)
 {
-    iatrousfilterbank_td_cd(reinterpret_cast<const double _Complex *>(c),
-                            reinterpret_cast<const double _Complex **>(g),
+    iatrousfilterbank_td_cd(reinterpret_cast<const fftw_complex *>(c),
+                            reinterpret_cast<const fftw_complex **>(g),
                             L, gl, W, a, offset, M,
-                            reinterpret_cast<double _Complex *>(f),
+                            reinterpret_cast<fftw_complex *>(f),
                             ext);
 }
 
@@ -30,10 +30,10 @@ fwd_iatrousfilterbank_td(const FloatComplex *c, const FloatComplex *g[],
                          const ltfatInt offset[], const ltfatInt M,
                          FloatComplex *f, ltfatExtType ext)
 {
-    iatrousfilterbank_td_cs(reinterpret_cast<const float _Complex *>(c),
-                            reinterpret_cast<const float _Complex **>(g),
+    iatrousfilterbank_td_cs(reinterpret_cast<const fftwf_complex *>(c),
+                            reinterpret_cast<const fftwf_complex **>(g),
                             L, gl, W, a, offset, M,
-                            reinterpret_cast<float _Complex *>(f),
+                            reinterpret_cast<fftwf_complex *>(f),
                             ext);
 }
 

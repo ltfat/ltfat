@@ -30,9 +30,9 @@ fwd_dct(const Complex *f, const octave_idx_type L,
         const octave_idx_type W, Complex *c,
         const dct_kind kind)
 {
-    dct_cd(reinterpret_cast<const double _Complex *>(f),
+    dct_cd(reinterpret_cast<const fftw_complex *>(f),
            L, W,
-           reinterpret_cast<double _Complex *>(c),
+           reinterpret_cast<fftw_complex *>(c),
            kind);
 }
 
@@ -41,9 +41,9 @@ fwd_dct(const FloatComplex *f, const octave_idx_type L,
         const octave_idx_type W, FloatComplex* c,
         const dct_kind kind)
 {
-    dct_cs(reinterpret_cast<const float _Complex *>(f),
+    dct_cs(reinterpret_cast<const fftwf_complex *>(f),
            L, W,
-           reinterpret_cast<float _Complex *>(c),
+           reinterpret_cast<fftwf_complex *>(c),
            kind);
 }
 
