@@ -1,5 +1,5 @@
 function [h,g,a,info]=wfilt_spline(m,n)
-% WFILT_SPLINE  Birthogonal spline wavelets
+% WFILT_SPLINE  Biorthogonal spline wavelets
 %   Usage: [h,g,a]=wfilt_spline(m,n);
 %
 %   Input parameters:

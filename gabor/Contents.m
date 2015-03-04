@@ -14,7 +14,7 @@
 %    dgt            -  Discrete Gabor transform
 %    IDGT           -  Inverse discrete Gabor transform
 %    ISGRAM         -  Iterative reconstruction from spectrogram
-%    ISGRAMREAL     -  Iterative reconstruction from spectrogram (real signal)
+%    ISGRAMREAL     -  Iterative reconstruction from spectrogram for real-valued signals
 %    DGT2           -  2D Discrete Gabor transform
 %    IDGT2          -  2D Inverse discrete Gabor transform
 %    DGTREAL        -  |dgt| for real-valued signals

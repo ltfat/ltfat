@@ -29,8 +29,8 @@
 %   Dual-tree complex wavelet transform
 %      DTWFB             - Dual-Tree Wavelet FilterBank
 %      IDTWFB            - Inverse Dual-Tree Wavelet FilterBank
-%      DTWFBREAL         - Dual-Tree Wavelet FilterBank for real signals
-%      IDTWFBREAL        - Inverse Dual-Tree Wavelet FilterBank for real signals
+%      DTWFBREAL         - Dual-Tree Wavelet FilterBank for real-valued signals
+%      IDTWFBREAL        - Inverse Dual-Tree Wavelet FilterBank for real-valued signals
 %
 %   Wavelet Filterbank trees manipulation
 %      WFBTINIT          - Wavelet Filterbank tree structure initialization
@@ -53,7 +53,7 @@
 %      WFILTDTINFO       - Plot the same as WFILTINFO but for dual-tree wavelet transform
 %
 %   Auxilary
-%      WAVFUN            - Aproximate of the continuous scaling and wavelet functions
+%      WAVFUN            - Approximate of the continuous scaling and wavelet functions
 %      WAVCELL2PACK      - Changes wavelet coefficient storing format
 %      WAVPACK2CELL      - Changes wavelet coefficient storing format back
 %
