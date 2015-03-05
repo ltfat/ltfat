@@ -26,9 +26,13 @@ ifndef SFFTW
    SFFTW=-lfftw3f
 endif
 
+# += to allow user defined values for CFLAGS
+CFLAGS+=-shared -fPIC -g -Wall -Wextra -std=c99
 
-CFLAGS=-shared -fPIC -O3 -Wall -std=c99
-SEARCHPATHS=-I../src/thirdparty -I../src -I$(MATLABROOT)/extern/include 
+# the following adds parameters to CFLAGS
+include ../src/comptarget.mk
+
+SEARCHPATHS=-I../src/thirdparty -I../src -I$(MATLABROOT)/extern/include
 
 include filedefs.mk
 
@@ -47,14 +51,17 @@ LTFATLIBSTATIC=../lib/libltfat.a ../lib/libltfatf.a
 
 # Setting relative paths 
 #LTFATLIBDYNAMIC=-L../lib -lltfat -lltfatf -Wl,-R,'$$ORIGIN/../lib'
- 
-LTFATLIB=$(LTFATLIBSTATIC) -lc -lm 
 
-all: $(MEXS)
+LTFATLIB=$(LTFATLIBSTATIC) -lc -lm
+
+# Use optimization by default
+all: $(MEXS) ltfatarghelper.$(EXT)
 
 %.$(EXT): %.c Makefile_unix config.h
 	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ $< $(LTFATLIB) $(LINKFLAGS) 
 
+ltfatarghelper.$(EXT):
+	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ ltfatarghelper.c ../src/utils/list.c -lc -lm $(LINKFLAGS)
 
 clean:
 	-rm *.o

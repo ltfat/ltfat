@@ -14,14 +14,20 @@ function test_extended_ltfat()
 tests_todo = {
     'erbfilters',...
     'fbreassign',...
-    'fbwarped_framebounds'
+    'fbwarped_framebounds',...
+    'wfilt'
 };
 
 total_tests_failed=0;
 list_of_failed_tests={};
 
 for name = tests_todo
-        feval(['test_',name{1}]);
+       tmpfailed = feval(['test_',name{1}]);
+       if tmpfailed>0
+           list_of_failed_tests{end+1} = ['test_',name{1}];
+           total_tests_failed = total_tests_failed + tmpfailed;
+       end
+       
 end
 
 

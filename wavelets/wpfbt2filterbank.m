@@ -27,10 +27,10 @@ function [g,a] = wpfbt2filterbank( wt, varargin)
 %      behavior of |wpfbt| and |iwpfbt| with the same flags.
 %
 %   `'scaling_notset'`(default),`'noscale'`,`'scale'`,`'sqrt'`
-%     Support for scaling flags as described in |upwfbt|. By default,
+%     Support for scaling flags as described in |uwpfbt|. By default,
 %     the returned filterbank *g* and *a* is equivalent to |wpfbt|,
 %     passing any of the non-default flags results in a filterbank 
-%     equivalent to |upwfbt| i.e. scaled and with `a(:)=1`.
+%     equivalent to |uwpfbt| i.e. scaled and with `a(:)=1`.
 %
 %   Examples:
 %   ---------

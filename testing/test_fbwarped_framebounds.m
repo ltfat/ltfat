@@ -1,4 +1,5 @@
-function test_fbwarped_framebounds
+function test_failed=test_fbwarped_framebounds
+test_failed = 0;
 Ls = 44100;
 fs = 44100;
 fmax = fs/2;

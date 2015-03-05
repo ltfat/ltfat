@@ -283,9 +283,9 @@ void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray 
 
 /** Private Function prototypes */
 
-bool checkIsReal(const mxArray *prhsEl);
+int checkIsReal(const mxArray *prhsEl);
 
-bool checkIsSingle(const mxArray *prhsEl);
+int checkIsSingle(const mxArray *prhsEl);
 
 mxArray* recastToSingle(mxArray* prhsEl);
 
@@ -496,16 +496,16 @@ mxArray* recastToSingle(mxArray* prhsEl)
    return tmpEl;
 }
 
-bool checkIsSingle(const mxArray *prhsEl)
+int checkIsSingle(const mxArray *prhsEl)
 {
    if (mxIsCell(prhsEl))
    {
       for (mwIndex jj = 0; jj < mxGetNumberOfElements(prhsEl); jj++)
       {
          if (checkIsSingle(mxGetCell(prhsEl, jj)))
-            return true;
+            return 1;
       }
-      return false;
+      return 0;
    }
 
    if (mxIsStruct(prhsEl))
@@ -516,11 +516,11 @@ bool checkIsSingle(const mxArray *prhsEl)
    return mxIsSingle(prhsEl);
 }
 
-bool checkIsReal(const mxArray *prhsEl)
+int checkIsReal(const mxArray *prhsEl)
 {
    if (mxIsCell(prhsEl))
    {
-      bool isAllReal = false;
+      int isAllReal = 0;
       for (mwIndex jj = 0; jj < mxGetNumberOfElements(prhsEl); jj++)
       {
          if (!(isAllReal = checkIsReal(mxGetCell(prhsEl, jj))))
@@ -586,11 +586,11 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
       LTFAT_MEXERRMSG("To few input arguments. Expected at least %i args.", maxPrhsToCheck + 1);
 
    // Indicator array defining which input arg. should be reformated.
-   bool recastToComplexIndArr[nrhs];
+   int recastToComplexIndArr[nrhs];
    memset(recastToComplexIndArr, 0, sizeof(recastToComplexIndArr));
 
 
-   bool isAnyComplex = false;
+   int isAnyComplex = 0;
    FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfComplex)
    if ( (isAnyComplex = !checkIsReal(*prhsElPtr))) break;
 
@@ -605,20 +605,20 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 #endif
 #if (defined(COMPLEXARGS) && !defined(REALARGS)) && !defined(COMPLEXINDEPENDENT)
    FORSUBSETIDX(int *  prhsElIdx, prhs, prhsToCheckIfComplex)
-   recastToComplexIndArr[*prhsElIdx] = true;
+   recastToComplexIndArr[*prhsElIdx] = 1;
 #endif
 
 #if (defined(COMPLEXARGS) && defined(REALARGS)) || defined(COMPLEXINDEPENDENT)
    if (isAnyComplex)
       FORSUBSETIDX(int *  prhsElIdx, prhs, prhsToCheckIfComplex)
-      recastToComplexIndArr[*prhsElIdx] = true;
+      recastToComplexIndArr[*prhsElIdx] = 1;
 #endif
 
    // Copy input parameters
    const mxArray **prhsAlt = mxMalloc(nrhs * sizeof(mxArray *));
    memcpy((void *)prhsAlt, (void *)prhs, nrhs * sizeof(mxArray *));
 
-   bool isAnySingle = false;
+   int isAnySingle = 0;
 #ifdef SINGLEARGS
    FORSUBSET(const mxArray **prhsElPtr, prhs, prhsToCheckIfSingle)
    if ( (isAnySingle = checkIsSingle(*prhsElPtr))) break;
@@ -637,8 +637,8 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 
 #if defined(COMPLEXINDEPENDENT)
 
-      bool isAllReal = false;
-      bool isAllComplex = false;
+      int isAllReal = 0;
+      int isAllComplex = 0;
 
       FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
       if ( !(isAllReal = checkIsReal(*prhsElPtr))) break;
@@ -672,8 +672,8 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 
 #if defined(COMPLEXINDEPENDENT)
 
-      bool isAllReal = false;
-      bool isAllComplex = false;
+      int isAllReal = 0;
+      int isAllComplex = 0;
 
       FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
       if ( !(isAllReal = checkIsReal(*prhsElPtr))) break;

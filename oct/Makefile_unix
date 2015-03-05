@@ -8,6 +8,8 @@ OCTSCC   = $(shell ls comp_*.cc)
 OCTSBASE = $(basename $(OCTSCC))
 OCTS     = $(addsuffix .$(EXT),$(OCTSBASE))
 
+MEXFILES = block_interface.mex comp_filterbank.mex comp_ifilterbank.mex
+
 MKOCTFILE ?= mkoctfile
 
 ifndef LAPACK_LIBS
@@ -26,19 +28,28 @@ ifndef FFTW_LIBS
 FFTW_LIBS := $(shell $(MKOCTFILE) -p FFTW_LIBS)
 endif
 
+export CFLAGS := $(shell $(MKOCTFILE) -p CFLAGS) -std=c99
 # export is necessary, otherwise LFLAGS won't have any effect
 # at least on Windows and on Mac
 export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS)
 
 include ../src/ostools.mk
 
-all:	$(OCTS)
+all:	$(OCTS) ltfatarghelper.mex $(MEXFILES)
 
 %.$(EXT): %.cc
-	$(MKOCTFILE) -strip -Wall -I../thirdparty -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
+	$(MKOCTFILE) -strip -Wall -DNDEBUG -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
+
+%.mex: ../mex/%.c 
+	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $< -o $@ 
+
+ltfatarghelper.mex:
+	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex ../src/utils/list.c ../mex/ltfatarghelper.c -o ltfatarghelper.mex
+
 
 clean:
 	$(RM) *.o
 	$(RM) *.$(EXT)
+	$(RM) *.mex
 
 .PHONY: all clean

@@ -91,7 +91,7 @@ definput.keyvals.climsym=1;
 definput.keyvals.fmax=[];
 definput.keyvals.xres=800;
 definput.keyvals.yres=600;
-
+definput.keyvals.fs=[];
 [flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
 % Override the setting from tfplot, because INSTFREQPLOT does not support the

@@ -55,7 +55,10 @@ end;
 bp=mfilename('fullpath');
 bp=bp(1:end-length(mfilename));
 
+
 definput.flags.target={'auto','lib','mex','gpc','playrec','java','blockproc'};
+% This has to be also defined 
+definput.flags.comptarget={'release','debug'};
 definput.flags.command={'compile','clean','test'};
 definput.flags.libs={'matlablibs','systemlibs'};
 definput.flags.verbosity={'noverbose','verbose'};
@@ -132,7 +135,7 @@ if flags.do_clean
   if do_lib
     disp('========= Cleaning libltfat ===============');
     cd([bp,'src']);
-    callmake(make_exe,makefilename,'target','clean');
+    callmake(make_exe,makefilename,'target','clean',flags.verbosity);
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean']);
     %disp('Done.');    
   end;
@@ -140,7 +143,7 @@ if flags.do_clean
   if do_mex
     fprintf('========= Cleaning %s interfaces =========\n', upper(extname));
      cd([bp,extname]);
-     callmake(make_exe,makefilename,'target','clean','ext',ext);
+     callmake(make_exe,makefilename,'target','clean','ext',ext,flags.verbosity);
      %[status,result]=system([make_exe, ' -f ',makefilename,' clean',...
      %                ' EXT=',ext]); 
   end;
@@ -149,7 +152,7 @@ if flags.do_clean
     disp('========= Cleaning GPC ====================');
     cd([bp,'thirdparty',filesep,'PolygonClip']);
     clear mex; 
-    callmake(make_exe,makefilename,'target','clean','ext',mexext);
+    callmake(make_exe,makefilename,'target','clean','ext',mexext,flags.verbosity);
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
   
@@ -165,14 +168,14 @@ if flags.do_clean
     cd([bp,'thirdparty',filesep,'Playrec']);
     clear mex; 
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
-    callmake(make_exe,makefilename,'target','clean','ext',mexext); 
+    callmake(make_exe,makefilename,'target','clean','ext',mexext,flags.verbosity); 
   end;
   
   if do_java
     disp('========= Cleaning JAVA ================');
     cd([bp,'blockproc',filesep,'java']);
     %[status,result]=system([make_exe,' clean']);
-    callmake(make_exe,[],'target','clean');
+    callmake(make_exe,[],'target','clean',flags.verbosity);
   end;
 
   cd(curdir);
@@ -197,7 +200,8 @@ if flags.do_compile
     end
       % DFFTW and SFFTW are not used in the unix_makefile
       [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                       'dfftw',dfftw,'sfftw',sfftw,flags.verbosity);
+                       'dfftw',dfftw,'sfftw',sfftw,flags.verbosity,...
+                       'comptarget',flags.comptarget);
       if(~status)
         disp('Done.');
       else
@@ -228,7 +232,9 @@ if flags.do_compile
     end
     
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
-                      'ext',ext,'dfftw',dfftw,'sfftw',sfftw,flags.verbosity);
+                      'ext',ext,'dfftw',dfftw,'sfftw',sfftw,...
+                      flags.verbosity,...
+                      'comptarget',flags.comptarget);
 
     if(~status)
       disp('Done.');
@@ -470,6 +476,7 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   definput.keyvals.dfftw=[];
   definput.keyvals.sfftw=[];
   definput.keyvals.target=[];
+  definput.keyvals.comptarget=[];
   definput.keyvals.portaudio=[];
   definput.keyvals.extra=[];
   definput.flags.verbosity={'noverbose','verbose'};
@@ -498,6 +505,10 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   if ~isempty(kv.portaudio)
      systemCommand = [systemCommand, ' PORTAUDIO=',kv.portaudio]; 
   end
+  
+  if ~isempty(kv.comptarget) && ~strcmpi(kv.comptarget,'release')
+     systemCommand = [systemCommand, ' COMPTARGET=',kv.comptarget];
+  end
 
   if ~isempty(kv.extra)
      systemCommand = [systemCommand, ' ',kv.extra,'=1']; 
@@ -507,10 +518,18 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
      systemCommand = [systemCommand,' ',kv.target];  
   end
 
+  if flags.do_verbose
+      fprintf('Calling:\n    %s\n\n',systemCommand);
+  end
+  
   [status,result]=system(systemCommand);
   
   if flags.do_verbose && ~isoctave
      disp(result); 
   end
+  
+  
+
+
       
 

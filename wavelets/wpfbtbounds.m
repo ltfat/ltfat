@@ -24,9 +24,9 @@ function [AF,BF]=wpfbtbounds(wt,varargin)
 %       behavior of |wpfbt| and |iwpfbt| with the same flags.
 %
 %   `'scaling_notset'`(default),`'noscale'`,`'scale'`,`'sqrt'`
-%     Support for scaling flags as described in |upwfbt|. By default,
+%     Support for scaling flags as described in |uwpfbt|. By default,
 %     the bounds are caltulated for |wpfbt|, passing any of the non-default
-%     flags results in bounds for |upwfbt|.
+%     flags results in bounds for |uwpfbt|.
 %
 %   See also: wpfbt, filterbankbounds
 

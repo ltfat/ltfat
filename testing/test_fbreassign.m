@@ -1,4 +1,6 @@
-function test_fbreassign(varargin)
+function test_failed = test_fbreassign(varargin)
+test_failed = 0;
+try
 
 do_time = any(strcmp('time',varargin));
 
@@ -106,3 +108,7 @@ if do_time, RAtimeL = toc; fprintf('RAtimeL=%d\n',RAtimeL); end
 figure(2); subplot(313); plotfilterbank(sr3,a,'fc',fs/2*cfreq1,'linabs');
 % 
 % clear all
+
+catch
+    test_failed = 1;
+end

@@ -26,7 +26,10 @@ ifndef SFFTW
    SFFTW=-lfftw3f-3
 endif
 
-CFLAGS=-O3 -shared -s -Wall -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
+CFLAGS=-shared -s -Wall -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
+
+# the following adds parameters to CFLAGS
+include ../src/comptarget.mk
 
 include filedefs.mk
 include ../src/ostools.mk
@@ -42,6 +45,9 @@ all: $(MEXS)
 
 $(MEXS): %.$(EXT): %.c 
 	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ $(DFFTW) $(SFFTW) -lltfat -lltfatf $(MEXLINKFLAGS)
+
+ltfatarghelper.$(EXT):
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) -o $@ ltfatarghelper.c ../src/utils/list.c -lc -lm $(MEXLINKFLAGS)
 
 clean: 
 	$(RM) *.$(EXT)

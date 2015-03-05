@@ -21,13 +21,18 @@ ifndef SFFTW
    SFFTW=-lfftw3f
 endif
 
-CFLAGS+=-O3 -std=c99 -Ithirdparty
+CFLAGS+=-g -std=c99 -Ithirdparty -Wall -Wextra
+
+# the following adds parameters to CFLAGS
+include comptarget.mk
+
 # This is used for Octave mxe 
 ifneq ($(OS),Windows_NT)
-   CFLAGS+=-fPIC 
+   CFLAGS+=-fPIC
 endif
 
-SHARED_FLAGS=-shared -Wl,--no-undefined -lc -lm -L"$(MATLABROOT)/bin/$(ARCH)" \
+# Used only in the shared library build
+SHARED_FLAGS=-shared -Wl,--no-undefined -L"$(MATLABROOT)/bin/$(ARCH)" \
 			 -lmwblas -lmwlapack $(DFFTW) $(SFFTW)
 
 include filedefs.mk
@@ -60,11 +65,11 @@ double_shared: $(DFILES) Makefile_unix
 single_shared: $(SFILES) Makefile_unix
 	$(CC) $(SHARED_FLAGS) $(SFILES) -o ../lib/libltfatf.so
 
-sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
-	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
-
-dltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
-	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DMATLABFORTRAN -c $< -o $*.o
+#sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
+#	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
+#
+#dltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
+#	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DMATLABFORTRAN -c $< -o $*.o
 
 s%.o: %.c config.h
 	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o s$*.o
