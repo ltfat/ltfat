@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <stdbool.h>
+//#include <stdbool.h> // We do not use bool anyway
 #include <math.h>
 #include "fftw3.h"
 #include "cblas.h"
