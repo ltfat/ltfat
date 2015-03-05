@@ -342,7 +342,7 @@ if flags.do_compile
     % Compile the JAVA classes
     cd([bp,'blockproc',filesep,'java']);
     clear mex; 
-    [status,result] = callmake(make_exe,flags.verbosity);
+    [status,result] = callmake(make_exe,'Makefile',flags.verbosity);
     if(~status)
       disp('Done.');
     else
