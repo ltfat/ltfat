@@ -13,7 +13,7 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %   Output parameters:
 %      g            : Cell array of filters.
 %      a            : Downsampling rate for each channel.
-%      fc           : Center frequency of each channel.
+%      fc           : Center frequency of each channel (in Hz).
 %      L            : Next admissible length suitable for the generated filters.
 %
 %   `[g,a,fc]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls)`
