@@ -287,7 +287,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
         LTFAT_NAME_COMPLEX(reverse_array)((LTFAT_COMPLEX *)G, Gconj, Gl);
         LTFAT_NAME_COMPLEX(conjugate_array)(Gconj, Gconj, Gl);
 
-        LTFAT_NAME(upconv_fftbl_execute)(p, cin, Gconj, foffconj, false, F);
+        LTFAT_NAME(upconv_fftbl_execute)(p, cin, Gconj, foffconj, 0, F);
         ltfat_free(Gconj);
     }
 

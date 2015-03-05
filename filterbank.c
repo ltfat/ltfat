@@ -287,7 +287,7 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
             Gconj[ii] = (LTFAT_COMPLEX) conj((double _Complex)G[Gl-1-ii]);
         }
 
-        LTFAT_NAME(convsub_fftbl_execute)(p, F, Gconj, foffconj, false, cout2);
+        LTFAT_NAME(convsub_fftbl_execute)(p, F, Gconj, foffconj, 0, cout2);
 
         // Scale
         for(ltfatInt ii=0; ii<W*N; ii++)
