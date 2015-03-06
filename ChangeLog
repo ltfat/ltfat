@@ -19,6 +19,8 @@ Version 2.0.2 x/x  2015
 	 * Fixed #112: Octave package now compiles on Windows (mxe version).
 
 	 * Related to #111: Wavelet filters were hand-centered around the origin.
+	 
+	 * comp_filterbank, comp_ifilterbank and ltfatarghelper are compiled as MEX files in Octave.
 
 Version 2.0.1 8/10 2014 (released only at Octave-Forge)
 	 * Included test suite.
