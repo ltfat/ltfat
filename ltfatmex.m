@@ -37,7 +37,15 @@ function ltfatmex(varargin)
 %
 %     'java'     Perform compilation of JAVA classes into the bytecode.
 %                The classes makes the GUI for the blockproc. framework.
-  
+%
+%   Other:
+%
+%      'verbose' Print action details. 
+%
+%      'debug'   Build a debug version. This will disable compiler 
+%                optimizations and include debug symbols.
+%                
+
 %   AUTHOR : Peter L. Søndergaard.
 %   TESTING: NA
 %   REFERENCE: NA
