@@ -89,6 +89,49 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %                           value is *1*. If the value is less than one,
 %                           the system may no longer be painless.
 %
+%   Examples:
+%   ---------
+%
+%   In the first example, we construct a highly redudant uniform
+%   filterbank and visualize the result:::
+%
+%     [f,fs]=greasy;  % Get the test signal
+%     [g,a,fc]=cqtfilters(fs,100,fs,32,length(f),'uniform');
+%     c=filterbank(f,g,a);
+%     plotfilterbank(c,a,fc,fs,90,'audtick');
+%
+%   In the second example, we construct a non-uniform filterbank with
+%   fractional sampling that works for this particular signal length, and
+%   test the reconstruction. The plot displays the response of the
+%   filterbank to verify that the filters are well-behaved both on a
+%   normal and an log scale. The second plot shows frequency responses of
+%   filters used for analysis (top) and synthesis (bottom). :::
+%
+%     [f,fs]=greasy;  % Get the test signal
+%     L=length(f);
+%     [g,a,fc]=cqtfilters(fs,100,fs,8,L,'fractional');
+%     c=filterbank(f,{'realdual',g},a);
+%     r=2*real(ifilterbank(c,g,a));
+%     norm(f-r)
+% 
+%     % Plot the response
+%     figure(1);
+%     subplot(2,1,1);
+%     R=filterbankresponse(g,a,L,fs,'real','plot');
+% 
+%     subplot(2,1,2);
+%     semiaudplot(linspace(0,fs/2,L/2+1),R(1:L/2+1));
+%     ylabel('Magnitude');
+% 
+%     % Plot frequency responses of individual filters
+%     gd=filterbankrealdual(g,a,L);
+%     figure(2);
+%     subplot(2,1,1);
+%     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
+% 
+%     subplot(2,1,2);
+%     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
+%
 %   See also:  erbfilters, cqt, firwin, filterbank
 %
 %   References:  dogrhove11 dogrhove12 schorkhuber2014matlab
