@@ -7,7 +7,8 @@ function gout = comp_painlessfilterbank(g,a,L,type,do_real)
 M = numel(g);
 
 F = comp_filterbankresponse(g,a,L,do_real);
-g = comp_filterbank_pre(g,a,L,0);
+% inf here ensures FIR filters will stay FIR
+g = comp_filterbank_pre(g,a,L,inf);
 
 if strcmpi(type,'tight')
     F = sqrt(F);  

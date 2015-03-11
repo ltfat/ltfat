@@ -13,7 +13,7 @@ function H = comp_zerofilt(wintype,fs,chan_min,freqtoscale,scaletofreq,bwmul,bin
         samples(1) = samples(2);
     end
     
-    FILTS = zeros(bins*(chan_min-Minfilt),numel(samples));
+    FILTS = zeros(round(bins*(chan_min-Minfilt)),numel(samples));
     for kk = 1:size(FILTS,1)
        FILTS(kk,:) = firwin(wintype,(samples-(chan_min-kk/bins))/(2*bwmul));
     end

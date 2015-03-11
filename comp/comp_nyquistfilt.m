@@ -10,7 +10,7 @@ function H = comp_nyquistfilt(wintype,fs,chan_max,freqtoscale,scaletofreq,bwmul,
     Minpos = ceil(Ls/fs*scaletofreq(chan_max+1/bins-bwmul));
     samples = freqtoscale((Minpos-1:floor(Ls/2))*fs/Ls);
     
-    FILTS = zeros(bins*(Maxfilt-chan_max),numel(samples));
+    FILTS = zeros(round(bins*(Maxfilt-chan_max)),numel(samples));
     for kk = 1:size(FILTS,1)
        FILTS(kk,:) = firwin(wintype,(samples-(chan_max+kk/bins))/(2*bwmul));
     end
