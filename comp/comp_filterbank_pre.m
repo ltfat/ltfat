@@ -79,7 +79,7 @@ for m=mFreq
                  %g.foff = 0;
                  %g.L = L;
                  error(['%s: g.H was already instantialized with L=%i, but ',...
-                 'it is now used with L=%i.'],upper(mfilename),g.L,L);
+                 'it is now used with L=%i.'],upper(mfilename),g{m}.L,L);
               end
            else
               % We do not know which L was g.H created with, there is no way
