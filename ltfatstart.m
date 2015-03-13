@@ -22,6 +22,13 @@ function ltfatstart(ltfatstartprint)
 %   `status==1` identifies a toolbox module any other value just a
 %   directory to be added to path.
 %
+%   !!WARNING for MATLAB users!!
+%   ----------------------------
+%
+%   The function indirectly calls `clear all`, which clears all your global
+%   and persistent variables. It comes with calling `javaaddpath` and 
+%   there is nothig we can do about that at the moment.
+%
 %   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
 
 %   AUTHOR : Peter L. Søndergaard.  
@@ -197,6 +204,9 @@ if ltfatstartprint
                    ltfat_version,backend);
   
   disp(banner);
+  if ~isoctave() && ltfatstartprint
+      disp('(Your global and persistent variables have just been cleared. Sorry.)');
+  end
   
   if exist('ltfat_binary_notes.m','file')
     ltfat_binary_notes;    

@@ -13,7 +13,7 @@ if ~isempty(which('javaaddpath'))
       % MATLAB calls the 'clear java' command whenever you change the dynamic path. 
       % It clears definition of all Java classes defined by files on the dynamic class path,
       % removes all variables from the base workspace, and removes all compiled scripts, functions,
-      % and MEX-functions from memory.
+      % global, persistent variables and MEX-functions from memory.
 
       jarFile = 'blockproc.jar';
       javaDirPath = [basepath,filesep,'blockproc',filesep,'java'];
