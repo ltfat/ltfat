@@ -1,8 +1,11 @@
-function f=normalize(f,varargin)
+function [f,fnorm]=normalize(f,varargin)
 %NORMALIZE  Normalize input signal by specified norm
 %   Usage:  h=normalize(f,...);
 % 
 %   `normalize(f,...)` will normalize the signal *f* by the specified norm.
+%
+%   `[f,fnorm]=normalize(f,...)` does the same thing, but in addition
+%   returns norm *fnorm* of a signal *f*.
 %
 %   The norm is specified as a string and may be one of:
 %
@@ -53,7 +56,7 @@ definput.keyvals.dim=[];
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-if flags.do_null || isempty(f);
+if flags.do_null || flags.do_norm_notset || isempty(f);
   return
 end;
 
@@ -65,32 +68,39 @@ end
  
 [f,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,[],kv.dim, ...
                                                   upper(mfilename));
+fnorm = zeros(W,1);
 
 for ii=1:W  
   
   if flags.do_1 || flags.do_area
-    f(:,ii)=f(:,ii)/norm(f(:,ii),1);
+    fnorm(ii) =  norm(f(:,ii),1);
+    f(:,ii)=f(:,ii)/fnorm(ii);
   end;
 
   if flags.do_2 || flags.do_energy 
-    f(:,ii)=f(:,ii)/norm(f(:,ii),2);
+    fnorm(ii) = norm(f(:,ii),2);
+    f(:,ii)=f(:,ii)/fnorm(ii);
   end;
 
   if flags.do_inf || flags.do_peak
-    f(:,ii)=f(:,ii)/norm(f(:,ii),Inf);
+    fnorm(ii) = norm(f(:,ii),Inf);
+    f(:,ii)=f(:,ii)/fnorm(ii);
   end;
 
   if flags.do_rms
-    f(:,ii)=f(:,ii)/rms(f(:,ii));
+    fnorm(ii) = rms(f(:,ii));
+    f(:,ii)=f(:,ii)/fnorm(ii);
   end;
   
   if flags.do_s0 
-    f(:,ii)=f(:,ii)/s0norm(f(:,ii));
+    fnorm(ii) = s0norm(f(:,ii));
+    f(:,ii)=f(:,ii)/fnorm(ii);
   end;
   
   if flags.do_wav
-    if isa(f,'float')    
-       f(:,ii)=0.99*f(:,ii)/norm(f(:,ii),Inf);
+    if isa(f,'float')
+       fnorm(ii) = norm(f(:,ii),Inf); 
+       f(:,ii) = 0.99*f(:,ii)/fnorm(ii);
     else
        error(['%s: TO DO: Normalizing integer data types not supported ',...
               'yet.'],upper(mfilename));
