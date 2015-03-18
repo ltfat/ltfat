@@ -211,8 +211,8 @@ if iscell(wdef)
             complainDual(do_dual,'filterbank cell array');
             g = wname{1};
             a = wname{2};
-            [g,asan,info]=filterbankwin(g,a,'normal');
-            if ~info.isfir
+            [g,asan,infotmp]=filterbankwin(g,a,'normal');
+            if ~infotmp.isfir
                 error('%s: Only FIR filters are supported.',upper(mfilename));
             end
             w.h = g;
