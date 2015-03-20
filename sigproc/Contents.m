@@ -9,6 +9,21 @@
 %    CRESTFACTOR    -  Compute the crest factor of a signal.
 %    UQUANT         -  Simulate uniform quantization.
 %
+%  Window functions
+%    FIRWIN         -  FIR windows (Hanning,Hamming,Blackman,...).
+%    FIRKAISER      -  FIR Kaiser-Bessel window.
+%    FIR2LONG       -  Extend FIR window to LONG window.
+%    LONG2FIR       -  Cut LONG window to FIR window.
+%
+%  Filtering
+%    FIRFILTER      -  Construct an FIR filter.
+%    BLFILTER       -  Construct a band-limited filter.
+%    WARPEDBLFILTER -  Warped, band-limited filter.
+%    PFILT          -  Apply filter with periodic boundary conditions.
+%    MAGRESP        -  Magnitude response plot.
+%    TRANSFERFUNCTION - Compute the transfer function of a filter.
+%    PGRPDELAY      -  Periodic Group Delay
+%
 %  Ramping
 %    RAMPUP         -  Rising ramp.
 %    RAMPDOWN       -  Falling ramp.

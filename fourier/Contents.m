@@ -33,31 +33,16 @@
 %    ISEVENFUNCTION -  Test if function is even.
 %    MIDDLEPAD      -  Cut or extend even function.
 %
-%  Functions
+%  Periodic functions
 %    EXPWAVE        -  Complex exponential wave.
 %    PCHIRP         -  Periodic chirp.
+%    PGAUSS         -  Periodic Gaussian.
+%    PSECH          -  Periodic SECH.
+%    PBSPLINE       -  Periodic B-splines.
 %    SHAH           -  Shah distribution.
 %    PHEAVISIDE     -  Periodic Heaviside function.
 %    PRECT          -  Periodic rectangle function.
 %    PSINC          -  Periodic sinc function.
-%
-%  Window functions
-%    PGAUSS         -  Periodic Gaussian.
-%    PSECH          -  Periodic SECH.
-%    PBSPLINE       -  Periodic B-splines.
-%    FIRWIN         -  FIR windows (Hanning,Hamming,Blackman,...).
-%    FIRKAISER      -  FIR Kaiser-Bessel window.
-%    FIR2LONG       -  Extend FIR window to LONG window.
-%    LONG2FIR       -  Cut LONG window to FIR window.
-%
-%  Filtering
-%    FIRFILTER      -  Construct an FIR filter.
-%    BLFILTER       -  Construct a band-limited filter.
-%    WARPEDBLFILTER -  Warped, band-limited filter.
-%    PFILT          -  Apply filter with periodic boundary conditions.
-%    MAGRESP        -  Magnitude response plot.
-%    TRANSFERFUNCTION - Compute the transfer function of a filter.
-%    PGRPDELAY      -  Periodic Group Delay
 %
 %  Hermite functions and fractional Fourier transforms
 %    PHERM          -  Periodic Hermite functions.
