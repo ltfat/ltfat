@@ -41,10 +41,9 @@ function [g,info]=firwin(name,M,varargin);
 %                  Aliases: `'cosine'`, `'sqrthann'`
 %
 %     'rect'       (Almost) rectangular window. The rectangular window has a
-%                  mainlobe width of 4/M, a  PSL of -13.3 dB and decay
-%                  rate of 6 dB/Octave. Forms a PU. Alias: `'square'`
-%
-%     'sqrtrect'   Square root of the rectangular window.
+%                  mainlobe width of 4/M, a PSL of -13.3 dB and decay
+%                  rate of 6 dB/Octave. Forms a PU if the order is odd.
+%                  Alias: `'square'`
 %
 %     'tria'       (Almost) triangular window. Forms a PU. Alias: `'bartlett'`
 %
@@ -270,12 +269,12 @@ switch name
  case {'square','rect'} 
   g=double(abs(x) < .5);
   
- case {'halfsquare','halfrect'} 
+ case {'halfsquare'} 
   g=double(abs(x) < .25);
   g(abs(x) == .25) = .5;
   info.ispu=1;
   
- case {'sqrthalfsquare','sqrthalfrect'}
+ case {'sqrthalfsquare'}
   g=firwin('halfsquare',M,varargin{:});
   info.issqpu=1;
   do_sqrt=1;
