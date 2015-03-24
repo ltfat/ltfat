@@ -269,16 +269,6 @@ switch name
  case {'square','rect'} 
   g=double(abs(x) < .5);
   
- case {'halfsquare'} 
-  g=double(abs(x) < .25);
-  g(abs(x) == .25) = .5;
-  info.ispu=1;
-  
- case {'sqrthalfsquare'}
-  g=firwin('halfsquare',M,varargin{:});
-  info.issqpu=1;
-  do_sqrt=1;
-  
  case {'tria','triangular','bartlett'}
   g=1-2*abs(x);
   info.ispu=1;
