@@ -1,4 +1,4 @@
-function p = blockpanel(params,varargin)
+function p = blockpanel(varargin)
 %BLOCKPANEL Control panel
 %   Usage: blockpanel(params)
 %
@@ -27,10 +27,9 @@ function p = blockpanel(params,varargin)
 %                                defining distance from the top-left
 %                                corner of the screen. 
 
-complainif_notenoughargs(nargin,1,'BLOCKPANEL');
-
-definput.keyvals.location=[50,50];
-[flags,kv]=ltfatarghelper({},definput,varargin);
+definput.keyvals.location = [50,50];
+definput.keyvals.params = {};
+[~,kv,params]=ltfatarghelper({'params'},definput,varargin);
 
 if ~isvector(kv.location) || any(size(kv.location)~=[1,2]) ||...
     any(kv.location<0) || ~isreal(kv.location)
@@ -38,11 +37,11 @@ if ~isvector(kv.location) || any(size(kv.location)~=[1,2]) ||...
          ' positive numbers.'],upper(mfilename));  
 end
 
-if ~iscell(params) || isempty(params)
+if ~iscell(params)
     error('%s: Input should be a nonempty cell array.',upper(mfilename));
 end
 
-if ~iscell(params{1})
+if ~isempty(params) && ~iscell(params{1})
     params = {params};
 end
 

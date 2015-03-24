@@ -238,6 +238,10 @@ public class ContFrame
                loadLabel.setVisible(true);
                loadBar.setVisible(true);
                loadTxt.setVisible(true);
+               if(jf != null)
+               {
+                   jf.pack();
+               }
             }
             loadBar.setValue((int)val);
             loadTxt.setText(String.format(" %d%%", ((int)val)));
@@ -382,9 +386,6 @@ public class ContFrame
       valConst.weighty = 1.0 / params.size();
       valConst.insets = new Insets(10, 0, 0, 0);
 
-
-
-
       for (List lEl : params)
       {
          String name = new String("noname");
@@ -419,7 +420,7 @@ public class ContFrame
          final JLabel jvalTxt = new JLabel(String.format("%.3g    ",
                                            slider2val(jval.getValue(),
                                                  minVal, maxVal, noVal)));
-         jvalTxt.setPreferredSize(new Dimension(50, 15));
+         jvalTxt.setPreferredSize(new Dimension(50, 10));
          jval.addChangeListener(new ChangeListener()
          {
             @Override
@@ -460,7 +461,7 @@ public class ContFrame
 
 
       loadTxt = new JLabel("0%");
-      loadTxt.setPreferredSize(new Dimension(50, 15));
+      loadTxt.setPreferredSize(new Dimension(50, 10));
       loadLabel = new JLabel("Load:");
       loadBar = new JProgressBar();
 
