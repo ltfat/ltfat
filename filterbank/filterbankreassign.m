@@ -6,8 +6,8 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %
 %   Input parameters:
 %      s     : Spectrogram to be reassigned.
-%      tgrad : Group delay relative to original position.
-%      fgrad : Instantaneous frequency relative to original position.
+%      tgrad : Instantaneous frequency relative to original position.
+%      fgrad : Group delay relative to original position.
 %      a     : Vector of time steps.
 %      cfreq : Vector of relative center frequencies in ]-1,1].
 %      g     : Set of filters.
@@ -16,13 +16,13 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %      repos : Reassigned positions.
 %      Lc    : Subband lengths.
 %
-%   `filterbankreassign(s,a,fgrad,tgrad,cfreq)` will reassign the values of 
-%   the filterbank spectrogram *s* using the group delay *tgrad* and 
-%   instantaneous frequency *fgrad*. The time-frequency sampling 
+%   `filterbankreassign(s,a,tgrad,fgrad,cfreq)` will reassign the values of 
+%   the filterbank spectrogram *s* using the group delay *fgrad* and 
+%   instantaneous frequency *tgrad*. The time-frequency sampling 
 %   pattern is determined from the time steps *a* and the center 
 %   frequencies *cfreq*. 
 %
-%   `filterbankreassign(s,a,fgrad,tgrad,g)` will do the same thing except
+%   `filterbankreassign(s,a,tgrad,fgrad,g)` will do the same thing except
 %   the center frequencies are estimated from a set of filters *g*.
 %
 %   `[sr,repos,Lc]=filterbankreassign(...)` does the same thing, but in addition
@@ -36,7 +36,36 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %   of the same lengths. Arguments *a* and *cfreq* or *g* must have the
 %   same number of elements as the cell arrays with coefficients.
 %
-%   
+%   Examples:
+%   ---------
+%
+%   This example shows how to reassign a ERB filterbank spectrogram:::
+%
+%     % Genrate 3 chirps 1 second long
+%     L = 44100; fs = 44100; l = 0:L-1;
+% 
+%     f = sin(2*pi*(l/35+(l/300).^2)) + ...
+%         sin(2*pi*(l/10+(l/300).^2)) + ...
+%         sin(2*pi*(l/5-(l/450).^2));
+%     f = 0.7*f';
+%     
+%     % Create ERB filterbank
+%     [g,a,fc]=erbfilters(fs,L,'fractional','spacing',1/12,'warped');
+%     
+%     % Compute phase gradient
+%     [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a);
+%     % Do the reassignment
+%     sr=filterbankreassign(cs,tgrad,fgrad,a,cent_freqs(fs,fc));
+%     figure(1); subplot(211);
+%     plotfilterbank(cs,a,fc,fs,60);
+%     title('ERBlet spectrogram of 3 chirps');
+%     subplot(212);  
+%     plotfilterbank(sr,a,fc,fs,60);
+%     title('Reassigned ERBlet spectrogram of 3 chirps');
+%
+%   See also: filterbankphasegrad, gabreassign
+%
+%   References: ltfatnote040
 
 %   AUTHOR : Nicki Holighaus.
 

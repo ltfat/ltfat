@@ -14,13 +14,13 @@ function [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %      L     : Signal length (optional).
 %      minlvl: Regularization parameter (optional, required < 1).
 %   Output parameters:
-%      fgrad : Instantaneous frequency relative to original position.
-%      tgrad : Group delay relative to original position.
+%      tgrad : Instantaneous frequency relative to original position.
+%      fgrad : Group delay relative to original position. 
 %      cs    : Filterbank spectrogram.
 %      c     : Filterbank coefficients.
 %
-%   `[fgrad,tgrad,cs,c] = filterbankphasegrad(f,g,a,L)` computes the group
-%   delay *tgrad* and instantaneous frequency *fgrad* of the filterbank
+%   `[tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,L)` computes the group
+%   delay *fgrad* and instantaneous frequency *tgrad* of the filterbank
 %   spectrogram *cs* obtained from the signal *f* and filterbank
 %   parameters *g* and *a*. Both quantities are specified relative to the
 %   original coefficient position. *tgrad* is given in samples, while

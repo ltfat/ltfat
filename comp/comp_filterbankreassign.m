@@ -21,31 +21,31 @@ end
 %% Compute reassigned frequencies and times
 for mm = M:-1:1
 
-    fgradIdx = zeros(Lc(mm),1);
     tgradIdx = zeros(Lc(mm),1);
+    fgradIdx = zeros(Lc(mm),1);
 
     cfreqm = cfreq2(mm);
 
     for jj = 1:Lc(mm)
 
-        fgradmjj = fgrad{mm}(jj) + cfreqm;
-        oldfgrad = 10;
-        fgradIdx(jj) = 0;
+        tgradmjj = tgrad{mm}(jj) + cfreqm;
+        oldtgrad = 10;
+        tgradIdx(jj) = 0;
 
-        if fgrad{mm}(jj) > 0
+        if tgrad{mm}(jj) > 0
             pos = mm;
             for ii = mm:M
                 pos = ii;
-                tmpfgrad = cfreq2(ii) - fgradmjj;
+                tmptgrad = cfreq2(ii) - tgradmjj;
 
-                if tmpfgrad >= 0
-                    if abs(tmpfgrad) < abs(oldfgrad)
+                if tmptgrad >= 0
+                    if abs(tmptgrad) < abs(oldtgrad)
 
-                        fgradIdx(jj) = pos;
+                        tgradIdx(jj) = pos;
 
                     else
 
-                        fgradIdx(jj) = pos-1;
+                        tgradIdx(jj) = pos-1;
 
                     end
 
@@ -53,26 +53,26 @@ for mm = M:-1:1
 
                 end
 
-                oldfgrad = tmpfgrad;
+                oldtgrad = tmptgrad;
 
             end
 
-            if pos == M && tmpfgrad < 0
+            if pos == M && tmptgrad < 0
 
                 for ii = 1:mm
 
                    pos = ii;
 
-                   tmpfgrad = cfreq2(ii) - fgradmjj + 2;
+                   tmptgrad = cfreq2(ii) - tgradmjj + 2;
 
-                   if tmpfgrad >= 0
-                        if abs(tmpfgrad) < abs(oldfgrad)
+                   if tmptgrad >= 0
+                        if abs(tmptgrad) < abs(oldtgrad)
 
-                            fgradIdx(jj) = pos;
+                            tgradIdx(jj) = pos;
 
                         else
 
-                            fgradIdx(jj) = pos-1;
+                            tgradIdx(jj) = pos-1;
 
                         end
 
@@ -80,30 +80,30 @@ for mm = M:-1:1
 
                     end
 
-                    oldfgrad = tmpfgrad;
+                    oldtgrad = tmptgrad;
 
                 end
             end
 
-            if fgradIdx(jj) < 1
+            if tgradIdx(jj) < 1
 
-                fgradIdx(jj) = M;
+                tgradIdx(jj) = M;
 
             end
         else
             pos = mm;
             for ii = mm:-1:1
                 pos = ii;
-                tmpfgrad = cfreq2(ii) - fgradmjj;
+                tmptgrad = cfreq2(ii) - tgradmjj;
 
-                if tmpfgrad <= 0
-                    if abs(tmpfgrad) < abs(oldfgrad)
+                if tmptgrad <= 0
+                    if abs(tmptgrad) < abs(oldtgrad)
 
-                        fgradIdx(jj) = pos;
+                        tgradIdx(jj) = pos;
 
                     else
 
-                        fgradIdx(jj) = pos+1;
+                        tgradIdx(jj) = pos+1;
 
                     end
 
@@ -111,26 +111,26 @@ for mm = M:-1:1
 
                 end
 
-                oldfgrad = tmpfgrad;
+                oldtgrad = tmptgrad;
 
             end
 
-            if pos == 1 && tmpfgrad > 0
+            if pos == 1 && tmptgrad > 0
 
                 for ii = M:-1:mm
 
                     pos = ii;
 
-                    tmpfgrad = cfreq2(ii) - fgradmjj - 2;
+                    tmptgrad = cfreq2(ii) - tgradmjj - 2;
 
-                    if tmpfgrad <= 0
-                        if abs(tmpfgrad) < abs(oldfgrad)
+                    if tmptgrad <= 0
+                        if abs(tmptgrad) < abs(oldtgrad)
 
-                            fgradIdx(jj) = pos;
+                            tgradIdx(jj) = pos;
 
                         else
 
-                            fgradIdx(jj) = pos+1;
+                            tgradIdx(jj) = pos+1;
 
                         end
 
@@ -138,32 +138,32 @@ for mm = M:-1:1
 
                     end
 
-                    oldfgrad = tmpfgrad;
+                    oldtgrad = tmptgrad;
 
                 end
 
             end
 
-            if fgradIdx(jj) >= M+1
+            if tgradIdx(jj) >= M+1
 
-                fgradIdx(jj) = 1;
+                tgradIdx(jj) = 1;
 
             end
         end
     end
 
     for jj = 1:Lc(mm)
-       tmpIdx = fgradIdx(jj);
-       tgradIdx(jj) = mod(round((tgrad{mm}(jj) + a(mm)*(jj-1))./a(tmpIdx)),Lc(tmpIdx))+1;
+       tmpIdx = tgradIdx(jj);
+       fgradIdx(jj) = mod(round((fgrad{mm}(jj) + a(mm)*(jj-1))./a(tmpIdx)),Lc(tmpIdx))+1;
     end
 
     for jj=1:Lc(mm)
-       sr{fgradIdx(jj)}(tgradIdx(jj)) = sr{fgradIdx(jj)}(tgradIdx(jj))+s{mm}(jj);
+       sr{tgradIdx(jj)}(fgradIdx(jj)) = sr{tgradIdx(jj)}(fgradIdx(jj))+s{mm}(jj);
     end
 
     if nargout>1
        for jj=1:Lc(mm)
-          repos{chan_pos(fgradIdx(jj))+tgradIdx(jj)}(end+1,1) = chan_pos(mm)+jj;
+          repos{chan_pos(tgradIdx(jj))+fgradIdx(jj)}(end+1,1) = chan_pos(mm)+jj;
        end
     end
 

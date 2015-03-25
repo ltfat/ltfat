@@ -38,14 +38,14 @@ fftind = fftindex(L,0); % Set Nyquist frequency to 0!
 for mId = mTime
     % Compute time weighted version.
     tempind = (g{mId}.offset:Lg(mId)+g{mId}.offset-1).';
-    gd{mId}.h = tempind.*g{mId}.h;
+    gh{mId}.h = tempind.*g{mId}.h;
     
     % Compute frequency weighted version.
     gH = comp_transferfunction(g{mId},L);
-    gh{mId}.H = circshift(fftind,cfreq(mId)).*gH;
-    gh{mId}=rmfield(gh{mId},'h');
-    gh{mId}=rmfield(gh{mId},'offset');
-    gh{mId}.foff = 0;
+    gd{mId}.H = circshift(fftind,cfreq(mId)).*gH;
+    gd{mId}=rmfield(gd{mId},'h');
+    gd{mId}=rmfield(gd{mId},'offset');
+    gd{mId}.foff = 0;
 end;
 
 % Construct time/frequency weighted versions of bandlimited filters
@@ -55,14 +55,14 @@ for mId = mFreqBl
     % Compute frequency weighted version.
     tempind = [L-floor(Lg(mId)/2)+1:L, ...
         1:ceil(Lg(mId)/2)];
-    gh{mId}.H = fftind(tempind).*g{mId}.H;
+    gd{mId}.H = fftind(tempind).*g{mId}.H;
     
     % Compute time weighted version.
     % The code below is a quick and dirty version of
     %     longg = fftshift(g{mId}.H);
     %     gd2{mId}.H = fftshift(pderiv(longg,[],Inf)/(2*pi));
     n=fftindex(Lg(mId),0);
-    gd{mId}.H = L/Lg(mId)*real(fftshift( ...
+    gh{mId}.H = L/Lg(mId)*real(fftshift( ...
         ifft(1i.*n.*fft(fftshift(g{mId}.H)))));
 end;
 
@@ -71,8 +71,8 @@ end;
 
 for mId = mFreqL
     % Compute frequency weighted version.
-    gh{mId}.H = circshift(fftind,cfreq(mId)).*g{mId}.H;
+    gd{mId}.H = circshift(fftind,cfreq(mId)).*g{mId}.H;
     
     % Compute time weighted version.
-    gd{mId}.H = real(ifft(1i.*fftind.*fft(g{mId}.H)));
+    gh{mId}.H = real(ifft(1i.*fftind.*fft(g{mId}.H)));
 end;
