@@ -1,97 +1,47 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD html 4.0//EN">
-<html>
-<head>
+<!DOCTYPE html>
+<html lang="en">
+<head class="include" file="../../include/header.html">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta NAME="keywords" CONTENT="gabor, wavelets, filterbank, signal processing, matlab,
+octave"/>
 <title>{TITLE}</title>
-<link rel="stylesheet" href="{BASEDIR}include/mat2doc.css" type="text/css">
-<link rel="stylesheet" href="{BASEDIR}include/color_text.css" type="text/css">
-<META NAME="keywords" CONTENT="{KEYWORDS}"/> 
-
-<!-- Script to enable latex equations with MathJax -->
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="../../include/style.css" type="text/css">
+<link rel="stylesheet" href="../../include/highlight.css" type="text/css">
 </head>
 
-<div class="topmenu">
-
-<div class="mybox">
-<table><tr><td>
-<a href="/doc/demos/demo_isgram.php"><img src="/ltfatlogo.png" alt="LTFAT logo" /></a></td>
-<td>
-
-<table></tr><td><div id="title1">The Large Time-Frequency Analysis Toolbox</div></td></tr>
-<tr><td><div id="title2">- All your frame are belong to us -</div></td></tr>
-</table>
-
-</table>
-<table><tr>
-<td><div class="button"><a href="/">Home</a></div></td>
-<td><div class="button"><a href="/download.php">Download</a></div></td>
-<td><div class="button"><a href="/contact.php">Contact</a></div></td>
-<td><div class="button"><a href="/documentation.php">Documentation</a></div></td>
-<td><div class="button"><a href="/notes">Notes</a></div></td>
-<td><div class="button"><a href="/development.php">Development</a></div></td>
-<td><div class="button"><a href="/team.php">Team</a></div></td>
-<td><div class="button"><a href="/related.php">Related</a></div></td>
-
-</tr>
-</table>
+<!-- body must stay hidden until all include parts are loaded -->
+<body style="display:none;">
+<!-- Wrap the content into responsive container --!>
+<div class="container">
+<!-- Include main navigation -->
+<div class="masthead include" file="../../include/mainnav.html">
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right" id="jumplist">This is where navigation should be.</div>
+        <div class="pull-left" id="codeswitch">{SWITCHVIEW}</div>
+    </div>
 </div>
+<div class="row">
+    <div class="col-md-2">
+        <div class="include" file='../include/docnav.html'></div>
+        <div id="seealso"><p>{SEEALSO}</p></div>
+    </div>
+    <div class="col-md-10">
 
+        {CONTENT}
 
-
-<div id="container">
-<div id="header">
-<table style="height:100%; width:100%">
-<tr>
-<td valign="top" width="75%">
-<h1>The title of my toolbox</h1>
-
-<h2>Short description of my toolbox</h2>
-</td>
-<td valign="middle">
-<a href="./index.php"><img src="{BASEDIR}include/logo_tr.png" alt="Logo" height="70"></a>
-</td>
-</tr>
-</table> 
+        <div class="include" file="../../include/footer.html"></div>
+    </div>
 </div>
-<div id="space"></div>
-<div id="main_content">
-<table width="100%">
-<tr>
-<td valign="top" width="20%">
-<div id="menu">
-{SWITCHVIEW}
-{SEEALSO}
-{MENU}
-
-</div>
-</td>
-<td valign="top"  width="80%">
-
-
-
-<div id="content">
-
-{CONTENT}
-
-
-</div>
-
-
-</td>
-</tr>
-</table>
-</div>
-<div id="space"></div>
-<div id="footer">
-Designed by: {AUTHOR}
-</div>
-</div>
-
+<!-- These two have to be here to dynamically load the included parts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="../../js/ltfat.js" type="text/javascript"></script>
+<script src="../include/lookup.js" type="text/javascript"></script>
+<script src="../include/jumplist.js" type="text/javascript"></script>
 </body>
 </html>
-
-

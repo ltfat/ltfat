@@ -1,5 +1,5 @@
 fext='.html'
-urlbase='#BASEURL#/doc/'
+urlbase='{TARGETDIR}'
 urlext='.html'
 widthstr=''
 imagetype='png'
