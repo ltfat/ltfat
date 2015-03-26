@@ -27,7 +27,21 @@
 %      The filterbank tree depth is 8 and it is fully decomposed meaning
 %      both outputs (low-pass and high-pass) of the basic filterbank is
 %      plot further. This results in 256 bands linearly covering the 
-%      frequency axis. 
+%      frequency axis.
+%
+%   .. figure::
+%
+%      Full Wavelet filterbank tree representation
+%
+%      The same case as before, but symmetric nearly orthogonal basic
+%      filterbank is used.
+%
+%   .. figure::
+%
+%      Full Dual-tree Wavelet filterbank representation
+%
+%      This is a 2 times redundant representation using Q-shift dual-tree
+%      wavelet filters.
 %
 
 
