@@ -65,7 +65,7 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %
 %   See also: filterbankphasegrad, gabreassign
 %
-%   References: ltfatnote040
+%   References: ltfatnote041
 
 %   AUTHOR : Nicki Holighaus.
 
