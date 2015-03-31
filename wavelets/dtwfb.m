@@ -1,12 +1,12 @@
 function [c,info]=dtwfb(f,dualwt,varargin)
-%DTWFB Dual-Tree Wavelet FilterBank
+%DTWFB Dual-Tree Wavelet Filter Bank
 %   Usage:  c=dtwfb(f,dualwt);
 %           c=dtwfb(f,{dualw,J});
 %           [c,info]=dtwfb(...);
 %
 %   Input parameters:
 %         f      : Input data.
-%         dualwt : Dual-tree Wavelet Filterbank definition.
+%         dualwt : Dual-tree Wavelet Filter bank definition.
 %
 %   Output parameters:
 %         c    : Coefficients stored in a cell-array.
@@ -14,18 +14,18 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %
 %   `c=dtwfbt(f,dualwt)` computes dual-tree complex wavelet coefficients 
 %   of the signal *f*. The representation is approximately 
-%   time-invariant and provides analytic behavior. Due to these facts, 
+%   time-invariant and provides analytic behaviour. Due to these facts, 
 %   the resulting subbands are nearly aliasing free making them suitable 
 %   for severe coefficient modifications. The representation is two times
-%   redundant, provided critical subsampling of all involved filterbanks.
+%   redundant, provided critical subsampling of all involved filter banks.
 %
 %   The shape of the filterbank tree and filters used is controlled by 
 %   `dualwt` (for possible formats see below). The output *c* is a 
 %   cell-array with each element containing a single subband. The subbands 
-%   are ordered with the increasing subband center frequency. 
+%   are ordered with the increasing subband centre frequency. 
 %
 %   In addition, the function returns struct. `info` containing transform 
-%   parameters. It can be conviniently used for the inverse transform
+%   parameters. It can be conveniently used for the inverse transform
 %   |idtwfbreal| e.g. `fhat = idtwfbreal(c,info)`. It is also required by
 %   the |plotwavelets| function.
 %
@@ -39,55 +39,55 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %      `dualw`   
 %        Basic dual-tree filters
 %      *J*
-%        Number of levels of the filterbank tree
+%        Number of levels of the filter bank tree
 %
 %      Possible formats of `dualw` are the same as in |fwtinit| except the
 %      `wfiltdt_` prefix is used when searching for function specifying
 %      the actual impulse responses. These filters were designed specially
-%      for the dual-tree filterbank to achieve the half-sample shift 
-%      ultimatelly resulting in analytic (complex) behavior of the 
+%      for the dual-tree filter bank to achieve the half-sample shift 
+%      ultimately resulting in analytic (complex) behaviour of the 
 %      transform.
 %      
-%      The default shape of the filterbank tree is DWT i.e. only low-pass
+%      The default shape of the filter bank tree is DWT i.e. only low-pass
 %      output is decomposed further (*J* times in total).
 %
-%      Different filterbank tree shapes can be obtained by passing
+%      Different filter bank tree shapes can be obtained by passing
 %      additional flag in the cell array. Supported flags (mutually
 %      exclusive) are:
 %
 %      `'dwt'`
 %         Plain DWT tree (default). This gives one band per octave freq. 
-%         resolution when using 2 channel basic wavelet filterbank.
+%         resolution when using 2 channel basic wavelet filter bank.
 %
 %      `'full'`
-%         Full filterbank tree. Both (all) basic filterbank outputs are
+%         Full filter bank tree. Both (all) basic filter bank outputs are
 %         decomposed further up to depth *J* achieving linear frequency band
 %         division.
 %
 %      `'doubleband'`,`'quadband'`,`'octaband'`
-%         The filterbank is designed such that it mimics 4-band, 8-band or
-%         16-band complex wavelet transform provided the basic filterbank
+%         The filter bank is designed such that it mimics 4-band, 8-band or
+%         16-band complex wavelet transform provided the basic filter bank
 %         is 2 channel. In this case, *J* is treated such that it defines
 %         number of levels of 4-band, 8-band or 16-band transform.
 %
-%      The dual-tree wavelet filterbank can use any basic wavelet
-%      filterbank in the first stage of both trees, provided they are 
+%      The dual-tree wavelet filter bank can use any basic wavelet
+%      filter bank in the first stage of both trees, provided they are 
 %      shifted by 1 sample (done internally). A custom first stage 
-%      filterbank can be defined by passing the following
+%      filter bank can be defined by passing the following
 %      key-value pair in the cell array:
 %
 %      `'first'`,`w` 
-%         `w` defines a regular basic filterbank. Accepted formats are the
+%         `w` defines a regular basic filter bank. Accepted formats are the
 %         same as in |fwtinit| assuming the `wfilt_` prefix.
 %
-%      Similarly, when working with a filterbank tree containing
+%      Similarly, when working with a filter bank tree containing
 %      decomposition of high-pass outputs, some filters in both trees must
-%      be replaced by a regular basic filterbank in order to achieve the
-%      aproximatelly analytic behavior. A custom filterbank can be
+%      be replaced by a regular basic filter bank in order to achieve the
+%      approximately analytic behaviour. A custom filter bank can be
 %      specified by passing another key-value pair in the cell array:
 %
 %      `'leaf'`,`w` 
-%         `w` defines a regular basic filterbank. Accepted formats are the
+%         `w` defines a regular basic filter bank. Accepted formats are the
 %         same as in |fwtinit| assuming the `wfilt_` prefix.      
 %
 %   2) Another possibility is to pass directly a struct. returned by 
@@ -101,7 +101,7 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %   `'freq'`,`'nat'`
 %      Frequency or natural (Paley) ordering of coefficient subbands.
 %      By default, subbands are ordered according to frequency. The natural
-%      ordering is how the subbands are obtained from the filterbank tree
+%      ordering is how the subbands are obtained from the filter bank tree
 %      without modifications. The ordering differs only in non-plain DWT
 %      case.
 %
@@ -115,8 +115,8 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %   ---------
 %   
 %   A simple example of calling the |dtwfb| function using the regular
-%   DWT iterated filterbank. The second figure shows a magnitude frequency
-%   response of an identical filterbank.:::
+%   DWT iterated filter bank. The second figure shows a magnitude frequency
+%   response of an identical filter bank.:::
 % 
 %     [f,fs] = greasy;
 %     J = 6;
@@ -127,7 +127,7 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %     [g,a] = dtwfb2filterbank({'qshift3',J});
 %     filterbankfreqz(g,a,1024,'plot','linabs');
 %
-%   The second example shows a decomposition using a full filterbank tree
+%   The second example shows a decomposition using a full filter bank tree
 %   of depth *J*:::
 %
 %     [f,fs] = greasy;

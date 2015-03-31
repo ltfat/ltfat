@@ -33,23 +33,23 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   |filterbanklength|.
 %
 %   `[g,a]=cqtfilters(...,'regsampling')` constructs a non-uniform
-%   filterbank. The downsampling rates are constant in the octaves but
+%   filter bank. The downsampling rates are constant in the octaves but
 %   can differ among octaves. This approach was chosen in order to minimize
 %   the least common multiple of *a*, which determines a granularity of
 %   admissible input signal lengths.
 %
-%   `[g,a]=cqtfilters(...,'uniform')` constructs a uniform filterbank
+%   `[g,a]=cqtfilters(...,'uniform')` constructs a uniform filter bank
 %   where the downsampling rate is the same for all the channels. This
 %   results in most redundant representation, which produces nice plots.
 %
-%   `[g,a]=cqtfilters(...,'fractional')` constructs a filterbank with
+%   `[g,a]=cqtfilters(...,'fractional')` constructs a filter bank with
 %   fractional downsampling rates *a*. The rates are constructed such
-%   that the filterbank can handle signal lengths that are multiples of
+%   that the filter bank can handle signal lengths that are multiples of
 %   *L*, so the benefit of the fractional downsampling is that you get to
 %   choose the value returned by |filterbanklength|. This results in the
 %   least redundant system.
 %
-%   `[g,a]=cqtfilters(...,'fractionaluniform')` constructs a filterbank with
+%   `[g,a]=cqtfilters(...,'fractionaluniform')` constructs a filter bank with
 %   fractional downsampling rates *a*, which are uniform for all filters
 %   except the "filling" low-pass and high-pass filters can have different
 %   fractional downsampling rates. This is usefull when uniform subsampling
@@ -72,7 +72,7 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %                           bandwidths to better approximate the constant-Q
 %                           property.
 %
-%     'complex'             Construct a filterbank that covers the entire
+%     'complex'             Construct a filter bank that covers the entire
 %                           frequency range. When missing, only positive
 %                           frequencies are covered.
 %
@@ -92,18 +92,18 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   Examples:
 %   ---------
 %
-%   In the first example, we construct a highly redudant uniform
-%   filterbank and visualize the result:::
+%   In the first example, we construct a highly redundant uniform
+%   filter bank and visualize the result:::
 %
 %     [f,fs]=greasy;  % Get the test signal
 %     [g,a,fc]=cqtfilters(fs,100,fs,32,length(f),'uniform');
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90,'audtick');
 %
-%   In the second example, we construct a non-uniform filterbank with
+%   In the second example, we construct a non-uniform filter bank with
 %   fractional sampling that works for this particular signal length, and
 %   test the reconstruction. The plot displays the response of the
-%   filterbank to verify that the filters are well-behaved both on a
+%   filter bank to verify that the filters are well-behaved both on a
 %   normal and an log scale. The second plot shows frequency responses of
 %   filters used for analysis (top) and synthesis (bottom). :::
 %

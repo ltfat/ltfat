@@ -36,8 +36,8 @@
 %
 %  Auditory scales and filters
 %     DEMO_AUDSCALES          - Different auditory scales.
-%     DEMO_AUDITORYFILTERBANK - Erb-spaced auditory filterbank.
-%     DEMO_WFBT               - Auditory filterbanks created using |wfbt|.
+%     DEMO_AUDITORYFILTERBANK - Erb-spaced auditory filter bank.
+%     DEMO_WFBT               - Auditory filter banks created using |wfbt|.
 %
 %  Block-processing demos
 %     DEMO_BLOCKPROC_BASICLOOP        - Simple audio playback loop.

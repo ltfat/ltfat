@@ -1,4 +1,4 @@
-%DEMO_FRSYNABS  Contruction of a signal with a given spectrogram
+%DEMO_FRSYNABS  Construction of a signal with a given spectrogram
 %
 %   This demo demonstrates iterative reconstruction of a spectrogram.
 %

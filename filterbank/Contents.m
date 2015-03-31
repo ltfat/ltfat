@@ -6,13 +6,13 @@
 %    FILTERBANK             - Filter bank
 %    UFILTERBANK            - Uniform Filter bank
 %    IFILTERBANK            - Inverse normal/uniform filter bank
-%    FILTERBANKWIN          - Evaluate filterbank window
-%    FILTERBANKLENGTH       - Length of filterbank to expand signal
-%    FILTERBANKLENGTHCOEF   - Length of filterbank to expand coefficients
+%    FILTERBANKWIN          - Evaluate filter bank window
+%    FILTERBANKLENGTH       - Length of filter bank to expand signal
+%    FILTERBANKLENGTHCOEF   - Length of filter bank to expand coefficients
 %
 %  Auditory inspired filterbanks
-%    CQT                    - Constant Q transform
-%    ICQT                   - Inverse constant Q transform
+%    CQT                    - Constant-Q transform
+%    ICQT                   - Inverse constant-Q transform
 %    ERBLETT                - Erb-let transform
 %    IERBLETT               - Inverse Erb-let transform
 %
@@ -32,7 +32,7 @@
 %
 %  Auxilary
 %    FILTERBANKFREQZ        - Frequency responses of filters
-%    NONU2UFILTERBANK       - Non-uni. to uniform filterbank transformation
+%    NONU2UFILTERBANK       - Non-uni. to uniform filter bank transformation
 %    U2NONUCFMT             - Change format of coefficients
 %    NONU2UCFMT             - Change format of coefficients back
 %
@@ -41,7 +41,7 @@
 %
 %  Reassignment and phase gradient
 %    FILTERBANKPHASEGRAD    - Instantaneous time/frequency from signal
-%    FILTERBANKREASSIGN     - Reassign filterbank spectrogram
+%    FILTERBANKREASSIGN     - Reassign filter bank spectrogram
 %    
 %
 %  For help, bug reports, suggestions etc. please send email to

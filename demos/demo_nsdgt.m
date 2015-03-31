@@ -1,4 +1,4 @@
-%DEMO_NSDGT  Nonsationary Gabor transform demo
+%DEMO_NSDGT  Nonstionary Gabor transform demo
 %
 %   This script sets up a nonstationary Gabor frame with the specified
 %   parameters, computes windows and corresponding canonical dual windows
@@ -16,7 +16,7 @@
 %
 %      Spectrogram (absolute value of coefficients in dB)
 %
-%      This figure shows a (color coded) image of the nsdgt coefficient
+%      This figure shows a (colour-coded) image of the nsdgt coefficient
 %      modulus. 
 %
 %   See also:  nsdgt, insdgt, nsgabdual

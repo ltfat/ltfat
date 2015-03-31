@@ -35,7 +35,7 @@ function gout=blfilter(winname,fsupp,varargin)
 %     'delay',d   Set the delay of the filter. Default value is zero.
 %
 %     'scal',s    Scale the filter by the constant *s*. This can be
-%                 useful to equalize channels in a filterbank.
+%                 useful to equalize channels in a filter bank.
 %
 %     'pedantic'  Force window frequency offset (g.foff) to a subsample 
 %                 precision by a subsample shift of the firwin output.

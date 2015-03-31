@@ -13,36 +13,36 @@
 %      FWTCLENGTH        - Lengths of the wavelet coefficient subbands
 %
 %   Advanced analysis/synthesis
-%      WFBT              - Transform using general Wavelet Filterbank Tree 
-%      IWFBT             - Inverse transform using general Wavelet Filterbank Tree
-%      UWFBT             - Undecimated transform using general Wavelet Filterbank Tree 
-%      IUWFBT            - Inverse Undecimated transform using general Wavelet Filterbank Tree
-%      WPFBT             - Wavelet Packet Transform using general Wavelet Filterbank Tree 
-%      IWPFBT            - Inverse Wavelet Packet Transform using general Wavelet Filterbank Tree
-%      UWPFBT            - Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree 
-%      IUWPFBT           - Inverse Undecimated Wavelet Packet Transform using general Wavelet Filterbank Tree
+%      WFBT              - Transform using general Wavelet Filter Bank Tree 
+%      IWFBT             - Inverse transform using general Wavelet Filter Bank Tree
+%      UWFBT             - Undecimated transform using general Wavelet Filter Bank Tree 
+%      IUWFBT            - Inverse Undecimated transform using general Wavelet Filter Bank Tree
+%      WPFBT             - Wavelet Packet Transform using general Wavelet Filter Bank Tree 
+%      IWPFBT            - Inverse Wavelet Packet Transform using general Wavelet Filter Bank Tree
+%      UWPFBT            - Undecimated Wavelet Packet Transform using general Wavelet Filter Bank Tree 
+%      IUWPFBT           - Inverse Undecimated Wavelet Packet Transform using general Wavelet Filter Bank Tree
 %      WPBEST            - Best Tree selection
-%      WFBTLENGTH        - Length of Wavelet filterbank system to expand a signal
-%      WFBTCLENGTH       - Lengths of Wavelet filterbank coefficent subbands
-%      WPFBTCLENGTH      - Lengths of Wavelet Packet transform coefficent subbands
+%      WFBTLENGTH        - Length of Wavelet filter bank system to expand a signal
+%      WFBTCLENGTH       - Lengths of Wavelet filter bank coefficient subbands
+%      WPFBTCLENGTH      - Lengths of Wavelet Packet transform coefficient subbands
 %
 %   Dual-tree complex wavelet transform
-%      DTWFB             - Dual-Tree Wavelet FilterBank
-%      IDTWFB            - Inverse Dual-Tree Wavelet FilterBank
-%      DTWFBREAL         - Dual-Tree Wavelet FilterBank for real-valued signals
-%      IDTWFBREAL        - Inverse Dual-Tree Wavelet FilterBank for real-valued signals
+%      DTWFB             - Dual-Tree Wavelet Filter Bank
+%      IDTWFB            - Inverse Dual-Tree Wavelet Filter Bank
+%      DTWFBREAL         - Dual-Tree Wavelet Filter Bank for real-valued signals
+%      IDTWFBREAL        - Inverse Dual-Tree Wavelet Filter Bank for real-valued signals
 %
 %   Wavelet Filterbank trees manipulation
-%      WFBTINIT          - Wavelet Filterbank tree structure initialization
-%      DTWFBINIT         - Dual-Tree wavelet filterbank structure initialization
-%      WFBTPUT           - Puts node (basic filterbank) to the specific  tree coordinates
-%      WFBTREMOVE        - Removes node (basic filterbank) from the specific tree coordinates
-%      WFBT2FILTERBANK   - WFBT or FWT non-iterated filterbank using the multirate identity
-%      WPFBT2FILTERBANK  - WPFBT non-iterated filterbank using the multirate identity
-%      DTWFB2FILTERBANK  - DTWFB or DTWFBREAL non-iterated filterbank
+%      WFBTINIT          - Wavelet Filter Bank tree structure initialization
+%      DTWFBINIT         - Dual-Tree wavelet filter bank structure initialization
+%      WFBTPUT           - Puts node (basic filter bank) to the specific  tree coordinates
+%      WFBTREMOVE        - Removes node (basic filter bank) from the specific tree coordinates
+%      WFBT2FILTERBANK   - WFBT or FWT non-iterated filter bank using the multi-rate identity
+%      WPFBT2FILTERBANK  - WPFBT non-iterated filter bank using the multi-rate identity
+%      DTWFB2FILTERBANK  - DTWFB or DTWFBREAL non-iterated filter bank
 %      FWTINIT           - Basic Wavelet Filters structure initialization
 %
-%   Frame properties of wavelet filterbanks:
+%   Frame properties of wavelet filter banks:
 %      WFBTBOUNDS        - Frame bounds of WFBT and FWT (or UWFBT and UFWT)
 %      WPFBTBOUNDS       - Frame bounds of WPFBT or UWPFBT
 %      DTWFBBOUNDS       - Frame bounds of DTWFB

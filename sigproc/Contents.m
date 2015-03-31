@@ -37,8 +37,8 @@
 %    GROUPTHRESH    -  Group thresholding.
 %
 %  Image processing
-%    RGB2JPEG       -  Convert RGB values to the JPEG color model
-%    JPEG2RGB       -  Convert values from the JPEG color model to RGB
+%    RGB2JPEG       -  Convert RGB values to the JPEG colour model
+%    JPEG2RGB       -  Convert values from the JPEG colour model to RGB
 %
 %  Tools for OFDM
 %    QAM4           -  Quadrature amplitude modulation, order 4

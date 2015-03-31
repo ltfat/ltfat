@@ -5,18 +5,18 @@ function c = fwt2(f,w,J,varargin)
 %
 %   Input parameters:
 %         f     : Input data.
-%         w     : Wavelet Filterbank definition.
-%         J     : Number of filterbank iterations.
+%         w     : Wavelet filter bank definition.
+%         J     : Number of filter bank iterations.
 %
 %   Output parameters:
 %         c      : Coefficients stored in a matrix.
 %
 %   `c=fwt2(f,w,J)` returns wavelet coefficients *c* of the input matrix *f*
-%   using *J* iterations of the basic wavelet filterbank defined by *w*.
+%   using *J* iterations of the basic wavelet filter bank defined by *w*.
 %   Please see |fwt| for description of *w* and *J*.
 %
 %   `fwt2` supports just the non-expansive boundary condition 'per' and
-%   critically subsampled filterbanks in order to be able to pack the
+%   critically subsampled filter banks in order to be able to pack the
 %   coefficients in a matrix. Also the *J* is limited to some maximum value
 %   for the same reason.
 %
@@ -74,7 +74,7 @@ end
 w = fwtinit(w);
 
 if(~all(w.a==length(w.h)))
-   error('%s: Non-critically subsampled filterbanks not supported.',...
+   error('%s: Non-critically subsampled filter banks not supported.',...
          upper(mfilename));
 end
 
