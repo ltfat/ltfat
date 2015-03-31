@@ -1,8 +1,8 @@
 function coef=framecoef2tf(F,coef)
 %FRAMECOEF2TF  Convert coefficients to time-frequency plane
-%   Usage: coef=framecoef2tf(F,coef);
+%   Usage: cout=framecoef2tf(F,cin);
 %
-%   `framecoef2tf(F,coef)` converts the frame coefficients *coef* into the
+%   `framecoef2tf(F,cin)` converts the frame coefficients *cin* into the
 %   time-frequency plane layout. The frame object *F* must have been
 %   created using |frame|.
 %
@@ -10,8 +10,8 @@ function coef=framecoef2tf(F,coef)
 %   dimension indexes frequency and the second dimension time. This is
 %   similar to the output format from |dgt| and |wmdct|.
 %
-%   Not all frame types support this coefficient layout. The supported frame
-%   types are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'`, `'ufilterbank'`,
+%   Not all types of frames support this coefficient conversion. The supported 
+%   types of frames are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'`, `'ufilterbank'`,
 %   `'ufwt'`,`'uwfbt'` and `'uwpfbt'`.
 %
 %   See also: frame, frametf2coef, framecoef2native

@@ -76,7 +76,7 @@ function F=frame(ftype,varargin);
 %   `frame('gen',g)` constructs an general frame with analysis matrix *g*.
 %   The frame atoms must be stored as column vectors in the matrices.
 %
-%   `frame('identity')` constructs the canonical orthornormal basis, meaning
+%   `frame('identity')` constructs the canonical orthonormal basis, meaning
 %   that all operators return their input as output, so it is the dummy
 %   operation.
 %
@@ -100,7 +100,7 @@ function F=frame(ftype,varargin);
 %   Frames types in this section are "virtual". They serve as a wrapper for
 %   a different type of frame.
 %
-%   `frame('erbletfb',fs,Ls,...)` constructs an Erblet filterbank frame for
+%   `frame('erbletfb',fs,Ls,...)` constructs an Erb-let filterbank frame for
 %   a given samp. frequency *fs* working with signals of length *Ls*. See
 %   |erbfilters| for a description of additional parameters as all 
 %   parameters other than the frame type string 'erbletfb' are passed to it.

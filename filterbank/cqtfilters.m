@@ -1,7 +1,7 @@
 function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %CQTFILTERS   CQT-spaced filters
-%   Usage:  [g,a,fc]=cqtfilters(fs);
-%           [g,a,fc]=cqtfilters(fs,...);
+%   Usage:  [g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin);
+%           
 %
 %   Input parameters:
 %      fs    : Sampling rate (in Hz).
@@ -19,11 +19,11 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   band-limited filters *g* which cover the required frequency range
 %   `fmin`-`fmax` with `bins` filters per octave starting at `fmin`. All
 %   filters have (approximately) equal $Q=f_c/f_b$, hence constant-Q. The
-%   remainding frequency intervals not covered by these filters are captured
+%   remaining frequency intervals not covered by these filters are captured
 %   by two additional filters (low-pass, high-pass). The signal length *Ls*
 %   is mandatory, since we need to avoid too narrow frequency windows.
 %
-%   By default, a Hann window on the frequency side is choosen, but the
+%   By default, a Hann window on the frequency side is chosen, but the
 %   window can be changed by passing any of the window types from
 %   |firwin| as an optional parameter.
 %
@@ -52,7 +52,7 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   `[g,a]=cqtfilters(...,'fractionaluniform')` constructs a filter bank with
 %   fractional downsampling rates *a*, which are uniform for all filters
 %   except the "filling" low-pass and high-pass filters can have different
-%   fractional downsampling rates. This is usefull when uniform subsampling
+%   fractional downsampling rates. This is useful when uniform subsampling
 %   and low redundancy at the same time are desirable.
 %
 %   The filters are intended to work with signals with a sampling rate of

@@ -39,8 +39,8 @@
 %
 %  Non-linear analysis and synthesis
 %    FRANABP           - Basis pursuit using the SALSA algorithm.
-%    FRANALASSO        - LASSO threshholding using Landweber iterations.
-%    FRANAGROUPLASSO   - Group LASSO threshholding.
+%    FRANALASSO        - LASSO thresholding using Landweber iterations.
+%    FRANAGROUPLASSO   - Group LASSO thresholding.
 %    FRSYNABS          - Frame synthesis from magnitude of coefficients
 %
 %  For help, bug reports, suggestions etc. please send email to

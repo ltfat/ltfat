@@ -10,24 +10,24 @@
 %    FILTERBANKLENGTH       - Length of filter bank to expand signal
 %    FILTERBANKLENGTHCOEF   - Length of filter bank to expand coefficients
 %
-%  Auditory inspired filterbanks
+%  Auditory inspired filter banks
 %    CQT                    - Constant-Q transform
 %    ICQT                   - Inverse constant-Q transform
 %    ERBLETT                - Erb-let transform
 %    IERBLETT               - Inverse Erb-let transform
 %
 %  Filter generators
-%    CQTFILTERS             - Logaritmically spaced filters
+%    CQTFILTERS             - Logarithmically spaced filters
 %    ERBFILTERS             - ERB-spaced filters
 %    WARPEDFILTERS          - Frequency-warped band-limited filters 
 %  
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters
 %    FILTERBANKTIGHT        - Canonical tight filters
-%    FILTERBANKREALDUAL     - Canonical dual filters for real signals
-%    FILTERBANKREALTIGHT    - Canonical tight filters for real signals
+%    FILTERBANKREALDUAL     - Canonical dual filters for real-valued signals
+%    FILTERBANKREALTIGHT    - Canonical tight filters for real-valued signals
 %    FILTERBANKBOUNDS       - Frame bounds of filter bank
-%    FILTERBANKREALBOUNDS   - Frame bounds of filter bank for real signals
+%    FILTERBANKREALBOUNDS   - Frame bounds of filter bank for real-valued signals
 %    FILTERBANKRESPONSE     - Total frequency response (a frame property)
 %
 %  Auxilary

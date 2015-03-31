@@ -1,9 +1,9 @@
 function framegram(F,x,varargin)
-%FRAMEGRAM  Easy visualization of energy in frame space
+%FRAMEGRAM  Easy visualization of energy in transform domain
 %   Usage: framegram(F,x,...);
 %
-%   `framegram(F,c)` plots the energy of the coefficients computed from
-%   the input signal *x* using the frame *F* for analysis. This is
+%   `framegram(F,x)` plots the energy of the frame coefficients computed
+%   from the input signal *x* using the frame *F* for analysis. This is
 %   just a shorthand for::
 %
 %     plotframe(F,abs(frana(F,x)).^2);

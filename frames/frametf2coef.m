@@ -1,9 +1,13 @@
 function coef=frametf2coef(F,coef)
 %FRAMETF2COEF  Convert coefficients from TF-plane format
-%   Usage: coef=frametf2coef(F,coef);
+%   Usage: cout=frametf2coef(F,cin);
 %
-%   `frametf2coef(F,coef)` converts the frame coefficients from the
+%   `frametf2coef(F,cin)` converts the frame coefficients from the
 %   time-frequency plane layout into the common column format.
+%
+%   Not all types of frames support this coefficient conversion. The supported 
+%   types of frames are: `'dgt'`, `'dgtreal'`, `'dwilt'`, `'wmdct'`, `'ufilterbank'`,
+%   `'ufwt'`,`'uwfbt'` and `'uwpfbt'`.
 %
 %   See also: frame, framecoef2tf, framecoef2native
 
