@@ -1,5 +1,5 @@
 function [c,Ls] = nsdgt(f,g,a,M)
-%NSDGT  Nonstationary Discrete Gabor transform
+%NSDGT  Non-stationary Discrete Gabor transform
 %   Usage:  c=nsdgt(f,g,a,M);
 %           [c,Ls]=nsdgt(f,g,a,M);
 %

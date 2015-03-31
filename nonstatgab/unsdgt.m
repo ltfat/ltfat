@@ -1,5 +1,5 @@
 function [c,Ls] = unsdgt(f,g,a,M)
-%UNSDGT  Uniform Nonstationary Discrete Gabor transform
+%UNSDGT  Uniform Non-stationary Discrete Gabor transform
 %   Usage:  c=unsdgt(f,g,a,M);
 %           [c,Ls]=unsdgt(f,g,a,M);
 %

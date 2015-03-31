@@ -1,5 +1,5 @@
 function [c,Ls] = nsdgtreal(f,g,a,M)
-%NSDGTREAL  Nonstationary Discrete Gabor transform for real valued signals
+%NSDGTREAL  Non-stationary Discrete Gabor transform for real valued signals
 %   Usage:  c=nsdgtreal(f,g,a,M);
 %           [c,Ls]=nsdgtreal(f,g,a,M);
 %

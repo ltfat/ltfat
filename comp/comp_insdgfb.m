@@ -1,5 +1,5 @@
 function fr = insdgfb(c,g,shift,Ls,dual)
-%INSDGFB  Nonstationary Gabor filterbank synthesis
+%INSDGFB  Non-stationary Gabor filterbank synthesis
 %   Usage: fr = insdgfb(c,g,shift,Ls,dual)
 %          fr = insdgfb(c,g,shift,Ls)
 %          fr = insdgfb(c,g,shift)

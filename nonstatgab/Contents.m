@@ -1,9 +1,9 @@
-% LTFAT - Nonstationary Gabor systems
+% LTFAT - Non-stationary Gabor systems
 %
 %  Florent Jaillet and Peter L. Søndergaard, 2011 - 2015
 %
 %  Transforms
-%    NSDGT                - Nonstationary DGT
+%    NSDGT                - Non-stationary DGT
 %    UNSDGT               - Uniform non-stationary DGT
 %    INSDGT               - Inverse NSDGT and UNSDGT
 %    NSDGTREAL            - Non-stationary DGT for real-valued signals
@@ -11,8 +11,8 @@
 %    INSDGTREAL           - Inverse NSDGTREAL and UNSDGTREAL
 %
 %  Window construction and bounds
-%    NSGABDUAL            - Nonstationary dual windows
-%    NSGABTIGHT           - Nonstationary tight windows
+%    NSGABDUAL            - Non-stationary dual windows
+%    NSGABTIGHT           - Non-stationary tight windows
 %    NSGABFRAMEBOUNDS     - Frame bounds of an NSDGT system
 %    NSGABFRAMEDIAG       - Diagonal of non-stationary Gabor frame operator
 %
