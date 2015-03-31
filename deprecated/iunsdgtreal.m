@@ -1,5 +1,5 @@
 function f=iunsdgtreal(c,g,a,M,Ls)
-%IUNSDGTREAL  Inverse uniform nonstationary discrete Gabor transform
+%IUNSDGTREAL  Inverse uniform non-stationary discrete Gabor transform
 %   Usage:  f=iunsdgtreal(c,g,a,M,Ls);
 %
 %   Input parameters:
@@ -11,7 +11,7 @@ function f=iunsdgtreal(c,g,a,M,Ls)
 %   Output parameters:
 %         f     : Signal.
 %
-%   IUNSDGTREAL(c,g,a,M,Ls) computes the inverse uniform nonstationary Gabor
+%   IUNSDGTREAL(c,g,a,M,Ls) computes the inverse uniform non-stationary Gabor
 %   expansion of the input coefficients c.
 %
 %   IUNSDGTREAL is used to invert the function UNSDGTREAL. Read the help of

@@ -1,5 +1,5 @@
 function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
-%ERBLETT  ERBlet nonstationary Gabor filterbank
+%ERBLETT  ERBlet non-stationary Gabor filterbank
 %   Usage: [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %          [c,Ls,g,shift] = erblett(...)
 %          [c,Ls] = erblett(...)
@@ -20,7 +20,7 @@ function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 %         shift     : Vector of frequency shifts
 %         M         : Number of time channels
 %
-%   This function computes an ERBlet constant-Q transform via nonstationary 
+%   This function computes an ERBlet constant-Q transform via non-stationary 
 %   Gabor filterbanks. Given the signal *f*, the ERBlet parameter *bins*, 
 %   as well as the sampling rate *fs* of *f*, the corresponding ERBlet
 %   coefficients *c* are given as output. For reconstruction, the length of

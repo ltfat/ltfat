@@ -1,5 +1,5 @@
 function [c,Ls] = unsdgtreal(f,g,a,M)
-%UNSDGTREAL  Uniform nonstationary Discrete Gabor transform
+%UNSDGTREAL  Uniform non-stationary Discrete Gabor transform
 %   Usage:  c=unsdgtreal(f,g,a,M);
 %           [c,Ls]=unsdgtreal(f,g,a,M);
 %
@@ -12,7 +12,7 @@ function [c,Ls] = unsdgtreal(f,g,a,M)
 %         c     : Cell array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   `unsdgtreal(f,g,a,M)` computes the nonstationary Gabor coefficients of the
+%   `unsdgtreal(f,g,a,M)` computes the non-stationary Gabor coefficients of the
 %   input signal *f*. The signal *f* can be a multichannel signal, given in
 %   the form of a 2D matrix of size $Ls \times W$, with *Ls* the signal
 %   length and *W* the number of signal channels.
@@ -21,7 +21,7 @@ function [c,Ls] = unsdgtreal(f,g,a,M)
 %   of the output are returned. `unsdgtreal` will refuse to work for complex
 %   valued input signals.
 %
-%   The nonstationary Gabor theory extends standard Gabor theory by
+%   The non-stationary Gabor theory extends standard Gabor theory by
 %   enabling the evolution of the window over time. It is therefore
 %   necessary to specify a set of windows instead of a single window.  This
 %   is done by using a cell array for *g*. In this cell array, the n'th

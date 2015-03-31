@@ -12,12 +12,12 @@ function [c,Ls] = unsdgt(f,g,a,M)
 %         c     : Cell array of coefficients.
 %         Ls    : Length of input signal.
 %
-%   `unsdgt(f,g,a,M)` computes the uniform nonstationary Gabor coefficients
+%   `unsdgt(f,g,a,M)` computes the uniform non-stationary Gabor coefficients
 %   of the input signal *f*. The signal f can be a multichannel signal,
 %   given in the form of a 2D matrix of size $Ls \times W$, with *Ls* being
 %   the signal length and *W* the number of signal channels.
 %
-%   The nonstationary Gabor theory extends standard Gabor theory by
+%   The non-stationary Gabor theory extends standard Gabor theory by
 %   enabling the evolution of the window over time. It is therefore necessary
 %   to specify a set of windows instead of a single window.  This is done by
 %   using a cell array for *g*. In this cell array, the n'th element `g{n}`

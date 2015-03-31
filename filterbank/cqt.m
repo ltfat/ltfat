@@ -1,5 +1,5 @@
 function [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs,varargin)
-%CQT  Constant-Q nonstationary Gabor filterbank
+%CQT  Constant-Q non-stationary Gabor filterbank
 %   Usage: [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs,M)
 %          [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs)
 %          [c,Ls,g,shift] = cqt(...)
@@ -25,7 +25,7 @@ function [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs,varargin)
 %         shift     : Vector of frequency shifts
 %         M         : Number of time channels
 %
-%   This function computes a constant-Q transform via nonstationary Gabor
+%   This function computes a constant-Q transform via non-stationary Gabor
 %   filterbanks. Given the signal *f*, the constant-Q parameters *fmin*,
 %   *fmax* and *bins*, as well as the sampling rate *fs* of *f*, the
 %   corresponding constant-Q coefficients *c* are given as output. For

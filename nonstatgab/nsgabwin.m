@@ -1,5 +1,5 @@
 function [g,info] = nsgabwin(g,a,M);
-%NSGABWIN  Compute a set of nonstationary Gabor windows from text or cell array
+%NSGABWIN  Compute a set of non-stationary Gabor windows from text or cell array
 %   Usage: [g,info] = nsgabwin(g,a,M);
 %
 %   `[g,info]=nsgabwin(g,a,M,L)` computes a window that fits well with

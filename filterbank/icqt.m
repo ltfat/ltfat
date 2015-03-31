@@ -1,5 +1,5 @@
 function fr = icqt(c,g,shift,Ls,dual)
-%ICQT  Constant-Q nonstationary Gabor synthesis
+%ICQT  Constant-Q non-stationary Gabor synthesis
 %   Usage: fr = icqt(c,g,shift,Ls,dual)
 %          fr = icqt(c,g,shift,Ls)
 %          fr = icqt(c,g,shift)

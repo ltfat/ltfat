@@ -9,7 +9,7 @@ function d=nsgabframediag(g,a,M)
 %   Output parameters:
 %         d     : Diagonal stored as a column vector
 %
-%   `nsgabframediag(g,a,M)` computes the diagonal of the nonstationary
+%   `nsgabframediag(g,a,M)` computes the diagonal of the non-stationary
 %   Gabor frame operator with respect to the window *g* and parameters *a*
 %   and *M*. The diagonal is stored as a column vector of length `L=sum(a)`.
 %

@@ -1,5 +1,5 @@
 function [AF,BF]=nsgabframebounds(g,a,M)
-%NSGABFRAMEBOUNDS  Frame bounds of nonstationary Gabor frame
+%NSGABFRAMEBOUNDS  Frame bounds of non-stationary Gabor frame
 %   Usage:  fcond=nsgabframebounds(g,a,M);
 %           [A,B]=nsgabframebounds(g,a,M);
 %
@@ -12,7 +12,7 @@ function [AF,BF]=nsgabframebounds(g,a,M)
 %         A,B   : Frame bounds.
 %
 %   `nsgabframebounds(g,a,Ls)` calculates the ratio $B/A$ of the frame
-%   bounds of the nonstationary discrete Gabor frame defined by windows
+%   bounds of the non-stationary discrete Gabor frame defined by windows
 %   given in *g* at positions given by *a*. Please see the help on |nsdgt|
 %   for a more thourough description of *g* and *a*.
 %

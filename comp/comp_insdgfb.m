@@ -17,7 +17,7 @@ function fr = insdgfb(c,g,shift,Ls,dual)
 %
 %   Given the cell array *c* of non-stationary Gabor coefficients, and a 
 %   set of filters *g* and frequency shifts *shift* this function computes 
-%   the corresponding nonstationary Gabor filterbank synthesis.
+%   the corresponding non-stationary Gabor filterbank synthesis.
 %
 %   If *dual* is set to 1 (default), an attempt is made to compute the 
 %   canonical dual frame for the system given by *g*, *shift* and the size 

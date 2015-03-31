@@ -1,5 +1,5 @@
 function fr = ierblett(c,g,shift,Ls,dual)
-%IERBLETT  ERBlet nonstationary Gabor synthesis
+%IERBLETT  ERBlet non-stationary Gabor synthesis
 %   Usage: fr = ierblett(c,g,shift,Ls,dual)
 %          fr = ierblett(c,g,shift,Ls)
 %          fr = ierblett(c,g,shift)

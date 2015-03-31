@@ -1,6 +1,6 @@
 %DEMO_NSDGT  Nonstionary Gabor transform demo
 %
-%   This script sets up a nonstationary Gabor frame with the specified
+%   This script sets up a non-stationary Gabor frame with the specified
 %   parameters, computes windows and corresponding canonical dual windows
 %   and a test signal, and plots the windows and the energy of the 
 %   coefficients.

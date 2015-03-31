@@ -1,5 +1,5 @@
 function f=iunsdgt(c,g,a,varargin)
-%IUNSDGT  Inverse uniform nonstationary discrete Gabor transform
+%IUNSDGT  Inverse uniform non-stationary discrete Gabor transform
 %   Usage:  f=iunsdgt(c,g,a,Ls);
 %
 %   Input parameters:
@@ -10,7 +10,7 @@ function f=iunsdgt(c,g,a,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   IUNSDGT(c,g,a,Ls) computes the nonstationary Gabor expansion of the 
+%   IUNSDGT(c,g,a,Ls) computes the non-stationary Gabor expansion of the 
 %   input coefficients c.
 %
 %   IUNSDGT is used to invert the function NSDGT. Read the help of NSDGT

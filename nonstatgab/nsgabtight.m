@@ -1,5 +1,5 @@
 function gt=nsgabtight(g,a,M,varargin)
-%NSGABTIGHT  Canonical tight window for nonstationary Gabor frames
+%NSGABTIGHT  Canonical tight window for non-stationary Gabor frames
 %   Usage:  gt=nsgabtight(g,a,M);
 %           gt=nsgabtight(g,a,M,L);
 %
@@ -12,7 +12,7 @@ function gt=nsgabtight(g,a,M,varargin)
 %         gt : Cell array of canonical tight windows
 %
 %   `nsgabtight(g,a,M)` computes the canonical tight windows of the 
-%   nonstationary discrete Gabor frame defined by windows given in *g* and  
+%   non-stationary discrete Gabor frame defined by windows given in *g* and  
 %   time-shifts given by *a*.
 %   
 %   `nsgabtight` is designed to be used with functions |nsdgt| and
