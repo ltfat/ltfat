@@ -8,16 +8,15 @@ else{
 
 // Build a combobox with function names
 var jstr = '';
-jstr += '<div class="input-group">';
+jstr += '<div class="input-group pull-right">';
 jstr += '<span class="input-group-addon"><b>Go to function</b></span>';
-jstr += '<form>';
-jstr += '<select>';
+jstr += '<select class="form-control input-sm">';
 
 for(var fname in globalfunlist){
     var relpath = globalfunlist[fname];
     jstr += '<option value="'+relpath+'">'+fname+'</option>';
 }
-jstr += '</select></form>';
+jstr += '</select>';
 jstr += '</div>';
 $('#jumplist').html(jstr);
 
