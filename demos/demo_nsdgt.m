@@ -1,4 +1,4 @@
-%DEMO_NSDGT  Nonstionary Gabor transform demo
+%DEMO_NSDGT  Non-stationary Gabor transform demo
 %
 %   This script sets up a non-stationary Gabor frame with the specified
 %   parameters, computes windows and corresponding canonical dual windows

@@ -22,25 +22,26 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %   By default, a Hann window on the frequency side is choosen, but the
 %   window can be changed by passing any of the window types from
 %   |firwin| as an optional parameter.
+%   Run `getfield(getfield(arg_firwin,'flags'),'wintype')` to get a cell
+%   array of window types available.
 %
-%   Because the downsampling rates of the channels must all divide the
-%   signal length, |filterbank| will only work for multiples of the
-%   least common multiple of the downsampling rates. See the help of
-%   |filterbanklength|.
+%   The integer downsampling rates of the channels must all divide the
+%   signal length, |filterbank| will only work for input signal lengths
+%   being multiples of the least common multiple of the downsampling rates.
+%   See the help of |filterbanklength|. 
+%   The fractional downsampling rates restrict the filterbank to a single
+%   length *L=Ls*.
 %
 %   `[g,a]=erbfilters(...,'regsampling')` constructs a non-uniform
 %   filterbank with integer subsampling factors.
 %
 %   `[g,a]=erbfilters(...,'uniform')` constructs a uniform filterbank
-%   where the downsampling rate is the same for all the channels. This
-%   results in most redundant representation, which produces nice plots.
+%   where the integer downsampling rate is the same for all the channels. This
+%   results in most redundant representation which produces nice plots.
 %
 %   `[g,a]=erbfilters(...,'fractional')` constructs a filterbank with
-%   fractional downsampling rates *a*. The rates are constructed such
-%   that the filterbank can handle signal lengths that are multiples of
-%   *L*, so the benefit of the fractional downsampling is that you get to
-%   choose the value returned by |filterbanklength|. This results in the
-%   least redundant system.
+%   fractional downsampling rates *a*. 
+%   This results in the least redundant system.
 %
 %   `[g,a]=erbfilters(...,'fractionaluniform')` constructs a filterbank with
 %   fractional downsampling rates *a*, which are uniform for all filters
@@ -65,7 +66,7 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %                      system may no longer be painless.
 %
 %     'symmetric'     Create filters that are symmetric around their centre
-%                     frequency. This is the default.
+%                     frequency. This is the default.'sqrtsquare','sqrtrect'
 %
 %     'warped'        Create asymmetric filters that are symmetric on the
 %                     Erb-scale.

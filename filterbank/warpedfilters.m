@@ -23,6 +23,12 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %   where the first filter is selected such that its center is lower than 
 %   `fmin`. 
 %
+%   By default, a Hann window on the frequency side is choosen, but the
+%   window can be changed by passing any of the window types from
+%   |firwin| as an optional parameter.
+%   Run `getfield(getfield(arg_firwin,'flags'),'wintype')` to get a cell
+%   array of window types available.
+%
 %   With respect to the selected scale, all filters have equal bandwidth 
 %   and are uniformly spaced on the scale axis, e.g. if `freqtoscale` is 
 %   $\log(x)$, then we obtain constant-Q filters with geometric spacing. 
@@ -63,26 +69,22 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %   but the window can be changed by passing any of the window types from
 %   |firwin| as an optional parameter.
 %
-%   Because the downsampling rates of the channels must all divide the
-%   signal length, |filterbank| will only work for multiples of the
-%   least common multiple of the downsampling rates. See the help of
-%   |filterbanklength|.
+%   The integer downsampling rates of the channels must all divide the
+%   signal length, |filterbank| will only work for input signal lengths
+%   being multiples of the least common multiple of the downsampling rates.
+%   See the help of |filterbanklength|. 
+%   The fractional downsampling rates restrict the filterbank to a single
+%   length *L=Ls*.
 %
 %   `[g,a]=warpedfilters(...,'regsampling')` constructs a non-uniform
-%   filterbank. The downsampling rates are constant in the octaves but
-%   can differ among octaves. This approach was chosen in order to minimize
-%   the least common multiple of *a*, which determines a granularity of
-%   admissible input signal lengths.
+%   filterbank with integer subsampling factors. 
 %
 %   `[g,a]=warpedfilters(...,'uniform')` constructs a uniform filterbank
-%   where the downsampling rate is the same for all the channels. This
+%   where the the downsampling rate is the same for all the channels. This
 %   results in most redundant representation, which produces nice plots.
 %
 %   `[g,a]=warpedfilters(...,'fractional')` constructs a filterbank with
-%   fractional downsampling rates *a*. The rates are constructed such
-%   that the filterbank can handle signal lengths that are multiples of
-%   *L*, so the benefit of the fractional downsampling is that you get to
-%   choose the value returned by |filterbanklength|. This results in the
+%   fractional downsampling rates *a*. This results in the
 %   least redundant system.
 %
 %   `[g,a]=warpedfilters(...,'fractionaluniform')` constructs a filterbank
@@ -95,10 +97,6 @@ function [g,a,fc,L]=warpedfilters(freqtoscale,scaletofreq,fs,fmin,fmax,bins,Ls,v
 %   *fs*.
 %
 %   `warpedfilters` accepts the following optional parameters:
-%
-%       'winfun',winfun       
-%                           Filter prototype (see |firwin| for available
-%                           filters). Default is `'hann'`.
 %
 %       'bwmul',bwmul 
 %                           Bandwidth variation factor. Multiplies the

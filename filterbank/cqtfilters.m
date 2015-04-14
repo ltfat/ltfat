@@ -26,6 +26,8 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   By default, a Hann window on the frequency side is chosen, but the
 %   window can be changed by passing any of the window types from
 %   |firwin| as an optional parameter.
+%   Run `getfield(getfield(arg_firwin,'flags'),'wintype')` to get a cell
+%   array of window types available.
 %
 %   Because the downsampling rates of the channels must all divide the
 %   signal length, |filterbank| will only work for multiples of the
@@ -59,9 +61,6 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   *fs*.
 %
 %   `cqtfilters` accepts the following optional parameters:
-%
-%     'winfun',winfun       Filter prototype (see |firwin| for available
-%                           filters). Default is `'hann'`.
 %
 %     'Qvar',Qvar           Bandwidth variation factor. Multiplies the
 %                           calculated bandwidth. Default value is *1*.
