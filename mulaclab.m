@@ -610,24 +610,29 @@ supportedFramesIdx = 1;
 supportedFrames = ...
 {...
   struct('type','Gabreal','def',...
-    struct('winType','hann','winLen',256,'hop',round(256 / 4),...
-           'nbFreq',256)),... 
+    struct('winType','hann','winLen',1024,'hop',256,...
+           'nbFreq',2048)),... 
+  struct('type','erblet','def',...
+    struct('M',300,'downsampling','fractionaluniform')),... 
+  ...
+  struct('type','cqt','def',...
+    struct('fmin',50,'fmax',20000,'bins',32,'downsampling','uniform')),... 
   ...
   struct('type','Gabor','def',...
-    struct('winType','hann','winLen',256,'hop',round(256 / 4),...
-           'nbFreq',256)),...
-  ...
-  struct('type','DWT','def',...
-    struct('wavelet','sym10','J',8)),...
-  ...
-  struct('type','UDWT','def',...
-    struct('wavelet','sym10','J',8)),...
-  ...
-  struct('type','WFBT','def',...
-    struct('wavelet','sym10','J',7)),... 
-  ...
-  struct('type','UWFBT','def',...
-    struct('wavelet','sym10','J',4)),...   
+    struct('winType','hann','winLen',1024,'hop',256,...
+           'nbFreq',2048)),...
+%  ...
+%   struct('type','DWT','def',...
+%     struct('wavelet','sym10','J',8)),...
+%   ...
+%   struct('type','UDWT','def',...
+%     struct('wavelet','sym10','J',8)),...
+%   ...
+%   struct('type','WFBT','def',...
+%     struct('wavelet','sym10','J',7)),... 
+%   ...
+%   struct('type','UWFBT','def',...
+%     struct('wavelet','sym10','J',4)),...   
 };
 
 iconpath=[ltfatbasepath,'mulaclab',filesep,'icons',filesep];
@@ -827,7 +832,7 @@ initialize(file);
       'Callback',@toggleModVisu);
     gui.visuMenu.showOverviewId = uimenu(menuVisuId,...
       'Label','Show overview of original signal',...
-      'Checked', 'on',...
+      'Checked', 'off',...
       'Callback',@toggleOverviewVisu);
      
     % intialize visualization
@@ -858,11 +863,14 @@ initialize(file);
     % activate the current tool
     % changeTool([], [], gui.curTool);
 
-    % end of initialization, show the interface to the user
-    set(gui.mainFigId, 'Visible', 'on');
+
     resetMulaclab();
+    toggleOverviewVisu(); % Do not show te overwiev window
     resetSel();
     resetSymbol();
+    
+        % end of initialization, show the interface to the user
+    set(gui.mainFigId, 'Visible', 'on');
   end
 
   function initializeParameter()
@@ -1030,6 +1038,8 @@ initialize(file);
        case 'gabor'
           win = firwin(frame.def.winType,frame.def.winLen);
           coef = dgt(f, win, frame.def.hop, frame.def.nbFreq);
+       case {'erblet','cqt'}
+           coef = filterbank(f,frame.precomp.g,frame.precomp.a);
        case 'dwt'
           [coef, coeff.info] = fwt(f,frame.def.wavelet,frame.def.J);
        case 'wfbt'
@@ -1053,6 +1063,8 @@ initialize(file);
           win = gabdual(firwin(frame.def.winType,frame.def.winLen), ...
           frame.def.hop, frame.def.nbFreq);
           fhat = idgt(coef, win, frame.def.hop,length(sig.ori));
+       case {'erblet','cqt'}
+          fhat = 2*real(ifilterbank(coef,frame.precomp.gdual,frame.precomp.a,length(sig.ori)));   
        case 'dwt'
           fhat = ifwt(coef,coeff.info);
        case 'wfbt'
@@ -1073,6 +1085,8 @@ initialize(file);
           C = plotdgtreal(coef,frame.def.hop,frame.def.nbFreq,sig.sampFreq,key,value);
        case 'gabor'
           C = plotdgt(coef,frame.def.hop,sig.sampFreq,key,value);
+       case {'erblet','cqt'}
+          C = plotfilterbank(coef,frame.precomp.a,frame.precomp.fc,sig.sampFreq,key,value);
        case {'dwt','udwt','wfbt','uwfbt','ufwt'}
           C = plotwavelets(coef,coeff.info,sig.sampFreq,key,value);
        otherwise
@@ -1098,7 +1112,7 @@ initialize(file);
            end
            
         % Cell array containing column vectors format
-        case 'wfbt'
+        case {'wfbt','erblet','cqt'}
            M = numel(coeff.ori);
            Lplot = size(symb,2);
            Lc = cellfun(@(cEl) size(cEl,1),coeff.ori);
@@ -1146,7 +1160,7 @@ initialize(file);
            end
 
         % Cell array containing column vectors format
-        case 'wfbt'
+        case {'wfbt','erblet','cqt'}
            M = numel(coeff.ori);
            Lsymb = size(coeff.oriC,2);
            Lc = cellfun(@(cEl) size(cEl,1),mult);
@@ -1179,6 +1193,31 @@ initialize(file);
           error('%s: Unrecognized frame type',upper(mfilename));
      end
 
+  end
+
+
+  function precomputeStuff()
+      if isfield(frame,'precomp')
+          % Already done, do nothing.
+          return;
+      end
+      frame.precomp = struct();
+      
+      switch lower(frame.type)
+          case 'erblet'
+             [frame.precomp.g,frame.precomp.a,frame.precomp.fc] = ...
+                 erbfilters(sig.sampFreq,length(sig.ori),'M',frame.def.M,frame.def.downsampling);
+             frame.precomp.gdual = ...
+                 filterbankrealdual(frame.precomp.g,frame.precomp.a,length(sig.ori));
+          case 'cqt'
+             [frame.precomp.g,frame.precomp.a,frame.precomp.fc] = ...
+                 cqtfilters(sig.sampFreq,frame.def.fmin,frame.def.fmax,...
+                            frame.def.bins,length(sig.ori),frame.def.downsampling);
+             frame.precomp.gdual = ...
+                 filterbankrealdual(frame.precomp.g,frame.precomp.a,...
+                 filterbanklength(length(sig.ori),frame.precomp.a));
+      end
+          
   end
 
   function applyMultiplier(c,mult)
@@ -1235,14 +1274,15 @@ initialize(file);
     % around each polygon (not on the whole time-frequency plane)
     % and also working with a smaller mask when signal is real
     for ind = 1:length(poly)
+      xvals = round(convAxesToIndX(poly(ind).x));
+      yvals = round(convAxesToIndY(poly(ind).y));
+      tmpmask = poly2mask(xvals,yvals,size(mask,1), size(mask,2));
+      
+      
       if poly(ind).hole
-        mask = mask - poly2mask(round(convAxesToIndX(poly(ind).x)),...
-          round(convAxesToIndY(poly(ind).y)),...
-          size(mask,1), size(mask,2));
+        mask = mask - tmpmask;
       else
-        mask = mask + poly2mask(round(convAxesToIndX(poly(ind).x)),...
-          round(convAxesToIndY(poly(ind).y)),...
-          size(mask,1), size(mask,2));
+        mask = mask + tmpmask;
       end
     end
 
@@ -1504,6 +1544,10 @@ initialize(file);
 
   function resetMulaclab()
     initializePlayer;
+    % Precompute stuff
+    precomputeStuff();
+    
+    
     coeff.ori = calculateCoeff(sig.ori);
     sig.mod = sig.ori;
     coeff.mod = coeff.ori;
@@ -1792,6 +1836,10 @@ initialize(file);
     
     function callbackOk(objId, eventData)
       newFrame = oldFrame;
+      if isfield(newFrame,'precomp')
+          newFrame = rmfield(newFrame,'precomp');
+      end
+      
       for ind2 = 1:length(fieldNames)
          val = get(objIds(ind2),'string');
           if isempty(val)
