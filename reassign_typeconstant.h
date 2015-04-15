@@ -4,6 +4,12 @@
 
 #define fbreassOptOut_EXPANDRAT 2
 
+typedef enum
+{
+    REASS_DEFAULT          = 0,
+    REASS_NOTIMEWRAPAROUND = 1
+} fbreassHints;
+
 typedef struct {
    ltfatInt** repos;
    ltfatInt*  reposl;
