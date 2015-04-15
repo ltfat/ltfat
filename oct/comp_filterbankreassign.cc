@@ -17,7 +17,7 @@ fwd_filterbankreassign(const double *s[], const double *tgrad[], const double *f
                        const ltfatInt N[], const double a[], const double cfreq[],
                        const ltfatInt M, double *sr[], fbreassOptOut* optout)
 {
-   filterbankreassign_d(s, tgrad, fgrad, N, a, cfreq, M, sr, optout);
+   filterbankreassign_d(s, tgrad, fgrad, N, a, cfreq, M, sr, REASS_DEFAULT, optout);
 }
 
 static inline void
@@ -25,7 +25,7 @@ fwd_filterbankreassign(const float *s[], const float *tgrad[], const float *fgra
                        const ltfatInt N[], const double a[], const double cfreq[],
                        const ltfatInt M, float *sr[], fbreassOptOut* optout)
 {
-   filterbankreassign_s(s, tgrad, fgrad, N, a, cfreq, M, sr, optout);
+   filterbankreassign_s(s, tgrad, fgrad, N, a, cfreq, M, sr, REASS_DEFAULT, optout);
 }
 
 

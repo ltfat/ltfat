@@ -112,6 +112,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
                                const ltfatInt N[], const double a[],
                                const double cfreq[], const ltfatInt M,
                                LTFAT_REAL *sr[],
+                               fbreassHints hints,
                                fbreassOptOut  *repos)
 {
 #define CHECKZEROCROSSINGANDBREAK( CMP, SIGN) \
@@ -132,6 +133,8 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
      }
 
    ltfatInt* chan_pos = NULL;
+
+   int doTimeWraparound = !(hints & REASS_NOTIMEWRAPAROUND);
 
    if (repos)
    {
@@ -257,8 +260,16 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
       for (ltfatInt jj = 0; jj < N[m]; jj++)
       {
          ltfatInt tmpIdx = tgradIdx[jj];
-         fgradIdx[jj] = positiverem(
-                           ltfat_round( (fgrad[m][jj] + a[m] * jj) / a[tmpIdx]), N[tmpIdx]);
+         ltfatInt fgradIdxTmp = ltfat_round( (fgrad[m][jj] + a[m] * jj) / a[tmpIdx]);
+
+         if(doTimeWraparound)
+         {
+            fgradIdx[jj] = positiverem( fgradIdxTmp, N[tmpIdx]);
+         }
+         else
+         {
+            fgradIdx[jj] = rangelimit( fgradIdxTmp, 0, N[tmpIdx]-1);
+         }
       }
 
 

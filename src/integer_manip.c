@@ -276,4 +276,11 @@ positiverem(const ltfatInt a,const ltfatInt b)
     return(c<0 ? c+b : c);
 }
 
+LTFAT_EXTERN_TOO ltfatInt
+rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax)
+{
+    ltfatInt c = a < amin? amin:a;
+    c = c > amax? amax: c;
+    return c;
+}
 

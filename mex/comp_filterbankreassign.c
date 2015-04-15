@@ -87,7 +87,8 @@ fbreassOptOut* optout = NULL;
 
    // Run it
    LTFAT_NAME(filterbankreassign)(sPtr, tgradPtr, fgradPtr,
-                                  N, a, cfreqPtr, M, srPtr, optout);
+                                  N, a, cfreqPtr, M, srPtr,
+                                  REASS_DEFAULT, optout);
 
    // Process the optional output
    if (optout != NULL)

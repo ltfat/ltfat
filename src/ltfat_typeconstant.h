@@ -71,6 +71,10 @@ ltfatInt ltfat_round(const double x);
 LTFAT_EXTERN_TOO
 ltfatInt positiverem(const ltfatInt a,const ltfatInt b);
 
+LTFAT_EXTERN_TOO ltfatInt
+rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax);
+
+
 // Custom headers are down here
 #include "reassign_typeconstant.h"
 
