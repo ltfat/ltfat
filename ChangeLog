@@ -16,9 +16,10 @@ Version 2.0.2 x/x  2015
 	 * Added implementation of some quadratic time-frequency representations: 
 	   Rihaczek,
 
-	 * Fixed #112: Octave package now compiles on Windows (mxe version).
+	 * Fixed #112 (Sourceforge): Octave package now compiles on Windows (mxe version)
+       thanks to John Donoghue.
 
-	 * Related to #111: Wavelet filters were hand-centered around the origin.
+	 * Related to #111 (Sourceforge): Wavelet filters were hand-centered around the origin.
 	 
 	 * comp_filterbank, comp_ifilterbank and ltfatarghelper are compiled as MEX files in Octave.
 
