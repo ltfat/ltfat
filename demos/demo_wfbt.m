@@ -46,14 +46,11 @@ fs = 48000;
 
 % Bark-like filterbank tree
 % Creating tree depicted in Figure 8 in the reference. 
-w = wfbtinit();
-w = wfbtput(0,0,'cmband3',w);
+w = wfbtinit({'cmband3',1});
 w = wfbtput(1,0,'cmband6',w);
 w = wfbtput(1,1,'cmband3',w);
-w = wfbtput(2,0,'cmband5',w);
-w = wfbtput(2,1,'cmband5',w);
-w = wfbtput(2,2,'cmband2',w);
-w = wfbtput(2,3,'cmband2',w);
+w = wfbtput(2,0:1,'cmband5',w);
+w = wfbtput(2,2:3,'cmband2',w);
 
 % Convert to filterbank
 [g,a] = wfbt2filterbank(w);
@@ -72,17 +69,10 @@ plotwavelets(c,info,fs,'dynrange',60);
 
 % Well-tempered musical scale filterbank tree
 % Creating tree depicted in Figure 9 in the reference. 
-w2 = wfbtinit();
-w2 = wfbtput(0,0,'cmband4',w2);
-w2 = wfbtput(1,0,'cmband6',w2);
-w2 = wfbtput(1,1,'cmband6',w2);
-w2 = wfbtput(2,0,'cmband4',w2);
-w2 = wfbtput(2,1,'cmband4',w2);
-w2 = wfbtput(3,1,'cmband4',w2);
-w2 = wfbtput(3,2,'cmband4',w2);
-w2 = wfbtput(3,3,'cmband4',w2);
-w2 = wfbtput(3,4,'cmband4',w2);
-
+w2 = wfbtinit({'cmband4',1});
+w2 = wfbtput(1,0:1,'cmband6',w2);
+w2 = wfbtput(2,0:1,'cmband4',w2);
+w2 = wfbtput(3,1:4,'cmband4',w2);
 
 % Convert to filterbank
 [g2,a2] = wfbt2filterbank(w2);
