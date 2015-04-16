@@ -63,12 +63,15 @@ flags = ltfatarghelper({},definput,varargin);
 wt = wfbtinit({'strict',wt},flags.forder);
 
 % Pick just nodes with outputs
-wtPath = 1:numel(wt.nodes);
-wtPath(nodesOutputsNo(1:numel(wt.nodes),wt)==0)=[];
+% wtPath = 1:numel(wt.nodes);
+% wtPath(nodesOutputsNo(1:numel(wt.nodes),wt)==0)=[];
+% 
+% rangeLoc = nodesLocOutRange(wtPath,wt);
+% rangeOut = nodesOutRange(wtPath,wt);
 
-rangeLoc = nodesLocOutRange(wtPath,wt);
-rangeOut = nodesOutRange(wtPath,wt);
-[g,a] = nodesMultid(wtPath,rangeLoc,rangeOut,wt);
+[nodesBF, rangeLoc, rangeOut] = treeBFranges(wt);
+slice = ~cellfun(@isempty,rangeOut); % Limit to nodes with unconnected outputs
+[g,a] = nodesMultid(nodesBF(slice),rangeLoc(slice),rangeOut(slice),wt);
 
 if ~flags.do_scaling_notset
    g = comp_filterbankscale(g,a,flags.scaling);

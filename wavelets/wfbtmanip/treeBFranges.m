@@ -23,11 +23,17 @@ function [nodesBF, rangeLoc, rangeOut] = treeBFranges(wt,varargin)
 
 
 nodesBF = nodeBForder(0,wt);
-
+do_rev = 0;
 if ~isempty(varargin(strcmp('rev',varargin)));
    nodesBF = fliplr(nodesBF); 
+   do_rev = 1;
 end
 
 rangeLoc = nodesLocOutRange(nodesBF,wt);
-rangeOut = nodesOutRange(nodesBF,wt);
+
+rangeOut = treeOutRange(wt);
+if do_rev
+    %rangeOut = nodesOutRange(nodesBF,wt);
+    rangeOut = rangeOut(end:-1:1);
+end
 

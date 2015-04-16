@@ -1,12 +1,32 @@
 function a = treeSub(wt)
-%TREESUB
+%TREESUB  Identical subsampling factors
+%   Usage:  a = treeSub(wt)
+%
+%   Input parameters:
+%         wt  : Structure containing description of the filter tree.
+%
+%   Output parameters:
+%         a : Subsampling factors.
+%
+%   `a = treeSub(wt)` returns subsampling factors asociated with the tree
+%   subbands. For definition of the structure see |wfbinit|.
+%
+%   See also: wfbtinit
+%
 
+% Get nodes in BF order
+nodesBF = nodeBForder(0,wt);
 % All nodes with at least one final output.
-termN = find(nodesOutputsNo(1:numel(wt.nodes),wt)~=0);
+termNslice = nodesOutputsNo(nodesBF,wt)~=0;
+termN = nodesBF(termNslice);
+
 % Range in filter outputs
 outRangeTermN = nodesLocOutRange(termN,wt);
 
-cRangeTermN = nodesOutRange(termN,wt);
+%cRangeTermN = nodesOutRange(termN,wt);
+rangeOut = treeOutRange(wt);
+% Get only nodes with some output
+cRangeTermN = rangeOut(termNslice);
 
 noOut = sum(cellfun(@numel,cRangeTermN));
 % Subsampling factors of the terminal nodes

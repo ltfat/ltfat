@@ -74,10 +74,11 @@ end
 dtw = dtwfbinit({'strict',dualwt},varargin{:});
 
 % Determine relation between the tree nodes
-wtPath = 1:numel(dtw.nodes);
-wtPath(nodesOutputsNo(1:numel(dtw.nodes),dtw)==0)=[];
-rangeLoc = nodesLocOutRange(wtPath,dtw);
-rangeOut = nodesOutRange(wtPath,dtw);
+[wtPath, rangeLoc, rangeOut] = treeBFranges(dtw);
+slice = ~cellfun(@isempty,rangeOut); % Limit to nodes with unconnected outputs
+wtPath   = wtPath(slice); 
+rangeLoc = rangeLoc(slice); 
+rangeOut = rangeOut(slice);
 
 % Multirate identity filters of the first tree
 [g1,a] = nodesMultid(wtPath,rangeLoc,rangeOut,dtw);
