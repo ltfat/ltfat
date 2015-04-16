@@ -141,13 +141,13 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
      case 'wfbt'
       [AF,BF]=wfbtbounds(g,L);
      case 'ufwt'
-      [AF,BF]=uwfbtbounds({g,F.J,'dwt'},L,F.flags.scaling);
+      [AF,BF]=wfbtbounds({g,F.J,'dwt'},L,F.flags.scaling);
      case 'uwfbt'
-      [AF,BF]=uwfbtbounds(g,L,F.flags.scaling);
+      [AF,BF]=wfbtbounds(g,L,F.flags.scaling);
      case 'wpfbt'
       [AF,BF]=wpfbtbounds(g,L,F.flags.interscaling);
      case 'uwpfbt'
-      [AF,BF]=uwpfbtbounds(g,L,F.flags.interscaling,F.flags.scaling);
+      [AF,BF]=wpfbtbounds(g,L,F.flags.interscaling,F.flags.scaling);
     end;  
   end;
   
