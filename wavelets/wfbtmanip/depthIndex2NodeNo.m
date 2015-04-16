@@ -1,5 +1,11 @@
 function [nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wt)
-
+%DEPTHINDEX2NODENO Get node from depth and index in the tree
+%   Usage: [nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wt)
+%
+%   `[nodeNo,nodeChildIdx] = depthIndex2NodeNo(d,k,wt)` returns node 
+%   *nodeNo* and an array of its children nodes *nodeChildIdx* positioned
+%   in depth *g* and index *k* in the tree *wt*.
+%
 if(d==0)
     nodeNo=0;
     nodeChildIdx=0;
@@ -29,25 +35,6 @@ for kIdx=1:numel(k)
     nodeChildIdx(kIdx) = ktmp-chNoZ(idx)+1;
 end
 
-% ktemp = k;
-% chNo = cellfun( @(nEl) numel(nEl.g),wt.nodes(nodesNo));
-% for ii=1:length(nodesNo)
-%     if(ktemp<chNo(ii))
-%         nodeChildIdx = ktemp+1;
-%         nodeNo = nodesNo(ii);
-%         if mynodeNo~=nodeNo || mynodeChildIdx ~= nodeChildIdx
-%             error('mas to tu spatne');
-%         end
-%         return;
-%     else
-%         ktemp = ktemp-chNo(ii);
-%     end
-% end
-% error('%s: Index k out of bounds.',mfilename);
-
-
-
-
 function nodd = getNodesInDepth(d,wt)
 % find all nodes with d steps to the root ordered
 if d==1
@@ -67,33 +54,4 @@ while tempd<d
 end
 nodd = nbf(nbfTmp==0);
 
-% 
-% nbfPar = wt.parents(nbf);
-% 
-% for ii=1:numel(nbf)
-%    
-% end
 
-% nodd = [];
-% toGoTrough = {};
-% 
-% 
-%    nodeNo = find(wt.parents==0);
-%    toGoTrough = cell(d+1,1);
-%    toGoTrough{1} = nodeNo;
-%    tempd = 1;
-% 
-% 
-% while(tempd<d)
-%     
-%     for jj=1:length(toGoTrough{tempd})
-%        actNod = toGoTrough{tempd}(jj);
-%        childrenIdx = find(wt.children{actNod}~=0);
-%        ch = wt.children{actNod}(childrenIdx);
-%        toGoTrough{tempd+1} = [toGoTrough{tempd+1},ch];
-%     end
-% 
-%     tempd = tempd+1;
-% end
-% 
-% nodd=toGoTrough{d};

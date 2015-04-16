@@ -134,8 +134,8 @@ if(~isempty(found))
      %check if childrenIdx has any children
      tmpnode = wt.children{nodeNo}(found);  
      if(~isempty(find(wt.children{tmpnode}~=0, 1)))
-         if length(w.g)~=length(wt.nodes{tmpnode}.g)
-            error('%s: The replacing node have to have %d filters.',mfilename,length(wt.nodes{tmpnode}.g)); 
+         if length(node.g)~=length(wt.nodes{tmpnode}.g)
+            error('%s: The replacing node must have %d filters.',mfilename,length(wt.nodes{tmpnode}.g)); 
          end
      end
      wt.nodes{tmpnode} = node;

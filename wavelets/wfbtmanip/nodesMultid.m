@@ -32,10 +32,6 @@ for ii = 1:numel(wtPath)
       tmpUpsFac = nodesFiltUps(iiNode,wt);
       tmpFilt = wt.nodes{iiNode}.g{locRange(jj)};
       g{outRange(jj)} = struct();
-      % Involution is here because of the filterbank convention is
-      % different from the one used in wavelet filtering.
-      %g{outRange(jj)}.h = conj(flipud(conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1))));
-      %g{outRange(jj)}.offset = 1-numel(g{outRange(jj)}.h)+nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
       g{outRange(jj)}.h = conv2(hmi,comp_ups(tmpFilt.h(:),tmpUpsFac,1));
       g{outRange(jj)}.offset = -nodePredecesorsOrig(-tmpFilt.offset,iiNode,wt);
    end
