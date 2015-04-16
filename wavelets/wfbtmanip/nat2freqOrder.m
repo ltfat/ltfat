@@ -16,7 +16,8 @@ function wt = nat2freqOrder(wt,varargin)
 %   `nat2freqOrder(wt,nodes)` does the same but works only with nodes
 %   listed in *nodes*.
 %
-%   REMARK: The function is self invertible.
+%   `nat2freqOrder(...,'rev')` changes the frequency ordering back to
+%   natural ordering.
 %
 %   See also: wfbtinit,  wfbtmultid, nodeBForder
 %
@@ -30,11 +31,10 @@ if do_rev
     varargin(strcmp('rev',varargin)) = [];
 end
 
+bftreepath = nodeBForder(0,wt);
+
 if isempty(varargin)
-   % Work with the whole tree
-   treePath = nodeBForder(0,wt);
-   %skip root
-   treePath = treePath(2:end);
+   treePath = bftreepath(2:end);% skip root
 else
    % Work with specified nodes only
    nodes = varargin{1}; 
@@ -46,6 +46,7 @@ end
 
 % Dual-tree complex wavelet packets require some more tweaking.
  if isfield(wt,'dualnodes')
+     
     locIdxs = arrayfun(@(tEl) find(wt.children{wt.parents(tEl)}==tEl,1),treePath);
     treeNodes = treePath(rem(locIdxs,2)~=1);
     % Root was removed so the following will not fail
@@ -58,7 +59,7 @@ end
  
         if do_rev
           jj = wt.children{jj}(1);
-        else
+        else 
           jj = wt.children{jj}(end);
         end
         
@@ -66,26 +67,47 @@ end
  
  end
 
+% Array indexed by nodeId
+reordered = zeros(size(bftreepath));
 
-% Get loc. index of nodes
-locIdxs = arrayfun(@(tEl) find(wt.children{wt.parents(tEl)}==tEl,1),treePath);
+% Long version
+if 1
+    for nodeId=bftreepath
+        ch = postpad(wt.children{nodeId},numel(wt.nodes{nodeId}.g));
+        odd = 1;
+        if reordered(nodeId) && rem(numel(ch),2)==1
+            odd = 0;
+        end 
 
-% Get only nodes connected to a high-pass output
-treeNodes = treePath(rem(locIdxs,2)~=1);
-
-for nodeId=treeNodes
-       % now for the filter reordering
-       wt.nodes{nodeId}.g = wt.nodes{nodeId}.g(end:-1:1);
-       wt.nodes{nodeId}.h = wt.nodes{nodeId}.h(end:-1:1);
-       wt.nodes{nodeId}.a = wt.nodes{nodeId}.a(end:-1:1);
-       
-        % Do the same with the dual tree if it exists
-        if isfield(wt,'dualnodes')
-            wt.dualnodes{nodeId}.g = wt.dualnodes{nodeId}.g(end:-1:1);
-            wt.dualnodes{nodeId}.h = wt.dualnodes{nodeId}.h(end:-1:1);
-            wt.dualnodes{nodeId}.a = wt.dualnodes{nodeId}.a(end:-1:1);
-        end
+        for m=0:numel(ch)-1
+            if ch(m+1) ~= 0
+                if rem(m,2)==odd
+                   reordered(ch(m+1)) = 1;
+                end
+            end
+        end    
+    end
 end
+
+% Reorder filters
+for nodeId=treePath(logical(reordered(treePath)))
+    wt = reorderFilters(nodeId,wt);
+end
+
+function wt = reorderFilters(nodeId,wt)
+% now for the filter reordering
+wt.nodes{nodeId}.g = wt.nodes{nodeId}.g(end:-1:1);
+wt.nodes{nodeId}.h = wt.nodes{nodeId}.h(end:-1:1);
+wt.nodes{nodeId}.a = wt.nodes{nodeId}.a(end:-1:1);
+
+% Do the same with the dual tree if it exists
+if isfield(wt,'dualnodes')
+    wt.dualnodes{nodeId}.g = wt.dualnodes{nodeId}.g(end:-1:1);
+    wt.dualnodes{nodeId}.h = wt.dualnodes{nodeId}.h(end:-1:1);
+    wt.dualnodes{nodeId}.a = wt.dualnodes{nodeId}.a(end:-1:1);
+end
+
+
 
 
 
