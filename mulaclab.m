@@ -2891,7 +2891,7 @@ initialize(file);
          range = indFreq:startInFreq;
          range = range(end:-1:1);
       end
-      if(all(selectedInFreq(range)==1))
+      if isempty(range) || all(selectedInFreq(range)==1)
       return;
       end
       
