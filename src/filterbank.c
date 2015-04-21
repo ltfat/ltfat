@@ -176,7 +176,10 @@ LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
                                   FFTW_BACKWARD, FFTW_ESTIMATE);
 
     const ltfatInt bufLen = (ltfatInt) ceil(Gl/((double)N))*N;
-    LTFAT_COMPLEX *buf = ltfat_malloc(bufLen*sizeof*buf);
+
+    LTFAT_COMPLEX* buf = NULL;
+    if(bufLen)
+       buf = ltfat_malloc(bufLen*sizeof*buf);
 
     struct LTFAT_NAME(convsub_fftbl_plan_struct) p_struct =
     {
@@ -193,7 +196,7 @@ LTFAT_EXTERN void
 LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);
-    ltfat_free(p->buf);
+    if(p->buf!=NULL) ltfat_free(p->buf);
     ltfat_free(p);
 }
 
@@ -206,17 +209,26 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
                                   const int realonly,
                                   LTFAT_COMPLEX *cout)
 {
+
     const ltfatInt L = p->L;
     const ltfatInt Gl = p->Gl;
     const ltfatInt W = p->W;
     const double a = p->a;
-    LTFAT_COMPLEX* tmp = p->buf;
-    const ltfatInt tmpLen = p->bufLen;
     // Output length
     const ltfatInt N = (ltfatInt) floor(L/a + 0.5);
+    // Bail out in degenerate case
+    if(!Gl)
+    {
+        memset(cout,0,W*N*sizeof*cout);
+        return;
+    }
+
+    LTFAT_COMPLEX* tmp = p->buf;
+    const ltfatInt tmpLen = p->bufLen;
     //const ltfatInt tmpLen = (ltfatInt) ceil(Gl/((double)N))*N;
     const LTFAT_REAL scalconst = (LTFAT_REAL) 1.0/(L);
     // LTFAT_COMPLEX *tmp = ltfat_calloc(tmpLen,sizeof*tmp);
+
 
     for(ltfatInt w=0; w<W; w++)
     {

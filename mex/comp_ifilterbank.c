@@ -4,18 +4,6 @@
 #include "ltfat.h"
 
 /*
-  Outside functions
-*/
-/*
-void comp_ifilterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
-void comp_ifilterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
-void comp_ifilterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
-
-void comp_ifilterbank_fftbl_atexit();
-void comp_ifilterbank_fft_atexit();
-void comp_ifilterbank_td_atexit();
-*/
-/*
   Inside functions
 */
 void ifilterbankAtExit();
@@ -128,16 +116,7 @@ do{                               \
 */
 void ifilterbankAtExit()
 {
-#ifdef _DEBUG
-   mexPrintf("Exit fnc called: %s\n", __PRETTY_FUNCTION__);
-#endif
-   /*
-     comp_ifilterbank_fftbl_atexit();
-     comp_ifilterbank_fft_atexit();
-     comp_ifilterbank_td_atexit();
-   */
-   if (mxF != NULL)
-      mxDestroyArray(mxF);
+   if (mxF != NULL) mxDestroyArray(mxF);
 
    if (p_double != NULL)
    {
@@ -173,7 +152,7 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
    mwSize acols = mxGetN(mxa);
 
    // pointer to a
-   double *a = (double*) mxGetData(mxa);
+   double *a = mxGetData(mxa);
 
 
    if (acols > 1)
@@ -189,11 +168,6 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
          acols = 1;
       }
    }
-
-   /*
-      plhs[0] = mxCreateNumericArray(ndim,dims,mxGetClassId(mx),mxCOMPLEX);
-      mxArray* mxf = plhs[0];
-     */
 
    // Stuff for sorting the filters
    mwSize tdCount = 0;
@@ -245,9 +219,9 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       prhs_td[1] = mxCreateCellMatrix(tdCount, 1);
       prhs_td[2] = mxCreateDoubleMatrix(tdCount, 1, mxREAL);
       prhs_td[3] = mxCreateDoubleScalar(L);
-      double* aPtr = (double*)mxGetPr(prhs_td[2]);
+      double* aPtr = mxGetData(prhs_td[2]);
       prhs_td[4] = mxCreateDoubleMatrix(tdCount, 1, mxREAL);
-      double* offsetPtr = (double*)mxGetPr(prhs_td[4]);
+      double* offsetPtr = mxGetData(prhs_td[4]);
       prhs_td[5] = mxCreateString("per");
 
       for (mwIndex m = 0; m < tdCount; m++)
@@ -290,7 +264,7 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       prhs_fft[0] = mxCreateCellMatrix(fftCount, 1);
       prhs_fft[1] = mxCreateCellMatrix(fftCount, 1);
       prhs_fft[2] = mxCreateDoubleMatrix(fftCount, 1, mxREAL);
-      double* aPtr = (double*)mxGetPr(prhs_fft[2]);
+      double* aPtr = mxGetData(prhs_fft[2]);
 
       for (mwIndex m = 0; m < fftCount; m++)
       {
@@ -312,7 +286,9 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
          mxSetCell(prhs_fft[0], m, NULL);
          mxSetCell(prhs_fft[1], m, NULL);
       }
+      /* This might be a real array on Octave */
       tmpF = plhs_fft[0];
+
       mxDestroyArray(prhs_fft[0]);
       mxDestroyArray(prhs_fft[1]);
       mxDestroyArray(prhs_fft[2]);
@@ -327,9 +303,9 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       prhs_fftbl[2] = mxCreateDoubleMatrix(fftblCount, 1, mxREAL);
       prhs_fftbl[3] = mxCreateDoubleMatrix(fftblCount, 2, mxREAL);
       prhs_fftbl[4] = mxCreateDoubleMatrix(fftblCount, 1, mxREAL);
-      double* foffPtr = (double*)mxGetPr(prhs_fftbl[2]);
-      double* aPtr = (double*)mxGetPr(prhs_fftbl[3]);
-      double* realonlyPtr = (double*)mxGetPr(prhs_fftbl[4]);
+      double* foffPtr = mxGetData(prhs_fftbl[2]);
+      double* aPtr = mxGetData(prhs_fftbl[3]);
+      double* realonlyPtr = mxGetData(prhs_fftbl[4]);
       memset(realonlyPtr, 0, fftblCount * sizeof * realonlyPtr);
 
       for (mwIndex m = 0; m < fftblCount; m++)
@@ -364,6 +340,8 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
 
       if (tmpF == NULL)
       {
+         /* On Octave, this might be real array because of the 
+          * automatic complex number simplification */
          tmpF = plhs_fftbl[0];
       }
       else
@@ -378,12 +356,12 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       mxDestroyArray(prhs_fftbl[4]);
    }
 
+   mwIndex ndim = 2;
+   const mwSize dims[] = {L, W};
 
    if (fftCount > 0 || fftblCount > 0)
    {
       // Need to do IFFT of mxF
-      mwIndex ndim = 2;
-      const mwSize dims[] = {L, W};
 
       if (mxF == NULL || mxGetM(mxF) != L || mxGetN(mxF) != W || mxGetClassID(mxF) != mxGetClassID(tmpF))
       {
@@ -454,8 +432,22 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
 
       }
 
+
+
+
       if (mxIsDouble(tmpF))
       {
+         if (!mxIsComplex(tmpF))
+         {
+            // tmpF might not be complex array because of the automatic complex 
+            // type simplification on Octave.
+            mxArray* tmpF2 = mxCreateNumericArray(ndim,dims,mxDOUBLE_CLASS, mxCOMPLEX);
+            memcpy(mxGetData(tmpF2),mxGetData(tmpF), L * W * sizeof(double));
+            memset(mxGetImagData(tmpF2), 0, L * W * sizeof(double));
+            mxDestroyArray(tmpF);
+            tmpF = tmpF2;
+         }
+
          double* mxFPtr = mxGetData(mxF);
          double* mxFPti = mxGetImagData(mxF);
          memcpy(mxFPtr, mxGetData(tmpF), L * W * sizeof * mxFPtr);
@@ -471,6 +463,17 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       }
       else if (mxIsSingle(tmpF))
       {
+         if (!mxIsComplex(tmpF))
+         {
+            // tmpF might not be complex array because of the automatic complex 
+            // type simplification on Octave.
+            mxArray* tmpF2 = mxCreateNumericArray(ndim,dims,mxSINGLE_CLASS, mxCOMPLEX);
+            memcpy(mxGetData(tmpF2),mxGetData(tmpF), L * W * sizeof(float));
+            memset(mxGetImagData(tmpF2), 0, L * W * sizeof(float));
+            mxDestroyArray(tmpF);
+            tmpF = tmpF2;
+         }
+
          float* mxFPtr = mxGetData(mxF);
          float* mxFPti = mxGetImagData(mxF);
          memcpy(mxFPtr, mxGetData(tmpF), L * W * sizeof * mxFPtr);

@@ -38,17 +38,17 @@ mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg)
    mwSize L = mxGetNumberOfElements(parg);
 
    #ifdef NOCOMPLEXFMTCHANGE
-    LTFAT_REAL *i_r = (LTFAT_REAL*)mxGetPr(parg);
-    LTFAT_REAL *o_r = (LTFAT_REAL*)mxGetPr(out);
-    LTFAT_REAL *o_i = (LTFAT_REAL*)mxGetPi(out);
+    LTFAT_REAL *i_r = mxGetData(parg);
+    LTFAT_REAL *o_r = mxGetData(out);
+    LTFAT_REAL *o_i = mxGetImagData(out);
     for(mwIndex jj=0;jj<L;jj++)
     {
         o_r[jj]= i_r[jj];
         o_i[jj]= (LTFAT_REAL )0.0;
     }
    #else
-    LTFAT_REAL *i_r = (LTFAT_REAL*)mxGetPr(parg);
-    LTFAT_REAL *o_r = (LTFAT_REAL*)mxGetPr(out);
+    LTFAT_REAL *i_r = mxGetData(parg);
+    LTFAT_REAL *o_r = mxGetData(out);
     for(mwIndex jj=0;jj<L;jj++)
     {
         o_r[2*jj]= i_r[jj];

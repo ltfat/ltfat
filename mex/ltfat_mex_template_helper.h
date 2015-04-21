@@ -337,7 +337,13 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
       out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxREAL);
       mxSetDimensions(out, dims, ndim);
       mwSize L = mxGetNumberOfElements(out);
-      mxSetData(out, mxMalloc(L * sizeofClassid(classid)));
+      if(L)
+      {
+           void* tmpData =  mxMalloc(L * sizeofClassid(classid));
+          if(!tmpData)
+              mexErrMsgTxt("Out of memory.");
+           mxSetData(out,tmpData);
+      }
    }
 #ifdef NOCOMPLEXFMTCHANGE
    else if (complexFlag == mxCOMPLEX)
@@ -346,18 +352,18 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
       out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxCOMPLEX);
       mxSetDimensions(out, dims, ndim);
       mwSize L = mxGetNumberOfElements(out);
-      void* tmpData = mxMalloc(L * sizeofClassid(classid));
-      if (!tmpData)
+      if(L)
       {
-         mexErrMsgTxt("Memory allocation failed. The array is probably too large.");
+          void* tmpData = mxMalloc(L * sizeofClassid(classid));
+          if(!tmpData)
+              mexErrMsgTxt("Out of memory.");
+          mxSetData(out, tmpData);
+
+          tmpData = mxMalloc(L * sizeofClassid(classid));
+          if(!tmpData)
+              mexErrMsgTxt("Out of memory.");
+          mxSetImagData(out, tmpData);
       }
-      mxSetData(out, tmpData);
-      tmpData = mxMalloc(L * sizeofClassid(classid));
-      if (!tmpData)
-      {
-         mexErrMsgTxt("Memory allocation failed. The array is probably too large.");
-      }
-      mxSetImagData(out, tmpData);
    }
 #else
    else if (complexFlag == mxCOMPLEX)
@@ -368,21 +374,20 @@ mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid
       mxSetDimensions(out, dims, ndim);
       mwSize L = mxGetNumberOfElements(out);
 
-      mwSize LL = L * 2 * sizeofClassid(classid);
-      void* data = mxMalloc(LL);
-
-      if (!data)
+      if(L) // Only if L>0
       {
-         mexErrMsgTxt("Memory allocation failed. The array is probably too large.");
+         mwSize LL = L * 2 * sizeofClassid(classid);
+         void* data = mxMalloc(LL);
+         if(!data)
+             mexErrMsgTxt("Out of memory");
+
+         mxSetData(out, data);
+          /*
+          Allocate array of length 1 to keep the array beeing identified as complex and to avoid automatic deallocation
+          issue.
+          */
+         mxSetImagData(out, (void*)mxCalloc(1, sizeofClassid(classid)));
       }
-
-      mxSetData(out, data);
-      /*
-      Allocate array of length 1 to keep the array beeing identified as complex and to avoid automatic deallocation
-      issue.
-      */
-
-      mxSetImagData(out, (void*)mxCalloc(1, sizeofClassid(classid)));
    }
 #endif
    else

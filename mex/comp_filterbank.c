@@ -3,19 +3,8 @@
 #include <string.h>
 #include "ltfat.h"
 
-/*
-void comp_filterbank_td(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
-void comp_filterbank_fft(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
-void comp_filterbank_fftbl(int nlhs, mxArray *plhs[],int nrhs, const mxArray *prhs[] );
-
-void comp_filterbank_fftbl_atexit();
-void comp_filterbank_fft_atexit();
-void comp_filterbank_td_atexit();
-*/
-
 static fftw_plan* p_double = NULL;
 static fftwf_plan* p_float = NULL;
-
 /*
 Since the array is stored for the lifetime of the MEX, we introduce limit od the array length.
 2^20 ~ 16 MB of complex double
@@ -24,20 +13,12 @@ Since the array is stored for the lifetime of the MEX, we introduce limit od the
 // Static pointer for holding the array the FFTW plan is
 static mxArray* mxF = NULL;
 
-// Calling convention:
-//  comp_filterbank(f,g,a);
 
 /*
   MEX exit fnc. are not called by Matlab
 */
 void filterbankAtExit()
 {
-#ifdef _DEBUG
-   mexPrintf("Exit fnc called: %s\n", __PRETTY_FUNCTION__);
-#endif
-   // comp_filterbank_fftbl_atexit();
-   // comp_filterbank_fft_atexit();
-   // comp_filterbank_td_atexit();
    if (mxF != NULL)
       mxDestroyArray(mxF);
 
@@ -55,6 +36,8 @@ void filterbankAtExit()
 
 }
 
+// Calling convention:
+//  comp_filterbank(f,g,a);
 void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
                   int UNUSED(nrhs), const mxArray *prhs[] )
 {
@@ -142,9 +125,9 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       prhs_td[0] = (mxArray*) mxf;
       prhs_td[1] = mxCreateCellMatrix(tdCount, 1);
       prhs_td[2] = mxCreateDoubleMatrix(tdCount, 1, mxREAL);
-      double* aPtr = (double*)mxGetPr(prhs_td[2]);
+      double* aPtr = mxGetData(prhs_td[2]);
       prhs_td[3] = mxCreateDoubleMatrix(tdCount, 1, mxREAL);
-      double* offsetPtr = (double*)mxGetPr(prhs_td[3]);
+      double* offsetPtr = mxGetData(prhs_td[3]);
       prhs_td[4] = mxCreateString("per");
 
       for (mwIndex m = 0; m < tdCount; m++)
@@ -282,7 +265,7 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       prhs_fft[0] = mxF;
       prhs_fft[1] = mxCreateCellMatrix(fftCount, 1);
       prhs_fft[2] = mxCreateDoubleMatrix(fftCount, 1, mxREAL);
-      double* aPtr = (double*)mxGetPr(prhs_fft[2]);
+      double* aPtr = mxGetData(prhs_fft[2]);
 
       for (mwIndex m = 0; m < fftCount; m++)
       {
@@ -316,9 +299,9 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       prhs_fftbl[2] = mxCreateDoubleMatrix(fftblCount, 1, mxREAL);
       prhs_fftbl[3] = mxCreateDoubleMatrix(fftblCount, 2, mxREAL);
       prhs_fftbl[4] = mxCreateDoubleMatrix(fftblCount, 1, mxREAL);
-      double* foffPtr = (double*)mxGetPr(prhs_fftbl[2]);
-      double* aPtr = (double*)mxGetPr(prhs_fftbl[3]);
-      double* realonlyPtr = (double*)mxGetPr(prhs_fftbl[4]);
+      double* foffPtr = mxGetData(prhs_fftbl[2]);
+      double* aPtr = mxGetData(prhs_fftbl[3]);
+      double* realonlyPtr = mxGetData(prhs_fftbl[4]);
       // Set all realonly flags to zero
       memset(realonlyPtr, 0, fftblCount * sizeof * realonlyPtr);
 
@@ -340,7 +323,6 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
             realonlyPtr[m] = mxGetScalar(mxrealonly);
       }
 
-
       // comp_filterbank_fftbl(1,plhs_fftbl,5, prhs_fftbl);
       mexCallMATLAB(1, plhs_fftbl, 5, prhs_fftbl, "comp_filterbank_fftbl");
 
@@ -357,8 +339,6 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       mxDestroyArray(prhs_fftbl[4]);
    }
 
-   /* This should overwrite function registered by mexAtExit in any of the previously
-   called MEX files */
    mexAtExit(filterbankAtExit);
 
    if (mxF != NULL)

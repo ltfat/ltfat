@@ -220,9 +220,10 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
                                  const ltfatInt foff,
                                  const int realonly, LTFAT_COMPLEX *F)
 {
+    const ltfatInt Gl = p->Gl;
+    if(!Gl) return; // Bail out if filter has zero bandwidth
     const ltfatInt L = p->L;
     const ltfatInt W = p->W;
-    const ltfatInt Gl = p->Gl;
     const double a = p->a;
     LTFAT_COMPLEX* cbuf = p->buf;
 
@@ -298,5 +299,5 @@ LTFAT_EXTERN void
 LTFAT_NAME(upconv_fftbl_done)(LTFAT_NAME(upconv_fftbl_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);
-    ltfat_free(p->buf);
+    if(p->buf) ltfat_free(p->buf);
 }

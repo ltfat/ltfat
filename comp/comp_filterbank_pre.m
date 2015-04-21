@@ -84,11 +84,14 @@ for m=mFreq
            else
               % We do not know which L was g.H created with, there is no way
               % how to handle this properly.
-              error('%s:  g.H is already a numeric vector, but g.L was not specified.',...
+              error('%s: g.H is already a numeric vector, but g.L was not specified.',...
               upper(mfilename));
            end
        elseif isa(g{m}.H,'function_handle')
           g{m}.H=g{m}.H(L);
+          if numel(g)>1 && isempty(g{m}.H)
+              fprintf('%s: Warning: Filter %4d has zero bandwidth.\n',upper(mfilename),m);
+          end
           % Store the length used
           g{m}.L = L;
        else
