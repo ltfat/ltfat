@@ -11,23 +11,27 @@ and the easiest way to install the toolbox is by typing the command
 pkg install -forge ltfat
 
 on the Octave prompt, which downloads LTFAT directly from the 
-Octave-forge and compiles all. This however was tested only on Linux.
-Since you are reading this you have probably downloaded LTFAT from
+Octave-forge and compiles everything. This was tested on Linux, on
+Windows with MXE-Octave and Mac X unsing Octave from Homebrew.
+Since you are reading this, you have probably downloaded LTFAT from
 elsewhere and you want to compile sources by yourself. 
 
 -------- What can be compiled -------------------------------
 
 - Static backend libraries libltfat.a, libltfatf.a
 
-- Fast Oct-interfaces linking to the backend libraries.
+- Fast Oct-interfaces linking to the backend libraries and some
+  additional MEX files.
 
-Block processing framework (optional, experimental, only on Linux)
+Block processing framework (optional, experimental)
 
 - Mex-interface playrec
 
 - Java classes for blockproc GUI
 
+------------------------------------------------------------------------
 -------- Compiling backend libs and the Octave interfaces  -------------
+------------------------------------------------------------------------
 
 LTFAT comes with C++ Octave interfaces to replace (shadow) all 
 computationally intensitive functions in the toolbox.
@@ -50,16 +54,8 @@ the Octave installation and doesn’t have to be installed separately.
 
 --------- Compiling on Microsoft Windows ------------------------------
 
-Presently, Octave binary distribution for Windows comes in 32bit version only.
-We recommend using the package with the MinGW installer. It comes with the 32bit
-MinGW compiler system. It is important to add the following two entries to the PATH 
-variable:
-
-[OCTAVE]\bin\;[OCTAVE]\mingw\bin\; 
-
-where [OCTAVE] stands for the Octave installation directory.
-
-Then typing "ltfatmex" should compile the Oct-interfaces. 
+Currently, there is no direct way of compiling ltfat on MXE-Octave.
+Please use the Octave-forge package.
 
 --------- Compiling on Linux ----------------------------------------
 
@@ -75,7 +71,9 @@ for compilation.
 Install the octave-forge packages to add extra toolboxes available for
 Octave.
 
--------- Compiling parts for the block processing framework ———
+---------------------------------------------------------------------------
+-------- Compiling parts for the block processing framework ———------------
+---------------------------------------------------------------------------
 
 Everything should be already compiled if you have downloaded the binary release.
 
@@ -88,7 +86,7 @@ done by typing
 Playrec MEX depends on the PORTAUDIO library, which has to be installed on your
 system prior running the commands. Compiling JAVA classes requires Java Development
 Kit to be installed. From Octave 3.8.0 the JAVA package is part of core Octave, so it
-doesn’t have to be installed separately when using Octave 3.8.0.
+doesn’t have to be installed separately.
 
 NOTE: Compiled Java classes (packed in blockproc.jar) are platform independent
 so compiling it and installing JDK can be avoided by taking the archive from any
@@ -106,11 +104,8 @@ Downloads.
 
 --------- Compiling on Microsoft Windows --------------------------
 
-Unfortunately, portaudio on Windows is not distributed in a binary package.
-One can follow instructions on http://www.portaudio.com/ to compile the library
-from the source with support for different sound APIs like DirectSound, MME,
-WASAPI, ASIO. Build a shared (dynamically linked) library (dll) and copy it to
-the ltfat/thirdparty/Playrec directory.
+Currently, there is no direct way of compiling ltfat on MXE-Octave.
+Please use the Octave-forge package.
 
 --------- Compiling on Linux ------------------------------------
 

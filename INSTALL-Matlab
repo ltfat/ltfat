@@ -18,7 +18,9 @@ Block processing framework (optional)
 
 - Java classes for blockproc GUI
 
+------------------------------------------------------------------------
 -------- Compiling backend libs and the MEX interfaces  ----------------
+------------------------------------------------------------------------
 
 LTFAT comes with C Mex interfaces to replace (shadow) all computationally
 intensitive functions in the toolbox.
@@ -37,23 +39,29 @@ The depending libraries are:  FFTW3, BLAS, LAPACK
 
 --------- Compiling on MacOS -------------------------------------------
 
-The GCC compiler is needed to compile the LTFAT on Mac OS X. When the Xcode Command Line Tools are installed the compilation of the LTFAT should work without any problem. Alternatively, Clang could be used to compile the LTFAT.
-The BLAS, LAPACK and FFTW libraries are taken directly from the Matlab installation and doesn’t have to be installed separately.
+The GCC compiler is needed to compile the LTFAT on Mac OS X. When the Xcode
+Command Line Tools are installed the compilation of the LTFAT should work
+without any problem. Alternatively, Clang could be used to compile the LTFAT.
+The BLAS, LAPACK and FFTW libraries are taken directly from the Matlab
+installation and doesn’t have to be installed separately.
 
 --------- Compiling on Microsoft Windows -------------------------------
 
-On Windows, we rely on the MinGW compiler system: 
+On Windows, we rely on the MinGW compiler system:
 
 - Install MinGW compiler system. The easiest is to download and install
-  TDM-GCC compiler suite from http://tdm-gcc.tdragon.net/download. 
-  After installation, ensure that the [MinGW]/bin directory is in the 
+  TDM-GCC compiler suite from http://tdm-gcc.tdragon.net/download.
+  After installation, ensure that the [MinGW]/bin directory is in the
   system PATH, where [MinGW] stands for installation directory.
-  
-- Manually install binaries of FFTW. The easiest way is to download 
+
+- Ensure there is not another MinGW/MSYS toolchain in PATH and, expecially,
+  that there is no sh.exe in PATH.
+
+- Manually install binaries of FFTW. The easiest way is to download
   them from http://www.fftw.org/install/windows.html. Copy all *.dll files
   to the ltfat/mex directory. This step is necessary since the FFTW lib
   shipped with Matlab does not contain some of the routines we need.
-  
+
 - Run "ltfatmex".
 
 BLAS and LAPACK libraries are taken directly from the Matlab installation.
@@ -65,7 +73,9 @@ versions of FFTW and TDM-GCC.
 The dependencies are taken directly from Matlab installation and you should
 not need to install anything. Just typing "ltfatmex" should do the trick.
 
---------- Compiling parts for block processing framework -----------
+-----------------------------------------------------------------------
+--------- Compiling parts for block processing framework --------------
+-----------------------------------------------------------------------
 
 Everything should be already compiled if you have downloaded the binary release.
 
@@ -85,8 +95,10 @@ binary LTFAT package (from ltfat/blockproc/java).
 
 --------- Compiling on Mac ------------
 
-It is recommended to compile PortAudio v19 to use with the block processing framework. PortAudio v19 only compiles on OS X version 10.4 or later.
-Several versions of the Java Development Kit, which is needed to compile the JAVA classes, could be downloaded through the Apple Developer Downloads.
+It is recommended to compile PortAudio v19 to use with the block processing
+framework. PortAudio v19 only compiles on OS X version 10.4 or later.
+Several versions of the Java Development Kit, which is needed to compile 
+the JAVA classes, could be downloaded through the Apple Developer Downloads.
 
 
 --------- Compiling on Microsoft Windows --------------------------
@@ -108,4 +120,6 @@ worse audio performance in this case.
 - On Debian / Ubuntu, install the packages 'portaudio19-dev', 'openjdk-7-jdk' 
 
 Recent versions of Matlab already contain the portaudio lib so there is no need
-for installing it.
+for installing it. To use a custom (or system) portaudio lib, adjust
+the symbolic link found here
+>>[matlabroot, filesep, 'bin', filesep, computer('arch')]

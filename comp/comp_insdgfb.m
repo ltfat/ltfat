@@ -1,8 +1,8 @@
-function fr = insdgfb(c,g,shift,Ls,dual)
-%INSDGFB  Non-stationary Gabor filterbank synthesis
-%   Usage: fr = insdgfb(c,g,shift,Ls,dual)
-%          fr = insdgfb(c,g,shift,Ls)
-%          fr = insdgfb(c,g,shift)
+function fr = comp_insdgfb(c,g,shift,Ls,dual)
+%COMP_INSDGFB  Non-stationary Gabor filterbank synthesis
+%   Usage: fr = comp_insdgfb(c,g,shift,Ls,dual)
+%          fr = comp_insdgfb(c,g,shift,Ls)
+%          fr = comp_insdgfb(c,g,shift)
 %
 %   Input parameters: 
 %         c         : Transform coefficients (matrix or cell array)
@@ -85,3 +85,4 @@ end
 
 fr = ifft(fr);
 fr = fr(1:Ls,:); % Truncate the signal to original length (if given)
+
