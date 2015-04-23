@@ -1197,11 +1197,13 @@ initialize(file);
 
 
   function precomputeStuff()
-      if isfield(frame,'precomp')
+      if isfield(frame,'precomp') && isfield(frame.precomp,'L') ...
+          && frame.precomp.L == length(sig.ori)
           % Already done, do nothing.
           return;
       end
       frame.precomp = struct();
+      frame.precomp.L = length(sig.ori);      
       
       switch lower(frame.type)
           case 'erblet'
