@@ -135,6 +135,13 @@ void ifilterbankAtExit()
 void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
                   int UNUSED(nrhs), const mxArray *prhs[] )
 {
+   static int atExitregistered = 0;
+   if(!atExitregistered)
+   {
+       atExitregistered = 1;
+       mexAtExit(ifilterbankAtExit);
+   }
+
    const mxArray* mxc = prhs[0];
    const mxArray* mxg = prhs[1];
    const mxArray* mxa = prhs[2];
@@ -507,10 +514,6 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       plhs[0] = tmpF;
    }
 
-
-   /* This should overwrite function registered by mexAtExit in any of the previously
-   called MEX files */
-   mexAtExit(ifilterbankAtExit);
 
    if (mxF != NULL)
       mexMakeArrayPersistent(mxF);

@@ -19,6 +19,7 @@ static mxArray* mxF = NULL;
 */
 void filterbankAtExit()
 {
+   // mexPrintf("Exit fnc. called\n");
    if (mxF != NULL)
       mxDestroyArray(mxF);
 
@@ -41,6 +42,13 @@ void filterbankAtExit()
 void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
                   int UNUSED(nrhs), const mxArray *prhs[] )
 {
+   static int atExitRegistered = 0;
+   if(!atExitRegistered)
+   {
+       atExitRegistered = 1;
+       mexAtExit(filterbankAtExit);
+   }
+
    const mxArray* mxf = prhs[0];
    const mxArray* mxg = prhs[1];
    const mxArray* mxa = prhs[2];
@@ -339,7 +347,6 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
       mxDestroyArray(prhs_fftbl[4]);
    }
 
-   mexAtExit(filterbankAtExit);
 
    if (mxF != NULL)
       mexMakeArrayPersistent(mxF);

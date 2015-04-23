@@ -23,8 +23,6 @@ function fr = ierblett(c,g,shift,Ls,dual)
 %   of the vectors in *c*. This provides perfect reconstruction in the 
 %   painless case, see the references for more information.
 %
-%   This is just a dummy routine calling |insdgfb|.
-% 
 %   See also:  erblett
 % 
 %   References:  ltfatnote027

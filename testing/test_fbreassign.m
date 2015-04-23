@@ -3,6 +3,7 @@ test_failed = 0;
 try
 
 do_time = any(strcmp('time',varargin));
+do_all = any(strcmp('all',varargin));
 
 L = 44100;
 
@@ -99,6 +100,7 @@ if do_time, tic; end
 if do_time, RAtimeBL = toc; fprintf('RAtimeBL=%d\n',RAtimeBL); end
 figure(2); subplot(312); plotfilterbank(sr2,a,'fc',fs/2*cfreq1,'linabs');
 
+if do_all
 if do_time, tic; end
 [tgrad,fgrad,c_s3]=filterbankphasegrad(f,g3,a,L); 
 if do_time, PGtimeL = toc; fprintf('PGtimeL=%d\n',PGtimeL); end
@@ -106,6 +108,7 @@ if do_time, tic; end
 [sr3,arg0,arg1]=filterbankreassign(c_s3,tgrad,fgrad,a,cfreq1);
 if do_time, RAtimeL = toc; fprintf('RAtimeL=%d\n',RAtimeL); end 
 figure(2); subplot(313); plotfilterbank(sr3,a,'fc',fs/2*cfreq1,'linabs');
+end
 % 
 % clear all
 

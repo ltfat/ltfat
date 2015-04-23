@@ -16,7 +16,10 @@ oct:
 	$(MAKE) -f Makefile_unix
 	$(MAKE) -C ../oct -f Makefile_unix
 	mv ../oct/*.oct .
+	mv ../oct/*.mex .
 	ls -1 *.oct | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
+	ls -1 *.mex | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
+	rm -f ../inst/ltfatarghelper.m
 
 playrec:
 	$(MAKE) -C ../thirdparty/Playrec -f Makefile_unixoct
