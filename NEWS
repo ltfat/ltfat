@@ -1,3 +1,15 @@
+Version 2.1.0
+
+* New general filterbank generating routine: warpedfilters
+
+* New filterbank spectrogram reassignment function: filterbankreassign
+
+* New quadratic time-frequency distributions
+
+* Octave package compiles on Windows (MXE-Octave).
+
+* Better alignment of wavelet filters.
+
 Version 2.0.1
 
 * Included a test suite (test_all_ltfat).
