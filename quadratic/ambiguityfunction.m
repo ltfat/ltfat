@@ -1,4 +1,4 @@
-function A = ambiguityfunction(f,g);
+function A = ambiguityfunction(f,g)
 %AMBIGUITYFUNCTION Ambiguity function
 %   Usage: A = ambiguityfunction(f);
 %          A = ambiguityfunction(f,g);
@@ -21,27 +21,38 @@ function A = ambiguityfunction(f,g);
 % TESTING: TEST_AMBIGUITYFUNCTION
 % REFERENCE: REF_AMBIGUITYFUNCTION
 
-complainif_notenoughargs(nargin, 1, 'AMBIGUITYFUNCTION');
+upfname = upper(mfilename);
+complainif_notenoughargs(nargin, 1, upfname);
+complainif_toomanyargs(nargin, 2, upfname);
+
+[f,~,W]=comp_sigreshape_pre(f,upfname);
+
+if W>1
+   error('%s: Only one-dimensional vectors can be processed.',upfname); 
+end
 
 if (nargin == 1)
-
-  [f,~,Lf,W,~,permutedsize,order]=assert_sigreshape_pre(f,[],[],upper(mfilename));
-
   if isreal(f)
     z1 = comp_fftanalytic(f);
-    z2 = z1;
   else
     z1 = f;
-    z2 = z1;
   end
+  z2 = z1;
 
 elseif (nargin == 2)
-  [f,~,Lf,W,~,permutedsize,order]=assert_sigreshape_pre(f,[],[],upper(mfilename));
-  [g,~,Lg,W,~,permutedsize,order]=assert_sigreshape_pre(g,[],[],upper(mfilename));
+  [g,~,W]=comp_sigreshape_pre(g,upfname);
+  if W>1
+     error('%s: Only one-dimensional vectors can be processed.',upfname); 
+  end
 
   if ~all(size(f)==size(g))
-  	error('%s: f and g must have the same length.', upper(mfilename));
+  	error('%s: f and g must have the same length.', upfname);
   end;
+
+  if xor(isreal(f), isreal(g))
+      error('%s: One input is real, the other one must be real too. ',...
+            upfname);
+  end
 
   if isreal(f) || isreal(g)
     z1 = comp_fftanalytic(f);
@@ -55,3 +66,5 @@ end
 R = comp_instcorrmat(z1, z2);
 
 A = fftshift(fft2(fft(R)));
+
+

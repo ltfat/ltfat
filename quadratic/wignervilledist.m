@@ -1,4 +1,4 @@
-function W = wignervilledist(f,g);
+function W = wignervilledist(f,g)
 %WIGNERVILLEDIST Wigner-Ville distribution
 %   Usage: W = wignervilledist(f);
 %          W = wignervilledist(f, g);
@@ -31,33 +31,42 @@ function W = wignervilledist(f,g);
 % TESTING: TEST_WIGNERVILLEDIST
 % REFERENCE: REF_WIGNERVILLEDIST
 
-complainif_notenoughargs(nargin, 1, 'WIGNERVILLEDIST');
+upfname = upper(mfilename);
+complainif_notenoughargs(nargin, 1, upfname);
+complainif_toomanyargs(nargin, 2, upfname);
 
+[f,~,W]=comp_sigreshape_pre(f,upfname);
+if W>1
+   error('%s: Only one-dimensional vectors can be processed.',upfname); 
+end
 
 if (nargin == 1)
-
-  [f,~,Lf,W,~,permutedsize,order]=assert_sigreshape_pre(f,[],[],upper(mfilename));
-
   if isreal(f)
     z1 = comp_fftanalytic(f);
-    z2 = z1;
   else
     z1 = f;
-    z2 = z1;
   end
-
+  
+  z2 = z1;
   R = comp_instcorrmat(z1, z2);
 
   W = real(fft(R));
 
 elseif (nargin == 2)
-
-  [f,~,Lf,W,~,permutedsize,order]=assert_sigreshape_pre(f,[],[],upper(mfilename));
-  [g,~,Lg,W,~,permutedsize,order]=assert_sigreshape_pre(g,[],[],upper(mfilename));
+  [g,~,W]=comp_sigreshape_pre(g,upfname);
+  
+  if W>1
+    error('%s: Only one-dimensional vectors can be processed.',upfname); 
+  end
 
   if ~all(size(f)==size(g))
   	error('%s: f and g must have the same length.', upper(mfilename));
   end;
+  
+  if xor(isreal(f), isreal(g))
+      error('%s: One input is real, the other one must be real too. ',...
+            upfname);
+  end
 
   if isreal(f) || isreal(g)
     z1 = comp_fftanalytic(f);
