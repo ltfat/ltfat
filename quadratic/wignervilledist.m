@@ -9,17 +9,17 @@ function W = wignervilledist(f,g)
 %   Output parameters:
 %         w      : Wigner-Ville distribution
 %
-%   `wignervilledist(f)` computes the Wigner-Ville distribution of f. The
+%   `wignervilledist(f)` computes the Wigner-Ville distribution of the vector f. The
 %   Wigner-Ville distribution is computed by
 %
-%   .. math:: W\left( n+1,k+1 \right)\; =\; \sum_{m=0}^{L-1}{R\left( n+1,m+1 \right)e^{-i2\pi mk/L}}
+%   .. math:: W\left( n+1,k+1 \right)\; =\; \sum_{m=0}^{L-1}{R\left( n+1,m+1 \right)e^{-i2\pi mk/L}},
 %
 %   where $R(n,m)$ is the instantaneous correlation matrix given by
 %
-%   .. math:: R\left( n,m \right)\; =\; z\left( n+m \right)\overline{z\left( n-m \right)}
+%   .. math:: R\left( n,m \right)\; =\; z\left( n+m \right)\overline{z\left( n-m \right)},
 %
-%   with $m \in {-L/2,\ldots, L/2 - 1} and $z$ as the analytical representation of
-%   $f$, when f is real-valued.
+%   where $m \in {-L/2,\ldots, L/2 - 1}$, and where $z$ is the analytical representation of
+%   $f$, when $f$ is real-valued.
 %
 %   `wignervilledist(f,g)` computes the cross-Wigner-Ville distribution of f and g.
 %
