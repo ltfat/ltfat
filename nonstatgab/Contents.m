@@ -20,5 +20,5 @@
 %    PLOTNSDGT            - Plot output coefficients from NSDGT
 %    PLOTNSDGTREAL        - Plot output coefficients from NSDGTREAL
 %
-%  For help, bug reports, suggestions etc. please send email to
-%  ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues

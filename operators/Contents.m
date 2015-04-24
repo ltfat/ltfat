@@ -26,5 +26,5 @@
 %    SPREADFUN         - Symbol of operator expressed as a matrix
 %    SPREADEIGS        - Eigenpairs of spreading operator
 %
-%  For help, bug reports, suggestions etc. please send email to
-%  ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues

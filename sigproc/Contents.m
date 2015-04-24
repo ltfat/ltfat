@@ -44,6 +44,6 @@
 %    QAM4           -  Quadrature amplitude modulation, order 4
 %    IQAM4          -  Inverse QAM of order 4
 %
-%  For help, bug reports, suggestions etc. please send email to
-%  ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues
 %

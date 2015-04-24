@@ -25,5 +25,5 @@
 %  Other
 %    LTFATPLAY     - Replacement for the sound command allowing selecting an output device
 %
-%  For help, bug reports, suggestions etc. please send email to
-%  ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues

@@ -28,7 +28,7 @@
 %    http://www.dogstar.dantimax.dk/testwavs/
 %    (currently not available)
 %
-%  For help, bug reports, suggestions etc. please send email to
-%  ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues
 %
 

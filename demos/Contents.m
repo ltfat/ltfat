@@ -50,7 +50,7 @@
 %     DEMO_BLOCKPROC_EFFECTS          - Real-time vocoder effects.
 %     
 %
-%   For help, bug reports, suggestions etc. send email to 
-%   ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues
 
 

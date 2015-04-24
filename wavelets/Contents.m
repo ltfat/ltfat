@@ -90,6 +90,6 @@
 %      WFILTDT_ODDEVEN       - Kingsbury's symmetric odd and even biorthogonal filters
 %      WFILTDT_DDEN          - Double-density dual-tree filters
 %
-%  For help, bug reports, suggestions etc. please send an email to
-%  ltfat-help@lists.sourceforge.net
+%  For help, bug reports, suggestions etc. please visit 
+%  http://github.com/ltfat/ltfat/issues
 
