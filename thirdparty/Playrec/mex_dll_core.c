@@ -541,7 +541,7 @@ unsigned int linewrapString( const char *pdisplayStr, unsigned int maxLineLength
     if(!pdisplayStr
         || !pdisplayStr[0]
         || (maxLineLength < 1)
-        || (blockIndent + firstLineIndent < 0)
+        // || (blockIndent + firstLineIndent < 0) // this is False all the time
         || (maxLineLength < blockIndent)
         || (maxLineLength < blockIndent + firstLineIndent)) {
 

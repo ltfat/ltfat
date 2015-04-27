@@ -1558,7 +1558,7 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
 
                   if (pcbs->pbuffer
                         && (tmpBufPos < pcbs->bufLen)
-                        && (pcbs->channel >= 0)
+                        // && (pcbs->channel >= 0) //always true
                         && (pcbs->channel < psis->playChanCount))
                   {
 
@@ -1617,7 +1617,7 @@ static int playrecCallback(const void *inputBuffer, void *outputBuffer,
 
                   if (pcbs->pbuffer
                         && (tmpBufPos < pcbs->bufLen)
-                        && (pcbs->channel >= 0)
+                        // && (pcbs->channel >= 0)// always true
                         && (pcbs->channel < psis->recChanCount))
                   {
 
@@ -2295,7 +2295,9 @@ bool addPlayrecPage(mxArray **ppmxPageNum, const mxArray *pplayData,
             }
 
             /* This if statement should not be required (included for safety) */
-            if ((pcbs->channel >= 0) && (pcbs->channel < psps->playChanCount))
+            if (
+                  //  (pcbs->channel >= 0) && // always true
+                    (pcbs->channel < psps->playChanCount))
                psps->pplayChansInUse[pcbs->channel] = true;
 
             chansCopied++;

@@ -49,7 +49,7 @@ extern "C"
 #define mxSAMPLE    mxSINGLE_CLASS
 
 /* Format to be used for samples with PortAudio = 32bit */
-typedef float SAMPLE;
+// typedef float SAMPLE; // Already done in config.h
 
 /* Structure to contain 'human readable' advice for each state */
 typedef struct {
