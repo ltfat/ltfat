@@ -1,6 +1,6 @@
 function plotquadtfdist(p, varargin);
 %PLOTQUADTFDIST Plot quadratic time-frequency distribution
-% Usage: plotquadtfdist(p);
+%   Usage: plotquadtfdist(p);
 % 
 %   'plotquadtfdist(p)' plots the quadratic time-frequency distribution 
 %   on the time-frequency plane. The quadratic time-frequency distribution
@@ -62,3 +62,4 @@ else
 end;
 
 tfplot(p, 1, yr, varargin{:});
+
