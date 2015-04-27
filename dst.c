@@ -33,7 +33,7 @@ LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
     unsigned flag = FFTW_ESTIMATE;
 #endif
 
-    LTFAT_FFTW(r2r_kind) kindFftw = kind;
+    LTFAT_FFTW(r2r_kind) kindFftw = (LTFAT_FFTW(r2r_kind)) kind;
     p = LTFAT_FFTW(plan_guru_r2r)(1, &dims,
                                   1, &howmanydims,
                                   (LTFAT_REAL*)cout, (LTFAT_REAL*)cout,
