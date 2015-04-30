@@ -1,4 +1,6 @@
-targets = oct playrec
+# Only .mex, .oct and .m files from the current directory will be copied
+# to the target installaction directory
+targets = oct playrec postbuild
 
 CC=@CC@
 CXX=@CXX@
@@ -13,14 +15,23 @@ endif
 all: $(targets)
 
 oct:
+	# Compile the backend lib
 	$(MAKE) -f Makefile_unix
+	# Compile oct and mex files
 	$(MAKE) -C ../oct -f Makefile_unix
-	mv ../oct/*.oct .
-	mv ../oct/*.mex .
-	ls -1 *.oct | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
-	ls -1 *.mex | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
-	rm -f ../inst/ltfatarghelper.m
 
 playrec:
 	$(MAKE) -C ../thirdparty/Playrec -f Makefile_unixoct
 	mv ../thirdparty/Playrec/playrec.mex .
+
+postbuild:
+	# Copy both here
+	mv ../oct/*.oct .
+	mv ../oct/*.mex .
+	# Delete corresponding m-files
+	ls -1 *.oct | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
+	ls -1 *.mex | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
+	rm -f ../inst/ltfatarghelper.m
+	# Copy extra help files for mex files
+	ls -1 *.mex | cut -d . -f 1 | xargs -I {} cp ../oct/mexhelp/{} ./{}.m
+

@@ -1,4 +1,9 @@
-% PLAYREC Multichannel non-blocking audio recording and playback
+%PLAYREC Multichannel non-blocking audio recording and playback
+%
+% Run: 
+%     playrec('help') 
+%
+% Tho get the actual help.
 %
 % PLAYREC is a MEX file which means it has to be compiled in order to work.
 % Please see INSTALL-Matlab or INSTALL-Octave for details. 

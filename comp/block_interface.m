@@ -1,11 +1,6 @@
 function  varargout = block_interface(varargin)
 %BLOCK_INTERFACE Common block processing backend
 %
-%
-%
-%
-%
-%
 %  Object-like interface for sharing data between block handling
 %  functions. 
 
