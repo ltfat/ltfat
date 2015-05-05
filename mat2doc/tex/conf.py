@@ -1,5 +1,5 @@
 fext='.tex'
-urlbase='http://ltfat.sourceforge.net/doc'
+urlbase='http://ltfat.github.io/doc'
 urlext='php'
 widthstr='60ex'
 imagetype='png'

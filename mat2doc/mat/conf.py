@@ -1,6 +1,6 @@
 fext='.m'
-urlbase='http://ltfat.sourceforge.net/doc'
-urlext='.php'
+urlbase='http://ltfat.github.io/doc'
+urlext='.html'
 
 # Option for the Octave package
 builddir='~/build/'
