@@ -24,7 +24,7 @@ if ~all(mod(Ls,2) == 0)
 end
  
 	
-R = zeros(Ls,Ls);
+R = zeros(Ls,Ls,assert_classname(f,g));
 
 for l = 0 : Ls-1;
    m = -min([Ls-l, l, round(Ls/2)-1]) : min([Ls-l, l, round(Ls/2)-1]);
