@@ -49,8 +49,8 @@
  * "config.h".
  *
  *
- * Copyright (C) 2014 Zdenek Prusa <prusa@users.sourceforge.net>.
- * This file is part of LTFAT http://ltfat.sourceforge.net
+ * Copyright (C) 2014 Zdenek Prusa <zdenek.prusa@gmail.com>.
+ * This file is part of LTFAT http://ltfat.github.io
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +269,7 @@ linear_interp(const double x, const SAMPLE *yin);
 /* Struct for holding EMQF filter */
 typedef struct EMQFfilters_struct *EMQFfilters;
 
-/*! \brief Initialize EMQF filter structure
+/*! \brief Initialize EMQF filter structurehttp://github.com/ltfat/ltfat/issues
  *
  *  fc can be in range ]0,1[, otherwise the function returns NULL
  *
