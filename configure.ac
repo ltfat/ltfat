@@ -1,5 +1,5 @@
 AC_PREREQ([2.62])
-AC_INIT([LTFAT], [2.0.0], [http://ltfat.sourceforge.net/contact.php], [ltfat])
+AC_INIT([LTFAT], [2.0.0], [http://github.com/ltfat/ltfat/issues], [ltfat])
 
 AC_PROG_CC_C99
 AC_PROG_CXX
