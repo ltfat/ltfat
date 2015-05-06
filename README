@@ -11,6 +11,7 @@ The toolbox is organized in subdirectories including the following:
   wavelets    - Wavelet analysis/synthesis, wavelet filter banks
   filterbank  - General and auditory inspired filterbanks. 
   nonstatgab  - Non-stationary Gabor frames.
+  quadratic   - Quadratic distributions
   frames      - Frame objects and linear operators associated with frames.
   sigproc     - A collection of simple, signal processing tools.
   blockproc   - Methods for block processing and block-adapted transforms.
