@@ -1,4 +1,5 @@
 Version 2.1.0 6/5  2015
+
     * New filterbank-generating function: warpedfilters
 
     * New filterbank spectrogram reassignment function: filterbankreassign
@@ -14,14 +15,14 @@ Version 2.1.0 6/5  2015
       the frame operator when calculating the lowest eigenvalue using eigs.
 
     * Added implementation of some quadratic time-frequency representations: 
-      Rihaczek,
+      Rihaczek, Wigner-Ville
 
     * Fixed #112 (Sourceforge): Octave package now compiles on Windows (mxe version)
       thanks to John Donoghue.
 
     * Related to #111 (Sourceforge): Wavelet filters were hand-centered around the origin.
 
-    * comp_filterbank, comp_ifilterbank and ltfatarghelper are compiled as MEX files on Octave.
+    * comp_filterbank, comp_ifilterbank and ltfatarghelper can be compiled as MEX files on Octave.
 
 Version 2.0.1 8/10 2014 (released only at Octave-Forge)
     * Included test suite.
