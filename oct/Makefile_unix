@@ -4,11 +4,16 @@ ifndef EXT
   EXT=oct
 endif
 
-OCTSCC   = $(shell ls comp_*.cc)
-OCTSBASE = $(basename $(OCTSCC))
-OCTS     = $(addsuffix .$(EXT),$(OCTSBASE))
+OCTCC   = $(shell ls comp_*.cc)
+OCTFILES = $(patsubst %.cc,%.$(EXT),$(OCTCC))
 
-MEXFILES = block_interface.mex comp_filterbank.mex comp_ifilterbank.mex
+MEXFILES = ltfatarghelper.mex block_interface.mex comp_filterbank.mex comp_ifilterbank.mex
+
+INTERFACES = $(OCTFILES)
+
+ifndef NOMEX
+  INTERFACES += $(MEXFILES)
+endif
 
 MKOCTFILE ?= mkoctfile
 
@@ -35,7 +40,7 @@ export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_
 
 include ../src/ostools.mk
 
-all:	$(OCTS) ltfatarghelper.mex $(MEXFILES)
+all:	$(INTERFACES)
 
 %.$(EXT): %.cc
 	$(MKOCTFILE) -strip -Wall -DNDEBUG -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<

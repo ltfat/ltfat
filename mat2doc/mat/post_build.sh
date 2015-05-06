@@ -1,7 +1,6 @@
 #!/bin/bash
 
 cd {INST}
-# rm -Rf mex # We need to keep the mex subdir. as we use some of the mex files
 # We do not need any of these.
 rm -Rf mulaclab
 rm -Rf thirdparty/GPC
@@ -10,7 +9,8 @@ rm mulaclab.m
 # Move these to the package top level
 mv src ..
 mv oct ..
-mv mex ..
+rm -Rf mex # We need to keep the mex subdir. as we use some of the mex files
+#mv mex ..
 mv lib ..
 
 # We moved src, we need to fix paths in some Makefiles
