@@ -1,6 +1,6 @@
 # Only .mex, .oct and .m files from the current directory will be copied
 # to the target installaction directory
-targets = oct playrec postbuild
+targets = oct playrec
 
 CC=@CC@
 CXX=@CXX@
@@ -23,6 +23,9 @@ oct:
 	$(MAKE) -f Makefile_unix
 	# Compile oct and mex files
 	$(MAKE) -C ../oct -f Makefile_unix
+	# Do postbuild explicitly so it is not called before 
+	# oct files are finished
+	$(MAKE) postbuild
 
 playrec:
 	$(MAKE) -C ../thirdparty/Playrec -f Makefile_unixoct
