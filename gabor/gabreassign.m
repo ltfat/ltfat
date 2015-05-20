@@ -1,7 +1,6 @@
-function sr=gabreassign(s,tgrad,fgrad,a,p5);
+function sr=gabreassign(s,tgrad,fgrad,a)
 %GABREASSIGN  Reassign time-frequency distribution
 %   Usage:  sr = gabreassign(s,tgrad,fgrad,a);
-%           sr = gabreassign(s,tgrad,fgrad,a,'aa');
 %
 %   `gabreassign(s,tgrad,fgrad,a)` reassigns the values of the positive
 %   time-frequency distribution *s* using the phase gradient given by *fgrad*
@@ -32,12 +31,31 @@ function sr=gabreassign(s,tgrad,fgrad,a,p5);
 %   References: aufl95
 
 % AUTHOR: Peter L. Søndergaard, 2008.
-  
-error(nargchk(4,5,nargin));
 
+thisname = upper(mfilename);
+complainif_notenoughargs(nargin,4,thisname);
+complainif_notposint(a,'a',thisname);
+
+
+% Basic checks
+if any(cellfun(@(el) isempty(el) || ~isnumeric(el),{s,tgrad,fgrad}))
+    error('%s: s, tgrad, fgrad must be non-empty and numeric.',...
+          upper(mfilename));
+end
+
+% Check if argument sizes are consistent
+if ~isequal(size(s),size(tgrad),size(fgrad))
+   error('%s: s, tgrad, fgrad must all have the same size.',...
+          upper(mfilename));
+end
+
+% Check if any argument is not real
+if any(cellfun(@(el) ~isreal(el),{s,tgrad,fgrad}))
+   error('%s: s, tgrad, fgrad must all be real.',...
+          upper(mfilename));
+end
 
 sr=comp_gabreassign(s,tgrad,fgrad,a);
-
 
 
 
