@@ -1,4 +1,4 @@
-function c=constructphase(s,g,a)
+function [c,newphase]=constructphase(s,g,a)
 %CONSTRUCTPHASE  Construct the phase of a DGT
 %   Usage:  c=constructphase(s,g,a);
 %           c=constructphase(s,g,a,tol);
@@ -29,16 +29,15 @@ function c=constructphase(s,g,a)
 %   Demos:  demo_constructphase
   
 % AUTHOR: Peter L. Søndergaard
-M=size(s,1);
-N=size(s,2);
-L=N*a;
   
 % Obtain the vectors.
+% The function fails for non-gaussian window g.
 [tgrad,fgrad] = gabphasegrad('abs',s,g,a);
 
 tol=1e-10;
 
+% Build the phase
 newphase=comp_heapint(s,tgrad,fgrad,a,tol);
 
-c=s.*exp(i*newphase);
+c=s.*exp(1i*newphase);
 
