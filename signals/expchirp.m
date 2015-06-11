@@ -1,9 +1,10 @@
-function outsig=expchirp(L,fstart,fend,varargin)
+function [outsig]=expchirp(L,fstart,fend,varargin)
 %EXPCHIRP  Exponential chirp
 %   Usage: outsig=expchirp(L,fstart,fend)
-% 
+%
 %   `expchirp(L,fstart,fend)` computes an exponential chirp of length *L*
-%   starting at normalized frequency *fstart* and ending at frequency *fend*.
+%   starting at frequency *fstart* and ending at frequency *fend*. The
+%   freqencies are assumed to be normalized to the Nyquist frequency.
 %
 %   `expchirp` takes the following parameters at the end of the line of input
 %   arguments:
@@ -13,30 +14,46 @@ function outsig=expchirp(L,fstart,fend,varargin)
 %
 %     'phi',phi  Starting phase of the chirp. Default value is 0.
 %
+%     'fc',fc    Shift the chirp by *fc* in frequency. Default values is 0.
+%
 %   See also: pchirp
-    
+
 % AUTHORS:  Piotr Majdak, Peter L. Søndergaard.
 
 if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
+thismfilename = upper(mfilename);
+complainif_notposint(L,'L',thismfilename);
+
+if ~all(cellfun(@isscalar,{fstart,fend})) || ...
+    any(cellfun(@(el) el<=0,{fstart,fend}))
+    error('%s: fstart and fend must be scalars strictly greater than 0.',...
+          thismfilename);
+end
+
 definput.keyvals.phi=0;
 definput.keyvals.fs=[];
+definput.keyvals.fc=0;
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[~,kv]=ltfatarghelper({},definput,varargin);
 
 if ~isempty(kv.fs)
   fstart=fstart/kv.fs*2;
   fend  =  fend/kv.fs*2;
+  kv.fc = kv.fc/kv.fs*2;
 end;
 
 w1=pi*fstart*L;
 w2=pi*fend*L;
 
-A=w1/log(w2/w1);
-tau=1/log(w2/w1);
+ratio = w2/w1;
 
-t=((0:L-1)/L).';
-outsig=exp(i*A*(exp(t/tau)-1)+kv.phi);
+A=w1/log(ratio);
+tau=1/log(ratio);
+
+l = 0:L-1; l = l(:);
+t= l./L;
+outsig=exp(1i*A*(exp(t/tau)-1)+kv.phi + 1i*pi*l*kv.fc);
 
