@@ -164,10 +164,6 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 
     /* Set the phase to zero initially */
     memset(phase,0,M*N*W*sizeof*phase);
-    //for (ii=0; ii<M*N*W; ii++)
-    //{
-    //    phase[ii]=0.0;
-    //}
 
     /* Rescale the partial derivatives to a torus of length L. We copy
        to work arrays because the input is const. */
@@ -278,11 +274,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 
         }
 
-        /* Find the new maximal element
-         *
-         * This code is currently missing
-         *
-         */
+        /* Find the new maximal element */
 
         maxs=-1e99;
         domainloop=0;
