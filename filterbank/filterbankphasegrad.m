@@ -31,7 +31,7 @@ function [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %   certain window (possibly different for every channel). As a consequence
 %   of this equivalence, the formulas derived in the reference apply. 
 %
-%   References: aufl95
+%   References: aufl95, ltfatnote041
 
 %   AUTHOR : Nicki Holighaus.
 
