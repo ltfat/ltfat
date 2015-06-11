@@ -7,7 +7,26 @@ function c = symphase(c,a,varargin)
 %   time/frequency shifts. The coefficient must have been obtained from a
 %   |dgt| with parameter *a*.
 %
-%   See also: dgt, phaselock
+%   Gabor coefficients with symmetric phase correspond to the following 
+%   transform:
+%   Consider a signal *f* of length *L* and define $N=L/a$.
+%   The output from `c=symphase(dgt(f,g,a,M),a)` is given by
+%
+%   ..             L-1 
+%     c(m+1,n+1) = sum f(l+1)*exp(-2*pi*i*m*(l-n*a/2)/M)*conj(g(l-a*n+1)), 
+%                  l=0  
+%
+%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)e^{-2\pi im(l-na/2)/M}\overline{g(l-an+1)}
+%
+%   where $m=0,\ldots,M-1$ and $n=0,\ldots,N-1$ and $l-an$ is computed modulo *L*.
+%
+%   `symphase(c,a,'lt',lt)` does the same for a non-separable lattice
+%   specified by *lt*. Please see the help of |matrix2latticetype| for a
+%   precise description of the parameter *lt*.
+%
+%   See also: dgt, phaselock, phaseunlock
+%
+%   References: cmdaaufl97
 
 %   AUTHORS : Peter Balazs, Peter L. Søndergaard.
 
