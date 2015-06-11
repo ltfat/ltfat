@@ -60,8 +60,8 @@ complainif_notposint(a,'a',upper(mfilename));
 complainif_notposint(M,'M',upper(mfilename));
 
 % Check lattice
-if M<a
-    error('%s: Lattice parameters must satisfy M>=a.',upper(mfilename));
+if M<=a
+    error('%s: Lattice parameters must satisfy M>a.',upper(mfilename));
 end
 
 % Check tpfun vect.
@@ -79,13 +79,9 @@ if any(w==0)
     % TO DO: Also add a warning if w is very small or big?
 end
 
-if all(w<0) || all(w>0)
-    error(['%s: Only positive or only negative weights w are not ',...
-           'supported yet.'], upper(mfilename));
-end
-
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
+definput.importdefaults={'null'};
 definput.keyvals.inc = 0;
 definput.flags.scale = {'nomatchscale','matchscale'};
 [flags,~,inc]=ltfatarghelper({'inc'},definput,varargin);
@@ -100,7 +96,7 @@ beta = 1/M;
 
 % compute m n and check that a has nonzero entries
 wloc = sort(wloc(:)); % sort and make it a column vector
-mult=myknt2mlt(wloc);
+mult=wmult(wloc);
 m = length(find(wloc>0));
 n = length(find(wloc<0));
 
@@ -117,22 +113,19 @@ if m == 0
         N = (n-1)*(r+1); % minimal column size
         k1 = 0;
         k2 = N-1;
-        case0 = 1;
+        case0 = 0;
     end
 elseif n == 0
     if m >= 2
         N = (m-1)*(r+1); % minimal column size
-        k1 = 0;
-        k2 = N-1;
+        k2 = 0;
+        k1 = -(N-1);
+        case0 = 0;
     end
-elseif n == 1
-    N = m*(r+1)+1;       % minimal column size
-    k1 = -m*(r+1)+1;     % column index k1 from the paper
-    k2 = k1+N-1;         % column index k2 from the paper
 else
-    N = (m+n-1)*(r+1);   % minimal column size
     k1 = -m*(r+1)+1;     % column index k1 from the paper
-    k2 = k1+N-1;         % column index k2 from the paper
+    k2 = n*(r+1)-1;      % symmetric choice
+    N = k2-k1+1;
 end
 
 k1 = k1-inc;
@@ -141,9 +134,9 @@ k2 = k2+inc;
 % minimal values for x and y
 varl = floor((k1+m-1)/(alpha*beta))-1;
 varr = ceil((k2-n+1)/(alpha*beta))+1;
-x = varl*alpha:alpha:varr*alpha;
+x = linspace(varl*alpha,varr*alpha,varr-varl+1);
 i0 = abs(varl)+1; % index of "central" row of P(x)
-y = (k1-1)/beta:(1/beta):(k2+1)/beta;
+y = linspace((k1-1)*M,(k2+1)*M,k2-k1+3);
 k0 = abs(k1-1)+1; % index of "central" column of P(x)
 [yy,xx] = meshgrid(y,x);
 
@@ -175,11 +168,16 @@ for k=1:length(t)
       i1 = floor((k1-k0+m-1)/alpha/beta-x0/alpha)+1+i0;
       %  i2 = max(find((x+x0)<(y(k2-n+1))));
       i2 = ceil((k2-k0-n+1)/alpha/beta-x0/alpha)-1+i0;
-    else
+    elseif case0 == 1  % m=0
       %  i1 = max(find((x+x0)<(y(k1))));
       i1 = ceil((k1-k0)/alpha/beta-x0/alpha)-1+i0;
-      %  i2 = max(find((x+x0)<(y(k2))));
-      i2 = ceil((k2-k0)/alpha/beta-x0/alpha)-1+i0;
+      %  i2 = max(find((x+x0)<(y(k2-n+1))));
+      i2 = ceil((k2-k0-n+1)/alpha/beta-x0/alpha)-1+i0;
+    elseif case0 == 2  % n=0
+      %  i1 = min(find((x+x0)>(y(k1+m-1))));
+      i1 = floor((k1-k0+m-1)/alpha/beta-x0/alpha)+1+i0;
+      %  i2 = min(find((x+x0)>(y(k2))));
+      i2 = floor((k2-k0)/alpha/beta-x0/alpha)+1+i0;
     end
 
     % Computation of P0(x0)
@@ -195,19 +193,22 @@ for k=1:length(t)
     % matrix of values for the divided difference
     m0 = find(z1==0); % compute values at 0 separately, one-sided only
     if ~isempty(m0)
-        zb(:,m0)=repmat((wloc>0),1,length(m0));
+        if m>0
+            zb(:,m0)=repmat((wloc>0),1,length(m0));
+        else
+            zb(:,m0)=repmat((wloc<0),1,length(m0));
+        end
     end
     if ~isempty(find(mult~=0)) % take the values of the derivates, if there are multiplicities
         col = find(mult~=0);
         for i = 1:length(col)
-            zb(col(i),:)=((-z1).^(mult(col(i))).*exp(-za(col(i),:)).*(za(col(i),:)>=0).*sign(z1))./(factorial(mult(col(i))));
+            zb(col(i),:)=((-z1).^(mult(col(i))).*zb(col(i),:))./(factorial(mult(col(i))));
         end
     end
     c = (-1)^(m+n-1)*prod(wloc)*L^(1/4); % normalization constant for g
-    A0 = c*divdiff_vector(wloc,zb);  % formula for g with divided differences
+    A0 = divdiff_vector(wloc,mult,zb);  % formula for g with divided differences
     A0 = reshape(A0,size(z0));
     P0 = A0(i1:i2,:);
-
     % computation of pseudo-inverse matrix of P0
     P0inv = pinv(P0);
     gd(k-1+tt0-a*(i0-i1):a:k-1+tt0+a*(i2-i0)) = beta*P0inv(k0-k1+1,:); % row index k0-k1a+1
@@ -236,10 +237,10 @@ end
 nlen = min([L,nlen]);
 
 if flags.do_matchscale
-   g = ptpfun(L,w,flags.norm);
+   g = ptpfun2(L,w,flags.norm);
    [scal,err]=gabdualnorm(g,gd,a,M,L);
-    assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
-                              ' dual window.'],upper(mfilename)));
+   assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
+                             ' dual window.'],upper(mfilename)));
    gd = gd/scal;
 else
    gd = normalize(gd,flags.norm); 

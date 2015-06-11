@@ -37,31 +37,32 @@ catch
 end
 fprintf('PTPFUN Too short w test %s\n',failstr);
 
-% Only pos weights
-try
-    g = ptpfun(L,[1,1]);
-    gd = ptpfundual(L,[1,1],a,M);
-    % We should have failed in g
-    test_failed = test_failed + 1;
-    failstr = 'FAILED';
-catch
-    err = lasterror;
-    [test_failed,failstr]=dititfailedcorrectly(err.message,'ptpfun',test_failed);
-end
-fprintf('PTPFUN Only positive w test %s\n',failstr);
-
-% Only neg weights
-try
-    g = ptpfun(L,[-1,-1]);
-    gd = ptpfundual(L,[-1,-1],a,M);
-    % We should have failed in g
-    test_failed = test_failed + 1;
-    failstr = 'FAILED';
-catch
-    err = lasterror;
-    [test_failed,failstr]=dititfailedcorrectly(err.message,'ptpfun',test_failed);
-end
-fprintf('PTPFUN Only negative w test %s\n',failstr);
+% This has been dealt with
+% % Only pos weights
+% try
+%     g = ptpfun(L,[1,1]);
+%     gd = ptpfundual(L,[1,1],a,M);
+%     % We should have failed in g
+%     test_failed = test_failed + 1;
+%     failstr = 'FAILED';
+% catch
+%     err = lasterror;
+%     [test_failed,failstr]=dititfailedcorrectly(err.message,'ptpfun',test_failed);
+% end
+% fprintf('PTPFUN Only positive w test %s\n',failstr);
+% 
+% % Only neg weights
+% try
+%     g = ptpfun(L,[-1,-1]);
+%     gd = ptpfundual(L,[-1,-1],a,M);
+%     % We should have failed in g
+%     test_failed = test_failed + 1;
+%     failstr = 'FAILED';
+% catch
+%     err = lasterror;
+%     [test_failed,failstr]=dititfailedcorrectly(err.message,'ptpfun',test_failed);
+% end
+% fprintf('PTPFUN Only negative w test %s\n',failstr);
 
 % One zero in weights
 try
@@ -79,7 +80,7 @@ fprintf('PTPFUN Zero in w test %s\n',failstr);
 
 % Test if ptpfun and ptpfundual indeed fulfill the Waxler-Raz conditions
 % (are dual windoes up to scaling) for a range of inc parameter
-wcell = {[-1,1],[1,-1,3,4],[7,8,-3]};
+wcell = {[-1,1],[1,-1,3,4],[7,8,-3],[-1,-1],[1,1]};
 
 for w = wcell
 for inc =incrange
@@ -136,3 +137,12 @@ else
     failstr = '';
 end
 
+function   u=WRtest(g,gamma,a,M,L);
+
+for j=1:a
+    g1=g;
+    for l=1:min([L/M,10]);
+        u(j,l)=gamma(j:a:L)'*g1(j:a:L);
+        g1=[g1(M+1:end);g1(1:M)];
+    end
+end
