@@ -41,12 +41,19 @@ function [gd,nlen]=ptpfundual(L,w,a,M,varargin)
 %   
 %   In addition, `ptpfundual` accepts any of the flags from |normalize|. 
 %   The output will be normalized as specified. The default normalization 
-%   is `'energy'`.
+%   is `'null'` i.e. no normalization.
 %
-%   If `ptpfundual` is intended to be used in conjuction with |ptpfun|,
-%   an additional flag `matchscale` must be used. In such case, the 
-%   original window is calculated and normalized according to the 
-%   |normalize| flag and *gd* is scaled using |gabdualnorm|.
+%   If `ptpfundual` is intended to be used in conjuction with |ptpfun|, they
+%   can both use the default normalization or if any other normalization
+%   of |ptpfun| is required, `ptpfundual` should be called with the same
+%   flag and an additional flag `matchscale` e.g.:
+%   
+%       g = ptpfun(1000,[-1,1],'energy');
+%       g = ptpfundual(1000,[-1,1],10,20,'energy','matchscale');
+%
+%   In such case `ptpfundual` calculates the original window normalized 
+%   according to the |normalize| flag and uses |gabdualnorm| to scale *gd*
+%   correctly.
 %
 %   See also: dgt, ptpfun, gabdualnorm, normalize
 %
@@ -206,7 +213,7 @@ for k=1:length(t)
         end
     end
     c = (-1)^(m+n-1)*prod(wloc)*L^(1/4); % normalization constant for g
-    A0 = divdiff_vector(wloc,mult,zb);  % formula for g with divided differences
+    A0 = c*divdiff_vector(wloc,mult,zb);  % formula for g with divided differences
     A0 = reshape(A0,size(z0));
     P0 = A0(i1:i2,:);
     % computation of pseudo-inverse matrix of P0
@@ -237,10 +244,10 @@ end
 nlen = min([L,nlen]);
 
 if flags.do_matchscale
-   g = ptpfun2(L,w,flags.norm);
+   g = ptpfun(L,w,flags.norm);
    [scal,err]=gabdualnorm(g,gd,a,M,L);
-   assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
-                             ' dual window.'],upper(mfilename)));
+   %assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
+   %                          ' dual window.'],upper(mfilename)));
    gd = gd/scal;
 else
    gd = normalize(gd,flags.norm); 

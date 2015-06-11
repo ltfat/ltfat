@@ -32,7 +32,7 @@ function g = ptpfun(L,w,varargin)
 %
 %   In addition `ptpfun` accepts any of the flags from |normalize|. The 
 %   output will be normalized as specified. The default normalization flag
-%   is `'energy'`
+%   is `'null'` i.e. no normalization.
 %
 %   See also: dgt, ptpfundual, gabdualnorm, normalize
 %
