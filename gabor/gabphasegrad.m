@@ -26,7 +26,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   The computation can be done using three different methods.
 %
 %     'dgt'    Directly from the signal. This is the default method.
-% 
+%
 %     'phase'  From the phase of a DGT of the signal. This is the
 %              classic method used in the phase vocoder.
 %
@@ -67,9 +67,9 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %   References: aufl95 cmdaaufl97 fl65
 
-  
+
 % AUTHOR: Peter L. Søndergaard, 2008.
-  
+
 %error(nargchk(4,6,nargin));
 
 if ~ischar(method) || ~any(strcmpi(method,{'dgt','phase','abs'}))
@@ -84,113 +84,116 @@ switch lower(method)
         end
 end
 
-  
+
 switch lower(method)
  case 'dgt'
   % ---------------------------  DGT method ------------------------
   complainif_notenoughargs(nargin,5,mfilename);
   [f,gg,a,M]=deal(varargin{1:4});
-  
+
   definput.keyvals.L=[];
   definput.keyvals.minlvl=eps;
   definput.keyvals.lt=[0 1];
   [flags,kv,L,minlvl]=ltfatarghelper({'L','minlvl'},definput,varargin(5:end));
-  
+
   %% ----- step 1 : Verify f and determine its length -------
   % Change f to correct shape.
   [f,~,W]=comp_sigreshape_pre(f,upper(mfilename),0);
-  
+
   % Call dgt once to check all the parameters
   [c,Ls,g] = dgt(f,gg,a,M,L,'lt',kv.lt);
-  
+
   % This L was used in dgt
   L=dgtlength(Ls,a,M,kv.lt);
-  
+
   % We also need info for info.gauss
   [~,info]=gabwin(gg,a,M,L,kv.lt,'callfun',upper(mfilename));
-  
+
   %% ----- step 4: final cleanup ---------------
-  
+
   f=postpad(f,L);
-  
+
   %% ------ algorithm starts --------------------
-  
+
   % Compute the time weighted version of the window.
   hg=fftindex(size(g,1)).*g;
-  
+
   % The computation done this way is insensitive to whether the dgt is
   % phaselocked or not.
   c_h = comp_dgt(f,hg,a,M,kv.lt,0,0,0);
-  
+
   N = size(c,2);
-  
+
   c_s = abs(c).^2;
-  
+
   % Remove small values because we need to divide by c_s
   c_s = max(c_s,minlvl*max(c_s(:)));
-  
+
   % Compute the group delay
   fgrad=real(c_h.*conj(c)./c_s);
-  
+
   if info.gauss
     % The method used below only works for the Gaussian window, because the
     % time derivative and the time multiplicative of the Gaussian are identical.
     tgrad=imag(c_h.*conj(c)./c_s)/info.tfr;
   else
-    
+
     % The code below works for any window, and not just the Gaussian
-    
-    dg  = pderiv(g,[],Inf)/(2*pi);
+
+    dg  = pderiv(middlepad(g,L),[],Inf)/(2*pi);
     c_d = comp_dgt(f,dg,a,M,kv.lt,0,0,0);
     c_d = reshape(c_d,M,N,W);
-    
+
     % Compute the instantaneous frequency
     tgrad=-imag(c_d.*conj(c)./c_s);
   end;
-  
-  
+
+
  case 'phase'
   % ---------------------------  phase method ------------------------
   complainif_notenoughargs(nargin,3,mfilename);
   [cphase,a]=deal(varargin{1:2});
   complainif_notposint(a,'a',mfilename)
-  
+
   if ~isreal(cphase)
     error(['Input phase must be real valued. Use the "angle" function to ' ...
            'compute the argument of complex numbers.']);
   end;
-  
+
   % --- linear method ---
   [M,N,W]=size(cphase);
   L=N*a;
   b=L/M;
-  
+
   if 0
-    
+
     % This is the classic phase vocoder algorithm by Flanagan.
-    
+
     tgrad = cphase-circshift(cphase,[0,-1]);
     tgrad = tgrad- 2*pi*round(tgrad/(2*pi));
     tgrad = -tgrad/(2*pi)*L;
-    
+
     % Phase-lock the angles.
     TimeInd = (0:(N-1))*a;
     FreqInd = (0:(M-1))/M;
-    
+
     phl = FreqInd'*TimeInd;
     cphase = cphase+2*pi.*phl;
-    
+
     fgrad = cphase-circshift(cphase,[1,0]);
     fgrad = fgrad- 2*pi*round(fgrad/(2*pi));
     fgrad = -fgrad/(2*pi)*L;
-    
+
   end;
-  
-  
+
+
   if 1
     % This is the classic phase vocoder algorithm by Flanagan modified to
-    % yield a second order centered difference approximation.
-    
+    % yield a second order centered difference approximation
+    % using unwrapped phase.
+
+    % Phase convention is phase-unlocked (frequency invariant)
+
     % Forward approximation
     tgrad_1 = cphase-circshift(cphase,[0,-1]);
     tgrad_1 = tgrad_1 - 2*pi*round(tgrad_1/(2*pi));
@@ -199,16 +202,16 @@ switch lower(method)
     tgrad_2 = tgrad_2 - 2*pi*round(tgrad_2/(2*pi));
     % Average
     tgrad = (tgrad_1+tgrad_2)/2;
-    
+
     tgrad = -tgrad/(2*pi*a)*L;
-    
-    % Phase-lock the angles.
+
+    % Phase-lock the angles (to time-invariant phase)
     TimeInd = (0:(N-1))*a;
     FreqInd = (0:(M-1))/M;
-    
+
     phl = FreqInd'*TimeInd;
     cphase = cphase+2*pi.*phl;
-    
+
     % Forward approximation
     fgrad_1 = cphase-circshift(cphase,[-1,0]);
     fgrad_1 = fgrad_1 - 2*pi*round(fgrad_1/(2*pi));
@@ -217,19 +220,19 @@ switch lower(method)
     fgrad_2 = fgrad_2 - 2*pi*round(fgrad_2/(2*pi));
     % Average
     fgrad = (fgrad_1+fgrad_2)/2;
-    
+
     fgrad = fgrad/(2*pi*b)*L;
-    
+
   end;
-  
-  
+
+
  case 'abs'
   % ---------------------------  abs method ------------------------
 
   complainif_notenoughargs(nargin,4,mfilename);
   [s,g,a]=deal(varargin{1:3});
   complainif_notposint(a,'a',mfilename)
-  
+
   if numel(varargin)>3
     difforder=varargin{4};
     complainif_notposint(difforder,'difforder',mfilename);
@@ -240,9 +243,9 @@ switch lower(method)
   if ~(all(s(:)>=0))
     error('First input argument must be positive or zero.');
   end;
-    
+
   [M,N,W]=size(s);
-  
+
   L=N*a;
 
   [~,info]=gabwin(g,a,M,L,'callfun','GABPHASEGRAD');
@@ -251,22 +254,22 @@ switch lower(method)
     error(['The window must be a Gaussian window (specified as a string or ' ...
            'as a cell array).']);
   end;
-  
+
   L=N*a;
   b=L/M;
-  
+
   % We must avoid taking the log of zero.
   % Therefore we add the smallest possible
   % number
   logs=log(s+realmin);
-  
+
   % XXX REMOVE Add a small constant to limit the dynamic range. This should
   % lessen the problem of errors in the differentiation for points close to
   % (but not exactly) zeros points.
   maxmax=max(logs(:));
   tt=-11;
   logs(logs<maxmax+tt)=tt;
-  
+
   fgrad=pderiv(logs,2,difforder)/(2*pi)*info.tfr;
   tgrad=pderiv(logs,1,difforder)/(2*pi*info.tfr);
-end;  
+end;
