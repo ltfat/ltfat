@@ -1,0 +1,638 @@
+function [phased,c]=gabphasederiv(type,method,varargin)
+%GABPHASEDERIV   DGT phase derivatives
+%   Usage:  [phased,c] = gabphasederiv(dflag,'dgt',f,g,a,M);
+%           [phased,c] = gabphasederiv(dflag,'cross',f,g,a,M)
+%            phased    = gabphasederiv(dflag,'phase',cphase,a,difforder);
+%            phased    = gabphasederiv(dflag,'abs',s,g,a);
+%
+%   `phased=gabphasederiv(dflag,method,...)` computes the time-frequency
+%   derivative `dflag` of the phase of the |dgt| of a signal using algorithm
+%   `method`.
+%
+%   The following strings can be used in place of `dflag`:
+%
+%     't'   First phase derivative in time. Instantaneous frequency.
+%
+%     'f'   First phase derivative in frequency. Local group delay.
+%
+%     'tt'  Second phase derivative in time.
+%
+%     'ff'  Second phase derivative in frequency.
+%
+%     'tf'  Second order mixed phase derivative. Frequency derivative first.
+%
+%     'ft'  Second order mixed phase derivative. Time derivative first.
+%
+%   *phased* is scaled such that (possibly non-integer) distances are measured
+%   in samples. Similarly, the frequencies are scaled such that the Nyquist
+%   frequency (the highest possible frequency) corresponds to a value of L/2.
+%
+%   The computation of *phased* is inaccurate when the absolute
+%   value of the Gabor coefficients is low. This is due to the fact the the
+%   phase of complex numbers close to the machine precision is almost
+%   random. Therefore, *phased* attain very large random values when `abs(c)`
+%   is close to zero.
+%
+%   The phase derivative computation can be done using four different methods
+%   depending on the string `method`:
+%
+%     'dgt'    Directly from the signal using algorithm by Auger and
+%              Flandrin.
+%
+%     'cross'  Directly from the signal using algorithm by Nelson.
+%
+%     'phase'  From the phase of a DGT of the signal using a finite differences
+%              scheme. This is the classic method used in the phase vocoder.
+%
+%     'abs'    From the absolute value of the DGT exploiting explicit
+%              dependency between partial derivatives of log-magnitudes and
+%              phase.
+%              Currently this method works only for Gaussian windows.
+%
+%   `phased=gabphasederiv(dflag,'dgt',f,g,a,M)` computes the time-frequency
+%   derivative using a DGT of the signal *f*. The DGT is computed using the
+%   window *g* on the lattice specified by the time shift *a* and the number
+%   of channels *M*. The algorithm used to perform this calculation computes
+%   several DGTs, and therefore this routine takes the exact same input
+%   parameters as |dgt|.
+
+%   `phased=gabphasederiv(dflag,'cross',f,g,a,M)` does the same as above
+%   but this time using algorithm by Nelson, based on computing several DGTs.
+%
+%   `[phased,c]=gabphasederiv(dflag,'dgt'|'cross',f,g,a,M)` additionally returns
+%   the Gabor coefficients *c*, as they are always computed as a byproduct of
+%   the algorithm.
+%
+%   `phased=gabphasederiv(dflag,'phase',cphase,a)` computes the phase
+%   derivative from the phase *cphase* of a DGT of the signal. The original DGT
+%   from which the phase is obtained must have been computed using a
+%   time-shift of *a* using the default phase convention (`'freqinv'`) e.g.::
+%
+%        phased=gabphasederiv(dflag,'phase',angle(dgt(f,g,a,M)),a)
+%
+%   `phased=gabphasederiv(dflag,'abs',s,g,a)` computes the phase derivative
+%   from the absolute values of DGT coefficients *s*. The spectrogram must have
+%   been computed using the window *g* and time-shift *a* e.g.::
+%
+%        phased=gabphasederiv(dflag,'abs',abs(dgt(f,g,a,M)),g,a)
+%
+%   Currently the `'abs'` method only works if the window *g* is a Gaussian
+%   window specified as a string or cell array.
+%
+%   `phased=gabphasederiv(dflag,'abs',s,g,a,difforder)` uses a centered finite
+%   diffence scheme of order *difforder* to perform the needed numerical
+%   differentiation. Default is to use a 4th order scheme.
+%
+%   Phase conventions
+%   -----------------
+%
+%   First derivatives in either direction are subject to phase convention.
+%   The following flags control 
+%
+%     'relative'    The phase derivatives are
+%
+%     'freqinv'     Directly from the signal using algorithm by Nelson.
+%
+%     'timeinv'     From the phase of a DGT of the signal using a finite differences
+%                   scheme. This is the classic method used in the phase vocoder.
+%
+%     'symphase'    From the absolute value of the DGT exploiting explicit
+%                   dependency between partial derivatives of log-magnitudes and
+%                   phase.
+%                   Currently this method works only for Gaussian windows.
+%
+%   See also: resgram, gabreassign, dgt, pderiv
+%
+%   References: aufl95 cmdaaufl97 fl65 auchfl12 fifu09 ne02
+
+
+% AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša, 2015
+
+% REMARK: There is no problem with phase conventions with the second
+% derivatives.
+
+complainif_notenoughargs(nargin,2,upper(mfilename));
+
+definput.flags.type = {'t','f','tt','ff','tf','ft'};
+definput.flags.method = {'dgt','phase','abs','cross'};
+definput.flags.phaseconv = {'relative','freqinv','timeinv','symphase'};
+
+if ~ischar(method) || ~any(strcmpi(type, definput.flags.type))
+    error(['%s: First argument must be the type of the derivative: %s'],...
+        upper(mfilename),...
+        strjoin(cellfun(@(el) sprintf('"%s"',el),...
+        definput.flags.type,'UniformOutput',0),', '));
+end;
+
+if ~ischar(method) || ~any(strcmpi(method, definput.flags.method))
+    error(['%s: Second argument must be the method name: %s '], ...
+        upper(mfilename),...
+        strjoin(cellfun(@(el) sprintf('"%s"',el),...
+        definput.flags.method,'UniformOutput',0),', '));
+end;
+
+foundFlags = cellfun(@(el)ischar(el) && any(strcmpi(el,definput.flags.phaseconv)),...
+             varargin);
+flags1 = ltfatarghelper({},definput,{type,method,varargin{foundFlags}});
+definput = []; % Definput is used again later
+varargin(foundFlags) = []; % Remove the phaseconv flags
+
+switch flags1.method
+    case {'phase','abs'}
+        if nargout>1
+            error('%s: Too many output arguments. ', upper(mfilename));
+        end
+end
+
+switch flags1.method
+    case {'dgt','cross'}
+        complainif_notenoughargs(nargin,6,mfilename);
+        [f,gg,a,M]=deal(varargin{1:4});
+        
+        definput.keyvals.L=[];
+        definput.keyvals.minlvl=eps;
+        definput.keyvals.lt=[0 1];
+        [~,kv,L,minlvl]=ltfatarghelper({'L','minlvl'},definput,varargin(5:end));
+        
+        % Change f to correct shape.
+        [f,Ls]=comp_sigreshape_pre(f,upper(mfilename),0);
+        
+        % Even though this check is also in dgt, we must do it here too
+        if isempty(L)
+            L = dgtlength(Ls,a,M,kv.lt);
+        else
+            Luser = dgtlength(L,a,M,kv.lt);
+            if Luser~=L
+                error(['%s: Incorrect transform length L=%i specified. Next valid length ' ...
+                    'is L=%i. See the help of DGTLENGTH for the requirements.'],...
+                    upper(mfilename),L,Luser);
+            end
+        end
+        
+        % Extend or crop f to correct length
+        f=postpad(f,L);
+        N = L/a;
+        b = L/M;
+end
+
+switch flags1.method
+    case 'dgt'
+        % ---------------------------  DGT method ------------------------
+        %
+        % Naming conventions used here:
+        % c    - dgt coefficients using window g
+        % c_s  - second power of c with small values set to minlvl*max(c_s)
+        % c_h  - dgt coefficietns computed using time-weighted window hg
+        % c_d  - dgt coefficients computed using time-derived window dg
+        % c_h2 - dgt coefficients computed using twice time-weighted window hg2
+        % c_d2 - dgt coefficients computed using second derivative of window g: hg2
+        % c_hd - dgt coefficients computed using time-weighted derivative of window g: hdg
+        % c_dh - dgt coefficients computed using derivative of time-weighted window g: dhg
+        %
+        
+        % Call dgt once to check all the parameters
+        % This computes frequency invariant phase.
+        [c,~,g] = dgt(f,gg,a,M,L,'lt',kv.lt);
+        
+        % Compute spectrogram and remove small values because we need to
+        % divide by c_s.
+        % This will also set the derivative to zeros in the regions
+        % containing only small coefficients.
+        c_s = abs(c).^2;
+        c_s = max(c_s,minlvl*max(c_s(:)));
+        
+        % We also need info for info.gauss
+        [~,info]=gabwin(gg,a,M,L,kv.lt,'callfun',upper(mfilename));
+        
+        switch flags1.type
+            case 't'
+                % fir2long is here to avoid possible boundary effects
+                % as the time support of the Inf derivative is not FIR
+                dg  = pderiv(fir2long(g,L),[],Inf)/(2*pi);
+                c_d = comp_dgt(f,dg,a,M,kv.lt,0,0,0);
+                
+                % Minus is here because of convolution correlation
+                % difference
+                phased = -imag(c_d.*conj(c)./c_s);
+                
+                switch flags1.phaseconv
+                    case {'relative','freqinv'}
+                        % Do nothing
+                    case 'timeinv'
+                        phased = bsxfun(@plus,phased,fftindex(M)*b);
+                    case 'symphase'
+                        phased = bsxfun(@plus,phased,fftindex(M)*b/2);
+                end
+            case 'f'
+                % Compute the time weighted version of the window.
+                % g is already a column vector
+                hg = fftindex(size(g,1)).*g;
+                c_h = comp_dgt(f,(hg),a,M,kv.lt,0,0,0);
+                
+                phased = -real(c_h.*conj(c)./c_s);
+                
+                switch flags1.phaseconv
+                    case {'relative','timeinv'}
+                        % Do nothing
+                    case 'freqinv'
+                        phased = bsxfun(@plus,phased,-fftindex(N).'*a);
+                    case 'symphase'
+                        phased = bsxfun(@plus,phased,-fftindex(N).'*a/2);
+                end                               
+            case 'tt'
+                dg  = pderiv(fir2long(g,L),[],Inf)/L;
+                dg2 = pderiv(dg,[],Inf)/L;
+                c_d = comp_dgt(f,flipwin(dg),a,M,kv.lt,0,0,0);
+                c_d2 = comp_dgt(f,flipwin(dg2),a,M,kv.lt,0,0,0);
+                
+                phased = imag(c_d2.*conj(c)./c_s - (c_d.*conj(c)./c_s).^2)/(2*pi)*L;
+                % Phase convention does not have any effect
+            case 'ff'
+                % Time weighted window
+                hg = (fftindex(size(g,1))/L).*g;
+                hg2 = (fftindex(size(g,1))/L).^2.*g;
+                c_h = comp_dgt(f,flipwin(hg),a,M,kv.lt,0,0,0);
+                c_h2 = comp_dgt(f,flipwin(hg2),a,M,kv.lt,0,0,0);
+                
+                phased = imag(-c_h2.*conj(c)./c_s + (c_h.*conj(c)./c_s).^2)*2*pi*L;
+                % Phase convention does not have any effect
+            case {'ft','tf'}
+                hg = (fftindex(size(g,1))/L).*g;
+                dg = pderiv(fir2long(g,L),[],Inf);
+                hdg = (fftindex(size(dg,1))/L).*dg;
+                %hdg = pderiv(fir2long(hg,L),[],Inf);
+                c_d = comp_dgt(f,(dg),a,M,kv.lt,0,0,0);
+                c_h = comp_dgt(f,(hg),a,M,kv.lt,0,0,0);
+                c_hd = comp_dgt(f,(hdg),a,M,kv.lt,0,0,0);
+                
+                % This is mixed derivative tf for freq. invariant
+                phased = real(c_hd.*conj(c)./c_s - c_h.*c_d.*(conj(c)./c_s).^2);
+                
+                switch flags1.phaseconv
+                    case {'freqinv','relative'}
+                       % Do nothing
+                    case 'timeinv'
+                       phased = phased + 1;
+                    case 'symphase'
+                       phased = phased + 1/2;
+                end
+            otherwise
+                error('%s: This should never happen.',upper(mfilename));
+        end
+        
+        
+    case 'phase'
+        % ----------  Direct numerical derivative of the phase  ----------------
+        complainif_notenoughargs(nargin,4,mfilename);
+        [cphase,a]=deal(varargin{1:2});
+        complainif_notposint(a,'a',mfilename)
+        
+        if ~isreal(cphase)
+            error(['%s: Input phase must be real valued. Use the "angle" ' ...
+                'function to compute the argument of complex numbers.'],...
+                upper(mfilename));
+        end;
+        
+        % --- linear method ---
+        [M,N,W]=size(cphase);
+        L=N*a;
+        b=L/M;
+        
+        % REMARK: Second derivative in one direction does not need phase
+        % unwrapping
+        if flags1.do_t || flags1.do_tt || flags1.do_ft
+            % This is the classic phase vocoder algorithm by Flanagan modified to
+            % yield a second order centered difference approximation.
+            
+            % Perform derivative along rows while unwrapping the phase by 2*pi
+            tgrad = pderivunwrap(cphase,2,2*pi);
+            % Normalize
+            %tgrad = tgrad/(2*pi);
+            % Normalize again using time step
+            tgrad = tgrad/(a);
+        end
+        
+        if flags1.do_f || flags1.do_ff || flags1.do_tf
+            % Phase-lock the angles.
+            % We have the frequency invariant phase.
+            TimeInd = (0:(N-1))*a;
+            FreqInd = (0:(M-1))/M;
+            
+            phl = FreqInd'*TimeInd;
+            cphaseLock = cphase+2*pi.*phl;
+            %cphaseLock = cphase;
+            
+            % Perform derivative along cols while unwrapping the phase by 2*pi
+            fgrad = pderivunwrap(cphaseLock,1,2*pi);
+            
+            % Convert from radians to relative frequencies
+            %fgrad = fgrad/(2*pi);
+            % Normalize again using frequency step
+            fgrad = fgrad/(b);
+            
+            % And convert back to phase-unlocked angles.
+            % We cannot do the derivative directly on the phase-unlocked
+            % angles as there is a discontinuity along frequency axis.
+            % TimeInd2 = (0:N-1)*a/L;
+            % fgrad = bsxfun(@plus,fgrad,TimeInd2);
+        end
+        
+        % tgrad fgrad here are relative quantites
+        
+        switch flags1.type
+            case 't'
+                phased = tgrad*L/(2*pi);
+                
+                switch flags1.phaseconv
+                    case {'relative','freqinv'}
+                        % Do nothing
+                    case 'timeinv'
+                        % phased = bsxfun(@plus,phased,0:);
+                    case 'symphase'
+                        % phased = bsxfun(@plus,phased,0:);
+                end
+            case 'f'
+                phased = fgrad*L/(2*pi);
+                
+                switch flags1.phaseconv
+                    case {'relative','timeinv'}
+                        % Do nothing
+                    case 'freqinv'
+                        % phased = bsxfun(@plus,phased,0:);
+                    case 'symphase'
+                        % phased = bsxfun(@plus,phased,0:);
+                end
+            case 'tt'
+                % Second derivatives should be independent of the phase
+                % convention.
+                % tgrad is already unwrapped along time, we can call pderiv
+                % directly.
+                phased = pderiv(tgrad,2,2)/(2*pi);
+                % Phase convention does not have any effect.
+            case 'ff'
+                % fgrad is already unwrapped along frequency
+                phased = pderiv(fgrad,1,2)/(2*pi);
+                % Phase convention does not have any effect.
+            case 'tf'
+                % Phase has not yet been unwrapped along time
+                phased = pderivunwrap(fgrad,2,2*pi)*N/(2*pi);
+                
+            case 'ft'
+                % Phase has not yet been unwrapped along frequency
+                phased = pderivunwrap(tgrad,1,2*pi)*M/(2*pi);
+            otherwise
+                error('%s: This should never happen.',upper(mfilename));
+        end
+        
+    case 'abs'
+        % ---------------------------  abs method ------------------------
+        
+        complainif_notenoughargs(nargin,5,mfilename);
+        [s,g,a]=deal(varargin{1:3});
+        complainif_notposint(a,'a',mfilename)
+        
+        if numel(varargin)>4
+            difforder=varargin{5};
+            complainif_notposint(difforder,'difforder',mfilename);
+        else
+            difforder=4;
+        end;
+        
+        if ~(all(s(:)>=0))
+            error('%s: s must be positive or zero.',mfilename);
+        end;
+        
+        [M,N,W]=size(s);
+        
+        L=N*a;
+        
+        [~,info]=gabwin(g,a,M,L,'callfun',upper(mfilename));
+        
+        if ~info.gauss
+            error(['%s: The window must be a Gaussian window (specified as a string or ' ...
+                'as a cell array).'],upper(mfilename));
+        end;
+        
+        L=N*a;
+        b=L/M;
+        
+        % We must avoid taking the log of zero.
+        % Therefore we add the smallest possible
+        % number
+        logs=log(s+realmin);
+        
+        % XXX REMOVE Add a small constant to limit the dynamic range. This should
+        % lessen the problem of errors in the differentiation for points close to
+        % (but not exactly) zeros points.
+        maxmax=max(logs(:));
+        tt=-11;
+        logs(logs<maxmax+tt)=tt;
+        
+        switch flags1.type
+            case 'f'
+                % Derivative of log-magnitude along time gives phase frequency
+                % derivative
+                phased=-pderiv(logs,2,difforder)/(2*pi)*info.tfr;
+            case 't'
+                % Derivative of log-magnitude along frequency gives phase
+                % time derivative
+                phased=pderiv(logs,1,difforder)/(2*pi*info.tfr);
+            case 'ff'
+                % Mixed derivatives of log-magnitude give second derivative
+                % of phase
+                phased=pderiv(logs,1,difforder)/(2*pi);
+                phased=-info.tfr*pderiv(phased,2,difforder)/L;
+            case 'tt'
+                % Second phase derivatives are equal up to factor -info.tfr^2
+                phased=pderiv(logs,1,difforder)/(2*pi);
+                phased=pderiv(phased,2,difforder)/(L*info.tfr);
+            case 'ft'
+                % (Both) second log-magnitude derivatives give mixed phase
+                % derivatives.
+                phased = pderiv(logs,1,difforder)/(2*pi);
+                phased = pderiv(phased,1,difforder)/(info.tfr*L)+1/2;
+            case 'tf'
+                %REMARK: In theory, tf and ft should be equal
+                phased = pderiv(logs,2,difforder)/(2*pi);
+                phased = -info.tfr*pderiv(phased,2,difforder)/L-1/2;
+            otherwise
+                error('%s: This should never happen.',upper(mfilename));
+        end
+        
+        if flags1.do_tf || flags1.do_ft
+               switch flags1.phaseconv
+                    case {'relative','symphase'}
+                       % Do nothing
+                    case 'timeinv'
+                       phased = phased + 1/2;
+                    case 'freqinv'
+                       phased = phased - 1/2;
+                end
+        end
+        
+    case 'cross'
+        % This is the Nelson's cross-spectral matrix algorithm modified to
+        % do centered finite difference approximations of the derivatives
+        
+        N = L/a;
+        b = L/M;
+        
+        if flags1.do_t || flags1.do_tt
+            % Get DGT of f advanced by 1 sample
+            fright = circshift(f,-1);
+            cright = dgt(fright,gg,a,M,L,'lt',kv.lt);
+            cright = bsxfun(@times,cright,exp(-1i*2*pi*fftindex(M)*b./L));
+            
+            % Get DGT of f delayed by 1 sample
+            fleft = circshift(f,1);
+            cleft = dgt(fleft,gg,a,M,L,'lt',kv.lt);
+            cleft = bsxfun(@times,cleft,exp(1i*2*pi*fftindex(M)*b./L));
+        end
+        
+        if flags1.do_f || flags1.do_ff
+            % Get DGT of f demodulated by 1/L*2*pi rad
+            fabove = f.*exp(-1i*2*pi*(0:L-1)'./L);
+            cabove = dgt(fabove,gg,a,M,L,'lt',kv.lt);
+            cabove = bsxfun(@times,cabove,exp(1i*2*pi*fftindex(N)*a.'./L));
+            
+            % Get DGT of f modulated by 1/L*2*pi rad
+            fbelow = f.*exp(1i*2*pi*(0:L-1)'./L);
+            cbelow = dgt(fbelow,gg,a,M,L,'lt',kv.lt);
+            cbelow = bsxfun(@times,cbelow,exp(-1i*2*pi*fftindex(N)*a.'./L));
+        end
+        
+        if flags1.do_tt || flags1.do_ff
+            ccenter = dgt(f,gg,a,M,L,'lt',kv.lt);
+        end
+        
+        if flags1.do_tf || flags1.do_ft
+            % Get four DGTs shifted by one in time and in frequency
+            frightabove = circshift(f,-1).*exp(-1i*2*pi*(0:L-1)'./L);
+            crightabove = dgt(frightabove,gg,a,M,L,'lt',kv.lt);
+            crightabove = bsxfun(@times,crightabove,exp(1i*2*pi*fftindex(N).'./N));
+            crightabove = bsxfun(@times,crightabove,exp(1i*2*pi*fftindex(M)./M));
+            
+            frightbelow = circshift(f,-1).*exp(1i*2*pi*(0:L-1)'./L);
+            crightbelow = dgt(frightbelow,gg,a,M,L,'lt',kv.lt);
+            crightbelow = bsxfun(@times,crightbelow,exp(-1i*2*pi*fftindex(N).'./N));
+            crightbelow = bsxfun(@times,crightbelow,exp(1i*2*pi*fftindex(M)./M));
+            
+            fleftabove = circshift(f,1).*exp(-1i*2*pi*(0:L-1)'./L);
+            cleftabove = dgt(fleftabove,gg,a,M,L,'lt',kv.lt);
+            cleftabove = bsxfun(@times,cleftabove,exp(1i*2*pi*fftindex(N).'./N));
+            cleftabove = bsxfun(@times,cleftabove,exp(-1i*2*pi*fftindex(M)./M));
+            
+            fleftbelow = circshift(f,1).*exp(1i*2*pi*(0:L-1)'./L);
+            cleftbelow = dgt(fleftbelow,gg,a,M,L,'lt',kv.lt);
+            cleftbelow = bsxfun(@times,cleftbelow,exp(-1i*2*pi*fftindex(N).'./N));
+            cleftbelow = bsxfun(@times,cleftbelow,exp(-1i*2*pi*fftindex(M)./M));
+
+            switch flags1.phaseconv
+                case 'timeinv'
+                    crightabove = phaselock(crightabove,a);
+                    crightbelow = phaselock(crightbelow,a);
+                    cleftabove  = phaselock(cleftabove,a);
+                    cleftbelow  = phaselock(cleftbelow,a);
+                case 'symphase'
+                    crightabove = symphase(crightabove,a);
+                    crightbelow = symphase(crightbelow,a);
+                    cleftabove  = symphase(cleftabove,a);
+                    cleftbelow  = symphase(cleftbelow,a);
+                case {'freqinv','relative'}
+                % Do nothing
+            end
+
+            
+             c = dgt(f,gg,a,M,L,'lt',kv.lt);
+             switch flags1.phaseconv
+                case 'timeinv'
+                    c = phaselock(c,a);
+                case 'symphase'
+                    % This is broken
+                    c = symphase(c,a);
+                case {'freqinv','relative'}
+                % Do nothing
+            end
+   
+             crightabove = circshift(circshift(c,[0,-1]),[-1,0]);
+             crightbelow = circshift(circshift(c,[0,-1]),[1,0]);
+             cleftabove = circshift(circshift(c,[0,1]),[-1,0]);
+             cleftbelow = circshift(circshift(c,[0,1]),[1,0]); 
+
+        end
+        
+        switch flags1.type
+            case 't'
+                ccross = cright.*conj(cleft);
+                phased = angle(ccross)/(2*2*pi)*L;
+            case 'f'
+                ccross = cabove.*conj(cbelow);
+                phased = angle(ccross)/(2*2*pi)*L;
+            case 'tt'
+                ccross = cright.*conj(ccenter).^2.*cleft;
+                phased = angle(ccross)/(2*pi)*L;
+            case 'ff'
+                ccross = cabove.*conj(ccenter).^2.*cbelow;
+                phased = angle(ccross)/(2*pi)*L;
+            case {'ft','tf'}
+                ccross = crightabove.*conj(crightbelow).*conj(cleftabove).*cleftbelow;
+                phased = angle(ccross)/(4*2*pi)*L;
+            otherwise
+                error('%s: This should never happen.',upper(mfilename));
+        end
+        
+        
+end;
+
+
+function fd=pderivunwrap(f,dim,unwrapconst)
+%PDERIVUNWRAP Periodic derivative with unwrapping
+%
+%  `pderivunwrap(f,dim,wrapconst)` performs derivative of *f* along
+%  dimmension *dim* using second order centered difference approximation
+%  including unwrapping by *unwrapconst*
+%
+%  This effectivelly is just 
+%  (circshift(f,-1)-circshift(f,1))/2
+
+if nargin<2 || isempty(dim)
+    dim = 1;
+end
+
+if nargin<3 || isempty(unwrapconst)
+    unwrapconst = 2*pi;
+end
+
+shiftParam = {[1,0],[-1,0]};
+if dim == 2
+    shiftParam = {[0,1],[0,-1]};
+end
+
+% Forward approximation
+fd_1 = f-circshift(f,shiftParam{1});
+fd_1 = fd_1 - unwrapconst*round(fd_1/(unwrapconst));
+% Backward approximation
+fd_2 = circshift(f,shiftParam{2})-f;
+fd_2 = fd_2 - unwrapconst*round(fd_2/(unwrapconst));
+% Average
+fd = (fd_1+fd_2)/2;
+
+
+function c = phaseadjust(c,phaseconv)
+% Converts frequency invariant to phaseconv
+
+switch phaseconv
+    case 'freqinv'
+    case 'time'   
+        
+end
+
+function g = flipwin(g)
+
+g = [g(1,:);flipud(g(2:end,:))];
+
+
+
+
+
+
