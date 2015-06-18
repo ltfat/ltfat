@@ -6,16 +6,20 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %   `[tgrad,fgrad]=gabphasegrad(method,...)` computes the time-frequency
 %   gradient of the phase of the |dgt| of a signal. The derivative in time
-%   *tgrad* is the instantaneous frequency while the frequency derivative
-%   *fgrad* is the local group delay.
+%   *tgrad* is the relative instantaneous frequency while the frequency 
+%   derivative *fgrad* is the local group delay.
 %
 %   *tgrad* and *fgrad* measure the deviation from the current time and
 %   frequency, so a value of zero means that the instantaneous frequency is
-%   equal to the center frequency of the considered channel.
+%   equal to the center frequency of the considered channel. 
 %
 %   *tgrad* is scaled such that distances are measured in samples. Similarly,
 %   *fgrad* is scaled such that the Nyquist frequency (the highest possible
-%   frequency) corresponds to a value of L/2.
+%   frequency) corresponds to a value of L/2. The absolute time and 
+%   frequency positions can be obtained as
+%
+%      tgradabs = bsxfun(@plus,tgrad,fftindex(M)*L/M);
+%      fgradabs = bsxfun(@plus,fgrad,(0:L/a-1)*a);
 %
 %   The computation of *tgrad* and *fgrad* is inaccurate when the absolute
 %   value of the Gabor coefficients is low. This is due to the fact the the
@@ -23,8 +27,10 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   random. Therefore, *tgrad* and *fgrad* may attain very large random values
 %   when `abs(c)` is close to zero.
 %
-%   The computation can be done using three different methods.
+%   The computation can be done using four different methods.
 %
+%     'dgt'    Directly from the signal using algorithm by Auger and
+%              Flandrin.
 %     'dgt'    Directly from the signal. This is the default method.
 %
 %     'phase'  From the phase of a DGT of the signal. This is the
@@ -47,14 +53,22 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %   Gabor coefficients *c*, as they are always computed as a byproduct of the
 %   algorithm.
 %
+%   `[tgrad,fgrad]=gabphasegrad('cross',f,g,a,M)` does the same as above
+%   but this time using algorithm by Nelson which is based on computing 
+%   several DGTs.
+%
 %   `[tgrad,fgrad]=gabphasegrad('phase',cphase,a)` computes the phase
 %   gradient from the phase *cphase* of a DGT of the signal. The original DGT
 %   from which the phase is obtained must have been computed using a
-%   time-shift of *a*.
+%   time-shift of *a* using the default phase convention (`'freqinv'`) e.g.::
+%
+%        [tgrad,fgrad]=gabphasegrad('phase',angle(dgt(f,g,a,M)),a)
 %
 %   `[tgrad,fgrad]=gabphasegrad('abs',s,g,a)` computes the phase gradient
 %   from the spectrogram *s*. The spectrogram must have been computed using
-%   the window *g* and time-shift *a*.
+%   the window *g* and time-shift *a* e.g.::
+%
+%        [tgrad,fgrad]=gabphasegrad('abs',abs(dgt(f,g,a,M)),g,a)
 %
 %   `[tgrad,fgrad]=gabphasegrad('abs',s,g,a,difforder)` uses a centered finite
 %   diffence scheme of order *difforder* to perform the needed numerical
