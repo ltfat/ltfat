@@ -1,9 +1,11 @@
 function [phased,c]=gabphasederiv(type,method,varargin)
 %GABPHASEDERIV   DGT phase derivatives
 %   Usage:  [phased,c] = gabphasederiv(dflag,'dgt',f,g,a,M);
-%           [phased,c] = gabphasederiv(dflag,'cross',f,g,a,M)
+%            phased    = gabphasederiv(dflag,'cross',f,g,a,M)
 %            phased    = gabphasederiv(dflag,'phase',cphase,a,difforder);
 %            phased    = gabphasederiv(dflag,'abs',s,g,a);
+%           [{phased1,phased2,...}] = gabphasederiv({dflag1,dflag2,...},...);
+%           [{phased1,phased2,...},c] = gabphasederiv({dflag1,dflag2,...},'dgt',...);
 %
 %   `phased=gabphasederiv(dflag,method,...)` computes the time-frequency
 %   derivative `dflag` of the phase of the |dgt| of a signal using algorithm
@@ -39,8 +41,9 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %
 %     'cross'  Directly from the signal using algorithm by Nelson.
 %
-%     'phase'  From the phase of a DGT of the signal using a finite differences
-%              scheme. This is the classic method used in the phase vocoder.
+%     'phase'  From the unwrapped phase of a DGT of the signal using a 
+%              finite differences scheme. This is the classic method used
+%              in the phase vocoder.
 %
 %     'abs'    From the absolute value of the DGT exploiting explicit
 %              dependency between partial derivatives of log-magnitudes and
@@ -54,13 +57,13 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %   several DGTs, and therefore this routine takes the exact same input
 %   parameters as |dgt|.
 %
+%   `[phased,c]=gabphasederiv(dflag,'dgt',f,g,a,M)` additionally returns
+%   the Gabor coefficients *c*, as they are always computed as a byproduct
+%   of the algorithm.
+%
 %   `phased=gabphasederiv(dflag,'cross',f,g,a,M)` does the same as above
 %   but this time using algorithm by Nelson which is based on computing 
 %   several DGTs.
-%
-%   `[phased,c]=gabphasederiv(dflag,'dgt'|'cross',f,g,a,M)` additionally returns
-%   the Gabor coefficients *c*, as they are always computed as a byproduct of
-%   the algorithm.
 %
 %   `phased=gabphasederiv(dflag,'phase',cphase,a)` computes the phase
 %   derivative from the phase *cphase* of a DGT of the signal. The original DGT
@@ -86,41 +89,52 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %   -----------------
 %
 %   First derivatives in either direction are subject to phase convention.
-%   The following flags control 
+%   The following additional flags define the phase convention the original
+%   phase would have had: 
 %
-%     'freqinv'     Directly from the signal using algorithm by Nelson.
+%     'freqinv'     Derivatives reflect the frequency-invariant phase of dgt.
+%                   This is the default.
 %
-%     'timeinv'     From the phase of a DGT of the signal using a finite differences
-%                   scheme. This is the classic method used in the phase vocoder.
+%     'timeinv'     Derivatives reflect the time-invariant phase of dgt.
 %
-%     'symphase'    From the absolute value of the DGT exploiting explicit
-%                   dependency between partial derivatives of log-magnitudes and
-%                   phase.
-%                   Currently this method works only for Gaussian windows.
+%     'symphase'    Derivatives reflect the symmetric phase of dgt.
 %
-%   Reassigned locations
-%   --------------------
+%     'relative'    This is a combination of 'freqinv' and 'timeinv'.
+%                   It uses 'timeinv' for derivatives along frequency and
+%                   and 'freqinv' for derivatives along time and for the 
+%                   mixed derivative.                      
+%                   This is usefull for the reassignment functions.
 %
-%   Each coefficient $(t,f)$ is asociated with a 
+%   Please see ltfatnote042 for the description of relations between the 
+%   phase derivatives with differnet phase conventions. Note that for the
+%   'relative' convention, the following holds::
 %
+%      gabphasederiv('t',...,'relative') == gabphasederiv('t',...,'freqinv')
+%      gabphasederiv('f',...,'relative') == -gabphasederiv('f',...,'timeinv')
+%      gabphasederiv('tt',...,'relative') == gabphasederiv('f',...,'freqinv')
+%      gabphasederiv('ff',...,'relative') == -gabphasederiv('f',...,'timeinv')
+%      gabphasederiv('tf',...,'relative') == gabphasederiv('tf',...,'freqinv')
 %
-%   ..              L-1 
-%      c(m+1,n+1) = sum f(l+1)*conj(g(l-a*n+1))*exp(-2*pi*i*m*l/M), 
-%                   l=0  
+%   Several derivatives at once
+%   ---------------------------
 %
-%   .. math:: c\left(m+1,n+1\right)=\sum_{l=0}^{L-1}f(l+1)\overline{g(l-an+1)}e^{-2\pi ilm/M}
+%   `phasedcell=gabphasederiv({dflag1,dflag2,...},...)` computes several
+%   phase derivatives at once while reusing some temporary computations.  
+%   `{dflag1,dflag2,...}` is a cell array of the derivative flags and
+%   cell elements of the returned `phasedcell` contain the corresponding
+%   derivatives i.e.::
 %
-%  
-%   Derivatives of reassigned locations
-%   -----------------------------------
-%
+%       [pderiv1,pderiv2,...] = deal(phasedcell{:});
 %   
-%   
-%   
+%   `[phasedcell,c]=gabphasederiv({dflag1,dflag2,...},'dgt',...)` works the
+%   same as above but in addition returns coefficients *c* which are the
+%   byproduct of the `'dgt'` method.
 %
-%   See also: resgram, gabreassign, dgt, pderiv
+%   Other flags and parameters work as before.
 %
-%   References: aufl95 cmdaaufl97 fl65 auchfl12 fifu09 ne02
+%   See also: resgram, gabreassign, dgt, pderiv, gabphasegrad
+%
+%   References: aufl95 cmdaaufl97 fl65 auchfl12 fifu09 ne02 ltfatnote042
 
 
 % AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša, 2015
@@ -132,14 +146,30 @@ complainif_notenoughargs(nargin,2,upper(mfilename));
 
 definput.flags.type = {'t','f','tt','ff','tf','ft'};
 definput.flags.method = {'dgt','phase','abs','cross'};
-definput.flags.phaseconv = {'relative','freqinv','timeinv','symphase'};
+definput.flags.phaseconv = {'freqinv','timeinv','symphase','relative'};
 
-if ~ischar(method) || ~any(strcmpi(type, definput.flags.type))
-    error(['%s: First argument must be the type of the derivative: %s'],...
-        upper(mfilename),...
-        strjoin(cellfun(@(el) sprintf('"%s"',el),...
-        definput.flags.type,'UniformOutput',0),', '));
-end;
+typewascell = 0;
+
+if ischar(type)
+    types = {type};
+elseif iscell(type)
+    error('Multiple derivatives at once were not implemented yet.');
+    types = type;
+    typewascell = 1;
+else
+    error('%s: First argument must be either char or a cell array.',...
+        upper(mfilename));
+end
+
+for ii=1:numel(types)
+    type = types{ii};
+    if ~ischar(type) || ~any(strcmpi(type, definput.flags.type))
+        error(['%s: First argument must contain the type of the derivative: %s'],...
+            upper(mfilename),...
+            strjoin(cellfun(@(el) sprintf('"%s"',el),...
+            definput.flags.type,'UniformOutput',0),', '));
+    end
+end
 
 if ~ischar(method) || ~any(strcmpi(method, definput.flags.method))
     error(['%s: Second argument must be the method name: %s '], ...
@@ -150,7 +180,7 @@ end;
 
 foundFlags = cellfun(@(el)ischar(el) && any(strcmpi(el,definput.flags.phaseconv)),...
              varargin);
-flags1 = ltfatarghelper({},definput,{type,method,varargin{foundFlags}});
+flags1 = ltfatarghelper({},definput,{types{1},method,varargin{foundFlags}});
 definput = []; % Definput is used again later
 varargin(foundFlags) = []; % Remove the phaseconv flags
 
@@ -160,6 +190,9 @@ switch flags1.method
             error('%s: Too many output arguments. ', upper(mfilename));
         end
 end
+
+% Allocate the output cell array
+phased = cell(1,numel(types));
 
 switch flags1.method
     case {'dgt','cross'}
@@ -221,6 +254,10 @@ switch flags1.method
         % We also need info for info.gauss
         [~,info]=gabwin(gg,a,M,L,kv.lt,'callfun',upper(mfilename));
         
+        if info.gauss
+            % Save computations
+        end
+        
         switch flags1.type
             case 't'
                 % fir2long is here to avoid possible boundary effects
@@ -231,7 +268,7 @@ switch flags1.method
                 phased = imag(c_d.*conj(c)./c_s);
                 
                 switch flags1.phaseconv
-                    case 'freqinv'
+                    case {'freqinv','relative'}
                         % Do nothing
                     case 'timeinv'
                         phased = bsxfun(@plus,phased,fftindex(M)*b);
@@ -610,6 +647,11 @@ switch flags1.method
         
         
 end;
+
+% if ~typewascell
+%     assert(numel(phased)==1,'phased should contain only 1 element');
+%     phased = phased{1};
+% end
 
 
 function fd=pderivunwrap(f,dim,unwrapconst)
