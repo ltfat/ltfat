@@ -134,7 +134,8 @@ LTFAT_EXTERN
 void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                          const LTFAT_REAL *tgrad,
                          const LTFAT_REAL *fgrad,
-                         const ltfatInt a, const ltfatInt M, const ltfatInt L, const ltfatInt W,
+                         const ltfatInt a, const ltfatInt M,
+                         const ltfatInt L, const ltfatInt W,
                          LTFAT_REAL tol, LTFAT_REAL *phase)
 {
 
@@ -172,7 +173,8 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
         for (ii=0; ii<M; ii++)
         {
             tgradw[ii+jj*M] = tgrad[ii+jj*M]*2*PI*a/L;
-            fgradw[ii+jj*M] = fgrad[ii+jj*M]*2*PI*b/L+2*PI*jj*a*b/L;
+            // time-invatinat -> frequency invariant
+            fgradw[ii+jj*M] =  -( fgrad[ii+jj*M]*2*PI*b/L+2*PI*jj*a*b/L);
         }
     }
 
@@ -233,7 +235,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
              * Integration by trapezoidal rule */
 
             /* North */
-            w_N=(w-1+M)%M+w-w%M;
+            w_N=((w+1)%M)+w-w%M;
             if (!donemask[w_N])
             {
                 /*   printf("C North: %i %i\n",w,w_N); */
@@ -243,7 +245,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
             }
 
             /* South */
-            w_S=((w+1)%M)+w-w%M;
+            w_S=(w-1+M)%M+w-w%M;
             if (!donemask[w_S])
             {
                 /* 	   printf("C South: %i %i\n",w,w_S); */
@@ -275,6 +277,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
         }
 
         /* Find the new maximal element */
+
 
         maxs=-1e99;
         domainloop=0;
