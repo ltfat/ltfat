@@ -1,3 +1,13 @@
+Version 2.1.1 x/6  2015
+    * New function for computing higher order phase derivatives: gabphasederiv
+
+    * New function for adjustable reassignment: gabreassignadjust
+
+    * Fixed bug in gabphasegrad which prevented it to be used with any window
+      other than Gaussian.
+
+    * Fixed bug in lconv.
+
 Version 2.1.0 6/5  2015
 
     * New filterbank-generating function: warpedfilters
