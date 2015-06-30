@@ -215,7 +215,7 @@ phased2 = cell(1,numel(dflagsUnique));
 
 switch flags1.method
     case {'dgt','cross'}
-        complainif_notenoughargs(nargin,6,mfilename);
+        complainif_notenoughargs(numel(varargin),4,mfilename);
         [f,gg,a,M]=deal(varargin{1:4});
         
         definput.keyvals.L=[];
@@ -386,7 +386,7 @@ switch flags1.method
         
     case 'phase'
         % ----------  Direct numerical derivative of the phase  ----------------
-        complainif_notenoughargs(nargin,4,mfilename);
+        complainif_notenoughargs(numel(varargin),2,mfilename);
         [cphase,a]=deal(varargin{1:2});
         complainif_notposint(a,'a',mfilename)
         
@@ -503,7 +503,7 @@ switch flags1.method
     case 'abs'
         % ---------------------------  abs method ------------------------
         
-        complainif_notenoughargs(nargin,5,mfilename);
+        complainif_notenoughargs(numel(varargin),3,mfilename);
         [s,g,a]=deal(varargin{1:3});
         complainif_notposint(a,'a',mfilename)
         
@@ -641,7 +641,8 @@ switch flags1.method
         end
         
         
-        cright = []; cleft = []; cabove = []; cbelow = []; ccenter = [];
+        cright = []; cleft = []; cabove = []; cbelow = []; ccenterfi = [];
+        ccenterti = [];
         crightabove = []; crightbelow = []; cleftabove = []; cleftbelow = [];
         for typedId=1:numel(dflagsUnique)
             typed = dflagsUnique{typedId};
@@ -652,13 +653,16 @@ switch flags1.method
             end
             
             if (isempty(cabove) || isempty(cbelow)) && any(strcmpi(typed,{'f','ff'}))
-                cabove = dgt(f,shiftwin(gtmp,0,1),a,M,L,'lt',kv.lt);
-                cbelow = dgt(f,shiftwin(gtmp,0,-1),a,M,L,'lt',kv.lt);
-                % This somehow computes time-invariant phase
+                cabove = dgt(f,shiftwin(gtmp,0,1),a,M,L,'lt',kv.lt,'timeinv');
+                cbelow = dgt(f,shiftwin(gtmp,0,-1),a,M,L,'lt',kv.lt,'timeinv');
             end
             
-            if isempty(ccenter) && any(strcmpi(typed,{'tt','ff'}))
-                ccenter = dgt(f,gg,a,M,L,'lt',kv.lt);
+            if isempty(ccenterfi) && any(strcmpi(typed,{'tt','t'}))
+                ccenterfi = dgt(f,gg,a,M,L,'lt',kv.lt);
+            end
+            
+            if isempty(ccenterti) && any(strcmpi(typed,{'ff','f'}))
+                ccenterti = dgt(f,gg,a,M,L,'lt',kv.lt,'timeinv');
             end
             
             if (isempty(crightabove) || isempty(crightbelow) || ...
@@ -676,13 +680,15 @@ switch flags1.method
                 
                 fleftbelow = circshift(f,1).*exp(1i*2*pi*(0:L-1)'./L);
                 cleftbelow = dgt(fleftbelow,gg,a,M,L,'lt',kv.lt);
-                % This somehow computes time-invariant phase
             end
             
             switch typed
                 case 't'
-                    ccross = cright.*conj(cleft);
-                    phased = angle(ccross)/(2*2*pi)*L;
+                    % This way, the implicit phase unwrapping is done in
+                    % both differences.
+                    ccross1 = cright.*conj(ccenterfi);
+                    ccross2 = ccenterfi.*conj(cleft);
+                    phased = (angle(ccross1)+angle(ccross2))/(2*2*pi)*L;
                     
                     switch flags1.phaseconv
                         case {'freqinv','relative'}
@@ -694,8 +700,9 @@ switch flags1.method
                     end
                     
                 case 'f'
-                    ccross = cabove.*conj(cbelow);
-                    phased = angle(ccross)/(2*2*pi)*L;
+                    ccross1 = cabove.*conj(ccenterti);
+                    ccross2 = ccenterti.*conj(cbelow);
+                    phased = (angle(ccross1)+angle(ccross2))/(2*2*pi)*L;
                     
                     switch flags1.phaseconv
                         case 'timeinv'
@@ -708,10 +715,10 @@ switch flags1.method
                             phased = bsxfun(@plus,phased,-fftindex(N).'*a/2);
                     end
                 case 'tt'
-                    ccross = cright.*conj(ccenter).^2.*cleft;
+                    ccross = cright.*conj(ccenterfi).^2.*cleft;
                     phased = angle(ccross)/(2*pi)*L;
                 case 'ff'
-                    ccross = cabove.*conj(ccenter).^2.*cbelow;
+                    ccross = cabove.*conj(ccenterti).^2.*cbelow;
                     phased = angle(ccross)/(2*pi)*L;
                     
                     switch flags1.phaseconv
