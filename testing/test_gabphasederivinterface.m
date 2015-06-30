@@ -3,6 +3,8 @@ test_failed = 0;
 
 %Test whether the batch interface does the same thing as indivisual calls
 
+% TODO: test also wrong number of input arguments
+
 disp('---------------test_gabphasederivinterface---------------------');
 
 f = tester_rand(128,1);
