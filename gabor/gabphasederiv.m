@@ -507,9 +507,8 @@ switch flags1.method
         [s,g,a]=deal(varargin{1:3});
         complainif_notposint(a,'a',mfilename)
         
-        if numel(varargin)>4
-            difforder=varargin{5};
-            complainif_notposint(difforder,'difforder',mfilename);
+        if numel(varargin)>3
+            difforder=varargin{4};
         else
             difforder=4;
         end;
@@ -541,19 +540,20 @@ switch flags1.method
         % lessen the problem of errors in the differentiation for points close to
         % (but not exactly) zeros points.
         maxmax=max(logs(:));
-        tt=-11;
+        tt=-11; % This is equal to about 95dB of 'normal' dynamic range 
+
         logs(logs<maxmax+tt)=tt;
         
         for typedId=1:numel(dflagsUnique)
             typed = dflagsUnique{typedId};
             
             tgrad = []; fgrad = [];
-            if isempty(tgrad) && any(strcmpi(typed,{'t','tt','ft','tf','ff'}))
+            if isempty(tgrad) && any(strcmpi(typed,{'t','tt','ft','tf'}))
                 tgrad = pderiv(logs,1,difforder)/(2*pi);
             end
             
-            if isempty(fgrad) && any(strcmpi(typed,{'f'}))
-                fgrad=-pderiv(logs,2,difforder)/(2*pi);
+            if isempty(fgrad) && any(strcmpi(typed,{'f','ff'}))
+                fgrad = -pderiv(logs,2,difforder)/(2*pi);
             end
             
             
@@ -591,7 +591,7 @@ switch flags1.method
                 case 'ff'
                     % Mixed derivatives of log-magnitude give second derivative
                     % of phase
-                    phased=-info.tfr*pderiv(tgrad,2,difforder)/L;
+                    phased= info.tfr*pderiv(fgrad,1,difforder)/L;
                     
                     switch flags1.phaseconv
                         case 'relative'
