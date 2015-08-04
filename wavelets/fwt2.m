@@ -83,7 +83,7 @@ end
 if(any(w.a(1)^J>size(f)))
    error(['%s: %d-level decomposition of the input is not possible. ',...
           'Maximum J is %d.'],...
-          upper(mfilename),J,floor(log(max(size(f)))/log(w.a(1))));
+          upper(mfilename),J,floor(log(min(size(f)))/log(w.a(1))));
 end
 
 %% ----- step 0 : Check inputs -------
