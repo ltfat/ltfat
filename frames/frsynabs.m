@@ -49,7 +49,9 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %   guaranteed to converge at all.
 %
 %   `frsynabs` takes the following parameters at the end of the line of input
-%   arguments:
+%   arguments. 
+%
+%   Initial phase guess:
 %
 %     'input'      Choose the starting phase as the phase of the input
 %                  *s*. This is the default
@@ -58,21 +60,32 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %
 %     'rand'       Choose a random starting phase.
 %
+%   The Griffin-Lim algorithm related parameters:
+%
 %     'griflim'    Use the Griffin-Lim iterative method. This is the
 %                  default.
 %
 %     'fgriflim'   Use the Fast Griffin-Lim iterative method. 
 %
-%     'bfgs'       Use the limited-memory Broyden Fletcher Goldfarb
-%                  Shanno (BFGS) method.
 %
 %     'Fd',Fd      A canonical dual frame object or an anonymous function 
 %                  acting as the synthesis operator of the canonical dual frame.
 %                  If not provided, the function attempts to create one using
-%                  `Fd=framedual(F)`. 
+%                  `Fd=framedual(F)`.
 %
 %     'alpha',a    Parameter of the Fast Griffin-Lim algorithm. It is
 %                  ignored if not used together with 'fgriflim' flag.
+%     
+%   The BFGS method related paramaters:
+%
+%     'bfgs'       Use the limited-memory Broyden Fletcher Goldfarb
+%                  Shanno (BFGS) method.
+%
+%     'p',p        Parameter for the compressed version of the obj. function
+%                  in the l-BFGS method. It is ignored if not used together
+%                  with 'bfgs' flag.
+%
+%   Other:
 %
 %     'tol',t      Stop if relative residual error is less than the
 %                  specified tolerance.  
@@ -108,6 +121,7 @@ definput.keyvals.Fd=[];
 definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.keyvals.alpha=0.99;
+definput.keyvals.p=2;
 definput.flags.print={'quiet','print'};
 definput.flags.startphase={'input','zero','rand'};
 definput.flags.method={'griflim','bfgs','fgriflim'};
@@ -225,7 +239,8 @@ if flags.do_bfgs
     end;
 
     if nargout>3
-        error('%s: 4th argument cannot be returned when using the BFGS method.',upper(mfilename));
+        error('%s: 4th argument cannot be returned when using the BFGS method.',...
+              upper(mfilename));
     end
     
     % Setting up the options for minFunc
@@ -237,9 +252,16 @@ if flags.do_bfgs
     % time-steps.
     opts.MaxFunEvals = 1e9;
     opts.usemex = 0;
-    
     f0 = Fdfrsyn(c);
-    [f,fval,exitflag,output]=minFunc(@objfun,f0,opts,F,s);
+    f0 = f0/norm(f0);
+    
+    if kv.p ~= 2
+        objfun = @(x) gradfunp(x,F,s,kv.p);
+    else
+        objfun = @(x) gradfun(x,F,s);
+    end
+    
+    [f,fval,exitflag,output]=minFunc(objfun,f0,opts);
     % First entry of output.trace.fval is the objective function
     % evaluated on the initial input. Skip it to be consistent.
     relres = output.trace.fval(2:end)/norm_s;
@@ -257,13 +279,23 @@ end;
 f=comp_sigreshape_post(f,Ls,0,[0; W]);
 
 %  Subfunction to compute the objective function for the BFGS method.
-function [f,df]=objfun(x,F,s)
+function [f,df]=gradfun(x,F,s)
+  % f  obj function value
+  % df gradient value
+  c=F.frana(x);
+  inner = abs(c).^2-s.^2;
+  
+  f = norm(inner,'fro')^2;
+  df = 4*real(F.frsyn(inner.*c));
+  
+%  Subfunction to compute the p-compressed objective function for the BFGS method.
+function [f,df]=gradfunp(x,F,s,p)
   c=F.frana(x);
   
-  inner = abs(c)-s;
+  inner = abs(c).^p-s.^p;
   f=norm(inner,'fro')^2;
   
-  df = 4*real(conj(F.frsyn(inner.*c)));
+  df = 2*p*real(F.frsyn( inner.*abs(c).^(p/2-1).*c));
   
 
 
