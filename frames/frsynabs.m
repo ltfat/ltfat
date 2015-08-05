@@ -92,7 +92,7 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %
 %   See also:  dgt, idgt
 %
-%   References: griffin1984sem pabaso13
+%   References: griffin1984sem pabaso13 desomada15
   
 %   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
