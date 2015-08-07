@@ -30,12 +30,10 @@ function coef=plotdgt(coef,a,varargin)
 %   TESTING: NA
 %   REFERENCE: NA
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,2,mfilename);
+complainif_notposint(a,'a',mfilename);
 
 definput.import={'ltfattranslate','tfplot'};
-
 [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
 
 M=size(coef,1);

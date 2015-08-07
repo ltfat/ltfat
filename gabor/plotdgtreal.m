@@ -27,9 +27,9 @@ function coef=plotdgtreal(coef,a,M,varargin)
 %   TESTING: NA
 %   REFERENCE: NA
 
-if nargin<3
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+complainif_notenoughargs(nargin,3,mfilename);
+complainif_notposint(a,'a',mfilename);
+complainif_notposint(M,'M',mfilename);
 
 definput.import={'ltfattranslate','tfplot'};
 

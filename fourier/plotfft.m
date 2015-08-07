@@ -15,10 +15,10 @@ function plotfft(coef,varargin)
 %
 %   `plotfft` accepts the following optional arguments:
 %
-%     'dynrange',r Limit the dynamical range to `r` by using a colormap in
-%                  the interval `[chigh-r,chigh]`, where `chigh` is the highest
-%                  value in the plot. The default value of `[]` means to not
-%                  limit the dynamical range. 
+%     'dynrange',r  Limit the dynamical range to `r` by using a colormap in
+%                   the interval `[chigh-r,chigh]`, where `chigh` is the highest
+%                   value in the plot. The default value of `[]` means to not
+%                   limit the dynamical range. 
 %
 %     'db'         Apply $20\cdot \log_{10}$ to the coefficients. This makes 
 %                  it possible to see very weak phenomena, but it might show 

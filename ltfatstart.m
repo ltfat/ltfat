@@ -1,4 +1,4 @@
-function ltfatstart(ltfatstartprint)
+function ltfatstart(varargin)
 %LTFATSTART   Start the LTFAT toolbox
 %   Usage:  ltfatstart;
 %
@@ -22,22 +22,42 @@ function ltfatstart(ltfatstartprint)
 %   `status==1` identifies a toolbox module any other value just a
 %   directory to be added to path.
 %
+%   `ltfatstart(0)` supresses any status messages.
+%
 %   !!WARNING for MATLAB users!!
 %   ----------------------------
 %
 %   The function indirectly calls `clear all`, which clears all your global
-%   and persistent variables. It comes with calling `javaaddpath` and 
-%   there is nothig we can do about that at the moment.
+%   and persistent variables. It comes with calling `javaaddpath` in
+%   blockproc/blockprocinit.m. You can avoid calling it by passing 
+%   additional `'nojava'` flag.
 %
 %   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
 
 %   AUTHOR : Peter L. Søndergaard.  
 %   TESTING: NA
 
-
-
-if nargin==0
-    ltfatstartprint=1;
+do_java = 1;
+ltfatstartprint=1;
+if nargin>0
+    scalarIds = cellfun(@isscalar,varargin);
+    nojavaIds = strcmpi('nojava',varargin);
+    
+    if ~all(scalarIds | nojavaIds)
+        error(['LTFATSTART: Only a single scalar and flag, '...
+               '''nojava'' are recognized']);
+    end
+    
+    if any(nojavaIds)
+        do_java = 0;
+    end
+    
+    scalars = varargin(scalarIds);
+    if numel(scalars)>1
+        error('LTFATSTART: Only a single scalar can be passed.');  
+    elseif numel(scalars) == 1
+        ltfatstartprint=scalars{1};
+    end
 end;
 
 % Get the basepath as the directory this function resides in.
@@ -63,6 +83,11 @@ end
 
 ignored_dirs_common = {[filesep(),'mat2doc'],...
                        [filesep(),'src']};
+
+ignored_inits = {};
+if ~do_java
+    ignored_inits{end+1} = {'blockprocinit.m',1};
+end
 
 %% --- Check for old versions of Octave and Matlab
 if isoctave
@@ -133,8 +158,9 @@ while ~isempty(d)
   
     % The file is a directory and it does not start with '.' This could
     % be a module
-    initfilename = [bp,basedir{1},name,filesep,lower(name),'init.m'];
-    if ~exist(initfilename,'file')
+    initfilename = [lower(name),'init.m'];
+    initfilefullpath = [bp,basedir{1},name,filesep,initfilename];
+    if ~exist(initfilefullpath,'file')
       continue
     end;
     
@@ -146,10 +172,17 @@ while ~isempty(d)
     module_version=ltfat_version;
      
     % Add the module dir to the path
-    addpath([bp,basedir{1},name])  
-  
-    % Execute the init file to see if the status is set.
-    run(initfilename);
+    addpath([bp,basedir{1},name]);
+    
+    iffound = cellfun(@(iEl) strcmpi(initfilename,iEl{1}),ignored_inits);
+    
+    if any(iffound)
+        status = ignored_inits{iffound}{2};
+    else
+        % Execute the init file to see if the status is set.
+        run(initfilefullpath);
+    end
+    
     if status>0
       % Only store top-level modules
       if status==1 && strcmp(basedir{1},filesep)
@@ -204,7 +237,8 @@ if ltfatstartprint
                    ltfat_version,backend);
   
   disp(banner);
-  if ~isoctave() && ltfatstartprint
+  
+  if ~isoctave() && do_java
       disp('(Your global and persistent variables have just been cleared. Sorry.)');
   end
   

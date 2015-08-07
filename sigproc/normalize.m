@@ -38,7 +38,8 @@ function [f,fnorm]=normalize(f,varargin)
 %
 %   It is possible to specify the dimension:
 %
-%      'dim',d  Work along specified dimension. The default value of `[]`
+%      'dim',d  
+%                Work along specified dimension. The default value of `[]`
 %                means to work along the first non-singleton one.
 %
 %   See also: rms, s0norm
