@@ -6,6 +6,7 @@ function ltfatmex(varargin)
 %   `ltfatmex` compiles the C backend in order to speed up the execution of
 %   the toolbox. The C backend is linked to Matlab and Octave through Mex
 %   and Octave C++ interfaces.
+%   Please see INSTALL-Matlab or INSTALL-Octave for the requirements.
 %
 %   The action of `ltfatmex` is determined by one of the following flags:
 %
@@ -68,14 +69,24 @@ definput.flags.target={'auto','lib','mex','gpc','playrec','java','blockproc'};
 % This has to be also defined 
 definput.flags.comptarget={'release','debug'};
 definput.flags.command={'compile','clean','test'};
-definput.flags.libs={'matlablibs','systemlibs'};
 definput.flags.verbosity={'noverbose','verbose'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
 
-if flags.do_systemlibs && (isoctave)
-    error('%s: Library preference is relevant only for Matlab.',...
-         upper(mfilename));
+s = which('ltfatarghelper');
+if strcmpi(mexext,s(end-numel(mexext)+1:end))
+   % We must avoid calling corrupt ltfatarghelper.mexext
+   % The following must not fail 
+   try
+       ltfatarghelper({},struct(),{});
+   catch
+       if any(strcmpi('verbose',varargin))
+           fprintf('Removing corrupt ltfatarghelper.%s',mexext);
+       end
+       delete(s);
+       % Now there is just a ltfatarghelper.m
+   end
 end
+
+[flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Remember the current directory.
 curdir=pwd;
@@ -529,7 +540,7 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   if flags.do_verbose
       fprintf('Calling:\n    %s\n\n',systemCommand);
   end
-  
+    
   [status,result]=system(systemCommand);
   
   if flags.do_verbose && ~isoctave
