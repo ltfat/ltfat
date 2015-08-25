@@ -5,14 +5,14 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %           [f,relres,iter,c]=frsynabs(...);
 %
 %   Input parameters:
-%         F       : Frame   
+%         F       : Frame
 %         s       : Array of coefficients.
 %         Ls      : length of signal.
 %   Output parameters:
 %         f       : Signal.
 %         relres  : Vector of residuals.
 %         iter    : Number of iterations done.
-%         c       : Coefficients with the reconstructed phase  
+%         c       : Coefficients with the reconstructed phase
 %
 %   `frsynabs(F,s)` attempts to find a signal which has `s` as the absolute
 %   value of its frame coefficients ::
@@ -30,7 +30,7 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %   vector *relres* and the number of iteration steps *iter*. The residuals
 %   are computed as:
 %
-%   .. relres = norm(abs(cn)-s,'fro')/norm(s,'fro') 
+%   .. relres = norm(abs(cn)-s,'fro')/norm(s,'fro')
 %
 %   .. math:: relres=\frac{\left\Vert \left|c_{n}\right|-s\right\Vert _{fro}}{\left\Vert s\right\Vert _{fro}},
 %
@@ -39,7 +39,7 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %   `[f,relres,iter,c]=frsynabs(...,'griflim'|'fgriflim')` additionally returns
 %   coefficients *c* with the reconstructed phase prior to the final reconstruction.
 %   This is usefull for determining the consistency (energy lost in the nullspace
-%   of F) of the reconstructed spectrogram. *c* will only be equal to `frana(F,f)` 
+%   of F) of the reconstructed spectrogram. *c* will only be equal to `frana(F,f)`
 %   if the spectrogram is already consistent (i.e. already in the range space of F*).
 %   This is possible only for `'griflim'` and `'fgriflim'` methods.
 %
@@ -49,7 +49,7 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %   guaranteed to converge at all.
 %
 %   `frsynabs` takes the following parameters at the end of the line of input
-%   arguments. 
+%   arguments.
 %
 %   Initial phase guess:
 %
@@ -65,17 +65,17 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %     'griflim'    Use the Griffin-Lim iterative method. This is the
 %                  default.
 %
-%     'fgriflim'   Use the Fast Griffin-Lim iterative method. 
+%     'fgriflim'   Use the Fast Griffin-Lim iterative method.
 %
 %
-%     'Fd',Fd      A canonical dual frame object or an anonymous function 
+%     'Fd',Fd      A canonical dual frame object or an anonymous function
 %                  acting as the synthesis operator of the canonical dual frame.
 %                  If not provided, the function attempts to create one using
 %                  `Fd=framedual(F)`.
 %
 %     'alpha',a    Parameter of the Fast Griffin-Lim algorithm. It is
 %                  ignored if not used together with 'fgriflim' flag.
-%     
+%
 %   The BFGS method related paramaters:
 %
 %     'bfgs'       Use the limited-memory Broyden Fletcher Goldfarb
@@ -88,7 +88,7 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %   Other:
 %
 %     'tol',t      Stop if relative residual error is less than the
-%                  specified tolerance.  
+%                  specified tolerance.
 %
 %     'maxit',n    Do at most n iterations.
 %
@@ -99,14 +99,14 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %     'printstep',p  If 'print' is specified, then print every p'th
 %                    iteration. Default value is p=10;
 %
-%   The BFGS method makes use of the minFunc software. To use the BFGS method, 
+%   The BFGS method makes use of the minFunc software. To use the BFGS method,
 %   please install the minFunc software from:
 %   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
 %   See also:  dgt, idgt
 %
 %   References: griffin1984sem pabaso13 desomada15
-  
+
 %   AUTHOR : Remi Decorsiere and Peter L. Søndergaard.
 %   REFERENCE: OK
 
@@ -114,7 +114,7 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 
 complainif_notenoughargs(nargin,2,'FRSYNABS');
 complainif_notvalidframeobj(F,'FRSYNABS');
-  
+
 definput.keyvals.Ls=[];
 definput.keyvals.tol=1e-6;
 definput.keyvals.Fd=[];
@@ -129,7 +129,7 @@ definput.flags.method={'griflim','bfgs','fgriflim'};
 [flags,kv,Ls]=ltfatarghelper({'Ls','tol','maxit'},definput,varargin);
 
 % Determine the proper length of the frame
-L=framelengthcoef(F,size(s,1));   
+L=framelengthcoef(F,size(s,1));
 W=size(s,2);
 
 if flags.do_input
@@ -164,7 +164,7 @@ if isempty(kv.Fd)
         error('%s: The canonical dual frame is not available.',upper(mfilename));
     end
 else
-   if isstruct(kv.Fd) && isfield(kv.Fd,'frsyn') 
+   if isstruct(kv.Fd) && isfield(kv.Fd,'frsyn')
       % The canonical dual frame was passed explicitly as a frame object
       Fd = frameaccel(kv.Fd,L);
       Fdfrsyn = @(insig) Fd.frana(insig);
@@ -183,28 +183,27 @@ F=frameaccel(F,L);
 if flags.do_griflim
   for iter=1:kv.maxit
     f=Fdfrsyn(c);
-    c=F.frana(f);
-    
-    relres(iter)=norm(abs(c)-s,'fro')/norm_s;
+    c2=F.frana(f);
 
-    c=s.*exp(1i*angle(c));
+    c=s.*exp(1i*angle(c2));
+    relres(iter)=norm(abs(c2)-s,'fro')/norm_s;
 
     if flags.do_print
       if mod(iter,kv.printstep)==0
         fprintf('FRSYNABS: Iteration %i, residual = %f.\n',iter,relres(iter));
-      end;    
+      end;
     end;
-    
+
     if relres(iter)<kv.tol
       relres=relres(1:iter);
       break;
     end;
-    
+
   end;
 end;
 
 if flags.do_fgriflim
-  told=s;
+  told=c;
 
   for iter=1:kv.maxit
     f=Fdfrsyn(c);
@@ -214,21 +213,21 @@ if flags.do_fgriflim
 
     tnew=s.*exp(1i*angle(tnew));
     c=tnew+kv.alpha*(tnew-told);
-    
+
 
     if flags.do_print
       if mod(iter,kv.printstep)==0
         fprintf('FRSYNABS: Iteration %i, residual = %f.\n',iter,relres(iter));
-      end;    
+      end;
     end;
-    
+
     if relres(iter)<kv.tol
       relres=relres(1:iter);
       break;
     end;
-    
+
     told=tnew;
-    
+
   end;
 end;
 
@@ -242,33 +241,53 @@ if flags.do_bfgs
         error('%s: 4th argument cannot be returned when using the BFGS method.',...
               upper(mfilename));
     end
-    
+
     % Setting up the options for minFunc
     opts = struct;
-    opts.display = kv.printstep;
-    opts.maxiter = kv.maxit;
-    
+    if flags.do_quiet
+          opts.Display = 'off';
+    end
+
+
+    opts.MaxIter = kv.maxit;
+    opts.optTol = kv.tol;
+    opts.progTol = kv.tol;
+
+    if nargout>1
+        % This custom function is called after each iteration.
+        % We cannot use the objective function itself as it might be called
+        % several times in a single iteration.
+        % We use outputFcn to keep track of norm(abs(c)+s)
+        % because the objective function is different: norm(abs(c).^p+s.^p)
+
+        opts.outputFcn = @outputFcn;
+        opts.outputFcn('init',kv.maxit,F,s);
+    end
+
     % Don't limit the number of function evaluations, just the number of
     % time-steps.
     opts.MaxFunEvals = 1e9;
     opts.usemex = 0;
     f0 = Fdfrsyn(c);
-    f0 = f0/norm(f0);
-    
+
     if kv.p ~= 2
-        objfun = @(x) gradfunp(x,F,s,kv.p);
+      objfun = @(x) gradfunp(x,F,s,kv.p);
     else
-        objfun = @(x) gradfun(x,F,s);
+      objfun = @(x) gradfun(x,F,s);
     end
-    
-    [f,fval,exitflag,output]=minFunc(objfun,f0,opts);
+
+
+    [f,~,~,output] = minFunc(objfun,f0,opts);
     % First entry of output.trace.fval is the objective function
     % evaluated on the initial input. Skip it to be consistent.
-    relres = output.trace.fval(2:end)/norm_s;
-    iter = output.iterations;
+    if nargout > 1
+        iter = output.iterations;
+        res = opts.outputFcn('getRes');
+        relres = res(1:iter)/norm_s;
+    end
 end;
 
-    
+
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
   f=postpad(f,Ls);
@@ -283,19 +302,46 @@ function [f,df]=gradfun(x,F,s)
   % f  obj function value
   % df gradient value
   c=F.frana(x);
+
   inner = abs(c).^2-s.^2;
-  
   f = norm(inner,'fro')^2;
-  df = 4*real(F.frsyn(inner.*c));
-  
+  df = 4*real(conj(F.frsyn(inner.*c)));
+
 %  Subfunction to compute the p-compressed objective function for the BFGS method.
 function [f,df]=gradfunp(x,F,s,p)
   c=F.frana(x);
-  
   inner = abs(c).^p-s.^p;
-  f=norm(inner,'fro')^2;
-  
-  df = 2*p*real(F.frsyn( inner.*abs(c).^(p/2-1).*c));
-  
+  f = norm(inner,'fro')^2;
+  df = 2*p*real(conj(F.frsyn( inner.*abs(c).^(p/2-1).*c)));
+
+function stop = outputFcn(x,iterationType,itNo,funEvals,f,t,gtd,g,d,optCond)
+% This is unfortunatelly a messy function.
+% Moreover, it computes one more analysis
+
+persistent res;
+persistent F;
+persistent s;
+
+if ischar(x)
+    switch x
+        case 'init'
+            res = zeros(iterationType,1);
+            F = itNo;
+            s = funEvals;
+            return;
+        case 'getRes'
+            stop = res;
+            F = []; s=[]; res = [];
+            return;
+    end
+end
+
+if isempty(res)
+    error('OUTPUTFCN: Initialize res first!');
+end
+
+res(itNo+1) = norm(abs(F.frana(x)) - s,'fro');
+stop = 0;
+
 
 

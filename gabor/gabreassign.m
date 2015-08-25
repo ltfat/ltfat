@@ -4,8 +4,8 @@ function sr=gabreassign(s,tgrad,fgrad,a)
 %
 %   `gabreassign(s,tgrad,fgrad,a)` reassigns the values of the positive
 %   time-frequency distribution *s* using the phase gradient given by *fgrad*
-%   and *tgrad*. The lattice is determined by the time shift *a* and the number
-%   of channels deduced from the size of *s*.
+%   and *tgrad*. The lattice is determined by the time shift *a* and the 
+%   number of channels deduced from the size of *s*.
 %
 %   *fgrad* and *tgrad* can be obtained by the routine |gabphasegrad|.
 %
@@ -16,8 +16,7 @@ function sr=gabreassign(s,tgrad,fgrad,a)
 %   reassigned spectrogram. An easier way is to just call |resgram|:::
 %
 %     % Create reassigned vector field of the bat signal.
-%     a=4;
-%     M=100
+%     a=4; M=100;
 %     [tgrad, fgrad, c] = gabphasegrad('dgt',bat,'gauss',a,M);
 %
 %     % Perform the actual reassignment
@@ -53,6 +52,11 @@ end
 if any(cellfun(@(el) ~isreal(el),{s,tgrad,fgrad}))
    error('%s: s, tgrad, fgrad must all be real.',...
           upper(mfilename));
+end
+
+if any(s<0)
+    error('%s: s must contain positive numbers only.',...
+        upper(mfilename));
 end
 
 sr=comp_gabreassign(s,tgrad,fgrad,a);
