@@ -26,7 +26,7 @@ function [c,info]=dtwfb(f,dualwt,varargin)
 %
 %   In addition, the function returns struct. `info` containing transform 
 %   parameters. It can be conveniently used for the inverse transform
-%   |idtwfbreal| e.g. `fhat = idtwfbreal(c,info)`. It is also required by
+%   |idtwfb| e.g. `fhat = idtwfb(c,info)`. It is also required by
 %   the |plotwavelets| function.
 %
 %   If *f* is a matrix, the transform is applied to each column.
