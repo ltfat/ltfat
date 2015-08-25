@@ -60,7 +60,9 @@
 %
 %  Phase gradient methods and reassignment
 %    GABPHASEGRAD   -  Instantaneous time/frequency from signal
+%    GABPHASEDERIV  -  Phase derivatives
 %    GABREASSIGN    -  Reassign positive distribution
+%    GABREASSIGNADJUST - Adjustable t-f reassignment
 %
 %  Phase conversions
 %    PHASELOCK      -  Phase Lock Gabor coefficients to time
