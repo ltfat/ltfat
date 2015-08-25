@@ -204,7 +204,7 @@ if flags.do_griflim
 end;
 
 if flags.do_fgriflim
-  told=s;
+  told=c;
 
   for iter=1:kv.maxit
     f=Fdfrsyn(c);
