@@ -8,27 +8,7 @@
 #define EASTFROMW(w,M,N)  (((w) + (M)) % ((M) * (N)))
 #define WESTFROMW(w,M,N)  (((w) - (M) + (M) * (N)) % ((M) * (N)))
 
-/*
- * Heap is a dynamic array h of heapsize elements which are ordered according
- * to s such that s[h[0]] is the maximum.
- *
- * */
-struct LTFAT_NAME(heap)
-{
-    ltfatInt *h;
-    ltfatInt heapsize;
-    ltfatInt totalheapsize;
-    const LTFAT_REAL *s;
-};
 
-struct LTFAT_NAME(heapinttask)
-{
-    ltfatInt M;
-    ltfatInt N;
-    const LTFAT_REAL *tgrad;
-    const LTFAT_REAL *fgrad;
-    int *donemask;
-};
 
 
 LTFAT_EXTERN
