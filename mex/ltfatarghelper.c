@@ -432,10 +432,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
          found = 1;
       }
 
-      if (!found && argname != NULL)
-      {
-         log_err("%s: Unknown parameter: %s", upper(callfunStr), atosRetVal);
-      }
+      check(!(!found && argname != NULL),"%s: Unknown parameter: %s", upper(callfunStr), atosRetVal);
 
       ltfatClean(&atosRetVal);
       mxDestroyArray(argname);
