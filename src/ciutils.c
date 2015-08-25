@@ -172,4 +172,47 @@ LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
 
 }
 
+LTFAT_EXTERN
+void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
+{
+    *max = in[0];
+    *idx = 0;
+    for (ltfatInt ii = 1; ii < L; ++ii)
+    {
+#ifdef LTFAT_COMPLEXTYPE
+        if(LTFAT_COMPLEXH(cabs)(in[ii])>LTFAT_COMPLEXH(cabs)(*max) )
+#else
+        if(in[ii]>*max)
+#endif
+        {
+            *max = in[ii];
+            *idx = ii;
+        }
+    }
+}
+
+LTFAT_EXTERN
+int LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
+{
+    int found = 0;
+    *max = -1e99;
+    *idx = 0;
+    for (ltfatInt ii = 0; ii < L; ++ii)
+    {
+
+#ifdef LTFAT_COMPLEXTYPE
+        if(!mask[ii] && LTFAT_COMPLEXH(cabs)(in[ii])>LTFAT_COMPLEXH(cabs)(*max))
+#else
+        if(!mask[ii] && in[ii]>*max)
+#endif
+        {
+            *max = in[ii];
+            *idx = ii;
+            found = 1;
+        }
+    }
+    return found;
+}
+
+
 #endif // LTFAT_TYPE
