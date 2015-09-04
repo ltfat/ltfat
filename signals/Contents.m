@@ -22,12 +22,6 @@
 %    LICHTENSTEIN   -  Color image of the Lichtenstein castle.
 %    LTFATTEXT      -  Black and white word: 'LTFAT'.
 %
-%  Other test signals are available from:
-%
-%    http://sound.media.mit.edu/mpeg4/audio/sqam/
-%    http://www.dogstar.dantimax.dk/testwavs/
-%    (currently not available)
-%
 %  For help, bug reports, suggestions etc. please visit 
 %  http://github.com/ltfat/ltfat/issues
 %
