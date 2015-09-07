@@ -50,5 +50,5 @@ if flags.do_erb
 end
 
 if flags.do_bark
-    bw = 25 + 75*(1 + 1.4E-6*fc^2)^0.69;
+    bw = 25 + 75*(1 + 1.4E-6*fc.^2).^0.69;
 end
