@@ -73,8 +73,9 @@ function [g,a,fc,L]=audfilters(fs,Ls,flow,fhigh,varargin)
 %     'symmetric'     Create filters that are symmetric around their centre
 %                     frequency. This is the default.'sqrtsquare','sqrtrect'
 %
-%     'warped'        Create asymmetric filters that are symmetric on the
-%                     chosen perceptual scale.
+%     'warped'        Create asymmetric filters that are asymmetric on the
+%                     ERB scale. The warping does not work with other
+%                     scales yet.
 %
 %     'complex'       Construct a filterbank that covers the entire
 %                     frequency range.
@@ -183,14 +184,13 @@ definput.flags.sampling = {'regsampling','uniform','fractional',...
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-% Get the bandwidth of the choosen window by doing a probe
+% Get the bandwidth of the chosen window by doing a probe
 winbw=norm(firwin(flags.wintype,1000)).^2/1000;% This is the ERB at 1000 Hz
 
 % Construct the AUD filterbank
 if flags.do_real
     if isempty(kv.M)
-%         M2=ceil(freqtoaud(fs/2,flags.audscale)/kv.spacing)+1;
-        M2=ceil(freqtfoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing+1;
+        M2=ceil(freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing+1;
         M=M2;
     else
         M=kv.M;
@@ -215,28 +215,43 @@ end;
 fc=audspace(flow,fhigh,M2,flags.audscale).';
 
 % Compute bandwidths on the corresponding auditory scale
-% The ERB bandwidth is used for the ERB scale
-% The Bark bandwidth is used for other scales
 if flags.do_erb || flags.do_erb83
     cb = audfiltbw(fc,'erb');
-else
+elseif flags.do_bark
     cb = audfiltbw(fc,'bark');
+% else
+%     No auditory bandwidth concept applies to other scales, the frequency support
+%     will then be computed below so as to achieve approx. 50% overlap between channels
 end
 
 %% Compute the frequency support
 if flags.do_symmetric
     % fsupp is measured in Hz
-    fsupp=round(cb/winbw*kv.bwmul);
+    if flags.do_erb || flags.do_erb83 || flags.do_bark
+        fsupp=round(cb/winbw*kv.bwmul);
+    else
+        fsupp = zeros(size(fc));
+        fsupp(1) = 2*fc(find(fc,1));
+        for k = 2:M2-1
+            fsupp(k) = (fc(k+1)-fc(k-1));
+        end
+        fsupp(M2) = 2*(fs/2-fc(M2-1));
+    end
+    
 else
-    % fsupp_erb is measured in Erbs
-    % The scaling is incorrect, it does not account for the warping
-    fsupp_erb=1/winbw*kv.bwmul;
+    if flags.do_erb || flags.do_erb83
+        % fsupp_erb is measured in Erbs
+        % The scaling is incorrect, it does not account for the warping
+        fsupp_erb=1/winbw*kv.bwmul;
 
-    % Convert fsupp into the correct widths in Hz, necessary to compute
-    % "a" in the next if-statement
-    fsupp=audtofreq(freqtoaud(fc,flags.audscale)+fsupp_erb/2,flags.audscale)...
-        -audtofreq(freqtoaud(fc,flags.audscale)-fsupp_erb/2,flags.audscale);
-
+        % Convert fsupp into the correct widths in Hz, necessary to compute
+        % "a" in the next if-statement
+        fsupp=audtofreq(freqtoaud(fc,flags.audscale)+fsupp_erb/2,flags.audscale)...
+            -audtofreq(freqtoaud(fc,flags.audscale)-fsupp_erb/2,flags.audscale);
+    else
+%         [FIXME] WARPING ON OTHER SCALES?
+        error('%s: Warped asymmetric filters can only be achieved on the ERB scale.',upper(mfilename));
+    end
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
