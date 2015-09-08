@@ -1,4 +1,4 @@
-function []=phaseplot(f,varargin)
+function varargout=phaseplot(f,varargin)
 %PHASEPLOT  Phase plot
 %   Usage: phaseplot(f,op1,op2, ... );
 %          phaseplot(f,fs,op1,op2, ... );
