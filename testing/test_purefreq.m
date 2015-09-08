@@ -207,7 +207,34 @@ for funpair=realinv_funs
   end;
 end;
 
-test_failed=ref_failed+inv_failed+nrm_failed;
+
+%------------ test fftreal postpad ----------------
+% Test that fftreal works with different length
+
+realpostpad_failed=0;
+postpad_sizes = {ref_sizes(:,1)*2, ceil(ref_sizes(:,1)/2), ceil(ref_sizes(:,1)/(3/4)) };
+
+  for ii=1:size(ref_sizes,1);
+    a=tester_rand(ref_sizes(ii,1),ref_sizes(ii,2));
+    
+    for jj=1:numel(postpad_sizes);
+        postpad_size =  postpad_sizes{jj};
+        ar = fftreal(a,postpad_size(ii));
+        ar2 = fft(a,postpad_size(ii),1);
+        M2 = floor(postpad_size(ii)/2) + 1;
+        ar2 = ar2(1:M2,:);
+
+        res=norm(ar(:)-ar2(:));
+
+        [realpostpad_failed,fail]=ltfatdiditfail(res,realinv_failed);
+        s=sprintf('RPOSTPAD fftreal L:%2i L2:%2i W:%2i %0.5g %s',ref_sizes(ii,1),postpad_size(ii),ref_sizes(ii,2),res,fail);
+        disp(s)
+    end
+    
+  end;
+
+
+test_failed=ref_failed+inv_failed+nrm_failed + realpostpad_failed;
 
 
 

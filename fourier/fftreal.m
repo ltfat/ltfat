@@ -32,6 +32,10 @@ end;
 
 [f,N,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(f,N,dim,'FFTREAL');
 
+if ~isempty(N)
+   f=postpad(f,N);
+end
+
 N2=floor(N/2)+1;
 
 f=comp_fftreal(f);
