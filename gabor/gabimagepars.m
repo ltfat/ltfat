@@ -20,14 +20,14 @@ function [a,M,L,N,Ngood]=gabimagepars(Ls,x,y)
 %
 %   An example: We wish to compute a Gabor image of a real valued signal *f*
 %   of length $7500$. The image should have an approximate resolution of
-%   $800 \times 600$ pixels:::
+%   $600 \times 800$ pixels:::
 %
 %     [f,fs]=linus; f=f(4001:4000+7500);
 %     [a,M,L,N,Ngood] = gabimagepars(7500,800,2*600);
 %     c = dgtreal(f,'gauss',a,M);
 %     plotdgtreal(c,a,M,fs,90);
 %
-%   The size of c is $N \times (M/2)+1$ equal to $801 \times 600$ pixels. 
+%   The size of c is $(M/2)+1 \times N$ equal to $601 \times 700$ pixels. 
 %
 %   For this function to work properly, the specified numbers for *x* and
 %   *y* must not be large prime numbers.
