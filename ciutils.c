@@ -100,6 +100,30 @@ void LTFAT_NAME(conjugate_array)(LTFAT_TYPE *in, LTFAT_TYPE *out,const ltfatInt 
 
 }
 
+LTFAT_EXTERN
+void LTFAT_NAME(periodize_array)(LTFAT_TYPE *in, const ltfatInt Lin,
+                                 LTFAT_TYPE *out, const ltfatInt Lout)
+{
+    /* Do nothing if there is no place where to put periodized samples */
+    if( Lout<=Lin )
+    {
+        if( in!=out )
+        {
+           memcpy(out,in,Lout*sizeof*in);
+        }
+        return;
+    }
+
+    ltfatInt periods = floor( Lout/((double)Lin) );
+    ltfatInt lastL = Lout - periods*Lin;
+    ltfatInt startPer = in == out ? 1: 0;
+
+    for(ltfatInt ii=startPer;ii<periods;ii++)
+    {
+        memcpy(out+ii*Lin,in,Lin*sizeof*in);
+    }
+    memcpy(out+periods*Lin,in,lastL*sizeof*in);
+}
 
 LTFAT_EXTERN
 void LTFAT_NAME(array2complex)(LTFAT_TYPE *in, LTFAT_COMPLEX *out, const ltfatInt L)
