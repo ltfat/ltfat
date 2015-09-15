@@ -21,6 +21,10 @@ LTFAT_EXTERN
 void LTFAT_NAME(conjugate_array)(LTFAT_TYPE *in, LTFAT_TYPE *out, const ltfatInt L);
 
 LTFAT_EXTERN
+void LTFAT_NAME(periodize_array)(LTFAT_TYPE *in, const ltfatInt Lin,
+                                 LTFAT_TYPE *out, const ltfatInt Lout);
+
+LTFAT_EXTERN
 void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx);
 
 LTFAT_EXTERN

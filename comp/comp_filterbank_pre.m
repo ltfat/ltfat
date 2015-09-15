@@ -92,6 +92,11 @@ for m=mFreq
           if numel(g)>1 && isempty(g{m}.H)
               fprintf('%s: Warning: Filter %4d has zero bandwidth.\n',upper(mfilename),m);
           end
+          
+          if numel(g{m}.H) > L
+              error('%s: Filter bandwidth is bigger than L.\n',upper(mfilename));
+          end
+          
           % Store the length used
           g{m}.L = L;
        else

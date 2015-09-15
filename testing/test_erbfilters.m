@@ -38,7 +38,7 @@ for realcomplexidx=1:2
                 end;
                 
                 [g,a]=erbfilters(16000,Ls,fractional{:},warping,uniform,...
-                      'redmul',1,realcomplex);
+                      'redmul',1,realcomplex,'nuttall30');
                 L=filterbanklength(Ls,a);
                 
                 f=randn(L,1);
@@ -71,6 +71,26 @@ for realcomplexidx=1:2
                 else
                     c=filterbank(f,g,a);
                 end;
+                
+                cind = cell(numel(g),1);
+                for ii = 1:numel(g)
+                    %clear comp_filterbank_fftbl;
+                    cind{ii} = pfilt(f,g{ii},a(ii,:));
+                end
+
+                if isuniform
+                    cind = cell2mat(cind);
+                    res = norm(c(:) - cind(:));
+                else
+                    res =  sum(cellfun(@(c1El,c2El) norm(c1El-c2El),cind,c));
+                end
+
+                [test_failed,fail]=ltfatdiditfail(res,test_failed);
+                s=sprintf(['ERBFILTER PFILT  %s %s %s %s L:%3i %0.5g %s'],realcomplex,warping,fracname,uniform,L,res,fail);    
+                disp(s);                
+                
+                
+                
                 r=ifilterbank(c,gd,a);
                 if isreal
                     r=2*real(r);

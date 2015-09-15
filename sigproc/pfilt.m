@@ -57,12 +57,11 @@ definput.keyvals.dim=[];
 
 [g,info] = comp_fourierwindow(g,L,upper(mfilename));
 
-
 outIsReal = isreal(f) &&...
               (isfield(g,'h') && isreal(g.h) && ~(isfield(g,'fc') && g.fc~=0) || isfield(g,'H') && g.realonly);
 
+asan = comp_filterbank_a(a,1);
 g = comp_filterbank_pre({g},a,L,kv.crossover);
-
 
 c = comp_filterbank(f,g,a);
 c = c{1};

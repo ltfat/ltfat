@@ -191,11 +191,12 @@ LTFAT_NAME(upconv_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
 {
     ltfatInt N = (ltfatInt) floor(L / a + 0.5);
     int Nint = (int) N;
+    int bufLen = N>Gl? N: Gl;
 
     const LTFAT_FFTW(iodim) dims = {.n = Nint, .is = 1, .os = 1};
-    const LTFAT_FFTW(iodim) howmany_dims = {.n = W, .is = Nint, .os = Nint};
+    const LTFAT_FFTW(iodim) howmany_dims = {.n = W, .is = bufLen, .os = bufLen};
 
-    LTFAT_COMPLEX* buf = ltfat_malloc(N * W * sizeof * buf);
+    LTFAT_COMPLEX* buf = ltfat_malloc(bufLen * W * sizeof * buf);
     LTFAT_FFTW(plan) p_many =
         LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
                                   buf, buf,
@@ -205,7 +206,7 @@ LTFAT_NAME(upconv_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
     struct LTFAT_NAME(upconv_fftbl_plan_struct) p_struct =
     {
         .L = L, .Gl = Gl, .a = a, .W = W,
-        .p_c = p_many, .buf = buf, .bufLen = N * W
+        .p_c = p_many, .buf = buf, .bufLen = bufLen
     };
 
     LTFAT_NAME(upconv_fftbl_plan) p = ltfat_malloc(sizeof * p);
@@ -220,40 +221,46 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
                                  const ltfatInt foff,
                                  const int realonly, LTFAT_COMPLEX *F)
 {
-    const ltfatInt Gl = p->Gl;
+    ltfatInt Gl = p->Gl;
     if(!Gl) return; // Bail out if filter has zero bandwidth
+    const ltfatInt bufLen = p->bufLen;
     const ltfatInt L = p->L;
     const ltfatInt W = p->W;
     const double a = p->a;
     LTFAT_COMPLEX* cbuf = p->buf;
 
     ltfatInt N = (ltfatInt) floor(L / a + 0.5);
-    memcpy(cbuf, cin, N * W * sizeof * cin);
+
+    for(ltfatInt w=0;w<W;w++)
+        memcpy(cbuf+w*bufLen, cin+w*N, N * sizeof * cin);
+
     LTFAT_FFTW(execute_dft)(p->p_c, cbuf, cbuf);
 
     for (ltfatInt w = 0; w < W; w++)
     {
 
-        LTFAT_NAME_COMPLEX(circshift)(cbuf + w * N, cbuf + w * N, N, -foff);
-        //LTFAT_NAME_COMPLEX(circshift)(cbuf+w*N,cbuf+w*N,N,Gl/2);
+        LTFAT_NAME_COMPLEX(circshift)(cbuf + w * bufLen, cbuf + w * bufLen, N, -foff);
+        // This does nothing if bufLen == N
+        LTFAT_NAME_COMPLEX(periodize_array)(cbuf + w * bufLen, N, cbuf + w * bufLen, bufLen);
 
         const LTFAT_COMPLEX* GPtrTmp = G;
         LTFAT_COMPLEX* FPtrTmp = F + w * L;
-        LTFAT_COMPLEX* CPtrTmp = cbuf + w * N;
+        LTFAT_COMPLEX* CPtrTmp = cbuf + w * bufLen;
+        ltfatInt Gltmp = Gl;
 
         // Determine range of G
         ltfatInt foffTmp = foff;
-        ltfatInt tmpLg = N < Gl ? N : Gl;
+
         ltfatInt over = 0;
-        if (foffTmp + tmpLg > (ltfatInt)L)
+        if (foffTmp + Gltmp > (ltfatInt)L)
         {
-            over = foffTmp + tmpLg - (ltfatInt)L;
+            over = foffTmp + Gltmp - (ltfatInt)L;
         }
 
 
         if (foffTmp < 0)
         {
-            ltfatInt toCopy = (-foffTmp) < tmpLg ? -foffTmp : tmpLg;
+            ltfatInt toCopy = (-foffTmp) < Gltmp ? -foffTmp : Gltmp;
             FPtrTmp = F + (w + 1) * L + foffTmp;
             for (ltfatInt ii = 0; ii < toCopy; ii++)
             {
@@ -261,12 +268,12 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
                 FPtrTmp[ii] += tmp;
             }
 
-            tmpLg -= toCopy;
+            Gltmp -= toCopy;
             foffTmp = 0;
         }
 
         FPtrTmp = F + w * L + foffTmp;
-        for (ltfatInt ii = 0; ii < tmpLg - over; ii++)
+        for (ltfatInt ii = 0; ii < Gltmp - over; ii++)
         {
             LTFAT_COMPLEX tmp = *CPtrTmp++ * LTFAT_COMPLEXH(conj)(*GPtrTmp++);
             FPtrTmp[ii] += tmp;

@@ -12,8 +12,8 @@ else
    afrac = a(:,1);
 end
 
+N = cellfun(@(cEl) size(cEl,1),c);
 if 0
-   N = cellfun(@(cEl) size(cEl,1),c);
    L = N.*afrac;
    assert(all(rem(L,1))<1e-6,'%s: Bad subband lengths. \n',upper(mfilename));
    L = round(L);
@@ -30,8 +30,11 @@ fsuppRangeSmall = cellfun(@(fEl,GEl) mod([fEl:fEl+numel(GEl)-1].',L)+1,...
 %
 for w=1:W 
    for m=1:M
-     Ctmp = postpad(circshift(fft(c{m}(:,w)),-foff(m)),numel(G{m}));
-     %Ctmp = postpad(fft(c{m}(:,w)),numel(G{m}));
+     % Un-circshift
+     Ctmp = circshift(fft(c{m}(:,w)),-foff(m));
+     % Periodize and cut to the bandwidth of G{m}
+     periods = ceil(numel(G{m})/N(m));
+     Ctmp = postpad(repmat(Ctmp,periods,1),numel(G{m}));
      F(fsuppRangeSmall{m},w)=F(fsuppRangeSmall{m},w) + Ctmp.*conj(G{m});
    end;
 end
