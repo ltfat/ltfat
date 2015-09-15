@@ -209,7 +209,7 @@ end;
 
 
 %------------ test fftreal postpad ----------------
-% Test that fftreal works with different length
+% Test that fftreal works with different lengths
 
 realpostpad_failed=0;
 postpad_sizes = {ref_sizes(:,1)*2, ceil(ref_sizes(:,1)/2), ceil(ref_sizes(:,1)/(3/4)) };
