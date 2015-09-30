@@ -21,10 +21,7 @@ function bw = audfiltbw(fc,varargin)
 %
 %   See also: freqtoerb, erbspace
 %
-%   References: glasberg1990daf,
-%       Zwicker, E., and Terhardt, E. (1980). "Analytical expressions for critical-
-%           band rate and critical bandwidth as a function of frequency,"
-%           J. Acoust. Soc. Am. 68, 1523-1524.
+%   References: glasberg1990daf zwickerterhardt80
   
 %   AUTHOR : Peter L. Søndergaard
   
