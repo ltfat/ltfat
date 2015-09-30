@@ -1,4 +1,4 @@
-function [g,a,fc,L]=audfilters(fs,Ls,flow,fhigh,varargin)
+function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %audfilters   ERB-spaced filters
 %   Usage:  [g,a,fc]=audfilters(fs,Ls);
 %           [g,a,fc]=audfilters(fs,Ls,...);
@@ -142,10 +142,31 @@ function [g,a,fc,L]=audfilters(fs,Ls,flow,fhigh,varargin)
 
 %% ------ Checking of input parameters ---------
 
-if nargin<4
+if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
   
+
+
+complainif_notposint(fs,'fs');
+complainif_notposint(Ls,'Ls');
+
+definput.import={'freqtoaud','firwin'};
+definput.keyvals.M=[];
+definput.keyvals.bwmul=1;
+definput.keyvals.redmul=1;
+definput.keyvals.min_win = 4;
+definput.keyvals.spacing=1;
+definput.keyvals.flow=0;
+definput.keyvals.fhigh=fs/2;
+definput.flags.warp     = {'symmetric','warped'};
+definput.flags.real     = {'real','complex'};
+definput.flags.sampling = {'regsampling','uniform','fractional',...
+                           'fractionaluniform'};
+
+[flags,kv,flow,fhigh]=ltfatarghelper({'flow','fhigh'},definput,varargin);
+
+
 % Default parameters.
 
 if ~isnumeric(flow) || ~isscalar(flow) 
@@ -168,21 +189,6 @@ if fhigh>fs/2
   error('%s: fhigh must be smaller or equal to fs.',upper(mfilename));
 end;
 
-complainif_notposint(fs,'fs');
-complainif_notposint(Ls,'Ls');
-
-definput.import={'freqtoaud','firwin'};
-definput.keyvals.M=[];
-definput.keyvals.bwmul=1;
-definput.keyvals.redmul=1;
-definput.keyvals.min_win = 4;
-definput.keyvals.spacing=1;
-definput.flags.warp     = {'symmetric','warped'};
-definput.flags.real     = {'real','complex'};
-definput.flags.sampling = {'regsampling','uniform','fractional',...
-                           'fractionaluniform'};
-
-[flags,kv]=ltfatarghelper({},definput,varargin);
 
 % Get the bandwidth of the chosen window by doing a probe
 winbw=norm(firwin(flags.wintype,1000)).^2/1000;% This is the ERB at 1000 Hz
