@@ -51,7 +51,7 @@ function sr=gabreassignadjust(s,pderivs,a,varargin)
 %  
 %   See also: gabphasederiv, gabreassign
 %
-%   References: aufl12 auchfl12b ltfatnote042
+%   References: auchfl12 auchfl12b ltfatnote042
 
 % AUTHOR: Peter L. Søndergaard, 2008; Zdeněk Průša 2015
 
