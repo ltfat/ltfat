@@ -1,19 +1,19 @@
 function sr=gabreassignadjust(s,pderivs,a,varargin)
-%GABREASSIGNADJUST Reassign time-frequency distribution
-%   Usage:  sr = gabreassign(s,pderivs,a,mu);
+%GABREASSIGNADJUST Adjustable reassignment of a time-frequency distribution
+%   Usage:  sr = gabreassignadjust(s,pderivs,a,mu);
 %
-%   `gabreassign(s,pderivs,a,mu)` reassigns the values of the positive
+%   `gabreassignadjust(s,pderivs,a,mu)` reassigns the values of the positive
 %   time-frequency distribution *s* using first and second order phase 
 %   derivatives given by *pderivs* and parameter *mu*>0. 
 %   The lattice is determined by the time shift *a* and the number of 
 %   channels deduced from the size of *s*.
 %
-%   *pderivs* is a cell array of phase derivatives obtainable by 
+%   *pderivs* is a cell array of phase derivatives which can be obtained 
 %   as follows::
 %
 %      pderivs = gabphasederiv({'t','f','tt','ff','tf'},...,'relative');
 %
-%   Please see help of |gabphasederiv| for description of the other
+%   Please see help of |gabphasederiv| for description of the missing
 %   parameters.
 %
 %   `gabreassign(s,pderivs,a,mu,despeckle)` works as above, but some 
