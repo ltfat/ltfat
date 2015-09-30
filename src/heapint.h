@@ -31,3 +31,13 @@ void
 LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
                           ltfatInt a, ltfatInt M, ltfatInt L,
                           LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
+
+inline void
+LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *heap,
+                       const struct LTFAT_NAME(heapinttask) *heaptask,
+                       const ltfatInt w, LTFAT_REAL* phase);
+
+void
+LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
+                              ltfatInt a, ltfatInt M, ltfatInt L,
+                              LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);

@@ -390,6 +390,14 @@ LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                     const LTFAT_REAL tol, LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
+LTFAT_NAME(heapintreal)(const LTFAT_REAL *s,
+                        const LTFAT_REAL *tgrad,
+                        const LTFAT_REAL *fgrad,
+                        const ltfatInt a, const ltfatInt M,
+                        const ltfatInt L, const ltfatInt W,
+                        const LTFAT_REAL tol, LTFAT_REAL *phase);
+
+LTFAT_EXTERN void
 LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
                         const LTFAT_REAL *fgrad, const ltfatInt L, const ltfatInt W,
                         const ltfatInt a, const ltfatInt M, LTFAT_REAL *sr);
