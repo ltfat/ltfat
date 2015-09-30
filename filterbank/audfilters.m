@@ -1,7 +1,7 @@
 function [g,a,fc,L]=audfilters(fs,Ls,varargin)
-%audfilters   ERB-spaced filters
-%   Usage:  [g,a,fc]=audfilters(fs,Ls);
-%           [g,a,fc]=audfilters(fs,Ls,...);
+% AUDFILTERS generates AUD-spaced filters
+%   Usage:  [g,a,fc,L]=audfilters(fs,Ls);
+%           [g,a,fc,L]=audfilters(fs,Ls,...);
 %
 %   Input parameters:
 %      fs    : Sampling rate (in Hz).
@@ -12,9 +12,9 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %      fc    : Center frequency of each channel.
 %      L     : Next admissible length suitable for the generated filters.
 %
-%   `[g,a,fc]=audfilters(fs,Ls,flow,fhigh)` constructs a set of filters *g* that are
+%   `[g,a,fc,L]=audfilters(fs,Ls)` constructs a set of filters *g* that are
 %   equidistantly spaced on a perceptual frequency scale (see |freqtoaud|) between
-%   'flow' and 'fhigh' and with bandwidths that are proportional to the critical 
+%   0 and the Nyquist frequency and with bandwidths that are proportional to the critical 
 %   bandwidth of the auditory filters |audfiltbw|. The filters are intended to work
 %   with signals with a sampling rate of *fs*. The signal length *Ls* is mandatory,
 %   since we need to avoid too narrow frequency windows.
@@ -35,32 +35,45 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   See the help of |filterbanklength|. 
 %   The fractional downsampling rates restrict the filterbank to a single
 %   length *L=Ls*.
+% 
+%   `[g,a,fc,L]=audfilters(fs,Ls,flow,figh)` constructs a set of filters that are
+%   equidistantly spaced between flow and fhigh. In that case two
+%   additional filters will be positioned at the 0 and Nyquist frequencies
+%   so as to cover the full spectrum. The values of 'flow' and 'fhigh' can
+%   also be specified using a key/value pair, see examples below.
 %
-%   `[g,a]=audfilters(...,'regsampling')` constructs a non-uniform
+%   `[g,a,fc,L]=audfilters(...,'regsampling')` constructs a non-uniform
 %   filterbank with integer subsampling factors.
 %
-%   `[g,a]=audfilters(...,'uniform')` constructs a uniform filterbank
+%   `[g,a,fc,L]=audfilters(...,'uniform')` constructs a uniform filterbank
 %   where the integer downsampling rate is the same for all the channels. This
 %   results in most redundant representation which produces nice plots.
 %
-%   `[g,a]=audfilters(...,'fractional')` constructs a filterbank with
+%   `[g,a,fc,L]=audfilters(...,'fractional')` constructs a filterbank with
 %   fractional downsampling rates *a*. 
 %   This results in the least redundant system.
 %
-%   `[g,a]=audfilters(...,'fractionaluniform')` constructs a filterbank with
+%   `[g,a,fc,L]=audfilters(...,'fractionaluniform')` constructs a filterbank with
 %   fractional downsampling rates *a*, which are uniform for all filters
 %   except the "filling" low-pass and high-pass filters can have different
 %   fractional downsampling rates. This is usefull when uniform subsampling
 %   and low redundancy at the same time are desirable.
 %
 %   `audfilters` accepts the following optional parameters:
+% 
+%     'flow',flow
+%     'fhigh',fhigh   Specify the minimum and maximum frequencies for the
+%                     perceptual analysis. In that case two additional filters
+%                     will be positioned at the 0 and Nyquist frequencies
+%                     so as to cover the full spectrum. 
+%   
 %
 %     'spacing',b     Specify the spacing in Ecritical bandwidth (ERB or Bark
 %                     depending on the scale) between the filters. Default value
 %                     is *b=1*.
 %
-%     'M',M           Specify the total number of filters, *M*. If this
-%                     parameter is specified, it overwrites the
+%     'M',M           Specify the total number of filters between 'flow' and 'fhigh', *M*.
+%                     If this parameter is specified, it overwrites the
 %                     `'spacing'` parameter.
 %
 %     'redmul',redmul  Redundancy multiplier. Increasing the value of this
@@ -95,7 +108,7 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   filterbank on the ERB scale and visualize the result:::
 %
 %     [f,fs]=greasy;  % Get the test signal
-%     [g,a,fc]=audfilters(fs,length(f),0,fs/2,'uniform','M',100);
+%     [g,a,fc,L]=audfilters(fs,length(f),'uniform','M',100);
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90,'audtick');
 %
@@ -108,7 +121,7 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %     [f,fs]=greasy;  % Get the test signal
 %     L=length(f);
-%     [g,a,fc]=audfilters(fs,L,0,fs/2,'fractional');
+%     [g,a,fc,L]=audfilters(fs,L,'fractional');
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     norm(f-r)
@@ -138,15 +151,13 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 
 % Authors: Peter L. Søndergaard (original 'erbfilters' function)
 % Modified by: Thibaud Necciari
-% Date: 07.09.15
+% Date: 30.09.15
 
 %% ------ Checking of input parameters ---------
 
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
-  
-
 
 complainif_notposint(fs,'fs');
 complainif_notposint(Ls,'Ls');
@@ -177,16 +188,12 @@ if ~isnumeric(fhigh) || ~isscalar(fhigh)
   error('%s: fhigh must be a scalar.',upper(mfilename));
 end;
 
-% if ~isnumeric(n) || ~isscalar(n) || n<=0 || fix(n)~=n
-%   error('%s: n must be a positive, integer scalar.',upper(mfilename));
-% end;
-
 if flow>fhigh
   error('%s: flow must be less than or equal to fhigh.',upper(mfilename));
 end;
 
 if fhigh>fs/2
-  error('%s: fhigh must be smaller or equal to fs.',upper(mfilename));
+  error('%s: fhigh must be smaller or equal to the Nyquist frequency.',upper(mfilename));
 end;
 
 
@@ -197,7 +204,7 @@ winbw=norm(firwin(flags.wintype,1000)).^2/1000;% This is the ERB at 1000 Hz
 if flags.do_real
     if isempty(kv.M)
         M2=ceil(freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing+1;
-        M=M2;
+%         M=M2;
     else
         M=kv.M;
         M2=M;
@@ -235,8 +242,28 @@ if flags.do_symmetric
     % fsupp is measured in Hz
     if flags.do_erb || flags.do_erb83 || flags.do_bark
         fsupp=round(cb/winbw*kv.bwmul);
+%         Add additional filters if required
+        if flow > 0 
+            fc = [0;fc];
+            fsupp = [2*flow;fsupp];
+            M2 = M2 + 1;
+        end
+        if fhigh < fs/2
+            fc = [fc;fs/2];
+            fsupp = [fsupp;2*(fs/2-fhigh)];
+            M2 = M2 + 1;
+        end
     else
-        fsupp = zeros(size(fc));
+%         First check for frequency range and add additional filters if required
+        if flow > 0 
+            fc = [0;fc];
+            M2 = M2 + 1;
+        end
+        if fhigh < fs/2
+            fc = [fc;fs/2];
+            M2 = M2 + 1;
+        end
+        fsupp = zeros(M2,1);
         fsupp(1) = 2*fc(find(fc,1));
         for k = 2:M2-1
             fsupp(k) = (fc(k+1)-fc(k-1));
@@ -331,8 +358,34 @@ end;
 if flags.do_symmetric
     % This is actually much faster than the vectorized call.
     g = cell(1,numel(fc));
-    for m=1:numel(g)
+    if flow > 0
+        % Frequency of the filter below flow on the perceptual scale
+        f0 = audtofreq(freqtoaud(flow,flags.audscale)-kv.spacing,flags.audscale);
+        cb0 = audfiltbw(f0,flags.audscale);
+        fsupp0 = round(cb0/winbw*kv.bwmul);
+        % Compute the filter
+        g{1} = blfilter({flags.wintype,'taper',fsupp0/fsupp(1)},fsupp(1),f0,'fs',fs,'scal',scal(1),...
+                   'inf','min_win',kv.min_win);   
+        % Done?!
+    else
+        g{1}=blfilter(flags.wintype,fsupp(1),fc(1),'fs',fs,'scal',scal(1),...
+                   'inf','min_win',kv.min_win);
+    end
+    for m=2:numel(g)-1
         g{m}=blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
+                   'inf','min_win',kv.min_win);
+    end
+    if fhigh < fs/2
+        % Frequency of the filter right next above fhigh on the perceptual scale
+        f0 = audtofreq(freqtoaud(fhigh,flags.audscale)+kv.spacing,flags.audscale);
+        cb0 = audfiltbw(f0,flags.audscale);
+        fsupp0 = round(cb0/winbw*kv.bwmul);
+        % Compute the filter
+        g{end} = blfilter({flags.wintype,'taper',fsupp0/fsupp(end)},fsupp(end),f0,'fs',fs,'scal',scal(end),...
+                   'inf','min_win',kv.min_win);
+        % Done?!
+    else
+        g{end}=blfilter(flags.wintype,fsupp(end),fc(end),'fs',fs,'scal',scal(end),...
                    'inf','min_win',kv.min_win);
     end
 else
