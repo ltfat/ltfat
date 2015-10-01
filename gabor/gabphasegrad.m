@@ -31,7 +31,8 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %     'dgt'    Directly from the signal using algorithm by Auger and
 %              Flandrin.
-%     'dgt'    Directly from the signal. This is the default method.
+%
+%     'cross'  Directly from the signal using algorithm by Nelson. 
 %
 %     'phase'  From the phase of a DGT of the signal. This is the
 %              classic method used in the phase vocoder.
