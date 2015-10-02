@@ -1,12 +1,14 @@
+#ifdef LTFAT_TYPE
+
 #include "ltfat.h"
 #include "ltfat_types.h"
 #include "reassign_typeconstant.h"
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
+LTFAT_NAME(gabreassign)(const LTFAT_TYPE *s, const LTFAT_REAL *tgrad,
                         const LTFAT_REAL *fgrad, const ltfatInt L, const ltfatInt W,
-                        const ltfatInt a, const ltfatInt M, LTFAT_REAL *sr)
+                        const ltfatInt a, const ltfatInt M, LTFAT_TYPE *sr)
 {
 
    ltfatInt ii, posi, posj;
@@ -45,73 +47,15 @@ LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
    LTFAT_SAFEFREEALL(freqpos, timepos);
 }
 
-LTFAT_EXTERN void
-LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
-                                const LTFAT_COMPLEX* ch[],
-                                const LTFAT_COMPLEX* cd[],
-                                const ltfatInt          M,
-                                const ltfatInt        N[],
-                                const ltfatInt          L,
-                                const LTFAT_REAL   minlvl,
-                                LTFAT_REAL*        tgrad[],
-                                LTFAT_REAL*        fgrad[],
-                                LTFAT_REAL*           cs[])
-{
-#define FOREACHCOEF \
-    for(ltfatInt m=0;m<M;++m){\
-        for(ltfatInt ii=0;ii<N[m];++ii){
 
-#define ARRAYEL(c) ((c)[m][ii])
-#define ENDFOREACHCOEF }}
-
-LTFAT_REAL minlvlAlt = LTFAT_COMPLEXH(cabs)(c[0][0]);
-
-// Compute spectrogram from coefficients
-// Keep max value
-FOREACHCOEF
-LTFAT_REAL en = LTFAT_COMPLEXH(cabs)(ARRAYEL(c))*LTFAT_COMPLEXH(cabs)(ARRAYEL(c));
-ARRAYEL(cs) = en;
-if(en>minlvlAlt)
-    minlvlAlt = en;
-ENDFOREACHCOEF
-
-// Adjust minlvl 
-minlvlAlt *= minlvl;
-
-// Force spectrogram values less tha minLvlAlt to minlvlAlt
-FOREACHCOEF
-LTFAT_REAL csEl = ARRAYEL(cs);
-if(csEl<minlvlAlt)
-    ARRAYEL(cs) = minlvlAlt;
-ENDFOREACHCOEF
-
-// Instantaneous frequency
-FOREACHCOEF
-LTFAT_REAL tgradEl = LTFAT_COMPLEXH(creal)(
-                         ARRAYEL(cd)*LTFAT_COMPLEXH(conj)(ARRAYEL(c))/ARRAYEL(cs)
-                                          )/L*2;
-ARRAYEL(tgrad) = fabs(tgradEl)<=2?tgradEl:0.0f;
-ENDFOREACHCOEF
-
-
-FOREACHCOEF
-ARRAYEL(fgrad) = LTFAT_COMPLEXH(cimag)(
-                        ARRAYEL(ch)*LTFAT_COMPLEXH(conj)(ARRAYEL(c))/ARRAYEL(cs)
-                                      );
-ENDFOREACHCOEF
-
-#undef FOREACHCOEF
-#undef ENDFOREACHCOEF
-#undef ARRAYEL
-}
 
 LTFAT_EXTERN void
-LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
+LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
                                const LTFAT_REAL *tgrad[],
                                const LTFAT_REAL *fgrad[],
                                const ltfatInt N[], const double a[],
                                const double cfreq[], const ltfatInt M,
-                               LTFAT_REAL *sr[],
+                               LTFAT_TYPE *sr[],
                                fbreassHints hints,
                                fbreassOptOut  *repos)
 {
@@ -152,12 +96,12 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
    LTFAT_REAL oneover2 = 1.0 / 2.0;
 
    // This will hold center frequencies modulo 2.0
-   double *cfreq2 = ltfat_malloc(M * sizeof * cfreq2);
+   LTFAT_REAL *cfreq2 = ltfat_malloc(M * sizeof * cfreq2);
 
    for (ltfatInt m = 0; m < M; m++)
    {
       // Zero the output arrays
-      memset(sr[m], 0, N[m]*sizeof(LTFAT_REAL));
+      memset(sr[m], 0, N[m]*sizeof*sr[m]);
       // This is effectivelly modulo by 2.0
       cfreq2[m] = cfreq[m] - floor(cfreq[m] * oneover2) * 2.0;
    }
@@ -301,4 +245,4 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_REAL *s[],
 }
 
 
-
+#endif

@@ -398,23 +398,6 @@ LTFAT_NAME(heapintreal)(const LTFAT_REAL *s,
                         const LTFAT_REAL tol, LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
-LTFAT_NAME(gabreassign)(const LTFAT_REAL *s, const LTFAT_REAL *tgrad,
-                        const LTFAT_REAL *fgrad, const ltfatInt L, const ltfatInt W,
-                        const ltfatInt a, const ltfatInt M, LTFAT_REAL *sr);
-
-LTFAT_EXTERN void
-LTFAT_NAME(filterbankreassign)(const LTFAT_REAL*     s[],
-                               const LTFAT_REAL* tgrad[],
-                               const LTFAT_REAL* fgrad[],
-                               const ltfatInt        N[],
-                               const double          a[],
-                               const double      cfreq[],
-                               const ltfatInt          M,
-                               LTFAT_REAL*          sr[],
-                               fbreassHints        hints,
-                               fbreassOptOut*      repos);
-
-LTFAT_EXTERN void
 LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
                                 const LTFAT_COMPLEX* ch[],
                                 const LTFAT_COMPLEX* cd[],
