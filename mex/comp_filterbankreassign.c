@@ -2,9 +2,10 @@
 #define _LTFAT_MEX_FILE
 
 #define ISNARGINEQ 5
-#define TYPEDEPARGS 0, 1, 2
+#define TYPEDEPARGS 0
 #define SINGLEARGS
-#define REALARGS
+#define COMPLEXINDEPENDENT
+#define MATCHEDARGS 0, 1, 2
 
 #endif /* _LTFAT_MEX_FILE */
 
@@ -30,12 +31,12 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 
    ltfatInt M = mxGetNumberOfElements(mxs);
 
-   const LTFAT_REAL* sPtr[M];
+   const LTFAT_TYPE* sPtr[M];
    const LTFAT_REAL* tgradPtr[M];
    const LTFAT_REAL* fgradPtr[M];
    double aPtr[M];
    double cfreqPtr[M];
-   LTFAT_REAL* srPtr[M];
+   LTFAT_TYPE* srPtr[M];
 
    ltfatInt N[M];
    mxArray* mxsr = mxCreateCellMatrix(M, 1);
@@ -55,7 +56,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
       fgradPtr[m] = mxGetData(mxGetCell(mxfgrad, m));
 
       mxSetCell(mxsr, m,
-                ltfatCreateMatrix(N[m], 1, LTFAT_MX_CLASSID, mxREAL));
+                ltfatCreateMatrix(N[m], 1, LTFAT_MX_CLASSID, LTFAT_MX_COMPLEXITY));
       srPtr[m] = mxGetData(mxGetCell(mxsr, m));
    }
 

@@ -1,10 +1,10 @@
-function [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a,L,minlvl)
+function [tgrad,fgrad,s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %FILTERBANKPHASEGRAD   Phase gradient of a filterbank representation
-%   Usage:  [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,L,minlvl);
-%           [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,L);
-%           [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,minlvl);
-%           [tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a);
-%           [tgrad,fgrad,cs] = filterbankphasegrad(...)
+%   Usage:  [tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a,L,minlvl);
+%           [tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a,L);
+%           [tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a,minlvl);
+%           [tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a);
+%           [tgrad,fgrad,s] = filterbankphasegrad(...)
 %           [tgrad,fgrad]  = filterbankphasegrad(...)
 % 
 %   Input parameters:
@@ -19,9 +19,9 @@ function [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %      cs    : Filterbank spectrogram.
 %      c     : Filterbank coefficients.
 %
-%   `[tgrad,fgrad,cs,c] = filterbankphasegrad(f,g,a,L)` computes the group
+%   `[tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a,L)` computes the group
 %   delay *fgrad* and instantaneous frequency *tgrad* of the filterbank
-%   spectrogram *cs* obtained from the signal *f* and filterbank
+%   spectrogram *s* obtained from the signal *f* and filterbank
 %   parameters *g* and *a*. Both quantities are specified relative to the
 %   original coefficient position. *tgrad* is given in samples, while
 %   *fgrad* is given as values on the unit circle, easily converted into 
@@ -88,4 +88,4 @@ ch=comp_filterbank(f,gh,asan);
 cd=comp_filterbank(f,gd,asan);
 
 % Run the computation
-[tgrad,fgrad,cs] = comp_filterbankphasegrad(c,ch,cd,L,minlvl);
+[tgrad,fgrad,s] = comp_filterbankphasegrad(c,ch,cd,L,minlvl);

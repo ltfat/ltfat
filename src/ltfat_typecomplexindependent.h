@@ -98,4 +98,24 @@ LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
                         const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
                         const dst_kind kind);
 
+/* --------------- Reassignment -----------*/
+
+LTFAT_EXTERN void
+LTFAT_NAME(gabreassign)(const LTFAT_TYPE *s, const LTFAT_REAL *tgrad,
+                        const LTFAT_REAL *fgrad, const ltfatInt L, const ltfatInt W,
+                        const ltfatInt a, const ltfatInt M, LTFAT_TYPE *sr);
+
+LTFAT_EXTERN void
+LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE*     s[],
+                               const LTFAT_REAL* tgrad[],
+                               const LTFAT_REAL* fgrad[],
+                               const ltfatInt        N[],
+                               const double          a[],
+                               const double      cfreq[],
+                               const ltfatInt          M,
+                               LTFAT_TYPE*          sr[],
+                               fbreassHints        hints,
+                               fbreassOptOut*      repos);
+
+
 

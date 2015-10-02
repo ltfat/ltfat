@@ -16,20 +16,20 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %      repos : Reassigned positions.
 %      Lc    : Subband lengths.
 %
-%   `filterbankreassign(s,a,tgrad,fgrad,cfreq)` will reassign the values of 
-%   the filterbank spectrogram *s* using the group delay *fgrad* and 
-%   instantaneous frequency *tgrad*. The time-frequency sampling 
-%   pattern is determined from the time steps *a* and the center 
-%   frequencies *cfreq*. 
+%   `filterbankreassign(s,tgrad,fgrad,a,cfreq)` will reassign the values of
+%   the filterbank spectrogram *s* using the group delay *fgrad* and
+%   instantaneous frequency *tgrad*. The time-frequency sampling
+%   pattern is determined from the time steps *a* and the center
+%   frequencies *cfreq*.
 %
-%   `filterbankreassign(s,a,tgrad,fgrad,g)` will do the same thing except
+%   `filterbankreassign(s,tgrad,fgrad,a,g)` will do the same thing except
 %   the center frequencies are estimated from a set of filters *g*.
 %
 %   `[sr,repos,Lc]=filterbankreassign(...)` does the same thing, but in addition
 %   returns a vector of subband lengths *Lc* (`Lc = cellfun(@numel,s)`)
-%   and cell array *repos* with `sum(Lc)` elements. Each element corresponds 
-%   to a single coefficient obtained by `cell2mat(sr)` and it is a vector 
-%   of indices identifying coefficients from `cell2mat(s)` assigned to 
+%   and cell array *repos* with `sum(Lc)` elements. Each element corresponds
+%   to a single coefficient obtained by `cell2mat(sr)` and it is a vector
+%   of indices identifying coefficients from `cell2mat(s)` assigned to
 %   the particular time-frequency position.
 %
 %   The arguments *s*, *tgrad* and *fgrad* must be cell-arrays of vectors
@@ -43,15 +43,15 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %
 %     % Genrate 3 chirps 1 second long
 %     L = 44100; fs = 44100; l = 0:L-1;
-% 
+%
 %     f = sin(2*pi*(l/35+(l/300).^2)) + ...
 %         sin(2*pi*(l/10+(l/300).^2)) + ...
 %         sin(2*pi*(l/5-(l/450).^2));
 %     f = 0.7*f';
-%     
+%
 %     % Create ERB filterbank
 %     [g,a,fc]=erbfilters(fs,L,'fractional','spacing',1/12,'warped');
-%     
+%
 %     % Compute phase gradient
 %     [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a);
 %     % Do the reassignment
@@ -59,7 +59,7 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 %     figure(1); subplot(211);
 %     plotfilterbank(cs,a,fc,fs,60);
 %     title('ERBlet spectrogram of 3 chirps');
-%     subplot(212);  
+%     subplot(212);
 %     plotfilterbank(sr,a,fc,fs,60);
 %     title('Reassigned ERBlet spectrogram of 3 chirps');
 %
@@ -72,34 +72,36 @@ function [sr,repos,Lc]=filterbankreassign(s,tgrad,fgrad,a,var)
 % Sanity checks
 complainif_notenoughargs(nargin,5,'FILTERBANKREASSIGN');
 
-if isempty(s) || ~iscell(s) 
+if isempty(s) || ~iscell(s)
     error('%s: s should be a nonempty cell array.',upper(mfilename));
 end
 
-if isempty(tgrad) || ~iscell(tgrad) 
-    error('%s: tgrad should be a nonempty cell array.',upper(mfilename));
+if isempty(tgrad) || ~iscell(tgrad) || any(~cellfun(@isreal,tgrad))
+    error('%s: tgrad should be a nonempty cell array of real vectors.',...
+          upper(mfilename));
 end
 
-if isempty(fgrad) || ~iscell(fgrad) 
-    error('%s: fgrad should be a nonempty cell array.',upper(mfilename));
+if isempty(fgrad) || ~iscell(fgrad) || any(~cellfun(@isreal,fgrad))
+    error('%s: fgrad should be a nonempty cell array of real vectors.',...
+          upper(mfilename));
 end
 
 if any(cellfun(@(sEl,tEl,fEl) ~isvector(sEl) || ~isvector(tEl) || ...
                               ~isvector(fEl), s,tgrad,fgrad))
-   error('%s: s, tgrad, frad must be cell arrays of numeric vectors.',...
-         upper(mfilename)); 
+   error('%s: s, tgrad, fgrad must be cell arrays of numeric vectors.',...
+         upper(mfilename));
 end
 
 if ~isequal(size(s),size(tgrad),size(fgrad)) || ...
    any(cellfun(@(sEl,tEl,fEl) ~isequal(size(sEl),size(tEl),size(fEl)), ...
                s,tgrad,fgrad))
-   error('%s: s, tgrad, frad does not have the same format.',upper(mfilename));   
+   error('%s: s, tgrad, fgrad does not have the same format.',upper(mfilename));
 end
 
 
 W = cellfun(@(sEl)size(sEl,2),s);
 if any(W>1)
-   error('%s: Only one-channel signals are supported.',upper(mfilename)); 
+   error('%s: Only one-channel signals are supported.',upper(mfilename));
 end
 
 % Number of channels
@@ -123,7 +125,7 @@ L = L(1);
 % Determine center frequencies
 if isempty(var) || numel(var)~=M || ~isvector(var) && ~iscell(var)
    error(['%s: cfreq must be length-M numeric vector or a cell-array ',...
-          'containg M filters.'],upper(mfilename)); 
+          'containg M filters.'],upper(mfilename));
 else
     if iscell(var)
        cfreq = cent_freqs(var,L);
