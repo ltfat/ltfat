@@ -1,18 +1,21 @@
-Version 2.1.1 x/6  2015
+Version 2.1.1 x/10  2015
     * New function for computing higher order phase derivatives: gabphasederiv
 
-    * New function for adjustable reassignment: gabreassignadjust
+    * New function doing the adjustable reassignment: gabreassignadjust
 
-	* Introduced constructphase and constructmagnitude functions to
-	  reconstruct phase and magnitude of Gabor transform respectivelly.
+	* New function for the Gabor transform phase reconstruction: constructphase, constructphasereal
 
-    * Fixed bug in gabphasegrad which prevented it from being used with any
-	  window other than Gaussian.
-
-    * Fixed bug in lconv.
+    * New filterbank-generating function: audfilters
 
 	* Added 'nojava' flag to ltfatstart to optionally disable adding the 
 	  blockproc JAVA classes to the classpath.
+
+    * Updated the lBFGS method in frsynabs accoring to the new paper. 
+
+    * Fixed bug in gabphasegrad which prevented it from being used with any
+	  window other than Gaussian.
+    
+    * Fixed bug in comp_ifilterbank_fftbl for non-painless filterbanks.
 
 Version 2.1.0 6/5  2015
 
