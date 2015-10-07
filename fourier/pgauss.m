@@ -43,9 +43,14 @@ function [g,tfr]=pgauss(L,varargin)
 %     'width',s   Set the width of the Gaussian such that it has an
 %                 effective support of *s* samples. This means that
 %                 approx. 96% of the energy or 79% of the area
-%                 under the graph is contained within *s* samples. This 
-%                 corresponds to a -6 db cutoff. This is equivalent to
-%                 calling `pgauss(L,s^2/L)`.
+%                 under the graph is contained within *s* samples. 
+%                 This corresponds to -6dB or to width at the
+%                 half of the height. 
+%                 This is equivalent to calling `pgauss(L,pi*s^2/4L*log(2))`.
+%
+%     'atheight',ah  Used only in conjuction with 'width'. Forces the 
+%                    Gaussian to width *s* at the *ah* fraction of the
+%                    height.
 %
 %     'bw',bw     As for the `'width'` argument, but specifies the width
 %                 in the frequency domain. The bandwidth is measured in 
@@ -125,12 +130,28 @@ definput.keyvals.width=0;
 definput.keyvals.fs=[];
 definput.keyvals.cf=0;
 definput.keyvals.bw=0;
+definput.keyvals.atheight=[];
 
 [flags,keyvals,tfr]=ltfatarghelper({'tfr'},definput,varargin);
 
 if (prod(size(tfr,1))~=1 || ~isnumeric(tfr))
   error('tfr must be a scalar.');
 end;
+
+if ~isempty(keyvals.atheight) && ~flags.do_width
+    error(['%s: Param. ''atheight'' must be used together with param.',...
+           ' ''width''. '],upper(mfilename));
+end
+
+if isempty(keyvals.atheight)
+    keyvals.atheight = 0.5;
+end
+
+if keyvals.atheight >= 1 || keyvals.atheight <=0
+    error('%s: Param. ''atheight'' must be in the range ]0,1[.',...
+           upper(mfilename));
+end
+
 
 fs=keyvals.fs;
 
@@ -143,11 +164,11 @@ end;
 if isempty(fs)
   
   if flags.do_width
-    tfr=keyvals.width^2/L;
+     tfr=pi/(4*log(1/keyvals.atheight))*keyvals.width^2/L; 
   end;
   
   if flags.do_bw
-  tfr=L/(keyvals.bw*L/2)^2;
+     tfr=L/(keyvals.bw*L/2)^2;
   end;
   
   delay_s=keyvals.delay;
