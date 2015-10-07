@@ -30,5 +30,5 @@ end;
 
 f=mfilename('fullpath');
 
-s = wavread([f,'.wav']);
+s = audioread([f,'.wav']);
 fs=8000;

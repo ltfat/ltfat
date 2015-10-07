@@ -135,9 +135,6 @@ function [] = mulaclab(file,varargin)
 % - sig.sampFreq: (scalar) sampling frequency of the original and modified
 %   signals
 %
-% - sig.nbBit: (scalar) number of bits to use when saving the modified
-%   signal
-%
 % - sig.real: (bool) boolean to know if the signal is real (true)
 %   or complex (false)
 %
@@ -694,8 +691,8 @@ initialize(file);
       switch lower(ext)
         case '.wav'
           % read the orginal signal in a wave file
-          [sig.ori, sig.sampFreq, sig.nbBit] =...
-            wavread([pathName, fileName]);
+          [sig.ori, sig.sampFreq] =...
+            audioread([pathName, fileName]);
           sig.real = true;
         case '.mat'
            % read the original signal decomposition in a mat file
@@ -1576,13 +1573,12 @@ initialize(file);
       % user pressed cancel, stop here
       return;
     end
-    [newSig, sampFreq, nbBit] = wavread([pathName, fileName]);
+    [newSig, sampFreq] = audioread([pathName, fileName]);
     if size(newSig, 2) > 1
       % multichannel wave, we keep only the first channel
       newSig = newSig(:, 1);
     end
     sig.sampFreq = sampFreq;
-    sig.nbBit = nbBit;
     sig.ori = newSig;
     sig.mod = newSig;
     sig.real = true;
@@ -1596,7 +1592,7 @@ initialize(file);
       % user pressed cancel, stop here
       return;
     end
-    wavwrite(sig.mod, sig.sampFreq, sig.nbBit, [pathName, fileName]);
+    audiowrite([pathName, fileName], sig.mod, sig.sampFreq);
   end
 
   function openOriDecompo(objId, eventData)
