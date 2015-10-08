@@ -276,14 +276,12 @@ if flags.do_bfgs
       objfun = @(x) gradfun(x,F,s);
     end
 
-
     [f,~,~,output] = minFunc(objfun,f0,opts);
-    % First entry of output.trace.fval is the objective function
-    % evaluated on the initial input. Skip it to be consistent.
+
     if nargout > 1
         iter = output.iterations;
         res = opts.outputFcn('getRes');
-        relres = res(1:iter)/norm_s;
+        relres = res/norm_s;
     end
 end;
 
