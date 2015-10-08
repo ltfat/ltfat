@@ -24,10 +24,6 @@ function [c,newphase,tgrad,fgrad]=constructphasereal(s,g,a,M,tol)
 %   This function requires a computational subroutine that is only
 %   available in C. Use |ltfatmex| to compile it.
 %
-%   Examples:
-%   ---------
-%
-%   
 %
 %   See also:  dgt, gabphasegrad, ltfatmex
 %

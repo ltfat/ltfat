@@ -20,6 +20,7 @@
 %    CQTFILTERS             - Logarithmically spaced filters
 %    ERBFILTERS             - ERB-spaced filters
 %    WARPEDFILTERS          - Frequency-warped band-limited filters 
+%    AUDFILTERS             - Filters based on auditory scales
 %  
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters
@@ -40,8 +41,9 @@
 %    PLOTFILTERBANK         - Plot normal/uniform filter bank coefficients
 %
 %  Reassignment and phase gradient
-%    FILTERBANKPHASEGRAD    - Instantaneous time/frequency from signal
-%    FILTERBANKREASSIGN     - Reassign filter bank spectrogram
+%    FILTERBANKPHASEGRAD      - Instantaneous time/frequency from signal
+%    FILTERBANKREASSIGN       - Reassign filterbank spectrogram
+%    FILTERBANKSYNCHROSQUEEZE - Synchrosqueeze filterbank spectrogram  
 %    
 %
 %  For help, bug reports, suggestions etc. please visit 

@@ -7,7 +7,7 @@ endif
 OCTCC   = $(shell ls comp_*.cc)
 OCTFILES = $(patsubst %.cc,%.$(EXT),$(OCTCC))
 
-MEXFILES = ltfatarghelper.mex block_interface.mex comp_filterbank.mex comp_ifilterbank.mex
+MEXFILES = block_interface.mex comp_filterbank.mex comp_ifilterbank.mex
 
 INTERFACES = $(OCTFILES)
 

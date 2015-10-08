@@ -4,7 +4,7 @@ function bw = audfiltbw(fc,varargin)
 %
 %   `audfiltbw(fc)` returns the critical bandwidth of the auditory filter 
 %   at center frequency *fc* defined in equivalent rectangular bandwidth.
-%   The function uses the relation
+%   The function uses the relation:
 %
 %   .. bw = 24.7 + fc/9.265
 %
@@ -12,12 +12,14 @@ function bw = audfiltbw(fc,varargin)
 %     
 %   as estimated in Glasberg and Moore (1990).
 % 
-%  `audfiltbw(fc,'bark') returns the critical bandwidth at *fc* according to
-%   the Bark scale using the relation:
+%   `audfiltbw(fc,'bark')` returns the critical bandwidth at *fc* according
+%   to the Bark scale using the relation:
 % 
-%       bw = 25 + 75 ( 1+1.4\times10^{-6} fc^2 )^{0.69}.
+%   .. bw = 25 + 75 ( 1+1.4*10^{-6} fc^2 )^0.69
+%
+%   .. math::  bw = 25 + 75 ( 1+1.4\times10^{-6} fc^2 )^{0.69}
 % 
-% as estimated by Zwicker and Terhardt (1980).
+%   as estimated by Zwicker and Terhardt (1980).
 %
 %   See also: freqtoerb, erbspace
 %

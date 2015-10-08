@@ -11,7 +11,7 @@
 %    S0NORM         -  S0-norm
 %
 %  Gabor systems
-%    dgt            -  Discrete Gabor transform
+%    DGT            -  Discrete Gabor transform
 %    IDGT           -  Inverse discrete Gabor transform
 %    ISGRAM         -  Iterative reconstruction from spectrogram
 %    ISGRAMREAL     -  Iterative reconstruction from spectrogram for real-valued signals
@@ -63,6 +63,10 @@
 %    GABPHASEDERIV  -  Phase derivatives
 %    GABREASSIGN    -  Reassign positive distribution
 %    GABREASSIGNADJUST - Adjustable t-f reassignment
+%
+%  Phase reconstruction
+%    CONSTRUCTPHASE     - Phase construction from abs. values of |dgt|
+%    CONSTRUCTPHASEREAL - |constructphase| for |dgtreal|
 %
 %  Phase conversions
 %    PHASELOCK      -  Phase Lock Gabor coefficients to time

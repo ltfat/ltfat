@@ -1,8 +1,8 @@
 function [cr,repos,Lc]=filterbanksynchrosqueeze(c,tgrad,var)
-%FILTERBANKREASSIGN  Reassign filterbank spectrogram
-%   Usage:  cr = filterbankreassign(c,tgrad,cfreq);
-%           cr = filterbankreassign(c,tgrad,g);
-%           [cr,repos,Lc] = filterbankreassign(...);
+%FILTERBANKSYNCHROSQUEEZE  Synchrosqueeze filterbank spectrogram
+%   Usage:  cr = filterbanksynchrosqueeze(c,tgrad,cfreq);
+%           cr = filterbanksynchrosqueeze(c,tgrad,g);
+%           [cr,repos,Lc] = filterbanksynchrosqueeze(...);
 %
 %   Input parameters:
 %      c     : Coefficients to be synchrosqueezed.
@@ -15,8 +15,8 @@ function [cr,repos,Lc]=filterbanksynchrosqueeze(c,tgrad,var)
 %      Lc    : Subband lengths.
 %
 %   `filterbanksynchrosqueeze(c,tgrad,cfreq)` will reassign the values of 
-%   the filterbank coefficients *c* instantaneous frequency *tgrad*. 
-%   The frequency center frequencies of filters are given by *cfreq*.
+%   the filterbank coefficients *c* according to instantaneous frequency
+%   *tgrad*. The frequency center frequencies of filters are given by *cfreq*.
 %   The filterbank coefficients *c* are assumed to be obtained from a
 %   non-subsampled filterbank (a=1).
 %
@@ -37,10 +37,10 @@ function [cr,repos,Lc]=filterbanksynchrosqueeze(c,tgrad,var)
 %   Examples:
 %   ---------
 %
-%   This example shows how to reassign a ERB filterbank spectrogram:::
+%   This example shows how to synchrosqueeze a ERB filterbank spectrogram:::
 %
-%     % Genrate 3 chirps 1 second long
-%     L = 44100; fs = 44100; l = 0:L-1;
+%     % Genrate 3 chirps half a second long
+%     L = 22050; fs = 44100; l = 0:L-1;
 % 
 %     f = sin(2*pi*(l/35+(l/300).^2)) + ...
 %         sin(2*pi*(l/10+(l/300).^2)) + ...
@@ -48,18 +48,18 @@ function [cr,repos,Lc]=filterbanksynchrosqueeze(c,tgrad,var)
 %     f = 0.7*f';
 %     
 %     % Create ERB filterbank
-%     [g,a,fc]=erbfilters(fs,L,'fractional','spacing',1/12,'warped');
+%     [g,~,fc]=erbfilters(fs,L,'uniform','spacing',1/12,'warped');
 %     
 %     % Compute phase gradient
-%     [tgrad,fgrad,cs,c]=filterbankphasegrad(f,g,a);
+%     [tgrad,~,cs]=filterbankphasegrad(f,g,1);
 %     % Do the reassignment
-%     sr=filterbankreassign(cs,tgrad,fgrad,a,cent_freqs(fs,fc));
+%     sr=filterbanksynchrosqueeze(cs,tgrad,cent_freqs(fs,fc));
 %     figure(1); subplot(211);
-%     plotfilterbank(cs,a,fc,fs,60);
+%     plotfilterbank(cs,1,fc,fs,60);
 %     title('ERBlet spectrogram of 3 chirps');
 %     subplot(212);  
-%     plotfilterbank(sr,a,fc,fs,60);
-%     title('Reassigned ERBlet spectrogram of 3 chirps');
+%     plotfilterbank(sr,1,fc,fs,60);
+%     title('Synchrosqueezed ERBlet spectrogram of 3 chirps');
 %
 %   See also: filterbankphasegrad, gabreassign
 %
