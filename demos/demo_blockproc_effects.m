@@ -42,7 +42,7 @@ Fmorph = blockframeaccel(Fmorph, bufLen,'segola');
 
 haveWav = 0;
 try
-   ff = 0.4*audioread('beat.wav');
+   ff = 0.4*wavread('beat.wav');
    %ff = 0.8*resample(ff,4,1);
    ffblocks = reshape(postpad(ff,ceil(numel(ff)/bufLen)*bufLen),bufLen,[]);
    cidx = 1;

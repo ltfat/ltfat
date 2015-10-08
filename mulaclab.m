@@ -692,7 +692,7 @@ initialize(file);
         case '.wav'
           % read the orginal signal in a wave file
           [sig.ori, sig.sampFreq] =...
-            audioread([pathName, fileName]);
+            wavread([pathName, fileName]);
           sig.real = true;
         case '.mat'
            % read the original signal decomposition in a mat file
@@ -1573,7 +1573,7 @@ initialize(file);
       % user pressed cancel, stop here
       return;
     end
-    [newSig, sampFreq] = audioread([pathName, fileName]);
+    [newSig, sampFreq] = wavread([pathName, fileName]);
     if size(newSig, 2) > 1
       % multichannel wave, we keep only the first channel
       newSig = newSig(:, 1);
@@ -1592,7 +1592,7 @@ initialize(file);
       % user pressed cancel, stop here
       return;
     end
-    audiowrite([pathName, fileName], sig.mod, sig.sampFreq);
+    wavwrite(sig.mod, sig.sampFreq,[pathName, fileName]);
   end
 
   function openOriDecompo(objId, eventData)
