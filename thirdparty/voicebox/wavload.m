@@ -4,7 +4,7 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 % Input Parameters:
 %
 %	FILENAME gives the name of the file (with optional .WAV extension) or alternatively
-%                 can be the FIDX output from a previous call to READWAV
+%                 can be the FIDX output from a previous call to WAVLOAD
 %	MODE		specifies the following (*=default):
 %
 %    Scaling: 's'    Auto scale to make data peak = +-1
@@ -54,8 +54,9 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %   The mask, if specified, is a bit field giving the channels present in the following order:
 %   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR
 %   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top
+%   
+%   See also WAVSAVE
 %
-
 %   *** Note on scaling ***
 %   If we want to scale signal values in the range +-1 to an integer in the
 %   range [-128,127] then we have four plausible choices corresponding to
@@ -418,118 +419,4 @@ if ns>0.01*fs
     end
 end
 
-function x=pcma2lin(p,m,s)
-%PCMU2LIN Convert A-law PCM to linear X=(P,M,S)
-%	lin = pcma2lin(pcma,m,s) where pcma contains a vector or matrix
-%	of A-law values in the range 0 to 255.
-%	No checking is performed to see that numbers are in this range.
-%
-%	Input values are exclusive ored with m (default=85)
-%
-%	Output values are divided by the scale factor s:
-%
-%		   s		Output Range
-%
-%		   1		+-4032	(integer values)
-%		2017.396342	+-1.998616 (default)
-%		4032		+-1
-%		4096		+-0.984375 (+-1 nominal full scale)
-%
-%	The default value of s is 2017.396342 which equals
-%	sqrt((1120^2 + 2624^2)/2). This factor follows ITU standard G.711 and
-%	the sine wave with PCM-A values [225 244 244 225 97 116 116 97]
-%	has a mean square value of unity corresponding to 0 dBm0.
-
-
-
-%      Copyright (C) Mike Brookes 1998
-%      Version: $Id: pcma2lin.m 713 2011-10-16 14:45:43Z dmb $
-%
-%   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   This program is free software; you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published by
-%   the Free Software Foundation; either version 2 of the License, or
-%   (at your option) any later version.
-%
-%   This program is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
-%
-%   You can obtain a copy of the GNU General Public License from
-%   http://www.gnu.org/copyleft/gpl.html or by writing to
-%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-if nargin<3
-    t=4.95688418E-4;
-    if nargin<2 m=85; end
-    else
-        t=1/s;
-end
-
-if m q=bitxor(p,m); else q=p; end;
-    k=rem(q,16);
-    g=floor(q/128);
-    e=(q-k-128*g)/16;
-    f=(abs(e-1)-e+1)/2;
-    x=(2*g-1).*(pow2(k+16.5,e)+f.*(k-15.5))*t;
-
-    function x=pcmu2lin(p,s)
-    %PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
-    %	lin = pcmu2lin(pcmu) where pcmu contains a vector
-    %	of mu-law values in the range 0 to 255.
-    %	No checking is performed to see that numbers are in this range.
-    %
-    %	Output values are divided by the scale factor s:
-    %
-    %		   s		Output Range
-    %
-    %		   1		+-8031	(integer values)
-    %		4004.2	+-2.005649 (default)
-    %		8031		+-1
-    %		8159		+-0.9843118 (+-1 nominal full scale)
-    %
-    %	The default scaling factor 4004.189931 is equal to
-    %	sqrt((2207^2 + 5215^2)/2) this follows ITU standard G.711.
-    %	The sine wave with PCM-Mu values [158 139 139 158 30 11 11 30]
-    %	has a mean square value of unity corresponding to 0 dBm0.
-
-
-
-    %      Copyright (C) Mike Brookes 1998
-    %      Version: $Id: pcmu2lin.m 713 2011-10-16 14:45:43Z dmb $
-    %
-    %   VOICEBOX is a MATLAB toolbox for speech processing.
-    %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
-    %
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %   This program is free software; you can redistribute it and/or modify
-    %   it under the terms of the GNU General Public License as published by
-    %   the Free Software Foundation; either version 2 of the License, or
-    %   (at your option) any later version.
-    %
-    %   This program is distributed in the hope that it will be useful,
-    %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-    %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    %   GNU General Public License for more details.
-    %
-    %   You can obtain a copy of the GNU General Public License from
-    %   http://www.gnu.org/copyleft/gpl.html or by writing to
-    %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    if nargin<2
-        t=9.98953613E-4;
-else
-    t=4/s;
-end
-
-m=15-rem(p,16);
-q=floor(p/128);
-e=(127-p-m+128*q)/16;
-x=(q-0.5).*(pow2(m+16.5,e)-16.5)*t;
 
