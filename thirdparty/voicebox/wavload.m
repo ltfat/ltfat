@@ -55,7 +55,6 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR
 %   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top
 %
-%   See also WRITEWAV.
 
 %   *** Note on scaling ***
 %   If we want to scale signal values in the range +-1 to an integer in the
@@ -71,6 +70,11 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+%
+%   *** NOTE ON CHANGES ***
+%   The original name of this function in VOICEBOX was readwav. It was
+%   renamed to avoid possible namespace clash.
+%   Modified by: Zdenek Prusa 2015
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   This program is free software; you can redistribute it and/or modify
@@ -93,8 +97,8 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 
 if nargin<1
     error('Usage: [y,fs,wmode,fidx]=READWAV(filename,mode,nmax,nskip)'); end
-if nargin<2
-    mode='p';
+    if nargin<2
+        mode='p';
 else
     mode = [mode(:).' 'p'];
 end
@@ -141,37 +145,38 @@ if ~info(3)
     factlen=-1;
     riffmt='e';  % default is original wave file format
     while datalen<0						% loop until FMT and DATA chuncks both found
-        header=fread(fid,4,'*char');
-        len=fread(fid,1,'ulong');
+        header=fread(fid,4,'uint8=>char')';
+        len=fread(fid,1,'uint32');
         if mh
             fprintf('  %s chunk: %d bytes\n',header,len);
         end
-        if strcmp(header','fmt ')					% ******* found FMT chunk *********
+
+        if strcmp(header,'fmt ')					% ******* found FMT chunk *********
             fmtlen=len;                             % remember the length
             if len>16
                 riffmt='x';  % might be WAVEFORMATEX format
             end
-            wavfmt=fread(fid,1,'short');			% format: 1=PCM, 6=A-law, 7-Mu-law
+            wavfmt=fread(fid,1,'int16');			% format: 1=PCM, 6=A-law, 7-Mu-law
             info(8)=wavfmt;
-            info(5)=fread(fid,1,'ushort');			% number of channels
-            fs=fread(fid,1,'ulong');				% sample rate in Hz
+            info(5)=fread(fid,1,'uint16');			% number of channels
+            fs=fread(fid,1,'uint32');				% sample rate in Hz
             info(9)=fs;                             % sample rate in Hz
-            rate=fread(fid,1,'ulong');				% average bytes per second (ignore)
-            align=fread(fid,1,'ushort');			% block alignment in bytes (container size * #channels)
-            bps=fread(fid,1,'ushort');			% bits per sample
+            rate=fread(fid,1,'uint32');				% average bytes per second (ignore)
+            align=fread(fid,1,'uint16');			% block alignment in bytes (container size * #channels)
+            bps=fread(fid,1,'uint16');			% bits per sample
             info(7)=bps;
             %             info(6)=ceil(info(7)/8);                % round up to a byte count
             info(6)=floor(align/info(5));                       % assume block size/channels = container size
             if info(8)==-2   % wave format extensible
-                cb=fread(fid,1,'ushort');			% extra bytes must be >=22
+                cb=fread(fid,1,'uint16');			% extra bytes must be >=22
                 riffmt='X';                         % WAVEFORMATEXTENSIBLE format
-                wfxsamp=fread(fid,1,'ushort');			% samples union
+                wfxsamp=fread(fid,1,'uint16');			% samples union
                 if wfxsamp>0
                     info(7)=wfxsamp;     % valid bits per sample
                 end
-                info(10)=fread(fid,1,'ulong');				% channel mask
-                wfxguida=fread(fid,1,'ulong');				% GUID
-                wfxguidb=fread(fid,2,'ushort');				% GUID
+                info(10)=fread(fid,1,'uint32');				% channel mask
+                wfxguida=fread(fid,1,'uint32');				% GUID
+                wfxguidb=fread(fid,2,'uint16');				% GUID
                 wfxguidc=fread(fid,8,'uchar');				% GUID
                 if wfxguida<65536
                     info(8)=wfxguida; % turn it into normal wav format
@@ -184,7 +189,7 @@ if ~info(3)
                 fseek(fid,len-16,0);				    % skip to end of header
             end
             if mh
-                fmttypes={'?' 'PCM' 'ADPCM' 'IEEE-float' '?' '?' 'A-law' 'µ-law' '?'};
+                fmttypes={'?' 'PCM' 'ADPCM' 'IEEE-float' '?' '?' 'A-law' 'ï¿½-law' '?'};
                 fprintf('        Format: %d = %s',info(8),fmttypes{1+max(min(info(8),8),0)});
                 if wavfmt==-2
                     fprintf(' (%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x)\n',wfxguida,wfxguidb,wfxguidc);
@@ -201,31 +206,10 @@ if ~info(3)
                 end
                 fprintf('\n        %d valid bits of %d per sample (%d byte block size)\n',info(7),bps,align);
             end
-        elseif strcmp(header','fact')				% ******* found FACT chunk *********
-            factlen=len;
-            if len<4
-                error('FACT chunk too short');
-            end
-            nsamp=fread(fid,1,'ulong');				% number of samples
-            fseek(fid,len-4,0);                     % skip to end of header
-            if mh
-                fprintf('        %d samples = %.3g seconds\n',nsamp,nsamp/fs);
-            end
-        elseif strcmp(header','inst')				% ******* found INST chunk *********
-            instlen=len;
-            if len<7
-                error('INST chunk too short');
-            end
-            inst=fread(fid,3,'schar');
-            info(11)=double(inst(3));                          % gain in dB
-            if mh
-                fprintf('        Gain = %d dB\n',info(11));
-            end
-            fseek(fid,len-3,0);                     % skip to end of header
-        elseif strcmp(header','data')				% ******* found DATA chunk *********
+        elseif strcmp(header,'data')				% ******* found DATA chunk *********
             if fmtlen<0
-                fclose(fid);
-                error('File %s does not contain a FMT chunck',filename);
+                 fclose(fid);
+                 error('File %s does not contain a FMT chunck',filename);
             end
             if factlen>3 && nsamp >0
                 info(4)=nsamp;   % take data length from FACT chunk
@@ -241,6 +225,27 @@ if ~info(3)
                 end
                 fprintf(' = %g sec\n',info(4)/fs);
             end
+        elseif strcmp(header,'fact')				% ******* found FACT chunk *********
+            factlen=len;
+            if len<4
+                error('FACT chunk too short');
+            end
+            nsamp=fread(fid,1,'uint32');				% number of samples
+            fseek(fid,len-4,0);                     % skip to end of header
+            if mh
+                fprintf('        %d samples = %.3g seconds\n',nsamp,nsamp/fs);
+            end
+        elseif strcmp(header,'inst')				% ******* found INST chunk *********
+            instlen=len;
+            if len<7
+                error('INST chunk too short');
+            end
+            inst=fread(fid,3,'schar');
+            info(11)=double(inst(3));                          % gain in dB
+            if mh
+                fprintf('        Gain = %d dB\n',info(11));
+            end
+            fseek(fid,len-3,0);                     % skip to end of header
         else							% ******* found unwanted chunk *********
             fseek(fid,len,0);
         end
@@ -267,7 +272,7 @@ if ksamples>0
     if any(info(8)==3)  % floating point format
         pk=1;  % peak is 1
         switch info(6)
-            case 4
+        case 4
                 y=fread(fid,nsamples,'float32');
             case 8
                 y=fread(fid,nsamples,'float64');
@@ -280,7 +285,7 @@ if ksamples>0
         end
         pk=pow2(0.5,8*info(6))*(1+(mno/2-all(mode~='n'))/pow2(0.5,info(7)));  % use modes o and n to determine effective peak
         switch info(6)
-            case 1
+        case 1
                 y=fread(fid,nsamples,'uchar');
                 if info(8)==1
                     y=y-z;
@@ -292,13 +297,13 @@ if ksamples>0
                     pk=8031+mno*128;
                 end
             case 2
-                y=fread(fid,nsamples,'short');
+                y=fread(fid,nsamples,'int16');
             case 3
                 y=fread(fid,3*nsamples,'uchar');
                 y=reshape(y,3,nsamples);
                 y=([1 256 65536]*y-pow2(fix(pow2(y(3,:),-7)),24)).';
             case 4
-                y=fread(fid,nsamples,'long');
+                y=fread(fid,nsamples,'int32');
             otherwise
                 error('cannot read %d-byte integers',info(6));
         end
@@ -343,7 +348,7 @@ if nargout>2  % sort out the mode input for writing this format
         wmode=[wmode cszc(info(6))];
     end
     switch info(8)
-        case 1                                    % PCM modes
+    case 1                                    % PCM modes
             if ~mno
                 wmode=[wmode 'o'];
             end
@@ -460,67 +465,67 @@ function x=pcma2lin(p,m,s)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if nargin<3
-  t=4.95688418E-4;
-  if nargin<2 m=85; end
-else
-  t=1/s;
+    t=4.95688418E-4;
+    if nargin<2 m=85; end
+    else
+        t=1/s;
 end
 
 if m q=bitxor(p,m); else q=p; end;
-k=rem(q,16);
-g=floor(q/128);
-e=(q-k-128*g)/16;
-f=(abs(e-1)-e+1)/2;
-x=(2*g-1).*(pow2(k+16.5,e)+f.*(k-15.5))*t;
+    k=rem(q,16);
+    g=floor(q/128);
+    e=(q-k-128*g)/16;
+    f=(abs(e-1)-e+1)/2;
+    x=(2*g-1).*(pow2(k+16.5,e)+f.*(k-15.5))*t;
 
-function x=pcmu2lin(p,s)
-%PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
-%	lin = pcmu2lin(pcmu) where pcmu contains a vector
-%	of mu-law values in the range 0 to 255.
-%	No checking is performed to see that numbers are in this range.
-%
-%	Output values are divided by the scale factor s:
-%
-%		   s		Output Range
-%
-%		   1		+-8031	(integer values)
-%		4004.2	+-2.005649 (default)
-%		8031		+-1
-%		8159		+-0.9843118 (+-1 nominal full scale)
-%
-%	The default scaling factor 4004.189931 is equal to
-%	sqrt((2207^2 + 5215^2)/2) this follows ITU standard G.711.
-%	The sine wave with PCM-Mu values [158 139 139 158 30 11 11 30]
-%	has a mean square value of unity corresponding to 0 dBm0.
+    function x=pcmu2lin(p,s)
+    %PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
+    %	lin = pcmu2lin(pcmu) where pcmu contains a vector
+    %	of mu-law values in the range 0 to 255.
+    %	No checking is performed to see that numbers are in this range.
+    %
+    %	Output values are divided by the scale factor s:
+    %
+    %		   s		Output Range
+    %
+    %		   1		+-8031	(integer values)
+    %		4004.2	+-2.005649 (default)
+    %		8031		+-1
+    %		8159		+-0.9843118 (+-1 nominal full scale)
+    %
+    %	The default scaling factor 4004.189931 is equal to
+    %	sqrt((2207^2 + 5215^2)/2) this follows ITU standard G.711.
+    %	The sine wave with PCM-Mu values [158 139 139 158 30 11 11 30]
+    %	has a mean square value of unity corresponding to 0 dBm0.
 
 
 
-%      Copyright (C) Mike Brookes 1998
-%      Version: $Id: pcmu2lin.m 713 2011-10-16 14:45:43Z dmb $
-%
-%   VOICEBOX is a MATLAB toolbox for speech processing.
-%   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%   This program is free software; you can redistribute it and/or modify
-%   it under the terms of the GNU General Public License as published by
-%   the Free Software Foundation; either version 2 of the License, or
-%   (at your option) any later version.
-%
-%   This program is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
-%
-%   You can obtain a copy of the GNU General Public License from
-%   http://www.gnu.org/copyleft/gpl.html or by writing to
-%   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %      Copyright (C) Mike Brookes 1998
+    %      Version: $Id: pcmu2lin.m 713 2011-10-16 14:45:43Z dmb $
+    %
+    %   VOICEBOX is a MATLAB toolbox for speech processing.
+    %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
+    %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %   This program is free software; you can redistribute it and/or modify
+    %   it under the terms of the GNU General Public License as published by
+    %   the Free Software Foundation; either version 2 of the License, or
+    %   (at your option) any later version.
+    %
+    %   This program is distributed in the hope that it will be useful,
+    %   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    %   GNU General Public License for more details.
+    %
+    %   You can obtain a copy of the GNU General Public License from
+    %   http://www.gnu.org/copyleft/gpl.html or by writing to
+    %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin<2
-  t=9.98953613E-4;
+    if nargin<2
+        t=9.98953613E-4;
 else
-  t=4/s;
+    t=4/s;
 end
 
 m=15-rem(p,16);
