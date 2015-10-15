@@ -21,7 +21,7 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %   File I/O: 'f'    Do not close file on exit
 %   Display;  'h'    Print header information
 %             'w'    Plot waveform
-%             'W'    Plot spectrogram
+%             'W'    Plot spectrogram (max 10 seconds)
 %             'a'    play audio (max 10 seconds)
 %             'A'    play all audio even if very long
 %
@@ -49,6 +49,9 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %           (11) gain   gain factor in dB
 %
 %   If no output parameters are specified, header information will be printed.
+%
+%   !!WARNING!!
+%   Please note that this function cannot handle compressed wav files.
 %
 %   For stereo data, y(:,1) is the left channel and y(:,2) the right
 %   The mask, if specified, is a bit field giving the channels present in the following order:
@@ -124,9 +127,12 @@ if ischar(filename)
         error('Can''t open %s for input',filename);
     end
     info(1)=fid;
-else
+elseif isvector(filename) && numel(filename) == 11
     info=filename;
     fid=info(1);
+else
+    error('%s: The first argument must be either a filename or FIDX vector.',...
+          upper(mfilename));
 end
 getdat= nargout>0 || any(lower(mode)=='w') || any(lower(mode)=='a');
 mh=any(mode=='h') || ~getdat;
@@ -395,6 +401,7 @@ if ns>0.01*fs
         if nchan>1
             for i=nchan:-1:1
                 subplot(nchan,1,i)
+                maxsamp = fs
                 sgram(y(:,i),fs,90);
             end
         else

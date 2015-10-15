@@ -42,7 +42,6 @@ function fidx=wavsave(d,fs,filename,mode,nskip,mask)
 %             'e'    use original WAVEFORMAT (default for PCM)
 %             'E'    include a 'fact' chunk (default for non-PCM)
 %   File I/O: 'f'    Do not close file on exit
-%             'd'    Look in data directory: voicebox('dir_data')
 %
 %
 % Output Parameter:
@@ -205,7 +204,7 @@ else
     d = d.';
 end;
 if nc>32
-    error('WRITEWAV: attempt to write a sound file with >32 channels');
+    error('WAVSAVE: attempt to write a sound file with >32 channels');
 end
 nc=max(nc,1);
 ncy=nc*info(6);                     % bytes per sample time
@@ -283,7 +282,6 @@ end
 info(5)=nc;
 
 if n
-
     if sc~='r'                  % 'r' = no scaling
         if sc=='s'              % 's' = scale to peak signal
             pd=max(abs(d(:)));
