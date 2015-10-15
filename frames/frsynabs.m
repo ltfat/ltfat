@@ -167,7 +167,7 @@ else
    if isstruct(kv.Fd) && isfield(kv.Fd,'frsyn')
       % The canonical dual frame was passed explicitly as a frame object
       Fd = frameaccel(kv.Fd,L);
-      Fdfrsyn = @(insig) Fd.frana(insig);
+      Fdfrsyn = @(insig) Fd.frsyn(insig);
    elseif isa(kv.Fd,'function_handle')
       % The anonymous function is expected to do (FF*)^(-1)F
       Fdfrsyn = kv.Fd;
