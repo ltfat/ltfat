@@ -13,7 +13,7 @@ void defaultSetter(biEntry* obj, const mxArray* in)
 mxArray* defaultGetter(biEntry* obj)
 {
    if (obj->var != NULL)
-      return obj->var;
+      return mxDuplicateArray(obj->var);
    else
       return mxCreateDoubleMatrix(0, 0, mxREAL);
 }
@@ -232,7 +232,7 @@ mxArray* getSource(biEntry* obj)
    if (obj->var == NULL || mxIsNumeric(obj->var))
       return mxCreateString("numeric");
    else
-      return obj->var;
+      return mxDuplicateArray(obj->var);
 }
 
 mxArray* getEnqBufCount()
