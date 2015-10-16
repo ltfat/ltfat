@@ -1,27 +1,15 @@
-function x=pcmu2lin(p,s)
-%PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
-%	lin = pcmu2lin(pcmu) where pcmu contains a vector
-%	of mu-law values in the range 0 to 255.
-%	No checking is performed to see that numbers are in this range.
-%
-%	Output values are divided by the scale factor s:
-%
-%		   s		Output Range
-%
-%		   1		+-8031	(integer values)
-%		4004.2	+-2.005649 (default)
-%		8031		+-1
-%		8159		+-0.9843118 (+-1 nominal full scale)
-%
-%	The default scaling factor 4004.189931 is equal to
-%	sqrt((2207^2 + 5215^2)/2) this follows ITU standard G.711.
-%	The sine wave with PCM-Mu values [158 139 139 158 30 11 11 30]
-%	has a mean square value of unity corresponding to 0 dBm0.
+function [y,zf]=voicebox_ditherq(x,m,zi)
+%DITHERQ  add dither and quantize [Y,ZF]=(X,M,ZI)
+%  Inputs:
+%      x   is the input signal
+%	   m   specifies the mode:
+%          'w'  white dither (default)
+%          'h'  high-pass dither (filtered by 1 - z^-1)
+%          'l'  low pass filter  (filtered by 1 + z^-1)
+%          'n'  no dither
 
-
-
-%      Copyright (C) Mike Brookes 1998
-%      Version: $Id: pcmu2lin.m 713 2011-10-16 14:45:43Z dmb $
+%      Copyright (C) Mike Brookes 1997
+%      Version: $Id: ditherq.m 713 2011-10-16 14:45:43Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
@@ -42,14 +30,29 @@ function x=pcmu2lin(p,s)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin<2
-        t=9.98953613E-4;
-else
-    t=4/s;
+s=size(x);
+n=length(x);
+if nargin<3 | ~length(zi)
+    zi=rand(1);
 end
-
-m=15-rem(p,16);
-q=floor(p/128);
-e=(127-p-m+128*q)/16;
-x=(q-0.5).*(pow2(m+16.5,e)-16.5)*t;
-
+    if nargin<2
+        m='w';
+    end
+if any(m=='n')
+    y=round(x);
+elseif any(m=='h') | any(m=='l')
+    v=rand(n+1,1);
+    v(1)=zi;
+    zf=v(end);
+    if any(m=='h')
+        y=round(x(:)+v(2:end)-v(1:end-1));
+    else
+        y=round(x(:)+v(2:end)+v(1:end-1)-1);
+    end
+else
+    y=round(x(:)+rand(n,2)*[1;-1]);
+    zf=rand(1);                         % output a random number anyway
+end
+if s(1)==1
+    y=y.';
+end

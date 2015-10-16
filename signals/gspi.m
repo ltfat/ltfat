@@ -22,6 +22,6 @@ end;
 f=mfilename('fullpath');
 
 % Load audio signal
-s = wavread([f,'.wav']);
+s = wavload([f,'.wav']);
 fs = 44100;
 

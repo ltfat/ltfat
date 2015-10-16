@@ -7,7 +7,7 @@ function test_failed = test_blocprocoffline()
 inName = 'test_in.wav';
 outName = 'test_out.wav';
 f = 2*rand(44100,1)*0.9-1;
-wavwrite(f,44100,inName);
+wavwsave(f,44100,inName);
 
 fs=block(inName,'offline','outfile',outName);
 

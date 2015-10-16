@@ -220,7 +220,7 @@ if ischar(source)
       end
       source = fullfile(pathName,fileName);
       if isempty(kv.fs)
-          [~, kv.fs] = wavread(source, [1,1]);
+          [~, kv.fs] = wavload(source, 'i');
       end
       play = 1;
    elseif(numel(source)>4)
@@ -232,7 +232,7 @@ if ischar(source)
             warning('off','Octave:fopen-file-in-path');
          end
          if isempty(kv.fs)
-            [~, kv.fs] = wavread(source, [1,1]);
+            [~, kv.fs] = wavload(source, 'i');
          end
          play = 1;
       else
@@ -312,12 +312,16 @@ block_interface('setSource',source);
 block_interface('setFs',fs);
 % Handle sources with known input length
 if is_wav
-   Ls = wavread(source, 'size');
-   tmpf = wavread(source,[1,1]); % Workaround for Octave
-   block_interface('setLs',[Ls(1),size(tmpf,2)]);
+   [~,~,~,fid] = wavload(source,'i');
+   Ls = fid(4);
+   chanNo = fid(5);
+   block_interface('setLs',[Ls,chanNo]);
    block_interface('setSource',@(pos,endSample)...
-                               cast(wavread(source,[pos, endSample]),...
+                               cast(wavload(source,'',endSample-pos+1,pos-1),...
                                block_interface('getClassId')) );
+      % block_interface('setSource',@(pos,endSample)...
+      % cast(wavread(source,[pos,endSample]),...
+      %                          block_interface('getClassId')) );
 elseif is_numeric
    source = comp_sigreshape_pre(source,'BLOCK');
    if size(source,2)>8

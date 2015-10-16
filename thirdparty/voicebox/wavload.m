@@ -24,6 +24,7 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %             'W'    Plot spectrogram (max 10 seconds)
 %             'a'    play audio (max 10 seconds)
 %             'A'    play all audio even if very long
+%             'i'    Read header only.
 %
 %	NMAX     maximum number of samples to read (or -1 for unlimited [default])
 %	NSKIP    number of samples to skip from start of file
@@ -37,7 +38,7 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %	FIDX     Information row vector containing the element listed below.
 %
 %           (1)  file id
-%		    (2)  current position in file
+%           (2)  current position in file
 %           (3)  dataoff	byte offset in file to start of data
 %           (4)  nsamp	number of samples
 %           (5)  nchan	number of channels
@@ -100,7 +101,7 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 
 
 if nargin<1
-    error('Usage: [y,fs,wmode,fidx]=READWAV(filename,mode,nmax,nskip)'); end
+    error('Usage: [y,fs,wmode,fidx]=WAVLOAD(filename,mode,nmax,nskip)'); end
     if nargin<2
         mode='p';
 else
@@ -134,8 +135,9 @@ else
     error('%s: The first argument must be either a filename or FIDX vector.',...
           upper(mfilename));
 end
-getdat= nargout>0 || any(lower(mode)=='w') || any(lower(mode)=='a');
-mh=any(mode=='h') || ~getdat;
+getdat= nargout>0 && ~any(mode=='i'); 
+getdat= getdat || any(lower(mode)=='w') || any(lower(mode)=='a');
+mh=any(mode=='h');
 if ~info(3)
     fseek(fid,8,-1);						% read riff chunk
     header=fread(fid,4,'*char')';
@@ -269,8 +271,10 @@ if nargin>2
     if nmax>=0
         ksamples=min(nmax,ksamples);
     end
-elseif ~getdat
+elseif mh
     ksamples=min(5,ksamples); % just read 5 samples so we can print the first few data values
+elseif ~getdat
+    ksamples = 0;
 end
 if ksamples>0
     info(2)=nskip+ksamples;
@@ -297,10 +301,10 @@ if ksamples>0
                 if info(8)==1
                     y=y-z;
                 elseif info(8)==6
-                    y=pcma2lin(y,213,1);
+                    y=voicebox_pcma2lin(y,213,1);
                     pk=4032+mno*64;
                 elseif info(8)==7
-                    y=pcmu2lin(y,1);
+                    y=voicebox_pcmu2lin(y,1);
                     pk=8031+mno*128;
                 end
             case 2
@@ -426,4 +430,7 @@ if ns>0.01*fs
     end
 end
 
+if nargout==0
+    clear y;
+end
 

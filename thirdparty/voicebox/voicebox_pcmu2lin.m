@@ -1,29 +1,27 @@
-function x=pcma2lin(p,m,s)
-%PCMU2LIN Convert A-law PCM to linear X=(P,M,S)
-%	lin = pcma2lin(pcma,m,s) where pcma contains a vector or matrix
-%	of A-law values in the range 0 to 255.
+function x=voicebox_pcmu2lin(p,s)
+%PCMU2LIN Convert Mu-law PCM to linear X=(P,S)
+%	lin = pcmu2lin(pcmu) where pcmu contains a vector
+%	of mu-law values in the range 0 to 255.
 %	No checking is performed to see that numbers are in this range.
-%
-%	Input values are exclusive ored with m (default=85)
 %
 %	Output values are divided by the scale factor s:
 %
 %		   s		Output Range
 %
-%		   1		+-4032	(integer values)
-%		2017.396342	+-1.998616 (default)
-%		4032		+-1
-%		4096		+-0.984375 (+-1 nominal full scale)
+%		   1		+-8031	(integer values)
+%		4004.2	+-2.005649 (default)
+%		8031		+-1
+%		8159		+-0.9843118 (+-1 nominal full scale)
 %
-%	The default value of s is 2017.396342 which equals
-%	sqrt((1120^2 + 2624^2)/2). This factor follows ITU standard G.711 and
-%	the sine wave with PCM-A values [225 244 244 225 97 116 116 97]
+%	The default scaling factor 4004.189931 is equal to
+%	sqrt((2207^2 + 5215^2)/2) this follows ITU standard G.711.
+%	The sine wave with PCM-Mu values [158 139 139 158 30 11 11 30]
 %	has a mean square value of unity corresponding to 0 dBm0.
 
 
 
 %      Copyright (C) Mike Brookes 1998
-%      Version: $Id: pcma2lin.m 713 2011-10-16 14:45:43Z dmb $
+%      Version: $Id: pcmu2lin.m 713 2011-10-16 14:45:43Z dmb $
 %
 %   VOICEBOX is a MATLAB toolbox for speech processing.
 %   Home page: http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html
@@ -44,18 +42,14 @@ function x=pcma2lin(p,m,s)
 %   Free Software Foundation, Inc.,675 Mass Ave, Cambridge, MA 02139, USA.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if nargin<3
-    t=4.95688418E-4;
-    if nargin<2 m=85; end
-    else
-        t=1/s;
+if nargin<2
+        t=9.98953613E-4;
+else
+    t=4/s;
 end
 
-if m q=bitxor(p,m); else q=p; end;
-    k=rem(q,16);
-    g=floor(q/128);
-    e=(q-k-128*g)/16;
-    f=(abs(e-1)-e+1)/2;
-    x=(2*g-1).*(pow2(k+16.5,e)+f.*(k-15.5))*t;
-
+m=15-rem(p,16);
+q=floor(p/128);
+e=(127-p-m+128*q)/16;
+x=(q-0.5).*(pow2(m+16.5,e)-16.5)*t;
 

@@ -49,7 +49,7 @@ function fidx=wavsave(d,fs,filename,mode,nskip,mask)
 %	FIDX     Information row vector containing the element listed below.
 %
 %           (1)  file id
-%			(2)  current position in file (in samples, 0=start of file)
+%           (2)  current position in file (in samples, 0=start of file)
 %           (3)  dataoff	length of file header in bytes
 %           (4)  nsamp	number of samples
 %           (5)  nchan	number of channels
@@ -110,7 +110,7 @@ function fidx=wavsave(d,fs,filename,mode,nskip,mask)
 
 
 if nargin<3
-    error('Usage: WRITEWAV(data,fs,filename,mode,nskip)');
+    error('Usage: WAVSAVE(data,fs,filename,mode,nskip)');
 end
 if nargin<6
     mask=0;
@@ -326,7 +326,7 @@ if n
             if di=='n'
                 d=round(d);
             else
-                [d,info(10)]=ditherq(d,di,info(10));
+                [d,info(10)]=voicebox_ditherq(d,di,info(10));
             end
             d=min(max(d,lo),hi)*pow2(1,8*info(6)-info(7));       % clip data and shift to most significant bits
         else                    % mu or A law
