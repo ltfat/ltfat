@@ -2,12 +2,10 @@
 
 [f,fs]=greasy;  % Get the test signal
 Ls=length(f);
-fmin = 0;
-fmax = fs/2;
 
 %% Generate a fractional ERBlet FB with V= 1 and a Hann window
 disp('--- Fractional non-uniform ERBlet FB, V=1, Hann window ---')
-[g_erb,a_erb,fc_erb]=audfilters(fs,Ls,fmin,fmax,'erb','fractional');
+[g_erb,a_erb,fc_erb]=audfilters(fs,Ls,'erb','fractional');
 c_erb=filterbank(f,{'realdual',g_erb},a_erb);
 r_erb=2*real(ifilterbank(c_erb,g_erb,a_erb));
 disp('Reconstruction error:')
@@ -29,9 +27,9 @@ subplot(2,1,2);
 filterbankfreqz(gd_erb,a_erb,Ls,fs,'plot','linabs','posfreq');
 title('Synthesis, dual filters')
 
-%% Generate a uniform Barklet FB with V= 3 and a cosine window
-disp('--- Uniform Barklet FB, V=3, cosine window ---')
-[g_bark,a_bark,fc_bark]=audfilters(fs,Ls,fmin,fmax,'bark','uniform','spacing',1/3,'cosine');
+%% Generate a fractional uniform Barklet FB with V= 3 and a cosine window, band-limited analysis
+disp('--- Uniform Barklet FB, V=3, cosine window, frequency range = 100-6000 Hz ---')
+[g_bark,a_bark,fc_bark]=audfilters(fs,Ls,'flow',100,'fhigh',6000,'bark','fractionaluniform','spacing',1/3,'cosine');
 c_bark=filterbank(f,{'realdual',g_bark},a_bark);
 r_bark=2*real(ifilterbank(c_bark,g_bark,a_bark));
 disp('Reconstruction error:')
@@ -53,9 +51,9 @@ subplot(2,1,2);
 filterbankfreqz(gd_bark,a_bark,Ls,fs,'plot','linabs','posfreq');
 title('Synthesis, dual filters')
 
-%% Generate a fractional uniform Mel FB with 30 filters and a triangular window
-disp('--- Fractional uniform Mel FB, M=30, triangular window ---')
-[g_mel,a_mel,fc_mel,L_mel]=audfilters(fs,Ls,fmin,fmax,'mel','fractionaluniform','M',30,'tria');
+%% Generate a uniform Mel FB with 30 filters and a triangular window
+disp('--- Uniform Mel FB, M=30, triangular window ---')
+[g_mel,a_mel,fc_mel,L_mel]=audfilters(fs,Ls,'mel','uniform','M',30,'tria');
 if L_mel > Ls
     f = postpad(f,L_mel);
 end

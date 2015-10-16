@@ -1,11 +1,15 @@
-%DEMO_FILTERBANKS  CQT and ERBLET filterbanks
+%DEMO_FILTERBANKS  CQT, ERBLET and AUDLET filterbanks
 %
-%   This demo shows CQT (Constant Quality Transform) and ERBLET (Equivalent
-%   Rectangular Bandwidth -let transform) representations acting as
-%   filterbanks  with high and low redundancies. Filterbanks are build such
-%   that the painless condition is always satified. Real input signal and 
-%   filters covering only the positive frequency range are used. The 
-%   redundancy is calculated as a ratio of the number of (complex) 
+%   This demo shows CQT (Constant Quality Transform), ERBLET (Equivalent
+%   Rectangular Bandwidth -let transform), and AUDLET (Auditory -let) 
+%   representations acting as filterbanks  with high and low redundancies.
+%   Note that ERBLET and AUDLET are similar concepts. The main difference
+%   is that ERBlet uses only the perceptual ERB scale while AUDlet allows
+%   for various perceptual scales like Bark or Mel scales. In short,
+%   ERBFILTERS is a wrapper of AUDFILTERS for the ERB scale. 
+%   Filterbanks are build such that the painless condition is always satisfied.
+%   Real input signal and filters covering only the positive frequency range 
+%   are used. The redundancy is calculated as a ratio of the number of (complex) 
 %   coefficients and the input length times two to account for the storage
 %   requirements of complex numbers.
 %
@@ -34,8 +38,18 @@
 %      Both representations consist of 280 channels (32 channels per octave,
 %      frequency range 50Hz-20kHz). The high-redundany represention is on 
 %      the top and the low-redundancy repr. is on the bottom.
+% 
+%      AUDLET representations
 %
-%   See also: erbfilters, cqtfilters
+%      The first representation consists of 72 channels BARKlet FB (3 filters
+%      per Bark in the frequency range 100Hz-16kHz using fractional subsampling.
+%      The second representation consists of 40 channels MELlet FB using
+%      uniform subsampling and triangular windows.
+%
+%   .. figure::
+
+%
+%   See also: audfilters, erbfilters, cqtfilters
 
 % Read the test signal and crop it to the range of interest
 [f,fs]=gspi;
@@ -57,6 +71,7 @@ erb1_redundancy = 2*sum(1./a);
 
 % Plot the representation
 plotfilterbank(c1,a,fc,fs,dr,'audtick');
+title('ERBLET representations')
 
 subplot(2,1,2);
 
@@ -91,6 +106,7 @@ cqt1_redundancy = 2*sum(1./a);
 
 % Plot the representation
 plotfilterbank(c3,a,fc,fs,'dynrange',dr);
+title('CQT representations')
 
 subplot(2,1,2);
 
@@ -109,4 +125,44 @@ plotfilterbank(c4,a,fc,fs,'dynrange',dr);
 
 fprintf('CQT high redundancy %.2f, low redundany %.2f.\n',...
         cqt1_redundancy,cqt2_redundancy);
+    
+% Finally two settings of AUDFILTERS are illustrated, namely an analysis on
+% the Bark scale (top) and one on the Mel scale using triangular windows (bottom).
+
+figure(3);
+subplot(2,1,1);
+
+% Create a Barklet FB with 3 filters per Bark in the
+% frequency range 100Hz-16kHz using fractional subsampling.
+[g,a,fc]=audfilters(fs,numel(f),100,16000,'bark','fractional','spacing',1/3);
+
+% Compute the filterbank response
+c5=filterbank(f,{'realdual',g},a);
+
+% Compute redundancy
+bark_redundancy = 2*sum(a(:,2)./a(:,1));
+
+% Plot the representation
+plotfilterbank(c5,a,fc,fs,dr,'audtick');
+title('AUDLET representations: Bark scale (top) and Mel scale (bottom)')
+
+fprintf('BARKLET redundancy %.2f\n',bark_redundancy);
+
+subplot(2,1,2);
+% Create a MELlet FB with 40 filters and a triangular window using 
+% uniform subsampling.
+[g,a,fc]=audfilters(fs,numel(f),'mel','uniform','M',40,'tria');
+
+% Compute the filterbank response
+c6=filterbank(f,{'realdual',g},a);
+
+% Compute redundancy
+mel_redundancy = 2*sum(a.^-1);
+
+% Plot the representation
+plotfilterbank(c6,a,fc,fs,dr,'audtick');
+title('MELlet representation')
+
+fprintf('MELLET redundancy %.2f\n',mel_redundancy);
+
 

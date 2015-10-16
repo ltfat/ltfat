@@ -221,8 +221,9 @@ else
         end;
         M2=M/2+1;
     end;
-
 end;
+% The spacing will be used below to compute "virtual" filters...
+spac = (freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/M2;
 
 % Compute center frequencies on the perceptual scale
 fc=audspace(flow,fhigh,M2,flags.audscale).';
@@ -268,6 +269,12 @@ if flags.do_symmetric
         for k = 2:M2-1
             fsupp(k) = (fc(k+1)-fc(k-1));
         end
+        if fhigh < fs/2
+            % Correct the bandwidth of the last filter positioned at fhigh
+            % Frequency of the (virtual) filter positioned at fhigh+spac
+            f1 = min(fs/2,audtofreq(freqtoaud(fhigh,flags.audscale)+spac,flags.audscale));
+            fsupp(M2-1)= f1-fc(end-1);
+        end
         fsupp(M2) = 2*(fs/2-fc(M2-1));
     end
     
@@ -296,7 +303,15 @@ for ii = 1:numel(fsupp)
 end
 
 % Find suitable channel subsampling rates
+% If flow > 0 and fhigh < fs/2, then do not apply redmul to channels 1 and M2
+% as it produces unecessarily badly conditioned frames!
 aprecise=fs./fsupp/kv.redmul;
+if flow > 0
+    aprecise(1)=aprecise(1)*kv.redmul;
+end
+if fhigh < fs/2
+    aprecise(end)=aprecise(end)*kv.redmul;
+end
 aprecise=aprecise(:);
 
 %% Compute the downsampling rate
@@ -359,14 +374,19 @@ if flags.do_symmetric
     % This is actually much faster than the vectorized call.
     g = cell(1,numel(fc));
     if flow > 0
-        % Frequency of the filter below flow on the perceptual scale
-        f0 = audtofreq(freqtoaud(flow,flags.audscale)-kv.spacing,flags.audscale);
-        cb0 = audfiltbw(f0,flags.audscale);
-        fsupp0 = round(cb0/winbw*kv.bwmul);
-        % Compute the filter
-        g{1} = blfilter({flags.wintype,'taper',fsupp0/fsupp(1)},fsupp(1),f0,'fs',fs,'scal',scal(1),...
+        % Frequency of the filter that would be positioned left below flow on the perceptual scale
+        f0 = max(0,audtofreq(freqtoaud(flow,flags.audscale)-spac,flags.audscale));
+        if flags.do_erb || flags.do_erb83 || flags.do_bark
+            cb0 = audfiltbw(f0,flags.audscale);
+            fsupp0 = round(cb0/winbw*kv.bwmul);
+        else
+            f00 = audtofreq(freqtoaud(flow,flags.audscale)-2*spac,flags.audscale);
+            fsupp0= fc(2)-f00;
+        end
+        % Compute the filter amd middle-pad it to cover the full frequency
+        % range not covered by the filter bank
+        g{1} = blfilter({flags.wintype,'taper',fsupp0/(2*fsupp(1))},fsupp(1),fc(1),'fs',fs,'scal',scal(1),...
                    'inf','min_win',kv.min_win);   
-        % Done?!
     else
         g{1}=blfilter(flags.wintype,fsupp(1),fc(1),'fs',fs,'scal',scal(1),...
                    'inf','min_win',kv.min_win);
@@ -376,14 +396,19 @@ if flags.do_symmetric
                    'inf','min_win',kv.min_win);
     end
     if fhigh < fs/2
-        % Frequency of the filter right next above fhigh on the perceptual scale
-        f0 = audtofreq(freqtoaud(fhigh,flags.audscale)+kv.spacing,flags.audscale);
-        cb0 = audfiltbw(f0,flags.audscale);
-        fsupp0 = round(cb0/winbw*kv.bwmul);
-        % Compute the filter
-        g{end} = blfilter({flags.wintype,'taper',fsupp0/fsupp(end)},fsupp(end),f0,'fs',fs,'scal',scal(end),...
+        % Do the same on the high frequency side, frequency of the filter right next
+%         above fhigh on the perceptual scale
+        f0 = min(fs/2,audtofreq(freqtoaud(fhigh,flags.audscale)+spac,flags.audscale));
+        if flags.do_erb || flags.do_erb83 || flags.do_bark
+            cb0 = audfiltbw(f0,flags.audscale);
+            fsupp0 = round(cb0/winbw*kv.bwmul);
+        else
+            f1 = audtofreq(freqtoaud(fhigh,flags.audscale)+2*spac,flags.audscale);
+            fsupp0= f1-fc(end-1);
+        end
+        % Compute the filter and middle-pad it
+        g{end} = blfilter({flags.wintype,'taper',fsupp0/(2*fsupp(end))},fsupp(end),fc(end),'fs',fs,'scal',scal(end),...
                    'inf','min_win',kv.min_win);
-        % Done?!
     else
         g{end}=blfilter(flags.wintype,fsupp(end),fc(end),'fs',fs,'scal',scal(end),...
                    'inf','min_win',kv.min_win);
