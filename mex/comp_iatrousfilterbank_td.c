@@ -29,9 +29,6 @@
     e.g. use mxGetData intead of mxGetPr (or recast to LTFAT_TYPE*)
          mxCreateNumericArray with macro LTFAT_MX_CLASSID instead of createDoubleMatrix
  */
-#include "mex.h"
-#include "math.h"
-#include "ltfat.h"
 #include "ltfat_types.h"
 /*
 %COMP_IATROUSFILTERBANK_TD   Synthesis Uniform filterbank by conv2

@@ -68,7 +68,7 @@ function [cr,repos,Lc]=filterbanksynchrosqueeze(c,tgrad,var)
 %   AUTHOR : Nicki Holighaus.
 
 % Sanity checks
-complainif_notenoughargs(nargin,3,'FILTERBANKREASSIGN');
+complainif_notenoughargs(nargin,3,'FILTERBANKSYNCHROSQUEEZE');
 
 if isempty(c) || ~iscell(c) 
     error('%s: s should be a nonempty cell array.',upper(mfilename));

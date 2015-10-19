@@ -16,9 +16,6 @@
 
 #include "ltfat_mex_template_helper.h"
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "mex.h"
-#include "math.h"
-#include "ltfat.h"
 #include "ltfat_types.h"
 
 /*

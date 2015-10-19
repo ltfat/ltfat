@@ -63,8 +63,6 @@ function fidx=wavsave(d,fs,filename,mode,nskip,mask)
 %   Note: WAVSAVE will create an 16-bit PCM, auto-scaled wave file by default.
 %   For stereo data, d(:,1) is the left channel and d(:,2) the right
 %
-%   See also WAVLOAD
-
 %   *** Note on scaling ***
 %   If we want to scale signal values in the range +-1 to an integer in the
 %   range [-128,127] then we have four plausible choices corresponding to

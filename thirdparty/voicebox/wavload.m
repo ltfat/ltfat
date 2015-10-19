@@ -59,8 +59,6 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %   0=FL, 1=FR, 2=FC, 3=W, 4=BL, 5=BR, 6=FLC, 7=FRC, 8=BC, 9=SL, 10=SR, 11=TC, 12=TFL, 13=TFC, 14=TFR, 15=TBL, 16=TBC, 17=TBR
 %   where F=front, L=left, C=centre, W=woofer (low frequency), B=back, LC=left of centre, RC=right of centre, S=side, T=top
 %   
-%   See also WAVSAVE
-%
 %   *** Note on scaling ***
 %   If we want to scale signal values in the range +-1 to an integer in the
 %   range [-128,127] then we have four plausible choices corresponding to
@@ -69,7 +67,7 @@ function [y,fs,wmode,fidx]=wavload(filename,mode,nmax,nskip)
 %   For forward scaling: (c) and (d) cause clipping on inputs of +1.
 %   For reverse scaling: (a) and (b) can generate output values < -1.
 %   Any of these scalings can be selected via the mode input: (a) 'o', (b) default, (c) 'on', (d) 'n'
-
+%
 %	   Copyright (C) Mike Brookes 1998-2011
 %      Version: $Id: readwav.m 713 2011-10-16 14:45:43Z dmb $
 %

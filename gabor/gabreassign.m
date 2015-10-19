@@ -49,18 +49,17 @@ if ~isequal(size(s),size(tgrad),size(fgrad))
 end
 
 % Check if any argument is not real
-if any(cellfun(@(el) ~isreal(el),{s,tgrad,fgrad}))
-   error('%s: s, tgrad, fgrad must all be real.',...
+if any(cellfun(@(el) ~isreal(el),{tgrad,fgrad}))
+   error('%s: tgrad, fgrad must be real.',...
           upper(mfilename));
 end
 
-if any(s<0)
-    error('%s: s must contain positive numbers only.',...
-        upper(mfilename));
-end
+% if any(s<0)
+%     error('%s: s must contain positive numbers only.',...
+%         upper(mfilename));
+% end
 
 sr=comp_gabreassign(s,tgrad,fgrad,a);
-
 
 
 % The following code is currently not actived. It calculates the

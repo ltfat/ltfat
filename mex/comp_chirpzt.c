@@ -24,10 +24,10 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     mwSize K = (mwSize) mxGetScalar(prhs[1]);
     double deltao = mxGetScalar(prhs[2]);
     double o = mxGetScalar(prhs[3]);
-    const LTFAT_TYPE* fPtr = (const LTFAT_TYPE*) mxGetData(prhs[0]);
+    const LTFAT_TYPE* fPtr = mxGetData(prhs[0]);
 
     plhs[0] = ltfatCreateMatrix(K, W, LTFAT_MX_CLASSID, mxCOMPLEX);
-    LTFAT_REAL _Complex* cPtr = (LTFAT_REAL _Complex*) mxGetPr(plhs[0]);
+    LTFAT_COMPLEX* cPtr = mxGetData(plhs[0]);
 
     LTFAT_NAME(chzt)(fPtr, L, W, K, deltao, o, cPtr);
     // Alternative implementation
