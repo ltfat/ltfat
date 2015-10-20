@@ -6,6 +6,7 @@
 %    AMBIGUITYFUNCTION   -  Ambiguity function
 %    WIGNERVILLEDIST     -  Wigner-Ville distribution
 %    DRIHACZEKDIST       -  Discrete Rihaczek distribution
+%    QUADTFDIST          -  Generic Quadratic distribution
 %
 %  Plots
 %    PLOTQUADTFDIST      - Plot quadratic time-frequency distribution
