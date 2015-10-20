@@ -64,9 +64,11 @@ if ischar(g)
    case firwinnames
     [g,firinfo]=firwin(winname,M,'2');
     info.isfir=1;
-    if firinfo.issqpu
-      info.istight=1;
-    end;
+    if isrect
+        if firinfo.issqpu && test_isfirtight(g,a,M)
+            info.istight=1;
+        end;
+    end
    otherwise
     error('%s: Unknown window type: %s',callfun,winname);
   end;
@@ -114,8 +116,13 @@ if iscell(g)
     end
     info.istight=1;
    case firwinnames
-    g=firwin(winname,g{2},'energy',g{3:end});
+    [g,firinfo]=firwin(winname,g{2},'energy',g{3:end});
     info.isfir=1;
+    if isrect
+        if firinfo.issqpu && test_isfirtight(g,a,M)
+            info.istight=1;
+        end;
+    end
    otherwise
     error('Unsupported window type.');
   end;
@@ -162,6 +169,28 @@ function isfir=test_isfir(gorig,M)
       else
          isfir = 0;
       end
+      
+function istight=test_isfirtight(g,a,M)
+    % Tests whether the Gabor system given by *a*, *M* and the FIR window
+    % *g* forms a tight frame by computing *a* elements of the diagonal of 
+    % the frame operator.
+    if numel(g) > M 
+        % There is still a small probability that the system is tight
+        % or at least tight numerically. We have no cheap way how to
+        % figure it out.
+        istight = 0;
+        return;
+    end
+    
+    Lsmallest = lcm(a,M);
+    Nsmallest = Lsmallest/a;
+    glong = fir2long(g,Lsmallest).^2;
+    
+    gdiag = sum(reshape(glong,a,Nsmallest),2);
+    istight = all(abs(gdiag(1)-gdiag)<1e-14);
+    
+
+
 
 
 
