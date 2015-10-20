@@ -39,6 +39,8 @@
 %      frequency range 50Hz-20kHz). The high-redundany represention is on 
 %      the top and the low-redundancy repr. is on the bottom.
 % 
+%   .. figure::
+%
 %      AUDLET representations
 %
 %      The first representation consists of 72 channels BARKlet FB (3 filters
@@ -46,8 +48,6 @@
 %      The second representation consists of 40 channels MELlet FB using
 %      uniform subsampling and triangular windows.
 %
-%   .. figure::
-
 %
 %   See also: audfilters, erbfilters, cqtfilters
 

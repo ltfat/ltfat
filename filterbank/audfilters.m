@@ -39,8 +39,10 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   `[g,a,fc,L]=audfilters(fs,Ls,flow,figh)` constructs a set of filters that are
 %   equidistantly spaced between flow and fhigh. In that case two
 %   additional filters will be positioned at the 0 and Nyquist frequencies
-%   so as to cover the full spectrum. The values of 'flow' and 'fhigh' can
-%   also be specified using a key/value pair, see examples below.
+%   so as to cover the full spectrum. The values of *flow* and *fhigh* can
+%   be instead specified using a key/value pair as::
+%
+%       [g,a,fc,L]=audfilters(fs,Ls,...,'flow',flow,'fhigh',figh)
 %
 %   `[g,a,fc,L]=audfilters(...,'regsampling')` constructs a non-uniform
 %   filterbank with integer subsampling factors.
@@ -60,13 +62,6 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   and low redundancy at the same time are desirable.
 %
 %   `audfilters` accepts the following optional parameters:
-% 
-%     'flow',flow
-%     'fhigh',fhigh   Specify the minimum and maximum frequencies for the
-%                     perceptual analysis. In that case two additional filters
-%                     will be positioned at the 0 and Nyquist frequencies
-%                     so as to cover the full spectrum. 
-%   
 %
 %     'spacing',b     Specify the spacing in Ecritical bandwidth (ERB or Bark
 %                     depending on the scale) between the filters. Default value
