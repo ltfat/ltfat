@@ -7,8 +7,10 @@ Version 2.1.1 x/10  2015
 
     * New filterbank-generating function: audfilters
 
+    * New generic quadratic TF distribution function: quadtfdist
+
     * New functions for reading and writing wav files 
-      (since wavread and wavwrite were removed in Matlab 2015b): wavload, wavwrite
+      (since wavread and wavwrite were removed in Matlab 2015b): wavload, wavsave
       (taken from VOICEBOX http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html)
 
 	* Added 'nojava' flag to ltfatstart to optionally disable adding the 
