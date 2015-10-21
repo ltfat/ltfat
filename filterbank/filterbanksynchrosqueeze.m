@@ -51,11 +51,11 @@ function [cr,repos,Lc]=filterbanksynchrosqueeze(c,tgrad,var)
 %     [g,~,fc]=erbfilters(fs,L,'uniform','spacing',1/12,'warped');
 %     
 %     % Compute phase gradient
-%     [tgrad,~,cs]=filterbankphasegrad(f,g,1);
+%     [tgrad,~,~,c]=filterbankphasegrad(f,g,1);
 %     % Do the reassignment
-%     sr=filterbanksynchrosqueeze(cs,tgrad,cent_freqs(fs,fc));
+%     sr=filterbanksynchrosqueeze(c,tgrad,cent_freqs(fs,fc));
 %     figure(1); subplot(211);
-%     plotfilterbank(cs,1,fc,fs,60);
+%     plotfilterbank(c,1,fc,fs,60);
 %     title('ERBlet spectrogram of 3 chirps');
 %     subplot(212);  
 %     plotfilterbank(sr,1,fc,fs,60);
