@@ -1,6 +1,7 @@
-#define TYPEDEPARGS 0, 1, 2
+#define TYPEDEPARGS 0
+#define MATCHEDARGS 1, 2
 #define SINGLEARGS
-#define REALARGS
+#define COMPLEXINDEPENDENT
 #define OCTFILENAME comp_gabreassign // change to filename
 #define OCTFILEHELP "Computes spreading permutation.\n\
                      Usage: sr=comp_gabreassign(s,itime,ifreq,a);\n\
@@ -30,6 +31,28 @@ fwd_gabreassign(const float *s, const float *tgrad, const float *fgrad,
     gabreassign_s(s, tgrad, fgrad, L, W, a, M, sr);
 }
 
+static inline void
+fwd_gabreassign(const Complex *s, const double *tgrad, const double *fgrad,
+                const octave_idx_type L, const octave_idx_type W,
+                const octave_idx_type a, const octave_idx_type M,
+                Complex *sr)
+{
+    gabreassign_cd(reinterpret_cast<const fftw_complex*>(s),
+                   tgrad, fgrad, L, W, a, M,
+                   reinterpret_cast<fftw_complex*>(sr));
+}
+
+static inline void
+fwd_gabreassign(const FloatComplex *s, const float *tgrad, const float *fgrad,
+                const octave_idx_type L, const octave_idx_type W,
+                const octave_idx_type a, const octave_idx_type M,
+                FloatComplex *sr)
+{
+    gabreassign_cs(reinterpret_cast<const fftwf_complex*>(s),
+                   tgrad, fgrad, L, W, a, M,
+                   reinterpret_cast<fftwf_complex*>(sr));
+}
+
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list
 octFunction(const octave_value_list& args, int nargout)
@@ -37,8 +60,8 @@ octFunction(const octave_value_list& args, int nargout)
     DEBUGINFO;
 
     MArray<LTFAT_TYPE> s = ltfatOctArray<LTFAT_TYPE>(args(0));
-    MArray<LTFAT_TYPE> tgrad = ltfatOctArray<LTFAT_TYPE>(args(1));
-    MArray<LTFAT_TYPE> fgrad = ltfatOctArray<LTFAT_TYPE>(args(2));
+    MArray<LTFAT_REAL> tgrad = ltfatOctArray<LTFAT_REAL>(args(1));
+    MArray<LTFAT_REAL> fgrad = ltfatOctArray<LTFAT_REAL>(args(2));
     const octave_idx_type a  = args(3).int_value();
     const octave_idx_type M  = s.rows();
     const octave_idx_type N  = s.columns();

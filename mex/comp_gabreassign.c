@@ -22,8 +22,9 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
                               int UNUSED(nrhs), const mxArray *prhs[] )
 {
    mwSignedIndex a, M, N, L;
-   const LTFAT_REAL *s,*tgrad, *fgrad;
-   LTFAT_REAL *sr;
+   const LTFAT_REAL *tgrad, *fgrad;
+   const LTFAT_TYPE *s;
+   LTFAT_TYPE *sr;
 
    // Get matrix dimensions.
    M = mxGetM(prhs[0]);
