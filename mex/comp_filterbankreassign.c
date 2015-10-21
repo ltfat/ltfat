@@ -3,9 +3,9 @@
 
 #define ISNARGINEQ 5
 #define TYPEDEPARGS 0
+#define MATCHEDARGS 1, 2
 #define SINGLEARGS
 #define COMPLEXINDEPENDENT
-#define MATCHEDARGS 0, 1, 2
 
 #endif /* _LTFAT_MEX_FILE */
 
