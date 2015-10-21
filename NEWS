@@ -1,3 +1,19 @@
+Version 2.1.1
+
+* New function for computing higher order phase derivatives: gabphasederiv
+
+* New function doing the adjustable reassignment: gabreassignadjust
+
+* New function for the Gabor transform phase reconstruction: constructphase, constructphasereal
+
+* New filterbank-generating function: audfilters
+
+* New generic quadratic TF distribution function: quadtfdist
+
+* New functions for reading and writing wav files
+  (since wavread and wavwrite were removed in Matlab 2015b): wavload, wavsave
+  (taken from VOICEBOX http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.html)
+
 Version 2.1.0
 
 * New general filterbank generating routine: warpedfilters
