@@ -1,16 +1,17 @@
-function p = quadtfdist(f, q);
+function p = quadtfdist(f, q)
 %QUADTFDIST Quadratic time-frequency distribution
 %   Usage p = quadtfdist(f, q);
 %
 %   Input parameters:
-%         f      : Input vector
-%	  q	 : Kernel
+%         f  : Input vector:w
+%         q  : Kernel
 %
 %   Output parameters:
-%         p      : Quadratic time-frequency distribution
+%         p  : Quadratic time-frequency distribution
 % 
-% For an input vector of length L, the kernel should be a L x L matrix.
-% `quadtfdist(f, q);` computes a discrete quadratic time-frequency distribution. 
+%   For an input vector of length L, the kernel should be a L x L matrix.
+%   `quadtfdist(f, q);` computes a discrete quadratic time-frequency 
+%   distribution. 
 %
 
 % AUTHOR: Jordy van Velthoven
