@@ -22,6 +22,7 @@
 %     DEMO_GABMULAPPR       - Approx. of time-varying system.
 %     DEMO_BPFRAMEMUL       - A Gabor multiplier as a time-varying bandpass filter.
 %     DEMO_FRSYNABS         - Synthetic spectrogram iterative reconstruction.
+%     DEMO_FILTERBANKSYNCHROSQUEEZE - Reconstruction from synchrosqueezed representation.
 %
 %   Aspects of particular functions
 %     DEMO_NSDGT            - Non-stationary Gabor systems
