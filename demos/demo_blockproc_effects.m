@@ -20,7 +20,7 @@ function demo_blockproc_effects(source,varargin) %RUNASSCRIPT
 %         that the phase of DGT coefficients is substituted by phase
 %         of DGT coefficients of the background signal. 
 %         File beat.wav (at 44,1kHz) (any sound will do) is expected to 
-%         be in the search path, oherwise the effect will fail.   
+%         be in the search path, oherwise the effect will be disabled.   
 %
 %   This demo was created for the Lange Nacht der Forschung 4.4.2014 event.
 %   
@@ -48,7 +48,7 @@ try
    cidx = 1;
    haveWav = 1;
 catch
-   warning('beat.wav not found. morphing effect wont work.'); 
+   warning('beat.wav not found. morphing effect is disabled.');
 end
 
 % Plain analysis params
@@ -89,13 +89,20 @@ phaseCorr2 = exp(abs(bsxfun(@minus,scaleTable2,(1:size(scaleTable2,1))'))./M*2*p
 fola = [];
 phasecorrVect = ones(Mhalf,1,'single');
 
-
+if haveWav
 % Basic Control pannel (Java object)
 parg = {
         {'GdB','Gain',-20,20,0,21},...
         {'Eff','Effect',0,4,0,5},...
         {'Shi','Shift',-shiftRange,shiftRange,0,2*shiftRange+1}
        };
+else
+parg = {
+        {'GdB','Gain',-20,20,0,21},...
+        {'Eff','Effect',0,3,0,4},...
+        {'Shi','Shift',-shiftRange,shiftRange,0,2*shiftRange+1}
+       };
+end
 
 p = blockpanel(parg);
 

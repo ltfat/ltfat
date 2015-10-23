@@ -1,4 +1,7 @@
+function test_failed=test_audfilters()
 % Testing script for audfilters
+
+test_failed = 0;
 
 [f,fs]=greasy;  % Get the test signal
 Ls=length(f);

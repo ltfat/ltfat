@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd {INST}
-# We do not need any of these.
+# We do not need any of these. They only work in Matlab
 rm -Rf mulaclab
 rm -Rf thirdparty/GPC
 rm -Rf thirdparty/PolygonClip
@@ -9,7 +9,8 @@ rm mulaclab.m
 # Move these to the package top level
 mv src ..
 mv oct ..
-rm -Rf mex # We need to keep the mex subdir. as we use some of the mex files
+rm -Rf mex 
+# We need to keep the mex subdir. as we use some of the mex files
 #mv mex ..
 mv lib ..
 
@@ -27,9 +28,11 @@ mv private/test_all_ltfat.m .
 rm -rf testing
 rm -rf reference
 
+# the thirdparty dir might contain Octave scripts as well as source code of oct and mex files
 mkdir ../thirdparty
-mv thirdparty/Playrec ../thirdparty/Playrec
-rm -Rf thirdparty
+mv thirdparty/Playrec ../thirdparty
+# ./thirdparty is still not empty
+# rm -Rf thirdparty
 
 # Remove Unicode characters, makeinfo in Octave cannot currently handle them
 find -name "*.m" | xargs -n1 sed -i s/ø/oe/g
