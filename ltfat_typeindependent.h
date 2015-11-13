@@ -267,7 +267,7 @@ LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
 
 LTFAT_EXTERN LTFAT_NAME(convsub_fftbl_plan)
 LTFAT_NAME(convsub_fftbl_init_no_ifft_plan)( const ltfatInt L, const ltfatInt Gl,
-                                             const ltfatInt W, const double a);
+        const ltfatInt W, const double a);
 
 LTFAT_EXTERN void
 LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p);
@@ -390,12 +390,30 @@ LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                     const LTFAT_REAL tol, LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
+LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
+                          const LTFAT_REAL *tgrad,
+                          const LTFAT_REAL *fgrad,
+                          const int* mask,
+                          const ltfatInt a, const ltfatInt M,
+                          const ltfatInt L, const ltfatInt W,
+                          LTFAT_REAL tol, LTFAT_REAL *phase);
+
+LTFAT_EXTERN void
 LTFAT_NAME(heapintreal)(const LTFAT_REAL *s,
                         const LTFAT_REAL *tgrad,
                         const LTFAT_REAL *fgrad,
                         const ltfatInt a, const ltfatInt M,
                         const ltfatInt L, const ltfatInt W,
                         const LTFAT_REAL tol, LTFAT_REAL *phase);
+
+LTFAT_EXTERN void
+LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
+                              const LTFAT_REAL * tgrad,
+                              const LTFAT_REAL * fgrad,
+                              const int* mask,
+                              const ltfatInt a, const ltfatInt M,
+                              const ltfatInt L, const ltfatInt W,
+                              LTFAT_REAL tol, LTFAT_REAL * phase);
 
 LTFAT_EXTERN void
 LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
@@ -583,7 +601,7 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan,
-                               const LTFAT_REAL *f, const ltfatInt L, 
+                               const LTFAT_REAL *f, const ltfatInt L,
                                const ltfatInt W, LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void

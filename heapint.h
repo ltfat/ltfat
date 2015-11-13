@@ -10,7 +10,7 @@ struct LTFAT_NAME(heap)
     ltfatInt *h;
     ltfatInt heapsize;
     ltfatInt totalheapsize;
-    const LTFAT_REAL *s;
+    LTFAT_REAL *s;
 };
 
 struct LTFAT_NAME(heapinttask)
@@ -32,12 +32,22 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
                           ltfatInt a, ltfatInt M, ltfatInt L,
                           LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
 
+void
+LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
+                          const ltfatInt M, const ltfatInt N,
+                          int * donemask);
+
 inline void
 LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *heap,
-                       const struct LTFAT_NAME(heapinttask) *heaptask,
-                       const ltfatInt w, LTFAT_REAL* phase);
+                           const struct LTFAT_NAME(heapinttask) *heaptask,
+                           const ltfatInt w, LTFAT_REAL* phase);
 
 void
 LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
                               ltfatInt a, ltfatInt M, ltfatInt L,
                               LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
+
+void
+LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
+                              const ltfatInt M, const ltfatInt N,
+                              int * donemask);
