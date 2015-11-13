@@ -43,7 +43,8 @@ complainif_notposint(M,'M',thismfilename);
 
 definput.keyvals.tol=1e-10;
 definput.keyvals.mask=[];
-[~,~,tol,mask]=ltfatarghelper({'tol','mask'},definput,varargin);
+definput.flags.phase={'freqinv','timeinv'};
+[flags,~,tol,mask]=ltfatarghelper({'tol','mask'},definput,varargin);
 
 if ~isnumeric(s) 
     error('%s: *s* must be numeric.',thismfilename);
@@ -110,14 +111,14 @@ absthr = max(abss(:))*tol;
 % Build the phase
 if isempty(mask)
     % s is real and positive
-    newphase=comp_heapintreal(abss,tgrad,fgrad,a,M,tol);
+    newphase=comp_heapintreal(abss,tgrad,fgrad,a,M,tol,flags.do_timeinv);
 
     % Set phase of small coefficient to random values
     toosmallidx = abss<absthr;
     zerono = numel(find(toosmallidx));
     newphase(toosmallidx) = rand(zerono,1)*2*pi;
 else
-    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol);
+    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol,flags.do_timeinv);
     % Set phase of small coefficient to random values
     % but just in the missing part
     missingidx = find(mask==0);

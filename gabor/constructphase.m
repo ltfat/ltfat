@@ -39,11 +39,11 @@ function [c,newphase,tgrad,fgrad]=constructphase(s,g,a,varargin)
 
 thismfilename = upper(mfilename);
 complainif_notposint(a,'a',thismfilename);
-complainif_notposint(M,'M',thismfilename);
 
 definput.keyvals.tol=1e-10;
 definput.keyvals.mask=[];
-[~,~,tol,mask]=ltfatarghelper({'tol','mask'},definput,varargin);
+definput.flags.phase={'freqinv','timeinv'};
+[flags,~,tol,mask]=ltfatarghelper({'tol','mask'},definput,varargin);
 
 if isempty(mask) 
     if ~isreal(s) || any(s(:)<0)
@@ -60,25 +60,25 @@ else
     mask(mask~=0) = 1;
 end
 
-if ~iscalar(tol)
+if ~isscalar(tol)
     error('%s: tol must be scalar.',thismfilename);
 end
 
 abss = abs(s);
-% Compute phase gradients, check parameteres
+% Compute phase gradient, check parameteres
 [tgrad,fgrad] = gabphasegrad('abs',abss,g,a,2);
 
 absthr = max(abss(:))*tol;
 
 if isempty(mask)
     % Build the phase (calling a MEX file)
-    newphase=comp_heapint(abss,tgrad,fgrad,a,tol);
+    newphase=comp_heapint(abss,tgrad,fgrad,a,tol,flags.do_timeinv);
     % Set phase of the coefficients below tol to random values
     toosmallidx = abss<absthr;
     zerono = numel(find(toosmallidx));
     newphase(toosmallidx) = rand(zerono,1)*2*pi;
 else
-    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol);
+    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol,flags.do_timeinv);
     % Set phase of small coefficient to random values
     % but just in the missing part
     missingidx = find(mask==0);

@@ -387,7 +387,8 @@ LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                     const LTFAT_REAL *fgrad,
                     const ltfatInt a, const ltfatInt M,
                     const ltfatInt L, const ltfatInt W,
-                    const LTFAT_REAL tol, LTFAT_REAL *phase);
+                    const LTFAT_REAL tol, dgt_phasetype phasetype,
+                    LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
 LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
@@ -396,7 +397,8 @@ LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
                           const int* mask,
                           const ltfatInt a, const ltfatInt M,
                           const ltfatInt L, const ltfatInt W,
-                          LTFAT_REAL tol, LTFAT_REAL *phase);
+                          LTFAT_REAL tol, dgt_phasetype phasetype,
+                          LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
 LTFAT_NAME(heapintreal)(const LTFAT_REAL *s,
@@ -404,7 +406,8 @@ LTFAT_NAME(heapintreal)(const LTFAT_REAL *s,
                         const LTFAT_REAL *fgrad,
                         const ltfatInt a, const ltfatInt M,
                         const ltfatInt L, const ltfatInt W,
-                        const LTFAT_REAL tol, LTFAT_REAL *phase);
+                        const LTFAT_REAL tol, dgt_phasetype phasetype,
+                        LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
 LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
@@ -413,7 +416,8 @@ LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
                               const int* mask,
                               const ltfatInt a, const ltfatInt M,
                               const ltfatInt L, const ltfatInt W,
-                              LTFAT_REAL tol, LTFAT_REAL * phase);
+                              LTFAT_REAL tol, dgt_phasetype phasetype,
+                              LTFAT_REAL * phase);
 
 LTFAT_EXTERN void
 LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],

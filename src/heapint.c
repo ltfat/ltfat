@@ -10,9 +10,8 @@
 
 
 
-
-LTFAT_EXTERN
-void LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
+    LTFAT_EXTERN void
+LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
 {
     ltfatInt pos, pos2, swap;
 
@@ -21,8 +20,8 @@ void LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
     {
         (h->totalheapsize) *= 2;
         h->h = ltfat_realloc_and_copy(h->h,
-                                      h->totalheapsize * sizeof * h->h / 2,
-                                      h->totalheapsize * sizeof * h->h);
+                h->totalheapsize * sizeof * h->h / 2,
+                h->totalheapsize * sizeof * h->h);
     }
 
     pos = h->heapsize;
@@ -48,8 +47,8 @@ void LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
     }
 }
 
-LTFAT_EXTERN
-ltfatInt LTFAT_NAME(heap_delete)(struct LTFAT_NAME(heap) *h)
+    LTFAT_EXTERN ltfatInt
+LTFAT_NAME(heap_delete)(struct LTFAT_NAME(heap) *h)
 {
 
     ltfatInt pos, maxchildpos, swap, key;
@@ -112,9 +111,9 @@ ltfatInt LTFAT_NAME(heap_delete)(struct LTFAT_NAME(heap) *h)
 
 
 void LTFAT_NAME(trapezheap)(struct LTFAT_NAME(heap) *h,
-                            const struct LTFAT_NAME(heapinttask) *heaptask,
-                            const ltfatInt w,
-                            LTFAT_REAL* phase)
+        const struct LTFAT_NAME(heapinttask) *heaptask,
+        const ltfatInt w,
+        LTFAT_REAL* phase)
 {
     const ltfatInt M = heaptask->M;
     const ltfatInt N = heaptask->N;
@@ -163,13 +162,13 @@ void LTFAT_NAME(trapezheap)(struct LTFAT_NAME(heap) *h,
     }
 }
 
-LTFAT_EXTERN
+    LTFAT_EXTERN
 void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
-                         const LTFAT_REAL *tgrad,
-                         const LTFAT_REAL *fgrad,
-                         const ltfatInt a, const ltfatInt M,
-                         const ltfatInt L, const ltfatInt W,
-                         LTFAT_REAL tol, LTFAT_REAL *phase)
+        const LTFAT_REAL *tgrad,
+        const LTFAT_REAL *fgrad,
+        const ltfatInt a, const ltfatInt M,
+        const ltfatInt L, const ltfatInt W,
+        LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL *phase)
 {
 
     /* Declarations */
@@ -200,7 +199,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
-    LTFAT_NAME(gradsamptorad)(tgrad, fgrad, a, M, L, tgradw, fgradw);
+    LTFAT_NAME(gradsamptorad)(tgrad, fgrad, a, M, L, phasetype, tgradw, fgradw);
 
     /* We will start intergration from the biffest coefficient */
     LTFAT_NAME_REAL(findmaxinarray)(s, M * N, &maxs, &Imax);
@@ -262,10 +261,10 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL *s,
  *
  * */
 
-void
+    void
 LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
-                          ltfatInt a, ltfatInt M, ltfatInt L,
-                          LTFAT_REAL* tgradw, LTFAT_REAL* fgradw)
+        ltfatInt a, ltfatInt M, ltfatInt L, dgt_phasetype phasetype,
+        LTFAT_REAL* tgradw, LTFAT_REAL* fgradw)
 {
     ltfatInt N = L / a;
     ltfatInt b = L / M;
@@ -275,23 +274,28 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
     {
         for (ltfatInt ii = 0; ii < M; ii++)
         {
-            tgradw[ii + jj * M] =    a * tgrad[ii + jj * M] * sampToRadConst;
-            fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] + jj * a ) * sampToRadConst;
-            /* The following converts phase derivatives so that the result is time-invariant phase */
-            /* tgradw[ii + jj * M] =    a * (tgrad[ii + jj * M] + ii*b) * sampToRadConst; */
-            /* fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] ) * sampToRadConst; */
+            if(phasetype==FREQINV)
+            {
+                tgradw[ii + jj * M] =    a * tgrad[ii + jj * M] * sampToRadConst;
+                fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] + jj * a ) * sampToRadConst;
+            }
+            else if(phasetype==TIMEINV)
+            {
+                tgradw[ii + jj * M] =    a * (tgrad[ii + jj * M] + ii*b) * sampToRadConst;
+                fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] ) * sampToRadConst;
+            }
         }
     }
 }
 
-LTFAT_EXTERN
+    LTFAT_EXTERN
 void LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
-                               const LTFAT_REAL *tgrad,
-                               const LTFAT_REAL *fgrad,
-                               const int* mask,
-                               const ltfatInt a, const ltfatInt M,
-                               const ltfatInt L, const ltfatInt W,
-                               LTFAT_REAL tol, LTFAT_REAL *phase)
+        const LTFAT_REAL *tgrad,
+        const LTFAT_REAL *fgrad,
+        const int* mask,
+        const ltfatInt a, const ltfatInt M,
+        const ltfatInt L, const ltfatInt W,
+        LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL *phase)
 {
     /* Declarations */
     ltfatInt N, ii, Imax;
@@ -359,7 +363,7 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
-    LTFAT_NAME(gradsamptorad)(tgrad, fgrad, a, M, L, tgradw, fgradw);
+    LTFAT_NAME(gradsamptorad)(tgrad, fgrad, a, M, L, phasetype, tgradw, fgradw);
 
     while (1)
     {
@@ -383,10 +387,10 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
     LTFAT_SAFEFREEALL(tgradw, fgradw, donemask, h.h, h.s);
 }
 
-void
+    void
 LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
-                          const ltfatInt M, const ltfatInt N,
-                          int * donemask)
+        const ltfatInt M, const ltfatInt N,
+        int * donemask)
 {
     for (ltfatInt w = 0; w < M * N ; w++)
     {
@@ -415,10 +419,10 @@ LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
  *
  *
  * */
-void
+    void
 LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
-                              const ltfatInt M, const ltfatInt N,
-                              int * donemask)
+        const ltfatInt M, const ltfatInt N,
+        int * donemask)
 {
     ltfatInt M2 = M / 2 + 1;
 
@@ -446,10 +450,10 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
 
 
 
-void
+    void
 LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL * tgrad, const LTFAT_REAL * fgrad,
-                              ltfatInt a, ltfatInt M, ltfatInt L,
-                              LTFAT_REAL * tgradw, LTFAT_REAL * fgradw)
+        ltfatInt a, ltfatInt M, ltfatInt L, dgt_phasetype phasetype,
+        LTFAT_REAL * tgradw, LTFAT_REAL * fgradw)
 {
     ltfatInt N = L / a;
     ltfatInt b = L / M;
@@ -460,11 +464,16 @@ LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL * tgrad, const LTFAT_REAL * fgrad
     {
         for (ltfatInt ii = 0; ii < M2; ii++)
         {
-            tgradw[ii + jj * M2] =    a * tgrad[ii + jj * M2] * sampToRadConst;
-            fgradw[ii + jj * M2] =  - b * ( fgrad[ii + jj * M2] + jj * a ) * sampToRadConst;
-            /* The following converts phase derivatives so that the result is time-invariant phase */
-            /* tgradw[ii + jj * M] =    a * (tgrad[ii + jj * M] + ii*b) * sampToRadConst; */
-            /* fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] ) * sampToRadConst; */
+            if(phasetype == FREQINV)
+            {
+                tgradw[ii + jj * M2] =    a * tgrad[ii + jj * M2] * sampToRadConst;
+                fgradw[ii + jj * M2] =  - b * ( fgrad[ii + jj * M2] + jj * a ) * sampToRadConst;
+            }
+            else if(phasetype == TIMEINV)
+            {
+                tgradw[ii + jj * M2] =    a * (tgrad[ii + jj * M2] + ii*b) * sampToRadConst;
+                fgradw[ii + jj * M2] =  - b * ( fgrad[ii + jj * M2] ) * sampToRadConst;
+            }
         }
     }
 }
@@ -472,9 +481,9 @@ LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL * tgrad, const LTFAT_REAL * fgrad
 
 
 void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
-                                const struct LTFAT_NAME(heapinttask) *heaptask,
-                                const ltfatInt w,
-                                LTFAT_REAL * phase)
+        const struct LTFAT_NAME(heapinttask) *heaptask,
+        const ltfatInt w,
+        LTFAT_REAL * phase)
 {
     const ltfatInt M = heaptask->M;
     const ltfatInt N = heaptask->N;
@@ -528,13 +537,13 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
 }
 
 
-LTFAT_EXTERN
+    LTFAT_EXTERN
 void LTFAT_NAME(heapintreal)(const LTFAT_REAL * s,
-                             const LTFAT_REAL * tgrad,
-                             const LTFAT_REAL * fgrad,
-                             const ltfatInt a, const ltfatInt M,
-                             const ltfatInt L, const ltfatInt W,
-                             LTFAT_REAL tol, LTFAT_REAL * phase)
+        const LTFAT_REAL * tgrad,
+        const LTFAT_REAL * fgrad,
+        const ltfatInt a, const ltfatInt M,
+        const ltfatInt L, const ltfatInt W,
+        LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL * phase)
 {
 
     /* Declarations */
@@ -566,7 +575,7 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL * s,
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
-    LTFAT_NAME(gradsamptoradreal)(tgrad, fgrad, a, M, L, tgradw, fgradw);
+    LTFAT_NAME(gradsamptoradreal)(tgrad, fgrad, a, M, L, phasetype, tgradw, fgradw);
 
     /* We will start intergration from the biffest coefficient */
     LTFAT_NAME_REAL(findmaxinarray)(s, M2 * N, &maxs, &Imax);
@@ -618,14 +627,14 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL * s,
 }
 
 
-LTFAT_EXTERN
+    LTFAT_EXTERN
 void LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
-                                   const LTFAT_REAL * tgrad,
-                                   const LTFAT_REAL * fgrad,
-                                   const int* mask,
-                                   const ltfatInt a, const ltfatInt M,
-                                   const ltfatInt L, const ltfatInt W,
-                                   LTFAT_REAL tol, LTFAT_REAL * phase)
+        const LTFAT_REAL * tgrad,
+        const LTFAT_REAL * fgrad,
+        const int* mask,
+        const ltfatInt a, const ltfatInt M,
+        const ltfatInt L, const ltfatInt W,
+        LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL * phase)
 {
 
     /* Declarations */
@@ -697,7 +706,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
-    LTFAT_NAME(gradsamptoradreal)(tgrad, fgrad, a, M, L, tgradw, fgradw);
+    LTFAT_NAME(gradsamptoradreal)(tgrad, fgrad, a, M, L, phasetype, tgradw, fgradw);
 
     while (1)
     {

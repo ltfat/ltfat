@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 5
+#define ISNARGINEQ 6
 #define TYPEDEPARGS 0, 1, 2
 #define SINGLEARGS
 #define REALARGS
@@ -20,7 +20,7 @@
 void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
                               int UNUSED(nrhs), const mxArray *prhs[] )
 {
-    int a, M, N, L, W;
+    int a, M, N, L, W, phasetype;
     double tol;
 
     const LTFAT_REAL *s, *tgrad, *fgrad;
@@ -32,6 +32,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     fgrad = mxGetData(prhs[2]);
     a     = (int)mxGetScalar(prhs[3]);
     tol   = mxGetScalar(prhs[4]);
+    phasetype = (int)mxGetScalar(prhs[5]);
 
     // Get matrix dimensions.
     M = mxGetM(prhs[0]);
@@ -45,7 +46,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     // Get pointer to output
     phase = (LTFAT_REAL*) mxGetPr(plhs[0]);
 
-    LTFAT_NAME(heapint)(s, tgrad, fgrad, a, M, L, W, tol, phase);
+    LTFAT_NAME(heapint)(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */
 
