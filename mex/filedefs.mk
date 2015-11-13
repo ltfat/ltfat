@@ -16,6 +16,8 @@ MEXBASESAFE=\
 	comp_gabreassign  \
 	comp_heapint  \
 	comp_heapintreal  \
+	comp_maskedheapint  \
+	comp_maskedheapintreal  \
 	comp_isepdgt  \
 	comp_ifftreal  \
 	comp_iwfac \
