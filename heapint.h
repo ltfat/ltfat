@@ -22,6 +22,7 @@ struct LTFAT_NAME(heapinttask)
     int *donemask;
 };
 
+
 inline void
 LTFAT_NAME(trapezheap)(struct LTFAT_NAME(heap) *heap,
                        const struct LTFAT_NAME(heapinttask) *heaptask,
@@ -29,7 +30,7 @@ LTFAT_NAME(trapezheap)(struct LTFAT_NAME(heap) *heap,
 
 void
 LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
-                          ltfatInt a, ltfatInt M, ltfatInt L,
+                          ltfatInt a, ltfatInt M, ltfatInt L, dgt_phasetype phasetype,
                           LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
 
 void
@@ -44,7 +45,7 @@ LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *heap,
 
 void
 LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
-                              ltfatInt a, ltfatInt M, ltfatInt L,
+                              ltfatInt a, ltfatInt M, ltfatInt L, dgt_phasetype phasetype,
                               LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
 
 void
