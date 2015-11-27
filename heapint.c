@@ -9,7 +9,6 @@
 #define WESTFROMW(w,M,N)  (((w) - (M) + (M) * (N)) % ((M) * (N)))
 
 
-
     LTFAT_EXTERN void
 LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
 {
@@ -270,19 +269,19 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
     ltfatInt b = L / M;
     LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * PI / L);
 
-    for (ltfatInt jj = 0; jj < N; jj++)
+    for (ltfatInt n = 0; n < N; n++)
     {
-        for (ltfatInt ii = 0; ii < M; ii++)
+        for (ltfatInt m = 0; m < M; m++)
         {
             if(phasetype==FREQINV)
             {
-                tgradw[ii + jj * M] =    a * tgrad[ii + jj * M] * sampToRadConst;
-                fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] + jj * a ) * sampToRadConst;
+                tgradw[m + n * M] =    a * tgrad[m + n * M] * sampToRadConst;
+                fgradw[m + n * M] =  - b * ( fgrad[m + n * M] + n * a ) * sampToRadConst;
             }
             else if(phasetype==TIMEINV)
             {
-                tgradw[ii + jj * M] =    a * (tgrad[ii + jj * M] + ii*b) * sampToRadConst;
-                fgradw[ii + jj * M] =  - b * ( fgrad[ii + jj * M] ) * sampToRadConst;
+                tgradw[m + n * M] =    a * (tgrad[m + n * M] + m*b) * sampToRadConst;
+                fgradw[m + n * M] =  - b * ( fgrad[m + n * M] ) * sampToRadConst;
             }
         }
     }
@@ -429,8 +428,7 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
     for (ltfatInt w = 0; w < M2 * N ; w++)
     {
         // Is it a coefficient with known phase and is it big enough?
-        // 5 is code of coefficients below tol
-        if (donemask[w] && donemask[w] != 5)
+        if (donemask[w] == 12)
         {
             ltfatInt col = w / M2;
             ltfatInt row = w % M2;
@@ -460,19 +458,19 @@ LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL * tgrad, const LTFAT_REAL * fgrad
     ltfatInt M2 = M / 2 + 1;
     LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * PI / L);
 
-    for (ltfatInt jj = 0; jj < N; jj++)
+    for (ltfatInt n = 0; n < N; n++)
     {
-        for (ltfatInt ii = 0; ii < M2; ii++)
+        for (ltfatInt m = 0; m < M2; m++)
         {
             if(phasetype == FREQINV)
             {
-                tgradw[ii + jj * M2] =    a * tgrad[ii + jj * M2] * sampToRadConst;
-                fgradw[ii + jj * M2] =  - b * ( fgrad[ii + jj * M2] + jj * a ) * sampToRadConst;
+                tgradw[m + n * M2] =    a * tgrad[m + n * M2] * sampToRadConst;
+                fgradw[m + n * M2] =  - b * ( fgrad[m + n * M2] + n * a ) * sampToRadConst;
             }
             else if(phasetype == TIMEINV)
             {
-                tgradw[ii + jj * M2] =    a * (tgrad[ii + jj * M2] + ii*b) * sampToRadConst;
-                fgradw[ii + jj * M2] =  - b * ( fgrad[ii + jj * M2] ) * sampToRadConst;
+                tgradw[m + n * M2] =    a * (tgrad[m + n * M2] + m*b) * sampToRadConst;
+                fgradw[m + n * M2] =  - b * ( fgrad[m + n * M2] ) * sampToRadConst;
             }
         }
     }
@@ -485,30 +483,42 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
         const ltfatInt w,
         LTFAT_REAL * phase)
 {
-    const ltfatInt M = heaptask->M;
+    const ltfatInt M2 = heaptask->M;
     const ltfatInt N = heaptask->N;
     const LTFAT_REAL* tgradw = heaptask->tgrad;
     const LTFAT_REAL* fgradw = heaptask->fgrad;
     int* donemask = heaptask->donemask;
-    ltfatInt w_E, w_W, w_N, w_S, row, col;
+    ltfatInt w_E, w_W, w_N, w_S, row, col, w_NE, w_SE, w_NW, w_SW, w_NN, w_EE, w_SS, w_WW;
+    LTFAT_REAL oneoversqrt2 = (LTFAT_REAL) (1.0/2.0);
 
     /* North */
-    w_N = NORTHFROMW(w, M, N);
+    w_N = NORTHFROMW(w, M2, N);
     /* South */
-    w_S = SOUTHFROMW(w, M, N);
+    w_S = SOUTHFROMW(w, M2, N);
     /* East */
-    w_E = EASTFROMW(w, M, N);
+    w_E = EASTFROMW(w, M2, N);
     /* West */
-    w_W = WESTFROMW(w, M, N);
+    w_W = WESTFROMW(w, M2, N);
 
-    col = w / M;
-    row = w % M;
+    w_NE = EASTFROMW(w_N, M2, N);
+    w_SE = EASTFROMW(w_S, M2, N);
+    w_NW = WESTFROMW(w_N, M2, N);
+    w_SW = WESTFROMW(w_S, M2, N);
+
+    w_NN = NORTHFROMW(w_N, M2, N);
+    w_SS = SOUTHFROMW(w_S, M2, N);
+    w_WW =  WESTFROMW(w_W, M2, N);
+    w_EE =  EASTFROMW(w_E, M2, N);
+
+    col = w / M2;
+    row = w % M2;
 
     /* Try and put the four neighbours onto the heap.
      * Integration by trapezoidal rule */
 
-    if (!donemask[w_N] && row != M - 1 )
+    if (!donemask[w_N] && row != M2 - 1 )
     {
+
         phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) / 2;
         donemask[w_N] = 1;
         LTFAT_NAME(heap_insert)(h, w_N);
@@ -516,6 +526,7 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
 
     if (!donemask[w_S] && row != 0)
     {
+
         phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) / 2;
         donemask[w_S] = 2;
         LTFAT_NAME(heap_insert)(h, w_S);
@@ -523,6 +534,7 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
 
     if (!donemask[w_E] && col != N - 1)
     {
+
         phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) / 2;
         donemask[w_E] = 3;
         LTFAT_NAME(heap_insert)(h, w_E);
@@ -534,6 +546,7 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
         donemask[w_W] = 4;
         LTFAT_NAME(heap_insert)(h, w_W);
     }
+
 }
 
 
@@ -634,7 +647,8 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
         const int* mask,
         const ltfatInt a, const ltfatInt M,
         const ltfatInt L, const ltfatInt W,
-        LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL * phase)
+        LTFAT_REAL tol, dgt_phasetype phasetype, int useoutphase,
+        LTFAT_REAL * phase)
 {
 
     /* Declarations */
@@ -672,7 +686,10 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
     {
         if (mask[w])
         {
-            phase[w]    = LTFAT_COMPLEXH(carg)(c[w]);
+            if(!useoutphase)
+            {
+                phase[w]    = LTFAT_COMPLEXH(carg)(c[w]);
+            }
             donemask[w] = 12; /* Code of known phase */
         }
         else
@@ -682,8 +699,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_COMPLEX * c,
         }
     }
 
-
-    /* We will start intergration from the biffest coefficient */
+    /* We will start intergration from the biggest coefficient */
     LTFAT_NAME_REAL(findmaxinarray)(h.s, M2 * N, &maxs, &Imax);
 
     /* Mark all the small elements as done, they get zero phase.
