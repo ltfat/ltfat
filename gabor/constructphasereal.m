@@ -1,4 +1,4 @@
-function [c,newphase,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
+function [c,newphase,usedmask,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
 %CONSTRUCTPHASEREAL  Construct the phase of a DGTREAL
 %   Usage:  c=constructphasereal(s,g,a,M);
 %           c=constructphasereal(s,g,a,M,tol);
@@ -43,11 +43,17 @@ complainif_notposint(M,'M',thismfilename);
 
 definput.keyvals.tol=1e-10;
 definput.keyvals.mask=[];
+definput.keyvals.usephase=[];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,~,tol,mask]=ltfatarghelper({'tol','mask'},definput,varargin);
+[flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
 
 if ~isnumeric(s) 
     error('%s: *s* must be numeric.',thismfilename);
+end
+
+if ~isempty(usephase) && isempty(mask)
+    error('%s: Both mask and usephase must be used at the same time.',...
+          upper(mfilename));
 end
 
 if isempty(mask) 
@@ -64,6 +70,15 @@ else
     mask = cast(mask,'double');
     mask(mask~=0) = 1;
 end
+
+if ~isempty(usephase)
+    if any(size(mask) ~= size(s)) || ~isreal(usephase)
+        error(['%s: s and usephase must have the same size and usephase must',...
+               ' be real.'],thismfilename)        
+    end
+end
+
+
 
 if ~isscalar(tol)
     error('%s: *tol* must be scalar.',thismfilename);
@@ -97,9 +112,10 @@ logs=log(abss+realmin);
 tt=-11;
 logs(logs<max(logs(:))+tt)=tt;
 
-fgrad = info.tfr*pderiv(logs,2,2)/(2*pi);
+difforder = 2;
+fgrad = info.tfr*pderiv(logs,2,difforder)/(2*pi);
 % Undo the scaling done by pderiv and scale properly
-tgrad = pderiv(logs,1,2)/(2*pi*info.tfr)*(M/M2);
+tgrad = pderiv(logs,1,difforder)/(2*pi*info.tfr)*(M/M2);
 
 % Fix the first and last rows .. the
 % borders are symmetric so the centered difference is 0
@@ -107,6 +123,7 @@ tgrad(1,:) = 0;
 tgrad(end,:) = 0;
 
 absthr = max(abss(:))*tol;
+usedmask = ones(size(s));
 
 % Build the phase
 if isempty(mask)
@@ -117,14 +134,19 @@ if isempty(mask)
     toosmallidx = abss<absthr;
     zerono = numel(find(toosmallidx));
     newphase(toosmallidx) = rand(zerono,1)*2*pi;
+    usedmask(toosmallidx) = 0;
 else
-    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol,flags.do_timeinv);
+    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol,...
+                                    flags.do_timeinv,usephase);
     % Set phase of small coefficient to random values
     % but just in the missing part
-    missingidx = find(mask==0);
-    toosmallidx = abss(missingidx)<absthr;
-    zerono = numel(find(toosmallidx));
-    newphase(missingidx(toosmallidx)) = rand(zerono,1)*2*pi;
+     missingidx = find(mask==0);
+     toosmallidx = abss(missingidx)<absthr;
+     zerono = numel(find(toosmallidx));
+     newphase(missingidx(toosmallidx)) = rand(zerono,1)*2*pi;
+     usedmask(missingidx(toosmallidx)) = 0;
 end
 
 c=abss.*exp(1i*newphase);
+
+usedmask = logical(usedmask);

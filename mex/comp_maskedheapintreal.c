@@ -1,9 +1,9 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 8
+#define ISNARGINEQ 9
 #define TYPEDEPARGS 0
-#define MATCHEDARGS 1, 2
+#define MATCHEDARGS 1, 2, 8
 #define SINGLEARGS
 #define COMPLEXARGS
 
@@ -19,15 +19,16 @@
 // phase=comp_heapint(s,itime,ifreq,a,tol);
 
 void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
-                              int UNUSED(nrhs), const mxArray *prhs[] )
+        int UNUSED(nrhs), const mxArray *prhs[] )
 {
-    int a, M, N, L, W, M2, phasetype;
+    int a, M, N, L, W, M2, phasetype, useoutphase;
     double tol;
 
     const LTFAT_COMPLEX* c;
     const LTFAT_REAL *tgrad, *fgrad;
     const double* maskDouble;
     LTFAT_REAL *phase;
+    int* mask;
 
     // Get inputs
     c     = mxGetData(prhs[0]);
@@ -37,15 +38,18 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     a     = (int)mxGetScalar(prhs[4]);
     tol   = mxGetScalar(prhs[6]);
     phasetype = (int)mxGetScalar(prhs[7]);
+    mxArray* knownphase = prhs[8];
+
+    useoutphase = mxGetNumberOfElements(knownphase) > 0;
 
     // Get matrix dimensions.
-    M = (int)mxGetScalar(prhs[5]);
+    M = (int) mxGetScalar(prhs[5]);
     M2 = mxGetM(prhs[0]);
     N = mxGetN(prhs[0]);
     L = N * a;
     W = 1;
 
-    int* mask = ltfat_malloc(M2 * N * W * sizeof * mask);
+    mask = ltfat_malloc(M2 * N * W * sizeof * mask);
 
     for (ltfatInt w = 0; w < M2 * N * W; w++ )
         mask[w] = (int) maskDouble[w];
@@ -56,7 +60,11 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     // Get pointer to output
     phase = mxGetData(plhs[0]);
 
-    LTFAT_NAME(maskedheapintreal)(c, tgrad, fgrad, mask, a, M, L, W, tol, phasetype, phase );
+    if(useoutphase)
+        memcpy(phase,mxGetData(knownphase),M2 * N * W * sizeof * phase);
+
+    LTFAT_NAME(maskedheapintreal)(c, tgrad, fgrad, mask, a, M, L, W, tol,
+                                  phasetype, useoutphase, phase );
 
     ltfat_free(mask);
 }
