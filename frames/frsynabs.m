@@ -103,7 +103,9 @@ function [f,relres,iter,c]=frsynabs(F,s,varargin)
 %   please install the minFunc software from:
 %   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
 %
-%   See also:  dgt, idgt
+%   See also:  frana, frsyn
+%
+%   Demos:  demo_frsynabs, demo_phaseret
 %
 %   References: griffin1984sem pabaso13 desomada15
 
