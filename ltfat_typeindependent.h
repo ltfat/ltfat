@@ -398,6 +398,7 @@ LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
                           const ltfatInt a, const ltfatInt M,
                           const ltfatInt L, const ltfatInt W,
                           LTFAT_REAL tol, dgt_phasetype phasetype,
+                          int useoutphase,
                           LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
