@@ -1,15 +1,32 @@
 function [c,newphase,usedmask,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
-%CONSTRUCTPHASEREAL  Construct the phase of a DGTREAL
+%CONSTRUCTPHASEREAL  Construct phase for DGTREAL
 %   Usage:  c=constructphasereal(s,g,a,M);
 %           c=constructphasereal(s,g,a,M,tol);
 %           c=constructphasereal(c,g,a,M,tol,mask);
-%           [c,newphase,tgrad,fgrad] = constructphasereal(...);
+%           c=constructphasereal(c,g,a,M,tol,mask,usephase);
+%           [c,newphase,usedmask,tgrad,fgrad] = constructphasereal(...);
 %
-%   `constructphasereal(s,g,a,M)` will construct a suitable phase for the positive
-%   valued coefficients *s*.
+%   Input parameters:
+%         s        : Initial coefficients.
+%         g        : Analysis Gabor window.
+%         a        : Hop factor.
+%         M        : Number of channels.
+%         tol      : Relative tolerance.
+%         mask     : Mask for selecting known phase.
+%         usephase : Explicit known phase.
+%   Output parameters:
+%         c        : Coefficients with the constructed phase.
+%         newphase : Just the (unwrapped) phase.
+%         usedmask : Mask for selecting coefficients with the new phase.
+%         tgrad    : Relative time phase derivative.
+%         fgrad    : Relative frequency phase derivative.
 %
-%   If *s* is the absolute values of the Gabor coefficients of a signal
-%   obtained using the window *g*, time-shift *a* and number of channels *M*, i.e.:
+%   `constructphasereal(s,g,a,M)` will construct a suitable phase for the 
+%   positive valued coefficients *s*.
+%
+%   If *s* contains the absolute values of the Gabor coefficients of a signal
+%   obtained using the window *g*, time-shift *a* and number of channels 
+%   *M*, i.e.:
 %
 %     c=dgtreal(f,g,a,M);
 %     s=abs(c);
@@ -17,11 +34,11 @@ function [c,newphase,usedmask,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
 %   then `constuctphasereal(s,g,a,M)` will attempt to reconstruct *c*.
 %
 %   The window *g* must be Gaussian, i.e. *g* must have the value `'gauss'`
-%   or be a cell array `{'gauss',tfr}`.
+%   or be a cell array `{'gauss',...}`.
 %
 %   `constructphasereal(s,g,a,M,tol)` does as above, but sets the phase of
-%   coefficients less than *tol* to random value.
-%   By default, *tol* has the value 1e-10.
+%   coefficients less than *tol* to random values.
+%   By default, *tol* has the value 1e-10. 
 %
 %   `constructphasereal(c,g,a,M,tol,mask)` accepts real or complex valued
 %   *c* and real valued *mask* of the same size. Values in *mask* which can
@@ -29,14 +46,34 @@ function [c,newphase,usedmask,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
 %   coefficients with known phase which is used in the output. Only the
 %   phase of remaining coefficients (for which mask==0) is computed.
 %
+%   `constructphasereal(c,g,a,M,tol,mask,usephase)` does the same as before
+%   but uses the known phase values from *usephase* rather than from *c*.
+%
+%   In addition, *tol* can be a vector containing decreasing values. In 
+%   that case, the algorithm is run `numel(tol)` times, initialized with
+%   the result from the previous step in the 2nd and the further steps.
+%
+%   Further, the function accepts the following flags:
+%
+%      'freqinv'  The constructed phase complies with the frequency
+%                 invariant phase convention such that it can be directly
+%                 used in |idgtreal|.
+%                 This is the default.
+%
+%      'timeinv'  The constructed phase complies with the time-invariant
+%                 phase convention. The same flag must be used in the other
+%                 functions e.g. |idgtreal|
+%
 %   This function requires a computational subroutine that is only
 %   available in C. Use |ltfatmex| to compile it.
 %
+%   See also:  dgtreal, gabphasegrad, ltfatmex
 %
-%   See also:  dgt, gabphasegrad, ltfatmex
+%   References: ltfatnote040
 %
 
 % AUTHOR: Peter L. Søndergaard, Zdenek Prusa
+
 thismfilename = upper(mfilename);
 complainif_notposint(a,'a',thismfilename);
 complainif_notposint(M,'M',thismfilename);
@@ -78,11 +115,11 @@ if ~isempty(usephase)
     end
 end
 
-
-
-if ~isscalar(tol)
-    error('%s: *tol* must be scalar.',thismfilename);
+if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
+    error(['%s: *tol* must be a scalar or a vector sorted in a ',...
+           'descending manner.'],thismfilename);
 end
+
 
 [M2,N,W] = size(s);
 
@@ -123,30 +160,47 @@ tgrad(1,:) = 0;
 tgrad(end,:) = 0;
 
 absthr = max(abss(:))*tol;
-usedmask = ones(size(s));
+if isempty(mask)
+    usedmask = zeros(size(s));
+else
+    usedmask = mask;
+end
+
 
 % Build the phase
 if isempty(mask)
     % s is real and positive
-    newphase=comp_heapintreal(abss,tgrad,fgrad,a,M,tol,flags.do_timeinv);
+    newphase=comp_heapintreal(abss,tgrad,fgrad,a,M,tol(1),flags.do_timeinv);
 
-    % Set phase of small coefficient to random values
-    toosmallidx = abss<absthr;
-    zerono = numel(find(toosmallidx));
-    newphase(toosmallidx) = rand(zerono,1)*2*pi;
-    usedmask(toosmallidx) = 0;
+    % Find all small coefficients and set the mask
+    bigenoughidx = abss>=absthr(1);
+    usedmask(bigenoughidx) = 1;
 else
-    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol,...
+    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol(1),...
                                     flags.do_timeinv,usephase);
-    % Set phase of small coefficient to random values
-    % but just in the missing part
-     missingidx = find(mask==0);
-     toosmallidx = abss(missingidx)<absthr;
-     zerono = numel(find(toosmallidx));
-     newphase(missingidx(toosmallidx)) = rand(zerono,1)*2*pi;
-     usedmask(missingidx(toosmallidx)) = 0;
+    % Find all small coefficients in the unknown phase area
+    missingidx = find(usedmask==0);
+    bigenoughidx = abss(missingidx)>=absthr(1);
+    usedmask(missingidx(bigenoughidx)) = 1;
 end
 
+% Do further tol
+for ii=2:numel(tol)
+    newphase=comp_maskedheapintreal(s,tgrad,fgrad,usedmask,a,M,tol(ii),...
+                                    flags.do_timeinv,newphase);
+    missingidx = find(usedmask==0);
+    bigenoughidx = abss(missingidx)>=absthr(ii);
+    usedmask(missingidx(bigenoughidx)) = 1;                  
+end
+
+
+% Convert the mask so it can be used directly for indexing
+usedmask = logical(usedmask);
+% Assign random values to coefficients below tolerance
+zerono = numel(find(~usedmask));
+newphase(~usedmask) = rand(zerono,1)*2*pi;
+
+% Build the coefficients
 c=abss.*exp(1i*newphase);
 
-usedmask = logical(usedmask);
+

@@ -1,9 +1,9 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 7
+#define ISNARGINEQ 8
 #define TYPEDEPARGS 0
-#define MATCHEDARGS 1, 2
+#define MATCHEDARGS 1, 2, 7
 #define SINGLEARGS
 #define COMPLEXARGS
 
@@ -16,12 +16,12 @@
 #include "ltfat_types.h"
 
 // Calling convention:
-// phase=comp_heapint(s,itime,ifreq,a,tol);
+// phase=comp_maskedheapint(s,itime,ifreq,mask,a,tol,do_timeinv,usephase);
 
 void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
                               int UNUSED(nrhs), const mxArray *prhs[] )
 {
-    int a, M, N, L, W, phasetype;
+    int a, M, N, L, W, phasetype, useoutphase;
     double tol;
 
     const LTFAT_COMPLEX *c;
@@ -37,6 +37,9 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     a     = (int)mxGetScalar(prhs[4]);
     tol   = mxGetScalar(prhs[5]);
     phasetype   = (int)mxGetScalar(prhs[6]);
+    const mxArray* knownphase = prhs[7];
+
+    useoutphase = mxGetNumberOfElements(knownphase) > 0;
 
     // Get matrix dimensions.
     M = mxGetM(prhs[0]);
@@ -55,7 +58,11 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     // Get pointer to output
     phase = mxGetData(plhs[0]);
 
-    LTFAT_NAME(maskedheapint)(c, tgrad, fgrad, mask, a, M, L, W, tol, phasetype, phase);
+    if(useoutphase)
+        memcpy(phase,mxGetData(knownphase), M * N * W * sizeof * phase);
+
+    LTFAT_NAME(maskedheapint)(c, tgrad, fgrad, mask,
+                              a, M, L, W, tol, phasetype, useoutphase, phase);
 
     ltfat_free(mask);
 }

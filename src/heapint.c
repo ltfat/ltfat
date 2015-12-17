@@ -294,7 +294,8 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
         const int* mask,
         const ltfatInt a, const ltfatInt M,
         const ltfatInt L, const ltfatInt W,
-        LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL *phase)
+        LTFAT_REAL tol, dgt_phasetype phasetype,
+        int useoutphase, LTFAT_REAL *phase)
 {
     /* Declarations */
     ltfatInt N, ii, Imax;
@@ -332,7 +333,10 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_COMPLEX  *c,
     {
         if (mask[w])
         {
-            phase[w]    = LTFAT_COMPLEXH(carg)(c[w]);
+            if(!useoutphase)
+            {
+                phase[w]    = LTFAT_COMPLEXH(carg)(c[w]);
+            }
             donemask[w] = 12; /* Code of known phase */
         }
         else
@@ -488,8 +492,7 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
     const LTFAT_REAL* tgradw = heaptask->tgrad;
     const LTFAT_REAL* fgradw = heaptask->fgrad;
     int* donemask = heaptask->donemask;
-    ltfatInt w_E, w_W, w_N, w_S, row, col, w_NE, w_SE, w_NW, w_SW, w_NN, w_EE, w_SS, w_WW;
-    LTFAT_REAL oneoversqrt2 = (LTFAT_REAL) (1.0/2.0);
+    ltfatInt w_E, w_W, w_N, w_S, row, col;
 
     /* North */
     w_N = NORTHFROMW(w, M2, N);
@@ -499,16 +502,6 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
     w_E = EASTFROMW(w, M2, N);
     /* West */
     w_W = WESTFROMW(w, M2, N);
-
-    w_NE = EASTFROMW(w_N, M2, N);
-    w_SE = EASTFROMW(w_S, M2, N);
-    w_NW = WESTFROMW(w_N, M2, N);
-    w_SW = WESTFROMW(w_S, M2, N);
-
-    w_NN = NORTHFROMW(w_N, M2, N);
-    w_SS = SOUTHFROMW(w_S, M2, N);
-    w_WW =  WESTFROMW(w_W, M2, N);
-    w_EE =  EASTFROMW(w_E, M2, N);
 
     col = w / M2;
     row = w % M2;
@@ -548,6 +541,7 @@ void LTFAT_NAME(trapezheapreal)(struct LTFAT_NAME(heap) *h,
     }
 
 }
+
 
 
     LTFAT_EXTERN

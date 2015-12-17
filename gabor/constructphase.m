@@ -1,9 +1,24 @@
-function [c,newphase,tgrad,fgrad]=constructphase(s,g,a,varargin)
-%CONSTRUCTPHASE  Construct the phase of a DGT
+function [c,newphase,usedmask,tgrad,fgrad]=constructphase(s,g,a,varargin)
+%CONSTRUCTPHASE  Construct phase for DGT
 %   Usage:  c=constructphase(s,g,a);
 %           c=constructphase(s,g,a,tol);
-%           c=constructphase(c,g,a,M,tol,mask);
-%           [c,newphase,tgrad,fgrad] = constructphase(...);
+%           c=constructphase(c,g,a,tol,mask);
+%           c=constructphase(c,g,a,tol,mask,usephase);
+%           [c,newphase,usedmask,tgrad,fgrad] = constructphase(...);
+%
+%   Input parameters:
+%         s        : Initial coefficients.
+%         g        : Analysis Gabor window.
+%         a        : Hop factor.
+%         tol      : Relative tolerance.
+%         mask     : Mask for selecting known phase.
+%         usephase : Explicit known phase.
+%   Output parameters:
+%         c        : Coefficients with the constructed phase.
+%         newphase : Just the (unwrapped) phase.
+%         usedmask : Mask for selecting coefficients with the new phase.
+%         tgrad    : Relative time phase derivative.
+%         fgrad    : Relative frequency phase derivative.
 %
 %   `constructphase(s,g,a)` will construct a suitable phase for the postive
 %   valued coefficients *s*. 
@@ -34,6 +49,8 @@ function [c,newphase,tgrad,fgrad]=constructphase(s,g,a,varargin)
 %
 %   See also:  dgt, gabphasegrad, ltfatmex
 %
+%   References: ltfatnote040
+%
 
 % AUTHOR: Peter L. Søndergaard, Zdenek Prusa
 
@@ -43,7 +60,16 @@ complainif_notposint(a,'a',thismfilename);
 definput.keyvals.tol=1e-10;
 definput.keyvals.mask=[];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,~,tol,mask]=ltfatarghelper({'tol','mask'},definput,varargin);
+[flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
+
+if ~isnumeric(s) 
+    error('%s: *s* must be numeric.',thismfilename);
+end
+
+if ~isempty(usephase) && isempty(mask)
+    error('%s: Both mask and usephase must be used at the same time.',...
+          thismfilename);
+end
 
 if isempty(mask) 
     if ~isreal(s) || any(s(:)<0)
@@ -60,8 +86,22 @@ else
     mask(mask~=0) = 1;
 end
 
-if ~isscalar(tol)
-    error('%s: tol must be scalar.',thismfilename);
+if ~isempty(usephase)
+    if any(size(mask) ~= size(s)) || ~isreal(usephase)
+        error(['%s: s and usephase must have the same size and usephase must',...
+               ' be real.'],thismfilename)        
+    end
+end
+
+if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
+    error(['%s: *tol* must be a scalar or a vector sorted in a ',...
+           'descending manner.'],thismfilename);
+end
+
+W = size(s,3);
+
+if W>1
+    error('%s: *s* must not be 3 dimensional.',thismfilename);
 end
 
 abss = abs(s);
@@ -69,23 +109,42 @@ abss = abs(s);
 [tgrad,fgrad] = gabphasegrad('abs',abss,g,a,2);
 
 absthr = max(abss(:))*tol;
+if isempty(mask)
+    usedmask = zeros(size(s));
+else
+    usedmask = mask;
+end
 
 if isempty(mask)
     % Build the phase (calling a MEX file)
-    newphase=comp_heapint(abss,tgrad,fgrad,a,tol,flags.do_timeinv);
+    newphase=comp_heapint(abss,tgrad,fgrad,a,tol(1),flags.do_timeinv);
     % Set phase of the coefficients below tol to random values
-    toosmallidx = abss<absthr;
-    zerono = numel(find(toosmallidx));
-    newphase(toosmallidx) = rand(zerono,1)*2*pi;
+    bigenoughidx = abss>=absthr(1);
+    usedmask(bigenoughidx) = 1;
 else
-    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol,flags.do_timeinv);
+    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol(1),flags.do_timeinv);
     % Set phase of small coefficient to random values
     % but just in the missing part
-    missingidx = find(mask==0);
-    toosmallidx = abss(missingidx)<absthr;
-    zerono = numel(find(toosmallidx));
-    newphase(missingidx(toosmallidx)) = rand(zerono,1)*2*pi;    
+    % Find all small coefficients in the unknown phase area
+    missingidx = find(usedmask==0);
+    bigenoughidx = abss(missingidx)>=absthr(1);
+    usedmask(missingidx(bigenoughidx)) = 1;
 end
+
+% Do further tol
+for ii=2:numel(tol)
+    newphase=comp_maskedheapint(s,tgrad,fgrad,usedmask,a,tol(ii),...
+                                flags.do_timeinv,newphase);
+    missingidx = find(usedmask==0);
+    bigenoughidx = abss(missingidx)>=absthr(ii);
+    usedmask(missingidx(bigenoughidx)) = 1;                  
+end
+
+% Convert the mask so it can be used directly for indexing
+usedmask = logical(usedmask);
+% Assign random values to coefficients below tolerance
+zerono = numel(find(~usedmask));
+newphase(~usedmask) = rand(zerono,1)*2*pi;
 
 % Combine the magnitude and phase
 c=abss.*exp(1i*newphase);

@@ -16,7 +16,7 @@
 #include "ltfat_types.h"
 
 // Calling convention:
-// phase=comp_heapint(s,itime,ifreq,a,tol);
+// phase=comp_maskedheapintreal(s,itime,ifreq,mask,a,M,tol,do_timeinv,usephase);
 
 void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
         int UNUSED(nrhs), const mxArray *prhs[] )
