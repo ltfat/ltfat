@@ -34,7 +34,7 @@ function ltfatstart(varargin)
 %
 %   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
 
-%   AUTHOR : Peter L. Søndergaard.  
+%   AUTHOR : Peter L. Søndergaard, Zdenek Prusa
 %   TESTING: NA
 
 do_java = 1;
@@ -60,6 +60,11 @@ if nargin>0
     end
 end;
 
+% Sometimes the run command used further does not return back to the 
+% current directory, here we explicitly store the current directory and 
+% cd to it at the end or is something goes wrong.
+currdir = pwd;
+
 % Get the basepath as the directory this function resides in.
 % The 'which' solution below is more portable than 'mfilename'
 % becase old versions of Matlab does not have "mfilename('fullpath')"
@@ -72,6 +77,7 @@ addpath(basepath);
 
 bp=basepath;
 
+ 
 % Load the version number
 [FID, MSG] = fopen ([bp,filesep,'ltfat_version'],'r');
 if FID == -1
@@ -180,7 +186,14 @@ while ~isempty(d)
         status = ignored_inits{iffound}{2};
     else
         % Execute the init file to see if the status is set.
-        run(initfilefullpath);
+        % We are super paranoid co we wrap the call to a try block
+        try
+            run(initfilefullpath);
+        catch
+            % If the run command breaks, it might not cd back to the
+            % original directory. We do it manually here:
+            cd(currdir);
+        end
     end
     
     if status>0
@@ -248,9 +261,13 @@ if ltfatstartprint
 
 end;
 
-clear ltfatarghelper;
-%% ---------- load information into ltfathelp ------------
+if isoctave()
+    % On Windows the run command might not change back to the original path
+    cd(currdir); 
+end
 
+%% ---------- load information into ltfathelp ------------
+clear ltfatarghelper;
 % As comp is now in the path, we can call ltfatarghelper
 ltfatsetdefaults('ltfathelp','versiondata',ltfat_version,...
                  'modulesdata',modules);
