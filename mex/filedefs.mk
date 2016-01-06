@@ -12,14 +12,12 @@ MEXBASESAFE=\
 	comp_idwilt \
 	comp_dwiltiii \
 	comp_idwiltiii \
-	comp_fftreal  \
 	comp_gabreassign  \
 	comp_heapint  \
 	comp_heapintreal  \
 	comp_maskedheapint  \
 	comp_maskedheapintreal  \
 	comp_isepdgt  \
-	comp_ifftreal  \
 	comp_iwfac \
 	comp_nonsepdgt_multi  \
 	comp_nonsepdgt_shear  \

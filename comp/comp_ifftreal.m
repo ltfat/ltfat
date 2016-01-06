@@ -1,8 +1,6 @@
 function f=comp_ifftreal(c,N)
 %COMP_IFFTREAL  Compute an IFFTREAL
   
-N2=floor(N/2)+1;
-
 % Force IFFT along dimension 1, since we have permuted the dimensions
 % manually
 if rem(N,2)==0
