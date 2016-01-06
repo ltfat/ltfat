@@ -33,9 +33,9 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     W  = mxGetNumberOfElements(prhs[0]) / (M * N);
 
     plhs[0] = ltfatCreateMatrix(L, W, LTFAT_MX_CLASSID, mxCOMPLEX);
-    const LTFAT_COMPLEX* c_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[0]);
-    const LTFAT_COMPLEX* g_combined = (const LTFAT_COMPLEX*) mxGetData(prhs[1]);
-    LTFAT_COMPLEX* f_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+    const LTFAT_COMPLEX* c_combined = mxGetData(prhs[0]);
+    const LTFAT_COMPLEX* g_combined = mxGetData(prhs[1]);
+    LTFAT_COMPLEX* f_combined = mxGetData(plhs[0]);
 
     if (gl < L)
     {

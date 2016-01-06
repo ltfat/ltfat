@@ -31,9 +31,9 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     mwSize dims[3] = {M, N, W};
     mwSize ndim = W > 1 ? 3 : 2;
     plhs[0] = ltfatCreateNdimArray(ndim, dims, LTFAT_MX_CLASSID, mxCOMPLEX);
-    const LTFAT_TYPE* f_combined = (const LTFAT_TYPE*) mxGetData(prhs[0]);
-    const LTFAT_TYPE* g_combined = (const LTFAT_TYPE*) mxGetData(prhs[1]);
-    LTFAT_COMPLEX* out_combined = (LTFAT_COMPLEX*) mxGetData(plhs[0]);
+    const LTFAT_TYPE* f_combined = mxGetData(prhs[0]);
+    const LTFAT_TYPE* g_combined = mxGetData(prhs[1]);
+    LTFAT_COMPLEX* out_combined = mxGetData(plhs[0]);
 
     if (gl < L)
     {
