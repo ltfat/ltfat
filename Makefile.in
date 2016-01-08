@@ -1,0 +1,49 @@
+CC=@CC@
+CXX=@CXX@
+
+CFLAGS+=-g -Ithirdparty -Wall -Wextra
+CFLAGS+=-fPIC
+
+SHARED_FLAGS=-shared -Wl,--no-undefined -llapack -lblas -lfftw3 -lfftw3f -lm
+
+# the following adds parameters to CFLAGS
+include comptarget.mk
+
+include filedefs.mk
+
+toCompile = $(files) $(files_blaslapack)
+
+DFILES = $(addprefix d,$(toCompile)) $(files_notypechange)
+SFILES = $(addprefix s,$(toCompile))
+
+all: static 
+
+static: double_static single_static
+
+shared: double_shared single_shared
+
+double_static: $(DFILES) Makefile
+	ar rvu libltfat.a $(DFILES) 
+	ranlib libltfat.a
+
+single_static: $(SFILES) Makefile
+	ar rvu libltfatf.a $(SFILES) 
+	ranlib libltfatf.a
+
+double_shared: $(DFILES) Makefile
+	$(CC) $(DFILES) -o libltfat.so $(SHARED_FLAGS)
+
+single_shared: $(SFILES) Makefile
+	$(CC) $(SFILES) -o libltfatf.so $(SHARED_FLAGS)
+
+s%.o: %.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o s$*.o
+
+d%.o: %.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE  -c $< -o d$*.o
+
+%.o: %.c Makefile config.h
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	-rm *.o *.a *.so

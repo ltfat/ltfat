@@ -1,10 +1,12 @@
-This directory contains the source for the C-library.
+This repository contains the source for the C-library.
 
 On Unix, type
 
+  ./bootstrap
+  ./configure
   make
 
-to compile the C-library. The library is called libltfat.a
+to compile the C-library.
 
 
 
