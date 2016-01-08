@@ -1,7 +1,7 @@
 *.o
 *.a
 *.so
-Makefile
+./Makefile
 configure
 config.log
 config.status
