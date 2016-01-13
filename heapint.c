@@ -266,7 +266,7 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
         LTFAT_REAL* tgradw, LTFAT_REAL* fgradw)
 {
     ltfatInt N = L / a;
-    ltfatInt b = L / M;
+    LTFAT_REAL b = ((LTFAT_REAL) L) / M;
     LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * PI / L);
 
     for (ltfatInt n = 0; n < N; n++)
@@ -458,7 +458,7 @@ LTFAT_NAME(gradsamptoradreal)(const LTFAT_REAL * tgrad, const LTFAT_REAL * fgrad
         LTFAT_REAL * tgradw, LTFAT_REAL * fgradw)
 {
     ltfatInt N = L / a;
-    ltfatInt b = L / M;
+    LTFAT_REAL b = ((LTFAT_REAL) L) / M;
     ltfatInt M2 = M / 2 + 1;
     LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * PI / L);
 
