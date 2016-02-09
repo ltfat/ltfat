@@ -32,7 +32,7 @@ wasreal=isreal(f);
 % In addition, postpad is explicitly told to pad with zeros.
 if isreal(f)
   L2=floor(L/2)+1;
-  f=ifftreal(postpad(fftreal(f,[],1),L2,1),L,0,1)/Ls*L;
+  f=ifftreal(postpad(fftreal(f,[],1),L2,0,1),L,1)/Ls*L;
 else
   f=ifft(middlepad(fft(f,[],1),L,1))/Ls*L;
 end;
