@@ -381,6 +381,33 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
                          LTFAT_REAL *cout);
 
 /* --------- other stuff -------- */
+LTFAT_EXTERN
+struct LTFAT_NAME(heapinttask)*
+LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
+                             const ltfatInt initheapsize,
+                             const LTFAT_REAL* s, int do_real);
+
+LTFAT_EXTERN
+void LTFAT_NAME(heapint_execute)(struct LTFAT_NAME(heapinttask)* hit,
+                                 const LTFAT_REAL* tgradw,
+                                 const LTFAT_REAL* fgradw,
+                                 LTFAT_REAL* phase);
+
+LTFAT_EXTERN void
+LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit);
+
+LTFAT_EXTERN void
+LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
+                                 const LTFAT_REAL* news,
+                                 const LTFAT_REAL tol);
+
+
+LTFAT_EXTERN void
+LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
+                                  const int* mask,
+                                  const LTFAT_REAL* news,
+                                  const LTFAT_REAL tol);
+
 LTFAT_EXTERN void
 LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                     const LTFAT_REAL *tgradw,
@@ -389,7 +416,7 @@ LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                     const ltfatInt L, const ltfatInt W,
                     const LTFAT_REAL tol, LTFAT_REAL *phase);
 
-// Does the same as the previous but 
+// Does the same as the previous but
 LTFAT_EXTERN void
 LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL *s,
                             const LTFAT_REAL *tgrad,
