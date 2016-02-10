@@ -142,16 +142,17 @@ LTFAT_NAME(heap_delete)(struct LTFAT_NAME(heap) *h)
     return key;
 }
 
-
+LTFAT_EXTERN
 struct LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
+                             const ltfatInt initheapsize,
                              const LTFAT_REAL* s, int do_real)
 {
     struct LTFAT_NAME(heapinttask)* hit = ltfat_malloc(sizeof * hit);
     hit->height = height;
     hit->N = N;
     hit->donemask = ltfat_malloc(height * N * sizeof * hit->donemask);
-    hit->heap = LTFAT_NAME(heap_init)((ltfatInt)(height * log((double)height)), s);
+    hit->heap = LTFAT_NAME(heap_init)(initheapsize, s);
     hit->do_real = do_real;
 
     if (do_real)
@@ -162,6 +163,7 @@ LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
     return hit;
 }
 
+LTFAT_EXTERN
 void
 LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit)
 {
@@ -172,6 +174,7 @@ LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit)
     ltfat_free(hit);
 }
 
+LTFAT_EXTERN
 void
 LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
                                  const LTFAT_REAL* news,
@@ -190,7 +193,7 @@ LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
      */
     for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
     {
-        if (news[ii] < tol * maxs)
+        if (news[ii] <= tol * maxs)
             hit->donemask[ii] = 5;
         else
             hit->donemask[ii] = 0;
@@ -200,6 +203,7 @@ LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
     hit->donemask[Imax] = 6;
 }
 
+LTFAT_EXTERN
 void
 LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
@@ -235,7 +239,7 @@ LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
      */
     for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
     {
-        if (news[ii] < tol * maxs)
+        if (news[ii] <= tol * maxs)
             hit->donemask[ii] = 5;
     }
 
@@ -362,7 +366,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
     memset(phase, 0, M * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M, N, s, 0);
+    hit = LTFAT_NAME(heapinttask_init)( M, N, M * log((double)M) , s, 0);
 
     for (ltfatInt w = 0; w < W; ++w)
     {
@@ -395,7 +399,7 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     /* Main body */
-    hit = LTFAT_NAME(heapinttask_init)( M, N, (LTFAT_REAL*)s, 0);
+    hit = LTFAT_NAME(heapinttask_init)( M, N, M * log((double)M) , s, 0);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
     for (ltfatInt ii = 0; ii < M * N * W; ii++)
@@ -597,7 +601,7 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
     memset(phase, 0, M2 * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, s, 1);
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, M2 * log((double)M2), s, 1);
 
     for (ltfatInt w = 0; w < W; ++w)
     {
@@ -632,7 +636,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     // Initialize plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, s, 1);
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, M2 * log((double) M2), s, 1);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
     for (ltfatInt ii = 0; ii < M2 * N * W; ii++)

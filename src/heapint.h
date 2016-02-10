@@ -42,24 +42,6 @@ struct LTFAT_NAME(heapinttask)
     struct LTFAT_NAME(heap)* heap;
 };
 
-struct LTFAT_NAME(heapinttask)*
-LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
-                             const LTFAT_REAL* s, int do_real);
-
-void
-LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit);
-
-void
-LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
-                                 const LTFAT_REAL* news,
-                                 const LTFAT_REAL tol);
-
-void
-LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
-                                  const int* mask,
-                                  const LTFAT_REAL* news,
-                                  const LTFAT_REAL tol);
-
 
 
 /*  */
@@ -90,8 +72,4 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
                               const ltfatInt height, const ltfatInt N,
                               int * donemask);
 
-LTFAT_EXTERN
-void LTFAT_NAME(heapint_execute)(struct LTFAT_NAME(heapinttask)* hit,
-                                 const LTFAT_REAL* tgradw,
-                                 const LTFAT_REAL* fgradw,
-                                 LTFAT_REAL* phase);
+
