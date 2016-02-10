@@ -2,3 +2,5 @@ Makefile* merge=ours
 README merge=ours
 configure.ac merge=ours
 examples merge=ours
+.gitignore merge=ours
+.gitattributes merge=ours
