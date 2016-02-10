@@ -113,6 +113,8 @@ if ~isempty(usephase)
         error(['%s: s and usephase must have the same size and usephase must',...
                ' be real.'],thismfilename)        
     end
+else
+    usephase = angle(s);
 end
 
 if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
@@ -159,46 +161,7 @@ tgrad = pderiv(logs,1,difforder)/(2*pi*info.tfr)*(M/M2);
 tgrad(1,:) = 0;
 tgrad(end,:) = 0;
 
-absthr = max(abss(:))*tol;
-if isempty(mask)
-    usedmask = zeros(size(s));
-else
-    usedmask = mask;
-end
-
-
-% Build the phase
-if isempty(mask)
-    % s is real and positive
-    newphase=comp_heapintreal(abss,tgrad,fgrad,a,M,tol(1),flags.do_timeinv);
-
-    % Find all small coefficients and set the mask
-    bigenoughidx = abss>=absthr(1);
-    usedmask(bigenoughidx) = 1;
-else
-    newphase=comp_maskedheapintreal(s,tgrad,fgrad,mask,a,M,tol(1),...
-                                    flags.do_timeinv,usephase);
-    % Find all small coefficients in the unknown phase area
-    missingidx = find(usedmask==0);
-    bigenoughidx = abss(missingidx)>=absthr(1);
-    usedmask(missingidx(bigenoughidx)) = 1;
-end
-
-% Do further tol
-for ii=2:numel(tol)
-    newphase=comp_maskedheapintreal(s,tgrad,fgrad,usedmask,a,M,tol(ii),...
-                                    flags.do_timeinv,newphase);
-    missingidx = find(usedmask==0);
-    bigenoughidx = abss(missingidx)>=absthr(ii);
-    usedmask(missingidx(bigenoughidx)) = 1;                  
-end
-
-
-% Convert the mask so it can be used directly for indexing
-usedmask = logical(usedmask);
-% Assign random values to coefficients below tolerance
-zerono = numel(find(~usedmask));
-newphase(~usedmask) = rand(zerono,1)*2*pi;
+newphase = comp_constructphasereal(abss,tgrad,fgrad,a,M,tol,flags.do_timeinv,mask,usephase);
 
 % Build the coefficients
 c=abss.*exp(1i*newphase);

@@ -59,6 +59,7 @@ complainif_notposint(a,'a',thismfilename);
 
 definput.keyvals.tol=1e-10;
 definput.keyvals.mask=[];
+definput.keyvals.usephase=[];
 definput.flags.phase={'freqinv','timeinv'};
 [flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
 
@@ -91,6 +92,8 @@ if ~isempty(usephase)
         error(['%s: s and usephase must have the same size and usephase must',...
                ' be real.'],thismfilename)        
     end
+else
+    usephase = angle(s);
 end
 
 if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
@@ -119,15 +122,16 @@ if isempty(mask)
     % Build the phase (calling a MEX file)
     newphase=comp_heapint(abss,tgrad,fgrad,a,tol(1),flags.do_timeinv);
     % Set phase of the coefficients below tol to random values
-    bigenoughidx = abss>=absthr(1);
+    bigenoughidx = abss>absthr(1);
     usedmask(bigenoughidx) = 1;
 else
-    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol(1),flags.do_timeinv);
+    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol(1),...
+                                flags.do_timeinv,usephase);
     % Set phase of small coefficient to random values
     % but just in the missing part
     % Find all small coefficients in the unknown phase area
     missingidx = find(usedmask==0);
-    bigenoughidx = abss(missingidx)>=absthr(1);
+    bigenoughidx = abss(missingidx)>absthr(1);
     usedmask(missingidx(bigenoughidx)) = 1;
 end
 
@@ -136,7 +140,7 @@ for ii=2:numel(tol)
     newphase=comp_maskedheapint(s,tgrad,fgrad,usedmask,a,tol(ii),...
                                 flags.do_timeinv,newphase);
     missingidx = find(usedmask==0);
-    bigenoughidx = abss(missingidx)>=absthr(ii);
+    bigenoughidx = abss(missingidx)>absthr(ii);
     usedmask(missingidx(bigenoughidx)) = 1;                  
 end
 
