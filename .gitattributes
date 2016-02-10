@@ -1,0 +1,5 @@
+# Listing all files and directories which should never be merged
+Makefile* merge=ours
+README* merge=ours
+configure.ac merge=ours
+examples merge=ours
