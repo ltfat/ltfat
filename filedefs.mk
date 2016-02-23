@@ -1,11 +1,15 @@
-files = dgt.o dgt_fac.o dgt_fb.o dgt_multi.o dgt_ola.o dgt_shear.o	\
-  dgt_walnut.o dgtreal_fac.o dwilt.o idwilt.o wmdct.o iwmdct.o filterbank.o ifilterbank.o heapint.o		\
-  idgt.o idgt_fac.o idgt_fb.o iwfac.o pfilt.o reassign_ci.o reassign_ti.o \
-  spread.o wfac.o windows.o winmanip.o ltfat_complexindependent.o \
-  dgt_shearola.o dct_ci.o dst_ci.o fftreal.o
+files = dgt.c dgt_fac.c dgt_fb.c dgt_multi.c dgt_ola.c dgt_shear.c	\
+		dgt_walnut.c dgtreal_fac.c dwilt.c idwilt.c wmdct.c iwmdct.c \
+		filterbank.c ifilterbank.c heapint.c \
+		idgt.c idgt_fac.c idgt_fb.c iwfac.c pfilt.c reassign_ti.c \
+		wfac.c windows.c winmanip.c \
+		dgt_shearola.c fftreal.c 
 
-files_blaslapack = \
-	ltfat_blaslapack.o gabdual_fac.o gabtight_fac.o ltfat_complexindependent_bl.o
+files_complextransp = ciutils.c spread.c wavelets.c goertzel.c dct.c dst.c reassign.c
 
-files_notypechange = c-safe-memalloc.o integer_manip.o reassign_typeconstant.o
+files_notypechange = c-safe-memalloc.c integer_manip.c reassign_typeconstant.c
+
+files_blaslapack = ltfat_blaslapack.c gabdual_fac.c gabtight_fac.c
+
+files_blaslapack_complextransp = gabdual.c gabtight.c
 

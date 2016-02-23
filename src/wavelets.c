@@ -1,5 +1,3 @@
-/* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
-#ifdef LTFAT_TYPE
 #include "ltfat.h"
 #include "ltfat_types.h"
 
@@ -757,6 +755,3 @@ void LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,ltfatInt L, LTFAT_TYPE *buf, 
 }
 
 
-
-
-#endif // LTFAT_TYPE

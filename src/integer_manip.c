@@ -1,7 +1,7 @@
 #include "ltfat.h"
 
 
-LTFAT_EXTERN_TOO void
+LTFAT_EXTERN void
 fftindex(const ltfatInt N, ltfatInt *indexout)
 {
     ltfatInt ii;
@@ -31,19 +31,19 @@ fftindex(const ltfatInt N, ltfatInt *indexout)
 
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 imax(const ltfatInt a, const ltfatInt b)
 {
    return (a > b ? a : b);
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 imin(const ltfatInt a, const ltfatInt b)
 {
    return (a < b ? a : b);
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 makelarger(const ltfatInt L, const ltfatInt K)
 {
     /* This is a floor operation */
@@ -59,7 +59,7 @@ makelarger(const ltfatInt L, const ltfatInt K)
 }
 
 /* Extended Euclid algorithm. */
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 gcd (const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s )
 {
     ltfatInt a1 = a;
@@ -91,7 +91,7 @@ gcd (const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s )
     return a1;
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 lcm(const ltfatInt a, const ltfatInt b)
 {
     ltfatInt junk_r, junk_s;
@@ -102,7 +102,7 @@ lcm(const ltfatInt a, const ltfatInt b)
 }
 
 
-LTFAT_EXTERN_TOO void
+LTFAT_EXTERN void
 gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
              ltfatInt *a, ltfatInt *M, ltfatInt *L, ltfatInt *N, ltfatInt *Ngood)
 {
@@ -132,7 +132,7 @@ gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
 }
 
 /* Determine the size of the output array of wfacreal and iwfacreal */
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
 {
 
@@ -150,7 +150,7 @@ wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
 
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 nextPow2(const ltfatInt y)
 {
     ltfatInt x = (ltfatInt) y;
@@ -172,7 +172,7 @@ nextPow2(const ltfatInt y)
     return x;
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 nextfastfft(const ltfatInt x)
 {
    ltfatInt xtmp = x;
@@ -193,25 +193,25 @@ nextfastfft(const ltfatInt x)
     return xtmp;
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 pow2(const ltfatInt x)
 {
     return ((1)<<(x));
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 modPow2(const ltfatInt x, const ltfatInt pow2var)
 {
     return ((x)&(pow2var-1));
 }
 
-LTFAT_EXTERN_TOO int
+LTFAT_EXTERN int
 isPow2(const ltfatInt x)
 {
     return x==nextPow2(x);
 }
 
-LTFAT_EXTERN_TOO int
+LTFAT_EXTERN int
 ilog2(const ltfatInt x)
 {
     ltfatInt tmp = 0;
@@ -221,7 +221,7 @@ ilog2(const ltfatInt x)
 }
 
 // integer power by squaring
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 ipow(const ltfatInt base, const ltfatInt exp)
 {
     ltfatInt baseTmp = (ltfatInt) base;
@@ -239,7 +239,7 @@ ipow(const ltfatInt base, const ltfatInt exp)
     return result;
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,
                    const ltfatInt offset, const ltfatExtType ext)
 {
@@ -260,7 +260,7 @@ filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,
     return Lc;
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 ltfat_round(const double x)
 {
     if (x < 0.0)
@@ -269,14 +269,14 @@ ltfat_round(const double x)
         return (ltfatInt)(x + 0.5);
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 positiverem(const ltfatInt a,const ltfatInt b)
 {
     const ltfatInt c = a%b;
     return(c<0 ? c+b : c);
 }
 
-LTFAT_EXTERN_TOO ltfatInt
+LTFAT_EXTERN ltfatInt
 rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax)
 {
     ltfatInt c = a < amin? amin:a;

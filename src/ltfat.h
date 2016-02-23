@@ -10,27 +10,27 @@ typedef ptrdiff_t ltfatInt;
 
 typedef enum
 {
-   ltfatUnspecErr = 1,
-   ltfatNoErr = 0
+    ltfatUnspecErr = 1,
+    ltfatNoErr = 0
 } ltfatStatus;
 
 typedef enum
 {
-   FREQINV = 0,
-   TIMEINV = 1
+    FREQINV = 0,
+    TIMEINV = 1
 } dgt_phasetype;
 
 typedef enum
 {
-    DCTI=FFTW_REDFT00, DCTIII=FFTW_REDFT01,
-    DCTII=FFTW_REDFT10, DCTIV=FFTW_REDFT11
+    DCTI = FFTW_REDFT00, DCTIII = FFTW_REDFT01,
+    DCTII = FFTW_REDFT10, DCTIV = FFTW_REDFT11
 } dct_kind;
 
 
 typedef enum
 {
-    DSTI=FFTW_RODFT00, DSTIII=FFTW_RODFT01,
-    DSTII=FFTW_RODFT10, DSTIV=FFTW_RODFT11
+    DSTI = FFTW_RODFT00, DSTIII = FFTW_RODFT01,
+    DSTII = FFTW_RODFT10, DSTIV = FFTW_RODFT11
 } dst_kind;
 
 typedef enum
@@ -71,21 +71,29 @@ extern "C"
 /* -------- Create the single precision routines headers ----- */
 
 #ifndef LTFAT_DOUBLE
-#ifndef LTFAT_SINGLE
+#   ifndef LTFAT_SINGLE
 #      define LTFAT_SINGLE_WASNOTDEFINED
 #      define LTFAT_SINGLE
-#endif
+#   endif
 
 #   include "ltfat_types.h"
 #   include "ltfat_typecomplexindependent.h"
 
-#   define LTFAT_COMPLEXTYPE
-#   include "ltfat_types.h"
-#   include "ltfat_typecomplexindependent.h"
-#   undef LTFAT_COMPLEXTYPE
+#   ifndef LTFAT_COMPLEXTYPE
+#       define LTFAT_COMPLEXTYPE
+#       include "ltfat_types.h"
+#       include "ltfat_typecomplexindependent.h"
+#       undef LTFAT_COMPLEXTYPE
+#       include "ltfat_types.h"
+#       include "ltfat_typeindependent.h"
+#   else
+#       undef LTFAT_COMPLEXTYPE
+#       include "ltfat_types.h"
+#       include "ltfat_typeindependent.h"
+#       define LTFAT_COMPLEXTYPE
+#   endif
 
-#   include "ltfat_types.h"
-#   include "ltfat_typeindependent.h"
+
 
 #   ifdef LTFAT_SINGLE_WASNOTDEFINED
 #      undef LTFAT_SINGLE
@@ -96,21 +104,27 @@ extern "C"
 
 /* -------- Create the single precision routines headers ----- */
 #ifndef LTFAT_SINGLE
-#ifndef LTFAT_DOUBLE
-#   define LTFAT_DOUBLE_WASNOTDEFINED
-#   define LTFAT_DOUBLE
-#endif
+#   ifndef LTFAT_DOUBLE
+#       define LTFAT_DOUBLE_WASNOTDEFINED
+#       define LTFAT_DOUBLE
+#   endif
 
-#include "ltfat_types.h"
-#include "ltfat_typecomplexindependent.h"
+#   include "ltfat_types.h"
+#   include "ltfat_typecomplexindependent.h"
 
-#define LTFAT_COMPLEXTYPE
-#include "ltfat_types.h"
-#include "ltfat_typecomplexindependent.h"
-#undef LTFAT_COMPLEXTYPE
-
-#include "ltfat_types.h"
-#include "ltfat_typeindependent.h"
+#   ifndef LTFAT_COMPLEXTYPE
+#       define LTFAT_COMPLEXTYPE
+#       include "ltfat_types.h"
+#       include "ltfat_typecomplexindependent.h"
+#       undef LTFAT_COMPLEXTYPE
+#       include "ltfat_types.h"
+#       include "ltfat_typeindependent.h"
+#   else
+#       undef LTFAT_COMPLEXTYPE
+#       include "ltfat_types.h"
+#       include "ltfat_typeindependent.h"
+#       define LTFAT_COMPLEXTYPE
+#   endif
 
 #   ifdef LTFAT_DOUBLE_WASNOTDEFINED
 #      undef LTFAT_DOUBLE

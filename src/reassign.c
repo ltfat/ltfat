@@ -1,5 +1,3 @@
-#ifdef LTFAT_TYPE
-
 #include "ltfat.h"
 #include "ltfat_types.h"
 #include "reassign_typeconstant.h"
@@ -244,5 +242,3 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
 #undef CHECKZEROCROSSINGANDBREAK
 }
 
-
-#endif

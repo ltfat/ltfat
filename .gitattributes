@@ -5,3 +5,8 @@ configure.ac merge=ours
 examples merge=ours
 .gitignore merge=ours
 .gitattributes merge=ours
+src/Makefile* merge=ours
+bootstrap merge=ours
+m4 merge=ours
+
+

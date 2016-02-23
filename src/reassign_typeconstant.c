@@ -1,6 +1,6 @@
 #include "ltfat.h"
 
-LTFAT_EXTERN_TOO fbreassOptOut*
+LTFAT_EXTERN fbreassOptOut*
 fbreassOptOut_init(const ltfatInt l, const ltfatInt inital)
 {
    fbreassOptOut* ret = ltfat_calloc( 1, sizeof * ret);
@@ -19,7 +19,7 @@ fbreassOptOut_init(const ltfatInt l, const ltfatInt inital)
    return ret;
 }
 
-LTFAT_EXTERN_TOO void
+LTFAT_EXTERN void
 fbreassOptOut_destroy(fbreassOptOut* oo)
 {
 
@@ -35,7 +35,7 @@ fbreassOptOut_destroy(fbreassOptOut* oo)
    oo = NULL;
 }
 
-LTFAT_EXTERN_TOO void
+LTFAT_EXTERN void
 fbreassOptOut_expand(fbreassOptOut* oo, ltfatInt ii)
 {
    ltfatInt explmax = (ltfatInt) (fbreassOptOut_EXPANDRAT * oo->reposlmax[ii]);

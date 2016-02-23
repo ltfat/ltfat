@@ -1,7 +1,5 @@
-/* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
-#ifdef LTFAT_TYPE
-
 #include "ltfat.h"
+#include "ltfat_types.h"
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
@@ -33,4 +31,3 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
 
     LTFAT_SAFEFREEALL(gdf,gf);
 }
-#endif

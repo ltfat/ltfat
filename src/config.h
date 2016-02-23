@@ -72,17 +72,9 @@
 /* defined by Makefile when compiling LTFAT */
 #if defined(DLL_EXPORT_SYMBOLS) && ((defined(_WIN32) || defined(__WIN32__)))
 #  define LTFAT_EXTERN extern __declspec(dllexport)
-#  if defined(LTFAT_DOUBLE)
-#     define LTFAT_EXTERN_TOO LTFAT_EXTERN
-#  else
-#     define LTFAT_EXTERN_TOO
-#  endif
 #else
 #  define LTFAT_EXTERN extern
-#  define LTFAT_EXTERN_TOO LTFAT_EXTERN
 #endif
-
-
 
 /* On WinXP, gcc defines __WIN32__ */
 /* On Linux, gcc defines __linux__ */

@@ -1,11 +1,9 @@
-/* NOT PROCESSED DIRECTLY, dct_ci.c */
-#ifdef LTFAT_TYPE
 #include "ltfat.h"
 #include "ltfat_types.h"
 
 LTFAT_EXTERN LTFAT_FFTW(plan)
-LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
-                      const dct_kind kind)
+LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                      const dst_kind kind)
 {
     LTFAT_FFTW(iodim) dims, howmanydims;
     LTFAT_FFTW(plan) p;
@@ -19,7 +17,6 @@ LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
     howmanydims.is = 2*L;
     howmanydims.os = 2*L;
 
-    // We want to use the plan for the unaligned imaginary part of the array
     unsigned flag = FFTW_ESTIMATE | FFTW_UNALIGNED;
 #else
     dims.n = L;
@@ -45,21 +42,21 @@ LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
 
 // f and cout cannot be equal, because creating plan can tamper with the array
 LTFAT_EXTERN void
-LTFAT_NAME(dct)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
-                LTFAT_TYPE *cout, const dct_kind kind)
+LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+                LTFAT_TYPE *cout, const dst_kind kind)
 {
-    LTFAT_FFTW(plan) p = LTFAT_NAME(dct_init)( L, W, cout, kind);
+    LTFAT_FFTW(plan) p = LTFAT_NAME(dst_init)( L, W, cout, kind);
 
-    LTFAT_NAME(dct_execute)(p, f,  L,  W,  cout, kind);
+    LTFAT_NAME(dst_execute)(p, f,  L,  W, cout, kind);
 
     LTFAT_FFTW(destroy_plan)(p);
 }
 
 // f and cout can be equal, provided plan was already created
-LTFAT_EXTERN
-void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
-                             const ltfatInt L, const ltfatInt W,
-                             LTFAT_TYPE *cout, const dct_kind kind)
+LTFAT_EXTERN void
+LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+                        const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                        const dst_kind kind)
 {
     // Copy input to the output
     if(cout!=f)
@@ -73,23 +70,18 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
     LTFAT_REAL postScale = (LTFAT_REAL) 1.0/sqrt2;
     LTFAT_REAL scale = (LTFAT_REAL) sqrt2*(1.0/(double)N)*sqrt((double)L);
 
-    if(kind==DCTI || kind==DCTIII)
+    if(kind==DSTIII)
     {
-        for(ltfatInt ii=0; ii<W; ii++)
-        {
-            cout[ii*L]*=sqrt2;
-        }
-    }
-
-    if(kind==DCTI)
-    {
-        N -= 2;
         for(ltfatInt ii=0; ii<W; ii++)
         {
             cout[(ii+1)*L-1] *= sqrt2;
         }
+    }
 
-        scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L-1);
+    if(kind==DSTI)
+    {
+        N += 2;
+        scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L+1);
     }
 
     LTFAT_REAL* c_r = (LTFAT_REAL*)cout;
@@ -106,16 +98,7 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
         cout[ii] *= scale;
     }
 
-    if(kind==DCTI || kind==DCTII)
-    {
-        // Scale DC component(s)
-        for(ltfatInt ii=0; ii<W; ii++)
-        {
-            cout[ii*L] *= postScale;
-        }
-    }
-
-    if(kind==DCTI)
+    if(kind==DSTII)
     {
         // Scale AC component
         for(ltfatInt ii=0; ii<W; ii++)
@@ -125,4 +108,3 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
     }
 }
 
-#endif

@@ -1,5 +1,5 @@
-/* NOT PROCESSED DIRECTLY, see ltfat_complexindependent.c */
-#ifdef LTFAT_TYPE
+#include "ltfat.h"
+#include "ltfat_types.h"
 
 #ifndef GGA_UNROLL
 #   define GGA_UNROLL 8
@@ -539,5 +539,4 @@ LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
 
 
 
-#endif // LTFAT_TYPE
 

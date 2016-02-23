@@ -36,10 +36,6 @@
 #undef LTFAT_COMPLEXH
 #endif
 
-#ifdef LTFAT_COMPLEXH
-#undef LTFAT_COMPLEXH
-#endif
-
 #ifdef LTFAT_DOUBLE
 #  define LTFAT_REAL double
 #  define LTFAT_COMPLEX fftw_complex
