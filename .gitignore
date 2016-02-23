@@ -1,8 +1,0 @@
-*.o
-*.a
-*.so
-./Makefile
-configure
-config.log
-config.status
-autom4te.cache*
