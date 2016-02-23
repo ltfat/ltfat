@@ -1,4 +1,4 @@
-function newphase = comp_constructphasereal(s,tgrad,fgrad,a,M,tol,do_timeinv,mask,usephase)
+function [newphase, usedmask] = comp_constructphasereal(s,tgrad,fgrad,a,M,tol,do_timeinv,mask,usephase)
 
 absthr = max(s(:))*tol;
 

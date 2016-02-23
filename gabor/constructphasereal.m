@@ -161,7 +161,7 @@ tgrad = pderiv(logs,1,difforder)/(2*pi*info.tfr)*(M/M2);
 tgrad(1,:) = 0;
 tgrad(end,:) = 0;
 
-newphase = comp_constructphasereal(abss,tgrad,fgrad,a,M,tol,flags.do_timeinv,mask,usephase);
+[newphase, usedmask] = comp_constructphasereal(abss,tgrad,fgrad,a,M,tol,flags.do_timeinv,mask,usephase);
 
 % Build the coefficients
 c=abss.*exp(1i*newphase);
