@@ -1,0 +1,84 @@
+# To run this makefile, you must provide the ARCH and MATLABROOT
+# variables on the command line, i.e. as in
+#
+# make -f Makefile_unix MATLABROOT=/usr/local/MATLAB/R2011a ARCH=glnxa64
+
+ifndef MATLABROOT
+  #$(warning MATLABROOT variable is undefined. Using default MATLABROOT="/usr/local/MATLAB/R2011a/")
+  MATLABROOT=/usr/local/MATLAB/R2011a/
+endif
+
+ifndef ARCH
+  #$(warning ARCH variable is undefined. Using default ARCH=glnxa64 )
+  ARCH=glnxa64
+endif
+
+ifndef DFFTW
+   DFFTW=-lfftw3
+endif
+
+ifndef SFFTW
+   SFFTW=-lfftw3f
+endif
+
+CFLAGS+=-g -std=c99 -Ithirdparty -Wall -Wextra
+
+# the following adds parameters to CFLAGS
+include comptarget.mk
+
+# This is used for Octave mxe 
+ifneq ($(OS),Windows_NT)
+   CFLAGS+=-fPIC
+endif
+
+# Used only in the shared library build
+SHARED_FLAGS=-shared -Wl,--no-undefined -L"$(MATLABROOT)/bin/$(ARCH)" \
+			 -lmwblas -lmwlapack $(DFFTW) $(SFFTW)
+
+include filedefs.mk
+
+toCompile = $(files) $(files_blaslapack)
+
+DFILES = $(addprefix d,$(toCompile)) $(files_notypechange)
+SFILES = $(addprefix s,$(toCompile))
+
+
+all: static
+
+static: double_static single_static
+
+shared: double_shared single_shared
+
+double_static: $(DFILES) Makefile_unix
+	ar rvu libltfat.a $(DFILES) 
+	ranlib libltfat.a
+	cp -f libltfat.a ../lib
+
+single_static: $(SFILES) Makefile_unix
+	ar rvu libltfatf.a $(SFILES) 
+	ranlib libltfatf.a
+	cp -f libltfatf.a ../lib
+
+double_shared: $(DFILES) Makefile_unix
+	$(CC) $(SHARED_FLAGS) $(DFILES) -o ../lib/libltfat.so
+
+single_shared: $(SFILES) Makefile_unix
+	$(CC) $(SHARED_FLAGS) $(SFILES) -o ../lib/libltfatf.so
+
+#sltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
+#	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DMATLABFORTRAN -c $< -o $*.o
+#
+#dltfat_blaslapack_matlab.o: ltfat_blaslapack.c config.h
+#	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DMATLABFORTRAN -c $< -o $*.o
+
+s%.o: %.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o s$*.o
+
+d%.o: %.c config.h
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE  -c $< -o d$*.o
+
+%.o: %.c Makefile config.h
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	-rm *.o *.a
