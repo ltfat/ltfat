@@ -28,7 +28,7 @@ endif
 
 
 CFLAGS=-shared -fPIC -O3 -Wall -std=c99
-SEARCHPATHS=-I../src/thirdparty -I../src -I$(MATLABROOT)/extern/include 
+SEARCHPATHS=-I../libltfat/thirdparty -I../libltfat/src -I$(MATLABROOT)/extern/include 
 
 include filedefs.mk
 
@@ -39,7 +39,7 @@ LINKFLAGS=-L"$(MATLABROOT)/bin/$(ARCH)" \
 		  -lmex -lmx -lmwblas -lmwlapack $(DFFTW) $(SFFTW) 
 		  
 # -L../lib -l:libltfat.a does not work with clang
-LTFATLIBSTATIC=../lib/libltfat.a ../lib/libltfatf.a 
+LTFATLIBSTATIC=../lib/libltfat.a
 
 # Setting relative paths 
 #LTFATLIBDYNAMIC=-L../lib -lltfat -lltfatf -Wl,-R,'$$ORIGIN/../lib'

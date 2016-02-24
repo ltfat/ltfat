@@ -20,7 +20,7 @@ ifndef ARCH
   ARCH=maci64
 endif
 
-include ../../src/ostools.mk
+include ../../libltfat/ostools.mk
 
 MEXTGT=PolygonClip.$(EXT)
 MEXSRC=PolygonClip.c ../GPC/gpc.c

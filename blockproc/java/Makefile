@@ -3,7 +3,7 @@
 JC=javac
 
 FLAGS=-source 1.6 -target 1.6
-include ../../src/ostools.mk
+include ../../libltfat/ostools.mk
 
 default:
 	$(JC) $(FLAGS) net/sourceforge/ltfat/*.java net/sourceforge/ltfat/thirdparty/*.java

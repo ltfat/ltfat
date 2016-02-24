@@ -26,13 +26,13 @@ ifndef SFFTW
    SFFTW=-lfftw3f-3
 endif
 
-CFLAGS=-shared -s -Wall -std=c99 -I../src/thirdparty -I../src -fvisibility=hidden
+CFLAGS=-shared -s -Wall -std=c99 -I../libltfat/thirdparty -I../libltfat/src -fvisibility=hidden
 
 # the following adds parameters to CFLAGS
-include ../src/comptarget.mk
+include ../libltfat/comptarget.mk
 
 include filedefs.mk
-include ../src/ostools.mk
+include ../libltfat/ostools.mk
 
 MEXBASE = $(MEXBASESAFE) $(MEXBASEMORE)
 MEXS    = $(addsuffix .$(EXT),$(MEXBASE))
@@ -44,10 +44,10 @@ MEXLINKFLAGS=-static-libgcc -Wl,--dll -L"$(MATLABROOT)\bin\$(ARCH)" \
 all: $(MEXS)
 
 $(MEXS): %.$(EXT): %.c 
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ $(DFFTW) $(SFFTW) -lltfat -lltfatf $(MEXLINKFLAGS)
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $@ -L./ $(DFFTW) $(SFFTW) -lltfat $(MEXLINKFLAGS)
 
 ltfatarghelper.$(EXT):
-	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) -o $@ ltfatarghelper.c ../src/utils/list.c -lc -lm $(MEXLINKFLAGS)
+	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) -o $@ ltfatarghelper.c ../libltfat/ltfatcompat/utils/list.c -lc -lm $(MEXLINKFLAGS)
 
 clean: 
 	$(RM) *.$(EXT)

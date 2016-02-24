@@ -18,13 +18,13 @@ ifndef ARCH
   ARCH=glnxa64
 endif
 
-include ../../src/ostools.mk
+include ../../libltfat/ostools.mk
 
 MEXTGT=PolygonClip.$(EXT)
 MEXSRC=PolygonClip.c ../GPC/gpc.c
 LIBS= -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -static-libgcc 
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../GPC
-CFLAGS=-fPIC -std=c99 -s -O3 -Wall -shared -DMATLAB_MEX_FILE 
+CFLAGS=-fPIC -std=c99 -s -O2 -Wall -shared -DMATLAB_MEX_FILE 
 
 
 all:

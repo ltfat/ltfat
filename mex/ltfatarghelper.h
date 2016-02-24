@@ -3,8 +3,8 @@
 
 #include <ctype.h>  // Because of upper
 #include "mex.h"
-#include "../src/utils/dbg.h"
-#include "../src/utils/lcthw_List.h"
+#include "../libltfat/ltfatcompat/utils/dbg.h"
+#include "../libltfat/ltfatcompat/utils/lcthw_List.h"
 
 // To help muting the unused variable compiler warning
 // Only works for GCC and Clang

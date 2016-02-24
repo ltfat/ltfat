@@ -38,18 +38,18 @@ export CFLAGS := $(shell $(MKOCTFILE) -p CFLAGS) -std=c99
 # at least on Windows and on Mac
 export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS)
 
-include ../src/ostools.mk
+include ../libltfat/ostools.mk
 
 all:	$(INTERFACES)
 
 %.$(EXT): %.cc
-	$(MKOCTFILE) -strip -Wall -DNDEBUG -I. -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $<
+	$(MKOCTFILE) -strip -Wall -DNDEBUG -I. -I../libltfat/src -I../libltfat/thirdparty -L../lib -lltfat $<
 
 %.mex: ../mex/%.c 
-	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex -I../src -I../src/thirdparty -L../lib -lltfat -lltfatf $< -o $@ 
+	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex -I../libltfat/src -I../libltfat/thirdparty -L../lib -lltfat $< -o $@ 
 
 ltfatarghelper.mex:
-	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex ../src/utils/list.c ../mex/ltfatarghelper.c -o ltfatarghelper.mex
+	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex ../libltfat/ltfatcompat/utils/list.c ../mex/ltfatarghelper.c -o ltfatarghelper.mex
 
 
 clean:
