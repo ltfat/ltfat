@@ -15,7 +15,10 @@ fwd_heapintreal(const double *s, const double *tgrad, const double *fgrad,
                 const octave_idx_type L, const octave_idx_type W,
                 double tol, dgt_phasetype phasetype, double *phase)
 {
-    heapintreal_d(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
+    if(phasetype == 2)
+        heapintreal_d(s, tgrad, fgrad, a, M, L, W, tol, phase);
+    else
+        heapintreal_relgrad_d(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
 }
 
 static inline void
@@ -24,7 +27,10 @@ fwd_heapintreal(const float *s, const float *tgrad, const float *fgrad,
                 const octave_idx_type L, const octave_idx_type W,
                 float tol, dgt_phasetype phasetype, float *phase)
 {
-    heapintreal_s(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
+    if(phasetype == 2)
+        heapintreal_s(s, tgrad, fgrad, a, M, L, W, tol, phase);
+    else
+        heapintreal_relgrad_s(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -41,10 +47,11 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type M2 = args(0).rows();
     const octave_idx_type N = args(0).columns();
     const octave_idx_type L = N * a;
+    const octave_idx_type W = s.nelem() / (M * N);
 
-    MArray<LTFAT_TYPE> phase(dim_vector(M2, N));
+    MArray<LTFAT_TYPE> phase(dim_vector(M2, N, W));
 
-    fwd_heapintreal(s.data(), tgrad.data(), fgrad.data(), a, M, L, 1, tol,
+    fwd_heapintreal(s.data(), tgrad.data(), fgrad.data(), a, M, L, W, tol,
                     static_cast<dgt_phasetype>(phasetype), phase.fortran_vec());
 
     return octave_value(phase);
