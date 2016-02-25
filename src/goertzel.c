@@ -35,7 +35,7 @@ LTFAT_NAME(gga_init)(const LTFAT_REAL *indVecPtr, const ltfatInt M, const ltfatI
     LTFAT_COMPLEX* cc_term = ltfat_malloc(M*sizeof*cc_term);
     LTFAT_COMPLEX* cc2_term = ltfat_malloc(M*sizeof*cc2_term);
 
-    LTFAT_REAL pik_term_pre = (LTFAT_REAL) (2.0*PI/((double) L));
+    LTFAT_REAL pik_term_pre = (LTFAT_REAL) (2.0*M_PI/((double) L));
     LTFAT_REAL _Complex cc2_pre = (-1.0*_Complex_I*((double)(L-1)));
     LTFAT_REAL _Complex cc_pre =  (-1.0*_Complex_I*((double)(L)));
 

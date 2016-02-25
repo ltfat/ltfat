@@ -1,5 +1,9 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
+#include "cblas.h"
+
+#define HAVE_BLAS 1
+#define HAVE_LAPACK 1
 
 #ifdef LTFAT_DOUBLE
 #define LTFAT_POSV F77_FUNC(zposv,ZPOSV)
