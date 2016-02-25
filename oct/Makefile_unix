@@ -33,20 +33,20 @@ ifndef FFTW_LIBS
 FFTW_LIBS := $(shell $(MKOCTFILE) -p FFTW_LIBS)
 endif
 
-export CFLAGS := $(shell $(MKOCTFILE) -p CFLAGS) -std=c99
+export CFLAGS := $(shell $(MKOCTFILE) -p CFLAGS) -std=c99 -I../libltfat/include -I../libltfat/include/ltfat -DNDEBUG
 # export is necessary, otherwise LFLAGS won't have any effect
 # at least on Windows and on Mac
-export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS)
+export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS) -L../lib -lltfat
 
 include ../libltfat/ostools.mk
 
 all:	$(INTERFACES)
 
 %.$(EXT): %.cc
-	$(MKOCTFILE) -strip -Wall -DNDEBUG -I. -I../libltfat/src -I../libltfat/thirdparty -L../lib -lltfat $<
+	$(MKOCTFILE) -strip -Wall $<
 
 %.mex: ../mex/%.c 
-	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex -I../libltfat/src -I../libltfat/thirdparty -L../lib -lltfat $< -o $@ 
+	$(MKOCTFILE) --mex -Wall $< -o $@ 
 
 ltfatarghelper.mex:
 	$(MKOCTFILE) --mex -Wall -DNDEBUG -I../mex ../libltfat/ltfatcompat/utils/list.c ../mex/ltfatarghelper.c -o ltfatarghelper.mex

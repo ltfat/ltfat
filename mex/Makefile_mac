@@ -28,7 +28,7 @@ endif
 
 
 CFLAGS=-shared -fPIC -O3 -Wall -std=c99
-SEARCHPATHS=-I../libltfat/thirdparty -I../libltfat/src -I$(MATLABROOT)/extern/include 
+SEARCHPATHS=-I../libltfat/thirdparty -I../libltfat/include -I../libltfat/include/ltfat -I$(MATLABROOT)/extern/include 
 
 include filedefs.mk
 

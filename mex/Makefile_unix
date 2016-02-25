@@ -32,7 +32,7 @@ CFLAGS+=-shared -fPIC -g -Wall -Wextra -std=c99
 # the following adds parameters to CFLAGS
 include ../libltfat/comptarget.mk
 
-SEARCHPATHS=-I../libltfat/thirdparty -I../libltfat/src -I$(MATLABROOT)/extern/include
+SEARCHPATHS=-I../libltfat/thirdparty -I../libltfat/include -I../libltfat/include/ltfat -I$(MATLABROOT)/extern/include
 
 include filedefs.mk
 
