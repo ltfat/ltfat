@@ -315,7 +315,7 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
 {
     ltfatInt N = L / a;
     LTFAT_REAL b = ((LTFAT_REAL) L) / M;
-    LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * PI / L);
+    LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * M_PI / L);
 
     ltfatInt height = do_real ? M / 2 + 1 : M;
 

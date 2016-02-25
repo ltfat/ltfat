@@ -9,7 +9,7 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
 {
     const ltfatInt b = L / M;
 
-    const LTFAT_REAL scal = 2 * PI / L;
+    const LTFAT_REAL scal = 2 * M_PI / L;
 
     LTFAT_COMPLEX *gwork = (LTFAT_COMPLEX *)ltfat_malloc(L * sizeof(LTFAT_COMPLEX));
     LTFAT_NAME(fir2long_c)((const LTFAT_COMPLEX*)g, Lg, L, (LTFAT_COMPLEX*)gwork);
@@ -75,7 +75,7 @@ LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     {
         for (ltfatInt n = 0; n < Ns; n++)
         {
-            plan.mod[win + n * lt2] = cexp(-2 * PI * I * (a * n * ((win * lt1) % lt2)) / M);
+            plan.mod[win + n * lt2] = cexp(-2 * M_PI * I * (a * n * ((win * lt1) % lt2)) / M);
         }
     }
 

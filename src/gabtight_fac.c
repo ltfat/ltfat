@@ -1,5 +1,6 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
+#include "ltfat_blaslapack.h"
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L,const ltfatInt R,

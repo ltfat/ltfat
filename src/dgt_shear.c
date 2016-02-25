@@ -23,7 +23,7 @@ LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX *g)
         const long long idx = positiverem_long(
                                   positiverem_long(Lponen * m, LL) * m, LL);
 
-        g[m] = cexp(1.0 * I * PI * idx / L);
+        g[m] = cexp(1.0 * I * M_PI * idx / L);
     }
 
 
@@ -32,8 +32,8 @@ LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX *g)
 
     /* for (ltfatInt m=0;m<L;m++) */
     /* { */
-    /*    //g[m] = cexp(I*PI*fmod(Lpone*n*m*m,LL)/L); */
-    /*    g[m] = cexp(I*PI*fmod(fmod(fmod(Lpone*n,LL)*m,LL)*m,LL)/L); */
+    /*    //g[m] = cexp(I*M_PI*fmod(Lpone*n*m*m,LL)/L); */
+    /*    g[m] = cexp(I*M_PI*fmod(fmod(fmod(Lpone*n,LL)*m,LL)*m,LL)/L); */
     /* } */
 
 }
@@ -147,7 +147,7 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 
     for (ltfatInt n = 0; n < 2 * N; n++)
     {
-        plan.finalmod[n] = cexp(PI * I * n / N);
+        plan.finalmod[n] = cexp(M_PI * I * n / N);
     }
 
     return plan;
