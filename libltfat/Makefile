@@ -35,6 +35,25 @@ PREFIX ?= /usr/local
 LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
 
+# Base CFLAGS
+CFLAGS+=-Ithirdparty -Wall -Wextra -pedantic -std=gnu99 -Iinclude -Iinclude/ltfat -Ithirdparty $(OPTCFLAGS)
+
+# The following adds parameters to CFLAGS
+include comptarget.mk
+
+# Define source files from src/
+include filedefs.mk
+
+FFTWLIBS?=-lfftw3 -lfftw3f
+
+ifdef MINGW
+	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
+	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
+else
+	CFLAGS += -fPIC
+	BLASLAPACKLIBS?=-llapack -lblas
+endif
+
 LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 # Dependencies
 ifndef NOBLASLAPACK
@@ -59,7 +78,6 @@ DFILES   = $(addprefix $(objprefix)/double/,$(toCompile) $(toCompile_complextran
 		   $(addprefix $(objprefix)/complexdouble/,$(toCompile_complextransp))
 SFILES   = $(addprefix $(objprefix)/single/,$(toCompile) $(toCompile_complextransp)) \
 		   $(addprefix $(objprefix)/complexsingle/,$(toCompile_complextransp))
-
 
 # Define libraries
 DSTATIC = libltfatd.a
