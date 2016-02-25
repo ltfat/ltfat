@@ -1,36 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H 1
-/**
-* Include files
-* Constants
-* Macros, not changing
-*/
-#ifdef __cplusplus
-   // C++ complex header
-   // fftw3.h will define:
-   // typedef double fftw_complex[2]
-   #include <complex>
-#else
-   // C99 complex header
-   // fftw3.h will define:
-   // typedef double _Complex fftw_complex
-   #include <complex.h>
-#endif
-#include <string.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
-//#include <stdbool.h> // We do not use bool anyway
-#include <math.h>
-#include "fftw3.h"
-#include "cblas.h"
 
-#define HAVE_BLAS 1
-#define HAVE_LAPACK 1
-
-#ifndef PI
-#define PI 3.1415926535897932384626433832795
-#endif /* defined(PI) */
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif /* defined(M_PI) */
 
 // "Vectorizes" a function call
 #define LTFAT_APPLYFN(type,fn,...) do{ \

@@ -23,7 +23,7 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
         {
             /* Use a tmp variable to calculate squaring */
             tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
-            g[lr]+=exp(-PI*tmp*tmp/w);
+            g[lr]+=exp(-M_PI*tmp*tmp/w);
         }
         gnorm +=g[lr]*g[lr];
     }
@@ -69,8 +69,8 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t, con
         {
             /* Use a tmp variable to calculate squaring */
             tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
-            tmp = exp(-PI*tmp*tmp/w);
-            g[lr]+=tmp*LTFAT_COMPLEXH(cexp)(I*2*PI*c_f*((double)lr/L-(double)k));
+            tmp = exp(-M_PI*tmp*tmp/w);
+            g[lr]+=tmp*LTFAT_COMPLEXH(cexp)(I*2*M_PI*c_f*((double)lr/L-(double)k));
 
         }
         double gReal = LTFAT_COMPLEXH(creal)(g[lr]);

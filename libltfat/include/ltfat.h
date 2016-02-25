@@ -1,6 +1,26 @@
 #ifndef LTFAT_H
 #define LTFAT_H 1
-#include "config.h"
+#include "ltfat/config.h"
+
+#ifdef __cplusplus
+   // C++ complex header
+   // fftw3.h will define:
+   // typedef double fftw_complex[2]
+   #include <complex>
+#else
+   // C99 complex header
+   // fftw3.h will define:
+   // typedef double _Complex fftw_complex
+   #include <complex.h>
+#endif
+#include <string.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdio.h>
+//#include <stdbool.h> // We do not use bool anyway
+#include <math.h>
+#include <fftw3.h>
+
 
 #ifdef LTFAT_COMPAT32
 typedef int       ltfatInt;
@@ -66,7 +86,7 @@ extern "C"
 #endif
 
 // First, include headers of type (single, double, or complex versions) inert functions
-#include "ltfat_typeconstant.h"
+#include "ltfat/ltfat_typeconstant.h"
 
 /* -------- Create the single precision routines headers ----- */
 
@@ -76,20 +96,20 @@ extern "C"
 #      define LTFAT_SINGLE
 #   endif
 
-#   include "ltfat_types.h"
-#   include "ltfat_typecomplexindependent.h"
+#   include "ltfat/ltfat_types.h"
+#   include "ltfat/ltfat_typecomplexindependent.h"
 
 #   ifndef LTFAT_COMPLEXTYPE
 #       define LTFAT_COMPLEXTYPE
-#       include "ltfat_types.h"
-#       include "ltfat_typecomplexindependent.h"
+#       include "ltfat/ltfat_types.h"
+#       include "ltfat/ltfat_typecomplexindependent.h"
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat_types.h"
-#       include "ltfat_typeindependent.h"
+#       include "ltfat/ltfat_types.h"
+#       include "ltfat/ltfat_typeindependent.h"
 #   else
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat_types.h"
-#       include "ltfat_typeindependent.h"
+#       include "ltfat/ltfat_types.h"
+#       include "ltfat/ltfat_typeindependent.h"
 #       define LTFAT_COMPLEXTYPE
 #   endif
 
@@ -109,20 +129,20 @@ extern "C"
 #       define LTFAT_DOUBLE
 #   endif
 
-#   include "ltfat_types.h"
-#   include "ltfat_typecomplexindependent.h"
+#   include "ltfat/ltfat_types.h"
+#   include "ltfat/ltfat_typecomplexindependent.h"
 
 #   ifndef LTFAT_COMPLEXTYPE
 #       define LTFAT_COMPLEXTYPE
-#       include "ltfat_types.h"
-#       include "ltfat_typecomplexindependent.h"
+#       include "ltfat/ltfat_types.h"
+#       include "ltfat/ltfat_typecomplexindependent.h"
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat_types.h"
-#       include "ltfat_typeindependent.h"
+#       include "ltfat/ltfat_types.h"
+#       include "ltfat/ltfat_typeindependent.h"
 #   else
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat_types.h"
-#       include "ltfat_typeindependent.h"
+#       include "ltfat/ltfat_types.h"
+#       include "ltfat/ltfat_typeindependent.h"
 #       define LTFAT_COMPLEXTYPE
 #   endif
 

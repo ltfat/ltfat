@@ -31,24 +31,9 @@ buildprefix ?= build
 objprefix ?= obj
 endif
 
-# Base CFLAGS
-CFLAGS+=-Ithirdparty -Wall -Wextra -pedantic -std=gnu99 $(OPTCFLAGS)
-
-# The following adds parameters to CFLAGS
-include comptarget.mk
-
-# Define source files from src/
-include filedefs.mk
-
-FFTWLIBS?=-lfftw3 -lfftw3f
-
-ifdef MINGW
-	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
-	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
-else
-	CFLAGS += -fPIC
-	BLASLAPACKLIBS?=-llapack -lblas
-endif
+PREFIX ?= /usr/local
+LIBDIR = $(PREFIX)/lib
+INCDIR = $(PREFIX)/include
 
 LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 # Dependencies
@@ -75,24 +60,33 @@ DFILES   = $(addprefix $(objprefix)/double/,$(toCompile) $(toCompile_complextran
 SFILES   = $(addprefix $(objprefix)/single/,$(toCompile) $(toCompile_complextransp)) \
 		   $(addprefix $(objprefix)/complexsingle/,$(toCompile_complextransp))
 
-# Define targets
-DTARGET=$(buildprefix)/libltfatd.a
-STARGET=$(buildprefix)/libltfatf.a
-ALLTARGET=$(buildprefix)/libltfat.a
+
+# Define libraries
+DSTATIC = libltfatd.a
+SSTATIC = libltfatf.a
+DSSTATIC = libltfat.a
 
 ifndef MINGW
-	SO_DTARGET=$(patsubst %.a,%.so,$(DTARGET))
-	SO_STARGET=$(patsubst %.a,%.so,$(STARGET))
-	SO_ALLTARGET=$(patsubst %.a,%.so,$(ALLTARGET))
+	DSHARED = $(patsubst %.a,%.so,$(DSTATIC))
+	SSHARED = $(patsubst %.a,%.so,$(SSTATIC))
+	DSSHARED = $(patsubst %.a,%.so,$(DSSTATIC))
 else
-	SO_DTARGET=$(patsubst %.a,%.dll,$(DTARGET))
-	SO_STARGET=$(patsubst %.a,%.dll,$(STARGET))
-	SO_ALLTARGET=$(patsubst %.a,%.dll,$(ALLTARGET))
+	DSHARED = $(patsubst %.a,%.dll,$(DSTATIC))
+	SSHARED = $(patsubst %.a,%.dll,$(SSTATIC))
+	DSSHARED = $(patsubst %.a,%.dll,$(DSSTATIC))
 endif
 
-all: $(DTARGET) $(STARGET) $(SO_DTARGET) $(SO_STARGET) $(ALLTARGET) $(SO_ALLTARGET)
+# Define targets
+DTARGET=$(buildprefix)/$(DSTATIC)
+STARGET=$(buildprefix)/$(SSTATIC)
+DSTARGET=$(buildprefix)/$(DSSTATIC)
+SO_DTARGET=$(buildprefix)/$(DSHARED)
+SO_STARGET=$(buildprefix)/$(SSHARED)
+SO_DSTARGET=$(buildprefix)/$(DSSHARED)
 
-$(ALLTARGET): $(STARGET) $(DTARGET)
+all: $(DTARGET) $(STARGET) $(SO_DTARGET) $(SO_STARGET) $(DSTARGET) $(SO_DSTARGET)
+
+$(DSTARGET): $(STARGET) $(DTARGET)
 	$(AR) rvu $@ $(COMMONFILES) $(DFILES) $(SFILES)
 	$(RANLIB) $@
 
@@ -104,7 +98,7 @@ $(STARGET): $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objp
 	$(AR) rvu $@ $(SFILES) $(COMMONFILESFORSFILES)
 	$(RANLIB) $@
 
-$(SO_ALLTARGET): $(ALLTARGET)
+$(SO_DSTARGET): $(DSTARGET)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(SFILES) $(LFLAGS) 
 
 $(SO_DTARGET): $(DTARGET)
@@ -155,7 +149,7 @@ $(objprefix)/complexdouble:
 $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
 
-.PHONY: clean help
+.PHONY: clean help doc
 
 clean:
 	@$(RMDIR) build
@@ -166,3 +160,22 @@ help:
 	@echo "Options:"
 	@echo "    make [target] CONFIG=debug               Compiles the library in a debug mode"
 	@echo "    make [target] NOBLASLAPACK=              Compiles the library without BLAS and LAPACK dependencies"
+
+doc:
+	doxygen doc/doxyconfig
+
+cleandoc:
+	@$(RMDIR) html
+	@$(RMDIR) latex
+
+install:
+	install -d $(LIBDIR)
+	install $(STARGET) $(DTARGET) $(DSTARGET) $(SO_STARGET) $(SO_DTARGET) $(SO_DSTARGET) $(LIBDIR)
+	mkdir -p $(INCDIR)
+	cp -r include/* $(INCDIR)
+
+uninstall:
+	rm -f $(LIBDIR)/$(DSTATIC) $(LIBDIR)/$(SSTATIC) $(LIBDIR)/$(DSSTATIC)
+	rm -f $(LIBDIR)/$(DSHARED) $(LIBDIR)/$(SSHARED) $(LIBDIR)/$(DSSHARED)
+	rm -f $(INCDIR)/ltfat.h
+	rm -rf $(INCDIR)/ltfat

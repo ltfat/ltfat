@@ -29,7 +29,7 @@ LTFAT_NAME(heap_grow)(struct LTFAT_NAME(heap)* h, int factor);
 void
 LTFAT_NAME(heap_reset)(struct LTFAT_NAME(heap)* h, const LTFAT_REAL* news);
 
-/*******  HEAPINT "plan" ***********/
+/*******  HEAM_PINT "plan" ***********/
 struct LTFAT_NAME(heapinttask)
 {
     ltfatInt height;
