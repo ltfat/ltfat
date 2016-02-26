@@ -1,3 +1,7 @@
+Version 2.1.2
+
+* Improved functions for DGT and DGTREAL phase reconstruction: constructphase, constructphasereal
+
 Version 2.1.1
 
 * New function for computing higher order phase derivatives: gabphasederiv

@@ -1,3 +1,9 @@
+Version 2.1.2 x/3 2016
+	* Improved functions for DGT and DGTREAL phase reconstruction: constructphase, constructphasereal
+
+	* The backend library is now in separate repository: https://github.com/ltfat/libltfat
+	  and it is included as a subtree in subdirectory libltfat/ (replacing src/)
+
 Version 2.1.1 x/10  2015
     * New function for computing higher order phase derivatives: gabphasederiv
 
