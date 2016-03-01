@@ -1,6 +1,6 @@
 % LTFAT - Quadratic time-frequency distributions
 %
-%  Jordy van Velthoven, 2014 - 2015.
+%  Jordy van Velthoven, 2014 - 2016.
 %
 %  Quadratic distributions
 %    AMBIGUITYFUNCTION   -  Ambiguity function

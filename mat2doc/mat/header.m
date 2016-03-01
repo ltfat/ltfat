@@ -1,4 +1,4 @@
-% Copyright (C) 2005-2015 Peter L. Soendergaard <peter@sonderport.dk>.
+% Copyright (C) 2005-2016 Peter L. Soendergaard <peter@sonderport.dk>.
 % This file is part of LTFAT version {VERSION}
 %
 % This program is free software: you can redistribute it and/or modify

@@ -1,6 +1,6 @@
 % LTFAT - Basic Fourier and DCT analysis.
 %
-%  Peter L. Søndergaard, 2008 - 2015.
+%  Peter L. Søndergaard, 2008 - 2016.
 %
 %  Support routines
 %    FFTINDEX       -  Index of positive and negative frequencies.

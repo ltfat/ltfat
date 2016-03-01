@@ -1,6 +1,6 @@
 % LTFAT - Wavelets
 %
-%   Zdenek Prusa, 2013 - 2015.
+%   Zdenek Prusa, 2013 - 2016.
 %
 %   Basic analysis/synthesis
 %      FWT               - Fast Wavelet Transform 
