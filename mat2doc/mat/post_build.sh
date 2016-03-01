@@ -1,13 +1,19 @@
 #!/bin/bash
+curdir={INST}
 
-cd {INST}
+echo "Changing to " $curdir
+
+cd $curdir
 # We do not need any of these. They only work in Matlab
 rm -Rf mulaclab
 rm -Rf thirdparty/GPC
 rm -Rf thirdparty/PolygonClip
+# the thirdparty dir might contain Octave scripts as well as source code of oct and mex files
+mkdir ../thirdparty
+mv thirdparty/Playrec ../thirdparty
 rm mulaclab.m
 # Move these to the package top level
-mv src ..
+mv libltfat ../src
 mv oct ..
 rm -Rf mex 
 # We need to keep the mex subdir. as we use some of the mex files
@@ -15,7 +21,9 @@ rm -Rf mex
 mv lib ..
 
 # We moved src, we need to fix paths in some Makefiles
-sed -i 's:../../src/ostools.mk:../../../src/ostools.mk:g' blockproc/java/Makefile
+sed -i 's:../../libltfat/ostools.mk:../../../src/ostools.mk:g' blockproc/java/Makefile
+sed -i 's:../libltfat/ostools.mk:../src/ostools.mk:g' ../oct/Makefile_unix
+sed -i 's:../../libltfat/ostools.mk:../../src/ostools.mk:g' ../thirdparty/Playrec/Makefile_unixoct
 
 # Store contents from the testing and the reference directories in 
 # private dir. so they do not pollute the namespace.
@@ -28,9 +36,6 @@ mv private/test_all_ltfat.m .
 rm -rf testing
 rm -rf reference
 
-# the thirdparty dir might contain Octave scripts as well as source code of oct and mex files
-mkdir ../thirdparty
-mv thirdparty/Playrec ../thirdparty
 # ./thirdparty is still not empty
 # rm -Rf thirdparty
 
@@ -47,13 +52,15 @@ find -name "*.m" | xargs -n1 sed -i s/í/i/g
 #ltfatversion=$(head -n 1 ltfat_version)
 ltfatversion={VERSION}
 
-cd ..
-cd src/
+cd ../src
+mv Makefile Makefile_libltfat
+cp ltfatcompat/Makefile_octpkg.in Makefile.in
+cp ltfatcompat/bootstrap .
+cp ltfatcompat/configure.ac .
 
 # Update current version in configure.ac
 sed -i -e "s/\[2.0.0\]/\[$ltfatversion\]/" configure.ac
 
-mv Makefile_octpkg.in Makefile.in
 ./bootstrap
 # Reported here http://savannah.gnu.org/bugs/?42278
 rm -Rf autom4te.cache/
