@@ -102,27 +102,30 @@ SO_DTARGET=$(buildprefix)/$(DSHARED)
 SO_STARGET=$(buildprefix)/$(SSHARED)
 SO_DSTARGET=$(buildprefix)/$(DSSHARED)
 
-all: $(DTARGET) $(STARGET) $(SO_DTARGET) $(SO_STARGET) $(DSTARGET) $(SO_DSTARGET)
+DDEP = $(buildprefix) $(objprefix)/double $(objprefix)/complexdouble $(objprefix)/common $(DFILES) $(COMMONFILES)
+SDEP = $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objprefix)/common $(SFILES) $(COMMONFILESFORSFILES)
 
-$(DSTARGET): $(STARGET) $(DTARGET)
+all: static shared
+
+$(DSTARGET): $(DDEP) $(SDEP)
 	$(AR) rvu $@ $(COMMONFILES) $(DFILES) $(SFILES)
 	$(RANLIB) $@
 
-$(DTARGET): $(buildprefix) $(objprefix)/double $(objprefix)/complexdouble $(objprefix)/common $(DFILES) $(COMMONFILES)
+$(DTARGET): $(DDEP)
 	$(AR) rvu $@ $(DFILES) $(COMMONFILES)
 	$(RANLIB) $@
 
-$(STARGET): $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objprefix)/common $(SFILES) $(COMMONFILESFORSFILES)
+$(STARGET): $(SDEP)
 	$(AR) rvu $@ $(SFILES) $(COMMONFILESFORSFILES)
 	$(RANLIB) $@
 
-$(SO_DSTARGET): $(DSTARGET)
+$(SO_DSTARGET): $(DDEP) $(SDEP)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(SFILES) $(LFLAGS) 
 
-$(SO_DTARGET): $(DTARGET)
+$(SO_DTARGET): $(DDEP)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(LFLAGS)
 
-$(SO_STARGET): $(STARGET)
+$(SO_STARGET): $(SDEP)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILESFORSFILES) $(SFILES) $(LFLAGS)
 
 $(objprefix)/common/d%.o: src/%.c
@@ -167,7 +170,11 @@ $(objprefix)/complexdouble:
 $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
 
-.PHONY: clean help doc
+.PHONY: clean help doc static shared
+
+static: $(DTARGET) $(STARGET) $(DSTARGET)
+
+shared: $(SO_DTARGET) $(SO_STARGET) $(SO_DSTARGET)
 
 clean:
 	@$(RMDIR) build
@@ -177,7 +184,7 @@ help:
 	@echo "USAGE: make [target]"
 	@echo "Options:"
 	@echo "    make [target] CONFIG=debug               Compiles the library in a debug mode"
-	@echo "    make [target] NOBLASLAPACK=              Compiles the library without BLAS and LAPACK dependencies"
+	@echo "    make [target] NOBLASLAPACK=1             Compiles the library without BLAS and LAPACK dependencies"
 
 doc:
 	doxygen doc/doxyconfig
