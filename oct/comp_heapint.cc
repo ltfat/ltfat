@@ -1,7 +1,7 @@
 #define TYPEDEPARGS 0, 1, 2
 #define SINGLEARGS
 #define REALARGS
-#define OCTFILENAME comp_heapint 
+#define OCTFILENAME comp_heapint
 #define OCTFILEHELP "Computes heapint.\n\
                     Usage: c = comp_heapint(s, itime, ifreq, a, tol, do_timeinv);\n\
                     Yeah."
@@ -13,12 +13,13 @@ static inline void
 fwd_heapint(const double *s, const double *tgrad, const double *fgrad,
             const octave_idx_type a, const octave_idx_type M,
             const octave_idx_type L, const octave_idx_type W,
-            double tol, dgt_phasetype phasetype, double *phase)
+            double tol, int phasetype, double *phase)
 {
-    if(phasetype == 2)
+    if (phasetype == 2)
         heapint_d(s, tgrad, fgrad, a, M, L, W, tol, phase);
     else
-        heapint_relgrad_d(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
+        heapint_relgrad_d(s, tgrad, fgrad, a, M, L, W, tol,
+                          static_cast<dgt_phasetype>(phasetype), phase);
 
 }
 
@@ -26,12 +27,13 @@ static inline void
 fwd_heapint(const float *s, const float *tgrad, const float *fgrad,
             const octave_idx_type a, const octave_idx_type M,
             const octave_idx_type L, const octave_idx_type W,
-            float tol, dgt_phasetype phasetype, float *phase)
+            float tol, int phasetype, float *phase)
 {
-    if(phasetype == 2)
+    if (phasetype == 2)
         heapint_s(s, tgrad, fgrad, a, M, L, W, tol, phase);
     else
-        heapint_relgrad_s(s, tgrad, fgrad, a, M, L, W, tol, phasetype, phase);
+        heapint_relgrad_s(s, tgrad, fgrad, a, M, L, W, tol,
+                          static_cast<dgt_phasetype>(phasetype), phase);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -52,7 +54,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     MArray<LTFAT_TYPE> phase(dim_vector(M, N, W));
 
     fwd_heapint(s.data(), tgrad.data(), fgrad.data(), a, M, L, W, tol,
-                static_cast<dgt_phasetype>(phasetype), phase.fortran_vec());
+                phasetype, phase.fortran_vec());
 
     return octave_value(phase);
 }
