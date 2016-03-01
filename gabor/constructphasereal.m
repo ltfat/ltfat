@@ -125,10 +125,6 @@ end
 
 [M2,N,W] = size(s);
 
-if W>1
-    error('%s: *s* must not be 3 dimensional.',thismfilename);
-end
-
 M2true = floor(M/2) + 1;
 
 if M2true ~= M2

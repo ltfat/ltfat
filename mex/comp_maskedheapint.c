@@ -62,11 +62,11 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     memcpy(phase, knownphase, M * N * W * sizeof * phase);
 
     if (phasetype == 2)
-        LTFAT_NAME(maskedheapint_relgrad)(s, tgrad, fgrad, mask,
-                                          a, M, L, W, tol, phasetype, phase);
-    else
         LTFAT_NAME(maskedheapint)(s, tgrad, fgrad, mask,
                                   a, M, L, W, tol, phase);
+    else
+        LTFAT_NAME(maskedheapint_relgrad)(s, tgrad, fgrad, mask,
+                                          a, M, L, W, tol, phasetype, phase);
 
 
     ltfat_free(mask);

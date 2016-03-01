@@ -44,6 +44,24 @@ function [c,newphase,usedmask,tgrad,fgrad]=constructphase(s,g,a,varargin)
 %   coefficients with known phase which is used in the output. Only the
 %   phase of remaining coefficients (for which mask==0) is computed.
 %
+%   `constructphasereal(c,g,a,M,tol,mask,usephase)` does the same as before
+%   but uses the known phase values from *usephase* rather than from *c*.
+%
+%   In addition, *tol* can be a vector containing decreasing values. In 
+%   that case, the algorithm is run `numel(tol)` times, initialized with
+%   the result from the previous step in the 2nd and the further steps.
+%
+%   Further, the function accepts the following flags:
+%
+%      'freqinv'  The constructed phase complies with the frequency
+%                 invariant phase convention such that it can be directly
+%                 used in |idgtreal|.
+%                 This is the default.
+%
+%      'timeinv'  The constructed phase complies with the time-invariant
+%                 phase convention. The same flag must be used in the other
+%                 functions e.g. |idgtreal|
+%
 %   This function requires a computational subroutine that is only
 %   available in C. Use |ltfatmex| to compile it.
 %
@@ -101,12 +119,6 @@ if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
            'descending manner.'],thismfilename);
 end
 
-W = size(s,3);
-
-if W>1
-    error('%s: *s* must not be 3 dimensional.',thismfilename);
-end
-
 abss = abs(s);
 % Compute phase gradient, check parameteres
 [tgrad,fgrad] = gabphasegrad('abs',abss,g,a,2);
@@ -125,7 +137,7 @@ if isempty(mask)
     bigenoughidx = abss>absthr(1);
     usedmask(bigenoughidx) = 1;
 else
-    newphase=comp_maskedheapint(s,tgrad,fgrad,mask,a,tol(1),...
+    newphase=comp_maskedheapint(abss,tgrad,fgrad,mask,a,tol(1),...
                                 flags.do_timeinv,usephase);
     % Set phase of small coefficient to random values
     % but just in the missing part
@@ -137,7 +149,7 @@ end
 
 % Do further tol
 for ii=2:numel(tol)
-    newphase=comp_maskedheapint(s,tgrad,fgrad,usedmask,a,tol(ii),...
+    newphase=comp_maskedheapint(abss,tgrad,fgrad,usedmask,a,tol(ii),...
                                 flags.do_timeinv,newphase);
     missingidx = find(usedmask==0);
     bigenoughidx = abss(missingidx)>absthr(ii);
