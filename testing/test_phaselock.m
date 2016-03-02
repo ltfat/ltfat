@@ -47,3 +47,14 @@ res=norm(c_quin - phaseunlock(c_quinp,a,'lt',[1 2]),'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
 fprintf(['PHASEUNLOCK QUIN   %0.5g %s\n'],res,fail);
 
+
+cfi = dgtreal(f,g,a,M);
+cti = dgtreal(f,g,a,M,'timeinv');
+
+res=norm(cfi - phaseunlockreal(cti,a,M),'fro');
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['PHASEUNLOCKREAL    %0.5g %s\n'],res,fail);
+
+res=norm(phaselockreal(cfi,a,M) - cti,'fro');
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['PHASELOCKREAL      %0.5g %s\n'],res,fail);

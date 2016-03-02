@@ -69,9 +69,11 @@
 %    CONSTRUCTPHASEREAL - |constructphase| for |dgtreal|
 %
 %  Phase conversions
-%    PHASELOCK      -  Phase Lock Gabor coefficients to time
-%    PHASEUNLOCK    -  Undo phase locking
-%    SYMPHASE       -  Convert to symmetric phase
+%    PHASELOCK       -  Phase Lock Gabor coefficients to time. inv.
+%    PHASEUNLOCK     -  Undo phase locking
+%    PHASELOCKREAL   -  Same as |phaselock| for |dgtreal|
+%    PHASEUNLOCKREAL -  Same as |phaseunlock| for |idgtreal|
+%    SYMPHASE        -  Convert to symmetric phase
 %
 %  Support for non-separable lattices
 %    MATRIX2LATTICETYPE - Matrix form to standard lattice description
