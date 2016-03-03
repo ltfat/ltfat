@@ -381,6 +381,20 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
                          LTFAT_REAL *cout);
 
 /* --------- other stuff -------- */
+
+/*******  HEAM_PINT "plan" ***********/
+struct LTFAT_NAME(heapinttask)
+{
+    ltfatInt height;
+    ltfatInt N;
+    int do_real;
+    int *donemask;
+    void (*intfun)(const struct LTFAT_NAME(heapinttask) *,
+                   const LTFAT_REAL*, const LTFAT_REAL*,
+                   const ltfatInt, LTFAT_REAL* );
+    struct LTFAT_NAME(heap)* heap;
+};
+
 LTFAT_EXTERN
 struct LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
@@ -406,7 +420,8 @@ LTFAT_EXTERN void
 LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
                                   const LTFAT_REAL* news,
-                                  const LTFAT_REAL tol);
+                                  const LTFAT_REAL tol,
+                                  const int do_log);
 
 LTFAT_EXTERN void
 LTFAT_NAME(heapint)(const LTFAT_REAL *s,

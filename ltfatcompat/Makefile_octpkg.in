@@ -20,7 +20,7 @@ all: $(targets)
 
 oct:
 	# Compile the backend lib
-	$(MAKE) -f Makefile_unix
+	$(MAKE) -f Makefile_libltfat build/libltfat.a
 	# Compile oct and mex files
 	$(MAKE) -C ../oct -f Makefile_unix
 	# Do postbuild explicitly so it is not called before 

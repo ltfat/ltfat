@@ -5,8 +5,8 @@ AC_PROG_CC_C99
 AC_PROG_CXX
 
 #AC_CONFIG_MACRO_DIR([m4/])
-m4_include([m4/ax_blas.m4])
-m4_include([m4/ax_lapack.m4])
+# m4_include([m4/ax_blas.m4])
+# m4_include([m4/ax_lapack.m4])
 
 # The checks for BLAS and Lapack have been disabled because they
 # provoke an error about a missing install-sh
