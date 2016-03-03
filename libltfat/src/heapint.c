@@ -208,7 +208,8 @@ void
 LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
                                   const LTFAT_REAL* news,
-                                  const LTFAT_REAL tol)
+                                  const LTFAT_REAL tol,
+                                  const int do_log)
 {
     ltfatInt Imax;
     LTFAT_REAL maxs;
@@ -237,10 +238,18 @@ LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
      * (But should get random phase instead)
      * Code 5
      */
-    for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
+
+    if (do_log)
     {
-        if (news[ii] <= tol * maxs)
-            hit->donemask[ii] = 5;
+        for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
+            if (news[ii] <= tol + maxs)
+                hit->donemask[ii] = 5;
+    }
+    else
+    {
+        for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
+            if (news[ii] <= tol * maxs)
+                hit->donemask[ii] = 5;
     }
 
     if (hit->do_real)
@@ -415,7 +424,7 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
         LTFAT_REAL* phasechan = phase + w * M * N;
 
         // Empty heap and fill it with the border coefficients from the mask
-        LTFAT_NAME(heapinttask_resetmask)(hit, maskchan, schan, tol);
+        LTFAT_NAME(heapinttask_resetmask)(hit, maskchan, schan, tol, 0);
 
 
         LTFAT_NAME(heapint_execute)(hit, tgradwchan, fgradwchan, phasechan);
@@ -652,7 +661,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
         LTFAT_REAL* phasechan = phase + w * M2 * N;
 
         // Empty heap and fill it with the border coefficients from the mask
-        LTFAT_NAME(heapinttask_resetmask)(hit, maskchan, schan, tol);
+        LTFAT_NAME(heapinttask_resetmask)(hit, maskchan, schan, tol, 0);
 
         LTFAT_NAME(heapint_execute)(hit, tgradwchan, fgradwchan, phasechan);
     }
