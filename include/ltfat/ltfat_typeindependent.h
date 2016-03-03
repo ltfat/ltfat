@@ -420,7 +420,8 @@ LTFAT_EXTERN void
 LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
                                   const LTFAT_REAL* news,
-                                  const LTFAT_REAL tol);
+                                  const LTFAT_REAL tol,
+                                  const int do_log);
 
 LTFAT_EXTERN void
 LTFAT_NAME(heapint)(const LTFAT_REAL *s,
