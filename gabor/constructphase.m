@@ -75,7 +75,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=constructphase(s,g,a,varargin)
 thismfilename = upper(mfilename);
 complainif_notposint(a,'a',thismfilename);
 
-definput.keyvals.tol=1e-10;
+definput.keyvals.tol=[1e-1 1e-10];
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
 definput.flags.phase={'freqinv','timeinv'};
