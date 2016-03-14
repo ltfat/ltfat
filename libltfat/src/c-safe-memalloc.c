@@ -1,12 +1,11 @@
 #include "ltfat.h"
-
-
+#include "ltfat_types.h"
 
 LTFAT_EXTERN
 void* ltfat_malloc (size_t n)
 {
     void *outp;
-    outp = fftw_malloc(n);
+    outp = LTFAT_FFTW(malloc)(n);
     if (outp == NULL)
     {
         puts("ltfat_malloc failed.");
@@ -22,7 +21,7 @@ void* ltfat_realloc (void *ptr, size_t n)
     void *outp;
     // DOES NOT PRODUCE MEMORY ALIGNED POINTER
     // outp = realloc(ptr, n);
-    outp = fftw_malloc(n);
+    outp = LTFAT_FFTW(malloc)(n);
 
     if (outp == NULL)
     {
@@ -48,7 +47,7 @@ void* ltfat_realloc_and_copy (void *ptr, size_t nold, size_t nnew)
 
     void *outp;
 
-    outp = fftw_malloc(nnew);
+    outp = LTFAT_FFTW(malloc)(nnew);
 
     if (outp == NULL)
     {
@@ -71,7 +70,7 @@ void* ltfat_calloc (size_t nmemb, size_t size)
     // outp = calloc(nmemb, size);
 
     // workaround
-    outp = fftw_malloc(nmemb*size);
+    outp = LTFAT_FFTW(malloc)(nmemb*size);
 
     if (outp == NULL)
     {
@@ -87,7 +86,7 @@ void* ltfat_calloc (size_t nmemb, size_t size)
 LTFAT_EXTERN
 void ltfat_free(const void *ptr)
 {
-    fftw_free((void*)ptr);
+    LTFAT_FFTW(free)((void*)ptr);
 }
 
 void ltfat_safefree(const void *ptr)
