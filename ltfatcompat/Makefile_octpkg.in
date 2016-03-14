@@ -9,21 +9,36 @@ export CC
 export CXX
 
 ifeq (@have_libportaudio@,1)
-  export HAVE_PORTAUDIO=1
+	export HAVE_PORTAUDIO=1
 endif
 
-# Disables compilation of MEX files. They cause trouble 
+# Disables compilation of MEX files. They cause trouble
 # with missing help.
 export NOMEX=1
+
+ifeq ($(OS),Windows_NT)
+	# Removes -fPIC from CFLAGS
+	export MINGW=1
+	# If OS==Windows_NT, the makefiles use Windows commands for
+	# file copy, delete and directory creation.
+	# To avoid that and fallback to posix compatible commands
+	# we temporarily redefine OS.
+	export OS=NotWindows_NT
+endif
+
+.PHONY: all oct playrec postbuild
 
 all: $(targets)
 
 oct:
-	# Compile the backend lib
+	# Compile the backend lib, no dependency is resolved here since we compile
+	# a static library
 	$(MAKE) -f Makefile_libltfat build/libltfat.a
+	# Copy to the common place.
+	mv build/libltfat.a ../lib
 	# Compile oct and mex files
 	$(MAKE) -C ../oct -f Makefile_unix
-	# Do postbuild explicitly so it is not called before 
+	# Do postbuild explicitly so it is not called before
 	# oct files are finished
 	$(MAKE) postbuild
 
