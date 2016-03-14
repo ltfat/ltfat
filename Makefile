@@ -15,20 +15,20 @@
 include ostools.mk
 
 ifdef CROSS
-CC=$(CROSS)gcc
-AR=$(CROSS)ar
-OBJCOPY=$(CROSS)objcopy
-RANLIB=$(CROSS)ranlib
-buildprefix ?= build/$(CROSS)
-objprefix ?= obj/$(CROSS)
-MINGW=1
+	CC=$(CROSS)gcc
+	AR=$(CROSS)ar
+	OBJCOPY=$(CROSS)objcopy
+	RANLIB=$(CROSS)ranlib
+	buildprefix ?= build/$(CROSS)
+	objprefix ?= obj/$(CROSS)
+	MINGW=1
 else
-CC?=gcc
-AR?=ar
-OBJCOPY?=objcopy
-RANLIB?=ranlib
-buildprefix ?= build
-objprefix ?= obj
+	CC?=gcc
+	AR?=ar
+	OBJCOPY?=objcopy
+	RANLIB?=ranlib
+	buildprefix ?= build
+	objprefix ?= obj
 endif
 
 PREFIX ?= /usr/local
@@ -102,55 +102,50 @@ SO_DTARGET=$(buildprefix)/$(DSHARED)
 SO_STARGET=$(buildprefix)/$(SSHARED)
 SO_DSTARGET=$(buildprefix)/$(DSSHARED)
 
-DDEP = $(buildprefix) $(objprefix)/double $(objprefix)/complexdouble $(objprefix)/common $(DFILES) $(COMMONFILES)
-SDEP = $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objprefix)/common $(SFILES) $(COMMONFILESFORSFILES)
+DDEP = $(buildprefix) $(objprefix)/double $(objprefix)/complexdouble $(objprefix)/common
+SDEP = $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objprefix)/common
 
 all: static shared
 
-$(DSTARGET): $(DDEP) $(SDEP)
+$(DSTARGET): $(DDEP) $(SDEP) $(COMMONFILES) $(DFILES) $(SFILES)
 	$(AR) rvu $@ $(COMMONFILES) $(DFILES) $(SFILES)
 	$(RANLIB) $@
 
-$(DTARGET): $(DDEP)
+$(DTARGET): $(DDEP) $(DFILES) $(COMMONFILES)
 	$(AR) rvu $@ $(DFILES) $(COMMONFILES)
 	$(RANLIB) $@
 
-$(STARGET): $(SDEP)
+$(STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
 	$(AR) rvu $@ $(SFILES) $(COMMONFILESFORSFILES)
 	$(RANLIB) $@
 
-$(SO_DSTARGET): $(DDEP) $(SDEP)
-	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(SFILES) $(LFLAGS) 
+$(SO_DSTARGET): $(DDEP) $(SDEP) $(COMMONFILES) $(DFILES) $(SFILES)
+	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(SFILES) $(LFLAGS)
 
-$(SO_DTARGET): $(DDEP)
+$(SO_DTARGET): $(DDEP) $(COMMONFILES) $(DFILES)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(LFLAGS)
 
-$(SO_STARGET): $(SDEP)
+$(SO_STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILESFORSFILES) $(SFILES) $(LFLAGS)
 
 $(objprefix)/common/d%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
-
-$(objprefix)/common/s%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
-# Overwrite symbols to avoid dependency on fftw since we actually link with fftwf
-	$(OBJCOPY) --redefine-sym fftw_malloc=fftwf_malloc $@
-	$(OBJCOPY) --redefine-sym fftw_free=fftwf_free $@
-
-$(objprefix)/common/%.o: src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ $(OPTCFLAGS)
-
-$(objprefix)/single/%.o: src/%.c
-	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o $@
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -c $< -o $@ $(OPTCFLAGS)
 
 $(objprefix)/double/%.o: src/%.c
-	$(CC) $(CFLAGS) -DLTFAT_DOUBLE  -c $< -o $@
-
-$(objprefix)/complexsingle/%.o: src/%.c
-	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE  -c $< -o $@
 
 $(objprefix)/complexdouble/%.o: src/%.c
-	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+
+$(objprefix)/common/s%.o: src/%.c
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -c $< -o $@
+
+$(objprefix)/single/%.o: src/%.c
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE  -c $< -o $@
+
+$(objprefix)/complexsingle/%.o: src/%.c
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+
 
 $(buildprefix):
 	@$(MKDIR) $(buildprefix)
