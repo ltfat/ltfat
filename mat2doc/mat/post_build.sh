@@ -20,9 +20,9 @@ rm -Rf mex
 #mv mex ..
 mv lib ..
 
-# We moved src, we need to fix paths in some Makefiles
+# We moved libltfat and renamed it to src, we need to fix paths in some Makefiles
 sed -i 's:../../libltfat/ostools.mk:../../../src/ostools.mk:g' blockproc/java/Makefile
-sed -i 's:../libltfat/ostools.mk:../src/ostools.mk:g' ../oct/Makefile_unix
+sed -i 's:/libltfat/:/src/:g' ../oct/Makefile_unix
 sed -i 's:../../libltfat/ostools.mk:../../src/ostools.mk:g' ../thirdparty/Playrec/Makefile_unixoct
 
 # Store contents from the testing and the reference directories in 
