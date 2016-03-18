@@ -2,6 +2,7 @@
 #define LTFAT_H 1
 #include "ltfat/config.h"
 
+#ifndef NOSYSTEMHEADERS
 #ifdef __cplusplus
    // C++ complex header
    // fftw3.h will define:
@@ -20,6 +21,7 @@
 //#include <stdbool.h> // We do not use bool anyway
 #include <math.h>
 #include <fftw3.h>
+#endif
 
 
 #ifdef LTFAT_COMPAT32

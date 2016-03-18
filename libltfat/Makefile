@@ -188,6 +188,9 @@ cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
 
+build/ltfat.h:
+	$(CC) -E -P -DNOSYSTEMHEADERS -nostdinc include/ltfat.h -o build/ltfat.h
+
 install:
 	install -d $(LIBDIR)
 	install $(STARGET) $(DTARGET) $(DSTARGET) $(SO_STARGET) $(SO_DTARGET) $(SO_DSTARGET) $(LIBDIR)
