@@ -7,7 +7,7 @@ files = dgt.c dgt_fac.c dgt_fb.c dgt_multi.c dgt_ola.c dgt_shear.c	\
 
 files_complextransp = ciutils.c spread.c wavelets.c goertzel.c dct.c dst.c reassign.c
 
-files_notypechange = c-safe-memalloc.c integer_manip.c reassign_typeconstant.c
+files_notypechange = c-safe-memalloc.c integer_manip.c reassign_typeconstant.c wavelets_typeconstant.c
 
 files_blaslapack = ltfat_blaslapack.c gabdual_fac.c gabtight_fac.c
 

@@ -1,6 +1,5 @@
 #ifndef _REASSIGN_TYPECONSTANT_H
 #define _REASSIGN_TYPECONSTANT_H
-#include "ltfat.h"
 
 #define fbreassOptOut_EXPANDRAT 2
 
