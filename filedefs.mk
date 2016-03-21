@@ -3,7 +3,7 @@ files = dgt.c dgt_fac.c dgt_fb.c dgt_multi.c dgt_ola.c dgt_shear.c	\
 		filterbank.c ifilterbank.c heapint.c \
 		idgt.c idgt_fac.c idgt_fb.c iwfac.c pfilt.c reassign_ti.c \
 		wfac.c windows.c winmanip.c \
-		dgt_shearola.c fftreal.c 
+		dgt_shearola.c fftreal.c tiutils.c
 
 files_complextransp = ciutils.c spread.c wavelets.c goertzel.c dct.c dst.c reassign.c
 

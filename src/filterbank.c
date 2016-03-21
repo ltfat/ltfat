@@ -274,7 +274,7 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
         }
 
         // Do the circshift
-         LTFAT_NAME_COMPLEX(circshift)(tmp,cout+w*N,N,foff);
+         LTFAT_NAME_COMPLEX(circshift)(tmp,N,foff, cout+w*N);
         //LTFAT_NAME_COMPLEX(circshift)(tmp,cout+w*N,N,-Gl/2);
         // memcpy(cout+w*N,tmp,N*sizeof*cout);
     }

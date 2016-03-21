@@ -1,65 +1,54 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
-#include "ciutils.h"
 
-LTFAT_EXTERN
-void LTFAT_NAME(circshift)(LTFAT_TYPE* in, LTFAT_TYPE* out, const ltfatInt L,
-                           const ltfatInt shift)
+LTFAT_EXTERN void
+LTFAT_NAME(circshift)(const LTFAT_TYPE* in, const ltfatInt L,
+                      const ltfatInt shift, LTFAT_TYPE* out)
 {
-    ltfatInt shiftMod = shift % L;
+    // Fix shift
+    int p = (L - shift) % L;
+
+    if (p < 0) p += L;
 
     if (in == out)
     {
+        int m, count, i, j;
 
-        if (1)
+        // Circshift inplace is magic!
+        for (m = 0, count = 0; count != L; m++)
         {
-            LTFAT_TYPE* inTmp = (LTFAT_TYPE*)ltfat_malloc(L * sizeof(LTFAT_TYPE));
-            memcpy(inTmp, in, L * sizeof(LTFAT_TYPE));
-            LTFAT_NAME(circshift)(inTmp, out, L, shift);
-            ltfat_free(inTmp);
+            LTFAT_TYPE t = in[m];
+
+            for (i = m, j = m + p; j != m;
+                 i = j, j = j + p < L ? j + p : j + p - L, count++)
+                out[i] = out[j];
+
+            out[i] = t; count++;
         }
-        else
-        {
-            ltfatInt m, count, ii, jj;
-
-            for (m = 0, count = 0; count != L; m++)
-            {
-                LTFAT_TYPE t = in[m];
-
-                for (ii = m, jj = m + shiftMod;
-                     jj != m;
-                     ii = jj, jj = jj + shiftMod < L ? jj + shiftMod : jj + shiftMod - L, count++)
-                {
-                    in[ii] = in[jj];
-                }
-
-                in[ii] = t;
-                count++;
-            }
-        }
-
-
-
-        return;
-    }
-
-
-
-    if (shiftMod < 0)
-    {
-        memcpy(out, in - shiftMod, (L + shiftMod)*sizeof * out);
-        memcpy(out + (L + shiftMod), in, -shiftMod * sizeof * out);
-    }
-    else if (shiftMod > 0)
-    {
-        memcpy(out + shiftMod, in, (L - shiftMod)*sizeof * out);
-        memcpy(out, in + L - shiftMod, shiftMod * sizeof * out);
     }
     else
     {
-        memcpy(out, in, L * sizeof * out);
+        // Circshit out of place is boring ...
+        memcpy(out, in + p, (L - p)*sizeof * out);
+        memcpy(out + L - p, in, p * sizeof * out);
     }
 }
+
+
+// in might be equal to out
+LTFAT_EXTERN void
+LTFAT_NAME(fftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
+{
+    LTFAT_NAME(circshift)(in, L, (L / 2), out);
+}
+
+// in might be equal to out
+LTFAT_EXTERN void
+LTFAT_NAME(ifftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
+{
+    LTFAT_NAME(circshift)(in, L, -(L / 2), out);
+}
+
 
 LTFAT_EXTERN
 void LTFAT_NAME(reverse_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
@@ -189,7 +178,7 @@ LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
             LTFAT_TYPE* cintmp = cin + offset;
             LTFAT_TYPE* couttmp = cout + offset;
             // circshift takes care of possible inplace operation
-            LTFAT_NAME(circshift)(cintmp, couttmp, M, -a * n);
+            LTFAT_NAME(circshift)(cintmp, M, -a * n, couttmp);
         }
 
     }
@@ -211,7 +200,7 @@ LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
             LTFAT_TYPE* cintmp = cin + offset;
             LTFAT_TYPE* couttmp = cout + offset;
             // circshift takes care of possible inplace operation
-            LTFAT_NAME(circshift)(cintmp, couttmp, M, a * n);
+            LTFAT_NAME(circshift)(cintmp, M, a * n, couttmp);
         }
 
     }

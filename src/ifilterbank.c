@@ -239,7 +239,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
     for (ltfatInt w = 0; w < W; w++)
     {
 
-        LTFAT_NAME_COMPLEX(circshift)(cbuf + w * bufLen, cbuf + w * bufLen, N, -foff);
+        LTFAT_NAME_COMPLEX(circshift)(cbuf + w * bufLen, N, -foff, cbuf + w * bufLen);
         // This does nothing if bufLen == N
         LTFAT_NAME_COMPLEX(periodize_array)(cbuf + w * bufLen, N, cbuf + w * bufLen, bufLen);
 
