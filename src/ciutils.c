@@ -2,17 +2,17 @@
 #include "ltfat_types.h"
 
 LTFAT_EXTERN void
-LTFAT_NAME(circshift)(const LTFAT_TYPE* in, const ltfatInt L,
-                      const ltfatInt shift, LTFAT_TYPE* out)
+LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
+                      const ltfatInt shift, LTFAT_TYPE out[])
 {
     // Fix shift
-    int p = (L - shift) % L;
+    ltfatInt p = (L - shift) % L;
 
     if (p < 0) p += L;
 
     if (in == out)
     {
-        int m, count, i, j;
+        ltfatInt m, count, i, j;
 
         // Circshift inplace is magic!
         for (m = 0, count = 0; count != L; m++)
@@ -50,9 +50,9 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
 }
 
 
-LTFAT_EXTERN
-void LTFAT_NAME(reverse_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
-                               const ltfatInt L)
+LTFAT_EXTERN void
+LTFAT_NAME(reverse_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
+                          const ltfatInt L)
 {
 
     if (in == out)
@@ -75,9 +75,9 @@ void LTFAT_NAME(reverse_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
     }
 }
 
-LTFAT_EXTERN
-void LTFAT_NAME(conjugate_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
-                                 const ltfatInt L)
+LTFAT_EXTERN void
+LTFAT_NAME(conjugate_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
+                            const ltfatInt L)
 {
 #ifdef LTFAT_COMPLEXTYPE
 
@@ -101,9 +101,9 @@ void LTFAT_NAME(conjugate_array)(LTFAT_TYPE* in, LTFAT_TYPE* out,
 
 }
 
-LTFAT_EXTERN
-void LTFAT_NAME(periodize_array)(LTFAT_TYPE* in, const ltfatInt Lin,
-                                 LTFAT_TYPE* out, const ltfatInt Lout)
+LTFAT_EXTERN void
+LTFAT_NAME(periodize_array)(LTFAT_TYPE* in, const ltfatInt Lin,
+                            LTFAT_TYPE* out, const ltfatInt Lout)
 {
     /* Do nothing if there is no place where to put periodized samples */
     if ( Lout <= Lin )
@@ -128,9 +128,37 @@ void LTFAT_NAME(periodize_array)(LTFAT_TYPE* in, const ltfatInt Lin,
     memcpy(out + periods * Lin, in, lastL * sizeof * in);
 }
 
-LTFAT_EXTERN
-void LTFAT_NAME(array2complex)(LTFAT_TYPE* in, LTFAT_COMPLEX* out,
-                               const ltfatInt L)
+LTFAT_EXTERN void
+LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
+                       const ltfatInt Lfold, LTFAT_TYPE* out)
+{
+    if (Lfold > Lin)
+    {
+        // Just copy
+        if (in != out)
+        {
+            memcpy(out, in, Lin * sizeof * out);
+            memset(out + Lin, 0, (Lfold - Lin)*sizeof * out);
+        }
+
+        return;
+    }
+
+    ltfatInt startIdx = 0;
+
+    if (in != out)
+        memset(out, 0, Lfold * sizeof * out);
+    else
+        startIdx = Lfold;
+
+    for (ltfatInt ii = startIdx; ii < Lin; ii++)
+        out[ii % Lfold] += in[ii];
+}
+
+
+LTFAT_EXTERN void
+LTFAT_NAME(array2complex)(LTFAT_TYPE* in, LTFAT_COMPLEX* out,
+                          const ltfatInt L)
 {
 #ifdef LTFAT_COMPLEXTYPE
 
@@ -207,9 +235,9 @@ LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
 
 }
 
-LTFAT_EXTERN
-void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
-                                LTFAT_TYPE* max, ltfatInt* idx)
+LTFAT_EXTERN void
+LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
+                           LTFAT_TYPE* max, ltfatInt* idx)
 {
     *max = in[0];
     *idx = 0;
@@ -229,9 +257,9 @@ void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
     }
 }
 
-LTFAT_EXTERN
-int LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
-                                      const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
+LTFAT_EXTERN int
+LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
+                                  const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
 {
     int found = 0;
     *max = -1e99;
@@ -239,7 +267,6 @@ int LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
 
     for (ltfatInt ii = 0; ii < L; ++ii)
     {
-
 #ifdef LTFAT_COMPLEXTYPE
 
         if (!mask[ii] && LTFAT_COMPLEXH(cabs)(in[ii]) > LTFAT_COMPLEXH(cabs)(*max))
@@ -256,3 +283,94 @@ int LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
     return found;
 }
 
+/* This routine changes an FIR window to a LONG window.
+ *
+ * Input parameters:
+ *  f     : Real valued input array.
+ *  Lfir  : Length of input array
+ *  Llong  : Length of output array
+ *  h     : Output array
+ */
+LTFAT_EXTERN void
+LTFAT_NAME(fir2long)(const LTFAT_TYPE* f, const ltfatInt Lfir,
+                     const ltfatInt Llong, LTFAT_TYPE* h)
+{
+    const div_t domod = div(Lfir, 2);
+
+    /* ---- In the odd case, the additional element is kept in the first half. ---*/
+
+    for (ltfatInt ii = 0; ii < domod.quot + domod.rem; ii++)
+    {
+        h[ii] = f[ii];
+    }
+
+    for (ltfatInt ii = domod.quot + domod.rem; ii < Llong - domod.quot; ii++)
+    {
+        h[ii] = 0.0;
+    }
+
+    const ltfatInt ss = Llong - Lfir;
+
+    for (ltfatInt ii = Lfir - 1; ii >= domod.quot + domod.rem; ii--)
+    {
+        h[ii + ss] = f[ii];
+    }
+
+}
+
+/* This routine changes a LONG window to an FIR window.
+ *
+ * Input parameters:
+ *  f     : Real valued input array.
+ *  Llong  : Length of input array
+ *  Lfir  : Length of output array
+ *  h     : Output array
+ */
+LTFAT_EXTERN void
+LTFAT_NAME(long2fir)(const LTFAT_TYPE* f, const ltfatInt Llong,
+                     const ltfatInt Lfir, LTFAT_TYPE* h)
+{
+    const div_t domod = div(Lfir, 2);
+
+    /* ---- In the odd case, the additional element is kept in the first half. ---*/
+
+    for (ltfatInt ii = 0; ii < domod.quot + domod.rem; ii++)
+    {
+        h[ii] = f[ii];
+    }
+
+    const ltfatInt ss = Llong - Lfir;
+
+    for (ltfatInt ii = domod.quot + domod.rem; ii < Lfir; ii++)
+    {
+        h[ii] = f[ii + ss];
+    }
+
+}
+
+LTFAT_EXTERN void
+LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
+                      ltfat_normalize_t flag, LTFAT_TYPE* out)
+{
+    LTFAT_REAL normfac = 1.0;
+
+    switch (flag)
+    {
+    case LTFAT_NORMALIZE_ENERGY:
+    {
+        normfac = 0.0;
+
+        for (ltfatInt ii = 0; ii < L; ii++)
+            normfac += in[ii] * in[ii];
+
+        normfac = sqrt(normfac);
+    }
+
+    case LTFAT_NORMALIZE_NULL:
+    default:
+        normfac = 1.0;
+    };
+
+    for (ltfatInt ii = 0; ii < L; ii++)
+        out[ii] = normfac * in[ii];
+}

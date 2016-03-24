@@ -512,32 +512,6 @@ LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
                                 LTFAT_REAL*        fgrad[],
                                 LTFAT_REAL*           cs[]);
 
-LTFAT_EXTERN void
-LTFAT_NAME(fftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h);
-
-LTFAT_EXTERN void
-LTFAT_NAME(ifftshift_r)(const LTFAT_REAL *f, const ltfatInt L, LTFAT_REAL *h);
-
-LTFAT_EXTERN void
-LTFAT_NAME(fir2long_r)(const LTFAT_REAL *f, const ltfatInt Lfir, const ltfatInt Llong,
-                       LTFAT_REAL *h);
-
-LTFAT_EXTERN void
-LTFAT_NAME(fir2long_c)(const LTFAT_COMPLEX *f,
-                       const ltfatInt Lfir, const ltfatInt Llong,
-                       LTFAT_COMPLEX *h);
-
-LTFAT_EXTERN void
-LTFAT_NAME(long2fir_r)(const LTFAT_REAL *f, const ltfatInt Llong,
-                       const ltfatInt Lfir, LTFAT_REAL *h);
-
-LTFAT_EXTERN void
-LTFAT_NAME(long2fir_c)(const LTFAT_COMPLEX *f, const ltfatInt Llong,
-                       const ltfatInt Lfir, LTFAT_COMPLEX *h);
-
-ltfatInt
-LTFAT_NAME(complexprod)(LTFAT_COMPLEX *c, const LTFAT_COMPLEX a,
-                        const LTFAT_COMPLEX b);
 
 /* ----- internal routines for calling BLAS and LAPACK ----- */
 

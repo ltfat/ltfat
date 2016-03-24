@@ -83,20 +83,6 @@ LTFAT_NAME(dgtreal_long_execute)(const LTFAT_NAME(dgtreal_long_plan) plan)
     {
         LTFAT_NAME_REAL(dgtphaselockhelper)(plan.cwork, plan.L, plan.W, plan.a,
                                             plan.M, plan.cwork);
-        /*ltfatInt N = plan.L / plan.a;
-        ltfatInt W = plan.W;
-        ltfatInt M = plan.M;
-
-        for (ltfatInt w = 0; w < W; w++)
-        {
-            for (ltfatInt n = 0; n < N; n++)
-            {
-                LTFAT_REAL* cworktmp = plan.cwork + w * N * M + n * M;
-                LTFAT_NAME_REAL(circshift)(cworktmp, cworktmp, M, -plan.a * n);
-            }
-
-        }
-        */
     }
 
     /* FFT to modulate the coefficients. */

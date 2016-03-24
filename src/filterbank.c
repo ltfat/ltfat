@@ -376,7 +376,7 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     /* Extend g and copy to work buffer */
     for (ltfatInt m=0; m<M; m++)
     {
-        LTFAT_NAME(fir2long_c)(g+m*Gl, Gl, L, gwork+m*L);
+        LTFAT_NAME_COMPLEX(fir2long)(g+m*Gl, Gl, L, gwork+m*L);
     }
 
     LTFAT_FFTW(execute)(plan_g);

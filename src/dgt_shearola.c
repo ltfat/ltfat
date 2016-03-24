@@ -23,7 +23,7 @@ LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
     plan.gext = ltfat_malloc(Lext*sizeof(LTFAT_COMPLEX));
     plan.cbuf = ltfat_malloc(M*Nblocke*W*sizeof(LTFAT_COMPLEX));
 
-    LTFAT_NAME(fir2long_c)(g, gl, Lext, plan.gext);
+    LTFAT_NAME_COMPLEX(fir2long)(g, gl, Lext, plan.gext);
 
     /* Zero the last part of the buffer, it will always be zero. */
     for (ltfatInt w=0; w<W; w++)

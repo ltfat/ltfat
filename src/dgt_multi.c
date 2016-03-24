@@ -12,7 +12,7 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
     const LTFAT_REAL scal = 2 * M_PI / L;
 
     LTFAT_COMPLEX *gwork = (LTFAT_COMPLEX *)ltfat_malloc(L * sizeof(LTFAT_COMPLEX));
-    LTFAT_NAME(fir2long_c)((const LTFAT_COMPLEX*)g, Lg, L, (LTFAT_COMPLEX*)gwork);
+    LTFAT_NAME_COMPLEX(fir2long)((const LTFAT_COMPLEX*)g, Lg, L, (LTFAT_COMPLEX*)gwork);
 
     for (ltfatInt w = 0; w < lt2; w++)
     {

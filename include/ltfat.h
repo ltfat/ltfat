@@ -1,6 +1,7 @@
 #ifndef LTFAT_H
 #define LTFAT_H 1
 #include "ltfat/config.h"
+#include "ltfat/ltfat_error.h"
 
 #ifndef NOSYSTEMHEADERS
 #ifdef __cplusplus
@@ -23,18 +24,11 @@
 #include <fftw3.h>
 #endif
 
-
 #ifdef LTFAT_COMPAT32
 typedef int       ltfatInt;
 #else
 typedef ptrdiff_t ltfatInt;
 #endif /* defined(LTFAT_COMPAT32) */
-
-typedef enum
-{
-    ltfatUnspecErr = 1,
-    ltfatNoErr = 0
-} ltfatStatus;
 
 typedef enum
 {

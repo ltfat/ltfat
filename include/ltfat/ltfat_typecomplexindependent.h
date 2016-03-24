@@ -1,6 +1,7 @@
 #include "wavelets.h"
 #include "goertzel.h"
 #include "ciutils.h"
+#include "gabdualfir.h"
 
 LTFAT_EXTERN void
 LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
