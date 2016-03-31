@@ -5,7 +5,7 @@ function gd=ref_gabtight(g,a,M)
 %   Calculate the canonical tight window by simple linear algebra
 g = double(g);
 
-G=tfmat('dgt',g,a,M);
+G=frsynmatrix(frame('dgt',g,a,M),length(g));
 
 gd=(G*G')^(-1/2)*g;
 

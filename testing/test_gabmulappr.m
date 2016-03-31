@@ -44,8 +44,8 @@ for ii=1:length(Lr);
   disp(s)
   
   % ---- Reconstruction test, tight Gaussian window ------------
-     
-  Tr=tfmat('gabmul',sym,a);
+  Tr = gabmulmatrix(frame('dgt',gabtight(a,M,L),a,M),sym);   
+  %Tr=tfmat('gabmul',sym,a);
   symnew=gabmulappr(Tr,a,M);
   
   res=norm(sym-symnew,'fro');
@@ -73,8 +73,8 @@ for ii=1:length(Lr);
   disp(s)
 
   % ---- Reconstruction test, same window for analysis and synthesis ------------
-     
-  Tr=tfmat('gabmul',sym,g,a);
+  Tr = gabmulmatrix(frame('dgt',g,a,M),sym);
+  %Tr=tfmat('gabmul',sym,g,a);
   symnew=gabmulappr(Tr,g,a,M);
   
   res=norm(sym-symnew,'fro');
@@ -96,8 +96,8 @@ for ii=1:length(Lr);
   disp(s) 
 
   % ---- Reconstruction test, two different windows for analysis and synthesis ---------
-     
-  Tr=tfmat('gabmul',sym,ga,gs,a);
+  Tr = gabmulmatrix2(frame('dgt',ga,a,M),frame('dgt',gs,a,M),sym);     
+  %Tr=tfmat('gabmul',sym,ga,gs,a);
   symnew=gabmulappr(Tr,ga,gs,a,M);
   
   res=norm(sym-symnew,'fro');
@@ -110,4 +110,10 @@ for ii=1:length(Lr);
 end;
 
 
+function T = gabmulmatrix(F,sym)
 
+T = operatormatrix(operatornew('framemul',F,F,framenative2coef(F,sym)));
+
+function T = gabmulmatrix2(Fa,Fs,sym)
+
+T = operatormatrix(operatornew('framemul',Fa,Fs,framenative2coef(Fs,sym)));

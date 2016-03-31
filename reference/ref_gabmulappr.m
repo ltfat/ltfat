@@ -99,10 +99,10 @@ part1=reshape(dgt(T',ga,a,M),M*N,L);
 part2=reshape(dgt(part1',gs,a,M),M*N,M*N).';
 lowsym = reshape(diag(part2),M,N);
 
-GBa = tfmat('dgt',ga,a,M);
+GBa = frsynmatrix(frame('dgt',ga,a,M),length(ga));
 % Gabor frame synthesis matrix
 if ga ~= gs
-   GBs = tfmat('dgt',gs,a,M);
+   GBs = frsynmatrix(frame('dgt',gs,a,M),length(gs));
 else
   GBs = GBa;
 end

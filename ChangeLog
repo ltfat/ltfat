@@ -1,3 +1,6 @@
+Version 2.1.3 x/6 2016
+	* Removed deprication warnings in test_all_ltfat 
+
 Version 2.1.2 x/3 2016
 	* Improved functions for DGT and DGTREAL phase reconstruction: constructphase, constructphasereal
 

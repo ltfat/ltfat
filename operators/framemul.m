@@ -64,6 +64,6 @@ if Fa.realinput && ~isreal(s)
            'be real.'],upper(mfilename));
 end;
 
-h=frsyn(Fs,s.*frana(Fa,f));
+h=frsyn(Fs,bsxfun(@times,frana(Fa,f),s));
 
 
