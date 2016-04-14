@@ -5,7 +5,7 @@ if nargin<2
 end
 
 if ~isstruct(F) || ~isfield(F,'frana')
-  error('%s: Agument F must be a frame definition structure.',...
+  error('%s: Argument F must be a frame definition structure.',...
         upper(callfun));
 end;
 
