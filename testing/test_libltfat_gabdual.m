@@ -2,7 +2,7 @@ function test_libltfat_gabdual
 [~,~,enuminfo]=libltfatprotofile;
 LTFAT_FIRWIN = enuminfo.LTFAT_FIRWIN;
 
-a = 12;
+a = 15;
 gl = 33;
 M = 33;
 g = zeros(gl,1);

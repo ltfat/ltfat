@@ -2,6 +2,7 @@
 #include "dgt_multi.h"
 #include "dgt_shear.h"
 #include "tiutils.h"
+#include "rtdgtreal.h"
 
 /*  --------- factorizations --------------- */
 

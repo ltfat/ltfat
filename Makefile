@@ -10,7 +10,11 @@
 # or
 # make CROSS=x86_64-w64-mingw32.static- NOBLASLAPACK=1
 #
+# Examples:
+# ---------
 #
+# Linking against BLAS and LAPACK from Matlab (if shared libs are desired):
+#  		make BLASLAPACKLIBS="-L/usr/local/MATLAB_R2013a/bin/glnxa64 -lmwblas -lmwlapack" 
 
 include ostools.mk
 
@@ -188,9 +192,9 @@ cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
 
-build/ltfat.h: $(buildprefix)
-	$(CC) -E -P -DNOSYSTEMHEADERS -nostdinc include/ltfat.h -o build/ltfat.h
-	sed -i '1 i\#include <fftw3.h>' build/ltfat.h
+$(buildprefix)/ltfat.h: $(buildprefix) 
+	$(CC) -E -P -DNOSYSTEMHEADERS -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
+	sed -i '1 i\#include <fftw3.h>' $(buildprefix)/ltfat.h
 
 install:
 	install -d $(LIBDIR)

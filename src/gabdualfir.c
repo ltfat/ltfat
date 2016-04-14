@@ -1,6 +1,5 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
-#include <assert.h>
 
 #define FIRWIN_RESETCOUNTER do{ \
             if (ii == domod.quot + domod.rem) \
@@ -125,6 +124,12 @@ LTFAT_EXTERN int
 LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a,
                               ltfatInt M, LTFAT_TYPE* gt)
 {
+    if (M < a || gl < a)
+        return LTFATERR_NOTAFRAME;
+
+    if (M < gl)
+        return LTFATERR_NOTPAINLESS;
+
     LTFAT_TYPE* d = ltfat_malloc(a * sizeof * d);
     LTFAT_NAME(gabframediag)(g, gl, a, M, a, d);
 

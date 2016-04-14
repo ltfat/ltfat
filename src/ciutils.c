@@ -28,6 +28,7 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
     }
     else
     {
+
         // Circshit out of place is boring ...
         memcpy(out, in + p, (L - p)*sizeof * out);
         memcpy(out + L - p, in, p * sizeof * out);

@@ -14,8 +14,8 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
 
 LTFAT_EXTERN int
 LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a,
-                        ltfatInt M, LTFAT_TYPE* gt);
+                              ltfatInt M, LTFAT_TYPE* gt);
 
 LTFAT_EXTERN int
 LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a, ltfatInt M,
-                       LTFAT_TYPE* gd);
+                             LTFAT_TYPE* gd);
