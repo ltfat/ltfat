@@ -148,10 +148,11 @@ LTFAT_NAME(rtidgtreal_done)(LTFAT_NAME(rtidgtreal_plan)* p)
 /* FWD FIFO */
 
 LTFAT_EXTERN LTFAT_NAME(rtdgtreal_fifo)*
-LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a)
+LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
+                                ltfatInt a, ltfatInt Wmax)
 {
-    LTFAT_REAL* buf = ltfat_calloc( (fifoLen + 1), sizeof * buf);
- 
+    LTFAT_REAL* buf = ltfat_calloc( Wmax*(fifoLen + 1), sizeof * buf);
+
     // TODO: This is the worst case delay. 
     // There might be cases for which the following is too pesimistic,
     // but I leave it for now.
@@ -159,7 +160,7 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a)
     LTFAT_NAME(rtdgtreal_fifo) retloc = {.buf = buf, .bufLen = fifoLen + 1,
                                          .a = a, .gl = gl,
                                          .readIdx =  fifoLen + 1 - (procDelay),
-                                         .writeIdx = 0
+                                         .writeIdx = 0, .Wmax = Wmax
                                         };
 
     LTFAT_NAME(rtdgtreal_fifo)* ret = malloc(sizeof * ret);
@@ -176,7 +177,8 @@ LTFAT_NAME(rtdgtreal_fifo_done)(LTFAT_NAME(rtdgtreal_fifo)* p)
 
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo)* p,
-                                 const ltfatInt bufLen, const LTFAT_REAL* buf)
+                                 const LTFAT_REAL** buf,
+                                 const ltfatInt bufLen, const ltfatInt W)
 {
     if (bufLen <= 0) return 0;
 
@@ -184,6 +186,8 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo)* p,
     if (freeSpace < 0) freeSpace += p->bufLen;
 
     if (freeSpace == 0) return 0;
+
+    ltfatInt Wact = p->Wmax < W ? p->Wmax: W;
 
     ltfatInt toWrite = bufLen > freeSpace ? freeSpace : bufLen;
     ltfatInt valid = toWrite;
@@ -198,10 +202,27 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo)* p,
     }
 
     if (valid > 0)
-        memcpy(p->buf + p->writeIdx, buf, valid * sizeof * p->buf );
+    {
+        for(ltfatInt w=0;w<p->Wmax;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + w * p->bufLen + p->writeIdx;
+            if(w < Wact)
+                memcpy(pbufchan, buf[w], valid * sizeof * p->buf );
+            else
+                memset(pbufchan, 0, valid * sizeof * p->buf );
+        }
+    }
     if (over > 0)
-        memcpy(p->buf, buf + valid, over * sizeof * p->buf);
-
+    {
+        for(ltfatInt w=0;w<Wact;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + w * p->bufLen;
+            if(w < Wact)
+                memcpy(pbufchan, buf[w] + valid, over * sizeof * p->buf);
+            else
+                memset(pbufchan, 0,  over * sizeof * p->buf);
+        }
+    }
     p->writeIdx = ( p->writeIdx + toWrite ) % p->bufLen;
 
     return toWrite;
@@ -229,9 +250,20 @@ LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo)* p, LTFAT_REAL* buf)
     }
 
     if (valid > 0)
-        memcpy(buf, p->buf + p->readIdx, valid * sizeof * p->buf );
+    {
+        for(ltfatInt w=0;w<p->Wmax;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + w * p->bufLen + p->readIdx;
+            memcpy(buf + w*p->gl, pbufchan, valid * sizeof * p->buf );
+        }
+    }
     if (over > 0)
-        memcpy(buf + valid, p->buf, over * sizeof * p->buf);
+    {
+        for(ltfatInt w=0;w<p->Wmax;w++)
+        {
+           memcpy(buf + valid + w*p->gl, p->buf + w*p->bufLen, over * sizeof * p->buf);
+        }
+    }
 
     // Only advance by a
     p->readIdx = ( p->readIdx + p->a ) % p->bufLen;
@@ -242,12 +274,13 @@ LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo)* p, LTFAT_REAL* buf)
 /* BACK FIFO */
 
 LTFAT_EXTERN LTFAT_NAME(rtidgtreal_fifo)*
-LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a)
+LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, 
+                                 ltfatInt a, ltfatInt Wmax)
 {
     // assert(fifoLen > gl)
     // assert(gl > a )
 
-    LTFAT_REAL* buf = ltfat_calloc((fifoLen + gl + 1), sizeof * buf);
+    LTFAT_REAL* buf = ltfat_calloc( Wmax*(fifoLen + gl + 1), sizeof * buf);
 
     // If gl is not integer divisible by a, we have to work with the worst case
     // delay
@@ -295,15 +328,23 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo)* p,
 
     if (valid > 0)
     {
-        LTFAT_REAL* pbuf = p->buf + p->writeIdx;
-        for (ltfatInt ii = 0; ii < valid; ii++)
-            pbuf[ii] += buf[ii];
+        for(ltfatInt w=0;w<p->Wmax;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + p->writeIdx + w*p->bufLen;
+            const LTFAT_REAL* bufchan = buf + w*p->gl;
+            for (ltfatInt ii = 0; ii < valid; ii++)
+                pbufchan[ii] += bufchan[ii];
+        }
     }
     if (over > 0)
     {
-        const LTFAT_REAL* vbuf = buf + valid;
-        for (ltfatInt ii = 0; ii < over; ii++)
-            p->buf[ii] += vbuf[ii];
+        for(ltfatInt w=0;w<p->Wmax;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + w*p->bufLen;
+            const LTFAT_REAL* bufchan = buf + valid + w*p->gl;
+            for (ltfatInt ii = 0; ii < over; ii++)
+                pbufchan[ii] += bufchan[ii];
+        }
     }
 
     p->writeIdx = ( p->writeIdx + p->a ) % p->bufLen;
@@ -313,7 +354,8 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo)* p,
 
 LTFAT_EXTERN int
 LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo)* p,
-                                 const ltfatInt bufLen, LTFAT_REAL* buf)
+                                 const ltfatInt bufLen, const ltfatInt W,
+                                 LTFAT_REAL** buf)
 {
     ltfatInt available = p->writeIdx - p->readIdx;
     if (available < 0) available += p->bufLen;
@@ -335,13 +377,21 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo)* p,
     // write again
     if (valid > 0)
     {
-        memcpy(buf, p->buf + p->readIdx, valid * sizeof * p->buf);
-        memset(p->buf + p->readIdx, 0, valid * sizeof * p->buf);
+        for(ltfatInt w=0;w<W;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + p->readIdx + w*p->bufLen;
+            memcpy(buf[w], pbufchan, valid * sizeof * p->buf);
+            memset(pbufchan, 0, valid * sizeof * p->buf);
+        }
     }
     if (over > 0)
     {
-        memcpy(buf + valid, p->buf, over * sizeof * p->buf);
-        memset(p->buf, 0, over * sizeof * p->buf);
+        for(ltfatInt w=0;w<W;w++)
+        {
+            LTFAT_REAL* pbufchan = p->buf + w*p->bufLen;
+            memcpy(buf[w] + valid, pbufchan, over * sizeof * p->buf);
+            memset(pbufchan, 0, over * sizeof * p->buf);
+        }
     }
 
     p->readIdx = ( p->readIdx + toRead ) % p->bufLen;
@@ -354,29 +404,58 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo)* p,
 LTFAT_EXTERN LTFAT_NAME(rtdgtreal_processor)*
 LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* g, const LTFAT_REAL* gd,
                                      const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                                     const ltfatInt Wmax,
                                      LTFAT_NAME(rtdgtreal_processor_callback) callback,
                                      void* userdata)
 {
     LTFAT_NAME(rtdgtreal_processor) retLoc =
     {
         .processorCallback = callback, .userdata = userdata,
-        .fwdfifo = LTFAT_NAME(rtdgtreal_fifo_init)(10 * gl, gl, a),
-        .backfifo = LTFAT_NAME(rtidgtreal_fifo_init)(10 * gl, gl, a),
+        .fwdfifo = LTFAT_NAME(rtdgtreal_fifo_init)(10 * gl, gl, a, Wmax),
+        .backfifo = LTFAT_NAME(rtidgtreal_fifo_init)(10 * gl, gl, a, Wmax),
         .fwdplan = LTFAT_NAME(rtdgtreal_init)(g, gl, M, LTFAT_RTDGTPHASE_ZERO),
         .backplan = LTFAT_NAME(rtidgtreal_init)(gd, gl, M, LTFAT_RTDGTPHASE_ZERO),
-        .buf = ltfat_malloc(gl * sizeof (LTFAT_REAL)),
-        .fftbufIn = ltfat_malloc((M / 2 + 1) * sizeof (LTFAT_COMPLEX)),
-        .fftbufOut = ltfat_malloc((M / 2 + 1) * sizeof (LTFAT_COMPLEX))
+        .buf = ltfat_malloc( Wmax * gl * sizeof (LTFAT_REAL)),
+        .fftbufIn = ltfat_malloc( Wmax * (M / 2 + 1) * sizeof (LTFAT_COMPLEX)),
+        .fftbufOut = ltfat_malloc( Wmax * (M / 2 + 1) * sizeof (LTFAT_COMPLEX)),
+        .garbageBinSize = 0
     };
     LTFAT_NAME(rtdgtreal_processor)* ret = malloc(sizeof * ret);
     memcpy(ret, &retLoc, sizeof * ret);
     return ret;
 }
 
+LTFAT_EXTERN LTFAT_NAME(rtdgtreal_processor)*
+LTFAT_NAME(rtdgtreal_processor_wininit)(LTFAT_FIRWIN win,
+                                       const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                                       const ltfatInt Wmax,
+                                       LTFAT_NAME(rtdgtreal_processor_callback) callback,
+                                       void* userdata)
+{
+    // assert is frame
+    // assert is painless
+    LTFAT_REAL* g = ltfat_malloc(gl*sizeof*g);
+    LTFAT_REAL* gd = ltfat_malloc(gl*sizeof*gd);
+
+    LTFAT_NAME_REAL(firwin)(win,gl,g);
+    LTFAT_NAME_REAL(gabdual_painless)(g,gl,a,M,gd);
+
+    LTFAT_NAME(rtdgtreal_processor)* ret =
+        LTFAT_NAME(rtdgtreal_processor_init)(g,gd,gl,a,M,Wmax,callback,userdata);
+
+    ret->garbageBinSize = 2;
+    ret->garbageBin = malloc(2*sizeof(void*));
+    ret->garbageBin[0] = g;
+    ret->garbageBin[1] = gd;
+
+    return ret;
+}
 
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
-                                        const LTFAT_REAL* in, const ltfatInt len, LTFAT_REAL* out)
+                                        const LTFAT_REAL** in,
+                                        const ltfatInt len, const ltfatInt chanNo,
+                                        LTFAT_REAL** out)
 {
     // Get default processor if none was set
     LTFAT_NAME(rtdgtreal_processor_callback) processorCallback =
@@ -385,27 +464,27 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
         processorCallback = &LTFAT_NAME(default_rtdgtreal_processor_callback);
 
     // Write new data
-    ltfatInt samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, len, in);
+    ltfatInt samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, len, chanNo);
 
     // While there is new data in the input fifo
     while ( LTFAT_NAME(rtdgtreal_fifo_read)(p->fwdfifo, p->buf) )
     {
         // Transform
-        LTFAT_NAME(rtdgtreal_execute)(p->fwdplan, p->buf, 1, p->fftbufIn);
+        LTFAT_NAME(rtdgtreal_execute)(p->fwdplan, p->buf, p->fwdfifo->Wmax, p->fftbufIn);
 
         // Process
         (*processorCallback)(p->userdata, p->fftbufIn, p->fwdplan->M / 2 + 1,
-                             p->fftbufOut);
+                             p->fwdfifo->Wmax, p->fftbufOut);
 
         // Reconstruct
-        LTFAT_NAME(rtidgtreal_execute)(p->backplan, p->fftbufOut, 1, p->buf);
+        LTFAT_NAME(rtidgtreal_execute)(p->backplan, p->fftbufOut, p->backfifo->Wmax, p->buf);
 
         // Write (and overlap) to out fifo
         LTFAT_NAME(rtidgtreal_fifo_write)(p->backfifo, p->buf);
     }
 
     // Read sampples for output
-    ltfatInt samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, len, out);
+    ltfatInt samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, len, chanNo, out);
 
     if ( samplesWritten != len ) return LTFAT_RTDGT_STREAMOVERFLOW;
     else if ( samplesRead != len ) return LTFAT_RTDGT_STREAMUNDERFLOW;
@@ -422,12 +501,21 @@ LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor)* p)
     ltfat_free(p->buf);
     ltfat_free(p->fftbufIn);
     ltfat_free(p->fftbufOut);
+
+    if(p->garbageBinSize)
+    {
+        for(int ii=0;ii<p->garbageBinSize;ii++)
+            ltfat_free(p->garbageBin[ii]);
+
+        free(p->garbageBin);
+    }
+
     free(p);
 }
 
 LTFAT_EXTERN void
 LTFAT_NAME(default_rtdgtreal_processor_callback)(void* UNUSED(userdata),
-        const LTFAT_COMPLEX* in, const ltfatInt M2, LTFAT_COMPLEX* out)
+        const LTFAT_COMPLEX* in, const int M2, LTFAT_COMPLEX* out)
 {
     memcpy(out, in, M2 * sizeof * in);
 }

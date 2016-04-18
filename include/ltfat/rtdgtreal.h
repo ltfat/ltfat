@@ -134,6 +134,7 @@ typedef struct
     ltfatInt bufLen; //!< Length of the previous
     ltfatInt readIdx; //!< Read pos.
     ltfatInt writeIdx; //!< Write pos.
+    ltfatInt Wmax;
 } LTFAT_NAME(rtdgtreal_fifo);
 
 
@@ -156,7 +157,8 @@ typedef struct
  * \returns RTDGTREAL_FIFO struct pointer
  */
 LTFAT_EXTERN LTFAT_NAME(rtdgtreal_fifo)*
-LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a);
+LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a, 
+                                ltfatInt Wmax);
 
 /** Write bufLen samples to DGT analysis ring buffer
  *
@@ -171,7 +173,8 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a);
  * \returns Number of samples written
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo)* p, const ltfatInt bufLen, const LTFAT_REAL* buf);
+LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo)* p, const LTFAT_REAL** buf, 
+                                 const ltfatInt bufLen, const ltfatInt W);
 
 /** Read p->gl samples from DGT analysis ring buffer
  *
@@ -202,6 +205,7 @@ typedef struct
     ltfatInt bufLen; //!< Length of the previous
     ltfatInt readIdx; //!< Read pos.
     ltfatInt writeIdx; //!< Write pos.
+    ltfatInt Wmax;
 } LTFAT_NAME(rtidgtreal_fifo);
 
 /** Create ring buffer for DGT synthesis
@@ -223,7 +227,7 @@ typedef struct
  * \returns RTIDGTREAL_FIFO struct pointer
  */
 LTFAT_EXTERN LTFAT_NAME(rtidgtreal_fifo)*
-LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a);
+LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a, ltfatInt Wmax);
 
 /** Write p->gl samples to DGT synthesis ring buffer
  *
@@ -249,7 +253,9 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo)* p, const LTFAT_RE
  * \returns Number of samples read
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo)* p, const ltfatInt bufLen, LTFAT_REAL* buf);
+LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo)* p,
+                                 const ltfatInt bufLen, const ltfatInt chanNo,
+                                 LTFAT_REAL* buf);
 
 /** Destroy DGT synthesis ring buffer
  * \param[in]  p      DGT synthesis ring buffer
@@ -265,7 +271,8 @@ LTFAT_NAME(rtidgtreal_fifo_done)(LTFAT_NAME(rtidgtreal_fifo)* p);
  * \param[in]        M2   Length of the arrays; number of unique FFT channels; equals to M/2 + 1
  * \param[out]      out   Output coefficients
  */
-typedef void (*LTFAT_NAME(rtdgtreal_processor_callback))(void* userdata, const LTFAT_COMPLEX* in, const ltfatInt M2, LTFAT_COMPLEX* out);
+typedef void (*LTFAT_NAME(rtdgtreal_processor_callback))(void* userdata, const LTFAT_COMPLEX** in,
+        const int M2, const int W, LTFAT_COMPLEX** out);
 
 typedef struct
 {
@@ -278,6 +285,8 @@ typedef struct
     LTFAT_REAL* buf;
     LTFAT_COMPLEX* fftbufIn;
     LTFAT_COMPLEX* fftbufOut;
+    void** garbageBin;
+    int garbageBinSize;
 } LTFAT_NAME(rtdgtreal_processor);
 
 
@@ -303,6 +312,12 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* g, const LTFAT_REAL* gd,
                                      LTFAT_NAME(rtdgtreal_processor_callback) callback,
                                      void* userdata);
 
+LTFAT_EXTERN LTFAT_NAME(rtdgtreal_processor)*
+LTFAT_NAME(rtdgtreal_processor_wininit)(LTFAT_FIRWIN win,
+                                       const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                                       LTFAT_NAME(rtdgtreal_processor_callback) callback,
+                                       void* userdata);
+
 /** Execute DGTREAL processor
  *
  * Output is lagging behind the input by (gl-1) samples.
@@ -317,7 +332,9 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* g, const LTFAT_REAL* gd,
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
-                                        const LTFAT_REAL* in, const ltfatInt len, LTFAT_REAL* out);
+                                        const LTFAT_REAL** in,
+                                        const ltfatInt len, const ltfatInt chanNo,
+                                        LTFAT_REAL** out);
 
 /** Destroy DGTREAL processor
  * \param[in]  p      DGTREAL processor
@@ -332,6 +349,7 @@ LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor)* p);
  * \param[out]      out   Output coefficients
  */
 LTFAT_EXTERN void
-LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COMPLEX* in, const ltfatInt M2, LTFAT_COMPLEX* out);
+LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COMPLEX** in,
+                                                 const int M2, const int W, LTFAT_COMPLEX** out);
 
 /** @}*/
