@@ -1,11 +1,12 @@
-function g = ptpfun(L,w,varargin)
+function g = ptpfun(w,L,width,varargin)
 %PTPFUN Sampled, periodized totally positive function of finite type
-%   Usage: g=ptpfun(L,w)
-%          g=ptpfun(L,w,...)
+%   Usage: g=ptpfun(w,L,width)
+%          g=ptpfun(w,L,...)
 %
 %   Input parameters:
 %         L    : Window length.
 %         w    : Vector of reciprocals $w_j=1/\delta_j$ in Fourier representation of *g*
+%         width: integer stretching factor for the essential support of g 
 %
 %   Output parameters:
 %         g    : The periodized totally positive function.
@@ -14,25 +15,23 @@ function g = ptpfun(L,w,varargin)
 %   function of finite type >=2 with weights *w* such that the Fourier
 %   representation of the continuous TP function is given as:
 %
-%   ..             m 
-%      ghat(f) = prod (1+2pijf/w(i))^(-1), 
-%                 i=1  
+%   ..             m
+%      ghat(f) = prod (1+2pijf/w(i))^(-1),
+%                 i=1
 %
 %   .. math:: \hat{g}(\xi)=\prod_{i=1}^{m}\left(1+2\pi i j\xi /w(i)\right)^{-1},
 %
-%   where $m$=`numel(w)`$\geq 2$. The samples are the values of
-%   the Zak transform Zg(x,0) with frequency variable set to zero. 
-%   
-%   *w* controls the function decay in the time domain. More specifically
-%   the function decays as $exp(-min(wpos)*x)$ for $x->\infty$ 
-%   and $exp(max(wneg)*x)$ for $x->-\infty$ assuming *w* contains 
-%   positive numbers (wpos) and negative numbers (wneg).
-%   If *w* has only positive (negative) values, the continuous 
-%   TP function is zero on the negative (positive) axis.
+%   where $m$=`numel(w)`$\geq 2$. The samples are obtained by discretizing
+%   the Zak transform of the function.
 %
-%   In addition `ptpfun` accepts any of the flags from |normalize|. The 
+%   *w* controls the function decay in the time domain. More specifically
+%   the function decays as $exp(max(w)x)$ for $x->\infty$ and $exp(min(w)x)$
+%   for $x->-\infty$ assuming *w* contains both positive and negative
+%   numbers.
+%
+%   In addition `ptpfun` accepts any of the flags from |normalize|. The
 %   output will be normalized as specified. The default normalization flag
-%   is `'null'` i.e. no normalization.
+%   is `'energy'`
 %
 %   See also: dgt, ptpfundual, gabdualnorm, normalize
 %
@@ -48,82 +47,94 @@ if isempty(w) || ~isnumeric(w)
     error('%s: w must be a nonempty numeric vector.', upper(mfilename));
 end
 
-if numel(w)<2
-    error(['%s: The tp fun. finite type must be >=2 (number of ',...
-           'elements of w).'], upper(mfilename));
-end
-
 if any(w==0)
     error('%s: All weights w must be nonzero.', upper(mfilename));
-    % TO DO: Also add a warning if w is very small or big?
+end
+
+if nargin == 2
+    width = sqrt(L);
 end
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
-definput.importdefaults={'null'};
 [flags,keyvals]=ltfatarghelper({},definput,varargin);
 
-w = sort(w(:))*sqrt(L);
-m = length(w);
-[wm,w] = wmult(w);
-wmax = max(wm)+1;   % maximal multiplicity in w
+w = -sort(w(:))*L/width;
+x = [0:L-1]'/L;
+n = length(w);
+x = repmat(x,1,2*n-1) + repmat([-n+1:n-1],L,1);
+x = x(:)';
+Y = zeros(n-1,length(x));
 
-% if k is the multiplicity of y in w, then we need derivatives
-% up to order k-1 of the function
-%    f(y) = exp(-x*y)/(1-exp(-y)) 
-% where x is a parameter in [0,1].
-% We use the Leibniz formula and explicit representations of 
-% the derivatives of f1(y)=(1-exp(-y))^(-1) in terms of Euler-Frobenius
-% polynomials:
-% (d^(k-1))/(dy^(k-1)) f1(y) = (-1)^(k-1)*(1-exp(-y))^(-k)*sum_(j=1)^(k) pw(k,j)*exp(-(k-j)*y)
-pw = zeros(wmax);   % square matrix of Euler-Frobenius coefficients 
-pw(1,1) = 1;
-for k = 2:wmax
-   pw(k,1:k)=[k-1:-1:0].*[0,pw(k-1,1:k-1)]+[1:k].*[pw(k-1,1:k-1),0];
-end  
-% stable computation for x in [0,1] and all real y=w(j) of 
-%     exp(-x*y)*(1-exp(-y))^(-k)*sum_(j=1)^(k) pw(k,j)*exp(-(k-j)*y)
-x=[0:L-1]/L;
-f1=zeros(m,L);
-h=zeros(wmax,L);
-for r=1:m
-    wr = w(r);
-    k = wm(r);
-    if k==0
-        if wr>0
-            h(1,:) = exp(-wr*x);
-            f1(r,:) = 1/(1-exp(-wr))*h(1,:);
+for k = 1:n-1
+    if w(k) == w(k+1)
+        if w(k) < 0
+            Y(k,(n-1)*L+1:(n+1)*L) = w(k)^2/(1-exp(w(k)))^2*[x((n-1)*L+1:n*L).*exp(w(k)*x((n-1)*L+1:n*L)) , ...
+                (2-x(n*L+1:(n+1)*L)).*exp(w(k)*x(n*L+1:(n+1)*L))];
         else
-            h(1,:) = exp(wr*(1-x));
-            f1(r,:) = 1/(exp(wr)-1)*h(1,:);
+            Y(k,(n-1)*L+1:(n+1)*L) = w(k)^2/(exp(-w(k))-1)^2*[x((n-1)*L+1:n*L).*exp(w(k)*(x((n-1)*L+1:n*L)-2)) , ...
+                (2-x(n*L+1:(n+1)*L)).*exp(w(k)*(x(n*L+1:(n+1)*L)-2))];
         end
-    else  % only for multiple wr
-        h(k+1,:) = exp(-abs(wr))*h(k,:);   
-        if wr>0
-            f1(r,:) = ((1-exp(-wr))^(-k-1)*pw(k+1,k+1:-1:1))*h(1:k+1,:);
-        else
-            f1(r,:) = ((exp(wr)-1)^(-k-1)*pw(k+1,1:k+1))*h(1:k+1,:);
+    else
+        if w(k) < 0 && w(k+1) < 0
+            Y(k,(n-1)*L+1:(n+1)*L) = w(k)/(1-exp(w(k)))*w(k+1)/(1-exp(w(k+1)))*[(exp(w(k)*x((n-1)*L+1:n*L))-exp(w(k+1)*x((n-1)*L+1:n*L)))/(w(k)-w(k+1)) , ...
+                (exp(w(k))*exp(w(k+1)*(x(n*L+1:(n+1)*L)-1))-exp(w(k+1))*exp(w(k)*(x(n*L+1:(n+1)*L)-1)))/(w(k)-w(k+1))];
+        elseif w(k) > 0 && w(k+1) < 0
+            Y(k,(n-1)*L+1:(n+1)*L) = w(k)/(exp(-w(k))-1)*w(k+1)/(1-exp(w(k+1)))*[(exp(w(k)*(x((n-1)*L+1:n*L)-1))-exp(-w(k))*exp(w(k+1)*x((n-1)*L+1:n*L)))/(w(k)-w(k+1)) , ...
+                (exp(w(k+1)*(x(n*L+1:(n+1)*L)-1))-exp(w(k+1))*exp(w(k)*(x(n*L+1:(n+1)*L)-2)))/(w(k)-w(k+1))];
+        elseif w(k) < 0 && w(k+1) > 0
+            Y(k,(n-1)*L+1:(n+1)*L) = w(k+1)/(exp(-w(k+1))-1)*w(k)/(1-exp(w(k)))*[(exp(w(k+1)*(x((n-1)*L+1:n*L)-1))-exp(-w(k+1))*exp(w(k)*x((n-1)*L+1:n*L)))/(w(k+1)-w(k)) , ...
+                (exp(w(k)*(x(n*L+1:(n+1)*L)-1))-exp(w(k))*exp(w(k+1)*(x(n*L+1:(n+1)*L)-2)))/(w(k+1)-w(k))];
+        elseif w(k) > 0 && w(k+1) > 0
+            Y(k,(n-1)*L+1:(n+1)*L) = w(k)/(exp(-w(k))-1)*w(k+1)/(exp(-w(k+1))-1)*[(exp(-w(k+1))*exp(w(k)*(x((n-1)*L+1:n*L)-1))-exp(-w(k))*exp(w(k+1)*(x((n-1)*L+1:n*L)-1)))/(w(k)-w(k+1)) , ...
+                (exp(w(k+1)*(x(n*L+1:(n+1)*L)-2))-exp(w(k)*(x(n*L+1:(n+1)*L)-2)))/(w(k)-w(k+1))];
         end
     end
 end
-% powers of x 
-f2=ones(wmax,L);
-for r=2:wmax
-    f2(r,:)=x.*f2(r-1,:);
-end
-% input for divided difference
-y=zeros(m,L);
-for r=1:m
-    k = wm(r);
-    for ell=0:k    % Leibniz rule
-        y(r,:) = y(r,:)+nchoosek(k,ell)*f1(r-k+ell,:).*f2(k-ell+1,:);
+
+for k = 2:n-1
+    for j = 1:n-k
+        if w(j) == w(j+k)
+            if w(j) < 0
+                Y(j,(k-1)*L+1:end) = -w(j)/(1-exp(w(j)))*(x((k-1)*L+1:end)/k .* Y(j,(k-1)*L+1:end) + ...
+                    exp(w(j))*(k+1-x((k-1)*L+1:end))/k .* Y(j,(k-2)*L+1:end-L));
+            else
+                Y(j,(k-1)*L+1:end) = -w(j)/(exp(-w(j))-1)*(exp(-w(j))*x((k-1)*L+1:end)/k .* Y(j,(k-1)*L+1:end) + ...
+                    (k+1-x((k-1)*L+1:end))/k .* Y(j,(k-2)*L+1:end-L));
+            end
+        else
+            if w(j) < 0 && w(j+k) < 0
+                Y(j,(k-1)*L+1:end) = ( (-w(j)*(Y(j+1,(k-1)*L+1:end) - exp(w(j))*Y(j+1,(k-2)*L+1:end-L)))/(1-exp(w(j))) - ...
+                    (-w(j+k)*(Y(j,(k-1)*L+1:end) - exp(w(j+k))*Y(j,(k-2)*L+1:end-L)))/(1-exp(w(j+k))) )/ ...
+                    (w(j+k)-w(j));
+            elseif w(j) > 0 && w(j+k) < 0
+                Y(j,(k-1)*L+1:end) = ( (-w(j)*(exp(-w(j))*Y(j+1,(k-1)*L+1:end) - Y(j+1,(k-2)*L+1:end-L)))/(exp(-w(j))-1) - ...
+                    (-w(j+k)*(Y(j,(k-1)*L+1:end) - exp(w(j+k))*Y(j,(k-2)*L+1:end-L)))/(1-exp(w(j+k))) )/ ...
+                    (w(j+k)-w(j));
+            elseif w(j) < 0 && w(j+k) > 0
+                Y(j,(k-1)*L+1:end) = ( (-w(j)*(Y(j+1,(k-1)*L+1:end) - exp(w(j))*Y(j+1,(k-2)*L+1:end-L)))/(1-exp(w(j))) - ...
+                    (-w(j+k)*(exp(-w(j+k))*Y(j,(k-1)*L+1:end) - Y(j,(k-2)*L+1:end-L)))/(exp(-w(j+k))-1) )/ ...
+                    (w(j+k)-w(j));
+            elseif w(j) > 0 && w(j+k) > 0
+                Y(j,(k-1)*L+1:end) = ( (-w(j)*(exp(-w(j))*Y(j+1,(k-1)*L+1:end) - Y(j+1,(k-2)*L+1:end-L)))/(exp(-w(j))-1) - ...
+                    (-w(j+k)*(exp(-w(j+k))*Y(j,(k-1)*L+1:end) - Y(j,(k-2)*L+1:end-L)))/(exp(-w(j+k))-1) )/ ...
+                    (w(j+k)-w(j));
+            end
+        end
     end
-    y(r,:) = (-1)^(k)/factorial(k)*y(r,:);
 end
 
-g = (-1)^(m-1) * prod(w) * divdiff_vector(w,wm,y) * L^(-3/4);
-g = g(:);
-g = normalize(g(:),flags.norm);
+if n == 1
+    if w < 0
+        g = -w/(1-exp(w))*exp(w*x(1:L)) * sqrt(width) / L;
+    else
+        g = -w/(exp(-w)-1)*exp(w*(x(1:L)-1)) * sqrt(width) / L;
+    end
+else
+    g = sum(reshape(Y(1,end-n*L+1:end),L,n),2) * sqrt(width) / L;
+end
 
+%g = normalize(g(:),flags.norm);
+g = g(:)';
 
-
+end

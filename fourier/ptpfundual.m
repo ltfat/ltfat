@@ -1,59 +1,53 @@
-function [gd,nlen]=ptpfundual(L,w,a,M,varargin)
+function [gd,nlen]=ptpfundual(w,a,M,L,width,inc,varargin)
 %PTPFUNDUAL Sampled, periodized dual TP function of finite type
-%   Usage: gd=ptpfundual(L,w,a,M)
-%          gd=ptpfundual(L,w,a,M,inc)
-%          gd=ptpfundual(L,w,a,M,...)
-%          [gd,nlen]=ptpfundual(L,w,a,M,...)
+%   Usage: gd=ptpfundual(w,a,M,L,width)
+%          gd=ptpfundual(w,a,M,L,width,inc)
+%          gd=ptpfundual(w,a,M,L,,...)
+%          [gd,nlen]=ptpfundual(w,a,M,L,...)
 %
 %   Input parameters:
 %         L     : Window length.
 %         w     : Vector of reciprocals $w_j=1/\delta_j$ in Fourier representation of *g*
 %         a     : Length of time shift.
 %         M     : Number of channels.
+%         width: integer stretching factor for the essential support of g 
 %
 %   Output parameters:
 %         gd    : The periodized totally positive function dual window.
 %         nlen  : Number of non-zero elements in gd.
 %
-%   `ptpfundual(L,w,a,M)` computes samples of a dual window of totally 
+%   `ptpfundual(w,a,M,L,width)` computes samples of a dual window of totally
 %   positive function of finite type >=2 with weights *w*. Please see
 %   |ptpfun| for definition of totally positive functions.
-%   The lattice parameters $a,M$ must satisfy $M \geq a$ to ensure the
-%   system is a frame. 
+%   The lattice parameters $a,M$ must satisfy $M > a$ to ensure the
+%   system is a frame.
 %
-%   `ptpfundual(L,w,a,M,inc)` works as above, but integer *inc* denotes
-%   number of additional columns to compute window function *gd*. 
+%   `ptpfundual(w,a,M,L,width,inc)` works as above, but integer *inc* denotes
+%   number of additional columns to compute window function *gd*.
 %   'inc'-many are added at each side. It should be smaller than 100 to
 %   have comfortable execution-time. The higher the number the closer *gd*
 %   is to the canonical dual window.
-%   The default value is 0.
+%   The default value is 10.
 %
-%   `[gd,nlen]=ptpfundual(...)` as *gd* migth have a compact support, 
-%   *nlen* contain a number of non-zero elements in *gd*. This is the case 
+%   `[gd,nlen]=ptpfundual(...)` as *gd* might have a compact support,
+%   *nlen* contains a number of non-zero elements in *gd*. This is the case
 %   when *gd* is symmetric. If *gd* is not symmetric, *nlen* is extended
-%   to the twice the length of the the longer tail.   
+%   to twice the length of the longer tail.
 %
 %   If $nlen = L$, *gd* has a 'full' support meaning it is a periodization
 %   of a dual TP function.
 %
-%   If $nlen < L$, additional zeros can be removed by calling 
+%   If $nlen < L$, additional zeros can be removed by calling
 %   `gd=middlepad(gd,nlen)`.
-%   
-%   In addition, `ptpfundual` accepts any of the flags from |normalize|. 
-%   The output will be normalized as specified. The default normalization 
-%   is `'null'` i.e. no normalization.
 %
-%   If `ptpfundual` is intended to be used in conjuction with |ptpfun|, they
-%   can both use the default normalization or if any other normalization
-%   of |ptpfun| is required, `ptpfundual` should be called with the same
-%   flag and an additional flag `matchscale` e.g.:
-%   
-%       g = ptpfun(1000,[-1,1],'energy');
-%       g = ptpfundual(1000,[-1,1],10,20,'energy','matchscale');
+%   In addition, `ptpfundual` accepts any of the flags from |normalize|.
+%   The output will be normalized as specified. The default normalization
+%   is `'energy'`.
 %
-%   In such case `ptpfundual` calculates the original window normalized 
-%   according to the |normalize| flag and uses |gabdualnorm| to scale *gd*
-%   correctly.
+%   If `ptpfundual` is intended to be used in conjuction with |ptpfun|,
+%   an additional flag `matchscale` must be used. In such case, the
+%   original window is calculated and normalized according to the
+%   |normalize| flag and *gd* is scaled using |gabdualnorm|.
 %
 %   See also: dgt, ptpfun, gabdualnorm, normalize
 %
@@ -78,7 +72,15 @@ end
 
 if numel(w)<2
     error(['%s: The tp fun. finite type must be >=2 (number of ',...
-           'elements of w).'], upper(mfilename));
+        'elements of w).'], upper(mfilename));
+end
+
+if nargin == 4
+    width = sqrt(L);
+    inc = 10;
+end
+if nargin == 5
+    inc = 10;
 end
 
 if any(w==0)
@@ -88,22 +90,33 @@ end
 
 % Define initial value for flags and key/value pairs.
 definput.import={'normalize'};
-definput.importdefaults={'null'};
 definput.keyvals.inc = 0;
 definput.flags.scale = {'nomatchscale','matchscale'};
-[flags,~,inc]=ltfatarghelper({'inc'},definput,varargin);
+[flags,~,tempinc]=ltfatarghelper({'inc'},definput,varargin);
 
-complainif_notnonnegint(inc,'inc',upper(mfilename));
+% complainif_notnonnegint(inc,'inc',upper(mfilename));
 
 % TP functions are scale invariant so we do scaling directly on w.
-wloc = w/sqrt(L);
+wloc = w/width;
 % Converting a, M to alpha, beta
 alpha = a;
 beta = 1/M;
 
+% check alpha beta
+if (alpha<=0) || (beta<=0)
+    error('lattice parameters alpha, beta must be positive')
+end
+if (width*beta > 10)
+    warning('width/M should be smaller than 10: numerical instability may occur')
+end
+
 % compute m n and check that a has nonzero entries
-wloc = sort(wloc(:)); % sort and make it a column vector
-mult=wmult(wloc);
+if all(wloc<0)
+    wloc = -wloc;
+    case0 = 2;
+else
+    case0 = 0;
+end
 m = length(find(wloc>0));
 n = length(find(wloc<0));
 
@@ -114,25 +127,22 @@ n = length(find(wloc<0));
 r = floor(1/(1-alpha*beta)+eps);
 
 % check special cases according to n and m
-case0 = 0;
-if m == 0
-    if n >= 2
-        N = (n-1)*(r+1); % minimal column size
-        k1 = 0;
-        k2 = N-1;
-        case0 = 0;
-    end
-elseif n == 0
+if n == 0
     if m >= 2
-        N = (m-1)*(r+1); % minimal column size
-        k2 = 0;
-        k1 = -(N-1);
-        case0 = 0;
+        k2 = (m-1)*(r+1)-1;
+        k1 = -k2;
+        if case0 == 0
+            case0 = 1;
+        end
     end
-else
+elseif n == 1
+    N = m*(r+1)+1;       % minimal column size
     k1 = -m*(r+1)+1;     % column index k1 from the paper
-    k2 = n*(r+1)-1;      % symmetric choice
-    N = k2-k1+1;
+    k2 = k1+N-1;         % column index k2 from the paper
+else
+    N = (m+n-1)*(r+1);   % minimal column size
+    k1 = -m*(r+1)+1;     % column index k1 from the paper
+    k2 = k1+N-1;         % column index k2 from the paper
 end
 
 k1 = k1-inc;
@@ -141,10 +151,11 @@ k2 = k2+inc;
 % minimal values for x and y
 varl = floor((k1+m-1)/(alpha*beta))-1;
 varr = ceil((k2-n+1)/(alpha*beta))+1;
-x = linspace(varl*alpha,varr*alpha,varr-varl+1);
+x = varl*alpha:alpha:varr*alpha;
 i0 = abs(varl)+1; % index of "central" row of P(x)
-y = linspace((k1-1)*M,(k2+1)*M,k2-k1+3);
+y = (k1-1)/beta:(1/beta):(k2+1)/beta;
 k0 = abs(k1-1)+1; % index of "central" column of P(x)
+
 [yy,xx] = meshgrid(y,x);
 
 
@@ -153,7 +164,7 @@ k0 = abs(k1-1)+1; % index of "central" column of P(x)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t = 0:(a-1); % for stepping through the interval [0,alpha)
 tt = varl*alpha:varr*alpha; % choose same stepsize for t and tt
-    % left and right bounds large enough for the support of gamma
+% left and right bounds large enough for the support of gamma
 tt0 = abs(varl*a)+1; % index for tt == 0
 gd = zeros(1,length(tt)); % dual window
 
@@ -168,25 +179,11 @@ k2 = k2+k0;
 for k=1:length(t)
     % step through the interval [0,alpha)
     x0 = t(k); % compute dual window at points (x+j*alpha)
-
+    
     % row indices for rectangular P0
-    if case0 == 0
-      %  i1 = min(find((x+x0)>(y(k1+m-1))));
-      i1 = floor((k1-k0+m-1)/alpha/beta-x0/alpha)+1+i0;
-      %  i2 = max(find((x+x0)<(y(k2-n+1))));
-      i2 = ceil((k2-k0-n+1)/alpha/beta-x0/alpha)-1+i0;
-    elseif case0 == 1  % m=0
-      %  i1 = max(find((x+x0)<(y(k1))));
-      i1 = ceil((k1-k0)/alpha/beta-x0/alpha)-1+i0;
-      %  i2 = max(find((x+x0)<(y(k2-n+1))));
-      i2 = ceil((k2-k0-n+1)/alpha/beta-x0/alpha)-1+i0;
-    elseif case0 == 2  % n=0
-      %  i1 = min(find((x+x0)>(y(k1+m-1))));
-      i1 = floor((k1-k0+m-1)/alpha/beta-x0/alpha)+1+i0;
-      %  i2 = min(find((x+x0)>(y(k2))));
-      i2 = floor((k2-k0)/alpha/beta-x0/alpha)+1+i0;
-    end
-
+    i1 = floor((k1-k0+m-1)/alpha/beta-x0/alpha)+1+i0;
+    i2 = ceil((k2-k0-n+1)/alpha/beta-x0/alpha)-1+i0;
+    
     % Computation of P0(x0)
     % z0 is the matrix of the abscissa x0+j*alpha-k/beta, j=i1:i2, k=k1:k2,
     % z1 puts all these abscissae into a row vector.
@@ -194,28 +191,40 @@ for k=1:length(t)
     % vector tt.
     z0 = x0+xx(:,k1:k2)-yy(:,k1:k2);
     z1 = z0(:)';
-    za = wloc*z1;     % matrix of values w(j)*z1(k)
-    za = max(-1,za);  % for numerical stability / Inf could be created next step
-    zb = exp(-za).*(za>=0).*repmat(sign(z1),length(wloc),1);
-    % matrix of values for the divided difference
-    m0 = find(z1==0); % compute values at 0 separately, one-sided only
-    if ~isempty(m0)
-        if m>0
-            zb(:,m0)=repmat((wloc>0),1,length(m0));
+    
+    Y = zeros((n+m)-1,length(z1));
+    for q = 1:(n+m)-1
+        if wloc(q) == wloc(q+1)
+            Y(q,:) = abs(wloc(q))^2*abs((z1.*((wloc(q)*z1)>=0))).*exp(-wloc(q)*(z1.*((wloc(q)*z1)>=0))).*((wloc(q)*z1)>=0);
         else
-            zb(:,m0)=repmat((wloc<0),1,length(m0));
+            if wloc(q)*wloc(q+1) < 0
+                Y(q,:) = abs(wloc(q)*wloc(q+1))/(abs(wloc(q))+abs(wloc(q+1)))*(exp(-wloc(q)*(z1.*((wloc(q)*z1)>=0))).*((wloc(q)*z1)>=0) + ...
+                    exp(-wloc(q+1)*(z1.*((wloc(q+1)*z1)>=0))).*((wloc(q+1)*z1)>0));
+            else
+                Y(q,:) = wloc(q)*wloc(q+1)/(abs(wloc(q+1))-abs(wloc(q)))*(exp(-wloc(q)*(z1.*((wloc(q)*z1)>=0)))-exp(-wloc(q+1)*(z1.*((wloc(q)*z1)>=0)))).*((wloc(q)*z1)>=0);
+            end
         end
     end
-    if ~isempty(find(mult~=0)) % take the values of the derivates, if there are multiplicities
-        col = find(mult~=0);
-        for i = 1:length(col)
-            zb(col(i),:)=((-z1).^(mult(col(i))).*zb(col(i),:))./(factorial(mult(col(i))));
+    
+    for q = 2:(n+m)-1
+        for j = 1:(n+m)-q
+            if wloc(j) == wloc(j+q)
+                Y(j,:) = Y(j,:).*abs(z1)/q*abs(wloc(j));
+            else
+                Y(j,:) = (wloc(j)*Y(j+1,:)-wloc(j+q)*Y(j,:))/(wloc(j)-wloc(j+q));
+            end
         end
     end
-    c = (-1)^(m+n-1)*prod(wloc)*L^(1/4); % normalization constant for g
-    A0 = c*divdiff_vector(wloc,mult,zb);  % formula for g with divided differences
-    A0 = reshape(A0,size(z0));
+    
+    if (n+m) == 1
+        A0 = abs(wloc)*exp(-wloc*(z1.*((wloc*z1)>=0))).*((wloc*z1)>=0);
+    else
+        A0 = Y(1,:);
+    end
+    
+    A0 = reshape(A0,size(z0))*sqrt(width);%*L^(1/4);
     P0 = A0(i1:i2,:);
+    
     % computation of pseudo-inverse matrix of P0
     P0inv = pinv(P0);
     gd(k-1+tt0-a*(i0-i1):a:k-1+tt0+a*(i2-i0)) = beta*P0inv(k0-k1+1,:); % row index k0-k1a+1
@@ -234,23 +243,29 @@ v = [v(tt0:end),v(1:tt0-1)];
 
 gd = sum(reshape(v,L,nr),2);
 gd = gd(:);
+if case0 == 2
+    gd =  flipud(gd);
+    gd = [gd(end);gd(1:end-1)];
+end
 
 % Determine nlen
 if nlen<L
-   negsupp = tt0-1;
-   possupp = nlen-tt0; % excluding zero pos.
-   nlen = 2*max([negsupp,possupp])+1;
+    negsupp = tt0-1;
+    possupp = nlen-tt0; % excluding zero pos.
+    nlen = 2*max([negsupp,possupp])+1;
 end
 nlen = min([L,nlen]);
 
-if flags.do_matchscale
-   g = ptpfun(L,w,flags.norm);
-   [scal,err]=gabdualnorm(g,gd,a,M,L);
-   %assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
-   %                          ' dual window.'],upper(mfilename)));
-   gd = gd/scal;
-else
-   gd = normalize(gd,flags.norm); 
+% if flags.do_matchscale
+%    g = ptpfun(w,L,width,flags.norm);
+%    [scal,err] = gabdualnorm(g,gd,a,M,L)
+%     assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
+%                               ' dual window.'],upper(mfilename)));
+%    gd = gd/scal;
+% else
+%    gd = normalize(gd,flags.norm);
+% end
+
+gd = gd(:)';
+
 end
-
-
