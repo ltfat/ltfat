@@ -1275,7 +1275,7 @@ initialize(file);
     for ind = 1:length(poly)
       xvals = round(convAxesToIndX(poly(ind).x));
       yvals = round(convAxesToIndY(poly(ind).y));
-      tmpmask = poly2mask(xvals,yvals,size(mask,1), size(mask,2));
+      tmpmask = octave_poly2mask(xvals,yvals,size(mask,1), size(mask,2));
       
       
       if poly(ind).hole
