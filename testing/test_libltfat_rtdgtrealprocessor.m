@@ -5,6 +5,7 @@ LTFAT_FIRWIN = enuminfo.LTFAT_FIRWIN;
 gl = 1024;
 M = gl;
 a = 100;
+W = 1;
 
 gPtr = libpointer('doublePtr',zeros(gl,1));
 gdPtr = libpointer('doublePtr',zeros(gl,1));
@@ -12,8 +13,8 @@ gdPtr = libpointer('doublePtr',zeros(gl,1));
 calllib('libltfat','firwin_d',LTFAT_FIRWIN.HAMMING,gl,gPtr);
 calllib('libltfat','gabdual_painless_d',gPtr,gl,a,M,gdPtr);
 
-processorPtr = calllib('libltfat','rtdgtreal_processor_init_d',...
-    gPtr,gdPtr,gl,a,M,libpointer('voidPtr'),libpointer('voidPtr'));
+processorPtr = calllib('libltfat','rtdgtreal_processor_wininit_d',...
+    LTFAT_FIRWIN.HAMMING,gl,a,M,W,libpointer('voidPtr'),libpointer('voidPtr'));
 
 
 [bufIn,fs] = gspi;
@@ -23,13 +24,14 @@ bufLen = 16;
 
 for ii=1:length(bufIn)/bufLen
 slice = (ii-1)*bufLen + 1 : ii*bufLen;
-buf = bufIn(slice);
+buf = bufIn(slice,:);
 bufInPtr = libpointer('doublePtr',buf);
 bufOutPtr = libpointer('doublePtr',zeros(size(buf)));
 
-calllib('libltfat','rtdgtreal_processor_execute_d',processorPtr,bufInPtr,bufLen,bufOutPtr);
+% Matlab automatically converts Ptr to PtrPtr
+calllib('libltfat','rtdgtreal_processor_execute_d',processorPtr,bufInPtr,bufLen,W,bufOutPtr);
 
-bufOut(slice) = bufOutPtr.Value;
+bufOut(slice,:) = bufOutPtr.Value;
 
 end
 
