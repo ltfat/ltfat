@@ -1,7 +1,7 @@
 #ifndef LTFAT_H
 #define LTFAT_H 1
 #include "ltfat/config.h"
-#include "ltfat/ltfat_error.h"
+#include "ltfat/ltfat_errno.h"
 
 #ifndef NOSYSTEMHEADERS
 #ifdef __cplusplus
