@@ -1,6 +1,5 @@
 #include "ltfat.h"
 
-
 LTFAT_EXTERN void
 fftindex(const ltfatInt N, ltfatInt *indexout)
 {
@@ -42,6 +41,13 @@ imin(const ltfatInt a, const ltfatInt b)
 {
    return (a < b ? a : b);
 }
+
+LTFAT_EXTERN ltfat_div_t
+ltfat_idiv(const ltfatInt a, const ltfatInt b)
+{
+    return (ltfat_div_t){.quot = a/b , .rem = a%b };
+}
+
 
 LTFAT_EXTERN ltfatInt
 makelarger(const ltfatInt L, const ltfatInt K)

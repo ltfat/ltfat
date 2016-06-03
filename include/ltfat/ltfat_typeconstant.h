@@ -2,9 +2,17 @@
 #define _LTFAT_TYPECONSTANT
 #include "config.h"
 
-
+typedef struct
+{
+ltfatInt quot;
+ltfatInt rem;
+} ltfat_div_t;
 
 /* -------- Define routines that do not change between single/double-- */
+LTFAT_EXTERN ltfat_div_t
+ltfat_idiv(const ltfatInt a, const ltfatInt b);
+
+
 LTFAT_EXTERN
 ltfatInt gcd(const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s );
 
