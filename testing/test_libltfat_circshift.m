@@ -1,6 +1,6 @@
 function test_libltfat_circshift
 
-L = 100000;
+L = 1000000;
 z = (1:L)+i*(1:L);
 zi = complex2interleaved(z);
 zout = zeros(size(zi));

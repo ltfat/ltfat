@@ -6,7 +6,7 @@ rdgt_phasetype = enuminfo.rtdgt_phasetype;
 f = greasy;
 
 a = 16;
-gl = 80;
+gl = 60;
 gdl = gl;
 M = 64;
 L = dgtlength(numel(f),a,M);
@@ -15,7 +15,7 @@ g = zeros(gl,1);
 gd = zeros(gdl,1);
 gPtr = libpointer('doublePtr',g);
 gdPtr = libpointer('doublePtr',gd);
-calllib('libltfat','firwin_d',LTFAT_FIRWIN.HANN,gl,gPtr);
+calllib('libltfat','firwin_d',LTFAT_FIRWIN.LTFAT_HANN,gl,gPtr);
 prd=calllib('libltfat','gabdual_painless_d',gPtr,gl,a,M,gdPtr);
 if prd
     warning('This is not painless frame');

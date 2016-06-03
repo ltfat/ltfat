@@ -10,11 +10,11 @@ W = 1;
 gPtr = libpointer('doublePtr',zeros(gl,1));
 gdPtr = libpointer('doublePtr',zeros(gl,1));
 
-calllib('libltfat','firwin_d',LTFAT_FIRWIN.HAMMING,gl,gPtr);
+calllib('libltfat','firwin_d',LTFAT_FIRWIN.LTFAT_HAMMING,gl,gPtr);
 calllib('libltfat','gabdual_painless_d',gPtr,gl,a,M,gdPtr);
 
 processorPtr = calllib('libltfat','rtdgtreal_processor_wininit_d',...
-    LTFAT_FIRWIN.HAMMING,gl,a,M,W,libpointer('voidPtr'),libpointer('voidPtr'));
+    LTFAT_FIRWIN.LTFAT_HAMMING,gl,a,M,W,libpointer('voidPtr'),libpointer('voidPtr'));
 
 
 [bufIn,fs] = gspi;

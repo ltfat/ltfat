@@ -7,9 +7,9 @@ g = firwin('hann',gl);
 gd = gabdual(g,a,M);
 gg = fftshift(g.*gd)*M;
 
-fifoPtr = calllib('libltfat','rtdgtreal_fifo_init_d',fifoLen,gl,a);
+fifoPtr = calllib('libltfat','rtdgtreal_fifo_init_d',fifoLen,gl,a,1);
 fifoPtr.Value.buf.setdatatype('doublePtr',fifoLen+1)
-ififoPtr = calllib('libltfat','rtidgtreal_fifo_init_d',fifoLen,gl,a);
+ififoPtr = calllib('libltfat','rtidgtreal_fifo_init_d',fifoLen,gl,a,1);
 ififoPtr.Value.buf.setdatatype('doublePtr',fifoLen+gl+1)
 
 bufIn = (1:1000)';
