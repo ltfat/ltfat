@@ -1,6 +1,13 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
 
+// These are non-public function header templates
+typedef void (*LTFAT_NAME(realtocomplextransform))(void* userdata,
+        const LTFAT_REAL* in, const ltfatInt, LTFAT_COMPLEX* out);
+
+typedef void (*LTFAT_NAME(complextorealtransform))(void* userdata,
+        const LTFAT_COMPLEX* in, const ltfatInt W, LTFAT_REAL* out);
+
 struct LTFAT_NAME(rtdgtreal_plan)
 {
     const LTFAT_REAL* g; //!< Window
@@ -77,6 +84,7 @@ LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
 }
 
 
+
 LTFAT_EXTERN void
 LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
                               const LTFAT_REAL* f, const ltfatInt W,
@@ -111,6 +119,14 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
     }
 }
 
+void
+LTFAT_NAME(rtdgtreal_execute_wrapper)(void* p,
+                              const LTFAT_REAL* f, const ltfatInt W,
+                              LTFAT_COMPLEX* c)
+{
+    LTFAT_NAME(rtdgtreal_execute)(p, f, W, c);
+}
+
 LTFAT_EXTERN void
 LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
                                const LTFAT_COMPLEX* c, const ltfatInt W,
@@ -142,6 +158,14 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
 
         memcpy(fchan, fftBuf, gl * sizeof * fchan);
     }
+}
+
+void
+LTFAT_NAME(rtidgtreal_execute_wrapper)(void* p,
+                               const LTFAT_COMPLEX* c, const ltfatInt W,
+                               LTFAT_REAL* f)
+{
+    LTFAT_NAME(rtidgtreal_execute)(p, c, W, f);
 }
 
 
@@ -477,6 +501,8 @@ struct LTFAT_NAME(rtdgtreal_processor)
     LTFAT_NAME(rtidgtreal_fifo)* backfifo;
     LTFAT_NAME(rtdgtreal_plan)* fwdplan;
     LTFAT_NAME(rtidgtreal_plan)* backplan;
+    LTFAT_NAME(realtocomplextransform) fwdtra;
+    LTFAT_NAME(complextorealtransform) backtra;
     LTFAT_REAL* buf;
     LTFAT_COMPLEX* fftbufIn;
     LTFAT_COMPLEX* fftbufOut;
@@ -527,6 +553,8 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
         .fwdfifo = fwdfifo, .backfifo = backfifo,
         .fwdplan = fwdplan, .backplan = backplan,
         .buf = buf, .fftbufIn = fftbufIn, .fftbufOut = fftbufOut,
+        .fwdtra = LTFAT_NAME(rtdgtreal_execute_wrapper),
+        .backtra = LTFAT_NAME(rtidgtreal_execute_wrapper),
         .garbageBin = NULL, .garbageBinSize = 0
     };
 
@@ -618,7 +646,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
     while ( LTFAT_NAME(rtdgtreal_fifo_read)(p->fwdfifo, p->buf) )
     {
         // Transform
-        LTFAT_NAME(rtdgtreal_execute)(p->fwdplan, p->buf, p->fwdfifo->Wmax,
+        (*p->fwdtra)((void*)p->fwdplan, p->buf, p->fwdfifo->Wmax,
                                       p->fftbufIn);
 
         // Process
@@ -626,8 +654,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
                              p->fwdfifo->Wmax, p->fftbufOut);
 
         // Reconstruct
-        LTFAT_NAME(rtidgtreal_execute)(p->backplan, p->fftbufOut, p->backfifo->Wmax,
-                                       p->buf);
+        (*p->backtra)((void*)p->backplan, p->fftbufOut, p->backfifo->Wmax, p->buf);
 
         // Write (and overlap) to out fifo
         LTFAT_NAME(rtidgtreal_fifo_write)(p->backfifo, p->buf);
