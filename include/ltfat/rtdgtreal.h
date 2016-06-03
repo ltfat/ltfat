@@ -24,13 +24,6 @@ typedef enum
 
 typedef enum
 {
-    LTFAT_RTDGT_STREAMOK = 0,
-    LTFAT_RTDGT_STREAMOVERFLOW = 1,
-    LTFAT_RTDGT_STREAMUNDERFLOW = 2
-} rtdgt_streamstate;
-
-typedef enum
-{
     LTFAT_FORWARD,
     LTFAT_INVERSE
 } ltfat_transformdirection;
@@ -136,12 +129,13 @@ typedef struct LTFAT_NAME(rtdgtreal_fifo) LTFAT_NAME(rtdgtreal_fifo);
  * \returns RTDGTREAL_FIFO struct pointer
  */
 LTFAT_EXTERN LTFAT_NAME(rtdgtreal_fifo)*
-LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl, ltfatInt a,
+LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay, ltfatInt gl, ltfatInt a,
                                 ltfatInt Wmax);
 
 /** Write bufLen samples to DGT analysis ring buffer
  *
- * The function returns 0 if bufLen is <=0 or the buffer is full.
+ * The function returns number of samples written and a negative number if something went
+ * wrong.
  * If there is not enough space for all bufLen samples, only available space is used
  * and the number of actually written samples is returned.
  *
@@ -160,7 +154,7 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo)* p, const LTFAT_REAL
  *
  * The function attempts to read p->gl samples from the buffer.
  *
- * The function returns 0 if there is less than p->gl samples available.
+ * The function does mothing and returns 0 if there is less than p->gl samples available.
  *
  * \param[in]   p        Analysis ring buffer struct
  * \param[out]  buf      Output array, it is expected to be able to hold p->gl*p->Wmax samples.
@@ -269,18 +263,19 @@ typedef struct LTFAT_NAME(rtdgtreal_processor) LTFAT_NAME(rtdgtreal_processor);
  * \returns DGTREAL processor struct
  */
 LTFAT_EXTERN LTFAT_NAME(rtdgtreal_processor)*
-LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* g, const LTFAT_REAL* gd,
-                                     const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
+                                     const LTFAT_REAL* gs, const ltfatInt gsl,
+                                     const ltfatInt a, const ltfatInt M,
                                      const ltfatInt Wmax,
                                      LTFAT_NAME(rtdgtreal_processor_callback) callback,
                                      void* userdata);
 
-/** Create DGTREAL processor 
+/** Create DGTREAL processor
  *
  * This function provides an alternative way of creating DGTREAL processor
- * struct. The function accepts only the analysis window and the synthesis 
- * window is computed internally. 
- * 
+ * struct. The function accepts only the analysis window and the synthesis
+ * window is computed internally.
+ *
  * \param[in]      win   Analysis window
  * \param[in]       gl   Length of the windows
  * \param[in]        a   Hop size
@@ -318,7 +313,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
                                         const ltfatInt len, const ltfatInt chanNo,
                                         LTFAT_REAL** out);
 
-/** Set DGTREAL processor callback 
+/** Set DGTREAL processor callback
  *
  * Function replaces the callback in the struct. This is not thread safe.
  * Only call this if there is no chance that the execute function is called
@@ -333,8 +328,8 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor)* p,
  */
 LTFAT_EXTERN void
 LTFAT_NAME(rtdgtreal_processor_setcallback)(LTFAT_NAME(rtdgtreal_processor)* p,
-                             LTFAT_NAME(rtdgtreal_processor_callback) callback,
-                             void* userdata);
+        LTFAT_NAME(rtdgtreal_processor_callback) callback,
+        void* userdata);
 
 /** Destroy DGTREAL processor
  * \param[in]  p      DGTREAL processor
@@ -354,4 +349,3 @@ LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COM
         const int M2, const int W, LTFAT_COMPLEX* out);
 
 /** @}*/
-

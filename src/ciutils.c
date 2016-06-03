@@ -1,6 +1,7 @@
 #include "ltfat.h"
 #include "ltfat_types.h"
 
+// in might be equal to out
 LTFAT_EXTERN void
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
                       const ltfatInt shift, LTFAT_TYPE out[])
