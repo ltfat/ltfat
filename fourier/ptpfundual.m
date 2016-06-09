@@ -1,32 +1,37 @@
-function [gd,nlen]=ptpfundual(w,a,M,L,width,inc,varargin)
+function [gd,nlen]=ptpfundual(w,a,M,L,varargin)
 %PTPFUNDUAL Sampled, periodized dual TP function of finite type
-%   Usage: gd=ptpfundual(w,a,M,L,width)
-%          gd=ptpfundual(w,a,M,L,width,inc)
-%          gd=ptpfundual(w,a,M,L,,...)
-%          [gd,nlen]=ptpfundual(w,a,M,L,...)
+%   Usage: gd=ptpfundual(w,a,M,L)
+%          gd=ptpfundual({w,width},a,M,L)
+%          gd=ptpfundual(...,inc)
+%          [gd,nlen]=ptpfundual(...)
 %
 %   Input parameters:
-%         L     : Window length.
-%         w     : Vector of reciprocals $w_j=1/\delta_j$ in Fourier representation of *g*
-%         a     : Length of time shift.
-%         M     : Number of channels.
-%         width: integer stretching factor for the essential support of g 
+%         w      : Vector of reciprocals $w_j=1/\delta_j$ in Fourier representation of *g*
+%         width  : Integer stretching factor for the essential support
+%         a      : Length of time shift.
+%         M      : Number of channels.
+%         L      : Window length.
+%         inc    : Extension parameter
 %
 %   Output parameters:
 %         gd    : The periodized totally positive function dual window.
 %         nlen  : Number of non-zero elements in gd.
 %
-%   `ptpfundual(w,a,M,L,width)` computes samples of a dual window of totally
+%   `ptpfundual(w,a,M,L)` computes samples of a dual window of totally
 %   positive function of finite type >=2 with weights *w*. Please see
 %   |ptpfun| for definition of totally positive functions.
 %   The lattice parameters $a,M$ must satisfy $M > a$ to ensure the
 %   system is a frame.
 %
-%   `ptpfundual(w,a,M,L,width,inc)` works as above, but integer *inc* denotes
-%   number of additional columns to compute window function *gd*.
-%   'inc'-many are added at each side. It should be smaller than 100 to
-%   have comfortable execution-time. The higher the number the closer *gd*
-%   is to the canonical dual window.
+%   `ptpfundual({w,width},a,M,L)` works as above but in addition the *width*
+%   parameter determines the integer stretching factor of the original TP
+%   function. For explanation see help of |ptpfun|.
+%
+%   `ptpfundual(...,inc)` or `ptpfundual(...,'inc',inc)` works as above, 
+%   but integer *inc* denotes number of additional columns to compute window
+%   function *gd*. 'inc'-many are added at each side. It should be smaller 
+%   than 100 to have comfortable execution-time. The higher the number the 
+%   closer *gd* is to the canonical dual window.
 %   The default value is 10.
 %
 %   `[gd,nlen]=ptpfundual(...)` as *gd* might have a compact support,
@@ -40,16 +45,45 @@ function [gd,nlen]=ptpfundual(w,a,M,L,width,inc,varargin)
 %   If $nlen < L$, additional zeros can be removed by calling
 %   `gd=middlepad(gd,nlen)`.
 %
-%   In addition, `ptpfundual` accepts any of the flags from |normalize|.
-%   The output will be normalized as specified. The default normalization
-%   is `'energy'`.
+%   Examples:
+%   ---------
 %
-%   If `ptpfundual` is intended to be used in conjuction with |ptpfun|,
-%   an additional flag `matchscale` must be used. In such case, the
-%   original window is calculated and normalized according to the
-%   |normalize| flag and *gd* is scaled using |gabdualnorm|.
+%   The following example compares dual windows computed using 2 different
+%   approaches.:::
+% 
+%     w = [-3,-1,1,3];a = 25; M = 31; inc = 10;
+%     L = 1e6; L = dgtlength(L,a,M);
+%     width = M;
+% 
+%     % Create the window
+%     g = ptpfun(L,w,width);
+% 
+%     % Compute a dual window using pebfundual
+%     tic
+%     [gd,nlen] = ptpfundual({w,width},a,M,L,inc);
+%     ttpfundual=toc;
+% 
+%     % We know that gd has only nlen nonzero samples, lets shrink it.
+%     gd = middlepad(gd,nlen);
+% 
+%     % Compute the canonical window using gabdual
+%     tic
+%     gdLTFAT = gabdual(g,a,M,L);
+%     tgabdual=toc;
+% 
+%     fprintf('PTPFUNDUAL elapsed time %f s\n',ttpfundual);
+%     fprintf('GABDUAL elapsed time    %f s\n',tgabdual);
+% 
+%     % Test on random signal
+%     f = randn(L,1);
+% 
+%     fr = idgt(dgt(f,g,a,M),gd,a,numel(f));
+%     fprintf('Reconstruction error PTPFUNDUAL: %e\n',norm(f-fr)/norm(f));
+% 
+%     fr = idgt(dgt(f,g,a,M),gdLTFAT,a,numel(f));  
+%     fprintf('Reconstruction error GABDUAL:    %e\n',norm(f-fr)/norm(f));
 %
-%   See also: dgt, ptpfun, gabdualnorm, normalize
+%   See also: dgt, idgt, ptpfun
 %
 %   References: grst13 kl12 bagrst14 klst14
 
@@ -65,22 +99,21 @@ if M<=a
     error('%s: Lattice parameters must satisfy M>a.',upper(mfilename));
 end
 
-% Check tpfun vect.
-if isempty(w) || ~isnumeric(w)
-    error('%s: w must be a nonempty numeric vector.', upper(mfilename));
+% Check w
+if iscell(w)
+    if numel(w)~=2
+        error('%s: w must be a 2 element cell array.',upper(mfilename));
+    end
+    width = w{2};
+    w = w{1};
+    complainif_notposint(width,'width',upper(mfilename));
+else
+    width = floor(sqrt(L));
 end
 
-if numel(w)<2
-    error(['%s: The tp fun. finite type must be >=2 (number of ',...
-        'elements of w).'], upper(mfilename));
-end
-
-if nargin == 4
-    width = sqrt(L);
-    inc = 10;
-end
-if nargin == 5
-    inc = 10;
+if isempty(w) || ~isnumeric(w) || numel(w)<2
+    error(['%s: w must be a nonempty numeric vector with at least',...
+    ' 2 elements.'], upper(mfilename));
 end
 
 if any(w==0)
@@ -89,12 +122,11 @@ if any(w==0)
 end
 
 % Define initial value for flags and key/value pairs.
-definput.import={'normalize'};
-definput.keyvals.inc = 0;
-definput.flags.scale = {'nomatchscale','matchscale'};
-[flags,~,tempinc]=ltfatarghelper({'inc'},definput,varargin);
-
-% complainif_notnonnegint(inc,'inc',upper(mfilename));
+%definput.import={'normalize'};
+definput.keyvals.inc = 10;
+%definput.flags.scale = {'nomatchscale','matchscale'};
+[flags,~,inc]=ltfatarghelper({'inc'},definput,varargin);
+complainif_notnonnegint(inc,'inc',upper(mfilename));
 
 % TP functions are scale invariant so we do scaling directly on w.
 wloc = w/width;
@@ -179,11 +211,11 @@ k2 = k2+k0;
 for k=1:length(t)
     % step through the interval [0,alpha)
     x0 = t(k); % compute dual window at points (x+j*alpha)
-    
+
     % row indices for rectangular P0
     i1 = floor((k1-k0+m-1)/alpha/beta-x0/alpha)+1+i0;
     i2 = ceil((k2-k0-n+1)/alpha/beta-x0/alpha)-1+i0;
-    
+
     % Computation of P0(x0)
     % z0 is the matrix of the abscissa x0+j*alpha-k/beta, j=i1:i2, k=k1:k2,
     % z1 puts all these abscissae into a row vector.
@@ -191,7 +223,7 @@ for k=1:length(t)
     % vector tt.
     z0 = x0+xx(:,k1:k2)-yy(:,k1:k2);
     z1 = z0(:)';
-    
+
     Y = zeros((n+m)-1,length(z1));
     for q = 1:(n+m)-1
         if wloc(q) == wloc(q+1)
@@ -199,13 +231,13 @@ for k=1:length(t)
         else
             if wloc(q)*wloc(q+1) < 0
                 Y(q,:) = abs(wloc(q)*wloc(q+1))/(abs(wloc(q))+abs(wloc(q+1)))*(exp(-wloc(q)*(z1.*((wloc(q)*z1)>=0))).*((wloc(q)*z1)>=0) + ...
-                    exp(-wloc(q+1)*(z1.*((wloc(q+1)*z1)>=0))).*((wloc(q+1)*z1)>0));
+                exp(-wloc(q+1)*(z1.*((wloc(q+1)*z1)>=0))).*((wloc(q+1)*z1)>0));
             else
                 Y(q,:) = wloc(q)*wloc(q+1)/(abs(wloc(q+1))-abs(wloc(q)))*(exp(-wloc(q)*(z1.*((wloc(q)*z1)>=0)))-exp(-wloc(q+1)*(z1.*((wloc(q)*z1)>=0)))).*((wloc(q)*z1)>=0);
             end
         end
     end
-    
+
     for q = 2:(n+m)-1
         for j = 1:(n+m)-q
             if wloc(j) == wloc(j+q)
@@ -215,16 +247,16 @@ for k=1:length(t)
             end
         end
     end
-    
+
     if (n+m) == 1
         A0 = abs(wloc)*exp(-wloc*(z1.*((wloc*z1)>=0))).*((wloc*z1)>=0);
     else
         A0 = Y(1,:);
     end
-    
+
     A0 = reshape(A0,size(z0))*sqrt(width);%*L^(1/4);
     P0 = A0(i1:i2,:);
-    
+
     % computation of pseudo-inverse matrix of P0
     P0inv = pinv(P0);
     gd(k-1+tt0-a*(i0-i1):a:k-1+tt0+a*(i2-i0)) = beta*P0inv(k0-k1+1,:); % row index k0-k1a+1
@@ -257,8 +289,8 @@ end
 nlen = min([L,nlen]);
 
 % if flags.do_matchscale
-%    g = ptpfun(w,L,width,flags.norm);
-%    [scal,err] = gabdualnorm(g,gd,a,M,L)
+%    g = ptpfun(L,w,width,flags.norm);
+%    [scal,err] = gabdualnorm(g,gd,a,M,L);
 %     assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
 %                               ' dual window.'],upper(mfilename)));
 %    gd = gd/scal;
@@ -266,6 +298,6 @@ nlen = min([L,nlen]);
 %    gd = normalize(gd,flags.norm);
 % end
 
-gd = gd(:)';
+gd = gd(:);
 
 end

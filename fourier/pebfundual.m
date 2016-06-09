@@ -1,70 +1,124 @@
-function gamma = pebfundual(w,a,M,L,width,increase)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [gd,nlen] = pebfundual(w,a,M,L,varargin)
 %PEBFUNDUAL Dual window of sampled, periodized EB-spline
-%   Usage: g=pebfundual(w,a,M,L,width,increase)
-%          g=pebfundual(w,a,M,L,width,...)
-%          g=pebfundual(w,a,M,L,...)
+%   Usage: g=pebfundual(w,a,M,L)
+%          g=pebfundual({w,width},a,M,L)
+%          g=pebfundual(...,inc)
 %
+%   Input parameters: 
+%         w      : vector of weights of g
+%         width  : integer stretching factor of the window *g*
+%         a      : time shift, given by an integer number of sampling points
+%         M      : number of channels
+%         L      : length of a period
+%         inc    : number of additional columns to compute window function
 %
-% INPUT:
-% w : vector of weights of g
-% a : time shift, given by an integer number of sampling points
-% M : number of channels
-% L : length of a period
-% width: integer stretching factor of the window *g*
+%   Output parameters:
+%         gd     : Periodized dual window for the discrete EB-spline
 %
-% increase : number of additional columns to compute window function
-%            gamma; 'increased'-many are added at each side;
-%            should be smaller than 100 to have comfortable execution-time
+%   `pebfundual(w,a,M,L)` computes samples of a dual window of EB spline
+%   with weights *w*. Please see |pebfun| for definition of EB splines.
+%   The lattice parameters $a,M$ must satisfy $M > a$ to ensure the
+%   system is a frame.
 %
-% OUTPUT:
-% gamma : periodized dual window for the discrete EB-spline g with given
-%         weights w
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   `pebfundual({w,width},a,M,L)` works as above but in addition the *width*
+%   parameter determines the integer stretching factor of the original EB
+%   spline. For explanation see help of |pebfun|.
+%
+%   `pebfundual(...,inc)` or `pebfundual(...,'inc',inc)` works as above, 
+%   but integer *inc* denotes number of additional columns to compute window 
+%   function *gd*. 'inc'-many are added at each side. It should be smaller than
+%   100 to have comfortable execution-time. The higher the number the
+%   closer *gd* is to the canonical dual window.
+%   The default value is 10.
+%
+%   Examples:
+%   ---------
+%
+%   The following example compares dual windows computed using 2 different
+%   approaches.:::
+%      
+%     w = [-3,-1,1,3];a = 25; M = 31; inc = 1;
+%     L = 1e6; L = dgtlength(L,a,M);
+%     width = M;
+% 
+%     % Create the window
+%     g = pebfun(L,w,width);
+% 
+%     % Compute a dual window using pebfundual
+%     tic
+%     [gd,nlen] = pebfundual({w,width},a,M,L,inc);
+%     tebfundual=toc;
+% 
+%     % We know that gd has only nlen nonzero samples, lets shrink it.
+%     gd = middlepad(gd,nlen);
+% 
+%     % Compute the canonical window using gabdual
+%     tic
+%     gdLTFAT = gabdual(g,a,M,L);
+%     tgabdual=toc;
+% 
+%     fprintf('PEBFUNDUAL elapsed time %f s\n',tebfundual);
+%     fprintf('GABDUAL elapsed time    %f s\n',tgabdual);
+% 
+%     % Test on random signal
+%     f = randn(L,1);
+% 
+%     fr = idgt(dgt(f,g,a,M),gd,a,numel(f));
+%     fprintf('Reconstruction error PEBFUNDUAL: %e\n',norm(f-fr)/norm(f));
+% 
+%     fr = idgt(dgt(f,g,a,M),gdLTFAT,a,numel(f));  
+%     fprintf('Reconstruction error GABDUAL:    %e\n',norm(f-fr)/norm(f));
+%   
+%   See also: dgt, idgt, pebfun
+%
+%   References: grst13 kl12 bagrst14 klst14 klstgr16
+%
 
-%   References:
-%     K. Groechenig and J. Stoeckler,
-%     Gabor Frames and Totally Positive Functions,
-%     Duke Mathematical Journal, Volume 162, pp.1003-1031, 2013.
-%
-%     T. Kloos,
-%     Gabor Frames total-positiver Funktionen endlicher Ordnung,
-%     Diploma thesis, University of Dortmund, 2012.
-%
-%     S. Bannert and K. Groechenig and J. Stoeckler,
-%     Discretized Gabor Frames of Totally Positive Functions,
-%     IEEE Transactions on Information Theory, Volume 60, pp.159-169, 2014.
-%
-%     T. Kloos and J. Stoeckler,
-%     Zak transforms and Gabor frames of totally positive functions and
-%     exponential B-splines,
-%     Journal of Approximation Theory, Volume 184, pp.209-237, 2014.
-%
-%     T. Kloos and J. Stoeckler and K. Groechenig,
-%     Implementation of discretized Gabor frames and their duals
-%     IEEE Transactions on Information Theory, 2016.
-
-%   (c) Joachim Stoeckler,
-%       Tobias Kloos, 2012-2016
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% AUTHORS: (c) Joachim Stoeckler, Tobias Kloos, 2012-2016
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % check input
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if isempty(w) || ~isnumeric(w)
-    error('%s: w must be a nonempty numeric vector.', upper(mfilename));
+complainif_notenoughargs(nargin,4,upper(mfilename));
+complainif_notposint(L,'L',upper(mfilename));
+complainif_notposint(a,'a',upper(mfilename));
+complainif_notposint(M,'M',upper(mfilename));
+
+% Check lattice
+if M<=a
+    error('%s: Lattice parameters must satisfy M>a.',upper(mfilename));
 end
 
-if nargin == 4
+% Check w
+if iscell(w)
+    if numel(w)~=2
+        error('%s: w must be a 2 element cell array.',upper(mfilename));
+    end
+    width = w{2};
+    w = w{1};
+    complainif_notposint(width,'width',upper(mfilename));
+else
     width = floor(sqrt(L));
-    increase = 10;
 end
-if nargin == 5
-    increase = 10;
+
+if isempty(w) || ~isnumeric(w) || numel(w)<2
+    error(['%s: w must be a nonempty numeric vector with at least',...
+           ' 2 elements.'], upper(mfilename));
 end
+
+if any(w==0)
+    error('%s: All weights w must be nonzero.', upper(mfilename));
+    % TO DO: Also add a warning if w is very small or big?
+end
+
+% Define initial value for flags and key/value pairs.
+%definput.import={'normalize'};
+definput.keyvals.inc = 10;
+%definput.flags.scale = {'nomatchscale','matchscale'};
+[flags,~,inc]=ltfatarghelper({'inc'},definput,varargin);
+complainif_notnonnegint(inc,'inc',upper(mfilename));
 
 w = sort(w(:)); % sort and make it a column vector
 m = length(w);
@@ -97,8 +151,8 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % preparations specially for computation of gamma
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-k1 = -(ceil(beta*(1/2*(m+alpha)+alpha*increase)/(1-alpha*beta))-1);
-k2 = ceil(beta*(1/2*(m+alpha)+alpha*increase)/(1-alpha*beta))-1;
+k1 = -(ceil(beta*(1/2*(m+alpha)+alpha*inc)/(1-alpha*beta))-1);
+k2 = ceil(beta*(1/2*(m+alpha)+alpha*inc)/(1-alpha*beta))-1;
 i1 = floor(m/2/alpha+(k1-1)/(alpha*beta)-1);
 i2 = ceil((k2+1)/(alpha*beta)-(m-alpha)/2/alpha+1);
 
@@ -119,7 +173,7 @@ t = t + j0/width;
 tt = i1*alpha:1/width:i2*alpha; % choose same stepsize for t and tt
 % left and right bounds large enough for the support of gamma
 tt0 = abs(i1*a)+1; % index for tt == 0
-gamma = zeros(1,length(tt)); % dual window
+gd = zeros(1,length(tt)); % dual window
 c0 = zeros(1,length(t));
 
 
@@ -131,14 +185,13 @@ c0 = zeros(1,length(t));
 for k = 1:length(t)
     % step through the interval [0,alpha)
     x0 = t(k); % compute dual window at points (x+j*alpha)
-    
-    k1x = -(ceil((beta*(m-x0+alpha*increase))/(1-alpha*beta))-1) + k0;
-    k2x = ceil((beta*(x0+alpha*increase))/(1-alpha*beta))-1 + k0;
-    
+
+    k1x = -(ceil((beta*(m-x0+alpha*inc))/(1-alpha*beta))-1) + k0;
+    k2x = ceil((beta*(x0+alpha*inc))/(1-alpha*beta))-1 + k0;
+
     i1x = ceil((m*beta+(k1x-k0)-1-x0*beta)/(alpha*beta)) + i0;
     i2x = floor(((k2x-k0)+1-x0*beta)/(alpha*beta)) + i0;
-    
-    
+
     % Computation of P0(x0)
     % z0 is the matrix of the abscissa x0+j*alpha-k/beta, j=i1:i2, k=k1:k2,
     % z1 puts all these abscissae into a row vector.
@@ -146,12 +199,12 @@ for k = 1:length(t)
     % vector tt.
     z0 = x0+xx(:,k1x:k2x)-yy(:,k1x:k2x);
     z1 = z0(:)';
-    
+
     lz1 = length(z1);
     z1 = repmat(z1.',1,m) + repmat([-m+1:0],lz1,1);
     z1 = z1(:)';
     Y = zeros(m-1,length(z1));
-    
+
     for q = 1:m-1
         if w(q) == w(q+1)
             Y(q,:) = z1.*exp(w(q)*z1).*(z1>=0).*(z1<=1) + ...
@@ -161,7 +214,7 @@ for k = 1:length(t)
                 (exp(w(q)-w(q+1))*exp(w(q+1)*z1)-exp(w(q+1)-w(q))*exp(w(q)*z1))/(w(q)-w(q+1)).*(z1>1).*(z1<=2);
         end
     end
-    
+
     for q = 2:m-1
         for j = 1:m-q
             if w(j) == w(j+q)
@@ -174,20 +227,20 @@ for k = 1:length(t)
             end
         end
     end
-    
+
     if m == 1
         A0 = exp(w*z1).*(z1>=0).*(z1<=1);
     else
         A0 = Y(1,end-lz1+1:end);
     end
-    
+
     A0 = reshape(A0,size(z0));
     P0 = A0(i1x:i2x,:);
-    
+
     % computation of pseudo-inverse matrix of P0
     P0inv = pinv(P0);
-    
-    gamma(k-1+tt0+j0+a*(i1x-i0):a:k-1+tt0+j0+a*(i2x-i0)) = beta*P0inv(k0-k1x+1,:); % row index k0-k1a+1
+
+    gd(k-1+tt0+j0+a*(i1x-i0):a:k-1+tt0+j0+a*(i2x-i0)) = beta*P0inv(k0-k1x+1,:); % row index k0-k1a+1
     % points to the "j=0" row of P0inv
 end
 
@@ -195,10 +248,33 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % periodization of gamma
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-nr = ceil(length(gamma)/L);
+nlen = numel(gd);
+nr = ceil(length(gd)/L);
 v = zeros(1,nr*L);
-v(1:length(gamma)) = gamma;
+v(1:length(gd)) = gd;
 v = [v(tt0:end),v(1:tt0-1)];
 
-gamma = sum(reshape(v,L,nr)',1);
-gamma = gamma/sqrt(width);
+% Determine nlen
+if nlen<L
+    negsupp = tt0-1;
+    possupp = nlen-tt0; % excluding zero pos.
+    nlen = 2*max([negsupp,possupp])+1;
+end
+nlen = min([L,nlen]);
+
+gd = sum(reshape(v,L,nr)',1);
+gd = gd/sqrt(width);
+
+% if flags.do_matchscale
+%    g = pebfun(L,w,width,flags.norm);
+%    [scal,err] = gabdualnorm(g,gd,a,M,L)
+%     assert(err<1e-10,sprintf(['%s: Assertion failed. This is not a valid ',...
+%                               ' dual window.'],upper(mfilename)));
+%    gd = gd/scal;
+% else
+%    gd = normalize(gd,flags.norm);
+% end
+
+gd = gd(:);
+%gd = circshift(gd,-floor(nlen/2));
+

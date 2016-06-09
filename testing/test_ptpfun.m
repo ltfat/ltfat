@@ -4,20 +4,23 @@ test_failed = 0;
 % First, just test if functions run with various input parameters
 
 M = 10;
-a = 5;
-L = 20;
+a = 8;
+L = 120;
 incrange = 0:4:80;
 
 g = ptpfun(L,[1,-1]);
 g = ptpfun(L,[1,-1,9]);
-g = ptpfun(L,[1,-1,9],'inf');
+%g = ptpfun(L,[1,-1,9],'inf');
 
-gd = ptpfundual(L,[1,-1],a,M);
-gd = ptpfundual(L,[1,-1],a,M,10);
+gd = ptpfundual([1,-1],a,M,L);
+gd = ptpfundual([1,-1],a,M,L,10);
 
-[gd,nlen] = ptpfundual(L,[1,-1],a,M,'inf');
-
-[gd,nlen] = ptpfundual(L,[1,-1],a,M,'inf','matchscale');
+gd = ptpfundual({[1,-1],10},a,M,L);
+gd = ptpfundual({[1,-1],20},a,M,L,10);
+% 
+% [gd,nlen] = ptpfundual([1,-1],a,M,L,'inf');
+% 
+% [gd,nlen] = ptpfundual([1,-1],a,M,L,'inf','matchscale');
 
 
 % This should fail, but be caught by some of the input checks.
@@ -27,7 +30,7 @@ gd = ptpfundual(L,[1,-1],a,M,10);
 % Too short w
 try
     g = ptpfun(L,[1]);
-    gd = ptpfundual(L,[1],a,M);
+    gd = ptpfundual([1],a,M,L);
     % We should have failed in g
     test_failed = test_failed + 1;
     failstr = 'FAILED';
@@ -67,7 +70,7 @@ fprintf('PTPFUN Too short w test %s\n',failstr);
 % One zero in weights
 try
     g = ptpfun(L,[-1,0,1]);
-    gd = ptpfundual(L,[-1,0,1],a,M);
+    gd = ptpfundual([-1,0,1],a,M,L);
     % We should have failed in g
     test_failed = test_failed + 1;
     failstr = 'FAILED';
@@ -85,7 +88,7 @@ wcell = {[-1,1],[1,-1,3,4],[7,8,-3],[-1,-1],[1,1]};
 for w = wcell
 for inc =incrange
    g = ptpfun(L,w{1});
-   gd = ptpfundual(L,w{1},a,M);
+   gd = ptpfundual(w{1},a,M,L);
    [~,err] = gabdualnorm(g,gd,a,M,L);
    [test_failed,fail]=ltfatdiditfail(err,test_failed);
    fprintf('PTPFUN IS DUAL L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
@@ -105,7 +108,7 @@ for w = wcell
 end
 
 for w = wcell
-   g = ptpfundual(L,w{1},a,M);
+   g = ptpfundual(w{1},a,M,L);
    c = dgt(f,g,a,M);
    fhat = idgt(c,{'dual',g},a);
    res = norm(f-fhat);
@@ -117,15 +120,41 @@ end
 for w = wcell
   for inc =incrange
    g = ptpfun(L,w{1});
-   gd = ptpfundual(L,w{1},a,M,inc,'matchscale');
+   gd = ptpfundual(w{1},a,M,L,inc);
    c = dgt(f,g,a,M);
    fhat = idgt(c,gd,a);
    res = norm(f-fhat);
    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-   fprintf('PTPFUN PTPFUNDUAL REC L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
+   fprintf('PTPFUN PTPFUNDUAL REC ENERGY L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
   end
 end
 
+% Disabled for now
+% for w = wcell
+%   for inc =incrange
+%    g = ptpfun(L,w{1},'inf');
+%    gd = ptpfundual(w{1},a,M,L,inc,'matchscale','inf');
+%    c = dgt(f,g,a,M);
+%    fhat = idgt(c,gd,a);
+%    res = norm(f-fhat);
+%    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+%    fprintf('PTPFUN PTPFUNDUAL REC PEAK L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
+%   end
+% end
+% 
+% % Test using FIR duals
+% wcell = {[-0.5,0.5]};
+% for w = wcell
+%   for inc =incrange
+%    g = ptpfun(L,w{1});
+%    [gd,nlen] = ptpfundual(w{1},a,M,L,inc,'matchscale');
+%    c = dgt(f,g,a,M);
+%    fhat = idgt(c,middlepad(gd,nlen),a);
+%    res = norm(f-fhat);
+%    [test_failed,fail]=ltfatdiditfail(res,test_failed);
+%    fprintf('PTPFUN PTPFUNDUAL REC FIR L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
+%   end
+% end
 
 
 function [test_failed,failstr]=dititfailedcorrectly(errmsg,fname,test_failed)

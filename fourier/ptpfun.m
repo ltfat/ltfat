@@ -1,19 +1,19 @@
-function g = ptpfun(w,L,width,varargin)
+function g = ptpfun(L,w,varargin)
 %PTPFUN Sampled, periodized totally positive function of finite type
-%   Usage: g=ptpfun(w,L,width)
-%          g=ptpfun(w,L,...)
+%   Usage: g=ptpfun(L,w)
+%          g=ptpfun(L,w,width)
 %
 %   Input parameters:
 %         L    : Window length.
 %         w    : Vector of reciprocals $w_j=1/\delta_j$ in Fourier representation of *g*
-%         width: integer stretching factor for the essential support of g 
+%         width: Integer stretching factor for the essential support of g 
 %
 %   Output parameters:
 %         g    : The periodized totally positive function.
 %
 %   `ptpfun(L,w)` computes samples of a periodized totally positive
-%   function of finite type >=2 with weights *w* such that the Fourier
-%   representation of the continuous TP function is given as:
+%   function of finite type >=2 with weights *w* for a system of length *L*.
+%   The Fourier representation of the continuous TP function is given as:
 %
 %   ..             m
 %      ghat(f) = prod (1+2pijf/w(i))^(-1),
@@ -29,9 +29,8 @@ function g = ptpfun(w,L,width,varargin)
 %   for $x->-\infty$ assuming *w* contains both positive and negative
 %   numbers.
 %
-%   In addition `ptpfun` accepts any of the flags from |normalize|. The
-%   output will be normalized as specified. The default normalization flag
-%   is `'energy'`
+%   `ptpfun(L,w,width)` additionally stretches the function by a factor of 
+%   *width*.
 %
 %   See also: dgt, ptpfundual, gabdualnorm, normalize
 %
@@ -43,21 +42,20 @@ function g = ptpfun(w,L,width,varargin)
 complainif_notenoughargs(nargin,2,upper(mfilename));
 complainif_notposint(L,'L',upper(mfilename));
 
-if isempty(w) || ~isnumeric(w)
-    error('%s: w must be a nonempty numeric vector.', upper(mfilename));
+if isempty(w) || ~isnumeric(w) || numel(w)<2
+    error(['%s: w must be a nonempty numeric vector with at least',...
+           ' 2 elements.'], upper(mfilename));
 end
 
 if any(w==0)
     error('%s: All weights w must be nonzero.', upper(mfilename));
 end
 
-if nargin == 2
-    width = sqrt(L);
-end
-
 % Define initial value for flags and key/value pairs.
-definput.import={'normalize'};
-[flags,keyvals]=ltfatarghelper({},definput,varargin);
+%definput.import={'normalize'};
+definput.keyvals.width=floor(sqrt(L));
+[flags,~,width]=ltfatarghelper({'width'},definput,varargin);
+complainif_notposint(width,'width',upper(mfilename));
 
 w = -sort(w(:))*L/width;
 x = [0:L-1]'/L;
@@ -135,6 +133,6 @@ else
 end
 
 %g = normalize(g(:),flags.norm);
-g = g(:)';
+g = g(:);
 
 end

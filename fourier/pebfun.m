@@ -1,31 +1,63 @@
-function g = pebfun(w,L,width)
+function [g,nlen] = pebfun(L,w,varargin)
 %PEBFUN Sampled, periodized EB-spline
-%   Usage: g=pebfun(w,L,width)
-%          g=pebfun(w,L,...)
+%   Usage: g=pebfun(L,w)
+%          g=pebfun(L,w,width)
+%          [g,nlen]=pebfun(...)
 %
 %   Input parameters:
-%         L    : Window length.
-%         w    : Vector of weights of *g*
-%         width: integer stretching factor, the support of g is width*length(w)
+%         L      : Window length.
+%         w      : Vector of weights of *g*
+%         width  : integer stretching factor, the support of g is width*length(w)
 %
 %   Output parameters:
-%         g    : The periodized EB-spline.
+%         g      : The periodized EB-spline.
+%         nlen   : Number of non-zero elements in out.
+%
+%   `pebfun(L,w)` computes samples of a periodized EB-spline with weights 
+%   *w* for a system of length *L*.
+%
+%   `pebfun(L,w,width)` additionally stretches the function by a factor of 
+%   *width*.   
+%
+%   `[g,nlen]=ptpfundual(...)` as *g* might have a compact support,
+%   *nlen* contains a number of non-zero elements in *g*. This is the case
+%   when *g* is symmetric. If *g* is not symmetric, *nlen* is extended
+%   to twice the length of the longer tail.
+%
+%   If $nlen = L$, *g* has a 'full' support meaning it is a periodization
+%   of a EB spline function.
+%
+%   If $nlen < L$, additional zeros can be removed by calling
+%   `g=middlepad(g,nlen)`.
 %
 %   See also: dgt, pebfundual, gabdualnorm, normalize
 %
-%   References: grst13 kl12 bagrst14 klst14
+%   References: grst13 kl12 bagrst14 klst14 klstgr16
 %
 
 %   AUTHORS: Joachim Stoeckler, Tobias Kloos  2012, 2016
 
-if isempty(w) || ~isnumeric(w)
-    error('%s: w must be a nonempty numeric vector.', upper(mfilename));
+complainif_notenoughargs(nargin,2,upper(mfilename));
+complainif_notposint(L,'L',upper(mfilename))
+
+if isempty(w) || ~isnumeric(w) || numel(w)<2
+    error(['%s: w must be a nonempty numeric vector with at least',...
+           ' 2 elements.'], upper(mfilename));
 end
 
-w = sort(w);
-if nargin == 2
-    width = floor(sqrt(L));
+if any(w==0)
+    error('%s: All weights w must be nonzero.', upper(mfilename));
 end
+
+%TODO: Sanity check for w e.g. 
+% pebfun(1000,[1000,300]) is degenerate
+
+%definput.import={'normalize'};
+definput.keyvals.width=floor(sqrt(L));
+[flags,~,width]=ltfatarghelper({'width'},definput,varargin);
+complainif_notposint(width,'width',upper(mfilename));
+
+w = sort(w);
 n = length(w);
 x = linspace(0,n-1/width,n*width);
 x = x(:);
@@ -70,4 +102,15 @@ else
     g = sum(reshape(y,L,ceil(m/L)),2).'/sqrt(width);
 end
 
+nlen = min([L,m]);
+g = g(:);
+%g = normalize(g(:),flags.norm);
+
+% Shift the window back
+%[~,maxidx] = max(abs(g));
+%g = circshift(g,-maxidx+1);
+
 end
+
+
+
