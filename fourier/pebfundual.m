@@ -205,16 +205,19 @@ for k = 1:length(t)
     z1 = z1(:)';
     Y = zeros(m-1,length(z1));
 
+    index = find( (z1>=0) & (z1<=2));
+    zinit = z1(index);  % only these are needed for initialization of Y
+
     for q = 1:m-1
         if w(q) == w(q+1)
-            Y(q,:) = z1.*exp(w(q)*z1).*(z1>=0).*(z1<=1) + ...
-                (2-z1).*exp(w(q)*z1).*(z1>1).*(z1<=2);
+            Y(q,index) = zinit.*exp(w(q)*zinit).*(zinit<=1) + ...
+                (2-zinit).*exp(w(q)*zinit).*(zinit>1);
         else
-            Y(q,:) = (exp(w(q)*z1)-exp(w(q+1)*z1))/(w(q)-w(q+1)).*(z1>=0).*(z1<=1) + ...
-                (exp(w(q)-w(q+1))*exp(w(q+1)*z1)-exp(w(q+1)-w(q))*exp(w(q)*z1))/(w(q)-w(q+1)).*(z1>1).*(z1<=2);
+            Y(q,index) = (exp(w(q)*zinit)-exp(w(q+1)*zinit))/(w(q)-w(q+1)).*(zinit<=1) + ...
+                (exp(w(q)-w(q+1))*exp(w(q+1)*zinit)-exp(w(q+1)-w(q))*exp(w(q)*zinit))/(w(q)-w(q+1)).*(zinit>1);
         end
     end
-
+    
     for q = 2:m-1
         for j = 1:m-q
             if w(j) == w(j+q)
@@ -229,7 +232,9 @@ for k = 1:length(t)
     end
 
     if m == 1
-        A0 = exp(w*z1).*(z1>=0).*(z1<=1);
+        index = find( (z1>=0) & (z1<=1));
+        zinit = z1(index);  % only these are needed for m=1
+        A0(index) = exp(w*zinit);
     else
         A0 = Y(1,end-lz1+1:end);
     end
@@ -277,4 +282,3 @@ gd = gd/sqrt(width);
 
 gd = gd(:);
 %gd = circshift(gd,-floor(nlen/2));
-

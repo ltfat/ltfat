@@ -16,7 +16,7 @@ gd = pebfundual([1,-1],a,M,L);
 gd = pebfundual([1,-1],a,M,L,10);
 
 gd = pebfundual({[1,-1],10},a,M,L);
-gd = pebfundual({[1,-1],20},a,M,L,10);
+gd = pebfundual({[1,-1],5},a,M,L,10);
 % 
 % [gd,nlen] = ptpfundual([1,-1],a,M,L,'inf');
 % 
@@ -125,7 +125,7 @@ for w = wcell
    fhat = idgt(c,gd,a);
    res = norm(f-fhat);
    [test_failed,fail]=ltfatdiditfail(res,test_failed);
-   fprintf('PEBFUN PTPFUNDUAL REC L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
+   fprintf('PEBFUN PEBFUNDUAL REC L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
   end
 end
 
