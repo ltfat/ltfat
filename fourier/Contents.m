@@ -43,6 +43,12 @@
 %    PHEAVISIDE     -  Periodic Heaviside function.
 %    PRECT          -  Periodic rectangle function.
 %    PSINC          -  Periodic sinc function.
+%    PTPFUN         -  Periodic totally positive function of finite type.
+%    PEBFUN         -  Periodic EB spline. 
+%
+%  Specialized dual windows
+%    PTPFUNDUAL     -  Dual window for |PTPFUN|
+%    PEBFUN         -  Dual window for |PEBFUN|
 %
 %  Hermite functions and fractional Fourier transforms
 %    PHERM          -  Periodic Hermite functions.
