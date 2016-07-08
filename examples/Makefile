@@ -1,4 +1,12 @@
-CFLAGS+=-g -Wall -Wextra -std=gnu99
+CFLAGS+=-g -Wall -Wextra -std=gnu99 -O3
 
-testgab: example_gabanasyn.c
-	$(CC) $(CFLAGS) -I.. example_gabanasyn.c -o example_gabanasyn ../build/libltfat.a -lblas -llapack -lfftw3 -lc -lm 
+SRC=$(wildcard *.c)
+PROGS = $(patsubst %.c,%,$(SRC))
+
+all: $(PROGS)
+
+%: %.c
+	$(CC) $(CFLAGS) -I.. $< -o $@ -l:../build/libltfat.a -lblas -llapack -lfftw3 -lc -lm 
+
+clean:
+	-rm $(PROGS)
