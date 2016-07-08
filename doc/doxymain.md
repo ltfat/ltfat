@@ -18,22 +18,83 @@ General conventions
 Papers which use this toolbox
 \cite ltfatnote014
 
+Function naming convention
+--------------------------
+
+The function names are in the following format:
+
+\c ltfat_<function_name>[_<d|s|dc|sc>](<parameters>)
+
+The \c ltfat_ prefix is present in all function names while the suffix
+is optional and identifies the data type the function is working with.
+
+<table>
+<caption id="multi_row">Data type suffix</caption>
+<tr><th>Suffix</th><th>Data type</th></tr>
+<tr><td>d</td><td>double</td></tr>
+<tr><td>s</td><td>float</td></tr>
+<tr><td>dc</td><td>complex double</td></tr>
+<tr><td>sc</td><td>complex float</td></tr>
+</table>
+
+\note In the documentation the prefix and the suffix will be omitted when
+introducing a non-unique function and when referring to the function group.
+
+Error handling
+--------------
+
+Every function returns a status code which should be checked by the user.
+Additionally, the error message is printed to the standard error stream.
+This behavior can be turned off or a custom error handler can be registered.
+For details see \ref error
+
+Plans
+-----
+
+When repeated computations with the same settings are desired, it is
+convenient to create a __plan__ using the appropriate *_init function,
+call the *_execute function multiple times and destroy the plan by
+calling the *_done function.
+The plan usually contains some precomputed read-only data,
+working arrays and FFTW plans.
+The plan is represented as a pointer to an opaque structure and here
+is an example how to use it: 
+~~~~~~~~~~~~~~~{.c}
+dgt_long_plan_d* plan = NULL;
+
+dgt_long_init_d(f, g, L, W, a, M, cout, ptype, FFTW_ESTIMATE, &plan)
+
+dgt_long_execute_d(plan);
+// Refresh data in f and call execute again  
+
+dgt_long_done_d(&plan);
+~~~~~~~~~~~~~~~
+
+\note Please note that due to the
+<a href="https://github.com/FFTW/fftw3/issues/16">limitation of FFTW</a>
+the *_init routines are not re-entrant because of the FFTW planning happening in them.
+Therefore, the *_init functions cannot be called on different threads even 
+when creating completely separate plans.
+
+\note Further, the *_execute function is reentrant and thread-safe, but not when executed 
+on a single plan concurrently. 
+This limitation comes from the fact that the plan contains some working buffers.
+
+States
+------
+
+A __state__ is a plan which additionally serves for persisting data 
+between the execute calls.
 
 Compatibility
 -------------
 
 The library internally uses complex numbers from ISO C99
-[complex.h](http://en.cppreference.com/w/c/numeric/complex) and
-[aligned_malloc](http://en.cppreference.com/w/c/memory/aligned_alloc)
- defined in ISO C11, therefore it must be compiled with a
-fairly modern compiler.
-
-When linking the library however, none of the above is required. It is not
-required to supply memory aligned output arrays and the complex data type
-in the headers will become a length 2 array.
-
-Such format is binary compatible with the complex class from C++.
+[complex.h](http://en.cppreference.com/w/c/numeric/complex).
+Their memory layout is interleved and they are
+binary compatible with the complex class from C++.
 One can cast pointers back and forth in the following way:
+
 ~~~~~~~~~~~~~~~{.cpp}
 double ccomp[][2] = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
 std::complex<double>* ccpp = reinterpret_cast<std::complex<double>*>(ccomp);
