@@ -1,5 +1,7 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
+
 
 #define CH(name) LTFAT_COMPLEXH(name)
 

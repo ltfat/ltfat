@@ -1,9 +1,9 @@
-#include "ltfat.h"
-#include "ltfat_types.h"
+#include "dgt_long_private.h"
+#include "dgtreal_long_private.h"
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
-LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
+LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
                          const ltfatInt W, const ltfatInt a, const ltfatInt M,
                          const ltfatInt bl, const dgt_phasetype ptype,
                          unsigned flags)
@@ -33,11 +33,18 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
         }
     }
 
-    plan.plan =
-        LTFAT_NAME(dgt_long_init)((const LTFAT_COMPLEX*)plan.buf,
-                                  (const LTFAT_COMPLEX*)plan.gext,
-                                  Lext, W, a, M,
-                                  plan.cbuf, ptype, flags);
+    /* plan.plan = */
+    /*     LTFAT_NAME(dgt_long_init)((const LTFAT_COMPLEX*)plan.buf, */
+    /*                               (const LTFAT_COMPLEX*)plan.gext, */
+    /*                               Lext, W, a, M, */
+    /*                               plan.cbuf, ptype, flags); */
+
+
+    LTFAT_NAME_COMPLEX(dgt_long_init)(plan.buf,
+                                      plan.gext,
+                                      Lext, W, a, M,
+                                      plan.cbuf, ptype, flags,
+                                      &plan.plan);
 
     return (plan);
 
@@ -45,14 +52,14 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
-                            const LTFAT_COMPLEX *f, const ltfatInt L,
-                            LTFAT_COMPLEX *cout)
+                            const LTFAT_COMPLEX* f, const ltfatInt L,
+                            LTFAT_COMPLEX* cout)
 
 {
     const ltfatInt bl      = plan.bl;
     const ltfatInt gl      = plan.gl;
-    const ltfatInt a       = plan.plan.a;
-    const ltfatInt M       = plan.plan.M;
+    const ltfatInt a       = plan.plan->a;
+    const ltfatInt M       = plan.plan->M;
     const ltfatInt N       = L / a;
     const ltfatInt Lext    = bl + gl;
     const ltfatInt Nb      = L / bl;
@@ -79,13 +86,13 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
         }
 
         /* Execute the short DGT */
-        LTFAT_NAME(dgt_long_execute)(plan.plan);
+        LTFAT_NAME_COMPLEX(dgt_long_execute)(plan.plan);
 
         /* Place the results */
         for (ltfatInt w = 0; w < W; w++)
         {
-            LTFAT_COMPLEX *cout_p;
-            LTFAT_COMPLEX *cbuf_p;
+            LTFAT_COMPLEX* cout_p;
+            LTFAT_COMPLEX* cbuf_p;
 
             /* Place large block */
             cout_p = cout + ii * M * Nblock + w * M * N ;
@@ -133,14 +140,14 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan)
 {
-    LTFAT_NAME(dgt_long_done)(plan.plan);
+    LTFAT_NAME_COMPLEX(dgt_long_done)(&plan.plan);
     LTFAT_SAFEFREEALL(plan.cbuf, plan.gext, plan.buf);
 }
 
 
 
 LTFAT_EXTERN LTFAT_NAME(dgtreal_ola_plan)
-LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
+LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL* g, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt a, const ltfatInt M,
                              const ltfatInt bl, const dgt_phasetype ptype,
                              unsigned flags)
@@ -158,7 +165,8 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
 
     plan.buf  = (LTFAT_REAL*) ltfat_malloc(Lext * W * sizeof(LTFAT_REAL));
     plan.gext = (LTFAT_REAL*) ltfat_malloc(Lext * sizeof(LTFAT_REAL));
-    plan.cbuf = (LTFAT_COMPLEX*) ltfat_malloc(M2 * Nblocke * W * sizeof(LTFAT_COMPLEX));
+    plan.cbuf = (LTFAT_COMPLEX*) ltfat_malloc(M2 * Nblocke * W * sizeof(
+                    LTFAT_COMPLEX));
 
     LTFAT_NAME_REAL(fir2long)(g, gl, Lext, plan.gext);
 
@@ -171,11 +179,10 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
         }
     }
 
-    plan.plan =
-        LTFAT_NAME(dgtreal_long_init)((const LTFAT_REAL*)plan.buf,
-                                      (const LTFAT_REAL*)plan.gext,
-                                      Lext, W, a, M, plan.cbuf,
-                                      ptype, flags);
+    LTFAT_NAME(dgtreal_long_init)((const LTFAT_REAL*)plan.buf,
+                                  (const LTFAT_REAL*)plan.gext,
+                                  Lext, W, a, M, plan.cbuf,
+                                  ptype, flags, &plan.plan);
 
     return (plan);
 
@@ -189,14 +196,14 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
-                                const LTFAT_REAL *f, const ltfatInt L,
-                                LTFAT_COMPLEX *cout)
+                                const LTFAT_REAL* f, const ltfatInt L,
+                                LTFAT_COMPLEX* cout)
 
 {
     const ltfatInt bl      = plan.bl;
     const ltfatInt gl      = plan.gl;
-    const ltfatInt a       = plan.plan.a;
-    const ltfatInt M       = plan.plan.M;
+    const ltfatInt a       = plan.plan->a;
+    const ltfatInt M       = plan.plan->M;
     const ltfatInt N       = L / a;
     const ltfatInt Lext    = bl + gl;
     const ltfatInt Nb      = L / bl;
@@ -229,8 +236,8 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
         /* Place the results */
         for (ltfatInt w = 0; w < W; w++)
         {
-            LTFAT_COMPLEX *cout_p;
-            LTFAT_COMPLEX *cbuf_p;
+            LTFAT_COMPLEX* cout_p;
+            LTFAT_COMPLEX* cbuf_p;
 
             /* Place large block */
             cout_p = cout + ii * M2 * Nblock + w * M2 * N ;
@@ -277,6 +284,6 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola_done)(LTFAT_NAME(dgtreal_ola_plan) plan)
 {
-    LTFAT_NAME(dgtreal_long_done)(plan.plan);
+    LTFAT_NAME(dgtreal_long_done)(&plan.plan);
     LTFAT_SAFEFREEALL(plan.cbuf, plan.gext, plan.buf);
 }

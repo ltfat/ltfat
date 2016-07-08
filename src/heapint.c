@@ -1,6 +1,7 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
-#include "heapint.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
+#include "ltfat/heapint.h"
 
 #define NORTHFROMW(w,M,N) ((((w) + 1) % (M)) + (w) - (w) % (M))
 #define SOUTHFROMW(w,M,N) (((w) - 1 + (M)) % (M) + (w) - (w) % (M))
@@ -38,9 +39,9 @@ void
 LTFAT_NAME(heap_grow)(struct LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
-    h->h = ltfat_realloc_and_copy(h->h,
-                                  h->totalheapsize * sizeof * h->h / 2,
-                                  h->totalheapsize * sizeof * h->h);
+    h->h = ltfat_realloc(h->h,
+                         h->totalheapsize * sizeof * h->h / 2,
+                         h->totalheapsize * sizeof * h->h);
 }
 
 

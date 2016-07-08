@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 struct LTFAT_NAME(upconv_fft_plan_struct)
 {
@@ -241,7 +242,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
 
         LTFAT_NAME_COMPLEX(circshift)(cbuf + w * bufLen, N, -foff, cbuf + w * bufLen);
         // This does nothing if bufLen == N
-        LTFAT_NAME_COMPLEX(periodize_array)(cbuf + w * bufLen, N, cbuf + w * bufLen, bufLen);
+        LTFAT_NAME_COMPLEX(periodize_array)(cbuf + w * bufLen, N, bufLen, cbuf + w * bufLen);
 
         const LTFAT_COMPLEX* GPtrTmp = G;
         LTFAT_COMPLEX* FPtrTmp = F + w * L;
@@ -292,8 +293,8 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
     {
         const ltfatInt foffconj = -L + positiverem(L - foff - Gl, L) + 1;
         LTFAT_COMPLEX *Gconj = ltfat_malloc(Gl * sizeof * Gconj);
-        LTFAT_NAME_COMPLEX(reverse_array)((LTFAT_COMPLEX *)G, Gconj, Gl);
-        LTFAT_NAME_COMPLEX(conjugate_array)(Gconj, Gconj, Gl);
+        LTFAT_NAME_COMPLEX(reverse_array)(G, Gl, Gconj);
+        LTFAT_NAME_COMPLEX(conjugate_array)(Gconj, Gl, Gconj);
 
         LTFAT_NAME(upconv_fftbl_execute)(p, cin, Gconj, foffconj, 0, F);
         ltfat_free(Gconj);

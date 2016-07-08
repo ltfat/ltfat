@@ -6,7 +6,7 @@
  *
  * */
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 /********  HEAP ********/
 struct LTFAT_NAME(heap)

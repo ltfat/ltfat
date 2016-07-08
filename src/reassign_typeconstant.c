@@ -1,4 +1,5 @@
 #include "ltfat.h"
+#include "ltfat/macros.h"
 
 LTFAT_EXTERN fbreassOptOut*
 fbreassOptOut_init(const ltfatInt l, const ltfatInt inital)
@@ -9,7 +10,7 @@ fbreassOptOut_init(const ltfatInt l, const ltfatInt inital)
    ret->repos = ltfat_malloc(l * sizeof * ret->repos);
    ret->reposl = ltfat_calloc(l , sizeof * ret->reposl);
    ret->reposlmax = ltfat_malloc(l * sizeof * ret->reposlmax);
-   ltfatInt inital2 = imax(1, inital);
+   ltfatInt inital2 = ltfat_imax(1, inital);
    for (ltfatInt ii = 0; ii < l; ii++)
    {
       ret->repos[ii] = ltfat_malloc( inital2 * sizeof * ret->repos[ii]);
@@ -39,7 +40,7 @@ LTFAT_EXTERN void
 fbreassOptOut_expand(fbreassOptOut* oo, ltfatInt ii)
 {
    ltfatInt explmax = (ltfatInt) (fbreassOptOut_EXPANDRAT * oo->reposlmax[ii]);
-   oo->repos[ii] = ltfat_realloc_and_copy(
+   oo->repos[ii] = ltfat_realloc(
                       oo->repos[ii],
                       oo->reposlmax[ii] * sizeof * oo->repos[ii],
                       explmax * sizeof * oo->repos[ii]);

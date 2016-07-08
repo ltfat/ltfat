@@ -1,10 +1,15 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
-LTFAT_EXTERN void
+LTFAT_EXTERN int
 LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
                    LTFAT_REAL *g)
 {
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(g);
+    CHECK(LTFATERR_NOTPOSARG, L>0,"L must be positive (passed %d).",L);
+    CHECK(LTFATERR_NOTPOSARG, w>0,"w must be positive (passed %f).",w);
 
     ltfatInt lr,k,nk;
     double tmp,sqrtl, safe, gnorm;
@@ -32,9 +37,10 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
     gnorm=sqrt(gnorm);
 
     for ( lr=0; lr<L; lr++)
-    {
         g[lr] /= gnorm;
-    }
+
+error:
+    return status;
 }
 
 
@@ -45,10 +51,14 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
 %end;
 */
 
-LTFAT_EXTERN void
+LTFAT_EXTERN int
 LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t, const double c_f,
                          LTFAT_COMPLEX *g)
 {
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(g);
+    CHECK(LTFATERR_NOTPOSARG, L>0,"L must be positive (passed %d).",L);
+    CHECK(LTFATERR_NOTPOSARG, w>0,"w must be positive (passed %f).",w);
 
     ltfatInt lr,k,nk;
     double tmp,sqrtl, safe, gnorm;
@@ -62,8 +72,6 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t, con
 
     for ( lr=0; lr<L; lr++)
     {
-        //g[lr][0]=0.0;
-        //g[lr][1]=0.0;
         g[lr] = (LTFAT_COMPLEX) 0.0;
         for (k=-nk; k<=nk; k++)
         {
@@ -82,7 +90,8 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t, con
     gnorm=sqrt(gnorm);
 
     for ( lr=0; lr<L; lr++)
-    {
         g[lr] /= gnorm;
-    }
+
+error:
+    return status;
 }

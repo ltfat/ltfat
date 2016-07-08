@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 
 
@@ -12,7 +13,7 @@ static inline long long positiverem_long(long long a, long long b)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX *g)
+LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX* g)
 {
 
     const long long LL = 2 * L;
@@ -40,10 +41,10 @@ LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX *g)
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_shear_plan)
-LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                            const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                            const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
-                           LTFAT_COMPLEX *cout,
+                           LTFAT_COMPLEX* cout,
                            unsigned flags)
 {
     LTFAT_NAME(dgt_shear_plan) plan;
@@ -64,15 +65,15 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     const ltfatInt Mr = L / br;
     const ltfatInt Nr = L / ar;
 
-    plan.f     = (LTFAT_COMPLEX *)f;
-    plan.fwork = (LTFAT_COMPLEX *)f;
-    plan.gwork = (LTFAT_COMPLEX *)g;
+    plan.f     = (LTFAT_COMPLEX*)f;
+    plan.fwork = (LTFAT_COMPLEX*)f;
+    plan.gwork = (LTFAT_COMPLEX*)g;
     plan.cout  = cout;
 
     plan.c_rect = ltfat_malloc(M * N * W * sizeof(LTFAT_COMPLEX));
 
-    LTFAT_COMPLEX *f_before_fft = (LTFAT_COMPLEX *)f;
-    LTFAT_COMPLEX *g_before_fft = (LTFAT_COMPLEX *)g;
+    LTFAT_COMPLEX* f_before_fft = (LTFAT_COMPLEX*)f;
+    LTFAT_COMPLEX* g_before_fft = (LTFAT_COMPLEX*)g;
 
     if ((s0 != 0) || (s1 != 0))
     {
@@ -103,8 +104,10 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
         /* Call the rectangular computation in the time domain */
         /* LTFAT_NAME(dgt_long)(plan.fwork,plan.gwork,L,W,ar,Mr,plan.c_rect); */
 
-        plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork,
-                         L, W, ar, Mr, plan.c_rect, 0, flags);
+        /* plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, */
+        /*                  L, W, ar, Mr, plan.c_rect, 0, flags); */
+        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.fwork, plan.gwork,
+                                          L, W, ar, Mr, plan.c_rect, 0, flags, &plan.rect_plan);
     }
     else
     {
@@ -124,7 +127,8 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
                                                 plan.fwork, NULL, 1, L,
                                                 FFTW_FORWARD, flags);
 
-        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(L, g_before_fft, plan.gwork, FFTW_FORWARD, flags);
+        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(L, g_before_fft, plan.gwork, FFTW_FORWARD,
+                                              flags);
 
         /* Execute the FFTs */
         LTFAT_FFTW(execute)(plan.g_plan);
@@ -138,8 +142,10 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
         /* Call the rectangular computation in the frequency domain*/
         /* LTFAT_NAME(dgt_long)(plan.fwork,plan.gwork,L,W,br,Nr,plan.c_rect); */
         /* Call the rectangular computation in the frequency domain*/
-        plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, L, W,
-                         br, Nr, plan.c_rect, 0, flags);
+        /* plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, L, W, */
+        /*                  br, Nr, plan.c_rect, 0, flags); */
+        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.fwork, plan.gwork, L, W,
+                                          br, Nr, plan.c_rect, 0, flags, &plan.rect_plan);
 
     }
 
@@ -196,7 +202,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         const long tmp1 = positiverem_long(cc3 * a, twoN);
 
-        LTFAT_NAME(dgt_long_execute)(plan.rect_plan);
+        LTFAT_NAME_COMPLEX(dgt_long_execute)(plan.rect_plan);
 
         for (ltfatInt k = 0; k < N; k++)
         {
@@ -211,7 +217,8 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
                 const ltfatInt outidx = idx2 + k * M;
                 for (ltfatInt w = 0; w < plan.W; w++)
                 {
-                    plan.cout[outidx + w * M * N] = plan.c_rect[inidx + w * M * N] * plan.finalmod[phsidx];
+                    plan.cout[outidx + w * M * N] = plan.c_rect[inidx + w * M * N] *
+                                                    plan.finalmod[phsidx];
                 }
             }
         }
@@ -240,7 +247,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
             }
         }
 
-        LTFAT_NAME(dgt_long_execute)(plan.rect_plan);
+        LTFAT_NAME_COMPLEX(dgt_long_execute)(plan.rect_plan);
 
         for (ltfatInt k = 0; k < Nr; k++)
         {
@@ -259,7 +266,8 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
                 const ltfatInt outidx = idx2 + (sq1 % N) * M;
                 for (ltfatInt w = 0; w < plan.W; w++)
                 {
-                    plan.cout[outidx + w * M * N] = plan.c_rect[inidx + w * M * N] * plan.finalmod[phsidx];
+                    plan.cout[outidx + w * M * N] = plan.c_rect[inidx + w * M * N] *
+                                                    plan.finalmod[phsidx];
 
                 }
             }
@@ -272,16 +280,17 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
 {
-    LTFAT_NAME(dgt_long_done)(plan.rect_plan);
-    LTFAT_SAFEFREEALL(plan.finalmod, plan.c_rect, plan.fwork, plan.gwork, plan.p0, plan.p1);
+    LTFAT_NAME_COMPLEX(dgt_long_done)(&plan.rect_plan);
+    LTFAT_SAFEFREEALL(plan.finalmod, plan.c_rect, plan.fwork, plan.gwork, plan.p0,
+                      plan.p1);
 }
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                       const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                       const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
-                      LTFAT_COMPLEX *cout)
+                      LTFAT_COMPLEX* cout)
 {
 
     LTFAT_NAME(dgt_shear_plan) plan = LTFAT_NAME(dgt_shear_init)(
@@ -292,7 +301,3 @@ LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     LTFAT_NAME(dgt_shear_done)(plan);
 
 }
-
-
-
-

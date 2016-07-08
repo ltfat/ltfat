@@ -1,5 +1,7 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
+
 
 #define CH(name) LTFAT_COMPLEXH(name)
 
@@ -57,7 +59,7 @@ LTFAT_NAME_COMPLEX(idwiltiii_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME(idgt_long)(coef2, g, L, W, M, 2 * M, FREQINV, f2);
+    LTFAT_NAME_COMPLEX(idgt_long)(coef2, g, L, W, M, 2 * M, FREQINV, f2);
 
     POSTPROC_COMPLEX
 
@@ -88,7 +90,7 @@ LTFAT_NAME_REAL(idwiltiii_long)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME(idgt_long)(coef2, g2, L, W, M, 2 * M, FREQINV, f2);
+    LTFAT_NAME_COMPLEX(idgt_long)(coef2, g2, L, W, M, 2 * M, FREQINV, f2);
 
     POSTPROC_REAL
 
@@ -118,7 +120,7 @@ LTFAT_NAME_COMPLEX(idwiltiii_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME(idgt_fb)(coef2, g, L, gl, W, M, 2 * M, FREQINV, f2);
+    LTFAT_NAME_COMPLEX(idgt_fb)(coef2, g, L, gl, W, M, 2 * M, FREQINV, f2);
 
     POSTPROC_COMPLEX
 
@@ -150,7 +152,7 @@ LTFAT_NAME_REAL(idwiltiii_fb)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME(idgt_fb)(coef2, g2, L, gl, W, M, 2 * M, FREQINV, f2);
+    LTFAT_NAME_COMPLEX(idgt_fb)(coef2, g2, L, gl, W, M, 2 * M, FREQINV, f2);
 
     POSTPROC_REAL
 

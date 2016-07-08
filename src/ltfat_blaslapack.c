@@ -1,6 +1,17 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 #include "cblas.h"
+
+/* Define to a macro mangling the given C identifier (in lower and upper
+   case), which must not contain underscores, for linking with Fortran. */
+
+#ifdef MATLABFORTRAN
+#define F77_FUNC(name,NAME) NAME
+#else
+#define F77_FUNC(name,NAME) name ## _
+#endif
+
 
 #define HAVE_BLAS 1
 #define HAVE_LAPACK 1

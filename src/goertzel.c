@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 #ifndef GGA_UNROLL
 #   define GGA_UNROLL 8
@@ -225,8 +226,11 @@ LTFAT_NAME(chzt_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE *fPtr,
     for(ltfatInt w = 0; w<W; w++)
     {
         memset(fbuffer,0,Lfft*sizeof*fbuffer);
-        LTFAT_NAME(array2complex)((LTFAT_TYPE *)(fPtr+w*L),fbuffer,L);
-
+#ifdef LTFAT_COMPLEXTYPE
+        memcpy(fbuffer,fPtr+w*L,L*sizeof*fbuffer);
+#else
+        LTFAT_NAME_REAL(real2complex_array)(fPtr+w*L,L,fbuffer);
+#endif
         //1) Premultiply by a chirp
 
         for(ltfatInt ii=0; ii<L; ii++)
@@ -267,9 +271,9 @@ LTFAT_NAME(chzt_init)(const ltfatInt K, ltfatInt L, const LTFAT_REAL deltao,
     ltfatInt Lfft = L+K-1;
 
     if(hint == CZT_NEXTPOW2)
-        Lfft = nextPow2(Lfft);
+        Lfft = ltfat_nextpow2(Lfft);
     else
-        Lfft = nextfastfft(Lfft);
+        Lfft = ltfat_nextfastfft(Lfft);
 
     LTFAT_COMPLEX* fbuffer = ltfat_malloc(Lfft*sizeof*fbuffer);
     LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfft, fbuffer, fbuffer,
@@ -296,9 +300,9 @@ LTFAT_NAME(chzt_init)(const ltfatInt K, ltfatInt L, const LTFAT_REAL deltao,
     // Set the rest to zero
     memset(W2+N,0,(Lfft-N)*sizeof*W2);
 
-    LTFAT_NAME_COMPLEX(conjugate_array)(W2,chirpF,K);
-    LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,chirpF+Lfft-L+1,L-1);
-    LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-L+1,chirpF+Lfft-L+1,L-1);
+    LTFAT_NAME_COMPLEX(conjugate_array)(W2,K,chirpF);
+    LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,L-1,chirpF+Lfft-L+1);
+    LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-L+1,L-1,chirpF+Lfft-L+1);
     memset(chirpF+K,0,(Lfft-(L+K-1))*sizeof*chirpF);
 
     LTFAT_FFTW(execute_dft)(plan_f,chirpF,chirpF);
@@ -474,9 +478,9 @@ LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
 
     ltfatInt Lfft=2*K-1;
     if(hint == CZT_NEXTPOW2)
-        Lfft = nextPow2(Lfft);
+        Lfft = ltfat_nextpow2(Lfft);
     else
-        Lfft = nextfastfft(Lfft);
+        Lfft = ltfat_nextfastfft(Lfft);
 
     ltfatInt q = (ltfatInt) ceil(((double)L)/((double)K));
 
@@ -504,9 +508,9 @@ LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
         W2[k] = (LTFAT_COMPLEX) cexp(-1.0*q*I*deltao*k*k/2.0);
     }
 
-    LTFAT_NAME_COMPLEX(conjugate_array)(W2,chirpF,K);
-    LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,chirpF+Lfft-K+1,K-1);
-    LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-K+1,chirpF+Lfft-K+1,K-1);
+    LTFAT_NAME_COMPLEX(conjugate_array)(W2,K,chirpF);
+    LTFAT_NAME_COMPLEX(conjugate_array)(W2+1,K-1,chirpF+Lfft-K+1);
+    LTFAT_NAME_COMPLEX(reverse_array)(chirpF+Lfft-K+1,K-1,chirpF+Lfft-K+1);
     memset(chirpF+K,0,(Lfft-(2*K-1))*sizeof*chirpF);
     LTFAT_FFTW(execute)(plan_chirpF);
     LTFAT_FFTW(destroy_plan)(plan_chirpF);

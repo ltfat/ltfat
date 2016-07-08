@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 LTFAT_EXTERN void
 LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,

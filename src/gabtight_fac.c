@@ -1,6 +1,7 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
-#include "ltfat_blaslapack.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
+#include "ltfat/blaslapack.h"
 
 LTFAT_EXTERN void
 LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L,const ltfatInt R,
@@ -18,7 +19,7 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L,const ltfatIn
 
     const ltfatInt N=L/a;
 
-    const ltfatInt c=gcd(a, M,&h_a, &h_m);
+    const ltfatInt c=ltfat_gcd(a, M,&h_a, &h_m);
     const ltfatInt p=a/c;
     const ltfatInt q=M/c;
     const ltfatInt d=N/q;
@@ -70,7 +71,7 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const lt
 
     const ltfatInt N=L/a;
 
-    const ltfatInt c=gcd(a, M,&h_a, &h_m);
+    const ltfatInt c=ltfat_gcd(a, M,&h_a, &h_m);
     const ltfatInt p=a/c;
     const ltfatInt q=M/c;
     const ltfatInt d=N/q;

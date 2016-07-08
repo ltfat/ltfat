@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 
 /**
@@ -242,7 +243,7 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
         // Copy samples of F according to range of G
         if(foffTmp<0)
         {
-            ltfatInt toCopy = imin(-foffTmp,tmpLg);
+            ltfatInt toCopy = ltfat_imin(-foffTmp,tmpLg);
             memcpy(tmpPtr,F+(w+1)*L+foffTmp,toCopy*sizeof*F);
             tmpPtr+=toCopy;
             tmpLg-=toCopy;

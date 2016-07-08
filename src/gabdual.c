@@ -1,48 +1,69 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
-LTFAT_EXTERN void
+LTFAT_EXTERN int
 LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
                          const ltfatInt L, const ltfatInt R, const ltfatInt a,
                          const ltfatInt M, LTFAT_TYPE* gd)
 {
+    LTFAT_COMPLEX* gf = NULL;
+    LTFAT_COMPLEX* gdf = NULL;
 
-    const ltfatInt wfs = L;
+    int status = LTFATERR_SUCCESS;
+    CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %d) must be positive.", R);
+    CHECK(LTFATERR_NOTAFRAME, M >= a, "Not a frame. Check if M>=a.");
+    ltfatInt minL = ltfat_lcm(a, M);
+    CHECK(LTFATERR_BADARG, L > 0 && !(L % minL),
+          "L (passed %d) must be positive and divisible by lcm(a,M)=%d.", L, minL);
+    // a,M, g and gd are checked further
 
-
-    LTFAT_COMPLEX* gf = ltfat_malloc(wfs * R * sizeof(LTFAT_COMPLEX));
-    LTFAT_COMPLEX* gdf = ltfat_malloc(wfs * R * sizeof(LTFAT_COMPLEX));
+    CHECKMEM( gf = ltfat_malloc(L * R * sizeof * gf));
+    CHECKMEM( gdf = ltfat_malloc(L * R * sizeof * gdf));
 
 #ifdef LTFAT_COMPLEXTYPE
 
-    LTFAT_NAME(wfac)(g, L, R, a, M, gf);
-    LTFAT_NAME_REAL(gabdual_fac)((const LTFAT_COMPLEX*)gf, L, R, a, M, gdf);
-    LTFAT_NAME(iwfac)((const LTFAT_COMPLEX*)gdf, L, R, a, M, gd);
+    CHECKSTATUS( LTFAT_NAME(wfac)(g, L, R, a, M, gf), "wfac failed");
+    LTFAT_NAME_REAL(gabdual_fac)(gf, L, R, a, M, gdf);
+    CHECKSTATUS( LTFAT_NAME(iwfac)(gdf, L, R, a, M, gd), "iwfac failed");
 
 #else
 
     LTFAT_NAME_REAL(wfacreal)(g, L, R, a, M, gf);
-    LTFAT_NAME_REAL(gabdualreal_fac)((const LTFAT_COMPLEX*)gf, L, R, a, M, gdf);
-    LTFAT_NAME_REAL(iwfacreal)((const LTFAT_COMPLEX*)gdf, L, R, a, M, gd);
+    LTFAT_NAME_REAL(gabdualreal_fac)(gf, L, R, a, M, gdf);
+    LTFAT_NAME_REAL(iwfacreal)(gdf, L, R, a, M, gd);
 
 #endif
 
+error:
     LTFAT_SAFEFREEALL(gdf, gf);
+    return status;
 }
 
 
-LTFAT_EXTERN void
-LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt Lg,
+LTFAT_EXTERN int
+LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
                         const ltfatInt L, const ltfatInt a,
-                        const ltfatInt M, const ltfatInt Ldual, LTFAT_TYPE* gdual)
+                        const ltfatInt M, const ltfatInt gdl, LTFAT_TYPE* gd)
 {
-    LTFAT_TYPE* tmp_iir = ltfat_malloc(L * sizeof * tmp_iir);
+    LTFAT_TYPE* tmpLong = NULL;
 
-    LTFAT_NAME(fir2long)(g, Lg, L, tmp_iir);
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(g); CHECKNULL(gd);
+    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
+    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_NOTPOSARG, gdl > 0, "gdl must be positive");
+    CHECK(LTFATERR_BADARG, L >= gl && L >= gdl,
+          "L>=gl && L>= gdl must hold. Passed L=%d, gl=%d, gdl=%d", L, gl, gdl);
 
-    LTFAT_NAME(gabdual_long)(tmp_iir, L, 1, a, M, tmp_iir);
+    CHECKMEM( tmpLong = ltfat_malloc(L * sizeof * tmpLong));
 
-    LTFAT_NAME(long2fir)(tmp_iir, L, Ldual, gdual);
+    CHECKSTATUS( LTFAT_NAME(fir2long)(g, gl, L, tmpLong), "fir2long failed");
+    CHECKSTATUS( LTFAT_NAME(gabdual_long)(tmpLong, L, 1, a, M, tmpLong),
+                 "gabdual_long failed");
+    CHECKSTATUS( LTFAT_NAME(long2fir)(tmpLong, L, gdl, gd), "long2fir failed");
 
-    ltfat_free(tmp_iir);
+error:
+    if (tmpLong) ltfat_free(tmpLong);
+    return status;
 }

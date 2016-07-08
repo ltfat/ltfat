@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 
 LTFAT_EXTERN void
@@ -92,16 +93,16 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
     memset(c,0,L*sizeof*c);
     ltfatInt skipLoc = -skip;
     LTFAT_TYPE *filtRev = ltfat_malloc(gl*sizeof*filtRev);
-    LTFAT_NAME(reverse_array)((LTFAT_TYPE*)g,filtRev,gl);
+    LTFAT_NAME(reverse_array)(g,gl,filtRev);
 
     ltfatInt glUps = ga*gl-(ga-1);
 
     LTFAT_TYPE *righExtbuff = 0;
     // number of output samples that can be calculated "painlessly"
-    ltfatInt Nsafe = imax((L - skipLoc),0);
+    ltfatInt Nsafe = ltfat_imax((L - skipLoc),0);
 
     // prepare cyclic buf of length of power of two (for effective modulo operations)
-    ltfatInt bufgl = nextPow2(glUps);
+    ltfatInt bufgl = ltfat_nextpow2(glUps);
     // buf index
     ltfatInt buffPtr = 0;
 
@@ -129,11 +130,11 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
 
 #define ONEOUTSAMPLE                                                    \
          tmpg = filtRev;                                           \
-         ltfatInt revBufPtr = modPow2(buffPtr-glUps,bufgl);             \
+         ltfatInt revBufPtr = ltfat_modpow2(buffPtr-glUps,bufgl);             \
          ltfatInt loop1it = gl+1;                                         \
 	      while(--loop1it)                                              \
 	      {                                                             \
-		     tmpBuffPtr = buf + modPow2(revBufPtr,bufgl);          \
+		     tmpBuffPtr = buf + ltfat_modpow2(revBufPtr,bufgl);          \
 		     revBufPtr+=ga;                                         \
            *tmpOut += *(tmpBuffPtr) * *(tmpg++);                  \
          }                                                             \
@@ -141,25 +142,25 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
 
 
 #define READNEXTDATA(samples,wherePtr)                                              \
-	   buffOver = imax(buffPtr+(samples)-bufgl, 0);                               \
+	   buffOver = ltfat_imax(buffPtr+(samples)-bufgl, 0);                               \
    	memcpy(buf + buffPtr, wherePtr, ((samples)-buffOver)*sizeof(LTFAT_TYPE)); \
 	   memcpy(buf,wherePtr+(samples)-buffOver,buffOver*sizeof(LTFAT_TYPE));      \
-	   buffPtr = modPow2(buffPtr += (samples),bufgl);
+	   buffPtr = ltfat_modpow2(buffPtr += (samples),bufgl);
 
 #define READNEXTSAMPLE(wherePtr)                               \
    	   *(buf + buffPtr) = *wherePtr;                        \
-	   buffPtr = modPow2(++buffPtr,bufgl);
+	   buffPtr = ltfat_modpow2(++buffPtr,bufgl);
 
 
     ltfatInt buffOver = 0;
     /*** initial buf fill ***/
-    ltfatInt sampToRead = imin((skipLoc+1),L);
+    ltfatInt sampToRead = ltfat_imin((skipLoc+1),L);
     READNEXTDATA(sampToRead,tmpIn);
     tmpIn += sampToRead;
 
     /*********** STEP 1: FREE LUNCH ( but also a hot-spot) *******************************/
     // Take the smaller value from "painless" output length and the user defined output length
-    ltfatInt iiLoops = imin(Nsafe-1,L-1);
+    ltfatInt iiLoops = ltfat_imin(Nsafe-1,L-1);
 
     // loop trough all output samples, omit the very last one.
     for (ltfatInt ii = 0; ii < iiLoops; ii++)
@@ -185,7 +186,7 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
         {
             ltfatInt lastInIdx = ((Nsafe-1)+1+skipLoc);
             rightExtBuffIdx = lastInIdx + 1 - L;
-            ltfatInt diff = imax(0,L - lastInIdx);
+            ltfatInt diff = ltfat_imax(0,L - lastInIdx);
             READNEXTDATA(diff,(f + lastInIdx))
         }
         else
@@ -203,7 +204,7 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
             ONEOUTSAMPLE
             READNEXTSAMPLE((righExtbuff+rightExtBuffIdx))
             ++rightExtBuffIdx;
-            //rightExtBuffIdx = modPow2(++rightExtBuffIdx,bufgl);
+            //rightExtBuffIdx = ltfat_modpow2(++rightExtBuffIdx,bufgl);
         }
     }
 
@@ -226,8 +227,8 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
     // Copy, reverse and conjugate the imp resp.
     LTFAT_TYPE *gInv = ltfat_malloc(gl*sizeof*gInv);
     memcpy(gInv,g,gl*sizeof*gInv);
-    LTFAT_NAME(reverse_array)(gInv,gInv,gl);
-    LTFAT_NAME(conjugate_array)(gInv,gInv,gl);
+    LTFAT_NAME(reverse_array)(gInv,gl,gInv);
+    LTFAT_NAME(conjugate_array)(gInv,gl,gInv);
 
 
     // Running output pointer
@@ -236,7 +237,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
     LTFAT_TYPE* tmpIn =  (LTFAT_TYPE*) c;
 
     /** prepare cyclic buf */
-    ltfatInt bufgl = nextPow2(glUps);
+    ltfatInt bufgl = ltfat_nextpow2(glUps);
     LTFAT_TYPE* buf = ltfat_calloc(bufgl,sizeof*buf);
     ltfatInt buffPtr = 0;
 
@@ -251,7 +252,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
     }
     else
     {
-        iiLoops = imin(L - skipLoc,L); // just in case L < L - inSkip
+        iiLoops = ltfat_imin(L - skipLoc,L); // just in case L < L - inSkip
         remainsOutSamp = L - (iiLoops-1);
     }
 
@@ -264,25 +265,25 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
         LTFAT_NAME(extend_right)(c,L,rightbuf,glUps,PER,0);
     }
 
-    ltfatInt iniStoCopy = imin(skipLoc,bufgl);
-    ltfatInt tmpInSkip = imax(0,skipLoc-bufgl);
+    ltfatInt iniStoCopy = ltfat_imin(skipLoc,bufgl);
+    ltfatInt tmpInSkip = ltfat_imax(0,skipLoc-bufgl);
     memcpy(buf,tmpIn+tmpInSkip,iniStoCopy*sizeof*buf);
     tmpIn += (iniStoCopy+tmpInSkip);
-    buffPtr = modPow2(buffPtr += iniStoCopy,bufgl);
+    buffPtr = ltfat_modpow2(buffPtr += iniStoCopy,bufgl);
 
 
 //LTFAT_TYPE* filtTmp = g;
 #define ONEOUTSAMPLE(filtTmp,jjLoops)                                   \
 	    for(ltfatInt jj=0;jj<(jjLoops);jj++)                                  \
 		    {                                                            \
-				ltfatInt idx = modPow2((-jj*ga+buffPtr-1), bufgl);      \
+				ltfatInt idx = ltfat_modpow2((-jj*ga+buffPtr-1), bufgl);      \
 				*tmpOut += *(buf+idx) * *((filtTmp) + jj);            \
 		    }                                                            \
 	    tmpOut++;
 
 #define READNEXTSAMPLE(wherePtr)                               \
    	   *(buf + buffPtr) = *(wherePtr);                      \
-	   buffPtr = modPow2(++buffPtr,bufgl);
+	   buffPtr = ltfat_modpow2(++buffPtr,bufgl);
 
 
     /** STEP 2: MAIN LOOP */
@@ -338,14 +339,14 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
     memset(c,0,N*sizeof*c);
     // Reverse and conjugate the filter
     LTFAT_TYPE *filtRev = ltfat_malloc(gl*sizeof*filtRev);
-    LTFAT_NAME(reverse_array)((LTFAT_TYPE*)g, filtRev,gl);
+    LTFAT_NAME(reverse_array)(g, gl, filtRev);
 
     LTFAT_TYPE *righExtbuff = 0;
     // number of output samples that can be calculated "painlessly"
-    ltfatInt Nsafe = imax((L + skip + a -1)/a,0);
+    ltfatInt Nsafe = ltfat_imax((L + skip + a -1)/a,0);
 
     // prepare cyclic buf of length of power of two (for effective modulo operations)
-    ltfatInt bufgl = nextPow2(imax(gl,a+1));
+    ltfatInt bufgl = ltfat_nextpow2(ltfat_imax(gl,a+1));
     // buf index
     ltfatInt buffPtr = 0;
 
@@ -372,11 +373,11 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
 
 #define ONEOUTSAMPLE                                                    \
           tmpg = filtRev;                                           \
-          ltfatInt revBufPtr = modPow2(buffPtr-gl,bufgl);                \
+          ltfatInt revBufPtr = ltfat_modpow2(buffPtr-gl,bufgl);                \
           ltfatInt loop1it = gl+1;                                         \
 	      while(--loop1it)                                              \
 	      {                                                             \
-		     tmpBuffPtr = buf + modPow2(revBufPtr++,bufgl);        \
+		     tmpBuffPtr = buf + ltfat_modpow2(revBufPtr++,bufgl);        \
              *tmpOut += *(tmpBuffPtr) * *(tmpg++);                  \
           }                                                             \
           tmpOut++;
@@ -384,21 +385,21 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
 
 
 #define READNEXTDATA(samples,wherePtr)                                              \
-	   buffOver = imax(buffPtr+(samples)-bufgl, 0);                               \
+	   buffOver = ltfat_imax(buffPtr+(samples)-bufgl, 0);                               \
    	memcpy(buf + buffPtr, wherePtr, ((samples)-buffOver)*sizeof*buf); \
 	   memcpy(buf,wherePtr+(samples)-buffOver,buffOver*sizeof*buf);      \
-	   buffPtr = modPow2(buffPtr += (samples),bufgl);
+	   buffPtr = ltfat_modpow2(buffPtr += (samples),bufgl);
 
 
     ltfatInt buffOver = 0;
     /*** initial buf fill ***/
-    ltfatInt sampToRead = imin((-skip+1),L);
+    ltfatInt sampToRead = ltfat_imin((-skip+1),L);
     READNEXTDATA(sampToRead,tmpIn);
     tmpIn += sampToRead;
 
     /*********** STEP 1: FREE LUNCH ( but also a hot-spot) *******************************/
     // Take the smaller value from "painless" output length and the user defined output length
-    ltfatInt iiLoops = imin(Nsafe-1,N-1);
+    ltfatInt iiLoops = ltfat_imin(Nsafe-1,N-1);
 
     // loop trough all output samples, omit the very last one.
     for (ltfatInt ii = 0; ii < iiLoops; ii++)
@@ -424,7 +425,7 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
         {
             ltfatInt lastInIdx = (a*(Nsafe-1)+1-skip);
             rightExtBuffIdx = lastInIdx + a - L;
-            ltfatInt diff = imax(0,L - lastInIdx);
+            ltfatInt diff = ltfat_imax(0,L - lastInIdx);
             READNEXTDATA(diff,(f + lastInIdx))
         }
         else
@@ -441,7 +442,7 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
         {
             ONEOUTSAMPLE
             READNEXTDATA(a,(righExtbuff+rightExtBuffIdx))
-            rightExtBuffIdx = modPow2(rightExtBuffIdx += a,bufgl);
+            rightExtBuffIdx = ltfat_modpow2(rightExtBuffIdx += a,bufgl);
         }
     }
 
@@ -462,8 +463,8 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
     // Copy, reverse and conjugate the imp resp.
     LTFAT_TYPE *gInv = ltfat_malloc(gl*sizeof*gInv);
     memcpy(gInv,g,gl*sizeof*gInv);
-    LTFAT_NAME(reverse_array)(gInv,gInv,gl);
-    LTFAT_NAME(conjugate_array)(gInv,gInv,gl);
+    LTFAT_NAME(reverse_array)(gInv,gl,gInv);
+    LTFAT_NAME(conjugate_array)(gInv,gl,gInv);
     ltfatInt skipRev = -(1 - gl - skip);
 
     // Running output pointer
@@ -472,7 +473,7 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
     const LTFAT_TYPE* tmpIn =  c;
 
     /** prepare cyclic buf */
-    ltfatInt bufgl = nextPow2(gl);
+    ltfatInt bufgl = ltfat_nextpow2(gl);
     LTFAT_TYPE* buf = ltfat_calloc(bufgl,sizeof*buf);
     ltfatInt buffPtr = 0;
 
@@ -496,7 +497,7 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
     else
     {
         uuLoops = skipToNextUp;
-        iiLoops = imin(N - inSkip,(L-skipToNextUp + a -1)/a); // just in case L/a < N - inSkip
+        iiLoops = ltfat_imin(N - inSkip,(L-skipToNextUp + a -1)/a); // just in case L/a < N - inSkip
         remainsOutSamp = L - (uuLoops + (iiLoops-1)*a);
     }
 
@@ -509,25 +510,25 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
         LTFAT_NAME(extend_right)(c,N,rightbuf,gl,PER,0);
     }
 
-    ltfatInt iniStoCopy = imin(inSkip,bufgl);
-    ltfatInt tmpInSkip = imax(0,inSkip-bufgl);
+    ltfatInt iniStoCopy = ltfat_imin(inSkip,bufgl);
+    ltfatInt tmpInSkip = ltfat_imax(0,inSkip-bufgl);
     memcpy(buf,tmpIn+tmpInSkip,iniStoCopy*sizeof*buf);
     tmpIn += (iniStoCopy+tmpInSkip);
-    buffPtr = modPow2(buffPtr += iniStoCopy,bufgl);
+    buffPtr = ltfat_modpow2(buffPtr += iniStoCopy,bufgl);
 
 
 
 #define ONEOUTSAMPLE(filtTmp,jjLoops)                                   \
 	    for(ltfatInt jj=0;jj<(jjLoops);jj++)                                  \
 		    {                                                            \
-				ltfatInt idx = modPow2((-jj+buffPtr-1), bufgl);             \
+				ltfatInt idx = ltfat_modpow2((-jj+buffPtr-1), bufgl);             \
 				*tmpOut += *(buf+idx) * *((filtTmp) +(jj*a));        \
 		    }                                                            \
 	    tmpOut++;
 
 #define READNEXTSAMPLE(wherePtr)                               \
    	   *(buf + buffPtr) = *(wherePtr);                      \
-	   buffPtr = modPow2(++buffPtr,bufgl);
+	   buffPtr = ltfat_modpow2(++buffPtr,bufgl);
 
 
     /** STEP 1: Deal with the shift - upsampling misaligment */
@@ -600,7 +601,7 @@ void LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, ltfatInt L, LTFAT_TYPE *buf,l
             buffTmp[ii] = in[legalExtLen-ii-1];
         break;
     case SYMW: // whole-point symmetry
-        legalExtLen = imin(gl-1, L-1);
+        legalExtLen = ltfat_imin(gl-1, L-1);
         buffTmp = buf + bufgl - legalExtLen;
         for(ltfatInt ii=0; ii<legalExtLen; ii++)
             buffTmp[ii] = in[legalExtLen-ii];
@@ -611,8 +612,8 @@ void LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, ltfatInt L, LTFAT_TYPE *buf,l
             buffTmp[ii] = -in[legalExtLen-ii-1];
         break;
     case ASYMW: // whole-point antisymmetry
-        legalExtLen = imin(gl-1, L-1);
-        legalExtLen = imin(gl-1, L-1);
+        legalExtLen = ltfat_imin(gl-1, L-1);
+        legalExtLen = ltfat_imin(gl-1, L-1);
         buffTmp = buf + bufgl - legalExtLen;
         for(ltfatInt ii=0; ii<legalExtLen; ii++)
             buffTmp[ii] = -in[legalExtLen-ii];
@@ -685,7 +686,7 @@ void LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,ltfatInt L, LTFAT_TYPE *buf, 
             buf[ii] = in[legalExtLen-ii];
         break;
     case SYMW: // whole-point symmetry
-        legalExtLen = imin(gl-1, L-1);
+        legalExtLen = ltfat_imin(gl-1, L-1);
         for(ltfatInt ii=0; ii<legalExtLen; ii++)
             buf[ii] = in[L-1-1-ii];
         break;
@@ -695,7 +696,7 @@ void LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,ltfatInt L, LTFAT_TYPE *buf, 
             buf[ii] = -in[L-1-ii];
         break;
     case ASYMW: // whole-point antisymmetry
-        legalExtLen = imin(gl-1, L-1);
+        legalExtLen = ltfat_imin(gl-1, L-1);
         for(ltfatInt ii=0; ii<legalExtLen; ii++)
             buf[ii] = -in[L-1-1-ii];
         break;

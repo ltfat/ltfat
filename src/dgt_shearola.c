@@ -1,6 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
-
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 LTFAT_EXTERN LTFAT_NAME(dgt_shearola_plan)
 LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,

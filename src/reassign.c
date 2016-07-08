@@ -1,6 +1,7 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
-#include "reassign_typeconstant.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
+#include "ltfat/reassign_typeconstant.h"
 
 
 LTFAT_EXTERN void
@@ -18,8 +19,8 @@ LTFAT_NAME(gabreassign)(const LTFAT_TYPE *s, const LTFAT_REAL *tgrad,
    ltfatInt *timepos = ltfat_malloc(N * sizeof * timepos);
    ltfatInt *freqpos = ltfat_malloc(M * sizeof * freqpos);
 
-   fftindex(N, timepos);
-   fftindex(M, freqpos);
+   ltfat_fftindex(N, timepos);
+   ltfat_fftindex(M, freqpos);
 
    /* Zero the output array. */
    memset(sr, 0, M * N * W * sizeof * sr);

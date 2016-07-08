@@ -21,7 +21,7 @@ typedef struct
     LTFAT_FFTW(plan) g_plan;
 
 
-    LTFAT_NAME(dgt_long_plan) rect_plan;
+    LTFAT_NAME_COMPLEX(dgt_long_plan)* rect_plan;
 
     const LTFAT_COMPLEX *f;
     LTFAT_COMPLEX *cout;

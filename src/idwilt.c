@@ -1,5 +1,6 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 #define CH(name) LTFAT_COMPLEXH(name)
 
@@ -71,7 +72,7 @@ LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME(idgt_long)(coef2, g, L, W, M, 2 * M, FREQINV, f);
+    LTFAT_NAME_COMPLEX(idgt_long)(coef2, g, L, W, M, 2 * M, FREQINV, f);
 
     ltfat_free(coef2);
 
@@ -120,7 +121,7 @@ LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME(idgt_fb)(coef2, g, L, gl, W, M, 2 * M, FREQINV, f);
+    LTFAT_NAME_COMPLEX(idgt_fb)(coef2, g, L, gl, W, M, 2 * M, FREQINV, f);
 
     ltfat_free(coef2);
 

@@ -1,27 +1,30 @@
 #include "ltfat.h"
-#include "ltfat_types.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
-LTFAT_EXTERN void
+LTFAT_EXTERN int
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
                           const ltfatInt L, const ltfatInt R, const ltfatInt a,
                           const ltfatInt M, LTFAT_TYPE* gd)
 {
+    LTFAT_COMPLEX* gf = NULL;
+    LTFAT_COMPLEX* gdf = NULL;
+
+    int status = LTFATERR_SUCCESS;
+    CHECK(LTFATERR_NOTPOSARG, L > 0, "L (passed %d) must be positive.", L);
+    CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %d) must be positive.", R);
+    // a,M, g and gd are checked further
+
+    CHECKMEM( gf = ltfat_malloc(L * R * sizeof * gf));
+    CHECKMEM( gdf = ltfat_malloc(L * R * sizeof * gdf));
 
 #ifdef LTFAT_COMPLEXTYPE
 
-    LTFAT_COMPLEX* gf = ltfat_malloc(L * R * sizeof(LTFAT_COMPLEX));
-    LTFAT_COMPLEX* gdf = ltfat_malloc(L * R * sizeof(LTFAT_COMPLEX));
-
-    LTFAT_NAME(wfac)(g, L, R, a, M, gf);
-    LTFAT_NAME_REAL(gabtight_fac)((const LTFAT_COMPLEX*)gf, L, R, a, M, gdf);
-    LTFAT_NAME(iwfac)((const LTFAT_COMPLEX*)gdf, L, R, a, M, gd);
+    CHECKSTATUS( LTFAT_NAME(wfac)(g, L, R, a, M, gf), "wfac failed");
+    LTFAT_NAME_REAL(gabtight_fac)(gf, L, R, a, M, gdf);
+    CHECKSTATUS( LTFAT_NAME(iwfac)(gdf, L, R, a, M, gd), "iwfac failed");
 
 #else
-
-    const ltfatInt wfs = L; /* wfacreal_size(L,a,M); */
-
-    LTFAT_COMPLEX* gf = ltfat_malloc(wfs * R * sizeof(LTFAT_COMPLEX));
-    LTFAT_COMPLEX* gdf = ltfat_malloc(wfs * R * sizeof(LTFAT_COMPLEX));
 
     LTFAT_NAME_REAL(wfacreal)(g, L, R, a, M, gf);
     LTFAT_NAME_REAL(gabtightreal_fac)((const LTFAT_COMPLEX*)gf, L, R, a, M, gdf);
@@ -29,22 +32,34 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
 
 #endif
 
+error:
     LTFAT_SAFEFREEALL(gdf, gf);
+    return status;
 }
 
 
-LTFAT_EXTERN void
-LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, const ltfatInt Lg,
+LTFAT_EXTERN int
+LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
                          const ltfatInt L, const ltfatInt a,
-                         const ltfatInt M, const ltfatInt Ltight, LTFAT_TYPE* gtight)
+                         const ltfatInt M, const ltfatInt gtl, LTFAT_TYPE* gt)
 {
-    LTFAT_TYPE* tmp_iir = ltfat_malloc(L * sizeof*tmp_iir);
+    LTFAT_TYPE* tmpLong = NULL;
 
-    LTFAT_NAME(fir2long)(g, Lg, L, tmp_iir);
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(g); CHECKNULL(gt);
+    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
+    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_NOTPOSARG, gtl > 0, "gtl must be positive");
+    CHECK(LTFATERR_BADARG, L >= gl && L >= gtl,
+          "L>=gl && L>= gtl must hold. Passed L=%d, gl=%d, gtl=%d", L, gl, gtl);
 
-    LTFAT_NAME(gabtight_long)(tmp_iir, L, 1, a, M, tmp_iir);
+    CHECKMEM( tmpLong = ltfat_malloc(L * sizeof * tmpLong));
 
-    LTFAT_NAME(long2fir)(tmp_iir, L, Ltight, gtight);
+    CHECKSTATUS( LTFAT_NAME(fir2long)(g, gl, L, tmpLong), "fir2long failed");
+    LTFAT_NAME(gabtight_long)(tmpLong, L, 1, a, M, tmpLong);
+    CHECKSTATUS( LTFAT_NAME(long2fir)(tmpLong, L, gtl, gt), "long2fir failed");
 
-    ltfat_free(tmp_iir);
+error:
+    if (tmpLong) ltfat_free(tmpLong);
+    return status;
 }
