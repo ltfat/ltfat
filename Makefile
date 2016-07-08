@@ -15,6 +15,8 @@
 #
 # Linking against BLAS and LAPACK from Matlab (if shared libs are desired):
 #  		make BLASLAPACKLIBS="-L/usr/local/MATLAB_R2013a/bin/glnxa64 -lmwblas -lmwlapack" 
+#
+#  		make clean && make BLASLAPACKLIBS="-L/usr/local/MATLAB_R2013a/bin/glnxa64 -lmwblas -lmwlapack" && make build/ltfat.h
 
 include ostools.mk
 
@@ -40,7 +42,7 @@ LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
 
 # Base CFLAGS
-CFLAGS+=-Ithirdparty -Wall -Wextra -pedantic -std=gnu99 -Iinclude -Iinclude/ltfat -Ithirdparty $(OPTCFLAGS)
+CFLAGS+=-Ithirdparty -Wall -Wextra -pedantic -std=gnu99 -Iinclude -Ithirdparty $(OPTCFLAGS)
 
 # The following adds parameters to CFLAGS
 include comptarget.mk
@@ -133,7 +135,7 @@ $(SO_STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILESFORSFILES) $(SFILES) $(LFLAGS)
 
 $(objprefix)/common/d%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -c $< -o $@ $(OPTCFLAGS)
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
 
 $(objprefix)/double/%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE  -c $< -o $@
