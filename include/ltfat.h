@@ -2,6 +2,7 @@
 #define LTFAT_H 1
 //#include "ltfat/config.h"
 #include "ltfat/errno.h"
+#include "ltfat/version.h"
 
 #ifndef NOSYSTEMHEADERS
 // !!! complex.h MUST be included before fftw3.h !!!!
