@@ -3,10 +3,10 @@
 #include "ltfat/macros.h"
 
 // These are non-public function header templates
-typedef int (*LTFAT_NAME(realtocomplextransform))(void* userdata,
+typedef int LTFAT_NAME(realtocomplextransform)(void* userdata,
         const LTFAT_REAL* in, const ltfatInt, LTFAT_COMPLEX* out);
 
-typedef int (*LTFAT_NAME(complextorealtransform))(void* userdata,
+typedef int LTFAT_NAME(complextorealtransform)(void* userdata,
         const LTFAT_COMPLEX* in, const ltfatInt W, LTFAT_REAL* out);
 
 struct LTFAT_NAME(rtdgtreal_plan)
@@ -568,8 +568,8 @@ struct LTFAT_NAME(rtdgtreal_processor_state)
     LTFAT_NAME(rtidgtreal_fifo_state)* backfifo;
     LTFAT_NAME(rtdgtreal_plan)* fwdplan;
     LTFAT_NAME(rtidgtreal_plan)* backplan;
-    LTFAT_NAME(realtocomplextransform) fwdtra;
-    LTFAT_NAME(complextorealtransform) backtra;
+    LTFAT_NAME(realtocomplextransform)* fwdtra;
+    LTFAT_NAME(complextorealtransform)* backtra;
     LTFAT_REAL* buf;
     LTFAT_COMPLEX* fftbufIn;
     LTFAT_COMPLEX* fftbufOut;
@@ -618,21 +618,21 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
 
     p->processorCallback = callback;
     p->userdata = userdata;
-    p->fwdtra = LTFAT_NAME(rtdgtreal_execute_wrapper),
-       p->backtra = LTFAT_NAME(rtidgtreal_execute_wrapper),
+    p->fwdtra = &LTFAT_NAME(rtdgtreal_execute_wrapper);
+    p->backtra = &LTFAT_NAME(rtidgtreal_execute_wrapper);
 
-          /* LTFAT_NAME(rtdgtreal_processor_state) retLoc = */
-          /* { */
-          /*     .processorCallback = callback, .userdata = userdata, */
-          /*     .fwdfifo = fwdfifo, .backfifo = backfifo, */
-          /*     .fwdplan = fwdplan, .backplan = backplan, */
-          /*     .buf = buf, .fftbufIn = fftbufIn, .fftbufOut = fftbufOut, */
-          /*     .fwdtra = LTFAT_NAME(rtdgtreal_execute_wrapper), */
-          /*     .backtra = LTFAT_NAME(rtidgtreal_execute_wrapper), */
-          /*     .garbageBin = NULL, .garbageBinSize = 0 */
-          /* }; */
+    /* LTFAT_NAME(rtdgtreal_processor_state) retLoc = */
+    /* { */
+    /*     .processorCallback = callback, .userdata = userdata, */
+    /*     .fwdfifo = fwdfifo, .backfifo = backfifo, */
+    /*     .fwdplan = fwdplan, .backplan = backplan, */
+    /*     .buf = buf, .fftbufIn = fftbufIn, .fftbufOut = fftbufOut, */
+    /*     .fwdtra = LTFAT_NAME(rtdgtreal_execute_wrapper), */
+    /*     .backtra = LTFAT_NAME(rtidgtreal_execute_wrapper), */
+    /*     .garbageBin = NULL, .garbageBinSize = 0 */
+    /* }; */
 
-          *pout = p;
+    *pout = p;
     return status;
 error:
     if (p)
@@ -649,12 +649,12 @@ error:
 }
 
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_processor_wininit)(LTFAT_FIRWIN win,
-                                        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
-                                        const ltfatInt Wmax,
-                                        LTFAT_NAME(rtdgtreal_processor_callback)* callback,
-                                        void* userdata,
-                                        LTFAT_NAME(rtdgtreal_processor_state)** pout)
+LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
+        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+        const ltfatInt Wmax,
+        LTFAT_NAME(rtdgtreal_processor_callback)* callback,
+        void* userdata,
+        LTFAT_NAME(rtdgtreal_processor_state)** pout)
 {
     LTFAT_REAL* g = NULL;
     LTFAT_REAL* gd = NULL;
@@ -719,13 +719,13 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     const LTFAT_REAL* inTmp[chanNo];
     LTFAT_REAL* outTmp[chanNo];
 
-    for(ltfatInt w =0;w<chanNo;w++)
+    for (ltfatInt w = 0; w < chanNo; w++)
     {
-        inTmp[w] = &in[w*len];
-        outTmp[w] = &out[w*len];
+        inTmp[w] = &in[w * len];
+        outTmp[w] = &out[w * len];
     }
 
-   return LTFAT_NAME(rtdgtreal_processor_execute)( p, inTmp, len, chanNo, outTmp);
+    return LTFAT_NAME(rtdgtreal_processor_execute)( p, inTmp, len, chanNo, outTmp);
 }
 
 LTFAT_EXTERN int
@@ -750,15 +750,15 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     while ( LTFAT_NAME(rtdgtreal_fifo_read)(p->fwdfifo, p->buf) > 0 )
     {
         // Transform
-        (*p->fwdtra)((void*)p->fwdplan, p->buf, p->fwdfifo->Wmax,
-                     p->fftbufIn);
+        p->fwdtra((void*)p->fwdplan, p->buf, p->fwdfifo->Wmax,
+                  p->fftbufIn);
 
         // Process
-        (*processorCallback)(p->userdata, p->fftbufIn, p->fwdplan->M / 2 + 1,
-                             p->fwdfifo->Wmax, p->fftbufOut);
+        processorCallback(p->userdata, p->fftbufIn, p->fwdplan->M / 2 + 1,
+                          p->fwdfifo->Wmax, p->fftbufOut);
 
         // Reconstruct
-        (*p->backtra)((void*)p->backplan, p->fftbufOut, p->backfifo->Wmax, p->buf);
+        p->backtra((void*)p->backplan, p->fftbufOut, p->backfifo->Wmax, p->buf);
 
         // Write (and overlap) to out fifo
         LTFAT_NAME(rtidgtreal_fifo_write)(p->backfifo, p->buf);
