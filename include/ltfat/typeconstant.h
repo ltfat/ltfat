@@ -40,6 +40,11 @@ ltfatInt ltfat_imin(const ltfatInt a, const ltfatInt b);
  */
 LTFAT_EXTERN
 ltfatInt ltfat_lcm(const ltfatInt a, const ltfatInt b);
+
+/** Find next suitable L for signal length Ls and Gabor lattice parameters a and M
+ */
+LTFAT_EXTERN ltfatInt
+ltfat_dgtlength(const ltfatInt Ls, const ltfatInt a, const ltfatInt M);
 /** @}*/
 
 LTFAT_EXTERN
@@ -65,10 +70,10 @@ LTFAT_EXTERN ltfatInt
 ltfat_round(const double x);
 
 LTFAT_EXTERN ltfatInt
-positiverem(const ltfatInt a, const ltfatInt b);
+ltfat_positiverem(const ltfatInt a, const ltfatInt b);
 
 LTFAT_EXTERN ltfatInt
-rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax);
+ltfat_rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax);
 
 
 // Custom headers are down here

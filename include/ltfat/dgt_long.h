@@ -37,30 +37,30 @@ typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
  *  -----------------
  *
  *  <tt>
- *  dgt_long_d(const double *f, const double *g, const ltfatInt L,
- *             const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *             const dgt_phasetype ptype, complex double *c);
+ *  ltfat_dgt_long_d(const double f[], const double g[], const ltfatInt L,
+ *                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                   const dgt_phasetype ptype, complex double c[]);
  *
- *  dgt_long_s(const float *f, const float *g, const ltfatInt L,
- *             const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *             const dgt_phasetype ptype, complex float *c);
+ *  ltfat_dgt_long_s(const float f[], const float g[], const ltfatInt L,
+ *                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                   const dgt_phasetype ptype, complex float c[]);
  *
- *  dgt_long_cd(const complex double *f, const complex double *g,
- *              const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *              const ltfatInt M, const dgt_phasetype ptype,
- *              complex double *c);
+ *  ltfat_dgt_long_dc(const complex double f[], const complex double g[],
+ *                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+ *                    const ltfatInt M, const dgt_phasetype ptype,
+ *                    complex double c[]);
  *
- *  dgt_long_cs(const complex float *f, const complex float *g,
- *              const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *              const ltfatInt M, const dgt_phasetype ptype,
- *              complex float *c);
+ *  ltfat_dgt_long_sc(const complex float f[], const complex float g[],
+ *                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+ *                    const ltfatInt M, const dgt_phasetype ptype,
+ *                    complex float c[]);
  *  </tt>
  */
 LTFAT_EXTERN int
-LTFAT_NAME(dgt_long)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
+LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
                      const ltfatInt M, const dgt_phasetype ptype,
-                     LTFAT_COMPLEX *c);
+                     LTFAT_COMPLEX c[]);
 
 /** Inicialization of the DGT plan
  *
@@ -81,32 +81,32 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
  *  -----------------
  *
  *  <tt>
- *  dgt_long_init_d(const double *f, const double *g, const ltfatInt L,
- *                  const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                  complex double *c, const dgt_phasetype ptype,
- *                  unsigned flags, dgt_long_plan_d** p);
+ *  ltfat_dgt_long_init_d(const double f[], const double g[], const ltfatInt L,
+ *                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                        complex double c[], const dgt_phasetype ptype,
+ *                        unsigned flags, dgt_long_plan_d** p);
  *
- *  dgt_long_init_s(const float *f, const float *g, const ltfatInt L,
- *                  const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                  complex float *c, const dgt_phasetype ptype,
- *                  unsigned flags, dgt_long_plan_s** p);
+ *  ltfat_dgt_long_init_s(const float f[], const float g[], const ltfatInt L,
+ *                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                        complex float c[], const dgt_phasetype ptype,
+ *                        unsigned flags, dgt_long_plan_s** p);
  *
- *  dgt_long_init_cd(const complex double *f, const complex double *g,
- *                   const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                   const ltfatInt M, complex double *c,
- *                   const dgt_phasetype ptype, unsigned flags,
- *                   dgt_long_plan_cd** p);
+ *  ltfat_dgt_long_init_dc(const complex double f[], const complex double g[],
+ *                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+ *                         const ltfatInt M, complex double c[],
+ *                         const dgt_phasetype ptype, unsigned flags,
+ *                         dgt_long_plan_dc** p);
  *
- *  dgt_long_init_cs(complex float *f, const complex float *g,
- *                   const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                   const ltfatInt M, complex float *c,
- *                   const dgt_phasetype ptype, unsigned flags,
- *                   dgt_long_plan_cs** p);
+ *  ltfat_dgt_long_init_sc(complex float f[], const complex float g[],
+ *                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
+ *                         const ltfatInt M, complex float c[],
+ *                         const dgt_phasetype ptype, unsigned flags,
+ *                         dgt_long_plan_sc** p);
  *  </tt>
  */
 LTFAT_EXTERN int
-LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt L,
-                          const ltfatInt W, const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *c,
+LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], const ltfatInt L,
+                          const ltfatInt W, const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX c[],
                           const dgt_phasetype ptype, unsigned flags,
                           LTFAT_NAME(dgt_long_plan)** p);
 
@@ -118,17 +118,47 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatI
  *  -----------------
  *
  *  <tt>
- *  dgt_long_execute_d(dgt_long_plan_d* plan);
+ *  ltfat_dgt_long_execute_d(ltfat_dgt_long_plan_d* plan);
  *
- *  dgt_long_execute_s(dgt_long_plan_s* plan);
+ *  ltfat_dgt_long_execute_s(ltfat_dgt_long_plan_s* plan);
  *
- *  dgt_long_execute_cd(dgt_long_plan_cd* plan);
+ *  ltfat_dgt_long_execute_dc(ltfat_dgt_long_plan_dc* plan);
  *
- *  dgt_long_execute_cs(dgt_long_plan_cs* plan);
+ *  ltfat_dgt_long_execute_sc(ltfat_dgt_long_plan_sc* plan);
  *  </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan);
+
+/** Execute DGT plan
+ *
+ * ... on arrays which might not have been used in init.
+ *
+ * \param[in]     plan  DGT plan
+ * \param[in]        f  Input signal, size L x W
+ * \param[out]       c  Coefficients, size M x N x W
+ *
+ *  Function versions
+ *  -----------------
+ *
+ *  <tt>
+ *  ltfat_dgt_long_execute_newarray_d(ltfat_dgt_long_plan_d* plan, 
+ *                                    const double f[], complex double c[]);
+ *
+ *  ltfat_dgt_long_execute_newarray_s(ltfat_dgt_long_plan_s* plan,
+ *                                    const float f[], complex float c[]);
+ *
+ *  ltfat_dgt_long_execute_newarray_dc(ltfat_dgt_long_plan_cd* plan,
+ *                                     const complex double f[], complex double c[]);
+ *
+ *  ltfat_dgt_long_execute_newarray_sc(ltfat_dgt_long_plan_cs* plan,
+ *                                     const complex float f[], complex float c[]);
+ *  </tt>
+ */
+LTFAT_EXTERN int
+LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
+                                      const LTFAT_TYPE f[], LTFAT_COMPLEX c[]);
+
 
 /** Destroy DGT plan
  *
@@ -136,13 +166,13 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan);
  *  -----------------
  *
  *  <tt>
- *  dgt_long_done_d(dgt_long_plan_d** plan);
+ *  ltfat_dgt_long_done_d(ltfat_dgt_long_plan_d** plan);
  *
- *  dgt_long_done_s(dgt_long_plan_s** plan);
+ *  ltfat_dgt_long_done_s(ltfat_dgt_long_plan_s** plan);
  *
- *  dgt_long_done_cd(dgt_long_plan_cd** plan);
+ *  ltfat_dgt_long_done_dc(ltfat_dgt_long_plan_dc** plan);
  *
- *  dgt_long_done_cs(dgt_long_plan_cs** plan);
+ *  ltfat_dgt_long_done_sc(ltfat_dgt_long_plan_sc** plan);
  *  </tt>
  */
 
@@ -152,4 +182,4 @@ LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan);
 /** @}*/
 
 LTFAT_EXTERN int
-LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan);
+LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan, LTFAT_COMPLEX* cout);

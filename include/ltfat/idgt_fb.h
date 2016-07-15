@@ -1,7 +1,7 @@
 typedef struct LTFAT_NAME(idgt_fb_plan) LTFAT_NAME(idgt_fb_plan);
 
-/** \defgroup idgtfb Inverse Discrete Gabor Transform for FIR windows -- idgt_fb 
- *  \addtogroup idgtfb
+/** 
+ *  \addtogroup dgtfb
  * @{
  *
  *

@@ -35,15 +35,15 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
  *  Versions
  * --------
  * <tt>
- * gabdual_painless_d(const double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, double* gd);
+ * ltfat_gabdual_painless_d(const double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, double* gd);
  *
- * gabdual_painless_s(const float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, float* gd);
+ * ltfat_gabdual_painless_s(const float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, float* gd);
  *
- * gabdual_painless_cd(const complex double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                     complex double* gd);
+ * ltfat_gabdual_painless_cd(const complex double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+ *                           complex double* gd);
  *
- * gabdual_painless_cs(const complex float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                     complex float* gd);
+ * ltfat_gabdual_painless_cs(const complex float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+ *                           complex float* gd);
  * </tt>
  *
  */
@@ -66,15 +66,15 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl, const ltfat
  * Versions
  * --------
  * <tt>
- * gabtight_painless_d(const double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, double* gt);
+ * ltfat_gabtight_painless_d(const double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, double* gt);
  *
- * gabtight_painless_s(const float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, float* gt);
+ * ltfat_gabtight_painless_s(const float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M, float* gt);
  *
- * gabtight_painless_cd(const complex double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                      complex double* gt);
+ * ltfat_gabtight_painless_cd(const complex double* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+ *                            complex double* gt);
  * 
- * gabtight_painless_cs(const complex float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                      complex float* gt);
+ * ltfat_gabtight_painless_cs(const complex float* g, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+ *                            complex float* gt);
  * </tt>
  */
 LTFAT_EXTERN int

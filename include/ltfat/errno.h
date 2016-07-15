@@ -1,5 +1,9 @@
 /** \defgroup error Error handling
  *
+ * Errors are negative numbers. Positive numbers are reserved for
+ * other purposes (like returning number of samples written)
+ *
+ *
  * \note The error handling system vas inspired by the GNU Scientific library
  * <a href="http://www.gnu.org/software/gsl/manual/html_node/Error-Handling.html#Error-Handling">
  * GNU Scientific library error handling</a>.
@@ -17,8 +21,7 @@ extern "C"
 {
 #endif
 
-// Errors are negative numbers. Postitive numbers are reserved for
-// other purposes (like returning number of samples written)
+
 enum
 {
 // General

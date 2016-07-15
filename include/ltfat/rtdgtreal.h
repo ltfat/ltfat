@@ -59,7 +59,7 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, const ltfatInt gl,
  * \returns RTDGTREAL plan
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
+LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL g[], const ltfatInt gl,
                            const ltfatInt M, const rtdgt_phasetype ptype,
                            LTFAT_NAME(rtdgtreal_plan)** p);
 
@@ -71,8 +71,8 @@ LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
-                              const LTFAT_REAL* f, const ltfatInt W,
-                              LTFAT_COMPLEX* c);
+                              const LTFAT_REAL f[], const ltfatInt W,
+                              LTFAT_COMPLEX c[]);
 
 /** Destroy RTDGTREAL plan
  * \param[in]  p      RTDGTREAL plan
@@ -93,7 +93,7 @@ LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p);
  * \returns RTIDGTREAL plan
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
+LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL g[], const ltfatInt gl,
                             const ltfatInt M, const rtdgt_phasetype ptype,
                             LTFAT_NAME(rtdgtreal_plan)** p);
 
@@ -105,8 +105,8 @@ LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
-                               const LTFAT_COMPLEX* c, const ltfatInt W,
-                               LTFAT_REAL* f);
+                               const LTFAT_COMPLEX c[], const ltfatInt W,
+                               LTFAT_REAL f[]);
 
 /** Destroy RTIDGTREAL plan
  * \param[in]  p      RTIDGTREAL plan
@@ -152,7 +152,7 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay, ltfatInt g
  * \returns Number of samples written
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p, const LTFAT_REAL** buf,
+LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p, const LTFAT_REAL* buf[],
                                  const ltfatInt bufLen, const ltfatInt W);
 
 /** Read p->gl samples from DGT analysis ring buffer
@@ -167,7 +167,7 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p, const LTFA
  * \returns Number of samples read
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p, LTFAT_REAL* buf);
+LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p, LTFAT_REAL buf[]);
 
 /** Destroy DGT analysis ring buffer
  * \param[in]  p      DGT analysis ring buffer
@@ -213,7 +213,7 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
-                                  const LTFAT_REAL* buf);
+                                  const LTFAT_REAL buf[]);
 
 /** Read bufLen samples from DGT analysis ring buffer
  *
@@ -230,7 +230,7 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
 LTFAT_EXTERN int
 LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                  const ltfatInt bufLen, const ltfatInt W,
-                                 LTFAT_REAL** buf);
+                                 LTFAT_REAL* buf[]);
 
 /** Destroy DGT synthesis ring buffer
  * \param[in]  p      DGT synthesis ring buffer
@@ -252,46 +252,76 @@ typedef struct LTFAT_NAME(rtdgtreal_processor_state) LTFAT_NAME(rtdgtreal_proces
 
 /** Processor callback signature
  *
+ * User defined processor callback must comply with this signature.
+ *
  * It is safe to assume that out and in are not aliased.
  *
  * \param[in]  userdata   User defined data
- * \param[in]        in   Input coefficients
+ * \param[in]        in   Input coefficients, M2 x W array
  * \param[in]        M2   Length of the arrays; number of unique FFT channels; equals to M/2 + 1
- * \param[out]      out   Output coefficients
+ * \param[in]         W   Number of channels
+ * \param[out]      out   Output coefficients, M2 x W array
+ *
+ *  #### Versions #
+ *
+ *  <tt>
+ *  typedef void ltfat_rtdgtreal_processor_callback_d(void* userdata, const complex double in[], const int M2,
+ *                                                    const int W, complex double out[]);
+ *
+ *  typedef void ltfat_rtdgtreal_processor_callback_s(void* userdata, const complex float in[], const int M2,
+ *                                                    const int W, complex float out[]);
+ *  </tt>
+ *
  */
 typedef void LTFAT_NAME(rtdgtreal_processor_callback)(void* userdata,
-        const LTFAT_COMPLEX* in, const int M2, const int W, LTFAT_COMPLEX* out);
+        const LTFAT_COMPLEX in[], const int M2, const int W, LTFAT_COMPLEX out[]);
 
-/** Create DGTREAL processor
+/** Create DGTREAL processor state struct
  *
  * The processor wraps DGTREAL analysis-modify-synthesis loop suitable for
  * stream of data. The -modify- part is user definable via callback.
  * If the callback is NULL, no coefficient modification occurs.
  *
- * \param[in]        g   Analysis window
- * \param[in]       gd   Synthesis window
- * \param[in]       gl   Length of the windows
+ * \param[in]       ga   Analysis window
+ * \param[in]      gal   Length of the analysis window
+ * \param[in]       gs   Synthesis window
+ * \param[in]      gsl   Length of the synthesis window
  * \param[in]        a   Hop size
  * \param[in]        M   Number of FFT channels
  * \param[in]     Wmax   Maximum number of channels
  * \param[in] callback   Custom function to process the coefficients
  * \param[in] userdata   Custom callback data. Will be passed to the callback.
  *                       Useful for storing state between callback calls.
+ * \param[out]       p   DGTREAL processor state
  *
- * \returns DGTREAL processor struct
+ * \returns Status code
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_rtdgtreal_processor_init_d(const double ga[], const ltfatInt gal, const double gs[], const ltfatInt gsl,
+ *                                  const ltfatInt a, const ltfatInt M, const ltfatInt Wmax,
+ *                                  rtdgtreal_processor_callback_d* callback, void* userdata,
+ *                                  rtdgtreal_processor_state_d** p);
+ *
+ * ltfat_rtdgtreal_processor_init_s(const float ga[], const ltfatInt gal, const float gs[], const ltfatInt gsl,
+ *                                  const ltfatInt a, const ltfatInt M, const ltfatInt Wmax,
+ *                                  rtdgtreal_processor_callback_s* callback, void* userdata,
+ *                                  rtdgtreal_processor_state_s** p);
+ * </tt>
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
-                                     const LTFAT_REAL* gs, const ltfatInt gsl,
+LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], const ltfatInt gal,
+                                     const LTFAT_REAL gs[], const ltfatInt gsl,
                                      const ltfatInt a, const ltfatInt M,
                                      const ltfatInt Wmax,
                                      LTFAT_NAME(rtdgtreal_processor_callback)* callback,
                                      void* userdata, LTFAT_NAME(rtdgtreal_processor_state)** p);
 
-/** Create DGTREAL processor
+/** Create DGTREAL processor state struct
  *
  * This function provides an alternative way of creating DGTREAL processor
- * struct. The function accepts only the analysis window and the synthesis
+ * state struct. The function accepts only the analysis window and the synthesis
  * window is computed internally.
  *
  * \param[in]      win   Analysis window
@@ -302,18 +332,34 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
  * \param[in] callback   Custom function to process the coefficients
  * \param[in] userdata   Custom callback data. Will be passed to the callback.
  *                       Useful for storing state between callback calls.
+ * \param[out]       p   DGTREAL processor state
  *
- * \returns DGTREAL processor struct
+ * \returns Status code
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_rtdgtreal_processor_init_win_d(LTFAT_FIRWIN win, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+ *                                      const ltfatInt Wmax, rtdgtreal_processor_callback_d* callback, void* userdata,
+ *                                      rtdgtreal_processor_state_d** p);
+ *
+ * ltfat_rtdgtreal_processor_init_win_s(LTFAT_FIRWIN win, const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+ *                                      const ltfatInt Wmax, rtdgtreal_processor_callback_s* callback, void* userdata,
+ *                                      rtdgtreal_processor_state_s** p);
+ * </tt>
  */
 LTFAT_EXTERN int
-LTFAT_NAME(rtdgtreal_processor_wininit)(LTFAT_FIRWIN win,
-                                        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
-                                        const ltfatInt Wmax,
-                                        LTFAT_NAME(rtdgtreal_processor_callback)* callback,
-                                        void* userdata,
-                                        LTFAT_NAME(rtdgtreal_processor_state)** p);
+LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
+        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+        const ltfatInt Wmax,
+        LTFAT_NAME(rtdgtreal_processor_callback)* callback,
+        void* userdata,
+        LTFAT_NAME(rtdgtreal_processor_state)** p);
 
 /** Process samples
+ *
+ * Process multichannel input samples. Chennels are stored as an array of
+ * pointers to the actual data arrays.
  *
  * Output is lagging behind the input by (gl-1) samples.
  * The function can run inplace i.e. in==out.
@@ -325,13 +371,22 @@ LTFAT_NAME(rtdgtreal_processor_wininit)(LTFAT_FIRWIN win,
  * \param[out]   out  Output frame
  *
  * \returns Error status
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_rtdgtreal_processor_execute_d(ltfat_rtdgtreal_processor_state_d* p, const double* in[],
+ *                                     const ltfatInt L, const ltfatInt W, double* out[]);
+ *
+ * ltfat_rtdgtreal_processor_execute_s(ltfat_rtdgtreal_processor_state_d* p, const float* in[],
+ *                                     const ltfatInt L, const ltfatInt W, float* out[]);
+ * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor_state)* p,
-                                        const LTFAT_REAL** in,
-                                        const ltfatInt len, const ltfatInt chanNo,
-                                        LTFAT_REAL** out);
-
+                                        const LTFAT_REAL* in[],
+                                        const ltfatInt L, const ltfatInt W,
+                                        LTFAT_REAL* out[]);
 
 /** Process samples
  *
@@ -345,16 +400,35 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor_state)* p
  * \param[out]   out  Output frame
  *
  * \returns Error status
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_rtdgtreal_processor_execute_compact_d(ltfat_rtdgtreal_processor_state_d* p, const double in[],
+ *                                             const ltfatInt L, const ltfatInt W, double out[]);
+ *
+ * ltfat_rtdgtreal_processor_execute_compact_s(ltfat_rtdgtreal_processor_state_d* p, const float in[],
+ *                                             const ltfatInt L, const ltfatInt W, float out[]);
+ * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     LTFAT_NAME(rtdgtreal_processor_state)* p,
-    const LTFAT_REAL* in,
+    const LTFAT_REAL in[],
     const ltfatInt len, const ltfatInt chanNo,
-    LTFAT_REAL* out);
+    LTFAT_REAL out[]);
 
-/** Destroy DGTREAL processor
+/** Destroy DGTREAL processor state
  * \param[in]  p      DGTREAL processor
+ * \returns Status code
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_rtdgtreal_processor_done_d(ltfat_rtdgtreal_processor_state_d** p);
+ *
+ * ltfat_rtdgtreal_processor_done_s(ltfat_rtdgtreal_processor_state_s** p);
+ * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** p);
@@ -365,12 +439,25 @@ LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** p);
  * Only call this if there is no chance that the execute function is called
  * simultaneously in a different thread.
  *
- * \param[in/out]        p   DGTREAL processor
+ * \param[in]            p   DGTREAL processor state
  * \param[in]     callback   Custom function to process the coefficients
  * \param[in]     userdata   Custom callback data. Will be passed to the callback.
  *                           Useful for storing state between callback calls.
  *
- * \returns DGTREAL processor struct
+ * \returns Status code
+ *
+ * Function versions
+ * -----------------
+ *
+ * <tt>
+ * ltfat_rtdgtreal_processor_setcallback_d(ltfat_rtdgtreal_processor_state_d* p,
+ *                                         ltfat_rtdgtreal_processor_callback_d* callback,
+ *                                         void* userdata);
+ *
+ * ltfat_rtdgtreal_processor_setcallback_s(ltfat_rtdgtreal_processor_state_s* p,
+ *                                         ltfat_rtdgtreal_processor_callback_s* callback,
+ *                                         void* userdata);
+ * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(rtdgtreal_processor_setcallback)(LTFAT_NAME(rtdgtreal_processor_state)* p,
@@ -381,14 +468,11 @@ LTFAT_NAME(rtdgtreal_processor_setcallback)(LTFAT_NAME(rtdgtreal_processor_state
  *
  * The callback just copies data from input to the output.
  *
- * \param[in]  userdata   User defined data (unused)
- * \param[in]        in   Input coefficients
- * \param[in]        M2   Length of the arrays; number of unique FFT channels; equals to M/2 + 1
- * \param[int]        W   Number of channels
- * \param[out]      out   Output coefficients
+ * It is used when no other processor callback is registered.
+ *
  */
 LTFAT_EXTERN void
-LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COMPLEX* in,
-        const int M2, const int W, LTFAT_COMPLEX* out);
+LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COMPLEX in[],
+        const int M2, const int W, LTFAT_COMPLEX out[]);
 
 /** @}*/

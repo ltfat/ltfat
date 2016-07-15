@@ -6,6 +6,9 @@ typedef struct
 {
     const char* version;
     const char* build_date;
+    const int major;
+    const int minor;
+    const int patch;
 } ltfat_library_version;
 
 

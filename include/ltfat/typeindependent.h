@@ -313,10 +313,47 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
  * @{
  */
 
+/** Compute real, periodized Gaussian window
+ *
+ * \param[in]   L      Window length
+ * \param[in]   w      Time-freqency support ratio
+ * \param[in]   c_t    Time center offset
+ * \param[out]  g      Window
+ *
+ * \returns Status code
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_pgauss_d(const ltfatInt L,const double w, const double c_t, double* g);
+ *
+ * ltfat_pgauss_s(const ltfatInt L,const double w, const double c_t, float* g);
+ * </tt>
+ */
 LTFAT_EXTERN int
 LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
                    LTFAT_REAL *g);
 
+/** Compute complex, periodized Gaussian window
+ *
+ * \param[in]   L      Window length
+ * \param[in]   w      Time-freqency support ratio
+ * \param[in]   c_t    Time center offset
+ * \param[in]   c_f    Frequency center offset
+ * \param[out]  g      Window
+ *
+ * \returns Status code
+ *
+ * #### Function versions #
+ *
+ * <tt>
+ * ltfat_pgauss_cmplx_d(const ltfatInt L, const double w, const double c_t,
+ *                      const double c_f, complex double* g);
+ *
+ * ltfat_pgauss_cmplx_s(const ltfatInt L, const double w, const double c_t,
+ *                      const double c_f, complex float* g);
+ * </tt>
+ */
 LTFAT_EXTERN int
 LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
                          const double c_f, LTFAT_COMPLEX *g);

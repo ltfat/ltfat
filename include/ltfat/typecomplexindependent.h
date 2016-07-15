@@ -62,6 +62,9 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
  *
  * The Gabor system must be a frame i.e. M>=a.
  *
+ * \warning This function is not available if libltfat has been compiled with
+ * NOBLASLAPACK.
+ *
  * \param[in]   g    Original window(s), size L x R
  * \param[in]   L    Length of the system
  * \param[in]   R    Number of windows
@@ -75,17 +78,17 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
  * --------
  *
  * <tt>
- * gabdual_long_d(const double* g, const ltfatInt L, const ltfatInt R,
- *                const ltfatInt a, const ltfatInt M, double* gd);
+ * ltfat_gabdual_long_d(const double* g, const ltfatInt L, const ltfatInt R,
+ *                      const ltfatInt a, const ltfatInt M, double* gd);
  *
- * gabdual_long_s(const float* g, const ltfatInt L, const ltfatInt R,
- *                const ltfatInt a, const ltfatInt M, float* gd);
+ * ltfat_gabdual_long_s(const float* g, const ltfatInt L, const ltfatInt R,
+ *                      const ltfatInt a, const ltfatInt M, float* gd);
  *
- * gabdual_long_cd(const complex double* g, const ltfatInt L, const ltfatInt R,
- *                 const ltfatInt a, const ltfatInt M, complex double* gd);
+ * ltfat_gabdual_long_dc(const complex double* g, const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, complex double* gd);
  *
- * gabdual_long_cs(const complex float* g, const ltfatInt L, const ltfatInt R,
- *                 const ltfatInt a, const ltfatInt M, complex float* gd);
+ * ltfat_gabdual_long_sc(const complex float* g, const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, complex float* gd);
  * </tt>
  */
 LTFAT_EXTERN int
@@ -96,6 +99,9 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
 /** Compute canonical tight window for Gabor system
  *
  * The Gabor system must be a frame i.e. M>=a.
+ *
+ * \warning This function is not available if libltfat has been compiled with
+ * NOBLASLAPACK.
  *
  * \param[in]   g    Original window(s), size L x R
  * \param[in]   L    Length of the system
@@ -110,17 +116,17 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
  * --------
  *
  * <tt>
- * gabtight_long_d(const double* g, const ltfatInt L, const ltfatInt R,
- *                 const ltfatInt a, const ltfatInt M, double* gt);
+ * ltfat_gabtight_long_d(const double* g, const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, double* gt);
  *
- * gabtight_long_s(const float* g, const ltfatInt L, const ltfatInt R,
- *                 const ltfatInt a, const ltfatInt M, float* gt);
+ * ltfat_gabtight_long_s(const float* g, const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, float* gt);
  *
- * gabtight_long_cd(const complex double* g, const ltfatInt L, const ltfatInt R,
- *                  const ltfatInt a, const ltfatInt M, complex double* gt);
+ * ltfat_gabtight_long_dc(const complex double* g, const ltfatInt L, const ltfatInt R,
+ *                        const ltfatInt a, const ltfatInt M, complex double* gt);
  *
- * gabtight_long_cs(const complex float* g, const ltfatInt L, const ltfatInt R,
- *                  const ltfatInt a, const ltfatInt M, complex float* gt);
+ * ltfat_gabtight_long_sc(const complex float* g, const ltfatInt L, const ltfatInt R,
+ *                        const ltfatInt a, const ltfatInt M, complex float* gt);
  * </tt>
  */
 LTFAT_EXTERN int
@@ -131,6 +137,9 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
 /** Compute FIR canonical dual window for Gabor system
  *
  * The Gabor system must be a frame i.e. M>=a.
+ *
+ * \warning This function is not available if libltfat has been compiled with
+ * NOBLASLAPACK.
  *
  * \param[in]    g    Original window
  * \param[in]   gl    Length of the window
@@ -146,21 +155,21 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
  * --------
  *
  * <tt>
- * gabdual_fir_d(const double* g, const ltfatInt gl, const ltfatInt L,
- *               const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *               double* gd);
+ * ltfat_gabdual_fir_d(const double* g, const ltfatInt gl, const ltfatInt L,
+ *                     const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
+ *                     double* gd);
  *
- * gabdual_fir_s(const float* g, const ltfatInt gl, const ltfatInt L,
- *               const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *               float* gd);
+ * ltfat_gabdual_fir_s(const float* g, const ltfatInt gl, const ltfatInt L,
+ *                     const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
+ *                     float* gd);
  *
- * gabdual_fir_cd(const complex double* g, const ltfatInt gl, const ltfatInt L,
- *                const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *                complex double* gd);
+ * ltfat_gabdual_fir_dc(const complex double* g, const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
+ *                      complex double* gd);
  *
- * gabdual_fir_cs(const complex float* g, const ltfatInt gl, const ltfatInt L,
- *                const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *                complex float* gd);
+ * ltfat_gabdual_fir_sc(const complex float* g, const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
+ *                      complex float* gd);
  * </tt>
  */
 LTFAT_EXTERN int
@@ -171,6 +180,9 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
 /** Compute FIR canonical tight window for Gabor system
  *
  * The Gabor system must be a frame i.e. M>=a.
+ *
+ * \warning This function is not available if libltfat has been compiled with
+ * NOBLASLAPACK.
  *
  * \param[in]    g    Original window
  * \param[in]   gl    Length of the window
@@ -186,21 +198,21 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
  * --------
  *
  * <tt>
- * gabtight_fir_d(const double* g, const ltfatInt gl, const ltfatInt L,
- *                const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                double* gt);
+ * ltfat_gabtight_fir_d(const double* g, const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
+ *                      double* gt);
  *
- * gabtight_fir_s(const float* g, const ltfatInt gl, const ltfatInt L,
- *                const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                float* gt);
+ * ltfat_gabtight_fir_s(const float* g, const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
+ *                      float* gt);
  *
- * gabtight_fir_cd(const complex double* g, const ltfatInt gl, const ltfatInt L,
- *                 const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                 complex double* gt);
+ * ltfat_gabtight_fir_dc(const complex double* g, const ltfatInt gl, const ltfatInt L,
+ *                       const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
+ *                       complex double* gt);
  *
- * gabtight_fir_cs(const complex float* g, const ltfatInt gl, const ltfatInt L,
- *                  const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                  complex float* gt);
+ * ltfat_gabtight_fir_sc(const complex float* g, const ltfatInt gl, const ltfatInt L,
+ *                       const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
+ *                       complex float* gt);
  * </tt>
  */
 LTFAT_EXTERN int
