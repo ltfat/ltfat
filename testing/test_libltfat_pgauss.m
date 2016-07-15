@@ -9,7 +9,7 @@ ziout = complex2interleaved(zeros(size(z)));
 ziPtr = libpointer('doublePtr',zi);
 zioutPtr = libpointer('doublePtr',ziout);
 
-calllib('libltfat','col2diag_cd',ziPtr,100,zioutPtr);
+calllib('libltfat','ltfat_col2diag_cd',ziPtr,100,zioutPtr);
 
 
 res = interleaved2complex(zioutPtr.Value);

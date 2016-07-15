@@ -1,21 +1,20 @@
 function test_libltfat_circshift
 
-L = 1000000;
-z = (1:L)+i*(1:L);
+L = 9;
+z = (1:L)+i*(L:-1:1);
 zi = complex2interleaved(z);
 zout = zeros(size(zi));
 
 ziPtr = libpointer('doublePtr',zi);
 zoutPtr = libpointer('doublePtr',zout);
 
-tic;
-calllib('libltfat','circshift_cd',ziPtr,L,-50000,ziPtr);
-toc;
+shift = -0;
 
-tic;
-calllib('libltfat','circshift_cd',ziPtr,10,50000,zoutPtr);
-toc;
+calllib('libltfat','ltfat_circshift_dc',ziPtr,L,shift,zoutPtr);
 
 
-%interleaved2complex(zoutPtr.Value)
 
+calllib('libltfat','ltfat_circshift_dc',zoutPtr,L,-shift,zoutPtr);
+
+
+norm(z - interleaved2complex(zoutPtr.Value))

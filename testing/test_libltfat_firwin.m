@@ -7,7 +7,7 @@ gl = 18;
 g = zeros(gl,1);
 gPtr = libpointer('doublePtr',g);
 
-calllib('libltfat','firwin_d',LTFAT_FIRWIN.HAMMING,gl,gPtr);
+calllib('libltfat','ltfat_firwin_d',LTFAT_FIRWIN.LTFAT_HAMMING,gl,gPtr);
 
 gtrue = firwin('hamming',gl);
 

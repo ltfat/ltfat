@@ -10,10 +10,10 @@ d = zeros(a,1);
 gPtr = libpointer('doublePtr',g);
 dPtr = libpointer('doublePtr',d);
 
-calllib('libltfat','firwin_d',LTFAT_FIRWIN.HANN,gl,gPtr);
+calllib('libltfat','ltfat_firwin_d',LTFAT_FIRWIN.LTFAT_HANN,gl,gPtr);
 
 
-calllib('libltfat','gabframediag_d',gPtr,gl,a,M,a,dPtr);
+calllib('libltfat','ltfat_gabframediag_d',gPtr,gl,a,M,a,dPtr);
 
 
 d =gabframediag(gPtr.Value,a,M,lcm(a,M));
