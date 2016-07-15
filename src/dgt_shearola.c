@@ -98,7 +98,7 @@ LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
             }
 
             /* Small block + */
-            s_ii=positiverem(ii+1,Nb);
+            s_ii=ltfat_positiverem(ii+1,Nb);
             cout_p = cout + s_ii*M*Nblock+w*M*N ;
             cbuf_p = plan.cbuf +      M*Nblock+w*M*Nblocke;
             for (ltfatInt m=0; m<M; m++)
@@ -111,7 +111,7 @@ LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
 
 
             /* Small block - */
-            s_ii=positiverem(ii-1,Nb)+1;
+            s_ii=ltfat_positiverem(ii-1,Nb)+1;
             cout_p = cout + M*(s_ii*Nblock-b2)+w*M*N ;
             cbuf_p = plan.cbuf + M*(Nblock+b2)     +w*M*Nblocke;
             for (ltfatInt m=0; m<M; m++)

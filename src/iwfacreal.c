@@ -42,7 +42,7 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt 
             {
                 for (ltfatInt k=0; k<p; k++)
                 {
-                    const ltfatInt negrem=positiverem(k*M-l*a,L);
+                    const ltfatInt negrem=ltfat_positiverem(k*M-l*a,L);
                     for (ltfatInt s=0; s<d2; s++)
                     {
                         cbuf[s] = gfp[s*ld3]*scaling;

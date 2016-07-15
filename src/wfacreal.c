@@ -47,7 +47,7 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const ltfatInt L, const ltfatInt R,
             {
                 for (ltfatInt k=0; k<p; k++)
                 {
-                    negrem = positiverem(k*M-l*a,L);
+                    negrem = ltfat_positiverem(k*M-l*a,L);
                     for (s=0; s<d; s++)
                     {
                         rem = (negrem+s*p*M)%L;

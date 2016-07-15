@@ -43,7 +43,7 @@ error:
 /* ltfatInt premarg = plan.ptype?-glh:n*a-glh; \ */
 /* for (ltfatInt m=0;m<M;m++) \ */
 /* { \ */
-/*    rem = positiverem(m+(premarg), M); \ */
+/*    rem = ltfat_positiverem(m+(premarg), M); \ */
 /*    sbuf[rem]=0.0; \ */
 /*    fbd=fw+m; \ */
 /*    for (ltfatInt k=0;k<gl/M;k++) \ */

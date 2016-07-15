@@ -121,7 +121,7 @@ LTFAT_NAME(iwfac_execute)(LTFAT_NAME(iwfac_plan)* plan, const LTFAT_COMPLEX* gf,
             {
                 for (ltfatInt k = 0; k < p; k++)
                 {
-                    negrem = positiverem(k * M - l * a, L);
+                    negrem = ltfat_positiverem(k * M - l * a, L);
                     for (ltfatInt s = 0; s < 2 * d; s += 2)
                     {
                         sbuf[s]   = gfp[s * ld3] * scaling;

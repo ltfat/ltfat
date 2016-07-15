@@ -291,7 +291,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
 
     if (realonly)
     {
-        const ltfatInt foffconj = -L + positiverem(L - foff - Gl, L) + 1;
+        const ltfatInt foffconj = -L + ltfat_positiverem(L - foff - Gl, L) + 1;
         LTFAT_COMPLEX *Gconj = ltfat_malloc(Gl * sizeof * Gconj);
         LTFAT_NAME_COMPLEX(reverse_array)(G, Gl, Gconj);
         LTFAT_NAME_COMPLEX(conjugate_array)(Gconj, Gl, Gconj);

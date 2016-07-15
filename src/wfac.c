@@ -99,7 +99,7 @@ LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
             {
                 for (ltfatInt k = 0; k < p; k++)
                 {
-                    negrem = positiverem(k * M - l * a, L);
+                    negrem = ltfat_positiverem(k * M - l * a, L);
                     for (ltfatInt s = 0; s < d; s++)
                     {
                         rem = (negrem + s * p * M) % L;
@@ -204,7 +204,7 @@ error:
 /*             { */
 /*                 for (ltfatInt k = 0; k < p; k++) */
 /*                 { */
-/*                     negrem = positiverem(k * M - l * a, L); */
+/*                     negrem = ltfat_positiverem(k * M - l * a, L); */
 /*                     for (s = 0; s < d; s++) */
 /*                     { */
 /*                         rem = (negrem + s * p * M) % L; */

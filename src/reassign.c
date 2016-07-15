@@ -33,10 +33,10 @@ LTFAT_NAME(gabreassign)(const LTFAT_TYPE *s, const LTFAT_REAL *tgrad,
          {
             /* Do a 'round' followed by a 'mod'. 'round' is not
              * present in all libraries, so use trunc(x+.5) instead */
-            /*posi=positiverem((ltfatInt)trunc(tgrad[ii+jj*M]/b+freqpos[ii]+.5),M);
-              posj=positiverem((ltfatInt)trunc(fgrad[ii+jj*M]/a+timepos[jj]+.5),N);*/
-            posi = positiverem(ltfat_round(tgrad[ii + jj * M] / b + freqpos[ii]), M);
-            posj = positiverem(ltfat_round(fgrad[ii + jj * M] / a + timepos[jj]), N);
+            /*posi=ltfat_positiverem((ltfatInt)trunc(tgrad[ii+jj*M]/b+freqpos[ii]+.5),M);
+              posj=ltfat_positiverem((ltfatInt)trunc(fgrad[ii+jj*M]/a+timepos[jj]+.5),N);*/
+            posi = ltfat_positiverem(ltfat_round(tgrad[ii + jj * M] / b + freqpos[ii]), M);
+            posj = ltfat_positiverem(ltfat_round(fgrad[ii + jj * M] / a + timepos[jj]), N);
 
             sr[posi + posj * M] += s[ii + jj * M];
          }
@@ -207,11 +207,11 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
 
          if(doTimeWraparound)
          {
-            fgradIdx[jj] = positiverem( fgradIdxTmp, N[tmpIdx]);
+            fgradIdx[jj] = ltfat_positiverem( fgradIdxTmp, N[tmpIdx]);
          }
          else
          {
-            fgradIdx[jj] = rangelimit( fgradIdxTmp, 0, N[tmpIdx]-1);
+            fgradIdx[jj] = ltfat_rangelimit( fgradIdxTmp, 0, N[tmpIdx]-1);
          }
       }
 

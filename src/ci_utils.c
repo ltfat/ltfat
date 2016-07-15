@@ -166,7 +166,7 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
     CHECK(LTFATERR_NOTPOSARG, Lfold > 0, "Lfold must be positive");
 
     // Sanitize offset.
-    ltfatInt startIdx = positiverem(offset, Lfold);
+    ltfatInt startIdx = ltfat_positiverem(offset, Lfold);
 
     // Clear output, we will use it as an accumulator
     if (in != out)
@@ -410,3 +410,70 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 error:
     return status;
 }
+
+
+/* LTFAT_EXTERN int */
+/* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, const ltfatInt Ls, const ltfatInt W, */
+/*                     const ltfatInt L, LTFAT_TYPE* out) */
+/* { */
+/*     int status = LTFATERR_SUCCESS; */
+/*     CHECKNULL(in); CHECKNULL(out); */
+/*     CHECK(LTFATERR_NOTPOSARG, Ls > 0, "Ls must be positive"); */
+/*     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive"); */
+/*     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive"); */
+/*  */
+/*     if (in == out) */
+/*     { */
+/*         LTFAT_TYPE* outTmp = ltfat_malloc(L * W * sizeof * out); */
+/*         CHECKMEM(outTmp); */
+/*     } */
+/*     else */
+/*     { */
+/*         outTmp = out; */
+/*     } */
+/*  */
+/*     ltfatInt Lcom = (Ls < L ? Ls : L); */
+/*     ltfatInt Lrem = L - Lcom; */
+/*  */
+/*     for (ltfatInt w = 0; w < W; w++) */
+/*     { */
+/*         memcpy(outTmp + w * L, in + w * Ls, Lcom * sizeof * out); */
+/*         memset(outTmp + w * L + Ls, 0, Lrem * sizeof * out); */
+/*     } */
+/*  */
+/*     if (in == out) */
+/*     { */
+/*         ltfat_free(in); */
+/*         out = outTmp; */
+/*     } */
+/*  */
+/* error: */
+/*     return status; */
+/* } */
+
+
+
+/* LTFAT_EXTERN LTFAT_REAL */
+/* LTFAT_NAME(norm)(const LTFAT_TYPE in[], const ltfatInt L, */
+/*                  ltfat_normalize_t flag) */
+/* { */
+/*     double retNorm = 0.0; */
+/*  */
+/*     switch (flag) */
+/*     { */
+/*     case LTFAT_NORMALIZE_ENERGY: */
+/*     { */
+/*         for (ltfatInt ii = 0; ii < L; ii++) */
+/*         { */
+/* #ifdef LTFAT_COMPLEXTYPE */
+/*             double inTmp = fabs(in[ii]); */
+/*             retNorm += in[ii] * in[ii]; */
+/* #else */
+/*             retNorm += in[ii] * in[ii]; */
+/* #endif */
+/*         } */
+/*     } */
+/*     }; */
+/*  */
+/*     return (LTFAT_REAL) sqrt(retNorm); */
+/* } */

@@ -42,7 +42,7 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
         const ltfatInt wavenum = ((w * lt1) % lt2) * b / lt2;
         for (ltfatInt l = 0; l < L; l++)
         {
-            mwin[l + w * L] = cexp(I * scal * l * wavenum) * gwork[positiverem(l - w * a, L)];
+            mwin[l + w * L] = cexp(I * scal * l * wavenum) * gwork[ltfat_positiverem(l - w * a, L)];
         }
     }
 

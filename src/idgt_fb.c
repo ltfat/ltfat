@@ -127,8 +127,8 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
         {
             THE_SUM;
 
-            sp = positiverem(n * a - glh, L);
-            ep = positiverem(n * a - glh + gl - 1, L);
+            sp = ltfat_positiverem(n * a - glh, L);
+            ep = ltfat_positiverem(n * a - glh + gl - 1, L);
 
             /* % Add the ff vector to f at position sp. */
             for (ltfatInt ii = 0; ii < L - sp; ii++)
@@ -144,8 +144,8 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
         {
             THE_SUM;
 
-            sp = positiverem(n * a - glh, L);
-            ep = positiverem(n * a - glh + gl - 1, L);
+            sp = ltfat_positiverem(n * a - glh, L);
+            ep = ltfat_positiverem(n * a - glh + gl - 1, L);
 
             /* Add the ff vector to f at position sp. */
             for (ltfatInt ii = 0; ii < ep - sp + 1; ii++)
@@ -157,8 +157,8 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
         {
             THE_SUM;
 
-            sp = positiverem(n * a - glh, L);
-            ep = positiverem(n * a - glh + gl - 1, L);
+            sp = ltfat_positiverem(n * a - glh, L);
+            ep = ltfat_positiverem(n * a - glh + gl - 1, L);
 
             /* Add the ff vector to f at position sp. */
             for (ltfatInt ii = 0; ii < L - sp; ii++)

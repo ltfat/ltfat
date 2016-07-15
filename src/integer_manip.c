@@ -1,30 +1,30 @@
 #include "ltfat.h"
 
 LTFAT_EXTERN void
-ltfat_fftindex(const ltfatInt N, ltfatInt *indexout)
+ltfat_fftindex(const ltfatInt N, ltfatInt* indexout)
 {
     ltfatInt ii;
 
-    if (N%2==0)
+    if (N % 2 == 0)
     {
-        for (ii=0; ii<N/2+1; ii++)
+        for (ii = 0; ii < N / 2 + 1; ii++)
         {
-            indexout[ii]=ii;
+            indexout[ii] = ii;
         }
-        for (ii=N/2; ii<N-1; ii++)
+        for (ii = N / 2; ii < N - 1; ii++)
         {
-            indexout[ii+1]=-N+ii+1;
+            indexout[ii + 1] = -N + ii + 1;
         }
     }
     else
     {
-        for (ii=0; ii<(N-1)/2+1; ii++)
+        for (ii = 0; ii < (N - 1) / 2 + 1; ii++)
         {
-            indexout[ii]=ii;
+            indexout[ii] = ii;
         }
-        for (ii=(N-1)/2; ii<N-1; ii++)
+        for (ii = (N - 1) / 2; ii < N - 1; ii++)
         {
-            indexout[ii+1]=-N+ii+1;
+            indexout[ii + 1] = -N + ii + 1;
         }
     }
 
@@ -33,19 +33,22 @@ ltfat_fftindex(const ltfatInt N, ltfatInt *indexout)
 LTFAT_EXTERN ltfatInt
 ltfat_imax(const ltfatInt a, const ltfatInt b)
 {
-   return (a > b ? a : b);
+    return (a > b ? a : b);
 }
 
 LTFAT_EXTERN ltfatInt
 ltfat_imin(const ltfatInt a, const ltfatInt b)
 {
-   return (a < b ? a : b);
+    return (a < b ? a : b);
 }
 
 LTFAT_EXTERN ltfat_div_t
 ltfat_idiv(const ltfatInt a, const ltfatInt b)
 {
-    return (ltfat_div_t){.quot = a/b , .rem = a%b };
+    return (ltfat_div_t)
+    {
+        .quot = a / b , .rem = a % b
+    };
 }
 
 
@@ -53,10 +56,10 @@ LTFAT_EXTERN ltfatInt
 makelarger(const ltfatInt L, const ltfatInt K)
 {
     /* This is a floor operation */
-    ltfatInt o = (L/K)*K;
+    ltfatInt o = (L / K) * K;
 
     /* Make it a ceil */
-    if (L%K>0)
+    if (L % K > 0)
     {
         o += K;
     }
@@ -66,7 +69,7 @@ makelarger(const ltfatInt L, const ltfatInt K)
 
 /* Extended Euclid algorithm. */
 LTFAT_EXTERN ltfatInt
-ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s )
+ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt* r, ltfatInt* s )
 {
     ltfatInt a1 = a;
     ltfatInt b1 = b;
@@ -77,23 +80,23 @@ ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s )
     ltfatInt c, d;
     while ( b1 != 0 )
     {
-        d=a1/b1;
+        d = a1 / b1;
         c = a1;
         a1 = b1;
-        b1 = c-d*b1;
+        b1 = c - d * b1;
 
         c = a2;
         a2 = b2;
-        b2 = c-d*b2;
+        b2 = c - d * b2;
 
         c = a3;
         a3 = b3;
-        b3 = c-d*b3;
+        b3 = c - d * b3;
 
     }
 
-    *r=a2;
-    *s=a3;
+    *r = a2;
+    *s = a3;
     return a1;
 }
 
@@ -104,37 +107,45 @@ ltfat_lcm(const ltfatInt a, const ltfatInt b)
 
     ltfatInt c = ltfat_gcd(a, b, &junk_r, &junk_s);
 
-    return (a*b/c);
+    return (a * b / c);
+}
+
+LTFAT_EXTERN ltfatInt
+ltfat_dgtlength(const ltfatInt Ls, const ltfatInt a, const ltfatInt M)
+{
+    ltfatInt minL = ltfat_lcm(a, M);
+    ltfatInt nminL = (Ls + minL - 1) / minL; // This is ceil of Ls/minL
+    return nminL * minL;
 }
 
 
 LTFAT_EXTERN void
 gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
-             ltfatInt *a, ltfatInt *M, ltfatInt *L, ltfatInt *N, ltfatInt *Ngood)
+             ltfatInt* a, ltfatInt* M, ltfatInt* L, ltfatInt* N, ltfatInt* Ngood)
 {
 
 
-    *M = ltfat_imin(y,Ls);
-    *N = ltfat_imax(x,Ls);
+    *M = ltfat_imin(y, Ls);
+    *N = ltfat_imax(x, Ls);
 
     /* Determine the minimum transform size. */
-    ltfatInt K = ltfat_lcm(*M,*N);
+    ltfatInt K = ltfat_lcm(*M, *N);
 
     /* This L is good, but is it not the same as DGT will choose. */
-    ltfatInt Llong = makelarger(Ls,K);
+    ltfatInt Llong = makelarger(Ls, K);
 
     /* Fix a from the long L */
-    *a=Llong/(*N);
+    *a = Llong / (*N);
 
     /* Now we have fixed a and M, so we can use the standard method of choosing L. */
-    ltfatInt Lsmallest=ltfat_lcm(*a,*M);
+    ltfatInt Lsmallest = ltfat_lcm(*a, *M);
     *L = makelarger(Ls, Lsmallest);
 
     /* We did not get N as desired. */
-    *N=*L/(*a);
+    *N = *L / (*a);
 
     /* Number of columns to display */
-    *Ngood=(Ls/(*a));
+    *Ngood = (Ls / (*a));
 }
 
 /* Determine the size of the output array of wfacreal and iwfacreal */
@@ -144,15 +155,15 @@ wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
 
     ltfatInt h_a, h_m;
 
-    const ltfatInt b=L/M;
-    const ltfatInt c=ltfat_gcd(a, M,&h_a, &h_m);
-    const ltfatInt p=a/c;
-    const ltfatInt d=b/p;
+    const ltfatInt b = L / M;
+    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
+    const ltfatInt p = a / c;
+    const ltfatInt d = b / p;
 
     /* This is a floor operation. */
-    const ltfatInt d2= d/2+1;
+    const ltfatInt d2 = d / 2 + 1;
 
-    return d2*p*M;
+    return d2 * p * M;
 
 }
 
@@ -160,19 +171,19 @@ LTFAT_EXTERN ltfatInt
 ltfat_nextpow2(const ltfatInt y)
 {
     ltfatInt x = (ltfatInt) y;
-    ltfatInt bits = sizeof(x)*8;
+    ltfatInt bits = sizeof(x) * 8;
 
-    if(x==0)
+    if (x == 0)
         return 1;
 
     x--;
-    (x) = ((x)>>1)  | (x);
-    (x) = ((x)>>2)  | (x);
-    (x) = ((x)>>4)  | (x);
-    (x) = ((x)>>8)  | (x);
-    (x) = ((x)>>16) | (x);
-    if(bits>32)
-        (x) = ((x)>>32) | (x);
+    (x) = ((x) >> 1)  | (x);
+    (x) = ((x) >> 2)  | (x);
+    (x) = ((x) >> 4)  | (x);
+    (x) = ((x) >> 8)  | (x);
+    (x) = ((x) >> 16) | (x);
+    if (bits > 32)
+        (x) = ((x) >> 32) | (x);
 
     (x)++;
     return x;
@@ -181,7 +192,7 @@ ltfat_nextpow2(const ltfatInt y)
 LTFAT_EXTERN ltfatInt
 ltfat_nextfastfft(const ltfatInt x)
 {
-   ltfatInt xtmp = x;
+    ltfatInt xtmp = x;
     while (1)
     {
         ltfatInt m = xtmp;
@@ -202,19 +213,19 @@ ltfat_nextfastfft(const ltfatInt x)
 LTFAT_EXTERN ltfatInt
 ltfat_pow2(const ltfatInt x)
 {
-    return ((1)<<(x));
+    return ((1) << (x));
 }
 
 LTFAT_EXTERN ltfatInt
 ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
 {
-    return ((x)&(pow2var-1));
+    return ((x) & (pow2var - 1));
 }
 
 LTFAT_EXTERN int
 isPow2(const ltfatInt x)
 {
-    return x==ltfat_nextpow2(x);
+    return x == ltfat_nextpow2(x);
 }
 
 LTFAT_EXTERN ltfatInt
@@ -222,7 +233,7 @@ ilog2(const ltfatInt x)
 {
     ltfatInt tmp = 0;
     ltfatInt xtmp = x;
-     while (xtmp >>= 1) ++tmp;
+    while (xtmp >>= 1) ++tmp;
     return tmp;
 }
 
@@ -250,18 +261,18 @@ filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,
                    const ltfatInt offset, const ltfatExtType ext)
 {
     ltfatInt Lc = 0;
-    if(ext==PER)
+    if (ext == PER)
     {
-        Lc = (ltfatInt) ceil( L/((double)a) );
+        Lc = (ltfatInt) ceil( L / ((double)a) );
     }
-    else if(ext==VALID)
+    else if (ext == VALID)
     {
-        Lc = (ltfatInt) ceil( (L-(gl-1))/((double)a) );
+        Lc = (ltfatInt) ceil( (L - (gl - 1)) / ((double)a) );
 
     }
     else
     {
-        Lc = (ltfatInt) ceil( (L + gl - 1 + offset )/((double)a) );
+        Lc = (ltfatInt) ceil( (L + gl - 1 + offset ) / ((double)a) );
     }
     return Lc;
 }
@@ -276,17 +287,16 @@ ltfat_round(const double x)
 }
 
 LTFAT_EXTERN ltfatInt
-positiverem(const ltfatInt a,const ltfatInt b)
+ltfat_positiverem(const ltfatInt a, const ltfatInt b)
 {
-    const ltfatInt c = a%b;
-    return(c<0 ? c+b : c);
+    const ltfatInt c = a % b;
+    return (c < 0 ? c + b : c);
 }
 
 LTFAT_EXTERN ltfatInt
-rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax)
+ltfat_rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax)
 {
-    ltfatInt c = a < amin? amin:a;
-    c = c > amax? amax: c;
+    ltfatInt c = a < amin ? amin : a;
+    c = c > amax ? amax : c;
     return c;
 }
-

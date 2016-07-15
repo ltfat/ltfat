@@ -5,7 +5,7 @@
 
 
 // long is only "at least 32 bit"
-static inline long long positiverem_long(long long a, long long b)
+static inline long long ltfat_positiverem_long(long long a, long long b)
 {
     const long long c = a % b;
     return (c < 0 ? c + b : c);
@@ -17,12 +17,12 @@ LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX* g)
 {
 
     const long long LL = 2 * L;
-    const long long Lponen = positiverem_long((L + 1) * n, LL);
+    const long long Lponen = ltfat_positiverem_long((L + 1) * n, LL);
 
     for (long long m = 0; m < L; m++)
     {
-        const long long idx = positiverem_long(
-                                  positiverem_long(Lponen * m, LL) * m, LL);
+        const long long idx = ltfat_positiverem_long(
+                                  ltfat_positiverem_long(Lponen * m, LL) * m, LL);
 
         g[m] = cexp(1.0 * I * M_PI * idx / L);
     }
@@ -198,16 +198,16 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         /* In this case, cc1=1 */
 
-        const long cc3 = positiverem_long(s1 * (L + 1), twoN);
+        const long cc3 = ltfat_positiverem_long(s1 * (L + 1), twoN);
 
-        const long tmp1 = positiverem_long(cc3 * a, twoN);
+        const long tmp1 = ltfat_positiverem_long(cc3 * a, twoN);
 
         LTFAT_NAME_COMPLEX(dgt_long_execute)(plan.rect_plan);
 
         for (ltfatInt k = 0; k < N; k++)
         {
-            const ltfatInt phsidx = positiverem_long((tmp1 * k) % twoN * k, twoN);
-            const long part1 = positiverem_long(-s1 * k * a, L);
+            const ltfatInt phsidx = ltfat_positiverem_long((tmp1 * k) % twoN * k, twoN);
+            const long part1 = ltfat_positiverem_long(-s1 * k * a, L);
             for (ltfatInt m = 0; m < M; m++)
             {
                 /* The line below has a hidden floor operation when dividing with the last b */
@@ -230,11 +230,11 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         const ltfatInt twoN = 2 * N;
         const long cc1 = ar / a;
-        const long cc2 = positiverem_long(-s0 * plan.br / a, twoN);
-        const long cc3 = positiverem_long(a * s1 * (L + 1), twoN);
-        const long cc4 = positiverem_long(cc2 * plan.br * (L + 1), twoN);
-        const long cc5 = positiverem_long(2 * cc1 * plan.br, twoN);
-        const long cc6 = positiverem_long((s0 * s1 + 1) * plan.br, L);
+        const long cc2 = ltfat_positiverem_long(-s0 * plan.br / a, twoN);
+        const long cc3 = ltfat_positiverem_long(a * s1 * (L + 1), twoN);
+        const long cc4 = ltfat_positiverem_long(cc2 * plan.br * (L + 1), twoN);
+        const long cc5 = ltfat_positiverem_long(2 * cc1 * plan.br, twoN);
+        const long cc6 = ltfat_positiverem_long((s0 * s1 + 1) * plan.br, L);
 
         LTFAT_FFTW(execute)(plan.f_plan);
 
@@ -251,18 +251,18 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         for (ltfatInt k = 0; k < Nr; k++)
         {
-            const long part1 = positiverem_long(-s1 * k * ar, L);
+            const long part1 = ltfat_positiverem_long(-s1 * k * ar, L);
             for (ltfatInt m = 0; m < Mr; m++)
             {
                 const long sq1 = k * cc1 + cc2 * m;
 
-                const ltfatInt phsidx = positiverem_long(
+                const ltfatInt phsidx = ltfat_positiverem_long(
                                             (cc3 * sq1 * sq1) % twoN - (m * (cc4 * m + k * cc5)) % twoN, twoN);
 
                 /* The line below has a hidden floor operation when dividing with the last b */
                 const ltfatInt idx2 = ((part1 + cc6 * m) % L) / b;
 
-                const ltfatInt inidx  = positiverem(-k, Nr) + m * Nr;
+                const ltfatInt inidx  = ltfat_positiverem(-k, Nr) + m * Nr;
                 const ltfatInt outidx = idx2 + (sq1 % N) * M;
                 for (ltfatInt w = 0; w < plan.W; w++)
                 {
