@@ -36,8 +36,8 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(idgtreal_long_init)(cin, g, L, W, a, M, f, ptype, FFTW_ESTIMATE,
-                                       &plan),
+        LTFAT_NAME(idgtreal_long_init)((LTFAT_COMPLEX*)cin, g, L, W, a, M, f,
+                                       ptype, FFTW_ESTIMATE, &plan),
         "Init failed");
 
     LTFAT_NAME(idgtreal_long_execute)(plan);
@@ -49,7 +49,7 @@ error:
 }
 
 LTFAT_EXTERN int
-LTFAT_NAME(idgtreal_long_init)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
+LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
                                const ltfatInt L, const ltfatInt W,
                                const ltfatInt a, const ltfatInt M, LTFAT_REAL* f,
                                const dgt_phasetype ptype, unsigned flags,
@@ -57,7 +57,11 @@ LTFAT_NAME(idgtreal_long_init)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 {
     LTFAT_NAME(idgtreal_long_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(cin); CHECKNULL(g); CHECKNULL(pout); CHECKNULL(f);
+    CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cin != NULL,
+          "cin cannot be NULL if flags is not FFTW_ESTIMATE");
+
+    // CHECKNULL(f); // can be NULL
+    CHECKNULL(g); CHECKNULL(pout);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
@@ -144,7 +148,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgtreal_long_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(p);
+    CHECKNULL(p); CHECKNULL(p->f); CHECKNULL(p->cin);
 
     LTFAT_FFTW(execute)(p->p_veryend);
 
@@ -153,6 +157,29 @@ LTFAT_NAME(idgtreal_long_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
                                               p->cwork);
 
     LTFAT_NAME(idgtreal_walnut_execute)(p);
+error:
+    return status;
+}
+
+LTFAT_EXTERN int
+LTFAT_NAME(idgtreal_long_execute_newarray)(LTFAT_NAME(idgtreal_long_plan)* p,
+        const LTFAT_COMPLEX* c, LTFAT_REAL* f)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
+
+    // The plan was created with the FFTW_PRESERVE_INPUT so it is ok to cast away the const
+    LTFAT_FFTW(execute_dft_c2r)(p->p_veryend, (LTFAT_COMPLEX*)c, p->cwork);
+
+    if (p->ptype)
+        LTFAT_NAME_REAL(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a, p->M,
+                                              p->cwork);
+
+    // Make a shallow copy and rewrite f
+    LTFAT_NAME(idgtreal_long_plan) p2 = *p;
+    p2.f = f;
+
+    LTFAT_NAME(idgtreal_walnut_execute)(&p2);
 error:
     return status;
 }
@@ -224,7 +251,7 @@ LTFAT_NAME(idgtreal_walnut_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
                     for (ltfatInt s = 0; s < d; s++)
                     {
                         p->sbuf[s] = p->cwork[r + l * c +
-                                              positiverem(u + s * q - l * h_a, N) *
+                                              ltfat_positiverem(u + s * q - l * h_a, N) *
                                               M + w * ld4c];
                     }
 
@@ -285,7 +312,7 @@ LTFAT_NAME(idgtreal_walnut_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
 
                     for (ltfatInt s = 0; s < d; s++)
                     {
-                        fp[positiverem(k * M + s * pp * M - l * h_a * a, L)] = p->sbuf[s];
+                        fp[ltfat_positiverem(k * M + s * pp * M - l * h_a * a, L)] = p->sbuf[s];
                     }
 
                     /* Advance the ff pointer. This is only done in this

@@ -34,7 +34,10 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     LTFAT_NAME(dgtreal_long_plan)* plan = NULL;
 
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(f); CHECKNULL(g); CHECKNULL(cout); CHECKNULL(pout);
+    CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cout != NULL,
+          "cout cannot be NULL if flags is not FFTW_ESTIMATE");
+    // CHECKNULL(f); // f can be NULL
+    CHECKNULL(g); CHECKNULL(pout);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
@@ -48,7 +51,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
 
     ltfatInt h_m;
-
+// f and cout can be NULL if flags is FFTW_ESTIMATE
     plan->a = a;
     plan->M = M;
     plan->L = L;
@@ -115,14 +118,11 @@ error:
     return status;
 }
 
-
-
-
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(plan);
+    CHECKNULL(plan); CHECKNULL(plan->f); CHECKNULL(plan->cout);
 
     LTFAT_NAME(dgtreal_walnut_plan)(plan);
 
@@ -132,6 +132,30 @@ LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
     /* FFT to modulate the coefficients. */
     LTFAT_FFTW(execute)(plan->p_veryend);
+
+error:
+    return status;
+}
+
+LTFAT_EXTERN int
+LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
+        const LTFAT_REAL* f, LTFAT_COMPLEX* c)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(plan); CHECKNULL(f); CHECKNULL(c);
+
+    // Make a shallow copy of the plan and overwrite f
+    LTFAT_NAME(dgtreal_long_plan) plan2 = *plan;
+    plan2.f = f;
+
+    LTFAT_NAME(dgtreal_walnut_plan)(&plan2);
+
+    if (plan->ptype)
+        LTFAT_NAME_REAL(dgtphaselockhelper)(plan->cwork, plan->L, plan->W, plan->a,
+                                            plan->M, plan->cwork);
+
+    /* FFTW new array execute function */
+    LTFAT_FFTW(execute_dft_r2c)(plan->p_veryend, plan->cwork, c);
 
 error:
     return status;
@@ -257,7 +281,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
                     {
                         for (ltfatInt s = 0; s < d; s++)
                         {
-                            sbuf[s]   = fp[ positiverem(k * M + s * p * M - l * h_a * a, L) ];
+                            sbuf[s]   = fp[ ltfat_positiverem(k * M + s * p * M - l * h_a * a, L) ];
                         }
 
                         LTFAT_FFTW(execute)(plan->p_before);
@@ -367,7 +391,8 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
                     for (ltfatInt s = 0; s < d; s++)
                     {
-                        cout[ r + l * c + positiverem(u + s * q - l * h_a, N)*M + w * ld5c ] = sbuf[s];
+                        cout[ r + l * c + ltfat_positiverem(u + s * q - l * h_a,
+                                                            N)*M + w * ld5c ] = sbuf[s];
                     }
                 }
             }

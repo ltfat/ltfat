@@ -28,8 +28,11 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     LTFAT_NAME(idgt_long_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
 
+    // Must use FFTW_ESTIMATE such that cin is not overwritten.
+    // It is safe to cast away the const.
     CHECKSTATUS(
-        LTFAT_NAME(idgt_long_init)(cin, g, L, W, a, M, f, ptype, FFTW_ESTIMATE,
+        LTFAT_NAME(idgt_long_init)((LTFAT_COMPLEX*)cin, g, L, W, a, M, f, ptype,
+                                   FFTW_ESTIMATE,
                                    &plan),
         "Init failed");
 
@@ -42,7 +45,7 @@ error:
 }
 
 LTFAT_EXTERN int
-LTFAT_NAME(idgt_long_init)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
+LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
                            const ltfatInt L, const ltfatInt W,
                            const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX* f,
                            const dgt_phasetype ptype, unsigned flags,
@@ -50,7 +53,10 @@ LTFAT_NAME(idgt_long_init)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
 {
     LTFAT_NAME(idgt_long_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(cin); CHECKNULL(g); CHECKNULL(pout); CHECKNULL(f);
+    CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cin != NULL,
+          "cin cannot be NULL if flags is not FFTW_ESTIMATE");
+    // CHECKNULL(f); // can be NULL
+    CHECKNULL(g); CHECKNULL(pout);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
@@ -109,7 +115,7 @@ LTFAT_NAME(idgt_long_init)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     plan->p_veryend = LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W,
                       (LTFAT_COMPLEX*)cin, NULL,
                       1, Mint, plan->cwork, NULL,
-                      1, Mint, FFTW_BACKWARD, flags);
+                      1, Mint, FFTW_BACKWARD, flags | FFTW_PRESERVE_INPUT);
 
     CHECKINIT(plan->p_veryend, "FFTW plan failed.");
 
@@ -131,7 +137,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_execute)(LTFAT_NAME(idgt_long_plan)* p)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(p);
+    CHECKNULL(p); CHECKNULL(p->f); CHECKNULL(p->cin);
 
     LTFAT_FFTW(execute)(p->p_veryend);
 
@@ -142,8 +148,30 @@ LTFAT_NAME(idgt_long_execute)(LTFAT_NAME(idgt_long_plan)* p)
     LTFAT_NAME(idgt_walnut_execute)(p);
 error:
     return status;
-
 }
+
+LTFAT_EXTERN int
+LTFAT_NAME(idgt_long_execute_newarray)(LTFAT_NAME(idgt_long_plan)* p,
+                                       const LTFAT_COMPLEX c[],
+                                       LTFAT_COMPLEX f[])
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
+
+    LTFAT_FFTW(execute_dft)(p->p_veryend, (LTFAT_COMPLEX*)c, p->cwork);
+
+    if (p->ptype)
+        LTFAT_NAME_COMPLEX(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a,
+                p->M, p->cwork);
+
+    LTFAT_NAME(idgt_long_plan) p2 = *p;
+    p2.f = f;
+
+    LTFAT_NAME(idgt_walnut_execute)(&p2);
+error:
+    return status;
+}
+
 
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_done)(LTFAT_NAME(idgt_long_plan)** plan)
@@ -208,7 +236,7 @@ LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p)
                     for (ltfatInt s = 0; s < d; s++)
                     {
                         const ltfatInt rem = r + l * c +
-                                             positiverem(u + s * q - l * h_a, N)
+                                             ltfat_positiverem(u + s * q - l * h_a, N)
                                              * M + w * ld4c;
                         p->cbuf[s] = p->cwork[rem];
                     }
@@ -282,8 +310,8 @@ LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p)
 
                     for (ltfatInt s = 0; s < d; s++)
                     {
-                        const ltfatInt rem = positiverem(k * M + s * pp * M -
-                                                         l * h_a * a, L);
+                        const ltfatInt rem = ltfat_positiverem(k * M + s * pp * M -
+                                                               l * h_a * a, L);
                         fp[rem] = p->cbuf[s];
                     }
 
@@ -392,7 +420,7 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* gf,
                     for (ltfatInt s = 0; s < d; s++)
                     {
                         const ltfatInt rem = r + l * c +
-                                             positiverem(u + s * q - l * h_a, N)
+                                             ltfat_positiverem(u + s * q - l * h_a, N)
                                              * M + w * ld4c;
                         cbuf[s] = cwork[rem];
                     }
@@ -466,8 +494,8 @@ LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* gf,
 
                     for (ltfatInt s = 0; s < d; s++)
                     {
-                        const ltfatInt rem = positiverem(k * M + s * p * M -
-                                                         l * h_a * a, L);
+                        const ltfatInt rem = ltfat_positiverem(k * M + s * p * M -
+                                                               l * h_a * a, L);
                         fp[rem] = cbuf[s];
                     }
 
