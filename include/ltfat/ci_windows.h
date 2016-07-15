@@ -1,4 +1,4 @@
-/** \defgroup windows Gabor Windows 
+/** \defgroup windows Gabor Windows
  * \addtogroup windows
  * @{
  */
@@ -30,6 +30,33 @@ LTFAT_FIRWIN;
 
 #endif /* _CI_WINDOWS_H */
 
+
+
+/** Creates real, whole-point symmetric, zero delay window.
+ *
+ * \note Please note that the window format is slightly unusual i.e.
+ * the (unique) peak of the window is at index [0] of the array and the 
+ * left tail is circularly wrapped such that the ends of both tails 
+ * meet in the middle of the array. 
+ * fftshift() can be used to format the array to the usual format
+ * with peak in the middle. 
+ *
+ * \param[in]   win  Window type
+ * \param[in]   gl   Window length
+ * \param[out]  g    Window
+ *
+  * #### Function versions #
+ *
+ * <tt>
+ * ltfat_firwin_d(LTFAT_FIRWIN win, int gl, double* g);
+ *
+ * ltfat_firwin_s(LTFAT_FIRWIN win, int gl, float* g);
+ *
+ * ltfat_firwin_dc(LTFAT_FIRWIN win, int gl, complex double* g);
+ *
+ * ltfat_firwin_sc(LTFAT_FIRWIN win, int gl, complex float* g);
+ * </tt>
+ */
 LTFAT_EXTERN int
 LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g);
 
