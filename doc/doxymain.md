@@ -1,7 +1,4 @@
-\mainpage
-
-libltfat - Large Time-Frequency Alalysis Toolbox backend library
-================================================================
+\mainpage libltfat - Large Time-Frequency Alalysis Toolbox backend library
 
 General conventions
 -------------------
@@ -66,7 +63,7 @@ Further, the following naming conventions are used consistently:
 <tr><td>M</td><td>Integer. Number of frequency channels (FFT length).</td></tr>
 <tr><td>M2</td><td>Integer. Number of unique frequency channels for real signals:
 M2=M/2+1.</td></tr>
-<tr><td>L</td><td>Integer. Length of the signal.</td></tr>
+<tr><td>L</td><td>Integer. Length of the signal. </td></tr>
 <tr><td>N</td><td>Integer. Nuber of time shifts: N=L/a.</td></tr>
 <tr><td>W</td><td>Integer. Number of signal channels.</td></tr>
 </table>

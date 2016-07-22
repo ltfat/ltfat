@@ -661,7 +661,7 @@ FILE_VERSION_FILTER    =
 # DoxygenLayout.xml, doxygen will parse it automatically even if the LAYOUT_FILE
 # tag is left empty.
 
-LAYOUT_FILE            =
+LAYOUT_FILE            = doc/DoxygenLayout.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files containing
 # the reference definitions. This must be a list of .bib files. The .bib
@@ -1937,7 +1937,9 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = DOXYGEN_ONLY \
                          LTFAT_EXTERN= \
-                         LTFAT_NAME(x)=x
+                         LTFAT_NAME(x)=x \
+                         LTFAT_NAME_COMPLEX(x)=x \
+                         LTFAT_NAME_REAL(x)=x 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
