@@ -144,7 +144,7 @@ error:
 
 /*
   *
- * If offset os not zero, the function performs:
+ * If offset is not zero, the function performs:
  * fold_array(in,Lin,0,Lfold,out);
  * circshift(out,Lfold,offset,out);
  *
@@ -390,18 +390,42 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
     switch (flag)
     {
     case LTFAT_NORMALIZE_ENERGY:
+    case LTFAT_NORMALIZE_2:
     {
         normfac = 0.0;
 
         for (ltfatInt ii = 0; ii < L; ii++)
-            normfac += in[ii] * in[ii];
+        {
+            LTFAT_REAL inAbs = fabs(in[ii]);
+            normfac += inAbs * inAbs;
+        }
 
         normfac = sqrt(normfac);
     }
+    case LTFAT_NORMALIZE_AREA:
+    case LTFAT_NORMALIZE_1:
+    {
+        normfac = 0.0;
 
+        for (ltfatInt ii = 0; ii < L; ii++)
+            normfac += fabs(in[ii]);
+
+        normfac = sqrt(normfac);
+    }
+    case LTFAT_NORMALIZE_PEAK:
+    case LTFAT_NORMALIZE_INF:
+    {
+        normfac = fabs(in[0]);
+
+        for (ltfatInt ii = 1; ii < L; ii++)
+            if (fabs(in[ii]) > normfac)
+                normfac = fabs(in[ii]);
+
+    }
     case LTFAT_NORMALIZE_NULL:
-    default:
         normfac = 1.0;
+    default:
+        CHECKCANTHAPPEN("Unknown normalization flag");
     };
 
     for (ltfatInt ii = 0; ii < L; ii++)
@@ -410,7 +434,6 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 error:
     return status;
 }
-
 
 /* LTFAT_EXTERN int */
 /* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, const ltfatInt Ls, const ltfatInt W, */

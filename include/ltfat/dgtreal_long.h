@@ -37,17 +37,17 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
  * <tt>
  * ltfat_dgtreal_long_d(const double f[], const double g[],
  *                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                      const ltfatInt M, const dgt_phasetype ptype, complex double c[]);
+ *                      const ltfatInt M, const ltfat_phaseconvention ptype, complex double c[]);
  *
  * ltfat_dgtreal_long_s(const float f[], const float g[],
  *                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                      const ltfatInt M, const dgt_phasetype ptype, complex float c[]);
+ *                      const ltfatInt M, const ltfat_phaseconvention ptype, complex float c[]);
  * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
                          const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-                         const ltfatInt M, const dgt_phasetype ptype,
+                         const ltfatInt M, const ltfat_phaseconvention ptype,
                          LTFAT_COMPLEX c[]);
 
 /** Initialize plan for Discrete Gabor Transform for real signals for the factorization algorithm
@@ -68,12 +68,12 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  * <tt>
  * ltfat_dgtreal_long_init_d(const double f[], const double g[],
  *                           const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                           const ltfatInt M,  complex double c[], const dgt_phasetype ptype,
+ *                           const ltfatInt M,  complex double c[], const ltfat_phaseconvention ptype,
  *                           unsigned flags, ltfat_dgtreal_long_plan_d** plan);
  *
  * ltfat_dgtreal_long_init_s(const float f[], const float g[],
  *                           const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                           const ltfatInt M,  complex double c[], const dgt_phasetype ptype,
+ *                           const ltfatInt M,  complex double c[], const ltfat_phaseconvention ptype,
  *                           unsigned flags, ltfat_dgtreal_long_plan_s** plan);
  * </tt>
  */
@@ -81,7 +81,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
                               const ltfatInt L, const ltfatInt W, const ltfatInt a,
                               const ltfatInt M, LTFAT_COMPLEX c[],
-                              const dgt_phasetype ptype, unsigned flags,
+                              const ltfat_phaseconvention ptype, unsigned flags,
                               LTFAT_NAME(dgtreal_long_plan)** plan);
 
 /** Execute plan for Discrete Gabor Transform for real signals using the factorization algorithm

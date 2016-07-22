@@ -1,7 +1,7 @@
 #ifndef _LTFAT_TYPECONSTANT
 #define _LTFAT_TYPECONSTANT
 #include "memalloc.h"
-
+#include "dgt_common.h"
 
 typedef struct
 {
@@ -21,11 +21,6 @@ ltfat_fftindex(const ltfatInt N, ltfatInt *indexout);
 
 LTFAT_EXTERN
 ltfatInt makelarger(const ltfatInt L, const ltfatInt K);
-
-LTFAT_EXTERN
-ltfatInt filterbank_td_size(const ltfatInt L, const ltfatInt a,
-                            const ltfatInt gl, const ltfatInt offset,
-                            const ltfatExtType ext);
 
 LTFAT_EXTERN
 ltfatInt ltfat_imax(const ltfatInt a, const ltfatInt b);

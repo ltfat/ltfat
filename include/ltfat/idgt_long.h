@@ -24,26 +24,26 @@ typedef struct LTFAT_NAME(idgt_long_plan) LTFAT_NAME(idgt_long_plan);
  * <tt>
  * ltfat_idgt_long_d(const complex double c[], const double g[], const ltfatInt L,
  *                   const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                   const dgt_phasetype ptype, complex double f[]);
+ *                   const ltfat_phaseconvention ptype, complex double f[]);
  *
  * ltfat_idgt_long_s(const complex float c[], const float g[], const ltfatInt L,
  *                   const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                   const dgt_phasetype ptype, complex float f[]);
+ *                   const ltfat_phaseconvention ptype, complex float f[]);
  *
  * ltfat_idgt_long_dc(const complex double c[], const complex double g[], const ltfatInt L,
  *                    const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                    const dgt_phasetype ptype, complex double f[]);
+ *                    const ltfat_phaseconvention ptype, complex double f[]);
  *
  * ltfat_idgt_long_sc(const complex float c[], const complex float g[], const ltfatInt L,
  *                    const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                    const dgt_phasetype ptype, complex float f[]);
+ *                    const ltfat_phaseconvention ptype, complex float f[]);
  * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
                       const ltfatInt L, const ltfatInt W,
                       const ltfatInt a, const ltfatInt M,
-                      const dgt_phasetype ptype, LTFAT_COMPLEX f[]);
+                      const ltfat_phaseconvention ptype, LTFAT_COMPLEX f[]);
 
 /** Initialize inverse Discrete Gabor Transform plan for the factorization algorithm
  *
@@ -66,22 +66,22 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
  * <tt>
  * ltfat_idgt_long_init_d(complex double c[], const double g[], const ltfatInt L,
  *                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                        complex double f[], unsigned flags, const dgt_phasetype ptype,
+ *                        complex double f[], unsigned flags, const ltfat_phaseconvention ptype,
  *                        ltfat_idgt_long_plan_d** pout);
  *
  * ltfat_idgt_long_init_s(complex float c[], const float g[], const ltfatInt L,
  *                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                        complex float f[], unsigned flags, const dgt_phasetype ptype,
+ *                        complex float f[], unsigned flags, const ltfat_phaseconvention ptype,
  *                        ltfat_idgt_long_plan_s** pout);
  *
  * ltfat_idgt_long_init_dc(complex double c[], const complex double g[], const ltfatInt L,
  *                         const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                         complex double f[], unsigned flags, const dgt_phasetype ptype,
+ *                         complex double f[], unsigned flags, const ltfat_phaseconvention ptype,
  *                         ltfat_idgt_long_plan_dc** pout);
  *
  * ltfat_idgt_long_init_sc(complex float c[], const complex float g[], const ltfatInt L,
  *                         const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                         complex float f[], unsigned flags, const dgt_phasetype ptype,
+ *                         complex float f[], unsigned flags, const ltfat_phaseconvention ptype,
  *                         ltfat_idgt_long_plan_sc** pout);
  * </tt>
  */
@@ -89,7 +89,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
                            const ltfatInt L, const ltfatInt W,
                            const ltfatInt a, const ltfatInt M,  LTFAT_COMPLEX f[],
-                           unsigned flags, const dgt_phasetype ptype, LTFAT_NAME(idgt_long_plan)** pout);
+                           unsigned flags, const ltfat_phaseconvention ptype, LTFAT_NAME(idgt_long_plan)** pout);
 
 
 /** Execute the Inverse Discrete Gabor Transform plan
@@ -166,7 +166,7 @@ LTFAT_EXTERN void
 LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *gf,
                      const ltfatInt L,
                      const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                     const dgt_phasetype ptype, LTFAT_COMPLEX *f);
+                     const ltfat_phaseconvention ptype, LTFAT_COMPLEX *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p);

@@ -68,7 +68,7 @@ LTFAT_NAME_COMPLEX(dwiltiii_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g
 
     PREPROC
 
-    LTFAT_NAME_COMPLEX(dgt_long)(f2, g, L, W, M, 2 * M, FREQINV, coef2);
+    LTFAT_NAME_COMPLEX(dgt_long)(f2, g, L, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
     LTFAT_COMPLEX *pcoef  = cout;
     LTFAT_COMPLEX *pcoef2 = coef2;
@@ -97,7 +97,7 @@ LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
     PREPROC
 
-    LTFAT_NAME_COMPLEX(dgt_long)(f2, g2, L, W, M, 2 * M, FREQINV, coef2);
+    LTFAT_NAME_COMPLEX(dgt_long)(f2, g2, L, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
 
     LTFAT_REAL *pcoef  = cout;
@@ -128,7 +128,7 @@ LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     PREPROC
 
     /* coef2=comp_dgt(f,g,a,2*M,L); */
-    LTFAT_NAME_COMPLEX(dgt_fb)(f2, g, L, gl, W, M, 2 * M, FREQINV, coef2);
+    LTFAT_NAME_COMPLEX(dgt_fb)(f2, g, L, gl, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
 
     LTFAT_COMPLEX *pcoef  = cout;
@@ -160,7 +160,7 @@ LTFAT_NAME_REAL(dwiltiii_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
     PREPROC
 
-    LTFAT_NAME_COMPLEX(dgt_fb)(f2, g2, L, gl, W, M, 2 * M, FREQINV, coef2);
+    LTFAT_NAME_COMPLEX(dgt_fb)(f2, g2, L, gl, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
     LTFAT_REAL* pcoef  = cout;
     LTFAT_COMPLEX* pcoef2 = coef2;

@@ -63,7 +63,7 @@ LTFAT_NAME_COMPLEX(dwilt_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     LTFAT_COMPLEX *coef2 = ltfat_malloc(2*M*N*W*sizeof*coef2);
 
     /* coef2=comp_dgt(f,g,a,2*M,L); */
-    LTFAT_NAME_COMPLEX(dgt_long)(f, g, L, W, M, 2*M, FREQINV, coef2);
+    LTFAT_NAME_COMPLEX(dgt_long)(f, g, L, W, M, 2*M, LTFAT_FREQINV, coef2);
 
     const ltfatInt nyquestadd = (M%2)*M2;
 
@@ -89,7 +89,7 @@ LTFAT_NAME_REAL(dwilt_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
     LTFAT_COMPLEX *coef2 = ltfat_malloc((M+1)*N*W*sizeof*coef2);
 
     /* coef2=comp_dgt(f,g,a,2*M,L); */
-    LTFAT_NAME(dgtreal_long)(f, g, L, W, M, 2*M, FREQINV,coef2);
+    LTFAT_NAME(dgtreal_long)(f, g, L, W, M, 2*M, LTFAT_FREQINV,coef2);
 
 
     LTFAT_REAL *pcoef  = cout;
@@ -115,7 +115,7 @@ LTFAT_NAME_COMPLEX(dwilt_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     LTFAT_COMPLEX *coef2 = ltfat_malloc(2*M*N*W*sizeof*coef2);
 
     /* coef2=comp_dgt(f,g,a,2*M,L); */
-    LTFAT_NAME_COMPLEX(dgt_fb)(f, g, L, gl, W, M, 2*M, FREQINV, coef2);
+    LTFAT_NAME_COMPLEX(dgt_fb)(f, g, L, gl, W, M, 2*M, LTFAT_FREQINV, coef2);
 
     const ltfatInt nyquestadd = (M%2)*M2;
 
@@ -140,7 +140,7 @@ LTFAT_NAME_REAL(dwilt_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
     const LTFAT_REAL scalconst = (LTFAT_REAL) sqrt(2.0);
 
     LTFAT_COMPLEX *coef2 = ltfat_malloc((M+1)*N*W*sizeof*coef2);
-    LTFAT_NAME(dgtreal_fb)(f, g, L, gl, W, M, 2*M, FREQINV, coef2);
+    LTFAT_NAME(dgtreal_fb)(f, g, L, gl, W, M, 2*M, LTFAT_FREQINV, coef2);
 
     LTFAT_REAL* pcoef  = cout;
     LTFAT_COMPLEX* pcoef2 = coef2;

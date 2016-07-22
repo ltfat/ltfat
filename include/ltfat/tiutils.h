@@ -14,16 +14,16 @@
  *  -----------------
  *
  *  <tt>
- *  ltfat_fftcircshift_d(const complex double in[], const ltfatInt L,const double shift, complex double out[]);
+ *  ltfat_fftcircshift_dc(const complex double in[], const ltfatInt L,const double shift, complex double out[]);
  *
- *  ltfat_fftcircshift_s(const complex float in[], const ltfatInt L,const double shift, complex float out[]);
+ *  ltfat_fftcircshift_sc(const complex float in[], const ltfatInt L,const double shift, complex float out[]);
  *  </tt>
  *
  * \returns Status code
  */
 LTFAT_EXTERN int
-LTFAT_NAME(fftcircshift)(const LTFAT_COMPLEX in[], const ltfatInt L, const double shift,
-                         LTFAT_COMPLEX out[]);
+LTFAT_NAME_COMPLEX(fftcircshift)(const LTFAT_COMPLEX in[], const ltfatInt L, const double shift,
+                                 LTFAT_COMPLEX out[]);
 
 /** fftshift in the Fourier domain via modulation
  *
@@ -35,15 +35,15 @@ LTFAT_NAME(fftcircshift)(const LTFAT_COMPLEX in[], const ltfatInt L, const doubl
  *  -----------------
  *
  *  <tt>
- *  ltfat_fftfftshift_d(const complex double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_fftfftshift_dc(const complex double in[], const ltfatInt L, complex double out[]);
  *
- *  ltfat_fftfftshift_s(const complex float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_fftfftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
  * \returns Status code
  */
 LTFAT_EXTERN int
-LTFAT_NAME(fftfftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
+LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
 
 /** ifftshift in the Fourier domain via modulation
  *
@@ -55,15 +55,15 @@ LTFAT_NAME(fftfftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLE
  *  -----------------
  *
  *  <tt>
- *  ltfat_fftifftshift_d(const complex double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_fftifftshift_dc(const complex double in[], const ltfatInt L, complex double out[]);
  *
- *  ltfat_fftifftshift_s(const complex float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_fftifftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
  * \returns Status code
  */
 LTFAT_EXTERN int
-LTFAT_NAME(fftifftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
+LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
 
 /** circshift in the Fourier domain (fftreal) via modulation
  *
@@ -76,16 +76,16 @@ LTFAT_NAME(fftifftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPL
  *  -----------------
  *
  *  <tt>
- *  ltfat_fftrealcircshift_d(const complex double in[], const ltfatInt L,const double shift, complex double out[]);
+ *  ltfat_fftrealcircshift_dc(const complex double in[], const ltfatInt L,const double shift, complex double out[]);
  *
- *  ltfat_fftrealcircshift_s(const complex float in[], const ltfatInt L,const double shift, complex float out[]);
+ *  ltfat_fftrealcircshift_sc(const complex float in[], const ltfatInt L,const double shift, complex float out[]);
  *  </tt>
  *
  * \returns Status code
  */
 LTFAT_EXTERN int
-LTFAT_NAME(fftrealcircshift)( const LTFAT_COMPLEX in[], const ltfatInt L, const double shift,
-                              LTFAT_COMPLEX out[]);
+LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX in[], const ltfatInt L, const double shift,
+                                      LTFAT_COMPLEX out[]);
 
 /** fftshift in the Fourier domain (fftreal) via modulation
  *
@@ -97,15 +97,15 @@ LTFAT_NAME(fftrealcircshift)( const LTFAT_COMPLEX in[], const ltfatInt L, const 
  *  -----------------
  *
  *  <tt>
- *  ltfat_fftrealfftshift_d(const complex double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_fftrealfftshift_dc(const complex double in[], const ltfatInt L, complex double out[]);
  *
- *  ltfat_fftrealfftshift_s(const complex float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_fftrealfftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
  * \returns Status code
  */
 LTFAT_EXTERN int
-LTFAT_NAME(fftrealfftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
+LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
 
 /** ifftshift in the Fourier domain (fftreal) via modulation
  *
@@ -117,16 +117,16 @@ LTFAT_NAME(fftrealfftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_CO
  *  -----------------
  *
  *  <tt>
- *  ltfat_fftrealifftshift_d(const complex double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_fftrealifftshift_dc(const complex double in[], const ltfatInt L, complex double out[]);
  *
- *  ltfat_fftrealifftshift_s(const complex float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_fftrealifftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
  * \returns Status code
  */
 
 LTFAT_EXTERN int
-LTFAT_NAME(fftrealifftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
+LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_COMPLEX out[]);
 
 
 /** Real to complex array
@@ -139,9 +139,9 @@ LTFAT_NAME(fftrealifftshift)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_C
  *  -----------------
  *
  *  <tt>
- *  ltfat_real2complex_array_d(const double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_real2complex_array_dc(const double in[], const ltfatInt L, complex double out[]);
  *
- *  ltfat_real2complex_array_s(const float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_real2complex_array_sc(const float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
  * \returns Status code
@@ -169,5 +169,108 @@ LTFAT_NAME(real2complex_array)(const LTFAT_REAL in[], const ltfatInt L, LTFAT_CO
 LTFAT_EXTERN int
 LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX in[], const ltfatInt L, LTFAT_REAL out[]);
 
+/** Change dgt phase convention from freq. invariant to time invariant
+ *
+ * N = L/a
+ *
+ * \param[in]  cFreqinv   Input coefficients, size M x N x W
+ * \param[in]  L          Length of the signal
+ * \param[in]  W          Number of signal channels
+ * \param[in]  a          Time hop factor
+ * \param[in]  M          Number of frequency channels
+ * \param[out] cTimeinv   Output coefficients, size M x N x W
+ * \returns Status code
+ *
+ * #### Versions #
+ * <tt>
+ * dgt_phaselock_dc(const complex double cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                  const ltfatInt a, const ltfatInt M, complex double cTimeinv[]);
+ *
+ * dgt_phaselock_sc(const complex float cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                  const ltfatInt a, const ltfatInt M, complex float cTimeinv[]);
+ * </tt>
+ */
+LTFAT_EXTERN int
+LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX cFreqinv[],
+                                  const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                  LTFAT_COMPLEX cTimeinv[]);
+
+/** Change dgt phase convention from time invariant to freq. invariant
+ *
+ * N = L/a
+ *
+ * \param[in]  cFreqinv   Input coefficients, size M x N x W
+ * \param[in]  L          Length of the signal
+ * \param[in]  W          Number of signal channels
+ * \param[in]  a          Time hop factor
+ * \param[in]  M          Number of frequency channels
+ * \param[out] cTimeinv   Output coefficients, size M x N x W
+ * \returns Status code
+ *
+ * #### Versions #
+ * <tt>
+ * dgt_phaseunlock_dc(const complex double cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                    const ltfatInt a, const ltfatInt M, complex double cTimeinv[]);
+ *
+ * dgt_phaseunlock_sc(const complex float cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                    const ltfatInt a, const ltfatInt M, complex float cTimeinv[]);
+ * </tt>
+ */
+LTFAT_EXTERN int
+LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX cTimeinv[],
+                                    const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                    LTFAT_COMPLEX cFreqinv[]);
+
+/** Change dgtreal phase convention from freq. invariant to time invariant
+ *
+ * N = L/a, M2 = M/2 + 1
+ *
+ * \param[in]  cFreqinv   Input coefficients, size M2 x N x W
+ * \param[in]  L          Length of the signal
+ * \param[in]  W          Number of signal channels
+ * \param[in]  a          Time hop factor
+ * \param[in]  M          Number of frequency channels
+ * \param[out] cTimeinv   Output coefficients, size M2 x N x W
+ * \returns Status code
+ *
+ * #### Versions #
+ * <tt>
+ * dgtreal_phaselock_dc(const complex double cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                      const ltfatInt a, const ltfatInt M, complex double cTimeinv[]);
+ *
+ * dgtreal_phaselock_sc(const complex float cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                      const ltfatInt a, const ltfatInt M, complex float cTimeinv[]);
+ * </tt>
+ */
+LTFAT_EXTERN int
+LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX cFreqinv[],
+                                      const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                      LTFAT_COMPLEX cTimeinv[]);
+
+/** Change dgtreal phase convention from time invariant to freq. invariant
+ *
+ * N = L/a, M2 = M/2 + 1
+ *
+ * \param[in]  cFreqinv   Input coefficients, size M2 x N x W
+ * \param[in]  L          Length of the signal
+ * \param[in]  W          Number of signal channels
+ * \param[in]  a          Time hop factor
+ * \param[in]  M          Number of frequency channels
+ * \param[out] cTimeinv   Output coefficients, size M2 x N x W
+ * \returns Status code
+ *
+ * #### Versions #
+ * <tt>
+ * dgtreal_phaseunlock_dc(const complex double cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                        const ltfatInt a, const ltfatInt M, complex double cTimeinv[]);
+ *
+ * dgtreal_phaseunlock_sc(const complex float cFreqinv[], const ltfatInt L, const ltfatInt W,
+ *                        const ltfatInt a, const ltfatInt M, complex float cTimeinv[]);
+ * </tt>
+ */
+LTFAT_EXTERN int
+LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX cTimeinv[],
+                                        const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                        LTFAT_COMPLEX cFreqinv[]);
 
 /** @}*/

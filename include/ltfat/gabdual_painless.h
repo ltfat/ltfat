@@ -22,8 +22,6 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
 
 /** Compute canonical dual window for painless Gabor system
  *
- * Painless system requires gl<=M and gl>=a
- *
  * \param[in]   g    Original window
  * \param[in]  gl    Length of the windows
  * \param[in]   a    Hop factor
@@ -52,8 +50,6 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl, const ltfat
         const ltfatInt M, LTFAT_TYPE* gd);
 
 /** Compute canonical tight window for painless Gabor system
- *
- * Painless system requires gl<=M and gl>=a
  *
  * \param[in]   g    Original window
  * \param[in]  gl    Length of the windows
@@ -90,8 +86,6 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl, const ltfa
  *
  * When using PU window for either analysis or synthesis, the other window can just be
  * rectangular.
- *
- * Painless system requires gl<=M and gl>=a
  *
  * \param[in]   g    Original window
  * \param[in]  gl    Length of the windows

@@ -7,7 +7,7 @@ struct LTFAT_NAME(dgtreal_fb_plan)
     ltfatInt a;
     ltfatInt M;
     ltfatInt gl;
-    dgt_phasetype ptype;
+    ltfat_phaseconvention ptype;
     LTFAT_FFTW(plan) p_small;
     LTFAT_REAL*    sbuf;
     LTFAT_COMPLEX* cbuf;
@@ -20,7 +20,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                        const ltfatInt L, const ltfatInt gl,
                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                       const dgt_phasetype ptype, LTFAT_COMPLEX* cout)
+                       const ltfat_phaseconvention ptype, LTFAT_COMPLEX* cout)
 {
     LTFAT_NAME(dgtreal_fb_plan)* plan = NULL;
 
@@ -72,7 +72,7 @@ memcpy(cout+(n*M2+w*M2*N),cbuf,M2*sizeof*cbuf); \
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
                             const ltfatInt gl, const ltfatInt a,
-                            const ltfatInt M, const dgt_phasetype ptype,
+                            const ltfatInt M, const ltfat_phaseconvention ptype,
                             unsigned flags, LTFAT_NAME(dgtreal_fb_plan)** pout)
 {
     LTFAT_NAME(dgtreal_fb_plan)* plan = NULL;

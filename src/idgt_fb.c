@@ -7,7 +7,7 @@ struct LTFAT_NAME(idgt_fb_plan)
     ltfatInt a;
     ltfatInt M;
     ltfatInt gl;
-    dgt_phasetype ptype;
+    ltfat_phaseconvention ptype;
     LTFAT_COMPLEX* cbuf;
     LTFAT_TYPE*    gw;
     LTFAT_COMPLEX* ff;
@@ -27,7 +27,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
                     const ltfatInt L, const ltfatInt gl, const ltfatInt W,
                     const ltfatInt a, const ltfatInt M,
-                    const dgt_phasetype ptype, LTFAT_COMPLEX* f)
+                    const ltfat_phaseconvention ptype, LTFAT_COMPLEX* f)
 
 {
     LTFAT_NAME(idgt_fb_plan)* plan = NULL;
@@ -48,7 +48,7 @@ error:
 
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_fb_init)(const LTFAT_TYPE* g, const ltfatInt gl,
-                         const ltfatInt a, const ltfatInt M, const dgt_phasetype ptype,
+                         const ltfatInt a, const ltfatInt M, const ltfat_phaseconvention ptype,
                          unsigned flags, LTFAT_NAME(idgt_fb_plan)** pout)
 {
     LTFAT_NAME(idgt_fb_plan)* p = NULL;

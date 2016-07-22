@@ -5,7 +5,7 @@
 LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
 LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
                          const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                         const ltfatInt bl, const dgt_phasetype ptype,
+                         const ltfatInt bl, const ltfat_phaseconvention ptype,
                          unsigned flags)
 {
 
@@ -149,7 +149,7 @@ LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan)
 LTFAT_EXTERN LTFAT_NAME(dgtreal_ola_plan)
 LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL* g, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                             const ltfatInt bl, const dgt_phasetype ptype,
+                             const ltfatInt bl, const ltfat_phaseconvention ptype,
                              unsigned flags)
 {
 

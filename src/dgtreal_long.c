@@ -3,7 +3,7 @@
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                          const ltfatInt L, const ltfatInt W, const ltfatInt a,
-                         const ltfatInt M, const dgt_phasetype ptype,
+                         const ltfatInt M, const ltfat_phaseconvention ptype,
                          LTFAT_COMPLEX* cout)
 {
 
@@ -28,7 +28,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                               const ltfatInt L, const ltfatInt W,
                               const ltfatInt a, const ltfatInt M,
-                              LTFAT_COMPLEX* cout, const dgt_phasetype ptype,
+                              LTFAT_COMPLEX* cout, const ltfat_phaseconvention ptype,
                               unsigned flags, LTFAT_NAME(dgtreal_long_plan)** pout)
 {
     LTFAT_NAME(dgtreal_long_plan)* plan = NULL;

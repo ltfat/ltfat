@@ -10,7 +10,7 @@ struct LTFAT_NAME(idgt_long_plan)
     ltfatInt W;
     ltfatInt c;
     ltfatInt h_a;
-    dgt_phasetype ptype;
+    ltfat_phaseconvention ptype;
     LTFAT_REAL scalconst;
     LTFAT_COMPLEX* f;
     const LTFAT_COMPLEX* cin;
@@ -22,7 +22,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
                       const ltfatInt L, const ltfatInt W,
                       const ltfatInt a, const ltfatInt M,
-                      const dgt_phasetype ptype,
+                      const ltfat_phaseconvention ptype,
                       LTFAT_COMPLEX* f)
 {
     LTFAT_NAME(idgt_long_plan)* plan = NULL;
@@ -48,7 +48,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
                            const ltfatInt L, const ltfatInt W,
                            const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX* f,
-                           const dgt_phasetype ptype, unsigned flags,
+                           const ltfat_phaseconvention ptype, unsigned flags,
                            LTFAT_NAME(idgt_long_plan)** pout)
 {
     LTFAT_NAME(idgt_long_plan)* plan = NULL;
@@ -337,7 +337,7 @@ LTFAT_EXTERN void
 LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* gf,
                      const ltfatInt L, const ltfatInt W,
                      const ltfatInt a, const ltfatInt M,
-                     const dgt_phasetype ptype,
+                     const ltfat_phaseconvention ptype,
                      LTFAT_COMPLEX* f)
 {
 

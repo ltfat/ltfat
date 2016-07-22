@@ -25,19 +25,19 @@ typedef struct LTFAT_NAME(idgtreal_fb_plan) LTFAT_NAME(idgtreal_fb_plan);
  * ltfat_idgtreal_fb_d(const complex double c[], const double g[],
  *                     const ltfatInt L, const ltfatInt gl,
  *                     const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                     const dgt_phasetype ptype, double f[]);
+ *                     const ltfat_phaseconvention ptype, double f[]);
  *
  * ltfat_idgtreal_fb_s(const complex float c[], const float g[],
  *                     const ltfatInt L, const ltfatInt gl,
  *                     const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                     const dgt_phasetype ptype, float f[]);
+ *                     const ltfat_phaseconvention ptype, float f[]);
  * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX c[], const LTFAT_REAL g[],
                         const ltfatInt L, const ltfatInt gl, const ltfatInt W,
                         const ltfatInt a, const ltfatInt M,
-                        const dgt_phasetype ptype, LTFAT_REAL f[]);
+                        const ltfat_phaseconvention ptype, LTFAT_REAL f[]);
 
 /** Initialize plan for Inverse Discrete Gabor Transform for real signals for the filter bank algorithm
  *
@@ -53,17 +53,17 @@ LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX c[], const LTFAT_REAL g[],
  * #### Versions #
  * <tt>
  * ltfat_idgtreal_fb_init_d(const double g[], const ltfatInt gl, const ltfatInt a,
- *                          const ltfatInt M, const dgt_phasetype ptype, unsigned flags
+ *                          const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
  *                          ltfat_idgtreal_fb_plan_d** pout);
  *
  * ltfat_idgtreal_fb_init_s(const float g[], const ltfatInt gl, const ltfatInt a,
- *                          const ltfatInt M, const dgt_phasetype ptype, unsigned flags
+ *                          const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
  *                          ltfat_idgtreal_fb_plan_s** pout);
  * </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL g[], const ltfatInt gl,
-                             const ltfatInt a, const ltfatInt M, const dgt_phasetype ptype,
+                             const ltfatInt a, const ltfatInt M, const ltfat_phaseconvention ptype,
                              unsigned flags, LTFAT_NAME(idgtreal_fb_plan)** pout);
 
 /** Execute plan for Inverse Discrete Gabor Transform for real signals using the filter bank algorithm

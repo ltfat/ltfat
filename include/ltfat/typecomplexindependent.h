@@ -7,6 +7,8 @@
 #include "ciutils.h"
 #include "gabdual_painless.h"
 #include "ci_windows.h"
+#include "dct.h"
+#include "dst.h"
 
 /*   Walnut factorization    */
 
@@ -55,12 +57,21 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
 
 /** \addtogroup gabdual
  * @{
+ *
+ * In order to be able to compute canonical dual or tight windows,
+ * the system must be a frame i.e. M>=a && gl>=a where gl is length
+ * of the window support.
+ *
+ * In general, the canonical dual (tight) window support might not be the same
+ * as of the original window.
+ *
+ * The canonical dual (tight) window is guaranteed to have the same support
+ * in the _painless case_ i.e. if M>=gl holds in addition to the frame condition.
+ *  
  */
 
 
 /** Compute canonical dual window for Gabor system
- *
- * The Gabor system must be a frame i.e. M>=a.
  *
  * \warning This function is not available if libltfat has been compiled with
  * NOBLASLAPACK.
@@ -98,8 +109,6 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
 
 /** Compute canonical tight window for Gabor system
  *
- * The Gabor system must be a frame i.e. M>=a.
- *
  * \warning This function is not available if libltfat has been compiled with
  * NOBLASLAPACK.
  *
@@ -136,7 +145,9 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
 
 /** Compute FIR canonical dual window for Gabor system
  *
- * The Gabor system must be a frame i.e. M>=a.
+ * The function internally calls fir2long, gabdual_long and long2fir. The window
+ * might no longer be exact canonical dual window if gdl is smaller than the
+ * length of the support of the window.
  *
  * \warning This function is not available if libltfat has been compiled with
  * NOBLASLAPACK.
@@ -178,9 +189,11 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
                         const ltfatInt M, const ltfatInt gdl, LTFAT_TYPE* gd);
 
 /** Compute FIR canonical tight window for Gabor system
- *
- * The Gabor system must be a frame i.e. M>=a.
- *
+ * 
+ * The function internally calls fir2long, gabtight_long and long2fir. The window
+ * might no longer be exact canonical tight window if gdl is smaller than the
+ * length of the support of the window.
+ * 
  * \warning This function is not available if libltfat has been compiled with
  * NOBLASLAPACK.
  *
@@ -274,34 +287,34 @@ LTFAT_NAME(idwiltiii_fb)(const LTFAT_TYPE *cin, const LTFAT_TYPE *g,
 
 /* --------------- DCT -------------------*/
 
-LTFAT_EXTERN LTFAT_FFTW(plan)
-LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
-                      const dct_kind kind);
-
-
-LTFAT_EXTERN void
-LTFAT_NAME(dct)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
-                LTFAT_TYPE *cout, const dct_kind kind);
-
-LTFAT_EXTERN void
-LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
-                        const ltfatInt L, const ltfatInt W,
-                        LTFAT_TYPE *cout, const dct_kind kind);
+// LTFAT_EXTERN LTFAT_FFTW(plan)
+// LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+//                       const dct_kind kind);
+//
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(dct)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+//                 LTFAT_TYPE *cout, const dct_kind kind);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+//                         const ltfatInt L, const ltfatInt W,
+//                         LTFAT_TYPE *cout, const dct_kind kind);
 
 /* --------------- DST -------------------*/
 
-LTFAT_EXTERN LTFAT_FFTW(plan)
-LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
-                      const dst_kind kind);
-
-LTFAT_EXTERN void
-LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
-                LTFAT_TYPE *cout, const dst_kind kind);
-
-LTFAT_EXTERN void
-LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
-                        const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
-                        const dst_kind kind);
+// LTFAT_EXTERN LTFAT_FFTW(plan)
+// LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+//                       const dst_kind kind);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+//                 LTFAT_TYPE *cout, const dst_kind kind);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+//                         const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+//                         const dst_kind kind);
 
 /* --------------- Reassignment -----------*/
 

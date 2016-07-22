@@ -1,8 +1,31 @@
 #ifndef _WAVELETS_H
-#define _WAVELETS_H 
+#define _WAVELETS_H
+
+
+typedef enum
+{
+    PER,
+    PERDEC,
+    PPD,
+    SYM,
+    EVEN,
+    SYMW,
+    ASYM,
+    ODD,
+    ASYMW,
+    SP0,
+    ZPD,
+    ZERO,
+    VALID,
+    BAD_TYPE
+} ltfatExtType;
 
 ltfatExtType ltfatExtStringToEnum(const char* extType);
 
+LTFAT_EXTERN
+ltfatInt filterbank_td_size(const ltfatInt L, const ltfatInt a,
+                            const ltfatInt gl, const ltfatInt offset,
+                            const ltfatExtType ext);
 
 #endif
 
@@ -10,10 +33,10 @@ ltfatExtType ltfatExtStringToEnum(const char* extType);
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(extend_left)(const LTFAT_TYPE *in,ltfatInt inLen, LTFAT_TYPE *buffer, ltfatInt buffLen, ltfatInt filtLen, ltfatExtType ext, ltfatInt a);
+LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, ltfatInt inLen, LTFAT_TYPE *buffer, ltfatInt buffLen, ltfatInt filtLen, ltfatExtType ext, ltfatInt a);
 
 LTFAT_EXTERN void
-LTFAT_NAME(extend_right)(const LTFAT_TYPE *in,ltfatInt inLen, LTFAT_TYPE *buffer, ltfatInt filtLen, ltfatExtType ext, ltfatInt a);
+LTFAT_NAME(extend_right)(const LTFAT_TYPE *in, ltfatInt inLen, LTFAT_TYPE *buffer, ltfatInt filtLen, ltfatExtType ext, ltfatInt a);
 
 
 
@@ -59,7 +82,7 @@ LTFAT_NAME(iatrousfilterbank_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g[],
 LTFAT_EXTERN void
 LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
                              const ltfatInt L, const ltfatInt gl,
-                             const ltfatInt ga,ltfatInt skip,
+                             const ltfatInt ga, ltfatInt skip,
                              LTFAT_TYPE *c, ltfatExtType ext);
 
 LTFAT_EXTERN void
@@ -67,7 +90,6 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
                             const ltfatInt L, const ltfatInt gl,
                             const ltfatInt ga, const ltfatInt skip,
                             LTFAT_TYPE *f, ltfatExtType ext);
-
 
 
 

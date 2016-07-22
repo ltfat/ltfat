@@ -5,14 +5,34 @@
 
 #define NORTHFROMW(w,M,N) ((((w) + 1) % (M)) + (w) - (w) % (M))
 #define SOUTHFROMW(w,M,N) (((w) - 1 + (M)) % (M) + (w) - (w) % (M))
-
 #define EASTFROMW(w,M,N)  (((w) + (M)) % ((M) * (N)))
 #define WESTFROMW(w,M,N)  (((w) - (M) + (M) * (N)) % ((M) * (N)))
 
-struct LTFAT_NAME(heap)*
+struct LTFAT_NAME(heap)
+{
+    ltfatInt* h;
+    ltfatInt heapsize;
+    ltfatInt totalheapsize;
+    const LTFAT_REAL* s;
+};
+
+struct LTFAT_NAME(heapinttask)
+{
+    ltfatInt height;
+    ltfatInt N;
+    int do_real;
+    int* donemask;
+    void (*intfun)(const  LTFAT_NAME(heapinttask)*,
+                   const LTFAT_REAL*, const LTFAT_REAL*,
+                   const ltfatInt, LTFAT_REAL* );
+    LTFAT_NAME(heap)* heap;
+};
+
+
+LTFAT_NAME(heap)*
 LTFAT_NAME(heap_init)(const ltfatInt initmaxsize, const LTFAT_REAL* s)
 {
-    struct LTFAT_NAME(heap)* h = ltfat_malloc(sizeof * h);
+    LTFAT_NAME(heap)* h = ltfat_malloc(sizeof * h);
 
     h->totalheapsize  = initmaxsize;
     h->h              = ltfat_malloc(h->totalheapsize * sizeof * h->h);
@@ -22,32 +42,32 @@ LTFAT_NAME(heap_init)(const ltfatInt initmaxsize, const LTFAT_REAL* s)
 }
 
 void
-LTFAT_NAME(heap_done)(struct LTFAT_NAME(heap)* h)
+LTFAT_NAME(heap_done)(LTFAT_NAME(heap)* h)
 {
     ltfat_free(h->h);
     ltfat_free(h);
 }
 
 void
-LTFAT_NAME(heap_reset)(struct LTFAT_NAME(heap)* h, const LTFAT_REAL* news)
+LTFAT_NAME(heap_reset)(LTFAT_NAME(heap)* h, const LTFAT_REAL* news)
 {
     h->s = news;
     h->heapsize = 0;
 }
 
 void
-LTFAT_NAME(heap_grow)(struct LTFAT_NAME(heap)* h, int factor)
+LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
     h->h = ltfat_realloc(h->h,
-                         h->totalheapsize * sizeof * h->h / 2,
+                         h->totalheapsize * sizeof * h->h / factor,
                          h->totalheapsize * sizeof * h->h);
 }
 
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
+LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key)
 {
     ltfatInt pos, pos2, swap;
 
@@ -82,7 +102,7 @@ LTFAT_NAME(heap_insert)(struct LTFAT_NAME(heap) *h, const ltfatInt key)
 }
 
 LTFAT_EXTERN ltfatInt
-LTFAT_NAME(heap_delete)(struct LTFAT_NAME(heap) *h)
+LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 {
 
     ltfatInt pos, maxchildpos, swap, key;
@@ -143,13 +163,12 @@ LTFAT_NAME(heap_delete)(struct LTFAT_NAME(heap) *h)
     return key;
 }
 
-LTFAT_EXTERN
-struct LTFAT_NAME(heapinttask)*
+LTFAT_EXTERN LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
                              const ltfatInt initheapsize,
                              const LTFAT_REAL* s, int do_real)
 {
-    struct LTFAT_NAME(heapinttask)* hit = ltfat_malloc(sizeof * hit);
+    LTFAT_NAME(heapinttask)* hit = ltfat_malloc(sizeof * hit);
     hit->height = height;
     hit->N = N;
     hit->donemask = ltfat_malloc(height * N * sizeof * hit->donemask);
@@ -164,9 +183,8 @@ LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
     return hit;
 }
 
-LTFAT_EXTERN
-void
-LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit)
+LTFAT_EXTERN void
+LTFAT_NAME(heapinttask_done)( LTFAT_NAME(heapinttask)* hit)
 {
     if (hit->heap)
         LTFAT_NAME(heap_done)(hit->heap);
@@ -175,9 +193,16 @@ LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit)
     ltfat_free(hit);
 }
 
+LTFAT_EXTERN int*
+LTFAT_NAME(heapinttask_get_mask)( LTFAT_NAME(heapinttask)* hit)
+{
+    return hit->donemask;
+}
+
+
 LTFAT_EXTERN
 void
-LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
+LTFAT_NAME(heapinttask_resetmax)(LTFAT_NAME(heapinttask)* hit,
                                  const LTFAT_REAL* news,
                                  const LTFAT_REAL tol)
 {
@@ -189,68 +214,58 @@ LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
     // Find the biggest coefficient
     LTFAT_NAME_REAL(findmaxinarray)(news,  hit->height * hit->N , &maxs, &Imax);
 
-    /* Mark all the small elements as done, they get zero phase.
-     * Code 5
-     */
+    /* Mark all the small elements as done, they get zero phase.  */
     for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
     {
         if (news[ii] <= tol * maxs)
-            hit->donemask[ii] = 5;
+            hit->donemask[ii] = LTFAT_MASK_BELOWTOL;
         else
-            hit->donemask[ii] = 0;
+            hit->donemask[ii] = LTFAT_MASK_UNKNOWN;
     }
 
     LTFAT_NAME(heap_insert)(hit->heap, Imax);
-    hit->donemask[Imax] = 6;
+    hit->donemask[Imax] = LTFAT_MASK_STARTPOINT;
 }
 
 LTFAT_EXTERN
 void
-LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
+LTFAT_NAME(heapinttask_resetmask)(LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
                                   const LTFAT_REAL* news,
                                   const LTFAT_REAL tol,
                                   const int do_log)
 {
-    ltfatInt Imax;
+    ltfatInt dummyImax;
     LTFAT_REAL maxs;
 
     LTFAT_NAME(heap_reset)(hit->heap, news);
 
     /* Copy known phase */
-    /* Code 12 */
     for (ltfatInt w = 0; w < hit->height * hit->N; w++)
     {
-        if (mask[w])
-        {
-            hit->donemask[w] = 12; /* Code of known phase */
-        }
+        if (mask[w] > LTFAT_MASK_UNKNOWN)
+            hit->donemask[w] = LTFAT_MASK_KNOWN;
         else
-        {
-            /* phase[w]    = 0; */
-            hit->donemask[w] = 0; /* Mask of unknown phase */
-        }
+            hit->donemask[w] = LTFAT_MASK_UNKNOWN;
     }
 
-    /* We will start intergration from the biggest coefficient */
-    LTFAT_NAME_REAL(findmaxinarray)(news, hit->height * hit->N, &maxs, &Imax);
+    /* Just find max element */
+    LTFAT_NAME_REAL(findmaxinarray)(news, hit->height * hit->N, &maxs, &dummyImax);
 
     /* Mark all the small elements as done, they get zero phase.
      * (But should get random phase instead)
-     * Code 5
      */
-
     if (do_log)
     {
         for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
             if (news[ii] <= tol + maxs)
-                hit->donemask[ii] = 5;
+                hit->donemask[ii] = LTFAT_MASK_BELOWTOL;
     }
     else
     {
         for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
             if (news[ii] <= tol * maxs)
-                hit->donemask[ii] = 5;
+                hit->donemask[ii] = LTFAT_MASK_BELOWTOL;
     }
 
     if (hit->do_real)
@@ -261,14 +276,14 @@ LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
 
 
 
-void LTFAT_NAME(trapezheap)(const struct LTFAT_NAME(heapinttask) *hit,
+void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
                             const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
                             const ltfatInt w,
                             LTFAT_REAL* phase)
 {
     const ltfatInt M = hit->height;
     const ltfatInt N = hit->N;
-    struct LTFAT_NAME(heap)* h = hit->heap;
+    LTFAT_NAME(heap)* h = hit->heap;
     int* donemask = hit->donemask;
     ltfatInt w_E, w_W, w_N, w_S;
 
@@ -281,7 +296,7 @@ void LTFAT_NAME(trapezheap)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_N])
     {
         phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) / 2;
-        donemask[w_N] = 1;
+        donemask[w_N] = LTFAT_MASK_WENTNORTH;
         LTFAT_NAME(heap_insert)(h, w_N);
     }
 
@@ -291,7 +306,7 @@ void LTFAT_NAME(trapezheap)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_S])
     {
         phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) / 2;
-        donemask[w_S] = 2;
+        donemask[w_S] = LTFAT_MASK_WENTSOUTH;
         LTFAT_NAME(heap_insert)(h, w_S);
     }
 
@@ -301,7 +316,7 @@ void LTFAT_NAME(trapezheap)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_E])
     {
         phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) / 2;
-        donemask[w_E] = 3;
+        donemask[w_E] = LTFAT_MASK_WENTEAST;
         LTFAT_NAME(heap_insert)(h, w_E);
     }
 
@@ -311,7 +326,7 @@ void LTFAT_NAME(trapezheap)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_W])
     {
         phase[w_W] = phase[w] - (tgradw[w] + tgradw[w_W]) / 2;
-        donemask[w_W] = 4;
+        donemask[w_W] = LTFAT_MASK_WENTWEST;
         LTFAT_NAME(heap_insert)(h, w_W);
     }
 }
@@ -320,7 +335,7 @@ void LTFAT_NAME(trapezheap)(const struct LTFAT_NAME(heapinttask) *hit,
 void
 LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
                           ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,
-                          dgt_phasetype phasetype, int do_real,
+                          ltfat_phaseconvention phasetype, int do_real,
                           LTFAT_REAL* tgradw, LTFAT_REAL* fgradw)
 {
     ltfatInt N = L / a;
@@ -340,13 +355,13 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
         {
             for (ltfatInt m = 0; m < height; m++)
             {
-                if (phasetype == FREQINV)
+                if (phasetype == LTFAT_FREQINV)
                 {
                     tgradwchan[m + n * height] =    a * tgradchan[m + n * height] * sampToRadConst;
                     fgradwchan[m + n * height] =  - b * ( fgradchan[m + n * height] + n * a ) *
                                                   sampToRadConst;
                 }
-                else if (phasetype == TIMEINV)
+                else if (phasetype == LTFAT_TIMEINV)
                 {
                     tgradwchan[m + n * height] =    a * (tgradchan[m + n * height] + m * b) *
                                                     sampToRadConst;
@@ -367,7 +382,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
                          LTFAT_REAL tol,  LTFAT_REAL* phase)
 {
     /* Declarations */
-    struct LTFAT_NAME(heapinttask)* hit;
+    LTFAT_NAME(heapinttask)* hit;
 
     // Width of s
     ltfatInt N = L / a;
@@ -404,7 +419,7 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
                                LTFAT_REAL* phase)
 {
     /* Declarations */
-    struct LTFAT_NAME(heapinttask)* hit;
+    LTFAT_NAME(heapinttask)* hit;
 
     ltfatInt N = L / a;
 
@@ -436,7 +451,7 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
 }
 
 void
-LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
+LTFAT_NAME(borderstoheap)(LTFAT_NAME(heap)* h,
                           const ltfatInt height, const ltfatInt N,
                           int* donemask)
 {
@@ -444,7 +459,7 @@ LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
     {
         // Is it a coefficient with known phase and is it big enough?
         // 5 is code of coefficients below tol
-        if (donemask[w] && donemask[w] != 5)
+        if (donemask[w] == LTFAT_MASK_KNOWN)
         {
             // Is it a border coefficient?
             // i.e. is any of the 4 neighbors not reliable?
@@ -453,7 +468,7 @@ LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
                  !donemask[SOUTHFROMW(w, height, N)] ||
                  !donemask[ WESTFROMW(w, height, N)] )
             {
-                donemask[w] = 11; // Code of a good border coefficient
+                donemask[w] = LTFAT_MASK_BORDERPOINT; // Code of a good border coefficient
                 LTFAT_NAME(heap_insert)(h, w);
             }
         }
@@ -468,7 +483,7 @@ LTFAT_NAME(borderstoheap)(struct LTFAT_NAME(heap)* h,
  *
  * */
 void
-LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
+LTFAT_NAME(borderstoheapreal)(LTFAT_NAME(heap)* h,
                               const ltfatInt height, const ltfatInt N,
                               int* donemask)
 {
@@ -476,7 +491,7 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
     for (ltfatInt w = 0; w < height * N ; w++)
     {
         // Is it a coefficient with known phase and is it big enough?
-        if (donemask[w] == 12)
+        if (donemask[w] == LTFAT_MASK_KNOWN)
         {
             ltfatInt col = w / height;
             ltfatInt row = w % height;
@@ -488,14 +503,14 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
                  ( row != 0        && !donemask[SOUTHFROMW(w, height, N)])  ||
                  ( col != 0        && !donemask[ WESTFROMW(w, height, N)]) )
             {
-                donemask[w] = 11; // Code of a good border coefficient
+                donemask[w] = LTFAT_MASK_BORDERPOINT; // Code of a good border coefficient
                 LTFAT_NAME(heap_insert)(h, w);
             }
         }
     }
 }
 
-void LTFAT_NAME(trapezheapreal)(const struct LTFAT_NAME(heapinttask) *hit,
+void LTFAT_NAME(trapezheapreal)(const LTFAT_NAME(heapinttask) *hit,
                                 const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
                                 const ltfatInt w,
                                 LTFAT_REAL* phase)
@@ -503,7 +518,7 @@ void LTFAT_NAME(trapezheapreal)(const struct LTFAT_NAME(heapinttask) *hit,
     const ltfatInt M2 = hit->height;
     const ltfatInt N = hit->N;
     int* donemask = hit->donemask;
-    struct LTFAT_NAME(heap) *h = hit->heap;
+    LTFAT_NAME(heap) *h = hit->heap;
     ltfatInt w_E, w_W, w_N, w_S, row, col;
 
     /* North */
@@ -523,49 +538,46 @@ void LTFAT_NAME(trapezheapreal)(const struct LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_N] && row != M2 - 1 )
     {
-
         phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) / 2;
-        donemask[w_N] = 1;
+        donemask[w_N] = LTFAT_MASK_WENTNORTH;
         LTFAT_NAME(heap_insert)(h, w_N);
     }
 
     if (!donemask[w_S] && row != 0)
     {
-
         phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) / 2;
-        donemask[w_S] = 2;
+        donemask[w_S] = LTFAT_MASK_WENTSOUTH;
         LTFAT_NAME(heap_insert)(h, w_S);
     }
 
     if (!donemask[w_E] && col != N - 1)
     {
-
         phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) / 2;
-        donemask[w_E] = 3;
+        donemask[w_E] = LTFAT_MASK_WENTEAST;
         LTFAT_NAME(heap_insert)(h, w_E);
     }
 
     if (!donemask[w_W] && col != 0)
     {
         phase[w_W] = phase[w] - (tgradw[w] + tgradw[w_W]) / 2;
-        donemask[w_W] = 4;
+        donemask[w_W] = LTFAT_MASK_WENTWEST;
         LTFAT_NAME(heap_insert)(h, w_W);
     }
 
 }
 
 LTFAT_EXTERN
-void LTFAT_NAME(heapint_execute)(struct LTFAT_NAME(heapinttask)* hit,
-                                 const LTFAT_REAL* tgradw,
-                                 const LTFAT_REAL* fgradw,
-                                 LTFAT_REAL* phase)
+void LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
+                                  const LTFAT_REAL* tgradw,
+                                  const LTFAT_REAL* fgradw,
+                                  LTFAT_REAL* phase)
 {
     /* Declarations */
     ltfatInt Imax;
     ltfatInt w;
     LTFAT_REAL maxs;
     int* donemask = hit->donemask;
-    struct LTFAT_NAME(heap)* h = hit->heap;
+    LTFAT_NAME(heap)* h = hit->heap;
 
     while (1)
     {
@@ -584,7 +596,7 @@ void LTFAT_NAME(heapint_execute)(struct LTFAT_NAME(heapinttask)* hit,
 
         /* Put maximal element onto the heap and mark that it is done. */
         LTFAT_NAME(heap_insert)(h, Imax);
-        donemask[Imax] = 6;
+        donemask[Imax] = LTFAT_MASK_STARTPOINT;
     }
 }
 
@@ -600,7 +612,7 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
                              LTFAT_REAL tol, LTFAT_REAL* phase)
 {
     /* Declarations */
-    struct LTFAT_NAME(heapinttask)* hit;
+    LTFAT_NAME(heapinttask)* hit;
 
     // Height of s
     ltfatInt M2 = M / 2 + 1;
@@ -629,7 +641,6 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
     LTFAT_NAME(heapinttask_done)(hit);
 }
 
-
 LTFAT_EXTERN
 void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
                                    const LTFAT_REAL* tgradw,
@@ -640,7 +651,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
                                    LTFAT_REAL tol, LTFAT_REAL* phase)
 {
     /* Declarations */
-    struct LTFAT_NAME(heapinttask)* hit;
+    LTFAT_NAME(heapinttask)* hit;
 
     ltfatInt M2 = M / 2 + 1;
     ltfatInt N = L / a;
@@ -650,7 +661,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
 
     // Set all phases outside of the mask to zeros, do not modify the rest
     for (ltfatInt ii = 0; ii < M2 * N * W; ii++)
-        if (!mask[ii])
+        if (mask[ii] <= LTFAT_MASK_UNKNOWN)
             phase[ii] = 0;
 
     for (ltfatInt w = 0; w < W; ++w)
@@ -675,7 +686,6 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
  *  They convert the relative phase gradients in samples to
  *  absolute phase gradinets in radians.
  * */
-
 LTFAT_EXTERN void
 LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL* s,
                                   const LTFAT_REAL* tgrad,
@@ -683,7 +693,7 @@ LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL* s,
                                   const int* mask,
                                   const ltfatInt a, const ltfatInt M,
                                   const ltfatInt L, const ltfatInt W,
-                                  const LTFAT_REAL tol, dgt_phasetype phasetype,
+                                  const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                   LTFAT_REAL* phase)
 {
     ltfatInt N = L / a;
@@ -708,7 +718,7 @@ LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL* s,
                             const LTFAT_REAL* fgrad,
                             const ltfatInt a, const ltfatInt M,
                             const ltfatInt L, const ltfatInt W,
-                            const LTFAT_REAL tol, dgt_phasetype phasetype,
+                            const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                             LTFAT_REAL* phase)
 {
     ltfatInt N = L / a;
@@ -734,7 +744,7 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
                                       const int* mask,
                                       const ltfatInt a, const ltfatInt M,
                                       const ltfatInt L, const ltfatInt W,
-                                      LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL* phase)
+                                      LTFAT_REAL tol, ltfat_phaseconvention phasetype, LTFAT_REAL* phase)
 {
     ltfatInt M2 = M / 2 + 1;
     ltfatInt N = L / a;
@@ -760,7 +770,7 @@ void LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL* s,
                                      const LTFAT_REAL* fgrad,
                                      const ltfatInt a, const ltfatInt M,
                                      const ltfatInt L, const ltfatInt W,
-                                     LTFAT_REAL tol, dgt_phasetype phasetype, LTFAT_REAL* phase)
+                                     LTFAT_REAL tol, ltfat_phaseconvention phasetype, LTFAT_REAL* phase)
 {
     ltfatInt M2 = M / 2 + 1;
     ltfatInt N = L / a;

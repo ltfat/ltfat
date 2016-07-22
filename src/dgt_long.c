@@ -4,7 +4,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgt_long)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
                      const ltfatInt L, const ltfatInt W,
                      const ltfatInt a, const ltfatInt M,
-                     const dgt_phasetype ptype, LTFAT_COMPLEX* cout)
+                     const ltfat_phaseconvention ptype, LTFAT_COMPLEX* cout)
 {
     LTFAT_NAME(dgt_long_plan)* plan = NULL;
 
@@ -26,7 +26,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
                           const ltfatInt L, const ltfatInt W,
                           const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX* cout,
-                          const dgt_phasetype ptype, unsigned flags,
+                          const ltfat_phaseconvention ptype, unsigned flags,
                           LTFAT_NAME(dgt_long_plan)** pout)
 {
     LTFAT_NAME(dgt_long_plan)* plan = NULL;
@@ -130,7 +130,7 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan)
 
     LTFAT_NAME(dgt_walnut_execute)(plan, plan->cout);
 
-    if (TIMEINV == plan->ptype)
+    if (LTFAT_TIMEINV == plan->ptype)
         LTFAT_NAME_COMPLEX(dgtphaselockhelper)(plan->cout, plan->L, plan->W,
                                                plan->a, plan->M, plan->cout);
 
@@ -154,7 +154,7 @@ LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
 
     LTFAT_NAME(dgt_walnut_execute)(&plan2, c);
 
-    if (TIMEINV == plan->ptype)
+    if (LTFAT_TIMEINV == plan->ptype)
         LTFAT_NAME_COMPLEX(dgtphaselockhelper)(plan->cout, plan->L, plan->W,
                                                plan->a, plan->M, plan->cout);
 

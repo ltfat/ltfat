@@ -32,50 +32,6 @@ typedef ptrdiff_t ltfatInt;
 #endif /* defined(LTFAT_COMPAT32) */
 
 
-typedef enum
-{
-    FREQINV = 0,
-    TIMEINV = 1
-} dgt_phasetype;
-
-typedef enum
-{
-    DCTI = FFTW_REDFT00, DCTIII = FFTW_REDFT01,
-    DCTII = FFTW_REDFT10, DCTIV = FFTW_REDFT11
-} dct_kind;
-
-
-typedef enum
-{
-    DSTI = FFTW_RODFT00, DSTIII = FFTW_RODFT01,
-    DSTII = FFTW_RODFT10, DSTIV = FFTW_RODFT11
-} dst_kind;
-
-typedef enum
-{
-    CZT_NEXTFASTFFT,
-    CZT_NEXTPOW2
-} czt_ffthint;
-
-typedef enum
-{
-    PER,
-    PERDEC,
-    PPD,
-    SYM,
-    EVEN,
-    SYMW,
-    ASYM,
-    ODD,
-    ASYMW,
-    SP0,
-    ZPD,
-    ZERO,
-    VALID,
-    BAD_TYPE
-} ltfatExtType;
-
-
 /* Handle Windows DLL files */
 /* defined by Makefile when compiling LTFAT */
 #if defined(DLL_EXPORT_SYMBOLS) && ((defined(_WIN32) || defined(__WIN32__)))
@@ -84,11 +40,11 @@ typedef enum
 #  define LTFAT_EXTERN extern
 #endif
 
-#define LTFAT_MAKENAME(name,type,comp) ltfat ## _ ## name ## _ ## type ## comp
-#define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,d,)
-#define LTFAT_NAME_SINGLE(name) LTFAT_MAKENAME(name,s,)
-#define LTFAT_NAME_COMPLEXDOUBLE(name) LTFAT_MAKENAME(name,d,c)
-#define LTFAT_NAME_COMPLEXSINGLE(name) LTFAT_MAKENAME(name,s,c)
+#define LTFAT_MAKENAME(name,suffix) ltfat ## _ ## name ## suffix
+#define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,_d)
+#define LTFAT_NAME_SINGLE(name) LTFAT_MAKENAME(name,_s)
+#define LTFAT_NAME_COMPLEXDOUBLE(name) LTFAT_MAKENAME(name,_dc)
+#define LTFAT_NAME_COMPLEXSINGLE(name) LTFAT_MAKENAME(name,_sc)
 
 /* BEGIN_C_DECLS */
 

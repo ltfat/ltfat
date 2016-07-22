@@ -7,7 +7,7 @@ LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                     const ltfatInt L, const ltfatInt gl,
                     const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                    const ltfatInt bl, const dgt_phasetype ptype,
+                    const ltfatInt bl, const ltfat_phaseconvention ptype,
                     LTFAT_COMPLEX* cout)
 {
     LTFAT_NAME(dgt_ola_plan) plan =
@@ -24,7 +24,7 @@ LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                         const ltfatInt L, const ltfatInt gl,
                         const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                        const ltfatInt bl, const dgt_phasetype ptype,
+                        const ltfatInt bl, const ltfat_phaseconvention ptype,
                         LTFAT_COMPLEX* cout)
 {
     LTFAT_NAME(dgtreal_ola_plan) plan =

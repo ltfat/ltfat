@@ -72,7 +72,7 @@ LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME_COMPLEX(idgt_long)(coef2, g, L, W, M, 2 * M, FREQINV, f);
+    LTFAT_NAME_COMPLEX(idgt_long)(coef2, g, L, W, M, 2 * M, LTFAT_FREQINV, f);
 
     ltfat_free(coef2);
 
@@ -95,7 +95,7 @@ LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 
     PREPROC_REAL
 
-    LTFAT_NAME(idgtreal_long)(coef2, g, L, W, M, 2 * M, FREQINV, f);
+    LTFAT_NAME(idgtreal_long)(coef2, g, L, W, M, 2 * M, LTFAT_FREQINV, f);
 
     ltfat_free(coef2);
 
@@ -121,7 +121,7 @@ LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 
     PREPROC_COMPLEX
 
-    LTFAT_NAME_COMPLEX(idgt_fb)(coef2, g, L, gl, W, M, 2 * M, FREQINV, f);
+    LTFAT_NAME_COMPLEX(idgt_fb)(coef2, g, L, gl, W, M, 2 * M, LTFAT_FREQINV, f);
 
     ltfat_free(coef2);
 
@@ -145,7 +145,7 @@ LTFAT_NAME_REAL(idwilt_fb)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 
     PREPROC_REAL
 
-    LTFAT_NAME(idgtreal_fb)(coef2, g, L, gl, W, M, 2 * M, FREQINV, f);
+    LTFAT_NAME(idgtreal_fb)(coef2, g, L, gl, W, M, 2 * M, LTFAT_FREQINV, f);
 
     ltfat_free(coef2);
 }

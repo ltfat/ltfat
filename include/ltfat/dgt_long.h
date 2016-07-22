@@ -4,19 +4,7 @@ typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
  *  \addtogroup dgtlong
  * @{
  *
- * \anchor dgt
- *  \f[
- *  c(m,n) 
- *   = \sum_{l=0}^{L-1}\! f(l)
- *   \overline{g(l-na)} \me^{-\mi 2\pi l m/M } \,
- *  \f]
- *
- *
- *  \f[
- *  c(m,n) 
- *   = \sum_{l=0}^{L-1}\! f(l)
- *   \overline{g(l-na)} \me^{-\mi 2\pi (l-na) m/M } \,
- *  \f]
+
  *
  */
 
@@ -39,27 +27,27 @@ typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
  *  <tt>
  *  ltfat_dgt_long_d(const double f[], const double g[], const ltfatInt L,
  *                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                   const dgt_phasetype ptype, complex double c[]);
+ *                   const ltfat_phaseconvention ptype, complex double c[]);
  *
  *  ltfat_dgt_long_s(const float f[], const float g[], const ltfatInt L,
  *                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                   const dgt_phasetype ptype, complex float c[]);
+ *                   const ltfat_phaseconvention ptype, complex float c[]);
  *
  *  ltfat_dgt_long_dc(const complex double f[], const complex double g[],
  *                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                    const ltfatInt M, const dgt_phasetype ptype,
+ *                    const ltfatInt M, const ltfat_phaseconvention ptype,
  *                    complex double c[]);
  *
  *  ltfat_dgt_long_sc(const complex float f[], const complex float g[],
  *                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                    const ltfatInt M, const dgt_phasetype ptype,
+ *                    const ltfatInt M, const ltfat_phaseconvention ptype,
  *                    complex float c[]);
  *  </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-                     const ltfatInt M, const dgt_phasetype ptype,
+                     const ltfatInt M, const ltfat_phaseconvention ptype,
                      LTFAT_COMPLEX c[]);
 
 /** Inicialization of the DGT plan
@@ -83,31 +71,31 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
  *  <tt>
  *  ltfat_dgt_long_init_d(const double f[], const double g[], const ltfatInt L,
  *                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                        complex double c[], const dgt_phasetype ptype,
+ *                        complex double c[], const ltfat_phaseconvention ptype,
  *                        unsigned flags, dgt_long_plan_d** p);
  *
  *  ltfat_dgt_long_init_s(const float f[], const float g[], const ltfatInt L,
  *                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                        complex float c[], const dgt_phasetype ptype,
+ *                        complex float c[], const ltfat_phaseconvention ptype,
  *                        unsigned flags, dgt_long_plan_s** p);
  *
  *  ltfat_dgt_long_init_dc(const complex double f[], const complex double g[],
  *                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
  *                         const ltfatInt M, complex double c[],
- *                         const dgt_phasetype ptype, unsigned flags,
+ *                         const ltfat_phaseconvention ptype, unsigned flags,
  *                         dgt_long_plan_dc** p);
  *
  *  ltfat_dgt_long_init_sc(complex float f[], const complex float g[],
  *                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
  *                         const ltfatInt M, complex float c[],
- *                         const dgt_phasetype ptype, unsigned flags,
+ *                         const ltfat_phaseconvention ptype, unsigned flags,
  *                         dgt_long_plan_sc** p);
  *  </tt>
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], const ltfatInt L,
                           const ltfatInt W, const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX c[],
-                          const dgt_phasetype ptype, unsigned flags,
+                          const ltfat_phaseconvention ptype, unsigned flags,
                           LTFAT_NAME(dgt_long_plan)** p);
 
 /** Execute DGT plan

@@ -1,3 +1,15 @@
+#ifndef _GOERTZEL_H
+#define _GOERTZEL_H
+
+typedef enum
+{
+    CZT_NEXTFASTFFT,
+    CZT_NEXTPOW2
+} czt_ffthint;
+
+#endif
+
+
 /*
 Goertzel algorithm
 */

@@ -28,13 +28,13 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt 
 // LTFAT_EXTERN void
 // LTFAT_NAME(dgtreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 //                          const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-//                          const ltfatInt M, const dgt_phasetype ptype,
+//                          const ltfatInt M, const ltfat_phaseconvention ptype,
 //                          LTFAT_COMPLEX *cout);
 
 // LTFAT_EXTERN void
 // LTFAT_NAME(dgt_fac_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
 //                       const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-//                       const ltfatInt M, const dgt_phasetype ptype,
+//                       const ltfatInt M, const ltfat_phaseconvention ptype,
 //                       LTFAT_COMPLEX *cout);
 
 // LTFAT_EXTERN
@@ -77,13 +77,13 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const lt
 // LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 //                        const ltfatInt L, const ltfatInt gl,
 //                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
-//                        const dgt_phasetype ptype, LTFAT_COMPLEX *cout);
+//                        const ltfat_phaseconvention ptype, LTFAT_COMPLEX *cout);
 
 // LTFAT_EXTERN void
 // LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
 //                     const ltfatInt L, const ltfatInt gl,
 //                     const ltfatInt W, const ltfatInt a, const ltfatInt M,
-//                     const dgt_phasetype ptype, LTFAT_COMPLEX *f);
+//                     const ltfat_phaseconvention ptype, LTFAT_COMPLEX *f);
 //
 // LTFAT_EXTERN void
 // LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
@@ -97,14 +97,14 @@ LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
                     const ltfatInt L, const ltfatInt gl,
                     const ltfatInt W, const ltfatInt a,
                     const ltfatInt M, const ltfatInt bl,
-                    const dgt_phasetype ptype,
+                    const ltfat_phaseconvention ptype,
                     LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgtreal_ola)(const LTFAT_REAL *f, const LTFAT_REAL *g,
                         const ltfatInt L, const ltfatInt gl,
                         const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                        const ltfatInt bl, const dgt_phasetype ptype,
+                        const ltfatInt bl, const ltfat_phaseconvention ptype,
                         LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN void
@@ -370,46 +370,55 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
 /* --------- other stuff -------- */
 
-/*******  HEAM_PINT "plan" ***********/
-struct LTFAT_NAME(heapinttask)
+#ifndef _ltfat_mask_element_defined
+#define _ltfat_mask_element_defined
+
+enum ltfat_mask_element
 {
-    ltfatInt height;
-    ltfatInt N;
-    int do_real;
-    int *donemask;
-    void (*intfun)(const struct LTFAT_NAME(heapinttask) *,
-                   const LTFAT_REAL*, const LTFAT_REAL*,
-                   const ltfatInt, LTFAT_REAL* );
-    struct LTFAT_NAME(heap)* heap;
+    LTFAT_MASK_BELOWTOL    = -1, // Do not compute phase, the coefficient is too small
+    LTFAT_MASK_UNKNOWN     =  0, // Will compute phase for these
+    LTFAT_MASK_KNOWN       =  1, // The phase was already known
+    LTFAT_MASK_WENTNORTH   =  2, // Phase was spread from the south neighbor
+    LTFAT_MASK_WENTSOUTH   =  3, // Phase was spread from the north neighbor
+    LTFAT_MASK_WENTEAST    =  4, // Phase was spread from the west neighbor
+    LTFAT_MASK_WENTWEST    =  5, // Phase was spread from the east neighbor
+    LTFAT_MASK_STARTPOINT  =  6, // This is the initial point of integration. It gets zero phase
+    LTFAT_MASK_BORDERPOINT =  7, // This is candidate border coefficient with known phase
 };
 
-LTFAT_EXTERN
-struct LTFAT_NAME(heapinttask)*
+#endif
+
+typedef struct LTFAT_NAME(heapinttask) LTFAT_NAME(heapinttask);
+
+LTFAT_EXTERN LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
                              const ltfatInt initheapsize,
                              const LTFAT_REAL* s, int do_real);
 
-LTFAT_EXTERN
-void LTFAT_NAME(heapint_execute)(struct LTFAT_NAME(heapinttask)* hit,
-                                 const LTFAT_REAL* tgradw,
-                                 const LTFAT_REAL* fgradw,
-                                 LTFAT_REAL* phase);
+LTFAT_EXTERN void
+LTFAT_NAME(heapint_execute)(LTFAT_NAME(heapinttask)* hit,
+                            const LTFAT_REAL* tgradw,
+                            const LTFAT_REAL* fgradw,
+                            LTFAT_REAL* phase);
 
 LTFAT_EXTERN void
-LTFAT_NAME(heapinttask_done)(struct LTFAT_NAME(heapinttask)* hit);
+LTFAT_NAME(heapinttask_done)(LTFAT_NAME(heapinttask)* hit);
 
 LTFAT_EXTERN void
-LTFAT_NAME(heapinttask_resetmax)(struct LTFAT_NAME(heapinttask)* hit,
+LTFAT_NAME(heapinttask_resetmax)(LTFAT_NAME(heapinttask)* hit,
                                  const LTFAT_REAL* news,
                                  const LTFAT_REAL tol);
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(heapinttask_resetmask)(struct LTFAT_NAME(heapinttask)* hit,
+LTFAT_NAME(heapinttask_resetmask)(LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
                                   const LTFAT_REAL* news,
                                   const LTFAT_REAL tol,
                                   const int do_log);
+
+LTFAT_EXTERN int*
+LTFAT_NAME(heapinttask_get_mask)( LTFAT_NAME(heapinttask)* hit);
 
 LTFAT_EXTERN void
 LTFAT_NAME(heapint)(const LTFAT_REAL *s,
@@ -426,7 +435,7 @@ LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL *s,
                             const LTFAT_REAL *fgrad,
                             const ltfatInt a, const ltfatInt M,
                             const ltfatInt L, const ltfatInt W,
-                            const LTFAT_REAL tol, dgt_phasetype phasetype,
+                            const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                             LTFAT_REAL *phase);
 
 
@@ -446,7 +455,7 @@ LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL  *c,
                                   const int* mask,
                                   const ltfatInt a, const ltfatInt M,
                                   const ltfatInt L, const ltfatInt W,
-                                  LTFAT_REAL tol, dgt_phasetype phasetype,
+                                  LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                   LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
@@ -464,7 +473,7 @@ LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL *s,
                                 const LTFAT_REAL *fgradw,
                                 const ltfatInt a, const ltfatInt M,
                                 const ltfatInt L, const ltfatInt W,
-                                const LTFAT_REAL tol, dgt_phasetype phasetype,
+                                const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                 LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
@@ -484,7 +493,7 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
                                       const int* mask,
                                       const ltfatInt a, const ltfatInt M,
                                       const ltfatInt L, const ltfatInt W,
-                                      LTFAT_REAL tol, dgt_phasetype phasetype,
+                                      LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                       LTFAT_REAL* phase);
 
 LTFAT_EXTERN void
@@ -559,7 +568,7 @@ LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 //     ltfatInt a;
 //     ltfatInt M;
 //     ltfatInt gl;
-//     dgt_phasetype ptype;
+//     ltfat_phaseconvention ptype;
 //     LTFAT_FFTW(plan) p_small;
 //     LTFAT_REAL    *sbuf;
 //     LTFAT_COMPLEX *cbuf;
@@ -572,7 +581,7 @@ LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 // LTFAT_EXTERN LTFAT_NAME(dgtreal_fb_plan)
 // LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
 //                             const ltfatInt gl, const ltfatInt a,
-//                             const ltfatInt M, const dgt_phasetype ptype,
+//                             const ltfatInt M, const ltfat_phaseconvention ptype,
 //                             unsigned flags);
 //
 // LTFAT_EXTERN void
@@ -602,7 +611,7 @@ LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
 LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
                          const ltfatInt W, const ltfatInt a,
                          const ltfatInt M, const ltfatInt bl,
-                         const dgt_phasetype ptype, unsigned flags);
+                         const ltfat_phaseconvention ptype, unsigned flags);
 
 LTFAT_EXTERN void
 LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
@@ -635,7 +644,7 @@ LTFAT_EXTERN LTFAT_NAME(dgtreal_ola_plan)
 LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt a,
                              const ltfatInt M, const ltfatInt bl,
-                             const dgt_phasetype ptype,
+                             const ltfat_phaseconvention ptype,
                              unsigned flags);
 
 LTFAT_EXTERN void

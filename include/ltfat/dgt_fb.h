@@ -24,12 +24,12 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
         const ltfatInt L, const ltfatInt gl,
         const ltfatInt W,  const ltfatInt a, const ltfatInt M,
-        const dgt_phasetype ptype, LTFAT_COMPLEX *cout);
+        const ltfat_phaseconvention ptype, LTFAT_COMPLEX *cout);
 
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE *g,
                         const ltfatInt gl, const ltfatInt a, const ltfatInt M,
-                        const dgt_phasetype ptype, unsigned flags, LTFAT_NAME(dgt_fb_plan)** p);
+                        const ltfat_phaseconvention ptype, unsigned flags, LTFAT_NAME(dgt_fb_plan)** p);
 
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* plan,

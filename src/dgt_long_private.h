@@ -10,7 +10,7 @@ struct LTFAT_NAME_REAL(dgt_long_plan)
     ltfatInt W;
     ltfatInt c;
     ltfatInt h_a;
-    dgt_phasetype ptype;
+    ltfat_phaseconvention ptype;
     LTFAT_FFTW(plan) p_before;
     LTFAT_FFTW(plan) p_after;
     LTFAT_FFTW(plan) p_veryend;
@@ -29,7 +29,7 @@ struct LTFAT_NAME_COMPLEX(dgt_long_plan)
     ltfatInt W;
     ltfatInt c;
     ltfatInt h_a;
-    dgt_phasetype ptype;
+    ltfat_phaseconvention ptype;
     LTFAT_FFTW(plan) p_before;
     LTFAT_FFTW(plan) p_after;
     LTFAT_FFTW(plan) p_veryend;
