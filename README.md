@@ -33,7 +33,7 @@ The dependency on BLAS and LAPACK can be disabled by calling
 make NOBLASLAPACK=1
 ```
 
-Docuemntation
+Documentation
 -------------
 
 Doxygen generated documentation is available [here](http://ltfat.github.io/libltfat).
