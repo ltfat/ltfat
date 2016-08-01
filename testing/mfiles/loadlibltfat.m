@@ -14,10 +14,12 @@ if libisloaded(libname)
     end
 end
 
+warning('off');
 currdir = fileparts(mfilename('fullpath'));
-libpath = [currdir, filesep, '..', filesep,'build',filesep,lib];
-headerpath = [currdir, filesep, '..', filesep,'build',filesep,'ltfat.h'];
+libpath = [currdir, filesep, '..', filesep,'..', filesep,'build',filesep,lib];
+headerpath = [currdir, filesep,'..', filesep, '..', filesep,'build',filesep,'ltfat.h'];
 loadlibrary(libpath,headerpath,'mfilename','libltfatprotofile.m');
+warning('on');
 
 
 

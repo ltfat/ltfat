@@ -7,7 +7,7 @@ end
 fsize = size(fc);
 fsize(1)=fsize(1)*2;
 
-fi = zeros(fsize,class(fc));
+fi = zeros(fsize,'like',fc);
 
 fi(1:2:end,:,:) = real(fc);
 

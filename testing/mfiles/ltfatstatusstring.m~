@@ -1,0 +1,13 @@
+function sstring=ltfatstatustring(status)
+
+[~,~,enuminfo]=libltfatprotofile;
+enuminfo.ltfaterr_status
+
+
+  
+fail='';
+if (abs(res)>tolerance) || isnan(res)
+  fail='FAILED';
+  test_failed=test_failed+1;
+end;
+
