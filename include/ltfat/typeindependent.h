@@ -320,15 +320,19 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
  * \param[in]   c_t    Time center offset
  * \param[out]  g      Window
  *
- * \returns Status code
- *
  * #### Function versions #
- *
  * <tt>
  * ltfat_pgauss_d(const ltfatInt L,const double w, const double c_t, double* g);
  *
  * ltfat_pgauss_s(const ltfatInt L,const double w, const double c_t, float* g);
  * </tt>
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | The output array is NULL.
+ * LTFATERR_BADSIZE         | Window length is less or equal to 0.
+ * LTFATERR_NOTPOSARG    | \a w is less or equal to zero.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
@@ -342,8 +346,6 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
  * \param[in]   c_f    Frequency center offset
  * \param[out]  g      Window
  *
- * \returns Status code
- *
  * #### Function versions #
  *
  * <tt>
@@ -353,6 +355,13 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
  * ltfat_pgauss_cmplx_s(const ltfatInt L, const double w, const double c_t,
  *                      const double c_f, complex float* g);
  * </tt>
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | The output array is NULL.
+ * LTFATERR_BADSIZE         | Window length is less or equal to 0.
+ * LTFATERR_NOTPOSARG    | \a w is less or equal to zero.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,

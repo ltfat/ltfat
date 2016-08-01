@@ -11,7 +11,8 @@ LTFAT_EXTERN int
 LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
 {
     int status = LTFATERR_SUCCESS;
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
+    CHECKNULL(g);
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
 
     double step = 1.0 / gl;
     // for gl even
@@ -212,4 +213,3 @@ error:
     return status;
 }
 #undef FIRWIN_RESETCOUNTER
-

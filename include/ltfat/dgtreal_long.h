@@ -4,21 +4,7 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
 /** \defgroup dgtreallong Discrete Gabor Transform for real signals and long windows -- dgtreal_long
  *  \addtogroup dgtreallong
  * @{
- *
- * \anchor dgt
- *  \f[
- *  c(m,n)
- *   = \sum_{l=0}^{L-1}\! f(l)
- *   \overline{g(l-na)} \me^{-\mi 2\pi l m/M } \,
- *  \f]
- *
- *
- *  \f[
- *  c(m,n)
- *   = \sum_{l=0}^{L-1}\! f(l)
- *   \overline{g(l-na)} \me^{-\mi 2\pi (l-na) m/M } \,
- *  \f]
- *
+ * For a detailed description see the dedicated page \ref dgttheory
  */
 
 /** Compute Discrete Gabor Transform for real signals using the factorization algorithm
@@ -31,7 +17,6 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
  * \param[in]     M   Number of frequency channels
  * \param[in] ptype   Phase convention
  * \param[out]    c   DGT coefficients, size M2 x N x W
- * \returns Status code
  *
  * #### Versions #
  * <tt>
@@ -43,6 +28,17 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
  *                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
  *                      const ltfatInt M, const ltfat_phaseconvention ptype, complex float c[]);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a f, \a g, \a c
+ * LTFATERR_BADSIZE         | length of the signal and of the window \a L was less or equal to 0.
+ * LTFATERR_NOTPOSARG       | At least one of the following was less or equal to zero: \a W, \a a, \a M
+ * LTFATERR_BADTRALEN       | \a L is not divisible by both \a a and \a M.
+ * LTFATERR_INITFAILED      | FFTW plan creation failed
+ * LTFATERR_CANNOTHAPPEN    | \a ptype does not have a valid value from the ltfat_phaseconvention enum
+ * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
@@ -51,18 +47,22 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
                          LTFAT_COMPLEX c[]);
 
 /** Initialize plan for Discrete Gabor Transform for real signals for the factorization algorithm
+ * 
+ * \note \a f can be NULL if the plan is intended to be used with the _newarray execute function.
+ * Similarly, \a c can also be NULL, but only if FFTW_ESTIMATE is passed in \a flags
+ * (the FFTW planning routine does not touch the array). On the other hand, 
+ * the content of \a c might get overwritten if other FFTW planning flags are used. 
  *
- * \param[in]     f   Input signal, size L x W
+ * \param[in]     f   Input signal, size L x W or NULL
  * \param[in]     g   Window, size L x 1
  * \param[in]     L   Signal length
  * \param[in]     W   Number of channels of the signal
  * \param[in]     a   Time hop factor
  * \param[in]     M   Number of frequency channels
- * \param[in]     c   DGT coefficients, size M2 x N x W
+ * \param[in]     c   DGT coefficients, size M2 x N x W or NULL if (flags & FFTW_ESTIMATE) is nonzero.
  * \param[in] ptype   Phase convention
  * \param[in] flags   FFTW plan flags
  * \param[out] plan   DGT plan
- * \returns Status code
  *
  * #### Versions #
  * <tt>
@@ -76,6 +76,17 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  *                           const ltfatInt M,  complex double c[], const ltfat_phaseconvention ptype,
  *                           unsigned flags, ltfat_dgtreal_long_plan_s** plan);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | The plan pointer \a plan or window \a g were NULL or \a c was NULL and (flags & FFTW_ESTIMATE) is zero
+ * LTFATERR_BADSIZE         | Signal and window length \a L is less or equal to 0.
+ * LTFATERR_NOTPOSARG       | Either of \a W, \a a, \a M was less or equal to zero.
+ * LTFATERR_BADTRALEN       | \a L is not divisible by both \a a and \a M.
+ * LTFATERR_INITFAILED      | The FFTW plan creation failed
+ * LTFATERR_CANNOTHAPPEN    | \a ptype does not have a valid value from the ltfat_phaseconvention enum
+ * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
@@ -87,7 +98,6 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
 /** Execute plan for Discrete Gabor Transform for real signals using the factorization algorithm
  *
  * \param[in]  plan   DGT plan
- * \returns Status code
  *
  * #### Versions #
  * <tt>
@@ -95,6 +105,11 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  *
  * ltfat_dgtreal_long_execute_s(ltfat_dgtreal_long_plan_s* plan);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | The \a plan was NULL or it was created with \a f == NULL or \a c == NULL
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan);
@@ -106,7 +121,6 @@ LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan);
  * \param[in]  plan   DGT plan
  * \param[in]     f   Input signal, size L x W
  * \param[out]    c   Coefficients, size M2 x N x W
- * \returns Status code
  *
  * #### Versions #
  * <tt>
@@ -116,6 +130,11 @@ LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan);
  * ltfat_dgtreal_long_execute_newarray_s(ltfat_dgtreal_long_plan_s* plan
  *                                       const float f[], complex float c[]);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | Al least one of the arguments was NULL.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
@@ -124,7 +143,6 @@ LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
 /** Destroy the plan
  *
  * \param[in]  plan   DGT plan
- * \return Status code
  *
  * #### Versions #
  * <tt>
@@ -132,6 +150,11 @@ LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
  *
  * ltfat_dgtreal_long_done_s(ltfat_dgtreal_long_plan_s** plan);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | plan or *plan was NULL.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan);

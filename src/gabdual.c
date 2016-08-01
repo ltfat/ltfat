@@ -11,12 +11,16 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
     LTFAT_COMPLEX* gdf = NULL;
 
     int status = LTFATERR_SUCCESS;
+    CHECKNULL(g); CHECKNULL(gd);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive", L);
     CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %d) must be positive.", R);
+    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
+    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
     CHECK(LTFATERR_NOTAFRAME, M >= a, "Not a frame. Check if M>=a.");
+
     ltfatInt minL = ltfat_lcm(a, M);
-    CHECK(LTFATERR_BADARG, L > 0 && !(L % minL),
-          "L (passed %d) must be positive and divisible by lcm(a,M)=%d.", L, minL);
-    // a,M, g and gd are checked further
+    CHECK(LTFATERR_BADTRALEN, !(L % minL),
+          "L must and divisible by lcm(a,M)=%d.", minL);
 
     CHECKMEM( gf = ltfat_malloc(L * R * sizeof * gf));
     CHECKMEM( gdf = ltfat_malloc(L * R * sizeof * gdf));
@@ -50,18 +54,17 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gd);
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
-    CHECK(LTFATERR_NOTPOSARG, gdl > 0, "gdl must be positive");
-    CHECK(LTFATERR_BADARG, L >= gl && L >= gdl,
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
+    CHECK(LTFATERR_BADSIZE, gdl > 0, "gdl must be positive");
+    CHECK(LTFATERR_BADREQSIZE, L >= gl && L >= gdl,
           "L>=gl && L>= gdl must hold. Passed L=%d, gl=%d, gdl=%d", L, gl, gdl);
 
     CHECKMEM( tmpLong = ltfat_malloc(L * sizeof * tmpLong));
 
-    CHECKSTATUS( LTFAT_NAME(fir2long)(g, gl, L, tmpLong), "fir2long failed");
+    LTFAT_NAME(fir2long)(g, gl, L, tmpLong);
     CHECKSTATUS( LTFAT_NAME(gabdual_long)(tmpLong, L, 1, a, M, tmpLong),
                  "gabdual_long failed");
-    CHECKSTATUS( LTFAT_NAME(long2fir)(tmpLong, L, gdl, gd), "long2fir failed");
+    LTFAT_NAME(long2fir)(tmpLong, L, gdl, gd);
 
 error:
     if (tmpLong) ltfat_free(tmpLong);

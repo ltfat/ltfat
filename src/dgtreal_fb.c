@@ -77,11 +77,12 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
 {
     LTFAT_NAME(dgtreal_fb_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(g);
-    CHECKNULL(pout);
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
+    CHECKNULL(g); CHECKNULL(pout);
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
+    CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
+          "Invalid ltfat_phaseconvention enum value." );
 
     CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
 
@@ -142,8 +143,10 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(f); CHECKNULL(cout);
-    CHECK(LTFATERR_BADARG, L >= plan->gl && !(L % plan->a) ,
-          "L (passed %d) must be positive and divisible by a (passed %d).", L, plan->a);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADTRALEN, L >= plan->gl && !(L % plan->a) ,
+          "L (passed %d) must be greater or equal to gl and divisible by a (passed %d).",
+          L, plan->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
     /*  --------- initial declarations -------------- */

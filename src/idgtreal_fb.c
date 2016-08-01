@@ -58,9 +58,11 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, const ltfatInt gl,
     LTFAT_NAME(idgtreal_fb_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(pout);
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl (passed %d) must be positive.", gl);
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl (passed %d) must be positive.", gl);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
+    CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
+          "Invalid ltfat_phaseconvention enum value." );
 
     CHECKMEM(p = ltfat_calloc(1, sizeof * p));
 

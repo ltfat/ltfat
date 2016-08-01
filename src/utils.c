@@ -8,7 +8,7 @@ LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     double shiftLoc = fmod(shift, L);
 
@@ -41,13 +41,12 @@ LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
     if (domod.rem)
     {
         // There is no Nyquist sample, modulation is by (L-1/L)*pi
-        CHECKSTATUS(LTFAT_NAME_COMPLEX(fftcircshift)(in, L, domod.quot, out),
-                    "fftcircshift failed");
+        status = LTFAT_NAME_COMPLEX(fftcircshift)(in, L, domod.quot, out);
     }
     else
     {
         CHECKNULL(in); CHECKNULL(out);
-        CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+        CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
         out[0] = in[0];
 
@@ -65,15 +64,14 @@ LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                  LTFAT_COMPLEX* out)
 {
     int status = LTFATERR_SUCCESS;
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
     const div_t domod = div(L, 2);
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
-        CHECKSTATUS(LTFAT_NAME_COMPLEX(fftcircshift)(in, L, -domod.quot, out),
-                    "fftcircshift failed");
+        status = LTFAT_NAME_COMPLEX(fftcircshift)(in, L, -domod.quot, out);
     else
-        CHECKSTATUS(LTFAT_NAME_COMPLEX(fftfftshift)(in, L, out),
-                    "fftcircshift failed");
+        status = LTFAT_NAME_COMPLEX(fftfftshift)(in, L, out);
 error:
     return status;
 }
@@ -84,7 +82,7 @@ LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     const div_t domod = div(L, 2);
 
@@ -114,18 +112,18 @@ LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                     LTFAT_COMPLEX* out)
 {
     int status = LTFATERR_SUCCESS;
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
     const div_t domod = div(L, 2);
 
     if (domod.rem)
     {
         // There is no Nyquist sample, modulation is by (L-1/L)*pi
-        CHECKSTATUS(LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, domod.quot, out),
-                    "fftrealcircshift failed");
+        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, domod.quot, out);
     }
     else
     {
         CHECKNULL(in); CHECKNULL(out);
-        CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+        CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
         out[0] = in[0];
 
@@ -144,17 +142,14 @@ LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                      LTFAT_COMPLEX* out)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
     const div_t domod = div(L, 2);
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
-        CHECKSTATUS(LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, -domod.quot, out),
-                    "fftrealcircshift failed");
+        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, -domod.quot, out);
     else
-        CHECKSTATUS(LTFAT_NAME_COMPLEX(fftrealfftshift)(in, L, out),
-                    "fftrealcircshift");
+        status = LTFAT_NAME_COMPLEX(fftrealfftshift)(in, L, out);
 
 error:
     return status;
@@ -166,7 +161,7 @@ LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     LTFAT_REAL (*outTmp)[2] = (LTFAT_REAL(*)[2])  out;
 
@@ -198,7 +193,7 @@ LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     const LTFAT_REAL (*inTmp)[2] = (const LTFAT_REAL(*)[2]) in;
 

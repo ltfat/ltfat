@@ -14,7 +14,7 @@
 }while(0)
 
 #define CHECKGABPAINLESS do{ \
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");\
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");\
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");\
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");\
     CHECK(LTFATERR_NOTAFRAME, M > a && gl >= a, "Not a frame. Check if M > a && gl >= a");\

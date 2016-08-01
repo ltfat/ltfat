@@ -9,7 +9,7 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     // Fix shift
     ltfatInt p = (L - shift) % L;
@@ -68,7 +68,7 @@ LTFAT_NAME(reverse_array)(const LTFAT_TYPE* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     if (in == out)
     {
@@ -97,7 +97,7 @@ LTFAT_NAME(conjugate_array)(const LTFAT_TYPE* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
 #ifdef LTFAT_COMPLEXTYPE
     for (ltfatInt ii = 0; ii < L; ii++)
@@ -118,8 +118,8 @@ LTFAT_NAME(periodize_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, Lin > 0, "Lin must be positive");
-    CHECK(LTFATERR_NOTPOSARG, Lout > 0, "Lout must be positive");
+    CHECK(LTFATERR_BADSIZE, Lin > 0, "Lin must be positive");
+    CHECK(LTFATERR_BADSIZE, Lout > 0, "Lout must be positive");
 
     /* Do nothing if there is no place where to put periodized samples */
     if ( Lout <= Lin )
@@ -162,8 +162,8 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, Lin > 0, "Lin must be positive");
-    CHECK(LTFATERR_NOTPOSARG, Lfold > 0, "Lfold must be positive");
+    CHECK(LTFATERR_BADSIZE, Lin > 0, "Lin must be positive");
+    CHECK(LTFATERR_BADSIZE, Lfold > 0, "Lfold must be positive");
 
     // Sanitize offset.
     ltfatInt startIdx = ltfat_positiverem(offset, Lfold);
@@ -220,7 +220,7 @@ LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE* in,  const ltfatInt L,
 #ifdef LTFAT_COMPLEXTYPE
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     if (in != (LTFAT_TYPE*)out)
         memcpy(out, in, L * sizeof * out);
@@ -329,9 +329,9 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, Llong > 0, "Llong must be positive");
-    CHECK(LTFATERR_NOTPOSARG, Lfir > 0, "Lfir must be positive");
-    CHECK(LTFATERR_BADARG, Lfir <= Llong, "Lfir <= Llong does not hold");
+    CHECK(LTFATERR_BADSIZE, Llong > 0, "Llong must be positive");
+    CHECK(LTFATERR_BADSIZE, Lfir > 0, "Lfir must be positive");
+    CHECK(LTFATERR_BADREQSIZE, Lfir <= Llong, "Lfir <= Llong does not hold");
 
     const div_t domod = div(Lfir, 2);
 
@@ -357,9 +357,9 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE* in, const ltfatInt Llong,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, Llong > 0, "Llong must be positive");
-    CHECK(LTFATERR_NOTPOSARG, Lfir > 0, "Lfir must be positive");
-    CHECK(LTFATERR_BADARG, Lfir <= Llong, "Lfir <= Llong does not hold");
+    CHECK(LTFATERR_BADSIZE, Llong > 0, "Llong must be positive");
+    CHECK(LTFATERR_BADSIZE, Lfir > 0, "Lfir must be positive");
+    CHECK(LTFATERR_BADREQSIZE, Lfir <= Llong, "Lfir <= Llong does not hold");
 
     const div_t domod = div(Lfir, 2);
 
@@ -383,50 +383,71 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
-    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     LTFAT_REAL normfac = 1.0;
 
     switch (flag)
     {
     case LTFAT_NORMALIZE_ENERGY:
-    case LTFAT_NORMALIZE_2:
     {
         normfac = 0.0;
 
         for (ltfatInt ii = 0; ii < L; ii++)
         {
-            LTFAT_REAL inAbs = fabs(in[ii]);
+#ifdef LTFAT_COMPLEXTYPE 
+            LTFAT_REAL inAbs = LTFAT_COMPLEXH(cabs)(in[ii]);
+#else
+            LTFAT_REAL inAbs = in[ii]; // We dont need abs here
+#endif
             normfac += inAbs * inAbs;
         }
 
         normfac = sqrt(normfac);
+        break;
     }
     case LTFAT_NORMALIZE_AREA:
-    case LTFAT_NORMALIZE_1:
     {
         normfac = 0.0;
 
         for (ltfatInt ii = 0; ii < L; ii++)
-            normfac += fabs(in[ii]);
+        {
+#ifdef LTFAT_COMPLEXTYPE // We want to avoid the type generic tgmath.h
+            LTFAT_REAL inAbs = LTFAT_COMPLEXH(cabs)(in[ii]);
+#else
+            LTFAT_REAL inAbs = LTFAT_COMPLEXH(fabs)(in[ii]);
+#endif
+            normfac += inAbs;
+        }
 
-        normfac = sqrt(normfac);
+
+        break;
     }
     case LTFAT_NORMALIZE_PEAK:
-    case LTFAT_NORMALIZE_INF:
     {
-        normfac = fabs(in[0]);
+        normfac = 0.0;
 
-        for (ltfatInt ii = 1; ii < L; ii++)
-            if (fabs(in[ii]) > normfac)
-                normfac = fabs(in[ii]);
+        for (ltfatInt ii = 0; ii < L; ii++)
+        {
+#ifdef LTFAT_COMPLEXTYPE
+            LTFAT_REAL inAbs = LTFAT_COMPLEXH(cabs)(in[ii]);
+#else
+            LTFAT_REAL inAbs = LTFAT_COMPLEXH(fabs)(in[ii]);
+#endif
+            if (inAbs > normfac)
+                normfac = inAbs;
+        }
+        break;
 
     }
     case LTFAT_NORMALIZE_NULL:
         normfac = 1.0;
+        break;
     default:
         CHECKCANTHAPPEN("Unknown normalization flag");
     };
+
+    normfac = 1.0 / normfac;
 
     for (ltfatInt ii = 0; ii < L; ii++)
         out[ii] = normfac * in[ii];

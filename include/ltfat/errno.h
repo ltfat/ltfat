@@ -7,10 +7,10 @@
  * \note The error handling system was inspired by the GNU Scientific library
  * <a href="http://www.gnu.org/software/gsl/manual/html_node/Error-Handling.html#Error-Handling">
  * GNU Scientific library error handling</a>.
- * 
+ *
  *
  * \addtogroup error
- * @{ 
+ * @{
  */
 
 #ifndef _LTFAT_ERRNO_H
@@ -22,7 +22,7 @@ extern "C"
 #endif
 
 
-enum
+enum ltfaterr_status
 {
 // General
     LTFATERR_SUCCESS     =   0,
@@ -36,7 +36,10 @@ enum
     LTFATERR_OVERFLOW    =  -8,
     LTFATERR_UNDERFLOW   =  -9,
     LTFATERR_CANNOTHAPPEN = -10,
+    LTFATERR_BADSIZE      = -11, // Array size is wrong
+    LTFATERR_BADREQSIZE   = -12, // Output array size is wrong
 // Specific
+    LTFATERR_BADTRALEN  =  -99,
     LTFATERR_NOTAFRAME   =  -100,
     LTFATERR_NOTPAINLESS =  -101,
 };
@@ -62,7 +65,7 @@ typedef void ltfat_error_handler_t (int ltfat_errno, const char* file, int line,
 ltfat_error_handler_t*
 ltfat_set_error_handler (ltfat_error_handler_t* new_handler);
 
-/** Disable error handling 
+/** Disable error handling
  * \returns Old error handler
  */
 ltfat_error_handler_t*
@@ -81,4 +84,3 @@ ltfat_error (int ltfat_errno,  const char * file, int line,
 
 
 #endif
-

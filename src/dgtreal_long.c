@@ -10,6 +10,7 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     LTFAT_NAME(dgtreal_long_plan) *plan = NULL;
 
     int status = LTFATERR_SUCCESS;
+    CHECKNULL(f); CHECKNULL(cout);
 
     CHECKSTATUS(
         LTFAT_NAME(dgtreal_long_init)(f, g, L, W, a, M, cout, ptype, FFTW_ESTIMATE,
@@ -38,15 +39,16 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
           "cout cannot be NULL if flags is not FFTW_ESTIMATE");
     // CHECKNULL(f); // f can be NULL
     CHECKNULL(g); CHECKNULL(pout);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive",L);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
+    CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
+          "Invalid ltfat_phaseconvention enum value." );
 
     ltfatInt minL = ltfat_lcm(a, M);
-    CHECK(LTFATERR_BADARG,
-          L > 0  && !(L % minL),
-          "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
-          L, minL);
+    CHECK(LTFATERR_BADTRALEN, !(L % minL),
+          "L must divisible by lcm(a,M)=%d.", minL);
 
     CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
 

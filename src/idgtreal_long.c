@@ -34,6 +34,7 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 {
     LTFAT_NAME(idgtreal_long_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
+    CHECKNULL(cin);CHECKNULL(f);
 
     CHECKSTATUS(
         LTFAT_NAME(idgtreal_long_init)((LTFAT_COMPLEX*)cin, g, L, W, a, M, f,
@@ -62,15 +63,16 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 
     // CHECKNULL(f); // can be NULL
     CHECKNULL(g); CHECKNULL(pout);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive", L);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
+    CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
+          "Invalid ltfat_phaseconvention enum value." );
 
     ltfatInt minL = ltfat_lcm(a, M);
-    CHECK(LTFATERR_BADARG,
-          L > 0  && !(L % minL),
-          "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
-          L, minL);
+    CHECK(LTFATERR_BADTRALEN,
+          !(L % minL), "L must be divisible by lcm(a,M)=%d.", minL);
 
     CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
 

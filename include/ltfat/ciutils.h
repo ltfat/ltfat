@@ -2,7 +2,7 @@
  * @{
  * Utility functions
  *
- * \note All utility functions can work inplace (i.e. in == out) without
+ * \note All utility functions working with arrays can work inplace (i.e. in == out) without
  * allocating additional memory internally.
  */
 
@@ -11,12 +11,25 @@
 
 typedef enum
 {
+    /** Don't normalize */
     LTFAT_NORMALIZE_NULL = 0,
-    LTFAT_NORMALIZE_AREA, LTFAT_NORMALIZE_1,
-    LTFAT_NORMALIZE_ENERGY, LTFAT_NORMALIZE_2,
-    LTFAT_NORMALIZE_INF, LTFAT_NORMALIZE_PEAK,
-    LTFAT_NORMALIZE_RMS,
-    LTFAT_NORMALIZE_WAV,
+    /** Normalize to 1 norm (divide by the sum of abs. values)  */
+    /**@{*/
+    LTFAT_NORMALIZE_AREA,
+    LTFAT_NORMALIZE_1 = LTFAT_NORMALIZE_AREA,
+    /**@}*/
+    /** Normalize to 2 norm (divide by the square root of sum of squares of abs. values) */
+    /**@{*/
+    LTFAT_NORMALIZE_ENERGY,
+    LTFAT_NORMALIZE_2 = LTFAT_NORMALIZE_ENERGY,
+    /**@}*/
+    /** Normalize to inf norm (divide by the max abs. val.)*/
+    /**@{*/
+    LTFAT_NORMALIZE_INF,
+    LTFAT_NORMALIZE_PEAK = LTFAT_NORMALIZE_INF,
+    /**@}*/
+    // LTFAT_NORMALIZE_RMS,
+    // LTFAT_NORMALIZE_WAV,
 } ltfat_normalize_t;
 
 #endif
@@ -32,9 +45,7 @@ typedef enum
  * \param[in]  shift  Shift amount (can be negative)
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
- *
+ *  #### Function versions ####
  *  <tt>
  *  ltfat_circshift_d(const double in[], const ltfatInt L,const ltfatInt shift, double out[]);
  *
@@ -45,7 +56,12 @@ typedef enum
  *  ltfat_circshift_sc(const complex float in[], const ltfatInt L,const ltfatInt shift, complex float out[]);
  *  </tt>
  *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
@@ -61,9 +77,7 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
  * \param[in]      L  Length of arrays
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
- *
+ *  #### Function versions ####
  *  <tt>
  *  ltfat_fftshift_d(const double in[], const ltfatInt L, double out[]);
  *
@@ -74,7 +88,12 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
  *  ltfat_fftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
@@ -89,9 +108,7 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  * \param[in]      L  Length of arrays
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
- *
+ *  #### Function versions ####
  *  <tt>
  *  ltfat_ifftshift_d(const double in[], const ltfatInt L, double out[]);
  *
@@ -102,7 +119,12 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  *  ltfat_ifftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
  *  </tt>
  *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
@@ -112,17 +134,15 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  *
  *  Works exactly like
  *  <a href="http://ltfat.github.io/doc/sigproc/fir2long.html">fir2long</a>
- *  form LTFAT i.e. extends in by inserting zeros in the middle.
- *  Llong must be bigger or equal to Lfir.
+ *  form LTFAT i.e. extends \a in by inserting zeros in the middle.
+ *  \a Llong must be greater or equal to \a Lfir.
  *
  * \param[in]     in  Input array
  * \param[in]   Lfir  Length of input array
  * \param[in]  Llong  Length of output array
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
- *
+ *  #### Function versions ####
  *  <tt>
  *  ltfat_fir2long_d(const double in[], const ltfatInt Lfir, const ltfatInt Llong, double out[]);
  *
@@ -133,7 +153,13 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  *  ltfat_fir2long_sc(const complex float in[], const ltfatInt Lfir, const ltfatInt Llong, complex float out[]);
  *  </tt>
  *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ * LTFATERR_BADREQSIZE   | Output array is shorter than the input array: \a Llong < \a Lfir
  */
 LTFAT_EXTERN int
 LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt Llong,
@@ -144,16 +170,14 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt 
  *  Works exactly like
  *  <a href="http://ltfat.github.io/doc/sigproc/long2fir.html">long2fir</a>
  *  form LTFAT i.e. it removes the middle part.
- *  Llong must be bigger or equal to Lfir.
+ *  Llong must be greater or equal to Lfir.
  *
  * \param[in]     in  Input array
  * \param[in]  Llong  Length of input array
  * \param[in]   Lfir  Length of output array
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
- *
+ *  #### Function versions ####
  *  <tt>
  *  ltfat_long2fir_d(const double in[], const ltfatInt Llong, const ltfatInt Lfir, double out[]);
  *
@@ -164,7 +188,13 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt 
  *  ltfat_long2fir_sc(const complex float in[], const ltfatInt Llong, const ltfatInt Lfir, complex float out[]);
  *  </tt>
  *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ * LTFATERR_BADREQSIZE   | Output array is longer than the input array: \a Lfir > \a Llong
  */
 LTFAT_EXTERN int
 LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt Lfir,
@@ -172,16 +202,14 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt
 
 /** Normalize a vector
  *
- * Normalizes the input vercor.
- *  
+ * Normalizes the input array such that the chosen norm is 1.
+ *
  * \param[in]     in  Input array
  * \param[in]      L  Length of the arrays
  * \param[in]   flag  Norm
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
- *
+ *  #### Function versions ####
  *  <tt>
  *  ltfat_normalize_d(const double in[], const ltfatInt L, ltfat_normalize_t flag, double out[]);
  *
@@ -192,36 +220,44 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt
  *  ltfat_normalize_sc(const complex float in[], const ltfatInt L, ltfat_normalize_t flag, complex float out[]);
  *  </tt>
  *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ * LTFATERR_CANNOTHAPPEN | \a flag is not defined in ltfat_normalize_t enum.
  */
-
 LTFAT_EXTERN int
 LTFAT_NAME(normalize)(const LTFAT_TYPE in[], const ltfatInt L,
                       ltfat_normalize_t flag, LTFAT_TYPE out[]);
 
 /** Ensure the array has complex interleaved layout
  *
- * This is a convenience function. 
- * Obviously the *_dc and *_sc versions of the function do nothing. 
+ * This is a convenience function.
+ * Obviously the *_dc and *_sc versions of the function do nothing.
  *
  * \param[in]     in  Input array
  * \param[in]      L  Length of arrays
  * \param[out]   out  Output array
  *
- *  Function versions
- *  -----------------
+ * #### Function versions ####
+ * <tt>
+ * ltfat_ensurecomplex_array_d(const double in[], const ltfatInt L, complex double out[]);
  *
- *  <tt>
- *  ltfat_ensurecomplex_array_d(const double in[], const ltfatInt L, complex double out[]);
+ * ltfat_ensurecomplex_array_s(const float in[], const ltfatInt L, complex float out[]);
  *
- *  ltfat_ensurecomplex_array_s(const float in[], const ltfatInt L, complex float out[]);
+ * ltfat_ensurecomplex_array_dc(const complex double in[], const ltfatInt L, complex double out[]);
  *
- *  ltfat_ensurecomplex_array_dc(const complex double in[], const ltfatInt L, complex double out[]);
+ * ltfat_ensurecomplex_array_sc(const complex float in[], const ltfatInt L, complex float out[]);
+ * </tt>
  *
- *  ltfat_ensurecomplex_array_sc(const complex float in[], const ltfatInt L, complex float out[]);
- *  </tt>
- *
- * \returns Status code
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_EXTERN int
 LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_COMPLEX *out);
@@ -258,4 +294,3 @@ void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TY
 
 LTFAT_EXTERN int
 LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx);
-

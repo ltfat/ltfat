@@ -20,14 +20,14 @@ LTFAT_NAME(wfac)(const LTFAT_TYPE *g, const ltfatInt L, const ltfatInt R,
 
 LTFAT_EXTERN int
 LTFAT_NAME(wfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
-                      unsigned flags, LTFAT_NAME(wfac_plan)** pout);
+                      unsigned flags, LTFAT_NAME(wfac_plan)** plan);
 
 LTFAT_EXTERN int
 LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE *g,
                          const ltfatInt R, LTFAT_COMPLEX *gf);
 
 LTFAT_EXTERN int
-LTFAT_NAME(wfac_done)(LTFAT_NAME(wfac_plan)** pout);
+LTFAT_NAME(wfac_done)(LTFAT_NAME(wfac_plan)** plan);
 
 /*  Inverse Walnut factorization  */
 
@@ -39,14 +39,14 @@ LTFAT_NAME(iwfac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
 
 LTFAT_EXTERN int
 LTFAT_NAME(iwfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
-                       unsigned flags, LTFAT_NAME(iwfac_plan)** pout);
+                       unsigned flags, LTFAT_NAME(iwfac_plan)** plan);
 
 LTFAT_EXTERN int
 LTFAT_NAME(iwfac_execute)(LTFAT_NAME(iwfac_plan)* plan, const LTFAT_COMPLEX* gf,
                           const ltfatInt R, LTFAT_TYPE* g);
 
 LTFAT_EXTERN int
-LTFAT_NAME(iwfac_done)(LTFAT_NAME(iwfac_plan)** pout);
+LTFAT_NAME(iwfac_done)(LTFAT_NAME(iwfac_plan)** plan);
 
 
 LTFAT_EXTERN void
@@ -67,7 +67,7 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
  *
  * The canonical dual (tight) window is guaranteed to have the same support
  * in the _painless case_ i.e. if M>=gl holds in addition to the frame condition.
- *  
+ *
  */
 
 
@@ -81,31 +81,37 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
  * \param[in]   R    Number of windows
  * \param[in]   a    Hop factor
  * \param[in]   M    Number of channels
- * \param[out] gd    Canonical dual window
+ * \param[out] gd    Canonical dual window(s), size L x R
  *
- * \returns Status code
- *
- * Versions
- * --------
- *
+ * #### Versions #
  * <tt>
- * ltfat_gabdual_long_d(const double* g, const ltfatInt L, const ltfatInt R,
- *                      const ltfatInt a, const ltfatInt M, double* gd);
+ * ltfat_gabdual_long_d(const double g[], const ltfatInt L, const ltfatInt R,
+ *                      const ltfatInt a, const ltfatInt M, double gd[]);
  *
- * ltfat_gabdual_long_s(const float* g, const ltfatInt L, const ltfatInt R,
- *                      const ltfatInt a, const ltfatInt M, float* gd);
+ * ltfat_gabdual_long_s(const float g[], const ltfatInt L, const ltfatInt R,
+ *                      const ltfatInt a, const ltfatInt M, float gd[]);
  *
- * ltfat_gabdual_long_dc(const complex double* g, const ltfatInt L, const ltfatInt R,
- *                       const ltfatInt a, const ltfatInt M, complex double* gd);
+ * ltfat_gabdual_long_dc(const complex double g[], const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, complex double gd[]);
  *
- * ltfat_gabdual_long_sc(const complex float* g, const ltfatInt L, const ltfatInt R,
- *                       const ltfatInt a, const ltfatInt M, complex float* gd);
+ * ltfat_gabdual_long_sc(const complex float g[], const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, complex float gd[]);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | Either of the arrays is NULL
+ * LTFATERR_BADSIZE         | Size of the array \a L is less or equal to 0.
+ * LTFATERR_BADTRALEN       | \a L is not divisible by both \a a and \a M.
+ * LTFATERR_NOTPOSARG       | Either of \a R, \a a, \a M is less or equal to 0.
+ * LTFATERR_NOTAFRAME       | System does not form a frame i.e. M<a
+ * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
-LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
+LTFAT_NAME(gabdual_long)(const LTFAT_TYPE g[],
                          const ltfatInt L, const ltfatInt R, const ltfatInt a,
-                         const ltfatInt M, LTFAT_TYPE *gd);
+                         const ltfatInt M, LTFAT_TYPE gd[]);
 
 /** Compute canonical tight window for Gabor system
  *
@@ -119,29 +125,34 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE *g,
  * \param[in]   M    Number of channels
  * \param[out] gt    Canonical tight window
  *
- * \returns Status code
+ * #### Versions #
+ * ltfat_gabtight_long_d(const double g[], const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, double gt[]);
  *
- * Versions
- * --------
+ * ltfat_gabtight_long_s(const float g[], const ltfatInt L, const ltfatInt R,
+ *                       const ltfatInt a, const ltfatInt M, float gt[]);
  *
- * <tt>
- * ltfat_gabtight_long_d(const double* g, const ltfatInt L, const ltfatInt R,
- *                       const ltfatInt a, const ltfatInt M, double* gt);
+ * ltfat_gabtight_long_dc(const complex double g[], const ltfatInt L, const ltfatInt R,
+ *                        const ltfatInt a, const ltfatInt M, complex double gt[]);
  *
- * ltfat_gabtight_long_s(const float* g, const ltfatInt L, const ltfatInt R,
- *                       const ltfatInt a, const ltfatInt M, float* gt);
- *
- * ltfat_gabtight_long_dc(const complex double* g, const ltfatInt L, const ltfatInt R,
- *                        const ltfatInt a, const ltfatInt M, complex double* gt);
- *
- * ltfat_gabtight_long_sc(const complex float* g, const ltfatInt L, const ltfatInt R,
- *                        const ltfatInt a, const ltfatInt M, complex float* gt);
+ * ltfat_gabtight_long_sc(const complex float g[], const ltfatInt L, const ltfatInt R,
+ *                        const ltfatInt a, const ltfatInt M, complex float gt[]);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | Either of the arrays is NULL
+ * LTFATERR_BADSIZE         | Size of the array \a L is less or equal to 0.
+ * LTFATERR_BADTRALEN       | L is not divisible by both \a a and \a M.
+ * LTFATERR_NOTPOSARG       | Either of \a R, \a a, \a M is less or equal to 0.
+ * LTFATERR_NOTAFRAME       | System does not form a frame i.e. M<a
+ * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
-LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
+LTFAT_NAME(gabtight_long)(const LTFAT_TYPE g[],
                           const ltfatInt L, const ltfatInt R, const ltfatInt a,
-                          const ltfatInt M, LTFAT_TYPE *gd);
+                          const ltfatInt M, LTFAT_TYPE gd[]);
 
 /** Compute FIR canonical dual window for Gabor system
  *
@@ -160,78 +171,92 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE *g,
  * \param[in]  gdl    Length of the dual window
  * \param[out]  gd    Canonical dual window
  *
- * \returns Status code
- *
- * Versions
- * --------
- *
+ * #### Versions #
  * <tt>
- * ltfat_gabdual_fir_d(const double* g, const ltfatInt gl, const ltfatInt L,
- *                     const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *                     double* gd);
+ * ltfat_gabdual_fir_d(const double g[], const ltfatInt gl, const ltfatInt L,
+ *                     const ltfatInt a, const ltfatInt M, const ltfatInt gdl,
+ *                     double gd[]);
  *
- * ltfat_gabdual_fir_s(const float* g, const ltfatInt gl, const ltfatInt L,
- *                     const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *                     float* gd);
+ * ltfat_gabdual_fir_s(const float g[], const ltfatInt gl, const ltfatInt L,
+ *                     const ltfatInt a, const ltfatInt M, const ltfatInt gdl,
+ *                     float gd[]);
  *
- * ltfat_gabdual_fir_dc(const complex double* g, const ltfatInt gl, const ltfatInt L,
- *                      const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *                      complex double* gd);
+ * ltfat_gabdual_fir_dc(const complex double g[], const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt gdl,
+ *                      complex double gd[]);
  *
- * ltfat_gabdual_fir_sc(const complex float* g, const ltfatInt gl, const ltfatInt L,
- *                      const ltfatInt a, const ltfatInt M, const ltfatInt dgl,
- *                      complex float* gd);
+ * ltfat_gabdual_fir_sc(const complex float g[], const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt gdl,
+ *                      complex float gd[]);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | Either of the arrays is NULL
+ * LTFATERR_BADSIZE         | Either of the array sizes is less or equal to 0.
+ * LTFATERR_NOTPOSARG       | Either of \a a, \a M is less or equal to 0.
+ * LTFATERR_BADTRALEN       | L is not divisible by both \a a and \a M.
+ * LTFATERR_BADREQSIZE      | \a L is not greater or equal than both \a gl and \a gdl
+ * LTFATERR_NOTAFRAME       | System does not form a frame i.e. M<a
+ * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
-LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
+LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE g[], const ltfatInt gl,
                         const ltfatInt L, const ltfatInt a,
-                        const ltfatInt M, const ltfatInt gdl, LTFAT_TYPE* gd);
+                        const ltfatInt M, const ltfatInt gdl, LTFAT_TYPE gd[]);
 
 /** Compute FIR canonical tight window for Gabor system
- * 
+ *
  * The function internally calls fir2long, gabtight_long and long2fir. The window
  * might no longer be exact canonical tight window if gdl is smaller than the
  * length of the support of the window.
- * 
+ *
  * \warning This function is not available if libltfat has been compiled with
  * NOBLASLAPACK.
  *
- * \param[in]    g    Original window
+ * \param[in]    g    Original window, size gl x 1
  * \param[in]   gl    Length of the window
  * \param[in]    L    Length of the system
  * \param[in]    a    Hop factor
  * \param[in]    M    Number of channels
- * \param[in]  gtl    Length of the dual window
- * \param[out]  gt    Canonical dual window
+ * \param[in]  gtl    Length of the tight window
+ * \param[out]  gt    Canonical dual window, size gtl x 1
  *
- * \returns Status code
- *
- * Versions
- * --------
- *
+ * #### Versions #
  * <tt>
- * ltfat_gabtight_fir_d(const double* g, const ltfatInt gl, const ltfatInt L,
- *                      const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                      double* gt);
+ * ltfat_gabtight_fir_d(const double g[], const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt gtl,
+ *                      double gt[]);
  *
- * ltfat_gabtight_fir_s(const float* g, const ltfatInt gl, const ltfatInt L,
- *                      const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                      float* gt);
+ * ltfat_gabtight_fir_s(const float g[], const ltfatInt gl, const ltfatInt L,
+ *                      const ltfatInt a, const ltfatInt M, const ltfatInt gtl,
+ *                      float gt[]);
  *
- * ltfat_gabtight_fir_dc(const complex double* g, const ltfatInt gl, const ltfatInt L,
- *                       const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                       complex double* gt);
+ * ltfat_gabtight_fir_dc(const complex double g[], const ltfatInt gl, const ltfatInt L,
+ *                       const ltfatInt a, const ltfatInt M, const ltfatInt gtl,
+ *                       complex double gt[]);
  *
- * ltfat_gabtight_fir_sc(const complex float* g, const ltfatInt gl, const ltfatInt L,
- *                       const ltfatInt a, const ltfatInt M, const ltfatInt dtl,
- *                       complex float* gt);
+ * ltfat_gabtight_fir_sc(const complex float g[], const ltfatInt gl, const ltfatInt L,
+ *                       const ltfatInt a, const ltfatInt M, const ltfatInt gtl,
+ *                       complex float gt[]);
  * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|--------------------------------------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | Either of the arrays is NULL
+ * LTFATERR_BADSIZE         | Either of the array sizes is less or equal to 0.
+ * LTFATERR_NOTPOSARG       | Either of \a a, \a M is less or equal to 0.
+ * LTFATERR_BADTRALEN       | L is not divisible by both \a a and \a M.
+ * LTFATERR_BADREQSIZE      | \a L is not greater or equal than both \a gl and \a gtl
+ * LTFATERR_NOTAFRAME       | System does not form a frame i.e. M<a
+ * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
-LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
+LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE g[], const ltfatInt gl,
                          const ltfatInt L, const ltfatInt a,
-                         const ltfatInt M, const ltfatInt gtl, LTFAT_TYPE* gt);
+                         const ltfatInt M, const ltfatInt gtl, LTFAT_TYPE gt[]);
 
 /** @} */
 

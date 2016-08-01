@@ -45,8 +45,7 @@ LTFAT_FIRWIN;
  * \param[in]   gl   Window length
  * \param[out]  g    Window
  *
-  * #### Function versions #
- *
+ * #### Function versions #
  * <tt>
  * ltfat_firwin_d(LTFAT_FIRWIN win, int gl, double* g);
  *
@@ -56,6 +55,13 @@ LTFAT_FIRWIN;
  *
  * ltfat_firwin_sc(LTFAT_FIRWIN win, int gl, complex float* g);
  * </tt>
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | The output array is NULL
+ * LTFATERR_BADSIZE      | Length of the array is less or equal to 0.
+ * LTFATERR_CANNOTHAPPEN | \a win is not a valid value from the LTFAT_FIRWIN enum
  */
 LTFAT_EXTERN int
 LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g);

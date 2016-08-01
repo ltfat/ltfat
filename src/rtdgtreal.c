@@ -589,8 +589,8 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(pout);
-    CHECK(LTFATERR_NOTPOSARG, gal > 0, "gla must be positive");
-    CHECK(LTFATERR_NOTPOSARG, gsl > 0, "gls must be positive");
+    CHECK(LTFATERR_BADSIZE, gal > 0, "gla must be positive");
+    CHECK(LTFATERR_BADSIZE, gsl > 0, "gls must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
     CHECK(LTFATERR_NOTPOSARG, Wmax > 0, "Wmax must be positive");
@@ -662,7 +662,7 @@ LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(pout);
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0,  "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0,  "M must be positive");
     CHECK(LTFATERR_NOTPOSARG, Wmax > 0, "Wmax must be positive");

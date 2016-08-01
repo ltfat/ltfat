@@ -4,39 +4,39 @@
 
 LTFAT_EXTERN int
 LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
-                   LTFAT_REAL *g)
+                   LTFAT_REAL* g)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g);
-    CHECK(LTFATERR_NOTPOSARG, L>0,"L must be positive (passed %d).",L);
-    CHECK(LTFATERR_NOTPOSARG, w>0,"w must be positive (passed %f).",w);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %d).", L);
+    CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
-    ltfatInt lr,k,nk;
-    double tmp,sqrtl, safe, gnorm;
+    ltfatInt lr, k, nk;
+    double tmp, sqrtl, safe, gnorm;
 
-    sqrtl=sqrt((double)L);
-    safe=4;
-    gnorm=0;
+    sqrtl = sqrt((double)L);
+    safe = 4;
+    gnorm = 0;
 
     /* Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero. */
-    nk=(ltfatInt)ceil(safe/sqrt((double)L/sqrt(w)));
+    nk = (ltfatInt)ceil(safe / sqrt((double)L / sqrt(w)));
 
-    for ( lr=0; lr<L; lr++)
+    for ( lr = 0; lr < L; lr++)
     {
-        g[lr]=0.0;
-        for (k=-nk; k<=nk; k++)
+        g[lr] = 0.0;
+        for (k = -nk; k <= nk; k++)
         {
             /* Use a tmp variable to calculate squaring */
-            tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
-            g[lr]+=exp(-M_PI*tmp*tmp/w);
+            tmp = ((double)lr + c_t) / sqrtl - (double)k * sqrtl;
+            g[lr] += exp(-M_PI * tmp * tmp / w);
         }
-        gnorm +=g[lr]*g[lr];
+        gnorm += g[lr] * g[lr];
     }
 
     /* Normalize it exactly. */
-    gnorm=sqrt(gnorm);
+    gnorm = sqrt(gnorm);
 
-    for ( lr=0; lr<L; lr++)
+    for ( lr = 0; lr < L; lr++)
         g[lr] /= gnorm;
 
 error:
@@ -52,44 +52,46 @@ error:
 */
 
 LTFAT_EXTERN int
-LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t, const double c_f,
-                         LTFAT_COMPLEX *g)
+LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
+                         const double c_f,
+                         LTFAT_COMPLEX* g)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g);
-    CHECK(LTFATERR_NOTPOSARG, L>0,"L must be positive (passed %d).",L);
-    CHECK(LTFATERR_NOTPOSARG, w>0,"w must be positive (passed %f).",w);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %d).", L);
+    CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
-    ltfatInt lr,k,nk;
-    double tmp,sqrtl, safe, gnorm;
+    ltfatInt lr, k, nk;
+    double tmp, sqrtl, safe, gnorm;
 
-    sqrtl=sqrt((double)L);
-    safe=4;
-    gnorm=0;
+    sqrtl = sqrt((double)L);
+    safe = 4;
+    gnorm = 0;
 
     /* Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero. */
-    nk=(ltfatInt)ceil(safe/sqrt((double)L/sqrt(w)));
+    nk = (ltfatInt)ceil(safe / sqrt((double)L / sqrt(w)));
 
-    for ( lr=0; lr<L; lr++)
+    for ( lr = 0; lr < L; lr++)
     {
         g[lr] = (LTFAT_COMPLEX) 0.0;
-        for (k=-nk; k<=nk; k++)
+        for (k = -nk; k <= nk; k++)
         {
             /* Use a tmp variable to calculate squaring */
-            tmp = ((double)lr+c_t)/sqrtl-(double)k*sqrtl;
-            tmp = exp(-M_PI*tmp*tmp/w);
-            g[lr]+=tmp*LTFAT_COMPLEXH(cexp)(I*2*M_PI*c_f*((double)lr/L-(double)k));
+            tmp = ((double)lr + c_t) / sqrtl - (double)k * sqrtl;
+            tmp = exp(-M_PI * tmp * tmp / w);
+            g[lr] += tmp * LTFAT_COMPLEXH(cexp)(I * 2 * M_PI * c_f * ((double)lr / L -
+                                                (double)k));
 
         }
         double gReal = LTFAT_COMPLEXH(creal)(g[lr]);
         double gImag = LTFAT_COMPLEXH(cimag)(g[lr]);
-        gnorm += (gReal*gReal+gImag*gImag);
+        gnorm += (gReal * gReal + gImag * gImag);
     }
 
     /* Normalize it exactly. */
-    gnorm=sqrt(gnorm);
+    gnorm = sqrt(gnorm);
 
-    for ( lr=0; lr<L; lr++)
+    for ( lr = 0; lr < L; lr++)
         g[lr] /= gnorm;
 
 error:

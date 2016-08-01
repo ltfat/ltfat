@@ -16,7 +16,7 @@ LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_TYPE *g,
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_fb_init)(const LTFAT_TYPE *g, const ltfatInt gl,
                          const ltfatInt a, const ltfatInt M, const ltfat_phaseconvention ptype,
-                         unsigned flags, LTFAT_NAME(idgt_fb_plan)** pout);
+                         unsigned flags, LTFAT_NAME(idgt_fb_plan)** plan);
 
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p, const LTFAT_COMPLEX *cin,
