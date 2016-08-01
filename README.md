@@ -38,5 +38,10 @@ Documentation
 
 Doxygen generated documentation is available [here](http://ltfat.github.io/libltfat).
 
+Contacts
+--------
+
+libltfat was written by Peter L. Søndergaard and Zdeněk Průša.
+
 
 

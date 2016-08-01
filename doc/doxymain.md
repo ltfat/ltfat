@@ -1,19 +1,8 @@
-\mainpage libltfat - Large Time-Frequency Alalysis Toolbox backend library
+\mainpage libltfat - Large Time-Frequency Alalysis Toolbox Library
 
-General conventions
--------------------
+The library contains implementation of the following time-frequency transforms:
 
-\anchor stft
- \f[
-(\mathcal{V}_g f) (\sfreq, \stime)
-    = \int_{\mathbb{R}}\! f(\stimearg+\stime)
-    \overline{g(\stimearg)} \me^{-\mi 2\pi \sfreq \stimearg  } \,
-    \mathrm{d}\stimearg,
-    \ \ \sfreq, \stime \in\mathbb{R}\\
-\f]
-
-Papers which use this toolbox
-\cite ltfatnote014
+* \ref dgttheory
 
 Function naming convention
 --------------------------
@@ -23,7 +12,7 @@ The function names are in the following format:
 \c ltfat_<function_name>[_<d|s|dc|sc>](<parameters>)
 
 The \c ltfat_ prefix is present in all function names while the suffix
-is optional and identifies the data type the function is working with.
+is optional and identifies the data type the function is working with:
 
 <table>
 <caption id="multi_row">Data type suffix</caption>
@@ -36,6 +25,37 @@ is optional and identifies the data type the function is working with.
 
 \note In the documentation the prefix and the suffix will be omitted when
 introducing a non-unique function and when referring to the function group.
+Similarly, the real data type (\c float or \c double) will be referred to as
+\c LTFAT_REAL and the complex data type (\c complex \c float or \c complex \c double)
+ as \c LTFAT_COMPLEX.
+
+\note Additionally, the \c LTFAT_TYPE type will be used whenever there is a version of the
+function for all four aforementioned types.
+
+Compatibility
+-------------
+The \c complex \c double and \c complex \c float types 
+are a [C99 feature](http://en.cppreference.com/w/c/numeric/complex) 
+and they are not supported anywhere else.
+The following substitution is done (for doubles and similarly to floats)
+ whenever the library is used in the environment which does not support C99
+(to compile the library itself a C99-enabled compiler is required):
+
+<table>
+<tr><th></th><th>Single number</th><th>Array</th><th>Pointer</th></tr>
+<tr><td>C99</td><td>complex double</td><td>complex double[]</td><td>complex double*</td></tr>
+<tr><td>Substitution</td><td>double[2]</td><td>double[][2]</td><td>double(*)[2]</td></tr>
+</table>
+Moreover, the interleaved layout of the complex arrays is binary compatible to 
+arrays of C++
+<a href="http://en.cppreference.com/w/cpp/numeric/complex">std::complex</a>
+and one can cast arrays and pointers back and forth in the following way:
+
+~~~~~~~~~~~~~~~{.cpp}
+double ccomp[][2] = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
+std::complex<double>* ccpp = reinterpret_cast<std::complex<double>*>(ccomp);
+double (*ccomp2)[2] = reinterpret_cast<double(*)[2]>(ccpp);
+~~~~~~~~~~~~~~~
 
 
 Arrays, matrices and naming conventions
@@ -91,8 +111,9 @@ is an example how to use it:
 ~~~~~~~~~~~~~~~{.c}
 dgt_long_plan_d* plan = NULL;
 
-dgt_long_init_d(f, g, L, W, a, M, cout, ptype, FFTW_ESTIMATE, &plan)
-// Fill in c and f after calling init. FFTW plan might overwrite it.
+dgt_long_init_d(f, g, L, W, a, M, c, ptype, FFTW_ESTIMATE, &plan)
+// Fill in c after calling init. The FFTW planning routine migh have written 
+// something to it.
 
 dgt_long_execute_d(plan);
 // Refresh data in f and call execute again  
@@ -106,7 +127,7 @@ the *_init routines are not re-entrant because of the FFTW planning happening in
 Therefore, the *_init functions cannot be called simultaneously on different threads even 
 when creating completely separate plans.
 
-\note Further, the *_execute function is reentrant and thread-safe, but not when executed 
+\note Further, the *_execute functions are reentrant and thread-safe, but not when executed 
 on a single plan concurrently on separate threads. 
 This limitation comes from the fact that the plan contains some working buffers.
 
@@ -115,24 +136,5 @@ States
 
 A __state__ is a plan which additionally holds some data which persists
 between the execute calls.
-
-Compatibility
--------------
-
-The library internally uses complex numbers from ISO C99
-[complex.h](http://en.cppreference.com/w/c/numeric/complex).
-Their memory layout is interleved and they are
-binary compatible with the complex class from C++.
-One can cast pointers back and forth in the following way:
-
-~~~~~~~~~~~~~~~{.cpp}
-double ccomp[][2] = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
-std::complex<double>* ccpp = reinterpret_cast<std::complex<double>*>(ccomp);
-double (*ccomp2)[2] = reinterpret_cast<double(*)[2]>(ccpp);
-~~~~~~~~~~~~~~~
-
-
-
-
 
 
