@@ -14,4 +14,4 @@ files_blaslapack = ltfat_blaslapack.c gabdual_fac.c gabtight_fac.c
 
 files_blaslapack_complextransp = gabdual.c gabtight.c
 
-files_notypechange = memalloc.c integer_manip.c reassign_typeconstant.c wavelets_typeconstant.c error.c version.c
+files_notypechange = memalloc.c integer_manip.c reassign_typeconstant.c wavelets_typeconstant.c error.c version.c argchecks.c

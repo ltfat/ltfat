@@ -39,4 +39,8 @@ typedef enum
 
 /** @}*/
 
+int
+ltfat_phaseconvention_is_valid(ltfat_phaseconvention in);
+
+
 #endif
