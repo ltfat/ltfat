@@ -10,7 +10,7 @@ dataPtr = [flags.complexity, 'Ptr'];
 [~,~,enuminfo]=libltfatprotofile;
 Cenumnorms = enuminfo.ltfat_normalize_t;
 
-Larr = [9,11,110];
+Larr = [1,9,11,110];
 normpairs = {{'null',Cenumnorms.LTFAT_NORMALIZE_NULL},...
              {'1', Cenumnorms.LTFAT_NORMALIZE_1},...
              {'2', Cenumnorms.LTFAT_NORMALIZE_2}};
@@ -28,14 +28,14 @@ for do_complex = 0:1
             if do_complex
                 z = cast(randn(L,1)+1i*randn(L,1),flags.complexity);
                 zi = complex2interleaved(z);
-                zout = zeros(size(zi),flags.complexity);
+                zout = randn(size(zi),flags.complexity);
                 
                 ziPtr = libpointer(dataPtr,zi);
                 zoutPtr = libpointer(dataPtr,zout);
             else
                 z = cast(randn(L,1),flags.complexity);
                 zi = z;
-                zout = zeros(size(zi),flags.complexity);
+                zout = randn(size(zi),flags.complexity);
                 
                 ziPtr = libpointer(dataPtr,zi);
                 zoutPtr = libpointer(dataPtr,zout);

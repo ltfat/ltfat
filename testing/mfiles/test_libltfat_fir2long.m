@@ -1,31 +1,66 @@
-function test_libltfat_fir2long
+function test_failed = test_libltfat_fir2long(varargin)
+test_failed = 0;
 
-L = 6;
-Llong = 9;
-ziorig = 1:L;
-zi = postpad(ziorig,Llong);
-zout = zeros(1,Llong);
+fprintf(' ===============  %s ================ \n',upper(mfilename));
 
-fir2longtrue = fir2long(ziorig,Llong);
+definput.flags.complexity={'double','single'};
+[flags]=ltfatarghelper({},definput,varargin);
+dataPtr = [flags.complexity, 'Ptr'];
 
-ziPtr = libpointer('doublePtr',zi);
-zoutPtr = libpointer('doublePtr',zout);
+Larr =    [1, 9,11,110,1, 9, 8, 8,   11, 11, 10];
+Loutarr = [11,9,12,221,1,10, 10, 11, 15, 16, 1000];
 
-
-ret = calllib('libltfat','ltfat_fir2long_d',ziPtr,L,Llong,zoutPtr)
-
-zoutPtr.Value
-
-
-ret = calllib('libltfat','ltfat_fir2long_d',ziPtr,L,Llong,ziPtr)
-
-ziPtr.Value
-
-
-
-errOutOfPlace = norm(fir2longtrue - zoutPtr.Value)
-errInPlace = norm(fir2longtrue - ziPtr.Value)
-
-
-%interleaved2complex(zoutPtr.Value)
+for do_complex = 0:1
+    complexstring = '';
+    if do_complex, complexstring = 'complex'; end
+    funname = makelibraryname('fir2long',flags.complexity,do_complex);
+    
+    for Lidx = 1:numel(Larr)
+        L = Larr(Lidx);
+        Lout = Loutarr(Lidx);
+            
+            if do_complex
+                z = cast((1:L)'+1i*(L:-1:1)',flags.complexity);
+                zi = complex2interleaved(z);
+                zout = randn(2*Lout,1,flags.complexity);
+                
+                ziPtr = libpointer(dataPtr,zi);
+                zoutPtr = libpointer(dataPtr,zout);
+            else
+                z = cast((1:L)',flags.complexity);
+                zi = z;
+                zout = randn(Lout,1,flags.complexity);
+                
+                ziPtr = libpointer(dataPtr,zi);
+                zoutPtr = libpointer(dataPtr,zout);
+            end
+            
+            trueres = fir2long(z,Lout);
+            
+            
+            status = calllib('libltfat',funname,ziPtr,L,Lout,zoutPtr);
+            
+            if do_complex
+                res = norm(trueres - interleaved2complex(zoutPtr.Value));
+            else
+                res = norm(trueres - zoutPtr.Value);
+            end
+            
+            [test_failed,fail]=ltfatdiditfail(res+status,test_failed,0);
+            fprintf(['FIR2LONG OP L:%3i, Lout:%3i, %s %s %s %s\n'],L,Lout,flags.complexity,complexstring,ltfatstatusstring(status),fail);
+            
+            zoutPtr.Value(:) = randn(size(zoutPtr.Value),flags.complexity);
+            zoutPtr.Value(1:numel(ziPtr.Value)) = ziPtr.Value;
+            status = calllib('libltfat',funname,zoutPtr,L,Lout,zoutPtr);
+            
+            if do_complex
+                res = norm(trueres - interleaved2complex(zoutPtr.Value));
+            else
+                res = norm(trueres - zoutPtr.Value);
+            end
+            
+            [test_failed,fail]=ltfatdiditfail(res+status,test_failed,0);
+            fprintf(['FIR2LONG IP L:%3i, Lout:%3i, %s %s %s %s\n'],L,Lout,flags.complexity,complexstring,ltfatstatusstring(status),fail);
+    end
+end
 

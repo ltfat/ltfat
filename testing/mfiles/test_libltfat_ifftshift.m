@@ -1,4 +1,4 @@
-function test_failed = test_libltfat_circshift(varargin)
+function test_failed = test_libltfat_ifftshift(varargin)
 test_failed = 0;
 
 fprintf(' ===============  %s ================ \n',upper(mfilename));
@@ -7,36 +7,35 @@ definput.flags.complexity={'double','single'};
 [flags]=ltfatarghelper({},definput,varargin);
 dataPtr = [flags.complexity, 'Ptr'];
 
-Larr = [9,11,110];
-shiftarr = [-10, 100, 0, -1, 1, 3];
+Larr = [1,9,11,110];
 
 for do_complex = 0:1
     complexstring = '';
     if do_complex, complexstring = 'complex'; end
+    funname = makelibraryname('ifftshift',flags.complexity,do_complex);
+    
     for L = Larr
-        for shift = shiftarr
             
             if do_complex
                 z = cast((1:L)'+1i*(L:-1:1)',flags.complexity);
                 zi = complex2interleaved(z);
-                zout = zeros(size(zi),flags.complexity);
+                zout = randn(size(zi),flags.complexity);
                 
                 ziPtr = libpointer(dataPtr,zi);
                 zoutPtr = libpointer(dataPtr,zout);
             else
                 z = cast((1:L)',flags.complexity);
                 zi = z;
-                zout = zeros(size(zi),flags.complexity);
+                zout = randn(size(zi),flags.complexity);
                 
                 ziPtr = libpointer(dataPtr,zi);
                 zoutPtr = libpointer(dataPtr,zout);
             end
             
-            trueres = circshift(z,shift);
+            trueres = ifftshift(z);
             
             
-            status = calllib('libltfat',makelibraryname('circshift',flags.complexity,do_complex),...
-                ziPtr,L,shift,zoutPtr);
+            status = calllib('libltfat',funname,ziPtr,L,zoutPtr);
             
             if do_complex
                 res = norm(trueres - interleaved2complex(zoutPtr.Value));
@@ -45,11 +44,9 @@ for do_complex = 0:1
             end
             
             [test_failed,fail]=ltfatdiditfail(res+status,test_failed,0);
-            [test_failed,fail2]=ltfatstatusstring(status);
-            fprintf(['CIRCSHIFT OP L:%3i, shift:%3i %s %s %s %s\n'],L,shift,flags.complexity,complexstring,fail,fail2);
+            fprintf(['FFTSHIFT OP L:%3i, %s %s %s %s\n'],L,flags.complexity,complexstring,ltfatstatusstring(status),fail);
             
-            status = calllib('libltfat',makelibraryname('circshift',flags.complexity,do_complex),...
-                ziPtr,L,shift,ziPtr);
+            status = calllib('libltfat',funname,ziPtr,L,ziPtr);
             
             if do_complex
                 res = norm(trueres - interleaved2complex(ziPtr.Value));
@@ -57,10 +54,8 @@ for do_complex = 0:1
                 res = norm(trueres - ziPtr.Value);
             end
             
-            [test_failed,fail]=ltfatdiditfail(res,test_failed,0);
-            [test_failed,fail2]=ltfatdiditfail(ret,test_failed,0);
-            fprintf(['CIRCSHIFT IP L:%3i, shift:%3i %s %s %s %s\n'],L,shift,flags.complexity,complexstring,fail,fail2);
-        end
+            [test_failed,fail]=ltfatdiditfail(res+status,test_failed,0);
+            fprintf(['FFTSHIFT IP L:%3i, %s %s %s %s\n'],L,flags.complexity,complexstring,ltfatstatusstring(status),fail);
     end
 end
 

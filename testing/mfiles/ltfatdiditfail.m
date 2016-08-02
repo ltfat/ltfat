@@ -7,7 +7,7 @@ function [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
 if nargin<3
   tolerance=1e-10;
   if isa(res,'single')
-      tolerance=1e-6;
+      tolerance=5e-4;
   end
 end;
   
