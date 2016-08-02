@@ -4,11 +4,12 @@
 
 LTFAT_EXTERN int
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
-                          const ltfatInt L, const ltfatInt R, const ltfatInt a,
+                          const ltfatInt L, const ltfatInt a,
                           const ltfatInt M, LTFAT_TYPE* gt)
 {
     LTFAT_COMPLEX* gf = NULL;
     LTFAT_COMPLEX* gtf = NULL;
+    ltfatInt R = 1;
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gt);
@@ -62,7 +63,7 @@ LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
     CHECKMEM( tmpLong = ltfat_malloc(L * sizeof * tmpLong));
 
     LTFAT_NAME(fir2long)(g, gl, L, tmpLong);
-    LTFAT_NAME(gabtight_long)(tmpLong, L, 1, a, M, tmpLong);
+    LTFAT_NAME(gabtight_long)(tmpLong, L, a, M, tmpLong);
     LTFAT_NAME(long2fir)(tmpLong, L, gtl, gt);
 
 error:

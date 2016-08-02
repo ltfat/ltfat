@@ -78,23 +78,22 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
  *
  * \param[in]   g    Original window(s), size L x R
  * \param[in]   L    Length of the system
- * \param[in]   R    Number of windows
  * \param[in]   a    Hop factor
  * \param[in]   M    Number of channels
  * \param[out] gd    Canonical dual window(s), size L x R
  *
  * #### Versions #
  * <tt>
- * ltfat_gabdual_long_d(const double g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabdual_long_d(const double g[], const ltfatInt L, 
  *                      const ltfatInt a, const ltfatInt M, double gd[]);
  *
- * ltfat_gabdual_long_s(const float g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabdual_long_s(const float g[], const ltfatInt L, 
  *                      const ltfatInt a, const ltfatInt M, float gd[]);
  *
- * ltfat_gabdual_long_dc(const complex double g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabdual_long_dc(const complex double g[], const ltfatInt L, 
  *                       const ltfatInt a, const ltfatInt M, complex double gd[]);
  *
- * ltfat_gabdual_long_sc(const complex float g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabdual_long_sc(const complex float g[], const ltfatInt L, 
  *                       const ltfatInt a, const ltfatInt M, complex float gd[]);
  * </tt>
  * \returns
@@ -110,32 +109,33 @@ LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
  */
 LTFAT_EXTERN int
 LTFAT_NAME(gabdual_long)(const LTFAT_TYPE g[],
-                         const ltfatInt L, const ltfatInt R, const ltfatInt a,
+                         const ltfatInt L, const ltfatInt a,
                          const ltfatInt M, LTFAT_TYPE gd[]);
 
 /** Compute canonical tight window for Gabor system
  *
  * \warning This function is not available if libltfat has been compiled with
  * NOBLASLAPACK.
+ * 
+ * \see fir2long long2fir
  *
  * \param[in]   g    Original window(s), size L x R
  * \param[in]   L    Length of the system
- * \param[in]   R    Number of windows
  * \param[in]   a    Hop factor
  * \param[in]   M    Number of channels
  * \param[out] gt    Canonical tight window
  *
  * #### Versions #
- * ltfat_gabtight_long_d(const double g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabtight_long_d(const double g[], const ltfatInt L, 
  *                       const ltfatInt a, const ltfatInt M, double gt[]);
  *
- * ltfat_gabtight_long_s(const float g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabtight_long_s(const float g[], const ltfatInt L, 
  *                       const ltfatInt a, const ltfatInt M, float gt[]);
  *
- * ltfat_gabtight_long_dc(const complex double g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabtight_long_dc(const complex double g[], const ltfatInt L, 
  *                        const ltfatInt a, const ltfatInt M, complex double gt[]);
  *
- * ltfat_gabtight_long_sc(const complex float g[], const ltfatInt L, const ltfatInt R,
+ * ltfat_gabtight_long_sc(const complex float g[], const ltfatInt L, 
  *                        const ltfatInt a, const ltfatInt M, complex float gt[]);
  * </tt>
  * \returns
@@ -151,8 +151,9 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE g[],
  */
 LTFAT_EXTERN int
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE g[],
-                          const ltfatInt L, const ltfatInt R, const ltfatInt a,
+                          const ltfatInt L, const ltfatInt a,
                           const ltfatInt M, LTFAT_TYPE gd[]);
+/** @} */
 
 /** Compute FIR canonical dual window for Gabor system
  *
@@ -258,7 +259,6 @@ LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE g[], const ltfatInt gl,
                          const ltfatInt L, const ltfatInt a,
                          const ltfatInt M, const ltfatInt gtl, LTFAT_TYPE gt[]);
 
-/** @} */
 
 /* --------- Wilson and WMDCT bases ---------*/
 LTFAT_EXTERN void

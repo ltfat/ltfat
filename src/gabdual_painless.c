@@ -25,7 +25,7 @@
 // Return first dl entries of the frame diagonal.
 LTFAT_EXTERN int
 LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
-                         ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_TYPE* d)
+                         ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(d);
@@ -45,7 +45,11 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     {
         for (int ii = aIdx; ii < domod.quot + domod.rem; ii += a)
         {
-            LTFAT_REAL gabs = fabs(g[ii]);
+#ifdef LTFAT_COMPLEXTYPE
+            LTFAT_REAL gabs = LTFAT_COMPLEXH(cabs)(g[ii]);
+#else
+            LTFAT_REAL gabs = g[ii];
+#endif
             d[aIdx] += gabs * gabs;
         }
     }
@@ -55,7 +59,11 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     {
         for (int ii = gl - (a - aIdx); ii >= domod.quot + domod.rem; ii -= a)
         {
-            LTFAT_REAL gabs = fabs(g[ii]);
+#ifdef LTFAT_COMPLEXTYPE
+            LTFAT_REAL gabs = LTFAT_COMPLEXH(cabs)(g[ii]);
+#else
+            LTFAT_REAL gabs = g[ii];
+#endif
             d[aIdx] += gabs * gabs;
         }
     }
@@ -65,7 +73,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
 
     // frame diagonal is a-periodic
     if (dl > a)
-        LTFAT_NAME(periodize_array)(d, a, dl, d);
+        LTFAT_NAME_REAL(periodize_array)(d, a, dl, d);
 
 error:
     return status;
@@ -75,7 +83,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
                               const ltfatInt a, const ltfatInt M, LTFAT_TYPE* gt)
 {
-    LTFAT_TYPE* d = NULL;
+    LTFAT_REAL* d = NULL;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gt);
     CHECKGABPAINLESS;
@@ -102,7 +110,7 @@ LTFAT_EXTERN int
 LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
                              const ltfatInt a,  const ltfatInt M, LTFAT_TYPE* gd)
 {
-    LTFAT_TYPE* d = NULL;
+    LTFAT_REAL* d = NULL;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gd);
     CHECKGABPAINLESS;
