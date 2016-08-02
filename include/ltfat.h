@@ -79,6 +79,8 @@ extern "C"
 #       undef LTFAT_COMPLEXTYPE
 #       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
+#       include "ltfat/types.h"
+#       include "ltfat/typecomplexindependent.h"
 #       define LTFAT_COMPLEXTYPE
 #   endif
 
@@ -110,6 +112,8 @@ extern "C"
 #       undef LTFAT_COMPLEXTYPE
 #       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
+#       include "ltfat/types.h"
+#       include "ltfat/typecomplexindependent.h"
 #       define LTFAT_COMPLEXTYPE
 #   endif
 
