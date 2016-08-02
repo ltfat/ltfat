@@ -41,6 +41,8 @@ LTFAT_FIRWIN;
  * fftshift() can be used to format the array to the usual format
  * with peak in the middle. 
  *
+ * \see normalize
+ *
  * \param[in]   win  Window type
  * \param[in]   gl   Window length
  * \param[out]  g    Window

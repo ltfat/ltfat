@@ -1,5 +1,6 @@
-#ifndef _LTFAT_TYPECONSTANT
-#define _LTFAT_TYPECONSTANT
+#ifndef _LTFAT_TYPECONSTANT_H
+#define _LTFAT_TYPECONSTANT_H
+#include "ltfat.h"
 #include "memalloc.h"
 #include "dgt_common.h"
 

@@ -27,7 +27,6 @@ ltfat_fftindex(const ltfatInt N, ltfatInt* indexout)
             indexout[ii + 1] = -N + ii + 1;
         }
     }
-
 }
 
 LTFAT_EXTERN ltfatInt
@@ -222,39 +221,39 @@ ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
     return ((x) & (pow2var - 1));
 }
 
-LTFAT_EXTERN int
-isPow2(const ltfatInt x)
-{
-    return x == ltfat_nextpow2(x);
-}
-
-LTFAT_EXTERN ltfatInt
-ilog2(const ltfatInt x)
-{
-    ltfatInt tmp = 0;
-    ltfatInt xtmp = x;
-    while (xtmp >>= 1) ++tmp;
-    return tmp;
-}
-
-// integer power by squaring
-LTFAT_EXTERN ltfatInt
-ipow(const ltfatInt base, const ltfatInt exp)
-{
-    ltfatInt baseTmp = (ltfatInt) base;
-    ltfatInt expTmp = (ltfatInt) exp;
-    ltfatInt result = 1;
-
-    while (expTmp)
-    {
-        if (expTmp & 1)
-            result *= baseTmp;
-        expTmp >>= 1;
-        baseTmp *= baseTmp;
-    }
-
-    return result;
-}
+/* LTFAT_EXTERN int */
+/* isPow2(const ltfatInt x) */
+/* { */
+/*     return x == ltfat_nextpow2(x); */
+/* } */
+/*  */
+/* LTFAT_EXTERN ltfatInt */
+/* ilog2(const ltfatInt x) */
+/* { */
+/*     ltfatInt tmp = 0; */
+/*     ltfatInt xtmp = x; */
+/*     while (xtmp >>= 1) ++tmp; */
+/*     return tmp; */
+/* } */
+/*  */
+/* // integer power by squaring */
+/* LTFAT_EXTERN ltfatInt */
+/* ipow(const ltfatInt base, const ltfatInt exp) */
+/* { */
+/*     ltfatInt baseTmp = (ltfatInt) base; */
+/*     ltfatInt expTmp = (ltfatInt) exp; */
+/*     ltfatInt result = 1; */
+/*  */
+/*     while (expTmp) */
+/*     { */
+/*         if (expTmp & 1) */
+/*             result *= baseTmp; */
+/*         expTmp >>= 1; */
+/*         baseTmp *= baseTmp; */
+/*     } */
+/*  */
+/*     return result; */
+/* } */
 
 LTFAT_EXTERN ltfatInt
 filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,

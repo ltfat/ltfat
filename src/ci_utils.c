@@ -337,15 +337,17 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
 
     /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
+    // Copy first half
     if (in != out)
         memcpy(out, in, (domod.quot + domod.rem)*sizeof * out);
 
     const ltfatInt ss = Llong - Lfir;
-
+    // Copy second half from the back
     for (ltfatInt ii = Lfir - 1; ii >= domod.quot + domod.rem; ii--)
         out[ii + ss] = in[ii];
 
-    for (ltfatInt ii = domod.quot + domod.rem; ii < Llong - domod.quot; ii++)
+    // Zero out the middle
+    for (ltfatInt ii = domod.quot + domod.rem; ii < Llong - domod.quot ; ii++)
         out[ii] = 0.0;
 error:
     return status;

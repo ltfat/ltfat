@@ -10,16 +10,21 @@ LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-    double shiftLoc = fmod(shift, L);
+    double shiftLoc = remainder(shift, L);
 
     if (shiftLoc != 0)
     {
+        const div_t domod = div(L, 2);
         LTFAT_COMPLEX phasefact = -I * 2.0 * M_PI * shiftLoc / L;
 
         out[0] = in[0];
 
-        for (int ii = 1; ii < L; ii++)
-            out[ii] = cexp(ii * phasefact) * in[ii];
+        for (int ii = 1; ii < domod.quot + 1; ii++)
+            out[ii] = LTFAT_COMPLEXH(cexp)(ii * phasefact) * in[ii];
+
+        for (int ii = 1; ii < domod.quot + domod.rem; ii++)
+            out[L-ii] = LTFAT_COMPLEXH(cexp)(-ii * phasefact) * in[L-ii];
+
     }
     else
     {
@@ -48,7 +53,9 @@ LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
         CHECKNULL(in); CHECKNULL(out);
         CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-        out[0] = in[0];
+        if (in != out)
+            for (int ii = 0; ii < L; ii += 2)
+                out[ii] = in[ii];
 
         // There is Nyquist sample. Modulation is exactly by pi i.e. no complex
         // multiplication
@@ -86,7 +93,7 @@ LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
 
     const div_t domod = div(L, 2);
 
-    double shiftLoc = fmod(shift, L);
+    double shiftLoc = remainder(shift, L);
 
     if (shiftLoc != 0)
     {
@@ -95,12 +102,12 @@ LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
         out[0] = in[0];
 
         for (int ii = 1; ii < domod.quot + 1; ii++)
-            out[ii] = cexp(ii * phasefact) * in[ii];
+            out[ii] = LTFAT_COMPLEXH(cexp)(ii * phasefact) * in[ii];
     }
     else
     {
         if (in != out)
-            memcpy(out, in, domod.quot * sizeof * out);
+            memcpy(out, in, (domod.quot + 1) * sizeof * out);
     }
 
 error:
@@ -125,7 +132,9 @@ LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
         CHECKNULL(in); CHECKNULL(out);
         CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-        out[0] = in[0];
+        if (in != out)
+            for (int ii = 0; ii < domod.quot + 1; ii += 2)
+                out[ii] = in[ii];
 
         // There is Nyquist sample. Modulation is exactly by pi i.e. no complex
         // multiplication
@@ -254,7 +263,7 @@ LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
         {
             const LTFAT_COMPLEX* inCol = cFreqinv + n * M2 + w * M2 * N;
             LTFAT_COMPLEX* outCol = cTimeinv + n * M2 + w * M2 * N;
-            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M2, -n * a, outCol);
+            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M, -n * a, outCol);
         }
     }
 
@@ -311,7 +320,7 @@ LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
         {
             const LTFAT_COMPLEX* inCol = cTimeinv + n * M2 + w * M2 * N;
             LTFAT_COMPLEX* outCol = cFreqinv + n * M2 + w * M2 * N;
-            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M2, n * a, outCol);
+            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M, n * a, outCol);
         }
     }
 
