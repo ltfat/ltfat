@@ -65,6 +65,28 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %   will be 1 if `'timeinv'` was selected and 0 otherwise, and similarly for
 %   `'freqinv'`. This allows for easy checking of selected flags.
 %
+%   Advanced usage
+%   --------------
+%   
+%   Expansion `import` was introduced in order to allow sharing common
+%   flags and key/value pair between functions. 
+%   
+%   The following example is taken from |plotdgt| and |tfplot|::
+%
+%       definput.import={'ltfattranslate','tfplot'};
+%       [flags,kv,fs]=ltfatarghelper({'fs','dynrange'},definput,varargin);
+%
+%   This code instructs `ltfatarghelper` to run functions 
+%   `arg_ltfattranslate` and `arg_tfplot` which define the flags and 
+%   key/value pairs. The `arg_` functions must have the following signature::
+%
+%       function definput=arg_name(definput)
+%
+%   Moreover, a special flag `'argimport'` is used to pass the flags 
+%   and the key/value pairs from |plotdgt| to |tfplot|::
+%
+%       coef=tfplot(...,'argimport',flags,kv);
+%   
 %   See also: ltfatgetdefaults, ltfatsetdefaults
 
 persistent TF_CONF;
