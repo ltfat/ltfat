@@ -38,7 +38,7 @@ export CFLAGS := $(shell $(MKOCTFILE) -p CFLAGS) -std=c99 -Wall
 # at least on Windows and on Mac
 export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS) 
 
-MKOCTFILEFLAGS = -I../libltfat/include -I../libltfat/include/ltfat -DNDEBUG -L../lib -lltfat
+MKOCTFILEFLAGS = -I../libltfat/thirdparty -I../libltfat/include -I../libltfat/include/ltfat -DNDEBUG -L../lib -lltfat
 
 include ../libltfat/ostools.mk
 
