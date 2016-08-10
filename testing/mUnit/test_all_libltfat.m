@@ -4,7 +4,7 @@ definput.keyvals.tests=[];
 definput.keyvals.ignore={};
 [flags,kv]=ltfatarghelper({'tests'},definput,varargin);
 
-tests_todo =  arrayfun(@(dEl) dEl.name(6:end-2),dir('./test_libltfat_*'),'UniformOutput',0);
+tests_todo =  arrayfun(@(dEl) dEl.name(6:end-2),dir('./test_libltfat_*.m'),'UniformOutput',0);
 
 if ~isempty(kv.tests)
    if ischar(kv.tests)
