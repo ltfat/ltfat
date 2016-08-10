@@ -13,6 +13,8 @@ typedef enum
     LTFAT_INVERSE
 } ltfat_transformdirection;
 
+#define rtdgtreal_processor_execute_compact_max_chan 128
+
 #endif /* _RTDGTREAL_H */
 
 

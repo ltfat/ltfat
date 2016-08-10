@@ -731,8 +731,8 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     LTFAT_REAL* out)
 {
     // Stack allocated (tiny) VLAs
-    const LTFAT_REAL* inTmp[chanNo];
-    LTFAT_REAL* outTmp[chanNo];
+    const LTFAT_REAL* inTmp[rtdgtreal_processor_execute_compact_max_chan];
+    LTFAT_REAL* outTmp[rtdgtreal_processor_execute_compact_max_chan];
 
     for (ltfatInt w = 0; w < chanNo; w++)
     {
