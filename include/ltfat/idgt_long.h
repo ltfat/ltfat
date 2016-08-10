@@ -3,8 +3,7 @@ typedef struct LTFAT_NAME(idgt_long_plan) LTFAT_NAME(idgt_long_plan);
 /**
  *  \addtogroup dgtlong
  * @{
- *
- *
+ * For a detailed description see the dedicated page \ref dgttheory
  */
 
 
@@ -66,22 +65,22 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
  * <tt>
  * ltfat_idgt_long_init_d(complex double c[], const double g[], const ltfatInt L,
  *                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                        complex double f[], unsigned flags, const ltfat_phaseconvention ptype,
+ *                        complex double f[], const ltfat_phaseconvention ptype, unsigned flags,
  *                        ltfat_idgt_long_plan_d** plan);
  *
  * ltfat_idgt_long_init_s(complex float c[], const float g[], const ltfatInt L,
  *                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                        complex float f[], unsigned flags, const ltfat_phaseconvention ptype,
+ *                        complex float f[], const ltfat_phaseconvention ptype, unsigned flags,
  *                        ltfat_idgt_long_plan_s** plan);
  *
  * ltfat_idgt_long_init_dc(complex double c[], const complex double g[], const ltfatInt L,
  *                         const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                         complex double f[], unsigned flags, const ltfat_phaseconvention ptype,
+ *                         complex double f[], const ltfat_phaseconvention ptype, unsigned flags,
  *                         ltfat_idgt_long_plan_dc** plan);
  *
  * ltfat_idgt_long_init_sc(complex float c[], const complex float g[], const ltfatInt L,
  *                         const ltfatInt W, const ltfatInt a, const ltfatInt M,
- *                         complex float f[], unsigned flags, const ltfat_phaseconvention ptype,
+ *                         complex float f[], const ltfat_phaseconvention ptype, unsigned flags,
  *                         ltfat_idgt_long_plan_sc** plan);
  * </tt>
  */
@@ -89,7 +88,8 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
                            const ltfatInt L, const ltfatInt W,
                            const ltfatInt a, const ltfatInt M,  LTFAT_COMPLEX f[],
-                           unsigned flags, const ltfat_phaseconvention ptype, LTFAT_NAME(idgt_long_plan)** plan);
+                           const ltfat_phaseconvention ptype, unsigned flags,
+                           LTFAT_NAME(idgt_long_plan)** plan);
 
 
 /** Execute the Inverse Discrete Gabor Transform plan
@@ -118,7 +118,7 @@ LTFAT_NAME(idgt_long_execute)(LTFAT_NAME(idgt_long_plan)* p);
  *
  * \param[in]       p   Plan
  * \param[in]       c   Coefficients, size M x N xW
- * \param[out]      f   Output signal, size L x W  
+ * \param[out]      f   Output signal, size L x W
  * \returns Status code
  *
  * #### Versions #
@@ -162,11 +162,11 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_done)(LTFAT_NAME(idgt_long_plan)** plan);
 /** @}*/
 
-LTFAT_EXTERN void
-LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *gf,
-                     const ltfatInt L,
-                     const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                     const ltfat_phaseconvention ptype, LTFAT_COMPLEX *f);
+// LTFAT_EXTERN void
+// LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *gf,
+//                      const ltfatInt L,
+//                      const ltfatInt W, const ltfatInt a, const ltfatInt M,
+//                      const ltfat_phaseconvention ptype, LTFAT_COMPLEX *f);
 
 LTFAT_EXTERN void
 LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p);
