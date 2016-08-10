@@ -14,7 +14,7 @@
  */
 LTFAT_EXTERN int
 LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
-                         ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_TYPE* d);
+                         ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d);
 
 /** \addtogroup gabdual
  * @{

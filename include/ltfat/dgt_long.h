@@ -3,9 +3,7 @@ typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
 /** \defgroup dgtlong Discrete Gabor Transform for long windows -- dgt_long 
  *  \addtogroup dgtlong
  * @{
- *
-
- *
+ * For a detailed description see the dedicated page \ref dgttheory
  */
 
 /** Computes DGT

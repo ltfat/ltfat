@@ -9,6 +9,7 @@
 #include "ci_windows.h"
 #include "dct.h"
 #include "dst.h"
+#include "ci_memalloc.h"
 
 /*   Walnut factorization    */
 
