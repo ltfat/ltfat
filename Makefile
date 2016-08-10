@@ -22,6 +22,7 @@ include ostools.mk
 
 ifdef CROSS
 	CC=$(CROSS)gcc
+	CXX=$(CROSS)g++
 	AR=$(CROSS)ar
 	OBJCOPY=$(CROSS)objcopy
 	RANLIB=$(CROSS)ranlib
@@ -30,6 +31,7 @@ ifdef CROSS
 	MINGW=1
 else
 	CC?=gcc
+	CXX?=gcc
 	AR?=ar
 	OBJCOPY?=objcopy
 	RANLIB?=ranlib
@@ -42,7 +44,8 @@ LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
 
 # Base CFLAGS
-CFLAGS+=-Ithirdparty -Wall -Wextra -pedantic -std=gnu99 -Iinclude -Ithirdparty $(OPTCFLAGS)
+CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
+CXXFLAGS+=-Wall -Wextra -pedantic -std=c++11 -Iinclude -Ithirdparty $(OPTCFLAGS)
 
 # The following adds parameters to CFLAGS
 include comptarget.mk
@@ -57,8 +60,15 @@ ifdef MINGW
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
 else
 	CFLAGS += -fPIC
+	CXXFLAGS += -fPIC
 	BLASLAPACKLIBS?=-llapack -lblas
 endif
+
+ifdef USECPP
+	CC = $(CXX)
+	CFLAGS = $(CXXFLAGS)
+endif
+
 
 LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 # Dependencies
@@ -186,6 +196,7 @@ help:
 	@echo "Options:"
 	@echo "    make [target] CONFIG=debug               Compiles the library in a debug mode"
 	@echo "    make [target] NOBLASLAPACK=1             Compiles the library without BLAS and LAPACK dependencies"
+	@echo "    make [target] USECPP=1                   Compiles the library using a C++ compiler"
 
 doc:
 	doxygen doc/doxyconfig
@@ -195,8 +206,11 @@ cleandoc:
 	@$(RMDIR) latex
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
-	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Iinclude/ltfat -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
-	sed -i '1 i\#include <fftw3.h>' $(buildprefix)/ltfat.h
+	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
+	sed -i '1 i #ifndef _LTFAT_H' $(buildprefix)/ltfat.h
+	sed -i '1 a #define _LTFAT_H' $(buildprefix)/ltfat.h
+	sed -i '2 a #include <fftw3.h>' $(buildprefix)/ltfat.h
+	sed -i '$$ a #endif' $(buildprefix)/ltfat.h
 
 install:
 	install -d $(LIBDIR)
