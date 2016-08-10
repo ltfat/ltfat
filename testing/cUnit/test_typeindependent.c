@@ -1,0 +1,6 @@
+#include "test_fftcircshift.c"
+#include "test_fftfftshift.c"
+#include "test_fftifftshift.c"
+#include "test_fftrealcircshift.c"
+#include "test_fftrealfftshift.c"
+#include "test_fftrealifftshift.c"

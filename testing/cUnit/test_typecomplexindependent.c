@@ -1,0 +1,6 @@
+#include "test_circshift.c"
+#include "test_fftshift.c"
+#include "test_ifftshift.c"
+#include "test_fir2long.c"
+#include "test_long2fir.c"
+#include "test_normalize.c"
