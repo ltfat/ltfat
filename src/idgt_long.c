@@ -32,8 +32,7 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     // It is safe to cast away the const.
     CHECKSTATUS(
         LTFAT_NAME(idgt_long_init)((LTFAT_COMPLEX*)cin, g, L, W, a, M, f, ptype,
-                                   FFTW_ESTIMATE,
-                                   &plan),
+                                   FFTW_ESTIMATE, &plan),
         "Init failed");
 
     LTFAT_NAME(idgt_long_execute)(plan);
@@ -51,7 +50,10 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
                            const ltfat_phaseconvention ptype, unsigned flags,
                            LTFAT_NAME(idgt_long_plan)** pout)
 {
+    ltfatInt minL, b, N, p, q, d;
     LTFAT_NAME(idgt_long_plan)* plan = NULL;
+    // Downcast to int
+    int Mint = (int) M;
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cin != NULL,
           "cin cannot be NULL if flags is not FFTW_ESTIMATE");
@@ -61,33 +63,32 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
 
-    ltfatInt minL = ltfat_lcm(a, M);
+    minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADARG,
           L > 0  && !(L % minL),
           "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
           L, minL);
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = (LTFAT_NAME(idgt_long_plan)*)ltfat_calloc(1, sizeof * plan));
 
     ltfatInt h_m;
 
     plan->a = a; plan->L = L; plan->M = M; plan->W = W; plan->ptype = ptype;
     /*  ----------- calculation of parameters and plans -------- */
 
-    const ltfatInt b = L / M;
-    const ltfatInt N = L / a;
+    b = L / M;
+    N = L / a;
 
     plan->c = ltfat_gcd(a, M, &plan->h_a, &h_m);
-    const ltfatInt p = a / plan->c;
-    const ltfatInt q = M / plan->c;
-    const ltfatInt d = b / p;
+    p = a / plan->c;
+    q = M / plan->c;
+    d = b / p;
 
-
-    CHECKMEM( plan->gf    = ltfat_malloc(L * sizeof * plan->gf));
-    CHECKMEM( plan->ff    = ltfat_malloc(d * p * q * W * sizeof * plan->ff));
-    CHECKMEM( plan->cf    = ltfat_malloc(d * q * q * W * sizeof * plan->cf));
-    CHECKMEM( plan->cwork = ltfat_malloc(M * N * W * sizeof * plan->cwork));
-    CHECKMEM( plan->cbuf  = ltfat_malloc(d * sizeof * plan->cbuf));
+    CHECKMEM( plan->gf    = LTFAT_NAME_COMPLEX(malloc)(L));
+    CHECKMEM( plan->ff    = LTFAT_NAME_COMPLEX(malloc)(d * p * q * W));
+    CHECKMEM( plan->cf    = LTFAT_NAME_COMPLEX(malloc)(d * q * q * W));
+    CHECKMEM( plan->cwork = LTFAT_NAME_COMPLEX(malloc)(M * N * W));
+    CHECKMEM( plan->cbuf  = LTFAT_NAME_COMPLEX(malloc)(d));
     plan->cin = cin;
     plan->f = f;
     LTFAT_NAME(wfac)(g, L, 1, a, M, plan->gf);
@@ -97,24 +98,24 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
 
     /* Create plans. In-place. */
 
-    plan->p_after  = LTFAT_FFTW(plan_dft_1d)(d, plan->cbuf, plan->cbuf,
+    plan->p_after  = LTFAT_FFTW(plan_dft_1d)(d,
+                     (LTFAT_FFTW(complex)*) plan->cbuf,
+                     (LTFAT_FFTW(complex)*) plan->cbuf,
                      FFTW_FORWARD, flags);
 
     CHECKINIT(plan->p_after, "FFTW plan failed.");
 
-    plan->p_before = LTFAT_FFTW(plan_dft_1d)(d, plan->cbuf, plan->cbuf,
-                     FFTW_BACKWARD, flags);
+    plan->p_before = LTFAT_FFTW(plan_dft_1d)(d,
+                     (LTFAT_FFTW(complex)*) plan->cbuf,
+                     (LTFAT_FFTW(complex)*) plan->cbuf, FFTW_BACKWARD, flags);
     CHECKINIT(plan->p_before, "FFTW plan failed.");
 
     /* Create plan. Copy data so we do not overwrite input. Therefore
        it is ok to cast away the constness of cin.*/
 
-    // Downcast to int
-    int Mint = (int) M;
-
     plan->p_veryend = LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W,
-                      (LTFAT_COMPLEX*)cin, NULL,
-                      1, Mint, plan->cwork, NULL,
+                      (LTFAT_FFTW(complex)*) cin, NULL, 1, Mint,
+                      (LTFAT_FFTW(complex)*) plan->cwork, NULL,
                       1, Mint, FFTW_BACKWARD, flags | FFTW_PRESERVE_INPUT);
 
     CHECKINIT(plan->p_veryend, "FFTW plan failed.");
@@ -155,16 +156,18 @@ LTFAT_NAME(idgt_long_execute_newarray)(LTFAT_NAME(idgt_long_plan)* p,
                                        const LTFAT_COMPLEX c[],
                                        LTFAT_COMPLEX f[])
 {
+    LTFAT_NAME(idgt_long_plan) p2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
 
-    LTFAT_FFTW(execute_dft)(p->p_veryend, (LTFAT_COMPLEX*)c, p->cwork);
+    LTFAT_FFTW(execute_dft)(p->p_veryend, (LTFAT_FFTW(complex)*)c,
+                            (LTFAT_FFTW(complex)*)p->cwork);
 
     if (p->ptype)
         LTFAT_NAME_COMPLEX(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a,
                 p->M, p->cwork);
 
-    LTFAT_NAME(idgt_long_plan) p2 = *p;
+    p2 = *p;
     p2.f = f;
 
     LTFAT_NAME(idgt_walnut_execute)(&p2);
@@ -176,9 +179,10 @@ error:
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_long_done)(LTFAT_NAME(idgt_long_plan)** plan)
 {
+    LTFAT_NAME(idgt_long_plan)* p;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(*plan);
-    LTFAT_NAME(idgt_long_plan)* p = *plan;
+    p = *plan;
 
     LTFAT_FFTW(destroy_plan)(p->p_before);
     LTFAT_FFTW(destroy_plan)(p->p_after);
@@ -333,191 +337,191 @@ LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p)
 
 }
 
-LTFAT_EXTERN void
-LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* gf,
-                     const ltfatInt L, const ltfatInt W,
-                     const ltfatInt a, const ltfatInt M,
-                     const ltfat_phaseconvention ptype,
-                     LTFAT_COMPLEX* f)
-{
-
-    /*  --------- initial declarations -------------- */
-
-    ltfatInt h_a, h_m;
-
-    LTFAT_FFTW(plan) p_before, p_after, p_veryend;
-    LTFAT_COMPLEX* ff, *cf, *cwork, *cbuf;
-
-    /*  ----------- calculation of parameters and plans -------- */
-
-    const ltfatInt b = L / M;
-    const ltfatInt N = L / a;
-
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = b / p;
-
-    h_a = -h_a;
-
-    ff    = ltfat_malloc(d * p * q * W * sizeof * ff);
-    cf    = ltfat_malloc(d * q * q * W * sizeof * cf);
-    cwork = ltfat_malloc(M * N * W * sizeof * cwork);
-    cbuf  = ltfat_malloc(d * sizeof * cbuf);
-
-    /* Scaling constant needed because of FFTWs normalization. */
-    const LTFAT_REAL scalconst = 1.0 / ((LTFAT_REAL)d * sqrt((LTFAT_REAL)M));
-
-    /* Create plans. In-place. */
-
-    p_after  = LTFAT_FFTW(plan_dft_1d)(d, cbuf, cbuf,
-                                       FFTW_FORWARD, FFTW_ESTIMATE);
-
-    p_before = LTFAT_FFTW(plan_dft_1d)(d, cbuf, cbuf,
-                                       FFTW_BACKWARD, FFTW_ESTIMATE);
-
-    /* Create plan. Copy data so we do not overwrite input. Therefore
-       it is ok to cast away the constness of cin.*/
-
-    // Downcast to int
-    int Mint = (int) M;
-
-    p_veryend = LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W,
-                                          (LTFAT_COMPLEX*)cin, NULL,
-                                          1, Mint,
-                                          cwork, NULL,
-                                          1, Mint,
-                                          FFTW_BACKWARD, FFTW_ESTIMATE);
-
-    /* -------- Execute initial IFFT ------------------------ */
-    LTFAT_FFTW(execute)(p_veryend);
-
-
-    if (ptype)
-        LTFAT_NAME_COMPLEX(dgtphaseunlockhelper)(cwork, L, W, a, M, cwork);
-
-    /* -------- Main loop ----------------------------------- */
-
-    const ltfatInt ld4c = M * N;
-
-    /* Leading dimensions of cf */
-    const ltfatInt ld3b = q * q * W;
-
-    /* Leading dimensions of the 4dim array. */
-    const ltfatInt ld2ff = p * q * W;
-
-    for (ltfatInt r = 0; r < c; r++)
-    {
-        LTFAT_COMPLEX* cfp = cf;
-
-        for (ltfatInt w = 0; w < W; w++)
-        {
-            /* Complete inverse fac of coefficients */
-            for (ltfatInt l = 0; l < q; l++)
-            {
-                for (ltfatInt u = 0; u < q; u++)
-                {
-                    for (ltfatInt s = 0; s < d; s++)
-                    {
-                        const ltfatInt rem = r + l * c +
-                                             ltfat_positiverem(u + s * q - l * h_a, N)
-                                             * M + w * ld4c;
-                        cbuf[s] = cwork[rem];
-                    }
-
-                    /* Do inverse fft of length d */
-                    LTFAT_FFTW(execute)(p_after);
-
-                    for (ltfatInt s = 0; s < d; s++)
-                    {
-                        cfp[s * ld3b] =  cbuf[s];
-                    }
-                    /* Advance the cf pointer. This is only done in this
-                    * one place, because the loops are placed such that
-                    * this pointer will advance linearly through
-                    * memory. Reordering the loops will break this. */
-                    cfp++;
-                }
-            }
-        }
-
-
-
-        /* -------- compute matrix multiplication ---------- */
-
-
-        /* Do the matmul  */
-        for (ltfatInt s = 0; s < d; s++)
-        {
-
-            const LTFAT_COMPLEX* gbase = gf + (r + s * c) * p * q;
-            LTFAT_COMPLEX*       fbase = ff + s * p * q * W;
-            const LTFAT_COMPLEX* cbase = (const LTFAT_COMPLEX*)cf + s * q * q * W;
-
-            for (ltfatInt nm = 0; nm < q * W; nm++)
-            {
-                for (ltfatInt km = 0; km < p; km++)
-                {
-
-                    fbase[km + nm * p] = 0.0;
-                    for (ltfatInt mm = 0; mm < q; mm++)
-                    {
-                        fbase[km + nm * p] += gbase[km + mm * p] * cbase[mm + nm * q];
-                    }
-                    /* Scale because of FFTWs normalization. */
-                    fbase[km + nm * p] = fbase[km + nm * p] * scalconst;
-                }
-            }
-        }
-
-
-
-
-        /* ----------- compute inverse signal factorization ---------- */
-
-
-        LTFAT_COMPLEX* ffp = ff;
-        LTFAT_COMPLEX* fp  = f + r;
-
-        for (ltfatInt w = 0; w < W; w++)
-        {
-            for (ltfatInt l = 0; l < q; l++)
-            {
-                for (ltfatInt k = 0; k < p; k++)
-                {
-                    for (ltfatInt s = 0; s < d; s++)
-                    {
-                        cbuf[s] = ffp[s * ld2ff];
-                    }
-
-                    LTFAT_FFTW(execute)(p_before);
-
-                    for (ltfatInt s = 0; s < d; s++)
-                    {
-                        const ltfatInt rem = ltfat_positiverem(k * M + s * p * M -
-                                                               l * h_a * a, L);
-                        fp[rem] = cbuf[s];
-                    }
-
-                    /* Advance the ff pointer. This is only done in this
-                    * one place, because the loops are placed such that
-                    * this pointer will advance linearly through
-                    * memory. Reordering the loops will break this. */
-                    ffp++;
-                }
-            }
-            fp += L;
-        }
-        fp -= L * W;
-
-        /* ----- Main loop ends here ------------- */
-    }
-
-    /* -----------  Clean up ----------------- */
-
-    LTFAT_FFTW(destroy_plan)(p_veryend);
-    LTFAT_FFTW(destroy_plan)(p_after);
-    LTFAT_FFTW(destroy_plan)(p_before);
-
-    LTFAT_SAFEFREEALL(cwork, ff, cf, cbuf);
-}
+/* LTFAT_EXTERN void */
+/* LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* gf, */
+/*                      const ltfatInt L, const ltfatInt W, */
+/*                      const ltfatInt a, const ltfatInt M, */
+/*                      const ltfat_phaseconvention ptype, */
+/*                      LTFAT_COMPLEX* f) */
+/* { */
+/*  */
+/*     #<{(|  --------- initial declarations -------------- |)}># */
+/*  */
+/*     ltfatInt h_a, h_m; */
+/*  */
+/*     LTFAT_FFTW(plan) p_before, p_after, p_veryend; */
+/*     LTFAT_COMPLEX* ff, *cf, *cwork, *cbuf; */
+/*  */
+/*     #<{(|  ----------- calculation of parameters and plans -------- |)}># */
+/*  */
+/*     const ltfatInt b = L / M; */
+/*     const ltfatInt N = L / a; */
+/*  */
+/*     const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m); */
+/*     const ltfatInt p = a / c; */
+/*     const ltfatInt q = M / c; */
+/*     const ltfatInt d = b / p; */
+/*  */
+/*     h_a = -h_a; */
+/*  */
+/*     ff    = ltfat_malloc(d * p * q * W * sizeof * ff); */
+/*     cf    = ltfat_malloc(d * q * q * W * sizeof * cf); */
+/*     cwork = ltfat_malloc(M * N * W * sizeof * cwork); */
+/*     cbuf  = ltfat_malloc(d * sizeof * cbuf); */
+/*  */
+/*     #<{(| Scaling constant needed because of FFTWs normalization. |)}># */
+/*     const LTFAT_REAL scalconst = 1.0 / ((LTFAT_REAL)d * sqrt((LTFAT_REAL)M)); */
+/*  */
+/*     #<{(| Create plans. In-place. |)}># */
+/*  */
+/*     p_after  = LTFAT_FFTW(plan_dft_1d)(d, cbuf, cbuf, */
+/*                                        FFTW_FORWARD, FFTW_ESTIMATE); */
+/*  */
+/*     p_before = LTFAT_FFTW(plan_dft_1d)(d, cbuf, cbuf, */
+/*                                        FFTW_BACKWARD, FFTW_ESTIMATE); */
+/*  */
+/*     #<{(| Create plan. Copy data so we do not overwrite input. Therefore */
+/*        it is ok to cast away the constness of cin.|)}># */
+/*  */
+/*     // Downcast to int */
+/*     int Mint = (int) M; */
+/*  */
+/*     p_veryend = LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W, */
+/*                                           (LTFAT_COMPLEX*)cin, NULL, */
+/*                                           1, Mint, */
+/*                                           cwork, NULL, */
+/*                                           1, Mint, */
+/*                                           FFTW_BACKWARD, FFTW_ESTIMATE); */
+/*  */
+/*     #<{(| -------- Execute initial IFFT ------------------------ |)}># */
+/*     LTFAT_FFTW(execute)(p_veryend); */
+/*  */
+/*  */
+/*     if (ptype) */
+/*         LTFAT_NAME_COMPLEX(dgtphaseunlockhelper)(cwork, L, W, a, M, cwork); */
+/*  */
+/*     #<{(| -------- Main loop ----------------------------------- |)}># */
+/*  */
+/*     const ltfatInt ld4c = M * N; */
+/*  */
+/*     #<{(| Leading dimensions of cf |)}># */
+/*     const ltfatInt ld3b = q * q * W; */
+/*  */
+/*     #<{(| Leading dimensions of the 4dim array. |)}># */
+/*     const ltfatInt ld2ff = p * q * W; */
+/*  */
+/*     for (ltfatInt r = 0; r < c; r++) */
+/*     { */
+/*         LTFAT_COMPLEX* cfp = cf; */
+/*  */
+/*         for (ltfatInt w = 0; w < W; w++) */
+/*         { */
+/*             #<{(| Complete inverse fac of coefficients |)}># */
+/*             for (ltfatInt l = 0; l < q; l++) */
+/*             { */
+/*                 for (ltfatInt u = 0; u < q; u++) */
+/*                 { */
+/*                     for (ltfatInt s = 0; s < d; s++) */
+/*                     { */
+/*                         const ltfatInt rem = r + l * c + */
+/*                                              ltfat_positiverem(u + s * q - l * h_a, N) */
+/*                                              * M + w * ld4c; */
+/*                         cbuf[s] = cwork[rem]; */
+/*                     } */
+/*  */
+/*                     #<{(| Do inverse fft of length d |)}># */
+/*                     LTFAT_FFTW(execute)(p_after); */
+/*  */
+/*                     for (ltfatInt s = 0; s < d; s++) */
+/*                     { */
+/*                         cfp[s * ld3b] =  cbuf[s]; */
+/*                     } */
+/*                     #<{(| Advance the cf pointer. This is only done in this */
+/*                     * one place, because the loops are placed such that */
+/*                     * this pointer will advance linearly through */
+/*                     * memory. Reordering the loops will break this. |)}># */
+/*                     cfp++; */
+/*                 } */
+/*             } */
+/*         } */
+/*  */
+/*  */
+/*  */
+/*         #<{(| -------- compute matrix multiplication ---------- |)}># */
+/*  */
+/*  */
+/*         #<{(| Do the matmul  |)}># */
+/*         for (ltfatInt s = 0; s < d; s++) */
+/*         { */
+/*  */
+/*             const LTFAT_COMPLEX* gbase = gf + (r + s * c) * p * q; */
+/*             LTFAT_COMPLEX*       fbase = ff + s * p * q * W; */
+/*             const LTFAT_COMPLEX* cbase = (const LTFAT_COMPLEX*)cf + s * q * q * W; */
+/*  */
+/*             for (ltfatInt nm = 0; nm < q * W; nm++) */
+/*             { */
+/*                 for (ltfatInt km = 0; km < p; km++) */
+/*                 { */
+/*  */
+/*                     fbase[km + nm * p] = 0.0; */
+/*                     for (ltfatInt mm = 0; mm < q; mm++) */
+/*                     { */
+/*                         fbase[km + nm * p] += gbase[km + mm * p] * cbase[mm + nm * q]; */
+/*                     } */
+/*                     #<{(| Scale because of FFTWs normalization. |)}># */
+/*                     fbase[km + nm * p] = fbase[km + nm * p] * scalconst; */
+/*                 } */
+/*             } */
+/*         } */
+/*  */
+/*  */
+/*  */
+/*  */
+/*         #<{(| ----------- compute inverse signal factorization ---------- |)}># */
+/*  */
+/*  */
+/*         LTFAT_COMPLEX* ffp = ff; */
+/*         LTFAT_COMPLEX* fp  = f + r; */
+/*  */
+/*         for (ltfatInt w = 0; w < W; w++) */
+/*         { */
+/*             for (ltfatInt l = 0; l < q; l++) */
+/*             { */
+/*                 for (ltfatInt k = 0; k < p; k++) */
+/*                 { */
+/*                     for (ltfatInt s = 0; s < d; s++) */
+/*                     { */
+/*                         cbuf[s] = ffp[s * ld2ff]; */
+/*                     } */
+/*  */
+/*                     LTFAT_FFTW(execute)(p_before); */
+/*  */
+/*                     for (ltfatInt s = 0; s < d; s++) */
+/*                     { */
+/*                         const ltfatInt rem = ltfat_positiverem(k * M + s * p * M - */
+/*                                                                l * h_a * a, L); */
+/*                         fp[rem] = cbuf[s]; */
+/*                     } */
+/*  */
+/*                     #<{(| Advance the ff pointer. This is only done in this */
+/*                     * one place, because the loops are placed such that */
+/*                     * this pointer will advance linearly through */
+/*                     * memory. Reordering the loops will break this. |)}># */
+/*                     ffp++; */
+/*                 } */
+/*             } */
+/*             fp += L; */
+/*         } */
+/*         fp -= L * W; */
+/*  */
+/*         #<{(| ----- Main loop ends here ------------- |)}># */
+/*     } */
+/*  */
+/*     #<{(| -----------  Clean up ----------------- |)}># */
+/*  */
+/*     LTFAT_FFTW(destroy_plan)(p_veryend); */
+/*     LTFAT_FFTW(destroy_plan)(p_after); */
+/*     LTFAT_FFTW(destroy_plan)(p_before); */
+/*  */
+/*     LTFAT_SAFEFREEALL(cwork, ff, cf, cbuf); */
+/* } */

@@ -6,25 +6,47 @@ LTFAT_EXTERN int
 LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
                                   const double shift, LTFAT_COMPLEX* out)
 {
+    double shiftLoc;
+
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-    double shiftLoc = remainder(shift, L);
+    shiftLoc = remainder(shift, L);
 
     if (shiftLoc != 0)
     {
-        const div_t domod = div(L, 2);
-        LTFAT_COMPLEX phasefact = -I * 2.0 * M_PI * shiftLoc / L;
-
+        const ltfat_div_t domod = ltfat_idiv(L, 2);
+        double phasefact = -2.0 * M_PI * shiftLoc /  L;
         out[0] = in[0];
 
+        // We do the complex multiplication explicitly, because we want the intermediate
+        // results to be doubles until the very end. This function has problems with
+        // numerical precision degradation.
+        const LTFAT_REAL* inPtr = (const LTFAT_REAL*) in;
+        LTFAT_REAL* outPtr = (LTFAT_REAL*) out;
+
         for (int ii = 1; ii < domod.quot + 1; ii++)
-            out[ii] = LTFAT_COMPLEXH(cexp)(ii * phasefact) * in[ii];
+        {
+            LTFAT_REAL ar = inPtr[2 * ii];
+            LTFAT_REAL ai = inPtr[2 * ii + 1];
+            double br = cos(ii * phasefact);
+            double bi = sin(ii * phasefact);
+
+            outPtr[2 * ii] = ar * br - ai * bi;
+            outPtr[2 * ii + 1] = ar * bi + ai * br;
+        }
 
         for (int ii = 1; ii < domod.quot + domod.rem; ii++)
-            out[L-ii] = LTFAT_COMPLEXH(cexp)(-ii * phasefact) * in[L-ii];
+        {
+            LTFAT_REAL ar = inPtr[2 * (L - ii)];
+            LTFAT_REAL ai = inPtr[2 * (L - ii) + 1];
+            double br = cos(-ii * phasefact);
+            double bi = sin(-ii * phasefact);
 
+            outPtr[2 * (L - ii)] =  ar * br - ai * bi;
+            outPtr[2 * (L - ii) + 1] = ar * bi + ai * br;
+        }
     }
     else
     {
@@ -40,8 +62,9 @@ LTFAT_EXTERN int
 LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                 LTFAT_COMPLEX* out)
 {
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
-    const div_t domod = div(L, 2);
+    domod = ltfat_idiv(L, 2);
 
     if (domod.rem)
     {
@@ -60,7 +83,7 @@ LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
         // There is Nyquist sample. Modulation is exactly by pi i.e. no complex
         // multiplication
         for (int ii = 1; ii < L; ii += 2)
-            out[ii] = -1.0 * in[ii];
+            out[ii] = -in[ii];
     }
 error:
     return status;
@@ -70,9 +93,10 @@ LTFAT_EXTERN int
 LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                  LTFAT_COMPLEX* out)
 {
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
-    const div_t domod = div(L, 2);
+    domod = ltfat_idiv(L, 2);
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
@@ -87,22 +111,24 @@ LTFAT_EXTERN int
 LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
                                       const double shift, LTFAT_COMPLEX* out)
 {
+    ltfat_div_t domod;
+    double shiftLoc;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-    const div_t domod = div(L, 2);
-
-    double shiftLoc = remainder(shift, L);
+    domod = ltfat_idiv(L, 2);
+    shiftLoc = remainder(shift, L);
 
     if (shiftLoc != 0)
     {
-        LTFAT_COMPLEX phasefact = -I * 2.0 * M_PI * shiftLoc / L;
+        LTFAT_COMPLEX phasefact = -I * (LTFAT_REAL)(2.0 * M_PI * shiftLoc) / ((
+                                      LTFAT_REAL) L);
 
         out[0] = in[0];
 
         for (int ii = 1; ii < domod.quot + 1; ii++)
-            out[ii] = LTFAT_COMPLEXH(cexp)(ii * phasefact) * in[ii];
+            out[ii] = exp((LTFAT_REAL)ii * phasefact) * in[ii];
     }
     else
     {
@@ -118,9 +144,10 @@ LTFAT_EXTERN int
 LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                     LTFAT_COMPLEX* out)
 {
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
-    const div_t domod = div(L, 2);
+    domod = ltfat_idiv(L, 2);
 
     if (domod.rem)
     {
@@ -139,7 +166,7 @@ LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
         // There is Nyquist sample. Modulation is exactly by pi i.e. no complex
         // multiplication
         for (int ii = 1; ii < domod.quot + 1; ii += 2)
-            out[ii] = -1.0 * in[ii];
+            out[ii] = -in[ii];
     }
 
 error:
@@ -150,9 +177,10 @@ LTFAT_EXTERN int
 LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                      LTFAT_COMPLEX* out)
 {
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
-    const div_t domod = div(L, 2);
+    domod = ltfat_idiv(L, 2);
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
@@ -168,11 +196,12 @@ LTFAT_EXTERN int
 LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, const ltfatInt L,
                                LTFAT_COMPLEX* out)
 {
+    LTFAT_REAL (*outTmp)[2];
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-    LTFAT_REAL (*outTmp)[2] = (LTFAT_REAL(*)[2])  out;
+    outTmp = (LTFAT_REAL(*)[2])  out;
 
     if (in == (LTFAT_REAL*)out)
     {
@@ -200,11 +229,12 @@ LTFAT_EXTERN int
 LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                LTFAT_REAL* out)
 {
+    const LTFAT_REAL (*inTmp)[2];
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-    const LTFAT_REAL (*inTmp)[2] = (const LTFAT_REAL(*)[2]) in;
+    inTmp = (const LTFAT_REAL(*)[2]) in;
 
     for (ltfatInt ii = 0; ii < L; ii++)
         out[ii] = inTmp[ii][0];
@@ -219,6 +249,7 @@ LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX* cFreqinv,
                                   const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                   LTFAT_COMPLEX* cTimeinv)
 {
+    ltfatInt N;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -226,7 +257,7 @@ LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX* cFreqinv,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
-    ltfatInt N = L / a;
+    N = L / a;
 
     for (ltfatInt w = 0; w < W; w++)
     {
@@ -247,6 +278,7 @@ LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
                                       const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                       LTFAT_COMPLEX* cTimeinv)
 {
+    ltfatInt N, M2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -254,8 +286,8 @@ LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
-    ltfatInt N = L / a;
-    ltfatInt M2 = M / 2 + 1;
+    N = L / a;
+    M2 = M / 2 + 1;
 
     for (ltfatInt w = 0; w < W; w++)
     {
@@ -276,6 +308,7 @@ LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
                                     const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                     LTFAT_COMPLEX* cFreqinv)
 {
+    ltfatInt N;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -283,7 +316,7 @@ LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
-    ltfatInt N = L / a;
+    N = L / a;
 
     for (ltfatInt w = 0; w < W; w++)
     {
@@ -304,6 +337,7 @@ LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
                                         const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                         LTFAT_COMPLEX* cFreqinv)
 {
+    ltfatInt N, M2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -311,8 +345,8 @@ LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
-    ltfatInt N = L / a;
-    ltfatInt M2 = M / 2 + 1;
+    N = L / a;
+    M2 = M / 2 + 1;
 
     for (ltfatInt w = 0; w < W; w++)
     {

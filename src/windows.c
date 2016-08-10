@@ -12,9 +12,9 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
     CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
     ltfatInt lr, k, nk;
-    double tmp, sqrtl, safe, gnorm;
+    double tmp, sqrtL, safe, gnorm;
 
-    sqrtl = sqrt((double)L);
+    sqrtL = sqrt((double)L);
     safe = 4;
     gnorm = 0;
 
@@ -27,7 +27,7 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
         for (k = -nk; k <= nk; k++)
         {
             /* Use a tmp variable to calculate squaring */
-            tmp = ((double)lr + c_t) / sqrtl - (double)k * sqrtl;
+            tmp = ((double)lr + c_t) / sqrtL - (double)k * sqrtL;
             g[lr] += exp(-M_PI * tmp * tmp / w);
         }
         gnorm += g[lr] * g[lr];
@@ -46,7 +46,7 @@ error:
 
 /* does not work correctly. This code does:
 %for k=-nk:nk
-%  tmp=exp(-pi*((lr+c_t)/sqrtl-k*sqrtl).^2/w)
+%  tmp=exp(-pi*((lr+c_t)/sqrtL-k*sqrtL).^2/w)
 %  g=g+tmp.*cos(2*pi*c_f*(lr/L-k))+i*tmp.*sin(2*pi*c_f*(lr/L-k));
 %end;
 */
@@ -62,9 +62,9 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
     CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
     ltfatInt lr, k, nk;
-    double tmp, sqrtl, safe, gnorm;
+    double tmp, sqrtL, safe, gnorm;
 
-    sqrtl = sqrt((double)L);
+    sqrtL = sqrt((double)L);
     safe = 4;
     gnorm = 0;
 
@@ -77,14 +77,15 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
         for (k = -nk; k <= nk; k++)
         {
             /* Use a tmp variable to calculate squaring */
-            tmp = ((double)lr + c_t) / sqrtl - (double)k * sqrtl;
-            tmp = exp(-M_PI * tmp * tmp / w);
-            g[lr] += tmp * LTFAT_COMPLEXH(cexp)(I * 2 * M_PI * c_f * ((double)lr / L -
-                                                (double)k));
+            tmp = ((double)lr + c_t) / sqrtL - (double)k * sqrtL;
+            tmp = exp( -M_PI * tmp * tmp / w );
+            g[lr] += (LTFAT_REAL)(tmp) *
+                     exp(I * (LTFAT_REAL)( 2.0 * M_PI * c_f * ((( double)lr) / ((double)L) - ((
+                                               double)k))));
 
         }
-        double gReal = LTFAT_COMPLEXH(creal)(g[lr]);
-        double gImag = LTFAT_COMPLEXH(cimag)(g[lr]);
+        double gReal = ltfat_real(g[lr]);
+        double gImag = ltfat_imag(g[lr]);
         gnorm += (gReal * gReal + gImag * gImag);
     }
 

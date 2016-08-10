@@ -43,23 +43,22 @@ LTFAT_EXTERN int
 LTFAT_NAME(iwfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
                        unsigned flags, LTFAT_NAME(iwfac_plan)** pout)
 {
+    ltfatInt minL, h_a, h_m;
     LTFAT_NAME(iwfac_plan)* plan = NULL;
-
     int status = LTFATERR_SUCCESS;
     CHECKNULL(pout);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
 
-    ltfatInt minL = ltfat_lcm(a, M);
+    minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADARG,
           L > 0 && !(L % minL),
           "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
           L, minL);
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = (LTFAT_NAME(iwfac_plan)*) ltfat_calloc(1, sizeof * plan));
 
     plan->b = L / M;
-    ltfatInt h_a, h_m;
     plan->c = ltfat_gcd(a, M, &h_a, &h_m);
     plan->p = a / plan->c;
     plan->q = M / plan->c;
@@ -67,11 +66,12 @@ LTFAT_NAME(iwfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
     plan->a = a; plan->M = M; plan->L = L;
     plan->scaling = 1.0 / sqrt((double)M) / plan->d;
 
-    CHECKMEM(plan->sbuf = ltfat_malloc(2 * plan->d * sizeof * plan->sbuf));
+    CHECKMEM(plan->sbuf = LTFAT_NAME_REAL(malloc)(2 * plan->d));
 
     /* Create plan. In-place. */
     plan->p_before = LTFAT_FFTW(plan_dft_1d)(plan->d,
-                     (LTFAT_COMPLEX*)plan->sbuf, (LTFAT_COMPLEX*)plan->sbuf,
+                     (LTFAT_FFTW(complex)*) plan->sbuf,
+                     (LTFAT_FFTW(complex)*) plan->sbuf,
                      FFTW_BACKWARD, flags);
 
     CHECKINIT(plan->p_before, "FFTW plan creation failed.");
@@ -93,25 +93,28 @@ LTFAT_EXTERN int
 LTFAT_NAME(iwfac_execute)(LTFAT_NAME(iwfac_plan)* plan, const LTFAT_COMPLEX* gf,
                           const ltfatInt R, LTFAT_TYPE* g)
 {
+    ltfatInt rem, negrem, c, p, q, d, M, a, L, ld3;
+    LTFAT_REAL scaling;
+    LTFAT_REAL* sbuf, *gfp;
+    LTFAT_FFTW(plan) p_before;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(g); CHECKNULL(gf);
     CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %d) must be positive.", R);
 
-    const ltfatInt c = plan->c;
-    const ltfatInt p = plan->p;
-    const ltfatInt q = plan->q;
-    const ltfatInt d = plan->d;
-    const ltfatInt M = plan->M;
-    const ltfatInt a = plan->a;
-    const ltfatInt L = plan->L;
+    c = plan->c;
+    p = plan->p;
+    q = plan->q;
+    d = plan->d;
+    M = plan->M;
+    a = plan->a;
+    L = plan->L;
 
-    LTFAT_REAL scaling = plan->scaling;
-    LTFAT_REAL* sbuf = plan->sbuf;
-    LTFAT_FFTW(plan) p_before = plan->p_before;
-    ltfatInt rem, negrem;
+    scaling = plan->scaling;
+    sbuf = plan->sbuf;
+    p_before = plan->p_before;
 
-    const ltfatInt ld3 = c * p * q * R;
-    LTFAT_REAL* gfp = (LTFAT_REAL*)gf;
+    ld3 = c * p * q * R;
+    gfp = (LTFAT_REAL*)gf;
 
     for (ltfatInt r = 0; r < c; r++)
     {
@@ -165,7 +168,3 @@ LTFAT_NAME(iwfac_done)(LTFAT_NAME(iwfac_plan)** pout)
 error:
     return status;
 }
-
-
-
-

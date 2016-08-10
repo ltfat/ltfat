@@ -34,7 +34,7 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 {
     LTFAT_NAME(idgtreal_long_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(cin);CHECKNULL(f);
+    CHECKNULL(cin); CHECKNULL(f);
 
     CHECKSTATUS(
         LTFAT_NAME(idgtreal_long_init)((LTFAT_COMPLEX*)cin, g, L, W, a, M, f,
@@ -56,6 +56,9 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
                                const ltfat_phaseconvention ptype, unsigned flags,
                                LTFAT_NAME(idgtreal_long_plan)** pout)
 {
+    ltfatInt minL, h_m, M2, b, N, p, q, d, d2, size;
+    // Downcast to int
+    int Mint = (int) M;
     LTFAT_NAME(idgtreal_long_plan)* plan = NULL;
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cin != NULL,
@@ -70,38 +73,37 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
           "Invalid ltfat_phaseconvention enum value." );
 
-    ltfatInt minL = ltfat_lcm(a, M);
+    minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN,
           !(L % minL), "L must be divisible by lcm(a,M)=%d.", minL);
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
-
-    ltfatInt h_m;
+    CHECKMEM(plan =
+                 (LTFAT_NAME(idgtreal_long_plan)*) ltfat_calloc(1, sizeof * plan));
 
     /* This is a floor operation. */
-    const ltfatInt M2 = M / 2 + 1;
+    M2 = M / 2 + 1;
 
     /*  ----------- calculation of parameters and plans -------- */
 
     plan->a = a; plan->L = L; plan->M = M; plan->W = W; plan->ptype = ptype;
-    const ltfatInt b = L / M;
-    const ltfatInt N = L / a;
+    b = L / M;
+    N = L / a;
 
     plan->c = ltfat_gcd(a, M, &plan->h_a, &h_m);
-    const ltfatInt p = a / plan->c;
-    const ltfatInt q = M / plan->c;
-    const ltfatInt d = b / p;
+    p = a / plan->c;
+    q = M / plan->c;
+    d = b / p;
 
     /* This is a floor operation. */
-    const ltfatInt d2 = d / 2 + 1;
+    d2 = d / 2 + 1;
 
-    ltfatInt size = wfacreal_size(L, a, M);
-    CHECKMEM( plan->gf    = ltfat_malloc(size * sizeof * plan->gf));
-    CHECKMEM( plan->ff    = ltfat_malloc(d2 * p * q * W * sizeof * plan->ff));
-    CHECKMEM( plan->cf    = ltfat_malloc(d2 * q * q * W * sizeof * plan->cf));
-    CHECKMEM( plan->cwork = ltfat_malloc(M * N * W * sizeof * plan->cwork));
-    CHECKMEM( plan->cbuf  = ltfat_malloc(d2 * sizeof * plan->cbuf));
-    CHECKMEM( plan->sbuf  = ltfat_malloc(d * sizeof * plan->sbuf));
+    size = wfacreal_size(L, a, M);
+    CHECKMEM( plan->gf    = LTFAT_NAME_COMPLEX(malloc)(size));
+    CHECKMEM( plan->ff    = LTFAT_NAME_COMPLEX(malloc)(d2 * p * q * W));
+    CHECKMEM( plan->cf    = LTFAT_NAME_COMPLEX(malloc)(d2 * q * q * W));
+    CHECKMEM( plan->cwork = LTFAT_NAME_REAL(malloc)(M * N * W));
+    CHECKMEM( plan->cbuf  = LTFAT_NAME_COMPLEX(malloc)(d2));
+    CHECKMEM( plan->sbuf  = LTFAT_NAME_REAL(malloc)(d));
     plan->cin = cin;
     plan->f = f;
 
@@ -111,21 +113,16 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     plan->scalconst = 1.0 / ((LTFAT_REAL)d * sqrt((LTFAT_REAL)M));
 
     /* Create plans. In-place. */
-    plan->p_before = LTFAT_FFTW(plan_dft_c2r_1d)(d, plan->cbuf, plan->sbuf, flags);
+    plan->p_before = LTFAT_FFTW(plan_dft_c2r_1d)(d,
+                     (LTFAT_FFTW(complex)*) plan->cbuf, plan->sbuf, flags);
     CHECKINIT(plan->p_before, "FFTW plan failed.");
 
-    plan->p_after  = LTFAT_FFTW(plan_dft_r2c_1d)(d, plan->sbuf, plan->cbuf, flags);
+    plan->p_after  = LTFAT_FFTW(plan_dft_r2c_1d)(d, plan->sbuf,
+                     (LTFAT_FFTW(complex)*) plan->cbuf, flags);
     CHECKINIT(plan->p_after, "FFTW plan failed.");
 
-    /* Create plan. Copy data so we do not overwrite input. Therefore
-       it is ok to cast away the constness of cin. This transform
-       destroys its input by default, but the extra flag should prevent
-       this. */
-
-    // Downcast to int
-    int Mint = (int) M;
     plan->p_veryend = LTFAT_FFTW(plan_many_dft_c2r)(1, &Mint, N * W,
-                      (LTFAT_COMPLEX*)plan->cin, NULL,
+                      (LTFAT_FFTW(complex)*) plan->cin, NULL,
                       1, M2, plan->cwork, NULL,
                       1, M, flags | FFTW_PRESERVE_INPUT);
 
@@ -167,18 +164,19 @@ LTFAT_EXTERN int
 LTFAT_NAME(idgtreal_long_execute_newarray)(LTFAT_NAME(idgtreal_long_plan)* p,
         const LTFAT_COMPLEX* c, LTFAT_REAL* f)
 {
+    LTFAT_NAME(idgtreal_long_plan) p2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
 
     // The plan was created with the FFTW_PRESERVE_INPUT so it is ok to cast away the const
-    LTFAT_FFTW(execute_dft_c2r)(p->p_veryend, (LTFAT_COMPLEX*)c, p->cwork);
+    LTFAT_FFTW(execute_dft_c2r)(p->p_veryend, (LTFAT_FFTW(complex)*) c, p->cwork);
 
     if (p->ptype)
         LTFAT_NAME_REAL(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a, p->M,
                                               p->cwork);
 
     // Make a shallow copy and rewrite f
-    LTFAT_NAME(idgtreal_long_plan) p2 = *p;
+    p2 = *p;
     p2.f = f;
 
     LTFAT_NAME(idgtreal_walnut_execute)(&p2);
@@ -189,9 +187,10 @@ error:
 LTFAT_EXTERN int
 LTFAT_NAME(idgtreal_long_done)(LTFAT_NAME(idgtreal_long_plan)** plan)
 {
+    LTFAT_NAME(idgtreal_long_plan)* p;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(*plan);
-    LTFAT_NAME(idgtreal_long_plan)* p = *plan;
+    p = *plan;
 
     LTFAT_FFTW(destroy_plan)(p->p_before);
     LTFAT_FFTW(destroy_plan)(p->p_after);

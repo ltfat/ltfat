@@ -71,19 +71,19 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = (LTFAT_NAME(dgt_fb_plan)*) ltfat_calloc(1, sizeof * plan));
 
     plan->a = a;
     plan->M = M;
     plan->gl = gl;
     plan->ptype = ptype;
 
-    CHECKMEM(plan->gw  = ltfat_malloc(plan->gl * sizeof * plan->gw));
-    CHECKMEM(plan->fw  = ltfat_calloc(plan->gl, sizeof * plan->fw));
-    CHECKMEM(plan->sbuf = ltfat_malloc(M * sizeof * plan->sbuf));
+    CHECKMEM(plan->gw  = LTFAT_NAME(malloc)(plan->gl));
+    CHECKMEM(plan->fw  = LTFAT_NAME_COMPLEX(calloc)(plan->gl));
+    CHECKMEM(plan->sbuf = LTFAT_NAME_COMPLEX(malloc)(M));
 
-    plan->p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_COMPLEX*)plan->sbuf,
-                                            (LTFAT_COMPLEX*)plan->sbuf,
+    plan->p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_FFTW(complex)*)plan->sbuf,
+                                            (LTFAT_FFTW(complex)*)plan->sbuf,
                                             FFTW_FORWARD, flags);
 
     CHECKINIT(plan->p_small, "FFTW plan creation failed.");
@@ -109,8 +109,9 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan)** plan)
 {
     int status = LTFATERR_SUCCESS;
+    LTFAT_NAME(dgt_fb_plan)* pp = NULL;
     CHECKNULL(plan); CHECKNULL(*plan);
-    LTFAT_NAME(dgt_fb_plan)* pp = *plan;
+    pp = *plan;
 
     LTFAT_SAFEFREEALL(pp->sbuf, pp->gw, pp->fw);
     LTFAT_FFTW(destroy_plan)(pp->p_small);
@@ -126,6 +127,10 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
                            const LTFAT_TYPE* f,
                            const ltfatInt L, const ltfatInt W,  LTFAT_COMPLEX* cout)
 {
+    ltfatInt a, M, N, gl, glh, glh_d_a;
+    LTFAT_COMPLEX* sbuf, *fw;
+    LTFAT_TYPE* fbd;
+    LTFAT_NAME(dgt_fb_plan) plan;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout);
     CHECK(LTFATERR_BADARG, L >= p->gl && !(L % p->a) ,
@@ -133,23 +138,22 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
     /*  --------- initial declarations -------------- */
-    LTFAT_NAME(dgt_fb_plan) plan = *p;
+    plan = *p;
 
-    const ltfatInt a = plan.a;
-    const ltfatInt M = plan.M;
-    const ltfatInt N = L / a;
+    a = plan.a;
+    M = plan.M;
+    N = L / a;
 
-    const ltfatInt gl = plan.gl;
-    LTFAT_COMPLEX* sbuf = plan.sbuf;
-    LTFAT_COMPLEX* fw = plan.fw;
+    gl = plan.gl;
+    sbuf = plan.sbuf;
+    fw = plan.fw;
 
     /* This is a floor operation. */
-    const ltfatInt glh = plan.gl / 2;
+    glh = plan.gl / 2;
 
     /* This is a ceil operation. */
-    const ltfatInt glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
+    glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
 
-    LTFAT_TYPE* fbd;
 
     /*  ---------- main body ----------- */
 

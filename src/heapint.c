@@ -32,10 +32,10 @@ struct LTFAT_NAME(heapinttask)
 LTFAT_NAME(heap)*
 LTFAT_NAME(heap_init)(const ltfatInt initmaxsize, const LTFAT_REAL* s)
 {
-    LTFAT_NAME(heap)* h = ltfat_malloc(sizeof * h);
+    LTFAT_NAME(heap)* h = (LTFAT_NAME(heap)*) ltfat_malloc(sizeof * h);
 
     h->totalheapsize  = initmaxsize;
-    h->h              = ltfat_malloc(h->totalheapsize * sizeof * h->h);
+    h->h              = (ltfatInt*) ltfat_malloc(h->totalheapsize * sizeof * h->h);
     h->s              = s;
     h->heapsize       = 0;
     return h;
@@ -59,9 +59,9 @@ void
 LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
-    h->h = ltfat_realloc(h->h,
-                         h->totalheapsize * sizeof * h->h / factor,
-                         h->totalheapsize * sizeof * h->h);
+    h->h = (ltfatInt*)ltfat_realloc((void*)h->h,
+                                    h->totalheapsize * sizeof * h->h / factor,
+                                    h->totalheapsize * sizeof * h->h);
 }
 
 
@@ -168,10 +168,11 @@ LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
                              const ltfatInt initheapsize,
                              const LTFAT_REAL* s, int do_real)
 {
-    LTFAT_NAME(heapinttask)* hit = ltfat_malloc(sizeof * hit);
+    LTFAT_NAME(heapinttask)* hit = (LTFAT_NAME(heapinttask)*) ltfat_malloc(
+                                       sizeof * hit);
     hit->height = height;
     hit->N = N;
-    hit->donemask = ltfat_malloc(height * N * sizeof * hit->donemask);
+    hit->donemask = (int*) ltfat_malloc(height * N * sizeof * hit->donemask);
     hit->heap = LTFAT_NAME(heap_init)(initheapsize, s);
     hit->do_real = do_real;
 
@@ -295,7 +296,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_N])
     {
-        phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) / 2;
+        phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) / 2.0;
         donemask[w_N] = LTFAT_MASK_WENTNORTH;
         LTFAT_NAME(heap_insert)(h, w_N);
     }
@@ -305,7 +306,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_S])
     {
-        phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) / 2;
+        phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) / 2.0;
         donemask[w_S] = LTFAT_MASK_WENTSOUTH;
         LTFAT_NAME(heap_insert)(h, w_S);
     }
@@ -315,7 +316,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_E])
     {
-        phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) / 2;
+        phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) / 2.0;
         donemask[w_E] = LTFAT_MASK_WENTEAST;
         LTFAT_NAME(heap_insert)(h, w_E);
     }
@@ -325,7 +326,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_W])
     {
-        phase[w_W] = phase[w] - (tgradw[w] + tgradw[w_W]) / 2;
+        phase[w_W] = phase[w] - (tgradw[w] + tgradw[w_W]) / 2.0;
         donemask[w_W] = LTFAT_MASK_WENTWEST;
         LTFAT_NAME(heap_insert)(h, w_W);
     }
@@ -699,8 +700,8 @@ LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
-    LTFAT_REAL* tgradw = ltfat_malloc(M * N * W * sizeof * tgradw);
-    LTFAT_REAL* fgradw = ltfat_malloc(M * N * W * sizeof * fgradw);
+    LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M * N * W);
+    LTFAT_REAL* fgradw = LTFAT_NAME_REAL(malloc)(M * N * W);
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
@@ -724,8 +725,8 @@ LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
-    LTFAT_REAL* tgradw = ltfat_malloc(M * N * W * sizeof * tgradw);
-    LTFAT_REAL* fgradw = ltfat_malloc(M * N * W * sizeof * fgradw);
+    LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M * N * W);
+    LTFAT_REAL* fgradw = LTFAT_NAME_REAL(malloc)(M * N * W);
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
@@ -750,8 +751,8 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
-    LTFAT_REAL* tgradw = ltfat_malloc(M2 * N * W * sizeof * tgradw);
-    LTFAT_REAL* fgradw = ltfat_malloc(M2 * N * W * sizeof * fgradw);
+    LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M2 * N * W);
+    LTFAT_REAL* fgradw = LTFAT_NAME_REAL(malloc)(M2 * N * W);
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */
@@ -776,8 +777,8 @@ void LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
-    LTFAT_REAL* tgradw = ltfat_malloc(M2 * N * W * sizeof * tgradw);
-    LTFAT_REAL* fgradw = ltfat_malloc(M2 * N * W * sizeof * fgradw);
+    LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M2 * N * W);
+    LTFAT_REAL* fgradw = LTFAT_NAME_REAL(malloc)(M2 * N * W);
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in both
      * directions */

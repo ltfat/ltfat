@@ -54,21 +54,21 @@
 
 
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
+LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
                                 const ltfatInt L, const ltfatInt W, const ltfatInt M,
-                                LTFAT_COMPLEX *f)
+                                LTFAT_COMPLEX* f)
 {
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
     const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
 
-    LTFAT_COMPLEX *coef2 = ltfat_calloc(2 * M * N * W, sizeof * coef2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(calloc)(2 * M * N * W);
 
     const ltfatInt nyquestadd = (M % 2) * M2;
 
-    const LTFAT_COMPLEX *pcoef  = c;
-    LTFAT_COMPLEX *pcoef2 = coef2;
+    const LTFAT_COMPLEX* pcoef  = c;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
     PREPROC_COMPLEX
 
@@ -79,19 +79,19 @@ LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL *c, const LTFAT_REAL *g,
+LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL* c, const LTFAT_REAL* g,
                              const ltfatInt L, const ltfatInt W, const ltfatInt M,
-                             LTFAT_REAL *f)
+                             LTFAT_REAL* f)
 {
     const ltfatInt N = L / M;
     const ltfatInt coef2_ld = M + 1;
     const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
     const ltfatInt nyquestadd = (M % 2) * coef2_ld;
 
-    LTFAT_COMPLEX *coef2 = ltfat_calloc((M + 1) * N * W, sizeof * coef2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(calloc)((M + 1) * N * W);
 
-    const LTFAT_REAL *pcoef  = c;
-    LTFAT_COMPLEX *pcoef2 = coef2;
+    const LTFAT_REAL* pcoef  = c;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
     PREPROC_REAL
 
@@ -102,22 +102,22 @@ LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
-                              const ltfatInt L, const ltfatInt gl, 
+LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
+                              const ltfatInt L, const ltfatInt gl,
                               const ltfatInt W, const ltfatInt M,
-                              LTFAT_COMPLEX *f)
+                              LTFAT_COMPLEX* f)
 {
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
     const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
 
-    LTFAT_COMPLEX *coef2 = ltfat_calloc(2 * M * N * W, sizeof * coef2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(calloc)(2 * M * N * W);
 
     const ltfatInt nyquestadd = (M % 2) * M2;
 
-    const LTFAT_COMPLEX *pcoef  = c;
-    LTFAT_COMPLEX *pcoef2 = coef2;
+    const LTFAT_COMPLEX* pcoef  = c;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
     PREPROC_COMPLEX
 
@@ -128,17 +128,17 @@ LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *g,
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME_REAL(idwilt_fb)(const LTFAT_REAL *c, const LTFAT_REAL *g,
+LTFAT_NAME_REAL(idwilt_fb)(const LTFAT_REAL* c, const LTFAT_REAL* g,
                            const ltfatInt L, const ltfatInt gl,
                            const ltfatInt W, const ltfatInt M,
-                           LTFAT_REAL *f)
+                           LTFAT_REAL* f)
 {
     const ltfatInt N = L / M;
     const ltfatInt coef2_ld = M + 1;
     const ltfatInt nyquestadd = (M % 2) * coef2_ld;
     const LTFAT_REAL scalconst = (LTFAT_REAL) 1.0 / sqrt(2.0);
 
-    LTFAT_COMPLEX *coef2 = ltfat_calloc((M + 1) * N * W, sizeof * coef2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(calloc)((M + 1) * N * W);
 
     const LTFAT_REAL* pcoef  = c;
     LTFAT_COMPLEX* pcoef2 = coef2;
@@ -153,4 +153,3 @@ LTFAT_NAME_REAL(idwilt_fb)(const LTFAT_REAL *c, const LTFAT_REAL *g,
 #undef CH
 #undef PREPROC_REAL
 #undef PREPROC_COMPLEX
-

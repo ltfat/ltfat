@@ -14,7 +14,7 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     LTFAT_COMPLEX* Sf;
 
     const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;//{0.0, 0.0 };
-    const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) (1.0 + 0.0 * I); //{1.0, 0.0 };
+    const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0; //{1.0, 0.0 };
 
     const ltfatInt N = L / a;
 
@@ -23,7 +23,7 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     const ltfatInt q = M / c;
     const ltfatInt d = N / q;
 
-    Sf = ltfat_malloc(p * p * sizeof * Sf);
+    Sf = LTFAT_NAME_COMPLEX(malloc)(p * p);
 
     /* Copy the contents of gf to gdualf because LAPACK overwrites it input
      * argument
@@ -61,8 +61,8 @@ LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
 
     LTFAT_COMPLEX* Sf;
 
-    const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX)0.0;
-    const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX)(1.0 + 0.0 * I); //{1.0, 0.0 };
+    const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;
+    const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0; //{1.0, 0.0 };
 
     const ltfatInt N = L / a;
 
@@ -74,7 +74,7 @@ LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     /* This is a floor operation. */
     const ltfatInt d2 = d / 2 + 1;
 
-    Sf = ltfat_malloc(p * p * sizeof * Sf);
+    Sf = LTFAT_NAME_COMPLEX(malloc)(p * p);
 
     /* Copy the contents of gf to gdualf because LAPACK overwrites it input
      * argument

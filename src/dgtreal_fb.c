@@ -76,6 +76,7 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
                             unsigned flags, LTFAT_NAME(dgtreal_fb_plan)** pout)
 {
     LTFAT_NAME(dgtreal_fb_plan)* plan = NULL;
+    ltfatInt M2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(pout);
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
@@ -84,20 +85,21 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
     CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
           "Invalid ltfat_phaseconvention enum value." );
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = (LTFAT_NAME(dgtreal_fb_plan)*)ltfat_calloc(1, sizeof * plan));
 
     plan->a = a;
     plan->M = M;
-    const ltfatInt M2 = M / 2 + 1;
+    M2 = M / 2 + 1;
     plan->gl = gl;
     plan->ptype = ptype;
 
-    CHECKMEM( plan->gw   = ltfat_malloc(gl * sizeof * plan->gw));
-    CHECKMEM( plan->fw   = ltfat_malloc(gl * sizeof * plan->fw));
-    CHECKMEM( plan->sbuf = ltfat_malloc(M  * sizeof * plan->sbuf));
-    CHECKMEM( plan->cbuf = ltfat_malloc(M2 * sizeof * plan->cbuf));
+    CHECKMEM( plan->gw   = LTFAT_NAME_REAL(malloc)(gl));
+    CHECKMEM( plan->fw   = LTFAT_NAME_REAL(malloc)(gl));
+    CHECKMEM( plan->sbuf = LTFAT_NAME_REAL(malloc)(M));
+    CHECKMEM( plan->cbuf = LTFAT_NAME_COMPLEX(malloc)(M2));
 
-    plan->p_small = LTFAT_FFTW(plan_dft_r2c_1d)(M, plan->sbuf, plan->cbuf, flags);
+    plan->p_small = LTFAT_FFTW(plan_dft_r2c_1d)(M, plan->sbuf,
+                    (LTFAT_FFTW(complex)*) plan->cbuf, flags);
 
     CHECKINIT(plan->p_small, "FFTW plan failed.");
 
@@ -123,9 +125,10 @@ error:
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan)** plan)
 {
+    LTFAT_NAME(dgtreal_fb_plan)* pp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(*plan);
-    LTFAT_NAME(dgtreal_fb_plan)* pp = *plan;
+    pp = *plan;
     LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf, pp->gw, pp->fw);
     LTFAT_FFTW(destroy_plan)(pp->p_small);
     ltfat_free(pp);
@@ -141,6 +144,10 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
                                const ltfatInt L, const ltfatInt W,
                                LTFAT_COMPLEX* cout)
 {
+    ltfatInt a, M, M2, N, gl, glh, glh_d_a;
+    LTFAT_REAL* sbuf, *fw;
+    const LTFAT_REAL* fbd;
+    LTFAT_COMPLEX* cbuf;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(f); CHECKNULL(cout);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
@@ -150,23 +157,21 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
     /*  --------- initial declarations -------------- */
-    const ltfatInt a = plan->a;
-    const ltfatInt M = plan->M;
-    const ltfatInt N = L / a;
+    a = plan->a;
+    M = plan->M;
+    N = L / a;
 
-    const ltfatInt gl = plan->gl;
-    LTFAT_REAL*    sbuf = plan->sbuf;
-    LTFAT_COMPLEX* cbuf = plan->cbuf;
-    LTFAT_REAL* fw = plan->fw;
+    gl = plan->gl;
+    sbuf = plan->sbuf;
+    cbuf = plan->cbuf;
+    fw = plan->fw;
 
     /* These are floor operations. */
-    const ltfatInt glh = plan->gl / 2;
-    const ltfatInt M2 = M / 2 + 1;
+    glh = plan->gl / 2;
+    M2 = M / 2 + 1;
 
     /* This is a ceil operation. */
-    const ltfatInt glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
-
-    const LTFAT_REAL* fbd;
+    glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
 
     /*  ---------- main body ----------- */
 

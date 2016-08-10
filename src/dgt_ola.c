@@ -18,9 +18,9 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
     const ltfatInt Lext    = bl + gl;
     const ltfatInt Nblocke = Lext / a;
 
-    plan.buf  = ltfat_malloc(Lext * W * sizeof * plan.buf);
-    plan.gext = ltfat_malloc(Lext * sizeof * plan.gext);
-    plan.cbuf = ltfat_malloc(M * Nblocke * W * sizeof * plan.cbuf);
+    plan.buf  = LTFAT_NAME_COMPLEX(malloc)(Lext * W);
+    plan.gext = LTFAT_NAME_COMPLEX(malloc)(Lext);
+    plan.cbuf = LTFAT_NAME_COMPLEX(malloc)(M * Nblocke * W);
 
     LTFAT_NAME_COMPLEX(fir2long)(g, gl, Lext, plan.gext);
 

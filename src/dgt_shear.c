@@ -24,7 +24,7 @@ LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX* g)
         const long long idx = ltfat_positiverem_long(
                                   ltfat_positiverem_long(Lponen * m, LL) * m, LL);
 
-        g[m] = cexp(1.0 * I * M_PI * idx / L);
+        g[m] = exp(I * (LTFAT_REAL) M_PI * (LTFAT_REAL)idx / ((LTFAT_REAL) L));
     }
 
 
@@ -70,21 +70,21 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
     plan.gwork = (LTFAT_COMPLEX*)g;
     plan.cout  = cout;
 
-    plan.c_rect = ltfat_malloc(M * N * W * sizeof(LTFAT_COMPLEX));
+    plan.c_rect = LTFAT_NAME_COMPLEX(malloc)(M * N * W);
 
     LTFAT_COMPLEX* f_before_fft = (LTFAT_COMPLEX*)f;
     LTFAT_COMPLEX* g_before_fft = (LTFAT_COMPLEX*)g;
 
     if ((s0 != 0) || (s1 != 0))
     {
-        plan.fwork = ltfat_malloc(L * W * sizeof(LTFAT_COMPLEX));
-        plan.gwork = ltfat_malloc(L * sizeof(LTFAT_COMPLEX));
+        plan.fwork = LTFAT_NAME_COMPLEX(malloc)(L * W);
+        plan.gwork = LTFAT_NAME_COMPLEX(malloc)(L);
     }
 
 
     if (s1)
     {
-        plan.p1 = ltfat_malloc(L * sizeof(LTFAT_COMPLEX));
+        plan.p1 = LTFAT_NAME_COMPLEX(malloc)(L);
 
         LTFAT_NAME(pchirp)(L, s1, plan.p1);
 
@@ -107,13 +107,13 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
         /* plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, */
         /*                  L, W, ar, Mr, plan.c_rect, 0, flags); */
         LTFAT_NAME_COMPLEX(dgt_long_init)(plan.fwork, plan.gwork,
-                                          L, W, ar, Mr, plan.c_rect, 0, flags, &plan.rect_plan);
+                                          L, W, ar, Mr, plan.c_rect, LTFAT_FREQINV, flags, &plan.rect_plan);
     }
     else
     {
 
         /* Allocate memory and compute the pchirp */
-        plan.p0 = ltfat_malloc(L * sizeof(LTFAT_COMPLEX));
+        plan.p0 = LTFAT_NAME_COMPLEX(malloc)(L);
         LTFAT_NAME(pchirp)(L, -s0, plan.p0);
 
         /* if data has already been copied to the working arrays, use
@@ -123,11 +123,12 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
         // Downcasting to int
         int Lint = (int) L;
         plan.f_plan = LTFAT_FFTW(plan_many_dft)(1, &Lint, W,
-                                                f_before_fft, NULL, 1, L,
-                                                plan.fwork, NULL, 1, L,
+                                                (LTFAT_FFTW(complex)*)f_before_fft, NULL, 1, L,
+                                                (LTFAT_FFTW(complex)*)plan.fwork, NULL, 1, L,
                                                 FFTW_FORWARD, flags);
 
-        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(L, g_before_fft, plan.gwork, FFTW_FORWARD,
+        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(L, (LTFAT_FFTW(complex)*)g_before_fft,
+                                              (LTFAT_FFTW(complex)*)plan.gwork, FFTW_FORWARD,
                                               flags);
 
         /* Execute the FFTs */
@@ -136,7 +137,7 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
         /* Multiply g by the chirp and scale by 1/L */
         for (ltfatInt l = 0; l < L; l++)
         {
-            plan.gwork[l] = plan.gwork[l] * plan.p0[l] / L;
+            plan.gwork[l] = plan.gwork[l] * plan.p0[l] / ((LTFAT_REAL) L);
         }
 
         /* Call the rectangular computation in the frequency domain*/
@@ -145,15 +146,15 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
         /* plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, L, W, */
         /*                  br, Nr, plan.c_rect, 0, flags); */
         LTFAT_NAME_COMPLEX(dgt_long_init)(plan.fwork, plan.gwork, L, W,
-                                          br, Nr, plan.c_rect, 0, flags, &plan.rect_plan);
+                                          br, Nr, plan.c_rect, LTFAT_FREQINV, flags, &plan.rect_plan);
 
     }
 
-    plan.finalmod = ltfat_malloc(2 * N * sizeof(LTFAT_COMPLEX));
+    plan.finalmod = LTFAT_NAME_COMPLEX(malloc)(2 * N);
 
     for (ltfatInt n = 0; n < 2 * N; n++)
     {
-        plan.finalmod[n] = cexp(M_PI * I * n / N);
+        plan.finalmod[n] = exp(I * (LTFAT_REAL) M_PI * (LTFAT_REAL)n / ((LTFAT_REAL) N));
     }
 
     return plan;

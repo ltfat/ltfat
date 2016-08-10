@@ -16,8 +16,8 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler)
     return retVal;
 }
 
-LTFAT_EXTERN
-void* ltfat_malloc (size_t n)
+LTFAT_EXTERN void*
+ltfat_malloc (size_t n)
 {
     void* outp;
 
@@ -28,7 +28,8 @@ void* ltfat_malloc (size_t n)
     return outp;
 }
 
-void* ltfat_realloc (void* ptr, size_t nold, size_t nnew)
+LTFAT_EXTERN void*
+ltfat_realloc (void* ptr, size_t nold, size_t nnew)
 {
     void* outp = ltfat_malloc(nnew);
 
@@ -44,8 +45,8 @@ void* ltfat_realloc (void* ptr, size_t nold, size_t nnew)
     return outp;
 }
 
-LTFAT_EXTERN
-void* ltfat_calloc (size_t nmemb, size_t size)
+LTFAT_EXTERN void*
+ltfat_calloc (size_t nmemb, size_t size)
 {
     void* outp = ltfat_malloc(nmemb * size);
 
@@ -57,8 +58,8 @@ void* ltfat_calloc (size_t nmemb, size_t size)
     return outp;
 }
 
-LTFAT_EXTERN
-void ltfat_free(const void* ptr)
+LTFAT_EXTERN void
+ltfat_free(const void* ptr)
 {
     if (ltfat_custom_free)
         (*ltfat_custom_free)((void*)ptr);
@@ -66,7 +67,8 @@ void ltfat_free(const void* ptr)
         LTFAT_FFTW(free)((void*)ptr);
 }
 
-void ltfat_safefree(const void* ptr)
+LTFAT_EXTERN void
+ltfat_safefree(const void* ptr)
 {
     if (ptr)
         ltfat_free((void*)ptr);

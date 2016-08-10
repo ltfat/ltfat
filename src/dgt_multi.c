@@ -25,24 +25,25 @@
 /* }; */
 
 LTFAT_EXTERN void
-LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
+LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX* g,
                             const ltfatInt L, const ltfatInt Lg, const ltfatInt a, const ltfatInt M,
                             const ltfatInt lt1, const ltfatInt lt2,
-                            LTFAT_COMPLEX *mwin)
+                            LTFAT_COMPLEX* mwin)
 {
     const ltfatInt b = L / M;
 
     const LTFAT_REAL scal = 2 * M_PI / L;
 
-    LTFAT_COMPLEX *gwork = (LTFAT_COMPLEX *)ltfat_malloc(L * sizeof(LTFAT_COMPLEX));
-    LTFAT_NAME_COMPLEX(fir2long)((const LTFAT_COMPLEX*)g, Lg, L, (LTFAT_COMPLEX*)gwork);
+    LTFAT_COMPLEX* gwork = LTFAT_NAME_COMPLEX(malloc)(L);
+    LTFAT_NAME_COMPLEX(fir2long)(g, Lg, L, gwork);
 
     for (ltfatInt w = 0; w < lt2; w++)
     {
         const ltfatInt wavenum = ((w * lt1) % lt2) * b / lt2;
         for (ltfatInt l = 0; l < L; l++)
         {
-            mwin[l + w * L] = cexp(I * scal * l * wavenum) * gwork[ltfat_positiverem(l - w * a, L)];
+            mwin[l + w * L] = exp(I * scal * (LTFAT_REAL)(l * wavenum)) *
+                              gwork[ltfat_positiverem(l - w * a, L)];
         }
     }
 
@@ -51,11 +52,11 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
 
 
 LTFAT_EXTERN LTFAT_NAME(dgt_multi_plan)
-LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                            const ltfatInt L, const ltfatInt Lg,
                            const ltfatInt W, const ltfatInt a, const ltfatInt M,
                            const ltfatInt lt1, const ltfatInt lt2,
-                           LTFAT_COMPLEX *cout, unsigned flags)
+                           LTFAT_COMPLEX* cout, unsigned flags)
 {
 
     LTFAT_NAME(dgt_multi_plan) plan;
@@ -69,36 +70,38 @@ LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     plan.lt1 = lt1;
     plan.lt2 = lt2;
 
-    plan.f     = (LTFAT_COMPLEX *)f;
+    plan.f     = (LTFAT_COMPLEX*)f;
     plan.cout  = cout;
 
     const ltfatInt N   = L / a;
     const ltfatInt Ns  = N / lt2;
 
-    plan.mwin = ltfat_malloc(L * lt2 * sizeof(LTFAT_COMPLEX));
-    plan.c_scratch = ltfat_malloc(M * Ns * W * sizeof(LTFAT_COMPLEX));
+    plan.mwin = LTFAT_NAME_COMPLEX(malloc)(L * lt2);
+    plan.c_scratch = LTFAT_NAME_COMPLEX(malloc)(M * Ns * W);
 
 
     LTFAT_NAME(nonsepwin2multi)(g, L, Lg, a, M, lt1, lt2, plan.mwin);
 
-    plan.rect_plan_array = ltfat_malloc(lt2 * sizeof(LTFAT_NAME_COMPLEX(dgt_long_plan)*));
+    plan.rect_plan_array = (LTFAT_NAME_COMPLEX(dgt_long_plan)**) ltfat_malloc(
+                               lt2 * sizeof( LTFAT_NAME_COMPLEX(dgt_long_plan)*));
 
     for (ltfatInt win = 0; win < lt2; win++)
     {
-            LTFAT_NAME_COMPLEX(dgt_long_init)(plan.f,
-                                      plan.mwin + L * win,
-                                      L, W, a * lt2, M, 
-                                      plan.c_scratch, 0, flags,
-                                      &plan.rect_plan_array[win]);
+        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.f,
+                                          plan.mwin + L * win,
+                                          L, W, a * lt2, M,
+                                          plan.c_scratch, LTFAT_FREQINV, flags,
+                                          &plan.rect_plan_array[win]);
     }
 
-    plan.mod = (LTFAT_COMPLEX*) ltfat_malloc(N * sizeof(LTFAT_COMPLEX));
+    plan.mod = LTFAT_NAME_COMPLEX(malloc)(N);
 
     for (ltfatInt win = 0; win < plan.lt2; win++)
     {
         for (ltfatInt n = 0; n < Ns; n++)
         {
-            plan.mod[win + n * lt2] = cexp(-2 * M_PI * I * (a * n * ((win * lt1) % lt2)) / M);
+            plan.mod[win + n * lt2] = exp((LTFAT_REAL)(-2.0 * M_PI) * I *
+                                          (LTFAT_REAL)( a * n * (( win * lt1) % lt2)) / ((LTFAT_REAL)M));
         }
     }
 
@@ -124,7 +127,8 @@ LTFAT_NAME(dgt_multi_execute)(const LTFAT_NAME(dgt_multi_plan) plan)
             {
                 for (ltfatInt m = 0; m < M; m++)
                 {
-                    plan.cout[m + win * M + n * lt2 * M + w * M * N] = plan.mod[win + n * lt2] * plan.c_scratch[m + n * M + w * M * Ns];
+                    plan.cout[m + win * M + n * lt2 * M + w * M * N] = plan.mod[win + n * lt2] *
+                            plan.c_scratch[m + n * M + w * M * Ns];
                 }
             }
         }
@@ -143,10 +147,11 @@ LTFAT_NAME(dgt_multi_done)(LTFAT_NAME(dgt_multi_plan) plan)
 
 
 LTFAT_EXTERN void
-LTFAT_NAME(dgt_multi)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                      const ltfatInt L, const ltfatInt Lg, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(dgt_multi)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
+                      const ltfatInt L, const ltfatInt Lg, const ltfatInt W, const ltfatInt a,
+                      const ltfatInt M,
                       const ltfatInt lt1, const ltfatInt lt2,
-                      LTFAT_COMPLEX *cout)
+                      LTFAT_COMPLEX* cout)
 {
 
     LTFAT_NAME(dgt_multi_plan) plan = LTFAT_NAME(dgt_multi_init)(

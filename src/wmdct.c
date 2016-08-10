@@ -10,14 +10,14 @@
   { \
      for (ltfatInt m=0;m<M;m+=2) \
      { \
-       pcoef[m]=CH(creal)(pcoef2[m])+CH(cimag)(pcoef2[m]); \
-       pcoef[m+M]=CH(creal)(pcoef2[m+M2])-CH(cimag)(pcoef2[m+M2]); \
+       pcoef[m]=ltfat_real(pcoef2[m])+ltfat_imag(pcoef2[m]); \
+       pcoef[m+M]=ltfat_real(pcoef2[m+M2])-ltfat_imag(pcoef2[m+M2]); \
      } \
      \
      for (ltfatInt m=1;m<M;m+=2) \
      { \
-       pcoef[m]=CH(creal)(pcoef2[m])-CH(cimag)(pcoef2[m]); \
-       pcoef[m+M]=CH(creal)(pcoef2[m+M2])+CH(cimag)(pcoef2[m+M2]); \
+       pcoef[m]=ltfat_real(pcoef2[m])-ltfat_imag(pcoef2[m]); \
+       pcoef[m+M]=ltfat_real(pcoef2[m+M2])+ltfat_imag(pcoef2[m+M2]); \
      } \
  \
      pcoef+=M2; \
@@ -45,33 +45,34 @@
 
 #define PREPROC \
    for(ltfatInt n=0;n<L;n++) \
-      f2[n] = (LTFAT_COMPLEX) cexp(-M_PI*I*n/(2.0*M)); \
+      f2[n] = (LTFAT_COMPLEX) exp(-I*(LTFAT_REAL) M_PI * (LTFAT_REAL)(n/(2.0*M))); \
    for(ltfatInt w=W-1;w>=0;w--) \
       for(ltfatInt n=0;n<L;n++) \
          f2[n+w*L] = f2[n]*f[n+w*L];
 
 
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(dwiltiii_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_NAME_COMPLEX(dwiltiii_long)(const LTFAT_COMPLEX* f,
+                                  const LTFAT_COMPLEX* g,
                                   const ltfatInt L, const ltfatInt W,
-                                  const ltfatInt M, LTFAT_COMPLEX *cout)
+                                  const ltfatInt M, LTFAT_COMPLEX* cout)
 {
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
     const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
-    const LTFAT_COMPLEX eipi4 = cexp(I * M_PI / 4.0);
-    const LTFAT_COMPLEX emipi4 = cexp(-I * M_PI / 4.0);
+    const LTFAT_COMPLEX eipi4 =  exp( I * (LTFAT_REAL) ( M_PI / 4.0 ));
+    const LTFAT_COMPLEX emipi4 = exp(-I * (LTFAT_REAL) ( M_PI / 4.0 ));
 
-    LTFAT_COMPLEX *coef2 = ltfat_malloc(2 * M * N * W * sizeof * coef2);
-    LTFAT_COMPLEX *f2 = ltfat_malloc(L * W * sizeof * f2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)(2 * M * N * W);
+    LTFAT_COMPLEX* f2 = LTFAT_NAME_COMPLEX(malloc)(L * W);
 
     PREPROC
 
     LTFAT_NAME_COMPLEX(dgt_long)(f2, g, L, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
-    LTFAT_COMPLEX *pcoef  = cout;
-    LTFAT_COMPLEX *pcoef2 = coef2;
+    LTFAT_COMPLEX* pcoef  = cout;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
     POSTPROC_COMPLEX
 
@@ -79,17 +80,17 @@ LTFAT_NAME_COMPLEX(dwiltiii_long)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                                const ltfatInt L, const ltfatInt W,
-                               const ltfatInt M, LTFAT_REAL *cout)
+                               const ltfatInt M, LTFAT_REAL* cout)
 {
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
 
-    LTFAT_COMPLEX *coef2 = ltfat_malloc(2 * M * N * W * sizeof * coef2);
-    LTFAT_COMPLEX *f2 = ltfat_malloc(L * W * sizeof * f2);
-    LTFAT_COMPLEX *g2 = ltfat_malloc(L * sizeof * g2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)(2 * M * N * W);
+    LTFAT_COMPLEX* f2 = LTFAT_NAME_COMPLEX(malloc)(L * W);
+    LTFAT_COMPLEX* g2 = LTFAT_NAME_COMPLEX(malloc)(L);
 
     // Real to complex
     for (ltfatInt ii = 0; ii < L; ii++)
@@ -100,8 +101,8 @@ LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
     LTFAT_NAME_COMPLEX(dgt_long)(f2, g2, L, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
 
-    LTFAT_REAL *pcoef  = cout;
-    LTFAT_COMPLEX *pcoef2 = coef2;
+    LTFAT_REAL* pcoef  = cout;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
     POSTPROC_REAL
 
@@ -110,20 +111,21 @@ LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
+LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                                 const ltfatInt L, const ltfatInt gl,
                                 const ltfatInt W, const ltfatInt M,
-                                LTFAT_COMPLEX *cout)
+                                LTFAT_COMPLEX* cout)
 {
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
     const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
-    const LTFAT_COMPLEX eipi4 = cexp(I * M_PI / 4.0);
-    const LTFAT_COMPLEX emipi4 = cexp(-I * M_PI / 4.0);
+    const LTFAT_COMPLEX eipi4 = exp(I * (LTFAT_REAL)(M_PI / 4.0));
+    const LTFAT_COMPLEX emipi4 = exp(-I * (LTFAT_REAL)(M_PI / 4.0));
 
-    LTFAT_COMPLEX *coef2 = ltfat_malloc(2 * M * N * W * sizeof * coef2);
-    LTFAT_COMPLEX *f2 = ltfat_malloc(L * W * sizeof * f2);
+    // XXX: This might allocate too much memory
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)(2 * M * N * W);
+    LTFAT_COMPLEX* f2 = LTFAT_NAME_COMPLEX(malloc)(L * W);
 
     PREPROC
 
@@ -131,8 +133,8 @@ LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     LTFAT_NAME_COMPLEX(dgt_fb)(f2, g, L, gl, W, M, 2 * M, LTFAT_FREQINV, coef2);
 
 
-    LTFAT_COMPLEX *pcoef  = cout;
-    LTFAT_COMPLEX *pcoef2 = coef2;
+    LTFAT_COMPLEX* pcoef  = cout;
+    LTFAT_COMPLEX* pcoef2 = coef2;
 
     POSTPROC_COMPLEX
 
@@ -141,18 +143,18 @@ LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 }
 
 LTFAT_EXTERN void
-LTFAT_NAME_REAL(dwiltiii_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
+LTFAT_NAME_REAL(dwiltiii_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                              const ltfatInt L, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt M,
-                             LTFAT_REAL *cout)
+                             LTFAT_REAL* cout)
 {
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
 
-    LTFAT_COMPLEX *coef2 = ltfat_malloc(2 * M * N * W * sizeof * coef2);
-    LTFAT_COMPLEX *f2 = ltfat_malloc(L * W * sizeof * f2);
-    LTFAT_COMPLEX *g2 = ltfat_malloc(gl * sizeof * g2);
+    LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)(2 * M * N * W);
+    LTFAT_COMPLEX* f2 = LTFAT_NAME_COMPLEX(malloc)(L * W);
+    LTFAT_COMPLEX* g2 = LTFAT_NAME_COMPLEX(malloc)(gl);
 
     //Real to complex
     for (ltfatInt ii = 0; ii < gl; ii++)
@@ -174,4 +176,3 @@ LTFAT_NAME_REAL(dwiltiii_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 #undef POSTPROC_REAL
 #undef POSTPROC_COMPLEX
 #undef PREPROC
-

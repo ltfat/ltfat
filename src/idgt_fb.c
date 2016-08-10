@@ -58,19 +58,20 @@ LTFAT_NAME(idgt_fb_init)(const LTFAT_TYPE* g, const ltfatInt gl,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
 
-    CHECKMEM(p = ltfat_calloc(1, sizeof * p));
+    CHECKMEM(p = (LTFAT_NAME(idgt_fb_plan)*)ltfat_calloc(1, sizeof * p));
 
     p->ptype = ptype;
     p->a = a;
     p->M = M;
     p->gl = gl;
 
-    CHECKMEM( p->cbuf  = ltfat_malloc(M * sizeof * p->cbuf));
-    CHECKMEM( p->gw    = ltfat_malloc(gl * sizeof * p->gw));
-    CHECKMEM( p->ff    = ltfat_malloc((gl > M ? gl : M) * sizeof * p->ff));
+    CHECKMEM( p->cbuf  = LTFAT_NAME_COMPLEX(malloc)(M));
+    CHECKMEM( p->gw    = LTFAT_NAME(malloc)(gl));
+    CHECKMEM( p->ff    = LTFAT_NAME_COMPLEX(malloc)(gl > M ? gl : M));
 
     /* Create plan. In-place. */
-    p->p_small = LTFAT_FFTW(plan_dft_1d)(M, p->cbuf, p->cbuf,
+    p->p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_FFTW(complex)*) p->cbuf,
+                                         (LTFAT_FFTW(complex)*) p->cbuf,
                                          FFTW_BACKWARD, flags);
 
     CHECKINIT(p->p_small, "FFTW plan failed.");
@@ -94,28 +95,29 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
                             const LTFAT_COMPLEX* cin,
                             const ltfatInt L, const ltfatInt W, LTFAT_COMPLEX* f)
 {
+    ltfatInt M, a, gl, N, ep, sp, glh, glh_d_a;
+    LTFAT_COMPLEX* cbuf, *ff;
+    LTFAT_TYPE* gw;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(cin); CHECKNULL(f);
     CHECK(LTFATERR_BADARG, L >= p->gl && !(L % p->a) ,
           "L (passed %d) must be positive and divisible by a (passed %d).", L, p->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
 
-    const ltfatInt M = p->M;
-    const ltfatInt a = p->a;
-    const ltfatInt gl = p->gl;
-    const ltfatInt N = L / a;
-
-    ltfatInt ep, sp;
+    M = p->M;
+    a = p->a;
+    gl = p->gl;
+    N = L / a;
 
     /* This is a floor operation. */
-    const ltfatInt glh = gl / 2;
+    glh = gl / 2;
 
     /* This is a ceil operation. */
-    const ltfatInt glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
+    glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
 
-    LTFAT_COMPLEX* cbuf = p->cbuf;
-    LTFAT_TYPE*      gw = p->gw;
-    LTFAT_COMPLEX*   ff = p->ff;
+    cbuf = p->cbuf;
+    gw = p->gw;
+    ff = p->ff;
 
     memset(f, 0, L * W * sizeof * f);
 
@@ -176,9 +178,10 @@ error:
 LTFAT_EXTERN int
 LTFAT_NAME(idgt_fb_done)(LTFAT_NAME(idgt_fb_plan)** p)
 {
+    LTFAT_NAME(idgt_fb_plan)* pp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(*p);
-    LTFAT_NAME(idgt_fb_plan)* pp = *p;
+    pp = *p;
     LTFAT_SAFEFREEALL(pp->cbuf, pp->ff, pp->gw);
     LTFAT_FFTW(destroy_plan)(pp->p_small);
     ltfat_free(pp);

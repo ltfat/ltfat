@@ -33,75 +33,79 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                               unsigned flags, LTFAT_NAME(dgtreal_long_plan)** pout)
 {
     LTFAT_NAME(dgtreal_long_plan)* plan = NULL;
+    ltfatInt minL, N, h_m, b, p, q, d, M2, d2, wfs;
+
+    // Downcast to int
+    int Mint = (int) M;
 
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cout != NULL,
           "cout cannot be NULL if flags is not FFTW_ESTIMATE");
     // CHECKNULL(f); // f can be NULL
     CHECKNULL(g); CHECKNULL(pout);
-    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive",L);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive", L);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
     CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
           "Invalid ltfat_phaseconvention enum value." );
 
-    ltfatInt minL = ltfat_lcm(a, M);
+    minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
           "L must divisible by lcm(a,M)=%d.", minL);
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = (LTFAT_NAME(dgtreal_long_plan)*) ltfat_calloc(1,
+                    sizeof * plan));
 
-    ltfatInt h_m;
 // f and cout can be NULL if flags is FFTW_ESTIMATE
     plan->a = a;
     plan->M = M;
     plan->L = L;
     plan->W = W;
     plan->ptype = ptype;
-    const ltfatInt N = L / a;
+    N = L / a;
 
     plan->c = ltfat_gcd(a, M, &plan->h_a, &h_m);
-    const ltfatInt b = L / M;
-    const ltfatInt p = a / plan->c;
-    const ltfatInt q = M / plan->c;
-    const ltfatInt d = b / p;
+    b = L / M;
+    p = a / plan->c;
+    q = M / plan->c;
+    d = b / p;
     plan->h_a = -plan->h_a;
 
-    const ltfatInt M2 = M / 2 + 1;
-    const ltfatInt d2 = d / 2 + 1;
-    const ltfatInt wfs = wfacreal_size(L, a, M);
+    M2 = M / 2 + 1;
+    d2 = d / 2 + 1;
+    wfs = wfacreal_size(L, a, M);
 
     plan->cout = cout;
     plan->f    = f;
-    CHECKMEM( plan->sbuf = ltfat_malloc( d * sizeof * plan->sbuf ));
-    CHECKMEM( plan->cbuf = ltfat_malloc(d2 * sizeof * plan->cbuf ));
-    CHECKMEM( plan->ff = ltfat_malloc(2 * d2 * p * q * W * sizeof * plan->ff));
-    CHECKMEM( plan->cf = ltfat_malloc(2 * d2 * q * q * W * sizeof * plan->cf));
-    CHECKMEM( plan->gf = ltfat_malloc(wfs * sizeof * plan->gf));
-    CHECKMEM( plan->cwork = ltfat_malloc(M * N * W * sizeof * plan->cwork));
+    CHECKMEM( plan->sbuf = LTFAT_NAME_REAL(malloc)( d ));
+    CHECKMEM( plan->cbuf = LTFAT_NAME_COMPLEX(malloc)(d2));
+    CHECKMEM( plan->ff = LTFAT_NAME_REAL(malloc)(2 * d2 * p * q * W));
+    CHECKMEM( plan->cf = LTFAT_NAME_REAL(malloc)(2 * d2 * q * q * W));
+    CHECKMEM( plan->gf = LTFAT_NAME_COMPLEX(malloc)(wfs));
+    CHECKMEM( plan->cwork = LTFAT_NAME_REAL(malloc)(M * N * W));
 
     /* Get factorization of window */
     LTFAT_NAME(wfacreal)(g, L, 1, a, M, plan->gf);
 
     /* Create plans. In-place. */
-    // Downcast to int
-    int Mint = (int) plan->M;
 
     plan->p_veryend =
         LTFAT_FFTW(plan_many_dft_r2c)(1, &Mint, N * W,
                                       plan->cwork, NULL, 1, M,
-                                      cout, NULL, 1, M2, flags);
+                                      (LTFAT_FFTW(complex)*)cout, NULL, 1, M2, flags);
 
     CHECKINIT(plan->p_veryend, "FFTW plan creation failed." );
 
     plan->p_before =
-        LTFAT_FFTW(plan_dft_r2c_1d)(d, plan->sbuf, plan->cbuf, flags);
+        LTFAT_FFTW(plan_dft_r2c_1d)(d, plan->sbuf, (LTFAT_FFTW(complex)*)plan->cbuf,
+                                    flags);
 
     CHECKINIT(plan->p_before, "FFTW plan creation failed." );
 
     plan->p_after  =
-        LTFAT_FFTW(plan_dft_c2r_1d)(d, plan->cbuf, plan->sbuf, flags);
+        LTFAT_FFTW(plan_dft_c2r_1d)(d, (LTFAT_FFTW(complex)*)plan->cbuf, plan->sbuf,
+                                    flags);
 
     CHECKINIT(plan->p_after, "FFTW plan creation failed.");
 
@@ -143,11 +147,12 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
         const LTFAT_REAL* f, LTFAT_COMPLEX* c)
 {
+    LTFAT_NAME(dgtreal_long_plan) plan2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(f); CHECKNULL(c);
 
     // Make a shallow copy of the plan and overwrite f
-    LTFAT_NAME(dgtreal_long_plan) plan2 = *plan;
+    plan2 = *plan;
     plan2.f = f;
 
     LTFAT_NAME(dgtreal_walnut_plan)(&plan2);
@@ -157,7 +162,8 @@ LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
                                             plan->M, plan->cwork);
 
     /* FFTW new array execute function */
-    LTFAT_FFTW(execute_dft_r2c)(plan->p_veryend, plan->cwork, c);
+    LTFAT_FFTW(execute_dft_r2c)(plan->p_veryend,
+                                plan->cwork, (LTFAT_FFTW(complex)*) c);
 
 error:
     return status;
@@ -167,9 +173,10 @@ error:
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan)
 {
+    LTFAT_NAME(dgtreal_long_plan)* pp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(*plan);
-    LTFAT_NAME(dgtreal_long_plan)* pp = *plan;
+    pp = *plan;
     LTFAT_FFTW(destroy_plan)(pp->p_veryend);
     LTFAT_FFTW(destroy_plan)(pp->p_before);
     LTFAT_FFTW(destroy_plan)(pp->p_after);
@@ -262,8 +269,8 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
                     for (ltfatInt s = 0; s < d2; s++)
                     {
-                        ffp[s * ld2a]   = LTFAT_COMPLEXH(creal)(cbuf[s]) * scalconst;
-                        ffp[s * ld2a + 1] = LTFAT_COMPLEXH(cimag)(cbuf[s]) * scalconst;
+                        ffp[s * ld2a]   = ltfat_real(cbuf[s]) * scalconst;
+                        ffp[s * ld2a + 1] = ltfat_imag(cbuf[s]) * scalconst;
                     }
                     ffp += 2;
                 }
@@ -290,8 +297,8 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
                         for (ltfatInt s = 0; s < d2; s++)
                         {
-                            ffp[s * ld2a]   = LTFAT_COMPLEXH(creal)(cbuf[s]) * scalconst;
-                            ffp[s * ld2a + 1] = LTFAT_COMPLEXH(cimag)(cbuf[s]) * scalconst;
+                            ffp[s * ld2a]   = ltfat_real(cbuf[s]) * scalconst;
+                            ffp[s * ld2a + 1] = ltfat_imag(cbuf[s]) * scalconst;
                         }
                         ffp += 2;
                     }

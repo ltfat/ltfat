@@ -7,6 +7,7 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
                           const ltfatInt L, const ltfatInt a,
                           const ltfatInt M, LTFAT_TYPE* gt)
 {
+    ltfatInt minL;
     LTFAT_COMPLEX* gf = NULL;
     LTFAT_COMPLEX* gtf = NULL;
     ltfatInt R = 1;
@@ -19,12 +20,12 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
     CHECK(LTFATERR_NOTAFRAME, M >= a, "Not a frame. Check if M>=a.");
 
-    ltfatInt minL = ltfat_lcm(a, M);
+    minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
           "L must and divisible by lcm(a,M)=%d.", minL);
 
-    CHECKMEM( gf = ltfat_malloc(L * R * sizeof * gf));
-    CHECKMEM( gtf = ltfat_malloc(L * R * sizeof * gtf));
+    CHECKMEM( gf = LTFAT_NAME_COMPLEX(malloc)(L * R));
+    CHECKMEM( gtf = LTFAT_NAME_COMPLEX(malloc)(L * R));
 
 #ifdef LTFAT_COMPLEXTYPE
 
@@ -60,7 +61,7 @@ LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
     CHECK(LTFATERR_BADREQSIZE, L >= gl && L >= gtl,
           "L>=gl && L>= gtl must hold. Passed L=%d, gl=%d, gtl=%d", L, gl, gtl);
 
-    CHECKMEM( tmpLong = ltfat_malloc(L * sizeof * tmpLong));
+    CHECKMEM( tmpLong = LTFAT_NAME(malloc)(L));
 
     LTFAT_NAME(fir2long)(g, gl, L, tmpLong);
     LTFAT_NAME(gabtight_long)(tmpLong, L, a, M, tmpLong);

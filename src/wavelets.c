@@ -92,7 +92,7 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
 {
     memset(c,0,L*sizeof*c);
     ltfatInt skipLoc = -skip;
-    LTFAT_TYPE *filtRev = ltfat_malloc(gl*sizeof*filtRev);
+    LTFAT_TYPE *filtRev = LTFAT_NAME(malloc)(gl);
     LTFAT_NAME(reverse_array)(g,gl,filtRev);
 
     ltfatInt glUps = ga*gl-(ga-1);
@@ -107,7 +107,7 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
     ltfatInt buffPtr = 0;
 
     // allocating and initializing the cyclic buf
-    LTFAT_TYPE *buf = ltfat_calloc(bufgl,sizeof*buf);
+    LTFAT_TYPE *buf = LTFAT_NAME(calloc)(bufgl);
 
     // pointer for moving in the input data
     const LTFAT_TYPE *tmpIn = f;
@@ -122,7 +122,7 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
     if(Nsafe<L)
     {
         // right extension is necessary, additional buf from where to copy
-        righExtbuff = ltfat_malloc(bufgl*sizeof(LTFAT_TYPE));
+        righExtbuff = LTFAT_NAME(malloc)(bufgl);
         memset(righExtbuff,0,bufgl*sizeof(LTFAT_TYPE));
         // store extension in the buf (must be done now to avoid errors when inplace calculation is done)
         LTFAT_NAME(extend_right)(f,L,righExtbuff,glUps,ext,1);
@@ -225,7 +225,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
     ltfatInt skipLoc = -(1-glUps-skip);
 
     // Copy, reverse and conjugate the imp resp.
-    LTFAT_TYPE *gInv = ltfat_malloc(gl*sizeof*gInv);
+    LTFAT_TYPE *gInv = LTFAT_NAME(malloc)(gl);
     memcpy(gInv,g,gl*sizeof*gInv);
     LTFAT_NAME(reverse_array)(gInv,gl,gInv);
     LTFAT_NAME(conjugate_array)(gInv,gl,gInv);
@@ -238,7 +238,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
 
     /** prepare cyclic buf */
     ltfatInt bufgl = ltfat_nextpow2(glUps);
-    LTFAT_TYPE* buf = ltfat_calloc(bufgl,sizeof*buf);
+    LTFAT_TYPE* buf = LTFAT_NAME(calloc)(bufgl);
     ltfatInt buffPtr = 0;
 
     ltfatInt iiLoops = 0;
@@ -256,7 +256,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
         remainsOutSamp = L - (iiLoops-1);
     }
 
-    LTFAT_TYPE *rightbuf = ltfat_calloc(bufgl,sizeof*rightbuf);
+    LTFAT_TYPE *rightbuf = LTFAT_NAME(calloc)(bufgl);
     LTFAT_TYPE *rightbufTmp = rightbuf;
 
     if(ext==PER) // if periodic extension
@@ -338,7 +338,7 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
     // Since c is used as an accu
     memset(c,0,N*sizeof*c);
     // Reverse and conjugate the filter
-    LTFAT_TYPE *filtRev = ltfat_malloc(gl*sizeof*filtRev);
+    LTFAT_TYPE *filtRev = LTFAT_NAME(malloc)(gl);
     LTFAT_NAME(reverse_array)(g, gl, filtRev);
 
     LTFAT_TYPE *righExtbuff = 0;
@@ -351,7 +351,7 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
     ltfatInt buffPtr = 0;
 
     // allocating and initializing the cyclic buf
-    LTFAT_TYPE *buf = ltfat_calloc(bufgl,sizeof*buf);
+    LTFAT_TYPE *buf = LTFAT_NAME(calloc)(bufgl);
 
     // pointer for moving in the input data
     const LTFAT_TYPE * tmpIn = f;
@@ -366,7 +366,7 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
     if(Nsafe<N)
     {
         // right extension is necessary, additional buf from where to copy
-        righExtbuff = ltfat_calloc(bufgl,sizeof*righExtbuff);
+        righExtbuff = LTFAT_NAME(calloc)(bufgl);
         // store extension in the buf (must be done now to avoid errors when inplace calculation is done)
         LTFAT_NAME(extend_right)(f,L,righExtbuff,gl,ext,a);
     }
@@ -461,7 +461,7 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
     const ltfatInt N = filterbank_td_size(L,a,gl,skip,ext);
 
     // Copy, reverse and conjugate the imp resp.
-    LTFAT_TYPE *gInv = ltfat_malloc(gl*sizeof*gInv);
+    LTFAT_TYPE *gInv = LTFAT_NAME(malloc)(gl);
     memcpy(gInv,g,gl*sizeof*gInv);
     LTFAT_NAME(reverse_array)(gInv,gl,gInv);
     LTFAT_NAME(conjugate_array)(gInv,gl,gInv);
@@ -474,7 +474,7 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
 
     /** prepare cyclic buf */
     ltfatInt bufgl = ltfat_nextpow2(gl);
-    LTFAT_TYPE* buf = ltfat_calloc(bufgl,sizeof*buf);
+    LTFAT_TYPE* buf = LTFAT_NAME(calloc)(bufgl);
     ltfatInt buffPtr = 0;
 
     ltfatInt inSkip = (skipRev + a - 1)/a;
@@ -501,7 +501,7 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
         remainsOutSamp = L - (uuLoops + (iiLoops-1)*a);
     }
 
-    LTFAT_TYPE *rightbuf = ltfat_calloc(bufgl,sizeof(LTFAT_TYPE));
+    LTFAT_TYPE *rightbuf = LTFAT_NAME(calloc)(bufgl);
     LTFAT_TYPE *rightbufTmp = rightbuf;
 
     if(ext==PER) // if periodic extension

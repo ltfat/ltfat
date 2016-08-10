@@ -7,18 +7,19 @@ LTFAT_EXTERN int
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
                       const ltfatInt shift, LTFAT_TYPE out[])
 {
+    ltfatInt p;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     // Fix shift
-    ltfatInt p = (L - shift) % L;
+    p = (L - shift) % L;
 
     if (p < 0) p += L;
 
     if (in == out)
     {
-        if (p) // Do nothing if no shit is needed
+        if (p) // Do nothing if no shift is needed
         {
             ltfatInt m, count, i, j;
 
@@ -160,13 +161,14 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
                        const ltfatInt offset,
                        const ltfatInt Lfold, LTFAT_TYPE* out)
 {
+    ltfatInt startIdx;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, Lin > 0, "Lin must be positive");
     CHECK(LTFATERR_BADSIZE, Lfold > 0, "Lfold must be positive");
 
     // Sanitize offset.
-    ltfatInt startIdx = ltfat_positiverem(offset, Lfold);
+    startIdx = ltfat_positiverem(offset, Lfold);
 
     // Clear output, we will use it as an accumulator
     if (in != out)
@@ -286,7 +288,7 @@ LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
     {
 #ifdef LTFAT_COMPLEXTYPE
 
-        if (LTFAT_COMPLEXH(cabs)(in[ii]) > LTFAT_COMPLEXH(cabs)(*max) )
+        if ( ltfat_abs(in[ii]) > ltfat_abs(*max) )
 #else
         if (in[ii] > *max)
 #endif
@@ -308,8 +310,7 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
     for (ltfatInt ii = 0; ii < L; ++ii)
     {
 #ifdef LTFAT_COMPLEXTYPE
-
-        if (!mask[ii] && LTFAT_COMPLEXH(cabs)(in[ii]) > LTFAT_COMPLEXH(cabs)(*max))
+        if (!mask[ii] && ltfat_abs(in[ii]) > ltfat_abs(*max))
 #else
         if (!mask[ii] && in[ii] > *max)
 #endif
@@ -327,13 +328,15 @@ LTFAT_EXTERN int
 LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
                      const ltfatInt Llong, LTFAT_TYPE* out)
 {
+    ltfat_div_t domod;
+    ltfatInt ss;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, Llong > 0, "Llong must be positive");
     CHECK(LTFATERR_BADSIZE, Lfir > 0, "Lfir must be positive");
     CHECK(LTFATERR_BADREQSIZE, Lfir <= Llong, "Lfir <= Llong does not hold");
 
-    const div_t domod = div(Lfir, 2);
+    domod = ltfat_idiv(Lfir, 2);
 
     /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
@@ -341,7 +344,7 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
     if (in != out)
         memcpy(out, in, (domod.quot + domod.rem)*sizeof * out);
 
-    const ltfatInt ss = Llong - Lfir;
+    ss = Llong - Lfir;
     // Copy second half from the back
     for (ltfatInt ii = Lfir - 1; ii >= domod.quot + domod.rem; ii--)
         out[ii + ss] = in[ii];
@@ -357,17 +360,19 @@ LTFAT_EXTERN int
 LTFAT_NAME(long2fir)(const LTFAT_TYPE* in, const ltfatInt Llong,
                      const ltfatInt Lfir, LTFAT_TYPE* out)
 {
+    ltfat_div_t domod;
+    ltfatInt ss;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, Llong > 0, "Llong must be positive");
     CHECK(LTFATERR_BADSIZE, Lfir > 0, "Lfir must be positive");
     CHECK(LTFATERR_BADREQSIZE, Lfir <= Llong, "Lfir <= Llong does not hold");
 
-    const div_t domod = div(Lfir, 2);
+    domod = ltfat_idiv(Lfir, 2);
 
     /* ---- In the odd case, the additional element is kept in the first half. ---*/
 
-    const ltfatInt ss = Llong - Lfir;
+    ss = Llong - Lfir;
 
     if (in != out)
         memcpy(out, in, (domod.quot + domod.rem)*sizeof * out);
@@ -383,11 +388,12 @@ LTFAT_EXTERN int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
                       ltfat_normalize_t flag, LTFAT_TYPE* out)
 {
+    LTFAT_REAL normfac;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
-    LTFAT_REAL normfac = 1.0;
+    normfac = 1.0;
 
     switch (flag)
     {
@@ -397,8 +403,8 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 
         for (ltfatInt ii = 0; ii < L; ii++)
         {
-#ifdef LTFAT_COMPLEXTYPE 
-            LTFAT_REAL inAbs = LTFAT_COMPLEXH(cabs)(in[ii]);
+#ifdef LTFAT_COMPLEXTYPE
+            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
 #else
             LTFAT_REAL inAbs = in[ii]; // We dont need abs here
 #endif
@@ -414,11 +420,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 
         for (ltfatInt ii = 0; ii < L; ii++)
         {
-#ifdef LTFAT_COMPLEXTYPE // We want to avoid the type generic tgmath.h
-            LTFAT_REAL inAbs = LTFAT_COMPLEXH(cabs)(in[ii]);
-#else
-            LTFAT_REAL inAbs = LTFAT_COMPLEXH(fabs)(in[ii]);
-#endif
+            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
             normfac += inAbs;
         }
 
@@ -431,11 +433,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 
         for (ltfatInt ii = 0; ii < L; ii++)
         {
-#ifdef LTFAT_COMPLEXTYPE
-            LTFAT_REAL inAbs = LTFAT_COMPLEXH(cabs)(in[ii]);
-#else
-            LTFAT_REAL inAbs = LTFAT_COMPLEXH(fabs)(in[ii]);
-#endif
+            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
             if (inAbs > normfac)
                 normfac = inAbs;
         }

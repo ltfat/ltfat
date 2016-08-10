@@ -27,6 +27,8 @@ LTFAT_EXTERN int
 LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
                          ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d)
 {
+    ltfat_div_t domod;
+    ltfatInt amax;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(d);
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
@@ -34,11 +36,11 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
     CHECK(LTFATERR_NOTPOSARG, dl > 0, "d must be positive");
 
-    ltfatInt amax = a > dl ? dl : a;
+    amax = a > dl ? dl : a;
     // d is used as an accumulator
     memset(d, 0, dl * sizeof * d);
 
-    const div_t domod = div(gl, 2);
+    domod = ltfat_idiv(gl, 2);
 
     // First half
     for (int aIdx = 0; aIdx < amax; aIdx++)
@@ -46,7 +48,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
         for (int ii = aIdx; ii < domod.quot + domod.rem; ii += a)
         {
 #ifdef LTFAT_COMPLEXTYPE
-            LTFAT_REAL gabs = LTFAT_COMPLEXH(cabs)(g[ii]);
+            LTFAT_REAL gabs = ltfat_abs(g[ii]);
 #else
             LTFAT_REAL gabs = g[ii];
 #endif
@@ -60,7 +62,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
         for (int ii = gl - (a - aIdx); ii >= domod.quot + domod.rem; ii -= a)
         {
 #ifdef LTFAT_COMPLEXTYPE
-            LTFAT_REAL gabs = LTFAT_COMPLEXH(cabs)(g[ii]);
+            LTFAT_REAL gabs = ltfat_abs(g[ii]);
 #else
             LTFAT_REAL gabs = g[ii];
 #endif
@@ -84,16 +86,17 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
                               const ltfatInt a, const ltfatInt M, LTFAT_TYPE* gt)
 {
     LTFAT_REAL* d = NULL;
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gt);
     CHECKGABPAINLESS;
 
-    CHECKMEM( d = ltfat_malloc(a * sizeof * d));
+    CHECKMEM( d = LTFAT_NAME_REAL(malloc)(a));
 
     CHECKSTATUS(LTFAT_NAME(gabframediag)(g, gl, a, M, a, d),
                 "Call to gabframediag failed.");
 
-    const div_t domod = div(gl, 2);
+    domod = ltfat_idiv(gl, 2);
 
     // Invert and square root the diagonal
     for (ltfatInt ii = 0; ii < a; ii++)
@@ -111,17 +114,18 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
                              const ltfatInt a,  const ltfatInt M, LTFAT_TYPE* gd)
 {
     LTFAT_REAL* d = NULL;
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gd);
     CHECKGABPAINLESS;
 
     // This temporary array cannot be substituted by gd
-    CHECKMEM( d = ltfat_malloc(a * sizeof * d));
+    CHECKMEM( d = LTFAT_NAME_REAL(malloc)(a));
 
     CHECKSTATUS(LTFAT_NAME(gabframediag)(g, gl, a, M, a, d),
                 "gabramediag failed.");
 
-    const div_t domod = div(gl, 2);
+    domod = ltfat_idiv(gl, 2);
 
     // Invert the diagonal
     for (ltfatInt ii = 0; ii < a; ii++)

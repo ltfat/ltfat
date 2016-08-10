@@ -30,6 +30,9 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
                           LTFAT_NAME(dgt_long_plan)** pout)
 {
     LTFAT_NAME(dgt_long_plan)* plan = NULL;
+    ltfatInt h_m, N, b, p, q, d, minL;
+    // Explicit downcast to int. It is passed by a pointer
+    int Mint = (int) M;
 
     int status = LTFATERR_SUCCESS;
     // CHECKNULL(f); // Can be NULL
@@ -41,34 +44,32 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
 
-    ltfatInt minL = ltfat_lcm(a, M);
+    minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADARG,
           L > 0  && !(L % minL),
           "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
           L, minL);
 
-    CHECKMEM(plan = ltfat_calloc(1, sizeof * plan));
-
-    ltfatInt h_m;
+    CHECKMEM(plan = (LTFAT_NAME(dgt_long_plan)*)ltfat_calloc(1, sizeof * plan));
 
     plan->a = a;
     plan->M = M;
     plan->L = L;
     plan->W = W;
     plan->ptype = ptype;
-    const ltfatInt N = L / a;
-    const ltfatInt b = L / M;
+    N = L / a;
+    b = L / M;
 
     plan->c = ltfat_gcd(a, M, &plan->h_a, &h_m);
-    const ltfatInt p = a / plan->c;
-    const ltfatInt q = M / plan->c;
-    const ltfatInt d = b / p;
+    p = a / plan->c;
+    q = M / plan->c;
+    d = b / p;
     plan->h_a = -plan->h_a;
 
-    CHECKMEM( plan->sbuf = ltfat_malloc(2 * d * sizeof(LTFAT_REAL)));
-    CHECKMEM( plan->gf   = ltfat_malloc(L * sizeof(LTFAT_COMPLEX)));
-    CHECKMEM( plan->ff = ltfat_malloc(2 * d * p * q * W * sizeof(LTFAT_REAL)));
-    CHECKMEM( plan->cf = ltfat_malloc(2 * d * q * q * W * sizeof(LTFAT_REAL)));
+    CHECKMEM( plan->sbuf = LTFAT_NAME_REAL(malloc)(2 * d));
+    CHECKMEM( plan->gf   = LTFAT_NAME_COMPLEX(malloc)(L));
+    CHECKMEM( plan->ff = LTFAT_NAME_REAL(malloc)(2 * d * p * q * W));
+    CHECKMEM( plan->cf = LTFAT_NAME_REAL(malloc)(2 * d * q * q * W));
     plan->cout = cout;
     plan->f    = f;
 
@@ -77,30 +78,27 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
         LTFAT_NAME(wfac)(g, L, 1, a, M, plan->gf),
         "wfac call failed.");
 
-    // Explicit downcast to int. It is passed by a pointer
-    int Mint = (int) M;
-
     /* Create plans. In-place. */
     plan->p_veryend =
         LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W,
-                                  plan->cout, NULL,
+                                  (LTFAT_FFTW(complex)*)plan->cout, NULL,
                                   1, Mint,
-                                  plan->cout, NULL,
+                                  (LTFAT_FFTW(complex)*)plan->cout, NULL,
                                   1, Mint,
                                   FFTW_FORWARD, flags);
 
     CHECKINIT(plan->p_veryend, "FFTW plan creation failed.");
 
     plan->p_before =
-        LTFAT_FFTW(plan_dft_1d)(d, (LTFAT_COMPLEX*)plan->sbuf,
-                                (LTFAT_COMPLEX*)plan->sbuf,
+        LTFAT_FFTW(plan_dft_1d)(d, (LTFAT_FFTW(complex)*)plan->sbuf,
+                                (LTFAT_FFTW(complex)*)plan->sbuf,
                                 FFTW_FORWARD, flags);
 
     CHECKINIT(plan->p_before, "FFTW plan creation failed.");
 
     plan->p_after  =
-        LTFAT_FFTW(plan_dft_1d)(d, (LTFAT_COMPLEX*)plan->sbuf,
-                                (LTFAT_COMPLEX*)plan->sbuf,
+        LTFAT_FFTW(plan_dft_1d)(d, (LTFAT_FFTW(complex)*)plan->sbuf,
+                                (LTFAT_FFTW(complex)*)plan->sbuf,
                                 FFTW_BACKWARD, flags);
 
     CHECKINIT(plan->p_after, "FFTW plan creation failed.");
@@ -145,21 +143,23 @@ LTFAT_EXTERN int
 LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
                                       const LTFAT_TYPE f[], LTFAT_COMPLEX c[])
 {
+    LTFAT_NAME(dgt_long_plan) plan2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(f); CHECKNULL(c);
 
     // Make a shallow copy and assign f
-    LTFAT_NAME(dgt_long_plan) plan2 = *plan;
+    plan2 = *plan;
     plan2.f = f;
 
     LTFAT_NAME(dgt_walnut_execute)(&plan2, c);
 
     if (LTFAT_TIMEINV == plan->ptype)
-        LTFAT_NAME_COMPLEX(dgtphaselockhelper)(plan->cout, plan->L, plan->W,
-                                               plan->a, plan->M, plan->cout);
+        LTFAT_NAME_COMPLEX(dgtphaselockhelper)(c, plan->L, plan->W,
+                                               plan->a, plan->M, c);
 
     /* FFT to modulate the coefficients. */
-    LTFAT_FFTW(execute_dft)(plan->p_veryend, c, c);
+    LTFAT_FFTW(execute_dft)(plan->p_veryend, (LTFAT_FFTW(complex)*)c,
+                            (LTFAT_FFTW(complex)*)c);
 
 error:
     return status;
@@ -169,9 +169,10 @@ error:
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan)
 {
+    LTFAT_NAME(dgt_long_plan)* pp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(*plan);
-    LTFAT_NAME(dgt_long_plan)* pp = *plan;
+    pp = *plan;
 
     LTFAT_FFTW(destroy_plan)(pp->p_veryend);
     LTFAT_FFTW(destroy_plan)(pp->p_before);
@@ -261,8 +262,8 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
                     {
                         rem = (s * M + l * a) % L;
 #ifdef LTFAT_COMPLEXTYPE
-                        sbuf[2 * s]   = creal(fp[rem]);
-                        sbuf[2 * s + 1] = cimag(fp[rem]);
+                        sbuf[2 * s]   = ltfat_real(fp[rem]);
+                        sbuf[2 * s + 1] = ltfat_imag(fp[rem]);
 #else
                         sbuf[2 * s]   = fp[rem];
                         sbuf[2 * s + 1] = 0.0;
@@ -318,8 +319,8 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
                         {
                             rem = ltfat_positiverem(k * M + s * p * M - l * h_a * a, L);
 #ifdef LTFAT_COMPLEXTYPE
-                            sbuf[2 * s]   = creal(fp[rem]);
-                            sbuf[2 * s + 1] = cimag(fp[rem]);
+                            sbuf[2 * s]   = ltfat_real(fp[rem]);
+                            sbuf[2 * s + 1] = ltfat_imag(fp[rem]);
 #else
                             sbuf[2 * s]   = fp[rem];
                             sbuf[2 * s + 1] = 0.0;

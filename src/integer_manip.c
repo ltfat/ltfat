@@ -44,10 +44,10 @@ ltfat_imin(const ltfatInt a, const ltfatInt b)
 LTFAT_EXTERN ltfat_div_t
 ltfat_idiv(const ltfatInt a, const ltfatInt b)
 {
-    return (ltfat_div_t)
-    {
-        .quot = a / b , .rem = a % b
-    };
+    ltfat_div_t ret;
+    ret.quot = a / b;
+    ret.rem = a % b;
+    return ret;
 }
 
 
