@@ -1,6 +1,6 @@
 #ifndef _DGT_COMMON_H
 #define _DGT_COMMON_H
-
+#include "ltfat/basicmacros.h"
 /** \defgroup dgtcommon Discrete Gabor Transform Common 
  * \addtogroup dgtcommon
  * @{
@@ -31,6 +31,9 @@
  *  a filterbank.
  *
  */
+
+
+
 typedef enum
 {
     LTFAT_FREQINV = 0,
@@ -39,8 +42,16 @@ typedef enum
 
 /** @}*/
 
-int
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+LTFAT_EXTERN int
 ltfat_phaseconvention_is_valid(ltfat_phaseconvention in);
 
+#ifdef __cplusplus
+}  // extern "C"
+#endif
 
 #endif

@@ -1,29 +1,17 @@
-#ifndef LTFAT_H
-#define LTFAT_H 1
+#ifndef _LTFAT_H
+#define _LTFAT_H 1
 //#include "ltfat/config.h"
+#include "ltfat/complexcompat.h"
 #include "ltfat/errno.h"
 #include "ltfat/version.h"
 
 #ifndef NOSYSTEMHEADERS
-// !!! complex.h MUST be included before fftw3.h !!!!
-#ifdef __cplusplus
-   // C++ complex header
-   // fftw3.h will define:
-   // typedef double fftw_complex[2]
-   #include <complex>
-#else
-   // C99 complex header
-   // fftw3.h will define:
-   // typedef double _Complex fftw_complex
-   #include <complex.h>
-#endif
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <math.h>
-#include <fftw3.h>
 #endif
+
 
 #ifdef LTFAT_COMPAT32
 typedef int       ltfatInt;
@@ -32,19 +20,7 @@ typedef ptrdiff_t ltfatInt;
 #endif /* defined(LTFAT_COMPAT32) */
 
 
-/* Handle Windows DLL files */
-/* defined by Makefile when compiling LTFAT */
-#if defined(DLL_EXPORT_SYMBOLS) && ((defined(_WIN32) || defined(__WIN32__)))
-#  define LTFAT_EXTERN extern __declspec(dllexport)
-#else
-#  define LTFAT_EXTERN extern
-#endif
-
-#define LTFAT_MAKENAME(name,suffix) ltfat ## _ ## name ## suffix
-#define LTFAT_NAME_DOUBLE(name) LTFAT_MAKENAME(name,_d)
-#define LTFAT_NAME_SINGLE(name) LTFAT_MAKENAME(name,_s)
-#define LTFAT_NAME_COMPLEXDOUBLE(name) LTFAT_MAKENAME(name,_dc)
-#define LTFAT_NAME_COMPLEXSINGLE(name) LTFAT_MAKENAME(name,_sc)
+#include "ltfat/basicmacros.h"
 
 /* BEGIN_C_DECLS */
 
@@ -79,7 +55,6 @@ extern "C"
 #       undef LTFAT_COMPLEXTYPE
 #       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
-#       include "ltfat/types.h"
 #       include "ltfat/typecomplexindependent.h"
 #       define LTFAT_COMPLEXTYPE
 #   endif
@@ -112,7 +87,6 @@ extern "C"
 #       undef LTFAT_COMPLEXTYPE
 #       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
-#       include "ltfat/types.h"
 #       include "ltfat/typecomplexindependent.h"
 #       define LTFAT_COMPLEXTYPE
 #   endif
