@@ -1,6 +1,6 @@
 typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
 
-/** \defgroup dgtfb Discrete Gabor Transform for FIR windows -- dgt_fb 
+/** \defgroup dgtfb Discrete Gabor Transform for FIR windows -- dgt_fb
  *  \addtogroup dgtfb
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
@@ -29,6 +29,16 @@ typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
  *                const ltfatInt L, const ltfatInt gl,
  *                const ltfatInt W,  const ltfatInt a, const ltfatInt M,
  *                const ltfat_phaseconvention ptype, complex float c[]);
+ *
+ * ltfat_dgt_fb_dc(const complex double f[], const complex double g[],
+ *                 const ltfatInt L, const ltfatInt gl,
+ *                 const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                 const ltfat_phaseconvention ptype, complex double c[]);
+ *
+ * ltfat_dgt_fb_sc(const complex float f[], const complex float g[],
+ *                 const ltfatInt L, const ltfatInt gl,
+ *                 const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                 const ltfat_phaseconvention ptype, complex float c[]);
  * </tt>
  * \returns
  * Status code              | Description
@@ -44,9 +54,9 @@ typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
-        const ltfatInt L, const ltfatInt gl,
-        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
-        const ltfat_phaseconvention ptype, LTFAT_COMPLEX *cout);
+                   const ltfatInt L, const ltfatInt gl,
+                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+                   const ltfat_phaseconvention ptype, LTFAT_COMPLEX *cout);
 
 /** Initialize plan for Discrete Gabor Transform for the filter bank algorithm
  *
@@ -61,12 +71,20 @@ LTFAT_NAME(dgt_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
  * #### Versions #
  * <tt>
  * ltfat_dgt_fb_init_d(const double g[], const ltfatInt gl, const ltfatInt a,
- *                     const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
- *                     ltfat_dgt_fb_plan_d** plan);
+ *                     const ltfatInt M, const ltfat_phaseconvention ptype,
+ *                     unsigned flags, ltfat_dgt_fb_plan_d** plan);
  *
  * ltfat_dgt_fb_init_s(const float g[], const ltfatInt gl, const ltfatInt a,
- *                     const ltfatInt M, const ltfat_phaseconvention ptype,unsigned flags
- *                     ltfat_dgt_fb_plan_s** plan);
+ *                     const ltfatInt M, const ltfat_phaseconvention ptype,
+ *                     unsigned flags, ltfat_dgt_fb_plan_s** plan);
+ *
+ * ltfat_dgt_fb_init_dc(const complex double g[], const ltfatInt gl, const ltfatInt a,
+ *                      const ltfatInt M, const ltfat_phaseconvention ptype,
+ *                      unsigned flags, ltfat_dgt_fb_plan_dc** plan);
+ *
+ * ltfat_dgt_fb_init_sc(const complex float g[], const ltfatInt gl, const ltfatInt a,
+ *                      const ltfatInt M, const ltfat_phaseconvention ptype,
+ *                      unsigned flags, ltfat_dgt_fb_plan_sc** plan);
  * </tt>
  * \returns
  * Status code              | Description
@@ -99,6 +117,12 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE *g,
  *
  * ltfat_dgt_fb_execute_s(ltfat_dgt_fb_plan_s* plan, const float f[],
  *                        const ltfatInt L, const ltfatInt W, complex float c[]);
+ *
+ * ltfat_dgt_fb_execute_dc(ltfat_dgt_fb_plan_dc* plan, const complex double f[],
+ *                         const ltfatInt L, const ltfatInt W, complex double c[]);
+ *
+ * ltfat_dgt_fb_execute_sc(ltfat_dgt_fb_plan_ds* plan, const complex float f[],
+ *                         const ltfatInt L, const ltfatInt W, complex float c[]);
  * </tt>
  *
  * \returns
@@ -124,6 +148,10 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* plan,
  * ltfat_dgt_fb_done_d(ltfat_dgt_fb_plan_d** plan);
  *
  * ltfat_dgt_fb_done_s(ltfat_dgt_fb_plan_s** plan);
+ *
+ * ltfat_dgt_fb_done_dc(ltfat_dgt_fb_plan_dc** plan);
+ *
+ * ltfat_dgt_fb_done_sc(ltfat_dgt_fb_plan_sc** plan);
  * </tt>
  *
  * \returns

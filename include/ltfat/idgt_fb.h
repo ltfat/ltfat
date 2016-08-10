@@ -23,12 +23,22 @@ typedef struct LTFAT_NAME(idgt_fb_plan) LTFAT_NAME(idgt_fb_plan);
  * ltfat_idgt_fb_d(const complex double c[], const double g[],
  *                 const ltfatInt L, const ltfatInt gl,
  *                 const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                 const ltfat_phaseconvention ptype, double f[]);
+ *                 const ltfat_phaseconvention ptype, complex double f[]);
  *
  * ltfat_idgt_fb_s(const complex float c[], const float g[],
  *                 const ltfatInt L, const ltfatInt gl,
  *                 const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                 const ltfat_phaseconvention ptype, float f[]);
+ *                 const ltfat_phaseconvention ptype, complex float f[]);
+ *
+ * ltfat_idgt_fb_dc(const complex double c[], const complex double g[],
+ *                  const ltfatInt L, const ltfatInt gl,
+ *                  const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                  const ltfat_phaseconvention ptype, complex double f[]);
+ *
+ * ltfat_idgt_fb_sc(const complex float c[], const complex float g[],
+ *                  const ltfatInt L, const ltfatInt gl,
+ *                  const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+ *                  const ltfat_phaseconvention ptype, complex float f[]);
  * </tt>
  *
  * \returns
@@ -62,12 +72,20 @@ LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_TYPE *g,
  * #### Versions #
  * <tt>
  * ltfat_idgt_fb_init_d(const double g[], const ltfatInt gl, const ltfatInt a,
- *                          const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
- *                          ltfat_idgt_fb_plan_d** plan);
+ *                      const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
+ *                      ltfat_idgt_fb_plan_d** plan);
  *
  * ltfat_idgt_fb_init_s(const float g[], const ltfatInt gl, const ltfatInt a,
- *                          const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
- *                          ltfat_idgt_fb_plan_s** plan);
+ *                      const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
+ *                      ltfat_idgt_fb_plan_s** plan);
+ *
+ * ltfat_idgt_fb_init_dc(const complex double g[], const ltfatInt gl, const ltfatInt a,
+ *                       const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
+ *                       ltfat_idgt_fb_plan_dc** plan);
+ *
+ * ltfat_idgt_fb_init_sc(const complex float g[], const ltfatInt gl, const ltfatInt a,
+ *                       const ltfatInt M, const ltfat_phaseconvention ptype, unsigned flags
+ *                       ltfat_idgt_fb_plan_sc** plan);
  * </tt>
  * \returns
  * Status code              | Description
@@ -100,6 +118,12 @@ LTFAT_NAME(idgt_fb_init)(const LTFAT_TYPE *g, const ltfatInt gl,
  *
  * ltfat_idgt_fb_execute_s(ltfat_idgt_fb_plan_s* plan, const complex float c[],
  *                         const ltfatInt L, const ltfatInt W, float f[]);
+ *
+ * ltfat_idgt_fb_execute_dc(ltfat_idgt_fb_plan_dc* plan, const complex double c[],
+ *                          const ltfatInt L, const ltfatInt W, double f[]);
+ *
+ * ltfat_idgt_fb_execute_sc(ltfat_idgt_fb_plan_sc* plan, const complex float c[],
+ *                          const ltfatInt L, const ltfatInt W, float f[]);
  * </tt>
  *
  * \returns
@@ -124,6 +148,10 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p, const LTFAT_COMPLEX *ci
  * ltfat_idgt_fb_done_d(ltfat_idgt_fb_plan_d** plan);
  *
  * ltfat_idgt_fb_done_s(ltfat_idgt_fb_plan_s** plan);
+ *
+ * ltfat_idgt_fb_done_dc(ltfat_idgt_fb_plan_dc** plan);
+ *
+ * ltfat_idgt_fb_done_sc(ltfat_idgt_fb_plan_sc** plan);
  * </tt>
  *
  * \returns

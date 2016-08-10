@@ -1,5 +1,7 @@
 \mainpage libltfat - Large Time-Frequency Alalysis Toolbox Library
 
+\warning This is work in progress. It is only relevant to the [refactor branch]( https://github.com/ltfat/libltfat/tree/refactor ).
+
 The library contains implementation of the following time-frequency transforms:
 
 * \ref dgttheory
@@ -17,46 +19,87 @@ is optional and identifies the data type the function is working with:
 <table>
 <caption id="multi_row">Data type suffix</caption>
 <tr><th>Suffix</th><th>Data type</th></tr>
-<tr><td>d</td><td>double</td></tr>
-<tr><td>s</td><td>float</td></tr>
-<tr><td>dc</td><td>complex double</td></tr>
-<tr><td>sc</td><td>complex float</td></tr>
+<tr><td>d</td><td>\c double</td></tr>
+<tr><td>s</td><td>\c float</td></tr>
+<tr><td>dc</td><td>\c ltfat_complex_d</td></tr>
+<tr><td>sc</td><td>\c ltfat_complex_s</td></tr>
 </table>
 
 \note In the documentation the prefix and the suffix will be omitted when
 introducing a non-unique function and when referring to the function group.
 Similarly, the real data type (\c float or \c double) will be referred to as
-\c LTFAT_REAL and the complex data type (\c complex \c float or \c complex \c double)
+\c LTFAT_REAL and the complex data type (\c ltfat_complex_s or \c ltfat_complex_d)
  as \c LTFAT_COMPLEX.
 
 \note Additionally, the \c LTFAT_TYPE type will be used whenever there is a version of the
-function for all four aforementioned types.
+function for each of the four aforementioned types.
 
 Compatibility
 -------------
-The \c complex \c double and \c complex \c float types 
-are a [C99 feature](http://en.cppreference.com/w/c/numeric/complex) 
-and they are not supported anywhere else.
-The following substitution is done (for doubles and similarly to floats)
- whenever the library is used in the environment which does not support C99
-(to compile the library itself a C99-enabled compiler is required):
 
-<table>
-<tr><th></th><th>Single number</th><th>Array</th><th>Pointer</th></tr>
-<tr><td>C99</td><td>complex double</td><td>complex double[]</td><td>complex double*</td></tr>
-<tr><td>Substitution</td><td>double[2]</td><td>double[][2]</td><td>double(*)[2]</td></tr>
-</table>
-Moreover, the interleaved layout of the complex arrays is binary compatible to 
-arrays of C++
-<a href="http://en.cppreference.com/w/cpp/numeric/complex">std::complex</a>
-and one can cast arrays and pointers back and forth in the following way:
+Source code of the library comply with both C99 and C++11 standards.
 
+When compiled with C99 enabled, \c ltfat_complex_d and \c ltfat_complex_s
+are effectively the following typedefs:
+
+~~~~~~~~~~~~~~~{.c}
+typedef complex double ltfat_complex_d;
+typedef complex float ltfat_complex_s;
+~~~~~~~~~~~~~~~
+Where \c complex \c double and \c complex \c float types 
+are a [C99 feature](http://en.cppreference.com/w/c/numeric/complex).
+
+When compiled with C++11 enabled, the following typedefs are used:
 ~~~~~~~~~~~~~~~{.cpp}
-double ccomp[][2] = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
-std::complex<double>* ccpp = reinterpret_cast<std::complex<double>*>(ccomp);
-double (*ccomp2)[2] = reinterpret_cast<double(*)[2]>(ccpp);
+typedef std::complex<double> ltfat_complex_d;
+typedef std::complex<float> ltfat_complex_s;
+~~~~~~~~~~~~~~~
+Description can be found here [std::complex](http://en.cppreference.com/w/cpp/numeric/complex).
+
+Arrays of complex data types from both C99 and C++11 are binary 
+compatible with simple arrays of basic types with the real and the imaginary parts interleaved in memory.
+
+Therefore, in C99 it is legal to do the following casts
+~~~~~~~~~~~~~~~{.cpp}
+complex double c[] = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
+double (*c2)[2] = (double(*)[2]) c;
+// c2[n][0] is identical to creal(c[n]) and c2[n][1] is identical to cimag(c[n])
+// Or even
+double *c3 = (double*) c;
+// and c3[2*n] is identical to creal(c[n]) and c3[2*n+1] is identical to cimag(c[n])
 ~~~~~~~~~~~~~~~
 
+Similarly, in C++11 one can do
+~~~~~~~~~~~~~~~{.cpp}
+std::complex<double> c[] = {{1.0,2.0},{3.0,4.0},{5.0,6.0}};
+double (*c2)[2] = reinterpret_cast<double(*)[2]>(c);
+// c2[n][0] is identical to real(c[n]) and c2[n][1] is identical to imag(c[n])
+// Or even
+double *c3 = reinterpret_cast<double*>( c);
+// and c3[2*n] is identical to real(c[n]) and c3[2*n+1] is identical to imag(c[n])
+~~~~~~~~~~~~~~~
+
+\warning The other way around i.e. casting \c double* (memory allocated as an array of \c
+double) to  \c complex \c double* or
+\c std::complex<double>* might not work. See this 
+[stackoverflow question](http://stackoverflow.com/questions/23198943/is-it-legal-to-cast-float-to-stdcomplexfloat).
+
+Linking
+-------
+
+The following table summarizes what type the \c ltfat_complex_d expands to depending 
+on the compiler
+<table>
+<tr><th></th><th>Single number</th><th>Array</th><th>Pointer</th></tr>
+<tr><td>C99</td><td>\c complex \c double</td><td>\c complex \c double[]</td><td>\c complex \c double*</td></tr>
+<tr><td>C++11</td><td>\c std::complex<double></td><td>\c std::complex<double>[]</td><td>\c std::complex<double>*</td></tr>
+<tr><td>Compatibility (C++11 and \c LTFAT_CINTERFACE defined)</td><td>\c double[2]</td><td>\c double[][2]</td><td>\c double(*)[2]</td></tr>
+</table>
+\c ltfat_complex_s expands the same way.
+
+\warning When using C99, you should not include \c fftw3.h before \c ltfat.h.
+The issue is described here [FFTW doc](http://www.fftw.org/doc/Complex-numbers.html)
+Basically \c complex.h must be included before \c fftw3.h and \c ltfat.h does that.
 
 Arrays, matrices and naming conventions
 ---------------------------------------
@@ -69,7 +112,7 @@ When an array represents a matrix, it is assumed that the columns are the
 first dimension and therefore they are stored continuously in memory.
 
 In the function headers, the data arrays are denoted with array brackets []
-and a pointer is used whenever reffering to a single object. This distinction
+and a pointer is used whenever refering to a single object. This distinction
 is just cosmetics as the arrays decay to pointers anyway.
 
 Further, the following naming conventions are used consistently:
@@ -77,7 +120,7 @@ Further, the following naming conventions are used consistently:
 <caption id="multi_row">Argument naming</caption>
 <tr><th>Arg. name</th><th>Definition</th></tr>
 <tr><td>f</td><td>Time domain signal</td></tr>
-<tr><td>g,gd,gt</td><td>Window, canotical dual window, canonical tight window </td></tr>
+<tr><td>g,gd,gt</td><td>Window, canonical dual window, canonical tight window </td></tr>
 <tr><td>c</td><td>Coefficients</td></tr>
 <tr><td>a</td><td>Integer. Time hop size.</td></tr>
 <tr><td>M</td><td>Integer. Number of frequency channels (FFT length).</td></tr>
@@ -128,8 +171,9 @@ Therefore, the *_init functions cannot be called simultaneously on different thr
 when creating completely separate plans.
 
 \note Further, the *_execute functions are reentrant and thread-safe, but not when executed 
-on a single plan concurrently on separate threads. 
-This limitation comes from the fact that the plan contains some working buffers.
+on a single plan concurrently on separate threads. This is a contrast with the FFTW
+execute function, which is thread safe even for a single plan. 
+This limitation comes from the fact that the LTFAT plan contains some working buffers.
 
 States
 ------
