@@ -66,7 +66,7 @@ LTFAT_FIRWIN;
  * LTFATERR_CANNOTHAPPEN | \a win is not a valid value from the LTFAT_FIRWIN enum
  */
 LTFAT_EXTERN int
-LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g);
+LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g);
 
 
 /** @} */

@@ -8,21 +8,23 @@ if (ii == domod.quot + domod.rem) \
             }while(0)
 
 LTFAT_EXTERN int
-LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
+LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
 {
+    double step, startInt, posInt;
+    ltfat_div_t domod;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g);
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
 
-    double step = 1.0 / gl;
+    step = 1.0 / gl;
     // for gl even
-    double startInt = -0.5;
-    const div_t domod = div(gl, 2);
+    startInt = -0.5;
+    domod = ltfat_idiv(gl, 2);
 
     if (domod.rem)
         startInt = -0.5 + step / 2.0;
 
-    double posInt = 0;
+    posInt = 0;
 
     switch (win)
     {
@@ -30,7 +32,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
     case LTFAT_HANNING:
     case LTFAT_NUTTALL10:
     {
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.5 + 0.5 * cos(2.0 * M_PI * posInt);
@@ -42,7 +44,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
     case LTFAT_SQRTHANN:
     case LTFAT_COSINE:
     case LTFAT_SINE:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = sqrt(0.5 + 0.5 * cos(2.0 * M_PI * posInt));
@@ -51,7 +53,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_HAMMING:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.54 + 0.46 * cos(2.0 * M_PI * posInt);
@@ -60,7 +62,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL01:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.53836 + 0.46164 * cos(2 * M_PI * posInt);
@@ -70,7 +72,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
 
     case LTFAT_SQUARE:
     case LTFAT_RECT:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = fabs(posInt) < 0.5 ? 1.0 : 0.0;
@@ -81,7 +83,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
     case LTFAT_TRIA:
     case LTFAT_TRIANGULAR:
     case LTFAT_BARTLETT:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 1.0 - 2.0 * fabs(posInt);
@@ -91,13 +93,13 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
 
     case LTFAT_SQRTTRIA:
         LTFAT_NAME(firwin)(LTFAT_TRIA, gl, g);
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
             g[ii] = sqrt(g[ii]);
 
         break;
 
     case LTFAT_BLACKMAN:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.42 + 0.5 * cos(2 * M_PI * posInt) + 0.08 * cos(4 * M_PI * posInt);
@@ -108,7 +110,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
     case LTFAT_BLACKMAN2:
     {
         double denomfac = 1.0 / 18608.0;
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 7938.0 + 9240.0 * cos(2.0 * M_PI * posInt) +
@@ -120,7 +122,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
     }
     case LTFAT_NUTTALL:
     case LTFAT_NUTTALL12:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.355768 + 0.487396 * cos(2.0 * M_PI * posInt) +
@@ -131,7 +133,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
 
     case LTFAT_OGG:
     case LTFAT_ITERSINE:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             double innercos = cos(M_PI * posInt);
@@ -141,7 +143,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL20:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 3.0 + 4.0 * cos(2.0 * M_PI * posInt) + cos(4.0 * M_PI * posInt);
@@ -151,7 +153,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL11:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.40897 + 0.5 * cos(2.0 * M_PI * posInt) +
@@ -161,7 +163,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL02:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.4243801 + 0.4973406 * cos(2.0 * M_PI * posInt) +
@@ -171,7 +173,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL30:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 10.0 + 15.0 * cos(2.0 * M_PI * posInt) +
@@ -182,7 +184,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL21:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.338946 + 0.481973 * cos(2.0 * M_PI * posInt) +
@@ -192,7 +194,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_NUTTALL03:
-        for (int ii = 0; ii < gl; ii++)
+        for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
             g[ii] = 0.3635819 + 0.4891775 * cos(2.0 * M_PI * posInt) +
