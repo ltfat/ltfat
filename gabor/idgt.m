@@ -127,7 +127,7 @@ if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if numel(g)==1
+if ~isnumeric(g) && numel(g)==1
   error('g must be a vector (you probably forgot to supply the window function as input parameter.)');
 end;
 

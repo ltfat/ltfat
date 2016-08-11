@@ -104,7 +104,7 @@ if nargin<4
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if prod(size(g))==1
+if ~isnumeric(g) && prod(size(g))==1
   error('g must be a vector (you probably forgot to supply the window function as input parameter.)');
 end;
 
