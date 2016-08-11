@@ -93,11 +93,9 @@ end
                 g.h = g.h(:);
             end
             
-            % In case a filter lacks .offset, treat it as if it was
-            % a zero delay FIR window.
+            % In case a filter lacks .offset, set it to zero
             if ~isfield(g,'offset')
-                g.h=fftshift(g.h);
-                g.offset=-floor(info.gl/2); 
+                g.offset= 0; 
             end
         elseif isfield(g,'H')  && ... 
                ( isnumeric(g.H) && isvector(g.H) || isa(g.H,'function_handle') )
