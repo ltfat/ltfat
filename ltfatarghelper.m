@@ -69,7 +69,7 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %   --------------
 %   
 %   Expansion `import` was introduced in order to allow sharing common
-%   flags and key/value pair between functions. 
+%   flags and key/value pairs between functions. 
 %   
 %   The following example is taken from |plotdgt| and |tfplot|::
 %
@@ -78,7 +78,7 @@ function [flags,keyvals,varargout]  = ltfatarghelper(posdepnames,definput,arglis
 %
 %   This code instructs `ltfatarghelper` to run functions 
 %   `arg_ltfattranslate` and `arg_tfplot` which define the flags and 
-%   key/value pairs. The `arg_` functions must have the following signature::
+%   the key/value pairs. The `arg_` functions must have the following signature::
 %
 %       function definput=arg_name(definput)
 %
