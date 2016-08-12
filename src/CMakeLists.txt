@@ -1,10 +1,9 @@
 
 
 if (MSVC)
-
 else (MSVC)
-SET(CMAKE_C_FLAGS "-fPIC -std=c99")
-SET(CMAKE_CXX_FLAGS "-fPIC -std=c++11")
+    SET(CMAKE_C_FLAGS "-fPIC -Wall -std=c99")
+    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11")
 SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 SET(LIBS m)
 endif(MSVC)
@@ -116,3 +115,6 @@ endif(MSVC)
 target_link_libraries(ltfat ${LAPACK_LIBRARIES} ${FFTW3_LIB} ${FFTW3F_LIB} ${LIBS})
 target_link_libraries(ltfatf ${LAPACK_LIBRARIES} ${FFTW3F_LIB} ${LIBS} )
 target_link_libraries(ltfatd  ${LAPACK_LIBRARIES} ${FFTW3_LIB} ${LIBS})
+
+
+set(CMAKE_BUILD_TYPE Release)

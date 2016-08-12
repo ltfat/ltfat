@@ -44,8 +44,8 @@ LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
 
 # Base CFLAGS
-CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
-CXXFLAGS+=-Wall -Wextra -pedantic -std=c++11 -Iinclude -Ithirdparty $(OPTCFLAGS)
+CFLAGS+=-Wall -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
+CXXFLAGS+=-Wall -std=c++11 -Iinclude -Ithirdparty $(OPTCFLAGS)
 
 # The following adds parameters to CFLAGS
 include comptarget.mk
