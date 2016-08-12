@@ -6,6 +6,7 @@
 #include "dgt_shear.h"
 #include "tiutils.h"
 #include "rtdgtreal.h"
+#include "fftw_wrappers.h"
 
 /*  --------- factorizations --------------- */
 
@@ -115,30 +116,30 @@ LTFAT_NAME(dgt_shearola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
                          const ltfatInt bl, LTFAT_COMPLEX *cout);
 
 /* --------- FFT ------------------*/
-LTFAT_EXTERN LTFAT_FFTW(plan)
-LTFAT_NAME(fftreal_init)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
-                         LTFAT_COMPLEX *cout, unsigned flag);
-
-LTFAT_EXTERN void
-LTFAT_NAME(fftreal_execute)(LTFAT_FFTW(plan) p, LTFAT_REAL *f,
-                            LTFAT_COMPLEX *cout);
-
-LTFAT_EXTERN void
-LTFAT_NAME(fftreal)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
-                    LTFAT_COMPLEX *cout);
-
-LTFAT_EXTERN LTFAT_FFTW(plan)
-LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
-                          LTFAT_REAL *f, unsigned flag);
-
-LTFAT_EXTERN void
-LTFAT_NAME(ifftreal_execute)(LTFAT_FFTW(plan), LTFAT_COMPLEX *c,
-                             const ltfatInt L, const ltfatInt W,
-                             LTFAT_REAL *f);
-
-LTFAT_EXTERN void
-LTFAT_NAME(ifftreal)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
-                     LTFAT_REAL *f);
+// LTFAT_EXTERN LTFAT_FFTW(plan)
+// LTFAT_NAME(fftreal_init)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+//                          LTFAT_COMPLEX *cout, unsigned flag);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(fftreal_execute)(LTFAT_FFTW(plan) p, LTFAT_REAL *f,
+//                             LTFAT_COMPLEX *cout);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(fftreal)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+//                     LTFAT_COMPLEX *cout);
+//
+// LTFAT_EXTERN LTFAT_FFTW(plan)
+// LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
+//                           LTFAT_REAL *f, unsigned flag);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(ifftreal_execute)(LTFAT_FFTW(plan), LTFAT_COMPLEX *c,
+//                              const ltfatInt L, const ltfatInt W,
+//                              LTFAT_REAL *f);
+//
+// LTFAT_EXTERN void
+// LTFAT_NAME(ifftreal)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
+//                      LTFAT_REAL *f);
 
 
 /* --------- filterbank codes ------------*/
