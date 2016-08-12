@@ -3,10 +3,14 @@
 
 /* Handle Windows DLL files */
 /* defined by Makefile when compiling LTFAT */
-#if defined(DLL_EXPORT_SYMBOLS) && ((defined(_WIN32) || defined(__WIN32__)))
-#  define LTFAT_EXTERN extern __declspec(dllexport)
+#if defined(_WIN32) || defined(__WIN32__)
+#   if defined(DLL_EXPORT_SYMBOLS)
+#       define LTFAT_EXTERN extern __declspec(dllexport)
+#   else
+#       define LTFAT_EXTERN extern __declspec(dllimport)
+#   endif
 #else
-#  define LTFAT_EXTERN extern
+#  define LTFAT_EXTERN
 #endif
 
 #define LTFAT_MAKENAME(name,suffix) ltfat ## _ ## name ## suffix
