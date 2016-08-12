@@ -304,7 +304,7 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
                                   const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
 {
     int found = 0;
-    *max = -1e99;
+    *max = (LTFAT_REAL) -1e99;
     *idx = 0;
 
     for (ltfatInt ii = 0; ii < L; ++ii)

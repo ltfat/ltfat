@@ -33,8 +33,8 @@ LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
             double br = cos(ii * phasefact);
             double bi = sin(ii * phasefact);
 
-            outPtr[2 * ii] = ar * br - ai * bi;
-            outPtr[2 * ii + 1] = ar * bi + ai * br;
+            outPtr[2 * ii] = (LTFAT_REAL) ( ar * br - ai * bi );
+            outPtr[2 * ii + 1] = (LTFAT_REAL) (ar * bi + ai * br );
         }
 
         for (int ii = 1; ii < domod.quot + domod.rem; ii++)
@@ -44,8 +44,8 @@ LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
             double br = cos(-ii * phasefact);
             double bi = sin(-ii * phasefact);
 
-            outPtr[2 * (L - ii)] =  ar * br - ai * bi;
-            outPtr[2 * (L - ii) + 1] = ar * bi + ai * br;
+            outPtr[2 * (L - ii)] = (LTFAT_REAL) ( ar * br - ai * bi );
+            outPtr[2 * (L - ii) + 1] = (LTFAT_REAL) ( ar * bi + ai * br );
         }
     }
     else

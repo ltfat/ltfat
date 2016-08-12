@@ -227,7 +227,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
     const LTFAT_REAL* fp;
 
     /* Scaling constant needed because of FFTWs normalization. */
-    const LTFAT_REAL scalconst = 1.0 / ((LTFAT_REAL)d * sqrt((LTFAT_REAL)M));
+    const LTFAT_REAL scalconst = (const LTFAT_REAL) ( 1.0 / ((double)d * sqrt((double)M)));
 
     /* Leading dimensions of the 4dim array. */
     const ltfatInt ld2a = 2 * p * q * W;

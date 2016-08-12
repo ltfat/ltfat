@@ -6,13 +6,13 @@ LTFAT_EXTERN int
 LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
                    LTFAT_REAL* g)
 {
+    ltfatInt lr, k, nk;
+    double tmp, sqrtL, safe, gnorm, gtmp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %d).", L);
     CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
-    ltfatInt lr, k, nk;
-    double tmp, sqrtL, safe, gnorm;
 
     sqrtL = sqrt((double)L);
     safe = 4;
@@ -23,21 +23,21 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
 
     for ( lr = 0; lr < L; lr++)
     {
-        g[lr] = 0.0;
+        gtmp = 0.0;
         for (k = -nk; k <= nk; k++)
         {
             /* Use a tmp variable to calculate squaring */
             tmp = ((double)lr + c_t) / sqrtL - (double)k * sqrtL;
-            g[lr] += exp(-M_PI * tmp * tmp / w);
+            gtmp += exp(-M_PI * tmp * tmp / w);
         }
-        gnorm += g[lr] * g[lr];
+        gnorm += gtmp * gtmp;
     }
 
     /* Normalize it exactly. */
     gnorm = sqrt(gnorm);
 
     for ( lr = 0; lr < L; lr++)
-        g[lr] /= gnorm;
+        g[lr] /= (LTFAT_REAL) gnorm;
 
 error:
     return status;
@@ -57,12 +57,13 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
                          LTFAT_COMPLEX* g)
 {
     int status = LTFATERR_SUCCESS;
+    ltfatInt lr, k, nk;
+    double tmp, sqrtL, safe, gnorm;
+    LTFAT_COMPLEX gtmp;
+
     CHECKNULL(g);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %d).", L);
     CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
-
-    ltfatInt lr, k, nk;
-    double tmp, sqrtL, safe, gnorm;
 
     sqrtL = sqrt((double)L);
     safe = 4;
@@ -73,19 +74,19 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
 
     for ( lr = 0; lr < L; lr++)
     {
-        g[lr] = (LTFAT_COMPLEX) 0.0;
+        gtmp = (LTFAT_COMPLEX) 0.0;
         for (k = -nk; k <= nk; k++)
         {
             /* Use a tmp variable to calculate squaring */
             tmp = ((double)lr + c_t) / sqrtL - (double)k * sqrtL;
             tmp = exp( -M_PI * tmp * tmp / w );
-            g[lr] += (LTFAT_REAL)(tmp) *
+            gtmp += (LTFAT_REAL)(tmp) *
                      exp(I * (LTFAT_REAL)( 2.0 * M_PI * c_f * ((( double)lr) / ((double)L) - ((
                                                double)k))));
 
         }
-        double gReal = ltfat_real(g[lr]);
-        double gImag = ltfat_imag(g[lr]);
+        double gReal = ltfat_real(gtmp);
+        double gImag = ltfat_imag(gtmp);
         gnorm += (gReal * gReal + gImag * gImag);
     }
 
@@ -93,7 +94,7 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
     gnorm = sqrt(gnorm);
 
     for ( lr = 0; lr < L; lr++)
-        g[lr] /= gnorm;
+        g[lr] /= (LTFAT_REAL) gnorm;
 
 error:
     return status;

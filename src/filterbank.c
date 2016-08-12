@@ -176,8 +176,8 @@ LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
     LTFAT_FFTW(complex)* coutNc = (LTFAT_FFTW(complex)*) cout;
     LTFAT_FFTW(plan) p_many =
         LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
-                                  coutNc, coutNc,
-                                  FFTW_BACKWARD, FFTW_ESTIMATE);
+                                    coutNc, coutNc,
+                                    FFTW_BACKWARD, FFTW_ESTIMATE);
 
     const ltfatInt bufLen = (ltfatInt) ceil(Gl / ((double)N)) * N;
 
@@ -349,7 +349,7 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
     int Lint = (int) L;
     int Nint = (int) N;
     int Mint = (int) M;
-    int MWint = (int) M * W;
+    int MWint = (int) (M * W);
 
     LTFAT_COMPLEX* gwork = LTFAT_NAME_COMPLEX(malloc)(L * M);
 
@@ -378,7 +378,7 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                                   1, Nint,
                                   FFTW_BACKWARD, FFTW_ESTIMATE);
 
-    const LTFAT_REAL scalconst = 1.0 / L;
+    const LTFAT_REAL scalconst = (const LTFAT_REAL) (1.0 / L);
 
     /* ----- Main -------------------------- */
 
