@@ -31,8 +31,6 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
 {
     LTFAT_NAME(dgt_long_plan)* plan = NULL;
     ltfatInt h_m, N, b, p, q, d, minL;
-    // Explicit downcast to int. It is passed by a pointer
-    int Mint = (int) M;
 
     int status = LTFATERR_SUCCESS;
     // CHECKNULL(f); // Can be NULL
@@ -78,30 +76,19 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
         LTFAT_NAME(wfac)(g, L, 1, a, M, plan->gf),
         "wfac call failed.");
 
-    /* Create plans. In-place. */
-    plan->p_veryend =
-        LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W,
-                                  (LTFAT_FFTW(complex)*)plan->cout, NULL,
-                                  1, Mint,
-                                  (LTFAT_FFTW(complex)*)plan->cout, NULL,
-                                  1, Mint,
-                                  FFTW_FORWARD, flags);
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(fft_init)(M, N * W, cout, cout, flags, &plan->p_veryend),
+        "FFTW plan creation failed.");
 
-    CHECKINIT(plan->p_veryend, "FFTW plan creation failed.");
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(fft_init)(d, 1, (LTFAT_COMPLEX*) plan->sbuf,
+                                  (LTFAT_COMPLEX*) plan->sbuf, flags, &plan->p_before),
+        "FFTW plan creation failed.");
 
-    plan->p_before =
-        LTFAT_FFTW(plan_dft_1d)(d, (LTFAT_FFTW(complex)*)plan->sbuf,
-                                (LTFAT_FFTW(complex)*)plan->sbuf,
-                                FFTW_FORWARD, flags);
-
-    CHECKINIT(plan->p_before, "FFTW plan creation failed.");
-
-    plan->p_after  =
-        LTFAT_FFTW(plan_dft_1d)(d, (LTFAT_FFTW(complex)*)plan->sbuf,
-                                (LTFAT_FFTW(complex)*)plan->sbuf,
-                                FFTW_BACKWARD, flags);
-
-    CHECKINIT(plan->p_after, "FFTW plan creation failed.");
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(ifft_init)(d, 1, (LTFAT_COMPLEX*) plan->sbuf,
+                                   (LTFAT_COMPLEX*) plan->sbuf, flags, &plan->p_after),
+        "FFTW plan creation failed.");
 
     // Assign the "return" value
     *pout = plan;
@@ -109,9 +96,9 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
 error:
     if (plan)
     {
-        if (plan->p_veryend) LTFAT_FFTW(destroy_plan)(plan->p_veryend);
-        if (plan->p_before)  LTFAT_FFTW(destroy_plan)(plan->p_before);
-        if (plan->p_after)   LTFAT_FFTW(destroy_plan)(plan->p_after);
+        if (plan->p_veryend) LTFAT_NAME_REAL(fft_done)(&plan->p_veryend);
+        if (plan->p_before)  LTFAT_NAME_REAL(fft_done)(&plan->p_before);
+        if (plan->p_after)   LTFAT_NAME_REAL(ifft_done)(&plan->p_after);
         LTFAT_SAFEFREEALL(plan->sbuf, plan->gf, plan->ff, plan->cf);
         ltfat_free(plan);
     }
@@ -133,7 +120,7 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan)
                                                plan->a, plan->M, plan->cout);
 
     /* FFT to modulate the coefficients. */
-    LTFAT_FFTW(execute)(plan->p_veryend);
+    LTFAT_NAME_REAL(fft_execute)(plan->p_veryend);
 
 error:
     return status;
@@ -158,8 +145,10 @@ LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
                                                plan->a, plan->M, c);
 
     /* FFT to modulate the coefficients. */
-    LTFAT_FFTW(execute_dft)(plan->p_veryend, (LTFAT_FFTW(complex)*)c,
-                            (LTFAT_FFTW(complex)*)c);
+    LTFAT_NAME_REAL(fft_execute_newarray)(plan->p_veryend, c, c);
+
+    /* LTFAT_FFTW(execute_dft)(plan->p_veryend, (LTFAT_FFTW(complex)*)c, */
+    /*                         (LTFAT_FFTW(complex)*)c); */
 
 error:
     return status;
@@ -174,9 +163,9 @@ LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan)
     CHECKNULL(plan); CHECKNULL(*plan);
     pp = *plan;
 
-    LTFAT_FFTW(destroy_plan)(pp->p_veryend);
-    LTFAT_FFTW(destroy_plan)(pp->p_before);
-    LTFAT_FFTW(destroy_plan)(pp->p_after);
+    LTFAT_NAME_REAL(fft_done)(&pp->p_veryend);
+    LTFAT_NAME_REAL(fft_done)(&pp->p_before);
+    LTFAT_NAME_REAL(ifft_done)(&pp->p_after);
     LTFAT_SAFEFREEALL(pp->sbuf, pp->gf, pp->ff, pp->cf);
     ltfat_free(pp);
     pp = NULL;
@@ -236,7 +225,8 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
     //LTFAT_COMPLEX* cout = plan->cout;
 
     /* Scaling constant needed because of FFTWs normalization. */
-    const LTFAT_REAL scalconst = 1.0 / ((LTFAT_REAL)d * sqrt((LTFAT_REAL)M));
+    const LTFAT_REAL scalconst = (const LTFAT_REAL)( 1.0 / ((double)d * sqrt((
+                                     double)M)) );
 
     /* Leading dimensions of the 4dim array. */
     const ltfatInt ld2a = 2 * p * q * W;
@@ -270,7 +260,7 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
 #endif
                     }
 
-                    LTFAT_FFTW(execute)(plan->p_before);
+                    LTFAT_NAME_REAL(fft_execute)(plan->p_before);
 
                     for (ltfatInt s = 0; s < d; s++)
                     {
@@ -327,7 +317,7 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
 #endif
                         }
 
-                        LTFAT_FFTW(execute)(plan->p_before);
+                        LTFAT_NAME_REAL(fft_execute)(plan->p_before);
 
                         for (ltfatInt s = 0; s < d; s++)
                         {
@@ -392,7 +382,7 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
                     cfp += 2;
 
                     /* Do inverse fft of length d */
-                    LTFAT_FFTW(execute)(plan->p_after);
+                    LTFAT_NAME_REAL(ifft_execute)(plan->p_after);
 
                     for (ltfatInt s = 0; s < d; s++)
                     {

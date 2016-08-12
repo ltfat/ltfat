@@ -8,7 +8,7 @@ struct LTFAT_NAME(dgtreal_fb_plan)
     ltfatInt M;
     ltfatInt gl;
     ltfat_phaseconvention ptype;
-    LTFAT_FFTW(plan) p_small;
+    LTFAT_NAME_REAL(fftreal_plan)* p_small;
     LTFAT_REAL*    sbuf;
     LTFAT_COMPLEX* cbuf;
     LTFAT_REAL* fw;
@@ -64,7 +64,7 @@ error:
 
 #define THE_SUM_REAL { \
 LTFAT_NAME(fold_array)(fw,gl,plan->ptype?-glh:n*a-glh,M,sbuf); \
-LTFAT_FFTW(execute)(plan->p_small); \
+LTFAT_NAME_REAL(fftreal_execute)(plan->p_small); \
 memcpy(cout+(n*M2+w*M2*N),cbuf,M2*sizeof*cbuf); \
 }
 
@@ -98,27 +98,23 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
     CHECKMEM( plan->sbuf = LTFAT_NAME_REAL(malloc)(M));
     CHECKMEM( plan->cbuf = LTFAT_NAME_COMPLEX(malloc)(M2));
 
-    plan->p_small = LTFAT_FFTW(plan_dft_r2c_1d)(M, plan->sbuf,
-                    (LTFAT_FFTW(complex)*) plan->cbuf, flags);
-
-    CHECKINIT(plan->p_small, "FFTW plan failed.");
-
-    /* This is a floor operation. */
-    /* const ltfatInt glh = gl / 2; */
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(fftreal_init)(M, 1, plan->sbuf, plan->cbuf, flags,
+                                      &plan->p_small),
+        "FFTW plan failed.");
 
     LTFAT_NAME(fftshift)(g, gl, plan->gw);
-    /* for (ltfatInt l = 0; l < glh; l++) */
-    /* { */
-    /*     plan.gw[l] = g[l + (gl - glh)]; */
-    /* } */
-    /* for (ltfatInt l = glh; l < gl; l++) */
-    /* { */
-    /*     plan.gw[l] = g[l - glh]; */
-    /* } */
 
     *pout = plan;
     return status;
 error:
+    if (plan)
+    {
+        if (plan->p_small) LTFAT_NAME_REAL(fftreal_done)(&plan->p_small);
+        LTFAT_SAFEFREEALL(plan->gw, plan->fw, plan->sbuf, plan->cbuf);
+        ltfat_free(plan);
+    }
+    *pout = NULL;
     return status;
 }
 
@@ -130,7 +126,7 @@ LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan)** plan)
     CHECKNULL(plan); CHECKNULL(*plan);
     pp = *plan;
     LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf, pp->gw, pp->fw);
-    LTFAT_FFTW(destroy_plan)(pp->p_small);
+    LTFAT_NAME_REAL(fftreal_done)(&pp->p_small);
     ltfat_free(pp);
     pp = NULL;
 error:

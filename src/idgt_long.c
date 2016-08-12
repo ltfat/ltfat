@@ -15,7 +15,9 @@ struct LTFAT_NAME(idgt_long_plan)
     LTFAT_COMPLEX* f;
     const LTFAT_COMPLEX* cin;
     LTFAT_COMPLEX* gf, *ff, *cf, *cwork, *cbuf;
-    LTFAT_FFTW(plan) p_before, p_after, p_veryend;
+    LTFAT_NAME_REAL(ifft_plan)* p_veryend;
+    LTFAT_NAME_REAL(ifft_plan)* p_before;
+    LTFAT_NAME_REAL(fft_plan)* p_after;
 };
 
 LTFAT_EXTERN int
@@ -53,7 +55,6 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     ltfatInt minL, b, N, p, q, d;
     LTFAT_NAME(idgt_long_plan)* plan = NULL;
     // Downcast to int
-    int Mint = (int) M;
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cin != NULL,
           "cin cannot be NULL if flags is not FFTW_ESTIMATE");
@@ -94,40 +95,55 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     LTFAT_NAME(wfac)(g, L, 1, a, M, plan->gf);
 
     /* Scaling constant needed because of FFTWs normalization. */
-    plan->scalconst = 1.0 / ((LTFAT_REAL)d * sqrt((LTFAT_REAL)M));
+    plan->scalconst = (LTFAT_REAL)(1.0 / ((double)d * sqrt((double)M)));
 
     /* Create plans. In-place. */
 
-    plan->p_after  = LTFAT_FFTW(plan_dft_1d)(d,
-                     (LTFAT_FFTW(complex)*) plan->cbuf,
-                     (LTFAT_FFTW(complex)*) plan->cbuf,
-                     FFTW_FORWARD, flags);
+    /* plan->p_after  = LTFAT_FFTW(plan_dft_1d)((int)d, */
+    /*                  (LTFAT_FFTW(complex)*) plan->cbuf, */
+    /*                  (LTFAT_FFTW(complex)*) plan->cbuf, */
+    /*                  FFTW_FORWARD, flags); */
+    /*  */
+    /* CHECKINIT(plan->p_after, "FFTW plan failed."); */
 
-    CHECKINIT(plan->p_after, "FFTW plan failed.");
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(fft_init)(d, 1, plan->cbuf, plan->cbuf, flags, &plan->p_after),
+        "FFTW plan failed.");
 
-    plan->p_before = LTFAT_FFTW(plan_dft_1d)(d,
-                     (LTFAT_FFTW(complex)*) plan->cbuf,
-                     (LTFAT_FFTW(complex)*) plan->cbuf, FFTW_BACKWARD, flags);
-    CHECKINIT(plan->p_before, "FFTW plan failed.");
+    /* plan->p_before = LTFAT_FFTW(plan_dft_1d)((int)d, */
+    /*                  (LTFAT_FFTW(complex)*) plan->cbuf, */
+    /*                  (LTFAT_FFTW(complex)*) plan->cbuf, FFTW_BACKWARD, flags); */
+    /* CHECKINIT(plan->p_before, "FFTW plan failed."); */
+
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(ifft_init)(d, 1, plan->cbuf, plan->cbuf, flags,
+                                   &plan->p_before),
+        "FFTW plan failed.");
 
     /* Create plan. Copy data so we do not overwrite input. Therefore
        it is ok to cast away the constness of cin.*/
 
-    plan->p_veryend = LTFAT_FFTW(plan_many_dft)(1, &Mint, N * W,
-                      (LTFAT_FFTW(complex)*) cin, NULL, 1, Mint,
-                      (LTFAT_FFTW(complex)*) plan->cwork, NULL,
-                      1, Mint, FFTW_BACKWARD, flags | FFTW_PRESERVE_INPUT);
+    /* plan->p_veryend = LTFAT_FFTW(plan_many_dft)(1, &Mint, NWint, */
+    /*                   (LTFAT_FFTW(complex)*) cin, NULL, 1, Mint, */
+    /*                   (LTFAT_FFTW(complex)*) plan->cwork, NULL, */
+    /*                   1, Mint, FFTW_BACKWARD, flags | FFTW_PRESERVE_INPUT); */
+    /*  */
+    /* CHECKINIT(plan->p_veryend, "FFTW plan failed."); */
 
-    CHECKINIT(plan->p_veryend, "FFTW plan failed.");
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(ifft_init)(M, N * W, cin, plan->cwork,
+                                   flags | FFTW_PRESERVE_INPUT, &plan->p_veryend),
+        "FFTW plan failed.");
+
 
     *pout = plan;
     return status;
 error:
     if (plan)
     {
-        if (plan->p_before) LTFAT_FFTW(destroy_plan)(plan->p_before);
-        if (plan->p_after) LTFAT_FFTW(destroy_plan)(plan->p_after);
-        if (plan->p_veryend) LTFAT_FFTW(destroy_plan)(plan->p_veryend);
+        if (plan->p_before) LTFAT_NAME_REAL(ifft_done)(&plan->p_before);
+        if (plan->p_after) LTFAT_NAME_REAL(fft_done)(&plan->p_after);
+        if (plan->p_veryend) LTFAT_NAME_REAL(ifft_done)(&plan->p_veryend);
         LTFAT_SAFEFREEALL(plan->gf, plan->ff, plan->cf, plan->cwork, plan->cbuf);
         ltfat_free(plan);
     }
@@ -140,7 +156,7 @@ LTFAT_NAME(idgt_long_execute)(LTFAT_NAME(idgt_long_plan)* p)
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(p->f); CHECKNULL(p->cin);
 
-    LTFAT_FFTW(execute)(p->p_veryend);
+    LTFAT_NAME_REAL(ifft_execute)(p->p_veryend);
 
     if (p->ptype)
         LTFAT_NAME_COMPLEX(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a,
@@ -160,8 +176,7 @@ LTFAT_NAME(idgt_long_execute_newarray)(LTFAT_NAME(idgt_long_plan)* p,
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
 
-    LTFAT_FFTW(execute_dft)(p->p_veryend, (LTFAT_FFTW(complex)*)c,
-                            (LTFAT_FFTW(complex)*)p->cwork);
+    LTFAT_NAME_REAL(ifft_execute_newarray)(p->p_veryend, c, p->cwork);
 
     if (p->ptype)
         LTFAT_NAME_COMPLEX(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a,
@@ -184,9 +199,9 @@ LTFAT_NAME(idgt_long_done)(LTFAT_NAME(idgt_long_plan)** plan)
     CHECKNULL(plan); CHECKNULL(*plan);
     p = *plan;
 
-    LTFAT_FFTW(destroy_plan)(p->p_before);
-    LTFAT_FFTW(destroy_plan)(p->p_after);
-    LTFAT_FFTW(destroy_plan)(p->p_veryend);
+    LTFAT_NAME_REAL(ifft_done)(&p->p_before);
+    LTFAT_NAME_REAL(fft_done)(&p->p_after);
+    LTFAT_NAME_REAL(ifft_done)(&p->p_veryend);
     LTFAT_SAFEFREEALL(p->gf, p->ff, p->cf, p->cwork, p->cbuf);
 
     ltfat_free(p);
@@ -246,7 +261,7 @@ LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p)
                     }
 
                     /* Do inverse fft of length d */
-                    LTFAT_FFTW(execute)(p->p_after);
+                    LTFAT_NAME_REAL(fft_execute)(p->p_after);
 
                     for (ltfatInt s = 0; s < d; s++)
                     {
@@ -310,7 +325,7 @@ LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p)
                         p->cbuf[s] = ffp[s * ld2ff];
                     }
 
-                    LTFAT_FFTW(execute)(p->p_before);
+                    LTFAT_NAME_REAL(ifft_execute)(p->p_before);
 
                     for (ltfatInt s = 0; s < d; s++)
                     {

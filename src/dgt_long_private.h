@@ -11,9 +11,9 @@ struct LTFAT_NAME_REAL(dgt_long_plan)
     ltfatInt c;
     ltfatInt h_a;
     ltfat_phaseconvention ptype;
-    LTFAT_FFTW(plan) p_before;
-    LTFAT_FFTW(plan) p_after;
-    LTFAT_FFTW(plan) p_veryend;
+    LTFAT_NAME_REAL(fft_plan)* p_before;
+    LTFAT_NAME_REAL(ifft_plan)* p_after;
+    LTFAT_NAME_REAL(fft_plan)* p_veryend;
     LTFAT_REAL* sbuf;
     const LTFAT_REAL* f;
     LTFAT_COMPLEX* gf;
@@ -30,9 +30,9 @@ struct LTFAT_NAME_COMPLEX(dgt_long_plan)
     ltfatInt c;
     ltfatInt h_a;
     ltfat_phaseconvention ptype;
-    LTFAT_FFTW(plan) p_before;
-    LTFAT_FFTW(plan) p_after;
-    LTFAT_FFTW(plan) p_veryend;
+    LTFAT_NAME_REAL(fft_plan)* p_before;
+    LTFAT_NAME_REAL(ifft_plan)* p_after;
+    LTFAT_NAME_REAL(fft_plan)* p_veryend;
     LTFAT_REAL* sbuf;
     const LTFAT_COMPLEX* f;
     LTFAT_COMPLEX* gf;

@@ -8,7 +8,7 @@ struct LTFAT_NAME(dgt_fb_plan)
     ltfatInt M;
     ltfatInt gl;
     ltfat_phaseconvention ptype;
-    LTFAT_FFTW(plan) p_small;
+    LTFAT_NAME_REAL(fft_plan)* p_small;
     LTFAT_COMPLEX* sbuf;
     LTFAT_COMPLEX* fw;
     LTFAT_TYPE* gw;
@@ -52,7 +52,7 @@ error:
  */
 #define THE_SUM { \
 LTFAT_NAME_COMPLEX(fold_array)(fw,gl,plan.ptype?-glh:n*a-glh,M,sbuf); \
-LTFAT_FFTW(execute)(plan.p_small); \
+LTFAT_NAME_REAL(fft_execute)(plan.p_small); \
 memcpy(cout + (n*M + w*M*N),sbuf,M*sizeof*cout); \
 }
 
@@ -82,11 +82,9 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
     CHECKMEM(plan->fw  = LTFAT_NAME_COMPLEX(calloc)(plan->gl));
     CHECKMEM(plan->sbuf = LTFAT_NAME_COMPLEX(malloc)(M));
 
-    plan->p_small = LTFAT_FFTW(plan_dft_1d)(M, (LTFAT_FFTW(complex)*)plan->sbuf,
-                                            (LTFAT_FFTW(complex)*)plan->sbuf,
-                                            FFTW_FORWARD, flags);
-
-    CHECKINIT(plan->p_small, "FFTW plan creation failed.");
+    CHECKSTATUS(
+        LTFAT_NAME_REAL(fft_init)(M, 1, plan->sbuf, plan->sbuf, flags, &plan->p_small),
+        "FFTW plan creation failed.");
 
     LTFAT_NAME(fftshift)(g, gl, plan->gw);
     LTFAT_NAME(conjugate_array)(plan->gw, gl, plan->gw);
@@ -97,7 +95,7 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
 error:
     if (plan)
     {
-        if (plan->p_small) LTFAT_FFTW(destroy_plan)(plan->p_small);
+        if (plan->p_small) LTFAT_NAME_REAL(fft_done)(&plan->p_small);
         LTFAT_SAFEFREEALL(plan->gw, plan->fw, plan->sbuf);
         ltfat_free(plan);
     }
@@ -114,7 +112,7 @@ LTFAT_NAME(dgt_fb_done)(LTFAT_NAME(dgt_fb_plan)** plan)
     pp = *plan;
 
     LTFAT_SAFEFREEALL(pp->sbuf, pp->gw, pp->fw);
-    LTFAT_FFTW(destroy_plan)(pp->p_small);
+    LTFAT_NAME_REAL(fft_done)(&pp->p_small);
     ltfat_free(pp);
     pp = NULL;
 error:

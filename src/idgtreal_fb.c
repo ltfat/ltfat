@@ -12,7 +12,7 @@ struct LTFAT_NAME(idgtreal_fb_plan)
     LTFAT_REAL*    crbuf;
     LTFAT_REAL*    gw;
     LTFAT_REAL*    ff;
-    LTFAT_FFTW(plan) p_small;
+    LTFAT_NAME(ifftreal_plan)* p_small;
 };
 
 
@@ -20,7 +20,7 @@ struct LTFAT_NAME(idgtreal_fb_plan)
 
 #define THE_SUM_REAL { \
     memcpy(cbuf,cin+n*M2+w*M2*N, M2*sizeof*cbuf); \
-    LTFAT_FFTW(execute)(p->p_small); \
+    LTFAT_NAME(ifftreal_execute)(p->p_small); \
     LTFAT_NAME_REAL(circshift)(crbuf,M,p->ptype?glh:-n*a+glh,ff); \
     LTFAT_NAME_REAL(periodize_array)(ff,M,gl,ff); \
     for (ltfatInt ii=0; ii<gl; ii++) \
@@ -80,11 +80,9 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, const ltfatInt gl,
     CHECKMEM( p->gw    = LTFAT_NAME_REAL(malloc)(gl));
     CHECKMEM( p->ff    = LTFAT_NAME_REAL(malloc)(gl > M ? gl : M));
 
-    /* Create plan. In-place. */
-    p->p_small = LTFAT_FFTW(plan_dft_c2r_1d)(M,
-                 (LTFAT_FFTW(complex)*)p->cbuf, p->crbuf, flags);
-
-    CHECKINIT(p->p_small, "FFTW plan failed.");
+    CHECKSTATUS(
+        LTFAT_NAME(ifftreal_init)(M, 1, p->cbuf, p->crbuf, flags, &p->p_small),
+        "FFTW plan failed.");
 
     LTFAT_NAME_REAL(fftshift)(g, gl, p->gw);
 
@@ -94,7 +92,7 @@ error:
     if (p)
     {
         LTFAT_SAFEFREEALL(p->cbuf, p->crbuf, p->gw, p->ff);
-        LTFAT_FFTW(destroy_plan)(p->p_small);
+        LTFAT_NAME(ifftreal_done)(&p->p_small);
         ltfat_free(p);
     }
     return status;
@@ -198,7 +196,7 @@ LTFAT_NAME(idgtreal_fb_done)(LTFAT_NAME(idgtreal_fb_plan)** p)
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
     LTFAT_SAFEFREEALL(pp->cbuf, pp->crbuf, pp->ff, pp->gw);
-    LTFAT_FFTW(destroy_plan)(pp->p_small);
+    LTFAT_NAME(ifftreal_done)(&pp->p_small);
     ltfat_free(pp);
     pp = NULL;
 error:
