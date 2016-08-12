@@ -2,4 +2,9 @@ obj
 build
 html
 latex
+*.mex*
+*.o
+*.so
+*.a
+.ycm_*
 
