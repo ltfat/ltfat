@@ -57,18 +57,16 @@ LTFAT_NAME(convsub_fft_init)(const ltfatInt L, const ltfatInt W,
 {
     const ltfatInt N = L / a;
 
-    int Nint = (int) N;
-
-    LTFAT_FFTW(iodim) dims;
-    dims.n = Nint; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim) howmany_dims;
-    howmany_dims.n = W; howmany_dims.is = Nint; howmany_dims.os = Nint;
+    LTFAT_FFTW(iodim64) dims;
+    dims.n = N; dims.is = 1; dims.os = 1;
+    LTFAT_FFTW(iodim64) howmany_dims;
+    howmany_dims.n = W; howmany_dims.is = N; howmany_dims.os = N;
 
     LTFAT_FFTW(complex)* coutNc = (LTFAT_FFTW(complex)*) cout;
     LTFAT_FFTW(plan) p_many =
-        LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
-                                  coutNc, coutNc,
-                                  FFTW_BACKWARD, FFTW_ESTIMATE);
+        LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
+                                    coutNc, coutNc,
+                                    FFTW_BACKWARD, FFTW_ESTIMATE);
 
 
     /* LTFAT_NAME(convsub_fft_plan_struct) p_struct; */
@@ -170,16 +168,14 @@ LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
 {
     const ltfatInt N = (ltfatInt) floor(L / a + 0.5);
 
-    int Nint = (int) N;
-
-    LTFAT_FFTW(iodim) dims;
-    dims.n = Nint; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim) howmany_dims;
-    howmany_dims.n = W; howmany_dims.is = Nint; howmany_dims.os = Nint;
+    LTFAT_FFTW(iodim64) dims;
+    dims.n = N; dims.is = 1; dims.os = 1;
+    LTFAT_FFTW(iodim64) howmany_dims;
+    howmany_dims.n = W; howmany_dims.is = N; howmany_dims.os = N;
 
     LTFAT_FFTW(complex)* coutNc = (LTFAT_FFTW(complex)*) cout;
     LTFAT_FFTW(plan) p_many =
-        LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
+        LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
                                   coutNc, coutNc,
                                   FFTW_BACKWARD, FFTW_ESTIMATE);
 
@@ -352,28 +348,30 @@ LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
     /* Downcasting to ints */
     int Lint = (int) L;
     int Nint = (int) N;
+    int Mint = (int) M;
+    int MWint = (int) M * W;
 
     LTFAT_COMPLEX* gwork = LTFAT_NAME_COMPLEX(malloc)(L * M);
 
     LTFAT_COMPLEX* work = LTFAT_NAME_COMPLEX(malloc)(L);
 
     LTFAT_FFTW(plan) plan_g =
-        LTFAT_FFTW(plan_many_dft)(1, &Lint, M,
+        LTFAT_FFTW(plan_many_dft)(1, &Lint, Mint,
                                   (LTFAT_FFTW(complex)*)gwork, NULL,
                                   1, Lint,
                                   (LTFAT_FFTW(complex)*)gwork, NULL,
                                   1, Lint,
                                   FFTW_FORWARD, FFTW_ESTIMATE);
 
-    LTFAT_FFTW(plan_dft_1d)(L, (LTFAT_FFTW(complex)*)gwork,
+    LTFAT_FFTW(plan_dft_1d)(Lint, (LTFAT_FFTW(complex)*)gwork,
                             (LTFAT_FFTW(complex)*)gwork, FFTW_FORWARD, FFTW_ESTIMATE);
 
     LTFAT_FFTW(plan) plan_w =
-        LTFAT_FFTW(plan_dft_1d)(L, (LTFAT_FFTW(complex)*)work,
+        LTFAT_FFTW(plan_dft_1d)(Lint, (LTFAT_FFTW(complex)*)work,
                                 (LTFAT_FFTW(complex)*)work, FFTW_FORWARD, FFTW_ESTIMATE);
 
     LTFAT_FFTW(plan) plan_c =
-        LTFAT_FFTW(plan_many_dft)(1, &Nint, M * W,
+        LTFAT_FFTW(plan_many_dft)(1, &Nint, MWint,
                                   (LTFAT_FFTW(complex)*)cout, NULL,
                                   1, Nint,
                                   (LTFAT_FFTW(complex)*)cout, NULL,

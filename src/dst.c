@@ -6,7 +6,7 @@ LTFAT_EXTERN LTFAT_FFTW(plan)
 LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
                       const dst_kind kind)
 {
-    LTFAT_FFTW(iodim) dims, howmanydims;
+    LTFAT_FFTW(iodim64) dims, howmanydims;
     LTFAT_FFTW(plan) p;
 
 #ifdef LTFAT_COMPLEXTYPE
@@ -32,7 +32,7 @@ LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
 #endif
 
     LTFAT_FFTW(r2r_kind) kindFftw = (LTFAT_FFTW(r2r_kind)) kind;
-    p = LTFAT_FFTW(plan_guru_r2r)(1, &dims,
+    p = LTFAT_FFTW(plan_guru64_r2r)(1, &dims,
                                   1, &howmanydims,
                                   (LTFAT_REAL*)cout, (LTFAT_REAL*)cout,
                                   &kindFftw, flag);
@@ -69,7 +69,7 @@ LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
     ltfatInt N = 2*L;
     LTFAT_REAL sqrt2 = (LTFAT_REAL) sqrt(2.0);
     LTFAT_REAL postScale = (LTFAT_REAL) 1.0/sqrt2;
-    LTFAT_REAL scale = (LTFAT_REAL) sqrt2*(1.0/(double)N)*sqrt((double)L);
+    LTFAT_REAL scale = (LTFAT_REAL) ( sqrt2*(1.0/(double)N)*sqrt((double)L) );
 
     if(kind==DSTIII)
     {
@@ -82,7 +82,7 @@ LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
     if(kind==DSTI)
     {
         N += 2;
-        scale = (LTFAT_REAL) sqrt2*(1.0/((double)N))*sqrt((double)L+1);
+        scale = (LTFAT_REAL) ( sqrt2*(1.0/((double)N))*sqrt((double)L+1.0) );
     }
 
     LTFAT_REAL* c_r = (LTFAT_REAL*)cout;

@@ -76,16 +76,15 @@ LTFAT_NAME(upconv_fft_init)(const ltfatInt L, const ltfatInt W,
                             const ltfatInt a)
 {
     ltfatInt N = L / a;
-    int Nint = (int) N;
 
-    LTFAT_FFTW(iodim) dims;
-    dims.n = Nint; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim) howmany_dims;
-    howmany_dims.n = W; howmany_dims.is = Nint; howmany_dims.os = Nint;
+    LTFAT_FFTW(iodim64) dims;
+    dims.n = N; dims.is = 1; dims.os = 1;
+    LTFAT_FFTW(iodim64) howmany_dims;
+    howmany_dims.n = W; howmany_dims.is = N; howmany_dims.os = N;
 
     LTFAT_COMPLEX* buf = LTFAT_NAME_COMPLEX(malloc)(W * N);
     LTFAT_FFTW(plan) p_many =
-        LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
+        LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
                                   (LTFAT_FFTW(complex)*) buf,
                                   (LTFAT_FFTW(complex)*) buf,
                                   FFTW_FORWARD, FFTW_ESTIMATE);
@@ -201,17 +200,16 @@ LTFAT_NAME(upconv_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
                                const ltfatInt W, const double a)
 {
     ltfatInt N = (ltfatInt) floor(L / a + 0.5);
-    int Nint = (int) N;
-    int bufLen = N > Gl ? N : Gl;
+    ltfatInt bufLen =  N > Gl ? N : Gl ;
 
-    LTFAT_FFTW(iodim) dims;
-    dims.n = Nint; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim) howmany_dims;
+    LTFAT_FFTW(iodim64) dims;
+    dims.n = N; dims.is = 1; dims.os = 1;
+    LTFAT_FFTW(iodim64) howmany_dims;
     howmany_dims.n = W; howmany_dims.is = bufLen; howmany_dims.os = bufLen;
 
     LTFAT_COMPLEX* buf = LTFAT_NAME_COMPLEX(malloc)(bufLen * W);
     LTFAT_FFTW(plan) p_many =
-        LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
+        LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
                                   (LTFAT_FFTW(complex)*)buf,
                                   (LTFAT_FFTW(complex)*)buf,
                                   FFTW_FORWARD, FFTW_ESTIMATE);
