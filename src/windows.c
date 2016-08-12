@@ -31,13 +31,14 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
             gtmp += exp(-M_PI * tmp * tmp / w);
         }
         gnorm += gtmp * gtmp;
+        g[lr] = (LTFAT_REAL) gtmp;
     }
 
     /* Normalize it exactly. */
     gnorm = sqrt(gnorm);
 
     for ( lr = 0; lr < L; lr++)
-        g[lr] /= (LTFAT_REAL) gnorm;
+        g[lr] /= ( (LTFAT_REAL) gnorm);
 
 error:
     return status;
@@ -84,6 +85,7 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
                      exp(I * (LTFAT_REAL)( 2.0 * M_PI * c_f * ((( double)lr) / ((double)L) - ((
                                                double)k))));
 
+            g[lr] = gtmp;
         }
         double gReal = ltfat_real(gtmp);
         double gImag = ltfat_imag(gtmp);
@@ -94,7 +96,7 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
     gnorm = sqrt(gnorm);
 
     for ( lr = 0; lr < L; lr++)
-        g[lr] /= (LTFAT_REAL) gnorm;
+        g[lr] /= ( (LTFAT_REAL) gnorm );
 
 error:
     return status;
