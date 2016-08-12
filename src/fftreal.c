@@ -30,11 +30,11 @@ LTFAT_EXTERN LTFAT_FFTW(plan)
 LTFAT_NAME(fftreal_init)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
                          LTFAT_COMPLEX* cout, unsigned flag)
 {
-    ltfatInt L2 = (L / 2) + 1;
-    int ltfatInt = (int) L;
-    LTFAT_FFTW(plan) p = LTFAT_FFTW(plan_many_dft_r2c)(1, &ltfatInt, W,
-                         f, NULL, 1, L, (LTFAT_FFTW(complex)*) cout, NULL,
-                         1, L2, flag);
+    int Lint = (int) L;
+    int L2int = (Lint / 2) + 1;
+    LTFAT_FFTW(plan) p = LTFAT_FFTW(plan_many_dft_r2c)(1, &Lint,(int) W,
+                         f, NULL, 1, Lint, (LTFAT_FFTW(complex)*) cout, NULL,
+                         1, L2int, flag);
 
     return p;
 }
@@ -57,9 +57,7 @@ LTFAT_NAME(ifftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_COMPLEX* c,
 
     LTFAT_REAL s  = (LTFAT_REAL) (1.0 / L);
     for (ltfatInt ii = 0; ii < L * W; ii++)
-    {
         f[ii] *= s;
-    }
 }
 
 
@@ -70,11 +68,11 @@ LTFAT_EXTERN LTFAT_FFTW(plan)
 LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
                           LTFAT_REAL* f, unsigned flag)
 {
-    ltfatInt L2 = (L / 2) + 1;
-    int ltfatInt = (int) L;
-    LTFAT_FFTW(plan) p = LTFAT_FFTW(plan_many_dft_c2r)(1, &ltfatInt, W,
-                         (LTFAT_FFTW(complex)*) c, NULL, 1, L2,
-                         f, NULL, 1, L, flag);
+    int Lint = (int) L;
+    int L2int = (L / 2) + 1;
+    LTFAT_FFTW(plan) p = LTFAT_FFTW(plan_many_dft_c2r)(1, &Lint,(int) W,
+                         (LTFAT_FFTW(complex)*) c, NULL, 1, L2int,
+                         f, NULL, 1, Lint, flag);
 
     return p;
 }

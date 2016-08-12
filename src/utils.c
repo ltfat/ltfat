@@ -69,7 +69,7 @@ LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
     if (domod.rem)
     {
         // There is no Nyquist sample, modulation is by (L-1/L)*pi
-        status = LTFAT_NAME_COMPLEX(fftcircshift)(in, L, domod.quot, out);
+        status = LTFAT_NAME_COMPLEX(fftcircshift)(in, L, (double)domod.quot, out);
     }
     else
     {
@@ -100,7 +100,7 @@ LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
-        status = LTFAT_NAME_COMPLEX(fftcircshift)(in, L, -domod.quot, out);
+        status = LTFAT_NAME_COMPLEX(fftcircshift)(in, L, (double)(-domod.quot), out);
     else
         status = LTFAT_NAME_COMPLEX(fftfftshift)(in, L, out);
 error:
@@ -152,7 +152,7 @@ LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
     if (domod.rem)
     {
         // There is no Nyquist sample, modulation is by (L-1/L)*pi
-        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, domod.quot, out);
+        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, (double) domod.quot, out);
     }
     else
     {
@@ -184,7 +184,7 @@ LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
-        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, -domod.quot, out);
+        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, (double)(-domod.quot), out);
     else
         status = LTFAT_NAME_COMPLEX(fftrealfftshift)(in, L, out);
 
@@ -265,7 +265,7 @@ LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX* cFreqinv,
         {
             const LTFAT_COMPLEX* inCol = cFreqinv + n * M + w * M * N;
             LTFAT_COMPLEX* outCol = cTimeinv + n * M + w * M * N;
-            LTFAT_NAME_COMPLEX(fftcircshift)( inCol, M, -n * a, outCol);
+            LTFAT_NAME_COMPLEX(fftcircshift)( inCol, M, (double)(-n * a), outCol);
         }
     }
 
@@ -295,7 +295,7 @@ LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
         {
             const LTFAT_COMPLEX* inCol = cFreqinv + n * M2 + w * M2 * N;
             LTFAT_COMPLEX* outCol = cTimeinv + n * M2 + w * M2 * N;
-            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M, -n * a, outCol);
+            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M, (double)(-n * a), outCol);
         }
     }
 
@@ -324,7 +324,7 @@ LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
         {
             const LTFAT_COMPLEX* inCol = cTimeinv + n * M + w * M * N;
             LTFAT_COMPLEX* outCol = cFreqinv + n * M + w * M * N;
-            LTFAT_NAME_COMPLEX(fftcircshift)( inCol, M, n * a, outCol);
+            LTFAT_NAME_COMPLEX(fftcircshift)( inCol, M, (double)( n * a ), outCol);
         }
     }
 
@@ -354,7 +354,7 @@ LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
         {
             const LTFAT_COMPLEX* inCol = cTimeinv + n * M2 + w * M2 * N;
             LTFAT_COMPLEX* outCol = cFreqinv + n * M2 + w * M2 * N;
-            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M, n * a, outCol);
+            LTFAT_NAME_COMPLEX(fftrealcircshift)( inCol, M, (double)(n * a), outCol);
         }
     }
 

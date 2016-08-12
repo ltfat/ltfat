@@ -83,7 +83,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
    {
       chan_pos = (ltfatInt*) ltfat_malloc((M + 1) * sizeof * chan_pos);
 
-      chan_pos[0] = 0.0;
+      chan_pos[0] = 0;
       for (ltfatInt ii = 0; ii < M; ii++)
       {
          chan_pos[ii + 1] = chan_pos[ii] + N[ii];
@@ -92,7 +92,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
 
    /* Limit tgrad? */
 
-   LTFAT_REAL oneover2 = 1.0 / 2.0;
+   double oneover2 = 1.0 / 2.0;
 
    // This will hold center frequencies modulo 2.0
    LTFAT_REAL *cfreq2 = LTFAT_NAME_REAL(malloc)(M);
@@ -102,7 +102,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
       // Zero the output arrays
       memset(sr[m], 0, N[m]*sizeof*sr[m]);
       // This is effectivelly modulo by 2.0
-      cfreq2[m] = cfreq[m] - floor(cfreq[m] * oneover2) * 2.0;
+      cfreq2[m] = (LTFAT_REAL) ( cfreq[m] - floor(cfreq[m] * oneover2) * 2.0 );
    }
 
    ltfatInt* tgradIdx = NULL;
@@ -161,7 +161,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
             {
                for (ltfatInt ii = 0; ii < m ; ii++)
                {
-                  tmptgrad = cfreq2[ii] - tgradmjj + 2.0;
+                  tmptgrad = (LTFAT_REAL)( cfreq2[ii] - tgradmjj + 2.0 );
                   CHECKZEROCROSSINGANDBREAK( >= , -)
                }
             }
@@ -183,7 +183,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
             {
                for (ltfatInt ii = M - 1; ii >= m; ii--)
                {
-                  tmptgrad = cfreq2[ii] - tgradmjj - 2.0;
+                  tmptgrad = (LTFAT_REAL) ( cfreq2[ii] - tgradmjj - 2.0 );
                   CHECKZEROCROSSINGANDBREAK( <= , +)
                }
             }

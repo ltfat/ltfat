@@ -212,7 +212,7 @@ ltfat_nextfastfft(const ltfatInt x)
 LTFAT_EXTERN ltfatInt
 ltfat_pow2(const ltfatInt x)
 {
-    return ((1) << (x));
+    return (((ltfatInt)1) << (x));
 }
 
 LTFAT_EXTERN ltfatInt

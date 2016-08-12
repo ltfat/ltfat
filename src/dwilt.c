@@ -58,7 +58,7 @@ LTFAT_NAME_COMPLEX(dwilt_long)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
-    const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL)( 1.0 / sqrt(2.0) );
 
     LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)(2 * M * N * W);
 
@@ -83,7 +83,7 @@ LTFAT_NAME_REAL(dwilt_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
 {
     const ltfatInt N = L / M;
     const ltfatInt coef2_ld = M + 1;
-    const LTFAT_REAL scalconst = sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL) sqrt(2.0);
     const ltfatInt nyquestadd = (M % 2) * coef2_ld;
 
     LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)((M + 1) * N * W);
@@ -110,7 +110,7 @@ LTFAT_NAME_COMPLEX(dwilt_fb)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
-    const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL) ( 1.0 / sqrt(2.0) );
 
     LTFAT_COMPLEX* coef2 = LTFAT_NAME_COMPLEX(malloc)(2 * M * N * W);
 

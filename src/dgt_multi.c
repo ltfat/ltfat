@@ -32,7 +32,7 @@ LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX* g,
 {
     const ltfatInt b = L / M;
 
-    const LTFAT_REAL scal = 2 * M_PI / L;
+    const LTFAT_REAL scal = (LTFAT_REAL) ( 2.0 * M_PI / L );
 
     LTFAT_COMPLEX* gwork = LTFAT_NAME_COMPLEX(malloc)(L);
     LTFAT_NAME_COMPLEX(fir2long)(g, Lg, L, gwork);

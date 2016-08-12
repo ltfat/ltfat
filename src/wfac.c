@@ -42,13 +42,13 @@ LTFAT_NAME(wfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
     plan->p = a / plan->c;
     plan->q = M / plan->c;
     plan->d = plan->b / plan->p;
-    plan->scaling = sqrt((double)M);
+    plan->scaling = (LTFAT_REAL) ( sqrt((double)M) );
     plan->a = a; plan->M = M; plan->L = L;
 
     CHECKMEM(plan->sbuf = LTFAT_NAME_REAL(malloc)(2 * plan->d));
 
     /* Create plan. In-place. */
-    plan->p_before = LTFAT_FFTW(plan_dft_1d)(plan->d,
+    plan->p_before = LTFAT_FFTW(plan_dft_1d)((int)plan->d,
                      (LTFAT_FFTW(complex)*) plan->sbuf,
                      (LTFAT_FFTW(complex)*) plan->sbuf,
                      FFTW_FORWARD, flags);

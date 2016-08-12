@@ -447,7 +447,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
         CHECKCANTHAPPEN("Unknown normalization flag");
     };
 
-    normfac = 1.0 / normfac;
+    normfac = (LTFAT_REAL)(1.0) / normfac;
 
     for (ltfatInt ii = 0; ii < L; ii++)
         out[ii] = normfac * in[ii];

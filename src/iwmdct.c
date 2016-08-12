@@ -47,7 +47,7 @@ LTFAT_NAME_COMPLEX(idwiltiii_long)(const LTFAT_COMPLEX* c,
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
-    const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL)( 1.0 / sqrt(2.0) );
     const LTFAT_COMPLEX eipi4 = exp(I * (LTFAT_REAL) (M_PI / 4.0));
     const LTFAT_COMPLEX emipi4 = exp(-I * (LTFAT_REAL) ( M_PI / 4.0));
 
@@ -75,7 +75,7 @@ LTFAT_NAME_REAL(idwiltiii_long)(const LTFAT_REAL* c, const LTFAT_REAL* g,
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
-    const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL)( 1.0 / sqrt(2.0) );
     const LTFAT_COMPLEX eipi4 = exp(  I * (LTFAT_REAL) (M_PI / 4.0));
     const LTFAT_COMPLEX emipi4 = exp(-I * (LTFAT_REAL) (M_PI / 4.0));
 
@@ -108,7 +108,7 @@ LTFAT_NAME_COMPLEX(idwiltiii_fb)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
-    const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL)( 1.0 / sqrt(2.0) );
     const LTFAT_COMPLEX eipi4 =  exp( I * (LTFAT_REAL)( M_PI / 4.0));
     const LTFAT_COMPLEX emipi4 = exp(-I * (LTFAT_REAL)( M_PI / 4.0));
 
@@ -137,7 +137,7 @@ LTFAT_NAME_REAL(idwiltiii_fb)(const LTFAT_REAL* c, const LTFAT_REAL* g,
     const ltfatInt N = L / M;
     const ltfatInt M2 = 2 * M;
     const ltfatInt M4 = 4 * M;
-    const LTFAT_REAL scalconst = 1.0 / sqrt(2.0);
+    const LTFAT_REAL scalconst = (LTFAT_REAL)( 1.0 / sqrt(2.0) );
     const LTFAT_COMPLEX eipi4 =  exp( I * (LTFAT_REAL)(M_PI / 4.0));
     const LTFAT_COMPLEX emipi4 = exp(-I * (LTFAT_REAL)(M_PI / 4.0));
 

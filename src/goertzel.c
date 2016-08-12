@@ -44,7 +44,7 @@ LTFAT_NAME(gga_init)(const LTFAT_REAL* indVecPtr, const ltfatInt M,
     for (ltfatInt m = 0; m < M; m++)
     {
         LTFAT_REAL pik_term = pik_term_pre * indVecPtr[m];
-        cos_term[m] = (LTFAT_REAL) cos(pik_term) * 2.0;
+        cos_term[m] = (LTFAT_REAL) ( cos(pik_term) * 2.0 );
         cc_term[m] = (LTFAT_COMPLEX) exp(cc_pre * pik_term);
         cc2_term[m] = (LTFAT_COMPLEX) exp(cc2_pre * pik_term);
     }
@@ -273,6 +273,7 @@ LTFAT_NAME(chzt_init)(const ltfatInt K, ltfatInt L, const LTFAT_REAL deltao,
                       czt_ffthint hint)
 {
     ltfatInt Lfft = L + K - 1;
+    int Lfftint = (int) Lfft;
 
     if (hint == CZT_NEXTPOW2)
         Lfft = ltfat_nextpow2(Lfft);
@@ -280,11 +281,11 @@ LTFAT_NAME(chzt_init)(const ltfatInt K, ltfatInt L, const LTFAT_REAL deltao,
         Lfft = ltfat_nextfastfft(Lfft);
 
     LTFAT_COMPLEX* fbuffer = LTFAT_NAME_COMPLEX(malloc)(Lfft);
-    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfft,
+    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfftint,
                                (LTFAT_FFTW(complex)*) fbuffer,
                                (LTFAT_FFTW(complex)*) fbuffer,
                                FFTW_FORWARD, fftw_flags);
-    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfft,
+    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfftint,
                                 (LTFAT_FFTW(complex)*) fbuffer,
                                 (LTFAT_FFTW(complex)*) fbuffer,
                                 FFTW_BACKWARD, fftw_flags);
@@ -501,16 +502,16 @@ LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
 
     LTFAT_COMPLEX* fbuffer = LTFAT_NAME_COMPLEX(malloc)(q * Lfft);
 
-    LTFAT_FFTW(iodim) dims;
+    LTFAT_FFTW(iodim64) dims;
     dims.n = Lfft; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim) howmany_dims;
-    howmany_dims.n = q; howmany_dims.is = Lfft; howmany_dims.os = Lfft;
-    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_guru_dft)(1, &dims, 1, &howmany_dims,
+    LTFAT_FFTW(iodim64) howmany_dims;
+    howmany_dims.n = (int)q; howmany_dims.is = Lfft; howmany_dims.os = Lfft;
+    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
                                (LTFAT_FFTW(complex)*) fbuffer,
                                (LTFAT_FFTW(complex)*) fbuffer,
                                FFTW_FORWARD, fftw_flags);
 
-    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_guru_dft)(1, &dims, 1,
+    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1,
                                 &howmany_dims,
                                 (LTFAT_FFTW(complex)*) fbuffer,
                                 (LTFAT_FFTW(complex)*) fbuffer,
@@ -520,7 +521,7 @@ LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
     LTFAT_COMPLEX* chirpF = LTFAT_NAME_COMPLEX(malloc)(Lfft);
     LTFAT_COMPLEX* Wo = LTFAT_NAME_COMPLEX(malloc)(q * K);
 
-    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)(Lfft,
+    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)((int)Lfft,
                                     (LTFAT_FFTW(complex)*) chirpF,
                                     (LTFAT_FFTW(complex)*) chirpF,
                                     FFTW_FORWARD, fftw_flags);
@@ -538,7 +539,7 @@ LTFAT_NAME(chzt_fac_init)(const ltfatInt K, const ltfatInt L,
     LTFAT_FFTW(execute)(plan_chirpF);
     LTFAT_FFTW(destroy_plan)(plan_chirpF);
 
-    LTFAT_REAL oneoverLfft = 1.0 / ((LTFAT_REAL) Lfft);
+    LTFAT_REAL oneoverLfft = (LTFAT_REAL) ( 1.0 / Lfft );
 
     for (ltfatInt jj = 0; jj < q; jj++)
     {

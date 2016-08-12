@@ -122,12 +122,12 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
         // Downcasting to int
         int Lint = (int) L;
-        plan.f_plan = LTFAT_FFTW(plan_many_dft)(1, &Lint, W,
-                                                (LTFAT_FFTW(complex)*)f_before_fft, NULL, 1, L,
-                                                (LTFAT_FFTW(complex)*)plan.fwork, NULL, 1, L,
+        plan.f_plan = LTFAT_FFTW(plan_many_dft)(1, &Lint, (int)W,
+                                                (LTFAT_FFTW(complex)*)f_before_fft, NULL, 1, Lint,
+                                                (LTFAT_FFTW(complex)*)plan.fwork, NULL, 1, Lint,
                                                 FFTW_FORWARD, flags);
 
-        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(L, (LTFAT_FFTW(complex)*)g_before_fft,
+        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(Lint, (LTFAT_FFTW(complex)*)g_before_fft,
                                               (LTFAT_FFTW(complex)*)plan.gwork, FFTW_FORWARD,
                                               flags);
 
@@ -171,8 +171,8 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
     const ltfatInt b = plan.L / plan.M;
     const ltfatInt N = plan.L / plan.a;
-    const long s0 = plan.s0;
-    const long s1 = plan.s1;
+    const long long s0 = plan.s0;
+    const long long s1 = plan.s1;
 
     const ltfatInt ar = plan.a * b / plan.br;
     const ltfatInt Mr = plan.L / plan.br;
@@ -199,16 +199,16 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         /* In this case, cc1=1 */
 
-        const long cc3 = ltfat_positiverem_long(s1 * (L + 1), twoN);
+        const long long cc3 = ltfat_positiverem_long(s1 * (L + 1), twoN);
 
-        const long tmp1 = ltfat_positiverem_long(cc3 * a, twoN);
+        const long long tmp1 = ltfat_positiverem_long(cc3 * a, twoN);
 
         LTFAT_NAME_COMPLEX(dgt_long_execute)(plan.rect_plan);
 
         for (ltfatInt k = 0; k < N; k++)
         {
             const ltfatInt phsidx = ltfat_positiverem_long((tmp1 * k) % twoN * k, twoN);
-            const long part1 = ltfat_positiverem_long(-s1 * k * a, L);
+            const long long part1 = ltfat_positiverem_long(-s1 * k * a, L);
             for (ltfatInt m = 0; m < M; m++)
             {
                 /* The line below has a hidden floor operation when dividing with the last b */
@@ -230,12 +230,12 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
     {
 
         const ltfatInt twoN = 2 * N;
-        const long cc1 = ar / a;
-        const long cc2 = ltfat_positiverem_long(-s0 * plan.br / a, twoN);
-        const long cc3 = ltfat_positiverem_long(a * s1 * (L + 1), twoN);
-        const long cc4 = ltfat_positiverem_long(cc2 * plan.br * (L + 1), twoN);
-        const long cc5 = ltfat_positiverem_long(2 * cc1 * plan.br, twoN);
-        const long cc6 = ltfat_positiverem_long((s0 * s1 + 1) * plan.br, L);
+        const long long cc1 = ar / a;
+        const long long cc2 = ltfat_positiverem_long(-s0 * plan.br / a, twoN);
+        const long long cc3 = ltfat_positiverem_long(a * s1 * (L + 1), twoN);
+        const long long cc4 = ltfat_positiverem_long(cc2 * plan.br * (L + 1), twoN);
+        const long long cc5 = ltfat_positiverem_long(2 * cc1 * plan.br, twoN);
+        const long long cc6 = ltfat_positiverem_long((s0 * s1 + 1) * plan.br, L);
 
         LTFAT_FFTW(execute)(plan.f_plan);
 
@@ -252,10 +252,10 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         for (ltfatInt k = 0; k < Nr; k++)
         {
-            const long part1 = ltfat_positiverem_long(-s1 * k * ar, L);
+            const long long part1 = ltfat_positiverem_long(-s1 * k * ar, L);
             for (ltfatInt m = 0; m < Mr; m++)
             {
-                const long sq1 = k * cc1 + cc2 * m;
+                const long long sq1 = k * cc1 + cc2 * m;
 
                 const ltfatInt phsidx = ltfat_positiverem_long(
                                             (cc3 * sq1 * sq1) % twoN - (m * (cc4 * m + k * cc5)) % twoN, twoN);

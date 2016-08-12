@@ -48,11 +48,11 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, const ltfatInt gl,
     LTFAT_NAME_REAL(fftshift)(g, gl, p->g);
 
     if (LTFAT_FORWARD == tradir)
-        p->pfft = LTFAT_FFTW(plan_dft_r2c_1d)(M, p->fftBuf,
+        p->pfft = LTFAT_FFTW(plan_dft_r2c_1d)((int)M, p->fftBuf,
                                               (LTFAT_FFTW(complex)*) p->fftBuf,
                                               FFTW_MEASURE);
     else if (LTFAT_INVERSE == tradir)
-        p->pfft = LTFAT_FFTW(plan_dft_c2r_1d)(M, (LTFAT_FFTW(complex)*)
+        p->pfft = LTFAT_FFTW(plan_dft_c2r_1d)((int)M, (LTFAT_FFTW(complex)*)
                                               p->fftBuf, p->fftBuf, FFTW_MEASURE);
     else
         CHECKCANTHAPPEN("Unknown transform direction.");

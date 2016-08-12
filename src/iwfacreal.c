@@ -28,7 +28,7 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     LTFAT_COMPLEX* cbuf = LTFAT_NAME_COMPLEX(malloc)( d2);
 
     /* Create plan. In-place. */
-    p_before = LTFAT_FFTW(plan_dft_c2r_1d)(d, (LTFAT_FFTW(complex)*) cbuf, sbuf,
+    p_before = LTFAT_FFTW(plan_dft_c2r_1d)((int)d, (LTFAT_FFTW(complex)*) cbuf, sbuf,
                                            FFTW_MEASURE);
 
     const ltfatInt ld3 = c * p * q * R;

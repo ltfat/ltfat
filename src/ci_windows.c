@@ -35,7 +35,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.5 + 0.5 * cos(2.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.5 + 0.5 * cos(2.0 * M_PI * posInt) );
             posInt += step;
         }
         break;
@@ -47,7 +47,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = sqrt(0.5 + 0.5 * cos(2.0 * M_PI * posInt));
+            g[ii] = (LTFAT_REAL) ( sqrt(0.5 + 0.5 * cos(2.0 * M_PI * posInt)) );
             posInt += step;
         }
         break;
@@ -56,7 +56,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.54 + 0.46 * cos(2.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.54 + 0.46 * cos(2.0 * M_PI * posInt));
             posInt += step;
         }
         break;
@@ -65,7 +65,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.53836 + 0.46164 * cos(2 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.53836 + 0.46164 * cos(2 * M_PI * posInt) );
             posInt += step;
         }
         break;
@@ -75,7 +75,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = fabs(posInt) < 0.5 ? 1.0 : 0.0;
+            g[ii] = (LTFAT_REAL) ( (fabs(posInt) < 0.5 ? 1.0 : 0.0 ));
             posInt += step;
         }
         break;
@@ -86,7 +86,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 1.0 - 2.0 * fabs(posInt);
+            g[ii] = (LTFAT_REAL) ( 1.0 - 2.0 * fabs(posInt) );
             posInt += step;
         }
         break;
@@ -94,7 +94,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
     case LTFAT_SQRTTRIA:
         LTFAT_NAME(firwin)(LTFAT_TRIA, gl, g);
         for (ltfatInt ii = 0; ii < gl; ii++)
-            g[ii] = sqrt(g[ii]);
+            g[ii] = ( sqrt(g[ii]) );
 
         break;
 
@@ -102,7 +102,8 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.42 + 0.5 * cos(2 * M_PI * posInt) + 0.08 * cos(4 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.42 + 0.5 * cos(2 * M_PI * posInt)
+                                   + 0.08 * cos( 4.0 * M_PI * posInt) );
             posInt += step;
         }
         break;
@@ -113,9 +114,9 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 7938.0 + 9240.0 * cos(2.0 * M_PI * posInt) +
-                    1430.0 * cos( 4.0 * M_PI * posInt);
-            g[ii] *= denomfac;
+            double tmp = 7938.0 + 9240.0 * cos(2.0 * M_PI * posInt) +
+                         1430.0 * cos( 4.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( tmp * denomfac );
             posInt += step;
         }
         break;
@@ -125,8 +126,9 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.355768 + 0.487396 * cos(2.0 * M_PI * posInt) +
-                    0.144232 * cos(4.0 * M_PI * posInt) + 0.012604 * cos(6.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.355768 + 0.487396 * cos(2.0 * M_PI * posInt) +
+                                   0.144232 * cos(4.0 * M_PI * posInt) +
+                                   0.012604 * cos(6.0 * M_PI * posInt));
             posInt += step;
         }
         break;
@@ -137,7 +139,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         {
             FIRWIN_RESETCOUNTER;
             double innercos = cos(M_PI * posInt);
-            g[ii] = sin(M_PI / 2.0 * innercos * innercos);
+            g[ii] = (LTFAT_REAL) ( sin(M_PI / 2.0 * innercos * innercos) );
             posInt += step;
         }
         break;
@@ -146,8 +148,8 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 3.0 + 4.0 * cos(2.0 * M_PI * posInt) + cos(4.0 * M_PI * posInt);
-            g[ii] /= 8.0;
+            g[ii] = (LTFAT_REAL) (( 3.0 + 4.0 * cos(2.0 * M_PI * posInt)
+                                    + cos(4.0 * M_PI * posInt) ) / 8.0);
             posInt += step;
         }
         break;
@@ -156,8 +158,8 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.40897 + 0.5 * cos(2.0 * M_PI * posInt) +
-                    0.09103 * cos( 4.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.40897 + 0.5 * cos(2.0 * M_PI * posInt) +
+                                   0.09103 * cos( 4.0 * M_PI * posInt) );
             posInt += step;
         }
         break;
@@ -166,8 +168,8 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.4243801 + 0.4973406 * cos(2.0 * M_PI * posInt) +
-                    0.0782793 * cos( 4.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.4243801 + 0.4973406 * cos(2.0 * M_PI * posInt) +
+                                   0.0782793 * cos( 4.0 * M_PI * posInt) );
             posInt += step;
         }
         break;
@@ -176,8 +178,9 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 10.0 + 15.0 * cos(2.0 * M_PI * posInt) +
-                    6.0 * cos( 4.0 * M_PI * posInt) + cos(6.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 10.0 + 15.0 * cos(2.0 * M_PI * posInt) +
+                                   6.0 * cos( 4.0 * M_PI * posInt) +
+                                   cos(6.0 * M_PI * posInt));
             g[ii] /= 32.0;
             posInt += step;
         }
@@ -187,8 +190,9 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.338946 + 0.481973 * cos(2.0 * M_PI * posInt) +
-                    0.161054 * cos(4.0 * M_PI * posInt) + 0.018027 * cos(6.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.338946 + 0.481973 * cos(2.0 * M_PI * posInt) +
+                                   0.161054 * cos(4.0 * M_PI * posInt) +
+                                   0.018027 * cos(6.0 * M_PI * posInt));
             posInt += step;
         }
         break;
@@ -197,8 +201,9 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
         for (ltfatInt ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
-            g[ii] = 0.3635819 + 0.4891775 * cos(2.0 * M_PI * posInt) +
-                    0.1365995 * cos( 4.0 * M_PI * posInt) + 0.0106411 * cos(6.0 * M_PI * posInt);
+            g[ii] = (LTFAT_REAL) ( 0.3635819 + 0.4891775 * cos(2.0 * M_PI * posInt) +
+                                   0.1365995 * cos( 4.0 * M_PI * posInt) +
+                                   0.0106411 * cos(6.0 * M_PI * posInt));
             posInt += step;
         }
         break;

@@ -43,9 +43,9 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     domod = ltfat_idiv(gl, 2);
 
     // First half
-    for (int aIdx = 0; aIdx < amax; aIdx++)
+    for (ltfatInt aIdx = 0; aIdx < amax; aIdx++)
     {
-        for (int ii = aIdx; ii < domod.quot + domod.rem; ii += a)
+        for (ltfatInt ii = aIdx; ii < domod.quot + domod.rem; ii += a)
         {
 #ifdef LTFAT_COMPLEXTYPE
             LTFAT_REAL gabs = ltfat_abs(g[ii]);
@@ -57,9 +57,9 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     }
 
     // Second half from the back
-    for (int aIdx = amax - 1; aIdx >= 0; aIdx--)
+    for (ltfatInt aIdx = amax - 1; aIdx >= 0; aIdx--)
     {
-        for (int ii = gl - (a - aIdx); ii >= domod.quot + domod.rem; ii -= a)
+        for (ltfatInt ii = gl - (a - aIdx); ii >= domod.quot + domod.rem; ii -= a)
         {
 #ifdef LTFAT_COMPLEXTYPE
             LTFAT_REAL gabs = ltfat_abs(g[ii]);
@@ -70,7 +70,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
         }
     }
 
-    for (int aIdx = 0; aIdx < amax; aIdx++)
+    for (ltfatInt aIdx = 0; aIdx < amax; aIdx++)
         d[aIdx] *= M;
 
     // frame diagonal is a-periodic
@@ -100,7 +100,7 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
 
     // Invert and square root the diagonal
     for (ltfatInt ii = 0; ii < a; ii++)
-        d[ii] = 1.0 / sqrt(d[ii]);
+        d[ii] = (LTFAT_REAL) ( 1.0 / sqrt(d[ii]) );
 
     GABDIAGAPPLY(gt);
 
@@ -129,7 +129,7 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
 
     // Invert the diagonal
     for (ltfatInt ii = 0; ii < a; ii++)
-        d[ii] = 1.0 / d[ii];
+        d[ii] = (LTFAT_REAL) ( 1.0 / d[ii] );
 
     GABDIAGAPPLY(gd);
 

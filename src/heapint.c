@@ -287,6 +287,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
     LTFAT_NAME(heap)* h = hit->heap;
     int* donemask = hit->donemask;
     ltfatInt w_E, w_W, w_N, w_S;
+    LTFAT_REAL oneover2 = (LTFAT_REAL) (1.0 / 2.0);
 
     /* Try and put the four neighbours onto the heap.
      * Integration by trapezoidal rule */
@@ -296,7 +297,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_N])
     {
-        phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) / 2.0;
+        phase[w_N] = phase[w] + (fgradw[w] + fgradw[w_N]) * oneover2;
         donemask[w_N] = LTFAT_MASK_WENTNORTH;
         LTFAT_NAME(heap_insert)(h, w_N);
     }
@@ -306,7 +307,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_S])
     {
-        phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) / 2.0;
+        phase[w_S] = phase[w] - (fgradw[w] + fgradw[w_S]) * oneover2;
         donemask[w_S] = LTFAT_MASK_WENTSOUTH;
         LTFAT_NAME(heap_insert)(h, w_S);
     }
@@ -316,7 +317,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_E])
     {
-        phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) / 2.0;
+        phase[w_E] = phase[w] + (tgradw[w] + tgradw[w_E]) * oneover2;
         donemask[w_E] = LTFAT_MASK_WENTEAST;
         LTFAT_NAME(heap_insert)(h, w_E);
     }
@@ -326,7 +327,7 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
     if (!donemask[w_W])
     {
-        phase[w_W] = phase[w] - (tgradw[w] + tgradw[w_W]) / 2.0;
+        phase[w_W] = phase[w] - (tgradw[w] + tgradw[w_W]) * oneover2;
         donemask[w_W] = LTFAT_MASK_WENTWEST;
         LTFAT_NAME(heap_insert)(h, w_W);
     }
@@ -392,7 +393,8 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
     memset(phase, 0, M * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M, N, M * log((double)M) , s, 0);
+    hit = LTFAT_NAME(heapinttask_init)( M, N, (ltfatInt)( M * log((double)M)) , s,
+                                        0);
 
     for (ltfatInt w = 0; w < W; ++w)
     {
@@ -425,7 +427,8 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     /* Main body */
-    hit = LTFAT_NAME(heapinttask_init)( M, N, M * log((double)M) , s, 0);
+    hit = LTFAT_NAME(heapinttask_init)( M, N, (ltfatInt)( M * log((double)M) ), s,
+                                        0);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
     for (ltfatInt ii = 0; ii < M * N * W; ii++)
@@ -624,7 +627,8 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
     memset(phase, 0, M2 * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, M2 * log((double)M2), s, 1);
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfatInt)( M2 * log((double)M2)), s,
+                                        1);
 
     for (ltfatInt w = 0; w < W; ++w)
     {
@@ -658,7 +662,8 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
     ltfatInt N = L / a;
 
     // Initialize plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, M2 * log((double) M2), s, 1);
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfatInt)( M2 * log((double) M2)),
+                                        s, 1);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
     for (ltfatInt ii = 0; ii < M2 * N * W; ii++)

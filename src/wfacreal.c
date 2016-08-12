@@ -28,13 +28,13 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL* g, const ltfatInt L, const ltfatInt R,
     /* This is a floor operation. */
     const ltfatInt d2 = d / 2 + 1;
 
-    const double sqrtM = sqrt(M);
+    const LTFAT_REAL sqrtM = (LTFAT_REAL) sqrt((double)M);
 
     LTFAT_REAL* sbuf = LTFAT_NAME_REAL(malloc)(d);
     LTFAT_COMPLEX* cbuf = LTFAT_NAME_COMPLEX(malloc)(d2);
 
     /* Create plan. In-place. */
-    p_before = LTFAT_FFTW(plan_dft_r2c_1d)(d, sbuf,
+    p_before = LTFAT_FFTW(plan_dft_r2c_1d)((int) d, sbuf,
                                            (LTFAT_FFTW(complex)*) cbuf, FFTW_MEASURE);
 
     // const ltfatInt ld3=2*c*p*q*R;
