@@ -39,11 +39,11 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     for (ltfatInt rs = 0; rs < c * d; rs++)
     {
         /* Compute the thin SVD */
-        LTFAT_NAME(ltfat_gesvd)(p, q * R, gfwork + rs * p * q * R, p,
+        LTFAT_NAME(gesvd)(p, q * R, gfwork + rs * p * q * R, p,
                                 S, U, p, VT, p);
 
         /* Combine U and V. */
-        LTFAT_NAME(ltfat_gemm)(CblasNoTrans, CblasNoTrans, p, q * R, p,
+        LTFAT_NAME(gemm)(CblasNoTrans, CblasNoTrans, p, q * R, p,
                                &alpha, (const LTFAT_COMPLEX*)U, p,
                                (const LTFAT_COMPLEX*)VT, p,
                                &zzero, gtightf + rs * p * q * R, p);
@@ -95,11 +95,11 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     for (ltfatInt rs = 0; rs < c * d2; rs++)
     {
         /* Compute the thin SVD */
-        LTFAT_NAME(ltfat_gesvd)(p, q * R, gfwork + rs * p * q * R, p,
+        LTFAT_NAME(gesvd)(p, q * R, gfwork + rs * p * q * R, p,
                                 S, U, p, VT, p);
 
         /* Combine U and V. */
-        LTFAT_NAME(ltfat_gemm)(CblasNoTrans, CblasNoTrans, p, q * R, p,
+        LTFAT_NAME(gemm)(CblasNoTrans, CblasNoTrans, p, q * R, p,
                                &alpha, (const LTFAT_COMPLEX*)U, p,
                                (const LTFAT_COMPLEX*)VT, p,
                                &zzero, gtightf + rs * p * q * R, p);

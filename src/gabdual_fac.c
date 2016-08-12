@@ -32,13 +32,13 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
 
     for (ltfatInt rs = 0; rs < c * d; rs++)
     {
-        LTFAT_NAME(ltfat_gemm)(CblasNoTrans, CblasConjTrans, p, p, q * R,
+        LTFAT_NAME(gemm)(CblasNoTrans, CblasConjTrans, p, p, q * R,
                                &alpha,
                                gf + rs * p * q * R, p,
                                gf + rs * p * q * R, p,
                                &zzero, Sf, p);
 
-        LTFAT_NAME(ltfat_posv)(p, q * R, Sf, p,
+        LTFAT_NAME(posv)(p, q * R, Sf, p,
                                gdualf + rs * p * q * R, p);
 
     }
@@ -83,13 +83,13 @@ LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
 
     for (ltfatInt rs = 0; rs < c * d2; rs++)
     {
-        LTFAT_NAME(ltfat_gemm)(CblasNoTrans, CblasConjTrans, p, p, q * R,
+        LTFAT_NAME(gemm)(CblasNoTrans, CblasConjTrans, p, p, q * R,
                                &alpha,
                                gf + rs * p * q * R, p,
                                gf + rs * p * q * R, p,
                                &zzero, Sf, p);
 
-        LTFAT_NAME(ltfat_posv)(p, q * R, Sf, p,
+        LTFAT_NAME(posv)(p, q * R, Sf, p,
                                gdualf + rs * p * q * R, p);
 
     }

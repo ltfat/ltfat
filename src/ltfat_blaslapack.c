@@ -1,7 +1,4 @@
-#include "ltfat.h"
-#include "ltfat/types.h"
-#include "ltfat/macros.h"
-#include "cblas.h"
+#include "ltfat/blaslapack.h"
 
 /* Define to a macro mangling the given C identifier (in lower and upper
    case), which must not contain underscores, for linking with Fortran. */
@@ -48,22 +45,22 @@ extern "C" {
 #endif
 F77_RET_T
 LTFAT_POSV (F77_CONST_CHAR_ARG_DECL uplo,
-            const ptrdiff_t *n, const ptrdiff_t *nrhs,
-            const LTFAT_REAL *a, const ptrdiff_t *lda,
-            LTFAT_REAL *b, const ptrdiff_t *ldb,
-            ptrdiff_t *info
+            const ptrdiff_t* n, const ptrdiff_t* nrhs,
+            const LTFAT_REAL* a, const ptrdiff_t* lda,
+            LTFAT_REAL* b, const ptrdiff_t* ldb,
+            ptrdiff_t* info
             F77_CHAR_ARG_LEN_DECL);
 
 
 F77_RET_T
 LTFAT_GESVD (F77_CONST_CHAR_ARG_DECL jobu,
              F77_CONST_CHAR_ARG_DECL jobvt,
-             const ptrdiff_t *M, const ptrdiff_t *N,
-             LTFAT_REAL* A, const ptrdiff_t *lda,
-             LTFAT_REAL *S, LTFAT_REAL* U, const ptrdiff_t *ldu,
-             LTFAT_REAL *VT, const ptrdiff_t *ldvt, LTFAT_REAL *work,
-             const ptrdiff_t *lwork,
-             LTFAT_REAL *rwork, ptrdiff_t *info
+             const ptrdiff_t* M, const ptrdiff_t* N,
+             LTFAT_REAL* A, const ptrdiff_t* lda,
+             LTFAT_REAL* S, LTFAT_REAL* U, const ptrdiff_t* ldu,
+             LTFAT_REAL* VT, const ptrdiff_t* ldvt, LTFAT_REAL* work,
+             const ptrdiff_t* lwork,
+             LTFAT_REAL* rwork, ptrdiff_t* info
              F77_CHAR_ARG_LEN_DECL
              F77_CHAR_ARG_LEN_DECL);
 #ifdef __cplusplus
@@ -83,14 +80,14 @@ extern "C" {
 F77_RET_T
 LTFAT_GEMM (F77_CONST_CHAR_ARG_DECL TransA,
             F77_CONST_CHAR_ARG_DECL TransB,
-            const ptrdiff_t *M, const ptrdiff_t *N,
-            const ptrdiff_t *K,
-            const LTFAT_COMPLEX *alpha,
-            const LTFAT_COMPLEX *a, const ptrdiff_t *lda,
-            const LTFAT_COMPLEX *b, const ptrdiff_t *ldb,
-            const LTFAT_COMPLEX *beta,
-            LTFAT_COMPLEX *c,
-            const ptrdiff_t *ldc
+            const ptrdiff_t* M, const ptrdiff_t* N,
+            const ptrdiff_t* K,
+            const LTFAT_COMPLEX* alpha,
+            const LTFAT_COMPLEX* a, const ptrdiff_t* lda,
+            const LTFAT_COMPLEX* b, const ptrdiff_t* ldb,
+            const LTFAT_COMPLEX* beta,
+            LTFAT_COMPLEX* c,
+            const ptrdiff_t* ldc
             F77_CHAR_ARG_LEN_DECL
             F77_CHAR_ARG_LEN_DECL);
 #ifdef __cplusplus
@@ -107,12 +104,13 @@ LTFAT_GEMM (F77_CONST_CHAR_ARG_DECL TransA,
  * are using column-major format and storing the upper
  * triangle
  */
-ltfatInt LTFAT_NAME(ltfat_posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
-                           LTFAT_COMPLEX *A, const ptrdiff_t lda,
-                           LTFAT_COMPLEX *B, const ptrdiff_t ldb)
+ltfatInt LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
+                          LTFAT_COMPLEX* A, const ptrdiff_t lda,
+                          LTFAT_COMPLEX* B, const ptrdiff_t ldb)
 #ifdef HAVE_CBLASLAPACK
 {
-    return LTFAT_clapack_posv(CblasColMajor, CblasUpper, N, NRHS, (LTFAT_REAL*)A, lda,
+    return LTFAT_clapack_posv(CblasColMajor, CblasUpper, N, NRHS, (LTFAT_REAL*)A,
+                              lda,
                               (LTFAT_REAL*)B, ldb);
 }
 #endif
@@ -135,16 +133,16 @@ ltfatInt LTFAT_NAME(ltfat_posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
 #endif
 
 /* ----- Compute SVD factorization  ------------ */
-ltfatInt LTFAT_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
-                            LTFAT_COMPLEX *A, const ptrdiff_t lda,
-                            LTFAT_REAL *S, LTFAT_COMPLEX *U, const ptrdiff_t ldu,
-                            LTFAT_COMPLEX *VT, const ptrdiff_t ldvt)
+ltfatInt LTFAT_NAME(gesvd)(const ptrdiff_t M, const ptrdiff_t N,
+                           LTFAT_COMPLEX* A, const ptrdiff_t lda,
+                           LTFAT_REAL* S, LTFAT_COMPLEX* U, const ptrdiff_t ldu,
+                           LTFAT_COMPLEX* VT, const ptrdiff_t ldvt)
 #ifdef HAVE_LAPACK
 {
 
     ptrdiff_t lwork, info, maxMN;
     LTFAT_REAL workquery[2];
-    LTFAT_REAL *rwork, *work;
+    LTFAT_REAL* rwork, *work;
 
     char jobu;
     char jobvt;
@@ -156,7 +154,7 @@ ltfatInt LTFAT_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
     maxMN = M > N ? M : N;
 
     /* Allocate workspace */
-    rwork = (LTFAT_REAL*)ltfat_malloc(5*maxMN*sizeof(LTFAT_REAL));
+    rwork = (LTFAT_REAL*)ltfat_malloc(5 * maxMN * sizeof(LTFAT_REAL));
 
     /* Ask ZGESVD what the dimension of WORK should be. */
     lwork = -1;
@@ -173,7 +171,7 @@ ltfatInt LTFAT_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
     lwork = (ptrdiff_t)(workquery[0]);
 
     /* Allocate more workspace */
-    work = (LTFAT_REAL*)ltfat_malloc(lwork*sizeof(LTFAT_COMPLEX));
+    work = (LTFAT_REAL*)ltfat_malloc(lwork * sizeof(LTFAT_COMPLEX));
 
     /* Call the function for real this time */
 
@@ -197,14 +195,14 @@ ltfatInt LTFAT_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
 #endif /* End of HAVE_LAPACK */
 
 
-void LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
-                            const enum CBLAS_TRANSPOSE TransB,
-                            const ptrdiff_t M, const ptrdiff_t N, const ptrdiff_t K,
-                            const LTFAT_COMPLEX *alpha,
-                            const LTFAT_COMPLEX *A, const ptrdiff_t lda,
-                            const LTFAT_COMPLEX *B, const ptrdiff_t ldb,
-                            const LTFAT_COMPLEX *beta,
-                            LTFAT_COMPLEX *C, const ptrdiff_t ldc)
+void LTFAT_NAME(gemm)(const enum CBLAS_TRANSPOSE TransA,
+                      const enum CBLAS_TRANSPOSE TransB,
+                      const ptrdiff_t M, const ptrdiff_t N, const ptrdiff_t K,
+                      const LTFAT_COMPLEX* alpha,
+                      const LTFAT_COMPLEX* A, const ptrdiff_t lda,
+                      const LTFAT_COMPLEX* B, const ptrdiff_t ldb,
+                      const LTFAT_COMPLEX* beta,
+                      LTFAT_COMPLEX* C, const ptrdiff_t ldc)
 #ifdef HAVE_CBLAS
 {
 
@@ -218,11 +216,11 @@ void LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 {
     char ca, cb;
 
-    if (TransA == CblasNoTrans)   ca='N';
-    if (TransA == CblasConjTrans) ca='C';
+    if (TransA == CblasNoTrans)   ca = 'N';
+    if (TransA == CblasConjTrans) ca = 'C';
 
-    if (TransB == CblasNoTrans)   cb='N';
-    if (TransB == CblasConjTrans) cb='C';
+    if (TransB == CblasNoTrans)   cb = 'N';
+    if (TransB == CblasConjTrans) cb = 'C';
 
     LTFAT_GEMM (F77_CONST_CHAR_ARG2 (&ca, 1),
                 F77_CONST_CHAR_ARG2 (&cb, 1),

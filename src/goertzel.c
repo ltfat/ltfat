@@ -114,16 +114,16 @@ void LTFAT_NAME(gga_execute)(LTFAT_NAME(gga_plan) p,
 //#pragma omp parallel for
         for (ltfatInt m = 0; m < p->M - unrollRem; m += GGA_UNROLL)
         {
-            LTFAT_TYPE s0[GGA_UNROLL];
-            LTFAT_TYPE s1[GGA_UNROLL];
-            LTFAT_TYPE s2[GGA_UNROLL];
+            LTFAT_TYPE s0[GGA_UNROLL] = {0};
+            LTFAT_TYPE s1[GGA_UNROLL] = {0};
+            LTFAT_TYPE s2[GGA_UNROLL] = {0};
 
-            for (ltfatInt un = 0; un < GGA_UNROLL; un++)
-            {
-                s0[un] = 0.0;
-                s1[un] = 0.0;
-                s2[un] = 0.0;
-            }
+            /* for (ltfatInt un = 0; un < GGA_UNROLL; un++) */
+            /* { */
+            /*     s0[un] = 0.0; */
+            /*     s1[un] = 0.0; */
+            /*     s2[un] = 0.0; */
+            /* } */
 
             LTFAT_TYPE* fPtrTmp = (LTFAT_TYPE*) fPtr + w * p->L;
 
@@ -150,16 +150,16 @@ void LTFAT_NAME(gga_execute)(LTFAT_NAME(gga_plan) p,
         ltfatInt m = p->M - unrollRem;
 
 
-        LTFAT_TYPE s0[GGA_UNROLL];
-        LTFAT_TYPE s1[GGA_UNROLL];
-        LTFAT_TYPE s2[GGA_UNROLL];
+        LTFAT_TYPE s0[GGA_UNROLL] = {0};
+        LTFAT_TYPE s1[GGA_UNROLL] = {0};
+        LTFAT_TYPE s2[GGA_UNROLL] = {0};
 
-        for (ltfatInt un = 0; un < unrollRem; un++)
-        {
-            s0[un] = 0.0;
-            s1[un] = 0.0;
-            s2[un] = 0.0;
-        }
+        /* for (ltfatInt un = 0; un < unrollRem; un++) */
+        /* { */
+        /*     s0[un] = 0.0; */
+        /*     s1[un] = 0.0; */
+        /*     s2[un] = 0.0; */
+        /* } */
 
         LTFAT_TYPE* fPtrTmp = (LTFAT_TYPE*) fPtr + w * p->L;
 

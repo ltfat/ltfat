@@ -502,3 +502,13 @@ LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COM
         const int M2, const int W, LTFAT_COMPLEX out[]);
 
 /** @}*/
+
+int
+LTFAT_NAME(rtdgtreal_execute_wrapper)(void* p,
+                                      const LTFAT_REAL* f, const ltfatInt W,
+                                      LTFAT_COMPLEX* c);
+
+int
+LTFAT_NAME(rtidgtreal_execute_wrapper)(void* p,
+                                       const LTFAT_COMPLEX* c, const ltfatInt W,
+                                       LTFAT_REAL* f);

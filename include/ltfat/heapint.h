@@ -8,6 +8,11 @@
 #include "ltfat.h"
 #include "ltfat/types.h"
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef struct LTFAT_NAME(heap) LTFAT_NAME(heap);
 
 LTFAT_NAME(heap)*
@@ -22,6 +27,11 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor);
 void
 LTFAT_NAME(heap_reset)(LTFAT_NAME(heap)* h, const LTFAT_REAL* news);
 
+ltfatInt
+LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h);
+
+void
+LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key);
 
 /*  */
 
@@ -51,4 +61,6 @@ LTFAT_NAME(borderstoheapreal)(LTFAT_NAME(heap)* h,
                               const ltfatInt height, const ltfatInt N,
                               int * donemask);
 
-
+#ifdef __cplusplus
+}
+#endif

@@ -15,12 +15,7 @@
 
 #ifndef _LTFAT_ERRNO_H
 #define _LTFAT_ERRNO_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
+#include "basicmacros.h"
 
 enum ltfaterr_status
 {
@@ -62,13 +57,13 @@ typedef void ltfat_error_handler_t (int ltfat_errno, const char* file, int line,
  * Default error handling behavior can be recovered by passing NULL.
  * \returns Old error handler
  */
-ltfat_error_handler_t*
+LTFAT_EXTERN ltfat_error_handler_t*
 ltfat_set_error_handler (ltfat_error_handler_t* new_handler);
 
 /** Disable error handling
  * \returns Old error handler
  */
-ltfat_error_handler_t*
+LTFAT_EXTERN ltfat_error_handler_t*
 ltfat_set_error_handler_off (void);
 
 /** @} */
@@ -76,11 +71,6 @@ ltfat_set_error_handler_off (void);
 void
 ltfat_error (int ltfat_errno,  const char * file, int line,
              const char* funcname, const char * format, ...);
-
-#ifdef __cplusplus
-}
-#endif
-
 
 
 #endif

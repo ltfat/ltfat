@@ -2,8 +2,6 @@
 #define _LTFAT_H 1
 //#include "ltfat/config.h"
 #include "ltfat/complexcompat.h"
-#include "ltfat/errno.h"
-#include "ltfat/version.h"
 
 #ifndef NOSYSTEMHEADERS
 #include <string.h>
@@ -23,11 +21,13 @@ typedef ptrdiff_t ltfatInt;
 #include "ltfat/basicmacros.h"
 
 /* BEGIN_C_DECLS */
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
+#include "ltfat/errno.h"
+#include "ltfat/version.h"
 
 // First, include headers of type (single, double, or complex versions) inert functions
 #include "ltfat/typeconstant.h"
