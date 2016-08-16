@@ -14,7 +14,6 @@ struct LTFAT_NAME(dgt_fb_plan)
     LTFAT_TYPE* gw;
 };
 
-
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
                    const ltfatInt L, const ltfatInt gl,
@@ -39,25 +38,7 @@ error:
     return status;
 }
 
-/* The following macro adds the coefficients together performing the
- * last part of the Poisson summation, executes the FFT on the summed
- * coefficients, and places the coefficients in the output array.
- *
- * The first summation is done in that peculiar way to obtain the
- * correct phase for a frequency invariant Gabor transform. Summing
- * them directly would lead to a time invariant (phase-locked) Gabor
- * transform.
- *
- * The macro is called in three different places in the dgt_fb function.
- */
-#define THE_SUM { \
-LTFAT_NAME_COMPLEX(fold_array)(fw,gl,plan.ptype?-glh:n*a-glh,M,sbuf); \
-LTFAT_NAME_REAL(fft_execute)(plan.p_small); \
-memcpy(cout + (n*M + w*M*N),sbuf,M*sizeof*cout); \
-}
-
-
-LTFAT_EXTERN int //LTFAT_NAME(dgt_fb_plan)
+LTFAT_EXTERN int 
 LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
                         const ltfatInt gl, const ltfatInt a, const ltfatInt M,
                         const ltfat_phaseconvention ptype, unsigned flags, LTFAT_NAME(dgt_fb_plan)** p)
@@ -67,9 +48,11 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g);
     CHECKNULL(p);
-    CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
+    CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
+          "Invalid ltfat_phaseconvention enum value." );
 
     CHECKMEM(plan = (LTFAT_NAME(dgt_fb_plan)*) ltfat_calloc(1, sizeof * plan));
 
@@ -119,6 +102,22 @@ error:
     return status;
 }
 
+/* The following macro adds the coefficients together performing the
+ * last part of the Poisson summation, executes the FFT on the summed
+ * coefficients, and places the coefficients in the output array.
+ *
+ * The first summation is done in that peculiar way to obtain the
+ * correct phase for a frequency invariant Gabor transform. Summing
+ * them directly would lead to a time invariant (phase-locked) Gabor
+ * transform.
+ *
+ * The macro is called in three different places in the dgt_fb function.
+ */
+#define THE_SUM { \
+LTFAT_NAME_COMPLEX(fold_array)(fw,gl,plan.ptype?-glh:n*a-glh,M,sbuf); \
+LTFAT_NAME_REAL(fft_execute)(plan.p_small); \
+memcpy(cout + (n*M + w*M*N),sbuf,M*sizeof*cout); \
+}
 
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
@@ -131,7 +130,7 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
     LTFAT_NAME(dgt_fb_plan) plan;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout);
-    CHECK(LTFATERR_BADARG, L >= p->gl && !(L % p->a) ,
+    CHECK(LTFATERR_BADTRALEN, L >= p->gl && !(L % p->a) ,
           "L (passed %d) must be positive and divisible by a (passed %d).", L, p->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 

@@ -108,8 +108,8 @@ LTFAT_NAME(idgtreal_fb_execute)(LTFAT_NAME(idgtreal_fb_plan)* p,
     LTFAT_REAL* crbuf, *gw, *ff;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(cin); CHECKNULL(f);
-    CHECK(LTFATERR_BADARG, L >= p->gl && !(L % p->a) ,
-          "L (passed %d) must be positive and divisible by a (passed %d).", L, p->a);
+    CHECK(LTFATERR_BADTRALEN, L >= p->gl && !(L % p->a) ,
+          "L (passed %d) must be greater or equal to gl and divisible by a (passed %d).", L, p->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
 
     M = p->M;

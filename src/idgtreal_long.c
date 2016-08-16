@@ -74,7 +74,7 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN,
-          !(L % minL), "L must be divisible by lcm(a,M)=%d.", minL);
+          !(L % minL), "L (passed %d) must be divisible by lcm(a,M)=%d.",L, minL);
 
     CHECKMEM(plan =
                  (LTFAT_NAME(idgtreal_long_plan)*) ltfat_calloc(1, sizeof * plan));

@@ -39,36 +39,6 @@ error:
     return status;
 }
 
-/* #define THE_SUM_REAL { \ */
-/* ltfatInt premarg = plan.ptype?-glh:n*a-glh; \ */
-/* for (ltfatInt m=0;m<M;m++) \ */
-/* { \ */
-/*    rem = ltfat_positiverem(m+(premarg), M); \ */
-/*    sbuf[rem]=0.0; \ */
-/*    fbd=fw+m; \ */
-/*    for (ltfatInt k=0;k<gl/M;k++) \ */
-/*    { \ */
-/*      sbuf[rem]+=(*fbd);         \ */
-/*       fbd+=M; \ */
-/*    } \ */
-/* } \ */
-/* \ */
-/*  LTFAT_FFTW(execute)(plan.p_small);         \ */
-/* \ */
-/* coefsum=(LTFAT_REAL*)cout+2*(n*M2+w*M2*N); \ */
-/* for (ltfatInt m=0;m<M2;m++) \ */
-/* { \ */
-/*    coefsum[2*m]   = CH(creal)(cbuf[m]); \ */
-/*    coefsum[2*m+1] = CH(cimag)(cbuf[m]); \ */
-/* }} */
-
-#define THE_SUM_REAL { \
-LTFAT_NAME(fold_array)(fw,gl,plan->ptype?-glh:n*a-glh,M,sbuf); \
-LTFAT_NAME_REAL(fftreal_execute)(plan->p_small); \
-memcpy(cout+(n*M2+w*M2*N),cbuf,M2*sizeof*cbuf); \
-}
-
-
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
                             const ltfatInt gl, const ltfatInt a,
@@ -133,6 +103,34 @@ error:
     return status;
 }
 
+/* #define THE_SUM_REAL { \ */
+/* ltfatInt premarg = plan.ptype?-glh:n*a-glh; \ */
+/* for (ltfatInt m=0;m<M;m++) \ */
+/* { \ */
+/*    rem = ltfat_positiverem(m+(premarg), M); \ */
+/*    sbuf[rem]=0.0; \ */
+/*    fbd=fw+m; \ */
+/*    for (ltfatInt k=0;k<gl/M;k++) \ */
+/*    { \ */
+/*      sbuf[rem]+=(*fbd);         \ */
+/*       fbd+=M; \ */
+/*    } \ */
+/* } \ */
+/* \ */
+/*  LTFAT_FFTW(execute)(plan.p_small);         \ */
+/* \ */
+/* coefsum=(LTFAT_REAL*)cout+2*(n*M2+w*M2*N); \ */
+/* for (ltfatInt m=0;m<M2;m++) \ */
+/* { \ */
+/*    coefsum[2*m]   = CH(creal)(cbuf[m]); \ */
+/*    coefsum[2*m+1] = CH(cimag)(cbuf[m]); \ */
+/* }} */
+
+#define THE_SUM_REAL { \
+LTFAT_NAME(fold_array)(fw,gl,plan->ptype?-glh:n*a-glh,M,sbuf); \
+LTFAT_NAME_REAL(fftreal_execute)(plan->p_small); \
+memcpy(cout+(n*M2+w*M2*N),cbuf,M2*sizeof*cbuf); \
+}
 
 LTFAT_EXTERN int
 LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,

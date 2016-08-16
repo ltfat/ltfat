@@ -37,11 +37,13 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
                                    FFTW_ESTIMATE, &plan),
         "Init failed");
 
-    LTFAT_NAME(idgt_long_execute)(plan);
+    CHECKSTATUS(
+        LTFAT_NAME(idgt_long_execute)(plan),
+        "Execute failed");
 
-    LTFAT_NAME(idgt_long_done)(&plan);
 
 error:
+    if (plan) LTFAT_NAME(idgt_long_done)(&plan);
     return status;
 }
 
@@ -60,14 +62,16 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
           "cin cannot be NULL if flags is not FFTW_ESTIMATE");
     // CHECKNULL(f); // can be NULL
     CHECKNULL(g); CHECKNULL(pout);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive", L);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
+    CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
+          "Invalid ltfat_phaseconvention enum value." );
 
     minL = ltfat_lcm(a, M);
-    CHECK(LTFATERR_BADARG,
-          L > 0  && !(L % minL),
-          "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
+    CHECK(LTFATERR_BADTRALEN,
+          !(L % minL), "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
           L, minL);
 
     CHECKMEM(plan = (LTFAT_NAME(idgt_long_plan)*)ltfat_calloc(1, sizeof * plan));

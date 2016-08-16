@@ -4,3 +4,8 @@
 #include "test_fftrealcircshift.c"
 #include "test_fftrealfftshift.c"
 #include "test_fftrealifftshift.c"
+#include "test_pgauss.c"
+#include "test_dgtreal_fb.c"
+#include "test_idgtreal_fb.c"
+#include "test_dgtreal_long.c"
+#include "test_idgtreal_long.c"

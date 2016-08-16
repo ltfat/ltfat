@@ -13,8 +13,24 @@ typedef struct
     int failedTestsLength;
     int noOfFailedTests;
 } failedTests;
-
 failedTests ft = {0};
+
+typedef struct
+{
+    int (*testHandle)(void);
+    char* testName;
+} namePointerPair;
+
+
+typedef struct
+{
+    namePointerPair* tests;
+    int noOfTests;
+    int testsLength;
+} testsToRun;
+
+testsToRun ttr = {0};
+
 
 // char** failedTests = NULL;
 // int failedTestsLength = 0;
@@ -23,7 +39,7 @@ failedTests ft = {0};
 void test_error_handler (int ltfat_errno, const char* file, int line,
                          const char* funcname, const char* reason)
 {
-    fprintf (stderr, "    [ERROR %d]: (%s:%d:): [%s]: %s\n", -ltfat_errno, file, line,
+    fprintf (stderr, "       [ERROR %d]: (%s:%d:): [%s]: %s\n", -ltfat_errno, file, line,
              funcname, reason);
 
     fflush (stderr);
@@ -43,16 +59,15 @@ void test_error_handler (int ltfat_errno, const char* file, int line,
 #define mu_run_test(test) printf("\n--- %s ---\n", #test); \
     message = test(); tests_run++; if (message) { ft.noOfFailedTests++;  ADDTOFAILEDTESTS(#test); message = 0; }
 
-#define RUN_TESTS(name) int main() {\
-    printf("---------------- RUNNING: " __FILE__ " ----------------\n");\
-        name();\
-        if (ft.noOfFailedTests>0){\
-            printf("\n----------------\nFAILED TESTS %d: \n\n", ft.noOfFailedTests);\
-            for(int ii=0;ii< ft.noOfFailedTests;ii++) { printf("    %s\n", ft.failedTests[ii]); }\
-            ltfat_free(ft.failedTests); }\
-        else { printf("\n----------------\nALL TESTS PASSED\n"); }}
 
 
+#define ADDTOTESTSTORUN(string) \
+do{ \
+    if( ttr.noOfTests > ttr.testsLength){ \
+        ttr.tests = ltfat_realloc( ttr.tests, ttr.testsLength*sizeof(char*), 2*ttr.noOfTests*sizeof(char*));\
+        ttr.testsLength = 2*ttr.noOfTests; } \
+    ttr.tests[ttr.noOfTests-1] = string; \
+}while(0)
 
 
 #define ADDTOFAILEDTESTS(string) \

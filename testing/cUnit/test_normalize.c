@@ -1,7 +1,8 @@
 int TEST_NAME(test_normalize)()
 {
     ltfatInt L[] = {111, 1, 100};
-    ltfat_normalize_t norm[] = { LTFAT_NORMALIZE_NULL, LTFAT_NORMALIZE_AREA, LTFAT_NORMALIZE_1, LTFAT_NORMALIZE_ENERGY,
+    ltfat_normalize_t norm[] = { LTFAT_NORMALIZE_NULL, LTFAT_NORMALIZE_AREA,
+                                 LTFAT_NORMALIZE_1, LTFAT_NORMALIZE_ENERGY,
                                  LTFAT_NORMALIZE_2, LTFAT_NORMALIZE_INF, LTFAT_NORMALIZE_PEAK
                                };
 
