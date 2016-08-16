@@ -53,10 +53,10 @@ typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
  * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
-LTFAT_NAME(dgt_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
+LTFAT_NAME(dgt_fb)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
                    const ltfatInt L, const ltfatInt gl,
                    const ltfatInt W,  const ltfatInt a, const ltfatInt M,
-                   const ltfat_phaseconvention ptype, LTFAT_COMPLEX *cout);
+                   const ltfat_phaseconvention ptype, LTFAT_COMPLEX c[]);
 
 /** Initialize plan for Discrete Gabor Transform for the filter bank algorithm
  *
@@ -98,7 +98,7 @@ LTFAT_NAME(dgt_fb)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
  * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_EXTERN int
-LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE *g,
+LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE g[],
                         const ltfatInt gl, const ltfatInt a, const ltfatInt M,
                         const ltfat_phaseconvention ptype, unsigned flags, LTFAT_NAME(dgt_fb_plan)** p);
 
@@ -136,8 +136,8 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE *g,
  */
 LTFAT_EXTERN int
 LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* plan,
-                           const LTFAT_TYPE *f, const ltfatInt L,
-                           const ltfatInt W, LTFAT_COMPLEX *cout);
+                           const LTFAT_TYPE f[], const ltfatInt L,
+                           const ltfatInt W, LTFAT_COMPLEX c[]);
 
 /** Destroy the plan
  *
