@@ -33,6 +33,7 @@ enum ltfaterr_status
     LTFATERR_CANNOTHAPPEN = -10,
     LTFATERR_BADSIZE      = -11, // Array size is wrong
     LTFATERR_BADREQSIZE   = -12, // Output array size is wrong
+    LTFATERR_NOTSUPPORTED = -13,
 // Specific
     LTFATERR_BADTRALEN  =  -99,
     LTFATERR_NOTAFRAME   =  -100,
