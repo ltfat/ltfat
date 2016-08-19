@@ -31,22 +31,17 @@ typedef fftwf_complex ltfat_complex_s;
 #endif
 
 #if defined(__cplusplus)
-
-#define ltfat_real(x) std::real(x)
-#define ltfat_imag(x) std::imag(x)
-#define ltfat_abs(x) std::abs(x)
-#define ltfat_arg(x) std::arg(x)
-
+#   define ltfat_real(x) std::real(x)
+#   define ltfat_imag(x) std::imag(x)
+#   define ltfat_abs(x) std::abs(x)
+#   define ltfat_arg(x) std::arg(x)
 #else
-
-#define ltfat_complex_d(r,i) ((float)(r) + ((float)(i))*I)
-#define ltfat_complex_s(r,i) ((double)(r) + ((double)(i))*I)
-
-#define ltfat_real(x) creal(x)
-#define ltfat_imag(x) cimag(x)
-#define ltfat_abs(x) fabs(x)
-#define ltfat_arg(x) carg(x)
-
+#   define ltfat_complex_d(r,i) ((float)(r) + ((float)(i))*I)
+#   define ltfat_complex_s(r,i) ((double)(r) + ((double)(i))*I)
+#   define ltfat_real(x) creal(x)
+#   define ltfat_imag(x) cimag(x)
+#   define ltfat_abs(x) fabs(x)
+#   define ltfat_arg(x) carg(x)
 #endif
 
 #endif
