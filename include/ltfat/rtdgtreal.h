@@ -1,5 +1,5 @@
-#ifndef _RTDGTREAL_H
-#define _RTDGTREAL_H
+#ifndef _LTFAT_RTDGTREAL_H
+#define _LTFAT_RTDGTREAL_H
 
 typedef enum
 {

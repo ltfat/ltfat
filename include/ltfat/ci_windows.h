@@ -3,8 +3,8 @@
  * @{
  */
 
-#ifndef _CI_WINDOWS_H
-#define _CI_WINDOWS_H
+#ifndef _LTFAT_CI_WINDOWS_H
+#define _LTFAT_CI_WINDOWS_H
 
 typedef enum
 {

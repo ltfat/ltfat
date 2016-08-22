@@ -1,5 +1,5 @@
-#ifndef _BASICMACROS_H
-#define _BASICMACROS_H
+#ifndef _LTFAT_BASICMACROS_H
+#define _LTFAT_BASICMACROS_H
 
 /* Handle Windows DLL files */
 /* defined by Makefile when compiling LTFAT */

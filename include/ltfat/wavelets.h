@@ -1,5 +1,5 @@
-#ifndef _WAVELETS_H
-#define _WAVELETS_H
+#ifndef _LTFAT_WAVELETS_H
+#define _LTFAT_WAVELETS_H
 
 
 typedef enum

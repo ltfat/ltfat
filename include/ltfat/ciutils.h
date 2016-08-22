@@ -6,8 +6,8 @@
  * allocating additional memory internally.
  */
 
-#ifndef _ciutils_h
-#define _ciutils_h
+#ifndef _ltfat_ciutils_h
+#define _ltfat_ciutils_h
 
 typedef enum
 {

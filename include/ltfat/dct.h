@@ -1,5 +1,5 @@
-#ifndef _DCT_H
-#define _DCT_H
+#ifndef _LTFAT_DCT_H
+#define _LTFAT_DCT_H
 
 typedef enum
 {

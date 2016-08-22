@@ -1,5 +1,5 @@
-#ifndef _DGT_COMMON_H
-#define _DGT_COMMON_H
+#ifndef _LTFAT_DGT_COMMON_H
+#define _LTFAT_DGT_COMMON_H
 #include "ltfat/basicmacros.h"
 /** \defgroup dgtcommon Discrete Gabor Transform Common 
  * \addtogroup dgtcommon

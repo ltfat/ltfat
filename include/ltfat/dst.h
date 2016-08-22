@@ -1,5 +1,5 @@
-#ifndef _DST_H
-#define _DST_H
+#ifndef _LTFAT_DST_H
+#define _LTFAT_DST_H
 
 typedef enum
 {

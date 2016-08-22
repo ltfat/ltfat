@@ -1,5 +1,5 @@
-#ifndef _GOERTZEL_H
-#define _GOERTZEL_H
+#ifndef _LTFAT_GOERTZEL_H
+#define _LTFAT_GOERTZEL_H
 
 typedef enum
 {
