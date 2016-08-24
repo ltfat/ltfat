@@ -2,9 +2,9 @@
 #
 # Builds three static and three shared libraries (default prefix is build/):
 #
-# 	libltfat.a     Contains double, single and common code
-# 	libltfatd.a    Contains double and common code
-# 	libltfatf.a    Contains single and common code
+# 	libltfat.a(.so)     Contains double, single and common code
+# 	libltfatd.a(.so)    Contains double and common code
+# 	libltfatf.a(.so)    Contains single and common code
 #
 # make CROSS=x86_64-w64-mingw32.static-
 # or
@@ -31,7 +31,7 @@ ifdef CROSS
 	MINGW=1
 else
 	CC?=gcc
-	CXX?=gcc
+	CXX?=g++
 	AR?=ar
 	OBJCOPY?=objcopy
 	RANLIB?=ranlib
@@ -39,13 +39,15 @@ else
 	objprefix ?= obj
 endif
 
+MATLABPATH ?= /usr/local/MATLAB_R2013a/bin/glnxa64
+
 PREFIX ?= /usr/local
 LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
 
 # Base CFLAGS
-CFLAGS+=-Wall -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
-CXXFLAGS+=-Wall -std=c++11 -Iinclude -Ithirdparty $(OPTCFLAGS)
+CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
+CXXFLAGS+=-Wall -Wextra -pedantic -std=c++11 -fno-exceptions -fno-rtti -Iinclude -Ithirdparty $(OPTCFLAGS)
 
 # The following adds parameters to CFLAGS
 include comptarget.mk
@@ -54,10 +56,13 @@ include comptarget.mk
 include filedefs.mk
 
 FFTWLIBS?=-lfftw3 -lfftw3f
+LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 
 ifdef MINGW
 	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
+	CFLAGS += -DLTFAT_BUILD_SHARED
+	CXXFLAGS += -DLTFAT_BUILD_SHARED
 else
 	CFLAGS += -fPIC
 	CXXFLAGS += -fPIC
@@ -69,8 +74,6 @@ ifdef USECPP
 	CFLAGS = $(CXXFLAGS)
 endif
 
-
-LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 # Dependencies
 ifndef NOBLASLAPACK
 	LFLAGS += $(BLASLAPACKLIBS)
@@ -124,15 +127,15 @@ SDEP = $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objprefix
 all: static shared
 
 $(DSTARGET): $(DDEP) $(SDEP) $(COMMONFILES) $(DFILES) $(SFILES)
-	$(AR) rvu $@ $(COMMONFILES) $(DFILES) $(SFILES)
+	$(AR) rv $@ $(COMMONFILES) $(DFILES) $(SFILES)
 	$(RANLIB) $@
 
 $(DTARGET): $(DDEP) $(DFILES) $(COMMONFILES)
-	$(AR) rvu $@ $(DFILES) $(COMMONFILES)
+	$(AR) rv $@ $(DFILES) $(COMMONFILES)
 	$(RANLIB) $@
 
 $(STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
-	$(AR) rvu $@ $(SFILES) $(COMMONFILESFORSFILES)
+	$(AR) rv $@ $(SFILES) $(COMMONFILESFORSFILES)
 	$(RANLIB) $@
 
 $(SO_DSTARGET): $(DDEP) $(SDEP) $(COMMONFILES) $(DFILES) $(SFILES)
@@ -162,7 +165,6 @@ $(objprefix)/single/%.o: src/%.c
 $(objprefix)/complexsingle/%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -DLTFAT_COMPLEXTYPE -c $< -o $@
 
-
 $(buildprefix):
 	@$(MKDIR) $(buildprefix)
 
@@ -181,7 +183,8 @@ $(objprefix)/complexdouble:
 $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
 
-.PHONY: clean help doc static shared
+
+.PHONY: clean help doc static shared munit
 
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
@@ -204,6 +207,11 @@ doc:
 cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
+
+munit:
+	$(MAKE) clean
+	$(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
+	$(MAKE) $(buildprefix)/ltfat.h
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
 	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h

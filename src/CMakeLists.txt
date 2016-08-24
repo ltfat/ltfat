@@ -1,9 +1,8 @@
-
-
 if (MSVC)
+        SET(CMAKE_CXX_FLAGS "/D_HAS_EXCEPTIONS=0")
 else (MSVC)
     SET(CMAKE_C_FLAGS "-fPIC -Wall -std=c99")
-    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11")
+    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11 -fno-exceptions -fno-rtti")
 SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 SET(LIBS m)
 endif(MSVC)
@@ -61,12 +60,12 @@ target_compile_definitions(double PUBLIC LTFAT_DOUBLE)
 target_compile_definitions(single PUBLIC LTFAT_SINGLE)
 
 if (MSVC)
-    target_compile_definitions(complexsingle PUBLIC DLL_EXPORT_SYMBOLS)
-    target_compile_definitions(complexdouble PUBLIC DLL_EXPORT_SYMBOLS)
-    target_compile_definitions(commondouble PUBLIC DLL_EXPORT_SYMBOLS)
-    target_compile_definitions(commonsingle PUBLIC DLL_EXPORT_SYMBOLS)
-    target_compile_definitions(double PUBLIC DLL_EXPORT_SYMBOLS)
-    target_compile_definitions(single PUBLIC DLL_EXPORT_SYMBOLS)
+    target_compile_definitions(complexsingle PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(complexdouble PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(commondouble PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(commonsingle PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(double PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(single PUBLIC LTFAT_BUILD_SHARED)
 endif(MSVC)
 
 add_library(ltfat_static STATIC
@@ -112,9 +111,9 @@ endif(MSVC)
 
 
 
-target_link_libraries(ltfat ${LAPACK_LIBRARIES} ${FFTW3_LIB} ${FFTW3F_LIB} ${LIBS})
-target_link_libraries(ltfatf ${LAPACK_LIBRARIES} ${FFTW3F_LIB} ${LIBS} )
-target_link_libraries(ltfatd  ${LAPACK_LIBRARIES} ${FFTW3_LIB} ${LIBS})
+target_link_libraries(ltfat ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3_LIB} ${FFTW3F_LIB} ${LIBS})
+target_link_libraries(ltfatf ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3F_LIB} ${LIBS} )
+target_link_libraries(ltfatd  ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3_LIB} ${LIBS})
 
 
 set(CMAKE_BUILD_TYPE Release)
