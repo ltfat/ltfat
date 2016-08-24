@@ -11,11 +11,11 @@
 #       define LTFAT_API
 #   endif
 #else
-#   if __GNUC__ >= 4
-#       define LTFAT_API __attribute__((visibility("default")))
-#   else
+// #   if __GNUC__ >= 4
+// #       define LTFAT_API __attribute__((visibility("default")))
+// #   else
 #       define LTFAT_API
-#   endif
+// #   endif
 #endif
 #endif
 

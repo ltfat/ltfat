@@ -9,7 +9,7 @@
 // typedef double fftw_complex[2]
 #include <complex>
 #include <cmath>
-using namespace std;
+// using namespace std;
 #else
 // C99 complex header
 // fftw3.h will define:
