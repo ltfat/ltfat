@@ -198,7 +198,7 @@ winbw=norm(firwin(flags.wintype,1000)).^2/1000;% This is the ERB at 1000 Hz
 % Construct the AUD filterbank
 if flags.do_real
     if isempty(kv.M)
-        M2=ceil(freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing+1;
+        M2=ceil((freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing)+1;
 %         M=M2;
     else
         M=kv.M;
