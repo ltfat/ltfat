@@ -38,7 +38,7 @@ typedef struct LTFAT_NAME(idgt_long_plan) LTFAT_NAME(idgt_long_plan);
  *                    const ltfat_phaseconvention ptype, complex float f[]);
  * </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
                       const ltfatInt L, const ltfatInt W,
                       const ltfatInt a, const ltfatInt M,
@@ -84,7 +84,7 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
  *                         ltfat_idgt_long_plan_sc** plan);
  * </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
                            const ltfatInt L, const ltfatInt W,
                            const ltfatInt a, const ltfatInt M,  LTFAT_COMPLEX f[],
@@ -108,7 +108,7 @@ LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
  * ltfat_idgt_long_execute_sc(ltfat_idgt_long_plan_sc* p);
  * </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgt_long_execute)(LTFAT_NAME(idgt_long_plan)* p);
 
 
@@ -136,7 +136,7 @@ LTFAT_NAME(idgt_long_execute)(LTFAT_NAME(idgt_long_plan)* p);
  *                                     complex double f[]);
  * </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgt_long_execute_newarray)(LTFAT_NAME(idgt_long_plan)* p,
                                        const LTFAT_COMPLEX c[],
                                        LTFAT_COMPLEX f[]);
@@ -158,15 +158,15 @@ LTFAT_NAME(idgt_long_execute_newarray)(LTFAT_NAME(idgt_long_plan)* p,
  * ltfat_idgt_long_done_sc(ltfat_idgt_long_plan_sc** p);
  * </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgt_long_done)(LTFAT_NAME(idgt_long_plan)** plan);
 /** @}*/
 
-// LTFAT_EXTERN void
+// LTFAT_API void
 // LTFAT_NAME(idgt_fac)(const LTFAT_COMPLEX *c, const LTFAT_COMPLEX *gf,
 //                      const ltfatInt L,
 //                      const ltfatInt W, const ltfatInt a, const ltfatInt M,
 //                      const ltfat_phaseconvention ptype, LTFAT_COMPLEX *f);
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(idgt_walnut_execute)(LTFAT_NAME(idgt_long_plan)* p);

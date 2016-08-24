@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
                                   const double shift, LTFAT_COMPLEX* out)
 {
@@ -58,7 +58,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                 LTFAT_COMPLEX* out)
 {
@@ -89,7 +89,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                  LTFAT_COMPLEX* out)
 {
@@ -107,7 +107,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
                                       const double shift, LTFAT_COMPLEX* out)
 {
@@ -140,7 +140,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                     LTFAT_COMPLEX* out)
 {
@@ -173,7 +173,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                      LTFAT_COMPLEX* out)
 {
@@ -192,7 +192,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, const ltfatInt L,
                                LTFAT_COMPLEX* out)
 {
@@ -225,7 +225,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, const ltfatInt L,
                                LTFAT_REAL* out)
 {
@@ -244,7 +244,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX* cFreqinv,
                                   const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                   LTFAT_COMPLEX* cTimeinv)
@@ -273,7 +273,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
                                       const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                       LTFAT_COMPLEX* cTimeinv)
@@ -303,7 +303,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
                                     const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                     LTFAT_COMPLEX* cFreqinv)
@@ -332,7 +332,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
                                         const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                                         LTFAT_COMPLEX* cFreqinv)

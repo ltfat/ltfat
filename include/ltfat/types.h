@@ -1,6 +1,8 @@
 /**
 *
+*
 */
+#include "ltfat/basicmacros.h"
 
 #ifdef LTFAT_COMPLEX
 #undef LTFAT_COMPLEX

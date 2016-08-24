@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 #include "ltfat/blaslapack.h"
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
                         const ltfatInt R,
                         const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX* gdualf)
@@ -50,7 +50,7 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
                             const ltfatInt R,
                             const ltfatInt a, const ltfatInt M,

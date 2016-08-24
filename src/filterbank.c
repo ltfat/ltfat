@@ -26,7 +26,7 @@ struct LTFAT_NAME(convsub_fftbl_plan_struct)
     ltfatInt bufLen;
 };
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbank_fft)(const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G[],
                            const ltfatInt L, const ltfatInt W, const ltfatInt a[], const ltfatInt M,
                            LTFAT_COMPLEX* cout[])
@@ -38,7 +38,7 @@ LTFAT_NAME(filterbank_fft)(const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G[],
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbank_fft_execute)(LTFAT_NAME(convsub_fft_plan) p[],
                                    const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G[],
                                    const ltfatInt M, LTFAT_COMPLEX* cout[])
@@ -51,7 +51,7 @@ LTFAT_NAME(filterbank_fft_execute)(LTFAT_NAME(convsub_fft_plan) p[],
 }
 
 
-LTFAT_EXTERN LTFAT_NAME(convsub_fft_plan)
+LTFAT_API LTFAT_NAME(convsub_fft_plan)
 LTFAT_NAME(convsub_fft_init)(const ltfatInt L, const ltfatInt W,
                              const ltfatInt a, const LTFAT_COMPLEX* cout)
 {
@@ -79,14 +79,14 @@ LTFAT_NAME(convsub_fft_init)(const ltfatInt L, const ltfatInt W,
     return p;
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_fft_done)(LTFAT_NAME(convsub_fft_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);
     ltfat_free(p);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_fft_execute)(const LTFAT_NAME(convsub_fft_plan) p,
                                 const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G,
                                 LTFAT_COMPLEX* cout)
@@ -122,7 +122,7 @@ LTFAT_NAME(convsub_fft_execute)(const LTFAT_NAME(convsub_fft_plan) p,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_fft)(const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G,
                         const ltfatInt L, const ltfatInt W,
                         const ltfatInt a, LTFAT_COMPLEX* cout)
@@ -132,7 +132,7 @@ LTFAT_NAME(convsub_fft)(const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G,
     LTFAT_NAME(convsub_fft_done)(p);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbank_fftbl)(const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G[],
                              const ltfatInt L, const ltfatInt Gl[],
                              const ltfatInt W, const double a[], const ltfatInt M,
@@ -146,7 +146,7 @@ LTFAT_NAME(filterbank_fftbl)(const LTFAT_COMPLEX* F, const LTFAT_COMPLEX* G[],
     }
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbank_fftbl_execute)(LTFAT_NAME(convsub_fftbl_plan) p[],
                                      const LTFAT_COMPLEX* F,
                                      const LTFAT_COMPLEX* G[],
@@ -161,7 +161,7 @@ LTFAT_NAME(filterbank_fftbl_execute)(LTFAT_NAME(convsub_fftbl_plan) p[],
 }
 
 
-LTFAT_EXTERN LTFAT_NAME(convsub_fftbl_plan)
+LTFAT_API LTFAT_NAME(convsub_fftbl_plan)
 LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
                                 const ltfatInt W, const double a,
                                 const LTFAT_COMPLEX* cout)
@@ -198,7 +198,7 @@ LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
     return p;
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);
@@ -207,7 +207,7 @@ LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p)
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
                                   const LTFAT_COMPLEX* F,
                                   const LTFAT_COMPLEX* G,
@@ -319,7 +319,7 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEX* F,  const LTFAT_COMPLEX* G,
                           const ltfatInt L, const ltfatInt Gl, const ltfatInt W,
                           const double a, const ltfatInt foff,
@@ -334,7 +334,7 @@ LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEX* F,  const LTFAT_COMPLEX* G,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                             const ltfatInt L, const ltfatInt Gl,
                             const ltfatInt W, const ltfatInt a, const ltfatInt M,

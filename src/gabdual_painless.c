@@ -23,7 +23,7 @@
 
 
 // Return first dl entries of the frame diagonal.
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
                          ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d)
 {
@@ -81,7 +81,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
                               const ltfatInt a, const ltfatInt M, LTFAT_TYPE* gt)
 {
@@ -105,11 +105,11 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
     GABDIAGAPPLY(gt);
 
 error:
-    if (d) ltfat_free(d);
+    ltfat_safefree(d);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
                              const ltfatInt a,  const ltfatInt M, LTFAT_TYPE* gd)
 {
@@ -134,11 +134,11 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
     GABDIAGAPPLY(gd);
 
 error:
-    if (d) ltfat_free(d);
+    ltfat_safefree(d);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a,
                            ltfatInt M, LTFAT_TYPE* gpu)
 {

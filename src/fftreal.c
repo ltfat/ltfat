@@ -6,7 +6,7 @@
 * FFreal routines
 */
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(fftreal)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
                     LTFAT_COMPLEX* cout)
 {
@@ -15,7 +15,7 @@ LTFAT_NAME(fftreal)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
     LTFAT_FFTW(destroy_plan)(p);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(fftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_REAL* f,
                             LTFAT_COMPLEX* cout)
 {
@@ -26,7 +26,7 @@ LTFAT_NAME(fftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_REAL* f,
 /*
 * IF anything else than FFTW_ESTIMATE is used for a flag, the planning overwrites input array !
 */
-LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_API LTFAT_FFTW(plan)
 LTFAT_NAME(fftreal_init)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
                          LTFAT_COMPLEX* cout, unsigned flag)
 {
@@ -39,7 +39,7 @@ LTFAT_NAME(fftreal_init)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
     return p;
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifftreal)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
                      LTFAT_REAL* f)
 {
@@ -48,7 +48,7 @@ LTFAT_NAME(ifftreal)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
     LTFAT_FFTW(destroy_plan)(p);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_COMPLEX* c,
                              const ltfatInt L, const ltfatInt W,
                              LTFAT_REAL* f)
@@ -64,7 +64,7 @@ LTFAT_NAME(ifftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_COMPLEX* c,
 /*
 * IF anything else than FFTW_ESTIMATE is used for a flag, the planning overwrites input array !
 */
-LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_API LTFAT_FFTW(plan)
 LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
                           LTFAT_REAL* f, unsigned flag)
 {

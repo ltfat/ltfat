@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN LTFAT_NAME(dgt_shearola_plan)
+LTFAT_API LTFAT_NAME(dgt_shearola_plan)
 LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
                               const ltfatInt W, const ltfatInt a, const ltfatInt M,
                               const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
@@ -45,7 +45,7 @@ LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
                                  const LTFAT_COMPLEX* f, const ltfatInt L,
                                  LTFAT_COMPLEX* cout)
@@ -129,7 +129,7 @@ LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_shearola_done)(LTFAT_NAME(dgt_shearola_plan) plan)
 {
     LTFAT_NAME(dgt_shear_done)(plan.plan);
@@ -140,7 +140,7 @@ LTFAT_NAME(dgt_shearola_done)(LTFAT_NAME(dgt_shearola_plan) plan)
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_shearola)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                          const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt a,
                          const ltfatInt M,

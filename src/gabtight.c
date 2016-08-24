@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
                           const ltfatInt L, const ltfatInt a,
                           const ltfatInt M, LTFAT_TYPE* gt)
@@ -47,7 +47,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
                          const ltfatInt L, const ltfatInt a,
                          const ltfatInt M, const ltfatInt gtl, LTFAT_TYPE* gt)

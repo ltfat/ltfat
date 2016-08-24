@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
                      LTFAT_TYPE *cout)
 {

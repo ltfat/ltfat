@@ -66,7 +66,7 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key)
 {
     ltfatInt pos, pos2, swap;
@@ -101,7 +101,7 @@ LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key)
     }
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 {
 
@@ -163,7 +163,7 @@ LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
     return key;
 }
 
-LTFAT_EXTERN LTFAT_NAME(heapinttask)*
+LTFAT_API LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
                              const ltfatInt initheapsize,
                              const LTFAT_REAL* s, int do_real)
@@ -184,7 +184,7 @@ LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
     return hit;
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(heapinttask_done)( LTFAT_NAME(heapinttask)* hit)
 {
     if (hit->heap)
@@ -194,14 +194,14 @@ LTFAT_NAME(heapinttask_done)( LTFAT_NAME(heapinttask)* hit)
     ltfat_free(hit);
 }
 
-LTFAT_EXTERN int*
+LTFAT_API int*
 LTFAT_NAME(heapinttask_get_mask)( LTFAT_NAME(heapinttask)* hit)
 {
     return hit->donemask;
 }
 
 
-LTFAT_EXTERN
+LTFAT_API
 void
 LTFAT_NAME(heapinttask_resetmax)(LTFAT_NAME(heapinttask)* hit,
                                  const LTFAT_REAL* news,
@@ -228,7 +228,7 @@ LTFAT_NAME(heapinttask_resetmax)(LTFAT_NAME(heapinttask)* hit,
     hit->donemask[Imax] = LTFAT_MASK_STARTPOINT;
 }
 
-LTFAT_EXTERN
+LTFAT_API
 void
 LTFAT_NAME(heapinttask_resetmask)(LTFAT_NAME(heapinttask)* hit,
                                   const int* mask,
@@ -375,7 +375,7 @@ LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
     }
 }
 
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
                          const LTFAT_REAL* tgradw,
                          const LTFAT_REAL* fgradw,
@@ -411,7 +411,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
     LTFAT_NAME(heapinttask_done)(hit);
 }
 
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
                                const LTFAT_REAL* tgradw,
                                const LTFAT_REAL* fgradw,
@@ -570,7 +570,7 @@ void LTFAT_NAME(trapezheapreal)(const LTFAT_NAME(heapinttask) *hit,
 
 }
 
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
                                   const LTFAT_REAL* tgradw,
                                   const LTFAT_REAL* fgradw,
@@ -607,7 +607,7 @@ void LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
 /*
  * tgradw and fgradw must be in radians and scaled such that the step is 1
  */
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
                              const LTFAT_REAL* tgradw,
                              const LTFAT_REAL* fgradw,
@@ -646,7 +646,7 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
     LTFAT_NAME(heapinttask_done)(hit);
 }
 
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
                                    const LTFAT_REAL* tgradw,
                                    const LTFAT_REAL* fgradw,
@@ -692,7 +692,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
  *  They convert the relative phase gradients in samples to
  *  absolute phase gradinets in radians.
  * */
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL* s,
                                   const LTFAT_REAL* tgrad,
                                   const LTFAT_REAL* fgrad,
@@ -718,7 +718,7 @@ LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL* s,
     LTFAT_SAFEFREEALL(tgradw, fgradw);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL* s,
                             const LTFAT_REAL* tgrad,
                             const LTFAT_REAL* fgrad,
@@ -743,7 +743,7 @@ LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL* s,
     LTFAT_SAFEFREEALL(tgradw, fgradw);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
                                       const LTFAT_REAL* tgrad,
                                       const LTFAT_REAL* fgrad,
@@ -770,7 +770,7 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
 
 }
 
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL* s,
                                      const LTFAT_REAL* tgrad,
                                      const LTFAT_REAL* fgrad,

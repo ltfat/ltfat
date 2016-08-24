@@ -2,7 +2,7 @@
 #include "dgtreal_long_private.h"
 
 
-LTFAT_EXTERN LTFAT_NAME(dgt_ola_plan)
+LTFAT_API LTFAT_NAME(dgt_ola_plan)
 LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
                          const ltfatInt W, const ltfatInt a, const ltfatInt M,
                          const ltfatInt bl, const ltfat_phaseconvention ptype,
@@ -50,7 +50,7 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX* g, const ltfatInt gl,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
                             const LTFAT_COMPLEX* f, const ltfatInt L,
                             LTFAT_COMPLEX* cout)
@@ -137,7 +137,7 @@ LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan)
 {
     LTFAT_NAME_COMPLEX(dgt_long_done)(&plan.plan);
@@ -146,7 +146,7 @@ LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan)
 
 
 
-LTFAT_EXTERN LTFAT_NAME(dgtreal_ola_plan)
+LTFAT_API LTFAT_NAME(dgtreal_ola_plan)
 LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL* g, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt a, const ltfatInt M,
                              const ltfatInt bl, const ltfat_phaseconvention ptype,
@@ -194,7 +194,7 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL* g, const ltfatInt gl,
 
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
                                 const LTFAT_REAL* f, const ltfatInt L,
                                 LTFAT_COMPLEX* cout)
@@ -281,7 +281,7 @@ LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtreal_ola_done)(LTFAT_NAME(dgtreal_ola_plan) plan)
 {
     LTFAT_NAME(dgtreal_long_done)(&plan.plan);

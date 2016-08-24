@@ -1,6 +1,6 @@
 #include "ltfat.h"
 
-LTFAT_EXTERN void
+LTFAT_API void
 ltfat_fftindex(const ltfatInt N, ltfatInt* indexout)
 {
     ltfatInt ii;
@@ -29,19 +29,19 @@ ltfat_fftindex(const ltfatInt N, ltfatInt* indexout)
     }
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_imax(const ltfatInt a, const ltfatInt b)
 {
     return (a > b ? a : b);
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_imin(const ltfatInt a, const ltfatInt b)
 {
     return (a < b ? a : b);
 }
 
-LTFAT_EXTERN ltfat_div_t
+LTFAT_API ltfat_div_t
 ltfat_idiv(const ltfatInt a, const ltfatInt b)
 {
     ltfat_div_t ret;
@@ -51,7 +51,7 @@ ltfat_idiv(const ltfatInt a, const ltfatInt b)
 }
 
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 makelarger(const ltfatInt L, const ltfatInt K)
 {
     /* This is a floor operation */
@@ -67,7 +67,7 @@ makelarger(const ltfatInt L, const ltfatInt K)
 }
 
 /* Extended Euclid algorithm. */
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt* r, ltfatInt* s )
 {
     ltfatInt a1 = a;
@@ -99,7 +99,7 @@ ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt* r, ltfatInt* s )
     return a1;
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_lcm(const ltfatInt a, const ltfatInt b)
 {
     ltfatInt junk_r, junk_s;
@@ -109,7 +109,7 @@ ltfat_lcm(const ltfatInt a, const ltfatInt b)
     return (a * b / c);
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_dgtlength(const ltfatInt Ls, const ltfatInt a, const ltfatInt M)
 {
     ltfatInt minL = ltfat_lcm(a, M);
@@ -118,7 +118,7 @@ ltfat_dgtlength(const ltfatInt Ls, const ltfatInt a, const ltfatInt M)
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
              ltfatInt* a, ltfatInt* M, ltfatInt* L, ltfatInt* N, ltfatInt* Ngood)
 {
@@ -148,7 +148,7 @@ gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
 }
 
 /* Determine the size of the output array of wfacreal and iwfacreal */
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
 {
 
@@ -166,7 +166,7 @@ wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
 
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_nextpow2(const ltfatInt y)
 {
     ltfatInt x = (ltfatInt) y;
@@ -188,7 +188,7 @@ ltfat_nextpow2(const ltfatInt y)
     return x;
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_nextfastfft(const ltfatInt x)
 {
     ltfatInt xtmp = x;
@@ -209,25 +209,25 @@ ltfat_nextfastfft(const ltfatInt x)
     return xtmp;
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_pow2(const ltfatInt x)
 {
     return (((ltfatInt)1) << (x));
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
 {
     return ((x) & (pow2var - 1));
 }
 
-/* LTFAT_EXTERN int */
+/* LTFAT_API int */
 /* isPow2(const ltfatInt x) */
 /* { */
 /*     return x == ltfat_nextpow2(x); */
 /* } */
 /*  */
-/* LTFAT_EXTERN ltfatInt */
+/* LTFAT_API ltfatInt */
 /* ilog2(const ltfatInt x) */
 /* { */
 /*     ltfatInt tmp = 0; */
@@ -237,7 +237,7 @@ ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
 /* } */
 /*  */
 /* // integer power by squaring */
-/* LTFAT_EXTERN ltfatInt */
+/* LTFAT_API ltfatInt */
 /* ipow(const ltfatInt base, const ltfatInt exp) */
 /* { */
 /*     ltfatInt baseTmp = (ltfatInt) base; */
@@ -255,7 +255,7 @@ ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
 /*     return result; */
 /* } */
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,
                    const ltfatInt offset, const ltfatExtType ext)
 {
@@ -276,7 +276,7 @@ filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,
     return Lc;
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_round(const double x)
 {
     if (x < 0.0)
@@ -285,14 +285,14 @@ ltfat_round(const double x)
         return (ltfatInt)(x + 0.5);
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_positiverem(const ltfatInt a, const ltfatInt b)
 {
     const ltfatInt c = a % b;
     return (c < 0 ? c + b : c);
 }
 
-LTFAT_EXTERN ltfatInt
+LTFAT_API ltfatInt
 ltfat_rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax)
 {
     ltfatInt c = a < amin ? amin : a;

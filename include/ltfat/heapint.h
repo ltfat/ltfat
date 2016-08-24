@@ -27,10 +27,10 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor);
 void
 LTFAT_NAME(heap_reset)(LTFAT_NAME(heap)* h, const LTFAT_REAL* news);
 
-ltfatInt
+LTFAT_API ltfatInt
 LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h);
 
-void
+LTFAT_API void
 LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key);
 
 /*  */

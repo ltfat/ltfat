@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 // in might be equal to out
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
                       const ltfatInt shift, LTFAT_TYPE out[])
 {
@@ -49,21 +49,21 @@ error:
 
 
 // in might be equal to out
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(fftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
 {
     return LTFAT_NAME(circshift)(in, L, (L / 2), out);
 }
 
 // in might be equal to out
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(ifftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
 {
     return LTFAT_NAME(circshift)(in, L, -(L / 2), out);
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(reverse_array)(const LTFAT_TYPE* in, const ltfatInt L,
                           LTFAT_TYPE* out)
 {
@@ -92,7 +92,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(conjugate_array)(const LTFAT_TYPE* in, const ltfatInt L,
                             LTFAT_TYPE* out)
 {
@@ -113,7 +113,7 @@ error:
 
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(periodize_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
                             const ltfatInt Lout, LTFAT_TYPE* out )
 {
@@ -156,7 +156,7 @@ error:
  *
  * without the intermediate step.
  * */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
                        const ltfatInt offset,
                        const ltfatInt Lfold, LTFAT_TYPE* out)
@@ -215,7 +215,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE* in,  const ltfatInt L,
                                 LTFAT_COMPLEX* out)
 {
@@ -235,7 +235,7 @@ error:
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
                                const ltfatInt W, const ltfatInt a,
                                const ltfatInt M, LTFAT_TYPE* cout)
@@ -256,7 +256,7 @@ LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
                                  const ltfatInt W, const ltfatInt a,
                                  const ltfatInt M, LTFAT_TYPE* cout)
@@ -277,7 +277,7 @@ LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
                            LTFAT_TYPE* max, ltfatInt* idx)
 {
@@ -299,7 +299,7 @@ LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
     }
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
                                   const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
 {
@@ -324,7 +324,7 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
     return found;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
                      const ltfatInt Llong, LTFAT_TYPE* out)
 {
@@ -356,7 +356,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(long2fir)(const LTFAT_TYPE* in, const ltfatInt Llong,
                      const ltfatInt Lfir, LTFAT_TYPE* out)
 {
@@ -384,7 +384,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
                       ltfat_normalize_t flag, LTFAT_TYPE* out)
 {
@@ -456,7 +456,7 @@ error:
     return status;
 }
 
-/* LTFAT_EXTERN int */
+/* LTFAT_API int */
 /* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, const ltfatInt Ls, const ltfatInt W, */
 /*                     const ltfatInt L, LTFAT_TYPE* out) */
 /* { */
@@ -497,7 +497,7 @@ error:
 
 
 
-/* LTFAT_EXTERN LTFAT_REAL */
+/* LTFAT_API LTFAT_REAL */
 /* LTFAT_NAME(norm)(const LTFAT_TYPE in[], const ltfatInt L, */
 /*                  ltfat_normalize_t flag) */
 /* { */

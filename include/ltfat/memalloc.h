@@ -61,7 +61,7 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
-LTFAT_EXTERN
+LTFAT_API
 void* ltfat_malloc (size_t n);
 
 /** Allocate memory block and initialize to zero
@@ -88,7 +88,7 @@ void* ltfat_malloc (size_t n);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
-LTFAT_EXTERN
+LTFAT_API
 void* ltfat_calloc (size_t nmemb, size_t size);
 
 /** Re-allocate memory block
@@ -115,15 +115,15 @@ void* ltfat_calloc (size_t nmemb, size_t size);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
-LTFAT_EXTERN
+LTFAT_API
 void* ltfat_realloc (void *ptr, size_t nold, size_t nnew);
 
-LTFAT_EXTERN
+LTFAT_API
 void  ltfat_free(const void *ptr);
 
 /** @} */
 
-LTFAT_EXTERN
+LTFAT_API
 void  ltfat_safefree(const void *ptr);
 
 #ifdef __cplusplus

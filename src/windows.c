@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
                    LTFAT_REAL* g)
 {
@@ -52,7 +52,7 @@ error:
 %end;
 */
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
                          const double c_f,
                          LTFAT_COMPLEX* g)

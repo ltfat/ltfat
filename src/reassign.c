@@ -4,7 +4,7 @@
 #include "ltfat/reassign_typeconstant.h"
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(gabreassign)(const LTFAT_TYPE *s, const LTFAT_REAL *tgrad,
                         const LTFAT_REAL *fgrad, const ltfatInt L, const ltfatInt W,
                         const ltfatInt a, const ltfatInt M, LTFAT_TYPE *sr)
@@ -48,7 +48,7 @@ LTFAT_NAME(gabreassign)(const LTFAT_TYPE *s, const LTFAT_REAL *tgrad,
 
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
                                const LTFAT_REAL *tgrad[],
                                const LTFAT_REAL *fgrad[],

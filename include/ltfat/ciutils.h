@@ -63,7 +63,7 @@ typedef enum
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
                       const ltfatInt shift, LTFAT_TYPE out[]);
 
@@ -95,7 +95,7 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
 
 /** ifftshift an array
@@ -126,7 +126,7 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
 
 
@@ -161,7 +161,7 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  * LTFATERR_BADREQSIZE   | Output array is shorter than the input array: \a Llong < \a Lfir
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt Llong,
                      LTFAT_TYPE out[]);
 
@@ -196,7 +196,7 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt 
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  * LTFATERR_BADREQSIZE   | Output array is longer than the input array: \a Lfir > \a Llong
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt Lfir,
                      LTFAT_TYPE out[]);
 
@@ -228,7 +228,7 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  * LTFATERR_CANNOTHAPPEN | \a flag is not defined in ltfat_normalize_t enum.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE in[], const ltfatInt L,
                       ltfat_normalize_t flag, LTFAT_TYPE out[]);
 
@@ -259,38 +259,38 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE in[], const ltfatInt L,
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_COMPLEX *out);
 
 /** @}*/
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
                                const ltfatInt W, const ltfatInt a,
                                const ltfatInt M, LTFAT_TYPE *cout);
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
                                  const ltfatInt W, const ltfatInt a,
                                  const ltfatInt M, LTFAT_TYPE *cout);
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(reverse_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE *out);
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(conjugate_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE *out);
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(periodize_array)(const LTFAT_TYPE *in, const ltfatInt Lin,
                             const ltfatInt Lout, LTFAT_TYPE *out );
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(fold_array)(const LTFAT_TYPE *in, const ltfatInt Lin,
                        const ltfatInt offset,
                        const ltfatInt Lfold, LTFAT_TYPE *out);
 
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx);
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx);

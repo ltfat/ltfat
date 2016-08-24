@@ -9,8 +9,9 @@ ltfat_error_handler_t* ltfat_error_handler = NULL;
 static void no_error_handler (int ltfat_errno, const char* file, int line,
                               const char* funcname, const char* reason);
 
-void ltfat_error (int ltfat_errno, const char* file, int line,
-                  const char* funcname, const char* format, ...)
+LTFAT_API void
+ltfat_error (int ltfat_errno, const char* file, int line,
+             const char* funcname, const char* format, ...)
 {
     // Shortcut when no_error_handler is used
     if (ltfat_error_handler && ltfat_error_handler == no_error_handler )
@@ -38,7 +39,7 @@ void ltfat_error (int ltfat_errno, const char* file, int line,
     }
 }
 
-ltfat_error_handler_t*
+LTFAT_API ltfat_error_handler_t*
 ltfat_set_error_handler (ltfat_error_handler_t* new_handler)
 {
     ltfat_error_handler_t* previous_handler = ltfat_error_handler;
@@ -46,7 +47,7 @@ ltfat_set_error_handler (ltfat_error_handler_t* new_handler)
     return previous_handler;
 }
 
-ltfat_error_handler_t*
+LTFAT_API ltfat_error_handler_t*
 ltfat_set_error_handler_off (void)
 {
     ltfat_error_handler_t* previous_handler = ltfat_error_handler;

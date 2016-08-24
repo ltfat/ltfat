@@ -27,7 +27,7 @@ struct LTFAT_NAME(idgtreal_fb_plan)
         ff[ii] *= gw[ii]; \
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
                         const ltfatInt L, const ltfatInt gl, const ltfatInt W,
                         const ltfatInt a, const ltfatInt M,
@@ -50,7 +50,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, const ltfatInt gl,
                              const ltfatInt a, const ltfatInt M, const ltfat_phaseconvention ptype,
                              unsigned flags, LTFAT_NAME(idgtreal_fb_plan)** pout)
@@ -89,16 +89,26 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, const ltfatInt gl,
     *pout = p;
     return status;
 error:
-    if (p)
-    {
-        LTFAT_SAFEFREEALL(p->cbuf, p->crbuf, p->gw, p->ff);
-        LTFAT_NAME(ifftreal_done)(&p->p_small);
-        ltfat_free(p);
-    }
+    if (p) LTFAT_NAME(idgtreal_fb_done)(&p);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
+LTFAT_NAME(idgtreal_fb_done)(LTFAT_NAME(idgtreal_fb_plan)** p)
+{
+    LTFAT_NAME(idgtreal_fb_plan)* pp;
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(*p);
+    pp = *p;
+    LTFAT_SAFEFREEALL(pp->cbuf, pp->crbuf, pp->ff, pp->gw);
+    if (pp->p_small) LTFAT_NAME(ifftreal_done)(&pp->p_small);
+    ltfat_free(pp);
+    pp = NULL;
+error:
+    return status;
+}
+
+LTFAT_API int
 LTFAT_NAME(idgtreal_fb_execute)(LTFAT_NAME(idgtreal_fb_plan)* p,
                                 const LTFAT_COMPLEX* cin,
                                 const ltfatInt L, const ltfatInt W, LTFAT_REAL* f)
@@ -188,20 +198,6 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
-LTFAT_NAME(idgtreal_fb_done)(LTFAT_NAME(idgtreal_fb_plan)** p)
-{
-    LTFAT_NAME(idgtreal_fb_plan)* pp;
-    int status = LTFATERR_SUCCESS;
-    CHECKNULL(p); CHECKNULL(*p);
-    pp = *p;
-    LTFAT_SAFEFREEALL(pp->cbuf, pp->crbuf, pp->ff, pp->gw);
-    LTFAT_NAME(ifftreal_done)(&pp->p_small);
-    ltfat_free(pp);
-    pp = NULL;
-error:
-    return status;
-}
 
 
 #undef THE_SUM_REAL

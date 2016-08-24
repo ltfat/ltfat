@@ -62,18 +62,11 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, const ltfatInt gl,
     *pout = p;
     return status;
 error:
-    if (p)
-    {
-        if (p->g) ltfat_free(p->g);
-        if (p->fftBuf) ltfat_free(p->fftBuf);
-        if (p->pfft) LTFAT_FFTW(destroy_plan)(p->pfft);
-        ltfat_free(p);
-    }
-    *pout = NULL;
+    if (p) LTFAT_NAME(rtdgtreal_done)(&p);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
                            const ltfatInt M, const rtdgt_phasetype ptype,
                            LTFAT_NAME(rtdgtreal_plan)** p)
@@ -81,7 +74,7 @@ LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
     return LTFAT_NAME(rtdgtreal_commoninit)(g, gl, M, ptype, LTFAT_FORWARD, p);
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
                             const ltfatInt M, const rtdgt_phasetype ptype,
                             LTFAT_NAME(rtdgtreal_plan)** p)
@@ -89,7 +82,7 @@ LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
     return LTFAT_NAME(rtdgtreal_commoninit)(g, gl, M, ptype, LTFAT_INVERSE, p);
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
                               const LTFAT_REAL* f, const ltfatInt W,
                               LTFAT_COMPLEX* c)
@@ -140,7 +133,7 @@ LTFAT_NAME(rtdgtreal_execute_wrapper)(void* p,
     return LTFAT_NAME(rtdgtreal_execute)((LTFAT_NAME(rtdgtreal_plan)*) p, f, W, c);
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
                                const LTFAT_COMPLEX* c, const ltfatInt W,
                                LTFAT_REAL* f)
@@ -190,7 +183,7 @@ LTFAT_NAME(rtidgtreal_execute_wrapper)(void* p,
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p)
 {
     LTFAT_NAME(rtdgtreal_plan)* pp;
@@ -198,16 +191,16 @@ LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p)
     CHECKNULL(p); CHECKNULL(*p);
 
     pp = *p;
-    ltfat_free(pp->g);
-    ltfat_free(pp->fftBuf);
-    LTFAT_FFTW(destroy_plan)(pp->pfft);
+    ltfat_safefree(pp->g);
+    ltfat_safefree(pp->fftBuf);
+    if (pp->pfft) LTFAT_FFTW(destroy_plan)(pp->pfft);
     ltfat_free(pp);
     pp = NULL;
 error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_done)(LTFAT_NAME(rtidgtreal_plan)** p)
 {
     return LTFAT_NAME(rtdgtreal_done)(p);
@@ -227,7 +220,7 @@ struct LTFAT_NAME(rtdgtreal_fifo_state)
 };
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay,
                                 ltfatInt gl, ltfatInt a, ltfatInt Wmax,
                                 LTFAT_NAME(rtdgtreal_fifo_state)** pout)
@@ -256,30 +249,25 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay,
     *pout = p;
     return status;
 error:
-    if (p)
-    {
-        if (p->buf) ltfat_free(p->buf);
-        ltfat_free(p);
-    }
-    *pout = NULL;
+    if (p) LTFAT_NAME(rtdgtreal_fifo_done)(&p);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_done)(LTFAT_NAME(rtdgtreal_fifo_state)** p)
 {
     LTFAT_NAME(rtdgtreal_fifo_state)* pp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
-    ltfat_free(pp->buf);
+    ltfat_safefree(pp->buf);
     ltfat_free(pp);
     pp = NULL;
 error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                  const LTFAT_REAL** buf,
                                  const ltfatInt bufLen, const ltfatInt W)
@@ -341,7 +329,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                 LTFAT_REAL* buf)
 {
@@ -406,7 +394,7 @@ struct LTFAT_NAME(rtidgtreal_fifo_state)
 };
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
                                  ltfatInt a, ltfatInt Wmax,
                                  LTFAT_NAME(rtidgtreal_fifo_state)** pout)
@@ -433,30 +421,25 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
     *pout = p;
     return status;
 error:
-    if (p)
-    {
-        if (p->buf) ltfat_free(p->buf);
-        ltfat_free(p);
-    }
-    *pout = NULL;
+    if (p) LTFAT_NAME(rtidgtreal_fifo_done)(&p);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_done)(LTFAT_NAME(rtidgtreal_fifo_state)** p)
 {
     LTFAT_NAME(rtidgtreal_fifo_state)* pp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
-    ltfat_free(pp->buf);
+    ltfat_safefree(pp->buf);
     ltfat_free(pp);
     pp = NULL;
 error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                   const LTFAT_REAL* buf)
 {
@@ -510,7 +493,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                  const ltfatInt bufLen, const ltfatInt W,
                                  LTFAT_REAL** buf)
@@ -591,7 +574,7 @@ struct LTFAT_NAME(rtdgtreal_processor_state)
 };
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
                                      const LTFAT_REAL* gs, const ltfatInt gsl,
                                      const ltfatInt a, const ltfatInt M, const ltfatInt Wmax,
@@ -649,20 +632,11 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
     *pout = p;
     return status;
 error:
-    if (p)
-    {
-        LTFAT_SAFEFREEALL(p->buf, p->fftbufIn, p->fftbufOut);
-        if (p->fwdfifo) LTFAT_NAME(rtdgtreal_fifo_done)(&p->fwdfifo);
-        if (p->backfifo) LTFAT_NAME(rtidgtreal_fifo_done)(&p->backfifo);
-        if (p->fwdplan) LTFAT_NAME(rtdgtreal_done)(&p->fwdplan);
-        if (p->backplan) LTFAT_NAME(rtidgtreal_done)(&p->backplan);
-        if (p) ltfat_free(p);
-    }
-    *pout = NULL;
+    if (p) LTFAT_NAME(rtdgtreal_processor_done)(&p);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
         const ltfatInt gl, const ltfatInt a, const ltfatInt M,
         const ltfatInt Wmax,
@@ -708,7 +682,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_setcallback)(
     LTFAT_NAME( rtdgtreal_processor_state)* p,
     LTFAT_NAME(rtdgtreal_processor_callback)* callback,
@@ -723,7 +697,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     LTFAT_NAME(rtdgtreal_processor_state)* p,
     const LTFAT_REAL* in,
@@ -743,7 +717,7 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     return LTFAT_NAME(rtdgtreal_processor_execute)( p, inTmp, len, chanNo, outTmp);
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute)(
     LTFAT_NAME(rtdgtreal_processor_state)* p,
     const LTFAT_REAL** in,
@@ -788,7 +762,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     return LTFATERR_SUCCESS;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** p)
 {
     LTFAT_NAME(rtdgtreal_processor_state)* pp;
@@ -796,20 +770,20 @@ LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** p)
     CHECKNULL(p); CHECKNULL(*p);
 
     pp = *p;
-    LTFAT_NAME(rtdgtreal_fifo_done)(&pp->fwdfifo);
-    LTFAT_NAME(rtidgtreal_fifo_done)(&pp->backfifo);
-    LTFAT_NAME(rtdgtreal_done)(&pp->fwdplan);
-    LTFAT_NAME(rtidgtreal_done)(&pp->backplan);
-    ltfat_free(pp->buf);
-    ltfat_free(pp->fftbufIn);
-    ltfat_free(pp->fftbufOut);
+    if (pp->fwdfifo) LTFAT_NAME(rtdgtreal_fifo_done)(&pp->fwdfifo);
+    if (pp->backfifo) LTFAT_NAME(rtidgtreal_fifo_done)(&pp->backfifo);
+    if (pp->fwdplan) LTFAT_NAME(rtdgtreal_done)(&pp->fwdplan);
+    if (pp->backplan) LTFAT_NAME(rtidgtreal_done)(&pp->backplan);
+    ltfat_safefree(pp->buf);
+    ltfat_safefree(pp->fftbufIn);
+    ltfat_safefree(pp->fftbufOut);
 
     if (pp->garbageBinSize)
     {
         for (int ii = 0; ii < pp->garbageBinSize; ii++)
-            ltfat_free(pp->garbageBin[ii]);
+            ltfat_safefree(pp->garbageBin[ii]);
 
-        ltfat_free(pp->garbageBin);
+        ltfat_safefree(pp->garbageBin);
     }
 
     ltfat_free(pp);
@@ -818,7 +792,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(default_rtdgtreal_processor_callback)(void* UNUSED(userdata),
         const LTFAT_COMPLEX* in, const int M2, const int W, LTFAT_COMPLEX* out)
 {

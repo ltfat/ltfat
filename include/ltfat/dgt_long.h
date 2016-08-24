@@ -42,7 +42,7 @@ typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
  *                    complex float c[]);
  *  </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
                      const ltfatInt M, const ltfat_phaseconvention ptype,
@@ -90,7 +90,7 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
  *                         dgt_long_plan_sc** p);
  *  </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], const ltfatInt L,
                           const ltfatInt W, const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX c[],
                           const ltfat_phaseconvention ptype, unsigned flags,
@@ -113,7 +113,7 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], const ltfa
  *  ltfat_dgt_long_execute_sc(ltfat_dgt_long_plan_sc* plan);
  *  </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan);
 
 /** Execute DGT plan
@@ -141,7 +141,7 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan);
  *                                     const complex float f[], complex float c[]);
  *  </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
                                       const LTFAT_TYPE f[], LTFAT_COMPLEX c[]);
 
@@ -162,10 +162,10 @@ LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
  *  </tt>
  */
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan);
 
 /** @}*/
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan, LTFAT_COMPLEX* cout);

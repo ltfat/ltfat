@@ -51,7 +51,7 @@
          f2[n+w*L] = f2[n]*f[n+w*L];
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(dwiltiii_long)(const LTFAT_COMPLEX* f,
                                   const LTFAT_COMPLEX* g,
                                   const ltfatInt L, const ltfatInt W,
@@ -79,7 +79,7 @@ LTFAT_NAME_COMPLEX(dwiltiii_long)(const LTFAT_COMPLEX* f,
     LTFAT_SAFEFREEALL(coef2, f2);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                                const ltfatInt L, const ltfatInt W,
                                const ltfatInt M, LTFAT_REAL* cout)
@@ -110,7 +110,7 @@ LTFAT_NAME_REAL(dwiltiii_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                                 const ltfatInt L, const ltfatInt gl,
                                 const ltfatInt W, const ltfatInt M,
@@ -142,7 +142,7 @@ LTFAT_NAME_COMPLEX(dwiltiii_fb)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(dwiltiii_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                              const ltfatInt L, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt M,

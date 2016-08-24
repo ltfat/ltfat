@@ -7,7 +7,7 @@ if (ii == domod.quot + domod.rem) \
                 posInt = startInt; \
             }while(0)
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g)
 {
     double step, startInt, posInt;

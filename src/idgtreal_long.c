@@ -26,7 +26,7 @@ struct LTFAT_NAME(idgtreal_long_plan)
 };
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
                           const ltfatInt L, const ltfatInt W,
                           const ltfatInt a, const ltfatInt M,
@@ -49,7 +49,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
                                const ltfatInt L, const ltfatInt W,
                                const ltfatInt a, const ltfatInt M, LTFAT_REAL* f,
@@ -74,7 +74,7 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN,
-          !(L % minL), "L (passed %d) must be divisible by lcm(a,M)=%d.",L, minL);
+          !(L % minL), "L (passed %d) must be divisible by lcm(a,M)=%d.", L, minL);
 
     CHECKMEM(plan =
                  (LTFAT_NAME(idgtreal_long_plan)*) ltfat_calloc(1, sizeof * plan));
@@ -124,19 +124,30 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     *pout = plan;
     return status;
 error:
-    if (plan)
-    {
-        if (plan->p_before) LTFAT_NAME(ifftreal_done)(&plan->p_before);
-        if (plan->p_after) LTFAT_NAME(fftreal_done)(&plan->p_after);
-        if (plan->p_veryend) LTFAT_NAME(ifftreal_done)(&plan->p_veryend);
-        LTFAT_SAFEFREEALL(plan->gf, plan->ff, plan->cf, plan->cwork, plan->cbuf,
-                          plan->sbuf);
-        ltfat_free(plan);
-    }
+    if (plan) LTFAT_NAME(idgtreal_long_done)(&plan);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
+LTFAT_NAME(idgtreal_long_done)(LTFAT_NAME(idgtreal_long_plan)** plan)
+{
+    LTFAT_NAME(idgtreal_long_plan)* p;
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(plan); CHECKNULL(*plan);
+    p = *plan;
+
+    if (p->p_before)  LTFAT_NAME(ifftreal_done)(&p->p_before);
+    if (p->p_after)   LTFAT_NAME(fftreal_done)(&p->p_after);
+    if (p->p_veryend) LTFAT_NAME(ifftreal_done)(&p->p_veryend);
+    LTFAT_SAFEFREEALL(p->gf, p->ff, p->cf, p->cwork, p->cbuf, p->sbuf);
+
+    ltfat_free(p);
+    p = NULL;
+error:
+    return status;
+}
+
+LTFAT_API int
 LTFAT_NAME(idgtreal_long_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
 {
     int status = LTFATERR_SUCCESS;
@@ -153,7 +164,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(idgtreal_long_execute_newarray)(LTFAT_NAME(idgtreal_long_plan)* p,
         const LTFAT_COMPLEX* c, LTFAT_REAL* f)
 {
@@ -177,26 +188,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
-LTFAT_NAME(idgtreal_long_done)(LTFAT_NAME(idgtreal_long_plan)** plan)
-{
-    LTFAT_NAME(idgtreal_long_plan)* p;
-    int status = LTFATERR_SUCCESS;
-    CHECKNULL(plan); CHECKNULL(*plan);
-    p = *plan;
-
-    LTFAT_NAME(ifftreal_done)(&p->p_before);
-    LTFAT_NAME(fftreal_done)(&p->p_after);
-    LTFAT_NAME(ifftreal_done)(&p->p_veryend);
-    LTFAT_SAFEFREEALL(p->gf, p->ff, p->cf, p->cwork, p->cbuf, p->sbuf);
-
-    ltfat_free(p);
-    p = NULL;
-error:
-    return status;
-}
-
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(idgtreal_walnut_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
 {
     const ltfatInt b = p->L / p->M;

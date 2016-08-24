@@ -12,7 +12,7 @@
  *
  * \returns Status code
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
                          ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d);
 
@@ -51,7 +51,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
  * LTFATERR_NOTPAINLESS  | System is not painless. 
  * LTFATERR_NOMEM        | Indicates that the heap allocation failed.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfatInt a,
                              const ltfatInt M, LTFAT_TYPE gd[]);
 
@@ -86,7 +86,7 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfa
  * LTFATERR_NOTPAINLESS  | System is not painless. 
  * LTFATERR_NOMEM        | Indicates that the heap allocation failed.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfatInt a,
                               const ltfatInt M, LTFAT_TYPE gt[]);
 
@@ -108,6 +108,6 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltf
  *
  * \returns Status code
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a,
                            ltfatInt M, LTFAT_TYPE* gpu);

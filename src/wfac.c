@@ -17,7 +17,7 @@ struct LTFAT_NAME(wfac_plan)
     LTFAT_FFTW(plan) p_before;
 };
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(wfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
                       unsigned flags, LTFAT_NAME(wfac_plan)** pout)
 {
@@ -68,7 +68,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
                          const ltfatInt R, LTFAT_COMPLEX* gf)
 {
@@ -136,7 +136,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(wfac_done)(LTFAT_NAME(wfac_plan)** pout)
 {
     int status = LTFATERR_SUCCESS;
@@ -151,7 +151,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(wfac)(const LTFAT_TYPE* g, const ltfatInt L, const ltfatInt R,
                  const ltfatInt a, const ltfatInt M,
                  LTFAT_COMPLEX* gf)
@@ -171,7 +171,7 @@ error:
 }
 
 
-/* LTFAT_EXTERN int */
+/* LTFAT_API int */
 /* LTFAT_NAME(wfac)(const LTFAT_TYPE* g, const ltfatInt L, const ltfatInt R, */
 /*                  const ltfatInt a, const ltfatInt M, */
 /*                  LTFAT_COMPLEX* gf) */

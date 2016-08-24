@@ -23,7 +23,7 @@ struct LTFAT_NAME(upconv_fftbl_plan_struct)
     ltfatInt bufLen;
 };
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifilterbank_fft)(const LTFAT_COMPLEX* cin[],
                             const LTFAT_COMPLEX* G[],
                             const ltfatInt L, const ltfatInt W, const ltfatInt a[],
@@ -38,7 +38,7 @@ LTFAT_NAME(ifilterbank_fft)(const LTFAT_COMPLEX* cin[],
     }
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifilterbank_fft_execute)(LTFAT_NAME(upconv_fft_plan) p[],
                                     const LTFAT_COMPLEX* cin[],
                                     const LTFAT_COMPLEX* G[],
@@ -58,7 +58,7 @@ LTFAT_NAME(ifilterbank_fft_execute)(LTFAT_NAME(upconv_fft_plan) p[],
 
 
 // Inverse
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_fft)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* G,
                        const ltfatInt L, const ltfatInt W, const ltfatInt a,
                        LTFAT_COMPLEX* F)
@@ -71,7 +71,7 @@ LTFAT_NAME(upconv_fft)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* G,
     LTFAT_NAME(upconv_fft_done)(p);
 }
 
-LTFAT_EXTERN LTFAT_NAME(upconv_fft_plan)
+LTFAT_API LTFAT_NAME(upconv_fft_plan)
 LTFAT_NAME(upconv_fft_init)(const ltfatInt L, const ltfatInt W,
                             const ltfatInt a)
 {
@@ -100,7 +100,7 @@ LTFAT_NAME(upconv_fft_init)(const ltfatInt L, const ltfatInt W,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_fft_execute)(LTFAT_NAME(upconv_fft_plan) p,
                                const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* G,
                                LTFAT_COMPLEX* F)
@@ -133,7 +133,7 @@ LTFAT_NAME(upconv_fft_execute)(LTFAT_NAME(upconv_fft_plan) p,
     }
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_fft_done)(LTFAT_NAME(upconv_fft_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);
@@ -141,7 +141,7 @@ LTFAT_NAME(upconv_fft_done)(LTFAT_NAME(upconv_fft_plan) p)
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifilterbank_fftbl)(const LTFAT_COMPLEX* cin[],
                               const LTFAT_COMPLEX* G[],
                               const ltfatInt L, const ltfatInt Gl[],
@@ -159,7 +159,7 @@ LTFAT_NAME(ifilterbank_fftbl)(const LTFAT_COMPLEX* cin[],
     }
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifilterbank_fftbl_execute)(LTFAT_NAME(upconv_fftbl_plan) p[],
                                       const LTFAT_COMPLEX* cin[],
                                       const LTFAT_COMPLEX* G[],
@@ -180,7 +180,7 @@ LTFAT_NAME(ifilterbank_fftbl_execute)(LTFAT_NAME(upconv_fftbl_plan) p[],
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* G,
                          const ltfatInt L, const ltfatInt Gl, const ltfatInt W,
                          const double a,
@@ -195,7 +195,7 @@ LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* G,
     LTFAT_NAME(upconv_fftbl_done)( p);
 }
 
-LTFAT_EXTERN LTFAT_NAME(upconv_fftbl_plan)
+LTFAT_API LTFAT_NAME(upconv_fftbl_plan)
 LTFAT_NAME(upconv_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
                                const ltfatInt W, const double a)
 {
@@ -231,7 +231,7 @@ LTFAT_NAME(upconv_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
                                  const LTFAT_COMPLEX* cin, const LTFAT_COMPLEX* G,
                                  const ltfatInt foff,
@@ -320,7 +320,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_fftbl_done)(LTFAT_NAME(upconv_fftbl_plan) p)
 {
     LTFAT_FFTW(destroy_plan)(p->p_c);

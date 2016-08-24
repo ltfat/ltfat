@@ -1,6 +1,6 @@
 #include "dgtreal_long_private.h"
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                          const ltfatInt L, const ltfatInt W, const ltfatInt a,
                          const ltfatInt M, const ltfat_phaseconvention ptype,
@@ -25,7 +25,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                               const ltfatInt L, const ltfatInt W,
                               const ltfatInt a, const ltfatInt M,
@@ -101,19 +101,29 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     *pout = plan;
     return status;
 error:
-    if (plan)
-    {
-        if (plan->p_veryend) LTFAT_NAME(fftreal_done)(&plan->p_veryend);
-        if (plan->p_before)  LTFAT_NAME(fftreal_done)(&plan->p_before);
-        if (plan->p_after)   LTFAT_NAME(ifftreal_done)(&plan->p_after);
-        LTFAT_SAFEFREEALL(plan->sbuf, plan->cbuf, plan->gf, plan->ff, plan->cf,
-                          plan->cwork);
-        ltfat_free(plan);
-    }
+    if (plan) LTFAT_NAME(dgtreal_long_done)(&plan);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
+LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan)
+{
+    LTFAT_NAME(dgtreal_long_plan)* pp;
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(plan); CHECKNULL(*plan);
+    pp = *plan;
+    if (pp->p_veryend) LTFAT_NAME(fftreal_done)(&pp->p_veryend);
+    if (pp->p_before)  LTFAT_NAME(fftreal_done)(&pp->p_before);
+    if (pp->p_after)   LTFAT_NAME(ifftreal_done)(&pp->p_after);
+    LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf, pp->cwork,
+                      pp->gf, pp->ff, pp->cf);
+    ltfat_free(pp);
+    pp = NULL;
+error:
+    return status;
+}
+
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan)
 {
     int status = LTFATERR_SUCCESS;
@@ -132,7 +142,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
         const LTFAT_REAL* f, LTFAT_COMPLEX* c)
 {
@@ -158,25 +168,6 @@ error:
 }
 
 
-LTFAT_EXTERN int
-LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan)
-{
-    LTFAT_NAME(dgtreal_long_plan)* pp;
-    int status = LTFATERR_SUCCESS;
-    CHECKNULL(plan); CHECKNULL(*plan);
-    pp = *plan;
-    LTFAT_NAME(fftreal_done)(&pp->p_veryend);
-    LTFAT_NAME(fftreal_done)(&pp->p_before);
-    LTFAT_NAME(ifftreal_done)(&pp->p_after);
-    LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf, pp->cwork,
-                      pp->gf, pp->ff, pp->cf);
-    ltfat_free(pp);
-    pp = NULL;
-error:
-    return status;
-}
-
-
 /*  This routine computes the DGT factorization using strided FFTs so
     the memory layout is optimized for the matrix product. Compared to
     dgt_fac_1, it moves the r-loop to be the outermost loop to
@@ -190,7 +181,7 @@ error:
 
 */
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 {
     /*  --------- initial declarations -------------- */
@@ -227,7 +218,8 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
     const LTFAT_REAL* fp;
 
     /* Scaling constant needed because of FFTWs normalization. */
-    const LTFAT_REAL scalconst = (const LTFAT_REAL) ( 1.0 / ((double)d * sqrt((double)M)));
+    const LTFAT_REAL scalconst = (const LTFAT_REAL) ( 1.0 / ((double)d * sqrt((
+                                     double)M)));
 
     /* Leading dimensions of the 4dim array. */
     const ltfatInt ld2a = 2 * p * q * W;

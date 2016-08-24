@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                     const ltfatInt L, const ltfatInt gl,
                     const ltfatInt W, const ltfatInt a, const ltfatInt M,
@@ -20,7 +20,7 @@ LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgtreal_ola)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                         const ltfatInt L, const ltfatInt gl,
                         const ltfatInt W, const ltfatInt a, const ltfatInt M,

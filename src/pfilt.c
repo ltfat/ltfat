@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
                          const ltfatInt L, const ltfatInt gl,
                          const ltfatInt W, const ltfatInt a,

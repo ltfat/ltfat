@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, const ltfatInt L,
                       const ltfatInt R,
                       const ltfatInt a, const ltfatInt M, LTFAT_REAL* g)

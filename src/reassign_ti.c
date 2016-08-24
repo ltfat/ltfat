@@ -4,7 +4,7 @@
 
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
                                 const LTFAT_COMPLEX* ch[],
                                 const LTFAT_COMPLEX* cd[],

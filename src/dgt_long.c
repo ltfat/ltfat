@@ -1,6 +1,6 @@
 #include "dgt_long_private.h"
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
                      const ltfatInt L, const ltfatInt W,
                      const ltfatInt a, const ltfatInt M,
@@ -23,7 +23,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
                           const ltfatInt L, const ltfatInt W,
                           const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX* cout,
@@ -97,20 +97,29 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
     *pout = plan;
     return status;
 error:
-    if (plan)
-    {
-        if (plan->p_veryend) LTFAT_NAME_REAL(fft_done)(&plan->p_veryend);
-        if (plan->p_before)  LTFAT_NAME_REAL(fft_done)(&plan->p_before);
-        if (plan->p_after)   LTFAT_NAME_REAL(ifft_done)(&plan->p_after);
-        LTFAT_SAFEFREEALL(plan->sbuf, plan->gf, plan->ff, plan->cf);
-        ltfat_free(plan);
-    }
-    *pout = NULL;
+    if (plan) LTFAT_NAME(dgt_long_done)(&plan);
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan)
+{
+    LTFAT_NAME(dgt_long_plan)* pp;
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(plan); CHECKNULL(*plan);
+    pp = *plan;
 
-LTFAT_EXTERN int
+    if (pp->p_veryend) LTFAT_NAME_REAL(fft_done)(&pp->p_veryend);
+    if (pp->p_before) LTFAT_NAME_REAL(fft_done)(&pp->p_before);
+    if (pp->p_after) LTFAT_NAME_REAL(ifft_done)(&pp->p_after);
+    LTFAT_SAFEFREEALL(pp->sbuf, pp->gf, pp->ff, pp->cf);
+    ltfat_free(pp);
+    pp = NULL;
+error:
+    return status;
+}
+
+LTFAT_API int
 LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan)
 {
     int status = LTFATERR_SUCCESS;
@@ -129,7 +138,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
                                       const LTFAT_TYPE f[], LTFAT_COMPLEX c[])
 {
@@ -158,25 +167,6 @@ error:
 }
 
 
-LTFAT_EXTERN int
-LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan)
-{
-    LTFAT_NAME(dgt_long_plan)* pp;
-    int status = LTFATERR_SUCCESS;
-    CHECKNULL(plan); CHECKNULL(*plan);
-    pp = *plan;
-
-    LTFAT_NAME_REAL(fft_done)(&pp->p_veryend);
-    LTFAT_NAME_REAL(fft_done)(&pp->p_before);
-    LTFAT_NAME_REAL(ifft_done)(&pp->p_after);
-    LTFAT_SAFEFREEALL(pp->sbuf, pp->gf, pp->ff, pp->cf);
-    ltfat_free(pp);
-    pp = NULL;
-error:
-    return status;
-}
-
-
 
 /*  This routine computes the DGT factorization using strided FFTs so
     the memory layout is optimized for the matrix product. Compared to
@@ -193,7 +183,7 @@ error:
 */
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
                                LTFAT_COMPLEX* cout)
 {

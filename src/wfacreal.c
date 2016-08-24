@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 /* wfac for real valued input. Produces only half the output coefficients of wfac_r */
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(wfacreal)(const LTFAT_REAL* g, const ltfatInt L, const ltfatInt R,
                      const ltfatInt a, const ltfatInt M,
                      LTFAT_COMPLEX* gf)

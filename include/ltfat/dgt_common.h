@@ -47,7 +47,7 @@ extern "C"
 {
 #endif
 
-LTFAT_EXTERN int
+LTFAT_API int
 ltfat_phaseconvention_is_valid(ltfat_phaseconvention in);
 
 #ifdef __cplusplus

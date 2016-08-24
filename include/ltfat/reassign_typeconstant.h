@@ -16,13 +16,13 @@ typedef struct {
    ltfatInt   l;
 } fbreassOptOut;
 
-LTFAT_EXTERN fbreassOptOut*
+LTFAT_API fbreassOptOut*
 fbreassOptOut_init(const ltfatInt l,const ltfatInt inital);
 
-LTFAT_EXTERN void
+LTFAT_API void
 fbreassOptOut_expand(fbreassOptOut* oo,const ltfatInt ii);
 
-LTFAT_EXTERN void
+LTFAT_API void
 fbreassOptOut_destroy(fbreassOptOut* oo);
 
 

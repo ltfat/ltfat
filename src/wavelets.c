@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(atrousfilterbank_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g[],
                                 const ltfatInt L, const ltfatInt gl[],
                                 const ltfatInt W, const ltfatInt a[],
@@ -20,7 +20,7 @@ LTFAT_NAME(atrousfilterbank_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g[],
     }
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(iatrousfilterbank_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g[],
                                  const ltfatInt L, const ltfatInt gl[],
                                  const ltfatInt W, const ltfatInt a[],
@@ -42,7 +42,7 @@ LTFAT_NAME(iatrousfilterbank_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g[],
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(filterbank_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g[],
                           const ltfatInt L, const ltfatInt gl[],
                           const ltfatInt W, const ltfatInt a[],
@@ -62,7 +62,7 @@ LTFAT_NAME(filterbank_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g[],
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(ifilterbank_td)(const LTFAT_TYPE *c[], const LTFAT_TYPE *g[],
                            const ltfatInt L, const ltfatInt gl[],
                            const ltfatInt W, const ltfatInt a[],
@@ -85,7 +85,7 @@ LTFAT_NAME(ifilterbank_td)(const LTFAT_TYPE *c[], const LTFAT_TYPE *g[],
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
                              const ltfatInt L, const ltfatInt gl, const ltfatInt ga,
                              ltfatInt skip, LTFAT_TYPE *c, ltfatExtType ext)
@@ -215,7 +215,7 @@ LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
     LTFAT_SAFEFREEALL(buf,filtRev,righExtbuff);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
                             const ltfatInt L, const ltfatInt gl,
                             const ltfatInt ga, const ltfatInt skip,
@@ -329,7 +329,7 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt L,
                        const ltfatInt gl, const ltfatInt a, const ltfatInt skip,
                        LTFAT_TYPE *c, ltfatExtType ext)
@@ -453,7 +453,7 @@ LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g, const ltfatInt 
 }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L,
                       const ltfatInt gl, const ltfatInt a, const ltfatInt skip,
                       LTFAT_TYPE *f, ltfatExtType ext)
@@ -587,7 +587,7 @@ LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g, const ltfatInt L
 
 
 // fills last buf samples
-LTFAT_EXTERN
+LTFAT_API
 void LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, ltfatInt L, LTFAT_TYPE *buf,ltfatInt bufgl, ltfatInt gl, ltfatExtType ext, ltfatInt a)
 {
     ltfatInt legalExtLen = (gl-1)%L;

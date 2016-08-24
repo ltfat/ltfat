@@ -4,10 +4,10 @@
 #include "ltfat/complexcompat.h"
 
 #ifndef NOSYSTEMHEADERS
-#include <string.h>
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
+//#include <string.h>
+//#include <stdlib.h>
+//#include <stddef.h>
+//#include <stdio.h>
 #endif
 
 
@@ -41,19 +41,15 @@ extern "C"
 #      define LTFAT_SINGLE
 #   endif
 
-#   include "ltfat/types.h"
 #   include "ltfat/typecomplexindependent.h"
 
 #   ifndef LTFAT_COMPLEXTYPE
 #       define LTFAT_COMPLEXTYPE
-#       include "ltfat/types.h"
 #       include "ltfat/typecomplexindependent.h"
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
 #   else
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
 #       include "ltfat/typecomplexindependent.h"
 #       define LTFAT_COMPLEXTYPE
@@ -73,19 +69,15 @@ extern "C"
 #       define LTFAT_DOUBLE
 #   endif
 
-#   include "ltfat/types.h"
 #   include "ltfat/typecomplexindependent.h"
 
 #   ifndef LTFAT_COMPLEXTYPE
 #       define LTFAT_COMPLEXTYPE
-#       include "ltfat/types.h"
 #       include "ltfat/typecomplexindependent.h"
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
 #   else
 #       undef LTFAT_COMPLEXTYPE
-#       include "ltfat/types.h"
 #       include "ltfat/typeindependent.h"
 #       include "ltfat/typecomplexindependent.h"
 #       define LTFAT_COMPLEXTYPE

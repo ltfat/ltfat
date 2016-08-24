@@ -40,7 +40,7 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
  * LTFATERR_CANNOTHAPPEN    | \a ptype does not have a valid value from the ltfat_phaseconvention enum
  * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
                          const ltfatInt L, const ltfatInt W,  const ltfatInt a,
                          const ltfatInt M, const ltfat_phaseconvention ptype,
@@ -88,7 +88,7 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  * LTFATERR_CANNOTHAPPEN    | \a ptype does not have a valid value from the ltfat_phaseconvention enum
  * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
                               const ltfatInt L, const ltfatInt W, const ltfatInt a,
                               const ltfatInt M, LTFAT_COMPLEX c[],
@@ -111,7 +111,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | The \a plan was NULL or it was created with \a f == NULL or \a c == NULL
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan);
 
 /** Execute plan for Discrete Gabor Transform for real signals using the factorization algorithm
@@ -136,7 +136,7 @@ LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan);
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | Al least one of the arguments was NULL.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
                                           const LTFAT_REAL* f, LTFAT_COMPLEX* c);
 
@@ -156,10 +156,10 @@ LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | plan or *plan was NULL.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan);
 
 /** @}*/
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan);

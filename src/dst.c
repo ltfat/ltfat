@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN LTFAT_FFTW(plan)
+LTFAT_API LTFAT_FFTW(plan)
 LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
                       const dst_kind kind)
 {
@@ -42,7 +42,7 @@ LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
 
 
 // f and cout cannot be equal, because creating plan can tamper with the array
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
                 LTFAT_TYPE *cout, const dst_kind kind)
 {
@@ -54,7 +54,7 @@ LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
 }
 
 // f and cout can be equal, provided plan was already created
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
                         const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
                         const dst_kind kind)

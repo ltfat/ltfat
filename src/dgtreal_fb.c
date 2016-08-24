@@ -16,7 +16,7 @@ struct LTFAT_NAME(dgtreal_fb_plan)
     LTFAT_COMPLEX* cout;
 };
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                        const ltfatInt L, const ltfatInt gl,
                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
@@ -39,7 +39,7 @@ error:
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
                             const ltfatInt gl, const ltfatInt a,
                             const ltfatInt M, const ltfat_phaseconvention ptype,
@@ -78,17 +78,11 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
     *pout = plan;
     return status;
 error:
-    if (plan)
-    {
-        if (plan->p_small) LTFAT_NAME_REAL(fftreal_done)(&plan->p_small);
-        LTFAT_SAFEFREEALL(plan->gw, plan->fw, plan->sbuf, plan->cbuf);
-        ltfat_free(plan);
-    }
-    *pout = NULL;
+    if (plan) LTFAT_NAME(dgtreal_fb_done)(&plan);
     return status;
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan)** plan)
 {
     LTFAT_NAME(dgtreal_fb_plan)* pp;
@@ -96,7 +90,7 @@ LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan)** plan)
     CHECKNULL(plan); CHECKNULL(*plan);
     pp = *plan;
     LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf, pp->gw, pp->fw);
-    LTFAT_NAME_REAL(fftreal_done)(&pp->p_small);
+    if (pp->p_small) LTFAT_NAME_REAL(fftreal_done)(&pp->p_small);
     ltfat_free(pp);
     pp = NULL;
 error:
@@ -132,7 +126,7 @@ LTFAT_NAME_REAL(fftreal_execute)(plan->p_small); \
 memcpy(cout+(n*M2+w*M2*N),cbuf,M2*sizeof*cbuf); \
 }
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
                                const LTFAT_REAL* f,
                                const ltfatInt L, const ltfatInt W,

@@ -50,7 +50,7 @@
   }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(dwilt_long)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                                const ltfatInt L, const ltfatInt W,
                                const ltfatInt M, LTFAT_COMPLEX* cout)
@@ -76,7 +76,7 @@ LTFAT_NAME_COMPLEX(dwilt_long)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(dwilt_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                             const ltfatInt L, const ltfatInt W,
                             const ltfatInt M, LTFAT_REAL* cout)
@@ -101,7 +101,7 @@ LTFAT_NAME_REAL(dwilt_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(dwilt_fb)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
                              const ltfatInt L, const ltfatInt gl,
                              const ltfatInt W, const ltfatInt M,
@@ -128,7 +128,7 @@ LTFAT_NAME_COMPLEX(dwilt_fb)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(dwilt_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
                           const ltfatInt L, const ltfatInt gl,
                           const ltfatInt W, const ltfatInt M,

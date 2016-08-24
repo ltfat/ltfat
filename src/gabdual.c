@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
                          const ltfatInt L, const ltfatInt a,
                          const ltfatInt M, LTFAT_TYPE* gd)
@@ -47,7 +47,7 @@ error:
 }
 
 
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
                         const ltfatInt L, const ltfatInt a,
                         const ltfatInt M, const ltfatInt gdl, LTFAT_TYPE* gd)
@@ -69,6 +69,6 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
     LTFAT_NAME(long2fir)(tmpLong, L, gdl, gd);
 
 error:
-    if (tmpLong) ltfat_free(tmpLong);
+    ltfat_safefree(tmpLong);
     return status;
 }

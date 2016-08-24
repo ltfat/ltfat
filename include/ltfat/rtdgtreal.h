@@ -44,7 +44,7 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, const ltfatInt gl,
  *
  * \returns RTDGTREAL plan
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL g[], const ltfatInt gl,
                            const ltfatInt M, const rtdgt_phasetype ptype,
                            LTFAT_NAME(rtdgtreal_plan)** p);
@@ -55,7 +55,7 @@ LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL g[], const ltfatInt gl,
  * \param[in]  W      Number of channels
  * \param[out] c      Output DGT coefficients (M2 x W)
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
                               const LTFAT_REAL f[], const ltfatInt W,
                               LTFAT_COMPLEX c[]);
@@ -63,7 +63,7 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
 /** Destroy RTDGTREAL plan
  * \param[in]  p      RTDGTREAL plan
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p);
 
 /** Create RTIDGTREAL plan
@@ -78,7 +78,7 @@ LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p);
  *
  * \returns RTIDGTREAL plan
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL g[], const ltfatInt gl,
                             const ltfatInt M, const rtdgt_phasetype ptype,
                             LTFAT_NAME(rtdgtreal_plan)** p);
@@ -89,7 +89,7 @@ LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL g[], const ltfatInt gl,
  * \param[in]  W      Number of channels
  * \param[out] f      Output buffer (gl x W)
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
                                const LTFAT_COMPLEX c[], const ltfatInt W,
                                LTFAT_REAL f[]);
@@ -97,7 +97,7 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
 /** Destroy RTIDGTREAL plan
  * \param[in]  p      RTIDGTREAL plan
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_done)(LTFAT_NAME(rtidgtreal_plan)** p);
 
 /** Create ring buffer for DGT analysis
@@ -119,7 +119,7 @@ LTFAT_NAME(rtidgtreal_done)(LTFAT_NAME(rtidgtreal_plan)** p);
  *
  * \returns RTDGTREAL_FIFO struct pointer
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay, ltfatInt gl, ltfatInt a,
                                 ltfatInt Wmax, LTFAT_NAME(rtdgtreal_fifo_state)** p);
 
@@ -137,7 +137,7 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay, ltfatInt g
  *
  * \returns Number of samples written
  */
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p, const LTFAT_REAL* buf[],
                                  const ltfatInt bufLen, const ltfatInt W);
 
@@ -152,13 +152,13 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p, const LTFA
  *
  * \returns Number of samples read
  */
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p, LTFAT_REAL buf[]);
 
 /** Destroy DGT analysis ring buffer
  * \param[in]  p      DGT analysis ring buffer
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_done)(LTFAT_NAME(rtdgtreal_fifo_state)** p);
 
 /** Create ring buffer for DGT synthesis
@@ -180,7 +180,7 @@ LTFAT_NAME(rtdgtreal_fifo_done)(LTFAT_NAME(rtdgtreal_fifo_state)** p);
  *
  * \returns RTIDGTREAL_FIFO struct pointer
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
                                  ltfatInt a, ltfatInt Wmax,
                                  LTFAT_NAME(rtidgtreal_fifo_state)** p);
@@ -195,7 +195,7 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
  *
  * \returns Number of samples written
  */
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                   const LTFAT_REAL buf[]);
 
@@ -211,7 +211,7 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
  *
  * \returns Number of samples read
  */
-LTFAT_EXTERN int
+LTFAT_API ltfatInt
 LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                  const ltfatInt bufLen, const ltfatInt W,
                                  LTFAT_REAL* buf[]);
@@ -219,7 +219,7 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
 /** Destroy DGT synthesis ring buffer
  * \param[in]  p      DGT synthesis ring buffer
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_done)(LTFAT_NAME(rtidgtreal_fifo_state)** p);
 
 
@@ -323,7 +323,7 @@ typedef void LTFAT_NAME(rtdgtreal_processor_callback)(void* userdata,
  * LTFATERR_CANNOTHAPPEN |  \a win was not valid value from the LTFAT_FIRWIN enum.
  * LTFATERR_NOMEM        |  Heap memory allocation failed
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], const ltfatInt gal,
                                      const LTFAT_REAL gs[], const ltfatInt gsl,
                                      const ltfatInt a, const ltfatInt M,
@@ -368,7 +368,7 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], const ltfatInt gal,
  * LTFATERR_CANNOTHAPPEN |  \a win was not valid value from the LTFAT_FIRWIN enum.
  * LTFATERR_NOMEM        |  Heap memory allocation failed
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
         const ltfatInt gl, const ltfatInt a, const ltfatInt M,
         const ltfatInt Wmax,
@@ -406,7 +406,7 @@ LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
  * ----------------------|----------------------
  * LTFATERR_SUCCESS      |  No error occured
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor_state)* p,
                                         const LTFAT_REAL* in[],
                                         const ltfatInt L, const ltfatInt W,
@@ -437,7 +437,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor_state)* p
  * ----------------------|----------------------
  * LTFATERR_SUCCESS      |  No error occured
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     LTFAT_NAME(rtdgtreal_processor_state)* p,
     const LTFAT_REAL in[],
@@ -460,7 +460,7 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | plan or *plan was NULL.
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** plan);
 
 /** Set DGTREAL processor callback
@@ -485,7 +485,7 @@ LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** pla
  *                                         void* userdata);
  * </tt>
  */
-LTFAT_EXTERN int
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_setcallback)(LTFAT_NAME(rtdgtreal_processor_state)* p,
         LTFAT_NAME(rtdgtreal_processor_callback)* callback,
         void* userdata);
@@ -497,7 +497,7 @@ LTFAT_NAME(rtdgtreal_processor_setcallback)(LTFAT_NAME(rtdgtreal_processor_state
  * It is used when no other processor callback is registered.
  *
  */
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COMPLEX in[],
         const int M2, const int W, LTFAT_COMPLEX out[]);
 

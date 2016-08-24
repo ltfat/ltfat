@@ -53,7 +53,7 @@
   }
 
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
                                 const ltfatInt L, const ltfatInt W, const ltfatInt M,
                                 LTFAT_COMPLEX* f)
@@ -78,7 +78,7 @@ LTFAT_NAME_COMPLEX(idwilt_long)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL* c, const LTFAT_REAL* g,
                              const ltfatInt L, const ltfatInt W, const ltfatInt M,
                              LTFAT_REAL* f)
@@ -101,7 +101,7 @@ LTFAT_NAME_REAL(idwilt_long)(const LTFAT_REAL* c, const LTFAT_REAL* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
                               const ltfatInt L, const ltfatInt gl,
                               const ltfatInt W, const ltfatInt M,
@@ -127,7 +127,7 @@ LTFAT_NAME_COMPLEX(idwilt_fb)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(idwilt_fb)(const LTFAT_REAL* c, const LTFAT_REAL* g,
                            const ltfatInt L, const ltfatInt gl,
                            const ltfatInt W, const ltfatInt M,

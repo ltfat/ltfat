@@ -29,7 +29,7 @@ typedef struct
 } LTFAT_NAME(dgt_shear_plan);
 
 
-LTFAT_EXTERN LTFAT_NAME(dgt_shear_plan)
+LTFAT_API LTFAT_NAME(dgt_shear_plan)
 LTFAT_NAME(dgt_shear_init)(
     const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
     const ltfatInt L, const ltfatInt W, const ltfatInt a,
@@ -37,17 +37,17 @@ LTFAT_NAME(dgt_shear_init)(
     LTFAT_COMPLEX *cout,
     unsigned flags);
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan);
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan);
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
                       const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
                       const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
                       LTFAT_COMPLEX *c);
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME(pchirp)(const long long L, const long long n, LTFAT_COMPLEX *g);

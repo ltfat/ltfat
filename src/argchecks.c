@@ -1,7 +1,7 @@
 #include "ltfat/dgt_common.h"
 #include <fftw3.h>
 
-LTFAT_EXTERN int
+LTFAT_API int
 ltfat_phaseconvention_is_valid(ltfat_phaseconvention in)
 {
     int isvalid = 0;

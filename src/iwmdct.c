@@ -38,7 +38,7 @@
       for(ltfatInt n=0;n<L;n++) \
          f[n+w*L] = scalconst*f2[n+w*L]*exp(I*(LTFAT_REAL)( M_PI*n/(2.0*M)) );
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(idwiltiii_long)(const LTFAT_COMPLEX* c,
                                    const LTFAT_COMPLEX* g,
                                    const ltfatInt L, const ltfatInt W,
@@ -67,7 +67,7 @@ LTFAT_NAME_COMPLEX(idwiltiii_long)(const LTFAT_COMPLEX* c,
     LTFAT_SAFEFREEALL(coef2, f2);
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(idwiltiii_long)(const LTFAT_REAL* c, const LTFAT_REAL* g,
                                 const ltfatInt L, const ltfatInt W,
                                 const ltfatInt M, LTFAT_REAL* f)
@@ -99,7 +99,7 @@ LTFAT_NAME_REAL(idwiltiii_long)(const LTFAT_REAL* c, const LTFAT_REAL* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_COMPLEX(idwiltiii_fb)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
                                  const ltfatInt L, const ltfatInt gl,
                                  const ltfatInt W, const ltfatInt M,
@@ -129,7 +129,7 @@ LTFAT_NAME_COMPLEX(idwiltiii_fb)(const LTFAT_COMPLEX* c, const LTFAT_COMPLEX* g,
 
 }
 
-LTFAT_EXTERN void
+LTFAT_API void
 LTFAT_NAME_REAL(idwiltiii_fb)(const LTFAT_REAL* c, const LTFAT_REAL* g,
                               const ltfatInt L, const ltfatInt gl, const ltfatInt W, const ltfatInt M,
                               LTFAT_REAL* f)
