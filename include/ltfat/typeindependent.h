@@ -13,43 +13,43 @@
 /*  --------- factorizations --------------- */
 
 LTFAT_API void
-LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, const ltfatInt L, const ltfatInt R,
-                     const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gf);
+LTFAT_NAME(wfacreal)(const LTFAT_REAL *g, ltfat_int L, ltfat_int R,
+                     ltfat_int a, ltfat_int M, LTFAT_COMPLEX *gf);
 
 LTFAT_API void
-LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
-                      const ltfatInt a, const ltfatInt M, LTFAT_REAL *g);
+LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, ltfat_int L, ltfat_int R,
+                      ltfat_int a, ltfat_int M, LTFAT_REAL *g);
 
 /* --------- DGT by factorization ------------ */
 
 // LTFAT_API void
 // LTFAT_NAME(dgt_fac)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *gf,
-//                     const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-//                     const ltfatInt M, LTFAT_COMPLEX *cout);
+//                     ltfat_int L, ltfat_int W,  ltfat_int a,
+//                     ltfat_int M, LTFAT_COMPLEX *cout);
 
 
 // LTFAT_API void
 // LTFAT_NAME(dgtreal_long)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-//                          const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-//                          const ltfatInt M, const ltfat_phaseconvention ptype,
+//                          ltfat_int L, ltfat_int W,  ltfat_int a,
+//                          ltfat_int M, const ltfat_phaseconvention ptype,
 //                          LTFAT_COMPLEX *cout);
 
 // LTFAT_API void
 // LTFAT_NAME(dgt_fac_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
-//                       const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-//                       const ltfatInt M, const ltfat_phaseconvention ptype,
+//                       ltfat_int L, ltfat_int W,  ltfat_int a,
+//                       ltfat_int M, const ltfat_phaseconvention ptype,
 //                       LTFAT_COMPLEX *cout);
 
 // LTFAT_API
 // void LTFAT_NAME(dgtreal_fac)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
-//                              const ltfatInt L,
-//                              const ltfatInt W,  const ltfatInt a,
-//                              const ltfatInt M, LTFAT_COMPLEX *cout);
+//                              ltfat_int L,
+//                              ltfat_int W,  ltfat_int a,
+//                              ltfat_int M, LTFAT_COMPLEX *cout);
 
 // LTFAT_API void
 // LTFAT_NAME(dgt_walnut_r)(const LTFAT_REAL *f, const LTFAT_COMPLEX *gf,
-//                          const ltfatInt L, const ltfatInt W,
-//                          const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *cout);
+//                          ltfat_int L, ltfat_int W,
+//                          ltfat_int a, ltfat_int M, LTFAT_COMPLEX *cout);
 
 
 
@@ -58,68 +58,68 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt 
 /* --------- dual windows etc. --------------- */
 
 LTFAT_API void
-LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *g, const ltfatInt L, const ltfatInt R,
-                        const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gdualf);
+LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX *g, ltfat_int L, ltfat_int R,
+                        ltfat_int a, ltfat_int M, LTFAT_COMPLEX *gdualf);
 
 LTFAT_API void
-LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *g, const ltfatInt L, const ltfatInt R,
-                            const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX *gdualf);
+LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX *g, ltfat_int L, ltfat_int R,
+                            ltfat_int a, ltfat_int M, LTFAT_COMPLEX *gdualf);
 
 LTFAT_API void
-LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
-                         const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX *gf, ltfat_int L, ltfat_int R,
+                         ltfat_int a, ltfat_int M,
                          LTFAT_COMPLEX *gtightf);
 
 LTFAT_API void
-LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, const ltfatInt L, const ltfatInt R,
-                             const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX *gf, ltfat_int L, ltfat_int R,
+                             ltfat_int a, ltfat_int M,
                              LTFAT_COMPLEX *gtightf);
 
 
 // LTFAT_API void
 // LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-//                        const ltfatInt L, const ltfatInt gl,
-//                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+//                        ltfat_int L, ltfat_int gl,
+//                        ltfat_int W,  ltfat_int a, ltfat_int M,
 //                        const ltfat_phaseconvention ptype, LTFAT_COMPLEX *cout);
 
 // LTFAT_API void
 // LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *g,
-//                     const ltfatInt L, const ltfatInt gl,
-//                     const ltfatInt W, const ltfatInt a, const ltfatInt M,
+//                     ltfat_int L, ltfat_int gl,
+//                     ltfat_int W, ltfat_int a, ltfat_int M,
 //                     const ltfat_phaseconvention ptype, LTFAT_COMPLEX *f);
 //
 // LTFAT_API void
 // LTFAT_NAME(idgt_fb_r)(const LTFAT_COMPLEX *cin, const LTFAT_REAL *g,
-//                       const ltfatInt L, const ltfatInt gl,
-//                       const ltfatInt W, const ltfatInt a, const ltfatInt M,
+//                       ltfat_int L, ltfat_int gl,
+//                       ltfat_int W, ltfat_int a, ltfat_int M,
 //                       LTFAT_COMPLEX *f);
 
 /* ---------- OLA DGTs ------------- */
 LTFAT_API void
 LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                    const ltfatInt L, const ltfatInt gl,
-                    const ltfatInt W, const ltfatInt a,
-                    const ltfatInt M, const ltfatInt bl,
+                    ltfat_int L, ltfat_int gl,
+                    ltfat_int W, ltfat_int a,
+                    ltfat_int M, ltfat_int bl,
                     const ltfat_phaseconvention ptype,
                     LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(dgtreal_ola)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-                        const ltfatInt L, const ltfatInt gl,
-                        const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                        const ltfatInt bl, const ltfat_phaseconvention ptype,
+                        ltfat_int L, ltfat_int gl,
+                        ltfat_int W, ltfat_int a, ltfat_int M,
+                        ltfat_int bl, const ltfat_phaseconvention ptype,
                         LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(dgt_shearola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                         const ltfatInt L, const ltfatInt gl, const ltfatInt W,
-                         const ltfatInt a, const ltfatInt M,
-                         const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
-                         const ltfatInt bl, LTFAT_COMPLEX *cout);
+                         ltfat_int L, ltfat_int gl, ltfat_int W,
+                         ltfat_int a, ltfat_int M,
+                         ltfat_int s0, ltfat_int s1, ltfat_int br,
+                         ltfat_int bl, LTFAT_COMPLEX *cout);
 
 /* --------- FFT ------------------*/
 // LTFAT_API LTFAT_FFTW(plan)
-// LTFAT_NAME(fftreal_init)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+// LTFAT_NAME(fftreal_init)(LTFAT_REAL *f, ltfat_int L, ltfat_int W,
 //                          LTFAT_COMPLEX *cout, unsigned flag);
 //
 // LTFAT_API void
@@ -127,20 +127,20 @@ LTFAT_NAME(dgt_shearola)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
 //                             LTFAT_COMPLEX *cout);
 //
 // LTFAT_API void
-// LTFAT_NAME(fftreal)(LTFAT_REAL *f, const ltfatInt L, const ltfatInt W,
+// LTFAT_NAME(fftreal)(LTFAT_REAL *f, ltfat_int L, ltfat_int W,
 //                     LTFAT_COMPLEX *cout);
 //
 // LTFAT_API LTFAT_FFTW(plan)
-// LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
+// LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX *c, ltfat_int L, ltfat_int W,
 //                           LTFAT_REAL *f, unsigned flag);
 //
 // LTFAT_API void
 // LTFAT_NAME(ifftreal_execute)(LTFAT_FFTW(plan), LTFAT_COMPLEX *c,
-//                              const ltfatInt L, const ltfatInt W,
+//                              ltfat_int L, ltfat_int W,
 //                              LTFAT_REAL *f);
 //
 // LTFAT_API void
-// LTFAT_NAME(ifftreal)(LTFAT_COMPLEX *c, const ltfatInt L, const ltfatInt W,
+// LTFAT_NAME(ifftreal)(LTFAT_COMPLEX *c, ltfat_int L, ltfat_int W,
 //                      LTFAT_REAL *f);
 
 
@@ -154,25 +154,25 @@ typedef struct LTFAT_NAME(upconv_fftbl_plan_struct) *LTFAT_NAME(upconv_fftbl_pla
 
 LTFAT_API void
 LTFAT_NAME(ufilterbank_fft)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                            const ltfatInt L, const ltfatInt gl,
-                            const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                            ltfat_int L, ltfat_int gl,
+                            ltfat_int W, ltfat_int a, ltfat_int M,
                             LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(filterbank_fft)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
-                           const ltfatInt L, const ltfatInt W,
-                           const ltfatInt a[], const ltfatInt M,
+                           ltfat_int L, ltfat_int W,
+                           ltfat_int a[], ltfat_int M,
                            LTFAT_COMPLEX *cout[]);
 
 LTFAT_API void
 LTFAT_NAME(filterbank_fft_execute)(LTFAT_NAME(convsub_fft_plan) p[],
                                    const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
-                                   const ltfatInt M, LTFAT_COMPLEX *cout[]);
+                                   ltfat_int M, LTFAT_COMPLEX *cout[]);
 
 
 LTFAT_API LTFAT_NAME(convsub_fft_plan)
-LTFAT_NAME(convsub_fft_init)(const ltfatInt L, const ltfatInt W,
-                             const ltfatInt a, const LTFAT_COMPLEX *cout);
+LTFAT_NAME(convsub_fft_init)(ltfat_int L, ltfat_int W,
+                             ltfat_int a, const LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(convsub_fft_done)(LTFAT_NAME(convsub_fft_plan) p);
@@ -184,39 +184,39 @@ LTFAT_NAME(convsub_fft_execute)(const LTFAT_NAME(convsub_fft_plan) p,
 
 LTFAT_API void
 LTFAT_NAME(convsub_fft)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G,
-                        const ltfatInt L, const ltfatInt W, const ltfatInt a,
+                        ltfat_int L, ltfat_int W, ltfat_int a,
                         LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(filterbank_fftbl)(const LTFAT_COMPLEX *F, const LTFAT_COMPLEX *G[],
-                             const ltfatInt L, const ltfatInt Gl[],
-                             const ltfatInt W, const double a[], const ltfatInt M,
-                             const ltfatInt foff[], const int realonly[],
+                             ltfat_int L, ltfat_int Gl[],
+                             ltfat_int W, const double a[], ltfat_int M,
+                             ltfat_int foff[], const int realonly[],
                              LTFAT_COMPLEX *cout[]);
 
 LTFAT_API void
 LTFAT_NAME(filterbank_fftbl_execute)(LTFAT_NAME(convsub_fftbl_plan) p[],
                                      const LTFAT_COMPLEX *F,
                                      const LTFAT_COMPLEX *G[],
-                                     const ltfatInt M, const ltfatInt foff[],
+                                     ltfat_int M, ltfat_int foff[],
                                      const int realonly[], LTFAT_COMPLEX *cout[]);
 
 LTFAT_API void
 LTFAT_NAME(ifilterbank_fft_execute)(LTFAT_NAME(upconv_fft_plan) p[],
                                     const LTFAT_COMPLEX *cin[],
                                     const LTFAT_COMPLEX *G[],
-                                    const ltfatInt M,
+                                    ltfat_int M,
                                     LTFAT_COMPLEX *F );
 
 
 LTFAT_API LTFAT_NAME(convsub_fftbl_plan)
-LTFAT_NAME(convsub_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
-                                const ltfatInt W, const double a,
+LTFAT_NAME(convsub_fftbl_init)( ltfat_int L, ltfat_int Gl,
+                                ltfat_int W, const double a,
                                 const LTFAT_COMPLEX *cout);
 
 LTFAT_API LTFAT_NAME(convsub_fftbl_plan)
-LTFAT_NAME(convsub_fftbl_init_no_ifft_plan)( const ltfatInt L, const ltfatInt Gl,
-        const ltfatInt W, const double a);
+LTFAT_NAME(convsub_fftbl_init_no_ifft_plan)( ltfat_int L, ltfat_int Gl,
+        ltfat_int W, const double a);
 
 LTFAT_API void
 LTFAT_NAME(convsub_fftbl_done)( LTFAT_NAME(convsub_fftbl_plan) p);
@@ -226,14 +226,14 @@ LTFAT_API void
 LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
                                   const LTFAT_COMPLEX *F,
                                   const LTFAT_COMPLEX *G,
-                                  const ltfatInt foff,
+                                  ltfat_int foff,
                                   const int realonly,
                                   LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEX *F,  const LTFAT_COMPLEX *G,
-                          const ltfatInt L, const ltfatInt Gl, const ltfatInt W,
-                          const double a, const ltfatInt foff,
+                          ltfat_int L, ltfat_int Gl, ltfat_int W,
+                          const double a, ltfat_int foff,
                           const int realonly, LTFAT_COMPLEX *cout);
 
 
@@ -241,25 +241,25 @@ LTFAT_NAME(convsub_fftbl)(const LTFAT_COMPLEX *F,  const LTFAT_COMPLEX *G,
 // Inverse
 LTFAT_API void
 LTFAT_NAME(ifilterbank_fft)(const LTFAT_COMPLEX *cin[], const LTFAT_COMPLEX *G[],
-                            const ltfatInt L, const ltfatInt W,
-                            const ltfatInt a[], const ltfatInt M,
+                            ltfat_int L, ltfat_int W,
+                            ltfat_int a[], ltfat_int M,
                             LTFAT_COMPLEX *F);
 
 LTFAT_API void
 LTFAT_NAME(ifilterbank_fft_execute)(LTFAT_NAME(upconv_fft_plan) p[],
                                     const LTFAT_COMPLEX *cin[],
                                     const LTFAT_COMPLEX *G[],
-                                    const ltfatInt M,
+                                    ltfat_int M,
                                     LTFAT_COMPLEX *F );
 
 
 LTFAT_API void
 LTFAT_NAME(upconv_fft)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
-                       const ltfatInt L, const ltfatInt W, const ltfatInt a,
+                       ltfat_int L, ltfat_int W, ltfat_int a,
                        LTFAT_COMPLEX *F);
 
 LTFAT_API LTFAT_NAME(upconv_fft_plan)
-LTFAT_NAME(upconv_fft_init)(const ltfatInt L, const ltfatInt W, const ltfatInt a);
+LTFAT_NAME(upconv_fft_init)(ltfat_int L, ltfat_int W, ltfat_int a);
 
 
 LTFAT_API void
@@ -274,16 +274,16 @@ LTFAT_NAME(upconv_fft_done)(LTFAT_NAME(upconv_fft_plan) p);
 
 LTFAT_API void
 LTFAT_NAME(ifilterbank_fftbl)(const LTFAT_COMPLEX *cin[], const LTFAT_COMPLEX *G[],
-                              const ltfatInt L, const ltfatInt Gl[],
-                              const ltfatInt W, const double a[], const ltfatInt M,
-                              const ptrdiff_t foff[], const int realonly[],
+                              ltfat_int L, const ltfat_int Gl[],
+                              ltfat_int W, const double a[], ltfat_int M,
+                              const ltfat_int foff[], const int realonly[],
                               LTFAT_COMPLEX *F);
 
 LTFAT_API void
 LTFAT_NAME(ifilterbank_fftbl_execute)(LTFAT_NAME(upconv_fftbl_plan) p[],
                                       const LTFAT_COMPLEX *cin[],
                                       const LTFAT_COMPLEX *G[],
-                                      const ltfatInt M, const ltfatInt foff[],
+                                      ltfat_int M, ltfat_int foff[],
                                       const int realonly[],
                                       LTFAT_COMPLEX *F);
 
@@ -291,13 +291,13 @@ LTFAT_NAME(ifilterbank_fftbl_execute)(LTFAT_NAME(upconv_fftbl_plan) p[],
 
 LTFAT_API void
 LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
-                         const ltfatInt L, const ltfatInt Gl, const ltfatInt W,
+                         ltfat_int L, ltfat_int Gl, ltfat_int W,
                          const double a, const ptrdiff_t foff,
                          const int realonly, LTFAT_COMPLEX *F);
 
 LTFAT_API LTFAT_NAME(upconv_fftbl_plan)
-LTFAT_NAME(upconv_fftbl_init)( const ltfatInt L, const ltfatInt Gl,
-                               const ltfatInt W, const double a);
+LTFAT_NAME(upconv_fftbl_init)( ltfat_int L, ltfat_int Gl,
+                               ltfat_int W, const double a);
 
 LTFAT_API void
 LTFAT_NAME(upconv_fftbl_done)(LTFAT_NAME(upconv_fftbl_plan) p);
@@ -325,9 +325,9 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
  *
  * #### Function versions #
  * <tt>
- * ltfat_pgauss_d(const ltfatInt L,const double w, const double c_t, double* g);
+ * ltfat_pgauss_d(ltfat_int L,const double w, const double c_t, double* g);
  *
- * ltfat_pgauss_s(const ltfatInt L,const double w, const double c_t, float* g);
+ * ltfat_pgauss_s(ltfat_int L,const double w, const double c_t, float* g);
  * </tt>
  * \returns
  * Status code           | Description
@@ -338,7 +338,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
  * LTFATERR_NOTPOSARG    | \a w is less or equal to zero.
  */
 LTFAT_API int
-LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
+LTFAT_NAME(pgauss)(ltfat_int L, const double w, const double c_t,
                    LTFAT_REAL *g);
 
 /** Compute complex, periodized Gaussian window
@@ -352,11 +352,11 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
  * #### Function versions #
  *
  * <tt>
- * ltfat_pgauss_cmplx_d(const ltfatInt L, const double w, const double c_t,
- *                      const double c_f, complex double* g);
+ * ltfat_pgauss_cmplx_d(ltfat_int L, const double w, const double c_t,
+ *                      const double c_f, ltfat_complex_d* g);
  *
- * ltfat_pgauss_cmplx_s(const ltfatInt L, const double w, const double c_t,
- *                      const double c_f, complex float* g);
+ * ltfat_pgauss_cmplx_s(ltfat_int L, const double w, const double c_t,
+ *                      const double c_f, ltfat_complex_s* g);
  * </tt>
  * \returns
  * Status code           | Description
@@ -367,7 +367,7 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
  * LTFATERR_NOTPOSARG    | \a w is less or equal to zero.
  */
 LTFAT_API int
-LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
+LTFAT_NAME(pgauss_cmplx)(ltfat_int L, const double w, const double c_t,
                          const double c_f, LTFAT_COMPLEX *g);
 
 /** @} */
@@ -375,8 +375,8 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
 /* --------- pfilt and filterbanks ------------- */
 LTFAT_API void
 LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-                         const ltfatInt L, const ltfatInt gl,
-                         const ltfatInt W, const ltfatInt a,
+                         ltfat_int L, ltfat_int gl,
+                         ltfat_int W, ltfat_int a,
                          LTFAT_REAL *cout);
 
 
@@ -403,8 +403,8 @@ enum ltfat_mask_element
 typedef struct LTFAT_NAME(heapinttask) LTFAT_NAME(heapinttask);
 
 LTFAT_API LTFAT_NAME(heapinttask)*
-LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
-                             const ltfatInt initheapsize,
+LTFAT_NAME(heapinttask_init)(ltfat_int height, ltfat_int N,
+                             ltfat_int initheapsize,
                              const LTFAT_REAL* s, int do_real);
 
 LTFAT_API void
@@ -436,8 +436,8 @@ LTFAT_API void
 LTFAT_NAME(heapint)(const LTFAT_REAL *s,
                     const LTFAT_REAL *tgradw,
                     const LTFAT_REAL *fgradw,
-                    const ltfatInt a, const ltfatInt M,
-                    const ltfatInt L, const ltfatInt W,
+                    ltfat_int a, ltfat_int M,
+                    ltfat_int L, ltfat_int W,
                     const LTFAT_REAL tol, LTFAT_REAL *phase);
 
 // Does the same as the previous but
@@ -445,8 +445,8 @@ LTFAT_API void
 LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL *s,
                             const LTFAT_REAL *tgrad,
                             const LTFAT_REAL *fgrad,
-                            const ltfatInt a, const ltfatInt M,
-                            const ltfatInt L, const ltfatInt W,
+                            ltfat_int a, ltfat_int M,
+                            ltfat_int L, ltfat_int W,
                             const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                             LTFAT_REAL *phase);
 
@@ -456,8 +456,8 @@ LTFAT_NAME(maskedheapint)(const LTFAT_REAL  *c,
                           const LTFAT_REAL *tgradw,
                           const LTFAT_REAL *fgradw,
                           const int* mask,
-                          const ltfatInt a, const ltfatInt M,
-                          const ltfatInt L, const ltfatInt W,
+                          ltfat_int a, ltfat_int M,
+                          ltfat_int L, ltfat_int W,
                           LTFAT_REAL tol, LTFAT_REAL *phase);
 
 LTFAT_API void
@@ -465,8 +465,8 @@ LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL  *c,
                                   const LTFAT_REAL *tgrad,
                                   const LTFAT_REAL *fgrad,
                                   const int* mask,
-                                  const ltfatInt a, const ltfatInt M,
-                                  const ltfatInt L, const ltfatInt W,
+                                  ltfat_int a, ltfat_int M,
+                                  ltfat_int L, ltfat_int W,
                                   LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                   LTFAT_REAL *phase);
 
@@ -474,8 +474,8 @@ LTFAT_API void
 LTFAT_NAME(heapintreal)(const LTFAT_REAL *s,
                         const LTFAT_REAL *tgradw,
                         const LTFAT_REAL *fgradw,
-                        const ltfatInt a, const ltfatInt M,
-                        const ltfatInt L, const ltfatInt W,
+                        ltfat_int a, ltfat_int M,
+                        ltfat_int L, ltfat_int W,
                         const LTFAT_REAL tol,
                         LTFAT_REAL *phase);
 
@@ -483,8 +483,8 @@ LTFAT_API void
 LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL *s,
                                 const LTFAT_REAL *tgradw,
                                 const LTFAT_REAL *fgradw,
-                                const ltfatInt a, const ltfatInt M,
-                                const ltfatInt L, const ltfatInt W,
+                                ltfat_int a, ltfat_int M,
+                                ltfat_int L, ltfat_int W,
                                 const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                 LTFAT_REAL *phase);
 
@@ -493,8 +493,8 @@ LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL * s,
                               const LTFAT_REAL * tgrad,
                               const LTFAT_REAL * fgrad,
                               const int* mask,
-                              const ltfatInt a, const ltfatInt M,
-                              const ltfatInt L, const ltfatInt W,
+                              ltfat_int a, ltfat_int M,
+                              ltfat_int L, ltfat_int W,
                               LTFAT_REAL tol,
                               LTFAT_REAL * phase);
 
@@ -503,8 +503,8 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
                                       const LTFAT_REAL* tgradw,
                                       const LTFAT_REAL* fgradw,
                                       const int* mask,
-                                      const ltfatInt a, const ltfatInt M,
-                                      const ltfatInt L, const ltfatInt W,
+                                      ltfat_int a, ltfat_int M,
+                                      ltfat_int L, ltfat_int W,
                                       LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                       LTFAT_REAL* phase);
 
@@ -512,9 +512,9 @@ LTFAT_API void
 LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
                                 const LTFAT_COMPLEX* ch[],
                                 const LTFAT_COMPLEX* cd[],
-                                const ltfatInt          M,
-                                const ltfatInt        N[],
-                                const ltfatInt          L,
+                                ltfat_int          M,
+                                ltfat_int        N[],
+                                ltfat_int          L,
                                 const LTFAT_REAL   minlvl,
                                 LTFAT_REAL*        tgrad[],
                                 LTFAT_REAL*        fgrad[],
@@ -525,38 +525,38 @@ LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
 
 /*
 // LAPACK overwrites the input argument.
-ltfatInt
-LTFAT_NAME(ltfat_posv)(const ltfatInt N, const ltfatInt NRHS,
-             LTFAT_COMPLEX *A, const ltfatInt lda,
-             LTFAT_COMPLEX *B, const ltfatInt ldb);
+ltfat_int
+LTFAT_NAME(ltfat_posv)(ltfat_int N, ltfat_int NRHS,
+             LTFAT_COMPLEX *A, ltfat_int lda,
+             LTFAT_COMPLEX *B, ltfat_int ldb);
 
 // LAPACK overwrites the input argument.
-ltfatInt
-LTFAT_NAME(ltfat_gesvd)(const ltfatInt M, const ltfatInt N,
-              LTFAT_COMPLEX *A, const ltfatInt lda,
-              LTFAT_REAL *S, LTFAT_COMPLEX *U, const ltfatInt ldu,
-              LTFAT_COMPLEX *VT, const ltfatInt ldvt);
+ltfat_int
+LTFAT_NAME(ltfat_gesvd)(ltfat_int M, ltfat_int N,
+              LTFAT_COMPLEX *A, ltfat_int lda,
+              LTFAT_REAL *S, LTFAT_COMPLEX *U, ltfat_int ldu,
+              LTFAT_COMPLEX *VT, ltfat_int ldvt);
 
 void
 LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
              const enum CBLAS_TRANSPOSE TransB,
-             const ltfatInt M, const ltfatInt N, const ltfatInt K,
+             ltfat_int M, ltfat_int N, ltfat_int K,
              const LTFAT_COMPLEX *alpha,
-             const LTFAT_COMPLEX *A, const ltfatInt lda,
-             const LTFAT_COMPLEX *B, const ltfatInt ldb,
+             const LTFAT_COMPLEX *A, ltfat_int lda,
+             const LTFAT_COMPLEX *B, ltfat_int ldb,
              const LTFAT_COMPLEX *beta,
-             LTFAT_COMPLEX *C, const ltfatInt ldc);
+             LTFAT_COMPLEX *C, ltfat_int ldc);
 */
 
 
 // // LAPACK overwrites the input argument.
-// ltfatInt
+// ltfat_int
 // LTFAT_NAME(ltfat_posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
 //                        LTFAT_COMPLEX *A, const ptrdiff_t lda,
 //                        LTFAT_COMPLEX *B, const ptrdiff_t ldb);
 //
 // // LAPACK overwrites the input argument.
-// ltfatInt
+// ltfat_int
 // LTFAT_NAME(ltfat_gesvd)(const ptrdiff_t M, const ptrdiff_t N,
 //                         LTFAT_COMPLEX *A, const ptrdiff_t lda,
 //                         LTFAT_REAL *S, LTFAT_COMPLEX *U, const ptrdiff_t ldu,
@@ -577,9 +577,9 @@ LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 
 // typedef struct
 // {
-//     ltfatInt a;
-//     ltfatInt M;
-//     ltfatInt gl;
+//     ltfat_int a;
+//     ltfat_int M;
+//     ltfat_int gl;
 //     ltfat_phaseconvention ptype;
 //     LTFAT_FFTW(plan) p_small;
 //     LTFAT_REAL    *sbuf;
@@ -592,14 +592,14 @@ LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 //
 // LTFAT_API LTFAT_NAME(dgtreal_fb_plan)
 // LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL *g,
-//                             const ltfatInt gl, const ltfatInt a,
-//                             const ltfatInt M, const ltfat_phaseconvention ptype,
+//                             ltfat_int gl, ltfat_int a,
+//                             ltfat_int M, const ltfat_phaseconvention ptype,
 //                             unsigned flags);
 //
 // LTFAT_API void
 // LTFAT_NAME(dgtreal_fb_execute)(const LTFAT_NAME(dgtreal_fb_plan) plan,
-//                                const LTFAT_REAL *f, const ltfatInt L,
-//                                const ltfatInt W, LTFAT_COMPLEX *cout);
+//                                const LTFAT_REAL *f, ltfat_int L,
+//                                ltfat_int W, LTFAT_COMPLEX *cout);
 //
 // LTFAT_API void
 // LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan) plan);
@@ -609,9 +609,9 @@ LTFAT_NAME(ltfat_gemm)(const enum CBLAS_TRANSPOSE TransA,
 typedef struct
 {
     LTFAT_NAME_COMPLEX(dgt_long_plan)* plan;
-    ltfatInt bl;
-    ltfatInt gl;
-    ltfatInt W;
+    ltfat_int bl;
+    ltfat_int gl;
+    ltfat_int W;
     LTFAT_COMPLEX *buf;
     LTFAT_COMPLEX *gext;
     LTFAT_COMPLEX *cbuf;
@@ -620,14 +620,14 @@ typedef struct
 
 
 LTFAT_API LTFAT_NAME(dgt_ola_plan)
-LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
-                         const ltfatInt W, const ltfatInt a,
-                         const ltfatInt M, const ltfatInt bl,
+LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX *g, ltfat_int gl,
+                         ltfat_int W, ltfat_int a,
+                         ltfat_int M, ltfat_int bl,
                          const ltfat_phaseconvention ptype, unsigned flags);
 
 LTFAT_API void
 LTFAT_NAME(dgt_ola_execute)(const LTFAT_NAME(dgt_ola_plan) plan,
-                            const LTFAT_COMPLEX *f, const ltfatInt L,
+                            const LTFAT_COMPLEX *f, ltfat_int L,
                             LTFAT_COMPLEX *cout);
 
 LTFAT_API void
@@ -642,9 +642,9 @@ LTFAT_NAME(dgt_ola_done)(LTFAT_NAME(dgt_ola_plan) plan);
 typedef struct
 {
     LTFAT_NAME(dgtreal_long_plan)* plan;
-    ltfatInt bl;
-    ltfatInt gl;
-    ltfatInt W;
+    ltfat_int bl;
+    ltfat_int gl;
+    ltfat_int W;
     LTFAT_REAL *buf;
     LTFAT_REAL *gext;
     LTFAT_COMPLEX *cbuf;
@@ -653,15 +653,15 @@ typedef struct
 
 
 LTFAT_API LTFAT_NAME(dgtreal_ola_plan)
-LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, const ltfatInt gl,
-                             const ltfatInt W, const ltfatInt a,
-                             const ltfatInt M, const ltfatInt bl,
+LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL *g, ltfat_int gl,
+                             ltfat_int W, ltfat_int a,
+                             ltfat_int M, ltfat_int bl,
                              const ltfat_phaseconvention ptype,
                              unsigned flags);
 
 LTFAT_API void
 LTFAT_NAME(dgtreal_ola_execute)(const LTFAT_NAME(dgtreal_ola_plan) plan,
-                                const LTFAT_REAL *f, const ltfatInt L,
+                                const LTFAT_REAL *f, ltfat_int L,
                                 LTFAT_COMPLEX *cout);
 
 LTFAT_API void
@@ -676,9 +676,9 @@ LTFAT_NAME(dgtreal_ola_done)(LTFAT_NAME(dgtreal_ola_plan) plan);
 typedef struct
 {
     LTFAT_NAME(dgt_shear_plan) plan;
-    ltfatInt bl;
-    ltfatInt gl;
-    ltfatInt W;
+    ltfat_int bl;
+    ltfat_int gl;
+    ltfat_int W;
     LTFAT_COMPLEX *buf;
     LTFAT_COMPLEX *gext;
     LTFAT_COMPLEX *cbuf;
@@ -687,15 +687,15 @@ typedef struct
 
 
 LTFAT_API LTFAT_NAME(dgt_shearola_plan)
-LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX *g, const ltfatInt gl,
-                              const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                              const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
-                              const ltfatInt bl,
+LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX *g, ltfat_int gl,
+                              ltfat_int W, ltfat_int a, ltfat_int M,
+                              ltfat_int s0, ltfat_int s1, ltfat_int br,
+                              ltfat_int bl,
                               unsigned flags);
 
 LTFAT_API void
 LTFAT_NAME(dgt_shearola_execute)(const LTFAT_NAME(dgt_shearola_plan) plan,
-                                 const LTFAT_COMPLEX *f, const ltfatInt L,
+                                 const LTFAT_COMPLEX *f, ltfat_int L,
                                  LTFAT_COMPLEX *cout);
 
 LTFAT_API void

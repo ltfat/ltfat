@@ -2,8 +2,8 @@
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
-                         const ltfatInt L, const ltfatInt W, const ltfatInt a,
-                         const ltfatInt M, const ltfat_phaseconvention ptype,
+                         ltfat_int L, ltfat_int W, ltfat_int a,
+                         ltfat_int M, const ltfat_phaseconvention ptype,
                          LTFAT_COMPLEX* cout)
 {
 
@@ -27,20 +27,20 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
-                              const ltfatInt L, const ltfatInt W,
-                              const ltfatInt a, const ltfatInt M,
+                              ltfat_int L, ltfat_int W,
+                              ltfat_int a, ltfat_int M,
                               LTFAT_COMPLEX* cout, const ltfat_phaseconvention ptype,
                               unsigned flags, LTFAT_NAME(dgtreal_long_plan)** pout)
 {
     LTFAT_NAME(dgtreal_long_plan)* plan = NULL;
-    ltfatInt minL, N, h_m, b, p, q, d, d2, wfs;
+    ltfat_int minL, N, h_m, b, p, q, d, d2, wfs;
 
     int status = LTFATERR_SUCCESS;
     CHECK(LTFATERR_NULLPOINTER, (flags & FFTW_ESTIMATE) || cout != NULL,
           "cout cannot be NULL if flags is not FFTW_ESTIMATE");
     // CHECKNULL(f); // f can be NULL
     CHECKNULL(g); CHECKNULL(pout);
-    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive", L);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %td) must be positive", L);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
@@ -49,7 +49,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
-          "L must divisible by lcm(a,M)=%d.", minL);
+          "L must divisible by lcm(a,M)=%td.", minL);
 
     CHECKMEM(plan = (LTFAT_NAME(dgtreal_long_plan)*)
                     ltfat_calloc(1, sizeof * plan));
@@ -186,24 +186,24 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 {
     /*  --------- initial declarations -------------- */
 
-    const ltfatInt a = plan->a;
-    const ltfatInt M = plan->M;
-    const ltfatInt L = plan->L;
-    const ltfatInt W = plan->W;
-    const ltfatInt N = L / a;
-    const ltfatInt c = plan->c;
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = N / q;
+    ltfat_int a = plan->a;
+    ltfat_int M = plan->M;
+    ltfat_int L = plan->L;
+    ltfat_int W = plan->W;
+    ltfat_int N = L / a;
+    ltfat_int c = plan->c;
+    ltfat_int p = a / c;
+    ltfat_int q = M / c;
+    ltfat_int d = N / q;
 
 
     /* This is a floor operation. */
-    const ltfatInt d2 = d / 2 + 1;
+    ltfat_int d2 = d / 2 + 1;
 
     const LTFAT_REAL* f = plan->f;
     const LTFAT_COMPLEX* gf = (const LTFAT_COMPLEX*)plan->gf;
 
-    const ltfatInt h_a = plan->h_a;
+    ltfat_int h_a = plan->h_a;
 
     LTFAT_REAL* sbuf = plan->sbuf;
     LTFAT_COMPLEX* cbuf = plan->cbuf;
@@ -222,13 +222,13 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
                                      double)M)));
 
     /* Leading dimensions of the 4dim array. */
-    const ltfatInt ld2a = 2 * p * q * W;
+    ltfat_int ld2a = 2 * p * q * W;
 
     /* Leading dimensions of cf */
-    const ltfatInt ld3b = 2 * q * q * W;
+    ltfat_int ld3b = 2 * q * q * W;
 
     /* --------- main loop begins here ------------------- */
-    for (ltfatInt r = 0; r < c; r++)
+    for (ltfat_int r = 0; r < c; r++)
     {
         /*  ---------- compute signal factorization ----------- */
         ffp = plan->ff;
@@ -236,18 +236,18 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
         if (p == 1)
         {
             /* Integer oversampling case */
-            for (ltfatInt w = 0; w < W; w++)
+            for (ltfat_int w = 0; w < W; w++)
             {
-                for (ltfatInt l = 0; l < q; l++)
+                for (ltfat_int l = 0; l < q; l++)
                 {
-                    for (ltfatInt s = 0; s < d; s++)
+                    for (ltfat_int s = 0; s < d; s++)
                     {
                         sbuf[s]   = fp[(s * M + l * a) % L];
                     }
 
                     LTFAT_NAME(fftreal_execute)(plan->p_before);
 
-                    for (ltfatInt s = 0; s < d2; s++)
+                    for (ltfat_int s = 0; s < d2; s++)
                     {
                         ffp[s * ld2a]   = ltfat_real(cbuf[s]) * scalconst;
                         ffp[s * ld2a + 1] = ltfat_imag(cbuf[s]) * scalconst;
@@ -262,20 +262,20 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
         {
             /* rational sampling case */
 
-            for (ltfatInt w = 0; w < W; w++)
+            for (ltfat_int w = 0; w < W; w++)
             {
-                for (ltfatInt l = 0; l < q; l++)
+                for (ltfat_int l = 0; l < q; l++)
                 {
-                    for (ltfatInt k = 0; k < p; k++)
+                    for (ltfat_int k = 0; k < p; k++)
                     {
-                        for (ltfatInt s = 0; s < d; s++)
+                        for (ltfat_int s = 0; s < d; s++)
                         {
                             sbuf[s]   = fp[ ltfat_positiverem(k * M + s * p * M - l * h_a * a, L) ];
                         }
 
                         LTFAT_NAME(fftreal_execute)(plan->p_before);
 
-                        for (ltfatInt s = 0; s < d2; s++)
+                        for (ltfat_int s = 0; s < d2; s++)
                         {
                             ffp[s * ld2a]   = ltfat_real(cbuf[s]) * scalconst;
                             ffp[s * ld2a + 1] = ltfat_imag(cbuf[s]) * scalconst;
@@ -297,15 +297,15 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
 
             /* Rational oversampling case */
-            for (ltfatInt s = 0; s < d2; s++)
+            for (ltfat_int s = 0; s < d2; s++)
             {
                 gbase = (LTFAT_REAL*)gf + 2 * (r + s * c) * q;
                 fbase = plan->ff + 2 * s * q * W;
                 cbase = plan->cf + 2 * s * q * q * W;
 
-                for (ltfatInt nm = 0; nm < q * W; nm++)
+                for (ltfat_int nm = 0; nm < q * W; nm++)
                 {
-                    for (ltfatInt mm = 0; mm < q; mm++)
+                    for (ltfat_int mm = 0; mm < q; mm++)
                     {
                         cbase[0] = gbase[0] * fbase[0] + gbase[1] * fbase[1];
                         cbase[1] = gbase[0] * fbase[1] - gbase[1] * fbase[0];
@@ -323,19 +323,19 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
         {
 
             /* Rational oversampling case */
-            for (ltfatInt s = 0; s < d2; s++)
+            for (ltfat_int s = 0; s < d2; s++)
             {
                 gbase = (LTFAT_REAL*)gf + 2 * (r + s * c) * p * q;
                 fbase = plan->ff + 2 * s * p * q * W;
                 cbase = plan->cf + 2 * s * q * q * W;
 
-                for (ltfatInt nm = 0; nm < q * W; nm++)
+                for (ltfat_int nm = 0; nm < q * W; nm++)
                 {
-                    for (ltfatInt mm = 0; mm < q; mm++)
+                    for (ltfat_int mm = 0; mm < q; mm++)
                     {
                         cbase[0] = 0.0;
                         cbase[1] = 0.0;
-                        for (ltfatInt km = 0; km < p; km++)
+                        for (ltfat_int km = 0; km < p; km++)
                         {
                             cbase[0] += gbase[0] * fbase[0] + gbase[1] * fbase[1];
                             cbase[1] += gbase[0] * fbase[1] - gbase[1] * fbase[0];
@@ -357,17 +357,17 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
         /*  -------  compute inverse coefficient factorization ------- */
         LTFAT_REAL* cfp = plan->cf;
-        const ltfatInt ld5c = M * N;
+        ltfat_int ld5c = M * N;
 
         /* Cover both integer and rational sampling case */
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             /* Complete inverse fac of coefficients */
-            for (ltfatInt l = 0; l < q; l++)
+            for (ltfat_int l = 0; l < q; l++)
             {
-                for (ltfatInt u = 0; u < q; u++)
+                for (ltfat_int u = 0; u < q; u++)
                 {
-                    for (ltfatInt s = 0; s < d2; s++)
+                    for (ltfat_int s = 0; s < d2; s++)
                     {
                         LTFAT_REAL* cbufTmp = (LTFAT_REAL*) &cbuf[s];
                         cbufTmp[0] = cfp[s * ld3b];
@@ -378,7 +378,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
                     /* Do inverse fft of length d */
                     LTFAT_NAME(ifftreal_execute)(plan->p_after);
 
-                    for (ltfatInt s = 0; s < d; s++)
+                    for (ltfat_int s = 0; s < d; s++)
                     {
                         cout[ r + l * c + ltfat_positiverem(u + s * q - l * h_a,
                                                             N)*M + w * ld5c ] = sbuf[s];

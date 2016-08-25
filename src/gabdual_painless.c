@@ -3,10 +3,10 @@
 #include "ltfat/macros.h"
 
 #define GABDIAGAPPLY(gg) do{ \
-    for (ltfatInt ii = 0; ii < domod.quot + domod.rem; ii++) \
+    for (ltfat_int ii = 0; ii < domod.quot + domod.rem; ii++) \
         (gg)[ii] = g[ii] * d[ii % a]; \
 \
-    for (ltfatInt ii = gl - 1, jj = a - 1; ii >= domod.quot + domod.rem; ii--, jj--)\
+    for (ltfat_int ii = gl - 1, jj = a - 1; ii >= domod.quot + domod.rem; ii--, jj--)\
     {\
         if(jj<0) jj=a-1;\
         (gg)[ii] = g[ii] * d[jj];\
@@ -24,11 +24,11 @@
 
 // Return first dl entries of the frame diagonal.
 LTFAT_API int
-LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
-                         ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d)
+LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfat_int gl,
+                         ltfat_int a, ltfat_int M, ltfat_int dl, LTFAT_REAL* d)
 {
     ltfat_div_t domod;
-    ltfatInt amax;
+    ltfat_int amax;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(d);
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
@@ -43,9 +43,9 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     domod = ltfat_idiv(gl, 2);
 
     // First half
-    for (ltfatInt aIdx = 0; aIdx < amax; aIdx++)
+    for (ltfat_int aIdx = 0; aIdx < amax; aIdx++)
     {
-        for (ltfatInt ii = aIdx; ii < domod.quot + domod.rem; ii += a)
+        for (ltfat_int ii = aIdx; ii < domod.quot + domod.rem; ii += a)
         {
 #ifdef LTFAT_COMPLEXTYPE
             LTFAT_REAL gabs = ltfat_abs(g[ii]);
@@ -57,9 +57,9 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
     }
 
     // Second half from the back
-    for (ltfatInt aIdx = amax - 1; aIdx >= 0; aIdx--)
+    for (ltfat_int aIdx = amax - 1; aIdx >= 0; aIdx--)
     {
-        for (ltfatInt ii = gl - (a - aIdx); ii >= domod.quot + domod.rem; ii -= a)
+        for (ltfat_int ii = gl - (a - aIdx); ii >= domod.quot + domod.rem; ii -= a)
         {
 #ifdef LTFAT_COMPLEXTYPE
             LTFAT_REAL gabs = ltfat_abs(g[ii]);
@@ -70,7 +70,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
         }
     }
 
-    for (ltfatInt aIdx = 0; aIdx < amax; aIdx++)
+    for (ltfat_int aIdx = 0; aIdx < amax; aIdx++)
         d[aIdx] *= M;
 
     // frame diagonal is a-periodic
@@ -82,8 +82,8 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
-                              const ltfatInt a, const ltfatInt M, LTFAT_TYPE* gt)
+LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, ltfat_int gl,
+                              ltfat_int a, ltfat_int M, LTFAT_TYPE* gt)
 {
     LTFAT_REAL* d = NULL;
     ltfat_div_t domod;
@@ -99,7 +99,7 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
     domod = ltfat_idiv(gl, 2);
 
     // Invert and square root the diagonal
-    for (ltfatInt ii = 0; ii < a; ii++)
+    for (ltfat_int ii = 0; ii < a; ii++)
         d[ii] = (LTFAT_REAL) ( 1.0 / sqrt(d[ii]) );
 
     GABDIAGAPPLY(gt);
@@ -110,8 +110,8 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
-                             const ltfatInt a,  const ltfatInt M, LTFAT_TYPE* gd)
+LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, ltfat_int gl,
+                             ltfat_int a,  ltfat_int M, LTFAT_TYPE* gd)
 {
     LTFAT_REAL* d = NULL;
     ltfat_div_t domod;
@@ -128,7 +128,7 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, const ltfatInt gl,
     domod = ltfat_idiv(gl, 2);
 
     // Invert the diagonal
-    for (ltfatInt ii = 0; ii < a; ii++)
+    for (ltfat_int ii = 0; ii < a; ii++)
         d[ii] = (LTFAT_REAL) ( 1.0 / d[ii] );
 
     GABDIAGAPPLY(gd);
@@ -139,14 +139,14 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a,
-                           ltfatInt M, LTFAT_TYPE* gpu)
+LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfat_int gl, ltfat_int a,
+                           ltfat_int M, LTFAT_TYPE* gpu)
 {
     int status = LTFATERR_SUCCESS;
     CHECKSTATUS(LTFAT_NAME(gabdual_painless)(g, gl, a, M, gpu),
                 "Call to gabdual_painless failed");
 
-    for (ltfatInt ii = 0; ii < gl; ii++)
+    for (ltfat_int ii = 0; ii < gl; ii++)
         gpu[ii] *= g[ii];
 
 error:

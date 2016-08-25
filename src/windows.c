@@ -3,14 +3,14 @@
 #include "ltfat/macros.h"
 
 LTFAT_API int
-LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
+LTFAT_NAME(pgauss)(ltfat_int L, const double w, const double c_t,
                    LTFAT_REAL* g)
 {
-    ltfatInt lr, k, nk;
+    ltfat_int lr, k, nk;
     double tmp, sqrtL, safe, gnorm, gtmp;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g);
-    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %d).", L);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %td).", L);
     CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
 
@@ -19,7 +19,7 @@ LTFAT_NAME(pgauss)(const ltfatInt L, const double w, const double c_t,
     gnorm = 0;
 
     /* Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero. */
-    nk = (ltfatInt)ceil(safe / sqrt((double)L / sqrt(w)));
+    nk = (ltfat_int)ceil(safe / sqrt((double)L / sqrt(w)));
 
     for ( lr = 0; lr < L; lr++)
     {
@@ -53,17 +53,17 @@ error:
 */
 
 LTFAT_API int
-LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
+LTFAT_NAME(pgauss_cmplx)(ltfat_int L, const double w, const double c_t,
                          const double c_f,
                          LTFAT_COMPLEX* g)
 {
     int status = LTFATERR_SUCCESS;
-    ltfatInt lr, k, nk;
+    ltfat_int lr, k, nk;
     double tmp, sqrtL, safe, gnorm;
     LTFAT_COMPLEX gtmp;
 
     CHECKNULL(g);
-    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %d).", L);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive (passed %td).", L);
     CHECK(LTFATERR_NOTPOSARG, w > 0, "w must be positive (passed %f).", w);
 
     sqrtL = sqrt((double)L);
@@ -71,7 +71,7 @@ LTFAT_NAME(pgauss_cmplx)(const ltfatInt L, const double w, const double c_t,
     gnorm = 0;
 
     /* Outside the interval [-safe,safe] then exp(-pi*x.^2) is numerically zero. */
-    nk = (ltfatInt)ceil(safe / sqrt((double)L / sqrt(w)));
+    nk = (ltfat_int)ceil(safe / sqrt((double)L / sqrt(w)));
 
     for ( lr = 0; lr < L; lr++)
     {

@@ -21,24 +21,24 @@ typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
  * #### Versions #
  * <tt>
  * ltfat_dgt_fb_d(const double f[], const double g[],
- *                const ltfatInt L, const ltfatInt gl,
- *                const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                const ltfat_phaseconvention ptype, complex double c[]);
+ *                ltfat_int L, ltfat_int gl,
+ *                ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                const ltfat_phaseconvention ptype, ltfat_complex_d c[]);
  *
  * ltfat_dgt_fb_s(const float f[], const float g[],
- *                const ltfatInt L, const ltfatInt gl,
- *                const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                const ltfat_phaseconvention ptype, complex float c[]);
+ *                ltfat_int L, ltfat_int gl,
+ *                ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                const ltfat_phaseconvention ptype, ltfat_complex_s c[]);
  *
- * ltfat_dgt_fb_dc(const complex double f[], const complex double g[],
- *                 const ltfatInt L, const ltfatInt gl,
- *                 const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                 const ltfat_phaseconvention ptype, complex double c[]);
+ * ltfat_dgt_fb_dc(const ltfat_complex_d f[], const ltfat_complex_d g[],
+ *                 ltfat_int L, ltfat_int gl,
+ *                 ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                 const ltfat_phaseconvention ptype, ltfat_complex_d c[]);
  *
- * ltfat_dgt_fb_sc(const complex float f[], const complex float g[],
- *                 const ltfatInt L, const ltfatInt gl,
- *                 const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                 const ltfat_phaseconvention ptype, complex float c[]);
+ * ltfat_dgt_fb_sc(const ltfat_complex_s f[], const ltfat_complex_s g[],
+ *                 ltfat_int L, ltfat_int gl,
+ *                 ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                 const ltfat_phaseconvention ptype, ltfat_complex_s c[]);
  * </tt>
  * \returns
  * Status code              | Description
@@ -54,8 +54,8 @@ typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
  */
 LTFAT_API int
 LTFAT_NAME(dgt_fb)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
-                   const ltfatInt L, const ltfatInt gl,
-                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+                   ltfat_int L, ltfat_int gl,
+                   ltfat_int W,  ltfat_int a, ltfat_int M,
                    const ltfat_phaseconvention ptype, LTFAT_COMPLEX c[]);
 
 /** Initialize plan for Discrete Gabor Transform for the filter bank algorithm
@@ -70,20 +70,20 @@ LTFAT_NAME(dgt_fb)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
  *
  * #### Versions #
  * <tt>
- * ltfat_dgt_fb_init_d(const double g[], const ltfatInt gl, const ltfatInt a,
- *                     const ltfatInt M, const ltfat_phaseconvention ptype,
+ * ltfat_dgt_fb_init_d(const double g[], ltfat_int gl, ltfat_int a,
+ *                     ltfat_int M, const ltfat_phaseconvention ptype,
  *                     unsigned flags, ltfat_dgt_fb_plan_d** plan);
  *
- * ltfat_dgt_fb_init_s(const float g[], const ltfatInt gl, const ltfatInt a,
- *                     const ltfatInt M, const ltfat_phaseconvention ptype,
+ * ltfat_dgt_fb_init_s(const float g[], ltfat_int gl, ltfat_int a,
+ *                     ltfat_int M, const ltfat_phaseconvention ptype,
  *                     unsigned flags, ltfat_dgt_fb_plan_s** plan);
  *
- * ltfat_dgt_fb_init_dc(const complex double g[], const ltfatInt gl, const ltfatInt a,
- *                      const ltfatInt M, const ltfat_phaseconvention ptype,
+ * ltfat_dgt_fb_init_dc(const ltfat_complex_d g[], ltfat_int gl, ltfat_int a,
+ *                      ltfat_int M, const ltfat_phaseconvention ptype,
  *                      unsigned flags, ltfat_dgt_fb_plan_dc** plan);
  *
- * ltfat_dgt_fb_init_sc(const complex float g[], const ltfatInt gl, const ltfatInt a,
- *                      const ltfatInt M, const ltfat_phaseconvention ptype,
+ * ltfat_dgt_fb_init_sc(const ltfat_complex_s g[], ltfat_int gl, ltfat_int a,
+ *                      ltfat_int M, const ltfat_phaseconvention ptype,
  *                      unsigned flags, ltfat_dgt_fb_plan_sc** plan);
  * </tt>
  * \returns
@@ -99,7 +99,7 @@ LTFAT_NAME(dgt_fb)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
  */
 LTFAT_API int
 LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE g[],
-                        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                        ltfat_int gl, ltfat_int a, ltfat_int M,
                         const ltfat_phaseconvention ptype, unsigned flags, LTFAT_NAME(dgt_fb_plan)** p);
 
 /** Execute plan for Discrete Gabor Transform using the filter bank algorithm
@@ -113,16 +113,16 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE g[],
  * #### Versions #
  * <tt>
  * ltfat_dgt_fb_execute_d(ltfat_dgt_fb_plan_d* plan, const double f[],
- *                        const ltfatInt L, const ltfatInt W, complex double c[]);
+ *                        ltfat_int L, ltfat_int W, ltfat_complex_d c[]);
  *
  * ltfat_dgt_fb_execute_s(ltfat_dgt_fb_plan_s* plan, const float f[],
- *                        const ltfatInt L, const ltfatInt W, complex float c[]);
+ *                        ltfat_int L, ltfat_int W, ltfat_complex_s c[]);
  *
- * ltfat_dgt_fb_execute_dc(ltfat_dgt_fb_plan_dc* plan, const complex double f[],
- *                         const ltfatInt L, const ltfatInt W, complex double c[]);
+ * ltfat_dgt_fb_execute_dc(ltfat_dgt_fb_plan_dc* plan, const ltfat_complex_d f[],
+ *                         ltfat_int L, ltfat_int W, ltfat_complex_d c[]);
  *
- * ltfat_dgt_fb_execute_sc(ltfat_dgt_fb_plan_ds* plan, const complex float f[],
- *                         const ltfatInt L, const ltfatInt W, complex float c[]);
+ * ltfat_dgt_fb_execute_sc(ltfat_dgt_fb_plan_ds* plan, const ltfat_complex_s f[],
+ *                         ltfat_int L, ltfat_int W, ltfat_complex_s c[]);
  * </tt>
  *
  * \returns
@@ -136,8 +136,8 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE g[],
  */
 LTFAT_API int
 LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* plan,
-                           const LTFAT_TYPE f[], const ltfatInt L,
-                           const ltfatInt W, LTFAT_COMPLEX c[]);
+                           const LTFAT_TYPE f[], ltfat_int L,
+                           ltfat_int W, LTFAT_COMPLEX c[]);
 
 /** Destroy the plan
  *

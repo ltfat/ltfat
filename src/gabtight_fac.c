@@ -4,13 +4,13 @@
 #include "ltfat/blaslapack.h"
 
 LTFAT_API void
-LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
-                         const ltfatInt R,
-                         const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX* gf, ltfat_int L,
+                         ltfat_int R,
+                         ltfat_int a, ltfat_int M,
                          LTFAT_COMPLEX* gtightf)
 {
 
-    ltfatInt h_a, h_m;
+    ltfat_int h_a, h_m;
 
     LTFAT_COMPLEX* Sf, *U, *VT, *gfwork;
     LTFAT_REAL* S;
@@ -18,12 +18,12 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;//{0.0, 0.0 };
     const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0; //{1.0, 0.0 };
 
-    const ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = N / q;
+    ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
+    ltfat_int p = a / c;
+    ltfat_int q = M / c;
+    ltfat_int d = N / q;
 
     S  = LTFAT_NAME_REAL(malloc)(p);
     Sf = LTFAT_NAME_COMPLEX(malloc)(p * p);
@@ -36,7 +36,7 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
      */
     memcpy(gfwork, gf, L * R * sizeof * gfwork);
 
-    for (ltfatInt rs = 0; rs < c * d; rs++)
+    for (ltfat_int rs = 0; rs < c * d; rs++)
     {
         /* Compute the thin SVD */
         LTFAT_NAME(gesvd)(p, q * R, gfwork + rs * p * q * R, p,
@@ -57,13 +57,13 @@ LTFAT_NAME(gabtight_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
 
 
 LTFAT_API void
-LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
-                             const ltfatInt R,
-                             const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX* gf, ltfat_int L,
+                             ltfat_int R,
+                             ltfat_int a, ltfat_int M,
                              LTFAT_COMPLEX* gtightf)
 {
 
-    ltfatInt h_a, h_m;
+    ltfat_int h_a, h_m;
 
     LTFAT_COMPLEX* Sf, *U, *VT, *gfwork;
     LTFAT_REAL* S;
@@ -71,15 +71,15 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
     const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;
     const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0; //{1.0, 0.0 };
 
-    const ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = N / q;
+    ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
+    ltfat_int p = a / c;
+    ltfat_int q = M / c;
+    ltfat_int d = N / q;
 
     /* This is a floor operation. */
-    const ltfatInt d2 = d / 2 + 1;
+    ltfat_int d2 = d / 2 + 1;
 
     S  = LTFAT_NAME_REAL(malloc)(p);
     Sf = LTFAT_NAME_COMPLEX(malloc)(p * p);
@@ -92,7 +92,7 @@ LTFAT_NAME(gabtightreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
      */
     memcpy(gfwork, gf, L * R * sizeof * gfwork);
 
-    for (ltfatInt rs = 0; rs < c * d2; rs++)
+    for (ltfat_int rs = 0; rs < c * d2; rs++)
     {
         /* Compute the thin SVD */
         LTFAT_NAME(gesvd)(p, q * R, gfwork + rs * p * q * R, p,

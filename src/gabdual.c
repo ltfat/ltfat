@@ -4,25 +4,25 @@
 
 LTFAT_API int
 LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
-                         const ltfatInt L, const ltfatInt a,
-                         const ltfatInt M, LTFAT_TYPE* gd)
+                         ltfat_int L, ltfat_int a,
+                         ltfat_int M, LTFAT_TYPE* gd)
 {
-    ltfatInt minL;
+    ltfat_int minL;
     LTFAT_COMPLEX* gf = NULL;
     LTFAT_COMPLEX* gdf = NULL;
-    ltfatInt R = 1;
+    ltfat_int R = 1;
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gd);
-    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %d) must be positive", L);
-    CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %d) must be positive.", R);
-    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
-    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L (passed %td) must be positive", L);
+    CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %td) must be positive.", R);
+    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %td) must be positive.", a);
+    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %td) must be positive.", M);
     CHECK(LTFATERR_NOTAFRAME, M >= a, "Not a frame. Check if M>=a.");
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
-          "L must and divisible by lcm(a,M)=%d.", minL);
+          "L must and divisible by lcm(a,M)=%td.", minL);
 
     CHECKMEM( gf = LTFAT_NAME_COMPLEX(malloc)(L * R));
     CHECKMEM( gdf = LTFAT_NAME_COMPLEX(malloc)(L * R));
@@ -48,9 +48,9 @@ error:
 
 
 LTFAT_API int
-LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
-                        const ltfatInt L, const ltfatInt a,
-                        const ltfatInt M, const ltfatInt gdl, LTFAT_TYPE* gd)
+LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, ltfat_int gl,
+                        ltfat_int L, ltfat_int a,
+                        ltfat_int M, ltfat_int gdl, LTFAT_TYPE* gd)
 {
     LTFAT_TYPE* tmpLong = NULL;
 
@@ -59,7 +59,7 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, const ltfatInt gl,
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
     CHECK(LTFATERR_BADSIZE, gdl > 0, "gdl must be positive");
     CHECK(LTFATERR_BADREQSIZE, L >= gl && L >= gdl,
-          "L>=gl && L>= gdl must hold. Passed L=%d, gl=%d, gdl=%d", L, gl, gdl);
+          "L>=gl && L>= gdl must hold. Passed L=%td, gl=%td, gdl=%td", L, gl, gdl);
 
     CHECKMEM( tmpLong = LTFAT_NAME(malloc)(L));
 

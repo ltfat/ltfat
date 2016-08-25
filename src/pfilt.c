@@ -5,13 +5,13 @@
 
 LTFAT_API void
 LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
-                         const ltfatInt L, const ltfatInt gl,
-                         const ltfatInt W, const ltfatInt a,
+                         ltfat_int L, ltfat_int gl,
+                         ltfat_int W, ltfat_int a,
                          LTFAT_REAL *cout)
 {
     /*  --------- initial declarations -------------- */
 
-    ltfatInt l, n, w;
+    ltfat_int l, n, w;
 
     LTFAT_REAL *gw;
 
@@ -22,13 +22,13 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
     /*  ----------- calculation of parameters and plans -------- */
 
-    const ltfatInt N=L/a;
+    ltfat_int N=L/a;
 
     /* These are floor operations. */
-    const ltfatInt glh=gl/2;
+    ltfat_int glh=gl/2;
 
     /* This is a ceil operation. */
-    const ltfatInt glh_d_a=(ltfatInt)ceil((glh*1.0)/(a));
+    ltfat_int glh_d_a=(ltfat_int)ceil((glh*1.0)/(a));
 
     gw   = (LTFAT_REAL*)ltfat_malloc(gl*sizeof(LTFAT_REAL));
 

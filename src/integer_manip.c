@@ -1,9 +1,9 @@
 #include "ltfat.h"
 
 LTFAT_API void
-ltfat_fftindex(const ltfatInt N, ltfatInt* indexout)
+ltfat_fftindex(ltfat_int N, ltfat_int* indexout)
 {
-    ltfatInt ii;
+    ltfat_int ii;
 
     if (N % 2 == 0)
     {
@@ -29,20 +29,20 @@ ltfat_fftindex(const ltfatInt N, ltfatInt* indexout)
     }
 }
 
-LTFAT_API ltfatInt
-ltfat_imax(const ltfatInt a, const ltfatInt b)
+LTFAT_API ltfat_int
+ltfat_imax(ltfat_int a, ltfat_int b)
 {
     return (a > b ? a : b);
 }
 
-LTFAT_API ltfatInt
-ltfat_imin(const ltfatInt a, const ltfatInt b)
+LTFAT_API ltfat_int
+ltfat_imin(ltfat_int a, ltfat_int b)
 {
     return (a < b ? a : b);
 }
 
 LTFAT_API ltfat_div_t
-ltfat_idiv(const ltfatInt a, const ltfatInt b)
+ltfat_idiv(ltfat_int a, ltfat_int b)
 {
     ltfat_div_t ret;
     ret.quot = a / b;
@@ -51,11 +51,11 @@ ltfat_idiv(const ltfatInt a, const ltfatInt b)
 }
 
 
-LTFAT_API ltfatInt
-makelarger(const ltfatInt L, const ltfatInt K)
+LTFAT_API ltfat_int
+makelarger(ltfat_int L, ltfat_int K)
 {
     /* This is a floor operation */
-    ltfatInt o = (L / K) * K;
+    ltfat_int o = (L / K) * K;
 
     /* Make it a ceil */
     if (L % K > 0)
@@ -67,16 +67,16 @@ makelarger(const ltfatInt L, const ltfatInt K)
 }
 
 /* Extended Euclid algorithm. */
-LTFAT_API ltfatInt
-ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt* r, ltfatInt* s )
+LTFAT_API ltfat_int
+ltfat_gcd (ltfat_int a, ltfat_int b, ltfat_int* r, ltfat_int* s )
 {
-    ltfatInt a1 = a;
-    ltfatInt b1 = b;
-    ltfatInt a2 = 1;
-    ltfatInt b2 = 0;
-    ltfatInt a3 = 0;
-    ltfatInt b3 = 1;
-    ltfatInt c, d;
+    ltfat_int a1 = a;
+    ltfat_int b1 = b;
+    ltfat_int a2 = 1;
+    ltfat_int b2 = 0;
+    ltfat_int a3 = 0;
+    ltfat_int b3 = 1;
+    ltfat_int c, d;
     while ( b1 != 0 )
     {
         d = a1 / b1;
@@ -99,28 +99,28 @@ ltfat_gcd (const ltfatInt a, const ltfatInt b, ltfatInt* r, ltfatInt* s )
     return a1;
 }
 
-LTFAT_API ltfatInt
-ltfat_lcm(const ltfatInt a, const ltfatInt b)
+LTFAT_API ltfat_int
+ltfat_lcm(ltfat_int a, ltfat_int b)
 {
-    ltfatInt junk_r, junk_s;
+    ltfat_int junk_r, junk_s;
 
-    ltfatInt c = ltfat_gcd(a, b, &junk_r, &junk_s);
+    ltfat_int c = ltfat_gcd(a, b, &junk_r, &junk_s);
 
     return (a * b / c);
 }
 
-LTFAT_API ltfatInt
-ltfat_dgtlength(const ltfatInt Ls, const ltfatInt a, const ltfatInt M)
+LTFAT_API ltfat_int
+ltfat_dgtlength(ltfat_int Ls, ltfat_int a, ltfat_int M)
 {
-    ltfatInt minL = ltfat_lcm(a, M);
-    ltfatInt nminL = (Ls + minL - 1) / minL; // This is ceil of Ls/minL
+    ltfat_int minL = ltfat_lcm(a, M);
+    ltfat_int nminL = (Ls + minL - 1) / minL; // This is ceil of Ls/minL
     return nminL * minL;
 }
 
 
 LTFAT_API void
-gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
-             ltfatInt* a, ltfatInt* M, ltfatInt* L, ltfatInt* N, ltfatInt* Ngood)
+gabimagepars(ltfat_int Ls, ltfat_int x, ltfat_int y,
+             ltfat_int* a, ltfat_int* M, ltfat_int* L, ltfat_int* N, ltfat_int* Ngood)
 {
 
 
@@ -128,16 +128,16 @@ gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
     *N = ltfat_imax(x, Ls);
 
     /* Determine the minimum transform size. */
-    ltfatInt K = ltfat_lcm(*M, *N);
+    ltfat_int K = ltfat_lcm(*M, *N);
 
     /* This L is good, but is it not the same as DGT will choose. */
-    ltfatInt Llong = makelarger(Ls, K);
+    ltfat_int Llong = makelarger(Ls, K);
 
     /* Fix a from the long L */
     *a = Llong / (*N);
 
     /* Now we have fixed a and M, so we can use the standard method of choosing L. */
-    ltfatInt Lsmallest = ltfat_lcm(*a, *M);
+    ltfat_int Lsmallest = ltfat_lcm(*a, *M);
     *L = makelarger(Ls, Lsmallest);
 
     /* We did not get N as desired. */
@@ -148,29 +148,29 @@ gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
 }
 
 /* Determine the size of the output array of wfacreal and iwfacreal */
-LTFAT_API ltfatInt
-wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M)
+LTFAT_API ltfat_int
+wfacreal_size(ltfat_int L, ltfat_int a, ltfat_int M)
 {
 
-    ltfatInt h_a, h_m;
+    ltfat_int h_a, h_m;
 
-    const ltfatInt b = L / M;
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt d = b / p;
+    ltfat_int b = L / M;
+    ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
+    ltfat_int p = a / c;
+    ltfat_int d = b / p;
 
     /* This is a floor operation. */
-    const ltfatInt d2 = d / 2 + 1;
+    ltfat_int d2 = d / 2 + 1;
 
     return d2 * p * M;
 
 }
 
-LTFAT_API ltfatInt
-ltfat_nextpow2(const ltfatInt y)
+LTFAT_API ltfat_int
+ltfat_nextpow2(ltfat_int y)
 {
-    ltfatInt x = (ltfatInt) y;
-    ltfatInt bits = sizeof(x) * 8;
+    ltfat_int x = (ltfat_int) y;
+    ltfat_int bits = sizeof(x) * 8;
 
     if (x == 0)
         return 1;
@@ -188,13 +188,13 @@ ltfat_nextpow2(const ltfatInt y)
     return x;
 }
 
-LTFAT_API ltfatInt
-ltfat_nextfastfft(const ltfatInt x)
+LTFAT_API ltfat_int
+ltfat_nextfastfft(ltfat_int x)
 {
-    ltfatInt xtmp = x;
+    ltfat_int xtmp = x;
     while (1)
     {
-        ltfatInt m = xtmp;
+        ltfat_int m = xtmp;
 
         while ((m % 2) == 0)
             m /= 2;
@@ -209,40 +209,40 @@ ltfat_nextfastfft(const ltfatInt x)
     return xtmp;
 }
 
-LTFAT_API ltfatInt
-ltfat_pow2(const ltfatInt x)
+LTFAT_API ltfat_int
+ltfat_pow2(ltfat_int x)
 {
-    return (((ltfatInt)1) << (x));
+    return (((ltfat_int)1) << (x));
 }
 
-LTFAT_API ltfatInt
-ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
+LTFAT_API ltfat_int
+ltfat_modpow2(ltfat_int x, ltfat_int pow2var)
 {
     return ((x) & (pow2var - 1));
 }
 
 /* LTFAT_API int */
-/* isPow2(const ltfatInt x) */
+/* isPow2(ltfat_int x) */
 /* { */
 /*     return x == ltfat_nextpow2(x); */
 /* } */
 /*  */
-/* LTFAT_API ltfatInt */
-/* ilog2(const ltfatInt x) */
+/* LTFAT_API ltfat_int */
+/* ilog2(ltfat_int x) */
 /* { */
-/*     ltfatInt tmp = 0; */
-/*     ltfatInt xtmp = x; */
+/*     ltfat_int tmp = 0; */
+/*     ltfat_int xtmp = x; */
 /*     while (xtmp >>= 1) ++tmp; */
 /*     return tmp; */
 /* } */
 /*  */
 /* // integer power by squaring */
-/* LTFAT_API ltfatInt */
-/* ipow(const ltfatInt base, const ltfatInt exp) */
+/* LTFAT_API ltfat_int */
+/* ipow(ltfat_int base, ltfat_int exp) */
 /* { */
-/*     ltfatInt baseTmp = (ltfatInt) base; */
-/*     ltfatInt expTmp = (ltfatInt) exp; */
-/*     ltfatInt result = 1; */
+/*     ltfat_int baseTmp = (ltfat_int) base; */
+/*     ltfat_int expTmp = (ltfat_int) exp; */
+/*     ltfat_int result = 1; */
 /*  */
 /*     while (expTmp) */
 /*     { */
@@ -255,47 +255,47 @@ ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var)
 /*     return result; */
 /* } */
 
-LTFAT_API ltfatInt
-filterbank_td_size(const ltfatInt L, const ltfatInt a, const ltfatInt gl,
-                   const ltfatInt offset, const ltfatExtType ext)
+LTFAT_API ltfat_int
+filterbank_td_size(ltfat_int L, ltfat_int a, ltfat_int gl,
+                   ltfat_int offset, const ltfatExtType ext)
 {
-    ltfatInt Lc = 0;
+    ltfat_int Lc = 0;
     if (ext == PER)
     {
-        Lc = (ltfatInt) ceil( L / ((double)a) );
+        Lc = (ltfat_int) ceil( L / ((double)a) );
     }
     else if (ext == VALID)
     {
-        Lc = (ltfatInt) ceil( (L - (gl - 1)) / ((double)a) );
+        Lc = (ltfat_int) ceil( (L - (gl - 1)) / ((double)a) );
 
     }
     else
     {
-        Lc = (ltfatInt) ceil( (L + gl - 1 + offset ) / ((double)a) );
+        Lc = (ltfat_int) ceil( (L + gl - 1 + offset ) / ((double)a) );
     }
     return Lc;
 }
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 ltfat_round(const double x)
 {
     if (x < 0.0)
-        return (ltfatInt)(x - 0.5);
+        return (ltfat_int)(x - 0.5);
     else
-        return (ltfatInt)(x + 0.5);
+        return (ltfat_int)(x + 0.5);
 }
 
-LTFAT_API ltfatInt
-ltfat_positiverem(const ltfatInt a, const ltfatInt b)
+LTFAT_API ltfat_int
+ltfat_positiverem(ltfat_int a, ltfat_int b)
 {
-    const ltfatInt c = a % b;
+    ltfat_int c = a % b;
     return (c < 0 ? c + b : c);
 }
 
-LTFAT_API ltfatInt
-ltfat_rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax)
+LTFAT_API ltfat_int
+ltfat_rangelimit(ltfat_int a, ltfat_int amin, ltfat_int amax)
 {
-    ltfatInt c = a < amin ? amin : a;
+    ltfat_int c = a < amin ? amin : a;
     c = c > amax ? amax : c;
     return c;
 }

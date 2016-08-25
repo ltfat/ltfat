@@ -21,12 +21,12 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
  * #### Versions #
  * <tt>
  * ltfat_dgtreal_long_d(const double f[], const double g[],
- *                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                      const ltfatInt M, const ltfat_phaseconvention ptype, complex double c[]);
+ *                      ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                      ltfat_int M, const ltfat_phaseconvention ptype, ltfat_complex_d c[]);
  *
  * ltfat_dgtreal_long_s(const float f[], const float g[],
- *                      const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                      const ltfatInt M, const ltfat_phaseconvention ptype, complex float c[]);
+ *                      ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                      ltfat_int M, const ltfat_phaseconvention ptype, ltfat_complex_s c[]);
  * </tt>
  * \returns
  * Status code              | Description
@@ -42,8 +42,8 @@ typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
  */
 LTFAT_API int
 LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
-                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-                         const ltfatInt M, const ltfat_phaseconvention ptype,
+                         ltfat_int L, ltfat_int W,  ltfat_int a,
+                         ltfat_int M, const ltfat_phaseconvention ptype,
                          LTFAT_COMPLEX c[]);
 
 /** Initialize plan for Discrete Gabor Transform for real signals for the factorization algorithm
@@ -67,13 +67,13 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  * #### Versions #
  * <tt>
  * ltfat_dgtreal_long_init_d(const double f[], const double g[],
- *                           const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                           const ltfatInt M,  complex double c[], const ltfat_phaseconvention ptype,
+ *                           ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                           ltfat_int M,  ltfat_complex_d c[], const ltfat_phaseconvention ptype,
  *                           unsigned flags, ltfat_dgtreal_long_plan_d** plan);
  *
  * ltfat_dgtreal_long_init_s(const float f[], const float g[],
- *                           const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                           const ltfatInt M,  complex double c[], const ltfat_phaseconvention ptype,
+ *                           ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                           ltfat_int M,  ltfat_complex_d c[], const ltfat_phaseconvention ptype,
  *                           unsigned flags, ltfat_dgtreal_long_plan_s** plan);
  * </tt>
  * \returns
@@ -90,8 +90,8 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL f[], const LTFAT_REAL g[],
  */
 LTFAT_API int
 LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL f[], const LTFAT_REAL g[],
-                              const ltfatInt L, const ltfatInt W, const ltfatInt a,
-                              const ltfatInt M, LTFAT_COMPLEX c[],
+                              ltfat_int L, ltfat_int W, ltfat_int a,
+                              ltfat_int M, LTFAT_COMPLEX c[],
                               const ltfat_phaseconvention ptype, unsigned flags,
                               LTFAT_NAME(dgtreal_long_plan)** plan);
 
@@ -125,10 +125,10 @@ LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan);
  * #### Versions #
  * <tt>
  * ltfat_dgtreal_long_execute_newarray_d(ltfat_dgtreal_long_plan_d* plan, 
- *                                       const double f[], complex double c[]);
+ *                                       const double f[], ltfat_complex_d c[]);
  *
  * ltfat_dgtreal_long_execute_newarray_s(ltfat_dgtreal_long_plan_s* plan
- *                                       const float f[], complex float c[]);
+ *                                       const float f[], ltfat_complex_s c[]);
  * </tt>
  * \returns
  * Status code              | Description

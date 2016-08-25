@@ -11,13 +11,13 @@ extern "C"
 
 
 // LAPACK overwrites the input argument.
-ltfatInt
+ltfat_int
 LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
                  LTFAT_COMPLEX *A, const ptrdiff_t lda,
                  LTFAT_COMPLEX *B, const ptrdiff_t ldb);
 
 // LAPACK overwrites the input argument.
-ltfatInt
+ltfat_int
 LTFAT_NAME(gesvd)(const ptrdiff_t M, const ptrdiff_t N,
                   LTFAT_COMPLEX *A, const ptrdiff_t lda,
                   LTFAT_REAL *S, LTFAT_COMPLEX *U, const ptrdiff_t ldu,

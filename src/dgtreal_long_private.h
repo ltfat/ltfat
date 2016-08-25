@@ -5,12 +5,12 @@
 
 struct LTFAT_NAME(dgtreal_long_plan)
 {
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt L;
-    ltfatInt W;
-    ltfatInt c;
-    ltfatInt h_a;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int L;
+    ltfat_int W;
+    ltfat_int c;
+    ltfat_int h_a;
     ltfat_phaseconvention ptype;
     LTFAT_NAME(fftreal_plan)* p_before;
     LTFAT_NAME(ifftreal_plan)* p_after;

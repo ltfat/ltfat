@@ -96,15 +96,13 @@ LTFAT_GEMM (F77_CONST_CHAR_ARG_DECL TransA,
 
 #endif /* end of HAVE_BLAS */
 
-
-
 /* ----- Compute Cholesky factorization  ------------
  *
  * For simplification, the interface assumes that we
  * are using column-major format and storing the upper
  * triangle
  */
-ltfatInt LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
+ltfat_int LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
                           LTFAT_COMPLEX* A, const ptrdiff_t lda,
                           LTFAT_COMPLEX* B, const ptrdiff_t ldb)
 #ifdef HAVE_CBLASLAPACK
@@ -133,7 +131,7 @@ ltfatInt LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
 #endif
 
 /* ----- Compute SVD factorization  ------------ */
-ltfatInt LTFAT_NAME(gesvd)(const ptrdiff_t M, const ptrdiff_t N,
+ltfat_int LTFAT_NAME(gesvd)(const ptrdiff_t M, const ptrdiff_t N,
                            LTFAT_COMPLEX* A, const ptrdiff_t lda,
                            LTFAT_REAL* S, LTFAT_COMPLEX* U, const ptrdiff_t ldu,
                            LTFAT_COMPLEX* VT, const ptrdiff_t ldvt)

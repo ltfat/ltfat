@@ -4,9 +4,9 @@
 
 struct LTFAT_NAME(dgtreal_fb_plan)
 {
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt gl;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int gl;
     ltfat_phaseconvention ptype;
     LTFAT_NAME_REAL(fftreal_plan)* p_small;
     LTFAT_REAL*    sbuf;
@@ -18,8 +18,8 @@ struct LTFAT_NAME(dgtreal_fb_plan)
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
-                       const ltfatInt L, const ltfatInt gl,
-                       const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                       ltfat_int L, ltfat_int gl,
+                       ltfat_int W, ltfat_int a, ltfat_int M,
                        const ltfat_phaseconvention ptype, LTFAT_COMPLEX* cout)
 {
     LTFAT_NAME(dgtreal_fb_plan)* plan = NULL;
@@ -41,12 +41,12 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
-                            const ltfatInt gl, const ltfatInt a,
-                            const ltfatInt M, const ltfat_phaseconvention ptype,
+                            ltfat_int gl, ltfat_int a,
+                            ltfat_int M, const ltfat_phaseconvention ptype,
                             unsigned flags, LTFAT_NAME(dgtreal_fb_plan)** pout)
 {
     LTFAT_NAME(dgtreal_fb_plan)* plan = NULL;
-    ltfatInt M2;
+    ltfat_int M2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(pout);
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
@@ -98,13 +98,13 @@ error:
 }
 
 /* #define THE_SUM_REAL { \ */
-/* ltfatInt premarg = plan.ptype?-glh:n*a-glh; \ */
-/* for (ltfatInt m=0;m<M;m++) \ */
+/* ltfat_int premarg = plan.ptype?-glh:n*a-glh; \ */
+/* for (ltfat_int m=0;m<M;m++) \ */
 /* { \ */
 /*    rem = ltfat_positiverem(m+(premarg), M); \ */
 /*    sbuf[rem]=0.0; \ */
 /*    fbd=fw+m; \ */
-/*    for (ltfatInt k=0;k<gl/M;k++) \ */
+/*    for (ltfat_int k=0;k<gl/M;k++) \ */
 /*    { \ */
 /*      sbuf[rem]+=(*fbd);         \ */
 /*       fbd+=M; \ */
@@ -114,7 +114,7 @@ error:
 /*  LTFAT_FFTW(execute)(plan.p_small);         \ */
 /* \ */
 /* coefsum=(LTFAT_REAL*)cout+2*(n*M2+w*M2*N); \ */
-/* for (ltfatInt m=0;m<M2;m++) \ */
+/* for (ltfat_int m=0;m<M2;m++) \ */
 /* { \ */
 /*    coefsum[2*m]   = CH(creal)(cbuf[m]); \ */
 /*    coefsum[2*m+1] = CH(cimag)(cbuf[m]); \ */
@@ -129,10 +129,10 @@ memcpy(cout+(n*M2+w*M2*N),cbuf,M2*sizeof*cbuf); \
 LTFAT_API int
 LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
                                const LTFAT_REAL* f,
-                               const ltfatInt L, const ltfatInt W,
+                               ltfat_int L, ltfat_int W,
                                LTFAT_COMPLEX* cout)
 {
-    ltfatInt a, M, M2, N, gl, glh, glh_d_a;
+    ltfat_int a, M, M2, N, gl, glh, glh_d_a;
     LTFAT_REAL* sbuf, *fw;
     const LTFAT_REAL* fbd;
     LTFAT_COMPLEX* cbuf;
@@ -140,7 +140,7 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
     CHECKNULL(plan); CHECKNULL(f); CHECKNULL(cout);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
     CHECK(LTFATERR_BADTRALEN, L >= plan->gl && !(L % plan->a) ,
-          "L (passed %d) must be greater or equal to gl and divisible by a (passed %d).",
+          "L (passed %td) must be greater or equal to gl and divisible by a (passed %td).",
           L, plan->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
@@ -159,21 +159,21 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
     M2 = M / 2 + 1;
 
     /* This is a ceil operation. */
-    glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
+    glh_d_a = (ltfat_int)ceil((glh * 1.0) / (a));
 
     /*  ---------- main body ----------- */
 
     /*----- Handle the first boundary using periodic boundary conditions.*/
-    for (ltfatInt n = 0; n < glh_d_a; n++)
+    for (ltfat_int n = 0; n < glh_d_a; n++)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             fbd = f + L - (glh - n * a) + L * w;
-            for (ltfatInt l = 0; l < glh - n * a; l++)
+            for (ltfat_int l = 0; l < glh - n * a; l++)
                 fw[l]  = fbd[l] * plan->gw[l];
 
             fbd = f - (glh - n * a) + L * w;
-            for (ltfatInt l = glh - n * a; l < gl; l++)
+            for (ltfat_int l = glh - n * a; l < gl; l++)
                 fw[l]  = fbd[l] * plan->gw[l];
 
             THE_SUM_REAL
@@ -181,12 +181,12 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
     }
 
     /* ----- Handle the middle case. --------------------- */
-    for (ltfatInt n = glh_d_a; n < (L - (gl + 1) / 2) / a + 1; n++)
+    for (ltfat_int n = glh_d_a; n < (L - (gl + 1) / 2) / a + 1; n++)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             fbd = f + (n * a - glh + L * w);
-            for (ltfatInt l = 0; l < gl; l++)
+            for (ltfat_int l = 0; l < gl; l++)
                 fw[l]  = fbd[l] * plan->gw[l];
 
             THE_SUM_REAL
@@ -195,16 +195,16 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
     }
 
     /* Handle the last boundary using periodic boundary conditions. */
-    for (ltfatInt n = (L - (gl + 1) / 2) / a + 1; n < N; n++)
+    for (ltfat_int n = (L - (gl + 1) / 2) / a + 1; n < N; n++)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             fbd = f + (n * a - glh + L * w);
-            for (ltfatInt l = 0; l < L - n * a + glh; l++)
+            for (ltfat_int l = 0; l < L - n * a + glh; l++)
                 fw[l]  = fbd[l] * plan->gw[l];
 
             fbd = f - (L - n * a + glh) + L * w;
-            for (ltfatInt l = L - n * a + glh; l < gl; l++)
+            for (ltfat_int l = L - n * a + glh; l < gl; l++)
                 fw[l]  = fbd[l] * plan->gw[l];
 
             THE_SUM_REAL

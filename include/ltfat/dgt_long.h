@@ -23,29 +23,29 @@ typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
  *  -----------------
  *
  *  <tt>
- *  ltfat_dgt_long_d(const double f[], const double g[], const ltfatInt L,
- *                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                   const ltfat_phaseconvention ptype, complex double c[]);
+ *  ltfat_dgt_long_d(const double f[], const double g[], ltfat_int L,
+ *                   ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                   const ltfat_phaseconvention ptype, ltfat_complex_d c[]);
  *
- *  ltfat_dgt_long_s(const float f[], const float g[], const ltfatInt L,
- *                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                   const ltfat_phaseconvention ptype, complex float c[]);
+ *  ltfat_dgt_long_s(const float f[], const float g[], ltfat_int L,
+ *                   ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                   const ltfat_phaseconvention ptype, ltfat_complex_s c[]);
  *
- *  ltfat_dgt_long_dc(const complex double f[], const complex double g[],
- *                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                    const ltfatInt M, const ltfat_phaseconvention ptype,
- *                    complex double c[]);
+ *  ltfat_dgt_long_dc(const ltfat_complex_d f[], const ltfat_complex_d g[],
+ *                    ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                    ltfat_int M, const ltfat_phaseconvention ptype,
+ *                    ltfat_complex_d c[]);
  *
- *  ltfat_dgt_long_sc(const complex float f[], const complex float g[],
- *                    const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                    const ltfatInt M, const ltfat_phaseconvention ptype,
- *                    complex float c[]);
+ *  ltfat_dgt_long_sc(const ltfat_complex_s f[], const ltfat_complex_s g[],
+ *                    ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                    ltfat_int M, const ltfat_phaseconvention ptype,
+ *                    ltfat_complex_s c[]);
  *  </tt>
  */
 LTFAT_API int
 LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
-                     const ltfatInt L, const ltfatInt W,  const ltfatInt a,
-                     const ltfatInt M, const ltfat_phaseconvention ptype,
+                     ltfat_int L, ltfat_int W,  ltfat_int a,
+                     ltfat_int M, const ltfat_phaseconvention ptype,
                      LTFAT_COMPLEX c[]);
 
 /** Inicialization of the DGT plan
@@ -67,32 +67,32 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
  *  -----------------
  *
  *  <tt>
- *  ltfat_dgt_long_init_d(const double f[], const double g[], const ltfatInt L,
- *                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                        complex double c[], const ltfat_phaseconvention ptype,
+ *  ltfat_dgt_long_init_d(const double f[], const double g[], ltfat_int L,
+ *                        ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                        ltfat_complex_d c[], const ltfat_phaseconvention ptype,
  *                        unsigned flags, dgt_long_plan_d** p);
  *
- *  ltfat_dgt_long_init_s(const float f[], const float g[], const ltfatInt L,
- *                        const ltfatInt W,  const ltfatInt a, const ltfatInt M,
- *                        complex float c[], const ltfat_phaseconvention ptype,
+ *  ltfat_dgt_long_init_s(const float f[], const float g[], ltfat_int L,
+ *                        ltfat_int W,  ltfat_int a, ltfat_int M,
+ *                        ltfat_complex_s c[], const ltfat_phaseconvention ptype,
  *                        unsigned flags, dgt_long_plan_s** p);
  *
- *  ltfat_dgt_long_init_dc(const complex double f[], const complex double g[],
- *                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                         const ltfatInt M, complex double c[],
+ *  ltfat_dgt_long_init_dc(const ltfat_complex_d f[], const ltfat_complex_d g[],
+ *                         ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                         ltfat_int M, ltfat_complex_d c[],
  *                         const ltfat_phaseconvention ptype, unsigned flags,
  *                         dgt_long_plan_dc** p);
  *
- *  ltfat_dgt_long_init_sc(complex float f[], const complex float g[],
- *                         const ltfatInt L, const ltfatInt W,  const ltfatInt a,
- *                         const ltfatInt M, complex float c[],
+ *  ltfat_dgt_long_init_sc(ltfat_complex_s f[], const ltfat_complex_s g[],
+ *                         ltfat_int L, ltfat_int W,  ltfat_int a,
+ *                         ltfat_int M, ltfat_complex_s c[],
  *                         const ltfat_phaseconvention ptype, unsigned flags,
  *                         dgt_long_plan_sc** p);
  *  </tt>
  */
 LTFAT_API int
-LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], const ltfatInt L,
-                          const ltfatInt W, const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX c[],
+LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], ltfat_int L,
+                          ltfat_int W, ltfat_int a, ltfat_int M, LTFAT_COMPLEX c[],
                           const ltfat_phaseconvention ptype, unsigned flags,
                           LTFAT_NAME(dgt_long_plan)** p);
 
@@ -129,16 +129,16 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan);
  *
  *  <tt>
  *  ltfat_dgt_long_execute_newarray_d(ltfat_dgt_long_plan_d* plan, 
- *                                    const double f[], complex double c[]);
+ *                                    const double f[], ltfat_complex_d c[]);
  *
  *  ltfat_dgt_long_execute_newarray_s(ltfat_dgt_long_plan_s* plan,
- *                                    const float f[], complex float c[]);
+ *                                    const float f[], ltfat_complex_s c[]);
  *
  *  ltfat_dgt_long_execute_newarray_dc(ltfat_dgt_long_plan_cd* plan,
- *                                     const complex double f[], complex double c[]);
+ *                                     const ltfat_complex_d f[], ltfat_complex_d c[]);
  *
  *  ltfat_dgt_long_execute_newarray_sc(ltfat_dgt_long_plan_cs* plan,
- *                                     const complex float f[], complex float c[]);
+ *                                     const ltfat_complex_s f[], ltfat_complex_s c[]);
  *  </tt>
  */
 LTFAT_API int

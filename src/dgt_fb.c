@@ -4,9 +4,9 @@
 
 struct LTFAT_NAME(dgt_fb_plan)
 {
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt gl;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int gl;
     ltfat_phaseconvention ptype;
     LTFAT_NAME_REAL(fft_plan)* p_small;
     LTFAT_COMPLEX* sbuf;
@@ -16,8 +16,8 @@ struct LTFAT_NAME(dgt_fb_plan)
 
 LTFAT_API int
 LTFAT_NAME(dgt_fb)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
-                   const ltfatInt L, const ltfatInt gl,
-                   const ltfatInt W,  const ltfatInt a, const ltfatInt M,
+                   ltfat_int L, ltfat_int gl,
+                   ltfat_int W,  ltfat_int a, ltfat_int M,
                    const ltfat_phaseconvention ptype, LTFAT_COMPLEX* cout)
 {
 
@@ -40,7 +40,7 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
-                        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
+                        ltfat_int gl, ltfat_int a, ltfat_int M,
                         const ltfat_phaseconvention ptype, unsigned flags, LTFAT_NAME(dgt_fb_plan)** p)
 {
     LTFAT_NAME(dgt_fb_plan)* plan = NULL;
@@ -116,16 +116,16 @@ memcpy(cout + (n*M + w*M*N),sbuf,M*sizeof*cout); \
 LTFAT_API int
 LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
                            const LTFAT_TYPE* f,
-                           const ltfatInt L, const ltfatInt W,  LTFAT_COMPLEX* cout)
+                           ltfat_int L, ltfat_int W,  LTFAT_COMPLEX* cout)
 {
-    ltfatInt a, M, N, gl, glh, glh_d_a;
+    ltfat_int a, M, N, gl, glh, glh_d_a;
     LTFAT_COMPLEX* sbuf, *fw;
     LTFAT_TYPE* fbd;
     LTFAT_NAME(dgt_fb_plan) plan;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout);
     CHECK(LTFATERR_BADTRALEN, L >= p->gl && !(L % p->a) ,
-          "L (passed %d) must be positive and divisible by a (passed %d).", L, p->a);
+          "L (passed %td) must be positive and divisible by a (passed %td).", L, p->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
     /*  --------- initial declarations -------------- */
@@ -143,23 +143,23 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
     glh = plan.gl / 2;
 
     /* This is a ceil operation. */
-    glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
+    glh_d_a = (ltfat_int)ceil((glh * 1.0) / (a));
 
 
     /*  ---------- main body ----------- */
 
     /*----- Handle the first boundary using periodic boundary conditions.*/
-    for (ltfatInt n = 0; n < glh_d_a; n++)
+    for (ltfat_int n = 0; n < glh_d_a; n++)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
 
             fbd = (LTFAT_TYPE*)f + (L - (glh - n * a) + L * w);
-            for (ltfatInt l = 0; l < glh - n * a; l++)
+            for (ltfat_int l = 0; l < glh - n * a; l++)
                 fw[l] = fbd[l] * plan.gw[l];
 
             fbd = (LTFAT_TYPE*)f -  (glh - n * a) +  L * w;
-            for (ltfatInt l = glh - n * a; l < gl; l++)
+            for (ltfat_int l = glh - n * a; l < gl; l++)
                 fw[l] = fbd[l] * plan.gw[l];
 
             THE_SUM
@@ -168,12 +168,12 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
     }
 
     /* ----- Handle the middle case. --------------------- */
-    for (ltfatInt n = glh_d_a; n < (L - (gl + 1) / 2) / a + 1; n++)
+    for (ltfat_int n = glh_d_a; n < (L - (gl + 1) / 2) / a + 1; n++)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             fbd = (LTFAT_TYPE*)f + (n * a - glh + L * w);
-            for (ltfatInt l = 0; l < gl; l++)
+            for (ltfat_int l = 0; l < gl; l++)
                 fw[l] = fbd[l] * plan.gw[l];
 
             THE_SUM
@@ -182,16 +182,16 @@ LTFAT_NAME(dgt_fb_execute)(const LTFAT_NAME(dgt_fb_plan)* p,
     }
 
     /* Handle the last boundary using periodic boundary conditions. */
-    for (ltfatInt n = (L - (gl + 1) / 2) / a + 1; n < N; n++)
+    for (ltfat_int n = (L - (gl + 1) / 2) / a + 1; n < N; n++)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             fbd = (LTFAT_TYPE*)f + (n * a - glh + L * w);
-            for (ltfatInt l = 0; l < L - n * a + glh; l++)
+            for (ltfat_int l = 0; l < L - n * a + glh; l++)
                 fw[l] = fbd[l] * plan.gw[l];
 
             fbd = (LTFAT_TYPE*)f - (L - n * a + glh) +  L * w;
-            for (ltfatInt l = L - n * a + glh; l < gl; l++)
+            for (ltfat_int l = L - n * a + glh; l < gl; l++)
                 fw[l] = fbd[l] * plan.gw[l];
 
             THE_SUM

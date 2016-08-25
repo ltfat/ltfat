@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 LTFAT_API LTFAT_FFTW(plan)
-LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE* cout,
+LTFAT_NAME(dct_init)( ltfat_int L, ltfat_int W, LTFAT_TYPE* cout,
                       const dct_kind kind)
 {
     LTFAT_FFTW(iodim64) dims, howmanydims;
@@ -44,7 +44,7 @@ LTFAT_NAME(dct_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE* cout,
 
 // f and cout cannot be equal, because creating plan can tamper with the array
 LTFAT_API void
-LTFAT_NAME(dct)(const LTFAT_TYPE* f, const ltfatInt L, const ltfatInt W,
+LTFAT_NAME(dct)(const LTFAT_TYPE* f, ltfat_int L, ltfat_int W,
                 LTFAT_TYPE* cout, const dct_kind kind)
 {
     LTFAT_FFTW(plan) p = LTFAT_NAME(dct_init)( L, W, cout, kind);
@@ -57,7 +57,7 @@ LTFAT_NAME(dct)(const LTFAT_TYPE* f, const ltfatInt L, const ltfatInt W,
 // f and cout can be equal, provided plan was already created
 LTFAT_API
 void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE* f,
-                             const ltfatInt L, const ltfatInt W,
+                             ltfat_int L, ltfat_int W,
                              LTFAT_TYPE* cout, const dct_kind kind)
 {
     // Copy input to the output
@@ -67,14 +67,14 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE* f,
     if (L == 1)
         return;
 
-    ltfatInt N = 2 * L;
+    ltfat_int N = 2 * L;
     LTFAT_REAL sqrt2 = (LTFAT_REAL) sqrt(2.0);
     LTFAT_REAL postScale = (LTFAT_REAL) 1.0 / sqrt2;
     LTFAT_REAL scale = (LTFAT_REAL) ( sqrt2 * (1.0 / (double)N) * sqrt((double)L) );
 
     if (kind == DCTI || kind == DCTIII)
     {
-        for (ltfatInt ii = 0; ii < W; ii++)
+        for (ltfat_int ii = 0; ii < W; ii++)
         {
             cout[ii * L] *= sqrt2;
         }
@@ -83,7 +83,7 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE* f,
     if (kind == DCTI)
     {
         N -= 2;
-        for (ltfatInt ii = 0; ii < W; ii++)
+        for (ltfat_int ii = 0; ii < W; ii++)
         {
             cout[(ii + 1)*L - 1] *= sqrt2;
         }
@@ -100,7 +100,7 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE* f,
 #endif
 
     // Post-scaling
-    for (ltfatInt ii = 0; ii < L * W; ii++)
+    for (ltfat_int ii = 0; ii < L * W; ii++)
     {
         cout[ii] *= scale;
     }
@@ -108,7 +108,7 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE* f,
     if (kind == DCTI || kind == DCTII)
     {
         // Scale DC component(s)
-        for (ltfatInt ii = 0; ii < W; ii++)
+        for (ltfat_int ii = 0; ii < W; ii++)
         {
             cout[ii * L] *= postScale;
         }
@@ -117,7 +117,7 @@ void LTFAT_NAME(dct_execute)(const LTFAT_FFTW(plan) p, const LTFAT_TYPE* f,
     if (kind == DCTI)
     {
         // Scale AC component
-        for (ltfatInt ii = 0; ii < W; ii++)
+        for (ltfat_int ii = 0; ii < W; ii++)
         {
             cout[(ii + 1)*L - 1] *= postScale;
         }

@@ -10,14 +10,14 @@ typedef enum
 #endif
 
 LTFAT_API LTFAT_FFTW(plan)
-LTFAT_NAME(dst_init)( const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+LTFAT_NAME(dst_init)( ltfat_int L, ltfat_int W, LTFAT_TYPE *cout,
                       const dst_kind kind);
 
 LTFAT_API void
-LTFAT_NAME(dst)(const LTFAT_TYPE *f, const ltfatInt L, const ltfatInt W,
+LTFAT_NAME(dst)(const LTFAT_TYPE *f, ltfat_int L, ltfat_int W,
                 LTFAT_TYPE *cout, const dst_kind kind);
 
 LTFAT_API void
 LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
-                        const ltfatInt L, const ltfatInt W, LTFAT_TYPE *cout,
+                        ltfat_int L, ltfat_int W, LTFAT_TYPE *cout,
                         const dst_kind kind);

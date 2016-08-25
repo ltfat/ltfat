@@ -23,8 +23,8 @@ typedef enum
 ltfatExtType ltfatExtStringToEnum(const char* extType);
 
 LTFAT_API
-ltfatInt filterbank_td_size(const ltfatInt L, const ltfatInt a,
-                            const ltfatInt gl, const ltfatInt offset,
+ltfat_int filterbank_td_size(ltfat_int L, ltfat_int a,
+                            ltfat_int gl, ltfat_int offset,
                             const ltfatExtType ext);
 
 #endif
@@ -33,62 +33,62 @@ ltfatInt filterbank_td_size(const ltfatInt L, const ltfatInt a,
 
 
 LTFAT_API void
-LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, ltfatInt inLen, LTFAT_TYPE *buffer, ltfatInt buffLen, ltfatInt filtLen, ltfatExtType ext, ltfatInt a);
+LTFAT_NAME(extend_left)(const LTFAT_TYPE *in, ltfat_int inLen, LTFAT_TYPE *buffer, ltfat_int buffLen, ltfat_int filtLen, ltfatExtType ext, ltfat_int a);
 
 LTFAT_API void
-LTFAT_NAME(extend_right)(const LTFAT_TYPE *in, ltfatInt inLen, LTFAT_TYPE *buffer, ltfatInt filtLen, ltfatExtType ext, ltfatInt a);
+LTFAT_NAME(extend_right)(const LTFAT_TYPE *in, ltfat_int inLen, LTFAT_TYPE *buffer, ltfat_int filtLen, ltfatExtType ext, ltfat_int a);
 
 
 
 
 LTFAT_API void
 LTFAT_NAME(convsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
-                       const ltfatInt L, const ltfatInt gl, const ltfatInt a, const ltfatInt skip,
+                       ltfat_int L, ltfat_int gl, ltfat_int a, ltfat_int skip,
                        LTFAT_TYPE *c, ltfatExtType ext);
 
 
 LTFAT_API void
 LTFAT_NAME(upconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
-                      const ltfatInt L,  const ltfatInt gl, const ltfatInt a, const ltfatInt skip,
+                      ltfat_int L,  ltfat_int gl, ltfat_int a, ltfat_int skip,
                       LTFAT_TYPE *f, ltfatExtType ext);
 
 
 LTFAT_API void
 LTFAT_NAME(filterbank_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g[],
-                          const ltfatInt L, const ltfatInt gl[], const ltfatInt W,
-                          const ltfatInt a[], const ltfatInt skip[], const ltfatInt M,
+                          ltfat_int L, ltfat_int gl[], ltfat_int W,
+                          ltfat_int a[], ltfat_int skip[], ltfat_int M,
                           LTFAT_TYPE *c[], ltfatExtType ext);
 
 
 LTFAT_API void
 LTFAT_NAME(ifilterbank_td)(const LTFAT_TYPE *c[], const LTFAT_TYPE *g[],
-                           const ltfatInt L, const ltfatInt gl[], const ltfatInt W, const ltfatInt a[],
-                           const ltfatInt skip[], const ltfatInt M, LTFAT_TYPE *f,
+                           ltfat_int L, ltfat_int gl[], ltfat_int W, ltfat_int a[],
+                           ltfat_int skip[], ltfat_int M, LTFAT_TYPE *f,
                            ltfatExtType ext);
 
 LTFAT_API void
 LTFAT_NAME(atrousfilterbank_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g[],
-                                const ltfatInt L, const ltfatInt gl[], const ltfatInt W,
-                                const ltfatInt a[], const ltfatInt skip[], const ltfatInt M,
+                                ltfat_int L, ltfat_int gl[], ltfat_int W,
+                                ltfat_int a[], ltfat_int skip[], ltfat_int M,
                                 LTFAT_TYPE *c, ltfatExtType ext);
 
 LTFAT_API void
 LTFAT_NAME(iatrousfilterbank_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g[],
-                                 const ltfatInt L, const ltfatInt gl[], const ltfatInt W, const ltfatInt a[],
-                                 const ltfatInt skip[], const ltfatInt M, LTFAT_TYPE *f,
+                                 ltfat_int L, ltfat_int gl[], ltfat_int W, ltfat_int a[],
+                                 ltfat_int skip[], ltfat_int M, LTFAT_TYPE *f,
                                  ltfatExtType ext);
 
 
 LTFAT_API void
 LTFAT_NAME(atrousconvsub_td)(const LTFAT_TYPE *f, const LTFAT_TYPE *g,
-                             const ltfatInt L, const ltfatInt gl,
-                             const ltfatInt ga, ltfatInt skip,
+                             ltfat_int L, ltfat_int gl,
+                             ltfat_int ga, ltfat_int skip,
                              LTFAT_TYPE *c, ltfatExtType ext);
 
 LTFAT_API void
 LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
-                            const ltfatInt L, const ltfatInt gl,
-                            const ltfatInt ga, const ltfatInt skip,
+                            ltfat_int L, ltfat_int gl,
+                            ltfat_int ga, ltfat_int skip,
                             LTFAT_TYPE *f, ltfatExtType ext);
 
 

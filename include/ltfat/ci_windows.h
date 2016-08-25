@@ -53,9 +53,9 @@ LTFAT_FIRWIN;
  *
  * ltfat_firwin_s(LTFAT_FIRWIN win, int gl, float* g);
  *
- * ltfat_firwin_dc(LTFAT_FIRWIN win, int gl, complex double* g);
+ * ltfat_firwin_dc(LTFAT_FIRWIN win, int gl, ltfat_complex_d* g);
  *
- * ltfat_firwin_sc(LTFAT_FIRWIN win, int gl, complex float* g);
+ * ltfat_firwin_sc(LTFAT_FIRWIN win, int gl, ltfat_complex_s* g);
  * </tt>
  * \returns
  * Status code           | Description
@@ -66,7 +66,7 @@ LTFAT_FIRWIN;
  * LTFATERR_CANNOTHAPPEN | \a win is not a valid value from the LTFAT_FIRWIN enum
  */
 LTFAT_API int
-LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfatInt gl, LTFAT_TYPE* g);
+LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g);
 
 
 /** @} */

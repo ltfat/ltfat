@@ -1,12 +1,12 @@
 typedef struct
 {
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt L;
-    ltfatInt W;
-    ltfatInt s0;
-    ltfatInt s1;
-    ltfatInt br;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int L;
+    ltfat_int W;
+    ltfat_int s0;
+    ltfat_int s1;
+    ltfat_int br;
 
     LTFAT_COMPLEX *p0;
     LTFAT_COMPLEX *p1;
@@ -32,8 +32,8 @@ typedef struct
 LTFAT_API LTFAT_NAME(dgt_shear_plan)
 LTFAT_NAME(dgt_shear_init)(
     const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-    const ltfatInt L, const ltfatInt W, const ltfatInt a,
-    const ltfatInt M, const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
+    ltfat_int L, ltfat_int W, ltfat_int a,
+    ltfat_int M, ltfat_int s0, ltfat_int s1, ltfat_int br,
     LTFAT_COMPLEX *cout,
     unsigned flags);
 
@@ -45,8 +45,8 @@ LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan);
 
 LTFAT_API void
 LTFAT_NAME(dgt_shear)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                      const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                      const ltfatInt s0, const ltfatInt s1, const ltfatInt br,
+                      ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
+                      ltfat_int s0, ltfat_int s1, ltfat_int br,
                       LTFAT_COMPLEX *c);
 
 LTFAT_API void

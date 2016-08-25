@@ -3,17 +3,17 @@
 #include "ltfat/macros.h"
 
 LTFAT_API void
-LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, const ltfatInt L,
+LTFAT_NAME(col2diag)(const LTFAT_TYPE *cin, ltfat_int L,
                      LTFAT_TYPE *cout)
 {
-    ltfatInt ii;
+    ltfat_int ii;
 
     LTFAT_TYPE *pcout;
     const LTFAT_TYPE *pcin;
 
     pcout=cout;
-    const ltfatInt Lp1=L+1;
-    for (ltfatInt jj=0; jj<L; jj++)
+    ltfat_int Lp1=L+1;
+    for (ltfat_int jj=0; jj<L; jj++)
     {
         pcin=cin+(L-jj)*L;
         for (ii=0; ii<jj; ii++)

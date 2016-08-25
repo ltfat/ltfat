@@ -47,13 +47,13 @@ typedef enum
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_circshift_d(const double in[], const ltfatInt L,const ltfatInt shift, double out[]);
+ *  ltfat_circshift_d(const double in[], ltfat_int L,ltfat_int shift, double out[]);
  *
- *  ltfat_circshift_s(const float in[], const ltfatInt L,const ltfatInt shift, float out[]);
+ *  ltfat_circshift_s(const float in[], ltfat_int L,ltfat_int shift, float out[]);
  *
- *  ltfat_circshift_dc(const complex double in[], const ltfatInt L,const ltfatInt shift, complex double out[]);
+ *  ltfat_circshift_dc(const ltfat_complex_d in[], ltfat_int L,ltfat_int shift, ltfat_complex_d out[]);
  *
- *  ltfat_circshift_sc(const complex float in[], const ltfatInt L,const ltfatInt shift, complex float out[]);
+ *  ltfat_circshift_sc(const ltfat_complex_s in[], ltfat_int L,ltfat_int shift, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -64,8 +64,8 @@ typedef enum
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_API int
-LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
-                      const ltfatInt shift, LTFAT_TYPE out[]);
+LTFAT_NAME(circshift)(const LTFAT_TYPE in[], ltfat_int L,
+                      ltfat_int shift, LTFAT_TYPE out[]);
 
 /** fftshift an array
  *
@@ -79,13 +79,13 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_fftshift_d(const double in[], const ltfatInt L, double out[]);
+ *  ltfat_fftshift_d(const double in[], ltfat_int L, double out[]);
  *
- *  ltfat_fftshift_s(const float in[], const ltfatInt L, float out[]);
+ *  ltfat_fftshift_s(const float in[], ltfat_int L, float out[]);
  *
- *  ltfat_fftshift_dc(const complex double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_fftshift_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_complex_d out[]);
  *
- *  ltfat_fftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_fftshift_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -96,7 +96,7 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_API int
-LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
+LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
 
 /** ifftshift an array
  *
@@ -110,13 +110,13 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_ifftshift_d(const double in[], const ltfatInt L, double out[]);
+ *  ltfat_ifftshift_d(const double in[], ltfat_int L, double out[]);
  *
- *  ltfat_ifftshift_s(const float in[], const ltfatInt L, float out[]);
+ *  ltfat_ifftshift_s(const float in[], ltfat_int L, float out[]);
  *
- *  ltfat_ifftshift_dc(const complex double in[], const ltfatInt L, complex double out[]);
+ *  ltfat_ifftshift_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_complex_d out[]);
  *
- *  ltfat_ifftshift_sc(const complex float in[], const ltfatInt L, complex float out[]);
+ *  ltfat_ifftshift_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -127,7 +127,7 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_API int
-LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
+LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
 
 
 /** Extend FIR window to long window
@@ -144,13 +144,13 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_fir2long_d(const double in[], const ltfatInt Lfir, const ltfatInt Llong, double out[]);
+ *  ltfat_fir2long_d(const double in[], ltfat_int Lfir, ltfat_int Llong, double out[]);
  *
- *  ltfat_fir2long_s(const float in[], const ltfatInt Lfir, const ltfatInt Llong, float out[]);
+ *  ltfat_fir2long_s(const float in[], ltfat_int Lfir, ltfat_int Llong, float out[]);
  *
- *  ltfat_fir2long_dc(const complex double in[], const ltfatInt Lfir, const ltfatInt Llong, complex double out[]);
+ *  ltfat_fir2long_dc(const ltfat_complex_d in[], ltfat_int Lfir, ltfat_int Llong, ltfat_complex_d out[]);
  *
- *  ltfat_fir2long_sc(const complex float in[], const ltfatInt Lfir, const ltfatInt Llong, complex float out[]);
+ *  ltfat_fir2long_sc(const ltfat_complex_s in[], ltfat_int Lfir, ltfat_int Llong, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -162,7 +162,7 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfatInt L, LTFAT_TYPE out[]);
  * LTFATERR_BADREQSIZE   | Output array is shorter than the input array: \a Llong < \a Lfir
  */
 LTFAT_API int
-LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt Llong,
+LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], ltfat_int Lfir, ltfat_int Llong,
                      LTFAT_TYPE out[]);
 
 /** Cut long window to a FIR window
@@ -179,13 +179,13 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt 
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_long2fir_d(const double in[], const ltfatInt Llong, const ltfatInt Lfir, double out[]);
+ *  ltfat_long2fir_d(const double in[], ltfat_int Llong, ltfat_int Lfir, double out[]);
  *
- *  ltfat_long2fir_s(const float in[], const ltfatInt Llong, const ltfatInt Lfir, float out[]);
+ *  ltfat_long2fir_s(const float in[], ltfat_int Llong, ltfat_int Lfir, float out[]);
  *
- *  ltfat_long2fir_dc(const complex double in[], const ltfatInt Llong, const ltfatInt Lfir, complex double out[]);
+ *  ltfat_long2fir_dc(const ltfat_complex_d in[], ltfat_int Llong, ltfat_int Lfir, ltfat_complex_d out[]);
  *
- *  ltfat_long2fir_sc(const complex float in[], const ltfatInt Llong, const ltfatInt Lfir, complex float out[]);
+ *  ltfat_long2fir_sc(const ltfat_complex_s in[], ltfat_int Llong, ltfat_int Lfir, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -197,7 +197,7 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], const ltfatInt Lfir, const ltfatInt 
  * LTFATERR_BADREQSIZE   | Output array is longer than the input array: \a Lfir > \a Llong
  */
 LTFAT_API int
-LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt Lfir,
+LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], ltfat_int Llong, ltfat_int Lfir,
                      LTFAT_TYPE out[]);
 
 /** Normalize a vector
@@ -211,13 +211,13 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_normalize_d(const double in[], const ltfatInt L, ltfat_normalize_t flag, double out[]);
+ *  ltfat_normalize_d(const double in[], ltfat_int L, ltfat_normalize_t flag, double out[]);
  *
- *  ltfat_normalize_s(const float in[], const ltfatInt L, ltfat_normalize_t flag, float out[]);
+ *  ltfat_normalize_s(const float in[], ltfat_int L, ltfat_normalize_t flag, float out[]);
  *
- *  ltfat_normalize_dc(const complex double in[], const ltfatInt L, ltfat_normalize_t flag, complex double out[]);
+ *  ltfat_normalize_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_normalize_t flag, ltfat_complex_d out[]);
  *
- *  ltfat_normalize_sc(const complex float in[], const ltfatInt L, ltfat_normalize_t flag, complex float out[]);
+ *  ltfat_normalize_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_normalize_t flag, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -229,7 +229,7 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], const ltfatInt Llong, const ltfatInt
  * LTFATERR_CANNOTHAPPEN | \a flag is not defined in ltfat_normalize_t enum.
  */
 LTFAT_API int
-LTFAT_NAME(normalize)(const LTFAT_TYPE in[], const ltfatInt L,
+LTFAT_NAME(normalize)(const LTFAT_TYPE in[], ltfat_int L,
                       ltfat_normalize_t flag, LTFAT_TYPE out[]);
 
 /** Ensure the array has complex interleaved layout
@@ -243,13 +243,13 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE in[], const ltfatInt L,
  *
  * #### Function versions ####
  * <tt>
- * ltfat_ensurecomplex_array_d(const double in[], const ltfatInt L, complex double out[]);
+ * ltfat_ensurecomplex_array_d(const double in[], ltfat_int L, ltfat_complex_d out[]);
  *
- * ltfat_ensurecomplex_array_s(const float in[], const ltfatInt L, complex float out[]);
+ * ltfat_ensurecomplex_array_s(const float in[], ltfat_int L, ltfat_complex_s out[]);
  *
- * ltfat_ensurecomplex_array_dc(const complex double in[], const ltfatInt L, complex double out[]);
+ * ltfat_ensurecomplex_array_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_complex_d out[]);
  *
- * ltfat_ensurecomplex_array_sc(const complex float in[], const ltfatInt L, complex float out[]);
+ * ltfat_ensurecomplex_array_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_complex_s out[]);
  * </tt>
  *
  * \returns
@@ -260,37 +260,37 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE in[], const ltfatInt L,
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_API int
-LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_COMPLEX *out);
+LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_COMPLEX *out);
 
 /** @}*/
 
 LTFAT_API void
-LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
-                               const ltfatInt W, const ltfatInt a,
-                               const ltfatInt M, LTFAT_TYPE *cout);
+LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE *cin, ltfat_int L,
+                               ltfat_int W, ltfat_int a,
+                               ltfat_int M, LTFAT_TYPE *cout);
 
 LTFAT_API void
-LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE *cin, const ltfatInt L,
-                                 const ltfatInt W, const ltfatInt a,
-                                 const ltfatInt M, LTFAT_TYPE *cout);
+LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE *cin, ltfat_int L,
+                                 ltfat_int W, ltfat_int a,
+                                 ltfat_int M, LTFAT_TYPE *cout);
 
 LTFAT_API int
-LTFAT_NAME(reverse_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE *out);
+LTFAT_NAME(reverse_array)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_TYPE *out);
 
 LTFAT_API int
-LTFAT_NAME(conjugate_array)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE *out);
+LTFAT_NAME(conjugate_array)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_TYPE *out);
 
 LTFAT_API int
-LTFAT_NAME(periodize_array)(const LTFAT_TYPE *in, const ltfatInt Lin,
-                            const ltfatInt Lout, LTFAT_TYPE *out );
+LTFAT_NAME(periodize_array)(const LTFAT_TYPE *in, ltfat_int Lin,
+                            ltfat_int Lout, LTFAT_TYPE *out );
 
 LTFAT_API int
-LTFAT_NAME(fold_array)(const LTFAT_TYPE *in, const ltfatInt Lin,
-                       const ltfatInt offset,
-                       const ltfatInt Lfold, LTFAT_TYPE *out);
+LTFAT_NAME(fold_array)(const LTFAT_TYPE *in, ltfat_int Lin,
+                       ltfat_int offset,
+                       ltfat_int Lfold, LTFAT_TYPE *out);
 
 LTFAT_API
-void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx);
+void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);
 
 LTFAT_API int
-LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask, const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx);
+LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask, ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);

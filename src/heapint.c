@@ -10,32 +10,32 @@
 
 struct LTFAT_NAME(heap)
 {
-    ltfatInt* h;
-    ltfatInt heapsize;
-    ltfatInt totalheapsize;
+    ltfat_int* h;
+    ltfat_int heapsize;
+    ltfat_int totalheapsize;
     const LTFAT_REAL* s;
 };
 
 struct LTFAT_NAME(heapinttask)
 {
-    ltfatInt height;
-    ltfatInt N;
+    ltfat_int height;
+    ltfat_int N;
     int do_real;
     int* donemask;
     void (*intfun)(const  LTFAT_NAME(heapinttask)*,
                    const LTFAT_REAL*, const LTFAT_REAL*,
-                   const ltfatInt, LTFAT_REAL* );
+                   ltfat_int, LTFAT_REAL* );
     LTFAT_NAME(heap)* heap;
 };
 
 
 LTFAT_NAME(heap)*
-LTFAT_NAME(heap_init)(const ltfatInt initmaxsize, const LTFAT_REAL* s)
+LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s)
 {
     LTFAT_NAME(heap)* h = (LTFAT_NAME(heap)*) ltfat_malloc(sizeof * h);
 
     h->totalheapsize  = initmaxsize;
-    h->h              = (ltfatInt*) ltfat_malloc(h->totalheapsize * sizeof * h->h);
+    h->h              = (ltfat_int*) ltfat_malloc(h->totalheapsize * sizeof * h->h);
     h->s              = s;
     h->heapsize       = 0;
     return h;
@@ -59,7 +59,7 @@ void
 LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
-    h->h = (ltfatInt*)ltfat_realloc((void*)h->h,
+    h->h = (ltfat_int*)ltfat_realloc((void*)h->h,
                                     h->totalheapsize * sizeof * h->h / factor,
                                     h->totalheapsize * sizeof * h->h);
 }
@@ -67,9 +67,9 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 
 
 LTFAT_API void
-LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key)
+LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, ltfat_int key)
 {
-    ltfatInt pos, pos2, swap;
+    ltfat_int pos, pos2, swap;
 
     /* Grow heap if necessary */
     if (h->totalheapsize == h->heapsize)
@@ -101,11 +101,11 @@ LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key)
     }
 }
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 {
 
-    ltfatInt pos, maxchildpos, swap, key;
+    ltfat_int pos, maxchildpos, swap, key;
     LTFAT_REAL maxchildkey;
 
     /* Extract first element */
@@ -164,8 +164,8 @@ LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 }
 
 LTFAT_API LTFAT_NAME(heapinttask)*
-LTFAT_NAME(heapinttask_init)(const ltfatInt height, const ltfatInt N,
-                             const ltfatInt initheapsize,
+LTFAT_NAME(heapinttask_init)(ltfat_int height, ltfat_int N,
+                             ltfat_int initheapsize,
                              const LTFAT_REAL* s, int do_real)
 {
     LTFAT_NAME(heapinttask)* hit = (LTFAT_NAME(heapinttask)*) ltfat_malloc(
@@ -207,7 +207,7 @@ LTFAT_NAME(heapinttask_resetmax)(LTFAT_NAME(heapinttask)* hit,
                                  const LTFAT_REAL* news,
                                  const LTFAT_REAL tol)
 {
-    ltfatInt Imax;
+    ltfat_int Imax;
     LTFAT_REAL maxs;
 
     LTFAT_NAME(heap_reset)(hit->heap, news);
@@ -216,7 +216,7 @@ LTFAT_NAME(heapinttask_resetmax)(LTFAT_NAME(heapinttask)* hit,
     LTFAT_NAME_REAL(findmaxinarray)(news,  hit->height * hit->N , &maxs, &Imax);
 
     /* Mark all the small elements as done, they get zero phase.  */
-    for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
+    for (ltfat_int ii = 0; ii < hit->height * hit->N; ii++)
     {
         if (news[ii] <= tol * maxs)
             hit->donemask[ii] = LTFAT_MASK_BELOWTOL;
@@ -236,13 +236,13 @@ LTFAT_NAME(heapinttask_resetmask)(LTFAT_NAME(heapinttask)* hit,
                                   const LTFAT_REAL tol,
                                   const int do_log)
 {
-    ltfatInt dummyImax;
+    ltfat_int dummyImax;
     LTFAT_REAL maxs;
 
     LTFAT_NAME(heap_reset)(hit->heap, news);
 
     /* Copy known phase */
-    for (ltfatInt w = 0; w < hit->height * hit->N; w++)
+    for (ltfat_int w = 0; w < hit->height * hit->N; w++)
     {
         if (mask[w] > LTFAT_MASK_UNKNOWN)
             hit->donemask[w] = LTFAT_MASK_KNOWN;
@@ -258,13 +258,13 @@ LTFAT_NAME(heapinttask_resetmask)(LTFAT_NAME(heapinttask)* hit,
      */
     if (do_log)
     {
-        for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
+        for (ltfat_int ii = 0; ii < hit->height * hit->N; ii++)
             if (news[ii] <= tol + maxs)
                 hit->donemask[ii] = LTFAT_MASK_BELOWTOL;
     }
     else
     {
-        for (ltfatInt ii = 0; ii < hit->height * hit->N; ii++)
+        for (ltfat_int ii = 0; ii < hit->height * hit->N; ii++)
             if (news[ii] <= tol * maxs)
                 hit->donemask[ii] = LTFAT_MASK_BELOWTOL;
     }
@@ -279,14 +279,14 @@ LTFAT_NAME(heapinttask_resetmask)(LTFAT_NAME(heapinttask)* hit,
 
 void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
                             const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
-                            const ltfatInt w,
+                            ltfat_int w,
                             LTFAT_REAL* phase)
 {
-    const ltfatInt M = hit->height;
-    const ltfatInt N = hit->N;
+    ltfat_int M = hit->height;
+    ltfat_int N = hit->N;
     LTFAT_NAME(heap)* h = hit->heap;
     int* donemask = hit->donemask;
-    ltfatInt w_E, w_W, w_N, w_S;
+    ltfat_int w_E, w_W, w_N, w_S;
     LTFAT_REAL oneover2 = (LTFAT_REAL) (1.0 / 2.0);
 
     /* Try and put the four neighbours onto the heap.
@@ -336,26 +336,26 @@ void LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *hit,
 
 void
 LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
-                          ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,
+                          ltfat_int a, ltfat_int M, ltfat_int L, ltfat_int W,
                           ltfat_phaseconvention phasetype, int do_real,
                           LTFAT_REAL* tgradw, LTFAT_REAL* fgradw)
 {
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
     LTFAT_REAL b = ((LTFAT_REAL) L) / M;
     LTFAT_REAL sampToRadConst = (LTFAT_REAL)( 2.0 * M_PI / L);
 
-    ltfatInt height = do_real ? M / 2 + 1 : M;
+    ltfat_int height = do_real ? M / 2 + 1 : M;
 
-    for (ltfatInt w = 0; w < W; ++w)
+    for (ltfat_int w = 0; w < W; ++w)
     {
         const LTFAT_REAL* tgradchan = tgrad + w * height * N;
         const LTFAT_REAL* fgradchan = fgrad + w * height * N;
         LTFAT_REAL* tgradwchan = tgradw + w * height * N;
         LTFAT_REAL* fgradwchan = fgradw + w * height * N;
 
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
-            for (ltfatInt m = 0; m < height; m++)
+            for (ltfat_int m = 0; m < height; m++)
             {
                 if (phasetype == LTFAT_FREQINV)
                 {
@@ -379,24 +379,24 @@ LTFAT_API
 void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
                          const LTFAT_REAL* tgradw,
                          const LTFAT_REAL* fgradw,
-                         const ltfatInt a, const ltfatInt M,
-                         const ltfatInt L, const ltfatInt W,
+                         ltfat_int a, ltfat_int M,
+                         ltfat_int L, ltfat_int W,
                          LTFAT_REAL tol,  LTFAT_REAL* phase)
 {
     /* Declarations */
     LTFAT_NAME(heapinttask)* hit;
 
     // Width of s
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
     /* Set the phase to zero initially */
     memset(phase, 0, M * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M, N, (ltfatInt)( M * log((double)M)) , s,
+    hit = LTFAT_NAME(heapinttask_init)( M, N, (ltfat_int)( M * log((double)M)) , s,
                                         0);
 
-    for (ltfatInt w = 0; w < W; ++w)
+    for (ltfat_int w = 0; w < W; ++w)
     {
         const LTFAT_REAL* schan = s + w * M * N;
         const LTFAT_REAL* tgradwchan = tgradw + w * M * N;
@@ -416,26 +416,26 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
                                const LTFAT_REAL* tgradw,
                                const LTFAT_REAL* fgradw,
                                const int* mask,
-                               const ltfatInt a, const ltfatInt M,
-                               const ltfatInt L, const ltfatInt W,
+                               ltfat_int a, ltfat_int M,
+                               ltfat_int L, ltfat_int W,
                                LTFAT_REAL tol,
                                LTFAT_REAL* phase)
 {
     /* Declarations */
     LTFAT_NAME(heapinttask)* hit;
 
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
     /* Main body */
-    hit = LTFAT_NAME(heapinttask_init)( M, N, (ltfatInt)( M * log((double)M) ), s,
+    hit = LTFAT_NAME(heapinttask_init)( M, N, (ltfat_int)( M * log((double)M) ), s,
                                         0);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
-    for (ltfatInt ii = 0; ii < M * N * W; ii++)
+    for (ltfat_int ii = 0; ii < M * N * W; ii++)
         if (!mask[ii])
             phase[ii] = 0;
 
-    for (ltfatInt w = 0; w < W; ++w)
+    for (ltfat_int w = 0; w < W; ++w)
     {
         const LTFAT_REAL* schan = s + w * M * N;
         const LTFAT_REAL* tgradwchan = tgradw + w * M * N;
@@ -456,10 +456,10 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
 
 void
 LTFAT_NAME(borderstoheap)(LTFAT_NAME(heap)* h,
-                          const ltfatInt height, const ltfatInt N,
+                          ltfat_int height, ltfat_int N,
                           int* donemask)
 {
-    for (ltfatInt w = 0; w < height * N ; w++)
+    for (ltfat_int w = 0; w < height * N ; w++)
     {
         // Is it a coefficient with known phase and is it big enough?
         // 5 is code of coefficients below tol
@@ -488,17 +488,17 @@ LTFAT_NAME(borderstoheap)(LTFAT_NAME(heap)* h,
  * */
 void
 LTFAT_NAME(borderstoheapreal)(LTFAT_NAME(heap)* h,
-                              const ltfatInt height, const ltfatInt N,
+                              ltfat_int height, ltfat_int N,
                               int* donemask)
 {
 
-    for (ltfatInt w = 0; w < height * N ; w++)
+    for (ltfat_int w = 0; w < height * N ; w++)
     {
         // Is it a coefficient with known phase and is it big enough?
         if (donemask[w] == LTFAT_MASK_KNOWN)
         {
-            ltfatInt col = w / height;
-            ltfatInt row = w % height;
+            ltfat_int col = w / height;
+            ltfat_int row = w % height;
 
             // Is it a border coefficient?
             // i.e. is any of the 4 neighbors not reliable?
@@ -516,14 +516,14 @@ LTFAT_NAME(borderstoheapreal)(LTFAT_NAME(heap)* h,
 
 void LTFAT_NAME(trapezheapreal)(const LTFAT_NAME(heapinttask) *hit,
                                 const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
-                                const ltfatInt w,
+                                ltfat_int w,
                                 LTFAT_REAL* phase)
 {
-    const ltfatInt M2 = hit->height;
-    const ltfatInt N = hit->N;
+    ltfat_int M2 = hit->height;
+    ltfat_int N = hit->N;
     int* donemask = hit->donemask;
     LTFAT_NAME(heap) *h = hit->heap;
-    ltfatInt w_E, w_W, w_N, w_S, row, col;
+    ltfat_int w_E, w_W, w_N, w_S, row, col;
 
     /* North */
     w_N = NORTHFROMW(w, M2, N);
@@ -577,8 +577,8 @@ void LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
                                   LTFAT_REAL* phase)
 {
     /* Declarations */
-    ltfatInt Imax;
-    ltfatInt w;
+    ltfat_int Imax;
+    ltfat_int w;
     LTFAT_REAL maxs;
     int* donemask = hit->donemask;
     LTFAT_NAME(heap)* h = hit->heap;
@@ -611,26 +611,26 @@ LTFAT_API
 void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
                              const LTFAT_REAL* tgradw,
                              const LTFAT_REAL* fgradw,
-                             const ltfatInt a, const ltfatInt M,
-                             const ltfatInt L, const ltfatInt W,
+                             ltfat_int a, ltfat_int M,
+                             ltfat_int L, ltfat_int W,
                              LTFAT_REAL tol, LTFAT_REAL* phase)
 {
     /* Declarations */
     LTFAT_NAME(heapinttask)* hit;
 
     // Height of s
-    ltfatInt M2 = M / 2 + 1;
+    ltfat_int M2 = M / 2 + 1;
     // Width of s
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
     /* Set the phase to zero initially */
     memset(phase, 0, M2 * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfatInt)( M2 * log((double)M2)), s,
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfat_int)( M2 * log((double)M2)), s,
                                         1);
 
-    for (ltfatInt w = 0; w < W; ++w)
+    for (ltfat_int w = 0; w < W; ++w)
     {
         const LTFAT_REAL* schan = s + w * M2 * N;
         const LTFAT_REAL* tgradwchan = tgradw + w * M2 * N;
@@ -651,26 +651,26 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
                                    const LTFAT_REAL* tgradw,
                                    const LTFAT_REAL* fgradw,
                                    const int* mask,
-                                   const ltfatInt a, const ltfatInt M,
-                                   const ltfatInt L, const ltfatInt W,
+                                   ltfat_int a, ltfat_int M,
+                                   ltfat_int L, ltfat_int W,
                                    LTFAT_REAL tol, LTFAT_REAL* phase)
 {
     /* Declarations */
     LTFAT_NAME(heapinttask)* hit;
 
-    ltfatInt M2 = M / 2 + 1;
-    ltfatInt N = L / a;
+    ltfat_int M2 = M / 2 + 1;
+    ltfat_int N = L / a;
 
     // Initialize plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfatInt)( M2 * log((double) M2)),
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfat_int)( M2 * log((double) M2)),
                                         s, 1);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
-    for (ltfatInt ii = 0; ii < M2 * N * W; ii++)
+    for (ltfat_int ii = 0; ii < M2 * N * W; ii++)
         if (mask[ii] <= LTFAT_MASK_UNKNOWN)
             phase[ii] = 0;
 
-    for (ltfatInt w = 0; w < W; ++w)
+    for (ltfat_int w = 0; w < W; ++w)
     {
         const LTFAT_REAL* schan = s + w * M2 * N;
         const LTFAT_REAL* tgradwchan = tgradw + w * M2 * N;
@@ -697,12 +697,12 @@ LTFAT_NAME(maskedheapint_relgrad)(const LTFAT_REAL* s,
                                   const LTFAT_REAL* tgrad,
                                   const LTFAT_REAL* fgrad,
                                   const int* mask,
-                                  const ltfatInt a, const ltfatInt M,
-                                  const ltfatInt L, const ltfatInt W,
+                                  ltfat_int a, ltfat_int M,
+                                  ltfat_int L, ltfat_int W,
                                   const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                                   LTFAT_REAL* phase)
 {
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
     LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M * N * W);
@@ -722,12 +722,12 @@ LTFAT_API void
 LTFAT_NAME(heapint_relgrad)(const LTFAT_REAL* s,
                             const LTFAT_REAL* tgrad,
                             const LTFAT_REAL* fgrad,
-                            const ltfatInt a, const ltfatInt M,
-                            const ltfatInt L, const ltfatInt W,
+                            ltfat_int a, ltfat_int M,
+                            ltfat_int L, ltfat_int W,
                             const LTFAT_REAL tol, ltfat_phaseconvention phasetype,
                             LTFAT_REAL* phase)
 {
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
     LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M * N * W);
@@ -748,12 +748,12 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
                                       const LTFAT_REAL* tgrad,
                                       const LTFAT_REAL* fgrad,
                                       const int* mask,
-                                      const ltfatInt a, const ltfatInt M,
-                                      const ltfatInt L, const ltfatInt W,
+                                      ltfat_int a, ltfat_int M,
+                                      ltfat_int L, ltfat_int W,
                                       LTFAT_REAL tol, ltfat_phaseconvention phasetype, LTFAT_REAL* phase)
 {
-    ltfatInt M2 = M / 2 + 1;
-    ltfatInt N = L / a;
+    ltfat_int M2 = M / 2 + 1;
+    ltfat_int N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
     LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M2 * N * W);
@@ -774,12 +774,12 @@ LTFAT_API
 void LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL* s,
                                      const LTFAT_REAL* tgrad,
                                      const LTFAT_REAL* fgrad,
-                                     const ltfatInt a, const ltfatInt M,
-                                     const ltfatInt L, const ltfatInt W,
+                                     ltfat_int a, ltfat_int M,
+                                     ltfat_int L, ltfat_int W,
                                      LTFAT_REAL tol, ltfat_phaseconvention phasetype, LTFAT_REAL* phase)
 {
-    ltfatInt M2 = M / 2 + 1;
-    ltfatInt N = L / a;
+    ltfat_int M2 = M / 2 + 1;
+    ltfat_int N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
     LTFAT_REAL* tgradw = LTFAT_NAME_REAL(malloc)(M2 * N * W);

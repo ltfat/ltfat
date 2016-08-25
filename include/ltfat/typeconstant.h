@@ -6,28 +6,28 @@
 
 typedef struct
 {
-    ltfatInt quot;
-    ltfatInt rem;
+    ltfat_int quot;
+    ltfat_int rem;
 } ltfat_div_t;
 
 /* -------- Define routines that do not change between single/double-- */
 LTFAT_API ltfat_div_t
-ltfat_idiv(const ltfatInt a, const ltfatInt b);
+ltfat_idiv(ltfat_int a, ltfat_int b);
 
-LTFAT_API ltfatInt
-ltfat_gcd(const ltfatInt a, const ltfatInt b, ltfatInt *r, ltfatInt *s );
+LTFAT_API ltfat_int
+ltfat_gcd(ltfat_int a, ltfat_int b, ltfat_int *r, ltfat_int *s );
 
 LTFAT_API void
-ltfat_fftindex(const ltfatInt N, ltfatInt *indexout);
+ltfat_fftindex(ltfat_int N, ltfat_int *indexout);
 
 LTFAT_API
-ltfatInt makelarger(const ltfatInt L, const ltfatInt K);
+ltfat_int makelarger(ltfat_int L, ltfat_int K);
 
 LTFAT_API
-ltfatInt ltfat_imax(const ltfatInt a, const ltfatInt b);
+ltfat_int ltfat_imax(ltfat_int a, ltfat_int b);
 
 LTFAT_API
-ltfatInt ltfat_imin(const ltfatInt a, const ltfatInt b);
+ltfat_int ltfat_imin(ltfat_int a, ltfat_int b);
 
 /** \addtogroup utils
  * @{
@@ -35,41 +35,41 @@ ltfatInt ltfat_imin(const ltfatInt a, const ltfatInt b);
 /** Find least common multiple of a and b
  */
 LTFAT_API
-ltfatInt ltfat_lcm(const ltfatInt a, const ltfatInt b);
+ltfat_int ltfat_lcm(ltfat_int a, ltfat_int b);
 
 /** Find next suitable L for signal length Ls and Gabor lattice parameters a and M
  */
-LTFAT_API ltfatInt
-ltfat_dgtlength(const ltfatInt Ls, const ltfatInt a, const ltfatInt M);
+LTFAT_API ltfat_int
+ltfat_dgtlength(ltfat_int Ls, ltfat_int a, ltfat_int M);
 /** @}*/
 
 LTFAT_API
-void gabimagepars(const ltfatInt Ls, const ltfatInt x, const ltfatInt y,
-                  ltfatInt *a, ltfatInt *M, ltfatInt *L, ltfatInt *N, ltfatInt *Ngood);
+void gabimagepars(ltfat_int Ls, ltfat_int x, ltfat_int y,
+                  ltfat_int *a, ltfat_int *M, ltfat_int *L, ltfat_int *N, ltfat_int *Ngood);
 
 LTFAT_API
-ltfatInt wfacreal_size(const ltfatInt L, const ltfatInt a, const ltfatInt M);
+ltfat_int wfacreal_size(ltfat_int L, ltfat_int a, ltfat_int M);
 
-LTFAT_API ltfatInt
-ltfat_nextfastfft(const ltfatInt x);
+LTFAT_API ltfat_int
+ltfat_nextfastfft(ltfat_int x);
 
-LTFAT_API ltfatInt
-ltfat_pow2(const ltfatInt x);
+LTFAT_API ltfat_int
+ltfat_pow2(ltfat_int x);
 
-LTFAT_API ltfatInt
-ltfat_nextpow2(const ltfatInt x);
+LTFAT_API ltfat_int
+ltfat_nextpow2(ltfat_int x);
 
-LTFAT_API ltfatInt
-ltfat_modpow2(const ltfatInt x, const ltfatInt pow2var);
+LTFAT_API ltfat_int
+ltfat_modpow2(ltfat_int x, ltfat_int pow2var);
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 ltfat_round(const double x);
 
-LTFAT_API ltfatInt
-ltfat_positiverem(const ltfatInt a, const ltfatInt b);
+LTFAT_API ltfat_int
+ltfat_positiverem(ltfat_int a, ltfat_int b);
 
-LTFAT_API ltfatInt
-ltfat_rangelimit(const ltfatInt a, const ltfatInt amin, const ltfatInt amax);
+LTFAT_API ltfat_int
+ltfat_rangelimit(ltfat_int a, ltfat_int amin, ltfat_int amax);
 
 
 // Custom headers are down here

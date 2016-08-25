@@ -4,10 +4,10 @@
 
 // in might be equal to out
 LTFAT_API int
-LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
-                      const ltfatInt shift, LTFAT_TYPE out[])
+LTFAT_NAME(circshift)(const LTFAT_TYPE in[], ltfat_int L,
+                      ltfat_int shift, LTFAT_TYPE out[])
 {
-    ltfatInt p;
+    ltfat_int p;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
@@ -21,7 +21,7 @@ LTFAT_NAME(circshift)(const LTFAT_TYPE in[], const ltfatInt L,
     {
         if (p) // Do nothing if no shift is needed
         {
-            ltfatInt m, count, i, j;
+            ltfat_int m, count, i, j;
 
             // Circshift inplace is magic!
             for (m = 0, count = 0; count != L; m++)
@@ -50,21 +50,21 @@ error:
 
 // in might be equal to out
 LTFAT_API int
-LTFAT_NAME(fftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
+LTFAT_NAME(fftshift)(const LTFAT_TYPE* in, ltfat_int L, LTFAT_TYPE* out)
 {
     return LTFAT_NAME(circshift)(in, L, (L / 2), out);
 }
 
 // in might be equal to out
 LTFAT_API int
-LTFAT_NAME(ifftshift)(const LTFAT_TYPE* in, ltfatInt L, LTFAT_TYPE* out)
+LTFAT_NAME(ifftshift)(const LTFAT_TYPE* in, ltfat_int L, LTFAT_TYPE* out)
 {
     return LTFAT_NAME(circshift)(in, L, -(L / 2), out);
 }
 
 
 LTFAT_API int
-LTFAT_NAME(reverse_array)(const LTFAT_TYPE* in, const ltfatInt L,
+LTFAT_NAME(reverse_array)(const LTFAT_TYPE* in, ltfat_int L,
                           LTFAT_TYPE* out)
 {
     int status = LTFATERR_SUCCESS;
@@ -75,7 +75,7 @@ LTFAT_NAME(reverse_array)(const LTFAT_TYPE* in, const ltfatInt L,
     {
         LTFAT_TYPE tmpVar = (LTFAT_TYPE) 0.0;
 
-        for (ltfatInt ii = 0; ii < L / 2; ii++)
+        for (ltfat_int ii = 0; ii < L / 2; ii++)
         {
             tmpVar = out[L - 1 - ii];
             out[L - 1 - ii] = out[ii];
@@ -84,7 +84,7 @@ LTFAT_NAME(reverse_array)(const LTFAT_TYPE* in, const ltfatInt L,
     }
     else
     {
-        for (ltfatInt ii = 0; ii < L; ii++)
+        for (ltfat_int ii = 0; ii < L; ii++)
             out[ii] = in[L - 1 - ii];
     }
 
@@ -93,7 +93,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(conjugate_array)(const LTFAT_TYPE* in, const ltfatInt L,
+LTFAT_NAME(conjugate_array)(const LTFAT_TYPE* in, ltfat_int L,
                             LTFAT_TYPE* out)
 {
     int status = LTFATERR_SUCCESS;
@@ -101,7 +101,7 @@ LTFAT_NAME(conjugate_array)(const LTFAT_TYPE* in, const ltfatInt L,
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
 #ifdef LTFAT_COMPLEXTYPE
-    for (ltfatInt ii = 0; ii < L; ii++)
+    for (ltfat_int ii = 0; ii < L; ii++)
         out[ii] = conj(in[ii]); // type-generic macro conj
 #else
     if (in != out)
@@ -114,8 +114,8 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(periodize_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
-                            const ltfatInt Lout, LTFAT_TYPE* out )
+LTFAT_NAME(periodize_array)(const LTFAT_TYPE* in, ltfat_int Lin,
+                            ltfat_int Lout, LTFAT_TYPE* out )
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
@@ -130,11 +130,11 @@ LTFAT_NAME(periodize_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
     }
     else
     {
-        ltfatInt periods =  Lout / Lin;
-        ltfatInt lastL = Lout - periods * Lin;
-        ltfatInt startPer = in == out ? 1 : 0;
+        ltfat_int periods =  Lout / Lin;
+        ltfat_int lastL = Lout - periods * Lin;
+        ltfat_int startPer = in == out ? 1 : 0;
 
-        for (ltfatInt ii = startPer; ii < periods; ii++)
+        for (ltfat_int ii = startPer; ii < periods; ii++)
             memcpy(out + ii * Lin, in, Lin * sizeof * in);
 
         memcpy(out + periods * Lin, in, lastL * sizeof * in);
@@ -157,11 +157,11 @@ error:
  * without the intermediate step.
  * */
 LTFAT_API int
-LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
-                       const ltfatInt offset,
-                       const ltfatInt Lfold, LTFAT_TYPE* out)
+LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, ltfat_int Lin,
+                       ltfat_int offset,
+                       ltfat_int Lfold, LTFAT_TYPE* out)
 {
-    ltfatInt startIdx;
+    ltfat_int startIdx;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, Lin > 0, "Lin must be positive");
@@ -179,10 +179,10 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
     if (!startIdx)
     {
         // Common code for no offset
-        ltfatInt startAt = in == out ? Lfold : 0;
+        ltfat_int startAt = in == out ? Lfold : 0;
 
-        for (ltfatInt ii = startAt; ii < Lin;)
-            for (ltfatInt kk = 0; ii < Lin && kk < Lfold; ii++, kk++)
+        for (ltfat_int ii = startAt; ii < Lin;)
+            for (ltfat_int kk = 0; ii < Lin && kk < Lfold; ii++, kk++)
                 out[kk] += in[ii];
 
     }
@@ -199,9 +199,9 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, const ltfatInt Lin,
         {
             // We avoid the inplace circshift by effectivelly
             // doing circshift of all blocks
-            for (ltfatInt ii = 0; ii < Lin;)
+            for (ltfat_int ii = 0; ii < Lin;)
             {
-                ltfatInt kk = startIdx;
+                ltfat_int kk = startIdx;
                 for (; kk < Lfold && ii < Lin; ii++, kk++)
                     out[kk] += in[ii];
 
@@ -216,7 +216,7 @@ error:
 
 
 LTFAT_API int
-LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE* in,  const ltfatInt L,
+LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE* in,  ltfat_int L,
                                 LTFAT_COMPLEX* out)
 {
 #ifdef LTFAT_COMPLEXTYPE
@@ -236,17 +236,17 @@ error:
 
 
 LTFAT_API void
-LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
-                               const ltfatInt W, const ltfatInt a,
-                               const ltfatInt M, LTFAT_TYPE* cout)
+LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, ltfat_int L,
+                               ltfat_int W, ltfat_int a,
+                               ltfat_int M, LTFAT_TYPE* cout)
 {
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
-            ltfatInt offset = w * N * M + n * M;
+            ltfat_int offset = w * N * M + n * M;
             LTFAT_TYPE* cintmp = cin + offset;
             LTFAT_TYPE* couttmp = cout + offset;
             LTFAT_NAME(circshift)(cintmp, M, -a * n, couttmp);
@@ -257,17 +257,17 @@ LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
 }
 
 LTFAT_API void
-LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
-                                 const ltfatInt W, const ltfatInt a,
-                                 const ltfatInt M, LTFAT_TYPE* cout)
+LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, ltfat_int L,
+                                 ltfat_int W, ltfat_int a,
+                                 ltfat_int M, LTFAT_TYPE* cout)
 {
-    ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
-            ltfatInt offset = w * N * M + n * M;
+            ltfat_int offset = w * N * M + n * M;
             LTFAT_TYPE* cintmp = cin + offset;
             LTFAT_TYPE* couttmp = cout + offset;
             LTFAT_NAME(circshift)(cintmp, M, a * n, couttmp);
@@ -278,13 +278,13 @@ LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, const ltfatInt L,
 }
 
 LTFAT_API void
-LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
-                           LTFAT_TYPE* max, ltfatInt* idx)
+LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, ltfat_int L,
+                           LTFAT_TYPE* max, ltfat_int* idx)
 {
     *max = in[0];
     *idx = 0;
 
-    for (ltfatInt ii = 1; ii < L; ++ii)
+    for (ltfat_int ii = 1; ii < L; ++ii)
     {
 #ifdef LTFAT_COMPLEXTYPE
 
@@ -301,13 +301,13 @@ LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE* in, const ltfatInt L,
 
 LTFAT_API int
 LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
-                                  const ltfatInt L, LTFAT_TYPE* max, ltfatInt* idx)
+                                  ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx)
 {
     int found = 0;
     *max = (LTFAT_REAL) -1e99;
     *idx = 0;
 
-    for (ltfatInt ii = 0; ii < L; ++ii)
+    for (ltfat_int ii = 0; ii < L; ++ii)
     {
 #ifdef LTFAT_COMPLEXTYPE
         if (!mask[ii] && ltfat_abs(in[ii]) > ltfat_abs(*max))
@@ -325,11 +325,11 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
 }
 
 LTFAT_API int
-LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
-                     const ltfatInt Llong, LTFAT_TYPE* out)
+LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, ltfat_int Lfir,
+                     ltfat_int Llong, LTFAT_TYPE* out)
 {
     ltfat_div_t domod;
-    ltfatInt ss;
+    ltfat_int ss;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, Llong > 0, "Llong must be positive");
@@ -346,22 +346,22 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE* in, const ltfatInt Lfir,
 
     ss = Llong - Lfir;
     // Copy second half from the back
-    for (ltfatInt ii = Lfir - 1; ii >= domod.quot + domod.rem; ii--)
+    for (ltfat_int ii = Lfir - 1; ii >= domod.quot + domod.rem; ii--)
         out[ii + ss] = in[ii];
 
     // Zero out the middle
-    for (ltfatInt ii = domod.quot + domod.rem; ii < Llong - domod.quot ; ii++)
+    for (ltfat_int ii = domod.quot + domod.rem; ii < Llong - domod.quot ; ii++)
         out[ii] = 0.0;
 error:
     return status;
 }
 
 LTFAT_API int
-LTFAT_NAME(long2fir)(const LTFAT_TYPE* in, const ltfatInt Llong,
-                     const ltfatInt Lfir, LTFAT_TYPE* out)
+LTFAT_NAME(long2fir)(const LTFAT_TYPE* in, ltfat_int Llong,
+                     ltfat_int Lfir, LTFAT_TYPE* out)
 {
     ltfat_div_t domod;
-    ltfatInt ss;
+    ltfat_int ss;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, Llong > 0, "Llong must be positive");
@@ -377,7 +377,7 @@ LTFAT_NAME(long2fir)(const LTFAT_TYPE* in, const ltfatInt Llong,
     if (in != out)
         memcpy(out, in, (domod.quot + domod.rem)*sizeof * out);
 
-    for (ltfatInt ii = domod.quot + domod.rem; ii < Lfir; ii++)
+    for (ltfat_int ii = domod.quot + domod.rem; ii < Lfir; ii++)
         out[ii] = in[ii + ss];
 
 error:
@@ -385,7 +385,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
+LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
                       ltfat_normalize_t flag, LTFAT_TYPE* out)
 {
     LTFAT_REAL normfac;
@@ -401,7 +401,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
     {
         normfac = 0.0;
 
-        for (ltfatInt ii = 0; ii < L; ii++)
+        for (ltfat_int ii = 0; ii < L; ii++)
         {
 #ifdef LTFAT_COMPLEXTYPE
             LTFAT_REAL inAbs = ltfat_abs(in[ii]);
@@ -418,7 +418,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
     {
         normfac = 0.0;
 
-        for (ltfatInt ii = 0; ii < L; ii++)
+        for (ltfat_int ii = 0; ii < L; ii++)
         {
             LTFAT_REAL inAbs = ltfat_abs(in[ii]);
             normfac += inAbs;
@@ -431,7 +431,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
     {
         normfac = 0.0;
 
-        for (ltfatInt ii = 0; ii < L; ii++)
+        for (ltfat_int ii = 0; ii < L; ii++)
         {
             LTFAT_REAL inAbs = ltfat_abs(in[ii]);
             if (inAbs > normfac)
@@ -449,7 +449,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, const ltfatInt L,
 
     normfac = (LTFAT_REAL)(1.0) / normfac;
 
-    for (ltfatInt ii = 0; ii < L; ii++)
+    for (ltfat_int ii = 0; ii < L; ii++)
         out[ii] = normfac * in[ii];
 
 error:
@@ -457,8 +457,8 @@ error:
 }
 
 /* LTFAT_API int */
-/* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, const ltfatInt Ls, const ltfatInt W, */
-/*                     const ltfatInt L, LTFAT_TYPE* out) */
+/* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, ltfat_int Ls, ltfat_int W, */
+/*                     ltfat_int L, LTFAT_TYPE* out) */
 /* { */
 /*     int status = LTFATERR_SUCCESS; */
 /*     CHECKNULL(in); CHECKNULL(out); */
@@ -476,10 +476,10 @@ error:
 /*         outTmp = out; */
 /*     } */
 /*  */
-/*     ltfatInt Lcom = (Ls < L ? Ls : L); */
-/*     ltfatInt Lrem = L - Lcom; */
+/*     ltfat_int Lcom = (Ls < L ? Ls : L); */
+/*     ltfat_int Lrem = L - Lcom; */
 /*  */
-/*     for (ltfatInt w = 0; w < W; w++) */
+/*     for (ltfat_int w = 0; w < W; w++) */
 /*     { */
 /*         memcpy(outTmp + w * L, in + w * Ls, Lcom * sizeof * out); */
 /*         memset(outTmp + w * L + Ls, 0, Lrem * sizeof * out); */
@@ -498,7 +498,7 @@ error:
 
 
 /* LTFAT_API LTFAT_REAL */
-/* LTFAT_NAME(norm)(const LTFAT_TYPE in[], const ltfatInt L, */
+/* LTFAT_NAME(norm)(const LTFAT_TYPE in[], ltfat_int L, */
 /*                  ltfat_normalize_t flag) */
 /* { */
 /*     double retNorm = 0.0; */
@@ -507,7 +507,7 @@ error:
 /*     { */
 /*     case LTFAT_NORMALIZE_ENERGY: */
 /*     { */
-/*         for (ltfatInt ii = 0; ii < L; ii++) */
+/*         for (ltfat_int ii = 0; ii < L; ii++) */
 /*         { */
 /* #ifdef LTFAT_COMPLEXTYPE */
 /*             double inTmp = fabs(in[ii]); */

@@ -53,11 +53,11 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler);
  *
  *  double* ltfat_malloc_d(size_t n);
  *
- *  complex double* ltfat_malloc_dc(size_t n);
+ *  ltfat_complex_d* ltfat_malloc_dc(size_t n);
  *
  *  float* ltfat_malloc_s(size_t n);
  *
- *  complex float* ltfat_malloc_sc(size_t n);
+ *  ltfat_complex_s* ltfat_malloc_sc(size_t n);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
@@ -80,11 +80,11 @@ void* ltfat_malloc (size_t n);
  *
  *  double* ltfat_calloc_d(size_t size);
  *
- *  complex double* ltfat_calloc_dc(size_t size);
+ *  ltfat_complex_d* ltfat_calloc_dc(size_t size);
  *
  *  float* ltfat_calloc_s(size_t size);
  *
- *  complex float* ltfat_calloc_sc(size_t size);
+ *  ltfat_complex_s* ltfat_calloc_sc(size_t size);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
@@ -107,11 +107,11 @@ void* ltfat_calloc (size_t nmemb, size_t size);
  *
  *  double* ltfat_realloc_d(double *ptr, size_t nold, size_t nnew);
  *
- *  complex double* ltfat_realloc_dc(complex double *ptr, size_t nold, size_t nnew);
+ *  ltfat_complex_d* ltfat_realloc_dc(ltfat_complex_d *ptr, size_t nold, size_t nnew);
  *
  *  float* ltfat_realloc_s(float *ptr, size_t nold, size_t nnew);
  *
- *  complex float* ltfat_realloc_sc(complex float *ptr, size_t nold, size_t nnew);
+ *  ltfat_complex_s* ltfat_realloc_sc(ltfat_complex_s *ptr, size_t nold, size_t nnew);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */

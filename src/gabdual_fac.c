@@ -4,24 +4,24 @@
 #include "ltfat/blaslapack.h"
 
 LTFAT_API void
-LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
-                        const ltfatInt R,
-                        const ltfatInt a, const ltfatInt M, LTFAT_COMPLEX* gdualf)
+LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, ltfat_int L,
+                        ltfat_int R,
+                        ltfat_int a, ltfat_int M, LTFAT_COMPLEX* gdualf)
 {
 
-    ltfatInt h_a, h_m;
+    ltfat_int h_a, h_m;
 
     LTFAT_COMPLEX* Sf;
 
     const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;//{0.0, 0.0 };
     const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0; //{1.0, 0.0 };
 
-    const ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = N / q;
+    ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
+    ltfat_int p = a / c;
+    ltfat_int q = M / c;
+    ltfat_int d = N / q;
 
     Sf = LTFAT_NAME_COMPLEX(malloc)(p * p);
 
@@ -30,7 +30,7 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
      */
     memcpy(gdualf, gf, L * R * sizeof * gdualf);
 
-    for (ltfatInt rs = 0; rs < c * d; rs++)
+    for (ltfat_int rs = 0; rs < c * d; rs++)
     {
         LTFAT_NAME(gemm)(CblasNoTrans, CblasConjTrans, p, p, q * R,
                                &alpha,
@@ -51,28 +51,28 @@ LTFAT_NAME(gabdual_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
 
 
 LTFAT_API void
-LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
-                            const ltfatInt R,
-                            const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, ltfat_int L,
+                            ltfat_int R,
+                            ltfat_int a, ltfat_int M,
                             LTFAT_COMPLEX* gdualf)
 {
 
-    ltfatInt h_a, h_m;
+    ltfat_int h_a, h_m;
 
     LTFAT_COMPLEX* Sf;
 
     const LTFAT_COMPLEX zzero = (LTFAT_COMPLEX) 0.0;
     const LTFAT_COMPLEX alpha = (LTFAT_COMPLEX) 1.0; //{1.0, 0.0 };
 
-    const ltfatInt N = L / a;
+    ltfat_int N = L / a;
 
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = N / q;
+    ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
+    ltfat_int p = a / c;
+    ltfat_int q = M / c;
+    ltfat_int d = N / q;
 
     /* This is a floor operation. */
-    const ltfatInt d2 = d / 2 + 1;
+    ltfat_int d2 = d / 2 + 1;
 
     Sf = LTFAT_NAME_COMPLEX(malloc)(p * p);
 
@@ -81,7 +81,7 @@ LTFAT_NAME(gabdualreal_fac)(const LTFAT_COMPLEX* gf, const ltfatInt L,
      */
     memcpy(gdualf, gf, sizeof(LTFAT_COMPLEX)*L * R);
 
-    for (ltfatInt rs = 0; rs < c * d2; rs++)
+    for (ltfat_int rs = 0; rs < c * d2; rs++)
     {
         LTFAT_NAME(gemm)(CblasNoTrans, CblasConjTrans, p, p, q * R,
                                &alpha,

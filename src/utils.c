@@ -3,7 +3,7 @@
 #include "ltfat/macros.h"
 
 LTFAT_API int
-LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME_COMPLEX(fftcircshift)( const LTFAT_COMPLEX* in, ltfat_int L,
                                   const double shift, LTFAT_COMPLEX* out)
 {
     double shiftLoc;
@@ -59,7 +59,7 @@ error:
 
 
 LTFAT_API int
-LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME_COMPLEX(fftfftshift)(const LTFAT_COMPLEX* in, ltfat_int L,
                                 LTFAT_COMPLEX* out)
 {
     ltfat_div_t domod;
@@ -90,7 +90,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME_COMPLEX(fftifftshift)(const LTFAT_COMPLEX* in, ltfat_int L,
                                  LTFAT_COMPLEX* out)
 {
     ltfat_div_t domod;
@@ -108,7 +108,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME_COMPLEX(fftrealcircshift)( const LTFAT_COMPLEX* in, ltfat_int L,
                                       const double shift, LTFAT_COMPLEX* out)
 {
     ltfat_div_t domod;
@@ -141,7 +141,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME_COMPLEX(fftrealfftshift)(const LTFAT_COMPLEX* in, ltfat_int L,
                                     LTFAT_COMPLEX* out)
 {
     ltfat_div_t domod;
@@ -174,7 +174,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, ltfat_int L,
                                      LTFAT_COMPLEX* out)
 {
     ltfat_div_t domod;
@@ -193,7 +193,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, const ltfatInt L,
+LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, ltfat_int L,
                                LTFAT_COMPLEX* out)
 {
     LTFAT_REAL (*outTmp)[2];
@@ -206,7 +206,7 @@ LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, const ltfatInt L,
     if (in == (LTFAT_REAL*)out)
     {
         // Go from the back to avoid overwriting input
-        for (ltfatInt ii = L - 1; ii >= 0; ii--)
+        for (ltfat_int ii = L - 1; ii >= 0; ii--)
         {
             outTmp[ii][0] = in[ii];
             outTmp[ii][1] = 0.0;
@@ -214,7 +214,7 @@ LTFAT_NAME(real2complex_array)(const LTFAT_REAL* in, const ltfatInt L,
     }
     else
     {
-        for (ltfatInt ii = 0; ii < L; ii++)
+        for (ltfat_int ii = 0; ii < L; ii++)
         {
             outTmp[ii][0] = in[ii];
             outTmp[ii][1] = 0.0;
@@ -226,7 +226,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, const ltfatInt L,
+LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, ltfat_int L,
                                LTFAT_REAL* out)
 {
     const LTFAT_REAL (*inTmp)[2];
@@ -236,7 +236,7 @@ LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, const ltfatInt L,
 
     inTmp = (const LTFAT_REAL(*)[2]) in;
 
-    for (ltfatInt ii = 0; ii < L; ii++)
+    for (ltfat_int ii = 0; ii < L; ii++)
         out[ii] = inTmp[ii][0];
 
 error:
@@ -246,10 +246,10 @@ error:
 
 LTFAT_API int
 LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX* cFreqinv,
-                                  const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                  ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                                   LTFAT_COMPLEX* cTimeinv)
 {
-    ltfatInt N;
+    ltfat_int N;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -259,9 +259,9 @@ LTFAT_NAME_COMPLEX(dgt_phaselock)(const LTFAT_COMPLEX* cFreqinv,
 
     N = L / a;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
             const LTFAT_COMPLEX* inCol = cFreqinv + n * M + w * M * N;
             LTFAT_COMPLEX* outCol = cTimeinv + n * M + w * M * N;
@@ -275,10 +275,10 @@ error:
 
 LTFAT_API int
 LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
-                                      const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                      ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                                       LTFAT_COMPLEX* cTimeinv)
 {
-    ltfatInt N, M2;
+    ltfat_int N, M2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -289,9 +289,9 @@ LTFAT_NAME_COMPLEX(dgtreal_phaselock)(const LTFAT_COMPLEX* cFreqinv,
     N = L / a;
     M2 = M / 2 + 1;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
             const LTFAT_COMPLEX* inCol = cFreqinv + n * M2 + w * M2 * N;
             LTFAT_COMPLEX* outCol = cTimeinv + n * M2 + w * M2 * N;
@@ -305,10 +305,10 @@ error:
 
 LTFAT_API int
 LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
-                                    const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                    ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                                     LTFAT_COMPLEX* cFreqinv)
 {
-    ltfatInt N;
+    ltfat_int N;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -318,9 +318,9 @@ LTFAT_NAME_COMPLEX(dgt_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
 
     N = L / a;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
             const LTFAT_COMPLEX* inCol = cTimeinv + n * M + w * M * N;
             LTFAT_COMPLEX* outCol = cFreqinv + n * M + w * M * N;
@@ -334,10 +334,10 @@ error:
 
 LTFAT_API int
 LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
-                                        const ltfatInt L, const ltfatInt W, const ltfatInt a, const ltfatInt M,
+                                        ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                                         LTFAT_COMPLEX* cFreqinv)
 {
-    ltfatInt N, M2;
+    ltfat_int N, M2;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cFreqinv); CHECKNULL(cTimeinv);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
@@ -348,9 +348,9 @@ LTFAT_NAME_COMPLEX(dgtreal_phaseunlock)(const LTFAT_COMPLEX* cTimeinv,
     N = L / a;
     M2 = M / 2 + 1;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
-        for (ltfatInt n = 0; n < N; n++)
+        for (ltfat_int n = 0; n < N; n++)
         {
             const LTFAT_COMPLEX* inCol = cTimeinv + n * M2 + w * M2 * N;
             LTFAT_COMPLEX* outCol = cFreqinv + n * M2 + w * M2 * N;

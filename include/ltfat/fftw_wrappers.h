@@ -1,10 +1,10 @@
 typedef struct LTFAT_NAME(fft_plan) LTFAT_NAME(fft_plan);
 
 LTFAT_API int
-LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfatInt L, ltfatInt W, LTFAT_COMPLEX out[]);
+LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[]);
 
 LTFAT_API int
-LTFAT_NAME(fft_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(fft_init)(ltfat_int L, ltfat_int W,
                      LTFAT_COMPLEX in[], LTFAT_COMPLEX out[],
                      unsigned flags, LTFAT_NAME(fft_plan)** p);
 
@@ -21,10 +21,10 @@ LTFAT_NAME(fft_done)(LTFAT_NAME(fft_plan)** p);
 typedef struct LTFAT_NAME(ifft_plan) LTFAT_NAME(ifft_plan);
 
 LTFAT_API int
-LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfatInt L, ltfatInt W, LTFAT_COMPLEX out[]);
+LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[]);
 
 LTFAT_API int
-LTFAT_NAME(ifft_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(ifft_init)(ltfat_int L, ltfat_int W,
                       LTFAT_COMPLEX in[], LTFAT_COMPLEX out[],
                       unsigned flags, LTFAT_NAME(ifft_plan)** p);
 
@@ -41,10 +41,10 @@ LTFAT_NAME(ifft_done)(LTFAT_NAME(ifft_plan)** p);
 typedef struct LTFAT_NAME(fftreal_plan) LTFAT_NAME(fftreal_plan);
 
 LTFAT_API int
-LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfatInt L, ltfatInt W, LTFAT_COMPLEX out[]);
+LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[]);
 
 LTFAT_API int
-LTFAT_NAME(fftreal_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(fftreal_init)(ltfat_int L, ltfat_int W,
                          LTFAT_REAL in[], LTFAT_COMPLEX out[],
                          unsigned flags, LTFAT_NAME(fftreal_plan)** p);
 
@@ -61,10 +61,10 @@ LTFAT_NAME(fftreal_done)(LTFAT_NAME(fftreal_plan)** p);
 typedef struct LTFAT_NAME(ifftreal_plan) LTFAT_NAME(ifftreal_plan);
 
 LTFAT_API int
-LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfatInt L, ltfatInt W, LTFAT_REAL out[]);
+LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_REAL out[]);
 
 LTFAT_API int
-LTFAT_NAME(ifftreal_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(ifftreal_init)(ltfat_int L, ltfat_int W,
                           LTFAT_COMPLEX in[], LTFAT_REAL out[],
                           unsigned flags, LTFAT_NAME(ifftreal_plan)** p);
 

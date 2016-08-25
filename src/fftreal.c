@@ -7,7 +7,7 @@
 */
 
 LTFAT_API void
-LTFAT_NAME(fftreal)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
+LTFAT_NAME(fftreal)(LTFAT_REAL* f, ltfat_int L, ltfat_int W,
                     LTFAT_COMPLEX* cout)
 {
     LTFAT_FFTW(plan) p = LTFAT_NAME(fftreal_init)(f, L, W, cout, FFTW_ESTIMATE);
@@ -27,7 +27,7 @@ LTFAT_NAME(fftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_REAL* f,
 * IF anything else than FFTW_ESTIMATE is used for a flag, the planning overwrites input array !
 */
 LTFAT_API LTFAT_FFTW(plan)
-LTFAT_NAME(fftreal_init)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
+LTFAT_NAME(fftreal_init)(LTFAT_REAL* f, ltfat_int L, ltfat_int W,
                          LTFAT_COMPLEX* cout, unsigned flag)
 {
     int Lint = (int) L;
@@ -40,7 +40,7 @@ LTFAT_NAME(fftreal_init)(LTFAT_REAL* f, const ltfatInt L, const ltfatInt W,
 }
 
 LTFAT_API void
-LTFAT_NAME(ifftreal)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
+LTFAT_NAME(ifftreal)(LTFAT_COMPLEX* c, ltfat_int L, ltfat_int W,
                      LTFAT_REAL* f)
 {
     LTFAT_FFTW(plan) p = LTFAT_NAME(ifftreal_init)(c, L, W, f, FFTW_ESTIMATE);
@@ -50,13 +50,13 @@ LTFAT_NAME(ifftreal)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
 
 LTFAT_API void
 LTFAT_NAME(ifftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_COMPLEX* c,
-                             const ltfatInt L, const ltfatInt W,
+                             ltfat_int L, ltfat_int W,
                              LTFAT_REAL* f)
 {
     LTFAT_FFTW(execute_dft_c2r)(p, (LTFAT_FFTW(complex)*) c, f);
 
     LTFAT_REAL s  = (LTFAT_REAL) (1.0 / L);
-    for (ltfatInt ii = 0; ii < L * W; ii++)
+    for (ltfat_int ii = 0; ii < L * W; ii++)
         f[ii] *= s;
 }
 
@@ -65,7 +65,7 @@ LTFAT_NAME(ifftreal_execute)(const LTFAT_FFTW(plan) p, LTFAT_COMPLEX* c,
 * IF anything else than FFTW_ESTIMATE is used for a flag, the planning overwrites input array !
 */
 LTFAT_API LTFAT_FFTW(plan)
-LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX* c, const ltfatInt L, const ltfatInt W,
+LTFAT_NAME(ifftreal_init)(LTFAT_COMPLEX* c, ltfat_int L, ltfat_int W,
                           LTFAT_REAL* f, unsigned flag)
 {
     int Lint = (int) L;

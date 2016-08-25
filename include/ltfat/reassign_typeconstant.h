@@ -10,17 +10,17 @@ typedef enum
 } fbreassHints;
 
 typedef struct {
-   ltfatInt** repos;
-   ltfatInt*  reposl;
-   ltfatInt*  reposlmax;
-   ltfatInt   l;
+   ltfat_int** repos;
+   ltfat_int*  reposl;
+   ltfat_int*  reposlmax;
+   ltfat_int   l;
 } fbreassOptOut;
 
 LTFAT_API fbreassOptOut*
-fbreassOptOut_init(const ltfatInt l,const ltfatInt inital);
+fbreassOptOut_init(ltfat_int l,ltfat_int inital);
 
 LTFAT_API void
-fbreassOptOut_expand(fbreassOptOut* oo,const ltfatInt ii);
+fbreassOptOut_expand(fbreassOptOut* oo,ltfat_int ii);
 
 LTFAT_API void
 fbreassOptOut_destroy(fbreassOptOut* oo);

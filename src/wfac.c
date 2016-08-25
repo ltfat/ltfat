@@ -4,35 +4,35 @@
 
 struct LTFAT_NAME(wfac_plan)
 {
-    ltfatInt b;
-    ltfatInt c;
-    ltfatInt p;
-    ltfatInt q;
-    ltfatInt d;
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt L;
+    ltfat_int b;
+    ltfat_int c;
+    ltfat_int p;
+    ltfat_int q;
+    ltfat_int d;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int L;
     LTFAT_REAL scaling;
     LTFAT_REAL* sbuf;
     LTFAT_FFTW(plan) p_before;
 };
 
 LTFAT_API int
-LTFAT_NAME(wfac_init)(const ltfatInt L, const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(wfac_init)(ltfat_int L, ltfat_int a, ltfat_int M,
                       unsigned flags, LTFAT_NAME(wfac_plan)** pout)
 {
     LTFAT_NAME(wfac_plan)* plan = NULL;
-    ltfatInt minL, h_a, h_m;
+    ltfat_int minL, h_a, h_m;
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(pout);
-    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
-    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
+    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %td) must be positive.", a);
+    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %td) must be positive.", M);
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADARG,
           L > 0 && !(L % minL),
-          "L (passed %d) must be positive and divisible by lcm(a,M)=%d.",
+          "L (passed %td) must be positive and divisible by lcm(a,M)=%td.",
           L, minL);
 
     CHECKMEM(plan = (LTFAT_NAME(wfac_plan)*) ltfat_calloc(1, sizeof * plan));
@@ -70,20 +70,20 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
-                         const ltfatInt R, LTFAT_COMPLEX* gf)
+                         ltfat_int R, LTFAT_COMPLEX* gf)
 {
-    ltfatInt rem, negrem, c, p, q, d, a, M, L, ld3;
+    ltfat_int rem, negrem, c, p, q, d, a, M, L, ld3;
     LTFAT_REAL* sbuf, *gfp;
     LTFAT_REAL scaling;
     LTFAT_FFTW(plan) p_before;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(g); CHECKNULL(gf);
-    CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %d) must be positive.", R);
+    CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %td) must be positive.", R);
 
     sbuf = plan->sbuf;
     p_before = plan->p_before;
 
-    /* const ltfatInt b = plan->b; */
+    /* ltfat_int b = plan->b; */
     c = plan->c;
     p = plan->p;
     q = plan->q;
@@ -96,16 +96,16 @@ LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
     ld3 = c * p * q * R;
     gfp = (LTFAT_REAL*)gf;
 
-    for (ltfatInt r = 0; r < c; r++)
+    for (ltfat_int r = 0; r < c; r++)
     {
-        for (ltfatInt w = 0; w < R; w++)
+        for (ltfat_int w = 0; w < R; w++)
         {
-            for (ltfatInt l = 0; l < q; l++)
+            for (ltfat_int l = 0; l < q; l++)
             {
-                for (ltfatInt k = 0; k < p; k++)
+                for (ltfat_int k = 0; k < p; k++)
                 {
                     negrem = ltfat_positiverem(k * M - l * a, L);
-                    for (ltfatInt s = 0; s < d; s++)
+                    for (ltfat_int s = 0; s < d; s++)
                     {
                         rem = (negrem + s * p * M) % L;
 #ifdef LTFAT_COMPLEXTYPE
@@ -120,7 +120,7 @@ LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
 
                     LTFAT_FFTW(execute)(p_before);
 
-                    for (ltfatInt s = 0; s < 2 * d; s += 2)
+                    for (ltfat_int s = 0; s < 2 * d; s += 2)
                     {
                         gfp[s * ld3]  = sbuf[s];
                         gfp[s * ld3 + 1] = sbuf[s + 1];
@@ -152,8 +152,8 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(wfac)(const LTFAT_TYPE* g, const ltfatInt L, const ltfatInt R,
-                 const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(wfac)(const LTFAT_TYPE* g, ltfat_int L, ltfat_int R,
+                 ltfat_int a, ltfat_int M,
                  LTFAT_COMPLEX* gf)
 {
     LTFAT_NAME(wfac_plan)* p = NULL;
@@ -172,23 +172,23 @@ error:
 
 
 /* LTFAT_API int */
-/* LTFAT_NAME(wfac)(const LTFAT_TYPE* g, const ltfatInt L, const ltfatInt R, */
-/*                  const ltfatInt a, const ltfatInt M, */
+/* LTFAT_NAME(wfac)(const LTFAT_TYPE* g, ltfat_int L, ltfat_int R, */
+/*                  ltfat_int a, ltfat_int M, */
 /*                  LTFAT_COMPLEX* gf) */
 /* { */
-/*     ltfatInt h_a, h_m, s; */
+/*     ltfat_int h_a, h_m, s; */
 /*  */
 /*     LTFAT_REAL* sbuf, *gfp; */
 /*  */
-/*     ltfatInt rem, negrem; */
+/*     ltfat_int rem, negrem; */
 /*  */
 /*     LTFAT_FFTW(plan) p_before; */
 /*  */
-/*     const ltfatInt b = L / M; */
-/*     const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m); */
-/*     const ltfatInt p = a / c; */
-/*     const ltfatInt q = M / c; */
-/*     const ltfatInt d = b / p; */
+/*     ltfat_int b = L / M; */
+/*     ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m); */
+/*     ltfat_int p = a / c; */
+/*     ltfat_int q = M / c; */
+/*     ltfat_int d = b / p; */
 /*  */
 /*     const double sqrtM = sqrt(M); */
 /*  */
@@ -199,15 +199,15 @@ error:
 /*                                        (LTFAT_COMPLEX*)sbuf, */
 /*                                        FFTW_FORWARD, FFTW_MEASURE); */
 /*  */
-/*     const ltfatInt ld3 = c * p * q * R; */
+/*     ltfat_int ld3 = c * p * q * R; */
 /*     gfp = (LTFAT_REAL*)gf; */
-/*     for (ltfatInt r = 0; r < c; r++) */
+/*     for (ltfat_int r = 0; r < c; r++) */
 /*     { */
-/*         for (ltfatInt w = 0; w < R; w++) */
+/*         for (ltfat_int w = 0; w < R; w++) */
 /*         { */
-/*             for (ltfatInt l = 0; l < q; l++) */
+/*             for (ltfat_int l = 0; l < q; l++) */
 /*             { */
-/*                 for (ltfatInt k = 0; k < p; k++) */
+/*                 for (ltfat_int k = 0; k < p; k++) */
 /*                 { */
 /*                     negrem = ltfat_positiverem(k * M - l * a, L); */
 /*                     for (s = 0; s < d; s++) */

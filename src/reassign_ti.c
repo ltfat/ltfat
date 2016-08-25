@@ -8,17 +8,17 @@ LTFAT_API void
 LTFAT_NAME(filterbankphasegrad)(const LTFAT_COMPLEX* c [],
                                 const LTFAT_COMPLEX* ch[],
                                 const LTFAT_COMPLEX* cd[],
-                                const ltfatInt          M,
-                                const ltfatInt        N[],
-                                const ltfatInt          L,
+                                ltfat_int          M,
+                                ltfat_int        N[],
+                                ltfat_int          L,
                                 const LTFAT_REAL   minlvl,
                                 LTFAT_REAL*        tgrad[],
                                 LTFAT_REAL*        fgrad[],
                                 LTFAT_REAL*           cs[])
 {
 #define FOREACHCOEF \
-    for(ltfatInt m=0;m<M;++m){\
-        for(ltfatInt ii=0;ii<N[m];++ii){
+    for(ltfat_int m=0;m<M;++m){\
+        for(ltfat_int ii=0;ii<N[m];++ii){
 
 #define ARRAYEL(c) ((c)[m][ii])
 #define ENDFOREACHCOEF }}

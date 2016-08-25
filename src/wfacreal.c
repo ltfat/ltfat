@@ -4,29 +4,29 @@
 
 /* wfac for real valued input. Produces only half the output coefficients of wfac_r */
 LTFAT_API void
-LTFAT_NAME(wfacreal)(const LTFAT_REAL* g, const ltfatInt L, const ltfatInt R,
-                     const ltfatInt a, const ltfatInt M,
+LTFAT_NAME(wfacreal)(const LTFAT_REAL* g, ltfat_int L, ltfat_int R,
+                     ltfat_int a, ltfat_int M,
                      LTFAT_COMPLEX* gf)
 {
 
-    ltfatInt h_a, h_m;
+    ltfat_int h_a, h_m;
 
     //LTFAT_REAL *gfp;
     LTFAT_COMPLEX* gfp = gf;
 
-    ltfatInt s;
-    ltfatInt rem, negrem;
+    ltfat_int s;
+    ltfat_int rem, negrem;
 
     LTFAT_FFTW(plan) p_before;
 
-    const ltfatInt b = L / M;
-    const ltfatInt c = ltfat_gcd(a, M, &h_a, &h_m);
-    const ltfatInt p = a / c;
-    const ltfatInt q = M / c;
-    const ltfatInt d = b / p;
+    ltfat_int b = L / M;
+    ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
+    ltfat_int p = a / c;
+    ltfat_int q = M / c;
+    ltfat_int d = b / p;
 
     /* This is a floor operation. */
-    const ltfatInt d2 = d / 2 + 1;
+    ltfat_int d2 = d / 2 + 1;
 
     const LTFAT_REAL sqrtM = (LTFAT_REAL) sqrt((double)M);
 
@@ -37,16 +37,16 @@ LTFAT_NAME(wfacreal)(const LTFAT_REAL* g, const ltfatInt L, const ltfatInt R,
     p_before = LTFAT_FFTW(plan_dft_r2c_1d)((int) d, sbuf,
                                            (LTFAT_FFTW(complex)*) cbuf, FFTW_MEASURE);
 
-    // const ltfatInt ld3=2*c*p*q*R;
-    const ltfatInt ld3 = c * p * q * R;
+    // ltfat_int ld3=2*c*p*q*R;
+    ltfat_int ld3 = c * p * q * R;
     //gfp=(LTFAT_REAL*)gf;
-    for (ltfatInt r = 0; r < c; r++)
+    for (ltfat_int r = 0; r < c; r++)
     {
-        for (ltfatInt w = 0; w < R; w++)
+        for (ltfat_int w = 0; w < R; w++)
         {
-            for (ltfatInt l = 0; l < q; l++)
+            for (ltfat_int l = 0; l < q; l++)
             {
-                for (ltfatInt k = 0; k < p; k++)
+                for (ltfat_int k = 0; k < p; k++)
                 {
                     negrem = ltfat_positiverem(k * M - l * a, L);
                     for (s = 0; s < d; s++)

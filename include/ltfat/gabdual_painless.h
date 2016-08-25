@@ -13,8 +13,8 @@
  * \returns Status code
  */
 LTFAT_API int
-LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
-                         ltfatInt a, ltfatInt M, ltfatInt dl, LTFAT_REAL* d);
+LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfat_int gl,
+                         ltfat_int a, ltfat_int M, ltfat_int dl, LTFAT_REAL* d);
 
 /** \addtogroup gabdual
  * @{
@@ -30,15 +30,15 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
  *
  * #### Versions #
  * <tt>
- * ltfat_gabdual_painless_d(const double g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M, double gd[]);
+ * ltfat_gabdual_painless_d(const double g[], ltfat_int gl, ltfat_int a, ltfat_int M, double gd[]);
  *
- * ltfat_gabdual_painless_s(const float g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M, float gd[]);
+ * ltfat_gabdual_painless_s(const float g[], ltfat_int gl, ltfat_int a, ltfat_int M, float gd[]);
  *
- * ltfat_gabdual_painless_cd(const complex double g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                           complex double gd[]);
+ * ltfat_gabdual_painless_cd(const ltfat_complex_d g[], ltfat_int gl, ltfat_int a, ltfat_int M,
+ *                           ltfat_complex_d gd[]);
  *
- * ltfat_gabdual_painless_cs(const complex float g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                           complex float gd[]);
+ * ltfat_gabdual_painless_cs(const ltfat_complex_s g[], ltfat_int gl, ltfat_int a, ltfat_int M,
+ *                           ltfat_complex_s gd[]);
  * </tt>
  * \returns
  * Status code           | Description
@@ -52,8 +52,8 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfatInt gl,
  * LTFATERR_NOMEM        | Indicates that the heap allocation failed.
  */
 LTFAT_API int
-LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfatInt a,
-                             const ltfatInt M, LTFAT_TYPE gd[]);
+LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], ltfat_int gl, ltfat_int a,
+                             ltfat_int M, LTFAT_TYPE gd[]);
 
 /** Compute canonical tight window for painless Gabor system
  *
@@ -65,15 +65,15 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfa
  *
  * #### Versions #
  * <tt>
- * ltfat_gabtight_painless_d(const double g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M, double gt[]);
+ * ltfat_gabtight_painless_d(const double g[], ltfat_int gl, ltfat_int a, ltfat_int M, double gt[]);
  *
- * ltfat_gabtight_painless_s(const float g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M, float gt[]);
+ * ltfat_gabtight_painless_s(const float g[], ltfat_int gl, ltfat_int a, ltfat_int M, float gt[]);
  *
- * ltfat_gabtight_painless_cd(const complex double g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                            complex double gt[]);
+ * ltfat_gabtight_painless_cd(const ltfat_complex_d g[], ltfat_int gl, ltfat_int a, ltfat_int M,
+ *                            ltfat_complex_d gt[]);
  *
- * ltfat_gabtight_painless_cs(const complex float g[], const ltfatInt gl, const ltfatInt a, const ltfatInt M,
- *                            complex float gt[]);
+ * ltfat_gabtight_painless_cs(const ltfat_complex_s g[], ltfat_int gl, ltfat_int a, ltfat_int M,
+ *                            ltfat_complex_s gt[]);
  * </tt>
  * \returns
  * Status code           | Description
@@ -87,8 +87,8 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfa
  * LTFATERR_NOMEM        | Indicates that the heap allocation failed.
  */
 LTFAT_API int
-LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltfatInt a,
-                              const ltfatInt M, LTFAT_TYPE gt[]);
+LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE g[], ltfat_int gl, ltfat_int a,
+                              ltfat_int M, LTFAT_TYPE gt[]);
 
 
 /** @} */
@@ -109,5 +109,5 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE g[], const ltfatInt gl, const ltf
  * \returns Status code
  */
 LTFAT_API int
-LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfatInt gl, ltfatInt a,
-                           ltfatInt M, LTFAT_TYPE* gpu);
+LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfat_int gl, ltfat_int a,
+                           ltfat_int M, LTFAT_TYPE* gpu);

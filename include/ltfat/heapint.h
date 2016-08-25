@@ -16,7 +16,7 @@ extern "C"
 typedef struct LTFAT_NAME(heap) LTFAT_NAME(heap);
 
 LTFAT_NAME(heap)*
-LTFAT_NAME(heap_init)(const ltfatInt initmaxsize, const LTFAT_REAL* s);
+LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s);
 
 void
 LTFAT_NAME(heap_done)(LTFAT_NAME(heap)* h);
@@ -27,38 +27,38 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor);
 void
 LTFAT_NAME(heap_reset)(LTFAT_NAME(heap)* h, const LTFAT_REAL* news);
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h);
 
 LTFAT_API void
-LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, const ltfatInt key);
+LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, ltfat_int key);
 
 /*  */
 
 inline void
 LTFAT_NAME(trapezheap)(const LTFAT_NAME(heapinttask) *heaptask,
                        const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
-                       const ltfatInt w, LTFAT_REAL* phase);
+                       ltfat_int w, LTFAT_REAL* phase);
 
 inline void
 LTFAT_NAME(trapezheapreal)(const LTFAT_NAME(heapinttask) *heaptask,
                            const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
-                           const ltfatInt w, LTFAT_REAL* phase);
+                           ltfat_int w, LTFAT_REAL* phase);
 
 void
 LTFAT_NAME(gradsamptorad)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
-                          ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,
+                          ltfat_int a, ltfat_int M, ltfat_int L, ltfat_int W,
                           ltfat_phaseconvention phasetype, int do_real,
                           LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
 
 void
 LTFAT_NAME(borderstoheap)(LTFAT_NAME(heap)* h,
-                          const ltfatInt height, const ltfatInt N,
+                          ltfat_int height, ltfat_int N,
                           int * donemask);
 
 void
 LTFAT_NAME(borderstoheapreal)(LTFAT_NAME(heap)* h,
-                              const ltfatInt height, const ltfatInt N,
+                              ltfat_int height, ltfat_int N,
                               int * donemask);
 
 #ifdef __cplusplus

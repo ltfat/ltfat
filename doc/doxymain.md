@@ -97,7 +97,8 @@ on the compiler
 </table>
 \c ltfat_complex_s expands the same way.
 
-\warning When using C99, you should not include \c fftw3.h before \c ltfat.h.
+\warning When using C99, you should n
+ot include \c fftw3.h before \c ltfat.h.
 The issue is described here [FFTW doc](http://www.fftw.org/doc/Complex-numbers.html)
 Basically \c complex.h must be included before \c fftw3.h and \c ltfat.h does that.
 
@@ -114,6 +115,12 @@ first dimension and therefore they are stored continuously in memory.
 In the function headers, the data arrays are denoted with array brackets []
 and a pointer is used whenever refering to a single object. This distinction
 is just cosmetics as the arrays decay to pointers anyway.
+
+Array sizes, indexes etc. are represented using \t ltfat_int :
+~~~~~~~~~~~~~~~{.c}
+typedef ptrdiff_t ltfat_int;
+~~~~~~~~~~~~~~~
+\note Size of \t ptrdiff_t is system dependent.
 
 Further, the following naming conventions are used consistently:
 <table>

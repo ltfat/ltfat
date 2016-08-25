@@ -70,15 +70,17 @@ else
 endif
 
 ifdef USECPP
+ifeq ($(USECPP),1)
 	CC = $(CXX)
 	CFLAGS = $(CXXFLAGS)
+endif
 endif
 
 # Dependencies
 ifndef NOBLASLAPACK
 	LFLAGS += $(BLASLAPACKLIBS)
 endif
-LFLAGS += $(FFTWLIBS) -lm $(EXTRALFLAGS) $(OPTLFLAGS)
+LFLAGS += $(FFTWLIBS) $(EXTRALFLAGS) $(OPTLFLAGS) -lm
 
 # Convert *.c names to *.o
 toCompile = $(patsubst %.c,%.o,$(files))
@@ -184,7 +186,7 @@ $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
 
 
-.PHONY: clean help doc static shared munit
+.PHONY: clean help doc doxy static shared munit
 
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
@@ -201,6 +203,7 @@ help:
 	@echo "    make [target] NOBLASLAPACK=1             Compiles the library without BLAS and LAPACK dependencies"
 	@echo "    make [target] USECPP=1                   Compiles the library using a C++ compiler"
 
+doxy: doc
 doc:
 	doxygen doc/doxyconfig
 
@@ -210,8 +213,9 @@ cleandoc:
 
 munit:
 	$(MAKE) clean
-	$(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
-	$(MAKE) $(buildprefix)/ltfat.h
+	# $(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
+	$(MAKE) $(SO_DSTARGET)
+	$(MAKE) $(buildprefix)/ltfat.h USECPP=0
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
 	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h

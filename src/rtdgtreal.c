@@ -4,30 +4,30 @@
 
 // These are non-public function header templates
 typedef int LTFAT_NAME(realtocomplextransform)(void* userdata,
-        const LTFAT_REAL* in, const ltfatInt, LTFAT_COMPLEX* out);
+        const LTFAT_REAL* in, ltfat_int, LTFAT_COMPLEX* out);
 
 typedef int LTFAT_NAME(complextorealtransform)(void* userdata,
-        const LTFAT_COMPLEX* in, const ltfatInt W, LTFAT_REAL* out);
+        const LTFAT_COMPLEX* in, ltfat_int W, LTFAT_REAL* out);
 
 struct LTFAT_NAME(rtdgtreal_plan)
 {
     LTFAT_REAL* g; //!< Window
-    ltfatInt gl; //!< Window length
-    ltfatInt M; //!< Number of FFT channels
+    ltfat_int gl; //!< Window length
+    ltfat_int M; //!< Number of FFT channels
     rtdgt_phasetype ptype; //!< Phase convention
     LTFAT_REAL* fftBuf; //!< Internal buffer
-    ltfatInt fftBufLen; //!< Internal buffer length
+    ltfat_int fftBufLen; //!< Internal buffer length
     LTFAT_FFTW(plan) pfft; //!< FFTW plan
 };
 
 
 int
-LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, const ltfatInt gl,
-                                 const ltfatInt M, const rtdgt_phasetype ptype,
+LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
+                                 ltfat_int M, const rtdgt_phasetype ptype,
                                  const ltfat_transformdirection tradir,
                                  LTFAT_NAME(rtdgtreal_plan)** pout)
 {
-    ltfatInt M2;
+    ltfat_int M2;
     LTFAT_NAME(rtdgtreal_plan)* p = NULL;
 
     int status = LTFATERR_SUCCESS;
@@ -67,16 +67,16 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
-                           const ltfatInt M, const rtdgt_phasetype ptype,
+LTFAT_NAME(rtdgtreal_init)(const LTFAT_REAL* g, ltfat_int gl,
+                           ltfat_int M, const rtdgt_phasetype ptype,
                            LTFAT_NAME(rtdgtreal_plan)** p)
 {
     return LTFAT_NAME(rtdgtreal_commoninit)(g, gl, M, ptype, LTFAT_FORWARD, p);
 }
 
 LTFAT_API int
-LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
-                            const ltfatInt M, const rtdgt_phasetype ptype,
+LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, ltfat_int gl,
+                            ltfat_int M, const rtdgt_phasetype ptype,
                             LTFAT_NAME(rtdgtreal_plan)** p)
 {
     return LTFAT_NAME(rtdgtreal_commoninit)(g, gl, M, ptype, LTFAT_INVERSE, p);
@@ -84,10 +84,10 @@ LTFAT_NAME(rtidgtreal_init)(const LTFAT_REAL* g, const ltfatInt gl,
 
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
-                              const LTFAT_REAL* f, const ltfatInt W,
+                              const LTFAT_REAL* f, ltfat_int W,
                               LTFAT_COMPLEX* c)
 {
-    ltfatInt M, M2, gl;
+    ltfat_int M, M2, gl;
     LTFAT_REAL* fftBuf;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(c);
@@ -98,13 +98,13 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
     gl = p->gl;
     fftBuf = p->fftBuf;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
         const LTFAT_REAL* fchan = f + w * gl;
         LTFAT_COMPLEX* cchan = c + w * M2;
 
         if (p->g)
-            for (ltfatInt ii = 0; ii < gl; ii++)
+            for (ltfat_int ii = 0; ii < gl; ii++)
                 fftBuf[ii] = fchan[ii] * p->g[ii];
 
         if (M > gl)
@@ -127,7 +127,7 @@ error:
 
 int
 LTFAT_NAME(rtdgtreal_execute_wrapper)(void* p,
-                                      const LTFAT_REAL* f, const ltfatInt W,
+                                      const LTFAT_REAL* f, ltfat_int W,
                                       LTFAT_COMPLEX* c)
 {
     return LTFAT_NAME(rtdgtreal_execute)((LTFAT_NAME(rtdgtreal_plan)*) p, f, W, c);
@@ -135,10 +135,10 @@ LTFAT_NAME(rtdgtreal_execute_wrapper)(void* p,
 
 LTFAT_API int
 LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
-                               const LTFAT_COMPLEX* c, const ltfatInt W,
+                               const LTFAT_COMPLEX* c, ltfat_int W,
                                LTFAT_REAL* f)
 {
-    ltfatInt M, M2, gl;
+    ltfat_int M, M2, gl;
     LTFAT_REAL* fftBuf;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
@@ -149,7 +149,7 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
     gl = p->gl;
     fftBuf = p->fftBuf;
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
         const LTFAT_COMPLEX* cchan = c + w * M2;
         LTFAT_REAL* fchan = f + w * gl;
@@ -165,7 +165,7 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
             LTFAT_NAME_REAL(periodize_array)(fftBuf, M , gl, fftBuf);
 
         if (p->g)
-            for (ltfatInt ii = 0; ii < gl; ii++)
+            for (ltfat_int ii = 0; ii < gl; ii++)
                 fftBuf[ii] *= p->g[ii];
 
         memcpy(fchan, fftBuf, gl * sizeof * fchan);
@@ -176,7 +176,7 @@ error:
 
 int
 LTFAT_NAME(rtidgtreal_execute_wrapper)(void* p,
-                                       const LTFAT_COMPLEX* c, const ltfatInt W,
+                                       const LTFAT_COMPLEX* c, ltfat_int W,
                                        LTFAT_REAL* f)
 {
     return LTFAT_NAME(rtidgtreal_execute)((LTFAT_NAME(rtidgtreal_plan)*)p, c, W, f);
@@ -210,19 +210,19 @@ LTFAT_NAME(rtidgtreal_done)(LTFAT_NAME(rtidgtreal_plan)** p)
 
 struct LTFAT_NAME(rtdgtreal_fifo_state)
 {
-    ltfatInt gl; //!< Window length
-    ltfatInt a; //!< Hop size
+    ltfat_int gl; //!< Window length
+    ltfat_int a; //!< Hop size
     LTFAT_REAL* buf; //!< Ring buffer array
-    ltfatInt bufLen; //!< Length of the previous
-    ltfatInt readIdx; //!< Read pos.
-    ltfatInt writeIdx; //!< Write pos.
-    ltfatInt Wmax;
+    ltfat_int bufLen; //!< Length of the previous
+    ltfat_int readIdx; //!< Read pos.
+    ltfat_int writeIdx; //!< Write pos.
+    ltfat_int Wmax;
 };
 
 
 LTFAT_API int
-LTFAT_NAME(rtdgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt procDelay,
-                                ltfatInt gl, ltfatInt a, ltfatInt Wmax,
+LTFAT_NAME(rtdgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int procDelay,
+                                ltfat_int gl, ltfat_int a, ltfat_int Wmax,
                                 LTFAT_NAME(rtdgtreal_fifo_state)** pout)
 {
     LTFAT_NAME(rtdgtreal_fifo_state)* p = NULL;
@@ -267,16 +267,16 @@ error:
     return status;
 }
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                  const LTFAT_REAL** buf,
-                                 const ltfatInt bufLen, const ltfatInt W)
+                                 ltfat_int bufLen, ltfat_int W)
 {
-    ltfatInt Wact, freeSpace, toWrite, valid, over, endWriteIdx;
+    ltfat_int Wact, freeSpace, toWrite, valid, over, endWriteIdx;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(buf);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
         CHECKNULL(buf[w]);
 
     CHECK(LTFATERR_NOTPOSARG, bufLen > 0, "bufLen must be positive.");
@@ -302,7 +302,7 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
 
     if (valid > 0)
     {
-        for (ltfatInt w = 0; w < p->Wmax; w++)
+        for (ltfat_int w = 0; w < p->Wmax; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + w * p->bufLen + p->writeIdx;
             if (w < Wact)
@@ -313,7 +313,7 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
     }
     if (over > 0)
     {
-        for (ltfatInt w = 0; w < Wact; w++)
+        for (ltfat_int w = 0; w < Wact; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + w * p->bufLen;
             if (w < Wact)
@@ -329,11 +329,11 @@ error:
     return status;
 }
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                 LTFAT_REAL* buf)
 {
-    ltfatInt available, toRead, valid, over, endReadIdx;
+    ltfat_int available, toRead, valid, over, endReadIdx;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(buf);
 
@@ -358,7 +358,7 @@ LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
 
     if (valid > 0)
     {
-        for (ltfatInt w = 0; w < p->Wmax; w++)
+        for (ltfat_int w = 0; w < p->Wmax; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + w * p->bufLen + p->readIdx;
             memcpy(buf + w * p->gl, pbufchan, valid * sizeof * p->buf );
@@ -366,7 +366,7 @@ LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
     }
     if (over > 0)
     {
-        for (ltfatInt w = 0; w < p->Wmax; w++)
+        for (ltfat_int w = 0; w < p->Wmax; w++)
         {
             memcpy(buf + valid + w * p->gl, p->buf + w * p->bufLen, over * sizeof * p->buf);
         }
@@ -384,19 +384,19 @@ error:
 
 struct LTFAT_NAME(rtidgtreal_fifo_state)
 {
-    ltfatInt gl; //!< Window length
-    ltfatInt a; //!< Hop size
+    ltfat_int gl; //!< Window length
+    ltfat_int a; //!< Hop size
     LTFAT_REAL* buf; //!< Ring buffer array
-    ltfatInt bufLen; //!< Length of the previous
-    ltfatInt readIdx; //!< Read pos.
-    ltfatInt writeIdx; //!< Write pos.
-    ltfatInt Wmax;
+    ltfat_int bufLen; //!< Length of the previous
+    ltfat_int readIdx; //!< Read pos.
+    ltfat_int writeIdx; //!< Write pos.
+    ltfat_int Wmax;
 };
 
 
 LTFAT_API int
-LTFAT_NAME(rtidgtreal_fifo_init)(ltfatInt fifoLen, ltfatInt gl,
-                                 ltfatInt a, ltfatInt Wmax,
+LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
+                                 ltfat_int a, ltfat_int Wmax,
                                  LTFAT_NAME(rtidgtreal_fifo_state)** pout)
 {
     LTFAT_NAME(rtidgtreal_fifo_state)* p = NULL;
@@ -439,11 +439,11 @@ error:
     return status;
 }
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                   const LTFAT_REAL* buf)
 {
-    ltfatInt freeSpace, toWrite, valid, over, endWriteIdx;
+    ltfat_int freeSpace, toWrite, valid, over, endWriteIdx;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(buf);
 
@@ -467,21 +467,21 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
 
     if (valid > 0)
     {
-        for (ltfatInt w = 0; w < p->Wmax; w++)
+        for (ltfat_int w = 0; w < p->Wmax; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + p->writeIdx + w * p->bufLen;
             const LTFAT_REAL* bufchan = buf + w * p->gl;
-            for (ltfatInt ii = 0; ii < valid; ii++)
+            for (ltfat_int ii = 0; ii < valid; ii++)
                 pbufchan[ii] += bufchan[ii];
         }
     }
     if (over > 0)
     {
-        for (ltfatInt w = 0; w < p->Wmax; w++)
+        for (ltfat_int w = 0; w < p->Wmax; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + w * p->bufLen;
             const LTFAT_REAL* bufchan = buf + valid + w * p->gl;
-            for (ltfatInt ii = 0; ii < over; ii++)
+            for (ltfat_int ii = 0; ii < over; ii++)
                 pbufchan[ii] += bufchan[ii];
         }
     }
@@ -493,17 +493,17 @@ error:
     return status;
 }
 
-LTFAT_API ltfatInt
+LTFAT_API ltfat_int
 LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
-                                 const ltfatInt bufLen, const ltfatInt W,
+                                 ltfat_int bufLen, ltfat_int W,
                                  LTFAT_REAL** buf)
 {
-    ltfatInt available, toRead, valid, over, endReadIdx;
+    ltfat_int available, toRead, valid, over, endReadIdx;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(buf);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
         CHECKNULL(buf[w]);
 
     CHECK(LTFATERR_NOTPOSARG, bufLen > 0, "bufLen must be positive.");
@@ -530,7 +530,7 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
     // write again
     if (valid > 0)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + p->readIdx + w * p->bufLen;
             memcpy(buf[w], pbufchan, valid * sizeof * p->buf);
@@ -539,7 +539,7 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
     }
     if (over > 0)
     {
-        for (ltfatInt w = 0; w < W; w++)
+        for (ltfat_int w = 0; w < W; w++)
         {
             LTFAT_REAL* pbufchan = p->buf + w * p->bufLen;
             memcpy(buf[w] + valid, pbufchan, over * sizeof * p->buf);
@@ -575,9 +575,9 @@ struct LTFAT_NAME(rtdgtreal_processor_state)
 
 
 LTFAT_API int
-LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, const ltfatInt gal,
-                                     const LTFAT_REAL* gs, const ltfatInt gsl,
-                                     const ltfatInt a, const ltfatInt M, const ltfatInt Wmax,
+LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
+                                     const LTFAT_REAL* gs, ltfat_int gsl,
+                                     ltfat_int a, ltfat_int M, ltfat_int Wmax,
                                      LTFAT_NAME(rtdgtreal_processor_callback)* callback, void* userdata,
                                      LTFAT_NAME(rtdgtreal_processor_state)** pout)
 {
@@ -638,8 +638,8 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
-        const ltfatInt gl, const ltfatInt a, const ltfatInt M,
-        const ltfatInt Wmax,
+        ltfat_int gl, ltfat_int a, ltfat_int M,
+        ltfat_int Wmax,
         LTFAT_NAME(rtdgtreal_processor_callback)* callback,
         void* userdata,
         LTFAT_NAME(rtdgtreal_processor_state)** pout)
@@ -701,14 +701,14 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     LTFAT_NAME(rtdgtreal_processor_state)* p,
     const LTFAT_REAL* in,
-    const ltfatInt len, const ltfatInt chanNo,
+    ltfat_int len, ltfat_int chanNo,
     LTFAT_REAL* out)
 {
     // Stack allocated (tiny) VLAs
     const LTFAT_REAL* inTmp[rtdgtreal_processor_execute_compact_max_chan];
     LTFAT_REAL* outTmp[rtdgtreal_processor_execute_compact_max_chan];
 
-    for (ltfatInt w = 0; w < chanNo; w++)
+    for (ltfat_int w = 0; w < chanNo; w++)
     {
         inTmp[w] = &in[w * len];
         outTmp[w] = &out[w * len];
@@ -721,7 +721,7 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute)(
     LTFAT_NAME(rtdgtreal_processor_state)* p,
     const LTFAT_REAL** in,
-    const ltfatInt len, const ltfatInt chanNo,
+    ltfat_int len, ltfat_int chanNo,
     LTFAT_REAL** out)
 {
     // Get default processor if none was set
@@ -732,7 +732,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
         processorCallback = &LTFAT_NAME(default_rtdgtreal_processor_callback);
 
     // Write new data
-    ltfatInt samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, len,
+    ltfat_int samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, len,
                               chanNo);
 
     // While there is new data in the input fifo
@@ -754,7 +754,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     }
 
     // Read sampples for output
-    ltfatInt samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, len,
+    ltfat_int samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, len,
                            chanNo, out);
 
     if ( samplesWritten != len ) return LTFATERR_OVERFLOW;

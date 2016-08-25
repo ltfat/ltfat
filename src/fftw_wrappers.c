@@ -5,15 +5,15 @@
 /****** FFT ******/
 struct LTFAT_NAME(fft_plan)
 {
-    ltfatInt L;
-    ltfatInt W;
+    ltfat_int L;
+    ltfat_int W;
     LTFAT_COMPLEX* in;
     LTFAT_COMPLEX* out;
     LTFAT_FFTW(plan) p;
 };
 
 LTFAT_API int
-LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfatInt L, ltfatInt W, LTFAT_COMPLEX out[])
+LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[])
 {
     LTFAT_NAME(fft_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -28,7 +28,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(fft_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(fft_init)(ltfat_int L, ltfat_int W,
                      LTFAT_COMPLEX in[], LTFAT_COMPLEX out[],
                      unsigned flags, LTFAT_NAME(fft_plan)** p)
 {
@@ -104,15 +104,15 @@ error:
 /******* IFFT ******/
 struct LTFAT_NAME(ifft_plan)
 {
-    ltfatInt L;
-    ltfatInt W;
+    ltfat_int L;
+    ltfat_int W;
     LTFAT_COMPLEX* in;
     LTFAT_COMPLEX* out;
     LTFAT_FFTW(plan) p;
 };
 
 LTFAT_API int
-LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfatInt L, ltfatInt W, LTFAT_COMPLEX out[])
+LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[])
 {
     LTFAT_NAME(ifft_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -127,7 +127,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(ifft_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(ifft_init)(ltfat_int L, ltfat_int W,
                       LTFAT_COMPLEX in[], LTFAT_COMPLEX out[],
                       unsigned flags, LTFAT_NAME(ifft_plan)** p)
 {
@@ -203,15 +203,15 @@ error:
 /****** FFTREAL ******/
 struct LTFAT_NAME(fftreal_plan)
 {
-    ltfatInt L;
-    ltfatInt W;
+    ltfat_int L;
+    ltfat_int W;
     LTFAT_REAL* in;
     LTFAT_COMPLEX* out;
     LTFAT_FFTW(plan) p;
 };
 
 LTFAT_API int
-LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfatInt L, ltfatInt W, LTFAT_COMPLEX out[])
+LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[])
 {
     LTFAT_NAME(fftreal_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -226,7 +226,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(fftreal_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(fftreal_init)(ltfat_int L, ltfat_int W,
                          LTFAT_REAL in[], LTFAT_COMPLEX out[],
                          unsigned flags, LTFAT_NAME(fftreal_plan)** p)
 {
@@ -300,15 +300,15 @@ error:
 /******* IFFTREAL ******/
 struct LTFAT_NAME(ifftreal_plan)
 {
-    ltfatInt L;
-    ltfatInt W;
+    ltfat_int L;
+    ltfat_int W;
     LTFAT_COMPLEX* in;
     LTFAT_REAL* out;
     LTFAT_FFTW(plan) p;
 };
 
 LTFAT_API int
-LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfatInt L, ltfatInt W, LTFAT_REAL out[])
+LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_REAL out[])
 {
     LTFAT_NAME(ifftreal_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -323,7 +323,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(ifftreal_init)(ltfatInt L, ltfatInt W,
+LTFAT_NAME(ifftreal_init)(ltfat_int L, ltfat_int W,
                           LTFAT_COMPLEX in[], LTFAT_REAL out[],
                           unsigned flags, LTFAT_NAME(ifftreal_plan)** p)
 {

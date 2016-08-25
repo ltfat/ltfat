@@ -1,13 +1,13 @@
 typedef struct LTFAT_NAME(dgt_multi_plan) LTFAT_NAME(dgt_multi_plan);
 
 // {
-//     ltfatInt a;
-//     ltfatInt M;
-//     ltfatInt L;
-//     ltfatInt Lg;
-//     ltfatInt W;
-//     ltfatInt lt1;
-//     ltfatInt lt2;
+//     ltfat_int a;
+//     ltfat_int M;
+//     ltfat_int L;
+//     ltfat_int Lg;
+//     ltfat_int W;
+//     ltfat_int lt1;
+//     ltfat_int lt2;
 //
 //     LTFAT_COMPLEX *f;
 //     LTFAT_COMPLEX *c_scratch;
@@ -24,13 +24,13 @@ typedef struct LTFAT_NAME(dgt_multi_plan) LTFAT_NAME(dgt_multi_plan);
 
 struct LTFAT_NAME(dgt_multi_plan)
 {
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt L;
-    ltfatInt Lg;
-    ltfatInt W;
-    ltfatInt lt1;
-    ltfatInt lt2;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int L;
+    ltfat_int Lg;
+    ltfat_int W;
+    ltfat_int lt1;
+    ltfat_int lt2;
 
     LTFAT_COMPLEX *f;
     LTFAT_COMPLEX *c_scratch;
@@ -46,8 +46,8 @@ struct LTFAT_NAME(dgt_multi_plan)
 
 LTFAT_API LTFAT_NAME(dgt_multi_plan)
 LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                           const ltfatInt L, const ltfatInt Lg, const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                           const ltfatInt lt1, const ltfatInt lt2,
+                           ltfat_int L, ltfat_int Lg, ltfat_int W, ltfat_int a, ltfat_int M,
+                           ltfat_int lt1, ltfat_int lt2,
                            LTFAT_COMPLEX *c,unsigned flags);
 
 LTFAT_API void
@@ -58,12 +58,12 @@ LTFAT_NAME(dgt_multi_done)(LTFAT_NAME(dgt_multi_plan) plan);
 
 LTFAT_API void
 LTFAT_NAME(nonsepwin2multi)(const LTFAT_COMPLEX *g,
-                            const ltfatInt L, const ltfatInt Lg, const ltfatInt a, const ltfatInt M,
-                            const ltfatInt lt1, const ltfatInt lt2,
+                            ltfat_int L, ltfat_int Lg, ltfat_int a, ltfat_int M,
+                            ltfat_int lt1, ltfat_int lt2,
                             LTFAT_COMPLEX *mwin);
 
 LTFAT_API void
 LTFAT_NAME(dgt_multi)(const LTFAT_COMPLEX *f, const LTFAT_COMPLEX *g,
-                      const ltfatInt L, const ltfatInt Lg, const ltfatInt W, const ltfatInt a, const ltfatInt M,
-                      const ltfatInt lt1, const ltfatInt lt2,
+                      ltfat_int L, ltfat_int Lg, ltfat_int W, ltfat_int a, ltfat_int M,
+                      ltfat_int lt1, ltfat_int lt2,
                       LTFAT_COMPLEX *c);

@@ -4,9 +4,9 @@
 
 struct LTFAT_NAME(idgt_fb_plan)
 {
-    ltfatInt a;
-    ltfatInt M;
-    ltfatInt gl;
+    ltfat_int a;
+    ltfat_int M;
+    ltfat_int gl;
     ltfat_phaseconvention ptype;
     LTFAT_COMPLEX* cbuf;
     LTFAT_TYPE*    gw;
@@ -19,14 +19,14 @@ struct LTFAT_NAME(idgt_fb_plan)
     LTFAT_NAME_REAL(ifft_execute)(p->p_small); \
     LTFAT_NAME_COMPLEX(circshift)(cbuf,M,p->ptype?glh:-n*a+glh,ff); \
     LTFAT_NAME_COMPLEX(periodize_array)(ff,M,gl,ff); \
-    for (ltfatInt ii=0; ii<gl; ii++) \
+    for (ltfat_int ii=0; ii<gl; ii++) \
         ff[ii] *= gw[ii]; \
 }
 
 LTFAT_API int
 LTFAT_NAME(idgt_fb)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
-                    const ltfatInt L, const ltfatInt gl, const ltfatInt W,
-                    const ltfatInt a, const ltfatInt M,
+                    ltfat_int L, ltfat_int gl, ltfat_int W,
+                    ltfat_int a, ltfat_int M,
                     const ltfat_phaseconvention ptype, LTFAT_COMPLEX* f)
 
 {
@@ -47,16 +47,16 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(idgt_fb_init)(const LTFAT_TYPE* g, const ltfatInt gl,
-                         const ltfatInt a, const ltfatInt M, const ltfat_phaseconvention ptype,
+LTFAT_NAME(idgt_fb_init)(const LTFAT_TYPE* g, ltfat_int gl,
+                         ltfat_int a, ltfat_int M, const ltfat_phaseconvention ptype,
                          unsigned flags, LTFAT_NAME(idgt_fb_plan)** pout)
 {
     LTFAT_NAME(idgt_fb_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(pout);
-    CHECK(LTFATERR_BADSIZE, gl > 0, "gl (passed %d) must be positive.", gl);
-    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %d) must be positive.", a);
-    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %d) must be positive.", M);
+    CHECK(LTFATERR_BADSIZE, gl > 0, "gl (passed %td) must be positive.", gl);
+    CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %td) must be positive.", a);
+    CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %td) must be positive.", M);
     CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
           "Invalid ltfat_phaseconvention enum value." );
 
@@ -102,16 +102,16 @@ error:
 LTFAT_API int
 LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
                             const LTFAT_COMPLEX* cin,
-                            const ltfatInt L, const ltfatInt W, LTFAT_COMPLEX* f)
+                            ltfat_int L, ltfat_int W, LTFAT_COMPLEX* f)
 {
-    ltfatInt M, a, gl, N, ep, sp, glh, glh_d_a;
+    ltfat_int M, a, gl, N, ep, sp, glh, glh_d_a;
     LTFAT_COMPLEX* cbuf, *ff;
     LTFAT_TYPE* gw;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(cin); CHECKNULL(f);
     CHECK(LTFATERR_BADTRALEN, L >= p->gl && !(L % p->a) ,
-          "L (passed %d) must be positive and divisible by a (passed %d).", L, p->a);
-    CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %d) must be positive.", W);
+          "L (passed %td) must be positive and divisible by a (passed %td).", L, p->a);
+    CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %td) must be positive.", W);
 
     M = p->M;
     a = p->a;
@@ -122,7 +122,7 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
     glh = gl / 2;
 
     /* This is a ceil operation. */
-    glh_d_a = (ltfatInt)ceil((glh * 1.0) / (a));
+    glh_d_a = (ltfat_int)ceil((glh * 1.0) / (a));
 
     cbuf = p->cbuf;
     gw = p->gw;
@@ -130,11 +130,11 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
 
     memset(f, 0, L * W * sizeof * f);
 
-    for (ltfatInt w = 0; w < W; w++)
+    for (ltfat_int w = 0; w < W; w++)
     {
         LTFAT_COMPLEX* fw = f + w * L;
         /* ----- Handle the first boundary using periodic boundary conditions. --- */
-        for (ltfatInt n = 0; n < glh_d_a; n++)
+        for (ltfat_int n = 0; n < glh_d_a; n++)
         {
             THE_SUM;
 
@@ -142,16 +142,16 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
             ep = ltfat_positiverem(n * a - glh + gl - 1, L);
 
             /* % Add the ff vector to f at position sp. */
-            for (ltfatInt ii = 0; ii < L - sp; ii++)
+            for (ltfat_int ii = 0; ii < L - sp; ii++)
                 fw[sp + ii] += ff[ii];
 
-            for (ltfatInt ii = 0; ii < ep + 1; ii++)
+            for (ltfat_int ii = 0; ii < ep + 1; ii++)
                 fw[ii] += ff[L - sp + ii];
         }
 
 
         /* ----- Handle the middle case. --------------------- */
-        for (ltfatInt n = glh_d_a; n < (L - (gl + 1) / 2) / a + 1; n++)
+        for (ltfat_int n = glh_d_a; n < (L - (gl + 1) / 2) / a + 1; n++)
         {
             THE_SUM;
 
@@ -159,12 +159,12 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
             ep = ltfat_positiverem(n * a - glh + gl - 1, L);
 
             /* Add the ff vector to f at position sp. */
-            for (ltfatInt ii = 0; ii < ep - sp + 1; ii++)
+            for (ltfat_int ii = 0; ii < ep - sp + 1; ii++)
                 fw[ii + sp] += ff[ii];
         }
 
         /* Handle the last boundary using periodic boundary conditions. */
-        for (ltfatInt n = (L - (gl + 1) / 2) / a + 1; n < N; n++)
+        for (ltfat_int n = (L - (gl + 1) / 2) / a + 1; n < N; n++)
         {
             THE_SUM;
 
@@ -172,10 +172,10 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
             ep = ltfat_positiverem(n * a - glh + gl - 1, L);
 
             /* Add the ff vector to f at position sp. */
-            for (ltfatInt ii = 0; ii < L - sp; ii++)
+            for (ltfat_int ii = 0; ii < L - sp; ii++)
                 fw[sp + ii] += ff[ii];
 
-            for (ltfatInt ii = 0; ii < ep + 1; ii++)
+            for (ltfat_int ii = 0; ii < ep + 1; ii++)
                 fw[ii] += ff[L - sp + ii];
         }
     }
