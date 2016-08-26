@@ -214,7 +214,7 @@ cleandoc:
 munit:
 	$(MAKE) clean
 	# $(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
-	$(MAKE) $(SO_DSTARGET)
+	$(MAKE) $(SO_DSTARGET) COMPTARGET=debug
 	$(MAKE) $(buildprefix)/ltfat.h USECPP=0
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
