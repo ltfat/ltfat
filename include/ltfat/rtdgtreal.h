@@ -13,8 +13,6 @@ typedef enum
     LTFAT_INVERSE
 } ltfat_transformdirection;
 
-#define rtdgtreal_processor_execute_compact_max_chan 128
-
 #endif /* _RTDGTREAL_H */
 
 
@@ -271,16 +269,16 @@ typedef struct LTFAT_NAME(rtdgtreal_processor_state) LTFAT_NAME(rtdgtreal_proces
  *
  *  #### Function versions #
  *  <tt>
- *  typedef void ltfat_rtdgtreal_processor_callback_d(void* userdata, const ltfat_complex_d in[], const int M2,
- *                                                    const int W, ltfat_complex_d out[]);
+ *  typedef void ltfat_rtdgtreal_processor_callback_d(void* userdata, const ltfat_complex_d in[], int M2,
+ *                                                    int W, ltfat_complex_d out[]);
  *
- *  typedef void ltfat_rtdgtreal_processor_callback_s(void* userdata, const ltfat_complex_s in[], const int M2,
- *                                                    const int W, ltfat_complex_s out[]);
+ *  typedef void ltfat_rtdgtreal_processor_callback_s(void* userdata, const ltfat_complex_s in[], ltfat_int M2,
+ *                                                    int W, ltfat_complex_s out[]);
  *  </tt>
  *
  */
 typedef void LTFAT_NAME(rtdgtreal_processor_callback)(void* userdata,
-        const LTFAT_COMPLEX in[], const int M2, const int W, LTFAT_COMPLEX out[]);
+        const LTFAT_COMPLEX in[], int M2, int W, LTFAT_COMPLEX out[]);
 
 /** Create DGTREAL processor state struct
  *
@@ -288,28 +286,24 @@ typedef void LTFAT_NAME(rtdgtreal_processor_callback)(void* userdata,
  * stream of data. The -modify- part is user definable via callback.
  * If the callback is NULL, no coefficient modification occurs.
  *
- * \param[in]       ga   Analysis window
- * \param[in]      gal   Length of the analysis window
- * \param[in]       gs   Synthesis window
- * \param[in]      gsl   Length of the synthesis window
- * \param[in]        a   Hop size
- * \param[in]        M   Number of FFT channels
- * \param[in]     Wmax   Maximum number of channels
- * \param[in] callback   Custom function to process the coefficients
- * \param[in] userdata   Custom callback data. Will be passed to the callback.
- *                       Useful for storing state between callback calls.
- * \param[out]    plan   DGTREAL processor state
+ * \param[in]          ga   Analysis window
+ * \param[in]         gal   Length of the analysis window
+ * \param[in]          gs   Synthesis window
+ * \param[in]       ' gsl   Length of the synthesis window
+ * \param[in]           a   Hop size
+ * \param[in]           M   Number of FFT channels
+ * \param[in]        Wmax   Maximum number of channels
+ * \param[in]   bufLenMax   Maximum buffer length expected in execute
+ * \param[out]       plan   DGTREAL processor state
  *
  * #### Function versions #
  * <tt>
  * ltfat_rtdgtreal_processor_init_d(const double ga[], ltfat_int gal, const double gs[], ltfat_int gsl,
- *                                  ltfat_int a, ltfat_int M, ltfat_int Wmax,
- *                                  rtdgtreal_processor_callback_d* callback, void* userdata,
+ *                                  ltfat_int a, ltfat_int M, ltfat_int Wmax, ltfat_int bufLenMax,
  *                                  rtdgtreal_processor_state_d** plan);
  *
  * ltfat_rtdgtreal_processor_init_s(const float ga[], ltfat_int gal, const float gs[], ltfat_int gsl,
- *                                  ltfat_int a, ltfat_int M, ltfat_int Wmax,
- *                                  rtdgtreal_processor_callback_s* callback, void* userdata,
+ *                                  ltfat_int a, ltfat_int M, ltfat_int Wmax, ltfat_int bufLenMax,
  *                                  rtdgtreal_processor_state_s** plan);
  * </tt>
  *
@@ -326,10 +320,9 @@ typedef void LTFAT_NAME(rtdgtreal_processor_callback)(void* userdata,
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], ltfat_int gal,
                                      const LTFAT_REAL gs[], ltfat_int gsl,
-                                     ltfat_int a, ltfat_int M,
-                                     ltfat_int Wmax,
-                                     LTFAT_NAME(rtdgtreal_processor_callback)* callback,
-                                     void* userdata, LTFAT_NAME(rtdgtreal_processor_state)** plan);
+                                     ltfat_int a, ltfat_int M, ltfat_int Wmax,
+                                     ltfat_int bufLenMax,
+                                     LTFAT_NAME(rtdgtreal_processor_state)** plan);
 
 /** Create DGTREAL processor state struct
  *
@@ -337,24 +330,22 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], ltfat_int gal,
  * state struct. The function accepts only the analysis window and the synthesis
  * window is computed internally.
  *
- * \param[in]      win   Analysis window
- * \param[in]       gl   Length of the windows
- * \param[in]        a   Hop size
- * \param[in]        M   Number of FFT channels
- * \param[in]     Wmax   Maximum number of channels
- * \param[in] callback   Custom function to process the coefficients
- * \param[in] userdata   Custom callback data. Will be passed to the callback.
- *                       Useful for storing state between callback calls.
- * \param[out]    plan   DGTREAL processor state
+ * \param[in]         win   Analysis window
+ * \param[in]          gl   Length of the windows
+ * \param[in]           a   Hop size
+ * \param[in]           M   Number of FFT channels
+ * \param[in]        Wmax   Maximum number of channels
+ * \param[in]   bufLenMax   Maximum buffer length expected in execute
+ * \param[out]       plan   DGTREAL processor state
  *
  * #### Function versions #
  * <tt>
  * ltfat_rtdgtreal_processor_init_win_d(LTFAT_FIRWIN win, ltfat_int gl, ltfat_int a, ltfat_int M,
- *                                      ltfat_int Wmax, rtdgtreal_processor_callback_d* callback, void* userdata,
+ *                                      ltfat_int Wmax, ltfat_int bufLenMax,
  *                                      rtdgtreal_processor_state_d** plan);
  *
  * ltfat_rtdgtreal_processor_init_win_s(LTFAT_FIRWIN win, ltfat_int gl, ltfat_int a, ltfat_int M,
- *                                      ltfat_int Wmax, rtdgtreal_processor_callback_s* callback, void* userdata,
+ *                                      ltfat_int Wmax, ltfat_int bufLenMax,
  *                                      rtdgtreal_processor_state_s** plan);
  * </tt>
  *
@@ -371,9 +362,7 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], ltfat_int gal,
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
         ltfat_int gl, ltfat_int a, ltfat_int M,
-        ltfat_int Wmax,
-        LTFAT_NAME(rtdgtreal_processor_callback)* callback,
-        void* userdata,
+        ltfat_int Wmax, ltfat_int bufLenMax,
         LTFAT_NAME(rtdgtreal_processor_state)** plan);
 
 /** Process samples
@@ -499,7 +488,7 @@ LTFAT_NAME(rtdgtreal_processor_setcallback)(LTFAT_NAME(rtdgtreal_processor_state
  */
 LTFAT_API void
 LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COMPLEX in[],
-        const int M2, const int W, LTFAT_COMPLEX out[]);
+        int M2, int W, LTFAT_COMPLEX out[]);
 
 /** @}*/
 
