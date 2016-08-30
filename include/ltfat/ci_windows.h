@@ -49,13 +49,13 @@ LTFAT_FIRWIN;
  *
  * #### Function versions #
  * <tt>
- * ltfat_firwin_d(LTFAT_FIRWIN win, int gl, double* g);
+ * ltfat_firwin_d(LTFAT_FIRWIN win, ltfat_int gl, double* g);
  *
- * ltfat_firwin_s(LTFAT_FIRWIN win, int gl, float* g);
+ * ltfat_firwin_s(LTFAT_FIRWIN win, ltfat_int gl, float* g);
  *
- * ltfat_firwin_dc(LTFAT_FIRWIN win, int gl, ltfat_complex_d* g);
+ * ltfat_firwin_dc(LTFAT_FIRWIN win, ltfat_int gl, ltfat_complex_d* g);
  *
- * ltfat_firwin_sc(LTFAT_FIRWIN win, int gl, ltfat_complex_s* g);
+ * ltfat_firwin_sc(LTFAT_FIRWIN win, ltfat_int gl, ltfat_complex_s* g);
  * </tt>
  * \returns
  * Status code           | Description

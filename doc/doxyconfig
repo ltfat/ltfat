@@ -1939,7 +1939,8 @@ PREDEFINED             = DOXYGEN_ONLY \
                          LTFAT_EXTERN= \
                          LTFAT_NAME(x)=x \
                          LTFAT_NAME_COMPLEX(x)=x \
-                         LTFAT_NAME_REAL(x)=x 
+                         LTFAT_NAME_REAL(x)=x \
+                         LTFAT_API= 
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
