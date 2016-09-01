@@ -277,6 +277,18 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_fifo_reset)(LTFAT_NAME(rtdgtreal_fifo_state)* p)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p);
+
+    memset(p->buf, 0, p->Wmax * p->bufLen * sizeof * p->buf);
+
+error:
+    return status;
+}
+
 LTFAT_API ltfat_int
 LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                  const LTFAT_REAL** buf,
@@ -426,6 +438,18 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
     return status;
 error:
     if (p) LTFAT_NAME(rtidgtreal_fifo_done)(&p);
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(rtidgtreal_fifo_reset)(LTFAT_NAME(rtidgtreal_fifo_state)* p)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p);
+
+    memset(p->buf, 0, p->Wmax * p->bufLen * sizeof * p->buf);
+
+error:
     return status;
 }
 
@@ -638,6 +662,20 @@ error:
 }
 
 LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_reset)(LTFAT_NAME(rtdgtreal_processor_state)* p)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p);
+
+    LTFAT_NAME(rtdgtreal_fifo_reset)(p->fwdfifo);
+    LTFAT_NAME(rtidgtreal_fifo_reset)(p->backfifo);
+
+error:
+    return status;
+}
+
+
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
         ltfat_int gl, ltfat_int a, ltfat_int M,
         ltfat_int Wmax, ltfat_int bufLenMax,
@@ -678,6 +716,7 @@ error:
     // Also status is now set to the proper value
     return status;
 }
+
 
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_setcallback)(

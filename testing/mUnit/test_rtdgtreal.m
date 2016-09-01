@@ -15,8 +15,8 @@ g = zeros(gl,1);
 gd = zeros(gdl,1);
 gPtr = libpointer('doublePtr',g);
 gdPtr = libpointer('doublePtr',gd);
-calllib('libltfat','firwin_d',LTFAT_FIRWIN.LTFAT_HANN,gl,gPtr);
-prd=calllib('libltfat','gabdual_painless_d',gPtr,gl,a,M,gdPtr);
+calllib('libltfat','ltfat_firwin_d',LTFAT_FIRWIN.LTFAT_HANN,gl,gPtr);
+prd=calllib('libltfat','ltfat_gabdual_painless_d',gPtr,gl,a,M,gdPtr);
 if prd
     warning('This is not painless frame');
     g2Ptr = libpointer('doublePtr',fir2long(gPtr.Value,L));
@@ -34,17 +34,18 @@ N = size(cframes,2);
 
 %ctrue = fftreal(ifftshift(bsxfun(@times,cframes,fftshift(gPtr.Value)),1));
 ctrue = dgtreal(f,gPtr.Value,a,M,'timeinv');
-
-p = calllib('libltfat','rtdgtreal_init_d',gPtr,gl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO);
-pinv = calllib('libltfat','rtidgtreal_init_d',gdPtr,gdl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO);
+p = libpointer();
+pinv = libpointer();
+calllib('libltfat','ltfat_rtdgtreal_init_d',gPtr,gl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO,p);
+calllib('libltfat','ltfat_rtidgtreal_init_d',gdPtr,gdl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO,pinv);
 
 c = zeros(2*M2,N);
 f2 = zeros(gdl,N);
 fPtr = libpointer('doublePtr',cframes);
 cPtr = libpointer('doublePtr',c);
 f2Ptr = libpointer('doublePtr',f2);
-calllib('libltfat','rtdgtreal_execute_d',p,fPtr,N,cPtr);
-calllib('libltfat','rtidgtreal_execute_d',pinv,cPtr,N,f2Ptr);
+calllib('libltfat','ltfat_rtdgtreal_execute_d',p,fPtr,N,cPtr);
+calllib('libltfat','ltfat_rtidgtreal_execute_d',pinv,cPtr,N,f2Ptr);
 
 frec = frames2signal(f2Ptr.Value,gdl,a);
 figure(1);plot([f-postpad(frec,numel(f))]);
@@ -55,8 +56,8 @@ fprintf('Rec error. %d \n', norm(f-postpad(frec,numel(f))));
 figure(2);plotdgtreal(abs(ctrue)-abs(interleaved2complex(cPtr.Value)),a,M,'linabs');
 %imagesc(abs(interleaved2complex(cPtr.Value))./abs(ctrue))
 
-calllib('libltfat','rtdgtreal_done_d',p);
-calllib('libltfat','rtidgtreal_done_d',pinv);
+calllib('libltfat','ltfat_rtdgtreal_done_d',p);
+calllib('libltfat','ltfat_rtidgtreal_done_d',pinv);
 
 %norm(long2fir(gdtrue,gl) - gdPtr.Value)
 

@@ -121,6 +121,9 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int procDelay, ltfat_int gl, ltfat_int a,
                                 ltfat_int Wmax, LTFAT_NAME(rtdgtreal_fifo_state)** p);
 
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_fifo_reset)(LTFAT_NAME(rtdgtreal_fifo_state)* p);
+
 /** Write bufLen samples to DGT analysis ring buffer
  *
  * The function returns number of samples written and a negative number if something went
@@ -182,6 +185,9 @@ LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
                                  ltfat_int a, ltfat_int Wmax,
                                  LTFAT_NAME(rtidgtreal_fifo_state)** p);
+
+LTFAT_API int
+LTFAT_NAME(rtidgtreal_fifo_reset)(LTFAT_NAME(rtidgtreal_fifo_state)* p);
 
 /** Write p->gl samples to DGT synthesis ring buffer
  *
@@ -323,6 +329,29 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], ltfat_int gal,
                                      ltfat_int a, ltfat_int M, ltfat_int Wmax,
                                      ltfat_int bufLenMax,
                                      LTFAT_NAME(rtdgtreal_processor_state)** plan);
+
+/** Reset processor state
+ *
+ * Whenever there is a break in the continuity of the input stream, the state 
+ * should be reset before feeding new data.
+ *
+ * \param[in]    p   Processor state
+ *
+ * #### Function versions #
+ * <tt>
+ * ltfat_rtdgtreal_processor_reset_d(rtdgtreal_processor_state_d* p);
+ *
+ * ltfat_rtdgtreal_processor_reset_s(rtdgtreal_processor_state_s* p);
+ * </tt>
+ *
+ * \returns
+ * Status code           |  Description
+ * ----------------------|----------------------
+ * LTFATERR_SUCCESS      |  No error occured
+ * LTFATERR_NULLPOINTER  |  \a p was NULL
+ */
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_reset)(LTFAT_NAME(rtdgtreal_processor_state)* p);
 
 /** Create DGTREAL processor state struct
  *
