@@ -223,6 +223,7 @@ $(buildprefix)/ltfat.h: $(buildprefix)
 	sed -i '1 a #define _LTFAT_H' $(buildprefix)/ltfat.h
 	sed -i '2 a #include <fftw3.h>' $(buildprefix)/ltfat.h
 	sed -i '$$ a #endif' $(buildprefix)/ltfat.h
+	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc $(buildprefix)/ltfat.h -o $(buildprefix)/ltfat_flat.h
 
 install:
 	install -d $(LIBDIR)

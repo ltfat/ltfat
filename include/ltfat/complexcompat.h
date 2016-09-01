@@ -19,6 +19,7 @@ using namespace std;
 #include <tgmath.h>
 #endif
 
+// Must be included after complex.h
 #include <fftw3.h>
 #endif
 
