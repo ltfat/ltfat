@@ -1,7 +1,17 @@
-function test_libltfat_rtdgtreal
+function test_failed = test_libltfat_rtdgtreal(varargin)
+fprintf(' ===============  %s ================ \n',upper(mfilename));
+
+definput.flags.complexity={'double','single'};
+[flags]=ltfatarghelper({},definput,varargin);
+dataPtr = [flags.complexity, 'Ptr'];
+
 [~,~,enuminfo]=libltfatprotofile;
 LTFAT_FIRWIN = enuminfo.LTFAT_FIRWIN;
-rdgt_phasetype = enuminfo.rtdgt_phasetype;
+
+glarr =     [500,  512, 1024, 90];
+Marr =      [1000, 512, 2048, 101];
+aarr =      [100 , 256,  256, 40];
+Warr =      [10  ,   2,    1,  3];
 
 f = greasy;
 
@@ -13,15 +23,19 @@ L = dgtlength(numel(f),a,M);
 M2 = floor(M/2) + 1;
 g = zeros(gl,1);
 gd = zeros(gdl,1);
-gPtr = libpointer('doublePtr',g);
-gdPtr = libpointer('doublePtr',gd);
-calllib('libltfat','ltfat_firwin_d',LTFAT_FIRWIN.LTFAT_HANN,gl,gPtr);
-prd=calllib('libltfat','ltfat_gabdual_painless_d',gPtr,gl,a,M,gdPtr);
+gPtr = libpointer(dataPtr,g);
+gdPtr = libpointer(dataPtr,gd);
+funname = makelibraryname('firwin',flags.complexity,0);
+calllib('libltfat',funname,LTFAT_FIRWIN.LTFAT_HANN,gl,gPtr);
+
+funname = makelibraryname('gabdual_painless',flags.complexity,0);
+prd=calllib('libltfat',funname,gPtr,gl,a,M,gdPtr);
 if prd
     warning('This is not painless frame');
-    g2Ptr = libpointer('doublePtr',fir2long(gPtr.Value,L));
-    gdPtr = libpointer('doublePtr',fir2long(gd,L));
-    calllib('libltfat','gabdual_long_d',g2Ptr,L,1,a,M,gdPtr);
+    g2Ptr = libpointer(dataPtr,fir2long(gPtr.Value,L));
+    gdPtr = libpointer(dataPtr,fir2long(gd,L));
+    funname = makelibraryname('gabdual_long',flags.complexity,0);
+    calllib('libltfat',funname,g2Ptr,L,1,a,M,gdPtr);
     gdl = L;
 end
 
@@ -36,15 +50,20 @@ N = size(cframes,2);
 ctrue = dgtreal(f,gPtr.Value,a,M,'timeinv');
 p = libpointer();
 pinv = libpointer();
-calllib('libltfat','ltfat_rtdgtreal_init_d',gPtr,gl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO,p);
-calllib('libltfat','ltfat_rtidgtreal_init_d',gdPtr,gdl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO,pinv);
+
+funname = makelibraryname('rtdgtreal_init',flags.complexity,0);
+calllib('libltfat',funname,gPtr,gl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO,p);
+funname = makelibraryname('rtidgtreal_init',flags.complexity,0);
+calllib('libltfat',funname,gdPtr,gdl,M,rdgt_phasetype.LTFAT_RTDGTPHASE_ZERO,pinv);
 
 c = zeros(2*M2,N);
 f2 = zeros(gdl,N);
-fPtr = libpointer('doublePtr',cframes);
-cPtr = libpointer('doublePtr',c);
-f2Ptr = libpointer('doublePtr',f2);
+fPtr = libpointer(dataPtr,cframes);
+cPtr = libpointer(dataPtr,c);
+f2Ptr = libpointer(dataPtr,f2);
+
 calllib('libltfat','ltfat_rtdgtreal_execute_d',p,fPtr,N,cPtr);
+norm(ctrue - interleaved2complex(cPtr.Value),'fro')
 calllib('libltfat','ltfat_rtidgtreal_execute_d',pinv,cPtr,N,f2Ptr);
 
 frec = frames2signal(f2Ptr.Value,gdl,a);
