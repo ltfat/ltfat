@@ -8,7 +8,7 @@ if isempty(LTFAT_TEST_TYPE)
     LTFAT_TEST_TYPE='double';
 end;
 
-f=rand(varargin{:});
+f=rand(varargin{:}) - 0.5;
 
 if strcmp(LTFAT_TEST_TYPE,'single')
     f=single(f);
