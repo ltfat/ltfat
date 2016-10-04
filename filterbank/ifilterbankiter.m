@@ -1,0 +1,95 @@
+function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
+%IFILTERBANKITER  Filter bank iterative inversion
+%   Usage:  f=ifilterbankiter(c,g,a);
+%
+%   `ifilterbankiter(c,g,a)` iteratively synthesizes a signal *f* from the
+%   coefficients *c* which were obtained using the filters stored in *g* for
+%   a channel subsampling rate of *a* (the hop-size).
+%
+%   The filter bank *g* and the subsampling rate *a* must be the same
+%   as used in |filterbank| or |ufilterbank|.
+%
+%   This function is useful if there is no way how to explicitly compute
+%   a dual system using |filterbankdual| or |filterbankdualreal|.
+%
+%   Additional parameters
+%   ---------------------
+%
+%   The function calls |frsyniter| and passes all the optional arguments to it.
+%   Please refer to help of |frsyniter| for further details.
+%
+%   Please note that by default, the function expects filterbank *g*
+%   to be created for real signals i.e. *g* cover only the positive frequencies.
+%   Additional flag 'complex' is required if the filterbank is defined for 
+%   positive and negative frequencies.
+%
+%   Examples:
+%   ---------
+%
+%   The following example compares convergence rates of CG and PCG for a
+%   filterbank which forms a frame, but it is neither uniform or painless:::
+%
+%       [f,fs] = greasy; L = size(f,1);
+%       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6,'complex');
+%       filterbankfreqz(g,a,L,'plot','lin');
+%       % Adjust subsampling rate and break the painless condition
+%       a(:,2) = round(4/5*a(:,2));
+%       % ... therefore the filterbankdual will not work
+%       try
+%           gd=filterbankdual(g,a,L);
+%       catch
+%           disp('FILTERBANKDUAL exited with error.');
+%       end
+%
+%       c = filterbank(f,g,a);
+%       [fpcg,~,iterpcg] = ifilterbankiter(c,g,a,'complex','pcg');
+%       [fcg,~,itercg] = ifilterbankiter(c,g,a,'complex','cg');
+%
+%       fprintf('CG achieved error %e in %d iterations.\n',norm(f-fcg), itercg);
+%       fprintf('PCG achieved error %e in %d iterations.\n',norm(f-fpcg), iterpcg);
+%
+%   Similar example with real filterbank:::
+%
+%       [f,fs] = greasy; L = size(f,1);
+%       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6);
+%       filterbankfreqz(g,a,L,'plot','lin');
+%       % Adjust subsampling rate and break the painless condition
+%       a(:,2) = round(4/5*a(:,2));
+%       % ... therefore the filterbankrealdual will not work
+%       try
+%           gd=filterbankrealdual(g,a,L);
+%       catch
+%           disp('FILTERBANKREALDUAL exited with error.');
+%       end
+%
+%       c = filterbank(f,g,a);
+%       [fpcg,~,iterpcg] = ifilterbankiter(c,g,a,'pcg');
+%       [fcg,~,itercg] = ifilterbankiter(c,g,a,'cg');
+%
+%       fprintf('CG achieved error %e in %d iterations.\n',norm(f-fcg), itercg);
+%       fprintf('PCG achieved error %e in %d iterations.\n',norm(f-fpcg), iterpcg);
+%
+%   See also: filterbank, ufilterbank, ifilterbank, filterbankdual
+%
+%   References: bohlfe02
+
+complainif_notenoughargs(nargin,3,'IFILTERBANKITER');
+
+tolchooser.double=1e-9;
+tolchooser.single=1e-5;
+
+definput.keyvals.Ls=[];
+definput.keyvals.tol=tolchooser.(class(c{1}));
+definput.keyvals.maxit=100;
+definput.flags.alg={'pcg','cg'};
+definput.flags.real={'real','complex'};
+[flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
+
+if flags.do_real
+    F = frame('filterbankreal',g,a,numel(g));
+else
+    F = frame('filterbank',g,a,numel(g));
+end
+
+[f,iter,relres] = frsyniter(F,framenative2coef(F,c),'Ls',Ls,flags.alg,'maxit',kv.maxit,'tol',kv.tol);
+
