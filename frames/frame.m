@@ -354,7 +354,7 @@ switch(ftype)
     F.coef2native=@(coef,s) vect2cell(coef,round(2*s(1)/F.red*F.a(:,2)./F.a(:,1)));
     F.frana=@(insig) F.native2coef(comp_filterbank(insig,F.g,F.a));
     F.frsyn=@(insig) 2*real(comp_ifilterbank(F.coef2native(insig,size(insig)),F.g,F.a,...
-                                             2*round(size(insig,1)/F.red)));
+                                             round(2*size(insig,1)/F.red)));
     F.destructor=@() clear('comp_filterbank','comp_ifilterbank');
     
   case 'ufilterbank'
