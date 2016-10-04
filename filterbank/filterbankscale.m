@@ -37,7 +37,7 @@ definput.keyvals.arg1 = [];
 % Try running filterbankwin without L. This should fail
 % for any strange filter definitions like 'gauss','hann',{'dual',...}
 try
-   g2 = filterbankwin(g,1,'normal');
+   filterbankwin(g,1,'normal');
 catch
    err = lasterror;
    if strcmp(err.identifier,'L:undefined')
