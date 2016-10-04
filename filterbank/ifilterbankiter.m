@@ -30,11 +30,9 @@ function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
 %   filterbank which forms a frame, but it is neither uniform or painless:::
 %
 %       [f,fs] = greasy; L = size(f,1);
-%       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6,'complex');
+%       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6,'redmul',4/5,'complex');
 %       filterbankfreqz(g,a,L,'plot','lin');
-%       % Adjust subsampling rate and break the painless condition
-%       a(:,2) = round(4/5*a(:,2));
-%       % ... therefore the filterbankdual will not work
+%       % Filterbankdual does not work
 %       try
 %           gd=filterbankdual(g,a,L);
 %       catch
@@ -51,11 +49,9 @@ function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
 %   Similar example with real filterbank:::
 %
 %       [f,fs] = greasy; L = size(f,1);
-%       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6);
+%       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6,'redmul',4/5);
 %       filterbankfreqz(g,a,L,'plot','lin');
-%       % Adjust subsampling rate and break the painless condition
-%       a(:,2) = round(4/5*a(:,2));
-%       % ... therefore the filterbankrealdual will not work
+%       % Filterbankrealdual does not work
 %       try
 %           gd=filterbankrealdual(g,a,L);
 %       catch
