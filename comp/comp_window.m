@@ -136,6 +136,9 @@ if isnumeric(g)
       info.wasrow=1;
     end;
   end;
+  if isempty(L)
+      info.isfir = 1; 
+  end
 end;
 
 if rem(length(g),M)~=0
@@ -162,9 +165,9 @@ function complain_L(L,callfun)
 function isfir=test_isfir(gorig,M)
     % Original window is FIR, dual window is FIR if length of the original
     % window is <= M. This is true if the length was not explicitly
-    % defined (gorig{2}).
+    % defined (gorig{2}) or gorig was given as a numeric vector explicitly.
       if iscell(gorig) && numel(gorig)>1 && isnumeric(gorig{2}) && gorig{2}<=M...
-         || ischar(gorig)   
+         || ischar(gorig) || isnumeric(gorig) && numel(gorig)<=M   
         isfir = 1; 
       else
          isfir = 0;
