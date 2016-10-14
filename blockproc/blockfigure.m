@@ -52,7 +52,7 @@ pause(0.1);
 
 if isempty(kv.cm)
    % Create a default colormap.
-   kv.cm = {jet(256)};
+   kv.cm = {ltfat_inferno()};
 elseif isnumeric(kv.cm)
    % Enclose the colormap to a single element cell array.
    kv.cm = {kv.cm};
