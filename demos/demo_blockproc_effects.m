@@ -42,13 +42,17 @@ Fmorph = blockframeaccel(Fmorph, bufLen,'segola');
 
 haveWav = 0;
 try
-   ff = 0.4*wavload('beat.wav');
+   [ff, fsbeat] = wavload('beat.wav'); ff = ff(:,1);
    %ff = 0.8*resample(ff,4,1);
-   ffblocks = reshape(postpad(ff,ceil(numel(ff)/bufLen)*bufLen),bufLen,[]);
+   ffblocks = reshape(postpad(ff,ceil(size(ff,1)/bufLen)*bufLen),bufLen,[]);
    cidx = 1;
    haveWav = 1;
 catch
    warning('beat.wav not found. morphing effect is disabled.');
+end
+
+if haveWav && fsbeat~=44100
+    error('%s: beat.wav must be sampled at 44.1 kHz.',upper(mfilename));
 end
 
 % Plain analysis params
