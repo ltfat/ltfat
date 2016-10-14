@@ -88,9 +88,9 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %error(nargchk(4,6,nargin));
 
 if nargout<3
-    phased = gabphasederiv({'t','f'},method,varargin{:},'relative');
+    phased = gabphasederiv({'t','f'},method,'relative',varargin{:});
 else
-    [phased,c] = gabphasederiv({'t','f'},method,varargin{:},'relative');
+    [phased,c] = gabphasederiv({'t','f'},method,'relative',varargin{:});
 end
 
 [tgrad,fgrad] = deal(phased{:});
