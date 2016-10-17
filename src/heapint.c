@@ -29,7 +29,7 @@ struct LTFAT_NAME(heapinttask)
 };
 
 
-LTFAT_NAME(heap)*
+LTFAT_API LTFAT_NAME(heap)*
 LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s)
 {
     LTFAT_NAME(heap)* h = (LTFAT_NAME(heap)*) ltfat_malloc(sizeof * h);
@@ -41,21 +41,21 @@ LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s)
     return h;
 }
 
-void
+LTFAT_API void
 LTFAT_NAME(heap_done)(LTFAT_NAME(heap)* h)
 {
     ltfat_free(h->h);
     ltfat_free(h);
 }
 
-void
+LTFAT_API void
 LTFAT_NAME(heap_reset)(LTFAT_NAME(heap)* h, const LTFAT_REAL* news)
 {
     h->s = news;
     h->heapsize = 0;
 }
 
-void
+LTFAT_API void
 LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
@@ -102,12 +102,20 @@ LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, ltfat_int key)
 }
 
 LTFAT_API ltfat_int
+LTFAT_NAME(heap_get)(LTFAT_NAME(heap) *h)
+{
+    if (h->heapsize == 0) return -1;
+    return h->h[0];
+}
+
+LTFAT_API ltfat_int
 LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 {
 
     ltfat_int pos, maxchildpos, swap, key;
     LTFAT_REAL maxchildkey;
 
+    if (h->heapsize == 0) return -1;
     /* Extract first element */
     key = h->h[0];
 
