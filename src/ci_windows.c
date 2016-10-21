@@ -207,7 +207,17 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
             posInt += step;
         }
         break;
-
+    case LTFAT_TRUNCGAUSS01:
+    {
+        double gamma =  4.0 * log(0.01);
+        for (ltfat_int ii = 0; ii < gl; ii++)
+        {
+            FIRWIN_RESETCOUNTER;
+            g[ii] = (LTFAT_REAL) exp(posInt * posInt * gamma);
+            posInt += step;
+        }
+        break;
+    }
     default:
         CHECKCANTHAPPEN("Unknown window");
     };
