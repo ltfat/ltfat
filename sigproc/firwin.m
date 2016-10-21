@@ -244,6 +244,14 @@ else
     x=M;
 end;
 
+startswith = 'truncgauss';
+if regexpi(name,['^',startswith])
+     percent = 1;
+     if numel(name) > numel(startswith)
+            percent = str2double(name(numel(startswith)+1:end));
+     end
+     name = startswith;
+end
 
 do_sqrt=0;
 switch name    
@@ -312,6 +320,9 @@ switch name
  case {'nuttall03'}
   g=0.3635819+0.4891775*cos(2*pi*(x))+0.1365995*cos(4*pi*(x)) ...
       +0.0106411*cos(6*pi*(x));
+ 
+ case {'truncgauss'}
+  g = exp(4*log(percent/100)*x.^2);
   
  otherwise
   error('Unknown window: %s.',name);
