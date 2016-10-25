@@ -1,6 +1,6 @@
 #ifndef _LTFAT_VERSION_H
 #define _LTFAT_VERSION_H
-#include "basicmacros.h"
+#include "ltfat/basicmacros.h"
 
 #define LTFAT_VERSION_MAJOR 0
 #define LTFAT_VERSION_MINOR 1

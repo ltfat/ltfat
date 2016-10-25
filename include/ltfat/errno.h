@@ -15,7 +15,7 @@
 
 #ifndef _LTFAT_ERRNO_H
 #define _LTFAT_ERRNO_H
-#include "basicmacros.h"
+#include "ltfat/basicmacros.h"
 
 enum ltfaterr_status
 {
