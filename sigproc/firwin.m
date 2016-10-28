@@ -108,6 +108,11 @@ function [g,info]=firwin(name,M,varargin);
 %                  The window has a mainlobe width of 16/M, a PSL of 
 %                  -98.17 dB and decay rate of 6 dB/Octave.
 %
+%     'truncgauss' Gaussian window truncated at 1% of its height.
+%                  Alternatively, a custom percentage can be appended to
+%                  'truncgauss' e.g. 'truncgauss0.1' will create Gaussian
+%                  window truncated at 0.1% of its height.
+%
 %   `firwin` understands the following flags at the end of the list of input
 %   parameters:
 %
@@ -248,7 +253,12 @@ startswith = 'truncgauss';
 if regexpi(name,['^',startswith])
      percent = 1;
      if numel(name) > numel(startswith)
-            percent = str2double(name(numel(startswith)+1:end));
+            suffix = name(numel(startswith)+1:end);
+            percent = str2double(suffix);
+            if isnan(percent)
+                error('%s: Passed "%s" and "%s" cannot be parsed to a number.',...
+                      upper(mfilename),name,suffix);
+            end
      end
      name = startswith;
 end
