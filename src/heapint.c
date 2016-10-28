@@ -60,8 +60,8 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
     h->h = (ltfat_int*)ltfat_realloc((void*)h->h,
-                                    h->totalheapsize * sizeof * h->h / factor,
-                                    h->totalheapsize * sizeof * h->h);
+                                     h->totalheapsize * sizeof * h->h / factor,
+                                     h->totalheapsize * sizeof * h->h);
 }
 
 
@@ -69,36 +69,31 @@ LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 LTFAT_API void
 LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, ltfat_int key)
 {
-    ltfat_int pos, pos2, swap;
+    ltfat_int pos, pos2;
 
     /* Grow heap if necessary */
     if (h->totalheapsize == h->heapsize)
-    {
         LTFAT_NAME(heap_grow)( h, 2);
-    }
 
     pos = h->heapsize;
     h->heapsize++;
 
-    h->h[h->heapsize - 1] = key;
+    LTFAT_REAL val = h->s[key];
 
     while (pos > 0)
     {
         /* printf("pos %i\n",pos); */
-        pos2 = (pos - pos % 2) / 2;
+        pos2 = (pos - 1) >> 1;
 
-        if (h->s[h->h[pos2]] < h->s[h->h[pos]] )
-        {
-            swap = h->h[pos2];
-            h->h[pos2] = h->h[pos];
-            h->h[pos] = swap;
-            pos = pos2;
-        }
+        if (h->s[h->h[pos2]] < val )
+            h->h[pos] = h->h[pos2];
         else
-        {
             break;
-        }
+
+        pos = pos2;
     }
+
+    h->h[pos] = key;
 }
 
 LTFAT_API ltfat_int
@@ -112,63 +107,40 @@ LTFAT_API ltfat_int
 LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
 {
 
-    ltfat_int pos, maxchildpos, swap, key;
-    LTFAT_REAL maxchildkey;
+    ltfat_int pos, pos2, retkey, key;
+    LTFAT_REAL maxchildkey, val;
 
     if (h->heapsize == 0) return -1;
     /* Extract first element */
-    key = h->h[0];
+    retkey = h->h[0];
+    key = h->h[h->heapsize - 1];
+    val = h->s[key];
 
-    /* Put last element on first elements place, and make the heap smaller. */
-    h->h[0] = h->h[h->heapsize - 1];
     h->heapsize--;
 
-    /* Fix the just introduced problem. */
     pos = 0;
+    pos2 = 1;
 
-    /*  %%%%%%%%%%%%%%
-     * %
-     * %  Is maxchildpos 0 or 1 indexed!
-     * %
-     * %
-     * %%%%%%%%%%%%%
-     */
-
-    while (2 * pos + 1 < h->heapsize)
+    while (pos2 < h->heapsize)
     {
-        if (2 * pos + 3 > h->heapsize)
-        {
-            maxchildkey = h->s[h->h[2 * pos + 1]];
-            maxchildpos = 1;
-        }
+        if ( (pos2 + 2 > h->heapsize) ||
+             (h->s[h->h[pos2]] >= h->s[h->h[pos2 + 1]]) )
+            maxchildkey = h->s[h->h[pos2]];
         else
-        {
-            if (h->s[h->h[2 * pos + 1]] >= h->s[h->h[2 * pos + 2]])
-            {
-                maxchildkey = h->s[h->h[2 * pos + 1]];
-                maxchildpos = 1;
-            }
-            else
-            {
-                maxchildkey = h->s[h->h[2 * pos + 2]];
-                maxchildpos = 2;
-            }
-        }
+            maxchildkey = h->s[h->h[++pos2]];
 
-        if (maxchildkey > h->s[h->h[pos]])
-        {
-            swap = h->h[2 * pos + maxchildpos];
-            h->h[2 * pos + maxchildpos] = h->h[pos];
-            h->h[pos] = swap;
-            pos = 2 * pos + maxchildpos;
-        }
+        if (maxchildkey > val)
+            h->h[pos] = h->h[pos2];
         else
-        {
             break;
-        }
+
+        pos = pos2;
+        pos2 = (pos << 1) + 1;
     }
 
-    return key;
+    h->h[pos] = key;
+
+    return retkey;
 }
 
 LTFAT_API LTFAT_NAME(heapinttask)*
@@ -635,7 +607,8 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
     memset(phase, 0, M2 * N * W * sizeof * phase);
 
     // Init plan
-    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfat_int)( M2 * log((double)M2)), s,
+    hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfat_int)( M2 * log((double)M2)),
+                                        s,
                                         1);
 
     for (ltfat_int w = 0; w < W; ++w)
