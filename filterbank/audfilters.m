@@ -1,7 +1,7 @@
-function [g,a,fc,L]=audfilters(fs,Ls,varargin)
-% AUDFILTERS generates AUD-spaced filters
-%   Usage:  [g,a,fc,L]=audfilters(fs,Ls);
-%           [g,a,fc,L]=audfilters(fs,Ls,...);
+function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
+%ERBFILTERS   ERB-spaced filters
+%   Usage:  [g,a,fc]=erbfilters(fs,Ls);
+%           [g,a,fc]=erbfilters(fs,Ls,...);
 %
 %   Input parameters:
 %      fs    : Sampling rate (in Hz).
@@ -12,20 +12,16 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %      fc    : Center frequency of each channel.
 %      L     : Next admissible length suitable for the generated filters.
 %
-%   `[g,a,fc,L]=audfilters(fs,Ls)` constructs a set of filters *g* that are
-%   equidistantly spaced on a perceptual frequency scale (see |freqtoaud|) between
-%   0 and the Nyquist frequency and with bandwidths that are proportional to the critical 
-%   bandwidth of the auditory filters |audfiltbw|. The filters are intended to work
-%   with signals with a sampling rate of *fs*. The signal length *Ls* is mandatory,
-%   since we need to avoid too narrow frequency windows.
-% 
-%   By default the ERB scale is chosen but other frequency scales are
-%   possible. See 'freqtoaud' for all available options. The most scales
-%   are 'erb', 'bark', and 'mel'.
+%   `[g,a,fc]=erbfilters(fs,Ls)` constructs a set of filters *g* that are
+%   equidistantly spaced on the ERB-scale (see |freqtoerb|) with bandwidths
+%   that are proportional to the width of the auditory filters
+%   |audfiltbw|. The filters are intended to work with signals with a
+%   sampling rate of *fs*. The signal length *Ls* is mandatory, since we
+%   need to avoid too narrow frequency windows.
 %
-%   By default, a Hann window on the frequency side is chosen, but the
+%   By default, a Hann window on the frequency side is choosen, but the
 %   window can be changed by passing any of the window types from
-%   |firwin| as an optional parameter.
+%   |firwin| or |freqwin| as an optional parameter.
 %   Run `getfield(getfield(arg_firwin,'flags'),'wintype')` to get a cell
 %   array of window types available.
 %
@@ -35,40 +31,31 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   See the help of |filterbanklength|. 
 %   The fractional downsampling rates restrict the filterbank to a single
 %   length *L=Ls*.
-% 
-%   `[g,a,fc,L]=audfilters(fs,Ls,flow,figh)` constructs a set of filters that are
-%   equidistantly spaced between flow and fhigh. In that case two
-%   additional filters will be positioned at the 0 and Nyquist frequencies
-%   so as to cover the full spectrum. The values of *flow* and *fhigh* can
-%   be instead specified using a key/value pair as::
 %
-%       [g,a,fc,L]=audfilters(fs,Ls,...,'flow',flow,'fhigh',figh)
-%
-%   `[g,a,fc,L]=audfilters(...,'regsampling')` constructs a non-uniform
+%   `[g,a]=erbfilters(...,'regsampling')` constructs a non-uniform
 %   filterbank with integer subsampling factors.
 %
-%   `[g,a,fc,L]=audfilters(...,'uniform')` constructs a uniform filterbank
+%   `[g,a]=erbfilters(...,'uniform')` constructs a uniform filterbank
 %   where the integer downsampling rate is the same for all the channels. This
 %   results in most redundant representation which produces nice plots.
 %
-%   `[g,a,fc,L]=audfilters(...,'fractional')` constructs a filterbank with
+%   `[g,a]=erbfilters(...,'fractional')` constructs a filterbank with
 %   fractional downsampling rates *a*. 
 %   This results in the least redundant system.
 %
-%   `[g,a,fc,L]=audfilters(...,'fractionaluniform')` constructs a filterbank with
+%   `[g,a]=erbfilters(...,'fractionaluniform')` constructs a filterbank with
 %   fractional downsampling rates *a*, which are uniform for all filters
 %   except the "filling" low-pass and high-pass filters can have different
 %   fractional downsampling rates. This is usefull when uniform subsampling
 %   and low redundancy at the same time are desirable.
 %
-%   `audfilters` accepts the following optional parameters:
+%   `erbfilters` accepts the following optional parameters:
 %
-%     'spacing',b     Specify the spacing in Ecritical bandwidth (ERB or Bark
-%                     depending on the scale) between the filters. Default value
-%                     is *b=1*.
+%     'spacing',b     Specify the spacing in ERBS between the
+%                     filters. Default value is *b=1*.
 %
-%     'M',M           Specify the total number of filters between 'flow' and 'fhigh', *M*.
-%                     If this parameter is specified, it overwrites the
+%     'M',M           Specify the number of filters, *M*. If this
+%                     parameter is specified, it overwrites the
 %                     `'spacing'` parameter.
 %
 %     'redmul',redmul  Redundancy multiplier. Increasing the value of this
@@ -79,11 +66,10 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %                      system may no longer be painless.
 %
 %     'symmetric'     Create filters that are symmetric around their centre
-%                     frequency. This is the default.'sqrtsquare','sqrtrect'
+%                     frequency. This is the default.
 %
-%     'warped'        Create asymmetric filters that are asymmetric on the
-%                     ERB scale. The warping does not work with other
-%                     scales yet.
+%     'warped'        Create asymmetric filters that are symmetric on the
+%                     Erb-scale.
 %
 %     'complex'       Construct a filterbank that covers the entire
 %                     frequency range.
@@ -100,10 +86,10 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   ---------
 %
 %   In the first example, we construct a highly redudant uniform
-%   filterbank on the ERB scale and visualize the result:::
+%   filterbank and visualize the result:::
 %
 %     [f,fs]=greasy;  % Get the test signal
-%     [g,a,fc,L]=audfilters(fs,length(f),'uniform','M',100);
+%     [g,a,fc]=erbfilters(fs,length(f),'uniform','M',100);
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90,'audtick');
 %
@@ -116,7 +102,7 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %     [f,fs]=greasy;  % Get the test signal
 %     L=length(f);
-%     [g,a,fc,L]=audfilters(fs,L,'fractional');
+%     [g,a,fc]=erbfilters(fs,L,'fractional');
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     norm(f-r)
@@ -140,29 +126,29 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 %
 %
-%   See also: erbfilters, filterbank, ufilterbank, ifilterbank, ceil23
+%   See also: filterbank, ufilterbank, ifilterbank, ceil23
 %
 %   References: ltfatnote027
 
-% Authors: Peter L. Søndergaard (original 'erbfilters' function)
-% Modified by: Thibaud Necciari
-% Date: 30.09.15
+% Authors: Peter L. Søndergaard, Zdenek Prusa, Nicki Holighaus
 
-%% ------ Checking of input parameters ---------
+complainif_notenoughargs(nargin,2,upper(mfilename));
+complainif_notposint(fs,'fs',upper(mfilename));
+complainif_notposint(Ls,'Ls',upper(mfilename));
 
-if nargin<2
-  error('%s: Too few input parameters.',upper(mfilename));
-end;
+firwinflags=arg_firwin(struct);
+firwinflags=firwinflags.flags.wintype;
+freqwinflags=arg_freqwin(struct);
+freqwinflags=freqwinflags.flags.wintype;
 
-complainif_notposint(fs,'fs');
-complainif_notposint(Ls,'Ls');
-
-definput.import={'freqtoaud','firwin'};
+definput.flags.wintype = [ firwinflags, freqwinflags];
+definput.import={'freqtoaud'};
 definput.keyvals.M=[];
 definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
 definput.keyvals.min_win = 4;
 definput.keyvals.spacing=1;
+definput.keyvals.trunc_at=10^(-5);
 definput.keyvals.flow=0;
 definput.keyvals.fhigh=fs/2;
 definput.flags.warp     = {'symmetric','warped'};
@@ -170,43 +156,99 @@ definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','uniform','fractional',...
                            'fractionaluniform'};
 
-[flags,kv,flow,fhigh]=ltfatarghelper({'flow','fhigh'},definput,varargin);
+% Search for window given as cell array
+candCellId = cellfun(@(vEl) iscell(vEl) && any(strcmpi(vEl{1},definput.flags.wintype)),varargin);
 
+winCell = {};
+% If there is such window, replace cell with function name so that 
+% ltfatarghelper does not complain
+if ~isempty(candCellId) && any(candCellId)
+    winCell = varargin{candCellId(end)};
+    varargin{candCellId} = [];
+    varargin{end+1} = winCell{1};
+end
+                       
+[flags,kv]=ltfatarghelper({},definput,varargin);
+if isempty(winCell), winCell = {flags.wintype}; end
 
-% Default parameters.
+if ~isempty(kv.M)
+    kv.spacing = (freqtoaud(kv.fhigh,flags.audscale) - freqtoaud(kv.flow,flags.audscale))/kv.M;
+end
 
-if ~isnumeric(flow) || ~isscalar(flow) 
-  error('%s: flow must be a scalar.',upper(mfilename));
-end;
+probelen = 10000;
 
-if ~isnumeric(fhigh) || ~isscalar(fhigh) 
-  error('%s: fhigh must be a scalar.',upper(mfilename));
-end;
-
-if flow>fhigh
-  error('%s: flow must be less than or equal to fhigh.',upper(mfilename));
-end;
-
-if fhigh>fs/2
-  error('%s: fhigh must be smaller or equal to the Nyquist frequency.',upper(mfilename));
-end;
-
-
-% Get the bandwidth of the chosen window by doing a probe
-winbw=norm(firwin(flags.wintype,1000)).^2/1000;% This is the ERB at 1000 Hz
+switch flags.wintype
+    case firwinflags
+        winbw=norm(firwin(flags.wintype,probelen)).^2/probelen;
+        % This is the ERB-type bandwidth of the prototype
+        
+        if flags.do_symmetric
+            filterfunc = @(fsupp,fc,scal)... 
+                         blfilter(winCell,fsupp,fc,'fs',fs,'scal',scal,...
+                                  'inf','min_win',kv.min_win);
+        else
+            fsupp_erb=1/winbw*kv.bwmul;
+            filterfunc = @(fsupp,fc,scal)...
+                         warpedblfilter(winCell,fsupp_erb,fc,fs,...
+                                        @(freq) freqtoaud(freq,flags.audscale),@(aud) audtofreq(aud,flags.audscale),'scal',scal,'inf');
+        end
+        bwtruncmul = 1;
+    case freqwinflags
+        if flags.do_warped
+            error('%s: TODO: Warping is not supported for windows from freqwin.',...
+                upper(mfilename));
+        end
+        
+        probebw = 0.01;
+ 
+        % Determine where to truncate the window
+        H = freqwin(winCell,probelen,probebw);
+        winbw = norm(H).^2/(probebw*probelen/2);
+        bwrelheight = 10^(-3/10);
+        
+        if kv.trunc_at <= eps
+            bwtruncmul = inf;
+        else
+            try
+                bwtruncmul = winwidthatheight(abs(H),kv.trunc_at)/winwidthatheight(abs(H),bwrelheight);
+            catch
+                bwtruncmul = inf;
+            end
+        end
+        
+        filterfunc = @(fsupp,fc,scal)...
+                     freqfilter(winCell, fsupp, fc,'fs',fs,'scal',scal,...
+                                'inf','min_win',kv.min_win,...
+                                'bwtruncmul',bwtruncmul);        
+end
 
 % Construct the AUD filterbank
+flow = max(0,kv.flow);
+fhigh = min(kv.fhigh,fs/2);
+
+innerChanNum = ceil((freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing)+1;
+
+fhigh = audtofreq(freqtoaud(flow,flags.audscale)+(innerChanNum-1)*kv.spacing,flags.audscale);
+
+% Make sure that fhigh <= fs/2, and F_ERB(fhigh) = F_ERB(flow)+k/spacing, for
+% some k.
+count = 1;
+while fhigh > fs/2
+    count = count+1;
+    fhigh = audtofreq(freqtoaud(flow,flags.audscale)+(innerChanNum-count)*kv.spacing,flags.audscale);
+end
+
 if flags.do_real
     if isempty(kv.M)
-        M2=ceil((freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing)+1;
-%         M=M2;
+        M2=innerChanNum;
+        M=M2;
     else
         M=kv.M;
         M2=M;
     end;
 else
     if isempty(kv.M)
-        M2=ceil(freqtoaud(fs/2,flags.audscale)/kv.spacing)+1;
+        M2=innerChanNum;
         M=2*(M2-1);
     else
         M=kv.M;
@@ -216,77 +258,86 @@ else
         end;
         M2=M/2+1;
     end;
+
 end;
-% The spacing will be used below to compute "virtual" filters...
-spac = (freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/M2;
 
-% Compute center frequencies on the perceptual scale
-fc=audspace(flow,fhigh,M2,flags.audscale).';
-
-% Compute bandwidths on the corresponding auditory scale
-if flags.do_erb || flags.do_erb83
-    cb = audfiltbw(fc,'erb');
-elseif flags.do_bark
-    cb = audfiltbw(fc,'bark');
-% else
-%     No auditory bandwidth concept applies to other scales, the frequency support
-%     will then be computed below so as to achieve approx. 50% overlap between channels
+fc=erbspace(flow,fhigh,M2).';
+if flow > 0
+    fc = [0;fc];
+    M2 = M2+1;
+    M=2*(M2-1);
+end
+if fhigh < fs/2
+    fc = [fc;fs/2];
+    M2 = M2+1;
+    M=2*(M2-1);
 end
 
+ind = (1:M2)';
 %% Compute the frequency support
+% fsupp is measured in Hz 
+
+fsupp=zeros(M2,1);
+aprecise=zeros(M2,1);
+if flow > 0
+    ind = ind(2:end);
+end
+if fhigh < fs/2
+    ind = ind(1:end-1);
+end
+
 if flags.do_symmetric
-    % fsupp is measured in Hz
     if flags.do_erb || flags.do_erb83 || flags.do_bark
-        fsupp=round(cb/winbw*kv.bwmul);
-%         Add additional filters if required
-        if flow > 0 
-            fc = [0;fc];
-            fsupp = [2*flow;fsupp];
-            M2 = M2 + 1;
-        end
-        if fhigh < fs/2
-            fc = [fc;fs/2];
-            fsupp = [fsupp;2*(fs/2-fhigh)];
-            M2 = M2 + 1;
-        end
+        fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
     else
-%         First check for frequency range and add additional filters if required
-        if flow > 0 
-            fc = [0;fc];
-            M2 = M2 + 1;
-        end
-        if fhigh < fs/2
-            fc = [fc;fs/2];
-            M2 = M2 + 1;
-        end
-        fsupp = zeros(M2,1);
-        fsupp(1) = 2*fc(find(fc,1));
-        for k = 2:M2-1
-            fsupp(k) = (fc(k+1)-fc(k-1));
-        end
-        if fhigh < fs/2
-            % Correct the bandwidth of the last filter positioned at fhigh
-            % Frequency of the (virtual) filter positioned at fhigh+spac
-            f1 = min(fs/2,audtofreq(freqtoaud(fhigh,flags.audscale)+spac,flags.audscale));
-            fsupp(M2-1)= f1-fc(end-1);
-        end
-        fsupp(M2) = 2*(fs/2-fc(M2-1));
+        fsupp(ind)=audtofreq(freqtoaud(fc(ind),flags.audscale)+kv.spacing,flags.audscale)-...
+                   audtofreq(freqtoaud(fc(ind),flags.audscale)-kv.spacing,flags.audscale);
     end
     
-else
-    if flags.do_erb || flags.do_erb83
-        % fsupp_erb is measured in Erbs
-        % The scaling is incorrect, it does not account for the warping
-        fsupp_erb=1/winbw*kv.bwmul;
-
-        % Convert fsupp into the correct widths in Hz, necessary to compute
-        % "a" in the next if-statement
-        fsupp=audtofreq(freqtoaud(fc,flags.audscale)+fsupp_erb/2,flags.audscale)...
-            -audtofreq(freqtoaud(fc,flags.audscale)-fsupp_erb/2,flags.audscale);
-    else
-%         [FIXME] WARPING ON OTHER SCALES?
-        error('%s: Warped asymmetric filters can only be achieved on the ERB scale.',upper(mfilename));
+    if flow > 0 
+        fsupp(1) = 0;%(2*fc(2)+4*audfiltbw(fc(2))/winbw);
+        fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
+        if flags.do_erb || flags.do_erb83 || flags.do_bark
+            fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
+        else
+            fsupp_temp=audtofreq(freqtoaud(fc_temp,flags.audscale)+kv.spacing,flags.audscale)-...
+                       audtofreq(freqtoaud(fc_temp,flags.audscale)-kv.spacing,flags.audscale); 
+        end
+        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);%/kv.redmul,1);        
     end
+    if fhigh < fs/2        
+        fsupp(end) = 0;%(2*(fc(end)-fc(end-1))+4*audfiltbw(fc(end-1))/winbw);
+        fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
+        if flags.do_erb || flags.do_erb83 || flags.do_bark
+            fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
+        else
+            fsupp_temp=audtofreq(freqtoaud(fc_temp,flags.audscale)+kv.spacing,flags.audscale)-...
+                       audtofreq(freqtoaud(fc_temp,flags.audscale)-kv.spacing,flags.audscale); 
+        end
+        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);%/kv.redmul,1);       
+    end    
+else    
+    % fsupp_erb is measured in Erbs
+    % The scaling is incorrect, it does not account for the warping
+    fsupp_erb=1/winbw*kv.bwmul;
+
+    % Convert fsupp into the correct widths in Hz, necessary to compute
+    % "a" in the next if-statement
+    fsupp(ind)=audtofreq(freqtoaud(fc(ind),flags.audscale)+fsupp_erb/2,flags.audscale)-...
+               audtofreq(freqtoaud(fc(ind),flags.audscale)-fsupp_erb/2,flags.audscale);
+    
+    if flow > 0 
+        fsupp(1) = 0;%(2*fc(2)+4*audfiltbw(fc(2))/winbw);
+        fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
+        fsupp_temp=2*(audtofreq(freqtoaud(fc_temp,flags.audscale)+fsupp_erb/2,flags.audscale)-fc_temp);        
+        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);%/kv.redmul,1);        
+    end
+    if fhigh < fs/2        
+        fsupp(end) = 0;%(2*(fc(end)-fc(end-1))+4*audfiltbw(fc(end-1))/winbw);
+        fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
+        fsupp_temp=2*(fc_temp-audtofreq(freqtoaud(fc_temp,flags.audscale)-fsupp_erb/2,flags.audscale));        
+        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);%/kv.redmul,1);       
+    end    
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
@@ -298,15 +349,7 @@ for ii = 1:numel(fsupp)
 end
 
 % Find suitable channel subsampling rates
-% If flow > 0 and fhigh < fs/2, then do not apply redmul to channels 1 and M2
-% as it produces unecessarily badly conditioned frames!
-aprecise=fs./fsupp/kv.redmul;
-if flow > 0
-    aprecise(1)=aprecise(1)*kv.redmul;
-end
-if fhigh < fs/2
-    aprecise(end)=aprecise(end)*kv.redmul;
-end
+aprecise(ind)=fs./fsupp(ind)/kv.redmul;
 aprecise=aprecise(:);
 
 %% Compute the downsampling rate
@@ -357,64 +400,195 @@ else
     a=[a;flipud(a(2:M2-1,:))];
     scal=[scal;flipud(scal(2:M2-1))];
     fc  =[fc; -flipud(fc(2:M2-1))];
-    if flags.do_symmetric
+    %if flags.do_symmetric
         fsupp=[fsupp;flipud(fsupp(2:M2-1))];
-    end;
-
+    %end;
+    ind = [ind;numel(fc)+2-(M2-1:-1:2)'];
 end;
 
 
 %% Compute the filters
-if flags.do_symmetric
-    % This is actually much faster than the vectorized call.
-    g = cell(1,numel(fc));
-    if flow > 0
-        % Frequency of the filter that would be positioned left below flow on the perceptual scale
-        f0 = max(0,audtofreq(freqtoaud(flow,flags.audscale)-spac,flags.audscale));
-        if flags.do_erb || flags.do_erb83 || flags.do_bark
-            cb0 = audfiltbw(f0,flags.audscale);
-            fsupp0 = round(cb0/winbw*kv.bwmul);
-        else
-            f00 = audtofreq(freqtoaud(flow,flags.audscale)-2*spac,flags.audscale);
-            fsupp0= fc(2)-f00;
-        end
-        % Compute the filter amd middle-pad it to cover the full frequency
-        % range not covered by the filter bank
-        g{1} = blfilter({flags.wintype,'taper',fsupp0/(2*fsupp(1))},fsupp(1),fc(1),'fs',fs,'scal',scal(1),...
-                   'inf','min_win',kv.min_win);   
-    else
-        g{1}=blfilter(flags.wintype,fsupp(1),fc(1),'fs',fs,'scal',scal(1),...
-                   'inf','min_win',kv.min_win);
-    end
-    for m=2:numel(g)-1
-        g{m}=blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
-                   'inf','min_win',kv.min_win);
-    end
-    if fhigh < fs/2
-        % Do the same on the high frequency side, frequency of the filter right next
-%         above fhigh on the perceptual scale
-        f0 = min(fs/2,audtofreq(freqtoaud(fhigh,flags.audscale)+spac,flags.audscale));
-        if flags.do_erb || flags.do_erb83 || flags.do_bark
-            cb0 = audfiltbw(f0,flags.audscale);
-            fsupp0 = round(cb0/winbw*kv.bwmul);
-        else
-            f1 = audtofreq(freqtoaud(fhigh,flags.audscale)+2*spac,flags.audscale);
-            fsupp0= f1-fc(end-1);
-        end
-        % Compute the filter and middle-pad it
-        g{end} = blfilter({flags.wintype,'taper',fsupp0/(2*fsupp(end))},fsupp(end),fc(end),'fs',fs,'scal',scal(end),...
-                   'inf','min_win',kv.min_win);
-    else
-        g{end}=blfilter(flags.wintype,fsupp(end),fc(end),'fs',fs,'scal',scal(end),...
-                   'inf','min_win',kv.min_win);
-    end
-else
-    g = cell(1,numel(fc));
-    for m=1:numel(g)
-        g{m}=warpedblfilter(flags.wintype,fsupp_erb,fc(m),fs,@freqtoaud,@audtofreq, ...
-                     'scal',scal(m),'inf');
-    end
-end;
+% This is actually much faster than the vectorized call.
+g = cell(1,numel(fc));
+for m=ind.'
+    g{m}=filterfunc(fsupp(m),fc(m),scal(m));
+end
 
+if flow > 0
+    g{1} = audlowpassfilter(filterfunc,g,a,flow,fs,winbw,scal(1),bwtruncmul,kv,flags);
+end
+
+if fhigh < fs/2
+    g{M2} = audhighpassfilter(filterfunc,g,a,fhigh,fs,winbw,scal(M2),bwtruncmul,kv,flags);
+end
+
+function glow = audlowpassfilter(filterfunc,g,a,flow,fs,winbw,scal,bwtruncmul,kv,flags)
+    next_fc = max(audtofreq(freqtoaud(flow,flags.audscale)-kv.spacing,flags.audscale),0);
+    temp_fc = [];    
+% Temporary center frequencies and bandwidths for lowpass -----------------
+% (only makes sense for symmetric filters)
+%     ERB = @(f) 9.265.*log(1+f./228.8455);
+%     iERB = @(E) 228.8455.*(exp(E./9.265)-1);
+%     bwERB = @(f) 24.7+f./9.265;
+%     while next_fc >= iERB(-4)
+%         temp_fc(end+1) = next_fc;
+%         next_fc = iERB(ERB(next_fc)-kv.spacing);
+%     end
+%     
+%     temp_bw=bwERB(temp_fc)/winbw*kv.bwmul;
+% [end] -------------------------------------------------------------------
+
+% Temporary center frequencies and bandwidths for lowpass - Simplified ----
+    while next_fc >= -120;
+        temp_fc(end+1) = next_fc;
+        next_fc = audtofreq(freqtoaud(next_fc,flags.audscale)-kv.spacing,flags.audscale);
+    end
+    
+    if flags.do_symmetric
+        if flags.do_erb || flags.do_erb83 || flags.do_bark
+            temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
+        else
+            temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
+                   audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
+        end
+        plateauWidth = max(2*temp_fc(1),0);
+        Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
+    else
+        fsupp_erb=1/winbw*kv.bwmul;
+        temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_erb/2,flags.audscale)-...
+                  audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_erb/2,flags.audscale);
+        Lw = @(L) min(ceil(2*audtofreq(freqtoaud(temp_fc(1),flags.audscale)+fsupp_erb/2,flags.audscale)*L/fs),L);
+    end
+% Simplified [end]---------------------------------------------------------
+    
+    temp_g = cell(1,numel(temp_fc));
+    for m=1:numel(temp_g)
+        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);%scal.^2);
+    end    
+    
+    temp_fun = @(L) filterbankresponse(temp_g,1,L);
+    if 1%flags.do_symmetric
+        temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
+        glow.H = @(L) fftshift(long2fir(...
+                    sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                    flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
+                    (flipud(postpad(ones(round(L/4)-1,1),L)).*temp_fbresp(L) + ...
+                    postpad(ones(round(L/4),1),L).*flipud(temp_fbresp(L)))),...
+                    Lw(L)))*scal;
+    else
+        glow.H = @(L) fftshift(long2fir(...
+                    sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                    flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1))),...
+                    Lw(L)))*scal;
+    end
+                    
+    glow.foff = @(L) -floor(Lw(L)/2);
+    glow.realonly = 0;
+    glow.delay = 0;
+    glow.fs = g{2}.fs;
+    %glow.H = @(L) glow.H(L)*scal;%*sqrt(2);
+    
+function ghigh = audhighpassfilter(filterfunc,g,a,fhigh,fs,winbw,scal,bwtruncmul,kv,flags)
+    
+    temp_fc = [];
+    if flags.do_bark
+        bark_of_22050 = freqtoaud(22050,flags.audscale);
+        next_fc_bark = modcent(freqtoaud(fhigh,flags.audscale)+kv.spacing,2*bark_of_22050);
+        if 0 <= next_fc_bark
+          next_fc = min(audtofreq(next_fc_bark,flags.audscale),fs/2);    
+        else 
+          next_fc = fs/2;
+        end            
+        while next_fc <= 3*fs/4
+            temp_fc(end+1) = next_fc;
+            next_fc_bark = modcent(next_fc_bark+kv.spacing,2*bark_of_22050);
+            if 0 <= next_fc_bark
+                next_fc = audtofreq(next_fc_bark,flags.audscale);
+            else
+                next_fc = 44100 - audtofreq(-next_fc_bark,flags.audscale);
+            end
+        end        
+    else
+        next_fc = min(audtofreq(freqtoaud(fhigh,flags.audscale)+kv.spacing,flags.audscale),fs/2);
+        
+        while next_fc <= 3*fs/4
+            temp_fc(end+1) = next_fc;
+            next_fc = audtofreq(freqtoaud(next_fc,flags.audscale)+kv.spacing,flags.audscale);
+        end
+    end
+    
+    if flags.do_symmetric
+        if flags.do_erb || flags.do_erb83
+            temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
+        elseif flags.do_bark
+            temp_bw=audfiltbw(abs(modcent(temp_fc,22050)),flags.audscale)/winbw*kv.bwmul;
+        else
+            temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
+                   audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
+        end
+        plateauWidth = max(2*(fs/2-temp_fc(1)),0);
+        Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
+    else
+        fsupp_erb=1/winbw*kv.bwmul;
+        temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_erb/2,flags.audscale)-...
+                  audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_erb/2,flags.audscale);
+        Lw = @(L) min(ceil(2*(fs/2-audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_erb/2,flags.audscale))*L/fs),L);
+    end
+    
+    temp_g = cell(1,numel(temp_fc));
+    for m=1:numel(temp_g)
+        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);%scal.^2);
+    end
+    
+    %plateauWidth = max(2*(fs/2-temp_fc(1)),0);
+    %Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
+    
+    temp_fun = @(L) filterbankresponse(temp_g,1,L);
+    if 1%flags.do_symmetric
+        temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
+        ghigh.H = @(L) fftshift(long2fir(...
+                         fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                         flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
+                         (postpad([zeros(ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L) + ...
+                         flipud(postpad([zeros(L-ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L))))),...
+                         Lw(L)))*scal;
+    else
+        ghigh.H = @(L) fftshift(long2fir(...
+                         fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...    
+                         flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)))),...
+                         Lw(L)))*scal;
+    end
+    
+    ghigh.foff = @(L) ceil(L/2)-floor(Lw(L)/2)-1;
+    ghigh.realonly = 0;
+    ghigh.delay = 0;
+    ghigh.fs = g{2}.fs;
+%    ghigh.H = @(L) ghigh.H(L)*scal;%*sqrt(2);
+
+
+function width = winwidthatheight(gnum,atheight)
+
+width = zeros(size(atheight));
+for ii=1:numel(atheight)
+    gl = numel(gnum);
+    gmax = max(gnum);
+    frac=  1/atheight(ii);
+    fracofmax = gmax/frac;
+    
+    
+    ind =find(gnum(1:floor(gl/2)+1)==fracofmax,1,'first');
+    if isempty(ind)
+        %There is no sample exactly half of the height
+        ind1 = find(gnum(1:floor(gl/2)+1)>fracofmax,1,'last');
+        ind2 = find(gnum(1:floor(gl/2)+1)<fracofmax,1,'first');
+%         if isempty(ind2)
+%            width(ii) = gl;
+%         else 
+           rest = 1-(fracofmax-gnum(ind2))/(gnum(ind1)-gnum(ind2));
+           width(ii) = 2*(ind1+rest-1);
+%        end        
+    else
+        width(ii) = 2*(ind-1);
+    end
 end
 

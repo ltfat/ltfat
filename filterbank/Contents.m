@@ -6,6 +6,7 @@
 %    FILTERBANK             - Filter bank
 %    UFILTERBANK            - Uniform Filter bank
 %    IFILTERBANK            - Inverse normal/uniform filter bank
+%    IFILTERBANKITER        - Iteratively inverse filter bank 
 %    FILTERBANKWIN          - Evaluate filter bank window
 %    FILTERBANKLENGTH       - Length of filter bank to expand signal
 %    FILTERBANKLENGTHCOEF   - Length of filter bank to expand coefficients
@@ -19,7 +20,7 @@
 %  Filter generators
 %    CQTFILTERS             - Logarithmically spaced filters
 %    ERBFILTERS             - ERB-spaced filters
-%    WARPEDFILTERS          - Frequency-warped band-limited filters 
+%    WARPEDFILTERS          - Frequency-warped filters 
 %    AUDFILTERS             - Filters based on auditory scales
 %  
 %  Window construction and bounds
@@ -33,6 +34,7 @@
 %
 %  Auxilary
 %    FILTERBANKFREQZ        - Frequency responses of filters
+%    FILTERBANKSCALE        - Scaling and normalization of filters
 %    NONU2UFILTERBANK       - Non-uni. to uniform filter bank transformation
 %    U2NONUCFMT             - Change format of coefficients
 %    NONU2UCFMT             - Change format of coefficients back

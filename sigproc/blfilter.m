@@ -27,7 +27,7 @@ function gout=blfilter(winname,fsupp,varargin)
 %                 *fsupp* and the centre frequency *fc* is specified in Hz.
 %
 %     'complex'   Make the filter complex valued if the centre frequency
-%                 is non-zero.necessary. This is the default.
+%                 is non-zero. This is the default.
 %
 %     'real'      Make the filter real-valued if the centre frequency
 %                 is non-zero.
@@ -129,8 +129,6 @@ end
 
 for ii=1:Nfilt
     g=struct();
-    
-
     
     if flags.do_1 || flags.do_area 
         g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...

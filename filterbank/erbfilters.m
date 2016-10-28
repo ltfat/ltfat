@@ -21,8 +21,9 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %
 %   By default, a Hann window on the frequency side is choosen, but the
 %   window can be changed by passing any of the window types from
-%   |firwin| as an optional parameter.
-%   Run `getfield(getfield(arg_firwin,'flags'),'wintype')` to get a cell
+%   |firwin| or |freqwin| as an optional parameter.
+%   Run `getfield(getfield(arg_firwin,'flags'),'wintype')` or 
+%   `getfield(getfield(arg_freqwin,'flags'),'wintype')` to get a cell
 %   array of window types available.
 %
 %   The integer downsampling rates of the channels must all divide the
@@ -66,7 +67,7 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %                      system may no longer be painless.
 %
 %     'symmetric'     Create filters that are symmetric around their centre
-%                     frequency. This is the default.'sqrtsquare','sqrtrect'
+%                     frequency. This is the default.
 %
 %     'warped'        Create asymmetric filters that are symmetric on the
 %                     Erb-scale.
@@ -130,37 +131,137 @@ function [g,a,fc,L]=erbfilters(fs,Ls,varargin)
 %
 %   References: ltfatnote027
 
-% Authors: Peter L. Søndergaard
-% Modified by: Zdenek Prusa
-% Date: 01.04.14
+% Authors: Peter L. Søndergaard, Zdenek Prusa, Nicki Holighaus
 
-if nargin<2
-    error('%s: Not enough input argumets.',upper(mfilename))
+complainif_notenoughargs(nargin,2,upper(mfilename));
+complainif_notposint(Ls,'Ls',upper(mfilename));
+
+if ~isscalar(fs) || fs <= 0
+    error('%s: fs must be positive scalar.',upper(mfilename))
 end
 
-complainif_notposint(fs,'fs');
-complainif_notposint(Ls,'Ls');
+firwinflags=getfield(getfield(arg_firwin,'flags'),'wintype');
+freqwinflags=getfield(getfield(arg_freqwin,'flags'),'wintype');
 
-definput.import = {'firwin'};
+definput.flags.wintype = [ firwinflags, freqwinflags];
 definput.keyvals.M=[];
 definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
 definput.keyvals.min_win = 4;
 definput.keyvals.spacing=1;
+definput.keyvals.trunc_at=10^(-5);
+definput.keyvals.flow=0;
+definput.keyvals.fhigh=fs/2;
 definput.flags.warp     = {'symmetric','warped'};
 definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','uniform','fractional',...
                            'fractionaluniform'};
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+% Search for window given as cell array
+candCellId = cellfun(@(vEl) iscell(vEl) && any(strcmpi(vEl{1},definput.flags.wintype)),varargin);
 
-% Get the bandwidth of the choosen window by doing a probe
-winbw=norm(firwin(flags.wintype,1000)).^2/1000;
+winCell = {};
+% If there is such window, replace cell with function name so that 
+% ltfatarghelper does not complain
+if ~isempty(candCellId) && any(candCellId)
+    winCell = varargin{candCellId(end)};
+    varargin{candCellId} = [];
+    varargin{end+1} = winCell{1};
+end
+                       
+[flags,kv]=ltfatarghelper({},definput,varargin);
+if isempty(winCell), winCell = {flags.wintype}; end
+
+if ~isscalar(kv.bwmul) || kv.bwmul <= 0
+    error('%s: bwmul must be a positive scalar.',upper(mfilename));
+end
+
+if ~isscalar(kv.redmul) || kv.redmul <= 0
+    error('%s: bwmul must be a positive scalar.',upper(mfilename));
+end
+
+if kv.fhigh < kv.flow || kv.flow < 0 || kv.fhigh > fs/2
+    error('%s: fhigh must be bigger than flow and in the range [0,fs/2].',upper(mfilename));
+end
+
+if kv.trunc_at > 1 || kv.trunc_at < 0
+    error('%s: trunc_at must be in range [0,1].',upper(mfilename));
+end
+
+if ~isscalar(kv.min_win) || rem(kv.min_win,1) ~= 0 || kv.min_win < 1
+    error('%s: min_win must be an integer bigger or equal to 1.',upper(mfilename));
+end
+
+if ~isempty(kv.M)
+    complainif_notposint(kv.M,'M',upper(mfilename));
+    kv.spacing = (freqtoerb(kv.fhigh) - freqtoerb(kv.flow))/kv.M;
+end
+
+probelen = 10000;
+
+switch flags.wintype
+    case firwinflags
+        winbw=norm(firwin(flags.wintype,probelen)).^2/probelen;
+        
+        if flags.do_symmetric
+            filterfunc = @(fsupp,fc,scal)... 
+                         blfilter(winCell,fsupp,fc,'fs',fs,'scal',scal,...
+                                  'inf','min_win',kv.min_win);
+        else
+            fsupp_erb=1/winbw*kv.bwmul;
+            filterfunc = @(fsupp,fc,scal)...
+                         warpedblfilter(winCell,fsupp_erb,fc,fs,...
+                                        @freqtoerb,@erbtofreq,'scal',scal,'inf');
+        end
+        bwtruncmul = 1;
+    case freqwinflags
+        if flags.do_warped
+            error('%s: TODO: Warping is not supported for windows from freqwin.',...
+                upper(mfilename));
+        end
+        
+        probebw = 0.01;
+ 
+        % Determine where to truncate the window
+        H = freqwin(winCell,probelen,probebw);
+        winbw = norm(H).^2/(probebw*probelen/2);
+        bwrelheight = 10^(-3/10);
+        
+        if kv.trunc_at <= eps
+            bwtruncmul = inf;
+        else
+            try
+                bwtruncmul = winwidthatheight(abs(H),kv.trunc_at)/winwidthatheight(abs(H),bwrelheight);
+            catch
+                bwtruncmul = inf;
+            end
+        end
+        
+        filterfunc = @(fsupp,fc,scal)...
+                     freqfilter(winCell, fsupp, fc,'fs',fs,'scal',scal,...
+                                'inf','min_win',kv.min_win,...
+                                'bwtruncmul',bwtruncmul);        
+end
 
 % Construct the Erb filterbank
+flow = max(0,kv.flow);
+fhigh = min(kv.fhigh,fs/2);
+
+innerChanNum = ceil((freqtoerb(fhigh)-freqtoerb(flow))/kv.spacing)+1;
+
+fhigh = erbtofreq(freqtoerb(flow)+(innerChanNum-1)*kv.spacing);
+
+% Make sure that fhigh <= fs/2, and F_ERB(fhigh) = F_ERB(flow)+k/spacing, for
+% some k.
+count = 1;
+while fhigh > fs/2
+    count = count+1;
+    fhigh = erbtofreq(freqtoerb(flow)+(innerChanNum-count)*kv.spacing);
+end
+
 if flags.do_real
     if isempty(kv.M)
-        M2=ceil(freqtoerb(fs/2)/kv.spacing)+1;
+        M2=innerChanNum;
         M=M2;
     else
         M=kv.M;
@@ -168,8 +269,8 @@ if flags.do_real
     end;
 else
     if isempty(kv.M)
-        M2=ceil(freqtoerb(fs/2)/kv.spacing)+1;
-        M=2*(M2-1);
+        M2=innerChanNum;
+        M=2*(M2-2);
     else
         M=kv.M;
         if rem(M,2)>0
@@ -181,22 +282,68 @@ else
 
 end;
 
-fc=erbspace(0,fs/2,M2).';
+fc=erbspace(flow,fhigh,M2).';
+if flow > 0
+    fc = [0;fc];
+    M2 = M2+1;
+    M=2*(M2-2);
+end
 
+if fhigh < fs/2
+    fc = [fc;fs/2];
+    M2 = M2+1;
+    M=2*(M2-2);
+end
 
+ind = (1:M2)';
 %% Compute the frequency support
+% fsupp is measured in Hz 
+
+fsupp=zeros(M2,1);
+aprecise=zeros(M2,1);
+if flow > 0
+    ind = ind(2:end);
+end
+if fhigh < fs/2
+    ind = ind(1:end-1);
+end
+
 if flags.do_symmetric
-    % fsupp is measured in Hz
-    fsupp=round(audfiltbw(fc)/winbw*kv.bwmul);
-else
+    fsupp(ind)=audfiltbw(fc(ind))/winbw*kv.bwmul;
+    
+    if flow > 0 
+        fsupp(1) = 0;%(2*fc(2)+4*audfiltbw(fc(2))/winbw);
+        fc_temp = max(erbtofreq(freqtoerb(fc(2))-kv.spacing),0);
+        fsupp_temp = audfiltbw(fc_temp)/winbw*kv.bwmul;
+        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);%/kv.redmul,1);        
+    end
+    if fhigh < fs/2        
+        fsupp(end) = 0;%(2*(fc(end)-fc(end-1))+4*audfiltbw(fc(end-1))/winbw);
+        fc_temp = min(erbtofreq(freqtoerb(fc(end-1))+kv.spacing),fs/2);
+        fsupp_temp = audfiltbw(fc_temp)/winbw*kv.bwmul;
+        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);%/kv.redmul,1);       
+    end    
+else    
     % fsupp_erb is measured in Erbs
     % The scaling is incorrect, it does not account for the warping
     fsupp_erb=1/winbw*kv.bwmul;
 
     % Convert fsupp into the correct widths in Hz, necessary to compute
     % "a" in the next if-statement
-    fsupp=erbtofreq(freqtoerb(fc)+fsupp_erb/2)-erbtofreq(freqtoerb(fc)-fsupp_erb/2);
-
+    fsupp(ind)=erbtofreq(freqtoerb(fc(ind))+fsupp_erb/2)-erbtofreq(freqtoerb(fc(ind))-fsupp_erb/2);
+    
+    if flow > 0 
+        fsupp(1) = 0;%(2*fc(2)+4*audfiltbw(fc(2))/winbw);
+        fc_temp = max(erbtofreq(freqtoerb(fc(2))-kv.spacing),0);
+        fsupp_temp=2*(erbtofreq(freqtoerb(fc_temp)+fsupp_erb/2)-fc_temp);        
+        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);%/kv.redmul,1);        
+    end
+    if fhigh < fs/2        
+        fsupp(end) = 0;%(2*(fc(end)-fc(end-1))+4*audfiltbw(fc(end-1))/winbw);
+        fc_temp = min(erbtofreq(freqtoerb(fc(end-1))+kv.spacing),fs/2);
+        fsupp_temp=2*(fc_temp-erbtofreq(freqtoerb(fc_temp)-fsupp_erb/2));        
+        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);%/kv.redmul,1);       
+    end    
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
@@ -208,7 +355,7 @@ for ii = 1:numel(fsupp)
 end
 
 % Find suitable channel subsampling rates
-aprecise=fs./fsupp/kv.redmul;
+aprecise(ind)=fs./fsupp(ind)/kv.redmul;
 aprecise=aprecise(:);
 
 %% Compute the downsampling rate
@@ -259,28 +406,163 @@ else
     a=[a;flipud(a(2:M2-1,:))];
     scal=[scal;flipud(scal(2:M2-1))];
     fc  =[fc; -flipud(fc(2:M2-1))];
-    if flags.do_symmetric
+    %if flags.do_symmetric
         fsupp=[fsupp;flipud(fsupp(2:M2-1))];
-    end;
-
+    %end;
+    ind = [ind;numel(fc)+2-(M2-1:-1:2)'];
 end;
 
 
 %% Compute the filters
-if flags.do_symmetric
-    % This is actually much faster than the vectorized call.
-    g = cell(1,numel(fc));
-    for m=1:numel(g)
-        g{m}=blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
-                   'inf','min_win',kv.min_win);
-    end
-else
-    g = cell(1,numel(fc));
-    for m=1:numel(g)
-        g{m}=warpedblfilter(flags.wintype,fsupp_erb,fc(m),fs,@freqtoerb,@erbtofreq, ...
-                     'scal',scal(m),'inf');
-    end
-end;
+% This is actually much faster than the vectorized call.
+g = cell(1,numel(fc));
+for m=ind.'
+    g{m}=filterfunc(fsupp(m),fc(m),scal(m));
+end
 
+if flow > 0
+    g{1} = erblowpassfilter(filterfunc,g,a,flow,fs,winbw,scal(1),M2,bwtruncmul,kv,flags);
+end
+
+if fhigh < fs/2
+    g{M2} = erbhighpassfilter(filterfunc,g,a,fhigh,fs,winbw,scal(M2),M2,bwtruncmul,kv,flags);
+end
+
+function glow = erblowpassfilter(filterfunc,g,a,flow,fs,winbw,scal,M2,bwtruncmul,kv,flags)
+    next_fc = max(erbtofreq(freqtoerb(flow)-kv.spacing),0);
+    temp_fc = [];    
+% Temporary center frequencies and bandwidths for lowpass -----------------
+% (only makes sense for symmetric filters)
+%     ERB = @(f) 9.265.*log(1+f./228.8455);
+%     iERB = @(E) 228.8455.*(exp(E./9.265)-1);
+%     bwERB = @(f) 24.7+f./9.265;
+%     while next_fc >= iERB(-4)
+%         temp_fc(end+1) = next_fc;
+%         next_fc = iERB(ERB(next_fc)-kv.spacing);
+%     end
+%     
+%     temp_bw=bwERB(temp_fc)/winbw*kv.bwmul;
+% [end] -------------------------------------------------------------------
+
+% Temporary center frequencies and bandwidths for lowpass - Simplified ----
+    while next_fc >= erbtofreq(-4)
+        temp_fc(end+1) = next_fc;
+        next_fc = erbtofreq(freqtoerb(next_fc)-kv.spacing);
+    end
+    
+    if flags.do_symmetric
+        temp_bw=audfiltbw(abs(temp_fc))/winbw*kv.bwmul;
+        plateauWidth = max(2*temp_fc(1),0);
+        Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
+    else
+        fsupp_erb=1/winbw*kv.bwmul;
+        temp_bw = erbtofreq(freqtoerb(temp_fc)+fsupp_erb/2)-erbtofreq(freqtoerb(temp_fc)-fsupp_erb/2);
+        Lw = @(L) min(ceil(2*erbtofreq(freqtoerb(temp_fc(1))+fsupp_erb/2)*L/fs),L);
+    end
+% Simplified [end]---------------------------------------------------------
+    
+    temp_g = cell(1,numel(temp_fc));
+    for m=1:numel(temp_g)
+        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);%scal.^2);
+    end    
+    
+
+    %Lw = @(L) L;
+    
+    temp_fun = @(L) filterbankresponse(temp_g,1,L);
+    if 1%flags.do_symmetric
+        temp_fbresp = @(L) filterbankresponse(g(2:M2-1),a(2:M2-1,:),L);
+        glow.H = @(L) fftshift(long2fir(...
+                    sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                    flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
+                    (flipud(postpad(ones(round(L/4)-1,1),L)).*temp_fbresp(L) + ...
+                    postpad(ones(round(L/4),1),L).*flipud(temp_fbresp(L)))),...
+                    Lw(L)))*scal;
+    else
+        glow.H = @(L) fftshift(long2fir(...
+                    sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                    flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1))),...
+                    Lw(L)))*scal;
+    end
+                    
+    glow.foff = @(L) -floor(Lw(L)/2);
+    glow.realonly = 0;
+    glow.delay = 0;
+    glow.fs = g{2}.fs;
+    %glow.H = @(L) glow.H(L)*scal;%*sqrt(2);
+    
+function ghigh = erbhighpassfilter(filterfunc,g,a,fhigh,fs,winbw,scal,M2,bwtruncmul,kv,flags)
+    next_fc = min(erbtofreq(freqtoerb(fhigh)+kv.spacing),fs/2);
+    temp_fc = [];    
+    while next_fc <= erbtofreq(freqtoerb(fs/2)+4)
+        temp_fc(end+1) = next_fc;
+        next_fc = erbtofreq(freqtoerb(next_fc)+kv.spacing);
+    end
+    
+    if flags.do_symmetric
+        temp_bw=audfiltbw(abs(temp_fc))/winbw*kv.bwmul;
+        plateauWidth = max(2*(fs/2-temp_fc(1)),0);
+        Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
+    else
+        fsupp_erb=1/winbw*kv.bwmul;
+        temp_bw = erbtofreq(freqtoerb(temp_fc)+fsupp_erb/2)-erbtofreq(freqtoerb(temp_fc)-fsupp_erb/2);
+        Lw = @(L) min(ceil(2*(fs/2-erbtofreq(freqtoerb(temp_fc(1))-fsupp_erb/2))*L/fs),L);
+    end
+    
+    temp_g = cell(1,numel(temp_fc));
+    for m=1:numel(temp_g)
+        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);%scal.^2);
+    end
+    
+    %plateauWidth = max(2*(fs/2-temp_fc(1)),0);
+    %Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
+    
+    temp_fun = @(L) filterbankresponse(temp_g,1,L);
+    if 1%flags.do_symmetric
+        temp_fbresp = @(L) filterbankresponse(g(2:M2-1),a(2:M2-1,:),L);
+        ghigh.H = @(L) fftshift(long2fir(...
+                         fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                         flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
+                         (postpad([zeros(ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L) + ...
+                         flipud(postpad([zeros(L-ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L))))),...
+                         Lw(L)))*scal;
+    else
+        ghigh.H = @(L) fftshift(long2fir(...
+                         fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...    
+                         flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)))),...
+                         Lw(L)))*scal;
+    end
+    
+    ghigh.foff = @(L) ceil(L/2)-floor(Lw(L)/2)-1;
+    ghigh.realonly = 0;
+    ghigh.delay = 0;
+    ghigh.fs = g{2}.fs;
+%    ghigh.H = @(L) ghigh.H(L)*scal;%*sqrt(2);
+
+
+function width = winwidthatheight(gnum,atheight)
+
+width = zeros(size(atheight));
+for ii=1:numel(atheight)
+    gl = numel(gnum);
+    gmax = max(gnum);
+    frac=  1/atheight(ii);
+    fracofmax = gmax/frac;
+    
+    
+    ind =find(gnum(1:floor(gl/2)+1)==fracofmax,1,'first');
+    if isempty(ind)
+        %There is no sample exactly half of the height
+        ind1 = find(gnum(1:floor(gl/2)+1)>fracofmax,1,'last');
+        ind2 = find(gnum(1:floor(gl/2)+1)<fracofmax,1,'first');
+%         if isempty(ind2)
+%            width(ii) = gl;
+%         else 
+           rest = 1-(fracofmax-gnum(ind2))/(gnum(ind1)-gnum(ind2));
+           width(ii) = 2*(ind1+rest-1);
+%        end        
+    else
+        width(ii) = 2*(ind-1);
+    end
 end
 

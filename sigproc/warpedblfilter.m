@@ -101,25 +101,33 @@ end
 Nfilt=numel(fsupp);
 gout=cell(1,Nfilt);
 
+if ischar(winname)
+    wn = {winname};
+elseif iscell(winname)
+    wn = winname;
+else
+    error('%s: Incorrect format of winname.',upper(mfilename));
+end
+
 for ii=1:Nfilt
     g=struct();
     
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    comp_warpedfreqresponse( winname,fc(ii), ...
+        g.H=@(L)    comp_warpedfreqresponse( wn{1},fc(ii), ...
                                              fsupp(ii),fs,L,freqtoscale, ...
                                              scaletofreq, flags.norm,...
                                              flags.symmetry)*kv.scal(ii)*L;
     end;
     
     if  flags.do_2 || flags.do_energy
-        g.H=@(L)    comp_warpedfreqresponse(winname,fc(ii), ...
+        g.H=@(L)    comp_warpedfreqresponse(wn{1},fc(ii), ...
                                             fsupp(ii),fs,L,freqtoscale,scaletofreq, ...
                                             flags.norm,flags.symmetry)*kv.scal(ii)*sqrt(L);
     end;
         
     if flags.do_inf || flags.do_peak
-        g.H=@(L)    comp_warpedfreqresponse(winname,fc(ii), ...
+        g.H=@(L)    comp_warpedfreqresponse(wn{1},fc(ii), ...
                                             fsupp(ii),fs,L,freqtoscale,scaletofreq, ...
                                             flags.norm,flags.symmetry)*kv.scal(ii);
     end;
