@@ -49,7 +49,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type M = args(0).rows();
     const octave_idx_type N = args(0).columns();
     const octave_idx_type L = N * a;
-    const octave_idx_type W = s.nelem() / (M * N);
+    const octave_idx_type W = s.numel() / (M * N);
 
     MArray<LTFAT_TYPE> phase(dim_vector(M, N, W));
 

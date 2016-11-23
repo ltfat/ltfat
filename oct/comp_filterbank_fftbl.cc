@@ -52,7 +52,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     // Number of channels
     const octave_idx_type W  = F.columns();
     // Number of filters
-    const octave_idx_type M = G.nelem();
+    const octave_idx_type M = G.numel();
 
 
     OCTAVE_LOCAL_BUFFER (double, afrac, M);

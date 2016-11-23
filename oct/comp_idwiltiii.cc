@@ -99,10 +99,10 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     MArray<LTFAT_TYPE> g = ltfatOctArray<LTFAT_TYPE>(args(1));
 
     const octave_idx_type M = c.rows();
-    const octave_idx_type gl = g.nelem();
+    const octave_idx_type gl = g.numel();
     const octave_idx_type N = c.columns();
     const octave_idx_type L = N * M;
-    const octave_idx_type W = c.nelem() / L;
+    const octave_idx_type W = c.numel() / L;
 
 
     MArray<LTFAT_TYPE> f(dim_vector(L, W));

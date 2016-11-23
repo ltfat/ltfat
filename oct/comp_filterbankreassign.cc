@@ -62,7 +62,7 @@ octFunction(const octave_value_list& args, int nargout)
     Matrix aMat     = args(3).matrix_value();
     Matrix cfreqMat = args(4).matrix_value();
 
-    const ltfatInt M  = (ltfatInt) sCell.nelem();
+    const ltfatInt M  = (ltfatInt) sCell.numel();
 
 
     OCTAVE_LOCAL_BUFFER (ltfatInt, NPtr, M);

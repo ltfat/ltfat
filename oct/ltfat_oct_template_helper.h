@@ -125,7 +125,7 @@ octave_value recastToSingle(const octave_value& ov)
    {
       Cell ov_cell = ov.cell_value();
       Cell ovtmp_cell(ov.dims());
-      for(int jj=0;jj<ovtmp_cell.nelem();jj++)
+      for(int jj=0;jj<ovtmp_cell.numel();jj++)
       {
          ovtmp_cell(jj) = recastToSingle(ov_cell.elem(jj));
       }
@@ -162,7 +162,7 @@ octave_value recastToComplex(const octave_value& ov)
    {
       Cell ov_cell = ov.cell_value();
       Cell ovtmp_cell(ov.dims());
-      for(int jj=0;jj<ovtmp_cell.nelem();jj++)
+      for(int jj=0;jj<ovtmp_cell.numel();jj++)
       {
          ovtmp_cell(jj) = recastToComplex(ov_cell.elem(jj));
       }

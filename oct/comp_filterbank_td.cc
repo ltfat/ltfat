@@ -73,7 +73,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     // Number of channels
     const octave_idx_type W  = f.columns();
     // Number of filters
-    const octave_idx_type M = g.nelem();
+    const octave_idx_type M = g.numel();
 
     // Allocating temporary arrays
     // Filter lengts

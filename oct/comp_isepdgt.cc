@@ -76,7 +76,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type N = L / a;
     const octave_idx_type gl = gf.rows();
 
-    const octave_idx_type W = coef.nelem() / (M * N);
+    const octave_idx_type W = coef.numel() / (M * N);
 
     MArray<LTFAT_COMPLEX> f(dim_vector(L, W));
 

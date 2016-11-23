@@ -59,7 +59,7 @@ octFunction(const octave_value_list& args, int nargout)
    // Number of channels
    const octave_idx_type W  = f.columns();
    // Number of coefficients
-   const octave_idx_type M = indVec.nelem();
+   const octave_idx_type M = indVec.numel();
 
    //dims_out.chop_trailing_singletons();
    MArray<LTFAT_COMPLEX> c(dim_vector(M,W));

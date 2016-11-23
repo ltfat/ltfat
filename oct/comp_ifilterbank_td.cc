@@ -73,7 +73,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     charMatrix extMat = args(5).char_matrix_value();
     ltfatExtType ext = ltfatExtStringToEnum(extMat.row_as_string(0).c_str());
     // Number of filters
-    const octave_idx_type M = g.nelem();
+    const octave_idx_type M = g.numel();
 
     // Allocating temporary arrays
     // Filter lengts
@@ -97,7 +97,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
         c_elems[m] = ltfatOctArray<LTFAT_TYPE>(c.elem(m));
         gPtrs[m] = g_elems[m].data();
         cPtrs[m] = c_elems[m].data();
-        filtLen[m] = (ltfatInt) g_elems[m].nelem();
+        filtLen[m] = (ltfatInt) g_elems[m].numel();
     }
 
     const octave_idx_type W  = c_elems[0].columns();
