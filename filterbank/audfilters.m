@@ -226,13 +226,13 @@ end
 flow = max(0,kv.flow);
 fhigh = min(kv.fhigh,fs/2);
 
-innerChanNum = ceil((freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing)+1;
+innerChanNum = floor((freqtoaud(fhigh,flags.audscale)-freqtoaud(flow,flags.audscale))/kv.spacing)+1;
 
 fhigh = audtofreq(freqtoaud(flow,flags.audscale)+(innerChanNum-1)*kv.spacing,flags.audscale);
 
 % Make sure that fhigh <= fs/2, and F_ERB(fhigh) = F_ERB(flow)+k/spacing, for
 % some k.
-count = 1;
+count = 0;
 while fhigh > fs/2
     count = count+1;
     fhigh = audtofreq(freqtoaud(flow,flags.audscale)+(innerChanNum-count)*kv.spacing,flags.audscale);

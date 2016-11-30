@@ -247,13 +247,13 @@ end
 flow = max(0,kv.flow);
 fhigh = min(kv.fhigh,fs/2);
 
-innerChanNum = ceil((freqtoerb(fhigh)-freqtoerb(flow))/kv.spacing)+1;
+innerChanNum = floor((freqtoerb(fhigh)-freqtoerb(flow))/kv.spacing)+1;
 
 fhigh = erbtofreq(freqtoerb(flow)+(innerChanNum-1)*kv.spacing);
 
 % Make sure that fhigh <= fs/2, and F_ERB(fhigh) = F_ERB(flow)+k/spacing, for
 % some k.
-count = 1;
+count = 0;
 while fhigh > fs/2
     count = count+1;
     fhigh = erbtofreq(freqtoerb(flow)+(innerChanNum-count)*kv.spacing);
