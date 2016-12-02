@@ -5,17 +5,25 @@ Version 2.1.3 x/6 2016
 
 	* New window and filter generating functions: freqwin, freqfilter
 
+	* New functions for changing DGT phase convention: phaselockreal, phaseunlockreal
+
+	* Included new colormaps: ltfat_inferno, ltfat_magma, ltfat_plasma,
+							  ltfat_viridis, ltfat_nicecolormap
+
 	* erbfilters can now generate Gammatone and other filters
 
 	* Removed deprication warnings in test_all_ltfat
 
-	* Mulaclab no longer requires the Image processing toolbox to be installed (for the basic functionality).
+	* Mulaclab no longer requires the Image processing toolbox to be installed (for the
+	  basic functionality).
+	
+	* Mulaclab now works on Octave.
 
 Version 2.1.2 x/3 2016
 	* Improved functions for DGT and DGTREAL phase reconstruction: constructphase, constructphasereal
 
 	* The backend library is now in separate repository: https://github.com/ltfat/libltfat
-	and it is included as a subtree in subdirectory libltfat/ (replacing src/)
+	  and it is included as a subtree in subdirectory libltfat/ (replacing src/)
 
 Version 2.1.1 x/10  2015
 	* New function for computing higher order phase derivatives: gabphasederiv
