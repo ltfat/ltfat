@@ -242,7 +242,7 @@ if ltfatstartprint
       end;
     end;
   catch
-    backend = 'Error with backend, consider running "ltfatmex clean" immidiatly.';
+    backend = 'Error with backend, consider running "ltfatmex clean" immediately.';
   end; 
   
   banner = sprintf(['LTFAT version %s. Copyright 2005-2016 Peter L. Søndergaard. ' ...

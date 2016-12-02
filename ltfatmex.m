@@ -25,7 +25,7 @@ function ltfatmex(varargin)
 %
 %     'mex'      Perform action on the mex / oct interfaces.
 %
-%     'gpc'      Perform action on the GPC code for use with MULACLAB
+%     'pbc'      Perform action on the PolyBoolClipper code for use with MULACLAB
 %
 %     'auto'     Choose automatically which targets to work on from the 
 %                previous ones based on the operation system etc. This is 
@@ -65,7 +65,7 @@ bp=mfilename('fullpath');
 bp=bp(1:end-length(mfilename));
 
 
-definput.flags.target={'auto','lib','mex','gpc','playrec','java','blockproc'};
+definput.flags.target={'auto','lib','mex','pbc','playrec','java','blockproc'};
 % This has to be also defined 
 definput.flags.comptarget={'release','debug'};
 definput.flags.command={'compile','clean','test'};
@@ -95,19 +95,13 @@ curdir=pwd;
 do_lib  = flags.do_lib || flags.do_auto;
 % Compile MEX/OCT interfaces?
 do_mex  = flags.do_mex || flags.do_auto;
-% Compile MEX PolygonClip.mex... using Generic Polygon Clipper
-% (relevant only for the mulaclab, which does not work in Octave)
-do_gpc  = flags.do_gpc || (flags.do_auto && ~isoctave);
+% Compile MEX PolyBoolClipper.mex
+do_pbc  = flags.do_pbc || flags.do_auto;
 % Compile MEX playrec.mex... using Portaudio library.
 % (relevant only for the bloc processing framework)
 do_playrec  = flags.do_playrec || flags.do_blockproc;
 % Compile Java classes containing GUI for the bloc proc. framework.
 do_java  = flags.do_java || flags.do_blockproc;
-
-
-if isoctave && flags.do_gpc
-    error('%s: Compiling GPC is not relevant for Octave.',upper(mfilename));
-end
 
 if isoctave
 	extname='oct';
@@ -167,11 +161,18 @@ if flags.do_clean
      %                ' EXT=',ext]); 
   end;
   
-  if do_gpc
-    disp('========= Cleaning GPC ====================');
-    cd([bp,'thirdparty',filesep,'PolygonClip']);
+  if do_pbc
+     % Use the correct makefile 
+     if isoctave
+       if ~strcmpi(makefilename(end-2:end),ext)
+          makefilename2 = [makefilename,ext];
+       end
+    end 
+      
+    disp('========= Cleaning PolyBoolClipper ====================');
+    cd([bp,'mulaclab']);
     clear mex; 
-    callmake(make_exe,makefilename,'target','clean','ext',mexext,flags.verbosity);
+    callmake(make_exe,makefilename2,'target','clean','ext',mexext,flags.verbosity);
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
   
@@ -262,18 +263,24 @@ if flags.do_compile
     end
   end;
   
-  if do_gpc
-    disp('========= Compiling GPC ===================');
-    % Compile the PolygonClip interface to GPC for use with mulaclab
-    cd([bp,'thirdparty',filesep,'PolygonClip']);
+  if do_pbc
+    if isoctave
+       if ~strcmpi(makefilename(end-2:end),ext)
+          makefilename_pbc = [makefilename,ext];
+       end
+    end  
+      
+    disp('========= Compiling PolyBoolClipper ===================');
+    % Compile PolyBoolClipper mex file for use with mulaclab
+    cd([bp,'mulaclab']);
     clear mex; 
-    [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
+    [status,result] = callmake(make_exe,makefilename_pbc,'matlabroot','arch',...
                       'ext',ext,flags.verbosity);
 
     if(~status)
       disp('Done.');
     else
-      error('Failed to build GPC:\n %s',result);
+      error('Failed to build PlyBoolClipper:\n %s',result);
     end
   end;
   if do_playrec
