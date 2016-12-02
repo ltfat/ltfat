@@ -32,20 +32,20 @@ c_quinp= phaselock(c_quin,a,'lt',[1 2]);
 % chanels
 res=norm(c_bigp(1:2:end,1)-c_quinp(:,1),'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['PHASELOCK QUIN 1   %0.5g %s\n'],res,fail);
+fprintf(['PHASELOCK QUIN 1    %0.5g %s\n'],res,fail);
 
 res=norm(c_bigp(2:2:end,2)-c_quinp(:,2),'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['PHASELOCK QUIN 2   %0.5g %s\n'],res,fail);
+fprintf(['PHASELOCK QUIN 2    %0.5g %s\n'],res,fail);
 
 % testing of phaseunlock routine
 res=norm(c_big - phaseunlock(c_bigp,a),'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['PHASEUNLOCK RECT   %0.5g %s\n'],res,fail);
+fprintf(['PHASEUNLOCK RECT    %0.5g %s\n'],res,fail);
 
 res=norm(c_quin - phaseunlock(c_quinp,a,'lt',[1 2]),'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['PHASEUNLOCK QUIN   %0.5g %s\n'],res,fail);
+fprintf(['PHASEUNLOCK QUIN    %0.5g %s\n'],res,fail);
 
 
 cfi = dgtreal(f,g,a,M);
@@ -53,8 +53,16 @@ cti = dgtreal(f,g,a,M,'timeinv');
 
 res=norm(cfi - phaseunlockreal(cti,a,M),'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['PHASEUNLOCKREAL    %0.5g %s\n'],res,fail);
+fprintf(['PHASEUNLOCKREAL     %0.5g %s\n'],res,fail);
 
 res=norm(phaselockreal(cfi,a,M) - cti,'fro');
 [test_failed,fail]=ltfatdiditfail(res,test_failed);
-fprintf(['PHASELOCKREAL      %0.5g %s\n'],res,fail);
+fprintf(['PHASELOCKREAL       %0.5g %s\n'],res,fail);
+
+res=norm(cfi - phaseunlockreal(cti,a,M,'precise'),'fro');
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['PHASEUNLOCKREAL PREC %0.5g %s\n'],res,fail);
+
+res=norm(phaselockreal(cfi,a,M,'precise') - cti,'fro');
+[test_failed,fail]=ltfatdiditfail(res,test_failed);
+fprintf(['PHASELOCKREAL PREC  %0.5g %s\n'],res,fail);

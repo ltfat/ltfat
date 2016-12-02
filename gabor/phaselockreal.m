@@ -32,6 +32,9 @@ if  ~isscalar(M) || ~isnumeric(M) || rem(M,1)~=0
   error('M must be integer');
 end;
 
+definput.flags.accuracy={'normal', 'precise'};
+flags=ltfatarghelper({},definput,varargin);
+
 M2=size(c,1);
 M2user = floor(M/2) + 1;
 
@@ -41,13 +44,24 @@ end
 
 N=size(c,2);
 
-TimeInd = (0:(N-1))*a;
-FreqInd = (0:(M2-1));
+if flags.do_normal
+    TimeInd = (0:(N-1))*a;
+    FreqInd = (0:(M2-1));
 
-phase = FreqInd'*TimeInd;
-phase = mod(phase,M);
-phase = exp(2*1i*pi*phase/M);
+    phase = FreqInd'*TimeInd;
+    phase = mod(phase,M);
+    phase = exp(2*1i*pi*phase/M);
 
-% Handle multisignals
-c=bsxfun(@times,c,phase);
+    % Handle multisignals
+    c=bsxfun(@times,c,phase);
+elseif flags.do_precise
+    
+    frames = ifftreal(c,M);
+    for n=0:N-1
+        frames(:,n+1,:) = circshift(frames(:,n+1,:),-n*a);
+    end
+    c = fftreal(frames);
+    
+end
+
 
