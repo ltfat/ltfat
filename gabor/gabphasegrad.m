@@ -87,10 +87,16 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 
 %error(nargchk(4,6,nargin));
 
+% If no phaseconv flag was passed, add 'relative'
+definput = arg_gabphasederivconv;
+if ~any(cellfun(@(el) any(strcmpi(el,varargin)),definput.flags.phaseconv))
+    varargin{end+1} = 'relative';
+end
+
 if nargout<3
-    phased = gabphasederiv({'t','f'},method,'relative',varargin{:});
+    phased = gabphasederiv({'t','f'},method,varargin{:});
 else
-    [phased,c] = gabphasederiv({'t','f'},method,'relative',varargin{:});
+    [phased,c] = gabphasederiv({'t','f'},method,varargin{:});
 end
 
 [tgrad,fgrad] = deal(phased{:});

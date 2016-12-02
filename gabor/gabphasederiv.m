@@ -106,7 +106,7 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %                   This is usefull for the reassignment functions.
 %
 %   Please see ltfatnote042 for the description of relations between the
-%   phase derivatives with differnet phase conventions. Note that for the
+%   phase derivatives with different phase conventions. Note that for the
 %   'relative' convention, the following holds::
 %
 %      gabphasederiv('t',...,'relative') == gabphasederiv('t',...,'freqinv')
@@ -147,7 +147,7 @@ complainif_notenoughargs(nargin,2,upper(mfilename));
 
 definput.flags.type = {'t','f','tt','ff','tf','ft'};
 definput.flags.method = {'dgt','phase','abs','cross'};
-definput.flags.phaseconv = {'freqinv','timeinv','symphase','relative'};
+definput.import = {'gabphasederivconv'};
 
 typewascell = 0;
 
@@ -181,7 +181,8 @@ if ~ischar(method) || ~any(strcmpi(method, definput.flags.method))
         definput.flags.method,'UniformOutput',0),', '));
 end;
 
-foundFlags = cellfun(@(el)ischar(el) && any(strcmpi(el,definput.flags.phaseconv)),...
+diphaseconv = arg_gabphasederivconv;
+foundFlags = cellfun(@(el)ischar(el) && any(strcmpi(el,diphaseconv.flags.phaseconv)),...
     varargin);
 flags1 = ltfatarghelper({},definput,{types{1},method,varargin{foundFlags}});
 definput = []; % Definput is used again later
