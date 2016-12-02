@@ -4,10 +4,7 @@ function test_failed=test_firwin
 %  This test script verifies the properties listed in the help of firwin
   
   
-allwins = {'hann','tria','sine', ...
-           'sqrttria','itersine', 'square','hamming','blackman', ...
-           'nuttall','nuttall10', 'nuttall01','nuttall20','nuttall11', ...
-           'nuttall02','nuttall30','nuttall21','nuttall03','blackman2'};
+allwins = getfield(arg_firwin,'flags','wintype');
 
 test_failed=0;
 

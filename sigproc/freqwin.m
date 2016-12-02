@@ -102,17 +102,12 @@ H = (-kv.shift+[0:1:ceil(L/2)-1,-floor(L/2):-1]');
 switch winName
     case 'gauss'
         H = exp(4*H.^2*log(bwrelheight)/(bw/step)^2);
-    
+        
     case 'butterworth'
         definputbutter.keyvals.order=4;
         [~,~,order]=ltfatarghelper({'order'},definputbutter,winArgs);
         H = 1./(sqrt(1 + (H/(bw/step/2)).^(2*order)));
         
-     case 'chebyschevI'
-         definputchebyI.keyvals.ripplefac = 0.01;
-         [~,~,ripplefac]=ltfatarghelper({'ripplefac'},definputchebyI,winArgs);
-         
-
     case 'gammatone'
         definputgamma.keyvals.order=4;
         [~,~,order]=ltfatarghelper({'order'},definputgamma,winArgs);

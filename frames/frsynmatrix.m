@@ -14,7 +14,7 @@ function G=frsynmatrix(F,L);
 %   *L*.
 %
 %   The action of the frame analysis operator |frana| is equal to
-%   multiplication with the Hermitean transpose of the frame
+%   multiplication with the Hermitean transpose of the frame synthesis
 %   matrix. Consider the following simple example:::
 %
 %     L=200;

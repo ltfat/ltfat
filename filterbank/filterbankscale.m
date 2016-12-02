@@ -26,6 +26,8 @@ function g = filterbankscale(g,varargin)
 %   the input filters.
 %
 
+%AUTHOR: Zdenek Prusa
+
 complainif_notenoughargs(nargin,2,'FILTERBANKSCALE');
 
 definput.import={'normalize'};

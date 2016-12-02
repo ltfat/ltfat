@@ -1,4 +1,4 @@
-function [g,info]=firwin(name,M,varargin);
+function [g,info]=firwin(name,M,varargin)
 %FIRWIN  FIR window
 %   Usage:  g=firwin(name,M);
 %           g=firwin(name,M,...);
@@ -165,12 +165,16 @@ function [g,info]=firwin(name,M,varargin);
   
 if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
-end;
+end
 
 if ~ischar(name)
-  error('%s: First input argument must the name of a window.',upper(mfilename));
-end;
-  
+  error('%s: First input argument must the name of a window.',...
+        upper(mfilename));
+end
+
+if ~isnumeric(M)
+  error('%s: M must be numeric.',upper(mfilename));  
+end
 
 % Always set to this
 info.isfir=1;
@@ -205,6 +209,7 @@ if M==0
 end;
 
 if numel(M)==1
+    complainif_notposint(M,'M',mfilename);
     
     % Deal with tapering
     if kv.taper<1

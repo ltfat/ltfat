@@ -43,6 +43,22 @@ function [f,relres,iter]=frsyniter(F,c,varargin)
 %
 %     'quiet'      Don't print anything, this is the default.
 %
+%   Algorithms
+%   ----------
+%
+%   The function uses the (Preconditioned) Conjugate Gradient algorithm
+%   to solve the following problem::
+%
+%   ..   FF*f=Fc
+%
+%   .. math:: FF* f = Fc
+%
+%   The preconditioning alters the equations such that
+%
+%   ..   inv(M)FF*f=inv(M)Fc
+%
+%   .. math:: M^{-1}FF* f = M^{-1}Fc
+%
 %   Examples
 %   --------
 %
