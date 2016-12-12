@@ -163,16 +163,17 @@ if flags.do_clean
   
   if do_pbc
      % Use the correct makefile 
+     makefilename_pbc = makefilename;
      if isoctave
        if ~strcmpi(makefilename(end-2:end),ext)
-          makefilename2 = [makefilename,ext];
+          makefilename_pbc = [makefilename,ext];
        end
     end 
       
     disp('========= Cleaning PolyBoolClipper ====================');
     cd([bp,'mulaclab']);
     clear mex; 
-    callmake(make_exe,makefilename2,'target','clean','ext',mexext,flags.verbosity);
+    callmake(make_exe,makefilename_pbc,'target','clean','ext',mexext,flags.verbosity);
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
   end;
   
@@ -264,6 +265,7 @@ if flags.do_compile
   end;
   
   if do_pbc
+    makefilename_pbc = makefilename;
     if isoctave
        if ~strcmpi(makefilename(end-2:end),ext)
           makefilename_pbc = [makefilename,ext];
