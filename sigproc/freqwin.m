@@ -1,10 +1,10 @@
 function H = freqwin(name,L,bw,varargin)
-%FREQWIN 
+%FREQWIN Frequency response window
 %
 %   `freqwin(name,L,bw)` returns a frequency window *name* of length *L* 
-%   with the mainlobe -6dB bandwidth *bw*. It is intended to represent a
-%   frequency response of a band-pass filter/window with bandwidth *bw*.
-%   The bandwidth is given in normalised frequencies.
+%   with the mainlobe -6dB (half height) bandwidth *bw*. It is intended to
+%   represent frequency response of a band-pass filter/window with 
+%   bandwidth *bw*. The bandwidth is given in normalised frequencies.
 %
 %   The function is not periodically wrapped should it be nonzero outside
 %   of the *L* samples (as opposed to e.g. |pgauss|).
@@ -18,14 +18,16 @@ function H = freqwin(name,L,bw,varargin)
 %         Gammatone window of order *order*. The default order is 4.
 %
 %     'butterworth' or {'butterworth',order}
+%         Butterworth window of order *order*. The default order is 4.
 %
-%     'roex'
-%         
+%   `freqwin(name,L,bw,fs)` does the same as above except *bw* is expected
+%   to be in Hz given sampling frequency *fs*.
+%
 %   `freqwin` understands the following key-value pairs and flags at the end of 
 %   the list of input parameters:
 %
 %     'fs',fs      If the sampling frequency *fs* is specified then the *bw*
-%                  is expected to be on Hz.
+%                  is expected to be in Hz.
 %
 %     'shift',s    Shift the window by $s$ samples. The value can be a
 %                  fractional number.   
@@ -39,12 +41,8 @@ function H = freqwin(name,L,bw,varargin)
 %   Additionally, the function accepts flags to normalize the output. Please see
 %   the help of |normalize|. Default is to use `'peak'` normalization.
 %
-%   Examples
-%   --------
 %
-%   
-%
-%   See also: firwin, plotfft
+%   See also: firwin, normalize, plotfft
 
 % AUTHORS: Nicki Holighaus
 

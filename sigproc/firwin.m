@@ -156,7 +156,7 @@ function [g,info]=firwin(name,M,varargin)
 %
 %     legend('Hann','Hamming','Blackman','Nuttall','Itersine');
 %
-%   See also:  pgauss, pbspline, firkaiser, normalize
+%   See also:  freqwin, pgauss, pbspline, firkaiser, normalize
 %
 %   References: opsc89 harris1978 nuttall1981 wesfreid1993
  

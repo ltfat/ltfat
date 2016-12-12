@@ -1,7 +1,18 @@
 function gout=freqfilter(winname,bw,varargin)
+%FREQFILTER Construct filter in frequency domain
+%   Usage:   g=freqfilter(winname,bw)
+%            g=freqfilter(winname,bw,fc)
+%
+%   Input parameters:
+%      winname  : Name of prototype
+%      bw       : Effective support length of the prototype
+%      fc       : Center frequency
+%   
+%   `freqfilter`
+%
 % 
 % Authors: Nicki Holighaus & Zdenek Prusa
-% Date: September 15
+% Date: September 15, 2016 
 
 if ~iscell(winname), winname = {winname}; end
 
