@@ -32,7 +32,7 @@ title('Synthesis, dual filters')
 
 %% Generate a fractional uniform Barklet FB with V= 3 and a cosine window, band-limited analysis
 disp('--- Uniform Barklet FB, V=3, cosine window, frequency range = 100-6000 Hz ---')
-[g_bark,a_bark,fc_bark]=audfilters(fs,Ls,'flow',100,'fhigh',6000,'bark','fractionaluniform','spacing',1/3,'cosine');
+[g_bark,a_bark,fc_bark]=audfilters(fs,Ls,'fmin',100,'fmax',6000,'bark','fractionaluniform','spacing',1/3,'cosine');
 c_bark=filterbank(f,{'realdual',g_bark},a_bark);
 r_bark=2*real(ifilterbank(c_bark,g_bark,a_bark));
 disp('Reconstruction error:')

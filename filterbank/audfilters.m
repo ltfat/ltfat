@@ -185,7 +185,7 @@ if ~isempty(candCellId) && any(candCellId)
     varargin{end+1} = winCell{1};
 end
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv]=ltfatarghelper({'fmin','fmax'},definput,varargin);
 if isempty(winCell), winCell = {flags.wintype}; end
 
 if ~isempty(kv.M)
