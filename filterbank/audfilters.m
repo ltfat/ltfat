@@ -243,13 +243,13 @@ end
 fmin = max(0,kv.fmin);
 fmax = min(kv.fmax,fs/2);
 
-innerChanNum = ceil((freqtoaud(fmax,flags.audscale)-freqtoaud(fmin,flags.audscale))/kv.spacing)+1;
+innerChanNum = floor((freqtoaud(fmax,flags.audscale)-freqtoaud(fmin,flags.audscale))/kv.spacing)+1;
 
 fmax = audtofreq(freqtoaud(fmin,flags.audscale)+(innerChanNum-1)*kv.spacing,flags.audscale);
 
 % Make sure that fmax <= fs/2, and F_ERB(fmax) = F_ERB(fmin)+k/spacing, for
 % some k.
-count = 1;
+count = 0;
 while fmax > fs/2
     count = count+1;
     fmax = audtofreq(freqtoaud(fmin,flags.audscale)+(innerChanNum-count)*kv.spacing,flags.audscale);

@@ -250,13 +250,13 @@ end
 fmin = max(0,kv.fmin);
 fmax = min(kv.fmax,fs/2);
 
-innerChanNum = ceil((freqtoerb(fmax)-freqtoerb(fmin))/kv.spacing)+1;
+innerChanNum = floor((freqtoerb(fmax)-freqtoerb(fmin))/kv.spacing)+1;
 
 fmax = erbtofreq(freqtoerb(fmin)+(innerChanNum-1)*kv.spacing);
 
 % Make sure that fmax <= fs/2, and F_ERB(fmax) = F_ERB(fmin)+k/spacing, for
 % some k.
-count = 1;
+count = 0;
 while fmax > fs/2
     count = count+1;
     fmax = erbtofreq(freqtoerb(fmin)+(innerChanNum-count)*kv.spacing);
