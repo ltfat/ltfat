@@ -20,12 +20,13 @@ typedef enum
     BAD_TYPE
 } ltfatExtType;
 
-ltfatExtType ltfatExtStringToEnum(const char* extType);
+LTFAT_API ltfatExtType
+ltfatExtStringToEnum(const char* extType);
 
-LTFAT_API
-ltfat_int filterbank_td_size(ltfat_int L, ltfat_int a,
-                            ltfat_int gl, ltfat_int offset,
-                            const ltfatExtType ext);
+LTFAT_API ltfat_int
+filterbank_td_size(ltfat_int L, ltfat_int a,
+                   ltfat_int gl, ltfat_int offset,
+                   const ltfatExtType ext);
 
 #endif
 
@@ -90,7 +91,6 @@ LTFAT_NAME(atrousupconv_td)(const LTFAT_TYPE *c, const LTFAT_TYPE *g,
                             ltfat_int L, ltfat_int gl,
                             ltfat_int ga, ltfat_int skip,
                             LTFAT_TYPE *f, ltfatExtType ext);
-
 
 
 
