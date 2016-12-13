@@ -204,9 +204,9 @@ switch flags.wintype
                          blfilter(winCell,fsupp,fc,'fs',fs,'scal',scal,...
                                   'inf','min_win',kv.min_win);
         else
-            fsupp_erb=1/winbw*kv.bwmul;
+            fsupp_scale=1/winbw*kv.bwmul;
             filterfunc = @(fsupp,fc,scal)...
-                         warpedblfilter(winCell,fsupp_erb,fc,fs,...
+                         warpedblfilter(winCell,fsupp_scale,fc,fs,...
                                         @(freq) freqtoaud(freq,flags.audscale),@(aud) audtofreq(aud,flags.audscale),'scal',scal,'inf');
         end
         bwtruncmul = 1;
@@ -240,68 +240,32 @@ switch flags.wintype
 end
 
 % Construct the AUD filterbank
-fmin = max(0,kv.fmin);
+fmin = max(kv.fmin,audtofreq(1/kv.spacing,flags.audscale));
 fmax = min(kv.fmax,fs/2);
 
 innerChanNum = floor((freqtoaud(fmax,flags.audscale)-freqtoaud(fmin,flags.audscale))/kv.spacing)+1;
 
 fmax = audtofreq(freqtoaud(fmin,flags.audscale)+(innerChanNum-1)*kv.spacing,flags.audscale);
 
-% Make sure that fmax <= fs/2, and F_ERB(fmax) = F_ERB(fmin)+k/spacing, for
+% Make sure that fmax < fs/2, and F_ERB(fmax) = F_ERB(fmin)+k/spacing, for
 % some k.
 count = 0;
-while fmax > fs/2
+while fmax >= fs/2
     count = count+1;
-    fmax = audtofreq(freqtoaud(fmin,flags.audscale)+(innerChanNum-count)*kv.spacing,flags.audscale);
+    fmax = audtofreq(freqtoaud(fmin,flags.audscale)+(innerChanNum-count-1)*kv.spacing,flags.audscale);    
 end
+innerChanNum = innerChanNum-count;
 
-if flags.do_real
-    if isempty(kv.M)
-        M2=innerChanNum;
-        M=M2;
-    else
-        M=kv.M;
-        M2=M;
-    end;
-else
-    if isempty(kv.M)
-        M2=innerChanNum;
-        M=2*(M2-1);
-    else
-        M=kv.M;
-        if rem(M,2)>0
-            error(['%s: M must be even for full frequency range ' ...
-                   'filterbanks.',upper(mfilename)]);
-        end;
-        M2=M/2+1;
-    end;
+fc=erbspace(fmin,fmax,innerChanNum).';
+fc = [0;fc;fs/2];
+M2 = innerChanNum+2;
 
-end;
-
-fc=erbspace(fmin,fmax,M2).';
-if fmin > 0
-    fc = [0;fc];
-    M2 = M2+1;
-    M=2*(M2-1);
-end
-if fmax < fs/2
-    fc = [fc;fs/2];
-    M2 = M2+1;
-    M=2*(M2-1);
-end
-
-ind = (1:M2)';
+ind = (2:M2-1)';
 %% Compute the frequency support
 % fsupp is measured in Hz 
 
 fsupp=zeros(M2,1);
 aprecise=zeros(M2,1);
-if fmin > 0
-    ind = ind(2:end);
-end
-if fmax < fs/2
-    ind = ind(1:end-1);
-end
 
 if flags.do_symmetric
     if flags.do_erb || flags.do_erb83 || flags.do_bark
@@ -311,8 +275,8 @@ if flags.do_symmetric
                    audtofreq(freqtoaud(fc(ind),flags.audscale)-kv.spacing,flags.audscale);
     end
     
-    if fmin > 0 
-        fsupp(1) = 0;%(2*fc(2)+4*audfiltbw(fc(2))/winbw);
+    % Generate lowpass filter parameters     
+        fsupp(1) = 0;
         fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
         if flags.do_erb || flags.do_erb83 || flags.do_bark
             fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
@@ -320,10 +284,10 @@ if flags.do_symmetric
             fsupp_temp=audtofreq(freqtoaud(fc_temp,flags.audscale)+kv.spacing,flags.audscale)-...
                        audtofreq(freqtoaud(fc_temp,flags.audscale)-kv.spacing,flags.audscale); 
         end
-        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);%/kv.redmul,1);        
-    end
-    if fmax < fs/2        
-        fsupp(end) = 0;%(2*(fc(end)-fc(end-1))+4*audfiltbw(fc(end-1))/winbw);
+        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);    
+        
+    % Generate highpass filter parameters     
+        fsupp(end) = 0;
         fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
         if flags.do_erb || flags.do_erb83 || flags.do_bark
             fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
@@ -331,30 +295,28 @@ if flags.do_symmetric
             fsupp_temp=audtofreq(freqtoaud(fc_temp,flags.audscale)+kv.spacing,flags.audscale)-...
                        audtofreq(freqtoaud(fc_temp,flags.audscale)-kv.spacing,flags.audscale); 
         end
-        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);%/kv.redmul,1);       
-    end    
+        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
 else    
-    % fsupp_erb is measured in Erbs
+    % fsupp_scale is measured in Erbs
     % The scaling is incorrect, it does not account for the warping
-    fsupp_erb=1/winbw*kv.bwmul;
+    fsupp_scale=1/winbw*kv.bwmul;
 
     % Convert fsupp into the correct widths in Hz, necessary to compute
     % "a" in the next if-statement
-    fsupp(ind)=audtofreq(freqtoaud(fc(ind),flags.audscale)+fsupp_erb/2,flags.audscale)-...
-               audtofreq(freqtoaud(fc(ind),flags.audscale)-fsupp_erb/2,flags.audscale);
+    fsupp(ind)=audtofreq(freqtoaud(fc(ind),flags.audscale)+fsupp_scale/2,flags.audscale)-...
+               audtofreq(freqtoaud(fc(ind),flags.audscale)-fsupp_scale/2,flags.audscale);
     
-    if fmin > 0 
-        fsupp(1) = 0;%(2*fc(2)+4*audfiltbw(fc(2))/winbw);
+    % Generate lowpass filter parameters     
+        fsupp(1) = 0;
         fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
-        fsupp_temp=2*(audtofreq(freqtoaud(fc_temp,flags.audscale)+fsupp_erb/2,flags.audscale)-fc_temp);        
-        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);%/kv.redmul,1);        
-    end
-    if fmax < fs/2        
-        fsupp(end) = 0;%(2*(fc(end)-fc(end-1))+4*audfiltbw(fc(end-1))/winbw);
+        fsupp_temp=2*(audtofreq(freqtoaud(fc_temp,flags.audscale)+fsupp_scale/2,flags.audscale)-fc_temp);        
+        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);
+    
+    % Generate highpass filter parameters     
+        fsupp(end) = 0;
         fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
-        fsupp_temp=2*(fc_temp-audtofreq(freqtoaud(fc_temp,flags.audscale)-fsupp_erb/2,flags.audscale));        
-        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);%/kv.redmul,1);       
-    end    
+        fsupp_temp=2*(fc_temp-audtofreq(freqtoaud(fc_temp,flags.audscale)-fsupp_scale/2,flags.audscale));        
+        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
@@ -431,32 +393,19 @@ for m=ind.'
     g{m}=filterfunc(fsupp(m),fc(m),scal(m));
 end
 
-if fmin > 0
-    g{1} = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal(1),bwtruncmul,kv,flags);
-end
+% Generate lowpass filter
+g{1} = audlowpassfilter(filterfunc,g(1:M2),a(1:M2,:),fmin,fs,winbw,scal(1),bwtruncmul,kv,flags);
 
-if fmax < fs/2
-    g{M2} = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal(M2),bwtruncmul,kv,flags);
-end
+% Generate highpass filter
+g{M2} = audhighpassfilter(filterfunc,g(1:M2),a(1:M2,:),fmax,fs,winbw,scal(M2),bwtruncmul,kv,flags);
+
 
 function glow = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal,bwtruncmul,kv,flags)
     next_fc = max(audtofreq(freqtoaud(fmin,flags.audscale)-kv.spacing,flags.audscale),0);
     temp_fc = [];    
-% Temporary center frequencies and bandwidths for lowpass -----------------
-% (only makes sense for symmetric filters)
-%     ERB = @(f) 9.265.*log(1+f./228.8455);
-%     iERB = @(E) 228.8455.*(exp(E./9.265)-1);
-%     bwERB = @(f) 24.7+f./9.265;
-%     while next_fc >= iERB(-4)
-%         temp_fc(end+1) = next_fc;
-%         next_fc = iERB(ERB(next_fc)-kv.spacing);
-%     end
-%     
-%     temp_bw=bwERB(temp_fc)/winbw*kv.bwmul;
-% [end] -------------------------------------------------------------------
 
-% Temporary center frequencies and bandwidths for lowpass - Simplified ----
-    while next_fc >= -120;
+    % Temporary center frequencies and bandwidths for lowpass
+    while next_fc >= -123.5604 % F^{-1}_{ERB}(-4) = -123.5604
         temp_fc(end+1) = next_fc;
         next_fc = audtofreq(freqtoaud(next_fc,flags.audscale)-kv.spacing,flags.audscale);
     end
@@ -471,74 +420,55 @@ function glow = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal,bwtruncmul,kv
         plateauWidth = max(2*temp_fc(1),0);
         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
     else
-        fsupp_erb=1/winbw*kv.bwmul;
-        temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_erb/2,flags.audscale)-...
-                  audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_erb/2,flags.audscale);
-        Lw = @(L) min(ceil(2*audtofreq(freqtoaud(temp_fc(1),flags.audscale)+fsupp_erb/2,flags.audscale)*L/fs),L);
+        fsupp_scale=1/winbw*kv.bwmul;
+        temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_scale/2,flags.audscale)-...
+                  audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
+        Lw = @(L) min(ceil(2*audtofreq(freqtoaud(temp_fc(1),flags.audscale)+fsupp_scale/2,flags.audscale)*L/fs),L);
     end
-% Simplified [end]---------------------------------------------------------
     
     temp_g = cell(1,numel(temp_fc));
     for m=1:numel(temp_g)
-        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);%scal.^2);
+        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);
     end    
     
     temp_fun = @(L) filterbankresponse(temp_g,1,L);
-    if 1%flags.do_symmetric
-        temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
-        glow.H = @(L) fftshift(long2fir(...
-                    sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
-                    flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
-                    (flipud(postpad(ones(round(L/4)-1,1),L)).*temp_fbresp(L) + ...
-                    postpad(ones(round(L/4),1),L).*flipud(temp_fbresp(L)))),...
-                    Lw(L)))*scal;
-    else
-        glow.H = @(L) fftshift(long2fir(...
-                    sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
-                    flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1))),...
-                    Lw(L)))*scal;
-    end
+    
+    temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
+    glow.H = @(L) fftshift(long2fir(...
+                sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
+                (flipud(postpad(ones(round(L/4)-1,1),L)).*temp_fbresp(L) + ...
+                postpad(ones(round(L/4),1),L).*flipud(temp_fbresp(L)))),...
+                Lw(L)))*scal;
                     
     glow.foff = @(L) -floor(Lw(L)/2);
     glow.realonly = 0;
     glow.delay = 0;
     glow.fs = g{2}.fs;
-    %glow.H = @(L) glow.H(L)*scal;%*sqrt(2);
     
 function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,kv,flags)
+    if flags.do_bark && (fs > 44100)
+        error(['%s: Bark scale is not suitable for sampling rates higher than 44.1 kHz. ',...
+        'Please choose another scale.'],upper(mfilename));
+    end 
+    wrap_around = freqtoaud(fs/2,flags.audscale);
+    next_fc = audtofreq(modcent(freqtoaud(fmax,flags.audscale)+kv.spacing,...
+                2*wrap_around),flags.audscale);
     
+    %Temporary filters are created up to this frequency
+    fc_lim = audtofreq(-freqtoaud(fs/2,'erb')+4,'erb'); 
+
     temp_fc = [];
-    if flags.do_bark
-        bark_of_22050 = freqtoaud(22050,flags.audscale);
-        next_fc_bark = modcent(freqtoaud(fmax,flags.audscale)+kv.spacing,2*bark_of_22050);
-        if 0 <= next_fc_bark
-          next_fc = min(audtofreq(next_fc_bark,flags.audscale),fs/2);    
-        else 
-          next_fc = fs/2;
-        end            
-        while next_fc <= 3*fs/4
-            temp_fc(end+1) = next_fc;
-            next_fc_bark = modcent(next_fc_bark+kv.spacing,2*bark_of_22050);
-            if 0 <= next_fc_bark
-                next_fc = audtofreq(next_fc_bark,flags.audscale);
-            else
-                next_fc = 44100 - audtofreq(-next_fc_bark,flags.audscale);
-            end
-        end        
-    else
-        next_fc = min(audtofreq(freqtoaud(fmax,flags.audscale)+kv.spacing,flags.audscale),fs/2);
-        
-        while next_fc <= 3*fs/4
-            temp_fc(end+1) = next_fc;
-            next_fc = audtofreq(freqtoaud(next_fc,flags.audscale)+kv.spacing,flags.audscale);
-        end
+    % Temporary center frequencies and bandwidths for lowpass
+    while (next_fc > 0) || (next_fc <= fc_lim) 
+        temp_fc(end+1) = next_fc;
+        next_fc = audtofreq(modcent(freqtoaud(next_fc,flags.audscale)+kv.spacing,...
+                2*wrap_around),flags.audscale);        
     end
     
     if flags.do_symmetric
-        if flags.do_erb || flags.do_erb83
+        if flags.do_erb || flags.do_erb83 || flags.do_bark
             temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-        elseif flags.do_bark
-            temp_bw=audfiltbw(abs(modcent(temp_fc,22050)),flags.audscale)/winbw*kv.bwmul;
         else
             temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
                    audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
@@ -546,42 +476,30 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
         plateauWidth = max(2*(fs/2-temp_fc(1)),0);
         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
     else
-        fsupp_erb=1/winbw*kv.bwmul;
-        temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_erb/2,flags.audscale)-...
-                  audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_erb/2,flags.audscale);
-        Lw = @(L) min(ceil(2*(fs/2-audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_erb/2,flags.audscale))*L/fs),L);
+        fsupp_scale=1/winbw*kv.bwmul;
+        temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_scale/2,flags.audscale)-...
+                  audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
+        Lw = @(L) min(ceil(2*(fs/2-audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale))*L/fs),L);
     end
     
     temp_g = cell(1,numel(temp_fc));
     for m=1:numel(temp_g)
-        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);%scal.^2);
+        temp_g{m}=filterfunc(temp_bw(m),temp_fc(m),1);
     end
-    
-    %plateauWidth = max(2*(fs/2-temp_fc(1)),0);
-    %Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
     
     temp_fun = @(L) filterbankresponse(temp_g,1,L);
-    if 1%flags.do_symmetric
-        temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
-        ghigh.H = @(L) fftshift(long2fir(...
-                         fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
-                         flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
-                         (postpad([zeros(ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L) + ...
-                         flipud(postpad([zeros(L-ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L))))),...
-                         Lw(L)))*scal;
-    else
-        ghigh.H = @(L) fftshift(long2fir(...
-                         fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...    
-                         flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)))),...
-                         Lw(L)))*scal;
-    end
+    temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
+    ghigh.H = @(L) fftshift(long2fir(...
+                     fftshift(sqrt(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
+                     flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
+                     (postpad([zeros(ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L) + ...
+                     flipud(postpad([zeros(L-ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L))))),...
+                     Lw(L)))*scal;
     
     ghigh.foff = @(L) ceil(L/2)-floor(Lw(L)/2)-1;
     ghigh.realonly = 0;
     ghigh.delay = 0;
     ghigh.fs = g{2}.fs;
-%    ghigh.H = @(L) ghigh.H(L)*scal;%*sqrt(2);
-
 
 function width = winwidthatheight(gnum,atheight)
 
@@ -598,12 +516,8 @@ for ii=1:numel(atheight)
         %There is no sample exactly half of the height
         ind1 = find(gnum(1:floor(gl/2)+1)>fracofmax,1,'last');
         ind2 = find(gnum(1:floor(gl/2)+1)<fracofmax,1,'first');
-%         if isempty(ind2)
-%            width(ii) = gl;
-%         else 
-           rest = 1-(fracofmax-gnum(ind2))/(gnum(ind1)-gnum(ind2));
-           width(ii) = 2*(ind1+rest-1);
-%        end        
+        rest = 1-(fracofmax-gnum(ind2))/(gnum(ind1)-gnum(ind2));
+        width(ii) = 2*(ind1+rest-1);
     else
         width(ii) = 2*(ind-1);
     end
