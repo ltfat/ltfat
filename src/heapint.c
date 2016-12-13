@@ -59,9 +59,10 @@ LTFAT_API void
 LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
 {
     h->totalheapsize *= factor;
-    h->h = (ltfat_int*)ltfat_realloc((void*)h->h,
-                                     h->totalheapsize * sizeof * h->h / factor,
-                                     h->totalheapsize * sizeof * h->h);
+
+    h->h = ltfat_realloc_and_copy(h->h,
+                                  h->totalheapsize * sizeof * h->h / factor,
+                                  h->totalheapsize * sizeof * h->h);
 }
 
 
