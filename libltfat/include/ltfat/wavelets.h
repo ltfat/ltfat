@@ -1,7 +1,7 @@
 #ifndef _WAVELETS_H
 #define _WAVELETS_H
 
-
+LTFAT_EXTERN
 ltfatExtType ltfatExtStringToEnum(const char* extType);
 
 

@@ -1,5 +1,6 @@
 #include "ltfat.h"
 
+LTFAT_EXTERN
 ltfatExtType ltfatExtStringToEnum(const char* extType)
 {
     if(strcmp(extType,"per")==0)
