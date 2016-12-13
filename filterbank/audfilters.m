@@ -473,7 +473,10 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
             temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
                    audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
         end
-        plateauWidth = max(2*(fs/2-temp_fc(1)),0);
+        plateauWidth = 0;
+        if temp_fc(1) > 0
+            plateauWidth = max(2*(fs/2-temp_fc(1)),0);
+        end
         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
     else
         fsupp_scale=1/winbw*kv.bwmul;
