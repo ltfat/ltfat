@@ -50,6 +50,7 @@ CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
 CXXFLAGS+=-Wall -Wextra -pedantic -std=c++11 -fno-exceptions -fno-rtti -Iinclude -Ithirdparty $(OPTCFLAGS)
 
 # The following adds parameters to CFLAGS
+COMPTARGET ?= release
 include comptarget.mk
 
 # Define source files from src/
