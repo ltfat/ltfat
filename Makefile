@@ -59,11 +59,22 @@ include filedefs.mk
 FFTWLIBS?=-lfftw3 -lfftw3f
 LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 
-ifdef MINGW
+ifndef MINGW
 	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
-	CFLAGS += -DLTFAT_BUILD_SHARED
-	CXXFLAGS += -DLTFAT_BUILD_SHARED
+
+	# NOTE that if both static and shared libraries are to be built, 
+	# the obj files must be cleared in between make calls i.e.
+	# make shared
+	# make cleanobj
+	# make static 
+	ifneq ($(MAKECMDGOALS),shared)
+		CFLAGS += -DLTFAT_BUILD_STATIC
+		CXXFLAGS += -DLTFAT_BUILD_STATIC
+	else
+		CFLAGS += -DLTFAT_BUILD_SHARED
+		CXXFLAGS += -DLTFAT_BUILD_SHARED
+	endif
 else
 	CFLAGS += -fPIC
 	CXXFLAGS += -fPIC
@@ -127,7 +138,7 @@ SO_DSTARGET=$(buildprefix)/$(DSSHARED)
 DDEP = $(buildprefix) $(objprefix)/double $(objprefix)/complexdouble $(objprefix)/common
 SDEP = $(buildprefix) $(objprefix)/single $(objprefix)/complexsingle $(objprefix)/common
 
-all: static shared
+all: static
 
 $(DSTARGET): $(DDEP) $(SDEP) $(COMMONFILES) $(DFILES) $(SFILES)
 	$(AR) rv $@ $(COMMONFILES) $(DFILES) $(SFILES)
@@ -187,15 +198,17 @@ $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
 
 
-.PHONY: clean help doc doxy static shared munit
+.PHONY: clean cleanobj help doc doxy static shared munit
 
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
 shared: $(SO_DTARGET) $(SO_STARGET) $(SO_DSTARGET)
 
-clean:
-	@$(RMDIR) build
+cleanobj:
 	@$(RMDIR) obj
+
+clean: cleanobj
+	@$(RMDIR) build
 
 help:
 	@echo "USAGE: make [target]"
