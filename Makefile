@@ -59,7 +59,7 @@ include filedefs.mk
 FFTWLIBS?=-lfftw3 -lfftw3f
 LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 
-ifndef MINGW
+ifdef MINGW
 	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
 
