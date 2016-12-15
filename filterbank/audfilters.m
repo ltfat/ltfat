@@ -1,5 +1,5 @@
 function [g,a,fc,L]=audfilters(fs,Ls,varargin)
-%AUDFILTERS Generates AUD-spaced filters
+%AUDFILTERS Generates filters equidistantly spaced on auditory frequency scales
 %   Usage:  [g,a,fc,L]=audfilters(fs,Ls);
 %           [g,a,fc,L]=audfilters(fs,Ls,...);
 %
@@ -14,7 +14,8 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %   `[g,a,fc,L]=audfilters(fs,Ls)` constructs a set of filters *g* that are
 %   equidistantly spaced on a perceptual frequency scale (see |freqtoaud|) between
-%   0 and the Nyquist frequency and with bandwidths that are proportional to the critical 
+%   0 and the Nyquist frequency. When available ...
+%   (i.e. The filters  and with bandwidths that are proportional to the critical 
 %   bandwidth of the auditory filters |audfiltbw|. The filters are intended to work
 %   with signals with a sampling rate of *fs*. The signal length *Ls* is mandatory,
 %   since we need to avoid too narrow frequency windows.
@@ -188,8 +189,29 @@ end
 [flags,kv]=ltfatarghelper({'fmin','fmax'},definput,varargin);
 if isempty(winCell), winCell = {flags.wintype}; end
 
+if ~isscalar(kv.bwmul) || kv.bwmul <= 0
+    error('%s: bwmul must be a positive scalar.',upper(mfilename));
+end
+
+if ~isscalar(kv.redmul) || kv.redmul <= 0
+    error('%s: relmul must be a positive scalar.',upper(mfilename));
+end
+
+if kv.fmax <= kv.fmin || kv.fmin < 0 || kv.fmax > fs/2
+    error('%s: fmax must be bigger than fmin and in the range [0,fs/2].',upper(mfilename));
+end
+
+if kv.trunc_at > 1 || kv.trunc_at < 0
+    error('%s: trunc_at must be in range [0,1].',upper(mfilename));
+end
+
+if ~isscalar(kv.min_win) || rem(kv.min_win,1) ~= 0 || kv.min_win < 1
+    error('%s: min_win must be an integer bigger or equal to 1.',upper(mfilename));
+end
+
 if ~isempty(kv.M)
-    kv.spacing = (freqtoaud(kv.fmax,flags.audscale) - freqtoaud(kv.fmin,flags.audscale))/kv.M;
+    complainif_notposint(kv.M,'M',upper(mfilename));
+    kv.spacing = (freqtoaud(kv.fmax,flags.audscale) - freqtoaud(kv.fmin,flags.audscale))/(kv.M-1);
 end
 
 probelen = 10000;
@@ -240,7 +262,7 @@ switch flags.wintype
 end
 
 % Construct the AUD filterbank
-fmin = max(kv.fmin,audtofreq(1/kv.spacing,flags.audscale));
+fmin = max(kv.fmin,audtofreq(kv.spacing,flags.audscale));
 fmax = min(kv.fmax,fs/2);
 
 innerChanNum = floor((freqtoaud(fmax,flags.audscale)-freqtoaud(fmin,flags.audscale))/kv.spacing)+1;
@@ -482,7 +504,13 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
         fsupp_scale=1/winbw*kv.bwmul;
         temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_scale/2,flags.audscale)-...
                   audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
-        Lw = @(L) min(ceil(2*(fs/2-audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale))*L/fs),L);
+              
+        temp_low = modcent(audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale),fs);
+        Width = 0;
+        if temp_low > 0
+            Width = max(2*(fs/2-temp_low),0);
+        end      
+        Lw = @(L) min(ceil(Width*L/fs),L);
     end
     
     temp_g = cell(1,numel(temp_fc));
