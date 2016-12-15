@@ -86,7 +86,8 @@ if flags.do_bark
 end;
 
 if flags.do_erb83
-  aud = sign(freq).*(11.17*log((abs(freq)+312)./(abs(freq)+14675))+43.0);
+  aud = sign(freq).*11.17*(log((abs(freq)+312)./(abs(freq)+14675)) ...
+        - log(312/14675));
 end;
 
 if flags.do_freq
