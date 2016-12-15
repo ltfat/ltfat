@@ -37,7 +37,7 @@ for realcomplexidx=1:2
                     uniform='uniform';
                 end;
                 
-                [g,a]=erbfilters(16000,Ls,fractional{:},warping,uniform,...
+                [g,a]=audfilters(16000,Ls,fractional{:},warping,uniform,...
                       'redmul',1,realcomplex,'nuttall30');
                 L=filterbanklength(Ls,a);
                 

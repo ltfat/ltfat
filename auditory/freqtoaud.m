@@ -93,10 +93,6 @@ if flags.do_freq
   aud = freq;
 end;
 
-if flags.do_log10
-   aud = log10(freq);
-end
-
-if flags.do_semitone
+if flags.do_log10 || flags.do_semitone
    aud = log10(freq);
 end

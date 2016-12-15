@@ -160,15 +160,15 @@ firwinflags=getfield(arg_firwin,'flags','wintype');
 freqwinflags=getfield(arg_freqwin,'flags','wintype');
 
 definput.flags.wintype = [ firwinflags, freqwinflags];
-definput.import={'freqtoaud'};
 definput.keyvals.M=[];
-definput.keyvals.bwmul=1;
 definput.keyvals.redmul=1;
 definput.keyvals.min_win = 4;
-definput.keyvals.spacing=1;
+definput.keyvals.bwmul=[];
+definput.keyvals.spacing=[];
 definput.keyvals.trunc_at=10^(-5);
 definput.keyvals.fmin=0;
 definput.keyvals.fmax=fs/2;
+definput.flags.audscale={'erb','erb83','bark','mel','mel1000'};
 definput.flags.warp     = {'symmetric','warped'};
 definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','uniform','fractional',...
@@ -188,6 +188,16 @@ end
 
 [flags,kv]=ltfatarghelper({'fmin','fmax'},definput,varargin);
 if isempty(winCell), winCell = {flags.wintype}; end
+
+switch flags.audscale
+    case {'mel','mel1000'} % The mel scales are very fine, therefore default spacing is adjusted
+        definput.keyvals.bwmul=100;
+        definput.keyvals.spacing=100;
+    otherwise
+        definput.keyvals.bwmul=1;
+        definput.keyvals.spacing=1;
+end
+[flags,kv]=ltfatarghelper({'fmin','fmax'},definput,varargin);
 
 if ~isscalar(kv.bwmul) || kv.bwmul <= 0
     error('%s: bwmul must be a positive scalar.',upper(mfilename));
@@ -278,7 +288,7 @@ while fmax >= fs/2
 end
 innerChanNum = innerChanNum-count;
 
-fc=erbspace(fmin,fmax,innerChanNum).';
+fc=audspace(fmin,fmax,innerChanNum,flags.audscale).';
 fc = [0;fc;fs/2];
 M2 = innerChanNum+2;
 
@@ -290,34 +300,19 @@ fsupp=zeros(M2,1);
 aprecise=zeros(M2,1);
 
 if flags.do_symmetric
-    if flags.do_erb || flags.do_erb83 || flags.do_bark
-        fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
-    else
-        fsupp(ind)=audtofreq(freqtoaud(fc(ind),flags.audscale)+kv.spacing,flags.audscale)-...
-                   audtofreq(freqtoaud(fc(ind),flags.audscale)-kv.spacing,flags.audscale);
-    end
+    fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
     
     % Generate lowpass filter parameters     
-        fsupp(1) = 0;
-        fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
-        if flags.do_erb || flags.do_erb83 || flags.do_bark
-            fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
-        else
-            fsupp_temp=audtofreq(freqtoaud(fc_temp,flags.audscale)+kv.spacing,flags.audscale)-...
-                       audtofreq(freqtoaud(fc_temp,flags.audscale)-kv.spacing,flags.audscale); 
-        end
-        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);    
+    fsupp(1) = 0;
+    fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
+    fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
+    aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);    
         
     % Generate highpass filter parameters     
-        fsupp(end) = 0;
-        fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
-        if flags.do_erb || flags.do_erb83 || flags.do_bark
-            fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
-        else
-            fsupp_temp=audtofreq(freqtoaud(fc_temp,flags.audscale)+kv.spacing,flags.audscale)-...
-                       audtofreq(freqtoaud(fc_temp,flags.audscale)-kv.spacing,flags.audscale); 
-        end
-        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
+    fsupp(end) = 0;
+    fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
+    fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
+    aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
 else    
     % fsupp_scale is measured in Erbs
     % The scaling is incorrect, it does not account for the warping
@@ -329,16 +324,16 @@ else
                audtofreq(freqtoaud(fc(ind),flags.audscale)-fsupp_scale/2,flags.audscale);
     
     % Generate lowpass filter parameters     
-        fsupp(1) = 0;
-        fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
-        fsupp_temp=2*(audtofreq(freqtoaud(fc_temp,flags.audscale)+fsupp_scale/2,flags.audscale)-fc_temp);        
-        aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);
+    fsupp(1) = 0;
+    fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
+    fsupp_temp=2*(audtofreq(freqtoaud(fc_temp,flags.audscale)+fsupp_scale/2,flags.audscale)-fc_temp);        
+    aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);
     
     % Generate highpass filter parameters     
-        fsupp(end) = 0;
-        fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
-        fsupp_temp=2*(fc_temp-audtofreq(freqtoaud(fc_temp,flags.audscale)-fsupp_scale/2,flags.audscale));        
-        aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
+    fsupp(end) = 0;
+    fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
+    fsupp_temp=2*(fc_temp-audtofreq(freqtoaud(fc_temp,flags.audscale)-fsupp_scale/2,flags.audscale));        
+    aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
@@ -401,9 +396,7 @@ else
     a=[a;flipud(a(2:M2-1,:))];
     scal=[scal;flipud(scal(2:M2-1))];
     fc  =[fc; -flipud(fc(2:M2-1))];
-    %if flags.do_symmetric
-        fsupp=[fsupp;flipud(fsupp(2:M2-1))];
-    %end;
+    fsupp=[fsupp;flipud(fsupp(2:M2-1))];
     ind = [ind;numel(fc)+2-(M2-1:-1:2)'];
 end;
 
@@ -433,12 +426,7 @@ function glow = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal,bwtruncmul,kv
     end
     
     if flags.do_symmetric
-        if flags.do_erb || flags.do_erb83 || flags.do_bark
-            temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-        else
-            temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
-                   audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
-        end
+        temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
         plateauWidth = max(2*temp_fc(1),0);
         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
     else
@@ -489,12 +477,12 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
     end
     
     if flags.do_symmetric
-        if flags.do_erb || flags.do_erb83 || flags.do_bark
+        %if flags.do_erb || flags.do_erb83 || flags.do_bark
             temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-        else
-            temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
-                   audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
-        end
+        %else
+        %    temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
+        %           audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
+        %end
         plateauWidth = 0;
         if temp_fc(1) > 0
             plateauWidth = max(2*(fs/2-temp_fc(1)),0);
