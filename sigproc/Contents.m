@@ -14,11 +14,13 @@
 %    FIRKAISER      -  FIR Kaiser-Bessel window.
 %    FIR2LONG       -  Extend FIR window to LONG window.
 %    LONG2FIR       -  Cut LONG window to FIR window.
+%    FREQWIN        -  Freq responses (Gauss,Gammatone,Butterworth,...)
 %
 %  Filtering
 %    FIRFILTER      -  Construct an FIR filter.
 %    BLFILTER       -  Construct a band-limited filter.
 %    WARPEDBLFILTER -  Warped, band-limited filter.
+%    FREQFILTER     -  Construct a full length frequency side filter.
 %    PFILT          -  Apply filter with periodic boundary conditions.
 %    MAGRESP        -  Magnitude response plot.
 %    TRANSFERFUNCTION - Compute the transfer function of a filter.

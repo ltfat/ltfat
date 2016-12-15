@@ -10,7 +10,7 @@ function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
 %   as used in |filterbank| or |ufilterbank|.
 %
 %   This function is useful if there is no way how to explicitly compute
-%   a dual system using |filterbankdual| or |filterbankdualreal|.
+%   a dual system using |filterbankdual| or |filterbankrealdual|.
 %
 %   Additional parameters
 %   ---------------------
@@ -31,7 +31,7 @@ function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
 %
 %       [f,fs] = greasy; L = size(f,1);
 %       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6,'redmul',4/5,'complex');
-%       filterbankfreqz(g,a,L,'plot','lin');
+%       filterbankfreqz(g,a,L,'plot','linabs');
 %       % Filterbankdual does not work
 %       try
 %           gd=filterbankdual(g,a,L);
@@ -50,7 +50,7 @@ function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
 %
 %       [f,fs] = greasy; L = size(f,1);
 %       [g,a,fc]=erbfilters(fs,L,'fractional','bwmul',0.6,'redmul',4/5);
-%       filterbankfreqz(g,a,L,'plot','lin');
+%       filterbankfreqz(g,a,L,'plot','linabs');
 %       % Filterbankrealdual does not work
 %       try
 %           gd=filterbankrealdual(g,a,L);
@@ -67,7 +67,7 @@ function [f,iter,relres]=ifilterbankiter(c,g,a,varargin)
 %
 %   See also: filterbank, ufilterbank, ifilterbank, filterbankdual
 %
-%   References: bohlfe02
+%   References: ltfatnote027
 
 complainif_notenoughargs(nargin,3,'IFILTERBANKITER');
 
