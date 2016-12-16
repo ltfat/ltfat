@@ -4,6 +4,8 @@ EXT?=mex
 
 include ../../libltfat/ostools.mk
 
+export CXXFLAGS := $(shell $(MKOCTFILE) -p CXXFLAGS) -std=c++11
+
 all:
 	$(MKOCTFILE) -Wall -mex polyboolmex.cpp clipper.cpp
 

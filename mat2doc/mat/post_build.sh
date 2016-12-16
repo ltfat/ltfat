@@ -5,17 +5,18 @@ echo "Changing to " $curdir
 
 cd $curdir
 # We do not need any of these. They only work in Matlab
-rm -Rf mulaclab
-rm -Rf thirdparty/GPC
-rm -Rf thirdparty/PolygonClip
+# rm -Rf mulaclab
+# rm -Rf thirdparty/GPC
+# rm -Rf thirdparty/PolygonClip
 # the thirdparty dir might contain Octave scripts as well as source code of oct and mex files
 mkdir ../thirdparty
 mv thirdparty/Playrec ../thirdparty
-rm mulaclab.m
+mv thirdparty/polyboolclipper ../thirdparty
+# rm mulaclab.m
 # Move these to the package top level
 mv libltfat ../src
 mv oct ..
-rm -Rf mex 
+rm -Rf mex
 # We need to keep the mex subdir. as we use some of the mex files
 #mv mex ..
 mv lib ..
@@ -24,6 +25,7 @@ mv lib ..
 sed -i 's:../../libltfat/ostools.mk:../../../src/ostools.mk:g' blockproc/java/Makefile
 sed -i 's:/libltfat/:/src/:g' ../oct/Makefile_unix
 sed -i 's:../../libltfat/ostools.mk:../../src/ostools.mk:g' ../thirdparty/Playrec/Makefile_unixoct
+sed -i 's:../../libltfat/ostools.mk:../../src/ostools.mk:g' ../thirdparty/polyboolclipper/Makefile_unixoct
 
 # Store contents from the testing and the reference directories in 
 # private dir. so they do not pollute the namespace.
