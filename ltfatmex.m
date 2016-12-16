@@ -171,7 +171,7 @@ if flags.do_clean
     end 
       
     disp('========= Cleaning PolyBoolClipper ====================');
-    cd([bp,'mulaclab']);
+    cd([bp,'thirdparty',filesep,'polyboolclipper']);
     clear mex; 
     callmake(make_exe,makefilename_pbc,'target','clean','ext',mexext,flags.verbosity);
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean',' EXT=',mexext]);
@@ -274,7 +274,7 @@ if flags.do_compile
       
     disp('========= Compiling PolyBoolClipper ===================');
     % Compile PolyBoolClipper mex file for use with mulaclab
-    cd([bp,'mulaclab']);
+    cd([bp,'thirdparty',filesep,'polyboolclipper']);
     clear mex; 
     [status,result] = callmake(make_exe,makefilename_pbc,'matlabroot','arch',...
                       'ext',ext,flags.verbosity);

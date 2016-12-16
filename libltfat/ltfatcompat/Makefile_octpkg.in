@@ -26,9 +26,9 @@ ifeq ($(OS),Windows_NT)
 	export OS=NotWindows_NT
 endif
 
-.PHONY: all oct playrec postbuild
+.PHONY: oct octpostbuild playrec mulaclab 
 
-all: $(targets)
+all: oct mulaclab playrec
 
 oct:
 	# Compile the backend lib, no dependency is resolved here since we compile
@@ -40,13 +40,17 @@ oct:
 	$(MAKE) -C ../oct -f Makefile_unix
 	# Do postbuild explicitly so it is not called before
 	# oct files are finished
-	$(MAKE) postbuild
+	$(MAKE) octpostbuild
+
+mulaclab:
+	$(MAKE) -C ../thirdparty/polyboolclipper -f Makefile_unixoct
+	mv ../thirdparty/polyboolclipper/polyboolmex.mex .
 
 playrec:
 	$(MAKE) -C ../thirdparty/Playrec -f Makefile_unixoct
 	mv ../thirdparty/Playrec/playrec.mex .
 
-postbuild:
+octpostbuild:
 	# OCT files here
 	mv ../oct/*.oct .
 	# Compilation of MEX files has been disabled

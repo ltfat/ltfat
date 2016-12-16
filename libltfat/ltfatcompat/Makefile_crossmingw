@@ -51,6 +51,7 @@ endif
 export CROSS
 
 CC=$(CROSS)gcc
+CXX=$(CROSS)g++
 LD=$(CROSS)ld
 AR=$(CROSS)ar
 MKDIR_P = mkdir -p
@@ -106,12 +107,12 @@ $(MEXS): CFLAGS=-O2 -shared -s -Wall -std=c99 -I../thirdparty -I../include -I../
 $(MEXS): %.$(EXT): ../../mex/%.c 
 	$(CC) $(CFLAGS) $(MEXCOMPFLAGS) $< -o $(OUTDIR)/mex/$@ -L$(OUTDIR)/mex -lfftw3-3 -lfftw3f-3 -lltfat $(MEXLINKFLAGS)
 
-polygonclip: CFLAGS=-std=c99 -s -O2 -Wall -shared -DMATLAB_MEX_FILE -DNDEBUG
+polygonclip: CXXFLAGS=-s -O2 -Wall -shared -DMATLAB_MEX_FILE -DNDEBUG
 polygonclip:
-	$(CC) $(CFLAGS) -I../../thirdparty/PolygonClip -I../../thirdparty/GPC -I$(MATLIBS) \
-	  	../../thirdparty/PolygonClip/PolygonClip.c ../../thirdparty/GPC/gpc.c \
-		-L$(MATLIBS) -lmex -lmx -static-libgcc \
-	  	-o $(OUTDIR)/thirdparty/PolygonClip/PolygonClip.$(EXT)
+	$(CXX) $(CXXFLAGS) -I../../thirdparty/polyboolclipper -I$(MATLIBS) \
+	  	../../thirdparty/polyboolclipper/polyboolmex.cpp ../../thirdparty/polyboolclipper/clipper.cpp \
+		-Wl,--dll -L$(MATLIBS) -lmex -lmx -static-libgcc -static-libstdc++ \
+	  	-o $(OUTDIR)/thirdparty/polyboolclipper/polyboolmex.$(EXT)
 
 playrec: CFLAGS=-static-libgcc -std=c99 -O2 -Wall -shared -DMATLAB_MEX_FILE -DHAVE_PORTAUDIO -DNDEBUG
 playrec: 
@@ -132,7 +133,7 @@ makedirtree:
 	$(MKDIR_P) $(OUTDIR)/lib
 	$(MKDIR_P) $(OUTDIR)/thirdparty
 	$(MKDIR_P) $(OUTDIR)/thirdparty/Playrec
-	$(MKDIR_P) $(OUTDIR)/thirdparty/PolygonClip
+	$(MKDIR_P) $(OUTDIR)/thirdparty/polyboolclipper
 
 copyrest:
 	$(CP) $(MATLIBS)/libfftw3-3.dll $(OUTDIR)/mex

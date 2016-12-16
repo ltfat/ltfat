@@ -18,14 +18,14 @@ ifndef ARCH
   ARCH=glnxa64
 endif
 
-include ../libltfat/ostools.mk
+include ../../libltfat/ostools.mk
 
 MEXTGT=polyboolmex.$(EXT)
 MEXSRC=polyboolmex.cpp clipper.cpp
 LIBS=-Wl,--no-undefined -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -lm
 	  
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I.
-CXXFLAGS=-fPIC -O3 -Wall -shared -DMATLAB_MEX_FILE
+CXXFLAGS=-std=c++11 -fPIC -O3 -Wall -shared -DMATLAB_MEX_FILE
 
 all:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 

@@ -8,10 +8,9 @@ function g = filterbankscale(g,varargin)
 %   with *scal*. *scal* can be either scalar or a vector of the same length
 %   as *g*.
 %   The function only works with filterbanks already instantiated 
-%   (returned from a function with a `filters` suffix or run trough 
-%   |filterbankwin|,|firfilter|,|blfilter|) such that the elements
-%   of *g* must be either structs with .h or .H fields or be plain 
-%   numeric vectors.
+%   (returned from a function with a `filter` (of `filters`) suffix or run trough 
+%   |filterbankwin|) such that the elements of *g* must be either structs 
+%   with .h or .H fields or be plain numeric vectors.
 %
 %   `g=filterbankscale(g,'flag')` instead normalizes each filter to have 
 %   unit norm defined by 'flag'. It can be any of the flags recognized by 

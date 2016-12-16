@@ -1,5 +1,6 @@
 function H = freqwin(name,L,bw,varargin)
 %FREQWIN Frequency response window
+%   Usage: H = freqwin(name,L,bw);
 %
 %   `freqwin(name,L,bw)` returns a frequency window *name* of length *L* 
 %   with the mainlobe -6dB (half height) bandwidth *bw*. It is intended to
@@ -11,14 +12,13 @@ function H = freqwin(name,L,bw,varargin)
 %
 %   The following windows can be used in place of *name*:
 %
-%     'gauss'
-%         Gaussian window
+%     'gauss'        Gaussian window
 %
-%     'gammatone' or {'gammatone',order}
-%         Gammatone window of order *order*. The default order is 4.
+%     'gammatone'    Gammatone window. The default order is 4. Custom order 
+%                    can be set by `{'gammatone',order}`.
 %
-%     'butterworth' or {'butterworth',order}
-%         Butterworth window of order *order*. The default order is 4.
+%     'butterworth'  Butterworth window. The default order is 4. Custom 
+%                    order can be set by `{'butterworth',order}`.
 %
 %   `freqwin(name,L,bw,fs)` does the same as above except *bw* is expected
 %   to be in Hz given sampling frequency *fs*.
