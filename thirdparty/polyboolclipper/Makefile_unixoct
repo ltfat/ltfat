@@ -2,7 +2,7 @@
 MKOCTFILE ?= mkoctfile
 EXT?=mex
 
-include ../libltfat/ostools.mk
+include ../../libltfat/ostools.mk
 
 all:
 	$(MKOCTFILE) -Wall -mex polyboolmex.cpp clipper.cpp

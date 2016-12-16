@@ -18,7 +18,7 @@ ifndef ARCH
   ARCH=glnxa64
 endif
 
-include ../libltfat/ostools.mk
+include ../../libltfat/ostools.mk
 
 MEXTGT=polyboolmex.$(EXT)
 MEXSRC=polyboolmex.cpp clipper.cpp
