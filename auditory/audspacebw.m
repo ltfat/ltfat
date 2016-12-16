@@ -1,20 +1,20 @@
-function [y,n] = audspacebw(flow,fhigh,varargin)
+function [y,n] = audspacebw(fmin,fmax,varargin)
 %AUDSPACEBW  Auditory scale points specified by bandwidth
-%   Usage: y=audspacebw(flow,fhigh,bw,hitme);
-%          y=audspacebw(flow,fhigh,bw);
-%          y=audspacebw(flow,fhigh);
+%   Usage: y=audspacebw(fmin,fmax,bw,hitme);
+%          y=audspacebw(fmin,fmax,bw);
+%          y=audspacebw(fmin,fmax);
 %          [y,n]=audspacebw(...);
 %
-%   `audspacebw(flow,fhigh,bw,scale)` computes a vector containing values
-%   equistantly scaled between frequencies *flow* and *fhigh* on the
+%   `audspacebw(fmin,fmax,bw,scale)` computes a vector containing values
+%   equistantly scaled between frequencies *fmin* and *fmax* on the
 %   selected auditory scale.  All frequencies are specified in Hz.The
 %   distance between two consecutive values is *bw* on the selected scale,
-%   and the points will be centered on the scale between *flow* and *fhigh*.
+%   and the points will be centered on the scale between *fmin* and *fmax*.
 %
 %   See the help on |freqtoaud| to get a list of the supported values of the
 %   *scale* parameter.
 %  
-%   `audspacebw(flow,fhigh,bw,hitme,scale)` will do as above, but one of
+%   `audspacebw(fmin,fmax,bw,hitme,scale)` will do as above, but one of
 %   the points is quaranteed to be the frequency *hitme*.
 %
 %   `[y,n]=audspacebw(...)` additionally returns the number of points *n* in
@@ -30,16 +30,16 @@ if nargin<2
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-if ~isnumeric(flow) || ~isscalar(flow) || flow<0
-  error('%s: flow must be a non-negative scalar.',upper(mfilename));
+if ~isnumeric(fmin) || ~isscalar(fmin) || fmin<0
+  error('%s: fmin must be a non-negative scalar.',upper(mfilename));
 end;
 
-if ~isnumeric(fhigh) || ~isscalar(fhigh) || fhigh<0
-  error('%s: fhigh must be a non-negative scalar.',upper(mfilename));
+if ~isnumeric(fmax) || ~isscalar(fmax) || fmax<0
+  error('%s: fmax must be a non-negative scalar.',upper(mfilename));
 end;
 
-if flow>fhigh
-  error('%s: flow must be less than or equal to fhigh.',upper(mfilename));
+if fmin>fmax
+  error('%s: fmin must be less than or equal to fmax.',upper(mfilename));
 end;
 
 definput.import={'freqtoaud'};
@@ -57,14 +57,14 @@ end;
 
 if isempty(kv.hitme)
   % Convert the frequency limits to auds.
-  audlimits = freqtoaud([flow,fhigh],flags.audscale);
+  audlimits = freqtoaud([fmin,fmax],flags.audscale);
   audrange  = audlimits(2)-audlimits(1);
 
   % Calculate number of points, excluding final point
   n         = floor(audrange/bw);
 
   % The remainder is calculated in order to center the points
-  % correctly between flow and fhigh.
+  % correctly between fmin and fmax.
   remainder = audrange-n*bw;
 
   audpoints = audlimits(1)+(0:n)*bw+remainder/2;
@@ -75,7 +75,7 @@ if isempty(kv.hitme)
 else
     
   % Convert the frequency limits to auds.
-  audlimits    = freqtoaud([flow,fhigh,kv.hitme],flags.audscale);
+  audlimits    = freqtoaud([fmin,fmax,kv.hitme],flags.audscale);
   audrangelow  = audlimits(3)-audlimits(1);
   audrangehigh = audlimits(2)-audlimits(3);
 

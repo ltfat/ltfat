@@ -14,27 +14,36 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %   `[g,a,fc,L]=audfilters(fs,Ls)` constructs a set of filters *g* that are
 %   equidistantly spaced on a perceptual frequency scale (see |freqtoaud|) between
-%   0 and the Nyquist frequency. When available ...
-%   (i.e. The filters  and with bandwidths that are proportional to the critical 
-%   bandwidth of the auditory filters |audfiltbw|. The filters are intended to work
-%   with signals with a sampling rate of *fs*. The signal length *Ls* is mandatory,
-%   since we need to avoid too narrow frequency windows.
+%   0 and the Nyquist frequency. The filter bandwidths are proportional to the 
+%   critical bandwidth of the auditory filters |audfiltbw|. The filters are intended 
+%   to work with signals with a sampling rate of *fs*. The signal length *Ls* is 
+%   mandatory, since we need to avoid too narrow frequency windows.
 %
 %   By default the ERB scale is chosen but other frequency scales are
-%   possible. See |freqtoaud| for all available options. The most scales
-%   are 'erb', 'bark', and 'mel'.
+%   possible. Currently supported scales are 'erb', 'erb83', 'bark', 'mel'
+%   and 'mel1000', and can be changed by passing the associated string as 
+%   an optional parameter. See |freqtoaud| for more information on the
+%   supported frequency scales.
 %
-%   By default, a Hann window on the frequency side is chosen, but the
-%   window can be changed by passing any of the window types from
-%   |firwin| or |freqwin| as an optional parameter.
+%   By default, a Hann window shape is chosen as prototype frequency 
+%   response for all filters. The prototype frequency response can be 
+%   changed by passing any of the window types from |firwin| or |freqwin| 
+%   as an optional parameter.
 %
-%   `[g,a,fc,L]=audfilters(fs,Ls,fmin,fmax)` constructs a set of filters that are
-%   equidistantly spaced between *fmin* and *fmax*. In that case two
-%   additional filters will be positioned at the 0 and Nyquist frequencies
-%   so as to cover the full spectrum. The values of *fmin* and *fmax* can
-%   be instead specified using a key/value pair as::
+%   `[g,a,fc,L]=audfilters(fs,Ls,fmin,fmax)` constructs a set of filters 
+%   between *fmin* and *fmax*. The filters are equidistantly spaced on the 
+%   selected frequency scale. One additional filter will be positioned at 
+%   the 0 and Nyquist frequencies each, so as to cover the full range of 
+%   positive frequencies. 
+%   The values of *fmin* and *fmax* can be instead specified using a 
+%   key/value pair as::
 %
 %       [g,a,fc,L]=audfilters(fs,Ls,...,'fmin',fmin,'fmax',fmax)
+%
+%   Default values are *fmin=0* and *fmax=fs/2*. 
+%
+%   For more details on the construction of the filters, please see the
+%   given references.
 %
 %   Downsampling factors
 %   --------------------
@@ -59,8 +68,8 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %   `[g,a]=audfilters(...,'fractionaluniform')` constructs a filterbank with
 %   fractional downsampling rates *a*, which are uniform for all filters
-%   except the "filling" low-pass and high-pass filters can have different
-%   fractional downsampling rates. This is usefull when uniform subsampling
+%   except the "filling" low-pass and high-pass filters which can have different
+%   fractional downsampling rates. This is useful when uniform subsampling
 %   and low redundancy at the same time are desirable.
 %
 %   Additional parameters
@@ -68,12 +77,15 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %   `audfilters` accepts the following optional parameters:
 %
-%     'spacing',b     Specify the spacing between the filters. 
-%                     Default value is *b=1*.
+%     'spacing',b     Specify the spacing between the filters, measured in
+%                     scale units. Default value is *b=1* for the scales
+%                     'erb', 'erb83' and 'bark'; the default is *b=100* for
+%                     'mel' and 'mel1000'.
 %
-%     'M',M           Specify the total number of filters between *fmin* and *fmax*.
-%                     If this parameter is specified, it overwrites the
-%                     `'spacing'` parameter.
+%     'bwmul',bwmul   Bandwidth of the filters relative to the bandwidth
+%                     returned by |audfiltbw|. Default value is *bwmul=1* for 
+%                     the scales 'erb', 'erb83' and 'bark'; the default is 
+%                     *b=100* for 'mel' and 'mel1000'.
 %
 %     'redmul',redmul  Redundancy multiplier. Increasing the value of this
 %                      will make the system more redundant by lowering the
@@ -82,19 +94,28 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %                      value is *1*. If the value is less than one, the
 %                      system may no longer be painless.
 %
+%     'M',M           Specify the total number of filters between *fmin* and 
+%                     *fmax*. If this parameter is specified, it overwrites the
+%                     `'spacing'` parameter.
+%
 %     'symmetric'     Create filters that are symmetric around their centre
 %                     frequency. This is the default.
 %
 %     'warped'        Create asymmetric filters that are asymmetric on the
-%                     auditory scale. The warping does not work with other
-%                     scales yet.
+%                     auditory scale. 
 %
 %     'complex'       Construct a filterbank that covers the entire
-%                     frequency range.
+%                     frequency range instead of just the positive 
+%                     frequencies this allows the analysis of complex
+%                     valued signals.
 %
-%
-%     'bwmul',bwmul   Bandwidth of the filters relative to the bandwidth
-%                     returned by |audfiltbw|. Default is $bwmul=1$.
+%     'trunc_at'      When using a prototype defined in |freqwin|, a hard 
+%                     thresholding of the filters at the specified threshold 
+%                     value is performed to reduce their support size. 
+%                     The default value is *trunc_at=10e-5*. When no 
+%                     truncation is desired, *trunc_at=0* should be chosen.
+%                     This value is ignored when a prototype shape from
+%                     |firwin| was chosen.
 %
 %     'min_win',min_win     Minimum admissible window length (in samples).
 %                           Default is *4*. This restrict the windows not
@@ -147,10 +168,11 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %   See also: filterbank, ufilterbank, ifilterbank, ceil23
 %
 %   References: ltfatnote027
+%   [DO NOT FORGET TO ADD NEW REFERENCE]
 
 % Authors: Peter L. Søndergaard (original 'erbfilters' function)
 % Modified by: Thibaud Necciari, Nicki Holighaus
-% Date: 30.09.15
+% Date: 16.12.16
 
 complainif_notenoughargs(nargin,2,upper(mfilename));
 complainif_notposint(fs,'fs',upper(mfilename));
@@ -198,6 +220,11 @@ switch flags.audscale
         definput.keyvals.spacing=1;
 end
 [flags,kv]=ltfatarghelper({'fmin','fmax'},definput,varargin);
+
+if flags.do_bark && (fs > 44100)
+    error(['%s: Bark scale is not suitable for sampling rates higher than 44.1 kHz. ',...
+    'Please choose another scale.'],upper(mfilename));
+end 
 
 if ~isscalar(kv.bwmul) || kv.bwmul <= 0
     error('%s: bwmul must be a positive scalar.',upper(mfilename));
@@ -314,8 +341,9 @@ if flags.do_symmetric
     fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
     aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
 else    
-    % fsupp_scale is measured in Erbs
-    % The scaling is incorrect, it does not account for the warping
+    % fsupp_scale is measured on the selected auditory scale
+    % The scaling is incorrect, it does not account for the warping (NH:
+    % I do think it is correct.)
     fsupp_scale=1/winbw*kv.bwmul;
 
     % Convert fsupp into the correct widths in Hz, necessary to compute
@@ -457,10 +485,6 @@ function glow = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal,bwtruncmul,kv
     glow.fs = g{2}.fs;
     
 function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,kv,flags)
-    if flags.do_bark && (fs > 44100)
-        error(['%s: Bark scale is not suitable for sampling rates higher than 44.1 kHz. ',...
-        'Please choose another scale.'],upper(mfilename));
-    end 
     wrap_around = freqtoaud(fs/2,flags.audscale);
     next_fc = audtofreq(modcent(freqtoaud(fmax,flags.audscale)+kv.spacing,...
                 2*wrap_around),flags.audscale);
@@ -477,12 +501,7 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
     end
     
     if flags.do_symmetric
-        %if flags.do_erb || flags.do_erb83 || flags.do_bark
-            temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-        %else
-        %    temp_bw=audtofreq(freqtoaud(temp_fc,flags.audscale)+kv.spacing,flags.audscale)-...
-        %           audtofreq(freqtoaud(temp_fc,flags.audscale)-kv.spacing,flags.audscale);
-        %end
+        temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
         plateauWidth = 0;
         if temp_fc(1) > 0
             plateauWidth = max(2*(fs/2-temp_fc(1)),0);
@@ -528,8 +547,7 @@ for ii=1:numel(atheight)
     gmax = max(gnum);
     frac=  1/atheight(ii);
     fracofmax = gmax/frac;
-    
-    
+        
     ind =find(gnum(1:floor(gl/2)+1)==fracofmax,1,'first');
     if isempty(ind)
         %There is no sample exactly half of the height

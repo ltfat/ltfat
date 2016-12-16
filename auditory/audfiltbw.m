@@ -10,7 +10,8 @@ function bw = audfiltbw(fc,varargin)
 %
 %   .. math::  bw = 24.7 + \frac{fc}{9.265}
 %     
-%   as estimated in Glasberg and Moore (1990).
+%   as estimated in Glasberg and Moore (1990). This function is also used
+%   when the original ERB scale ('erb83') is chosen.
 % 
 %   `audfiltbw(fc,'bark')` returns the critical bandwidth at *fc* according
 %   to the Bark scale using the relation:

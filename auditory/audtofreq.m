@@ -48,19 +48,13 @@ end;
 
 if flags.do_erb83
   %freq = 14363./(1-exp((aud-43.0)/11.7))-14675;
-  freq = sign(aud).*14675*(1-exp(0.0895255*abs(aud)))./(exp(0.0895255*abs(aud)) - 47.0353);
+  freq = sign(aud).*14675.*(1-exp(0.0895255*abs(aud)))./(exp(0.0895255*abs(aud)) - 47.0353);
 end;
 
 if flags.do_freq
   freq=aud;
 end;
 
-if flags.do_log10
+if flags.do_log10 || flags.do_semitone
    freq = 10^(aud);
 end
-
-if flags.do_semitone
-   freq = 10^(aud);
-end
-
-

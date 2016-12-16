@@ -1,10 +1,10 @@
-function [y,bw] = audspace(flow,fhigh,n,varargin)
+function [y,bw] = audspace(fmin,fmax,n,varargin)
 %AUDSPACE  Equidistantly spaced points on auditory scale
-%   Usage: y=audspace(flow,fhigh,n,scale);
+%   Usage: y=audspace(fmin,fmax,n,scale);
 %
-%   `audspace(flow,fhigh,n,scale)` computes a vector of length *n*
+%   `audspace(fmin,fmax,n,scale)` computes a vector of length *n*
 %   containing values equidistantly scaled on the selected auditory scale
-%   between the frequencies *flow* and *fhigh*. All frequencies are
+%   between the frequencies *fmin* and *fmax*. All frequencies are
 %   specified in Hz.
 %
 %   See the help on |freqtoaud| to get a list of the supported values of the
@@ -25,20 +25,20 @@ end;
   
 % Default parameters.
 
-if ~isnumeric(flow) || ~isscalar(flow) 
-  error('%s: flow must be a scalar.',upper(mfilename));
+if ~isnumeric(fmin) || ~isscalar(fmin) 
+  error('%s: fmin must be a scalar.',upper(mfilename));
 end;
 
-if ~isnumeric(fhigh) || ~isscalar(fhigh) 
-  error('%s: fhigh must be a scalar.',upper(mfilename));
+if ~isnumeric(fmax) || ~isscalar(fmax) 
+  error('%s: fmax must be a scalar.',upper(mfilename));
 end;
 
 if ~isnumeric(n) || ~isscalar(n) || n<=0 || fix(n)~=n
   error('%s: n must be a positive, integer scalar.',upper(mfilename));
 end;
 
-if flow>fhigh
-  error('%s: flow must be less than or equal to fhigh.',upper(mfilename));
+if fmin>fmax
+  error('%s: fmin must be less than or equal to fmax.',upper(mfilename));
 end;
 
 definput.import={'freqtoaud'};
@@ -47,7 +47,7 @@ definput.import={'freqtoaud'};
 
 %% ------ Computation --------------------------
 
-audlimits = freqtoaud([flow,fhigh],flags.audscale);
+audlimits = freqtoaud([fmin,fmax],flags.audscale);
 
 y = audtofreq(linspace(audlimits(1),audlimits(2),n),flags.audscale);
 
@@ -55,6 +55,6 @@ bw=(audlimits(2)-audlimits(1))/(n-1);
 
 % Set the endpoints to be exactly what the user specified, instead of the
 % calculated values
-y(1)=flow;
-y(end)=fhigh;
+y(1)=fmin;
+y(end)=fmax;
 
