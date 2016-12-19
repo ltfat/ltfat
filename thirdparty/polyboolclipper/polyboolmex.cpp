@@ -41,6 +41,10 @@ ulf.griesmann@nist.gov, ulfgri@gmail.com
 // all memory allocated by the Clipper library is freed, and memory 
 // leaks are possible. Need to keep an eye on this ... 
 
+#ifdef __STDC_UTF_16__
+#include <uchar.h>
+#endif
+
 #include "mex.h"
 #include "clipper.hpp"
 
