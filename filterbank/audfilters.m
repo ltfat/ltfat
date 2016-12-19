@@ -489,14 +489,14 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
                 2*wrap_around),flags.audscale);
     
     %Temporary filters are created up to this frequency
-    fc_lim = audtofreq(-freqtoaud(fs/2,'erb')+4,'erb'); 
+    fc_lim = audtofreq(freqtoaud(fs/2,'erb')+4,'erb'); 
 
     temp_fc = [];
     % Temporary center frequencies and bandwidths for lowpass
-    while (next_fc > 0) || (next_fc <= fc_lim) 
+    while (next_fc <= fc_lim) %(next_fc > 0) || (next_fc <= fc_lim) 
         temp_fc(end+1) = next_fc;
-        next_fc = audtofreq(modcent(freqtoaud(next_fc,flags.audscale)+kv.spacing,...
-                2*wrap_around),flags.audscale);        
+        next_fc = audtofreq(freqtoaud(next_fc,flags.audscale)+kv.spacing,...
+                            flags.audscale);        
     end
     
     if flags.do_symmetric
@@ -511,7 +511,7 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
         temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_scale/2,flags.audscale)-...
                   audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
               
-        temp_low = modcent(audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale),fs);
+        temp_low = audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale);
         Width = 0;
         if temp_low > 0
             Width = max(2*(fs/2-temp_low),0);
