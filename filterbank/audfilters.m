@@ -167,8 +167,7 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %
 %   See also: filterbank, ufilterbank, ifilterbank, ceil23
 %
-%   References: ltfatnote027
-%   [DO NOT FORGET TO ADD NEW REFERENCE]
+%   References: ltfatnote027 Necciari2016_sub
 
 % Authors: Peter L. Søndergaard (original 'erbfilters' function)
 % Modified by: Thibaud Necciari, Nicki Holighaus
