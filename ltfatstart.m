@@ -37,6 +37,8 @@ function ltfatstart(varargin)
 %   AUTHOR : Peter L. Søndergaard, Zdenek Prusa
 %   TESTING: NA
 
+%% PKG_ADD: ltfatstart(0); 
+
 do_java = 1;
 ltfatstartprint=1;
 if nargin>0
@@ -72,11 +74,18 @@ basepath=which('ltfatstart');
 % Kill the function name from the path.
 basepath=basepath(1:end-13);
 
-% add the base path
-addpath(basepath);
+pathCell = regexp(path, pathsep, 'split');
+if ispc  % Windows is not case-sensitive
+   bponPath = any(strcmpi(basepath, pathCell));
+else
+   bponPath = any(strcmp(basepath, pathCell));
+end
+
+if ~bponPath % To avoid recursion during pkg load
+    addpath(basepath);
+end
 
 bp=basepath;
-
  
 % Load the version number
 [FID, MSG] = fopen ([bp,filesep,'ltfat_version'],'r');

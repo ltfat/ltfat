@@ -1,4 +1,4 @@
-function ltfatstop()
+function ltfatstop(varargin)
 %LTFATSTOP   Stops the LTFAT toolbox
 %   Usage:  ltfatstop;
 %
@@ -7,6 +7,10 @@ function ltfatstop()
 %   See also:  ltfatstart
 
 %   AUTHOR : Peter L. Søndergaard, Zdenek Prusa 
+
+%% PKG_DEL: ltfatstop('notbasepath')
+
+do_removebp = ~any(strcmpi('notbasepath',varargin));
 
 dirlist = {};
 jarsubpath = ['blockproc', filesep(), 'java', filesep(), 'blockproc.jar'];
@@ -63,7 +67,7 @@ else
 end
 
 % This can actually remove user hardcoded path to LTFAT's root.
-if onPath
+if onPath && do_removebp
     rmpath(pkg_folder);
 end
 
