@@ -1,3 +1,12 @@
+Version 2.2.0
+
+* New Gabor window generating functions: ptpfun, ptpfundual, pebfun, pebfundual
+
+* Introduced Mulaclab, a GUI for editing time-frequency representations.
+
+* Included new colormaps: ltfat_inferno, ltfat_magma, ltfat_plasma,
+						  ltfat_viridis, ltfat_nicecolormap
+
 Version 2.1.2
 
 * Improved functions for DGT and DGTREAL phase reconstruction: constructphase, constructphasereal
