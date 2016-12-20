@@ -202,8 +202,9 @@ winCell = {};
 % If there is such window, replace cell with function name so that 
 % ltfatarghelper does not complain
 if ~isempty(candCellId) && any(candCellId)
-    winCell = varargin{candCellId(end)};
-    varargin{candCellId} = [];
+    candCellIdLast = find(candCellId,1,'last');
+    winCell = varargin{candCellIdLast};
+    varargin(candCellId) = []; % But remove all
     varargin{end+1} = winCell{1};
 end
 
@@ -314,6 +315,10 @@ while fmax >= fs/2
 end
 innerChanNum = innerChanNum-count;
 
+if fmax <= fmin || fmin > fs/4 || fmax < fs/4
+    error(['%s: Bad combination of fs, fmax and fmin.'],upper(mfilename));
+end
+
 fc=audspace(fmin,fmax,innerChanNum,flags.audscale).';
 fc = [0;fc;fs/2];
 M2 = innerChanNum+2;
@@ -374,6 +379,10 @@ end
 % Find suitable channel subsampling rates
 aprecise(ind)=fs./fsupp(ind)/kv.redmul;
 aprecise=aprecise(:);
+
+if any(aprecise<1)
+    error('%s: Invalid subsampling rates. Decrease redmul.',upper(mfilename))
+end
 
 %% Compute the downsampling rate
 if flags.do_regsampling
