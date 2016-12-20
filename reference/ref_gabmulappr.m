@@ -115,8 +115,8 @@ else
 end
 
 % The Gram matrix is square and Toeplitz.
-iGram=inv(Gram);
-sym = reshape(iGram*(lowsym(:)),M,N);
+%iGram=inv(Gram);
+sym = reshape(Gram\lowsym(:),M,N);
 % sym = involute(sym); % strange but true ?
  
 
