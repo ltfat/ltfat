@@ -330,15 +330,15 @@ if flags.do_symmetric
     
     % Generate lowpass filter parameters     
     fsupp(1) = 0;
-    fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale),0);
+    fc_temp = audtofreq(freqtoaud(fc(2),flags.audscale)-kv.spacing,flags.audscale);
     fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
-    aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);    
+    aprecise(1) = max(fs./(2*max(fc_temp,0)+fsupp_temp*kv.redmul),1);    
         
     % Generate highpass filter parameters     
     fsupp(end) = 0;
-    fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale),fs/2);
+    fc_temp = audtofreq(freqtoaud(fc(end-1),flags.audscale)+kv.spacing,flags.audscale);
     fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
-    aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
+    aprecise(end) = max(fs./(2*(fc(end)-min(fc_temp,fs/2))+fsupp_temp*kv.redmul),1);
 else    
     % fsupp_scale is measured on the selected auditory scale
     % The scaling is incorrect, it does not account for the warping (NH:
@@ -471,12 +471,12 @@ function glow = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal,bwtruncmul,kv
     temp_fun = @(L) filterbankresponse(temp_g,1,L);
     
     temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
-    glow.H = @(L) fftshift(long2fir(...
-                sqrt(max(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
-                flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
-                (flipud(postpad(ones(round(L/4)-1,1),L)).*temp_fbresp(L) + ...
-                postpad(ones(round(L/4),1),L).*flipud(temp_fbresp(L))),0)),...
-                Lw(L)))*scal;
+    glow.H = @(L) fftshift(long2fir(sqrt(max(...
+        postpad(1-min(10.*max((1:floor(L/2)+1).'./L-1/4,0),1),L).* ...
+            (temp_fun(L) - flipud(circshift(temp_fbresp(L),-1))) + ...
+        flipud(postpad(1-min(10.*max((1:ceil(L/2)-1).'./L-1/4,0),1),L).* ...
+            (circshift(temp_fun(L),1) - flipud(temp_fbresp(L)))) ...
+        ,0)),Lw(L)))*scal;           
                     
     glow.foff = @(L) -floor(Lw(L)/2);
     glow.realonly = 0;
@@ -485,8 +485,8 @@ function glow = audlowpassfilter(filterfunc,g,a,fmin,fs,winbw,scal,bwtruncmul,kv
     
 function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,kv,flags)
     wrap_around = freqtoaud(fs/2,flags.audscale);
-    next_fc = audtofreq(modcent(freqtoaud(fmax,flags.audscale)+kv.spacing,...
-                2*wrap_around),flags.audscale);
+    next_fc = audtofreq(freqtoaud(fmax,flags.audscale)+kv.spacing,...
+                flags.audscale);
     
     %Temporary filters are created up to this frequency
     fc_lim = audtofreq(freqtoaud(fs/2,'erb')+4,'erb'); 
@@ -501,10 +501,7 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
     
     if flags.do_symmetric
         temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-        plateauWidth = 0;
-        if temp_fc(1) > 0
-            plateauWidth = max(2*(fs/2-temp_fc(1)),0);
-        end
+        plateauWidth = max(2*(fs/2-temp_fc(1)),0);
         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
     else
         fsupp_scale=1/winbw*kv.bwmul;
@@ -512,10 +509,7 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
                   audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
               
         temp_low = audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale);
-        Width = 0;
-        if temp_low > 0
-            Width = max(2*(fs/2-temp_low),0);
-        end      
+        Width = max(2*(fs/2-temp_low),0);
         Lw = @(L) min(ceil(Width*L/fs),L);
     end
     
@@ -526,12 +520,12 @@ function ghigh = audhighpassfilter(filterfunc,g,a,fmax,fs,winbw,scal,bwtruncmul,
     
     temp_fun = @(L) filterbankresponse(temp_g,1,L);
     temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L);
-    ghigh.H = @(L) fftshift(long2fir(...
-                     fftshift(sqrt(max(postpad(ones(ceil(L/2),1),L).*temp_fun(L) + ...
-                     flipud(postpad(ones(L-ceil(L/2),1),L).*circshift(temp_fun(L),-1)) - ...
-                     (postpad([zeros(ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L) + ...
-                     flipud(postpad([zeros(L-ceil(L/2),1);ones(round(L/4),1)],L).*temp_fbresp(L))),0))),...
-                     Lw(L)))*scal;
+    ghigh.H = @(L) fftshift(long2fir(fftshift(sqrt(max(...
+        postpad(min(10.*max((1:floor(L/2)+1).'./L-1/4,0),1),L).* ...
+            (temp_fun(L) - flipud(circshift(temp_fbresp(L),-1))) + ...
+        flipud(postpad(min(10.*max((1:ceil(L/2)-1).'./L-1/4,0),1),L).* ...
+            (circshift(temp_fun(L),1) - flipud(temp_fbresp(L)))) ...
+        ,0))),Lw(L)))*scal;
     
     ghigh.foff = @(L) ceil(L/2)-floor(Lw(L)/2)-1;
     ghigh.realonly = 0;
