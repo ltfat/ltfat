@@ -32,7 +32,7 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
     LTFAT_FFTW(iodim64) dims;
     LTFAT_FFTW(iodim64) howmany_dims;
 
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
@@ -75,7 +75,7 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
     CHECKINIT(p->pfft, "FFTW plan creation failed.");
 
     *pout = p;
-    return status;
+    return LTFATERR_SUCCESS;
 error:
     if (p) LTFAT_NAME(rtdgtreal_done)(&p);
     return status;
@@ -104,7 +104,7 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
 {
     ltfat_int M, M2, gl;
     LTFAT_REAL* fftBuf;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(c);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
@@ -136,6 +136,7 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
         memcpy(cchan, fftBuf, M2 * sizeof * c);
     }
 
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -155,7 +156,7 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
 {
     ltfat_int M, M2, gl;
     LTFAT_REAL* fftBuf;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
 
@@ -185,6 +186,8 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
 
         memcpy(fchan, fftBuf, gl * sizeof * fchan);
     }
+
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -202,7 +205,7 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p)
 {
     LTFAT_NAME(rtdgtreal_plan)* pp;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(*p);
 
     pp = *p;
@@ -211,6 +214,8 @@ LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p)
     if (pp->pfft) LTFAT_FFTW(destroy_plan)(pp->pfft);
     ltfat_free(pp);
     pp = NULL;
+
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -242,7 +247,7 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int procDelay,
 {
     LTFAT_NAME(rtdgtreal_fifo_state)* p = NULL;
 
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECK(LTFATERR_NOTPOSARG, fifoLen > 0, "fifoLen must be positive");
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
@@ -257,7 +262,7 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int procDelay,
     p->a = a; p->gl = gl; p->readIdx = fifoLen + 1 - (procDelay); p->Wmax = Wmax;
 
     *pout = p;
-    return status;
+    return LTFATERR_SUCCESS;
 error:
     if (p) LTFAT_NAME(rtdgtreal_fifo_done)(&p);
     return status;
@@ -267,12 +272,14 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_done)(LTFAT_NAME(rtdgtreal_fifo_state)** p)
 {
     LTFAT_NAME(rtdgtreal_fifo_state)* pp;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
     ltfat_safefree(pp->buf);
     ltfat_free(pp);
     pp = NULL;
+
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -280,11 +287,12 @@ error:
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_reset)(LTFAT_NAME(rtdgtreal_fifo_state)* p)
 {
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p);
 
     memset(p->buf, 0, p->Wmax * p->bufLen * sizeof * p->buf);
 
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -295,7 +303,7 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                  ltfat_int bufLen, ltfat_int W)
 {
     ltfat_int Wact, freeSpace, toWrite, valid, over, endWriteIdx;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(buf);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
     for (ltfat_int w = 0; w < W; w++)
@@ -356,7 +364,7 @@ LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
                                 LTFAT_REAL* buf)
 {
     ltfat_int available, toRead, valid, over, endReadIdx;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(buf);
 
     available = p->writeIdx - p->readIdx;
@@ -423,7 +431,7 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
 {
     LTFAT_NAME(rtidgtreal_fifo_state)* p = NULL;
 
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECK(LTFATERR_NOTPOSARG, fifoLen > 0, "fifoLen must be positive");
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
@@ -435,7 +443,7 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
     p->a = a; p->gl = gl; p->Wmax = Wmax; p->bufLen = fifoLen + gl + 1;
 
     *pout = p;
-    return status;
+    return LTFATERR_SUCCESS;
 error:
     if (p) LTFAT_NAME(rtidgtreal_fifo_done)(&p);
     return status;
@@ -444,11 +452,12 @@ error:
 LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_reset)(LTFAT_NAME(rtidgtreal_fifo_state)* p)
 {
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p);
 
     memset(p->buf, 0, p->Wmax * p->bufLen * sizeof * p->buf);
 
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -457,12 +466,14 @@ LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_done)(LTFAT_NAME(rtidgtreal_fifo_state)** p)
 {
     LTFAT_NAME(rtidgtreal_fifo_state)* pp;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
     ltfat_safefree(pp->buf);
     ltfat_free(pp);
     pp = NULL;
+
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -472,7 +483,7 @@ LTFAT_NAME(rtidgtreal_fifo_write)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                   const LTFAT_REAL* buf)
 {
     ltfat_int freeSpace, toWrite, valid, over, endWriteIdx;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(buf);
 
     freeSpace = p->readIdx - p->writeIdx - 1;
@@ -527,12 +538,11 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
                                  LTFAT_REAL** buf)
 {
     ltfat_int available, toRead, valid, over, endReadIdx;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(buf);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
 
-    for (ltfat_int w = 0; w < W; w++)
-        CHECKNULL(buf[w]);
+    for (ltfat_int w = 0; w < W; w++) CHECKNULL(buf[w]);
 
     CHECK(LTFATERR_NOTPOSARG, bufLen > 0, "bufLen must be positive.");
 
@@ -614,7 +624,7 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
 {
     LTFAT_NAME(rtdgtreal_processor_state)* p = NULL;
 
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(pout);
     CHECK(LTFATERR_BADSIZE, gal > 0, "gla must be positive");
     CHECK(LTFATERR_BADSIZE, gsl > 0, "gls must be positive");
@@ -655,7 +665,7 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
     p->bufLenMax = bufLenMax;
 
     *pout = p;
-    return status;
+    return LTFATERR_SUCCESS;
 error:
     if (p) LTFAT_NAME(rtdgtreal_processor_done)(&p);
     return status;
@@ -664,12 +674,13 @@ error:
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_reset)(LTFAT_NAME(rtdgtreal_processor_state)* p)
 {
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p);
 
     LTFAT_NAME(rtdgtreal_fifo_reset)(p->fwdfifo);
     LTFAT_NAME(rtidgtreal_fifo_reset)(p->backfifo);
 
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -686,7 +697,7 @@ LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
     LTFAT_REAL* gd = NULL;
     void** garbageBin = NULL;
 
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(pout);
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, a > 0,  "a must be positive");
@@ -710,7 +721,7 @@ LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
     p->garbageBin[0] = g;
     p->garbageBin[1] = gd;
 
-    return status;
+    return LTFATERR_SUCCESS;
 error:
     LTFAT_SAFEFREEALL(g, gd, garbageBin);
     // Also status is now set to the proper value
@@ -724,10 +735,12 @@ LTFAT_NAME(rtdgtreal_processor_setcallback)(
     LTFAT_NAME(rtdgtreal_processor_callback)* callback,
     void* userdata)
 {
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p);
     p->processorCallback = callback;
     p->userdata = userdata;
+
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -774,7 +787,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     const LTFAT_REAL** in, ltfat_int len, ltfat_int chanNo,
     LTFAT_REAL** out)
 {
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     ltfat_int samplesWritten = 0, samplesRead = 0;
     // Get default processor if none was set
     LTFAT_NAME(rtdgtreal_processor_callback)* processorCallback =
@@ -839,6 +852,7 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     // Read sampples for output
     samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, len, chanNo, out);
 
+    status = LTFATERR_SUCCESS;
 error:
     if (status != LTFATERR_SUCCESS) return status;
     // These should never occur, it would mean internal error
@@ -851,7 +865,7 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** p)
 {
     LTFAT_NAME(rtdgtreal_processor_state)* pp;
-    int status = LTFATERR_SUCCESS;
+    int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(*p);
 
     pp = *p;
@@ -871,6 +885,7 @@ LTFAT_NAME(rtdgtreal_processor_done)(LTFAT_NAME(rtdgtreal_processor_state)** p)
 
     ltfat_free(pp);
     pp = NULL;
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
