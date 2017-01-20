@@ -579,7 +579,18 @@ function [] = mulaclab(file, varargin)
 
   global coeff default export frame gui link player redoData sel sig symbol
   global undoData visu visucommon 
-
+  
+   % initialize the interface
+  if(nargin<1)
+     file = [];
+  end
+  
+  if ~isempty(file) 
+      if handleMulaclabAction(file,varargin{:})
+          return;
+      end
+  end
+  
   forceSingleInstanceOfMulaclab();
 
   coeff = struct;
@@ -600,11 +611,7 @@ function [] = mulaclab(file, varargin)
   % possible values for default.backendClipPoly: 'clipper' or 'polygonclip' or
   % 'binmasks'
   default.backendClipPoly = 'clipper';
-  
-  % initialize the interface
-  if(nargin<1)
-     file = [];
-  end
+
 
   initialize(file, varargin{:});
 
@@ -613,6 +620,16 @@ end
 % using the following functions
 
 function forceSingleInstanceOfMulaclab()
+
+  figNumber = getMulaclabFigNo();  
+
+  if ~isempty(figNumber)
+    error(['Only one single instance of the MulAcLab gui can be run at a '...
+      'time and MulAcLab is already running in figure ', figNumber]);
+  end
+end
+
+function figNumber = getMulaclabFigNo()
   % as we use global variables to share data between callbacks, we need to
   % insure that only one instance of the mulaclab gui is running
   mulaclabFigId = findall(0, 'name', 'MulAcLab');
@@ -624,10 +641,39 @@ function forceSingleInstanceOfMulaclab()
   catch
     figNumber = num2str(get(mulaclabFigId, 'Number'));
   end
-  if ~isempty(mulaclabFigId)
-    error(['Only one single instance of the MulAcLab gui can be run at a '...
-      'time and MulAcLab is already running in figure ', figNumber]);
-  end
+end
+
+function wasaction = handleMulaclabAction(action,varargin)
+wasaction = 1;
+isrunning = ~isempty(getMulaclabFigNo());
+
+actions = {'playori','applySel'};
+
+if ~any(strcmpi(action,actions)) 
+    wasaction = 0;
+    if isrunning
+        error('Mulaclab is already running. Unrecognized action');
+    end
+    return;
+end
+
+if ~isrunning
+    error('MulacLab is not running!!');
+end
+
+action = lower(action);
+   
+disp(action);
+disp(varargin);
+
+switch action
+    case 'playori'
+        global sig
+        soundsc(sig.ori,sig.sampFreq);
+    case 'applysel'
+        applySel();
+end
+
 end
 
 % __________________________ INITIALIZATION _______________________________
@@ -675,6 +721,8 @@ function initialize(file, varargin)
           errordlg([fileName ' is not a valid signal decomposition file']);
           return;
         end
+      otherwise
+          error('Unrecognized file. Only wav and mat files are supported');
     end
   elseif(nargin>=1)
     definput.keyvals.Fs=[];
@@ -1408,6 +1456,8 @@ function symb = convMaskToSymb(mask, indLay)
       gain = sel.lay(indLay).param(1).val;
       symb = ones(size(mask));
       symb = symb + (gain-1)*mask;
+      %randphase = 2*pi*randn(size(symb));
+      %symb(mask>0) = exp(1i*randphase(mask>0));
     case 'smoothBorder'
       gain = sel.lay(indLay).param(1).val;
       threshold = sel.lay(indLay).param(2).val;
