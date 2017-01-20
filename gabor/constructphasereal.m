@@ -3,7 +3,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
 %   Usage:  c=constructphasereal(s,g,a,M);
 %           c=constructphasereal(s,g,a,M,tol);
 %           c=constructphasereal(c,g,a,M,tol,mask);
-%           c=constructphasereal(c,g,a,M,tol,mask,usephase);
+%           c=constructphasereal(s,g,a,M,tol,mask,usephase);
 %           [c,newphase,usedmask,tgrad,fgrad] = constructphasereal(...);
 %
 %   Input parameters:
@@ -46,8 +46,8 @@ function [c,newphase,usedmask,tgrad,fgrad]=constructphasereal(s,g,a,M,varargin)
 %   coefficients with known phase which is used in the output. Only the
 %   phase of remaining coefficients (for which mask==0) is computed.
 %
-%   `constructphasereal(c,g,a,M,tol,mask,usephase)` does the same as before
-%   but uses the known phase values from *usephase* rather than from *c*.
+%   `constructphasereal(s,g,a,M,tol,mask,usephase)` does the same as before
+%   but uses the known phase values from *usephase* rather than from *s*.
 %
 %   In addition, *tol* can be a vector containing decreasing values. In 
 %   that case, the algorithm is run `numel(tol)` times, initialized with
@@ -82,15 +82,22 @@ definput.keyvals.tol=[1e-1,1e-10];
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
 definput.flags.phase={'freqinv','timeinv'};
-[flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
+definput.keyvals.tgrad = [];
+definput.keyvals.fgrad = [];
+[flags,kv,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
+
+do_compgrad = 1;  
+
+if ~any(cellfun(@isempty,{kv.tgrad,kv.fgrad}))
+    do_compgrad = 0;
+else
+    if ~all(cellfun(@isempty,{kv.tgrad,kv.fgrad}))
+        error('%s: Both fgrad nad tgrad must be defined.',upper(mfilename))
+    end
+end
 
 if ~isnumeric(s) 
     error('%s: *s* must be numeric.',thismfilename);
-end
-
-if ~isempty(usephase) && isempty(mask)
-    error('%s: Both mask and usephase must be used at the same time.',...
-          upper(mfilename));
 end
 
 if isempty(mask) 
@@ -109,9 +116,9 @@ else
 end
 
 if ~isempty(usephase)
-    if any(size(mask) ~= size(s)) || ~isreal(usephase)
+    if any(size(usephase) ~= size(s)) || ~isreal(usephase)
         error(['%s: s and usephase must have the same size and usephase must',...
-               ' be real.'],thismfilename)        
+               ' be real.'],thismfilename);
     end
 else
     usephase = angle(s);
@@ -133,29 +140,40 @@ end
 
 L=N*a;
 
-[~,info]=gabwin(g,a,M,L,'callfun',upper(mfilename));
-
-if ~info.gauss
-    error(['%s: The window must be a Gaussian window (specified ',...
-           'as a string or as a cell array)'],upper(mfilename));
-end
-
 % Here we try to avoid calling gabphasegrad as it only works with full
 % dgts.
 abss = abs(s);
-logs=log(abss+realmin);
-tt=-11;
-logs(logs<max(logs(:))+tt)=tt;
 
-difforder = 2;
-fgrad = info.tfr*pderiv(logs,2,difforder)/(2*pi);
-% Undo the scaling done by pderiv and scale properly
-tgrad = pderiv(logs,1,difforder)/(2*pi*info.tfr)*(M/M2);
+if do_compgrad
+    [~,info]=gabwin(g,a,M,L,'callfun',upper(mfilename));
 
-% Fix the first and last rows .. the
-% borders are symmetric so the centered difference is 0
-tgrad(1,:) = 0;
-tgrad(end,:) = 0;
+    if ~info.gauss && do_compgrad
+        error(['%s: The window must be a Gaussian window (specified ',...
+               'as a string or as a cell array)'],upper(mfilename));
+    end
+
+    logs=log(abss+realmin);
+    tt=-11;
+    logs(logs<max(logs(:))+tt)=tt;
+
+    difforder = 2;
+    fgrad = info.tfr*pderiv(logs,2,difforder)/(2*pi);
+    % Undo the scaling done by pderiv and scale properly
+    tgrad = pderiv(logs,1,difforder)/(2*pi*info.tfr)*(M/M2);
+
+    % Fix the first and last rows .. the
+    % borders are symmetric so the centered difference is 0
+    tgrad(1,:) = 0;
+    tgrad(end,:) = 0;
+else
+    if any(size(kv.tgrad) ~= size(s)) ||  any(size(kv.fgrad) ~= size(s))
+        error('%s: tgrad and fgrad must have the same size as s',upper(mfilename));
+    end
+
+    tgrad = kv.tgrad*2*pi/N;
+    fgrad = kv.fgrad*2*pi/M;
+    flags.do_timeinv = 2;
+end
 
 [newphase, usedmask] = comp_constructphasereal(abss,tgrad,fgrad,a,M,tol,flags.do_timeinv,mask,usephase);
 
