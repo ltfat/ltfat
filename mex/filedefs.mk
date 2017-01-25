@@ -17,6 +17,10 @@ MEXBASESAFE=\
 	comp_heapintreal  \
 	comp_maskedheapint  \
 	comp_maskedheapintreal  \
+	comp_heapint_ufb  \
+	comp_heapintreal_ufb  \
+	comp_maskedheapint_ufb  \
+	comp_maskedheapintreal_ufb  \
 	comp_isepdgt  \
 	comp_iwfac \
 	comp_nonsepdgt_multi  \

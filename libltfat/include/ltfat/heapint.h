@@ -61,4 +61,24 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
                               const ltfatInt height, const ltfatInt N,
                               int * donemask);
 
+/* Experimental FB stuff */
+
+inline void
+LTFAT_NAME(trapezheap_ufb)(const struct LTFAT_NAME(heapinttask) *heaptask,
+                           const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
+                           const LTFAT_REAL* cfreq,
+                           const ltfatInt w, LTFAT_REAL* phase);
+
+inline void
+LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *heaptask,
+                               const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
+                               const LTFAT_REAL* cfreq,
+                               const ltfatInt w, LTFAT_REAL* phase);
+
+void
+LTFAT_NAME(gradsamptorad_ufb)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
+                              const LTFAT_REAL* cfreq,
+                              ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,                              
+                              LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
+
 
