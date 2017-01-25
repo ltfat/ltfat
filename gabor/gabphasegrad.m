@@ -4,22 +4,32 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %           [tgrad,fgrad]   = gabphasegrad('phase',cphase,a);
 %           [tgrad,fgrad]   = gabphasegrad('abs',s,g,a);
 %
-%   `[tgrad,fgrad]=gabphasegrad(method,...)` computes the time-frequency
-%   gradient of the phase of the |dgt| of a signal. The derivative in time
-%   *tgrad* is the relative instantaneous frequency while the frequency 
-%   derivative *fgrad* is the local group delay.
+%   `[tgrad,fgrad]=gabphasegrad(method,...)` computes the relative 
+%   time-frequency gradient of the phase of the |dgt| of a signal. 
+%   The derivative in time *tgrad* is the relative instantaneous 
+%   frequency while the frequency derivative *fgrad* is the negative
+%   of the local group delay.
 %
-%   *tgrad* and *fgrad* measure the deviation from the current time and
-%   frequency, so a value of zero means that the instantaneous frequency is
-%   equal to the center frequency of the considered channel. 
+%   *tgrad* is a measure the deviation from the current channel frequency,
+%   so a value of zero means that the instantaneous frequency is equal to 
+%   the center frequency of the considered channel, a positive value means
+%   the true absolute intantaneous frequency is higher than the current 
+%   channel frequency and vice versa. 
+%   Similarly, *fgrad* is a measure of deviation from the current time 
+%   positions.
 %
-%   *tgrad* is scaled such that distances are measured in samples. Similarly,
-%   *fgrad* is scaled such that the Nyquist frequency (the highest possible
+%   *fgrad* is scaled such that distances are measured in samples. Similarly,
+%   *tgrad* is scaled such that the Nyquist frequency (the highest possible
 %   frequency) corresponds to a value of L/2. The absolute time and 
 %   frequency positions can be obtained as
 %
 %      tgradabs = bsxfun(@plus,tgrad,fftindex(M)*L/M);
 %      fgradabs = bsxfun(@plus,fgrad,(0:L/a-1)*a);
+%
+%   Please note that neither *tgrad* and *fgrad* nor *tgradabs* and 
+%   *fgradabs* are true derivatives of the |dgt| phase. To obtain the true
+%   phase derivatives, one has to explicitly pass either 'freqinv' or 
+%   'timeinv' flags and scale both *tgrad* and *fgrad* by 2*pi/L.
 %
 %   The computation of *tgrad* and *fgrad* is inaccurate when the absolute
 %   value of the Gabor coefficients is low. This is due to the fact the the
@@ -32,13 +42,13 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %     'dgt'    Directly from the signal using algorithm by Auger and
 %              Flandrin.
 %
-%     'cross'  Directly from the signal using algorithm by Nelson. 
-%
 %     'phase'  From the phase of a DGT of the signal. This is the
 %              classic method used in the phase vocoder.
 %
 %     'abs'    From the absolute value of the DGT. Currently this
 %              method works only for Gaussian windows.
+%
+%     'cross'  Directly from the signal using algorithm by Nelson.
 %
 %   `[tgrad,fgrad]=gabphasegrad('dgt',f,g,a,M)` computes the time-frequency
 %   gradient using a DGT of the signal *f*. The DGT is computed using the
@@ -80,7 +90,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 %
 %   See also: resgram, gabreassign, dgt
 %
-%   References: aufl95 cmdaaufl97 fl65
+%   References: aufl95 cmdaaufl97 fl65 ltfatnote042
 
 
 % AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša 2015

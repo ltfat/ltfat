@@ -15,21 +15,25 @@ function [tgrad,fgrad,s,c]=filterbankphasegrad(f,g,a,L,minlvl)
 %      minlvl: Regularization parameter (optional, required < 1).
 %   Output parameters:
 %      tgrad : Instantaneous frequency relative to original position.
-%      fgrad : Group delay relative to original position. 
+%      fgrad : The negative of the local group delay. 
 %      cs    : Filterbank spectrogram.
 %      c     : Filterbank coefficients.
 %
-%   `[tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a,L)` computes the group
-%   delay *fgrad* and instantaneous frequency *tgrad* of the filterbank
-%   spectrogram *s* obtained from the signal *f* and filterbank
-%   parameters *g* and *a*. Both quantities are specified relative to the
-%   original coefficient position. *tgrad* is given in samples, while
-%   *fgrad* is given as values on the unit circle, easily converted into 
-%   relative frequencies by $\log(tgrad)/(pi*i)$.
+%   `[tgrad,fgrad,s,c] = filterbankphasegrad(f,g,a,L)` computes the 
+%   relative instantaneous frequency *tgrad* and the negative of the group
+%   delay *fgrad* of the filterbank spectrogram *s* obtained from the 
+%   signal *f* and filterbank parameters *g* and *a*. 
+%   Both *tgrad* and *fgrad* are specified relative to the original 
+%   coefficient position entirely similar to |gabphasegrad|.
+%   *fgrad* is given in samples, while *tgrad* is given in normalised
+%   frequencies such that the absolute frequencies are in the range of ]-1,1]. 
+%
 %   This routine uses the equivalence of the filterbank coefficients in 
 %   each channel with coefficients obtained from an STFT obtained with a
 %   certain window (possibly different for every channel). As a consequence
 %   of this equivalence, the formulas derived in the reference apply. 
+%
+%   See also: gabphasegrad
 %
 %   References: aufl95 ltfatnote041
 
