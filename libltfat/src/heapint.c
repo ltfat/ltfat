@@ -981,33 +981,33 @@ void LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
                                     const ltfatInt w,
                                     LTFAT_REAL* phase)
 {
-    const ltfatInt M2 = hit->height;
+    const ltfatInt M = hit->height;
     const ltfatInt N = hit->N;
     int* donemask = hit->donemask;
     struct LTFAT_NAME(heap) *h = hit->heap;
     ltfatInt w_E, w_W, w_N, w_S, row, col;
 
     /* North */
-    w_N = NORTHFROMW(w, M2, N);
+    w_N = NORTHFROMW(w, M, N);
     /* South */
-    w_S = SOUTHFROMW(w, M2, N);
+    w_S = SOUTHFROMW(w, M, N);
     /* East */
-    w_E = EASTFROMW(w, M2, N);
+    w_E = EASTFROMW(w, M, N);
     /* West */
-    w_W = WESTFROMW(w, M2, N);
+    w_W = WESTFROMW(w, M, N);
 
-    col = w / M2;
-    row = w % M2;
+    col = w / M;
+    row = w % M;
 
     /* Try and put the four neighbours onto the heap.
      * Integration by trapezoidal rule */
     /* When integrating across frequencies, the difference of the associated 
      * center frequencies has to be taken into account*/
     
-    if (!donemask[w_N] && row != M2 - 1 )
+    if (!donemask[w_N] && row != M - 1 )
     {
         
-        phase[w_N] = phase[w] + (cfreq[w_N % M2] - cfreq[w % M2]) * 
+        phase[w_N] = phase[w] + (cfreq[w_N % M] - cfreq[w % M]) * 
 						(fgradw[w] + fgradw[w_N]) / 2;
         donemask[w_N] = 1;
         LTFAT_NAME(heap_insert)(h, w_N);
@@ -1016,7 +1016,7 @@ void LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_S] && row != 0)
     {
 
-        phase[w_S] = phase[w] - (cfreq[w % M2] - cfreq[w_S % M2]) *
+        phase[w_S] = phase[w] - (cfreq[w % M] - cfreq[w_S % M]) *
 						(fgradw[w] + fgradw[w_S]) / 2;
         donemask[w_S] = 2;
         LTFAT_NAME(heap_insert)(h, w_S);
@@ -1089,23 +1089,21 @@ void LTFAT_NAME(heapintreal_ufb)(const LTFAT_REAL* s,
     /* Declarations */
     struct LTFAT_NAME(heapinttask_ufb)* fbhit;
 
-    // Height of s
-    ltfatInt M2 = M; // / 2 + 1;
     // Width of s
     ltfatInt N = L / a;
 
     /* Set the phase to zero initially */
-    memset(phase, 0, M2 * N * W * sizeof * phase);
+    memset(phase, 0, M * N * W * sizeof * phase);
 
     // Init plan
-    fbhit = LTFAT_NAME(heapinttask_init_ufb)( M2, N, M2 * log((double)M2), s, 1);
+    fbhit = LTFAT_NAME(heapinttask_init_ufb)( M, N, M * log((double)M), s, 1);
 
     for (ltfatInt w = 0; w < W; ++w)
     {
-        const LTFAT_REAL* schan = s + w * M2 * N;
-        const LTFAT_REAL* tgradwchan = tgradw + w * M2 * N;
-        const LTFAT_REAL* fgradwchan = fgradw + w * M2 * N;
-        LTFAT_REAL* phasechan = phase + w * M2 * N;
+        const LTFAT_REAL* schan = s + w * M * N;
+        const LTFAT_REAL* tgradwchan = tgradw + w * M * N;
+        const LTFAT_REAL* fgradwchan = fgradw + w * M * N;
+        LTFAT_REAL* phasechan = phase + w * M * N;
 
         // empty heap and add max element to it
         LTFAT_NAME(heapinttask_resetmax)(fbhit->hit, schan, tol);
@@ -1131,24 +1129,23 @@ void LTFAT_NAME(maskedheapintreal_ufb)(const LTFAT_REAL* s,
     /* Declarations */
     struct LTFAT_NAME(heapinttask_ufb)* fbhit;
 
-    ltfatInt M2 = M; // / 2 + 1;
     ltfatInt N = L / a;
 
     // Initialize plan
-    fbhit = LTFAT_NAME(heapinttask_init_ufb)( M2, N, M2 * log((double) M2), s, 1);
+    fbhit = LTFAT_NAME(heapinttask_init_ufb)( M, N, M * log((double) M), s, 1);
 
     // Set all phases outside of the mask to zeros, do not modify the rest
-    for (ltfatInt ii = 0; ii < M2 * N * W; ii++)
+    for (ltfatInt ii = 0; ii < M * N * W; ii++)
         if (!mask[ii])
             phase[ii] = 0;
 
     for (ltfatInt w = 0; w < W; ++w)
     {
-        const LTFAT_REAL* schan = s + w * M2 * N;
-        const LTFAT_REAL* tgradwchan = tgradw + w * M2 * N;
-        const LTFAT_REAL* fgradwchan = fgradw + w * M2 * N;
-        const int* maskchan = mask + w * M2 * N;
-        LTFAT_REAL* phasechan = phase + w * M2 * N;
+        const LTFAT_REAL* schan = s + w * M * N;
+        const LTFAT_REAL* tgradwchan = tgradw + w * M * N;
+        const LTFAT_REAL* fgradwchan = fgradw + w * M * N;
+        const int* maskchan = mask + w * M * N;
+        LTFAT_REAL* phasechan = phase + w * M * N;
 
         // Empty heap and fill it with the border coefficients from the mask
         LTFAT_NAME(heapinttask_resetmask)(fbhit->hit, maskchan, schan, tol, 0);
@@ -1230,12 +1227,11 @@ LTFAT_NAME(maskedheapintreal_relgrad_ufb)(const LTFAT_REAL* s,
                                           LTFAT_REAL tol, 
                                           LTFAT_REAL* phase)
 {
-    ltfatInt M2 = M; // / 2 + 1;
     ltfatInt N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
-    LTFAT_REAL* tgradw = ltfat_malloc(M2 * N * W * sizeof * tgradw);
-    LTFAT_REAL* fgradw = ltfat_malloc(M2 * N * W * sizeof * fgradw);
+    LTFAT_REAL* tgradw = ltfat_malloc(M * N * W * sizeof * tgradw);
+    LTFAT_REAL* fgradw = ltfat_malloc(M * N * W * sizeof * fgradw);
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in time
      * direction. The step in frequency direction is multiplied by the difference of the center
@@ -1258,12 +1254,11 @@ void LTFAT_NAME(heapintreal_relgrad_ufb)(const LTFAT_REAL* s,
                                          LTFAT_REAL tol, 
                                          LTFAT_REAL* phase)
 {
-    ltfatInt M2 = M; // / 2 + 1;
     ltfatInt N = L / a;
 
     /* Allocate new arrays, we need to rescale the derivatives */
-    LTFAT_REAL* tgradw = ltfat_malloc(M2 * N * W * sizeof * tgradw);
-    LTFAT_REAL* fgradw = ltfat_malloc(M2 * N * W * sizeof * fgradw);
+    LTFAT_REAL* tgradw = ltfat_malloc(M * N * W * sizeof * tgradw);
+    LTFAT_REAL* fgradw = ltfat_malloc(M * N * W * sizeof * fgradw);
 
     /* Rescale the derivatives such that they are in radians and the step is 1 in time
      * direction. The step in frequency direction is multiplied by the difference of the center
