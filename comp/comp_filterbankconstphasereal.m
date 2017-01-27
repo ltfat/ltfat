@@ -1,4 +1,4 @@
-function [newphase, usedmask] = comp_filterbankconstphasereal(s,tgrad,fgrad,a,M,tol,mask,usephase)
+function [newphase, usedmask] = comp_filterbankconstphasereal(s,tgrad,fgrad,cfreq,a,M,tol,mask,usephase)
 
 absthr = max(s(:))*tol;
 
@@ -11,13 +11,13 @@ end
 % Build the phase
 if isempty(mask)
     % s is real and positive
-    newphase=comp_heapintreal_ufb(s,tgrad,fgrad,a,M,tol(1),1);
+    newphase=comp_heapintreal_ufb(s,tgrad,fgrad,cfreq,a,M,tol(1),1);
 
     % Find all small coefficients and set the mask
     bigenoughidx = s>absthr(1);
     usedmask(bigenoughidx) = 1;
 else
-    newphase=comp_maskedheapintreal_ufb(s,tgrad,fgrad,mask,a,M,tol(1),...
+    newphase=comp_maskedheapintreal_ufb(s,tgrad,fgrad,cfreq,mask,a,M,tol(1),...
                                     1,usephase);
     % Find all small coefficients in the unknown phase area
     missingidx = find(usedmask==0);
@@ -27,7 +27,7 @@ end
 
 % Do further tol
 for ii=2:numel(tol)
-    newphase=comp_maskedheapintreal_ufb(s,tgrad,fgrad,usedmask,a,M,tol(ii),...
+    newphase=comp_maskedheapintreal_ufb(s,tgrad,fgrad,cfreq,usedmask,a,M,tol(ii),...
                                     1,newphase);
     missingidx = find(usedmask==0);
     bigenoughidx = s(missingidx)>absthr(ii);

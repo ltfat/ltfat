@@ -1,4 +1,4 @@
-function [g,a,M2,cfreq,L] = gabrealfilters(a,M,Ls)
+function [g,a,M2,cfreq,L] = gabrealfilters(a,M,Ls,tfr)
 
 M2 = floor(M/2)+1;
 cfreq = 2*(0:M2-1).'/M;
@@ -6,7 +6,7 @@ cfreq = 2*(0:M2-1).'/M;
 L = lcm(a,M);
 L = ceil(Ls/L)*L;
 
-g0 = fftshift(sqrt(L)*pgauss(L,1));
+g0 = fftshift(sqrt(L)*pgauss(L,1/tfr));
 Lg = L;
 
 g = cell(1,M2);
