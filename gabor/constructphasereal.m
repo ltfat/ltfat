@@ -169,9 +169,10 @@ else
     if any(size(kv.tgrad) ~= size(s)) ||  any(size(kv.fgrad) ~= size(s))
         error('%s: tgrad and fgrad must have the same size as s',upper(mfilename));
     end
-
-    tgrad = kv.tgrad*2*pi/N;
-    fgrad = kv.fgrad*2*pi/M;
+    L = N*a;
+    b = L/M;
+    tgrad = kv.tgrad*a;
+    fgrad = kv.fgrad*b;
     flags.do_timeinv = 2;
 end
 
