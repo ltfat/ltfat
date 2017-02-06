@@ -141,9 +141,13 @@ L=N*a;
 %end
 
 %Prepare differences of center frequencies [given in normalized frequency]
-cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
-cfreqdiff(1) = fc(2)-fc(1);
-cfreqdiff(end) = fc(end)-fc(end-1);
+%cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
+%cfreqdiff(1) = fc(2)-fc(1);
+%cfreqdiff(end) = fc(end)-fc(end-1);
+
+cfreqdiff = diff(fc);
+sqtfr = sqrt(tfr);
+sqtfrdiff = diff(sqtfr);
 
 % Filterbankphasegrad does not support phasederivatives from absolute
 % values
@@ -156,18 +160,27 @@ difforder = 2;
 %% First obtain the straight disc. derivative, do the correction for TFRs and channel distance later
 fgrad = pderiv(logs,2,difforder)/(2*pi);
 
-%% First obtain the straight disc. derivative, do the correction for TFRs later
-%  (channel distances do not matter for tgrad) 
-% Undo the scaling done by pderiv
-%if 1 %do_real
-    tgrad = 2.*pderiv(logs,1,difforder)./(L*pi);%*(2*(M-1)/M);
-%else %????
-%    tgrad = 100.*pderiv(logs,1,difforder)./(L*pi);
-%end
-% Here the TFRs and channel distances are considered - ToDo
+% Here the TFRs and channel distances are considered
 for kk = 1:M
     fgrad(kk,:) = tfr(kk).*fgrad(kk,:);
-    tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./cfreqdiff(kk)./M;%.*cfreqdiff(kk)
+end
+
+tgrad = zeros(size(s));
+if 1 % Improved version
+    logsdiff = diff(logs);
+    for kk = 2:M-1
+        tgrad(kk,:) = (logsdiff(kk,:) + 2*sqtfrdiff(kk)./sqtfr(kk)./pi)./cfreqdiff(kk) + ...
+                      (logsdiff(kk-1,:) + 2*sqtfrdiff(kk-1)./sqtfr(kk)./pi)./cfreqdiff(kk-1);
+        tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./(pi*L);
+    end
+else % Classic version
+    tgrad = 2.*pderiv(logs,1,difforder)./(L*pi);
+    cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
+    cfreqdiff(1) = fc(2)-fc(1);
+    cfreqdiff(end) = fc(end)-fc(end-1);
+    for kk = 1:M        
+        tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./cfreqdiff(kk)./M;
+    end
 end
 
 % Fix the first and last rows .. the

@@ -1,6 +1,14 @@
 Ls = 44100;
-[f,fs] = gspi;
-f = f(1:Ls);
+f = zeros(Ls,1);
+ind = (1:Ls).'./Ls;
+basefreq = 110;
+fac = 1;
+for kk = 1:7*fac+1
+    f = f + sin(2*pi*2^((kk-1)./fac)*basefreq*ind);
+end
+fs = Ls;
+%[f,fs] = gspi;
+%f = postpad(f,Ls);
 
 % Create an UNIFORM filterbank
 a = 32;
@@ -79,7 +87,7 @@ tfr = getgausstfr(cfreq,fs,L,'erb','bwmul',bwmul);
 cfreq = 2*cfreq/fs;
 
 a = a(1);
-
+% 
 f = postpad(f,L);
 [tgradtmp,fgradtmp,~,ctmp] = filterbankphasegrad(f,g,a,L);
  
@@ -104,7 +112,7 @@ plotfilterbank(abs(fgrad0.'-fgrad.')./abs(fgrad.'),a,'fc',22050*cfreq,'lin','cli
 gd = filterbankrealdual(g,a,L);
 
 figure(4); close; figure(4);
-plotdgtrealphasediff(angle(c0),angle(c),abs(c),1e-4,a,M);
+plotdgtrealphasediff(angle(c0),angle(c),abs(c),1e-1,a,M);
 
 f_rec = 2*real(ifilterbank(c0.',gd,a));
 soundsc(f_rec,44100);

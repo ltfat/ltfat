@@ -8,7 +8,7 @@ M = 1024;
 
 %% Regular uniform Gabor filters
 
-[g,a,M,cfreq,L] = gabrealfilters(a,M,Ls);
+[g,a,M,cfreq,L] = gabrealfilters(a,M,Ls,1);
 %[g,a,fc] = erbfilters(fs,Ls,'uniform','spacing',1/10,'bwmul',1);
 
 % We will not do no subsampling. 
