@@ -81,7 +81,6 @@ complainif_notposint(a,'a',thismfilename);
 definput.keyvals.tol=[1e-1,1e-10];
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
-%definput.flags.phase={'freqinv','timeinv'};
 [flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
 
 if ~isnumeric(s) 
@@ -124,23 +123,10 @@ end
 
 
 [M,N,W] = size(s);
-
-% M2true = floor(M/2) + 1;
-% 
-% if M2true ~= M2
-%     error('%s: Mismatch between *M* and the size of *s*.',thismfilename);
-% end
-
 L=N*a;
 
-%[~,info]=gabwin(g,a,M,L,'callfun',upper(mfilename));
-%
-%if ~info.gauss
-%    error(['%s: The window must be a Gaussian window (specified ',...
-%           'as a string or as a cell array)'],upper(mfilename));
-%end
-
-%Prepare differences of center frequencies [given in normalized frequency]
+% Prepare differences of center frequencies [given in normalized frequency]
+% and dilation factors (square root of the time-frequency ratio)
 cfreqdiff = diff(fc);
 sqtfr = sqrt(tfr);
 sqtfrdiff = diff(sqtfr);
@@ -153,31 +139,40 @@ tt=-11;
 logs(logs<max(logs(:))+tt)=tt;
 
 difforder = 2;
-%% First obtain the straight disc. derivative, do the correction for TFRs and channel distance later
+% Obtain the (relative) phase difference in frequency direction by taking
+% the time derivative of the log magnitude and weighting it by the
+% time-frequency ratio of the appropriate filter.
+% ! Note: This disregards the 'quadratic' factor in the equation for the 
+% phase derivative !
 fgrad = pderiv(logs,2,difforder)/(2*pi);
-
-% Here the TFRs and channel distances are considered
 for kk = 1:M
     fgrad(kk,:) = tfr(kk).*fgrad(kk,:);
 end
 
+% Obtain the (relative) phase difference in time direction using the
+% frequency derivative of the log magnitude. The result is the mean of
+% estimates obtained from 'above' and 'below', appropriately weighted by
+% the channel distance and the inverse time-frequency ratio of the
+% appropriate filter.
+% ! Note: We consider the term depending on the time-frequency ratio 
+% difference, but again disregard the 'quadratic' factor. !
 tgrad = zeros(size(s));
-if 1 % Improved version
+%if 1 % Improved version
     logsdiff = diff(logs);
     for kk = 2:M-1
         tgrad(kk,:) = (logsdiff(kk,:) + 2*sqtfrdiff(kk)./sqtfr(kk)./pi)./cfreqdiff(kk) + ...
                       (logsdiff(kk-1,:) + 2*sqtfrdiff(kk-1)./sqtfr(kk)./pi)./cfreqdiff(kk-1);
         tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./(pi*L);
     end
-else % Classic version
-    tgrad = 2.*pderiv(logs,1,difforder)./(L*pi);
-    cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
-    cfreqdiff(1) = fc(2)-fc(1);
-    cfreqdiff(end) = fc(end)-fc(end-1);
-    for kk = 1:M        
-        tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./cfreqdiff(kk)./M;
-    end
-end
+% else % Classic version
+%     tgrad = 2.*pderiv(logs,1,difforder)./(L*pi);
+%     cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
+%     cfreqdiff(1) = fc(2)-fc(1);
+%     cfreqdiff(end) = fc(end)-fc(end-1);
+%     for kk = 1:M        
+%         tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./cfreqdiff(kk)./M;
+%     end
+% end
 
 % Fix the first and last rows .. the
 % borders are symmetric so the centered difference is 0
@@ -226,10 +221,3 @@ newphase(~usedmask) = rand(zerono,1)*2*pi;
 
 % Build the coefficients
 c=abss.*exp(1i*newphase);
-
-%%
-% Compute phase gradient, check parameteres
-%[tgrad,fgrad] = gabphasegrad('abs',abss,g,a,2);
-
-
-
