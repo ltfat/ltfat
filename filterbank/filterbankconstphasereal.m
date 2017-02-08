@@ -157,12 +157,15 @@ end
 % appropriate filter.
 % ! Note: We consider the term depending on the time-frequency ratio 
 % difference, but again disregard the 'quadratic' factor. !
+%fac = 0;
+%fac = 1/2; 
+fac = 2/pi;
 tgrad = zeros(size(s));
 %if 1 % Improved version
     logsdiff = diff(logs);
     for kk = 2:M-1
-        tgrad(kk,:) = (logsdiff(kk,:) + 2*sqtfrdiff(kk)./sqtfr(kk)./pi)./cfreqdiff(kk) + ...
-                      (logsdiff(kk-1,:) + 2*sqtfrdiff(kk-1)./sqtfr(kk)./pi)./cfreqdiff(kk-1);
+        tgrad(kk,:) = (logsdiff(kk,:) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk) + ...
+                      (logsdiff(kk-1,:) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk-1);
         tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./(pi*L);
     end
 % else % Classic version
