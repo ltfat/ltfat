@@ -50,4 +50,6 @@ gH = cellfun(@(gHEl) abs(gHEl)./norm(gHEl,1),gH,'UniformOutput',false);
 circInd = exp(2*pi*1i*(0:L-1)/L).';
 cfreq = cellfun(@(gHEl) sum(circInd.*gHEl),gH.');
 cfreq = real((pi*1i)\log(cfreq));   
+
+cfreq(isnan(cfreq)) = 0;
  

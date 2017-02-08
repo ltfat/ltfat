@@ -178,11 +178,6 @@ tgrad = zeros(size(s));
 %     end
 % end
 
-% Fix the first and last rows .. the
-% borders are symmetric so the centered difference is 0
-tgrad(1,:) = 0;
-tgrad(end,:) = 0;
-
 [newphase, usedmask] = comp_filterbankconstphasereal(abss,tgrad,fgrad,fc,a,M,tol,mask,usephase);
 
 % Build the coefficients
