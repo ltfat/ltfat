@@ -21,3 +21,4 @@ bw=2.*bw./fs;
 
 tfr = (bw./basebw).^2.*L;
 tfr = 1./tfr;
+tfr(tfr == Inf) = 0;

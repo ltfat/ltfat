@@ -79,9 +79,10 @@ complainif_notposint(a,'a',thismfilename);
 
 
 definput.keyvals.tol=[1e-1,1e-10];
+definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
-[flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
+[flags,kv,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
 
 if ~isnumeric(s) 
     error('%s: *s* must be numeric.',thismfilename);
@@ -159,7 +160,10 @@ end
 % difference, but again disregard the 'quadratic' factor. !
 %fac = 0;
 %fac = 1/2; 
-fac = 2/pi;
+%fac = 2/3;
+%fac = 2/pi;
+
+fac = kv.gderivweight;
 tgrad = zeros(size(s));
 %if 1 % Improved version
     logsdiff = diff(logs);
