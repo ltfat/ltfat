@@ -44,7 +44,7 @@ function g=pchirp(L,n)
 %   TESTING: OK
 %   REFERENCE: OK
 
-error(nargchk(2,2,nargin));
+narginchk(2,2);
 
 if ~isnumeric(L) || ~isscalar(L)
   error('%s: L must be a scalar',upper(mfilename));

@@ -15,7 +15,7 @@ function f=psinc(L,n)
 %
 %   See also: prect
   
-error(nargchk(2,2,nargin));
+narginchk(2,2);
 
 if ~(numel(L)==1) || ~(isnumeric(L)) || mod(L,1)~=0 || L<=0
   error('%s: L has to be a positive integer.',upper(mfilename));

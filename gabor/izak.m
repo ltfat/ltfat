@@ -13,7 +13,7 @@ function f=izak(c);
 %   TESTING: TEST_ZAK
 %   REFERENCE: OK
 
-error(nargchk(1,1,nargin));
+narginchk(1,1);
 
 a=size(c,1);
 N=size(c,2);

@@ -11,7 +11,7 @@ function cadj=spreadadj(coef)
 %   TESTING: TEST_SPREAD
 %   REFERENCE: REF_SPREADADJ REF_SPREADADJ_1
   
-error(nargchk(1,1,nargin));
+narginchk(1,1);
 
 if ~isnumeric(coef) || ndims(coef)~=2 || size(coef,1)~=size(coef,2)
     error('Input symbol coef must be a square matrix.');

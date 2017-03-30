@@ -24,7 +24,7 @@ function [xo,N]=ref_adaptlasso(ttype,xi,lambda,group);
 %   [xo,N]=TF_ADAPTLASSO(ttype,x,lambda,group) additionally returns
 %   a number N specifying how many numbers where kept.
 
-error(nargchk(4,4,nargin));
+narginchk(4,4);
   
 group=lower(group);
 ttype=lower(ttype);

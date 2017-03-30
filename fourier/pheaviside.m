@@ -21,7 +21,7 @@ function h=pheaviside(L)
 %   REFERENCE: OK
 %   TESTING: OK
   
-error(nargchk(1,1,nargin));
+narginchk(1,1);
   
 
 h=zeros(L,1);

@@ -13,7 +13,7 @@ function outsig=rampup(L,wintype)
 %
 %   See also: rampdown, rampsignal, firwin
 
-error(nargchk(1,2,nargin))
+narginchk(1,2)
 
 if nargin==1
   wintype='hann';

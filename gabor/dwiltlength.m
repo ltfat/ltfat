@@ -19,7 +19,7 @@ function [L,tfr]=dwiltlength(Ls,M);
 %
 %   See also: dwilt, wmdct
 
-error(nargchk(2,2,nargin));
+narginchk(2,2);
 
 if ~isnumeric(M) || ~isscalar(M)
   error('%s: M must be a scalar',upper(mfilename));

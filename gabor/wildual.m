@@ -40,7 +40,7 @@ function [gamma]=wildual(g,M,L)
 %   TESTING: TEST_DWILT
 %   REFERENCE: OK
 
-error(nargchk(2,3,nargin));
+narginchk(2,3);
 
 if nargin==2
     L=[];

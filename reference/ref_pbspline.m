@@ -21,7 +21,7 @@ function [out,nlen] = ref_pbspline(splinetype,L,order,a,centering)
  
 %   AUTHOR : Peter L. Søndergaard.
 
-error(nargchk(4,5,nargin));
+narginchk(4,5);
 
 if nargin==4
   centering=0;

@@ -51,7 +51,7 @@ function c=zak(f,a);
 %   TESTING: TEST_ZAK
 %   REFERENCE: REF_ZAK
 
-error(nargchk(2,2,nargin));
+narginchk(2,2);
 
 if (prod(size(a))~=1 || ~isnumeric(a))
   error([callfun,': a must be a scalar']);

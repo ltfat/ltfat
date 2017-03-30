@@ -35,7 +35,7 @@ function [f]=idgt2(c,g1,p3,p4,p5)
 
 %   AUTHOR : Peter L. Søndergaard
 
-error(nargchk(3,5,nargin));
+narginchk(3,5);
 
 if ndims(c)<4 || ndims(c)>5
   error('c must be 4 or 5 dimensional.');

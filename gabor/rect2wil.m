@@ -12,7 +12,7 @@ function cout=rect2wil(cin);
 %   TESTING: OK
 %   REFERENCE: OK
 
-error(nargchk(1,1,nargin));
+narginchk(1,1);
   
 M=size(cin,1)-1;
 N=size(cin,2);

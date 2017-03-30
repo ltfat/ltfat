@@ -35,7 +35,7 @@ function f=involute(f,dim);
 %   TESTING: TEST_INVOLUTE
 %   REFERENCE: OK
 
-error(nargchk(1,2,nargin));
+narginchk(1,2);
 
 if nargin==1
   dim=[];

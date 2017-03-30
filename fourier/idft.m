@@ -24,7 +24,7 @@ function f=idft(c,N,dim)
 %   TESTING: TEST_IDFT
 %   REFERENCE: TEST_DFT
 
-error(nargchk(1,3,nargin));
+narginchk(1,3);
 
 if nargin<3
   dim=[];  

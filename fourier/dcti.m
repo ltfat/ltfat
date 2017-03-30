@@ -64,7 +64,7 @@ function c=dcti(f,L,dim)
 %   TESTING: TEST_PUREFREQ
 %   REFERENCE: REF_DCTI
   
-error(nargchk(1,3,nargin));
+narginchk(1,3);
 
 if nargin<3
   dim=[];
