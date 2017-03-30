@@ -60,7 +60,7 @@ function [c,Ls]=dgt2(f,g1,p3,p4,p5,p6)
 % 
 %   See also:  dgt, idgt2, gabdual
 
-error(nargchk(4,6,nargin));
+narginchk(4,6);
 
 L=[];
 

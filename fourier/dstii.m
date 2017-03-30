@@ -56,7 +56,7 @@ function c=dstii(f,L,dim)
 %   TESTING: TEST_PUREFREQ
 %   REFERENCE: REF_DSTII
 
-error(nargchk(1,3,nargin));
+narginchk(1,3);
 
 if nargin<3
   dim=[];

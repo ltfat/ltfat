@@ -211,7 +211,7 @@ function [b,a,z,p,k] = halfbandiir(N,fp,varargin)
 % Foundation, Inc.,  59 Temple Place,  Suite 330,  Boston,
 % MA  02111-1307  USA,  http://www.fsf.org/
 
-error(nargchk(2,4,nargin));
+narginchk(2,4);
 
 [minOrderFlag,lowpassFlag,msg] = validateParseInput(N,fp,varargin{:});
 error(msg);

@@ -17,7 +17,7 @@ function f=fftresample(f,L,dim)
 %   AUTHOR: Peter L. Søndergaard
   
 % ------- Checking of input --------------------
-error(nargchk(2,3,nargin));
+narginchk(2,3);
 
 if nargin<3
   dim=[];

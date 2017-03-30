@@ -55,7 +55,7 @@ function c=dsti(f,L,dim)
 %   REFERENCE: REF_DSTI
 
   
-error(nargchk(1,3,nargin));
+narginchk(1,3);
 
 if nargin<3
   dim=[];

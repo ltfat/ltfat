@@ -40,7 +40,7 @@ function bw = audfiltbw(fc,varargin)
   
 % ------ Checking of input parameters ---------
   
-% error(nargchk(1,1,nargin));
+% narginchk(1,1);
 if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;

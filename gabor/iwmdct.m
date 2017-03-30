@@ -30,7 +30,7 @@ function [f,g]=iwmdct(c,g,Ls)
 %   AUTHOR: Peter L. Søndergaard
 %   TESTING: TEST_WMDCT
 
-error(nargchk(2,3,nargin));
+narginchk(2,3);
 
 wasrow=0;
 if isnumeric(g)

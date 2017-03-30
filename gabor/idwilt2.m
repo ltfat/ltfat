@@ -26,7 +26,7 @@ function [f]=idwilt2(c,g1,p3,p4)
 
 %   AUTHOR : Peter L. Søndergaard
 
-error(nargchk(2,4,nargin));
+narginchk(2,4);
 
 Ls=[];
 

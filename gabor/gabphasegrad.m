@@ -95,7 +95,7 @@ function [tgrad,fgrad,c]=gabphasegrad(method,varargin)
 
 % AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša 2015
 
-%error(nargchk(4,6,nargin));
+%narginchk(4,6);
 
 % If no phaseconv flag was passed, add 'relative'
 definput = arg_gabphasederivconv;

@@ -72,7 +72,7 @@ function [g,tfr]=psech(L,p2,p3,p4)
 %
 %   References: jast02-1
 
-error(nargchk(1,4,nargin));
+narginchk(1,4);
 
 if nargin==1
   tfr=1;

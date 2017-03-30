@@ -15,7 +15,7 @@ function n=fftindex(N,nyquistzero)
 %   REFERENCE: OK
 
   
-error(nargchk(1,2,nargin));
+narginchk(1,2);
 
 if nargin ==1
   if rem(N,2)==0

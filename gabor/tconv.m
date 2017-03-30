@@ -35,7 +35,7 @@ function h=tconv(f,g)
 %   TESTING: TEST_SPREAD
 %   REFERENCE: REF_TCONV
 
-error(nargchk(2,2,nargin));
+narginchk(2,2);
 
 
 if any(size(f)~=size(g))

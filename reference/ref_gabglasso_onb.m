@@ -31,7 +31,7 @@ function [xo,N]=gabglasso(ttype,xi,lambda,group);
 %   AUTHOR : Bruno Torresani.  
 %   REFERENCE: OK
 
-error(nargchk(4,4,nargin));
+narginchk(4,4);
   
 NbFreqBands = size(xi,1);
 NbTimeSteps = size(xi,2);

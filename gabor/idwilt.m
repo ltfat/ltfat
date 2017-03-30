@@ -31,7 +31,7 @@ function [f,g]=idwilt(c,g,Ls)
 %   TESTING: TEST_DWILT
 %   REFERENCE: OK
 
-error(nargchk(2,3,nargin));
+narginchk(2,3);
 
 M=size(c,1)/2;
 N=2*size(c,2);

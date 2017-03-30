@@ -44,7 +44,7 @@ function g=ref_pchirp(L,n)
 %   TESTING: OK
 %   REFERENCE: OK
 
-error(nargchk(2,2,nargin));
+narginchk(2,2);
 
 % Compute normalized chirp
 
