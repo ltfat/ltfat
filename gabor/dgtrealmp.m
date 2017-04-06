@@ -17,7 +17,8 @@ definput.keyvals.g7 = [];
 definput.keyvals.g8 = [];
 definput.keyvals.g9 = [];
 definput.keyvals.g10 = [];
-definput.flags.method={'mp','comp','locomp'};
+definput.flags.method={'mp','cyclicmp','complmp','localomp'};
+definput.keyvals.cyclicmpcycles = 10;
 [flags,kv]=ltfatarghelper({'maxit','tol'},definput,varargin);
 
 Ls = size(f,1);
@@ -48,7 +49,7 @@ M2 = floor(M/2) + 1;
 kerns = cell(numel(g),numel(g));
 masks = cell(numel(g),numel(g));
 
-if flags.do_mp || flags.do_locomp
+if flags.do_mp || flags.do_localomp || flags.do_cyclicmp
 
 for ii = 1:numel(g)
     for jj = 1:numel(g)
@@ -81,8 +82,8 @@ c = zeros(M,superN);
 
 kernwidx = cellfun(@(kEl) fftshift(fftindex(size(kEl,2))),kerns,'UniformOutput',0);
 kernhidx = cellfun(@(kEl) fftshift(fftindex(size(kEl,1))),kerns,'UniformOutput',0);
-bigkernwidx = cellfun(@(kEl) fftshift(fftindex(min([2*size(kEl,2)-1,N]))),kerns,'UniformOutput',0);
-bigkernhidx = cellfun(@(kEl) fftshift(fftindex(min([2*size(kEl,1)-1,M]))),kerns,'UniformOutput',0);
+bigkernwidx = cellfun(@(kEl) fftshift(fftindex(min([2*size(kEl,2)+1,N]))),kerns,'UniformOutput',0);
+bigkernhidx = cellfun(@(kEl) fftshift(fftindex(min([2*size(kEl,1)+1,M]))),kerns,'UniformOutput',0);
 kernno = size(kerns{1,1},3);
 
 s = abs(  cresfull );
@@ -90,11 +91,16 @@ norm_f = norm(f);
 relres = zeros(ceil(kv.maxit/kv.relresstep),1);
 
 
+if kv.printstep > 0
+    smax = 20*log10(max(max(s(1:M2,:))));
+    clim = [smax-120,smax];
+end
+
 tic
 iter = 1;
 [maxcols,maxcolspos] = max(s(1:M2,:));
 
-if flags.do_mp
+if flags.do_mp || flags.do_cyclicmp
 
     while (iter <= kv.maxit)
        %% 1) Selection
@@ -112,29 +118,35 @@ if flags.do_mp
             idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
            
             currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
-    %        currmask = masks{winIdx,secondwinIdx};
             
             cresfulltmp = cresfull(idxm,idxn);
-     %       cresfulltmp(currmask) = cresfulltmp(currmask) - cval*currkern(currmask);
             cresfulltmp = cresfulltmp - cval*currkern;
             cresfull(idxm,idxn) = cresfulltmp;
 
-            s(idxm,idxn) = abs(cresfull(idxm,idxn));
+            s(idxm,idxn) = abs(cresfulltmp);
             [maxcolupd,maxcolposupd] = max(s(1:M2,idxn));
 
             maxcols(idxn) = maxcolupd;
             maxcolspos(idxn) = maxcolposupd;
        end
 
-       %% 3) Coefficient update 
-       cvalold = c(m+1,n+1);
-       % A single atom can be selected more than once
-       c(m+1,n+1) = cvalold + cval;
+       if flags.do_mp
+           %% 3) Coefficient update 
+           cvalold = c(m+1,n+1);
+           % A single atom can be selected more than once
+           c(m+1,n+1) = cvalold + cval;
+       elseif flags.do_cyclicmp
+           cyciter = 1;
+           while cyciter<= kv.cyclicmpcycles
+               
+           end
+       end
+       
 
        %% 4) Rest
        if mod(iter,kv.printstep) == 0
-            figure(1);plotdgtreal(cresfull(1:M2,:),a,M,'clim',[-120,10]);shg;
-            figure(2);plotdgtreal(c(1:M2,:),a,M,'clim',[-120,10]);shg;
+            figure(1);plotdgtreal(cresfull(1:M2,:),a,M,'clim',clim);shg;
+            figure(2);plotdgtreal(c(1:M2,:),a,M,'clim',clim);shg;
        end
 
        if mod(iter,kv.relresstep) == 0 || iter == kv.maxit
@@ -154,8 +166,9 @@ if flags.do_mp
 
        iter = iter+1;
     end
-elseif flags.do_locomp
+elseif flags.do_localomp
     suppind = false(size(cresfull));
+    c0 = cresfull;
     
     while (iter <= kv.maxit)
        %% 1) Selection
@@ -164,7 +177,16 @@ elseif flags.do_locomp
        winIdx = floor(n/N) + 1;
        nstart = (winIdx - 1)*N;
        nloc = n - nstart;
+       
+%        [cmaxtrue] = max(max(abs(cresfull(1:M2,:))));
+%        if abs(cresfull(m+1,n+1)) ~= cmaxtrue
+%            warning('ja')
+%        end
+       
 
+        if suppind(m+1,n+1)
+            %warning('selecting the same atom again');
+        end
        suppind(m+1,n+1) = 1;
 
        %% 2) Residual update
@@ -203,15 +225,18 @@ elseif flags.do_locomp
                     end
                 end
             end
-            
-
        end
+      
+        if cond(G)<1e-5 || cond(G)>1e5
+            cond(G);
+        end
        
        % Update the solution
        cvalinv = G\cval;
 
        ctmp = c(idxm,idxn);
-       ctmp(suppidtmp) = ctmp(suppidtmp) + cvalinv;
+       ctmpadd = ctmp(suppidtmp) + cvalinv;
+       ctmp(suppidtmp) = ctmpadd;
        c(idxm,idxn) = ctmp;
           
        for ii=1:numel(cvalinv)
@@ -220,6 +245,7 @@ elseif flags.do_locomp
             
            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(cvaln(ii)-1,kernno));
            cresfull(idxm,idxn) = cresfull(idxm,idxn) - cvalinv(ii)*currkern;
+           %cresfull(idxm,idxn) = cresfull(idxm,idxn) - ctmpadd(ii)*currkern;
        end
         
        idxn = mod(n + bigkernwidx{winIdx,secondwinIdx},N)+1;
@@ -229,8 +255,7 @@ elseif flags.do_locomp
 
        maxcols(idxn) = maxcolupd;
        maxcolspos(idxn) = maxcolposupd;
-
-
+       
        %% 4) Rest
        if mod(iter,kv.printstep) == 0
             figure(1);plotdgtreal(cresfull(1:M2,:),a,M,'clim',[-120,10]);shg;
@@ -238,6 +263,7 @@ elseif flags.do_locomp
        end
 
        if mod(iter,kv.relresstep) == 0 || iter == kv.maxit
+           
             [fhatsum,fhat] = reccoefs(c(1:M2,:),g,a,M,L,Ls);
             relrescurr = norm(f-fhatsum)/norm_f;
             relres(ceil(iter/kv.relresstep)) = relrescurr;
@@ -280,13 +306,12 @@ fhat = sum(fhats,2);
 function [kerns,mask] = projkernels(g1,g2,a,M,L,tol)
 N = L/a;
 M2 = floor(M/2) + 1;
+kern = dgt(fir2long(g1,L),g2,a,M);
 
-projfnc = @(c) dgt(middlepad(g1,L),g2,a,M);
-ctmp = zeros(M,N); ctmp(1,1) = 1;
-kern = projfnc(ctmp);
 
 ksize=findsmallkernelsize(kern(1:M2,:),tol);
 if ksize(1)>M, ksize(1) = M; end
+if ksize(2)>N, ksize(2) = N; end
 kernh= ksize(1); kernw = ksize(2);
 
 kern = middlepad(kern,kernh);
@@ -307,7 +332,7 @@ thr = relthr*max(abs(kern(:)));
 
 lastrow = 1;
 for n=1:N
-    newlastrow = find(abs(kern(:,n))>=thr,1,'last');
+    newlastrow = find(abs(kern(:,n))>thr,1,'last');
     if newlastrow > lastrow
         lastrow = newlastrow;
     end
@@ -318,7 +343,7 @@ lastcol1 = 1;
 % is always symmetric in the horizontal direction too
 % lastcol2 = 1;
 for m=1:M2
-    newlastcol = find(abs(kern(m,1:ceil(end/2)))>=thr,1,'last');
+    newlastcol = find(abs(kern(m,1:floor(end/2)+1))>thr,1,'last');
     if newlastcol > lastcol1
         lastcol1 = newlastcol;
     end
