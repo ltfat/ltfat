@@ -348,7 +348,7 @@ if all(mode~='f')
     fclose(fid);
 end
 if nargout>2  % sort out the mode input for writing this format
-    wmode=char([riffmt sc 'z'-z/128]);
+    wmode=char([riffmt sc char(double('z')-z/128)]);
     if factlen>0
         wmode=[wmode 'E'];
     end
