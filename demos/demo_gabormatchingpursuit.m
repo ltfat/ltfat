@@ -1,17 +1,17 @@
-[f,fs] = wavload('serj.wav'); a = 512; M = 2048; 
-atoms = 100000;
+[f,fs] = wavload('serj.wav'); a = 1024; M = 2*2048; 
+atoms = 200000;
 Ls = numel(f);
 L = dgtlength(Ls,a,M);
 tfr = a*M/L;
-step = 1000000;
+step = 10000;
 g = 'gauss';
 
 
-
-[c1,fhat1,info1] = dgtrealmp(f,a,M,'localomp','tol',1e-4,'atoms',atoms,...
-                   'g1',g,...
-                   'relresstep',step,'printdb');
- 
+[c1,fhat1,info1] = dgtrealmp(f,a,M,'mp','tol',1e-4,'atoms',atoms,...
+                   'g1',{'gauss',tfr/2},'g2',{'gauss',2*tfr},...
+                   'relresstep',step,'errappr','printdb');
+ info1
+ info1.exitmsg
 % a = 256;
 % [c2,fhat2,info2] = dgtrealmp(f,a,M,'localomp','tol',1e-4,'atoms',atoms,...
 %                     'g1',g,...
@@ -34,7 +34,7 @@ g = 'gauss';
 %                 'g1',{'hann',128},...
 %                 'relresstep',1000);
             
-plot(20*log10([info1.relres,info2.relres,info3.relres]))
+%plot(20*log10([info1.relres,info2.relres,info3.relres]))
 %[c,relreslocmp] = dgtrealmp(f,a,M,'locomp','tol',1e-4,'maxit',maxit,...
 %                    'relresstep',1000,'g1','hann');
 % 

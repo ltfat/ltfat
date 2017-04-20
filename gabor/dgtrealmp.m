@@ -1,5 +1,5 @@
 function [ c, fhat, info] = dgtrealmp( f, a, M, varargin)
-%DGTREALMP Matching Pursuit using
+%DGTREALMP Matching Pursuit in (multiscale) Gabor Dictionary
 %   Detailed explanation goes here
 
 definput.keyvals.tol=1e-4;
@@ -7,6 +7,7 @@ definput.keyvals.maxit=[];
 definput.keyvals.relresstep=[];
 definput.keyvals.printstep=[];
 definput.flags.printerr = {'noerr','printerr','printdb'};
+definput.flags.apprerrprec = {'errappr','errexact'};
 definput.flags.verbosity = {'quiet','verbose'};
 definput.keyvals.g1 = [];
 definput.keyvals.g2 = [];
@@ -23,11 +24,19 @@ definput.keyvals.cyclicmpcycles = 1;
 definput.keyvals.atsellim = [];
 definput.keyvals.atoms = [];
 definput.keyvals.mpdebiasstep = [];
+definput.keyvals.relrestol = [];
+definput.keyvals.relrestoldb = -40;
 [flags,kv]=ltfatarghelper({'maxit','tol'},definput,varargin);
 
+if isempty(kv.relrestol)
+    kv.relrestol = 10^(kv.relrestoldb/20);
+end
+
 convmessages = {'Achieved desired number of atoms',...
+                'Achieved desired approximation error',...
                 'Not achieved desired number of atoms in maxit iterations',...
                 'The limit of repeated selections of one atom reached',...
+                'Appr. error stalled.',...
                 'localomp: The condition number is out of bounds',...
                 };
             
@@ -111,22 +120,23 @@ bigkernhidx = cellfun(@(kEl) fftshift(fftindex(min([2*size(kEl,1)+1,M]))),kerns,
 kernno = size(kerns{1,1},3);
 
 norm_f = norm(f);
-norm_c_max = norm_f^2*A;
+norm_c = [norm_f^2*B, norm_f^2*A];
 relres = zeros(ceil(kv.maxit/kv.relresstep),1);
-fhat = [];
+relres(1) = 1;
 suppindcount = zeros(size(cres));
 suppind = false(size(cres));
 suppIdx = zeros(numel(cres),2);
 suppNo = 0;
 
-%ssum = s(1,:).^2 + sum(2*s(2:M2,:).^2);
+exitcode = 0;
+
 tic
 [maxcols,maxcolspos] = max(s(1:M2,:));
-iter = 1;
+iter = 0;
 atNo = 0;
 if flags.do_mp
     %% MATCHING PURSUIT
-    while atNo < kv.atoms && iter <= kv.maxit
+    while atNo < kv.atoms && iter < kv.maxit
         %% 1) Selection
         [~,n] = max(maxcols); n = n-1;
         m = maxcolspos(n+1); m=m-1;
@@ -134,8 +144,9 @@ if flags.do_mp
         nstart = (winIdx - 1)*N;
         nloc = n - nstart;
         
+        iter = iter+1;
         if suppindcount(m+1,n+1) == 0, atNo = atNo + 1; end
-        if suppindcount(m+1,n+1) >= kv.atsellim, break; end
+        if suppindcount(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
         suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1;
         
         % 1b) Selected coefficient
@@ -161,20 +172,28 @@ if flags.do_mp
 
             maxcols(idxn) = maxcolupd;
             maxcolspos(idxn) = maxcolposupd;
-            
-            %ssum(idxn) = s(1,idxn).^2 + sum(2*s(2:M2,idxn).^2);
-       end
+        end
 
-       if mod(iter,kv.printstep) == 0
-           plotiter(c,cres,a,M,clim,iter,kv,flags);
-       end
+        if mod(iter,kv.printstep) == 0
+            plotiter(c,cres,a,M,clim,iter,kv,flags);
+        end
        
-       %10*log10(sum(ssum)/norm_c)
-       if mod(iter,kv.relresstep) == 0
-           %[fhat, relres] = printiter2(cres,M,relres,norm_f,iter,kv,flags);
-           [fhat, relres] = printiter(c,cres,g,a,M,L,Ls,relres,f,norm_f,iter,kv,flags);
-       end
-       iter = iter+1;
+        if mod(iter,kv.relresstep) == 0
+            relresid = ceil(iter/kv.relresstep) + 1;
+            if flags.do_errappr
+                relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
+            else
+                relres(relresid) = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags);
+            end
+            if relres(relresid) <= kv.relrestol
+                exitcode = 1;
+                break;
+            end
+            if relres(relresid-1)<relres(relresid)
+                exitcode = 4;
+                break;
+            end            
+        end
     end
 elseif flags.do_cyclicmp
     %% CYCLIC MATCHING PURSUIT
@@ -461,22 +480,30 @@ elseif flags.do_localomp || flags.do_compllocalomp
    end
 end
 
-if isempty(fhat)
-    [fhat, relres] = printiter(c,cres,g,a,M,L,Ls,relres,f,norm_f,iter,kv,flags);
-end
+%% Final computation
+% Coefficient residual 
+cres = cres(1:M2,:);
+% Coefficient solution
+c = c(1:M2,:);
+% Approximation
+fhat = reccoefs(c,g,a,M,L,Ls);
+% Approximation error
+relresfinal = norm(f-fhat)/norm_f;
 
 t = toc;
 fprintf('%.2f atoms/s\n',atNo/t);
 
-cres = cres(1:M2,:);
-c = c(1:M2,:);
-exitcode = 0;
-info = struct('cres',cres,...
-              'relres',relres,...
-              'iter',iter,...
-              'exitcode',exitcode,...
-              'exitmsg','prd',...
-              'atoms',atNo);
+info.cres = cres;
+info.relres = relresfinal;
+info.relresiter = relres;
+info.iter = iter;
+info.exitcode = exitcode;
+info.exitmsg = convmessages{exitcode+1};
+info.atoms = atNo;
+info.suppindcount = suppindcount(1:M2,:);
+info.g = g;
+info.a = a;
+info.M = M;
 
 %%%%%%%%%%%%%%%%%% Helper functions %%%%%%%%%%%%%%%%%%%%%%%
 function [fhat,fhats] = reccoefs(c,g,a,M,L,Ls)
@@ -567,41 +594,48 @@ function plotiter(c,cres,a,M,clim,iter,kv,flags)
         figure(1);clf;plotdgt(cres,a,'clim',clim);shg;
         figure(2);clf;plotdgt(c,a,'clim',clim);shg;
     
-function [fhat,relres] = printiter2(cres,M,relres,norm_f,iter,kv,flags)
-    fhat = [];
-    
+function relres = printiterappr(s,M,norm_c,iter,kv,flags)
     M2 = floor(M/2) + 1;
-    relrescurr = sqrt(sum(abs(cres(1,:)).^2) + sum(sum(2*abs(cres(2:M2,:).^2))))/(norm_f*sqrt(4));
-
-    relres(ceil(iter/kv.relresstep)) = relrescurr;
-
-%     if flags.do_printerr || flags.do_printdb
-%         if flags.do_printdb
-%             relrescurr = 20*log10(relrescurr);
-%             fprintf('Iteration %d, RMS: %.2f dB\n',iter, relrescurr);
-%         else
-%             fprintf('Iteration %d, RMS: %.2d %s\n',iter, relrescurr);
-%         end
-%     end
-        
-function [fhat,relres] = printiter(c,cres,g,a,M,L,Ls,relres,f,norm_f,iter,kv,flags)
-    fhat = [];
+    relrescurr = sqrt( ( sum(s(1,:).^2) + sum(sum(2*s(2:M2,:).^2)) )./norm_c );
+    relres = relrescurr(2);
+    spreaddb = 20*log10(relrescurr(2)) - 20*log10(relrescurr(1));
     
-     M2 = floor(M/2) + 1;
-   % relrescurr = sqrt(sum(abs(cres(1,:)).^2) + sum(sum(2*abs(cres(2:M2,:).^2))))/(norm_f*sqrt(4));
-    
-       
-        [fhatsum,fhat] = reccoefs(c(1:M2,:),g,a,M,L,Ls);
-        relrescurr = norm(f-fhatsum)/norm_f;
-        relres(ceil(iter/kv.relresstep)) = relrescurr;
-
-        if flags.do_printerr || flags.do_printdb
-            if flags.do_printdb
-                relrescurr = 20*log10(relrescurr);
-                fprintf('Iteration %d, RMS: %.2f dB\n',iter, relrescurr);
-            else
-                fprintf('Iteration %d, RMS: %.2d %s\n',iter, relrescurr);
-            end
+    if spreaddb < 1
+         if flags.do_printerr || flags.do_printdb
+             if flags.do_printdb
+                 relrescurr = 20*log10(relrescurr);
+                 fprintf('Iteration %d, RMS: %.2f dB\n',iter, relrescurr(2));
+             else
+                 fprintf('Iteration %d, RMS: %.2d \n',iter, relrescurr(2));
+             end
         end
+    else
+         if flags.do_printerr || flags.do_printdb
+             if flags.do_printdb
+                 relrescurr = 20*log10(relrescurr);
+                 fprintf('Iteration %d, RMS range: [%.2f %.2f] dB\n',...
+                         iter, relrescurr(1), relrescurr(2));
+             else
+                 fprintf('Iteration %d, RMS range: [%.2d %.2d] \n',...
+                         iter, relrescurr(1), relrescurr(2));
+             end
+        end        
+    end
+        
+function relres = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags)
+     M2 = floor(M/2) + 1;
+       
+     fhatsum = reccoefs(c(1:M2,:),g,a,M,L,Ls);
+     relrescurr = norm(f-fhatsum)/norm_f;
+     relres = relrescurr;
+     
+     if flags.do_printerr || flags.do_printdb
+         if flags.do_printdb
+              relrescurr = 20*log10(relrescurr);
+              fprintf('Iteration %d, RMS: %.2f dB\n',iter, relrescurr);
+         else
+              fprintf('Iteration %d, RMS: %.2d %s\n',iter, relrescurr);
+         end
+     end
     
 
