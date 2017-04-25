@@ -120,6 +120,8 @@ bigkernhidx = cellfun(@(kEl) fftshift(fftindex(min([2*size(kEl,1)+1,M]))),kerns,
 kernno = size(kerns{1,1},3);
 
 norm_f = norm(f);
+norm_f2 = norm(f)^2;
+resnorm = norm_f2;
 norm_c = [norm_f^2*B, norm_f^2*A];
 relres = zeros(ceil(kv.maxit/kv.relresstep),1);
 relres(1) = 1;
@@ -178,8 +180,12 @@ if flags.do_mp
             plotiter(c,cres,a,M,clim,iter,kv,flags);
         end
        
+        %resnorm = resnorm - (2*abs(cval))^2;
+        
         if mod(iter,kv.relresstep) == 0
             relresid = ceil(iter/kv.relresstep) + 1;
+            err = 10*log10( resnorm/ norm_f2);
+            fprintf('%.2f\n',err);
             if flags.do_errappr
                 relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
@@ -504,6 +510,7 @@ info.suppindcount = suppindcount(1:M2,:);
 info.g = g;
 info.a = a;
 info.M = M;
+info.kerns = kerns;
 
 %%%%%%%%%%%%%%%%%% Helper functions %%%%%%%%%%%%%%%%%%%%%%%
 function [fhat,fhats] = reccoefs(c,g,a,M,L,Ls)
