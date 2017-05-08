@@ -160,17 +160,32 @@ if flags.do_mp
 
         %% 2) Residual update
         for secondwinIdx = 1:numel(g)
+            currkern = cval*kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
             idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
+
+%             if m >= 1 && m <= floor(size(currkern,2)/2) + 1
+%                 % There is an interaction between the conjugated
+%                 mmid = floor(kernh/2) + 1 + m + 1;
+%                 nmid = floor(kernw/2) + 1;
+%                 
+%                 currkernconj = conj(cval)*kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+%                 cval = 0;
+%                 cvalconj = 0; 
+%                 mconj = M + 1 - m;
+%                 idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
+%                 cresfulltmp = cres(idxm,idxn);
+%                 cresfulltmp = cresfulltmp - currkern;
+%                 cres(idxm,idxn) = cresfulltmp;           
+%             end
+
             idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
-
-            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
-
+            
             cresfulltmp = cres(idxm,idxn);
-            cresfulltmp = cresfulltmp - cval*currkern;
+            cresfulltmp = cresfulltmp - currkern;
             cres(idxm,idxn) = cresfulltmp;
-
+            
             s(idxm,idxn) = abs(cresfulltmp);
-            [maxcolupd,maxcolposupd] = max(s(1:M2,idxn));
+            [maxcolupd,maxcolposupd] = max(s(:,idxn));
 
             maxcols(idxn) = maxcolupd;
             maxcolspos(idxn) = maxcolposupd;

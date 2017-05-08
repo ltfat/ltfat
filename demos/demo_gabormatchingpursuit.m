@@ -1,15 +1,16 @@
-[f,fs] = wavload('serj.wav'); a = 512; M = 2*2048; 
-atoms = 200000;
+[f,fs] = wavload('serj.wav'); a = 256; M = 2048; 
+atoms = 400000;
 Ls = numel(f);
 L = dgtlength(Ls,a,M);
 tfr = a*M/L;
-step = 10000;
+step = 100000;
 g = 'gauss';
 
 
 [c1,fhat1,info1] = dgtrealmp(f,a,M,'mp','tol',1e-4,'atoms',atoms,...
-                   'g1','hann','g2',{'hann',1024},'atsellim',10000,...
-                   'relresstep',step,'errexact','printdb');
+                   'g1','hann','g2',{'hann',512},'atsellim',10000,...
+                   'relresstep',step,'errexact','printdb',...
+                   'relrestoldb',-60);
  info1
  info1.exitmsg
 % a = 256;
