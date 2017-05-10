@@ -130,6 +130,7 @@ suppind = false(size(cres));
 suppIdx = zeros(numel(cres),2);
 suppNo = 0;
 
+apprenenergy = 0;
 exitcode = 0;
 
 tic
@@ -147,60 +148,96 @@ if flags.do_mp
         nloc = n - nstart;
         
         iter = iter+1;
-        if suppindcount(m+1,n+1) == 0, atNo = atNo + 1; end
+        if suppindcount(m+1,n+1) == 0 && m < M2, atNo = atNo + 1; end
         if suppindcount(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
         suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1;
         
         % 1b) Selected coefficient
         cval = cres(m+1,n+1);
-        %% 3) Coefficient update
+         %% 3) Coefficient update
         cvalold = c(m+1,n+1);
         % A single atom can be selected more than once
         c(m+1,n+1) = cvalold + cval;
 
         %% 2) Residual update
         for secondwinIdx = 1:numel(g)
-            currkern = cval*kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
             idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-
-%             if m >= 1 && m <= floor(size(currkern,2)/2) + 1
-%                 % There is an interaction between the conjugated
-%                 mmid = floor(kernh/2) + 1 + m + 1;
-%                 nmid = floor(kernw/2) + 1;
-%                 
-%                 currkernconj = conj(cval)*kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
-%                 cval = 0;
-%                 cvalconj = 0; 
-%                 mconj = M + 1 - m;
-%                 idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
-%                 cresfulltmp = cres(idxm,idxn);
-%                 cresfulltmp = cresfulltmp - currkern;
-%                 cres(idxm,idxn) = cresfulltmp;           
-%             end
-
             idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+  
+%             [kernh,kernw] = size(currkern);
+%             mmid = floor(kernh/2) + 1;
+%             nmid = floor(kernw/2) + 1;
+%             spillm = mmid - m;
+%             if m > 0 && spillm > 0
+%                 conjcurrkern = conj(cval)*kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+%                 
+%                 mstart = kernh + 2 - 2*spillm;
+%                 currkern(mstart:mstart+spillm-1,:) = currkern(mstart:mstart+spillm-1,:) ...
+%                                                + conjcurrkern(1:spillm,:);
+%                
+% %                 rat = cval/currkern(mmid,nmid);
+% %                 cval = cval*abs(rat);    
+% %                 currkern = currkern*rat;
+%                   
+% %                 if abs(rat - 1) > 1e-10
+% %                     disp('prd');
+% %                 end
+% 
+%                 
+%             end
             
+            
+%             if abs( cresfulltmp(mmid,nmid)) > 1e-10
+%                 disp('prd');
+%             end
+    
             cresfulltmp = cres(idxm,idxn);
-            cresfulltmp = cresfulltmp - currkern;
+            cresfulltmp = cresfulltmp - cval*currkern;
             cres(idxm,idxn) = cresfulltmp;
-            
             s(idxm,idxn) = abs(cresfulltmp);
-            [maxcolupd,maxcolposupd] = max(s(:,idxn));
-
+            
+            % Subsequently remove the conjugated coefficient from the
+            % residuum
+            kernh = size(currkern,1);
+            mmid = floor(kernh/2) + 1;
+            spillm = mmid - m;
+            if m > 0 && spillm > 0
+                mconj = M - m;
+                idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
+                cval2 = cres(mconj + 1,n+1);
+                
+                cresfulltmp = cres(idxm,idxn);
+                cresfulltmp = cresfulltmp - cval2*currkern;
+                cres(idxm,idxn) = cresfulltmp;
+                s(idxm,idxn) = abs(cresfulltmp);
+            end
+            
+            % Update max in updated cols
+            [maxcolupd,maxcolposupd] = max(s(1:M2,idxn));
             maxcols(idxn) = maxcolupd;
             maxcolspos(idxn) = maxcolposupd;
         end
+        
+
 
         if mod(iter,kv.printstep) == 0
             plotiter(c,cres,a,M,clim,iter,kv,flags);
         end
        
-        %resnorm = resnorm - (2*abs(cval))^2;
+        
+        
+        if m==0
+            apprenenergy = apprenenergy - abs(cvalold)^2 + (abs(c(m+1,n+1)))^2;
+        elseif m<M2
+            apprenenergy = apprenenergy - 2*abs(cvalold)^2 + 2*(abs(c(m+1,n+1)))^2;
+        end
+        %
         
         if mod(iter,kv.relresstep) == 0
             relresid = ceil(iter/kv.relresstep) + 1;
-            err = 10*log10( resnorm/ norm_f2);
-            fprintf('%.2f\n',err);
+            fprintf('Err: %.2f\n',10*log10( (norm_f2-apprenenergy)/norm_f2));
+            fprintf('Atoms: %d\n',atNo);
             if flags.do_errappr
                 relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
@@ -333,7 +370,7 @@ elseif flags.do_cyclicmp
     end    
 elseif flags.do_complmp
     %% COMPLEMENTARY MATCHING PURSUIT
-    while atNo < kv.atoms && iter <= kv.maxit
+    while atNo < kv.atoms && iter < kv.maxit
         %% 1) Selection
         [~,n] = max(maxcols); n = n-1;
         m = maxcolspos(n+1); m=m-1;
@@ -341,8 +378,9 @@ elseif flags.do_complmp
         nstart = (winIdx - 1)*N;
         nloc = n - nstart;
 
-        if suppindcount(m+1,n+1) == 0, atNo = atNo + 1; end
-        if suppindcount(m+1,n+1) >= kv.atsellim, break; end
+        iter = iter+1;
+        if suppindcount(m+1,n+1) == 0 && m < M2, atNo = atNo + 1; end
+        if suppindcount(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
         suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1;
         
         % 1b) Selected coefficient
@@ -364,19 +402,52 @@ elseif flags.do_complmp
             cres(idxm,idxn) = cresfulltmp;
 
             s(idxm,idxn) = abs(cresfulltmp);
-            [maxcolupd,maxcolposupd] = max(s(:,idxn));
-
+            
+            kernh = size(currkern,1);
+            mmid = floor(kernh/2) + 1;
+            spillm = mmid - m;
+            if m > 0 && spillm > 0
+                mconj = M - m;
+                idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
+                cval2 = cres(mconj + 1,n+1);
+                
+                cresfulltmp = cres(idxm,idxn);
+                cresfulltmp = cresfulltmp - cval2*currkern;
+                cres(idxm,idxn) = cresfulltmp;
+                s(idxm,idxn) = abs(cresfulltmp);
+            end
+            
+            [maxcolupd,maxcolposupd] = max(s(1:M2,idxn));
             maxcols(idxn) = maxcolupd;
             maxcolspos(idxn) = maxcolposupd;
-       end
+        end
+       
+        if mod(iter,kv.printstep) == 0
+            plotiter(c,cres,a,M,clim,iter,kv,flags);
+        end
+       
+        %resnorm = resnorm - (2*abs(cval))^2;
+        
+        if mod(iter,kv.relresstep) == 0
+            relresid = ceil(iter/kv.relresstep) + 1;
+            %err = 10*log10( resnorm/ norm_f2);
+            fprintf('Atoms: %d\n',atNo);
+            if flags.do_errappr
+                relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
+            else
+                relres(relresid) = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags);
+            end
+            if relres(relresid) <= kv.relrestol
+                exitcode = 1;
+                break;
+            end
+            if relres(relresid-1)<relres(relresid)
+                exitcode = 4;
+                break;
+            end            
+        end
 
-       if mod(iter,kv.printstep) == 0
-           plotiter(c,cres,a,M,clim,iter,kv,flags);
-       end
-       if mod(iter,kv.relresstep) == 0 || iter == kv.maxit
-           [fhat, relres] = printiter(c,cres,g,a,M,L,Ls,relres,f,norm_f,iter,kv,flags);
-       end
-       iter = iter+1;
+
     end
 elseif flags.do_localomp || flags.do_compllocalomp
     %% LOCAL ORTHOGONAL MATCHING PURSUIT
@@ -397,18 +468,23 @@ elseif flags.do_localomp || flags.do_compllocalomp
         %            warning('ja')
         %        end
         
-        if suppindcount(m+1,n+1) == 0, atNo = atNo + 1; end
-  
+        iter = iter+1;
+        if suppindcount(m+1,n+1) == 0 && m < M2, atNo = atNo + 1; end
+        if suppindcount(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
         suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1;
-        if suppindcount(m+1,n+1) > kv.atsellim,
-            break; 
-%            pred= 1;
-%             s(m+1,n+1) = 0;
-%             [maxcolupd,maxcolposupd] = max(s(1:M2,n+1));
-%             maxcols(n+1) = maxcolupd;
-%             maxcolspos(n+1) = maxcolposupd;
-%             continue;
-        end
+        
+%         if suppindcount(m+1,n+1) == 0, atNo = atNo + 1; end
+%   
+%         suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1;
+%         if suppindcount(m+1,n+1) > kv.atsellim,
+%             break; 
+% %            pred= 1;
+% %             s(m+1,n+1) = 0;
+% %             [maxcolupd,maxcolposupd] = max(s(1:M2,n+1));
+% %             maxcols(n+1) = maxcolupd;
+% %             maxcolspos(n+1) = maxcolposupd;
+% %             continue;
+%         end
 
 
         suppind(m+1,n+1) = 1;
@@ -490,14 +566,32 @@ elseif flags.do_localomp || flags.do_compllocalomp
 
        maxcols(idxn) = maxcolupd;
        maxcolspos(idxn) = maxcolposupd;
-
+       
        if mod(iter,kv.printstep) == 0
-           plotiter(c,cres,a,M,clim,iter,kv,flags);
+            plotiter(c,cres,a,M,clim,iter,kv,flags);
        end
-       if mod(iter,kv.relresstep) == 0 || iter == kv.maxit
-           [fhat, relres] = printiter(c,cres,g,a,M,L,Ls,relres,f,norm_f,iter,kv,flags);
-       end
-       iter = iter+1;
+       
+        %resnorm = resnorm - (2*abs(cval))^2;
+        
+        if mod(iter,kv.relresstep) == 0
+            relresid = ceil(iter/kv.relresstep) + 1;
+            %err = 10*log10( resnorm/ norm_f2);
+            fprintf('Atoms: %d\n',atNo);
+            if flags.do_errappr
+                relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
+            else
+                relres(relresid) = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags);
+            end
+            if relres(relresid) <= kv.relrestol
+                exitcode = 1;
+                break;
+            end
+            if relres(relresid-1)<relres(relresid)
+                exitcode = 4;
+                break;
+            end            
+        end
+
    end
 end
 
@@ -513,6 +607,8 @@ relresfinal = norm(f-fhat)/norm_f;
 
 t = toc;
 fprintf('%.2f atoms/s\n',atNo/t);
+
+if atNo ~= kv.atoms, exitcode = 2; end
 
 info.cres = cres;
 info.relres = relresfinal;
