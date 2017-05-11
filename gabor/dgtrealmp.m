@@ -70,7 +70,8 @@ if isempty(g), g{1} = 'gauss'; end
 g = cellfun(@(gEl) normalize(gabwin(gEl,a,M,L),'2'),g(:)',...
 'UniformOutput',0);
 
-[A,B] = gabframebounds(cell2mat(g),a,M,L);
+%[A,B] = gabframebounds(cell2mat(g),a,M,L);
+A=1;B=1;
 
 N = L/a;
 superN = numel(g)*N;
@@ -165,33 +166,6 @@ if flags.do_mp
             idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
             idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
   
-%             [kernh,kernw] = size(currkern);
-%             mmid = floor(kernh/2) + 1;
-%             nmid = floor(kernw/2) + 1;
-%             spillm = mmid - m;
-%             if m > 0 && spillm > 0
-%                 conjcurrkern = conj(cval)*kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
-%                 
-%                 mstart = kernh + 2 - 2*spillm;
-%                 currkern(mstart:mstart+spillm-1,:) = currkern(mstart:mstart+spillm-1,:) ...
-%                                                + conjcurrkern(1:spillm,:);
-%                
-% %                 rat = cval/currkern(mmid,nmid);
-% %                 cval = cval*abs(rat);    
-% %                 currkern = currkern*rat;
-%                   
-% %                 if abs(rat - 1) > 1e-10
-% %                     disp('prd');
-% %                 end
-% 
-%                 
-%             end
-            
-            
-%             if abs( cresfulltmp(mmid,nmid)) > 1e-10
-%                 disp('prd');
-%             end
-    
             cresfulltmp = cres(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkern;
             cres(idxm,idxn) = cresfulltmp;
@@ -205,7 +179,8 @@ if flags.do_mp
             if m > 0 && spillm > 0
                 mconj = M - m;
                 idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
-                cval2 = cres(mconj + 1,n+1);
+                
+                if secondwinIdx==1, cval2 = cres(mconj + 1,n+1); end
                 
                 cresfulltmp = cres(idxm,idxn);
                 cresfulltmp = cresfulltmp - cval2*currkern;
@@ -218,14 +193,12 @@ if flags.do_mp
             maxcols(idxn) = maxcolupd;
             maxcolspos(idxn) = maxcolposupd;
         end
-        
-
+     
 
         if mod(iter,kv.printstep) == 0
             plotiter(c,cres,a,M,clim,iter,kv,flags);
         end
        
-        
         
         if m==0
             apprenenergy = apprenenergy - abs(cvalold)^2 + (abs(c(m+1,n+1)))^2;
