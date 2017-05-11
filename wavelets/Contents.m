@@ -2,6 +2,12 @@
 %
 %   Zdenek Prusa, 2013 - 2016.
 %
+%   If you use the wavelets module for a scientific work, please cite:
+%
+%   Z. Průša, P. L. Søndergaard, and P. Rajmic. “Discrete Wavelet Transforms in the Large
+%   Time-Frequency Analysis Toolbox for MATLAB/GNU Octave.” ACM Trans. Math. Softw. 42, 4,
+%   Article 32, 2016. DOI: 10.1145/2839298
+%   
 %   Basic analysis/synthesis
 %      FWT               - Fast Wavelet Transform 
 %      IFWT              - Inverse Fast Wavelet Transform
