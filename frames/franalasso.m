@@ -93,6 +93,19 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %      If 'print' is specified, then print every p'th iteration. Default 
 %      value is 10;
 %
+%   'debias'
+%      Performs debiasing (improves approximation accuracy) of the solution
+%      using the conjugate gradient algorithm. This amounts to doing 
+%      best-fit with respect to a subdictionary selected by ISTA. 
+%
+%   'pcgmaxit',pcgmaxit 
+%      Maximum allowed number of iterations for pcg. Only used together
+%      with the 'debias' flag. The default value is 100.
+%   
+%   'pcgtol',pcgtol 
+%      Tolerance of pcg. Only used together with the 'debias' flag. 
+%      The default value is 1e-6.
+%
 %   The parameters *C*, *itermax* and *tol* may also be specified on the
 %   command line in that order: `franalasso(F,x,lambda,C,tol,maxit)`.
 %
@@ -112,31 +125,34 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %      % Choosing lambda (weight of the sparse regularization param.)
 %      lambda = 0.1;
 %      % Solve the basis pursuit problem
-%      [c,~,~,frec,cd] = franalasso(F,f,lambda);
+%      [c1,~,~,frec1,cd] = franalasso(F,f,lambda);
+%      % Solve again with debiasing enabled
+%      [c2,~,~,frec2,cd] = franalasso(F,f,lambda,'debias');
 %      % Plot sparse coefficients
-%      figure(1);
-%      plotframe(F,c,'dynrange',50);
-%
+%      figure(1); plotframe(F,c1,'dynrange',50);
+%      % Plot debiased coefficients
+%      figure(2); plotframe(F,c2,'dynrange',50);
 %      % Plot coefficients obtained by applying an analysis operator of a
 %      % dual Gabor system to f
-%      figure(2);
-%      plotframe(F,cd,'dynrange',50);
+%      figure(3); plotframe(F,cd,'dynrange',50);
 %
-%      % Check the (NON-ZERO) reconstruction error .
+%      % Normalized MSE of the approximation
 %      % frec is obtained by applying the synthesis operator of frame F
 %      % to sparse coefficients c.
-%      norm(f-frec)
+%      fprintf('Normalized MSE:                  %.2f dB\n',20*log10(norm(f-frec1)/norm(f)));
+%      fprintf('Normalized MSE (with debiasing): %.2f dB\n',20*log10(norm(f-frec2)/norm(f)));
 %
 %      % Compare decay of coefficients sorted by absolute values
 %      % (compressibility of coefficients)
 %      figure(3);
-%      semilogx([sort(abs(c),'descend')/max(abs(c)),...
+%      semilogx([sort(abs(c1),'descend')/max(abs(c1)),...
+%      sort(abs(c2),'descend')/max(abs(c2)),...
 %      sort(abs(cd),'descend')/max(abs(cd))]);
-%      legend({'sparsified coefficients','dual system coefficients'});
+%      legend({'sparsified coefficients','with debiasing','dual system coefficients'});
 %  
 %   See also: frame, frsyn, framebounds, franabp, franagrouplasso
 %
-%   References: dademo04 beck09
+%   References: dademo04 beck09 finowr07
 
 %   AUTHOR : Bruno Torresani.  
 %   TESTING: OK
