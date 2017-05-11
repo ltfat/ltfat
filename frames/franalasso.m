@@ -152,7 +152,7 @@ complainif_notenoughargs(nargin,2,'FRANALASSO');
 complainif_notvalidframeobj(F,'FRANALASSO');
 
 if sum(size(f)>1)>1
-  error('%s: Too many input channels.',upper(mfilename));    
+  error('%s: Too many input channels.',upper(mfilename));
 end
 
 
@@ -163,6 +163,9 @@ definput.keyvals.maxit=100;
 definput.keyvals.printstep=10;
 definput.flags.print={'print','quiet'};
 definput.flags.algorithm={'fista','ista'};
+definput.flags.debias = {'nodebias','debias'};
+definput.keyvals.pcgmaxit=100;
+definput.keyvals.pcgtol=1e-6;
 [flags,kv]=ltfatarghelper({'C','tol','maxit'},definput,varargin);
 
 
@@ -170,6 +173,7 @@ definput.flags.algorithm={'fista','ista'};
 Ls = size(f,1);
 F=frameaccel(F,Ls);
 L=F.L;
+f = postpad(f,L);
 
 % Use the upper framebound as C
 if isempty(kv.C)
@@ -197,7 +201,7 @@ if flags.do_ista
        tc0 = tc;
        iter = iter + 1;
        if flags.do_print
-         if mod(iter,kv.printstep)==0        
+         if mod(iter,kv.printstep)==0
            fprintf('Iteration %d: relative error = %f\n',iter,relres);
          end;
        end;
@@ -210,7 +214,7 @@ elseif flags.do_fista
        tc = c0 - F.frana(F.frsyn(tz0));
        tc = tz0 + tc/kv.C;
        tc = thresh(tc,threshold,'soft');
-       
+
        tau = 1/2*(1+sqrt(1+4*tau0^2));
        tz0 = tc + (tau0-1)/tau*(tc-tc0);
        relres = norm(tc(:)-tc0(:))/norm(tc0(:));
@@ -218,10 +222,30 @@ elseif flags.do_fista
        tau0 = tau;
        iter = iter + 1;
        if flags.do_print
-         if mod(iter,kv.printstep)==0        
+         if mod(iter,kv.printstep)==0
            fprintf('Iteration %d: relative error = %f\n',iter,relres);
          end;
        end;
+   end
+end
+
+
+if flags.do_debias
+   mask = double(abs(tc)>0);
+
+   % Simulate the pseudoinverse of the synthesis operator of the
+   % reduced system
+   if numel(find(mask>0)) >= L
+       % Invert the frame matrix
+       A=@(x) F.frsyn(mask.*F.frana(x));
+
+       [fout,flag,~,iter,relres]=pcg(A,f,kv.pcgtol,kv.pcgmaxit);
+       tc=mask.*F.frana(fout);
+   else
+       % Invert the Gram matrix
+       A=@(x) mask.*F.frana(F.frsyn(mask.*x));
+       [tc,flag,~,iter,relres]=pcg(A,mask.*F.frana(f),kv.pcgtol,kv.pcgmaxit);
+       tc=mask.*tc;
    end
 end
 
@@ -233,7 +257,7 @@ end;
 % Calculate coefficients using the canonical dual system
 % May be conviniently used for comparison
 if nargout>4
-  try  
+  try
      Fd = framedual(F);
      cd = frana(Fd,f);
   catch
