@@ -83,15 +83,10 @@ LTFAT_NAME(gradsamptorad_ufb)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
 
 /* Experimental NUFB stuff */
 
-inline void
-LTFAT_NAME(trapezheap_fb)(const struct LTFAT_NAME(heapinttask) *hit,
+void LTFAT_NAME(trapezheap_fb)(const struct LTFAT_NAME(heapinttask) *hit,
                                const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
-                               const LTFAT_REAL wNeighI[], const LTFAT_REAL wNeighL[],
-                               const LTFAT_REAL wNeighU[], 
-                               const LTFAT_REAL wDistL[], const LTFAT_REAL wDistU[],
-                               const LTFAT_REAL wDistV[],
-                               const ltfatInt w,
-                               LTFAT_REAL* phase);
+                               const ltfatInt* wneigh, const LTFAT_REAL* posInfo,
+                               const ltfatInt w, LTFAT_REAL* phase);
 
 void
 LTFAT_NAME(gradsamptorad_fb)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
