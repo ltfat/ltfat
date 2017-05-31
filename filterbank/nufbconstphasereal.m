@@ -78,7 +78,7 @@ thismfilename = upper(mfilename);
 %complainif_notposint(a,'a',thismfilename);
 
 
-definput.keyvals.tol=[1e-1,1e-10];
+definput.keyvals.tol=[1e-10,1e-10];
 definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
@@ -140,7 +140,7 @@ L=N(1)*a(1);
 
 % Prepare differences of center frequencies [given in normalized frequency]
 % and dilation factors (square root of the time-frequency ratio)
-cfreqdiff = [0;diff(fc);0];
+cfreqdiff = [diff(fc)];
 sqtfr = sqrt(tfr);
 sqtfrdiff = diff(sqtfr);
 
@@ -181,50 +181,60 @@ end
 %fac = 2/3;
 %fac = 2/pi;
 
-DIST = cell(chanStart(end),3);
+positionInfo = zeros(chanStart(end),2);
+for kk = 1:M
+   positionInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
+end
 
 fac = kv.gderivweight;
 tgrad = cell(numel(s),1);
 for kk = 1:M    
-    temp = zeros(N(kk),2);
-    %DIST{kk} = cell(N(kk),2);    
+    temp = zeros(N(kk),2);    
     for ll = 1:N(kk) 
         currPos = chanStart(kk)+ll;
-        lowNeigh = NEIGH{currPos,2};
-        highNeigh = NEIGH{currPos,3};
-        DIST{currPos,1} = zeros(size(lowNeigh));
-        DIST{currPos,2} = zeros(size(highNeigh));
-        DIST{currPos,3} = cfreqdiff(kk:kk+1);
         tempVal = 0;
-        for jj = 1:numel(highNeigh)
-            dist = NEIGH{highNeigh(jj),4}(1)-ll; 
-            DIST{currPos,2}(jj) = dist;
-            tempVal = tempVal + (logs{kk+1}(highNeigh(jj)-chanStart(kk+1))-logs{kk}(ll)...
-                     -dist*tmagdiff{kk}(ll))/numel(highNeigh);
-                     %-DIST{kk}{ll,2}(jj)*tmagdiff{kk}(ll))/numel(highNeigh);
+        numNeigh = 0;
+        for jj = 1:2
+           neigh = NEIGH(currPos,4+jj);           
+           if neigh
+              numNeigh = numNeigh+1;
+              dist = (positionInfo(neigh,2)-positionInfo(currPos,2))/a(kk);
+              tempVal = tempVal + (logs{kk+1}(neigh-chanStart(kk+1))-logs{kk}(ll)...
+                     -dist*tmagdiff{kk}(ll));
+           end
         end
-        temp(ll,1) = tempVal;
+        if numNeigh
+            temp(ll,1) = tempVal/numNeigh;
+        end
         
         tempVal = 0;
-        for jj = 1:numel(lowNeigh)
-            dist = NEIGH{lowNeigh(jj),4}(2)-ll;
-            DIST{currPos,1}(jj) = dist;
-            tempVal = tempVal + (logs{kk}(ll)-logs{kk-1}(lowNeigh(jj)-chanStart(kk-1))...
-                     -dist*tmagdiff{kk}(ll))/numel(lowNeigh);
-                     %-DIST{kk}{ll,1}(jj)*tmagdiff{kk}(ll))/numel(lowNeigh);
+        numNeigh = 0;
+        for jj = 1:2
+           neigh = NEIGH(currPos,2+jj);           
+           if neigh
+              numNeigh = numNeigh+1;
+              dist = (positionInfo(neigh,2)-positionInfo(currPos,2))/a(kk);
+              tempVal = tempVal + (logs{kk}(ll)-logs{kk-1}(neigh-chanStart(kk-1))...
+                     -dist*tmagdiff{kk}(ll));
+           end
         end
-        temp(ll,2) = tempVal;
+        
+        if numNeigh
+            temp(ll,2) = tempVal/numNeigh; 
+        end           
     end
     if kk~=M
-        temp(:,1) = (temp(:,1) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk+1);
+        temp(:,1) = (temp(:,1) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk);
     end
     if kk~=1
-        temp(:,2) = (temp(:,2) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk);
+        temp(:,2) = (temp(:,2) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk-1);
     end
+    % Maybe a factor of 1/2 is missing here?
     tgrad{kk} = sum(temp,2)./tfr(kk)./(pi*L);
 end
 
-[newphase, usedmask] = comp_nufbconstphasereal(abss,tgrad,fgrad,NEIGH,DIST,a,M,tol,mask,usephase);
+NEIGH = NEIGH-1;
+[newphase, usedmask] = comp_nufbconstphasereal_alt(abss,tgrad,fgrad,NEIGH,positionInfo,fc,a,M,tol,mask,usephase);
  
 % Build the coefficients
 c=cellfun(@(sEl,pEl) sEl.*exp(1i*pEl),abss,newphase,'UniformOutput',0);
@@ -233,23 +243,14 @@ end
 function [NEIGH,chanStart] = get_neighbors(c,a,N)
 
 M = numel(c);
-% N = zeros(M,1);
-% for kk = 1:M
-% N(kk) = numel(c{kk});
-% end
 
 chanStart = [0;cumsum(N)];
-%numCoef = chanStart(end);
 
-NEIGH = cell(chanStart(end),4);
-%
-%DIST = cell(M,1);
+NEIGH = zeros(chanStart(end),6);
 %Horizontal neighbors
 for kk = 1:M
-  %NEIGH{kk} = cell(N(kk),4);  
-  %DIST{kk} = cell(N(kk),2);
-  NEIGH{chanStart(kk)+1,1} = chanStart(kk); NEIGH{chanStart(kk+1),1} = chanStart(kk+1)-1;
-  NEIGH(chanStart(kk)+(2:N(kk)-1),1) = mat2cell(chanStart(kk)+[(1:N(kk)-2)',(3:N(kk))'],ones(N(kk)-2,1));
+  NEIGH(chanStart(kk)+1,1) = chanStart(kk)+2; NEIGH(chanStart(kk+1),1) = chanStart(kk+1)-1;
+  NEIGH(chanStart(kk)+(2:N(kk)-1),1:2) = chanStart(kk)+[(1:N(kk)-2)',(3:N(kk))'];
 end
 
 %Vertical neighbors
@@ -262,25 +263,22 @@ for kk = 1:M-1
   POSlow = chanStart(kk+1)+max(0,ceil(((0:N(kk)-1)-LIM)*aTemp))';
   POShigh = chanStart(kk+1)+min(floor(((0:N(kk)-1)+LIM)*aTemp),N(kk+1)-1)';
   
-  NEIGH(chanStart(kk)+(1:N(kk)),3) = arrayfun(@(xEl,yEl) (xEl:yEl)+1,POSlow,POShigh,'UniformOutput',0);
-  %DIST{kk}(1:N(kk),2) = arrayfun(@(xEl,yEl,zEl) (xEl:yEl)/aTemp-zEl,POSlow,POShigh,(0:N(kk)-1)','UniformOutput',0);
+  for ll = 1:N(kk)
+    tmpIdx = (POSlow(ll):POShigh(ll))+1;    
+    NEIGH(chanStart(kk)+ll,(5:4+numel(tmpIdx))) = tmpIdx;
+  end
 end
 
 %One channel lower
 for kk = 2:M
   aTemp = a(kk)/a(kk-1);  
   POSlow = chanStart(kk-1)+max(0,ceil(((0:N(kk)-1)-LIM)*aTemp))';
-  POShigh = chanStart(kk-1)+min(floor(((0:N(kk)-1)+LIM)*aTemp),N(kk-1)-1)';  
+  POShigh = chanStart(kk-1)+min(floor(((0:N(kk)-1)+LIM)*aTemp),N(kk-1)-1)';
   
-  NEIGH(chanStart(kk)+(1:N(kk)),2) = arrayfun(@(xEl,yEl) (xEl:yEl)+1,POSlow,POShigh,'UniformOutput',0);  
-  %DIST{kk}(1:N(kk),1) = arrayfun(@(xEl,yEl,zEl) (xEl:yEl)/aTemp-zEl,POSlow,POShigh,(0:N(kk)-1)','UniformOutput',0);
-end
-
-%Create lookup table of positions relative to the neighboring channels
-NEIGH(1:N(1),4) = mat2cell([zeros(N(1),1),(0:N(1)-1)'*a(1)/a(2)+1],ones(N(1),1));
-NEIGH(chanStart(M)+(1:N(M)),4) = mat2cell([(0:N(M)-1)'*a(M)/a(M-1)+1,zeros(N(M),1)],ones(N(M),1));
-for kk = 2:M-1
-    NEIGH(chanStart(kk)+(1:N(kk)),4) = mat2cell([(0:N(kk)-1)'*a(kk)/a(kk-1)+1,(0:N(kk)-1)'*a(kk)/a(kk+1)+1],ones(N(kk),1));
+  for ll = 1:N(kk)
+    tmpIdx = (POSlow(ll):POShigh(ll))+1;    
+    NEIGH(chanStart(kk)+ll,(3:2+numel(tmpIdx))) = tmpIdx;
+  end
 end
 
 end

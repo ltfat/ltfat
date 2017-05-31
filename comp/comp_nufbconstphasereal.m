@@ -1,4 +1,4 @@
-function [newphase, usedmask] = comp_filterbankconstphasereal(s,tgrad,fgrad,NEIGH,DIST,cfreqdiff,a,M,tol,mask,usephase)
+function [newphase, usedmask] = comp_filterbankconstphasereal_alt(s,tgrad,fgrad,NEIGH,posInfo,cfreq,a,M,tol,mask,usephase)
 
 N = cellfun(@(sEl) size(sEl,1),s);
 chanStart = [0;cumsum(N)];
@@ -18,7 +18,7 @@ else
     usedmask = cell2mat(mask);
 end
 
-newphase = usedmask;
+phasetype = 0;
 % % Build the phase
 % if isempty(mask)
 %     % s is real and positive
@@ -44,13 +44,14 @@ newphase = usedmask;
 %     bigenoughidx = s(missingidx)>absthr(ii);
 %     usedmask(missingidx(bigenoughidx)) = 1;
 % end
+newphase = comp_heapintreal_fb(s,tgrad,fgrad,NEIGH.',posInfo.',cfreq,a,M,N,chanStart,tol,phasetype);
 
 
-% Convert the mask so it can be used directly for indexing
-usedmask = logical(usedmask);
-% Assign random values to coefficients below tolerance
-zerono = numel(find(~usedmask));
-newphase(~usedmask) = rand(zerono,1)*2*pi;
+% % Convert the mask so it can be used directly for indexing
+% usedmask = logical(usedmask);
+% % Assign random values to coefficients below tolerance
+% zerono = numel(find(~usedmask));
+% newphase(~usedmask) = rand(zerono,1)*2*pi;
 
 % Convert to cell array again
 usedmask = mat2cell(usedmask,N,W);
