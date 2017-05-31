@@ -39,7 +39,7 @@ convmessages = {'Achieved desired number of atoms',...
                 'Appr. error stalled.',...
                 'localomp: The condition number is out of bounds',...
                 };
-            
+
 Ls = size(f,1);
 L = dgtlength(Ls,a,M);
 
@@ -61,14 +61,26 @@ if isempty(kv.relresstep) || kv.relresstep > kv.maxit
     kv.relresstep = kv.maxit;
 end
 
+
 % Parse windows
 maxwins = 10;
 g = cell(maxwins,1);
 for ii=1:maxwins, g{ii} = kv.(sprintf('g%i',ii)); end
 g = g(~cellfun(@isempty,g));
 if isempty(g), g{1} = 'gauss'; end
-g = cellfun(@(gEl) normalize(gabwin(gEl,a,M,L),'2'),g(:)',...
-'UniformOutput',0);
+
+aarr = zeros(numel(g),1); aarr(:) = a;
+Marr = zeros(numel(g),1); Marr(:) = M;
+
+Marr(2) = M/2;
+
+dgtparamsrows = cellfun(@(gEl,aEl,MEl) ...
+    { normalize(gabwin(gEl,a,M,L),'2'), aEl, MEl...
+      floor(MEl/2)+1, L./aEl},...
+      g(:), num2cell(aarr), num2cell(Marr),'UniformOutput',0);
+
+dgtparamsfields = {'g','a','M','M2','N'};
+dp = cell2struct(vertcat(dgtparamsrows{:}),dgtparamsfields,2);
 
 %[A,B] = gabframebounds(cell2mat(g),a,M,L);
 A=1;B=1;
@@ -82,13 +94,15 @@ masks = cell(numel(g),numel(g));
 
 if flags.do_mp || flags.do_localomp || flags.do_cyclicmp
 
-    for ii = 1:numel(g)
-        for jj = 1:numel(g)
-            [kerns{ii,jj}, masks{ii,jj}] = projkernels(g{ii},g{jj},a,M,L,kv.tol);
+    for ii = 1:numel(dp)
+        for jj = 1:numel(dp)
+            [kerns{ii,jj}, masks{ii,jj}] = ...
+                projkernels(dp(ii).g, dp(jj).g, dp(ii).a, dp(jj).a,...
+                            dp(ii).M, dp(jj).M, L, kv.tol);
         end
     end
 
-cres = cell2mat(cellfun(@(gEl) dgt(f,gEl,a,M),g(:)','UniformOutput',0));
+cres = arrayfun(@(pEl) dgt(f,pEl.g,pEl.a,pEl.M), dp, 'UniformOutput',0);
 
 elseif flags.do_complmp || flags.do_cycliccomplmp || flags.do_compllocalomp ...
     gd = gabdual(cell2mat(g),a,M,L);
@@ -99,7 +113,7 @@ elseif flags.do_complmp || flags.do_cycliccomplmp || flags.do_compllocalomp ...
         for jj = 1:numel(g)
             [kerns{ii,jj}, masks{ii,jj}, atnorms(ii,jj)] = ...
                 projkernels(g{ii},gd{jj},a,M,L,kv.tol);
-            
+
             kerns{ii,jj} = kerns{ii,jj}./atnorms(ii,jj);
         end
     end
@@ -108,10 +122,11 @@ elseif flags.do_complmp || flags.do_cycliccomplmp || flags.do_compllocalomp ...
    cres = cell2mat(cellfun(@(gEl,nEl) 1/nEl*dgt(f,gEl,a,M),gd(:)',num2cell(diag(atnorms))','UniformOutput',0));
 end
 
-s = abs(  cres );
-c = zeros(M,superN);
+s = cellfun(@abs, cres, 'UniformOutput',0);
+c = cellfun(@(cEl) zeros(size(cEl)), cres, 'UniformOutput',0);
 
-smax = 20*log10(max(max(s(1:M2,:))));
+smax = max(cellfun(@(sEl,m2El) max(max(sEl(1:m2El,:))), s,{dp.M2}.'));
+%smax = 20*log10(max(max(s(1:M2,:))));
 clim = [smax-120,smax];
 
 kernwidx = cellfun(@(kEl) fftshift(fftindex(size(kEl,2))),kerns,'UniformOutput',0);
@@ -126,50 +141,73 @@ resnorm = norm_f2;
 norm_c = [norm_f^2*B, norm_f^2*A];
 relres = zeros(ceil(kv.maxit/kv.relresstep),1);
 relres(1) = 1;
-suppindcount = zeros(size(cres));
-suppind = false(size(cres));
-suppIdx = zeros(numel(cres),2);
+suppindcount = cellfun(@(cEl) zeros(size(cEl)), cres, 'UniformOutput',0);
+suppind = cellfun(@(cEl) false(size(cEl)), cres ,'UniformOutput', 0);
+%suppIdx = zeros(numel(cres),2);
 suppNo = 0;
 
 apprenenergy = 0;
 exitcode = 0;
 
+rowCounts = cellfun(@(kEl,m2El) ceil(m2El/size(kEl,1)),...
+                      kerns(:,1),{dp.M2}.');
+%  
+% colCounts = cellfun(@(kEl,sEl) ceil(size(sEl,2)/size(kEl,2)),...
+%                      kerns(:,1),s);
+
+
+                 
 tic
-[maxcols,maxcolspos] = max(s(1:M2,:));
+[maxcols,maxcolspos] = ...
+    cellfun(@(sEl,m2El) max(sEl(1:m2El,:)),s,{dp.M2}.',...
+    'UniformOutput',0);
+
 iter = 0;
 atNo = 0;
 if flags.do_mp
     %% MATCHING PURSUIT
     while atNo < kv.atoms && iter < kv.maxit
         %% 1) Selection
-        [~,n] = max(maxcols); n = n-1;
-        m = maxcolspos(n+1); m=m-1;
-        winIdx = floor(n/N) + 1;
-        nstart = (winIdx - 1)*N;
-        nloc = n - nstart;
-        
+        %[valrow,mcell] = cellfun(@(mEl) max(mEl,[],1),maxcols,'UniformOutput',0);
+        [val,n] = cellfun(@max,maxcols); [~,wIdx] = max(val); n = n(wIdx)-1;
+        m = maxcolspos{wIdx}(n+1); m=m-1;
+         
         iter = iter+1;
-        if suppindcount(m+1,n+1) == 0 && m < M2, atNo = atNo + 1; end
-        if suppindcount(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
-        suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1;
+        if suppindcount{wIdx}(m+1,n+1) == 0 && m < dp(wIdx).M2, atNo = atNo + 1; end
+        if suppindcount{wIdx}(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
+        suppindcount{wIdx}(m+1,n+1) = suppindcount{wIdx}(m+1,n+1) + 1;
+        
+        if suppindcount{wIdx}(m+1,n+1) > 1
+            prd = 1;
+        end
         
         % 1b) Selected coefficient
-        cval = cres(m+1,n+1);
+        cval = cres{wIdx}(m+1,n+1);
          %% 3) Coefficient update
-        cvalold = c(m+1,n+1);
+        cvalold = c{wIdx}(m+1,n+1);
         % A single atom can be selected more than once
-        c(m+1,n+1) = cvalold + cval;
+        c{wIdx}(m+1,n+1) = cvalold + cval;
 
         %% 2) Residual update
-        for secondwinIdx = 1:numel(g)
-            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
-            idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-            idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+        for secondwIdx = [wIdx,1:wIdx-1,wIdx+1:numel(dp)]
+            currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
+            
+            Mrat = dp(wIdx).M/dp(secondwIdx).M;
+            arat = dp(wIdx).a/dp(secondwIdx).a;
+            
+            if Mrat > 1
+                Moff = mod(m,Mrat);
+            elseif Mrat < 1
+                
+            end 
+            
+            idxn = mod(n + kernwidx{wIdx,secondwIdx},N)+1;
+            idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
   
-            cresfulltmp = cres(idxm,idxn);
+            cresfulltmp = cres{secondwIdx}(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkern;
-            cres(idxm,idxn) = cresfulltmp;
-            s(idxm,idxn) = abs(cresfulltmp);
+            cres{secondwIdx}(idxm,idxn) = cresfulltmp;
+            s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
             
             % Subsequently remove the conjugated coefficient from the
             % residuum
@@ -178,20 +216,22 @@ if flags.do_mp
             spillm = mmid - m;
             if m > 0 && spillm > 0
                 mconj = M - m;
-                idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
+                idxm = mod(mconj + kernhidx{wIdx,secondwIdx},M)+1;
                 
-                if secondwinIdx==1, cval2 = cres(mconj + 1,n+1); end
+                if secondwIdx==wIdx
+                    cval2 = cres{wIdx}(mconj + 1,n+1);
+                end
                 
-                cresfulltmp = cres(idxm,idxn);
+                cresfulltmp = cres{secondwIdx}(idxm,idxn);
                 cresfulltmp = cresfulltmp - cval2*currkern;
-                cres(idxm,idxn) = cresfulltmp;
-                s(idxm,idxn) = abs(cresfulltmp);
+                cres{secondwIdx}(idxm,idxn) = cresfulltmp;
+                s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
             end
             
             % Update max in updated cols
-            [maxcolupd,maxcolposupd] = max(s(1:M2,idxn));
-            maxcols(idxn) = maxcolupd;
-            maxcolspos(idxn) = maxcolposupd;
+            [maxcolupd,maxcolposupd] = max(s{secondwIdx}(1:dp(wIdx).M2,idxn));
+            maxcols{secondwIdx}(idxn) = maxcolupd;
+            maxcolspos{secondwIdx}(idxn) = maxcolposupd;
         end
      
 
@@ -201,20 +241,20 @@ if flags.do_mp
        
         
         if m==0
-            apprenenergy = apprenenergy - abs(cvalold)^2 + (abs(c(m+1,n+1)))^2;
+            apprenenergy = apprenenergy + abs(cvalold)^2;
         elseif m<M2
-            apprenenergy = apprenenergy - 2*abs(cvalold)^2 + 2*(abs(c(m+1,n+1)))^2;
+            apprenenergy = apprenenergy + 2*abs(cval)^2;
         end
         %
         
         if mod(iter,kv.relresstep) == 0
             relresid = ceil(iter/kv.relresstep) + 1;
-            fprintf('Err: %.2f\n',10*log10( (norm_f2-apprenenergy)/norm_f2));
+            fprintf('Err: %.6f\n',10*log10( (norm_f2-apprenenergy)/norm_f2));
             fprintf('Atoms: %d\n',atNo);
             if flags.do_errappr
                 relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
-                relres(relresid) = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags);
+                relres(relresid) = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags);
             end
             if relres(relresid) <= kv.relrestol
                 exitcode = 1;
@@ -232,8 +272,8 @@ elseif flags.do_cyclicmp
         %% 1) Selection
         [~,n] = max(maxcols); n = n-1;
         m = maxcolspos(n+1); m=m-1;
-        winIdx = floor(n/N) + 1;
-        nloc = n - (winIdx - 1)*N;
+        wIdx = floor(n/N) + 1;
+        nloc = n - (wIdx - 1)*N;
 
         if suppindcount(m+1,n+1) >= kv.atsellim, break; end
         suppindcount(m+1,n+1) = suppindcount(m+1,n+1) + 1; 
@@ -251,11 +291,11 @@ elseif flags.do_cyclicmp
         c(m+1,n+1) = cvalold + cval;
 
         %% 2) Residual update
-        for secondwinIdx = 1:numel(g)
-            idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-            idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+        for secondwIdx = 1:numel(g)
+            idxn = N*(secondwIdx-1) + mod(nloc + kernwidx{wIdx,secondwIdx},N)+1;
+            idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
 
-            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+            currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
 
             cresfulltmp = cres(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkern;
@@ -272,10 +312,10 @@ elseif flags.do_cyclicmp
             for atId = 1:suppNo
                 [m] = suppIdx(atId,1);
                 [n] = suppIdx(atId,2);
-                winIdx = floor(n/N) + 1;
-                nloc = n - (winIdx - 1)*N;
-                idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-                idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+                wIdx = floor(n/N) + 1;
+                nloc = n - (wIdx - 1)*N;
+                idxn = N*(secondwIdx-1) + mod(nloc + kernwidx{wIdx,secondwIdx},N)+1;
+                idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
                 
                 cval = c(m+1,n+1);
                 c(m+1,n+1) = 0;
@@ -283,7 +323,7 @@ elseif flags.do_cyclicmp
                 suppind(m+1,n+1) = 0;
                 
                 % Current kernel
-                currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+                currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
 
                 % Add back the atom to the residual
                 cresfulltmp = cres(idxm,idxn);
@@ -300,8 +340,8 @@ elseif flags.do_cyclicmp
                 % Find max
                 [~,n] = max(maxcols); n = n-1;
                 m = maxcolspos(n+1); m = m-1;
-                winIdx = floor(n/N) + 1;
-                nloc = n - (winIdx - 1)*N;
+                wIdx = floor(n/N) + 1;
+                nloc = n - (wIdx - 1)*N;
                 
                 % Replace atom in selected atoms
                 suppIdx(atId,:) = [m,n];
@@ -313,11 +353,11 @@ elseif flags.do_cyclicmp
                 c(m+1,n+1) = cvalold + cval;
                 
                 % Update residual
-                for secondwinIdx = 1:numel(g)
-                    idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-                    idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+                for secondwIdx = 1:numel(g)
+                    idxn = N*(secondwIdx-1) + mod(nloc + kernwidx{wIdx,secondwIdx},N)+1;
+                    idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
 
-                    currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+                    currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
 
                     cresfulltmp = cres(idxm,idxn);
                     cresfulltmp = cresfulltmp - cval*currkern;
@@ -347,8 +387,8 @@ elseif flags.do_complmp
         %% 1) Selection
         [~,n] = max(maxcols); n = n-1;
         m = maxcolspos(n+1); m=m-1;
-        winIdx = floor(n/N) + 1;
-        nstart = (winIdx - 1)*N;
+        wIdx = floor(n/N) + 1;
+        nstart = (wIdx - 1)*N;
         nloc = n - nstart;
 
         iter = iter+1;
@@ -364,11 +404,11 @@ elseif flags.do_complmp
         c(m+1,n+1) = cvalold + cval;
 
         %% 2) Residual update
-        for secondwinIdx = 1:numel(g)
-            idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-            idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+        for secondwIdx = 1:numel(g)
+            idxn = N*(secondwIdx-1) + mod(nloc + kernwidx{wIdx,secondwIdx},N)+1;
+            idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
 
-            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(n,kernno));
+            currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
 
             cresfulltmp = cres(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkern;
@@ -381,7 +421,7 @@ elseif flags.do_complmp
             spillm = mmid - m;
             if m > 0 && spillm > 0
                 mconj = M - m;
-                idxm = mod(mconj + kernhidx{winIdx,secondwinIdx},M)+1;
+                idxm = mod(mconj + kernhidx{wIdx,secondwIdx},M)+1;
                 cval2 = cres(mconj + 1,n+1);
                 
                 cresfulltmp = cres(idxm,idxn);
@@ -408,7 +448,7 @@ elseif flags.do_complmp
             if flags.do_errappr
                 relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
-                relres(relresid) = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags);
+                relres(relresid) = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags);
             end
             if relres(relresid) <= kv.relrestol
                 exitcode = 1;
@@ -432,8 +472,8 @@ elseif flags.do_localomp || flags.do_compllocalomp
         %% 1) Selection
         [~,n] = max(maxcols); n = n-1;
         m = maxcolspos(n+1); m=m-1;
-        winIdx = floor(n/N) + 1;
-        nstart = (winIdx - 1)*N;
+        wIdx = floor(n/N) + 1;
+        nstart = (wIdx - 1)*N;
         nloc = n - nstart;
 
         %        [cmaxtrue] = max(max(abs(cresfull(1:M2,:))));
@@ -468,10 +508,10 @@ elseif flags.do_localomp || flags.do_compllocalomp
 
 
         %% 2) Residual update
-        for secondwinIdx = 1:numel(g)
+        for secondwIdx = 1:numel(g)
             % Index range in the output
-            idxn = N*(secondwinIdx-1) + mod(nloc + kernwidx{winIdx,secondwinIdx},N)+1;
-            idxm = mod(m + kernhidx{winIdx,secondwinIdx},M)+1;
+            idxn = N*(secondwIdx-1) + mod(nloc + kernwidx{wIdx,secondwIdx},N)+1;
+            idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
 
             cresfulltmp = cres(idxm,idxn);
                         
@@ -490,7 +530,7 @@ elseif flags.do_localomp || flags.do_compllocalomp
             G = eye(numel(cval));
 
             for ii = 1:numel(cval)
-                currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(cvaln(ii)-1,kernno));
+                currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(cvaln(ii)-1,kernno));
                 [kernh,kernw] = size(currkern);
                 mmid = floor(kernh/2) + 1 - cvalm(ii);
                 nmid = floor(kernw/2) + 1 - cvaln(ii);
@@ -521,10 +561,10 @@ elseif flags.do_localomp || flags.do_compllocalomp
         c(idxm,idxn) = ctmp;
 
         for ii=1:numel(cvalinv)
-            idxn = mod(cvaln(ii)-1 + kernwidx{winIdx,winIdx},N)+1;
-            idxm = mod(cvalm(ii)-1 + kernhidx{winIdx,winIdx},M)+1;
+            idxn = mod(cvaln(ii)-1 + kernwidx{wIdx,wIdx},N)+1;
+            idxm = mod(cvalm(ii)-1 + kernhidx{wIdx,wIdx},M)+1;
 
-            currkern = kerns{winIdx,secondwinIdx}(:,:,1+mod(cvaln(ii)-1,kernno));
+            currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(cvaln(ii)-1,kernno));
             cres(idxm,idxn) = cres(idxm,idxn) - cvalinv(ii)*currkern;
 %             if cvalm(ii)-1~=0
 %                 idxm = mod(M - (cvalm(ii)-1) + kernhidx{winIdx,winIdx},M)+1;
@@ -532,8 +572,8 @@ elseif flags.do_localomp || flags.do_compllocalomp
 %             end
        end
 
-       idxn = mod(n + bigkernwidx{winIdx,secondwinIdx},N)+1;
-       idxm = mod(m + bigkernhidx{winIdx,secondwinIdx},M)+1;
+       idxn = mod(n + bigkernwidx{wIdx,secondwIdx},N)+1;
+       idxm = mod(m + bigkernhidx{wIdx,secondwIdx},M)+1;
        s(idxm,idxn) = abs(cres(idxm,idxn));
        [maxcolupd,maxcolposupd] = max(s(:,idxn));
 
@@ -570,11 +610,11 @@ end
 
 %% Final computation
 % Coefficient residual 
-cres = cres(1:M2,:);
+cres = cellfun(@(cEl,m2El) cEl(1:m2El,:),cres,{dp.M2}.','UniformOutput',0);
 % Coefficient solution
-c = c(1:M2,:);
+c = cellfun(@(cEl,m2El) cEl(1:m2El,:),c,{dp.M2}.','UniformOutput',0);
 % Approximation
-fhat = reccoefs(c,g,a,M,L,Ls);
+fhat = reccoefs(c,dp,L,Ls);
 % Approximation error
 relresfinal = norm(f-fhat)/norm_f;
 
@@ -590,24 +630,26 @@ info.iter = iter;
 info.exitcode = exitcode;
 info.exitmsg = convmessages{exitcode+1};
 info.atoms = atNo;
-info.suppindcount = suppindcount(1:M2,:);
+info.suppindcount = cellfun(@(spEl,m2El) spEl(1:m2El,:),suppindcount,{dp.M2}.','UniformOutput',0);
 info.g = g;
 info.a = a;
 info.M = M;
 info.kerns = kerns;
 
 %%%%%%%%%%%%%%%%%% Helper functions %%%%%%%%%%%%%%%%%%%%%%%
-function [fhat,fhats] = reccoefs(c,g,a,M,L,Ls)
-    N = L/a;
-    fhats = zeros(Ls,numel(g));
+function [fhat,fhats] = reccoefs(c,dp,L,Ls)
+    %N = L/a;
+    fhats = zeros(Ls,numel(dp));
 
-    for ii=1:numel(g)
-        fhats(:,ii) = idgtreal(c(:,(ii-1)*N+1:ii*N),g{ii},a,M,Ls);
+    for ii=1:numel(dp)
+        fhats(:,ii) = idgtreal(c{ii}(1:dp(ii).M2,:),dp(ii).g,dp(ii).a,dp(ii).M,Ls);
     end
 
     fhat = sum(fhats,2);
 
-function [kerns,mask,kernnorm] = projkernels(g1,g2,a,M,L,tol)
+function [kerns,mask,kernnorm] = projkernels(g1,g2,a1,a2,M1,M2,L,tol)
+    a = min([a1,a2]);
+    M = max([M1,M2]);
     N = L/a;
     M2 = floor(M/2) + 1;
     kern = dgt(fir2long(g1,L),g2,a,M);
@@ -713,17 +755,17 @@ function relres = printiterappr(s,M,norm_c,iter,kv,flags)
         end        
     end
         
-function relres = printiterexact(c,g,a,M,L,Ls,f,norm_f,iter,kv,flags)
-     M2 = floor(M/2) + 1;
+function relres = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags)
+     %M2 = floor(M/2) + 1;
        
-     fhatsum = reccoefs(c(1:M2,:),g,a,M,L,Ls);
+     fhatsum = reccoefs(c,dp,L,Ls);
      relrescurr = norm(f-fhatsum)/norm_f;
      relres = relrescurr;
      
      if flags.do_printerr || flags.do_printdb
          if flags.do_printdb
               relrescurr = 20*log10(relrescurr);
-              fprintf('Iteration %d, RMS: %.2f dB\n',iter, relrescurr);
+              fprintf('Iteration %d, RMS: %.6f dB\n',iter, relrescurr);
          else
               fprintf('Iteration %d, RMS: %.2d %s\n',iter, relrescurr);
          end
