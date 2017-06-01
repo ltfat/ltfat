@@ -194,33 +194,43 @@ if flags.do_mp
             
             Mrat = dp(wIdx).M/dp(secondwIdx).M;
             arat = dp(wIdx).a/dp(secondwIdx).a;
+            msecond = floor(m/Mrat);
+            msecondoff = mod(m,Mrat);
+            nsecond = floor(n/arat);
+            nsecondoff = mod(a,arat);
             
             if Mrat > 1
-                Moff = mod(m,Mrat);
+                
             elseif Mrat < 1
                 
             end 
             
-            idxn = mod(n + kernwidx{wIdx,secondwIdx},N)+1;
-            idxm = mod(m + kernhidx{wIdx,secondwIdx},M)+1;
+            % Update the residual
+            idxn = mod(n + kernwidx{wIdx,secondwIdx},dp(secondwIdx).N)+1;
+            idxm = mod(m + kernhidx{wIdx,secondwIdx},dp(secondwIdx).M)+1;
   
             cresfulltmp = cres{secondwIdx}(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkern;
             cres{secondwIdx}(idxm,idxn) = cresfulltmp;
             s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
             
+            if m > 0
+                mconj = dp(secondwIdx).M - m;
+                
+                if secondwIdx==wIdx
+                    cval2 = cres{wIdx}(mconj + 1,n+1);
+                end
+            end
+            
+            
             % Subsequently remove the conjugated coefficient from the
             % residuum
             kernh = size(currkern,1);
             mmid = floor(kernh/2) + 1;
             spillm = mmid - m;
+            
             if m > 0 && spillm > 0
-                mconj = M - m;
-                idxm = mod(mconj + kernhidx{wIdx,secondwIdx},M)+1;
-                
-                if secondwIdx==wIdx
-                    cval2 = cres{wIdx}(mconj + 1,n+1);
-                end
+                idxm = mod(mconj + kernhidx{wIdx,secondwIdx},dp(secondwIdx).M)+1;
                 
                 cresfulltmp = cres{secondwIdx}(idxm,idxn);
                 cresfulltmp = cresfulltmp - cval2*currkern;
@@ -229,7 +239,7 @@ if flags.do_mp
             end
             
             % Update max in updated cols
-            [maxcolupd,maxcolposupd] = max(s{secondwIdx}(1:dp(wIdx).M2,idxn));
+            [maxcolupd,maxcolposupd] = max(s{secondwIdx}(1:dp(secondwIdx).M2,idxn));
             maxcols{secondwIdx}(idxn) = maxcolupd;
             maxcolspos{secondwIdx}(idxn) = maxcolposupd;
         end
