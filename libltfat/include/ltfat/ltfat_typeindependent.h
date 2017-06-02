@@ -610,23 +610,32 @@ LTFAT_NAME(maskedheapintreal_relgrad_ufb)(const LTFAT_REAL* s,
 /* Heapint for NUFB - Start */
 struct LTFAT_NAME(heapinttask_fb)
 {
-    ltfatInt* N;
     struct LTFAT_NAME(heapinttask) * hit;
-    void (*intfun)(const struct LTFAT_NAME(heapinttask) *,
-                   const LTFAT_REAL*, const LTFAT_REAL*, const ltfatInt*,
-                   const LTFAT_REAL*, const ltfatInt, LTFAT_REAL* );
+    void (*intfun)(const struct LTFAT_NAME(heapinttask_fb) *,
+                   const LTFAT_REAL*, const LTFAT_REAL*, const ltfatInt, LTFAT_REAL* );
+    ltfatInt* N;
+    double* a;
+    LTFAT_REAL* cfreq;
+    ltfatInt* neigh;
+    LTFAT_REAL* posInfo;
 };
 
 LTFAT_EXTERN
 struct LTFAT_NAME(heapinttask_fb)*
-LTFAT_NAME(heapinttask_init_fb)(const ltfatInt height, const ltfatInt* N,
+LTFAT_NAME(heapinttask_init_fb)(const ltfatInt height, 
                                 const ltfatInt initheapsize,
-                                const LTFAT_REAL* s, int do_real);
+                                const LTFAT_REAL* s,
+                                const ltfatInt* N,
+                                const double* a,
+                                const LTFAT_REAL* cfreq,
+                                const ltfatInt* neigh,
+                                const LTFAT_REAL* posInfo,
+                                int do_real);
+
 
 LTFAT_EXTERN
 void LTFAT_NAME(heapint_execute_fb)(struct LTFAT_NAME(heapinttask_fb)* fbhit,
                                     const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,
-                                    const ltfatInt neigh[], const LTFAT_REAL posinfo[],
                                     LTFAT_REAL* phase);
 
 LTFAT_EXTERN void
@@ -645,10 +654,10 @@ LTFAT_NAME(heapint_fb)(const LTFAT_REAL* s,
 // Does the same as the previous but
 LTFAT_EXTERN void
 LTFAT_NAME(heapint_relgrad_fb)(const LTFAT_REAL* s,
-                               const LTFAT_REAL* tgradw,
-                               const LTFAT_REAL* fgradw,
-                               const LTFAT_REAL* neigh[],
-                               const LTFAT_REAL* dist[],
+                               const LTFAT_REAL* tgrad,
+                               const LTFAT_REAL* fgrad,
+                               const ltfatInt* neigh,
+                               const LTFAT_REAL* posInfo,
                                const LTFAT_REAL* cfreq,
                                const double* a,
                                const ltfatInt M,
