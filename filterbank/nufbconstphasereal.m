@@ -132,125 +132,145 @@ W = size(s{1},2);
 usephase = arrayfun(@(NEl) zeros(NEl,W),N,'UniformOutput',0);
 mask = [];%cellfun(@(NEl) ones(NEl,W),N,'UniformOutput',0);
 
-a = a(:,1)./a(:,2);
+asan = comp_filterbank_a(a,M);
+a = asan(:,1)./asan(:,2);
 
 L=N(1)*a(1);
 
-[NEIGH,chanStart] = get_neighbors(s,a,N);
+[NEIGH,chanStart] = get_neighbors(a,numel(s),N);
+
+ posInfo = zeros(chanStart(end),2);
+ for kk = 1:M
+    posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
+ end
 
 % Prepare differences of center frequencies [given in normalized frequency]
 % and dilation factors (square root of the time-frequency ratio)
-cfreqdiff = [diff(fc)];
-sqtfr = sqrt(tfr);
-sqtfrdiff = diff(sqtfr);
+%cfreqdiff = [diff(fc)];
+%sqtfr = sqrt(tfr);
+%sqtfrdiff = diff(sqtfr);
 
 % Filterbankphasegrad does not support phasederivatives from absolute
 % values
-abss = cellfun(@abs,s,'UniformOutput',0);
-logs = cellfun(@(sEl) log(sEl)+realmin,abss,'UniformOutput',0);
-tt=-11;
-logsMax = max(cellfun(@(sEl) max(sEl(:)),logs));
-for kk = 1:M
-    logsTemp = logs{kk};
-    logsTemp(logsTemp<logsMax+tt)=tt;
-    logs{kk} = logsTemp;
-end
-difforder = 2;
 
-% Obtain the (relative) phase difference in frequency direction by taking
-% the time derivative of the log magnitude and weighting it by the
-% time-frequency ratio of the appropriate filter.
-% ! Note: This disregards the 'quadratic' factor in the equation for the 
-% phase derivative !
-tmagdiff = cellfun(@(sEl) pderiv(sEl,1,difforder),logs,'UniformOutput',0);
-fgrad = tmagdiff;
-for kk = 1:M
-    fgrad{kk} = tfr(kk).*fgrad{kk}/(2*pi);%./aStep(kk);
-    tmagdiff{kk} = tmagdiff{kk}/N(kk); 
-end
+s = cell2mat(s);
+abss = abs(s);
 
-% Obtain the (relative) phase difference in time direction using the
-% frequency derivative of the log magnitude. The result is the mean of
-% estimates obtained from 'above' and 'below', appropriately weighted by
-% the channel distance and the inverse time-frequency ratio of the
-% appropriate filter.
-% ! Note: We consider the term depending on the time-frequency ratio 
-% difference, but again disregard the 'quadratic' factor. !
-%fac = 0;
-%fac = 1/2; 
-%fac = 2/3;
-%fac = 2/pi;
+% difforder = 2;
+% tt=-11;
+% 
+% logs = log(abss + realmin);
+% logsMax = max(logs);
+% logs(logs<logsMax+tt) = tt;
+% 
+% % Obtain the (relative) phase difference in frequency direction by taking
+% % the time derivative of the log magnitude and weighting it by the
+% % time-frequency ratio of the appropriate filter.
+% % ! Note: This disregards the 'quadratic' factor in the equation for the 
+% % phase derivative !
+% 
+% tmagdiff = zeros(size(logs));
+% fgrad = zeros(size(logs));
+% for kk = 1:M
+%     idx = chanStart(kk)+1:chanStart(kk)+N(kk);
+%     tmagdiff(idx) = pderiv(logs(idx),1,difforder);
+%     fgrad(idx) = tmagdiff(idx).*tfr(kk)/(2*pi);
+%     
+%     tmagdiff(idx) = tmagdiff(idx)/N(kk);
+% end
+% 
+% %tmagdiff2 = cell2mat(tmagdiff);
+% 
+% % Obtain the (relative) phase difference in time direction using the
+% % frequency derivative of the log magnitude. The result is the mean of
+% % estimates obtained from 'above' and 'below', appropriately weighted by
+% % the channel distance and the inverse time-frequency ratio of the
+% % appropriate filter.
+% % ! Note: We consider the term depending on the time-frequency ratio 
+% % difference, but again disregard the 'quadratic' factor. !
+% %fac = 0;
+% %fac = 1/2; 
+% %fac = 2/3;
+% %fac = 2/pi;
+% 
 
-positionInfo = zeros(chanStart(end),2);
-for kk = 1:M
-   positionInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
-end
+% 
+% fac = kv.gderivweight;
+% %tgrad = cell(numel(s),1);
+% tgrad = zeros(size(abss));
+% 
+% for kk = 1:M    
+%     temp = zeros(N(kk),2);    
+%     for ll = 1:N(kk) 
+%         w = chanStart(kk) + ll;
+%         tempVal = 0;
+%         numNeigh = 0;
+%         for jj = 1:2
+%            neigh = NEIGH(4+jj,w);           
+%            if neigh
+%               numNeigh = numNeigh+1;
+%               dist = (posInfo(neigh,2)-posInfo(w,2))/a(kk);
+%               tempVal = tempVal + (logs(neigh)-logs(w)...
+%                      -dist*tmagdiff(w));
+%            end
+%         end
+%         if numNeigh
+%             temp(ll,1) = tempVal/numNeigh;
+%         end
+%         
+%         tempVal = 0;
+%         numNeigh = 0;
+%         for jj = 1:2
+%            neigh = NEIGH(2+jj,w);           
+%            if neigh
+%               numNeigh = numNeigh+1;
+%               dist = (posInfo(neigh,2)-posInfo(w,2))/a(kk);
+%               tempVal = tempVal + (logs(w)-logs(neigh)...
+%                      -dist*tmagdiff(w));
+%            end
+%         end
+%         
+%         if numNeigh
+%             temp(ll,2) = tempVal/numNeigh; 
+%         end           
+%     end
+%     if kk~=M
+%         temp(:,1) = (temp(:,1) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk);
+%     end
+%     if kk~=1
+%         temp(:,2) = (temp(:,2) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk-1);
+%     end
+%     % Maybe a factor of 1/2 is missing here?
+%     tgrad(chanStart(kk)+1:chanStart(kk)+N(kk)) = sum(temp,2)./tfr(kk)./(pi*L);
+% end
 
-fac = kv.gderivweight;
-tgrad = cell(numel(s),1);
-for kk = 1:M    
-    temp = zeros(N(kk),2);    
-    for ll = 1:N(kk) 
-        currPos = chanStart(kk)+ll;
-        tempVal = 0;
-        numNeigh = 0;
-        for jj = 1:2
-           neigh = NEIGH(currPos,4+jj);           
-           if neigh
-              numNeigh = numNeigh+1;
-              dist = (positionInfo(neigh,2)-positionInfo(currPos,2))/a(kk);
-              tempVal = tempVal + (logs{kk+1}(neigh-chanStart(kk+1))-logs{kk}(ll)...
-                     -dist*tmagdiff{kk}(ll));
-           end
-        end
-        if numNeigh
-            temp(ll,1) = tempVal/numNeigh;
-        end
-        
-        tempVal = 0;
-        numNeigh = 0;
-        for jj = 1:2
-           neigh = NEIGH(currPos,2+jj);           
-           if neigh
-              numNeigh = numNeigh+1;
-              dist = (positionInfo(neigh,2)-positionInfo(currPos,2))/a(kk);
-              tempVal = tempVal + (logs{kk}(ll)-logs{kk-1}(neigh-chanStart(kk-1))...
-                     -dist*tmagdiff{kk}(ll));
-           end
-        end
-        
-        if numNeigh
-            temp(ll,2) = tempVal/numNeigh; 
-        end           
-    end
-    if kk~=M
-        temp(:,1) = (temp(:,1) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk);
-    end
-    if kk~=1
-        temp(:,2) = (temp(:,2) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk-1);
-    end
-    % Maybe a factor of 1/2 is missing here?
-    tgrad{kk} = sum(temp,2)./tfr(kk)./(pi*L);
-end
+[tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
 
 NEIGH = NEIGH-1;
-[newphase, usedmask] = comp_nufbconstphasereal_alt(abss,tgrad,fgrad,NEIGH,positionInfo,fc,a,M,tol,mask,usephase);
+[newphase, usedmask] = comp_nufbconstphasereal(abss,tgrad,fgrad,N,NEIGH,posInfo,fc,a,M,tol,mask,usephase);
  
 % Build the coefficients
-c=cellfun(@(sEl,pEl) sEl.*exp(1i*pEl),abss,newphase,'UniformOutput',0);
+%usedmask = mat2cell(usedmask,N,W);
+
+c = mat2cell(abss.*exp(1i*newphase),N,W);
+newphase = mat2cell(newphase,N,W);
+
+%c=cellfun(@(sEl,pEl) sEl.*exp(1i*pEl),abss,newphase,'UniformOutput',0);
 end
 
-function [NEIGH,chanStart] = get_neighbors(c,a,N)
+function [NEIGH,chanStart] = get_neighbors(a,M,N)
 
-M = numel(c);
+%M = numel(c);
 
 chanStart = [0;cumsum(N)];
 
-NEIGH = zeros(chanStart(end),6);
+NEIGH = zeros(6,chanStart(end));
+
 %Horizontal neighbors
 for kk = 1:M
-  NEIGH(chanStart(kk)+1,1) = chanStart(kk)+2; NEIGH(chanStart(kk+1),1) = chanStart(kk+1)-1;
-  NEIGH(chanStart(kk)+(2:N(kk)-1),1:2) = chanStart(kk)+[(1:N(kk)-2)',(3:N(kk))'];
+  NEIGH(1,chanStart(kk)+1) = chanStart(kk)+2; 
+  NEIGH(1,chanStart(kk+1)) = chanStart(kk+1)-1;
+  NEIGH(1:2,chanStart(kk)+(2:N(kk)-1)) = chanStart(kk)+[(1:N(kk)-2);(3:N(kk))];
 end
 
 %Vertical neighbors
@@ -265,7 +285,7 @@ for kk = 1:M-1
   
   for ll = 1:N(kk)
     tmpIdx = (POSlow(ll):POShigh(ll))+1;    
-    NEIGH(chanStart(kk)+ll,(5:4+numel(tmpIdx))) = tmpIdx;
+    NEIGH((5:4+numel(tmpIdx)),chanStart(kk)+ll) = tmpIdx.';
   end
 end
 
@@ -277,7 +297,7 @@ for kk = 2:M
   
   for ll = 1:N(kk)
     tmpIdx = (POSlow(ll):POShigh(ll))+1;    
-    NEIGH(chanStart(kk)+ll,(3:2+numel(tmpIdx))) = tmpIdx;
+    NEIGH((3:2+numel(tmpIdx)),chanStart(kk)+ll) = tmpIdx.';
   end
 end
 

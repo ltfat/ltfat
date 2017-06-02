@@ -43,7 +43,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     mwSize M = (mwSize)mxGetScalar(prhs[7]);
 
     ltfatInt NPtr[M];
-    ltfatInt chanStartPtr[M+1];
+    ltfatInt chanStartPtr[M + 1];
 
     double* N  = mxGetData(prhs[8]);
     double* chanStart  = mxGetData(prhs[9]);
@@ -60,7 +60,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     const ltfatInt sLen = chanStart[M];
 
     mwSize neighLen = mxGetNumberOfElements(mxneigh);
-    ltfatInt* neighPtr = ltfat_malloc(neighLen*sizeof*neighPtr);
+    ltfatInt* neighPtr = ltfat_malloc(neighLen * sizeof * neighPtr);
 
     const double* neighDoublePtr = mxGetData(mxneigh);
     for (mwSize ii = 0; ii < neighLen; ++ii)
@@ -108,12 +108,12 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
 
     //mexPrintf("L=%i, n[0] = %i, a = %f, M = %i \n",L,neighPtr[0],a[0],M);
 
-    /* if (phasetype == 1) */
+    if (phasetype == 1)
         LTFAT_NAME(heapint_fb)(s, tgrad, fgrad, neighPtr, posinfoPtr, cfreq,
                                a, M, NPtr, chanStartPtr, L, W, tol, phase);
-    /* else */
-    /*     LTFAT_NAME(heapint_relgrad_fb)(s, tgrad, fgrad, neighPtr, distPtr, */
-    /*                                    cfreq, a, M, NPtr, chanStartPtr, L, W, tol, phase); */
+    else
+        LTFAT_NAME(heapint_relgrad_fb)(s , tgrad, fgrad, neighPtr, posinfoPtr, cfreq,
+                                       a, M, NPtr, chanStartPtr, L, W, tol, phase);
 
     ltfat_free(neighPtr);
 }
