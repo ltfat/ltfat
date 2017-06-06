@@ -1,4 +1,5 @@
 function [tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,sqtfr,fc,NEIGH,posInfo,gderivweight)
+NEIGH = NEIGH + 1;
 %chanStart = [0;cumsum(N)];
 fac = gderivweight;
 %cfreqdiff = diff(fc);
@@ -23,14 +24,14 @@ logs = log(abss + realmin);
 %tmagdiff = zeros(size(logs));
 fgrad = zeros(size(logs));
 chanStart = 0;
-for kk = 1:M
-    idx = chanStart+(1:N(kk));
-    fgrad(idx) = pderiv(logs(idx),1,difforder)/N(kk);
+for m = 1:M
+    idx = chanStart+(1:N(m));
+    fgrad(idx) = pderiv(logs(idx),1,difforder)/N(m);
    % fgrad(idx) = tmagdiff(idx).*sqtfr(kk)^2/(2*pi);
     
     %tmagdiff(idx) = tmagdiff(idx)/N(kk);
     
-    chanStart = chanStart + N(kk);
+    chanStart = chanStart + N(m);
 end
 
 % Obtain the (relative) phase difference in time direction using the
@@ -48,28 +49,28 @@ end
 tgrad = zeros(size(abss));
 
 chanStart = 0;
-for kk = 1:M
+for m = 1:M
     aboveNom = 0; aboveDenom = 1; belowNom = 0; belowDenom = 1; 
-    denom = sqtfr(kk)^2*(pi*L);
-    if kk<M
-        aboveNom = fac*(sqtfr(kk+1)-sqtfr(kk))/sqtfr(kk);
-        aboveDenom = fc(kk+1)-fc(kk);
+    denom = sqtfr(m)^2*(pi*L);
+    if m<M
+        aboveNom = fac*(sqtfr(m+1)-sqtfr(m))/sqtfr(m);
+        aboveDenom = fc(m+1)-fc(m);
     end
-    if kk>1
-        belowNom = fac*(sqtfr(kk)-sqtfr(kk-1))/sqtfr(kk);
-        belowDenom = fc(kk)-fc(kk-1);
+    if m>1
+        belowNom = fac*(sqtfr(m)-sqtfr(m-1))/sqtfr(m);
+        belowDenom = fc(m)-fc(m-1);
     end
    
-    temp = zeros(N(kk),1);    
-    for ll = 1:N(kk) 
-        w = chanStart + ll;
+    temp = zeros(N(m),1);    
+    for n = 1:N(m) 
+        w = chanStart + n;
         tempValAbove = 0;
         numNeigh = 0;
         for jj = 1:2
            neigh = NEIGH(4+jj,w);           
            if neigh
               numNeigh = numNeigh+1;
-              dist = (posInfo(neigh,2)-posInfo(w,2))/a(kk);
+              dist = (posInfo(2,neigh)-posInfo(2,w))/a(m);
               tempValAbove = tempValAbove + (logs(neigh)-logs(w) - dist*fgrad(w));
            end
         end
@@ -83,7 +84,7 @@ for kk = 1:M
            neigh = NEIGH(2+jj,w);           
            if neigh
               numNeigh = numNeigh+1;
-              dist = (posInfo(neigh,2)-posInfo(w,2))/a(kk);
+              dist = (posInfo(2,neigh)-posInfo(2,w))/a(m);
               tempValBelow = tempValBelow + (logs(w)-logs(neigh) - dist*fgrad(w));
            end
         end
@@ -92,7 +93,7 @@ for kk = 1:M
             tempValBelow = tempValBelow/numNeigh; 
         end  
         
-        temp(ll) = (tempValAbove + aboveNom) / aboveDenom + ...
+        temp(n) = (tempValAbove + aboveNom) / aboveDenom + ...
                    (tempValBelow + belowNom) / belowDenom;
         %temp(ll,2) = (tempValBelow + belowNom) / belowDenom;
     end
@@ -104,17 +105,17 @@ for kk = 1:M
 %     end
     % Maybe a factor of 1/2 is missing here?
     
-    tgrad(chanStart+(1:N(kk))) = temp/denom;
+    tgrad(chanStart+(1:N(m))) = temp/denom;
     
-    chanStart = chanStart + N(kk);
+    chanStart = chanStart + N(m);
 end
 
 chanStart = 0;
-for kk = 1:M
-    idx = chanStart+(1:N(kk));
-    fgrad(idx) = fgrad(idx).*sqtfr(kk)^2/(2*pi)*N(kk);
+for m = 1:M
+    idx = chanStart+(1:N(m));
+    fgrad(idx) = fgrad(idx).*sqtfr(m)^2/(2*pi)*N(m);
     
-    chanStart = chanStart + N(kk);
+    chanStart = chanStart + N(m);
 end
 
 

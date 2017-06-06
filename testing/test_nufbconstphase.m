@@ -1,8 +1,8 @@
-[f,fs] = greasy;%
+[f,fs] = gspi;%
 
 %[f,fs] = wavload('testFile7.wav');
 %[g,a,cfreq,L]=audfilters(fs,numel(f),'uniform','gauss','bwmul',1/2,'spacing',1/4,'redmul',2);
-[g,a,cfreq,L]=audfilters(fs,numel(f),'uniform','gauss','bwmul',1/4,'spacing',1/12,'redmul',4);
+[g,a,cfreq,L]=audfilters(fs,numel(f),'fractionaluniform','gauss','bwmul',1/4,'spacing',1/12,'redmul',4);
 corig = filterbank(f,g,a);
 %coriguni = ufilterbank(f,g,a(1));
 
@@ -36,7 +36,7 @@ cfreq = 2*cfreq/fs;
 % subplot(133); plotfilterbank(tgrad,a,'lin','clim',[-.01,.01])
 
 %Nonuniform
-
+disp('About to start')
 [cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',1e-4);
 
 

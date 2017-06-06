@@ -137,12 +137,16 @@ a = asan(:,1)./asan(:,2);
 
 L=N(1)*a(1);
 
-[NEIGH,chanStart] = get_neighbors(a,numel(s),N);
+tic
+NEIGH = comp_nufbneighbors(a,numel(s),N);
+chanStart = [0;cumsum(N)];
+toc
 
  posInfo = zeros(chanStart(end),2);
  for kk = 1:M
     posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
  end
+ posInfo = posInfo.';
 
 % Prepare differences of center frequencies [given in normalized frequency]
 % and dilation factors (square root of the time-frequency ratio)
@@ -243,12 +247,13 @@ abss = abs(s);
 %     % Maybe a factor of 1/2 is missing here?
 %     tgrad(chanStart(kk)+1:chanStart(kk)+N(kk)) = sum(temp,2)./tfr(kk)./(pi*L);
 % end
-
-[tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
-
 NEIGH = NEIGH-1;
+tic
+[tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+toc
+tic
 [newphase, usedmask] = comp_nufbconstphasereal(abss,tgrad,fgrad,N,NEIGH,posInfo,fc,a,M,tol,mask,usephase);
- 
+toc
 % Build the coefficients
 %usedmask = mat2cell(usedmask,N,W);
 
@@ -258,47 +263,3 @@ newphase = mat2cell(newphase,N,W);
 %c=cellfun(@(sEl,pEl) sEl.*exp(1i*pEl),abss,newphase,'UniformOutput',0);
 end
 
-function [NEIGH,chanStart] = get_neighbors(a,M,N)
-
-%M = numel(c);
-
-chanStart = [0;cumsum(N)];
-
-NEIGH = zeros(6,chanStart(end));
-
-%Horizontal neighbors
-for kk = 1:M
-  NEIGH(1,chanStart(kk)+1) = chanStart(kk)+2; 
-  NEIGH(1,chanStart(kk+1)) = chanStart(kk+1)-1;
-  NEIGH(1:2,chanStart(kk)+(2:N(kk)-1)) = chanStart(kk)+[(1:N(kk)-2);(3:N(kk))];
-end
-
-%Vertical neighbors
-%Set time distance limit
-LIM = .8;
-
-%One channel higher
-for kk = 1:M-1
-  aTemp = a(kk)/a(kk+1);
-  POSlow = chanStart(kk+1)+max(0,ceil(((0:N(kk)-1)-LIM)*aTemp))';
-  POShigh = chanStart(kk+1)+min(floor(((0:N(kk)-1)+LIM)*aTemp),N(kk+1)-1)';
-  
-  for ll = 1:N(kk)
-    tmpIdx = (POSlow(ll):POShigh(ll))+1;    
-    NEIGH((5:4+numel(tmpIdx)),chanStart(kk)+ll) = tmpIdx.';
-  end
-end
-
-%One channel lower
-for kk = 2:M
-  aTemp = a(kk)/a(kk-1);  
-  POSlow = chanStart(kk-1)+max(0,ceil(((0:N(kk)-1)-LIM)*aTemp))';
-  POShigh = chanStart(kk-1)+min(floor(((0:N(kk)-1)+LIM)*aTemp),N(kk-1)-1)';
-  
-  for ll = 1:N(kk)
-    tmpIdx = (POSlow(ll):POShigh(ll))+1;    
-    NEIGH((3:2+numel(tmpIdx)),chanStart(kk)+ll) = tmpIdx.';
-  end
-end
-
-end

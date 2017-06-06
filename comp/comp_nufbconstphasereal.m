@@ -44,7 +44,7 @@ phasetype = 0;
 %     bigenoughidx = s(missingidx)>absthr(ii);
 %     usedmask(missingidx(bigenoughidx)) = 1;
 % end
-newphase = comp_heapintreal_fb(s,tgrad,fgrad,NEIGH,posInfo.',cfreq,a,M,N,chanStart,tol,phasetype);
+newphase = comp_heapintreal_fb(s,tgrad,fgrad,NEIGH,posInfo,cfreq,a,M,N,chanStart,tol,phasetype);
 
 
 % % Convert the mask so it can be used directly for indexing
