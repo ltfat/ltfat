@@ -61,6 +61,10 @@ LTFAT_NAME(borderstoheapreal)(struct LTFAT_NAME(heap)* h,
                               const ltfatInt height, const ltfatInt N,
                               int * donemask);
 
+void
+LTFAT_NAME(borderstoheapneighs)(struct LTFAT_NAME(heap)* h,
+                                const ltfatInt Nsum, const ltfatInt neighs[], int* donemask);
+
 /* Experimental FB stuff */
 
 inline void
@@ -78,7 +82,7 @@ LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *heaptask,
 void
 LTFAT_NAME(gradsamptorad_ufb)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
                               const LTFAT_REAL* cfreq,
-                              ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,                              
+                              ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,
                               LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
 
 /* Experimental NUFB stuff */
@@ -89,10 +93,9 @@ void LTFAT_NAME(trapezheap_fb)(const struct LTFAT_NAME(heapinttask_fb) *fbhit,
 
 void
 LTFAT_NAME(gradsamptorad_fb)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
-	                     const LTFAT_REAL* cfreq, 
-                             const LTFAT_REAL* a,
-                             const ltfatInt* N, const ltfatInt* chanStart,
-                             ltfatInt M, ltfatInt L, ltfatInt W,                              
+                             const LTFAT_REAL* cfreq,
+                             const ltfatInt M,
+                             const ltfatInt N[], const ltfatInt Nsum,
+                             const ltfatInt W,
                              LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
-
 

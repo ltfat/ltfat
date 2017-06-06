@@ -46,7 +46,7 @@ LTFAT_NAME(fbmagphasegrad)(const LTFAT_REAL* logs,
     for (ltfatInt m = 0; m < M; m++)
     {
         LTFAT_REAL* tgradCol = tgrad + chStart;
-        LTFAT_REAL* fgradCol = fgrad + chStart;
+        //LTFAT_REAL* fgradCol = fgrad + chStart;
 
         LTFAT_REAL aboveNom = 0, aboveDenom = 1, belowNom = 0, belowDenom = 1;
         LTFAT_REAL denom = sqtfr[m] * sqtfr[m] * (M_PI * L);
