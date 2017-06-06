@@ -1,14 +1,12 @@
 [f,fs] = gspi;%
 
-
 %[f,fs] = wavload('testFile7.wav');
 %[g,a,cfreq,L]=audfilters(fs,numel(f),'uniform','gauss','bwmul',1/2,'spacing',1/4,'redmul',2);
-bwmul = 1/3;
-[g,a,cfreq,L]=audfilters(fs,numel(f),'fractional','gauss','bwmul',bwmul,'spacing',1/9,'redmul',3,'complex');
+[g,a,cfreq,L]=audfilters(fs,numel(f),'uniform','gauss','bwmul',1/4,'spacing',1/12,'redmul',4);
 corig = filterbank(f,g,a);
-%coriguni = ufilterbank(f,g,a(1));
+coriguni = ufilterbank(f,g,a(1));
 
-tfr = getgausstfr(cfreq,fs,L,'erb','bwmul',bwmul);
+tfr = getgausstfr(cfreq,fs,L,'erb','bwmul',1/4);
 cfreq = 2*cfreq/fs;
 %[tgrad0,fgrad0] = filterbankphasegrad(f,g,a,L);
 
@@ -39,11 +37,13 @@ cfreq = 2*cfreq/fs;
 
 %Nonuniform
 disp('About to start')
-%[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',1e-4);
-[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphase(corig,g,a,tfr,cfreq,'tol',1e-4);
+tic
+[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',1e-4);
+toc
 
-
-%[cuni,newphase,usedmask,tgraduni,fgraduni]=filterbankconstphasereal(abs(coriguni).',g,a(1),tfr,cfreq,'tol',1e-3);
+tic
+[cuni,newphase,usedmask,tgraduni,fgraduni]=filterbankconstphasereal(abs(coriguni).',g,a(1),tfr,cfreq,'tol',1e-4);
+toc
 % figure(1);
 % subplot(121); plotfilterbank(fgrad0,a,'linabs','clim',[0,400])
 % subplot(122); plotfilterbank(fgrad,a,'linabs','clim',[0,400])
@@ -51,7 +51,7 @@ disp('About to start')
 % subplot(121); plotfilterbank(tgrad0,a,'lin','clim',[-.01,.01])
 % subplot(122); plotfilterbank(tgrad,a,'lin','clim',[-.01,.01])
 
-%fhat = ifilterbankiter(cnonuni,g,a);
+%[fhat,iter,relres] = ifilterbankiter(cnonuni,g,a);
 
-%figure(1);plotfilterbankphasediff(coriguni,cuni.',1e-3,a)
-figure(1);plotfilterbankphasediff(corig,cnonuni,1e-4,a)
+figure(1);plotfilterbankphasediff(coriguni,cuni.',1e-3,a)
+figure(2);plotfilterbankphasediff(corig,cnonuni,1e-4,a)

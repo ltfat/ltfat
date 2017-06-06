@@ -1,4 +1,4 @@
-function [newphase, usedmask] = comp_filterbankconstphasereal(s,tgrad,fgrad,N,NEIGH,posInfo,cfreq,a,M,tol,mask,usephase)
+function [newphase, usedmask] = comp_nufbconstphasereal(s,tgrad,fgrad,N,NEIGH,posInfo,cfreq,a,M,tol,mask,usephase)
 
 %N = cellfun(@(sEl) size(sEl,1),s);
 chanStart = [0;cumsum(N)];
