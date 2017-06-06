@@ -23,7 +23,7 @@ winbw = 0.754;
 
 basebw = 1.875657;
 
-bw=audfiltbw(fc,flags.audscale)/winbw*kv.bwmul;
+bw=audfiltbw(abs(fc),flags.audscale)/winbw*kv.bwmul;
 bw=2.*bw./fs;
 
 tfr = (bw./basebw).^2.*L;

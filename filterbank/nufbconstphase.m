@@ -130,7 +130,7 @@ N = cellfun(@(sEl) size(sEl,1),s);
 W = size(s{1},2);
 
 usephase = arrayfun(@(NEl) zeros(NEl,W),N,'UniformOutput',0);
-mask = [];%cellfun(@(NEl) ones(NEl,W),N,'UniformOutput',0);
+mask = [];
 
 asan = comp_filterbank_a(a,M);
 a = asan(:,1)./asan(:,2);
@@ -138,7 +138,7 @@ a = asan(:,1)./asan(:,2);
 L=N(1)*a(1);
 
 tic
-NEIGH = comp_nufbneighbors(a,numel(s),N,1);
+NEIGH = comp_nufbneighbors(a,numel(s),N,0);
 chanStart = [0;cumsum(N)];
 toc
 
@@ -148,105 +148,9 @@ toc
  end
  posInfo = posInfo.';
 
-% Prepare differences of center frequencies [given in normalized frequency]
-% and dilation factors (square root of the time-frequency ratio)
-%cfreqdiff = [diff(fc)];
-%sqtfr = sqrt(tfr);
-%sqtfrdiff = diff(sqtfr);
-
-% Filterbankphasegrad does not support phasederivatives from absolute
-% values
-
 s = cell2mat(s);
 abss = abs(s);
 
-% difforder = 2;
-% tt=-11;
-% 
-% logs = log(abss + realmin);
-% logsMax = max(logs);
-% logs(logs<logsMax+tt) = tt;
-% 
-% % Obtain the (relative) phase difference in frequency direction by taking
-% % the time derivative of the log magnitude and weighting it by the
-% % time-frequency ratio of the appropriate filter.
-% % ! Note: This disregards the 'quadratic' factor in the equation for the 
-% % phase derivative !
-% 
-% tmagdiff = zeros(size(logs));
-% fgrad = zeros(size(logs));
-% for kk = 1:M
-%     idx = chanStart(kk)+1:chanStart(kk)+N(kk);
-%     tmagdiff(idx) = pderiv(logs(idx),1,difforder);
-%     fgrad(idx) = tmagdiff(idx).*tfr(kk)/(2*pi);
-%     
-%     tmagdiff(idx) = tmagdiff(idx)/N(kk);
-% end
-% 
-% %tmagdiff2 = cell2mat(tmagdiff);
-% 
-% % Obtain the (relative) phase difference in time direction using the
-% % frequency derivative of the log magnitude. The result is the mean of
-% % estimates obtained from 'above' and 'below', appropriately weighted by
-% % the channel distance and the inverse time-frequency ratio of the
-% % appropriate filter.
-% % ! Note: We consider the term depending on the time-frequency ratio 
-% % difference, but again disregard the 'quadratic' factor. !
-% %fac = 0;
-% %fac = 1/2; 
-% %fac = 2/3;
-% %fac = 2/pi;
-% 
-
-% 
-% fac = kv.gderivweight;
-% %tgrad = cell(numel(s),1);
-% tgrad = zeros(size(abss));
-% 
-% for kk = 1:M    
-%     temp = zeros(N(kk),2);    
-%     for ll = 1:N(kk) 
-%         w = chanStart(kk) + ll;
-%         tempVal = 0;
-%         numNeigh = 0;
-%         for jj = 1:2
-%            neigh = NEIGH(4+jj,w);           
-%            if neigh
-%               numNeigh = numNeigh+1;
-%               dist = (posInfo(neigh,2)-posInfo(w,2))/a(kk);
-%               tempVal = tempVal + (logs(neigh)-logs(w)...
-%                      -dist*tmagdiff(w));
-%            end
-%         end
-%         if numNeigh
-%             temp(ll,1) = tempVal/numNeigh;
-%         end
-%         
-%         tempVal = 0;
-%         numNeigh = 0;
-%         for jj = 1:2
-%            neigh = NEIGH(2+jj,w);           
-%            if neigh
-%               numNeigh = numNeigh+1;
-%               dist = (posInfo(neigh,2)-posInfo(w,2))/a(kk);
-%               tempVal = tempVal + (logs(w)-logs(neigh)...
-%                      -dist*tmagdiff(w));
-%            end
-%         end
-%         
-%         if numNeigh
-%             temp(ll,2) = tempVal/numNeigh; 
-%         end           
-%     end
-%     if kk~=M
-%         temp(:,1) = (temp(:,1) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk);
-%     end
-%     if kk~=1
-%         temp(:,2) = (temp(:,2) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk-1);
-%     end
-%     % Maybe a factor of 1/2 is missing here?
-%     tgrad(chanStart(kk)+1:chanStart(kk)+N(kk)) = sum(temp,2)./tfr(kk)./(pi*L);
-% end
 NEIGH = NEIGH-1;
 tic
 [tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);

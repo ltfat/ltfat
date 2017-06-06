@@ -1,12 +1,14 @@
 [f,fs] = gspi;%
 
+
 %[f,fs] = wavload('testFile7.wav');
 %[g,a,cfreq,L]=audfilters(fs,numel(f),'uniform','gauss','bwmul',1/2,'spacing',1/4,'redmul',2);
-[g,a,cfreq,L]=audfilters(fs,numel(f),'fractionaluniform','gauss','bwmul',1/4,'spacing',1/12,'redmul',4);
+bwmul = 1/3;
+[g,a,cfreq,L]=audfilters(fs,numel(f),'fractional','gauss','bwmul',bwmul,'spacing',1/9,'redmul',3,'complex');
 corig = filterbank(f,g,a);
 %coriguni = ufilterbank(f,g,a(1));
 
-tfr = getgausstfr(cfreq,fs,L,'erb','bwmul',1/4);
+tfr = getgausstfr(cfreq,fs,L,'erb','bwmul',bwmul);
 cfreq = 2*cfreq/fs;
 %[tgrad0,fgrad0] = filterbankphasegrad(f,g,a,L);
 
@@ -37,7 +39,8 @@ cfreq = 2*cfreq/fs;
 
 %Nonuniform
 disp('About to start')
-[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',1e-4);
+%[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',1e-4);
+[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphase(corig,g,a,tfr,cfreq,'tol',1e-4);
 
 
 %[cuni,newphase,usedmask,tgraduni,fgraduni]=filterbankconstphasereal(abs(coriguni).',g,a(1),tfr,cfreq,'tol',1e-3);

@@ -1,6 +1,4 @@
-function NEIGH = comp_nufbneighbors(a,M,N)
-
-%M = numel(c);
+function NEIGH = comp_nufbneighbors(a,M,N,do_real)
 
 chanStart = [0;cumsum(N)];
 
@@ -31,7 +29,14 @@ for kk = 1:M-1
 NEIGH(5,chanStart(kk)+(1:N(kk))) = POSlow + 1;
 NEIGH(6,chanStart(kk)+(1:N(kk))) = POShigh + 1;
 end
-
+if ~do_real
+    aTemp = a(M)/a(1);
+    POSlow = chanStart(1)+max(0,ceil(((0:N(M)-1)-LIM)*aTemp));
+    POShigh = chanStart(1)+min(floor(((0:N(M)-1)+LIM)*aTemp),N(1)-1);
+    
+    NEIGH(5,chanStart(M)+(1:N(M))) = POSlow + 1;
+    NEIGH(6,chanStart(M)+(1:N(M))) = POShigh + 1;
+end
 NEIGH(6,NEIGH(6,:)==NEIGH(5,:)) = 0;
 
 %One channel lower
@@ -46,6 +51,14 @@ for kk = 2:M
 %   end
 NEIGH(3,chanStart(kk)+(1:N(kk))) = POSlow + 1;
 NEIGH(4,chanStart(kk)+(1:N(kk))) = POShigh + 1;
+end
+if ~do_real
+    aTemp = a(1)/a(M);
+    POSlow = chanStart(M)+max(0,ceil(((0:N(1)-1)-LIM)*aTemp));
+    POShigh = chanStart(M)+min(floor(((0:N(1)-1)+LIM)*aTemp),N(M)-1);
+    
+    NEIGH(3,chanStart(1)+(1:N(1))) = POSlow + 1;
+    NEIGH(4,chanStart(1)+(1:N(1))) = POShigh + 1;
 end
 NEIGH(4,NEIGH(4,:)==NEIGH(3,:)) = 0;
 
