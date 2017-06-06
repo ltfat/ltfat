@@ -2,7 +2,7 @@
 #define _LTFAT_MEX_FILE
 
 #define ISNARGINEQ 9
-#define TYPEDEPARGS 0
+#define TYPEDEPARGS 0, 4
 #define SINGLEARGS
 #define REALARGS
 
@@ -27,7 +27,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     const double*      N = mxGetPr(prhs[1]);
     const double*      a = mxGetPr(prhs[2]);
     mwSize             M = (mwSize)mxGetScalar(prhs[3]);
-    const double*    tfr = mxGetPr(prhs[4]);
+    const LTFAT_REAL*    tfr = mxGetPr(prhs[4]);
     const double*     fc = mxGetPr(prhs[5]);
     const mxArray* mxneigh = prhs[6];
     const double*  neigh = mxGetPr(mxneigh);
@@ -68,6 +68,9 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     LTFAT_REAL* fgrad = mxGetData(plhs[1]);
     LTFAT_REAL* logs  = mxGetData(plhs[2]);
 
+    LTFAT_NAME(logarray)(s, Nsum, logs);
+    LTFAT_NAME(fbmagphasegrad)(logs, tfr, NPtr, a, fc, M, NEIGHPtr, posInfo, gderivweight,
+                              tgrad, fgrad);
 
     ltfat_free(NPtr);
     ltfat_free(NEIGHPtr);
