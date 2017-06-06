@@ -78,7 +78,7 @@ thismfilename = upper(mfilename);
 %complainif_notposint(a,'a',thismfilename);
 
 
-definput.keyvals.tol=[1e-10,1e-10];
+definput.keyvals.tol=[1e-1,1e-10];
 definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
@@ -137,7 +137,7 @@ a = asan(:,1)./asan(:,2);
 
 L=N(1)*a(1);
 
-NEIGH = comp_nufbneighbors(a,numel(s),N);
+NEIGH = comp_nufbneighbors(a,numel(s),N,1);
 chanStart = [0;cumsum(N)];
 
 posInfo = zeros(chanStart(end),2);

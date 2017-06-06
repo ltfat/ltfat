@@ -78,7 +78,7 @@ thismfilename = upper(mfilename);
 %complainif_notposint(a,'a',thismfilename);
 
 
-definput.keyvals.tol=[1e-10,1e-10];
+definput.keyvals.tol=[1e-1,1e-10];
 definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
