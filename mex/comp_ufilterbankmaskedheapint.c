@@ -40,8 +40,8 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     const LTFAT_REAL* knownphase = mxGetData(prhs[9]);
 
     // Get matrix dimensions.
-    mwSize M = mxGetM(prhs[0]);
-    mwSize N = ltfatGetN(prhs[0]);
+    mwSize M = ltfatGetN(prhs[0]);
+    mwSize N = mxGetM(prhs[0]);
     mwSize L = N * a;
     mwSize W = 1;
     phasetype--;
