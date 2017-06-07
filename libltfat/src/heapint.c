@@ -905,8 +905,8 @@ void LTFAT_NAME(trapezheap_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_W])
     {
         LTFAT_REAL step = cfreq[w_W / N] - cfreq[col];
-        if (step < 0)
-            step += 2;
+        if (step > 0)
+            step -= 2;
 
         phase[w_W] = phase[w] + step * (fgradw[w] + fgradw[w_W]) / 2;
         donemask[w_W] = 1;
@@ -979,8 +979,8 @@ void LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
     if (!donemask[w_W] && col != 0)
     {
         LTFAT_REAL step = cfreq[w_W / N] - cfreq[col];
-        if (step < 0)
-            step += 2;
+        if (step > 0)
+            step -= 2;
 
         phase[w_W] = phase[w] + step * (fgradw[w] + fgradw[w_W]) / 2;
         donemask[w_W] = 1;
