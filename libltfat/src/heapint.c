@@ -800,7 +800,7 @@ void LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL* s,
     LTFAT_SAFEFREEALL(tgradw, fgradw);
 }
 
-/*--------------------------------FILTERBANK STUFF---------------------------------*/
+/*--------------------------------FILTERBANK HEAP INTEGRATION---------------------------------*/
 LTFAT_EXTERN
 struct LTFAT_NAME(heapinttask_ufb)*
 LTFAT_NAME(heapinttask_init_ufb)(const ltfatInt height, const ltfatInt N,
@@ -877,29 +877,29 @@ void LTFAT_NAME(trapezheap_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
 
     /* Inside a channel */
 
-    /* South */
+    /* South -> Backwards time */
     w_S = SOUTHFROMW(w, N, M);
 
-    if (!donemask[w_S] && row != N-1)
+    if (!donemask[w_S] && row != 0)
     {
-        phase[w_S] = phase[w] + (tgradw[w] + tgradw[w_S]) / 2;
+        phase[w_S] = phase[w] - (tgradw[w] + tgradw[w_S]) / 2;
         donemask[w_S] = 3;
         LTFAT_NAME(heap_insert)(h, w_S);
     }
 
-    /* North */
+    /* North -> Forwards time */
     w_N = NORTHFROMW(w, N, M);
 
-    if (!donemask[w_N] && row != 0)
+    if (!donemask[w_N] && row != N-1)
     {
-        phase[w_N] = phase[w] - (tgradw[w] + tgradw[w_N]) / 2;
+        phase[w_N] = phase[w] + (tgradw[w] + tgradw[w_N]) / 2;
         donemask[w_N] = 4;
         LTFAT_NAME(heap_insert)(h, w_N);
     }
 
     /* Across channels */
 
-    /* West */
+    /* West -> Lower frequency */
     w_W = WESTFROMW(w, N, M);
 
     if (!donemask[w_W])
@@ -913,16 +913,16 @@ void LTFAT_NAME(trapezheap_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
         LTFAT_NAME(heap_insert)(h, w_W);
     }
 
-    /* East */
-    w_E = SOUTHFROMW(w, N, M);
+    /* East -> Higher frequency */
+    w_E = EASTFROMW(w, N, M);
 
     if (!donemask[w_E])
     {
-        LTFAT_REAL step = cfreq[col] - cfreq[w_E / N];
+        LTFAT_REAL step = cfreq[w_E / N] - cfreq[col];
         if (step < 0)
             step += 2;
 
-        phase[w_E] = phase[w] - step * (fgradw[w] + fgradw[w_E]) / 2;
+        phase[w_E] = phase[w] + step * (fgradw[w] + fgradw[w_E]) / 2;
         donemask[w_E] = 2;
         LTFAT_NAME(heap_insert)(h, w_E);
     }    
@@ -951,29 +951,29 @@ void LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
 
     /* Inside a channel */
 
-    /* South */
+    /* South -> Backwards time */
     w_S = SOUTHFROMW(w, N, M);
 
-    if (!donemask[w_S] && row != N-1)
+    if (!donemask[w_S] && row != 0)
     {
-        phase[w_S] = phase[w] + (tgradw[w] + tgradw[w_S]) / 2;
+        phase[w_S] = phase[w] - (tgradw[w] + tgradw[w_S]) / 2;
         donemask[w_S] = 3;
         LTFAT_NAME(heap_insert)(h, w_S);
     }
 
-    /* North */
+    /* North -> Forwards time*/
     w_N = NORTHFROMW(w, N, M);
 
-    if (!donemask[w_N] && row != 0)
+    if (!donemask[w_N] && row != N-1)
     {
-        phase[w_N] = phase[w] - (tgradw[w] + tgradw[w_N]) / 2;
+        phase[w_N] = phase[w] + (tgradw[w] + tgradw[w_N]) / 2;
         donemask[w_N] = 4;
         LTFAT_NAME(heap_insert)(h, w_N);
     }
 
     /* Across channels */
 
-    /* West */
+    /* West -> Lower frequency */
     w_W = WESTFROMW(w, N, M);
 
     if (!donemask[w_W] && col != 0)
@@ -987,16 +987,16 @@ void LTFAT_NAME(trapezheapreal_ufb)(const struct LTFAT_NAME(heapinttask) *hit,
         LTFAT_NAME(heap_insert)(h, w_W);
     }
 
-    /* East */
-    w_E = SOUTHFROMW(w, N, M);
+    /* East -> Higher frequency */
+    w_E = EASTFROMW(w, N, M);
 
     if (!donemask[w_E] && col != M-1)
     {
-        LTFAT_REAL step = cfreq[col] - cfreq[w_E / N];
+        LTFAT_REAL step = cfreq[w_E / N] - cfreq[col];
         if (step < 0)
             step += 2;
 
-        phase[w_E] = phase[w] - step * (fgradw[w] + fgradw[w_E]) / 2;
+        phase[w_E] = phase[w] + step * (fgradw[w] + fgradw[w_E]) / 2;
         donemask[w_E] = 2;
         LTFAT_NAME(heap_insert)(h, w_E);
     }    
@@ -1110,7 +1110,7 @@ void LTFAT_NAME(ufilterbankmaskedheapint)(const LTFAT_REAL* s,
 
         // Empty heap and fill it with the border coefficients from the mask
         LTFAT_NAME(heapinttask_resetmask)(fbhit->hit, maskchan, schan, tol, 0);
-        LTFAT_NAME(borderstoheap)(fbhit->hit->heap, fbhit->hit->height, fbhit->hit->N,
+        LTFAT_NAME(borderstoheap)(fbhit->hit->heap, fbhit->hit->N, fbhit->hit->height,
                                   fbhit->hit->donemask);
 
         LTFAT_NAME(heapint_execute_ufb)(fbhit, tgradwchan, fgradwchan, cfreq,
