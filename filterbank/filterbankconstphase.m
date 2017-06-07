@@ -1,4 +1,4 @@
-function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,g,a,tfr,fc,varargin)
+function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varargin)
 %% Old help -> CONSTRUCTPHASEREAL  Construct phase for DGTREAL
 %   Usage:  c=constructphasereal(s,g,a,M);
 %           c=constructphasereal(s,g,a,M,tol);
@@ -75,142 +75,121 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,g,a,tfr,fc,var
 % AUTHOR: Peter L. Søndergaard, Zdenek Prusa
 
 thismfilename = upper(mfilename);
-complainif_notposint(a,'a',thismfilename);
+%complainif_notposint(a,'a',thismfilename);
 
 
 definput.keyvals.tol=[1e-1,1e-10];
+definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
-[flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
+definput.flags.real = {'real','complex'};
+[flags,kv,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
 
-if ~isnumeric(s) 
-    error('%s: *s* must be numeric.',thismfilename);
-end
-
-if ~isempty(usephase) && isempty(mask)
-    error('%s: Both mask and usephase must be used at the same time.',...
-          upper(mfilename));
-end
-
-if isempty(mask) 
-    if ~isreal(s) || any(s(:)<0)
-        error('%s: *s* must be real and positive when no mask is used.',...
-              thismfilename);
-    end
-else 
-    if any(size(mask) ~= size(s)) || ~isreal(mask)
-        error(['%s: s and mask must have the same size and mask must',...
-               ' be real.'],thismfilename)
-    end
-    % Sanitize mask (anything other than 0 is true)
-    mask = cast(mask,'double');
-    mask(mask~=0) = 1;
-end
-
-if ~isempty(usephase)
-    if any(size(mask) ~= size(s)) || ~isreal(usephase)
-        error(['%s: s and usephase must have the same size and usephase must',...
-               ' be real.'],thismfilename)        
-    end
-else
-    usephase = angle(s);
-end
-
-if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
-    error(['%s: *tol* must be a scalar or a vector sorted in a ',...
-           'descending manner.'],thismfilename);
-end
-
-
-[M,N,W] = size(s);
-L=N*a;
-
-% Prepare differences of center frequencies [given in normalized frequency]
-% and dilation factors (square root of the time-frequency ratio)
-cfreqdiff = diff(fc);
-sqtfr = sqrt(tfr);
-sqtfrdiff = diff(sqtfr);
-
-% Filterbankphasegrad does not support phasederivatives from absolute
-% values
-abss = abs(s);
-logs=log(abss+realmin);
-tt=-11;
-logs(logs<max(logs(:))+tt)=tt;
-
-difforder = 2;
-% Obtain the (relative) phase difference in frequency direction by taking
-% the time derivative of the log magnitude and weighting it by the
-% time-frequency ratio of the appropriate filter.
-% ! Note: This disregards the 'quadratic' factor in the equation for the 
-% phase derivative !
-fgrad = pderiv(logs,2,difforder)/(2*pi);
-for kk = 1:M
-    fgrad(kk,:) = tfr(kk).*fgrad(kk,:);
-end
-
-% Obtain the (relative) phase difference in time direction using the
-% frequency derivative of the log magnitude. The result is the mean of
-% estimates obtained from 'above' and 'below', appropriately weighted by
-% the channel distance and the inverse time-frequency ratio of the
-% appropriate filter.
-% ! Note: We consider the term depending on the time-frequency ratio 
-% difference, but again disregard the 'quadratic' factor. !
-tgrad = zeros(size(s));
-%if 1 % Improved version
-    logsdiff = diff(logs);
-    for kk = 2:M-1
-        tgrad(kk,:) = (logsdiff(kk,:) + 2*sqtfrdiff(kk)./sqtfr(kk)./pi)./cfreqdiff(kk) + ...
-                      (logsdiff(kk-1,:) + 2*sqtfrdiff(kk-1)./sqtfr(kk)./pi)./cfreqdiff(kk-1);
-        tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./(pi*L);
-    end
-% else % Classic version
-%     tgrad = 2.*pderiv(logs,1,difforder)./(L*pi);
-%     cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
-%     cfreqdiff(1) = fc(2)-fc(1);
-%     cfreqdiff(end) = fc(end)-fc(end-1);
-%     for kk = 1:M        
-%         tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./cfreqdiff(kk)./M;
+% if ~isnumeric(s) 
+%     error('%s: *s* must be numeric.',thismfilename);
+% end
+% 
+% if ~isempty(usephase) && isempty(mask)
+%     error('%s: Both mask and usephase must be used at the same time.',...
+%           upper(mfilename));
+% end
+% 
+% if isempty(mask) 
+%     if ~isreal(s) || any(s(:)<0)
+%         error('%s: *s* must be real and positive when no mask is used.',...
+%               thismfilename);
 %     end
+% else 
+%     if any(size(mask) ~= size(s)) || ~isreal(mask)
+%         error(['%s: s and mask must have the same size and mask must',...
+%                ' be real.'],thismfilename)
+%     end
+%     % Sanitize mask (anything other than 0 is true)
+%     mask = cast(mask,'double');
+%     mask(mask~=0) = 1;
+% end
+% 
+% if ~isempty(usephase)
+%     if any(size(mask) ~= size(s)) || ~isreal(usephase)
+%         error(['%s: s and usephase must have the same size and usephase must',...
+%                ' be real.'],thismfilename)        
+%     end
+% else
+%     usephase = angle(s);
 % end
 
-% Fix the first and last rows .. the
-% borders are symmetric so the centered difference is 0
-tgrad(1,:) = 0;
-tgrad(end,:) = 0;
+% 
+% if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
+%     error(['%s: *tol* must be a scalar or a vector sorted in a ',...
+%            'descending manner.'],thismfilename);
+% end
 
-%% DO the heap integration
-absthr = max(abss(:))*tol;
+
+M = numel(s);
+
+N = cellfun(@(sEl) size(sEl,1),s);
+W = size(s{1},2);
+
+usephase = arrayfun(@(NEl) zeros(NEl,W),N,'UniformOutput',0);
+mask = [];
+
+asan = comp_filterbank_a(a,M);
+a = asan(:,1)./asan(:,2);
+
+tic
+NEIGH = comp_filterbankneighbors(a,numel(s),N,flags.do_real);
+chanStart = [0;cumsum(N)];
+toc
+
+ posInfo = zeros(chanStart(end),2);
+ for kk = 1:M
+    posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
+ end
+ posInfo = posInfo.';
+
+s = cell2mat(s);
+abss = abs(s);
+
+NEIGH = NEIGH-1;
+tic
+[tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+toc
+tic
+%% The actual phase construction
+sMax = max(abss(:));
+absthr = max(sMax)*tol;
+
 if isempty(mask)
-    usedmask = zeros(size(s));
+    usedmask= zeros(chanStart(end),W);
 else
-    usedmask = mask;
+    usedmask = cell2mat(mask);
 end
 
+phasetype = 0;
+% % Build the phase
 if isempty(mask)
-    % Build the phase (calling a MEX file)
-    newphase=comp_heapint_ufb(abss,tgrad,fgrad,fc,a,tol(1),1);
-    % Set phase of the coefficients below tol to random values
-    bigenoughidx = abss>absthr(1);
-    usedmask(bigenoughidx) = 1;
-else
-    newphase=comp_maskedheapint_ufb(abss,tgrad,fgrad,fc,mask,a,tol(1),1,...
-                                usephase);
-    % Set phase of small coefficient to random values
-    % but just in the missing part
-    % Find all small coefficients in the unknown phase area
-    missingidx = find(usedmask==0);
-    bigenoughidx = abss(missingidx)>absthr(1);
-    usedmask(missingidx(bigenoughidx)) = 1;
+     % s is real and positive
+     newphase = comp_filterbankheapint(abss,tgrad,fgrad,NEIGH,posInfo,fc,a,M,N,tol(1),phasetype);
+ 
+     % Find all small coefficients and set the mask
+     bigenoughidx = abss>absthr(1);
+     usedmask(bigenoughidx) = 1;
+ else
+     newphase=comp_filterbankmaskedheapint(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,a,M,N,tol(1),...
+                                     phasetype,usephase);
+     % Find all small coefficients in the unknown phase area
+     missingidx = find(usedmask==0);
+     bigenoughidx = abss(missingidx)>absthr(1);
+     usedmask(missingidx(bigenoughidx)) = 1;
 end
-
-% Do further tol
+% 
+% % Do further tol
 for ii=2:numel(tol)
-    newphase=comp_maskedheapint_ufb(abss,tgrad,fgrad,fc,usedmask,a,tol(ii),1,...
-                                newphase);
-    missingidx = find(usedmask==0);
-    bigenoughidx = abss(missingidx)>absthr(ii);
-    usedmask(missingidx(bigenoughidx)) = 1;                  
+     newphase=comp_filterbankmaskedheapint(abss,tgrad,fgrad,NEIGH,posInfo,fc,usedmask,a,M,N,tol(ii),...
+                                     phasetype,newphase);
+     missingidx = find(usedmask==0);
+     bigenoughidx = abss(missingidx)>absthr(ii);
+     usedmask(missingidx(bigenoughidx)) = 1;
 end
 
 % Convert the mask so it can be used directly for indexing
@@ -218,6 +197,10 @@ usedmask = logical(usedmask);
 % Assign random values to coefficients below tolerance
 zerono = numel(find(~usedmask));
 newphase(~usedmask) = rand(zerono,1)*2*pi;
+toc
 
-% Build the coefficients
-c=abss.*exp(1i*newphase);
+%% Apply the phase and convert back to cell array
+c = mat2cell(abss.*exp(1i*newphase),N,W);
+newphase = mat2cell(newphase,N,W);
+end
+

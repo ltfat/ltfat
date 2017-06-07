@@ -1,4 +1,4 @@
-function NEIGH = comp_nufbneighbors(a,M,N,do_real)
+function NEIGH = comp_filterbankneighbors(a,M,N,do_real)
 
 chanStart = [0;cumsum(N)];
 

@@ -1,4 +1,4 @@
-function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphasereal(s,g,a,tfr,fc,varargin)
+function [c,newphase,usedmask,tgrad,fgrad]=ufilterbankconstphase(s,a,tfr,fc,varargin)
 %% Old help -> CONSTRUCTPHASEREAL  Construct phase for DGTREAL
 %   Usage:  c=constructphasereal(s,g,a,M);
 %           c=constructphasereal(s,g,a,M,tol);
@@ -79,10 +79,10 @@ complainif_notposint(a,'a',thismfilename);
 
 
 definput.keyvals.tol=[1e-1,1e-10];
-definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
-[flags,kv,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
+definput.flags.real={'real','complex'};
+[flags,~,tol,mask,usephase]=ltfatarghelper({'tol','mask','usephase'},definput,varargin);
 
 if ~isnumeric(s) 
     error('%s: *s* must be numeric.',thismfilename);
@@ -123,7 +123,7 @@ if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
 end
 
 
-[M,N,W] = size(s);
+[N,M,W] = size(s);
 L=N*a;
 
 % Prepare differences of center frequencies [given in normalized frequency]
@@ -140,17 +140,17 @@ tt=-11;
 logs(logs<max(logs(:))+tt)=tt;
 
 difforder = 2;
-
 % Obtain the (relative) phase difference in frequency direction by taking
 % the time derivative of the log magnitude and weighting it by the
 % time-frequency ratio of the appropriate filter.
 % ! Note: This disregards the 'quadratic' factor in the equation for the 
 % phase derivative !
-fgrad = pderiv(logs,2,difforder)/(2*pi);
+fgrad = pderiv(logs,1,difforder)/(2*pi);
 for kk = 1:M
-    fgrad(kk,:) = tfr(kk).*fgrad(kk,:);
+    fgrad(:,kk,:) = tfr(kk).*fgrad(:,kk,:);
 end
 
+    
 % Obtain the (relative) phase difference in time direction using the
 % frequency derivative of the log magnitude. The result is the mean of
 % estimates obtained from 'above' and 'below', appropriately weighted by
@@ -158,31 +158,72 @@ end
 % appropriate filter.
 % ! Note: We consider the term depending on the time-frequency ratio 
 % difference, but again disregard the 'quadratic' factor. !
-%fac = 0;
-%fac = 1/2; 
-%fac = 2/3;
-%fac = 2/pi;
-
-fac = kv.gderivweight;
 tgrad = zeros(size(s));
-%if 1 % Improved version
-    logsdiff = diff(logs);
+if flags.do_real
+    logsdiff = diff(logs,1,2);
     for kk = 2:M-1
-        tgrad(kk,:) = (logsdiff(kk,:) + fac*sqtfrdiff(kk)./sqtfr(kk))./cfreqdiff(kk) + ...
-                      (logsdiff(kk-1,:) + fac*sqtfrdiff(kk-1)./sqtfr(kk))./cfreqdiff(kk-1);
-        tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./(pi*L);
+        tgrad(:,kk,:) = (logsdiff(:,kk,:) + 2*sqtfrdiff(kk)./sqtfr(kk)./pi)./cfreqdiff(kk) + ...
+                        (logsdiff(:,kk-1,:) + 2*sqtfrdiff(kk-1)./sqtfr(kk)./pi)./cfreqdiff(kk-1);
+        tgrad(:,kk,:) = tgrad(:,kk,:)./tfr(kk)./(pi*L);
     end
-% else % Classic version
-%     tgrad = 2.*pderiv(logs,1,difforder)./(L*pi);
-%     cfreqdiff = mod((circshift(fc,-1)-circshift(fc,1))/2,2);
-%     cfreqdiff(1) = fc(2)-fc(1);
-%     cfreqdiff(end) = fc(end)-fc(end-1);
-%     for kk = 1:M        
-%         tgrad(kk,:) = tgrad(kk,:)./tfr(kk)./cfreqdiff(kk)./M;
-%     end
-% end
+    % For first and last channel, use a 1st order difference scheme as they
+    % are not considered to be adjacent.
+    tgrad(:,1,:) = 2*(logsdiff(:,1,:) + 2*sqtfrdiff(1)./sqtfr(1)./pi)./cfreqdiff(1);
+    tgrad(:,1,:) = tgrad(:,1,:)./tfr(1)./(pi*L);
+    tgrad(:,M,:) = 2*(logsdiff(:,M-1,:) + 2*sqtfrdiff(M-1)./sqtfr(M)./pi)./cfreqdiff(1);
+    tgrad(:,M,:) = tgrad(:,M,:)./tfr(M)./(pi*L);
+    % Fix the first and last rows .. the
+    % borders are symmetric so the centered difference is 0
+    %tgrad(:,1,:) = 0;
+    %tgrad(:,M,:) = 0;
+else
+    logsdiff = diff([logs(:,M,:);logs;logs(:,1,:)],1,2); 
+    for kk = 1:M
+        tgrad(:,kk,:) = (logsdiff(:,kk+1,:) + 2*sqtfrdiff(kk+1)./sqtfr(kk)./pi)./cfreqdiff(kk) + ...
+                        (logsdiff(:,kk,:) + 2*sqtfrdiff(kk)./sqtfr(kk)./pi)./cfreqdiff(kk-1);
+        tgrad(:,kk,:) = tgrad(:,kk,:)./tfr(kk)./(pi*L);
+    end
+end
 
-[newphase, usedmask] = comp_filterbankconstphasereal(abss,tgrad,fgrad,fc,a,M,tol,mask,usephase);
+%% DO the heap integration
+absthr = max(abss(:))*tol;
+if isempty(mask)
+    usedmask = zeros(size(s));
+else
+    usedmask = mask;
+end
+
+if isempty(mask)
+    % Build the phase (calling a MEX file)
+    newphase=comp_ufilterbankheapint(abss,tgrad,fgrad,fc,a,flags.do_real,tol(1),1);
+    % Set phase of the coefficients below tol to random values
+    bigenoughidx = abss>absthr(1);
+    usedmask(bigenoughidx) = 1;
+else
+    newphase=comp_ufilterbankmaskedheapint(abss,tgrad,fgrad,fc,mask,a,flags.do_real,tol(1),1,...
+                                usephase);
+    % Set phase of small coefficient to random values
+    % but just in the missing part
+    % Find all small coefficients in the unknown phase area
+    missingidx = find(usedmask==0);
+    bigenoughidx = abss(missingidx)>absthr(1);
+    usedmask(missingidx(bigenoughidx)) = 1;
+end
+
+% Do further tol
+for ii=2:numel(tol)
+    newphase=comp_ufilterbankmaskedheapint(abss,tgrad,fgrad,fc,usedmask,a,flags.do_real,tol(ii),1,...
+                                newphase);
+    missingidx = find(usedmask==0);
+    bigenoughidx = abss(missingidx)>absthr(ii);
+    usedmask(missingidx(bigenoughidx)) = 1;                  
+end
+
+% Convert the mask so it can be used directly for indexing
+usedmask = logical(usedmask);
+% Assign random values to coefficients below tolerance
+zerono = numel(find(~usedmask));
+newphase(~usedmask) = rand(zerono,1)*2*pi;
 
 % Build the coefficients
 c=abss.*exp(1i*newphase);
