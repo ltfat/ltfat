@@ -500,7 +500,7 @@ LTFAT_NAME(maskedheapintreal_relgrad)(const LTFAT_REAL* s,
                                       LTFAT_REAL tol, dgt_phasetype phasetype,
                                       LTFAT_REAL* phase);
 
-/* Heapint for UFB - Start */
+/* Filter bank heap integration (uniform case) - Start */
 struct LTFAT_NAME(heapinttask_ufb)
 {
     struct LTFAT_NAME(heapinttask) * hit;
@@ -523,90 +523,49 @@ void LTFAT_NAME(heapint_execute_ufb)(struct LTFAT_NAME(heapinttask_ufb)* fbhit,
                                      LTFAT_REAL* phase);
 
 LTFAT_EXTERN void
-LTFAT_NAME(heapint_ufb)(const LTFAT_REAL *s,
+LTFAT_NAME(ufilterbankheapint)(const LTFAT_REAL *s,
                         const LTFAT_REAL *tgradw,
                         const LTFAT_REAL *fgradw,
                         const LTFAT_REAL* cfreq,
                         const ltfatInt a, const ltfatInt M,
                         const ltfatInt L, const ltfatInt W,
+                        const int do_real,
                         const LTFAT_REAL tol, LTFAT_REAL *phase);
 
-// Does the same as the previous but
 LTFAT_EXTERN void
-LTFAT_NAME(heapint_relgrad_ufb)(const LTFAT_REAL *s,
-                                const LTFAT_REAL *tgrad,
-                                const LTFAT_REAL *fgrad,
-                                const LTFAT_REAL* cfreq,
-                                const ltfatInt a, const ltfatInt M,
-                                const ltfatInt L, const ltfatInt W,
-                                const LTFAT_REAL tol,
-                                LTFAT_REAL *phase);
-
-
-LTFAT_EXTERN void
-LTFAT_NAME(maskedheapint_ufb)(const LTFAT_REAL  *c,
+LTFAT_NAME(ufilterbankmaskedheapint)(const LTFAT_REAL  *c,
                               const LTFAT_REAL *tgradw,
                               const LTFAT_REAL *fgradw,
                               const LTFAT_REAL* cfreq,
                               const int* mask,
                               const ltfatInt a, const ltfatInt M,
                               const ltfatInt L, const ltfatInt W,
-                              LTFAT_REAL tol, LTFAT_REAL *phase);
+                              const int do_real, const LTFAT_REAL tol, 
+			      LTFAT_REAL *phase);
+
+// The same as the previous but with gradient adjustment
+LTFAT_EXTERN void
+LTFAT_NAME(ufilterbankheapint_relgrad)(const LTFAT_REAL *s,
+                                const LTFAT_REAL *tgrad,
+                                const LTFAT_REAL *fgrad,
+                                const LTFAT_REAL* cfreq,
+                                const ltfatInt a, const ltfatInt M,
+                                const ltfatInt L, const ltfatInt W,
+                                const int do_real, const LTFAT_REAL tol,
+                                LTFAT_REAL *phase);
 
 LTFAT_EXTERN void
-LTFAT_NAME(maskedheapint_relgrad_ufb)(const LTFAT_REAL  *c,
+LTFAT_NAME(ufilterbankmaskedheapint_relgrad)(const LTFAT_REAL  *c,
                                       const LTFAT_REAL *tgrad,
                                       const LTFAT_REAL *fgrad,
                                       const LTFAT_REAL* cfreq,
                                       const int* mask,
                                       const ltfatInt a, const ltfatInt M,
                                       const ltfatInt L, const ltfatInt W,
-                                      LTFAT_REAL tol,
+				      const int do_real,
+                                      const LTFAT_REAL tol,
                                       LTFAT_REAL *phase);
-
-LTFAT_EXTERN void
-LTFAT_NAME(heapintreal_ufb)(const LTFAT_REAL *s,
-                            const LTFAT_REAL *tgradw,
-                            const LTFAT_REAL *fgradw,
-                            const LTFAT_REAL* cfreq,
-                            const ltfatInt a, const ltfatInt M,
-                            const ltfatInt L, const ltfatInt W,
-                            const LTFAT_REAL tol,
-                            LTFAT_REAL *phase);
-
-LTFAT_EXTERN void
-LTFAT_NAME(heapintreal_relgrad_ufb)(const LTFAT_REAL *s,
-                                    const LTFAT_REAL *tgradw,
-                                    const LTFAT_REAL *fgradw,
-                                    const LTFAT_REAL* cfreq,
-                                    const ltfatInt a, const ltfatInt M,
-                                    const ltfatInt L, const ltfatInt W,
-                                    const LTFAT_REAL tol,
-                                    LTFAT_REAL *phase);
-
-LTFAT_EXTERN void
-LTFAT_NAME(maskedheapintreal_ufb)(const LTFAT_REAL * s,
-                                  const LTFAT_REAL * tgrad,
-                                  const LTFAT_REAL * fgrad,
-                                  const LTFAT_REAL* cfreq,
-                                  const int* mask,
-                                  const ltfatInt a, const ltfatInt M,
-                                  const ltfatInt L, const ltfatInt W,
-                                  LTFAT_REAL tol,
-                                  LTFAT_REAL * phase);
-
-LTFAT_EXTERN void
-LTFAT_NAME(maskedheapintreal_relgrad_ufb)(const LTFAT_REAL* s,
-        const LTFAT_REAL* tgradw,
-        const LTFAT_REAL* fgradw,
-        const LTFAT_REAL* cfreq,
-        const int* mask,
-        const ltfatInt a, const ltfatInt M,
-        const ltfatInt L, const ltfatInt W,
-        LTFAT_REAL tol,
-        LTFAT_REAL* phase);
-
-/* Heapint for UFB - End */
+/* Filter bank heap integration (uniform case) - End */
 
 /* Heapint for NUFB - Start */
 struct LTFAT_NAME(heapinttask_fb)

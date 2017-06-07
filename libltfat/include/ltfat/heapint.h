@@ -65,7 +65,7 @@ void
 LTFAT_NAME(borderstoheapneighs)(struct LTFAT_NAME(heap)* h,
                                 const ltfatInt Nsum, const ltfatInt neighs[], int* donemask);
 
-/* Experimental FB stuff */
+/* Filter bank heap integration (uniform case)*/
 
 inline void
 LTFAT_NAME(trapezheap_ufb)(const struct LTFAT_NAME(heapinttask) *heaptask,
@@ -85,7 +85,7 @@ LTFAT_NAME(gradsamptorad_ufb)(const LTFAT_REAL* tgrad, const LTFAT_REAL* fgrad,
                               ltfatInt a, ltfatInt M, ltfatInt L, ltfatInt W,
                               LTFAT_REAL* tgradw, LTFAT_REAL* fgradw);
 
-/* Experimental NUFB stuff */
+/* Filter bank heap integration (general case)*/
 
 void LTFAT_NAME(trapezheap_fb)(const struct LTFAT_NAME(heapinttask_fb) *fbhit,
                                const LTFAT_REAL* tgradw, const LTFAT_REAL* fgradw,

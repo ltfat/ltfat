@@ -17,12 +17,10 @@ MEXBASESAFE=\
 	comp_heapintreal  \
 	comp_maskedheapint  \
 	comp_maskedheapintreal  \
-	comp_heapint_ufb  \
-	comp_heapintreal_fb  \
-	comp_maskedheapintreal_fb  \
-	comp_heapintreal_ufb  \
-	comp_maskedheapint_ufb  \
-	comp_maskedheapintreal_ufb  \
+	comp_filterbankheapint  \
+	comp_filterbankmaskedheapint  \
+	comp_ufilterbankheapint  \
+	comp_ufilterbankmaskedheapint \
 	comp_isepdgt  \
 	comp_iwfac \
 	comp_nonsepdgt_multi  \
@@ -44,9 +42,9 @@ MEXBASESAFE=\
 	comp_filterbank_fftbl \
 	comp_ifilterbank_fft \
 	comp_ifilterbank_fftbl \
-    comp_filterbank \
+        comp_filterbank \
 	comp_ifilterbank \
-    comp_filterbankreassign \
+        comp_filterbankreassign \
     comp_filterbankphasegrad \
     comp_nufbphasegrad \
 	comp_circshiftdim1 \
