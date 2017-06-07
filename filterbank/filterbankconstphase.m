@@ -124,83 +124,76 @@ definput.flags.real = {'real','complex'};
 %            'descending manner.'],thismfilename);
 % end
 
+do_uniform = 1;
+wasCell = 0;
 
-M = numel(s);
+if iscell(s)
+    M = numel(s);
+    N = cellfun(@(sEl) size(sEl,1),s);
+    W = size(s{1},2);
 
-N = cellfun(@(sEl) size(sEl,1),s);
-W = size(s{1},2);
+    usephase = arrayfun(@(NEl) zeros(NEl,W),N,'UniformOutput',0);
+    mask = [];
 
-usephase = arrayfun(@(NEl) zeros(NEl,W),N,'UniformOutput',0);
-mask = [];
-
-asan = comp_filterbank_a(a,M);
-a = asan(:,1)./asan(:,2);
-
-tic
-NEIGH = comp_filterbankneighbors(a,numel(s),N,flags.do_real);
-chanStart = [0;cumsum(N)];
-toc
-
- posInfo = zeros(chanStart(end),2);
- for kk = 1:M
-    posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
- end
- posInfo = posInfo.';
-
-s = cell2mat(s);
-abss = abs(s);
-
-NEIGH = NEIGH-1;
-tic
-[tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
-toc
-tic
-%% The actual phase construction
-sMax = max(abss(:));
-absthr = max(sMax)*tol;
-
-if isempty(mask)
-    usedmask= zeros(chanStart(end),W);
+    asan = comp_filterbank_a(a,M);
+    a = asan(:,1)./asan(:,2);
+    
+    wasCell = 1;
+    
+    if any( N ~= N(1)) && any( a ~= a(1) )
+        do_uniform = 0;
+        abss = abs(cell2mat(s));
+    else
+        a = a(1);
+        abss = zeros(N(1),M,W);
+        for m=1:M    
+            size(s{m}), size(abss(:,m,:))
+            abss(:,m,:)=abs(s{m});
+        end;        
+    end
 else
-    usedmask = cell2mat(mask);
+    [N,M,W] = size(s);
+    
+    usephase = zeros(size(s));
+    mask = [];
+    
+    asan = comp_filterbank_a(a,M);
+    a = asan(:,1)./asan(:,2);
+    a = a(1);
+    abss = abs(s);
 end
 
-phasetype = 0;
-% % Build the phase
-if isempty(mask)
-     % s is real and positive
-     newphase = comp_filterbankheapint(abss,tgrad,fgrad,NEIGH,posInfo,fc,a,M,N,tol(1),phasetype);
- 
-     % Find all small coefficients and set the mask
-     bigenoughidx = abss>absthr(1);
-     usedmask(bigenoughidx) = 1;
- else
-     newphase=comp_filterbankmaskedheapint(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,a,M,N,tol(1),...
-                                     phasetype,usephase);
-     % Find all small coefficients in the unknown phase area
-     missingidx = find(usedmask==0);
-     bigenoughidx = abss(missingidx)>absthr(1);
-     usedmask(missingidx(bigenoughidx)) = 1;
-end
-% 
-% % Do further tol
-for ii=2:numel(tol)
-     newphase=comp_filterbankmaskedheapint(abss,tgrad,fgrad,NEIGH,posInfo,fc,usedmask,a,M,N,tol(ii),...
-                                     phasetype,newphase);
-     missingidx = find(usedmask==0);
-     bigenoughidx = abss(missingidx)>absthr(ii);
-     usedmask(missingidx(bigenoughidx)) = 1;
+if do_uniform
+    [tgrad,fgrad,logs] = comp_ufilterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,flags.do_real);    
+    
+    [newphase,usedmask] = comp_ufilterbankconstphase(abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
+else
+    tic
+    NEIGH = comp_filterbankneighbors(a,M,N,flags.do_real);
+    chanStart = [0;cumsum(N)];
+    toc
+
+    posInfo = zeros(chanStart(end),2);
+    for kk = 1:M
+        posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
+    end
+    posInfo = posInfo.';  
+
+    NEIGH = NEIGH-1;
+
+    tic
+    [tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+    toc
+    
+    tic
+    [newphase,usedmask] = comp_filterbankconstphase(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol);
+    toc
 end
 
-% Convert the mask so it can be used directly for indexing
-usedmask = logical(usedmask);
-% Assign random values to coefficients below tolerance
-zerono = numel(find(~usedmask));
-newphase(~usedmask) = rand(zerono,1)*2*pi;
-toc
-
-%% Apply the phase and convert back to cell array
-c = mat2cell(abss.*exp(1i*newphase),N,W);
-newphase = mat2cell(newphase,N,W);
+c = abss.*exp(1i*newphase);
+if wasCell
+    % Apply the phase and convert back to cell array 
+    c = mat2cell(c(:),N,W);
+    newphase = mat2cell(newphase(:),N,W);
 end
 

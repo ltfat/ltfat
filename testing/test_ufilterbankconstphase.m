@@ -41,7 +41,7 @@ end;
 %% Uniform Gabor filter bank, constructphase stuff
 tfr = tfr*ones(size(g))';
 
-[~,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[~,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 figure(1); close; figure(1); subplot(2,1,1);
 plotfilterbank(abs(tgrad0-tgrad)./abs(tgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
@@ -72,10 +72,10 @@ tgradG(end,:) = 0;
 tgradG = tgradG*2/L;
 
 figure(2); close; figure(2); subplot(2,1,1);
-plotfilterbank(abs(tgrad0-tgradG.')./abs(tgradG.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(tgrad0-tgradG.')./abs(tgrad0),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 subplot(2,1,2);
-plotfilterbank(abs(fgrad0-fgradG.')./abs(fgradG.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(fgrad0-fgradG.')./abs(fgrad0),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 %% Uniform ERB filter bank heap integration stuff
 
@@ -101,7 +101,7 @@ for m=1:M
     fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 figure(3); close; figure(3); subplot(2,1,1);
 plotfilterbank(abs(tgrad0-tgrad)./abs(tgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
@@ -114,7 +114,7 @@ gd = filterbankrealdual(g,a,L);
 figure(4); close; figure(4);
 plotdgtrealphasediff(angle(c0),angle(c),abs(c),1e-1,a,M);
 
-f_rec = 2*real(ifilterbank(c0.',gd,a));
+f_rec = 2*real(ifilterbank(c0,gd,a));
 soundsc(f_rec,44100);
 
 %% Same for complex filter bank
@@ -129,26 +129,26 @@ f = postpad(f,L);
  
 M = size(ctmp,1);
 N = length(ctmp{1});
-c=zeros(M,N);
+c=zeros(N,M);
 tgrad = c; fgrad = c;
 for m=1:M    
-    c(m,:)=ctmp{m};    
-    tgrad(m,:)=tgradtmp{m};
-    fgrad(m,:)=fgradtmp{m};
+    c(:,m)=ctmp{m};    
+    tgrad(:,m)=tgradtmp{m};
+    fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'complex');
 
 figure(5); close; figure(5); subplot(2,1,1);
-plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(tgrad0-tgrad)./abs(tgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 subplot(2,1,2);
-plotfilterbank((fgrad0.'-fgrad.')./abs(fgrad.'),a,'fc',22050*cfreq,'lin','clim',[-1,1]); shg
+plotfilterbank((fgrad0-fgrad)./abs(fgrad),a,'fc',22050*cfreq,'lin','clim',[-1,1]); shg
 
 gd = filterbankdual(g,a,L);
 
 figure(6); close; figure(6);
 plotdgtrealphasediff(angle(c0),angle(c),abs(c),1e-4,a,2*(M-1));
 
-f_rec = real(ifilterbank(c0.',gd,a));
+f_rec = real(ifilterbank(c0,gd,a));
 soundsc(f_rec,44100);

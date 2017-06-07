@@ -36,7 +36,7 @@ for m=1:M
     fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 % figure(1); close; figure(1); subplot(2,1,1);
 % plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
@@ -79,7 +79,7 @@ for m=1:M
     fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 % figure(3); close; figure(3); subplot(2,1,1);
 % plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
@@ -124,7 +124,7 @@ for m=1:M
     fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real'); 
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real'); 
  
 % figure(5); close; figure(5); subplot(2,1,1);
 % plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
@@ -166,7 +166,7 @@ for m=1:M
     fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 % figure(7); close; figure(7); subplot(2,1,1);
 % plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
@@ -207,7 +207,7 @@ for m=1:M
     fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
+[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 % figure(9); close; figure(9); subplot(2,1,1);
 % plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
