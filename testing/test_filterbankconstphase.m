@@ -40,10 +40,10 @@ cfreq = 2*cfreq/fs;
 %Nonuniform
 disp('About to start')
 tic
-[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',[1e-1,1e-10]);
+[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=filterbankconstphase(corig,a,tfr,cfreq,'tol',[1e-1,1e-10],'real');
 toc
 tic
-[cnonuni2,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphasereal(corig,g,a,tfr,cfreq,'tol',[1e-10]);
+[cnonuni2,newphase,~,tgradnonuni,fgradnonuni]=filterbankconstphase(corig,a,tfr,cfreq,'tol',[1e-10],'real');
 toc
 %[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphase(corig,g,a,tfr,cfreq);
 

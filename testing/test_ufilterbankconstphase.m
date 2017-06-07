@@ -30,24 +30,24 @@ a = a(1);
  
 M = size(ctmp,1);
 N = length(ctmp{1});
-c=zeros(M,N);
+c=zeros(N,M);
 tgrad = c; fgrad = c;
 for m=1:M    
-    c(m,:)=ctmp{m};    
-    tgrad(m,:)=tgradtmp{m};
-    fgrad(m,:)=fgradtmp{m};
+    c(:,m)=ctmp{m};    
+    tgrad(:,m)=tgradtmp{m};
+    fgrad(:,m)=fgradtmp{m};
 end;
 
 %% Uniform Gabor filter bank, constructphase stuff
 tfr = tfr*ones(size(g))';
 
-[~,~,~,tgrad0,fgrad0]=filterbankconstphasereal(abs(c),g,a(1),tfr,cfreq);
+[~,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 figure(1); close; figure(1); subplot(2,1,1);
-plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(tgrad0-tgrad)./abs(tgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 subplot(2,1,2);
-plotfilterbank(abs(fgrad0.'-fgrad.')./abs(fgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(fgrad0-fgrad)./abs(fgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 %% Gabor classic
 
@@ -72,10 +72,10 @@ tgradG(end,:) = 0;
 tgradG = tgradG*2/L;
 
 figure(2); close; figure(2); subplot(2,1,1);
-plotfilterbank(abs(tgrad0.'-tgradG.')./abs(tgradG.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(tgrad0-tgradG.')./abs(tgradG.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 subplot(2,1,2);
-plotfilterbank(abs(fgrad0.'-fgradG.')./abs(fgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(fgrad0-fgradG.')./abs(fgradG.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 %% Uniform ERB filter bank heap integration stuff
 
@@ -93,21 +93,21 @@ f = postpad(f,L);
  
 M = size(ctmp,1);
 N = length(ctmp{1});
-c=zeros(M,N);
+c=zeros(N,M);
 tgrad = c; fgrad = c;
 for m=1:M    
-    c(m,:)=ctmp{m};    
-    tgrad(m,:)=tgradtmp{m};
-    fgrad(m,:)=fgradtmp{m};
+    c(:,m)=ctmp{m};    
+    tgrad(:,m)=tgradtmp{m};
+    fgrad(:,m)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=filterbankconstphasereal(abs(c),g,a(1),tfr,cfreq);
+[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 figure(3); close; figure(3); subplot(2,1,1);
-plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(tgrad0-tgrad)./abs(tgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 subplot(2,1,2);
-plotfilterbank(abs(fgrad0.'-fgrad.')./abs(fgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
+plotfilterbank(abs(fgrad0-fgrad)./abs(fgrad),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
 
 gd = filterbankrealdual(g,a,L);
 
@@ -137,7 +137,7 @@ for m=1:M
     fgrad(m,:)=fgradtmp{m};
 end;
 
-[c0,~,~,tgrad0,fgrad0]=filterbankconstphase(abs(c),g,a(1),tfr,cfreq);
+[c0,~,~,tgrad0,fgrad0]=ufilterbankconstphase(abs(c),a(1),tfr,cfreq,'real');
 
 figure(5); close; figure(5); subplot(2,1,1);
 plotfilterbank(abs(tgrad0.'-tgrad.')./abs(tgrad.'),a,'fc',22050*cfreq,'lin','clim',[0,1]); shg
