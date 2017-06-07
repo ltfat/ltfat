@@ -147,7 +147,6 @@ if iscell(s)
         a = a(1);
         abss = zeros(N(1),M,W);
         for m=1:M    
-            size(s{m}), size(abss(:,m,:))
             abss(:,m,:)=abs(s{m});
         end;        
     end
@@ -164,7 +163,7 @@ else
 end
 
 if do_uniform
-    [tgrad,fgrad,logs] = comp_ufilterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,flags.do_real);    
+    [tgrad,fgrad,logs] = comp_ufilterbankphasegradfrommag(abss,N(1),a,M,sqrt(tfr),fc,flags.do_real);    
     
     [newphase,usedmask] = comp_ufilterbankconstphase(abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
 else
