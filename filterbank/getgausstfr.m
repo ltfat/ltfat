@@ -1,4 +1,4 @@
-function tfr = getgausstfr(fc,fs,L,varargin)
+function [tfr,fcnorm] = getgausstfr(fc,fs,L,varargin)
 
 definput.flags.audscale={'erb','erb83','bark','mel','mel1000'};
 definput.keyvals.bwmul=[];
@@ -28,3 +28,5 @@ bw=2.*bw./fs;
 
 tfr = (bw./basebw).^2.*L;
 tfr = 1./tfr;
+
+fcnorm = 2*fc/fs;
