@@ -87,5 +87,5 @@ else
     F = frame('filterbank',g,a,numel(g));
 end
 
-[f,iter,relres] = frsyniter(F,framenative2coef(F,c),'Ls',Ls,flags.alg,'maxit',kv.maxit,'tol',kv.tol);
+[f,relres,iter] = frsyniter(F,framenative2coef(F,c),'Ls',Ls,flags.alg,'maxit',kv.maxit,'tol',kv.tol);
 
