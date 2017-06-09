@@ -72,11 +72,12 @@ if isempty(g), g{1} = 'gauss'; end
 aarr = zeros(numel(g),1); aarr(:) = a;
 Marr = zeros(numel(g),1); Marr(:) = M;
 
-Marr(2) = M/2;
+%Marr(2) = M/2;
 
 dgtparamsrows = cellfun(@(gEl,aEl,MEl) ...
-    { normalize(gabwin(gEl,a,M,L),'2'), aEl, MEl...
-      floor(MEl/2)+1, L./aEl},...
+    { normalize(gabwin(gEl,a,M,L),'2'), aEl, MEl, ...
+      floor(MEl/2)+1,...
+      L./aEl},...
       g(:), num2cell(aarr), num2cell(Marr),'UniformOutput',0);
 
 dgtparamsfields = {'g','a','M','M2','N'};
@@ -140,7 +141,8 @@ norm_f2 = norm(f)^2;
 resnorm = norm_f2;
 norm_c = [norm_f^2*B, norm_f^2*A];
 relres = zeros(ceil(kv.maxit/kv.relresstep),1);
-relres(1) = 1;
+relres(1) = 1; 
+relresexact = relres;
 suppindcount = cellfun(@(cEl) zeros(size(cEl)), cres, 'UniformOutput',0);
 suppind = cellfun(@(cEl) false(size(cEl)), cres ,'UniformOutput', 0);
 %suppIdx = zeros(numel(cres),2);
@@ -176,10 +178,6 @@ if flags.do_mp
         if suppindcount{wIdx}(m+1,n+1) == 0 && m < dp(wIdx).M2, atNo = atNo + 1; end
         if suppindcount{wIdx}(m+1,n+1) >= kv.atsellim, exitcode = 3; break; end
         suppindcount{wIdx}(m+1,n+1) = suppindcount{wIdx}(m+1,n+1) + 1;
-        
-        if suppindcount{wIdx}(m+1,n+1) > 1
-            prd = 1;
-        end
         
         % 1b) Selected coefficient
         cval = cres{wIdx}(m+1,n+1);
@@ -222,11 +220,11 @@ if flags.do_mp
                 end
             end
             
-            
             % Subsequently remove the conjugated coefficient from the
             % residuum
-            kernh = size(currkern,1);
+            [kernh,kernw] = size(currkern);
             mmid = floor(kernh/2) + 1;
+            nmid = floor(kernw/2) + 1;
             spillm = mmid - m;
             
             if m > 0 && spillm > 0
@@ -245,26 +243,41 @@ if flags.do_mp
         end
      
 
-        if mod(iter,kv.printstep) == 0
-            plotiter(c,cres,a,M,clim,iter,kv,flags);
-        end
+         if mod(iter,kv.printstep) == 0
+             plotiter(c,cres,a,M,clim,iter,kv,flags);
+         end
        
-        
-        if m==0
-            apprenenergy = apprenenergy + abs(cvalold)^2;
-        elseif m<M2
-            apprenenergy = apprenenergy + 2*abs(cval)^2;
-        end
+         
+%        apprenenergy = apprenenergy + abs(cval)^2;
+       
+         if m==0
+             apprenenergy = apprenenergy + abs(cval)^2;
+         else
+            if mmid - 2*m > 0
+               inprod = conj(currkern(mmid+2*m,nmid));
+               K = sqrt(2/(1 + real(inprod*exp(1i*2*angle(cval)))));
+               %K = 1;
+               apprenenergy = apprenenergy + (2/K)^2*abs(cval)^2;
+               %apprenenergy = apprenenergy + abs(cval)^2;
+            else
+               apprenenergy = apprenenergy + 2*abs(cval)^2;
+            end
+         end
+
         %
         
         if mod(iter,kv.relresstep) == 0
             relresid = ceil(iter/kv.relresstep) + 1;
             fprintf('Err: %.6f\n',10*log10( (norm_f2-apprenenergy)/norm_f2));
-            fprintf('Atoms: %d\n',atNo);
+            %fprintf('Atoms: %d\n',atNo);
             if flags.do_errappr
                 relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
-                relres(relresid) = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags);
+                relresexact(relresid) = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags);
+                relres(relresid) = sqrt ((norm_f2-apprenenergy)/norm_f2);
+                if ~isreal(relres(relresid))
+                    prd = 1;
+                end
             end
             if relres(relresid) <= kv.relrestol
                 exitcode = 1;
@@ -619,12 +632,12 @@ elseif flags.do_localomp || flags.do_compllocalomp
 end
 
 %% Final computation
+% Approximation
+fhat = reccoefs(c,dp,L,Ls);
 % Coefficient residual 
 cres = cellfun(@(cEl,m2El) cEl(1:m2El,:),cres,{dp.M2}.','UniformOutput',0);
 % Coefficient solution
 c = cellfun(@(cEl,m2El) cEl(1:m2El,:),c,{dp.M2}.','UniformOutput',0);
-% Approximation
-fhat = reccoefs(c,dp,L,Ls);
 % Approximation error
 relresfinal = norm(f-fhat)/norm_f;
 
@@ -652,7 +665,11 @@ function [fhat,fhats] = reccoefs(c,dp,L,Ls)
     fhats = zeros(Ls,numel(dp));
 
     for ii=1:numel(dp)
-        fhats(:,ii) = idgtreal(c{ii}(1:dp(ii).M2,:),dp(ii).g,dp(ii).a,dp(ii).M,Ls);
+        if dp(ii).M == dp(ii).M2
+            fhats(:,ii) = idgt(c{ii}(1:dp(ii).M,:),dp(ii).g,dp(ii).a,Ls);
+        else
+            fhats(:,ii) = idgtreal(c{ii}(1:dp(ii).M2,:),dp(ii).g,dp(ii).a,dp(ii).M,Ls);
+        end
     end
 
     fhat = sum(fhats,2);
