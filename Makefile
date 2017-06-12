@@ -92,7 +92,10 @@ endif
 ifndef NOBLASLAPACK
 	LFLAGS += $(BLASLAPACKLIBS)
 endif
-LFLAGS += $(FFTWLIBS) $(EXTRALFLAGS) $(OPTLFLAGS) -lm
+# ifndef NOFFTW
+	LFLAGS += $(FFTWLIBS)
+#endif
+LFLAGS += $(EXTRALFLAGS) $(OPTLFLAGS) -lm
 
 # Convert *.c names to *.o
 toCompile = $(patsubst %.c,%.o,$(files))
@@ -102,6 +105,12 @@ toCompile_notypechange = $(patsubst  %.c,%.o,$(files_notypechange))
 ifndef NOBLASLAPACK
 	toCompile += $(patsubst %.c,%.o,$(files_blaslapack))
 	toCompile_complextransp += $(patsubst %.c,%.o,$(files_blaslapack_complextransp))
+endif
+
+ifndef NOFFTW
+	toCompile += fftw_wrappers.o
+else
+	toCompile += kissfft_wrappers.o kiss_fft.o kiss_fftr.o
 endif
 
 COMMONFILES = $(addprefix $(objprefix)/common/d,$(toCompile_notypechange))
@@ -170,6 +179,9 @@ $(objprefix)/double/%.o: src/%.c
 $(objprefix)/complexdouble/%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -DLTFAT_COMPLEXTYPE -c $< -o $@
 
+$(objprefix)/double/kiss_%.o: thirdparty/kissfft/%.c
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
+
 $(objprefix)/common/s%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -c $< -o $@
 
@@ -178,6 +190,9 @@ $(objprefix)/single/%.o: src/%.c
 
 $(objprefix)/complexsingle/%.o: src/%.c
 	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+
+$(objprefix)/single/kiss_%.o: thirdparty/kissfft/%.c
+	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE  -c $< -o $@
 
 $(buildprefix):
 	@$(MKDIR) $(buildprefix)
@@ -196,7 +211,6 @@ $(objprefix)/complexdouble:
 
 $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
-
 
 .PHONY: clean cleanobj help doc doxy static shared munit
 

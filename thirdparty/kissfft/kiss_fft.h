@@ -6,6 +6,10 @@
 #include <math.h>
 #include <string.h>
 
+#include "ltfat/types.h"
+#include "ltfat/memalloc.h"
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,8 +33,8 @@ extern "C" {
 #define KISS_FFT_MALLOC(nbytes) _mm_malloc(nbytes,16)
 #define KISS_FFT_FREE _mm_free
 #else
-#define KISS_FFT_MALLOC malloc
-#define KISS_FFT_FREE free
+#define KISS_FFT_MALLOC ltfat_malloc
+#define KISS_FFT_FREE ltfat_free
 #endif
 
 
@@ -44,7 +48,7 @@ extern "C" {
 #else
 # ifndef kiss_fft_scalar
 /*  default is float */
-#   define kiss_fft_scalar float
+#   define kiss_fft_scalar LTFAT_REAL
 # endif
 #endif
 
@@ -54,7 +58,7 @@ typedef struct
     kiss_fft_scalar i;
 } kiss_fft_cpx;
 
-typedef struct kiss_fft_state* kiss_fft_cfg;
+typedef struct LTFAT_KISS(fft_state)* LTFAT_KISS(fft_cfg);
 
 /*
  *  kiss_fft_alloc
@@ -79,7 +83,8 @@ typedef struct kiss_fft_state* kiss_fft_cfg;
  *      buffer size in *lenmem.
  * */
 
-kiss_fft_cfg kiss_fft_alloc(int nfft, int inverse_fft, void * mem, size_t * lenmem);
+LTFAT_KISS(fft_cfg)
+LTFAT_KISS(fft_alloc)(int nfft, int inverse_fft, void * mem, size_t * lenmem);
 
 /*
  * kiss_fft(cfg,in_out_buf)
@@ -91,30 +96,27 @@ kiss_fft_cfg kiss_fft_alloc(int nfft, int inverse_fft, void * mem, size_t * lenm
  * Note that each element is complex and can be accessed like
     f[k].r and f[k].i
  * */
-void kiss_fft(kiss_fft_cfg cfg, const kiss_fft_cpx *fin, kiss_fft_cpx *fout);
+void
+LTFAT_KISS(fft)(LTFAT_KISS(fft_cfg) cfg, const kiss_fft_cpx *fin, kiss_fft_cpx *fout);
 
 /*
  A more generic version of the above function. It reads its input from every Nth sample.
  * */
-void kiss_fft_stride(kiss_fft_cfg cfg, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, int fin_stride);
+void
+LTFAT_KISS(fft_stride)(LTFAT_KISS(fft_cfg) cfg, const kiss_fft_cpx *fin, kiss_fft_cpx *fout, int fin_stride);
 
 /* If kiss_fft_alloc allocated a buffer, it is one contiguous
    buffer and can be simply free()d when no longer needed*/
 
 /*
- Cleans up some memory that gets managed internally. Not necessary to call, but it might clean up
- your compiler output to call this before you exit.
-*/
-void kiss_fft_cleanup(void);
-
-/*
  Real optimized version can save about 45% cpu time vs. complex fft of a real seq.
  */
 
-typedef struct kiss_fftr_state *kiss_fftr_cfg;
+typedef struct LTFAT_KISS(fftr_state)* LTFAT_KISS(fftr_cfg);
 
 
-kiss_fftr_cfg kiss_fftr_alloc(int nfft, int inverse_fft, void * mem, size_t * lenmem);
+LTFAT_KISS(fftr_cfg)
+LTFAT_KISS(fftr_alloc)(int nfft, int inverse_fft, void * mem, size_t * lenmem);
 /*
  nfft must be even
 
@@ -122,13 +124,15 @@ kiss_fftr_cfg kiss_fftr_alloc(int nfft, int inverse_fft, void * mem, size_t * le
 */
 
 
-void kiss_fftr(kiss_fftr_cfg cfg, const kiss_fft_scalar *timedata, kiss_fft_cpx *freqdata);
+void
+LTFAT_KISS(fftr)(LTFAT_KISS(fftr_cfg) cfg, const kiss_fft_scalar *timedata, kiss_fft_cpx *freqdata);
 /*
  input timedata has nfft scalar points
  output freqdata has nfft/2+1 complex points
 */
 
-void kiss_fftri(kiss_fftr_cfg cfg, const kiss_fft_cpx *freqdata, kiss_fft_scalar *timedata);
+void
+LTFAT_KISS(fftri)(LTFAT_KISS(fftr_cfg) cfg, const kiss_fft_cpx *freqdata, kiss_fft_scalar *timedata);
 /*
  input freqdata has  nfft/2+1 complex points
  output timedata has nfft scalar points
@@ -137,11 +141,11 @@ void kiss_fftri(kiss_fftr_cfg cfg, const kiss_fft_cpx *freqdata, kiss_fft_scalar
 /*
  * Returns the smallest integer k, such that k>=n and k has only "fast" factors (2,3,5)
  */
-int kiss_fft_next_fast_size(int n);
+//int kiss_fft_next_fast_size(int n);
 
 /* for real ffts, we need an even size */
-#define kiss_fftr_next_fast_size_real(n) \
-        (kiss_fft_next_fast_size( ((n)+1)>>1)<<1)
+/* #define kiss_fftr_next_fast_size_real(n) \
+         (kiss_fft_next_fast_size( ((n)+1)>>1)<<1)*/
 
 #ifdef __cplusplus
 }

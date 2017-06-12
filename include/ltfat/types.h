@@ -25,6 +25,9 @@
 #ifdef LTFAT_FFTW
 #undef LTFAT_FFTW
 #endif
+#ifdef LTFAT_KISS
+#undef LTFAT_KISS
+#endif
 
 #ifdef LTFAT_MX_CLASSID
 #undef LTFAT_MX_CLASSID
@@ -45,6 +48,7 @@
 #  define LTFAT_REAL double
 #  define LTFAT_COMPLEX ltfat_complex_d
 #  define LTFAT_FFTW(name) fftw_ ## name
+#  define LTFAT_KISS(name)  kiss_ ## name ## _d
 #  define LTFAT_NAME_REAL(name) LTFAT_NAME_DOUBLE(name)
 #  define LTFAT_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXDOUBLE(name)
 #  define LTFAT_COMPLEXH(name) name
@@ -70,6 +74,7 @@
 #define LTFAT_NAME_REAL(name) LTFAT_NAME_SINGLE(name)
 #define LTFAT_NAME_COMPLEX(name) LTFAT_NAME_COMPLEXSINGLE(name)
 #define LTFAT_FFTW(name) fftwf_ ## name
+#define LTFAT_KISS(name)  kiss_ ## name ## _s
 #define LTFAT_COMPLEXH(name) name ## f
 #  if defined(LTFAT_COMPLEXTYPE)
 #    define LTFAT_TYPE LTFAT_COMPLEX

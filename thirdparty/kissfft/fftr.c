@@ -14,8 +14,8 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "_kiss_fft_guts.h"
 
-struct kiss_fftr_state{
-    kiss_fft_cfg substate;
+struct LTFAT_KISS(fftr_state){
+    LTFAT_KISS(fft_cfg) substate;
     kiss_fft_cpx * tmpbuf;
     kiss_fft_cpx * super_twiddles;
 #ifdef USE_SIMD
@@ -23,10 +23,11 @@ struct kiss_fftr_state{
 #endif
 };
 
-kiss_fftr_cfg kiss_fftr_alloc(int nfft,int inverse_fft,void * mem,size_t * lenmem)
+LTFAT_KISS(fftr_cfg) 
+LTFAT_KISS(fftr_alloc)(int nfft,int inverse_fft,void * mem,size_t * lenmem)
 {
     int i;
-    kiss_fftr_cfg st = NULL;
+    LTFAT_KISS(fftr_cfg) st = NULL;
     size_t subsize, memneeded;
 
     if (nfft & 1) {
@@ -35,23 +36,23 @@ kiss_fftr_cfg kiss_fftr_alloc(int nfft,int inverse_fft,void * mem,size_t * lenme
     }
     nfft >>= 1;
 
-    kiss_fft_alloc (nfft, inverse_fft, NULL, &subsize);
-    memneeded = sizeof(struct kiss_fftr_state) + subsize + sizeof(kiss_fft_cpx) * ( nfft * 3 / 2);
+    LTFAT_KISS(fft_alloc) (nfft, inverse_fft, NULL, &subsize);
+    memneeded = sizeof(struct LTFAT_KISS(fftr_state)) + subsize + sizeof(kiss_fft_cpx) * ( nfft * 3 / 2);
 
     if (lenmem == NULL) {
-        st = (kiss_fftr_cfg) KISS_FFT_MALLOC (memneeded);
+        st = (LTFAT_KISS(fftr_cfg)) KISS_FFT_MALLOC (memneeded);
     } else {
         if (*lenmem >= memneeded)
-            st = (kiss_fftr_cfg) mem;
+            st = (LTFAT_KISS(fftr_cfg)) mem;
         *lenmem = memneeded;
     }
     if (!st)
         return NULL;
 
-    st->substate = (kiss_fft_cfg) (st + 1); /*just beyond kiss_fftr_state struct */
+    st->substate = (LTFAT_KISS(fft_cfg)) (st + 1); /*just beyond kiss_fftr_state struct */
     st->tmpbuf = (kiss_fft_cpx *) (((char *) st->substate) + subsize);
     st->super_twiddles = st->tmpbuf + nfft;
-    kiss_fft_alloc(nfft, inverse_fft, st->substate, &subsize);
+    LTFAT_KISS(fft_alloc)(nfft, inverse_fft, st->substate, &subsize);
 
     for (i = 0; i < nfft/2; ++i) {
         double phase =
@@ -63,7 +64,8 @@ kiss_fftr_cfg kiss_fftr_alloc(int nfft,int inverse_fft,void * mem,size_t * lenme
     return st;
 }
 
-void kiss_fftr(kiss_fftr_cfg st,const kiss_fft_scalar *timedata,kiss_fft_cpx *freqdata)
+void 
+LTFAT_KISS(fftr)(LTFAT_KISS(fftr_cfg) st,const kiss_fft_scalar *timedata,kiss_fft_cpx *freqdata)
 {
     /* input buffer timedata is stored row-wise */
     int k,ncfft;
@@ -77,7 +79,7 @@ void kiss_fftr(kiss_fftr_cfg st,const kiss_fft_scalar *timedata,kiss_fft_cpx *fr
     ncfft = st->substate->nfft;
 
     /*perform the parallel fft of two real signals packed in real,imag*/
-    kiss_fft( st->substate , (const kiss_fft_cpx*)timedata, st->tmpbuf );
+    LTFAT_KISS(fft)( st->substate , (const kiss_fft_cpx*)timedata, st->tmpbuf );
     /* The real part of the DC element of the frequency spectrum in st->tmpbuf
      * contains the sum of the even-numbered elements of the input time sequence
      * The imag part is the sum of the odd-numbered elements
@@ -119,7 +121,8 @@ void kiss_fftr(kiss_fftr_cfg st,const kiss_fft_scalar *timedata,kiss_fft_cpx *fr
     }
 }
 
-void kiss_fftri(kiss_fftr_cfg st,const kiss_fft_cpx *freqdata,kiss_fft_scalar *timedata)
+void 
+LTFAT_KISS(fftri)(LTFAT_KISS(fftr_cfg) st,const kiss_fft_cpx *freqdata,kiss_fft_scalar *timedata)
 {
     /* input buffer timedata is stored row-wise */
     int k, ncfft;
@@ -154,5 +157,5 @@ void kiss_fftri(kiss_fftr_cfg st,const kiss_fft_cpx *freqdata,kiss_fft_scalar *t
         st->tmpbuf[ncfft - k].i *= -1;
 #endif
     }
-    kiss_fft (st->substate, st->tmpbuf, (kiss_fft_cpx *) timedata);
+    LTFAT_KISS(fft)(st->substate, st->tmpbuf, (kiss_fft_cpx *) timedata);
 }
