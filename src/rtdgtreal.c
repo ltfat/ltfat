@@ -16,8 +16,11 @@ struct LTFAT_NAME(rtdgtreal_plan)
     ltfat_int M; //!< Number of FFT channels
     rtdgt_phasetype ptype; //!< Phase convention
     LTFAT_REAL* fftBuf; //!< Internal buffer
+    LTFAT_COMPLEX* fftBuf_cpx; //!< Internal buffer
     ltfat_int fftBufLen; //!< Internal buffer length
-    LTFAT_FFTW(plan) pfft; //!< FFTW plan
+    /* LTFAT_FFTW(plan) pfft; //!< FFTW plan */
+    LTFAT_NAME_REAL(fftreal_plan)*  pfft;
+    LTFAT_NAME_REAL(ifftreal_plan)* pifft;
 };
 
 
@@ -29,8 +32,8 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
 {
     ltfat_int M2;
     LTFAT_NAME(rtdgtreal_plan)* p = NULL;
-    LTFAT_FFTW(iodim64) dims;
-    LTFAT_FFTW(iodim64) howmany_dims;
+    /* LTFAT_FFTW(iodim64) dims; */
+    /* LTFAT_FFTW(iodim64) howmany_dims; */
 
     int status = LTFATERR_FAILED;
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
@@ -42,7 +45,8 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
     p->fftBufLen = gl > 2 * M2 ? gl : 2 * M2;
 
     CHECKMEM( p->g = LTFAT_NAME_REAL(malloc)(gl));
-    CHECKMEM( p->fftBuf = LTFAT_NAME_REAL(malloc)(p->fftBufLen));
+    CHECKMEM( p->fftBuf =     LTFAT_NAME_REAL(malloc)(p->fftBufLen));
+    CHECKMEM( p->fftBuf_cpx = LTFAT_NAME_COMPLEX(malloc)(M2));
     p->gl = gl;
     p->M = M;
     p->ptype = ptype;
@@ -51,28 +55,33 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
 
     if (LTFAT_FORWARD == tradir)
     {
-        dims.n = M; dims.is = 1; dims.os = 1;
-        howmany_dims.n = 1; howmany_dims.is = M; howmany_dims.os = M / 2 + 1;
-
-        p->pfft =
-            LTFAT_FFTW(plan_guru64_dft_r2c)(1, &dims, 1, &howmany_dims,
-                                            p->fftBuf, (LTFAT_FFTW(complex)*) p->fftBuf,
-                                            FFTW_MEASURE);
+        /* dims.n = M; dims.is = 1; dims.os = 1; */
+        /* howmany_dims.n = 1; howmany_dims.is = M; howmany_dims.os = M / 2 + 1; */
+        /*  */
+        /* p->pfft = */
+        /*     LTFAT_FFTW(plan_guru64_dft_r2c)(1, &dims, 1, &howmany_dims, */
+        /*                                     p->fftBuf, (LTFAT_FFTW(complex)*) p->fftBuf, */
+        /*                                     FFTW_MEASURE); */
+        LTFAT_NAME_REAL(fftreal_init)(M, 1, p->fftBuf, p->fftBuf_cpx,
+                                      FFTW_MEASURE, &p->pfft);
+        CHECKINIT(p->pfft, "FFTW plan creation failed.");
     }
     else if (LTFAT_INVERSE == tradir)
     {
-        dims.n = M; dims.is = 1; dims.os = 1;
-        howmany_dims.n = 1; howmany_dims.is = M / 2 + 1; howmany_dims.os = M;
-
-        p->pfft =
-            LTFAT_FFTW(plan_guru64_dft_c2r)(1, &dims, 1, &howmany_dims,
-                                            (LTFAT_FFTW(complex)*)
-                                            p->fftBuf, p->fftBuf, FFTW_MEASURE);
+        /* dims.n = M; dims.is = 1; dims.os = 1; */
+        /* howmany_dims.n = 1; howmany_dims.is = M / 2 + 1; howmany_dims.os = M; */
+        /*  */
+        /* p->pfft = */
+        /*     LTFAT_FFTW(plan_guru64_dft_c2r)(1, &dims, 1, &howmany_dims, */
+        /*                                     (LTFAT_FFTW(complex)*) */
+        /*                                     p->fftBuf, p->fftBuf, FFTW_MEASURE); */
+        LTFAT_NAME_REAL(ifftreal_init)(M, 1, p->fftBuf_cpx, p->fftBuf,
+                                       FFTW_MEASURE, &p->pifft);
+        CHECKINIT(p->pifft, "FFTW plan creation failed.");
     }
     else
         CHECKCANTHAPPEN("Unknown transform direction.");
 
-    CHECKINIT(p->pfft, "FFTW plan creation failed.");
 
     *pout = p;
     return LTFATERR_SUCCESS;
@@ -104,6 +113,7 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
 {
     ltfat_int M, M2, gl;
     LTFAT_REAL* fftBuf;
+    LTFAT_COMPLEX* fftBuf_cpx;
     int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(c);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
@@ -112,6 +122,7 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
     M2 = M / 2 + 1;
     gl = p->gl;
     fftBuf = p->fftBuf;
+    fftBuf_cpx = p->fftBuf_cpx;
 
     for (ltfat_int w = 0; w < W; w++)
     {
@@ -131,9 +142,10 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
         if (p->ptype == LTFAT_RTDGTPHASE_ZERO)
             LTFAT_NAME_REAL(circshift)(fftBuf, M, -(gl / 2), fftBuf );
 
-        LTFAT_FFTW(execute)(p->pfft);
+        /* LTFAT_FFTW(execute)(p->pfft); */
+        LTFAT_NAME_REAL(fftreal_execute)(p->pfft);
 
-        memcpy(cchan, fftBuf, M2 * sizeof * c);
+        memcpy(cchan, fftBuf_cpx, M2 * sizeof * c);
     }
 
     return LTFATERR_SUCCESS;
@@ -156,6 +168,7 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
 {
     ltfat_int M, M2, gl;
     LTFAT_REAL* fftBuf;
+    LTFAT_COMPLEX* fftBuf_cpx;
     int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(c); CHECKNULL(f);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
@@ -164,15 +177,17 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
     M2 = M / 2 + 1;
     gl = p->gl;
     fftBuf = p->fftBuf;
+    fftBuf_cpx = p->fftBuf_cpx;
 
     for (ltfat_int w = 0; w < W; w++)
     {
         const LTFAT_COMPLEX* cchan = c + w * M2;
         LTFAT_REAL* fchan = f + w * gl;
 
-        memcpy(fftBuf, cchan, M2 * sizeof * cchan);
+        memcpy(fftBuf_cpx, cchan, M2 * sizeof * cchan);
 
-        LTFAT_FFTW(execute)(p->pfft);
+        /* LTFAT_FFTW(execute)(p->pifft); */
+        LTFAT_NAME_REAL(ifftreal_execute)(p->pifft);
 
         if (p->ptype == LTFAT_RTDGTPHASE_ZERO)
             LTFAT_NAME_REAL(circshift)(fftBuf, M, gl / 2, fftBuf );
@@ -211,7 +226,11 @@ LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p)
     pp = *p;
     ltfat_safefree(pp->g);
     ltfat_safefree(pp->fftBuf);
-    if (pp->pfft) LTFAT_FFTW(destroy_plan)(pp->pfft);
+    ltfat_safefree(pp->fftBuf_cpx);
+    /* if (pp->pfft) LTFAT_FFTW(destroy_plan)(pp->pfft); */
+    /* if (pp->pifft) LTFAT_FFTW(destroy_plan)(pp->pfft); */
+    if (pp->pfft) LTFAT_NAME_REAL(fftreal_done)(&pp->pfft);
+    if (pp->pifft) LTFAT_NAME_REAL(ifftreal_done)(&pp->pifft);
     ltfat_free(pp);
     pp = NULL;
 

@@ -45,10 +45,10 @@ PREFIX ?= /usr/local
 LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
 
-# Base CFLAGS
-CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty $(OPTCFLAGS)
-CXXFLAGS+=-Wall -Wextra -pedantic -std=c++11 -fno-exceptions -fno-rtti -Iinclude -Ithirdparty $(OPTCFLAGS)
 
+# Base CFLAGS
+CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty
+CXXFLAGS+=-Wall -Wextra -pedantic -std=c++11 -fno-exceptions -fno-rtti -Iinclude -Ithirdparty 
 # The following adds parameters to CFLAGS
 COMPTARGET ?= release
 include comptarget.mk
@@ -92,9 +92,14 @@ endif
 ifndef NOBLASLAPACK
 	LFLAGS += $(BLASLAPACKLIBS)
 endif
-# ifndef NOFFTW
+
+ifdef NOFFTW
+	CFLAGS += -DNOFFTW
+else
 	LFLAGS += $(FFTWLIBS)
-#endif
+endif
+
+CFLAGS += $(EXTRACFLAGS) $(OPTCFLAGS)
 LFLAGS += $(EXTRALFLAGS) $(OPTLFLAGS) -lm
 
 # Convert *.c names to *.o
@@ -109,6 +114,7 @@ endif
 
 ifndef NOFFTW
 	toCompile += fftw_wrappers.o
+	toCompile += $(toCompile_fftw_complextransp)
 else
 	toCompile += kissfft_wrappers.o kiss_fft.o kiss_fftr.o
 endif
@@ -171,28 +177,28 @@ $(SO_STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
 	$(CC) -shared -fPIC -o $@ $(COMMONFILESFORSFILES) $(SFILES) $(LFLAGS)
 
 $(objprefix)/common/d%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
 
 $(objprefix)/double/%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE  -c $< -o $@
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE  -c $< -o $@
 
 $(objprefix)/complexdouble/%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -DLTFAT_COMPLEXTYPE -c $< -o $@
 
 $(objprefix)/double/kiss_%.o: thirdparty/kissfft/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
+	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
 
 $(objprefix)/common/s%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -c $< -o $@
+	$(CC) $(CFLAGS)  -DLTFAT_SINGLE -c $< -o $@
 
 $(objprefix)/single/%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE  -c $< -o $@
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o $@
 
 $(objprefix)/complexsingle/%.o: src/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE -DLTFAT_COMPLEXTYPE -c $< -o $@
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE -DLTFAT_COMPLEXTYPE -c $< -o $@
 
 $(objprefix)/single/kiss_%.o: thirdparty/kissfft/%.c
-	$(CC) $(CFLAGS) $(OPTCFLAGS) -DLTFAT_SINGLE  -c $< -o $@
+	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o $@
 
 $(buildprefix):
 	@$(MKDIR) $(buildprefix)
@@ -239,10 +245,13 @@ cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
 
-munit:
+munitdebug: export COMPTARGET=debug
+munitdebug: munit
+
+munit: 
 	$(MAKE) clean
 	# $(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
-	$(MAKE) $(SO_DSTARGET) COMPTARGET=debug
+	$(MAKE) $(SO_DSTARGET) 
 	$(MAKE) $(buildprefix)/ltfat.h USECPP=0
 
 $(buildprefix)/ltfat.h: $(buildprefix) 

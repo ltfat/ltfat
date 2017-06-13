@@ -121,18 +121,20 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
          * being used, do the copying using the fft. */
 
         // Downcasting to int
-        int Lint = (int) L;
-        plan.f_plan = LTFAT_FFTW(plan_many_dft)(1, &Lint, (int)W,
-                                                (LTFAT_FFTW(complex)*)f_before_fft, NULL, 1, Lint,
-                                                (LTFAT_FFTW(complex)*)plan.fwork, NULL, 1, Lint,
-                                                FFTW_FORWARD, flags);
-
-        plan.g_plan = LTFAT_FFTW(plan_dft_1d)(Lint, (LTFAT_FFTW(complex)*)g_before_fft,
-                                              (LTFAT_FFTW(complex)*)plan.gwork, FFTW_FORWARD,
-                                              flags);
-
-        /* Execute the FFTs */
-        LTFAT_FFTW(execute)(plan.g_plan);
+        /* int Lint = (int) L; */
+        /* plan.f_plan = LTFAT_FFTW(plan_many_dft)(1, &Lint, (int)W, */
+        /*                                         (LTFAT_FFTW(complex)*)f_before_fft, NULL, 1, Lint, */
+        /*                                         (LTFAT_FFTW(complex)*)plan.fwork, NULL, 1, Lint, */
+        /*                                         FFTW_FORWARD, flags); */
+        /*  */
+        /* plan.g_plan = LTFAT_FFTW(plan_dft_1d)(Lint, (LTFAT_FFTW(complex)*)g_before_fft, */
+        /*                                       (LTFAT_FFTW(complex)*)plan.gwork, FFTW_FORWARD, */
+        /*                                       flags); */
+        /* #<{(| Execute the FFTs |)}># */
+        /* LTFAT_FFTW(execute)(plan.g_plan); */
+        LTFAT_NAME_REAL(fft_init)(L, W, f_before_fft, plan.fwork, flags, &plan.f_plan );
+        LTFAT_NAME_REAL(fft_init)(L, 1, g_before_fft, plan.gwork, flags, &plan.g_plan );
+        LTFAT_NAME_REAL(fft_execute)( plan.g_plan);
 
         /* Multiply g by the chirp and scale by 1/L */
         for (ltfat_int l = 0; l < L; l++)
@@ -154,7 +156,8 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
     for (ltfat_int n = 0; n < 2 * N; n++)
     {
-        plan.finalmod[n] = exp(I * (LTFAT_REAL) M_PI * (LTFAT_REAL)n / ((LTFAT_REAL) N));
+        plan.finalmod[n] = exp(I * (LTFAT_REAL) M_PI * (LTFAT_REAL)n / ((
+                                   LTFAT_REAL) N));
     }
 
     return plan;
@@ -237,7 +240,8 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
         const long long cc5 = ltfat_positiverem_long(2 * cc1 * plan.br, twoN);
         const long long cc6 = ltfat_positiverem_long((s0 * s1 + 1) * plan.br, L);
 
-        LTFAT_FFTW(execute)(plan.f_plan);
+        // LTFAT_FFTW(execute)(plan.f_plan);
+        LTFAT_NAME_REAL(fft_execute)(plan.f_plan);
 
         for (ltfat_int w = 0; w < plan.W; w++)
         {
@@ -258,7 +262,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
                 const long long sq1 = k * cc1 + cc2 * m;
 
                 ltfat_int phsidx = ltfat_positiverem_long(
-                                            (cc3 * sq1 * sq1) % twoN - (m * (cc4 * m + k * cc5)) % twoN, twoN);
+                                       (cc3 * sq1 * sq1) % twoN - (m * (cc4 * m + k * cc5)) % twoN, twoN);
 
                 /* The line below has a hidden floor operation when dividing with the last b */
                 ltfat_int idx2 = ((part1 + cc6 * m) % L) / b;
@@ -282,6 +286,8 @@ LTFAT_API void
 LTFAT_NAME(dgt_shear_done)(LTFAT_NAME(dgt_shear_plan) plan)
 {
     LTFAT_NAME_COMPLEX(dgt_long_done)(&plan.rect_plan);
+    LTFAT_NAME_REAL(fft_done)(&plan.f_plan);
+    LTFAT_NAME_REAL(fft_done)(&plan.g_plan);
     LTFAT_SAFEFREEALL(plan.finalmod, plan.c_rect, plan.fwork, plan.gwork, plan.p0,
                       plan.p1);
 }

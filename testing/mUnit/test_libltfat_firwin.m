@@ -12,6 +12,8 @@ Cenumnorms = enuminfo.LTFAT_FIRWIN;
 
 d = arg_firwin;
 wins = d.flags.wintype;
+wins(strcmp('truncgauss',wins)) = [];
+
 wins = [wins 'truncgauss01'];
 
 names =fieldnames(Cenumnorms);

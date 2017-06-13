@@ -14,7 +14,8 @@ struct LTFAT_NAME(wfac_plan)
     ltfat_int L;
     LTFAT_REAL scaling;
     LTFAT_REAL* sbuf;
-    LTFAT_FFTW(plan) p_before;
+    /* LTFAT_FFTW(plan) p_before; */
+    LTFAT_NAME_REAL(fft_plan)* p_before;
 };
 
 LTFAT_API int
@@ -48,10 +49,15 @@ LTFAT_NAME(wfac_init)(ltfat_int L, ltfat_int a, ltfat_int M,
     CHECKMEM(plan->sbuf = LTFAT_NAME_REAL(malloc)(2 * plan->d));
 
     /* Create plan. In-place. */
-    plan->p_before = LTFAT_FFTW(plan_dft_1d)((int)plan->d,
-                     (LTFAT_FFTW(complex)*) plan->sbuf,
-                     (LTFAT_FFTW(complex)*) plan->sbuf,
-                     FFTW_FORWARD, flags);
+    /* plan->p_before = LTFAT_FFTW(plan_dft_1d)((int)plan->d, */
+    /*                  (LTFAT_FFTW(complex)*) plan->sbuf, */
+    /*                  (LTFAT_FFTW(complex)*) plan->sbuf, */
+    /*                  FFTW_FORWARD, flags); */
+    LTFAT_NAME_REAL(fft_init)(plan->d, 1,
+                              (LTFAT_COMPLEX*) plan->sbuf,
+                              (LTFAT_COMPLEX*) plan->sbuf,
+                              flags, &plan->p_before);
+
 
     CHECKINIT(plan->p_before, "FFTW plan creation failed.");
 
@@ -60,7 +66,8 @@ LTFAT_NAME(wfac_init)(ltfat_int L, ltfat_int a, ltfat_int M,
 error:
     if (plan)
     {
-        if (plan->p_before) LTFAT_FFTW(destroy_plan)(plan->p_before);
+        /* if (plan->p_before) LTFAT_FFTW(destroy_plan)(plan->p_before); */
+        if (plan->p_before) LTFAT_NAME_REAL(fft_done)(&plan->p_before);
         ltfat_free(plan->sbuf);
         ltfat_free(plan);
     }
@@ -75,7 +82,8 @@ LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
     ltfat_int rem, negrem, c, p, q, d, a, M, L, ld3;
     LTFAT_REAL* sbuf, *gfp;
     LTFAT_REAL scaling;
-    LTFAT_FFTW(plan) p_before;
+    /* LTFAT_FFTW(plan) p_before; */
+    LTFAT_NAME_REAL(fft_plan)* p_before;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(plan); CHECKNULL(g); CHECKNULL(gf);
     CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %td) must be positive.", R);
@@ -118,7 +126,8 @@ LTFAT_NAME(wfac_execute)(LTFAT_NAME(wfac_plan)* plan, const LTFAT_TYPE* g,
 #endif
                     }
 
-                    LTFAT_FFTW(execute)(p_before);
+                    /* LTFAT_FFTW(execute)(p_before); */
+                    LTFAT_NAME_REAL(fft_execute)(p_before);
 
                     for (ltfat_int s = 0; s < 2 * d; s += 2)
                     {
@@ -143,7 +152,8 @@ LTFAT_NAME(wfac_done)(LTFAT_NAME(wfac_plan)** pout)
     CHECKNULL(pout);
     CHECKNULL(*pout);
 
-    LTFAT_FFTW(destroy_plan)((*pout)->p_before);
+    /* LTFAT_FFTW(destroy_plan)((*pout)->p_before); */
+    LTFAT_NAME_REAL(fft_done)(&(*pout)->p_before);
     ltfat_free((*pout)->sbuf);
     ltfat_free(*pout);
     *pout = NULL;

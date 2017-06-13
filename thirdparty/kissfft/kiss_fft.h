@@ -9,34 +9,20 @@
 #include "ltfat/types.h"
 #include "ltfat/memalloc.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*
- ATTENTION!
- If you would like a :
- -- a utility that will handle the caching of fft objects
- -- real-only (no imaginary time component ) FFT
- -- a multi-dimensional FFT
- -- a command-line utility to perform ffts
- -- a command-line utility to perform fast-convolution filtering
-
- Then see kfc.h kiss_fftr.h kiss_fftnd.h fftutil.c kiss_fastfir.c
-  in the tools/ directory.
-*/
-
 #ifdef USE_SIMD
 # include <xmmintrin.h>
 # define kiss_fft_scalar __m128
-#define KISS_FFT_MALLOC(nbytes) _mm_malloc(nbytes,16)
-#define KISS_FFT_FREE _mm_free
-#else
-#define KISS_FFT_MALLOC ltfat_malloc
-#define KISS_FFT_FREE ltfat_free
+// #define KISS_FFT_MALLOC(nbytes) _mm_malloc(nbytes,16)
+// #define KISS_FFT_FREE _mm_free
+// #else
 #endif
 
+#define KISS_FFT_MALLOC ltfat_malloc
+#define KISS_FFT_FREE ltfat_free
 
 #ifdef FIXED_POINT
 #include <sys/types.h>

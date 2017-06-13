@@ -13,7 +13,8 @@ struct LTFAT_NAME(fft_plan)
 };
 
 LTFAT_API int
-LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[])
+LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W,
+                LTFAT_COMPLEX out[])
 {
     LTFAT_NAME(fft_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -42,6 +43,8 @@ LTFAT_NAME(fft_init)(ltfat_int L, ltfat_int W,
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECKMEM( fftwp = (LTFAT_NAME(fft_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+
+    fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
     dims.n = L; dims.is = 1; dims.os = 1;
     howmany_dims.n = W; howmany_dims.is = L; howmany_dims.os = L;
@@ -112,7 +115,8 @@ struct LTFAT_NAME(ifft_plan)
 };
 
 LTFAT_API int
-LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[])
+LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W,
+                 LTFAT_COMPLEX out[])
 {
     LTFAT_NAME(ifft_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -141,6 +145,8 @@ LTFAT_NAME(ifft_init)(ltfat_int L, ltfat_int W,
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECKMEM( fftwp = (LTFAT_NAME(ifft_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+
+    fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
     dims.n = L; dims.is = 1; dims.os = 1;
     howmany_dims.n = W; howmany_dims.is = L; howmany_dims.os = L;
@@ -211,7 +217,8 @@ struct LTFAT_NAME(fftreal_plan)
 };
 
 LTFAT_API int
-LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfat_int L, ltfat_int W, LTFAT_COMPLEX out[])
+LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfat_int L, ltfat_int W,
+                    LTFAT_COMPLEX out[])
 {
     LTFAT_NAME(fftreal_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -232,6 +239,7 @@ LTFAT_NAME(fftreal_init)(ltfat_int L, ltfat_int W,
 {
     LTFAT_FFTW(iodim64) dims;
     LTFAT_FFTW(iodim64) howmany_dims;
+    ltfat_int M2;
     LTFAT_NAME(fftreal_plan)* fftwp = NULL;
 
     int status = LTFATERR_SUCCESS;
@@ -241,8 +249,16 @@ LTFAT_NAME(fftreal_init)(ltfat_int L, ltfat_int W,
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
     CHECKMEM( fftwp = (LTFAT_NAME(fftreal_plan)*) ltfat_calloc(1, sizeof * fftwp) );
 
+    fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
+
+    M2 = L / 2 + 1;
     dims.n = L; dims.is = 1; dims.os = 1;
-    howmany_dims.n = W; howmany_dims.is = L; howmany_dims.os = L / 2 + 1;
+    howmany_dims.n = W;  howmany_dims.os = M2;
+
+    if (in != (LTFAT_REAL*) out )
+        howmany_dims.is = L;
+    else
+        howmany_dims.is = 2 * M2;
 
     fftwp->p =
         LTFAT_FFTW(plan_guru64_dft_r2c)(1, &dims, 1, &howmany_dims,
@@ -308,7 +324,8 @@ struct LTFAT_NAME(ifftreal_plan)
 };
 
 LTFAT_API int
-LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W, LTFAT_REAL out[])
+LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W,
+                     LTFAT_REAL out[])
 {
     LTFAT_NAME(ifftreal_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -329,6 +346,7 @@ LTFAT_NAME(ifftreal_init)(ltfat_int L, ltfat_int W,
 {
     LTFAT_FFTW(iodim64) dims;
     LTFAT_FFTW(iodim64) howmany_dims;
+    ltfat_int M2;
     LTFAT_NAME(ifftreal_plan)* fftwp = NULL;
 
     int status = LTFATERR_SUCCESS;
@@ -339,8 +357,17 @@ LTFAT_NAME(ifftreal_init)(ltfat_int L, ltfat_int W,
     CHECKMEM( fftwp = (LTFAT_NAME(ifftreal_plan)*)
                       ltfat_calloc(1, sizeof * fftwp) );
 
+    M2 = L / 2 + 1;
+
+    fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
+
     dims.n = L; dims.is = 1; dims.os = 1;
-    howmany_dims.n = W; howmany_dims.is = L / 2 + 1; howmany_dims.os = L;
+    howmany_dims.n = W; howmany_dims.is = L / 2 + 1;
+
+    if (in != (LTFAT_COMPLEX*) out )
+        howmany_dims.os = L;
+    else
+        howmany_dims.os = 2 * M2;
 
     fftwp->p =
         LTFAT_FFTW(plan_guru64_dft_c2r)(1, &dims, 1, &howmany_dims,

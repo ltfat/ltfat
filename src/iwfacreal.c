@@ -10,7 +10,8 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, ltfat_int L,
 
     ltfat_int h_a, h_m;
 
-    LTFAT_FFTW(plan) p_before;
+    /* LTFAT_FFTW(plan) p_before; */
+    LTFAT_NAME_REAL(ifftreal_plan)* p_before;
 
     ltfat_int b = L / M;
     ltfat_int c = ltfat_gcd(a, M, &h_a, &h_m);
@@ -28,8 +29,9 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, ltfat_int L,
     LTFAT_COMPLEX* cbuf = LTFAT_NAME_COMPLEX(malloc)( d2);
 
     /* Create plan. In-place. */
-    p_before = LTFAT_FFTW(plan_dft_c2r_1d)((int)d, (LTFAT_FFTW(complex)*) cbuf, sbuf,
-                                           FFTW_MEASURE);
+    /* p_before = LTFAT_FFTW(plan_dft_c2r_1d)((int)d, (LTFAT_FFTW(complex)*) cbuf, sbuf, */
+    /*                                        FFTW_MEASURE); */
+    LTFAT_NAME_REAL(ifftreal_init)(d, 1, cbuf, sbuf, FFTW_MEASURE, &p_before);
 
     ltfat_int ld3 = c * p * q * R;
 
@@ -50,7 +52,8 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, ltfat_int L,
                         cbuf[s] = gfp[s * ld3] * scaling;
                     }
 
-                    LTFAT_FFTW(execute)(p_before);
+                    /* LTFAT_FFTW(execute)(p_before); */
+                    LTFAT_NAME_REAL(ifftreal_execute)(p_before);
 
                     for (ltfat_int s = 0; s < d; s++)
                     {
@@ -65,7 +68,6 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, ltfat_int L,
     /* Clear the work-arrays. */
     LTFAT_SAFEFREEALL(cbuf, sbuf);
 
-    LTFAT_FFTW(destroy_plan)(p_before);
+    /* LTFAT_FFTW(destroy_plan)(p_before); */
+    LTFAT_NAME_REAL(ifftreal_done)(&p_before);
 }
-
-

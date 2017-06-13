@@ -7,7 +7,8 @@ struct LTFAT_NAME(upconv_fft_plan_struct)
     ltfat_int L;
     ltfat_int W;
     ltfat_int a;
-    LTFAT_FFTW(plan) p_c;
+    /* LTFAT_FFTW(plan) p_c; */
+    LTFAT_NAME_REAL(fft_plan)* p_c;
     LTFAT_COMPLEX* buf;
     ltfat_int bufLen;
 };
@@ -18,7 +19,8 @@ struct LTFAT_NAME(upconv_fftbl_plan_struct)
     ltfat_int Gl;
     ltfat_int W;
     double a;
-    LTFAT_FFTW(plan) p_c;
+    /* LTFAT_FFTW(plan) p_c; */
+    LTFAT_NAME_REAL(fft_plan)* p_c;
     LTFAT_COMPLEX* buf;
     ltfat_int bufLen;
 };
@@ -77,17 +79,21 @@ LTFAT_NAME(upconv_fft_init)(ltfat_int L, ltfat_int W,
 {
     ltfat_int N = L / a;
 
-    LTFAT_FFTW(iodim64) dims;
-    dims.n = N; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim64) howmany_dims;
-    howmany_dims.n = W; howmany_dims.is = N; howmany_dims.os = N;
-
     LTFAT_COMPLEX* buf = LTFAT_NAME_COMPLEX(malloc)(W * N);
-    LTFAT_FFTW(plan) p_many =
-        LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
-                                  (LTFAT_FFTW(complex)*) buf,
-                                  (LTFAT_FFTW(complex)*) buf,
-                                  FFTW_FORWARD, FFTW_ESTIMATE);
+
+    /* LTFAT_FFTW(iodim64) dims; */
+    /* dims.n = N; dims.is = 1; dims.os = 1; */
+    /* LTFAT_FFTW(iodim64) howmany_dims; */
+    /* howmany_dims.n = W; howmany_dims.is = N; howmany_dims.os = N; */
+    /*  */
+    /* LTFAT_FFTW(plan) p_many = */
+    /*     LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims, */
+    /*                                 (LTFAT_FFTW(complex)*) buf, */
+    /*                                 (LTFAT_FFTW(complex)*) buf, */
+    /*                                 FFTW_FORWARD, FFTW_ESTIMATE); */
+
+    LTFAT_NAME_REAL(fft_plan)* p_many;
+    LTFAT_NAME_REAL(fft_init)(N, W, buf, buf, FFTW_ESTIMATE, &p_many);
 
     /* struct LTFAT_NAME(upconv_fft_plan_struct) p_struct = */
     /* { .L = L, .a = a, .W = W, .p_c = p_many, .buf = buf, .bufLen = W * N }; */
@@ -114,9 +120,10 @@ LTFAT_NAME(upconv_fft_execute)(LTFAT_NAME(upconv_fft_plan) p,
 
 
     // New array execution, inplace
-    LTFAT_FFTW(execute_dft)(p->p_c,
-                            (LTFAT_FFTW(complex)*) buf,
-                            (LTFAT_FFTW(complex)*) buf);
+    /* LTFAT_FFTW(execute_dft)(p->p_c, */
+    /*                         (LTFAT_FFTW(complex)*) buf, */
+    /*                         (LTFAT_FFTW(complex)*) buf); */
+    LTFAT_NAME_REAL(fft_execute_newarray)(p->p_c, buf, buf);
 
     for (ltfat_int w = 0; w < W; w++)
     {
@@ -136,7 +143,8 @@ LTFAT_NAME(upconv_fft_execute)(LTFAT_NAME(upconv_fft_plan) p,
 LTFAT_API void
 LTFAT_NAME(upconv_fft_done)(LTFAT_NAME(upconv_fft_plan) p)
 {
-    LTFAT_FFTW(destroy_plan)(p->p_c);
+    /* LTFAT_FFTW(destroy_plan)(p->p_c); */
+    LTFAT_NAME_REAL(fft_done)(&p->p_c);
     ltfat_free(p->buf);
 }
 
@@ -202,18 +210,21 @@ LTFAT_NAME(upconv_fftbl_init)( ltfat_int L, ltfat_int Gl,
     ltfat_int N = (ltfat_int) floor(L / a + 0.5);
     ltfat_int bufLen =  N > Gl ? N : Gl ;
 
-    LTFAT_FFTW(iodim64) dims;
-    dims.n = N; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim64) howmany_dims;
-    howmany_dims.n = W; howmany_dims.is = bufLen; howmany_dims.os = bufLen;
-
     LTFAT_COMPLEX* buf = LTFAT_NAME_COMPLEX(malloc)(bufLen * W);
-    LTFAT_FFTW(plan) p_many =
-        LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
-                                  (LTFAT_FFTW(complex)*)buf,
-                                  (LTFAT_FFTW(complex)*)buf,
-                                  FFTW_FORWARD, FFTW_ESTIMATE);
 
+    /* LTFAT_FFTW(iodim64) dims; */
+    /* dims.n = N; dims.is = 1; dims.os = 1; */
+    /* LTFAT_FFTW(iodim64) howmany_dims; */
+    /* howmany_dims.n = W; howmany_dims.is = bufLen; howmany_dims.os = bufLen; */
+    /*  */
+    /* LTFAT_FFTW(plan) p_many = */
+    /*     LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims, */
+    /*                                 (LTFAT_FFTW(complex)*)buf, */
+    /*                                 (LTFAT_FFTW(complex)*)buf, */
+    /*                                 FFTW_FORWARD, FFTW_ESTIMATE); */
+
+    LTFAT_NAME_REAL(fft_plan)* p_many;
+    LTFAT_NAME_REAL(fft_init)(N, W, buf, buf, FFTW_ESTIMATE, &p_many);
 
     /* struct LTFAT_NAME(upconv_fftbl_plan_struct) p_struct = */
     /* { */
@@ -250,8 +261,9 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
     for (ltfat_int w = 0; w < W; w++)
         memcpy(cbuf + w * bufLen, cin + w * N, N * sizeof * cin);
 
-    LTFAT_FFTW(execute_dft)(p->p_c, (LTFAT_FFTW(complex)*)cbuf,
-                            (LTFAT_FFTW(complex)*)cbuf);
+    /* LTFAT_FFTW(execute_dft)(p->p_c, (LTFAT_FFTW(complex)*)cbuf, */
+    /*                         (LTFAT_FFTW(complex)*)cbuf); */
+    LTFAT_NAME_REAL(fft_execute_newarray)(p->p_c, cbuf, cbuf);
 
     for (ltfat_int w = 0; w < W; w++)
     {
@@ -323,6 +335,7 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
 LTFAT_API void
 LTFAT_NAME(upconv_fftbl_done)(LTFAT_NAME(upconv_fftbl_plan) p)
 {
-    LTFAT_FFTW(destroy_plan)(p->p_c);
+    /* LTFAT_FFTW(destroy_plan)(p->p_c); */
+    LTFAT_NAME_REAL(fft_done)(&p->p_c);
     if (p->buf) ltfat_free(p->buf);
 }

@@ -21,8 +21,10 @@ struct LTFAT_NAME(chzt_plan_struct)
     LTFAT_COMPLEX* W2;
     LTFAT_COMPLEX* Wo;
     LTFAT_COMPLEX* chirpF;
-    LTFAT_FFTW(plan) plan;
-    LTFAT_FFTW(plan) plan2;
+    /* LTFAT_FFTW(plan) plan; */
+    /* LTFAT_FFTW(plan) plan2; */
+    LTFAT_NAME_REAL(fft_plan)* plan;
+    LTFAT_NAME_REAL(ifft_plan)* plan2;
     ltfat_int L;
     ltfat_int K;
     ltfat_int Lfft;
@@ -221,8 +223,10 @@ LTFAT_NAME(chzt_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
     ltfat_int K = p->K;
     ltfat_int Lfft = p->Lfft;
     LTFAT_COMPLEX* fbuffer = p->fbuffer;
-    LTFAT_FFTW(plan) plan_f = p->plan;
-    LTFAT_FFTW(plan) plan_fi = p->plan2;
+    /* LTFAT_FFTW(plan) plan_f = p->plan; */
+    /* LTFAT_FFTW(plan) plan_fi = p->plan2; */
+    LTFAT_NAME_REAL(fft_plan)*   plan_f = p->plan;
+    LTFAT_NAME_REAL(ifft_plan)* plan_fi = p->plan2;
     LTFAT_COMPLEX* W2 = p->W2;
     LTFAT_COMPLEX* Wo = p->Wo;
     LTFAT_COMPLEX* chirpF = p->chirpF;
@@ -243,7 +247,8 @@ LTFAT_NAME(chzt_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
         }
 
         // 2) FFT of input
-        LTFAT_FFTW(execute)(plan_f);
+        /* LTFAT_FFTW(execute)(plan_f); */
+        LTFAT_NAME_REAL(fft_execute)(plan_f);
 
         // Frequency domain filtering
         for (ltfat_int ii = 0; ii < Lfft; ii++)
@@ -254,7 +259,8 @@ LTFAT_NAME(chzt_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
 
         // Inverse FFT
         LTFAT_COMPLEX* fPtrTmp = fbuffer;
-        LTFAT_FFTW(execute)(plan_fi);
+        /* LTFAT_FFTW(execute)(plan_fi); */
+        LTFAT_NAME_REAL(ifft_execute)(plan_fi);
 
         // Final chirp multiplication and normalization
         LTFAT_COMPLEX* cPtrTmp = cPtr + w * K;
@@ -273,7 +279,6 @@ LTFAT_NAME(chzt_init)(ltfat_int K, ltfat_int L, const LTFAT_REAL deltao,
                       czt_ffthint hint)
 {
     ltfat_int Lfft = L + K - 1;
-    int Lfftint = (int) Lfft;
 
     if (hint == CZT_NEXTPOW2)
         Lfft = ltfat_nextpow2(Lfft);
@@ -281,14 +286,20 @@ LTFAT_NAME(chzt_init)(ltfat_int K, ltfat_int L, const LTFAT_REAL deltao,
         Lfft = ltfat_nextfastfft(Lfft);
 
     LTFAT_COMPLEX* fbuffer = LTFAT_NAME_COMPLEX(malloc)(Lfft);
-    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfftint,
-                               (LTFAT_FFTW(complex)*) fbuffer,
-                               (LTFAT_FFTW(complex)*) fbuffer,
-                               FFTW_FORWARD, fftw_flags);
-    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfftint,
-                                (LTFAT_FFTW(complex)*) fbuffer,
-                                (LTFAT_FFTW(complex)*) fbuffer,
-                                FFTW_BACKWARD, fftw_flags);
+    /* int Lfftint = (int) Lfft; */
+    /* LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_dft_1d)(Lfftint, */
+    /*                            (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                            (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                            FFTW_FORWARD, fftw_flags); */
+    /* LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_dft_1d)(Lfftint, */
+    /*                             (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                             (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                             FFTW_BACKWARD, fftw_flags); */
+
+    LTFAT_NAME_REAL(fft_plan)*   plan_f;
+    LTFAT_NAME_REAL(ifft_plan)* plan_fi;
+    LTFAT_NAME_REAL(fft_init)( Lfft, 1, fbuffer, fbuffer, fftw_flags, &plan_f);
+    LTFAT_NAME_REAL(ifft_init)(Lfft, 1, fbuffer, fbuffer, fftw_flags, &plan_fi);
 
     // Pre and post chirp
     ltfat_int N = L > K ? L : K;
@@ -315,17 +326,15 @@ LTFAT_NAME(chzt_init)(ltfat_int K, ltfat_int L, const LTFAT_REAL deltao,
                                       chirpF + Lfft - L + 1);
     memset(chirpF + K, 0, (Lfft - (L + K - 1))*sizeof * chirpF);
 
-    LTFAT_FFTW(execute_dft)(plan_f, (LTFAT_FFTW(complex)*) chirpF,
-                            (LTFAT_FFTW(complex)*) chirpF);
-
+    /* LTFAT_FFTW(execute_dft)(plan_f, (LTFAT_FFTW(complex)*) chirpF, */
+    /*                         (LTFAT_FFTW(complex)*) chirpF); */
+    LTFAT_NAME_REAL(fft_execute_newarray)(plan_f, chirpF, chirpF);
 
     for (ltfat_int ii = 0; ii < K; ii++)
     {
         W2[ii] = exp(-I * (LTFAT_REAL)(deltao * ii * ii / 2.0))
                  / (( LTFAT_REAL) Lfft);
     }
-
-
 
     /*
     We could have shrinked the W2 to length K here.
@@ -349,8 +358,10 @@ LTFAT_API
 void LTFAT_NAME(chzt_done)(LTFAT_NAME(chzt_plan) p)
 {
     LTFAT_SAFEFREEALL(p->fbuffer, p->W2, p->Wo, p->chirpF);
-    LTFAT_FFTW(destroy_plan)(p->plan);
-    LTFAT_FFTW(destroy_plan)(p->plan2);
+    /* LTFAT_FFTW(destroy_plan)(p->plan); */
+    /* LTFAT_FFTW(destroy_plan)(p->plan2); */
+    LTFAT_NAME_REAL(fft_done)(&p->plan);
+    LTFAT_NAME_REAL(ifft_done)(&p->plan2);
     ltfat_free(p);
 }
 
@@ -376,8 +387,10 @@ LTFAT_NAME(chzt_fac_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
     ltfat_int K = p->K;
     ltfat_int Lfft = p->Lfft;
     LTFAT_COMPLEX* fbuffer = p->fbuffer;
-    LTFAT_FFTW(plan) plan_f = p->plan;
-    LTFAT_FFTW(plan) plan_fi = p->plan2;
+    /* LTFAT_FFTW(plan) plan_f = p->plan; */
+    /* LTFAT_FFTW(plan) plan_fi = p->plan2; */
+    LTFAT_NAME_REAL(fft_plan)*   plan_f = p->plan;
+    LTFAT_NAME_REAL(ifft_plan)* plan_fi = p->plan2;
     LTFAT_COMPLEX* W2 = p->W2;
     LTFAT_COMPLEX* Wo = p->Wo;
     LTFAT_COMPLEX* chirpF = p->chirpF;
@@ -431,7 +444,8 @@ LTFAT_NAME(chzt_fac_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
         // *********************************
         // 3) q ffts of length Lfft
         // *********************************
-        LTFAT_FFTW(execute)(plan_f);
+        /* LTFAT_FFTW(execute)(plan_f); */
+        LTFAT_NAME_REAL(fft_execute)(plan_f);
 
         // *********************************
         // 4) Filter
@@ -450,8 +464,8 @@ LTFAT_NAME(chzt_fac_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
         // *********************************
         // 5) q iffts of length Lfft
         // *********************************
-        LTFAT_FFTW(execute)(plan_fi);
-
+        /* LTFAT_FFTW(execute)(plan_fi); */
+        LTFAT_NAME_REAL(ifft_execute)(plan_fi);
 
         // *********************************
         // 6) Postmultiply
@@ -502,29 +516,35 @@ LTFAT_NAME(chzt_fac_init)(ltfat_int K, ltfat_int L,
 
     LTFAT_COMPLEX* fbuffer = LTFAT_NAME_COMPLEX(malloc)(q * Lfft);
 
-    LTFAT_FFTW(iodim64) dims;
-    dims.n = Lfft; dims.is = 1; dims.os = 1;
-    LTFAT_FFTW(iodim64) howmany_dims;
-    howmany_dims.n = (int)q; howmany_dims.is = Lfft; howmany_dims.os = Lfft;
-    LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, &howmany_dims,
-                               (LTFAT_FFTW(complex)*) fbuffer,
-                               (LTFAT_FFTW(complex)*) fbuffer,
-                               FFTW_FORWARD, fftw_flags);
+    /* LTFAT_FFTW(iodim64) dims; */
+    /* dims.n = Lfft; dims.is = 1; dims.os = 1; */
+    /* LTFAT_FFTW(iodim64) howmany_dims; */
+    /* howmany_dims.n = (int)q; howmany_dims.is = Lfft; howmany_dims.os = Lfft; */
+    /* LTFAT_FFTW(plan) plan_f =  LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, */
+    /*                            &howmany_dims, */
+    /*                            (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                            (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                            FFTW_FORWARD, fftw_flags); */
+    /*  */
+    /* LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1, */
+    /*                             &howmany_dims, */
+    /*                             (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                             (LTFAT_FFTW(complex)*) fbuffer, */
+    /*                             FFTW_BACKWARD, fftw_flags); */
 
-    LTFAT_FFTW(plan) plan_fi =  LTFAT_FFTW(plan_guru64_dft)(1, &dims, 1,
-                                &howmany_dims,
-                                (LTFAT_FFTW(complex)*) fbuffer,
-                                (LTFAT_FFTW(complex)*) fbuffer,
-                                FFTW_BACKWARD, fftw_flags);
+    LTFAT_NAME_REAL(fft_plan)*   plan_f;
+    LTFAT_NAME_REAL(ifft_plan)* plan_fi;
+    LTFAT_NAME_REAL(fft_init)( Lfft, q, fbuffer, fbuffer, fftw_flags, &plan_f);
+    LTFAT_NAME_REAL(ifft_init)(Lfft, q, fbuffer, fbuffer, fftw_flags, &plan_fi);
 
     LTFAT_COMPLEX* W2 = LTFAT_NAME_COMPLEX(malloc)(K);
     LTFAT_COMPLEX* chirpF = LTFAT_NAME_COMPLEX(malloc)(Lfft);
     LTFAT_COMPLEX* Wo = LTFAT_NAME_COMPLEX(malloc)(q * K);
 
-    LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)((int)Lfft,
-                                    (LTFAT_FFTW(complex)*) chirpF,
-                                    (LTFAT_FFTW(complex)*) chirpF,
-                                    FFTW_FORWARD, fftw_flags);
+    /* LTFAT_FFTW(plan) plan_chirpF =  LTFAT_FFTW(plan_dft_1d)((int)Lfft, */
+    /*                                 (LTFAT_FFTW(complex)*) chirpF, */
+    /*                                 (LTFAT_FFTW(complex)*) chirpF, */
+    /*                                 FFTW_FORWARD, fftw_flags); */
 
     for (ltfat_int k = 0; k < K; k++)
     {
@@ -536,8 +556,10 @@ LTFAT_NAME(chzt_fac_init)(ltfat_int K, ltfat_int L,
     LTFAT_NAME_COMPLEX(reverse_array)(chirpF + Lfft - K + 1, K - 1,
                                       chirpF + Lfft - K + 1);
     memset(chirpF + K, 0, (Lfft - (2 * K - 1))*sizeof * chirpF);
-    LTFAT_FFTW(execute)(plan_chirpF);
-    LTFAT_FFTW(destroy_plan)(plan_chirpF);
+    /* LTFAT_FFTW(execute)(plan_chirpF); */
+    /* LTFAT_FFTW(destroy_plan)(plan_chirpF); */
+
+    LTFAT_NAME_REAL(ifft)( chirpF, Lfft, 1, chirpF);
 
     LTFAT_REAL oneoverLfft = (LTFAT_REAL) ( 1.0 / Lfft );
 

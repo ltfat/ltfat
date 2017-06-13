@@ -17,8 +17,10 @@ typedef struct
 
     LTFAT_COMPLEX *finalmod;
 
-    LTFAT_FFTW(plan) f_plan;
-    LTFAT_FFTW(plan) g_plan;
+    // LTFAT_FFTW(plan) f_plan;
+    // LTFAT_FFTW(plan) g_plan;
+    LTFAT_NAME_REAL(fft_plan)* f_plan;
+    LTFAT_NAME_REAL(fft_plan)* g_plan;
 
 
     LTFAT_NAME_COMPLEX(dgt_long_plan)* rect_plan;

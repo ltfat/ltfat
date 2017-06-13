@@ -1,5 +1,6 @@
 #include "ltfat/types.h"
 
+#include "fftw_wrappers.h"
 #include "dgtreal_long.h"
 #include "idgtreal_long.h"
 #include "dgtreal_fb.h"
@@ -8,7 +9,6 @@
 #include "dgt_shear.h"
 #include "tiutils.h"
 #include "rtdgtreal.h"
-#include "fftw_wrappers.h"
 
 /*  --------- factorizations --------------- */
 
@@ -172,7 +172,7 @@ LTFAT_NAME(filterbank_fft_execute)(LTFAT_NAME(convsub_fft_plan) p[],
 
 LTFAT_API LTFAT_NAME(convsub_fft_plan)
 LTFAT_NAME(convsub_fft_init)(ltfat_int L, ltfat_int W,
-                             ltfat_int a, const LTFAT_COMPLEX *cout);
+                             ltfat_int a, LTFAT_COMPLEX *cout);
 
 LTFAT_API void
 LTFAT_NAME(convsub_fft_done)(LTFAT_NAME(convsub_fft_plan) p);
@@ -204,7 +204,7 @@ LTFAT_NAME(filterbank_fftbl_execute)(LTFAT_NAME(convsub_fftbl_plan) p[],
 LTFAT_API LTFAT_NAME(convsub_fftbl_plan)
 LTFAT_NAME(convsub_fftbl_init)( ltfat_int L, ltfat_int Gl,
                                 ltfat_int W, const double a,
-                                const LTFAT_COMPLEX *cout);
+                                LTFAT_COMPLEX *cout);
 
 LTFAT_API LTFAT_NAME(convsub_fftbl_plan)
 LTFAT_NAME(convsub_fftbl_init_no_ifft_plan)( ltfat_int L, ltfat_int Gl,
