@@ -7,15 +7,14 @@ SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
 SET(LIBS m)
 endif(MSVC)
 
-
 SET(src_files
     dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c dgtreal_long.c dwilt.c
     idwilt.c wmdct.c iwmdct.c filterbank.c ifilterbank.c heapint.c wfacreal.c
     idgtreal_long.c idgtreal_fb.c iwfacreal.c pfilt.c reassign_ti.c windows.c
-    dgt_shearola.c fftw_wrappers.c utils.c rtdgtreal.c )
+    dgt_shearola.c utils.c rtdgtreal.c )
 
 SET(src_files_complextransp
-    ci_utils.c ci_windows.c spread.c wavelets.c goertzel.c dct.c dst.c
+    ci_utils.c ci_windows.c spread.c wavelets.c goertzel.c
     reassign.c gabdual_painless.c wfac.c iwfac.c dgt_long.c idgt_long.c dgt_fb.c
     idgt_fb.c ci_memalloc.c )
 
@@ -25,16 +24,13 @@ SET(src_files_blaslapack
 SET(src_files_blaslapack_complextransp
     gabdual.c gabtight.c)
 
+SET(src_files_fftw_complextransp
+    dct.c dst.c)
+
 SET(src_files_notypechange
     memalloc.c integer_manip.c reassign_typeconstant.c wavelets_typeconstant.c
     error.c version.c argchecks.c)
 
-if (USECPP)
-SET_SOURCE_FILES_PROPERTIES( ${src_files} ${src_files_blaslapack}
-    ${src_files_complextransp} ${src_files_blaslapack_complextransp}
-    ${src_files_notypechange}
-    PROPERTIES LANGUAGE CXX)
-endif (USECPP)
 
 if (NOT NOBLASLAPACK)
     SET(src_files ${src_files}
@@ -42,6 +38,21 @@ if (NOT NOBLASLAPACK)
     SET(src_files_complextransp
         ${src_files_complextransp} ${src_files_blaslapack_complextransp} )
 endif (NOT NOBLASLAPACK)
+
+if (NOT NOFFTW)
+    SET(src_files ${src_files}
+        fftw_wrappers.c ${src_files_fftw_complextransp})
+else (NOT NOFFTW)
+    SET(src_files ${src_files}
+        kissfft_wrappers.c ../thirdparty/kissfft/fft.c ../thirdparty/kissfft/fftr.c)
+endif (NOT NOFFTW)
+
+if (USECPP)
+    SET_SOURCE_FILES_PROPERTIES( ${src_files} 
+        ${src_files_complextransp} 
+        ${src_files_notypechange}
+        PROPERTIES LANGUAGE CXX)
+endif (USECPP)
 
 add_library(commondouble OBJECT ${src_files_notypechange})
 add_library(commonsingle OBJECT ${src_files_notypechange})
@@ -58,6 +69,15 @@ target_compile_definitions(commondouble PUBLIC LTFAT_DOUBLE)
 target_compile_definitions(commonsingle PUBLIC LTFAT_SINGLE)
 target_compile_definitions(double PUBLIC LTFAT_DOUBLE)
 target_compile_definitions(single PUBLIC LTFAT_SINGLE)
+
+if (NOFFTW)
+    target_compile_definitions(complexsingle PUBLIC NOFFTW)
+    target_compile_definitions(complexdouble PUBLIC NOFFTW)
+    target_compile_definitions(commondouble PUBLIC  NOFFTW)
+    target_compile_definitions(commonsingle PUBLIC  NOFFTW)
+    target_compile_definitions(double PUBLIC NOFFTW)
+    target_compile_definitions(single PUBLIC NOFFTW)
+endif (NOFFTW)
 
 if (MSVC)
     target_compile_definitions(complexsingle PUBLIC LTFAT_BUILD_SHARED)

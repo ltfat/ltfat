@@ -4,6 +4,9 @@ project (libltfat C CXX)
 option(NOBLASLAPACK
     "Disable BLAS and LAPACK dependency" OFF)
 
+option(NOFFTW
+    "Disable FFTW dependency" OFF)
+
 if (MSVC)
     set(USECPP 1)
 else (MSVC)
@@ -11,8 +14,10 @@ else (MSVC)
         "Use C++ compiler" OFF)
 endif (MSVC)
 
+if (NOT NOFFTW)
 FIND_LIBRARY(FFTW3_LIB NAMES fftw3 libfftw3)
 FIND_LIBRARY(FFTW3F_LIB NAMES fftw3f libfftw3f)
+endif (NOT NOFFTW)
 
 if (NOT NOBLASLAPACK)
      FIND_LIBRARY(BLAS_LIB NAMES blas libblas)
