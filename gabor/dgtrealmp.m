@@ -72,7 +72,7 @@ if isempty(g), g{1} = 'gauss'; end
 aarr = zeros(numel(g),1); aarr(:) = a;
 Marr = zeros(numel(g),1); Marr(:) = M;
 
-%Marr(2) = M/2;
+Marr(2) = M/2;
 
 dgtparamsrows = cellfun(@(gEl,aEl,MEl) ...
     { normalize(gabwin(gEl,a,M,L),'2'), aEl, MEl, ...
@@ -181,6 +181,7 @@ if flags.do_mp
         
         % 1b) Selected coefficient
         cval = cres{wIdx}(m+1,n+1);
+        %cval2 = conj(cval);
          %% 3) Coefficient update
         cvalold = c{wIdx}(m+1,n+1);
         % A single atom can be selected more than once
@@ -189,6 +190,9 @@ if flags.do_mp
         %% 2) Residual update
         for secondwIdx = [wIdx,1:wIdx-1,wIdx+1:numel(dp)]
             currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
+            [kernh,kernw] = size(currkern);
+            mmid = floor(kernh/2) + 1;
+            nmid = floor(kernw/2) + 1;
             
             Mrat = dp(wIdx).M/dp(secondwIdx).M;
             arat = dp(wIdx).a/dp(secondwIdx).a;
@@ -198,10 +202,18 @@ if flags.do_mp
             nsecondoff = mod(a,arat);
             
             if Mrat > 1
-                
+                currkern = zeros(size(currkern));
+                currkern 
+                msecondoff
             elseif Mrat < 1
-                
+                % do nothing
             end 
+            
+            if arat > 1
+                
+            elseif arat < 1
+                
+            end
             
             % Update the residual
             idxn = mod(n + kernwidx{wIdx,secondwIdx},dp(secondwIdx).N)+1;
@@ -218,16 +230,17 @@ if flags.do_mp
                 if secondwIdx==wIdx
                     cval2 = cres{wIdx}(mconj + 1,n+1);
                 end
-            end
-            
-            % Subsequently remove the conjugated coefficient from the
-            % residuum
-            [kernh,kernw] = size(currkern);
-            mmid = floor(kernh/2) + 1;
-            nmid = floor(kernw/2) + 1;
-            spillm = mmid - m;
-            
-            if m > 0 && spillm > 0
+%             end
+%             
+%             % Subsequently remove the conjugated coefficient from the
+%             % residuum
+%             [kernh,kernw] = size(currkern);
+%             mmid = floor(kernh/2) + 1;
+%             nmid = floor(kernw/2) + 1;
+%             %spillm = mmid - m;
+%             spillm = M;%kernh - m;
+%             
+%             if m > 0 && spillm > 0
                 idxm = mod(mconj + kernhidx{wIdx,secondwIdx},dp(secondwIdx).M)+1;
                 
                 cresfulltmp = cres{secondwIdx}(idxm,idxn);
@@ -241,37 +254,25 @@ if flags.do_mp
             maxcols{secondwIdx}(idxn) = maxcolupd;
             maxcolspos{secondwIdx}(idxn) = maxcolposupd;
         end
-     
-
+ 
          if mod(iter,kv.printstep) == 0
              plotiter(c,cres,a,M,clim,iter,kv,flags);
          end
-       
-         
-%        apprenenergy = apprenenergy + abs(cval)^2;
-       
-         if m==0
-             apprenenergy = apprenenergy + abs(cval)^2;
-         else
-            if mmid - 2*m > 0
-               inprod = conj(currkern(mmid+2*m,nmid));
-               K = sqrt(2/(1 + real(inprod*exp(1i*2*angle(cval)))));
-               %K = 1;
-               apprenenergy = apprenenergy + (2/K)^2*abs(cval)^2;
-               %apprenenergy = apprenenergy + abs(cval)^2;
-            else
-               apprenenergy = apprenenergy + 2*abs(cval)^2;
-            end
+      
+         apprenenergy = apprenenergy + abs(cval)^2;
+         if m>0
+             apprenenergy = apprenenergy + abs(cval2)^2;
          end
-
-        %
         
         if mod(iter,kv.relresstep) == 0
             relresid = ceil(iter/kv.relresstep) + 1;
-            fprintf('Err: %.6f\n',10*log10( (norm_f2-apprenenergy)/norm_f2));
+           
             %fprintf('Atoms: %d\n',atNo);
             if flags.do_errappr
-                relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
+                relres(relresid) = sqrt((norm_f2-apprenenergy)/norm_f2);
+                fprintf('Err: %.6f\n',20*log10(relres(relresid)));
+                
+                %relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
                 relresexact(relresid) = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags);
                 relres(relresid) = sqrt ((norm_f2-apprenenergy)/norm_f2);
