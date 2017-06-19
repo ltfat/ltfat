@@ -37,12 +37,23 @@ LTFAT_NAME(fft_init_common)(ltfat_int L, ltfat_int W,
                             unsigned inverse, LTFAT_NAME(fft_plan)** p)
 {
     LTFAT_NAME(fft_plan)* fftwp = NULL;
+    ltfat_int nextfastL = 0;
 
     int status = LTFATERR_SUCCESS;
 
     CHECKNULL(p);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
+
+    nextfastL = ltfat_nextfastfft(L);
+
+    if (L != nextfastL)
+    {
+        DEBUG("Warning: L=%td is a \"slow\" FFT lengh. "
+              "Next fast FFT lenght is L=%td. See ltfat_nextfastfft. "
+              "Moreover, some dynamic memory allocation will occur "
+              "during execution.", L, nextfastL);
+    }
 
     CHECKMEM( fftwp = (LTFAT_NAME(fft_plan)*) ltfat_calloc(1, sizeof * fftwp) );
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
@@ -209,6 +220,7 @@ LTFAT_NAME(fftreal_init_common)(ltfat_int L, ltfat_int W,
 {
     LTFAT_NAME(fftreal_plan)* fftwp = NULL;
     ltfat_int M2;
+    ltfat_int nextfastL;
 
     int status = LTFATERR_SUCCESS;
 
@@ -221,8 +233,22 @@ LTFAT_NAME(fftreal_init_common)(ltfat_int L, ltfat_int W,
     CHECKMEM( fftwp = (LTFAT_NAME(fftreal_plan)*) ltfat_calloc(1, sizeof * fftwp) );
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
+    nextfastL = ltfat_nextfastfft(L);
+
+    if (L != nextfastL)
+    {
+        DEBUG("Warning: L=%td is a \"slow\" FFT lengh. "
+              "Next fast FFT lenght is L=%td. See ltfat_nextfastfft. "
+              "Moreover, some dynamic memory allocation will occur "
+              "during execution.", L, nextfastL);
+    }
+
     if (L % 2)
     {
+        if (L != nextfastL)
+        {
+            DEBUGNOTE("Warning: Odd L is a \"very slow\" FFT lengh. Full FFT will be performed.");
+        }
         // Workaround for odd-length transforms
         fftwp->kiss_plan_cpx = LTFAT_KISS(fft_alloc)(L, inverse, NULL, NULL);
         CHECKINIT(fftwp->kiss_plan_cpx, "FFTW plan creation failed.");
@@ -275,7 +301,7 @@ LTFAT_NAME(fftreal_execute_newarray)(LTFAT_NAME(fftreal_plan)* p,
     if (p->L % 2)
     {
         ltfat_int step = p->L;
-        if ((in == (const LTFAT_REAL*) out) )
+        if (in == (const LTFAT_REAL*) out)
             step = 2 * M2;
 
         for (ltfat_int w = 0; w < p->W; w++)
@@ -291,7 +317,7 @@ LTFAT_NAME(fftreal_execute_newarray)(LTFAT_NAME(fftreal_plan)* p,
     }
     else
     {
-        if (in == ((const LTFAT_REAL*) out) )
+        if ( in == (const LTFAT_REAL*) out )
         {
             CHECKNULL(p->tmp);
 
@@ -385,7 +411,7 @@ LTFAT_NAME(ifftreal_execute_newarray)(LTFAT_NAME(ifftreal_plan)* pin,
     if (p->L % 2)
     {
         ltfat_int step = p->L;
-        if ((in == (const LTFAT_COMPLEX*) out) )
+        if (in == (const LTFAT_COMPLEX*) out)
             step = 2 * M2;
 
         for (ltfat_int w = 0; w < p->W; w++)

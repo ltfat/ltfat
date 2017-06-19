@@ -14,9 +14,27 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 
 #include "_kiss_fft_guts.h"
+
 /* The guts header contains all the multiplication and addition macros that are defined for
  fixed or floating point complex numbers.  It also delares the kf_ internal functions.
  */
+
+
+/* static int  */
+/* kiss_fft_next_fast_size(int n) */
+/* { */
+/*     while (1) */
+/*     { */
+/*         int m = n; */
+/*         while ( (m % 2) == 0 ) m /= 2; */
+/*         while ( (m % 3) == 0 ) m /= 3; */
+/*         while ( (m % 5) == 0 ) m /= 5; */
+/*         if (m <= 1) */
+/*             break; #<{(| n is completely factorable by twos, threes, and fives |)}># */
+/*         n++; */
+/*     } */
+/*     return n; */
+/* } */
 
 static void kf_bfly2(
     kiss_fft_cpx* Fout,
@@ -438,17 +456,3 @@ LTFAT_KISS(fft)(LTFAT_KISS(fft_cfg) cfg, const kiss_fft_cpx* fin,
 }
 
 
-/* int kiss_fft_next_fast_size(int n) */
-/* { */
-/*     while (1) */
-/*     { */
-/*         int m = n; */
-/*         while ( (m % 2) == 0 ) m /= 2; */
-/*         while ( (m % 3) == 0 ) m /= 3; */
-/*         while ( (m % 5) == 0 ) m /= 5; */
-/*         if (m <= 1) */
-/*             break; #<{(| n is completely factorable by twos, threes, and fives |)}># */
-/*         n++; */
-/*     } */
-/*     return n; */
-/* } */

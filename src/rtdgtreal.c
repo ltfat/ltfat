@@ -651,23 +651,27 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
     CHECK(LTFATERR_NOTPOSARG, Wmax > 0, "Wmax must be positive");
     CHECK(LTFATERR_NOTPOSARG, bufLenMax > 0, "bufLenMax must be positive");
-    CHECKMEM( p =
-                  (LTFAT_NAME(rtdgtreal_processor_state)*) ltfat_calloc(1, sizeof * p));
+    CHECKMEM( p = (LTFAT_NAME(rtdgtreal_processor_state)*)
+                  ltfat_calloc(1, sizeof * p));
 
     CHECKMEM(
         p->fftbufIn = LTFAT_NAME_COMPLEX(malloc)( Wmax * (M / 2 + 1)));
+
     CHECKMEM(
         p->fftbufOut = LTFAT_NAME_COMPLEX(malloc)( Wmax * (M / 2 + 1)));
+
     CHECKMEM( p->buf = LTFAT_NAME_REAL(malloc)( Wmax * gal));
 
-    CHECKMEM( p->inTmp = (const LTFAT_REAL**) ltfat_malloc(Wmax * sizeof *
-                         p->inTmp));
-    CHECKMEM( p->outTmp = (LTFAT_REAL**) ltfat_malloc(Wmax * sizeof * p->outTmp));
+    CHECKMEM( p->inTmp = (const LTFAT_REAL**)
+                         ltfat_malloc(Wmax * sizeof * p->inTmp));
+
+    CHECKMEM( p->outTmp = (LTFAT_REAL**)
+                          ltfat_malloc(Wmax * sizeof * p->outTmp));
 
     CHECKSTATUS(
         LTFAT_NAME(rtdgtreal_fifo_init)(bufLenMax + gal, gal > gsl ? gal - 1 : gsl - 1 ,
-                                        gal,
-                                        a, Wmax, &p->fwdfifo), "fwd fifo init failed");
+                                        gal, a, Wmax, &p->fwdfifo),
+        "fwd fifo init failed");
 
     CHECKSTATUS(
         LTFAT_NAME(rtidgtreal_fifo_init)(bufLenMax + gsl, gsl, a, Wmax, &p->backfifo),
