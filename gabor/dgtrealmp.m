@@ -73,10 +73,11 @@ aarr = zeros(numel(g),1); aarr(:) = a;
 Marr = zeros(numel(g),1); Marr(:) = M;
 
 Marr(2) = M/2;
+Marr(2) = a/2;
 
 dgtparamsrows = cellfun(@(gEl,aEl,MEl) ...
     { normalize(gabwin(gEl,a,M,L),'2'), aEl, MEl, ...
-      floor(MEl/2)+1,...
+      MEl,...%floor(MEl/2)+1,...
       L./aEl},...
       g(:), num2cell(aarr), num2cell(Marr),'UniformOutput',0);
 
@@ -189,6 +190,7 @@ if flags.do_mp
 
         %% 2) Residual update
         for secondwIdx = [wIdx,1:wIdx-1,wIdx+1:numel(dp)]
+            kernno = size(kerns{wIdx,secondwIdx},3);
             currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(n,kernno));
             [kernh,kernw] = size(currkern);
             mmid = floor(kernh/2) + 1;
@@ -201,53 +203,59 @@ if flags.do_mp
             nsecond = floor(n/arat);
             nsecondoff = mod(a,arat);
             
+            currkernhidx = kernhidx{wIdx,secondwIdx};
+            
             if Mrat > 1
-                currkern = zeros(size(currkern));
-                currkern 
-                msecondoff
+                %currkern2 = zeros(size(currkern));
+                subidx = [fliplr(mmid - msecondoff -Mrat:-Mrat:1),mmid - msecondoff:Mrat:kernh];
+                currkern = currkern(subidx,:);
+                newcurrkernh = size(currkern,1);
+                currkernhidx = -ceil(newcurrkernh/2)+1:floor(newcurrkernh/2);
+
             elseif Mrat < 1
                 % do nothing
             end 
             
             if arat > 1
-                
+                subidx = [fliplr(nmid + nsecondoff - arat:-arat:1),nmid - nsecondoff:arat:kernw];
+                currkern = currkern(subidx,:);
             elseif arat < 1
                 
             end
             
             % Update the residual
             idxn = mod(n + kernwidx{wIdx,secondwIdx},dp(secondwIdx).N)+1;
-            idxm = mod(m + kernhidx{wIdx,secondwIdx},dp(secondwIdx).M)+1;
+            idxm = mod(msecond + currkernhidx,dp(secondwIdx).M)+1;
   
             cresfulltmp = cres{secondwIdx}(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkern;
             cres{secondwIdx}(idxm,idxn) = cresfulltmp;
             s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
             
-            if m > 0
-                mconj = dp(secondwIdx).M - m;
-                
-                if secondwIdx==wIdx
-                    cval2 = cres{wIdx}(mconj + 1,n+1);
-                end
+%             if m > 0
+%                 mconj = dp(secondwIdx).M - msecond;
+%                 
+%                 if secondwIdx==wIdx
+%                     cval2 = cres{wIdx}(mconj + 1,n+1);
+%                 end
+% %             end
+% %             
+% %             % Subsequently remove the conjugated coefficient from the
+% %             % residuum
+% %             [kernh,kernw] = size(currkern);
+% %             mmid = floor(kernh/2) + 1;
+% %             nmid = floor(kernw/2) + 1;
+% %             %spillm = mmid - m;
+% %             spillm = M;%kernh - m;
+% %             
+% %             if m > 0 && spillm > 0
+%                 idxm = mod(mconj + currkernhidx,dp(secondwIdx).M)+1;
+%                 
+%                 cresfulltmp = cres{secondwIdx}(idxm,idxn);
+%                 cresfulltmp = cresfulltmp - cval2*currkern;
+%                 cres{secondwIdx}(idxm,idxn) = cresfulltmp;
+%                 s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
 %             end
-%             
-%             % Subsequently remove the conjugated coefficient from the
-%             % residuum
-%             [kernh,kernw] = size(currkern);
-%             mmid = floor(kernh/2) + 1;
-%             nmid = floor(kernw/2) + 1;
-%             %spillm = mmid - m;
-%             spillm = M;%kernh - m;
-%             
-%             if m > 0 && spillm > 0
-                idxm = mod(mconj + kernhidx{wIdx,secondwIdx},dp(secondwIdx).M)+1;
-                
-                cresfulltmp = cres{secondwIdx}(idxm,idxn);
-                cresfulltmp = cresfulltmp - cval2*currkern;
-                cres{secondwIdx}(idxm,idxn) = cresfulltmp;
-                s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
-            end
             
             % Update max in updated cols
             [maxcolupd,maxcolposupd] = max(s{secondwIdx}(1:dp(secondwIdx).M2,idxn));
@@ -260,9 +268,9 @@ if flags.do_mp
          end
       
          apprenenergy = apprenenergy + abs(cval)^2;
-         if m>0
-             apprenenergy = apprenenergy + abs(cval2)^2;
-         end
+%          if m>0
+%              apprenenergy = apprenenergy + abs(cval2)^2;
+%          end
         
         if mod(iter,kv.relresstep) == 0
             relresid = ceil(iter/kv.relresstep) + 1;
@@ -752,8 +760,8 @@ function [m,n, winIdx, nstart, nloc] = findmax(maxcols,maxcolspos,N)
 
 function plotiter(c,cres,a,M,clim,iter,kv,flags)
         M2 = floor(M/2) + 1;
-        figure(1);clf;plotdgt(cres,a,'clim',clim);shg;
-        figure(2);clf;plotdgt(c,a,'clim',clim);shg;
+        figure(1);clf;plotdgt(c{1},a,'clim',clim);shg;
+        figure(2);clf;plotdgt(c{2},a,'clim',clim);shg;
     
 function relres = printiterappr(s,M,norm_c,iter,kv,flags)
     M2 = floor(M/2) + 1;
