@@ -15,7 +15,7 @@ function gout=fir2long(gin,Llong);
 %
 %   See also:  long2fir, middlepad
 
-narginchk(2,2);
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if iscell(gin)
     gout=cellfun(@(x) fir2long(x,Llong),gin,'UniformOutput',false);    

@@ -7,7 +7,7 @@ function H=transferfunction(g,L)
 %
 %   See also: pfilt
 
-narginchk(2,2);
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 [g,info] = comp_fourierwindow(g,L,upper(mfilename));
 

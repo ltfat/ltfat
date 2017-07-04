@@ -14,19 +14,19 @@ function f=psinc(L,n)
 %     plot(psinc(30,7));
 %
 %   See also: prect
-  
-narginchk(2,2);
+
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if ~(numel(L)==1) || ~(isnumeric(L)) || mod(L,1)~=0 || L<=0
-  error('%s: L has to be a positive integer.',upper(mfilename));
+    error('%s: L has to be a positive integer.',upper(mfilename));
 end;
 
 if ~(numel(n)==1) || ~(isnumeric(L)) || mod(n,1)~=0 || n<=0
-  error('%s: n has to be a positive integer.',upper(mfilename));
+    error('%s: n has to be a positive integer.',upper(mfilename));
 end;
-  
+
 x=(2*pi*(0:L-1)/L).';
-  
+
 n_odd = n-(1-mod(n,2));
 
 f = sin(n_odd.*x./2)./(n_odd.*sin(x./2));
@@ -34,6 +34,6 @@ f = sin(n_odd.*x./2)./(n_odd.*sin(x./2));
 f(1)  = 1;
 
 if (mod(n,2))==0;
-  f = f+cos(x*n/2)/n_odd;
+    f = f+cos(x*n/2)/n_odd;
 end;
 

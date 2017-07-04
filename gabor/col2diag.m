@@ -18,7 +18,7 @@ function cout=col2diag(cin)
 %   REFERENCE: OK
 
 % Assert correct input.
-narginchk(1,1);
+complainif_argnonotinrange(nargin,1,1,mfilename);
 
 if ndims(cin)~=2 || size(cin,1)~=size(cin,2)
   error('Input matrix must be square.');

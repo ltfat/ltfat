@@ -14,7 +14,7 @@ function outsig=rampdown(L,wintype)
 %  
 %   See also: rampup, rampsignal, firwin
    
-narginchk(1,2)
+complainif_argnonotinrange(nargin,1,2,mfilename);
 
 if nargin==1
   wintype='hann';

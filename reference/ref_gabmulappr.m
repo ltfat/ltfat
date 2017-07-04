@@ -56,7 +56,7 @@ function sym=ref_gabmulappr(T,p2,p3,p4,p5);
 %
 %   Author: P. Balazs (XXL)
 
-narginchk(3,5);
+complainif_argnonotinrange(nargin,3,5,mfilename);
 
 L=size(T,1);
 

@@ -14,7 +14,7 @@ function f=ifftreal(c,N,dim);
 
 %   AUTHOR : Peter L. Søndergaard
 
-narginchk(2,3);
+complainif_argnonotinrange(nargin,2,3,mfilename);
 
 if nargin==2
   dim=[];  

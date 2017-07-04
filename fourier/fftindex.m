@@ -9,24 +9,23 @@ function n=fftindex(N,nyquistzero)
 %   `fftindex(N,0)` does as above, but sets the Nyquist frequency to zero.
 %
 %   See also: dft
-  
+
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: OK
 %   REFERENCE: OK
 
-  
-narginchk(1,2);
+complainif_argnonotinrange(nargin,1,2,mfilename);
 
 if nargin ==1
-  if rem(N,2)==0
-    n=[0:N/2,-N/2+1:-1].';
+    if rem(N,2)==0
+        n=[0:N/2,-N/2+1:-1].';
   else
-    n=[0:(N-1)/2,-(N-1)/2:-1].';
+      n=[0:(N-1)/2,-(N-1)/2:-1].';
   end;
 else
-  if rem(N,2)==0
-    n=[0:N/2-1,0,-N/2+1:-1].';
+    if rem(N,2)==0
+        n=[0:N/2-1,0,-N/2+1:-1].';
   else
-    n=[0:(N-1)/2,-(N-1)/2:-1].';
-  end;  
+      n=[0:(N-1)/2,-(N-1)/2:-1].';
+  end;
 end;

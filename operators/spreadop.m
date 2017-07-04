@@ -32,7 +32,7 @@ function h=spreadop(f,coef)
 %   TESTING: TEST_SPREAD
 %   REFERENCE: REF_SPREADOP
 
-narginchk(2,2);
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if ndims(coef)>2 || size(coef,1)~=size(coef,2)
     error('Input symbol coef must be a square matrix.');

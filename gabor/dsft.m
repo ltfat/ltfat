@@ -25,7 +25,7 @@ function F=dsft(F);
 %   TESTING: TEST_DSFT 
 %   REFERENCE: REF_DSFT
 
-narginchk(1,1);
+complainif_argnonotinrange(nargin,1,1,mfilename);
 
 D=ndims(F);
 

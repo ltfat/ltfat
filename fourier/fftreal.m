@@ -15,7 +15,7 @@ function f=fftreal(f,N,dim);
 %   TESTING   : TEST_PUREFREQ
 %   REFERENCE : OK
   
-narginchk(1,3);
+complainif_argnonotinrange(nargin,1,3,mfilename);
 
 if nargin<3
   dim=[];  

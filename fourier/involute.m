@@ -35,7 +35,7 @@ function f=involute(f,dim);
 %   TESTING: TEST_INVOLUTE
 %   REFERENCE: OK
 
-narginchk(1,2);
+complainif_argnonotinrange(nargin,1,2,mfilename);
 
 if nargin==1
   dim=[];

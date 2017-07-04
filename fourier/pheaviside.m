@@ -20,21 +20,20 @@ function h=pheaviside(L)
 %   AUTHOR : Peter L. Søndergaard.
 %   REFERENCE: OK
 %   TESTING: OK
-  
-narginchk(1,1);
-  
+
+complainif_argnonotinrange(nargin,1,1,mfilename);
 
 h=zeros(L,1);
 if L>0
-  % First term is .5
-  h(1)=.5;
+    % First term is .5
+    h(1)=.5;
 
-  % Set positive frequencies to 1.
-  h(2:ceil(L/2))=1;
- 
-  % Last term (Nyquist frequency) is also .5, if it exists.
-  if rem(L,2)==0
-    h(L/2+1)=.5;
+    % Set positive frequencies to 1.
+    h(2:ceil(L/2))=1;
+
+    % Last term (Nyquist frequency) is also .5, if it exists.
+    if rem(L,2)==0
+        h(L/2+1)=.5;
   end;
 end;
 

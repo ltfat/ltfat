@@ -10,7 +10,7 @@ function out=spreadinv(p1,p2);
 %
 %   See also: spreadfun, tconv, spreadfun, spreadadj
 
-narginchk(1,2);
+complainif_argnonotinrange(nargin,1,2,mfilename);
 
 % FIXME This function should handle sparse symbols, and use a iterative
 % method instead of creating the full symbol.

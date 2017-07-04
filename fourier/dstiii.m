@@ -56,8 +56,7 @@ function c=dstiii(f,L,dim)
 %   TESTING: TEST_PUREFREQ
 %   REFERENCE: REF_DSTIII
 
-
-narginchk(1,3);
+complainif_argnonotinrange(nargin,1,3,mfilename);
 
 if nargin<3
   dim=[];

@@ -42,7 +42,7 @@ function [sym,lowb,upb]=gabmulappr(T,p2,p3,p4,p5);
 % REFERENCE : REF_GABMULAPPR
 % TESTING   : TEST_GABMULAPPR
   
-narginchk(3,5);
+complainif_argnonotinrange(nargin,3,5,mfilename);
 
 L=size(T,1);
 

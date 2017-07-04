@@ -17,7 +17,7 @@ function f=fftresample(f,L,dim)
 %   AUTHOR: Peter L. Søndergaard
   
 % ------- Checking of input --------------------
-narginchk(2,3);
+complainif_argnonotinrange(nargin,2,3,mfilename);
 
 if nargin<3
   dim=[];

@@ -24,10 +24,10 @@ function f=dft(f,N,dim);
 %   TESTING: TEST_DFT
 %   REFERENCE: REF_DFT
 
-narginchk(1,3);
+complainif_argnonotinrange(nargin,1,3,mfilename);
 
 if nargin<3
-  dim=[];  
+  dim=[];
 end;
 
 if nargin<2

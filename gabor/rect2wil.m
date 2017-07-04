@@ -12,7 +12,7 @@ function cout=rect2wil(cin);
 %   TESTING: OK
 %   REFERENCE: OK
 
-narginchk(1,1);
+complainif_argnonotinrange(nargin,1,1,mfilename);
   
 M=size(cin,1)-1;
 N=size(cin,2);

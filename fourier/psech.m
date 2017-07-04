@@ -72,7 +72,7 @@ function [g,tfr]=psech(L,p2,p3,p4)
 %
 %   References: jast02-1
 
-narginchk(1,4);
+complainif_argnonotinrange(nargin,1,4,mfilename);
 
 if nargin==1
   tfr=1;
