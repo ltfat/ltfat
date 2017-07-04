@@ -7,7 +7,7 @@ function [V,D]=spreadeigs(K,coef);
 %
 %   See also:  tconv, spreadfun, spreadinv, spreadadj
 
-narginchk(2,2);
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if ndims(coef)>2 || size(coef,1)~=size(coef,2)
     error('Input symbol coef must be a square matrix.');

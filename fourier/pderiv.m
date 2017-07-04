@@ -22,7 +22,7 @@ function fd=pderiv(f,dim,difforder)
 
 % Assert correct input.
 
-narginchk(1,3);
+complainif_argnonotinrange(nargin,1,3,mfilename);
 
 if nargin==1
   dim=[];

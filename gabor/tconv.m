@@ -35,8 +35,7 @@ function h=tconv(f,g)
 %   TESTING: TEST_SPREAD
 %   REFERENCE: REF_TCONV
 
-narginchk(2,2);
-
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if any(size(f)~=size(g))
   error('Input matrices must be same size.');

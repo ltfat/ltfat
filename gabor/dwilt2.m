@@ -71,7 +71,7 @@ function [c,Ls]=dwilt2(f,g1,p3,p4,p5)
 
 %   AUTHOR : Peter L. Søndergaard.
 
-narginchk(3,5);
+complainif_argnonotinrange(nargin,3,5,mfilename);
 
 L=[];
 

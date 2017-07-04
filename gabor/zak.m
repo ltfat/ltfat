@@ -51,7 +51,7 @@ function c=zak(f,a);
 %   TESTING: TEST_ZAK
 %   REFERENCE: REF_ZAK
 
-narginchk(2,2);
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if (prod(size(a))~=1 || ~isnumeric(a))
   error([callfun,': a must be a scalar']);

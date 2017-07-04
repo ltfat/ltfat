@@ -45,7 +45,7 @@ function h=gabmul(f,c,p3,p4,p5)
 warning(['LTFAT: GABMUL has been deprecated, please use FRAMEMUL ' ...
          'instead. See the help on GABMUL for more details.']);   
 
-narginchk(3,5);
+complainif_argnonotinrange(nargin,3,5,mfilename);
 
 M=size(c,1);
 N=size(c,2);

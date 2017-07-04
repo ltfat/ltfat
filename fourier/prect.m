@@ -29,15 +29,15 @@ function f=prect(L,n)
 %     ylim([-.2 1.2]);
 %
 %   See also: psinc
-  
-narginchk(2,2);
+
+complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if ~(numel(L)==1) || ~(isnumeric(L)) || mod(L,1)~=0 || L<=0
-  error('%s: L has to be a positive integer.',upper(mfilename));
+    error('%s: L has to be a positive integer.',upper(mfilename));
 end;
 
 if ~(numel(n)==1) || ~(isnumeric(L)) || mod(n,1)~=0 || n<=0
-  error('%s: n has to be a positive integer.',upper(mfilename));
+    error('%s: n has to be a positive integer.',upper(mfilename));
 end;
 
 f=pbspline(L,0,n);
