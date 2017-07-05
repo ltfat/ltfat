@@ -93,10 +93,12 @@ ifndef NOBLASLAPACK
 	LFLAGS += $(BLASLAPACKLIBS)
 endif
 
-ifdef NOFFTW
-	CFLAGS += -DNOFFTW
-else
+FFTBACKEND ?= FFTW
+
+ifeq ($(FFTBACKEND),FFTW)
 	LFLAGS += $(FFTWLIBS)
+else
+	CFLAGS += -DNOFFTW
 endif
 
 CFLAGS += $(EXTRACFLAGS) $(OPTCFLAGS)
@@ -112,10 +114,12 @@ ifndef NOBLASLAPACK
 	toCompile_complextransp += $(patsubst %.c,%.o,$(files_blaslapack_complextransp))
 endif
 
-ifndef NOFFTW
+ifeq ($(FFTBACKEND),FFTW)
 	toCompile += fftw_wrappers.o
 	toCompile += $(toCompile_fftw_complextransp)
-else
+endif
+
+ifeq ($(FFTBACKEND),KISS)
 	toCompile += kissfft_wrappers.o kiss_fft.o kiss_fftr.o
 endif
 

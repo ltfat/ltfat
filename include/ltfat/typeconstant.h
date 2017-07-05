@@ -37,6 +37,13 @@ ltfat_int ltfat_imin(ltfat_int a, ltfat_int b);
 LTFAT_API
 ltfat_int ltfat_lcm(ltfat_int a, ltfat_int b);
 
+LTFAT_API ltfat_int
+ltfat_pow2base(ltfat_int x);
+
+LTFAT_API int
+ltfat_ispow2(ltfat_int x);
+
+
 /** Find next suitable L for signal length Ls and Gabor lattice parameters a and M
  */
 LTFAT_API ltfat_int

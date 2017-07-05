@@ -215,11 +215,35 @@ ltfat_pow2(ltfat_int x)
     return (((ltfat_int)1) << (x));
 }
 
+LTFAT_API int
+ltfat_ispow2(ltfat_int x)
+{
+    return x == ltfat_nextpow2(x);
+}
+
+
 LTFAT_API ltfat_int
 ltfat_modpow2(ltfat_int x, ltfat_int pow2var)
 {
     return ((x) & (pow2var - 1));
 }
+
+LTFAT_API ltfat_int
+ltfat_pow2base(ltfat_int x)
+{
+    ltfat_int y = 0;
+    ltfat_int xtmp = x;
+    while (xtmp > 0 && !(xtmp & 1))
+    {
+        xtmp >>= 1;
+        y++;
+    }
+
+    return y;
+}
+
+
+
 
 /* LTFAT_API int */
 /* isPow2(ltfat_int x) */
