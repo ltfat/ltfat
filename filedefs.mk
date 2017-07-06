@@ -1,6 +1,6 @@
 files = dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c	\
 		dgtreal_long.c dwilt.c idwilt.c wmdct.c iwmdct.c \
-		filterbank.c ifilterbank.c heapint.c wfacreal.c \
+		filterbank.c ifilterbank.c heapint.c heap.c wfacreal.c \
 		idgtreal_long.c idgtreal_fb.c iwfacreal.c pfilt.c reassign_ti.c \
 		windows.c  \
 		dgt_shearola.c utils.c rtdgtreal.c \

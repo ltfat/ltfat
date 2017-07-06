@@ -425,6 +425,7 @@ LTFAT_NAME(heapinttask_init)(ltfat_int height, ltfat_int N,
 
 LTFAT_API void
 LTFAT_NAME(heapint_execute)(LTFAT_NAME(heapinttask)* hit,
+                            const LTFAT_REAL* s,
                             const LTFAT_REAL* tgradw,
                             const LTFAT_REAL* fgradw,
                             LTFAT_REAL* phase);

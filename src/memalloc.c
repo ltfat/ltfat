@@ -20,7 +20,7 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler)
     return retVal;
 }
 
-#ifdef NOFFTW
+#ifdef KISS
 static void*
 ltfat_aligned_malloc(int size)
 {
@@ -48,10 +48,10 @@ ltfat_malloc (size_t n)
     if (ltfat_custom_malloc)
         outp = (*ltfat_custom_malloc)(n);
     else
-#ifdef NOFFTW
-        outp = ltfat_aligned_malloc(n);
-#else
+#ifdef FFTW
         outp = LTFAT_FFTW(malloc)(n);
+#elif KISS
+        outp = ltfat_aligned_malloc(n);
 #endif
     return outp;
 }
@@ -92,10 +92,10 @@ ltfat_free(const void* ptr)
     if (ltfat_custom_free)
         (*ltfat_custom_free)((void*)ptr);
     else
-#ifdef NOFFTW
-        ltfat_aligned_free((void*)ptr);
-#else
+#ifdef FFTW
         LTFAT_FFTW(free)((void*)ptr);
+#elif KISS
+        ltfat_aligned_free((void*)ptr);
 #endif
 }
 

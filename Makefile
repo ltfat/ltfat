@@ -95,12 +95,6 @@ endif
 
 FFTBACKEND ?= FFTW
 
-ifeq ($(FFTBACKEND),FFTW)
-	LFLAGS += $(FFTWLIBS)
-else
-	CFLAGS += -DNOFFTW
-endif
-
 CFLAGS += $(EXTRACFLAGS) $(OPTCFLAGS)
 LFLAGS += $(EXTRALFLAGS) $(OPTLFLAGS) -lm
 
@@ -117,10 +111,13 @@ endif
 ifeq ($(FFTBACKEND),FFTW)
 	toCompile += fftw_wrappers.o
 	toCompile += $(toCompile_fftw_complextransp)
+	LFLAGS += $(FFTWLIBS)
+	CFLAGS += -DFFTW
 endif
 
 ifeq ($(FFTBACKEND),KISS)
 	toCompile += kissfft_wrappers.o kiss_fft.o kiss_fftr.o
+	CFLAGS += -DKISS
 endif
 
 COMMONFILES = $(addprefix $(objprefix)/common/d,$(toCompile_notypechange))

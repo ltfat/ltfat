@@ -8,14 +8,6 @@
 #define EASTFROMW(w,M,N)  (((w) + (M)) % ((M) * (N)))
 #define WESTFROMW(w,M,N)  (((w) - (M) + (M) * (N)) % ((M) * (N)))
 
-struct LTFAT_NAME(heap)
-{
-    ltfat_int* h;
-    ltfat_int heapsize;
-    ltfat_int totalheapsize;
-    const LTFAT_REAL* s;
-};
-
 struct LTFAT_NAME(heapinttask)
 {
     ltfat_int height;
@@ -27,121 +19,6 @@ struct LTFAT_NAME(heapinttask)
                    ltfat_int, LTFAT_REAL* );
     LTFAT_NAME(heap)* heap;
 };
-
-
-LTFAT_API LTFAT_NAME(heap)*
-LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s)
-{
-    LTFAT_NAME(heap)* h = (LTFAT_NAME(heap)*) ltfat_malloc(sizeof * h);
-
-    h->totalheapsize  = initmaxsize;
-    h->h              = (ltfat_int*) ltfat_malloc(h->totalheapsize * sizeof * h->h);
-    h->s              = s;
-    h->heapsize       = 0;
-    return h;
-}
-
-LTFAT_API void
-LTFAT_NAME(heap_done)(LTFAT_NAME(heap)* h)
-{
-    ltfat_free(h->h);
-    ltfat_free(h);
-}
-
-LTFAT_API void
-LTFAT_NAME(heap_reset)(LTFAT_NAME(heap)* h, const LTFAT_REAL* news)
-{
-    h->s = news;
-    h->heapsize = 0;
-}
-
-LTFAT_API void
-LTFAT_NAME(heap_grow)(LTFAT_NAME(heap)* h, int factor)
-{
-    h->totalheapsize *= factor;
-    h->h = (ltfat_int*)ltfat_realloc((void*)h->h,
-                                    h->totalheapsize * sizeof * h->h / factor,
-                                    h->totalheapsize * sizeof * h->h);
-}
-
-
-
-LTFAT_API void
-LTFAT_NAME(heap_insert)(LTFAT_NAME(heap) *h, ltfat_int key)
-{
-    ltfat_int pos, pos2;
-
-    /* Grow heap if necessary */
-    if (h->totalheapsize == h->heapsize)
-        LTFAT_NAME(heap_grow)( h, 2);
-
-    pos = h->heapsize;
-    h->heapsize++;
-
-    LTFAT_REAL val = h->s[key];
-
-    while (pos > 0)
-    {
-        /* printf("pos %i\n",pos); */
-        pos2 = (pos - 1) >> 1;
-
-        if (h->s[h->h[pos2]] < val )
-            h->h[pos] = h->h[pos2];
-        else
-            break;
-
-        pos = pos2;
-    }
-
-    h->h[pos] = key;
-}
-
-LTFAT_API ltfat_int
-LTFAT_NAME(heap_get)(LTFAT_NAME(heap) *h)
-{
-    if (h->heapsize == 0) return -1;
-    return h->h[0];
-}
-
-LTFAT_API ltfat_int
-LTFAT_NAME(heap_delete)(LTFAT_NAME(heap) *h)
-{
-
-    ltfat_int pos, pos2, retkey, key;
-    LTFAT_REAL maxchildkey, val;
-
-    if (h->heapsize == 0) return -1;
-    /* Extract first element */
-    retkey = h->h[0];
-    key = h->h[h->heapsize - 1];
-    val = h->s[key];
-
-    h->heapsize--;
-
-    pos = 0;
-    pos2 = 1;
-
-    while (pos2 < h->heapsize)
-    {
-        if ( (pos2 + 2 > h->heapsize) ||
-             (h->s[h->h[pos2]] >= h->s[h->h[pos2 + 1]]) )
-            maxchildkey = h->s[h->h[pos2]];
-        else
-            maxchildkey = h->s[h->h[++pos2]];
-
-        if (maxchildkey > val)
-            h->h[pos] = h->h[pos2];
-        else
-            break;
-
-        pos = pos2;
-        pos2 = (pos << 1) + 1;
-    }
-
-    h->h[pos] = key;
-
-    return retkey;
-}
 
 LTFAT_API LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(ltfat_int height, ltfat_int N,
@@ -385,7 +262,7 @@ void LTFAT_NAME(heapint)(const LTFAT_REAL* s,
 
         LTFAT_NAME(heapinttask_resetmax)(hit, schan, tol);
 
-        LTFAT_NAME(heapint_execute)(hit, tgradwchan, fgradwchan, phasechan);
+        LTFAT_NAME(heapint_execute)(hit, schan, tgradwchan, fgradwchan, phasechan);
     }
 
     LTFAT_NAME(heapinttask_done)(hit);
@@ -427,7 +304,7 @@ void LTFAT_NAME(maskedheapint)(const LTFAT_REAL* s,
         LTFAT_NAME(heapinttask_resetmask)(hit, maskchan, schan, tol, 0);
 
 
-        LTFAT_NAME(heapint_execute)(hit, tgradwchan, fgradwchan, phasechan);
+        LTFAT_NAME(heapint_execute)(hit, schan, tgradwchan, fgradwchan, phasechan);
     }
 
     LTFAT_NAME(heapinttask_done)(hit);
@@ -550,11 +427,12 @@ void LTFAT_NAME(trapezheapreal)(const LTFAT_NAME(heapinttask) *hit,
 
 }
 
-LTFAT_API
-void LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
-                                  const LTFAT_REAL* tgradw,
-                                  const LTFAT_REAL* fgradw,
-                                  LTFAT_REAL* phase)
+LTFAT_API void
+LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
+                             const LTFAT_REAL* s,
+                             const LTFAT_REAL* tgradw,
+                             const LTFAT_REAL* fgradw,
+                             LTFAT_REAL* phase)
 {
     /* Declarations */
     ltfat_int Imax;
@@ -566,15 +444,14 @@ void LTFAT_NAME(heapint_execute)( LTFAT_NAME(heapinttask)* hit,
     while (1)
     {
         /* Inner loop processing all connected coefficients */
-        while (h->heapsize)
+        /* Extract largest (first) element from heap and delete it. */
+        while ((w = LTFAT_NAME(heap_delete)(h)) >= 0)
         {
-            /* Extract largest (first) element from heap and delete it. */
-            w = LTFAT_NAME(heap_delete)(h);
             /* Spread the current phase value to 4 direct neighbors */
             (*hit->intfun)(hit, tgradw, fgradw, w, phase);
         }
 
-        if (!LTFAT_NAME_REAL(findmaxinarraywrtmask)(h->s, donemask,
+        if (!LTFAT_NAME_REAL(findmaxinarraywrtmask)(s, donemask,
                 hit->height * hit->N, &maxs, &Imax))
             break;
 
@@ -621,7 +498,7 @@ void LTFAT_NAME(heapintreal)(const LTFAT_REAL* s,
         // empty heap and add max element to it
         LTFAT_NAME(heapinttask_resetmax)(hit, schan, tol);
 
-        LTFAT_NAME(heapint_execute)(hit, tgradwchan, fgradwchan, phasechan);
+        LTFAT_NAME(heapint_execute)(hit, schan, tgradwchan, fgradwchan, phasechan);
     }
 
     LTFAT_NAME(heapinttask_done)(hit);
@@ -662,7 +539,7 @@ void LTFAT_NAME(maskedheapintreal)(const LTFAT_REAL* s,
         // Empty heap and fill it with the border coefficients from the mask
         LTFAT_NAME(heapinttask_resetmask)(hit, maskchan, schan, tol, 0);
 
-        LTFAT_NAME(heapint_execute)(hit, tgradwchan, fgradwchan, phasechan);
+        LTFAT_NAME(heapint_execute)(hit, schan, tgradwchan, fgradwchan, phasechan);
     }
 
     LTFAT_NAME(heapinttask_done)(hit);
