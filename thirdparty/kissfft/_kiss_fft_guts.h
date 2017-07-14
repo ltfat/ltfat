@@ -25,12 +25,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  4*4*4*2
  */
 
-struct LTFAT_KISS(fft_state){
-    int nfft;
-    int inverse;
-    int factors[2*MAXFACTORS];
-    kiss_fft_cpx twiddles[1];
-};
+
 
 /*
   Explanation of macros dealing with complex math:

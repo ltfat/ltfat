@@ -15,6 +15,13 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "_kiss_fft_guts.h"
 
+struct LTFAT_KISS(fft_state){
+    int nfft;
+    int inverse;
+    int factors[2*MAXFACTORS];
+    kiss_fft_cpx twiddles[1];
+};
+
 /* The guts header contains all the multiplication and addition macros that are defined for
  fixed or floating point complex numbers.  It also delares the kf_ internal functions.
  */
