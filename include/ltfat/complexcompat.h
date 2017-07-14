@@ -24,25 +24,30 @@ using namespace std;
 #endif
 
 #if defined(__cplusplus) && !defined(LTFAT_CINTERFACE)
-typedef std::complex<double> ltfat_complex_d;
-typedef std::complex<float> ltfat_complex_s;
+    typedef std::complex<double> ltfat_complex_d;
+    typedef std::complex<float> ltfat_complex_s;
 #else
-typedef fftw_complex ltfat_complex_d;
-typedef fftwf_complex ltfat_complex_s;
+#   if defined(_Complex_I) && defined(complex) && defined(I)
+        typedef complex double ltfat_complex_d;
+        typedef complex float ltfat_complex_s;
+#   else
+        typedef double ltfat_complex_d[2];
+        typedef float ltfat_complex_s[2] ;
+#   endif
 #endif
 
-#if defined(__cplusplus)
-#   define ltfat_real(x) std::real(x)
-#   define ltfat_imag(x) std::imag(x)
-#   define ltfat_abs(x) std::abs(x)
-#   define ltfat_arg(x) std::arg(x)
-#else
-#   define ltfat_complex_d(r,i) ((float)(r) + ((float)(i))*I)
-#   define ltfat_complex_s(r,i) ((double)(r) + ((double)(i))*I)
-#   define ltfat_real(x) creal(x)
-#   define ltfat_imag(x) cimag(x)
-#   define ltfat_abs(x) fabs(x)
-#   define ltfat_arg(x) carg(x)
-#endif
+// #if defined(__cplusplus)
+// #   define ltfat_real(x) std::real(x)
+// #   define ltfat_imag(x) std::imag(x)
+// #   define ltfat_abs(x) std::abs(x)
+// #   define ltfat_arg(x) std::arg(x)
+// #else
+// #   define ltfat_complex_d(r,i) ((float)(r) + ((float)(i))*I)
+// #   define ltfat_complex_s(r,i) ((double)(r) + ((double)(i))*I)
+// #   define ltfat_real(x) creal(x)
+// #   define ltfat_imag(x) cimag(x)
+// #   define ltfat_abs(x) fabs(x)
+// #   define ltfat_arg(x) carg(x)
+// #endif
 
 #endif
