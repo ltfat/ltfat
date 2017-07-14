@@ -124,6 +124,10 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int procDelay, ltfat_in
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_reset)(LTFAT_NAME(rtdgtreal_fifo_state)* p);
 
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_fifo_seta)(LTFAT_NAME(rtdgtreal_fifo_state)* p, ltfat_int a);
+
+
 /** Write bufLen samples to DGT analysis ring buffer
  *
  * The function returns number of samples written and a negative number if something went
@@ -188,6 +192,9 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
 
 LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_reset)(LTFAT_NAME(rtidgtreal_fifo_state)* p);
+
+LTFAT_API int
+LTFAT_NAME(rtidgtreal_fifo_seta)(LTFAT_NAME(rtidgtreal_fifo_state)* p, ltfat_int a);
 
 /** Write p->gl samples to DGT synthesis ring buffer
  *
@@ -327,7 +334,7 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL ga[], ltfat_int gal,
                                      const LTFAT_REAL gs[], ltfat_int gsl,
                                      ltfat_int a, ltfat_int M, ltfat_int Wmax,
-                                     ltfat_int bufLenMax,
+                                     ltfat_int bufLenMax, ltfat_int procDelay,
                                      LTFAT_NAME(rtdgtreal_processor_state)** plan);
 
 /** Reset processor state
@@ -391,7 +398,7 @@ LTFAT_NAME(rtdgtreal_processor_reset)(LTFAT_NAME(rtdgtreal_processor_state)* p);
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
         ltfat_int gl, ltfat_int a, ltfat_int M,
-        ltfat_int Wmax, ltfat_int bufLenMax,
+        ltfat_int Wmax, ltfat_int bufLenMax, ltfat_int procDelay,
         LTFAT_NAME(rtdgtreal_processor_state)** plan);
 
 /** Process samples
@@ -430,6 +437,12 @@ LTFAT_NAME(rtdgtreal_processor_execute)(LTFAT_NAME(rtdgtreal_processor_state)* p
                                         ltfat_int L, ltfat_int W,
                                         LTFAT_REAL* out[]);
 
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_execute_gen)(
+    LTFAT_NAME(rtdgtreal_processor_state)* p,
+    const LTFAT_REAL** in, ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen,
+    LTFAT_REAL** out);
+
 /** Process samples
  *
  * Works exactly like rtdgtreal_processor_execute except that the multichannel
@@ -461,6 +474,12 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     const LTFAT_REAL in[],
     ltfat_int len, ltfat_int chanNo,
     LTFAT_REAL out[]);
+
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_execute_gen_compact)(
+    LTFAT_NAME(rtdgtreal_processor_state)* p, const LTFAT_REAL* in,
+    ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen, LTFAT_REAL* out);
+
 
 /** Destroy DGTREAL processor state
  * \param[in]  p      DGTREAL processor
@@ -520,6 +539,13 @@ LTFAT_NAME(default_rtdgtreal_processor_callback)(void* userdata, const LTFAT_COM
         int M2, int W, LTFAT_COMPLEX out[]);
 
 /** @}*/
+
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_setanaa)(LTFAT_NAME(rtdgtreal_processor_state)* p, ltfat_int a);
+
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_setsyna)(LTFAT_NAME(rtdgtreal_processor_state)* p, ltfat_int a);
+
 
 int
 LTFAT_NAME(rtdgtreal_execute_wrapper)(void* p,

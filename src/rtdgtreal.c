@@ -304,6 +304,22 @@ error:
 }
 
 LTFAT_API int
+LTFAT_NAME(rtdgtreal_fifo_seta)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
+                                ltfat_int a)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+    CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
+
+    p->a = a;
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
+
+LTFAT_API int
 LTFAT_NAME(rtdgtreal_fifo_reset)(LTFAT_NAME(rtdgtreal_fifo_state)* p)
 {
     int status = LTFATERR_FAILED;
@@ -324,11 +340,14 @@ LTFAT_NAME(rtdgtreal_fifo_write)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
     ltfat_int Wact, freeSpace, toWrite, valid, over, endWriteIdx;
     int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(buf);
+    CHECK(LTFATERR_NOTPOSARG, bufLen >= 0, "bufLen must be positive.");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
+
+    if ( bufLen == 0 ) return 0;
+
     for (ltfat_int w = 0; w < W; w++)
         CHECKNULL(buf[w]);
 
-    CHECK(LTFATERR_NOTPOSARG, bufLen > 0, "bufLen must be positive.");
 
     freeSpace = p->readIdx - p->writeIdx - 1;
     if (freeSpace < 0) freeSpace += p->bufLen;
@@ -482,6 +501,22 @@ error:
 }
 
 LTFAT_API int
+LTFAT_NAME(rtidgtreal_fifo_seta)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
+                                 ltfat_int a)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+    CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
+
+    p->a = a;
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
+
+LTFAT_API int
 LTFAT_NAME(rtidgtreal_fifo_done)(LTFAT_NAME(rtidgtreal_fifo_state)** p)
 {
     LTFAT_NAME(rtidgtreal_fifo_state)* pp;
@@ -560,10 +595,11 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
     int status = LTFATERR_FAILED;
     CHECKNULL(p); CHECKNULL(buf);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
+    CHECK(LTFATERR_NOTPOSARG, bufLen >= 0, "bufLen must be positive.");
+    if(bufLen == 0) return 0;
 
     for (ltfat_int w = 0; w < W; w++) CHECKNULL(buf[w]);
 
-    CHECK(LTFATERR_NOTPOSARG, bufLen > 0, "bufLen must be positive.");
 
     available = p->writeIdx - p->readIdx;
     if (available < 0) available += p->bufLen;
@@ -638,15 +674,21 @@ LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
                                      const LTFAT_REAL* gs, ltfat_int gsl,
                                      ltfat_int a, ltfat_int M, ltfat_int Wmax,
-                                     ltfat_int bufLenMax,
+                                     ltfat_int bufLenMax, ltfat_int procDelay,
                                      LTFAT_NAME(rtdgtreal_processor_state)** pout)
 {
     LTFAT_NAME(rtdgtreal_processor_state)* p = NULL;
+    ltfat_int glmax;
 
     int status = LTFATERR_FAILED;
     CHECKNULL(pout);
     CHECK(LTFATERR_BADSIZE, gal > 0, "gla must be positive");
     CHECK(LTFATERR_BADSIZE, gsl > 0, "gls must be positive");
+
+    glmax = gal > gsl ? gal - 1 : gsl - 1;
+
+    CHECK(LTFATERR_BADSIZE, procDelay >= glmax && procDelay <= glmax + bufLenMax,
+          "procdelay must be at least the window length at most the bufLenMax");
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
     CHECK(LTFATERR_NOTPOSARG, Wmax > 0, "Wmax must be positive");
@@ -669,7 +711,7 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
                           ltfat_malloc(Wmax * sizeof * p->outTmp));
 
     CHECKSTATUS(
-        LTFAT_NAME(rtdgtreal_fifo_init)(bufLenMax + gal, gal > gsl ? gal - 1 : gsl - 1 ,
+        LTFAT_NAME(rtdgtreal_fifo_init)(bufLenMax + gal, procDelay,
                                         gal, a, Wmax, &p->fwdfifo),
         "fwd fifo init failed");
 
@@ -708,11 +750,38 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_setanaa)(LTFAT_NAME(rtdgtreal_processor_state)*
+                                        p, ltfat_int a)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+
+    LTFAT_NAME(rtdgtreal_fifo_seta)(p->fwdfifo, a);
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_setsyna)(LTFAT_NAME(rtdgtreal_processor_state)*
+                                        p, ltfat_int a)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+
+    LTFAT_NAME(rtidgtreal_fifo_seta)(p->backfifo, a);
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
 
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
         ltfat_int gl, ltfat_int a, ltfat_int M,
-        ltfat_int Wmax, ltfat_int bufLenMax,
+        ltfat_int Wmax, ltfat_int bufLenMax, ltfat_int procDelay,
         LTFAT_NAME(rtdgtreal_processor_state)** pout)
 {
     LTFAT_NAME(rtdgtreal_processor_state)* p;
@@ -736,7 +805,7 @@ LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
                 "Call to gabdual_painless failed");
 
     CHECKSTATUS(LTFAT_NAME(rtdgtreal_processor_init)(g, gl, gd, gl, a, M, Wmax,
-                bufLenMax, pout), "processor_init failed");
+                bufLenMax, procDelay, pout), "processor_init failed");
 
     p = *pout;
     p->garbageBinSize = 2;
@@ -768,11 +837,20 @@ error:
     return status;
 }
 
-
 LTFAT_API int
 LTFAT_NAME(rtdgtreal_processor_execute_compact)(
     LTFAT_NAME(rtdgtreal_processor_state)* p, const LTFAT_REAL* in,
     ltfat_int len, ltfat_int chanNo, LTFAT_REAL* out)
+{
+    return LTFAT_NAME(rtdgtreal_processor_execute_gen_compact)(
+               p, in, len, chanNo, len, out);
+
+}
+
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_execute_gen_compact)(
+    LTFAT_NAME(rtdgtreal_processor_state)* p, const LTFAT_REAL* in,
+    ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen, LTFAT_REAL* out)
 {
     ltfat_int chanLoc;
     int status2 = LTFATERR_SUCCESS;
@@ -783,8 +861,8 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
 
     for (ltfat_int w = 0; w < chanLoc; w++)
     {
-        p->inTmp[w] = &in[w * len];
-        p->outTmp[w] = &out[w * len];
+        p->inTmp[w] = &in[w * inLen];
+        p->outTmp[w] = &out[w * outLen];
     }
 
     // Clear superfluous channels
@@ -793,11 +871,12 @@ LTFAT_NAME(rtdgtreal_processor_execute_compact)(
         DEBUG("Channel overflow (passed %td, max %td)", chanNo, chanLoc);
         status = LTFATERR_OVERFLOW;
 
-        memset(out + chanLoc * len, 0, (chanNo - chanLoc)*len * sizeof * out);
+        memset(out + chanLoc * outLen, 0, (chanNo - chanLoc)*outLen * sizeof * out);
     }
 
-    status2 = LTFAT_NAME(rtdgtreal_processor_execute)( p, p->inTmp, len, chanLoc,
-              p->outTmp);
+    status2 = LTFAT_NAME(rtdgtreal_processor_execute_gen)( p, p->inTmp, inLen,
+              chanLoc,
+              outLen, p->outTmp);
 
     if (status2 != LTFATERR_SUCCESS) return status2;
 error:
@@ -810,6 +889,18 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     const LTFAT_REAL** in, ltfat_int len, ltfat_int chanNo,
     LTFAT_REAL** out)
 {
+    return LTFAT_NAME(rtdgtreal_processor_execute_gen)( p, in, len, chanNo, len,
+            out);
+
+}
+
+
+LTFAT_API int
+LTFAT_NAME(rtdgtreal_processor_execute_gen)(
+    LTFAT_NAME(rtdgtreal_processor_state)* p,
+    const LTFAT_REAL** in, ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen,
+    LTFAT_REAL** out)
+{
     int status = LTFATERR_FAILED;
     ltfat_int samplesWritten = 0, samplesRead = 0;
     // Get default processor if none was set
@@ -819,12 +910,14 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     // Failing these checks prohibits execution altogether
     CHECKNULL(p); CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE,
-          len >= 0, "len must be positive or zero (passed %td)", len);
+          inLen >= 0
+          && outLen >= 0, "len must be positive or zero (passed %td and %td)", inLen,
+          outLen);
     CHECK(LTFATERR_BADSIZE,
           chanNo >= 0, "chanNo must be positive or zero (passed %td)", chanNo);
 
     // Just dont do anything
-    if (len == 0 || chanNo == 0) return status;
+    if (chanNo == 0 || (inLen == 0 && outLen == 0)) return LTFATERR_SUCCESS;
 
     if ( chanNo > p->fwdfifo->Wmax )
     {
@@ -832,27 +925,35 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
         status = LTFATERR_OVERFLOW;
 
         for (ltfat_int w = p->fwdfifo->Wmax; w < chanNo; w++)
-            memset(out[w], 0, len * sizeof * out[w]);
+            memset(out[w], 0, outLen * sizeof * out[w]);
 
         chanNo = p->fwdfifo->Wmax;
     }
 
-    if ( len > p->bufLenMax )
+    if ( inLen > p->bufLenMax )
     {
-        DEBUG("Buffer overflow (passed %td, max %td)", len, p->bufLenMax);
+        DEBUG("Buffer overflow (passed %td, max %td)", inLen, p->bufLenMax);
+        status = LTFATERR_OVERFLOW;
+        inLen = p->bufLenMax;
+    }
+
+    if ( outLen > p->bufLenMax )
+    {
+        DEBUG("Buffer overflow (passed %td, max %td)", outLen, p->bufLenMax);
         status = LTFATERR_OVERFLOW;
 
         for (ltfat_int w = 0; w < chanNo; w++)
-            memset(out[w] + p->bufLenMax, 0, (len - p->bufLenMax)*sizeof * out[w]);
+            memset(out[w] + p->bufLenMax, 0, (outLen - p->bufLenMax)*sizeof * out[w]);
 
-        len = p->bufLenMax;
+        outLen = p->bufLenMax;
     }
 
     if (!processorCallback)
         processorCallback = &LTFAT_NAME(default_rtdgtreal_processor_callback);
 
     // Write new data
-    samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, len, chanNo);
+    samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, inLen,
+                     chanNo);
 
     // While there is new data in the input fifo
     while ( LTFAT_NAME(rtdgtreal_fifo_read)(p->fwdfifo, p->buf) > 0 )
@@ -873,14 +974,15 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
     }
 
     // Read sampples for output
-    samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, len, chanNo, out);
+    samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, outLen, chanNo,
+                  out);
 
     status = LTFATERR_SUCCESS;
 error:
     if (status != LTFATERR_SUCCESS) return status;
     // These should never occur, it would mean internal error
-    if ( samplesWritten != len ) return LTFATERR_OVERFLOW;
-    else if ( samplesRead != len ) return LTFATERR_UNDERFLOW;
+    if ( samplesWritten != inLen ) return LTFATERR_OVERFLOW;
+    else if ( samplesRead != outLen ) return LTFATERR_UNDERFLOW;
     return status;
 }
 
