@@ -409,7 +409,8 @@ LTFAT_NAME(rtdgtreal_fifo_read)(LTFAT_NAME(rtdgtreal_fifo_state)* p,
     if (available < 0) available += p->bufLen;
 
     // CHECK(LTFATERR_UNDERFLOW, available >= p->gl, "FIFO underflow");
-    if (available < p->gl) return 0;
+    // p->a can actually be larger than p->gl
+    if (available < p->gl || available < p->a) return 0;
 
     toRead = p->gl;
 
@@ -596,7 +597,7 @@ LTFAT_NAME(rtidgtreal_fifo_read)(LTFAT_NAME(rtidgtreal_fifo_state)* p,
     CHECKNULL(p); CHECKNULL(buf);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive.");
     CHECK(LTFATERR_NOTPOSARG, bufLen >= 0, "bufLen must be positive.");
-    if(bufLen == 0) return 0;
+    if (bufLen == 0) return 0;
 
     for (ltfat_int w = 0; w < W; w++) CHECKNULL(buf[w]);
 
@@ -952,8 +953,8 @@ LTFAT_NAME(rtdgtreal_processor_execute_gen)(
         processorCallback = &LTFAT_NAME(default_rtdgtreal_processor_callback);
 
     // Write new data
-    samplesWritten = LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, inLen,
-                     chanNo);
+    samplesWritten =
+        LTFAT_NAME(rtdgtreal_fifo_write)(p->fwdfifo, in, inLen, chanNo);
 
     // While there is new data in the input fifo
     while ( LTFAT_NAME(rtdgtreal_fifo_read)(p->fwdfifo, p->buf) > 0 )
@@ -974,8 +975,8 @@ LTFAT_NAME(rtdgtreal_processor_execute_gen)(
     }
 
     // Read sampples for output
-    samplesRead = LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, outLen, chanNo,
-                  out);
+    samplesRead =
+        LTFAT_NAME(rtidgtreal_fifo_read)(p->backfifo, outLen, chanNo, out);
 
     status = LTFATERR_SUCCESS;
 error:
