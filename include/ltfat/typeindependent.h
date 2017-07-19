@@ -284,7 +284,7 @@ LTFAT_NAME(ifilterbank_fftbl_execute)(LTFAT_NAME(upconv_fftbl_plan) p[],
 LTFAT_API void
 LTFAT_NAME(upconv_fftbl)(const LTFAT_COMPLEX *cin, const LTFAT_COMPLEX *G,
                          ltfat_int L, ltfat_int Gl, ltfat_int W,
-                         const double a, const ptrdiff_t foff,
+                         const double a, const ltfat_int foff,
                          const int realonly, LTFAT_COMPLEX *F);
 
 LTFAT_API LTFAT_NAME(upconv_fftbl_plan)
@@ -298,7 +298,7 @@ LTFAT_API void
 LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
                                  const LTFAT_COMPLEX *cin,
                                  const LTFAT_COMPLEX *G,
-                                 const ptrdiff_t foff, const int realonly,
+                                 const ltfat_int foff, const int realonly,
                                  LTFAT_COMPLEX *F);
 
 
