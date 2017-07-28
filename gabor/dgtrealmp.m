@@ -9,6 +9,7 @@ definput.keyvals.printstep=[];
 definput.flags.printerr = {'noerr','printerr','printdb'};
 definput.flags.apprerrprec = {'errappr','errexact'};
 definput.flags.verbosity = {'quiet','verbose'};
+definput.flags.verbosity = {'real','complex'};
 definput.keyvals.g1 = [];
 definput.keyvals.g2 = [];
 definput.keyvals.g3 = [];
@@ -71,24 +72,25 @@ if isempty(g), g{1} = 'gauss'; end
 aarr = zeros(numel(g),1); aarr(:) = a;
 Marr = zeros(numel(g),1); Marr(:) = M;
 
-Marr(2) = M/2;
-aarr(2) = a/2;
-Marr(3) = M/4;
-aarr(3) = a/4;
-Marr(4) = M/8;
-aarr(4) = a/8;
-Marr(5) = M/16;
-aarr(5) = a/16;
-Marr(6) = M/32;
-aarr(6) = a/32;
+ Marr(2) = M/2;
+ aarr(2) = a/2;
+ Marr(3) = M/4;
+ aarr(3) = a/4;
+ Marr(4) = M/8;
+ aarr(4) = a/8;
+ Marr(5) = M/16;
+ aarr(5) = a/16;
+ Marr(6) = M/32;
+ aarr(6) = a/32;
 
 L = dgtlength(Ls,max(aarr),max(Marr));
 f = postpad(f,L);
 
+
 dgtparamsrows = cellfun(@(gEl,aEl,MEl) ...
     { normalize(gabwin(gEl,a,M,L),'2'), aEl, MEl, ...
-      floor(MEl/2)+1,...
-      L./aEl},...
+     floor(MEl/2)+1,...%MEl,... 
+     L./aEl},...
       g(:), num2cell(aarr), num2cell(Marr),'UniformOutput',0);
 
 dgtparamsfields = {'g','a','M','M2','N'};
@@ -101,13 +103,16 @@ N = L/a;
 M2 = floor(M/2) + 1;
 
 kerns = cell(numel(g),numel(g));
+kmids = cell(numel(g),numel(g));
 masks = cell(numel(g),numel(g));
 
 if flags.do_mp || flags.do_localomp || flags.do_cyclicmp
 
+    
+    
     for ii = 1:numel(dp)
         for jj = 1:numel(dp)
-            [kerns{ii,jj}, masks{ii,jj}] = ...
+            [kerns{ii,jj}, kmids{ii,jj}, masks{ii,jj}] = ...
                 projkernels(dp(ii).g, dp(jj).g, dp(ii).a, dp(jj).a,...
                             dp(ii).M, dp(jj).M, L, kv.tol);
         end
@@ -122,7 +127,7 @@ elseif flags.do_complmp || flags.do_cycliccomplmp || flags.do_compllocalomp ...
 
     for ii = 1:numel(g)
         for jj = 1:numel(g)
-            [kerns{ii,jj}, masks{ii,jj}, atnorms(ii,jj)] = ...
+            [kerns{ii,jj}, kmids{ii,jj}, masks{ii,jj}, atnorms(ii,jj)] = ...
                 projkernels(g{ii},gd{jj},a,M,L,kv.tol);
 
             kerns{ii,jj} = kerns{ii,jj}./atnorms(ii,jj);
@@ -182,11 +187,6 @@ if flags.do_mp
         
         % 1b) Selected coefficient
         cval = cres{wIdx}(m+1,n+1);
-        %cval2 = conj(cval);
-         %% 3) Coefficient update
-        cvalold = c{wIdx}(m+1,n+1);
-        % A single atom can be selected more than once
-        c{wIdx}(m+1,n+1) = cvalold + cval;
         
         %% 2) Residual update
         for secondwIdx = [wIdx,1:wIdx-1,wIdx+1:numel(dp)]
@@ -204,9 +204,9 @@ if flags.do_mp
                 currkern = kerns{wIdx,secondwIdx}(:,:,1+mod(nsecond,kernno));
             end
 
-            [kernh,kernw] = size(currkern);
-            mmid = floor(kernh/2) + 1;
-            nmid = floor(kernw/2) + 1;
+            [kernh, kernw] = size(currkern);
+            mmid = kmids{wIdx,secondwIdx}(1);
+            nmid = kmids{wIdx,secondwIdx}(2);
             
             currkernhidx = kernhidx{wIdx,secondwIdx};
             currkernwidx = kernwidx{wIdx,secondwIdx};
@@ -294,6 +294,11 @@ if flags.do_mp
             maxcols{secondwIdx}(idxn) = maxcolupd;
             maxcolspos{secondwIdx}(idxn) = maxcolposupd;
         end
+        
+        %% 3) Coefficient update
+        cvalold = c{wIdx}(m+1,n+1);
+        % A single atom can be selected more than once
+        c{wIdx}(m+1,n+1) = cvalold + cval;
  
          if mod(iter,kv.printstep) == 0
              plotiter(c,cres,a,M,clim,iter,kv,flags);
@@ -672,6 +677,9 @@ elseif flags.do_complmp
     end
 end
 
+
+
+
 %% Final computation
 % Approximation
 fhat = reccoefs(c,dp,L,Ls);
@@ -720,35 +728,40 @@ function [fhat,fhats] = reccoefs(c,dp,L,Ls)
 
     fhat = sum(fhats,2);
 
-function [kerns,mask,kernnorm] = projkernels(g1,g2,a1,a2,M1,M2,L,tol)
+function [kerns,kmid,mask,kernnorm] = projkernels(g1,g2,a1,a2,M1,M2,L,tol)
     a = min([a1,a2]);
     M = max([M1,M2]);
     N = L/a;
     M2 = floor(M/2) + 1;
+    
     kern = dgt(fir2long(g1,L),g2,a,M);
     kernnorm = norm(kern,'fro');
 
-    ksize=findsmallkernelsize(kern(1:M2,:),tol);
+    [ksize,kmid]=findsmallkernelsize(kern(1:M2,:),tol);
 
     if ksize(1)>M, ksize(1) = M; end
     if ksize(2)>N, ksize(2) = N; end
-    kernh= ksize(1); 
+    kernh = ksize(1); 
     kernw = ksize(2);
 
     kern = middlepad(kern,kernh);
-    kern = middlepad(kern,kernw,2);
+    kernw1 = kmid(2);
+    kernw2 = kernw - (kmid(2)+1);
+    kern = [kern(:,1:kernw1),kern(:,end-kernw2:end)];
 
     kernno = lcm(M,a)/a;
     kerns = zeros([size(kern),kernno]);
 
+    kern =  circshift(kern,kmid-1);
+    
     for n=1:kernno
-        kerns(:,:,n) = fftshift(phasekernfi(kern,n-1,a,M));
+        kerns(:,:,n) = phasekernfi(kern,kmid,n-1,a,M);
     end
 
     thr = tol*max(abs(kern(:)));
     mask = abs(kerns(:,:,n)) > thr;
 
-function ksize=findsmallkernelsize(kern,relthr)
+function [ksize,kmid]=findsmallkernelsize(kern,relthr)
     [M2,N] = size(kern);
     thr = relthr*max(abs(kern(:)));
 
@@ -759,33 +772,39 @@ function ksize=findsmallkernelsize(kern,relthr)
             lastrow = newlastrow;
         end
     end
-
+    
     lastcol1 = 1;
-    % Searching from the other end is not neccesary since the kenel
-    % is always symmetric in the horizontal direction too
-    % lastcol2 = 1;
+    lastcol2 = 1;
     for m=1:M2
         newlastcol = find(abs(kern(m,1:floor(end/2)+1))>thr,1,'last');
         if newlastcol > lastcol1
             lastcol1 = newlastcol;
         end
-        %     newlastcol = find(abs(kern(m,end:-1:floor(end/2)))>=thr,1,'last');
-        %     if newlastcol > lastcol2
-        %         lastcol2 = newlastcol;
-        %     end
+        newlastcol = find(abs(kern(m,end:-1:floor(end/2)))>=thr,1,'last');
+        if newlastcol > lastcol2
+            lastcol2 = newlastcol;
+        end
     end
+    %lastcol2 = floor((lastcol2/2));
 
-    ksize = [2*lastrow-1, 2*lastcol1 - 1];
+    ksize = [2*lastrow-1, lastcol1 + lastcol2];
+    kmid = [lastrow,lastcol1];
 
-function kernm = phasekernfi(kern,n,a,M)
+function kernm = phasekernfi(kern,kmid,n,a,M)
     kernh = size(kern,1);
-    l = -2*pi*n*fftindex(kernh)*a/M;
+    kmidh = kmid(1);
+    midx = (-kmidh + 1:kernh - kmidh)';
+    %midx = circshift(fftindex(kernh),kmidh-1);
+    l = -2*pi*n*midx*a/M;
     kernm = bsxfun(@times,kern,exp(1i*l));
 
 % M/a periodic in m
-function kernm = phasekernti(kern,m,a,M)
-    [kernh, kernw] = size(kern);
-    l = 2*pi*m*fftindex(kernw)'*a/M;
+function kernm = phasekernti(kern,kmid,m,a,M)
+    kernw = size(kern,2);
+    kmidw = kmid(2);
+    %nidx = fftindex(kernw)';
+    nidx = (-kmidw + 1:kernw - kmidw);
+    l = 2*pi*m*nidx*a/M;
     kernm = bsxfun(@times,kern,exp(1i*l));
 
 function [m,n, winIdx, nstart, nloc] = findmax(maxcols,maxcolspos,N)
