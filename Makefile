@@ -116,7 +116,7 @@ ifeq ($(FFTBACKEND),FFTW)
 endif
 
 ifeq ($(FFTBACKEND),KISS)
-	toCompile += kissfft_wrappers.o kiss_fft.o kiss_fftr.o
+	toCompile += kissfft_wrappers.o kiss_fft.o
 	CFLAGS += -DKISS
 endif
 

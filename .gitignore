@@ -1,4 +1,6 @@
 cmakebuild
+*/CMakeFiles/*
+CMakeFiles/*
 obj
 build
 html

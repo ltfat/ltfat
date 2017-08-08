@@ -44,7 +44,7 @@ if (NOT NOFFTW)
         fftw_wrappers.c ${src_files_fftw_complextransp})
 else (NOT NOFFTW)
     SET(src_files ${src_files}
-        kissfft_wrappers.c ../thirdparty/kissfft/fft.c ../thirdparty/kissfft/fftr.c)
+        kissfft_wrappers.c ../thirdparty/kissfft/fft.c)
 endif (NOT NOFFTW)
 
 if (USECPP)

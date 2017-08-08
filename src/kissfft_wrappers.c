@@ -12,7 +12,7 @@ struct LTFAT_NAME(fft_plan)
     LTFAT_COMPLEX* in;
     LTFAT_COMPLEX* out;
     LTFAT_COMPLEX* tmp;
-    LTFAT_KISS(fft_cfg) kiss_plan;
+    LTFAT_KISS(fft_plan)* kiss_plan;
 };
 
 LTFAT_API int
@@ -193,8 +193,8 @@ struct LTFAT_NAME(fftreal_plan)
     LTFAT_REAL* in;
     LTFAT_REAL* out;
     LTFAT_COMPLEX* tmp;
-    LTFAT_KISS(fft_cfg) kiss_plan_cpx;
-    LTFAT_KISS(fftr_cfg) kiss_plan;
+    LTFAT_KISS(fft_plan)* kiss_plan_cpx;
+    LTFAT_KISS(fftr_plan)* kiss_plan;
 };
 
 LTFAT_API int

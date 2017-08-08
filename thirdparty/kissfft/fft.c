@@ -15,7 +15,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 #include "_kiss_fft_guts.h"
 
-struct LTFAT_KISS(fft_state){
+struct LTFAT_KISS(fft_plan){
     int nfft;
     int inverse;
     int factors[2*MAXFACTORS];
@@ -46,12 +46,12 @@ struct LTFAT_KISS(fft_state){
 static void kf_bfly2(
     kiss_fft_cpx* Fout,
     const size_t fstride,
-    const LTFAT_KISS(fft_cfg) st,
+    const LTFAT_KISS(fft_plan)* st,
     int m
 )
 {
     kiss_fft_cpx* Fout2;
-    kiss_fft_cpx* tw1 = st->twiddles;
+    const kiss_fft_cpx* tw1 = st->twiddles;
     kiss_fft_cpx t;
     Fout2 = Fout + m;
     do
@@ -71,11 +71,11 @@ static void kf_bfly2(
 static void kf_bfly4(
     kiss_fft_cpx* Fout,
     const size_t fstride,
-    const LTFAT_KISS(fft_cfg) st,
+    const LTFAT_KISS(fft_plan)* st,
     const size_t m
 )
 {
-    kiss_fft_cpx* tw1, *tw2, *tw3;
+    const kiss_fft_cpx* tw1, *tw2, *tw3;
     kiss_fft_cpx scratch[6];
     size_t k = m;
     const size_t m2 = 2 * m;
@@ -125,13 +125,13 @@ static void kf_bfly4(
 static void kf_bfly3(
     kiss_fft_cpx* Fout,
     const size_t fstride,
-    const LTFAT_KISS(fft_cfg) st,
+    const LTFAT_KISS(fft_plan)* st,
     size_t m
 )
 {
     size_t k = m;
     const size_t m2 = 2 * m;
-    kiss_fft_cpx* tw1, *tw2;
+    const kiss_fft_cpx* tw1, *tw2;
     kiss_fft_cpx scratch[5];
     kiss_fft_cpx epi3;
     epi3 = st->twiddles[fstride * m];
@@ -171,15 +171,15 @@ static void kf_bfly3(
 static void kf_bfly5(
     kiss_fft_cpx* Fout,
     const size_t fstride,
-    const LTFAT_KISS(fft_cfg) st,
+    const LTFAT_KISS(fft_plan)* st,
     int m
 )
 {
     kiss_fft_cpx* Fout0, *Fout1, *Fout2, *Fout3, *Fout4;
     int u;
     kiss_fft_cpx scratch[13];
-    kiss_fft_cpx* twiddles = st->twiddles;
-    kiss_fft_cpx* tw;
+    const kiss_fft_cpx* twiddles = st->twiddles;
+    const kiss_fft_cpx* tw;
     kiss_fft_cpx ya, yb;
     ya = twiddles[fstride * m];
     yb = twiddles[fstride * 2 * m];
@@ -239,13 +239,13 @@ static void kf_bfly5(
 static void kf_bfly_generic(
     kiss_fft_cpx* Fout,
     const size_t fstride,
-    const LTFAT_KISS(fft_cfg) st,
+    const LTFAT_KISS(fft_plan)* st,
     int m,
     int p
 )
 {
     int u, k, q1, q;
-    kiss_fft_cpx* twiddles = st->twiddles;
+    const kiss_fft_cpx* twiddles = st->twiddles;
     kiss_fft_cpx t;
     int Norig = st->nfft;
 
@@ -287,7 +287,7 @@ void kf_work(
     const size_t fstride,
     int in_stride,
     int* factors,
-    const LTFAT_KISS(fft_cfg) st
+    const LTFAT_KISS(fft_plan)* st
 )
 {
     kiss_fft_cpx* Fout_beg = Fout;
@@ -396,21 +396,21 @@ void kf_factor(int n, int* facbuf)
  * The return value is a contiguous block of memory, allocated with malloc.  As such,
  * It can be freed with free(), rather than a kiss_fft-specific function.
  * */
-LTFAT_KISS(fft_cfg)
+LTFAT_KISS(fft_plan)*
 LTFAT_KISS(fft_alloc)(int nfft, int inverse_fft, void* mem, size_t* lenmem )
 {
-    LTFAT_KISS(fft_cfg) st = NULL;
-    size_t memneeded = sizeof(struct LTFAT_KISS(fft_state))
+    LTFAT_KISS(fft_plan)* st = NULL;
+    size_t memneeded = sizeof(struct LTFAT_KISS(fft_plan))
                        + sizeof(kiss_fft_cpx) * (nfft - 1); /* twiddle factors*/
 
     if ( lenmem == NULL )
     {
-        st = ( LTFAT_KISS(fft_cfg) ) KISS_FFT_MALLOC( memneeded );
+        st = ( LTFAT_KISS(fft_plan)* ) KISS_FFT_MALLOC( memneeded );
     }
     else
     {
         if (mem != NULL && *lenmem >= memneeded)
-            st = ( LTFAT_KISS(fft_cfg) ) mem;
+            st = ( LTFAT_KISS(fft_plan)* ) mem;
         *lenmem = memneeded;
     }
     if (st)
@@ -436,7 +436,7 @@ LTFAT_KISS(fft_alloc)(int nfft, int inverse_fft, void* mem, size_t* lenmem )
 
 
 void
-LTFAT_KISS(fft_stride)(LTFAT_KISS(fft_cfg) st, const kiss_fft_cpx* fin,
+LTFAT_KISS(fft_stride)(LTFAT_KISS(fft_plan)* st, const kiss_fft_cpx* fin,
                        kiss_fft_cpx* fout, int in_stride)
 {
     if (fin == fout)
@@ -456,10 +456,154 @@ LTFAT_KISS(fft_stride)(LTFAT_KISS(fft_cfg) st, const kiss_fft_cpx* fin,
 }
 
 void
-LTFAT_KISS(fft)(LTFAT_KISS(fft_cfg) cfg, const kiss_fft_cpx* fin,
+LTFAT_KISS(fft)(LTFAT_KISS(fft_plan)* cfg, const kiss_fft_cpx* fin,
                 kiss_fft_cpx* fout)
 {
     LTFAT_KISS(fft_stride)(cfg, fin, fout, 1);
 }
 
+struct LTFAT_KISS(fftr_plan){
+    LTFAT_KISS(fft_plan)* substate;
+    kiss_fft_cpx * tmpbuf;
+    kiss_fft_cpx * super_twiddles;
+#ifdef USE_SIMD
+    void * pad;
+#endif
+};
 
+LTFAT_KISS(fftr_plan)*
+LTFAT_KISS(fftr_alloc)(int nfft,int inverse_fft,void * mem,size_t * lenmem)
+{
+    int i;
+    LTFAT_KISS(fftr_plan)* st = NULL;
+    size_t subsize, memneeded;
+
+    if (nfft & 1) {
+        fprintf(stderr,"Real FFT optimization must be even.\n");
+        return NULL;
+    }
+    nfft >>= 1;
+
+    LTFAT_KISS(fft_alloc) (nfft, inverse_fft, NULL, &subsize);
+    memneeded = sizeof(struct LTFAT_KISS(fftr_plan)) + subsize + sizeof(kiss_fft_cpx) * ( nfft * 3 / 2);
+
+    if (lenmem == NULL) {
+        st = (LTFAT_KISS(fftr_plan)*) KISS_FFT_MALLOC (memneeded);
+    } else {
+        if (*lenmem >= memneeded)
+            st = (LTFAT_KISS(fftr_plan)*) mem;
+        *lenmem = memneeded;
+    }
+    if (!st)
+        return NULL;
+
+    st->substate = (LTFAT_KISS(fft_plan)*) (st + 1); /*just beyond kiss_fftr_state struct */
+    st->tmpbuf = (kiss_fft_cpx *) (((char *) st->substate) + subsize);
+    st->super_twiddles = st->tmpbuf + nfft;
+    LTFAT_KISS(fft_alloc)(nfft, inverse_fft, st->substate, &subsize);
+
+    for (i = 0; i < nfft/2; ++i) {
+        double phase =
+            -3.14159265358979323846264338327 * ((double) (i+1) / nfft + .5);
+        if (inverse_fft)
+            phase *= -1;
+        kf_cexp (st->super_twiddles+i,phase);
+    }
+    return st;
+}
+
+void 
+LTFAT_KISS(fftr)(LTFAT_KISS(fftr_plan)* st,const kiss_fft_scalar *timedata,kiss_fft_cpx *freqdata)
+{
+    /* input buffer timedata is stored row-wise */
+    int k,ncfft;
+    kiss_fft_cpx fpnk,fpk,f1k,f2k,tw,tdc;
+
+    if ( st->substate->inverse) {
+        fprintf(stderr,"kiss fft usage error: improper alloc\n");
+        exit(1);
+    }
+
+    ncfft = st->substate->nfft;
+
+    /*perform the parallel fft of two real signals packed in real,imag*/
+    LTFAT_KISS(fft)( st->substate , (const kiss_fft_cpx*)timedata, st->tmpbuf );
+    /* The real part of the DC element of the frequency spectrum in st->tmpbuf
+     * contains the sum of the even-numbered elements of the input time sequence
+     * The imag part is the sum of the odd-numbered elements
+     *
+     * The sum of tdc.r and tdc.i is the sum of the input time sequence. 
+     *      yielding DC of input time sequence
+     * The difference of tdc.r - tdc.i is the sum of the input (dot product) [1,-1,1,-1... 
+     *      yielding Nyquist bin of input time sequence
+     */
+ 
+    tdc.r = st->tmpbuf[0].r;
+    tdc.i = st->tmpbuf[0].i;
+    C_FIXDIV(tdc,2);
+    CHECK_OVERFLOW_OP(tdc.r ,+, tdc.i);
+    CHECK_OVERFLOW_OP(tdc.r ,-, tdc.i);
+    freqdata[0].r = tdc.r + tdc.i;
+    freqdata[ncfft].r = tdc.r - tdc.i;
+#ifdef USE_SIMD    
+    freqdata[ncfft].i = freqdata[0].i = _mm_set1_ps(0);
+#else
+    freqdata[ncfft].i = freqdata[0].i = 0;
+#endif
+
+    for ( k=1;k <= ncfft/2 ; ++k ) {
+        fpk    = st->tmpbuf[k]; 
+        fpnk.r =   st->tmpbuf[ncfft-k].r;
+        fpnk.i = - st->tmpbuf[ncfft-k].i;
+        C_FIXDIV(fpk,2);
+        C_FIXDIV(fpnk,2);
+
+        C_ADD( f1k, fpk , fpnk );
+        C_SUB( f2k, fpk , fpnk );
+        C_MUL( tw , f2k , st->super_twiddles[k-1]);
+
+        freqdata[k].r = HALF_OF(f1k.r + tw.r);
+        freqdata[k].i = HALF_OF(f1k.i + tw.i);
+        freqdata[ncfft-k].r = HALF_OF(f1k.r - tw.r);
+        freqdata[ncfft-k].i = HALF_OF(tw.i - f1k.i);
+    }
+}
+
+void 
+LTFAT_KISS(fftri)(LTFAT_KISS(fftr_plan)* st,const kiss_fft_cpx *freqdata,kiss_fft_scalar *timedata)
+{
+    /* input buffer timedata is stored row-wise */
+    int k, ncfft;
+
+    if (st->substate->inverse == 0) {
+        fprintf (stderr, "kiss fft usage error: improper alloc\n");
+        exit (1);
+    }
+
+    ncfft = st->substate->nfft;
+
+    st->tmpbuf[0].r = freqdata[0].r + freqdata[ncfft].r;
+    st->tmpbuf[0].i = freqdata[0].r - freqdata[ncfft].r;
+    C_FIXDIV(st->tmpbuf[0],2);
+
+    for (k = 1; k <= ncfft / 2; ++k) {
+        kiss_fft_cpx fk, fnkc, fek, fok, tmp;
+        fk = freqdata[k];
+        fnkc.r = freqdata[ncfft - k].r;
+        fnkc.i = -freqdata[ncfft - k].i;
+        C_FIXDIV( fk , 2 );
+        C_FIXDIV( fnkc , 2 );
+
+        C_ADD (fek, fk, fnkc);
+        C_SUB (tmp, fk, fnkc);
+        C_MUL (fok, tmp, st->super_twiddles[k-1]);
+        C_ADD (st->tmpbuf[k],     fek, fok);
+        C_SUB (st->tmpbuf[ncfft - k], fek, fok);
+#ifdef USE_SIMD        
+        st->tmpbuf[ncfft - k].i *= _mm_set1_ps(-1.0);
+#else
+        st->tmpbuf[ncfft - k].i *= -1;
+#endif
+    }
+    LTFAT_KISS(fft)(st->substate, st->tmpbuf, (kiss_fft_cpx *) timedata);
+}
