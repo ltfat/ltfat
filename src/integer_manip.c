@@ -117,6 +117,18 @@ ltfat_dgtlength(ltfat_int Ls, ltfat_int a, ltfat_int M)
     return nminL * minL;
 }
 
+LTFAT_API ltfat_int
+ltfat_dgtlengthmulti(ltfat_int Ls, ltfat_int P, ltfat_int a[], ltfat_int M[])
+{
+    ltfat_int minL = ltfat_lcm( a[0], M[0]);
+
+    for (ltfat_int p = 1; p < P; p++)
+        minL = ltfat_lcm( minL, ltfat_lcm(a[p], M[p]));
+
+    ltfat_int nminL = (Ls + minL - 1) / minL; // This is ceil of Ls/minL
+    return nminL * minL;
+}
+
 
 LTFAT_API void
 gabimagepars(ltfat_int Ls, ltfat_int x, ltfat_int y,
@@ -176,7 +188,7 @@ ltfat_nextpow2(ltfat_int y)
         return 1;
 
     x--;
-    for(ltfat_int ii = 1; ii < bits; ii = ii << 1)
+    for (ltfat_int ii = 1; ii < bits; ii = ii << 1)
         (x) = ((x) >> ii)  | (x);
 
     /* (x) = ((x) >> 1)  | (x); */

@@ -304,7 +304,7 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
                                   ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx)
 {
     int found = 0;
-    *max = (LTFAT_REAL) -1e99;
+    *max = (LTFAT_REAL) - 1e99;
     *idx = 0;
 
     for (ltfat_int ii = 0; ii < L; ++ii)
@@ -322,6 +322,14 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
     }
 
     return found;
+}
+
+LTFAT_API void
+LTFAT_NAME(findmaxincols)(const LTFAT_TYPE* in, ltfat_int M, ltfat_int N,
+                          LTFAT_TYPE* max, ltfat_int* idx)
+{
+    for (ltfat_int n = 0; n < N; n++)
+        LTFAT_NAME(findmaxinarray)(in + n * M, M, max + n, idx + n);
 }
 
 LTFAT_API int

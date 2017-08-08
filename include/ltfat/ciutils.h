@@ -289,8 +289,14 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE *in, ltfat_int Lin,
                        ltfat_int offset,
                        ltfat_int Lfold, LTFAT_TYPE *out);
 
-LTFAT_API
-void LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);
+LTFAT_API void
+LTFAT_NAME(findmaxinarray)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);
 
 LTFAT_API int
-LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask, ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);
+LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask,
+                                  ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);
+
+LTFAT_API void
+LTFAT_NAME(findmaxincols)(const LTFAT_TYPE* in, ltfat_int M, ltfat_int N,
+                          LTFAT_TYPE* max, ltfat_int* idx);
+

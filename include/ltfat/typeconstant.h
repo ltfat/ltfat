@@ -50,6 +50,9 @@ LTFAT_API ltfat_int
 ltfat_dgtlength(ltfat_int Ls, ltfat_int a, ltfat_int M);
 /** @}*/
 
+LTFAT_API ltfat_int
+ltfat_dgtlengthmulti(ltfat_int Ls, ltfat_int P, ltfat_int a[], ltfat_int M[]);
+
 LTFAT_API
 void gabimagepars(ltfat_int Ls, ltfat_int x, ltfat_int y,
                   ltfat_int *a, ltfat_int *M, ltfat_int *L, ltfat_int *N, ltfat_int *Ngood);
