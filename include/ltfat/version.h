@@ -27,6 +27,13 @@ ltfat_get_version();
 LTFAT_API int
 ltfat_is_compatible_version();
 
+LTFAT_API int
+ltfat_int_size();
+
+LTFAT_API int
+ltfat_int_is_compatible(int sizeofyourint);
+
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

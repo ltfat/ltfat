@@ -1,4 +1,4 @@
-#include "ltfat/version.h"
+#include "ltfat.h"
 
 #define LTFAT_MAKEVESRIONSTRING(major,minor,patch) #major "." #minor "." #patch
 #define LTFAT_VERSIONSTRING(major,minor,patch) LTFAT_MAKEVESRIONSTRING(major,minor,patch)
@@ -23,3 +23,16 @@ ltfat_is_compatible_version()
     ltfat_library_version* dll_version = ltfat_get_version();
     return (int) ( dll_version->major == LTFAT_VERSION_MAJOR);
 }
+
+LTFAT_API int
+ltfat_int_size()
+{
+    return sizeof(ltfat_int)*8;
+}
+
+LTFAT_API int
+ltfat_int_is_compatible(int sizeofyourint)
+{
+    return ltfat_int_size() == sizeofyourint;
+}
+
