@@ -55,7 +55,7 @@ LTFAT_NAME(fft_init_common)(ltfat_int L, ltfat_int W,
               "during execution.", L, nextfastL);
     }
 
-    CHECKMEM( fftwp = (LTFAT_NAME(fft_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+    CHECKMEM( fftwp = LTFAT_NEW(LTFAT_NAME(fft_plan)) );
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
     fftwp->kiss_plan = LTFAT_KISS(fft_alloc)(L, inverse, NULL, NULL);
@@ -230,7 +230,7 @@ LTFAT_NAME(fftreal_init_common)(ltfat_int L, ltfat_int W,
 
     M2 = L / 2 + 1;
 
-    CHECKMEM( fftwp = (LTFAT_NAME(fftreal_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+    CHECKMEM( fftwp = LTFAT_NEW(LTFAT_NAME(fftreal_plan)) );
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
     nextfastL = ltfat_nextfastfft(L);

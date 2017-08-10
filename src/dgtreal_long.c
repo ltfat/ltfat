@@ -51,8 +51,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
           "L must divisible by lcm(a,M)=%td.", minL);
 
-    CHECKMEM(plan = (LTFAT_NAME(dgtreal_long_plan)*)
-                    ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = LTFAT_NEW(LTFAT_NAME(dgtreal_long_plan)));
 
 // f and cout can be NULL if flags is FFTW_ESTIMATE
     plan->a = a;

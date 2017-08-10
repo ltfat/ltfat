@@ -43,7 +43,7 @@ LTFAT_NAME(fft_init)(ltfat_int L, ltfat_int W,
     CHECKNULL(p);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
-    CHECKMEM( fftwp = (LTFAT_NAME(fft_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+    CHECKMEM( fftwp = LTFAT_NEW(LTFAT_NAME(fft_plan)) );
 
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
@@ -145,7 +145,7 @@ LTFAT_NAME(ifft_init)(ltfat_int L, ltfat_int W,
     CHECKNULL(p);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
-    CHECKMEM( fftwp = (LTFAT_NAME(ifft_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+    CHECKMEM( fftwp = LTFAT_NEW(LTFAT_NAME(ifft_plan)) );
 
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
@@ -248,7 +248,7 @@ LTFAT_NAME(fftreal_init)(ltfat_int L, ltfat_int W,
     CHECKNULL(p);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
-    CHECKMEM( fftwp = (LTFAT_NAME(fftreal_plan)*) ltfat_calloc(1, sizeof * fftwp) );
+    CHECKMEM( fftwp = LTFAT_NEW(LTFAT_NAME(fftreal_plan)) );
 
     fftwp->L = L; fftwp->W = W; fftwp->in = in; fftwp->out = out;
 
@@ -355,8 +355,7 @@ LTFAT_NAME(ifftreal_init)(ltfat_int L, ltfat_int W,
     CHECKNULL(p);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive");
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W must be positive");
-    CHECKMEM( fftwp = (LTFAT_NAME(ifftreal_plan)*)
-                      ltfat_calloc(1, sizeof * fftwp) );
+    CHECKMEM( fftwp = LTFAT_NEW(LTFAT_NAME(ifftreal_plan)) );
 
     M2 = L / 2 + 1;
 

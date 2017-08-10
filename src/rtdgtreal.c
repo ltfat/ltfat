@@ -18,7 +18,6 @@ struct LTFAT_NAME(rtdgtreal_plan)
     LTFAT_REAL* fftBuf; //!< Internal buffer
     LTFAT_COMPLEX* fftBuf_cpx; //!< Internal buffer
     ltfat_int fftBufLen; //!< Internal buffer length
-    /* LTFAT_FFTW(plan) pfft; //!< FFTW plan */
     LTFAT_NAME_REAL(fftreal_plan)*  pfft;
     LTFAT_NAME_REAL(ifftreal_plan)* pifft;
 };
@@ -32,14 +31,12 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
 {
     ltfat_int M2;
     LTFAT_NAME(rtdgtreal_plan)* p = NULL;
-    /* LTFAT_FFTW(iodim64) dims; */
-    /* LTFAT_FFTW(iodim64) howmany_dims; */
 
     int status = LTFATERR_FAILED;
     CHECK(LTFATERR_NOTPOSARG, gl > 0, "gl must be positive");
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
 
-    CHECKMEM( p = (LTFAT_NAME(rtdgtreal_plan)*) ltfat_calloc(1, sizeof * p) );
+    CHECKMEM( p = LTFAT_NEW( LTFAT_NAME(rtdgtreal_plan) ));
 
     M2 = M / 2 + 1;
     p->fftBufLen = gl > 2 * M2 ? gl : 2 * M2;
@@ -55,26 +52,12 @@ LTFAT_NAME(rtdgtreal_commoninit)(const LTFAT_REAL* g, ltfat_int gl,
 
     if (LTFAT_FORWARD == tradir)
     {
-        /* dims.n = M; dims.is = 1; dims.os = 1; */
-        /* howmany_dims.n = 1; howmany_dims.is = M; howmany_dims.os = M / 2 + 1; */
-        /*  */
-        /* p->pfft = */
-        /*     LTFAT_FFTW(plan_guru64_dft_r2c)(1, &dims, 1, &howmany_dims, */
-        /*                                     p->fftBuf, (LTFAT_FFTW(complex)*) p->fftBuf, */
-        /*                                     FFTW_MEASURE); */
         LTFAT_NAME_REAL(fftreal_init)(M, 1, p->fftBuf, p->fftBuf_cpx,
                                       FFTW_MEASURE, &p->pfft);
         CHECKINIT(p->pfft, "FFTW plan creation failed.");
     }
     else if (LTFAT_INVERSE == tradir)
     {
-        /* dims.n = M; dims.is = 1; dims.os = 1; */
-        /* howmany_dims.n = 1; howmany_dims.is = M / 2 + 1; howmany_dims.os = M; */
-        /*  */
-        /* p->pfft = */
-        /*     LTFAT_FFTW(plan_guru64_dft_c2r)(1, &dims, 1, &howmany_dims, */
-        /*                                     (LTFAT_FFTW(complex)*) */
-        /*                                     p->fftBuf, p->fftBuf, FFTW_MEASURE); */
         LTFAT_NAME_REAL(ifftreal_init)(M, 1, p->fftBuf_cpx, p->fftBuf,
                                        FFTW_MEASURE, &p->pifft);
         CHECKINIT(p->pifft, "FFTW plan creation failed.");
@@ -142,7 +125,6 @@ LTFAT_NAME(rtdgtreal_execute)(const LTFAT_NAME(rtdgtreal_plan)* p,
         if (p->ptype == LTFAT_RTDGTPHASE_ZERO)
             LTFAT_NAME_REAL(circshift)(fftBuf, M, -(gl / 2), fftBuf );
 
-        /* LTFAT_FFTW(execute)(p->pfft); */
         LTFAT_NAME_REAL(fftreal_execute)(p->pfft);
 
         memcpy(cchan, fftBuf_cpx, M2 * sizeof * c);
@@ -186,7 +168,6 @@ LTFAT_NAME(rtidgtreal_execute)(const LTFAT_NAME(rtidgtreal_plan)* p,
 
         memcpy(fftBuf_cpx, cchan, M2 * sizeof * cchan);
 
-        /* LTFAT_FFTW(execute)(p->pifft); */
         LTFAT_NAME_REAL(ifftreal_execute)(p->pifft);
 
         if (p->ptype == LTFAT_RTDGTPHASE_ZERO)
@@ -227,8 +208,6 @@ LTFAT_NAME(rtdgtreal_done)(LTFAT_NAME(rtdgtreal_plan)** p)
     ltfat_safefree(pp->g);
     ltfat_safefree(pp->fftBuf);
     ltfat_safefree(pp->fftBuf_cpx);
-    /* if (pp->pfft) LTFAT_FFTW(destroy_plan)(pp->pfft); */
-    /* if (pp->pifft) LTFAT_FFTW(destroy_plan)(pp->pfft); */
     if (pp->pfft) LTFAT_NAME_REAL(fftreal_done)(&pp->pfft);
     if (pp->pifft) LTFAT_NAME_REAL(ifftreal_done)(&pp->pifft);
     ltfat_free(pp);
@@ -274,7 +253,7 @@ LTFAT_NAME(rtdgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int procDelay,
     CHECK(LTFATERR_BADARG, procDelay >= gl - 1 , "procDelay must be positive");
     CHECK(LTFATERR_BADARG , fifoLen > gl + 1, "fifoLen must be bugger than gl+1");
 
-    CHECKMEM(p = (LTFAT_NAME(rtdgtreal_fifo_state)*) ltfat_calloc(1, sizeof * p));
+    CHECKMEM(p = LTFAT_NEW(LTFAT_NAME(rtdgtreal_fifo_state)) );
     CHECKMEM(p->buf = LTFAT_NAME_REAL(calloc)( Wmax * (fifoLen + 1)));
 
     p->bufLen = fifoLen + 1;
@@ -477,7 +456,7 @@ LTFAT_NAME(rtidgtreal_fifo_init)(ltfat_int fifoLen, ltfat_int gl,
     CHECK(LTFATERR_NOTPOSARG, Wmax > 0, "Wmax must be positive");
     CHECK(LTFATERR_BADARG , fifoLen > gl + 1, "fifoLen must be bugger than gl+1");
 
-    CHECKMEM( p = (LTFAT_NAME(rtidgtreal_fifo_state)*) ltfat_calloc(1, sizeof * p));
+    CHECKMEM( p = LTFAT_NEW( LTFAT_NAME(rtidgtreal_fifo_state) ));
     CHECKMEM( p->buf = LTFAT_NAME_REAL(calloc)( Wmax * (fifoLen + gl + 1)));
     p->a = a; p->gl = gl; p->Wmax = Wmax; p->bufLen = fifoLen + gl + 1;
 
@@ -694,8 +673,7 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");
     CHECK(LTFATERR_NOTPOSARG, Wmax > 0, "Wmax must be positive");
     CHECK(LTFATERR_NOTPOSARG, bufLenMax > 0, "bufLenMax must be positive");
-    CHECKMEM( p = (LTFAT_NAME(rtdgtreal_processor_state)*)
-                  ltfat_calloc(1, sizeof * p));
+    CHECKMEM( p = LTFAT_NEW(LTFAT_NAME(rtdgtreal_processor_state)) );
 
     CHECKMEM(
         p->fftbufIn = LTFAT_NAME_COMPLEX(malloc)( Wmax * (M / 2 + 1)));
@@ -892,7 +870,6 @@ LTFAT_NAME(rtdgtreal_processor_execute)(
 {
     return LTFAT_NAME(rtdgtreal_processor_execute_gen)( p, in, len, chanNo, len,
             out);
-
 }
 
 

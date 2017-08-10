@@ -55,7 +55,7 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
     CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
           "Invalid ltfat_phaseconvention enum value." );
 
-    CHECKMEM(plan = (LTFAT_NAME(dgtreal_fb_plan)*)ltfat_calloc(1, sizeof * plan));
+    CHECKMEM( plan = LTFAT_NEW(LTFAT_NAME(dgtreal_fb_plan)) );
 
     plan->a = a;
     plan->M = M;

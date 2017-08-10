@@ -51,7 +51,7 @@ LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
           !(L % minL), "L (passed %td) must be positive and divisible by lcm(a,M)=%td.",
           L, minL);
 
-    CHECKMEM(plan = (LTFAT_NAME(dgt_long_plan)*)ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = LTFAT_NEW(LTFAT_NAME(dgt_long_plan)) );
 
     plan->a = a;
     plan->M = M;

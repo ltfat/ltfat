@@ -65,7 +65,7 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, ltfat_int gl,
     CHECK(LTFATERR_CANNOTHAPPEN, ltfat_phaseconvention_is_valid(ptype),
           "Invalid ltfat_phaseconvention enum value." );
 
-    CHECKMEM(p = (LTFAT_NAME(idgtreal_fb_plan)*) ltfat_calloc(1, sizeof * p));
+    CHECKMEM(p = LTFAT_NEW(LTFAT_NAME(idgtreal_fb_plan)) );
 
     p->ptype = ptype;
     p->a = a;

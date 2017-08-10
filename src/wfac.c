@@ -36,7 +36,7 @@ LTFAT_NAME(wfac_init)(ltfat_int L, ltfat_int a, ltfat_int M,
           "L (passed %td) must be positive and divisible by lcm(a,M)=%td.",
           L, minL);
 
-    CHECKMEM(plan = (LTFAT_NAME(wfac_plan)*) ltfat_calloc(1, sizeof * plan));
+    CHECKMEM(plan = LTFAT_NEW(LTFAT_NAME(wfac_plan)) );
 
     plan->b = L / M;
     plan->c = ltfat_gcd(a, M, &h_a, &h_m);
