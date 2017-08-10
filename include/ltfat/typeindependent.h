@@ -10,6 +10,7 @@
 #include "tiutils.h"
 #include "rtdgtreal.h"
 #include "heap.h"
+#include "dgtrealwrapper.h"
 #include "dgtrealmp.h"
 
 /*  --------- factorizations --------------- */

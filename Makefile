@@ -88,10 +88,7 @@ ifeq ($(USECPP),1)
 endif
 endif
 
-# Dependencies
-ifndef NOBLASLAPACK
-	LFLAGS += $(BLASLAPACKLIBS)
-endif
+
 
 FFTBACKEND ?= FFTW
 
@@ -103,9 +100,12 @@ toCompile = $(patsubst %.c,%.o,$(files))
 toCompile_complextransp = $(patsubst %.c,%.o,$(files_complextransp))
 toCompile_notypechange = $(patsubst  %.c,%.o,$(files_notypechange))
 
-ifndef NOBLASLAPACK
+ifdef NOBLASLAPACK
+	CFLAGS += -DNOBLASLAPACK
+else
 	toCompile += $(patsubst %.c,%.o,$(files_blaslapack))
 	toCompile_complextransp += $(patsubst %.c,%.o,$(files_blaslapack_complextransp))
+	LFLAGS += $(BLASLAPACKLIBS)
 endif
 
 ifeq ($(FFTBACKEND),FFTW)

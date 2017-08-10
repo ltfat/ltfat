@@ -11,7 +11,7 @@ SET(src_files
     dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c dgtreal_long.c dwilt.c
     idwilt.c wmdct.c iwmdct.c filterbank.c ifilterbank.c heapint.c wfacreal.c
     idgtreal_long.c idgtreal_fb.c iwfacreal.c pfilt.c reassign_ti.c windows.c
-    dgt_shearola.c utils.c rtdgtreal.c )
+    dgt_shearola.c utils.c rtdgtreal.c dgtrealwrapper.c )
 
 SET(src_files_complextransp
     ci_utils.c ci_windows.c spread.c wavelets.c goertzel.c
@@ -29,7 +29,7 @@ SET(src_files_fftw_complextransp
 
 SET(src_files_notypechange
     memalloc.c integer_manip.c reassign_typeconstant.c wavelets_typeconstant.c
-    error.c version.c argchecks.c)
+    error.c version.c argchecks.c dgtrealwrapper_typeconstant.c)
 
 
 if (NOT NOBLASLAPACK)
