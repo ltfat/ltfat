@@ -338,3 +338,4 @@ ltfat_rangelimit(ltfat_int a, ltfat_int amin, ltfat_int amax)
     c = c > amax ? amax : c;
     return c;
 }
+

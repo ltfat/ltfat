@@ -1,4 +1,4 @@
-/** \defgroup dgtrealwrapper Discrete Gabor Transform analysis-synthesis
+/** \defgroup dgtrealwrapper Discrete Gabor Transform analysis-synthesis;
 */
 
 #ifndef _ltfat_dgtrealwrapper_h
@@ -103,16 +103,16 @@ typedef struct LTFAT_NAME(dgtreal_plan) LTFAT_NAME(dgtreal_plan);
 LTFAT_API int
 LTFAT_NAME(dgtreal_init)(const LTFAT_REAL g[], ltfat_int gl,
                          ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
-                         LTFAT_COMPLEX c[], ltfat_dgtreal_params* params,
-                         LTFAT_NAME(dgtreal_plan)** p);
+                         LTFAT_REAL f[], LTFAT_COMPLEX c[],
+                         ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** p);
 
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
                              const LTFAT_REAL gs[], ltfat_int gsl,
                              ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
-                             LTFAT_COMPLEX c[], ltfat_dgtreal_params* params,
-                             LTFAT_NAME(dgtreal_plan)** p);
+                             LTFAT_REAL f[], LTFAT_COMPLEX c[],
+                             ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** p);
 
 /** Perform DGTREAL synthesis followed by analysis
  *

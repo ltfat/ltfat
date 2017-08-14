@@ -393,6 +393,12 @@ error:
 }
 
 LTFAT_API int
+LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_int Lout)
+{
+
+}
+
+LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
                       ltfat_normalize_t flag, LTFAT_TYPE* out)
 {

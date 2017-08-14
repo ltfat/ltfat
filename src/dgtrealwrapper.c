@@ -163,7 +163,7 @@ LTFAT_API int
 LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
                              const LTFAT_REAL gs[], ltfat_int gsl,
                              ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
-                             LTFAT_REAL f[], LTFAT_COMPLEX c[], 
+                             LTFAT_REAL f[], LTFAT_COMPLEX c[],
                              ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** pout)
 {
     int status = LTFATERR_SUCCESS;

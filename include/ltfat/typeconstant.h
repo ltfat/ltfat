@@ -81,7 +81,6 @@ ltfat_positiverem(ltfat_int a, ltfat_int b);
 LTFAT_API ltfat_int
 ltfat_rangelimit(ltfat_int a, ltfat_int amin, ltfat_int amax);
 
-
 // Custom headers are down here
 #include "reassign_typeconstant.h"
 

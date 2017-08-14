@@ -81,3 +81,98 @@ error:
     if (p) LTFAT_NAME(dgtrealmp_done)(&p);
     return status;
 }
+
+
+int
+LTFAT_NAME(dgtrealmp_computekernel)(
+    LTFAT_REAL g[],
+    ltfat_int a[],
+    ltfat_int M[],
+    ltfat_int L,
+    LTFAT_NAME(kerns)** k)
+{
+    double arat
+    ltfat_int modNo, amin, Mmax, lefttail0, righttail0, lefttail1, righttail1;
+    LTFAT_REAL* g0tmp, * g1tmp;
+    int status = LTFATERR_FAILED;
+
+    amin = a[0] > a[1] ? a[0] : a[1];
+    Mmax = M[0] > M[1] ? M[0] : M[1];
+
+    LTFAT_NAME(dgtrealmp_essentialsupport)(g[0], gl[0], 1e-6, &lefttail0,
+                                           &righttail0);
+    LTFAT_NAME(dgtrealmp_essentialsupport)(g[1], gl[1], 1e-6, &lefttail1,
+                                           &righttail1);
+
+    ltfat_int Lshort =
+        (lefttail0 > righttail0 ? 2 * lefttail0 : 2 * righttail0) +
+        (lefttail1 > righttail1 ? 2 * lefttail1 : 2 * righttail1);
+
+    Lshort = ltfat_dgtlength(Lshort > L ? L : Lshort, amin, Mmax);
+    Nshort = Lshort / amin;
+
+    CHECKMEM(g0tmp = LTFAT_NAME_REAL(malloc)(Lshort));
+    CHECKMEM(g1tmp = LTFAT_NAME_REAL(malloc)(Lshort));
+    CHECKMEM(kernlarge = LTFAT_NAME_COMPLEX(malloc)(Mmax * Nshort));
+
+    LTFAT_NAME(middlepad)(g[0], gl[0], Lshort, g0tmp);
+    LTFAT_NAME(middlepad)(g[1], gl[1], Lshort, g1tmp);
+
+    LTFAT_NAME_REAL(dgt_long)(g0tmp, g1tmp, Lshort, 1, amin, Mmax, LTFAT_FREQINV,
+                              kernlarge);
+
+    if (a[0] > a[1])
+    {
+        modNo = ltfat_lcm(amin, Mmax) / a[0];
+        arat = a[0] / a[1];
+    }
+    else
+    {
+        modNo = ltfat_lcm(amin, Mmax) / amin;
+        arat = 1;
+    }
+
+
+
+
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
+int
+LTFAT_NAME(dgtrealmp_essentialsupport)(const LTFAT_REAL g[], ltfat_int gl,
+                                       LTFAT_REAL reltol,
+                                       ltfat_int* lefttail, ltfat_int* righttail)
+{
+    ltfat_int gl2 = gl / 2 + 1;
+    LTFAT_REAL gmax, gthr;
+    ltfat_int gmaxPos, lastPos;
+
+    LTFAT_NAME_REAL(findmaxinarray)(g, gl, &gmax, &gmaxPos);
+    gthr = gmax * reltol;
+
+    *righttail = 0;
+    *lefttail  = 0;
+
+    for (ltfat_int l = 0; l < gl2; l++)
+        if (g[l] > gthr)
+            *righttail = l;
+
+    for (ltfat_int l = gl - 1; l > gl2; l--)
+        if (g[l] > gthr)
+            *lefttail = gl - l;
+
+    return 0
+}
+
+
+int
+LTFAT_NAME(dgtrealmp_findsmallkernelsize)(const LTFAT_REAL kernlarge[], ltfat_int M, ltfat_int N,
+                                          LTFAT_REAL reltol,
+                                          ksize* size, kanchor* anchor)
+{
+}
+
+
