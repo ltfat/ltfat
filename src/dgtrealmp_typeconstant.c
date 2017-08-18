@@ -33,7 +33,7 @@ ltfat_dgtrealmp_params_defaults(ltfat_dgtrealmp_params* params)
     CHECKNULL(params);
     params->hint = ltfat_dgtrealmp_allmods;
     params->alg = ltfat_dgtrealmp_alg_mp;
-    params->errtol = -40.0;
+    params->errtoldb = -40.0;
     params->kernrelthr = 1e-4;
     params->verbose = 1;
     params->maxatoms = 0;

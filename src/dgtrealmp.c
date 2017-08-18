@@ -3,6 +3,7 @@
 #include "ltfat/macros.h"
 #include "dgtrealmp_private.h"
 
+
 LTFAT_API LTFAT_NAME(dgtreal_plan)**
 LTFAT_NAME(dgtrealmp_getdgtrealplan)(LTFAT_NAME(dgtrealmp_plan)* p)
 {
@@ -72,8 +73,9 @@ LTFAT_NAME(dgtrealmp_init)(
 
     p->params->initwasrun = 1;
 
-    DEBUG("maxit=%zu, maxatoms=%zu, iterstep=%zu, errtol=%f",
-          p->params->maxit, p->params->maxatoms, p->params->iterstep, p->params->errtol);
+    DEBUG("maxit=%zu, maxatoms=%zu, iterstep=%zu, errtoldb=%f",
+          p->params->maxit, p->params->maxatoms, p->params->iterstep,
+          p->params->errtoldb);
 
     CHECKMEM( p->dgtplans  = LTFAT_NEWARRAY( LTFAT_NAME(dgtreal_plan)*, P) );
     CHECKMEM( p->gramkerns = LTFAT_NEWARRAY( LTFAT_NAME(kerns)*, P * P) );
@@ -134,10 +136,15 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_plan)* p, const LTFAT_REAL* f)
     p->iterstate->curratoms = 0;
     p->iterstate->err = 0.0;
 
+    /* DEBUG("L=%td, M=%td, M2=%td, N=%td,P=%td", p->L, p->M[0], p->M2[0], p->N[0], */
+    /*       p->P); */
+
     for (ltfat_int l = 0; l < p->L; l++)
         p->iterstate->err += f[l] * f[l];
 
     p->iterstate->fnorm2 = p->iterstate->err;
+    p->params->errtoladj = pow(10.0,
+                               p->params->errtoldb / 10.0) * p->iterstate->fnorm2;
 
     for (ltfat_int k = 0; k < p->P; k++)
     {
@@ -151,16 +158,14 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_plan)* p, const LTFAT_REAL* f)
         LTFAT_NAME_COMPLEX(dgtreal2dgt)(cEl, p->M[k], p->N[k], cEl);
 
         for (size_t l = 0; l < (size_t) ( p->M[k] * p->N[k]); l++ )
-        {
             sEl[l] = ltfat_abs(cEl[l]);
-        }
 
         LTFAT_NAME_REAL(findmaxincols)(sEl, p->M[k], p->M2[k], p->N[k],
                                        p->iterstate->maxcols[k],
                                        p->iterstate->maxcolspos[k]);
 
         memset( p->iterstate->suppindCount[k], 0 ,
-                p->M[k] * p->N[k] * sizeof * p->iterstate->suppindCount[k] );
+                p->M2[k] * p->N[k] * sizeof * p->iterstate->suppindCount[k] );
     }
 
 error:
@@ -198,7 +203,7 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                                      ltfat_int itno, LTFAT_COMPLEX** cout)
 {
-    int status = LTFATERR_SUCCESS;
+    int status = LTFAT_DGTREALMP_STATUS_WILLCONTINUE;
 
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
 
@@ -255,7 +260,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
 
         if (s->err < 0)
         {
-            status = 3;
+            status = LTFAT_DGTREALMP_STATUS_STALLED;
             break;
         }
 
@@ -351,15 +356,21 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
             LTFAT_DGTREALMP_UPDATEMAX(secondwIdx)
         }
 
+        if (s->err <= p->params->errtoladj)
+        {
+            status = LTFAT_DGTREALMP_STATUS_TOLREACHED;
+            break;
+        }
+
         if (s->curratoms >= p->params->maxatoms)
         {
-            status = 1;
+            status = LTFAT_DGTREALMP_STATUS_MAXATOMS;
             break;
         }
 
         if (s->currit >= p->params->maxit)
         {
-            status = 2;
+            status = LTFAT_DGTREALMP_STATUS_MAXITER;
             break;
         }
     }
@@ -387,12 +398,11 @@ LTFAT_NAME(dgtrealmp_execute)(LTFAT_NAME(dgtrealmp_plan)* p,
                  "dgtrealmp_reset failed" );
 
     for (ltfat_int k = 0; k < p->P; k++)
-        memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof *cout[k]);
+        memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
 
-    DEBUG("err=%.4f", p->iterstate->err);
-
-    while ( ( status2 =
-                  LTFAT_NAME(dgtrealmp_execute_niters)( p, iterstep, cout) ) == 0 )
+    while ( LTFAT_DGTREALMP_STATUS_WILLCONTINUE ==
+                ( status2 =
+                      LTFAT_NAME(dgtrealmp_execute_niters)( p, iterstep, cout)))
     {
         if (p->params->verbose)
         {
@@ -665,12 +675,12 @@ LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
                ktmp->size.height * sizeof * kernlarge);
 
 
-    for (ltfat_int m = 0; m < ktmp->size.height; m++)
-    {
-        printf("\n");
-        for (ltfat_int n = 0; n < ktmp->size.width; n++)
-            printf("%2.2e ", ltfat_abs(ktmp->kval[0][m + ktmp->size.height * n]) );
-    }
+    /* for (ltfat_int m = 0; m < ktmp->size.height; m++) */
+    /* { */
+    /*     printf("\n"); */
+    /*     for (ltfat_int n = 0; n < ktmp->size.width; n++) */
+    /*         printf("%2.2e ", ltfat_abs(ktmp->kval[0][m + ktmp->size.height * n]) ); */
+    /* } */
 
     printf("\n");
 

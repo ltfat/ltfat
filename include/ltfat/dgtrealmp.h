@@ -1,6 +1,16 @@
 #ifndef _LTFAT_DGTREALMP_H
 #define _LTFAT_DGTREALMP_H
 
+enum ltfat_dgtrealmp_status
+{
+LTFAT_DGTREALMP_STATUS_TOLREACHED = 0,
+LTFAT_DGTREALMP_STATUS_MAXATOMS   = 1,
+LTFAT_DGTREALMP_STATUS_MAXITER    = 2,
+LTFAT_DGTREALMP_STATUS_STALLED    = 3,
+LTFAT_DGTREALMP_STATUS_WILLCONTINUE   = 10
+};
+
+
 typedef enum
 {
     ltfat_dgtrealmp_singlemod    = 0,

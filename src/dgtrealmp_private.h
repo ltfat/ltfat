@@ -8,7 +8,8 @@ struct ltfat_dgtrealmp_params
 {
     ltfat_dgtrealmp_hint hint;
     ltfat_dgtrealmp_alg alg;
-    LTFAT_REAL errtol;
+    LTFAT_REAL errtoldb;
+    LTFAT_REAL errtoladj;
     LTFAT_REAL kernrelthr;
     size_t maxit;
     size_t maxatoms;
