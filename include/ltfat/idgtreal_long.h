@@ -88,11 +88,11 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX c[], const LTFAT_REAL g[],
  * LTFATERR_NOMEM           | Indicates that heap allocation failed
  */
 LTFAT_API int
-LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX c[], const LTFAT_REAL g[],
-                               ltfat_int L, ltfat_int W,
-                               ltfat_int a, ltfat_int M, LTFAT_REAL f[],
-                               const ltfat_phaseconvention ptype, unsigned flags,
-                               LTFAT_NAME(idgtreal_long_plan)** plan);
+LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL g[],
+                                ltfat_int L, ltfat_int W,
+                                ltfat_int a, ltfat_int M, LTFAT_COMPLEX c[], LTFAT_REAL f[],
+                                const ltfat_phaseconvention ptype, unsigned flags,
+                                LTFAT_NAME(idgtreal_long_plan)** plan);
 
 /** Execute plan for Inverse Discrete Gabor Transform for real signals using the factorization algorithm
  *

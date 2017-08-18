@@ -19,6 +19,7 @@ struct LTFAT_NAME(idgtreal_long_plan)
     LTFAT_COMPLEX* cf;
     LTFAT_COMPLEX* cbuf;
     LTFAT_REAL* cwork;
+    int freecwork;
     LTFAT_REAL* sbuf;
     LTFAT_NAME(ifftreal_plan)* p_veryend;
     LTFAT_NAME(ifftreal_plan)* p_before;
@@ -37,8 +38,9 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     CHECKNULL(cin); CHECKNULL(f);
 
     CHECKSTATUS(
-        LTFAT_NAME(idgtreal_long_init)((LTFAT_COMPLEX*)cin, g, L, W, a, M, f,
-                                       ptype, FFTW_ESTIMATE, &plan),
+        LTFAT_NAME(idgtreal_long_init)( g, L, W, a, M,
+                                        (LTFAT_COMPLEX*)cin, f,
+                                        ptype, FFTW_ESTIMATE, &plan),
         "Init failed");
 
     LTFAT_NAME(idgtreal_long_execute)(plan);
@@ -50,11 +52,12 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
-                               ltfat_int L, ltfat_int W,
-                               ltfat_int a, ltfat_int M, LTFAT_REAL* f,
-                               const ltfat_phaseconvention ptype, unsigned flags,
-                               LTFAT_NAME(idgtreal_long_plan)** pout)
+LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL* g,
+                                ltfat_int L, ltfat_int W,
+                                ltfat_int a, ltfat_int M,
+                                LTFAT_COMPLEX* cin, LTFAT_REAL* f,
+                                const ltfat_phaseconvention ptype, unsigned flags,
+                                LTFAT_NAME(idgtreal_long_plan)** pout)
 {
     ltfat_int minL, h_m, b, N, p, q, d, d2, size;
     // Downcast to int
@@ -96,11 +99,30 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     CHECKMEM( plan->gf    = LTFAT_NAME_COMPLEX(malloc)(size));
     CHECKMEM( plan->ff    = LTFAT_NAME_COMPLEX(malloc)(d2 * p * q * W));
     CHECKMEM( plan->cf    = LTFAT_NAME_COMPLEX(malloc)(d2 * q * q * W));
-    CHECKMEM( plan->cwork = LTFAT_NAME_REAL(malloc)(M * N * W));
     CHECKMEM( plan->cbuf  = LTFAT_NAME_COMPLEX(malloc)(d2));
     CHECKMEM( plan->sbuf  = LTFAT_NAME_REAL(malloc)(d));
     plan->cin = cin;
     plan->f = f;
+
+    if ( flags & FFTW_DESTROY_INPUT )
+    {
+        CHECKSTATUS(
+            LTFAT_NAME(ifftreal_init)(M, N * W, plan->cin, (LTFAT_REAL*) plan->cin,
+                                      flags, &plan->p_veryend),
+            "FFTW plan failed.");
+
+        plan->cwork = (LTFAT_REAL*) plan->cin;
+    }
+    else
+    {
+        CHECKMEM( plan->cwork = LTFAT_NAME_REAL(malloc)(M * N * W));
+        plan->freecwork = 1;
+
+        CHECKSTATUS(
+            LTFAT_NAME(ifftreal_init)(M, N * W, plan->cin, plan->cwork,
+                                      flags | FFTW_PRESERVE_INPUT, &plan->p_veryend),
+            "FFTW plan failed.");
+    }
 
     LTFAT_NAME(wfacreal)(g, L, 1, a, M, plan->gf);
 
@@ -115,10 +137,6 @@ LTFAT_NAME(idgtreal_long_init)(LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
         LTFAT_NAME(fftreal_init)(d, 1, plan->sbuf, plan->cbuf, flags, &plan->p_after),
         "FFTW plan failed.");
 
-    CHECKSTATUS(
-        LTFAT_NAME(ifftreal_init)(M, N * W, plan->cin, plan->cwork,
-                                  flags | FFTW_PRESERVE_INPUT, &plan->p_veryend),
-        "FFTW plan failed.");
 
     *pout = plan;
     return status;
@@ -138,8 +156,8 @@ LTFAT_NAME(idgtreal_long_done)(LTFAT_NAME(idgtreal_long_plan)** plan)
     if (p->p_before)  LTFAT_NAME(ifftreal_done)(&p->p_before);
     if (p->p_after)   LTFAT_NAME(fftreal_done)(&p->p_after);
     if (p->p_veryend) LTFAT_NAME(ifftreal_done)(&p->p_veryend);
-    LTFAT_SAFEFREEALL(p->gf, p->ff, p->cf, p->cwork, p->cbuf, p->sbuf);
-
+    LTFAT_SAFEFREEALL(p->gf, p->ff, p->cf, p->cbuf, p->sbuf);
+    if ( p->freecwork) ltfat_free(p->cwork);
     ltfat_free(p);
     p = NULL;
 error:
@@ -155,7 +173,7 @@ LTFAT_NAME(idgtreal_long_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
     LTFAT_NAME(ifftreal_execute)(p->p_veryend);
 
     if (p->ptype)
-        LTFAT_NAME_REAL(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a, p->M,
+        LTFAT_NAME_REAL(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a, p->M, p->M,
                                               p->cwork);
 
     LTFAT_NAME(idgtreal_walnut_execute)(p);
@@ -175,7 +193,7 @@ LTFAT_NAME(idgtreal_long_execute_newarray)(LTFAT_NAME(idgtreal_long_plan)* p,
     LTFAT_NAME(ifftreal_execute_newarray)(p->p_veryend, c, p->cwork);
 
     if (p->ptype)
-        LTFAT_NAME_REAL(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a, p->M,
+        LTFAT_NAME_REAL(dgtphaseunlockhelper)(p->cwork, p->L, p->W, p->a, p->M, p->M,
                                               p->cwork);
 
     // Make a shallow copy and rewrite f

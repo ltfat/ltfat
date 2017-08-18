@@ -62,29 +62,63 @@ LTFAT_NAME(dgtreal_fb_done_wrapper)(void** plan)
 LTFAT_API int
 LTFAT_NAME(dgtreal_execute_proj)(
     LTFAT_NAME(dgtreal_plan)* p, const LTFAT_COMPLEX cin[],
-    LTFAT_COMPLEX cout[])
+    LTFAT_REAL fbuffer[], LTFAT_COMPLEX cout[])
 {
     int status = LTFATERR_SUCCESS;
-    CHECKSTATUS( p->backtra(p->backtra_userdata, cin, p->L, p->W, p->f),
+    LTFAT_REAL* ftmp;
+
+    CHECKNULL(p);
+    ftmp = p->f;
+    CHECK(LTFATERR_NULLPOINTER, !(fbuffer == NULL && p->f == NULL),
+          "fbuffer cannot be NULL when the plan was created without f");
+
+    if (fbuffer != NULL)
+        ftmp = fbuffer;
+
+    CHECKSTATUS( p->backtra(p->backtra_userdata, cin, p->L, p->W, ftmp),
                  "Back transform failed");
-    CHECKSTATUS( p->fwdtra(p->fwdtra_userdata, p->f, p->L, p->W,  cout),
+    CHECKSTATUS( p->fwdtra(p->fwdtra_userdata, ftmp, p->L, p->W,  cout),
                  "Forward transform failed");
 error:
     return status;
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtreal_execute_syn)(
+LTFAT_NAME(dgtreal_execute_syn_newarray)(
     LTFAT_NAME(dgtreal_plan)* p, const LTFAT_COMPLEX c[], LTFAT_REAL f[])
 {
+    int status = LTFATERR_FAILED; CHECKNULL(p);
     return p->backtra(p->backtra_userdata, c, p->L, p->W, f);
+error:
+    return status;
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtreal_execute_ana)(
+LTFAT_NAME(dgtreal_execute_syn)( LTFAT_NAME(dgtreal_plan)* p)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return p->backtra(p->backtra_userdata, p->c, p->L, p->W, p->f);
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtreal_execute_ana_newarray)(
     LTFAT_NAME(dgtreal_plan)* p, const LTFAT_REAL f[], LTFAT_COMPLEX c[])
 {
+    int status = LTFATERR_FAILED; CHECKNULL(p);
     return p->fwdtra(p->fwdtra_userdata, f, p->L, p->W,  c);
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtreal_execute_ana)(LTFAT_NAME(dgtreal_plan)* p)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return p->fwdtra(p->fwdtra_userdata, p->f, p->L, p->W, p->c);
+error:
+    return status;
 }
 
 LTFAT_API int
@@ -103,7 +137,7 @@ LTFAT_NAME(dgtreal_done)(LTFAT_NAME(dgtreal_plan)** p)
         CHECKSTATUS( pp->backdonefunc(&pp->backtra_userdata),
                      "Back trnasform done function failed");
 
-    ltfat_safefree(pp->f);
+    //ltfat_safefree(pp->f);
     ltfat_free(pp);
     pp = NULL;
 error:
@@ -179,6 +213,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
     else
         ltfat_dgtreal_params_defaults(&paramsLoc);
 
+    CHECKNULL( pout );
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
           "L must divisible by lcm(a,M)=%d.", minL);
 
@@ -195,9 +230,9 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
         p->backdonefunc = &LTFAT_NAME(idgtreal_long_done_wrapper);
 
         CHECKSTATUS(
-            LTFAT_NAME(idgtreal_long_init)(c, g2, L, W, a, M, p->f, paramsLoc.ptype,
-                                           paramsLoc.fftw_flags,
-                                           (LTFAT_NAME(idgtreal_long_plan)**)&p->backtra_userdata),
+            LTFAT_NAME(idgtreal_long_init)( g2, L, W, a, M, c, p->f, paramsLoc.ptype,
+                                            paramsLoc.fftw_flags,
+                                            (LTFAT_NAME(idgtreal_long_plan)**)&p->backtra_userdata),
             "idgtreal long init failed"
         );
 
@@ -208,9 +243,9 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
         LTFAT_NAME(fir2long)(ga, gal, L, g2);
 
         CHECKSTATUS(
-            LTFAT_NAME(dgtreal_long_init)(p->f, g2, L, W, a, M, c, paramsLoc.ptype,
-                                          paramsLoc.fftw_flags,
-                                          (LTFAT_NAME(dgtreal_long_plan)**)&p->fwdtra_userdata),
+            LTFAT_NAME(dgtreal_long_init)( g2, L, W, a, M, p->f, c, paramsLoc.ptype,
+                                           paramsLoc.fftw_flags,
+                                           (LTFAT_NAME(dgtreal_long_plan)**)&p->fwdtra_userdata),
             "dgtreal long init failed");
 
         ltfat_safefree(g2);
@@ -258,7 +293,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
             CHECKMEM( g2 = LTFAT_NAME_REAL(malloc)(L) );
             LTFAT_NAME(fir2long)(gs, gsl, L, g2);
 
-            LTFAT_NAME(idgtreal_long_init)(c, g2, L, W, a, M, p->f, paramsLoc.ptype,
+            LTFAT_NAME(idgtreal_long_init)(g2, L, W, a, M, c, p->f, paramsLoc.ptype,
                                            paramsLoc.fftw_flags,
                                            (LTFAT_NAME(idgtreal_long_plan)**)&p->backtra_userdata);
 
@@ -284,9 +319,9 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
             LTFAT_NAME(fir2long)(ga, gal, L, g2);
 
 
-            LTFAT_NAME(dgtreal_long_init)(p->f, g2, L, W, a, M, c, paramsLoc.ptype,
-                                          paramsLoc.fftw_flags,
-                                          (LTFAT_NAME(dgtreal_long_plan)**)&p->fwdtra_userdata);
+            LTFAT_NAME(dgtreal_long_init)( g2, L, W, a, M, p->f, c, paramsLoc.ptype,
+                                           paramsLoc.fftw_flags,
+                                           (LTFAT_NAME(dgtreal_long_plan)**)&p->fwdtra_userdata);
 
             ltfat_safefree(g2);
         }

@@ -27,7 +27,7 @@ ltfat_is_compatible_version()
 LTFAT_API int
 ltfat_int_size()
 {
-    return sizeof(ltfat_int)*8;
+    return sizeof(ltfat_int);
 }
 
 LTFAT_API int

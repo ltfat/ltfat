@@ -17,7 +17,7 @@
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive");\
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive");\
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive");\
-    CHECK(LTFATERR_NOTAFRAME, M > a && gl >= a, "Not a frame. Check if M > a && gl >= a");\
+    CHECK(LTFATERR_NOTAFRAME, M > a && gl >= a, "Not a frame. Check if M > a && gl >= a (passed M=%td, a=%td)",M,a);\
     CHECK(LTFATERR_NOTPAINLESS, M >= gl, "Not painless. Check if M>=gl");\
 }while(0)
 

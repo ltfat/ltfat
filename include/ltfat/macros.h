@@ -24,8 +24,9 @@
 // Vectorized free
 #define LTFAT_SAFEFREEALL(...) LTFAT_APPLYFN(void*,ltfat_safefree,__VA_ARGS__)
 
+// s is evaluated twice, but it is supposed to be a type anyway
 #define LTFAT_NEW(s)        ( (s*) ltfat_calloc( 1, sizeof(s)) )
-#define LTFAT_NEWARRAY(s,N) ( (s*) ltfat_calloc( N, sizeof(s)) )
+#define LTFAT_NEWARRAY(s,N) ( (s*) ltfat_calloc( (N), sizeof(s)) )
 
 #ifdef NDEBUG
 #define DEBUG( M, ... )

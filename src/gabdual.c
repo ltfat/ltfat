@@ -18,7 +18,8 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
     CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %td) must be positive.", R);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %td) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %td) must be positive.", M);
-    CHECK(LTFATERR_NOTAFRAME, M >= a, "Not a frame. Check if M>=a.");
+    CHECK(LTFATERR_NOTAFRAME, M >= a,
+          "Not a frame. Check M>=a (passed M=%td, a=%td)", M, a);
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN, !(L % minL),

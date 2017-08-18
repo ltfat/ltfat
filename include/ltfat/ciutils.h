@@ -32,6 +32,14 @@ typedef enum
     // LTFAT_NORMALIZE_WAV,
 } ltfat_normalize_t;
 
+
+typedef enum
+{
+    LTFAT_WHOLEPOINT = 0,
+    LTFAT_HALFPOINT
+
+} ltfat_symmetry_t;
+
 #endif
 
 /** Shift array circurarly
@@ -66,6 +74,14 @@ typedef enum
 LTFAT_API int
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], ltfat_int L,
                       ltfat_int shift, LTFAT_TYPE out[]);
+
+LTFAT_API int
+LTFAT_NAME(circshiftcols)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
+                          ltfat_int shift, LTFAT_TYPE out[]);
+
+LTFAT_API int
+LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
+                        ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[]);
 
 /** fftshift an array
  *
@@ -128,6 +144,52 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
  */
 LTFAT_API int
 LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
+
+/** Change signal length
+ *
+ *  Works exactly like
+ *  <a href="http://ltfat.github.io/doc/fourier/middlepad.html">middlepad</a>
+ *  form LTFAT i.e. extends \a in by inserting zeros in the middle or
+ *  removes the middlepart such that the output is \a Lout.
+ *
+ *
+ * \param[in]     in  Input array
+ * \param[in]    Lin  Length of input array
+ * \param[in]   Lout  Length of output array
+ * \param[out]   out  Output array
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltfat_middlepad_d(const double in[], ltfat_int Lin, ltfat_symmetry_t sym, ltfat_int Lout, double out[]);
+ *
+ *  ltfat_middlepad_s(const float in[], ltfat_int Lin, ltfat_symmetry_t sym, ltfat_int Lout, float out[]);
+ *
+ *  ltfat_middlepad_dc(const ltfat_complex_d in[], ltfat_int Lin, ltfat_symmetry_t sym, ltfat_int Lout, ltfat_complex_d out[]);
+ *
+ *  ltfat_middlepad_sc(const ltfat_complex_s in[], ltfat_int Lin, ltfat_symmetry_t sym, ltfat_int Lout, ltfat_complex_s out[]);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ * LTFATERR_BADREQSIZE   | Output array is shorter than the input array: \a Llong < \a Lfir
+ */
+
+LTFAT_API int
+LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_symmetry_t sym,
+                      ltfat_int Lout, LTFAT_TYPE* out);
+
+// LTFAT_API int
+// LTFAT_NAME(middlepadcols)(const LTFAT_TYPE* in, ltfat_int Hin, ltfat_int Win, ltfat_symmetry_t sym,
+//                           ltfat_int Wout, LTFAT_TYPE* out);
+//
+//
+// LTFAT_API int
+// LTFAT_NAME(middlepad2d)(const LTFAT_TYPE* in, ltfat_int Hin, ltfat_int Win, ltfat_symmetry_t sym,
+//                         ltfat_int Hout, ltfat_int Wout, LTFAT_TYPE* out);
 
 
 /** Extend FIR window to long window
@@ -267,12 +329,14 @@ LTFAT_NAME(ensurecomplex_array)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_COMPLEX
 LTFAT_API void
 LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE *cin, ltfat_int L,
                                ltfat_int W, ltfat_int a,
-                               ltfat_int M, LTFAT_TYPE *cout);
+                               ltfat_int M, ltfat_int M2,
+                               LTFAT_TYPE *cout);
 
 LTFAT_API void
 LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE *cin, ltfat_int L,
                                  ltfat_int W, ltfat_int a,
-                                 ltfat_int M, LTFAT_TYPE *cout);
+                                 ltfat_int M, ltfat_int M2,
+                                 LTFAT_TYPE *cout);
 
 LTFAT_API int
 LTFAT_NAME(reverse_array)(const LTFAT_TYPE *in, ltfat_int L, LTFAT_TYPE *out);
@@ -297,6 +361,5 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE *in, const int *mask,
                                   ltfat_int L, LTFAT_TYPE* max, ltfat_int* idx);
 
 LTFAT_API void
-LTFAT_NAME(findmaxincols)(const LTFAT_TYPE* in, ltfat_int M, ltfat_int N,
-                          LTFAT_TYPE* max, ltfat_int* idx);
-
+LTFAT_NAME(findmaxincols)(const LTFAT_TYPE* in, ltfat_int M, ltfat_int M2,
+                          ltfat_int N, LTFAT_TYPE* max, ltfat_int* idx);

@@ -18,10 +18,12 @@ error:
 LTFAT_API ltfat_dgtreal_params*
 ltfat_dgtreal_params_allocdef()
 {
-    ltfat_dgtreal_params* params = LTFAT_NEW(ltfat_dgtreal_params);
+    ltfat_dgtreal_params* params;
+    int status = LTFATERR_SUCCESS;
+    CHECKMEM( params = LTFAT_NEW(ltfat_dgtreal_params));
 
     ltfat_dgtreal_params_defaults(params);
-
+error:
     return params;
 }
 

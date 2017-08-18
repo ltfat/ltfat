@@ -196,6 +196,16 @@ LTFAT_NAME(real2complex_array)(const LTFAT_REAL in[], ltfat_int L, LTFAT_COMPLEX
 LTFAT_API int
 LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX in[], ltfat_int L, LTFAT_REAL out[]);
 
+
+LTFAT_API int
+LTFAT_NAME_COMPLEX(dgtreal2dgt)(const LTFAT_COMPLEX* cdgtreal, ltfat_int M,
+                                ltfat_int N, LTFAT_COMPLEX* cdgt);
+
+LTFAT_API int
+LTFAT_NAME_COMPLEX(dgt2dgtreal)(const LTFAT_COMPLEX* cdgt, ltfat_int M,
+                                ltfat_int N, LTFAT_COMPLEX* cdgtreal);
+
+
 /** Change dgt phase convention from freq. invariant to time invariant
  *
  * N = L/a

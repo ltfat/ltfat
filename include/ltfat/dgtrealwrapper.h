@@ -139,7 +139,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
  */
 LTFAT_API int
 LTFAT_NAME(dgtreal_execute_proj)(LTFAT_NAME(dgtreal_plan)* p,
-                                 const LTFAT_COMPLEX cin[], LTFAT_COMPLEX c[]);
+                                 const LTFAT_COMPLEX cin[], LTFAT_REAL fbuffer[], LTFAT_COMPLEX c[]);
 
 /** Perform DGTREAL synthesis
  *
@@ -163,8 +163,11 @@ LTFAT_NAME(dgtreal_execute_proj)(LTFAT_NAME(dgtreal_plan)* p,
  * \returns
  */
 LTFAT_API int
-LTFAT_NAME(dgtreal_execute_syn)(LTFAT_NAME(dgtreal_plan)* p,
+LTFAT_NAME(dgtreal_execute_syn_newarray)(LTFAT_NAME(dgtreal_plan)* p,
                                 const LTFAT_COMPLEX c[], LTFAT_REAL f[]);
+
+LTFAT_API int
+LTFAT_NAME(dgtreal_execute_syn)(LTFAT_NAME(dgtreal_plan)* p);
 
 /** Perform DGTREAL analysis
  *
@@ -185,8 +188,11 @@ LTFAT_NAME(dgtreal_execute_syn)(LTFAT_NAME(dgtreal_plan)* p,
  * \returns
  */
 LTFAT_API int
-LTFAT_NAME(dgtreal_execute_ana)(LTFAT_NAME(dgtreal_plan)* p,
+LTFAT_NAME(dgtreal_execute_ana_newarray)(LTFAT_NAME(dgtreal_plan)* p,
                                 const LTFAT_REAL f[], LTFAT_COMPLEX c[]);
+
+LTFAT_API int
+LTFAT_NAME(dgtreal_execute_ana)(LTFAT_NAME(dgtreal_plan)* p);
 
 /** Destroy transform plan
  *
@@ -204,7 +210,6 @@ LTFAT_API int
 LTFAT_NAME(dgtreal_done)(LTFAT_NAME(dgtreal_plan)** p);
 
 /** @} */
-
 
 
 

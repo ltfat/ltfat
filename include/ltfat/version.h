@@ -31,7 +31,7 @@ LTFAT_API int
 ltfat_int_size();
 
 LTFAT_API int
-ltfat_int_is_compatible(int sizeofyourint);
+ltfat_int_is_compatible(int sizeofyour_ltfat_int);
 
 
 #ifdef __cplusplus

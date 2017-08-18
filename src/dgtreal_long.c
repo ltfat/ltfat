@@ -13,7 +13,7 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     CHECKNULL(f); CHECKNULL(cout);
 
     CHECKSTATUS(
-        LTFAT_NAME(dgtreal_long_init)(f, g, L, W, a, M, cout, ptype, FFTW_ESTIMATE,
+        LTFAT_NAME(dgtreal_long_init)(g, L, W, a, M, f, cout, ptype, FFTW_ESTIMATE,
                                       &plan),
         "Init failed");
 
@@ -26,11 +26,12 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
-                              ltfat_int L, ltfat_int W,
-                              ltfat_int a, ltfat_int M,
-                              LTFAT_COMPLEX* cout, const ltfat_phaseconvention ptype,
-                              unsigned flags, LTFAT_NAME(dgtreal_long_plan)** pout)
+LTFAT_NAME(dgtreal_long_init)( const LTFAT_REAL* g,
+                               ltfat_int L, ltfat_int W,
+                               ltfat_int a, ltfat_int M,
+                               const LTFAT_REAL* f, LTFAT_COMPLEX* cout,
+                               const ltfat_phaseconvention ptype,
+                               unsigned flags, LTFAT_NAME(dgtreal_long_plan)** pout)
 {
     LTFAT_NAME(dgtreal_long_plan)* plan = NULL;
     ltfat_int minL, N, h_m, b, p, q, d, d2, wfs;
@@ -78,7 +79,7 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     CHECKMEM( plan->ff = LTFAT_NAME_REAL(malloc)(2 * d2 * p * q * W));
     CHECKMEM( plan->cf = LTFAT_NAME_REAL(malloc)(2 * d2 * q * q * W));
     CHECKMEM( plan->gf = LTFAT_NAME_COMPLEX(malloc)(wfs));
-    CHECKMEM( plan->cwork = LTFAT_NAME_REAL(malloc)(M * N * W));
+    //CHECKMEM( plan->cwork = (LTFAT_REAL*) LTFAT_NAME_COMPLEX(malloc)(M2 * N * W));
 
     /* Get factorization of window */
     LTFAT_NAME(wfacreal)(g, L, 1, a, M, plan->gf);
@@ -86,7 +87,8 @@ LTFAT_NAME(dgtreal_long_init)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     /* Create plans. In-place. */
 
     CHECKSTATUS(
-        LTFAT_NAME(fftreal_init)(M, N * W, plan->cwork, cout, flags, &plan->p_veryend),
+        LTFAT_NAME(fftreal_init)(M, N * W,
+                                 (LTFAT_REAL*) cout, cout, flags, &plan->p_veryend),
         "FFTW plan creation failed." );
 
     CHECKSTATUS(
@@ -114,7 +116,7 @@ LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan)
     if (pp->p_veryend) LTFAT_NAME(fftreal_done)(&pp->p_veryend);
     if (pp->p_before)  LTFAT_NAME(fftreal_done)(&pp->p_before);
     if (pp->p_after)   LTFAT_NAME(ifftreal_done)(&pp->p_after);
-    LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf, pp->cwork,
+    LTFAT_SAFEFREEALL(pp->sbuf, pp->cbuf,// pp->cwork,
                       pp->gf, pp->ff, pp->cf);
     ltfat_free(pp);
     pp = NULL;
@@ -126,13 +128,15 @@ LTFAT_API int
 LTFAT_NAME(dgtreal_long_execute)(LTFAT_NAME(dgtreal_long_plan)* plan)
 {
     int status = LTFATERR_SUCCESS;
+    ltfat_int M2;
     CHECKNULL(plan); CHECKNULL(plan->f); CHECKNULL(plan->cout);
+    M2 = plan->M / 2 + 1;
 
     LTFAT_NAME(dgtreal_walnut_plan)(plan);
 
     if (plan->ptype)
-        LTFAT_NAME_REAL(dgtphaselockhelper)(plan->cwork, plan->L, plan->W, plan->a,
-                                            plan->M, plan->cwork);
+        LTFAT_NAME_REAL(dgtphaselockhelper)((LTFAT_REAL*) plan->cout, plan->L, plan->W,
+                                            plan->a, 2 * M2, plan->M, (LTFAT_REAL*) plan->cout);
 
     /* FFT to modulate the coefficients. */
     LTFAT_NAME(fftreal_execute)(plan->p_veryend);
@@ -145,22 +149,26 @@ LTFAT_API int
 LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
         const LTFAT_REAL* f, LTFAT_COMPLEX* c)
 {
-    LTFAT_NAME(dgtreal_long_plan) plan2;
     int status = LTFATERR_SUCCESS;
+    LTFAT_NAME(dgtreal_long_plan) plan2;
+    ltfat_int M2;
+
     CHECKNULL(plan); CHECKNULL(f); CHECKNULL(c);
+    M2 = plan->M / 2 + 1;
 
     // Make a shallow copy of the plan and overwrite f
     plan2 = *plan;
     plan2.f = f;
+    plan2.cout = c;
 
     LTFAT_NAME(dgtreal_walnut_plan)(&plan2);
 
     if (plan->ptype)
-        LTFAT_NAME_REAL(dgtphaselockhelper)(plan->cwork, plan->L, plan->W, plan->a,
-                                            plan->M, plan->cwork);
+        LTFAT_NAME_REAL(dgtphaselockhelper)((LTFAT_REAL*)c, plan->L, plan->W, plan->a,
+                                            2 * M2, plan->M, (LTFAT_REAL*) c);
 
     /* FFTW new array execute function */
-    LTFAT_NAME(fftreal_execute_newarray)(plan->p_veryend, plan->cwork, c);
+    LTFAT_NAME(fftreal_execute_newarray)(plan->p_veryend, (LTFAT_REAL*)c, c);
 
 error:
     return status;
@@ -194,6 +202,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
     ltfat_int p = a / c;
     ltfat_int q = M / c;
     ltfat_int d = N / q;
+    ltfat_int M2 = M / 2 + 1;
 
 
     /* This is a floor operation. */
@@ -207,7 +216,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
     LTFAT_REAL* sbuf = plan->sbuf;
     LTFAT_COMPLEX* cbuf = plan->cbuf;
 
-    LTFAT_REAL* cout = plan->cwork;
+    LTFAT_REAL* cout = (LTFAT_REAL*) plan->cout;
 
 
     LTFAT_REAL* gbase, *fbase, *cbase;
@@ -356,7 +365,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
 
         /*  -------  compute inverse coefficient factorization ------- */
         LTFAT_REAL* cfp = plan->cf;
-        ltfat_int ld5c = M * N;
+        ltfat_int ld5c = 2 * M2 * N;
 
         /* Cover both integer and rational sampling case */
         for (ltfat_int w = 0; w < W; w++)
@@ -380,7 +389,7 @@ LTFAT_NAME(dgtreal_walnut_plan)(LTFAT_NAME(dgtreal_long_plan)* plan)
                     for (ltfat_int s = 0; s < d; s++)
                     {
                         cout[ r + l * c + ltfat_positiverem(u + s * q - l * h_a,
-                                                            N)*M + w * ld5c ] = sbuf[s];
+                                                            N) * 2 * M2 + w * ld5c ] = sbuf[s];
                     }
                 }
             }

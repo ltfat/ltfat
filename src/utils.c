@@ -184,7 +184,8 @@ LTFAT_NAME_COMPLEX(fftrealifftshift)(const LTFAT_COMPLEX* in, ltfat_int L,
 
     if (domod.rem)
         // There is no Nyquist sample, modulation is by -(L-1/L)*pi
-        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, (double)(-domod.quot), out);
+        status = LTFAT_NAME_COMPLEX(fftrealcircshift)(in, L, (double)(-domod.quot),
+                 out);
     else
         status = LTFAT_NAME_COMPLEX(fftrealfftshift)(in, L, out);
 
@@ -239,6 +240,74 @@ LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX* in, ltfat_int L,
     for (ltfat_int ii = 0; ii < L; ii++)
         out[ii] = inTmp[ii][0];
 
+error:
+    return status;
+}
+
+
+LTFAT_API int
+LTFAT_NAME_COMPLEX(dgtreal2dgt)(const LTFAT_COMPLEX* cdgtreal, ltfat_int M,
+                                ltfat_int N, LTFAT_COMPLEX* cdgt)
+{
+    int status = LTFATERR_SUCCESS;
+    int M2 = M / 2 + 1;
+
+    CHECKNULL(cdgtreal); CHECKNULL(cdgt);
+    CHECK(LTFATERR_BADSIZE, M > 0, "M must be positive");
+    CHECK(LTFATERR_BADSIZE, N > 0, "N must be positive");
+
+    if (cdgtreal == (const LTFAT_COMPLEX*) cdgt)
+    {
+        const LTFAT_COMPLEX* cdgtrealTail = cdgtreal + M2 * N - 1;
+        for (ltfat_int n = N - 1; n > 0; n--)
+        {
+            LTFAT_COMPLEX* cdgtCol = cdgt + n * M;
+
+            for (ltfat_int m = M2 - 1; m >= 0; m--)
+                cdgtCol[m] = *cdgtrealTail--;
+        }
+
+    }
+    else
+        for (ltfat_int n = 0; n < N; n++)
+            memcpy(cdgt + n * M, cdgtreal + n * M2, M2 * sizeof * cdgtreal);
+
+    for (ltfat_int n = 0; n < N; n++)
+    {
+        LTFAT_COMPLEX* cdgtCol = cdgt + n * M;
+        for (ltfat_int m = M - 1, m2 = 1; m >= M2; m--, m2++)
+            cdgtCol[m] = conj(cdgtCol[m2]);
+
+    }
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME_COMPLEX(dgt2dgtreal)(const LTFAT_COMPLEX* cdgt, ltfat_int M,
+                                ltfat_int N, LTFAT_COMPLEX* cdgtreal)
+{
+    int status = LTFATERR_SUCCESS;
+    int M2 = M / 2 + 1;
+
+    CHECKNULL(cdgtreal); CHECKNULL(cdgt);
+    CHECK(LTFATERR_BADSIZE, M > 0, "M must be positive");
+    CHECK(LTFATERR_BADSIZE, N > 0, "N must be positive");
+
+    if (cdgtreal == (const LTFAT_COMPLEX*) cdgt)
+    {
+        LTFAT_COMPLEX* cdgtrealFront = cdgtreal + M2;
+        for (ltfat_int n = 1; n < N; n++)
+        {
+            const LTFAT_COMPLEX* cdgtCol = cdgt + n * M;
+
+            for (ltfat_int m = 0; m < M2; m++)
+                *cdgtrealFront++ = cdgtCol[m] ;
+        }
+    }
+    else
+        for (ltfat_int n = 0; n < N; n++)
+            memcpy(cdgtreal + n * M2, cdgt + n * M, M2 * sizeof * cdgtreal);
 error:
     return status;
 }

@@ -106,8 +106,8 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
         /* plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, */
         /*                  L, W, ar, Mr, plan.c_rect, 0, flags); */
-        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.fwork, plan.gwork,
-                                          L, W, ar, Mr, plan.c_rect, LTFAT_FREQINV, flags, &plan.rect_plan);
+        LTFAT_NAME_COMPLEX(dgt_long_init)( plan.gwork,
+                                           L, W, ar, Mr, plan.fwork, plan.c_rect, LTFAT_FREQINV, flags, &plan.rect_plan);
     }
     else
     {
@@ -147,8 +147,8 @@ LTFAT_NAME(dgt_shear_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
         /* Call the rectangular computation in the frequency domain*/
         /* plan.rect_plan = LTFAT_NAME(dgt_long_init)(plan.fwork, plan.gwork, L, W, */
         /*                  br, Nr, plan.c_rect, 0, flags); */
-        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.fwork, plan.gwork, L, W,
-                                          br, Nr, plan.c_rect, LTFAT_FREQINV, flags, &plan.rect_plan);
+        LTFAT_NAME_COMPLEX(dgt_long_init)( plan.gwork, L, W,
+                                           br, Nr, plan.fwork, plan.c_rect, LTFAT_FREQINV, flags, &plan.rect_plan);
 
     }
 

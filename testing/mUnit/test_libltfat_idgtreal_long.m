@@ -61,7 +61,7 @@ for idx = 1:numel(Larr)
     
     plan = libpointer();
     funname = makelibraryname('idgtreal_long_init',flags.complexity,0);
-    statusInit = calllib('libltfat',funname,cinPtr,gPtr,L,W,a,M,fPtr,phaseconv.LTFAT_TIMEINV,fftwflags.FFTW_MEASURE,plan);
+    statusInit = calllib('libltfat',funname,gPtr,L,W,a,M,cinPtr,fPtr,phaseconv.LTFAT_TIMEINV,fftwflags.FFTW_MEASURE,plan);
     
     % Initialize input again. FFTW_MEASURE rewrites c during the planning.
     cinPtr = libpointer(dataPtr,cin);
@@ -86,7 +86,7 @@ for idx = 1:numel(Larr)
     
     plan = libpointer();
     funname = makelibraryname('idgtreal_long_init',flags.complexity,0);
-    statusInit = calllib('libltfat',funname,cinPtr,gPtr,L,W,a,M,fPtr,phaseconv.LTFAT_FREQINV,fftwflags.FFTW_MEASURE,plan);
+    statusInit = calllib('libltfat',funname,gPtr,L,W,a,M,cinPtr,fPtr,phaseconv.LTFAT_FREQINV,fftwflags.FFTW_MEASURE,plan);
     
     % Initialize input again. FFTW_MEASURE rewrites c during the planning.
     cinPtr = libpointer(dataPtr,cin);
@@ -114,7 +114,7 @@ for idx = 1:numel(Larr)
     plan = libpointer();
     nullPtr = libpointer();
     funname = makelibraryname('idgtreal_long_init',flags.complexity,0);
-    statusInit = calllib('libltfat',funname,nullPtr,gPtr,L,W,a,M,nullPtr,phaseconv.LTFAT_FREQINV,fftwflags.FFTW_ESTIMATE,plan);
+    statusInit = calllib('libltfat',funname,gPtr,L,W,a,M,nullPtr,nullPtr,phaseconv.LTFAT_FREQINV,fftwflags.FFTW_ESTIMATE,plan);
     
     funname = makelibraryname('idgtreal_long_execute_newarray',flags.complexity,0);
     statusExecute = calllib('libltfat',funname,plan,cinPtr,fPtr);
@@ -136,7 +136,7 @@ for idx = 1:numel(Larr)
     
     plan = libpointer();
     funname = makelibraryname('idgtreal_long_init',flags.complexity,0);
-    statusInit = calllib('libltfat',funname,nullPtr,gPtr,L,W,a,M,nullPtr,phaseconv.LTFAT_TIMEINV,fftwflags.FFTW_ESTIMATE,plan);
+    statusInit = calllib('libltfat',funname,gPtr,L,W,a,M,nullPtr,nullPtr,phaseconv.LTFAT_TIMEINV,fftwflags.FFTW_ESTIMATE,plan);
     
     funname = makelibraryname('idgtreal_long_execute_newarray',flags.complexity,0);
     statusExecute = calllib('libltfat',funname,plan,cinPtr,fPtr);

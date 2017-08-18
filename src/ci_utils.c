@@ -47,6 +47,71 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(circshiftcols)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
+                          ltfat_int shift, LTFAT_TYPE out[])
+{
+    ltfat_int p;
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(in); CHECKNULL(out);
+    CHECK(LTFATERR_BADSIZE, Hin > 0, "Hin must be positive");
+    CHECK(LTFATERR_BADSIZE, Win > 0, "Win must be positive");
+
+    // Fix shift
+    p = (Win - shift) % Win;
+
+    if (p < 0) p += Win;
+
+    if (in == out)
+    {
+        if (p)
+        {
+            for (ltfat_int m = 0; m < Hin; m++ )
+            {
+                ltfat_int l, count, i, j;
+
+                for (l = 0, count = 0; count != Win; l++)
+                {
+                    LTFAT_TYPE t = in[Hin * l + m];
+
+                    for (i = l, j = l + p; j != l;
+                         i = j, j = j + p < Win ? j + p : j + p - Win, count++)
+                        out[Hin * i + m] = out[Hin * j + m];
+
+                    out[Hin * i + m] = t; count++;
+                }
+            }
+        }
+    }
+    else
+    {
+        // Still ok if p==0
+        memcpy(out,     in + p * Hin, Hin * (Win - p) * sizeof * out);
+        memcpy(out + (Win - p) * Hin, in, Hin * p * sizeof * out);
+    }
+
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
+                        ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[])
+{
+    int status = LTFATERR_SUCCESS;
+
+    CHECKSTATUS(
+        LTFAT_NAME(circshiftcols)(in, Hin, Win, shiftCol, out),
+        "Circshiftcols failed");
+
+    for (ltfat_int n = 0; n < Win; n++)
+        LTFAT_NAME(circshift)(out + n * Hin, Hin, shiftRow, out + n * Hin);
+
+error:
+    return status;
+
+}
+
 
 // in might be equal to out
 LTFAT_API int
@@ -238,7 +303,8 @@ error:
 LTFAT_API void
 LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, ltfat_int L,
                                ltfat_int W, ltfat_int a,
-                               ltfat_int M, LTFAT_TYPE* cout)
+                               ltfat_int M, ltfat_int M2,
+                               LTFAT_TYPE* cout)
 {
     ltfat_int N = L / a;
 
@@ -249,7 +315,7 @@ LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, ltfat_int L,
             ltfat_int offset = w * N * M + n * M;
             LTFAT_TYPE* cintmp = cin + offset;
             LTFAT_TYPE* couttmp = cout + offset;
-            LTFAT_NAME(circshift)(cintmp, M, -a * n, couttmp);
+            LTFAT_NAME(circshift)(cintmp, M2, -a * n, couttmp);
         }
 
     }
@@ -259,7 +325,8 @@ LTFAT_NAME(dgtphaselockhelper)(LTFAT_TYPE* cin, ltfat_int L,
 LTFAT_API void
 LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, ltfat_int L,
                                  ltfat_int W, ltfat_int a,
-                                 ltfat_int M, LTFAT_TYPE* cout)
+                                 ltfat_int M, ltfat_int M2,
+                                 LTFAT_TYPE* cout)
 {
     ltfat_int N = L / a;
 
@@ -270,7 +337,7 @@ LTFAT_NAME(dgtphaseunlockhelper)(LTFAT_TYPE* cin, ltfat_int L,
             ltfat_int offset = w * N * M + n * M;
             LTFAT_TYPE* cintmp = cin + offset;
             LTFAT_TYPE* couttmp = cout + offset;
-            LTFAT_NAME(circshift)(cintmp, M, a * n, couttmp);
+            LTFAT_NAME(circshift)(cintmp, M2, a * n, couttmp);
         }
 
     }
@@ -325,11 +392,11 @@ LTFAT_NAME(findmaxinarraywrtmask)(const LTFAT_TYPE* in, const int* mask,
 }
 
 LTFAT_API void
-LTFAT_NAME(findmaxincols)(const LTFAT_TYPE* in, ltfat_int M, ltfat_int N,
-                          LTFAT_TYPE* max, ltfat_int* idx)
+LTFAT_NAME(findmaxincols)(const LTFAT_TYPE* in, ltfat_int M, ltfat_int M2,
+                          ltfat_int N, LTFAT_TYPE* max, ltfat_int* idx)
 {
     for (ltfat_int n = 0; n < N; n++)
-        LTFAT_NAME(findmaxinarray)(in + n * M, M, max + n, idx + n);
+        LTFAT_NAME(findmaxinarray)(in + n * M, M2, max + n, idx + n);
 }
 
 LTFAT_API int
@@ -393,10 +460,109 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_int Lout)
+LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_symmetry_t sym,
+                      ltfat_int Lout, LTFAT_TYPE* out)
 {
+    int status = LTFATERR_FAILED;
+    LTFAT_TYPE middlepoint;
+    LTFAT_REAL oneover2 = (LTFAT_REAL) (1.0 / 2.0);
 
+    CHECKNULL(in); CHECKNULL(out);
+    CHECK(LTFATERR_BADSIZE, Lin > 0, "Lin must be positive");
+    CHECK(LTFATERR_BADSIZE, Lout > 0, "Lout must be positive");
+
+    CHECK(LTFATERR_BADSIZE, !( Lin == 1 && sym == LTFAT_HALFPOINT ),
+          "HP symmetry not supported for Lin=1");
+
+    if (Lin == Lout)
+    {
+        if (in != (const LTFAT_TYPE*) out)
+            memcpy(out, in, Lout * sizeof * out);
+
+        return LTFATERR_SUCCESS;
+    }
+
+    if (Lin == 1)
+    {
+        out[0] = in[0];
+        memset(out + 1, 0, (Lout - 1) * sizeof * out);
+        return LTFATERR_SUCCESS;
+    }
+
+    switch (sym)
+    {
+    case LTFAT_HALFPOINT:
+        if (Lin > Lout)
+        {
+            if ( Lout % 2 == 1 )
+            {
+                middlepoint = oneover2 * ( in[(Lout + 1) / 2 - 1] + in[Lin -
+                                           (Lout - 1) / 2 - 1] );
+                LTFAT_NAME(long2fir)(in, Lin, Lout, out);
+                out[(Lout - 1) / 2] = middlepoint;
+            }
+            else
+                LTFAT_NAME(long2fir)(in, Lin, Lout, out);
+        }
+        else
+        {
+            if ( Lin % 2 == 1 )
+            {
+                middlepoint = in[Lin / 2] * oneover2;
+                LTFAT_NAME(fir2long)(in, Lin, Lout, out);
+                out[(Lin + 1) / 2 - 1] = middlepoint;
+                out[Lout  - (Lin - 1) / 2 - 1] = middlepoint;
+            }
+            else
+                LTFAT_NAME(fir2long)(in, Lin, Lout, out);
+        }
+        break;
+    case LTFAT_WHOLEPOINT:
+    default:
+        if (Lin > Lout)
+        {
+            if ( Lout % 2 == 0 )
+            {
+                middlepoint = oneover2 * ( in[Lout / 2] + in[Lin - Lout / 2] );
+                LTFAT_NAME(long2fir)(in, Lin, Lout, out);
+                out[Lout / 2] = middlepoint;
+            }
+            else
+                LTFAT_NAME(long2fir)(in, Lin, Lout, out);
+        }
+        else
+        {
+            if ( Lin % 2 == 0 )
+            {
+                middlepoint = in[Lin / 2] * oneover2;
+                LTFAT_NAME(fir2long)(in, Lin, Lout, out);
+                out[Lin / 2] = middlepoint;
+                out[Lout  - Lin / 2] = middlepoint;
+            }
+            else
+                LTFAT_NAME(fir2long)(in, Lin, Lout, out);
+        }
+        break;
+    }
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
 }
+
+/* LTFAT_API int */
+/* LTFAT_NAME(middlepad2d)(const LTFAT_TYPE* in, ltfat_int Hin, ltfat_int Win, */
+/*                         ltfat_symmetry_t sym, ltfat_int Hout, ltfat_int Wout, */
+/*                         LTFAT_TYPE* out) */
+/* { */
+/*     int status = LTFATERR_SUCCESS; */
+/*  */
+/*  */
+/*  */
+/* error: */
+/*     return status; */
+/* } */
+
 
 LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,

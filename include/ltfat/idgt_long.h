@@ -85,11 +85,11 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
  * </tt>
  */
 LTFAT_API int
-LTFAT_NAME(idgt_long_init)(LTFAT_COMPLEX c[], const LTFAT_TYPE g[],
-                           ltfat_int L, ltfat_int W,
-                           ltfat_int a, ltfat_int M,  LTFAT_COMPLEX f[],
-                           const ltfat_phaseconvention ptype, unsigned flags,
-                           LTFAT_NAME(idgt_long_plan)** plan);
+LTFAT_NAME(idgt_long_init)( const LTFAT_TYPE g[],
+                            ltfat_int L, ltfat_int W,
+                            ltfat_int a, ltfat_int M, LTFAT_COMPLEX c[], LTFAT_COMPLEX f[],
+                            const ltfat_phaseconvention ptype, unsigned flags,
+                            LTFAT_NAME(idgt_long_plan)** plan);
 
 
 /** Execute the Inverse Discrete Gabor Transform plan

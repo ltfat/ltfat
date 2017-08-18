@@ -11,7 +11,7 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(dgt_long_init)(f, g, L, W, a, M, cout, ptype, FFTW_ESTIMATE, &plan)
+        LTFAT_NAME(dgt_long_init)( g, L, W, a, M, f, cout, ptype, FFTW_ESTIMATE, &plan)
         , "Init failed");
 
     CHECKSTATUS(
@@ -24,11 +24,12 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
-                          ltfat_int L, ltfat_int W,
-                          ltfat_int a, ltfat_int M, LTFAT_COMPLEX* cout,
-                          const ltfat_phaseconvention ptype, unsigned flags,
-                          LTFAT_NAME(dgt_long_plan)** pout)
+LTFAT_NAME(dgt_long_init)( const LTFAT_TYPE* g,
+                           ltfat_int L, ltfat_int W,
+                           ltfat_int a, ltfat_int M,
+                           const LTFAT_TYPE* f, LTFAT_COMPLEX* cout,
+                           const ltfat_phaseconvention ptype, unsigned flags,
+                           LTFAT_NAME(dgt_long_plan)** pout)
 {
     LTFAT_NAME(dgt_long_plan)* plan = NULL;
     ltfat_int h_m, N, b, p, q, d, minL;
@@ -129,7 +130,7 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan)
 
     if (LTFAT_TIMEINV == plan->ptype)
         LTFAT_NAME_COMPLEX(dgtphaselockhelper)(plan->cout, plan->L, plan->W,
-                                               plan->a, plan->M, plan->cout);
+                                               plan->a, plan->M, plan->M, plan->cout);
 
     /* FFT to modulate the coefficients. */
     LTFAT_NAME_REAL(fft_execute)(plan->p_veryend);
@@ -154,7 +155,7 @@ LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
 
     if (LTFAT_TIMEINV == plan->ptype)
         LTFAT_NAME_COMPLEX(dgtphaselockhelper)(c, plan->L, plan->W,
-                                               plan->a, plan->M, c);
+                                               plan->a, plan->M, plan->M, c);
 
     /* FFT to modulate the coefficients. */
     LTFAT_NAME_REAL(fft_execute_newarray)(plan->p_veryend, c, c);

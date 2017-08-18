@@ -1,6 +1,6 @@
 typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
 
-/** \defgroup dgtlong Discrete Gabor Transform for long windows -- dgt_long 
+/** \defgroup dgtlong Discrete Gabor Transform for long windows -- dgt_long
  *  \addtogroup dgtlong
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
@@ -91,8 +91,9 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE f[], const LTFAT_TYPE g[],
  *  </tt>
  */
 LTFAT_API int
-LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE f[], const LTFAT_TYPE g[], ltfat_int L,
-                          ltfat_int W, ltfat_int a, ltfat_int M, LTFAT_COMPLEX c[],
+LTFAT_NAME(dgt_long_init)(const LTFAT_TYPE g[], ltfat_int L,
+                          ltfat_int W, ltfat_int a, ltfat_int M,
+                          const LTFAT_TYPE f[], LTFAT_COMPLEX c[],
                           const ltfat_phaseconvention ptype, unsigned flags,
                           LTFAT_NAME(dgt_long_plan)** p);
 
@@ -128,7 +129,7 @@ LTFAT_NAME(dgt_long_execute)(LTFAT_NAME(dgt_long_plan)* plan);
  *  -----------------
  *
  *  <tt>
- *  ltfat_dgt_long_execute_newarray_d(ltfat_dgt_long_plan_d* plan, 
+ *  ltfat_dgt_long_execute_newarray_d(ltfat_dgt_long_plan_d* plan,
  *                                    const double f[], ltfat_complex_d c[]);
  *
  *  ltfat_dgt_long_execute_newarray_s(ltfat_dgt_long_plan_s* plan,

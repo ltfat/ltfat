@@ -40,10 +40,9 @@ LTFAT_NAME(dgt_ola_init)(const LTFAT_COMPLEX* g, ltfat_int gl,
     /*                               plan.cbuf, ptype, flags); */
 
 
-    LTFAT_NAME_COMPLEX(dgt_long_init)(plan.buf,
-                                      plan.gext,
+    LTFAT_NAME_COMPLEX(dgt_long_init)(plan.gext,
                                       Lext, W, a, M,
-                                      plan.cbuf, ptype, flags,
+                                      plan.buf, plan.cbuf, ptype, flags,
                                       &plan.plan);
 
     return (plan);
@@ -179,10 +178,9 @@ LTFAT_NAME(dgtreal_ola_init)(const LTFAT_REAL* g, ltfat_int gl,
         }
     }
 
-    LTFAT_NAME(dgtreal_long_init)((const LTFAT_REAL*)plan.buf,
-                                  (const LTFAT_REAL*)plan.gext,
-                                  Lext, W, a, M, plan.cbuf,
-                                  ptype, flags, &plan.plan);
+    LTFAT_NAME(dgtreal_long_init)( (const LTFAT_REAL*)plan.gext,
+                                   Lext, W, a, M, (const LTFAT_REAL*)plan.buf,
+                                   plan.cbuf, ptype, flags, &plan.plan);
 
     return (plan);
 

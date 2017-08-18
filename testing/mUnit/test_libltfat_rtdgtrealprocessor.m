@@ -29,7 +29,7 @@ for ii = 1:numel(glarr)
     
     if initId == 0
         funname = makelibraryname('rtdgtreal_processor_init_win',flags.complexity,0);
-        calllib('libltfat',funname, LTFAT_FIRWIN.LTFAT_HAMMING,gl,a,M,W,bufLenMax,plan);
+        calllib('libltfat',funname, LTFAT_FIRWIN.LTFAT_HAMMING,gl,a,M,W,bufLenMax,gl-1,plan);
         initstr = 'INIT WIN';
     else
         gPtr = libpointer(dataPtr,zeros(gl,1,flags.complexity));
@@ -41,7 +41,7 @@ for ii = 1:numel(glarr)
         calllib('libltfat',funname,gPtr,gl,a,M,gdPtr); 
         
         funname = makelibraryname('rtdgtreal_processor_init',flags.complexity,0);
-        calllib('libltfat',funname, gPtr,gl, gdPtr,gl, a,M,W,bufLenMax,plan);    
+        calllib('libltfat',funname, gPtr,gl, gdPtr,gl, a,M,W,bufLenMax,gl-1,plan);    
         initstr = 'INIT';
     end
 
@@ -86,7 +86,7 @@ for ii = 1:numel(glarr)
     
     plan = libpointer();
     funname = makelibraryname('rtdgtreal_processor_init_win',flags.complexity,0);
-    calllib('libltfat',funname, LTFAT_FIRWIN.LTFAT_HAMMING,gl,a,M,W,bufLenMax,plan);
+    calllib('libltfat',funname, LTFAT_FIRWIN.LTFAT_HAMMING,gl,a,M,W,bufLenMax,gl-1,plan);
 
     bufOut = 1000*ones(size(bufIn),flags.complexity);
     L = size(bufIn,1);

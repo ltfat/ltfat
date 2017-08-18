@@ -9,7 +9,6 @@
 #include <stdlib.h>
 /* #include "ltfat/macros.h" */
 
-#define ALIGNBOUNDARY 32
 
 void* (*ltfat_custom_malloc)(size_t) = NULL;
 void (*ltfat_custom_free)(void*) = NULL;
@@ -25,6 +24,8 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler)
 }
 
 #ifdef KISS
+#define ALIGNBOUNDARY 64
+
 static void*
 ltfat_aligned_malloc(int size)
 {
@@ -56,6 +57,8 @@ ltfat_malloc (size_t n)
         outp = LTFAT_FFTW(malloc)(n);
 #elif KISS
         outp = ltfat_aligned_malloc(n);
+#else
+    #error "No FFT backend specified. Use -DKISS or -DFFTW"
 #endif
     return outp;
 }

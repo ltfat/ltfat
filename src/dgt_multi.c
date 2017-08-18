@@ -87,10 +87,9 @@ LTFAT_NAME(dgt_multi_init)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,
 
     for (ltfat_int win = 0; win < lt2; win++)
     {
-        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.f,
-                                          plan.mwin + L * win,
+        LTFAT_NAME_COMPLEX(dgt_long_init)(plan.mwin + L * win,
                                           L, W, a * lt2, M,
-                                          plan.c_scratch, LTFAT_FREQINV, flags,
+                                          plan.f, plan.c_scratch, LTFAT_FREQINV, flags,
                                           &plan.rect_plan_array[win]);
     }
 
