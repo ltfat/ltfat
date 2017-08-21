@@ -189,6 +189,19 @@ for (ltfat_int nidx = nstart, knidx = knstart; knidx < currkern->size.width;\
     }\
 }
 
+#define LTFAT_DGTREALMP_COPYTOCONJ \
+for (ltfat_int nidx = nstart, knidx = knstart; knidx < currkern->size.width;\
+     nidx = ltfat_positiverem(nidx + 1, N), knidx+=astep )\
+{\
+\
+    LTFAT_COMPLEX*     currcCol = currc + nidx * M + mstart;\
+    LTFAT_COMPLEX* currcconjCol = currc + nidx * M + mconjstop;\
+\
+    for (ltfat_int kmidx = kmstart; kmidx < currkern->size.height;\
+            kmidx+=Mstep )\
+          *currcconjCol-- = conj(*currcCol++);\
+}
+
 #define LTFAT_DGTREALMP_UPDATEMAX(wtmp)\
 for (ltfat_int nidx = nstart, knidx = knstart; knidx < currkern->size.width;\
      nidx = ltfat_positiverem(nidx + 1, N), knidx+=astep )\
@@ -231,11 +244,17 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
             }
         }
 
+        LTFAT_NAME(kerns)* currkern = p->gramkerns[wIdx + s->P * wIdx];
+
         /* DEBUG("m=%td, n=%td, wIdx=%td, N=%td, ", m, n, wIdx, p->N[wIdx]); */
 
         M  = p->M[wIdx]; M2 = p->M2[wIdx]; N  = p->N[wIdx]; mconj = M - m;
         int uniquenyquest = M % 2 == 0;
-        int doconj = !( m == 0 || (m == M2 - 1 && uniquenyquest));
+        int do_conj = !( m == 0 || (m == M2 - 1 && uniquenyquest));
+        // true if the support of the kernel is completely contained in the
+        // positive frequencies
+        int do_copy = (m - currkern->mid.hmid) > 0 &&
+                      (m + currkern->size.height - currkern->mid.hmid - 1) < M2 - 1 - uniquenyquest;
 
         if ( s->suppindCount[wIdx][m + M2 * n] == 0 )
             s->curratoms++;
@@ -255,7 +274,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
         /*       ltfat_imag(cval), cvalabs); */
 
         s->err -= cvalabs * cvalabs;
-        if (doconj)
+        if (do_conj)
             s->err -= cvalabs * cvalabs;
 
         if (s->err < 0)
@@ -264,7 +283,6 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
             break;
         }
 
-        LTFAT_NAME(kerns)* currkern = p->gramkerns[wIdx + s->P * wIdx];
         LTFAT_COMPLEX* currkernvals = currkern->kval[n % currkern->kNo];
 
         ltfat_int Mstep   = 1;
@@ -277,30 +295,24 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
         LTFAT_COMPLEX* currc = s->c[wIdx];
         LTFAT_REAL* currs    = s->s[wIdx];
 
-        /* for (ltfat_int m = 0; m < M; m++) */
-        /* { */
-        /*     printf("\n"); */
-        /*     for (ltfat_int n = 0; n < N; n++) */
-        /*         printf("%2.2e ", currs[m + n * M] ); */
-        /* } */
-        /* printf("\n"); */
-
         LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval)
 
-        /* for (ltfat_int m = 0; m < M; m++) */
-        /* { */
-        /*     printf("\n"); */
-        /*     for (ltfat_int n = 0; n < N; n++) */
-        /*         printf("%2.2e ", currs[m + n * M] ); */
-        /* } */
-        /* printf("\n"); */
-
-        if (doconj)
+        if (do_conj)
         {
-            cval2 = currc[mconj + M * n];
-            mstart = ltfat_positiverem(mconj - currkern->mid.hmid, M);
+            if (!do_copy)
+            {
+                cval2 = currc[mconj + M * n];
+                mstart = ltfat_positiverem(mconj - currkern->mid.hmid, M);
 
-            LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval2)
+                LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval2)
+            }
+            else
+            {
+                ltfat_int mconjstop = mconj +
+                                      (currkern->size.height - currkern->mid.hmid - 1);
+
+                LTFAT_DGTREALMP_COPYTOCONJ
+            }
         }
 
         LTFAT_DGTREALMP_UPDATEMAX(wIdx)
@@ -341,7 +353,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
 
             LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval)
 
-            if (doconj)
+            if (do_conj)
             {
                 ltfat_int msecondconj = (ltfat_int) ltfat_round( mconj / Mrat);
                 ltfat_int msecondoffconj = mconj - (ltfat_int)(msecondconj * Mrat);
@@ -379,6 +391,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
 }
 
 #undef LTFAT_DGTREALMP_SUBSTRACTKERNEL
+#undef LTFAT_DGTREALMP_COPYTOCONJ
 #undef LTFAT_DGTREALMP_UPDATEMAX
 
 LTFAT_API int
@@ -401,8 +414,8 @@ LTFAT_NAME(dgtrealmp_execute)(LTFAT_NAME(dgtrealmp_plan)* p,
         memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
 
     while ( LTFAT_DGTREALMP_STATUS_WILLCONTINUE ==
-                ( status2 =
-                      LTFAT_NAME(dgtrealmp_execute_niters)( p, iterstep, cout)))
+            ( status2 =
+                  LTFAT_NAME(dgtrealmp_execute_niters)( p, iterstep, cout)))
     {
         if (p->params->verbose)
         {
