@@ -1,4 +1,12 @@
 Version 2.3.0 X/X 2017
+	* New function for computing matching pursuit in DGT: dgtrealmp
+
+	* New function for time-frequency jigsaw puzzle
+	  tonal-transient-residual separation: tfjigsawsep
+
+	* Abandoned nargchk and narginchk. They are deprecated in recent Matlab.
+
+Version 2.3.0 X/X 2017
     * New function for computing matching pursuits in DGT: dgtrealmp
 
     * New function for transient-tonal separation: tfjigsawsep
