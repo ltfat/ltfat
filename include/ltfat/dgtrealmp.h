@@ -60,6 +60,9 @@ LTFAT_NAME(dgtrealmp_set_iterstep)(LTFAT_NAME(dgtrealmp_plan)* p, size_t iterste
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_set_maxatoms)(LTFAT_NAME(dgtrealmp_plan)* p, size_t maxatoms);
 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_set_errtoldb)(LTFAT_NAME(dgtrealmp_plan)* p, int errtoldb);
+
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
@@ -82,3 +85,31 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int it
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_plan)** p);
+
+
+// maxtree
+
+typedef struct LTFAT_NAME(maxtree) LTFAT_NAME(maxtree);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_init)( ltfat_int L, ltfat_int Lstep, ltfat_int depth, LTFAT_NAME(maxtree)** p);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_initwitharray)(
+    ltfat_int L, ltfat_int depth,
+    const LTFAT_REAL* inarray,
+    LTFAT_NAME(maxtree)** p);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_reset)(LTFAT_NAME(maxtree)* p, const LTFAT_REAL* inarray);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start, ltfat_int stop);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_findmax)(LTFAT_NAME(maxtree)* p, LTFAT_REAL* max, ltfat_int* maxPos);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_done)(LTFAT_NAME(maxtree)** p);
+
+

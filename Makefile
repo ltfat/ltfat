@@ -219,7 +219,7 @@ $(objprefix)/complexdouble:
 $(objprefix)/complexsingle:
 	@$(MKDIR) $(objprefix)$(PS)complexsingle
 
-.PHONY: clean cleanobj help doc doxy static shared munit
+.PHONY: clean cleanobj help doc doxy static shared munit cunit
 
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
@@ -246,14 +246,15 @@ cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
 
-munitdebug: export COMPTARGET=debug
-munitdebug: munit
-
 munit: 
 	$(MAKE) clean
 	# $(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
 	$(MAKE) $(SO_DSTARGET) 
 	$(MAKE) $(buildprefix)/ltfat.h USECPP=0
+
+cunit: 
+	$(MAKE) clean
+	$(MAKE) $(SO_DSTARGET) 
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
 	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h

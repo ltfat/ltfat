@@ -16,6 +16,7 @@ struct ltfat_dgtrealmp_params
     size_t iterstep;
     int verbose;
     int initwasrun;
+    int treelevels;
 };
 
 typedef struct
@@ -24,11 +25,27 @@ typedef struct
     ltfat_int width;
 } ksize;
 
+
 typedef struct
 {
     ltfat_int hmid;
     ltfat_int wmid;
 } kanchor;
+
+struct LTFAT_NAME(maxtree)
+{
+    LTFAT_REAL* pointedarray;
+    LTFAT_REAL* treeVals;
+    LTFAT_REAL** treePtrs;
+    ltfat_int*  treePos;
+    ltfat_int** treePosPtrs;
+    ltfat_int   depth;
+    ltfat_int   L;
+    ltfat_int   Lstep;
+    ltfat_int   nextL;
+    ltfat_int* levelL;
+    ltfat_int   W;
+};
 
 typedef struct
 {
@@ -42,14 +59,17 @@ typedef struct
 {
     LTFAT_REAL** s;
     LTFAT_COMPLEX** c;
-    int** suppindCount;
     LTFAT_REAL** maxcols;
-    ltfat_int** maxcolspos;
+    ltfat_int**  maxcolspos;
+    LTFAT_NAME(maxtree)** tmaxtree;
+    LTFAT_NAME(maxtree)*** fmaxtree;
+    int** suppindCount;
     LTFAT_REAL err;
     LTFAT_REAL fnorm2;
     size_t currit;
     size_t curratoms;
     ltfat_int         P;
+    ltfat_int*        N;
 } LTFAT_NAME(dgtrealmpiter_state);
 
 struct LTFAT_NAME(dgtrealmp_plan)
@@ -96,5 +116,8 @@ int
 LTFAT_NAME(dgtrealmp_essentialsupport)(const LTFAT_REAL g[], ltfat_int gl,
                                        LTFAT_REAL reltol,
                                        ltfat_int* lefttail, ltfat_int* righttail);
+
+
+
 
 #endif

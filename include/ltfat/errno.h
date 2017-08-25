@@ -14,24 +14,24 @@
 enum ltfaterr_status
 {
 // General
-    LTFATERR_SUCCESS     =   0,
-    LTFATERR_FAILED      =  -1,
-    LTFATERR_NOMEM       =  -2,
-    LTFATERR_INITFAILED  =  -3,
-    LTFATERR_NULLPOINTER =  -4,
-    LTFATERR_BADARG      =  -5,
-    LTFATERR_NOTPOSARG   =  -6,
-    LTFATERR_NOTINRANGE  =  -7,
-    LTFATERR_OVERFLOW    =  -8,
-    LTFATERR_UNDERFLOW   =  -9,
-    LTFATERR_CANNOTHAPPEN = -10,
-    LTFATERR_BADSIZE      = -11, // Array size is wrong
-    LTFATERR_BADREQSIZE   = -12, // Output array size is wrong
-    LTFATERR_NOTSUPPORTED = -13,
+    LTFATERR_SUCCESS        =     0,
+    LTFATERR_FAILED         =    -1,
+    LTFATERR_NOMEM          =    -2,
+    LTFATERR_INITFAILED     =    -3,
+    LTFATERR_NULLPOINTER    =    -4,
+    LTFATERR_BADARG         =    -5,
+    LTFATERR_NOTPOSARG      =    -6,
+    LTFATERR_NOTINRANGE     =    -7,
+    LTFATERR_OVERFLOW       =    -8,
+    LTFATERR_UNDERFLOW      =    -9,
+    LTFATERR_CANNOTHAPPEN   =   -10,
+    LTFATERR_BADSIZE        =   -11, // Array size is wrong
+    LTFATERR_BADREQSIZE     =   -12, // Output array size is wrong
+    LTFATERR_NOTSUPPORTED   =   -13,
 // Specific
-    LTFATERR_BADTRALEN  =  -99,
-    LTFATERR_NOTAFRAME   =  -100,
-    LTFATERR_NOTPAINLESS =  -101,
+    LTFATERR_BADTRALEN      =   -99,
+    LTFATERR_NOTAFRAME      =  -100,
+    LTFATERR_NOTPAINLESS    =  -101,
 };
 
 

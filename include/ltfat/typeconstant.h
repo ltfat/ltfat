@@ -78,6 +78,10 @@ ltfat_round(const double x);
 LTFAT_API ltfat_int
 ltfat_positiverem(ltfat_int a, ltfat_int b);
 
+
+LTFAT_API ltfat_int
+ltfat_posnumfastmod(ltfat_int a, ltfat_int b);
+
 LTFAT_API ltfat_int
 ltfat_rangelimit(ltfat_int a, ltfat_int amin, ltfat_int amax);
 

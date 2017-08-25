@@ -332,10 +332,22 @@ ltfat_positiverem(ltfat_int a, ltfat_int b)
 }
 
 LTFAT_API ltfat_int
+ltfat_posnumfastmod(ltfat_int a, ltfat_int b)
+{
+#ifndef NDEBUG
+    int status = LTFATERR_SUCCESS;
+    CHECK(LTFATERR_BADARG,a>=0 && b>=0,"Negative number passed.");
+    return ( a >= b ? a % b : a);
+error:
+    return status;
+#endif
+    return ( a >= b ? a % b : a);
+}
+
+LTFAT_API ltfat_int
 ltfat_rangelimit(ltfat_int a, ltfat_int amin, ltfat_int amax)
 {
     ltfat_int c = a < amin ? amin : a;
     c = c > amax ? amax : c;
     return c;
 }
-
