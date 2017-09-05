@@ -54,7 +54,7 @@ f = postpad(f,L);
 N = L/a;
 %g = randn(gl,1,flags.complexity);
 g = cast(firwin('blackman',gl,'2'),flags.complexity);
-gPtr = libpointer(dataPtrPtr,g);
+gPtr = libpointer(dataPtr,g);
 
 fPtr = libpointer(dataPtr,f);
 
@@ -69,29 +69,27 @@ ctrue = dgt(f,g,a,M);
 atoms = 0.1*L;
 
 
+params = calllib('libltfat','ltfat_dgtrealmp_params_allocdef');
+calllib('libltfat','ltfat_dgtrealmp_setpar_maxatoms',params,atoms);
+calllib('libltfat','ltfat_dgtrealmp_setpar_errtoldb',params,-40);
+calllib('libltfat','ltfat_dgtrealmp_setpar_kernrelthr',params,1e-4);
+calllib('libltfat','ltfat_dgtrealmp_setpar_iterstep',params,1e6);
+
 plan = libpointer();
-funname = makelibraryname('dgtrealmp_init',flags.complexity,0);
+funname = makelibraryname('dgtrealmp_init_compact',flags.complexity,0);
 statusInit = calllib('libltfat',funname,gPtr,libpointer('int64Ptr',gl),...
-    L,1,libpointer('int64Ptr',a),libpointer('int64Ptr',M),libpointer(),plan);
+    L,1,libpointer('int64Ptr',a),libpointer('int64Ptr',M),params,plan);
+
+calllib('libltfat','ltfat_dgtrealmp_params_free',params);
 
 tic
 funname = makelibraryname('dgtrealmp_reset',flags.complexity,0);
 statusReset = calllib('libltfat',funname,plan,fPtr);
 t1 = toc
 
-funname = makelibraryname('dgtrealmp_set_iterstep',flags.complexity,0);
-sttatusSet =  calllib('libltfat',funname, plan, 1e6);
-
-funname = makelibraryname('dgtrealmp_set_maxatoms',flags.complexity,0);
-sttatusSet =  calllib('libltfat',funname, plan, atoms);    
-
-funname = makelibraryname('dgtrealmp_set_errtoldb',flags.complexity,0);
-sttatusSet =  calllib('libltfat',funname, plan, -40); 
-
-
 tic
- funname = makelibraryname('dgtrealmp_execute',flags.complexity,0);
- statusExecute = calllib('libltfat',funname,plan,fPtr,coutPtr,foutPtr);
+ funname = makelibraryname('dgtrealmp_execute_compact',flags.complexity,0);
+ statusExecute = calllib('libltfat',funname,plan,fPtr,coutPtr,foutPtr)
 
 t2 =toc;
 

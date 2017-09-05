@@ -3,11 +3,11 @@
 
 enum ltfat_dgtrealmp_status
 {
-LTFAT_DGTREALMP_STATUS_TOLREACHED = 0,
-LTFAT_DGTREALMP_STATUS_MAXATOMS   = 1,
-LTFAT_DGTREALMP_STATUS_MAXITER    = 2,
-LTFAT_DGTREALMP_STATUS_STALLED    = 3,
-LTFAT_DGTREALMP_STATUS_WILLCONTINUE   = 10
+    LTFAT_DGTREALMP_STATUS_TOLREACHED = 0,
+    LTFAT_DGTREALMP_STATUS_MAXATOMS   = 1,
+    LTFAT_DGTREALMP_STATUS_MAXITER    = 2,
+    LTFAT_DGTREALMP_STATUS_STALLED    = 3,
+    LTFAT_DGTREALMP_STATUS_CANCONTINUE   = 10
 };
 
 
@@ -36,10 +36,38 @@ ltfat_dgtrealmp_params_free(ltfat_dgtrealmp_params* params);
 LTFAT_API int
 ltfat_dgtrealmp_params_free(ltfat_dgtrealmp_params* params);
 
+LTFAT_API int
+ltfat_dgtrealmp_setpar_hint(ltfat_dgtrealmp_params* params,
+                            ltfat_dgtrealmp_hint hint);
 
+LTFAT_API int
+ltfat_dgtrealmp_setpar_alg(ltfat_dgtrealmp_params* params,
+                           ltfat_dgtrealmp_alg alg);
+
+LTFAT_API int
+ltfat_dgtrealmp_setpar_maxatoms(ltfat_dgtrealmp_params* params,
+                                size_t maxatoms);
+
+LTFAT_API int
+ltfat_dgtrealmp_setpar_kernrelthr(ltfat_dgtrealmp_params* p,
+                                  double thr);
+
+LTFAT_API int
+ltfat_dgtrealmp_setpar_iterstep(ltfat_dgtrealmp_params* p,
+                                size_t iterstep);
+
+LTFAT_API int
+ltfat_dgtrealmp_setpar_errtoldb(ltfat_dgtrealmp_params* p,
+                                double errtoldb);
 
 int
 ltfat_dgtrealmp_params_defaults(ltfat_dgtrealmp_params* params);
+
+int
+ltfat_dgtrealmp_hint_isvalid(ltfat_dgtrealmp_hint in);
+
+int
+ltfat_dgtrealmp_alg_isvalid(ltfat_dgtrealmp_alg in);
 
 #endif
 
@@ -61,14 +89,26 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_set_maxatoms)(LTFAT_NAME(dgtrealmp_plan)* p, size_t maxatoms);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_errtoldb)(LTFAT_NAME(dgtrealmp_plan)* p, int errtoldb);
+LTFAT_NAME(dgtrealmp_set_errtoldb)(LTFAT_NAME(dgtrealmp_plan)* p, double errtoldb);
 
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_init_compact)(
+    const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
+    ltfat_int M[], ltfat_dgtrealmp_params* params,
+    LTFAT_NAME(dgtrealmp_plan)** pout);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
     const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[], ltfat_int M[],
     ltfat_dgtrealmp_params* params, LTFAT_NAME(dgtrealmp_plan)** p);
 
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_execute_compact)(LTFAT_NAME(dgtrealmp_plan)* p,
+                                      const LTFAT_REAL* f,
+                                      LTFAT_COMPLEX* cout,
+                                      LTFAT_REAL* fout);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute)(LTFAT_NAME(dgtrealmp_plan)* p,
@@ -111,5 +151,4 @@ LTFAT_NAME(maxtree_findmax)(LTFAT_NAME(maxtree)* p, LTFAT_REAL* max, ltfat_int* 
 
 LTFAT_API int
 LTFAT_NAME(maxtree_done)(LTFAT_NAME(maxtree)** p);
-
 

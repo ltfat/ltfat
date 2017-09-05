@@ -1,4 +1,5 @@
 #include "ltfat.h"
+#include "ltfat/macros.h"
 
 LTFAT_API void
 ltfat_fftindex(ltfat_int N, ltfat_int* indexout)

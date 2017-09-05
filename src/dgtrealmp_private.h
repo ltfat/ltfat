@@ -52,6 +52,7 @@ typedef struct
     ksize        size;
     kanchor       mid;
     ltfat_int     kNo;
+    LTFAT_COMPLEX** mods;
     LTFAT_COMPLEX** kval;
 } LTFAT_NAME(kerns);
 
@@ -85,6 +86,7 @@ struct LTFAT_NAME(dgtrealmp_plan)
     ltfat_int         L;
     LTFAT_REAL**    cout;
     ltfat_dgtrealmp_params* params;
+    LTFAT_COMPLEX** couttmp;
 };
 
 int
@@ -98,6 +100,7 @@ int
 LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
                                    ltfat_int a[], ltfat_int M[],
                                    ltfat_int L, LTFAT_REAL reltol,
+                                   int do_allmods,
                                    LTFAT_NAME(kerns)** pout);
 
 int

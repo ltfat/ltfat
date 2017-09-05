@@ -16,6 +16,35 @@ ltfat_positiverem2(ltfat_int x, ltfat_int L)
     return xx < 0 ? xx + L : xx;
 }
 
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_init_compact)(
+    const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
+    ltfat_int M[], ltfat_dgtrealmp_params* params,
+    LTFAT_NAME(dgtrealmp_plan)** pout)
+{
+    int status = LTFATERR_SUCCESS;
+    const LTFAT_REAL** multig = NULL;
+    CHECK( LTFATERR_NOTPOSARG, P > 0, "P must be positive (passed %td)", P);
+    CHECKMEM( multig = LTFAT_NEWARRAY(const LTFAT_REAL*, P));
+
+    for (ltfat_int p = 0, glaccum = 0; p < P;  glaccum += gl[p], p++)
+    {
+        CHECK(LTFATERR_NOTPOSARG, gl[p] > 0,
+              "gl[%td] must be positive (passed %td)", p, gl[p]);
+        multig[p] = g + glaccum;
+    }
+
+    CHECKSTATUS(
+        LTFAT_NAME(dgtrealmp_init)(multig, gl, L, P, a, M, params, pout),
+        "dgtrealmp_init failed");
+
+error:
+    ltfat_safefree(multig);
+    return status;
+
+}
+
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
     const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
@@ -27,12 +56,26 @@ LTFAT_NAME(dgtrealmp_init)(
     ltfat_int Mtmp[2];
     LTFAT_NAME(dgtrealmp_plan)* p = NULL;
 
+    CHECK(LTFATERR_NOTPOSARG, P > 0, "P must be positive (passed %td)", P);
+    CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive (passed %td)", L);
+    CHECKNULL(gl); CHECKNULL(g); CHECKNULL(a); CHECKNULL(M); CHECKNULL(pout);
+
+    for (ltfat_int p = 0; p < P; p++)
+    {
+        CHECKNULL(g[p]);
+        CHECK(LTFATERR_NOTPOSARG, gl[p] > 0,
+              "gl[%td] must be positive (passed %td)", p, gl[p]);
+        CHECK(LTFATERR_NOTPOSARG, a[p] > 0,
+              "a[%td] must be positive (passed %td)", p, a[p]);
+        CHECK(LTFATERR_NOTPOSARG, M[p] > 0,
+              "m[%td] must be positive (passed %td)", p, M[p]);
+    }
+
     ltfat_int nextL = ltfat_dgtlengthmulti(L, P, a, M);
 
-    DEBUG("L=%td, nextL=%td, P=%td, gl[0]=%td, a[0]=%td, M[0]=%td",
-          L, nextL, P, gl[0], a[0], M[0]);
+    /* DEBUG("L=%td, nextL=%td, P=%td, gl[0]=%td, a[0]=%td, M[0]=%td", */
+    /*       L, nextL, P, gl[0], a[0], M[0]); */
 
-    CHECKNULL( pout );
     CHECK(LTFATERR_BADTRALEN, L == nextL,
           "Next compatible transform length is %d (passed %d).", nextL, L);
 
@@ -50,9 +93,9 @@ LTFAT_NAME(dgtrealmp_init)(
 
     p->params->initwasrun = 1;
 
-    DEBUG("maxit=%zu, maxatoms=%zu, iterstep=%zu, errtoldb=%f",
-          p->params->maxit, p->params->maxatoms, p->params->iterstep,
-          p->params->errtoldb);
+    /* DEBUG("maxit=%zu, maxatoms=%zu, iterstep=%zu, errtoldb=%f", */
+    /*       p->params->maxit, p->params->maxatoms, p->params->iterstep, */
+    /*       p->params->errtoldb); */
 
     CHECKMEM( p->dgtplans  = LTFAT_NEWARRAY( LTFAT_NAME(dgtreal_plan)*, P) );
     CHECKMEM( p->gramkerns = LTFAT_NEWARRAY( LTFAT_NAME(kerns)*, P * P) );
@@ -60,6 +103,7 @@ LTFAT_NAME(dgtrealmp_init)(
     CHECKMEM( p->M  = LTFAT_NEWARRAY( ltfat_int, P));
     CHECKMEM( p->M2 = LTFAT_NEWARRAY( ltfat_int, P));
     CHECKMEM( p->N  = LTFAT_NEWARRAY( ltfat_int, P));
+    CHECKMEM( p->couttmp = LTFAT_NEWARRAY( LTFAT_COMPLEX*, P));
 
     for (ltfat_int k = 0; k < P; k++)
     {
@@ -77,6 +121,7 @@ LTFAT_NAME(dgtrealmp_init)(
             "dgtreal_init failed" );
     }
 
+
     for (ltfat_int k1 = 0; k1 < P; k1++)
     {
         for (ltfat_int k2 = 0; k2 < P; k2++)
@@ -85,10 +130,28 @@ LTFAT_NAME(dgtrealmp_init)(
             Mtmp[0] = M[k1]; Mtmp[1] = M[k2]; gltmp[0] = gl[k1]; gltmp[1] = gl[k2];
 
             CHECKSTATUS( LTFAT_NAME(dgtrealmp_kernel_init)( gtmp, gltmp,
-                         atmp, Mtmp, L, p->params->kernrelthr, &p->gramkerns[k1 + k2 * P]),
+                         atmp, Mtmp, L, p->params->kernrelthr,
+                         p->params->hint == ltfat_dgtrealmp_allmods,
+                         &p->gramkerns[k1 + k2 * P]),
                          "dgtrealmp_kernel_init failed");
         }
     }
+
+
+#ifndef NDEBUG
+    LTFAT_NAME(kerns)* kk = p->gramkerns[0];
+
+    for (ltfat_int m = 0; m < kk->size.height; m++ )
+    {
+        for (ltfat_int n = 0; n < kk->size.width; n++ )
+        {
+            printf("r=% 5.3e,i=% 5.3e ", ltfat_real(kk->kval[0][n * kk->size.height + m]),
+                   ltfat_imag(kk->kval[0][n * kk->size.height + m]));
+        }
+        printf("\n");
+    }
+
+#endif
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate),
                  "dgtrealmpiter_init failed" );
@@ -161,7 +224,7 @@ error:
     return status;
 }
 
-#define LTFAT_DGTREALMP_SUBSTRACTKERNEL(ctmp)\
+#define LTFAT_DGTREALMP_SUBSTRACTKERNEL_CONJ(ctmp,m)\
 for (ltfat_int nidx = nstart, knidx = knstart; \
      knidx < currkern->size.width;\
      nidx = ++nidx>=N? nidx-N: nidx, knidx+=astep ){\
@@ -169,9 +232,10 @@ for (ltfat_int nidx = nstart, knidx = knstart; \
     LTFAT_REAL*    currsCol = currs + nidx * M;\
     LTFAT_COMPLEX* kcurrCol = currkernvals + knidx * currkern->size.height;\
     \
-    for ( ltfat_int midx = mstart,  kmidx = kmstart;\
-          kmidx < currkern->size.height;\
-          midx  = ++midx>=M? midx-M: midx, \
+    for ( ltfat_int midx = mstart, midx2 = mstop, kmidx = kmstart;\
+          kmidx < currkern->mid.hmid;\
+          midx   = ++midx>=M? midx -M: midx, \
+          midx2  = --midx2<0? midx2+M: midx2, \
           kmidx += Mstep ) {\
         LTFAT_REAL rr = ltfat_real(ctmp)*ltfat_real(kcurrCol[kmidx]);  \
         LTFAT_REAL ii = ltfat_imag(ctmp)*ltfat_imag(kcurrCol[kmidx]);  \
@@ -179,15 +243,31 @@ for (ltfat_int nidx = nstart, knidx = knstart; \
         LTFAT_REAL ri = ltfat_real(ctmp)*ltfat_imag(kcurrCol[kmidx]);  \
         currcCol[midx]  -= LTFAT_COMPLEX(rr-ii,ir+ri);\
         currsCol[midx]   = ltfat_norm(currcCol[midx]);\
-    }}\
-/*         currcCol[midx2] -= LTFAT_COMPLEX(rr+ii,ir-ri);\ */
-/*         currsCol[midx2]  = ltfat_norm(currcCol[midx2]);\ */
-/* }\ */
-/*         LTFAT_REAL rr = ltfat_real(ctmp)*ltfat_real(kcurrCol[currkern->mid.hmid]);  \ */
-/*         LTFAT_REAL ir = ltfat_imag(ctmp)*ltfat_real(kcurrCol[currkern->mid.hmid]);  \ */
-/*         currcCol[m]  -= LTFAT_COMPLEX(rr,ir);\ */
-/*         currsCol[m]   = ltfat_norm(currcCol[m]);\ */
-/* } */
+    \
+        currcCol[midx2] -= LTFAT_COMPLEX(rr+ii,ir-ri);\
+        currsCol[midx2]  = ltfat_norm(currcCol[midx2]);\
+}\
+        LTFAT_REAL rr = ltfat_real(ctmp)*ltfat_real(kcurrCol[currkern->mid.hmid]);  \
+        LTFAT_REAL ir = ltfat_imag(ctmp)*ltfat_real(kcurrCol[currkern->mid.hmid]);  \
+        currcCol[m]  -= LTFAT_COMPLEX(rr,ir);\
+        currsCol[m]   = ltfat_norm(currcCol[m]);\
+}
+
+#define LTFAT_DGTREALMP_SUBSTRACTKERNEL(ctmp,m)\
+for (ltfat_int nidx = nstart, knidx = knstart; \
+     knidx < currkern->size.width;\
+     nidx = ++nidx>=N? nidx-N: nidx, knidx+=astep ){\
+    LTFAT_COMPLEX* currcCol = currc + nidx * M;\
+    LTFAT_REAL*    currsCol = currs + nidx * M;\
+    LTFAT_COMPLEX* kcurrCol = currkernvals + knidx * currkern->size.height;\
+    \
+    for ( ltfat_int midx = mstart, kmidx = kmstart;\
+          kmidx < currkern->size.height;\
+          midx   = ++midx>=M? midx -M: midx, \
+          kmidx += Mstep ) {\
+        currcCol[midx]  -= ctmp*kcurrCol[kmidx];\
+        currsCol[midx]   = ltfat_norm(currcCol[midx]);\
+}}
 
 #define LTFAT_DGTREALMP_COPYTOCONJ \
 for (ltfat_int nidx = nstart, knidx = knstart; knidx < currkern->size.width;\
@@ -221,7 +301,7 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                                      ltfat_int itno, LTFAT_COMPLEX** cout)
 {
-    int status = LTFAT_DGTREALMP_STATUS_WILLCONTINUE;
+    int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
 
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
 
@@ -292,16 +372,19 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
 
         ltfat_int Mstep   = 1;
         ltfat_int astep   = 1;
-        ltfat_int mstart  = ltfat_positiverem(m - currkern->mid.hmid, M);
-        ltfat_int mstop  =  ltfat_positiverem(mstart + currkern->size.height - 1, M);
-        ltfat_int nstart  = ltfat_positiverem(n - currkern->mid.wmid, N);
+        ltfat_int mstart  = m - currkern->mid.hmid;
+        mstart < 0 ? mstart += M : mstart;
+        ltfat_int mstop  =  mstart + currkern->size.height - 1;
+        mstop >= M ? mstop -= M : mstop;
+        ltfat_int nstart  = n - currkern->mid.wmid;
+        nstart < 0 ? nstart += N : nstart;
         ltfat_int kmstart = 0;
         ltfat_int knstart = 0;
 
         LTFAT_COMPLEX* currc = s->c[wIdx];
         LTFAT_REAL* currs    = s->s[wIdx];
 
-        LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval)
+        LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval, m)
 
         if (do_conj)
         {
@@ -311,15 +394,15 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                 mstart = ltfat_positiverem(mconj - currkern->mid.hmid, M);
                 mstop  = ltfat_positiverem(mstart + currkern->size.height - 1, M);
 
-                LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval2)
+                LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval2, mconj)
             }
-            else
-            {
-                ltfat_int mconjstop = mconj +
-                                      (currkern->size.height - currkern->mid.hmid - 1);
-
-                LTFAT_DGTREALMP_COPYTOCONJ
-            }
+            /* else */
+            /* { */
+            /*     ltfat_int mconjstop = mconj + */
+            /*                           (currkern->size.height - currkern->mid.hmid - 1); */
+            /*  */
+            /*     LTFAT_DGTREALMP_COPYTOCONJ */
+            /* } */
         }
 
         mstart  = ltfat_positiverem(m - currkern->mid.hmid, M);
@@ -331,7 +414,6 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                 continue;
 
             M  = p->M[secondwIdx]; M2 = p->M2[secondwIdx]; N = p->N[secondwIdx];
-
 
             double Mrat = p->M[wIdx] / M;
             double arat = p->a[secondwIdx] / p->a[wIdx];
@@ -359,7 +441,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
             currc = s->c[secondwIdx];
             currs = s->s[secondwIdx];
 
-            LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval)
+            LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval, m)
 
             if (do_conj)
             {
@@ -370,7 +452,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                 mstart = ltfat_positiverem(msecond - Mremprev, M);
                 kmstart = currkern->mid.hmid - msecondoffconj - Mremprev * Mstep;
 
-                LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval2)
+                LTFAT_DGTREALMP_SUBSTRACTKERNEL(cval2, msecondconj)
             }
 
             LTFAT_DGTREALMP_UPDATEMAX(secondwIdx)
@@ -402,6 +484,24 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
 #undef LTFAT_DGTREALMP_COPYTOCONJ
 #undef LTFAT_DGTREALMP_UPDATEMAX
 
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_execute_compact)(LTFAT_NAME(dgtrealmp_plan)* p,
+                                      const LTFAT_REAL* f,
+                                      LTFAT_COMPLEX* cout,
+                                      LTFAT_REAL* fout)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p);
+    for (ltfat_int k = 0, accum = 0; k < p->P; accum += p->N[k] * p->M2[k], k++)
+        p->couttmp[k] = cout + accum;
+
+    status = LTFAT_NAME(dgtrealmp_execute)( p, f, p->couttmp, fout);
+error :
+    return status;
+
+}
+
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute)(LTFAT_NAME(dgtrealmp_plan)* p,
                               const LTFAT_REAL* f,
@@ -421,7 +521,7 @@ LTFAT_NAME(dgtrealmp_execute)(LTFAT_NAME(dgtrealmp_plan)* p,
     for (ltfat_int k = 0; k < p->P; k++)
         memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
 
-    while ( LTFAT_DGTREALMP_STATUS_WILLCONTINUE ==
+    while ( LTFAT_DGTREALMP_STATUS_CANCONTINUE ==
             ( status2 =
                   LTFAT_NAME(dgtrealmp_execute_niters)( p, iterstep, cout)))
     {
@@ -477,6 +577,7 @@ LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_plan)** p)
     ltfat_safefree(pp->M);
     ltfat_safefree(pp->M2);
     ltfat_safefree(pp->N);
+    ltfat_safefree(pp->couttmp);
 
     if (pp->params)
         ltfat_dgtrealmp_params_free(pp->params);
@@ -629,6 +730,7 @@ int
 LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
                                    ltfat_int a[], ltfat_int M[],
                                    ltfat_int L, LTFAT_REAL reltol,
+                                   int do_allmods,
                                    LTFAT_NAME(kerns)** pout)
 {
     double arat;
@@ -696,9 +798,17 @@ LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
 
     CHECKMEM( ktmp->kval = LTFAT_NEWARRAY(LTFAT_COMPLEX*, ktmp->kNo));
 
-    for (ltfat_int k = 0; k < ktmp->kNo; k++)
-        CHECKMEM( ktmp->kval[k] =
+    if (do_allmods)
+    {
+        for (ltfat_int k = 0; k < ktmp->kNo; k++)
+            CHECKMEM( ktmp->kval[k] =
+                          LTFAT_NAME_COMPLEX(malloc)( ktmp->size.height * ktmp->size.width));
+    }
+    else
+    {
+        CHECKMEM( ktmp->kval[0] =
                       LTFAT_NAME_COMPLEX(malloc)( ktmp->size.height * ktmp->size.width));
+    }
 
     // Copy the zero-th kernel
     for (ltfat_int n = 0; n < ktmp->size.width; n++)
@@ -706,10 +816,17 @@ LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
                kernlarge + n * Mmax,
                ktmp->size.height * sizeof * kernlarge);
 
-    // Compute kernel modulations
-    for (ltfat_int n = 1; n < ktmp->kNo; n++)
-        LTFAT_NAME(dgtrealmp_kernel_modfi)(ktmp->kval[0], ktmp->size, ktmp->mid,
-                                           arat * n, amin, Mmax, ktmp->kval[n]);
+    if (do_allmods)
+    {
+        // Compute kernel modulations
+        for (ltfat_int n = 1; n < ktmp->kNo; n++)
+            LTFAT_NAME(dgtrealmp_kernel_modfi)(ktmp->kval[0], ktmp->size, ktmp->mid,
+                                               arat * n, amin, Mmax, ktmp->kval[n]);
+    }
+    else
+    {
+
+    }
 
     *pout = ktmp;
     LTFAT_SAFEFREEALL(g0tmp, g1tmp, kernlarge);
@@ -739,6 +856,7 @@ LTFAT_NAME(dgtrealmp_kernel_done)(LTFAT_NAME(kerns)** k)
 error:
     return status;
 }
+
 
 int
 LTFAT_NAME(dgtrealmp_kernel_modfi)(LTFAT_COMPLEX* kfirst, ksize size,
@@ -861,7 +979,7 @@ LTFAT_NAME(dgtrealmp_set_maxatoms)(LTFAT_NAME(dgtrealmp_plan)* p,
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p);
-    CHECK(LTFATERR_NOTPOSARG, maxatoms > 0, "iterstep must be greater than 0");
+    CHECK(LTFATERR_NOTPOSARG, maxatoms > 0, "maxatoms must be greater than 0");
     p->params->maxatoms = maxatoms;
     p->params->maxit = 2 * maxatoms;
 error:
@@ -870,7 +988,7 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_set_errtoldb)(LTFAT_NAME(dgtrealmp_plan)* p,
-                                   int errtoldb)
+                                   double errtoldb)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p);
