@@ -81,7 +81,7 @@ LTFAT_NAME(circshiftcols)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
 
 LTFAT_API int
 LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
-                        ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[]);
+                       ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[]);
 
 /** fftshift an array
  *
@@ -261,6 +261,10 @@ LTFAT_NAME(fir2long)(const LTFAT_TYPE in[], ltfat_int Lfir, ltfat_int Llong,
 LTFAT_API int
 LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], ltfat_int Llong, ltfat_int Lfir,
                      LTFAT_TYPE out[]);
+
+LTFAT_API int
+LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
+                 ltfat_normalize_t flag, LTFAT_REAL* norm);
 
 /** Normalize a vector
  *

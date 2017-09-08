@@ -33,7 +33,7 @@ ltfat_dgtreal_params_allocdef();
  * LTFATERR_NULLPOINTER |  \a params was NULL
  */
 LTFAT_API int
-ltfat_dgtreal_params_set_phaseconv(ltfat_dgtreal_params* params, ltfat_phaseconvention ptype);
+ltfat_dgtreal_setpar_phaseconv(ltfat_dgtreal_params* params, ltfat_phaseconvention ptype);
 
 /** Set FFTW flags
  *
@@ -44,7 +44,7 @@ ltfat_dgtreal_params_set_phaseconv(ltfat_dgtreal_params* params, ltfat_phaseconv
  * LTFATERR_NULLPOINTER |  \a params was NULL
  */
 LTFAT_API int
-ltfat_dgtreal_params_set_fftwflags(ltfat_dgtreal_params* params, unsigned fftw_flags);
+ltfat_dgtreal_setpar_fftwflags(ltfat_dgtreal_params* params, unsigned fftw_flags);
 
 /** Set algorithm hint
  *
@@ -55,7 +55,11 @@ ltfat_dgtreal_params_set_fftwflags(ltfat_dgtreal_params* params, unsigned fftw_f
  * LTFATERR_NULLPOINTER |  \a params was NULL
  */
 LTFAT_API int
-ltfat_dgtreal_params_set_hint(ltfat_dgtreal_params* params, ltfat_dgtreal_hint hint);
+ltfat_dgtreal_setpar_hint(ltfat_dgtreal_params* params, ltfat_dgtreal_hint hint);
+
+LTFAT_API int
+ltfat_dgtreal_setpar_normalizewin(ltfat_dgtreal_params* params,
+                                  int do_normalize_win);
 
 /** Destroy struct
  *
@@ -164,7 +168,7 @@ LTFAT_NAME(dgtreal_execute_proj)(LTFAT_NAME(dgtreal_plan)* p,
  */
 LTFAT_API int
 LTFAT_NAME(dgtreal_execute_syn_newarray)(LTFAT_NAME(dgtreal_plan)* p,
-                                const LTFAT_COMPLEX c[], LTFAT_REAL f[]);
+        const LTFAT_COMPLEX c[], LTFAT_REAL f[]);
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_execute_syn)(LTFAT_NAME(dgtreal_plan)* p);
@@ -189,7 +193,7 @@ LTFAT_NAME(dgtreal_execute_syn)(LTFAT_NAME(dgtreal_plan)* p);
  */
 LTFAT_API int
 LTFAT_NAME(dgtreal_execute_ana_newarray)(LTFAT_NAME(dgtreal_plan)* p,
-                                const LTFAT_REAL f[], LTFAT_COMPLEX c[]);
+        const LTFAT_REAL f[], LTFAT_COMPLEX c[]);
 
 LTFAT_API int
 LTFAT_NAME(dgtreal_execute_ana)(LTFAT_NAME(dgtreal_plan)* p);
@@ -210,6 +214,4 @@ LTFAT_API int
 LTFAT_NAME(dgtreal_done)(LTFAT_NAME(dgtreal_plan)** p);
 
 /** @} */
-
-
 

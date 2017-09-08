@@ -8,15 +8,16 @@ struct ltfat_dgtrealmp_params
 {
     ltfat_dgtrealmp_hint hint;
     ltfat_dgtrealmp_alg alg;
-    LTFAT_REAL errtoldb;
-    LTFAT_REAL errtoladj;
-    LTFAT_REAL kernrelthr;
+    long double errtoldb;
+    long double errtoladj;
+    double kernrelthr;
     size_t maxit;
     size_t maxatoms;
     size_t iterstep;
     int verbose;
     int initwasrun;
     int treelevels;
+    ltfat_phaseconvention ptype;
 };
 
 typedef struct
@@ -65,8 +66,8 @@ typedef struct
     LTFAT_NAME(maxtree)** tmaxtree;
     LTFAT_NAME(maxtree)*** fmaxtree;
     int** suppindCount;
-    LTFAT_REAL err;
-    LTFAT_REAL fnorm2;
+    long double err;
+    long double fnorm2;
     size_t currit;
     size_t curratoms;
     ltfat_int         P;
@@ -100,7 +101,7 @@ int
 LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
                                    ltfat_int a[], ltfat_int M[],
                                    ltfat_int L, LTFAT_REAL reltol,
-                                   int do_allmods,
+                                   int do_allmods, ltfat_phaseconvention ptype,
                                    LTFAT_NAME(kerns)** pout);
 
 int

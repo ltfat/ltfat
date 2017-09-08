@@ -96,7 +96,7 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
-                        ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[])
+                       ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[])
 {
     int status = LTFATERR_SUCCESS;
 
@@ -563,6 +563,66 @@ error:
 /*     return status; */
 /* } */
 
+LTFAT_API int
+LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
+                 ltfat_normalize_t flag, LTFAT_REAL* norm)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(in); CHECKNULL(norm);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
+
+    *norm = 0.0;
+
+    switch (flag)
+    {
+    case LTFAT_NORMALIZE_ENERGY:
+    {
+        for (ltfat_int ii = 0; ii < L; ii++)
+        {
+#ifdef LTFAT_COMPLEXTYPE
+            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
+#else
+            LTFAT_REAL inAbs = in[ii]; // We dont need abs here
+#endif
+            *norm += inAbs * inAbs;
+        }
+
+        *norm = sqrt(*norm);
+        break;
+    }
+    case LTFAT_NORMALIZE_AREA:
+    {
+        for (ltfat_int ii = 0; ii < L; ii++)
+        {
+            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
+            *norm += inAbs;
+        }
+        break;
+    }
+    case LTFAT_NORMALIZE_PEAK:
+    {
+
+        for (ltfat_int ii = 0; ii < L; ii++)
+        {
+            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
+            if (inAbs > *norm)
+                *norm = inAbs;
+        }
+        break;
+
+    }
+    break;
+    case LTFAT_NORMALIZE_NULL:
+        *norm = 1.0;
+        break;
+    default:
+        CHECKCANTHAPPEN("Unknown normalization flag");
+    };
+
+error:
+    return status;
+}
+
 
 LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
@@ -575,57 +635,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
 
     normfac = 1.0;
 
-    switch (flag)
-    {
-    case LTFAT_NORMALIZE_ENERGY:
-    {
-        normfac = 0.0;
-
-        for (ltfat_int ii = 0; ii < L; ii++)
-        {
-#ifdef LTFAT_COMPLEXTYPE
-            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
-#else
-            LTFAT_REAL inAbs = in[ii]; // We dont need abs here
-#endif
-            normfac += inAbs * inAbs;
-        }
-
-        normfac = sqrt(normfac);
-        break;
-    }
-    case LTFAT_NORMALIZE_AREA:
-    {
-        normfac = 0.0;
-
-        for (ltfat_int ii = 0; ii < L; ii++)
-        {
-            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
-            normfac += inAbs;
-        }
-
-
-        break;
-    }
-    case LTFAT_NORMALIZE_PEAK:
-    {
-        normfac = 0.0;
-
-        for (ltfat_int ii = 0; ii < L; ii++)
-        {
-            LTFAT_REAL inAbs = ltfat_abs(in[ii]);
-            if (inAbs > normfac)
-                normfac = inAbs;
-        }
-        break;
-
-    }
-    case LTFAT_NORMALIZE_NULL:
-        normfac = 1.0;
-        break;
-    default:
-        CHECKCANTHAPPEN("Unknown normalization flag");
-    };
+    CHECKSTATUS(LTFAT_NAME(norm)(in, L, flag, &normfac), "norm failed");
 
     normfac = (LTFAT_REAL)(1.0) / normfac;
 

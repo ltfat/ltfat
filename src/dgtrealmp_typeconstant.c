@@ -123,6 +123,7 @@ ltfat_dgtrealmp_params_defaults(ltfat_dgtrealmp_params* params)
     params->maxit = 0;
     params->iterstep = 100;
     params->treelevels = 10;
+    params->ptype = LTFAT_FREQINV;
 error:
     return status;
 }
