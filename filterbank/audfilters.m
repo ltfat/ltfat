@@ -239,8 +239,10 @@ if ~isscalar(kv.redmul) || kv.redmul <= 0
     error('%s: redmul must be a positive scalar.',upper(mfilename));
 end
 
-if ~isscalar(kv.redtar) || kv.redtar <= 0
-    error('%s: redtar must be a positive scalar.',upper(mfilename));
+if ~isempty(kv.redtar)
+    if ~isscalar(kv.redtar) || kv.redtar <= 0
+        error('%s: redtar must be a positive scalar.',upper(mfilename));
+    end
 end
 
 if kv.redtar <= 1
