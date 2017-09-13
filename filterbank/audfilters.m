@@ -350,15 +350,15 @@ if flags.do_symmetric
     
     % Generate lowpass filter parameters     
     fsupp(1) = 0;
-    fc_temp = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
-    fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
-    aprecise(1) = max(fs./(2*max(fc_temp,0)+fsupp_temp*kv.redmul),1);  
-        
+    fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);  
+    
     % Generate highpass filter parameters     
     fsupp(end) = 0;
-    fc_temp = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
-    fsupp_temp = audfiltbw(fc_temp,flags.audscale)/winbw*kv.bwmul;
-    aprecise(end) = max(fs./(2*(fc(end)-min(fc_temp,fs/2))+fsupp_temp*kv.redmul),1);
+    fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
+    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
 else    
     % fsupp_scale is measured on the selected auditory scale
     % The scaling is incorrect, it does not account for the warping (NH:
@@ -372,15 +372,15 @@ else
     
     % Generate lowpass filter parameters     
     fsupp(1) = 0;
-    fc_temp = max(audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale),0);
-    fsupp_temp=2*(audtofreq(freqtoaud(fc_temp,flags.audscale)+fsupp_scale/2,flags.audscale)-fc_temp);        
-    aprecise(1) = max(fs./(2*fc_temp+fsupp_temp*kv.redmul),1);
+    fps0 = max(audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale),0);
+    fsupp_temp1=2*(audtofreq(freqtoaud(fps0,flags.audscale)+fsupp_scale/2,flags.audscale)-fps0);        
+    aprecise(1) = max(fs./(2*fps0+fsupp_temp1*kv.redmul),1);
     
     % Generate highpass filter parameters     
     fsupp(end) = 0;
-    fc_temp = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale),fs/2);
-    fsupp_temp=2*(fc_temp-audtofreq(freqtoaud(fc_temp,flags.audscale)-fsupp_scale/2,flags.audscale));        
-    aprecise(end) = max(fs./(2*(fc(end)-fc_temp)+fsupp_temp*kv.redmul),1);
+    fps0 = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale),fs/2);
+    fsupp_temp1=2*(fps0-audtofreq(freqtoaud(fps0,flags.audscale)-fsupp_scale/2,flags.audscale));        
+    aprecise(end) = max(fs./(2*(fc(end)-fps0)+fsupp_temp1*kv.redmul),1);
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
@@ -429,40 +429,6 @@ elseif flags.do_uniform
     a = repmat(a,M2,1);
 end;
 
-% Adjust the downsampling rates in order to achieve 'redtar'
-if ~isempty(kv.redtar)
-    if flags.do_uniform
-        warning('%s: redtar is not yet supported for uniform filter banks.',upper(mfilename))
-%         a_old = a(1);
-%         red_old= (2*M2-2)*a_old;
-%         redfac = floor(red_old/kv.redtar);
-%         a_new = a_old*redfac;
-%         L=filterbanklength(Ls,a_new);
-% 
-%         % Rebuild the matrix 'a' in the correct format
-%         a = repmat(a_new,M2,1);
-        
-        % Compute and display redundancy for verification
-    else
-        dk_old = a(:,1)./a(:,2);
-        red_old= sum(2./dk_old)-sum(1./dk_old([1,end]));
-        redfac = red_old/kv.redtar;
-        dk_new = dk_old;
-        dk_new(2:M2-1) = dk_old(2:M2-1)*redfac;
-        
-        % Rebuild the matrix 'a' in the correct format
-        N = ceil(Ls./dk_new);
-        a = [repmat(Ls,length(dk_new),1),N];
-        
-        % Compute and display redundancy for verification
-%         R_old = sum(2./dk_old)-sum(1./dk_old([1,end]));
-%         R = sum(2./dk_new)-sum(1./dk_new([1,end]));
-%         fprintf('Original redundancy: %g \n', R_old);
-%         fprintf('Target redundancy: %g \n', kv.redtar);
-%         fprintf('Actual redundancy: %g \n', R);
-    end
-end
-
 % Get an expanded "a"
 afull=comp_filterbank_a(a,M2,struct());
 
@@ -498,6 +464,44 @@ g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc,fs,winbw,scal(1),kv,flags);
 
 % Generate highpass filter
 g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc,fs,winbw,scal(M2),kv,flags);
+
+% Adjust the downsampling rates in order to achieve 'redtar'
+if ~isempty(kv.redtar)
+    if flags.do_uniform
+        % Compute and display redundancy for verification
+        org_red = (M2-2)/a(1);
+        a_new = floor(a*org_red/kv.redtar);
+        scal_new = org_red/kv.redtar*ones(numel(g),1);
+        new_red = (M2-2)/a_new(1);
+    else
+%         Exactly as in the paper
+        dk_old = a(:,1)./a(:,2);
+        org_red = sum(2./dk_old)-sum(1./dk_old([1,end]));
+        a_new = [a(1,:);[a(2:end-1,1),round(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
+%         %         Adjust d0 and dK to the new redundancy
+%         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
+%         % Low-pass
+%         fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+%         fsupp_temp0 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+%         a_new(1,2) = ceil(Ls/max(fs./(2*max(fps0,0)+fsupp_temp0/cbw),1));  
+%         % High-pass
+%         fps1 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
+%         fsupp_temp1 = audfiltbw(fps1,flags.audscale)/winbw*kv.bwmul;
+%         a_new(end,2) = ceil(Ls/max(fs./(2*(fc(end)-min(fps1,fs/2))+fsupp_temp1/cbw),1));
+        % Finally re-scale all filters
+%         scal_new = [a(1,2)/a_new(1,2);org_red/kv.redtar*ones(numel(g)-2,1);a(end,2)/a_new(end,2)];
+        scal_new = [1;org_red/kv.redtar*ones(numel(g)-2,1);1];
+        dk_new = a_new(:,1)./a_new(:,2);
+        new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
+    end
+    g_new = filterbankscale(g,sqrt(scal_new)');
+    a = a_new;
+    g = g_new;
+    % Compute and display redundancy for verification
+    fprintf('Original redundancy: %g \n', org_red);
+    fprintf('Target redundancy: %g \n', kv.redtar);
+    fprintf('Actual redundancy: %g \n', new_red);
+end
 
 function glow = audlowpassfilter(g,a,fc,fs,winbw,scal,kv,flags)    
 
