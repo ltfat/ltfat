@@ -1,26 +1,35 @@
-%[f,fs] =wavload('serj.wav'); 
+for ii= 70:70
+
+filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
+disp(filename);
+
+[f,fs] =wavload(filename); 
+f = f(1:10*fs,1);
+
 %f = f(1:fs);
 [f,fs] =gspi;
 
 a1 = 32; M1 = 128;
-a2 = 1024; M2 = 16384;
+a2 = 512; M2 = 2048;
 a3 = 512; M3 = 2048;
 a4 = 1024; M4 = 4096;
-%[f,fs] = gspi;
-atoms = 10000;
+
+
 Ls = numel(f);
 L = dgtlength(Ls,a2,M2);
-tfr1 = a*M/L;
-tfr2 = a2*M2/L;
-step = 100;
+atoms = 0.5*L;
+f = postpad(f,L);
+f(:) = 1;
+
+step = 10;
 g = 'gauss';
 
 
-[c1,fhat1,info1] = dgtrealmp(f,'mp','tol',1e-3,'atoms',atoms,...
-                   'g2',{'hann',256,2048},...
+[c1,fhat1,info1] = dgtrealmp(f,'mp','tol',1e-4,'atoms',atoms,...
+                   'g2',{'blackman',512,2048},...
                    'atsellim',10000,...
                    'relresstep',step,'errappr','printdb',...
-                   'relrestoldb',-45);
+                   'relrestoldb',-60);
 %                     'g3',{'gauss',tfr/2^2},...
 %                    'g4',{'gauss',tfr/2^2},...
 %                    'g5',{'gauss',tfr/2^2},...
@@ -29,6 +38,7 @@ g = 'gauss';
  info1
  info1.exitmsg
  20*log10(info1.relres)
+end
 % a = 256;
 % [c2,fhat2,info2] = dgtrealmp(f,a,M,'localomp','tol',1e-4,'atoms',atoms,...
 %                     'g1',g,...

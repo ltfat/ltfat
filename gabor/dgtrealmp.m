@@ -180,6 +180,8 @@ if flags.do_mp
         % 1b) Selected coefficient
         cval = cres{wIdx}(m+1,n+1);
         
+
+        
         %% 2) Residual update
         for secondwIdx = [wIdx,1:wIdx-1,wIdx+1:numel(dp)]
             Mrat = dp(wIdx).M/dp(secondwIdx).M;
@@ -229,6 +231,8 @@ if flags.do_mp
             msecond = round(m/Mrat);
             msecondoff = m - msecond*Mrat;
             
+            
+            
             mmid = kmids{wIdx,secondwIdx}(1);
             currkerntmp = currkern;
             
@@ -254,13 +258,20 @@ if flags.do_mp
             end 
 
             idxm = mod(msecond + currkernhidx,dp(secondwIdx).M)+1;
+            
+            fac = 1;
+            if msecond > 0 && msecond < kernh/4
+                fac = 1/(1+real(currkerntmp(2*msecond + mmid,nmid)*exp(1i*2*angle(cval))));
+                cval = cval*fac;
+            end
   
             cresfulltmp = cres{secondwIdx}(idxm,idxn);
             cresfulltmp = cresfulltmp - cval*currkerntmp;
             cres{secondwIdx}(idxm,idxn) = cresfulltmp;
             s{secondwIdx}(idxm,idxn) = abs(cresfulltmp);
             
-            if m > 0
+            if msecond > 0 && msecond < kernh/4
+            %if m > 0
                 currkernhidxconj = currkernhidx;
                 %%% Conjugated frequency bin %%%
 
@@ -269,8 +280,8 @@ if flags.do_mp
                 
                 if secondwIdx==wIdx
                      % Get the conjugated coefficient (might have been changed by subtracting the first one)
-                     %cval2 = conj(cval);
-                     cval2 = cres{secondwIdx}(msecondconj + 1,n+1);
+                     cval2 = conj(cval);
+                     %cval2 = cres{secondwIdx}(msecondconj + 1,n+1);
                 end
                 
                 mmid = kmids{wIdx,secondwIdx}(1);
@@ -322,9 +333,13 @@ if flags.do_mp
              plotiter(c,cres,a,M,clim,iter,kv,flags);
          end
       
-        apprenenergy = apprenenergy + abs(cval)^2;
+        apprenenergy = apprenenergy + abs(cval)^2*1/fac;
         if m>0
-           apprenenergy = apprenenergy + abs(cval2)^2;
+           cvalold = c{wIdx}(mconj+1,n+1);
+           c{wIdx}(mconj+1,n+1) = cvalold + conj(cval);
+            
+           %apprenenergy = apprenenergy + abs(cval*fac/sqrt(fac))^2;
+           apprenenergy = apprenenergy + abs(cval)^2*1/fac;
         end
         
         if mod(iter,kv.relresstep) == 0
@@ -333,12 +348,13 @@ if flags.do_mp
             %fprintf('Atoms: %d\n',atNo);
             if flags.do_errappr
                 relres(relresid) = sqrt((norm_f2-apprenenergy)/norm_f2);
-                fprintf('Err: %.6f\n',20*log10(relres(relresid)));
+                %fprintf('Err: %.6f\n',20*log10(relres(relresid)));
                 
                 %relres(relresid) = printiterappr(s,M,norm_c,iter,kv,flags);
             else
                 relresexact(relresid) = printiterexact(c,dp,L,Ls,f,norm_f,iter,kv,flags);
-                relres(relresid) = sqrt ((norm_f2-apprenenergy)/norm_f2);
+                relres(relresid) = relresexact(relresid);
+                resappr = sqrt ((norm_f2-apprenenergy)/norm_f2);
                 if ~isreal(relres(relresid))
                     prd = 1;
                 end
