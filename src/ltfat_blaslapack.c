@@ -14,16 +14,16 @@
 #define HAVE_LAPACK 1
 
 #ifdef LTFAT_DOUBLE
-#define LTFAT_POSV F77_FUNC(zposv,ZPOSV)
 #define LTFAT_GESVD F77_FUNC(zgesvd,ZGESVD)
+#define LTFAT_POSV F77_FUNC(zposv,ZPOSV)
 #define LTFAT_clapack_posv clapack_zposv
 #define LTFAT_GEMM F77_FUNC (zgemm, ZGEMM)
 #define LTFAT_cblas_gemm cblas_zgemm
 #endif
 
 #ifdef LTFAT_SINGLE
-#define LTFAT_POSV F77_FUNC(cposv,CPOSV)
 #define LTFAT_GESVD F77_FUNC(cgesvd,CGESVD)
+#define LTFAT_POSV F77_FUNC(cposv,CPOSV)
 #define LTFAT_clapack_posv clapack_cposv
 #define LTFAT_GEMM F77_FUNC (cgemm, CGEMM)
 #define LTFAT_cblas_gemm cblas_cgemm
@@ -63,6 +63,9 @@ LTFAT_GESVD (F77_CONST_CHAR_ARG_DECL jobu,
              LTFAT_REAL* rwork, ptrdiff_t* info
              F77_CHAR_ARG_LEN_DECL
              F77_CHAR_ARG_LEN_DECL);
+
+
+
 #ifdef __cplusplus
 }
 #endif
@@ -96,15 +99,25 @@ LTFAT_GEMM (F77_CONST_CHAR_ARG_DECL TransA,
 
 #endif /* end of HAVE_BLAS */
 
+LTFAT_API ltfat_int
+LTFAT_NAME_COMPLEX(solvehermitiansystem)(const LTFAT_COMPLEX* A,
+                                 ltfat_int M, LTFAT_COMPLEX* b)
+{
+    return LTFAT_NAME(posv)(M, 1, (LTFAT_COMPLEX*) A, M, b, M);
+}
+
+
+
 /* ----- Compute Cholesky factorization  ------------
  *
  * For simplification, the interface assumes that we
  * are using column-major format and storing the upper
  * triangle
  */
-ltfat_int LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
-                          LTFAT_COMPLEX* A, const ptrdiff_t lda,
-                          LTFAT_COMPLEX* B, const ptrdiff_t ldb)
+ltfat_int
+LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
+                 LTFAT_COMPLEX* A, const ptrdiff_t lda,
+                 LTFAT_COMPLEX* B, const ptrdiff_t ldb)
 #ifdef HAVE_CBLASLAPACK
 {
     return LTFAT_clapack_posv(CblasColMajor, CblasUpper, N, NRHS, (LTFAT_REAL*)A,
@@ -132,9 +145,9 @@ ltfat_int LTFAT_NAME(posv)(const ptrdiff_t N, const ptrdiff_t NRHS,
 
 /* ----- Compute SVD factorization  ------------ */
 ltfat_int LTFAT_NAME(gesvd)(const ptrdiff_t M, const ptrdiff_t N,
-                           LTFAT_COMPLEX* A, const ptrdiff_t lda,
-                           LTFAT_REAL* S, LTFAT_COMPLEX* U, const ptrdiff_t ldu,
-                           LTFAT_COMPLEX* VT, const ptrdiff_t ldvt)
+                            LTFAT_COMPLEX* A, const ptrdiff_t lda,
+                            LTFAT_REAL* S, LTFAT_COMPLEX* U, const ptrdiff_t ldu,
+                            LTFAT_COMPLEX* VT, const ptrdiff_t ldvt)
 #ifdef HAVE_LAPACK
 {
 
