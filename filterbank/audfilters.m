@@ -476,8 +476,8 @@ if ~isempty(kv.redtar)
     else
 %         Exactly as in the paper
         dk_old = a(:,1)./a(:,2);
-        org_red = sum(2./dk_old)-sum(1./dk_old([1,end]));
-        a_new = [a(1,:);[a(2:end-1,1),round(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
+        org_red = sum(2./dk_old(2:end-1));
+        a_new = [a(1,:);[a(2:end-1,1),ceil(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
 %         %         Adjust d0 and dK to the new redundancy
         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
 %         % Low-pass
@@ -489,11 +489,9 @@ if ~isempty(kv.redtar)
         fsupp_temp1 = audfiltbw(fps1,flags.audscale)/winbw*kv.bwmul;
         a_new(end,2) = ceil(Ls/max(fs./(2*(fc(end)-fps1)+fsupp_temp1/cbw),1));
         % Finally re-scale all filters
-%         scal_new = [a(1,2)/a_new(1,2);org_red/kv.redtar*ones(numel(g)-2,1);a(end,2)/a_new(end,2)];
-%         [1;org_red/kv.redtar*ones(numel(g)-2,1);1];
         dk_new = a_new(:,1)./a_new(:,2);
         scal_new = dk_new./dk_old;
-%         new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
+        new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
     end
     g_new = filterbankscale(g,sqrt(scal_new)');
     a = a_new;
