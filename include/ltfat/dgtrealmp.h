@@ -19,9 +19,11 @@ typedef enum
 
 typedef enum
 {
-    ltfat_dgtrealmp_alg_mp       = 0,
-    ltfat_dgtrealmp_alg_locomp   = (1U << 0),
-    ltfat_dgtrealmp_alg_cyclicmp  = (1U << 1),
+    ltfat_dgtrealmp_alg_mp              = 0,
+    ltfat_dgtrealmp_alg_locomp          = (1U << 0),
+    ltfat_dgtrealmp_alg_cyclicmp        = (1U << 1),
+    ltfat_dgtrealmp_alg_complmp         = (1U << 2),
+    ltfat_dgtrealmp_alg_complcyclicmp   = (1U << 3),
 } ltfat_dgtrealmp_alg;
 
 

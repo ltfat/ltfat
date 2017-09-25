@@ -39,11 +39,11 @@ for idx = 1:1%numel(Larr)
 
 for ii= 61:61
 
-filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
-disp(filename);
+%filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
+%disp(filename);
     
-[f,fs] = wavload(filename);
-%[f,fs] = gspi;
+%[f,fs] = wavload(filename);
+[f,fs] = gspi;
 
 %f = postpad(f,fs);
 f = cast(f,flags.complexity);
@@ -51,11 +51,12 @@ f = cast(f,flags.complexity);
 Ls = min([Ls,10*fs]);
 W = 1;
 f = f(:,1);
-a = [128,2048,128,32];
-M = [512,8192,512,128];
+a = [512,2048,128,32];
+M = [2048,8192,512,128];
 M2 = floor(M/2) + 1;
 gl = [2048,8192,512,128];
-P = 2;
+P = [2,4];
+Psize = numel(P);
 L = dgtlength(Ls,max(a),max(M));
 f = postpad(f,L);
 %f(:) = 1; 
@@ -64,17 +65,17 @@ f = postpad(f,L);
 N = L./a;
 %g = randn(gl,1,flags.complexity);
 
-gCell = cell(P,1);
-for p=1:P
-    gCell{p} = cast(firwin('blackman',gl(p),'2'),flags.complexity);
+gCell = cell(Psize,1);
+for p=1:Psize
+    gCell{p} = cast(firwin('blackman',gl(P(p)),'2'),flags.complexity);
 end
 g = cell2mat(gCell);
  
  
 gPtr = libpointer(dataPtr,g);
-glPtr = libpointer('int64Ptr',cast(gl,'int64'));
-aPtr  = libpointer('int64Ptr',cast(a,'int64'));
-MPtr  = libpointer('int64Ptr',cast(M,'int64'));
+glPtr = libpointer('int64Ptr',cast(gl(P),'int64'));
+aPtr  = libpointer('int64Ptr',cast(a(P),'int64'));
+MPtr  = libpointer('int64Ptr',cast(M(P),'int64'));
 
 
 fPtr = libpointer(dataPtr,f);
@@ -83,8 +84,8 @@ fout = randn(L,W,flags.complexity);
 foutPtr = libpointer(dataPtr,fout);
 
 sizeaccum = 0;
-for p=1:P
-    sizeaccum = sizeaccum + M2(p)*N(p)*W;
+for p=1:Psize
+    sizeaccum = sizeaccum + M2(P(p))*N(P(p))*W;
 end
 
 c = cast(randn(sizeaccum,1)+...
@@ -93,7 +94,7 @@ cout = complex2interleaved(c);
 coutPtr = libpointer(dataPtr,cout);
 
 %ctrue = dgt(f,g(1:gl(1)),a(1),M(1));
-atoms = 0.2*L;
+atoms = 20000;
 %atoms = 100000;
 
 params = calllib('libltfat','ltfat_dgtrealmp_params_allocdef');
@@ -105,7 +106,7 @@ calllib('libltfat','ltfat_dgtrealmp_setpar_iterstep',params,1e6);
 plan = libpointer();
 funname = makelibraryname('dgtrealmp_init_compact',flags.complexity,0);
 statusInit = calllib('libltfat',funname,gPtr,glPtr,...
-    L,P,aPtr,MPtr,params,plan);
+    L,Psize,aPtr,MPtr,params,plan);
 
 calllib('libltfat','ltfat_dgtrealmp_params_free',params);
 
@@ -126,12 +127,12 @@ fprintf('Init %.3f, execute %.3f, both %.3f seconds.\n',t1,t2,t1+t2);
  cout2 = interleaved2complex(coutPtr.value);
  atoms = numel(find(abs(cout2(:))));
 
-coutCell = cell(P,1);
+coutCell = cell(Psize,1);
 sizeaccum = 0;
-for p=1:P
-    coutCell{p} = cout2(sizeaccum +1: sizeaccum + M2(p)*N(p)*W);
-    coutCell{p} = reshape(coutCell{p},M2(p),N(p),W);
-    sizeaccum = sizeaccum + M2(p)*N(p)*W;
+for p=1:Psize
+    coutCell{p} = cout2(sizeaccum +1: sizeaccum + M2(P(p))*N(P(p))*W);
+    coutCell{p} = reshape(coutCell{p},M2(P(p)),N(P(p)),W);
+    sizeaccum = sizeaccum + M2(P(p))*N(P(p))*W;
 end
 
 plot((0:L-1)/fs,[fPtr.value, foutPtr.value]);

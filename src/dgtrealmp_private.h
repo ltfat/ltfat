@@ -72,6 +72,9 @@ typedef struct
     size_t curratoms;
     ltfat_int         P;
     ltfat_int*        N;
+    // LocOMP related
+    LTFAT_COMPLEX* gramBuf;
+    LTFAT_COMPLEX* cvalBuf;
 } LTFAT_NAME(dgtrealmpiter_state);
 
 struct LTFAT_NAME(dgtrealmp_plan)
@@ -121,7 +124,13 @@ LTFAT_NAME(dgtrealmp_essentialsupport)(const LTFAT_REAL g[], ltfat_int gl,
                                        LTFAT_REAL reltol,
                                        ltfat_int* lefttail, ltfat_int* righttail);
 
+int
+LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
+        LTFAT_NAME(dgtrealmp_plan)* p,
+        ltfat_int* m, ltfat_int* n, ltfat_int* w);
 
+// inline int
+// LTFAT_NAME(dgtrealmp_execute_substractatom)();
 
 
 #endif

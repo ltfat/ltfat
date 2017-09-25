@@ -153,6 +153,8 @@ ltfat_dgtrealmp_alg_isvalid(ltfat_dgtrealmp_alg in)
     case ltfat_dgtrealmp_alg_mp:
     case ltfat_dgtrealmp_alg_locomp:
     case ltfat_dgtrealmp_alg_cyclicmp:
+    case ltfat_dgtrealmp_alg_complmp:
+    case ltfat_dgtrealmp_alg_complcyclicmp:
         isvalid = 1;
     }
 
