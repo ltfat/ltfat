@@ -37,25 +37,26 @@ for idx = 1:1%numel(Larr)
 
 
 
-for ii= 61:61
+for ii= 1:1
 
-%filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
-%disp(filename);
+filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
+disp(filename);
     
-%[f,fs] = wavload(filename);
+[f,fs] = wavload(filename);
 [f,fs] = gspi;
 
 %f = postpad(f,fs);
 f = cast(f,flags.complexity);
+%f = [zeros(10000,1);f];
 [Ls,W] = size(f(:,1));
 Ls = min([Ls,10*fs]);
 W = 1;
 f = f(:,1);
-a = [512,2048,128,32];
-M = [2048,8192,512,128];
+a  = [  512,  64,  64,  64,  64];
+M  = [2048, 4*1024,8192,8192,8192];
 M2 = floor(M/2) + 1;
-gl = [2048,8192,512,128];
-P = [2,4];
+gl = [2048, 256, 512,1024,2048];
+P = [1];
 Psize = numel(P);
 L = dgtlength(Ls,max(a),max(M));
 f = postpad(f,L);
@@ -88,27 +89,27 @@ for p=1:Psize
     sizeaccum = sizeaccum + M2(P(p))*N(P(p))*W;
 end
 
-c = cast(randn(sizeaccum,1)+...
-         1i*randn(sizeaccum,1),flags.complexity);
-cout = complex2interleaved(c);
+cout = complex2interleaved(...
+cast(randn(sizeaccum,1)+...
+         1i*randn(sizeaccum,1),flags.complexity));
 coutPtr = libpointer(dataPtr,cout);
 
 %ctrue = dgt(f,g(1:gl(1)),a(1),M(1));
-atoms = 20000;
-%atoms = 100000;
+atoms = 0.8*L;
+atoms = 19000;
 
 params = calllib('libltfat','ltfat_dgtrealmp_params_allocdef');
 calllib('libltfat','ltfat_dgtrealmp_setpar_maxatoms',params,atoms);
 calllib('libltfat','ltfat_dgtrealmp_setpar_errtoldb',params,-40);
 calllib('libltfat','ltfat_dgtrealmp_setpar_kernrelthr',params,1e-4);
+calllib('libltfat','ltfat_dgtrealmp_setpar_phaseconv',params,phaseconv.LTFAT_TIMEINV);
+calllib('libltfat','ltfat_dgtrealmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_locomp);
 calllib('libltfat','ltfat_dgtrealmp_setpar_iterstep',params,1e6);
 
 plan = libpointer();
 funname = makelibraryname('dgtrealmp_init_compact',flags.complexity,0);
 statusInit = calllib('libltfat',funname,gPtr,glPtr,...
     L,Psize,aPtr,MPtr,params,plan);
-
-calllib('libltfat','ltfat_dgtrealmp_params_free',params);
 
 tic
 funname = makelibraryname('dgtrealmp_reset',flags.complexity,0);
@@ -121,11 +122,12 @@ tic
 
 t2 =toc;
 
-fprintf('Init %.3f, execute %.3f, both %.3f seconds.\n',t1,t2,t1+t2);
+fprintf('Init %.3f, execute %.3f, both %.3f seconds, status %d.\n',t1,t2,t1+t2,statusExecute);
 
 
- cout2 = interleaved2complex(coutPtr.value);
- atoms = numel(find(abs(cout2(:))));
+cout2 = interleaved2complex(coutPtr.value);
+clear coutPtr cout
+atoms = numel(find(abs(cout2(:))));
 
 coutCell = cell(Psize,1);
 sizeaccum = 0;
@@ -134,7 +136,7 @@ for p=1:Psize
     coutCell{p} = reshape(coutCell{p},M2(P(p)),N(P(p)),W);
     sizeaccum = sizeaccum + M2(P(p))*N(P(p))*W;
 end
-
+clear cout2
 plot((0:L-1)/fs,[fPtr.value, foutPtr.value]);
 
 errdb = 20*log10(norm(fPtr.value -foutPtr.value)/norm(fPtr.value));
@@ -147,7 +149,7 @@ funname = makelibraryname('dgtrealmp_done',flags.complexity,0);
 statusDone = calllib('libltfat',funname,plan);
 
 
-    
+  
     %[test_failed,fail]=ltfatdiditfail(res+statusInit,test_failed);
     %fprintf(['DGTREAL FREQINV WP auto %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s\n'],dirstr,L,W,a,M,flags.complexity,ltfatstatusstring(statusExecute),fail);
    

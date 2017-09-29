@@ -27,6 +27,20 @@ error:
 }
 
 LTFAT_API int
+ltfat_dgtrealmp_setpar_phaseconv(ltfat_dgtrealmp_params* params,
+                                 ltfat_phaseconvention pconv)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+    CHECK(LTFATERR_BADARG, ltfat_phaseconvention_is_valid(pconv),
+          "Invalid phase conv. passed (passed %d)", pconv);
+
+    params->ptype = pconv;
+error:
+    return status;
+}
+
+LTFAT_API int
 ltfat_dgtrealmp_setpar_hint(ltfat_dgtrealmp_params* params,
                             ltfat_dgtrealmp_hint hint)
 {
@@ -135,6 +149,7 @@ ltfat_dgtrealmp_hint_isvalid(ltfat_dgtrealmp_hint in)
 
     switch (in)
     {
+    case ltfat_dgtrealmp_auto:
     case ltfat_dgtrealmp_singlemod:
     case ltfat_dgtrealmp_allmods:
         isvalid = 1;

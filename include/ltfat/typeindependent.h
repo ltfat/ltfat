@@ -13,6 +13,7 @@
 #include "dgtrealwrapper.h"
 #include "dgtrealmp.h"
 #include "linalg.h"
+#include "maxtree.h"
 
 /*  --------- factorizations --------------- */
 

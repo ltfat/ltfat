@@ -32,6 +32,7 @@ enum ltfaterr_status
     LTFATERR_BADTRALEN      =   -99,
     LTFATERR_NOTAFRAME      =  -100,
     LTFATERR_NOTPAINLESS    =  -101,
+    LTFATERR_NOTPOSDEFMATRIX=  -102,
 // Missing components
     LTFATERR_NOBLASLAPACK   =  -200
 };

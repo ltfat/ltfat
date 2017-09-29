@@ -3,18 +3,20 @@
 
 enum ltfat_dgtrealmp_status
 {
-    LTFAT_DGTREALMP_STATUS_TOLREACHED = 0,
-    LTFAT_DGTREALMP_STATUS_MAXATOMS   = 1,
-    LTFAT_DGTREALMP_STATUS_MAXITER    = 2,
-    LTFAT_DGTREALMP_STATUS_STALLED    = 3,
-    LTFAT_DGTREALMP_STATUS_CANCONTINUE   = 10
+    LTFAT_DGTREALMP_STATUS_TOLREACHED   = 0,
+    LTFAT_DGTREALMP_STATUS_MAXATOMS     = 1,
+    LTFAT_DGTREALMP_STATUS_MAXITER      = 2,
+    LTFAT_DGTREALMP_STATUS_STALLED      = 3,
+    LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 4,
+    LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 10
 };
 
 
 typedef enum
 {
-    ltfat_dgtrealmp_singlemod    = 0,
-    ltfat_dgtrealmp_allmods      = (1U << 0),
+    ltfat_dgtrealmp_auto         = 0,
+    ltfat_dgtrealmp_singlemod    = (1U << 0),
+    ltfat_dgtrealmp_allmods      = (1U << 1),
 } ltfat_dgtrealmp_hint;
 
 typedef enum
@@ -36,7 +38,8 @@ LTFAT_API int
 ltfat_dgtrealmp_params_free(ltfat_dgtrealmp_params* params);
 
 LTFAT_API int
-ltfat_dgtrealmp_params_free(ltfat_dgtrealmp_params* params);
+ltfat_dgtrealmp_setpar_phaseconv(ltfat_dgtrealmp_params* params,
+                                 ltfat_phaseconvention pconv);
 
 LTFAT_API int
 ltfat_dgtrealmp_setpar_hint(ltfat_dgtrealmp_params* params,
@@ -129,28 +132,5 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_plan)** p);
 
 
-// maxtree
 
-typedef struct LTFAT_NAME(maxtree) LTFAT_NAME(maxtree);
-
-LTFAT_API int
-LTFAT_NAME(maxtree_init)( ltfat_int L, ltfat_int Lstep, ltfat_int depth, LTFAT_NAME(maxtree)** p);
-
-LTFAT_API int
-LTFAT_NAME(maxtree_initwitharray)(
-    ltfat_int L, ltfat_int depth,
-    const LTFAT_REAL* inarray,
-    LTFAT_NAME(maxtree)** p);
-
-LTFAT_API int
-LTFAT_NAME(maxtree_reset)(LTFAT_NAME(maxtree)* p, const LTFAT_REAL* inarray);
-
-LTFAT_API int
-LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start, ltfat_int stop);
-
-LTFAT_API int
-LTFAT_NAME(maxtree_findmax)(LTFAT_NAME(maxtree)* p, LTFAT_REAL* max, ltfat_int* maxPos);
-
-LTFAT_API int
-LTFAT_NAME(maxtree_done)(LTFAT_NAME(maxtree)** p);
 
