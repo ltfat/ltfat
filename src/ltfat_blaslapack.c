@@ -1,4 +1,7 @@
 #include "ltfat/blaslapack.h"
+#include "ltfat.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 /* Define to a macro mangling the given C identifier (in lower and upper
    case), which must not contain underscores, for linking with Fortran. */
@@ -17,6 +20,8 @@
 #define LTFAT_GESVD F77_FUNC(zgesvd,ZGESVD)
 #define LTFAT_POSV F77_FUNC(zposv,ZPOSV)
 #define LTFAT_clapack_posv clapack_zposv
+#define LTFAT_HESV F77_FUNC(zhesv,ZHESV)
+#define LTFAT_clapack_hesv clapack_zhesv
 #define LTFAT_GEMM F77_FUNC (zgemm, ZGEMM)
 #define LTFAT_cblas_gemm cblas_zgemm
 #endif
@@ -25,6 +30,8 @@
 #define LTFAT_GESVD F77_FUNC(cgesvd,CGESVD)
 #define LTFAT_POSV F77_FUNC(cposv,CPOSV)
 #define LTFAT_clapack_posv clapack_cposv
+#define LTFAT_HESV F77_FUNC(chesv,CHESV)
+#define LTFAT_clapack_hesv clapack_chesv
 #define LTFAT_GEMM F77_FUNC (cgemm, CGEMM)
 #define LTFAT_cblas_gemm cblas_cgemm
 #endif
@@ -48,6 +55,16 @@ LTFAT_POSV (F77_CONST_CHAR_ARG_DECL uplo,
             const ptrdiff_t* n, const ptrdiff_t* nrhs,
             const LTFAT_REAL* a, const ptrdiff_t* lda,
             LTFAT_REAL* b, const ptrdiff_t* ldb,
+            ptrdiff_t* info
+            F77_CHAR_ARG_LEN_DECL);
+
+F77_RET_T
+LTFAT_HESV (F77_CONST_CHAR_ARG_DECL uplo,
+            const ptrdiff_t* n, const ptrdiff_t* nrhs,
+            const LTFAT_REAL* a, const ptrdiff_t* lda,
+            const ptrdiff_t* ipiv,
+            LTFAT_REAL* b, const ptrdiff_t* ldb,
+            LTFAT_REAL* work, const ptrdiff_t* lwork,
             ptrdiff_t* info
             F77_CHAR_ARG_LEN_DECL);
 
@@ -99,13 +116,96 @@ LTFAT_GEMM (F77_CONST_CHAR_ARG_DECL TransA,
 
 #endif /* end of HAVE_BLAS */
 
-LTFAT_API ltfat_int
-LTFAT_NAME_COMPLEX(solvehermitiansystem)(const LTFAT_COMPLEX* A,
-                                 ltfat_int M, LTFAT_COMPLEX* b)
+struct LTFAT_NAME_COMPLEX(hermsystemsolver_plan)
 {
-    return LTFAT_NAME(posv)(M, 1, (LTFAT_COMPLEX*) A, M, b, M);
-}
+    ltfat_int Mmax;
+    ltfat_int nrhs;
+    ptrdiff_t* ipiv;
+    LTFAT_COMPLEX* work;
+    ptrdiff_t lwork;
+};
 
+LTFAT_API int
+LTFAT_NAME_COMPLEX(hermsystemsolver_init)(ltfat_int M,
+        LTFAT_NAME_COMPLEX(hermsystemsolver_plan)** pout)
+#ifdef HAVE_LAPACK
+{
+    int status = LTFATERR_SUCCESS;
+    LTFAT_NAME_COMPLEX(hermsystemsolver_plan)* p = NULL;
+    ptrdiff_t info, M_t = M;
+    char u;
+    const ptrdiff_t nrhs = 1;
+    const ptrdiff_t lwork = -1;
+    LTFAT_COMPLEX dummy;
+    LTFAT_COMPLEX outlen;
+
+    CHECKMEM( p = LTFAT_NEW(LTFAT_NAME_COMPLEX(hermsystemsolver_plan)));
+    CHECKMEM( p->ipiv = LTFAT_NEWARRAY(ptrdiff_t, M));
+    p->Mmax = M;
+
+    u = 'U';
+
+    LTFAT_HESV (F77_CONST_CHAR_ARG2 (&u, 1),
+                &M_t, &nrhs,
+                (LTFAT_REAL*) &dummy, &M_t,
+                p->ipiv,
+                (LTFAT_REAL*) &dummy, &M_t,
+                (LTFAT_REAL*) &outlen, &lwork, &info
+                F77_CHAR_ARG_LEN (1)
+               );
+
+    p->lwork = (size_t) ltfat_real(outlen);
+    CHECKMEM( p->work = LTFAT_NAME_COMPLEX(malloc)(p->lwork) );
+
+    *pout = p;
+    return status;
+error:
+    if (p) LTFAT_NAME_COMPLEX(hermsystemsolver_done)(&p);
+    *pout = NULL;
+    return status;
+}
+#endif
+
+LTFAT_API int
+LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
+    LTFAT_NAME_COMPLEX(hermsystemsolver_plan)* p,
+    const LTFAT_COMPLEX* A, ltfat_int M, LTFAT_COMPLEX* b)
+#ifdef HAVE_LAPACK
+{
+    const ptrdiff_t nrhs = 1;
+    ptrdiff_t info, M_t = M;
+    char u;
+    u = 'U';
+
+    LTFAT_HESV (F77_CONST_CHAR_ARG2 (&u, 1),
+                &M_t, &nrhs,
+                (LTFAT_REAL*) A, &M_t,
+                p->ipiv,
+                (LTFAT_REAL*) b, &M_t,
+                (LTFAT_REAL*) p->work, &p->lwork, &info
+                F77_CHAR_ARG_LEN (1)
+               );
+
+    return info;
+}
+#endif
+
+LTFAT_API int
+LTFAT_NAME_COMPLEX(hermsystemsolver_done)(
+    LTFAT_NAME_COMPLEX(hermsystemsolver_plan)** p)
+{
+    LTFAT_NAME_COMPLEX(hermsystemsolver_plan)* pp;
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(*p);
+    pp = *p;
+    ltfat_safefree(pp->work);
+    ltfat_safefree(pp->ipiv);
+
+    ltfat_free(pp);
+    *p = NULL;
+error:
+    return status;
+}
 
 
 /* ----- Compute Cholesky factorization  ------------
