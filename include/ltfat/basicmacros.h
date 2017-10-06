@@ -27,4 +27,13 @@
 #define LTFAT_NAME_COMPLEXSINGLE(name) LTFAT_MAKENAME(ltfat,name,_sc)
 
 
+#if defined(__cplusplus)
+#define LTFAT_STRUCT_BRACKETS(s) s
+#else
+#define LTFAT_STRUCT_BRACKETS(s) (s)
+#endif // defined(__cplusplus)
+
+#define LTFAT_STRUCTINIT(s,...)  (LTFAT_STRUCT_BRACKETS(s){__VA_ARGS__})
+
+
 #endif

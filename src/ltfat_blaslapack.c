@@ -175,7 +175,7 @@ LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
     const ptrdiff_t nrhs = 1;
     ptrdiff_t info, M_t = M;
     char u;
-    u = 'U';
+    u = 'L';
 
     LTFAT_HESV (F77_CONST_CHAR_ARG2 (&u, 1),
                 &M_t, &nrhs,

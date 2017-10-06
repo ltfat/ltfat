@@ -38,8 +38,11 @@ typedef struct
     ltfat_int m;
     ltfat_int n;
     ltfat_int w;
+    ltfat_int n2;
 } kpoint;
 #define PTOI(k) k.w][k.m + p->M2[k.w] * k.n
+#define kpoint_init(m,n,w) LTFAT_STRUCTINIT(kpoint,m,n,w,n)
+#define kpoint_init2(m,n,n2,w) LTFAT_STRUCTINIT(kpoint,m,n,w,n2)
 
 
 typedef struct
@@ -64,7 +67,7 @@ typedef struct
     ltfat_int**            maxcolspos;
     LTFAT_NAME(maxtree)**  tmaxtree;
     LTFAT_NAME(maxtree)*** fmaxtree;
-    int**                  suppind;
+    LTFAT_REAL**           suppind;
     long double            err;
     long double            fnorm2;
     size_t                 currit;
@@ -74,9 +77,19 @@ typedef struct
     // LocOMP related
     LTFAT_COMPLEX*         gramBuf;
     LTFAT_COMPLEX*         cvalBuf;
+    LTFAT_COMPLEX*         cvalinvBuf;
     kpoint*                cvalBufPos;
     LTFAT_NAME_COMPLEX(hermsystemsolver_plan)* hplan;
+    // CyclicMP related
+    kpoint*                pointBuf;
+    size_t                 pointBufNo;
 } LTFAT_NAME(dgtrealmpiter_state);
+
+// typedef struct
+// {
+//
+// } LTFAT_NAME(dgtrealmpiter_atompos);
+
 
 struct LTFAT_NAME(dgtrealmp_plan)
 {
@@ -139,29 +152,35 @@ LTFAT_NAME(dgtrealmp_execute_kpos)(LTFAT_NAME(dgtrealmp_plan)* p,
 
 int
 LTFAT_NAME(dgtrealmp_execute_indices)(LTFAT_NAME(dgtrealmp_plan)* p,
-                                      ltfat_int m, ltfat_int n, ltfat_int w,  ltfat_int w2,
-                                      ltfat_int* m2, ltfat_int* n2, ltfat_int* m2start, ltfat_int* n2start,
-                                      ltfat_int* Mstep, ltfat_int* astep,
+                                      kpoint origpos, kpoint* pos,
+                                      // ltfat_int m,  ltfat_int n, ltfat_int w,
+                                      // ltfat_int w2, ltfat_int* m2, ltfat_int* n2,
+                                      ltfat_int* m2start, ltfat_int* n2start,
                                       ksize* kdim2, kanchor* kmid2, kpoint* kstart2);
 
 LTFAT_COMPLEX*
 LTFAT_NAME(dgtrealmp_execute_pickkernel)(
-        LTFAT_NAME(kerns)* currkern, ltfat_int m, ltfat_int n, ltfat_phaseconvention pconv);
+    LTFAT_NAME(kerns)* currkern, ltfat_int m, ltfat_int n, ltfat_phaseconvention pconv);
 
 int
 LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
-        LTFAT_NAME(dgtrealmp_plan)* p,
-        ltfat_int* m, ltfat_int* n, ltfat_int* w);
+    LTFAT_NAME(dgtrealmp_plan)* p, kpoint* pos);
+// ltfat_int* m, ltfat_int* n, ltfat_int* w);
 
 int
 LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
     LTFAT_NAME(dgtrealmp_plan)* p,
-    LTFAT_COMPLEX cval, ltfat_int m, ltfat_int n, ltfat_int wIdx, int do_conj);
+    kpoint pos, LTFAT_COMPLEX cval, 
+    int do_substract);
 
-int
-LTFAT_NAME(dgtrealmp_execute_adjustprod)(
-    LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int m, ltfat_int n, ltfat_int wIdx,
-    int do_conj, LTFAT_COMPLEX* cval, LTFAT_REAL* fac);
+LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_normfac)(
+    LTFAT_NAME(dgtrealmp_plan)* p, kpoint pos,
+    LTFAT_COMPLEX cval);
+
+LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_mp)( LTFAT_NAME(dgtrealmp_plan)* p,
+                                  kpoint pos, LTFAT_COMPLEX** cout);
 
 // inline int
 // LTFAT_NAME(dgtrealmp_execute_substractatom)();

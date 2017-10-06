@@ -86,6 +86,20 @@ error:
 }
 
 LTFAT_API int
+ltfat_dgtrealmp_setpar_maxit(ltfat_dgtrealmp_params* params,
+                             size_t maxit)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+
+    CHECK(LTFATERR_NOTPOSARG, maxit > 0, "maxatoms must be greater than 0");
+    params->maxit = maxit;
+
+error:
+    return status;
+}
+
+LTFAT_API int
 ltfat_dgtrealmp_setpar_errtoldb(ltfat_dgtrealmp_params* params,
                                 double errtoldb)
 {

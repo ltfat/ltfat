@@ -14,6 +14,7 @@ hintstruct = enuminfo.ltfat_dgtreal_hint;
 
 hintmpstruct = enuminfo.ltfat_dgtrealmp_hint;
 algmpstruct = enuminfo.ltfat_dgtrealmp_alg;
+statusenum = enuminfo.ltfat_dgtrealmp_status;
 
 fftwflags = struct('FFTW_MEASURE',0,'FFTW_ESTIMATE',64,'FFTW_PATIENT',32,'FFTW_DESTROY_INPUT',1,...
     'FFTW_UNALIGNED',2,'FFTW_EXHAUSTIVE',8,'FFTW_PRESERVE_INPUT',16);
@@ -42,26 +43,27 @@ for ii= 1:1
 filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
 disp(filename);
     
-[f,fs] = wavload(filename);
+%[f,fs] = wavload(filename);
 [f,fs] = gspi;
 
 %f = postpad(f,fs);
 f = cast(f,flags.complexity);
-%f = [zeros(10000,1);f];
+
 [Ls,W] = size(f(:,1));
-Ls = min([Ls,10*fs]);
+Ls = min([Ls,1*fs]);
+%f = [zeros(200000,1);postpad(f(:,1),Ls);zeros(200000,1)];
 W = 1;
 f = f(:,1);
-a  = [  512,  64,  64,  64,  64];
-M  = [2048, 4*1024,8192,8192,8192];
+a  = [ 512,  64,  64,  64,  64];
+M  = [2048, 1024,8192,8192,8192];
+gl = [2048, 512, 512,1024,2048];
 M2 = floor(M/2) + 1;
-gl = [2048, 256, 512,1024,2048];
 P = [1];
 Psize = numel(P);
 L = dgtlength(Ls,max(a),max(M));
 f = postpad(f,L);
-%f(:) = 1; 
-
+%f(:) = linspace(0,1,L); 
+%f(:) = 1;
     
 N = L./a;
 %g = randn(gl,1,flags.complexity);
@@ -96,20 +98,23 @@ coutPtr = libpointer(dataPtr,cout);
 
 %ctrue = dgt(f,g(1:gl(1)),a(1),M(1));
 atoms = 0.8*L;
-atoms = 19000;
+atoms = 2000;
 
 params = calllib('libltfat','ltfat_dgtrealmp_params_allocdef');
 calllib('libltfat','ltfat_dgtrealmp_setpar_maxatoms',params,atoms);
-calllib('libltfat','ltfat_dgtrealmp_setpar_errtoldb',params,-40);
+%calllib('libltfat','ltfat_dgtrealmp_setpar_maxit',params,atoms);
+calllib('libltfat','ltfat_dgtrealmp_setpar_errtoldb',params,-50);
 calllib('libltfat','ltfat_dgtrealmp_setpar_kernrelthr',params,1e-4);
 calllib('libltfat','ltfat_dgtrealmp_setpar_phaseconv',params,phaseconv.LTFAT_TIMEINV);
-calllib('libltfat','ltfat_dgtrealmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_locomp);
+calllib('libltfat','ltfat_dgtrealmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_cyclicmp);
 calllib('libltfat','ltfat_dgtrealmp_setpar_iterstep',params,1e6);
 
 plan = libpointer();
 funname = makelibraryname('dgtrealmp_init_compact',flags.complexity,0);
 statusInit = calllib('libltfat',funname,gPtr,glPtr,...
     L,Psize,aPtr,MPtr,params,plan);
+
+calllib('libltfat','ltfat_dgtrealmp_params_free',params);
 
 tic
 funname = makelibraryname('dgtrealmp_reset',flags.complexity,0);
@@ -122,7 +127,7 @@ tic
 
 t2 =toc;
 
-fprintf('Init %.3f, execute %.3f, both %.3f seconds, status %d.\n',t1,t2,t1+t2,statusExecute);
+fprintf('Init %.3f, execute %.3f, both %.3f seconds, status %s.\n',t1,t2,t1+t2,dgtrealmpstring(statusExecute));
 
 
 cout2 = interleaved2complex(coutPtr.value);
@@ -157,5 +162,13 @@ statusDone = calllib('libltfat',funname,plan);
 end
 end
 
+
+function sstring=dgtrealmpstring(status)
+
+[~,~,enuminfo]=libltfatprotofile;
+
+map = structfun(@(a) a==status ,enuminfo.ltfat_dgtrealmp_status);
+names = fieldnames(enuminfo.ltfat_dgtrealmp_status);
+sstring = names{map};
 
 

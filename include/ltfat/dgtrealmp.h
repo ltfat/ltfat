@@ -8,6 +8,7 @@ enum ltfat_dgtrealmp_status
     LTFAT_DGTREALMP_STATUS_MAXITER      = 2,
     LTFAT_DGTREALMP_STATUS_STALLED      = 3,
     LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 4,
+    LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED = 5,
     LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 10
 };
 
@@ -52,6 +53,10 @@ ltfat_dgtrealmp_setpar_alg(ltfat_dgtrealmp_params* params,
 LTFAT_API int
 ltfat_dgtrealmp_setpar_maxatoms(ltfat_dgtrealmp_params* params,
                                 size_t maxatoms);
+
+LTFAT_API int
+ltfat_dgtrealmp_setpar_maxit(ltfat_dgtrealmp_params* params,
+                             size_t maxit);
 
 LTFAT_API int
 ltfat_dgtrealmp_setpar_kernrelthr(ltfat_dgtrealmp_params* p,
@@ -130,7 +135,6 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int it
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_plan)** p);
-
 
 
 

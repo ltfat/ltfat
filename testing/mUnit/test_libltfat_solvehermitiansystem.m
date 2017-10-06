@@ -29,9 +29,9 @@ for Lidx = 1:numel(Larr)
    % D(:,1) = D(:,end);
     A = D*D';
     Amessedup = A;
-    for m=2:size(A,1)
-        for n=1:m-1
-              Amessedup(m,n) = 0;
+    for n=2:size(A,2)
+        for m=1:n-1
+              Amessedup(m,n) = randn(1);
         end
     end
     Aint = complex2interleaved(Amessedup);
