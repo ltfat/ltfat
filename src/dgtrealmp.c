@@ -276,8 +276,8 @@ NLOOP{\
     LTFAT_NAME(maxtree_setdirty)(s->tmaxtree[w2],       n2start, n2start + kdim2.width);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
-                                     ltfat_int itno, LTFAT_COMPLEX** cout)
+LTFAT_NAME(dgtrealmp_execute_niters)(
+    LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int itno, LTFAT_COMPLEX** cout)
 {
     int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
 
@@ -409,12 +409,9 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                     ltfat_int m2start, n2start;
                     ksize   kdim2; kanchor kmid2; kpoint kstart2;
 
-                    LTFAT_NAME(dgtrealmp_execute_indices)( p,
-                                                           cvalPos, &pos,
-                                                           /* cvalPos.m, cvalPos.n2, cvalPos.w,  */
-                                                           /* cvalPos2.w, &m2, &n2,  */
-                                                           &m2start, &n2start, &kdim2,
-                                                           &kmid2, &kstart2);
+                    LTFAT_NAME(dgtrealmp_execute_indices)(
+                        p, cvalPos, &pos, &m2start, &n2start, &kdim2,
+                        &kmid2, &kstart2);
 
                     ltfat_int muse = cvalPos2.m  - pos.m  + kmid2.hmid;
                     ltfat_int nuse = cvalPos2.n2 - pos.n2 + kmid2.wmid;
@@ -541,20 +538,23 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
                 {
                     kpoint* pos = &s->pointBuf[pIdx];
                     LTFAT_COMPLEX cval = cout[PTOI((*pos))];
-                    s->err += s->suppind[PTOI((*pos))];
+                    /* s->err += s->suppind[PTOI((*pos))]; */
 
                     s->curratoms -= 1;
                     cout[PTOI((*pos))]       = 0;
-                    s->suppind[PTOI((*pos))] = 0;
-                    /* LTFAT_REAL cvalabs = ltfat_norm(cval); */
-                    /* int do_conj = !( pos->m == 0 || (pos->m == p->M2[pos->w] - 1 */
-                    /*                                  && uniquenyquest)); */
-                    /*  */
-                    /* LTFAT_REAL fac = */
-                    /*     LTFAT_NAME(dgtrealmp_execute_normfac)( p, *pos, cval); */
-                    /*  */
-                    /* s->err += cvalabs / fac; */
-                    /* if (do_conj) s->err += cvalabs / fac; */
+
+
+                    LTFAT_REAL cvale = ltfat_norm(cval);
+                    int do_conj = !( pos->m == 0 || (pos->m == p->M2[pos->w] - 1
+                                                     && uniquenyquest));
+
+                    LTFAT_REAL fac =
+                        LTFAT_NAME(dgtrealmp_execute_normfac)( p, *pos, cval);
+
+                    cvale /= fac;
+                    if (do_conj) cvale *= 2.0;
+                    s->suppind[PTOI((*pos))] -=  cvale;
+                    s->err += cvale;
 
                     /* DEBUG("Middle %Lf", s->err); */
 
@@ -649,7 +649,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
         /*     } */
         /* } */
 
-        DEBUG("ERR=%2.3Lf",s->err);
+        DEBUG("ERR=%2.3Lf", s->err);
 
         if (s->err < 0)
         {
@@ -677,6 +677,59 @@ LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p,
     }
 
     return status;
+}
+
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_revert)(
+    LTFAT_NAME(dgtrealmp_plan)* p, LTFAT_COMPLEX** cout)
+{
+
+    for (ltfat_int w = 0; w < p->P; w++)
+        for (ltfat_int n = 0; n < p->N[w]; n++)
+            for (ltfat_int m = 0; m < p->M2[w]; m++)
+            {
+                kpoint pos = kpoint_init(m, n, w);
+                if (cout[PTOI(pos)])
+                {
+                    LTFAT_REAL cvalenergy =
+                        LTFAT_NAME(dgtrealmp_execute_invmp)(
+                            p, pos, cout);
+
+                    p->iterstate->suppind[PTOI(pos)] -= cvalenergy;
+                    p->iterstate->err += cvalenergy;
+                }
+            }
+    return 0;
+}
+
+LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_invmp)( LTFAT_NAME(dgtrealmp_plan)* p,
+                                     kpoint pos, LTFAT_COMPLEX** cout)
+{
+    /* LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate; */
+
+    int uniquenyquest = p->M[pos.w] % 2 == 0;
+    int do_conj = !( pos.m == 0 || (pos.m == p->M2[pos.w] - 1
+                                    && uniquenyquest));
+
+    LTFAT_COMPLEX cval = cout[PTOI(pos)];
+    cout[PTOI(pos)] = 0.0;
+
+    LTFAT_REAL fac =
+        LTFAT_NAME(dgtrealmp_execute_normfac)( p, pos, cval);
+
+    cval *= fac;
+
+    LTFAT_REAL cvalenergy = ltfat_norm(cval) / fac;
+    if (do_conj) cvalenergy *= 2.0;
+    /* s->err -= cvalenergy / fac; */
+    /* if (do_conj) s->err -= cvalenergy / fac; */
+
+    LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
+        p, pos, cval, 0);
+
+    return cvalenergy;
 }
 
 LTFAT_REAL
@@ -775,9 +828,8 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
                                        k, origpos.m, origpos.n, p->params->ptype);
 
         pos.w = w2;
-        LTFAT_NAME(dgtrealmp_execute_indices)( p,
-                                               /* pos.m, pos.n, pos.w, w2, &m2, &n2, */
-                                               origpos, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
+        LTFAT_NAME(dgtrealmp_execute_indices)(
+            p, origpos, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
 
         if (do_substract)
         {
@@ -796,10 +848,8 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
             kvals = LTFAT_NAME(dgtrealmp_execute_pickkernel)(
                         k, origposconj.m, origpos.n, p->params->ptype);
 
-            LTFAT_NAME(dgtrealmp_execute_indices)( p,
-                                                   /* posconj.m, pos.n, pos.w, w2, &m2, &n2,  */
-                                                   origposconj, &pos,
-                                                   &m2start, &n2start, &kdim2, &kmid2, &kstart2);
+            LTFAT_NAME(dgtrealmp_execute_indices)(
+                p, origposconj, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
 
             if (do_substract)
             {
@@ -1167,11 +1217,10 @@ error:
 }
 
 int
-LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
-                                   ltfat_int a[], ltfat_int M[],
-                                   ltfat_int L, LTFAT_REAL reltol,
-                                   int do_allmods, ltfat_phaseconvention ptype,
-                                   LTFAT_NAME(kerns)** pout)
+LTFAT_NAME(dgtrealmp_kernel_init)(
+    const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int a[], ltfat_int M[],
+    ltfat_int L, LTFAT_REAL reltol, int do_allmods, ltfat_phaseconvention ptype,
+    LTFAT_NAME(kerns)** pout)
 {
     ltfat_int modNo, amin, Mmax, lefttail0, righttail0, lefttail1, righttail1,
               Lshort, Nshort;
@@ -1277,12 +1326,14 @@ LTFAT_NAME(dgtrealmp_kernel_init)( const LTFAT_REAL* g[], ltfat_int gl[],
         // Compute kernel modulations
         if (ptype == LTFAT_FREQINV)
             for (ltfat_int n = 1; n < ktmp->kNo; n++)
-                LTFAT_NAME(dgtrealmp_kernel_modfi)(ktmp->kval[0], ktmp->size, ktmp->mid,
-                                                   n * kernskip , amin, Mmax, ktmp->kval[n]);
+                LTFAT_NAME(dgtrealmp_kernel_modfi)(
+                    ktmp->kval[0], ktmp->size, ktmp->mid,
+                    n * kernskip , amin, Mmax, ktmp->kval[n]);
         else if (ptype == LTFAT_TIMEINV)
             for (ltfat_int m = 1; m < ktmp->kNo; m++)
-                LTFAT_NAME(dgtrealmp_kernel_modti)(ktmp->kval[0], ktmp->size, ktmp->mid,
-                                                   m * kernskip, amin, Mmax, ktmp->kval[m]);
+                LTFAT_NAME(dgtrealmp_kernel_modti)(
+                    ktmp->kval[0], ktmp->size, ktmp->mid,
+                    m * kernskip, amin, Mmax, ktmp->kval[m]);
     }
     else
     {
@@ -1320,9 +1371,9 @@ error:
 
 
 int
-LTFAT_NAME(dgtrealmp_kernel_modfi)(LTFAT_COMPLEX* kfirst, ksize size,
-                                   kanchor mid, ltfat_int n, ltfat_int a, ltfat_int M,
-                                   LTFAT_COMPLEX* kmod)
+LTFAT_NAME(dgtrealmp_kernel_modfi)(
+    LTFAT_COMPLEX* kfirst, ksize size, kanchor mid, ltfat_int n, ltfat_int a,
+    ltfat_int M, LTFAT_COMPLEX* kmod)
 {
     for (ltfat_int nn = 0; nn < size.width; nn++)
     {
@@ -1341,9 +1392,9 @@ LTFAT_NAME(dgtrealmp_kernel_modfi)(LTFAT_COMPLEX* kfirst, ksize size,
 }
 
 int
-LTFAT_NAME(dgtrealmp_kernel_modti)(LTFAT_COMPLEX* kfirst, ksize size,
-                                   kanchor mid, ltfat_int m, ltfat_int a, ltfat_int M,
-                                   LTFAT_COMPLEX* kmod)
+LTFAT_NAME(dgtrealmp_kernel_modti)(
+    LTFAT_COMPLEX* kfirst, ksize size, kanchor mid, ltfat_int m, ltfat_int a,
+    ltfat_int M, LTFAT_COMPLEX* kmod)
 {
     for (ltfat_int nn = 0; nn < size.width; nn++)
     {
@@ -1494,17 +1545,37 @@ error:
 
 }
 
-LTFAT_API LTFAT_COMPLEX**
-LTFAT_NAME(dgtrealmp_getresidualcoef)(LTFAT_NAME(dgtrealmp_plan)* p)
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_getresidualcoef_compact)(
+    LTFAT_NAME(dgtrealmp_plan)* p, LTFAT_COMPLEX* c)
 {
+
     int status = LTFATERR_SUCCESS;
-    CHECKNULL(p);
+    CHECKNULL(p); CHECKNULL(c);
 
-    return p->iterstate->c;
+    ltfat_int accum = 0;
+    for (ltfat_int k = 0; k < p->P; k++)
+    {
+        ltfat_int L = p->N[k] * p->M2[k];
+        memcpy(c + accum, p->iterstate->c[k], L * sizeof * c);
+        accum += L;
+    }
+
 error:
-    return NULL;
-
+    return status;
 }
+
+/* LTFAT_API LTFAT_COMPLEX** */
+/* LTFAT_NAME(dgtrealmp_getresidualcoef)(LTFAT_NAME(dgtrealmp_plan)* p) */
+/* { */
+/*     int status = LTFATERR_SUCCESS; */
+/*     CHECKNULL(p); */
+/*  */
+/*     return p->iterstate->c; */
+/* error: */
+/*     return NULL; */
+/*  */
+/* } */
 
 LTFAT_API ltfat_dgtrealmp_params*
 LTFAT_NAME(dgtrealmp_getparams)(LTFAT_NAME(dgtrealmp_plan)* p)

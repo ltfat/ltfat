@@ -92,21 +92,22 @@ for p=1:Psize
 end
 
 cout = complex2interleaved(...
-cast(randn(sizeaccum,1)+...
-         1i*randn(sizeaccum,1),flags.complexity));
+cast(zeros(sizeaccum,1)+...
+         1i*zeros(sizeaccum,1),flags.complexity));
 coutPtr = libpointer(dataPtr,cout);
+
 
 %ctrue = dgt(f,g(1:gl(1)),a(1),M(1));
 atoms = 0.8*L;
-atoms = 2000;
+atoms = 20000;
 
 params = calllib('libltfat','ltfat_dgtrealmp_params_allocdef');
 calllib('libltfat','ltfat_dgtrealmp_setpar_maxatoms',params,atoms);
 %calllib('libltfat','ltfat_dgtrealmp_setpar_maxit',params,atoms);
-calllib('libltfat','ltfat_dgtrealmp_setpar_errtoldb',params,-50);
+calllib('libltfat','ltfat_dgtrealmp_setpar_errtoldb',params,-40);
 calllib('libltfat','ltfat_dgtrealmp_setpar_kernrelthr',params,1e-4);
 calllib('libltfat','ltfat_dgtrealmp_setpar_phaseconv',params,phaseconv.LTFAT_TIMEINV);
-calllib('libltfat','ltfat_dgtrealmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_cyclicmp);
+%calllib('libltfat','ltfat_dgtrealmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_cyclicmp);
 calllib('libltfat','ltfat_dgtrealmp_setpar_iterstep',params,1e6);
 
 plan = libpointer();
@@ -121,11 +122,39 @@ funname = makelibraryname('dgtrealmp_reset',flags.complexity,0);
 statusReset = calllib('libltfat',funname,plan,fPtr);
 t1 = toc;
 
-tic
- funname = makelibraryname('dgtrealmp_execute_compact',flags.complexity,0);
- statusExecute = calllib('libltfat',funname,plan,fPtr,coutPtr,foutPtr);
+cres1 = complex2interleaved(...
+cast(randn(sizeaccum,1)+...
+         1i*randn(sizeaccum,1),flags.complexity));
+cresPtr = libpointer(dataPtr,cres1);
 
+funname = makelibraryname('dgtrealmp_getresidualcoef_compact',flags.complexity,0);
+calllib('libltfat',funname,plan,cresPtr);
+cres1 = reshape(interleaved2complex(cresPtr.value),M2(P(1)),N(P(1)));
+figure(2); plotdgtreal(cres1,1,100,'clim',[-90,10]);
+
+
+tic
+ %funname = makelibraryname('dgtrealmp_execute_compact',flags.complexity,0);
+ %statusExecute = calllib('libltfat',funname,plan,fPtr,coutPtr,foutPtr);
+ funname = makelibraryname('dgtrealmp_execute_niters',flags.complexity,0);
+ statusExecute = calllib('libltfat',funname,plan,atoms,coutPtr);
 t2 =toc;
+
+funname = makelibraryname('dgtrealmp_revert',flags.complexity,0);
+calllib('libltfat',funname,plan,coutPtr);
+
+cres2 = complex2interleaved(...
+cast(randn(sizeaccum,1)+...
+         1i*randn(sizeaccum,1),flags.complexity));
+cresPtr = libpointer(dataPtr,cres2);
+ 
+funname = makelibraryname('dgtrealmp_getresidualcoef_compact',flags.complexity,0);
+calllib('libltfat',funname,plan,cresPtr);
+cres2 = reshape(interleaved2complex(cresPtr.value),M2(P(1)),N(P(1)));
+figure(3); plotdgtreal(cres2,1,100,'clim',[-90,10]);
+
+figure(4); plotdgtreal(cres1-cres2,1,100,'dynrange',90);
+
 
 fprintf('Init %.3f, execute %.3f, both %.3f seconds, status %s.\n',t1,t2,t1+t2,dgtrealmpstring(statusExecute));
 
@@ -136,15 +165,17 @@ atoms = numel(find(abs(cout2(:))));
 
 coutCell = cell(Psize,1);
 sizeaccum = 0;
+fout(:) = 0;
 for p=1:Psize
     coutCell{p} = cout2(sizeaccum +1: sizeaccum + M2(P(p))*N(P(p))*W);
     coutCell{p} = reshape(coutCell{p},M2(P(p)),N(P(p)),W);
     sizeaccum = sizeaccum + M2(P(p))*N(P(p))*W;
+    fout = fout + idgtreal(coutCell{p},gCell{P(p)},a(P(p)),M(P(p)),'timeinv');
 end
 clear cout2
-plot((0:L-1)/fs,[fPtr.value, foutPtr.value]);
+figure(1);plot((0:L-1)/fs,[fPtr.value, fout]);
 
-errdb = 20*log10(norm(fPtr.value -foutPtr.value)/norm(fPtr.value));
+errdb = 20*log10(norm(fPtr.value -fout)/norm(fPtr.value));
 
  fprintf('%i atoms, sparsity %.3f, %i atoms/s, err: %.2f dB\n',atoms,atoms/L,atoms/t2, errdb);
 

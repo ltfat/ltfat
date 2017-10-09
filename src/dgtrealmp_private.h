@@ -134,33 +134,31 @@ LTFAT_NAME(dgtrealmp_kernel_modti)(LTFAT_COMPLEX* kfirst, ksize size,
                                    LTFAT_COMPLEX* kmod);
 
 int
-LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(const LTFAT_COMPLEX kernlarge[],
-        ltfat_int M, ltfat_int N, LTFAT_REAL reltol,
-        ksize* size, kanchor* anchor);
+LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
+    const LTFAT_COMPLEX kernlarge[], ltfat_int M, ltfat_int N,
+    LTFAT_REAL reltol, ksize* size, kanchor* anchor);
 
 int
-LTFAT_NAME(dgtrealmp_essentialsupport)(const LTFAT_REAL g[], ltfat_int gl,
-                                       LTFAT_REAL reltol,
-                                       ltfat_int* lefttail, ltfat_int* righttail);
+LTFAT_NAME(dgtrealmp_essentialsupport)(
+    const LTFAT_REAL g[], ltfat_int gl, LTFAT_REAL reltol,
+    ltfat_int* lefttail, ltfat_int* righttail);
 
 int
-LTFAT_NAME(dgtrealmp_execute_kpos)(LTFAT_NAME(dgtrealmp_plan)* p,
-                                   kpoint pos1, kpoint pos2,
-                                   ltfat_int* m2, ltfat_int* n2,
-                                   ltfat_int* Mstep, ltfat_int* astep,
-                                   ksize* kdim2, kanchor* kmid2, kpoint* kstart2);
+LTFAT_NAME(dgtrealmp_execute_kpos)(
+    LTFAT_NAME(dgtrealmp_plan)* p, kpoint pos1, kpoint pos2,
+    ltfat_int* m2, ltfat_int* n2, ltfat_int* Mstep, ltfat_int* astep,
+    ksize* kdim2, kanchor* kmid2, kpoint* kstart2);
 
 int
-LTFAT_NAME(dgtrealmp_execute_indices)(LTFAT_NAME(dgtrealmp_plan)* p,
-                                      kpoint origpos, kpoint* pos,
-                                      // ltfat_int m,  ltfat_int n, ltfat_int w,
-                                      // ltfat_int w2, ltfat_int* m2, ltfat_int* n2,
-                                      ltfat_int* m2start, ltfat_int* n2start,
-                                      ksize* kdim2, kanchor* kmid2, kpoint* kstart2);
+LTFAT_NAME(dgtrealmp_execute_indices)(
+    LTFAT_NAME(dgtrealmp_plan)* p, kpoint origpos, kpoint* pos,
+    ltfat_int* m2start, ltfat_int* n2start, ksize* kdim2, kanchor* kmid2,
+    kpoint* kstart2);
 
 LTFAT_COMPLEX*
 LTFAT_NAME(dgtrealmp_execute_pickkernel)(
-    LTFAT_NAME(kerns)* currkern, ltfat_int m, ltfat_int n, ltfat_phaseconvention pconv);
+    LTFAT_NAME(kerns)* currkern, ltfat_int m, ltfat_int n,
+    ltfat_phaseconvention pconv);
 
 int
 LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
@@ -169,18 +167,21 @@ LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
 
 int
 LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
-    LTFAT_NAME(dgtrealmp_plan)* p,
-    kpoint pos, LTFAT_COMPLEX cval, 
+    LTFAT_NAME(dgtrealmp_plan)* p, kpoint pos, LTFAT_COMPLEX cval,
     int do_substract);
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_normfac)(
-    LTFAT_NAME(dgtrealmp_plan)* p, kpoint pos,
-    LTFAT_COMPLEX cval);
+    LTFAT_NAME(dgtrealmp_plan)* p, kpoint pos, LTFAT_COMPLEX cval);
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_mp)( LTFAT_NAME(dgtrealmp_plan)* p,
                                   kpoint pos, LTFAT_COMPLEX** cout);
+
+
+LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_invmp)( LTFAT_NAME(dgtrealmp_plan)* p,
+                                     kpoint pos, LTFAT_COMPLEX** cout);
 
 // inline int
 // LTFAT_NAME(dgtrealmp_execute_substractatom)();

@@ -89,52 +89,66 @@ LTFAT_NAME(dgtrealmp_getdgtrealplan)(LTFAT_NAME(dgtrealmp_plan)* p);
 LTFAT_API ltfat_dgtrealmp_params*
 LTFAT_NAME(dgtrealmp_getparams)(LTFAT_NAME(dgtrealmp_plan)* p);
 
-LTFAT_API LTFAT_COMPLEX**
-LTFAT_NAME(dgtrealmp_getresidualcoef)(LTFAT_NAME(dgtrealmp_plan)* p);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstep)(LTFAT_NAME(dgtrealmp_plan)* p, size_t iterstep);
+LTFAT_NAME(dgtrealmp_getresidualcoef_compact)(
+    LTFAT_NAME(dgtrealmp_plan)* p, LTFAT_COMPLEX* c);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_maxatoms)(LTFAT_NAME(dgtrealmp_plan)* p, size_t maxatoms);
+LTFAT_NAME(dgtrealmp_set_iterstep)(
+    LTFAT_NAME(dgtrealmp_plan)* p, size_t iterstep);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_errtoldb)(LTFAT_NAME(dgtrealmp_plan)* p, double errtoldb);
+LTFAT_NAME(dgtrealmp_set_maxatoms)(
+    LTFAT_NAME(dgtrealmp_plan)* p, size_t maxatoms);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_set_errtoldb)(
+    LTFAT_NAME(dgtrealmp_plan)* p, double errtoldb);
 
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init_compact)(
-    const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
-    ltfat_int M[], ltfat_dgtrealmp_params* params,
+    const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P,
+    ltfat_int a[], ltfat_int M[], ltfat_dgtrealmp_params* params,
     LTFAT_NAME(dgtrealmp_plan)** pout);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
-    const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[], ltfat_int M[],
-    ltfat_dgtrealmp_params* params, LTFAT_NAME(dgtrealmp_plan)** p);
+    const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P,
+    ltfat_int a[], ltfat_int M[], ltfat_dgtrealmp_params* params,
+    LTFAT_NAME(dgtrealmp_plan)** p);
 
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_compact)(LTFAT_NAME(dgtrealmp_plan)* p,
-                                      const LTFAT_REAL* f,
-                                      LTFAT_COMPLEX* cout,
-                                      LTFAT_REAL* fout);
+LTFAT_NAME(dgtrealmp_execute_compact)(
+    LTFAT_NAME(dgtrealmp_plan)* p, const LTFAT_REAL* f,
+    LTFAT_COMPLEX* cout, LTFAT_REAL* fout);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute)(LTFAT_NAME(dgtrealmp_plan)* p,
-                              const LTFAT_REAL* f,
-                              LTFAT_COMPLEX** cout,
-                              LTFAT_REAL* fout);
+LTFAT_NAME(dgtrealmp_execute)(
+    LTFAT_NAME(dgtrealmp_plan)* p, const LTFAT_REAL* f,
+    LTFAT_COMPLEX** cout, LTFAT_REAL* fout);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_plan)* p, const LTFAT_REAL* f);
+LTFAT_NAME(dgtrealmp_reset)(
+    LTFAT_NAME(dgtrealmp_plan)* p, const LTFAT_REAL* f);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters)(LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int itno,
-                                     LTFAT_COMPLEX** cout);
+LTFAT_NAME(dgtrealmp_execute_niters)(
+    LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int itno, LTFAT_COMPLEX** cout);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_execute_niters_compact)(
+    LTFAT_NAME(dgtrealmp_plan)* p, ltfat_int itno, LTFAT_COMPLEX* cout);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_revert)(
+    LTFAT_NAME(dgtrealmp_plan)* p, LTFAT_COMPLEX** cout);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_revert_compact)(
+    LTFAT_NAME(dgtrealmp_plan)* p, LTFAT_COMPLEX* cout);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_plan)** p);
-
-
-
