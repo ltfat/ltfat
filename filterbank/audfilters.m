@@ -372,15 +372,15 @@ else
     
     % Generate lowpass filter parameters     
     fsupp(1) = 0;
-    fps0 = max(audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale),0);
-    fsupp_temp1=2*(audtofreq(freqtoaud(fps0,flags.audscale)+fsupp_scale/2,flags.audscale)-fps0);        
-    aprecise(1) = max(fs./(2*fps0+fsupp_temp1*kv.redmul),1);
+    fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);
     
     % Generate highpass filter parameters     
     fsupp(end) = 0;
-    fps0 = min(audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale),fs/2);
-    fsupp_temp1=2*(fps0-audtofreq(freqtoaud(fps0,flags.audscale)-fsupp_scale/2,flags.audscale));        
-    aprecise(end) = max(fs./(2*(fc(end)-fps0)+fsupp_temp1*kv.redmul),1);
+    fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
+    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
 end;
 
 % Do not allow lower bandwidth than keyvals.min_win
@@ -460,10 +460,10 @@ for m=ind.'
 end
 
 % Generate lowpass filter
-g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc,fs,winbw,scal(1),kv,flags);
+g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc,fs,scal(1),kv,flags);
 
 % Generate highpass filter
-g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc,fs,winbw,scal(M2),kv,flags);
+g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc,fs,scal(M2),kv,flags);
 
 % Adjust the downsampling rates in order to achieve 'redtar'
 if ~isempty(kv.redtar)
@@ -472,7 +472,7 @@ if ~isempty(kv.redtar)
         org_red = (M2-2)/a(1);
         a_new = floor(a*org_red/kv.redtar);
         scal_new = org_red/kv.redtar*ones(numel(g),1);
-        new_red = (M2-2)/a_new(1);
+%         new_red = (M2-2)/a_new(1);
     else
 %         Exactly as in the paper
         dk_old = a(:,1)./a(:,2);
@@ -491,7 +491,7 @@ if ~isempty(kv.redtar)
         % Finally re-scale all filters
         dk_new = a_new(:,1)./a_new(:,2);
         scal_new = dk_new./dk_old;
-        new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
+%         new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
     end
     g_new = filterbankscale(g,sqrt(scal_new)');
     a = a_new;
@@ -502,7 +502,7 @@ if ~isempty(kv.redtar)
 %     fprintf('Actual redundancy: %g \n', new_red);
 end
 
-function glow = audlowpassfilter(g,a,fc,fs,winbw,scal,kv,flags)    
+function glow = audlowpassfilter(g,a,fc,fs,scal,kv,flags)    
 
 % Make a probe, compute the restricted filter bank response to check if low-pass filter is needed
     Lprobe = 10000;
@@ -525,23 +525,9 @@ function glow = audlowpassfilter(g,a,fc,fs,winbw,scal,kv,flags)
         fps = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);
         % Determines the cosine transition frequency
         fpe = audtofreq(freqtoaud(fc(2),flags.audscale)+4*kv.spacing,flags.audscale);
-    %     plateauWidth = max(2*fps,0);
-    %     fsupp_LP = plateauWidth+(audfiltbw(fps,flags.audscale)/winbw*kv.bwmul)*kv.redmul;
         fsupp_LP = 2*fpe;
         ratio = (fpe-fps)/fsupp_LP;
         Lw = @(L) min(ceil(fsupp_LP*L/fs),L);
-
-    %    [FIXME] Consider those 2 cases?
-    %     if flags.do_symmetric
-    %         temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-    %         plateauWidth = max(2*temp_fc(1),0);
-    %         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
-    %     else
-    %         fsupp_scale=1/winbw*kv.bwmul;
-    %         temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_scale/2,flags.audscale)-...
-    %                   audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
-    %         Lw = @(L) min(ceil(2*audtofreq(freqtoaud(temp_fc(1),flags.audscale)+fsupp_scale/2,flags.audscale)*L/fs),L);
-    %     end
 
         P0 = blfilter({'hann','taper',ratio},fsupp_LP,'fs',fs,'inf','min_win',kv.min_win);
         temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L,'real');
@@ -556,7 +542,7 @@ function glow = audlowpassfilter(g,a,fc,fs,winbw,scal,kv,flags)
         glow.fs = g{2}.fs;
     end
     
-function ghigh = audhighpassfilter(g,a,fc,fs,winbw,scal,kv,flags)
+function ghigh = audhighpassfilter(g,a,fc,fs,scal,kv,flags)
 
 % Make a probe, compute the restricted filter bank response to check if hi-pass filter is needed
     Lprobe = 10000;
@@ -580,7 +566,6 @@ function ghigh = audhighpassfilter(g,a,fc,fs,winbw,scal,kv,flags)
     fpe = audtofreq(freqtoaud(fc(end-1),flags.audscale)-4*kv.spacing,flags.audscale);
 
 %     plateauWidth = 2*(fs/2-fps);
-%     fsupp_HP = plateauWidth+(audfiltbw(fps,flags.audscale)/winbw*kv.bwmul)*kv.redmul;
     fsupp_HP = 2*(fs/2-fpe);
     ratio = (fps-fpe)/fsupp_HP;
     Lw = @(L) min(ceil(fsupp_HP*L/fs),L);
@@ -592,20 +577,6 @@ function ghigh = audhighpassfilter(g,a,fc,fs,winbw,scal,kv,flags)
 %     Compute the final high-pass filter
     ghigh.H = @(L) fftshift(long2fir(fftshift(...
         filterbankfreqz(PK,a(1,:),L).*Hinv(L)),Lw(L)))*scal;
-
-%     if flags.do_symmetric
-%         temp_bw=audfiltbw(abs(temp_fc),flags.audscale)/winbw*kv.bwmul;
-%         plateauWidth = max(2*(fs/2-temp_fc(1)),0);
-%         Lw = @(L) min(ceil((plateauWidth+temp_bw(1)*bwtruncmul)*L/fs),L);
-%     else
-%         fsupp_scale=1/winbw*kv.bwmul;
-%         temp_bw = audtofreq(freqtoaud(temp_fc,flags.audscale)+fsupp_scale/2,flags.audscale)-...
-%                   audtofreq(freqtoaud(temp_fc,flags.audscale)-fsupp_scale/2,flags.audscale);
-%               
-%         temp_low = audtofreq(freqtoaud(temp_fc(1),flags.audscale)-fsupp_scale/2,flags.audscale);
-%         Width = max(2*(fs/2-temp_low),0);
-%         Lw = @(L) min(ceil(Width*L/fs),L);
-%     end
     
     ghigh.foff = @(L) ceil(L/2)-floor(Lw(L)/2)-1;
     ghigh.realonly = 0;
