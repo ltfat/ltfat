@@ -2,6 +2,13 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+int
+LTFAT_NAME(maxtree_updatedirty)(LTFAT_NAME(maxtree)* p);
+
+int
+LTFAT_NAME(maxtree_updaterange)(
+    LTFAT_NAME(maxtree)* p, ltfat_int start, ltfat_int stop);
+
 struct LTFAT_NAME(maxtree)
 {
     ltfat_int dirtystart;
@@ -20,8 +27,9 @@ struct LTFAT_NAME(maxtree)
 };
 
 LTFAT_API int
-LTFAT_NAME(maxtree_init)( ltfat_int L, ltfat_int Lstep, ltfat_int depth,
-                          LTFAT_NAME(maxtree)** pout)
+LTFAT_NAME(maxtree_init)(
+    ltfat_int L, ltfat_int Lstep, ltfat_int depth,
+    LTFAT_NAME(maxtree)** pout)
 {
     LTFAT_NAME(maxtree)* p = NULL;
     ltfat_int nextL, granL, cumL;
@@ -101,9 +109,9 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(maxtree_initwitharray)( ltfat_int L, ltfat_int depth,
-                                   const LTFAT_REAL* inarray,
-                                   LTFAT_NAME(maxtree)** pout)
+LTFAT_NAME(maxtree_initwitharray)(
+    ltfat_int L, ltfat_int depth, const LTFAT_REAL inarray[],
+    LTFAT_NAME(maxtree)** pout)
 {
     LTFAT_NAME(maxtree)* p = NULL;
     int status = LTFATERR_SUCCESS;
@@ -123,8 +131,8 @@ error:
 
 
 LTFAT_API int
-LTFAT_NAME(maxtree_reset)(LTFAT_NAME(maxtree)* p,
-                          const LTFAT_REAL* inarray)
+LTFAT_NAME(maxtree_reset)(
+    LTFAT_NAME(maxtree)* p, const LTFAT_REAL inarray[])
 {
     p->treePtrs[p->depth] = (LTFAT_REAL*) inarray;
 
@@ -134,25 +142,26 @@ LTFAT_NAME(maxtree_reset)(LTFAT_NAME(maxtree)* p,
 
 LTFAT_API int
 LTFAT_NAME(maxtree_setdirty)(LTFAT_NAME(maxtree)* p, ltfat_int start,
-                                ltfat_int end)
+                             ltfat_int end)
 {
-    if(start < p->dirtystart) p->dirtystart = start;
-    if(end   > p->dirtyend)  p->dirtyend  = end;
+    if (start < p->dirtystart) p->dirtystart = start;
+    if (end   > p->dirtyend)  p->dirtyend  = end;
     return 0;
 }
 
 LTFAT_API int
-LTFAT_NAME(maxtree_getdirty)(LTFAT_NAME(maxtree)* p, ltfat_int* start, ltfat_int* end)
+LTFAT_NAME(maxtree_getdirty)(LTFAT_NAME(maxtree)* p, ltfat_int* start,
+                             ltfat_int* end)
 {
     *start = p->dirtystart;
     *end   = p->dirtyend;
-return 0;
+    return 0;
 }
 
-LTFAT_API int
+int
 LTFAT_NAME(maxtree_updatedirty)(LTFAT_NAME(maxtree)* p)
 {
-    if( p->dirtyend <= p->dirtystart )
+    if ( p->dirtyend <= p->dirtystart )
         return 1;
 
     int ret = LTFAT_NAME(maxtree_updaterange)(p, p->dirtystart, p->dirtyend);
@@ -161,7 +170,7 @@ LTFAT_NAME(maxtree_updatedirty)(LTFAT_NAME(maxtree)* p)
     return ret;
 }
 
-LTFAT_API int
+int
 LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
                                 ltfat_int end)
 {
@@ -171,12 +180,10 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
     {
         ltfat_int over = end - p->Lstep;
         LTFAT_NAME(maxtree_updaterange)( p, 0, over);
-        //end = p->levelL[p->depth];
     }
 
     if (end > p->L) end = p->L;
     if (start >= end) return 0;
-    /* DEBUG("s=%td, e=%td",start,end);  */
 
     ltfat_int parity = 0;
     parity =  end == p->L ? end % 2 : 0;

@@ -51,6 +51,11 @@ ltfat_idiv(ltfat_int a, ltfat_int b)
     return ret;
 }
 
+LTFAT_API ltfat_int
+ltfat_idivceil(ltfat_int a, ltfat_int b)
+{
+    return a / b + (a % b > 0);
+}
 
 LTFAT_API ltfat_int
 makelarger(ltfat_int L, ltfat_int K)
@@ -337,7 +342,7 @@ ltfat_posnumfastmod(ltfat_int a, ltfat_int b)
 {
 #ifndef NDEBUG
     int status = LTFATERR_SUCCESS;
-    CHECK(LTFATERR_BADARG,a>=0 && b>=0,"Negative number passed.");
+    CHECK(LTFATERR_BADARG, a >= 0 && b >= 0, "Negative number passed.");
     return ( a >= b ? a % b : a);
 error:
     return status;

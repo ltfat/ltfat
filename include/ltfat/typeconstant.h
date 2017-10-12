@@ -15,6 +15,9 @@ LTFAT_API ltfat_div_t
 ltfat_idiv(ltfat_int a, ltfat_int b);
 
 LTFAT_API ltfat_int
+ltfat_idivceil(ltfat_int a, ltfat_int b);
+
+LTFAT_API ltfat_int
 ltfat_gcd(ltfat_int a, ltfat_int b, ltfat_int *r, ltfat_int *s );
 
 LTFAT_API void
