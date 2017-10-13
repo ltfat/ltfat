@@ -27,8 +27,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_phaseconv(ltfat_dgtrealmp_params* params,
-                                 ltfat_phaseconvention pconv)
+ltfat_dgtrealmp_setpar_phaseconv(
+    ltfat_dgtrealmp_params* params, ltfat_phaseconvention pconv)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -40,24 +40,24 @@ error:
     return status;
 }
 
+/* LTFAT_API int */
+/* ltfat_dgtrealmp_setpar_hint( */
+/*     ltfat_dgtrealmp_params* params, ltfat_dgtrealmp_hint hint) */
+/* { */
+/*     int status = LTFATERR_SUCCESS; */
+/*     CHECKNULL(params); */
+/*     CHECK(LTFATERR_BADARG, ltfat_dgtrealmp_hint_isvalid(hint), */
+/*           "Invalid hint passed (passed %d)", hint); */
+/*  */
+/*     params->hint = hint; */
+/*  */
+/* error: */
+/*     return status; */
+/* } */
+
 LTFAT_API int
-ltfat_dgtrealmp_setpar_hint(ltfat_dgtrealmp_params* params,
-                            ltfat_dgtrealmp_hint hint)
-{
-    int status = LTFATERR_SUCCESS;
-    CHECKNULL(params);
-    CHECK(LTFATERR_BADARG, ltfat_dgtrealmp_hint_isvalid(hint),
-          "Invalid hint passed (passed %d)", hint);
-
-    params->hint = hint;
-
-error:
-    return status;
-}
-
-LTFAT_API int
-ltfat_dgtrealmp_setpar_alg(ltfat_dgtrealmp_params* params,
-                           ltfat_dgtrealmp_alg alg)
+ltfat_dgtrealmp_setpar_alg(
+    ltfat_dgtrealmp_params* params, ltfat_dgtrealmp_alg alg)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -70,8 +70,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_maxatoms(ltfat_dgtrealmp_params* params,
-                                size_t maxatoms)
+ltfat_dgtrealmp_setpar_maxatoms(
+    ltfat_dgtrealmp_params* params, size_t maxatoms)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -86,8 +86,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_maxit(ltfat_dgtrealmp_params* params,
-                             size_t maxit)
+ltfat_dgtrealmp_setpar_maxit(
+    ltfat_dgtrealmp_params* params, size_t maxit)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -100,8 +100,22 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_errtoldb(ltfat_dgtrealmp_params* params,
-                                double errtoldb)
+ltfat_dgtrealmp_setpar_cycles(
+    ltfat_dgtrealmp_params* params, size_t cycles)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+
+    CHECK(LTFATERR_NOTPOSARG, cycles > 0, "maxatoms must be greater than 0");
+    params->cycles = cycles;
+
+error:
+    return status;
+}
+
+LTFAT_API int
+ltfat_dgtrealmp_setpar_errtoldb(
+    ltfat_dgtrealmp_params* params, double errtoldb)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -113,8 +127,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_iterstep(ltfat_dgtrealmp_params* params,
-                                size_t iterstep)
+ltfat_dgtrealmp_setpar_iterstep(
+    ltfat_dgtrealmp_params* params, size_t iterstep)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -125,8 +139,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_kernrelthr(ltfat_dgtrealmp_params* params,
-                                  double thr)
+ltfat_dgtrealmp_setpar_kernrelthr(
+    ltfat_dgtrealmp_params* params, double thr)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -142,8 +156,8 @@ ltfat_dgtrealmp_params_defaults(ltfat_dgtrealmp_params* params)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
-    params->hint = ltfat_dgtrealmp_allmods;
-    params->alg = ltfat_dgtrealmp_alg_mp;
+    /* params->hint = ltfat_dgtrealmp_allmods; */
+    params->alg = ltfat_dgtrealmp_alg_MP;
     params->errtoldb = -40.0;
     params->kernrelthr = 1e-4;
     params->verbose = 1;
@@ -151,26 +165,27 @@ ltfat_dgtrealmp_params_defaults(ltfat_dgtrealmp_params* params)
     params->maxit = 0;
     params->iterstep = 100;
     params->treelevels = 10;
+    params->cycles = 1;
     params->ptype = LTFAT_FREQINV;
 error:
     return status;
 }
 
-int
-ltfat_dgtrealmp_hint_isvalid(ltfat_dgtrealmp_hint in)
-{
-    int isvalid = 0;
-
-    switch (in)
-    {
-    case ltfat_dgtrealmp_auto:
-    case ltfat_dgtrealmp_singlemod:
-    case ltfat_dgtrealmp_allmods:
-        isvalid = 1;
-    }
-
-    return isvalid;
-}
+/* int */
+/* ltfat_dgtrealmp_hint_isvalid(ltfat_dgtrealmp_hint in) */
+/* { */
+/*     int isvalid = 0; */
+/*  */
+/*     switch (in) */
+/*     { */
+/*     case ltfat_dgtrealmp_auto: */
+/*     case ltfat_dgtrealmp_singlemod: */
+/*     case ltfat_dgtrealmp_allmods: */
+/*         isvalid = 1; */
+/*     } */
+/*  */
+/*     return isvalid; */
+/* } */
 
 int
 ltfat_dgtrealmp_alg_isvalid(ltfat_dgtrealmp_alg in)
@@ -179,11 +194,9 @@ ltfat_dgtrealmp_alg_isvalid(ltfat_dgtrealmp_alg in)
 
     switch (in)
     {
-    case ltfat_dgtrealmp_alg_mp:
-    case ltfat_dgtrealmp_alg_locomp:
-    case ltfat_dgtrealmp_alg_cyclicmp:
-    case ltfat_dgtrealmp_alg_complmp:
-    case ltfat_dgtrealmp_alg_complcyclicmp:
+    case ltfat_dgtrealmp_alg_MP:
+    case ltfat_dgtrealmp_alg_LocOMP:
+    case ltfat_dgtrealmp_alg_LocCyclicMP:
         isvalid = 1;
     }
 
