@@ -66,16 +66,20 @@ winArgs = name(2:end);
 winName = lower(name{1});
 
 definput.import={'normalize'};
-definput.importdefaults={'null'};
+definput.importdefaults={'inf'};
 definput.flags.asymmetry = {'asym','sym'};
 definput.keyvals.shift = 0;
-definput.keyvals.damp = 1;        
+definput.keyvals.damp = 1;  
+definput.keyvals.inftimetol  = 0.001; 
 
 switch winName
     case 'reds'
-      
+        definput.keyvals.scale = 1;
+        definput.keyvals.order = 4;
     case 'fof'
-        definput.keyvals.order = 1;
+        definput.keyvals.scale = 1;
+    case 'gammatone'
+        definput.keyvals.order = 4;
     case {'damp'}
     otherwise 
         error('%s: SENTINEL. Unknown window.',upper(mfilename));
@@ -83,29 +87,57 @@ end
 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
-if kv.damp < 0
+if kv.damp < 0,
+    error('%s: damp must be nonnegative.',upper(mfilename));
+end
+
+if kv.inftimetol < 0
     error('%s: damp must be nonnegative.',upper(mfilename));
 end
 
 switch winName
     case 'reds'
-      
+        if kv.order < 1
+           error('%s: Order must be greater than 1',...
+                 upper(mfilename));  
+        end
+        p = kv.order - 1; 
+        beta = kv.scale;
+    case 'gammatone'
+        if kv.order < 1
+           error('%s: Order must be greater than 1',...
+                 upper(mfilename));  
+        end
+        p = kv.order - 1;
     case 'fof'
+        beta = kv.scale;
 end
 
-h = zeros(L,1);
+alpha = kv.damp;
+h = ones(L,1);
+n = (0:L-1)';
+scalfac = (4*pi)/L;
+l = n*scalfac;
 switch winName
-    case 'damp'
-        l = 0:floor(L/2);
-        h(1:numel(l)) = exp(-kv.damp*l);
+    case 'gammatone'
+        delay = p/alpha;
+        lval = (n+delay)*scalfac;
+        h = lval.^p;
     case 'reds'
-        
-
+        delay = (1/beta)*log(1+p*beta/alpha);
+        lval = (n+delay)*scalfac;
+        h = (1-exp(-beta*lval)).^p;
     case 'fof'
-        delay = (1/kv.damp)*acos();
-        l = 0:L-1;
-        h = 0.5*(1-cos(kv.damp*l));
+        delay = (1/beta)*acos((alpha^2 - beta^2)/(alpha^2 + beta^2));
+        lval = (n+delay)*scalfac;
+        lclip = (pi/beta)/scalfac;
+        h = 0.5*(1-cos(beta*lval));
+        h(ceil(lclip):end) = 1;
+
 end
 
+h = h.*exp(-alpha*l);
+[~,peakl] = max(h);
+h = circshift(h,-peakl+1);
 h=normalize(h,flags.norm);
 
