@@ -2,6 +2,8 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 #ifndef GGA_UNROLL
 #   define GGA_UNROLL 8
 #endif

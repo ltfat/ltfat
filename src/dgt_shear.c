@@ -2,7 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-
+#include "ltfat/thirdparty/fftw3.h"
 
 // long is only "at least 32 bit"
 static inline long long ltfat_positiverem_long(long long a, long long b)

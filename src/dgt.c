@@ -2,6 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
 
 LTFAT_API void
 LTFAT_NAME(dgt_ola)(const LTFAT_COMPLEX* f, const LTFAT_COMPLEX* g,

@@ -2,6 +2,7 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
 
 /**
 * FFT filterbank routines

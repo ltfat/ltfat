@@ -2,6 +2,8 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 struct LTFAT_NAME(upconv_fft_plan_struct)
 {
     ltfat_int L;

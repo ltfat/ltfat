@@ -2,6 +2,8 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 /* wfac for real valued input. Produces only half the output coefficients of wfac_r */
 LTFAT_API void
 LTFAT_NAME(wfacreal)(const LTFAT_REAL* g, ltfat_int L, ltfat_int R,

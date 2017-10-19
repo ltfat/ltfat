@@ -2,7 +2,15 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-LTFAT_API LTFAT_FFTW(plan)
+#include "ltfat/thirdparty/fftw3.h"
+
+/* typedef enum */
+/* { */
+/*     DSTI = FFTW_RODFT00, DSTIII = FFTW_RODFT01, */
+/*     DSTII = FFTW_RODFT10, DSTIV = FFTW_RODFT11 */
+/* } dst_kind; */
+
+LTFAT_API LTFAT_NAME(dst_plan)*
 LTFAT_NAME(dst_init)( ltfat_int L, ltfat_int W, LTFAT_TYPE *cout,
                       const dst_kind kind)
 {
@@ -31,13 +39,22 @@ LTFAT_NAME(dst_init)( ltfat_int L, ltfat_int W, LTFAT_TYPE *cout,
     unsigned flag = FFTW_ESTIMATE;
 #endif
 
-    LTFAT_FFTW(r2r_kind) kindFftw = (LTFAT_FFTW(r2r_kind)) kind;
+    LTFAT_FFTW(r2r_kind) kindFftw = FFTW_RODFT00;
+    
+    switch (kind)
+    {
+        case DSTI:  kindFftw = FFTW_RODFT00; break;
+        case DSTII: kindFftw = FFTW_RODFT10; break;
+        case DSTIII: kindFftw = FFTW_RODFT01; break;
+        case DSTIV: kindFftw = FFTW_RODFT11; break;
+    };
+
     p = LTFAT_FFTW(plan_guru64_r2r)(1, &dims,
                                   1, &howmanydims,
                                   (LTFAT_REAL*)cout, (LTFAT_REAL*)cout,
                                   &kindFftw, flag);
 
-    return p;
+    return (LTFAT_NAME(dst_plan)*)p;
 }
 
 
@@ -46,16 +63,16 @@ LTFAT_API void
 LTFAT_NAME(dst)(const LTFAT_TYPE *f, ltfat_int L, ltfat_int W,
                 LTFAT_TYPE *cout, const dst_kind kind)
 {
-    LTFAT_FFTW(plan) p = LTFAT_NAME(dst_init)( L, W, cout, kind);
+    LTFAT_NAME(dst_plan)* p = LTFAT_NAME(dst_init)( L, W, cout, kind);
 
     LTFAT_NAME(dst_execute)(p, f,  L,  W, cout, kind);
 
-    LTFAT_FFTW(destroy_plan)(p);
+    LTFAT_FFTW(destroy_plan)((LTFAT_FFTW(plan)) p);
 }
 
 // f and cout can be equal, provided plan was already created
 LTFAT_API void
-LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
+LTFAT_NAME(dst_execute)(LTFAT_NAME(dst_plan)* p, const LTFAT_TYPE *f,
                         ltfat_int L, ltfat_int W, LTFAT_TYPE *cout,
                         const dst_kind kind)
 {
@@ -87,10 +104,10 @@ LTFAT_NAME(dst_execute)(LTFAT_FFTW(plan) p, const LTFAT_TYPE *f,
 
     LTFAT_REAL* c_r = (LTFAT_REAL*)cout;
 
-    LTFAT_FFTW(execute_r2r)(p,c_r,c_r);
+    LTFAT_FFTW(execute_r2r)((LTFAT_FFTW(plan))p,c_r,c_r);
 #ifdef LTFAT_COMPLEXTYPE
     LTFAT_REAL* c_i = c_r+1;
-    LTFAT_FFTW(execute_r2r)(p,c_i,c_i);
+    LTFAT_FFTW(execute_r2r)((LTFAT_FFTW(plan))p,c_i,c_i);
 #endif
 
     // Post-scaling

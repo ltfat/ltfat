@@ -2,6 +2,8 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 // These are non-public function header templates
 typedef int LTFAT_NAME(realtocomplextransform)(void* userdata,
         const LTFAT_REAL* in, ltfat_int, LTFAT_COMPLEX* out);

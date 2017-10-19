@@ -3,6 +3,8 @@
 #include "ltfat/macros.h"
 #include "dgtrealwrapper_private.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 int
 ltfat_dgtreal_params_defaults(ltfat_dgtreal_params* params)
 {

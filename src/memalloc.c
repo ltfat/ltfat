@@ -58,9 +58,27 @@ ltfat_malloc (size_t n)
 #elif KISS
         outp = ltfat_aligned_malloc(n);
 #else
-    #error "No FFT backend specified. Use -DKISS or -DFFTW"
+#error "No FFT backend specified. Use -DKISS or -DFFTW"
 #endif
     return outp;
+}
+
+
+LTFAT_API void*
+ltfat_postpad (void* ptr, size_t nold, size_t nnew)
+{
+    if(!ptr)
+        return ltfat_calloc(nnew, 1);
+
+    if (nnew > nold)
+    {
+        void* outp = ltfat_realloc (ptr, nold, nnew);
+        if (!outp) return NULL;
+
+        memset(((unsigned char*)outp) + nold, 0, nnew - nold);
+        return outp;
+    }
+    return ptr;
 }
 
 LTFAT_API void*
@@ -68,8 +86,7 @@ ltfat_realloc (void* ptr, size_t nold, size_t nnew)
 {
     void* outp = ltfat_malloc(nnew);
 
-    if (!outp)
-        return NULL;
+    if (!outp) return NULL;
 
     if (ptr)
     {

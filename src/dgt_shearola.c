@@ -2,6 +2,8 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 LTFAT_API LTFAT_NAME(dgt_shearola_plan)
 LTFAT_NAME(dgt_shearola_init)(const LTFAT_COMPLEX* g, ltfat_int gl,
                               ltfat_int W, ltfat_int a, ltfat_int M,

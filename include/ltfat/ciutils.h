@@ -266,6 +266,10 @@ LTFAT_API int
 LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
                  ltfat_normalize_t flag, LTFAT_REAL* norm);
 
+LTFAT_API int
+LTFAT_NAME(snr)(const LTFAT_TYPE* in, LTFAT_TYPE* rec,
+                ltfat_int L, LTFAT_REAL* snr);
+
 /** Normalize a vector
  *
  * Normalizes the input array such that the chosen norm is 1.

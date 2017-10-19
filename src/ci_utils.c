@@ -625,6 +625,43 @@ error:
 
 
 LTFAT_API int
+LTFAT_NAME(snr)(const LTFAT_TYPE* in, LTFAT_TYPE* rec,
+                ltfat_int L, LTFAT_REAL* snr)
+{
+    int status = LTFATERR_SUCCESS;
+    long double innorm = 0.0;
+    long double errnorm = 0.0;
+    CHECKNULL(in); CHECKNULL(rec); CHECKNULL(snr);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
+    *snr = 0.0;
+
+    for (ltfat_int ii = 0; ii < L; ii++)
+    {
+#ifdef LTFAT_COMPLEXTYPE
+        LTFAT_REAL inAbs = ltfat_abs(in[ii]);
+#else
+        LTFAT_REAL inAbs = in[ii]; // We dont need abs here
+#endif
+        innorm += inAbs * inAbs;
+    }
+
+    for (ltfat_int ii = 0; ii < L; ii++)
+    {
+#ifdef LTFAT_COMPLEXTYPE
+        LTFAT_REAL errAbs = ltfat_abs(in[ii] - rec[ii]);
+#else
+        LTFAT_REAL errAbs = in[ii] - rec[ii]; // We dont need abs here
+#endif
+        errnorm += errAbs * errAbs;
+    }
+
+
+    *snr = (LTFAT_REAL) (10.0*log10l( innorm/errnorm));
+error:
+    return status;
+}
+
+LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
                       ltfat_normalize_t flag, LTFAT_TYPE* out)
 {

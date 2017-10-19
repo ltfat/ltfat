@@ -1,7 +1,7 @@
 #include "ltfat.h"
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
-#include <fftw3.h>
+#include "ltfat/thirdparty/fftw3.h"
 
 /****** FFT ******/
 struct LTFAT_NAME(fft_plan)

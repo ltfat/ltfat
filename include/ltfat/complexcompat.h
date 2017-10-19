@@ -20,15 +20,20 @@ using namespace std;
 #endif
 
 // Must be included after complex.h
-#include "ltfat/thirdparty/fftw3.h"
+// #include "ltfat/thirdparty/fftw3.h"
 #endif
 
 #if defined(__cplusplus) && !defined(LTFAT_CINTERFACE)
-typedef std::complex<double> ltfat_complex_d;
-typedef std::complex<float> ltfat_complex_s;
+    typedef std::complex<double> ltfat_complex_d;
+    typedef std::complex<float> ltfat_complex_s;
 #else
-typedef fftw_complex ltfat_complex_d;
-typedef fftwf_complex ltfat_complex_s;
+#if !defined(LTFAT_CINTERFACE) && defined(_Complex_I) && defined(complex) && defined(I)
+    typedef double _Complex ltfat_complex_d;
+    typedef float  _Complex ltfat_complex_s;
+#else
+    typedef double ltfat_complex_d[2];
+    typedef float  ltfat_complex_s[2];
+#endif
 #endif
 
 #endif

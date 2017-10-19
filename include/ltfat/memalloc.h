@@ -61,8 +61,8 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
-LTFAT_API
-void* ltfat_malloc (size_t n);
+LTFAT_API void*
+ltfat_malloc (size_t n);
 
 /** Allocate memory block and initialize to zero
  *
@@ -78,13 +78,13 @@ void* ltfat_malloc (size_t n);
  *  <tt>
  *  void* ltfat_calloc(size_t nmemb, size_t size);
  *
- *  double* ltfat_calloc_d(size_t size);
+ *  double* ltfat_calloc_d(size_t nmemb);
  *
- *  ltfat_complex_d* ltfat_calloc_dc(size_t size);
+ *  ltfat_complex_d* ltfat_calloc_dc(size_t nmemb);
  *
- *  float* ltfat_calloc_s(size_t size);
+ *  float* ltfat_calloc_s(size_t nmemb);
  *
- *  ltfat_complex_s* ltfat_calloc_sc(size_t size);
+ *  ltfat_complex_s* ltfat_calloc_sc(size_t nmemb);
  *  </tt>
  *  \returns Valid pointer or NULL if the memory allocation failed.
  */
@@ -96,10 +96,12 @@ void* ltfat_calloc (size_t nmemb, size_t size);
  * The function will re-allocate \a nold element array to
  * \a nnew element array of the corresponding type. 
  * The void* version of the function accepts the sizes in bytes.
- *
+ * The input memory block \a ptr is freed if it is not NULL. 
  * The function works as \a ltfat_malloc(nnew) if \a ptr==NULL and \a nold is ignored. 
  *
- * \param[in]     n  Size of the block. 
+ * \param[in]   ptr    Pointer to the input block  
+ * \param[in]   nold   Size of the input block
+ * \param[in]   nnew   Size of the output block 
  *
  *  #### Function versions ####
  *  <tt>
@@ -117,6 +119,29 @@ void* ltfat_calloc (size_t nmemb, size_t size);
  */
 LTFAT_API
 void* ltfat_realloc (void *ptr, size_t nold, size_t nnew);
+
+/** Increase a size of a memory block
+ *
+ *  The function will call \a ltfat_realloc only if \a nnew > \a nold and
+ *  sets the padded elements to 0. Otherwise it does nothing.
+ *  The function works as \a ltfat_calloc if \a ptr==NULL and \a nold is ignored. 
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  void* ltfat_realloc(void *ptr, size_t noldbytes, size_t nnewbytes);
+ *
+ *  double* ltfat_realloc_d(double *ptr, size_t nold, size_t nnew);
+ *
+ *  ltfat_complex_d* ltfat_realloc_dc(ltfat_complex_d *ptr, size_t nold, size_t nnew);
+ *
+ *  float* ltfat_realloc_s(float *ptr, size_t nold, size_t nnew);
+ *
+ *  ltfat_complex_s* ltfat_realloc_sc(ltfat_complex_s *ptr, size_t nold, size_t nnew);
+ *  </tt>
+ *  \returns Valid pointer or NULL if the memory allocation failed.
+ */
+LTFAT_API void*
+ltfat_postpad (void* ptr, size_t nold, size_t nnew);
 
 LTFAT_API
 void  ltfat_free(const void *ptr);

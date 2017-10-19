@@ -2,6 +2,8 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+#include "ltfat/thirdparty/fftw3.h"
+
 LTFAT_API void
 LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, ltfat_int L,
                       ltfat_int R,
