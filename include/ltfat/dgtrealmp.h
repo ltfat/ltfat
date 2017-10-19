@@ -12,21 +12,12 @@ enum ltfat_dgtrealmp_status
     LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 10
 };
 
-
-// typedef enum
-// {
-//     ltfat_dgtrealmp_auto         = 0,
-//     ltfat_dgtrealmp_singlemod    = (1U << 0),
-//     ltfat_dgtrealmp_allmods      = (1U << 1),
-// } ltfat_dgtrealmp_hint;
-
 typedef enum
 {
     ltfat_dgtrealmp_alg_MP              = 0,
-    ltfat_dgtrealmp_alg_LocOMP          = (1U << 0),
-    ltfat_dgtrealmp_alg_LocCyclicMP     = (1U << 1),
+    ltfat_dgtrealmp_alg_LocOMP          = 1,
+    ltfat_dgtrealmp_alg_LocCyclicMP     = 2,
 } ltfat_dgtrealmp_alg;
-
 
 typedef struct ltfat_dgtrealmp_params ltfat_dgtrealmp_params;
 
@@ -88,9 +79,6 @@ typedef struct LTFAT_NAME(dgtrealmp_state) LTFAT_NAME(dgtrealmp_state);
 LTFAT_API LTFAT_NAME(dgtreal_plan)**
 LTFAT_NAME(dgtrealmp_getdgtrealplan)(LTFAT_NAME(dgtrealmp_state)* p);
 
-LTFAT_API ltfat_dgtrealmp_params*
-LTFAT_NAME(dgtrealmp_getparams)(const LTFAT_NAME(dgtrealmp_state)* p);
-
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_getresidualcoef_compact)(
     LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX* c);
@@ -110,6 +98,14 @@ LTFAT_NAME(dgtrealmp_set_errtoldb)(
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_errdb)(
     const LTFAT_NAME(dgtrealmp_state)* p, double* err);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_numatoms)(
+    const LTFAT_NAME(dgtrealmp_state)* p, size_t* atoms);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_numiters)(
+    const LTFAT_NAME(dgtrealmp_state)* p, size_t* iters);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init_compact)(
@@ -155,3 +151,6 @@ LTFAT_NAME(dgtrealmp_revert_compact)(
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
+
+
+

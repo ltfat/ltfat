@@ -12,6 +12,7 @@
 #include "heap.h"
 #include "dgtrealwrapper.h"
 #include "dgtrealmp.h"
+#include "slidgtrealmp.h"
 #include "linalg.h"
 #include "maxtree.h"
 

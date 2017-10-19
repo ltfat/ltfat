@@ -73,9 +73,6 @@ LTFAT_NAME(maxtree_init)(
         }
     }
 
-    /* for (ltfat_int d = 0; d < depth + 1; d++) */
-    /*     DEBUG("L=%td", p->levelL[d]); */
-
     p->depth = depth; p->L = L; p->nextL = nextL; p->Lstep = Lstep;
 
     p->dirtystart = p->Lstep;

@@ -8,9 +8,9 @@ definput.flags.complexity={'double','single'};
 dataPtr = [flags.complexity, 'Ptr'];
 
 Larr =    [100,101,500,501,1025];
-darr =    1:10;
+darr =    0;
 
-for repeat = 1:10000
+for repeat = 1:1
   for depth = darr
     
 for Lidx = 1:numel(Larr)
@@ -37,10 +37,10 @@ for Lidx = 1:numel(Larr)
     
     fprintf('max=%.3f, maxPos=%d\n',maxPtr.value, maxposPtr.value);
     
-    fPtr.value(end) = 1000;
+    fPtr.value(1) = 1000;
     
-    funname = makelibraryname('maxtree_updaterange',flags.complexity,0);
-    status=calllib('libltfat',funname,p,L-1,L);
+    funname = makelibraryname('maxtree_setdirty',flags.complexity,0);
+    status=calllib('libltfat',funname,p,0,1);
     
     funname = makelibraryname('maxtree_findmax',flags.complexity,0);
     status=calllib('libltfat',funname,p,maxPtr,maxposPtr);
@@ -51,6 +51,7 @@ for Lidx = 1:numel(Larr)
     [fmax,fIdx] = max(fPtr.value);
     
     fprintf('max=%.3f, maxPos=%d\n', fmax, fIdx -1);
+    fprintf('max=%.3f, maxPos=%d\n',maxPtr.value, maxposPtr.value);
     
     [test_failed,fail]=ltfatdiditfail(maxPtr.value-fmax + maxposPtr.value - (fIdx -1) ,test_failed,0);
     fprintf(['MAXTREE L:%3i, %s %s %s\n'],L,flags.complexity,ltfatstatusstring(status),fail);

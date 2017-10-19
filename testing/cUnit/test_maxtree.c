@@ -43,7 +43,7 @@ for (unsigned int lId = 0; lId < ARRAYLEN(L); lId++)
                 LTFAT_NAME(findmaxinarray)(fin, L[lId], &max, &maxPos);
                 /* printf("max=%.2f, maxPos=%td\n",max,maxPos); */
 
-                LTFAT_NAME(maxtree_updaterange)(p, idx, idx + rLen[rIdx]);
+                LTFAT_NAME(maxtree_setdirty)(p, idx, idx + rLen[rIdx]);
                 LTFAT_NAME(maxtree_findmax)(p, &max2, &maxPos2);
 
                 /* printf("max=%.2f, maxPos=%td\n",max2,maxPos2);  */

@@ -35,6 +35,12 @@ typedef struct
 
 typedef struct
 {
+    ltfat_int start;
+    ltfat_int end;
+} krange;
+
+typedef struct
+{
     ltfat_int m;
     ltfat_int n;
     ltfat_int w;
@@ -53,6 +59,9 @@ typedef struct
     ltfat_int        kNo;
     LTFAT_COMPLEX** mods;
     LTFAT_COMPLEX*  kval;
+    krange*        range;
+    krange*       srange;
+    LTFAT_REAL    absthr;
     double Mrat;
     double arat;
     ltfat_int Mstep;
@@ -104,6 +113,12 @@ struct LTFAT_NAME(dgtrealmp_state)
     LTFAT_COMPLEX** couttmp;
 };
 
+static LTFAT_REAL
+ltfat_norm(LTFAT_COMPLEX c)
+{
+    return ltfat_real(c) * ltfat_real(c) + ltfat_imag(c) * ltfat_imag(c);
+}
+
 int
 LTFAT_NAME(dgtrealmpiter_init)(
     ltfat_int a[], ltfat_int M[], ltfat_int P, ltfat_int L,
@@ -144,7 +159,7 @@ LTFAT_NAME(dgtrealmp_kernel_modtiexp)(
 int
 LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
     const LTFAT_COMPLEX kernlarge[], ltfat_int M, ltfat_int N,
-    LTFAT_REAL reltol, ksize* size, kanchor* anchor);
+    LTFAT_REAL reltol, LTFAT_REAL* absthr, ksize* size, kanchor* anchor);
 
 int
 LTFAT_NAME(dgtrealmp_essentialsupport)(
@@ -192,10 +207,25 @@ LTFAT_NAME(dgtrealmp_execute_mp)(
     LTFAT_NAME(dgtrealmp_state)* p,
     kpoint pos, LTFAT_COMPLEX** cout);
 
+int
+LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    kpoint origpos, LTFAT_COMPLEX** cout);
+
+int
+LTFAT_NAME(dgtrealmp_execute_locomp)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    kpoint origpos, LTFAT_COMPLEX** cout);
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_invmp)(
     LTFAT_NAME(dgtrealmp_state)* p,
     kpoint pos, LTFAT_COMPLEX** cout);
+
+LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_realatenergy)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    kpoint pos, LTFAT_COMPLEX cval);
+
 
 #endif

@@ -13,7 +13,7 @@ clean:
 	-rm -f *.o
 	find . -type f -executable -exec sh -c "file -i '{}' | grep -q 'x-executable; charset=binary'" \; -print | xargs rm -f
 
-test_%: test_%.c ../../build/libltfat.so Makefile
+test_%: test_%.c  Makefile
 	$(shell truncate -s 0 runner_test_typecomplexindependent.c)
 	$(shell truncate -s 0 runner_test_typeindependent.c)
 	$(shell echo 'int TEST_NAME($@)(){' >> runner_test_typeindependent.c)
