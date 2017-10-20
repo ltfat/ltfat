@@ -40,21 +40,6 @@ error:
     return status;
 }
 
-/* LTFAT_API int */
-/* ltfat_dgtrealmp_setpar_hint( */
-/*     ltfat_dgtrealmp_params* params, ltfat_dgtrealmp_hint hint) */
-/* { */
-/*     int status = LTFATERR_SUCCESS; */
-/*     CHECKNULL(params); */
-/*     CHECK(LTFATERR_BADARG, ltfat_dgtrealmp_hint_isvalid(hint), */
-/*           "Invalid hint passed (passed %d)", hint); */
-/*  */
-/*     params->hint = hint; */
-/*  */
-/* error: */
-/*     return status; */
-/* } */
-
 LTFAT_API int
 ltfat_dgtrealmp_setpar_alg(
     ltfat_dgtrealmp_params* params, ltfat_dgtrealmp_alg alg)

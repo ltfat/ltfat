@@ -115,18 +115,18 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     {
         ktmp->range[knidx].start = 0;
         ktmp->range[knidx].end   = 0;
-        /* LTFAT_COMPLEX* kcol      = ktmp->kval + knidx * ktmp->size.height; */
-        /*  */
-        /* for (ltfat_int kmidx = 0; kmidx < ktmp->size.height; kmidx++) */
-        /*     if ( ltfat_norm(kcol[kmidx]) > ktmp->absthr ) */
-        /*     { ktmp->range[knidx].start = kmidx; break; } */
-        /*  */
-        /* for (ltfat_int kmidx = 0; kmidx < ktmp->size.height; kmidx++) */
-        /*     if ( ltfat_norm(kcol[ktmp->size.height - 1 - kmidx ]) > ktmp->absthr ) */
-        /*     { ktmp->range[knidx].end = kmidx; break; } */
+        LTFAT_COMPLEX* kcol      = ktmp->kval + knidx * ktmp->size.height;
 
-        ktmp->srange[knidx].start = 0;//ktmp->range[knidx].start / ktmp->Mstep;
-        ktmp->srange[knidx].end =   0;//ktmp->range[knidx].end / ktmp->Mstep;
+        for (ltfat_int kmidx = 0; kmidx < ktmp->size.height; kmidx++)
+            if ( ltfat_norm(kcol[kmidx]) > ktmp->absthr )
+            { ktmp->range[knidx].start = kmidx; break; }
+
+        for (ltfat_int kmidx = 0; kmidx < ktmp->size.height; kmidx++)
+            if ( ltfat_norm(kcol[ktmp->size.height - 1 - kmidx ]) > ktmp->absthr )
+            { ktmp->range[knidx].end = kmidx; break; }
+
+        ktmp->srange[knidx].start = ktmp->range[knidx].start / ktmp->Mstep;
+        ktmp->srange[knidx].end =   ktmp->range[knidx].end / ktmp->Mstep;
     }
 
     *pout = ktmp;
@@ -246,7 +246,7 @@ LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
                 lastrow = m;
     }
 
-    for (ltfat_int m = 0; m < M2; m++)
+    for (ltfat_int m = 0; m <= lastrow; m++)
     {
         const LTFAT_COMPLEX* kernlargeRow1 = kernlarge + m;
         const LTFAT_COMPLEX* kernlargeRow2 = kernlarge + (N - 1) * M + m;
