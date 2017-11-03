@@ -526,7 +526,7 @@ function glow = audlowpassfilter(g,a,fc,fs,scal,kv,flags)
         % Determines the cosine transition frequency
         fpe = audtofreq(freqtoaud(fc(2),flags.audscale)+4*kv.spacing,flags.audscale);
         fsupp_LP = 2*fpe;
-        ratio = (fpe-fps)/fsupp_LP;
+        ratio = 2*(fpe-fps)/fsupp_LP;
         Lw = @(L) min(ceil(fsupp_LP*L/fs),L);
 
         P0 = blfilter({'hann','taper',ratio},fsupp_LP,'fs',fs,'inf','min_win',kv.min_win);
@@ -567,7 +567,7 @@ function ghigh = audhighpassfilter(g,a,fc,fs,scal,kv,flags)
 
 %     plateauWidth = 2*(fs/2-fps);
     fsupp_HP = 2*(fs/2-fpe);
-    ratio = (fps-fpe)/fsupp_HP;
+    ratio = 2*(fps-fpe)/fsupp_HP;
     Lw = @(L) min(ceil(fsupp_HP*L/fs),L);
     
     PK = blfilter({'hann','taper',ratio},fsupp_HP,'fc',fs/2,'fs',fs,'inf','min_win',kv.min_win);
