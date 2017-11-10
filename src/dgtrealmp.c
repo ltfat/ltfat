@@ -11,7 +11,7 @@ LTFAT_NAME(dgtrealmp_init)(
     ltfat_int Mtmp[2];
     ltfat_int nextL;
     LTFAT_NAME(dgtrealmp_state)* p = NULL;
-    ltfat_dgtreal_params* dgtparams = NULL;
+    ltfat_dgt_params* dgtparams = NULL;
 
     CHECK(LTFATERR_NOTPOSARG, P > 0, "P must be positive (passed %td)", P);
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive (passed %td)", L);
@@ -69,8 +69,8 @@ LTFAT_NAME(dgtrealmp_init)(
 
     p->P = P; p->L = L;
 
-    CHECKMEM( dgtparams = ltfat_dgtreal_params_allocdef());
-    ltfat_dgtreal_setpar_phaseconv(dgtparams, p->params->ptype);
+    CHECKMEM( dgtparams = ltfat_dgt_params_allocdef());
+    ltfat_dgt_setpar_phaseconv(dgtparams, p->params->ptype);
 
     for (ltfat_int k = 0; k < P; k++)
     {
@@ -80,7 +80,7 @@ LTFAT_NAME(dgtrealmp_init)(
             "dgtreal_init failed" );
 
     }
-    ltfat_dgtreal_params_free(dgtparams); dgtparams = NULL;
+    ltfat_dgt_params_free(dgtparams); dgtparams = NULL;
 
     for (ltfat_int k1 = 0; k1 < P; k1++)
     {
@@ -175,7 +175,7 @@ LTFAT_NAME(dgtrealmp_init)(
     return LTFATERR_SUCCESS;
 error:
     if (p) LTFAT_NAME(dgtrealmp_done)(&p);
-    if (dgtparams) ltfat_dgtreal_params_free(dgtparams);
+    if (dgtparams) ltfat_dgt_params_free(dgtparams);
     *pout = NULL;
     return status;
 }
