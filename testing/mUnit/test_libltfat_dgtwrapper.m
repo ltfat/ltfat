@@ -1,4 +1,4 @@
-function test_failed = test_libltfat_dgtrealwrapper(varargin)
+function test_failed = test_libltfat_dgtwrapper(varargin)
 test_failed = 0;
 
 fprintf(' ===============  %s ================ \n',upper(mfilename));
@@ -20,6 +20,10 @@ aarr  = [ 10  10   3   1];
 Marr  = [ 35  36   3   2];
 Warr  = [  1   3   3   1];
 
+for do_complex = 0:1
+    complexstring = '';
+    if do_complex, complexstring = 'complex'; end
+
 for anasyn = {'ana','syn'}
 dirstr = anasyn{1};
 for hint = fieldnames(hintstruct).'
@@ -29,50 +33,52 @@ for idx = 1:numel(Larr)
     W = Warr(idx);
     a = aarr(idx);
     M = Marr(idx);
-    M2 = floor(M/2) + 1;
     gl = glarr(idx);
     
     N = L/a;
     g = randn(gl,1,flags.complexity);
     gPtr = libpointer(dataPtr,g);
     
-    f = randn(L,W,flags.complexity);
-    fPtr = libpointer(dataPtr,f);
+    f = cast(randn(L,W)+1i*randn(L,W),flags.complexity);
+    fPtr = libpointer(dataPtr,complex2interleaved(f));
+    if ~do_complex, f = reshape(postpad(fPtr.value(:),L*W),L,W); end
 
-    c = cast(randn(M2,N,W)+1i*randn(M2,N,W),flags.complexity);
+    c = cast(randn(M,N,W)+1i*randn(M,N,W),flags.complexity);
     cout = complex2interleaved(c);
     coutPtr = libpointer(dataPtr,cout);
     
 
     plan = libpointer();
-    funname = makelibraryname('dgtreal_init',flags.complexity,0);
+    funname = makelibraryname('dgt_init',flags.complexity,do_complex);
     statusInit = calllib('libltfat',funname,gPtr,gl,L,W,a,M,fPtr,coutPtr,libpointer(),plan);
     
     if strcmp(dirstr,'ana') 
-        funname = makelibraryname('dgtreal_execute_ana',flags.complexity,0);
+        funname = makelibraryname('dgt_execute_ana',flags.complexity,do_complex);
         statusExecute = calllib('libltfat',funname,plan);
     
-        truec = dgtreal(f,g,a,M);
-        res = norm(reshape(truec,M2,N*W) - interleaved2complex(coutPtr.Value),'fro');
+        truec = dgt(f,g,a,M);
+        res = norm(reshape(truec,M,N*W) - interleaved2complex(coutPtr.Value),'fro');
     elseif strcmp(dirstr,'syn')
-        funname = makelibraryname('dgtreal_execute_syn',flags.complexity,0);
+        funname = makelibraryname('dgt_execute_syn',flags.complexity,do_complex);
         statusExecute = calllib('libltfat',funname,plan);
     
-        truef = idgtreal(c,{'dual',g},a,M);
-        res = norm(truef - fPtr.Value,'fro');      
+        truef = idgt(c,{'dual',g},a);
+        res = norm(truef - interleaved2complex(fPtr.Value),'fro');      
     end
     
-    funname = makelibraryname('dgtreal_done',flags.complexity,0);
+    funname = makelibraryname('dgt_done',flags.complexity,do_complex);
     statusDone = calllib('libltfat',funname,plan);
     
     [test_failed,fail]=ltfatdiditfail(res+statusInit,test_failed);
-    fprintf(['DGTREAL FREQINV WP auto %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s\n'],dirstr,L,W,a,M,flags.complexity,ltfatstatusstring(statusExecute),fail);
+    fprintf(['dgt FREQINV WP auto %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s %s\n'],dirstr,L,W,a,M,flags.complexity,complexstring,ltfatstatusstring(statusExecute),fail);
 
     
     %%%%%%
-    f = randn(L,W,flags.complexity);
-    fPtr = libpointer(dataPtr,f);
-    c = cast(randn(M2,N,W)+1i*randn(M2,N,W),flags.complexity);
+    f = cast(randn(L,W)+1i*randn(L,W),flags.complexity);
+    fPtr = libpointer(dataPtr,complex2interleaved(f));
+    if ~do_complex, f = reshape(postpad(fPtr.value(:),L*W),L,W); end
+       
+    c = cast(randn(M,N,W)+1i*randn(M,N,W),flags.complexity);
     cout = complex2interleaved(c);
     coutPtr = libpointer(dataPtr,cout);
     
@@ -82,35 +88,37 @@ for idx = 1:numel(Larr)
     calllib('libltfat','ltfat_dgt_setpar_fftwflags',params,fftwflags.FFTW_MEASURE);
     
     plan = libpointer();
-    funname = makelibraryname('dgtreal_init',flags.complexity,0);
+    funname = makelibraryname('dgt_init',flags.complexity,do_complex);
     statusInit = calllib('libltfat',funname,gPtr,gl,L,W,a,M,fPtr,coutPtr,params,plan);
     
     if strcmp(dirstr,'ana') 
-        funname = makelibraryname('dgtreal_execute_ana',flags.complexity,0);
+        funname = makelibraryname('dgt_execute_ana',flags.complexity,do_complex);
         statusExecute = calllib('libltfat',funname,plan);
     
-        truec = dgtreal(f,g,a,M,'timeinv');
-        res = norm(reshape(truec,M2,N*W) - interleaved2complex(coutPtr.Value),'fro');
+        truec = dgt(f,g,a,M,'timeinv');
+        res = norm(reshape(truec,M,N*W) - interleaved2complex(coutPtr.Value),'fro');
     elseif strcmp(dirstr,'syn')
-        funname = makelibraryname('dgtreal_execute_syn',flags.complexity,0);
+        funname = makelibraryname('dgt_execute_syn',flags.complexity,do_complex);
         statusExecute = calllib('libltfat',funname,plan);
     
-        truef = idgtreal(c,{'dual',g},a,M,'timeinv');
+        truef = idgt(c,{'dual',g},a,'timeinv');
         res = norm(truef - fPtr.Value,'fro');      
     end
     
-    funname = makelibraryname('dgtreal_done',flags.complexity,0);
+    funname = makelibraryname('dgt_done',flags.complexity,do_complex);
     statusDone = calllib('libltfat',funname,plan);
     
     calllib('libltfat','ltfat_dgt_params_free',params);
     
     [test_failed,fail]=ltfatdiditfail(res+statusInit,test_failed);
-    fprintf(['DGTREAL TIMEINV WP %-4s %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s\n'],hint(15:end),dirstr,L,W,a,M,flags.complexity,ltfatstatusstring(statusExecute),fail);
+    fprintf(['dgt TIMEINV WP %-4s %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s %s\n'],hint(15:end),dirstr,L,W,a,M,flags.complexity,complexstring,ltfatstatusstring(statusExecute),fail);
     
     %%%%%%%
-    f = randn(L,W,flags.complexity);
-    fPtr = libpointer(dataPtr,f);
-    c = cast(randn(M2,N,W)+1i*randn(M2,N,W),flags.complexity);
+    f = cast(randn(L,W)+1i*randn(L,W),flags.complexity);
+    fPtr = libpointer(dataPtr,complex2interleaved(f));
+    if ~do_complex, f = reshape(postpad(fPtr.value(:),L*W),L,W); end
+   
+    c = cast(randn(M,N,W)+1i*randn(M,N,W),flags.complexity);
     cout = complex2interleaved(c);
     coutPtr = libpointer(dataPtr,cout);
     
@@ -120,32 +128,33 @@ for idx = 1:numel(Larr)
     calllib('libltfat','ltfat_dgt_setpar_fftwflags',params,fftwflags.FFTW_ESTIMATE);
     
     plan = libpointer();
-    funname = makelibraryname('dgtreal_init',flags.complexity,0);
+    funname = makelibraryname('dgt_init',flags.complexity,0);
     statusInit = calllib('libltfat',funname,gPtr,gl,L,W,a,M,libpointer(),libpointer(),params,plan);
     
     if strcmp(dirstr,'ana') 
-        funname = makelibraryname('dgtreal_execute_ana_newarray',flags.complexity,0);
+        funname = makelibraryname('dgt_execute_ana_newarray',flags.complexity,do_complex);
         statusExecute = calllib('libltfat',funname,plan,fPtr,coutPtr);
     
-        truec = dgtreal(f,g,a,M,'timeinv');
-        res = norm(reshape(truec,M2,N*W) - interleaved2complex(coutPtr.Value),'fro');
+        truec = dgt(f,g,a,M,'timeinv');
+        res = norm(reshape(truec,M,N*W) - interleaved2complex(coutPtr.Value),'fro');
     elseif strcmp(dirstr,'syn')
-        funname = makelibraryname('dgtreal_execute_syn_newarray',flags.complexity,0);
+        funname = makelibraryname('dgt_execute_syn_newarray',flags.complexity,do_complex);
         statusExecute = calllib('libltfat',funname,plan,coutPtr,fPtr);
     
-        truef = idgtreal(c,{'dual',g},a,M,'timeinv');
+        truef = idgt(c,{'dual',g},a,'timeinv');
         res = norm(truef - fPtr.Value,'fro');      
     end
     
-    funname = makelibraryname('dgtreal_done',flags.complexity,0);
+    funname = makelibraryname('dgt_done',flags.complexity,do_complex);
     statusDone = calllib('libltfat',funname,plan);
     
     calllib('libltfat','ltfat_dgt_params_free',params);
     
     [test_failed,fail]=ltfatdiditfail(res+statusInit,test_failed);
-    fprintf(['DGTREAL TIMEINV WP %-4s %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s\n'],hint(15:end),dirstr,L,W,a,M,flags.complexity,ltfatstatusstring(statusExecute),fail);    
+    fprintf(['dgt TIMEINV WP %-4s %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s %s\n'],hint(15:end),dirstr,L,W,a,M,flags.complexity,complexstring,ltfatstatusstring(statusExecute),fail);    
     
     
+end
 end
 end
 end

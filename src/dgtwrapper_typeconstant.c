@@ -1,36 +1,36 @@
 #include "ltfat.h"
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
-#include "dgtrealwrapper_private.h"
+#include "dgtwrapper_private.h"
 
 #include "ltfat/thirdparty/fftw3.h"
 
 int
-ltfat_dgtreal_params_defaults(ltfat_dgtreal_params* params)
+ltfat_dgt_params_defaults(ltfat_dgt_params* params)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     params->ptype = LTFAT_FREQINV;
     params->fftw_flags = FFTW_ESTIMATE;
-    params->hint = ltfat_dgtreal_auto;
+    params->hint = ltfat_dgt_auto;
 error:
     return status;
 }
 
-LTFAT_API ltfat_dgtreal_params*
-ltfat_dgtreal_params_allocdef()
+LTFAT_API ltfat_dgt_params*
+ltfat_dgt_params_allocdef()
 {
-    ltfat_dgtreal_params* params;
+    ltfat_dgt_params* params;
     int status = LTFATERR_SUCCESS;
-    CHECKMEM( params = LTFAT_NEW(ltfat_dgtreal_params));
+    CHECKMEM( params = LTFAT_NEW(ltfat_dgt_params));
 
-    ltfat_dgtreal_params_defaults(params);
+    ltfat_dgt_params_defaults(params);
 error:
     return params;
 }
 
 LTFAT_API int
-ltfat_dgtreal_setpar_phaseconv(ltfat_dgtreal_params* params,
+ltfat_dgt_setpar_phaseconv(ltfat_dgt_params* params,
                                    ltfat_phaseconvention ptype)
 {
     int status = LTFATERR_SUCCESS;
@@ -41,7 +41,7 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtreal_setpar_fftwflags(ltfat_dgtreal_params* params,
+ltfat_dgt_setpar_fftwflags(ltfat_dgt_params* params,
                                    unsigned fftw_flags)
 {
     int status = LTFATERR_SUCCESS;
@@ -53,8 +53,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtreal_setpar_hint(ltfat_dgtreal_params* params,
-                              ltfat_dgtreal_hint hint)
+ltfat_dgt_setpar_hint(ltfat_dgt_params* params,
+                              ltfat_dgt_hint hint)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -64,7 +64,7 @@ error:
 }
 
 /* LTFAT_API int */
-/* ltfat_dgtreal_setpar_normalizewin(ltfat_dgtreal_params* params, */
+/* ltfat_dgt_setpar_normalizewin(ltfat_dgt_params* params, */
 /*                                       int do_normalize_win) */
 /* { */
 /*     int status = LTFATERR_SUCCESS; */
@@ -75,7 +75,7 @@ error:
 /* } */
 
 LTFAT_API int
-ltfat_dgtreal_params_free(ltfat_dgtreal_params* params)
+ltfat_dgt_params_free(ltfat_dgt_params* params)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);

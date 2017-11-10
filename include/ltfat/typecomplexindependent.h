@@ -12,6 +12,7 @@
 #include "dct.h"
 #include "dst.h"
 #include "ci_memalloc.h"
+#include "dgtwrapper.h"
 
 /*   Walnut factorization    */
 

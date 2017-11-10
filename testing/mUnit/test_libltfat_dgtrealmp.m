@@ -10,7 +10,7 @@ dataPtrPtr = [flags.complexity, 'PtrPtr'];
 
 [~,~,enuminfo]=libltfatprotofile;
 phaseconv = enuminfo.ltfat_phaseconvention;
-hintstruct = enuminfo.ltfat_dgtreal_hint;
+hintstruct = enuminfo.ltfat_dgt_hint;
 
 
 algmpstruct = enuminfo.ltfat_dgtrealmp_alg;
@@ -46,14 +46,14 @@ filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
 disp(filename);
     
 [f,fs] = wavload(filename);
-%[f,fs] = gspi;
+[f,fs] = gspi;
 
 %f = postpad(f,fs);
 f = cast(f,flags.complexity);
 f = f(:,1);
 
 [Ls,W] = size(f(:,1));
-Ls = min([Ls,5*fs]);
+Ls = min([Ls,8*fs]);
 % Ls = 5*2048;
  f = postpad(f(:,1),Ls);
 % f = zeros(Ls,1);
@@ -229,11 +229,11 @@ figure(1);plot((0:L-1)/fs,[fPtr.value, fout]);
 
 errdb = 20*log10(norm(fPtr.value -fout)/norm(fPtr.value));
 
-errdb22 = libpointer('doublePtr',[1]);
+errdb22 = libpointer(dataPtr,[1]);
 foutPtr = libpointer(dataPtr,fout);
 funname = makelibraryname('snr',flags.complexity,0);
 statusExecute = calllib('libltfat',funname,fPtr,foutPtr,L,errdb22);
-soundsc(fout,44100);pause(4);
+%soundsc(fout,44100);pause(4);
 
 errdb22.value;
 

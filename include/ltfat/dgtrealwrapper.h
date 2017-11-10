@@ -1,84 +1,4 @@
-/** \defgroup dgtrealwrapper Discrete Gabor Transform analysis-synthesis;
-*/
-
-#ifndef _ltfat_dgtrealwrapper_h
-#define _ltfat_dgtrealwrapper_h
-typedef struct ltfat_dgtreal_params ltfat_dgtreal_params;
-
-/** \addtogroup dgtrealwrapper
- * @{ */
-typedef enum
-{
-    ltfat_dgtreal_auto,
-    ltfat_dgtreal_long,
-    ltfat_dgtreal_fb
-} ltfat_dgtreal_hint;
-
-/** Allocate dgtreal_params structure and initialize to default values
- *
- * \warning The structure must be freed using ltfat_dgtreal_params_free()
- *
- * \returns Allocated struct (or NULL if the memory allocation failed
- * \see ltfat_dgtreal_params_free
- */
-LTFAT_API ltfat_dgtreal_params*
-ltfat_dgtreal_params_allocdef();
-
-/** Set DGT phase convention
- *
- * \returns
- * Status code          |  Description
- * ---------------------|----------------
- * LTFATERR_SUCESS      |  No error occured
- * LTFATERR_NULLPOINTER |  \a params was NULL
- */
-LTFAT_API int
-ltfat_dgtreal_setpar_phaseconv(ltfat_dgtreal_params* params, ltfat_phaseconvention ptype);
-
-/** Set FFTW flags
- *
- * \returns
- * Status code          |  Description
- * ---------------------|----------------
- * LTFATERR_SUCESS      |  No error occured
- * LTFATERR_NULLPOINTER |  \a params was NULL
- */
-LTFAT_API int
-ltfat_dgtreal_setpar_fftwflags(ltfat_dgtreal_params* params, unsigned fftw_flags);
-
-/** Set algorithm hint
- *
- * \returns
- * Status code          |  Description
- * ---------------------|----------------
- * LTFATERR_SUCESS      |  No error occured
- * LTFATERR_NULLPOINTER |  \a params was NULL
- */
-LTFAT_API int
-ltfat_dgtreal_setpar_hint(ltfat_dgtreal_params* params, ltfat_dgtreal_hint hint);
-
-LTFAT_API int
-ltfat_dgtreal_setpar_normalizewin(ltfat_dgtreal_params* params,
-                                  int do_normalize_win);
-
-/** Destroy struct
- *
- * \returns
- * Status code          |  Description
- * ---------------------|----------------
- * LTFATERR_SUCESS      |  No error occured
- * LTFATERR_NULLPOINTER |  \a params was NULL
- */
-LTFAT_API int
-ltfat_dgtreal_params_free(ltfat_dgtreal_params* params);
-
-/** @} */
-
-// The following function is not part of API
-int
-ltfat_dgtreal_params_defaults(ltfat_dgtreal_params* params);
-
-#endif
+#include "dgtwrapper_typeconstant.h"
 
 typedef struct LTFAT_NAME(dgtreal_plan) LTFAT_NAME(dgtreal_plan);
 
@@ -101,14 +21,14 @@ typedef struct LTFAT_NAME(dgtreal_plan) LTFAT_NAME(dgtreal_plan);
  * LTFATERR_BADTRALEN      | \a L is not divisible by both \a a and \a M.
  * LTFATERR_INITFAILED     | The FFTW plan creation failed
  * LTFATERR_NOTSUPPORTED   | This is a non-painless system but its support was not compiled
- * LTFATERR_CANNOTHAPPEN   | \a hint does not have a valid value from \a ltfat_dgtreal_hint or \a ptype is not valid value from \a ltfat_phaseconvention enum
+ * LTFATERR_CANNOTHAPPEN   | \a hint does not have a valid value from \a ltfat_dgt_hint or \a ptype is not valid value from \a ltfat_phaseconvention enum
  * LTFATERR_NOMEM          | Signalizes memory allocation error
  */
 LTFAT_API int
 LTFAT_NAME(dgtreal_init)(const LTFAT_REAL g[], ltfat_int gl,
                          ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                          LTFAT_REAL f[], LTFAT_COMPLEX c[],
-                         ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** p);
+                         ltfat_dgt_params* params, LTFAT_NAME(dgtreal_plan)** p);
 
 
 LTFAT_API int
@@ -116,7 +36,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
                              const LTFAT_REAL gs[], ltfat_int gsl,
                              ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                              LTFAT_REAL f[], LTFAT_COMPLEX c[],
-                             ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** p);
+                             ltfat_dgt_params* params, LTFAT_NAME(dgtreal_plan)** p);
 
 /** Perform DGTREAL synthesis followed by analysis
  *

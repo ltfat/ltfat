@@ -1,17 +1,9 @@
 #ifndef _ltfat_dgtrealwrapper_private_h
 #define _ltfat_dgtrealwrapper_private_h
-
-struct ltfat_dgtreal_params
-{
-    ltfat_phaseconvention ptype;
-    unsigned fftw_flags;
-    ltfat_dgtreal_hint hint;
-};
-
+#include "dgtwrapper_private.h"
 
 typedef int LTFAT_NAME(complextorealtransform)(void* userdata, const LTFAT_COMPLEX* c, ltfat_int L, ltfat_int W, LTFAT_REAL* f);
 typedef int LTFAT_NAME(realtocomplextransform)(void* userdata, const LTFAT_REAL* f, ltfat_int L, ltfat_int W, LTFAT_COMPLEX* c);
-typedef int LTFAT_NAME(donefunc)(void** pla);
 
 struct LTFAT_NAME(dgtreal_plan)
 {

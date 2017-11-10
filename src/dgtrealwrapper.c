@@ -149,7 +149,7 @@ LTFAT_API int
 LTFAT_NAME(dgtreal_init)(const LTFAT_REAL g[], ltfat_int gl, ltfat_int L,
                          ltfat_int W, ltfat_int a, ltfat_int M,
                          LTFAT_REAL f[], LTFAT_COMPLEX c[],
-                         ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** pout)
+                         ltfat_dgt_params* params, LTFAT_NAME(dgtreal_plan)** pout)
 {
     int status = LTFATERR_SUCCESS;
     int ispainless = gl <= M;
@@ -198,11 +198,11 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
                              const LTFAT_REAL gs[], ltfat_int gsl,
                              ltfat_int L, ltfat_int W, ltfat_int a, ltfat_int M,
                              LTFAT_REAL f[], LTFAT_COMPLEX c[],
-                             ltfat_dgtreal_params* params, LTFAT_NAME(dgtreal_plan)** pout)
+                             ltfat_dgt_params* params, LTFAT_NAME(dgtreal_plan)** pout)
 {
     int status = LTFATERR_SUCCESS;
     LTFAT_NAME(dgtreal_plan)* p = NULL;
-    ltfat_dgtreal_params paramsLoc;
+    ltfat_dgt_params paramsLoc;
 
     LTFAT_REAL* g2 = NULL;
 
@@ -211,7 +211,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
     if (params)
         paramsLoc = *params;
     else
-        ltfat_dgtreal_params_defaults(&paramsLoc);
+        ltfat_dgt_params_defaults(&paramsLoc);
 
     CHECKNULL( pout );
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
@@ -220,7 +220,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
     CHECKMEM( p = LTFAT_NEW(LTFAT_NAME(dgtreal_plan)) );
     p->M = M, p->a = a, p->L = L, p->W = W, p->c = c; p->f = f;
 
-    if (ltfat_dgtreal_long == paramsLoc.hint)
+    if (ltfat_dgt_long == paramsLoc.hint)
     {
         // Make the dual window longer if it is not already
         CHECKMEM( g2 = LTFAT_NAME_REAL(malloc)(L) );
@@ -250,7 +250,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
 
         ltfat_safefree(g2);
     }
-    else if ( ltfat_dgtreal_fb == paramsLoc.hint )
+    else if ( ltfat_dgt_fb == paramsLoc.hint )
     {
         // Use _fb functions only
         p->backtra = &LTFAT_NAME(idgtreal_fb_execute_wrapper);
@@ -272,7 +272,7 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
             "dgtreal fb init failed");
 
     }
-    else if ( ltfat_dgtreal_auto == paramsLoc.hint )
+    else if ( ltfat_dgt_auto == paramsLoc.hint )
     {
         // Decide whether to use _fb or _long depending on the window lengths
         if (gsl < L)
