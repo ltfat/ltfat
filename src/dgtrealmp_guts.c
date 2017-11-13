@@ -237,8 +237,12 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
         int do_conj = !( cvalPos.m == 0 || (cvalPos.m == p->M2[cvalPos.w] - 1
                                             && uniquenyquest));
 
+        LTFAT_COMPLEX atprod =
+            LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, cvalPos);
+
         LTFAT_REAL atenergy =
-            LTFAT_NAME(dgtrealmp_execute_atenergy)( p, cvalPos, cvalinv);
+            LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cval);
+
         cvalinv *= atenergy;
 
         cout[PTOI(cvalPos)] += cvalinv;
@@ -349,12 +353,16 @@ LTFAT_NAME(dgtrealmp_execute_mp)(
 
     LTFAT_COMPLEX cval = s->c[PTOI(pos)];
 
+    LTFAT_COMPLEX atprod =
+        LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, pos);
+
+    cval = (cval - (atprod) * conj(cval))/(1.0 - ltfat_norm(atprod));
+
     LTFAT_REAL atenergy =
-        LTFAT_NAME(dgtrealmp_execute_atenergy)( p, pos, cval);
+        LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cval);
 
-    cval /= atenergy;
+    /* cval /= atenergy; */
     cout[PTOI(pos)] += cval;
-
     LTFAT_REAL cvalenergy = ltfat_norm(cval) * atenergy;
     if (do_conj) cvalenergy *= 2.0;
 
@@ -381,8 +389,11 @@ LTFAT_NAME(dgtrealmp_execute_invmp)(
     LTFAT_COMPLEX cresval = s->c[PTOI(pos)];
     s->suppind[PTOI(pos)] = 0;
 
+    LTFAT_COMPLEX atinprod =
+        LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, pos);
+
     LTFAT_REAL plusatenergy =
-        LTFAT_NAME(dgtrealmp_execute_atenergy)( p, pos, coutval)
+        LTFAT_NAME(dgtrealmp_execute_atenergy)( atinprod, coutval)
         * ltfat_norm(coutval)
         + 2.0 * ltfat_real(cresval  * conj(coutval));
 
@@ -396,8 +407,15 @@ LTFAT_NAME(dgtrealmp_execute_invmp)(
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_atenergy)(
-    LTFAT_NAME(dgtrealmp_state)* p,
-    kpoint pos, LTFAT_COMPLEX cval)
+    LTFAT_COMPLEX atinprod, LTFAT_COMPLEX cval)
+{
+    LTFAT_COMPLEX cvalphase = exp( I * ((LTFAT_REAL)2.0) * ltfat_arg(cval));
+    return (1.0 + ltfat_real(cvalphase * ( atinprod) ));
+}
+
+LTFAT_COMPLEX
+LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
+    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos)
 {
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
     int uniquenyquest = p->M[pos.w] % 2 == 0;
@@ -405,26 +423,19 @@ LTFAT_NAME(dgtrealmp_execute_atenergy)(
 
     LTFAT_NAME(kerns)* k = p->gramkerns[pos.w + s->P * pos.w];
 
-    /* Check whether the kernel overflows */
-    /* If it does, adjust cval by the inner product */
     ltfat_int posinkern  = k->mid.hmid + 2 * pos.m;
     /* ltfat_int posinkern2 = k->mid.hmid - 2 * m; */
     if (do_conj &&
         (posinkern < k->size.height - k->range[k->mid.wmid].end ) )
     {
-        LTFAT_COMPLEX cvalphase = exp( I * ((LTFAT_REAL)2.0) * ltfat_arg(cval));
         LTFAT_COMPLEX atinprod = k->kval[k->size.height * k->mid.wmid + posinkern];
-
         if (p->params->ptype == LTFAT_FREQINV)
             atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern];
 
-        return (1.0 + ltfat_real(cvalphase * conj( atinprod) ));
+        return conj(atinprod);
     }
-    else
-    {
-        return 1.0;
-    }
-    return 0;
+
+    return LTFAT_COMPLEX(0.0, 0.0);
 }
 
 int
@@ -476,7 +487,7 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
 
         ltfat_int posinkern  = kmid2.hmid + 2 * pos.m;
         /* ltfat_int posinkern2 = 2 * (p->M2[w2] - pos.m) + kmid2.hmid; */
-        if (do_conj && (posinkern < kdim2.height - k->srange[kmid2.wmid].end ))
+        if (do_conj && (posinkern < kdim2.height  ))
         {
             kexp = LTFAT_NAME(dgtrealmp_execute_pickmod)(
                        k, origposconj.m, origpos.n, p->params->ptype);
@@ -606,4 +617,3 @@ LTFAT_API int
 LTFAT_NAME_COMPLEX(hermsystemsolver_done)(
     LTFAT_NAME_COMPLEX(hermsystemsolver_plan)** UNUSED(p)) {return 0;}
 #endif
-

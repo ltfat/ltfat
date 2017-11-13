@@ -200,7 +200,11 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_atenergy)(
-    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval);
+    LTFAT_COMPLEX ainprod, LTFAT_COMPLEX cval);
+
+LTFAT_COMPLEX
+LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
+    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos);
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_mp)(

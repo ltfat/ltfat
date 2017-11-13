@@ -20,7 +20,7 @@ aarr  = [ 10  10   3   1];
 Marr  = [ 35  36   3   2];
 Warr  = [  1   3   3   1];
 
-for do_complex = 0:1
+for do_complex = [1,0]
     complexstring = '';
     if do_complex, complexstring = 'complex'; end
 
@@ -37,7 +37,12 @@ for idx = 1:numel(Larr)
     
     N = L/a;
     g = randn(gl,1,flags.complexity);
-    gPtr = libpointer(dataPtr,g);
+    if do_complex
+        g = g + 1i*randn(gl,1,flags.complexity);
+        gPtr = libpointer(dataPtr,complex2interleaved(g)); 
+    else
+       gPtr = libpointer(dataPtr,g); 
+    end
     
     f = cast(randn(L,W)+1i*randn(L,W),flags.complexity);
     fPtr = libpointer(dataPtr,complex2interleaved(f));
@@ -102,7 +107,7 @@ for idx = 1:numel(Larr)
         statusExecute = calllib('libltfat',funname,plan);
     
         truef = idgt(c,{'dual',g},a,'timeinv');
-        res = norm(truef - fPtr.Value,'fro');      
+        res = norm(truef - interleaved2complex(fPtr.Value),'fro');      
     end
     
     funname = makelibraryname('dgt_done',flags.complexity,do_complex);
@@ -128,7 +133,7 @@ for idx = 1:numel(Larr)
     calllib('libltfat','ltfat_dgt_setpar_fftwflags',params,fftwflags.FFTW_ESTIMATE);
     
     plan = libpointer();
-    funname = makelibraryname('dgt_init',flags.complexity,0);
+    funname = makelibraryname('dgt_init',flags.complexity,do_complex);
     statusInit = calllib('libltfat',funname,gPtr,gl,L,W,a,M,libpointer(),libpointer(),params,plan);
     
     if strcmp(dirstr,'ana') 
@@ -142,7 +147,7 @@ for idx = 1:numel(Larr)
         statusExecute = calllib('libltfat',funname,plan,coutPtr,fPtr);
     
         truef = idgt(c,{'dual',g},a,'timeinv');
-        res = norm(truef - fPtr.Value,'fro');      
+        res = norm(truef - interleaved2complex(fPtr.Value),'fro');      
     end
     
     funname = makelibraryname('dgt_done',flags.complexity,do_complex);

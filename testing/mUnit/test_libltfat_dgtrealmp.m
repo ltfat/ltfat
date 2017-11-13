@@ -40,20 +40,20 @@ for idx = 1:1%numel(Larr)
 
 
 
-for ii=  1:70
+for ii=  11:70
 
 filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
 disp(filename);
     
 [f,fs] = wavload(filename);
-[f,fs] = gspi;
+%[f,fs] = gspi;
 
 %f = postpad(f,fs);
 f = cast(f,flags.complexity);
 f = f(:,1);
 
 [Ls,W] = size(f(:,1));
-Ls = min([Ls,8*fs]);
+Ls = min([Ls,4*fs]);
 % Ls = 5*2048;
  f = postpad(f(:,1),Ls);
 % f = zeros(Ls,1);
