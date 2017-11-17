@@ -73,7 +73,7 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
     LTFAT_NAME(dgtrealmp_state)* p,
     kpoint origpos, LTFAT_COMPLEX** cout)
 {
-    int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
+    /* int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE; */
 
     int uniquenyquest = p->M[origpos.w] % 2 == 0;
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
@@ -96,7 +96,6 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
     s->cvalBuf[cvalNo] = s->c[PTOI(origpos)];
     s->cvalBufPos[cvalNo] = origpos;
     cvalNo++;
-
 
     for (ltfat_int w2 = 0; w2 < s->P; w2++)
     {
@@ -124,14 +123,14 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
                     s->cvalBufPos[cvalNo] = cvalPos;
                     cvalNo++;
 
-                    if ( midx > 0 && do_conjat )
-                    {
-                        /*     cvalPos.m =  -midx; */
-                        /*     s->cvalBuf[cvalNo] = conj(s->cvalBuf[cvalNo - 1]); */
-                        /*     s->cvalBufPos[cvalNo] = cvalPos; */
-                        /*     cvalNo++; */
-                        DEBUGNOTE("PRD***********************************");
-                    }
+                    /* if ( midx > 0 && do_conjat ) */
+                    /* { */
+                    /*     cvalPos.m =  -midx; */
+                    /*     s->cvalBuf[cvalNo] = conj(s->cvalBuf[cvalNo - 1]); */
+                    /*     s->cvalBufPos[cvalNo] = cvalPos; */
+                    /*     cvalNo++; */
+                    /*     DEBUGNOTE("PRD***********************************"); */
+                    /* } */
                 }
             }
         }
@@ -148,73 +147,78 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
     DEBUGNOTE("--------------------");
 #endif
 
-    /* cvalNo = 1; */
-    /* kpoint cvalPos; cvalPos.m = m; cvalPos.n = n; cvalPos.w = w; */
-    /* s->cvalBuf[0] = s->c[PTOI(cvalPos)]; */
-    /* s->cvalBufPos[0] = cvalPos; */
+    memcpy(s->cvalinvBuf, s->cvalBuf, cvalNo * sizeof * s->cvalinvBuf);
 
-    //memset(s->gramBuf, 0, cvalNo * cvalNo * sizeof * s->gramBuf);
-    // STEP 2: Construct the Gram matrix
-    for (ltfat_int cidx1 = 0; cidx1 < cvalNo; cidx1++)
+    if (cvalNo > 1)
     {
-        kpoint cvalPos            = s->cvalBufPos[cidx1];
-        LTFAT_COMPLEX* gramBufCol = s->gramBuf + cidx1 * cvalNo;
 
-        gramBufCol[cidx1] = 1;
+        /* cvalNo = 1; */
+        /* kpoint cvalPos; cvalPos.m = m; cvalPos.n = n; cvalPos.w = w; */
+        /* s->cvalBuf[0] = s->c[PTOI(cvalPos)]; */
+        /* s->cvalBufPos[0] = cvalPos; */
 
-        for (ltfat_int cidx2 = cidx1 + 1; cidx2 < cvalNo; cidx2++)
+        memset(s->gramBuf, 0, cvalNo * cvalNo * sizeof * s->gramBuf);
+        // STEP 2: Construct the Gram matrix
+        for (ltfat_int cidx1 = 0; cidx1 < cvalNo; cidx1++)
         {
-            kpoint cvalPos2      = s->cvalBufPos[cidx2];
-            kpoint pos           = cvalPos2;
-            LTFAT_NAME(kerns)* k =
-                p->gramkerns[cvalPos.w + s->P * cvalPos2.w];
+            kpoint cvalPos            = s->cvalBufPos[cidx1];
+            LTFAT_COMPLEX* gramBufCol = s->gramBuf + cidx1 * cvalNo;
 
-            /* LTFAT_COMPLEX* kvals = */
-            /*     LTFAT_NAME(dgtrealmp_execute_pickkernel)( */
-            /*         k, cvalPos.m, cvalPos.n, p->params->ptype); */
+            gramBufCol[cidx1] = 1;
 
-            ltfat_int m2start, n2start;
-            ksize   kdim2; kanchor kmid2; kpoint kstart2;
+            for (ltfat_int cidx2 = cidx1 + 1; cidx2 < cvalNo; cidx2++)
+            {
+                kpoint cvalPos2      = s->cvalBufPos[cidx2];
+                kpoint pos           = cvalPos2;
+                LTFAT_NAME(kerns)* k =
+                    p->gramkerns[cvalPos.w + s->P * cvalPos2.w];
 
-            LTFAT_NAME(dgtrealmp_execute_indices)(
-                p, cvalPos, &pos, &m2start, &n2start, &kdim2,
-                &kmid2, &kstart2);
+                /* LTFAT_COMPLEX* kvals = */
+                /*     LTFAT_NAME(dgtrealmp_execute_pickkernel)( */
+                /*         k, cvalPos.m, cvalPos.n, p->params->ptype); */
 
-            ltfat_int muse = cvalPos2.m  - pos.m  + kmid2.hmid;
-            ltfat_int nuse = cvalPos2.n2 - pos.n2 + kmid2.wmid;
+                ltfat_int m2start, n2start;
+                ksize   kdim2; kanchor kmid2; kpoint kstart2;
 
-            if ( muse >= 0 && muse < kdim2.height &&
-                 nuse >= 0 && nuse < kdim2.width )
-                gramBufCol[cidx2] =
-                    (k->kval[k->size.height * (kstart2.n + k->astep * nuse) +
-                             k->Mstep * muse + kstart2.m]);
-            else
-                gramBufCol[cidx2] = 0;
+                LTFAT_NAME(dgtrealmp_execute_indices)(
+                    p, cvalPos, &pos, &m2start, &n2start, &kdim2,
+                    &kmid2, &kstart2);
+
+                ltfat_int muse = cvalPos2.m  - pos.m  + kmid2.hmid;
+                ltfat_int nuse = cvalPos2.n2 - pos.n2 + kmid2.wmid;
+
+                if ( muse >= 0 && muse < kdim2.height &&
+                     nuse >= 0 && nuse < kdim2.width )
+                    gramBufCol[cidx2] =
+                        (k->kval[k->size.height * (kstart2.n + k->astep * nuse) +
+                                 k->Mstep * muse + kstart2.m]);
+                else
+                    gramBufCol[cidx2] = 0;
+            }
+        }
+
+        /* #ifndef NDEBUG */
+        /*             printf("\n"); */
+        /*             for (ltfat_int m = 0; m < cvalNo; m++ ) */
+        /*             { */
+        /*                 for (ltfat_int n = 0; n < cvalNo; n++ ) */
+        /*                 { */
+        /*                     printf("r=% 2.3e,i=% 2.3e ", ltfat_real(s->gramBuf[n * cvalNo + m]), */
+        /*                            ltfat_imag(s->gramBuf[n * cvalNo + m])); */
+        /*                 } */
+        /*                 printf("\n"); */
+        /*             } */
+        /* #endif */
+
+
+        // STEP 3: Invert that S**T
+        if ( LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
+                 s->hplan, s->gramBuf, cvalNo, s->cvalinvBuf) )
+        {
+            /* status = LTFATERR_NOTPOSDEFMATRIX; */
+            return LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM;
         }
     }
-
-    /* #ifndef NDEBUG */
-    /*             printf("\n"); */
-    /*             for (ltfat_int m = 0; m < cvalNo; m++ ) */
-    /*             { */
-    /*                 for (ltfat_int n = 0; n < cvalNo; n++ ) */
-    /*                 { */
-    /*                     printf("r=% 2.3e,i=% 2.3e ", ltfat_real(s->gramBuf[n * cvalNo + m]), */
-    /*                            ltfat_imag(s->gramBuf[n * cvalNo + m])); */
-    /*                 } */
-    /*                 printf("\n"); */
-    /*             } */
-    /* #endif */
-
-    memcpy(s->cvalinvBuf, s->cvalBuf, cvalNo * sizeof * s->cvalinvBuf);
-    // STEP 3: Invert that S**T
-    if ( LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
-             s->hplan, s->gramBuf, cvalNo, s->cvalinvBuf) )
-    {
-        /* status = LTFATERR_NOTPOSDEFMATRIX; */
-        return LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM;
-    }
-
 #ifndef NDEBUG
     for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
     {
@@ -230,30 +234,34 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
     for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
     {
         LTFAT_COMPLEX cvalinv = s->cvalinvBuf[cidx];
-        LTFAT_COMPLEX cval = s->cvalBuf[cidx];
+        /* LTFAT_COMPLEX cval = s->cvalBuf[cidx]; */
         kpoint cvalPos     = s->cvalBufPos[cidx];
         if (cvalPos.m < 0) continue;
 
-        int do_conj = !( cvalPos.m == 0 || (cvalPos.m == p->M2[cvalPos.w] - 1
-                                            && uniquenyquest));
+        s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, cvalinv, cvalPos, cout);
 
-        LTFAT_COMPLEX atprod =
-            LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, cvalPos);
-
-        LTFAT_REAL atenergy =
-            LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cval);
-
-        cvalinv *= atenergy;
-
-        cout[PTOI(cvalPos)] += cvalinv;
-
-        /* LTFAT_REAL cvalabs = ltfat_norm(cvalinv); */
+        /* int do_conj = !( cvalPos.m == 0 || (cvalPos.m == p->M2[cvalPos.w] - 1 */
+        /*                                     && uniquenyquest)); */
         /*  */
-        /* s->err -= cvalabs / atenergy; */
-        /* if (do_conj) s->err -= cvalabs / atenergy; */
-
-        LTFAT_NAME(dgtrealmp_execute_updateresiduum)( p,
-                cvalPos, cvalinv,  1);
+        /* LTFAT_COMPLEX atprod = */
+        /*     LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, cvalPos); */
+        /*  */
+        /* cvalinv = (cvalinv - (atprod) * conj(cvalinv)) / (1.0 - ltfat_norm(atprod)); */
+        /*  */
+        /* LTFAT_REAL atenergy = */
+        /*     LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cvalinv); */
+        /*  */
+        /* #<{(| cvalinv *= atenergy; |)}># */
+        /*  */
+        /* cout[PTOI(cvalPos)] += cvalinv; */
+        /*  */
+        /* LTFAT_REAL cvalabs = ltfat_norm(cvalinv) * atenergy; */
+        /*  */
+        /* s->err -= cvalabs ; */
+        /* if (do_conj) s->err -= cvalabs ; */
+        /*  */
+        /* LTFAT_NAME(dgtrealmp_execute_updateresiduum)( p, */
+        /*         cvalPos, cvalinv,  1); */
 
     }
 
@@ -269,7 +277,8 @@ LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
 
     long double errstart = s->err;
-    s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, origpos, cout);
+    s->err -= LTFAT_NAME(dgtrealmp_execute_mp)(
+                  p, s->c[PTOI(origpos)], origpos, cout);
 
     s->pBufNo = 0;
     s->pBuf[s->pBufNo++] = origpos;
@@ -322,7 +331,8 @@ LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
                 /* DEBUG("Before m=%td,n=%td",pos->m,pos->n); */
                 s->err += LTFAT_NAME(dgtrealmp_execute_invmp)( p, *pos, cout);
                 LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, pos);
-                s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, *pos, cout);
+                s->err -= LTFAT_NAME(dgtrealmp_execute_mp)(
+                              p, s->c[PTOI((*pos))] , *pos, cout);
 
                 /* DEBUG("After m=%td,n=%td",pos->m,pos->n); */
             }
@@ -340,9 +350,9 @@ LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
     return LTFAT_DGTREALMP_STATUS_CANCONTINUE;
 }
 
-inline LTFAT_REAL
+LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_mp)(
-    LTFAT_NAME(dgtrealmp_state)* p,
+    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX cval,
     kpoint pos, LTFAT_COMPLEX** cout)
 {
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
@@ -351,12 +361,14 @@ LTFAT_NAME(dgtrealmp_execute_mp)(
     int do_conj = !( pos.m == 0 || (pos.m == p->M2[pos.w] - 1
                                     && uniquenyquest));
 
-    LTFAT_COMPLEX cval = s->c[PTOI(pos)];
+    /* LTFAT_COMPLEX cval = s->c[PTOI(pos)]; */
 
     LTFAT_COMPLEX atprod =
         LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, pos);
 
-    cval = (cval - (atprod) * conj(cval))/(1.0 - ltfat_norm(atprod));
+    cval = (cval - (atprod) * conj(cval)) / ((LTFAT_REAL)(1.0) - ltfat_norm(atprod));
+
+    /* DEBUG("w=%td,abs(cval)=%.4f",pos.w,ltfat_norm(cval)); */
 
     LTFAT_REAL atenergy =
         LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cval);
@@ -410,7 +422,7 @@ LTFAT_NAME(dgtrealmp_execute_atenergy)(
     LTFAT_COMPLEX atinprod, LTFAT_COMPLEX cval)
 {
     LTFAT_COMPLEX cvalphase = exp( I * ((LTFAT_REAL)2.0) * ltfat_arg(cval));
-    return (1.0 + ltfat_real(cvalphase * ( atinprod) ));
+    return (1.0 + ltfat_real(cvalphase * conj( atinprod) ));
 }
 
 LTFAT_COMPLEX
@@ -423,16 +435,28 @@ LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
 
     LTFAT_NAME(kerns)* k = p->gramkerns[pos.w + s->P * pos.w];
 
-    ltfat_int posinkern  = k->mid.hmid + 2 * pos.m;
-    /* ltfat_int posinkern2 = k->mid.hmid - 2 * m; */
-    if (do_conj &&
-        (posinkern < k->size.height - k->range[k->mid.wmid].end ) )
+    if (do_conj)
     {
-        LTFAT_COMPLEX atinprod = k->kval[k->size.height * k->mid.wmid + posinkern];
-        if (p->params->ptype == LTFAT_FREQINV)
-            atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern];
+        ltfat_int posinkern  = k->mid.hmid - 2 * pos.m;
+        /* if( posinkern >= 0 )  */
+        if( posinkern >= k->range[k->mid.wmid].start ) 
+        {
+            LTFAT_COMPLEX atinprod = k->kval[k->size.height * k->mid.wmid + posinkern];
+            if (p->params->ptype == LTFAT_FREQINV)
+                atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern];
 
-        return conj(atinprod);
+            return  conj(atinprod);
+        }
+        posinkern  = k->mid.hmid + 2 * ( p->M2[pos.w] - 1 - pos.m) + 1 - uniquenyquest;
+        /* if( posinkern < k->size.height  ) */
+        if( posinkern < k->size.height - k->range[k->mid.wmid].end )
+        {
+            LTFAT_COMPLEX atinprod = k->kval[k->size.height * k->mid.wmid + posinkern];
+            if (p->params->ptype == LTFAT_FREQINV)
+                atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern];
+
+            return conj(atinprod);
+        }
     }
 
     return LTFAT_COMPLEX(0.0, 0.0);
@@ -440,8 +464,7 @@ LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
 
 int
 LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
-    LTFAT_NAME(dgtrealmp_state)* p,
-    kpoint origpos, LTFAT_COMPLEX cval,
+    LTFAT_NAME(dgtrealmp_state)* p, kpoint origpos, LTFAT_COMPLEX cval,
     int do_substract)
 {
     ltfat_int  m2start, n2start, m2end, mover, n2end, nover, moverM2;
@@ -485,24 +508,27 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
 
         LTFAT_DGTREALMP_MARKMODIFIED
 
-        ltfat_int posinkern  = kmid2.hmid + 2 * pos.m;
-        /* ltfat_int posinkern2 = 2 * (p->M2[w2] - pos.m) + kmid2.hmid; */
-        if (do_conj && (posinkern < kdim2.height  ))
+        ltfat_int posinkern  = kmid2.hmid - 2 * pos.m;
+        ltfat_int posinkern2 = kmid2.hmid + 2 * (p->M2[w2] - 1 - pos.m) + 1 - uniquenyquest ;
+        if (do_conj)
         {
-            kexp = LTFAT_NAME(dgtrealmp_execute_pickmod)(
-                       k, origposconj.m, origpos.n, p->params->ptype);
+            if (posinkern >= 0 || posinkern2 < kdim2.height)
+            {
+                kexp = LTFAT_NAME(dgtrealmp_execute_pickmod)(
+                           k, origposconj.m, origpos.n, p->params->ptype);
 
-            LTFAT_NAME(dgtrealmp_execute_indices)(
-                p, origposconj, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
+                LTFAT_NAME(dgtrealmp_execute_indices)(
+                    p, origposconj, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
 
-            m2end = m2start + kdim2.height;
-            mover = ltfat_imax(0, m2end - p->M[w2]);
-            moverM2 = mover;
-            if (kdim2.height > p->M2[w2])
-                moverM2 = kdim2.height - ltfat_imax(0, p->M[w2] - m2start);
-            /* m2end = ltfat_imin(m2end, p->M2[w2]); */
+                m2end = m2start + kdim2.height;
+                mover = ltfat_imax(0, m2end - p->M[w2]);
+                moverM2 = mover;
+                if (kdim2.height > p->M2[w2])
+                    moverM2 = kdim2.height - ltfat_imax(0, p->M[w2] - m2start);
+                /* m2end = ltfat_imin(m2end, p->M2[w2]); */
 
-            LTFAT_DGTREALMP_APPLYKERNEL(cval2)
+                LTFAT_DGTREALMP_APPLYKERNEL(cval2)
+            }
         }
 
     }
@@ -551,6 +577,9 @@ LTFAT_NAME(dgtrealmp_execute_indices)(
 
     kdim2->height = (kdim2->height - kstart2->m) / k->Mstep;
     kdim2->width  = (kdim2->width  - kstart2->n) / k->astep;
+
+    /* DEBUG("Wheight=%td,Kwidth=%td",k->size.height, k->size.width  ); */
+    /* DEBUG("Wheight=%td,Kwidth=%td,Kstartm=%td,Kstartn=%td",kdim2->height, kdim2->width, kstart2->m, kstart2->n  ); */
 
     return 0;
 }

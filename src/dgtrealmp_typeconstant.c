@@ -3,21 +3,41 @@
 #include "ltfat/macros.h"
 #include "dgtrealmp_private.h"
 
-LTFAT_API ltfat_dgtrealmp_params*
-ltfat_dgtrealmp_params_allocdef()
+int
+ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
 {
-    ltfat_dgtrealmp_params* params;
     int status = LTFATERR_SUCCESS;
-    CHECKMEM( params = LTFAT_NEW(ltfat_dgtrealmp_params));
+    CHECKNULL(params);
+    /* params->hint = ltfat_dgtrealmp_allmods; */
+    params->alg = ltfat_dgtmp_alg_MP;
+    params->errtoldb = -40.0;
+    params->kernrelthr = 1e-4;
+    params->verbose = 1;
+    params->maxatoms = 0;
+    params->maxit = 0;
+    params->iterstep = 100;
+    params->treelevels = 10;
+    params->cycles = 1;
+    params->ptype = LTFAT_FREQINV;
+error:
+    return status;
+}
 
-    ltfat_dgtrealmp_params_defaults(params);
+LTFAT_API ltfat_dgtmp_params*
+ltfat_dgtmp_params_allocdef()
+{
+    ltfat_dgtmp_params* params;
+    int status = LTFATERR_SUCCESS;
+    CHECKMEM( params = LTFAT_NEW(ltfat_dgtmp_params));
+
+    ltfat_dgtmp_params_defaults(params);
 
 error:
     return params;
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_params_free(ltfat_dgtrealmp_params* params)
+ltfat_dgtmp_params_free(ltfat_dgtmp_params* params)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -27,8 +47,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_phaseconv(
-    ltfat_dgtrealmp_params* params, ltfat_phaseconvention pconv)
+ltfat_dgtmp_setpar_phaseconv(
+    ltfat_dgtmp_params* params, ltfat_phaseconvention pconv)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -41,12 +61,12 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_alg(
-    ltfat_dgtrealmp_params* params, ltfat_dgtrealmp_alg alg)
+ltfat_dgtmp_setpar_alg(
+    ltfat_dgtmp_params* params, ltfat_dgtmp_alg alg)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
-    CHECK(LTFATERR_BADARG, ltfat_dgtrealmp_alg_isvalid(alg),
+    CHECK(LTFATERR_BADARG, ltfat_dgtmp_alg_isvalid(alg),
           "Invalid hint passed (passed %d)", alg);
 
     params->alg = alg;
@@ -55,8 +75,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_maxatoms(
-    ltfat_dgtrealmp_params* params, size_t maxatoms)
+ltfat_dgtmp_setpar_maxatoms(
+    ltfat_dgtmp_params* params, size_t maxatoms)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -71,8 +91,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_maxit(
-    ltfat_dgtrealmp_params* params, size_t maxit)
+ltfat_dgtmp_setpar_maxit(
+    ltfat_dgtmp_params* params, size_t maxit)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -85,8 +105,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_cycles(
-    ltfat_dgtrealmp_params* params, size_t cycles)
+ltfat_dgtmp_setpar_cycles(
+    ltfat_dgtmp_params* params, size_t cycles)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -99,8 +119,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_errtoldb(
-    ltfat_dgtrealmp_params* params, double errtoldb)
+ltfat_dgtmp_setpar_errtoldb(
+    ltfat_dgtmp_params* params, double errtoldb)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -112,8 +132,8 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_iterstep(
-    ltfat_dgtrealmp_params* params, size_t iterstep)
+ltfat_dgtmp_setpar_iterstep(
+    ltfat_dgtmp_params* params, size_t iterstep)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
@@ -124,34 +144,14 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtrealmp_setpar_kernrelthr(
-    ltfat_dgtrealmp_params* params, double thr)
+ltfat_dgtmp_setpar_kernrelthr(
+    ltfat_dgtmp_params* params, double thr)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     CHECK(LTFATERR_BADARG, thr <= 1 && thr >= 0,
           "Relative threshold must be in range [0-1] (passed %s)", thr);
     params->kernrelthr = thr;
-error:
-    return status;
-}
-
-int
-ltfat_dgtrealmp_params_defaults(ltfat_dgtrealmp_params* params)
-{
-    int status = LTFATERR_SUCCESS;
-    CHECKNULL(params);
-    /* params->hint = ltfat_dgtrealmp_allmods; */
-    params->alg = ltfat_dgtrealmp_alg_MP;
-    params->errtoldb = -40.0;
-    params->kernrelthr = 1e-4;
-    params->verbose = 1;
-    params->maxatoms = 0;
-    params->maxit = 0;
-    params->iterstep = 100;
-    params->treelevels = 10;
-    params->cycles = 1;
-    params->ptype = LTFAT_FREQINV;
 error:
     return status;
 }
@@ -173,15 +173,15 @@ error:
 /* } */
 
 int
-ltfat_dgtrealmp_alg_isvalid(ltfat_dgtrealmp_alg in)
+ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in)
 {
     int isvalid = 0;
 
     switch (in)
     {
-    case ltfat_dgtrealmp_alg_MP:
-    case ltfat_dgtrealmp_alg_LocOMP:
-    case ltfat_dgtrealmp_alg_LocCyclicMP:
+    case ltfat_dgtmp_alg_MP:
+    case ltfat_dgtmp_alg_LocOMP:
+    case ltfat_dgtmp_alg_LocCyclicMP:
         isvalid = 1;
     }
 

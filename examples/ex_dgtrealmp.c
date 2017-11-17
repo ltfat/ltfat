@@ -1,3 +1,4 @@
+#define LTFAT_COMPAT32 1
 #include <sndfile.h>
 #include "complex.h"
 #include "../include/ltfat.h"
@@ -34,6 +35,8 @@ loadwavfile(const char* name, double** f, int* Ls, int* W )
     return 0;
 }
 
+char fileTemplate[] = "/home/susnak/Desktop/SQAM/%02d.wav";
+char file[1024];
 
 int main(int argc, char* argv[])
 {
@@ -42,51 +45,59 @@ int main(int argc, char* argv[])
     double* f;
     double complex* cout;
     int fs = 44100;
-    loadwavfile("/home/susnak/Desktop/SQAM/57.wav", &f, &Ls, &W);
-    Ls = 44100 * 4;
-    printf("Ls=%d,W=%d\n", Ls, W);
 
-    ltfat_int a = 16;
-    ltfat_int M = 2048;
-    ltfat_int gl = 2048;
-    ltfat_int M2 = M/2 + 1;
+    for (int fileNo = 1; fileNo <= 70; fileNo++)
+    {
 
-    L = ltfat_dgtlength(Ls, a, M);
-    f = ltfat_postpad_d(f, Ls, L);
-    double* fout = ltfat_malloc_d(L);
+        snprintf(file, 1023, fileTemplate, fileNo );
+        printf(file); printf("\n");
+        loadwavfile(file, &f, &Ls, &W);
+        Ls = 44100 * 5;
+        /* printf("Ls=%d,W=%d\n", Ls, W); */
 
-    double* g = ltfat_malloc_d(gl);
-    cout = ltfat_malloc_dc(M2*L/a);
+        ltfat_int a = 512;
+        ltfat_int M = 2048;
+        ltfat_int gl = 2048;
+        ltfat_int M2 = M / 2 + 1;
 
-    ltfat_firwin_d(LTFAT_BLACKMAN, gl, g);
-    ltfat_normalize_d(g, gl, LTFAT_NORMALIZE_ENERGY, g);
+        L = ltfat_dgtlength(Ls, a, M);
+        f = ltfat_postpad_d(f, Ls, L);
+        double* fout = ltfat_malloc_d(L);
 
-    ltfat_dgtrealmp_state_d* plan;
+        double* g = ltfat_malloc_d(gl);
+        cout = ltfat_malloc_dc(M2 * L / a);
 
-    ltfat_dgtrealmp_params* params = ltfat_dgtrealmp_params_allocdef();
-    ltfat_dgtrealmp_setpar_phaseconv(params,LTFAT_TIMEINV);
-    ltfat_dgtrealmp_setpar_errtoldb(params,-40);
-    ltfat_dgtrealmp_setpar_maxatoms(params,0.8*L);
-    ltfat_dgtrealmp_setpar_iterstep(params,1);
+        ltfat_firwin_d(LTFAT_BLACKMAN, gl, g);
+        ltfat_normalize_d(g, gl, LTFAT_NORMALIZE_ENERGY, g);
 
-    ltfat_dgtrealmp_init_d((const double**)&g, &gl, L, 1, &a, &M, params, &plan);
+        ltfat_dgtrealmp_state_d* plan;
 
-    ltfat_dgtrealmp_params_free(params);
+        ltfat_dgtmp_params* params = ltfat_dgtmp_params_allocdef();
+        ltfat_dgtmp_setpar_phaseconv(params, LTFAT_TIMEINV);
+        ltfat_dgtmp_setpar_errtoldb(params, -40);
+        ltfat_dgtmp_setpar_maxatoms(params, 0.8 * L);
+        ltfat_dgtmp_setpar_iterstep(params, 1e6);
+        //ltfat_dgtrealmp_setpar_alg(params, ltfat_dgtrealmp_alg_LocCyclicMP);
+
+        ltfat_dgtrealmp_init_gen_d((const double**)&g, &gl, L, 1, &a, &M, params, &plan);
+
+        ltfat_dgtmp_params_free(params);
 
 
-    ltfat_dgtrealmp_execute_d(plan,f,&cout,fout);
+        ltfat_dgtrealmp_execute_d(plan, f, &cout, fout);
 
-    ltfat_dgtrealmp_done_d(&plan);
+        ltfat_dgtrealmp_done_d(&plan);
 
-    double snr;
-    ltfat_snr_d(f,fout,L,&snr);
+        double snr;
+        ltfat_snr_d(f, fout, L, &snr);
 
-    printf("SNR=%2.3f dB\n",snr);
+        printf("SNR=%2.3f dB\n", snr);
+        ltfat_safefree(g);
+        ltfat_safefree(f);
+        ltfat_safefree(cout);
+        ltfat_safefree(fout);
+    }
 
-    ltfat_safefree(g);
-    ltfat_safefree(f);
-    ltfat_safefree(cout);
-    ltfat_safefree(fout);
 
     return 0;
 }

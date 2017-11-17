@@ -186,23 +186,32 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
     parity =  end == p->L ? end % 2 : 0;
     start = start - start % 2;
     end   = end   + end % 2;
-    start /= 2; end /= 2;
+    start = start >> 1; end = end >> 1;
 
     LTFAT_REAL* treeVal = p->treePtrs[p->depth];
     LTFAT_REAL* treeValnext = p->treePtrs[p->depth - 1];
     ltfat_int* treePosnext = p->treePosPtrs[p->depth - 1];
 
-    for (ltfat_int l = start; l < end - parity; l++)
+    ltfat_int endmpar = end - parity - start;
+    ltfat_int newl = start - 1;
+
+    for (ltfat_int l = 0; l < endmpar; l++)
     {
-        if ( treeVal[2 * l] > treeVal[2 * l + 1])
+        newl++;
+        ltfat_int twol = newl<<1;
+        ltfat_int twolp1 = twol + 1;
+        LTFAT_REAL tv1 = treeVal[twol];
+        LTFAT_REAL tv2 = treeVal[twolp1];
+
+        if ( tv1 > tv2)
         {
-            treeValnext[l] = treeVal[2 * l];
-            treePosnext[l] = 2 * l;
+            treeValnext[newl] = tv1;
+            treePosnext[newl] = twol;
         }
         else
         {
-            treeValnext[l] = treeVal[2 * l + 1];
-            treePosnext[l] = 2 * l + 1;
+            treeValnext[newl] = tv2;
+            treePosnext[newl] = twolp1;
         }
     }
 
@@ -217,24 +226,32 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
         parity =  end >= p->levelL[d] ? end % 2 : 0;
         start = start - start % 2;
         end   = end   + end % 2;
-        start /= 2; end /= 2;
+        start = start >> 1; end = end >> 1;
 
-        LTFAT_REAL* treeVal = p->treePtrs[d];
+        LTFAT_REAL* treeVal     = p->treePtrs[d];
         LTFAT_REAL* treeValnext = p->treePtrs[d - 1];
-        ltfat_int* treePos = p->treePosPtrs[d];
-        ltfat_int* treePosnext = p->treePosPtrs[d - 1];
+        ltfat_int* treePos      = p->treePosPtrs[d];
+        ltfat_int* treePosnext  = p->treePosPtrs[d - 1];
 
-        for (ltfat_int l = start; l < end - parity; l++)
+        ltfat_int endmpar = end - parity - start;
+        ltfat_int newl = start - 1;
+
+        for (ltfat_int l = 0; l < endmpar; l++)
         {
-            if ( treeVal[2 * l] > treeVal[2 * l + 1])
+            newl++;
+            ltfat_int twol = newl<<1;
+            ltfat_int twolp1 = twol + 1;
+            LTFAT_REAL tv1 = treeVal[twol];
+            LTFAT_REAL tv2 = treeVal[twolp1];
+            if ( tv1 > tv2)
             {
-                treeValnext[l] = treeVal[2 * l];
-                treePosnext[l] = treePos[2 * l];
+                treeValnext[newl] = tv1;
+                treePosnext[newl] = treePos[twol];
             }
             else
             {
-                treeValnext[l] = treeVal[2 * l + 1];
-                treePosnext[l] = treePos[2 * l + 1];
+                treeValnext[newl] = tv2;
+                treePosnext[newl] = treePos[twolp1];
             }
         }
 

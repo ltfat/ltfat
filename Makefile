@@ -39,7 +39,7 @@ else
 	objprefix ?= obj
 endif
 
-MATLABPATH ?= /usr/local/MATLAB_R2013a/bin/glnxa64
+MATLABROOT ?= /usr/local/MATLAB_R2017a
 
 PREFIX ?= /usr/local
 LIBDIR = $(PREFIX)/lib
@@ -246,18 +246,20 @@ cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
 
+munit: export EXTRACFLAGS += -DLTFAT_COMPAT32
+munit: export BLASLAPACKLIBS += -L$(MATLABROOT)/bin/glnxa64 -lmwblas -lmwlapack
 munit: 
 	$(MAKE) clean
 	# $(MAKE) BLASLAPACKLIBS="-L$(MATLABPATH) -lmwblas -lmwlapack" $(SO_DSTARGET)
 	$(MAKE) $(SO_DSTARGET) 
-	$(MAKE) $(buildprefix)/ltfat.h USECPP=0
+	$(MAKE) $(buildprefix)/ltfat.h USECPP=0 CC=gcc
 
 cunit: 
 	$(MAKE) clean
 	$(MAKE) $(SO_DSTARGET) 
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
-	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
+	$(CC) -E -P -DNOSYSTEMHEADERS $(EXTRACFLAGS) -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
 	sed -i '1 i #ifndef _LTFAT_H' $(buildprefix)/ltfat.h
 	sed -i '1 a #define _LTFAT_H' $(buildprefix)/ltfat.h
 	sed -i '2 a #ifndef NOSYSTEMHEADERS\n #include <stddef.h>\n #endif' $(buildprefix)/ltfat.h

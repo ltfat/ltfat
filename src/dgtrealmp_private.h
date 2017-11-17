@@ -4,10 +4,23 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-struct ltfat_dgtrealmp_params
+struct LTFAT_NAME(dgtmp_parbuf)
+{
+    LTFAT_REAL**        g;
+    ltfat_int*          gl;
+    ltfat_int           L;
+    ltfat_int           P;
+    ltfat_int*          a;
+    ltfat_int*          M;
+    ltfat_dgtmp_params* params;
+    LTFAT_REAL          chirprate;
+    LTFAT_REAL          shiftby;
+};
+
+struct ltfat_dgtmp_params
 {
     // ltfat_dgtrealmp_hint  hint;
-    ltfat_dgtrealmp_alg   alg;
+    ltfat_dgtmp_alg   alg;
     long double           errtoldb;
     long double           errtoladj;
     double                kernrelthr;
@@ -62,10 +75,10 @@ typedef struct
     krange*        range;
     krange*       srange;
     LTFAT_REAL    absthr;
-    double Mrat;
-    double arat;
-    ltfat_int Mstep;
-    ltfat_int astep;
+    double          Mrat;
+    double          arat;
+    ltfat_int      Mstep;
+    ltfat_int      astep;
 } LTFAT_NAME(kerns);
 
 
@@ -109,11 +122,11 @@ struct LTFAT_NAME(dgtrealmp_state)
     ltfat_int         P;
     ltfat_int         L;
     LTFAT_REAL**    cout;
-    ltfat_dgtrealmp_params* params;
+    ltfat_dgtmp_params* params;
     LTFAT_COMPLEX** couttmp;
 };
 
-static LTFAT_REAL
+static inline LTFAT_REAL
 ltfat_norm(LTFAT_COMPLEX c)
 {
     return ltfat_real(c) * ltfat_real(c) + ltfat_imag(c) * ltfat_imag(c);
@@ -208,7 +221,7 @@ LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_mp)(
-    LTFAT_NAME(dgtrealmp_state)* p,
+    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX cval,
     kpoint pos, LTFAT_COMPLEX** cout);
 
 int

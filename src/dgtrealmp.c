@@ -2,14 +2,32 @@
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
+    LTFAT_NAME(dgtmp_parbuf)* pb, LTFAT_NAME(dgtrealmp_state)** pout)
+{
+    int status = LTFATERR_SUCCESS;
+
+    CHECKNULL(pb);
+    CHECK(LTFATERR_BADARG, pb->L > 0 , "Signal length L not set");
+    CHECK(LTFATERR_BADARG, pb->P > 0 , "No Gabor system set");
+
+    return LTFAT_NAME(dgtrealmp_init_gen)(
+               (const LTFAT_REAL**)pb->g, pb->gl, pb->L, pb->P, pb->a, pb->M,
+               pb->params, pout);
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_init_gen)(
     const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
-    ltfat_int M[], ltfat_dgtrealmp_params* params,
+    ltfat_int M[], ltfat_dgtmp_params* params,
     LTFAT_NAME(dgtrealmp_state)** pout)
 {
     int status = LTFATERR_FAILED;
     const LTFAT_REAL* gtmp[2]; ltfat_int gltmp[2]; ltfat_int atmp[2];
     ltfat_int Mtmp[2];
     ltfat_int nextL;
+    ltfat_int amin;
     LTFAT_NAME(dgtrealmp_state)* p = NULL;
     ltfat_dgt_params* dgtparams = NULL;
 
@@ -25,7 +43,22 @@ LTFAT_NAME(dgtrealmp_init)(
         CHECK(LTFATERR_NOTPOSARG, a[p] > 0,
               "a[%td] must be positive (passed %td)", p, a[p]);
         CHECK(LTFATERR_NOTPOSARG, M[p] > 0,
-              "m[%td] must be positive (passed %td)", p, M[p]);
+              "M[%td] must be positive (passed %td)", p, M[p]);
+        CHECK(LTFATERR_NOTAFRAME, M[p] >= a[p],
+              "M[%td]>=a[%td] failed passed (%td,%td)", p, p,  M[p], a[p]);
+    }
+
+    amin = a[0];
+    for (ltfat_int p = 1; p < P; p++)
+        if (a[p] < amin )
+            amin = a[p];
+
+    for (ltfat_int p = 0; p < P; p++)
+    {
+        CHECK( LTFATERR_BADARG, a[p] % amin == 0,
+               "a[%td] not divisible by amin %td (passed %td)", p, amin, a[p]);
+        CHECK( LTFATERR_BADARG, M[p] % amin == 0,
+               "M[%td] not divisible by amin %td (passed %td)", p, amin, M[p]);
     }
 
     nextL = ltfat_dgtlengthmulti(L, P, a, M);
@@ -34,7 +67,7 @@ LTFAT_NAME(dgtrealmp_init)(
           "Next compatible transform length is %d (passed %d).", nextL, L);
 
     CHECKMEM( p = LTFAT_NEW( LTFAT_NAME(dgtrealmp_state)) );
-    CHECKMEM( p->params = ltfat_dgtrealmp_params_allocdef() );
+    CHECKMEM( p->params = ltfat_dgtmp_params_allocdef() );
 
     if (params)
         memcpy( p->params, params, sizeof * p->params);
@@ -99,12 +132,12 @@ LTFAT_NAME(dgtrealmp_init)(
 
 #ifndef NDEBUG
     {
-    LTFAT_NAME(kerns)* kk = p->gramkerns[0];
-    printf("h=%td, w=%td \n", kk->size.height, kk->size.width);
-    for (ltfat_int n = 0; n < kk->size.width; n++ )
-    {
-        printf("s=%td,e=%td \n", kk->range[n].start, kk->range[n].end);
-    }
+        LTFAT_NAME(kerns)* kk = p->gramkerns[0];
+        printf("h=%td, w=%td \n", kk->size.height, kk->size.width);
+        for (ltfat_int n = 0; n < kk->size.width; n++ )
+        {
+            printf("s=%td,e=%td \n", kk->range[n].start, kk->range[n].end);
+        }
     }
 
     /* for (ltfat_int m = 0; m < kk->size.height; m++ ) */
@@ -121,7 +154,7 @@ LTFAT_NAME(dgtrealmp_init)(
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate),
                  "dgtrealmpiter_init failed" );
 
-    if (p->params->alg == ltfat_dgtrealmp_alg_LocOMP)
+    if (p->params->alg == ltfat_dgtmp_alg_LocOMP)
     {
         ltfat_int kernSizeAccum = 0;
         for (ltfat_int k = 0; k < P; k++)
@@ -148,7 +181,7 @@ LTFAT_NAME(dgtrealmp_init)(
             "hermsystemsolver_init failed" );
     }
 
-    if (p->params->alg == ltfat_dgtrealmp_alg_LocCyclicMP)
+    if (p->params->alg == ltfat_dgtmp_alg_LocCyclicMP)
     {
         p->iterstate->pBufNo = p->params->maxatoms;
         p->iterstate->pBufNo = 0;
@@ -254,13 +287,14 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
 
         switch ( p->params->alg)
         {
-        case ltfat_dgtrealmp_alg_MP:
-            s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, origpos, cout);
+        case ltfat_dgtmp_alg_MP:
+            s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, s->c[PTOI(origpos)], origpos,
+                      cout);
             break;
-        case ltfat_dgtrealmp_alg_LocOMP:
+        case ltfat_dgtmp_alg_LocOMP:
             status  = LTFAT_NAME(dgtrealmp_execute_locomp)( p, origpos, cout);
             break;
-        case ltfat_dgtrealmp_alg_LocCyclicMP:
+        case ltfat_dgtmp_alg_LocCyclicMP:
             status  = LTFAT_NAME(dgtrealmp_execute_cyclicmp)( p, origpos, cout);
             break;
         }
@@ -379,7 +413,7 @@ LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_state)** p)
     ltfat_safefree(pp->couttmp);
 
     if (pp->params)
-        ltfat_dgtrealmp_params_free(pp->params);
+        ltfat_dgtmp_params_free(pp->params);
 
     if (pp->dgtplans)
     {
@@ -658,9 +692,9 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_init_compact)(
+LTFAT_NAME(dgtrealmp_init_gen_compact)(
     const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
-    ltfat_int M[], ltfat_dgtrealmp_params* params,
+    ltfat_int M[], ltfat_dgtmp_params* params,
     LTFAT_NAME(dgtrealmp_state)** pout)
 {
     int status = LTFATERR_SUCCESS;
@@ -676,7 +710,7 @@ LTFAT_NAME(dgtrealmp_init_compact)(
     }
 
     CHECKSTATUS(
-        LTFAT_NAME(dgtrealmp_init)(multig, gl, L, P, a, M, params, pout),
+        LTFAT_NAME(dgtrealmp_init_gen)(multig, gl, L, P, a, M, params, pout),
         "dgtrealmp_init failed");
 
 error:
@@ -714,3 +748,5 @@ error :
     return status;
 
 }
+
+

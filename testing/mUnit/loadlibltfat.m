@@ -14,7 +14,8 @@ iscompiled = exist(libpath,'file');
 
 makecmd = ['make -C ',libltfatpath];
 if ~iscompiled || flags.do_recompile
-    makecmd = [makecmd, ' munit BLASLAPACKLIBS="-L/usr/local/MATLAB_R2013a/bin/glnxa64 -lmwblas -lmwlapack" -j12'];
+    makecmd = [makecmd, ' munit -j12'];
+    makecmd = [makecmd, ' MATLABROOT=', matlabroot];
     makecmd = [makecmd, sprintf(' COMPTARGET=%s',flags.comptarget)];
     
     if flags.do_verbose
