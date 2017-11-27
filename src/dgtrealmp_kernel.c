@@ -35,6 +35,7 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
              2 * ltfat_imax(lefttail1, righttail1);
 
     Lshort = ltfat_dgtlength( ltfat_imin(Lshort, L), amin, Mmax);
+    /* Lshort = 2048; */
 
     DEBUG("Lmin=%td",Lshort);
 

@@ -49,17 +49,17 @@ filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
 disp(filename);
     
 [f,fs] = wavload(filename);
-%[f,fs] = gspi;
+[f,fs] = gspi;
 
 %f = postpad(f,fs);
 f = cast(f,flags.complexity);
 f = f(:,1);
 
 [Ls,W] = size(f(:,1));
-Ls = min([Ls,6*fs]);
+%Ls = min([Ls,2*fs]);
 % Ls = 5*2048;
-
- f = postpad(f,Ls);
+Ls = 20000;
+ f = postpad(f(fs:fs+Ls),Ls);
 % f = zeros(Ls,1);
 % f(1) = 1;
 %f = [zeros(10*1024,1);f;zeros(10*1024,1);];
@@ -73,11 +73,11 @@ Ls = numel(f);
 %f = [zeros(fs,1);postpad(f(fs:end,1),Ls);zeros(fs,1)];
 W = 1;
 %Ls = numel(f);
-a  = [        512, 256,   64,  64,  64, 512];
-M  = [       1024, 1024, 8192,8192, 256 , 2048];
-gl = [       1024, 512, 512,  1024, 90, 2048];
+a  = [       128 ,   2,   64,  64,  64, 1024, 1];
+M  = [       512,   512, 8192,8192, 256 , 2048, 4];
+gl = [       2*512,  63, 512,  1024, 70, 2048,  8 ];
 M2 = floor(M/2) + 1;
-P = [5];
+P = [1,2];
 Psize = numel(P);
 
 L = dgtlength(Ls,max(a(P)),max(M(P)));
@@ -98,11 +98,11 @@ N = L./a;
 
 gCell = cell(Psize,1);
 for p=1:Psize
-    gCell{p} = cast(firwin('blackmAN',gl(P(p)),'2'),flags.complexity);
+    gCell{p} = cast(firwin('blackman',gl(P(p)),'2'),flags.complexity);
 %       gg = cast(firwin('tria',gl(P(p)),'2'),flags.complexity);
 %       gCell{p}(end/2:end) = gg(end/2:end); 
 %        gCell{p} = normalize(gCell{p},'2');
-       [A,B] = gabframebounds(gCell{p},a(P(p)),M(P(p)))
+         [A,B] = gabframebounds(gCell{p},a(P(p)),M(P(p)));
 %     gCell{p} = cast(gabwin({'gauss',a(p)*M(p)/L},a(p),M(p),L),flags.complexity); 
 %     [idx] = find(gCell{p} < 1e-6 ,1,'first');
 %     gCell{p} = middlepad(gCell{p},2*idx-1);
@@ -133,17 +133,18 @@ coutPtr = libpointer(dataPtr,cout);
 
 
 %ctrue = dgt(f,g(1:gl(1)),a(1),M(1));
-atoms = 0.8*L;
+atoms = sizeaccum;
+atoms = ii;
 
 tic;
 params = calllib('libltfat','ltfat_dgtmp_params_allocdef');
 calllib('libltfat','ltfat_dgtmp_setpar_maxatoms',params,atoms);
-calllib('libltfat','ltfat_dgtmp_setpar_maxit',params,10*atoms);
+calllib('libltfat','ltfat_dgtmp_setpar_maxit',params,50*atoms);
 calllib('libltfat','ltfat_dgtmp_setpar_errtoldb',params,-40);
-calllib('libltfat','ltfat_dgtmp_setpar_kernrelthr',params,1e-4);
+calllib('libltfat','ltfat_dgtmp_setpar_kernrelthr',params,1e-10);
 calllib('libltfat','ltfat_dgtmp_setpar_phaseconv',params,cphaseconv);
-%calllib('libltfat','ltfat_dgtmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_LocCyclicMP);
-%calllib('libltfat','ltfat_dgtmp_setpar_alg',params,algmpstruct.ltfat_dgtrealmp_alg_LocOMP);
+%calllib('libltfat','ltfat_dgtmp_setpar_alg',params,algmpstruct.ltfat_dgtmp_alg_LocCyclicMP);
+%calllib('libltfat','ltfat_dgtmp_setpar_alg',params,algmpstruct.ltfat_dgtmp_alg_LocOMP);
 calllib('libltfat','ltfat_dgtmp_setpar_iterstep',params,1e6);
 calllib('libltfat','ltfat_dgtmp_setpar_cycles',params,1);
 
@@ -153,6 +154,10 @@ funname = makelibraryname('dgtrealmp_init_gen_compact',flags.complexity,0);
 statusInit = calllib('libltfat',funname,gPtr,glPtr,...
     L,Psize,aPtr,MPtr,params,plan);
 tinit = toc;
+
+coherence = libpointer('doublePtr',[1]);
+funname = makelibraryname('dgtdict_coherence_fromstatus',flags.complexity,0);
+retval = calllib('libltfat',funname,plan,coherence);
 
 calllib('libltfat','ltfat_dgtmp_params_free',params);
 
@@ -184,7 +189,7 @@ tic
  %funname = makelibraryname('dgtrealmp_execute_compact',flags.complexity,0);
  %statusExecute = calllib('libltfat',funname,plan,fPtr,coutPtr,foutPtr);
  funname = makelibraryname('dgtrealmp_execute_niters_compact',flags.complexity,0);
- statusExecute = calllib('libltfat',funname,plan,10*atoms,coutPtr);
+ statusExecute = calllib('libltfat',funname,plan,50*atoms,coutPtr);
 t2 =toc;
 
 %%%%%%%%%%%%%%
@@ -194,12 +199,15 @@ calllib('libltfat',funname,plan,errdb);
 err1 = errdb.value;
 %%%%%%%%%%%%%%
 
+
+
 cout2 = interleaved2complex(coutPtr.value);
 sizeaccum = 0;
 for p=1:Psize
     nextsizeaccum = sizeaccum + M2(P(p))*N(P(p))*W;
-    figure(4+p); plotdgtreal(reshape(postpad(cout2(1+sizeaccum:nextsizeaccum), M2(P(p))*N(P(p)) ),M2(P(p)),N(P(p))),1,100,'clim',[-90,10]);
+    figure(4+p); plotdgtreal(reshape(postpad(cout2(1+sizeaccum:nextsizeaccum), M2(P(p))*N(P(p)) ),M2(P(p)),N(P(p))),a(P(p)),M(P(p)),'clim',[-90,10]);
     sizeaccum = nextsizeaccum;
+    %ylim([0,0.01]);
 end
 
 
@@ -212,6 +220,16 @@ errdb = libpointer('doublePtr',[1]);
 funname = makelibraryname('dgtrealmp_get_errdb',flags.complexity,0);
 calllib('libltfat',funname,plan,errdb);
 err2 = errdb.value;
+%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+numitersPtr = libpointer('uint64Ptr',[1]);
+funname = makelibraryname('dgtrealmp_get_numiters',flags.complexity,0);
+calllib('libltfat',funname,plan,numitersPtr);
+%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%
+numatomsPtr = libpointer('uint64Ptr',[1]);
+funname = makelibraryname('dgtrealmp_get_numatoms',flags.complexity,0);
+calllib('libltfat',funname,plan,numatomsPtr);
 %%%%%%%%%%%%%%
 
 cres2 = complex2interleaved(...
@@ -235,7 +253,7 @@ end
 %figure(3); plotdgtreal(cres2,1,100,'clim',[-90,10]);
 %figure(4); plotdgtreal(cres1-cres2,1,100,'dynrange',90);
 
-
+fprintf('Coherence: %.3f\n',coherence.value);
 fprintf('Init %.3f, reset %.3f, execute %.3f, both %.3f seconds, status %s.\n',tinit,t1,t2,t1+t2,dgtrealmpstring(statusExecute));
 
 
@@ -266,7 +284,8 @@ statusExecute = calllib('libltfat',funname,fPtr,foutPtr,L,errdb22);
 
 errdb22.value;
 
- fprintf('%i atoms, sparsity %.3f, %i atoms/s, Err: True: %.2f dB, En: %.2f dB, Rev: %.2f dB\n',atoms,atoms/L,atoms/t2, errdb,err1,err2);
+ fprintf('%i(%i) atoms, %i iters, %.3f sparsity, L=%i, %i atoms/s\nErr: True: %.8f dB, En: %.8f dB,\n',...
+     atoms, numatomsPtr.value,numitersPtr.value,atoms/L,L,atoms/t2, errdb22.value,err2);
 
 shg; 
 

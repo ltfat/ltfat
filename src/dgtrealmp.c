@@ -20,8 +20,7 @@ error:
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init_gen)(
     const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P, ltfat_int a[],
-    ltfat_int M[], ltfat_dgtmp_params* params,
-    LTFAT_NAME(dgtrealmp_state)** pout)
+    ltfat_int M[], ltfat_dgtmp_params* params, LTFAT_NAME(dgtrealmp_state)** pout)
 {
     int status = LTFATERR_FAILED;
     const LTFAT_REAL* gtmp[2]; ltfat_int gltmp[2]; ltfat_int atmp[2];
@@ -46,6 +45,10 @@ LTFAT_NAME(dgtrealmp_init_gen)(
               "M[%td] must be positive (passed %td)", p, M[p]);
         CHECK(LTFATERR_NOTAFRAME, M[p] >= a[p],
               "M[%td]>=a[%td] failed passed (%td,%td)", p, p,  M[p], a[p]);
+
+        CHECK(LTFATERR_BADARG, gl[p] <= L,
+              "gl[%td]<=L failed. Window is too long. passed (%td, %td)",
+              p, gl[p], L);
     }
 
     amin = a[0];
@@ -132,13 +135,12 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
 #ifndef NDEBUG
     {
-        LTFAT_NAME(kerns)* kk = p->gramkerns[0];
+        LTFAT_NAME(kerns)* kk = p->gramkerns[1];
         printf("h=%td, w=%td \n", kk->size.height, kk->size.width);
         for (ltfat_int n = 0; n < kk->size.width; n++ )
         {
             printf("s=%td,e=%td \n", kk->range[n].start, kk->range[n].end);
         }
-    }
 
     /* for (ltfat_int m = 0; m < kk->size.height; m++ ) */
     /* { */
@@ -149,6 +151,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     /*     } */
     /*     printf("\n"); */
     /* } */
+    }
 #endif
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate),
@@ -749,4 +752,63 @@ error :
 
 }
 
+LTFAT_API int
+LTFAT_NAME(dgtdict_coherence_gen)(
+    const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P,
+    ltfat_int a[], ltfat_int M[], LTFAT_REAL* coherence)
+{
+    int status = LTFATERR_SUCCESS;
+error:
+    return status;
+}
 
+LTFAT_API int
+LTFAT_NAME(dgtdict_coherence_fromstatus)(
+    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_REAL* coherence)
+{
+    int status = LTFATERR_SUCCESS;
+    LTFAT_REAL maxval = 0.0;
+    CHECKNULL(p); CHECKNULL(coherence);
+
+    for (ltfat_int pp1 = 0; pp1 < p->P; pp1++)
+    {
+        LTFAT_NAME(kerns)* kk = p->gramkerns[pp1 + pp1 * p->P];
+
+        ltfat_int midlinpos = kk->mid.hmid + kk->mid.wmid * kk->size.height;
+
+        for (ltfat_int n = 0; n < kk->size.width * kk->size.height; n++)
+            if (n != midlinpos && ltfat_abs(kk->kval[n]) > maxval)
+                maxval = ltfat_abs(kk->kval[n]);
+
+        for (ltfat_int pp2 = pp1 + 1; pp2 < p->P; pp2++)
+        {
+            LTFAT_NAME(kerns)* kk2 = p->gramkerns[pp2 + pp1 * p->P];
+
+            for (ltfat_int n = 0; n < kk2->size.width * kk2->size.height; n++)
+                if (ltfat_abs(kk2->kval[n]) > maxval)
+                    maxval = ltfat_abs(kk2->kval[n]);
+        }
+    }
+
+    *coherence = maxval;
+error:
+    return status;
+}
+
+/* LTFAT_API int */
+/* LTFAT_NAME(dgtdict_coherence)( */
+/*     LTFAT_NAME(dgtmp_parbuf)* pb, LTFAT_REAL* coherence) */
+/* { */
+/* } */
+/*  */
+/* LTFAT_API int */
+/* LTFAT_NAME(dgtdict_babel)( */
+/*     LTFAT_NAME(dgtmp_parbuf)* pb, ltfat_int P, LTFAT_REAL* babel) */
+/* { */
+/* } */
+/*  */
+/* LTFAT_API int */
+/* LTFAT_NAME(dgtdict_isquaziincoherent)( */
+/*     LTFAT_NAME(dgtmp_parbuf)* pb) */
+/* { */
+/* } */

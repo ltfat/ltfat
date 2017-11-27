@@ -63,6 +63,10 @@ LTFAT_API int
 ltfat_dgtmp_setpar_errtoldb(
     ltfat_dgtmp_params* p, double errtoldb);
 
+// LTFAT_API int
+// ltfat_dgtmp_setpar_checkerreverynit(
+//     ltfat_dgtmp_params* p, ltfat_int itstep, double errtoldb);
+
 int
 ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params);
 
@@ -230,3 +234,8 @@ LTFAT_NAME(dgtmp_setparbuf_iterstep)(
 LTFAT_API int
 LTFAT_NAME(dgtmp_setparbcycless)(
     LTFAT_NAME(dgtmp_parbuf)* parbuf, size_t cycles);
+
+
+LTFAT_API int
+LTFAT_NAME(dgtdict_coherence_fromstatus)(
+    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_REAL* coherence);
