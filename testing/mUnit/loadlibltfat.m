@@ -4,7 +4,10 @@ definput.keyvals.lib='libltfat.so';
 definput.flags.phase={'load','reload','recompile'};
 definput.flags.comptarget={'fulloptim','release','debug'};
 definput.flags.verbosity={'quiet','verbose'};
-[flags,~,lib]=ltfatarghelper({'lib'},definput,varargin);
+definput.flags.corcpp={'c','cpp'};
+definput.keyvals.compiler = [];
+
+[flags,kv,lib]=ltfatarghelper({'lib'},definput,varargin);
 
 [~,libname]=fileparts(lib);
 currdir = fileparts(mfilename('fullpath'));
@@ -17,6 +20,14 @@ if ~iscompiled || flags.do_recompile
     makecmd = [makecmd, ' munit -j12'];
     makecmd = [makecmd, ' MATLABROOT=', matlabroot];
     makecmd = [makecmd, sprintf(' COMPTARGET=%s',flags.comptarget)];
+    
+    if flags.do_cpp
+        makecmd = [makecmd, ' USECPP=1'];
+    end
+    
+    if kv.compiler
+        makecmd = [makecmd, sprintf(' CC=%s',kv.compiler)];
+    end
     
     if flags.do_verbose
         disp(makecmd);

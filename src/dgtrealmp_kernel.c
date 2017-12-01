@@ -37,8 +37,6 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     Lshort = ltfat_dgtlength( ltfat_imin(Lshort, L), amin, Mmax);
     /* Lshort = 2048; */
 
-    DEBUG("Lmin=%td",Lshort);
-
     Nshort = Lshort / amin;
 
     CHECKMEM(g0tmp     = LTFAT_NAME_REAL(malloc)(Lshort));
@@ -82,10 +80,10 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     ktmp->kNo = modNo;
 
     DEBUG("h=%td,w=%td,hmid=%td,wmid=%td,kno=%td,a0=%td,a1=%td,M1=%td,M2=%td,"
-          "astep=%td,Mstep=%td,arat=%.2f,Mrat=%.2f",
+          "astep=%td,Mstep=%td,arat=%.2f,Mrat=%.2f,Lmin=%td",
           ktmp->size.height, ktmp->size.width, ktmp->mid.hmid, ktmp->mid.wmid, modNo,
           a[0], a[1], M[0], M[1],
-          ktmp->astep, ktmp->Mstep, ktmp->arat, ktmp->Mrat);
+          ktmp->astep, ktmp->Mstep, ktmp->arat, ktmp->Mrat, Lshort);
 
     CHECKMEM( ktmp->kval =
                   LTFAT_NAME_COMPLEX(malloc)( ktmp->size.height * ktmp->size.width));
@@ -107,8 +105,8 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
         memcpy(ktmp->kval + n * ktmp->size.height,
                kernlarge + n * Mmax, ktmp->size.height * sizeof * kernlarge);
 
-    LTFAT_COMPLEX kk = *( ktmp->kval + ktmp->mid.hmid + ktmp->mid.wmid * ktmp->size.height);
-    DEBUG("re=%.3f,im=%.3f", ltfat_real(kk),ltfat_imag(kk));
+        /* LTFAT_COMPLEX kk = *( ktmp->kval + ktmp->mid.hmid + ktmp->mid.wmid * ktmp->size.height); */
+        /* DEBUG("re=%.3f,im=%.3f", ltfat_real(kk),ltfat_imag(kk)); */
 
 
     if (ptype == LTFAT_FREQINV)
@@ -266,7 +264,6 @@ LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
             if ( ltfat_norm(kernlargeRow1[n * M]) > *absthr && n > lastcol1 )
             {
                 lastcol1 = n;
-                break;
             }
         }
 
@@ -275,7 +272,6 @@ LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
             if ( ltfat_norm(kernlargeRow2[-n * M]) > *absthr && n > lastcol2 )
             {
                 lastcol2 = n;
-                break;
             }
         }
     }

@@ -32,6 +32,7 @@ struct ltfat_dgtmp_params
     int                   treelevels;
     size_t                cycles;
     ltfat_phaseconvention ptype;
+    int                   do_pedantic;
 };
 
 typedef struct
@@ -214,6 +215,10 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_atenergy)(
     LTFAT_COMPLEX ainprod, LTFAT_COMPLEX cval);
+
+LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_adjustedenergy)(
+    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval);
 
 LTFAT_COMPLEX
 LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(

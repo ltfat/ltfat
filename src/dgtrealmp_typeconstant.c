@@ -18,7 +18,7 @@ ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
     params->iterstep = 100;
     params->treelevels = 10;
     params->cycles = 1;
-    params->ptype = LTFAT_FREQINV;
+    params->ptype = LTFAT_TIMEINV;
 error:
     return status;
 }
@@ -56,6 +56,18 @@ ltfat_dgtmp_setpar_phaseconv(
           "Invalid phase conv. passed (passed %d)", pconv);
 
     params->ptype = pconv;
+error:
+    return status;
+}
+
+LTFAT_API int
+ltfat_dgtmp_setpar_pedanticsearch(
+    ltfat_dgtmp_params* params, int do_pedanticsearch)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+
+    params->do_pedantic = do_pedanticsearch;
 error:
     return status;
 }
@@ -125,7 +137,7 @@ ltfat_dgtmp_setpar_errtoldb(
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     CHECK(LTFATERR_BADARG, errtoldb <= 0, "errtoldb must be lower than 0");
-    params->errtoldb = errtoldb;
+    params->errtoldb = errtoldb < 0.0 ? errtoldb: -errtoldb;
 
 error:
     return status;

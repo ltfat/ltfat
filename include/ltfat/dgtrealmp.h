@@ -63,6 +63,10 @@ LTFAT_API int
 ltfat_dgtmp_setpar_errtoldb(
     ltfat_dgtmp_params* p, double errtoldb);
 
+LTFAT_API int
+ltfat_dgtmp_setpar_pedanticsearch(
+    ltfat_dgtmp_params* params, int do_pedanticsearch);
+
 // LTFAT_API int
 // ltfat_dgtmp_setpar_checkerreverynit(
 //     ltfat_dgtmp_params* p, ltfat_int itstep, double errtoldb);
@@ -203,6 +207,15 @@ LTFAT_NAME(dgtmp_parbuf_add_genwin_ignoremods)(
     LTFAT_NAME(dgtmp_parbuf)* parbuf,
     const LTFAT_REAL g[], ltfat_int gl, ltfat_int a, ltfat_int M);
 
+// Callback allows changing the values of energies of inner products which
+// are used in the search for the maximally corellated atom with the residuum.
+typedef int LTFAT_NAME(selectionmodcallback)(void* userdata,
+        const LTFAT_COMPLEX* in, ltfat_int, ltfat_int, ltfat_int, LTFAT_REAL* out);
+
+LTFAT_API int
+LTFAT_NAME(dgtmp_setparbuf_selectiomodcallback)(
+    LTFAT_NAME(dgtmp_parbuf)* parbuf, LTFAT_NAME(selectionmodcallback)* callback);
+
 LTFAT_API int
 LTFAT_NAME(dgtmp_setparbuf_phaseconv)(
     LTFAT_NAME(dgtmp_parbuf)* parbuf, ltfat_phaseconvention pconv);
@@ -230,11 +243,6 @@ LTFAT_NAME(dgtmp_setparbuf_kernrelthr)(
 LTFAT_API int
 LTFAT_NAME(dgtmp_setparbuf_iterstep)(
     LTFAT_NAME(dgtmp_parbuf)* parbuf, size_t iterstep);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbcycless)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, size_t cycles);
-
 
 LTFAT_API int
 LTFAT_NAME(dgtdict_coherence_fromstatus)(

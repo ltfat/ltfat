@@ -34,6 +34,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     CHECK(LTFATERR_NOTPOSARG, L > 0, "L must be positive (passed %td)", L);
     CHECKNULL(gl); CHECKNULL(g); CHECKNULL(a); CHECKNULL(M); CHECKNULL(pout);
 
+
     for (ltfat_int p = 0; p < P; p++)
     {
         CHECKNULL(g[p]);
@@ -122,8 +123,10 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     {
         for (ltfat_int k2 = 0; k2 < P; k2++)
         {
-            gtmp[0] = g[k1]; gtmp[1] = g[k2]; atmp[0] = a[k1]; atmp[1] = a[k2];
-            Mtmp[0] = M[k1]; Mtmp[1] = M[k2]; gltmp[0] = gl[k1]; gltmp[1] = gl[k2];
+            gtmp[0] = g[k1]; gtmp[1] = g[k2];
+            atmp[0] = p->a[k1]; atmp[1] = p->a[k2];
+            Mtmp[0] = p->M[k1]; Mtmp[1] = p->M[k2];
+            gltmp[0] = gl[k1]; gltmp[1] = gl[k2];
 
             CHECKSTATUS( LTFAT_NAME(dgtrealmp_kernel_init)( gtmp, gltmp,
                          atmp, Mtmp, L, p->params->kernrelthr,
@@ -134,24 +137,25 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     }
 
 #ifndef NDEBUG
-    {
-        LTFAT_NAME(kerns)* kk = p->gramkerns[1];
-        printf("h=%td, w=%td \n", kk->size.height, kk->size.width);
-        for (ltfat_int n = 0; n < kk->size.width; n++ )
-        {
-            printf("s=%td,e=%td \n", kk->range[n].start, kk->range[n].end);
-        }
-
-    /* for (ltfat_int m = 0; m < kk->size.height; m++ ) */
+    /* for(ltfat_int kNo=0;kNo<P;kNo++) */
     /* { */
+    /*     LTFAT_NAME(kerns)* kk = p->gramkerns[kNo]; */
+    /*     printf("h=%td, w=%td \n", kk->size.height, kk->size.width); */
     /*     for (ltfat_int n = 0; n < kk->size.width; n++ ) */
     /*     { */
-    /*         printf("r=% 5.3e,i=% 5.3e ", ltfat_real(kk->kval[n * kk->size.height + m]), */
-    /*                ltfat_imag(kk->kval[n * kk->size.height + m])); */
+    /*         printf("s=%td,e=%td \n", kk->range[n].start, kk->range[n].end); */
     /*     } */
-    /*     printf("\n"); */
+    /*  */
+    /*     for (ltfat_int m = 0; m < kk->size.height; m++ ) */
+    /*     { */
+    /*         for (ltfat_int n = 0; n < kk->size.width; n++ ) */
+    /*         { */
+    /*             printf("r=% 5.3e,i=% 5.3e ", ltfat_real(kk->kval[n * kk->size.height + m]), */
+    /*                    ltfat_imag(kk->kval[n * kk->size.height + m])); */
+    /*         } */
+    /*         printf("\n"); */
+    /*     } */
     /* } */
-    }
 #endif
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate),
@@ -247,8 +251,17 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
             LTFAT_NAME(dgtreal_execute_ana_newarray)(p->dgtplans[k], f, cEl),
             "dgtreal_execute failed");
 
-        for (size_t l = 0; l < (size_t) ( p->M2[k] * p->N[k]); l++ )
-            sEl[l] = ltfat_norm(cEl[l]);
+        if (p->params->do_pedantic)
+            for ( ltfat_int n = 0; n < p->N[k] ; n++)
+                for ( ltfat_int m = 0; m < p->M2[k]; m++)
+                {
+                    ltfat_int l = m + n*p->M2[k];
+                    sEl[l] =
+                        LTFAT_NAME(dgtrealmp_execute_adjustedenergy)( p, kpoint_init(m,n,k), cEl[l]);
+                }
+        else
+            for (size_t l = 0; l < (size_t) ( p->M2[k] * p->N[k]); l++ )
+                sEl[l] = ltfat_norm(cEl[l]);
 
         for (ltfat_int n = 0; n < p->N[k]; n++)
         {
