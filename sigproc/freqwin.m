@@ -112,7 +112,9 @@ switch winName
 
         gtInverse = @(yn) sqrt(yn^(-2/order)-1);
         dilation = bw/2/gtInverse(bwrelheight)/step;
-        H = (1+1i*abs(H)/dilation).^(-order);
+        peakpos = 3/(2*pi*dilation)/step*2;
+        peakmod = exp(2*pi*1i*H*peakpos/L);
+        H = (1+1i*H/dilation).^(-order).*peakmod;
     otherwise 
         error('%s: SENTINEL. Unknown window.',upper(mfilename));
 end
