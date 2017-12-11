@@ -510,7 +510,8 @@ function glow = audlowpassfilter(g,a,fc,fs,scal,kv,flags)
     eps_thr = 1e-3;
     ind_f1 = floor(fc(2)*Lprobe/fs);
     ind_fK = floor(fc(end-1)*Lprobe/fs);
-    if min(FBresp0(1:ind_f1)) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
+    if ind_f1 == 0 || ...
+        min(FBresp0(1:ind_f1)) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
 %       Not required
         glow.H = @(L) 0;
         glow.foff = @(L) 0;
@@ -550,7 +551,8 @@ function ghigh = audhighpassfilter(g,a,fc,fs,scal,kv,flags)
     eps_thr = 1e-3;
     ind_f1 = floor(fc(2)*Lprobe/fs);
     ind_fK = floor(fc(end-1)*Lprobe/fs);
-    if min(FBresp0(ind_fK:floor(Lprobe/2))) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
+    if ind_f1 == 0 ||...
+        min(FBresp0(ind_fK:floor(Lprobe/2))) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
 %       Not required
         ghigh.H = @(L) 0;
         ghigh.foff = @(L) 0;
