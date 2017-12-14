@@ -79,7 +79,7 @@ MEXLINKFLAGS=-static-libgcc -Wl,--dll -L$(MATLIBS) \
 
 CFLAGS=-O2 -s -Wall -Wextra -std=c99 -I./thirdparty/ -I./ -DDLL_EXPORT_SYMBOLS -DNDEBUG
 
-all: clean makedirtree backlib $(MEXS) ltfatarghelper polygonclip playrec copyrest clean 
+all: clean makedirtree backlib $(MEXS) polygonclip playrec copyrest clean 
 
 backlib: CFLAGS=-O2 -s -Wall -Wextra -std=c99 -I./thirdparty/ -I./ -DMATLABFORTRAN -DDLL_EXPORT_SYMBOLS -DNDEBUG
 backlib: 
