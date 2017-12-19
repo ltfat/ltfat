@@ -14,7 +14,6 @@ Version 2.2.1 14/12 2017
 
 	* Fixed char to number conversion warning in wavload occuring on Octave
 
-
 Version 2.2.0 24/12 2016
     * New Gabor window generating functions: ptpfun, ptpfundual, pebfun, pebfundual
 
