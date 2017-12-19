@@ -460,10 +460,10 @@ for m=ind.'
 end
 
 % Generate lowpass filter
-g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc,fs,scal(1),kv,flags);
+g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(1),kv,flags);
 
 % Generate highpass filter
-g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc,fs,scal(M2),kv,flags);
+g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(M2),kv,flags);
 
 % Adjust the downsampling rates in order to achieve 'redtar'
 if ~isempty(kv.redtar)
