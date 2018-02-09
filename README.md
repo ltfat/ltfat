@@ -33,6 +33,12 @@ The dependency on BLAS and LAPACK can be disabled by calling
 make NOBLASLAPACK=1
 ```
 
+The dependency on FFTW can be disabled by calling
+```
+make FFTBACKEND=KISS
+```
+The internal [KISS FFT](http://kissfft.sourceforge.net/) implementation will be used.
+
 Documentation
 -------------
 
