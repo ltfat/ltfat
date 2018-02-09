@@ -7,8 +7,9 @@ enum ltfat_dgtmp_status
     LTFAT_DGTREALMP_STATUS_MAXATOMS     = 1,
     LTFAT_DGTREALMP_STATUS_MAXITER      = 2,
     LTFAT_DGTREALMP_STATUS_STALLED      = 3,
-    LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 4,
-    LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED = 5,
+    LTFAT_DGTREALMP_STATUS_EMPTY        = 4,
+    LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 5,
+    LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED = 6,
     LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 10
 };
 
@@ -165,7 +166,7 @@ LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
 typedef struct LTFAT_NAME(dgtmp_parbuf) LTFAT_NAME(dgtmp_parbuf);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_init)(ltfat_int L, LTFAT_NAME(dgtmp_parbuf)* p);
+LTFAT_NAME(dgtmp_parbuf_init)(ltfat_int L, LTFAT_NAME(dgtmp_parbuf)** p);
 
 LTFAT_API int
 LTFAT_NAME(dgtmp_parbuf_done)(LTFAT_NAME(dgtmp_parbuf)** p);

@@ -616,6 +616,7 @@ LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
 {
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
     LTFAT_REAL val = 0.0;
+    int retval = LTFATERR_CANNOTHAPPEN;
 
     for (ltfat_int k = 0; k < s->P; k++)
     {
@@ -650,9 +651,10 @@ LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
         if ( valTmp > val )
         {
             val = valTmp; pos->m = s->maxcolspos[k][nTmp]; pos->n = nTmp; pos->w = k;
+            retval = LTFATERR_SUCCESS;
         }
     }
-    return 0;
+    return retval;
 }
 
 #ifdef NOBLASLAPACK

@@ -12,24 +12,24 @@
 typedef enum
 {
     /** Don't normalize */
-    LTFAT_NORMALIZE_NULL = 0,
+    LTFAT_NORM_NULL = 0,
     /** Normalize to 1 norm (divide by the sum of abs. values)  */
     /**@{*/
-    LTFAT_NORMALIZE_AREA,
-    LTFAT_NORMALIZE_1 = LTFAT_NORMALIZE_AREA,
+    LTFAT_NORM_AREA,
+    LTFAT_NORM_1 = LTFAT_NORM_AREA,
     /**@}*/
     /** Normalize to 2 norm (divide by the square root of sum of squares of abs. values) */
     /**@{*/
-    LTFAT_NORMALIZE_ENERGY,
-    LTFAT_NORMALIZE_2 = LTFAT_NORMALIZE_ENERGY,
+    LTFAT_NORM_ENERGY,
+    LTFAT_NORM_2 = LTFAT_NORM_ENERGY,
     /**@}*/
     /** Normalize to inf norm (divide by the max abs. val.)*/
     /**@{*/
-    LTFAT_NORMALIZE_INF,
-    LTFAT_NORMALIZE_PEAK = LTFAT_NORMALIZE_INF,
+    LTFAT_NORM_INF,
+    LTFAT_NORM_PEAK = LTFAT_NORM_INF,
     /**@}*/
-    // LTFAT_NORMALIZE_RMS,
-    // LTFAT_NORMALIZE_WAV,
+    // LTFAT_NORM_RMS,
+    // LTFAT_NORM_WAV,
 } ltfat_normalize_t;
 
 

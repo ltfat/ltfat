@@ -597,7 +597,7 @@ LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
 
     switch (flag)
     {
-    case LTFAT_NORMALIZE_ENERGY:
+    case LTFAT_NORM_ENERGY:
     {
         for (ltfat_int ii = 0; ii < L; ii++)
         {
@@ -612,7 +612,7 @@ LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
         *norm = sqrt(*norm);
         break;
     }
-    case LTFAT_NORMALIZE_AREA:
+    case LTFAT_NORM_AREA:
     {
         for (ltfat_int ii = 0; ii < L; ii++)
         {
@@ -621,7 +621,7 @@ LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
         }
         break;
     }
-    case LTFAT_NORMALIZE_PEAK:
+    case LTFAT_NORM_PEAK:
     {
 
         for (ltfat_int ii = 0; ii < L; ii++)
@@ -634,7 +634,7 @@ LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
 
     }
     break;
-    case LTFAT_NORMALIZE_NULL:
+    case LTFAT_NORM_NULL:
         *norm = 1.0;
         break;
     default:
@@ -754,7 +754,7 @@ error:
 /*  */
 /*     switch (flag) */
 /*     { */
-/*     case LTFAT_NORMALIZE_ENERGY: */
+/*     case LTFAT_NORM_ENERGY: */
 /*     { */
 /*         for (ltfat_int ii = 0; ii < L; ii++) */
 /*         { */

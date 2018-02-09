@@ -50,6 +50,10 @@ LTFAT_NAME(dgtrealmp_init_gen)(
         CHECK(LTFATERR_BADARG, gl[p] <= L,
               "gl[%td]<=L failed. Window is too long. passed (%td, %td)",
               p, gl[p], L);
+
+        LTFAT_REAL gnorm; LTFAT_NAME(norm)(g[p], gl[p], LTFAT_NORM_ENERGY, &gnorm);
+        CHECK(LTFATERR_BADARG, ltfat_abs(gnorm - 1.0) < 1e-6,
+              "Window g[%td] is not normalized. The norm is %.3f.", p, gnorm);
     }
 
     amin = a[0];
@@ -297,7 +301,10 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
         kpoint origpos;
 
         s->currit++;
-        LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, &origpos);
+
+       if( LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, &origpos)
+           != LTFATERR_SUCCESS )
+           return LTFAT_DGTREALMP_STATUS_EMPTY;
 
         if ( !s->suppind[PTOI(origpos)] ) s->curratoms++;
 
@@ -359,7 +366,6 @@ LTFAT_NAME(dgtrealmp_execute)(
 {
     int status = LTFATERR_SUCCESS;
     int status2 = LTFATERR_SUCCESS;
-    size_t iterstep = p->params->iterstep;
     LTFAT_REAL* ftmp = NULL;
 
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout); CHECKNULL(fout);
@@ -371,7 +377,7 @@ LTFAT_NAME(dgtrealmp_execute)(
         memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
 
     while ( LTFAT_DGTREALMP_STATUS_CANCONTINUE ==
-            ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)( p, iterstep, cout)))
+            ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)( p, p->params->iterstep, cout)))
     {
         if (p->params->verbose)
         {

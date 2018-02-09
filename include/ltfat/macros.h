@@ -39,6 +39,7 @@
 
 
 #define CHECK(errcode, A, ...) do{if(!(A)){status=(errcode); ltfat_error(status, __FILE__, __LINE__,__func__ , __VA_ARGS__); goto error;}}while(0)
+#define CHECKFWD(errcode) do{ status=(errcode); if(status<0){ goto error;}}while(0)
 
 // The following cannot be just
 // #define CHECKSTATUS(errcode, M)  CHECK(errcode,!(errcode), M)

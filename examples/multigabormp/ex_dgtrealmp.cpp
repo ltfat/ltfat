@@ -1,12 +1,19 @@
 #define LTFAT_COMPAT32 1
-#include "../include/ltfat.h"
 #include <chrono>
 #include <sndfile.h>
 #include <iostream>
-typedef std::chrono::high_resolution_clock Clock;
-using mycomplex = std::complex<double>;
 
-int loadwavfile(const char* name, double** f, int* Ls, int* W)
+#if !(defined(LTFAT_DOUBLE) || defined(LTFAT_SINGLE))
+#define LTFAT_DOUBLE
+#endif
+
+#include "../../include/ltfat.h"
+#include "../../include/ltfat/types.h"
+#include "../../include/ltfat/macros.h"
+
+using Clock = std::chrono::high_resolution_clock;
+
+int loadwavfile(const char* name, LTFAT_REAL** f, int* Ls, int* W)
 {
     SF_INFO info;
     SNDFILE* sf = sf_open(name, SFM_READ, &info);
@@ -17,17 +24,19 @@ int loadwavfile(const char* name, double** f, int* Ls, int* W)
 
     *Ls = info.frames * info.channels;
     *W = info.channels;
-    double* ftmp = ltfat_calloc_d(*Ls);
+    LTFAT_REAL* ftmp = LTFAT_NAME(calloc)(*Ls);
     *f = ltfat_calloc_d(*Ls / (*W));
 
+#ifdef LTFAT_DOUBLE
     *Ls = sf_read_double(sf, ftmp, *Ls);
+#else
+    *Ls = sf_read_float(sf, ftmp, *Ls);
+#endif
     *Ls /= *W;
 
-    if (*W > 1) {
         for (int l = 0; l < *Ls; l++) {
             (*f)[l] = ftmp[(*W) * l];
         }
-    }
 
     ltfat_safefree(ftmp);
     sf_close(sf);
@@ -40,10 +49,15 @@ const char* file = "/home/susnak/dev/ltfat/signals/gspi.wav";
 
 int main(int argc, char* argv[])
 {
+    if (!ltfat_int_is_compatible(sizeof(int)))
+    {
+        std::cout << "Incompatible size of int. Compile libltfat with -DLTFAT_COMPAT32" << std::endl;
+        exit(-1);
+    }
     int Ls, L;
     int W;
-    double* f;
-    mycomplex* cout;
+    LTFAT_REAL* f;
+    LTFAT_COMPLEX* cout;
     int fs = 44100;
 
     for (int fileNo = 1; fileNo <= 1; fileNo++) {
@@ -61,16 +75,18 @@ int main(int argc, char* argv[])
 
         L = ltfat_dgtlength(Ls, a, M);
         printf("L=%td\n", L);
-        f = ltfat_postpad_d(f, Ls, L);
-        double* fout = ltfat_malloc_d(L);
 
-        double* g = ltfat_malloc_d(gl);
-        cout = ltfat_malloc_dc(M2 * L / a);
+        f = LTFAT_NAME(postpad)(f, Ls, L);
 
-        ltfat_firwin_d(LTFAT_BLACKMAN, gl, g);
-        ltfat_normalize_d(g, gl, LTFAT_NORMALIZE_ENERGY, g);
+        LTFAT_REAL* fout = LTFAT_NAME(malloc)(L);
 
-        ltfat_dgtrealmp_state_d* plan = NULL;
+        LTFAT_REAL* g = LTFAT_NAME(malloc)(gl);
+        cout = LTFAT_NAME_COMPLEX(malloc)(M2 * L / a);
+
+        LTFAT_NAME(firwin)(LTFAT_BLACKMAN, gl, g);
+        LTFAT_NAME(normalize)(g, gl, LTFAT_NORM_ENERGY, g);
+
+        LTFAT_NAME(dgtrealmp_state)* plan = NULL;
 
         ltfat_dgtmp_params* params = ltfat_dgtmp_params_allocdef();
         ltfat_dgtmp_setpar_phaseconv(params, LTFAT_TIMEINV);
@@ -80,33 +96,32 @@ int main(int argc, char* argv[])
         ltfat_dgtmp_setpar_iterstep(params, 1e6);
         // ltfat_dgtrealmp_setpar_alg(params, ltfat_dgtrealmp_alg_LocCyclicMP);
 
-        int retval = ltfat_dgtrealmp_init_gen_d(
-            (const double**)&g, &gl, L, 1, &a, &M, params, &plan);
+        int retval = LTFAT_NAME(dgtrealmp_init_gen)(
+            (const LTFAT_REAL**)&g, &gl, L, 1, &a, &M, params, &plan);
         printf("status=%d\n", retval);
 
         ltfat_dgtmp_params_free(params);
 
         auto t1 = Clock::now();
 
-        retval = ltfat_dgtrealmp_execute_d(plan, f, &cout, fout);
+        retval = LTFAT_NAME(dgtrealmp_execute)(plan, f, &cout, fout);
         auto t2 = Clock::now();
         std::cout
             << "Delta t2-t1: "
             << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
-                / 1000.0
-            << " seconds" << std::endl;
+            << " miliseconds" << std::endl;
         printf("status=%d\n", retval);
 
 
         size_t atoms;
-        ltfat_dgtrealmp_get_numatoms_d(plan,&atoms);
+        LTFAT_NAME(dgtrealmp_get_numatoms)(plan,&atoms);
         size_t iters;
-        ltfat_dgtrealmp_get_numiters_d(plan,&iters);
+        LTFAT_NAME(dgtrealmp_get_numiters)(plan,&iters);
 
-        ltfat_dgtrealmp_done_d(&plan);
+        LTFAT_NAME(dgtrealmp_done)(&plan);
 
-        double snr;
-        ltfat_snr_d(f, fout, L, &snr);
+        LTFAT_REAL snr;
+        LTFAT_NAME(snr)(f, fout, L, &snr);
 
         printf("atoms=%u,iters=%u,SNR=%2.3f dB\n",atoms, iters, snr);
         ltfat_safefree(g);

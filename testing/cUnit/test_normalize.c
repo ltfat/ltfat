@@ -1,9 +1,9 @@
 int TEST_NAME(test_normalize)()
 {
     ltfatInt L[] = {111, 1, 100};
-    ltfat_normalize_t norm[] = { LTFAT_NORMALIZE_NULL, LTFAT_NORMALIZE_AREA,
-                                 LTFAT_NORMALIZE_1, LTFAT_NORMALIZE_ENERGY,
-                                 LTFAT_NORMALIZE_2, LTFAT_NORMALIZE_INF, LTFAT_NORMALIZE_PEAK
+    ltfat_normalize_t norm[] = { LTFAT_NORM_NULL, LTFAT_NORM_AREA,
+                                 LTFAT_NORM_1, LTFAT_NORM_ENERGY,
+                                 LTFAT_NORM_2, LTFAT_NORM_INF, LTFAT_NORM_PEAK
                                };
 
     for (unsigned int lId = 0; lId < ARRAYLEN(L); lId++)
