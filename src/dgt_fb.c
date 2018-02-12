@@ -28,12 +28,10 @@ LTFAT_NAME(dgt_fb)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(dgt_fb_init)(g, gl, a, M, ptype, FFTW_ESTIMATE, &plan),
-        "Init failed");
+        LTFAT_NAME(dgt_fb_init)(g, gl, a, M, ptype, FFTW_ESTIMATE, &plan));
 
     CHECKSTATUS(
-        LTFAT_NAME(dgt_fb_execute)(plan, f, L, W, cout),
-        "Execute failed");
+        LTFAT_NAME(dgt_fb_execute)(plan, f, L, W, cout));
 
 error:
     if (plan) LTFAT_NAME(dgt_fb_done)(&plan);
@@ -68,9 +66,7 @@ LTFAT_NAME(dgt_fb_init)(const LTFAT_TYPE* g,
     CHECKMEM(plan->sbuf = LTFAT_NAME_COMPLEX(malloc)(M));
 
     CHECKSTATUS(
-        LTFAT_NAME_REAL(fft_init)(M, 1, plan->sbuf, plan->sbuf, flags, &plan->p_small),
-        "FFTW plan creation failed.");
-
+        LTFAT_NAME_REAL(fft_init)(M, 1, plan->sbuf, plan->sbuf, flags, &plan->p_small));
     LTFAT_NAME(fftshift)(g, gl, plan->gw);
     LTFAT_NAME(conjugate_array)(plan->gw, gl, plan->gw);
 

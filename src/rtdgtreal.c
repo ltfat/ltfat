@@ -693,18 +693,16 @@ LTFAT_NAME(rtdgtreal_processor_init)(const LTFAT_REAL* ga, ltfat_int gal,
 
     CHECKSTATUS(
         LTFAT_NAME(rtdgtreal_fifo_init)(bufLenMax + gal, procDelay,
-                                        gal, a, Wmax, &p->fwdfifo),
-        "fwd fifo init failed");
+                                        gal, a, Wmax, &p->fwdfifo));
 
     CHECKSTATUS(
-        LTFAT_NAME(rtidgtreal_fifo_init)(bufLenMax + gsl, gsl, a, Wmax, &p->backfifo),
-        "back fifo init failed");
+        LTFAT_NAME(rtidgtreal_fifo_init)(bufLenMax + gsl, gsl, a, Wmax, &p->backfifo));
 
     CHECKSTATUS( LTFAT_NAME(rtdgtreal_init)(ga, gal, M, LTFAT_RTDGTPHASE_ZERO,
-                                            &p->fwdplan), "fwd plan failed");
+                                            &p->fwdplan));
 
     CHECKSTATUS( LTFAT_NAME(rtidgtreal_init)(gs, gsl, M,
-                 LTFAT_RTDGTPHASE_ZERO, &p->backplan), "back plan failed");
+                 LTFAT_RTDGTPHASE_ZERO, &p->backplan));
 
     p->fwdtra = &LTFAT_NAME(rtdgtreal_execute_wrapper);
     p->backtra = &LTFAT_NAME(rtidgtreal_execute_wrapper);
@@ -781,12 +779,10 @@ LTFAT_NAME(rtdgtreal_processor_init_win)(LTFAT_FIRWIN win,
     CHECKMEM(gd = LTFAT_NAME_REAL(malloc)(gl));
     CHECKMEM(garbageBin = (void**) ltfat_malloc(2 * sizeof(void*)));
 
-    CHECKSTATUS(LTFAT_NAME_REAL(firwin)(win, gl, g), "Call to firwin failed");
-    CHECKSTATUS(LTFAT_NAME_REAL(gabdual_painless)(g, gl, a, M, gd),
-                "Call to gabdual_painless failed");
-
+    CHECKSTATUS(LTFAT_NAME_REAL(firwin)(win, gl, g));
+    CHECKSTATUS(LTFAT_NAME_REAL(gabdual_painless)(g, gl, a, M, gd));
     CHECKSTATUS(LTFAT_NAME(rtdgtreal_processor_init)(g, gl, gd, gl, a, M, Wmax,
-                bufLenMax, procDelay, pout), "processor_init failed");
+                bufLenMax, procDelay, pout));
 
     p = *pout;
     p->garbageBinSize = 2;

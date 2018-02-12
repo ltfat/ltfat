@@ -30,9 +30,9 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
 
 #ifdef LTFAT_COMPLEXTYPE
 
-    CHECKSTATUS( LTFAT_NAME(wfac)(g, L, R, a, M, gf), "wfac failed");
+    CHECKSTATUS( LTFAT_NAME(wfac)(g, L, R, a, M, gf));
     LTFAT_NAME_REAL(gabdual_fac)(gf, L, R, a, M, gdf);
-    CHECKSTATUS( LTFAT_NAME(iwfac)(gdf, L, R, a, M, gd), "iwfac failed");
+    CHECKSTATUS( LTFAT_NAME(iwfac)(gdf, L, R, a, M, gd));
 
 #else
 
@@ -65,8 +65,7 @@ LTFAT_NAME(gabdual_fir)(const LTFAT_TYPE* g, ltfat_int gl,
     CHECKMEM( tmpLong = LTFAT_NAME(malloc)(L));
 
     LTFAT_NAME(fir2long)(g, gl, L, tmpLong);
-    CHECKSTATUS( LTFAT_NAME(gabdual_long)(tmpLong, L, a, M, tmpLong),
-                 "gabdual_long failed");
+    CHECKSTATUS( LTFAT_NAME(gabdual_long)(tmpLong, L, a, M, tmpLong));
     LTFAT_NAME(long2fir)(tmpLong, L, gdl, gd);
 
 error:

@@ -29,9 +29,9 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
 
 #ifdef LTFAT_COMPLEXTYPE
 
-    CHECKSTATUS( LTFAT_NAME(wfac)(g, L, R, a, M, gf), "wfac failed");
+    CHECKSTATUS( LTFAT_NAME(wfac)(g, L, R, a, M, gf));
     LTFAT_NAME_REAL(gabtight_fac)(gf, L, R, a, M, gtf);
-    CHECKSTATUS( LTFAT_NAME(iwfac)(gtf, L, R, a, M, gt), "iwfac failed");
+    CHECKSTATUS( LTFAT_NAME(iwfac)(gtf, L, R, a, M, gt));
 
 #else
 

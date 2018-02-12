@@ -22,9 +22,7 @@ LTFAT_NAME(fft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W,
     LTFAT_NAME(fft_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
 
-    CHECKSTATUS( LTFAT_NAME(fft_init)(L, W, in, out, 0, &p),
-                 "Init failed");
-
+    CHECKSTATUS( LTFAT_NAME(fft_init)(L, W, in, out, 0, &p));
     LTFAT_NAME(fft_execute)(p);
     LTFAT_NAME(fft_done)(&p);
 error:
@@ -147,9 +145,7 @@ LTFAT_NAME(ifft)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W,
     LTFAT_NAME(ifft_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
 
-    CHECKSTATUS( LTFAT_NAME(ifft_init)(L, W, in, out, 0, &p),
-                 "Init failed");
-
+    CHECKSTATUS( LTFAT_NAME(ifft_init)(L, W, in, out, 0, &p));
     LTFAT_NAME(ifft_execute)(p);
     LTFAT_NAME(ifft_done)(&p);
 error:
@@ -204,9 +200,7 @@ LTFAT_NAME(fftreal)(LTFAT_REAL in[], ltfat_int L, ltfat_int W,
     LTFAT_NAME(fftreal_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
 
-    CHECKSTATUS( LTFAT_NAME(fftreal_init)(L, W, in, out, 0, &p),
-                 "Init failed");
-
+    CHECKSTATUS( LTFAT_NAME(fftreal_init)(L, W, in, out, 0, &p));
     LTFAT_NAME(fftreal_execute)(p);
     LTFAT_NAME(fftreal_done)(&p);
 error:
@@ -370,9 +364,7 @@ LTFAT_NAME(ifftreal)(LTFAT_COMPLEX in[], ltfat_int L, ltfat_int W,
     LTFAT_NAME(ifftreal_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
 
-    CHECKSTATUS( LTFAT_NAME(ifftreal_init)(L, W, in, out, 0, &p),
-                 "Init failed");
-
+    CHECKSTATUS( LTFAT_NAME(ifftreal_init)(L, W, in, out, 0, &p));
     LTFAT_NAME(ifftreal_execute)(p);
     LTFAT_NAME(ifftreal_done)(&p);
 error:

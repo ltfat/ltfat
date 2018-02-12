@@ -77,10 +77,8 @@ LTFAT_NAME(dgt_execute_proj)(
     if (fbuffer != NULL)
         ftmp = fbuffer;
 
-    CHECKSTATUS( p->backtra(p->backtra_userdata, cin, p->L, p->W, ftmp),
-                 "Back transform failed");
-    CHECKSTATUS( p->fwdtra(p->fwdtra_userdata, ftmp, p->L, p->W,  cout),
-                 "Forward transform failed");
+    CHECKSTATUS( p->backtra(p->backtra_userdata, cin, p->L, p->W, ftmp));
+    CHECKSTATUS( p->fwdtra(p->fwdtra_userdata, ftmp, p->L, p->W,  cout));
 error:
     return status;
 }
@@ -133,12 +131,10 @@ LTFAT_NAME(dgt_done)(LTFAT_NAME(dgt_plan)** p)
     pp = *p;
 
     if (pp->fwdtra_userdata)
-        CHECKSTATUS( pp->fwddonefunc(&pp->fwdtra_userdata),
-                     "Forward transform done function failed");
+        CHECKSTATUS( pp->fwddonefunc(&pp->fwdtra_userdata));
 
     if (pp->backtra_userdata)
-        CHECKSTATUS( pp->backdonefunc(&pp->backtra_userdata),
-                     "Back trnasform done function failed");
+        CHECKSTATUS( pp->backdonefunc(&pp->backtra_userdata));
 
     //ltfat_safefree(pp->f);
     ltfat_free(pp);
@@ -169,8 +165,7 @@ LTFAT_NAME(dgt_init)(const LTFAT_TYPE g[], ltfat_int gl, ltfat_int L,
         // The length of the dual window is guaranteed to be gl
         g2l = gl;
         CHECKMEM( g2 = LTFAT_NAME(malloc)(gl));
-        CHECKSTATUS( LTFAT_NAME(gabdual_painless)(g, gl, a, M, g2),
-                     "Gabdual painless call failed");
+        CHECKSTATUS( LTFAT_NAME(gabdual_painless)(g, gl, a, M, g2));
     }
     else
     {
@@ -178,16 +173,14 @@ LTFAT_NAME(dgt_init)(const LTFAT_TYPE g[], ltfat_int gl, ltfat_int L,
         g2l = L;
         CHECKMEM( g2 = LTFAT_NAME(malloc)(L));
         LTFAT_NAME(fir2long)(g, gl, L, g2);
-        CHECKSTATUS( LTFAT_NAME(gabdual_long)(g, L, a, M, g2),
-                     "Gabdual long failed");
+        CHECKSTATUS( LTFAT_NAME(gabdual_long)(g, L, a, M, g2));
 #else
         CHECK( LTFATERR_NOTSUPPORTED, 0, "Non-painless support was not compiled.");
 #endif
     }
 
     CHECKSTATUS(
-        LTFAT_NAME(dgt_init_gen)(g, gl, g2, g2l, L, W, a, M, f, c, params, pout),
-        "dgt_init_gen failed");
+        LTFAT_NAME(dgt_init_gen)(g, gl, g2, g2l, L, W, a, M, f, c, params, pout));
 
     ltfat_free(g2);
     return status;
@@ -235,9 +228,7 @@ LTFAT_NAME(dgt_init_gen)(const LTFAT_TYPE ga[], ltfat_int gal,
         CHECKSTATUS(
             LTFAT_NAME(idgt_long_init)( g2, L, W, a, M, c, p->f, paramsLoc.ptype,
                                         paramsLoc.fftw_flags,
-                                        (LTFAT_NAME(idgt_long_plan)**)&p->backtra_userdata),
-            "idgt long init failed"
-        );
+                                        (LTFAT_NAME(idgt_long_plan)**)&p->backtra_userdata));
 
         p->fwdtra = &LTFAT_NAME(dgt_long_execute_wrapper);
         p->fwddonefunc = &LTFAT_NAME(dgt_long_done_wrapper);
@@ -249,8 +240,7 @@ LTFAT_NAME(dgt_init_gen)(const LTFAT_TYPE ga[], ltfat_int gal,
             LTFAT_NAME(dgt_long_init)( g2, L, W, a, M, (LTFAT_TYPE*) p->f, c,
                                        paramsLoc.ptype,
                                        paramsLoc.fftw_flags,
-                                       (LTFAT_NAME(dgt_long_plan)**)&p->fwdtra_userdata),
-            "dgt long init failed");
+                                       (LTFAT_NAME(dgt_long_plan)**)&p->fwdtra_userdata));
 
         ltfat_safefree(g2);
     }
@@ -263,8 +253,7 @@ LTFAT_NAME(dgt_init_gen)(const LTFAT_TYPE ga[], ltfat_int gal,
         CHECKSTATUS(
             LTFAT_NAME(idgt_fb_init)( gs, gsl, a, M, paramsLoc.ptype,
                                       paramsLoc.fftw_flags,
-                                      (LTFAT_NAME(idgt_fb_plan)**)&p->backtra_userdata),
-            "idgt fb init failed");
+                                      (LTFAT_NAME(idgt_fb_plan)**)&p->backtra_userdata));
 
         p->fwdtra = &LTFAT_NAME(dgt_fb_execute_wrapper);
         p->fwddonefunc = &LTFAT_NAME(dgt_fb_done_wrapper);
@@ -272,8 +261,7 @@ LTFAT_NAME(dgt_init_gen)(const LTFAT_TYPE ga[], ltfat_int gal,
         CHECKSTATUS(
             LTFAT_NAME(dgt_fb_init)( ga, gal, a, M, paramsLoc.ptype,
                                      paramsLoc.fftw_flags,
-                                     (LTFAT_NAME(dgt_fb_plan)**)&p->fwdtra_userdata),
-            "dgt fb init failed");
+                                     (LTFAT_NAME(dgt_fb_plan)**)&p->fwdtra_userdata));
 
     }
     else if ( ltfat_dgt_auto == paramsLoc.hint )

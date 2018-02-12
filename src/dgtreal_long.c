@@ -14,8 +14,7 @@ LTFAT_NAME(dgtreal_long)(const LTFAT_REAL* f, const LTFAT_REAL* g,
 
     CHECKSTATUS(
         LTFAT_NAME(dgtreal_long_init)(g, L, W, a, M, f, cout, ptype, FFTW_ESTIMATE,
-                                      &plan),
-        "Init failed");
+                                      &plan));
 
     LTFAT_NAME(dgtreal_long_execute)(plan);
 
@@ -88,16 +87,13 @@ LTFAT_NAME(dgtreal_long_init)( const LTFAT_REAL* g,
 
     CHECKSTATUS(
         LTFAT_NAME(fftreal_init)(M, N * W,
-                                 (LTFAT_REAL*) cout, cout, flags, &plan->p_veryend),
-        "FFTW plan creation failed." );
+                                 (LTFAT_REAL*) cout, cout, flags, &plan->p_veryend));
 
     CHECKSTATUS(
-        LTFAT_NAME(fftreal_init)(d, 1, plan->sbuf, plan->cbuf, flags, &plan->p_before),
-        "FFTW plan creation failed." );
+        LTFAT_NAME(fftreal_init)(d, 1, plan->sbuf, plan->cbuf, flags, &plan->p_before));
 
     CHECKSTATUS(
-        LTFAT_NAME(ifftreal_init)(d, 1, plan->cbuf, plan->sbuf, flags, &plan->p_after),
-        "FFTW plan creation failed." );
+        LTFAT_NAME(ifftreal_init)(d, 1, plan->cbuf, plan->sbuf, flags, &plan->p_after));
 
     *pout = plan;
     return status;

@@ -172,10 +172,8 @@ LTFAT_NAME(wfac)(const LTFAT_TYPE* g, ltfat_int L, ltfat_int R,
 
     int status = LTFATERR_SUCCESS;
 
-    CHECKSTATUS( LTFAT_NAME(wfac_init)( L, a, M, FFTW_ESTIMATE, &p),
-                 "Init failed");
-
-    CHECKSTATUS( LTFAT_NAME(wfac_execute)(p, g, R, gf), "Execute failed");
+    CHECKSTATUS( LTFAT_NAME(wfac_init)( L, a, M, FFTW_ESTIMATE, &p));
+    CHECKSTATUS( LTFAT_NAME(wfac_execute)(p, g, R, gf));
 
 error:
     if (p) LTFAT_NAME(wfac_done)(&p);

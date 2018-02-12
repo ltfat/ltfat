@@ -38,13 +38,13 @@
 #endif
 
 
-#define CHECK(errcode, A, ...) do{if(!(A)){status=(errcode); ltfat_error(status, __FILE__, __LINE__,__func__ , __VA_ARGS__); goto error;}}while(0)
-#define CHECKFWD(errcode) do{ status=(errcode); if(status<0){ goto error;}}while(0)
+#define CHECK(errcode, A, ...) do{ if(!(A)){status=(errcode); ltfat_error(status, __FILE__, __LINE__,__func__ , __VA_ARGS__); goto error;}}while(0)
+#define CHECKSTATUS(A) do{ status=(A); if(status<0){ goto error;}}while(0)
 
 // The following cannot be just
 // #define CHECKSTATUS(errcode, M)  CHECK(errcode,!(errcode), M)
 // it evaluates errcode twice!
-#define CHECKSTATUS(errcode, M) do{ status = (errcode); CHECK(status,!(status), M);}while(0)
+// #define CHECKSTATUS(errcode, M) do{ status = (errcode); CHECK(status,!(status), M);}while(0)
 //#define CHECKSTATUSNOMESG(errcode) do{if((errcode)){status=errcode; goto error;}}while(0)
 
 #define CHECKMEM(A) CHECK(LTFATERR_NOMEM,(A), "Out of memory.")

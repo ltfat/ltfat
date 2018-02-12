@@ -29,13 +29,10 @@ LTFAT_NAME(iwfac)(const LTFAT_COMPLEX* gf, ltfat_int L, ltfat_int R,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(iwfac_init)( L, a, M, FFTW_MEASURE, &p),
-        "Init failed");
-
+        LTFAT_NAME(iwfac_init)( L, a, M, FFTW_MEASURE, &p));
 
     CHECKSTATUS(
-        LTFAT_NAME(iwfac_execute)(p, gf, R, g),
-        "Execute failed");
+        LTFAT_NAME(iwfac_execute)(p, gf, R, g));
 
 error:
     if (p) LTFAT_NAME(iwfac_done)(&p);

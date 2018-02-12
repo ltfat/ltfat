@@ -36,13 +36,10 @@ LTFAT_NAME(idgt_long)(const LTFAT_COMPLEX* cin, const LTFAT_TYPE* g,
     // It is safe to cast away the const.
     CHECKSTATUS(
         LTFAT_NAME(idgt_long_init)( g, L, W, a, M, (LTFAT_COMPLEX*)cin, f, ptype,
-                                    FFTW_ESTIMATE, &plan),
-        "Init failed");
+                                    FFTW_ESTIMATE, &plan));
 
     CHECKSTATUS(
-        LTFAT_NAME(idgt_long_execute)(plan),
-        "Execute failed");
-
+        LTFAT_NAME(idgt_long_execute)(plan));
 
 error:
     if (plan) LTFAT_NAME(idgt_long_done)(&plan);
@@ -114,8 +111,7 @@ LTFAT_NAME(idgt_long_init)( const LTFAT_TYPE* g,
     /* CHECKINIT(plan->p_after, "FFTW plan failed."); */
 
     CHECKSTATUS(
-        LTFAT_NAME_REAL(fft_init)(d, 1, plan->cbuf, plan->cbuf, flags, &plan->p_after),
-        "FFTW plan failed.");
+        LTFAT_NAME_REAL(fft_init)(d, 1, plan->cbuf, plan->cbuf, flags, &plan->p_after));
 
     /* plan->p_before = LTFAT_FFTW(plan_dft_1d)((int)d, */
     /*                  (LTFAT_FFTW(complex)*) plan->cbuf, */
@@ -124,8 +120,7 @@ LTFAT_NAME(idgt_long_init)( const LTFAT_TYPE* g,
 
     CHECKSTATUS(
         LTFAT_NAME_REAL(ifft_init)(d, 1, plan->cbuf, plan->cbuf, flags,
-                                   &plan->p_before),
-        "FFTW plan failed.");
+                                   &plan->p_before));
 
     /* Create plan. Copy data so we do not overwrite input. Therefore
        it is ok to cast away the constness of cin.*/
@@ -139,9 +134,7 @@ LTFAT_NAME(idgt_long_init)( const LTFAT_TYPE* g,
 
     CHECKSTATUS(
         LTFAT_NAME_REAL(ifft_init)(M, N * W, cin, plan->cwork,
-                                   flags | FFTW_PRESERVE_INPUT, &plan->p_veryend),
-        "FFTW plan failed.");
-
+                                   flags | FFTW_PRESERVE_INPUT, &plan->p_veryend));
 
     *pout = plan;
     return status;

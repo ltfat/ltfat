@@ -40,12 +40,10 @@ LTFAT_NAME(idgtreal_fb)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(idgtreal_fb_init)(g, gl, a, M, ptype, FFTW_ESTIMATE, &plan),
-        "Init failed");
+        LTFAT_NAME(idgtreal_fb_init)(g, gl, a, M, ptype, FFTW_ESTIMATE, &plan));
 
     CHECKSTATUS(
-        LTFAT_NAME(idgtreal_fb_execute)(plan, cin, L, W, f),
-        "Execute failed");
+        LTFAT_NAME(idgtreal_fb_execute)(plan, cin, L, W, f));
 
 error:
     if (plan) LTFAT_NAME(idgtreal_fb_done)(&plan);
@@ -83,8 +81,7 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, ltfat_int gl,
     CHECKMEM( p->ff    = LTFAT_NAME_REAL(malloc)(gl > M ? gl : M));
 
     CHECKSTATUS(
-        LTFAT_NAME(ifftreal_init)(M, 1, p->cbuf, p->crbuf, flags, &p->p_small),
-        "FFTW plan failed.");
+        LTFAT_NAME(ifftreal_init)(M, 1, p->cbuf, p->crbuf, flags, &p->p_small));
 
     LTFAT_NAME_REAL(fftshift)(g, gl, p->gw);
 

@@ -93,8 +93,7 @@ LTFAT_NAME(gabtight_painless)(const LTFAT_TYPE* g, ltfat_int gl,
 
     CHECKMEM( d = LTFAT_NAME_REAL(malloc)(a));
 
-    CHECKSTATUS(LTFAT_NAME(gabframediag)(g, gl, a, M, a, d),
-                "Call to gabframediag failed.");
+    CHECKSTATUS(LTFAT_NAME(gabframediag)(g, gl, a, M, a, d));
 
     domod = ltfat_idiv(gl, 2);
 
@@ -122,8 +121,7 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE* g, ltfat_int gl,
     // This temporary array cannot be substituted by gd
     CHECKMEM( d = LTFAT_NAME_REAL(malloc)(a));
 
-    CHECKSTATUS(LTFAT_NAME(gabframediag)(g, gl, a, M, a, d),
-                "gabramediag failed.");
+    CHECKSTATUS(LTFAT_NAME(gabframediag)(g, gl, a, M, a, d));
 
     domod = ltfat_idiv(gl, 2);
 
@@ -143,8 +141,7 @@ LTFAT_NAME(gabpu_painless)(const LTFAT_TYPE* g, ltfat_int gl, ltfat_int a,
                            ltfat_int M, LTFAT_TYPE* gpu)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKSTATUS(LTFAT_NAME(gabdual_painless)(g, gl, a, M, gpu),
-                "Call to gabdual_painless failed");
+    CHECKSTATUS(LTFAT_NAME(gabdual_painless)(g, gl, a, M, gpu));
 
     for (ltfat_int ii = 0; ii < gl; ii++)
         gpu[ii] *= g[ii];

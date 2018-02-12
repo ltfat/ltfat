@@ -42,8 +42,7 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
     CHECKSTATUS(
         LTFAT_NAME(idgtreal_long_init)( g, L, W, a, M,
                                         (LTFAT_COMPLEX*)cin, f,
-                                        ptype, FFTW_ESTIMATE, &plan),
-        "Init failed");
+                                        ptype, FFTW_ESTIMATE, &plan));
 
     LTFAT_NAME(idgtreal_long_execute)(plan);
 
@@ -110,8 +109,7 @@ LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL* g,
     {
         CHECKSTATUS(
             LTFAT_NAME(ifftreal_init)(M, N * W, plan->cin, (LTFAT_REAL*) plan->cin,
-                                      flags, &plan->p_veryend),
-            "FFTW plan failed.");
+                                      flags, &plan->p_veryend));
 
         plan->cwork = (LTFAT_REAL*) plan->cin;
     }
@@ -122,8 +120,7 @@ LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL* g,
 
         CHECKSTATUS(
             LTFAT_NAME(ifftreal_init)(M, N * W, plan->cin, plan->cwork,
-                                      flags | FFTW_PRESERVE_INPUT, &plan->p_veryend),
-            "FFTW plan failed.");
+                                      flags | FFTW_PRESERVE_INPUT, &plan->p_veryend));
     }
 
     LTFAT_NAME(wfacreal)(g, L, 1, a, M, plan->gf);
@@ -132,13 +129,10 @@ LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL* g,
     plan->scalconst = (LTFAT_REAL) ( 1.0 / ((double)d * sqrt((double)M)));
 
     CHECKSTATUS(
-        LTFAT_NAME(ifftreal_init)(d, 1, plan->cbuf, plan->sbuf, flags, &plan->p_before),
-        "FFTW plan failed.");
+        LTFAT_NAME(ifftreal_init)(d, 1, plan->cbuf, plan->sbuf, flags, &plan->p_before));
 
     CHECKSTATUS(
-        LTFAT_NAME(fftreal_init)(d, 1, plan->sbuf, plan->cbuf, flags, &plan->p_after),
-        "FFTW plan failed.");
-
+        LTFAT_NAME(fftreal_init)(d, 1, plan->sbuf, plan->cbuf, flags, &plan->p_after));
 
     *pout = plan;
     return status;

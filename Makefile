@@ -88,8 +88,6 @@ ifeq ($(USECPP),1)
 endif
 endif
 
-
-
 FFTBACKEND ?= FFTW
 
 CFLAGS += $(EXTRACFLAGS) $(OPTCFLAGS)
@@ -246,7 +244,6 @@ cleandoc:
 	@$(RMDIR) html
 	@$(RMDIR) latex
 
-munit: export EXTRACFLAGS += -DLTFAT_COMPAT32
 munit: export BLASLAPACKLIBS += -L$(MATLABROOT)/bin/glnxa64 -lmwblas -lmwlapack
 munit: 
 	$(MAKE) clean

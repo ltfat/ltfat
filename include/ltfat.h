@@ -10,10 +10,10 @@
 #include <stdio.h>
 #endif
 
-#ifdef LTFAT_COMPAT32
-typedef int       ltfat_int;
-#else
+#ifdef LTFAT_LARGEARRAYS
 typedef ptrdiff_t ltfat_int;
+#else
+typedef int       ltfat_int;
 #endif /* defined(LTFAT_COMPAT32) */
 
 #include "ltfat/basicmacros.h"

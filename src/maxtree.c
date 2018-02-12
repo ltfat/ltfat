@@ -113,11 +113,8 @@ LTFAT_NAME(maxtree_initwitharray)(
     LTFAT_NAME(maxtree)* p = NULL;
     int status = LTFATERR_SUCCESS;
 
-    CHECKSTATUS( LTFAT_NAME(maxtree_init)( L, L, depth, &p),
-                 "init failed");
-
-    CHECKSTATUS( LTFAT_NAME(maxtree_reset)( p, inarray),
-                 "reset failed");
+    CHECKSTATUS( LTFAT_NAME(maxtree_init)( L, L, depth, &p));
+    CHECKSTATUS( LTFAT_NAME(maxtree_reset)( p, inarray));
 
     *pout = p;
     return LTFATERR_SUCCESS;

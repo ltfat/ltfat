@@ -11,12 +11,10 @@ LTFAT_NAME(dgt_long)(const LTFAT_TYPE* f, const LTFAT_TYPE* g,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(dgt_long_init)( g, L, W, a, M, f, cout, ptype, FFTW_ESTIMATE, &plan)
-        , "Init failed");
+        LTFAT_NAME(dgt_long_init)( g, L, W, a, M, f, cout, ptype, FFTW_ESTIMATE, &plan));
 
     CHECKSTATUS(
-        LTFAT_NAME(dgt_long_execute)(plan),
-        "Exetute failed");
+        LTFAT_NAME(dgt_long_execute)(plan));
 
 error:
     if (plan) LTFAT_NAME(dgt_long_done)(&plan);
@@ -77,22 +75,18 @@ LTFAT_NAME(dgt_long_init)( const LTFAT_TYPE* g,
 
     /* Get factorization of window */
     CHECKSTATUS(
-        LTFAT_NAME(wfac)(g, L, 1, a, M, plan->gf),
-        "wfac call failed.");
+        LTFAT_NAME(wfac)(g, L, 1, a, M, plan->gf));
 
     CHECKSTATUS(
-        LTFAT_NAME_REAL(fft_init)(M, N * W, cout, cout, flags, &plan->p_veryend),
-        "FFTW plan creation failed.");
+        LTFAT_NAME_REAL(fft_init)(M, N * W, cout, cout, flags, &plan->p_veryend));
 
     CHECKSTATUS(
         LTFAT_NAME_REAL(fft_init)(d, 1, (LTFAT_COMPLEX*) plan->sbuf,
-                                  (LTFAT_COMPLEX*) plan->sbuf, flags, &plan->p_before),
-        "FFTW plan creation failed.");
+                                  (LTFAT_COMPLEX*) plan->sbuf, flags, &plan->p_before));
 
     CHECKSTATUS(
         LTFAT_NAME_REAL(ifft_init)(d, 1, (LTFAT_COMPLEX*) plan->sbuf,
-                                   (LTFAT_COMPLEX*) plan->sbuf, flags, &plan->p_after),
-        "FFTW plan creation failed.");
+                                   (LTFAT_COMPLEX*) plan->sbuf, flags, &plan->p_after));
 
     // Assign the "return" value
     *pout = plan;

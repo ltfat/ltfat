@@ -101,8 +101,7 @@ LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(circshiftcols)(in, Hin, Win, shiftCol, out),
-        "Circshiftcols failed");
+        LTFAT_NAME(circshiftcols)(in, Hin, Win, shiftCol, out));
 
     for (ltfat_int n = 0; n < Win; n++)
         LTFAT_NAME(circshift)(out + n * Hin, Hin, shiftRow, out + n * Hin);
@@ -555,7 +554,7 @@ LTFAT_NAME(reflect)(const LTFAT_TYPE* in, ltfat_int L,
                     LTFAT_TYPE* out)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKSTATUS( LTFAT_NAME(reverse_array)(in + 1, L, out + 1), "reverse_array failed");
+    CHECKSTATUS( LTFAT_NAME(reverse_array)(in + 1, L, out + 1));
     if ( in != out) out[0] = in[0];
 error:
     return status;
@@ -566,7 +565,7 @@ LTFAT_NAME(involute)(const LTFAT_TYPE* in, ltfat_int L,
                      LTFAT_TYPE* out)
 {
     int status = LTFATERR_SUCCESS;
-    CHECKSTATUS(LTFAT_NAME(reflect)(in, L, out), "reflect failed");
+    CHECKSTATUS(LTFAT_NAME(reflect)(in, L, out));
     LTFAT_NAME(conjugate_array)(in, L, out);
 error:
     return status;
@@ -694,7 +693,7 @@ LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
 
     normfac = 1.0;
 
-    CHECKSTATUS(LTFAT_NAME(norm)(in, L, flag, &normfac), "norm failed");
+    CHECKSTATUS(LTFAT_NAME(norm)(in, L, flag, &normfac));
 
     normfac = (LTFAT_REAL)(1.0) / normfac;
 

@@ -117,8 +117,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     {
         CHECKSTATUS(
             LTFAT_NAME(dgtreal_init_gen)(g[k], gl[k], g[k], gl[k], L, 1, a[k], M[k],
-                                         NULL, NULL, dgtparams, &p->dgtplans[k]),
-            "dgtreal_init failed" );
+                                         NULL, NULL, dgtparams, &p->dgtplans[k]));
 
     }
     ltfat_dgt_params_free(dgtparams); dgtparams = NULL;
@@ -135,8 +134,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
             CHECKSTATUS( LTFAT_NAME(dgtrealmp_kernel_init)( gtmp, gltmp,
                          atmp, Mtmp, L, p->params->kernrelthr,
                          p->params->ptype,
-                         &p->gramkerns[k1 + k2 * P]),
-                         "dgtrealmp_kernel_init failed");
+                         &p->gramkerns[k1 + k2 * P]));
         }
     }
 
@@ -162,8 +160,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     /* } */
 #endif
 
-    CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate),
-                 "dgtrealmpiter_init failed" );
+    CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate));
 
     if (p->params->alg == ltfat_dgtmp_alg_LocOMP)
     {
@@ -188,8 +185,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
         CHECKSTATUS(
             LTFAT_NAME_COMPLEX(hermsystemsolver_init)(
-                kernSizeAccum, &p->iterstate->hplan),
-            "hermsystemsolver_init failed" );
+                kernSizeAccum, &p->iterstate->hplan));
     }
 
     if (p->params->alg == ltfat_dgtmp_alg_LocCyclicMP)
@@ -246,14 +242,16 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
     p->params->errtoladj = powl((long double)10.0,
                                 p->params->errtoldb / 10.0) * p->iterstate->fnorm2;
 
+    if (istate->fnorm2 == 0.0)
+        return LTFAT_DGTREALMP_STATUS_EMPTY;
+
     for (ltfat_int k = 0; k < p->P; k++)
     {
         LTFAT_REAL* sEl = istate->s[k];
         LTFAT_COMPLEX* cEl = istate->c[k];
 
         CHECKSTATUS(
-            LTFAT_NAME(dgtreal_execute_ana_newarray)(p->dgtplans[k], f, cEl),
-            "dgtreal_execute failed");
+            LTFAT_NAME(dgtreal_execute_ana_newarray)(p->dgtplans[k], f, cEl));
 
         if (p->params->do_pedantic)
             for ( ltfat_int n = 0; n < p->N[k] ; n++)
@@ -293,6 +291,9 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
     int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
 
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
+
+    if (s->fnorm2 == 0.0)
+        return LTFAT_DGTREALMP_STATUS_EMPTY;
 
     for (ltfat_int iter = 0;
          iter < itno && status == LTFAT_DGTREALMP_STATUS_CANCONTINUE;
@@ -370,8 +371,7 @@ LTFAT_NAME(dgtrealmp_execute)(
 
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout); CHECKNULL(fout);
 
-    CHECKSTATUS( LTFAT_NAME(dgtrealmp_reset)( p, f),
-                 "dgtrealmp_reset failed" );
+    CHECKSTATUS( LTFAT_NAME(dgtrealmp_reset)( p, f));
 
     for (ltfat_int k = 0; k < p->P; k++)
         memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
@@ -388,15 +388,14 @@ LTFAT_NAME(dgtrealmp_execute)(
     }
 
     if (status2 < 0)
-        CHECKSTATUS(status2, "Iterations exited with an error");
+        CHECKSTATUS(status2);
     else
     {
         // TO DO: Finished sucessfully with some exit code
     }
 
     CHECKSTATUS(
-        LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[0], cout[0], fout),
-        "dgtreal_execute_syn failed");
+        LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[0], cout[0], fout));
 
     if (p->P > 1)
     {
@@ -496,14 +495,12 @@ LTFAT_NAME(dgtrealmpiter_init)(
         CHECKMEM( s->suppind[p] = LTFAT_NEWARRAY(unsigned int, N * M2 ));
         CHECKMEM( s->maxcols[p]    = LTFAT_NAME_REAL(malloc)(N) );
         CHECKMEM( s->maxcolspos[p] = LTFAT_NEWARRAY(ltfat_int, N) );
-        CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N, 10, &s->tmaxtree[p]),
-                     "maxtree_init failed" );
+        CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N, 10, &s->tmaxtree[p]));
 
         CHECKMEM( s->fmaxtree[p] = LTFAT_NEWARRAY(LTFAT_NAME(maxtree)*, N));
         for (ltfat_int n = 0; n < N; n++ )
             CHECKSTATUS( LTFAT_NAME(maxtree_init)(
-                             M2, M[p], 8, &s->fmaxtree[p][n]),
-                         "maxtree_init failed" );
+                             M2, M[p], 8, &s->fmaxtree[p][n]));
 
     }
 
@@ -732,8 +729,7 @@ LTFAT_NAME(dgtrealmp_init_gen_compact)(
     }
 
     CHECKSTATUS(
-        LTFAT_NAME(dgtrealmp_init_gen)(multig, gl, L, P, a, M, params, pout),
-        "dgtrealmp_init failed");
+        LTFAT_NAME(dgtrealmp_init_gen)(multig, gl, L, P, a, M, params, pout));
 
 error:
     ltfat_safefree(multig);

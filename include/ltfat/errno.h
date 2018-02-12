@@ -19,15 +19,16 @@ enum ltfaterr_status
     LTFATERR_NOMEM          =    -2,
     LTFATERR_INITFAILED     =    -3,
     LTFATERR_NULLPOINTER    =    -4,
-    LTFATERR_BADARG         =    -5,
-    LTFATERR_NOTPOSARG      =    -6,
-    LTFATERR_NOTINRANGE     =    -7,
-    LTFATERR_OVERFLOW       =    -8,
-    LTFATERR_UNDERFLOW      =    -9,
-    LTFATERR_CANNOTHAPPEN   =   -10,
-    LTFATERR_BADSIZE        =   -11, // Array size is wrong
-    LTFATERR_BADREQSIZE     =   -12, // Output array size is wrong
-    LTFATERR_NOTSUPPORTED   =   -13,
+    LTFATERR_EMPTY          =    -5,
+    LTFATERR_BADARG         =    -6,
+    LTFATERR_NOTPOSARG      =    -7,
+    LTFATERR_NOTINRANGE     =    -8,
+    LTFATERR_OVERFLOW       =    -9,
+    LTFATERR_UNDERFLOW      =   -10,
+    LTFATERR_CANNOTHAPPEN   =   -11,
+    LTFATERR_BADSIZE        =   -12, // Array size is wrong
+    LTFATERR_BADREQSIZE     =   -13, // Output array size is wrong
+    LTFATERR_NOTSUPPORTED   =   -14,
 // Specific
     LTFATERR_BADTRALEN      =   -99,
     LTFATERR_NOTAFRAME      =  -100,

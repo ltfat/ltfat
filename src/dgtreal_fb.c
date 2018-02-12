@@ -29,12 +29,10 @@ LTFAT_NAME(dgtreal_fb)(const LTFAT_REAL* f, const LTFAT_REAL* g,
     int status = LTFATERR_SUCCESS;
 
     CHECKSTATUS(
-        LTFAT_NAME(dgtreal_fb_init)(g, gl, a, M, ptype, FFTW_ESTIMATE, &plan),
-        "Init failed");
+        LTFAT_NAME(dgtreal_fb_init)(g, gl, a, M, ptype, FFTW_ESTIMATE, &plan));
 
     CHECKSTATUS(
-        LTFAT_NAME(dgtreal_fb_execute)(plan, f, L, W, cout),
-        "Execute failed");
+        LTFAT_NAME(dgtreal_fb_execute)(plan, f, L, W, cout));
 
 error:
     if (plan) LTFAT_NAME(dgtreal_fb_done)(&plan);
@@ -72,8 +70,7 @@ LTFAT_NAME(dgtreal_fb_init)(const LTFAT_REAL* g,
 
     CHECKSTATUS(
         LTFAT_NAME_REAL(fftreal_init)(M, 1, plan->sbuf, plan->cbuf, flags,
-                                      &plan->p_small),
-        "FFTW plan failed.");
+                                      &plan->p_small));
 
     LTFAT_NAME(fftshift)(g, gl, plan->gw);
 
