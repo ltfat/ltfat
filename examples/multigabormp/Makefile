@@ -1,13 +1,13 @@
-CFLAGS+=-g -Wall -Wextra -std=c++11 
-CPP=g++
+CFLAGS+=-Ofast -Wall -Wextra -std=c++11 -DLTFAT_SINGLE
 
 SRC=$(wildcard *.cpp)
 PROGS = $(patsubst %.cpp,%,$(SRC))
 
 all: $(PROGS)
 
-%: %.c
-	$(CPP) $(CFLAGS) -g -Ofast -I.. -I../../include $< -o $@ ../../build/libltfat.a -lblas -llapack -lfftw3 -lc -lm -lsndfile
+%: %.cpp
+	$(CXX) $(CFLAGS) -I.. $< -o $@ ../../build/libltfat.a -lblas -llapack -lfftw3 -lfftw3f -lc -lm -lsndfile
 
 clean:
 	-rm $(PROGS)
+

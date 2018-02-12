@@ -1,17 +1,5 @@
-#define LTFAT_COMPAT32 1
-#include <chrono>
+#include "../ltfathelper.h"
 #include <sndfile.h>
-#include <iostream>
-
-#if !(defined(LTFAT_DOUBLE) || defined(LTFAT_SINGLE))
-#define LTFAT_DOUBLE
-#endif
-
-#include "../../include/ltfat.h"
-#include "../../include/ltfat/types.h"
-#include "../../include/ltfat/macros.h"
-
-using Clock = std::chrono::high_resolution_clock;
 
 int loadwavfile(const char* name, LTFAT_REAL** f, int* Ls, int* W)
 {
@@ -25,7 +13,7 @@ int loadwavfile(const char* name, LTFAT_REAL** f, int* Ls, int* W)
     *Ls = info.frames * info.channels;
     *W = info.channels;
     LTFAT_REAL* ftmp = LTFAT_NAME(calloc)(*Ls);
-    *f = ltfat_calloc_d(*Ls / (*W));
+    *f = LTFAT_NAME(calloc)(*Ls / (*W));
 
 #ifdef LTFAT_DOUBLE
     *Ls = sf_read_double(sf, ftmp, *Ls);
@@ -111,7 +99,6 @@ int main(int argc, char* argv[])
             << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count()
             << " miliseconds" << std::endl;
         printf("status=%d\n", retval);
-
 
         size_t atoms;
         LTFAT_NAME(dgtrealmp_get_numatoms)(plan,&atoms);
