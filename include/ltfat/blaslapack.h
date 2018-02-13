@@ -2,7 +2,7 @@
 #define _ltfat_blaslapack
 #include "ltfat.h"
 #include "ltfat/types.h"
-#include "cblas.h"
+#include "ltfat/thirdparty/cblas.h"
 
 #ifdef __cplusplus
 extern "C"

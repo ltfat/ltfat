@@ -47,8 +47,8 @@ INCDIR = $(PREFIX)/include
 
 
 # Base CFLAGS
-CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude -Ithirdparty
-CXXFLAGS+=-Wall -Wextra -std=c++11 -fno-exceptions -fno-rtti -Iinclude -Ithirdparty 
+CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude 
+CXXFLAGS+=-Wall -Wextra -std=c++11 -fno-exceptions -fno-rtti -Iinclude 
 # The following adds parameters to CFLAGS
 COMPTARGET ?= release
 include comptarget.mk
@@ -256,12 +256,12 @@ cunit:
 	$(MAKE) $(SO_DSTARGET) 
 
 $(buildprefix)/ltfat.h: $(buildprefix) 
-	$(CC) -E -P -DNOSYSTEMHEADERS $(EXTRACFLAGS) -Iinclude -Ithirdparty -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
+	$(CC) -E -P -DNOSYSTEMHEADERS $(EXTRACFLAGS) -Iinclude -nostdinc include/ltfat.h -o $(buildprefix)/ltfat.h
 	sed -i '1 i #ifndef _LTFAT_H' $(buildprefix)/ltfat.h
 	sed -i '1 a #define _LTFAT_H' $(buildprefix)/ltfat.h
 	sed -i '2 a #ifndef NOSYSTEMHEADERS\n #include <stddef.h>\n #endif' $(buildprefix)/ltfat.h
 	sed -i '$$ a #endif' $(buildprefix)/ltfat.h
-	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -Ithirdparty -nostdinc $(buildprefix)/ltfat.h -o $(buildprefix)/ltfat_flat.h
+	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -nostdinc $(buildprefix)/ltfat.h -o $(buildprefix)/ltfat_flat.h
 
 install:
 	install -d $(LIBDIR)

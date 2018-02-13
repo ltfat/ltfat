@@ -39,12 +39,12 @@
 
 /* Use the LAPACK library supplied with ATLAS */
 #ifdef HAVE_ATLASLAPACK
-#include "clapack.h"
+#include "ltfat/thirdparty/clapack.h"
 #endif /* end of HAVE_ATLASLAPACK */
 
 /* Call Fortran LAPACK */
 #ifdef HAVE_LAPACK
-#include "f77-fcn.h"
+#include "ltfat/thirdparty/f77-fcn.h"
 
 
 #ifdef __cplusplus
@@ -91,7 +91,7 @@ LTFAT_GESVD (F77_CONST_CHAR_ARG_DECL jobu,
 
 /* Call Fortran BLAS */
 #ifdef HAVE_BLAS
-#include "f77-fcn.h"
+#include "ltfat/thirdparty/f77-fcn.h"
 
 #ifdef __cplusplus
 extern "C" {
