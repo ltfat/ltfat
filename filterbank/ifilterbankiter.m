@@ -67,7 +67,7 @@ function [f,relres,iter]=ifilterbankiter(c,g,a,varargin)
 %
 %   See also: filterbank, ufilterbank, ifilterbank, filterbankdual
 %
-%   References: ltfatnote027
+%   References: ltfatnote027 nehobaprpide18
 
 complainif_notenoughargs(nargin,3,'IFILTERBANKITER');
 
