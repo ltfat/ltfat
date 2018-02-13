@@ -137,8 +137,20 @@ ltfat_dgtmp_setpar_errtoldb(
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     CHECK(LTFATERR_BADARG, errtoldb <= 0, "errtoldb must be lower than 0");
-    params->errtoldb = errtoldb < 0.0 ? errtoldb: -errtoldb;
+    params->errtoldb = errtoldb;
 
+error:
+    return status;
+}
+
+LTFAT_API int
+ltfat_dgtmp_setpar_snrdb(
+    ltfat_dgtmp_params* params, double snrdb)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+    CHECK(LTFATERR_BADARG, snrdb >= 0, "snrdb must be higher than 0");
+    params->errtoldb = -snrdb;
 error:
     return status;
 }

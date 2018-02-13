@@ -4,17 +4,16 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-struct LTFAT_NAME(dgtmp_parbuf)
+struct LTFAT_NAME(dgtrealmp_parbuf)
 {
     LTFAT_REAL**        g;
     ltfat_int*          gl;
-    ltfat_int           L;
-    ltfat_int           P;
     ltfat_int*          a;
     ltfat_int*          M;
+    ltfat_int           P;
     ltfat_dgtmp_params* params;
-    LTFAT_REAL          chirprate;
-    LTFAT_REAL          shiftby;
+//    LTFAT_REAL          chirprate;
+//    LTFAT_REAL          shiftby;
 };
 
 struct ltfat_dgtmp_params

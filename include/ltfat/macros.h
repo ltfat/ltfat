@@ -27,6 +27,7 @@
 // s is evaluated twice, but it is supposed to be a type anyway
 #define LTFAT_NEW(s)        ( (s*) ltfat_calloc( 1, sizeof(s)) )
 #define LTFAT_NEWARRAY(s,N) ( (s*) ltfat_calloc( (N), sizeof(s)) )
+#define LTFAT_POSTPADARRAY(s,ptr,Nold,Nnew) ( (s*) ltfat_postpad( (void*)(ptr), (Nold) * sizeof(s) , (Nnew) * sizeof(s) ) )
 
 #ifdef NDEBUG
 #define DEBUG( M, ... )

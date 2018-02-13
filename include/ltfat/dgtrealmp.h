@@ -49,10 +49,6 @@ ltfat_dgtmp_setpar_maxit(
     ltfat_dgtmp_params* params, size_t maxit);
 
 LTFAT_API int
-ltfat_dgtmp_setpar_cycles(
-    ltfat_dgtmp_params* params, size_t cycles);
-
-LTFAT_API int
 ltfat_dgtmp_setpar_kernrelthr(
     ltfat_dgtmp_params* p, double thr);
 
@@ -65,8 +61,16 @@ ltfat_dgtmp_setpar_errtoldb(
     ltfat_dgtmp_params* p, double errtoldb);
 
 LTFAT_API int
+ltfat_dgtmp_setpar_snrdb(
+    ltfat_dgtmp_params* params, double snrdb);
+
+LTFAT_API int
 ltfat_dgtmp_setpar_pedanticsearch(
     ltfat_dgtmp_params* params, int do_pedanticsearch);
+
+LTFAT_API int
+ltfat_dgtmp_setpar_cycles(
+        ltfat_dgtmp_params* params, size_t cycles);
 
 // LTFAT_API int
 // ltfat_dgtmp_setpar_checkerreverynit(
@@ -84,6 +88,7 @@ ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in);
 #endif
 
 typedef struct LTFAT_NAME(dgtrealmp_state) LTFAT_NAME(dgtrealmp_state);
+typedef struct LTFAT_NAME(dgtrealmp_parbuf) LTFAT_NAME(dgtrealmp_parbuf);
 
 LTFAT_API LTFAT_NAME(dgtreal_plan)**
 LTFAT_NAME(dgtrealmp_getdgtrealplan)(LTFAT_NAME(dgtrealmp_state)* p);
@@ -115,6 +120,10 @@ LTFAT_NAME(dgtrealmp_get_numatoms)(
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_numiters)(
     const LTFAT_NAME(dgtrealmp_state)* p, size_t* iters);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_init)(
+    LTFAT_NAME(dgtrealmp_parbuf)* pb, ltfat_int L, LTFAT_NAME(dgtrealmp_state)** p);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init_gen_compact)(
@@ -163,50 +172,89 @@ LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
 
 /***********************************************************************/
 
-typedef struct LTFAT_NAME(dgtmp_parbuf) LTFAT_NAME(dgtmp_parbuf);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgtrealmp_parbuf_nextcompatlen)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, ltfat_int L);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgtrealmp_parbuf_nextcoefsize)(
+    LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int L, ltfat_int dictid);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgtrealmp_getparbuf_dictno)( LTFAT_NAME(dgtrealmp_parbuf) * p);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_init)(ltfat_int L, LTFAT_NAME(dgtmp_parbuf)** p);
+LTFAT_NAME(dgtrealmp_parbuf_init)( LTFAT_NAME(dgtrealmp_parbuf)** p);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_done)(LTFAT_NAME(dgtmp_parbuf)** p);
+LTFAT_NAME(dgtrealmp_parbuf_done)( LTFAT_NAME(dgtrealmp_parbuf)** p);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_mod_chirpmod)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, LTFAT_REAL chirprate);
+LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(
+        LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
+        LTFAT_FIRWIN win, ltfat_int gl, ltfat_int a, ltfat_int M);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_mod_shiftby)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, LTFAT_REAL frac);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_mod_truncat)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, LTFAT_REAL relthr);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_add_firwin)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf,
-    LTFAT_FIRWIN win, ltfat_int gl, ltfat_int a, ltfat_int M);
+LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(
+        LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
+        const LTFAT_REAL g[], ltfat_int gl, ltfat_int a, ltfat_int M);
 
 // LTFAT_API int
-// LTFAT_NAME(dgtmp_parbuf_add_longwin)(
-//     LTFAT_NAME(dgtmp_parbuf)* parbuf,
-//     LTFAT_LONGWIN win, LTFAT_REAL damp, ltfat_int a, ltfat_int M);
+// LTFAT_NAME(dgtrealmp_parbuf_add_gausswin)(
+//         LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
+//         LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
+//
+// LTFAT_API int
+// LTFAT_NAME(dgtrealmp_parbuf_add_hermwin)(
+//         LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
+//         ltfat_int order, LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_add_gausswin)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf,
-    LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
+LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(
+        LTFAT_NAME(dgtrealmp_parbuf)* parbuf, ltfat_phaseconvention pconv);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_add_hermwin)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf,
-    ltfat_int order, LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
+LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t maxatoms);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_parbuf_add_genwin_ignoremods)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf,
-    const LTFAT_REAL g[], ltfat_int gl, ltfat_int a, ltfat_int M);
+LTFAT_NAME(dgtrealmp_setparbuf_maxit)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t maxit);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_errtoldb)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double errtoldb);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_snrdb)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double snrdb);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double thr);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t iterstep);
+
+/* TODO:
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_mod_chirpmod)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, LTFAT_REAL chirprate);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_mod_shiftby)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, LTFAT_REAL frac);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_mod_truncat)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, LTFAT_REAL relthr);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_add_longwin)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
+    LTFAT_LONGWIN win, LTFAT_REAL damp, ltfat_int a, ltfat_int M);
 
 // Callback allows changing the values of energies of inner products which
 // are used in the search for the maximally corellated atom with the residuum.
@@ -214,37 +262,11 @@ typedef int LTFAT_NAME(selectionmodcallback)(void* userdata,
         const LTFAT_COMPLEX* in, ltfat_int, ltfat_int, ltfat_int, LTFAT_REAL* out);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_selectiomodcallback)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, LTFAT_NAME(selectionmodcallback)* callback);
+LTFAT_NAME(dgtrealmp_setparbuf_selectiomodcallback)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, LTFAT_NAME(selectionmodcallback)* callback);
 
 LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_phaseconv)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, ltfat_phaseconvention pconv);
+LTFAT_NAME(dgtrealmp_setparbuf_alg)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, ltfat_dgtmp_alg alg);
+*/
 
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_alg)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, ltfat_dgtmp_alg alg);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_maxatoms)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, size_t maxatoms);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_maxit)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, size_t maxit);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_errtoldb)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, double errtoldb);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_kernrelthr)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, double thr);
-
-LTFAT_API int
-LTFAT_NAME(dgtmp_setparbuf_iterstep)(
-    LTFAT_NAME(dgtmp_parbuf)* parbuf, size_t iterstep);
-
-LTFAT_API int
-LTFAT_NAME(dgtdict_coherence_fromstatus)(
-    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_REAL* coherence);

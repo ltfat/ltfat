@@ -75,7 +75,7 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
 {
     /* int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE; */
 
-    int uniquenyquest = p->M[origpos.w] % 2 == 0;
+    /* int uniquenyquest = p->M[origpos.w] % 2 == 0; */
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
 
     int count = s->suppind[PTOI(origpos)];
@@ -88,10 +88,10 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
     // STEP 1: Find all active atoms around the current one
     ltfat_int cvalNo = 0;
 
-    LTFAT_NAME(kerns)* k1 = p->gramkerns[origpos.w + s->P * origpos.w];
-    int do_conjat = 0;
-    if (  (k1->mid.hmid + 2 * origpos.m) < k1->size.height )
-        do_conjat = 1;
+    /* LTFAT_NAME(kerns)* k1 = p->gramkerns[origpos.w + s->P * origpos.w]; */
+    /* int do_conjat = 0; */
+    /* if (  (k1->mid.hmid + 2 * origpos.m) < k1->size.height ) */
+    /*     do_conjat = 1; */
 
     s->cvalBuf[cvalNo] = s->c[PTOI(origpos)];
     s->cvalBufPos[cvalNo] = origpos;
