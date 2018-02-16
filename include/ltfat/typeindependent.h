@@ -8,6 +8,8 @@
 #include "dgt_multi.h"
 #include "dgt_shear.h"
 #include "tiutils.h"
+#include "circularbuf.h"
+#include "slicingbuf.h"
 #include "rtdgtreal.h"
 #include "heap.h"
 #include "dgtrealwrapper.h"
