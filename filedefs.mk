@@ -3,8 +3,9 @@ files = dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c	\
 		filterbank.c ifilterbank.c heapint.c heap.c wfacreal.c \
 		idgtreal_long.c idgtreal_fb.c iwfacreal.c pfilt.c reassign_ti.c \
 		windows.c  \
-		dgt_shearola.c utils.c rtdgtreal.c \
-		dgtrealwrapper.c dgtrealmp.c dgtrealmp_parbuf.c dgtrealmp_kernel.c dgtrealmp_guts.c maxtree.c
+		dgt_shearola.c utils.c rtdgtreal.c circularbuf.c slicingbuf.c \
+		dgtrealwrapper.c dgtrealmp.c dgtrealmp_parbuf.c dgtrealmp_kernel.c dgtrealmp_guts.c maxtree.c \
+		slidgtrealmp.c
 
 files_complextransp = ci_utils.c ci_windows.c spread.c wavelets.c goertzel.c \
 					  reassign.c gabdual_painless.c wfac.c iwfac.c \
