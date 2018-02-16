@@ -497,13 +497,14 @@ LTFAT_NAME(dgtrealmpiter_init)(
         CHECKMEM( s->suppind[p] = LTFAT_NEWARRAY(unsigned int, N * M2 ));
         CHECKMEM( s->maxcols[p]    = LTFAT_NAME_REAL(malloc)(N) );
         CHECKMEM( s->maxcolspos[p] = LTFAT_NEWARRAY(ltfat_int, N) );
-        CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N, ltfat_pow2base(N) - 4 ,
-                                              &s->tmaxtree[p]));
+        CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N,
+                    ltfat_imax(0,ltfat_pow2base(N) - 4), &s->tmaxtree[p]));
 
         CHECKMEM( s->fmaxtree[p] = LTFAT_NEWARRAY(LTFAT_NAME(maxtree)*, N));
         for (ltfat_int n = 0; n < N; n++ )
             CHECKSTATUS( LTFAT_NAME(maxtree_init)(
-                             M2, M[p], ltfat_pow2base(M[p]) - 4 , &s->fmaxtree[p][n]));
+                             M2, M[p], ltfat_imax(0,ltfat_pow2base(M[p]) - 4),
+                             &s->fmaxtree[p][n]));
 
     }
 
