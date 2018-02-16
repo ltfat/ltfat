@@ -704,6 +704,53 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(peakpad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_int Lout,
+                    LTFAT_TYPE* out)
+{
+    int status = LTFATERR_FAILED;
+    ltfat_div_t domod;
+
+    CHECKNULL(in); CHECKNULL(out);
+    CHECK(LTFATERR_BADSIZE, Lin > 0, "Lin must be positive");
+    CHECK(LTFATERR_BADSIZE, Lout > 0, "Lout must be positive");
+
+    if (Lout > Lin)
+    {
+        domod = ltfat_idiv(Lout - Lin, 2);
+        LTFAT_TYPE initpoint = in[0];
+        if (in != (const LTFAT_TYPE*) out)
+            memcpy(out +  domod.quot, in, Lin * sizeof * out);
+        else
+            for (ltfat_int l = 0; l < Lin; l++)
+                out[Lout - domod.quot - l] = out[Lin - 1 - l];
+
+        for (ltfat_int l = 0; l < domod.quot; l++)
+            out[l] = initpoint;
+
+        for (ltfat_int l = 0; l < domod.quot; l++)
+            out[Lout - domod.quot + l] = initpoint;
+
+    }
+    else if (Lout < Lin)
+    {
+        domod = ltfat_idiv(Lin - Lout, 2);
+        if (in != (const LTFAT_TYPE*) out)
+            memcpy(out, in + domod.quot, Lout * sizeof * out);
+        else
+            for (ltfat_int l = 0; l < Lout; l++)
+                out[l] = out[l + domod.quot];
+    }
+    else if (in != (const LTFAT_TYPE*) out)
+        memcpy(out, in, Lin * sizeof * in);
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+
+}
+
+
 /* LTFAT_API int */
 /* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, ltfat_int Ls, ltfat_int W, */
 /*                     ltfat_int L, LTFAT_TYPE* out) */

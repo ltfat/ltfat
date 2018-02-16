@@ -182,6 +182,9 @@ LTFAT_API int
 LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_symmetry_t sym,
                       ltfat_int Lout, LTFAT_TYPE* out);
 
+LTFAT_API int
+LTFAT_NAME(peakpad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_int Lout, LTFAT_TYPE* out);
+
 // LTFAT_API int
 // LTFAT_NAME(middlepadcols)(const LTFAT_TYPE* in, ltfat_int Hin, ltfat_int Win, ltfat_symmetry_t sym,
 //                           ltfat_int Wout, LTFAT_TYPE* out);
