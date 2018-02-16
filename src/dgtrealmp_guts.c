@@ -481,9 +481,7 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
     LTFAT_NAME(dgtrealmp_state)* p, kpoint origpos, LTFAT_COMPLEX cval,
     int do_substract)
 {
-    ltfat_int  m2start, n2start, m2end, mover, n2end, nover, moverM2;
-    kpoint pos;
-    ksize   kdim2; kanchor kmid2; kpoint  kstart2;
+
 
     int uniquenyquest = p->M[origpos.w] % 2 == 0;
     int do_conj = !( origpos.m == 0 ||
@@ -500,6 +498,10 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
     /* This loop is trivially pararelizable */
     for (ltfat_int w2 = 0; w2 < s->P; w2++)
     {
+        ltfat_int  m2start, n2start, m2end, mover, n2end, nover, moverM2;
+        kpoint pos;
+        ksize   kdim2; kanchor kmid2; kpoint  kstart2;
+
         ltfat_int kIdx = origpos.w + s->P * w2;
         LTFAT_NAME(kerns)* k     = p->gramkerns[kIdx];
         LTFAT_COMPLEX* kexp = LTFAT_NAME(dgtrealmp_execute_pickmod)(
