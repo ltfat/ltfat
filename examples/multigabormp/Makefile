@@ -1,4 +1,4 @@
-CFLAGS+=-Ofast -Wall -Wextra -std=c++11 -DLTFAT_SINGLE
+CFLAGS+=-Ofast -Wall -Wextra -std=c++11 -DLTFAT_DOUBLE
 
 SRC=$(wildcard *.cpp)
 PROGS = $(patsubst %.cpp,%,$(SRC))

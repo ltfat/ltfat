@@ -47,7 +47,7 @@ INCDIR = $(PREFIX)/include
 
 
 # Base CFLAGS
-CFLAGS+=-Wall -Wextra -pedantic -std=c99 -Iinclude 
+CFLAGS+=-Wall -Wextra -std=c99 -Iinclude 
 CXXFLAGS+=-Wall -Wextra -std=c++11 -fno-exceptions -fno-rtti -Iinclude 
 # The following adds parameters to CFLAGS
 COMPTARGET ?= release
