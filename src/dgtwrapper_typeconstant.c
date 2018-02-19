@@ -13,6 +13,7 @@ ltfat_dgt_params_defaults(ltfat_dgt_params* params)
     params->ptype = LTFAT_FREQINV;
     params->fftw_flags = FFTW_ESTIMATE;
     params->hint = ltfat_dgt_auto;
+    params->do_synoverwrites = 1;
 error:
     return status;
 }
@@ -50,6 +51,16 @@ ltfat_dgt_setpar_fftwflags(ltfat_dgt_params* params,
 error:
     return status;
 
+}
+
+LTFAT_API int
+ltfat_dgt_setpar_synoverwrites(ltfat_dgt_params* params, int do_synoverwrites)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+    params->do_synoverwrites = do_synoverwrites;
+error:
+    return status;
 }
 
 LTFAT_API int

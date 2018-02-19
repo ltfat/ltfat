@@ -222,10 +222,15 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
         p->backtra = &LTFAT_NAME(idgtreal_long_execute_wrapper);
         p->backdonefunc = &LTFAT_NAME(idgtreal_long_done_wrapper);
 
+        LTFAT_NAME(idgtreal_long_plan)* backtra_tmp = NULL;
         CHECKSTATUS(
             LTFAT_NAME(idgtreal_long_init)( g2, L, W, a, M, c, p->f, paramsLoc.ptype,
                                             paramsLoc.fftw_flags,
-                                            (LTFAT_NAME(idgtreal_long_plan)**)&p->backtra_userdata));
+                                            &backtra_tmp));
+
+        LTFAT_NAME(idgtreal_long_set_overwriteoutarray)(
+            backtra_tmp, paramsLoc.do_synoverwrites);
+        p->backtra_userdata = (void*) backtra_tmp;
 
         p->fwdtra = &LTFAT_NAME(dgtreal_long_execute_wrapper);
         p->fwddonefunc = &LTFAT_NAME(dgtreal_long_done_wrapper);
@@ -246,10 +251,15 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
         p->backtra = &LTFAT_NAME(idgtreal_fb_execute_wrapper);
         p->backdonefunc = &LTFAT_NAME(idgtreal_fb_done_wrapper);
 
+        LTFAT_NAME(idgtreal_fb_plan)* backtra_tmp = NULL;
         CHECKSTATUS(
             LTFAT_NAME(idgtreal_fb_init)( gs, gsl, a, M, paramsLoc.ptype,
                                           paramsLoc.fftw_flags,
-                                          (LTFAT_NAME(idgtreal_fb_plan)**)&p->backtra_userdata));
+                                          &backtra_tmp));
+
+        LTFAT_NAME(idgtreal_fb_set_overwriteoutarray)(backtra_tmp,
+                paramsLoc.do_synoverwrites);
+        p->backtra_userdata = (void*) backtra_tmp;
 
         p->fwdtra = &LTFAT_NAME(dgtreal_fb_execute_wrapper);
         p->fwddonefunc = &LTFAT_NAME(dgtreal_fb_done_wrapper);
@@ -268,10 +278,14 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
             p->backtra = &LTFAT_NAME(idgtreal_fb_execute_wrapper);
             p->backdonefunc = &LTFAT_NAME(idgtreal_fb_done_wrapper);
 
+            LTFAT_NAME(idgtreal_fb_plan)* backtra_tmp = NULL;
             LTFAT_NAME(idgtreal_fb_init)( gs, gsl, a, M, paramsLoc.ptype,
                                           paramsLoc.fftw_flags,
-                                          (LTFAT_NAME(idgtreal_fb_plan)**)&p->backtra_userdata);
+                                          &backtra_tmp);
 
+            LTFAT_NAME(idgtreal_fb_set_overwriteoutarray)(backtra_tmp,
+                    paramsLoc.do_synoverwrites);
+            p->backtra_userdata = (void*) backtra_tmp;
         }
         else
         {
@@ -281,9 +295,13 @@ LTFAT_NAME(dgtreal_init_gen)(const LTFAT_REAL ga[], ltfat_int gal,
             CHECKMEM( g2 = LTFAT_NAME_REAL(malloc)(L) );
             LTFAT_NAME(fir2long)(gs, gsl, L, g2);
 
+            LTFAT_NAME(idgtreal_long_plan)* backtra_tmp = NULL;
             LTFAT_NAME(idgtreal_long_init)(g2, L, W, a, M, c, p->f, paramsLoc.ptype,
-                                           paramsLoc.fftw_flags,
-                                           (LTFAT_NAME(idgtreal_long_plan)**)&p->backtra_userdata);
+                                           paramsLoc.fftw_flags, &backtra_tmp);
+
+            LTFAT_NAME(idgtreal_long_set_overwriteoutarray)(
+                backtra_tmp, paramsLoc.do_synoverwrites);
+            p->backtra_userdata = (void*) backtra_tmp;
 
             ltfat_safefree(g2);
         }

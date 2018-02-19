@@ -26,6 +26,7 @@ struct LTFAT_NAME(idgtreal_long_plan)
     LTFAT_NAME(ifftreal_plan)* p_veryend;
     LTFAT_NAME(ifftreal_plan)* p_before;
     LTFAT_NAME(fftreal_plan)* p_after;
+    int do_overwriteoutarray;
 };
 
 
@@ -48,6 +49,17 @@ LTFAT_NAME(idgtreal_long)(const LTFAT_COMPLEX* cin, const LTFAT_REAL* g,
 
     LTFAT_NAME(idgtreal_long_done)(&plan);
 
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(idgtreal_long_set_overwriteoutarray)(
+    LTFAT_NAME(idgtreal_long_plan)* p, int do_overwriteoutarray)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+    p->do_overwriteoutarray = do_overwriteoutarray;
 error:
     return status;
 }
@@ -85,6 +97,7 @@ LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL* g,
     /*  ----------- calculation of parameters and plans -------- */
 
     plan->a = a; plan->L = L; plan->M = M; plan->W = W; plan->ptype = ptype;
+    plan->do_overwriteoutarray = 1;
     b = L / M;
     N = L / a;
 
@@ -129,7 +142,8 @@ LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL* g,
     plan->scalconst = (LTFAT_REAL) ( 1.0 / ((double)d * sqrt((double)M)));
 
     CHECKSTATUS(
-        LTFAT_NAME(ifftreal_init)(d, 1, plan->cbuf, plan->sbuf, flags, &plan->p_before));
+        LTFAT_NAME(ifftreal_init)(d, 1, plan->cbuf, plan->sbuf, flags,
+                                  &plan->p_before));
 
     CHECKSTATUS(
         LTFAT_NAME(fftreal_init)(d, 1, plan->sbuf, plan->cbuf, flags, &plan->p_after));
@@ -311,7 +325,10 @@ LTFAT_NAME(idgtreal_walnut_execute)(LTFAT_NAME(idgtreal_long_plan)* p)
 
                     for (ltfat_int s = 0; s < d; s++)
                     {
-                        fp[ltfat_positiverem(k * M + s * pp * M - l * h_a * a, L)] = p->sbuf[s];
+                        if (p->do_overwriteoutarray)
+                            fp[ltfat_positiverem(k * M + s * pp * M - l * h_a * a, L)] = p->sbuf[s];
+                        else
+                            fp[ltfat_positiverem(k * M + s * pp * M - l * h_a * a, L)] += p->sbuf[s];
                     }
 
                     /* Advance the ff pointer. This is only done in this

@@ -6,6 +6,7 @@ struct ltfat_dgt_params
     ltfat_phaseconvention ptype;
     unsigned fftw_flags;
     ltfat_dgt_hint hint;
+    int do_synoverwrites;
 };
 
 typedef int LTFAT_NAME(donefunc)(void** pla);

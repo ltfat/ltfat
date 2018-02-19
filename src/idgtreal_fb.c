@@ -15,6 +15,7 @@ struct LTFAT_NAME(idgtreal_fb_plan)
     LTFAT_REAL*    gw;
     LTFAT_REAL*    ff;
     LTFAT_NAME(ifftreal_plan)* p_small;
+    int do_overwriteoutarray;
 };
 
 
@@ -50,6 +51,18 @@ error:
     return status;
 }
 
+
+LTFAT_API int
+LTFAT_NAME(idgtreal_fb_set_overwriteoutarray)(
+    LTFAT_NAME(idgtreal_fb_plan)* p, int do_overwriteoutarray)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+    p->do_overwriteoutarray = do_overwriteoutarray;
+error:
+    return status;
+}
+
 LTFAT_API int
 LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, ltfat_int gl,
                              ltfat_int a, ltfat_int M, const ltfat_phaseconvention ptype,
@@ -67,10 +80,8 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL* g, ltfat_int gl,
 
     CHECKMEM(p = LTFAT_NEW(LTFAT_NAME(idgtreal_fb_plan)) );
 
-    p->ptype = ptype;
-    p->a = a;
-    p->M = M;
-    p->gl = gl;
+    p->ptype = ptype; p->a = a; p->M = M; p->gl = gl;
+    p->do_overwriteoutarray = 1;
 
     /* This is a floor operation. */
     M2 = M / 2 + 1;
@@ -140,7 +151,8 @@ LTFAT_NAME(idgtreal_fb_execute)(LTFAT_NAME(idgtreal_fb_plan)* p,
     gw  = p->gw;
     ff  = p->ff;
 
-    memset(f, 0, L * W * sizeof * f);
+    if(p->do_overwriteoutarray)
+        memset(f, 0, L * W * sizeof * f);
 
     for (ltfat_int w = 0; w < W; w++)
     {

@@ -85,6 +85,10 @@ LTFAT_NAME(idgtreal_fb_init)(const LTFAT_REAL g[], ltfat_int gl,
                              ltfat_int a, ltfat_int M, const ltfat_phaseconvention ptype,
                              unsigned flags, LTFAT_NAME(idgtreal_fb_plan)** plan);
 
+LTFAT_API int
+LTFAT_NAME(idgtreal_fb_set_overwriteoutarray)(
+    LTFAT_NAME(idgtreal_fb_plan)* p, int do_overwriteoutarray);
+
 /** Execute plan for Inverse Discrete Gabor Transform for real signals using the filter bank algorithm
  *
  * \param[in]  plan   DGT plan

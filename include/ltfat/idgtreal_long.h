@@ -94,6 +94,11 @@ LTFAT_NAME(idgtreal_long_init)( const LTFAT_REAL g[],
                                 const ltfat_phaseconvention ptype, unsigned flags,
                                 LTFAT_NAME(idgtreal_long_plan)** plan);
 
+
+LTFAT_API int
+LTFAT_NAME(idgtreal_long_set_overwriteoutarray)(
+    LTFAT_NAME(idgtreal_long_plan)* p, int do_overwriteoutarray);
+
 /** Execute plan for Inverse Discrete Gabor Transform for real signals using the factorization algorithm
  *
  * \param[in]  plan   IDGT plan
