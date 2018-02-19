@@ -24,6 +24,7 @@ struct LTFAT_NAME(maxtree)
     ltfat_int    nextL;
     ltfat_int*   levelL;
     ltfat_int    W;
+    int is_complexinput;
 };
 
 LTFAT_API int
@@ -125,10 +126,21 @@ error:
 
 
 LTFAT_API int
+LTFAT_NAME(maxtree_reset_complex)(
+    LTFAT_NAME(maxtree)* p, const LTFAT_COMPLEX inarray[])
+{
+    p->treePtrs[p->depth] = (LTFAT_REAL*) inarray;
+    p->is_complexinput = 1;
+
+    return LTFAT_NAME(maxtree_updaterange)(p, 0, p->L);
+}
+
+LTFAT_API int
 LTFAT_NAME(maxtree_reset)(
     LTFAT_NAME(maxtree)* p, const LTFAT_REAL inarray[])
 {
     p->treePtrs[p->depth] = (LTFAT_REAL*) inarray;
+    p->is_complexinput = 0;
 
     return LTFAT_NAME(maxtree_updaterange)(p, 0, p->L);
 }
@@ -195,10 +207,21 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
     for (ltfat_int l = 0; l < endmpar; l++)
     {
         newl++;
-        ltfat_int twol = newl<<1;
+        ltfat_int twol = newl << 1;
         ltfat_int twolp1 = twol + 1;
-        LTFAT_REAL tv1 = treeVal[twol];
-        LTFAT_REAL tv2 = treeVal[twolp1];
+        LTFAT_REAL tv1, tv2;
+        if (p->is_complexinput)
+        {
+            tv1 = treeVal[2 * twol] * treeVal[2 * twol] +
+                  treeVal[2 * twol + 1] * treeVal[2 * twol + 1];
+            tv2 = treeVal[2 * twolp1] * treeVal[2 * twolp1] +
+                  treeVal[2 * twolp1 + 1] * treeVal[2 * twolp1 + 1];
+        }
+        else
+        {
+            tv1 = treeVal[twol];
+            tv2 = treeVal[twolp1];
+        }
 
         if ( tv1 > tv2)
         {
@@ -214,7 +237,13 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
 
     if ( parity )
     {
-        treeValnext[end - 1] = treeVal[2 * (end - 1)];
+        ltfat_int lastl = 2 * (end - 1);
+        if (p->is_complexinput)
+            treeValnext[end - 1] = treeVal[2 * lastl] * treeVal[2 * lastl] +
+                                   treeVal[2 * lastl + 1] * treeVal[2 * lastl + 1];
+        else
+            treeValnext[end - 1] = treeVal[lastl];
+
         treePosnext[end - 1] = 2 * (end - 1);
     }
 
@@ -236,7 +265,7 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
         for (ltfat_int l = 0; l < endmpar; l++)
         {
             newl++;
-            ltfat_int twol = newl<<1;
+            ltfat_int twol = newl << 1;
             ltfat_int twolp1 = twol + 1;
             LTFAT_REAL tv1 = treeVal[twol];
             LTFAT_REAL tv2 = treeVal[twolp1];

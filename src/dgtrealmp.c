@@ -2,7 +2,8 @@
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
-    LTFAT_NAME(dgtrealmp_parbuf)* pb, ltfat_int L, LTFAT_NAME(dgtrealmp_state)** pout)
+    LTFAT_NAME(dgtrealmp_parbuf)* pb, ltfat_int L,
+    LTFAT_NAME(dgtrealmp_state)** pout)
 {
     int status = LTFATERR_FAILED;
 
@@ -113,6 +114,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
     CHECKMEM( dgtparams = ltfat_dgt_params_allocdef());
     ltfat_dgt_setpar_phaseconv(dgtparams, p->params->ptype);
+    ltfat_dgt_setpar_synoverwrites(dgtparams, 0);
 
     for (ltfat_int k = 0; k < P; k++)
     {
@@ -248,27 +250,27 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
 
     for (ltfat_int k = 0; k < p->P; k++)
     {
-        LTFAT_REAL* sEl = istate->s[k];
+        /* LTFAT_REAL* sEl = istate->s[k]; */
         LTFAT_COMPLEX* cEl = istate->c[k];
 
         CHECKSTATUS(
             LTFAT_NAME(dgtreal_execute_ana_newarray)(p->dgtplans[k], f, cEl));
 
-        if (p->params->do_pedantic)
-            for ( ltfat_int n = 0; n < p->N[k] ; n++)
-                for ( ltfat_int m = 0; m < p->M2[k]; m++)
-                {
-                    ltfat_int l = m + n * p->M2[k];
-                    sEl[l] =
-                        LTFAT_NAME(dgtrealmp_execute_adjustedenergy)( p, kpoint_init(m, n, k), cEl[l]);
-                }
-        else
-            for (size_t l = 0; l < (size_t) ( p->M2[k] * p->N[k]); l++ )
-                sEl[l] = ltfat_norm(cEl[l]);
+        /* if (p->params->do_pedantic) */
+        /*     for ( ltfat_int n = 0; n < p->N[k] ; n++) */
+        /*         for ( ltfat_int m = 0; m < p->M2[k]; m++) */
+        /*         { */
+        /*             ltfat_int l = m + n * p->M2[k]; */
+        /*             sEl[l] = */
+        /*                 LTFAT_NAME(dgtrealmp_execute_adjustedenergy)( p, kpoint_init(m, n, k), cEl[l]); */
+        /*         } */
+        /* else */
+        /*     for (size_t l = 0; l < (size_t) ( p->M2[k] * p->N[k]); l++ ) */
+        /*         sEl[l] = ltfat_norm(cEl[l]); */
 
         for (ltfat_int n = 0; n < p->N[k]; n++)
         {
-            LTFAT_NAME(maxtree_reset)(istate->fmaxtree[k][n], sEl + n * p->M2[k]);
+            LTFAT_NAME(maxtree_reset_complex)(istate->fmaxtree[k][n], cEl + n * p->M2[k]);
             LTFAT_NAME(maxtree_findmax)(istate->fmaxtree[k][n],
                                         &istate->maxcols[k][n],
                                         &istate->maxcolspos[k][n]);
@@ -360,7 +362,6 @@ LTFAT_NAME(dgtrealmp_revert)(
 }
 
 
-
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute)(
     LTFAT_NAME(dgtrealmp_state)* p,
@@ -368,7 +369,6 @@ LTFAT_NAME(dgtrealmp_execute)(
 {
     int status = LTFATERR_SUCCESS;
     int status2 = LTFATERR_SUCCESS;
-    LTFAT_REAL* ftmp = NULL;
 
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout); CHECKNULL(fout);
 
@@ -378,8 +378,8 @@ LTFAT_NAME(dgtrealmp_execute)(
         memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
 
     while ( LTFAT_DGTREALMP_STATUS_CANCONTINUE ==
-            ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)( p, p->params->iterstep,
-                        cout)))
+            ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)(
+                            p, p->params->iterstep, cout)))
     {
         if (p->params->verbose)
         {
@@ -389,34 +389,15 @@ LTFAT_NAME(dgtrealmp_execute)(
         }
     }
 
-    if (status2 < 0)
-        CHECKSTATUS(status2);
-    else
-    {
-        // TO DO: Finished sucessfully with some exit code
-    }
+    CHECKSTATUS(status2);
+    memset(fout, 0, p->L * sizeof * fout);
 
-    CHECKSTATUS(
-        LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[0], cout[0], fout));
-
-    if (p->P > 1)
-    {
-        CHECKMEM( ftmp = LTFAT_NAME_REAL(malloc)(p->L) );
-
-        for (ltfat_int k = 1; k < p->P; k++)
-        {
-            LTFAT_NAME(dgtreal_execute_syn_newarray)(p->dgtplans[k], cout[k], ftmp);
-
-            for (ltfat_int l = 0; l < p->L; l++)
-                fout[l] += ftmp[l];
-        }
-
-        ltfat_free(ftmp);
-    }
+    for (ltfat_int k = 0; k < p->P; k++)
+        CHECKSTATUS(
+            LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[k], cout[k], fout));
 
     return status2;
 error:
-    ltfat_safefree(ftmp);
     return status;
 }
 
@@ -475,7 +456,7 @@ LTFAT_NAME(dgtrealmpiter_init)(
 
     CHECKNULL( state );
     CHECKMEM( s =    LTFAT_NEW( LTFAT_NAME(dgtrealmpiter_state)) );
-    CHECKMEM( s->s = LTFAT_NEWARRAY(LTFAT_REAL*,    P));
+    /* CHECKMEM( s->s = LTFAT_NEWARRAY(LTFAT_REAL*,    P)); */
     CHECKMEM( s->c = LTFAT_NEWARRAY(LTFAT_COMPLEX*, P));
     CHECKMEM( s->N = LTFAT_NEWARRAY(ltfat_int, P));
     CHECKMEM( s->suppind = LTFAT_NEWARRAY(unsigned int*, P));
@@ -492,18 +473,18 @@ LTFAT_NAME(dgtrealmpiter_init)(
         s->N[p] = N;
         ltfat_int M2 = M[p] / 2 + 1;
         /* ltfat_int M2ext = M2 */
-        CHECKMEM( s->s[p] = LTFAT_NAME_REAL(malloc)(N * M2) );
+        /* CHECKMEM( s->s[p] = LTFAT_NAME_REAL(malloc)(N * M2) ); */
         CHECKMEM( s->c[p] = LTFAT_NAME_COMPLEX(malloc)(N * M2) );
         CHECKMEM( s->suppind[p] = LTFAT_NEWARRAY(unsigned int, N * M2 ));
         CHECKMEM( s->maxcols[p]    = LTFAT_NAME_REAL(malloc)(N) );
         CHECKMEM( s->maxcolspos[p] = LTFAT_NEWARRAY(ltfat_int, N) );
         CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N,
-                    ltfat_imax(0,ltfat_pow2base(N) - 4), &s->tmaxtree[p]));
+                                              ltfat_imax(0, ltfat_pow2base(N) - 4), &s->tmaxtree[p]));
 
         CHECKMEM( s->fmaxtree[p] = LTFAT_NEWARRAY(LTFAT_NAME(maxtree)*, N));
         for (ltfat_int n = 0; n < N; n++ )
             CHECKSTATUS( LTFAT_NAME(maxtree_init)(
-                             M2, M[p], ltfat_imax(0,ltfat_pow2base(M[p]) - 4),
+                             M2, M[p], ltfat_imax(0, ltfat_pow2base(M[p]) - 4),
                              &s->fmaxtree[p][n]));
 
     }

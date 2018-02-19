@@ -160,10 +160,6 @@ statusInit = calllib('libltfat',funname,gPtr,glPtr,...
     L,Psize,aPtr,MPtr,params,plan);
 tinit = toc;
 
-coherence = libpointer(dataPtr,[1]);
-funname = makelibraryname('dgtdict_coherence_fromstatus',flags.complexity,0);
-retval = calllib('libltfat',funname,plan,coherence);
-
 calllib('libltfat','ltfat_dgtmp_params_free',params);
 
 tic
@@ -242,7 +238,7 @@ end
 %figure(3); plotdgtreal(cres2,1,100,'clim',[-90,10]);
 %figure(4); plotdgtreal(cres1-cres2,1,100,'dynrange',90);
 
-fprintf('Coherence: %.3f\n',coherence.value);
+
 fprintf('Init %.3f, reset %.3f, execute %.3f, both %.3f seconds, status %s.\n',tinit,t1,t2,t1+t2,dgtrealmpstring(statusExecute));
 
 

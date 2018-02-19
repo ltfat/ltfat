@@ -43,23 +43,23 @@ else{              LTFAT_DGTREALMP_APPLYKERNEL_SIGN(cvaltmp, +) }}
 if (p->params->ptype == LTFAT_TIMEINV){\
 NLOOPBOTH(\
     LTFAT_COMPLEX* currcCol = s->c[w2] + nidx * p->M2[w2];\
-    LTFAT_REAL*    currsCol = s->s[w2] + nidx * p->M2[w2];\
+    /*LTFAT_REAL*    currsCol = s->s[w2] + nidx * p->M2[w2];*/\
     LTFAT_COMPLEX* kcurrCol = k->kval + knidx * k->size.height;\
     LTFAT_COMPLEX  cvaltmp2 = ctmp * kexp[knidx];\
 MLOOPBOTH(\
     currcCol[midx] = currcCol[midx] SIGN (cvaltmp2) * kcurrCol[kmidx]; \
-    currsCol[midx] = ltfat_norm( currcCol[midx]); ))}\
+    /* currsCol[midx] = ltfat_norm( currcCol[midx]); */ ))}\
 else if (p->params->ptype == LTFAT_FREQINV){\
     for(ltfat_int kmidx = kstart2.m, mmidx = 0; kmidx < k->size.height;\
         kmidx += k->Mstep, mmidx++){\
         s->cvalModBuf[kIdx][mmidx] = ctmp * kexp[kmidx];}\
 NLOOPBOTH(\
     LTFAT_COMPLEX* currcCol = s->c[w2] + nidx * p->M2[w2];\
-    LTFAT_REAL*    currsCol = s->s[w2] + nidx * p->M2[w2];\
+    /* LTFAT_REAL*    currsCol = s->s[w2] + nidx * p->M2[w2]; */ \
     LTFAT_COMPLEX* kcurrCol = k->kval + knidx * k->size.height;\
 MLOOPBOTH(\
     currcCol[midx] = currcCol[midx] SIGN s->cvalModBuf[kIdx][mmidx] * kcurrCol[kmidx]; \
-    currsCol[midx] = ltfat_norm( currcCol[midx]); ))}}
+    /* currsCol[midx] = ltfat_norm( currcCol[midx]); */ ))}}
 
 #define LTFAT_DGTREALMP_MARKMODIFIED \
 NLOOPBOTH(\
