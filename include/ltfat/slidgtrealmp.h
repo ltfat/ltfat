@@ -14,9 +14,20 @@ typedef int LTFAT_NAME(slidgtrealmp_niter_callback)(void* userdata,
 //         LTFAT_NAME(slidgtrealmp_state)* p,
 //         LTFAT_NAME(slidgtrealmp_niter_callback)* callback,
 //         void* userdata);
+//
+//
+
+LTFAT_API ltfat_int
+LTFAT_NAME(slidgtrealmp_getprocdelay)( LTFAT_NAME(slidgtrealmp_state)* p);
 
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_init)(
+    LTFAT_NAME(dgtrealmp_parbuf)* pb, ltfat_int L,
+    ltfat_int numChans, ltfat_int bufLenMax,
+    LTFAT_NAME(slidgtrealmp_state)** pout);
+
+LTFAT_API int
+LTFAT_NAME(slidgtrealmp_init_fromstates)(
     LTFAT_NAME(dgtrealmp_state)* mpstate,
     LTFAT_NAME(slicing_processor_state)* slistate,
     LTFAT_NAME(slidgtrealmp_state)** pout);

@@ -7,8 +7,11 @@
 struct LTFAT_NAME(slidgtrealmp_state)
 {
     LTFAT_NAME(dgtrealmp_state)* mpstate;
+    int owning_mpstate;
     LTFAT_NAME(slicing_processor_state)* slistate;
+    int owning_slistate;
     LTFAT_COMPLEX** couttmp;
+    ltfat_int P;
 };
 
 int

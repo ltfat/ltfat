@@ -10,7 +10,7 @@ dataPtr = [flags.complexity, 'Ptr'];
 [~,~,enuminfo]=libltfatprotofile;
 LTFAT_FIRWIN = enuminfo.LTFAT_FIRWIN;
 
-glarr =     [ 2*2048];
+glarr =     [ 4*2048];
 Warr =      [ 1];
 
 bufLenInit = 100;
@@ -30,8 +30,8 @@ for ii = 1:numel(glarr)
     taperLen = 1024;%round(floor(gl/100)/2)*2;
     zpadLen = 1024;
     procdelay = gl - zpadLen - 1;
-    funname = makelibraryname('slicing_processor_init',flags.complexity,0);
-    calllib('libltfat',funname, gl, taperLen, zpadLen, W,bufLenMax,sliplan);
+%     funname = makelibraryname('slicing_processor_init',flags.complexity,0);
+%     calllib('libltfat',funname, gl, taperLen, zpadLen, W,bufLenMax,sliplan);
 
     funname = makelibraryname('dgtrealmp_parbuf_init',flags.complexity,0);
     calllib('libltfat',funname, parbuf);
@@ -43,15 +43,20 @@ for ii = 1:numel(glarr)
     funname = makelibraryname('dgtrealmp_setparbuf_maxit',flags.complexity,0);
     calllib('libltfat',funname, parbuf, gl);
     
+        funname = makelibraryname('dgtrealmp_setparbuf_iterstep',flags.complexity,0);
+    calllib('libltfat',funname, parbuf, gl);
+    
     funname = makelibraryname('dgtrealmp_setparbuf_snrdb',flags.complexity,0);
     calllib('libltfat',funname, parbuf, 40);
 
-    funname = makelibraryname('dgtrealmp_init',flags.complexity,0);
-    calllib('libltfat',funname, parbuf, gl, mpstate);
+%     funname = makelibraryname('dgtrealmp_init',flags.complexity,0);
+%     calllib('libltfat',funname, parbuf, gl, mpstate);
     
     funname = makelibraryname('slidgtrealmp_init',flags.complexity,0);
-    calllib('libltfat',funname, mpstate, sliplan, slimpstate);
+    calllib('libltfat',funname, parbuf, gl, W, bufLenMax, slimpstate);
     
+    funname = makelibraryname('slidgtrealmp_getprocdelay',flags.complexity,0);
+    procdelay = calllib('libltfat',funname,slimpstate);    
     initstr = 'INIT WIN';
 
 
@@ -91,9 +96,7 @@ for ii = 1:numel(glarr)
     [test_failed,fail]=ltfatdiditfail(20*log10(norm(inshift)/norm(plotthat)) < 35 + any(bufOut(:)>10),test_failed);
     fprintf(['DGTREAL_PROCESSOR OP %s gl:%3i, W:%3i, %s %s %s\n'],initstr,gl,W,flags.complexity,ltfatstatusstring(status),fail);
 
-    funname = makelibraryname('slicing_processor_done',flags.complexity,0);
-    calllib('libltfat',funname,sliplan);
-    
+  
 
 end
 end

@@ -45,7 +45,7 @@ LTFAT_NAME(slicing_processor_init)( ltfat_int winLen, ltfat_int taperLen,
     p->bufOut = p->bufOut_start + zpadLen / 2;
 
     CHECKSTATUS( LTFAT_NAME(fifo_processor_init_withbuffers)(
-      Ltrue, hop, numChans, bufLenMax, Ltrue, p->bufIn, p->bufOut, &p->fifo_processor
+      Ltrue, hop, numChans, bufLenMax, Ltrue-1, p->bufIn, p->bufOut, &p->fifo_processor
       ));
 
     LTFAT_NAME(fifo_processor_setprebufchanstride)( p->fifo_processor, winLen);
