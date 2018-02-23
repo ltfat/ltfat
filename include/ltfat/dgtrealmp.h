@@ -238,6 +238,10 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t iterstep);
 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_mod_makelasttight)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf);
+
 /* TODO:
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_parbuf_mod_chirpmod)(
@@ -264,9 +268,9 @@ typedef int LTFAT_NAME(selectionmodcallback)(void* userdata,
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_setparbuf_selectiomodcallback)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, LTFAT_NAME(selectionmodcallback)* callback);
-
+*/
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_setparbuf_alg)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, ltfat_dgtmp_alg alg);
-*/
+
 

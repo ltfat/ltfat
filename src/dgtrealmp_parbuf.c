@@ -162,6 +162,28 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_mod_makelasttight)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p)
+{
+    int status = LTFATERR_FAILED;
+    ltfat_int plast = 0;
+    CHECKNULL(p);
+    CHECK( LTFATERR_EMPTY, p->P > 0, "No Gabor system present.");
+    plast = p->P - 1;
+
+    CHECKSTATUS(
+            LTFAT_NAME(gabtight_painless)(
+                p->g[plast], p->gl[plast], p->a[plast], p->M[plast], p->g[plast]));
+
+    CHECKSTATUS(
+           LTFAT_NAME(normalize)(p->g[plast], p->gl[plast], LTFAT_NORM_ENERGY,  p->g[plast]));
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
 /* LTFAT_API int */
 /* LTFAT_NAME(dgtrealmp_parbuf_add_gausswin)( */
 /*     LTFAT_NAME(dgtrealmp_parbuf) * parbuf, LTFAT_REAL tfr, ltfat_int a, ltfat_int M); */
@@ -239,4 +261,15 @@ LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
     return ltfat_dgtmp_setpar_iterstep(p->params, iterstep);
 error:
     return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_alg)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, ltfat_dgtmp_alg alg)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return ltfat_dgtmp_setpar_alg(p->params, alg);
+error:
+    return status;
+
 }

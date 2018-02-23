@@ -10,7 +10,7 @@ dataPtr = [flags.complexity, 'Ptr'];
 [~,~,enuminfo]=libltfatprotofile;
 LTFAT_FIRWIN = enuminfo.LTFAT_FIRWIN;
 
-glarr =     [ 4*2048];
+Larr =     [ 4*2048];
 Warr =      [ 1];
 
 bufLenInit = 100;
@@ -18,21 +18,12 @@ bufLenMax = 1000;
 
 for initId = 0:1
     
-for ii = 1:numel(glarr)
-    gl = glarr(ii);
+for ii = 1:numel(Larr)
+    L = Larr(ii);
     W = Warr(ii);
-    sliplan = libpointer();
     parbuf = libpointer();
-    mpstate = libpointer();
     slimpstate = libpointer();
-
     
-    taperLen = 1024;%round(floor(gl/100)/2)*2;
-    zpadLen = 1024;
-    procdelay = gl - zpadLen - 1;
-%     funname = makelibraryname('slicing_processor_init',flags.complexity,0);
-%     calllib('libltfat',funname, gl, taperLen, zpadLen, W,bufLenMax,sliplan);
-
     funname = makelibraryname('dgtrealmp_parbuf_init',flags.complexity,0);
     calllib('libltfat',funname, parbuf);
     
@@ -41,24 +32,20 @@ for ii = 1:numel(glarr)
     calllib('libltfat',funname, parbuf, LTFAT_FIRWIN.LTFAT_BLACKMAN, 512,  128, 512);
     
     funname = makelibraryname('dgtrealmp_setparbuf_maxit',flags.complexity,0);
-    calllib('libltfat',funname, parbuf, gl);
+    calllib('libltfat',funname, parbuf, L);
     
-        funname = makelibraryname('dgtrealmp_setparbuf_iterstep',flags.complexity,0);
-    calllib('libltfat',funname, parbuf, gl);
+    funname = makelibraryname('dgtrealmp_setparbuf_iterstep',flags.complexity,0);
+    calllib('libltfat',funname, parbuf, L);
     
     funname = makelibraryname('dgtrealmp_setparbuf_snrdb',flags.complexity,0);
     calllib('libltfat',funname, parbuf, 40);
-
-%     funname = makelibraryname('dgtrealmp_init',flags.complexity,0);
-%     calllib('libltfat',funname, parbuf, gl, mpstate);
     
     funname = makelibraryname('slidgtrealmp_init',flags.complexity,0);
-    calllib('libltfat',funname, parbuf, gl, W, bufLenMax, slimpstate);
+    calllib('libltfat',funname, parbuf, L, W, bufLenMax, slimpstate);
     
     funname = makelibraryname('slidgtrealmp_getprocdelay',flags.complexity,0);
     procdelay = calllib('libltfat',funname,slimpstate);    
     initstr = 'INIT WIN';
-
 
     [bufIn,fs] = gspi;
     bufIn = cast(bufIn,flags.complexity);
@@ -94,7 +81,7 @@ for ii = 1:numel(glarr)
     plotthat(end-(procdelay):end,:) = 0;
 
     [test_failed,fail]=ltfatdiditfail(20*log10(norm(inshift)/norm(plotthat)) < 35 + any(bufOut(:)>10),test_failed);
-    fprintf(['DGTREAL_PROCESSOR OP %s gl:%3i, W:%3i, %s %s %s\n'],initstr,gl,W,flags.complexity,ltfatstatusstring(status),fail);
+    fprintf(['DGTREAL_PROCESSOR OP %s gl:%3i, W:%3i, %s %s %s\n'],initstr,L,W,flags.complexity,ltfatstatusstring(status),fail);
 
   
 
