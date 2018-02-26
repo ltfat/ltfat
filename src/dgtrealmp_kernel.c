@@ -118,6 +118,7 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
             LTFAT_NAME(dgtrealmp_kernel_modtiexp)(
                 ktmp->size, ktmp->mid, m * kernskip, amin, Mmax, ktmp->mods[m]);
 
+
     // Compute ranges of values in the columns ...
     for (ltfat_int knidx = 0; knidx < ktmp->size.width; knidx++)
     {
@@ -157,9 +158,8 @@ LTFAT_NAME(dgtrealmp_kernel_done)(LTFAT_NAME(kerns)** k)
 
     /* for (ltfat_int kIdx = 0; kIdx < kk->kNo; kIdx++) */
     /*     ltfat_safefree( kk->kval[kIdx] ); */
-    ltfat_safefree( kk->kval );
-    ltfat_safefree( kk->range);
-    ltfat_safefree( kk->srange);
+    LTFAT_SAFEFREEALL(kk->kval, kk->range, kk->srange, kk->atprods,
+                      kk->oneover1minatprodnorms);
 
     if (kk->mods)
     {

@@ -361,29 +361,29 @@ LTFAT_NAME(dgtrealmp_execute_mp)(
     int do_conj = !( pos.m == 0 || (pos.m == p->M2[pos.w] - 1
                                     && uniquenyquest));
 
-    /* LTFAT_COMPLEX cval = s->c[PTOI(pos)]; */
-
     LTFAT_COMPLEX atprod =
         LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, pos);
 
-    cval = (cval - (atprod) * conj(cval)) / ((LTFAT_REAL)(1.0) - ltfat_norm(
-                atprod));
+    LTFAT_REAL cvalenergy = 0.0;
 
-    /* DEBUG("w=%td,abs(cval)=%.4f",pos.w,ltfat_norm(cval)); */
+    if( atprod != LTFAT_COMPLEX(0.0,0.0))
+    {
+        cval = (cval - (atprod) * conj(cval)) / ((LTFAT_REAL)(1.0) - ltfat_norm(atprod));
+        /* LTFAT_REAL cvalenergy = ltfat_norm(cval) * LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cval); */
+        cvalenergy = LTFAT_NAME(dgtrealmp_execute_projenergy)( atprod, cval);
+    }
+    else
+    {
+        cvalenergy = ltfat_norm(cval);
+    }
 
-    LTFAT_REAL atenergy =
-        LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cval);
-
-    /* cval /= atenergy; */
-    cout[PTOI(pos)] += cval;
-    LTFAT_REAL cvalenergy = ltfat_norm(cval) * atenergy;
     if (do_conj) cvalenergy *= 2.0;
 
     LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
         p, pos, cval, 1);
 
     s->suppind[PTOI(pos)]++;
-
+    cout[PTOI(pos)] += cval;
     return cvalenergy;
 }
 
@@ -439,6 +439,19 @@ LTFAT_NAME(dgtrealmp_execute_atenergy)(
     return (1.0 + ltfat_real(cvalphase * conj( atinprod) ));
 }
 
+
+/* LTFAT_REAL */
+/* LTFAT_NAME(dgtrealmp_execute_projenergy)( */
+/*     LTFAT_COMPLEX atinprod, LTFAT_COMPLEX cval) */
+/* { */
+/*     LTFAT_REAL cr = ltfat_real(cval); */
+/*     LTFAT_REAL ci = ltfat_imag(cval); */
+/*     LTFAT_REAL cr2 = cr*cr; */
+/*     LTFAT_REAL ci2 = ci*ci; */
+/*     LTFAT_COMPLEX at = conj(atinprod); */
+/*     return cr2 + ci2 + ltfat_real(at)*(cr2 - ci2) - 2*ltfat_imag(at)*cr*ci; */
+/* } */
+
 LTFAT_COMPLEX
 LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
     LTFAT_NAME(dgtrealmp_state)* p, kpoint pos)
@@ -459,7 +472,7 @@ LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
             if (p->params->ptype == LTFAT_FREQINV)
                 atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern];
 
-            return  conj(atinprod);
+            return  (atinprod);
         }
         posinkern  = k->mid.hmid + 2 * ( p->M2[pos.w] - 1 - pos.m) + 1 - uniquenyquest;
         /* if( posinkern < k->size.height  ) */
@@ -469,7 +482,7 @@ LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
             if (p->params->ptype == LTFAT_FREQINV)
                 atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern];
 
-            return conj(atinprod);
+            return (atinprod);
         }
     }
 

@@ -18,6 +18,7 @@ typedef enum
     ltfat_dgtmp_alg_MP              = 0,
     ltfat_dgtmp_alg_LocOMP          = 1,
     ltfat_dgtmp_alg_LocCyclicMP     = 2,
+    ltfat_dgtmp_alg_LocSelfProjdMP  = 3,
 } ltfat_dgtmp_alg;
 
 typedef struct ltfat_dgtmp_params ltfat_dgtmp_params;
@@ -241,6 +242,10 @@ LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_parbuf_mod_makelasttight)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_pedanticsearch)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, int do_pedantic);
 
 /* TODO:
 LTFAT_API int

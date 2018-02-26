@@ -139,7 +139,26 @@ LTFAT_NAME(dgtrealmp_init_gen)(
                          p->params->ptype,
                          &p->gramkerns[k1 + k2 * P]));
         }
+
+        // Prepare inner products between conjugated atoms
+        LTFAT_NAME(kerns)* ktmp = p->gramkerns[k1 + k1 * P];
+        LTFAT_COMPLEX* kvalwmid = &ktmp->kval[ktmp->size.height * ktmp->mid.wmid];
+        ktmp->atprodsNo = ltfat_idivceil( ktmp->size.height, 2);
+        CHECKMEM( ktmp->atprods = LTFAT_NAME_COMPLEX(calloc)( ktmp->atprodsNo  ));
+        CHECKMEM( ktmp->oneover1minatprodnorms =
+                      LTFAT_NAME_REAL(calloc)( ktmp->atprodsNo ));
+
+        ktmp->atprodsNo = 0;
+        for (ltfat_int m = ktmp->mid.hmid - 2;
+             m >= ktmp->range[ktmp->mid.wmid].start;
+             m -= 2, ktmp->atprodsNo++  )
+        {
+            ktmp->atprods[ktmp->atprodsNo] = kvalwmid[m];
+            ktmp->oneover1minatprodnorms[ktmp->atprodsNo] =
+                1.0 / (1.0 - ltfat_norm(kvalwmid[m]));
+        }
     }
+
 
 #ifndef NDEBUG
     /* for(ltfat_int kNo=0;kNo<P;kNo++) */

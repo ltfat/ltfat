@@ -271,5 +271,14 @@ LTFAT_NAME(dgtrealmp_setparbuf_alg)(
     return ltfat_dgtmp_setpar_alg(p->params, alg);
 error:
     return status;
+}
 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_pedanticsearch)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, int do_pedantic)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return ltfat_dgtmp_setpar_pedanticsearch(p->params, do_pedantic);
+error:
+    return status;
 }

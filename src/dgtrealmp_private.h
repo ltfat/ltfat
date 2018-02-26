@@ -67,18 +67,21 @@ typedef struct
 
 typedef struct
 {
-    ksize           size;
-    kanchor          mid;
-    ltfat_int        kNo;
-    LTFAT_COMPLEX** mods;
-    LTFAT_COMPLEX*  kval;
-    krange*        range;
-    krange*       srange;
-    LTFAT_REAL    absthr;
-    double          Mrat;
-    double          arat;
-    ltfat_int      Mstep;
-    ltfat_int      astep;
+    ksize              size;
+    kanchor             mid;
+    ltfat_int           kNo;
+    LTFAT_COMPLEX**    mods;
+    LTFAT_COMPLEX*     kval;
+    krange*           range;
+    krange*          srange;
+    LTFAT_REAL       absthr;
+    double             Mrat;
+    double             arat;
+    ltfat_int         Mstep;
+    ltfat_int         astep;
+    LTFAT_COMPLEX*     atprods;
+    LTFAT_REAL* oneover1minatprodnorms;
+    ltfat_int   atprodsNo;
 } LTFAT_NAME(kerns);
 
 
@@ -130,6 +133,25 @@ static inline LTFAT_REAL
 ltfat_norm(LTFAT_COMPLEX c)
 {
     return ltfat_real(c) * ltfat_real(c) + ltfat_imag(c) * ltfat_imag(c);
+}
+
+static inline LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_projenergy)(
+    LTFAT_COMPLEX atinprod, LTFAT_COMPLEX cval)
+{
+    LTFAT_REAL cr = ltfat_real(cval);
+    LTFAT_REAL ci = ltfat_imag(cval);
+    LTFAT_REAL cr2 = cr*cr;
+    LTFAT_REAL ci2 = ci*ci;
+    return cr2 + ci2 + ltfat_real(atinprod)*(cr2 - ci2) - 2*ltfat_imag(atinprod)*cr*ci;
+}
+
+static inline LTFAT_REAL
+LTFAT_NAME(dgtrealmp_execute_dualprojenergy)(
+    LTFAT_COMPLEX atinprod, LTFAT_REAL oneoveroneminatprodnorm, LTFAT_COMPLEX cval)
+{
+    LTFAT_COMPLEX cvaldual = (cval - (atinprod) * conj(cval)) * oneoveroneminatprodnorm;
+    return LTFAT_NAME(dgtrealmp_execute_projenergy)( atinprod, cvaldual);
 }
 
 int
