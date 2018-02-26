@@ -14,7 +14,7 @@ int loadwavfile(const char* name, vector<LTFAT_REAL>& f, int* Ls, int* W)
         exit(1);
     }
 
-    int maxL = 4*info.samplerate;
+    int maxL = 6*info.samplerate;
 
     
 
@@ -37,8 +37,9 @@ int loadwavfile(const char* name, vector<LTFAT_REAL>& f, int* Ls, int* W)
 
 char fileTemplate[] = "/home/susnak/Desktop/SQAM/%02d.wav";
 /* char file[1024]; */
-//  const char* file = "/home/susnak/dev/ltfat/signals/gspi.wav";
-const char* file = "/home/susnak/Desktop/SQAM/57.wav";
+
+// const char* file = "/home/susnak/dev/ltfat/signals/gspi.wav";
+const char* file = "/home/susnak/Desktop/TSM/Cartoon4s.wav";
 
 int main(int argc, char* argv[])
 {
@@ -63,11 +64,14 @@ int main(int argc, char* argv[])
         LTFAT_NAME(dgtrealmp_parbuf)* pbuf = NULL;
         LTFAT_NAME(dgtrealmp_parbuf_init)(&pbuf);
 
+        // LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, ltfat_dgtmp_alg_LocOMP);
+
         // LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN, 8192, 2048, 8192);
         // LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN, 4096, 1024, 4096);
-        LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN, 2048,  512, 2048);
-        // LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN, 1024,  256, 2048);
-        // LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN,  512,  128,  512);
+         LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN, 2048,  512, 2048);
+        // LTFAT_NAME(dgtrealmp_parbuf_mod_makelasttight)(pbuf);
+        // LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN, 1024,  256, 1024);
+        //  LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN,  512,  128,  512);
         // LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, LTFAT_BLACKMAN,  256,  64,  256);
 
         ltfat_int L = LTFAT_NAME(dgtrealmp_parbuf_nextcompatlen)(pbuf,Ls);
