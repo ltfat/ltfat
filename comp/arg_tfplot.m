@@ -10,3 +10,4 @@ function definput=arg_tfplot(definput)
   definput.keyvals.fs=[];
   definput.keyvals.clim=[];
   definput.keyvals.dynrange=[];  
+  definput.keyvals.colormap=ltfat_inferno(); 
