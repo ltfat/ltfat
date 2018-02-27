@@ -111,6 +111,7 @@ STOPTOL     = ceil(n/4);
 MAXITER     = n;
 verbose     = false;
 s_initial   = zeros(m,1);
+vectnfact   = ones(m,1);
 linsolve_options_transpose.UT = true;
 linsolve_options_transpose.TRANSA = true;
 linsolve_options.UT = true;
@@ -185,6 +186,9 @@ for i=1:2:OS
         case {'verbose'}
             if isa(Options{i+1},'logical'); verbose     = Options{i+1};   
             else error('verbose must be a logical. Exiting.'); end 
+        case {'vecNormFac'}
+            if isa(Options{i+1},'numeric')& length(Options{i+1}) == m , vectnfact = Options{i+1};   
+            else error('verbose must be a logical. Exiting.'); end 
         case {'start_val'}
             if isa(Options{i+1},'numeric') & length(Options{i+1}) == m ;
                 s_initial     = Options{i+1};   
@@ -235,12 +239,12 @@ Ptx=Pt(x);
 %                 Random Check to see if dictionary is normalised 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        mask=zeros(m,1);
-        mask(ceil(rand*m))=1;
-        nP=norm(P(mask));
-        if abs(1-nP)>1e-3;
-            display('Dictionary appears not to have unit norm columns.')
-        end
+%         mask=zeros(m,1);
+%         mask(ceil(rand*m))=1;
+%         nP=norm(P(mask));
+%         if abs(1-nP)>1e-3;
+%             display('Dictionary appears not to have unit norm columns.')
+%         end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %              Check if we have enough memory and initialise 
@@ -293,14 +297,14 @@ end
 
 tic
 t=0;
-DR=Pt(Residual);
+DR=Pt(Residual).*vectnfact;
 done = 0;
 iter=1;
 while ~done
  
     % Select new element
         DR(IN)=0;
-        [v I]=max(abs(DR));
+        [~, I]=max(abs(DR));
         IN=[IN I];
 
     % Update R
@@ -325,7 +329,7 @@ while ~done
     % New Residual and inner products
     
         Residual=x-P(s);
-        DR=Pt(Residual);
+        DR=Pt(Residual).*vectnfact;
         
      ERR=Residual'*Residual/n;
      if comp_err

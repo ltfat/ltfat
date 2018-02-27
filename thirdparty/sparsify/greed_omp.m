@@ -145,6 +145,7 @@ STOPTOL     = ceil(n/4);
 MAXITER     = n;
 verbose     = false;
 s_initial   = zeros(m,1);
+vectnfact   = ones(m,1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                           Output variables
@@ -211,6 +212,9 @@ for i=1:2:OS
             else error('maxIter must be a number. Exiting.'); end
         case {'verbose'}
             if isa(Options{i+1},'logical'); verbose     = Options{i+1};   
+            else error('verbose must be a logical. Exiting.'); end 
+        case {'vecNormFac'}
+            if isa(Options{i+1},'numeric')& length(Options{i+1}) == m , vectnfact = Options{i+1};   
             else error('verbose must be a logical. Exiting.'); end 
         case {'start_val'}
             if isa(Options{i+1},'numeric') & length(Options{i+1}) == m ;
@@ -300,12 +304,12 @@ if strcmp(SOLVER,'qr')
     try 
         if comp_err
             if comp_time
-                [s, err_norm, iter_time]    = greed_omp_qr(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});
+                [s, err_norm, iter_time]    = greed_omp_qr(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});
             else 
-                [s, err_norm]               = greed_omp_qr(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});  
+                [s, err_norm]               = greed_omp_qr(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});  
             end
         else
-                [s]                         = greed_omp_qr(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});           
+                [s]                         = greed_omp_qr(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});           
         end
      catch 
          display('Error using QR algorithm. Trying Cholesky instead.')
@@ -313,16 +317,17 @@ if strcmp(SOLVER,'qr')
      end
 end
 if strcmp(SOLVER,'cgp') 
+    error('cgp has been disabled, since it does not work.');
     display('Trying to use CGP implementation.')
      try 
         if comp_err
             if comp_time
-                [s, err_norm, iter_time]    = greed_omp_cgp(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});
+                [s, err_norm, iter_time]    = greed_omp_cgp(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});
             else 
-                [s, err_norm]               = greed_omp_cgp(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});  
+                [s, err_norm]               = greed_omp_cgp(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});  
             end
         else
-                [s]                         = greed_omp_cgp(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});           
+                [s]                         = greed_omp_cgp(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});           
         end
      catch 
          display('Error using CG algorithm. Trying Cholesky instead.')
@@ -334,12 +339,12 @@ if strcmp(SOLVER,'chol')
      try 
         if comp_err
             if comp_time
-                [s, err_norm, iter_time]    = greed_omp_chol(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});
+                [s, err_norm, iter_time]    = greed_omp_chol(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});
             else 
-                [s, err_norm]               = greed_omp_chol(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});  
+                [s, err_norm]               = greed_omp_chol(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});  
             end
         else
-                [s]                         = greed_omp_chol(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});           
+                [s]                         = greed_omp_chol(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});           
         end
      catch 
          display('Error using Cholesky algorithm. Problem instance probably too large. We recommend the use of greed_gp or greed_acgp.')
@@ -350,12 +355,12 @@ if strcmp(SOLVER,'cg')
      try 
         if comp_err
             if comp_time
-                [s, err_norm, iter_time]    = greed_omp_cg(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});
+                [s, err_norm, iter_time]    = greed_omp_cg(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});
             else 
-                [s, err_norm]               = greed_omp_cg(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});  
+                [s, err_norm]               = greed_omp_cg(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});  
             end
         else
-                [s]                         = greed_omp_cg(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});           
+                [s]                         = greed_omp_cg(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});           
         end
      catch 
          display('Something wrong. Full CG did not work.')
@@ -366,12 +371,12 @@ if strcmp(SOLVER,'pinv')
      try 
         if comp_err
             if comp_time
-                [s, err_norm, iter_time]    = greed_omp_pinv(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});
+                [s, err_norm, iter_time]    = greed_omp_pinv(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});
             else 
-                [s, err_norm]               = greed_omp_pinv(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});  
+                [s, err_norm]               = greed_omp_pinv(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});  
             end
         else
-                [s]                         = greed_omp_pinv(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});           
+                [s]                         = greed_omp_pinv(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});           
         end
      catch 
          display('Something wrong. pinv did not work.')
@@ -382,12 +387,12 @@ if strcmp(SOLVER,'linsolve')
      try 
         if comp_err
             if comp_time
-                [s, err_norm, iter_time]    = greed_omp_linsolve(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});
+                [s, err_norm, iter_time]    = greed_omp_linsolve(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});
             else 
-                [s, err_norm]               = greed_omp_linsolve(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});  
+                [s, err_norm]               = greed_omp_linsolve(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});  
             end
         else
-                [s]                         = greed_omp_linsolve(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose});           
+                [s]                         = greed_omp_linsolve(x,P,m,{'start_val',s_initial,'stopCrit',STOPCRIT,'stopTol',STOPTOL,'P_trans',Pt,'maxIter',MAXITER,'verbose',verbose,'vecNormFac',vectnfact});           
         end
      catch 
          display('Something wrong. linsolve did not work.')

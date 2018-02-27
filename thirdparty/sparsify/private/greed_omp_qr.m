@@ -110,6 +110,7 @@ STOPTOL     = ceil(n/4);
 MAXITER     = n;
 verbose     = false;
 s_initial   = zeros(m,1);
+vectnfact   = ones(m,1);
 
 
 if verbose
@@ -177,6 +178,9 @@ for i=1:2:OS
         case {'maxIter'}
             if isa(Options{i+1},'numeric'); MAXITER     = Options{i+1};             
             else error('maxIter must be a number. Exiting.'); end
+        case {'vecNormFac'}
+            if isa(Options{i+1},'numeric')& length(Options{i+1}) == m , vectnfact = Options{i+1};   
+            else error('verbose must be a logical. Exiting.'); end 
         case {'verbose'}
             if isa(Options{i+1},'logical'); verbose     = Options{i+1};   
             else error('verbose must be a logical. Exiting.'); end 
@@ -224,12 +228,12 @@ else        error('P is of unsupported type. Use matrix, function_handle or obje
 %                 Random Check to see if dictionary is normalised 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        mask=zeros(m,1);
-        mask(ceil(rand*m))=1;
-        nP=norm(P(mask));
-        if abs(1-nP)>1e-3;
-            display('Dictionary appears not to have unit norm columns.')
-        end
+%         mask=zeros(m,1);
+%         mask(ceil(rand*m))=1;
+%         nP=norm(P(mask));
+%         if abs(1-nP)>1e-3;
+%             display('Dictionary appears not to have unit norm columns.')
+%         end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %              Check if we have enough memory and initialise 
@@ -308,7 +312,7 @@ if verbose
 end
 tic
 t=0;
-DR=Pt(Residual);
+DR=Pt(Residual).*vectnfact;
 done = 0;
 iter=1;
 
@@ -342,7 +346,7 @@ while ~done
    
     % New residual 
      Residual=Residual-q*(z(k));
-     DR=Pt(Residual);
+     DR=Pt(Residual).*vectnfact;;
      
      ERR=Residual'*Residual/n;
      if comp_err
@@ -441,7 +445,7 @@ end
 %            Now we can solve for s by back-substitution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- s(IN)=R(1:k,1:k)\z(1:k)';
+ s(IN)=R(1:k,1:k)\z(1:k).';
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                  Only return as many elements as iterations

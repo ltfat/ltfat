@@ -117,7 +117,7 @@ MAXITER     = n;
 verbose     = false;
 s_initial   = zeros(m,1);
 cg_tol      = 1e-6;
-
+vectnfact   = ones(m,1);
 
 if verbose
    display('Initialising...') 
@@ -190,6 +190,9 @@ for i=1:2:OS
         case {'verbose'}
             if isa(Options{i+1},'logical'); verbose     = Options{i+1};   
             else error('verbose must be a logical. Exiting.'); end 
+        case {'vecNormFac'}
+            if isa(Options{i+1},'numeric')& length(Options{i+1}) == m , vectnfact = Options{i+1};   
+            else error('verbose must be a logical. Exiting.'); end 
         case {'start_val'}
             if isa(Options{i+1},'numeric') & length(Options{i+1}) == m ;
                 s_initial     = Options{i+1};   
@@ -252,12 +255,12 @@ end
 %                 Random Check to see if dictionary is normalised 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-        mask=zeros(m,1);
-        mask(ceil(rand*m))=1;
-        nP=norm(P(mask));
-        if abs(1-nP)>1e-3;
-            display('Dictionary appears not to have unit norm columns.')
-        end
+%         mask=zeros(m,1);
+%         mask(ceil(rand*m))=1;
+%         nP=norm(P(mask));
+%         if abs(1-nP)>1e-3;
+%             display('Dictionary appears not to have unit norm columns.')
+%         end
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +271,7 @@ if verbose
 end
 tic
 t=0;
-DR=Pt(Residual);
+DR=Pt(Residual).*vectnfact;
 done = 0;
 iter=1;
 while ~done
@@ -278,7 +281,7 @@ while ~done
        %      abs(DR(IN))
        % pause
      [s Residual]=SubsetCG(x,s,P,Pt,IN,cg_tol,verbose);
-     DR=feval(Pt,Residual);
+     DR=Pt(Residual).*vectnfact;
  
      
      ERR=Residual'*Residual/n;
