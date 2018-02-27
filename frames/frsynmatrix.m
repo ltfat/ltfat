@@ -73,7 +73,11 @@ else
          sprintf('%s: There is a bug. Ncoef=%d should be an integer.',...
          upper(mfilename),Ncoef));
   Ncoef=round(Ncoef);
-  coef=eye(Ncoef);
-  G = frsyn(F,coef);  
+  G = zeros(L,Ncoef);
+  tmpf = zeros(Ncoef,1); tmpf(1) = 1;
+  for n = 1:Ncoef
+      G(:,n) = frsyn(F,tmpf);
+      tmpf = circshift(tmpf,1);
+  end
 end;
 
