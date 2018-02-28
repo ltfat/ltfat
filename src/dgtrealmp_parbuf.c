@@ -29,11 +29,11 @@ error:
     return status;
 }
 
-LTFAT_API ltfat_int
+LTFAT_API size_t
 LTFAT_NAME(dgtrealmp_parbuf_nextcoefsize)(
     LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int L, ltfat_int dictid)
 {
-    ltfat_int Llong = 0;
+    size_t Llong = 0;
     int status = LTFATERR_FAILED;
     CHECKNULL(p);
     CHECK(LTFATERR_BADARG, dictid >= 0 && dictid < p->P,
@@ -41,7 +41,7 @@ LTFAT_NAME(dgtrealmp_parbuf_nextcoefsize)(
 
     Llong = LTFAT_NAME(dgtrealmp_parbuf_nextcompatlen)( p, L);
     CHECKSTATUS(Llong);
-    return (p->M[dictid] / 2 + 1) * Llong / p->a[dictid];
+    return (p->M[dictid] / 2 + 1) * (Llong / p->a[dictid]);
 error:
     return status;
 }
@@ -163,7 +163,7 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_parbuf_mod_makelasttight)(
+LTFAT_NAME(dgtrealmp_modparbuf_lasttight)(
     LTFAT_NAME(dgtrealmp_parbuf)* p)
 {
     int status = LTFATERR_FAILED;
