@@ -25,7 +25,23 @@ struct LTFAT_NAME(maxtree)
     ltfat_int*   levelL;
     ltfat_int    W;
     int is_complexinput;
+    LTFAT_NAME(maxtree_complexinput_callback)* callback;
+    void* userdata;
 };
+
+LTFAT_API int
+LTFAT_NAME(maxtree_setcallback)(LTFAT_NAME(maxtree)* p,
+        LTFAT_NAME(maxtree_complexinput_callback)* callback,
+        void* userdata)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p); CHECKNULL(callback);
+    p->callback = callback;
+    p->userdata = userdata;
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
 
 LTFAT_API int
 LTFAT_NAME(maxtree_init)(
@@ -212,10 +228,18 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
         LTFAT_REAL tv1, tv2;
         if (p->is_complexinput)
         {
-            tv1 = treeVal[2 * twol] * treeVal[2 * twol] +
-                  treeVal[2 * twol + 1] * treeVal[2 * twol + 1];
-            tv2 = treeVal[2 * twolp1] * treeVal[2 * twolp1] +
-                  treeVal[2 * twolp1 + 1] * treeVal[2 * twolp1 + 1];
+            if(p->callback)
+            {
+                tv1 = p->callback(p->userdata, *((LTFAT_COMPLEX*)&treeVal[2 * twol]), twol);
+                tv2 = p->callback(p->userdata, *((LTFAT_COMPLEX*)&treeVal[2 * twolp1]), twolp1);
+            }
+            else
+            {
+                tv1 = treeVal[2 * twol] * treeVal[2 * twol] +
+                      treeVal[2 * twol + 1] * treeVal[2 * twol + 1];
+                tv2 = treeVal[2 * twolp1] * treeVal[2 * twolp1] +
+                      treeVal[2 * twolp1 + 1] * treeVal[2 * twolp1 + 1];
+            }
         }
         else
         {
@@ -239,8 +263,15 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
     {
         ltfat_int lastl = 2 * (end - 1);
         if (p->is_complexinput)
-            treeValnext[end - 1] = treeVal[2 * lastl] * treeVal[2 * lastl] +
-                                   treeVal[2 * lastl + 1] * treeVal[2 * lastl + 1];
+        {
+            if(p->callback)
+                treeValnext[end - 1] =
+                    p->callback(p->userdata, *((LTFAT_COMPLEX*)&treeVal[2 * lastl]), lastl);
+            else
+                treeValnext[end - 1] =
+                    treeVal[2 * lastl] * treeVal[2 * lastl] +
+                    treeVal[2 * lastl + 1] * treeVal[2 * lastl + 1];
+        }
         else
             treeValnext[end - 1] = treeVal[lastl];
 

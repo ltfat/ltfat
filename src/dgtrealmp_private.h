@@ -113,6 +113,14 @@ typedef struct
     size_t                 pBufNo;
 } LTFAT_NAME(dgtrealmpiter_state);
 
+
+typedef struct
+{
+    ltfat_int n;
+    ltfat_int w;
+    LTFAT_NAME(dgtrealmp_state)* state;
+} LTFAT_NAME(dgtrealmp_state_closure);
+
 struct LTFAT_NAME(dgtrealmp_state)
 {
     LTFAT_NAME(dgtrealmpiter_state)* iterstate;
@@ -127,6 +135,7 @@ struct LTFAT_NAME(dgtrealmp_state)
     LTFAT_REAL**    cout;
     ltfat_dgtmp_params* params;
     LTFAT_COMPLEX** couttmp;
+    LTFAT_NAME(dgtrealmp_state_closure)** closures;
 };
 
 static inline LTFAT_REAL
@@ -143,7 +152,7 @@ LTFAT_NAME(dgtrealmp_execute_projenergy)(
     LTFAT_REAL ci = ltfat_imag(cval);
     LTFAT_REAL cr2 = cr*cr;
     LTFAT_REAL ci2 = ci*ci;
-    return cr2 + ci2 + ltfat_real(atinprod)*(cr2 - ci2) - 2*ltfat_imag(atinprod)*cr*ci;
+    return 2.0*(cr2 + ci2 + ltfat_real(atinprod)*(cr2 - ci2) - 2*ltfat_imag(atinprod)*cr*ci);
 }
 
 static inline LTFAT_REAL
@@ -241,9 +250,15 @@ LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_adjustedenergy)(
     LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval);
 
-LTFAT_COMPLEX
+void
 LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
-    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos);
+    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos,
+    LTFAT_COMPLEX* atinprod, LTFAT_REAL* oneover1minatprodnorm);
+
+void
+LTFAT_NAME(dgtrealmp_execute_dualprodandprojenergy)(
+    LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval,
+    LTFAT_COMPLEX* cvaldual, LTFAT_REAL* projenergy);
 
 LTFAT_REAL
 LTFAT_NAME(dgtrealmp_execute_mp)(

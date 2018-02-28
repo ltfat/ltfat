@@ -1,6 +1,13 @@
 // maxtree
 
 typedef struct LTFAT_NAME(maxtree) LTFAT_NAME(maxtree);
+typedef LTFAT_REAL
+LTFAT_NAME(maxtree_complexinput_callback)(void* userdata, LTFAT_COMPLEX cval, ltfat_int pos);
+
+LTFAT_API int
+LTFAT_NAME(maxtree_setcallback)(LTFAT_NAME(maxtree)* p,
+        LTFAT_NAME(maxtree_complexinput_callback)* callback,
+        void* userdata);
 
 LTFAT_API int
 LTFAT_NAME(maxtree_init)(

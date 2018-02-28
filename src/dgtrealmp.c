@@ -1,5 +1,21 @@
 #include "dgtrealmp_private.h"
 
+
+LTFAT_REAL
+LTFAT_NAME(pedantic_callback)(void* userdata,
+                              LTFAT_COMPLEX cval, ltfat_int pos)
+{
+    LTFAT_NAME(dgtrealmp_state_closure)* p =
+        (LTFAT_NAME(dgtrealmp_state_closure)*) userdata;
+    LTFAT_COMPLEX cvaldual;
+    LTFAT_REAL projenergy;
+    LTFAT_NAME(dgtrealmp_execute_dualprodandprojenergy)(
+        p->state, kpoint_init(pos,p->n,p->w), cval, &cvaldual, &projenergy);
+
+    return projenergy;
+}
+
+
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
     LTFAT_NAME(dgtrealmp_parbuf)* pb, ltfat_int L,
@@ -148,7 +164,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
         CHECKMEM( ktmp->oneover1minatprodnorms =
                       LTFAT_NAME_REAL(calloc)( ktmp->atprodsNo ));
 
-        ktmp->atprodsNo = 0;
+        ktmp->atprodsNo = 1;
         for (ltfat_int m = ktmp->mid.hmid - 2;
              m >= ktmp->range[ktmp->mid.wmid].start;
              m -= 2, ktmp->atprodsNo++  )
@@ -157,6 +173,8 @@ LTFAT_NAME(dgtrealmp_init_gen)(
             ktmp->oneover1minatprodnorms[ktmp->atprodsNo] =
                 1.0 / (1.0 - ltfat_norm(kvalwmid[m]));
         }
+        ktmp->atprods[0] = 0.0;
+        ktmp->oneover1minatprodnorms[0] = 1.0;
     }
 
 
@@ -183,6 +201,8 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 #endif
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate));
+
+
 
     if (p->params->alg == ltfat_dgtmp_alg_LocOMP)
     {
@@ -229,6 +249,34 @@ LTFAT_NAME(dgtrealmp_init_gen)(
                 ltfat_int h2 = ltfat_idivceil( currkern->size.height , currkern->Mstep);
                 CHECKMEM(p->iterstate->cvalModBuf[k1 + k2 * P] =
                              LTFAT_NAME_COMPLEX(malloc)( h2));
+            }
+        }
+    }
+
+
+    if(p->params->do_pedantic)
+    {
+        CHECKMEM(
+            p->closures =
+            LTFAT_NEWARRAY( LTFAT_NAME( dgtrealmp_state_closure)*, p->P));
+
+        for (ltfat_int k = 0; k < p->P; k++)
+        {
+            CHECKMEM(
+                p->closures[k] =
+                LTFAT_NEWARRAY( LTFAT_NAME(dgtrealmp_state_closure), p->N[k]));
+
+            for (ltfat_int n = 0; n < p->N[k]; n++ )
+            {
+                p->closures[k][n].n = n;
+                p->closures[k][n].w = k;
+                p->closures[k][n].state = p;
+
+                CHECKSTATUS(
+                LTFAT_NAME(maxtree_setcallback)(
+                        p->iterstate->fmaxtree[k][n],
+                        LTFAT_NAME(pedantic_callback),
+                        &p->closures[k][n]));
             }
         }
     }
@@ -438,6 +486,15 @@ LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_state)** p)
     if (pp->params)
         ltfat_dgtmp_params_free(pp->params);
 
+    if (pp->closures)
+    {
+        for (ltfat_int k = 0; k < pp->P; k++)
+               ltfat_free(pp->closures[k]);
+
+        ltfat_free(pp->closures);
+        pp->closures = NULL;
+    }
+
     if (pp->dgtplans)
     {
         for (ltfat_int k = 0; k < pp->P; k++)
@@ -498,13 +555,15 @@ LTFAT_NAME(dgtrealmpiter_init)(
         CHECKMEM( s->maxcols[p]    = LTFAT_NAME_REAL(malloc)(N) );
         CHECKMEM( s->maxcolspos[p] = LTFAT_NEWARRAY(ltfat_int, N) );
         CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N,
-                                              ltfat_imax(0, ltfat_pow2base(N) - 4), &s->tmaxtree[p]));
+                                              ltfat_imax(0, ltfat_pow2base(ltfat_nextpow2(N)) - 4), &s->tmaxtree[p]));
 
         CHECKMEM( s->fmaxtree[p] = LTFAT_NEWARRAY(LTFAT_NAME(maxtree)*, N));
         for (ltfat_int n = 0; n < N; n++ )
+        {
             CHECKSTATUS( LTFAT_NAME(maxtree_init)(
-                             M2, M[p], ltfat_imax(0, ltfat_pow2base(M[p]) - 4),
+                             M2, M[p], ltfat_imax(0, ltfat_pow2base(ltfat_nextpow2(M[p])) - 4),
                              &s->fmaxtree[p][n]));
+        }
 
     }
 
