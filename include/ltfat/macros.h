@@ -53,5 +53,12 @@
 #define CHECKINIT(A, M) CHECK(LTFATERR_INITFAILED,(A), M)
 #define CHECKCANTHAPPEN(M) CHECK(LTFATERR_CANNOTHAPPEN, 0, M)
 
+#if defined(__cplusplus)
+#define LTFAT_STRUCT_BRACKETS(s) s
+#else
+#define LTFAT_STRUCT_BRACKETS(s) (s)
+#endif // defined(__cplusplus)
+
+#define LTFAT_STRUCTINIT(s,...)  (LTFAT_STRUCT_BRACKETS(s){__VA_ARGS__})
 
 #endif /* _LTFAT_MACROS_H */
