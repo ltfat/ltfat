@@ -29,8 +29,6 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
     switch (win)
     {
     case LTFAT_HANN:
-    case LTFAT_HANNING:
-    case LTFAT_NUTTALL10:
     {
         for (ltfat_int ii = 0; ii < gl; ii++)
         {
@@ -42,8 +40,6 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
     }
 
     case LTFAT_SQRTHANN:
-    case LTFAT_COSINE:
-    case LTFAT_SINE:
         for (ltfat_int ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
@@ -70,7 +66,6 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
         }
         break;
 
-    case LTFAT_SQUARE:
     case LTFAT_RECT:
         for (ltfat_int ii = 0; ii < gl; ii++)
         {
@@ -80,9 +75,7 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
         }
         break;
 
-    case LTFAT_TRIA:
     case LTFAT_TRIANGULAR:
-    case LTFAT_BARTLETT:
         for (ltfat_int ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
@@ -122,7 +115,6 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
         break;
     }
     case LTFAT_NUTTALL:
-    case LTFAT_NUTTALL12:
         for (ltfat_int ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
@@ -134,7 +126,6 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
         break;
 
     case LTFAT_OGG:
-    case LTFAT_ITERSINE:
         for (ltfat_int ii = 0; ii < gl; ii++)
         {
             FIRWIN_RESETCOUNTER;
