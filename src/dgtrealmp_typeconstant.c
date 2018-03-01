@@ -12,7 +12,7 @@ ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
     params->alg = ltfat_dgtmp_alg_MP;
     params->errtoldb = -40.0;
     params->kernrelthr = 1e-4;
-    params->verbose = 1;
+    params->verbose = 0;
     params->maxatoms = 0;
     params->maxit = 0;
     params->iterstep = 100;

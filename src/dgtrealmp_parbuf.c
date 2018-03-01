@@ -11,7 +11,7 @@ error:
 }
 
 LTFAT_API ltfat_int
-LTFAT_NAME(dgtrealmp_parbuf_nextcompatlen)(
+LTFAT_NAME(dgtrealmp_getparbuf_siglen)(
     LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int L)
 {
     int status = LTFATERR_FAILED;
@@ -29,19 +29,39 @@ error:
     return status;
 }
 
-LTFAT_API size_t
-LTFAT_NAME(dgtrealmp_parbuf_nextcoefsize)(
+LTFAT_API ptrdiff_t
+LTFAT_NAME(dgtrealmp_getparbuf_coeflen)(
     LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int L, ltfat_int dictid)
 {
-    size_t Llong = 0;
+    ptrdiff_t Llong = 0;
     int status = LTFATERR_FAILED;
     CHECKNULL(p);
     CHECK(LTFATERR_BADARG, dictid >= 0 && dictid < p->P,
           "Dictionary %td is not in the plan. There is %td dicts.", dictid, p->P);
 
-    Llong = LTFAT_NAME(dgtrealmp_parbuf_nextcompatlen)( p, L);
+    Llong = LTFAT_NAME(dgtrealmp_getparbuf_siglen)( p, L);
     CHECKSTATUS(Llong);
     return (p->M[dictid] / 2 + 1) * (Llong / p->a[dictid]);
+error:
+    return status;
+}
+
+LTFAT_API ptrdiff_t
+LTFAT_NAME(dgtrealmp_getparbuf_coeflen_compact)(
+    LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int L)
+{
+    ltfat_int W = 0;
+    ptrdiff_t N = 0;
+    int status = LTFATERR_FAILED;
+    CHECKSTATUS( LTFAT_NAME(dgtrealmp_getparbuf_dictno)(p));
+
+    for(ltfat_int w = 0; w < W; w++)
+    {
+        ptrdiff_t Ntmp = LTFAT_NAME(dgtrealmp_getparbuf_coeflen)(p,L,w);
+        CHECKSTATUS(Ntmp); N += Ntmp;
+    }
+
+    return N;
 error:
     return status;
 }
@@ -58,6 +78,7 @@ LTFAT_NAME(dgtrealmp_parbuf_init)(LTFAT_NAME(dgtrealmp_parbuf)** p)
     CHECKMEM(ploc->gl = LTFAT_NEW(ltfat_int));
     CHECKMEM(ploc->a  = LTFAT_NEW(ltfat_int));
     CHECKMEM(ploc->M  = LTFAT_NEW(ltfat_int));
+    CHECKMEM(ploc->chanmask  = LTFAT_NEW(int));
 
     *p = ploc;
     return LTFATERR_SUCCESS;
@@ -82,7 +103,7 @@ LTFAT_NAME(dgtrealmp_parbuf_done)(LTFAT_NAME(dgtrealmp_parbuf)** p)
     for (ltfat_int pidx = 0; pidx < pp->P; pidx++)
         ltfat_safefree(pp->g[pidx]);
 
-    LTFAT_SAFEFREEALL(pp->g, pp->gl, pp->a, pp->M);
+    LTFAT_SAFEFREEALL(pp->g, pp->gl, pp->a, pp->M, pp->chanmask);
 
     ltfat_free(pp);
     *p = NULL;
@@ -130,6 +151,7 @@ LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(dgtrealmp_parbuf) * p,
     p->gl[p->P - 1] = gl;
     p->a[p->P - 1]  = a;
     p->M[p->P - 1]  = M;
+    p->chanmask[p->P - 1] = 1;
 
     amin = p->a[0];
     for (ltfat_int pidx = 1; pidx < p->P; pidx++)
@@ -151,6 +173,7 @@ LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(dgtrealmp_parbuf) * p,
     CHECKMEM( p->gl = LTFAT_POSTPADARRAY(ltfat_int, p->gl, p->P, p->P + 1));
     CHECKMEM( p->a  = LTFAT_POSTPADARRAY(ltfat_int, p->a, p->P, p->P + 1));
     CHECKMEM( p->M  = LTFAT_POSTPADARRAY(ltfat_int, p->M, p->P, p->P + 1));
+    CHECKMEM( p->chanmask  = LTFAT_POSTPADARRAY(int, p->chanmask, p->P, p->P + 1));
 
     return LTFATERR_SUCCESS;
 error:

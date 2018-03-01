@@ -628,9 +628,9 @@ LTFAT_NAME(dgtrealmp_execute_pickmod)(
     ltfat_phaseconvention pconv)
 {
     if (pconv == LTFAT_FREQINV)
-        return k->mods[ltfat_positiverem( n, k->kNo)];
+        return k->mods[ltfat_positiverem( n*k->kSkip, k->kNo)];
     else if (pconv == LTFAT_TIMEINV)
-        return k->mods[ltfat_positiverem( m, k->kNo)];
+        return k->mods[ltfat_positiverem( m*k->kSkip, k->kNo)];
     else
         return NULL;
 }

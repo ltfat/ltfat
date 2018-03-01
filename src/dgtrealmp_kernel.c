@@ -3,6 +3,7 @@
 #include "ltfat/macros.h"
 #include "dgtrealmp_private.h"
 
+
 int
 LTFAT_NAME(dgtrealmp_kernel_init)(
     const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int a[], ltfat_int M[],
@@ -15,10 +16,12 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     LTFAT_COMPLEX* kernlarge = NULL;
     LTFAT_NAME(kerns)* ktmp = NULL;
     ltfat_int kernskip = 1;
+    LTFAT_COMPLEX* kvalwmid;
     int status = LTFATERR_SUCCESS;
 
     CHECKMEM( ktmp = LTFAT_NEW(LTFAT_NAME(kerns)) );
-    ktmp->arat = 1.0; ktmp->Mrat = 1.0;
+    ktmp->arat = 1.0; ktmp->Mrat = 1.0; ktmp->kSkip = 1;
+    ktmp->ptype = ptype;
 
     ktmp->Mrat = ((double) M[0]) / M[1];
     ktmp->arat = ((double) a[1]) / a[0];
@@ -46,8 +49,9 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     LTFAT_NAME(middlepad)(g[0], gl[0], LTFAT_WHOLEPOINT, Lshort, g0tmp);
     LTFAT_NAME(middlepad)(g[1], gl[1], LTFAT_WHOLEPOINT, Lshort, g1tmp);
 
-    LTFAT_NAME_REAL(dgt_fb)(g0tmp, g1tmp, Lshort, Lshort, 1, amin, Mmax,
-                            ptype, kernlarge);
+    LTFAT_NAME_REAL(dgtreal_fb)(g0tmp, g1tmp, Lshort, Lshort, 1, amin, Mmax,
+                                ptype, kernlarge);
+    LTFAT_NAME_COMPLEX(dgtreal2dgt)(kernlarge,Mmax,Nshort,kernlarge);
 
     LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
         kernlarge, Mmax, Nshort, reltol, &ktmp->absthr, &ktmp->size, &ktmp->mid);
@@ -62,18 +66,18 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
 
     if (ptype == LTFAT_FREQINV)
     {
-        if (a[0] > a[1])
+        if (ktmp->arat < 1.0)
         {
             modNo = ltfat_lcm(amin, Mmax) / a[0];
-            kernskip = a[0] / a[1];
+            kernskip = (ltfat_int)(1.0 / ktmp->arat);//  a[0] / a[1];
         }
     }
     else if (ptype == LTFAT_TIMEINV)
     {
-        if (M[1] > M[0])
+        if (ktmp->Mrat < 1.0)
         {
             modNo *= ktmp->Mrat;
-            kernskip = M[1] / M[0];
+            kernskip = (ltfat_int)(1.0/ktmp->Mrat);//M[1] / M[0];
         }
     }
 
@@ -138,6 +142,26 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
         ktmp->srange[knidx].end =   ktmp->range[knidx].end / ktmp->Mstep;
     }
 
+    // Prepare inner products between conjugated atoms
+    kvalwmid = &ktmp->kval[ktmp->size.height * ktmp->mid.wmid]; 
+    ktmp->atprodsNo = ltfat_idivceil( ktmp->size.height, 2);
+    CHECKMEM( ktmp->atprods = LTFAT_NAME_COMPLEX(calloc)( ktmp->atprodsNo  ));
+    CHECKMEM( ktmp->oneover1minatprodnorms =
+                  LTFAT_NAME_REAL(calloc)( ktmp->atprodsNo ));
+
+    ktmp->atprodsNo = 1;
+    for (ltfat_int m = ktmp->mid.hmid - 2;
+         m >= ktmp->range[ktmp->mid.wmid].start;
+         m -= 2, ktmp->atprodsNo++  )
+    {
+        ktmp->atprods[ktmp->atprodsNo] = kvalwmid[m];
+        ktmp->oneover1minatprodnorms[ktmp->atprodsNo] =
+            1.0 / (1.0 - ltfat_norm(kvalwmid[m]));
+    }
+    ktmp->atprods[0] = 0.0;
+    ktmp->oneover1minatprodnorms[0] = 1.0;
+
+
     *pout = ktmp;
     LTFAT_SAFEFREEALL(g0tmp, g1tmp, kernlarge);
     return status;
@@ -158,7 +182,11 @@ LTFAT_NAME(dgtrealmp_kernel_done)(LTFAT_NAME(kerns)** k)
 
     /* for (ltfat_int kIdx = 0; kIdx < kk->kNo; kIdx++) */
     /*     ltfat_safefree( kk->kval[kIdx] ); */
-    LTFAT_SAFEFREEALL(kk->kval, kk->range, kk->srange, kk->atprods,
+
+    if(kk->cloned == 0)
+    {
+        ltfat_safefree(kk->kval);
+    LTFAT_SAFEFREEALL( kk->range, kk->srange, kk->atprods,
                       kk->oneover1minatprodnorms);
 
     if (kk->mods)
@@ -167,10 +195,11 @@ LTFAT_NAME(dgtrealmp_kernel_done)(LTFAT_NAME(kerns)** k)
             ltfat_safefree( kk->mods[kIdx] );
         ltfat_free(kk->mods);
     }
+    
 
-    ltfat_free(kk);
+    ltfat_safefree(kk);
+    }
     *k = NULL;
-
 error:
     return status;
 }
@@ -239,7 +268,7 @@ LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
     ltfat_int maxcoefIdx, lastrow = 0, lastcol1 = 0, lastcol2 = -1, M2;
     size->width = 0; size->height = 0;
     anchor->hmid = 0; anchor->wmid = 0;
-    M2 = M / 2 + 1;
+    M2 = M / 2 + 1; 
 
     LTFAT_NAME_COMPLEX(findmaxinarray)(kernlarge, M * N, &maxcoef, &maxcoefIdx);
 
@@ -285,3 +314,36 @@ LTFAT_NAME(dgtrealmp_kernel_findsmallsize)(
 
     return 0;
 }
+
+/* int */
+/* LTFAT_NAME(dgtrealmp_kernel_cloneconj)( */
+/*     LTFAT_NAME(kerns)* kin, LTFAT_NAME(kerns)** kout) */
+/* { */
+/*     LTFAT_NAME(kerns)* ktmp = NULL; */
+/*     int status = LTFATERR_FAILED; */
+/*  */
+/*     CHECKMEM( ktmp = LTFAT_NEW(LTFAT_NAME(kerns)) ); */
+/*     *ktmp = *kin; */
+/*  */
+/*     #<{(| CHECKMEM( ktmp->kval = LTFAT_NAME_COMPLEX(malloc)(ktmp->size.width * ktmp->size.height) ); |)}># */
+/*  */
+/*     #<{(| LTFAT_NAME_COMPLEX(conjugate_array)(kin->kval,ktmp->size.width * ktmp->size.height,ktmp->kval ); |)}># */
+/*     ktmp->Mrat = 1.0 / ktmp->Mrat; */
+/*     ktmp->arat = 1.0 / ktmp->arat; */
+/*     ktmp->Mstep = ktmp->Mrat > 1 ? (ltfat_int) ktmp->Mrat : 1; */
+/*     ktmp->astep = ktmp->arat > 1 ? (ltfat_int) ktmp->arat : 1; */
+/*  */
+/*     if (ktmp->ptype == LTFAT_FREQINV) */
+/*         if (ktmp->arat < 1.0) */
+/*             ktmp->kSkip = (ltfat_int)(1.0 / ktmp->arat);//  a[0] / a[1]; */
+/*     else if (ktmp->ptype == LTFAT_TIMEINV) */
+/*         if (ktmp->Mrat < 1.0) */
+/*             ktmp->kSkip = (ltfat_int)(1.0/ktmp->Mrat);//M[1] / M[0]; */
+/*  */
+/*     ktmp->cloned = 1; */
+/*  */
+/*     *kout = ktmp; */
+/*     return LTFATERR_SUCCESS; */
+/* error: */
+/*     return status; */
+/* } */

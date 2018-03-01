@@ -10,6 +10,7 @@ struct LTFAT_NAME(dgtrealmp_parbuf)
     ltfat_int*          gl;
     ltfat_int*          a;
     ltfat_int*          M;
+    int*         chanmask;
     ltfat_int           P;
     ltfat_dgtmp_params* params;
 //    LTFAT_REAL          chirprate;
@@ -19,7 +20,7 @@ struct LTFAT_NAME(dgtrealmp_parbuf)
 struct ltfat_dgtmp_params
 {
     // ltfat_dgtrealmp_hint  hint;
-    ltfat_dgtmp_alg   alg;
+    ltfat_dgtmp_alg       alg;
     long double           errtoldb;
     long double           errtoladj;
     double                kernrelthr;
@@ -70,6 +71,7 @@ typedef struct
     ksize              size;
     kanchor             mid;
     ltfat_int           kNo;
+    ltfat_int         kSkip;
     LTFAT_COMPLEX**    mods;
     LTFAT_COMPLEX*     kval;
     krange*           range;
@@ -82,6 +84,8 @@ typedef struct
     LTFAT_COMPLEX*     atprods;
     LTFAT_REAL* oneover1minatprodnorms;
     ltfat_int   atprodsNo;
+    int cloned;
+     ltfat_phaseconvention ptype;
 } LTFAT_NAME(kerns);
 
 
@@ -130,11 +134,11 @@ struct LTFAT_NAME(dgtrealmp_state)
     ltfat_int*        M;
     ltfat_int*       M2;
     ltfat_int*        N;
+    int*       chanmask;
     ltfat_int         P;
     ltfat_int         L;
-    LTFAT_REAL**    cout;
     ltfat_dgtmp_params* params;
-    LTFAT_COMPLEX** couttmp;
+    LTFAT_COMPLEX**     couttmp;
     LTFAT_NAME(dgtrealmp_state_closure)** closures;
 };
 
@@ -170,6 +174,10 @@ LTFAT_NAME(dgtrealmpiter_init)(
 
 int
 LTFAT_NAME(dgtrealmpiter_done)(LTFAT_NAME(dgtrealmpiter_state)** state);
+
+int
+LTFAT_NAME(dgtrealmp_kernel_cloneconj)(
+    LTFAT_NAME(kerns)* kin, LTFAT_NAME(kerns)** kout);
 
 int
 LTFAT_NAME(dgtrealmp_kernel_init)(

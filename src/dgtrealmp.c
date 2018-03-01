@@ -1,6 +1,5 @@
 #include "dgtrealmp_private.h"
 
-
 LTFAT_REAL
 LTFAT_NAME(pedantic_callback)(void* userdata,
                               LTFAT_COMPLEX cval, ltfat_int pos)
@@ -28,9 +27,12 @@ LTFAT_NAME(dgtrealmp_init)(
           L > 0 , "Signal length L must be positive (passed %td)", L);
     CHECK(LTFATERR_BADARG, pb->P > 0 , "No Gabor system set in the plan");
 
-    return LTFAT_NAME(dgtrealmp_init_gen)(
+    CHECKSTATUS( LTFAT_NAME(dgtrealmp_init_gen)(
                (const LTFAT_REAL**)pb->g, pb->gl, L, pb->P, pb->a, pb->M,
-               pb->params, pout);
+               pb->params, pout));
+
+    memcpy((*pout)->chanmask, pb->chanmask, pb->P*sizeof*pb->chanmask);
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -118,10 +120,12 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     CHECKMEM( p->M  = LTFAT_NEWARRAY( ltfat_int, P));
     CHECKMEM( p->M2 = LTFAT_NEWARRAY( ltfat_int, P));
     CHECKMEM( p->N  = LTFAT_NEWARRAY( ltfat_int, P));
+    CHECKMEM( p->chanmask  = LTFAT_NEWARRAY( int, P));
     CHECKMEM( p->couttmp = LTFAT_NEWARRAY( LTFAT_COMPLEX*, P));
 
     for (ltfat_int k = 0; k < P; k++)
     {
+        p->chanmask[k] = 1;
         p->a[k] = a[k]; p->M[k] = M[k];
         p->M2[k] = M[k] / 2 + 1; p->N[k] = L / a[k];
     }
@@ -156,27 +160,13 @@ LTFAT_NAME(dgtrealmp_init_gen)(
                          &p->gramkerns[k1 + k2 * P]));
         }
 
-        // Prepare inner products between conjugated atoms
-        LTFAT_NAME(kerns)* ktmp = p->gramkerns[k1 + k1 * P];
-        LTFAT_COMPLEX* kvalwmid = &ktmp->kval[ktmp->size.height * ktmp->mid.wmid];
-        ktmp->atprodsNo = ltfat_idivceil( ktmp->size.height, 2);
-        CHECKMEM( ktmp->atprods = LTFAT_NAME_COMPLEX(calloc)( ktmp->atprodsNo  ));
-        CHECKMEM( ktmp->oneover1minatprodnorms =
-                      LTFAT_NAME_REAL(calloc)( ktmp->atprodsNo ));
-
-        ktmp->atprodsNo = 1;
-        for (ltfat_int m = ktmp->mid.hmid - 2;
-             m >= ktmp->range[ktmp->mid.wmid].start;
-             m -= 2, ktmp->atprodsNo++  )
-        {
-            ktmp->atprods[ktmp->atprodsNo] = kvalwmid[m];
-            ktmp->oneover1minatprodnorms[ktmp->atprodsNo] =
-                1.0 / (1.0 - ltfat_norm(kvalwmid[m]));
-        }
-        ktmp->atprods[0] = 0.0;
-        ktmp->oneover1minatprodnorms[0] = 1.0;
+        /* for(ltfat_int k2 = 0; k2 < k1; k2++) */
+        /* { */
+        /*     LTFAT_NAME(dgtrealmp_kernel_cloneconj)( */
+        /*             p->gramkerns[k2 + k1 * P], */
+        /*             &p->gramkerns[k1 + k2 * P]); */
+        /* } */
     }
-
 
 #ifndef NDEBUG
     /* for(ltfat_int kNo=0;kNo<P;kNo++) */
@@ -201,8 +191,6 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 #endif
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate));
-
-
 
     if (p->params->alg == ltfat_dgtmp_alg_LocOMP)
     {
@@ -323,18 +311,6 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
         CHECKSTATUS(
             LTFAT_NAME(dgtreal_execute_ana_newarray)(p->dgtplans[k], f, cEl));
 
-        /* if (p->params->do_pedantic) */
-        /*     for ( ltfat_int n = 0; n < p->N[k] ; n++) */
-        /*         for ( ltfat_int m = 0; m < p->M2[k]; m++) */
-        /*         { */
-        /*             ltfat_int l = m + n * p->M2[k]; */
-        /*             sEl[l] = */
-        /*                 LTFAT_NAME(dgtrealmp_execute_adjustedenergy)( p, kpoint_init(m, n, k), cEl[l]); */
-        /*         } */
-        /* else */
-        /*     for (size_t l = 0; l < (size_t) ( p->M2[k] * p->N[k]); l++ ) */
-        /*         sEl[l] = ltfat_norm(cEl[l]); */
-
         for (ltfat_int n = 0; n < p->N[k]; n++)
         {
             LTFAT_NAME(maxtree_reset_complex)(istate->fmaxtree[k][n], cEl + n * p->M2[k]);
@@ -432,21 +408,63 @@ LTFAT_NAME(dgtrealmp_revert)(
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute)(
     LTFAT_NAME(dgtrealmp_state)* p,
-    const LTFAT_REAL* f, LTFAT_COMPLEX** cout, LTFAT_REAL* fout)
+    const LTFAT_REAL f[], LTFAT_COMPLEX* cout[], LTFAT_REAL fout[])
+{
+    int status = LTFATERR_FAILED, status2 = LTFATERR_FAILED;
+    CHECKSTATUS( status2 = LTFAT_NAME(dgtrealmp_execute_decompose)(p,f,cout));
+    CHECKSTATUS(
+            LTFAT_NAME(dgtrealmp_execute_synthesize)(
+                p, (const LTFAT_COMPLEX**)cout, p->chanmask, fout));
+    return status2;
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_execute_synthesize)(
+    LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_COMPLEX* c[], int dict_mask[], LTFAT_REAL f[])
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p); CHECKNULL(c);  CHECKNULL(f);
+
+    memset(f, 0, p->L * sizeof * f);
+
+    for (ltfat_int k = 0; k < p->P; k++)
+    {
+        if(dict_mask == NULL || dict_mask[k])
+        {
+            CHECKNULL(c[k]);
+            CHECKSTATUS(
+                LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[k], c[k], f));
+        }
+    }
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_execute_decompose)(
+    LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL f[], LTFAT_COMPLEX* c[])
 {
     int status = LTFATERR_SUCCESS;
     int status2 = LTFATERR_SUCCESS;
 
-    CHECKNULL(p); CHECKNULL(f); CHECKNULL(cout); CHECKNULL(fout);
+    CHECKNULL(p); CHECKNULL(f); CHECKNULL(c);
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmp_reset)( p, f));
 
     for (ltfat_int k = 0; k < p->P; k++)
-        memset(cout[k], 0, p->M2[k] * p->N[k] * sizeof * cout[k]);
+    {
+        CHECKNULL(c[k]);
+        memset(c[k], 0, p->M2[k] * p->N[k] * sizeof * c[k]);
+    }
 
     while ( LTFAT_DGTREALMP_STATUS_CANCONTINUE ==
             ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)(
-                            p, p->params->iterstep, cout)))
+                            p, p->params->iterstep, c)))
     {
         if (p->params->verbose)
         {
@@ -457,13 +475,38 @@ LTFAT_NAME(dgtrealmp_execute)(
     }
 
     CHECKSTATUS(status2);
-    memset(fout, 0, p->L * sizeof * fout);
-
-    for (ltfat_int k = 0; k < p->P; k++)
-        CHECKSTATUS(
-            LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[k], cout[k], fout));
+    /* memset(fout, 0, p->L * sizeof * fout); */
+    /*  */
+    /* for (ltfat_int k = 0; k < p->P; k++) */
+    /*     CHECKSTATUS( */
+    /*         LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[k], cout[k], fout)); */
 
     return status2;
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_execute_synthesizeresidual)(
+    LTFAT_NAME(dgtrealmp_state)* p, int dict_mask[], LTFAT_REAL f[])
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p); CHECKNULL(dict_mask); CHECKNULL(f);
+
+    memset(f, 0, p->L * sizeof * f);
+
+    for (ltfat_int k = 0; k < p->P; k++)
+    {
+        if(dict_mask[k])
+        {
+            CHECKNULL(p->iterstate->c[k]);
+            CHECKSTATUS(
+                LTFAT_NAME(dgtreal_execute_syn_newarray)( 
+                    p->dgtplans[k], p->iterstate->c[k], f));
+        }
+    }
+
+    return LTFATERR_SUCCESS;
 error:
     return status;
 }
@@ -477,11 +520,8 @@ LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_state)** p)
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
 
-    ltfat_safefree(pp->a);
-    ltfat_safefree(pp->M);
-    ltfat_safefree(pp->M2);
-    ltfat_safefree(pp->N);
-    ltfat_safefree(pp->couttmp);
+    LTFAT_SAFEFREEALL(pp->a,pp->M,pp->M2,pp->N,pp->chanmask,pp->couttmp);
+
 
     if (pp->params)
         ltfat_dgtmp_params_free(pp->params);
@@ -507,7 +547,9 @@ LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_state)** p)
     if (pp->gramkerns)
     {
         for (ltfat_int k = 0; k < pp->P * pp->P; k++)
-            LTFAT_NAME(dgtrealmp_kernel_done)( &pp->gramkerns[k]);
+        {
+                LTFAT_NAME(dgtrealmp_kernel_done)( &pp->gramkerns[k]);
+        }
 
         ltfat_free(pp->gramkerns);
         pp->gramkerns = NULL;
