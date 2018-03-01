@@ -1,10 +1,13 @@
-\mainpage libltfat - Large Time-Frequency Alalysis Toolbox Library
+\mainpage libltfat - Large Time-Frequency Analysis Toolbox Library 
+[Fork libltfat on Github](https://github.com/ltfat/libltfat)
 
-\warning This is work in progress. It is only relevant to the [refactor branch]( https://github.com/ltfat/libltfat/tree/refactor ).
-
-The library contains implementation of the following time-frequency transforms:
-
-* \ref dgttheory
+This is the standalone back end library of
+ [LTFAT](http://ltfat.github.io/) the Matlab/Octave 
+toolbox for working with time-frequency analysis and synthesis. It is intended
+both as an educational and a computational tool. The toolbox provides a large
+number of linear transforms including Gabor and wavelet transforms along with 
+routines for constructing windows (filter prototypes) and routines for 
+manipulating coefficients
 
 Function naming convention
 --------------------------
@@ -37,7 +40,7 @@ function for each of the four aforementioned types.
 Compatibility
 -------------
 
-Source code of the library comply with both C99 and C++11 standards.
+The source code of the library complies with both C99 and C++11 standards.
 
 When compiled with C99 enabled, \c ltfat_complex_d and \c ltfat_complex_s
 are effectively the following typedefs:
@@ -54,7 +57,7 @@ When compiled with C++11 enabled, the following typedefs are used:
 typedef std::complex<double> ltfat_complex_d;
 typedef std::complex<float> ltfat_complex_s;
 ~~~~~~~~~~~~~~~
-Description can be found here [std::complex](http://en.cppreference.com/w/cpp/numeric/complex).
+The description can be found here [std::complex](http://en.cppreference.com/w/cpp/numeric/complex).
 
 Arrays of complex data types from both C99 and C++11 are binary 
 compatible with simple arrays of basic types with the real and the imaginary parts interleaved in memory.
@@ -97,11 +100,6 @@ on the compiler
 </table>
 \c ltfat_complex_s expands the same way.
 
-\warning When using C99, you should n
-ot include \c fftw3.h before \c ltfat.h.
-The issue is described here [FFTW doc](http://www.fftw.org/doc/Complex-numbers.html)
-Basically \c complex.h must be included before \c fftw3.h and \c ltfat.h does that.
-
 Arrays, matrices and naming conventions
 ---------------------------------------
 
@@ -113,12 +111,16 @@ When an array represents a matrix, it is assumed that the columns are the
 first dimension and therefore they are stored continuously in memory.
 
 In the function headers, the data arrays are denoted with array brackets []
-and a pointer is used whenever refering to a single object. This distinction
+and a pointer is used whenever referring to a single object. This distinction
 is just cosmetics as the arrays decay to pointers anyway.
 
-Array sizes, indexes etc. are represented using \t ltfat_int :
+Array sizes, indexes etc. are represented using \t ltfat_int , which is defined as:
 ~~~~~~~~~~~~~~~{.c}
+#ifdef LTFAT_LARGEARRAYS
 typedef ptrdiff_t ltfat_int;
+#else
+typedef int       ltfat_int;
+#endif 
 ~~~~~~~~~~~~~~~
 \note Size of \t ptrdiff_t is system dependent.
 
@@ -127,14 +129,14 @@ Further, the following naming conventions are used consistently:
 <caption id="multi_row">Argument naming</caption>
 <tr><th>Arg. name</th><th>Definition</th></tr>
 <tr><td>f</td><td>Time domain signal</td></tr>
-<tr><td>g,gd,gt</td><td>Window, canonical dual window, canonical tight window </td></tr>
+<tr><td>g,gd,gt</td><td>Window (filter), canonical dual window, canonical tight window </td></tr>
 <tr><td>c</td><td>Coefficients</td></tr>
 <tr><td>a</td><td>Integer. Time hop size.</td></tr>
 <tr><td>M</td><td>Integer. Number of frequency channels (FFT length).</td></tr>
 <tr><td>M2</td><td>Integer. Number of unique frequency channels for real signals:
 M2=M/2+1.</td></tr>
 <tr><td>L</td><td>Integer. Length of the signal. </td></tr>
-<tr><td>N</td><td>Integer. Nuber of time shifts: N=L/a.</td></tr>
+<tr><td>N</td><td>Integer. Number of time shifts: N=L/a.</td></tr>
 <tr><td>W</td><td>Integer. Number of signal channels.</td></tr>
 </table>
 
@@ -155,7 +157,7 @@ convenient to create a __plan__ using the appropriate *_init function,
 call the *_execute function multiple times and destroy the plan by
 calling the *_done function.
 The plan usually contains some precomputed read-only data,
-working arrays and FFTW plans.
+working arrays and other plans.
 The plan is represented as a pointer to an opaque structure and here
 is an example how to use it: 
 ~~~~~~~~~~~~~~~{.c}
