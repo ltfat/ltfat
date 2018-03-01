@@ -120,7 +120,7 @@ void* ltfat_calloc (size_t nmemb, size_t size);
 LTFAT_API
 void* ltfat_realloc (void *ptr, size_t nold, size_t nnew);
 
-/** Increase a size of a memory block
+/** Increase the size of a memory block
  *
  *  The function will call \a ltfat_realloc only if \a nnew > \a nold and
  *  sets the padded elements to 0. Otherwise it does nothing.

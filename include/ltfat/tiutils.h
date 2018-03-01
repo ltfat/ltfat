@@ -191,15 +191,59 @@ LTFAT_NAME(real2complex_array)(const LTFAT_REAL in[], ltfat_int L, LTFAT_COMPLEX
  * ----------------------|--------------------------------------------
  * LTFATERR_SUCCESS      | Indicates no error
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
- * LTFATERR_BADSIZE         | Length of the arrays is less or equal to 0.
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  */
 LTFAT_API int
 LTFAT_NAME(complex2real_array)(const LTFAT_COMPLEX in[], ltfat_int L, LTFAT_REAL out[]);
 
-
+/** Convert coefficients from the dgtreal format to the dgt format
+ * 
+ * \param[in]     cdgtreal  Input array
+ * \param[in]           M   Number of channels 
+ * \param[in]           N   Number of time shifts
+ * \param[out]       cdgt   Output array
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltaft_dgtreal2dgt_d(const ltfat_complex_d in[], ltfat_int M, ltfat_int N, double out[]);
+ *
+ *  ltfat_dgtreal2dgt_s(const ltfat_complex_s in[], ltfat_int M, ltfat_int N, float out[]);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less than 0.
+ */
 LTFAT_API int
 LTFAT_NAME_COMPLEX(dgtreal2dgt)(const LTFAT_COMPLEX* cdgtreal, ltfat_int M,
                                 ltfat_int N, LTFAT_COMPLEX* cdgt);
+
+/** Convert coefficients from the dgt format to the dgtreal format
+ *
+ * Note this will discard the frequency channels beyond Nyquist channel M/2+1
+ * 
+ * \param[in]        cdgt   Input array
+ * \param[in]           M   Number of channels 
+ * \param[in]           N   Number of time shifts
+ * \param[out]   cdgtreal   Output array
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltaft_dgt2dgtreal_d(const ltfat_complex_d in[], ltfat_int M, ltfat_int N, double out[]);
+ *
+ *  ltfat_dgt2dgtreal_s(const ltfat_complex_s in[], ltfat_int M, ltfat_int N, float out[]);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less than 0.
+ */
 
 LTFAT_API int
 LTFAT_NAME_COMPLEX(dgt2dgtreal)(const LTFAT_COMPLEX* cdgt, ltfat_int M,
