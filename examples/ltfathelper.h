@@ -9,6 +9,9 @@
 #ifdef __cplusplus
 #include <chrono>
 #include <iostream>
+#include <vector>
+#include <memory>
+#include "utils/cxxopts.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 using namespace std;
