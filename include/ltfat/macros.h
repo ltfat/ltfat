@@ -40,7 +40,7 @@
 
 
 #define CHECK(errcode, A, ...) do{ if(!(A)){status=(errcode); ltfat_error(status, __FILE__, __LINE__,__func__ , __VA_ARGS__); goto error;}}while(0)
-#define CHECKSTATUS(A) do{ int checkstatustmp=(A); if(checkstatustmp<0){ status = checkstatustmp; goto error;}}while(0)
+#define CHECKSTATUS(A) do{ ptrdiff_t checkstatustmp=(A); if(checkstatustmp<0){ status = checkstatustmp; goto error;}}while(0)
 
 // The following cannot be just
 // #define CHECKSTATUS(errcode, M)  CHECK(errcode,!(errcode), M)
