@@ -13,24 +13,24 @@ typedef enum
 {
     /** Don't normalize */
     LTFAT_NORM_NULL = 0,
-    /** Normalize to 1 norm (divide by the sum of abs. values)  */
+    /**  1 norm (divide by the sum of abs. values)  */
     /**@{*/
     LTFAT_NORM_AREA,
     LTFAT_NORM_1 = LTFAT_NORM_AREA,
     /**@}*/
-    /** Normalize to 2 norm (divide by the square root of sum of squares of abs. values) */
+    /**  2 norm (divide by the square root of sum of squares of abs. values) */
     /**@{*/
     LTFAT_NORM_ENERGY,
     LTFAT_NORM_2 = LTFAT_NORM_ENERGY,
     /**@}*/
-    /** Normalize to inf norm (divide by the max abs. val.)*/
+    /**  inf norm (divide by the max abs. val.)*/
     /**@{*/
     LTFAT_NORM_INF,
     LTFAT_NORM_PEAK = LTFAT_NORM_INF,
     /**@}*/
     // LTFAT_NORM_RMS,
     // LTFAT_NORM_WAV,
-} ltfat_normalize_t;
+} ltfat_norm_t;
 
 
 typedef enum
@@ -42,11 +42,11 @@ typedef enum
 
 #endif
 
-/** Shift array circurarly
+/** Shift array circularly
  *
  *  Works exactly like
  *  <a href="http://de.mathworks.com/help/matlab/ref/circshift.html">circshift</a>
- *  form Matlab.
+ *  from Matlab.
  *
  * \param[in]     in  Input array
  * \param[in]      L  Length of arrays
@@ -75,13 +75,72 @@ LTFAT_API int
 LTFAT_NAME(circshift)(const LTFAT_TYPE in[], ltfat_int L,
                       ltfat_int shift, LTFAT_TYPE out[]);
 
+/** Shift columns of a matrix circularly
+ *
+ *  Works like circshift but with entire cols.
+ *
+ * \param[in]     in  Input array
+ * \param[in]      L  Length of cols
+ * \param[in]      W  Number of cols
+ * \param[in]  shift  Shift amount (can be negative)
+ * \param[out]   out  Output array
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltfat_circshiftcols_d(const double in[], ltfat_int L, ltfat_int W, ltfat_int shift, double out[]);
+ *
+ *  ltfat_circshiftcols_s(const float in[], ltfat_int L, ltfat_int W, ltfat_int shift, float out[]);
+ *
+ *  ltfat_circshiftcols_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_int W, ltfat_int shift, ltfat_complex_d out[]);
+ *
+ *  ltfat_circshiftcols_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_int W, ltfat_int shift, ltfat_complex_s out[]);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ */
 LTFAT_API int
-LTFAT_NAME(circshiftcols)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
+LTFAT_NAME(circshiftcols)(const LTFAT_TYPE in[], ltfat_int L, ltfat_int W,
                           ltfat_int shift, LTFAT_TYPE out[]);
 
+/** 2D circshift
+ *
+ *  Works exactly like
+ *  <a href="http://de.mathworks.com/help/matlab/ref/circshift.html">circshift</a>
+ *  from Matlab for matrices.
+ *
+ * \param[in]             in  Input array
+ * \param[in]              H  Number of rows
+ * \param[in]              W  Number of columns
+ * \param[in]      shift_row  Shift amount (can be negative)
+ * \param[in]      shift_col  Shift amount (can be negative)
+ * \param[out]   out  Output array
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltfat_circshift2_d(const double in[], ltfat_int H, ltfat_int W, ltfat_int shift_row, ltfat_int shift_col, double out[]);
+ *
+ *  ltfat_circshift2_s(const float in[], ltfat_int H, ltfat_int W, ltfat_int shift_row, ltfat_int shift_col, float out[]);
+ *
+ *  ltfat_circshift2_dc(const ltfat_complex_d in[], ltfat_int H, ltfat_int W, ltfat_int shift_row, ltfat_int shift_col, ltfat_complex_d out[]);
+ *
+ *  ltfat_circshift2_sc(const ltfat_complex_s in[], ltfat_int H, ltfat_int W, ltfat_int shift_row, ltfat_int shift_col, ltfat_complex_s out[]);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ */
 LTFAT_API int
-LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int Hin, ltfat_int Win,
-                       ltfat_int shiftRow, ltfat_int shiftCol, LTFAT_TYPE out[]);
+LTFAT_NAME(circshift2)(const LTFAT_TYPE in[], ltfat_int H, ltfat_int W,
+                       ltfat_int shift_row, ltfat_int shift_col, LTFAT_TYPE out[]);
 
 /** fftshift an array
  *
@@ -145,16 +204,17 @@ LTFAT_NAME(fftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
 LTFAT_API int
 LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
 
-/** Change signal length
+/** Change signal length by inserting zeros in the middle
  *
  *  Works exactly like
  *  <a href="http://ltfat.github.io/doc/fourier/middlepad.html">middlepad</a>
  *  form LTFAT i.e. extends \a in by inserting zeros in the middle or
- *  removes the middlepart such that the output is \a Lout.
+ *  removes the middle part such that the output is \a Lout.
  *
  *
  * \param[in]     in  Input array
  * \param[in]    Lin  Length of input array
+ * \param[in]    sym  Which symmetry to preserve
  * \param[in]   Lout  Length of output array
  * \param[out]   out  Output array
  *
@@ -177,11 +237,39 @@ LTFAT_NAME(ifftshift)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
  * LTFATERR_BADREQSIZE   | Output array is shorter than the input array: \a Llong < \a Lfir
  */
-
 LTFAT_API int
 LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_symmetry_t sym,
                       ltfat_int Lout, LTFAT_TYPE* out);
 
+
+/** Change signal length by repeating in[0] from both ends
+ *
+ * Intended to be used on windows e.g. from firwin
+ *
+ * \param[in]     in  Input array
+ * \param[in]    Lin  Length of input array
+ * \param[in]   Lout  Length of output array
+ * \param[out]   out  Output array
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltfat_peakpad_d(const double in[], ltfat_int Lin, ltfat_int Lout, double out[]);
+ *
+ *  ltfat_peakpad_s(const float in[], ltfat_int Lin, ltfat_int Lout, float out[]);
+ *
+ *  ltfat_peakpad_dc(const ltfat_complex_d in[], ltfat_int Lin, ltfat_int Lout, ltfat_complex_d out[]);
+ *
+ *  ltfat_peakpad_sc(const ltfat_complex_s in[], ltfat_int Lin, ltfat_int Lout, ltfat_complex_s out[]);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ * LTFATERR_BADREQSIZE   | Output array is shorter than the input array: \a Llong < \a Lfir
+ */
 LTFAT_API int
 LTFAT_NAME(peakpad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_int Lout, LTFAT_TYPE* out);
 
@@ -265,12 +353,67 @@ LTFAT_API int
 LTFAT_NAME(long2fir)(const LTFAT_TYPE in[], ltfat_int Llong, ltfat_int Lfir,
                      LTFAT_TYPE out[]);
 
+
+/** Compute norm of a vector
+ *
+ * \param[in]     in  Input array
+ * \param[in]      L  Length of input array
+ * \param[in]   flag  Norm
+ * \param[out]   out  Computed norm
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltfat_norm_d(const double in[], ltfat_int L, ltfat_norm_t flag, double* out);
+ *
+ *  ltfat_norm_s(const float in[], ltfat_int L, ltfat_norm_t flag flag, float* out);
+ *
+ *  ltfat_norm_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_norm_t flag, double* out);
+ *
+ *  ltfat_norm_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_norm_t flag, float* out);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either in or norm is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ * LTFATERR_CANNOTHAPPEN | Wrong ltfat_norm_t flag
+ */
 LTFAT_API int
 LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
-                 ltfat_normalize_t flag, LTFAT_REAL* norm);
+                 ltfat_norm_t flag, LTFAT_REAL* norm);
+
+/** Compute normalized signal-to-noise
+ *
+ * Such that snr=20*log10(norm(rec,2)/norm(in,2))
+ *
+ * \param[in]     in  Input array
+ * \param[in]    rec  Reconstructed array
+ * \param[in]      L  Length of the arrays
+ * \param[out]   snr  Computed snr
+ *
+ *  #### Function versions ####
+ *  <tt>
+ *  ltfat_snr_d(const double in[], const double rec[], ltfat_int L, double* out);
+ *
+ *  ltfat_snr_s(const float in[], const float rec[], ltfat_int L, float* out);
+ *
+ *  ltfat_snr_dc(const ltfat_complex_d in[], const ltfat_complex_d rec[], ltfat_int L, double* out);
+ *
+ *  ltfat_snr_sc(const ltfat_complex_s in[], const ltfat_complex_s rec[], ltfat_int L, float* out);
+ *  </tt>
+ *
+ * \returns
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_SUCCESS      | Indicates no error
+ * LTFATERR_NULLPOINTER  | Either in, rec or snr is NULL
+ * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
+ */
 
 LTFAT_API int
-LTFAT_NAME(snr)(const LTFAT_TYPE* in, LTFAT_TYPE* rec,
+LTFAT_NAME(snr)(const LTFAT_TYPE* in, const LTFAT_TYPE* rec,
                 ltfat_int L, LTFAT_REAL* snr);
 
 /** Normalize a vector
@@ -284,13 +427,13 @@ LTFAT_NAME(snr)(const LTFAT_TYPE* in, LTFAT_TYPE* rec,
  *
  *  #### Function versions ####
  *  <tt>
- *  ltfat_normalize_d(const double in[], ltfat_int L, ltfat_normalize_t flag, double out[]);
+ *  ltfat_normalize_d(const double in[], ltfat_int L, ltfat_norm_t flag, double out[]);
  *
- *  ltfat_normalize_s(const float in[], ltfat_int L, ltfat_normalize_t flag, float out[]);
+ *  ltfat_normalize_s(const float in[], ltfat_int L, ltfat_norm_t flag, float out[]);
  *
- *  ltfat_normalize_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_normalize_t flag, ltfat_complex_d out[]);
+ *  ltfat_normalize_dc(const ltfat_complex_d in[], ltfat_int L, ltfat_norm_t flag, ltfat_complex_d out[]);
  *
- *  ltfat_normalize_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_normalize_t flag, ltfat_complex_s out[]);
+ *  ltfat_normalize_sc(const ltfat_complex_s in[], ltfat_int L, ltfat_norm_t flag, ltfat_complex_s out[]);
  *  </tt>
  *
  * \returns
@@ -299,11 +442,11 @@ LTFAT_NAME(snr)(const LTFAT_TYPE* in, LTFAT_TYPE* rec,
  * LTFATERR_SUCCESS      | Indicates no error
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL
  * LTFATERR_BADSIZE      | Length of the arrays is less or equal to 0.
- * LTFATERR_CANNOTHAPPEN | \a flag is not defined in ltfat_normalize_t enum.
+ * LTFATERR_CANNOTHAPPEN | \a flag is not defined in ltfat_norm_t enum.
  */
 LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE in[], ltfat_int L,
-                      ltfat_normalize_t flag, LTFAT_TYPE out[]);
+                      ltfat_norm_t flag, LTFAT_TYPE out[]);
 
 /** Ensure the array has complex interleaved layout
  *

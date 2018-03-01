@@ -586,7 +586,7 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(norm)(const LTFAT_TYPE* in, ltfat_int L,
-                 ltfat_normalize_t flag, LTFAT_REAL* norm)
+                 ltfat_norm_t flag, LTFAT_REAL* norm)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(norm);
@@ -646,7 +646,7 @@ error:
 
 
 LTFAT_API int
-LTFAT_NAME(snr)(const LTFAT_TYPE* in, LTFAT_TYPE* rec,
+LTFAT_NAME(snr)(const LTFAT_TYPE* in, const LTFAT_TYPE* rec,
                 ltfat_int L, LTFAT_REAL* snr)
 {
     int status = LTFATERR_SUCCESS;
@@ -684,7 +684,7 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(normalize)(const LTFAT_TYPE* in, ltfat_int L,
-                      ltfat_normalize_t flag, LTFAT_TYPE* out)
+                      ltfat_norm_t flag, LTFAT_TYPE* out)
 {
     LTFAT_REAL normfac;
     int status = LTFATERR_SUCCESS;
@@ -747,7 +747,6 @@ LTFAT_NAME(peakpad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_int Lout,
     return LTFATERR_SUCCESS;
 error:
     return status;
-
 }
 
 
@@ -794,7 +793,7 @@ error:
 
 /* LTFAT_API LTFAT_REAL */
 /* LTFAT_NAME(norm)(const LTFAT_TYPE in[], ltfat_int L, */
-/*                  ltfat_normalize_t flag) */
+/*                  ltfat_norm_t flag) */
 /* { */
 /*     double retNorm = 0.0; */
 /*  */
