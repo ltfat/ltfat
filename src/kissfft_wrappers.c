@@ -2,7 +2,7 @@
 #include "ltfat.h"
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
-#include "kissfft/kiss_fft.h"
+#include "ltfat/thirdparty/kiss_fft.h"
 
 /****** FFT ******/
 struct LTFAT_NAME(fft_plan)
