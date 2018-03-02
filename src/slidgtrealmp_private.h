@@ -12,6 +12,8 @@ struct LTFAT_NAME(slidgtrealmp_state)
     int owning_slistate;
     LTFAT_COMPLEX** couttmp;
     ltfat_int P;
+    void* userdata;
+    LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback;
 };
 
 int

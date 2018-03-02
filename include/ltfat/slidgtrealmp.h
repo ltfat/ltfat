@@ -9,6 +9,10 @@ typedef struct LTFAT_NAME(slidgtrealmp_state) LTFAT_NAME(slidgtrealmp_state);
 typedef int LTFAT_NAME(slidgtrealmp_niter_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int taperLen, int zpadLen, int W, LTFAT_REAL out[]);
 
+typedef int LTFAT_NAME(slidgtrealmp_processor_execute_callback)(
+        void* userdata, LTFAT_NAME(dgtrealmp_state)* mpstate,
+        LTFAT_COMPLEX* cres[], LTFAT_COMPLEX* c[], int P, int M2[], int N[], int L, LTFAT_REAL f[]);
+
 // LTFAT_API int
 // LTFAT_NAME(slidgtrealmp_setnitercallback)(
 //         LTFAT_NAME(slidgtrealmp_state)* p,
@@ -46,6 +50,12 @@ LTFAT_NAME(slidgtrealmp_execute_compact)(
 
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_done)(LTFAT_NAME(slidgtrealmp_state)** p);
+
+LTFAT_API int
+LTFAT_NAME(slidgtrealmp_setcallback)(LTFAT_NAME(slidgtrealmp_state)* p,
+        LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback,
+        void* userdata);
+
 
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_reset)(

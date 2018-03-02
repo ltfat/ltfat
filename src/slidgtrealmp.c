@@ -67,7 +67,7 @@ LTFAT_NAME(slidgtrealmp_init_fromstates)(
 
     for (ltfat_int pidx = 0; pidx < p->P; pidx++)
         CHECKMEM( p->couttmp[pidx] = LTFAT_NAME_COMPLEX(malloc)(
-                                         mpstate->M2[pidx] * mpstate->L / mpstate->a[pidx]));
+                                         mpstate->M2[pidx] * (mpstate->L / mpstate->a[pidx])));
 
     LTFAT_NAME(slicing_processor_setcallback)( slistate,
             &LTFAT_NAME(slidgtrealmp_execute_callback), p);
@@ -163,11 +163,37 @@ LTFAT_NAME(slidgtrealmp_execute_callback)(void* userdata,
 
     for (ltfat_int w = 0; w < W; w++)
     {
-        LTFAT_NAME(dgtrealmp_reset)( p->mpstate, in + w * winLen);
-        LTFAT_NAME(dgtrealmp_execute)(
-            p->mpstate, in + w * winLen, p->couttmp, out + w * winLen);
+        LTFAT_NAME(dgtrealmp_execute_decompose)(
+            p->mpstate, in + w * winLen, p->couttmp);
+
+        if(p->callback)
+        {
+            p->callback(p->userdata, p->mpstate, p->mpstate->iterstate->c,
+                        p->couttmp, p->mpstate->P, p->mpstate->M2, p->mpstate->N,
+                        p->mpstate->L, out + w * winLen);
+        }
+        else
+        {
+            LTFAT_NAME(dgtrealmp_execute_synthesize)(
+                p->mpstate, (const LTFAT_COMPLEX**)p->couttmp, NULL, out + w * winLen);
+        }
+
     }
     return  0;
+}
+
+LTFAT_API int
+LTFAT_NAME(slidgtrealmp_setcallback)(LTFAT_NAME(slidgtrealmp_state)* p,
+        LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback,
+        void* userdata)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+    p->callback = callback;
+    p->userdata = userdata;
+    return LTFATERR_SUCCESS;
+error:
+    return status;
 }
 
 /* LTFAT_API int */
