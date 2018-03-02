@@ -1,8 +1,6 @@
-#include "../ltfathelper.h"
+#include "ltfathelper.h"
+#include "cxxopts.hpp"
 #include <sndfile.h>
-
-#include <fftw3.h>
-using namespace std;
 
 int loadwavfile(const char* name, vector<LTFAT_REAL>& f, int* Ls, int* W)
 {
@@ -40,10 +38,6 @@ const char* file = "/home/susnak/dev/mptk/bin/39ch1.wav";
 
 int main(int argc, char* argv[])
 {
-    if(fftw_import_wisdom_from_filename("/home/susnak/dev/mptk/mptk/default_fftw_wisdom_filemptk"))
-    {
-        cout << "Wisdom laoded!!\n";
-    }
 
     if (!ltfat_int_is_compatible(sizeof(int)))
     {

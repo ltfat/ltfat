@@ -6,7 +6,7 @@ PROGS = $(patsubst %.cpp,%,$(SRC))
 all: $(PROGS)
 
 %: %.cpp
-	$(CXX) $(CFLAGS) -I.. $< -o $@ ../../build/libltfat.a -lblas -llapack -lfftw3 -lfftw3f -lc -lm -lsndfile
+	$(CXX) $(CFLAGS) -I../utils $< -o $@ ../../build/libltfat.a -lblas -llapack -lfftw3 -lfftw3f -lc -lm -lsndfile
 
 clean:
 	-rm $(PROGS)
