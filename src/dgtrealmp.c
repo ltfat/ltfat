@@ -72,7 +72,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
               p, gl[p], L);
 
         LTFAT_REAL gnorm; LTFAT_NAME(norm)(g[p], gl[p], LTFAT_NORM_ENERGY, &gnorm);
-        CHECK(LTFATERR_BADARG, ltfat_abs(gnorm - 1.0) < 1e-6,
+        CHECK(LTFATERR_BADARG, ltfat_abs(gnorm - 1.0) < 1e-4,
               "Window g[%td] is not normalized. The norm is %.3f.", p, gnorm);
     }
 
