@@ -7,7 +7,7 @@
 ltfat_error_handler_t* ltfat_error_handler = NULL;
 
 static void no_error_handler (int ltfat_errno, const char* file, int line,
-                              const char* funcname, const char* reason);
+                              const char* funcname, const char* reason){};
 
 LTFAT_API void
 ltfat_error (int ltfat_errno, const char* file, int line,
@@ -55,7 +55,4 @@ ltfat_set_error_handler_off (void)
     return previous_handler;
 }
 
-static void
-no_error_handler ( int UNUSED(ltfat_errno), const char* UNUSED(file),
-                   int UNUSED(line), const char* UNUSED(funcname),
-                   const char* UNUSED(reason) ) {}
+

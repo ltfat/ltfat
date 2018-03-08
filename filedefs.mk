@@ -21,4 +21,4 @@ files_fftw_complextransp = dct.c dst.c
 files_notypechange = memalloc.c error.c version.c argchecks.c \
 					 dgtwrapper_typeconstant.c dgtrealmp_typeconstant.c  \
 				   	 reassign_typeconstant.c wavelets_typeconstant.c \
-					 integer_manip.c
+					 integer_manip.c firwin_typeconstant.c

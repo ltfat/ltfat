@@ -334,11 +334,6 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_synthesize)(
     LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_COMPLEX* c[], int dict_mask[], LTFAT_REAL f[]);
 
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_synthesizeresidual)(
-    LTFAT_NAME(dgtrealmp_state)* p, int dict_mask[], LTFAT_REAL f[]);
-
-
 /** @}*/
 
 /***********************************************************************/

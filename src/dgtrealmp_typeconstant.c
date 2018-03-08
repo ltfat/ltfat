@@ -174,7 +174,8 @@ ltfat_dgtmp_setpar_kernrelthr(
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     CHECK(LTFATERR_BADARG, thr <= 1 && thr >= 0,
-          "Relative threshold must be in range [0-1] (passed %s)", thr);
+          "Relative threshold must be in range [0-1] (passed %f)."
+          " Using previously set threshold %f", thr, params->kernrelthr);
     params->kernrelthr = thr;
 error:
     return status;

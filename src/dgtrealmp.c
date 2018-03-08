@@ -108,7 +108,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
 #ifdef NOBLASLAPACK
     CHECK( LTFATERR_NOBLASLAPACK,
-           p->params->alg != ltfat_dgtrealmp_alg_LocOMP,
+           p->params->alg != ltfat_dgtmp_alg_LocOMP,
            "LocOMP requires LAPACK, but libltfat was compiled without it.");
 #endif
 
@@ -486,30 +486,30 @@ error:
     return status;
 }
 
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_synthesizeresidual)(
-    LTFAT_NAME(dgtrealmp_state)* p, int dict_mask[], LTFAT_REAL f[])
-{
-    int status = LTFATERR_FAILED;
-    CHECKNULL(p); CHECKNULL(dict_mask); CHECKNULL(f);
-
-    memset(f, 0, p->L * sizeof * f);
-
-    for (ltfat_int k = 0; k < p->P; k++)
-    {
-        if(dict_mask[k])
-        {
-            CHECKNULL(p->iterstate->c[k]);
-            CHECKSTATUS(
-                LTFAT_NAME(dgtreal_execute_syn_newarray)( 
-                    p->dgtplans[k], p->iterstate->c[k], f));
-        }
-    }
-
-    return LTFATERR_SUCCESS;
-error:
-    return status;
-}
+/* LTFAT_API int */
+/* LTFAT_NAME(dgtrealmp_execute_synthesizeresidual)( */
+/*     LTFAT_NAME(dgtrealmp_state)* p, int dict_mask[], LTFAT_REAL f[]) */
+/* { */
+/*     int status = LTFATERR_FAILED; */
+/*     CHECKNULL(p); CHECKNULL(f); */
+/*  */
+/*     memset(f, 0, p->L * sizeof * f); */
+/*  */
+/*     for (ltfat_int k = 0; k < p->P; k++) */
+/*     { */
+/*         if(dict_mask == NULL || dict_mask[k]) */
+/*         { */
+/*             CHECKNULL(p->iterstate->c[k]); */
+/*             CHECKSTATUS( */
+/*                 LTFAT_NAME(dgtreal_execute_syn_newarray)(  */
+/*                     p->dgtplans[k], p->iterstate->c[k], f)); */
+/*         } */
+/*     } */
+/*  */
+/*     return LTFATERR_SUCCESS; */
+/* error: */
+/*     return status; */
+/* } */
 
 
 LTFAT_API int

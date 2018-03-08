@@ -25,9 +25,13 @@ typedef enum
     LTFAT_NUTTALL30,
     LTFAT_NUTTALL21,
     LTFAT_NUTTALL03,
-    LTFAT_TRUNCGAUSS01
+    LTFAT_TRUNCGAUSS01,
 }
 LTFAT_FIRWIN;
+
+LTFAT_API int
+ltfat_str2firwin(const char* name);
+
 
 #endif /* _CI_WINDOWS_H */
 
