@@ -249,3 +249,31 @@ LTFAT_API int
 LTFAT_NAME(dgt_done)(LTFAT_NAME(dgt_plan)** p);
 
 /** @} */
+
+int
+LTFAT_NAME(idgt_long_execute_wrapper)(void* plan, const LTFAT_COMPLEX* c,
+        ltfat_int L, ltfat_int W, LTFAT_COMPLEX* f);
+
+int
+LTFAT_NAME(dgt_long_execute_wrapper)(void* plan, const LTFAT_TYPE* f,
+        ltfat_int L, ltfat_int W, LTFAT_COMPLEX* c);
+
+int
+LTFAT_NAME(idgt_fb_execute_wrapper)(void* plan, const LTFAT_COMPLEX* c, ltfat_int L,
+        ltfat_int W, LTFAT_COMPLEX* f);
+
+int
+LTFAT_NAME(dgt_fb_execute_wrapper)(void* plan, const LTFAT_TYPE* f, ltfat_int L, ltfat_int W,
+        LTFAT_COMPLEX* c);
+
+int
+LTFAT_NAME(idgt_long_done_wrapper)(void** plan);
+
+int
+LTFAT_NAME(dgt_long_done_wrapper)(void** plan);
+
+int
+LTFAT_NAME(idgt_fb_done_wrapper)(void** plan);
+
+int
+LTFAT_NAME(dgt_fb_done_wrapper)(void** plan);

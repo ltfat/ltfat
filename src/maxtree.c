@@ -2,13 +2,6 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
-int
-LTFAT_NAME(maxtree_updatedirty)(LTFAT_NAME(maxtree)* p);
-
-int
-LTFAT_NAME(maxtree_updaterange)(
-    LTFAT_NAME(maxtree)* p, ltfat_int start, ltfat_int stop);
-
 struct LTFAT_NAME(maxtree)
 {
     ltfat_int dirtystart;

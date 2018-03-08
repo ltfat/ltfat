@@ -42,3 +42,10 @@ LTFAT_NAME(maxtree_findmax)(
 
 LTFAT_API int
 LTFAT_NAME(maxtree_done)(LTFAT_NAME(maxtree)** p);
+
+int
+LTFAT_NAME(maxtree_updatedirty)(LTFAT_NAME(maxtree)* p);
+
+int
+LTFAT_NAME(maxtree_updaterange)(
+    LTFAT_NAME(maxtree)* p, ltfat_int start, ltfat_int stop);

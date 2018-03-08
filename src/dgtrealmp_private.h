@@ -167,6 +167,11 @@ LTFAT_NAME(dgtrealmp_execute_dualprojenergy)(
     return LTFAT_NAME(dgtrealmp_execute_projenergy)( atinprod, cvaldual);
 }
 
+/* BEGIN_C_DECLS */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int
 LTFAT_NAME(dgtrealmpiter_init)(
     ltfat_int a[], ltfat_int M[], ltfat_int P, ltfat_int L,
@@ -293,5 +298,11 @@ LTFAT_NAME(dgtrealmp_execute_realatenergy)(
     LTFAT_NAME(dgtrealmp_state)* p,
     kpoint pos, LTFAT_COMPLEX cval);
 
+LTFAT_REAL
+LTFAT_NAME(pedantic_callback)(void* userdata,
+                              LTFAT_COMPLEX cval, ltfat_int pos);
+#ifdef __cplusplus
+}  // extern "C"
+#endif
 
 #endif

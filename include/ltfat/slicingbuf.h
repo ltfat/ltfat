@@ -58,4 +58,8 @@ LTFAT_API int
 LTFAT_NAME(slicing_processor_settaper)(
     LTFAT_NAME(slicing_processor_state)* p, const LTFAT_REAL g[], int do_analysis);
 
+int
+LTFAT_NAME(slicing_processor_execute_callback)(void* userdata,
+        const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
+
 

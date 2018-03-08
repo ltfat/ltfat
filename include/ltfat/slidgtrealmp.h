@@ -60,3 +60,10 @@ LTFAT_NAME(slidgtrealmp_setcallback)(LTFAT_NAME(slidgtrealmp_state)* p,
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_reset)(
         LTFAT_NAME(slidgtrealmp_state)* p);
+
+/* PRIVATE */
+
+int
+LTFAT_NAME(slidgtrealmp_execute_callback)(void* userdata,
+        const LTFAT_REAL in[], int winLen, int taperLen, 
+        int zpadLen, int W, LTFAT_REAL out[]);

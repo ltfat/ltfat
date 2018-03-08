@@ -16,7 +16,4 @@ struct LTFAT_NAME(slidgtrealmp_state)
     LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback;
 };
 
-int
-LTFAT_NAME(slidgtrealmp_execute_callback)(void* userdata,
-        const LTFAT_REAL in[], int winLen, int taperLen, 
-        int zpadLen, int W, LTFAT_REAL out[]);
+

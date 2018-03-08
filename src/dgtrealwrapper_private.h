@@ -21,34 +21,5 @@ struct LTFAT_NAME(dgtreal_plan)
     LTFAT_NAME(donefunc)* fwddonefunc;
 };
 
-
-int
-LTFAT_NAME(idgtreal_long_execute_wrapper)(void* plan, const LTFAT_COMPLEX* c,
-        ltfat_int L, ltfat_int W, LTFAT_REAL* f);
-
-int
-LTFAT_NAME(dgtreal_long_execute_wrapper)(void* plan, const LTFAT_REAL* f,
-        ltfat_int L, ltfat_int W, LTFAT_COMPLEX* c);
-
-int
-LTFAT_NAME(idgtreal_fb_execute_wrapper)(void* plan, const LTFAT_COMPLEX* c, ltfat_int L,
-        ltfat_int W, LTFAT_REAL* f);
-
-int
-LTFAT_NAME(dgtreal_fb_execute_wrapper)(void* plan, const LTFAT_REAL* f, ltfat_int L, ltfat_int W,
-        LTFAT_COMPLEX* c);
-
-int
-LTFAT_NAME(idgtreal_long_done_wrapper)(void** plan);
-
-int
-LTFAT_NAME(dgtreal_long_done_wrapper)(void** plan);
-
-int
-LTFAT_NAME(idgtreal_fb_done_wrapper)(void** plan);
-
-int
-LTFAT_NAME(dgtreal_fb_done_wrapper)(void** plan);
-
 #endif
 
