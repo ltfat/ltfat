@@ -1,10 +1,14 @@
 typedef struct LTFAT_NAME(idgtreal_fb_plan) LTFAT_NAME(idgtreal_fb_plan);
 
 /**
- *  \addtogroup dgtrealfb
+ *  \addtogroup dgt
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
  */
+
+/** \name IDGTREAL using filter bank algorithm
+ * 
+ * @{ */
 
 /** Compute Inverse Discrete Gabor Transform for real signals using filter bank algorithm
  *
@@ -139,4 +143,5 @@ LTFAT_NAME(idgtreal_fb_execute)(LTFAT_NAME(idgtreal_fb_plan)* plan, const LTFAT_
 LTFAT_API int
 LTFAT_NAME(idgtreal_fb_done)(LTFAT_NAME(idgtreal_fb_plan)** p);
 
+/** @}*/
 /** @}*/

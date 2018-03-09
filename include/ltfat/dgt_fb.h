@@ -1,10 +1,13 @@
 typedef struct LTFAT_NAME(dgt_fb_plan) LTFAT_NAME(dgt_fb_plan);
 
-/** \defgroup dgtfb Discrete Gabor Transform for FIR windows -- dgt_fb
- *  \addtogroup dgtfb
+/** 
+ *  \addtogroup dgt
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
  */
+
+ /** \name DGT using filter bank algorithm
+  * @{ */
 
 /** Compute Discrete Gabor Transform using filter bank algorithm
  *

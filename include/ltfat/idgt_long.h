@@ -1,11 +1,12 @@
 typedef struct LTFAT_NAME(idgt_long_plan) LTFAT_NAME(idgt_long_plan);
 
 /**
- *  \addtogroup dgtlong
+ *  \addtogroup dgt
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
  */
-
+ /** \name IDGT using factorization algorithm
+  * @{ */
 
 /** Computes inverse Discrete Gabor Transform using the factorization algorithm
  *
@@ -160,6 +161,7 @@ LTFAT_NAME(idgt_long_execute_newarray)(LTFAT_NAME(idgt_long_plan)* p,
  */
 LTFAT_API int
 LTFAT_NAME(idgt_long_done)(LTFAT_NAME(idgt_long_plan)** plan);
+/** @}*/
 /** @}*/
 
 // LTFAT_API void

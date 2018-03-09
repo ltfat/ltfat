@@ -1,10 +1,13 @@
 typedef struct LTFAT_NAME(dgt_long_plan) LTFAT_NAME(dgt_long_plan);
 
-/** \defgroup dgtlong Discrete Gabor Transform for long windows -- dgt_long
- *  \addtogroup dgtlong
+/** \defgroup dgt Discrete Gabor Transform 
+ *  \addtogroup dgt
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
  */
+
+ /** \name DGT using factorization algorithm
+  * @{ */
 
 /** Computes DGT
  *
@@ -166,6 +169,7 @@ LTFAT_NAME(dgt_long_execute_newarray)(LTFAT_NAME(dgt_long_plan)* plan,
 LTFAT_API int
 LTFAT_NAME(dgt_long_done)(LTFAT_NAME(dgt_long_plan)** plan);
 
+/** @}*/
 /** @}*/
 
 LTFAT_API int

@@ -1,3 +1,5 @@
+/** \defgroup slidgtrealmp Slicing 
+*/
 #ifndef _LTFAT_SLIDGTREALMP_H
 #define _LTFAT_SLIDGTREALMP_H
 
@@ -21,8 +23,6 @@ typedef int LTFAT_NAME(slidgtrealmp_processor_execute_callback)(
 //
 //
 
-LTFAT_API ltfat_int
-LTFAT_NAME(slidgtrealmp_getprocdelay)( LTFAT_NAME(slidgtrealmp_state)* p);
 
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_init)(
@@ -56,10 +56,12 @@ LTFAT_NAME(slidgtrealmp_setcallback)(LTFAT_NAME(slidgtrealmp_state)* p,
         LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback,
         void* userdata);
 
-
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_reset)(
         LTFAT_NAME(slidgtrealmp_state)* p);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(slidgtrealmp_getprocdelay)( LTFAT_NAME(slidgtrealmp_state)* p);
 
 /* PRIVATE */
 

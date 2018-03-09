@@ -1,10 +1,13 @@
 typedef struct LTFAT_NAME(dgtreal_fb_plan) LTFAT_NAME(dgtreal_fb_plan);
 
-/** \defgroup dgtrealfb Discrete Gabor Transform for real signals and FIR windows -- dgtreal_fb
- *  \addtogroup dgtrealfb
+/** 
+ *  \addtogroup dgt
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
  */
+
+/** \name DGTREAL using filter bank algorithm
+ * @{ */
 
 /** Compute Discrete Gabor Transform for real signals using filter bank algorithm
  *
@@ -136,4 +139,5 @@ LTFAT_NAME(dgtreal_fb_execute)(LTFAT_NAME(dgtreal_fb_plan)* plan,
 LTFAT_API int
 LTFAT_NAME(dgtreal_fb_done)(LTFAT_NAME(dgtreal_fb_plan)** plan);
 
+/** @}*/
 /** @}*/

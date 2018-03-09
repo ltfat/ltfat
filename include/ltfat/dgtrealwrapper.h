@@ -2,10 +2,13 @@
 
 typedef struct LTFAT_NAME(dgtreal_plan) LTFAT_NAME(dgtreal_plan);
 
-/** \addtogroup dgtrealwrapper
+/** \addtogroup dgtwrapper
  * @{
  *
  */
+
+/** \name DGTREAL wrapper interface
+ * @{ */
 
 /**
  * Note c can be NULL if FFTW_ESTIMATE is used in flags
@@ -133,6 +136,7 @@ LTFAT_NAME(dgtreal_execute_ana)(LTFAT_NAME(dgtreal_plan)* p);
 LTFAT_API int
 LTFAT_NAME(dgtreal_done)(LTFAT_NAME(dgtreal_plan)** p);
 
+/** @} */
 /** @} */
 
 int

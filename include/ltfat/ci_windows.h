@@ -30,6 +30,17 @@ typedef enum
 }
 LTFAT_FIRWIN;
 
+/** Convert lowercase string to a firwin enum
+ *
+ * E.g. "hann" returns LTFAT_HANN etc.
+ *
+ * \param[in]   win  Window type
+ * \returns
+ * LTFAT_FIRWIN integer
+ * Status code           | Description
+ * ----------------------|--------------------------------------------
+ * LTFATERR_BADARG       | Unsupported string
+ */
 LTFAT_API int
 ltfat_str2firwin(const char* name);
 

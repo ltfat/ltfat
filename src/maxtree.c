@@ -61,16 +61,17 @@ LTFAT_NAME(maxtree_init)(
     CHECKMEM( p->levelL = LTFAT_NEWARRAY(ltfat_int, depth + 1) );
     CHECKMEM( p->treePtrs = LTFAT_NEWARRAY(LTFAT_REAL*, depth + 1) );
 
-    for (ltfat_int d = 0; d < depth + 1; d++)
+    p->levelL[depth] = L;
+    for (ltfat_int d = 1; d < depth + 1; d++)
     {
-        ltfat_int dpow2 = 1 << d;
-        p->levelL[depth - d] = (L + dpow2 - 1) / dpow2;
+        ltfat_int Llevel = ltfat_idivceil(L, 1 << (d));
+        p->levelL[depth - d] = Llevel + Llevel%2;
     }
 
     if (depth > 0)
     {
 
-        CHECKMEM( p->treeVals = LTFAT_NAME_REAL(calloc)( nextL));
+        CHECKMEM( p->treeVals = LTFAT_NAME_REAL(calloc)( nextL ));
         CHECKMEM( p->treePos = LTFAT_NEWARRAY(ltfat_int, nextL ) );
         CHECKMEM( p->treePosPtrs = LTFAT_NEWARRAY(ltfat_int*, depth ) );
 
@@ -273,7 +274,6 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
 
     for (ltfat_int d = p->depth - 1; d > 0; d--)
     {
-        parity =  end >= p->levelL[d] ? end % 2 : 0;
         start = start - start % 2;
         end   = end   + end % 2;
         start = start >> 1; end = end >> 1;
@@ -283,7 +283,7 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
         ltfat_int* treePos      = p->treePosPtrs[d];
         ltfat_int* treePosnext  = p->treePosPtrs[d - 1];
 
-        ltfat_int endmpar = end - parity - start;
+        ltfat_int endmpar = end - start;
         ltfat_int newl = start - 1;
 
         for (ltfat_int l = 0; l < endmpar; l++)
@@ -304,13 +304,6 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
                 treePosnext[newl] = treePos[twolp1];
             }
         }
-
-        if ( parity )
-        {
-            treeValnext[end - 1] = treeVal[2 * (end - 1)];
-            treePosnext[end - 1] = treePos[2 * (end - 1)];
-        }
-
     }
 
     return 0;

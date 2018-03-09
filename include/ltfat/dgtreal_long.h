@@ -1,11 +1,13 @@
 /*   --- dgtreal_long class definition  --- */
 typedef struct LTFAT_NAME(dgtreal_long_plan) LTFAT_NAME(dgtreal_long_plan);
 
-/** \defgroup dgtreallong Discrete Gabor Transform for real signals and long windows -- dgtreal_long
- *  \addtogroup dgtreallong
+/** 
+ *  \addtogroup dgt
  * @{
- * For a detailed description see the dedicated page \ref dgttheory
  */
+
+/** \name DGTREAL using factorization algorithm
+ * @{ */
 
 /** Compute Discrete Gabor Transform for real signals using the factorization algorithm
  *
@@ -159,6 +161,7 @@ LTFAT_NAME(dgtreal_long_execute_newarray)(LTFAT_NAME(dgtreal_long_plan)* plan,
 LTFAT_API int
 LTFAT_NAME(dgtreal_long_done)(LTFAT_NAME(dgtreal_long_plan)** plan);
 
+/** @}*/
 /** @}*/
 
 LTFAT_API int

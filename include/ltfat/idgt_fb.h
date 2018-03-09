@@ -1,10 +1,13 @@
 typedef struct LTFAT_NAME(idgt_fb_plan) LTFAT_NAME(idgt_fb_plan);
 
 /** 
- *  \addtogroup dgtfb
+ *  \addtogroup dgt
  * @{
  * For a detailed description see the dedicated page \ref dgttheory
  */
+
+ /** \name IDGT using filter bank algorithm
+  * @{ */
 
 /** Compute Inverse Discrete Gabor Transform using filter bank algorithm
  *

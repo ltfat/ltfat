@@ -1,4 +1,4 @@
-CXXFLAGS+=-Ofast -Wall -Wextra -std=c++1z
+CXXFLAGS+=-Ofast -Wall -Wextra -std=c++1z -g
 
 ifeq ($(TYPE),single)
 	CXXFLAGS+=-DLTFAT_SINGLE
@@ -16,7 +16,7 @@ $(PROGS): %: %.cpp $(libltfat)
 	$(CXX) $(CXXFLAGS) -I../utils $< -o $@ $(libltfat) -lfftw3 -lfftw3f -lc -lm -lsndfile 
 
 $(libltfat):
-	make -C ../.. -j12 USECPP=1 COMPTARGET=fulloptim NOBLASLAPACK=1 static
+	make -C ../.. -j12 NOBLASLAPACK=1 COMPTARGET=fulloptim static
 
 clean: cleanlib cleanexe
 

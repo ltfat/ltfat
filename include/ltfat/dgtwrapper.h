@@ -7,6 +7,9 @@ typedef struct LTFAT_NAME(dgt_plan) LTFAT_NAME(dgt_plan);
  *
  */
 
+/** \name DGT wrapper interface
+ * @{ */
+
 /**
  * Note c can be NULL if FFTW_ESTIMATE is used in flags
  *
@@ -248,6 +251,7 @@ LTFAT_NAME(dgt_execute_ana)(LTFAT_NAME(dgt_plan)* p);
 LTFAT_API int
 LTFAT_NAME(dgt_done)(LTFAT_NAME(dgt_plan)** p);
 
+/** @} */
 /** @} */
 
 int

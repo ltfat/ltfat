@@ -1,7 +1,7 @@
 #ifndef _ltfat_dgtwrapper_typeconstant_h
 #define _ltfat_dgtwrapper_typeconstant_h
 
-/** \defgroup dgtwrapper Discrete Gabor Transform analysis-synthesis;
+/** \defgroup dgtwrapper Discrete Gabor Transform analysis-synthesis
 */
 typedef struct ltfat_dgt_params ltfat_dgt_params;
 
@@ -13,6 +13,9 @@ typedef enum
     ltfat_dgt_long,
     ltfat_dgt_fb
 } ltfat_dgt_hint;
+
+/** \name Parameter setup struct
+ * @{ */
 
 /** Allocate dgt_params structure and initialize to default values
  *
@@ -75,6 +78,7 @@ ltfat_dgt_setpar_normalizewin(ltfat_dgt_params* params,
 LTFAT_API int
 ltfat_dgt_params_free(ltfat_dgt_params* params);
 
+/** @} */
 /** @} */
 
 // The following function is not part of API
