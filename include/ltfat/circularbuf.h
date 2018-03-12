@@ -1,3 +1,5 @@
+/** \defgroup block_processor Block processor
+ */
 #ifndef _LTFAT_CIRCULARBUF_H
 #define _LTFAT_CIRCULARBUF_H
 
@@ -6,57 +8,92 @@
 
 typedef struct LTFAT_NAME(analysis_fifo_state) LTFAT_NAME(analysis_fifo_state);
 typedef struct LTFAT_NAME(synthesis_fifo_state) LTFAT_NAME(synthesis_fifo_state);
-typedef struct LTFAT_NAME(fifo_processor_state) LTFAT_NAME(fifo_processor_state);
+typedef struct LTFAT_NAME(block_processor_state) LTFAT_NAME(block_processor_state);
 
-typedef int LTFAT_NAME(fifo_processor_callback)(void* userdata,
+/** \addgroup block_processor
+ * @{
+ */
+typedef int LTFAT_NAME(block_processor_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
 
-LTFAT_API int
-LTFAT_NAME(fifo_processor_setcallback)(
-        LTFAT_NAME(fifo_processor_state)* p,
-        LTFAT_NAME(fifo_processor_callback)* callback, void* userdata);
+int LTFAT_NAME(default_block_processor_callback)(void* userdata,
+    const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
 
-LTFAT_API int
-LTFAT_NAME(fifo_processor_init)(
-        ltfat_int winLen, ltfat_int hop, ltfat_int numChans,
-        ltfat_int bufLenMax, ltfat_int procDelay,
-        LTFAT_NAME(fifo_processor_state)** p);
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_init_withbuffers)(
-        ltfat_int winLen, ltfat_int hop, ltfat_int numChans,
-        ltfat_int bufLenMax, ltfat_int procDelay,
-        LTFAT_REAL* prebuf, LTFAT_REAL* postbuf,
-        LTFAT_NAME(fifo_processor_state)** p);
+LTFAT_NAME(block_processor_init)(
+    ltfat_int winLen, ltfat_int hop, ltfat_int numChans,
+    ltfat_int bufLenMax, ltfat_int procDelay,
+    LTFAT_NAME(block_processor_state)** p);
+
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_execute_gen_compact)(
-            LTFAT_NAME(fifo_processor_state)* p,
-            const LTFAT_REAL* in, ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen,
-            LTFAT_REAL* out);
+LTFAT_NAME(block_processor_init_withbuffers)(
+    ltfat_int winLen, ltfat_int hop, ltfat_int numChans,
+    ltfat_int bufLenMax, ltfat_int procDelay,
+    LTFAT_REAL* prebuf, LTFAT_REAL* postbuf,
+    LTFAT_NAME(block_processor_state)** p);
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_execute_gen)(
-        LTFAT_NAME(fifo_processor_state)* p,
-        const LTFAT_REAL** in, ltfat_int inLen, ltfat_int chanNo,
-        ltfat_int outLen, LTFAT_REAL** out);
+LTFAT_NAME(block_processor_execute_compact)(
+    LTFAT_NAME(block_processor_state)* p,
+    const LTFAT_REAL* in, ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen,
+    LTFAT_REAL* out);
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_reset)( LTFAT_NAME(fifo_processor_state)* p);
+LTFAT_NAME(block_processor_execute)(
+    LTFAT_NAME(block_processor_state)* p,
+    const LTFAT_REAL** in, ltfat_int inLen, ltfat_int chanNo,
+    ltfat_int outLen, LTFAT_REAL** out);
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_done)( LTFAT_NAME(fifo_processor_state)** p);
+LTFAT_NAME(block_processor_reset)( LTFAT_NAME(block_processor_state)* p);
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_setprebufchanstride)(
-        LTFAT_NAME(fifo_processor_state)* p, ltfat_int stride);
+LTFAT_NAME(block_processor_done)( LTFAT_NAME(block_processor_state)** p);
 
 LTFAT_API int
-LTFAT_NAME(fifo_processor_setpostbufchanstride)(
-        LTFAT_NAME(fifo_processor_state)* p, ltfat_int stride);
+LTFAT_NAME(block_processor_setprebufchanstride)(
+    LTFAT_NAME(block_processor_state)* p, ltfat_int stride);
 
+LTFAT_API int
+LTFAT_NAME(block_processor_setpostbufchanstride)(
+    LTFAT_NAME(block_processor_state)* p, ltfat_int stride);
 
-/** Create constant size output ring buffer 
+LTFAT_API size_t
+LTFAT_NAME(block_processor_nextinlen)(LTFAT_NAME(block_processor_state)* state, size_t Lout);
+
+LTFAT_API size_t
+LTFAT_NAME(block_processor_nextoutlen)(LTFAT_NAME(block_processor_state)* state, size_t Lin);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_setcallback)(
+        LTFAT_NAME(block_processor_state)* p,
+        LTFAT_NAME(block_processor_callback)* callback, void* userdata);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_setprehop)(
+        LTFAT_NAME(block_processor_state)* p, ltfat_int hop);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_setposthop)(
+        LTFAT_NAME(block_processor_state)* p, ltfat_int hop);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_setwin)(
+        LTFAT_NAME(block_processor_state)* p, LTFAT_REAL g[], int do_prewin);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_setfirwin)(
+        LTFAT_NAME(block_processor_state)* p, LTFAT_FIRWIN win, int do_prewin);
+/** @} */
+
+void
+LTFAT_NAME(block_processor_advanceby)(
+        LTFAT_NAME(block_processor_state)* p,
+        size_t Lin, size_t Lout);
+
+/** Create constant size output ring buffer
  *
  * The ring buffer works as usual when written to, but only constant
  * size (winLen) chunks can be read from it and the read pointer is
@@ -86,7 +123,7 @@ LTFAT_NAME(analysis_fifo_sethop)(LTFAT_NAME(analysis_fifo_state)* p, ltfat_int h
 
 LTFAT_API int
 LTFAT_NAME(analysis_fifo_setreadchanstride)(LTFAT_NAME(analysis_fifo_state)* p,
-                                            ltfat_int stride);
+        ltfat_int stride);
 
 /** Write bufLen samples to the analysis ring buffer
  *
@@ -104,7 +141,7 @@ LTFAT_NAME(analysis_fifo_setreadchanstride)(LTFAT_NAME(analysis_fifo_state)* p,
  */
 LTFAT_API ltfat_int
 LTFAT_NAME(analysis_fifo_write)(LTFAT_NAME(analysis_fifo_state)* p, const LTFAT_REAL* buf[],
-                                 ltfat_int bufLen, ltfat_int W);
+                                ltfat_int bufLen, ltfat_int W);
 
 /** Read p->winLen samples from the analysis ring buffer
  *
@@ -147,8 +184,8 @@ LTFAT_NAME(analysis_fifo_done)(LTFAT_NAME(analysis_fifo_state)** p);
  */
 LTFAT_API int
 LTFAT_NAME(synthesis_fifo_init)(ltfat_int fifoLen, ltfat_int winLen,
-                                 ltfat_int hop, ltfat_int numChans,
-                                 LTFAT_NAME(synthesis_fifo_state)** p);
+                                ltfat_int hop, ltfat_int numChans,
+                                LTFAT_NAME(synthesis_fifo_state)** p);
 
 LTFAT_API int
 LTFAT_NAME(synthesis_fifo_reset)(LTFAT_NAME(synthesis_fifo_state)* p);
@@ -158,7 +195,7 @@ LTFAT_NAME(synthesis_fifo_sethop)(LTFAT_NAME(synthesis_fifo_state)* p, ltfat_int
 
 LTFAT_API int
 LTFAT_NAME(synthesis_fifo_setwritechanstride)(LTFAT_NAME(synthesis_fifo_state)* p,
-                                              ltfat_int stride);
+        ltfat_int stride);
 
 /** Write p->winLen samples to DGT synthesis ring buffer
  *
@@ -172,7 +209,7 @@ LTFAT_NAME(synthesis_fifo_setwritechanstride)(LTFAT_NAME(synthesis_fifo_state)* 
  */
 LTFAT_API ltfat_int
 LTFAT_NAME(synthesis_fifo_write)(LTFAT_NAME(synthesis_fifo_state)* p,
-                                  const LTFAT_REAL buf[]);
+                                 const LTFAT_REAL buf[]);
 
 /** Read bufLen samples from DGT analysis ring buffer
  *
@@ -188,13 +225,12 @@ LTFAT_NAME(synthesis_fifo_write)(LTFAT_NAME(synthesis_fifo_state)* p,
  */
 LTFAT_API ltfat_int
 LTFAT_NAME(synthesis_fifo_read)(LTFAT_NAME(synthesis_fifo_state)* p,
-                                 ltfat_int bufLen, ltfat_int W,
-                                 LTFAT_REAL* buf[]);
+                                ltfat_int bufLen, ltfat_int W,
+                                LTFAT_REAL* buf[]);
 
 /** Destroy DGT synthesis ring buffer
  * \param[in]  p      DGT synthesis ring buffer
  */
 LTFAT_API int
 LTFAT_NAME(synthesis_fifo_done)(LTFAT_NAME(synthesis_fifo_state)** p);
-
 

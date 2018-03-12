@@ -3,7 +3,7 @@ struct LTFAT_NAME(slicing_processor_state)
     LTFAT_NAME(slicing_processor_callback)*
     processorCallback; //!< Custom processor callback
     void* userdata; //!< Callback data
-    LTFAT_NAME(fifo_processor_state)* fifo_processor;
+    LTFAT_NAME(block_processor_state)* block_processor;
     LTFAT_REAL* bufIn;
     LTFAT_REAL* bufOut;
     LTFAT_REAL* bufIn_start;

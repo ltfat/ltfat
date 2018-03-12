@@ -44,15 +44,15 @@ LTFAT_NAME(slicing_processor_init)( ltfat_int winLen, ltfat_int taperLen,
     p->bufIn = p->bufIn_start + zpadLen / 2;
     p->bufOut = p->bufOut_start + zpadLen / 2;
 
-    CHECKSTATUS( LTFAT_NAME(fifo_processor_init_withbuffers)(
-      Ltrue, hop, numChans, bufLenMax, Ltrue-1, p->bufIn, p->bufOut, &p->fifo_processor
+    CHECKSTATUS( LTFAT_NAME(block_processor_init_withbuffers)(
+      Ltrue, hop, numChans, bufLenMax, Ltrue-1, p->bufIn, p->bufOut, &p->block_processor
       ));
 
-    LTFAT_NAME(fifo_processor_setprebufchanstride)( p->fifo_processor, winLen);
-    LTFAT_NAME(fifo_processor_setpostbufchanstride)( p->fifo_processor, winLen);
+    LTFAT_NAME(block_processor_setprebufchanstride)( p->block_processor, winLen);
+    LTFAT_NAME(block_processor_setpostbufchanstride)( p->block_processor, winLen);
 
-    CHECKSTATUS( LTFAT_NAME(fifo_processor_setcallback)(
-            p->fifo_processor, &LTFAT_NAME(slicing_processor_execute_callback), p));
+    CHECKSTATUS( LTFAT_NAME(block_processor_setcallback)(
+            p->block_processor, &LTFAT_NAME(slicing_processor_execute_callback), p));
 
     *pout = p;
     return LTFATERR_SUCCESS;
@@ -109,7 +109,7 @@ LTFAT_NAME(slicing_processor_done)(LTFAT_NAME(slicing_processor_state)** p)
     CHECKNULL(p); CHECKNULL(*p);
 
     pp = *p;
-    if(pp->fifo_processor) LTFAT_NAME(fifo_processor_done)(&pp->fifo_processor);
+    if(pp->block_processor) LTFAT_NAME(block_processor_done)(&pp->block_processor);
     LTFAT_SAFEFREEALL(pp->bufIn_start, pp->bufOut_start, pp->ga, pp->gs );
 
     ltfat_free(pp);
@@ -192,7 +192,7 @@ LTFAT_NAME(slicing_processor_reset)(LTFAT_NAME(slicing_processor_state)* p)
     int status = LTFATERR_FAILED;
     CHECKNULL(p);
 
-    LTFAT_NAME(fifo_processor_reset)(p->fifo_processor);
+    LTFAT_NAME(block_processor_reset)(p->block_processor);
 
     return LTFATERR_SUCCESS;
 error:
@@ -207,7 +207,7 @@ LTFAT_NAME(slicing_processor_execute_gen)(
 {
     int status = LTFATERR_FAILED;
     CHECKNULL(p);
-    return LTFAT_NAME(fifo_processor_execute_gen)( p->fifo_processor, in, inLen, chanNo, outLen, out);
+    return LTFAT_NAME(block_processor_execute)( p->block_processor, in, inLen, chanNo, outLen, out);
 error:
     return status;
 }
@@ -220,7 +220,7 @@ LTFAT_NAME(slicing_processor_execute_gen_compact)(
 {
     int status = LTFATERR_FAILED;
     CHECKNULL(p);
-    return LTFAT_NAME(fifo_processor_execute_gen_compact)( p->fifo_processor, in, inLen, chanNo, outLen, out);
+    return LTFAT_NAME(block_processor_execute_compact)( p->block_processor, in, inLen, chanNo, outLen, out);
 error:
     return status;
 }
