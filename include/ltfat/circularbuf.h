@@ -1,4 +1,4 @@
-/** \defgroup block_processor Block processor
+/** \defgroup block_processor Block Stream Processor
  */
 #ifndef _LTFAT_CIRCULARBUF_H
 #define _LTFAT_CIRCULARBUF_H
@@ -10,23 +10,49 @@ typedef struct LTFAT_NAME(analysis_fifo_state) LTFAT_NAME(analysis_fifo_state);
 typedef struct LTFAT_NAME(synthesis_fifo_state) LTFAT_NAME(synthesis_fifo_state);
 typedef struct LTFAT_NAME(block_processor_state) LTFAT_NAME(block_processor_state);
 
-/** \addgroup block_processor
+int LTFAT_NAME(default_block_processor_callback)(void* userdata,
+        const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
+
+/** \addtogroup block_processor
  * @{
+ */
+
+/** Block processor callback template
  */
 typedef int LTFAT_NAME(block_processor_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
 
-int LTFAT_NAME(default_block_processor_callback)(void* userdata,
-    const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
-
-
+/** \name Basic interface
+ * PRd
+* @{
+*/
 LTFAT_API int
 LTFAT_NAME(block_processor_init)(
     ltfat_int winLen, ltfat_int hop, ltfat_int numChans,
     ltfat_int bufLenMax, ltfat_int procDelay,
     LTFAT_NAME(block_processor_state)** p);
 
+LTFAT_API int
+LTFAT_NAME(block_processor_execute)(
+        LTFAT_NAME(block_processor_state)* p,
+        const LTFAT_REAL** in, ltfat_int inLen, ltfat_int chanNo,
+        ltfat_int outLen, LTFAT_REAL** out);
 
+LTFAT_API int
+LTFAT_NAME(block_processor_done)( LTFAT_NAME(block_processor_state)** p);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_reset)( LTFAT_NAME(block_processor_state)* p);
+
+LTFAT_API int
+LTFAT_NAME(block_processor_setcallback)(
+        LTFAT_NAME(block_processor_state)* p,
+        LTFAT_NAME(block_processor_callback)* callback, void* userdata);
+/** @} */
+
+/** \name Extended interface
+* @{
+*/
 LTFAT_API int
 LTFAT_NAME(block_processor_init_withbuffers)(
     ltfat_int winLen, ltfat_int hop, ltfat_int numChans,
@@ -39,19 +65,11 @@ LTFAT_NAME(block_processor_execute_compact)(
     LTFAT_NAME(block_processor_state)* p,
     const LTFAT_REAL* in, ltfat_int inLen, ltfat_int chanNo, ltfat_int outLen,
     LTFAT_REAL* out);
+/** @} */
 
-LTFAT_API int
-LTFAT_NAME(block_processor_execute)(
-    LTFAT_NAME(block_processor_state)* p,
-    const LTFAT_REAL** in, ltfat_int inLen, ltfat_int chanNo,
-    ltfat_int outLen, LTFAT_REAL** out);
-
-LTFAT_API int
-LTFAT_NAME(block_processor_reset)( LTFAT_NAME(block_processor_state)* p);
-
-LTFAT_API int
-LTFAT_NAME(block_processor_done)( LTFAT_NAME(block_processor_state)** p);
-
+/** \name Advanced interface
+* @{
+*/
 LTFAT_API int
 LTFAT_NAME(block_processor_setprebufchanstride)(
     LTFAT_NAME(block_processor_state)* p, ltfat_int stride);
@@ -66,10 +84,6 @@ LTFAT_NAME(block_processor_nextinlen)(LTFAT_NAME(block_processor_state)* state, 
 LTFAT_API size_t
 LTFAT_NAME(block_processor_nextoutlen)(LTFAT_NAME(block_processor_state)* state, size_t Lin);
 
-LTFAT_API int
-LTFAT_NAME(block_processor_setcallback)(
-        LTFAT_NAME(block_processor_state)* p,
-        LTFAT_NAME(block_processor_callback)* callback, void* userdata);
 
 LTFAT_API int
 LTFAT_NAME(block_processor_setprehop)(
@@ -86,6 +100,7 @@ LTFAT_NAME(block_processor_setwin)(
 LTFAT_API int
 LTFAT_NAME(block_processor_setfirwin)(
         LTFAT_NAME(block_processor_state)* p, LTFAT_FIRWIN win, int do_prewin);
+/** @} */
 /** @} */
 
 void

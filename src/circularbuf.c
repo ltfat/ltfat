@@ -378,23 +378,22 @@ LTFAT_NAME(block_processor_setwin)(
             if (g != p->prewin)
                 memcpy(p->prewin, g, p->fwdfifo->winLen * sizeof * g);
 
-            LTFAT_NAME(gabdual_painless)(
-                p->prewin, p->fwdfifo->winLen, p->backfifo->hop, p->fwdfifo->winLen,
-                p->postwin);
-            for (ltfat_int l = 0; l < p->fwdfifo->winLen;
-                 l++) p->postwin[l] *= p->fwdfifo->winLen;
+            LTFAT_NAME(gabdual_painless)( p->prewin, p->fwdfifo->winLen,
+                    p->backfifo->hop, p->fwdfifo->winLen, p->postwin);
 
+            for (ltfat_int l = 0; l < p->fwdfifo->winLen; l++)
+                p->postwin[l] *= p->fwdfifo->winLen;
         }
         else
         {
             memcpy(p->postwin, g, p->backfifo->winLen * sizeof * g);
-            LTFAT_NAME(gabdual_painless)(
-                p->postwin, p->backfifo->winLen, p->fwdfifo->hop, p->fwdfifo->winLen,
-                p->prewin);
-            for (ltfat_int l = 0; l < p->fwdfifo->winLen;
-                 l++) p->prewin[l] *= p->fwdfifo->winLen;
+            LTFAT_NAME(gabdual_painless)( p->postwin, p->backfifo->winLen,
+                    p->fwdfifo->hop, p->fwdfifo->winLen, p->prewin);
 
+            for (ltfat_int l = 0; l < p->fwdfifo->winLen; l++)
+                p->prewin[l] *= p->fwdfifo->winLen;
         }
+
         LTFAT_NAME_REAL(fftshift)(p->prewin, p->fwdfifo->winLen, p->prewin);
         LTFAT_NAME_REAL(fftshift)(p->postwin, p->backfifo->winLen, p->postwin);
     }
