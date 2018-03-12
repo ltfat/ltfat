@@ -53,9 +53,8 @@ error:
 */
 
 LTFAT_API int
-LTFAT_NAME(pgauss_cmplx)(ltfat_int L, const double w, const double c_t,
-                         const double c_f,
-                         LTFAT_COMPLEX* g)
+LTFAT_NAME_COMPLEX(pgauss)(ltfat_int L, const double w, const double c_t,
+                           const double c_f, LTFAT_COMPLEX* g)
 {
     int status = LTFATERR_SUCCESS;
     ltfat_int lr, k, nk;

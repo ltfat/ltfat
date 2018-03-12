@@ -352,10 +352,10 @@ LTFAT_NAME(pgauss)(ltfat_int L, const double w, const double c_t,
  * #### Function versions #
  *
  * <tt>
- * ltfat_pgauss_cmplx_d(ltfat_int L, const double w, const double c_t,
+ * ltfat_pgauss_cd(ltfat_int L, const double w, const double c_t,
  *                      const double c_f, ltfat_complex_d* g);
  *
- * ltfat_pgauss_cmplx_s(ltfat_int L, const double w, const double c_t,
+ * ltfat_pgauss_cs(ltfat_int L, const double w, const double c_t,
  *                      const double c_f, ltfat_complex_s* g);
  * </tt>
  * \returns
@@ -367,8 +367,8 @@ LTFAT_NAME(pgauss)(ltfat_int L, const double w, const double c_t,
  * LTFATERR_NOTPOSARG    | \a w is less or equal to zero.
  */
 LTFAT_API int
-LTFAT_NAME(pgauss_cmplx)(ltfat_int L, const double w, const double c_t,
-                         const double c_f, LTFAT_COMPLEX *g);
+LTFAT_NAME_COMPLEX(pgauss)(ltfat_int L, const double w, const double c_t,
+                           const double c_f, LTFAT_COMPLEX *g);
 
 /** @} */
 
