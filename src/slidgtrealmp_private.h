@@ -13,7 +13,7 @@ struct LTFAT_NAME(slidgtrealmp_state)
     LTFAT_COMPLEX** couttmp;
     ltfat_int P;
     void* userdata;
-    LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback;
+    LTFAT_NAME(slidgtrealmp_processor_callback)* callback;
 };
 
 

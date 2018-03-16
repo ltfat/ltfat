@@ -14,7 +14,6 @@ LTFAT_NAME(pedantic_callback)(void* userdata,
     return projenergy;
 }
 
-
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init)(
     LTFAT_NAME(dgtrealmp_parbuf)* pb, ltfat_int L,
@@ -106,6 +105,9 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     if ( p->params->maxit == 0 )
         p->params->maxit = 2 * p->params->maxatoms;
 
+    if (p->params->iterstep == 0)
+        p->params->iterstep = p->params->maxit;
+
 #ifdef NOBLASLAPACK
     CHECK( LTFATERR_NOBLASLAPACK,
            p->params->alg != ltfat_dgtmp_alg_LocOMP,
@@ -159,13 +161,6 @@ LTFAT_NAME(dgtrealmp_init_gen)(
                          p->params->ptype,
                          &p->gramkerns[k1 + k2 * P]));
         }
-
-        /* for(ltfat_int k2 = 0; k2 < k1; k2++) */
-        /* { */
-        /*     LTFAT_NAME(dgtrealmp_kernel_cloneconj)( */
-        /*             p->gramkerns[k2 + k1 * P], */
-        /*             &p->gramkerns[k1 + k2 * P]); */
-        /* } */
     }
 
 #ifndef NDEBUG
@@ -305,7 +300,6 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
 
     for (ltfat_int k = 0; k < p->P; k++)
     {
-        /* LTFAT_REAL* sEl = istate->s[k]; */
         LTFAT_COMPLEX* cEl = istate->c[k];
 
         CHECKSTATUS(
@@ -466,51 +460,16 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
             ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)(
                             p, p->params->iterstep, c)))
     {
-        if (p->params->verbose)
-        {
-            printf("Error %.2Lf, iteration %zu \n",
-                   (long double) 10.0 * log10l( p->iterstate->err / p->iterstate->fnorm2 ),
-                   p->iterstate->currit);
-        }
+        if(p->callback)
+            p->callback(p->userdata, p, c);
     }
 
     CHECKSTATUS(status2);
-    /* memset(fout, 0, p->L * sizeof * fout); */
-    /*  */
-    /* for (ltfat_int k = 0; k < p->P; k++) */
-    /*     CHECKSTATUS( */
-    /*         LTFAT_NAME(dgtreal_execute_syn_newarray)( p->dgtplans[k], cout[k], fout)); */
 
     return status2;
 error:
     return status;
 }
-
-/* LTFAT_API int */
-/* LTFAT_NAME(dgtrealmp_execute_synthesizeresidual)( */
-/*     LTFAT_NAME(dgtrealmp_state)* p, int dict_mask[], LTFAT_REAL f[]) */
-/* { */
-/*     int status = LTFATERR_FAILED; */
-/*     CHECKNULL(p); CHECKNULL(f); */
-/*  */
-/*     memset(f, 0, p->L * sizeof * f); */
-/*  */
-/*     for (ltfat_int k = 0; k < p->P; k++) */
-/*     { */
-/*         if(dict_mask == NULL || dict_mask[k]) */
-/*         { */
-/*             CHECKNULL(p->iterstate->c[k]); */
-/*             CHECKSTATUS( */
-/*                 LTFAT_NAME(dgtreal_execute_syn_newarray)(  */
-/*                     p->dgtplans[k], p->iterstate->c[k], f)); */
-/*         } */
-/*     } */
-/*  */
-/*     return LTFATERR_SUCCESS; */
-/* error: */
-/*     return status; */
-/* } */
-
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_state)** p)
@@ -574,7 +533,6 @@ LTFAT_NAME(dgtrealmpiter_init)(
 
     CHECKNULL( state );
     CHECKMEM( s =    LTFAT_NEW( LTFAT_NAME(dgtrealmpiter_state)) );
-    /* CHECKMEM( s->s = LTFAT_NEWARRAY(LTFAT_REAL*,    P)); */
     CHECKMEM( s->c = LTFAT_NEWARRAY(LTFAT_COMPLEX*, P));
     CHECKMEM( s->N = LTFAT_NEWARRAY(ltfat_int, P));
     CHECKMEM( s->suppind = LTFAT_NEWARRAY(unsigned int*, P));
@@ -582,7 +540,6 @@ LTFAT_NAME(dgtrealmpiter_init)(
     CHECKMEM( s->maxcolspos =  LTFAT_NEWARRAY(ltfat_int*, P));
     CHECKMEM( s->tmaxtree =  LTFAT_NEWARRAY( LTFAT_NAME(maxtree)*, P));
     CHECKMEM( s->fmaxtree =  LTFAT_NEWARRAY( LTFAT_NAME(maxtree)**, P));
-    /* s->fmaxtree = NULL; */
     s->P = P;
 
     for (ltfat_int p = 0; p < P; p++)
@@ -590,8 +547,6 @@ LTFAT_NAME(dgtrealmpiter_init)(
         ltfat_int N = L / a[p];
         s->N[p] = N;
         ltfat_int M2 = M[p] / 2 + 1;
-        /* ltfat_int M2ext = M2 */
-        /* CHECKMEM( s->s[p] = LTFAT_NAME_REAL(malloc)(N * M2) ); */
         CHECKMEM( s->c[p] = LTFAT_NAME_COMPLEX(malloc)(N * M2) );
         CHECKMEM( s->suppind[p] = LTFAT_NEWARRAY(unsigned int, N * M2 ));
         CHECKMEM( s->maxcols[p]    = LTFAT_NAME_REAL(malloc)(N) );
@@ -625,13 +580,13 @@ LTFAT_NAME(dgtrealmpiter_done)(LTFAT_NAME(dgtrealmpiter_state)** state)
     CHECKNULL(state); CHECKNULL(*state);
     s = *state;
 
-    if (s->s)
-    {
-        for (ltfat_int p = 0; p < s->P; p++)
-            ltfat_safefree(s->s[p]);
-
-        ltfat_free(s->s);
-    }
+    /* if (s->s) */
+    /* { */
+    /*     for (ltfat_int p = 0; p < s->P; p++) */
+    /*         ltfat_safefree(s->s[p]); */
+    /*  */
+    /*     ltfat_free(s->s); */
+    /* } */
 
     if (s->c)
     {
@@ -872,63 +827,3 @@ error :
 
 }
 
-/* LTFAT_API int */
-/* LTFAT_NAME(dgtdict_coherence_gen)( */
-/*     const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P, */
-/*     ltfat_int a[], ltfat_int M[], LTFAT_REAL* coherence) */
-/* { */
-/*     int status = LTFATERR_SUCCESS; */
-/* error: */
-/*     return status; */
-/* } */
-/*  */
-/* LTFAT_API int */
-/* LTFAT_NAME(dgtdict_coherence_fromstatus)( */
-/*     LTFAT_NAME(dgtrealmp_state)* p, LTFAT_REAL* coherence) */
-/* { */
-/*     int status = LTFATERR_SUCCESS; */
-/*     LTFAT_REAL maxval = 0.0; */
-/*     CHECKNULL(p); CHECKNULL(coherence); */
-/*  */
-/*     for (ltfat_int pp1 = 0; pp1 < p->P; pp1++) */
-/*     { */
-/*         LTFAT_NAME(kerns)* kk = p->gramkerns[pp1 + pp1 * p->P]; */
-/*  */
-/*         ltfat_int midlinpos = kk->mid.hmid + kk->mid.wmid * kk->size.height; */
-/*  */
-/*         for (ltfat_int n = 0; n < kk->size.width * kk->size.height; n++) */
-/*             if (n != midlinpos && ltfat_abs(kk->kval[n]) > maxval) */
-/*                 maxval = ltfat_abs(kk->kval[n]); */
-/*  */
-/*         for (ltfat_int pp2 = pp1 + 1; pp2 < p->P; pp2++) */
-/*         { */
-/*             LTFAT_NAME(kerns)* kk2 = p->gramkerns[pp2 + pp1 * p->P]; */
-/*  */
-/*             for (ltfat_int n = 0; n < kk2->size.width * kk2->size.height; n++) */
-/*                 if (ltfat_abs(kk2->kval[n]) > maxval) */
-/*                     maxval = ltfat_abs(kk2->kval[n]); */
-/*         } */
-/*     } */
-/*  */
-/*     *coherence = maxval; */
-/* error: */
-/*     return status; */
-/* } */
-
-/* LTFAT_API int */
-/* LTFAT_NAME(dgtdict_coherence)( */
-/*     LTFAT_NAME(dgtmp_parbuf)* pb, LTFAT_REAL* coherence) */
-/* { */
-/* } */
-/*  */
-/* LTFAT_API int */
-/* LTFAT_NAME(dgtdict_babel)( */
-/*     LTFAT_NAME(dgtmp_parbuf)* pb, ltfat_int P, LTFAT_REAL* babel) */
-/* { */
-/* } */
-/*  */
-/* LTFAT_API int */
-/* LTFAT_NAME(dgtdict_isquaziincoherent)( */
-/*     LTFAT_NAME(dgtmp_parbuf)* pb) */
-/* { */
-/* } */

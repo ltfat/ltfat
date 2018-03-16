@@ -60,7 +60,7 @@ FFTWLIBS?=-lfftw3 -lfftw3f
 LFLAGS = -Wl,--no-undefined $(OPTLPATH)
 
 ifdef MINGW
-	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
+	EXTRALFLAGS += -Wl,--out-implib,$@.a -static-libgcc
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
 
 	# NOTE that if both static and shared libraries are to be built, 

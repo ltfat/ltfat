@@ -133,6 +133,30 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_parbuf_add_gausswin)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, ltfat_int a, ltfat_int M)
+{
+    LTFAT_REAL* g = NULL;
+    ltfat_int gl = 0;
+    double thr = 1e-4;
+    int status = LTFATERR_SUCCESS;
+
+    CHECKNULL(parbuf);
+    CHECKSTATUS( gl = ltfat_mtgausslength(a,M,thr));
+    CHECKMEM( g = LTFAT_NAME(malloc)(gl));
+    CHECKSTATUS( LTFAT_NAME(mtgauss)(a, M, thr, g));
+    CHECKSTATUS( LTFAT_NAME(normalize)(g, gl, LTFAT_NORM_ENERGY, g));
+
+    CHECKSTATUS(
+        LTFAT_NAME(dgtrealmp_parbuf_add_genwin)( parbuf, (const LTFAT_REAL*) g, gl, a,
+                M ));
+error:
+    ltfat_safefree(g);
+    return status;
+}
+
+
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(dgtrealmp_parbuf) * p,
