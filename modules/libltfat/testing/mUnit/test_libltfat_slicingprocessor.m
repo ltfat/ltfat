@@ -24,10 +24,12 @@ for ii = 1:numel(glarr)
     W = Warr(ii);
     plan = libpointer();
 
-    procdelay = gl - 1;
     funname = makelibraryname('slicing_processor_init',flags.complexity,0);
     calllib('libltfat',funname, gl, floor(gl/5), floor(gl/5), W,bufLenMax,plan);
     initstr = 'INIT WIN';
+    
+    funname = makelibraryname('slicing_processor_getprocdelay',flags.complexity,0);
+    procdelay = calllib('libltfat',funname, plan);
 
     [bufIn,fs] = gspi;
     bufIn = cast(bufIn,flags.complexity);

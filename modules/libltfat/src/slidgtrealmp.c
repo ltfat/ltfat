@@ -86,8 +86,7 @@ LTFAT_NAME(slidgtrealmp_getprocdelay)( LTFAT_NAME(slidgtrealmp_state)* p)
 {
     int status = LTFATERR_FAILED;
     CHECKNULL(p);
-    CHECKNULL(p->slistate);
-    return p->slistate->winLen - p->slistate->zpadLen - 1;
+    return LTFAT_NAME(slicing_processor_getprocdelay)(p->slistate);
 error:
     return status;
 }

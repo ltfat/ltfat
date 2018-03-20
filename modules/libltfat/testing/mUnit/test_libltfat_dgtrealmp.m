@@ -29,6 +29,7 @@ glarr = [ base  10   9   1];
 aarr  = [   base/4   10   3   1];
 Marr  = [ base  36   3   2];
 Warr  = [  1   3   3   1];
+errtoldb = -40;
 
 atomsArr= [];
 
@@ -46,8 +47,8 @@ for idx = 1:1%numel(Larr)
 
 for ii=  57
 
-filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
-disp(filename);
+%filename = sprintf('~/Desktop/SQAM/%02d.wav',ii);
+%disp(filename);
     
 %[f,fs] = wavload(filename);
 [f,fs] = gspi;
@@ -144,7 +145,7 @@ tic;
 params = calllib('libltfat','ltfat_dgtmp_params_allocdef');
 calllib('libltfat','ltfat_dgtmp_setpar_maxatoms',params,atoms);
 calllib('libltfat','ltfat_dgtmp_setpar_maxit',params,2*atoms);
-calllib('libltfat','ltfat_dgtmp_setpar_errtoldb',params,-40);
+calllib('libltfat','ltfat_dgtmp_setpar_errtoldb',params,errtoldb);
 calllib('libltfat','ltfat_dgtmp_setpar_kernrelthr',params,1e-4);
 calllib('libltfat','ltfat_dgtmp_setpar_phaseconv',params,cphaseconv);
 %calllib('libltfat','ltfat_dgtmp_setpar_pedanticsearch',params,1);
@@ -283,9 +284,10 @@ statusDone = calllib('libltfat',funname,plan);
 
 
   atomsArr(end + 1) = atoms;
+  [test_failed,fail]=ltfatdiditfail(abs(errdb - errtoldb)>0.1 ,test_failed);
     %[test_failed,fail]=ltfatdiditfail(res+statusInit,test_failed);
     %fprintf(['DGTREAL FREQINV WP auto %s L:%3i, W:%3i, a:%3i, M:%3i %s %s %s\n'],dirstr,L,W,a,M,flags.complexity,ltfatstatusstring(statusExecute),fail);
- drawnow  
+ %drawnow  
    
 end
 end

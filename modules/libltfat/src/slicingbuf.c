@@ -74,6 +74,16 @@ error:
     return status;
 }
 
+LTFAT_API ltfat_int
+LTFAT_NAME(slicing_processor_getprocdelay)( LTFAT_NAME(slicing_processor_state)* p)
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(p);
+    return p->winLen - p->zpadLen - 1;
+error:
+    return status;
+}
+
 LTFAT_API int
 LTFAT_NAME(slicing_processor_settaper)(
     LTFAT_NAME(slicing_processor_state)* p, const LTFAT_REAL g[], int do_analysis)

@@ -46,6 +46,9 @@ LTFAT_NAME(slicing_processor_setcallback)(
 /** \name Advanced interface
  * @{ 
  * */
+LTFAT_API ltfat_int
+LTFAT_NAME(slicing_processor_getprocdelay)( LTFAT_NAME(slicing_processor_state)* p);
+
 LTFAT_API int
 LTFAT_NAME(slicing_processor_execute_gen)(
     LTFAT_NAME(slicing_processor_state)* p,
