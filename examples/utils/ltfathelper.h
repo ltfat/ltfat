@@ -2,9 +2,9 @@
 #define LTFAT_DOUBLE
 #endif
 
-#include "../../include/ltfat.h"
-#include "../../include/ltfat/types.h"
-#include "../../include/ltfat/macros.h"
+#include "ltfat.h"
+#include "ltfat/types.h"
+#include "ltfat/macros.h"
 
 #ifdef __cplusplus
 #include <chrono>
