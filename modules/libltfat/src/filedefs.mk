@@ -43,13 +43,11 @@ ifeq ($(FFTBACKEND),KISS)
 	CFLAGS+=-DKISS
 endif
 
-ifdef NOBLASLAPACK
-	CFLAGS+=-DNOBLASLAPACK
-	override undefine BLASLAPACKLIBS
-else
+ifndef NOBLASLAPACK
 	files += $(files_blaslapack)
 	files_complextransp += $(files_blaslapack_complextransp)
-	BLASLAPACKLIBS?=-llapack -lblas
+ 	LFLAGS+=$(BLASLAPACKLIBS)
 endif
 
+extradepincludes:=\#include <stddef.h>\n
 

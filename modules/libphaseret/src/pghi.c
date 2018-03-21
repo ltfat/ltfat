@@ -25,7 +25,7 @@ PHASERET_NAME(pghi)(const LTFAT_REAL s[], ltfat_int L,
     PHASERET_NAME(pghi_plan)* p = NULL;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(s); CHECKNULL(c);
-    CHECKSTATUS( PHASERET_NAME(pghi_init)(gamma, L, W, a, M, 1e-1, 1e-10, &p));
+    CHECKSTATUS( PHASERET_NAME(pghi_init)( L, W, a, M, 1e-1, 1e-10, gamma, &p));
     PHASERET_NAME(pghi_execute)(p, s, c); // This cannot fail
 
     PHASERET_NAME(pghi_done)(&p);
@@ -42,7 +42,7 @@ PHASERET_NAME(pghi_withmask)(const LTFAT_COMPLEX cinit[], const int mask[],
     int status = LTFATERR_SUCCESS;
     CHECKNULL(cinit); CHECKNULL(mask); CHECKNULL(c);
 
-    CHECKSTATUS( PHASERET_NAME(pghi_init)(gamma, L, W, a, M, 1e-1, 1e-10, &p));
+    CHECKSTATUS( PHASERET_NAME(pghi_init)(L, W, a, M, 1e-1, 1e-10, gamma, &p));
     PHASERET_NAME(pghi_execute_withmask)(p, cinit, mask, NULL,
                                          c); // This cannot fail
 

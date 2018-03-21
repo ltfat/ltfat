@@ -5,4 +5,5 @@ DSLFLAGS = -lltfat
 DLFLAGS = -lltfatd
 SLFLAGS = -lltfatf
 CFLAGS+=-Imodules/libltfat/include
+extradepincludes:=\#include \"ltfat.h\"\n
 

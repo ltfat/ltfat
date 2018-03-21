@@ -1,4 +1,4 @@
-clear all;
+;
 f = gspi;
 a = 256;
 M = 2048;

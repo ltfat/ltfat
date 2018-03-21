@@ -3,7 +3,7 @@
 #include "ltfat/memalloc.h"
 
 #ifdef FFTW
-#include <fftw3.h>
+#include "ltfat/thirdparty/fftw3.h"
 #endif
 
 #include <stdlib.h>

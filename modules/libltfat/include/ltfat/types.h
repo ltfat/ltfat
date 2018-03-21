@@ -3,7 +3,6 @@
 *
 */
 #include "basicmacros.h"
-#include "complexcompat.h"
 
 #ifndef LTFAT_COMPLEX_OPERATIONS
 #define LTFAT_COMPLEX_OPERATIONS

@@ -1,5 +1,5 @@
 
-#ifndef NOSYSTEMHEADERS
+#ifndef LTFAT_NOSYSTEMHEADERS
 #include "ltfat.h"
 #include "ltfat/types.h"
 #endif

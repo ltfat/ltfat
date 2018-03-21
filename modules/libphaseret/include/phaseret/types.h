@@ -1,4 +1,5 @@
 #include "basicmacros.h"
+#include "ltfat/types.h"
 
 #ifdef PHASERET_NAME_REAL
 #undef PHASERET_NAME_REAL

@@ -1,13 +1,31 @@
 #ifndef _LTFAT_H
 #define _LTFAT_H 1
-//#include "ltfat/config.h"
-#include "ltfat/complexcompat.h"
 
-#ifndef NOSYSTEMHEADERS
+#ifndef LTFAT_NOSYSTEMHEADERS
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
+#ifdef __cplusplus
+#include <complex>
+#include <cmath>
+using namespace std;
+#else
+#include <tgmath.h>
+#endif // notdefined(NOSYSTEMHEADERS)
+#endif
+
+#if defined(__cplusplus) && !defined(LTFAT_CINTERFACE)
+typedef std::complex<double> ltfat_complex_d;
+typedef std::complex<float> ltfat_complex_s;
+#else
+#if !defined(LTFAT_CINTERFACE) && defined(_Complex_I) && defined(complex) && defined(I)
+typedef double _Complex ltfat_complex_d;
+typedef float  _Complex ltfat_complex_s;
+#else
+typedef double ltfat_complex_d[2];
+typedef float  ltfat_complex_s[2];
+#endif
 #endif
 
 #ifdef LTFAT_LARGEARRAYS
@@ -29,7 +47,6 @@ extern "C"
 
 // First, include headers of type (single, double, or complex versions) inert functions
 #include "ltfat/typeconstant.h"
-
 
 /* -------- Create the single precision routines headers ----- */
 

@@ -1,7 +1,7 @@
 #ifndef _phaseret_h
 #define _phaseret_h
 
-#ifndef NOSYSTEMHEADERS
+#ifndef LTFAT_NOSYSTEMHEADERS
 #include "ltfat.h"
 #endif
 

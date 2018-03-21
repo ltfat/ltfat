@@ -48,7 +48,7 @@
 #define FFTW3_H
 
 // CHANGE:
-#ifndef NOSYSTEMHEADERS
+#ifndef LTFAT_NOSYSTEMHEADERS
 #include <stdio.h>
 #endif
 

@@ -42,13 +42,10 @@ CFLAGS+=-Wall -Wextra -std=c99
 CXXFLAGS+=-Wall -Wextra -std=c++11 -fno-exceptions -fno-rtti
 LFLAGS = -Wl,--no-undefined -Lbuild/$(CROSS) $(OPTLPATH) '-Wl,-rpath,$$ORIGIN'
 
-
-
 MATLABROOT ?= /usr/local/MATLAB_R2017a
 PREFIX ?= /usr/local
 LIBDIR = $(PREFIX)/lib
 INCDIR = $(PREFIX)/include
-FFTWLIBS?=-lfftw3 -lfftw3f
 
 # The following adds parameters to CFLAGS
 COMPTARGET ?= release
@@ -56,9 +53,7 @@ include comptarget.mk
 
 ifdef MINGW
 	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
-ifndef NOBLASLAPACK
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
-endif
 	# NOTE that if both static and shared libraries are to be built, 
 	# the obj files must be cleared in between make calls i.e.
 	# make shared
@@ -83,6 +78,8 @@ ifeq ($(USECPP),1)
 endif
 endif
 
+FFTWLIBS?=-lfftw3 -lfftw3f
+BLASLAPACKLIBS?=-llapack -lblas
 MODULE ?= libltfat
 SRCDIR=modules/$(MODULE)/
 CFLAGS+=-I$(SRCDIR)include
@@ -91,6 +88,10 @@ headerbase=$(MODULE:lib%=%)
 
 # Define source files from $(SRCDIR)/
 include $(SRCDIR)src/filedefs.mk
+
+ifdef NOBLASLAPACK
+	CFLAGS+=-DNOBLASLAPACK
+endif
 
 # Convert *.c names to *.o
 toCompile = $(patsubst %.c,%.o,$(files))
@@ -149,13 +150,13 @@ $(STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
 	$(RANLIB) $@
 
 $(SO_DSTARGET): $(DDEP) $(SDEP) $(COMMONFILES) $(DFILES) $(SFILES)
-	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(SFILES) $(LFLAGS) $(DSLFLAGS) $(BLASLAPACKLIBS)
+	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(SFILES) $(LFLAGS) $(DSLFLAGS) 
 
 $(SO_DTARGET): $(DDEP) $(COMMONFILES) $(DFILES)
-	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(LFLAGS) $(DLFLAGS) $(BLASLAPACKLIBS)
+	$(CC) -shared -fPIC -o $@ $(COMMONFILES) $(DFILES) $(LFLAGS) $(DLFLAGS)
 
 $(SO_STARGET): $(SDEP) $(SFILES) $(COMMONFILESFORSFILES)
-	$(CC) -shared -fPIC -o $@ $(COMMONFILESFORSFILES) $(SFILES) $(LFLAGS) $(SLFLAGS) $(BLASLAPACKLIBS)
+	$(CC) -shared -fPIC -o $@ $(COMMONFILESFORSFILES) $(SFILES) $(LFLAGS) $(SLFLAGS)
 
 $(objprefix)/common/d%.o: $(SRCDIR)src/%.c
 	$(CC) $(CFLAGS) -DLTFAT_DOUBLE -c $< -o $@ 
@@ -192,6 +193,7 @@ $(objprefix)/%:
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
 allshared:
+	$(MAKE) clean
 	$(MAKE) MODULE=libltfat shared 
 	$(MAKE) MODULE=libphaseret shared
 
@@ -229,12 +231,12 @@ munit:
 	$(MAKE) $(buildprefix)/$(headerbase).h USECPP=0 CC=gcc
 
 $(buildprefix)/$(headerbase).h: $(buildprefix) 
-	$(CC) -E -P -DNOSYSTEMHEADERS $(EXTRACFLAGS) -Iinclude -I$(SRCDIR)include -nostdinc $(SRCDIR)include/$(headerbase).h -o $(buildprefix)/$(headerbase).h
+	$(CC) -E -P -DLTFAT_NOSYSTEMHEADERS $(EXTRACFLAGS) $(OPTCFLAGS) -Imodules/libltfat/include -I$(SRCDIR)include -nostdinc $(SRCDIR)include/$(headerbase).h -o $(buildprefix)/$(headerbase).h
 	sed -i '1 i #ifndef _$(headerbase)_H' $(buildprefix)/$(headerbase).h
 	sed -i '1 a #define _$(headerbase)_H' $(buildprefix)/$(headerbase).h
-	sed -i '2 a #ifndef NOSYSTEMHEADERS\n #include <stddef.h>\n #endif' $(buildprefix)/$(headerbase).h
+	sed -i '2 a #ifndef LTFAT_NOSYSTEMHEADERS\n $(extradepincludes) #endif' $(buildprefix)/$(headerbase).h
 	sed -i '$$ a #endif' $(buildprefix)/$(headerbase).h
-	$(CC) -E -P -DNOSYSTEMHEADERS -Iinclude -nostdinc $(buildprefix)/$(headerbase).h -o $(buildprefix)/$(headerbase)_flat.h
+	$(CC) -E -P -DLTFAT_NOSYSTEMHEADERS -Iinclude -nostdinc $(buildprefix)/$(headerbase).h -o $(buildprefix)/$(headerbase)_flat.h
 
 install:
 	install -d $(LIBDIR)
