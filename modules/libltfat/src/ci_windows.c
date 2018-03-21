@@ -231,6 +231,44 @@ LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g)
 error:
     return status;
 }
+
+
+LTFAT_API int
+LTFAT_NAME(mtgauss)(ltfat_int a, ltfat_int M, double thr, LTFAT_TYPE* g)
+{
+    double step, startInt, posInt;
+    ltfat_div_t domod;
+    int status = LTFATERR_FAILED;
+    CHECKNULL(g);
+    ltfat_int gl = ltfat_mtgausslength( a, M, thr);
+    CHECKSTATUS(gl);
+
+    step = 1.0 / gl;
+    startInt = -0.5;
+    domod = ltfat_idiv(gl, 2);
+
+    if (domod.rem)
+        startInt = -0.5 + step / 2.0;
+
+    posInt = 0;
+    double gamma =  -M_PI*((double)(gl*gl))/((double)(a*M));
+    for (ltfat_int ii = 0; ii < gl; ii++)
+    {
+        FIRWIN_RESETCOUNTER;
+        g[ii] = (LTFAT_REAL) exp(posInt * posInt * gamma);
+        posInt += step;
+    }
+
+    // Fix symmetry of windows which are not zero at -0.5
+    if (!domod.rem)
+        g[domod.quot + domod.rem] = 0.0;
+
+    return LTFATERR_SUCCESS;
+error:
+    return status;
+}
+
+
 #undef FIRWIN_RESETCOUNTER
 
 

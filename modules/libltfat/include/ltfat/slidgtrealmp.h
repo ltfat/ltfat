@@ -14,7 +14,9 @@ typedef int LTFAT_NAME(slidgtrealmp_niter_callback)(void* userdata,
 /** \addtogroup slidgtrealmp
  * @{ */
 
-typedef int LTFAT_NAME(slidgtrealmp_processor_execute_callback)(
+/** 
+ */
+typedef int LTFAT_NAME(slidgtrealmp_processor_callback)(
         void* userdata, LTFAT_NAME(dgtrealmp_state)* mpstate,
         LTFAT_COMPLEX* cres[], LTFAT_COMPLEX* c[], int P, int M2[], int N[], int L, LTFAT_REAL f[]);
 
@@ -41,7 +43,7 @@ LTFAT_NAME(slidgtrealmp_reset)(
 
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_setcallback)(LTFAT_NAME(slidgtrealmp_state)* p,
-        LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback,
+        LTFAT_NAME(slidgtrealmp_processor_callback)* callback,
         void* userdata);
 /** @} */
 

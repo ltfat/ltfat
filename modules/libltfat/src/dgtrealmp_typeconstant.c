@@ -15,7 +15,7 @@ ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
     params->verbose = 0;
     params->maxatoms = 0;
     params->maxit = 0;
-    params->iterstep = 100;
+    params->iterstep = 0;
     params->treelevels = 10;
     params->cycles = 1;
     params->ptype = LTFAT_TIMEINV;

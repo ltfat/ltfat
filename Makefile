@@ -52,7 +52,7 @@ COMPTARGET ?= release
 include comptarget.mk
 
 ifdef MINGW
-	EXTRALFLAGS = -Wl,--out-implib,$@.a -static-libgcc
+	EXTRALFLAGS += -Wl,--out-implib,$@.a -static-libgcc
 	BLASLAPACKLIBS?=-llapack -lblas -lgfortran -lquadmath
 	# NOTE that if both static and shared libraries are to be built, 
 	# the obj files must be cleared in between make calls i.e.

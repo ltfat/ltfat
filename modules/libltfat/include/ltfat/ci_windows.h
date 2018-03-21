@@ -44,7 +44,8 @@ LTFAT_FIRWIN;
 LTFAT_API int
 ltfat_str2firwin(const char* name);
 
-
+LTFAT_API ltfat_int
+ltfat_mtgausslength(ltfat_int a, ltfat_int M, double thr);
 #endif /* _CI_WINDOWS_H */
 
 
@@ -85,5 +86,10 @@ ltfat_str2firwin(const char* name);
 LTFAT_API int
 LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g);
 
+
+
+
+LTFAT_API int
+LTFAT_NAME(mtgauss)(ltfat_int a, ltfat_int M, double thr, LTFAT_TYPE* g);
 
 /** @} */

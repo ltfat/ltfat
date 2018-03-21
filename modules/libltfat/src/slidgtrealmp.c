@@ -167,9 +167,9 @@ LTFAT_NAME(slidgtrealmp_execute_callback)(void* userdata,
 
         if(p->callback)
         {
-            p->callback(p->userdata, p->mpstate, p->mpstate->iterstate->c,
-                        p->couttmp, p->mpstate->P, p->mpstate->M2, p->mpstate->N,
-                        p->mpstate->L, out + w * winLen);
+            /* p->callback(p->userdata, p->mpstate, p->mpstate->iterstate->c, */
+            /*             p->couttmp, p->mpstate->P, p->mpstate->M2, p->mpstate->N, */
+            /*             p->mpstate->L, out + w * winLen); */
         }
         else
         {
@@ -183,7 +183,7 @@ LTFAT_NAME(slidgtrealmp_execute_callback)(void* userdata,
 
 LTFAT_API int
 LTFAT_NAME(slidgtrealmp_setcallback)(LTFAT_NAME(slidgtrealmp_state)* p,
-        LTFAT_NAME(slidgtrealmp_processor_execute_callback)* callback,
+        LTFAT_NAME(slidgtrealmp_processor_callback)* callback,
         void* userdata)
 {
     int status = LTFATERR_FAILED;

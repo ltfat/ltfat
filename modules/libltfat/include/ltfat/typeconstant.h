@@ -3,6 +3,7 @@
 // #include "ltfat.h"
 #include "memalloc.h"
 #include "dgt_common.h"
+#include "dgtwrapper_typeconstant.h"
 
 typedef struct
 {

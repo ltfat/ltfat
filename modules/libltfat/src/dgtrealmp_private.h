@@ -91,13 +91,12 @@ typedef struct
 
 typedef struct
 {
-    LTFAT_REAL**           s;
     LTFAT_COMPLEX**        c;
     LTFAT_REAL**           maxcols;
     ltfat_int**            maxcolspos;
     LTFAT_NAME(maxtree)**  tmaxtree;
     LTFAT_NAME(maxtree)*** fmaxtree;
-    unsigned int**        suppind;
+    unsigned int**         suppind;
     long double            err;
     long double            fnorm2;
     size_t                 currit;
@@ -140,6 +139,8 @@ struct LTFAT_NAME(dgtrealmp_state)
     ltfat_dgtmp_params* params;
     LTFAT_COMPLEX**     couttmp;
     LTFAT_NAME(dgtrealmp_state_closure)** closures;
+    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback;
+    void* userdata;
 };
 
 static inline LTFAT_REAL

@@ -1,4 +1,15 @@
 /** \defgroup block_processor Block Stream Processor
+ *
+ * A simple data stream blocking interface employing a pair of circular buffers.
+ * It is intended for block-wise processing of audio streams or long audio files.
+ * The blocks might be overlapping.
+ *
+ * The processor will invoke the registered callback function every \a hop
+ * samples and will provide a block of samples of length \a winLen.
+ *
+ * The output data stream is delayed by \a procDelay samples behind the input stream.
+ *
+ * Optionally, the blocks can be weighted by pre- and post- windows.
  */
 #ifndef _LTFAT_CIRCULARBUF_H
 #define _LTFAT_CIRCULARBUF_H
@@ -23,7 +34,7 @@ typedef int LTFAT_NAME(block_processor_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
 
 /** \name Basic interface
- * PRd
+ * 
 * @{
 */
 LTFAT_API int
