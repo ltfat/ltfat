@@ -8,7 +8,7 @@ typedef struct LTFAT_NAME(dgtrealmp_parbuf) LTFAT_NAME(dgtrealmp_parbuf);
 #ifndef _LTFAT_DGTREALMP_H
 #define _LTFAT_DGTREALMP_H
 
-/** \addtogroup dgtrealmp  */
+/** \addtogroup multidgtrealmp  */
 /**@{*/
 enum ltfat_dgtmp_status
 {
@@ -97,70 +97,6 @@ int
 ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in);
 
 #endif
-
-typedef struct LTFAT_NAME(dgtrealmp_state) LTFAT_NAME(dgtrealmp_state);
-typedef struct LTFAT_NAME(dgtrealmp_parbuf) LTFAT_NAME(dgtrealmp_parbuf);
-
-LTFAT_API LTFAT_NAME(dgtreal_plan)**
-LTFAT_NAME(dgtrealmp_getdgtrealplan)(LTFAT_NAME(dgtrealmp_state)* p);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_getresidualcoef_compact)(
-    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX* c);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstep)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t iterstep);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_maxatoms)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t maxatoms);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_errtoldb)(
-    LTFAT_NAME(dgtrealmp_state)* p, double errtoldb);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_get_errdb)(
-    const LTFAT_NAME(dgtrealmp_state)* p, double* err);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_get_numatoms)(
-    const LTFAT_NAME(dgtrealmp_state)* p, size_t* atoms);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_get_numiters)(
-    const LTFAT_NAME(dgtrealmp_state)* p, size_t* iters);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_init_gen_compact)(
-        const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P,
-        ltfat_int a[], ltfat_int M[], ltfat_dgtmp_params* params,
-        LTFAT_NAME(dgtrealmp_state)** pout);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_init_gen)(
-        const LTFAT_REAL* g[], ltfat_int gl[], ltfat_int L, ltfat_int P,
-        ltfat_int a[], ltfat_int M[], ltfat_dgtmp_params* params,
-        LTFAT_NAME(dgtrealmp_state)** p);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters)(
-        LTFAT_NAME(dgtrealmp_state)* p, ltfat_int itno, LTFAT_COMPLEX** cout);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters_compact)(
-        LTFAT_NAME(dgtrealmp_state)* p, ltfat_int itno, LTFAT_COMPLEX* cout);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_reset)(
-    LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_revert)(
-        LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX** cout);
-
-
 
 /** \addtogroup dgtrealmp  */
 /**@{*/

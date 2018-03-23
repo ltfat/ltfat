@@ -3,6 +3,44 @@
 #include "ltfat/macros.h"
 #include "dgtwrapper_private.h"
 
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_M)(LTFAT_NAME(dgt_plan)* p)
+{
+    if(p) return p->M;
+    else return LTFATERR_NULLPOINTER;
+}
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_a)(LTFAT_NAME(dgt_plan)* p)
+{
+    if(p) return p->a;
+    else return LTFATERR_NULLPOINTER;
+}
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_W)(LTFAT_NAME(dgt_plan)* p)
+{
+    if(p) return p->W;
+    else return LTFATERR_NULLPOINTER;
+}
+
+LTFAT_API ltfat_phaseconvention
+LTFAT_NAME(dgt_get_phaseconv)(LTFAT_NAME(dgt_plan)* p)
+{
+    if(p) return p->ptype;
+    else return LTFATERR_NULLPOINTER;
+}
+
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_L)(LTFAT_NAME(dgt_plan)* p)
+{
+    if(p) return p->L;
+    else return LTFATERR_NULLPOINTER;
+}
+
+
 int
 LTFAT_NAME(idgt_long_execute_wrapper)(void* plan,
                                       const LTFAT_COMPLEX* c, ltfat_int UNUSED(L), ltfat_int UNUSED(W),

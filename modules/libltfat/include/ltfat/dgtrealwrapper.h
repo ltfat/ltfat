@@ -136,7 +136,6 @@ LTFAT_NAME(dgtreal_execute_ana)(LTFAT_NAME(dgtreal_plan)* p);
 LTFAT_API int
 LTFAT_NAME(dgtreal_done)(LTFAT_NAME(dgtreal_plan)** p);
 
-/** @} */
 
 
 LTFAT_API ltfat_int
@@ -153,6 +152,7 @@ LTFAT_NAME(dgtreal_get_L)(LTFAT_NAME(dgtreal_plan)* p);
 
 LTFAT_API ltfat_phaseconvention
 LTFAT_NAME(dgtreal_get_phaseconv)(LTFAT_NAME(dgtreal_plan)* p);
+/** @} */
 /** @} */
 
 int

@@ -66,10 +66,6 @@ ltfat_dgt_setpar_hint(ltfat_dgt_params* params, ltfat_dgt_hint hint);
 LTFAT_API int
 ltfat_dgt_setpar_synoverwrites(ltfat_dgt_params* params, int do_synoverwrites);
 
-LTFAT_API int
-ltfat_dgt_setpar_normalizewin(ltfat_dgt_params* params,
-                              int do_normalize_win);
-
 /** Destroy struct
  *
  * \returns

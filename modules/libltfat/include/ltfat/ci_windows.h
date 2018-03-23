@@ -1,11 +1,22 @@
 /** \defgroup windows Gabor Windows
  * \addtogroup windows
  * @{
+ *
+ * \note Please note that the window format is slightly unusual i.e.
+ * the (unique) peak of the window is at index [0] of the array and the 
+ * left tail is circularly wrapped such that the ends of both tails 
+ * meet in the middle of the array. 
+ * fftshift() can be used to format the array to the usual format
+ * with peak in the middle. 
+ *
  */
 
 #ifndef _LTFAT_CI_WINDOWS_H
 #define _LTFAT_CI_WINDOWS_H
 
+/**
+ *Codes for finite support windows
+ */
 typedef enum
 {
     LTFAT_HANN, LTFAT_HANNING=LTFAT_HANN, LTFAT_NUTTALL10=LTFAT_HANN,
@@ -27,8 +38,7 @@ typedef enum
     LTFAT_NUTTALL03,
     LTFAT_TRUNCGAUSS01,
     LTFAT_TRUNCGAUSS005
-}
-LTFAT_FIRWIN;
+} LTFAT_FIRWIN;
 
 /** Convert lowercase string to a firwin enum
  *
@@ -36,14 +46,22 @@ LTFAT_FIRWIN;
  *
  * \param[in]   win  Window type
  * \returns
- * LTFAT_FIRWIN integer
+ * LTFAT_FIRWIN integer or
+ *
  * Status code           | Description
- * ----------------------|--------------------------------------------
+ * ----------------------|------------
  * LTFATERR_BADARG       | Unsupported string
  */
 LTFAT_API int
 ltfat_str2firwin(const char* name);
 
+/** Get the array length for mtgauss()
+ *
+ * \param[in]     a   Time hop factor
+ * \param[in]     M   Number of frequency channels
+ * \param[in]   thr   Threshold ]0,1[ where to truncate
+ * \returns ltfaterr_status
+ */
 LTFAT_API ltfat_int
 ltfat_mtgausslength(ltfat_int a, ltfat_int M, double thr);
 #endif /* _CI_WINDOWS_H */
@@ -51,13 +69,6 @@ ltfat_mtgausslength(ltfat_int a, ltfat_int M, double thr);
 
 
 /** Creates real, whole-point symmetric, zero delay window.
- *
- * \note Please note that the window format is slightly unusual i.e.
- * the (unique) peak of the window is at index [0] of the array and the 
- * left tail is circularly wrapped such that the ends of both tails 
- * meet in the middle of the array. 
- * fftshift() can be used to format the array to the usual format
- * with peak in the middle. 
  *
  * \see normalize fftshift
  *
@@ -77,7 +88,7 @@ ltfat_mtgausslength(ltfat_int a, ltfat_int M, double thr);
  * </tt>
  * \returns
  * Status code           | Description
- * ----------------------|--------------------------------------------
+ * ----------------------|------------
  * LTFATERR_SUCCESS      | Indicates no error
  * LTFATERR_NULLPOINTER  | The output array is NULL
  * LTFATERR_BADSIZE      | Length of the array is less or equal to 0.
@@ -86,9 +97,31 @@ ltfat_mtgausslength(ltfat_int a, ltfat_int M, double thr);
 LTFAT_API int
 LTFAT_NAME(firwin)(LTFAT_FIRWIN win, ltfat_int gl, LTFAT_TYPE* g);
 
-
-
-
+/** Truncated Gaussian window optimally matched to the lattice
+ *
+ * Computes peak-normalized Gaussian window scaled such that the time-
+ * frequency support is circular with respect to the lattice given by parameters
+ * \a a and \a M.
+ *
+ * \see normalize fftshift ltfat_mtgausslength
+ *
+ * \param[in]     a   Time hop factor
+ * \param[in]     M   Number of frequency channels
+ * \param[in]   thr   Threshold ]0,1[ where to truncate
+ * \param[out]    g   Window. ltfat_mtgausslength
+ *
+ * #### Function versions #
+ * <tt>
+ * ltfat_mtgauss_d(ltfat_int a, ltfat_int M, double thr, double g[]);
+ *
+ * ltfat_mtgauss_s(ltfat_int a, ltfat_int M, double thr, float g[]);
+ *
+ * ltfat_mtgauss_dc(ltfat_int a, ltfat_int M, double thr, ltfat_complex_d g[]);
+ *
+ * ltfat_mtgauss_ds(ltfat_int a, ltfat_int M, double thr, ltfat_complex_s g[]);
+ * </tt>
+ * \returns ltfaterr_status
+ */
 LTFAT_API int
 LTFAT_NAME(mtgauss)(ltfat_int a, ltfat_int M, double thr, LTFAT_TYPE* g);
 

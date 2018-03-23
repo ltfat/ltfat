@@ -55,7 +55,7 @@ LTFAT_NAME(gabframediag)(const LTFAT_TYPE* g, ltfat_int gl,
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | Either of the arrays is NULL
  * LTFATERR_BADSIZE         | Size of the array \a L is less or equal to 0.
@@ -97,7 +97,7 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE g[],
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | Either of the arrays is NULL
  * LTFATERR_BADSIZE         | Size of the array \a L is less or equal to 0.
@@ -133,7 +133,7 @@ LTFAT_NAME(gabtight_long)(const LTFAT_TYPE g[],
  * </tt>
  * \returns
  * Status code           | Description
- * ----------------------|--------------------------------------------
+ * ----------------------|------------
  * LTFATERR_SUCCESS      | Indicates no error
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL.
  * LTFATERR_BADSIZE      | Length of the windows is less or equal to 0.
@@ -168,7 +168,7 @@ LTFAT_NAME(gabdual_painless)(const LTFAT_TYPE g[], ltfat_int gl, ltfat_int a,
  * </tt>
  * \returns
  * Status code           | Description
- * ----------------------|--------------------------------------------
+ * ----------------------|------------
  * LTFATERR_SUCCESS      | Indicates no error
  * LTFATERR_NULLPOINTER  | Either of the arrays is NULL.
  * LTFATERR_BADSIZE      | Length of the windows is less or equal to 0.

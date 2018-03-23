@@ -251,6 +251,20 @@ LTFAT_NAME(dgt_execute_ana)(LTFAT_NAME(dgt_plan)* p);
 LTFAT_API int
 LTFAT_NAME(dgt_done)(LTFAT_NAME(dgt_plan)** p);
 
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_M)(LTFAT_NAME(dgt_plan)* p);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_a)(LTFAT_NAME(dgt_plan)* p);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_W)(LTFAT_NAME(dgt_plan)* p);
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgt_get_L)(LTFAT_NAME(dgt_plan)* p);
+
+LTFAT_API ltfat_phaseconvention
+LTFAT_NAME(dgt_get_phaseconv)(LTFAT_NAME(dgt_plan)* p);
 /** @} */
 /** @} */
 
