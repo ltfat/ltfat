@@ -16,7 +16,7 @@ $(PROGS): %: %.cpp $(libltfat)
 	$(CXX) $(CXXFLAGS) -I../utils -I../../modules/libltfat/include $< -o $@ $(libltfat) -lfftw3 -lfftw3f -lc -lm -lsndfile 
 
 $(libltfat):
-	make -C ../.. -j12 NOBLASLAPACK=1 COMPTARGET=fulloptim static
+	make -C ../.. -j12 MODULE=libltfat NOBLASLAPACK=1 COMPTARGET=fulloptim static
 
 clean: cleanlib cleanexe
 
