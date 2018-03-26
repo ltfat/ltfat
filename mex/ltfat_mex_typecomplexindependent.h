@@ -1,5 +1,5 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 #include "mex.h"
 
  void LTFAT_NAME(ltfatMexAtExit)(void (*ExitFcn)(void))

@@ -16,7 +16,7 @@
 
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 /*
 COMP_CELLCOEF2TF Cell to a tf-layout

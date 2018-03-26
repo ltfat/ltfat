@@ -28,11 +28,11 @@ endif
 
 # += to allow user defined values for CFLAGS
 CFLAGS+=-shared -fPIC -g -Wall -Wextra -std=c99
-
+COMPTARGET?=release
 # the following adds parameters to CFLAGS
 include ../libltfat/comptarget.mk
 
-SEARCHPATHS=-I../libltfat/thirdparty -I../libltfat/include -I../libltfat/include/ltfat -I$(MATLABROOT)/extern/include
+SEARCHPATHS=-I../libltfat/modules/libltfat/include -I$(MATLABROOT)/extern/include
 
 include filedefs.mk
 
@@ -42,12 +42,12 @@ MEXS     = $(addsuffix .$(EXT),$(MEXBASE))
 # Without -Wl,--no-undefined, the compilation is always sucessfull
 # but one can get into problems in runtime.
 LINKFLAGS=-Wl,--no-undefined -L"$(MATLABROOT)/bin/$(ARCH)" \
-		  -lmex -lmx -lmwblas -lmwlapack $(DFFTW) $(SFFTW) 
+		  -lmex -lmx -lmwblas -lmwlapack $(DFFTW) $(SFFTW) '-Wl,-rpath,$$ORIGIN/../lib'
 #          -Wl,-rpath-link='$$ORIGIN/../lib'  \
 		  -Wl,-rpath='$$ORIGIN/../lib'
 		  
 # -L../lib -l:libltfat.a does not work with clang
-LTFATLIBSTATIC=../lib/libltfat.a 
+LTFATLIBSTATIC=../lib/libltfat.a
 
 # Setting relative paths 
 #LTFATLIBDYNAMIC=-L../lib -lltfat -lltfatf -Wl,-R,'$$ORIGIN/../lib'
@@ -61,7 +61,7 @@ all: $(MEXS) ltfatarghelper.$(EXT)
 	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ $< $(LTFATLIB) $(LINKFLAGS) 
 
 ltfatarghelper.$(EXT):
-	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ ltfatarghelper.c ../libltfat/ltfatcompat/utils/list.c -lc -lm $(LINKFLAGS)
+	$(CC) $(CFLAGS) $(SEARCHPATHS) -o $@ ltfatarghelper.c ../lib/ltfatcompat/utils/list.c -lc -lm $(LINKFLAGS)
 
 clean:
 	-rm *.o

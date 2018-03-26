@@ -16,7 +16,7 @@
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 
 /* Calling convention:
@@ -41,13 +41,13 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
      plhs[0] = mxCreateDoubleMatrix(L, 1, mxREAL);
      g = mxGetPr(plhs[0]);
 
-     pgauss_d(L, w, c_t,(double*)g);
+     ltfat_pgauss_d(L, w, c_t,(double*)g);
   }
   else
   {
     plhs[0] = ltfatCreateMatrix(L, 1, mxDOUBLE_CLASS, mxCOMPLEX);
     LTFAT_COMPLEX *gc =  mxGetData(plhs[0]);
-    pgauss_cmplx_d(L, w, c_t,c_f,gc);
+    ltfat_pgauss_dc(L, w, c_t,c_f,gc);
   }
 
   return;

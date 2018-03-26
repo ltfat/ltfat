@@ -16,7 +16,7 @@
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 /*
   Defining forwarders since there is no simple way of unified call to
@@ -26,7 +26,7 @@
 static inline void 
 LTFAT_NAME(fwd_col2diag)(const double* cin, const mwSize L, double* cout)
 {
-   col2diag_d(cin,L,cout);
+   ltfat_col2diag_d(cin,L,cout);
 }
 #endif /* LTFAT_DOUBLE */
 
@@ -34,7 +34,7 @@ LTFAT_NAME(fwd_col2diag)(const double* cin, const mwSize L, double* cout)
 static inline void
 LTFAT_NAME(fwd_col2diag)(const float* cin, const int L, float* cout)
 {
-   col2diag_s(cin,L,cout);
+   ltfat_col2diag_s(cin,L,cout);
 }
 #endif /* LTFAT_SINGLE */
 

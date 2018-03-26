@@ -19,7 +19,7 @@ int ltfat_round(double x)
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 // Calling convention:
 //    c=comp_nonsepdgt_multi(f,g,a,M,lt);
@@ -27,7 +27,7 @@ int ltfat_round(double x)
 void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
                               int UNUSED(nrhs), const mxArray *prhs[] )
 {
-   ltfatInt a, M, N, L, W, Lg, lt1, lt2;
+   ltfat_int a, M, N, L, W, Lg, lt1, lt2;
 
    double *lt;
 
@@ -36,8 +36,8 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
    W  = mxGetN(prhs[0]);
    Lg = mxGetM(prhs[1]);
 
-   a=(ltfatInt)mxGetScalar(prhs[2]);
-   M=(ltfatInt)mxGetScalar(prhs[3]);
+   a=(ltfat_int)mxGetScalar(prhs[2]);
+   M=(ltfat_int)mxGetScalar(prhs[3]);
 
    // Read the values of lt and round them to integers.
    lt = mxGetPr(prhs[4]);

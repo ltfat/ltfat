@@ -12,7 +12,7 @@
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 // Calling convention:
 // comp_sepdgtreal(f,g,a,M);
@@ -29,7 +29,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
 
     a = (int)mxGetScalar(prhs[2]);
     M = (int)mxGetScalar(prhs[3]);
-    int ptype = (int)mxGetScalar(prhs[4]);
+    int ptype = (int)mxGetScalar(prhs[4]) == 1 ? LTFAT_TIMEINV: LTFAT_FREQINV;
     M2 = M / 2 + 1;
     N = L / a;
 

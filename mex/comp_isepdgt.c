@@ -13,7 +13,7 @@
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 // Calling convention:
 //  comp_isepdgt(coef,g,L,a,M,phasetype);
@@ -26,7 +26,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
     L = (int)mxGetScalar(prhs[2]);
     a = (int)mxGetScalar(prhs[3]);
     M = (int)mxGetScalar(prhs[4]);
-    int ptype = (int)mxGetScalar(prhs[5]);
+    int ptype = (int)mxGetScalar(prhs[5]) == 1 ? LTFAT_TIMEINV: LTFAT_FREQINV;
     N = L / a;
 
     gl = mxGetM(prhs[1]);
@@ -39,12 +39,12 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
 
     if (gl < L)
     {
-        LTFAT_NAME(idgt_fb)(c_combined, g_combined, L, gl, W, a, M, ptype,
+        LTFAT_NAME_COMPLEX(idgt_fb)(c_combined, g_combined, L, gl, W, a, M, ptype,
                             f_combined);
     }
     else
     {
-        LTFAT_NAME(idgt_long)(c_combined, g_combined, L, W, a, M, ptype,
+        LTFAT_NAME_COMPLEX(idgt_long)(c_combined, g_combined, L, W, a, M, ptype,
                               f_combined);
     }
     /*

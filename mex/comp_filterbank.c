@@ -1,7 +1,8 @@
 #include "mex.h"
-#include "fftw3.h"
+#include "ltfat/thirdparty/fftw3.h"
 #include <string.h>
 #include "ltfat.h"
+#include "ltfat/macros.h"
 
 static fftw_plan* p_double = NULL;
 static fftwf_plan* p_float = NULL;

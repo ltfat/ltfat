@@ -25,7 +25,6 @@ MEXBASESAFE=\
 	comp_nonsepwin2multi  \
 	comp_pchirp  \
 	comp_pgauss  \
-	comp_ufilterbank_fft  \
 	comp_wfac \
 	comp_atrousfilterbank_td \
 	comp_iatrousfilterbank_td \

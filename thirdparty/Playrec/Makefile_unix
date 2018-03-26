@@ -28,7 +28,7 @@ MEXTGT=playrec.$(EXT)
 MEXSRC=mex_dll_core.c pa_dll_playrec.c ltfatresample.c
 LIBS=-Wl,--no-undefined -L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -lm $(PORTAUDIO)
 	  
-INCLUDES= -I"$(MATLABROOT)/extern/include" -I. -I../../libltfat/thirdparty
+INCLUDES= -I"$(MATLABROOT)/extern/include" -I. 
 CFLAGS=-static-libgcc -fPIC -std=c99 -O3 -Wall -shared -DMATLAB_MEX_FILE -DHAVE_PORTAUDIO
 
 all:

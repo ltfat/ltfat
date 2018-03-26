@@ -16,7 +16,7 @@
 
 #include "ltfat_mex_template_helper.h"
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 /*
 %COMP_ATROUSFILTERBANK_TD   Uniform filterbank by conv2
@@ -54,9 +54,9 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
 
    // POINTER TO THE FILTERS
    const LTFAT_TYPE* gPtrs[M];
-   ltfatInt offset[M];
-   ltfatInt a[M];
-   ltfatInt filtLens[M];
+   ltfat_int offset[M];
+   ltfat_int a[M];
+   ltfat_int filtLens[M];
    for(mwSize m=0; m<M; m++)
    {
       filtLens[m] = filtLen;

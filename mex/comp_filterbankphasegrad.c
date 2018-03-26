@@ -12,7 +12,7 @@
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 
 // Calling convention:
 // [tgrad,fgrad,cs] = comp_filterbankphasegrad(c,ch,cd,L,minlvl);
@@ -27,7 +27,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
    const double L = mxGetScalar(prhs[3]);
    const double minlvl = mxGetScalar(prhs[4]);
 
-   ltfatInt M = mxGetNumberOfElements(mxc);
+   ltfat_int M = mxGetNumberOfElements(mxc);
 
    const LTFAT_COMPLEX* cPtr[M];
    const LTFAT_COMPLEX* chPtr[M];
@@ -37,13 +37,13 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
    LTFAT_REAL* fgradPtr[M];
    LTFAT_REAL* csPtr[M];
 
-   ltfatInt N[M];
+   ltfat_int N[M];
 
    mxArray* mxtgrad = plhs[0] = mxCreateCellMatrix(M, 1);
    mxArray* mxfgrad = plhs[1] = mxCreateCellMatrix(M, 1);
    mxArray* mxcs = plhs[2] = mxCreateCellMatrix(M, 1);
 
-   for (ltfatInt m = 0; m < M; m++)
+   for (ltfat_int m = 0; m < M; m++)
    {
       N[m] = mxGetM(mxGetCell(mxc, m));
       cPtr[m] = mxGetData(mxGetCell(mxc, m));

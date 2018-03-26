@@ -147,7 +147,7 @@ if flags.do_clean
 
   if do_lib
     disp('========= Cleaning libltfat ===============');
-    cd([bp,'libltfat',filesep,'ltfatcompat']);
+    cd([bp,'lib',filesep,'ltfatcompat']);
     callmake(make_exe,makefilename,'target','clean',flags.verbosity);
     %[status,result]=system([make_exe, ' -f ',makefilename,' clean']);
     %disp('Done.');    
@@ -207,7 +207,7 @@ end;
 if flags.do_compile
   if do_lib
     disp('========= Compiling libltfat ==============');
-    cd([bp,'libltfat',filesep,'ltfatcompat']);
+    cd([bp,'lib',filesep,'ltfatcompat']);
     clear mex; 
     
     dfftw = ['-l',fftw_lib_names{1}];

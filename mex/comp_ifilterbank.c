@@ -1,7 +1,8 @@
 #include "mex.h"
-#include "fftw3.h"
+#include "ltfat/thirdparty/fftw3.h"
 #include <string.h>
 #include "ltfat.h"
+#include "ltfat/macros.h"
 
 /*
   Inside functions

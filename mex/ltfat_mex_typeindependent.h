@@ -1,7 +1,7 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include <complex.h>
-#include "fftw3.h"
-#include "ltfat_types.h"
+// #include "fftw3.h"
+#include "ltfat/types.h"
 #include "mex.h"
 
 

@@ -110,6 +110,7 @@ NOCOMPLEXFMTCHANGE
 
 /** HEADERS */
 #include "ltfat.h"
+#include "ltfat/macros.h"
 #include <stdio.h>
 #include <string.h>
 #include <mex.h>
@@ -192,9 +193,9 @@ Include MEX source code (MEX_FILE) for each template data type according to the 
     REALARGS
     COMPLEXINDEPENDENT
 
-For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
+For each inclusion a whole set of macros is defined (see src/ltfat/types.h):
 
-    MACRO SETS (from ltfat_types.h)
+    MACRO SETS (from ltfat/types.h)
           MACRO                                     EXPANDS TO
                               (double)           (single)           (complex double)      (complex single)
     ------------------------------------------------------------------------------------------------------
@@ -212,14 +213,14 @@ For each inclusion a whole set of macros is defined (see src/ltfat_types.h):
 
 
 #define LTFAT_DOUBLE
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 #include "ltfat_mex_typeindependent.h"
 #include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 #include MEX_FILE
 #ifdef COMPLEXINDEPENDENT
 #  define LTFAT_COMPLEXTYPE
-#  include "ltfat_types.h"
+#  include "ltfat/types.h"
 #  include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 #  include MEX_FILE
@@ -229,14 +230,14 @@ void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray 
 
 #ifdef SINGLEARGS
 #  define LTFAT_SINGLE
-#  include "ltfat_types.h"
+#  include "ltfat/types.h"
 #  include "ltfat_mex_typeindependent.h"
 #  include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 #  include MEX_FILE
 #  ifdef COMPLEXINDEPENDENT
 #    define LTFAT_COMPLEXTYPE
-#    include "ltfat_types.h"
+#    include "ltfat/types.h"
 #    include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 #    include MEX_FILE

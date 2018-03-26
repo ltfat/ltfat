@@ -13,7 +13,7 @@ endif
 
 include ../../libltfat/ostools.mk
 
-ADDITIONALFLAGS = -L. $(PORTAUDIO) -I. -I../../libltfat/thirdparty -DIS_OCTAVE
+ADDITIONALFLAGS = -L. $(PORTAUDIO) -I. -DIS_OCTAVE
 ifdef HAVE_PORTAUDIO
   ADDITIONALFLAGS += -DHAVE_PORTAUDIO
 endif

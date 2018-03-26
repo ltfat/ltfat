@@ -15,17 +15,17 @@
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
-#include "ltfat_types.h"
+#include "ltfat/types.h"
 #include "config.h"
 
 
-static LTFAT_FFTW(plan) LTFAT_NAME(p_old) = 0;
+static LTFAT_NAME(dst_plan)* LTFAT_NAME(p_old) = 0;
 
 static void LTFAT_NAME(dctMexAtExitFnc)()
 {
    if (LTFAT_NAME(p_old) != 0)
    {
-      LTFAT_FFTW(destroy_plan)(LTFAT_NAME(p_old));
+      LTFAT_NAME(dst_done)(LTFAT_NAME(p_old));
    }
 }
 
@@ -85,7 +85,7 @@ LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
 
 
 
-   LTFAT_FFTW(plan) p = LTFAT_NAME(dst_init)( L, W, c_r, kind);
+   LTFAT_NAME(dst_plan)* p = LTFAT_NAME(dst_init)( L, W, c_r, kind);
 
 
 
