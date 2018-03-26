@@ -24,6 +24,7 @@
 # signals subdirectory
 *.png
 !/signals/*.png
+old_*
 
 # Ignore temporaty files
 *octave-workspace
