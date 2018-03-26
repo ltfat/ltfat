@@ -5,7 +5,7 @@
 .PHONY: all clean
 
 all:
-	make -C ../../libltfat build/libltfat.a
+	make -C ../../libltfat build/libltfat.a OPTCFLAGS=-DLTFAT_LARGEARRAYS
 	cp ../../libltfat/build/libltfat.a ../
 
 clean:

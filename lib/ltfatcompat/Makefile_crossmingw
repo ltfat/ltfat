@@ -82,7 +82,7 @@ all: clean makedirtree backlib $(MEXS) ltfatarghelper polygonclip playrec copyre
 
 backlib: CFLAGS=-O2 -s -Wall -Wextra -std=c99 -I./thirdparty/ -I./ -DMATLABFORTRAN -DDLL_EXPORT_SYMBOLS -DNDEBUG
 backlib: 
-	make -C .. CROSS=$(CROSS) buildprefix=$(OUTDIR)/mex $(OUTDIR)/mex/libltfat.dll FFTWLIBS="-L$(MATLIBS) -lfftw3-3 -lfftw3f-3" BLASLAPACKLIBS="-L$(MATLIBS) -lmwblas -lmwlapack" OPTCFLAGS=-DMATLABFORTRAN
+	make -C .. CROSS=$(CROSS) buildprefix=$(OUTDIR)/mex $(OUTDIR)/mex/libltfat.dll FFTWLIBS="-L$(MATLIBS) -lfftw3-3 -lfftw3f-3" BLASLAPACKLIBS="-L$(MATLIBS) -lmwblas -lmwlapack" OPTCFLAGS="-DMATLABFORTRAN -DLTFAT_LARGEARRAYS"
 
 # backlib_double: $(DFILES) $(DFILES_BLASLAPACK) Makefile_crossmingw
 # 	$(CC) -shared -Wl,--dll -L$(MATLIBS) -lfftw3-3 -lmwlapack -lmwblas $(DFILES) $(DFILES_BLASLAPACK)  \
