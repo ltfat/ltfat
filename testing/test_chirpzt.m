@@ -5,7 +5,7 @@ test_failed=0;
 global LTFAT_TEST_TYPE;
 tolerance = 2e-10;
 if strcmpi(LTFAT_TEST_TYPE,'single')
-   tolerance = 2e-4;
+   tolerance = 8e-4;
 end
 L = 36;
 W = 17;
