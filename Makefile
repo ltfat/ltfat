@@ -188,7 +188,7 @@ $(buildprefix):
 $(objprefix)/%:
 	@$(MKDIR) $@
 
-.PHONY: clean cleanobj help doc doxy static shared munit unit $(MODULE)
+.PHONY: clean cleanobj help doc doxy static shared allshared munit unit $(MODULE)
 
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
@@ -212,14 +212,6 @@ help:
 	@echo "    make [target] CONFIG=debug               Compiles the library in a debug mode"
 	@echo "    make [target] NOBLASLAPACK=1             Compiles the library without BLAS and LAPACK dependencies"
 	@echo "    make [target] USECPP=1                   Compiles the library using a C++ compiler"
-
-doxy: doc
-doc:
-	doxygen doc/doxyconfig
-
-cleandoc:
-	@$(RMDIR) html
-	@$(RMDIR) latex
 
 allmunit:
 	$(MAKE) clean

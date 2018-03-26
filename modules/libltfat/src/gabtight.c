@@ -2,15 +2,15 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+
 LTFAT_API int
-LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
-                          ltfat_int L, ltfat_int a,
-                          ltfat_int M, LTFAT_TYPE* gt)
+LTFAT_NAME(multiwingabtight_long)(const LTFAT_TYPE g[],
+                          ltfat_int L, ltfat_int R, ltfat_int a,
+                          ltfat_int M, LTFAT_TYPE gt[])
 {
     ltfat_int minL;
     LTFAT_COMPLEX* gf = NULL;
     LTFAT_COMPLEX* gtf = NULL;
-    ltfat_int R = 1;
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gt);
@@ -46,6 +46,13 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(gabtight_long)(const LTFAT_TYPE* g,
+                          ltfat_int L, ltfat_int a,
+                          ltfat_int M, LTFAT_TYPE* gt)
+{
+    return LTFAT_NAME(multiwingabtight_long)(g,L,1,a,M,gt);
+}
 
 LTFAT_API int
 LTFAT_NAME(gabtight_fir)(const LTFAT_TYPE* g, ltfat_int gl,

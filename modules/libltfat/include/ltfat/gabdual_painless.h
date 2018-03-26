@@ -69,6 +69,11 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE g[],
                          ltfat_int L, ltfat_int a,
                          ltfat_int M, LTFAT_TYPE gd[]);
 
+LTFAT_API int
+LTFAT_NAME(multiwingabdual_long)(
+        const LTFAT_TYPE* g, ltfat_int L, ltfat_int R, ltfat_int a,
+        ltfat_int M, LTFAT_TYPE* gd);
+
 /** Compute canonical tight window for Gabor system
  *
  * \warning This function is not available if libltfat has been compiled with
@@ -110,6 +115,11 @@ LTFAT_API int
 LTFAT_NAME(gabtight_long)(const LTFAT_TYPE g[],
                           ltfat_int L, ltfat_int a,
                           ltfat_int M, LTFAT_TYPE gd[]);
+
+LTFAT_API int
+LTFAT_NAME(multiwingabtight_long)(const LTFAT_TYPE g[],
+                          ltfat_int L, ltfat_int R, ltfat_int a,
+                          ltfat_int M, LTFAT_TYPE gt[]);
 
 /** Compute canonical dual window for painless Gabor system
  *

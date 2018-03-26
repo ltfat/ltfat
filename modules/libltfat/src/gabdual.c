@@ -2,15 +2,15 @@
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
 
+
 LTFAT_API int
-LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
-                         ltfat_int L, ltfat_int a,
-                         ltfat_int M, LTFAT_TYPE* gd)
+LTFAT_NAME(multiwingabdual_long)(
+        const LTFAT_TYPE* g, ltfat_int L, ltfat_int R, ltfat_int a,
+        ltfat_int M, LTFAT_TYPE* gd)
 {
     ltfat_int minL;
     LTFAT_COMPLEX* gf = NULL;
     LTFAT_COMPLEX* gdf = NULL;
-    ltfat_int R = 1;
 
     int status = LTFATERR_SUCCESS;
     CHECKNULL(g); CHECKNULL(gd);
@@ -18,8 +18,8 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
     CHECK(LTFATERR_NOTPOSARG, R > 0, "R (passed %td) must be positive.", R);
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a (passed %td) must be positive.", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M (passed %td) must be positive.", M);
-    CHECK(LTFATERR_NOTAFRAME, M >= a,
-          "Not a frame. Check M>=a (passed M=%td, a=%td)", M, a);
+    /* CHECK(LTFATERR_NOTAFRAME, M >= a, */
+    /*       "Not a frame. Check M>=a (passed M=%td, a=%td)", M, a); */
 
     minL = ltfat_lcm(a, M);
     CHECK(LTFATERR_BADTRALEN, !(L % minL),
@@ -45,6 +45,14 @@ LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
 error:
     LTFAT_SAFEFREEALL(gdf, gf);
     return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(gabdual_long)(const LTFAT_TYPE* g,
+                         ltfat_int L, ltfat_int a,
+                         ltfat_int M, LTFAT_TYPE* gd)
+{
+    return LTFAT_NAME(multiwingabdual_long)( g, L, 1, a, M, gd);
 }
 
 

@@ -22,3 +22,6 @@ LTFAT_API void
 LTFAT_NAME(dct_execute)(const LTFAT_NAME(dct_plan)* p, const LTFAT_TYPE *f,
                         ltfat_int L, ltfat_int W,
                         LTFAT_TYPE *cout, const dct_kind kind);
+
+LTFAT_API void
+LTFAT_NAME(dct_done)( LTFAT_NAME(dct_plan)* p);

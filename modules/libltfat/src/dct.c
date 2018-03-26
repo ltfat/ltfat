@@ -70,6 +70,12 @@ LTFAT_NAME(dct)(const LTFAT_TYPE* f, ltfat_int L, ltfat_int W,
 
     LTFAT_NAME(dct_execute)(p, f,  L,  W,  cout, kind);
 
+    LTFAT_NAME(dct_done)(p);
+}
+
+LTFAT_API void
+LTFAT_NAME(dct_done)( LTFAT_NAME(dct_plan)* p)
+{
     LTFAT_FFTW(destroy_plan)((LTFAT_FFTW(plan))p);
 }
 
