@@ -45,7 +45,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type a  = args(4).int_value();
     const octave_idx_type M  = args(5).int_value();
     const double tol  = args(6).double_value();
-    const int phasetype  = args(7).int_value();
+    const int phasetype  = args(7).int_value()== 1? LTFAT_TIMEINV: LTFAT_FREQINV;
     MArray<LTFAT_REAL> usephase = ltfatOctArray<LTFAT_REAL>(args(8));
 
     const octave_idx_type M2 = args(0).rows();
