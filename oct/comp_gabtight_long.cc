@@ -15,9 +15,9 @@ fwd_gabtight_long(const Complex *g, const octave_idx_type L,
                   const octave_idx_type R, const octave_idx_type a,
                   const octave_idx_type M, Complex *gd)
 {
-    gabtight_long_cd(reinterpret_cast<const fftw_complex*>(g),
+    ltfat_multiwingabtight_long_dc(reinterpret_cast<const ltfat_complex_d*>(g),
                      L, R, a, M,
-                     reinterpret_cast<fftw_complex*>(gd));
+                     reinterpret_cast<ltfat_complex_d*>(gd));
 }
 
 static inline void
@@ -25,9 +25,9 @@ fwd_gabtight_long(const FloatComplex *g, const octave_idx_type L,
                   const octave_idx_type R, const octave_idx_type a,
                   const octave_idx_type M, FloatComplex *gd)
 {
-    gabtight_long_cs(reinterpret_cast<const fftwf_complex*>(g),
+    ltfat_multiwingabtight_long_sc(reinterpret_cast<const ltfat_complex_s*>(g),
                      L, R, a, M,
-                     reinterpret_cast<fftwf_complex*>(gd));
+                     reinterpret_cast<ltfat_complex_s*>(gd));
 }
 
 static inline void
@@ -35,7 +35,7 @@ fwd_gabtight_long(const double *g, const octave_idx_type L,
                   const octave_idx_type R, const octave_idx_type a,
                   const octave_idx_type M, double *gd)
 {
-    gabtight_long_d(g, L, R, a, M, gd);
+    ltfat_multiwingabtight_long_d(g, L, R, a, M, gd);
 }
 
 static inline void
@@ -43,7 +43,7 @@ fwd_gabtight_long(const float *g, const octave_idx_type L,
                   const octave_idx_type R, const octave_idx_type a,
                   const octave_idx_type M, float *gd)
 {
-    gabtight_long_s(g, L, R, a, M, gd);
+    ltfat_multiwingabtight_long_s(g, L, R, a, M, gd);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

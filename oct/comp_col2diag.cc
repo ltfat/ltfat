@@ -14,28 +14,28 @@
 static inline void
 fwd_col2diag(const Complex *cin, const octave_idx_type L, Complex *cout)
 {
-    col2diag_cd(reinterpret_cast<const fftw_complex*>(cin), L,
-                reinterpret_cast<fftw_complex*>(cout));
+    ltfat_col2diag_dc(reinterpret_cast<const ltfat_complex_d*>(cin), L,
+                reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
 fwd_col2diag(const FloatComplex *cin, const octave_idx_type L,
              FloatComplex *cout)
 {
-    col2diag_cs(reinterpret_cast<const fftwf_complex*>(cin), L,
-                reinterpret_cast<fftwf_complex*>(cout));
+    ltfat_col2diag_sc(reinterpret_cast<const ltfat_complex_s*>(cin), L,
+                reinterpret_cast<ltfat_complex_s*>(cout));
 }
 
 static inline void
 fwd_col2diag(const double *cin, const octave_idx_type L, double *cout)
 {
-    col2diag_d(cin, L, cout);
+    ltfat_col2diag_d(cin, L, cout);
 }
 
 static inline void
 fwd_col2diag(const float *cin, const octave_idx_type L, float *cout)
 {
-    col2diag_s(cin, L, cout);
+    ltfat_col2diag_s(cin, L, cout);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

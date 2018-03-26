@@ -17,10 +17,10 @@ fwd_nonsepwin2multi(const Complex *g,
                     const octave_idx_type lt1, const octave_idx_type lt2,
                     Complex *mwin)
 {
-    nonsepwin2multi_d(
-        reinterpret_cast<const fftw_complex *>(g),
+    ltfat_nonsepwin2multi_d(
+        reinterpret_cast<const ltfat_complex_d *>(g),
         L,Lg,a,M,lt1,lt2,
-        reinterpret_cast<fftw_complex *>(mwin));
+        reinterpret_cast<ltfat_complex_d *>(mwin));
 }
 
 static inline void
@@ -30,10 +30,10 @@ fwd_nonsepwin2multi(const FloatComplex *g,
                     const octave_idx_type lt1, const octave_idx_type lt2,
                     FloatComplex *mwin)
 {
-    nonsepwin2multi_s(
-        reinterpret_cast<const fftwf_complex *>(g),
+    ltfat_nonsepwin2multi_s(
+        reinterpret_cast<const ltfat_complex_s *>(g),
         L,Lg,a,M,lt1,lt2,
-        reinterpret_cast<fftwf_complex *>(mwin));
+        reinterpret_cast<ltfat_complex_s *>(mwin));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

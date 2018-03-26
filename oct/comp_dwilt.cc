@@ -19,9 +19,9 @@ fwd_dwilt_fb(const Complex *f, const Complex *g,
              const octave_idx_type W, const octave_idx_type M,
              Complex *cout)
 {
-    dwilt_fb_cd(reinterpret_cast<const fftw_complex*>(f),
-                reinterpret_cast<const fftw_complex*>(g),
-                L, gl, W, M, reinterpret_cast<fftw_complex*>(cout));
+    ltfat_dwilt_fb_dc(reinterpret_cast<const ltfat_complex_d*>(f),
+                reinterpret_cast<const ltfat_complex_d*>(g),
+                L, gl, W, M, reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
@@ -30,10 +30,10 @@ fwd_dwilt_fb(const FloatComplex *f, const FloatComplex *g,
              const octave_idx_type W, const octave_idx_type M,
              FloatComplex *cout)
 {
-    dwilt_fb_cs(reinterpret_cast<const fftwf_complex*>(f),
-                reinterpret_cast<const fftwf_complex*>(g),
+    ltfat_dwilt_fb_sc(reinterpret_cast<const ltfat_complex_s*>(f),
+                reinterpret_cast<const ltfat_complex_s*>(g),
                 L, gl, W, M,
-                reinterpret_cast<fftwf_complex*>(cout));
+                reinterpret_cast<ltfat_complex_s*>(cout));
 }
 
 static inline void
@@ -42,7 +42,7 @@ fwd_dwilt_fb(const double *f, const double *g,
              const octave_idx_type W, const octave_idx_type M,
              double *cout)
 {
-    dwilt_fb_d(f, g, L, gl, W, M, cout);
+    ltfat_dwilt_fb_d(f, g, L, gl, W, M, cout);
 }
 
 static inline void
@@ -51,7 +51,7 @@ fwd_dwilt_fb(const float *f, const float *g,
              const octave_idx_type W, const octave_idx_type M,
              float *cout)
 {
-    dwilt_fb_s(f, g, L, gl, W, M, cout);
+    ltfat_dwilt_fb_s(f, g, L, gl, W, M, cout);
 }
 
 static inline void
@@ -59,9 +59,9 @@ fwd_dwilt_long(const Complex *f, const Complex *g,
                const octave_idx_type L, const octave_idx_type W,
                const octave_idx_type M, Complex *cout)
 {
-    dwilt_long_cd(reinterpret_cast<const fftw_complex*>(f),
-                  reinterpret_cast<const fftw_complex*>(g),
-                  L, W, M, reinterpret_cast<fftw_complex*>(cout));
+    ltfat_dwilt_long_dc(reinterpret_cast<const ltfat_complex_d*>(f),
+                  reinterpret_cast<const ltfat_complex_d*>(g),
+                  L, W, M, reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
@@ -69,9 +69,9 @@ fwd_dwilt_long(const FloatComplex *f, const FloatComplex *g,
                const octave_idx_type L, const octave_idx_type W,
                const octave_idx_type M, FloatComplex *cout)
 {
-    dwilt_long_cs(reinterpret_cast<const fftwf_complex*>(f),
-                  reinterpret_cast<const fftwf_complex*>(g),
-                  L, W, M, reinterpret_cast<fftwf_complex*>(cout));
+    ltfat_dwilt_long_sc(reinterpret_cast<const ltfat_complex_s*>(f),
+                  reinterpret_cast<const ltfat_complex_s*>(g),
+                  L, W, M, reinterpret_cast<ltfat_complex_s*>(cout));
 }
 
 static inline void
@@ -79,7 +79,7 @@ fwd_dwilt_long(const double *f, const double *g,
                const octave_idx_type L, const octave_idx_type W,
                const octave_idx_type M, double *cout)
 {
-    dwilt_long_d(f, g, L, W, M, cout);
+    ltfat_dwilt_long_d(f, g, L, W, M, cout);
 }
 
 static inline void
@@ -87,7 +87,7 @@ fwd_dwilt_long(const float *f, const float *g,
                const octave_idx_type L, const octave_idx_type W,
                const octave_idx_type M, float *cout)
 {
-    dwilt_long_s(f, g, L, W, M, cout);
+    ltfat_dwilt_long_s(f, g, L, W, M, cout);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

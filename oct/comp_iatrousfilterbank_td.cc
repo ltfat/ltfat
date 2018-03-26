@@ -11,50 +11,50 @@
 
 static inline void
 fwd_iatrousfilterbank_td(const Complex *c, const Complex *g[],
-                         const ltfatInt L, const ltfatInt gl[],
-                         const ltfatInt W, const ltfatInt a[],
-                         const ltfatInt offset[], const ltfatInt M,
+                         const ltfat_int L, ltfat_int gl[],
+                         const ltfat_int W, ltfat_int a[],
+                         ltfat_int offset[], const ltfat_int M,
                          Complex *f, ltfatExtType ext)
 {
-    iatrousfilterbank_td_cd(reinterpret_cast<const fftw_complex *>(c),
-                            reinterpret_cast<const fftw_complex **>(g),
+    ltfat_iatrousfilterbank_td_dc(reinterpret_cast<const ltfat_complex_d *>(c),
+                            reinterpret_cast<const ltfat_complex_d **>(g),
                             L, gl, W, a, offset, M,
-                            reinterpret_cast<fftw_complex *>(f),
+                            reinterpret_cast<ltfat_complex_d *>(f),
                             ext);
 }
 
 static inline void
 fwd_iatrousfilterbank_td(const FloatComplex *c, const FloatComplex *g[],
-                         const ltfatInt L, const ltfatInt gl[],
-                         const ltfatInt W, const ltfatInt a[],
-                         const ltfatInt offset[], const ltfatInt M,
+                         const ltfat_int L, ltfat_int gl[],
+                         const ltfat_int W, ltfat_int a[],
+                         ltfat_int offset[], const ltfat_int M,
                          FloatComplex *f, ltfatExtType ext)
 {
-    iatrousfilterbank_td_cs(reinterpret_cast<const fftwf_complex *>(c),
-                            reinterpret_cast<const fftwf_complex **>(g),
+    ltfat_iatrousfilterbank_td_sc(reinterpret_cast<const ltfat_complex_s *>(c),
+                            reinterpret_cast<const ltfat_complex_s **>(g),
                             L, gl, W, a, offset, M,
-                            reinterpret_cast<fftwf_complex *>(f),
+                            reinterpret_cast<ltfat_complex_s *>(f),
                             ext);
 }
 
 static inline void
 fwd_iatrousfilterbank_td(const double *c, const double *g[],
-                         const ltfatInt L, const ltfatInt gl[],
-                         const ltfatInt W, const ltfatInt a[],
-                         const ltfatInt offset[], const ltfatInt M,
+                         const ltfat_int L, ltfat_int gl[],
+                         const ltfat_int W, ltfat_int a[],
+                         ltfat_int offset[], const ltfat_int M,
                          double *f, ltfatExtType ext)
 {
-    iatrousfilterbank_td_d(c, g, L, gl, W, a, offset, M, f, ext);
+    ltfat_iatrousfilterbank_td_d(c, g, L, gl, W, a, offset, M, f, ext);
 }
 
 static inline void
 fwd_iatrousfilterbank_td(const float *c, const float *g[],
-                         const ltfatInt L, const ltfatInt gl[],
-                         const ltfatInt W, const ltfatInt a[],
-                         const ltfatInt offset[], const ltfatInt M,
+                         const ltfat_int L, ltfat_int gl[],
+                         const ltfat_int W, ltfat_int a[],
+                         ltfat_int offset[], const ltfat_int M,
                          float *f, ltfatExtType ext)
 {
-    iatrousfilterbank_td_s(c, g, L, gl, W, a, offset, M, f, ext);
+    ltfat_iatrousfilterbank_td_s(c, g, L, gl, W, a, offset, M, f, ext);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -79,16 +79,16 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type filtLen = g.rows();
 
     OCTAVE_LOCAL_BUFFER (const LTFAT_TYPE*, gPtrs, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, filtLens, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, a, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, offset, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, filtLens, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, a, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, offset, M);
 
 
     for (octave_idx_type m = 0; m < M; m++)
     {
-        filtLens[m] = (ltfatInt) filtLen;
-        a[m] = (ltfatInt) aDouble(0);
-        offset[m] = (ltfatInt) offsetDouble(m);
+        filtLens[m] = (ltfat_int) filtLen;
+        a[m] = (ltfat_int) aDouble(0);
+        offset[m] = (ltfat_int) offsetDouble(m);
         gPtrs[m] = g.data() +  m * filtLen;
     }
 

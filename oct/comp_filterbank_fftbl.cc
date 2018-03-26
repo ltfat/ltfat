@@ -11,29 +11,29 @@
 
 static inline void
 fwd_filterbank_fftbl(const Complex *F, const Complex *G[],
-                     const ltfatInt L, const ltfatInt Gl[],
-                     const ltfatInt W, const double afrac[],
-                     const ltfatInt M, const ltfatInt foff[],
-                     const int realonly[], Complex *c[])
+                     const ltfat_int L,  ltfat_int Gl[],
+                     const ltfat_int W,  double afrac[],
+                     const ltfat_int M,  ltfat_int foff[],
+                      int realonly[], Complex *c[])
 {
-    filterbank_fftbl_d(reinterpret_cast<const fftw_complex *>(F),
-                       reinterpret_cast<const fftw_complex **>(G),
+    ltfat_filterbank_fftbl_d(reinterpret_cast<const ltfat_complex_d *>(F),
+                       reinterpret_cast<const ltfat_complex_d **>(G),
                        L, Gl, W, afrac, M, foff, realonly,
-                       reinterpret_cast<fftw_complex **>(c));
+                       reinterpret_cast<ltfat_complex_d **>(c));
 }
 
 static inline void
 fwd_filterbank_fftbl(const FloatComplex *F, const FloatComplex *G[],
-                     const ltfatInt L, const ltfatInt Gl[],
-                     const ltfatInt W, const double afrac[],
-                     const ltfatInt M, const ltfatInt foff[],
-                     const int realonly[], FloatComplex *c[])
+                     const ltfat_int L,  ltfat_int Gl[],
+                     const ltfat_int W,  double afrac[],
+                     const ltfat_int M,  ltfat_int foff[],
+                      int realonly[], FloatComplex *c[])
 {
 
-    filterbank_fftbl_s(reinterpret_cast<const fftwf_complex *>(F),
-                       reinterpret_cast<const fftwf_complex **>(G),
+    ltfat_filterbank_fftbl_s(reinterpret_cast<const ltfat_complex_s *>(F),
+                       reinterpret_cast<const ltfat_complex_s **>(G),
                        L, Gl, W, afrac, M, foff, realonly,
-                       reinterpret_cast<fftwf_complex **>(c));
+                       reinterpret_cast<ltfat_complex_s **>(c));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -69,9 +69,9 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     // Allocating temporary arrays
     // Filter lengts
-    OCTAVE_LOCAL_BUFFER (ltfatInt, Gl, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, Gl, M);
     // Output subband lengths
-    OCTAVE_LOCAL_BUFFER (ltfatInt, foff, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, foff, M);
     OCTAVE_LOCAL_BUFFER (int, realonly, M);
     // Impulse responses pointers
     OCTAVE_LOCAL_BUFFER (const LTFAT_TYPE*, GPtrs, M);
@@ -84,10 +84,10 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     for (octave_idx_type m = 0; m < M; m++)
     {
         realonly[m] = (int) (realonlyDouble(m) > 1e-3);
-        foff[m] = (ltfatInt) foffDouble(m);
+        foff[m] = (ltfat_int) foffDouble(m);
         g_elems[m] = ltfatOctArray<LTFAT_TYPE>(G.elem(m));
         GPtrs[m] = g_elems[m].data();
-        Gl[m] = (ltfatInt) g_elems[m].numel();
+        Gl[m] = (ltfat_int) g_elems[m].numel();
         octave_idx_type outLen = (octave_idx_type) floor( L / afrac[m] + 0.5);
         c_elems[m] = MArray<LTFAT_TYPE>(dim_vector(outLen, W));
         cPtrs[m] = c_elems[m].fortran_vec();

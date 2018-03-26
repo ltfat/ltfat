@@ -9,26 +9,26 @@
 
 static inline void
 fwd_filterbank_fft(const Complex *F, const Complex *G[],
-                   const ltfatInt L, const ltfatInt W,
-                   const ltfatInt a[], const ltfatInt M,
+                   const ltfat_int L, const ltfat_int W,
+                    ltfat_int a[], const ltfat_int M,
                    Complex *c[])
 {
-    filterbank_fft_d(reinterpret_cast<const fftw_complex *>(F),
-                     reinterpret_cast<const fftw_complex **>(G),
+    ltfat_filterbank_fft_d(reinterpret_cast<const ltfat_complex_d *>(F),
+                     reinterpret_cast<const ltfat_complex_d **>(G),
                      L, W, a, M,
-                     reinterpret_cast<fftw_complex **>(c));
+                     reinterpret_cast<ltfat_complex_d **>(c));
 }
 
 static inline void
 fwd_filterbank_fft(const FloatComplex *F, const FloatComplex *G[],
-                   const ltfatInt L, const ltfatInt W,
-                   const ltfatInt a[], const ltfatInt M,
+                   const ltfat_int L, const ltfat_int W,
+                    ltfat_int a[], const ltfat_int M,
                    FloatComplex *c[])
 {
-    filterbank_fft_s(reinterpret_cast<const fftwf_complex *>(F),
-                     reinterpret_cast<const fftwf_complex **>(G),
+    ltfat_filterbank_fft_s(reinterpret_cast<const ltfat_complex_s *>(F),
+                     reinterpret_cast<const ltfat_complex_s **>(G),
                      L, W, a, M,
-                     reinterpret_cast<fftwf_complex **>(c));
+                     reinterpret_cast<ltfat_complex_s **>(c));
 }
 
 
@@ -51,7 +51,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     // Allocating temporary arrays
     // Output subband lengths
-    OCTAVE_LOCAL_BUFFER (ltfatInt, a, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, a, M);
     // Impulse responses pointers
     OCTAVE_LOCAL_BUFFER (const LTFAT_TYPE*, GPtrs, M);
     // Output subbands pointers
@@ -62,7 +62,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     for (octave_idx_type m = 0; m < M; m++)
     {
-        a[m] = (ltfatInt)aDouble(m);
+        a[m] = (ltfat_int)aDouble(m);
         gElems[m] = ltfatOctArray<LTFAT_TYPE>(G.elem(m));
         GPtrs[m] = gElems[m].data();
         octave_idx_type outLen = (octave_idx_type) ceil( L / aDouble(m) );

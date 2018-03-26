@@ -38,7 +38,7 @@ export CXXFLAGS := $(shell $(MKOCTFILE) -p CXXFLAGS) -std=gnu++11 -Wall
 # at least on Windows and on Mac
 export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS) 
 
-MKOCTFILEFLAGS = -I../libltfat/thirdparty -I../libltfat/include -I../libltfat/include/ltfat -DNDEBUG -L../lib -lltfat
+MKOCTFILEFLAGS = -I../libltfat/modules/libltfat/include -DNDEBUG -L../lib -lltfat
 
 include ../libltfat/ostools.mk
 
@@ -51,7 +51,7 @@ all:	$(INTERFACES)
 	$(MKOCTFILE) --mex $(MKOCTFILEFLAGS) $< -o $@ 
 
 ltfatarghelper.mex:
-	$(MKOCTFILE) --mex $(MKOCTFILEFLAGS) -I../mex ../libltfat/ltfatcompat/utils/list.c ../mex/ltfatarghelper.c -o ltfatarghelper.mex
+	$(MKOCTFILE) --mex $(MKOCTFILEFLAGS) -I../mex ../lib/ltfatcompat/utils/list.c ../mex/ltfatarghelper.c -o ltfatarghelper.mex
 
 
 clean:

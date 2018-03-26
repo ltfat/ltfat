@@ -19,9 +19,9 @@ fwd_dgtreal_fb(const double *f, const double *g,
                const octave_idx_type M, const octave_idx_type phasetype,
                Complex *cout)
 {
-    dgtreal_fb_d(f, g, L, gl, W, a, M,
-                 static_cast<dgt_phasetype>(phasetype),
-                 reinterpret_cast<fftw_complex*>(cout));
+    ltfat_dgtreal_fb_d(f, g, L, gl, W, a, M,
+                 static_cast<ltfat_phaseconvention>(phasetype),
+                 reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
@@ -31,9 +31,9 @@ fwd_dgtreal_fb(const float *f, const float *g,
                const octave_idx_type M, const octave_idx_type phasetype,
                FloatComplex *cout)
 {
-    dgtreal_fb_s(f, g, L, gl, W, a, M,
-                 static_cast<dgt_phasetype>(phasetype),
-                 reinterpret_cast<fftwf_complex*>(cout));
+    ltfat_dgtreal_fb_s(f, g, L, gl, W, a, M,
+                 static_cast<ltfat_phaseconvention>(phasetype),
+                 reinterpret_cast<ltfat_complex_s*>(cout));
 }
 
 static inline void
@@ -42,9 +42,9 @@ fwd_dgtreal_long(const double *f, const double *g, const octave_idx_type L,
                  const octave_idx_type M, const octave_idx_type phasetype,
                  Complex *cout)
 {
-    dgtreal_long_d(f, g, L, W, a, M,
-                   static_cast<dgt_phasetype>(phasetype),
-                   reinterpret_cast<fftw_complex*>(cout));
+    ltfat_dgtreal_long_d(f, g, L, W, a, M,
+                   static_cast<ltfat_phaseconvention>(phasetype),
+                   reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
@@ -53,9 +53,9 @@ fwd_dgtreal_long(const float *f, const float *g, const octave_idx_type L,
                  const octave_idx_type M, const octave_idx_type phasetype,
                  FloatComplex *cout)
 {
-    dgtreal_long_s(f, g, L, W, a, M,
-                   static_cast<dgt_phasetype>(phasetype),
-                   reinterpret_cast<fftwf_complex*>(cout));
+    ltfat_dgtreal_long_s(f, g, L, W, a, M,
+                   static_cast<ltfat_phaseconvention>(phasetype),
+                   reinterpret_cast<ltfat_complex_s*>(cout));
 }
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
 octave_value_list octFunction(const octave_value_list& args, int nargout)
@@ -63,7 +63,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     DEBUGINFO;
     const octave_idx_type a = args(2).int_value();
     const octave_idx_type M = args(3).int_value();
-    const octave_idx_type phasetype = args(4).int_value();
+    const octave_idx_type phasetype = args(4).int_value()== 1? LTFAT_TIMEINV: LTFAT_FREQINV;
     const octave_idx_type M2 = M / 2 + 1;
 
     MArray<LTFAT_TYPE> f = ltfatOctArray<LTFAT_TYPE>(args(0));

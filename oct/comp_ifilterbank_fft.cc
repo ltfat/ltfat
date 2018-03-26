@@ -13,26 +13,26 @@
 
 static inline void
 fwd_ifilterbank_fft(const Complex *c[], const Complex *filt[],
-                    const ltfatInt L, const ltfatInt W,
-                    const ltfatInt a[], const ltfatInt M,
+                    const ltfat_int L, const ltfat_int W,
+                    ltfat_int a[], const ltfat_int M,
                     Complex *f)
 {
-    ifilterbank_fft_d(reinterpret_cast<const fftw_complex **>(c),
-                      reinterpret_cast<const fftw_complex **>(filt),
+    ltfat_ifilterbank_fft_d(reinterpret_cast<const ltfat_complex_d **>(c),
+                      reinterpret_cast<const ltfat_complex_d **>(filt),
                       L, W, a, M,
-                      reinterpret_cast<fftw_complex *>(f));
+                      reinterpret_cast<ltfat_complex_d *>(f));
 }
 
 static inline void
 fwd_ifilterbank_fft(const FloatComplex *c[], const FloatComplex *filt[],
-                    const ltfatInt L, const ltfatInt W,
-                    const ltfatInt a[], const ltfatInt M,
+                    const ltfat_int L, const ltfat_int W,
+                    ltfat_int a[], const ltfat_int M,
                     FloatComplex *f)
 {
-    ifilterbank_fft_s(reinterpret_cast<const fftwf_complex **>(c),
-                      reinterpret_cast<const fftwf_complex **>(filt),
+    ltfat_ifilterbank_fft_s(reinterpret_cast<const ltfat_complex_s **>(c),
+                      reinterpret_cast<const ltfat_complex_s **>(filt),
                       L, W, a, M,
-                      reinterpret_cast<fftwf_complex *>(f));
+                      reinterpret_cast<ltfat_complex_s *>(f));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -66,11 +66,11 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, cElems, M);
     //
     OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, GElems, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, a, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, a, M);
 
     for (octave_idx_type m = 0; m < M; m++)
     {
-        a[m] = (ltfatInt) aDouble(m);
+        a[m] = (ltfat_int) aDouble(m);
         GElems[m] = ltfatOctArray<LTFAT_COMPLEX>(G.elem(m));
         GPtrs[m] = GElems[m].data();
         cElems[m] = ltfatOctArray<LTFAT_COMPLEX>(c.elem(m));

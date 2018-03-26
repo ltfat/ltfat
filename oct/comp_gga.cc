@@ -13,9 +13,9 @@ fwd_gga(const Complex *fPtr, const double*  indVecPtr,
         const octave_idx_type L, const octave_idx_type W,
         const octave_idx_type M, Complex *cPtr )
 {
-   gga_cd(reinterpret_cast<const fftw_complex *>(fPtr),
+   ltfat_gga_dc(reinterpret_cast<const ltfat_complex_d *>(fPtr),
           indVecPtr,L,W,M,
-          reinterpret_cast<fftw_complex *>(cPtr));
+          reinterpret_cast<ltfat_complex_d *>(cPtr));
 }
 
 static inline void
@@ -23,9 +23,9 @@ fwd_gga(const FloatComplex *fPtr, const float*  indVecPtr,
         const octave_idx_type L, const octave_idx_type W,
         const octave_idx_type M, FloatComplex *cPtr )
 {
-   gga_cs(reinterpret_cast<const fftwf_complex *>(fPtr),
+   ltfat_gga_sc(reinterpret_cast<const ltfat_complex_s *>(fPtr),
           indVecPtr,L,W,M,
-          reinterpret_cast<fftwf_complex *>(cPtr));
+          reinterpret_cast<ltfat_complex_s *>(cPtr));
 }
 
 static inline void
@@ -33,8 +33,8 @@ fwd_gga(const double *fPtr, const double*  indVecPtr,
         const octave_idx_type L, const octave_idx_type W,
         const octave_idx_type M, Complex *cPtr )
 {
-   gga_d(fPtr, indVecPtr,L,W,M,
-         reinterpret_cast<fftw_complex *>(cPtr));
+   ltfat_gga_d(fPtr, indVecPtr,L,W,M,
+         reinterpret_cast<ltfat_complex_d *>(cPtr));
 }
 
 static inline void
@@ -42,8 +42,8 @@ fwd_gga(const float *fPtr, const float*  indVecPtr,
         const octave_idx_type L, const octave_idx_type W,
         const octave_idx_type M, FloatComplex *cPtr )
 {
-   gga_s(fPtr, indVecPtr,L,W,M,
-         reinterpret_cast<fftwf_complex *>(cPtr));
+   ltfat_gga_s(fPtr, indVecPtr,L,W,M,
+         reinterpret_cast<ltfat_complex_s *>(cPtr));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

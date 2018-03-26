@@ -17,11 +17,11 @@ fwd_idgt_fb(const Complex *coef, const Complex *gf,
             const octave_idx_type M, const octave_idx_type ptype,
             Complex *f)
 {
-    idgt_fb_d(reinterpret_cast<const fftw_complex*>(coef),
-              reinterpret_cast<const fftw_complex*>(gf),
+    ltfat_idgt_fb_dc(reinterpret_cast<const ltfat_complex_d*>(coef),
+              reinterpret_cast<const ltfat_complex_d*>(gf),
               L, gl, W, a, M,
-              static_cast<dgt_phasetype>(ptype),
-              reinterpret_cast<fftw_complex*>(f));
+              static_cast<ltfat_phaseconvention>(ptype),
+              reinterpret_cast<ltfat_complex_d*>(f));
 }
 
 static inline void
@@ -31,11 +31,11 @@ fwd_idgt_fb(const FloatComplex *coef, const FloatComplex *gf,
             const octave_idx_type M, const octave_idx_type ptype,
             FloatComplex *f)
 {
-    idgt_fb_s(reinterpret_cast<const fftwf_complex*>(coef),
-              reinterpret_cast<const fftwf_complex*>(gf),
+    ltfat_idgt_fb_sc(reinterpret_cast<const ltfat_complex_s*>(coef),
+              reinterpret_cast<const ltfat_complex_s*>(gf),
               L, gl, W, a, M,
-              static_cast<dgt_phasetype>(ptype),
-              reinterpret_cast<fftwf_complex*>(f));
+              static_cast<ltfat_phaseconvention>(ptype),
+              reinterpret_cast<ltfat_complex_s*>(f));
 }
 
 static inline void
@@ -44,11 +44,11 @@ fwd_idgt_long(const Complex *coef, const Complex *gf,
               const octave_idx_type a, const octave_idx_type M,
               const octave_idx_type ptype, Complex *f)
 {
-    idgt_long_d(reinterpret_cast<const fftw_complex*>(coef),
-                reinterpret_cast<const fftw_complex*>(gf),
+    ltfat_idgt_long_dc(reinterpret_cast<const ltfat_complex_d*>(coef),
+                reinterpret_cast<const ltfat_complex_d*>(gf),
                 L, W, a, M, 
-                static_cast<dgt_phasetype>(ptype),
-                reinterpret_cast<fftw_complex*>(f));
+                static_cast<ltfat_phaseconvention>(ptype),
+                reinterpret_cast<ltfat_complex_d*>(f));
 }
 
 static inline void
@@ -57,11 +57,11 @@ fwd_idgt_long(const FloatComplex *coef, const FloatComplex *gf,
               const octave_idx_type a, const octave_idx_type M,
               const octave_idx_type ptype, FloatComplex *f)
 {
-    idgt_long_s(reinterpret_cast<const fftwf_complex*>(coef),
-                reinterpret_cast<const fftwf_complex*>(gf),
+    ltfat_idgt_long_sc(reinterpret_cast<const ltfat_complex_s*>(coef),
+                reinterpret_cast<const ltfat_complex_s*>(gf),
                 L, W, a, M, 
-                static_cast<dgt_phasetype>(ptype),
-                reinterpret_cast<fftwf_complex*>(f));
+                static_cast<ltfat_phaseconvention>(ptype),
+                reinterpret_cast<ltfat_complex_s*>(f));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -72,7 +72,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type L = args(2).int_value();
     const octave_idx_type a = args(3).int_value();
     const octave_idx_type M = args(4).int_value();
-    const octave_idx_type ptype = args(5).int_value();
+    const octave_idx_type ptype = args(5).int_value()== 1? LTFAT_TIMEINV: LTFAT_FREQINV;
     const octave_idx_type N = L / a;
     const octave_idx_type gl = gf.rows();
 

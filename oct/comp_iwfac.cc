@@ -14,9 +14,9 @@ static inline void fwd_iwfac(const Complex *gf,
                              const octave_idx_type a, const octave_idx_type M,
                              Complex *g)
 {
-    iwfac_cd(reinterpret_cast<const fftw_complex*>(gf),
+    ltfat_iwfac_dc(reinterpret_cast<const ltfat_complex_d*>(gf),
              L, R, a, M,
-             reinterpret_cast<fftw_complex*>(g));
+             reinterpret_cast<ltfat_complex_d*>(g));
 }
 
 static inline void fwd_iwfac(const FloatComplex *gf,
@@ -24,9 +24,9 @@ static inline void fwd_iwfac(const FloatComplex *gf,
                              const octave_idx_type a, const octave_idx_type M,
                              FloatComplex *g)
 {
-    iwfac_cs(reinterpret_cast<const fftwf_complex*>(gf),
+    ltfat_iwfac_sc(reinterpret_cast<const ltfat_complex_s*>(gf),
              L, R, a, M,
-             reinterpret_cast<fftwf_complex*>(g));
+             reinterpret_cast<ltfat_complex_s*>(g));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

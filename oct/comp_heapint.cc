@@ -16,10 +16,10 @@ fwd_heapint(const double *s, const double *tgrad, const double *fgrad,
             double tol, int phasetype, double *phase)
 {
     if (phasetype == 2)
-        heapint_d(s, tgrad, fgrad, a, M, L, W, tol, phase);
+        ltfat_heapint_d(s, tgrad, fgrad, a, M, L, W, tol, phase);
     else
-        heapint_relgrad_d(s, tgrad, fgrad, a, M, L, W, tol,
-                          static_cast<dgt_phasetype>(phasetype), phase);
+        ltfat_heapint_relgrad_d(s, tgrad, fgrad, a, M, L, W, tol,
+                          static_cast<ltfat_phaseconvention>(phasetype), phase);
 
 }
 
@@ -30,10 +30,10 @@ fwd_heapint(const float *s, const float *tgrad, const float *fgrad,
             float tol, int phasetype, float *phase)
 {
     if (phasetype == 2)
-        heapint_s(s, tgrad, fgrad, a, M, L, W, tol, phase);
+        ltfat_heapint_s(s, tgrad, fgrad, a, M, L, W, tol, phase);
     else
-        heapint_relgrad_s(s, tgrad, fgrad, a, M, L, W, tol,
-                          static_cast<dgt_phasetype>(phasetype), phase);
+        ltfat_heapint_relgrad_s(s, tgrad, fgrad, a, M, L, W, tol,
+                          static_cast<ltfat_phaseconvention>(phasetype), phase);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -44,7 +44,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     MArray<LTFAT_TYPE> fgrad = ltfatOctArray<LTFAT_TYPE>(args(2));
     const octave_idx_type a  = args(3).int_value();
     const double tol   = args(4).double_value();
-    const int phasetype = args(5).int_value();
+    const int phasetype = args(5).int_value() == 1? LTFAT_TIMEINV: LTFAT_FREQINV;
 
     const octave_idx_type M = args(0).rows();
     const octave_idx_type N = args(0).columns();

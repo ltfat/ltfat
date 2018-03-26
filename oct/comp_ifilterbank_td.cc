@@ -10,50 +10,50 @@
 
 static inline void
 fwd_ifilterbank_td(const Complex *c[],  const Complex *g[],
-                   const ltfatInt L, const ltfatInt gl[],
-                   const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[], const ltfatInt M,
+                   const ltfat_int L, ltfat_int gl[],
+                   const ltfat_int W, ltfat_int a[],
+                   ltfat_int offset[], const ltfat_int M,
                    Complex *f, ltfatExtType ext)
 {
-    ifilterbank_td_cd(reinterpret_cast<const fftw_complex **>(c),
-                      reinterpret_cast<const fftw_complex **>(g),
+    ltfat_ifilterbank_td_dc(reinterpret_cast<const ltfat_complex_d **>(c),
+                      reinterpret_cast<const ltfat_complex_d **>(g),
                       L, gl, W, a, offset, M,
-                      reinterpret_cast<fftw_complex *>(f),
+                      reinterpret_cast<ltfat_complex_d *>(f),
                       ext);
 }
 
 static inline void
 fwd_ifilterbank_td(const FloatComplex *c[],  const FloatComplex *g[],
-                   const ltfatInt L, const ltfatInt gl[],
-                   const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[], const ltfatInt M,
+                   const ltfat_int L, ltfat_int gl[],
+                   const ltfat_int W, ltfat_int a[],
+                   ltfat_int offset[], const ltfat_int M,
                    FloatComplex *f, ltfatExtType ext)
 {
-    ifilterbank_td_cs(reinterpret_cast<const fftwf_complex **>(c),
-                      reinterpret_cast<const fftwf_complex **>(g),
+    ltfat_ifilterbank_td_sc(reinterpret_cast<const ltfat_complex_s **>(c),
+                      reinterpret_cast<const ltfat_complex_s **>(g),
                       L, gl, W, a, offset, M,
-                      reinterpret_cast<fftwf_complex *>(f),
+                      reinterpret_cast<ltfat_complex_s *>(f),
                       ext);
 }
 
 static inline void
 fwd_ifilterbank_td(const double *c[],  const double *g[],
-                   const ltfatInt L, const ltfatInt gl[],
-                   const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[], const ltfatInt M,
+                   const ltfat_int L, ltfat_int gl[],
+                   const ltfat_int W, ltfat_int a[],
+                   ltfat_int offset[], const ltfat_int M,
                    double *f, ltfatExtType ext)
 {
-    ifilterbank_td_d(c, g, L, gl, W, a, offset, M, f, ext);
+    ltfat_ifilterbank_td_d(c, g, L, gl, W, a, offset, M, f, ext);
 }
 
 static inline void
 fwd_ifilterbank_td(const float *c[],  const float *g[],
-                   const ltfatInt L, const ltfatInt gl[],
-                   const ltfatInt W, const ltfatInt a[],
-                   const ltfatInt offset[], const ltfatInt M,
+                   const ltfat_int L, ltfat_int gl[],
+                   const ltfat_int W, ltfat_int a[],
+                   ltfat_int offset[], const ltfat_int M,
                    float *f, ltfatExtType ext)
 {
-    ifilterbank_td_s(c, g, L, gl, W, a, offset, M, f, ext);
+    ltfat_ifilterbank_td_s(c, g, L, gl, W, a, offset, M, f, ext);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -77,9 +77,9 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     // Allocating temporary arrays
     // Filter lengts
-    OCTAVE_LOCAL_BUFFER (ltfatInt, filtLen, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, a, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, offset, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, filtLen, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, a, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, offset, M);
     // Impulse responses pointers
     OCTAVE_LOCAL_BUFFER (const LTFAT_TYPE*, gPtrs, M);
     // Output subbands pointers
@@ -91,13 +91,13 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     for (octave_idx_type m = 0; m < M; m++)
     {
-        a[m] = (ltfatInt) aDouble(m);
-        offset[m] = (ltfatInt) offsetDouble(m);
+        a[m] = (ltfat_int) aDouble(m);
+        offset[m] = (ltfat_int) offsetDouble(m);
         g_elems[m] = ltfatOctArray<LTFAT_TYPE>(g.elem(m));
         c_elems[m] = ltfatOctArray<LTFAT_TYPE>(c.elem(m));
         gPtrs[m] = g_elems[m].data();
         cPtrs[m] = c_elems[m].data();
-        filtLen[m] = (ltfatInt) g_elems[m].numel();
+        filtLen[m] = (ltfat_int) g_elems[m].numel();
     }
 
     const octave_idx_type W  = c_elems[0].columns();

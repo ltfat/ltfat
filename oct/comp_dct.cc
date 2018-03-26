@@ -14,7 +14,7 @@ fwd_dct(const double *f, const octave_idx_type L,
         const octave_idx_type W, double *c,
         const dct_kind kind)
 {
-    dct_d(f, L, W, c, kind);
+    ltfat_dct_d(f, L, W, c, kind);
 }
 
 static inline void
@@ -22,7 +22,7 @@ fwd_dct(const float *f, const octave_idx_type L,
         const octave_idx_type W, float *c,
         const dct_kind kind)
 {
-    dct_s(f, L, W, c, kind);
+    ltfat_dct_s(f, L, W, c, kind);
 }
 
 static inline void
@@ -30,9 +30,9 @@ fwd_dct(const Complex *f, const octave_idx_type L,
         const octave_idx_type W, Complex *c,
         const dct_kind kind)
 {
-    dct_cd(reinterpret_cast<const fftw_complex *>(f),
+    ltfat_dct_dc(reinterpret_cast<const ltfat_complex_d *>(f),
            L, W,
-           reinterpret_cast<fftw_complex *>(c),
+           reinterpret_cast<ltfat_complex_d *>(c),
            kind);
 }
 
@@ -41,9 +41,9 @@ fwd_dct(const FloatComplex *f, const octave_idx_type L,
         const octave_idx_type W, FloatComplex* c,
         const dct_kind kind)
 {
-    dct_cs(reinterpret_cast<const fftwf_complex *>(f),
+    ltfat_dct_sc(reinterpret_cast<const ltfat_complex_s *>(f),
            L, W,
-           reinterpret_cast<fftwf_complex *>(c),
+           reinterpret_cast<ltfat_complex_s *>(c),
            kind);
 }
 

@@ -16,10 +16,10 @@ fwd_dgt_shear(const Complex *f, const Complex *g,
               const octave_idx_type s0, const octave_idx_type s1,
               const octave_idx_type br, Complex *cout)
 {
-    dgt_shear_d(reinterpret_cast<const fftw_complex *>(f),
-                reinterpret_cast<const fftw_complex *>(g),
+    ltfat_dgt_shear_d(reinterpret_cast<const ltfat_complex_d *>(f),
+                reinterpret_cast<const ltfat_complex_d *>(g),
                 L, W, a, M, s0, s1, br,
-                reinterpret_cast<fftw_complex *>(cout));
+                reinterpret_cast<ltfat_complex_d *>(cout));
 }
 
 static inline void
@@ -29,10 +29,10 @@ fwd_dgt_shear(const FloatComplex *f, const FloatComplex *g,
               const octave_idx_type s0, const octave_idx_type s1,
               const octave_idx_type br, FloatComplex *cout)
 {
-    dgt_shear_s(reinterpret_cast<const fftwf_complex *>(f),
-                reinterpret_cast<const fftwf_complex *>(g),
+    ltfat_dgt_shear_s(reinterpret_cast<const ltfat_complex_s *>(f),
+                reinterpret_cast<const ltfat_complex_s *>(g),
                 L, W, a, M, s0, s1, br,
-                reinterpret_cast<fftwf_complex *>(cout));
+                reinterpret_cast<ltfat_complex_s *>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

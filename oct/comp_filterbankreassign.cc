@@ -15,39 +15,39 @@ Yeah."
 
     static inline void
 fwd_filterbankreassign(const double *s[], const double *tgrad[], const double *fgrad[],
-        const ltfatInt N[], const double a[], const double cfreq[],
-        const ltfatInt M, double *sr[], fbreassOptOut* optout)
+         ltfat_int N[],  double a[],  double cfreq[],
+        const ltfat_int M, double *sr[], fbreassOptOut* optout)
 {
-    filterbankreassign_d(s, tgrad, fgrad, N, a, cfreq, M, sr, REASS_DEFAULT, optout);
+    ltfat_filterbankreassign_d(s, tgrad, fgrad, N, a, cfreq, M, sr, REASS_DEFAULT, optout);
 }
 
     static inline void
 fwd_filterbankreassign(const float *s[], const float *tgrad[], const float *fgrad[],
-        const ltfatInt N[], const double a[], const double cfreq[],
-        const ltfatInt M, float *sr[], fbreassOptOut* optout)
+         ltfat_int N[],  double a[],  double cfreq[],
+        const ltfat_int M, float *sr[], fbreassOptOut* optout)
 {
-    filterbankreassign_s(s, tgrad, fgrad, N, a, cfreq, M, sr, REASS_DEFAULT, optout);
+    ltfat_filterbankreassign_s(s, tgrad, fgrad, N, a, cfreq, M, sr, REASS_DEFAULT, optout);
 }
 
     static inline void
 fwd_filterbankreassign(const Complex *s[], const double *tgrad[], const double *fgrad[],
-        const ltfatInt N[], const double a[], const double cfreq[],
-        const ltfatInt M, Complex *sr[], fbreassOptOut* optout)
+         ltfat_int N[],  double a[],  double cfreq[],
+        const ltfat_int M, Complex *sr[], fbreassOptOut* optout)
 {
-    filterbankreassign_cd(reinterpret_cast<const fftw_complex **>(s),
+    ltfat_filterbankreassign_dc(reinterpret_cast<const ltfat_complex_d **>(s),
             tgrad, fgrad, N, a, cfreq, M,
-            reinterpret_cast<fftw_complex **>(sr),
+            reinterpret_cast<ltfat_complex_d **>(sr),
             REASS_DEFAULT, optout);
 }
 
     static inline void
 fwd_filterbankreassign(const FloatComplex *s[], const float *tgrad[], const float *fgrad[],
-        const ltfatInt N[], const double a[], const double cfreq[],
-        const ltfatInt M, FloatComplex *sr[], fbreassOptOut* optout)
+         ltfat_int N[],  double a[],  double cfreq[],
+        const ltfat_int M, FloatComplex *sr[], fbreassOptOut* optout)
 {
-    filterbankreassign_cs(reinterpret_cast<const fftwf_complex **>(s),
+    ltfat_filterbankreassign_sc(reinterpret_cast<const ltfat_complex_s **>(s),
             tgrad, fgrad, N, a, cfreq, M,
-            reinterpret_cast<fftwf_complex **>(sr),
+            reinterpret_cast<ltfat_complex_s **>(sr),
             REASS_DEFAULT, optout);
 }
 
@@ -62,10 +62,10 @@ octFunction(const octave_value_list& args, int nargout)
     Matrix aMat     = args(3).matrix_value();
     Matrix cfreqMat = args(4).matrix_value();
 
-    const ltfatInt M  = (ltfatInt) sCell.numel();
+    const ltfat_int M  = (ltfat_int) sCell.numel();
 
 
-    OCTAVE_LOCAL_BUFFER (ltfatInt, NPtr, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, NPtr, M);
     OCTAVE_LOCAL_BUFFER (double, aPtr, M);
     OCTAVE_LOCAL_BUFFER (const LTFAT_TYPE*, sPtr, M);
     OCTAVE_LOCAL_BUFFER (const LTFAT_REAL*, tgradPtr, M);
@@ -114,7 +114,7 @@ octFunction(const octave_value_list& args, int nargout)
         }
     }
 
-    fwd_filterbankreassign(sPtr, tgradPtr, fgradPtr, NPtr, aPtr, cfreqMat.data(), M,
+    fwd_filterbankreassign(sPtr, tgradPtr, fgradPtr, NPtr, aPtr, cfreqMat.fortran_vec(), M,
             srPtr, optout);
 
     // Output cell
@@ -128,7 +128,7 @@ octFunction(const octave_value_list& args, int nargout)
 
     if (nargout > 1)
     {
-        for (ltfatInt ii = 0; ii < sumN; ii++)
+        for (ltfat_int ii = 0; ii < sumN; ii++)
         {
             octave_idx_type l = optout->reposl[ii];
             MArray<double> cEl = MArray<double>(dim_vector(l, l > 0 ? 1 : 0));

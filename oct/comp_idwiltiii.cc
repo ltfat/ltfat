@@ -19,9 +19,9 @@ fwd_idwiltiii_fb(const Complex *c, const Complex *g,
                  const octave_idx_type W, const octave_idx_type M,
                  Complex *f)
 {
-    idwiltiii_fb_cd(reinterpret_cast<const fftw_complex*>(c),
-                    reinterpret_cast<const fftw_complex*>(g),
-                    L, gl, W, M, reinterpret_cast<fftw_complex*>(f));
+    ltfat_idwiltiii_fb_dc(reinterpret_cast<const ltfat_complex_d*>(c),
+                    reinterpret_cast<const ltfat_complex_d*>(g),
+                    L, gl, W, M, reinterpret_cast<ltfat_complex_d*>(f));
 }
 
 static inline void
@@ -30,10 +30,10 @@ fwd_idwiltiii_fb(const FloatComplex *c, const FloatComplex *g,
                  const octave_idx_type W, const octave_idx_type M,
                  FloatComplex *f)
 {
-    idwiltiii_fb_cs(reinterpret_cast<const fftwf_complex*>(c),
-                    reinterpret_cast<const fftwf_complex*>(g),
+    ltfat_idwiltiii_fb_sc(reinterpret_cast<const ltfat_complex_s*>(c),
+                    reinterpret_cast<const ltfat_complex_s*>(g),
                     L, gl, W, M,
-                    reinterpret_cast<fftwf_complex*>(f));
+                    reinterpret_cast<ltfat_complex_s*>(f));
 }
 
 static inline void
@@ -42,7 +42,7 @@ fwd_idwiltiii_fb(const double *c, const double *g,
                  const octave_idx_type W, const octave_idx_type M,
                  double *f)
 {
-    idwiltiii_fb_d(c, g, L, gl, W, M, f);
+    ltfat_idwiltiii_fb_d(c, g, L, gl, W, M, f);
 }
 
 static inline void
@@ -51,7 +51,7 @@ fwd_idwiltiii_fb(const float *c, const float *g,
                  const octave_idx_type W, const octave_idx_type M,
                  float *f)
 {
-    idwiltiii_fb_s(c, g, L, gl, W, M, f);
+    ltfat_idwiltiii_fb_s(c, g, L, gl, W, M, f);
 }
 
 static inline void
@@ -59,9 +59,9 @@ fwd_idwiltiii_long(const Complex *c, const Complex *g,
                    const octave_idx_type L, const octave_idx_type W,
                    const octave_idx_type M, Complex *f)
 {
-    idwiltiii_long_cd(reinterpret_cast<const fftw_complex*>(c),
-                      reinterpret_cast<const fftw_complex*>(g),
-                      L, W, M, reinterpret_cast<fftw_complex*>(f));
+    ltfat_idwiltiii_long_dc(reinterpret_cast<const ltfat_complex_d*>(c),
+                      reinterpret_cast<const ltfat_complex_d*>(g),
+                      L, W, M, reinterpret_cast<ltfat_complex_d*>(f));
 }
 
 static inline void
@@ -69,9 +69,9 @@ fwd_idwiltiii_long(const FloatComplex *c, const FloatComplex *g,
                    const octave_idx_type L, const octave_idx_type W,
                    const octave_idx_type M, FloatComplex *f)
 {
-    idwiltiii_long_cs(reinterpret_cast<const fftwf_complex*>(c),
-                      reinterpret_cast<const fftwf_complex*>(g),
-                      L, W, M, reinterpret_cast<fftwf_complex*>(f));
+    ltfat_idwiltiii_long_sc(reinterpret_cast<const ltfat_complex_s*>(c),
+                      reinterpret_cast<const ltfat_complex_s*>(g),
+                      L, W, M, reinterpret_cast<ltfat_complex_s*>(f));
 }
 
 static inline void
@@ -79,7 +79,7 @@ fwd_idwiltiii_long(const double *c, const double *g,
                    const octave_idx_type L, const octave_idx_type W,
                    const octave_idx_type M, double *f)
 {
-    idwiltiii_long_d(c, g, L, W, M, f);
+    ltfat_idwiltiii_long_d(c, g, L, W, M, f);
 }
 
 static inline void
@@ -87,7 +87,7 @@ fwd_idwiltiii_long(const float *c, const float *g,
                    const octave_idx_type L, const octave_idx_type W,
                    const octave_idx_type M, float *f)
 {
-    idwiltiii_long_s(c, g, L, W, M, f);
+    ltfat_idwiltiii_long_s(c, g, L, W, M, f);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

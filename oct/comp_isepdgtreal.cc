@@ -18,9 +18,9 @@ fwd_idgtreal_fb(const Complex *coef, const double *gf,
                 const octave_idx_type M, const octave_idx_type ptype,
                 double *f)
 {
-    idgtreal_fb_d(reinterpret_cast<const fftw_complex*>(coef),
+    ltfat_idgtreal_fb_d(reinterpret_cast<const ltfat_complex_d*>(coef),
                   gf, L, gl, W, a, M,
-                  static_cast<const dgt_phasetype>(ptype),
+                  static_cast<const ltfat_phaseconvention>(ptype),
                   f);
 }
 
@@ -31,9 +31,9 @@ fwd_idgtreal_fb(const FloatComplex *coef, const float *gf,
                 const octave_idx_type M, const octave_idx_type ptype,
                 float *f)
 {
-    idgtreal_fb_s(reinterpret_cast<const fftwf_complex*>(coef),
+    ltfat_idgtreal_fb_s(reinterpret_cast<const ltfat_complex_s*>(coef),
                   gf, L, gl, W, a, M,
-                  static_cast<const dgt_phasetype>(ptype),
+                  static_cast<const ltfat_phaseconvention>(ptype),
                   f);
 }
 
@@ -43,9 +43,9 @@ fwd_idgtreal_long(const Complex *coef, const double *gf,
                   const octave_idx_type a, const octave_idx_type M,
                   const octave_idx_type ptype, double *f)
 {
-    idgtreal_long_d(reinterpret_cast<const fftw_complex*>(coef),
+    ltfat_idgtreal_long_d(reinterpret_cast<const ltfat_complex_d*>(coef),
                     gf, L, W, a, M,
-                    static_cast<const dgt_phasetype>(ptype),
+                    static_cast<const ltfat_phaseconvention>(ptype),
                     f);
 }
 
@@ -55,9 +55,9 @@ fwd_idgtreal_long(const FloatComplex *coef, const float *gf,
                   const octave_idx_type a, const octave_idx_type M,
                   const octave_idx_type ptype, float *f)
 {
-    idgtreal_long_s(reinterpret_cast<const fftwf_complex*>(coef),
+    ltfat_idgtreal_long_s(reinterpret_cast<const ltfat_complex_s*>(coef),
                     gf, L, W, a, M,
-                    static_cast<const dgt_phasetype>(ptype),
+                    static_cast<const ltfat_phaseconvention>(ptype),
                     f);
 }
 
@@ -71,7 +71,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     const octave_idx_type L = args(2).int_value();
     const octave_idx_type a = args(3).int_value();
     const octave_idx_type M = args(4).int_value();
-    const octave_idx_type ptype = args(5).int_value();
+    const octave_idx_type ptype = args(5).int_value() == 1? LTFAT_TIMEINV: LTFAT_FREQINV;
     const octave_idx_type N = L / a;
     const octave_idx_type M2 = M / 2 + 1;
     const octave_idx_type W = coef.numel() / (N * M2);

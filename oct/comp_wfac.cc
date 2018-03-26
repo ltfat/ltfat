@@ -17,9 +17,9 @@ fwd_comp_wfac(const Complex *g,
               const octave_idx_type a, const octave_idx_type M,
               Complex *cout)
 {
-    wfac_cd(reinterpret_cast<const fftw_complex*>(g),
+    ltfat_wfac_dc(reinterpret_cast<const ltfat_complex_d*>(g),
             L, R, a, M,
-            reinterpret_cast<fftw_complex*>(cout));
+            reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
@@ -28,9 +28,9 @@ fwd_comp_wfac(const FloatComplex *g,
               const octave_idx_type a, const octave_idx_type M,
               FloatComplex *cout)
 {
-    wfac_cs(reinterpret_cast<const fftwf_complex*>(g),
+    ltfat_wfac_sc(reinterpret_cast<const ltfat_complex_s*>(g),
             L, R, a, M,
-            reinterpret_cast<fftwf_complex*>(cout));
+            reinterpret_cast<ltfat_complex_s*>(cout));
 }
 
 static inline void
@@ -39,9 +39,9 @@ fwd_comp_wfac(const double *g,
               const octave_idx_type a, const octave_idx_type M,
               Complex *cout)
 {
-    wfac_d(reinterpret_cast<const double*>(g),
+    ltfat_wfac_d(reinterpret_cast<const double*>(g),
            L, R, a, M,
-           reinterpret_cast<fftw_complex*>(cout));
+           reinterpret_cast<ltfat_complex_d*>(cout));
 }
 
 static inline void
@@ -50,9 +50,9 @@ fwd_comp_wfac(const float *g,
               const octave_idx_type a, const octave_idx_type M,
               FloatComplex *cout)
 {
-    wfac_s(reinterpret_cast<const float*>(g),
+    ltfat_wfac_s(reinterpret_cast<const float*>(g),
            L, R, a, M,
-           reinterpret_cast<fftwf_complex*>(cout));
+           reinterpret_cast<ltfat_complex_s*>(cout));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
@@ -67,8 +67,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     const octave_idx_type b = L / M;
 
-    ltfatInt h_a, h_m;
-    const octave_idx_type c = gcd(a, M, &h_a, &h_m);
+    ltfat_int h_a, h_m;
+    const octave_idx_type c = ltfat_gcd(a, M, &h_a, &h_m);
     const octave_idx_type p = a / c;
     const octave_idx_type q = M / c;
     const octave_idx_type d = b / p;

@@ -16,10 +16,10 @@ fwd_maskedheapint(const double *s, const double *tgrad, const double *fgrad,
                   const double tol, int phasetype, double *phase)
 {
     if (phasetype == 2)
-        maskedheapint_d( s, tgrad, fgrad, mask, a, M, L, W, tol, phase);
+        ltfat_maskedheapint_d( s, tgrad, fgrad, mask, a, M, L, W, tol, phase);
     else
-        maskedheapint_relgrad_d( s, tgrad, fgrad, mask, a, M, L, W, tol,
-                static_cast<dgt_phasetype>(phasetype), phase);
+        ltfat_maskedheapint_relgrad_d( s, tgrad, fgrad, mask, a, M, L, W, tol,
+                static_cast<ltfat_phaseconvention>(phasetype), phase);
 }
 
 static inline void
@@ -29,10 +29,10 @@ fwd_maskedheapint(const float *s, const float *tgrad, const float *fgrad,
                   const float tol, int phasetype, float *phase)
 {
     if (phasetype == 2)
-        maskedheapint_s(s, tgrad, fgrad, mask, a, M, L, W, tol, phase);
+        ltfat_maskedheapint_s(s, tgrad, fgrad, mask, a, M, L, W, tol, phase);
     else
-        maskedheapint_relgrad_s(s, tgrad, fgrad, mask, a, M, L, W, tol,
-                static_cast<dgt_phasetype>(phasetype), phase);
+        ltfat_maskedheapint_relgrad_s(s, tgrad, fgrad, mask, a, M, L, W, tol,
+                static_cast<ltfat_phaseconvention>(phasetype), phase);
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

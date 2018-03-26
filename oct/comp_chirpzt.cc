@@ -13,9 +13,9 @@ fwd_chzt(const Complex *fPtr, const octave_idx_type L,
          const double deltao, const double o,
          Complex *cPtr )
 {
-    chzt_cd(reinterpret_cast<const fftw_complex *>(fPtr),
+    ltfat_chzt_dc(reinterpret_cast<const ltfat_complex_d *>(fPtr),
             L, W, K, deltao, o,
-            reinterpret_cast<fftw_complex *>(cPtr));
+            reinterpret_cast<ltfat_complex_d *>(cPtr));
 }
 
 static inline void
@@ -24,9 +24,9 @@ fwd_chzt(const FloatComplex *fPtr, const octave_idx_type L,
          const double deltao, const double o,
          FloatComplex *cPtr )
 {
-    chzt_cs(reinterpret_cast<const fftwf_complex *>(fPtr),
+    ltfat_chzt_sc(reinterpret_cast<const ltfat_complex_s *>(fPtr),
             L, W, K, deltao, o,
-            reinterpret_cast<fftwf_complex *>(cPtr));
+            reinterpret_cast<ltfat_complex_s *>(cPtr));
 }
 
 static inline void
@@ -35,8 +35,8 @@ fwd_chzt(const double *fPtr, const octave_idx_type L,
          const double deltao, const double o,
          Complex *cPtr )
 {
-    chzt_d(fPtr, L, W, K, deltao, o,
-           reinterpret_cast<fftw_complex *>(cPtr));
+    ltfat_chzt_d(fPtr, L, W, K, deltao, o,
+           reinterpret_cast<ltfat_complex_d *>(cPtr));
 }
 
 static inline void
@@ -44,8 +44,8 @@ fwd_chzt(const float *fPtr, const octave_idx_type L,
          const octave_idx_type W, const octave_idx_type K,
          const double deltao, const double o, FloatComplex *cPtr )
 {
-    chzt_s(fPtr, L, W, K, deltao, o,
-           reinterpret_cast<fftwf_complex *>(cPtr));
+    ltfat_chzt_s(fPtr, L, W, K, deltao, o,
+           reinterpret_cast<ltfat_complex_s *>(cPtr));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>

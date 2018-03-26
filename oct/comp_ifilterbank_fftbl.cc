@@ -10,28 +10,28 @@
 
 static inline void
 fwd_ifilterbank_fftbl(const Complex *c[], const Complex *G[],
-                      const ltfatInt L, const ltfatInt Gl[],
-                      const ltfatInt W, const double afrac[],
-                      const ltfatInt M, const ltfatInt foff[],
+                      const ltfat_int L, const ltfat_int Gl[],
+                      const ltfat_int W, const double afrac[],
+                      const ltfat_int M, const ltfat_int foff[],
                       const int realonly[], Complex *F)
 {
-    ifilterbank_fftbl_d(reinterpret_cast<const fftw_complex **>(c),
-                        reinterpret_cast<const fftw_complex **>(G),
+    ltfat_ifilterbank_fftbl_d(reinterpret_cast<const ltfat_complex_d **>(c),
+                        reinterpret_cast<const ltfat_complex_d **>(G),
                         L,Gl,W,afrac,M,foff,realonly,
-                        reinterpret_cast<fftw_complex *>(F));
+                        reinterpret_cast<ltfat_complex_d *>(F));
 }
 
 static inline void
 fwd_ifilterbank_fftbl(const FloatComplex *c[], const FloatComplex *G[],
-                      const ltfatInt L, const ltfatInt Gl[],
-                      const ltfatInt W, const double afrac[],
-                      const ltfatInt M, const ltfatInt foff[],
+                      const ltfat_int L, const ltfat_int Gl[],
+                      const ltfat_int W, const double afrac[],
+                      const ltfat_int M, const ltfat_int foff[],
                       const int realonly[], FloatComplex *F)
 {
-    ifilterbank_fftbl_s(reinterpret_cast<const fftwf_complex **>(c),
-                        reinterpret_cast<const fftwf_complex **>(G),
+    ltfat_ifilterbank_fftbl_s(reinterpret_cast<const ltfat_complex_s **>(c),
+                        reinterpret_cast<const ltfat_complex_s **>(G),
                         L,Gl,W,afrac,M,foff,realonly,
-                        reinterpret_cast<fftwf_complex *>(F));
+                        reinterpret_cast<ltfat_complex_s *>(F));
 }
 
 
@@ -66,8 +66,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     // Allocating
     // Output subband lengths
-    OCTAVE_LOCAL_BUFFER (ltfatInt, foff, M);
-    OCTAVE_LOCAL_BUFFER (ltfatInt, Gl, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, foff, M);
+    OCTAVE_LOCAL_BUFFER (ltfat_int, Gl, M);
     OCTAVE_LOCAL_BUFFER (int, realonly, M);
     // Impulse responses pointers
     OCTAVE_LOCAL_BUFFER (const LTFAT_COMPLEX*, GPtrs, M);

@@ -11,7 +11,7 @@ DEFUN_DLD (comp_pchirp, args, ,
 
     ComplexMatrix g(L, 1);
 
-    pchirp_d(L, n, reinterpret_cast<fftw_complex *>(g.fortran_vec()));
+    ltfat_pchirp_d(L, n, reinterpret_cast<ltfat_complex_d *>(g.fortran_vec()));
 
     return octave_value (g);
 

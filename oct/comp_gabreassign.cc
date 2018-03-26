@@ -19,7 +19,7 @@ fwd_gabreassign(const double *s, const double *tgrad, const double *fgrad,
                 const octave_idx_type a, const octave_idx_type M,
                 double *sr)
 {
-    gabreassign_d(s, tgrad, fgrad, L, W, a, M, sr);
+    ltfat_gabreassign_d(s, tgrad, fgrad, L, W, a, M, sr);
 }
 
 static inline void
@@ -28,7 +28,7 @@ fwd_gabreassign(const float *s, const float *tgrad, const float *fgrad,
                 const octave_idx_type a, const octave_idx_type M,
                 float *sr)
 {
-    gabreassign_s(s, tgrad, fgrad, L, W, a, M, sr);
+    ltfat_gabreassign_s(s, tgrad, fgrad, L, W, a, M, sr);
 }
 
 static inline void
@@ -37,9 +37,9 @@ fwd_gabreassign(const Complex *s, const double *tgrad, const double *fgrad,
                 const octave_idx_type a, const octave_idx_type M,
                 Complex *sr)
 {
-    gabreassign_cd(reinterpret_cast<const fftw_complex*>(s),
+    ltfat_gabreassign_dc(reinterpret_cast<const ltfat_complex_d*>(s),
                    tgrad, fgrad, L, W, a, M,
-                   reinterpret_cast<fftw_complex*>(sr));
+                   reinterpret_cast<ltfat_complex_d*>(sr));
 }
 
 static inline void
@@ -48,9 +48,9 @@ fwd_gabreassign(const FloatComplex *s, const float *tgrad, const float *fgrad,
                 const octave_idx_type a, const octave_idx_type M,
                 FloatComplex *sr)
 {
-    gabreassign_cs(reinterpret_cast<const fftwf_complex*>(s),
+    ltfat_gabreassign_sc(reinterpret_cast<const ltfat_complex_s*>(s),
                    tgrad, fgrad, L, W, a, M,
-                   reinterpret_cast<fftwf_complex*>(sr));
+                   reinterpret_cast<ltfat_complex_s*>(sr));
 }
 
 template <class LTFAT_TYPE, class LTFAT_REAL, class LTFAT_COMPLEX>
