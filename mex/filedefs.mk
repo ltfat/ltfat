@@ -5,9 +5,7 @@ MEXBASESAFE=\
 	comp_dct\
 	comp_dst\
 	comp_sepdgt \
-	comp_dgt_ola  \
 	comp_sepdgtreal \
-	comp_dgtreal_ola \
 	comp_dwilt \
 	comp_idwilt \
 	comp_dwiltiii \
@@ -21,7 +19,6 @@ MEXBASESAFE=\
 	comp_iwfac \
 	comp_nonsepdgt_multi  \
 	comp_nonsepdgt_shear  \
-	comp_nonsepdgt_shearola \
 	comp_nonsepwin2multi  \
 	comp_pchirp  \
 	comp_pgauss  \
