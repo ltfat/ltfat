@@ -1,18 +1,4 @@
-if (MSVC)
-    if (NOBLASLAPACK)
-        SET(CMAKE_CXX_FLAGS "/DNOBLASLAPACK /D_HAS_EXCEPTIONS=0")
-    endif (NOBLASLAPACK)
-else (MSVC)
-    SET(CMAKE_C_FLAGS "-fPIC -Wall -std=c99")
-    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11 -fno-exceptions -fno-rtti")
-    if (NOBLASLAPACK)
-        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOBLASLAPACK")
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOBLASLAPACK")
-    endif (NOBLASLAPACK)
-    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
-    SET(LIBS m)
-endif(MSVC)
-
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 SET(sources
     dgtrealwrapper.c gla.c legla.c pghi.c rtisila.c rtpghi.c spsi.c utils.c

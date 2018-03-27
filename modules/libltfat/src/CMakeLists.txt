@@ -1,11 +1,4 @@
-if (MSVC)
-        SET(CMAKE_CXX_FLAGS "/D_HAS_EXCEPTIONS=0")
-else (MSVC)
-    SET(CMAKE_C_FLAGS "-fPIC -Wall -std=c99")
-    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11 -fno-exceptions -fno-rtti")
-SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
-SET(LIBS m)
-endif(MSVC)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 SET(src_files
     dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c

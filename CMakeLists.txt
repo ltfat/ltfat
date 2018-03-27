@@ -31,11 +31,27 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+if (MSVC)
+    if (NOBLASLAPACK)
+        SET(CMAKE_CXX_FLAGS "/DNOBLASLAPACK /D_HAS_EXCEPTIONS=0")
+    endif (NOBLASLAPACK)
+else (MSVC)
+    SET(CMAKE_C_FLAGS "-fPIC -Wall -std=c99")
+    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11 -fno-exceptions -fno-rtti")
+    if (NOBLASLAPACK)
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOBLASLAPACK")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOBLASLAPACK")
+    endif (NOBLASLAPACK)
+
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
+    SET(LIBS m)
+endif(MSVC)
 
 add_subdirectory(modules/libltfat/src)
 
 if (DO_PHASERET)
     add_subdirectory(modules/libphaseret/src)
 endif (DO_PHASERET)
+
+
 
