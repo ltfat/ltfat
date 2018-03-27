@@ -12,7 +12,7 @@
 */
 
 
-#define MEX_FILE __BASE_FILE__
+#define MEX_FILE comp_pgauss.c
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_DOUBLE)

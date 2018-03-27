@@ -10,12 +10,7 @@
 
 #endif // _LTFAT_MEX_FILE - INCLUDED ONCE
 
-/* Obtain this filename. */
-#if defined(__GNUC__) || defined(__ICC)
-#define MEX_FILE __BASE_FILE__
-//#else
-//#define MEX_FILE "comp_ifilterbank_td.c"
-#endif
+#define MEX_FILE comp_ifilterbank_td.c
 
 
 #include "ltfat_mex_template_helper.h"

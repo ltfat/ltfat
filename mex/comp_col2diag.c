@@ -9,10 +9,7 @@
 
 #endif /* _LTFAT_MEX_FILE */
 
-/* Assuming __BASE_FILE__ is known by the compiler.
-   Otherwise specify this filename
-   e.g. #define MEX_FILE "comp_col2diag.c"  */
-#define MEX_FILE __BASE_FILE__
+#define MEX_FILE comp_col2diag.c
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)

@@ -211,19 +211,23 @@ For each inclusion a whole set of macros is defined (see src/ltfat/types.h):
     By default, a macro set (double) is used.
 */
 
+#define MEX_FILE_STRINGIFY(x) #x
+#define MEX_FILE_STR(x) MEX_FILE_STRINGIFY(x)
+#define MEX_FILE_S MEX_FILE_STR(MEX_FILE)
+
 
 #define LTFAT_DOUBLE
 #include "ltfat/types.h"
 #include "ltfat_mex_typeindependent.h"
 #include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-#include MEX_FILE
+#include MEX_FILE_S
 #ifdef COMPLEXINDEPENDENT
 #  define LTFAT_COMPLEXTYPE
 #  include "ltfat/types.h"
 #  include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-#  include MEX_FILE
+#  include MEX_FILE_S
 #  undef LTFAT_COMPLEXTYPE
 #endif
 #undef LTFAT_DOUBLE
@@ -234,13 +238,13 @@ void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray 
 #  include "ltfat_mex_typeindependent.h"
 #  include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-#  include MEX_FILE
+#  include MEX_FILE_S
 #  ifdef COMPLEXINDEPENDENT
 #    define LTFAT_COMPLEXTYPE
 #    include "ltfat/types.h"
 #    include "ltfat_mex_typecomplexindependent.h"
 void LTFAT_NAME(ltfatMexFnc)(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
-#    include MEX_FILE
+#    include MEX_FILE_S
 #    undef LTFAT_COMPLEXTYPE
 #  endif
 #  undef LTFAT_SINGLE

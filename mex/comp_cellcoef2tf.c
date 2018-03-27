@@ -8,10 +8,7 @@
 
 #endif /* _LTFAT_MEX_FILE */
 
-/* Obtain this filename. */
-#if defined(__GNUC__) || defined(__ICC)
-  #define MEX_FILE __BASE_FILE__
-#endif
+#define MEX_FILE comp_cellcoef2tf.c
 #include "ltfat_mex_template_helper.h"
 
 

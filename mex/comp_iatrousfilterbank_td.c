@@ -9,10 +9,7 @@
 
 #endif /* _LTFAT_MEX_FILE */
 
-/* Obtain this filename. */
-#if defined(__GNUC__) || defined(__ICC)
-#define MEX_FILE __BASE_FILE__
-#endif
+#define MEX_FILE comp_iatrousfilterbank_td.c
 
 /* The following header includes this file twice setting either LTFAT_SINGLE or LTFAT_DOUBLE.
     At the end of the header, LTFAT_SINGLE or LTFAT_DOUBLE is unset. */
