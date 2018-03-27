@@ -1,4 +1,4 @@
-/** \defgroup dgtrealmp Matching pursuit with Multi-Gabor Dictionaries 
+/** \defgroup multidgtrealmp Matching pursuit with Multi-Gabor Dictionaries 
  *
  *
  * */
@@ -98,7 +98,7 @@ ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in);
 
 #endif
 
-/** \addtogroup dgtrealmp  */
+/** \addtogroup multidgtrealmp  */
 /**@{*/
 
 /** Callback template to be called every iterstep iteration 

@@ -9,6 +9,14 @@ number of linear transforms including Gabor and wavelet transforms along with
 routines for constructing windows (filter prototypes) and routines for 
 manipulating coefficients
 
+Modules
+-------
+
+The following modules are included in the libltfat repository and can be optionally
+compiled:
+
+* Phase Retrieval Toolbox Library [libphaseret](http://ltfat.github.io/libphaseret/)
+
 Function naming convention
 --------------------------
 
