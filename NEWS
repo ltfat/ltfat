@@ -1,3 +1,12 @@
+Version 2.3.0
+
+* New function for computing matching pursuit in DGT: multidgtrealmp
+
+* Matching pursuit and orthogonal matching pursuit for general frames
+  (for small problems): franamp
+
+* ltfat_inferno is now the default colormap.
+
 Version 2.2.1
 
 * Added optional debiasing to franalasso.

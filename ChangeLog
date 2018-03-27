@@ -1,8 +1,10 @@
 WIP: Version 2.3.0 X/X 2018
-	* New function for computing matching pursuit in DGT: dgtrealmp
+	* New function for computing matching pursuit in DGT: multidgtrealmp
 
-	* New function for time-frequency jigsaw puzzle
-	  tonal-transient-residual separation: tfjigsawsep
+	* Matching pursuit and orthogonal matching pursuit for general frames 
+	  (for small problems): franamp
+
+	* ltfat_inferno is now the default colormap.
 
 Version 2.2.1 14/12 2017
 
