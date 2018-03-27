@@ -70,7 +70,6 @@ MEXCOMPFLAGS=-I$(MATLIBS) -DMATLAB_MEX_FILE -DLTFAT_LARGEARRAYS -DNDEBUG
 MEXLINKFLAGS=-static-libgcc -Wl,--dll -L$(MATLIBS) \
 			    -lmex -lmx -lmwlapack -lmwblas 
 
-
 all: clean makedirtree backlib $(MEXS) polygonclip playrec copyrest clean 
 
 backlib: 

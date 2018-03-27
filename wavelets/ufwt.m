@@ -9,7 +9,7 @@ function [c,info] = ufwt(f,w,J,varargin)
 %         J     : Number of filterbank iterations.
 %
 %   Output parameters:
-%         c     : Coefficients stored in $L \times J+1$ matrix.
+%         c     : Coefficients stored in $L \times (J+1)$ matrix.
 %         info  : Transform paramaters struct.
 %
 %   `ufwt(f,w,J)` computes redundant time (or shift) invariant

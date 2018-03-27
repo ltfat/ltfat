@@ -1,3 +1,7 @@
+Version 2.2.1
+
+* Added optional debiasing to franalasso.
+
 Version 2.2.0
 
 * New Gabor window generating functions: ptpfun, ptpfundual, pebfun, pebfundual

@@ -82,26 +82,34 @@ Nfilt = numel(bw);
 gout = cell(Nfilt,1);
 for ii=1:Nfilt
     g=struct();
+    g.foff=@(L) round(L/2*kv.fc(ii)) - floor(Lw(L,bw(ii))/2); 
     
     if flags.do_1 || flags.do_area 
-        g.H=@(L)    fftshift(freqwin(winname,Lw(L,bw(ii)),bw(ii),fsRestricted(L,bw(ii)),'shift',fc_offset(L,kv.fc(ii))))*kv.scal(ii)*L;                
-    end;
+        g.H=@(L) fftshift(...
+                 freqwin(winname,Lw(L,bw(ii)),bw(ii),fsRestricted(L,bw(ii)),...
+                 'shift',fc_offset(L,kv.fc(ii)))...
+                 )*kv.scal(ii)*L;                
+    end
     
     if  flags.do_2 || flags.do_energy
-        g.H=@(L)    fftshift(freqwin(winname,Lw(L,bw(ii)),bw(ii),fsRestricted(L,bw(ii)),'shift',fc_offset(L,kv.fc(ii))))*kv.scal(ii)*sqrt(L);                        
-    end;
+        g.H=@(L) fftshift(...
+                 freqwin(winname,Lw(L,bw(ii)),bw(ii),fsRestricted(L,bw(ii)),...
+                 'shift',fc_offset(L,kv.fc(ii)))...  
+                 )*kv.scal(ii)*sqrt(L);                        
+    end
         
     if flags.do_inf || flags.do_peak
-        g.H=@(L)    fftshift(freqwin(winname,Lw(L,bw(ii)),bw(ii),fsRestricted(L,bw(ii)),'shift',fc_offset(L,kv.fc(ii))))*kv.scal(ii);           
-    end;
-    
-    g.foff=@(L) round(L/2*kv.fc(ii)) - floor(Lw(L,bw(ii))/2);                    
-                    
+        g.H=@(L) fftshift(...
+                 freqwin(winname,Lw(L,bw(ii)),bw(ii),fsRestricted(L,bw(ii)),...
+                 'shift',fc_offset(L,kv.fc(ii)))... 
+                 )*kv.scal(ii);           
+    end
+          
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
     g.fs=kv.fs;
     gout{ii}=g;
-end;
+end
 
 if Nfilt==1
     gout=g;

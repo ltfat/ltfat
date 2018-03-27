@@ -154,10 +154,10 @@ if flags.do_display
         % situations where the data (is by itself limited (from above or
         % below) to within the specified range. Setting clim explicitly
         % avoids the colormap moves in the top or bottom.
-	if isempty(kv.clim)
-          imagesc(xr,yr,coef);
+        if isempty(kv.clim)
+            imagesc(xr,yr,coef);
         else
-	  imagesc(xr,yr,coef,kv.clim);
+            imagesc(xr,yr,coef,kv.clim);
         end;
       case 'contour'
         contour(xr,yr,coef);
@@ -169,6 +169,9 @@ if flags.do_display
     
     if flags.do_colorbar
         colorbar;
+        if ~isempty(kv.colormap)
+            colormap(kv.colormap); 
+        end
     end;
     
     axis('xy');

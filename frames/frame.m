@@ -73,8 +73,8 @@ function F=frame(ftype,varargin);
 %   Special / general frames
 %   ------------------------
 %
-%   `frame('gen',g)` constructs an general frame with analysis matrix *g*.
-%   The frame atoms must be stored as column vectors in the matrices.
+%   `frame('gen',g)` constructs a general frame with a synthesis matrix *g*.
+%   The frame atoms must be stored as column vectors in the matrix.
 %
 %   `frame('identity')` constructs the canonical orthonormal basis, meaning
 %   that all operators return their input as output, so it is the dummy

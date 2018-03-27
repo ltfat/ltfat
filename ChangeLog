@@ -1,11 +1,18 @@
-Version 2.3.0 X/X 2017
-    * New function for computing matching pursuits in DGT: dgtrealmp
+WIP: Version 2.3.0 X/X 2018
+	* New function for computing matching pursuit in DGT: dgtrealmp
 
-    * New function for transient-tonal separation: tfjigsawsep
+	* New function for time-frequency jigsaw puzzle
+	  tonal-transient-residual separation: tfjigsawsep
 
-    * Fixed char to number conversion warning in wavload occuring on Octave
+Version 2.2.1 14/12 2017
 
-    * Fixed nargchk deprication warning occuring in Matlab 2016
+	* Added optional debiasing to franalasso.
+
+	* Some adjustments in audfilters.
+
+	* Abandoned nargchk and narginchk. They are deprecated in recent Matlab.
+
+	* Fixed char to number conversion warning in wavload occuring on Octave
 
 Version 2.2.0 24/12 2016
     * New Gabor window generating functions: ptpfun, ptpfundual, pebfun, pebfundual

@@ -176,8 +176,12 @@ switch(flags.plottype)
     pcolor(xr,yr,C);
 end;
 
+
 if flags.do_colorbar
-  colorbar;
+   colorbar;
+   if ~isempty(kv.colormap)
+       colormap(kv.colormap); 
+   end
 end;
 
 axis('xy');

@@ -77,13 +77,8 @@ definput.keyvals.fs = 2;
 definput.keyvals.atheight = 10^(-3/10);
 [flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
 
-if flags.do_wp
-  kv.shift=0;
-end;
-
-if flags.do_hp
-  kv.shift=0.5;
-end;
+if flags.do_wp, kv.shift=0; end
+if flags.do_hp, kv.shift=0.5; end
 
 if ( kv.shift >= .5 || kv.shift < -.5 )
     error('%s: Parameter shift must be in ]-.5,.5].',upper(mfilename));
@@ -93,8 +88,10 @@ if ( bw > fs || bw < eps )
      error('%s: Parameter bw must be in ]0,fs].',upper(mfilename));
 end
 
+
 step = fs/L; 
 bwrelheight = kv.atheight;
+
 H = (-kv.shift+[0:1:ceil(L/2)-1,-floor(L/2):-1]');
 
 switch winName
@@ -109,10 +106,16 @@ switch winName
     case 'gammatone'
         definputgamma.keyvals.order=4;
         [~,~,order]=ltfatarghelper({'order'},definputgamma,winArgs);
+        if order <= 1
+            error('%s: order must be bigger than 1. (passed %.2f)',...
+                  upper(mfilename),order);
+        end
 
         gtInverse = @(yn) sqrt(yn^(-2/order)-1);
         dilation = bw/2/gtInverse(bwrelheight)/step;
-        H = (1+1i*abs(H)/dilation).^(-order);
+        peakpos = (order-1)/(2*pi*dilation);
+        peakmod = exp(2*pi*1i*H*peakpos);
+        H = (1+1i*H/dilation).^(-order).*peakmod;
     otherwise 
         error('%s: SENTINEL. Unknown window.',upper(mfilename));
 end
