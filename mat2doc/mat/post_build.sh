@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 curdir={INST}
 
 echo "Changing to " $curdir
@@ -22,8 +23,8 @@ rm -Rf mex
 mv lib ..
 
 # We moved libltfat and renamed it to src, we need to fix paths in some Makefiles
-sed -i 's:../../libltfat/ostools.mk:../../../src/ostools.mk:g' blockproc/java/Makefile
-sed -i 's:/libltfat/:/src/:g' ../oct/Makefile_unix
+# sed -i 's:../../libltfat/ostools.mk:../../../src/ostools.mk:g' blockproc/java/Makefile
+sed -i 's:\.\./libltfat/:../src/:g' ../oct/Makefile_unix
 sed -i 's:../../libltfat/ostools.mk:../../src/ostools.mk:g' ../thirdparty/Playrec/Makefile_unixoct
 sed -i 's:../../libltfat/ostools.mk:../../src/ostools.mk:g' ../thirdparty/polyboolclipper/Makefile_unixoct
 
@@ -56,9 +57,9 @@ ltfatversion={VERSION}
 
 cd ../src
 mv Makefile Makefile_libltfat
-cp ltfatcompat/Makefile_octpkg.in Makefile.in
-cp ltfatcompat/bootstrap .
-cp ltfatcompat/configure.ac .
+cp ../lib/ltfatcompat/Makefile_octpkg.in Makefile.in
+cp ../lib/ltfatcompat/bootstrap .
+cp ../lib/ltfatcompat/configure.ac .
 
 # Update current version in configure.ac
 sed -i -e "s/\[2.0.0\]/\[$ltfatversion\]/" configure.ac
