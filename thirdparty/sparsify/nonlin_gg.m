@@ -79,6 +79,7 @@ function [s, err_cost, iter_time]=nonlin_gg(x,F,C,m,varargin)
 %   approximated using diference between cost at s and at s+DELTA. Once a
 %   new element has been selected, gradient optimisation is used to
 %   minimise the cost function based on the selected elements.
+
 % References: T. Blumensath, M. E. Davies; "Gradient Pursuit for Non-Linear
 %            Sparse Signal Modelling", submitted to EUSIPCO, 2008.
 %   
