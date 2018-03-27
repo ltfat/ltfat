@@ -70,6 +70,7 @@ definput.flags.target={'auto','lib','mex','pbc','playrec','java','blockproc'};
 definput.flags.comptarget={'release','debug'};
 definput.flags.command={'compile','clean','test'};
 definput.flags.verbosity={'noverbose','verbose'};
+definput.keyvals.jobs = [];
 
 s = which('ltfatarghelper');
 if strcmpi(mexext,s(end-numel(mexext)+1:end))
@@ -222,7 +223,7 @@ if flags.do_compile
       % DFFTW and SFFTW are not used in the unix_makefile
       [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
                        'dfftw',dfftw,'sfftw',sfftw,flags.verbosity,...
-                       'comptarget',flags.comptarget);
+                       'comptarget',flags.comptarget,'jobs',kv.jobs);
       if(~status)
         disp('Done.');
       else
@@ -255,7 +256,7 @@ if flags.do_compile
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
                       'ext',ext,'dfftw',dfftw,'sfftw',sfftw,...
                       flags.verbosity,...
-                      'comptarget',flags.comptarget);
+                      'comptarget',flags.comptarget,'jobs',kv.jobs);
 
     if(~status)
       disp('Done.');
@@ -507,6 +508,7 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   definput.keyvals.comptarget=[];
   definput.keyvals.portaudio=[];
   definput.keyvals.extra=[];
+  definput.keyvals.jobs =[];
   definput.flags.verbosity={'noverbose','verbose'};
   [flags,kv]=ltfatarghelper({},definput,varargin);
   
@@ -544,6 +546,10 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   
   if ~isempty(kv.target)
      systemCommand = [systemCommand,' ',kv.target];  
+  end
+  
+  if ~isempty(kv.jobs)
+      systemCommand = [systemCommand,sprintf(' -j%d',kv.jobs)];
   end
 
   if flags.do_verbose
