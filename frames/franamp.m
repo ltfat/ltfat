@@ -51,13 +51,17 @@ function [c, frec, info] = franamp(F,f,varargin)
 %   In fact, the sparsify toolbox implements several flavors of OMP
 %   implementation. They can be chosen using the following flags:
 %
-%     'auto'  Selects a suitable algorithm according to the size of the problem.
+%     'auto'  Selects a suitable OMP algorithm according to the size of the problem.
 %
 %     'qr'    QR based method
 %
 %     'chol'  Cholesky based method
 %
 %     'cg'    Conjugate Gradient Pursuit
+%
+%   Additionally:
+%
+%     'mp'    Classical (non-orthogonal) matching pursuit.
 %
 %   Examples
 %   --------
