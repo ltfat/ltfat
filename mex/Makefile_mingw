@@ -26,7 +26,7 @@ ifndef SFFTW
    SFFTW=-lfftw3f-3
 endif
 
-CFLAGS=-shared -s -Wall -std=c99 -I../libltfat/thirdparty -I../libltfat/include -I../libltfat/include/ltfat -fvisibility=hidden
+CFLAGS=-shared -s -Wall -std=c99 -I../libltfat/modules/libltfat/include -fvisibility=hidden -DLTFAT_LARGEARRAYS
 
 # the following adds parameters to CFLAGS
 include ../libltfat/comptarget.mk
