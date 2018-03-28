@@ -23,6 +23,9 @@
 %    PROJKERN	    -  Projection of Gabor coefficients onto kernel space
 %    DGTLENGTH      -  Length of Gabor system to expand a signal
 %
+%  Multi-Gabor systems
+%    MULTIDGTREALMP -  Matching pursuit decomposition in Multi-Gabor system 
+%
 %  Wilson bases and WMDCT
 %    DWILT          -  Discrete Wilson transform
 %    IDWILT         -  Inverse discrete Wilson transform
