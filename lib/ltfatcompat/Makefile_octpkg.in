@@ -33,7 +33,7 @@ all: $(targets)
 oct:
 	# Compile the backend lib, no dependency is resolved here since we compile
 	# a static library
-	$(MAKE) -f Makefile_libltfat build/libltfat.a
+	$(MAKE) -f Makefile_libltfat build/libltfat.a OPTCFLAGS=-DLTFAT_LARGEARRAYS
 	# Copy to the common place.
 	mv build/libltfat.a ../lib/
 	# Compile oct and mex files
