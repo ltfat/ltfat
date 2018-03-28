@@ -9,7 +9,7 @@ $(info Windows detected)
 MINGW = 1
 RM = del /Q /F
 CP = copy /Y
-MKDIR = md /S
+MKDIR = md
 RMDIR = rmdir /S /Q
 PS2 = \\
 PS = $(strip $(PS2))
