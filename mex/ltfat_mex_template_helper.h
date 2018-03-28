@@ -120,6 +120,9 @@ EXPORT_SYM
 void mexFunctionInner( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 /** C99 headers for a generic complex number manipulations */
 
+
+
+
 // Storing function pointers to exitFunctions
 #define MEXEXITFNCCOUNT 4
 void ltfatMexAtExitGlobal(void);
@@ -137,6 +140,14 @@ void ltfatMexAtExitGlobal(void)
 #ifdef _DEBUG
    mexPrintf("Global Exit fnc called: %s\n", __PRETTY_FUNCTION__);
 #endif
+}
+
+void cust_ltfat_error_handler (int ltfat_errno, const char* file, int line,
+                            const char* funcname, const char* reason)
+{
+    ltfatMexAtExitGlobal();
+    mexErrMsgIdAndTxt("libltfat:internal", "[ERROR %d]: (%s:%d): [%s]: %s\n",
+                      -ltfat_errno, file, line, funcname, reason);
 }
 
 #ifdef EXPORTALIAS
@@ -553,6 +564,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
    {
       // This fails when mexFunction is not called directly from Matlab or another MEX function
       mexAtExit(ltfatMexAtExitGlobal);
+      ltfat_set_error_handler(cust_ltfat_error_handler);
       exitFncRegistered = 1;
    }
 
