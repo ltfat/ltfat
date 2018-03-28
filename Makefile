@@ -40,7 +40,7 @@ endif
 # Base CFLAGS
 CFLAGS+=-Wall -Wextra -std=c99
 CXXFLAGS+=-Wall -Wextra -std=c++11 -fno-exceptions -fno-rtti
-LFLAGS = -Wl,--no-undefined -Lbuild/$(CROSS) $(OPTLPATH) '-Wl,-rpath,$$ORIGIN'
+LFLAGS = -Wl,--no-undefined -Lbuild/$(CROSS) $(OPTLPATH) -Wl,-rpath,$$ORIGIN
 
 MATLABROOT ?= /usr/local/MATLAB_R2017a
 PREFIX ?= /usr/local
@@ -183,10 +183,10 @@ $(objprefix)/single/kiss_%.o: $(SRCDIR)thirdparty/kissfft/%.c
 	$(CC) $(CFLAGS) -DLTFAT_SINGLE  -c $< -o $@
 
 $(buildprefix):
-	@$(MKDIR) $(buildprefix)
+	@$(MKDIR) $(subst /,$(PS)/,$(buildprefix))
 
 $(objprefix)/%:
-	@$(MKDIR) $@
+	@$(MKDIR) $(subst /,$(PS),$@)
 
 .PHONY: clean cleanobj help doc doxy static shared allshared munit unit $(MODULE)
 
