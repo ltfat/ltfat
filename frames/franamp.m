@@ -120,12 +120,20 @@ info.relres = [];
 fpad = postpad(f,L);
 fnorm = norm(fpad);
 
-F=frameaccel(F,Ls);
 % Initialize solution
 r0 = fpad;
 info.relres = zeros(kv.maxit,1);
 relresiter = fnorm;
 info.iter = 0;
+
+if fnorm == 0
+    c = zeros(frameclength(F,Ls),1);
+    frec = zeros(size(f));
+    info.relres = [];
+    return;
+end
+
+F=frameaccel(F,Ls);
 
 vectnfact = 1./(framevectornorms(F,L,'ana'));
 

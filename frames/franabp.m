@@ -264,6 +264,12 @@ threshold = lambda./C;
 relres = 1e16;
 iter = 0;
 
+if norm(f) == 0
+    relres = 0;
+    frec = zeros(size(f));
+    return;
+end
+
 % Main loop
 while ((iter < kv.maxit)&&(relres >= kv.tol))
    % Main part of the algorithm 
