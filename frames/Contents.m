@@ -1,6 +1,6 @@
 % LTFAT - Frames
 %
-%  Peter L. Søndergaard, 2012 - 2016.
+%  Peter L. Søndergaard, 2012 - 2018.
 %
 %  Creation of a frame object
 %    FRAME             - Construct a new frame

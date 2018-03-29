@@ -1,6 +1,6 @@
 % LTFAT - Wavelets
 %
-%   Zdenek Prusa, 2013 - 2016.
+%   Zdenek Prusa, 2013 - 2018.
 %
 %   If you use the wavelets module for a scientific work, please cite:
 %

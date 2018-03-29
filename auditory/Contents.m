@@ -1,6 +1,6 @@
 % LTFAT - Simple auditory processing
 %
-%  Peter L. Søndergaard, 2011 - 2016
+%  Peter L. Søndergaard, 2011 - 2018
 %
 %  Plots
 %     SEMIAUDPLOT      - 2D plot on auditory scale.
