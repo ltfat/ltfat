@@ -27,10 +27,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     LTFAT_NAME(dgtrealmp_state)*  LTFAT_NAME(plan) = NULL;
     size_t atoms = 0;
     size_t iters = 0;
-    //int status = LTFATERR_FAILED;
 
-    int L  = mxGetNumberOfElements(prhs[0]);
-    int dictno = mxGetNumberOfElements(prhs[1]);
+    mwSize L  = mxGetNumberOfElements(prhs[0]);
+    mwSize dictno = mxGetNumberOfElements(prhs[1]);
     double* aDouble = mxGetData(prhs[2]);
     double* MDouble = mxGetData(prhs[3]);
     int ptype = (int)mxGetScalar(prhs[4]) == 1 ? LTFAT_TIMEINV: LTFAT_FREQINV;;
