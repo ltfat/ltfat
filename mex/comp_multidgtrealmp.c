@@ -20,31 +20,13 @@
 //  
 //
 
-LTFAT_NAME(dgtrealmp_parbuf)* LTFAT_NAME(pbuf) = NULL;
-LTFAT_NAME(dgtrealmp_state)*  LTFAT_NAME(plan) = NULL;
-
-void LTFAT_NAME(mexAtExitFnc)()
-{
-    if(LTFAT_NAME(pbuf))
-    {
-        LTFAT_NAME(dgtrealmp_parbuf_done)(&LTFAT_NAME(pbuf)); LTFAT_NAME(pbuf) = NULL;
-    }
-    if(LTFAT_NAME(plan))
-    {
-        LTFAT_NAME(dgtrealmp_done)(&LTFAT_NAME(plan)); LTFAT_NAME(plan) = NULL;
-    }
-}
-
-void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
+void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
                               int UNUSED(nrhs), const mxArray *prhs[] )
 {
-    static int atExitFncRegistered = 0;
-    if(!atExitFncRegistered)
-    {
-        LTFAT_NAME(ltfatMexAtExit)(LTFAT_NAME(mexAtExitFnc));
-        atExitFncRegistered = 1;
-    }
-
+    LTFAT_NAME(dgtrealmp_parbuf)* LTFAT_NAME(pbuf) = NULL;
+    LTFAT_NAME(dgtrealmp_state)*  LTFAT_NAME(plan) = NULL;
+    size_t atoms = 0;
+    size_t iters = 0;
     //int status = LTFATERR_FAILED;
 
     int L  = mxGetNumberOfElements(prhs[0]);
@@ -70,29 +52,36 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
         cPtrs[dIdx] = mxGetData(mxGetCell(plhs[0],dIdx));
     }
 
-    LTFAT_NAME(dgtrealmp_parbuf_init)(&LTFAT_NAME(pbuf));
+    CHSTAT(LTFAT_NAME(dgtrealmp_parbuf_init)(&LTFAT_NAME(pbuf)));
 
     for(int dIdx=0;dIdx<dictno;dIdx++)
     {
-        LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(pbuf),
+        CHSTAT(LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(pbuf),
                 mxGetData(mxGetCell(prhs[1],dIdx)),
                 mxGetNumberOfElements(mxGetCell(prhs[1],dIdx)),
-                (ltfat_int)aDouble[dIdx], (ltfat_int)MDouble[dIdx]);
+                (ltfat_int)aDouble[dIdx], (ltfat_int)MDouble[dIdx]));
     }
 
-    LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(LTFAT_NAME(pbuf), ptype);
-    LTFAT_NAME(dgtrealmp_setparbuf_pedanticsearch)(LTFAT_NAME(pbuf), do_pedanticsearch);
-    LTFAT_NAME(dgtrealmp_setparbuf_snrdb)(LTFAT_NAME(pbuf), -errdb);
-    LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(LTFAT_NAME(pbuf), kernthr);
-    LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(LTFAT_NAME(pbuf), maxat);
-    LTFAT_NAME(dgtrealmp_setparbuf_maxit)(LTFAT_NAME(pbuf), maxit);
-    LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(LTFAT_NAME(pbuf), L);
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(LTFAT_NAME(pbuf), ptype));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_pedanticsearch)(LTFAT_NAME(pbuf), do_pedanticsearch));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_snrdb)(LTFAT_NAME(pbuf), -errdb));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(LTFAT_NAME(pbuf), kernthr));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(LTFAT_NAME(pbuf), maxat));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxit)(LTFAT_NAME(pbuf), maxit));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(LTFAT_NAME(pbuf), L));
 
-    LTFAT_NAME(dgtrealmp_init)( LTFAT_NAME(pbuf), L, &LTFAT_NAME(plan));
-    LTFAT_NAME(dgtrealmp_execute_decompose)(LTFAT_NAME(plan), mxGetData(prhs[0]), cPtrs);
+    CHSTAT(LTFAT_NAME(dgtrealmp_init)( LTFAT_NAME(pbuf), L, &LTFAT_NAME(plan)));
+    CHSTAT(LTFAT_NAME(dgtrealmp_execute_decompose)(LTFAT_NAME(plan), mxGetData(prhs[0]), cPtrs));
 
-//error:
-    LTFAT_NAME(mexAtExitFnc)();
+    CHSTAT(LTFAT_NAME(dgtrealmp_get_numatoms)(LTFAT_NAME(plan), &atoms));
+    CHSTAT(LTFAT_NAME(dgtrealmp_get_numiters)(LTFAT_NAME(plan), &iters));
+
+error:
+    if(nlhs>1) plhs[1] = mxCreateDoubleScalar((double)atoms);
+    if(nlhs>2) plhs[2] = mxCreateDoubleScalar((double)iters);
+
+    if(LTFAT_NAME(pbuf)) LTFAT_NAME(dgtrealmp_parbuf_done)(&LTFAT_NAME(pbuf));
+    if(LTFAT_NAME(plan)) LTFAT_NAME(dgtrealmp_done)(&LTFAT_NAME(plan));
 }
 #endif /* LTFAT_SINGLE or LTFAT_DOUBLE */
 

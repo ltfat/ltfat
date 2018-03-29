@@ -51,7 +51,7 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %               This is the default. 
 %               Requires MEX files to be compiled.
 %
-%     'slow'    By-the-book implementation
+%     'slow'    Textbook very slow implementation.
 %
 %   Examples
 %   --------
@@ -67,6 +67,7 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %AUTHOR: Zdenek Prusa
 
 thismfile = upper(mfilename);
+
 complainif_notenoughargs(nargin,2,thismfile);
     
 % Define initial value for flags and key/value pairs.
@@ -74,12 +75,20 @@ definput.keyvals.errdb=-40;
 definput.keyvals.maxit=[];
 definput.keyvals.printstep=100;
 definput.keyvals.kernthr = 1e-4;
-definput.keyvals.dictmask = [];
 definput.flags.print={'quiet','print'};
 definput.flags.algorithm={'fast','slow'};
 definput.flags.search={'plainsearch','pedanticsearch'};
 definput.flags.phaseconv={'freqinv','timeinv'};
 [flags,kv]=ltfatarghelper({'errdb','maxit'},definput,varargin);
+
+if exist('comp_multidgtrealmp','file') ~= 3 && flags.do_fast
+    error(['%s: MEX/OCT file is missing. Either compile the MEX/OCT ',...
+           'interfaces or re-run the function with ''slow'''], thismfile);
+end
+
+if flags.do_slow
+    error('%s: ''slow'' is not supported yet.',thismfile)
+end
 
 %% ----- step 1 : Verify f and determine its length -------
 % Change f to correct shape.
@@ -93,6 +102,10 @@ if kv.errdb > 0
     error('%s: Target error must be lower than 0 dB.',upper(mfilename));
 end
 
+if ~(kv.kernthr > 0 && kv.kernthr <= 1)
+    error('%s: Kenel threshold must be in range ]0,1].',upper(mfilename));    
+end
+    
 if ~iscell(dicts), error('%s: dicts must be cell',thismfile); end
 if rem(numel(dicts),3) ~= 0 || ~all(cellfun(@(x)isscalar(x), dicts([2:3:end,3:3:end])))
     error('%s: bad format of dicts. Check {g1,a1,M1,g2,a2,M2,...,gW,aW,MW}',...
@@ -100,15 +113,6 @@ if rem(numel(dicts),3) ~= 0 || ~all(cellfun(@(x)isscalar(x), dicts([2:3:end,3:3:
 end
 
 dictno = numel(dicts)/3;
-
-if isempty(kv.dictmask) 
-    kv.dictmask = ones(dictno,1);
-else
-    if ~isvector(kv.dictmask) || numel(kv.dictmask) ~= dictno
-        error('%s: dictmask length must be equal to the number of dictionaries.',thismfile);
-    end
-end
-
 gin = dicts(1:3:end);
 a = cell2mat(dicts(2:3:end));
 M = cell2mat(dicts(3:3:end));
@@ -120,21 +124,21 @@ if any(rem([a(:);M(:)],amin) ~= 0)
     error('%s: all a and M must be divisible by min(a1,...,aW)',thismfile);
 end
 
+info.iter = 0;
+info.relres = [];
+fnorm = norm(f);
+
 L = dgtlength(Ls,amin,Mmax);
+if isempty(kv.maxit), kv.maxit = L; end
 
 g = cell(dictno,1);
 for dIdx = 1:dictno
     g{dIdx} = normalize(gabwin(gin{dIdx},a(dIdx),M(dIdx),L),'2');
 end
 
-if isempty(kv.maxit), kv.maxit = L; end
-info.iter = 0;
-info.relres = [];
-
 fpad = postpad(f,L);
-fnorm = norm(fpad);
 
-c = comp_multidgtrealmp(fpad,g,a,M,flags.do_timeinv,kv.kernthr,kv.errdb,kv.maxit,kv.maxit,flags.do_pedanticsearch);
+[c,info.atoms,info.iter] = comp_multidgtrealmp(fpad,g,a,M,flags.do_timeinv,kv.kernthr,kv.errdb,kv.maxit,kv.maxit,flags.do_pedanticsearch);
 
 if nargout>1
   frec = zeros(size(fpad,1),dictno,class(fpad));
