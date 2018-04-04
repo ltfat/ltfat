@@ -24,7 +24,7 @@ target_compile_definitions(libphaseret_commonsingle PUBLIC LTFAT_SINGLE)
 target_compile_definitions(libphaseret_double PUBLIC LTFAT_DOUBLE)
 target_compile_definitions(libphaseret_single PUBLIC LTFAT_SINGLE)
 
-if (MSVC)
+if (WIN32)
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(libphaseret_commondouble PUBLIC LTFAT_BUILD_SHARED)
     target_compile_definitions(libphaseret_commonsingle PUBLIC LTFAT_BUILD_SHARED)
@@ -36,7 +36,7 @@ else(BUILD_SHARED_LIBS)
     target_compile_definitions(libphaseret_double PUBLIC LTFAT_BUILD_STATIC)
     target_compile_definitions(libphaseret_single PUBLIC LTFAT_BUILD_STATIC)
 endif(BUILD_SHARED_LIBS)
-endif(MSVC)
+endif(WIN32)
 
 add_library(phaseret
     $<TARGET_OBJECTS:libphaseret_commondouble>
@@ -52,13 +52,13 @@ add_library(phaseretf
     $<TARGET_OBJECTS:libphaseret_commonsingle>
     $<TARGET_OBJECTS:libphaseret_single>)
 
-if (MSVC)
+if (WIN32)
 if(BUILD_SHARED_LIBS)
     set_target_properties(phaseret PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(phaseretf PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(phaseretd PROPERTIES IMPORT_SUFFIX ".dll.lib")
 endif(BUILD_SHARED_LIBS)
-endif(MSVC)
+endif(WIN32)
 
 target_link_libraries(phaseret  ltfat)
 target_link_libraries(phaseretf ltfatf)

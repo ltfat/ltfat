@@ -25,6 +25,9 @@
 #ifdef LTFAT_COMPLEX
 #undef LTFAT_COMPLEX
 #endif
+#ifdef LTFAT_REAL_MIN
+#undef LTFAT_REAL_MIN
+#endif
 #ifdef LTFAT_REAL
 #undef LTFAT_REAL
 #endif

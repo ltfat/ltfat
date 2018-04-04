@@ -22,6 +22,8 @@ sudo ldconfig
 ```
 to make the just installed library accesible.
 
+Building with MAKE (Linux)
+--------------------------
 
 There are three target libraries (static and shared versions)
 * build/libltfat.a(.so)   Contains double and single prec. versions of the functions
@@ -38,6 +40,12 @@ The dependency on FFTW can be disabled by calling
 make FFTBACKEND=KISS
 ```
 The internal [KISS FFT](http://kissfft.sourceforge.net/) implementation will be used.
+
+Building with CMAKE (Linux, Windows)
+------------------------------------
+
+By default, cmake is configured as if `NOBLASLAPACK=1` and `FFTBACKEND=KISS` were set such
+that libltfat is standalone (except for the libm dependency).
 
 Documentation
 -------------

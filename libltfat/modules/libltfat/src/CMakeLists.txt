@@ -67,7 +67,7 @@ target_compile_definitions(libltfat_commonsingle PUBLIC LTFAT_SINGLE)
 target_compile_definitions(libltfat_double PUBLIC LTFAT_DOUBLE)
 target_compile_definitions(libltfat_single PUBLIC LTFAT_SINGLE)
 
-if (MSVC)
+if (WIN32)
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(libltfat_complexsingle PUBLIC LTFAT_BUILD_SHARED)
     target_compile_definitions(libltfat_complexdouble PUBLIC LTFAT_BUILD_SHARED)
@@ -83,7 +83,7 @@ else(BUILD_SHARED_LIBS)
     target_compile_definitions(libltfat_double PUBLIC LTFAT_BUILD_STATIC)
     target_compile_definitions(libltfat_single PUBLIC LTFAT_BUILD_STATIC)
 endif(BUILD_SHARED_LIBS)
-endif(MSVC)
+endif(WIN32)
 
 add_library(ltfat
     $<TARGET_OBJECTS:libltfat_commondouble>
@@ -98,13 +98,13 @@ add_library(ltfatf
     $<TARGET_OBJECTS:libltfat_commonsingle>
     $<TARGET_OBJECTS:libltfat_single> $<TARGET_OBJECTS:libltfat_complexsingle>)
 
-if (MSVC)
+if (WIN32)
 if(BUILD_SHARED_LIBS)
     set_target_properties(ltfat PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(ltfatf PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(ltfatd PROPERTIES IMPORT_SUFFIX ".dll.lib")
 endif(BUILD_SHARED_LIBS)
-endif(MSVC)
+endif(WIN32)
 
 target_link_libraries(ltfat ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3_LIB} ${FFTW3F_LIB} ${LIBS})
 target_link_libraries(ltfatf ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3F_LIB} ${LIBS} )
