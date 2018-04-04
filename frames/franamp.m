@@ -69,12 +69,12 @@ function [c, frec, info] = franamp(F,f,varargin)
 %   The following example show the development of the approx. error for the
 %   MP and OMP algorithms. :::
 %
-%   [f,fs] = greasy; F = frame('dgt','hann',256,1024);
-%   maxit = 4000;
-%   [c1,~,info1] = franamp(F,f,'omp','cg','maxit',maxit);
-%   [c2,~,info2] = franamp(F,f,'mp','maxit',maxit);
-%   plot(20*log10([info1.relres,info2.relres]));
-%   legend({'OMP','MP'});
+%       [f,fs] = greasy; F = frame('dgt','hann',256,1024);
+%       maxit = 4000;
+%       [c1,~,info1] = franamp(F,f,'omp','cg','maxit',maxit);
+%       [c2,~,info2] = franamp(F,f,'mp','maxit',maxit);
+%       plot(20*log10([info1.relres,info2.relres]));
+%       legend({'OMP','MP'});
 %
 %   See also: frame, frsyn, framevectornorms
 %

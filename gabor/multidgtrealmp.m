@@ -33,7 +33,7 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %
 %     .iter    Number of iterations done.
 %
-%     -atoms   Number of atoms selected.
+%     .atoms   Number of atoms selected.
 %
 %     .relres  Final approximation error. 
 %
@@ -57,10 +57,8 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %     'pedanticsearch' Be pedantic about the energy of pairs of conjugated
 %                      atoms in the selection step. Disbaled by default.
 %
-%   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %   The computational routine is only available in C. Use |ltfatmex| to
 %   to compile it.
-%   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 %
 %   Algorithms
 %   ----------
