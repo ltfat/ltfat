@@ -307,7 +307,7 @@ LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
                         {
                             /* if ( kmidx < k->range[knidx].start || */
                             /* kmidx > k->size.height - 1 - k->range[knidx].end)  continue; */
-                            kpoint pos = kpoint_init(midx, nidx, w2);
+                            pos = kpoint_init(midx, nidx, w2);
 
                             int alreadyhave = 0;
                             for (size_t pIdx = 0; pIdx < s->pBufNo; pIdx++ )
@@ -386,7 +386,7 @@ LTFAT_NAME(dgtrealmp_execute_invmp)(
 
     LTFAT_REAL plusatenergy =
         LTFAT_NAME(dgtrealmp_execute_projenergy)( atinprod, coutval)
-        + 2.0 * ltfat_real(cresval  * conj(coutval));
+        + (LTFAT_REAL)(2.0) * ltfat_real(cresval  * conj(coutval));
 
     if (do_conj) plusatenergy *= 2.0;
 

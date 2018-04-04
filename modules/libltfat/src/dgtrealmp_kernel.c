@@ -29,9 +29,9 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     amin = ltfat_imin(a[0], a[1]);
     Mmax = ltfat_imax(M[0], M[1]);
 
-    LTFAT_NAME(dgtrealmp_essentialsupport)(g[0], gl[0], 1e-6, &lefttail0,
+    LTFAT_NAME(dgtrealmp_essentialsupport)(g[0], gl[0], (LTFAT_REAL) 1e-6, &lefttail0,
                                            &righttail0);
-    LTFAT_NAME(dgtrealmp_essentialsupport)(g[1], gl[1], 1e-6, &lefttail1,
+    LTFAT_NAME(dgtrealmp_essentialsupport)(g[1], gl[1], (LTFAT_REAL) 1e-6, &lefttail1,
                                            &righttail1);
 
     Lshort = 2 * ltfat_imax(lefttail0, righttail0) +
@@ -76,7 +76,7 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
     {
         if (ktmp->Mrat < 1.0)
         {
-            modNo *= ktmp->Mrat;
+            modNo = (ltfat_int)(modNo * ktmp->Mrat);
             kernskip = (ltfat_int)(1.0/ktmp->Mrat);//M[1] / M[0];
         }
     }
@@ -155,8 +155,8 @@ LTFAT_NAME(dgtrealmp_kernel_init)(
          m -= 2, ktmp->atprodsNo++  )
     {
         ktmp->atprods[ktmp->atprodsNo] = kvalwmid[m];
-        ktmp->oneover1minatprodnorms[ktmp->atprodsNo] =
-            1.0 / (1.0 - ltfat_norm(kvalwmid[m]));
+        ktmp->oneover1minatprodnorms[ktmp->atprodsNo] = 
+			(LTFAT_REAL)(1.0 / (1.0 - ltfat_norm(kvalwmid[m])));
     }
     ktmp->atprods[0] = 0.0;
     ktmp->oneover1minatprodnorms[0] = 1.0;
@@ -212,7 +212,7 @@ LTFAT_NAME(dgtrealmp_kernel_modfiexp)(
     for (ltfat_int m = 0; m < size.height; m++ )
     {
         ltfat_int xval = m - mid.hmid;
-        LTFAT_REAL exparg = -2.0 * M_PI * n * xval * a / ((double) M);
+        LTFAT_REAL exparg = (LTFAT_REAL) ( -2.0 * M_PI * n * xval * a / ((double) M));
         kmod[m] = exp( I * exparg);
     }
     return 0;
@@ -226,7 +226,7 @@ LTFAT_NAME(dgtrealmp_kernel_modtiexp)(
     for (ltfat_int nn = 0; nn < size.width; nn++)
     {
         ltfat_int xval = nn - mid.wmid;
-        LTFAT_REAL exparg = 2.0 * M_PI * m * xval * a / ((double) M);
+        LTFAT_REAL exparg = (LTFAT_REAL) (2.0 * M_PI * m * xval * a / ((double) M));
         kmod[nn] = exp( I * exparg );
     }
     return 0;

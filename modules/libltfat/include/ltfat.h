@@ -9,7 +9,6 @@
 #ifdef __cplusplus
 #include <complex>
 #include <cmath>
-using namespace std;
 #else
 #include <tgmath.h>
 #endif // notdefined(NOSYSTEMHEADERS)

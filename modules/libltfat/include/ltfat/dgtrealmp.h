@@ -848,11 +848,11 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_niters)(
-        LTFAT_NAME(dgtrealmp_state)* p, ltfat_int itno, LTFAT_COMPLEX** cout);
+        LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX** cout);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_niters_compact)(
-        LTFAT_NAME(dgtrealmp_state)* p, ltfat_int itno, LTFAT_COMPLEX* cout);
+        LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX* cout);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_reset)(

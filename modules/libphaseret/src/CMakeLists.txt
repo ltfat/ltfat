@@ -1,72 +1,66 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+
 
 SET(sources
-    dgtrealwrapper.c gla.c legla.c pghi.c rtisila.c rtpghi.c spsi.c utils.c
+    gla.c legla.c pghi.c rtisila.c rtpghi.c spsi.c utils.c
     gsrtisila.c gsrtisilapghi.c)
 
 SET(sources_typeconstant
-    dgtrealwrapper_typeconstant.c legla_typeconstant.c pghi_typeconstant.c)
+    legla_typeconstant.c pghi_typeconstant.c)
 
 if (USECPP)
-    SET_SOURCE_FILES_PROPERTIES( ${sources} ${sources_typeconstant} PROPERTIES LANGUAGE CXX)
+    SET_SOURCE_FILES_PROPERTIES( ${sources} ${sources_typeconstant} 
+        PROPERTIES LANGUAGE CXX)
 endif (USECPP)
 
-add_library(commondouble OBJECT ${sources_typeconstant})
-add_library(commonsingle OBJECT ${sources_typeconstant})
+add_library(libphaseret_commondouble OBJECT ${sources_typeconstant})
+add_library(libphaseret_commonsingle OBJECT ${sources_typeconstant})
 
-add_library(double OBJECT ${sources})
-add_library(single OBJECT ${sources})
+add_library(libphaseret_double OBJECT ${sources})
+add_library(libphaseret_single OBJECT ${sources})
 
-target_compile_definitions(commondouble PUBLIC LTFAT_DOUBLE)
-target_compile_definitions(commonsingle PUBLIC LTFAT_SINGLE)
-target_compile_definitions(double PUBLIC LTFAT_DOUBLE)
-target_compile_definitions(single PUBLIC LTFAT_SINGLE)
+target_compile_definitions(libphaseret_commondouble PUBLIC LTFAT_DOUBLE)
+target_compile_definitions(libphaseret_commonsingle PUBLIC LTFAT_SINGLE)
+target_compile_definitions(libphaseret_double PUBLIC LTFAT_DOUBLE)
+target_compile_definitions(libphaseret_single PUBLIC LTFAT_SINGLE)
 
 if (MSVC)
-    target_compile_definitions(commondouble PUBLIC PHASERET_BUILD_SHARED)
-    target_compile_definitions(commonsingle PUBLIC PHASERET_BUILD_SHARED)
-    target_compile_definitions(double PUBLIC PHASERET_BUILD_SHARED)
-    target_compile_definitions(single PUBLIC PHASERET_BUILD_SHARED)
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(libphaseret_commondouble PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libphaseret_commonsingle PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libphaseret_double PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libphaseret_single PUBLIC LTFAT_BUILD_SHARED)
+else(BUILD_SHARED_LIBS)
+    target_compile_definitions(libphaseret_commondouble PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libphaseret_commonsingle PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libphaseret_double PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libphaseret_single PUBLIC LTFAT_BUILD_STATIC)
+endif(BUILD_SHARED_LIBS)
 endif(MSVC)
 
-add_library(phaseret_static STATIC
-    $<TARGET_OBJECTS:commondouble> $<TARGET_OBJECTS:double> $<TARGET_OBJECTS:single>)
-set_target_properties(phaseret_static PROPERTIES OUTPUT_NAME phaseret)
-
-add_library(phaseretd_static STATIC
-    $<TARGET_OBJECTS:commondouble> $<TARGET_OBJECTS:double>)
-set_target_properties(phaseretd_static PROPERTIES OUTPUT_NAME phaseretd)
-
-add_library(phaseretf_static STATIC
-    $<TARGET_OBJECTS:commonsingle> $<TARGET_OBJECTS:single>)
-set_target_properties(phaseretf_static PROPERTIES OUTPUT_NAME phaseretf)
-
-target_link_libraries(phaseret_static)
-target_link_libraries(phaseretf_static)
-target_link_libraries(phaseretd_static)
-
-add_library(phaseret SHARED
-    $<TARGET_OBJECTS:commondouble> $<TARGET_OBJECTS:double> $<TARGET_OBJECTS:single>)
+add_library(phaseret
+    $<TARGET_OBJECTS:libphaseret_commondouble>
+    $<TARGET_OBJECTS:libphaseret_double>
+    $<TARGET_OBJECTS:libphaseret_single>)
 
 
-add_library(phaseretd SHARED
-    $<TARGET_OBJECTS:commondouble> $<TARGET_OBJECTS:double>)
+add_library(phaseretd
+    $<TARGET_OBJECTS:libphaseret_commondouble>
+    $<TARGET_OBJECTS:libphaseret_double>)
 
-add_library(phaseretf SHARED
-    $<TARGET_OBJECTS:commonsingle> $<TARGET_OBJECTS:single>)
-
+add_library(phaseretf
+    $<TARGET_OBJECTS:libphaseret_commonsingle>
+    $<TARGET_OBJECTS:libphaseret_single>)
 
 if (MSVC)
+if(BUILD_SHARED_LIBS)
     set_target_properties(phaseret PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(phaseretf PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(phaseretd PROPERTIES IMPORT_SUFFIX ".dll.lib")
+endif(BUILD_SHARED_LIBS)
 endif(MSVC)
 
+target_link_libraries(phaseret  ltfat)
+target_link_libraries(phaseretf ltfatf)
+target_link_libraries(phaseretd ltfatd)
 
-
-target_link_libraries(phaseret  ${LTFAT_LIB} ${LIBS})
-target_link_libraries(phaseretf ${LTFATF_LIB} ${LIBS})
-target_link_libraries(phaseretd ${LTFATD_LIB} ${LIBS})
-
-
-set(CMAKE_BUILD_TYPE Release)

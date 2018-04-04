@@ -63,6 +63,7 @@
 #  ifndef I
 #     define I ltfat_complex_d(0.0,1.0)
 #  endif
+#  define LTFAT_REAL_MIN DBL_MIN
 #  define LTFAT_REAL double
 #  define LTFAT_COMPLEX ltfat_complex_d
 #  define LTFAT_FFTW(name) fftw_ ## name
@@ -86,6 +87,7 @@
 #  ifndef I
 #     define I ltfat_complex_s(0.0,1.0)
 #  endif
+#  define LTFAT_REAL_MIN FLT_MIN
 #define LTFAT_REAL float
 #define LTFAT_COMPLEX ltfat_complex_s
 #define LTFAT_MX_CLASSID mxSINGLE_CLASS

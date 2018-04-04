@@ -115,18 +115,18 @@ PHASERET_NAME(spsiupdate)(const LTFAT_REAL* scol, ltfat_int stride, ltfat_int a,
         {
             LTFAT_REAL p;
             ltfat_int binup = m, bindown = m;
-            LTFAT_REAL alpha = log(scol[stride * (m - 1)] + DBL_MIN);
-            LTFAT_REAL beta = log(scol[stride * m] + DBL_MIN);
-            LTFAT_REAL gamma = log(scol[stride * (m + 1)] + DBL_MIN);
-            LTFAT_REAL denom = alpha - 2.0 * beta + gamma;
+            LTFAT_REAL alpha = log(scol[stride * (m - 1)] + LTFAT_REAL_MIN);
+            LTFAT_REAL beta = log(scol[stride * m] + LTFAT_REAL_MIN);
+            LTFAT_REAL gamma = log(scol[stride * (m + 1)] + LTFAT_REAL_MIN);
+            LTFAT_REAL denom = alpha - (LTFAT_REAL)(2.0) * beta + gamma;
 
             if (denom != 0.0)
-                p = 0.5 * (alpha - gamma) / denom;
+                p = (LTFAT_REAL)(0.5) * (alpha - gamma) / denom;
             else
                 p = 0;
 
             LTFAT_REAL instf = m + p;
-            LTFAT_REAL peakPhase = tmpphase[m] + 2.0 * M_PI * a * instf / M;
+            LTFAT_REAL peakPhase = tmpphase[m] + (LTFAT_REAL)( 2.0 * M_PI * a * instf) / M;
             tmpphase[m] = peakPhase;
 
             if (p > 0)

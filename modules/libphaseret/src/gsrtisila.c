@@ -125,7 +125,7 @@ PHASERET_NAME(gsrtisila_init)(const LTFAT_REAL* g, ltfat_int gl, ltfat_int W,
     LTFAT_REAL* gcopy = NULL;
 
     ltfat_int M2, lookback, winsNo, maxLookahead;
-    LTFAT_REAL rellim = 1e-3;
+    LTFAT_REAL rellim = (LTFAT_REAL) 1e-3;
 
     CHECKNULL(g); CHECKNULL(pout);
     CHECK(LTFATERR_BADSIZE, gl > 0, "gl must be positive (passed %d)", gl);
@@ -138,7 +138,7 @@ PHASERET_NAME(gsrtisila_init)(const LTFAT_REAL* g, ltfat_int gl, ltfat_int W,
           "maxit must be positive (passed %d)", maxit);
 
     M2 = M / 2 + 1;
-    lookback = ceil(((LTFAT_REAL) gl) / a) - 1;
+    lookback = (ltfat_int)( ceil(((LTFAT_REAL) gl) / a) - 1);
     winsNo = (lookback + 1 + lookahead);
     maxLookahead = lookahead;
     CHECKMEM( p = (PHASERET_NAME(gsrtisila_state)*) ltfat_calloc(1, sizeof * p));

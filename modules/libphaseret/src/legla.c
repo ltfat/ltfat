@@ -21,7 +21,7 @@ struct PHASERET_NAME(legla_plan)
     int do_fast;
     double alpha;
     LTFAT_COMPLEX* t;
-    ltfat_phaseconvention ptype;
+    int ptype;
 };
 
 struct PHASERET_NAME(leglaupdate_plan)
@@ -114,8 +114,8 @@ PHASERET_NAME(legla_init)(const LTFAT_COMPLEX cinit[], const LTFAT_REAL g[],
 
         if (ksize.width == 0 && ksize.height == 0)
         {
-            ksize.width = 2 * ceil(((double)M) / a) - 1;
-            ksize.height = 2 * ceil(((double)M) / a) - 1;
+            ksize.width = (ltfat_int) ( 2 * ceil(((double)M) / a) - 1 );
+            ksize.height = (ltfat_int) ( 2 * ceil(((double)M) / a) - 1);
         }
     }
 

@@ -26,7 +26,7 @@ struct ltfat_dgtmp_params
     double                kernrelthr;
     size_t                maxit;
     size_t                maxatoms;
-    size_t                iterstep;
+    size_t             iterstep;
     int                   verbose;
     int                   initwasrun;
     int                   treelevels;
@@ -157,7 +157,8 @@ LTFAT_NAME(dgtrealmp_execute_projenergy)(
     LTFAT_REAL ci = ltfat_imag(cval);
     LTFAT_REAL cr2 = cr*cr;
     LTFAT_REAL ci2 = ci*ci;
-    return 2.0*(cr2 + ci2 + ltfat_real(atinprod)*(cr2 - ci2) - 2*ltfat_imag(atinprod)*cr*ci);
+	LTFAT_REAL two = (LTFAT_REAL) 2.0;
+    return two*(cr2 + ci2 + ltfat_real(atinprod)*(cr2 - ci2) - two*ltfat_imag(atinprod)*cr*ci);
 }
 
 static inline LTFAT_REAL

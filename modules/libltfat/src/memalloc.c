@@ -27,7 +27,7 @@ ltfat_set_memory_handler (ltfat_memory_handler_t new_handler)
 #define ALIGNBOUNDARY 64
 
 static void*
-ltfat_aligned_malloc(int size)
+ltfat_aligned_malloc(size_t size)
 {
     void* mem = malloc(size + sizeof(void*) + ALIGNBOUNDARY - 1);
     void* ptr = (void**)

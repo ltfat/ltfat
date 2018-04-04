@@ -1,14 +1,16 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.1)
 project (libltfat C CXX)
 
+set(CMAKE_BUILD_TYPE Release)
+
+option(BUILD_SHARED_LIBS
+    "Build .so/.dll" ON)
+
 option(NOBLASLAPACK
-    "Disable BLAS and LAPACK dependency" OFF)
+    "Disable BLAS and LAPACK dependency" ON)
 
 option(NOFFTW
-    "Disable FFTW dependency" OFF)
-
-option(DO_LIBPHASERET
-    "Compile libphaseret module" OFF)
+    "Disable FFTW dependency" ON)
 
 if (MSVC)
     set(USECPP 1)
@@ -18,40 +20,58 @@ else (MSVC)
 endif (MSVC)
 
 if (NOT NOFFTW)
-FIND_LIBRARY(FFTW3_LIB NAMES fftw3 libfftw3)
-FIND_LIBRARY(FFTW3F_LIB NAMES fftw3f libfftw3f)
+    FIND_LIBRARY(FFTW3_LIB NAMES fftw3 libfftw3)
+    FIND_LIBRARY(FFTW3F_LIB NAMES fftw3f libfftw3f)
 endif (NOT NOFFTW)
 
 if (NOT NOBLASLAPACK)
-     FIND_LIBRARY(BLAS_LIB NAMES blas libblas)
-     FIND_LIBRARY(LAPACK_LIB NAMES lapack liblapack)
+    FIND_LIBRARY(BLAS_LIB NAMES blas libblas)
+    FIND_LIBRARY(LAPACK_LIB NAMES lapack liblapack)
 endif (NOT NOBLASLAPACK)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set(OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+set(OLD_CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
+
+if (NOBLASLAPACK)
+    add_definitions(-DNOBLASLAPACK)
+endif (NOBLASLAPACK)
+
+if (NOFFTW)
+    add_definitions(-DKISS)
+else (NOFFTW)
+    add_definitions(-DFFTW)
+endif (NOFFTW)
+
+if(USECPP)
+    set (CMAKE_CXX_STANDARD 11)
+else(USECPP)
+    set (CMAKE_C_STANDARD 99)
+endif(USECPP)
 
 if (MSVC)
-    if (NOBLASLAPACK)
-        SET(CMAKE_CXX_FLAGS "/DNOBLASLAPACK /D_HAS_EXCEPTIONS=0")
-    endif (NOBLASLAPACK)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D_HAS_EXCEPTIONS=0 /EHsc /W4 /wd4706")
 else (MSVC)
-    SET(CMAKE_C_FLAGS "-fPIC -Wall -std=c99")
-    SET(CMAKE_CXX_FLAGS "-fPIC -Wall -std=c++11 -fno-exceptions -fno-rtti")
-    if (NOBLASLAPACK)
-        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNOBLASLAPACK")
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOBLASLAPACK")
-    endif (NOBLASLAPACK)
-
-    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fno-exceptions -fno-rtti")
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined -Wl,-rpath,$ORIGIN")
     SET(LIBS m)
 endif(MSVC)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/modules/libltfat/include)
+
 add_subdirectory(modules/libltfat/src)
 
-if (DO_PHASERET)
+option(DO_LIBPHASERET
+    "Compile libphaseret module" OFF)
+
+if (DO_LIBPHASERET)
     add_subdirectory(modules/libphaseret/src)
-endif (DO_PHASERET)
+endif (DO_LIBPHASERET)
 
-
+add_subdirectory(examples EXCLUDE_FROM_ALL)
 

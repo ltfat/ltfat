@@ -210,7 +210,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
 
         for (ltfat_int k = 0; k < N; k++)
         {
-            ltfat_int phsidx = ltfat_positiverem_long((tmp1 * k) % twoN * k, twoN);
+            long long phsidx = ltfat_positiverem_long((tmp1 * k) % twoN * k, twoN);
             const long long part1 = ltfat_positiverem_long(-s1 * k * a, L);
             for (ltfat_int m = 0; m < M; m++)
             {
@@ -261,7 +261,7 @@ LTFAT_NAME(dgt_shear_execute)(const LTFAT_NAME(dgt_shear_plan) plan)
             {
                 const long long sq1 = k * cc1 + cc2 * m;
 
-                ltfat_int phsidx = ltfat_positiverem_long(
+                long long phsidx = ltfat_positiverem_long(
                                        (cc3 * sq1 * sq1) % twoN - (m * (cc4 * m + k * cc5)) % twoN, twoN);
 
                 /* The line below has a hidden floor operation when dividing with the last b */

@@ -159,7 +159,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
             // If the previous for does not break, ii == M
             if (ii == M  && tmptgrad < 0.0)
             {
-               for (ltfat_int ii = 0; ii < m ; ii++)
+               for (ii = 0; ii < m ; ii++)
                {
                   tmptgrad = (LTFAT_REAL)( cfreq2[ii] - tgradmjj + 2.0 );
                   CHECKZEROCROSSINGANDBREAK( >= , -)
@@ -181,7 +181,7 @@ LTFAT_NAME(filterbankreassign)(const LTFAT_TYPE *s[],
             // If the previous for does not break, ii=-1
             if (ii == -1 && tmptgrad > 0.0)
             {
-               for (ltfat_int ii = M - 1; ii >= m; ii--)
+               for (ii = M - 1; ii >= m; ii--)
                {
                   tmptgrad = (LTFAT_REAL) ( cfreq2[ii] - tgradmjj - 2.0 );
                   CHECKZEROCROSSINGANDBREAK( <= , +)
