@@ -278,13 +278,13 @@ LTFAT_NAME(maxtree_updaterange)(LTFAT_NAME(maxtree)* p, ltfat_int start,
         end   = end   + end % 2;
         start = start >> 1; end = end >> 1;
 
-        LTFAT_REAL* treeVal     = p->treePtrs[d];
-        LTFAT_REAL* treeValnext = p->treePtrs[d - 1];
+        treeVal     = p->treePtrs[d];
+        treeValnext = p->treePtrs[d - 1];
         ltfat_int* treePos      = p->treePosPtrs[d];
-        ltfat_int* treePosnext  = p->treePosPtrs[d - 1];
+        treePosnext  = p->treePosPtrs[d - 1];
 
-        ltfat_int endmpar = end - start;
-        ltfat_int newl = start - 1;
+        endmpar = end - start;
+        newl = start - 1;
 
         for (ltfat_int l = 0; l < endmpar; l++)
         {

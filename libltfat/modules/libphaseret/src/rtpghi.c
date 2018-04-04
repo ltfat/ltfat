@@ -178,7 +178,7 @@ PHASERET_NAME(rtpghiupdate_init)(ltfat_int M, ltfat_int W, double tol,
 
     /* Do this somewhere else */
     for (ltfat_int ii = 0; ii < p->randphaseLen; ii++)
-        p->randphase[ii] = 2.0 * M_PI * ((double)rand()) / RAND_MAX;
+        p->randphase[ii] = (LTFAT_REAL)( 2.0 * M_PI * ((double)rand()) / RAND_MAX);
 
     p->logtol = log(tol);
     p->tol = tol;
@@ -253,7 +253,7 @@ PHASERET_NAME(rtpghiupdate_execute_common)(PHASERET_NAME(rtpghiupdate_plan)* p,
         if (slog[m] > logabstol)
             logabstol = slog[m];
 
-    logabstol += p->logtol;
+    logabstol += (LTFAT_REAL) p->logtol;
 
     LTFAT_NAME(heap_reset)(h, slog);
 
@@ -413,7 +413,7 @@ PHASERET_NAME(rtpghifgrad)(const LTFAT_REAL* logs, ltfat_int a, ltfat_int M,
 {
     ltfat_int M2 = M / 2 + 1;
 
-    const LTFAT_REAL fgradmul = -gamma / (2.0 * a * M);
+    const LTFAT_REAL fgradmul = (const LTFAT_REAL)( -gamma / (2.0 * a * M));
     const LTFAT_REAL* scol0 = logs;
     const LTFAT_REAL* scol2 = logs + 2 * M2;
 
@@ -422,7 +422,7 @@ PHASERET_NAME(rtpghifgrad)(const LTFAT_REAL* logs, ltfat_int a, ltfat_int M,
         const LTFAT_REAL* scol1 = logs + M2;
 
         for (ltfat_int m = 0; m < M2; ++m)
-            fgrad[m] = fgradmul * (3.0 * scol2[m] - 4.0 * scol1[m] + scol0[m]);
+            fgrad[m] = fgradmul * ((LTFAT_REAL)(3.0)* scol2[m] - (LTFAT_REAL)(4.0) * scol1[m] + scol0[m]);
     }
     else
     {
@@ -438,8 +438,8 @@ PHASERET_NAME(rtpghitgrad)(const LTFAT_REAL* logs, ltfat_int a, ltfat_int M,
 {
     ltfat_int M2 = M / 2 + 1;
 
-    const LTFAT_REAL tgradmul = (a * M) / (gamma * 2.0);
-    const LTFAT_REAL tgradplus = 2.0 * M_PI * a / M;
+    const LTFAT_REAL tgradmul = (const LTFAT_REAL)( (a * M) / (gamma * 2.0));
+    const LTFAT_REAL tgradplus = (const LTFAT_REAL)( 2.0 * M_PI * a / ((double)M) );
 
     tgrad[0]      = 0.0;
     tgrad[M2 - 1] = 0.0;

@@ -9,6 +9,8 @@
 // Only works for GCC and Clang
 #ifdef __GNUC__
 #  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#elif __cplusplus
+#  define UNUSED(x) 
 #else
 #  define UNUSED(x) UNUSED_ ## x
 #endif
@@ -17,8 +19,8 @@
 #define LTFAT_APPLYFN(type,fn,...) do{ \
    const type list[] = {(const type)0,__VA_ARGS__}; \
    size_t len = sizeof(list)/sizeof(*list) - 1; \
-   for(size_t ii=0;ii<len;ii++) \
-      fn((const type)list[ii+1]); \
+   for(size_t ltfat_applyfn_ii=0;ltfat_applyfn_ii<len;ltfat_applyfn_ii++) \
+      fn((const type)list[ltfat_applyfn_ii+1]); \
 }while(0)
 
 // Vectorized free
@@ -40,7 +42,7 @@
 
 
 #define CHECK(errcode, A, ...) do{ if(!(A)){status=(errcode); ltfat_error(status, __FILE__, __LINE__,__func__ , __VA_ARGS__); goto error;}}while(0)
-#define CHECKSTATUS(A) do{ ptrdiff_t checkstatustmp=(A); if(checkstatustmp<0){ status = checkstatustmp; goto error;}}while(0)
+#define CHECKSTATUS(A) do{ ptrdiff_t checkstatustmp=(ptrdiff_t)(A); if(checkstatustmp<0){ status = (int)checkstatustmp; goto error;}}while(0)
 
 // The following cannot be just
 // #define CHECKSTATUS(errcode, M)  CHECK(errcode,!(errcode), M)

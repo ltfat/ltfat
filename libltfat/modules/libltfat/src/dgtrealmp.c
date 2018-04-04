@@ -54,38 +54,38 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     CHECKNULL(gl); CHECKNULL(g); CHECKNULL(a); CHECKNULL(M); CHECKNULL(pout);
 
 
-    for (ltfat_int p = 0; p < P; p++)
+    for (ltfat_int pIdx = 0; pIdx < P; pIdx++)
     {
-        CHECKNULL(g[p]);
-        CHECK(LTFATERR_NOTPOSARG, gl[p] > 0,
-              "gl[%td] must be positive (passed %td)", p, gl[p]);
-        CHECK(LTFATERR_NOTPOSARG, a[p] > 0,
-              "a[%td] must be positive (passed %td)", p, a[p]);
-        CHECK(LTFATERR_NOTPOSARG, M[p] > 0,
-              "M[%td] must be positive (passed %td)", p, M[p]);
-        CHECK(LTFATERR_NOTAFRAME, M[p] >= a[p],
-              "M[%td]>=a[%td] failed passed (%td,%td)", p, p,  M[p], a[p]);
+        CHECKNULL(g[pIdx]);
+        CHECK(LTFATERR_NOTPOSARG, gl[pIdx] > 0,
+              "gl[%td] must be positive (passed %td)", pIdx, gl[pIdx]);
+        CHECK(LTFATERR_NOTPOSARG, a[pIdx] > 0,
+              "a[%td] must be positive (passed %td)", pIdx, a[pIdx]);
+        CHECK(LTFATERR_NOTPOSARG, M[pIdx] > 0,
+              "M[%td] must be positive (passed %td)", pIdx, M[pIdx]);
+        CHECK(LTFATERR_NOTAFRAME, M[pIdx] >= a[pIdx],
+              "M[%td]>=a[%td] failed passed (%td,%td)", pIdx, pIdx,  M[pIdx], a[pIdx]);
 
-        CHECK(LTFATERR_BADARG, gl[p] <= L,
+        CHECK(LTFATERR_BADARG, gl[pIdx] <= L,
               "gl[%td]<=L failed. Window is too long. passed (%td, %td)",
-              p, gl[p], L);
+              pIdx, gl[pIdx], L);
 
-        LTFAT_REAL gnorm; LTFAT_NAME(norm)(g[p], gl[p], LTFAT_NORM_ENERGY, &gnorm);
+        LTFAT_REAL gnorm; LTFAT_NAME(norm)(g[pIdx], gl[pIdx], LTFAT_NORM_ENERGY, &gnorm);
         CHECK(LTFATERR_BADARG, ltfat_abs(gnorm - 1.0) < 1e-4,
-              "Window g[%td] is not normalized. The norm is %.3f.", p, gnorm);
+              "Window g[%td] is not normalized. The norm is %.3f.", pIdx, gnorm);
     }
 
     amin = a[0];
-    for (ltfat_int p = 1; p < P; p++)
-        if (a[p] < amin )
-            amin = a[p];
+    for (ltfat_int pIdx = 1; pIdx < P; pIdx++)
+        if (a[pIdx] < amin )
+            amin = a[pIdx];
 
-    for (ltfat_int p = 0; p < P; p++)
+    for (ltfat_int pIdx = 0; pIdx < P; pIdx++)
     {
-        CHECK( LTFATERR_BADARG, a[p] % amin == 0,
-               "a[%td] not divisible by amin %td (passed %td)", p, amin, a[p]);
-        CHECK( LTFATERR_BADARG, M[p] % amin == 0,
-               "M[%td] not divisible by amin %td (passed %td)", p, amin, M[p]);
+        CHECK( LTFATERR_BADARG, a[pIdx] % amin == 0,
+               "a[%td] not divisible by amin %td (passed %td)", pIdx, amin, a[pIdx]);
+        CHECK( LTFATERR_BADARG, M[pIdx] % amin == 0,
+               "M[%td] not divisible by amin %td (passed %td)", pIdx, amin, M[pIdx]);
     }
 
     nextL = ltfat_dgtlengthmulti(L, P, a, M);
@@ -157,7 +157,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
             gltmp[0] = gl[k1]; gltmp[1] = gl[k2];
 
             CHECKSTATUS( LTFAT_NAME(dgtrealmp_kernel_init)( gtmp, gltmp,
-                         atmp, Mtmp, L, p->params->kernrelthr,
+                         atmp, Mtmp, L, (LTFAT_REAL) p->params->kernrelthr,
                          p->params->ptype,
                          &p->gramkerns[k1 + k2 * P]));
         }
@@ -326,7 +326,7 @@ error:
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_niters)(
-    LTFAT_NAME(dgtrealmp_state)* p, ltfat_int itno, LTFAT_COMPLEX** cout)
+    LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX** cout)
 {
     int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
 
@@ -335,7 +335,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
     if (s->fnorm2 == 0.0)
         return LTFAT_DGTREALMP_STATUS_EMPTY;
 
-    for (ltfat_int iter = 0;
+    for (size_t iter = 0;
          iter < itno && status == LTFAT_DGTREALMP_STATUS_CANCONTINUE;
          iter++)
     {
@@ -814,7 +814,7 @@ error :
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_niters_compact)(
-    LTFAT_NAME(dgtrealmp_state)* p, ltfat_int itno, LTFAT_COMPLEX* cout)
+    LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX* cout)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p);

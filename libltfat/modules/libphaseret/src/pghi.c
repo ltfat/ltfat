@@ -92,7 +92,7 @@ PHASERET_NAME(pghi_init)(ltfat_int L, ltfat_int W,
     CHECKMEM( p->fgrad = LTFAT_NAME_REAL(malloc)(M2 * N));
     /* CHECKMEM( p->scratch = malloc(M2 * N * sizeof * p->scratch)); */
     // Not yet
-    p->hit = LTFAT_NAME(heapinttask_init)( M2, N, M2 * log((double)M2) , NULL, 1);
+    p->hit = LTFAT_NAME(heapinttask_init)( M2, N, (ltfat_int)( M2 * log((double)M2)) , NULL, 1);
 
     *pout = p;
     return status;
@@ -129,21 +129,21 @@ PHASERET_NAME(pghi_execute)(PHASERET_NAME(pghi_plan)* p, const LTFAT_REAL s[],
         memset(scratch, 0, M2 * N * sizeof * scratch);
 
         // Start of without mask
-        LTFAT_NAME(heapinttask_resetmax)(p->hit, schan, p->tol1);
+        LTFAT_NAME(heapinttask_resetmax)(p->hit, schan, (LTFAT_REAL) p->tol1);
         LTFAT_NAME(heapint_execute)(p->hit, schan, tgradwchan, fgradwchan, scratch);
         int* donemask = LTFAT_NAME(heapinttask_get_mask)(p->hit);
 
         if (!isnan(p->tol2) && p->tol2 < p->tol1)
         {
             // Reuse the just computed mask
-            LTFAT_NAME(heapinttask_resetmask)(p->hit, donemask, schan, p->tol2, 0);
+            LTFAT_NAME(heapinttask_resetmask)(p->hit, donemask, schan, (LTFAT_REAL) p->tol2, 0);
             LTFAT_NAME(heapint_execute)(p->hit, schan, tgradwchan, fgradwchan, scratch);
         }
 
         // Assign random phase to unused coefficients
         for (ltfat_int ii = 0; ii < M2 * N; ii++)
             if (donemask[ii] <= LTFAT_MASK_UNKNOWN)
-                scratch[ii] = 2.0 * M_PI * ((double)rand()) / RAND_MAX;
+                scratch[ii] = (LTFAT_REAL) ( 2.0 * M_PI * ((double)rand()) / RAND_MAX);
 
         // Combine phase and magnitude
         if (schan != (LTFAT_REAL*) cchan)
@@ -206,21 +206,21 @@ PHASERET_NAME(pghi_execute_withmask)(PHASERET_NAME(pghi_plan)* p,
         memset(scratch, 0, M2 * N * sizeof * scratch);
 
         // Start of without mask
-        LTFAT_NAME(heapinttask_resetmask)(p->hit, maskchan, schan, p->tol1, 0);
+        LTFAT_NAME(heapinttask_resetmask)(p->hit, maskchan, schan, (LTFAT_REAL)p->tol1, 0);
         LTFAT_NAME(heapint_execute)(p->hit, schan, tgradwchan, fgradwchan, scratch);
         int* donemask = LTFAT_NAME(heapinttask_get_mask)(p->hit);
 
         if (!isnan(p->tol2))
         {
             // Reuse the just computed mask
-            LTFAT_NAME(heapinttask_resetmask)(p->hit, donemask, schan, p->tol2, 0);
+            LTFAT_NAME(heapinttask_resetmask)(p->hit, donemask, schan, (LTFAT_REAL)p->tol2, 0);
             LTFAT_NAME(heapint_execute)(p->hit, schan, tgradwchan, fgradwchan, scratch);
         }
 
         // Assign random phase to unused coefficients
         for (ltfat_int ii = 0; ii < M2 * N; ii++)
             if (donemask[ii] <= LTFAT_MASK_UNKNOWN)
-                scratch[ii] = 2.0 * M_PI * ((double)rand()) / RAND_MAX;
+                scratch[ii] = (LTFAT_REAL) (2.0 * M_PI * ((double)rand()) / RAND_MAX);
 
         // Combine phase and magnitude
         PHASERET_NAME(pghimagphase)(schan, scratch, M2 * N, coutchan);
@@ -266,7 +266,11 @@ void
 PHASERET_NAME(pghilog)(const LTFAT_REAL* in, ltfat_int L, LTFAT_REAL* out)
 {
     for (ltfat_int l = 0; l < L; l++)
+#ifdef LTFAT_DOUBLE
         out[l] = log(in[l] + DBL_MIN);
+#else
+		out[l] = log(in[l] + FLT_MIN);
+#endif
 
 }
 
@@ -278,8 +282,8 @@ PHASERET_NAME(pghitgrad)(const LTFAT_REAL* logs, double gamma, ltfat_int a,
 {
     ltfat_int M2 = M / 2 + 1;
 
-    const LTFAT_REAL tgradmul = (a * M) / (gamma * 2.0);
-    const LTFAT_REAL tgradplus = 2.0 * M_PI * a / M;
+    const LTFAT_REAL tgradmul = (LTFAT_REAL)( (a * M) / (gamma * 2.0));
+    const LTFAT_REAL tgradplus = (LTFAT_REAL)( 2.0 * M_PI * a / ((double)M));
 
 
     for (ltfat_int n = 0; n < N; n++)
@@ -301,7 +305,7 @@ PHASERET_NAME(pghifgrad)(const LTFAT_REAL* logs, double gamma, ltfat_int a,
 {
     ltfat_int M2 = M / 2 + 1;
 
-    const double fgradmul = -gamma / (2.0 * a * M);
+    const LTFAT_REAL fgradmul = (const LTFAT_REAL) ( -gamma / (2.0 * a * M));
 
     for (ltfat_int n = 1; n < N - 1; n++)
     {

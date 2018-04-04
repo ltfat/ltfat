@@ -1,5 +1,3 @@
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
 SET(src_files
     dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c
     dgtreal_long.c dwilt.c idwilt.c wmdct.c iwmdct.c
@@ -53,93 +51,62 @@ if (USECPP)
         PROPERTIES LANGUAGE CXX)
 endif (USECPP)
 
-add_library(commondouble OBJECT ${src_files_notypechange})
-add_library(commonsingle OBJECT ${src_files_notypechange})
+add_library(libltfat_commondouble OBJECT ${src_files_notypechange})
+add_library(libltfat_commonsingle OBJECT ${src_files_notypechange})
 
-add_library(double OBJECT ${src_files} ${src_files_complextransp})
-add_library(single OBJECT ${src_files} ${src_files_complextransp})
+add_library(libltfat_double OBJECT ${src_files} ${src_files_complextransp})
+add_library(libltfat_single OBJECT ${src_files} ${src_files_complextransp})
 
-add_library(complexdouble OBJECT ${src_files_complextransp})
-add_library(complexsingle OBJECT ${src_files_complextransp})
+add_library(libltfat_complexdouble OBJECT ${src_files_complextransp})
+add_library(libltfat_complexsingle OBJECT ${src_files_complextransp})
 
-target_compile_definitions(complexsingle PUBLIC LTFAT_SINGLE LTFAT_COMPLEXTYPE)
-target_compile_definitions(complexdouble PUBLIC LTFAT_DOUBLE LTFAT_COMPLEXTYPE)
-target_compile_definitions(commondouble PUBLIC LTFAT_DOUBLE)
-target_compile_definitions(commonsingle PUBLIC LTFAT_SINGLE)
-target_compile_definitions(double PUBLIC LTFAT_DOUBLE)
-target_compile_definitions(single PUBLIC LTFAT_SINGLE)
-
-if (NOFFTW)
-    target_compile_definitions(complexsingle PUBLIC KISS)
-    target_compile_definitions(complexdouble PUBLIC KISS)
-    target_compile_definitions(commondouble PUBLIC  KISS)
-    target_compile_definitions(commonsingle PUBLIC  KISS)
-    target_compile_definitions(double PUBLIC KISS)
-    target_compile_definitions(single PUBLIC KISS)
-else (NOFFTW)
-    target_compile_definitions(complexsingle PUBLIC FFTW)
-    target_compile_definitions(complexdouble PUBLIC FFTW)
-    target_compile_definitions(commondouble PUBLIC  FFTW)
-    target_compile_definitions(commonsingle PUBLIC  FFTW)
-    target_compile_definitions(double PUBLIC FFTW)
-    target_compile_definitions(single PUBLIC FFTW)
-endif (NOFFTW)
+target_compile_definitions(libltfat_complexsingle PUBLIC LTFAT_SINGLE LTFAT_COMPLEXTYPE)
+target_compile_definitions(libltfat_complexdouble PUBLIC LTFAT_DOUBLE LTFAT_COMPLEXTYPE)
+target_compile_definitions(libltfat_commondouble PUBLIC LTFAT_DOUBLE)
+target_compile_definitions(libltfat_commonsingle PUBLIC LTFAT_SINGLE)
+target_compile_definitions(libltfat_double PUBLIC LTFAT_DOUBLE)
+target_compile_definitions(libltfat_single PUBLIC LTFAT_SINGLE)
 
 if (MSVC)
-    target_compile_definitions(complexsingle PUBLIC LTFAT_BUILD_SHARED)
-    target_compile_definitions(complexdouble PUBLIC LTFAT_BUILD_SHARED)
-    target_compile_definitions(commondouble PUBLIC LTFAT_BUILD_SHARED)
-    target_compile_definitions(commonsingle PUBLIC LTFAT_BUILD_SHARED)
-    target_compile_definitions(double PUBLIC LTFAT_BUILD_SHARED)
-    target_compile_definitions(single PUBLIC LTFAT_BUILD_SHARED)
+if(BUILD_SHARED_LIBS)
+    target_compile_definitions(libltfat_complexsingle PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libltfat_complexdouble PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libltfat_commondouble PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libltfat_commonsingle PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libltfat_double PUBLIC LTFAT_BUILD_SHARED)
+    target_compile_definitions(libltfat_single PUBLIC LTFAT_BUILD_SHARED)
+else(BUILD_SHARED_LIBS)
+    target_compile_definitions(libltfat_complexsingle PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libltfat_complexdouble PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libltfat_commondouble PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libltfat_commonsingle PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libltfat_double PUBLIC LTFAT_BUILD_STATIC)
+    target_compile_definitions(libltfat_single PUBLIC LTFAT_BUILD_STATIC)
+endif(BUILD_SHARED_LIBS)
 endif(MSVC)
 
-add_library(ltfat_static STATIC
-    $<TARGET_OBJECTS:commondouble>
-    $<TARGET_OBJECTS:double> $<TARGET_OBJECTS:complexdouble>
-    $<TARGET_OBJECTS:single> $<TARGET_OBJECTS:complexsingle>)
-set_target_properties(ltfat_static PROPERTIES OUTPUT_NAME ltfat)
+add_library(ltfat
+    $<TARGET_OBJECTS:libltfat_commondouble>
+    $<TARGET_OBJECTS:libltfat_double> $<TARGET_OBJECTS:libltfat_complexdouble>
+    $<TARGET_OBJECTS:libltfat_single> $<TARGET_OBJECTS:libltfat_complexsingle>)
 
-add_library(ltfatd_static STATIC
-    $<TARGET_OBJECTS:commondouble>
-    $<TARGET_OBJECTS:double> $<TARGET_OBJECTS:complexdouble>)
-set_target_properties(ltfatd_static PROPERTIES OUTPUT_NAME ltfatd)
+add_library(ltfatd
+    $<TARGET_OBJECTS:libltfat_commondouble>
+    $<TARGET_OBJECTS:libltfat_double> $<TARGET_OBJECTS:libltfat_complexdouble>)
 
-add_library(ltfatf_static STATIC
-    $<TARGET_OBJECTS:commonsingle>
-    $<TARGET_OBJECTS:single> $<TARGET_OBJECTS:complexsingle>)
-set_target_properties(ltfatf_static PROPERTIES OUTPUT_NAME ltfatf)
-
-target_link_libraries(ltfat_static)
-target_link_libraries(ltfatf_static)
-target_link_libraries(ltfatd_static)
-
-add_library(ltfat SHARED
-    $<TARGET_OBJECTS:commondouble>
-    $<TARGET_OBJECTS:double> $<TARGET_OBJECTS:complexdouble>
-    $<TARGET_OBJECTS:single> $<TARGET_OBJECTS:complexsingle>)
-
-
-add_library(ltfatd SHARED
-    $<TARGET_OBJECTS:commondouble>
-    $<TARGET_OBJECTS:double> $<TARGET_OBJECTS:complexdouble>)
-
-add_library(ltfatf SHARED
-    $<TARGET_OBJECTS:commonsingle>
-    $<TARGET_OBJECTS:single> $<TARGET_OBJECTS:complexsingle>)
-
+add_library(ltfatf
+    $<TARGET_OBJECTS:libltfat_commonsingle>
+    $<TARGET_OBJECTS:libltfat_single> $<TARGET_OBJECTS:libltfat_complexsingle>)
 
 if (MSVC)
+if(BUILD_SHARED_LIBS)
     set_target_properties(ltfat PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(ltfatf PROPERTIES IMPORT_SUFFIX ".dll.lib")
     set_target_properties(ltfatd PROPERTIES IMPORT_SUFFIX ".dll.lib")
+endif(BUILD_SHARED_LIBS)
 endif(MSVC)
-
-
 
 target_link_libraries(ltfat ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3_LIB} ${FFTW3F_LIB} ${LIBS})
 target_link_libraries(ltfatf ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3F_LIB} ${LIBS} )
 target_link_libraries(ltfatd  ${LAPACK_LIB} ${BLAS_LIB} ${FFTW3_LIB} ${LIBS})
 
-
-set(CMAKE_BUILD_TYPE Release)

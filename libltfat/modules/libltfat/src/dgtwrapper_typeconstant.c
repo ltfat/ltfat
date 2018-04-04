@@ -41,7 +41,7 @@ error:
     return status;
 }
 
-LTFAT_API ltfat_phaseconvention
+LTFAT_API int
 ltfat_dgt_getpar_phaseconv(ltfat_dgt_params* params)
 {
     if(params) return params->ptype;

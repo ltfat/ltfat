@@ -132,6 +132,10 @@ typedef int       ltfat_int;
 ~~~~~~~~~~~~~~~
 \note Size of \t ptrdiff_t is system dependent.
 
+Use ltfat_int_is_compatible() to test whether your signed integer type size is
+compatible with the one libltfat was compiled with. It is crucial the sizes
+match whenever an array of integers is passed to a libltfat function.
+
 Further, the following naming conventions are used consistently:
 <table>
 <caption id="multi_row">Argument naming</caption>

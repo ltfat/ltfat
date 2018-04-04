@@ -236,11 +236,11 @@ error:
 LTFAT_API int
 LTFAT_NAME(mtgauss)(ltfat_int a, ltfat_int M, double thr, LTFAT_TYPE* g)
 {
-    double step, startInt, posInt;
+    double step, startInt, posInt, gamma;
     ltfat_div_t domod;
     int status = LTFATERR_FAILED;
-    CHECKNULL(g);
     ltfat_int gl = ltfat_mtgausslength( a, M, thr);
+    CHECKNULL(g);
     CHECKSTATUS(gl);
 
     step = 1.0 / gl;
@@ -251,7 +251,7 @@ LTFAT_NAME(mtgauss)(ltfat_int a, ltfat_int M, double thr, LTFAT_TYPE* g)
         startInt = -0.5 + step / 2.0;
 
     posInt = 0;
-    double gamma =  -M_PI*((double)(gl*gl))/((double)(a*M));
+    gamma =  -M_PI*((double)(gl*gl))/((double)(a*M));
     for (ltfat_int ii = 0; ii < gl; ii++)
     {
         FIRWIN_RESETCOUNTER;

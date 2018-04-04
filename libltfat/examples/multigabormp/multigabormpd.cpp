@@ -240,10 +240,8 @@ int main(int argc, char* argv[])
             coef.push_back( unique_ptr<LTFAT_COMPLEX[]>(new LTFAT_COMPLEX[clen]) );
         }
 
-        int format = 0;
         {
             WavReader<LTFAT_REAL> wr{inFile};
-            format = wr.getFormat();
             wr.readSamples(f);
         }
 
@@ -281,7 +279,7 @@ int main(int argc, char* argv[])
 
         if(!outFile.empty())
         {
-            WavWriter<LTFAT_REAL> ww{outFile,sampRate,(int)fout.size(),format};
+            WavWriter<LTFAT_REAL> ww{outFile,sampRate,(int)fout.size()};
             ww.writeSamples(fout);
         }
 
@@ -291,7 +289,7 @@ int main(int argc, char* argv[])
                 for(size_t l=0;l<fout[nCh].size();l++)
                     fout[nCh][l] =  f[nCh][l] - fout[nCh][l];
 
-            WavWriter<LTFAT_REAL> ww{resFile,sampRate,(int)fout.size(),format};
+            WavWriter<LTFAT_REAL> ww{resFile,sampRate,(int)fout.size()};
             ww.writeSamples(fout);
         }
     }

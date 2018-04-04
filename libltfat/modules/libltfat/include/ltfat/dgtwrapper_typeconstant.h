@@ -38,7 +38,7 @@ ltfat_dgt_params_allocdef();
 LTFAT_API int
 ltfat_dgt_setpar_phaseconv(ltfat_dgt_params* params, ltfat_phaseconvention ptype);
 
-LTFAT_API ltfat_phaseconvention
+LTFAT_API int
 ltfat_dgt_getpar_phaseconv(ltfat_dgt_params* params);
 
 /** Set FFTW flags

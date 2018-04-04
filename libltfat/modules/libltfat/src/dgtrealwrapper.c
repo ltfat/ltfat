@@ -24,13 +24,12 @@ LTFAT_NAME(dgtreal_get_W)(LTFAT_NAME(dgtreal_plan)* p)
     else return LTFATERR_NULLPOINTER;
 }
 
-LTFAT_API ltfat_phaseconvention
+LTFAT_API int
 LTFAT_NAME(dgtreal_get_phaseconv)(LTFAT_NAME(dgtreal_plan)* p)
 {
     if(p) return p->ptype;
     else return LTFATERR_NULLPOINTER;
 }
-
 
 LTFAT_API ltfat_int
 LTFAT_NAME(dgtreal_get_L)(LTFAT_NAME(dgtreal_plan)* p)

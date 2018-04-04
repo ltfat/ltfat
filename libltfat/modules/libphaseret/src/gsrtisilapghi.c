@@ -90,11 +90,13 @@ PHASERET_NAME(gsrtisilapghi_execute)(PHASERET_NAME(gsrtisilapghi_state)* p,
 {
     int status = LTFATERR_SUCCESS;
     ltfat_int M2 = p->M / 2 + 1;
+    LTFAT_COMPLEX* lastc = NULL;
+    LTFAT_REAL* lastphase = NULL;
     CHECKNULL(p); CHECKNULL(s); CHECKNULL(c);
 
-    LTFAT_COMPLEX* lastc = p->gsstate->cframes +
-                           (p->gsstate->lookback + p->gsstate->lookahead) * M2;
-    LTFAT_REAL* lastphase = p->pghistate->phase;
+    lastc = p->gsstate->cframes +
+            (p->gsstate->lookback + p->gsstate->lookahead) * M2;
+    lastphase = p->pghistate->phase;
 
     for (ltfat_int m = 0; m < M2; m++)
         lastphase[m] = ltfat_arg(lastc[m]);

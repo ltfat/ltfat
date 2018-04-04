@@ -369,7 +369,7 @@ PHASERET_NAME(rtisila_init)(const LTFAT_REAL* g, ltfat_int gl,
           maxit);
 
     M2 = M / 2 + 1;
-    lookback = ceil(((LTFAT_REAL)gl) / a) - 1;
+    lookback = (ltfat_int)( ceil(((LTFAT_REAL)gl) / a) - 1 );
     winsNo = (2 * lookback + 1);
     maxLookahead = lookahead;
     CHECKMEM(p = (PHASERET_NAME(rtisila_state)*)ltfat_calloc(1, sizeof * p));
