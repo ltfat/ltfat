@@ -549,7 +549,11 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   end
   
   if ~isempty(kv.jobs)
-      systemCommand = [systemCommand,sprintf(' -j%d',kv.jobs)];
+      if isnumeric(kv.jobs)
+        systemCommand = [systemCommand,sprintf(' -j%d',kv.jobs)];
+      elseif ischar(kv.jobs)
+        systemCommand = [systemCommand,sprintf(' -j%s',kv.jobs)];  
+      end
   end
 
   if flags.do_verbose
