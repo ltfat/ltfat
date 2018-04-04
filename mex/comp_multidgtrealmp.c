@@ -42,7 +42,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     plhs[0] = mxCreateCellMatrix(dictno, 1);
     LTFAT_COMPLEX** cPtrs = mxMalloc(dictno*sizeof*cPtrs);
 
-    for(int dIdx=0;dIdx<dictno;dIdx++)
+    for(mwIndex dIdx=0;dIdx<dictno;dIdx++)
     {
         mxSetCell(plhs[0], dIdx,
                   ltfatCreateMatrix(
@@ -53,7 +53,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 
     CHSTAT(LTFAT_NAME(dgtrealmp_parbuf_init)(&pbuf));
 
-    for(int dIdx=0;dIdx<dictno;dIdx++)
+    for(mwIndex dIdx=0;dIdx<dictno;dIdx++)
     {
         CHSTAT(LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(pbuf,
                 mxGetData(mxGetCell(prhs[1],dIdx)),
