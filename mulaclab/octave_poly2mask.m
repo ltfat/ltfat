@@ -14,16 +14,16 @@
 % this program; if not, see <http://www.gnu.org/licenses/>.
 
 % -*- texinfo -*-
-% @deftypefn {Function File} {@var{BW} = } poly2mask (@var{x},@var{y},@var{m},@var{n})
+% @deftypefn {Function File} {@var{BW} = } octave_poly2mask (@var{x},@var{y},@var{m},@var{n})
 % Convert a polygon to a region mask.
 %
-% BW=poly2mask(x,y,m,n) converts a polygon, specified by a list of
+% BW=octave_poly2mask(x,y,m,n) converts a polygon, specified by a list of
 % vertices in @var{x} and @var{y} and returns in a @var{m}-by-@var{n}
 % logical mask @var{BW} the filled polygon. Region inside the polygon
 % is set to 1, values outside the shape are set to 0.
 %
 % @var{x} and @var{y} should always represent a closed polygon, first
-% and last points should be coincident. If they are not poly2mask will
+% and last points should be coincident. If they are not octave_poly2mask will
 % close it for you. If @var{x} or @var{y} are fractional they are
 % nearest integer.
 %
@@ -51,10 +51,10 @@ function BW = octave_poly2mask (x, y, m, n)
   x = round (x (:).');
   y = round (y (:).');
   if (length (x) < 3)
-    error ('poly2mask: polygon must have at least 3 vertices.');
+    error ('octave_poly2mask: polygon must have at least 3 vertices.');
   end
   if (length (x) ~= length (y))
-    error ('poly2mask: length of x doesn''t match length of y.');
+    error ('octave_poly2mask: length of x doesn''t match length of y.');
   end
 
   % create output matrix
@@ -163,7 +163,7 @@ end
 %! s = [0:pi/4:2*pi];
 %! x = cos (s) * 90 + 101;
 %! y = sin (s) * 90 + 101;
-%! bw = poly2mask(x, y, 200, 200);
+%! bw = octave_poly2mask(x, y, 200, 200);
 %! imshow (bw);
 
 % This should create a 5-vertex star
@@ -172,7 +172,7 @@ end
 %! s = s ([1, 3, 5, 2, 4, 6]);
 %! x = cos (s) * 90 + 101;
 %! y = sin (s) * 90 + 101;
-%! bw = poly2mask (x, y, 200, 200);
+%! bw = octave_poly2mask (x, y, 200, 200);
 %! imshow (bw);
 
 %!# Convex polygons
@@ -192,12 +192,12 @@ end
 %!     0,0,0,0,0,0,0];
 %! Rt=logical(Rt);
 
-%!assert(poly2mask(xs,ys,16,14),Rs);          # rectangle
-%!assert(poly2mask(xs,ys,8,7),Rs(1:8,1:7));   # clipped
-%!assert(poly2mask(xs-7,ys-8,8,7),Rs(9:16,8:14)); # more clipping
+%!assert(octave_poly2mask(xs,ys,16,14),Rs);          # rectangle
+%!assert(octave_poly2mask(xs,ys,8,7),Rs(1:8,1:7));   # clipped
+%!assert(octave_poly2mask(xs-7,ys-8,8,7),Rs(9:16,8:14)); # more clipping
 
-%!assert(poly2mask(xt,yt,5,7),Rt);            # triangle
-%!assert(poly2mask(xt,yt,3,3),Rt(1:3,1:3));   # clipped
+%!assert(octave_poly2mask(xt,yt,5,7),Rt);            # triangle
+%!assert(octave_poly2mask(xt,yt,3,3),Rt(1:3,1:3));   # clipped
 
 
 %!# Concave polygons
@@ -210,7 +210,7 @@ end
 %! R(5:8,6:8)=1;
 %! R(5:11,9:10)=1;
 %! R=logical(R);
-%! assert(poly2mask(x,y,16,14), R);
+%! assert(octave_poly2mask(x,y,16,14), R);
 
 %!# Complex polygons
 %!test
@@ -222,4 +222,4 @@ end
 %!    0,1,1,1,1,0;
 %!    0,0,0,0,0,0];
 %! R=logical(R);
-%! assert(poly2mask(x,y,5,6), R);
+%! assert(octave_poly2mask(x,y,5,6), R);
