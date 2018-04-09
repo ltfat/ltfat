@@ -3,7 +3,7 @@ function s=lichtenstein();
 %   Usage: s=lichtenstein;
 % 
 %   `lichtenstein` loads a $512 \times 512$ color image of a castle
-%   Lichtenstein, `<http://en.wikipedia.org/wiki/Lichtenstein_Castle>`_.
+%   Lichtenstein.
 % 
 %   The returned matrix `s` consists of integers between 0 and 255.
 % 
@@ -11,11 +11,11 @@ function s=lichtenstein();
 % 
 %     image(lichtenstein); axis('image');
 % 
+%   See also: cameraman  
+
 %   See
 %   `<http://commons.wikimedia.org/wiki/File:Lichtenstein_img_processing_test.png>`_.
 %
-%   See also: cameraman  
-
 %   AUTHOR : Peter L. Søndergaard
 %   TESTING: TEST_SIGNALS
 
