@@ -110,7 +110,7 @@ if L~=Ls
     % ------------------ HPE case ------------------------------------
     
     if Lorig==1
-      
+        f=[f(1,:);zeros(L-1,W,assert_classname(f))];
     else
       if Lorig>L
         
@@ -137,7 +137,7 @@ if L~=Ls
         d=L-Lorig;
         
         % Extend
-        if mod(Lorig,2)==0
+        if mod(Lorig,2)==0 
           
           % Lorig even. We can just insert zeros in the middle.
           
