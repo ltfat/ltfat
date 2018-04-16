@@ -80,8 +80,6 @@ function varargout=sgram(f,varargin)
 %           
 %     'surf'       Do a surf plot to display the spectrogram.
 %    
-%     'mesh'       Do a mesh plot to display the spectrogram.
-%    
 %     'colorbar'   Display the colorbar. This is the default.
 %    
 %     'nocolorbar'  Do not display the colorbar.
