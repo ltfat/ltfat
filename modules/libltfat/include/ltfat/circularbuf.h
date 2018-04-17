@@ -1,4 +1,4 @@
-/** \defgroup block_processor Block Stream Processor
+/* \defgroup block_processor Block Stream Processor
  *
  * A simple data stream blocking interface employing a pair of circular buffers.
  * It is intended for block-wise processing of audio streams or long audio files.
@@ -24,7 +24,7 @@ typedef struct LTFAT_NAME(block_processor_state) LTFAT_NAME(block_processor_stat
 int LTFAT_NAME(default_block_processor_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int W, LTFAT_REAL out[]);
 
-/** \addtogroup block_processor
+/* \addtogroup block_processor
  * @{
  */
 

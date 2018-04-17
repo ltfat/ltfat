@@ -98,7 +98,7 @@ LTFAT_NAME(rtidgtreal_done)(LTFAT_NAME(rtidgtreal_plan)** p);
 
 typedef struct LTFAT_NAME(rtdgtreal_processor_state) LTFAT_NAME(rtdgtreal_processor_state);
 
-/** \defgroup rtdgtrealprocessor Real-Time Discrete Gabor Transform Processor
+/* \defgroup rtdgtrealprocessor Real-Time Discrete Gabor Transform Processor
  *  \addtogroup rtdgtrealprocessor
  *  @{
  *  The real-time DGT processor wraps the analysis-modify-synthesis loop for

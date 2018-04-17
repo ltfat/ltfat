@@ -1,4 +1,4 @@
-/** \defgroup slicing_processor Slicing Window Stream Processor
+/* \defgroup slicing_processor Slicing Window Stream Processor
  */
 #ifndef _LTFAT_SLICINGBUF_H
 #define _LTFAT_SLICINGBUF_H
@@ -12,7 +12,7 @@ LTFAT_API int
 LTFAT_NAME(default_slicing_processor_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int taperLen, int zpadLen, int W, LTFAT_REAL out[]);
 
-/** \addtogroup slicing_processor
+/* \addtogroup slicing_processor
  * @{
  */
 typedef int LTFAT_NAME(slicing_processor_callback)(void* userdata,

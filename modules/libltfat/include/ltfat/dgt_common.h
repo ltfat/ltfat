@@ -32,6 +32,8 @@
  *  This is commonly used by engineers. This is equivalent to
  *  a filterbank.
  *
+ * \see dgt_phaselock dgtreal_phaselock dgt_phaseunlock dgtreal_phaseunlock
+ *
  */
 typedef enum
 {

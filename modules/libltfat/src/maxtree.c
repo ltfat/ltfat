@@ -315,8 +315,35 @@ LTFAT_NAME(maxtree_findmax)(LTFAT_NAME(maxtree)* p, LTFAT_REAL* max,
 {
     LTFAT_NAME(maxtree_updatedirty)(p);
 
-    LTFAT_NAME_REAL(findmaxinarray)(p->treePtrs[0], p->levelL[0],
-                                    max, maxPos);
+    if(  p->is_complexinput && p->depth == 0 )
+    {
+        LTFAT_COMPLEX* toplevel = (LTFAT_COMPLEX*)p->treePtrs[0];
+        *maxPos = 0;
+        if(p->callback)
+        {
+            *max =  p->callback(p->userdata, toplevel[0], 0);
+            for(ltfat_int l = 1; l< p->levelL[0]; l++)
+            {
+                LTFAT_REAL tmpenergy = p->callback(p->userdata, toplevel[l], l);
+                if( tmpenergy > *max )
+                {
+                    *max = tmpenergy;
+                    *maxPos = l;
+                }
+            }
+        }
+        else
+        {
+            LTFAT_COMPLEX maxc;
+            LTFAT_NAME_COMPLEX(findmaxinarray)(toplevel, p->levelL[0], &maxc, maxPos);
+            *max = ltfat_energy(maxc);
+        }
+    }
+    else
+    {
+        LTFAT_NAME_REAL(findmaxinarray)(p->treePtrs[0], p->levelL[0],
+                                        max, maxPos);
+    }
 
     if (p->depth > 0)
         *maxPos = p->treePos[*maxPos];

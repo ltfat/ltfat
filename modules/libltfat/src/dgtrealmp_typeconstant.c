@@ -9,7 +9,7 @@ ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     /* params->hint = ltfat_dgtrealmp_allmods; */
-    params->alg = ltfat_dgtmp_alg_MP;
+    params->alg = ltfat_dgtmp_alg_mp;
     params->errtoldb = -40.0;
     params->kernrelthr = 1e-4;
     params->verbose = 0;
@@ -204,9 +204,10 @@ ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in)
 
     switch (in)
     {
-    case ltfat_dgtmp_alg_MP:
-    case ltfat_dgtmp_alg_LocOMP:
-    case ltfat_dgtmp_alg_LocCyclicMP:
+    case ltfat_dgtmp_alg_mp:
+    case ltfat_dgtmp_alg_locomp:
+    case ltfat_dgtmp_alg_loccyclicmp:
+    case ltfat_dgtmp_alg_locselfprojmp:
         isvalid = 1;
     }
 

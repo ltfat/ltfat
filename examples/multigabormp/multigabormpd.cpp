@@ -21,12 +21,13 @@ int main(int argc, char* argv[])
     size_t maxit = 0, maxat = 0;
     double seglen = 0.0;
     double kernthr = 1e-4;
-    vector<tuple<string,int,int,int>> dicts;
+    vector<tuple<string,int,int,int,int>> dicts;
     size_t numSamples = 0;
     int numChannels = 0;
     int sampRate = 0;
     bool do_pedanticsearch = false;
     bool do_verbose = false;
+    int alg = ltfat_dgtmp_alg_mp;
 
     try
     {
@@ -54,11 +55,12 @@ int main(int argc, char* argv[])
          cxxopts::value<double>()->default_value(to_string(targetsnrdb)))
         ("maxit", "Maximum number of iterations", cxxopts::value<size_t>() )
         ("maxat", "Maximum number of atoms", cxxopts::value<size_t>() )
+        ("alg", "MP algorithm. Available: mp(default),cyclicmp", cxxopts::value<string>() )
         ("kernthr", "Kernel truncation threshold",
          cxxopts::value<double>()->default_value(to_string(kernthr)))
         ("seglen", "Segment length in seconds. 0 disables the segmentation.",
          cxxopts::value<double>()->default_value(to_string(seglen)) )
-        ("pedanticsearch", "Enables pedantic search.",
+        ("pedanticsearch", "Enables pedantic search. Pedantic search is always enabled for cyclic MP.",
          cxxopts::value<bool>(do_pedanticsearch) )
         ("verbose", "Print additional information.",
          cxxopts::value<bool>(do_verbose) )
@@ -128,6 +130,19 @@ int main(int argc, char* argv[])
             }
         }
 
+        if (result.count("alg"))
+        {
+            string algstr = result["alg"].as<string>();
+            if( algstr.compare("mp") == 0 ) alg = ltfat_dgtmp_alg_mp;
+            else if( algstr.compare("cyclicmp") == 0 ) alg = ltfat_dgtmp_alg_loccyclicmp;
+            else if( algstr.compare("selfprojmp") == 0 ) alg = ltfat_dgtmp_alg_locselfprojmp;
+            else
+            {
+                cout << "Unrecognized algorithm." << endl;
+                exit(1);
+            }
+        }
+
         if (result.count("dict"))
         {
              string toparse = result["dict"].as<string>() + ":";
@@ -149,9 +164,9 @@ int main(int argc, char* argv[])
                         if( !itemstr.empty())
                             dictvec.push_back(itemstr);
                     }
-                    if(dictvec.size() != 3)
+                    if(dictvec.size() != 3 && dictvec.size() != 4)
                     {
-                        cout << "Parse error: Dictionary should consist of 3 items: win,a,M" << endl;
+                        cout << "Parse error: Dictionary should consist of 3 or 4 items: win,a,M or win,a,M,gl" << endl;
                         exit(1);
                     }
                     transform(dictvec[0].begin(), dictvec[0].end(), dictvec[0].begin(), ::tolower);
@@ -162,7 +177,10 @@ int main(int argc, char* argv[])
                             << " not recognized." << endl;
                        exit(1);
                     }
-                    dicts.push_back(make_tuple(dictvec[0],winenum,stoi(dictvec[1]),stoi(dictvec[2])));
+                    if(dictvec.size() == 3)
+                        dicts.push_back(make_tuple(dictvec[0],winenum,stoi(dictvec[1]),stoi(dictvec[2]),stoi(dictvec[2])));
+                    else if(dictvec.size() == 4)
+                        dicts.push_back(make_tuple(dictvec[0],winenum,stoi(dictvec[1]),stoi(dictvec[2]),stoi(dictvec[3])));
                  }
              }
         }
@@ -207,7 +225,7 @@ int main(int argc, char* argv[])
 
     for(auto dict:dicts)
     {
-       if( 0 > LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, (LTFAT_FIRWIN)(get<1>(dict)), get<3>(dict), get<2>(dict), get<3>(dict)))
+       if( 0 > LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(pbuf, (LTFAT_FIRWIN)(get<1>(dict)), get<4>(dict), get<2>(dict), get<3>(dict)))
        {
           cout << "Bad dictionary: " << get<0>(dict) << "," << get<2>(dict)  << "," << get<3>(dict) << endl;
           exit(1);
@@ -225,6 +243,7 @@ int main(int argc, char* argv[])
         LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(pbuf, maxat);
         LTFAT_NAME(dgtrealmp_setparbuf_maxit)(pbuf, maxit);
         LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(pbuf, L);
+        LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, static_cast<ltfat_dgtmp_alg>(alg));
 
         vector<vector<LTFAT_REAL>> f(numChannels);
         for(auto& fEl:f) fEl = vector<LTFAT_REAL>(L,0.0);

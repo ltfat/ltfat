@@ -25,10 +25,10 @@ enum ltfat_dgtmp_status
 
 typedef enum
 {
-    ltfat_dgtmp_alg_MP              = 0,
-    ltfat_dgtmp_alg_LocOMP          = 1,
-    ltfat_dgtmp_alg_LocCyclicMP     = 2,
-/*    ltfat_dgtmp_alg_LocSelfProjdMP  = 3,*/
+    ltfat_dgtmp_alg_mp              = 0,
+    ltfat_dgtmp_alg_locomp          = 1,
+    ltfat_dgtmp_alg_loccyclicmp     = 2,
+    ltfat_dgtmp_alg_locselfprojmp   = 3,
 } ltfat_dgtmp_alg;
 
 typedef struct ltfat_dgtmp_params ltfat_dgtmp_params;
@@ -101,20 +101,25 @@ ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in);
 /** \addtogroup multidgtrealmp  */
 /**@{*/
 
-/** Callback template to be called every iterstep iteration 
+/** Callback template to be called every iterstep iteration.
+ * \a c
  *
+ * \see dgtrealmp_setparbuf_iterstep dgtrealmp_setparbuf_iterstepcallback dgtrealmp_get_dictno dgtrealmp_get_coefdims
  *
- *
- * \see dgtrealmp_setparbuf_iterstep dgtrealmp_setparbuf_iterstepcallback
- *
- * \param[in/out]  userdata   User defined struct
+ * \param[in,out]  userdata   User defined struct
  * \param[in]      state      State struct
- * \param[in/out]  cres       Coefficient domain residual
- * \param[in/out]  c          Selected coefficients
- * \param[in]      atoms      Number of selected atoms so far
- * \param[in]      iters      Number of iterations performed so far
- * \param[in]      errdb      Approximation error estimate    
+ * \param[in,out]  c          Selected coefficients
  *
+ * #### Versions #
+ * <tt>
+ * typedef int 
+ * ltfat_dgtrealmp_iterstep_callback_d(void* userdata, 
+ *      ltfat_dgtrealmp_state_d* state, ltfat_complex_d* c[]);
+ *
+ * typedef int
+ * ltfat_dgtrealmp_iterstep_callback_s(void* userdata, 
+ *      ltfat_dgtrealmp_state_s* state, ltfat_complex_s* c[]);
+ * </tt>
  * \returns Status code: =0 continue iterations, >0 stop, <0 stop with error
  */
 typedef int
@@ -137,13 +142,13 @@ LTFAT_NAME(dgtrealmp_iterstep_callback)(
  *
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_init_d( ltfat_dgtrealmp_parbuf_d* pb, ltfat_dgtrealmp_state_d** p);
+ * ltfat_dgtrealmp_init_d( ltfat_dgtrealmp_parbuf_d* pb, ltfat_int L, ltfat_dgtrealmp_state_d** p);
  *
- * ltfat_dgtrealmp_init_s( ltfat_dgtrealmp_parbuf_s* pb, ltfat_dgtrealmp_state_s** p);
+ * ltfat_dgtrealmp_init_s( ltfat_dgtrealmp_parbuf_s* pb, ltfat_int L, ltfat_dgtrealmp_state_s** p);
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a pb, \a p
  * LTFATERR_BADSIZE         | Length of the window \a gl was less or equal to 0.
@@ -155,11 +160,13 @@ LTFAT_NAME(dgtrealmp_init)(
 
 /** Execute DGTREAL Matching Pursuit
  *
- * \param[in/out]    p DGTREALMP state
- * \param[in]        f Input signal
- * \param[out]    cout Output coefficients
- * \param[out]    fout Output signal 
+ * \param[in,out]    p DGTREALMP state
+ * \param[in]        f Input signal, array of length L
+ * \param[out]    cout Output coefficients, array of length equal to the number of dictionaries
+ * \param[out]    fout Output signal, array of length L
  *
+ * The required size of an array cout[dictid] can be obtained from dgtrealmp_getparbuf_coeflen(),
+ * individual dimensions from dgtrealmp_get_coefdims()
  * #### Versions #
  * <tt>
  * ltfat_dgtrealmp_execute_d( ltfat_dgtrealmp_state_d* p, const double f[],
@@ -170,7 +177,7 @@ LTFAT_NAME(dgtrealmp_init)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a pb, \a p
  * LTFATERR_BADSIZE         | Length of the window \a gl was less or equal to 0.
@@ -193,9 +200,9 @@ LTFAT_NAME(dgtrealmp_execute)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
- * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a pb, \a p
+ * LTFATERR_NULLPOINTER     | \a p is NULL
  */
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
@@ -205,12 +212,12 @@ LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
 /** \name Advanced interface */
 /**@{*/
 
-/** Execute DGTREAL Matching Pursuit with flat coefficient layout
+/** Execute DGTREAL Matching Pursuit with flat coefficient layout.
  *
- * \param[in/out]    p DGTREALMP state
- * \param[in]        f Input signal
- * \param[out]    cout Output coefficients
- * \param[out]    fout Output signal 
+ * \param[in,out]    p DGTREALMP state
+ * \param[in]        f Input signal, length L
+ * \param[out]    cout Output coefficients, length obtainable from dgtrealmp_getparbuf_coeflen_compact()
+ * \param[out]    fout Output signal, length L 
  *
  * #### Versions #
  * <tt>
@@ -222,7 +229,7 @@ LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a pb, \a p
  * LTFATERR_BADSIZE         | Length of the window \a gl was less or equal to 0.
@@ -235,11 +242,12 @@ LTFAT_NAME(dgtrealmp_execute_compact)(
 
 /** Perform DGTREAL Matching Pursuit decomposition
  *
- * \param[in/out]    p DGTREALMP state
- * \param[in]        f Input signal
- * \param[out]    cout Output coefficients
- * \param[out]    fout Output signal 
+ * \param[in,out]    p DGTREALMP state
+ * \param[in]        f Input signal, length L
+ * \param[out]    cout Output coefficients, array of length equal to the number of dictionaries
  *
+ * The required size of an array cout[dictid] can be obtained from dgtrealmp_getparbuf_coeflen(),
+ * individual dimensions from dgtrealmp_get_coefdims()
  * #### Versions #
  * <tt>
  * ltfat_dgtrealmp_execute_decompose_d( ltfat_dgtrealmp_state_d* p, 
@@ -250,7 +258,7 @@ LTFAT_NAME(dgtrealmp_execute_compact)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a pb, \a p
  * LTFATERR_BADSIZE         | Length of the window \a gl was less or equal to 0.
@@ -260,24 +268,28 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_decompose)(
     LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL f[], LTFAT_COMPLEX* c[]);
 
-/** Perform DGTREAL Matching Pursuit synthesis
+/** Perform Multi-DGTREAL synthesis
  *
- * \param[in/out]    p DGTREALMP state
- * \param[in]        f Input signal
- * \param[out]    cout Output coefficients
- * \param[out]    fout Output signal 
+ * \param[in,out]        p DGTREALMP state
+ * \param[in]            c Input coefficients, array of length equal to the number of dictionaries
+ * \patam[in]    dict_mask Dictionary mask. NULL or array of length equal to the number of dictionaries.
+ * \param[out]           f Output signal, length L 
  *
+ * The function will synthesize only from dictionary coefficients for which \a dict_mask[dictid]
+ * is not 0. If NULL all coefficients are used. 
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_execute_decompose_d( ltfat_dgtrealmp_state_d* p, 
- *                                      const double f[], ltfat_complex_d* cout[]);
+ * ltfat_dgtrealmp_execute_synthesize_d( ltfat_dgtrealmp_state_d* p, 
+ *                                       const ltfat_complex_d* cout[],
+ *                                       int dict_mask[], double f[]);
  *
- * ltfat_dgtrealmp_execute_decompose_s( ltfat_dgtrealmp_state_s* p, 
- *                                      const float f[], ltfat_complex_s* cout[]);
+ * ltfat_dgtrealmp_execute_synthesize_s( ltfat_dgtrealmp_state_s* p, 
+ *                                       const ltfat_complex_s* cout[], 
+ *                                       int dict_mask[], float f[]);
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a pb, \a p
  * LTFATERR_BADSIZE         | Length of the window \a gl was less or equal to 0.
@@ -314,7 +326,7 @@ LTFAT_NAME(dgtrealmp_execute_synthesize)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -333,7 +345,7 @@ LTFAT_NAME(dgtrealmp_parbuf_init)( LTFAT_NAME(dgtrealmp_parbuf)** p);
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -360,7 +372,7 @@ LTFAT_NAME(dgtrealmp_parbuf_done)( LTFAT_NAME(dgtrealmp_parbuf)** p);
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -387,7 +399,7 @@ LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -415,7 +427,7 @@ LTFAT_NAME(dgtrealmp_parbuf_add_gausswin)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -436,7 +448,7 @@ LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -456,7 +468,7 @@ LTFAT_NAME(dgtrealmp_getparbuf_dictno)( LTFAT_NAME(dgtrealmp_parbuf) * p);
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -481,7 +493,7 @@ LTFAT_NAME(dgtrealmp_getparbuf_siglen)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -505,7 +517,7 @@ LTFAT_NAME(dgtrealmp_getparbuf_coeflen)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -538,7 +550,7 @@ LTFAT_NAME(dgtrealmp_getparbuf_coeflen_compact)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -561,7 +573,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -584,7 +596,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -607,7 +619,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_maxit)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -630,7 +642,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_errtoldb)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -653,7 +665,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_snrdb)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -676,7 +688,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|-------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -701,7 +713,7 @@ LTFAT_NAME(dgtrealmp_modparbuf_lasttight)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -709,7 +721,7 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t iterstep);
 
-/**  
+/** Register callback function to be called every iterstep iteration 
  * #### Versions #
  * <tt>
  * ltfat_dgtrealmp_setparbuf_iterstepcallback_d( 
@@ -724,7 +736,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -749,7 +761,7 @@ LTFAT_NAME(dgtrealmp_setparbuf_iterstepcallback)(
  * </tt>
  * \returns
  * Status code              | Description
- * -------------------------|--------------------------------------------
+ * -------------------------|------------
  * LTFATERR_SUCCESS         | Indicates no error
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
@@ -792,26 +804,153 @@ LTFAT_NAME(dgtrealmp_setparbuf_selectiomodcallback)(
 /** \name Retrieving information from the state
  * @{
  */
+
+/** Get current normalized error 
+ * 
+ * \param[in]       p  DGTREALMP state
+ * \param[out]    err  Error in dB
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_get_errdb_d( ltfat_dgtrealmp_state_d* p, double* err);
+ *
+ * ltfat_dgtrealmp_get_errdb_s( ltfat_dgtrealmp_state_s* p, double* err);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
+ */
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_errdb)(
     const LTFAT_NAME(dgtrealmp_state)* p, double* err);
 
+/** Get current number of selected atoms
+ * 
+ * \param[in]       p  DGTREALMP state
+ * \param[out]  atoms  Number of selected atoms
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_get_numatoms_d( ltfat_dgtrealmp_state_d* p, size_t* atoms);
+ *
+ * ltfat_dgtrealmp_get_numatoms_s( ltfat_dgtrealmp_state_s* p, size_t* atoms);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p, \a atoms
+ */
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_numatoms)(
         const LTFAT_NAME(dgtrealmp_state)* p, size_t* atoms);
 
+/** Get current number of iterations done
+ * 
+ * \param[in]       p  DGTREALMP state
+ * \param[out]  iters  Number of iterations done
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_get_numiters_d( ltfat_dgtrealmp_state_d* p, size_t* iters);
+ *
+ * ltfat_dgtrealmp_get_numiters_s( ltfat_dgtrealmp_state_s* p, size_t* iters);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p, \a atoms
+ */
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_numiters)(
         const LTFAT_NAME(dgtrealmp_state)* p, size_t* iters);
 
+/** Get pointer to an array of residual coefficients 
+ * 
+ * \param[in]        p  DGTREALMP state
+ * \param[in]   dictid  Dictionary index
+ * \param[out]    cres  Pointer to a pointer to be initialized
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_get_rescoefs_d( ltfat_dgtrealmp_state_d* p, 
+ *                                 int dictid, ltfat_complex_d** cres);
+ *
+ * ltfat_dgtrealmp_get_rescoefs_s( ltfat_dgtrealmp_state_s* p,
+ *                                 int dictid, ltfat_complex_s** cres);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p, \a M2, \a N
+ */
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_rescoefs)(
         const LTFAT_NAME(dgtrealmp_state)* p, int dictid,
-        ltfat_int* M2, ltfat_int* N, LTFAT_COMPLEX* cres);
+        LTFAT_COMPLEX** cres);
 
+/** Get dimensions of the coefficient matrix for dictionary dictid
+ * 
+ * \param[in]        p  DGTREALMP state
+ * \param[in]   dictid  Dictionary index
+ * \param[out]      M2  Number of rows
+ * \param[out]       N  Number of cols
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_get_coefdims_d( ltfat_dgtrealmp_state_d* p, 
+ *                                 int dictid, ltfat_int* M2, ltfat_int* N);
+ *
+ * ltfat_dgtrealmp_get_coefdims_s( ltfat_dgtrealmp_state_s* p,
+ *                                 int dictid, ltfat_int* M2, ltfat_int* N);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p, \a M2, \a N
+ */
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_coefdims)(
+        const LTFAT_NAME(dgtrealmp_state)* p, int dictid,
+        ltfat_int* M2, ltfat_int* N);
+
+/** Get the number of dictionaries
+ *
+ * \param[in]   p  DGTREALMP state
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_get_dictno_d( ltfat_dgtrealmp_state_d* p);
+ *
+ * ltfat_dgtrealmp_get_dictno_s( ltfat_dgtrealmp_state_s* p);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
+ */
 LTFAT_API ltfat_int
 LTFAT_NAME(dgtrealmp_get_dictno)(
         const LTFAT_NAME(dgtrealmp_state)* p);
+/** @}*/
+
+/** \name Changing state parameters
+ * @{
+ */
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_set_iterstep)(
+    LTFAT_NAME(dgtrealmp_state)* p, size_t iterstep);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_set_iterstepcallback)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback, void* userdata);
 /** @}*/
 /** @}*/
 
@@ -821,10 +960,6 @@ LTFAT_NAME(dgtrealmp_getdgtrealplan)(LTFAT_NAME(dgtrealmp_state)* p);
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_getresidualcoef_compact)(
     LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX* c);
-
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstep)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t iterstep);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_set_maxatoms)(
