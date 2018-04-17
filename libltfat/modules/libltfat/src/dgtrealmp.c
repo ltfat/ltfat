@@ -30,6 +30,9 @@ LTFAT_NAME(dgtrealmp_init)(
                (const LTFAT_REAL**)pb->g, pb->gl, L, pb->P, pb->a, pb->M,
                pb->params, pout));
 
+    LTFAT_NAME(dgtrealmp_set_iterstepcallback)( *pout,
+        pb->iterstepcallback, pb->iterstepcallbackdata);
+
     memcpy((*pout)->chanmask, pb->chanmask, pb->P*sizeof*pb->chanmask);
     return LTFATERR_SUCCESS;
 error:
@@ -110,7 +113,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
 #ifdef NOBLASLAPACK
     CHECK( LTFATERR_NOBLASLAPACK,
-           p->params->alg != ltfat_dgtmp_alg_LocOMP,
+           p->params->alg != ltfat_dgtmp_alg_locomp,
            "LocOMP requires LAPACK, but libltfat was compiled without it.");
 #endif
 
@@ -187,7 +190,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate));
 
-    if (p->params->alg == ltfat_dgtmp_alg_LocOMP)
+    if (p->params->alg == ltfat_dgtmp_alg_locomp)
     {
         ltfat_int kernSizeAccum = 0;
         for (ltfat_int k = 0; k < P; k++)
@@ -213,12 +216,14 @@ LTFAT_NAME(dgtrealmp_init_gen)(
                 kernSizeAccum, &p->iterstate->hplan));
     }
 
-    if (p->params->alg == ltfat_dgtmp_alg_LocCyclicMP)
+    if (p->params->alg == ltfat_dgtmp_alg_loccyclicmp ||
+        p->params->alg == ltfat_dgtmp_alg_locselfprojmp)
     {
-        p->iterstate->pBufNo = p->params->maxatoms;
         p->iterstate->pBufNo = 0;
         CHECKMEM( p->iterstate->pBuf =
                       LTFAT_NEWARRAY( kpoint, p->params->maxatoms) );
+        // Must be pedantic search (opthervise it can end up in a deadlock)
+        p->params->do_pedantic = 1;
     }
 
     if (p->params->ptype == LTFAT_FREQINV)
@@ -351,15 +356,18 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
 
         switch ( p->params->alg)
         {
-        case ltfat_dgtmp_alg_MP:
+        case ltfat_dgtmp_alg_mp:
             s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, s->c[PTOI(origpos)], origpos,
                       cout);
             break;
-        case ltfat_dgtmp_alg_LocOMP:
+        case ltfat_dgtmp_alg_locomp:
             status  = LTFAT_NAME(dgtrealmp_execute_locomp)( p, origpos, cout);
             break;
-        case ltfat_dgtmp_alg_LocCyclicMP:
+        case ltfat_dgtmp_alg_loccyclicmp:
             status  = LTFAT_NAME(dgtrealmp_execute_cyclicmp)( p, origpos, cout);
+            break;
+        case ltfat_dgtmp_alg_locselfprojmp:
+            status  = LTFAT_NAME(dgtrealmp_execute_selfprojmp)( p, origpos, cout);
             break;
         }
 
@@ -445,6 +453,7 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
 {
     int status = LTFATERR_SUCCESS;
     int status2 = LTFATERR_SUCCESS;
+    int statuscallback = LTFATERR_SUCCESS;
 
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(c);
 
@@ -460,8 +469,14 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
             ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)(
                             p, p->params->iterstep, c)))
     {
+        CHECKSTATUS(status2);
+
         if(p->callback)
-            p->callback(p->userdata, p, c);
+        {
+            statuscallback = p->callback(p->userdata, p, c);
+            CHECKSTATUS(statuscallback);
+            if (statuscallback > 0) break;
+        }
     }
 
     CHECKSTATUS(status2);
@@ -552,13 +567,15 @@ LTFAT_NAME(dgtrealmpiter_init)(
         CHECKMEM( s->maxcols[p]    = LTFAT_NAME_REAL(malloc)(N) );
         CHECKMEM( s->maxcolspos[p] = LTFAT_NEWARRAY(ltfat_int, N) );
         CHECKSTATUS( LTFAT_NAME(maxtree_init)(N, N,
-                                              ltfat_imax(0, ltfat_pow2base(ltfat_nextpow2(N)) - 4), &s->tmaxtree[p]));
+                                              ltfat_imax(0, ltfat_pow2base(ltfat_nextpow2(N)) - 4),
+                                              &s->tmaxtree[p]));
 
         CHECKMEM( s->fmaxtree[p] = LTFAT_NEWARRAY(LTFAT_NAME(maxtree)*, N));
         for (ltfat_int n = 0; n < N; n++ )
         {
             CHECKSTATUS( LTFAT_NAME(maxtree_init)(
-                             M2, M[p], ltfat_imax(0, ltfat_pow2base(ltfat_nextpow2(M[p])) - 4),
+                             M2, M[p],
+                             ltfat_imax(0, ltfat_pow2base(ltfat_nextpow2(M[p])) - 4),
                              &s->fmaxtree[p][n]));
         }
 
@@ -579,14 +596,6 @@ LTFAT_NAME(dgtrealmpiter_done)(LTFAT_NAME(dgtrealmpiter_state)** state)
     int status = LTFATERR_SUCCESS;
     CHECKNULL(state); CHECKNULL(*state);
     s = *state;
-
-    /* if (s->s) */
-    /* { */
-    /*     for (ltfat_int p = 0; p < s->P; p++) */
-    /*         ltfat_safefree(s->s[p]); */
-    /*  */
-    /*     ltfat_free(s->s); */
-    /* } */
 
     if (s->c)
     {
@@ -675,6 +684,18 @@ error:
 }
 
 LTFAT_API int
+LTFAT_NAME(dgtrealmp_set_iterstepcallback)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback, void* userdata)
+{
+    int status = LTFATERR_SUCCESS; CHECKNULL(p);
+    p->callback = callback;
+    p->userdata = userdata;
+error:
+    return status;
+}
+
+LTFAT_API int
 LTFAT_NAME(dgtrealmp_set_maxatoms)(
     LTFAT_NAME(dgtrealmp_state)* p, size_t maxatoms)
 {
@@ -733,6 +754,49 @@ LTFAT_NAME(dgtrealmp_get_numiters)(
     CHECKNULL(p); CHECKNULL(iters);
 
     *iters = p->iterstate->currit;
+error:
+    return status;
+}
+
+LTFAT_API ltfat_int
+LTFAT_NAME(dgtrealmp_get_dictno)(
+    const LTFAT_NAME(dgtrealmp_state)* p)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p);
+
+    return p->P;
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_coefdims)(
+        const LTFAT_NAME(dgtrealmp_state)* p, int dictid,
+        ltfat_int* M2, ltfat_int* N)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(M2); CHECKNULL(N);
+    CHECK(LTFATERR_BADARG, dictid >= 0 && dictid < p->P,
+            "dictid must be in range [0,%d]", p->P - 1);
+
+    *M2 = p->M2[dictid];
+    *N  = p->N[dictid];
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_rescoefs)(
+        const LTFAT_NAME(dgtrealmp_state)* p, int dictid,
+        LTFAT_COMPLEX** cres)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(cres);
+    CHECK(LTFATERR_BADARG, dictid >= 0 && dictid < p->P,
+            "dictid must be in range [0,%d]", p->P - 1);
+
+    *cres = p->iterstate->c[dictid];
 error:
     return status;
 }

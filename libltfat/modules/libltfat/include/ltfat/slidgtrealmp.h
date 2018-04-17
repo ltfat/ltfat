@@ -1,4 +1,4 @@
-/** \defgroup slidgtrealmp Sliding Matching Pursuit with Multi-Gabor Dictionaries
+/* \defgroup slidgtrealmp Sliding Matching Pursuit with Multi-Gabor Dictionaries
 */
 #ifndef _LTFAT_SLIDGTREALMP_H
 #define _LTFAT_SLIDGTREALMP_H
@@ -11,7 +11,7 @@ typedef struct LTFAT_NAME(slidgtrealmp_state) LTFAT_NAME(slidgtrealmp_state);
 typedef int LTFAT_NAME(slidgtrealmp_niter_callback)(void* userdata,
         const LTFAT_REAL in[], int winLen, int taperLen, int zpadLen, int W, LTFAT_REAL out[]);
 
-/** \addtogroup slidgtrealmp
+/* \addtogroup slidgtrealmp
  * @{ */
 
 /** 

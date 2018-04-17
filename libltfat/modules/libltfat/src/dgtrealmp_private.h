@@ -13,6 +13,8 @@ struct LTFAT_NAME(dgtrealmp_parbuf)
     int*         chanmask;
     ltfat_int           P;
     ltfat_dgtmp_params* params;
+    LTFAT_NAME(dgtrealmp_iterstep_callback)* iterstepcallback;
+    void*                        iterstepcallbackdata;
 //    LTFAT_REAL          chirprate;
 //    LTFAT_REAL          shiftby;
 };
@@ -253,6 +255,11 @@ LTFAT_NAME(dgtrealmp_execute_findmaxatom)(
 // ltfat_int* m, ltfat_int* n, ltfat_int* w);
 
 int
+LTFAT_NAME(dgtrealmp_execute_findneighbors)(
+        LTFAT_NAME(dgtrealmp_state)* p, kpoint pos,
+        kpoint* nBuf, size_t* nCount);
+
+int
 LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
     LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval,
     int do_substract);
@@ -282,6 +289,11 @@ LTFAT_NAME(dgtrealmp_execute_mp)(
 
 int
 LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    kpoint origpos, LTFAT_COMPLEX** cout);
+
+int
+LTFAT_NAME(dgtrealmp_execute_selfprojmp)(
     LTFAT_NAME(dgtrealmp_state)* p,
     kpoint origpos, LTFAT_COMPLEX** cout);
 

@@ -190,6 +190,10 @@ $(objprefix)/%:
 
 .PHONY: clean cleanobj help doc doxy static shared allshared munit unit $(MODULE)
 
+doc:
+	(cd modules/libltfat ; doxygen doc/doxyconfig)
+	(cd modules/libphaseret ; doxygen doc/doxyconfig)
+
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
 allshared:

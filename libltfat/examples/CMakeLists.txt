@@ -9,4 +9,9 @@ set (CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
 set(CMAKE_C_FLAGS ${OLD_CMAKE_C_FLAGS})
 
+
+if(CMAKE_CROSSCOMPILING)
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+endif(CMAKE_CROSSCOMPILING)
+
 add_subdirectory(multigabormp)

@@ -1,8 +1,8 @@
 \mainpage libltfat - Large Time-Frequency Analysis Toolbox Library 
 [Fork libltfat on Github](https://github.com/ltfat/libltfat)
 
-This is the standalone back end library of
- [LTFAT](http://ltfat.github.io/) the Matlab/Octave 
+This is the documentation page for the standalone back end library of
+ [LTFAT](http://ltfat.github.io/) the Matlab/Octave
 toolbox for working with time-frequency analysis and synthesis. It is intended
 both as an educational and a computational tool. The toolbox provides a large
 number of linear transforms including Gabor and wavelet transforms along with 
@@ -173,16 +173,16 @@ working arrays and other plans.
 The plan is represented as a pointer to an opaque structure and here
 is an example how to use it: 
 ~~~~~~~~~~~~~~~{.c}
-dgt_long_plan_d* plan = NULL;
+ltfat_dgt_long_plan_d* plan = NULL;
 
-dgt_long_init_d(f, g, L, W, a, M, c, ptype, FFTW_ESTIMATE, &plan)
+ltfat_dgt_long_init_d(f, g, L, W, a, M, c, ptype, FFTW_ESTIMATE, &plan)
 // Fill in c after calling init. The FFTW planning routine migh have written 
 // something to it.
 
-dgt_long_execute_d(plan);
+ltfat_dgt_long_execute_d(plan);
 // Refresh data in f and call execute again  
 
-dgt_long_done_d(&plan);
+ltfat_dgt_long_done_d(&plan);
 ~~~~~~~~~~~~~~~
 
 \note Please note that due to the

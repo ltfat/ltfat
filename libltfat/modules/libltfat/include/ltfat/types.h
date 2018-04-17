@@ -20,6 +20,7 @@
 #   define ltfat_abs(x) fabs(x)
 #   define ltfat_arg(x) carg(x)
 #endif
+#   define ltfat_energy(x) ( ltfat_real(x)*ltfat_real(x) + ltfat_imag(x)*ltfat_imag(x) )
 #endif
 
 #ifdef LTFAT_COMPLEX
