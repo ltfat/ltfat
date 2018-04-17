@@ -57,6 +57,9 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %     'pedanticsearch' Be pedantic about the energy of pairs of conjugated
 %                      atoms in the selection step. Disbaled by default.
 %
+%     'algorithm',alg  Algorithm to use. Available: 
+%                      'mp'(default),'selfprojmp','cyclicmp'
+%
 %   The computational routine is only available in C. Use |ltfatmex| to
 %   to compile it.
 %
@@ -104,7 +107,8 @@ definput.keyvals.maxit=[];
 %definput.keyvals.iterstep=[];
 definput.keyvals.kernthr = 1e-4;
 %definput.flags.print={'quiet','print'};
-definput.flags.algorithm={'fast','slow'};
+definput.flags.algversion={'fast','slow'};
+definput.keyvals.algorithm={'mp','selfprojmp','cyclicmp'};
 definput.flags.search={'plainsearch','pedanticsearch'};
 definput.flags.phaseconv={'freqinv','timeinv'};
 [flags,kv]=ltfatarghelper({'errdb','maxit'},definput,varargin);
@@ -166,7 +170,10 @@ end
 
 fpad = postpad(f,L);
 
-[c,info.atoms,info.iter] = comp_multidgtrealmp(fpad,g,a,M,flags.do_timeinv,kv.kernthr,kv.errdb,kv.maxit,kv.maxit,flags.do_pedanticsearch);
+[c,info.atoms,info.iter] = ...
+    comp_multidgtrealmp(fpad,g,a,M,flags.do_timeinv,...
+                        kv.kernthr,kv.errdb,kv.maxit,kv.maxit,...
+                        flags.do_pedanticsearch, kv.algorithm );
 
 if nargout>1  
   permutedsize2 = permutedsize; permutedsize2(2) = dictno;

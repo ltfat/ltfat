@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 10
+#define ISNARGINEQ 11
 #define TYPEDEPARGS 0, 1
 #define SINGLEARGS
 #define REALARGS
@@ -14,8 +14,8 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include "ltfat/types.h"
 
-// Calling convention:  0 1 2 3     4       5     6     7     8                 9  
-//  comp_multidgtrealmp(f,g,a,M,ptype,kernthr,errdb,maxit,maxat,do_pedanticsearch);
+// Calling convention:  0 1 2 3     4       5     6     7     8                 9  10  
+//  comp_multidgtrealmp(f,g,a,M,ptype,kernthr,errdb,maxit,maxat,do_pedanticsearch,alg);
 //
 //  
 //
@@ -25,6 +25,13 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 {
     LTFAT_NAME(dgtrealmp_parbuf)* pbuf = NULL;
     LTFAT_NAME(dgtrealmp_state)*  plan = NULL;
+    ltfat_dgtmp_alg alg = ltfat_dgtmp_alg_mp;
+    
+    if( 0 == strncmp('cyclicmp', mxGetChars(prhs[10]), mxGetNumberOfElements(prhs[10]))
+        alg = ltfat_dgtmp_alg_loccyclicmp;
+    else if( 0 == strncmp('selfprojmp', mxGetChars(prhs[10]), mxGetNumberOfElements(prhs[10]))
+        alg = ltfat_dgtmp_alg_locselfprojmp;
+    
     size_t atoms = 0;
     size_t iters = 0;
 
