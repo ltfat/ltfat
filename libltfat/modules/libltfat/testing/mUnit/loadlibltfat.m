@@ -1,4 +1,5 @@
 function loadlibltfat(varargin)
+global libltfat_intptrstr;
 
 definput.keyvals.lib='libltfat.so';
 definput.flags.phase={'load','reload','recompile'};
@@ -54,6 +55,11 @@ warning('off');
 headerpath = [libltfatpath,'build',filesep,'ltfat.h'];
 loadlibrary(libpath,headerpath,'mfilename','libltfatprotofile.m');
 warning('on');
+
+intbitsize = 8*calllib('libltfat','ltfat_int_size');
+libltfat_intptrstr = sprintf('int%dPtr',intbitsize);
+
+
 
 
 

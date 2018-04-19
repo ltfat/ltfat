@@ -475,7 +475,7 @@ LTFAT_NAME(dgtrealmp_execute_dualprodandprojenergy)(
             if (p->params->ptype == LTFAT_FREQINV)
                 atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][-2*pos.m  + k->mid.hmid];
 
-            *cvaldual = (cval - conj(cval)*atinprod)*k->oneover1minatprodnorms[pos.m];
+            *cvaldual = (cval - conj(cval)*conj(atinprod))*k->oneover1minatprodnorms[pos.m];
             *projenergy = LTFAT_NAME(dgtrealmp_execute_projenergy)( atinprod, *cvaldual);
             return;
         }
@@ -483,12 +483,12 @@ LTFAT_NAME(dgtrealmp_execute_dualprodandprojenergy)(
         ltfat_int posinkern = p->M2[pos.w] - pos.m - uniquenyquest;
         if ( posinkern < k->atprodsNo )
         {
-            LTFAT_COMPLEX atinprod = conj(k->atprods[posinkern]);
+            LTFAT_COMPLEX atinprod = (k->atprods[posinkern]);
 
             if (p->params->ptype == LTFAT_FREQINV)
                 atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][2*posinkern + k->mid.hmid];
 
-            *cvaldual = (cval - conj(cval)*atinprod)*k->oneover1minatprodnorms[posinkern];
+            *cvaldual = (cval - conj(cval)*conj(atinprod))*k->oneover1minatprodnorms[posinkern];
             *projenergy = LTFAT_NAME(dgtrealmp_execute_projenergy)( atinprod, *cvaldual);
             return;
         }
