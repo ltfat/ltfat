@@ -25,11 +25,14 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 {
     LTFAT_NAME(dgtrealmp_parbuf)* pbuf = NULL;
     LTFAT_NAME(dgtrealmp_state)*  plan = NULL;
+    char algstr[51];
+    mxGetString(prhs[10],algstr,50);
     ltfat_dgtmp_alg alg = ltfat_dgtmp_alg_mp;
+
     
-    if( 0 == strncmp('cyclicmp', mxGetChars(prhs[10]), mxGetNumberOfElements(prhs[10]))
+    if( 0 == strcmp("cyclicmp", algstr))
         alg = ltfat_dgtmp_alg_loccyclicmp;
-    else if( 0 == strncmp('selfprojmp', mxGetChars(prhs[10]), mxGetNumberOfElements(prhs[10]))
+    else if( 0 == strcmp("selfprojmp",algstr))
         alg = ltfat_dgtmp_alg_locselfprojmp;
     
     size_t atoms = 0;
@@ -75,6 +78,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(pbuf, maxat));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxit)(pbuf, maxit));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(pbuf, L));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, alg));
 
     CHSTAT(LTFAT_NAME(dgtrealmp_init)( pbuf, L, &plan));
     CHSTAT(LTFAT_NAME(dgtrealmp_execute_decompose)(plan, mxGetData(prhs[0]), cPtrs));

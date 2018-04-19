@@ -108,7 +108,7 @@ definput.keyvals.maxit=[];
 definput.keyvals.kernthr = 1e-4;
 %definput.flags.print={'quiet','print'};
 definput.flags.algversion={'fast','slow'};
-definput.keyvals.algorithm={'mp','selfprojmp','cyclicmp'};
+definput.flags.algorithm={'mp','selfprojmp','cyclicmp'};
 definput.flags.search={'plainsearch','pedanticsearch'};
 definput.flags.phaseconv={'freqinv','timeinv'};
 [flags,kv]=ltfatarghelper({'errdb','maxit'},definput,varargin);
@@ -173,7 +173,7 @@ fpad = postpad(f,L);
 [c,info.atoms,info.iter] = ...
     comp_multidgtrealmp(fpad,g,a,M,flags.do_timeinv,...
                         kv.kernthr,kv.errdb,kv.maxit,kv.maxit,...
-                        flags.do_pedanticsearch, kv.algorithm );
+                        flags.do_pedanticsearch, flags.algorithm );
 
 if nargout>1  
   permutedsize2 = permutedsize; permutedsize2(2) = dictno;
