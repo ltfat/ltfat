@@ -1,4 +1,4 @@
-function [] = mulaclab(file, varargin)
+function [ret] = mulaclab(file, varargin)
 %MULACLAB Graphical interface for audio processing using frame multipliers
 %   Usage: mulaclab;
 %          mulaclab(filename);
@@ -586,8 +586,9 @@ function [] = mulaclab(file, varargin)
   end
   
   if ~isempty(file) 
-      if handleMulaclabAction(file,varargin{:})
-          return;
+      [wasaction,ret] = handleMulaclabAction(file,varargin{:});
+      if wasaction
+        return;
       end
   end
   
@@ -643,11 +644,12 @@ function figNumber = getMulaclabFigNo()
   end
 end
 
-function wasaction = handleMulaclabAction(action,varargin)
+function [wasaction,retpar] = handleMulaclabAction(action,varargin)
+retpar = {};
 wasaction = 1;
 isrunning = ~isempty(getMulaclabFigNo());
 
-actions = {'playori','applySel'};
+actions = {'playori','applySel','playbutton','getsymbol'};
 
 if ~any(strcmpi(action,actions)) 
     wasaction = 0;
@@ -672,6 +674,12 @@ switch action
         soundsc(sig.ori,sig.sampFreq);
     case 'applysel'
         applySel();
+    case 'playbutton'
+        playPauseAudioplayer();
+    case 'getsymbol'
+        global symbol;
+        currsymbol = convSymbToCoefFormat(convSelToSymb());
+        retpar = currsymbol;
 end
 
 end
