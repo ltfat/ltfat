@@ -1,4 +1,4 @@
-function W = wignervilledist(f,g)
+function W = wignervilledist(f,varargin)
 %WIGNERVILLEDIST Wigner-Ville distribution
 %   Usage: W = wignervilledist(f);
 %          W = wignervilledist(f, g);
@@ -33,15 +33,18 @@ function W = wignervilledist(f,g)
 
 upfname = upper(mfilename);
 complainif_notenoughargs(nargin, 1, upfname);
-complainif_toomanyargs(nargin, 2, upfname);
+
+definput.flags.complex = {'asinput','complex'};
+definput.keyvals.g=[];
+[flags,kv,g]=ltfatarghelper({'g'},definput,varargin);
 
 [f,~,W]=comp_sigreshape_pre(f,upfname);
 if W>1
    error('%s: Only one-dimensional vectors can be processed.',upfname); 
 end
 
-if (nargin == 1)
-  if isreal(f)
+if isempty(g)
+  if isreal(f) && ~flags.do_complex
     z1 = comp_fftanalytic(f);
   else
     z1 = f;
@@ -52,7 +55,7 @@ if (nargin == 1)
 
   W = real(fft(R));
 
-elseif (nargin == 2)
+else
   [g,~,W]=comp_sigreshape_pre(g,upfname);
   
   if W>1
@@ -68,7 +71,7 @@ elseif (nargin == 2)
             upfname);
   end
 
-  if isreal(f) || isreal(g)
+  if isreal(f) || isreal(g) && ~flags.do_complex
     z1 = comp_fftanalytic(f);
     z2 = comp_fftanalytic(g);
   else
