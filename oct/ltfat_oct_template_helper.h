@@ -4,6 +4,7 @@
 #include "ltfat.h"
 #include <octave/oct.h>
 
+#define IS_OCTAVE_NEWAPI ((OCTAVE_MAJOR_VERSION > 4) || (OCTAVE_MAJOR_VERSION == 4 && OCTAVE_MINOR_VERSION >= 4))
 
 #ifdef _DEBUG
 #define DEBUGINFO  octave_stdout << __PRETTY_FUNCTION__ << "\n"
@@ -49,7 +50,11 @@ MArray<double> ltfatOctArray(const octave_value& ov)
 template <>
 MArray<float> ltfatOctArray(const octave_value& ov)
 {
+#if IS_OCTAVE_NEWAPI
+    if(ov.isfloat())
+#else
     if(ov.is_float_type())
+#endif
     {
        return (ov.float_array_value());
     }
@@ -77,7 +82,11 @@ MArray<Complex> ltfatOctArray(const octave_value& ov)
 template <>
 MArray<FloatComplex> ltfatOctArray(const octave_value& ov)
 {
+#if IS_OCTAVE_NEWAPI
+    if(ov.isfloat())
+#else
     if(ov.is_float_type())
+#endif
     {
        return (ov.float_complex_array_value());
     }
@@ -90,7 +99,11 @@ MArray<FloatComplex> ltfatOctArray(const octave_value& ov)
 
 bool checkIsSingle(const octave_value& ov)
 {
+#if IS_OCTAVE_NEWAPI
+   if(ov.iscell())
+#else
    if(ov.is_cell())
+#endif
    {
       Cell ov_cell = ov.cell_value();
       for(int jj=0;jj<ov_cell.numel();jj++)
@@ -105,7 +118,11 @@ bool checkIsSingle(const octave_value& ov)
 
 bool checkIsComplex(const octave_value& ov)
 {
+#if IS_OCTAVE_NEWAPI
+   if(ov.iscell())
+#else
    if(ov.is_cell())
+#endif
    {
       Cell ov_cell = ov.cell_value();
       for(int jj=0;jj<ov_cell.numel();jj++)
@@ -115,13 +132,22 @@ bool checkIsComplex(const octave_value& ov)
       }
       return false;
    }
+
+#if IS_OCTAVE_NEWAPI
+   return ov.iscomplex();
+#else
    return ov.is_complex_type();
+#endif
 }
 
 octave_value recastToSingle(const octave_value& ov)
 {
 
+#if IS_OCTAVE_NEWAPI
+   if(ov.iscell())
+#else
    if(ov.is_cell())
+#endif
    {
       Cell ov_cell = ov.cell_value();
       Cell ovtmp_cell(ov.dims());
@@ -141,12 +167,20 @@ octave_value recastToSingle(const octave_value& ov)
    TODO: ov is struct
    */
    // just copy pointer if the element is not numeric
+#if IS_OCTAVE_NEWAPI
+   if(!ov.isnumeric())
+#else
    if(!ov.is_numeric_type())
+#endif
    {
       return ov;
    }
 
+#if IS_OCTAVE_NEWAPI
+   if(ov.iscomplex())
+#else
    if(ov.is_complex_type())
+#endif
    {
       return ltfatOctArray<FloatComplex>(ov);
    }
@@ -158,7 +192,11 @@ octave_value recastToSingle(const octave_value& ov)
 
 octave_value recastToComplex(const octave_value& ov)
 {
+#if IS_OCTAVE_NEWAPI
+   if(ov.iscell())
+#else
    if(ov.is_cell())
+#endif
    {
       Cell ov_cell = ov.cell_value();
       Cell ovtmp_cell(ov.dims());
@@ -169,7 +207,11 @@ octave_value recastToComplex(const octave_value& ov)
       return ovtmp_cell;
    }
 
+ #if IS_OCTAVE_NEWAPI
+   if(ov.iscomplex())
+#else
    if(ov.is_complex_type())
+#endif
    {
       return ov;
    }
@@ -178,7 +220,11 @@ octave_value recastToComplex(const octave_value& ov)
    TODO: ov is struct
    */
    // just copy pointer if the element is not numeric
+#if IS_OCTAVE_NEWAPI
+   if(!ov.isnumeric())
+#else
    if(!ov.is_numeric_type())
+#endif
    {
       return ov;
    }
