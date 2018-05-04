@@ -11,7 +11,7 @@ static void
 fwd_dgtrealmp_decompose(const float f[], ltfat_int L,
                         const float* g[], ltfat_int gl[],
                         double a[], double M[], ltfat_int dictno,
-                        int ptype, int do_pedanticsearch,
+                        int ptype, int do_pedanticsearch, ltfat_dgtmp_alg alg,
                         double errdb,
                         double kernthr, size_t maxit, size_t maxat,
                         size_t& atoms, size_t& iters,
@@ -29,6 +29,7 @@ fwd_dgtrealmp_decompose(const float f[], ltfat_int L,
 
     ltfat_dgtrealmp_setparbuf_phaseconv_s(pbuf, static_cast<ltfat_phaseconvention>( ptype));
     ltfat_dgtrealmp_setparbuf_pedanticsearch_s(pbuf, do_pedanticsearch);
+    ltfat_dgtrealmp_setparbuf_alg_s(pbuf, alg);
     ltfat_dgtrealmp_setparbuf_snrdb_s(pbuf, -errdb);
     ltfat_dgtrealmp_setparbuf_kernrelthr_s(pbuf, kernthr);
     ltfat_dgtrealmp_setparbuf_maxatoms_s(pbuf, maxat);
@@ -50,7 +51,7 @@ static void
 fwd_dgtrealmp_decompose(const double f[], ltfat_int L,
                         const double* g[], ltfat_int gl[],
                         double a[], double M[], ltfat_int dictno,
-                        int ptype, int do_pedanticsearch,
+                        int ptype, int do_pedanticsearch, ltfat_dgtmp_alg alg,
                         double errdb,
                         double kernthr, size_t maxit, size_t maxat,
                         size_t& atoms, size_t& iters,
@@ -68,6 +69,7 @@ fwd_dgtrealmp_decompose(const double f[], ltfat_int L,
 
     ltfat_dgtrealmp_setparbuf_phaseconv_d(pbuf, static_cast<ltfat_phaseconvention>( ptype));
     ltfat_dgtrealmp_setparbuf_pedanticsearch_d(pbuf, do_pedanticsearch);
+    ltfat_dgtrealmp_setparbuf_alg_d(pbuf, alg);
     ltfat_dgtrealmp_setparbuf_snrdb_d(pbuf, -errdb);
     ltfat_dgtrealmp_setparbuf_kernrelthr_d(pbuf, kernthr);
     ltfat_dgtrealmp_setparbuf_maxatoms_d(pbuf, maxat);
@@ -90,6 +92,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
     size_t atoms = 0;
     size_t iters = 0;
+    ltfat_dgtmp_alg alg = ltfat_dgtmp_alg_mp;
 
     // Input data
     MArray<LTFAT_REAL> f = ltfatOctArray<LTFAT_TYPE>(args(0));
@@ -104,6 +107,12 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     size_t maxit = (size_t)args(7).double_value();
     size_t maxat = (size_t)args(8).double_value();
     int do_pedanticsearch = args(9).int_value();
+    const char* algstr = args(10).char_matrix_value().row_as_string(0).c_str();
+
+    if( 0 == strcmp("cyclicmp", algstr))
+        alg = ltfat_dgtmp_alg_loccyclicmp;
+    else if( 0 == strcmp("selfprojmp",algstr))
+        alg = ltfat_dgtmp_alg_locselfprojmp;
 
     // Input length
     const octave_idx_type L  = f.rows();
@@ -132,7 +141,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 
     fwd_dgtrealmp_decompose(f.fortran_vec(), L, gPtrs, glPtr,
                          aDouble.fortran_vec(), MDouble.fortran_vec(),
-                         dictno, ptype, do_pedanticsearch,
+                         dictno, ptype, do_pedanticsearch, alg,
                          errdb, kernthr, maxit, maxat,
                          atoms, iters, cPtrs);
 
