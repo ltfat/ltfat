@@ -56,7 +56,7 @@ NLOOPBOTH(\
     LTFAT_COMPLEX* kcurrCol = k->kval + knidx * k->size.height;\
 MLOOPBOTH(\
     currcCol[midx] = currcCol[midx] SIGN s->cvalModBuf[kIdx][mmidx] * kcurrCol[kmidx]; \
-    /* currsCol[midx] = ltfat_norm( currcCol[midx]); */ ))}}
+    ))}}
 
 #define LTFAT_DGTREALMP_MARKMODIFIED \
 NLOOPBOTH(\
@@ -419,40 +419,6 @@ LTFAT_NAME(dgtrealmp_execute_invmp)(
     return plusatenergy;
 }
 
-
-/* LTFAT_REAL */
-/* LTFAT_NAME(dgtrealmp_execute_adjustedenergy)( */
-/*     LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval) */
-/* { */
-/*     LTFAT_COMPLEX atprod = */
-/*         LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, pos); */
-/*     LTFAT_COMPLEX cvaldual = */
-/*         (cval - (atprod) * conj(cval)) / ((LTFAT_REAL)(1.0) - ltfat_norm( atprod)); */
-/*  */
-/*     return LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cvaldual); */
-/* } */
-
-/* LTFAT_REAL */
-/* LTFAT_NAME(dgtrealmp_execute_atenergy)( */
-/*     LTFAT_COMPLEX atinprod, LTFAT_COMPLEX cval) */
-/* { */
-/*     LTFAT_COMPLEX cvalphase = exp( I * ((LTFAT_REAL)2.0) * ltfat_arg(cval)); */
-/*     return (1.0 + ltfat_real(cvalphase * conj( atinprod) )); */
-/* } */
-
-
-/* LTFAT_REAL */
-/* LTFAT_NAME(dgtrealmp_execute_projenergy)( */
-/*     LTFAT_COMPLEX atinprod, LTFAT_COMPLEX cval) */
-/* { */
-/*     LTFAT_REAL cr = ltfat_real(cval); */
-/*     LTFAT_REAL ci = ltfat_imag(cval); */
-/*     LTFAT_REAL cr2 = cr*cr; */
-/*     LTFAT_REAL ci2 = ci*ci; */
-/*     LTFAT_COMPLEX at = conj(atinprod); */
-/*     return cr2 + ci2 + ltfat_real(at)*(cr2 - ci2) - 2*ltfat_imag(at)*cr*ci; */
-/* } */
-
 void
 LTFAT_NAME(dgtrealmp_execute_dualprodandprojenergy)(
     LTFAT_NAME(dgtrealmp_state)* p, kpoint pos, LTFAT_COMPLEX cval,
@@ -530,26 +496,6 @@ LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
 
             *oneover1minatprodnorm = k->oneover1minatprodnorms[posinkern];
         }
-        /* ltfat_int posinkern  = k->mid.hmid - 2 * pos.m; */
-        /* #<{(| if( posinkern >= 0 )  |)}># */
-        /* if ( posinkern >= k->range[k->mid.wmid].start ) */
-        /* { */
-        /*     LTFAT_COMPLEX atinprod = k->kval[k->size.height * k->mid.wmid + posinkern]; */
-        /*     if (p->params->ptype == LTFAT_FREQINV) */
-        /*         atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern]; */
-        /*  */
-        /*     return  (atinprod); */
-        /* } */
-        /* posinkern  = k->mid.hmid + 2 * ( p->M2[pos.w] - 1 - pos.m) + 1 - uniquenyquest; */
-        /* #<{(| if( posinkern < k->size.height  ) |)}># */
-        /* if ( posinkern < k->size.height - k->range[k->mid.wmid].end ) */
-        /* { */
-        /*     LTFAT_COMPLEX atinprod = k->kval[k->size.height * k->mid.wmid + posinkern]; */
-        /*     if (p->params->ptype == LTFAT_FREQINV) */
-        /*         atinprod *= k->mods[ltfat_positiverem(pos.n, k->kNo)][posinkern]; */
-        /*  */
-        /*     return (atinprod); */
-        /* } */
     }
 }
 
@@ -570,9 +516,6 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
     kpoint origposconj = origpos;
     origposconj.m = p->M[origpos.w] - origpos.m;
 
-    /* DEBUG("it=%td",s->currit); */
-    /* DEBUG("Origpos: m=%td,n=%td,w=%td", origpos.m,origpos.n,origpos.w); */
-
     /* This loop is trivially pararelizable */
     for (ltfat_int w2 = 0; w2 < s->P; w2++)
     {
@@ -588,10 +531,6 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
         pos.w = w2;
         LTFAT_NAME(dgtrealmp_execute_indices)(
             p, origpos, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
-
-        /* DEBUG("Pos: m=%td,n=%td,w=%td", pos.m, pos.n,pos.w); */
-        /* DEBUG("LLLLLL wstart=%td, hstart=%td, wmid=%td, hmid=%td, w=%td,h=%td,kno=%td,", */
-        /*       kstart2.m, kstart2.n, kmid2.wmid, kmid2.hmid, kdim2.width, kdim2.height, k->kNo ); */
 
         m2end = m2start + kdim2.height;
         mover = ltfat_imax(0, m2end - p->M[w2]);
@@ -621,10 +560,6 @@ LTFAT_NAME(dgtrealmp_execute_updateresiduum)(
 
                 LTFAT_NAME(dgtrealmp_execute_indices)(
                     p, origposconj, &pos, &m2start, &n2start, &kdim2, &kmid2, &kstart2);
-
-
-                /* DEBUG("CONJ LLLLLL wstart=%td, hstart=%td, wmid=%td, hmid=%td, w=%td,h=%td", */
-                /*       kstart2.m, kstart2.n, kmid2.wmid, kmid2.hmid, kdim2.width, kdim2.height ); */
 
                 m2end = m2start + kdim2.height;
                 mover = ltfat_imax(0, m2end - p->M[w2]);
@@ -683,9 +618,6 @@ LTFAT_NAME(dgtrealmp_execute_indices)(
 
     kdim2->height = ltfat_idivceil(kdim2->height - kstart2->m, k->Mstep);
     kdim2->width  = ltfat_idivceil(kdim2->width  - kstart2->n, k->astep);
-
-    /* DEBUG("Wheight=%td,Kwidth=%td",k->size.height, k->size.width  ); */
-    /* DEBUG("Wheight=%td,Kwidth=%td,Kstartm=%td,Kstartn=%td",kdim2->height, kdim2->width, kstart2->m, kstart2->n  ); */
 
     return 0;
 }
