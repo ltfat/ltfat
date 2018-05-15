@@ -226,7 +226,7 @@ LTFAT_NAME(upconv_fftbl_init)( ltfat_int L, ltfat_int Gl,
     /*                                 FFTW_FORWARD, FFTW_ESTIMATE); */
 
     LTFAT_NAME_REAL(fft_plan)* p_many;
-    LTFAT_NAME_REAL(fft_init)(N, W, buf, buf, FFTW_ESTIMATE, &p_many);
+    LTFAT_NAME_REAL(fft_init)(N, 1, buf, buf, FFTW_ESTIMATE, &p_many);
 
     /* struct LTFAT_NAME(upconv_fftbl_plan_struct) p_struct = */
     /* { */
@@ -261,11 +261,14 @@ LTFAT_NAME(upconv_fftbl_execute)(const LTFAT_NAME(upconv_fftbl_plan) p,
     ltfat_int N = (ltfat_int) floor(L / a + 0.5);
 
     for (ltfat_int w = 0; w < W; w++)
-        memcpy(cbuf + w * bufLen, cin + w * N, N * sizeof * cin);
-
+    {
+        LTFAT_COMPLEX* cbuf_col = cbuf + w * bufLen;
+        memcpy(cbuf_col, cin + w * N, N * sizeof * cin);
+        LTFAT_NAME_REAL(fft_execute_newarray)(p->p_c, cbuf_col, cbuf_col);
+    }
     /* LTFAT_FFTW(execute_dft)(p->p_c, (LTFAT_FFTW(complex)*)cbuf, */
     /*                         (LTFAT_FFTW(complex)*)cbuf); */
-    LTFAT_NAME_REAL(fft_execute_newarray)(p->p_c, cbuf, cbuf);
+    /* LTFAT_NAME_REAL(fft_execute_newarray)(p->p_c, cbuf, cbuf); */
 
     for (ltfat_int w = 0; w < W; w++)
     {
