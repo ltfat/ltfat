@@ -49,7 +49,7 @@ playrec:
 postbuild:
 	# OCT files here
 	mv ../oct/*.oct .
-	mv ../oct/*.m .
+	mv ../oct/*.m src/
 	# Compilation of MEX files has been disabled
 	# mv ../oct/*.mex .
 	# Delete corresponding m-files
