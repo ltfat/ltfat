@@ -56,5 +56,5 @@ postbuild:
 	# ls -1 *.mex | cut -d . -f 1 | xargs -I {} rm -f ../inst/comp/{}.m
 	# rm -f ../inst/ltfatarghelper.m
 	## Copy extra help files for mex files
-	# ls -1 *.mex | cut -d . -f 1 | xargs -I {} cp ../oct/mexhelp/{} ./{}.m
+	ls -1 *.mex | cut -d . -f 1 | xargs -I {} cp ../oct/mexhelp/{} ./{}.m
 
