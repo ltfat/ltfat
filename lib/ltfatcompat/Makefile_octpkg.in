@@ -1,6 +1,6 @@
 # Only .mex, .oct and .m files from the current directory will be copied
 # to the target installaction directory
-targets = oct playrec
+targets = oct playrec polyboolclipper
 
 CC=@CC@
 CXX=@CXX@
@@ -46,10 +46,14 @@ playrec:
 	$(MAKE) -C ../thirdparty/Playrec -f Makefile_unixoct
 	mv ../thirdparty/Playrec/playrec.mex .
 
+polyboolclipper:
+	$(MAKE) -C ../thirdparty/polyboolclipper -f Makefile_unixoct
+	mv ../thirdparty/polyboolclipper/polyboolmex.mex .
+
 postbuild:
 	# OCT files here
 	mv ../oct/*.oct .
-	mv ../oct/*.m src/
+	# mv ../oct/*.m .
 	# Compilation of MEX files has been disabled
 	# mv ../oct/*.mex .
 	# Delete corresponding m-files
