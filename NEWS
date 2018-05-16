@@ -1,3 +1,9 @@
+Version 2.3.1
+
+* Two additional matching pursuit variants in multidgtrealmp
+
+* Bug fixes
+
 Version 2.3.0
 
 * New function for computing matching pursuit in DGT: multidgtrealmp
