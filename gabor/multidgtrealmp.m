@@ -106,7 +106,6 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 
 thismfile = upper(mfilename);
 complainif_notenoughargs(nargin,2,thismfile);
-    
 % Define initial value for flags and key/value pairs.
 definput.keyvals.errdb=-40;
 definput.keyvals.maxit=[];
@@ -141,13 +140,13 @@ if kv.errdb > 0
 end
 
 if ~(kv.kernthr > 0 && kv.kernthr <= 1)
-    error('%s: Kenel threshold must be in range ]0,1].',upper(mfilename));    
+    error('%s: Kenel threshold must be in range ]0,1].',upper(mfilename));
 end
-    
+
 if ~iscell(dicts), error('%s: dicts must be cell',thismfile); end
 if rem(numel(dicts),3) ~= 0 || ~all(cellfun(@(x)isscalar(x), dicts([2:3:end,3:3:end])))
     error('%s: bad format of dicts. Check {g1,a1,M1,g2,a2,M2,...,gW,aW,MW}',...
-        thismfile); 
+        thismfile);
 end
 
 dictno = numel(dicts)/3;
@@ -155,11 +154,21 @@ gin = dicts(1:3:end);
 a = cell2mat(dicts(2:3:end));
 M = cell2mat(dicts(3:3:end));
 
-amin = min(a);
-Mmax = max(M);
+if any(rem(M,a) ~= 0) || any(M./a<2)
+    error(['%s: Only integer oversampling greater than 1 is allowed ',...
+           'i.e. M/a must be an integer>=2.'],...
+    upper(mfilename));
+end
 
-if any(rem([a(:);M(:)],amin) ~= 0)
-    error('%s: all a and M must be divisible by min(a1,...,aW)',thismfile);
+if dictno > 1
+    asort  = sort(a);
+    Msort  = sort(M);
+    if any(rem(asort(2:end),asort(1:end-1)) ~= 0)
+        error('%s: all au and av must be divisible by min(au,av)',thismfile);
+    end
+    if any(rem(Msort(2:end),Msort(1:end-1)) ~= 0)
+        error('%s: all Mu and Mv must be divisible by min(Mu,Mv)',thismfile);
+    end
 end
 
 info.a = a;
@@ -168,12 +177,19 @@ info.iter = 0;
 info.relres = [];
 fnorm = norm(f);
 
-L = dgtlength(Ls,amin,Mmax);
+L = filterbanklength(Ls,[a(:);M(:)]);
 if isempty(kv.maxit), kv.maxit = L; end
 
 info.g = cell(dictno,1);
 for dIdx = 1:dictno
     info.g{dIdx} = normalize(gabwin(gin{dIdx},a(dIdx),M(dIdx),L),'2');
+end
+
+for dIdx = 1:dictno
+    condnum = gabframebounds(info.g{dIdx},a(dIdx),M(dIdx));
+    if condnum > 1e3
+        error('%s: Dictionary %d is badly conditioned.',dIdx,upper(mfilename));
+    end
 end
 
 fpad = postpad(f,L);
@@ -183,7 +199,7 @@ fpad = postpad(f,L);
                         kv.kernthr,kv.errdb,kv.maxit,kv.maxit,...
                         flags.do_pedanticsearch, flags.algorithm );
 
-if nargout>1  
+if nargout>1
   permutedsize2 = permutedsize; permutedsize2(2) = dictno;
   info.synthetize = @(c) ...
       assert_sigreshape_post(...
