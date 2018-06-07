@@ -16,10 +16,11 @@ enum ltfat_dgtmp_status
     LTFAT_DGTREALMP_STATUS_MAXATOMS     = 1,
     LTFAT_DGTREALMP_STATUS_MAXITER      = 2,
     LTFAT_DGTREALMP_STATUS_STALLED      = 3,
-    LTFAT_DGTREALMP_STATUS_EMPTY        = 4,
-    LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 5,
-    LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED = 6,
-    LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 10
+    LTFAT_DGTREALMP_STATUS_ATPRODTOL    = 4,
+    LTFAT_DGTREALMP_STATUS_EMPTY        = 5,
+    LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 6,
+    LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED = 7,
+    LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 100
 };
 /**@}*/
 
@@ -46,6 +47,10 @@ ltfat_dgtmp_setpar_phaseconv(
 // LTFAT_API int
 // ltfat_dgtmp_setpar_hint(
 //     ltfat_dgtmp_params* params, ltfat_dgtmp_hint hint);
+
+LTFAT_API int
+ltfat_dgtmp_setpar_atprodreltoldb(ltfat_dgtmp_params* params,
+                                  double atprodreltoldb);
 
 LTFAT_API int
 ltfat_dgtmp_setpar_alg(
@@ -311,6 +316,7 @@ LTFAT_NAME(dgtrealmp_execute_synthesize)(
  * The default values are: 
  *  - Target SNR: 40 dB
  *  - Kernel relative threshold: 1e-4
+ *  - Inner product relative tolerance: 80 dB
  *  - Phase convention: LTFAT_TIMEINV
  *  - Pedantic search: disabled
  *  - Max. number of iterations: 0.8*L
@@ -390,11 +396,9 @@ LTFAT_NAME(dgtrealmp_parbuf_add_firwin)(
  * #### Versions #
  * <tt>
  * ltfat_dgtrealmp_parbuf_add_gausswin_d( ltfat_dgtrealmp_parbuf_d* parbuf,
- *                                      LTFAT_FIRWIN win, ltfat_int gl, 
  *                                      ltfat_int a, ltfat_int M );
  *
  * ltfat_dgtrealmp_parbuf_add_gausswin_s( ltfat_dgtrealmp_parbuf_s* parbuf,
- *                                      LTFAT_FIRWIN win, ltfat_int gl, 
  *                                      ltfat_int a, ltfat_int M );
  * </tt>
  * \returns
@@ -526,11 +530,6 @@ LTFAT_NAME(dgtrealmp_getparbuf_coeflen_compact)(
     LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int Ls);
 
 // LTFAT_API int
-// LTFAT_NAME(dgtrealmp_parbuf_add_gausswin)(
-//         LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
-//         LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
-//
-// LTFAT_API int
 // LTFAT_NAME(dgtrealmp_parbuf_add_hermwin)(
 //         LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
 //         ltfat_int order, LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
@@ -557,6 +556,33 @@ LTFAT_NAME(dgtrealmp_getparbuf_coeflen_compact)(
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(
         LTFAT_NAME(dgtrealmp_parbuf)* parbuf, ltfat_phaseconvention pconv);
+
+/** Set relative inner product tolerance in dB
+ * 
+ * Causes the algorithm to stop whenever the selected inner product becomes 
+ * less than \a atprodreltoldb relative to the inner product selected in the first iteration.
+ * E.g. -80 dB amouns to the absolute threshold of 10^-4*max(abs(c_0))
+ * 
+ * \param[in]   parbuf          DGTREALMP parameter buffer 
+ * \param[in]   atprodreltoldb  Relative tolerance in dB
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_setparbuf_atprodreltoldb_d( ltfat_dgtrealmp_parbuf_d* p,
+ *                                             double atprodreltoldb);
+ *
+ * ltfat_dgtrealmp_setparbuf_atprodreltoldb_s( ltfat_dgtrealmp_parbuf_s* p,
+ *                                             double atprodreltoldb);
+ * </tt>
+ * \returns
+ * Status code              | Description
+ * -------------------------|------------
+ * LTFATERR_SUCCESS         | Indicates no error
+ * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
+ */
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_atprodreltoldb)(
+        LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double atprodreltoldb);
 
 /** Set maximum number of atoms
  * 
@@ -606,6 +632,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_maxit)(
 
 /** Set target normalized MSE in dB
  * 
+ * \a errtoldb must be less than 0. 
+ * 
  * \param[in]     parbuf  DGTREALMP parameter buffer 
  * \param[in]   errtoldb  MSE in dB
  *
@@ -628,6 +656,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_errtoldb)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double errtoldb);
 
 /** Set target SNR in dB
+ *
+ * \a snrdb must be larger than 0.
  * 
  * \param[in]     parbuf  DGTREALMP parameter buffer 
  * \param[in]      snrdb  SNR in dB

@@ -23,12 +23,14 @@ struct ltfat_dgtmp_params
 {
     // ltfat_dgtrealmp_hint  hint;
     ltfat_dgtmp_alg       alg;
+    double                atprodreltoldb;
+    double                atprodreltoladj;
     long double           errtoldb;
     long double           errtoladj;
     double                kernrelthr;
     size_t                maxit;
     size_t                maxatoms;
-    size_t             iterstep;
+    size_t                iterstep;
     int                   verbose;
     int                   initwasrun;
     int                   treelevels;
