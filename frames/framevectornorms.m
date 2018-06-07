@@ -22,7 +22,7 @@ function vnorms = framevectornorms(F,L,varargin)
 %
 %   By default, the function returns the norm of vectors used for
 %   synthesis. Frames like 'dgtreal', 'filterbankreal' do not contain the 
-%   ''redundant'' conjugate-symmetrix vectors and their synthesis operator
+%   ''redundant'' conjugate-symmetric vectors and their synthesis operator
 %   is not linear. Therefore the vectors used in synthesis do not have 
 %   an explicit form and their norm is unspecified. The vectors used for 
 %   analysis are well defined and can be obtained by passing additional
@@ -38,6 +38,7 @@ complainif_notvalidframeobj(F,thismfile);
 complainif_notposint(L,'L',thismfile);
 
 definput.keyvals.idx=[];
+definput.flags.method = {'auto', 'slow'};
 definput.flags.anasyn = {'syn','ana'};
 [flags,kv,idx]=ltfatarghelper({'idx'},definput,varargin);
 
@@ -68,33 +69,61 @@ end
 
 F = frameaccel(F,L);
 vnorms = zeros(numel(idx),1);
-    
-switch F.type
-    case 'gen'
-        [~,vnorms] = normalize(F.g(:,idx));
-    case {'dgt','dgtreal','dwilt','wmdct'}
-        vnorms(:) = norm(F.g);
-    case {'filterbank','filterbankreal','ufilterbank'}
-        [~,scal] = filterbankscale(F.g,L,'2');
-        channorm = 1./scal;
-        subidx = [0; cumsum(L./F.a(:,1).*F.a(:,2))];
-        for ii = 1:numel(vnorms)
-           vnorms(ii) = channorm(find( idx(ii) > subidx, 1,'last'));
-        end
-    case { 'dft','dftreal',...
-           'dcti','dctii','dctiii','dctiv',...
-           'dsti','dstii','dstiii','dstiv' }
-         vnorms(:) = 1;
-    otherwise
-        % Fallback option
-        if ~flags.do_syn
-            error('%s: Unsupported frame.',thismfile);
-        end
 
-        ctmp = zeros(N,1);
-        for ii = 1:numel(vnorms)
-            ctmp(idx(ii)) = 1;
-            vnorms(ii) = norm(F.frsyn(ctmp));
-            ctmp(:) = 0;
-        end
+if flags.do_auto
+    switch F.type
+        case 'gen'
+            [~,vnorms] = normalize(F.g(:,idx));
+        case {'dgt','dgtreal','dwilt','wmdct'}
+            vnorms(:) = norm(F.g);
+        case {'filterbank','filterbankreal','ufilterbank'}
+            [~,scal] = filterbankscale(F.g,L,'2');
+            channorm = 1./scal;
+            subidx = [0; cumsum(L./F.a(:,1).*F.a(:,2))];
+            for ii = 1:numel(vnorms)
+               vnorms(ii) = channorm(find( idx(ii) > subidx, 1,'last'));
+            end
+        case { 'dft','dftreal',...
+               'dcti','dctii','dctiii','dctiv',...
+               'dsti','dstii','dstiii','dstiv', 'identity'}
+             vnorms(:) = 1;
+        case 'fwt'
+            [g, a] = wfbt2filterbank({F.g,F.J,'dwt'});
+            vnorms = framevectornorms(frame('filterbank',g,a,numel(g)),L,idx);
+        case 'ufwt'
+            g = wfbt2filterbank({F.g,F.J,'dwt'});
+            vnorms = framevectornorms(frame('filterbank',g,1,numel(g)),L,idx);
+        case 'wfbt'
+            [g, a] = wfbt2filterbank(F.info.wt);
+            vnorms = framevectornorms(frame('filterbank',g,a,numel(g)),L,idx);
+        case 'uwfbt'
+            g = wfbt2filterbank(F.info.wt);
+            vnorms = framevectornorms(frame('filterbank',g,1,numel(g)),L,idx);
+        case 'fusion'
+            idxaccum = 1;
+            for p = 1:numel(F.frames)
+                atno = frameclength(F.frames{p},L);
+                thisframeidx = idx(idx >= idxaccum & idx < idxaccum + atno);
+                vnorms(thisframeidx) = ...
+                    F.w(p)*framevectornorms(F.frames{p},L,thisframeidx-idxaccum+1);
+                idxaccum = idxaccum + atno;
+            end
+        otherwise
+            flags.do_slow = 1;
+    end
 end
+
+if flags.do_slow
+    % Fallback option
+    if ~flags.do_syn
+        error('%s: Unsupported frame.',thismfile);
+    end
+
+    ctmp = zeros(N,1);
+    for ii = 1:numel(vnorms)
+        ctmp(idx(ii)) = 1;
+        vnorms(ii) = norm(F.frsyn(ctmp));
+        ctmp(:) = 0;
+    end
+end
+
