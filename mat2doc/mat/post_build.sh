@@ -5,6 +5,15 @@ curdir={INST}
 echo "Changing to " $curdir
 
 cd $curdir
+
+bsNo="$(find . -type l -xtype l | wc -l)"
+if [ $bsNo -gt 0 ] 
+then
+     echo "******There are broken symlinks!******" 
+     find . -type l -xtype l
+     exit 1 
+fi
+
 # We do not need any of these. They only work in Matlab
 # rm -Rf mulaclab
 # rm -Rf thirdparty/GPC
