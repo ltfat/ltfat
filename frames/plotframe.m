@@ -87,6 +87,15 @@ switch(F.type)
     info.J = F.J;
     info.dim = 1;
     plotwavelets(insig,info,varargin{:});  
+ case 'fusion'
+    idxaccum = 1;
+    L = framelengthcoef(F,numel(insig));
+    for p = 1:numel(F.frames)
+        atno = frameclength(F.frames{p},L);
+        figure(p);
+        plotframe(F.frames{p},insig(idxaccum:idxaccum+atno-1),varargin{:});
+        idxaccum = idxaccum + atno;
+    end
  case 'ufwt'
     info.J = F.J;
     outsig = plotwavelets(framecoef2native(F,insig),info,varargin{:}); 
