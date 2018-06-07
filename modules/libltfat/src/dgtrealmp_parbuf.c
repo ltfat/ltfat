@@ -156,13 +156,12 @@ error:
     return status;
 }
 
-
-
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(dgtrealmp_parbuf) * p,
-                                        const LTFAT_REAL g[], ltfat_int gl, ltfat_int a, ltfat_int M)
+                                        const LTFAT_REAL g[], ltfat_int gl,
+                                        ltfat_int a, ltfat_int M)
 {
-    ltfat_int amin = 0;
+    ltfat_int amax = 0, Mmax = 0;
     int status = LTFATERR_FAILED;
 
     CHECKNULL(p);
@@ -171,23 +170,27 @@ LTFAT_NAME(dgtrealmp_parbuf_add_genwin)(LTFAT_NAME(dgtrealmp_parbuf) * p,
     CHECK(LTFATERR_NOTPOSARG, a > 0, "a must be positive (passed %td)", a);
     CHECK(LTFATERR_NOTPOSARG, M > 0, "M must be positive (passed %td)", M);
     CHECK(LTFATERR_NOTAFRAME, M >= a, "M>=a failed.(passed (%td,%td))", M, a);
+    CHECK(LTFATERR_BADARG, M % a == 0 && M / a > 1, "M must be divisible by a and M/a>=2. Passed (%td,%td)", M, a);
 
     p->gl[p->P - 1] = gl;
     p->a[p->P - 1]  = a;
     p->M[p->P - 1]  = M;
     p->chanmask[p->P - 1] = 1;
 
-    amin = p->a[0];
+    amax = p->a[0]; Mmax = p->M[0];
+
     for (ltfat_int pidx = 1; pidx < p->P; pidx++)
-        if (p->a[pidx] < amin)
-            amin = p->a[pidx];
+    {
+        if (p->a[pidx] > amax) amax = p->a[pidx];
+        if (p->M[pidx] > Mmax) Mmax = p->M[pidx];
+    }
 
     for (ltfat_int pidx = 0; pidx < p->P; pidx++)
     {
-        CHECK(LTFATERR_BADARG, p->a[pidx] % amin == 0,
-              "a[%td] not divisible by amin %td (passed %td)", pidx, amin, p->a[pidx]);
-        CHECK(LTFATERR_BADARG, p->M[pidx] % amin == 0,
-              "M[%td] not divisible by amin %td (passed %td)", pidx, amin, p->M[pidx]);
+        CHECK(LTFATERR_BADARG, amax % p->a[pidx] == 0,
+              "a[%td] not divisible by amax=%td (passed %td)", pidx, amax, p->a[pidx]);
+        CHECK(LTFATERR_BADARG, Mmax % p->M[pidx] == 0,
+              "M[%td] not divisible by Mmax=%td (passed %td)", pidx, Mmax, p->M[pidx]);
     }
 
     CHECKMEM(p->g[p->P - 1] = LTFAT_NAME(malloc)(gl));
@@ -248,6 +251,17 @@ LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(
     return ltfat_dgtmp_setpar_phaseconv(p->params, pconv);
 error:
     return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_atprodreltoldb)(
+        LTFAT_NAME(dgtrealmp_parbuf)* p, double atprodreltoldb)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return ltfat_dgtmp_setpar_atprodreltoldb(p->params, atprodreltoldb);
+error:
+    return status;
+
 }
 
 LTFAT_API int

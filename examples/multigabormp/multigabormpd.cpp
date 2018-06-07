@@ -18,6 +18,7 @@ int main(int argc, char* argv[])
 
     string inFile, outFile, resFile;
     double targetsnrdb = 40;
+    double atprodreltoldb = -80;
     size_t maxit = 0, maxat = 0;
     double seglen = 0.0;
     double kernthr = 1e-4;
@@ -53,9 +54,11 @@ int main(int argc, char* argv[])
                   cxxopts::value<string>() )
         ("s,snr", "Target signal-to-noise ratio in dB",
          cxxopts::value<double>()->default_value(to_string(targetsnrdb)))
+        ("atprodtol", "Relative inner product tolerance in dB",
+         cxxopts::value<double>()->default_value(to_string(atprodreltoldb)))
         ("maxit", "Maximum number of iterations", cxxopts::value<size_t>() )
         ("maxat", "Maximum number of atoms", cxxopts::value<size_t>() )
-        ("alg", "MP algorithm. Available: mp(default),cyclicmp", cxxopts::value<string>() )
+        ("alg", "MP algorithm. Available: mp(default),cyclicmp,selfprojmp", cxxopts::value<string>() )
         ("kernthr", "Kernel truncation threshold",
          cxxopts::value<double>()->default_value(to_string(kernthr)))
         ("seglen", "Segment length in seconds. 0 disables the segmentation.",
@@ -116,6 +119,16 @@ int main(int argc, char* argv[])
             if(seglen < 0.0)
             {
                 cout << "seglen must be greater than 0." << endl;
+                exit(1);
+            }
+        }
+
+        if (result.count("atprodtol"))
+        {
+            atprodreltoldb = result["atprodtol"].as<double>();
+            if(atprodreltoldb > 0)
+            {
+                cout << "The relative inner product tolernace must be less than 0 dB." << endl;
                 exit(1);
             }
         }
@@ -238,6 +251,7 @@ int main(int argc, char* argv[])
 
         LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(pbuf, LTFAT_TIMEINV);
         LTFAT_NAME(dgtrealmp_setparbuf_pedanticsearch)(pbuf, do_pedanticsearch);
+        LTFAT_NAME(dgtrealmp_setparbuf_atprodreltoldb)(pbuf, atprodreltoldb);
         LTFAT_NAME(dgtrealmp_setparbuf_snrdb)(pbuf, targetsnrdb);
         LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(pbuf, kernthr);
         LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(pbuf, maxat);
@@ -276,7 +290,7 @@ int main(int argc, char* argv[])
         for (int nCh=0;nCh<numChannels;nCh++)
         {
             t1 = Clock::now();
-            LTFAT_NAME(dgtrealmp_execute_decompose)(plan, f[nCh].data(), (LTFAT_COMPLEX**) coef.data());
+            int status = LTFAT_NAME(dgtrealmp_execute_decompose)(plan, f[nCh].data(), (LTFAT_COMPLEX**) coef.data());
             t2 = Clock::now();
             dur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
             cout << "DURATION: " << dur << " ms" << std::endl;
@@ -292,7 +306,7 @@ int main(int argc, char* argv[])
             LTFAT_REAL snr; LTFAT_NAME(snr)(f[nCh].data(), fout[nCh].data(), L, &snr);
 
             cout << "atoms=" << atoms << ", iters=" << iters << ", SNR=" << snr << " dB"
-                 << ", perit=" << 1000.0 * dur / ((double)iters) << "us" << endl;
+                 << ", perit=" << 1000.0 * dur / ((double)iters) << "us, exit code=" << status <<endl;
 
         }
 

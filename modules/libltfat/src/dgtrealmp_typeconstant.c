@@ -18,6 +18,7 @@ ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
     params->iterstep = 0;
     params->treelevels = 10;
     params->cycles = 1;
+    params->atprodreltoldb = -80.0;
     params->ptype = LTFAT_TIMEINV;
 error:
     return status;
@@ -42,6 +43,19 @@ ltfat_dgtmp_params_free(ltfat_dgtmp_params* params)
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
     ltfat_free(params);
+error:
+    return status;
+}
+
+LTFAT_API int
+ltfat_dgtmp_setpar_atprodreltoldb(ltfat_dgtmp_params* params, double atprodreltoldb)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+    CHECK(LTFATERR_NOTPOSARG, atprodreltoldb <= 0,
+          "Nonpositive number is expected (passed %d)", atprodreltoldb);
+
+    params->atprodreltoldb = atprodreltoldb;
 error:
     return status;
 }

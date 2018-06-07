@@ -48,7 +48,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     const LTFAT_REAL* gtmp[2]; ltfat_int gltmp[2]; ltfat_int atmp[2];
     ltfat_int Mtmp[2];
     ltfat_int nextL;
-    ltfat_int amin;
+    ltfat_int amax = 0, Mmax = 0;
     LTFAT_NAME(dgtrealmp_state)* p = NULL;
     ltfat_dgt_params* dgtparams = NULL;
 
@@ -68,6 +68,8 @@ LTFAT_NAME(dgtrealmp_init_gen)(
               "M[%td] must be positive (passed %td)", pIdx, M[pIdx]);
         CHECK(LTFATERR_NOTAFRAME, M[pIdx] >= a[pIdx],
               "M[%td]>=a[%td] failed passed (%td,%td)", pIdx, pIdx,  M[pIdx], a[pIdx]);
+        CHECK(LTFATERR_BADARG, M[pIdx] % a[pIdx] == 0,
+              "M[%td] must be divisible by a[%td]. Passed (%td,%td)", pIdx, pIdx, M, a);
 
         CHECK(LTFATERR_BADARG, gl[pIdx] <= L,
               "gl[%td]<=L failed. Window is too long. passed (%td, %td)",
@@ -78,17 +80,21 @@ LTFAT_NAME(dgtrealmp_init_gen)(
               "Window g[%td] is not normalized. The norm is %.3f.", pIdx, gnorm);
     }
 
-    amin = a[0];
-    for (ltfat_int pIdx = 1; pIdx < P; pIdx++)
-        if (a[pIdx] < amin )
-            amin = a[pIdx];
+    amax = a[0];
+    Mmax = M[0];
 
-    for (ltfat_int pIdx = 0; pIdx < P; pIdx++)
+    for (ltfat_int pIdx = 1; pIdx < P; pIdx++)
     {
-        CHECK( LTFATERR_BADARG, a[pIdx] % amin == 0,
-               "a[%td] not divisible by amin %td (passed %td)", pIdx, amin, a[pIdx]);
-        CHECK( LTFATERR_BADARG, M[pIdx] % amin == 0,
-               "M[%td] not divisible by amin %td (passed %td)", pIdx, amin, M[pIdx]);
+        if (a[pIdx] > amax ) amax = a[pIdx];
+        if (M[pIdx] > Mmax ) Mmax = M[pIdx];
+
+        for (ltfat_int pIdx2 = 0; pIdx2 <= pIdx; pIdx2++)
+        {
+            CHECK( LTFATERR_BADARG, amax % a[pIdx2] == 0,
+                    "a[%td] not divisible by amax=%td (passed %td)", pIdx2, amax, a[pIdx2]);
+            CHECK( LTFATERR_BADARG, Mmax % M[pIdx2] == 0,
+                    "M[%td] not divisible by Mmax=%td (passed %td)", pIdx2, Mmax, M[pIdx2]);
+        }
     }
 
     nextL = ltfat_dgtlengthmulti(L, P, a, M);
@@ -300,8 +306,7 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
     p->params->errtoladj = powl((long double)10.0,
                                 p->params->errtoldb / 10.0) * p->iterstate->fnorm2;
 
-    if (istate->fnorm2 == 0.0)
-        return LTFAT_DGTREALMP_STATUS_EMPTY;
+    CHECK( LTFAT_DGTREALMP_STATUS_EMPTY, istate->fnorm2 > 0.0, "Zero energy signal");
 
     for (ltfat_int k = 0; k < p->P; k++)
     {
@@ -324,6 +329,12 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
                 p->M2[k] * p->N[k] * sizeof * p->iterstate->suppind[k] );
     }
 
+    kpoint origpos;
+    LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, &origpos);
+    LTFAT_REAL initcmax = ltfat_norm(istate->c[PTOI(origpos)]);
+
+    CHECK( LTFAT_DGTREALMP_STATUS_EMPTY, initcmax > 0.0, " Sanity check (zero max init in prod)");
+    p->params->atprodreltoladj = pow(10.0, p->params->atprodreltoldb / 10.0) * initcmax;
 error:
     return status;
 }
@@ -351,6 +362,12 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
         if ( LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, &origpos)
              != LTFATERR_SUCCESS )
             return LTFAT_DGTREALMP_STATUS_EMPTY;
+
+        if (ltfat_norm(s->c[PTOI(origpos)]) < p->params->atprodreltoladj)
+        {
+            printf("At prod: %.6f \n",10.0*log10(ltfat_norm(s->c[PTOI(origpos)])));
+            return LTFAT_DGTREALMP_STATUS_ATPRODTOL;
+        }
 
         if ( !s->suppind[PTOI(origpos)] ) s->curratoms++;
 
@@ -382,6 +399,7 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
 
         if (s->currit >= p->params->maxit)
             return LTFAT_DGTREALMP_STATUS_MAXITER;
+
     }
 
     return status;
