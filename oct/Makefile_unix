@@ -33,7 +33,7 @@ ifndef FFTW_LIBS
 FFTW_LIBS := $(shell $(MKOCTFILE) -p FFTW_LIBS)
 endif
 
-export CXXFLAGS := $(shell $(MKOCTFILE) -p CXXFLAGS) -std=gnu++11 -Wall -DLTFAT_LARGEARRAYS
+export CXXFLAGS := $(shell $(MKOCTFILE) -p CXXFLAGS) -std=gnu++11 -Wall -DLTFAT_LARGEARRAYS $(OPTCXXFLAGS)
 # export is necessary, otherwise LFLAGS won't have any effect
 # at least on Windows and on Mac
 export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS) 

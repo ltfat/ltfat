@@ -37,7 +37,7 @@ oct:
 	# Copy to the common place.
 	mv build/libltfat.a ../lib/
 	# Compile oct and mex files
-	$(MAKE) -C ../oct -f Makefile_unix
+	$(MAKE) -C ../oct -f Makefile_unix OPTCXXFLAGS=-DLTFAT_BUILD_STATIC
 	# Do postbuild explicitly so it is not called before
 	# oct files are finished
 	$(MAKE) postbuild
