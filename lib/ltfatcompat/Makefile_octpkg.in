@@ -19,6 +19,7 @@ export NOMEX=1
 ifeq ($(OS),Windows_NT)
 	# Removes -fPIC from CFLAGS
 	export MINGW=1
+	export OPTCXXFLAGS=-DLTFAT_BUILD_STATIC
 	# If OS==Windows_NT, the makefiles use Windows commands for
 	# file copy, delete and directory creation.
 	# To avoid that and fallback to posix compatible commands
@@ -37,7 +38,7 @@ oct:
 	# Copy to the common place.
 	mv build/libltfat.a ../lib/
 	# Compile oct and mex files
-	$(MAKE) -C ../oct -f Makefile_unix OPTCXXFLAGS=-DLTFAT_BUILD_STATIC
+	$(MAKE) -C ../oct -f Makefile_unix 
 	# Do postbuild explicitly so it is not called before
 	# oct files are finished
 	$(MAKE) postbuild
