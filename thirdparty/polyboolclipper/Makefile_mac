@@ -26,7 +26,7 @@ MEXSRC=polyboolmex.cpp clipper.cpp
 LIBS=-L. -L"$(MATLABROOT)/bin/$(ARCH)" -lmex -lmx -lm
 	  
 INCLUDES= -I"$(MATLABROOT)/extern/include" -I.
-CXXFLAGS=-fPIC -O3 -Wall -shared -DMATLAB_MEX_FILE
+CXXFLAGS=-fPIC -O3 -Wall -shared -DMATLAB_MEX_FILE -DMATLAB_MEXCMD_RELEASE=R2017b
 
 all:
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(MEXSRC) $(LIBS) -o $(MEXTGT) 
