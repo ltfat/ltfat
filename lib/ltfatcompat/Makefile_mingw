@@ -15,9 +15,9 @@ OPTCFLAGS=-DMATLABFORTRAN -DDLL_EXPORT_SYMBOLS -DLTFAT_LARGEARRAYS
 .PHONY: all clean
 
 all: 
-	mingw32-make -C .. build/libltfat.dll OPTCFLAGS="$(OPTCFLAGS)" BLASLAPACKLIBS="$(MATLABLINKFLAGS)" FFTWLIBS="-L../mex $(DFFTW) $(SFFTW)" MINGW=1
-	copy /Y ..\build\libltfat.dll ..\..\mex
+	mingw32-make -C ..\..\libltfat build/libltfat.dll OPTCFLAGS="$(OPTCFLAGS)" BLASLAPACKLIBS="$(MATLABLINKFLAGS)" FFTWLIBS="-L../mex $(DFFTW) $(SFFTW)" MINGW=1
+	copy /Y ..\..\libltfat\build\libltfat.dll ..\..\mex
 
 clean:
-	mingw32-make -C .. clean
+	mingw32-make -C ..\..\libltfat clean
 	del /Q /F ..\..\mex\libltfat.dll
