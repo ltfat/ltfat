@@ -1,5 +1,6 @@
 Version 2.3.1 13/06 2018
 	* multidgtrealmp: Introduced 2 additional MP variants
+	* Fixed Matlab 2018a MEX compilation issue
 	* Bug fixes:
 	multidgtrealmp: 'pedanticsearch' option now works correctly with 'freqinv'
 	ifilterbank: Fixed the multichannel issue
