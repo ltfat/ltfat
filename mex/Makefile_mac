@@ -27,7 +27,7 @@ ifndef SFFTW
 endif
 
 
-CFLAGS=-shared -fPIC -Wall -std=c99 -DMATLAB_MEX_FILE -DLTFAT_LARGEARRAYS
+CFLAGS=-shared -fPIC -Wall -std=c99 -DMATLAB_MEX_FILE -DLTFAT_LARGEARRAYS -DMATLAB_MEXCMD_RELEASE=R2017b
 SEARCHPATHS=-I../libltfat/modules/libltfat/include -I$(MATLABROOT)/extern/include 
 
 # the following adds parameters to CFLAGS
