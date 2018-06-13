@@ -64,20 +64,34 @@ if F.realinput
             upper(mfilename));
         %end;
 else
-    
-  % Generic code handles all frames where there are no extra coefficients
-  % in the representation
   Ncoef = framered(F)*L;
   % sprintf for Octave compatibility
   assert(abs(Ncoef-round(Ncoef))<1e-3,...
          sprintf('%s: There is a bug. Ncoef=%d should be an integer.',...
          upper(mfilename),Ncoef));
+  % Fix the system length
+  Faccel = frameaccel(F,L);
   Ncoef=round(Ncoef);
   G = zeros(L,Ncoef);
-  tmpf = zeros(Ncoef,1); tmpf(1) = 1;
-  for n = 1:Ncoef
-      G(:,n) = frsyn(F,tmpf);
-      tmpf = circshift(tmpf,1);
+
+  switch F.type
+      case {'ufwt','uwfbt','uwpfbt'}
+          for nstep = 1:L:Ncoef
+              G(:,nstep) = comp_framevector(Faccel, Ncoef, nstep);
+              for l = 1:L-1
+                 G(:, nstep+l) = circshift(G(:, nstep+l-1), 1);
+              end
+          end
+      otherwise
+          tmpf = zeros(Ncoef,1); tmpf(1) = 1;
+          for n = 1:Ncoef
+              G(:,n) = Faccel.frsyn(tmpf);
+              tmpf = circshift(tmpf,1);
+          end
   end
 end;
+
+function g = comp_framevector(Faccel,Ncoef,nidx)
+tmpf = zeros(Ncoef,1); tmpf(nidx) = 1;
+g = Faccel.frsyn(tmpf);
 
