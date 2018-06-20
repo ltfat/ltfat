@@ -73,14 +73,36 @@ else
   Faccel = frameaccel(F,L);
   Ncoef=round(Ncoef);
   G = zeros(L,Ncoef);
+  
+  Ftype = F.type;
+  
+  if strcmpi(Ftype,'filterbank') && all(F.a(:,2) == 1)
+      % Only integer-subsamped filterbanks are translation-invariant
+      Ftype = 'regfilterbank';
+  end
 
-  switch F.type
+  switch Ftype
       case {'ufwt','uwfbt','uwpfbt'}
           for nstep = 1:L:Ncoef
               G(:,nstep) = comp_framevector(Faccel, Ncoef, nstep);
               for l = 1:L-1
                  G(:, nstep+l) = circshift(G(:, nstep+l-1), 1);
               end
+          end
+      case {'wfbt','wpfbt','ufilterbank','regfilterbank'}
+          cnative = framecoef2native(Faccel, zeros(Ncoef,1));
+          if iscell(cnative)
+              Lc = cellfun(@(cEl) size(cEl,1), cnative);
+          else
+              Lc = ones(size(cnative,2),1)*size(cnative,1);
+          end
+          nstep = 1;
+          for ii = 1:numel(Lc)
+              G(:,nstep) = comp_framevector(Faccel, Ncoef, nstep);
+              for l = 1:Lc(ii)-1
+                 G(:, nstep+l) = circshift(G(:, nstep + l - 1), L/Lc(ii));
+              end              
+              nstep = nstep + Lc(ii);
           end
       otherwise
           tmpf = zeros(Ncoef,1); tmpf(1) = 1;
