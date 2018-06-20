@@ -178,7 +178,7 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 % Date: 16.12.16
 
 complainif_notenoughargs(nargin,2,upper(mfilename));
-complainif_notposint(fs,'fs',upper(mfilename));
+complainif_notposscalar(fs,'fs',upper(mfilename));
 complainif_notposint(Ls,'Ls',upper(mfilename));
 
 firwinflags=getfield(arg_firwin,'flags','wintype');

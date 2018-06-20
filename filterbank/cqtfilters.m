@@ -142,9 +142,9 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 
 %% Check input arguments
 complainif_notenoughargs(nargin,5,upper(mfilename));
-complainif_notposint(fs,'fs',upper(mfilename));
-complainif_notposint(fmin,'fmin',upper(mfilename));
-complainif_notposint(fmax,'fmax',upper(mfilename));
+complainif_notposscalar(fs,'fs',upper(mfilename));
+complainif_notposscalar(fmin,'fmin',upper(mfilename));
+complainif_notposscalar(fmax,'fmax',upper(mfilename));
 complainif_notposint(bins,'bins',upper(mfilename));
 complainif_notposint(Ls,'Ls',upper(mfilename));
 
