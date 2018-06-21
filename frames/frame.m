@@ -66,6 +66,11 @@ function F=frame(ftype,varargin);
 %   transforms |dcti|, |dctii|, |dctiii|, |dctiv|, |dsti|, |dstii|,
 %   |dstiii| or |dstiv|.
 %
+%   `frame('reddft',red)` constructs so called harmonic Parseval tight
+%   frame or redundant dft with redundancy `red`. The frame accepts any 
+%   `red`, but |frana| will only work for signal lengths `Ls` for which 
+%   the number of coefficients `Ls*red` is an integer.
+%
 %   `frame('dftreal')` constructs a normalized |fftreal| basis for
 %   real-valued signals of even length only. The basis is normalized
 %   to ensure that is it orthonormal.
@@ -257,11 +262,22 @@ switch(ftype)
   case 'identity'
     F.frana=@(insig) insig;
     F.frsyn=@(insig) insig;
-    
+ 
   case 'dft'
     F.frana=@(insig) dft(insig,[],1);
     F.frsyn=@(insig) idft(insig,[],1);
     
+  case 'reddft'
+    F.red = 1;
+    if nargin > 1, F.red = varargin{1}; end
+    if ~isscalar(F.red) || F.red < 1
+        error('%s: Redundancy must be greater or equal to 1.',upper(mfilename));
+    end
+    F.frana     = @(insig) dft(insig,F.red*size(insig,1),1);
+    F.frsyn     = @(insig) postpad(idft(insig,[],1),size(insig,1)/F.red);
+    F.lengthcoef= @(Ncoef) Ncoef/F.red;
+    F.clength   = @(L) L*F.red;
+
   case 'dftreal'
     F.frana=@(insig) fftreal(insig,[],1)/sqrt(size(insig,1));
     F.frsyn=@(insig) ifftreal(insig,(size(insig,1)-1)*2,1)*sqrt((size(insig,1)-1)*2);
