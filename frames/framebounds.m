@@ -176,7 +176,7 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
     
     % Lower frame bound
     frameop2 = @(x) F.frsyn(F.frana(x));
-    invfrop = @(x) pcg(frameop2,x,pcgopts.tol,pcgopts.maxit);
+    invfrop = @(x) pcgwrapper(frameop2,x,pcgopts.tol,pcgopts.maxit);
     
     % Test convergence of pcg
     test = randn(L,1);
@@ -215,6 +215,11 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
     end;
   end;
   
+end
+
+% In order to mute pprinting out pcg progress
+function [y,flag]=pcgwrapper(varargin)
+[y,flag,dummyrelres,dummyiter] = pcg(varargin{:});
 end
 
 % The function has been written in this way, because Octave (at the time
