@@ -34,8 +34,6 @@ MEXBASESAFE=\
 	comp_filterbank_fftbl \
 	comp_ifilterbank_fft \
 	comp_ifilterbank_fftbl \
-    comp_filterbank \
-	comp_ifilterbank \
     comp_filterbankreassign \
     comp_filterbankphasegrad \
 	comp_multidgtrealmp
