@@ -108,13 +108,7 @@ NOCOMPLEXFMTCHANGE
 #define DEBUGINFO
 #endif
 
-/** HEADERS */
-#include "ltfat.h"
-#include "ltfat/macros.h"
-#include <stdio.h>
-#include <string.h>
-#include <mex.h>
-#include <complex.h>
+#include "ltfat_mex_includes.h"
 /* This is just for the case when we want to skip registration of the atExit function */
 EXPORT_SYM
 void mexFunctionInner( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
@@ -284,6 +278,9 @@ void checkArgs(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]);
 // Returns size of datatype defined by classid in bytes
 mwSize sizeofClassid(mxClassID classid);
 
+void
+clearPRHScopy( mxArray* prhsAlt, const mxArray* prhs);
+
 
 mwSize sizeofClassid(mxClassID classid)
 {
@@ -316,48 +313,21 @@ mxArray *ltfatCreateMatrix(mwSize M, mwSize N, mxClassID classid, mxComplexity c
    return ltfatCreateNdimArray(2, dims, classid, complexFlag);
 }
 
-mxArray *ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid, mxComplexity complexFlag)
+mxArray*
+ltfatCreateNdimArray(mwSize ndim, const mwSize *dims, mxClassID classid, mxComplexity complexFlag)
 {
    mxArray* out = NULL;
-   mwIndex dummyndim = 1;
-   const mwSize dummyDims[] = {0};
 
    if (complexFlag == mxREAL)
-   {
-      out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxREAL);
-      mxSetDimensions(out, dims, ndim);
-      mwSize L = mxGetNumberOfElements(out);
-      if(L)
-      {
-           void* tmpData =  mxMalloc(L * sizeofClassid(classid));
-          if(!tmpData)
-              mexErrMsgTxt("Out of memory.");
-           mxSetData(out,tmpData);
-      }
-   }
-#ifdef NOCOMPLEXFMTCHANGE
+       out = mxCreateNumericArray( ndim, dims, classid, mxREAL);
+#if (MX_HAS_INTERLEAVED_COMPLEX) || defined(NOCOMPLEXFMTCHANGE) 
    else if (complexFlag == mxCOMPLEX)
-   {
-      //out = mxCreateNumericArray(ndim,dims,classid,mxCOMPLEX);
-      out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxCOMPLEX);
-      mxSetDimensions(out, dims, ndim);
-      mwSize L = mxGetNumberOfElements(out);
-      if(L)
-      {
-          void* tmpData = mxMalloc(L * sizeofClassid(classid));
-          if(!tmpData)
-              mexErrMsgTxt("Out of memory.");
-          mxSetData(out, tmpData);
-
-          tmpData = mxMalloc(L * sizeofClassid(classid));
-          if(!tmpData)
-              mexErrMsgTxt("Out of memory.");
-          mxSetImagData(out, tmpData);
-      }
-   }
+       out = mxCreateNumericArray( ndim, dims, classid, mxCOMPLEX);
 #else
    else if (complexFlag == mxCOMPLEX)
    {
+       mwIndex dummyndim = 1;
+       const mwSize dummyDims[] = {0};
       // Ugly...
       out = mxCreateNumericArray(dummyndim, dummyDims, classid, mxCOMPLEX);
       // Set correct dimensions
@@ -422,16 +392,16 @@ mxArray* recastToSingle(mxArray* prhsEl)
       for (mwIndex jj = 0; jj < mxGetNumberOfElements(prhsEl); jj++)
       {
          mxArray* cEl = mxGetCell(prhsEl, jj);
-         if (checkIsSingle(cEl))
-         {
-            // Elements of cell-arrays need to be duplicated to avoid double-free
-            // issue which occures when copying only a pointer.
-            mxSetCell(tmpCell, (mwIndex) jj, mxDuplicateArray(cEl));
-         }
-         else
-         {
+         // if (checkIsSingle(cEl))
+         // {
+         //    // Elements of cell-arrays need to be duplicated to avoid double-free
+         //    // issue which occures when copying only a pointer.
+         //    mxSetCell(tmpCell, (mwIndex) jj, mxDuplicateArray(cEl));
+         // }
+         // else
+         // {
             mxSetCell(tmpCell, (mwIndex) jj, recastToSingle(cEl));
-         }
+         // }
       }
       return tmpCell;
    }
@@ -461,31 +431,28 @@ mxArray* recastToSingle(mxArray* prhsEl)
    mwSize elToCopy = mxGetNumberOfElements(prhsEl);
 
    if (mxIsComplex(prhsEl))
-   {
       tmpEl = mxCreateNumericArray(ndim, dims, mxSINGLE_CLASS, mxCOMPLEX);
-   }
    else
-   {
       tmpEl = mxCreateNumericArray(ndim, dims, mxSINGLE_CLASS, mxREAL);
-   }
 
-   double* prhsElPtr = (double*) mxGetPr(prhsEl);
-   float* tmpElPtr = (float*) mxGetPr(tmpEl);
+   double* prhsElPtr = (double*) mxGetData(prhsEl);
+   float* tmpElPtr = (float*) mxGetData(tmpEl);
 
    for (mwIndex jj = 0; jj < elToCopy; jj++)
-   {
       *(tmpElPtr++) = (float)( *(prhsElPtr++) );
-   }
 
    if (mxIsComplex(prhsEl))
    {
-      double* prhsElPtr_i = (double*) mxGetPi(prhsEl);
-      float* tmpElPtr_i = (float*) mxGetPi(tmpEl);
+#if (MX_HAS_INTERLEAVED_COMPLEX)
+       for (mwIndex jj = elToCopy; jj < 2*elToCopy; jj++)
+           *(tmpElPtr++) = (float)( *(prhsElPtr++) );
+#else
+      double* prhsElPtr_i = (double*) mxGetImagData(prhsEl);
+      float* tmpElPtr_i = (float*) mxGetImagData(tmpEl);
 
       for (mwIndex jj = 0; jj < elToCopy; jj++)
-      {
          *(tmpElPtr_i++) = (float)( *(prhsElPtr_i++) );
-      }
+#endif
    }
 
    return tmpEl;
@@ -611,7 +578,7 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 #endif
 
    // Copy input parameters
-   const mxArray **prhsAlt = mxMalloc(nrhs * sizeof(mxArray *));
+   mxArray **prhsAlt = mxMalloc(nrhs * sizeof(mxArray *));
    memcpy((void *)prhsAlt, (void *)prhs, nrhs * sizeof(mxArray *));
 
    int isAnySingle = 0;
@@ -628,7 +595,7 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 #ifndef NOCOMPLEXFMTCHANGE
       for (int ii = 0; ii < nrhs; ii++)
          if (recastToComplexIndArr[ii])
-            prhsAlt[ii] = LTFAT_NAME_SINGLE(mexSplit2combined)(prhsAlt[ii]);
+            prhsAlt[ii] = LTFAT_NAME_SINGLE(mexSplit2combined)(prhsAlt[ii] ,prhs[ii]);
 #endif
 
 #if defined(COMPLEXINDEPENDENT)
@@ -636,21 +603,21 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
       int isAllReal = 0;
       int isAllComplex = 0;
 
-      FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
+      FORSUBSET(mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
       if ( !(isAllReal = checkIsReal(*prhsElPtr))) break;
 
-      FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
+      FORSUBSET(mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
       if ( !(isAllComplex = !checkIsReal(*prhsElPtr))) break;
 
       if (!(isAllReal ^ isAllComplex))
          mexErrMsgTxt("Template subsystem error. My bad .");
 
       if (isAllReal)
-         LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs, plhs, nrhs, prhsAlt);
+         LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs, plhs, nrhs, (const mxArray**)prhsAlt);
       else if (isAllComplex)
-         LTFAT_NAME_COMPLEXSINGLE(ltfatMexFnc)(nlhs, plhs, nrhs, prhsAlt);
+         LTFAT_NAME_COMPLEXSINGLE(ltfatMexFnc)(nlhs, plhs, nrhs, (const mxArray**)prhsAlt);
 #else
-      LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs, plhs, nrhs, prhsAlt);
+      LTFAT_NAME_SINGLE(ltfatMexFnc)(nlhs, plhs, nrhs, (const mxArray**)prhsAlt);
 #endif //COMPLEXINDEPENDENT
 
    }
@@ -661,7 +628,7 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 #ifndef NOCOMPLEXFMTCHANGE
       for (int ii = 0; ii < nrhs; ii++)
          if (recastToComplexIndArr[ii])
-            prhsAlt[ii] = LTFAT_NAME_DOUBLE(mexSplit2combined)(prhsAlt[ii]);
+            prhsAlt[ii] = LTFAT_NAME_DOUBLE(mexSplit2combined)(prhsAlt[ii] ,prhs[ii]);
 
 #endif
 
@@ -671,27 +638,32 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
       int isAllReal = 0;
       int isAllComplex = 0;
 
-      FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
+      FORSUBSET(mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
       if ( !(isAllReal = checkIsReal(*prhsElPtr))) break;
 
-      FORSUBSET(const mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
+      FORSUBSET( mxArray **prhsElPtr, prhsAlt, prhsToCheckIfComplex)
       if ( !(isAllComplex = !checkIsReal(*prhsElPtr))) break;
 
       if (isAllReal == isAllComplex)
          mexErrMsgTxt("Template subsystem error. My bad...");
 
       if (isAllReal)
-         LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs, plhs, nrhs, prhsAlt);
+         LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs, plhs, nrhs, (const mxArray**)prhsAlt);
       else if (isAllComplex)
-         LTFAT_NAME_COMPLEXDOUBLE(ltfatMexFnc)(nlhs, plhs, nrhs, prhsAlt);
+         LTFAT_NAME_COMPLEXDOUBLE(ltfatMexFnc)(nlhs, plhs, nrhs, (const mxArray**)prhsAlt);
 
 #else
-      LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs, plhs, nrhs, prhsAlt);
+      LTFAT_NAME_DOUBLE(ltfatMexFnc)(nlhs, plhs, nrhs, (const mxArray**)prhsAlt);
 #endif
-
-
-      mxFree(prhsAlt);
    }
+
+   for (int n = 0; n < nrhs; n++)
+    {
+        // mexPrintf("%d, Equal? %d\n" ,n,prhsAlt[n] == prhs[n]);
+       clearPRHScopy(prhsAlt[n],prhs[n]);
+    }
+
+   mxFree(prhsAlt);
 
 
 #endif // TYPEDEPARGS
@@ -716,12 +688,38 @@ void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]
 
 #endif
 
+
    if (mexstatus < 0)
    {
         mexstatus = 0;
         mexErrMsgIdAndTxt("libltfat:internal", mexerrormsg);
    }
 }
+
+void
+clearPRHScopy( mxArray* prhsAlt, const mxArray* prhs)
+{
+
+    if (prhs != prhsAlt)
+    {
+        if( mxIsCell(prhsAlt) )
+        {
+            // mexPrintf("This is cell\n");
+            for( mwSize k = 0; k < mxGetNumberOfElements(prhsAlt); k++ )
+            {
+                mxArray* altEl = mxGetCell(prhsAlt,k);
+                mxArray* origEl = mxGetCell(prhs,k);
+                // mexPrintf("Element %d, Equal? %d\n" , k, altEl == origEl);
+                clearPRHScopy(altEl, origEl);
+
+                mxSetCell( prhsAlt, k, NULL);
+            }
+        }
+        // mexPrintf("Deleting\n");
+        mxDestroyArray(prhsAlt);
+    }
+}
+
 #endif // _LTFAT_MEX_TEMPLATEHELPER_H
 #endif // defined(MEX_FILE)
 

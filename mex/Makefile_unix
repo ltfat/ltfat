@@ -27,7 +27,14 @@ ifndef SFFTW
 endif
 
 # += to allow user defined values for CFLAGS
-CFLAGS+=-shared -fPIC -g -Wall -Wextra -std=c99 -DMATLAB_MEX_FILE -DLTFAT_LARGEARRAYS -DMATLAB_MEXCMD_RELEASE=R2017b
+CFLAGS+=-shared -fPIC -g -Wall -Wextra -std=c99 -DMATLAB_MEX_FILE -DLTFAT_LARGEARRAYS
+
+ifndef POST2018a
+CFLAGS+=-DMATLAB_MEXCMD_RELEASE=R2017b
+else
+CFLAGS+=-DMATLAB_MEXCMD_RELEASE=R2018a
+endif
+
 COMPTARGET?=release
 # the following adds parameters to CFLAGS
 include ../libltfat/comptarget.mk

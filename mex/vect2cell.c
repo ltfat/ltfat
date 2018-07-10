@@ -45,7 +45,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
 
    plhs[0] = mxCreateCellMatrix(M, 1);
    LTFAT_REAL* cPr[M];
-#ifdef LTFAT_COMPLEXTYPE
+#if defined(LTFAT_COMPLEXTYPE) && !(MX_HAS_INTERLEAVED_COMPLEX)
    LTFAT_REAL* cPi[M];
 #endif
 
@@ -54,7 +54,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
       mxArray* tmpA = ltfatCreateMatrix((mwSize)Lc[ii], W, LTFAT_MX_CLASSID, LTFAT_MX_COMPLEXITY);
       mxSetCell(plhs[0], ii, tmpA);
       cPr[ii] = mxGetData(tmpA);
-#ifdef LTFAT_COMPLEXTYPE
+#if defined(LTFAT_COMPLEXTYPE) && !(MX_HAS_INTERLEAVED_COMPLEX)
       cPi[ii] = mxGetImagData(tmpA);
 #endif
    }
@@ -68,13 +68,16 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
       for (mwIndex ii = 0; ii < M; ii++)
       {
          mwSize LcTmp = (mwSize)Lc[ii];
+         #if defined(LTFAT_COMPLEXTYPE) && (MX_HAS_INTERLEAVED_COMPLEX)
+            LcTmp *= 2;
+         #endif
          LTFAT_REAL* cTmp = cPr[ii] + w * LcTmp;
          memcpy(cTmp, xTmp, LcTmp * sizeof * cTmp);
          xTmp += LcTmp;
       }
    }
 
-#ifdef LTFAT_COMPLEXTYPE
+#if defined(LTFAT_COMPLEXTYPE) && !(MX_HAS_INTERLEAVED_COMPLEX)
    LTFAT_REAL* xPi = mxGetImagData(prhs[0]);
    for (mwIndex w = 0; w < W; w++)
    {

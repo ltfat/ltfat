@@ -7,7 +7,7 @@
 
 
 
-mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg);
+mxArray* LTFAT_NAME(mexSplit2combined)( mxArray *parg, const mxArray *pargorig);
 
 mxArray* LTFAT_NAME(mexCombined2split)( const mxArray *parg);
 
@@ -31,13 +31,16 @@ mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg)
       return (mxArray*)parg;
    }
 
+   if (mxIsComplex(parg))
+       return (mxArray*) parg;
+
    mwIndex ndim = mxGetNumberOfDimensions(parg);
    const mwSize *dims = mxGetDimensions(parg);
 
    mxArray* out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
    mwSize L = mxGetNumberOfElements(parg);
 
-   #ifdef NOCOMPLEXFMTCHANGE
+   #if defined(NOCOMPLEXFMTCHANGE) && !(MX_HAS_INTERLEAVED_COMPLEX)
     LTFAT_REAL *i_r = mxGetData(parg);
     LTFAT_REAL *o_r = mxGetData(out);
     LTFAT_REAL *o_i = mxGetImagData(out);
@@ -60,32 +63,42 @@ mxArray* LTFAT_NAME(mexReal2Complex)( const mxArray *parg)
 }
 
 
-mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg)
+mxArray* LTFAT_NAME(mexSplit2combined)( mxArray *parg, const mxArray *pargorig)
 {
    if(mxIsCell(parg))
    {
-      mxArray* tmpCell = mxCreateCellMatrix(mxGetM(parg), mxGetN(parg));
-      for(unsigned int jj=0;jj<mxGetNumberOfElements(parg);jj++)
+      mxArray* tmpCell = parg;
+      if (pargorig == parg)
+          tmpCell = mxCreateCellMatrix(mxGetM(parg), mxGetN(parg));
+
+      for(mwSize jj=0;jj<mxGetNumberOfElements(parg);jj++)
       {
-         mxSetCell(tmpCell, (mwIndex) jj, LTFAT_NAME(mexSplit2combined)(mxGetCell(parg, jj)));
+         mxArray* tmpCellEl = LTFAT_NAME(mexSplit2combined)( mxGetCell(parg, jj), mxGetCell(pargorig, jj));
+
+         mxSetCell(tmpCell, jj, tmpCellEl);
       }
+
       return tmpCell;
    }
 
    // just copy pointer if the element is not numeric
    if(!mxIsNumeric(parg))
-   {
       return (mxArray*)parg;
-   }
 
+   mxArray* out = NULL;
+#if (MX_HAS_INTERLEAVED_COMPLEX)
+   if (mxIsComplex(parg))
+       out = (mxArray*) parg;
+   else
+       out = LTFAT_NAME(mexReal2Complex)(parg);
+#else
    mwIndex ndim = mxGetNumberOfDimensions(parg);
    const mwSize *dims = mxGetDimensions(parg);
 
-   mxArray* out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
+   out = ltfatCreateNdimArray(ndim,dims,LTFAT_MX_CLASSID,mxCOMPLEX);
    mwSize L = mxGetNumberOfElements(parg);
 
    LTFAT_COMPLEX* outc = mxGetData(out);
-
    LTFAT_REAL *i_r= mxGetData(parg);
 
    if (mxIsComplex(parg))
@@ -93,23 +106,24 @@ mxArray* LTFAT_NAME(mexSplit2combined)( const mxArray *parg)
       LTFAT_REAL *i_i= mxGetImagData(parg);
 
       for (mwIndex ii=0;ii<L; ii++)
-      {
          outc[ii] = i_r[ii] + i_i[ii]*I;
-      }
    }
    else
    {
       /* No imaginary part */
       for (mwIndex ii=0;ii<L; ii++)
-      {
 	    outc[ii] = i_r[ii];
-      }
    }
+
+#endif
+   if (parg != pargorig && out != parg)
+       mxDestroyArray(parg);
    return out;
 }
 
 mxArray* LTFAT_NAME(mexCombined2split)( const mxArray *parg)
 {
+#if !(MX_HAS_INTERLEAVED_COMPLEX)
    if(mxIsCell(parg))
    {
       mxArray* tmpCell = mxCreateCellMatrix(mxGetM(parg), mxGetN(parg));
@@ -142,6 +156,9 @@ mxArray* LTFAT_NAME(mexCombined2split)( const mxArray *parg)
       outi[ii] = __imag__ pargc[ii];
    }
    return out;
+#else // NOOP in the new memory layout
+   return (mxArray*) parg;
+#endif
 }
 
 #endif

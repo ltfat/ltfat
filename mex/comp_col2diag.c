@@ -44,7 +44,7 @@ void LTFAT_NAME(ltfatMexFnc)(int UNUSED(nlhs), mxArray *plhs[],
    mwSize L = mxGetM(prhs[0]);
    plhs[0] = ltfatCreateMatrix(L, L, LTFAT_MX_CLASSID, LTFAT_MX_COMPLEXITY);
 
-   #ifdef NOCOMPLEXFMTCHANGE
+   #if defined(NOCOMPLEXFMTCHANGE) && !(MX_HAS_INTERLEAVED_COMPLEX)
    LTFAT_REAL* cout_r = mxGetData(plhs[0]);
    LTFAT_REAL* cin_r =  mxGetData(prhs[0]);
    LTFAT_NAME(fwd_col2diag)(cin_r,L,cout_r);

@@ -70,6 +70,8 @@ definput.flags.target={'auto','lib','mex','pbc','playrec','java','blockproc'};
 definput.flags.comptarget={'release','debug'};
 definput.flags.command={'compile','clean','test'};
 definput.flags.verbosity={'noverbose','verbose'};
+definput.flags.mexapi={'auto','legacy'};
+definput.keyvals.mexfile = [];
 definput.keyvals.jobs = [];
 
 s = which('ltfatarghelper');
@@ -255,8 +257,9 @@ if flags.do_compile
     
     [status,result] = callmake(make_exe,makefilename,'matlabroot','arch',...
                       'ext',ext,'dfftw',dfftw,'sfftw',sfftw,...
-                      flags.verbosity,...
-                      'comptarget',flags.comptarget,'jobs',kv.jobs);
+                      flags.verbosity,'target',kv.mexfile,...
+                      'comptarget',flags.comptarget,'jobs',kv.jobs,...
+                      flags.mexapi);
 
     if(~status)
       disp('Done.');
@@ -509,6 +512,7 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
   definput.keyvals.portaudio=[];
   definput.keyvals.extra=[];
   definput.keyvals.jobs =[];
+  definput.flags.targetapi={'auto','legacy'};
   definput.flags.verbosity={'noverbose','verbose'};
   [flags,kv]=ltfatarghelper({},definput,varargin);
   
@@ -544,10 +548,6 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
      systemCommand = [systemCommand, ' ',kv.extra,'=1']; 
   end
   
-  if ~isempty(kv.target)
-     systemCommand = [systemCommand,' ',kv.target];  
-  end
-  
   if ~isempty(kv.jobs)
       if isnumeric(kv.jobs)
         systemCommand = [systemCommand,sprintf(' -j%d',kv.jobs)];
@@ -555,12 +555,28 @@ function [status,result]=callmake(make_exe,makefilename,varargin)
         systemCommand = [systemCommand,sprintf(' -j%s',kv.jobs)];  
       end
   end
+ 
+  if ~isoctave && ~flags.do_legacy
+      matlabversion = version('-release');
+      if str2double(matlabversion(1:4)) >= 2018
+          systemCommand = [systemCommand,' POST2018a=1']; 
+      end
+  end
 
   if flags.do_verbose
       fprintf('Calling:\n    %s\n\n',systemCommand);
   end
+  
+  if ~isempty(kv.target)
+       if ~iscell(kv.target), kv.target = {kv.target}; end
+       for ii = 1:numel(kv.target)
+           [status,result]=system([systemCommand,' ',kv.target{ii}]);
+       end
+  else
+        [status,result]=system(systemCommand);
+  end
     
-  [status,result]=system(systemCommand);
+
   
   if flags.do_verbose && ~isoctave
      disp(result); 
