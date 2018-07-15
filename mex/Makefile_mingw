@@ -26,7 +26,13 @@ ifndef SFFTW
    SFFTW=-lfftw3f-3
 endif
 
-CFLAGS=-shared -s -Wall -std=c99 -I../libltfat/modules/libltfat/include -fvisibility=hidden -DLTFAT_LARGEARRAYS -DMATLAB_MEXCMD_RELEASE=R2017b
+CFLAGS=-shared -s -Wall -std=c99 -I../libltfat/modules/libltfat/include -fvisibility=hidden -DLTFAT_LARGEARRAYS 
+
+ifndef POST2018a
+CFLAGS+=-DMATLAB_MEXCMD_RELEASE=R2017b
+else
+CFLAGS+=-DMATLAB_MEXCMD_RELEASE=R2018a
+endif
 
 # the following adds parameters to CFLAGS
 include ../libltfat/comptarget.mk
