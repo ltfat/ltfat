@@ -31,17 +31,13 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
    mwSize M = mxGetNumberOfElements(prhs[1]);
    double* Lc = mxGetData(prhs[1]);
 
-
    /* Sanity check */
    mwSize sumLc = (mwSize) Lc[0];
    for (mwIndex ii = 1; ii < M; ii++)
-   {
       sumLc += (mwSize) Lc[ii];
-   }
    if (sumLc != L)
-   {
       mexErrMsgTxt("VECT2CELL: Sizes do not comply.");
-   }
+
 
    plhs[0] = mxCreateCellMatrix(M, 1);
    LTFAT_REAL* cPr[M];
@@ -61,6 +57,10 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
 
    LTFAT_REAL* xPr = mxGetData(prhs[0]);
 
+#if defined(LTFAT_COMPLEXTYPE) && (MX_HAS_INTERLEAVED_COMPLEX)
+   L *= 2;
+   for (mwIndex ii = 0; ii < M; ii++) Lc[ii] *= 2;
+#endif
 
    for (mwIndex w = 0; w < W; w++)
    {
@@ -68,9 +68,6 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray *plhs[],
       for (mwIndex ii = 0; ii < M; ii++)
       {
          mwSize LcTmp = (mwSize)Lc[ii];
-         #if defined(LTFAT_COMPLEXTYPE) && (MX_HAS_INTERLEAVED_COMPLEX)
-            LcTmp *= 2;
-         #endif
          LTFAT_REAL* cTmp = cPr[ii] + w * LcTmp;
          memcpy(cTmp, xTmp, LcTmp * sizeof * cTmp);
          xTmp += LcTmp;
