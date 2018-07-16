@@ -5,5 +5,5 @@ if nargin<3
 end
 
 if isempty(var) || ~isscalar(var) || ~isnumeric(var) || var<0 || rem(var,1)~=0 
-   error('%s: %s should be a positive integer.',upper(callfun),varname);
+   error('%s: %s should be non-negative integer.',upper(callfun),varname);
 end
