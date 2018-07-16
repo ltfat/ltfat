@@ -34,8 +34,13 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     const double* maskDouble = mxGetData(prhs[3]);
     mwSize a     = (mwSize)mxGetScalar(prhs[4]);
     LTFAT_REAL tol   = (LTFAT_REAL)mxGetScalar(prhs[5]);
-    int phasetype   = (int)mxGetScalar(prhs[6]) == 1 ? LTFAT_TIMEINV: LTFAT_FREQINV;
     const LTFAT_REAL* knownphase = mxGetData(prhs[7]);
+    int phasetype   = (int)mxGetScalar(prhs[6]);
+    switch (phasetype)
+    {
+        case 0: phasetype = LTFAT_FREQINV; break;
+        case 1: phasetype = LTFAT_TIMEINV; break;
+    }
 
     // Get matrix dimensions.
     mwSize M = mxGetM(prhs[0]);
