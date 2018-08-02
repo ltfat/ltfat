@@ -46,6 +46,10 @@
 %    QAM4           -  Quadrature amplitude modulation, order 4
 %    IQAM4          -  Inverse QAM of order 4
 %
+%  Tonal-transient separation
+%    tfjigsawsep      - Tonal-transient-residual separation using the T-F jigsaw puzzle algorithm.
+%    plottfjigsawsep  - Plot the separated layers.
+%
 %  For help, bug reports, suggestions etc. please visit 
 %  http://github.com/ltfat/ltfat/issues
 %

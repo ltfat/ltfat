@@ -1,3 +1,9 @@
+Version 2.4.0 XX/08 2018
+	* Added time-frequency jigsaw puzzle tonal-transinet-residual separation:
+	  tfjigsawsep, plottfjigsawsep, demo_tfjigsawsep
+	  Thanks to Daniel Haider.
+	* MEX files are now compatible with the new MATLAB 2018a API.
+
 Version 2.3.1 13/06 2018
 	* multidgtrealmp: Introduced 2 additional MP variants
 	* Fixed Matlab 2018a MEX compilation issue
@@ -16,7 +22,6 @@ Version 2.3.0 10/04 2018
 	* ltfat_inferno is now the default colormap.
 
 Version 2.2.1 14/12 2017
-
 	* Added optional debiasing to franalasso.
 
 	* Some adjustments in audfilters.
