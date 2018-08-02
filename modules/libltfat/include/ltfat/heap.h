@@ -3,6 +3,9 @@ typedef struct LTFAT_NAME(heap) LTFAT_NAME(heap);
 LTFAT_API LTFAT_NAME(heap)*
 LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s);
 
+LTFAT_API const LTFAT_REAL*
+LTFAT_NAME(heap_getdataptr)(LTFAT_NAME(heap)* h);
+
 LTFAT_API void
 LTFAT_NAME(heap_done)(LTFAT_NAME(heap)* h);
 

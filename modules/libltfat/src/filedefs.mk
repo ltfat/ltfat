@@ -6,7 +6,7 @@ files = dgt.c dgtreal_fb.c dgt_multi.c dgt_ola.c dgt_shear.c	\
 		dgt_shearola.c utils.c rtdgtreal.c circularbuf.c slicingbuf.c \
 		dgtrealwrapper.c dgtrealmp.c dgtrealmp_parbuf.c dgtrealmp_kernel.c dgtrealmp_guts.c maxtree.c \
 		slidgtrealmp.c \
-		filterbankphaseret.c
+		filterbankphaseret.c fbheapint.c
 
 files_complextransp =\
 ci_utils.c ci_windows.c spread.c wavelets.c goertzel.c \
