@@ -508,6 +508,10 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE *in, ltfat_int Lin,
                        ltfat_int Lfold, LTFAT_TYPE *out);
 
 LTFAT_API int
+LTFAT_NAME(log_array)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[]);
+
+
+LTFAT_API int
 LTFAT_NAME(reflect)(const LTFAT_TYPE* in, ltfat_int L, LTFAT_TYPE* out);
 
 LTFAT_API int

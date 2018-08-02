@@ -749,6 +749,20 @@ error:
     return status;
 }
 
+LTFAT_API int
+LTFAT_NAME(log_array)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[])
+{
+    int status = LTFATERR_FAILED;
+    CHECKNULL(in); CHECKNULL(out);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
+
+    for (ltfat_int l = 0; l < L; l++ )
+        out[l] = log(in[l] + LTFAT_REAL_MIN);
+
+error:
+    return status;
+}
+
 
 /* LTFAT_API int */
 /* LTFAT_NAME(postpad)(const LTFAT_TYPE* in, ltfat_int Ls, ltfat_int W, */
