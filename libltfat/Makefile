@@ -205,10 +205,10 @@ shared: $(SO_DTARGET) $(SO_STARGET) $(SO_DSTARGET)
 	$(MAKE) $(buildprefix)/$(headerbase).h USECPP=0 CC=gcc
 
 cleanobj:
-	@$(RMDIR) obj
+	@-$(RMDIR) obj
 
 clean: cleanobj
-	@$(RMDIR) build
+	@-$(RMDIR) build
 
 help:
 	@echo "USAGE: make [target]"
