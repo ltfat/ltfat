@@ -1,9 +1,8 @@
 LTFAT_API void
-LTFAT_NAME(fbmagphasegrad)(const LTFAT_REAL* logs,
-                              const LTFAT_REAL* sqtfr,
-                              ltfat_int N[], double a[], double fc[], ltfat_int M,
-                              ltfat_int neigh[], double posInfo[], LTFAT_REAL gderivweight,
-                              LTFAT_REAL tgrad[], LTFAT_REAL fgrad[]);
+LTFAT_NAME(fbmagphasegrad)(const LTFAT_REAL logs[], const LTFAT_REAL sqtfr[],
+                           const ltfat_int N[], const double a[], const double fc[], ltfat_int M,
+                           const ltfat_int neigh[], const double posInfo[], LTFAT_REAL gderivweight,
+                           LTFAT_REAL tgrad[], LTFAT_REAL fgrad[]);
 
 /* Filter bank heap integration (uniform case) - Start */
 struct LTFAT_NAME(heapinttask_ufb)
