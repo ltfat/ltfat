@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <float.h>
 #ifdef __cplusplus
 #include <complex>
 #include <cmath>
