@@ -40,30 +40,30 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     double* a = mxGetData(prhs[6]);
     mwSize M = (mwSize)mxGetScalar(prhs[7]);
 
-    ltfatInt NPtr[M];
+    ltfat_int NPtr[M];
 
     double* N  = mxGetData(prhs[8]);
 
     for (mwSize ii = 0; ii < M; ++ii)
-        NPtr[ii] = (ltfatInt) N[ii];
+        NPtr[ii] = (ltfat_int) N[ii];
 
     LTFAT_REAL tol = (LTFAT_REAL) mxGetScalar(prhs[9]);
     int phasetype = (int)mxGetScalar(prhs[10]);
 
-    const ltfatInt Nsum = mxGetM(mxs);
+    const ltfat_int Nsum = mxGetM(mxs);
 
     mwSize neighLen = mxGetNumberOfElements(mxneigh);
-    ltfatInt* neighPtr = ltfat_malloc(neighLen * sizeof * neighPtr);
+    ltfat_int* neighPtr = ltfat_malloc(neighLen * sizeof * neighPtr);
 
     const double* neighDoublePtr = mxGetData(mxneigh);
     for (mwSize ii = 0; ii < neighLen; ++ii)
-        neighPtr[ii] = (ltfatInt) neighDoublePtr[ii];
+        neighPtr[ii] = (ltfat_int) neighDoublePtr[ii];
 
 
     const LTFAT_REAL* posinfoPtr = mxGetData(mxposinfo);
 
     // Get matrix dimensions.
-    ltfatInt W = mxGetN(mxs);
+    ltfat_int W = mxGetN(mxs);
 
     // Create output matrix and zero it.
     plhs[0] = ltfatCreateNdimArray(mxGetNumberOfDimensions(mxs),

@@ -8,7 +8,7 @@
 
 #endif /* _LTFAT_MEX_FILE */
 
-#define MEX_FILE comp_ufilterbankmaskedhheapint.c
+#define MEX_FILE comp_ufilterbankmaskedheapint.c
 #include "ltfat_mex_template_helper.h"
 
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
