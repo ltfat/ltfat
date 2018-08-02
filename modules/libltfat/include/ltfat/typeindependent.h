@@ -18,6 +18,7 @@
 #include "linalg.h"
 #include "maxtree.h"
 #include "ti_windows.h"
+#include "filterbankphaseret.h"
 
 /*  --------- factorizations --------------- */
 
