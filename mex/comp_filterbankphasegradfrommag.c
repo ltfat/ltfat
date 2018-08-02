@@ -35,7 +35,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     double   gderivweight = mxGetScalar(prhs[8]);
 
     mwSize Nsum = mxGetM(mxs);
-    mwSize W = mxGetN(mxs);
+    //mwSize W = mxGetN(mxs);
 
     ltfat_int* NPtr = ltfat_malloc(M * sizeof * N);
     ltfat_int* NEIGHPtr = ltfat_malloc(mxGetNumberOfElements(mxneigh) * sizeof * N);

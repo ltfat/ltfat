@@ -37,6 +37,10 @@ MEXBASESAFE=\
     comp_filterbankreassign \
     comp_filterbankphasegrad \
     comp_filterbankphasegradfrommag \
+	comp_ufilterbankheapint \
+	comp_ufilterbankmaskedheapint \
+	comp_filterbankheapint \
+	comp_filterbankmaskedheapint \
 	comp_multidgtrealmp
 
 MEXBASEMORE =\
