@@ -1,24 +1,8 @@
 #include "ltfat.h"
 #include "ltfat/types.h"
 #include "ltfat/macros.h"
-#include "ltfat/heapint.h"
+#include "heapint_private.h"
 
-#define NORTHFROMW(w,M,N) ((((w) + 1) % (M)) + (w) - (w) % (M))
-#define SOUTHFROMW(w,M,N) (((w) - 1 + (M)) % (M) + (w) - (w) % (M))
-#define EASTFROMW(w,M,N)  (((w) + (M)) % ((M) * (N)))
-#define WESTFROMW(w,M,N)  (((w) - (M) + (M) * (N)) % ((M) * (N)))
-
-struct LTFAT_NAME(heapinttask)
-{
-    ltfat_int height;
-    ltfat_int N;
-    int do_real;
-    int* donemask;
-    void (*intfun)(const  LTFAT_NAME(heapinttask)*,
-                   const LTFAT_REAL*, const LTFAT_REAL*,
-                   ltfat_int, LTFAT_REAL* );
-    LTFAT_NAME(heap)* heap;
-};
 
 LTFAT_API LTFAT_NAME(heapinttask)*
 LTFAT_NAME(heapinttask_init)(ltfat_int height, ltfat_int N,
@@ -653,7 +637,7 @@ void LTFAT_NAME(heapintreal_relgrad)(const LTFAT_REAL* s,
     LTFAT_SAFEFREEALL(tgradw, fgradw);
 }
 
-#undef NORTHFROMW
-#undef SOUTHFROMW
-#undef WESTFROMW
-#undef EASTFROMW
+/* #undef NORTHFROMW */
+/* #undef SOUTHFROMW */
+/* #undef WESTFROMW */
+/* #undef EASTFROMW */

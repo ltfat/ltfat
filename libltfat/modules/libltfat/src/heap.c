@@ -22,6 +22,12 @@ LTFAT_NAME(heap_init)(ltfat_int initmaxsize, const LTFAT_REAL* s)
     return h;
 }
 
+LTFAT_API const LTFAT_REAL*
+LTFAT_NAME(heap_getdataptr)(LTFAT_NAME(heap)* h)
+{
+    return h->s;
+}
+
 LTFAT_API void
 LTFAT_NAME(heap_done)(LTFAT_NAME(heap)* h)
 {

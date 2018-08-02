@@ -321,23 +321,7 @@ LTFAT_NAME(pfilt_fir_rr)(const LTFAT_REAL *f, const LTFAT_REAL *g,
 
 /* --------- other stuff -------- */
 
-#ifndef _ltfat_mask_element_defined
-#define _ltfat_mask_element_defined
 
-enum ltfat_mask_element
-{
-    LTFAT_MASK_BELOWTOL    = -1, // Do not compute phase, the coefficient is too small
-    LTFAT_MASK_UNKNOWN     =  0, // Will compute phase for these
-    LTFAT_MASK_KNOWN       =  1, // The phase was already known
-    LTFAT_MASK_WENTNORTH   =  2, // Phase was spread from the south neighbor
-    LTFAT_MASK_WENTSOUTH   =  3, // Phase was spread from the north neighbor
-    LTFAT_MASK_WENTEAST    =  4, // Phase was spread from the west neighbor
-    LTFAT_MASK_WENTWEST    =  5, // Phase was spread from the east neighbor
-    LTFAT_MASK_STARTPOINT  =  6, // This is the initial point of integration. It gets zero phase
-    LTFAT_MASK_BORDERPOINT =  7, // This is candidate border coefficient with known phase
-};
-
-#endif
 
 typedef struct LTFAT_NAME(heapinttask) LTFAT_NAME(heapinttask);
 
