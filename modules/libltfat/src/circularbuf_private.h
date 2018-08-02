@@ -1,3 +1,6 @@
+#ifndef _circularbuf_private_h
+#define _circularbuf_private_h
+
 struct LTFAT_NAME(analysis_fifo_state)
 {
     ltfat_int winLen; //!< Window length
@@ -44,3 +47,5 @@ struct LTFAT_NAME(block_processor_state)
     ltfat_int prehop;
     ltfat_int posthop;
 };
+
+#endif
