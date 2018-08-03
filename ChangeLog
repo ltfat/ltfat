@@ -1,14 +1,22 @@
-Version 2.4.0 XX/08 2018
+Version 2.4.0 24/08 2018
+	* Added filterbank phase reconstruction function and demo:
+	  filterbankconstphase, demo_filterbankconstphase
+	  Thanks to Nicki Holighaus.
+
 	* Added time-frequency jigsaw puzzle tonal-transinet-residual separation:
 	  tfjigsawsep, plottfjigsawsep, demo_tfjigsawsep
 	  Thanks to Daniel Haider.
+
 	* Added coiflet filters up to K=17. 
 	  Thanks to KIMURA Masaru.
+
 	* MEX files are now compatible with the new MATLAB 2018a API.
 
 Version 2.3.1 13/06 2018
 	* multidgtrealmp: Introduced 2 additional MP variants
+
 	* Fixed Matlab 2018a MEX compilation issue
+
 	* Bug fixes:
 	multidgtrealmp: 'pedanticsearch' option now works correctly with 'freqinv'
 	ifilterbank: Fixed the multichannel issue
