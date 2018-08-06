@@ -1,6 +1,9 @@
 function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varargin)
-%% FILTERBANKCONSTPHASE Construct phase for FILTERBANK and UFILTERBANK
+%FILTERBANKCONSTPHASE Construct phase from FILTERBANK and UFILTERBANK magnitude 
 %   Usage:  c=filterbankconstphase(s,a,tfr,fc);
+%           c=filterbankconstphase(s,a,tfr,fc,mask);
+%           c=filterbankconstphase(s,a,tfr,fc,mask,usephase);
+%           c=filterbankconstphase(s,a,{tgrad,fgrad},fc,...);
 %           [c,newphase,usedmask,tgrad,fgrad] = filterbankconstphase(...);
 %
 %   Input parameters:
@@ -18,43 +21,66 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varar
 %         fgrad    : Relative frequency phase derivative.
 %
 %   `filterbankconstphase(s,a,tfr,fc)` will construct a suitable phase for 
-%   the positive valued coefficients `abs(s)` of a filterbank with center
-%   frequencies *fc* and time-frequency ratios *tfr* and subsampling
-%   factors *a*. It is assumed that the coefficients are
+%   the positive valued coefficients `s`. 
 %
-%   If *s* contains the absolute values of the Gabor coefficients of a signal
-%   obtained using the window *g*, time-shift *a* and number of channels 
-%   *M*, i.e.:
+%   If `s` is the absolute value of filterbank coefficients comming from
+%   a filterbank with filters with center frequencies *fc* and time-frequency
+%   ratios *tfr* and subsampling factors *a* i.e.:
 %
-%     c=dgtreal(f,g,a,M);
-%     s=abs(c);
+%       [g,a,fc] = ...filters(...);
+%       tfr = 
+%       c = filterbank(f,g,a);
+%       s = abs(c);
 %
-%   `filterbankconstphase(s,g,a,M,tol)` does as above, but sets the phase of
-%   coefficients less than *tol* to random values.
-%   By default, *tol* has the value 1e-10. 
+%   then `filterbankconstphase(s,a,tfr,fc)` will attempt to reconstruct
+%   *c*.
 %
-%   `filterbankconstphase(c,g,a,M,tol,mask)` accepts real or complex valued
+%   `filterbankconstphase(c,g,a,M,mask)` accepts real or complex valued
 %   *c* and real valued *mask* of the same size. Values in *mask* which can
 %   be converted to logical true (anything other than 0) determine
 %   coefficients with known phase which is used in the output. Only the
 %   phase of remaining coefficients (for which mask==0) is computed.
 %
-%   `filterbankconstphase(c,g,a,M,tol,mask,usephase)` does the same as before
+%   `filterbankconstphase(c,g,a,M,mask,usephase)` does the same as before
 %   but uses the known phase values from *usephase* rather than from *c*.
+%
+%   `filterbankconstphase(s,a,{tgrad,fgrad},fc,...)` accepts the phase 
+%   gradient `{tgrad,fgrad}` explicitly instead of computing it from
+%   the magnitude using `tfr` and the phase-magnitude relationship.
+%
+%   Addition parameters
+%   -------------------
 %
 %   The function accepts the following additional paramaters:
 %
 %       'tol',tol 
-%   In addition, *tol* can be a vector containing decreasing values. In 
-%   that case, the algorithm is run `numel(tol)` times, initialized with
-%   the result from the previous step in the 2nd and the further steps.
+%           The phase is computed only for coefficients above `tol`. The
+%           rest is set to random values.
+%           In addition, `tol` can be a vector containing decreasing values. 
+%           In that case, the algorithm is run `numel(tol)` times, 
+%           initialized with the result from the previous step in the 2nd 
+%           and the further steps. 
+%           The default value is `tol=[1e-1, 1e-10]`.
 %
+%       'real' (default) or 'complex'
+%           By default, the coefficients are expected to come from a real
+%           filterbank i.e. the filters cover only the positive
+%           frequencies. For filterbanks which cover the whole frequency
+%           range, pass 'complex' instead.
+%           
 %   This function requires a computational subroutine that is only
 %   available in C. Use |ltfatmex| to compile it.
 %
+%   Example
+%   -------
+%
+%   The following example shows basic usage:::
+%
+%       
+%
 %   See also:  ltfatmex
 %
-%   References: ltfatnote051
+%   References: ltfatnote053 ltfatnote051
 %
 
 % AUTHOR: Nicki Holighaus, Zdenek Prusa
@@ -77,7 +103,7 @@ definput.keyvals.usephase=[];
 definput.flags.real = {'real','complex'};
 [flags,kv,mask,usephase]=ltfatarghelper({'mask','usephase'},definput,varargin);
 tol = kv.tol;
-  
+
 if ~isnumeric(tol) || ~isequal(tol,sort(tol,'descend'))
     error(['%s: *tol* must be a scalar or a vector sorted in a ',...
           'descending manner.'],thismfilename);
@@ -106,9 +132,9 @@ if iscell(s)
 
     asan = comp_filterbank_a(a,M);
     a = asan(:,1)./asan(:,2);
-    
+
     wasCell = 1;
-    
+
     if any( N ~= N(1)) && any( a ~= a(1) )
         do_uniform = 0;
         s = cell2mat(s);
@@ -121,14 +147,14 @@ if iscell(s)
     else
         a = a(1);
         smat = zeros(N(1),M,W);
-        for m=1:M    
+        for m=1:M
             smat(:,m,:)=(s{m});
         end
         s = smat;
     end
 else
     [N,M,W] = size(s);
-    
+
     asan = comp_filterbank_a(a,M);
     a = asan(:,1)./asan(:,2);
     a = a(1);
@@ -152,8 +178,13 @@ if ~isempty(mask)
     mask(mask~=0) = 1;
 end
 
-if ~isnumeric(tfr) || isempty(tfr) || numel(tfr) ~= M
-  error('%s: tfr must be non-empty numeric.',upper(mfilename));
+if  ~( isvector(tfr) && ~isempty(tfr) && numel(tfr) == M ) && ...
+    ~( iscell(tfr) && numel(tfr) == 2 ...
+       && all(cellfun(@(tEl) isequal(size(tEl),size(s)),tfr)) ...
+       && all(cellfun(@isreal,tfr)) )
+    error(['%s: tfr must be either a vector of length %d or a ',...
+           '2 element cell array containing phase derivatives such that ',...
+           '{tgrad,fgrad}.'],upper(mfilename),M);
 end;
 
 if ~isnumeric(fc) || isempty(fc) || numel(fc) ~= M
@@ -161,8 +192,12 @@ if ~isnumeric(fc) || isempty(fc) || numel(fc) ~= M
 end
 
 if do_uniform
-    [tgrad,fgrad,logs] = ...
-        comp_ufilterbankphasegradfrommag(abss,N(1),a,M,sqrt(tfr),fc,flags.do_real);    
+    if iscell(tfr)
+        tgrad = tfr{1}; fgrad = tfr{2};
+    else
+        [tgrad,fgrad] = ...
+            comp_ufilterbankphasegradfrommag(abss,N(1),a,M,sqrt(tfr),fc,flags.do_real);
+    end
     [newphase,usedmask] = ...
         comp_ufilterbankconstphase(abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
 else
@@ -173,16 +208,22 @@ else
     for kk = 1:M
         posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
     end
-    posInfo = posInfo.';  
+    posInfo = posInfo.';
 
     NEIGH = NEIGH-1;
-    [tgrad,fgrad,logs] = ...
-        comp_filterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+
+    if iscell(tfr)
+        tgrad = tfr{1}; fgrad = tfr{2};
+    else
+        [tgrad,fgrad] = ...
+            comp_filterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+    end
     [newphase,usedmask] = ...
         comp_filterbankconstphase(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol);
 end
 
 c = abss.*exp(1i*newphase);
+
 if wasCell
     % Apply the phase and convert back to cell array 
     c = mat2cell(c(:),N,W);
