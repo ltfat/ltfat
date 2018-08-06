@@ -101,15 +101,16 @@ if flags.do_norm_notset
 else
     scal = zeros(numel(g),1);
     % Normalize flag was set
+    
+    L = arg1; % can be still empty
+    % Run again with L specified
+    [g2,~,info] = filterbankwin(g,1,L,'normal');
+    
+    if ~isempty(L) && L < max(info.gl)
+         error('%s: One of the windows is longer than the transform length.',upper(mfilename));
+    end;
+    
     for ii=1:numel(g)
-        L = arg1; % can be still empty
-        % Run again with L specified
-        [g2,~,info] = filterbankwin(g,1,L,'normal');
-
-        if ~isempty(L) && L < max(info.gl)
-            error('%s: One of the windows is longer than the transform length.',upper(mfilename));
-        end;
-
         if isstruct(g{ii})
             if isfield(g{ii},'h')
                 if ~isnumeric(g{ii}.h)
@@ -122,6 +123,7 @@ else
                     % Get frequency response and it's norm
                     H = comp_transferfunction(g2{ii},L);
                     [~,scal(ii)] = normalize(H,flags.norm);
+                    if scal(ii) == 0, scal(ii) = 1; end
                     g{ii}.h = g{ii}.h/scal(ii);
                 else
                     if isfield(g{ii},'fc') && g{ii}.fc~=0
@@ -132,6 +134,7 @@ else
                     % Get impulse response with all the fields applied
                     tmpg = comp_filterbank_pre(g2(ii),1,L,inf);
                     [~,scal(ii)] = normalize(tmpg{1}.h,flags.norm);
+                    if scal(ii) == 0, scal(ii) = 1; end
                      g{ii}.h = g{ii}.h/scal(ii);
                 end
             elseif isfield(g{ii},'H')
@@ -140,9 +143,11 @@ else
                     H = comp_transferfunction(g2{ii},L);
                     if flags.do_freq
                         [~,scal(ii)] = normalize(H,flags.norm);
+                        if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = @(L) g{ii}.H(L)/scal(ii);
                     else
                         [~,scal(ii)] = normalize(ifft(H),flags.norm);
+                        if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = @(L) g{ii}.H(L)/scal(ii);
                     end
                 elseif isnumeric(g{ii}.H)
@@ -162,9 +167,11 @@ else
                     H = comp_transferfunction(g2{ii},L);
                     if flags.do_freq
                         [~,scal(ii)] = normalize(H,flags.norm);
+                        if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = g{ii}.H/scal(ii);
                     else
                         [~,scal(ii)] = normalize(ifft(H),flags.norm);
+                        if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = g{ii}.H/scal(ii);
                     end
                 end
@@ -178,6 +185,7 @@ else
                 complain_L(L);
                 % We must use g2 here
                 [~, scal(ii)] = normalize(fft(g2{ii}.h,L),flags.norm);
+                if scal(ii) == 0, scal(ii) = 1; end
                 g{ii} = g{ii}/scal(ii);
             else
                 [g{ii}, scal(ii)] = normalize(g{ii},flags.norm);
