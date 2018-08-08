@@ -45,8 +45,6 @@ definput.keyvals.L=[];
 
 [f,Ls,W]=comp_sigreshape_pre(f,'UFILTERBANK',0);
 
-a=a(1);
-
 if isempty(L)
   L=filterbanklength(Ls,a);
 end;
@@ -54,7 +52,11 @@ end;
 [g,asan]=filterbankwin(g,a,L,'normal');
 
 M=numel(g);
-N=L/a;
+N=L./(asan(:,1)./asan(:,2));
+
+if any( N~=N(1) )
+    error('%s: Non-uniform subsampling is not allowed.',upper(mfilename))
+end
 
 f=postpad(f,L);
 
@@ -62,7 +64,7 @@ g = comp_filterbank_pre(g,asan,L,kv.crossover);
 
 ctmp=comp_filterbank(f,g,asan);
 
-c=zeros(N,M,W,assert_classname(f));
+c=zeros(N(1),M,W,assert_classname(f));
 for m=1:M    
     c(:,m,:)=ctmp{m};
 end;
