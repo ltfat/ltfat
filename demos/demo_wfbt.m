@@ -41,7 +41,7 @@
 
 % Load a test signal and resample it to 48 kHz since such sampling
 % rate is assumed in the reference.
-f = resample(greasy,3,1);
+f = dctresample(greasy,3*numel(greasy));
 fs = 48000;
 
 % Bark-like filterbank tree
