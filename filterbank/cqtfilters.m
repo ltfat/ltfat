@@ -264,35 +264,35 @@ end
 
 %% Compute the downsampling rate
 if flags.do_regsampling
-        % Find minimum a in each octave and floor23 it.
-        s = M-cumsum(bins);
-        bins=bins(1:find(s<=0,1));
-        bins(end) = bins(end)-(sum(bins)-M);
-        aocts = mat2cell(aprecise(2:end-1),bins);
-        aocts = [{aprecise(1)};aocts;aprecise(end)];
-        %aocts{1} = [aprecise(1);aocts{1}];
-        %aocts{end} = [aocts{end};aprecise(end)];
-        a=cellfun(@(aEl) floor23(min(aEl)),aocts);
+    % Find minimum a in each octave and floor23 it.
+    s = M-cumsum(bins);
+    bins=bins(1:find(s<=0,1));
+    bins(end) = bins(end)-(sum(bins)-M);
+    aocts = mat2cell(aprecise(2:end-1),bins);
+    aocts = [{aprecise(1)};aocts;aprecise(end)];
+    %aocts{1} = [aprecise(1);aocts{1}];
+    %aocts{end} = [aocts{end};aprecise(end)];
+    a=cellfun(@(aEl) floor23(min(aEl)),aocts);
 
-        % Determine the minimal transform length lcm(a)
+    % Determine the minimal transform length lcm(a)
+    L = filterbanklength(Ls,a);
+
+    % Heuristic trying to reduce lcm(a)
+    while L>2*Ls && ~(all(a==a(1)))
+        maxa = max(a);
+        a(a==maxa) = 0;
+        a(a==0) = max(a);
         L = filterbanklength(Ls,a);
+    end
 
-        % Heuristic trying to reduce lcm(a)
-        while L>2*Ls && ~(all(a==a(1)))
-            maxa = max(a);
-            a(a==maxa) = 0;
-            a(a==0) = max(a);
-            L = filterbanklength(Ls,a);
-        end
-
-        % Deal the integer subsampling factors
-        a = cell2mat(cellfun(@(aoEl,aEl) ones(numel(aoEl),1)*aEl,...
-            aocts,mat2cell(a,ones(numel(a),1)),'UniformOutput',0));
+    % Deal the integer subsampling factors
+    a = cell2mat(cellfun(@(aoEl,aEl) ones(numel(aoEl),1)*aEl,...
+        aocts,mat2cell(a,ones(numel(a),1)),'UniformOutput',0));
 
 elseif flags.do_fractional
-        L = Ls;
-        N=ceil(Ls./aprecise);
-        a=[repmat(Ls,M2,1),N];
+    L = Ls;
+    N=ceil(Ls./aprecise);
+    a=[repmat(Ls,M2,1),N];
 elseif flags.do_fractionaluniform
     L = Ls;
     aprecise(2:end-1) = min(aprecise(2:end-1));
