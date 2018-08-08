@@ -26,18 +26,14 @@ function demo_tfjigsawsep(demo) %RUNASSCRIPT
 %   applying this procedure iteratively on the residual, tonal and
 %   transient layers emerge.
 %   
-%   Figure: Phase and TF-Plots
-%       first row:  the phase representations of the original, tonal,
-%                   transient und residual signal
-%       second row: buttons to automatically listen to the single layers
-%       third row:  time-frequency representation
+%   .. figure:: 
 %
+%      Separated layers
+%      
 %   See also: tfjigsawsep, plottfjigsawsep, dgtreal
 %
-%   References:
-%   [1] F. Jaillet, B. Torresani. Time-Frequency Jigsaw Puzzle: Adaptive
-%       Multiwindow and Multilayered Gabor Expansion. IJWMIP, vol.5, pp.
-%       293-315, 2007.
+%   References: jato07
+%
 
 % 
 %   tfjigsawsep takes three very crucial parameters, t1,t2 and p. One has to

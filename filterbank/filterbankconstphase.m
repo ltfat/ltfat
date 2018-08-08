@@ -1,5 +1,5 @@
 function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varargin)
-%FILTERBANKCONSTPHASE Construct phase from FILTERBANK and UFILTERBANK magnitude 
+%FILTERBANKCONSTPHASE Construct phase from FILTERBANK or UFILTERBANK magnitude 
 %   Usage:  c=filterbankconstphase(s,a,tfr,fc);
 %           c=filterbankconstphase(c,a,tfr,fc,mask);
 %           c=filterbankconstphase(s,a,tfr,fc,mask,usephase);
@@ -47,6 +47,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varar
 %   `filterbankconstphase(s,a,{tgrad,fgrad},fc,...)` accepts the phase 
 %   gradient `{tgrad,fgrad}` explicitly instead of computing it from
 %   the magnitude using `tfr` and the phase-magnitude relationship.
+%   This is directly compatible with |filterbankphasegrad|.
 %
 %   Addition parameters
 %   -------------------
@@ -82,11 +83,12 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varar
 %   Example
 %   -------
 %
-%   The following example shows basic usage:::
+%   The following example shows basic usage
 %
 %       
 %
-%   See also:  ltfatmex
+%   See also:  ltfatmex filterbank ufilterbank audfilters cqtfilters gabfilters
+%
 %
 %   References: ltfatnote053 ltfatnote051
 %

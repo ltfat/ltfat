@@ -4,9 +4,9 @@ function [gout,a,fc,L] = gabfilters(Ls,g,a,M,varargin)
 %
 %   Input parameters:
 %      Ls    : Signal length.
-%       g    : Window
-%       a    : Hop factor
-%       M    : Number of channels
+%      g     : Window
+%      a     : Hop factor
+%      M     : Number of channels
 %   Output parameters:
 %      gout  : Cell array of filters.
 %      aout  : Downsampling rate for each channel.

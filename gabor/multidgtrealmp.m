@@ -100,7 +100,7 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %
 %   See also: dgtreal idgtreal
 %
-%   References: ltfatnote052 mazh93
+%   References: ltfatnote052 mazh93 stchr10 rerose17
 
 %AUTHOR: Zdenek Prusa
 

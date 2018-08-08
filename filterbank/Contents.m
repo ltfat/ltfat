@@ -10,7 +10,6 @@
 %    FILTERBANKWIN          - Evaluate filter bank window
 %    FILTERBANKLENGTH       - Length of filter bank to expand signal
 %    FILTERBANKLENGTHCOEF   - Length of filter bank to expand coefficients
-
 %
 %  Filter generators
 %    CQTFILTERS             - Logarithmically spaced filters
