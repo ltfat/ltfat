@@ -18,9 +18,9 @@ void mexFunction( int UNUSED(nlhs), mxArray *plhs[],
    const long long n=(long long) mxGetScalar(prhs[1]);
 
    plhs[0] = mxCreateDoubleMatrix(L, 1, mxCOMPLEX);
-   double *gr = mxGetPr(plhs[0]);
+   double *gr = mxGetData(plhs[0]);
 #if !(MX_HAS_INTERLEAVED_COMPLEX)
-   double *gi = mxGetPi(plhs[0]);
+   double *gi = mxGetImagData(plhs[0]);
 #endif
 
 
