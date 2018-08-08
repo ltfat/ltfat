@@ -14,11 +14,11 @@ function test_failed=test_demos
      % variable name clash
      rundemo(filename(1:end-2));
      
-     
-  end;
+  end
   
   
 function rundemo(demoname)
    close all;
    eval(demoname);
+   clear all; 
 
