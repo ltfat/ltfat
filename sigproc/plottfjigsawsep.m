@@ -88,7 +88,7 @@ title('residual')
 
 colormap(ltfat_inferno)
 
-if flags.do_showbuttons
+if flags.do_showbuttons && ~isoctave() && usejava('desktop')
 
 if fs == 1
     warning(sprintf(['%s: Invalid sampling rate for audio playback.',...
@@ -100,6 +100,7 @@ end
 % stores fplanes.
 try
 btn1 = uicontrol('Style','pushbutton','String','Play Original Sound','Callback',@(varargin) sound(sum(fplanes,2),fs));
+    
 set(btn1,'Units','normalized');
 set(btn1,'Position',[0.125 0.54 0.15 0.05]);
 set(btn1,'BackgroundColor','m');
