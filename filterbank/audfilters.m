@@ -105,7 +105,7 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %     'symmetric'     Create filters that are symmetric around their centre
 %                     frequency. This is the default.
 %
-%     'warped'        Create asymmetric filters that are asymmetric on the
+%     'warped'        Create asymmetric filters that are symmetric on the
 %                     auditory scale. 
 %
 %     'complex'       Construct a filterbank that covers the entire
@@ -200,18 +200,7 @@ definput.flags.real     = {'real','complex'};
 definput.flags.sampling = {'regsampling','uniform','fractional',...
                            'fractionaluniform'};
 
-% Search for window given as cell array
-candCellId = cellfun(@(vEl) iscell(vEl) && any(strcmpi(vEl{1},definput.flags.wintype)),varargin);
-
-winCell = {};
-% If there is such window, replace cell with function name so that 
-% ltfatarghelper does not complain
-if ~isempty(candCellId) && any(candCellId)
-    candCellIdLast = find(candCellId,1,'last');
-    winCell = varargin{candCellIdLast};
-    varargin(candCellId) = []; % But remove all
-    varargin{end+1} = winCell{1};
-end
+[varargin,winCell] = arghelper_filterswinparser(definput.flags.wintype,varargin);
 
 [flags,kv]=ltfatarghelper({'fmin','fmax'},definput,varargin);
 if isempty(winCell), winCell = {flags.wintype}; end
@@ -266,52 +255,56 @@ if ~isempty(kv.M)
     kv.spacing = (freqtoaud(kv.fmax,flags.audscale) - freqtoaud(kv.fmin,flags.audscale))/(kv.M-1);
 end
 
-probelen = 10000;
+[filterfunc,winbw] = helper_filtergeneratorfunc(...
+                          flags.wintype,winCell,fs,kv.bwmul,kv.min_win,kv.trunc_at,...
+                          flags.audscale,flags.do_symmetric,flags.do_warped);
 
-switch flags.wintype
-    case firwinflags
-        winbw=norm(firwin(flags.wintype,probelen)).^2/probelen;
-        % This is the ERB-type bandwidth of the prototype
-
-        if flags.do_symmetric
-            filterfunc = @(fsupp,fc,scal)... 
-                         blfilter(winCell,fsupp,fc,'fs',fs,'scal',scal,...
-                                  'inf','min_win',kv.min_win);
-        else
-            fsupp_scale=1/winbw*kv.bwmul;
-            filterfunc = @(fsupp,fc,scal)...
-                         warpedblfilter(winCell,fsupp_scale,fc,fs,...
-                                        @(freq) freqtoaud(freq,flags.audscale),@(aud) audtofreq(aud,flags.audscale),'scal',scal,'inf');
-        end
-        bwtruncmul = 1;
-    case freqwinflags
-        if flags.do_warped
-            error('%s: TODO: Warping is not supported for windows from freqwin.',...
-                upper(mfilename));
-        end
-
-        probebw = 0.01;
-
-        % Determine where to truncate the window
-        H = freqwin(winCell,probelen,probebw);
-        winbw = norm(H).^2/(probebw*probelen/2);
-        bwrelheight = 10^(-3/10);
-
-        if kv.trunc_at <= eps
-            bwtruncmul = inf;
-        else
-            try
-                bwtruncmul = winwidthatheight(abs(H),kv.trunc_at)/winwidthatheight(abs(H),bwrelheight);
-            catch
-                bwtruncmul = inf;
-            end
-        end
-
-        filterfunc = @(fsupp,fc,scal)...
-                     freqfilter(winCell, fsupp, fc,'fs',fs,'scal',scal,...
-                                'inf','min_win',kv.min_win,...
-                                'bwtruncmul',bwtruncmul);        
-end
+% probelen = 10000;
+%
+% switch flags.wintype
+%     case firwinflags
+%         winbw=norm(firwin(flags.wintype,probelen)).^2/probelen;
+%         % This is the ERB-type bandwidth of the prototype
+%
+%         if flags.do_symmetric
+%             filterfunc = @(fsupp,fc,scal)... 
+%                          blfilter(winCell,fsupp,fc,'fs',fs,'scal',scal,...
+%                                   'inf','min_win',kv.min_win);
+%         else
+%             fsupp_scale=1/winbw*kv.bwmul;
+%             filterfunc = @(fsupp,fc,scal)...
+%                          warpedblfilter(winCell,fsupp_scale,fc,fs,...
+%                                         @(freq) freqtoaud(freq,flags.audscale),@(aud) audtofreq(aud,flags.audscale),'scal',scal,'inf');
+%         end
+%         bwtruncmul = 1;
+%     case freqwinflags
+%         if flags.do_warped
+%             error('%s: TODO: Warping is not supported for windows from freqwin.',...
+%                 upper(mfilename));
+%         end
+%
+%         probebw = 0.01;
+%
+%         % Determine where to truncate the window
+%         H = freqwin(winCell,probelen,probebw);
+%         winbw = norm(H).^2/(probebw*probelen/2);
+%         bwrelheight = 10^(-3/10);
+%
+%         if kv.trunc_at <= eps
+%             bwtruncmul = inf;
+%         else
+%             try
+%                 bwtruncmul = winwidthatheight(abs(H),kv.trunc_at)/winwidthatheight(abs(H),bwrelheight);
+%             catch
+%                 bwtruncmul = inf;
+%             end
+%         end
+%
+%         filterfunc = @(fsupp,fc,scal)...
+%                      freqfilter(winCell, fsupp, fc,'fs',fs,'scal',scal,...
+%                                 'inf','min_win',kv.min_win,...
+%                                 'bwtruncmul',bwtruncmul);
+% end
 
 % Construct the AUD filterbank
 fmin = max(kv.fmin,audtofreq(kv.spacing,flags.audscale));
@@ -586,23 +579,4 @@ function ghigh = audhighpassfilter(g,a,fc,fs,scal,kv,flags)
     ghigh.fs = g{2}.fs;
     end
 
-function width = winwidthatheight(gnum,atheight)
 
-width = zeros(size(atheight));
-for ii=1:numel(atheight)
-    gl = numel(gnum);
-    gmax = max(gnum);
-    frac=  1/atheight(ii);
-    fracofmax = gmax/frac;
-        
-    ind =find(gnum(1:floor(gl/2)+1)==fracofmax,1,'first');
-    if isempty(ind)
-        %There is no sample exactly half of the height
-        ind1 = find(gnum(1:floor(gl/2)+1)>fracofmax,1,'last');
-        ind2 = find(gnum(1:floor(gl/2)+1)<fracofmax,1,'first');
-        rest = 1-(fracofmax-gnum(ind2))/(gnum(ind1)-gnum(ind2));
-        width(ii) = 2*(ind1+rest-1);
-    else
-        width(ii) = 2*(ind-1);
-    end
-end

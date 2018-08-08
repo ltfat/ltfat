@@ -152,17 +152,23 @@ if fmin>=fmax
     error('%s: fmin has to be less than fmax.',upper(mfilename));
 end
 
-definput.import = {'firwin'};
+firwinflags=getfield(arg_firwin,'flags','wintype');
+freqwinflags=getfield(arg_freqwin,'flags','wintype');
+
+definput.flags.wintype = [ firwinflags, freqwinflags];
 definput.keyvals.L=[];
 definput.keyvals.Qvar = 1;
 definput.keyvals.redmul=1;
 definput.keyvals.min_win = 4;
+definput.keyvals.trunc_at=10^(-5);
 definput.flags.real     = {'real','complex'};
 definput.flags.subprec  = {'nosubprec','subprec'};
 definput.flags.sampling = {'regsampling','uniform',...
                            'fractional','fractionaluniform'};
 
+[varargin,winCell] = arghelper_filterswinparser(definput.flags.wintype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
+if isempty(winCell), winCell = {flags.wintype}; end
 
 if flags.do_subprec
     error('%s: TO DO: Subsample window positioning is not implemented yet.',...
@@ -319,11 +325,16 @@ else
     fsupp=[fsupp;flipud(fsupp(2:M2-1))];
 end;
 
+filterfunc = helper_filtergeneratorfunc(...
+                          flags.wintype,winCell,fs,1,kv.min_win,kv.trunc_at,...
+                          [],1,0);
+
 % This is actually much faster than the vectorized call.
 g = cell(1,numel(fc));
 for m=1:numel(g)
-  g{m} = blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
-                  'inf','min_win',kv.min_win);
+    g{m} = filterfunc(fsupp(m),fc(m),scal(m));
+  % g{m} = blfilter(flags.wintype,fsupp(m),fc(m),'fs',fs,'scal',scal(m),...
+  %                 'inf','min_win',kv.min_win);
 end
 
 
