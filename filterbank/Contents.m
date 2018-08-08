@@ -10,18 +10,14 @@
 %    FILTERBANKWIN          - Evaluate filter bank window
 %    FILTERBANKLENGTH       - Length of filter bank to expand signal
 %    FILTERBANKLENGTHCOEF   - Length of filter bank to expand coefficients
-%
-%  Auditory inspired filter banks
-%    CQT                    - Constant-Q transform
-%    ICQT                   - Inverse constant-Q transform
-%    ERBLETT                - Erb-let transform
-%    IERBLETT               - Inverse Erb-let transform
+
 %
 %  Filter generators
 %    CQTFILTERS             - Logarithmically spaced filters
 %    ERBFILTERS             - ERB-spaced filters
 %    WARPEDFILTERS          - Frequency-warped filters 
 %    AUDFILTERS             - Filters based on auditory scales
+%    GABFILTERS             - Linearly spaced Gabor filters
 %  
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters
@@ -46,6 +42,9 @@
 %    FILTERBANKPHASEGRAD      - Instantaneous time/frequency from signal
 %    FILTERBANKREASSIGN       - Reassign filterbank spectrogram
 %    FILTERBANKSYNCHROSQUEEZE - Synchrosqueeze filterbank spectrogram  
+%
+%  Phase reconstruction
+%    FILTERBANKCONSTPHASE     - Construct suitable phase from the coefficient magnitude
 %    
 %
 %  For help, bug reports, suggestions etc. please visit 

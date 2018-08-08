@@ -76,6 +76,9 @@ function [c,Ls,g,shift,M] = cqt(f,fmin,fmax,bins,fs,varargin)
 % Authors: Nicki Holighaus, Gino Velasco
 % Date: 10.04.13
 
+warning(['LTFAT: CQT has been deprecated and will be removed',...
+         ' in the future releases, please use CQTFILTERS and FILTERBANK instead.']);   
+
 %% Check input arguments
 if nargin < 5
     error('Not enough input arguments');

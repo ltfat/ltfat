@@ -65,6 +65,9 @@ function [c,Ls,g,shift,M] = erblett(f,bins,fs,varargin)
 % Authors: Thibaud Necciari, Nicki Holighaus
 % Date: 10.04.13
 
+warning(['LTFAT: ERBLETT has been deprecated and will be removed',...
+         ' in the future releases, please use AUDFILTERS with ''erb'' and FILTERBANK instead.']);   
+
 %% Check input arguments
 if nargin < 3
     error('Not enough input arguments');

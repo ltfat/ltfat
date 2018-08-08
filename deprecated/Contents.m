@@ -20,6 +20,10 @@
 %    TFMAT             - Use |frsynmatrix| or |operatormatrix|
 %    UWFBTBOUNDS       - Use |wfbtbounds|
 %    UWPFBTBOUNDS      - Use |wpfbtbounds|
+%    CQT               - Use |cqtfilters| and |filterbank|
+%    ICQT              - Use |filterbankdual| and |ifilterbank| or |ifilterbankiter|
+%    ERBLETT           - Use |audfilters| with 'erb' and |filterbank|
+%    IERBLETT          - Use |filterbankdual| and |ifilterbank| or |ifilterbankiter|
 %
 %  For help, bug reports, suggestions etc. please visit 
 %  http://github.com/ltfat/ltfat/issues
