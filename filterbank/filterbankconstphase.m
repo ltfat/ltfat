@@ -1,7 +1,7 @@
 function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varargin)
 %FILTERBANKCONSTPHASE Construct phase from FILTERBANK and UFILTERBANK magnitude 
 %   Usage:  c=filterbankconstphase(s,a,tfr,fc);
-%           c=filterbankconstphase(s,a,tfr,fc,mask);
+%           c=filterbankconstphase(c,a,tfr,fc,mask);
 %           c=filterbankconstphase(s,a,tfr,fc,mask,usephase);
 %           c=filterbankconstphase(s,a,{tgrad,fgrad},fc,...);
 %           [c,newphase,usedmask,tgrad,fgrad] = filterbankconstphase(...);
@@ -10,7 +10,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varar
 %         s        : Initial coefficients.
 %         a        : Downsampling factor(s).
 %         tfr      : Time-frequency rations of the filters
-%         fc       : Center frequencies of the filters
+%         fc       : Center frequencies normalized to the Nyquist rate
 %         mask     : Mask for selecting known phase.
 %         usephase : Explicit known phase.
 %   Output parameters:
@@ -67,6 +67,14 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varar
 %           filterbank i.e. the filters cover only the positive
 %           frequencies. For filterbanks which cover the whole frequency
 %           range, pass 'complex' instead.
+%
+%       'naturalscaling' (default) or 'peakscaling' or 'custscaling',scal
+%           Relative scaling of the filter frequency responses. 
+%           'naturalscaling' deduces the scaling of the filters from the
+%           subsampling factors *a*. 
+%           'peakscaling' assumes all frequency responses were notmalized 
+%           to have peaks of equal height.
+%           'custscaling',scal allows passing a custom scaling vector *scal*. 
 %           
 %   This function requires a computational subroutine that is only
 %   available in C. Use |ltfatmex| to compile it.
@@ -100,7 +108,9 @@ definput.keyvals.tol=[1e-1,1e-10];
 definput.keyvals.gderivweight=1/2;
 definput.keyvals.mask=[];
 definput.keyvals.usephase=[];
+definput.keyvals.custscaling=[];
 definput.flags.real = {'real','complex'};
+definput.flags.scaling = {'naturalscaling','peakscaling','custscaling'};
 [flags,kv,mask,usephase]=ltfatarghelper({'mask','usephase'},definput,varargin);
 tol = kv.tol;
 
@@ -115,55 +125,100 @@ if ~isempty(usephase) && isempty(mask)
 end
 
 if ~isempty(usephase)
-    complainif_notequalsize('s',s,'usephase',usephase,thismfilename);
+    complainif_notequalsize('usephase',usephase,'s',s,mfilename);
+    complainif_notreal('usephase',usephase,mfilename);
 end
 
 if ~isempty(mask)
-    complainif_notequalsize('s',s,'mask',mask,thismfilename);
+    complainif_notequalsize('mask',mask,'s',s,mfilename);
+    complainif_notreal('mask',mask,mfilename);
 end
-
-do_uniform = 1;
-wasCell = 0;
 
 if iscell(s)
     M = numel(s);
     N = cellfun(@(sEl) size(sEl,1),s);
     W = size(s{1},2);
+else
+    [N,M,W] = size(s);
+end
 
-    asan = comp_filterbank_a(a,M);
-    a = asan(:,1)./asan(:,2);
+if ~isnumeric(fc) || isempty(fc) || numel(fc) ~= M
+  error('%s: fc must be non-empty numeric.',upper(mfilename));
+end
+
+if  ~( (isvector(tfr) && ~isempty(tfr) && numel(tfr) == M ) || ...
+       (iscell(tfr) && numel(tfr) == 2 ...
+       && all(cellfun(@(tEl) isequal(size(tEl),size(s)),tfr))))
+    error(['%s: tfr must be either a vector of length %d or a ',...
+           '2 element cell array containing phase derivatives such that ',...
+           '{tgrad,fgrad}.'],upper(mfilename),M);
+end
+
+do_uniform = 1;
+wasCell = 0;
+tgrad = []; fgrad = [];
+    
+asan = comp_filterbank_a(a,M);
+a = asan(:,1)./asan(:,2);
+
+if flags.do_naturalscaling
+    scal = 1./(sqrt(asan(:,1)./asan(:,2)));
+elseif flags.do_peakscaling
+    scal = ones(M,1);
+elseif flags.do_custscaling
+    if isempty(kv.custscaling) || ~isvector(kv.custscaling) ...
+       || ~isnumeric(kv.custscaling) || numel(kv.custscaling) ~= M
+        error(['%s: value for key custscaling must be a numeic vector',...
+               ' of length %d.'],thismfilename,M);
+    end
+    scal = kv.custscaling(:);
+end
+
+if iscell(s)
+    if iscell(tfr)
+        complainif_notequalsize('tgrad',tfr{1},'s',s,mfilename);
+        complainif_notreal('tgrad',tfr{1},mfilename);
+        complainif_notequalsize('fgrad',tfr{2},'s',s,mfilename);
+        complainif_notreal('fgrad',tfr{2},mfilename);
+    end
 
     wasCell = 1;
 
     if any( N ~= N(1)) && any( a ~= a(1) )
         do_uniform = 0;
-        s = cell2mat(s);
-        if ~isempty(mask)
-            mask = cell2mat(s);
-        end
-        if ~isempty(usephase)
-            usephase = cell2mat(usephase);
+        abss = abs(cell2mat(cellfun(@times,s,num2cell(scal),'UniformOutput',0)));
+        swork = cell2mat(s);
+        if ~isempty(mask),         mask = cell2mat(mask);  end
+        if ~isempty(usephase), usephase = cell2mat(usephase); end
+        if iscell(tfr)
+            tgrad = cell2mat(tfr{1});
+            fgrad = cell2mat(tfr{2});
         end
     else
-        a = a(1);
-        smat = zeros(N(1),M,W);
-        for m=1:M
-            smat(:,m,:)=(s{m});
+        swork = zeros(N(1),M,W);
+        for m=1:M, swork(:,m,:)=s{m}; end
+        if iscell(tfr)
+            tgrad = zeros(N(1),M,W);
+            fgrad = zeros(N(1),M,W);
+            for m=1:M
+                tgrad(:,m,:)=tfr{1}{m}; 
+                fgrad(:,m,:)=tfr{2}{m}; 
+            end
         end
-        s = smat;
+        
+        a = a(1);
     end
 else
-    [N,M,W] = size(s);
-
-    asan = comp_filterbank_a(a,M);
-    a = asan(:,1)./asan(:,2);
+    swork = s;
     a = a(1);
 end
 
-abss = abs(s);
+if do_uniform
+    abss = abs(bsxfun(@times,swork,scal(:).'));
+end
 
 if isempty(usephase)
-    usephase = angle(s);
+    usephase = angle(swork);
 else
     if ~isreal(usephase)
         error('%s: usephase must be real.',thismfilename);
@@ -178,28 +233,16 @@ if ~isempty(mask)
     mask(mask~=0) = 1;
 end
 
-if  ~( isvector(tfr) && ~isempty(tfr) && numel(tfr) == M ) && ...
-    ~( iscell(tfr) && numel(tfr) == 2 ...
-       && all(cellfun(@(tEl) isequal(size(tEl),size(s)),tfr)) ...
-       && all(cellfun(@isreal,tfr)) )
-    error(['%s: tfr must be either a vector of length %d or a ',...
-           '2 element cell array containing phase derivatives such that ',...
-           '{tgrad,fgrad}.'],upper(mfilename),M);
-end;
-
-if ~isnumeric(fc) || isempty(fc) || numel(fc) ~= M
-  error('%s: fc must be non-empty numeric.',upper(mfilename));
-end
-
 if do_uniform
-    if iscell(tfr)
-        tgrad = tfr{1}; fgrad = tfr{2};
-    else
+    if isempty(tgrad) && isempty(fgrad)
         [tgrad,fgrad] = ...
-            comp_ufilterbankphasegradfrommag(abss,N(1),a,M,sqrt(tfr),fc,flags.do_real);
+            comp_ufilterbankphasegradfrommag(...
+            abss,N(1),a,M,sqrt(tfr),fc,flags.do_real);
     end
+    
     [newphase,usedmask] = ...
-        comp_ufilterbankconstphase(abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
+        comp_ufilterbankconstphase(...
+        abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
 else
     NEIGH = comp_filterbankneighbors(a,M,N,flags.do_real);
     chanStart = [0;cumsum(N)];
@@ -212,17 +255,18 @@ else
 
     NEIGH = NEIGH-1;
 
-    if iscell(tfr)
-        tgrad = tfr{1}; fgrad = tfr{2};
-    else
+    if isempty(tgrad) && isempty(fgrad)
         [tgrad,fgrad] = ...
-            comp_filterbankphasegradfrommag(abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+            comp_filterbankphasegradfrommag(...
+            abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
     end
+    
     [newphase,usedmask] = ...
-        comp_filterbankconstphase(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol);
+        comp_filterbankconstphase(...
+        abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol);
 end
 
-c = abss.*exp(1i*newphase);
+c = abs(swork).*exp(1i*newphase);
 
 if wasCell
     % Apply the phase and convert back to cell array 
@@ -232,6 +276,7 @@ if wasCell
     tgrad = mat2cell(tgrad(:),N,W);
     fgrad = mat2cell(fgrad(:),N,W);
 end
+
 
 function complainif_notequalsize(aname,a,bname,b,thismfilename)
 
@@ -246,12 +291,21 @@ if ~isequal(size(a), size(b))
 end
 
 if iscell(a)
-    if ~all(cellfun(@(aEl,bEl) isequal(aEl,bEl),a,b))
+    if ~all(cellfun(@(aEl,bEl) isequal(size(aEl),size(bEl)),a,b))
         error('%s: %s and %s must have equal sizes.',...
               aname, bname,thismfilename);
     end
 end
 
+function complainif_notreal(aname,a,thismfilename)
 
+if iscell(a)
+    isareal = all(cellfun(@isreal,a));
+else
+    isareal = isreal(a);
+end
 
+if ~isareal
+    error('%s: %s must be real.',thismfilename,aname);
+end
 

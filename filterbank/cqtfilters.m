@@ -12,7 +12,7 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   Output parameters:
 %      g     : Cell array of filters.
 %      a     : Downsampling rate for each channel.
-%      fc    : Center frequency of each channel.
+%      fc    : Center frequency of each channel (in Hz).
 %      L     : Next admissible length suitable for the generated filters.
 %
 %   `[g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls)` constructs a set of
