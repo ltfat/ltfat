@@ -108,7 +108,7 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
     LTFAT_TYPE* gw;
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p); CHECKNULL(cin); CHECKNULL(f);
-    CHECK(LTFATERR_BADTRALEN, L >= p->gl && !(L % p->a) ,
+    CHECK(LTFATERR_BADTRALEN, L >= p->gl && !(L % p->a),
           "L (passed %td) must be positive and divisible by a (passed %td).", L, p->a);
     CHECK(LTFATERR_NOTPOSARG, W > 0, "W (passed %td) must be positive.", W);
 
@@ -127,7 +127,8 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
     gw = p->gw;
     ff = p->ff;
 
-    memset(f, 0, L * W * sizeof * f);
+    LTFAT_NAME_COMPLEX(clear_array)( f, L * W);
+    /* memset(f, 0, L * W * sizeof * f); */
 
     for (ltfat_int w = 0; w < W; w++)
     {
@@ -182,4 +183,3 @@ LTFAT_NAME(idgt_fb_execute)(LTFAT_NAME(idgt_fb_plan)* p,
 error:
     return status;
 }
-

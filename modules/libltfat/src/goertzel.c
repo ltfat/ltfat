@@ -235,7 +235,8 @@ LTFAT_NAME(chzt_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
 
     for (ltfat_int w = 0; w < W; w++)
     {
-        memset(fbuffer, 0, Lfft * sizeof * fbuffer);
+        LTFAT_NAME_COMPLEX(clear_array)( fbuffer, Lfft);
+        //memset(fbuffer, 0, Lfft * sizeof * fbuffer);
 #ifdef LTFAT_COMPLEXTYPE
         memcpy(fbuffer, fPtr + w * L, L * sizeof * fbuffer);
 #else
@@ -320,13 +321,16 @@ LTFAT_NAME(chzt_init)(ltfat_int K, ltfat_int L, const LTFAT_REAL deltao,
         Wo[ii] = exp(-I * (LTFAT_REAL)( o * ii )) * W2[ii];
     }
     // Set the rest to zero
-    memset(W2 + N, 0, (Lfft - N)*sizeof * W2);
+    /* memset(W2 + N, 0, (Lfft - N)*sizeof * W2); */
+    LTFAT_NAME_COMPLEX(clear_array)( W2 + N, Lfft - N);
 
     LTFAT_NAME_COMPLEX(conjugate_array)(W2, K, chirpF);
     LTFAT_NAME_COMPLEX(conjugate_array)(W2 + 1, L - 1, chirpF + Lfft - L + 1);
     LTFAT_NAME_COMPLEX(reverse_array)(chirpF + Lfft - L + 1, L - 1,
                                       chirpF + Lfft - L + 1);
-    memset(chirpF + K, 0, (Lfft - (L + K - 1))*sizeof * chirpF);
+
+    LTFAT_NAME_COMPLEX(clear_array)( chirpF + K, Lfft - (L + K - 1));
+    /* memset(chirpF + K, 0, (Lfft - (L + K - 1))*sizeof * chirpF); */
 
     /* LTFAT_FFTW(execute_dft)(plan_f, (LTFAT_FFTW(complex)*) chirpF, */
     /*                         (LTFAT_FFTW(complex)*) chirpF); */
@@ -407,7 +411,8 @@ LTFAT_NAME(chzt_fac_execute)(LTFAT_NAME(chzt_plan) p, const LTFAT_TYPE* fPtr,
         // *********************************
         // 1) Read and reorganize input data
         // *********************************
-        memset(fbuffer, 0, q * Lfft * sizeof * fbuffer);
+        LTFAT_NAME_COMPLEX(clear_array)( fbuffer, q * Lfft);
+        /* memset(fbuffer, 0, q * Lfft * sizeof * fbuffer); */
         LTFAT_TYPE* fPtrTmp = ((LTFAT_TYPE*)fPtr) + w * L;
 
         for (ltfat_int k = 0; k < lastK; k++)
@@ -557,7 +562,9 @@ LTFAT_NAME(chzt_fac_init)(ltfat_int K, ltfat_int L,
     LTFAT_NAME_COMPLEX(conjugate_array)(W2 + 1, K - 1, chirpF + Lfft - K + 1);
     LTFAT_NAME_COMPLEX(reverse_array)(chirpF + Lfft - K + 1, K - 1,
                                       chirpF + Lfft - K + 1);
-    memset(chirpF + K, 0, (Lfft - (2 * K - 1))*sizeof * chirpF);
+
+    LTFAT_NAME_COMPLEX(clear_array)( chirpF + K, Lfft - (2 * K - 1));
+    /* memset(chirpF + K, 0, (Lfft - (2 * K - 1))*sizeof * chirpF); */
     /* LTFAT_FFTW(execute)(plan_chirpF); */
     /* LTFAT_FFTW(destroy_plan)(plan_chirpF); */
 

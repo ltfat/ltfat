@@ -34,7 +34,8 @@ LTFAT_NAME(ifilterbank_fft)(const LTFAT_COMPLEX* cin[],
                             ltfat_int M, LTFAT_COMPLEX* F)
 {
     // This is necessary since F us used as an accumulator
-    memset(F, 0, L * W * sizeof * F);
+    LTFAT_NAME_COMPLEX(clear_array)(F, L * W);
+    //memset(F, 0, L * W * sizeof * F);
 
     for (ltfat_int m = 0; m < M; m++)
     {
@@ -52,7 +53,8 @@ LTFAT_NAME(ifilterbank_fft_execute)(LTFAT_NAME(upconv_fft_plan) p[],
     ltfat_int L = p[0]->L;
     ltfat_int W = p[0]->W;
     // This is necessary since F us used as an accumulator
-    memset(F, 0, W * L * sizeof * F);
+    LTFAT_NAME_COMPLEX(clear_array)(F, L * W);
+    //memset(F, 0, W * L * sizeof * F);
 
     for (ltfat_int m = 0; m < M; m++)
     {
@@ -160,7 +162,8 @@ LTFAT_NAME(ifilterbank_fftbl)(const LTFAT_COMPLEX* cin[],
                               LTFAT_COMPLEX* F)
 {
     // This is necessary since F us used as an accumulator
-    memset(F, 0, W * L * sizeof * F);
+    LTFAT_NAME_COMPLEX(clear_array)(F, L * W);
+    //memset(F, 0, W * L * sizeof * F);
 
     for (ltfat_int m = 0; m < M; m++)
     {
@@ -180,7 +183,8 @@ LTFAT_NAME(ifilterbank_fftbl_execute)(LTFAT_NAME(upconv_fftbl_plan) p[],
     ltfat_int L = p[0]->L;
     ltfat_int W = p[0]->W;
     // This is necessary since F us used as an accumulator
-    memset(F, 0, W * L * sizeof * F);
+    LTFAT_NAME_COMPLEX(clear_array)(F, L * W);
+    //memset(F, 0, W * L * sizeof * F);
 
     for (ltfat_int m = 0; m < M; m++)
     {

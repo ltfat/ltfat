@@ -154,7 +154,8 @@ LTFAT_NAME(dgtrealmp_execute_locomp)(
         /* s->cvalBuf[0] = s->c[PTOI(cvalPos)]; */
         /* s->cvalBufPos[0] = cvalPos; */
 
-        memset(s->gramBuf, 0, cvalNo * cvalNo * sizeof * s->gramBuf);
+        LTFAT_NAME_COMPLEX(clear_array)( s->gramBuf, cvalNo * cvalNo);
+        /* memset(s->gramBuf, 0, cvalNo * cvalNo * sizeof * s->gramBuf); */
         // STEP 2: Construct the Gram matrix
         for (ltfat_int cidx1 = 0; cidx1 < cvalNo; cidx1++)
         {

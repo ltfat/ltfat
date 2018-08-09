@@ -61,9 +61,62 @@ LTFAT_NAME(ufilterbankmaskedheapint_relgrad)(const LTFAT_REAL  *c,
                                       const int* mask,
                                       ltfat_int a, ltfat_int M,
                                       ltfat_int L, ltfat_int W,
-				      const int do_real,
+                				      const int do_real,
                                       const LTFAT_REAL tol,
                                       LTFAT_REAL *phase);
+
+LTFAT_API
+void LTFAT_NAME(filterbankheapint)(const LTFAT_REAL* s,
+                            const LTFAT_REAL* tgradw,
+                            const LTFAT_REAL* fgradw,
+                            const ltfat_int neigh[],
+                            const LTFAT_REAL posInfo[],
+                            const LTFAT_REAL cfreq[],
+                            const double a[], const ltfat_int M, const ltfat_int N[],
+                            const ltfat_int Nsum, const ltfat_int W,
+                            LTFAT_REAL tol,  LTFAT_REAL* phase);
+
+LTFAT_API void
+LTFAT_NAME(filterbankmaskedheapint)(const LTFAT_REAL* s,
+                             const LTFAT_REAL* tgradw,
+                             const LTFAT_REAL* fgradw,
+                             const int* mask,
+                             const ltfat_int neigh[],
+                             const LTFAT_REAL posInfo[],
+                             const LTFAT_REAL* cfreq,
+                             const double* a,
+                             const ltfat_int M,
+                             const ltfat_int N[], const ltfat_int Nsum,
+                             const ltfat_int W,
+                             LTFAT_REAL tol,  LTFAT_REAL* phase);
+
+LTFAT_API void
+LTFAT_NAME(filterbankheapint_relgrad)(const LTFAT_REAL* s,
+                               const LTFAT_REAL* tgrad,
+                               const LTFAT_REAL* fgrad,
+                               const ltfat_int* neigh,
+                               const LTFAT_REAL* posInfo,
+                               const LTFAT_REAL* cfreq,
+                               const double* a, const ltfat_int M,
+                               const ltfat_int N[], const ltfat_int Nsum,
+                               const ltfat_int W,
+                               LTFAT_REAL tol,  LTFAT_REAL* phase);
+
+LTFAT_API void
+LTFAT_NAME(filterbankmaskedheapint_relgrad)(const LTFAT_REAL* s,
+                                     const LTFAT_REAL* tgrad,
+                                     const LTFAT_REAL* fgrad,
+                                     const int* mask,
+                                     const ltfat_int neigh[],
+                                     const LTFAT_REAL posInfo[],
+                                     const LTFAT_REAL* cfreq,
+                                     const double* a,
+                                     const ltfat_int M,
+                                     const ltfat_int N[], const ltfat_int Nsum,
+                                     const ltfat_int W,
+                                     LTFAT_REAL tol,  LTFAT_REAL* phase);
+
+
 /* Filter bank heap integration (uniform case) - End */
 /* Heapint for NUFB - Start */
 struct LTFAT_NAME(heapinttask_fb)
