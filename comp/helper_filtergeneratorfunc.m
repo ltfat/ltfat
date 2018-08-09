@@ -1,17 +1,14 @@
-function [filterfunc,winbw,halfbw] = helper_filtergeneratorfunc(wintype,winCell,fs,bwmul,min_win,trunc_at,audscale,do_subprec,do_symmetric,do_warped)
+function [filterfunc,winbw] = helper_filtergeneratorfunc(wintype,winCell,fs,bwmul,min_win,trunc_at,audscale,do_subprec,do_symmetric,do_warped)
 firwinflags=getfield(arg_firwin,'flags','wintype');
 freqwinflags=getfield(arg_freqwin,'flags','wintype');
 probelen = 10000;
-bwrelheight = 10^(-3/10);
 
 subprecflag = 'pedantic';
 if ~do_subprec, subprecflag = 'nopedantic'; end
 
 switch wintype
     case firwinflags
-        h = firwin(wintype,probelen);
-        winbw=norm(h).^2/probelen;
-        halfbw = winwidthatheight(abs(h),bwrelheight)/probelen*2;
+        winbw=norm(firwin(wintype,probelen)).^2/probelen;
         % This is the ERB-type bandwidth of the prototype
 
         if do_symmetric
@@ -38,14 +35,13 @@ switch wintype
         % Determine where to truncate the window
         H = freqwin(winCell,probelen,probebw);
         winbw = norm(H).^2/(probebw*probelen/2);
-
-        halfbw = winwidthatheight(abs(H),bwrelheight)/probelen*2;
+        bwrelheight = 10^(-3/10);
 
         if trunc_at <= eps
             bwtruncmul = inf;
         else
             try
-                bwtruncmul = winwidthatheight(abs(H),trunc_at)/bwatrelheight;
+                bwtruncmul = winwidthatheight(abs(H),trunc_at)/winwidthatheight(abs(H),bwrelheight);
             catch
                 bwtruncmul = inf;
             end
