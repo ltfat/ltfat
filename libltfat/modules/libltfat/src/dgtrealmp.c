@@ -481,7 +481,8 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
     for (ltfat_int k = 0; k < p->P; k++)
     {
         CHECKNULL(c[k]);
-        memset(c[k], 0, p->M2[k] * p->N[k] * sizeof * c[k]);
+        LTFAT_NAME_COMPLEX(clear_array)( c[k], p->M2[k] * p->N[k]);
+        /* memset(c[k], 0, p->M2[k] * p->N[k] * sizeof * c[k]); */
     }
 
     while ( LTFAT_DGTREALMP_STATUS_CANCONTINUE ==

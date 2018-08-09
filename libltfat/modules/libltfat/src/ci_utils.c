@@ -236,9 +236,10 @@ LTFAT_NAME(fold_array)(const LTFAT_TYPE* in, ltfat_int Lin,
 
     // Clear output, we will use it as an accumulator
     if (in != out)
-        memset(out, 0, Lfold * sizeof * out);
+        LTFAT_NAME(clear_array)(out, Lfold); //memset(out, 0, Lfold * sizeof * out);
     else if (Lfold > Lin)
-        memset(out + Lin, 0, (Lfold - Lin)*sizeof * out);
+        LTFAT_NAME(clear_array)(out + Lin,
+                                Lfold - Lin); //memset(out + Lin, 0, (Lfold - Lin)*sizeof * out);
 
     if (!startIdx)
     {
@@ -484,7 +485,8 @@ LTFAT_NAME(middlepad)(const LTFAT_TYPE* in, ltfat_int Lin, ltfat_symmetry_t sym,
     if (Lin == 1)
     {
         out[0] = in[0];
-        memset(out + 1, 0, (Lout - 1) * sizeof * out);
+        LTFAT_NAME(clear_array)(out + 1,
+                                Lout - 1);//memset(out + 1, 0, (Lout - 1) * sizeof * out);
         return LTFATERR_SUCCESS;
     }
 
@@ -752,12 +754,29 @@ error:
 LTFAT_API int
 LTFAT_NAME(log_array)(const LTFAT_TYPE in[], ltfat_int L, LTFAT_TYPE out[])
 {
-    int status = LTFATERR_FAILED;
+    int status = LTFATERR_SUCCESS;
     CHECKNULL(in); CHECKNULL(out);
     CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
 
     for (ltfat_int l = 0; l < L; l++ )
         out[l] = log(in[l] + LTFAT_REAL_MIN);
+
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(clear_array)(LTFAT_TYPE* in, ltfat_int L)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(in);
+    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
+
+#ifdef __cplusplus
+    std::fill(in, in + L, LTFAT_TYPE {} );
+#else
+    memset(in, 0, L * sizeof * in);
+#endif
 
 error:
     return status;

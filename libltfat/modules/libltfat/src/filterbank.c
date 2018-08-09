@@ -102,7 +102,7 @@ LTFAT_NAME(convsub_fft_execute)(const LTFAT_NAME(convsub_fft_plan) p,
     ltfat_int N = L / a;
     const LTFAT_REAL scalconst = (LTFAT_REAL) (1.0 / L);
 
-    memset(cout, 0, W * N * sizeof * cout);
+    LTFAT_NAME_COMPLEX(clear_array)(cout, W * N);
 
     for (ltfat_int w = 0; w < W; w++)
     {
@@ -235,7 +235,8 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
     // Bail out in degenerate case
     if (!Gl)
     {
-        memset(cout, 0, W * N * sizeof * cout);
+        LTFAT_NAME_COMPLEX(clear_array)(cout, W * N);
+        //memset(cout, 0, W * N * sizeof * cout);
         return;
     }
 
@@ -250,7 +251,8 @@ LTFAT_NAME(convsub_fftbl_execute)(const LTFAT_NAME(convsub_fftbl_plan) p,
     {
         // First Gl elements of tmp is copied from F so,
         // zero only the part which wont be written to.
-        memset(tmp + Gl, 0, (tmpLen - Gl)*sizeof * tmp);
+        LTFAT_NAME_COMPLEX(clear_array)(tmp + Gl, tmpLen - Gl);
+        /* memset(tmp + Gl, 0, (tmpLen - Gl)*sizeof * tmp); */
         LTFAT_COMPLEX* tmpPtr = tmp;
         ltfat_int foffTmp = foff;
         ltfat_int tmpLg = Gl;

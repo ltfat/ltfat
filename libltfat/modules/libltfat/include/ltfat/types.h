@@ -111,5 +111,6 @@
 #  endif
 #endif
 
-
-
+#if defined(__cplusplus)
+    static_assert(std::is_trivially_copyable<std::complex<LTFAT_REAL>>::value);
+#endif

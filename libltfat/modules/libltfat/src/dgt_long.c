@@ -213,7 +213,7 @@ LTFAT_NAME(dgt_walnut_execute)(LTFAT_NAME(dgt_long_plan)* plan,
     //LTFAT_COMPLEX* cout = plan->cout;
 
     /* Scaling constant needed because of FFTWs normalization. */
-    const LTFAT_REAL scalconst = (const LTFAT_REAL)( 1.0 / ((double)d * sqrt((
+    LTFAT_REAL scalconst = (LTFAT_REAL)( 1.0 / ((double)d * sqrt((
                                      double)M)) );
 
     /* Leading dimensions of the 4dim array. */

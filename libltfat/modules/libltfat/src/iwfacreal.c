@@ -25,7 +25,7 @@ LTFAT_NAME(iwfacreal)(const LTFAT_COMPLEX* gf, ltfat_int L,
     ltfat_int d2 = d / 2 + 1;
 
     /* division by d is because of the way FFTW normalizes the transform. */
-    const LTFAT_REAL scaling = (const LTFAT_REAL) ( 1.0 / sqrt((double)M) / d );
+    LTFAT_REAL scaling = (LTFAT_REAL) ( 1.0 / sqrt((double)M) / d );
 
     LTFAT_REAL*    sbuf = LTFAT_NAME_REAL(malloc)( d);
     LTFAT_COMPLEX* cbuf = LTFAT_NAME_COMPLEX(malloc)( d2);
