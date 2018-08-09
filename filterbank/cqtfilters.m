@@ -67,9 +67,7 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %                           If the value is less than one, the
 %                           system may no longer be painless.
 %
-%     'subprec'             Allow subsample window positions and
-%                           bandwidths to better approximate the constant-Q
-%                           property.
+%     'nosubprec'           Disable subsample window positions.
 %
 %     'complex'             Construct a filter bank that covers the entire
 %                           frequency range. When missing, only positive
@@ -162,7 +160,7 @@ definput.keyvals.redmul=1;
 definput.keyvals.min_win = 4;
 definput.keyvals.trunc_at=10^(-5);
 definput.flags.real     = {'real','complex'};
-definput.flags.subprec  = {'nosubprec','subprec'};
+definput.flags.subprec  = {'subprec','nosubprec'};
 definput.flags.sampling = {'regsampling','uniform',...
                            'fractional','fractionaluniform'};
 
@@ -170,10 +168,6 @@ definput.flags.sampling = {'regsampling','uniform',...
 [flags,kv]=ltfatarghelper({},definput,varargin);
 if isempty(winCell), winCell = {flags.wintype}; end
 
-if flags.do_subprec
-    error('%s: TO DO: Subsample window positioning is not implemented yet.',...
-          upper(mfilename));
-end
 % Nyquist frequency
 nf = fs/2;
 
@@ -199,7 +193,7 @@ end
 fc = zeros(sum(bins),1);
 
 ll = 0;
-for kk = 1:length(bins);
+for kk = 1:length(bins)
     fc(ll+(1:bins(kk))) = ...
         fmin*2.^(((kk-1)*bins(kk):(kk*bins(kk)-1)).'/bins(kk));
     ll = ll+bins(kk);
@@ -327,7 +321,7 @@ end;
 
 filterfunc = helper_filtergeneratorfunc(...
                           flags.wintype,winCell,fs,1,kv.min_win,kv.trunc_at,...
-                          [],1,0);
+                          [],flags.do_subprec,1,0);
 
 % This is actually much faster than the vectorized call.
 g = cell(1,numel(fc));

@@ -96,8 +96,9 @@ definput.flags.real={'complex','real'};
 [flags,kv]=ltfatarghelper({'fc'},definput,varargin);
 
 if flags.do_pedantic
-    error('%s: TO DO: Pedantic option not implemented yet.',...
-          upper(mfilename));
+    fc_offset = @(L,fc) L/2*fc-round(L/2*fc);
+else
+    fc_offset = @(L,fc) 0;
 end
 
 [fsupp,kv.fc,kv.delay,kv.scal]=scalardistribute(fsupp,kv.fc,kv.delay,kv.scal);
@@ -133,23 +134,28 @@ for ii=1:Nfilt
     if flags.do_1 || flags.do_area 
         g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...
                                     round(L/2*fsupp(ii))]),wn{2:end},...
-                                    flags.norm))*kv.scal(ii)*L;        
+                                    flags.norm,...
+                                    'shift',-fc_offset(L,kv.fc(ii))))...
+                                    *kv.scal(ii)*L;        
     end;
     
     if  flags.do_2 || flags.do_energy
         g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...
                                     round(L/2*fsupp(ii))]),wn{2:end},...
-                                    flags.norm))*kv.scal(ii)*sqrt(L);                
+                                    flags.norm,...
+                                    'shift',-fc_offset(L,kv.fc(ii))))...
+                                    *kv.scal(ii)*sqrt(L);                
     end;
         
     if flags.do_inf || flags.do_peak
         g.H=@(L)    fftshift(firwin(wn{1},max([kv.min_win,...
                                     round(L/2*fsupp(ii))]),wn{2:end},...
-                                    flags.norm))*kv.scal(ii);        
+                                    'shift',-fc_offset(L,kv.fc(ii))))...
+                                    *kv.scal(ii);        
         
     end;
         
-    g.foff=@(L) floor(L/2*kv.fc(ii))-floor(max([kv.min_win,round(L/2*fsupp(ii))])/2);
+    g.foff=@(L) round(L/2*kv.fc(ii))-floor(max([kv.min_win,round(L/2*fsupp(ii))])/2);
     g.realonly=flags.do_real;
     g.delay=kv.delay(ii);
     g.fs=kv.fs;

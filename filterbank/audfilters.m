@@ -113,6 +113,8 @@ function [g,a,fc,L]=audfilters(fs,Ls,varargin)
 %                     frequencies this allows the analysis of complex
 %                     valued signals.
 %
+%     'nosubprec'     Disable subsample window positions.
+%
 %     'trunc_at'      When using a prototype defined in |freqwin|, a hard 
 %                     thresholding of the filters at the specified threshold 
 %                     value is performed to reduce their support size. 
@@ -194,6 +196,7 @@ definput.keyvals.trunc_at=10^(-5);
 definput.keyvals.fmin=0;
 definput.keyvals.fmax=fs/2;
 definput.keyvals.redtar=[];
+definput.flags.subprec={'subprec','nosubprec'};
 definput.flags.audscale={'erb','erb83','bark','mel','mel1000'};
 definput.flags.warp     = {'symmetric','warped'};
 definput.flags.real     = {'real','complex'};
@@ -257,7 +260,7 @@ end
 
 [filterfunc,winbw] = helper_filtergeneratorfunc(...
                           flags.wintype,winCell,fs,kv.bwmul,kv.min_win,kv.trunc_at,...
-                          flags.audscale,flags.do_symmetric,flags.do_warped);
+                          flags.audscale,flags.do_subprec,flags.do_symmetric,flags.do_warped);
 
 % probelen = 10000;
 %

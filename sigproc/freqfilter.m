@@ -69,10 +69,10 @@ definput.flags.real={'complex','real'};
 % Sanitize
 kv.fc=modcent(2*kv.fc/kv.fs,2);
 
-Lw = @(L,bw) min(ceil(bw*kv.bwtruncmul*L/kv.fs),L);
+Lw = @(L,bw) min(round(bw*kv.bwtruncmul*L/kv.fs),L);
     
 fsRestricted = @(L,bw) kv.fs/L*Lw(L,bw);
-if flags.pedantic
+if flags.do_pedantic
     fc_offset = @(L,fc) L/2*fc-round(L/2*fc);
 else
     fc_offset = @(L,fc) 0;
