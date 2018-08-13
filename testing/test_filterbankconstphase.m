@@ -1,63 +1,40 @@
-[f,fs] = gspi;%wavload('serj.wav');%
+function test_failed = tets_filterbankconstphase()
+firwinflags=getfield(arg_firwin,'flags','wintype');
+freqwinflags=getfield(arg_freqwin,'flags','wintype');
 
+[f,fs] = gspi;
+win = {'gauss','blackman','hann'};
 
-%[f,fs] = wavload('testFile7.wav');
-%[g,a,cfreq,L]=audfilters(fs,numel(f),'uniform','gauss','bwmul',1/2,'spacing',1/4,'redmul',2);
-bwmul = 1/3;
-[g,a,cfreq,L]=audfilters(fs,numel(f),'fractional','gauss','bwmul',bwmul,'spacing',1/9,'redmul',3);
-corig = filterbank(f,g,a);
-%coriguni = ufilterbank(f,g,a(1));
+for winId = 1:numel(win)
+    bwmul = 1/4;
+    [g,a,fc,L,info]=audfilters(fs,numel(f),'fractional','bwmul',bwmul,'spacing',1/9,'redtar',8,win{winId},'subprec');
+    aud_red = sum(a(:,2))/L;
 
-tfr = getgausstfr(cfreq,fs,L,'erb','bwmul',bwmul);
-cfreq = 2*cfreq/fs;
-%[tgrad0,fgrad0] = filterbankphasegrad(f,g,a,L);
+    corig = filterbank(f,g,a);
 
-% M = size(c,1);
-% N = length(c{1});
-% c1=zeros(M,N);
-% for m=1:M    
-%     c1(m,:)=c{m};
-% end;
-%
-% [~,~,~,tgrad1,fgrad1]=filterbankconstphasereal(abs(c1),g,a(1),tfr,cfreq);
-% 
-% tgrad1 = mat2cell(tgrad1,ones(M,1));
-% fgrad1 = mat2cell(fgrad1,ones(M,1));
+    c=filterbankconstphase(corig,a,info.fc,info.tfr);
 
-%av = [a(:,1), ones(M,1)];
-% [~,~,~,tgrad,fgrad]=nufbconstphasereal_old(c,g,av,tfr,cfreq);
+    cproj = filterbank(ifilterbankiter(c,g,a,'pcg','tol',1e-10),g,a);
+    Cdb = 20*log10( norm(abs(cell2mat(corig)) - abs(cell2mat(cproj)) )/norm( abs(cell2mat(corig))) );
 
-% %Uniform
-% figure(1);
-% subplot(131); plotfilterbank(fgrad0,a,'linabs','clim',[0,4500])
-% subplot(132); plotfilterbank(fgrad1,a,'linabs','clim',[0,4500])
-% subplot(133); plotfilterbank(fgrad,a,'linabs','clim',[0,4500])
-% figure(2); 
-% subplot(131); plotfilterbank(tgrad0,a,'lin','clim',[-.01,.01])
-% subplot(132); plotfilterbank(tgrad1,a,'lin','clim',[-.01,.01])
-% subplot(133); plotfilterbank(tgrad,a,'lin','clim',[-.01,.01])
+    %figure(1);plotfilterbankphasediff(corig,c,1e-4,a);
 
-%Nonuniform
-disp('About to start')
-tic
-[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=filterbankconstphase(corig,a,tfr,cfreq,'tol',[1e-1,1e-10],'real');
-toc
-tic
-[cnonuni2,newphase,~,tgradnonuni,fgradnonuni]=filterbankconstphase(corig,a,tfr,cfreq,'tol',[1e-10],'real');
-toc
-%[cnonuni,newphase,~,tgradnonuni,fgradnonuni]=nufbconstphase(corig,g,a,tfr,cfreq);
+    fprintf('AUDFILTERS win=%8s red=%.2f, C=%.2f dB\n', win{winId}, aud_red, Cdb);
 
+    redmul=2;
+    switch win{winId}
+    case firwinflags
+        redmul=1;
+    end
 
-%[cuni,newphase,usedmask,tgraduni,fgraduni]=filterbankconstphasereal(abs(coriguni).',g,a(1),tfr,cfreq,'tol',1e-3);
-% figure(1);
-% subplot(121); plotfilterbank(fgrad0,a,'linabs','clim',[0,400])
-% subplot(122); plotfilterbank(fgrad,a,'linabs','clim',[0,400])
-% figure(2); 
-% subplot(121); plotfilterbank(tgrad0,a,'lin','clim',[-.01,.01])
-% subplot(122); plotfilterbank(tgrad,a,'lin','clim',[-.01,.01])
+    [g,a,fc,L,info]=cqtfilters(fs,100,fs/2 - 100,48,numel(f),'fractional',win{winId},'redmul',redmul,'Qvar',4,'subprec');
+    cqt_red = sum(a(:,2))/L;
 
-fhat = ifilterbankiter(cnonuni,g,a,'cg');
+    corig = filterbank(f,g,a);
+    c=filterbankconstphase(corig,a,info.fc,info.tfr);
+   % figure(2);plotfilterbankphasediff(corig,c,1e-4,a);
 
-%figure(1);plotfilterbankphasediff(coriguni,cuni.',1e-3,a)
-figure(1);plotfilterbankphasediff(corig,cnonuni,1e-6,a)
-figure(2);plotfilterbankphasediff(corig,cnonuni2,1e-6,a)
+    cproj = filterbank(ifilterbankiter(c,g,a,'pcg','tol',1e-10),g,a);
+    Cdb = 20*log10( norm(abs(cell2mat(corig)) - abs(cell2mat(cproj)) )/norm( abs(cell2mat(corig))) );
+    fprintf('CQTFILTERS win=%8s red=%.2f, C=%.2f dB\n', win{winId}, cqt_red, Cdb);
+end
