@@ -1,4 +1,4 @@
-function [g,a,fc,L]=audfilters(fs,Ls,varargin)
+function [g,a,fc,L,info]=audfilters(fs,Ls,varargin)
 %AUDFILTERS Generates filters equidistantly spaced on auditory frequency scales
 %   Usage:  [g,a,fc,L]=audfilters(fs,Ls);
 %           [g,a,fc,L]=audfilters(fs,Ls,...);
@@ -262,53 +262,6 @@ end
                           flags.wintype,winCell,fs,kv.bwmul,kv.min_win,kv.trunc_at,...
                           flags.audscale,flags.do_subprec,flags.do_symmetric,flags.do_warped);
 
-% probelen = 10000;
-%
-% switch flags.wintype
-%     case firwinflags
-%         winbw=norm(firwin(flags.wintype,probelen)).^2/probelen;
-%         % This is the ERB-type bandwidth of the prototype
-%
-%         if flags.do_symmetric
-%             filterfunc = @(fsupp,fc,scal)... 
-%                          blfilter(winCell,fsupp,fc,'fs',fs,'scal',scal,...
-%                                   'inf','min_win',kv.min_win);
-%         else
-%             fsupp_scale=1/winbw*kv.bwmul;
-%             filterfunc = @(fsupp,fc,scal)...
-%                          warpedblfilter(winCell,fsupp_scale,fc,fs,...
-%                                         @(freq) freqtoaud(freq,flags.audscale),@(aud) audtofreq(aud,flags.audscale),'scal',scal,'inf');
-%         end
-%         bwtruncmul = 1;
-%     case freqwinflags
-%         if flags.do_warped
-%             error('%s: TODO: Warping is not supported for windows from freqwin.',...
-%                 upper(mfilename));
-%         end
-%
-%         probebw = 0.01;
-%
-%         % Determine where to truncate the window
-%         H = freqwin(winCell,probelen,probebw);
-%         winbw = norm(H).^2/(probebw*probelen/2);
-%         bwrelheight = 10^(-3/10);
-%
-%         if kv.trunc_at <= eps
-%             bwtruncmul = inf;
-%         else
-%             try
-%                 bwtruncmul = winwidthatheight(abs(H),kv.trunc_at)/winwidthatheight(abs(H),bwrelheight);
-%             catch
-%                 bwtruncmul = inf;
-%             end
-%         end
-%
-%         filterfunc = @(fsupp,fc,scal)...
-%                      freqfilter(winCell, fsupp, fc,'fs',fs,'scal',scal,...
-%                                 'inf','min_win',kv.min_win,...
-%                                 'bwtruncmul',bwtruncmul);
-% end
-
 % Construct the AUD filterbank
 fmin = max(kv.fmin,audtofreq(kv.spacing,flags.audscale));
 fmax = min(kv.fmax,fs/2);
@@ -492,94 +445,104 @@ if ~isempty(kv.redtar)
     g_new = filterbankscale(g,sqrt(scal_new)');
     a = a_new;
     g = g_new;
-    % Compute and display redundancy for verification
-%     fprintf('Original redundancy: %g \n', org_red);
-%     fprintf('Target redundancy: %g \n', kv.redtar);
-%     fprintf('Actual redundancy: %g \n', new_red);
+    if 0
+        % Compute and display redundancy for verification
+        fprintf('Original redundancy: %g \n', org_red);
+        fprintf('Target redundancy: %g \n', kv.redtar);
+        fprintf('Actual redundancy: %g \n', new_red);
+    end
 end
+
+winbwrat = winbw/0.754;
+basebw = 1.875657;
+
+info.fc  = 2*fc/fs;
+info.tfr = @(L)(1/L)*1./((2*fsupp*winbwrat/fs)./basebw).^2;
+
+
 
 function glow = audlowpassfilter(g,a,fc,fs,scal,kv,flags)    
 
 % Make a probe, compute the restricted filter bank response to check if low-pass filter is needed
-    Lprobe = 10000;
-    FBresp0 = filterbankresponse(g(2:end-1),a(2:end-1,:),Lprobe,'real');
-    eps_thr = 1e-3;
-    ind_f1 = floor(fc(2)*Lprobe/fs);
-    ind_fK = floor(fc(end-1)*Lprobe/fs);
-    if ind_f1 == 0 || ...
-        min(FBresp0(1:ind_f1)) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
+Lprobe = 10000;
+FBresp0 = filterbankresponse(g(2:end-1),a(2:end-1,:),Lprobe,'real');
+eps_thr = 1e-3;
+ind_f1 = floor(fc(2)*Lprobe/fs);
+ind_fK = floor(fc(end-1)*Lprobe/fs);
+if ind_f1 == 0 || ...
+    min(FBresp0(1:ind_f1)) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
 %       Not required
-        glow.H = @(L) 0;
-        glow.foff = @(L) 0;
-        glow.realonly = 0;
-        glow.delay = 0;
-        glow.fs = g{2}.fs;
-    else
+    glow.H = @(L) 0;
+    glow.foff = @(L) 0;
+    glow.realonly = 0;
+    glow.delay = 0;
+    glow.fs = g{2}.fs;
+else
 
 %       Required
-        % Compute the transition frequencies f_{p,s}^{-} and f_{p,e}^{-}
-        % Determines the width of the plateau
-        fps = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);
-        % Determines the cosine transition frequency
-        fpe = audtofreq(freqtoaud(fc(2),flags.audscale)+4*kv.spacing,flags.audscale);
-        fsupp_LP = 2*fpe;
-        ratio = 2*(fpe-fps)/fsupp_LP;
-        Lw = @(L) min(ceil(fsupp_LP*L/fs),L);
+    % Compute the transition frequencies f_{p,s}^{-} and f_{p,e}^{-}
+    % Determines the width of the plateau
+    fps = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);
+    % Determines the cosine transition frequency
+    fpe = audtofreq(freqtoaud(fc(2),flags.audscale)+4*kv.spacing,flags.audscale);
+    fsupp_LP = 2*fpe;
+    ratio = 2*(fpe-fps)/fsupp_LP;
+    Lw = @(L) min(ceil(fsupp_LP*L/fs),L);
 
-        P0 = blfilter({'hann','taper',ratio},fsupp_LP,'fs',fs,'inf','min_win',kv.min_win);
-        temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L,'real');
-        Hinv = @(L) sqrt(max(temp_fbresp(L))-temp_fbresp(L));
+    P0 = blfilter({'hann','taper',ratio},fsupp_LP,'fs',fs,'inf','min_win',kv.min_win);
+    temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L,'real');
+    Hinv = @(L) sqrt(max(temp_fbresp(L))-temp_fbresp(L));
 
-    %     Compute the final low-pass filter
-        glow.H = @(L) fftshift(long2fir(...
-            filterbankfreqz(P0,a(1,:),L).*Hinv(L),Lw(L)))*scal;
-        glow.foff = @(L) -floor(Lw(L)/2);
-        glow.realonly = 0;
-        glow.delay = 0;
-        glow.fs = g{2}.fs;
-    end
+%     Compute the final low-pass filter
+    glow.H = @(L) fftshift(long2fir(...
+        filterbankfreqz(P0,a(1,:),L).*Hinv(L),Lw(L)))*scal;
+    glow.foff = @(L) -floor(Lw(L)/2);
+    glow.realonly = 0;
+    glow.delay = 0;
+    glow.fs = g{2}.fs;
+end
     
 function ghigh = audhighpassfilter(g,a,fc,fs,scal,kv,flags)
 
 % Make a probe, compute the restricted filter bank response to check if hi-pass filter is needed
-    Lprobe = 10000;
-    FBresp0 = filterbankresponse(g(2:end-1),a(2:end-1,:),Lprobe,'real');
-    eps_thr = 1e-3;
-    ind_f1 = floor(fc(2)*Lprobe/fs);
-    ind_fK = floor(fc(end-1)*Lprobe/fs);
-    if ind_f1 == 0 ||...
-        min(FBresp0(ind_fK:floor(Lprobe/2))) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
+Lprobe = 10000;
+FBresp0 = filterbankresponse(g(2:end-1),a(2:end-1,:),Lprobe,'real');
+eps_thr = 1e-3;
+ind_f1 = floor(fc(2)*Lprobe/fs);
+ind_fK = floor(fc(end-1)*Lprobe/fs);
+if ind_f1 == 0 ||...
+    min(FBresp0(ind_fK:floor(Lprobe/2))) >= (1-eps_thr)*min(FBresp0(ind_f1:ind_fK))
 %       Not required
-        ghigh.H = @(L) 0;
-        ghigh.foff = @(L) 0;
-        ghigh.realonly = 0;
-        ghigh.delay = 0;
-        ghigh.fs = g{2}.fs;
-    else
+    ghigh.H = @(L) 0;
+    ghigh.foff = @(L) 0;
+    ghigh.realonly = 0;
+    ghigh.delay = 0;
+    ghigh.fs = g{2}.fs;
+else
 
-%     Compute the transition frequencies f_{p,s}^{+} and f_{p,e}^{+}
+    %     Compute the transition frequencies f_{p,s}^{+} and f_{p,e}^{+}
     % Determines the width of the plateau
     fps = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);
     % Determines the cosine transition frequency
     fpe = audtofreq(freqtoaud(fc(end-1),flags.audscale)-4*kv.spacing,flags.audscale);
 
-%     plateauWidth = 2*(fs/2-fps);
+    %     plateauWidth = 2*(fs/2-fps);
     fsupp_HP = 2*(fs/2-fpe);
     ratio = 2*(fps-fpe)/fsupp_HP;
     Lw = @(L) min(ceil(fsupp_HP*L/fs),L);
-    
+
     PK = blfilter({'hann','taper',ratio},fsupp_HP,'fc',fs/2,'fs',fs,'inf','min_win',kv.min_win);
     temp_fbresp = @(L) filterbankresponse(g(2:end-1),a(2:end-1,:),L,'real');
     Hinv = @(L) sqrt(max(temp_fbresp(L))-temp_fbresp(L));
-    
-%     Compute the final high-pass filter
+
+    %     Compute the final high-pass filter
     ghigh.H = @(L) fftshift(long2fir(fftshift(...
         filterbankfreqz(PK,a(1,:),L).*Hinv(L)),Lw(L)))*scal;
-    
+
     ghigh.foff = @(L) ceil(L/2)-floor(Lw(L)/2)-1;
     ghigh.realonly = 0;
     ghigh.delay = 0;
     ghigh.fs = g{2}.fs;
-    end
+end
 
 

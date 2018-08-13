@@ -1,4 +1,4 @@
-function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
+function [g,a,fc,L,info]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %CQTFILTERS   CQT-spaced filters
 %   Usage:  [g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin);
 %           
@@ -63,8 +63,9 @@ function [g,a,fc,L]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %   `cqtfilters` accepts the following optional parameters:
 %
 %     'Qvar',Qvar           Bandwidth variation factor. Multiplies the
-%                           calculated bandwidth. Default value is *1*.
-%                           If the value is less than one, the
+%                           calculated bandwidth (divides Q). 
+%                           Default value is *1*.
+%                           If the value is larger than one, the
 %                           system may no longer be painless.
 %
 %     'nosubprec'           Disable subsample window positions.
@@ -168,6 +169,22 @@ definput.flags.sampling = {'regsampling','uniform',...
 [flags,kv]=ltfatarghelper({},definput,varargin);
 if isempty(winCell), winCell = {flags.wintype}; end
 
+[filterfunc,winbw] = helper_filtergeneratorfunc(...
+                          flags.wintype,winCell,fs,1,kv.min_win,kv.trunc_at,...
+                          [],flags.do_subprec,1,0);
+     
+winbw_hann = 0.3750;
+switch flags.wintype
+    case firwinflags
+       winbw = winbw/winbw_hann;
+    case freqwinflags
+       % Adjusting Qvar such that the filters have the same erb as the
+       % Hann window
+       winbw = winbw/winbw_hann;
+       kv.Qvar = kv.Qvar/(winbw);
+end
+
+
 % Nyquist frequency
 nf = fs/2;
 
@@ -179,7 +196,7 @@ end
 % Number of octaves
 b = ceil(log2(fmax/fmin))+1;
 
-if length(bins) == 1;
+if length(bins) == 1
     % Constant number of bins in each octave
     bins = bins*ones(b,1);
 elseif length(bins) < b
@@ -319,9 +336,7 @@ else
     fsupp=[fsupp;flipud(fsupp(2:M2-1))];
 end;
 
-filterfunc = helper_filtergeneratorfunc(...
-                          flags.wintype,winCell,fs,1,kv.min_win,kv.trunc_at,...
-                          [],flags.do_subprec,1,0);
+
 
 % This is actually much faster than the vectorized call.
 g = cell(1,numel(fc));
@@ -345,5 +360,11 @@ for idx = 1:size(kkpairs,1)
                              scal(kkpairs(idx)),'inf');
     end
 end
+
+winbwrat = winbw/2.0106;
+basebw = 1.875657;
+
+info.fc  = 2*fc/fs;
+info.tfr = @(L)(1/L)*1./((2*fsupp*winbwrat/fs)./basebw).^2;
 
 
