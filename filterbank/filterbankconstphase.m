@@ -1,16 +1,16 @@
-function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varargin)
+function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varargin)
 %FILTERBANKCONSTPHASE Construct phase from FILTERBANK or UFILTERBANK magnitude 
-%   Usage:  c=filterbankconstphase(s,a,tfr,fc);
-%           c=filterbankconstphase(c,a,tfr,fc,mask);
-%           c=filterbankconstphase(s,a,tfr,fc,mask,usephase);
-%           c=filterbankconstphase(s,a,{tgrad,fgrad},fc,...);
+%   Usage:  c=filterbankconstphase(s,a,fc,tfr);
+%           c=filterbankconstphase(c,a,fc,tfr,mask);
+%           c=filterbankconstphase(s,a,fc,tfr,mask,usephase);
+%           c=filterbankconstphase(s,a,fc,{tgrad,fgrad},...);
 %           [c,newphase,usedmask,tgrad,fgrad] = filterbankconstphase(...);
 %
 %   Input parameters:
 %         s        : Initial coefficients.
 %         a        : Downsampling factor(s).
-%         tfr      : Time-frequency rations of the filters
-%         fc       : Center frequencies normalized to the Nyquist rate
+%         fc       : Center frequencies (normalized to the Nyquist rate)
+%         tfr      : ERB of the filters (normalized to the Nyquist rate)
 %         mask     : Mask for selecting known phase.
 %         usephase : Explicit known phase.
 %   Output parameters:
@@ -27,13 +27,12 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,tfr,fc,varar
 %   a filterbank with filters with center frequencies *fc* and time-frequency
 %   ratios *tfr* and subsampling factors *a* i.e.:
 %
-%       [g,a,fc] = ...filters(...);
-%       tfr = 
+%       [g,a,~,~,info] = ...filters(...);
 %       c = filterbank(f,g,a);
 %       s = abs(c);
 %
-%   then `filterbankconstphase(s,a,tfr,fc)` will attempt to reconstruct
-%   *c*.
+%   then `filterbankconstphase(s,a,info.fc,info.tfr)` will attempt to 
+%   reconstruct *c*.
 %
 %   `filterbankconstphase(c,g,a,M,mask)` accepts real or complex valued
 %   *c* and real valued *mask* of the same size. Values in *mask* which can
@@ -144,6 +143,18 @@ else
     [N,M,W] = size(s);
 end
 
+do_uniform = 1;
+wasCell = 0;
+tgrad = []; fgrad = [];
+    
+asan = comp_filterbank_a(a,M);
+a = asan(:,1)./asan(:,2);
+L = N.*a;
+
+%TODO: Check all L?
+if isa(fc,'function_handle'), fc = fc(L(1)); end
+if isa(tfr,'function_handle'), tfr = tfr(L(1)); end
+
 if ~isnumeric(fc) || isempty(fc) || numel(fc) ~= M
   error('%s: fc must be non-empty numeric.',upper(mfilename));
 end
@@ -156,12 +167,7 @@ if  ~( (isvector(tfr) && ~isempty(tfr) && numel(tfr) == M ) || ...
            '{tgrad,fgrad}.'],upper(mfilename),M);
 end
 
-do_uniform = 1;
-wasCell = 0;
-tgrad = []; fgrad = [];
-    
-asan = comp_filterbank_a(a,M);
-a = asan(:,1)./asan(:,2);
+
 
 if flags.do_naturalscaling
     scal = 1./(sqrt(asan(:,1)./asan(:,2)));
@@ -235,11 +241,15 @@ if ~isempty(mask)
     mask(mask~=0) = 1;
 end
 
+if isempty(tgrad) && isempty(fgrad)
+    tfr = sqrt(tfr);% sqrt(1./( (tfr./1.875657).^2*L(1) ));
+end
+
 if do_uniform
     if isempty(tgrad) && isempty(fgrad)
         [tgrad,fgrad] = ...
             comp_ufilterbankphasegradfrommag(...
-            abss,N(1),a,M,sqrt(tfr),fc,flags.do_real);
+            abss,N(1),a,M,tfr,fc,flags.do_real);
     end
     
     [newphase,usedmask] = ...
@@ -260,7 +270,7 @@ else
     if isempty(tgrad) && isempty(fgrad)
         [tgrad,fgrad] = ...
             comp_filterbankphasegradfrommag(...
-            abss,N,a,M,sqrt(tfr),fc,NEIGH,posInfo,kv.gderivweight);
+            abss,N,a,M,tfr,fc,NEIGH,posInfo,kv.gderivweight);
     end
     
     [newphase,usedmask] = ...
