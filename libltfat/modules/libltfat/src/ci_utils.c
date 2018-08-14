@@ -770,7 +770,8 @@ LTFAT_NAME(clear_array)(LTFAT_TYPE* in, ltfat_int L)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(in);
-    CHECK(LTFATERR_BADSIZE, L > 0, "L must be positive");
+    CHECK(LTFATERR_BADSIZE, L >= 0, "L must be nonegative");
+    if (L == 0) return status;
 
 #ifdef __cplusplus
     std::fill(in, in + L, LTFAT_TYPE {} );
