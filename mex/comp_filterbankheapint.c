@@ -28,42 +28,32 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
 {
     // Get inputs
     const mxArray* mxs  = prhs[0];
-    const mxArray* mxneigh  = prhs[3];
-    const mxArray* mxposinfo  = prhs[4];
-
     const LTFAT_REAL* s = mxGetData(mxs);
-
     const LTFAT_REAL* tgrad = mxGetData(prhs[1]);
     const LTFAT_REAL* fgrad = mxGetData(prhs[2]);
+    const mxArray* mxneigh  = prhs[3];
+    const mxArray* mxposinfo  = prhs[4];
     const LTFAT_REAL* cfreq = mxGetData(prhs[5]);
-
     double* a = mxGetData(prhs[6]);
     mwSize M = (mwSize)mxGetScalar(prhs[7]);
-
-    ltfat_int NPtr[M];
-
     double* N  = mxGetData(prhs[8]);
-
-    for (mwSize ii = 0; ii < M; ++ii)
-        NPtr[ii] = (ltfat_int) N[ii];
-
     LTFAT_REAL tol = (LTFAT_REAL) mxGetScalar(prhs[9]);
     int phasetype = (int)mxGetScalar(prhs[10]);
 
     const ltfat_int Nsum = mxGetM(mxs);
-
+    ltfat_int W = mxGetN(mxs);
     mwSize neighLen = mxGetNumberOfElements(mxneigh);
-    ltfat_int* neighPtr = ltfat_malloc(neighLen * sizeof * neighPtr);
 
+    ltfat_int NPtr[M];
+    for (mwSize ii = 0; ii < M; ++ii)
+        NPtr[ii] = (ltfat_int) N[ii];
+
+    ltfat_int* neighPtr = ltfat_malloc(neighLen * sizeof * neighPtr);
     const double* neighDoublePtr = mxGetData(mxneigh);
     for (mwSize ii = 0; ii < neighLen; ++ii)
         neighPtr[ii] = (ltfat_int) neighDoublePtr[ii];
 
-
     const LTFAT_REAL* posinfoPtr = mxGetData(mxposinfo);
-
-    // Get matrix dimensions.
-    ltfat_int W = mxGetN(mxs);
 
     // Create output matrix and zero it.
     plhs[0] = ltfatCreateNdimArray(mxGetNumberOfDimensions(mxs),
@@ -72,8 +62,6 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
 
     // Get pointer to output
     LTFAT_REAL* phase = mxGetData(plhs[0]);
-
-    //mexPrintf("L=%i, n[0] = %i, a = %f, M = %i \n",L,neighPtr[0],a[0],M);
 
     if (phasetype == 1)
         LTFAT_NAME(filterbankheapint)(s, tgrad, fgrad, neighPtr, posinfoPtr, cfreq,

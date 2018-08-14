@@ -22,17 +22,17 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
                               int UNUSED(nrhs), const mxArray* prhs[] )
 {
     // Get inputs
-    const mxArray*   mxs = prhs[0];
-    const LTFAT_REAL*  s = mxGetData(mxs);
-    const double*      N = mxGetPr(prhs[1]);
-    const double*      a = mxGetPr(prhs[2]);
-    mwSize             M = (mwSize)mxGetScalar(prhs[3]);
-    const LTFAT_REAL*    tfr = mxGetData(prhs[4]);
-    const double*     fc = mxGetPr(prhs[5]);
+    const mxArray*     mxs = prhs[0];
+    const LTFAT_REAL*    s = mxGetData(mxs);
+    const double*        N = mxGetPr(prhs[1]);
+    const double*        a = mxGetPr(prhs[2]);
+    mwSize               M = (mwSize)mxGetScalar(prhs[3]);
+    const LTFAT_REAL*  tfr = mxGetData(prhs[4]);
+    const double*       fc = mxGetPr(prhs[5]);
     const mxArray* mxneigh = prhs[6];
-    const double*  neigh = mxGetPr(mxneigh);
-    const double* posInfo = mxGetPr(prhs[7]);
-    double   gderivweight = mxGetScalar(prhs[8]);
+    const double*    neigh = mxGetPr(mxneigh);
+    const double*  posInfo = mxGetPr(prhs[7]);
+    double    gderivweight = mxGetScalar(prhs[8]);
 
     mwSize Nsum = mxGetM(mxs);
     //mwSize W = mxGetN(mxs);
