@@ -2,7 +2,7 @@
 #define _LTFAT_MEX_FILE
 
 #define ISNARGINEQ 13
-#define TYPEDEPARGS 0, 1, 2, 4, 5
+#define TYPEDEPARGS 0, 1, 2, 4, 5, 12
 #define SINGLEARGS
 #define REALARGS
 
