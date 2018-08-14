@@ -1,4 +1,4 @@
-function test_failed = tets_filterbankconstphase()
+function test_failed = test_filterbankconstphase()
 firwinflags=getfield(arg_firwin,'flags','wintype');
 freqwinflags=getfield(arg_freqwin,'flags','wintype');
 
