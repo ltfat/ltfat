@@ -1,4 +1,4 @@
-function [gout,a,fc,L] = gabfilters(Ls,g,a,M,varargin)
+function [gout,a,fc,L,info] = gabfilters(Ls,g,a,M,varargin)
 %GABFILTERS Constructs Gabor filters
 %   Usage:  [gout,aout,fc,L]=gabfilters(Ls,g,a,M);
 %
@@ -27,8 +27,8 @@ function [gout,a,fc,L] = gabfilters(Ls,g,a,M,varargin)
 %       c2 = ufilterbank(f,gfb,afb);
 %       norm(c1 - c2.')  
 %
-%   !!!Note!!! that the this function is not suitable for doing heavy 
-%   computation. Using |dgtreal| and |dgt| directly will be much faster.
+%   !!!Note!!! that the this function is not suitable for long signals. 
+%   Using |dgtreal| and |dgt| directly will be much faster.
 %
 %   Additional paramaters
 %   ---------------------
@@ -52,18 +52,18 @@ definput.flags.windowaxis={'time','freq'};
 [flags]=ltfatarghelper({},definput,varargin);
 
 L = dgtlength(Ls,a,M);
-g0 = gabwin(g,a,M,L);
+[g0, wininfo] = gabwin(g,a,M,L);
 
 fc = 2*(0:M-1).'/M;
 Mfull = M;
 
 if flags.do_time
-    g0 = fftshift(fft(involute(fir2long(g0,L))));
+    gnum = fftshift(fft(involute(fir2long(g0,L))));
 else
-    g0 = conj(fftshift(g0));
+    gnum = conj(fftshift(g0));
 end
 
-Lg = numel(g0);
+Lg = numel(gnum);
 
 if flags.do_real
     M = floor(M/2) + 1;
@@ -73,11 +73,19 @@ end
 gout = cell(M,1);
 
 for kk = 0:M-1
-    gtmp.H = g0;
+    gtmp.H = gnum;
     gtmp.foff = kk*L/Mfull-floor(Lg/2);
     gtmp.realonly = 0; 
     gtmp.L = L;
     gout{kk+1} = gtmp;
 end
 
+info.fc = fc;
 
+% Use tfr of a Gaussian with the same width at ~half of the rel. height 
+tfrfunc = comp_tfrfromwin(g0,10^(-3/10));
+info.tfr = tfrfunc(L);
+
+if ~flags.do_time
+    info.tfr = 1/info.tfr; 
+end
