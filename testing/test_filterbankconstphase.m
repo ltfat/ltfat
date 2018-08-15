@@ -41,7 +41,7 @@ for winId = 1:numel(win)
     res = ~( Cdb < -30 );
     [test_failed,fail]=ltfatdiditfail(res,test_failed);
 
-    figure(1);plotfilterbankphasediff(corig,c,1e-4,a);
+    %figure(1);plotfilterbankphasediff(corig,c,1e-4,a);
 
     fprintf('AUDFILTERS win=%8s red=%.2f, C=%.2f dB %s\n', win{winId}, aud_red, Cdb, fail);
 
@@ -56,7 +56,7 @@ for winId = 1:numel(win)
 
     corig = filterbank(f,g,a);
     c=filterbankconstphase(cellfun(@abs,corig,'UniformOutput',0),a,info.fc,info.tfr,'tol',tol);
-    figure(2);plotfilterbankphasediff(corig,c,1e-4,a);
+    %figure(2);plotfilterbankphasediff(corig,c,1e-4,a);
 
     cproj = filterbank(ifilterbankiter(c,g,a,'pcg','tol',1e-6),g,a);
     Cdb = 20*log10( norm(abs(cell2mat(corig)) - abs(cell2mat(cproj)) )/norm( abs(cell2mat(corig))) );
@@ -71,7 +71,7 @@ for winId = 1:numel(win)
     
     corig = dgtreal(f,win{winId},a,M,'timeinv').';
     c=filterbankconstphase(abs(corig),a,info.fc,info.tfr,'tol',tol);
-    figure(3);plotfilterbankphasediff(corig,c,1e-4,a);
+    %figure(3);plotfilterbankphasediff(corig,c,1e-4,a);
 
     cproj = dgtreal(idgtreal(c.',{'dual',win{winId}},a,M,'timeinv'),win{winId},a,M,'timeinv').';
     Cdb = 20*log10( norm(abs(corig) - abs(cproj) )/norm( abs(corig)) );
