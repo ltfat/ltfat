@@ -255,15 +255,7 @@ if do_uniform
         comp_ufilterbankconstphase(...
         abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
 else
-    NEIGH = comp_filterbankneighbors(a,M,N,flags.do_real);
-    chanStart = [0;cumsum(N)];
-
-    posInfo = zeros(chanStart(end),2);
-    for kk = 1:M
-        posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
-    end
-    posInfo = posInfo.';
-
+    [NEIGH, posInfo] = comp_filterbankneighbors(a,M,N,flags.do_real);
     NEIGH = NEIGH-1;
 
     if isempty(tgrad) && isempty(fgrad)

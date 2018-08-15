@@ -1,4 +1,4 @@
-function NEIGH = comp_filterbankneighbors(a,M,N,do_real)
+function [NEIGH,posInfo] = comp_filterbankneighbors(a,M,N,do_real)
 
 chanStart = [0;cumsum(N)];
 
@@ -62,4 +62,10 @@ if ~do_real
 end
 NEIGH(4,NEIGH(4,:)==NEIGH(3,:)) = 0;
 
+
+posInfo = zeros(chanStart(end),2);
+for kk = 1:M
+    posInfo(chanStart(kk)+(1:N(kk)),:) = [(kk-1)*ones(N(kk),1),(0:N(kk)-1)'.*a(kk)];
 end
+posInfo = posInfo.';
+

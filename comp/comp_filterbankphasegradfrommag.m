@@ -27,10 +27,6 @@ chanStart = 0;
 for m = 1:M
     idx = chanStart+(1:N(m));
     fgrad(idx) = pderiv(logs(idx),1,difforder)/N(m);
-   % fgrad(idx) = tmagdiff(idx).*sqtfr(kk)^2/(2*pi);
-    
-    %tmagdiff(idx) = tmagdiff(idx)/N(kk);
-    
     chanStart = chanStart + N(m);
 end
 
@@ -97,12 +93,6 @@ for m = 1:M
                    (tempValBelow + belowNom) / belowDenom;
         %temp(ll,2) = (tempValBelow + belowNom) / belowDenom;
     end
-%     if kk<M
-%         temp(:,1) = (temp(:,1) + fac*(sqtfr(kk+1)-sqtfr(kk))./sqtfr(kk))./(fc(kk+1)-fc(kk));
-%     end
-%     if kk>1
-%         temp(:,2) = (temp(:,2) + fac*(sqtfr(kk)-sqtfr(kk-1))./sqtfr(kk))./(fc(kk)-fc(kk-1));
-%     end
     % Maybe a factor of 1/2 is missing here?
     
     tgrad(chanStart+(1:N(m))) = temp/denom;
