@@ -146,7 +146,7 @@ end
 do_uniform = 1;
 wasCell = 0;
 tgrad = []; fgrad = [];
-    
+
 asan = comp_filterbank_a(a,M);
 a = asan(:,1)./asan(:,2);
 L = N.*a;
@@ -154,6 +154,7 @@ L = N.*a;
 %TODO: Check all L?
 if isa(fc,'function_handle'), fc = fc(L(1)); end
 if isa(tfr,'function_handle'), tfr = tfr(L(1)); end
+if isscalar(tfr), tfr = repmat(tfr,M,1); end
 
 if ~isnumeric(fc) || isempty(fc) || numel(fc) ~= M
   error('%s: fc must be non-empty numeric.',upper(mfilename));
@@ -166,8 +167,6 @@ if  ~( (isvector(tfr) && ~isempty(tfr) && numel(tfr) == M ) || ...
            '2 element cell array containing phase derivatives such that ',...
            '{tgrad,fgrad}.'],upper(mfilename),M);
 end
-
-
 
 if flags.do_naturalscaling
     scal = 1./(sqrt(asan(:,1)./asan(:,2)));
@@ -213,7 +212,7 @@ if iscell(s)
                 fgrad(:,m,:)=tfr{2}{m}; 
             end
         end
-        
+
         a = a(1);
     end
 else
@@ -251,7 +250,7 @@ if do_uniform
             comp_ufilterbankphasegradfrommag(...
             abss,N(1),a,M,tfr,fc,flags.do_real);
     end
-    
+
     [newphase,usedmask] = ...
         comp_ufilterbankconstphase(...
         abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
@@ -272,7 +271,7 @@ else
             comp_filterbankphasegradfrommag(...
             abss,N,a,M,tfr,fc,NEIGH,posInfo,kv.gderivweight);
     end
-    
+
     [newphase,usedmask] = ...
         comp_filterbankconstphase(...
         abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol);
