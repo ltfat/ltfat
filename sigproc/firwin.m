@@ -193,7 +193,7 @@ definput.keyvals.shift=0;
 
 definput.keyvals.taper=1;
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin,'firwin');
 
 if flags.do_wp
   kv.shift=0;

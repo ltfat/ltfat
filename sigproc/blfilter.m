@@ -93,7 +93,7 @@ definput.keyvals.min_win=1;
 definput.flags.pedantic = {'nopedantic','pedantic'};
 definput.flags.real={'complex','real'};
 
-[flags,kv]=ltfatarghelper({'fc'},definput,varargin);
+[flags,kv]=ltfatarghelper({'fc'},definput,varargin,'blfilter');
 
 if flags.do_pedantic
     fc_offset = @(L,fc) L/2*fc-round(L/2*fc);

@@ -22,11 +22,11 @@ function x = postpad (x, L, varargin)
 
 if nargin<2
   error('Too few input parameters.');
-end;
+end
 
 definput.keyvals.dim  = [];
 definput.keyvals.C    = 0;
-[flags,keyvals,C,dim] = ltfatarghelper({'C','dim'},definput,varargin);
+[~,~,C,dim] = ltfatarghelper({'C','dim'},definput,varargin,'postpad');
 
 [x,L,Ls,W,dim,permutedsize,order]=assert_sigreshape_pre(x,L,dim,'POSTPAD');
 
@@ -34,6 +34,6 @@ if Ls<L
   x=[x; C*ones(L-Ls,W)];
 else
   x=x(1:L,:);
-end;
+end
   
 x=assert_sigreshape_post(x,dim,permutedsize,order);

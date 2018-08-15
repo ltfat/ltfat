@@ -1,4 +1,4 @@
-function [g,info] = comp_window(g,a,M,L,lt,callfun);
+function [g,info] = comp_window(g,a,M,L,lt,callfun)
 %COMP_WINDOW  Compute the window from numeric, text or cell array.
 %   Usage: [g,info] = comp_window(g,a,M,L,s,callfun);
 %

@@ -55,7 +55,7 @@ end;
 definput.import={'normalize'};
 definput.keyvals.dim=[];
 
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv]=ltfatarghelper({},definput,varargin,'normalize');
 
 if flags.do_null || flags.do_norm_notset || isempty(f);
   return

@@ -110,12 +110,7 @@ definput.keyvals.L=[];
 definput.keyvals.lt=[0 1];
 definput.keyvals.callfun='GABWIN';
 definput.flags.phase={'freqinv','timeinv'};
-[flags,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin);
+[~,kv,L,lt]=ltfatarghelper({'L','lt'},definput,varargin,'gabwin');
 
 [g,info] = comp_window(g,a,M,L,lt,kv.callfun);
 
-if (info.isfir)  
-  if info.istight
-      %g=g/sqrt(2);
-  end;  
-end;

@@ -76,7 +76,7 @@ definput.flags.centering={'wp','hp','shift'};
 definput.keyvals.shift = 0;
 definput.keyvals.fs = 2;
 definput.keyvals.atheight = 10^(-3/10);
-[flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin);
+[flags,kv,fs]=ltfatarghelper({'fs'},definput,varargin,'freqwin');
 
 if flags.do_wp, kv.shift=0; end
 if flags.do_hp, kv.shift=0.5; end
