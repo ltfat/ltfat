@@ -46,10 +46,11 @@ if do_real
     tgrad(:,1,:) = tgrad(:,1,:)./tfr(1)./(pi*L);
     tgrad(:,M,:) = 2*(logsdiff(:,M-1,:) + 2*sqtfrdiff(M-1)./sqtfr(M)./pi)./cfreqdiff(1);
     tgrad(:,M,:) = tgrad(:,M,:)./tfr(M)./(pi*L);
+
     % Fix the first and last rows .. the
     % borders are symmetric so the centered difference is 0
-    %tgrad(:,1,:) = 0;
-    %tgrad(:,M,:) = 0;
+    if fc(1) == 0, tgrad(:,1,:) = 0; end
+    if fc(M) == 1, tgrad(:,M,:) = 0; end
 else
     logsdiff = diff([logs(:,M,:),logs,logs(:,1,:)],1,2); 
     cfreqdiff = [fc(1)-fc(M);cfreqdiff;fc(1)-fc(M)];
