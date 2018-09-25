@@ -22,13 +22,6 @@
 %      This figure shows a spectrogram of an iterative reconstruction of the
 %      target spectrogram using the Griffin-Lim projection method.
 %
-%   .. figure::
-%
-%      Iterative reconstruction using the BFGS method.
-%
-%      This figure shows a spectrogram of an iterative reconstruction of the
-%      target spectrogram using the BFGS method.
-%
 %   The BFGS method makes use of the minFunc software. To use the BFGS method, 
 %   please install the minFunc software from:
 %   `<http://www.cs.ubc.ca/~schmidtm/Software/minFunc.html>`_.
@@ -52,6 +45,3 @@ figure(3);
 sig_griflim = frsynabs(F,scoef);
 sgram(sig_griflim,'dynrange',100);
 
-figure(4);
-sig_bfgs = frsynabs(F,scoef,'bfgs');
-sgram(sig_bfgs,'dynrange',100);
