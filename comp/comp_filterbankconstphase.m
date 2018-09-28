@@ -1,4 +1,4 @@
-function [newphase,usedmask] = comp_filterbankconstphase(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol)
+function [newphase,usedmask] = comp_filterbankconstphase(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol,phasetype)
 
 %% The actual phase construction
 sMax = max(abss(:));
@@ -10,7 +10,7 @@ else
     usedmask = cell2mat(mask);
 end
 
-phasetype = 0;
+%phasetype = 0;
 % % Build the phase
 if isempty(mask)
      % s is real and positive

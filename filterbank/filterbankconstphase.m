@@ -253,7 +253,7 @@ if do_uniform
 
     [newphase,usedmask] = ...
         comp_ufilterbankconstphase(...
-        abss,tgrad,fgrad,fc,mask,usephase,a,tol,flags.do_real);
+        abss,tgrad,fgrad,fc,mask,usephase,a,tol,0,flags.do_real);
 else
     [NEIGH, posInfo] = comp_filterbankneighbors(a,M,N,flags.do_real);
     NEIGH = NEIGH-1;
@@ -266,7 +266,7 @@ else
 
     [newphase,usedmask] = ...
         comp_filterbankconstphase(...
-        abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol);
+        abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol,0);
 end
 
 c = abs(swork).*exp(1i*newphase);

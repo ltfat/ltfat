@@ -41,7 +41,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     mwSize N = mxGetM(mxs);
     mwSize L = N * a;
     mwSize W = 1;
-    phasetype--;
+    //phasetype--;
 
     if (mxGetNumberOfDimensions(mxs) > 2)
         W = mxGetDimensions(mxs)[2];

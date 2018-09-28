@@ -54,7 +54,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     octave_idx_type W  = 1;
     octave_idx_type L  = (octave_idx_type)( N * a);
 
-    phasetype--;
+   // phasetype--;
 
     MArray<LTFAT_REAL> phase(dim_vector(N, M, W));
 
