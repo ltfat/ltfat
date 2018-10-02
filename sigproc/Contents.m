@@ -16,6 +16,9 @@
 %    LONG2FIR       -  Cut LONG window to FIR window.
 %    FREQWIN        -  Freq responses (Gauss,Gammatone,Butterworth,...)
 %
+%  Wavelet functions
+%    FREQWAVELET    -  Frequency responses of wavelets (Cauchy, Morse)
+%
 %  Filtering
 %    FIRFILTER      -  Construct an FIR filter.
 %    BLFILTER       -  Construct a band-limited filter.
