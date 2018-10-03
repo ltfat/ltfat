@@ -118,7 +118,7 @@ definput.keyvals.usephase=[];
 definput.keyvals.custscaling=[];
 definput.flags.real = {'real','complex'};
 definput.flags.scaling = {'naturalscaling','peakscaling','custscaling'};
-definput.flags.phasemagrel = {'wavelet','gabor'};
+definput.flags.phasemagrel = {'gabor','wavelet'};
 [flags,kv,mask,usephase]=ltfatarghelper({'mask','usephase'},definput,varargin);
 tol = kv.tol;
 
