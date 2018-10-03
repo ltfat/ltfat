@@ -187,12 +187,11 @@ for m = 1:M
                 error('%s: Alpha must be larger than 1 (passed alpha=%.2f).',...
                       upper(mfilename),alpha);
             end
-            
+
             if gamma <= 0
                 error('%s: Gamma must be larger than 0 (passed gamma=%.2f).',...
                       upper(mfilename),gamma);
             end
-            
 
             order = (alpha-1)/(2*gamma);
             peakpos = ( order/(2*pi*gamma) )^(1/(gamma));
@@ -226,7 +225,7 @@ for m = 1:M
             fsupp(4) = min(fs,freqatheightdesc(kv.bwthr));
 
             fsuppL = [ ceil(fsupp(1:2)/step), round(fsupp(3)/step), floor(fsupp(4:5)/step) ];
-           
+
             morsefun = @(y) (y > 0).*exp(-2*pi*y.^gamma + order*log(y) ...
                              + ( order/gamma - order/gamma*log(order/(2*pi*gamma)) ));
 
@@ -248,7 +247,8 @@ for m = 1:M
             info.bw(m)  = (fsupp(4) - fsupp(2));
             bwinsamples = info.bw(m)/step;
             info.a_natural(m,2) = ceil(bwinsamples);
-            info.tfr(m) = 1/(pi/(4*log(1/kv.bwthr))*bwinsamples^2/L);
+            %info.tfr(m) = 1/(pi/(4*log(1/kv.bwthr))*bwinsamples^2/L);
+            info.tfr(m) = (alpha - 1)/(pi*info.fc(m)^2*L);
         otherwise
             error('%s: SENTINEL. Unknown window.',upper(mfilename));
     end
