@@ -141,7 +141,6 @@ definput.keyvals.scale = 1;
 definput.keyvals.basefc = 0.1;
 definput.keyvals.bwthr = 10^(-3/10);
 definput.keyvals.efsuppthr = 10^(-5);
-definput.flags.real = {'real','complex'};
 definput.flags.outformat = {'full','econ','asblfilter'};
 [flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin,'freqwavelet');
 
