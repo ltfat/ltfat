@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
 
         LTFAT_NAME(dgtrealmp_state)*  plan = NULL;
         auto t1 = Clock::now();
-        LTFAT_NAME(dgtrealmp_init)( pbuf, L, &plan);
+        if( 0 != LTFAT_NAME(dgtrealmp_init)( pbuf, L, &plan)) return -1;
         auto t2 = Clock::now();
         int dur = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
         cout << "INIT DURATION: " << dur << " ms" << std::endl;

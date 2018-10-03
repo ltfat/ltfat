@@ -112,5 +112,6 @@
 #endif
 
 #if defined(__cplusplus)
-    static_assert(std::is_trivially_copyable<std::complex<LTFAT_REAL>>::value);
+    // The following is constexpr only since C++17, so it is disabled for the time being
+    // static_assert(std::is_trivially_copyable<std::complex<LTFAT_REAL>>::value);
 #endif

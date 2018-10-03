@@ -6,7 +6,7 @@ LTFAT_API void
 LTFAT_NAME(fbmagphasegrad)(const LTFAT_REAL logs[], const LTFAT_REAL sqtfr[],
                            const ltfat_int N[], const double a[], const double fc[], ltfat_int M,
                            const ltfat_int neigh[], const double posInfo[], LTFAT_REAL gderivweight,
-                           LTFAT_REAL tgrad[], LTFAT_REAL fgrad[])
+                           int do_tfrdiff, LTFAT_REAL tgrad[], LTFAT_REAL fgrad[])
 {
     LTFAT_REAL L = a[0] * N[0];
     ltfat_int chStart = 0;
@@ -31,12 +31,14 @@ LTFAT_NAME(fbmagphasegrad)(const LTFAT_REAL logs[], const LTFAT_REAL sqtfr[],
         LTFAT_REAL denom = sqtfr[m] * sqtfr[m] * (M_PI * L);
         if (m < M - 1)
         {
-            aboveNom = gderivweight * (sqtfr[m + 1] - sqtfr[m]) / sqtfr[m];
+            if (do_tfrdiff)
+                aboveNom = gderivweight * (sqtfr[m + 1] - sqtfr[m]) / sqtfr[m];
             aboveDenom = fc[m + 1] - fc[m];
         }
         if ( m > 0)
         {
-            belowNom = gderivweight * (sqtfr[m] - sqtfr[m - 1]) / sqtfr[m];
+            if (do_tfrdiff)
+                belowNom = gderivweight * (sqtfr[m] - sqtfr[m - 1]) / sqtfr[m];
             belowDenom = fc[m] - fc[m - 1];
         }
         for (ltfat_int n = 0; n < N[m]; n++)

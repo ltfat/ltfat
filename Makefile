@@ -210,6 +210,9 @@ cleanobj:
 clean: cleanobj
 	@-$(RMDIR) build
 
+cleanall: clean
+	find . -name 'CMakeCache.txt' -o -name '*.cmake' -o -name 'CMakeFiles' -exec rm -rf {} +
+
 help:
 	@echo "USAGE: make [target]"
 	@echo "Options:"

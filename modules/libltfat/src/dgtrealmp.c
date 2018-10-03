@@ -69,7 +69,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
         CHECK(LTFATERR_NOTAFRAME, M[pIdx] >= a[pIdx],
               "M[%td]>=a[%td] failed passed (%td,%td)", pIdx, pIdx,  M[pIdx], a[pIdx]);
         CHECK(LTFATERR_BADARG, M[pIdx] % a[pIdx] == 0,
-              "M[%td] must be divisible by a[%td]. Passed (%td,%td)", pIdx, pIdx, M, a);
+              "M[%td] must be divisible by a[%td]. Passed (%td,%td)", pIdx, pIdx, M[pIdx], a[pIdx]);
 
         CHECK(LTFATERR_BADARG, gl[pIdx] <= L,
               "gl[%td]<=L failed. Window is too long. passed (%td, %td)",
@@ -652,7 +652,8 @@ LTFAT_NAME(dgtrealmpiter_done)(LTFAT_NAME(dgtrealmpiter_state)** state)
     if (s->tmaxtree)
     {
         for (ltfat_int p = 0; p < s->P; p++)
-            LTFAT_NAME(maxtree_done)(&s->tmaxtree[p]);
+            if (s->tmaxtree[p])
+                LTFAT_NAME(maxtree_done)(&s->tmaxtree[p]);
 
         ltfat_free(s->tmaxtree);
     }
@@ -661,10 +662,14 @@ LTFAT_NAME(dgtrealmpiter_done)(LTFAT_NAME(dgtrealmpiter_state)** state)
     {
         for (ltfat_int p = 0; p < s->P; p++)
         {
-            for (ltfat_int n = 0; n < s->N[p]; n++)
-                LTFAT_NAME(maxtree_done)(&s->fmaxtree[p][n]);
+            if(s->fmaxtree[p])
+            {
+                for (ltfat_int n = 0; n < s->N[p]; n++)
+                    if (s->fmaxtree[p][n])
+                       LTFAT_NAME(maxtree_done)(&s->fmaxtree[p][n]);
 
-            ltfat_free(s->fmaxtree[p]);
+                ltfat_free(s->fmaxtree[p]);
+            }
         }
 
         ltfat_free(s->fmaxtree);

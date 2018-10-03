@@ -129,7 +129,10 @@ ltfat_dgtlengthmulti(ltfat_int Ls, ltfat_int P, ltfat_int a[], ltfat_int M[])
     ltfat_int minL = ltfat_lcm( a[0], M[0]);
 
     for (ltfat_int p = 1; p < P; p++)
-        minL = ltfat_lcm( minL, ltfat_lcm(a[p], M[p]));
+    {
+        minL = ltfat_lcm( minL, a[p]);
+        minL = ltfat_lcm( minL, M[p]);
+    }
 
     ltfat_int nminL = (Ls + minL - 1) / minL; // This is ceil of Ls/minL
     return nminL * minL;
