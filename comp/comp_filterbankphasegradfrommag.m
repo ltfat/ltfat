@@ -1,4 +1,4 @@
-function [tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,sqtfr,fc,NEIGH,posInfo,gderivweight)
+function [tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,sqtfr,fc,NEIGH,posInfo,gderivweight,do_tfrdiff)
 NEIGH = NEIGH + 1;
 %chanStart = [0;cumsum(N)];
 fac = gderivweight;
@@ -49,11 +49,15 @@ for m = 1:M
     aboveNom = 0; aboveDenom = 1; belowNom = 0; belowDenom = 1; 
     denom = sqtfr(m)^2*(pi*L);
     if m<M
-        aboveNom = fac*(sqtfr(m+1)-sqtfr(m))/sqtfr(m);
+        if do_tfrdiff
+            aboveNom = fac*(sqtfr(m+1)-sqtfr(m))/sqtfr(m);
+        end
         aboveDenom = fc(m+1)-fc(m);
     end
     if m>1
-        belowNom = fac*(sqtfr(m)-sqtfr(m-1))/sqtfr(m);
+        if do_tfrdiff
+            belowNom = fac*(sqtfr(m)-sqtfr(m-1))/sqtfr(m);
+        end
         belowDenom = fc(m)-fc(m-1);
     end
    

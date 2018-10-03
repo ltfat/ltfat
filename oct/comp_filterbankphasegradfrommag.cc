@@ -3,7 +3,7 @@
 #define REALARGS
 #define OCTFILENAME comp_filterbankphasegradfrommag // change to filename
 #define OCTFILEHELP "This function calls the C-library\n\
-                    [tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,tfr,fc,NEIGH,posInfo,gderivweight); \n Yeah."
+                    [tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,tfr,fc,NEIGH,posInfo,gderivweight,do_tfrdiff); \n Yeah."
 
 #include "ltfat_oct_template_helper.h"
 
@@ -11,10 +11,10 @@ static inline void
 fwd_fbmagphasegrad(
         const double s[], const double tfr[], const ltfat_int NPtr[], const double a[],
         const double fc[], ltfat_int Nsum, ltfat_int M, const ltfat_int neighPtr[], const double posInfo[],
-        double gderivweight, double logs[], double tgrad[], double fgrad[])
+        double gderivweight, double logs[], int do_tfrdiff, double tgrad[], double fgrad[])
 {
     ltfat_log_array_d(s, Nsum, logs);
-    ltfat_fbmagphasegrad_d(logs, tfr, NPtr, a, fc, M, neighPtr, posInfo, gderivweight,
+    ltfat_fbmagphasegrad_d(logs, tfr, NPtr, a, fc, M, neighPtr, posInfo, gderivweight, do_tfrdiff,
                            tgrad, fgrad);
 }
 
@@ -22,10 +22,10 @@ static inline void
 fwd_fbmagphasegrad(
         const float s[], const float tfr[], const ltfat_int NPtr[], const double a[],
         const double fc[], ltfat_int Nsum, ltfat_int M, const ltfat_int neighPtr[], const double posInfo[],
-        double gderivweight, float logs[], float tgrad[], float fgrad[])
+        double gderivweight, float logs[], int do_tfrdiff, float tgrad[], float fgrad[])
 {
     ltfat_log_array_s(s, Nsum, logs);
-    ltfat_fbmagphasegrad_s(logs, tfr, NPtr, a, fc, M, neighPtr, posInfo, gderivweight,
+    ltfat_fbmagphasegrad_s(logs, tfr, NPtr, a, fc, M, neighPtr, posInfo, gderivweight, do_tfrdiff,
                            tgrad, fgrad);
 }
 
@@ -42,6 +42,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     MArray<double>   neighDouble = ltfatOctArray<double>(args(6));
     MArray<double> posinfoDouble = ltfatOctArray<LTFAT_REAL>(args(7));
     double          gderivweight = args(8).double_value();
+    int               do_tfrdiff = args(9).int_value();
 
     const octave_idx_type Nsum  = s.rows();
     octave_idx_type W = 1;
@@ -62,7 +63,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     fwd_fbmagphasegrad(
             s.data(), tfr.data(), NPtr, aDouble.data(), fcDouble.data(),
             Nsum, M, neighPtr, posinfoDouble.data(), gderivweight,
-            logs.fortran_vec(), tgrad.fortran_vec(), fgrad.fortran_vec());
+            logs.fortran_vec(), do_tfrdiff, tgrad.fortran_vec(), fgrad.fortran_vec());
 
     delete [] neighPtr;
     octave_value_list retval;

@@ -1,11 +1,16 @@
-function [tgrad,fgrad,logs] = comp_ufilterbankphasegradfrommag(abss,N,a,M,sqtfr,fc,do_real)
+function [tgrad,fgrad,logs] = comp_ufilterbankphasegradfrommag(abss,N,a,M,sqtfr,fc,do_real,do_tfrdiff)
 
 L=N*a;
 
 % Prepare differences of center frequencies [given in normalized frequency]
 % and dilation factors (square root of the time-frequency ratio)
 cfreqdiff = mod(diff(fc),2);
-sqtfrdiff = diff(sqtfr);
+
+if do_tfrdiff
+    sqtfrdiff = diff(sqtfr);
+else
+    sqtfrdiff = zeros(size(cfreqdiff));
+end
 tfr = sqtfr.^2;
 
 % Filterbankphasegrad does not support phasederivatives from absolute

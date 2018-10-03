@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 9
+#define ISNARGINEQ 10
 #define TYPEDEPARGS 0, 4
 #define SINGLEARGS
 #define REALARGS
@@ -15,8 +15,8 @@
 #include "ltfat/types.h"
 
 // Calling convention:
-//      0     1    2                          0 1 2 3   4  5     6       7            8
-// [tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,tfr,fc,NEIGH,posInfo,gderivweight);
+//      0     1    2                          0 1 2 3   4  5     6       7            8          9
+// [tgrad,fgrad,logs] = comp_nufbphasegrad(abss,N,a,M,tfr,fc,NEIGH,posInfo,gderivweight,do_tfrdiff);
 
 void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
                               int UNUSED(nrhs), const mxArray* prhs[] )
@@ -33,6 +33,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     const double*    neigh = mxGetPr(mxneigh);
     const double*  posInfo = mxGetPr(prhs[7]);
     double    gderivweight = mxGetScalar(prhs[8]);
+    int         do_tfrdiff = (int) mxGetScalar(prhs[9]);
 
     mwSize Nsum = mxGetM(mxs);
     //mwSize W = mxGetN(mxs);
@@ -69,7 +70,7 @@ void LTFAT_NAME(ltfatMexFnc)( int UNUSED(nlhs), mxArray* plhs[],
     LTFAT_REAL* logs  = mxGetData(plhs[2]);
 
     LTFAT_NAME(log_array)(s, Nsum, logs);
-    LTFAT_NAME(fbmagphasegrad)(logs, tfr, NPtr, a, fc, M, NEIGHPtr, posInfo, gderivweight,
+    LTFAT_NAME(fbmagphasegrad)(logs, tfr, NPtr, a, fc, M, NEIGHPtr, posInfo, gderivweight, do_tfrdiff,
                               tgrad, fgrad);
 
     ltfat_free(NPtr);

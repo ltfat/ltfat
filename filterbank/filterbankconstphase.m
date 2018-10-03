@@ -34,16 +34,16 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %   then `filterbankconstphase(s,a,info.fc,info.tfr)` will attempt to 
 %   reconstruct *c*.
 %
-%   `filterbankconstphase(c,g,a,M,mask)` accepts real or complex valued
+%   `filterbankconstphase(c,a,fc,tfr,mask)` accepts real or complex valued
 %   *c* and real valued *mask* of the same size. Values in *mask* which can
 %   be converted to logical true (anything other than 0) determine
 %   coefficients with known phase which is used in the output. Only the
 %   phase of remaining coefficients (for which mask==0) is computed.
 %
-%   `filterbankconstphase(c,g,a,M,mask,usephase)` does the same as before
+%   `filterbankconstphase(c,a,fc,tfr,mask,usephase)` does the same as before
 %   but uses the known phase values from *usephase* rather than from *c*.
 %
-%   `filterbankconstphase(s,a,{tgrad,fgrad},fc,...)` accepts the phase 
+%   `filterbankconstphase(s,a,fc,{tgrad,fgrad},...)` accepts the phase 
 %   gradient `{tgrad,fgrad}` explicitly instead of computing it from
 %   the magnitude using `tfr` and the phase-magnitude relationship.
 %   This is directly compatible with |filterbankphasegrad|.
@@ -75,6 +75,12 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %           'peakscaling' assumes all frequency responses were notmalized 
 %           to have peaks of equal height.
 %           'custscaling',scal allows passing a custom scaling vector *scal*. 
+%
+%       'gabor' (default) or 'wavelet'
+%           Version of the phase-magnitude relationship to be used. In
+%           contrast to 'gabor', the 'wavelet' option does not contain the
+%           term involving the derivative of `sqrt(tfr)`. 
+%           See the references for more details.
 %           
 %   This function requires a computational subroutine that is only
 %   available in C. Use |ltfatmex| to compile it.
@@ -112,6 +118,7 @@ definput.keyvals.usephase=[];
 definput.keyvals.custscaling=[];
 definput.flags.real = {'real','complex'};
 definput.flags.scaling = {'naturalscaling','peakscaling','custscaling'};
+definput.flags.phasemagrel = {'wavelet','gabor'};
 [flags,kv,mask,usephase]=ltfatarghelper({'mask','usephase'},definput,varargin);
 tol = kv.tol;
 
@@ -248,7 +255,7 @@ if do_uniform
     if isempty(tgrad) && isempty(fgrad)
         [tgrad,fgrad] = ...
             comp_ufilterbankphasegradfrommag(...
-            abss,N(1),a,M,tfr,fc,flags.do_real);
+            abss,N(1),a,M,tfr,fc,flags.do_real,flags.do_gabor);
     end
 
     [newphase,usedmask] = ...
@@ -261,7 +268,7 @@ else
     if isempty(tgrad) && isempty(fgrad)
         [tgrad,fgrad] = ...
             comp_filterbankphasegradfrommag(...
-            abss,N,a,M,tfr,fc,NEIGH,posInfo,kv.gderivweight);
+            abss,N,a,M,tfr,fc,NEIGH,posInfo,kv.gderivweight,flags.do_gabor);
     end
 
     [newphase,usedmask] = ...
