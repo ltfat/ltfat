@@ -63,10 +63,9 @@ function [H,info] = freqwavelet(name,L,varargin)
 %                       length of the effective support given by parametar
 %                       'efsuppthr'.
 %
-%       'asblfilter'    As 'econ', but the elements of the cell-array are
+%       'asfreqfilter'  As 'econ', but the elements of the cell-array are
 %                       filter structs with fields .H and .foff as in 
 %                       |blfilter| to be used in |filterbank| and related. 
-%                       The returned filters are fixed for signals of length *L*.
 %
 %   `[H,info]=freqwavelet(...)` additionally returns a struct with the
 %   following fields:
@@ -125,9 +124,9 @@ end
 
 if ~iscell(name), name = {name}; end
 
-freqwintypes = {'cauchy','morse'};
+freqwavelettypes = getfield(arg_freqwavelet(),'flags','wavelettype');
 
-if ~ischar(name{1}) || ~any(strcmpi(name{1},freqwintypes))
+if ~ischar(name{1}) || ~any(strcmpi(name{1},freqwavelettypes))
   error('%s: First input argument must the name of a supported window.',...
         upper(mfilename));
 end
@@ -141,7 +140,8 @@ definput.keyvals.scale = 1;
 definput.keyvals.basefc = 0.1;
 definput.keyvals.bwthr = 10^(-3/10);
 definput.keyvals.efsuppthr = 10^(-5);
-definput.flags.outformat = {'full','econ','asblfilter'};
+definput.flags.outformat = {'full','econ','asfreqfilter'};
+definput.keyvals.scal = 1;
 [flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin,'freqwavelet');
 
 if ~isnumeric(L), error('%s: scale must be numeric',upper(mfilename)); end
@@ -223,21 +223,10 @@ for m = 1:M
             fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
             fsupp(4) = min(fs,freqatheightdesc(kv.bwthr));
 
-            fsuppL = [ ceil(fsupp(1:2)/step), round(fsupp(3)/step), floor(fsupp(4:5)/step) ];
+            fsuppL = fsuppL_inner(fsupp,fs,L,1:5);
 
             morsefun = @(y) (y > 0).*exp(-2*pi*y.^gamma + order*log(y) ...
                              + ( order/gamma - order/gamma*log(order/(2*pi*gamma)) ));
-
-            if flags.do_full
-                y = ((0:L-1)').*basedil*step*scale(m);
-                H(:,m) = normalize(morsefun(y), flags.norm);
-            elseif flags.do_econ
-                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*step*scale(m);
-                H{m} = normalize(morsefun(y), flags.norm);
-            elseif flags.do_asblfilter
-                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*step*scale(m);
-                H{m} = struct('H',normalize(morsefun(y),flags.norm),'foff',fsuppL(1),'L',L,'realonly',0);
-            end
 
             info.foff(m) = fsuppL(1);
             info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
@@ -248,6 +237,19 @@ for m = 1:M
             info.a_natural(m,2) = ceil(bwinsamples);
             %info.tfr(m) = 1/(pi/(4*log(1/kv.bwthr))*bwinsamples^2/L);
             info.tfr(m) = (alpha - 1)/(pi*info.fc(m)^2*L);
+                         
+            if flags.do_full
+                y = ((0:L-1)').*basedil*step*scale(m);
+                H(:,m) = kv.scal*normalize(morsefun(y), flags.norm);
+            elseif flags.do_econ
+                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*step*scale(m);
+                H{m} = kv.scal*normalize(morsefun(y), flags.norm);
+            elseif flags.do_asfreqfilter
+                y = @(L) ((fsuppL_inner(fsupp,fs,L,1):fsuppL_inner(fsupp,fs,L,5)-1)').*basedil*scale(m)*fs/L;
+                H{m} = struct('H',@(L) kv.scal*normalize(morsefun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,fs,L,1),'realonly',0);
+            end
+
+
         otherwise
             error('%s: SENTINEL. Unknown window.',upper(mfilename));
     end
@@ -256,6 +258,10 @@ end
 if M==1 && iscell(H)
     H = H{1};
 end
+
+function fsuppL = fsuppL_inner(fsupp,fs,L,idx)
+fsuppL_all = [ ceil(fsupp(1:2)/fs*L), round(fsupp(3)/fs*L), floor(fsupp(4:5)/fs*L) ];
+fsuppL = fsuppL_all(idx);
 
 
 function w = octave_lambertw(b,z)
