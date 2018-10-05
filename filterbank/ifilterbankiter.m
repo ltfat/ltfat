@@ -75,17 +75,33 @@ tolchooser.double=1e-9;
 tolchooser.single=1e-5;
 
 definput.keyvals.Ls=[];
-definput.keyvals.tol=tolchooser.(class(c{1}));
+definput.keyvals.tol=tolchooser.(classofc(c));
 definput.keyvals.maxit=100;
 definput.flags.alg={'pcg','cg'};
 definput.flags.real={'real','complex'};
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
-if flags.do_real
-    F = frame('filterbankreal',g,a,numel(g));
+
+if isnumeric(c)
+    if flags.do_real
+        F = frame('ufilterbankreal',g,a,numel(g));
+    else
+        F = frame('ufilterbank',g,a,numel(g));
+    end
 else
-    F = frame('filterbank',g,a,numel(g));
+    if flags.do_real
+        F = frame('filterbankreal',g,a,numel(g));
+    else
+        F = frame('filterbank',g,a,numel(g));
+    end
 end
 
 [f,relres,iter] = frsyniter(F,framenative2coef(F,c),'Ls',Ls,flags.alg,'maxit',kv.maxit,'tol',kv.tol);
+
+function cl = classofc(c)
+if iscell(c)
+    cl = class(c{1});
+else
+    cl = class(c);
+end
 
