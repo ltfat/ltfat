@@ -20,18 +20,18 @@ function [H,info] = freqwavelet(name,L,varargin)
 %   The supported wavelets that can be used in place of `name` (the actual
 %   equations can be found at the end of this help):
 %
-%       'cauchy'    Cauchy wavelet with alpha=100. Custom order=(alpha-1)/2
-%                   (with alpha>1) can be set by `{'cauchy',alpha}`. The
-%                   higher the order, the narrower and more symmetric the
-%                   wavelet. A numericaly stable formula is used in order
-%                   to allow support even for very high `alpha` e.g.
-%                   milions.
+%     'cauchy'    Cauchy wavelet with alpha=100. Custom order=(alpha-1)/2
+%                 (with alpha>1) can be set by `{'cauchy',alpha}`. The
+%                 higher the order, the narrower and more symmetric the
+%                 wavelet. A numericaly stable formula is used in order
+%                 to allow support even for very high `alpha` e.g.
+%                 milions.
 %
-%       'morse'     Morse wavelet with alpha=100 and gamma=3. Both parameters
-%                   can be set directly by `{'morse',alpha,gamma}`. `alpha`
-%                   has the same role as for 'cauchy', `gamma` is the
-%                   'skewness' parameter. 'morse' becomes 'cauchy' for
-%                   gamma=1.
+%     'morse'     Morse wavelet with alpha=100 and gamma=3. Both parameters
+%                 can be set directly by `{'morse',alpha,gamma}`. `alpha`
+%                 has the same role as for 'cauchy', `gamma` is the
+%                 'skewness' parameter. 'morse' becomes 'cauchy' for
+%                 gamma=1.
 %
 %   `freqwavelet(name,L,scale)` returns a "dilated" version of the wavelet.
 %   The positive scalar `scale` controls both the bandwidth and the center
@@ -44,52 +44,52 @@ function [H,info] = freqwavelet(name,L,varargin)
 %
 %   The following additional flags and key-value parameters are available:
 %
-%       'basefc',fc     Normalized center frequency of the mother wavelet
-%                       (scale=1). The default is 0.1.
+%     'basefc',fc      Normalized center frequency of the mother wavelet
+%                      (scale=1). The default is 0.1.
 %
-%       'bwthr',bwthr   The height at which the bandwidth is computed.
-%                       The default value is 10^(-3/10) (~0.5).
+%     'bwthr',bwthr    The height at which the bandwidth is computed.
+%                      The default value is 10^(-3/10) (~0.5).
 %
-%       'efsuppthr',thr The threshold determinig the effective support of
-%                       the wavelet. The default value is 10^(-5).
+%     'efsuppthr',thr  The threshold determinig the effective support of
+%                      the wavelet. The default value is 10^(-5).
 %
 %   The format of the output is controlled by the following flags:
 %   'full' (default),'econ','asblfilter':
 %
-%       'full'          The output is a `L x numel(scale)` matrix.
+%     'full'           The output is a `L x numel(scale)` matrix.
 %
-%       'econ'          The output is a `numel(scale)` cell array with
-%                       individual freq. domain wavelets truncated to the
-%                       length of the effective support given by parametar
-%                       'efsuppthr'.
+%     'econ'           The output is a `numel(scale)` cell array with
+%                      individual freq. domain wavelets truncated to the
+%                      length of the effective support given by parametar
+%                      'efsuppthr'.
 %
-%       'asfreqfilter'  As 'econ', but the elements of the cell-array are
-%                       filter structs with fields .H and .foff as in 
-%                       |blfilter| to be used in |filterbank| and related. 
+%     'asfreqfilter'   As 'econ', but the elements of the cell-array are
+%                      filter structs with fields .H and .foff as in 
+%                      |blfilter| to be used in |filterbank| and related. 
 %
 %   `[H,info]=freqwavelet(...)` additionally returns a struct with the
 %   following fields:
 %
-%       .fc             Normalized center frequency.
+%     .fc             Normalized center frequency.
 %
-%       .foff           Index of the first sample above the effective
-%                       support threshold (minus one). 
-%                       It can be directly used to convert the 'econ'
-%                       output to 'full' by `circshift(postpad(H,L),foff)`.
+%     .foff           Index of the first sample above the effective
+%                     support threshold (minus one). 
+%                     It can be directly used to convert the 'econ'
+%                     output to 'full' by `circshift(postpad(H,L),foff)`.
 %
-%       .fsupplen       Length of the effective support (with values above efsuppthr.).
+%     .fsupplen       Length of the effective support (with values above efsuppthr.).
 %
-%       .scale          The scale used.
+%     .scale          The scale used.
 %
-%       .dilation       The actual dilation used in the formula.
+%     .dilation       The actual dilation used in the formula.
 %
-%       .bw             Relative bandwidth at -3 dB (half of the height).
+%     .bw             Relative bandwidth at -3 dB (half of the height).
 %
-%       .tfr            Time-frequency ratio of a Gaussian with the same
-%                       bandwidth as the wavelet.
+%     .tfr            Time-frequency ratio of a Gaussian with the same
+%                     bandwidth as the wavelet.
 %
-%       .a_natural      Fractional natural subsampling factors in the
-%                       format acceptable by |filterbank| and related.
+%     .a_natural      Fractional natural subsampling factors in the
+%                     format acceptable by |filterbank| and related.
 %
 %   Additionally, the function accepts flags to normalize the output.
 %   Please see the help of |normalize|. By default, no normaliazation is
@@ -102,15 +102,15 @@ function [H,info] = freqwavelet(name,L,varargin)
 %
 %   Cauchy wavelet
 %
-%       H = C \xi^{\frec{\alpha-1}{2}} exp( -2\pi\xi )
+%       H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
 %
-%       .. math: H = C \xi^{\frec{\alpha-1}{2}} exp( -2\pi\xi )
+%       .. math: H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
 %
 %   Morse wavelet
 %
-%       H = C \xi^{\frec{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%       H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
-%       .. math: H = C \xi^{\frec{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%       .. math: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
 %   See also: normalize, filterbank, blfilter
 
