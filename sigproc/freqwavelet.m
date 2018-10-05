@@ -64,7 +64,9 @@ function [H,info] = freqwavelet(name,L,varargin)
 %
 %     'asfreqfilter'   As 'econ', but the elements of the cell-array are
 %                      filter structs with fields .H and .foff as in 
-%                      |blfilter| to be used in |filterbank| and related. 
+%                      |blfilter| to be used in |filterbank| and related.
+%   
+%   The flags are position independent.
 %
 %   `[H,info]=freqwavelet(...)` additionally returns a struct with the
 %   following fields:
@@ -101,13 +103,13 @@ function [H,info] = freqwavelet(name,L,varargin)
 %
 %   Cauchy wavelet
 %
-%       H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
+%       .. H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
 %
 %       .. math:: H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
 %
 %   Morse wavelet
 %
-%       H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%       .. H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
 %       .. math:: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
