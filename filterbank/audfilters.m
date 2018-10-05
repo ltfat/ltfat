@@ -127,7 +127,6 @@ function [g,a,fc,L,info]=audfilters(fs,Ls,varargin)
 %                        Default is *4*. This restrict the windows not
 %                        to become too narrow when *L* is low.
 %
-%
 %   Examples:
 %   ---------
 %

@@ -25,7 +25,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %
 %   If `s` is the absolute value of filterbank coefficients comming from
 %   a filterbank with filters with center frequencies *fc* and time-frequency
-%   ratios *tfr* and subsampling factors *a* i.e.:
+%   ratios *tfr* and subsampling factors *a* i.e.::
 %
 %       [g,a,~,~,info] = ...filters(...);
 %       c = filterbank(f,g,a);
@@ -53,7 +53,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %
 %   The function accepts the following additional paramaters:
 %
-%       'tol',tol 
+%   'tol',tol 
 %           The phase is computed only for coefficients above `tol`. The
 %           rest is set to random values.
 %           In addition, `tol` can be a vector containing decreasing values. 
@@ -62,13 +62,13 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %           and the further steps. 
 %           The default value is `tol=[1e-1, 1e-10]`.
 %
-%       'real' (default) or 'complex'
+%   'real' (default) or 'complex'
 %           By default, the coefficients are expected to come from a real
 %           filterbank i.e. the filters cover only the positive
 %           frequencies. For filterbanks which cover the whole frequency
 %           range, pass 'complex' instead.
 %
-%       'naturalscaling' (default) or 'peakscaling' or 'custscaling',scal
+%   'naturalscaling' (default) or 'peakscaling' or 'custscaling',scal
 %           Relative scaling of the filter frequency responses. 
 %           'naturalscaling' deduces the scaling of the filters from the
 %           subsampling factors *a*. 
@@ -76,7 +76,7 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %           to have peaks of equal height.
 %           'custscaling',scal allows passing a custom scaling vector *scal*. 
 %
-%       'filterbank' (default) or 'wavelet'
+%   'filterbank' (default) or 'wavelet'
 %           Version of the phase-magnitude relationship to be used. In
 %           contrast to 'filterbank', the 'wavelet' option does not contain the
 %           term involving the derivative of `sqrt(tfr)`. 

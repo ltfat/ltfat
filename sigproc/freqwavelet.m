@@ -62,11 +62,9 @@ function [H,info] = freqwavelet(name,L,varargin)
 %                      individual freq. domain wavelets truncated to the
 %                      length of the effective support given by parameter 'efsuppthr'.
 %
-%     'asfreqfilter'   As 'econ', but the elements of the cell-array are
+%     'asfreqfilter'   As `'econ'`, but the elements of the cell-array are
 %                      filter structs with fields .H and .foff as in 
 %                      |blfilter| to be used in |filterbank| and related.
-%   
-%   The flags are position independent.
 %
 %   `[H,info]=freqwavelet(...)` additionally returns a struct with the
 %   following fields:
