@@ -76,9 +76,9 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %           to have peaks of equal height.
 %           'custscaling',scal allows passing a custom scaling vector *scal*. 
 %
-%       'gabor' (default) or 'wavelet'
+%       'filterbank' (default) or 'wavelet'
 %           Version of the phase-magnitude relationship to be used. In
-%           contrast to 'gabor', the 'wavelet' option does not contain the
+%           contrast to 'filterbank', the 'wavelet' option does not contain the
 %           term involving the derivative of `sqrt(tfr)`. 
 %           See the references for more details.
 %           
