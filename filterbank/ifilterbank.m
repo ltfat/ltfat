@@ -1,4 +1,4 @@
-function [f,Ls]=ifilterbank(c,g,a,varargin);  
+function [f,Ls]=ifilterbank(c,g,a,varargin)
 %IFILTERBANK  Filter bank inversion
 %   Usage:  f=ifilterbank(c,g,a);
 %
@@ -13,6 +13,14 @@ function [f,Ls]=ifilterbank(c,g,a,varargin);
 %   of the filters used to generate the coefficients. See the help on
 %   |filterbankdual|.
 %
+%   Additional parameters
+%   ---------------------
+%
+%   'complex' (default), 'real'
+%       The 'real' flag indicates that the filters *g* cover only the positive
+%       frequencies and does `2*real(f)` to effectivelly mirror the filters to
+%       cover also the negative frequencies.
+%       
 %   See also: filterbank, ufilterbank, filterbankdual
 %
 %   References: bohlfe02
@@ -23,6 +31,7 @@ end;
 
 definput.import={'pfilt'};
 definput.keyvals.Ls=[];
+definput.flags.complex={'complex','real'};
 [flags,kv,Ls]=ltfatarghelper({'Ls'},definput,varargin);
 
 L=filterbanklengthcoef(c,a);
@@ -54,14 +63,18 @@ g = comp_filterbank_pre(g,asan,L,kv.crossover);
 if isnumeric(c)
    ctmp = c;
    c = cell(M,1);
-   for m=1:M    
+   for m=1:M
       c{m}=squeeze(ctmp(:,m,:));
    end;
 end
 
 
 f = comp_ifilterbank(c,g,asan,L);
-  
+
+if flags.do_real
+    f = 2*real(f);
+end
+
 % Cut or extend f to the correct length, if desired.
 if ~isempty(Ls)
   f=postpad(f,Ls);
