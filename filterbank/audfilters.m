@@ -77,55 +77,56 @@ function [g,a,fc,L,info]=audfilters(fs,Ls,varargin)
 %
 %   `audfilters` accepts the following optional parameters:
 %
-%     'spacing',b       Specify the spacing between the filters, measured in
-%                       scale units. Default value is *b=1* for the scales
-%                       'erb', 'erb83' and 'bark'; the default is *b=100* for
-%                       'mel' and 'mel1000'.
+%     'spacing',b        Specify the spacing between the filters, measured in
+%                        scale units. Default value is *b=1* for the scales
+%                        'erb', 'erb83' and 'bark'; the default is *b=100* for
+%                        'mel' and 'mel1000'.
 %
-%     'bwmul',bwmul     Bandwidth of the filters relative to the bandwidth
-%                       returned by |audfiltbw|. Default value is *bwmul=1* for 
-%                       the scales 'erb', 'erb83' and 'bark'; the default is 
-%                       *b=100* for 'mel' and 'mel1000'.
+%     'bwmul',bwmul      Bandwidth of the filters relative to the bandwidth
+%                        returned by |audfiltbw|. Default value is *bwmul=1* for 
+%                        the scales 'erb', 'erb83' and 'bark'; the default is 
+%                        *b=100* for 'mel' and 'mel1000'.
 %
-%     'redmul',redmul   Redundancy multiplier. Increasing the value of this
-%                       will make the system more redundant by lowering the
-%                       channel downsampling rates. It is only used if the
-%                       filterbank is a non-uniform filterbank. Default
-%                       value is *1*. If the value is less than one, the
-%                       system may no longer be painless.
+%     'redmul',redmul    Redundancy multiplier. Increasing the value of this
+%                        will make the system more redundant by lowering the
+%                        channel downsampling rates. It is only used if the
+%                        filterbank is a non-uniform filterbank. Default
+%                        value is *1*. If the value is less than one, the
+%                        system may no longer be painless.
 % 
-%     'redtar',redtar   Target redundancy. The downsampling factors will be
-%                       adjusted to achieve a redundancy as close as possible
-%                       to 'redtar'.
+%     'redtar',redtar    Target redundancy. The downsampling factors will be
+%                        adjusted to achieve a redundancy as close as possible
+%                        to 'redtar'.
 %
-%     'M',M             Specify the total number of filters between *fmin* and 
-%                       *fmax*. If this parameter is specified, it overwrites the
-%                       `'spacing'` parameter.
+%     'M',M              Specify the total number of filters between *fmin* and 
+%                        *fmax*. If this parameter is specified, it overwrites the
+%                        `'spacing'` parameter.
 %
-%     'symmetric'       Create filters that are symmetric around their centre
-%                       frequency. This is the default.
+%     'symmetric'        Create filters that are symmetric around their centre
+%                        frequency. This is the default.
 %
-%     'warped'          Create asymmetric filters that are symmetric on the
-%                       auditory scale. 
+%     'warped'           Create asymmetric filters that are symmetric on the
+%                        auditory scale. 
 %
-%     'complex'         Construct a filterbank that covers the entire
-%                       frequency range instead of just the positive 
-%                       frequencies this allows the analysis of complex
-%                       valued signals.
+%     'complex'          Construct a filterbank that covers the entire
+%                        frequency range instead of just the positive 
+%                        frequencies this allows the analysis of complex
+%                        valued signals.
 %
-%     'nosubprec'       Disable subsample window positions.
+%     'nosubprec'        Disable subsample window positions.
 %
-%     'trunc_at'        When using a prototype defined in |freqwin|, a hard 
-%                       thresholding of the filters at the specified threshold 
-%                       value is performed to reduce their support size. 
-%                       The default value is *trunc_at=10e-5*. When no 
-%                       truncation is desired, *trunc_at=0* should be chosen.
-%                       This value is ignored when a prototype shape from
-%                       |firwin| was chosen.
+%     'trunc_at'         When using a prototype defined in |freqwin|, a hard 
+%                        thresholding of the filters at the specified threshold 
+%                        value is performed to reduce their support size. 
+%                        The default value is *trunc_at=10e-5*. When no 
+%                        truncation is desired, *trunc_at=0* should be chosen.
+%                        This value is ignored when a prototype shape from
+%                        |firwin| was chosen.
 %
-%     'min_win',min_win Minimum admissible window length (in samples).
-%                       Default is *4*. This restrict the windows not
-%                       to become too narrow when *L* is low.
+%     'min_win',min_win  Minimum admissible window length (in samples).
+%                        Default is *4*. This restrict the windows not
+%                        to become too narrow when *L* is low.
+%
 %
 %   Examples:
 %   ---------

@@ -54,14 +54,13 @@ function [H,info] = freqwavelet(name,L,varargin)
 %                      the wavelet. The default value is 10^(-5).
 %
 %   The format of the output is controlled by the following flags:
-%   'full' (default),'econ','asblfilter':
+%   'full' (default),'econ','asfreqfilter':
 %
 %     'full'           The output is a `L x numel(scale)` matrix.
 %
 %     'econ'           The output is a `numel(scale)` cell array with
 %                      individual freq. domain wavelets truncated to the
-%                      length of the effective support given by parametar
-%                      'efsuppthr'.
+%                      length of the effective support given by parameter 'efsuppthr'.
 %
 %     'asfreqfilter'   As 'econ', but the elements of the cell-array are
 %                      filter structs with fields .H and .foff as in 
@@ -104,13 +103,13 @@ function [H,info] = freqwavelet(name,L,varargin)
 %
 %       H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
 %
-%       .. math: H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
+%       .. math:: H = C \xi^{\frac{\alpha-1}{2}} exp( -2\pi\xi )
 %
 %   Morse wavelet
 %
 %       H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
-%       .. math: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%       .. math:: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
 %   See also: normalize, filterbank, blfilter
 
