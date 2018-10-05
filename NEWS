@@ -1,3 +1,13 @@
+Version 2.4.0
+
+* Added universal filterbank phase reconstruction function: filterbankconstphase
+
+* Added time-frequency jigsaw puzzle tonal-transinet-residual separation: tfjigsawsep, plottfjigsawsep, demo_tfjigsawsep
+
+* Added coiflet filters up to K=17.
+
+* Added wavelet function generator (supported Cauchy, Morse): freqwavelet
+
 Version 2.3.1
 
 * Two additional matching pursuit variants in multidgtrealmp
