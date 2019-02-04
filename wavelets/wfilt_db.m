@@ -15,7 +15,7 @@ function [h, g, a, info] = wfilt_db(N)
 %   spectral factorization of the Lagrange interpolator filter.  *N* also
 %   denotes the number of zeros at $z=-1$ of the lowpass filters of length
 %   $2N$.  The prototype lowpass filter has the following form (all roots of
-%   $R(z)$ are outside of the unit circle):
+%   $R(z)$ are inside of the unit circle):
 %                 
 %   .. H_l(z)=(1+z^-1)^N*R(z),
 %
@@ -73,16 +73,16 @@ P(1:2:end) = a;
 P = [P(end:-1:1),1,P];
 
 R = roots(P);
-% Roots outside of the unit circle and in the right halfplane
+% Roots inside of the unit circle and in the right halfplane
 R = R(abs(R)<1 & real(R)>0);
 
-% roots of the 2*conv(lo_a,lo_r) filter
+% Roots of the 2*conv(lo_a,lo_r) filter
 hroots = [R(:);-ones(N,1)];
 
 
-% building synthetizing low-pass filter from roots
+% Building synthesizing low-pass filter from roots
 h{1}= real(poly(sort(hroots,'descend')));
-% normalize
+% Normalize
 h{1}= h{1}/norm(h{1});
 % QMF modulation low-pass -> highpass
 h{2}= (-1).^(0:flen-1).*h{1}(end:-1:1);
