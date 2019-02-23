@@ -1,4 +1,4 @@
-function [h, g, a, info] = wfilt_db(N, compat = 1)
+function [h, g, a, info] = wfilt_db(N)
 %WFILT_DB    Daubechies FIR filterbank
 %   Usage:  [h, g, a, info] = wfilt_db(N, compat = 1);
 %
@@ -11,7 +11,7 @@ function [h, g, a, info] = wfilt_db(N, compat = 1)
 %         G      : cell array of synthetizing filters impulse reponses
 %         a      : array of subsampling (or hop) factors accociated with
 %                  corresponding filters
-%         info   : ???
+%         info   : info.istight=1 indicates the wavelet system is a can. tight frame
 %
 %   `[H, G] = wfilt_db(N)` computes a two-channel Daubechies FIR filterbank
 %   from prototype maximum-phase analysing lowpass filter obtained by
@@ -46,7 +46,7 @@ function [h, g, a, info] = wfilt_db(N, compat = 1)
 %
 %   References: daub98tenlectures
 
-% AUTHOR: Zdenek Prusa
+% AUTHOR: KIMURA Masaru, Zdenek Prusa
 
 if (nargin < 1);
     error('Too few input parameters.');
@@ -55,11 +55,13 @@ if (N < 1);
     error('Minimum N is 1.');
 end;
 h = cell(2,1);
-if (compat == 1);
-	h{1} = cal(N);
-else
-	h{1} = lut(N);
-end;
+
+try
+    h{1} = lut(N);
+catch
+    h{1} = cal(N);
+end
+
 h{2} = (-1).^[0:(2 * N - 1)] .* fliplr(h{1});
 % The reverse is here, because we use different convention for
 % filterbanks than in Ten Lectures on Wavelets
