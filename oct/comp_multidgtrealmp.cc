@@ -14,7 +14,7 @@ fwd_dgtrealmp_decompose(const float f[], ltfat_int L,
                         int ptype, int do_pedanticsearch, ltfat_dgtmp_alg alg,
                         double errdb,
                         double kernthr, size_t maxit, size_t maxat,
-                        size_t& atoms, size_t& iters,
+                        size_t& atoms, size_t& iters, int &dec_status,
                         FloatComplex* c[])
 {
     ltfat_dgtrealmp_parbuf_s* pbuf = NULL;
@@ -37,7 +37,7 @@ fwd_dgtrealmp_decompose(const float f[], ltfat_int L,
     ltfat_dgtrealmp_setparbuf_iterstep_s(pbuf, L);
 
     ltfat_dgtrealmp_init_s( pbuf, L, &plan);
-    ltfat_dgtrealmp_execute_decompose_s(plan, f, c);
+    dec_status = ltfat_dgtrealmp_execute_decompose_s(plan, f, c);
 
     ltfat_dgtrealmp_get_numatoms_s(plan, &atoms);
     ltfat_dgtrealmp_get_numiters_s(plan, &iters);
@@ -54,7 +54,7 @@ fwd_dgtrealmp_decompose(const double f[], ltfat_int L,
                         int ptype, int do_pedanticsearch, ltfat_dgtmp_alg alg,
                         double errdb,
                         double kernthr, size_t maxit, size_t maxat,
-                        size_t& atoms, size_t& iters,
+                        size_t& atoms, size_t& iters, int &dec_status,
                         Complex* c[])
 {
     ltfat_dgtrealmp_parbuf_d* pbuf = NULL;
@@ -77,7 +77,7 @@ fwd_dgtrealmp_decompose(const double f[], ltfat_int L,
     ltfat_dgtrealmp_setparbuf_iterstep_d(pbuf, L);
 
     ltfat_dgtrealmp_init_d( pbuf, L, &plan);
-    ltfat_dgtrealmp_execute_decompose_d(plan, f, c);
+    dec_status = ltfat_dgtrealmp_execute_decompose_d(plan, f, c);
 
     ltfat_dgtrealmp_get_numatoms_d(plan, &atoms);
     ltfat_dgtrealmp_get_numiters_d(plan, &iters);
@@ -92,6 +92,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
 {
     size_t atoms = 0;
     size_t iters = 0;
+    int dec_status = 0;
     ltfat_dgtmp_alg alg = ltfat_dgtmp_alg_mp;
 
     // Input data
@@ -143,7 +144,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
                          aDouble.fortran_vec(), MDouble.fortran_vec(),
                          dictno, ptype, do_pedanticsearch, alg,
                          errdb, kernthr, maxit, maxat,
-                         atoms, iters, cPtrs);
+                         atoms, iters, dec_status, cPtrs);
 
     Cell c(dim_vector(dictno, 1));
     for (octave_idx_type m = 0; m < dictno; ++m)
@@ -153,5 +154,6 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     retlist(0) = c;
     if(nargout > 1) retlist(1) = octave_value((double)atoms);
     if(nargout > 2) retlist(2) = octave_value((double)iters);
+    if(nargout > 3) retlist(3) = octave_value((double)dec_status);
     return retlist;
 }

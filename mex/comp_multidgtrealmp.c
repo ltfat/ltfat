@@ -37,6 +37,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     
     size_t atoms = 0;
     size_t iters = 0;
+    int dec_status = 0;
 
     mwSize L  = mxGetNumberOfElements(prhs[0]);
     mwSize dictno = mxGetNumberOfElements(prhs[1]);
@@ -81,7 +82,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, alg));
 
     CHSTAT(LTFAT_NAME(dgtrealmp_init)( pbuf, L, &plan));
-    CHSTAT(LTFAT_NAME(dgtrealmp_execute_decompose)(plan, mxGetData(prhs[0]), cPtrs));
+    CHSTAT(dec_status = LTFAT_NAME(dgtrealmp_execute_decompose)(plan, mxGetData(prhs[0]), cPtrs));
 
     CHSTAT(LTFAT_NAME(dgtrealmp_get_numatoms)(plan, &atoms));
     CHSTAT(LTFAT_NAME(dgtrealmp_get_numiters)(plan, &iters));
@@ -89,6 +90,7 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
 error:
     if(nlhs>1) plhs[1] = mxCreateDoubleScalar((double)atoms);
     if(nlhs>2) plhs[2] = mxCreateDoubleScalar((double)iters);
+    if(nlhs>3) plhs[3] = mxCreateDoubleScalar((double)dec_status);
 
     if(pbuf) LTFAT_NAME(dgtrealmp_parbuf_done)(&pbuf);
     if(plan) LTFAT_NAME(dgtrealmp_done)(&plan);
