@@ -84,8 +84,7 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %                       Must be a positive integer.
 %
 %     'reseterrdb',err  Reset the decomposition when the error estimate 
-%                       in dB decreases below `err`. Overwrites 'resetit'.
-%                       Must be negative. 
+%                       in dB decreases below `err`. Must be negative. 
 %                       Default is `10*log10(1.1*kv.kernthr)`.
 %
 %   The computational routine is only available in C. Use |ltfatmex| to
