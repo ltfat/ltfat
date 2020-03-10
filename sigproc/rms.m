@@ -43,7 +43,7 @@ end;
 
 definput.keyvals.dim=[];
 definput.flags.mean={'noac','ac'};
-[flags,kv]=ltfatarghelper({},definput,varargin);
+[flags,kv]=ltfatarghelper({'dim'},definput,varargin);
 
 %% ------ Computation --------------------------
 
