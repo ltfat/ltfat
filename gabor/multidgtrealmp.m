@@ -263,5 +263,12 @@ if nargout>1
   { 32, 'All zeros'},...
   {1024, 'Stalled (Residual has increased since last reset. Try to reduce resetit.)'}
   };
-  info.message = status_str{1 + info.status};
+    
+    
+  try
+    info.message = status_str{info.status};
+  catch
+    info.message = 'Unrecognized status code';
+  end
+
 end
