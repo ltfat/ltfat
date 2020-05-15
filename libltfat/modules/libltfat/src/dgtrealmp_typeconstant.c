@@ -11,14 +11,16 @@ ltfat_dgtmp_params_defaults(ltfat_dgtmp_params* params)
     /* params->hint = ltfat_dgtrealmp_allmods; */
     params->alg = ltfat_dgtmp_alg_mp;
     params->errtoldb = -40.0;
+    params->reseterrdb = 0;
     params->kernrelthr = 1e-4;
     params->verbose = 0;
     params->maxatoms = 0;
     params->maxit = 0;
-    params->iterstep = 0;
+    params->callbackit = 0;
+    params->resetit = 0;
     params->treelevels = 10;
     params->cycles = 1;
-    params->atprodreltoldb = -80.0;
+    params->atprodreltoldb = -120.0;
     params->ptype = LTFAT_TIMEINV;
 error:
     return status;
@@ -123,8 +125,21 @@ ltfat_dgtmp_setpar_maxit(
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
 
-    CHECK(LTFATERR_NOTPOSARG, maxit > 0, "maxatoms must be greater than 0");
+    CHECK(LTFATERR_NOTPOSARG, maxit > 0, "maxit must be greater than 0");
     params->maxit = maxit;
+
+error:
+    return status;
+}
+
+LTFAT_API int
+ltfat_dgtmp_setpar_resetit(
+    ltfat_dgtmp_params* params, size_t resetit)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+
+    params->resetit = resetit;
 
 error:
     return status;
@@ -158,6 +173,19 @@ error:
 }
 
 LTFAT_API int
+ltfat_dgtmp_setpar_reseterrdb(
+    ltfat_dgtmp_params* params, double reseterrdb)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(params);
+    CHECK(LTFATERR_BADARG, reseterrdb >= 0, "reseterrdb must be higger than 0");
+    params->reseterrdb = reseterrdb;
+
+error:
+    return status;
+}
+
+LTFAT_API int
 ltfat_dgtmp_setpar_snrdb(
     ltfat_dgtmp_params* params, double snrdb)
 {
@@ -170,13 +198,13 @@ error:
 }
 
 LTFAT_API int
-ltfat_dgtmp_setpar_iterstep(
-    ltfat_dgtmp_params* params, size_t iterstep)
+ltfat_dgtmp_setpar_callbackit(
+    ltfat_dgtmp_params* params, size_t callbackit)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(params);
-    CHECK(LTFATERR_NOTPOSARG, iterstep > 0, "iterstep must be greater than 0");
-    params->iterstep = iterstep;
+    CHECK(LTFATERR_NOTPOSARG, callbackit > 0, "callbackit must be greater than 0");
+    params->callbackit = callbackit;
 error:
     return status;
 }
@@ -219,7 +247,7 @@ ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in)
     switch (in)
     {
     case ltfat_dgtmp_alg_mp:
-    case ltfat_dgtmp_alg_locomp:
+    //case ltfat_dgtmp_alg_locomp:
     case ltfat_dgtmp_alg_loccyclicmp:
     case ltfat_dgtmp_alg_locselfprojmp:
         isvalid = 1;

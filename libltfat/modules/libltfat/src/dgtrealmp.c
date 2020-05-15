@@ -30,8 +30,14 @@ LTFAT_NAME(dgtrealmp_init)(
                (const LTFAT_REAL**)pb->g, pb->gl, L, pb->P, pb->a, pb->M,
                pb->params, pout));
 
-    LTFAT_NAME(dgtrealmp_set_iterstepcallback)( *pout,
-        pb->iterstepcallback, pb->iterstepcallbackdata);
+    LTFAT_NAME(dgtrealmp_set_callback)( *pout, pb->callback, pb->callbackdata);
+
+    ltfat_dgtmp_params* params = (*pout)->params;
+
+    if ( params->resetit != 0 || params->resettoladj != 0.0 )
+    {
+        CHECKMEM( (*pout)->ftmp = LTFAT_NEWARRAY( LTFAT_REAL, (*pout)->L ) );
+    }
 
     memcpy((*pout)->chanmask, pb->chanmask, pb->P*sizeof*pb->chanmask);
     return LTFATERR_SUCCESS;
@@ -114,10 +120,13 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     if ( p->params->maxit == 0 )
         p->params->maxit = 2 * p->params->maxatoms;
 
-    if (p->params->iterstep == 0)
-        p->params->iterstep = p->params->maxit;
+    if (p->params->callbackit == 0)
+        p->params->callbackit = p->params->maxit + 1;
 
-#ifdef NOBLASLAPACK
+    if (p->params->resetit == 0)
+        p->params->resetit = p->params->maxit + 1;
+
+#if 0
     CHECK( LTFATERR_NOBLASLAPACK,
            p->params->alg != ltfat_dgtmp_alg_locomp,
            "LocOMP requires LAPACK, but libltfat was compiled without it.");
@@ -196,6 +205,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
 
     CHECKSTATUS( LTFAT_NAME(dgtrealmpiter_init)(a, M, P, L, &p->iterstate));
 
+#if 0
     if (p->params->alg == ltfat_dgtmp_alg_locomp)
     {
         ltfat_int kernSizeAccum = 0;
@@ -221,6 +231,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
             LTFAT_NAME_COMPLEX(hermsystemsolver_init)(
                 kernSizeAccum, &p->iterstate->hplan));
     }
+#endif
 
     if (p->params->alg == ltfat_dgtmp_alg_loccyclicmp ||
         p->params->alg == ltfat_dgtmp_alg_locselfprojmp)
@@ -248,7 +259,7 @@ LTFAT_NAME(dgtrealmp_init_gen)(
     }
 
 
-    if(p->params->do_pedantic)
+    if (p->params->do_pedantic)
     {
         CHECKMEM(
             p->closures =
@@ -275,6 +286,8 @@ LTFAT_NAME(dgtrealmp_init_gen)(
         }
     }
 
+
+
     *pout = p;
     return LTFATERR_SUCCESS;
 error:
@@ -284,30 +297,31 @@ error:
     return status;
 }
 
-
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
+LTFAT_NAME(dgtrealmp_reset_residuum)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
 {
     int status = LTFATERR_SUCCESS;
 
     LTFAT_NAME(dgtrealmpiter_state)* istate = NULL;
-    LTFAT_REAL initcmax = 0.0;
 
     CHECKNULL(p); CHECKNULL(f);
     istate = p->iterstate;
 
-    istate->currit = 0;
-    istate->curratoms = 0;
     istate->err = 0.0;
-
     for (ltfat_int l = 0; l < p->L; l++)
         istate->err += f[l] * f[l];
 
-    istate->fnorm2 = istate->err;
-    p->params->errtoladj = powl((long double)10.0,
-                                p->params->errtoldb / 10.0) * p->iterstate->fnorm2;
+    if (p->params->reseterrdb != 0.0)
+    {
+        p->params->resettoladj = powl((long double)10.0,
+                                    -p->params->reseterrdb / 10.0) * istate->err;
+    }
+    else
+    {
+        p->params->resettoladj = 0.0;
+    }
 
-    CHECK( LTFAT_DGTREALMP_STATUS_EMPTY, istate->fnorm2 > 0.0, "Zero energy signal");
+    CHECK( LTFAT_DGTREALMP_STATUS_EMPTY, istate->err > 0.0, "Zero energy signal");
 
     for (ltfat_int k = 0; k < p->P; k++)
     {
@@ -330,6 +344,33 @@ LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
                 p->M2[k] * p->N[k] * sizeof * p->iterstate->suppind[k] );
     }
 
+    istate->resetcount++;
+error:
+    return status;
+}
+
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_reset)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f)
+{
+    int status = LTFATERR_SUCCESS;
+
+    LTFAT_NAME(dgtrealmpiter_state)* istate = NULL;
+    LTFAT_REAL initcmax = 0.0;
+
+    CHECKNULL(p); CHECKNULL(f);
+    istate = p->iterstate;
+
+    istate->currit = 0;
+    istate->curratoms = 0;
+
+    CHECKSTATUS( LTFAT_NAME(dgtrealmp_reset_residuum)( p, f));
+
+    istate->reseterr = istate->err;
+    istate->fnorm2 = istate->err;
+    p->params->errtoladj = powl((long double)10.0,
+                                p->params->errtoldb / 10.0) * p->iterstate->fnorm2;
+
     kpoint origpos;
     LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, &origpos);
     initcmax = ltfat_norm(istate->c[PTOI(origpos)]);
@@ -342,32 +383,34 @@ error:
 
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX** cout)
+LTFAT_NAME(dgtrealmp_execute_iters)(
+    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX** cout)
 {
     int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
 
     LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
 
     if (s->fnorm2 == 0.0)
-        return LTFAT_DGTREALMP_STATUS_EMPTY;
+        status |= LTFAT_DGTREALMP_STATUS_EMPTY;
 
-    for (size_t iter = 0;
-         iter < itno && status == LTFAT_DGTREALMP_STATUS_CANCONTINUE;
-         iter++)
+    for ( ; s->currit < p->params->maxit
+            && status == LTFAT_DGTREALMP_STATUS_CANCONTINUE ;
+            ++s->currit )
     {
         kpoint origpos;
 
-        s->currit++;
-
         if ( LTFAT_NAME(dgtrealmp_execute_findmaxatom)(p, &origpos)
              != LTFATERR_SUCCESS )
-            return LTFAT_DGTREALMP_STATUS_EMPTY;
+        {
+            status |= LTFAT_DGTREALMP_STATUS_EMPTY;
+            break;
+        }
 
         if (ltfat_norm(s->c[PTOI(origpos)]) < p->params->atprodreltoladj)
         {
-            printf("At prod: %.6f \n",10.0*log10(ltfat_norm(s->c[PTOI(origpos)])));
-            return LTFAT_DGTREALMP_STATUS_ATPRODTOL;
+            /* printf("At prod: %.6f \n",10.0*log10(ltfat_norm(s->c[PTOI(origpos)]))); */
+            status |= LTFAT_DGTREALMP_STATUS_ATPRODTOL;
+            break;
         }
 
         if ( !s->suppind[PTOI(origpos)] ) s->curratoms++;
@@ -378,9 +421,9 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
             s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, s->c[PTOI(origpos)], origpos,
                       cout);
             break;
-        case ltfat_dgtmp_alg_locomp:
-            status  = LTFAT_NAME(dgtrealmp_execute_locomp)( p, origpos, cout);
-            break;
+        /* case ltfat_dgtmp_alg_locomp: */
+        /*     status  = LTFAT_NAME(dgtrealmp_execute_locomp)( p, origpos, cout); */
+        /*     break; */
         case ltfat_dgtmp_alg_loccyclicmp:
             status  = LTFAT_NAME(dgtrealmp_execute_cyclicmp)( p, origpos, cout);
             break;
@@ -390,17 +433,25 @@ LTFAT_NAME(dgtrealmp_execute_niters)(
         }
 
         if (s->err < 0)
-            return LTFAT_DGTREALMP_STATUS_STALLED;
+            status |= LTFAT_DGTREALMP_STATUS_STALLED;
 
         if (s->err <= p->params->errtoladj)
-            return LTFAT_DGTREALMP_STATUS_TOLREACHED;
+            status |= LTFAT_DGTREALMP_STATUS_TOLREACHED;
 
         if (s->curratoms >= p->params->maxatoms)
-            return LTFAT_DGTREALMP_STATUS_MAXATOMS;
+            status |= LTFAT_DGTREALMP_STATUS_MAXATOMS;
 
-        if (s->currit >= p->params->maxit)
-            return LTFAT_DGTREALMP_STATUS_MAXITER;
+        if ( (s->currit + 1) >= p->params->maxit )
+            status |= LTFAT_DGTREALMP_STATUS_MAXITER;
 
+        if ( (s->currit + 1 ) % p->params->resetit == 0 )
+            status |= LTFAT_DGTREALMP_STATUS_RESETIT;
+
+        if ( s->err <= p->params->resettoladj )
+            status |= LTFAT_DGTREALMP_STATUS_RESETTOLREACHED;
+
+        if ((s->currit + 1 ) % p->params->callbackit == 0 )
+            status |= LTFAT_DGTREALMP_STATUS_CALLBACKIT;
     }
 
     return status;
@@ -471,8 +522,8 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
     LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL f[], LTFAT_COMPLEX* c[])
 {
     int status = LTFATERR_SUCCESS;
-    int status2 = LTFATERR_SUCCESS;
-    int statuscallback = LTFATERR_SUCCESS;
+    int status2 = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
+    int status3 = LTFATERR_SUCCESS;
 
     CHECKNULL(p); CHECKNULL(f); CHECKNULL(c);
 
@@ -485,21 +536,27 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
         /* memset(c[k], 0, p->M2[k] * p->N[k] * sizeof * c[k]); */
     }
 
-    while ( LTFAT_DGTREALMP_STATUS_CANCONTINUE ==
-            ( status2 = LTFAT_NAME(dgtrealmp_execute_niters)(
-                            p, p->params->iterstep, c)))
+    while ( status2 == LTFAT_DGTREALMP_STATUS_CANCONTINUE )
     {
+        status2 = LTFAT_NAME(dgtrealmp_execute_iters)( p, c);
         CHECKSTATUS(status2);
+        status3 = status2;
 
-        if(p->callback)
+        if (( status2 & LTFAT_DGTREALMP_STATUS_RESETIT ) ||
+            ( status2 & LTFAT_DGTREALMP_STATUS_RESETTOLREACHED ))
         {
-            statuscallback = p->callback(p->userdata, p, c);
-            CHECKSTATUS(statuscallback);
-            if (statuscallback > 0) break;
+            status3 = LTFAT_NAME(dgtrealmp_callback_resetresiduum)( p, f, c, status2 );
+            CHECKSTATUS(status3);
         }
-    }
 
-    CHECKSTATUS(status2);
+        if ( p->callback && ( status2 & LTFAT_DGTREALMP_STATUS_CALLBACKIT ) )
+        {
+            status3 = p->callback(p->userdata, p, f, c, status3 );
+            CHECKSTATUS(status3);
+        }
+
+        status2 = status3;
+    }
 
     return status2;
 error:
@@ -514,8 +571,7 @@ LTFAT_NAME(dgtrealmp_done)( LTFAT_NAME(dgtrealmp_state)** p)
     CHECKNULL(p); CHECKNULL(*p);
     pp = *p;
 
-    LTFAT_SAFEFREEALL(pp->a,pp->M,pp->M2,pp->N,pp->chanmask,pp->couttmp);
-
+    LTFAT_SAFEFREEALL(pp->a,pp->M,pp->M2,pp->N,pp->chanmask,pp->couttmp,pp->ftmp);
 
     if (pp->params)
         ltfat_dgtmp_params_free(pp->params);
@@ -688,7 +744,7 @@ LTFAT_NAME(dgtrealmpiter_done)(LTFAT_NAME(dgtrealmpiter_state)** state)
     ltfat_safefree(s->cvalinvBuf);
     ltfat_safefree(s->cvalBufPos);
     ltfat_safefree(s->pBuf);
-    if (s->hplan) LTFAT_NAME_COMPLEX(hermsystemsolver_done)(&s->hplan);
+    /* if (s->hplan) LTFAT_NAME_COMPLEX(hermsystemsolver_done)(&s->hplan); */
     ltfat_safefree(s->N);
     ltfat_free(s);
     *state = NULL;
@@ -697,21 +753,21 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstep)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t iterstep)
+LTFAT_NAME(dgtrealmp_set_callbackit)(
+    LTFAT_NAME(dgtrealmp_state)* p, size_t callbackit)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p);
-    CHECK(LTFATERR_NOTPOSARG, iterstep > 0, "iterstep must be greater than 0");
-    p->params->iterstep = iterstep;
+    CHECK(LTFATERR_NOTPOSARG, callbackit > 0, "callbackit must be greater than 0");
+    p->params->callbackit = callbackit;
 error:
     return status;
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstepcallback)(
+LTFAT_NAME(dgtrealmp_set_callback)(
     LTFAT_NAME(dgtrealmp_state)* p,
-    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback, void* userdata)
+    LTFAT_NAME(dgtrealmp_callback)* callback, void* userdata)
 {
     int status = LTFATERR_SUCCESS; CHECKNULL(p);
     p->callback = callback;
@@ -779,6 +835,18 @@ LTFAT_NAME(dgtrealmp_get_numiters)(
     CHECKNULL(p); CHECKNULL(iters);
 
     *iters = p->iterstate->currit;
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_numresets)(
+    const LTFAT_NAME(dgtrealmp_state)* p, size_t* resets)
+{
+    int status = LTFATERR_SUCCESS;
+    CHECKNULL(p); CHECKNULL(resets);
+
+    *resets = p->iterstate->resetcount;
 error:
     return status;
 }
@@ -902,17 +970,48 @@ error :
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters_compact)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX* cout)
+LTFAT_NAME(dgtrealmp_execute_iters_compact)(
+    LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX* cout)
 {
     int status = LTFATERR_SUCCESS;
     CHECKNULL(p);
     for (ltfat_int k = 0, accum = 0; k < p->P; accum += p->N[k] * p->M2[k], k++)
         p->couttmp[k] = cout + accum;
 
-    status = LTFAT_NAME(dgtrealmp_execute_niters)( p, itno, p->couttmp);
+    status = LTFAT_NAME(dgtrealmp_execute_iters)( p, p->couttmp);
 error :
     return status;
 
 }
 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_callback_resetresiduum)(
+        LTFAT_NAME(dgtrealmp_state)* state, const LTFAT_REAL f[],
+        LTFAT_COMPLEX* c[], int itstatus)
+{
+    int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE;
+    LTFAT_REAL* ftmp = state->ftmp;
+
+    LTFAT_NAME(dgtrealmp_execute_synthesize)( state, (const LTFAT_COMPLEX**)c, NULL, ftmp );
+
+    for( ltfat_int l = 0; l < state->L; l++ )
+        ftmp[l] = f[l] - ftmp[l];
+
+    long double oldreseterr = state->iterstate->reseterr;
+
+    LTFAT_NAME(dgtrealmp_reset_residuum)( state, ftmp );
+
+    if ( itstatus & LTFAT_DGTREALMP_STATUS_RESETTOLREACHED )
+    {
+
+    }
+
+    if ( oldreseterr <= state->iterstate->err )
+    {
+        status = LTFAT_DGTREALMP_STATUS_RESETSTALLED;
+    }
+
+    state->iterstate->reseterr = state->iterstate->err;
+//error:
+    return status;
+}

@@ -315,24 +315,44 @@ error:
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
-    LTFAT_NAME(dgtrealmp_parbuf)* p, size_t iterstep)
+LTFAT_NAME(dgtrealmp_setparbuf_callbackit)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, size_t callbackit)
 {
     int status = LTFATERR_FAILED; CHECKNULL(p);
-    return ltfat_dgtmp_setpar_iterstep(p->params, iterstep);
+    return ltfat_dgtmp_setpar_callbackit(p->params, callbackit);
 error:
     return status;
 }
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_setparbuf_iterstepcallback)(
+LTFAT_NAME(dgtrealmp_setparbuf_resetit)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, size_t resetit)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return ltfat_dgtmp_setpar_resetit(p->params, resetit);
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_reseterrdb)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, double reseterrdb)
+{
+    int status = LTFATERR_FAILED; CHECKNULL(p);
+    return ltfat_dgtmp_setpar_reseterrdb(p->params, reseterrdb);
+error:
+    return status;
+}
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_callback)(
     LTFAT_NAME(dgtrealmp_parbuf)* p,
-    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback, void* userdata)
+    LTFAT_NAME(dgtrealmp_callback)* callback, void* userdata)
 {
     int status = LTFATERR_FAILED; CHECKNULL(p);
 
-    p->iterstepcallback = callback;
-    p->iterstepcallbackdata = userdata;
+    p->callback = callback;
+    p->callbackdata = userdata;
 error:
     return status;
 }

@@ -3,6 +3,7 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %   Usage:  c = multidgtrealmp(f,dicts)
 %           c = multidgtrealmp(f,dicts,errdb,maxit)
 %           [c,frec,info] = multidgtrealmp(...)
+%           [c,frec,info] = multidgtrealmp(...)
 %
 %   Input parameters:
 %       f        : Input signal
@@ -65,10 +66,22 @@ function [c, frec, info] = multidgtrealmp(f,dicts,varargin)
 %
 %     'algorithm',alg  Algorithm to use. Available: 
 %                      'mp'(default),'selfprojmp','cyclicmp'
+
+%     'reset'          Reset the decomposition until stopping criteria
+%                      are met. The reset means a complete synthesis and
+%                      re-analysis. Available:
+%                      'noreset' (default), 'reset', 'quickreset'
+%                      Option 'quickreset' applies a heuristic to stop the
+%                      algorithm more quickly when the targer error is
+%                      reached.
+%
+%   Reset conditions can be controlled by the following key-value pairs:
 %
 %     'resetit',it     Reset the decomposition every `it` iteration.
-%                      The reset means a complete synthesis and re-analysis.
-%                      The default is 0 (no reset)
+%
+%     'resetdb',err    Reset the decomposition when the error estimate
+%                      in dB decreases by `err` between the resets. 
+%                      Must be positive. Default is `10*log10(1/(1.1*kv.kernthr))`
 %
 %   The computational routine is only available in C. Use |ltfatmex| to
 %   to compile it.
@@ -114,10 +127,12 @@ complainif_notenoughargs(nargin,2,thismfile);
 definput.keyvals.errdb=-40;
 definput.keyvals.maxit=[];
 definput.keyvals.resetit=0;
+definput.keyvals.resetdb=[];
 %definput.keyvals.iterstep=[];
 definput.keyvals.kernthr = 1e-4;
 %definput.flags.print={'quiet','print'};
 definput.flags.algversion={'fast','slow'};
+definput.flags.resetmode={'noreset','reset','quickreset'};
 definput.flags.algorithm={'mp','selfprojmp','cyclicmp'};
 definput.flags.search={'plainsearch','pedanticsearch'};
 definput.flags.phaseconv={'freqinv','timeinv'};
@@ -146,6 +161,23 @@ end
 
 if ~(kv.kernthr > 0 && kv.kernthr <= 1)
     error('%s: Kenel threshold must be in range ]0,1].',upper(mfilename));
+end
+
+if isempty(kv.resetdb)
+    kv.resetdb = 10*log10(1/(1.1*kv.kernthr));
+end
+
+if kv.resetdb < 0
+    error('%s: Decomposition reset limit must be higher than 0 dB.',upper(mfilename));
+end
+
+if flags.do_noreset
+    kv.resetit = 0;
+    kv.resetdb = 0;
+end
+
+if flags.do_quickreset
+    error('%s: NOT IMPLEMENTED',upper(mfilename))
 end
 
 if ~iscell(dicts), error('%s: dicts must be cell',thismfile); end
@@ -200,51 +232,11 @@ end
 % Initial residuum
 fpad = postpad(f,L);
 
-if kv.resetit == 0
-    [c,info.atoms,info.iter,info.status] = ...
-        comp_multidgtrealmp(fpad,info.g,a,M,flags.do_timeinv,...
-                            kv.kernthr,kv.errdb,kv.maxit,kv.maxit,...
-                            flags.do_pedanticsearch, flags.algorithm );
-else
-    c = cell(1,dictno);
-    for dIdx = 1:dictno
-        c{dIdx} = zeros(floor(M(dIdx)/2) + 1, L/a(dIdx),class(f));
-    end
-
-    remainingit = kv.maxit;
-    currerrdb = kv.errdb;
-
-    while remainingit > 0 
-        currit = min([remainingit,kv.resetit]);
-
-        [ctmp,info.atoms,info.iter,info.status] = ...
-            comp_multidgtrealmp(fpad,info.g,a,M,flags.do_timeinv,...
-                                kv.kernthr,currerrdb,currit,currit,...
-                                flags.do_pedanticsearch, flags.algorithm );
-
-        c = cellfun(@(cEl,ctmpEl) cEl + ctmpEl, c(:)',ctmp(:)','UniformOutput', 0);
-
-        remainingit = remainingit - info.iter;
-
-        %The following means that some other stopping criterion has been reached
-        if currit ~= info.iter, break; end
-
-        if remainingit > 0
-            % Recompute residuum
-            frec = sum(cell2mat(cellfun(@(cEl,gEl,aEl,MEl) idgtreal(cEl,gEl,aEl,MEl,flags.phaseconv),...
-                   c(:)',info.g(:)',num2cell(a(:))',num2cell(M(:))','UniformOutput',0)),2);
-            
-            fpad = postpad(f,L) - frec;
-            % Since we are changing the residual, we must adjust the target error
-            currerrdb = kv.errdb - 20*log10( norm(fpad(:)) / fnorm );
-        end
-    end
-
-    %Fix the info
-    info.atoms = sum(cellfun(@(cEl) numel(find( abs(cEl) > 0 )), c));
-    info.iter = kv.maxit - remainingit;
-end
-
+[c,info.atoms,info.iter,info.status] = ...
+    comp_multidgtrealmp(fpad,info.g,a,M,flags.do_timeinv,...
+                        kv.kernthr,kv.errdb,kv.maxit,kv.maxit,...
+                        kv.resetit,kv.resetdb,flags.do_quickreset, ...
+                        flags.do_pedanticsearch, flags.algorithm);
 
 if nargout>1
   permutedsize2 = permutedsize; permutedsize2(2) = dictno;
@@ -263,12 +255,13 @@ if nargout>1
   end
 
   status_str = {...
-  'Target error reached',...
-  'Maximum number of atoms reached',...
-  'Maximum number of iterations reached',...
-  'Stalled (abs. norm. error estimate became negative)',...
-  'Selected coefficient tolerance reached',...
-  'All zeros'...
+  { 1, 'Target error reached'},...
+  { 2, 'Maximum number of atoms reached'},...
+  { 4, 'Maximum number of iterations reached'},...
+  { 8, 'Stalled (abs. norm. error estimate became negative)'},...
+  { 16, 'Selected coefficient tolerance reached'},...
+  { 32, 'All zeros'},...
+  {1024, 'Stalled (Residual has increased since last reset. Try to reduce resetit.)'}
   };
   info.message = status_str{1 + info.status};
 end

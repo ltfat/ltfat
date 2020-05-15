@@ -1,7 +1,7 @@
 #ifndef _LTFAT_MEX_FILE
 #define _LTFAT_MEX_FILE
 
-#define ISNARGINEQ 11
+#define ISNARGINEQ 14
 #define TYPEDEPARGS 0, 1
 #define SINGLEARGS
 #define REALARGS
@@ -14,10 +14,10 @@
 #if defined(LTFAT_SINGLE) || defined(LTFAT_DOUBLE)
 #include "ltfat/types.h"
 
-// Calling convention:  0 1 2 3     4       5     6     7     8                 9  10  
-//  comp_multidgtrealmp(f,g,a,M,ptype,kernthr,errdb,maxit,maxat,do_pedanticsearch,alg);
+// Calling convention:  0 1 2 3     4       5     6     7     8       9      10         11                 12  13
+//  comp_multidgtrealmp(f,g,a,M,ptype,kernthr,errdb,maxit,maxat,resetit,resetdb,quickreset, do_pedanticsearch,alg);
 //
-//  
+//
 //
 
 void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
@@ -26,15 +26,15 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     LTFAT_NAME(dgtrealmp_parbuf)* pbuf = NULL;
     LTFAT_NAME(dgtrealmp_state)*  plan = NULL;
     char algstr[51];
-    mxGetString(prhs[10],algstr,50);
+    mxGetString(prhs[13],algstr,50);
     ltfat_dgtmp_alg alg = ltfat_dgtmp_alg_mp;
 
-    
+
     if( 0 == strcmp("cyclicmp", algstr))
         alg = ltfat_dgtmp_alg_loccyclicmp;
     else if( 0 == strcmp("selfprojmp",algstr))
         alg = ltfat_dgtmp_alg_locselfprojmp;
-    
+
     size_t atoms = 0;
     size_t iters = 0;
     int dec_status = 0;
@@ -48,7 +48,10 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     double errdb = mxGetScalar(prhs[6]);
     size_t maxit = (size_t)mxGetScalar(prhs[7]);
     size_t maxat = (size_t)mxGetScalar(prhs[8]);
-    int do_pedanticsearch = (int)mxGetScalar(prhs[9]);
+    size_t resetit = (size_t)mxGetScalar(prhs[9]);
+    double resetdb = mxGetScalar(prhs[10]);
+    int do_quickreset = (int)mxGetScalar(prhs[11]);
+    int do_pedanticsearch = (int)mxGetScalar(prhs[12]);
 
     plhs[0] = mxCreateCellMatrix(dictno, 1);
     LTFAT_COMPLEX** cPtrs = mxMalloc(dictno*sizeof*cPtrs);
@@ -78,8 +81,9 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(pbuf, kernthr));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(pbuf, maxat));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxit)(pbuf, maxit));
-    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(pbuf, L));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, alg));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_resetit)( resetit));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_reseterrdb)( resetdb));
 
     CHSTAT(LTFAT_NAME(dgtrealmp_init)( pbuf, L, &plan));
     CHSTAT(dec_status = LTFAT_NAME(dgtrealmp_execute_decompose)(plan, mxGetData(prhs[0]), cPtrs));

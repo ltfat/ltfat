@@ -65,206 +65,6 @@ NLOOPBOTH(\
                                  m2start + kdim2.height - k->srange[knidx].end);)\
     LTFAT_NAME(maxtree_setdirty)(s->tmaxtree[w2],       n2start, n2start + kdim2.width);
 
-int
-LTFAT_NAME(dgtrealmp_execute_locomp)(
-    LTFAT_NAME(dgtrealmp_state)* p,
-    kpoint origpos, LTFAT_COMPLEX** cout)
-{
-    /* int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE; */
-
-    /* int uniquenyquest = p->M[origpos.w] % 2 == 0; */
-    LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
-
-    int count = s->suppind[PTOI(origpos)];
-    DEBUG("\n*****************\n Count %d \n ****************", count);
-    if (count > 10)
-    {
-        /* status = LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED; break; */
-    }
-
-    // STEP 1: Find all active atoms around the current one
-    ltfat_int cvalNo = 0;
-
-    /* LTFAT_NAME(kerns)* k1 = p->gramkerns[origpos.w + s->P * origpos.w]; */
-    /* int do_conjat = 0; */
-    /* if (  (k1->mid.hmid + 2 * origpos.m) < k1->size.height ) */
-    /*     do_conjat = 1; */
-
-    s->cvalBuf[cvalNo] = s->c[PTOI(origpos)];
-    s->cvalBufPos[cvalNo] = origpos;
-    cvalNo++;
-
-    for (ltfat_int w2 = 0; w2 < s->P; w2++)
-    {
-        kpoint pos = kpoint_init(0, 0, w2);
-        ltfat_int m2start, n2start;
-        ksize   kdim2; kanchor kmid2; kpoint  kstart2;
-
-        LTFAT_NAME(dgtrealmp_execute_indices)(
-            p, origpos, &pos, &m2start, &n2start,
-            &kdim2, &kmid2, &kstart2);
-
-        LTFAT_NAME(kerns)* k = p->gramkerns[origpos.w + s->P * w2];
-
-        NLOOPUNBOUNDED
-        {
-            unsigned int* suppCol = s->suppind[w2] + nidx * p->M2[w2];
-
-            MLOOP
-            {
-                if ( midx == origpos.m && nidx == origpos.n && w2 == origpos.w) continue;
-                if ( midx >= k->size.height && midx < p->M2[w2] - k->size.height && suppCol[midx])
-                {
-                    kpoint cvalPos = kpoint_init2(midx, nidx, nidx2, w2);
-                    s->cvalBuf[cvalNo] = s->c[PTOI(cvalPos)];
-                    s->cvalBufPos[cvalNo] = cvalPos;
-                    cvalNo++;
-
-                    /* if ( midx > 0 && do_conjat ) */
-                    /* { */
-                    /*     cvalPos.m =  -midx; */
-                    /*     s->cvalBuf[cvalNo] = conj(s->cvalBuf[cvalNo - 1]); */
-                    /*     s->cvalBufPos[cvalNo] = cvalPos; */
-                    /*     cvalNo++; */
-                    /*     DEBUGNOTE("PRD***********************************"); */
-                    /* } */
-                }
-            }
-        }
-    }
-
-#ifndef NDEBUG
-    for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
-    {
-        kpoint cvalPos = s->cvalBufPos[cidx];
-        LTFAT_COMPLEX cval =  s->cvalBuf[cidx];
-        DEBUG("m=%td,n=%td,w=%td, r=% 5.3e,i=% 5.3e",
-              cvalPos.m, cvalPos.n, cvalPos.w, ltfat_real(cval), ltfat_imag(cval));
-    }
-    DEBUGNOTE("--------------------");
-#endif
-
-    memcpy(s->cvalinvBuf, s->cvalBuf, cvalNo * sizeof * s->cvalinvBuf);
-
-    if (cvalNo > 1)
-    {
-
-        /* cvalNo = 1; */
-        /* kpoint cvalPos; cvalPos.m = m; cvalPos.n = n; cvalPos.w = w; */
-        /* s->cvalBuf[0] = s->c[PTOI(cvalPos)]; */
-        /* s->cvalBufPos[0] = cvalPos; */
-
-        LTFAT_NAME_COMPLEX(clear_array)( s->gramBuf, cvalNo * cvalNo);
-        /* memset(s->gramBuf, 0, cvalNo * cvalNo * sizeof * s->gramBuf); */
-        // STEP 2: Construct the Gram matrix
-        for (ltfat_int cidx1 = 0; cidx1 < cvalNo; cidx1++)
-        {
-            kpoint cvalPos            = s->cvalBufPos[cidx1];
-            LTFAT_COMPLEX* gramBufCol = s->gramBuf + cidx1 * cvalNo;
-
-            gramBufCol[cidx1] = 1;
-
-            for (ltfat_int cidx2 = cidx1 + 1; cidx2 < cvalNo; cidx2++)
-            {
-                kpoint cvalPos2      = s->cvalBufPos[cidx2];
-                kpoint pos           = cvalPos2;
-                LTFAT_NAME(kerns)* k =
-                    p->gramkerns[cvalPos.w + s->P * cvalPos2.w];
-
-                /* LTFAT_COMPLEX* kvals = */
-                /*     LTFAT_NAME(dgtrealmp_execute_pickkernel)( */
-                /*         k, cvalPos.m, cvalPos.n, p->params->ptype); */
-
-                ltfat_int m2start, n2start;
-                ksize   kdim2; kanchor kmid2; kpoint kstart2;
-
-                LTFAT_NAME(dgtrealmp_execute_indices)(
-                    p, cvalPos, &pos, &m2start, &n2start, &kdim2,
-                    &kmid2, &kstart2);
-
-                ltfat_int muse = cvalPos2.m  - pos.m  + kmid2.hmid;
-                ltfat_int nuse = cvalPos2.n2 - pos.n2 + kmid2.wmid;
-
-                if ( muse >= 0 && muse < kdim2.height &&
-                     nuse >= 0 && nuse < kdim2.width )
-                    gramBufCol[cidx2] =
-                        (k->kval[k->size.height * (kstart2.n + k->astep * nuse) +
-                                 k->Mstep * muse + kstart2.m]);
-                else
-                    gramBufCol[cidx2] = 0;
-            }
-        }
-
-        /* #ifndef NDEBUG */
-        /*             printf("\n"); */
-        /*             for (ltfat_int m = 0; m < cvalNo; m++ ) */
-        /*             { */
-        /*                 for (ltfat_int n = 0; n < cvalNo; n++ ) */
-        /*                 { */
-        /*                     printf("r=% 2.3e,i=% 2.3e ", ltfat_real(s->gramBuf[n * cvalNo + m]), */
-        /*                            ltfat_imag(s->gramBuf[n * cvalNo + m])); */
-        /*                 } */
-        /*                 printf("\n"); */
-        /*             } */
-        /* #endif */
-
-
-        // STEP 3: Invert that S**T
-        if ( LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
-                 s->hplan, s->gramBuf, cvalNo, s->cvalinvBuf) )
-        {
-            /* status = LTFATERR_NOTPOSDEFMATRIX; */
-            return LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM;
-        }
-    }
-#ifndef NDEBUG
-    for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
-    {
-        kpoint cvalPos = s->cvalBufPos[cidx];
-        LTFAT_COMPLEX cval =  s->cvalinvBuf[cidx];
-        DEBUG("m=%td,n=%td,n2=%td, r=% 2.3e,i=% 2.3e",
-              cvalPos.m, cvalPos.n, cvalPos.n2, ltfat_real(cval), ltfat_imag(cval));
-    }
-    DEBUGNOTE("------------+-------");
-#endif
-
-    // STEP 4: Update result and the residuum
-    for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
-    {
-        LTFAT_COMPLEX cvalinv = s->cvalinvBuf[cidx];
-        /* LTFAT_COMPLEX cval = s->cvalBuf[cidx]; */
-        kpoint cvalPos     = s->cvalBufPos[cidx];
-        if (cvalPos.m < 0) continue;
-
-        s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, cvalinv, cvalPos, cout);
-
-        /* int do_conj = !( cvalPos.m == 0 || (cvalPos.m == p->M2[cvalPos.w] - 1 */
-        /*                                     && uniquenyquest)); */
-        /*  */
-        /* LTFAT_COMPLEX atprod = */
-        /*     LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, cvalPos); */
-        /*  */
-        /* cvalinv = (cvalinv - (atprod) * conj(cvalinv)) / (1.0 - ltfat_norm(atprod)); */
-        /*  */
-        /* LTFAT_REAL atenergy = */
-        /*     LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cvalinv); */
-        /*  */
-        /* #<{(| cvalinv *= atenergy; |)}># */
-        /*  */
-        /* cout[PTOI(cvalPos)] += cvalinv; */
-        /*  */
-        /* LTFAT_REAL cvalabs = ltfat_norm(cvalinv) * atenergy; */
-        /*  */
-        /* s->err -= cvalabs ; */
-        /* if (do_conj) s->err -= cvalabs ; */
-        /*  */
-        /* LTFAT_NAME(dgtrealmp_execute_updateresiduum)( p, */
-        /*         cvalPos, cvalinv,  1); */
-
-    }
-
-    return LTFAT_DGTREALMP_STATUS_CANCONTINUE;
-}
 
 int
 LTFAT_NAME(dgtrealmp_execute_selfprojmp)(
@@ -363,7 +163,7 @@ LTFAT_NAME(dgtrealmp_execute_cyclicmp)(
             long double erratomend = s->err;
             if( (erratomstart - erratomend) < (long double) (-1e-6))
             {
-                // The selected atom is worse! 
+                // The selected atom is worse!
                 // printf("itno:%td, errdif=%.8Lf\n", s->currit , erratomstart - erratomend);
                 return LTFAT_DGTREALMP_STATUS_STALLED;
             }
@@ -405,7 +205,7 @@ LTFAT_NAME(dgtrealmp_execute_invmp)(
 
     LTFAT_COMPLEX atinprod;
     LTFAT_REAL oneover1minatprodnorm;
-    LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( 
+    LTFAT_NAME(dgtrealmp_execute_conjatpairprod)(
             p, pos, &atinprod, &oneover1minatprodnorm);
 
     LTFAT_REAL plusatenergy =
@@ -713,6 +513,7 @@ LTFAT_NAME(dgtrealmp_execute_findneighbors)(
     return 0;
 }
 
+#if 0
 #ifdef NOBLASLAPACK
 
 LTFAT_API int
@@ -729,4 +530,210 @@ LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
 LTFAT_API int
 LTFAT_NAME_COMPLEX(hermsystemsolver_done)(
     LTFAT_NAME_COMPLEX(hermsystemsolver_plan)** UNUSED(p)) {return 0;}
+#endif
+
+
+int
+LTFAT_NAME(dgtrealmp_execute_locomp)(
+    LTFAT_NAME(dgtrealmp_state)* p,
+    kpoint origpos, LTFAT_COMPLEX** cout)
+{
+    /* int status = LTFAT_DGTREALMP_STATUS_CANCONTINUE; */
+
+    /* int uniquenyquest = p->M[origpos.w] % 2 == 0; */
+    LTFAT_NAME(dgtrealmpiter_state)* s = p->iterstate;
+
+    int count = s->suppind[PTOI(origpos)];
+    DEBUG("\n*****************\n Count %d \n ****************", count);
+    if (count > 10)
+    {
+        /* status = LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED; break; */
+    }
+
+    // STEP 1: Find all active atoms around the current one
+    ltfat_int cvalNo = 0;
+
+    /* LTFAT_NAME(kerns)* k1 = p->gramkerns[origpos.w + s->P * origpos.w]; */
+    /* int do_conjat = 0; */
+    /* if (  (k1->mid.hmid + 2 * origpos.m) < k1->size.height ) */
+    /*     do_conjat = 1; */
+
+    s->cvalBuf[cvalNo] = s->c[PTOI(origpos)];
+    s->cvalBufPos[cvalNo] = origpos;
+    cvalNo++;
+
+    for (ltfat_int w2 = 0; w2 < s->P; w2++)
+    {
+        kpoint pos = kpoint_init(0, 0, w2);
+        ltfat_int m2start, n2start;
+        ksize   kdim2; kanchor kmid2; kpoint  kstart2;
+
+        LTFAT_NAME(dgtrealmp_execute_indices)(
+            p, origpos, &pos, &m2start, &n2start,
+            &kdim2, &kmid2, &kstart2);
+
+        LTFAT_NAME(kerns)* k = p->gramkerns[origpos.w + s->P * w2];
+
+        NLOOPUNBOUNDED
+        {
+            unsigned int* suppCol = s->suppind[w2] + nidx * p->M2[w2];
+
+            MLOOP
+            {
+                if ( midx == origpos.m && nidx == origpos.n && w2 == origpos.w) continue;
+                if ( midx >= k->size.height && midx < p->M2[w2] - k->size.height && suppCol[midx])
+                {
+                    kpoint cvalPos = kpoint_init2(midx, nidx, nidx2, w2);
+                    s->cvalBuf[cvalNo] = s->c[PTOI(cvalPos)];
+                    s->cvalBufPos[cvalNo] = cvalPos;
+                    cvalNo++;
+
+                    /* if ( midx > 0 && do_conjat ) */
+                    /* { */
+                    /*     cvalPos.m =  -midx; */
+                    /*     s->cvalBuf[cvalNo] = conj(s->cvalBuf[cvalNo - 1]); */
+                    /*     s->cvalBufPos[cvalNo] = cvalPos; */
+                    /*     cvalNo++; */
+                    /*     DEBUGNOTE("PRD***********************************"); */
+                    /* } */
+                }
+            }
+        }
+    }
+
+#ifndef NDEBUG
+    for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
+    {
+        kpoint cvalPos = s->cvalBufPos[cidx];
+        LTFAT_COMPLEX cval =  s->cvalBuf[cidx];
+        DEBUG("m=%td,n=%td,w=%td, r=% 5.3e,i=% 5.3e",
+              cvalPos.m, cvalPos.n, cvalPos.w, ltfat_real(cval), ltfat_imag(cval));
+    }
+    DEBUGNOTE("--------------------");
+#endif
+
+    memcpy(s->cvalinvBuf, s->cvalBuf, cvalNo * sizeof * s->cvalinvBuf);
+
+    if (cvalNo > 1)
+    {
+
+        /* cvalNo = 1; */
+        /* kpoint cvalPos; cvalPos.m = m; cvalPos.n = n; cvalPos.w = w; */
+        /* s->cvalBuf[0] = s->c[PTOI(cvalPos)]; */
+        /* s->cvalBufPos[0] = cvalPos; */
+
+        LTFAT_NAME_COMPLEX(clear_array)( s->gramBuf, cvalNo * cvalNo);
+        /* memset(s->gramBuf, 0, cvalNo * cvalNo * sizeof * s->gramBuf); */
+        // STEP 2: Construct the Gram matrix
+        for (ltfat_int cidx1 = 0; cidx1 < cvalNo; cidx1++)
+        {
+            kpoint cvalPos            = s->cvalBufPos[cidx1];
+            LTFAT_COMPLEX* gramBufCol = s->gramBuf + cidx1 * cvalNo;
+
+            gramBufCol[cidx1] = 1;
+
+            for (ltfat_int cidx2 = cidx1 + 1; cidx2 < cvalNo; cidx2++)
+            {
+                kpoint cvalPos2      = s->cvalBufPos[cidx2];
+                kpoint pos           = cvalPos2;
+                LTFAT_NAME(kerns)* k =
+                    p->gramkerns[cvalPos.w + s->P * cvalPos2.w];
+
+                /* LTFAT_COMPLEX* kvals = */
+                /*     LTFAT_NAME(dgtrealmp_execute_pickkernel)( */
+                /*         k, cvalPos.m, cvalPos.n, p->params->ptype); */
+
+                ltfat_int m2start, n2start;
+                ksize   kdim2; kanchor kmid2; kpoint kstart2;
+
+                LTFAT_NAME(dgtrealmp_execute_indices)(
+                    p, cvalPos, &pos, &m2start, &n2start, &kdim2,
+                    &kmid2, &kstart2);
+
+                ltfat_int muse = cvalPos2.m  - pos.m  + kmid2.hmid;
+                ltfat_int nuse = cvalPos2.n2 - pos.n2 + kmid2.wmid;
+
+                if ( muse >= 0 && muse < kdim2.height &&
+                     nuse >= 0 && nuse < kdim2.width )
+                    gramBufCol[cidx2] =
+                        (k->kval[k->size.height * (kstart2.n + k->astep * nuse) +
+                                 k->Mstep * muse + kstart2.m]);
+                else
+                    gramBufCol[cidx2] = 0;
+            }
+        }
+
+        /* #ifndef NDEBUG */
+        /*             printf("\n"); */
+        /*             for (ltfat_int m = 0; m < cvalNo; m++ ) */
+        /*             { */
+        /*                 for (ltfat_int n = 0; n < cvalNo; n++ ) */
+        /*                 { */
+        /*                     printf("r=% 2.3e,i=% 2.3e ", ltfat_real(s->gramBuf[n * cvalNo + m]), */
+        /*                            ltfat_imag(s->gramBuf[n * cvalNo + m])); */
+        /*                 } */
+        /*                 printf("\n"); */
+        /*             } */
+        /* #endif */
+
+
+        // STEP 3: Invert that S**T
+        //
+#if 0
+        if ( LTFAT_NAME_COMPLEX(hermsystemsolver_execute)(
+                 s->hplan, s->gramBuf, cvalNo, s->cvalinvBuf) )
+        {
+            /* status = LTFATERR_NOTPOSDEFMATRIX; */
+            return LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM;
+        }
+#endif
+    }
+#ifndef NDEBUG
+    for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
+    {
+        kpoint cvalPos = s->cvalBufPos[cidx];
+        LTFAT_COMPLEX cval =  s->cvalinvBuf[cidx];
+        DEBUG("m=%td,n=%td,n2=%td, r=% 2.3e,i=% 2.3e",
+              cvalPos.m, cvalPos.n, cvalPos.n2, ltfat_real(cval), ltfat_imag(cval));
+    }
+    DEBUGNOTE("------------+-------");
+#endif
+
+    // STEP 4: Update result and the residuum
+    for (ltfat_int cidx = 0; cidx < cvalNo; cidx++)
+    {
+        LTFAT_COMPLEX cvalinv = s->cvalinvBuf[cidx];
+        /* LTFAT_COMPLEX cval = s->cvalBuf[cidx]; */
+        kpoint cvalPos     = s->cvalBufPos[cidx];
+        if (cvalPos.m < 0) continue;
+
+        s->err -= LTFAT_NAME(dgtrealmp_execute_mp)( p, cvalinv, cvalPos, cout);
+
+        /* int do_conj = !( cvalPos.m == 0 || (cvalPos.m == p->M2[cvalPos.w] - 1 */
+        /*                                     && uniquenyquest)); */
+        /*  */
+        /* LTFAT_COMPLEX atprod = */
+        /*     LTFAT_NAME(dgtrealmp_execute_conjatpairprod)( p, cvalPos); */
+        /*  */
+        /* cvalinv = (cvalinv - (atprod) * conj(cvalinv)) / (1.0 - ltfat_norm(atprod)); */
+        /*  */
+        /* LTFAT_REAL atenergy = */
+        /*     LTFAT_NAME(dgtrealmp_execute_atenergy)( atprod, cvalinv); */
+        /*  */
+        /* #<{(| cvalinv *= atenergy; |)}># */
+        /*  */
+        /* cout[PTOI(cvalPos)] += cvalinv; */
+        /*  */
+        /* LTFAT_REAL cvalabs = ltfat_norm(cvalinv) * atenergy; */
+        /*  */
+        /* s->err -= cvalabs ; */
+        /* if (do_conj) s->err -= cvalabs ; */
+        /*  */
+        /* LTFAT_NAME(dgtrealmp_execute_updateresiduum)( p, */
+        /*         cvalPos, cvalinv,  1); */
+
+    }
+
+    return LTFAT_DGTREALMP_STATUS_CANCONTINUE;
+}
 #endif

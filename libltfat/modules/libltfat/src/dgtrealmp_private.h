@@ -13,10 +13,8 @@ struct LTFAT_NAME(dgtrealmp_parbuf)
     int*         chanmask;
     ltfat_int           P;
     ltfat_dgtmp_params* params;
-    LTFAT_NAME(dgtrealmp_iterstep_callback)* iterstepcallback;
-    void*                        iterstepcallbackdata;
-//    LTFAT_REAL          chirprate;
-//    LTFAT_REAL          shiftby;
+    LTFAT_NAME(dgtrealmp_callback)* callback;
+    void*                        callbackdata;
 };
 
 struct ltfat_dgtmp_params
@@ -27,10 +25,14 @@ struct ltfat_dgtmp_params
     double                atprodreltoladj;
     long double           errtoldb;
     long double           errtoladj;
+    double                reseterrdb;
+    double                resettoladj;
+    int                   do_reset;
     double                kernrelthr;
     size_t                maxit;
     size_t                maxatoms;
-    size_t                iterstep;
+    size_t                callbackit;
+    size_t                resetit;
     int                   verbose;
     int                   initwasrun;
     int                   treelevels;
@@ -102,9 +104,11 @@ typedef struct
     LTFAT_NAME(maxtree)*** fmaxtree;
     unsigned int**         suppind;
     long double            err;
+    long double            reseterr;
     long double            fnorm2;
     size_t                 currit;
     size_t                 curratoms;
+    size_t                 resetcount;
     ltfat_int              P;
     ltfat_int*             N;
     LTFAT_COMPLEX**        cvalModBuf;
@@ -142,8 +146,9 @@ struct LTFAT_NAME(dgtrealmp_state)
     ltfat_int         L;
     ltfat_dgtmp_params* params;
     LTFAT_COMPLEX**     couttmp;
+    LTFAT_REAL*         ftmp;
     LTFAT_NAME(dgtrealmp_state_closure)** closures;
-    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback;
+    LTFAT_NAME(dgtrealmp_callback)* callback;
     void* userdata;
 };
 

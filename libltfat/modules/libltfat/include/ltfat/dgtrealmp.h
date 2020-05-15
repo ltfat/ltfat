@@ -1,4 +1,4 @@
-/** \defgroup multidgtrealmp Matching pursuit with Multi-Gabor Dictionaries 
+/** \defgroup multidgtrealmp Matching pursuit with Multi-Gabor Dictionaries
  *
  *
  * */
@@ -12,25 +12,35 @@ typedef struct LTFAT_NAME(dgtrealmp_parbuf) LTFAT_NAME(dgtrealmp_parbuf);
 /**@{*/
 enum ltfat_dgtmp_status
 {
-    LTFAT_DGTREALMP_STATUS_TOLREACHED   = 0,
-    LTFAT_DGTREALMP_STATUS_MAXATOMS     = 1,
-    LTFAT_DGTREALMP_STATUS_MAXITER      = 2,
-    LTFAT_DGTREALMP_STATUS_STALLED      = 3,
-    LTFAT_DGTREALMP_STATUS_ATPRODTOL    = 4,
-    LTFAT_DGTREALMP_STATUS_EMPTY        = 5,
-    LTFAT_DGTREALMP_STATUS_LOCOMP_NOTHERM = 6,
-    LTFAT_DGTREALMP_STATUS_LOCOMP_ORTHFAILED = 7,
-    LTFAT_DGTREALMP_STATUS_CANCONTINUE  = 100
+    LTFAT_DGTREALMP_STATUS_CANCONTINUE      = 0,
+    LTFAT_DGTREALMP_STATUS_TOLREACHED       = 1 ,
+    LTFAT_DGTREALMP_STATUS_MAXATOMS         = 1 << 1,
+    LTFAT_DGTREALMP_STATUS_MAXITER          = 1 << 2,
+    LTFAT_DGTREALMP_STATUS_STALLED          = 1 << 3,
+    LTFAT_DGTREALMP_STATUS_ATPRODTOL        = 1 << 4,
+    LTFAT_DGTREALMP_STATUS_EMPTY            = 1 << 5,
+    LTFAT_DGTREALMP_STATUS_CALLBACKIT       = 1 << 6,
+    LTFAT_DGTREALMP_STATUS_CALLBACKQUIT     = 1 << 7,
+    LTFAT_DGTREALMP_STATUS_RESETIT          = 1 << 8,
+    LTFAT_DGTREALMP_STATUS_RESETTOLREACHED  = 1 << 9,
+    LTFAT_DGTREALMP_STATUS_RESETSTALLED     = 1 << 10,
+    LTFAT_DGTREALMP_STATUS_RESETQUIT        = 1 << 11,
 };
 /**@}*/
 
 typedef enum
 {
     ltfat_dgtmp_alg_mp              = 0,
-    ltfat_dgtmp_alg_locomp          = 1,
+    // ltfat_dgtmp_alg_locomp          = 1,
     ltfat_dgtmp_alg_loccyclicmp     = 2,
     ltfat_dgtmp_alg_locselfprojmp   = 3,
 } ltfat_dgtmp_alg;
+
+typedef enum
+{
+    ltfat_dgtmp_reset_default  = 0,
+    ltfat_dgtmp_reset_quick     = 1
+} ltfat_dgtmp_reset_strategy;
 
 typedef struct ltfat_dgtmp_params ltfat_dgtmp_params;
 
@@ -53,6 +63,10 @@ ltfat_dgtmp_setpar_atprodreltoldb(ltfat_dgtmp_params* params,
                                   double atprodreltoldb);
 
 LTFAT_API int
+ltfat_dgtmp_setpar_resetit(
+    ltfat_dgtmp_params* params, size_t resetit);
+
+LTFAT_API int
 ltfat_dgtmp_setpar_alg(
     ltfat_dgtmp_params* params, ltfat_dgtmp_alg alg);
 
@@ -69,8 +83,12 @@ ltfat_dgtmp_setpar_kernrelthr(
     ltfat_dgtmp_params* p, double thr);
 
 LTFAT_API int
-ltfat_dgtmp_setpar_iterstep(
-    ltfat_dgtmp_params* p, size_t iterstep);
+ltfat_dgtmp_setpar_callbackit(
+    ltfat_dgtmp_params* p, size_t callbackit);
+
+LTFAT_API int
+ltfat_dgtmp_setpar_reseterrdb(
+    ltfat_dgtmp_params* params, double reseterrdb);
 
 LTFAT_API int
 ltfat_dgtmp_setpar_errtoldb(
@@ -106,31 +124,34 @@ ltfat_dgtmp_alg_isvalid(ltfat_dgtmp_alg in);
 /** \addtogroup multidgtrealmp  */
 /**@{*/
 
-/** Callback template to be called every iterstep iteration.
+/** Callback template to be called every callbackit iteration.
  * \a c
  *
- * \see dgtrealmp_setparbuf_iterstep dgtrealmp_setparbuf_iterstepcallback dgtrealmp_get_dictno dgtrealmp_get_coefdims
+ * \see dgtrealmp_setparbuf_callbackit dgtrealmp_setparbuf_callback dgtrealmp_get_dictno dgtrealmp_get_coefdims
  *
  * \param[in,out]  userdata   User defined struct
  * \param[in]      state      State struct
  * \param[in,out]  c          Selected coefficients
+ * \param[in]      status     Current status of decomposition
  *
  * #### Versions #
  * <tt>
- * typedef int 
- * ltfat_dgtrealmp_iterstep_callback_d(void* userdata, 
+ * typedef int
+ * ltfat_dgtrealmp_callback_d(void* userdata,
  *      ltfat_dgtrealmp_state_d* state, ltfat_complex_d* c[]);
  *
  * typedef int
- * ltfat_dgtrealmp_iterstep_callback_s(void* userdata, 
+ * ltfat_dgtrealmp_callback_s(void* userdata,
  *      ltfat_dgtrealmp_state_s* state, ltfat_complex_s* c[]);
  * </tt>
  * \returns Status code: =0 continue iterations, >0 stop, <0 stop with error
  */
 typedef int
-LTFAT_NAME(dgtrealmp_iterstep_callback)(
-        void* userdata, LTFAT_NAME(dgtrealmp_state)* state,
-        LTFAT_COMPLEX* c[]);
+LTFAT_NAME(dgtrealmp_callback)(
+        void* userdata, LTFAT_NAME(dgtrealmp_state)* state, const LTFAT_REAL f[],
+        LTFAT_COMPLEX* c[], int status);
+
+
 
 /** \name Basic interface */
 /**@{*/
@@ -140,7 +161,7 @@ LTFAT_NAME(dgtrealmp_iterstep_callback)(
  * The signal length \a L must be compatible with the dictionaries defined in \a pb.
  * Having a signal of length \a Ls, one can get the next bigger compatible length \a L
  * using dgtrealmp_getparbuf_siglen()
- * 
+ *
  * \param[in]   pb  Parameter buffer
  * \param[in]    L  Signal length
  * \param[out]   p  DGTREALMP state
@@ -222,7 +243,7 @@ LTFAT_NAME(dgtrealmp_done)(LTFAT_NAME(dgtrealmp_state)** p);
  * \param[in,out]    p DGTREALMP state
  * \param[in]        f Input signal, length L
  * \param[out]    cout Output coefficients, length obtainable from dgtrealmp_getparbuf_coeflen_compact()
- * \param[out]    fout Output signal, length L 
+ * \param[out]    fout Output signal, length L
  *
  * #### Versions #
  * <tt>
@@ -255,10 +276,10 @@ LTFAT_NAME(dgtrealmp_execute_compact)(
  * individual dimensions from dgtrealmp_get_coefdims()
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_execute_decompose_d( ltfat_dgtrealmp_state_d* p, 
+ * ltfat_dgtrealmp_execute_decompose_d( ltfat_dgtrealmp_state_d* p,
  *                                      const double f[], ltfat_complex_d* c[]);
  *
- * ltfat_dgtrealmp_execute_decompose_s( ltfat_dgtrealmp_state_s* p, 
+ * ltfat_dgtrealmp_execute_decompose_s( ltfat_dgtrealmp_state_s* p,
  *                                      const float f[], ltfat_complex_s* c[]);
  * </tt>
  * \returns
@@ -278,18 +299,18 @@ LTFAT_NAME(dgtrealmp_execute_decompose)(
  * \param[in,out]        p DGTREALMP state
  * \param[in]            c Input coefficients, array of length equal to the number of dictionaries
  * \patam[in]    dict_mask Dictionary mask. NULL or array of length equal to the number of dictionaries.
- * \param[out]           f Output signal, length L 
+ * \param[out]           f Output signal, length L
  *
  * The function will synthesize only from dictionary coefficients for which \a dict_mask[dictid]
- * is not 0. If NULL all coefficients are used. 
+ * is not 0. If NULL all coefficients are used.
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_execute_synthesize_d( ltfat_dgtrealmp_state_d* p, 
+ * ltfat_dgtrealmp_execute_synthesize_d( ltfat_dgtrealmp_state_d* p,
  *                                       const ltfat_complex_d* cout[],
  *                                       int dict_mask[], double f[]);
  *
- * ltfat_dgtrealmp_execute_synthesize_s( ltfat_dgtrealmp_state_s* p, 
- *                                       const ltfat_complex_s* cout[], 
+ * ltfat_dgtrealmp_execute_synthesize_s( ltfat_dgtrealmp_state_s* p,
+ *                                       const ltfat_complex_s* cout[],
  *                                       int dict_mask[], float f[]);
  * </tt>
  * \returns
@@ -304,7 +325,38 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_execute_synthesize)(
     LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_COMPLEX* c[], int dict_mask[], LTFAT_REAL f[]);
 
+
+/** Perform DGTREALMP state reset to a new input signal
+ *
+ * \param[in,out]       p DGTREALMP state
+ * \param[in]           f Input signal, length L
+ *
+ * The function performs the initial comutation of the inner products of the signal
+ * with the dictionary and contstructs the search trees.
+ *
+ * This function is normally not necessaty to be called.
+ *
+ * #### Versions #
+ * <tt>
+ * ltfat_dgtrealmp_reset_d( ltfat_dgtrealmp_state_d* p, double f[]);
+ *
+ * ltfat_dgtrealmp_reset_s( ltfat_dgtrealmp_state_s* p, float f[]);
+ * </tt>
+ * \returns
+ * Status code                  | Description
+ * -----------------------------|------------
+ * LTFATERR_SUCCESS             | Indicates no error
+ * LTFATERR_NULLPOINTER         | At least one of the following was NULL: \a pb, \a p
+ * LTFAT_DGTREALMP_STATUS_EMPTY | Input signal is all zeros
+ */
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_reset)(
+    LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f);
+
 /** @}*/
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_reset_residuum)(LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f);
 
 /***********************************************************************/
 
@@ -313,7 +365,7 @@ LTFAT_NAME(dgtrealmp_execute_synthesize)(
 
 /** Initialize the parameter buffer with default values and no dictionary
  *
- * The default values are: 
+ * The default values are:
  *  - Target SNR: 40 dB
  *  - Kernel relative threshold: 1e-4
  *  - Inner product relative tolerance: 80 dB
@@ -321,6 +373,7 @@ LTFAT_NAME(dgtrealmp_execute_synthesize)(
  *  - Pedantic search: disabled
  *  - Max. number of iterations: 0.8*L
  *  - Max. number of atoms: 0.8*L
+ *  - Reset
  *
  * \param[in]   p  DGTREALMP parameter buffer
  *
@@ -369,11 +422,11 @@ LTFAT_NAME(dgtrealmp_parbuf_done)( LTFAT_NAME(dgtrealmp_parbuf)** p);
  * #### Versions #
  * <tt>
  * ltfat_dgtrealmp_parbuf_add_firwin_d( ltfat_dgtrealmp_parbuf_d* parbuf,
- *                                      LTFAT_FIRWIN win, ltfat_int gl, 
+ *                                      LTFAT_FIRWIN win, ltfat_int gl,
  *                                      ltfat_int a, ltfat_int M );
  *
  * ltfat_dgtrealmp_parbuf_add_firwin_s( ltfat_dgtrealmp_parbuf_s* parbuf,
- *                                      LTFAT_FIRWIN win, ltfat_int gl, 
+ *                                      LTFAT_FIRWIN win, ltfat_int gl,
  *                                      ltfat_int a, ltfat_int M );
  * </tt>
  * \returns
@@ -422,11 +475,11 @@ LTFAT_NAME(dgtrealmp_parbuf_add_gausswin)(
  * #### Versions #
  * <tt>
  * ltfat_dgtrealmp_parbuf_add_genwin_d( ltfat_dgtrealmp_parbuf_d* parbuf,
- *                                      double g[], ltfat_int gl, 
+ *                                      double g[], ltfat_int gl,
  *                                      ltfat_int a, ltfat_int M );
  *
  * ltfat_dgtrealmp_parbuf_add_genwin_s( ltfat_dgtrealmp_parbuf_s* parbuf,
- *                                      float g[], ltfat_int gl, 
+ *                                      float g[], ltfat_int gl,
  *                                      ltfat_int a, ltfat_int M );
  * </tt>
  * \returns
@@ -506,7 +559,7 @@ LTFAT_NAME(dgtrealmp_getparbuf_coeflen)(
     LTFAT_NAME(dgtrealmp_parbuf) * p, ltfat_int Ls, ltfat_int dictid);
 
 /** Returns the length of the array to hold output coefficients for
- * all dictionaries. This is useful with the *_compact function.  
+ * all dictionaries. This is useful with the *_compact function.
  *
  * \param[in]      p  DGTREALMP parameter buffer
  * \param[in]     Ls  Signal length
@@ -535,8 +588,8 @@ LTFAT_NAME(dgtrealmp_getparbuf_coeflen_compact)(
 //         ltfat_int order, LTFAT_REAL tfr, ltfat_int a, ltfat_int M);
 
 /** Set coefficient phase convention.
- * 
- * \param[in]   parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]   parbuf  DGTREALMP parameter buffer
  * \param[in]    pconv  LTFAT_TIMEINV or LTFAT_FREQINV
  *
  * #### Versions #
@@ -558,12 +611,12 @@ LTFAT_NAME(dgtrealmp_setparbuf_phaseconv)(
         LTFAT_NAME(dgtrealmp_parbuf)* parbuf, ltfat_phaseconvention pconv);
 
 /** Set relative inner product tolerance in dB
- * 
- * Causes the algorithm to stop whenever the selected inner product becomes 
+ *
+ * Causes the algorithm to stop whenever the selected inner product becomes
  * less than \a atprodreltoldb relative to the inner product selected in the first iteration.
  * E.g. -80 dB amouns to the absolute threshold of 10^-4*max(abs(c_0))
- * 
- * \param[in]   parbuf          DGTREALMP parameter buffer 
+ *
+ * \param[in]   parbuf          DGTREALMP parameter buffer
  * \param[in]   atprodreltoldb  Relative tolerance in dB
  *
  * #### Versions #
@@ -585,8 +638,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_atprodreltoldb)(
         LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double atprodreltoldb);
 
 /** Set maximum number of atoms
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
  * \param[in]   maxatoms  Number of atoms
  *
  * #### Versions #
@@ -608,8 +661,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t maxatoms);
 
 /** Set maximum number of iterations
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
  * \param[in]      maxit  Number of iterations
  *
  * #### Versions #
@@ -631,10 +684,10 @@ LTFAT_NAME(dgtrealmp_setparbuf_maxit)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t maxit);
 
 /** Set target normalized MSE in dB
- * 
- * \a errtoldb must be less than 0. 
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
+ *
+ * \a errtoldb must be less than 0.
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
  * \param[in]   errtoldb  MSE in dB
  *
  * #### Versions #
@@ -658,8 +711,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_errtoldb)(
 /** Set target SNR in dB
  *
  * \a snrdb must be larger than 0.
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
  * \param[in]      snrdb  SNR in dB
  *
  * #### Versions #
@@ -681,8 +734,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_snrdb)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double snrdb);
 
 /** Set kernel relative threshold
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
  * \param[in]        thr  Threshold
  *
  * #### Versions #
@@ -704,11 +757,11 @@ LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf, double thr);
 
 
-/** Make the most recently added dictionary tight. 
+/** Make the most recently added dictionary tight.
  *
  * The dictionary must be painless.
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
  *
  * #### Versions #
  * <tt>
@@ -728,18 +781,18 @@ LTFAT_NAME(dgtrealmp_modparbuf_lasttight)(
 
 
 /** Sets iteration step.
- *  Prints results/ calls callback every \a iterstep iterations.
- * 
- * \param[in]     parbuf  DGTREALMP parameter buffer 
- * \param[in]   iterstep  Step
+ *  Prints results/ calls callback every \a callbackit iterations.
+ *
+ * \param[in]     parbuf  DGTREALMP parameter buffer
+ * \param[in]   callbackit  Step
  *
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_setparbuf_iterstep_d( ltfat_dgtrealmp_parbuf_d* p,
- *                                       size_t iterstep);
+ * ltfat_dgtrealmp_setparbuf_callbackit_d( ltfat_dgtrealmp_parbuf_d* p,
+ *                                       size_t callbackit);
  *
- * ltfat_dgtrealmp_setparbuf_iterstep_s( ltfat_dgtrealmp_parbuf_s* p,
- *                                       size_t iterstep);
+ * ltfat_dgtrealmp_setparbuf_callbackit_s( ltfat_dgtrealmp_parbuf_s* p,
+ *                                       size_t callbackit);
  * </tt>
  * \returns
  * Status code              | Description
@@ -748,20 +801,24 @@ LTFAT_NAME(dgtrealmp_modparbuf_lasttight)(
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
-    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t iterstep);
+LTFAT_NAME(dgtrealmp_setparbuf_callbackit)(
+    LTFAT_NAME(dgtrealmp_parbuf)* parbuf, size_t callbackit);
 
-/** Register callback function to be called every iterstep iteration 
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_resetit)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, size_t resetitit);
+
+/** Register callback function to be called every callbackit iteration
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_setparbuf_iterstepcallback_d( 
+ * ltfat_dgtrealmp_setparbuf_callback_d(
  *      ltfat_dgtrealmp_parbuf_d* p,
- *      ltfat_dgtrealmp_execute_iterstep_callback_d* callback,
+ *      ltfat_dgtrealmp_callback_d* callback,
  *      void* userdata);
  *
- * ltfat_dgtrealmp_setparbuf_iterstepcallback_s( 
+ * ltfat_dgtrealmp_setparbuf_callback_s(
  *      ltfat_dgtrealmp_parbuf_s* p,
- *      ltfat_dgtrealmp_execute_iterstep_callback_s* callback,
+ *      ltfat_dgtrealmp_callback_s* callback,
  *      void* userdata);
  * </tt>
  * \returns
@@ -771,14 +828,14 @@ LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(
  * LTFATERR_NULLPOINTER     | At least one of the following was NULL: \a p
  */
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_setparbuf_iterstepcallback)(
+LTFAT_NAME(dgtrealmp_setparbuf_callback)(
     LTFAT_NAME(dgtrealmp_parbuf)* parbuf,
-    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback,
+    LTFAT_NAME(dgtrealmp_callback)* callback,
     void* userdata);
 
 /** Enable/disable pedantic search
- * 
- * \param[in]       parbuf  DGTREALMP parameter buffer 
+ *
+ * \param[in]       parbuf  DGTREALMP parameter buffer
  * \param[in]  do_pedantic  0 - false, anything else - true
  *
  * #### Versions #
@@ -835,8 +892,8 @@ LTFAT_NAME(dgtrealmp_setparbuf_selectiomodcallback)(
  * @{
  */
 
-/** Get current normalized error 
- * 
+/** Get current normalized error
+ *
  * \param[in]       p  DGTREALMP state
  * \param[out]    err  Error in dB
  *
@@ -857,7 +914,7 @@ LTFAT_NAME(dgtrealmp_get_errdb)(
     const LTFAT_NAME(dgtrealmp_state)* p, double* err);
 
 /** Get current number of selected atoms
- * 
+ *
  * \param[in]       p  DGTREALMP state
  * \param[out]  atoms  Number of selected atoms
  *
@@ -878,7 +935,7 @@ LTFAT_NAME(dgtrealmp_get_numatoms)(
         const LTFAT_NAME(dgtrealmp_state)* p, size_t* atoms);
 
 /** Get current number of iterations done
- * 
+ *
  * \param[in]       p  DGTREALMP state
  * \param[out]  iters  Number of iterations done
  *
@@ -898,15 +955,20 @@ LTFAT_API int
 LTFAT_NAME(dgtrealmp_get_numiters)(
         const LTFAT_NAME(dgtrealmp_state)* p, size_t* iters);
 
-/** Get pointer to an array of residual coefficients 
- * 
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_get_numresets)(
+    const LTFAT_NAME(dgtrealmp_state)* p, size_t* resets);
+
+/** Get pointer to an array of residual coefficients
+ *
  * \param[in]        p  DGTREALMP state
  * \param[in]   dictid  Dictionary index
  * \param[out]    cres  Pointer to a pointer to be initialized
  *
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_get_rescoefs_d( ltfat_dgtrealmp_state_d* p, 
+ * ltfat_dgtrealmp_get_rescoefs_d( ltfat_dgtrealmp_state_d* p,
  *                                 int dictid, ltfat_complex_d** cres);
  *
  * ltfat_dgtrealmp_get_rescoefs_s( ltfat_dgtrealmp_state_s* p,
@@ -924,7 +986,7 @@ LTFAT_NAME(dgtrealmp_get_rescoefs)(
         LTFAT_COMPLEX** cres);
 
 /** Get dimensions of the coefficient matrix for dictionary dictid
- * 
+ *
  * \param[in]        p  DGTREALMP state
  * \param[in]   dictid  Dictionary index
  * \param[out]      M2  Number of rows
@@ -932,7 +994,7 @@ LTFAT_NAME(dgtrealmp_get_rescoefs)(
  *
  * #### Versions #
  * <tt>
- * ltfat_dgtrealmp_get_coefdims_d( ltfat_dgtrealmp_state_d* p, 
+ * ltfat_dgtrealmp_get_coefdims_d( ltfat_dgtrealmp_state_d* p,
  *                                 int dictid, ltfat_int* M2, ltfat_int* N);
  *
  * ltfat_dgtrealmp_get_coefdims_s( ltfat_dgtrealmp_state_s* p,
@@ -974,13 +1036,13 @@ LTFAT_NAME(dgtrealmp_get_dictno)(
  * @{
  */
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstep)(
-    LTFAT_NAME(dgtrealmp_state)* p, size_t iterstep);
+LTFAT_NAME(dgtrealmp_set_callbackit)(
+    LTFAT_NAME(dgtrealmp_state)* p, size_t callbackit);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_set_iterstepcallback)(
+LTFAT_NAME(dgtrealmp_set_callback)(
     LTFAT_NAME(dgtrealmp_state)* p,
-    LTFAT_NAME(dgtrealmp_iterstep_callback)* callback, void* userdata);
+    LTFAT_NAME(dgtrealmp_callback)* callback, void* userdata);
 /** @}*/
 /** @}*/
 
@@ -1000,10 +1062,19 @@ LTFAT_NAME(dgtrealmp_set_errtoldb)(
     LTFAT_NAME(dgtrealmp_state)* p, double errtoldb);
 
 LTFAT_API int
+LTFAT_NAME(dgtrealmp_setparbuf_reseterrdb)(
+    LTFAT_NAME(dgtrealmp_parbuf)* p, double reseterrdb);
+
+LTFAT_API int
 LTFAT_NAME(dgtrealmp_init_gen_compact)(
         const LTFAT_REAL g[], ltfat_int gl[], ltfat_int L, ltfat_int P,
         ltfat_int a[], ltfat_int M[], ltfat_dgtmp_params* params,
         LTFAT_NAME(dgtrealmp_state)** pout);
+
+LTFAT_API int
+LTFAT_NAME(dgtrealmp_callback_resetresiduum)(
+        LTFAT_NAME(dgtrealmp_state)* state, const LTFAT_REAL f[],
+        LTFAT_COMPLEX* c[], int itstatus);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_init_gen)(
@@ -1012,16 +1083,13 @@ LTFAT_NAME(dgtrealmp_init_gen)(
         LTFAT_NAME(dgtrealmp_state)** p);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters)(
-        LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX** cout);
+LTFAT_NAME(dgtrealmp_execute_iters)(
+        LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX** cout);
 
 LTFAT_API int
-LTFAT_NAME(dgtrealmp_execute_niters_compact)(
-        LTFAT_NAME(dgtrealmp_state)* p, size_t itno, LTFAT_COMPLEX* cout);
+LTFAT_NAME(dgtrealmp_execute_iters_compact)(
+        LTFAT_NAME(dgtrealmp_state)* p, LTFAT_COMPLEX* cout);
 
-LTFAT_API int
-LTFAT_NAME(dgtrealmp_reset)(
-    LTFAT_NAME(dgtrealmp_state)* p, const LTFAT_REAL* f);
 
 LTFAT_API int
 LTFAT_NAME(dgtrealmp_revert)(

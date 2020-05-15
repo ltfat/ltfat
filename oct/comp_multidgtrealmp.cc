@@ -14,6 +14,7 @@ fwd_dgtrealmp_decompose(const float f[], ltfat_int L,
                         int ptype, int do_pedanticsearch, ltfat_dgtmp_alg alg,
                         double errdb,
                         double kernthr, size_t maxit, size_t maxat,
+                        size_t resetit, double resetdb, int do_quickreset,
                         size_t& atoms, size_t& iters, int &dec_status,
                         FloatComplex* c[])
 {
@@ -34,7 +35,8 @@ fwd_dgtrealmp_decompose(const float f[], ltfat_int L,
     ltfat_dgtrealmp_setparbuf_kernrelthr_s(pbuf, kernthr);
     ltfat_dgtrealmp_setparbuf_maxatoms_s(pbuf, maxat);
     ltfat_dgtrealmp_setparbuf_maxit_s(pbuf, maxit);
-    ltfat_dgtrealmp_setparbuf_iterstep_s(pbuf, L);
+    ltfat_dgtrealmp_setparbuf_resetit_s(pbuf, resetit);
+    ltfat_dgtrealmp_setparbuf_reseterrdb_s(pbuf, resetdb);
 
     ltfat_dgtrealmp_init_s( pbuf, L, &plan);
     dec_status = ltfat_dgtrealmp_execute_decompose_s(plan, f, c);
@@ -54,6 +56,7 @@ fwd_dgtrealmp_decompose(const double f[], ltfat_int L,
                         int ptype, int do_pedanticsearch, ltfat_dgtmp_alg alg,
                         double errdb,
                         double kernthr, size_t maxit, size_t maxat,
+                        size_t resetit, double resetdb, int do_quickreset,
                         size_t& atoms, size_t& iters, int &dec_status,
                         Complex* c[])
 {
@@ -74,7 +77,8 @@ fwd_dgtrealmp_decompose(const double f[], ltfat_int L,
     ltfat_dgtrealmp_setparbuf_kernrelthr_d(pbuf, kernthr);
     ltfat_dgtrealmp_setparbuf_maxatoms_d(pbuf, maxat);
     ltfat_dgtrealmp_setparbuf_maxit_d(pbuf, maxit);
-    ltfat_dgtrealmp_setparbuf_iterstep_d(pbuf, L);
+    ltfat_dgtrealmp_setparbuf_resetit_d(pbuf, resetit);
+    ltfat_dgtrealmp_setparbuf_reseterrdb_d(pbuf, resetdb);
 
     ltfat_dgtrealmp_init_d( pbuf, L, &plan);
     dec_status = ltfat_dgtrealmp_execute_decompose_d(plan, f, c);
@@ -107,8 +111,11 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     double errdb = args(6).double_value();
     size_t maxit = (size_t)args(7).double_value();
     size_t maxat = (size_t)args(8).double_value();
-    int do_pedanticsearch = args(9).int_value();
-    const char* algstr = args(10).char_matrix_value().row_as_string(0).c_str();
+    size_t resetit = (size_t)args(9).double_value();
+    double resetdb = args(10).double_value();
+    int do_quickreset = args(11).int_value();
+    int do_pedanticsearch = args(12).int_value();
+    const char* algstr = args(13).char_matrix_value().row_as_string(0).c_str();
 
     if( 0 == strcmp("cyclicmp", algstr))
         alg = ltfat_dgtmp_alg_loccyclicmp;
@@ -144,6 +151,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
                          aDouble.fortran_vec(), MDouble.fortran_vec(),
                          dictno, ptype, do_pedanticsearch, alg,
                          errdb, kernthr, maxit, maxat,
+                         resetit, resetdb, do_quickreset,
                          atoms, iters, dec_status, cPtrs);
 
     Cell c(dim_vector(dictno, 1));

@@ -18,8 +18,9 @@ int main(int argc, char* argv[])
 
     string inFile, outFile, resFile;
     double targetsnrdb = 40;
-    double atprodreltoldb = -80;
-    size_t maxit = 0, maxat = 0;
+    double atprodreltoldb = -120;
+    double reseterr = 0;
+    size_t maxit = 0, resetit = 0, maxat = 0;
     double seglen = 0.0;
     double kernthr = 1e-4;
     vector<tuple<string,int,int,int,int>> dicts;
@@ -32,7 +33,7 @@ int main(int argc, char* argv[])
 
     try
     {
-        string examplestr{"Usage:\n" + 
+        string examplestr{"Usage:\n" +
             string(argv[0]) + " -d win,a,M input.wav"
             + "\nExample:\n" +
             string(argv[0]) + " -d HANN,512,2048 input.wav"
@@ -57,6 +58,8 @@ int main(int argc, char* argv[])
         ("atprodtol", "Relative inner product tolerance in dB",
          cxxopts::value<double>()->default_value(to_string(atprodreltoldb)))
         ("maxit", "Maximum number of iterations", cxxopts::value<size_t>() )
+        ("resetit", "Reset decomposition every resetit iteration.", cxxopts::value<size_t>() )
+        ("reseterr", "Reset decomposition every time the error in dB decreases by this value between the resets.", cxxopts::value<double>() )
         ("maxat", "Maximum number of atoms", cxxopts::value<size_t>() )
         ("alg", "MP algorithm. Available: mp(default),cyclicmp,selfprojmp", cxxopts::value<string>() )
         ("kernthr", "Kernel truncation threshold",
@@ -143,6 +146,18 @@ int main(int argc, char* argv[])
             }
         }
 
+        if (result.count("reseterr"))
+        {
+            reseterr = result["reseterr"].as<double>();
+            if(reseterr <= 0)
+            {
+                cout << "Reset error must be less than 0 dB." << endl;
+                exit(1);
+            }
+        }
+
+
+
         if (result.count("alg"))
         {
             string algstr = result["alg"].as<string>();
@@ -214,6 +229,9 @@ int main(int argc, char* argv[])
         else
             maxit =  result["maxit"].as<size_t>();
 
+        if (result.count("resetit"))
+            resetit =  result["resetit"].as<size_t>();
+
         if(maxat == 0) maxat = maxit;
         if(maxit == 0) maxit = 2*maxat;
 
@@ -256,7 +274,8 @@ int main(int argc, char* argv[])
         LTFAT_NAME(dgtrealmp_setparbuf_kernrelthr)(pbuf, kernthr);
         LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(pbuf, maxat);
         LTFAT_NAME(dgtrealmp_setparbuf_maxit)(pbuf, maxit);
-        LTFAT_NAME(dgtrealmp_setparbuf_iterstep)(pbuf, L);
+        LTFAT_NAME(dgtrealmp_setparbuf_resetit)(pbuf, resetit);
+        LTFAT_NAME(dgtrealmp_setparbuf_reseterrdb)(pbuf, reseterr);
         LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, static_cast<ltfat_dgtmp_alg>(alg));
 
         vector<vector<LTFAT_REAL>> f(numChannels);
