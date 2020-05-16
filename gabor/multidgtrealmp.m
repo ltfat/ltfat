@@ -263,12 +263,7 @@ if nargout>1
   { 32, 'All zeros'},...
   {1024, 'Stalled (Residual has increased since last reset. Try to reduce resetit.)'}
   };
-    
-    
-  try
-    info.message = status_str{info.status};
-  catch
-    info.message = 'Unrecognized status code';
-  end
+   
+  info.message = status_str(cellfun(@(x) bitand(x{1},info.status)~=0,status_str));
 
 end
