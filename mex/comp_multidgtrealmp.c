@@ -82,8 +82,8 @@ void LTFAT_NAME(ltfatMexFnc)( int nlhs, mxArray *plhs[],
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxatoms)(pbuf, maxat));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_maxit)(pbuf, maxit));
     CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_alg)(pbuf, alg));
-    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_resetit)( resetit));
-    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_reseterrdb)( resetdb));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_resetit)( pbuf, resetit));
+    CHSTAT(LTFAT_NAME(dgtrealmp_setparbuf_reseterrdb)( pbuf, resetdb));
 
     CHSTAT(LTFAT_NAME(dgtrealmp_init)( pbuf, L, &plan));
     CHSTAT(dec_status = LTFAT_NAME(dgtrealmp_execute_decompose)(plan, mxGetData(prhs[0]), cPtrs));
