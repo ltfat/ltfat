@@ -1,4 +1,4 @@
-outsig = comp_frana_tensor(F,insig)
+function outsig = comp_frana_tensor(F,insig)
 
 outsig=frsyn(F.frames{1},insig);
 perm=circshift((1:F.Nframes).',-1);
