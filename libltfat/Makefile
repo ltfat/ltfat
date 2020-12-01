@@ -196,6 +196,10 @@ doc:
 
 static: $(DTARGET) $(STARGET) $(DSTARGET)
 
+phaseret:
+	$(MAKE) clean
+	$(MAKE) MODULE=libphaseret
+
 allshared:
 	$(MAKE) clean
 	$(MAKE) MODULE=libltfat shared 
