@@ -1,4 +1,5 @@
 #include "phaseret/pghi.h"
+#include "phaseret/heapint_private.h"
 #include "ltfat/macros.h"
 #include <float.h>
 
