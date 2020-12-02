@@ -1,6 +1,8 @@
 function [f,fnorm]=normalize(f,varargin)
 %NORMALIZE  Normalize input signal by specified norm
 %   Usage:  h=normalize(f,...);
+%
+%   BE CAREFUL: THIS FUNCTION WILL BE RENAMED WITH LTFAT 3.0
 % 
 %   `normalize(f,...)` will normalize the signal *f* by the specified norm.
 %
