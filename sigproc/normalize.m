@@ -1,6 +1,9 @@
 function [f,fnorm]=normalize(f,varargin)
 %NORMALIZE  Normalize input signal by specified norm
 %   Usage:  h=normalize(f,...);
+%
+%   WARNING: Due to a possible naming clash with an upcoming Octave function
+%   of the same name, this function will be renamed in LTFAT 3.0.
 % 
 %   `normalize(f,...)` will normalize the signal *f* by the specified norm.
 %
