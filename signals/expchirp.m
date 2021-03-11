@@ -16,6 +16,8 @@ function [outsig]=expchirp(L,fstart,fend,varargin)
 %
 %     'fc',fc    Shift the chirp by *fc* in frequency. Default values is 0.
 %
+%     'ramp',r   Apply fade-in and fade out ramps on the first and last *r* samples.
+%
 %   See also: pchirp
 
 % AUTHORS:  Piotr Majdak, Peter L. Søndergaard.
@@ -36,6 +38,7 @@ end
 definput.keyvals.phi=0;
 definput.keyvals.fs=[];
 definput.keyvals.fc=0;
+definput.keyvals.ramp=0;
 
 [~,kv]=ltfatarghelper({},definput,varargin);
 
@@ -44,6 +47,10 @@ if ~isempty(kv.fs)
   fend  =  fend/kv.fs*2;
   kv.fc = kv.fc/kv.fs*2;
 end;
+
+if kv.ramp > L || kv.ramp < 0 || rem(kv.ramp,1) != 0
+    error('%s: Ramp length must be a positive integer number less than L.',thismfilename);
+end
 
 w1=pi*fstart*L;
 w2=pi*fend*L;
@@ -56,4 +63,9 @@ tau=1/log(ratio);
 l = 0:L-1; l = l(:);
 t= l./L;
 outsig=exp(1i*A*(exp(t/tau)-1)+kv.phi + 1i*pi*l*kv.fc);
+
+if kv.ramp > 0
+    outsig(end:-1:end-kv.ramp+1) = outsig(end:-1:end-kv.ramp+1).*rampup(kv.ramp);
+    outsig(1:kv.ramp) = outsig(1:kv.ramp).*rampup(kv.ramp);
+end
 
