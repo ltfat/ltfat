@@ -1,10 +1,11 @@
 function alpha = wpghi_findalpha(name,varargin)
-%WPGHI_FINDALPHA  Find matching Cauchy wavelet order alpha to given Wavelet
+%WPGHI_FINDALPHA  Approximates a matching Cauchy wavelet order alpha to given Wavelet
 %   Usage: H=wpghi_findalpha(name)
 %
 %   Input parameters: 
 %         name  : Name of the wavelet (optionally with parameters)
-%         bwthr : Reference threshold for bandwidth comparison
+%         bwthr : Reference threshold for bandwidth comparison (default:
+%         0.5012); should be ]0 1[
 %   Output parameters:
 %         alpha : Matching Cauchy wavelet order
 %
@@ -31,7 +32,8 @@ function alpha = wpghi_findalpha(name,varargin)
 %   For a list of supported CQT-type filters, please see the help of 
 %   |firwin| and |freqwin|. 
 
-% AUTHORS: Zdenek Prusa, Nicki Holighaus, Guenther Koliander
+% AUTHORS: Zdenek Prusa, Nicki Holighaus, Guenther Koliander, Clara
+% Hollomey
 
 complainif_notenoughargs(nargin,1,upper(mfilename));
 
@@ -47,15 +49,18 @@ if ~ischar(name{1}) || ~any(strcmpi(name{1},[freqwavelettypes,firwintypes,freqwi
 end
 
 basefc = 0.1;
-if isscalar(varargin{1})
+
+if nargin == 1
+    bwthr = 10^(-3/10);
+elseif isscalar(varargin{1})
     bwthr = varargin{1};
     varargin = varargin(2:end);
 else 
-    bwthr = 10^(-3/10);
-end
-if bwthr <= 0
-     error('%s: Reference bandwidth threshold bwthr must be a positive scalar.',...
+    bwthr = varargin{1};
+    if bwthr <= 0
+       error('%s: Reference bandwidth threshold bwthr must be a positive scalar.',...
                     upper(mfilename));
+    end
 end
 
 % Preprocess wavelet parameters
@@ -110,8 +115,8 @@ if any(strcmpi(name{1},freqwavelettypes))
                 *octave_lambertw(-1, ...
                 -thr^(gamma/order)/exp(1)))^(1/gamma) )...
                 /basedil;
-            
-            bwatthr = freqatheightdesc(bwthr)-freqatheightasc(bwthr);
+            %here, the lambert function is symmetric...
+            bwatthr = freqatheightdesc(bwthr)-(-freqatheightasc(bwthr));
             
         case 'morlet' % For Morlet
             definputmorlet.keyvals.sigma=4;
@@ -299,7 +304,15 @@ else
     bwatthr = -(freqatheightdesc-freqatheightasc);
 end
 
-alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,15);
+if numel(name) > 1
+    name = name{1};
+end
+
+if ( strcmp('cauchy', name) && bwthr == 1 ) %do not run lambert, because bw always 0 and loop won't terminate
+    alpha = 1;
+else
+    alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,15);
+end
 
 end
 
@@ -311,21 +324,22 @@ cauchybwatthr = @(alph) basefc * ...
                           ( octave_lambertw(0, -bwthr^(2/(alph-1))/exp(1))...
                            -octave_lambertw(-1,-bwthr^(2/(alph-1))/exp(1)) );
 
+
 alpha_current = 10;
-cauchybw_current = cauchybwatthr(alpha_current);
+cauchybw_current = real(cauchybwatthr(alpha_current));
 
 % Find initial guess
 if cauchybw_current > bwatthr
     while cauchybw_current > bwatthr
         alpha_left = alpha_current;
         alpha_current = 10*alpha_current;
-        cauchybw_current = cauchybwatthr(alpha_current);
+        cauchybw_current = real(cauchybwatthr(alpha_current));
     end
 elseif cauchybw_current < bwatthr
     while cauchybw_current < bwatthr
         alpha_current = 0.1*alpha_current;
         alpha_left = alpha_current;
-        cauchybw_current = cauchybwatthr(alpha_current);
+        cauchybw_current = real(cauchybwatthr(alpha_current));
     end
 else 
     alpha = alpha_current;
@@ -335,7 +349,7 @@ end
 for kk = 1:steps
    exponent = 2^(-kk); 
    alpha_current = alpha_left*10^exponent;
-   cauchybw_current = cauchybwatthr(alpha_current);
+   cauchybw_current = real(cauchybwatthr(alpha_current));
    if cauchybw_current > bwatthr
        alpha_left = alpha_current;
    end
