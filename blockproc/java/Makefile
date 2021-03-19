@@ -2,12 +2,13 @@
 
 JC=javac
 
-FLAGS=-source 1.6 -target 1.6
+FLAGS=-source 1.8 -target 1.8
+
 include ostools.mk
 
 default:
 	$(JC) $(FLAGS) net/sourceforge/ltfat/*.java net/sourceforge/ltfat/thirdparty/*.java
-	jar cf blockproc.jar net/sourceforge/ltfat/*.class net/sourceforge/ltfat/thirdparty/*.class
+	C:\Program Files\Java\jdk-15.0.2\bin\jar cf blockproc.jar net/sourceforge/ltfat/*.class net/sourceforge/ltfat/thirdparty/*.class
 
 clean: classclean
 	$(RM)  *.jar
