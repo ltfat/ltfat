@@ -432,10 +432,10 @@ for m = 1:M
 
               if kv.efsuppthr > 0
                 fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
-                fsupp(5) = min(fs,freqatheightdesc(kv.efsuppthr));
+                fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
               end
               fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
-              fsupp(4) = min(fs,freqatheightdesc(kv.bwthr));
+              fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
 
               fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5);
               
@@ -469,7 +469,7 @@ for m = 1:M
 
               if kv.efsuppthr > 0
                 fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
-                fsupp(5) = min(fs,freqatheightdesc(kv.efsuppthr));
+                fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
               end
               fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
               fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
@@ -486,7 +486,7 @@ for m = 1:M
  
               CauchyAlpha = wpghi_findalpha({'analyticsp',order,fb},0.2);
               info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L); 
-          info.CauchyAlpha(m) = CauchyAlpha;    
+              info.CauchyAlpha(m) = CauchyAlpha;    
             end
             
          case 'cplxsp' % Complex-modulated B-Spline
@@ -528,7 +528,18 @@ for m = 1:M
                          
         end 
 
-end
+        end
+        
+        if flags.do_full
+            y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
+            H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+        elseif flags.do_econ
+            y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
+            H{m} = kv.scal*normalize(fun(y), flags.norm);
+        elseif flags.do_asfreqfilter
+            y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
+            H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+        end
 end 
 
             %if gamma = 1, it's a Cauchy window, else find matching Cauchy wavelet order alpha
@@ -559,18 +570,17 @@ end
             %end
 
             %write to output
-            if flags.do_full
-                y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
-            elseif flags.do_econ
-                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                H{m} = kv.scal*normalize(fun(y), flags.norm);
-            elseif flags.do_asfreqfilter
-                y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
-            end
-
-%    end
+            %if flags.do_full
+            %    y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
+            %    H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+            %elseif flags.do_econ
+            %    y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
+            %    H{m} = kv.scal*normalize(fun(y), flags.norm);
+            %elseif flags.do_asfreqfilter
+            %    y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
+            %    H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+            %end
+            
 
 if M==1 && iscell(H)
     H = H{1};
