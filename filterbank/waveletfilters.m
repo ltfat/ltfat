@@ -1,4 +1,5 @@
-function [gout,info] = waveletfilters(name, L,scales,varargin)
+%function [gout,info] = waveletfilters(name, L,scales,varargin)
+function [gout, info] = waveletfilters(L, scales, varargin)
 %WAVELETFILTERS Generates wavelet filters
 %   Usage: H=freqwavelet(L,scales)
 %          [H,info]=freqwavelet(...)
@@ -21,7 +22,7 @@ function [gout,info] = waveletfilters(name, L,scales,varargin)
 % AUTHORS: Zdenek Prusa, Nicki Holighaus, Guenther Koliander, Clara Hollomey
 
 
-complainif_notenoughargs(nargin,1,upper(mfilename));
+complainif_notenoughargs(nargin,2,upper(mfilename));
 complainif_notposint(L,'L',upper(mfilename));
 
 definput.flags.real        = {'real','complex'};
@@ -30,8 +31,8 @@ definput.flags.wavelettype = getfield(arg_freqwavelet(),'flags','wavelettype');
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
-%if isempty(winCell), winCell = {flags.wavelettype}; end
-winCell = name;
+if isempty(winCell), winCell = {flags.wavelettype}; end
+%winCell = name;
 a = 1;
 
 [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);

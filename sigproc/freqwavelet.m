@@ -641,16 +641,15 @@ end
 %end 
 
 
-%function w = octave_lambertw(b,z)
-%% Copyright (C) 1998 by Nicol N. Schraudolph <schraudo@inf.ethz.ch>
-%%
-%% @deftypefn {Function File} {@var{x} = } lambertw (@var{z})
-%% @deftypefnx {Function File} {@var{x} = } lambertw (@var{n}, @var{z})
-%% Compute the Lambert W function of @var{z}.
-%%
-%% This function satisfies W(z).*exp(W(z)) = z, and can thus be used to express
-%% solutions of transcendental equations involving exponentials or logarithms.
-%%
+function w = octave_lambertw(b,z)
+% Copyright (C) 1998 by Nicol N. Schraudolph <schraudo@inf.ethz.ch>
+%
+% @deftypefn {Function File} {@var{x} = } lambertw (@var{z})
+% @deftypefnx {Function File} {@var{x} = } lambertw (@var{n}, @var{z})
+% Compute the Lambert W function of @var{z}.
+%
+% This function satisfies W(z).*exp(W(z)) = z, and can thus be used to express%
+% solutions of transcendental equations involving exponentials or logarithms.%%
 %% @var{n} must be integer, and specifies the branch of W to be computed;
 %% W(z) is a shorthand for W(0,z), the principal branch.  Branches
 %% 0 and -1 are the only ones that can take on non-complex values.
@@ -662,55 +661,55 @@ end
 %% counterpart in Maple V, release 3 or later.  Please report any
 %% discrepancies to the author, Nici Schraudolph <schraudo@@inf.ethz.ch>.
 
-%if (nargin == 1)
-%    z = b;
-%    b = 0;
-%else
-%    %% some error checking
-%    if (nargin ~= 2)
-%        print_usage;
-%    else
-%        if (any(round(real(b)) ~= b))
-%            usage('branch number for lambertw must be integer')
-%        end
-%    end
-%end
+if (nargin == 1)
+    z = b;
+    b = 0;
+else
+    %% some error checking
+    if (nargin ~= 2)
+        print_usage;
+    else
+        if (any(round(real(b)) ~= b))
+            usage('branch number for lambertw must be integer')
+        end
+    end
+end
 
 %%% series expansion about -1/e
 %%
-%% p = (1 - 2*abs(b)).*sqrt(2*e*z + 2);
-%% w = (11/72)*p;
-%% w = (w - 1/3).*p;
-%% w = (w + 1).*p - 1
-%%
-%% first-order version suffices:
-%%
-%w = (1 - 2*abs(b)).*sqrt(2*exp(1)*z + 2) - 1;
+% p = (1 - 2*abs(b)).*sqrt(2*e*z + 2);
+% w = (11/72)*p;
+% w = (w - 1/3).*p;
+% w = (w + 1).*p - 1
+%
+% first-order version suffices:
+%
+w = (1 - 2*abs(b)).*sqrt(2*exp(1)*z + 2) - 1;
 
-%%% asymptotic expansion at 0 and Inf
-%%
-%v = log(z + double(~(z | b))) + 2*pi*1i*b;
-%v = v - log(v + double(v==0));
+%% asymptotic expansion at 0 and Inf
+%
+v = log(z + double(~(z | b))) + 2*pi*1i*b;
+v = v - log(v + double(v==0));
 
 %%% choose strategy for initial guess
-%%
-%c = abs(z + 1/exp(1));
-%c = (c > 1.45 - 1.1*abs(b));
-%c = c | (b.*imag(z) > 0) | (~imag(z) & (b == 1));
-%w = (1 - c).*w + c.*v;
+%
+c = abs(z + 1/exp(1));
+c = (c > 1.45 - 1.1*abs(b));
+c = c | (b.*imag(z) > 0) | (~imag(z) & (b == 1));
+w = (1 - c).*w + c.*v;
 
 %%% Halley iteration
 %%
-%for n = 1:10
-%    p = exp(w);
-%    t = w.*p - z;
-%    f = (w ~= -1);
-%    t = f.*t./(p.*(w + f) - 0.5*(w + 2.0).*t./(w + f));
-%    w = w - t;
-%    if (abs(real(t)) < (2.48*eps)*(1.0 + abs(real(w))) ...
-%        && abs(imag(t)) < (2.48*eps)*(1.0 + abs(imag(w))))
-%        return
-%    end
-%end
-%end 
+for n = 1:10
+    p = exp(w);
+    t = w.*p - z;
+    f = (w ~= -1);
+    t = f.*t./(p.*(w + f) - 0.5*(w + 2.0).*t./(w + f));
+    w = w - t;
+    if (abs(real(t)) < (2.48*eps)*(1.0 + abs(real(w))) ...
+        && abs(imag(t)) < (2.48*eps)*(1.0 + abs(imag(w))))
+        return
+    end
+end
+end 
 %%error('PRECISION:iteration limit reached, result of lambertw may be inaccurate');
