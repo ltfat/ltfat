@@ -1,4 +1,4 @@
-function [H,info] = clara_freqwavelet(name,L,varargin)
+function [H,info] = freqwavelet(name,L,varargin)
 %FREQWAVELET  Wavelet in the freq. domain
 %   Usage: H=freqwavelet(name,L)
 %          H=freqwavelet(name,L,scale)
