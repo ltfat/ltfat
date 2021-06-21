@@ -100,7 +100,9 @@ r = r(real(r) > 0 & abs(r) < 1);
 % FIXME: poly(r) produces errors due to sorting.
 %        At least, consuming known multiple zeros at -1 first dramatically reduces mantissa error.
 %r = [-ones(1, N), sort(r,  'ascend')(:)'];
- r = [-ones(1, N), sort(r, 'descend')(:)']; % NOTE: It looks being suboptimal at N = 38, but keep being compat.
+rTemp = sort(r, 'descend');
+r = [-ones(1, N), rTemp(:)'];
+% r = [-ones(1, N), sort(r, 'descend')(:)']; % NOTE: It looks being suboptimal at N = 38, but keep being compat.
 %r = [sort(r,  'ascend')(:)', -ones(1, N)];
 %r = [sort(r, 'descend')(:)', -ones(1, N)];
 
@@ -125,7 +127,7 @@ r = r(real(r) > 0 & abs(r) < 1);
 %		c = conv(c, [1, -2 * real(r(i)), abs(r(i))^2]);
 %	end;
 %end;
- c /= norm(c);
+ c = c/norm(c);
 
 function c = lut(N)
 if (N > 38);
