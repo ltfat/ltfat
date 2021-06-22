@@ -106,8 +106,8 @@ function [H,info] = freqwavelet(name,L,varargin)
 %                     It can be directly used to convert the 'econ'
 %                     output to 'full' by `circshift(postpad(H,L),foff)`.
 %
-%     .fsupp       Length of the effective support (with values above efsuppthr.).
-%basefc
+%     .fsupp       Length of the effective support (with values above efsuppthr.).basefc
+%
 %     .scale          The scale used.
 %
 %     .dilation       The actual dilation used in the formula.
@@ -148,6 +148,11 @@ function [H,info] = freqwavelet(name,L,varargin)
 complainif_notenoughargs(nargin,2,upper(mfilename));
 
 %set default input parameters
+if ~isscalar(L)
+    error('%s: L must be a scalar',upper(mfilename));
+end
+
+
 
 if ~iscell(name), name = {name}; end
 
@@ -161,8 +166,17 @@ end
 winArgs = name(2:end);
 winName = lower(name{1});
 
-%set default wavelet parameters 
 definput.import={'normalize', 'freqwavelet'};
+definput.importdefaults={'null'};
+definput.keyvals.scale = 1;
+definput.keyvals.scal = 1;
+definput.keyvals.basefc = 0.1;
+definput.keyvals.bwthr = 10^(-3/10);
+definput.keyvals.efsuppthr = 10^(-5);
+definput.flags.outformat = {'full','econ','asfreqfilter'};
+definput.keyvals.fs = 2;
+definput.keyvals.alphaStep = definput.keyvals.fs/L;
+
 switch lower(winName)
   case 'cauchy'
     definput.keyvals.waveletParams = [100,0,3];
@@ -178,6 +192,8 @@ switch lower(winName)
     definput.keyvals.waveletParams = [4, 2];  
 end 
 
+[flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin,'freqwavelet');
+
 %check L
 if ~isscalar(L)
     error('%s: L must be a scalar',upper(mfilename));
@@ -185,8 +201,6 @@ end
 
 if ~isnumeric(L), error('%s: scale must be numeric',upper(mfilename)); end
 
-%[flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin,'freqwavelet');
-[flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin);
 
 if any(scale <= 0), error('%s: scale must be positive.', upper(mfilename)); end
 if kv.efsuppthr < 0, error('%s: efsuppthr must be nonegative',upper(mfilename)); end
@@ -194,7 +208,7 @@ if kv.bwthr < 0, error('%s: bwthr must be nonegative',upper(mfilename)); end
 if kv.bwthr < kv.efsuppthr, error('%s: bwthr must be lower than efsuppthr.',upper(mfilename)); end
 
 %initialize the output info
-step = kv.fs/L;
+
 M = numel(scale);
 info.fc    = zeros(1,M);
 info.foff  = zeros(1,M);
@@ -211,6 +225,7 @@ else
     H = cell(1,M);
 end
 
+for m = 1:M
 % Generalized Morse wavelets
         if strcmp('morse', lower(winName)) || strcmp('cauchy', lower(winName))
             
@@ -245,8 +260,48 @@ end
                                      -thr^(gamma/order)/exp(1)))^(1/gamma) )...
                                      /basedil/scale(m);
 
+
               fun = @(y) (y > 0).*exp(-2*pi*y.^gamma + (order - 1i*beta)*log(y) ...
                              + ( order/gamma - order/gamma*log(order/(2*pi*gamma)) ));
+              
+              info.fc(m) = peakpos/(basedil*scale(m));
+              info.scale(m) = scale(m);
+              info.dilation(m) = basedil*scale(m);
+              
+              fsupp = [0 0 info.fc(m) kv.fs kv.fs];
+
+              if kv.efsuppthr > 0
+                fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
+                fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
+              end
+              fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
+              fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
+
+              fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5);
+              
+              info.foff(m) = fsuppL(1);
+              info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
+              if info.fsupp(m) <= 0, info.fsupp(m) = 0; end
+
+              info.bw(m)  = (fsupp(4) - fsupp(2));
+              bwinsamples = info.bw(m)/kv.alphaStep;
+              info.a_natural(m,2) = ceil(bwinsamples);
+ 
+%              CauchyAlpha = wpghi_findalpha({'morse',order},0.2);
+              CauchyAlpha = alpha;
+              info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+              info.CauchyAlpha(m) = CauchyAlpha;
+              
+              if flags.do_full
+                y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
+                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_econ
+                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
+                H{m} = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_asfreqfilter
+                y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
+                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+              end
             end 
         
 % Morlet wavelets
@@ -277,6 +332,44 @@ end
             for m = 1:M
               freqatheightdesc = @(thr) determine_freqatheight(fun,peakpos,thr,1)/basedil/scale(m);
               freqatheightasc= @(thr) determine_freqatheight(fun,peakpos,thr,0)/basedil/scale(m);
+              
+              info.fc(m) = peakpos/(basedil*scale(m));
+              info.scale(m) = scale(m);
+              info.dilation(m) = basedil*scale(m);
+              
+              fsupp = [0 0 info.fc(m) kv.fs kv.fs];
+
+              if kv.efsuppthr > 0
+                fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
+                fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
+              end
+              fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
+              fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
+
+              fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5);
+              
+              info.foff(m) = fsuppL(1);
+              info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
+              if info.fsupp(m) <= 0, info.fsupp(m) = 0; end
+
+              info.bw(m)  = (fsupp(4) - fsupp(2));
+              bwinsamples = info.bw(m)/kv.alphaStep;
+              info.a_natural(m,2) = ceil(bwinsamples);
+ 
+              CauchyAlpha = wpghi_findalpha({'morlet',sigma},0.2);
+              info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+              info.CauchyAlpha(m) = CauchyAlpha;
+              
+              if flags.do_full
+                y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
+                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_econ
+                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
+                H{m} = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_asfreqfilter
+                y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
+                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+              end
             end 
 
        elseif strcmp('sp', lower(winName(end-1:end)))
@@ -343,15 +436,54 @@ end
                                 + ( x >= 3 ).*( x < 4 ) .* ...
                                    (-x.^4./6 + 5.*x.^3./2 - 55.*x.^2./4 + 65.*x./2 - 655/24) ... 
                                 + ( x >= 4 ).*( x < 5 ) .* ...
-                                   (x.^4./24 -5.*x.^3./6 + 25.*x.^2./4 - 125.*x./6 + 625/24);
-                                  
+                                   (x.^4./24 -5.*x.^3./6 + 25.*x.^2./4 - 125.*x./6 + 625/24);                                   
+                          
                end
             
             fun = @(y) prefun((y-1).*fb.*order./2+order/2)./prefun(order/2);
             
+            
             for m = 1:M
               freqatheightdesc = @(thr) determine_freqatheight(fun,peakpos,thr,1)/basedil/scale(m);
               freqatheightasc= @(thr) determine_freqatheight(fun,peakpos,thr,0)/basedil/scale(m);
+    
+              info.fc(m) = peakpos/(basedil*scale(m));
+              info.scale(m) = scale(m);
+              info.dilation(m) = basedil*scale(m);
+    
+              fsupp = [0 0 info.fc(m) kv.fs kv.fs];
+
+              if kv.efsuppthr > 0
+                fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
+                fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
+              end
+              fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
+              fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
+
+              fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5);
+              
+              info.foff(m) = fsuppL(1);
+              info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
+              if info.fsupp(m) <= 0, info.fsupp(m) = 0; end
+
+              info.bw(m)  = (fsupp(4) - fsupp(2));
+              bwinsamples = info.bw(m)/kv.alphaStep;
+              info.a_natural(m,2) = ceil(bwinsamples);
+ 
+              CauchyAlpha = wpghi_findalpha({'fbsp',order,fb},0.2);
+              info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+              info.CauchyAlpha(m) = CauchyAlpha;
+              
+                            if flags.do_full
+                y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
+                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_econ
+                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
+                H{m} = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_asfreqfilter
+                y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
+                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+              end
             end
            
          case 'analyticsp' % Positive frequency part of cosine-modulated B-spline
@@ -362,6 +494,44 @@ end
               heightfun = @(y) min(1,(y>20).* ( 1./abs(fb.*(pi.*y - pi)+eps).^order + 1./abs(fb.*( pi.*y + pi )).^order ));
               freqatheightdesc = @(thr) determine_freqatheight(heightfun,peakpos,thr,1)/basedil/scale(m);
               freqatheightasc= @(thr) determine_freqatheight(heightfun,peakpos,thr,0)/basedil/scale(m);
+              
+              info.fc(m) = peakpos/(basedil*scale(m));
+              info.scale(m) = scale(m);
+              info.dilation(m) = basedil*scale(m);
+              
+              fsupp = [0 0 info.fc(m) kv.fs kv.fs];
+
+              if kv.efsuppthr > 0
+                fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
+                fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
+              end
+              fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
+              fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
+
+              fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5);
+     
+              info.foff(m) = fsuppL(1);
+              info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
+              if info.fsupp(m) <= 0, info.fsupp(m) = 0; end
+
+              info.bw(m)  = (fsupp(4) - fsupp(2));
+              bwinsamples = info.bw(m)/kv.alphaStep;
+              info.a_natural(m,2) = ceil(bwinsamples);
+ 
+              CauchyAlpha = wpghi_findalpha({'analyticsp',order,fb},0.2);
+              info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L); 
+              info.CauchyAlpha(m) = CauchyAlpha;    
+              
+                            if flags.do_full
+                y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
+                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_econ
+                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
+                H{m} = kv.scal*normalize(fun(y), flags.norm);
+              elseif flags.do_asfreqfilter
+                y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
+                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+              end
             end
             
          case 'cplxsp' % Complex-modulated B-Spline
@@ -372,75 +542,105 @@ end
               heightfun = @(y) min(1,1./abs(fb.*(pi*y - pi)+eps).^order);
               freqatheightdesc = @(thr) determine_freqatheight(heightfun,peakpos,thr,1)/(basedil+eps)/scale(m);
               freqatheightasc= @(thr) determine_freqatheight(heightfun,peakpos,thr,0)/(basedil+eps)/scale(m);
-            end
-                         
-        end 
-        
-    end
-    
-            bwatthr = (freqatheightdesc(kv.bwthr)-freqatheightasc(kv.bwthr));
+              
+              info.fc(m) = peakpos/(basedil*scale(m));
+              info.scale(m) = scale(m);
+              info.dilation(m) = basedil*scale(m);
+              
+              fsupp = [0 0 info.fc(m) kv.fs kv.fs];
 
-            %if gamma = 1, it's a Cauchy window, else find matching Cauchy wavelet order alpha         
-            if ~exist('gamma', 'var') || gamma > 1
-                CauchyAlpha = determine_alpha_from_bandwidth(bwatthr,kv.bwthr,kv.basefc,kv.alphaSteps);
-            else
-                CauchyAlpha = alpha;
-            end
-            
-            fsupp = [0 0 info.fc(m) kv.fs kv.fs];
-
-            if kv.efsuppthr > 0
+              if kv.efsuppthr > 0
                 fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
                 fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
-            end
-            fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
-            fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
+              end
+              fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
+              fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
 
-            fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5); 
-    
-    for m = 1:M
-            info.fc(m) = peakpos/(basedil*scale(m));          
-          
-            if info.fc(m) <= 0 || info.fc(m) > 1
-                error(['%s: fc out of range [0,1[. Decrease alpha ',...
-                       '(passed %.2f) and/or scale (passed %.2f)'],...
-                       upper(mfilename),alpha,scale(m));
-            end  
-        
-            info.scale(m) = scale(m);
-            info.dilation(m) = basedil*scale(m);
-        
-            info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
-            info.foff(m) = fsuppL(1);
-            info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
-            if info.fsupp(m) <= 0, info.fsupp(m) = 0; end
+              fsuppL = fsuppL_inner(fsupp,kv.fs,L,1:5);
+              
+              info.foff(m) = fsuppL(1);
+              info.fsupp(m) = fsuppL(end) - fsuppL(1) + 1;
+              if info.fsupp(m) <= 0, info.fsupp(m) = 0; end
 
-            info.bw(m)  = (fsupp(4) - fsupp(2));
-            bwinsamples = info.bw(m)/step;
-            info.a_natural(m,2) = ceil(bwinsamples);
-
-            %write to output
-            if flags.do_full
-                y = ((0:L-1)').*basedil*step*scale(m);
+              info.bw(m)  = (fsupp(4) - fsupp(2));
+              bwinsamples = info.bw(m)/kv.alphaStep;
+              info.a_natural(m,2) = ceil(bwinsamples);
+ 
+              CauchyAlpha = wpghi_findalpha({'cplxsp',order,fb},0.2);
+              info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+              info.CauchyAlpha(m) = CauchyAlpha;
+              
+                            if flags.do_full
+                y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
                 H(:,m) = kv.scal*normalize(fun(y), flags.norm);
-            elseif flags.do_econ
-                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*step*scale(m);
+              elseif flags.do_econ
+                y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
                 H{m} = kv.scal*normalize(fun(y), flags.norm);
-            elseif flags.do_asfreqfilter
+              elseif flags.do_asfreqfilter
                 y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
                 H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
-            end
+              end
+            end 
+                         
+        end 
 
-    end
+        end
+        
+
+end 
+
 
 if M==1 && iscell(H)
     H = H{1};
 end
+end 
 
 
 function fsuppL = fsuppL_inner(fsupp,fs,L,idx)
 fsuppL_all = [ ceil(fsupp(1:2)/fs*L), round(fsupp(3)/fs*L), floor(fsupp(4:5)/fs*L) ];
 fsuppL = fsuppL_all(idx);
+end 
+
+%function alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,steps)
+%% This function computes alpha from a bandwidth `bwatthr` at a reference height `bwthr`, together with
+%% a given base center frequency `basefc`.
+   
+%cauchybwatthr = @(alph) basefc * ...
+%                          ( octave_lambertw(0, -bwthr^(2/(alph-1))/exp(1))...
+%                           -octave_lambertw(-1,-bwthr^(2/(alph-1))/exp(1)) );
+
+%alpha_current = 10;
+%cauchybw_current = cauchybwatthr(alpha_current);
+
+% Find initial guess
+%if cauchybw_current > bwatthr
+%    while cauchybw_current > bwatthr
+%        alpha_left = alpha_current;
+%        alpha_current = 10*alpha_current;
+%        cauchybw_current = cauchybwatthr(alpha_current);
+%    end
+%elseif cauchybw_current < bwatthr
+%    while cauchybw_current < bwatthr
+%        alpha_current = 0.1*alpha_current;
+%        alpha_left = alpha_current;
+%        cauchybw_current = cauchybwatthr(alpha_current);
+%    end
+%else 
+%    alpha = alpha_current;
+%    return
+%end
+
+%for kk = 1:steps
+%   exponent = 2^(-kk); 
+%   alpha_current = alpha_left*10^exponent;
+%   cauchybw_current = cauchybwatthr(alpha_current);
+%   if cauchybw_current > bwatthr
+%       alpha_left = alpha_current;
+%   end
+%end
+
+%alpha = alpha_current;
+%end 
 
 
 function alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,steps)
@@ -492,19 +692,18 @@ function w = octave_lambertw(b,z)
 % @deftypefnx {Function File} {@var{x} = } lambertw (@var{n}, @var{z})
 % Compute the Lambert W function of @var{z}.
 %
-% This function satisfies W(z).*exp(W(z)) = z, and can thus be used to express
-% solutions of transcendental equations involving exponentials or logarithms.
-%
-% @var{n} must be integer, and specifies the branch of W to be computed;
-% W(z) is a shorthand for W(0,z), the principal branch.  Branches
-% 0 and -1 are the only ones that can take on non-complex values.
-%
-% If either @var{n} or @var{z} are non-scalar, the function is mapped to each
-% element; both may be non-scalar provided their dimensions agree.
-%
-% This implementation should return values within 2.5*eps of its
-% counterpart in Maple V, release 3 or later.  Please report any
-% discrepancies to the author, Nici Schraudolph <schraudo@@inf.ethz.ch>.
+% This function satisfies W(z).*exp(W(z)) = z, and can thus be used to express%
+% solutions of transcendental equations involving exponentials or logarithms.%%
+%% @var{n} must be integer, and specifies the branch of W to be computed;
+%% W(z) is a shorthand for W(0,z), the principal branch.  Branches
+%% 0 and -1 are the only ones that can take on non-complex values.
+%%
+%% If either @var{n} or @var{z} are non-scalar, the function is mapped to each
+%% element; both may be non-scalar provided their dimensions agree.
+%%
+%% This implementation should return values within 2.5*eps of its
+%% counterpart in Maple V, release 3 or later.  Please report any
+%% discrepancies to the author, Nici Schraudolph <schraudo@@inf.ethz.ch>.
 
 if (nargin == 1)
     z = b;
@@ -520,8 +719,8 @@ else
     end
 end
 
-%% series expansion about -1/e
-%
+%%% series expansion about -1/e
+%%
 % p = (1 - 2*abs(b)).*sqrt(2*e*z + 2);
 % w = (11/72)*p;
 % w = (w - 1/3).*p;
@@ -536,15 +735,15 @@ w = (1 - 2*abs(b)).*sqrt(2*exp(1)*z + 2) - 1;
 v = log(z + double(~(z | b))) + 2*pi*1i*b;
 v = v - log(v + double(v==0));
 
-%% choose strategy for initial guess
+%%% choose strategy for initial guess
 %
 c = abs(z + 1/exp(1));
 c = (c > 1.45 - 1.1*abs(b));
 c = c | (b.*imag(z) > 0) | (~imag(z) & (b == 1));
 w = (1 - c).*w + c.*v;
 
-%% Halley iteration
-%
+%%% Halley iteration
+%%
 for n = 1:10
     p = exp(w);
     t = w.*p - z;
@@ -557,4 +756,5 @@ for n = 1:10
     end
 end
 
-%error('PRECISION:iteration limit reached, result of lambertw may be inaccurate');
+end 
+%%error('PRECISION:iteration limit reached, result of lambertw may be inaccurate');
