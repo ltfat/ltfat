@@ -48,7 +48,7 @@ if ~isempty(kv.fs)
   kv.fc = kv.fc/kv.fs*2;
 end;
 
-if kv.ramp > L || kv.ramp < 0 || rem(kv.ramp,1) != 0
+if kv.ramp > L || kv.ramp < 0 || rem(kv.ramp,1) ~= 0
     error('%s: Ramp length must be a positive integer number less than L.',thismfilename);
 end
 
