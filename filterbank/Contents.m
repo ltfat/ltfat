@@ -17,6 +17,7 @@
 %    WARPEDFILTERS          - Frequency-warped filters 
 %    AUDFILTERS             - Filters based on auditory scales
 %    GABFILTERS             - Linearly spaced Gabor filters
+%    WAVELETFILTERS         - Waveletfilters
 %  
 %  Window construction and bounds
 %    FILTERBANKDUAL         - Canonical dual filters

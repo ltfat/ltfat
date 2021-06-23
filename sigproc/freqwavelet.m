@@ -169,7 +169,7 @@ winName = lower(name{1});
 definput.import={'normalize', 'freqwavelet'};
 definput.importdefaults={'null'};
 definput.keyvals.scale = 1;
-definput.keyvals.scal = 1;
+%definput.keyvals.scal = 1;
 definput.keyvals.basefc = 0.1;
 definput.keyvals.bwthr = 10^(-3/10);
 definput.keyvals.efsuppthr = 10^(-5);
@@ -294,13 +294,13 @@ for m = 1:M
               
               if flags.do_full
                 y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+                H(:,m) = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_econ
                 y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                H{m} = kv.scal*normalize(fun(y), flags.norm);
+                H{m} = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_asfreqfilter
                 y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
               end
             end 
         
@@ -362,13 +362,13 @@ for m = 1:M
               
               if flags.do_full
                 y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+                H(:,m) = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_econ
                 y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                H{m} = kv.scal*normalize(fun(y), flags.norm);
+                H{m} = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_asfreqfilter
                 y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
               end
             end 
 
@@ -474,15 +474,15 @@ for m = 1:M
               info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
               info.CauchyAlpha(m) = CauchyAlpha;
               
-                            if flags.do_full
+              if flags.do_full
                 y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+                H(:,m) = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_econ
                 y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                H{m} = kv.scal*normalize(fun(y), flags.norm);
+                H{m} = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_asfreqfilter
                 y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
               end
             end
            
@@ -522,15 +522,15 @@ for m = 1:M
               info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L); 
               info.CauchyAlpha(m) = CauchyAlpha;    
               
-                            if flags.do_full
+              if flags.do_full
                 y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+                H(:,m) = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_econ
                 y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                H{m} = kv.scal*normalize(fun(y), flags.norm);
+                H{m} = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_asfreqfilter
                 y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
               end
             end
             
@@ -570,15 +570,15 @@ for m = 1:M
               info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
               info.CauchyAlpha(m) = CauchyAlpha;
               
-                            if flags.do_full
+              if flags.do_full
                 y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                H(:,m) = kv.scal*normalize(fun(y), flags.norm);
+                H(:,m) = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_econ
                 y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                H{m} = kv.scal*normalize(fun(y), flags.norm);
+                H{m} = scale(m)*normalize(fun(y), flags.norm);
               elseif flags.do_asfreqfilter
                 y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                H{m} = struct('H',@(L) kv.scal*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
               end
             end 
                          
@@ -601,89 +601,48 @@ fsuppL_all = [ ceil(fsupp(1:2)/fs*L), round(fsupp(3)/fs*L), floor(fsupp(4:5)/fs*
 fsuppL = fsuppL_all(idx);
 end 
 
-%function alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,steps)
-%% This function computes alpha from a bandwidth `bwatthr` at a reference height `bwthr`, together with
-%% a given base center frequency `basefc`.
-   
-%cauchybwatthr = @(alph) basefc * ...
-%                          ( octave_lambertw(0, -bwthr^(2/(alph-1))/exp(1))...
-%                           -octave_lambertw(-1,-bwthr^(2/(alph-1))/exp(1)) );
 
-%alpha_current = 10;
-%cauchybw_current = cauchybwatthr(alpha_current);
-
-% Find initial guess
-%if cauchybw_current > bwatthr
-%    while cauchybw_current > bwatthr
+% function alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,steps)
+% % This function computes alpha from a bandwidth `bwatthr` at a reference height `bwthr`, together with
+% % a given base center frequency `basefc`.
+%    
+% cauchybwatthr = @(alph) basefc * ...
+%                           ( octave_lambertw(0, -bwthr^(2/(alph-1))/exp(1))...
+%                            -octave_lambertw(-1,-bwthr^(2/(alph-1))/exp(1)) );
+% 
+% alpha_current = 10;
+% cauchybw_current = cauchybwatthr(alpha_current);
+% 
+% % Find initial guess
+% if cauchybw_current > bwatthr
+%     while cauchybw_current > bwatthr
+%         alpha_left = alpha_current;
+%         alpha_current = 10*alpha_current;
+%         cauchybw_current = cauchybwatthr(alpha_current);
+%     end
+% elseif cauchybw_current < bwatthr
+%     while cauchybw_current < bwatthr
+%         alpha_current = 0.1*alpha_current;
+%         alpha_left = alpha_current;
+%         cauchybw_current = cauchybwatthr(alpha_current);
+%     end
+% else 
+%     alpha = alpha_current;
+%     return
+% end
+% 
+% for kk = 1:steps
+%    exponent = 2^(-kk); 
+%    alpha_current = alpha_left*10^exponent;
+%    cauchybw_current = cauchybwatthr(alpha_current);
+%    if cauchybw_current > bwatthr
 %        alpha_left = alpha_current;
-%        alpha_current = 10*alpha_current;
-%        cauchybw_current = cauchybwatthr(alpha_current);
 %    end
-%elseif cauchybw_current < bwatthr
-%    while cauchybw_current < bwatthr
-%        alpha_current = 0.1*alpha_current;
-%        alpha_left = alpha_current;
-%        cauchybw_current = cauchybwatthr(alpha_current);
-%    end
-%else 
-%    alpha = alpha_current;
-%    return
-%end
-
-%for kk = 1:steps
-%   exponent = 2^(-kk); 
-%   alpha_current = alpha_left*10^exponent;
-%   cauchybw_current = cauchybwatthr(alpha_current);
-%   if cauchybw_current > bwatthr
-%       alpha_left = alpha_current;
-%   end
-%end
-
-%alpha = alpha_current;
-%end 
-
-
-function alpha = determine_alpha_from_bandwidth(bwatthr,bwthr,basefc,steps)
-% This function computes alpha from a bandwidth `bwatthr` at a reference height `bwthr`, together with
-% a given base center frequency `basefc`.
-   
-cauchybwatthr = @(alph) basefc * ...
-                          ( octave_lambertw(0, -bwthr^(2/(alph-1))/exp(1))...
-                           -octave_lambertw(-1,-bwthr^(2/(alph-1))/exp(1)) );
-
-alpha_current = 10;
-cauchybw_current = cauchybwatthr(alpha_current);
-
-% Find initial guess
-if cauchybw_current > bwatthr
-    while cauchybw_current > bwatthr
-        alpha_left = alpha_current;
-        alpha_current = 10*alpha_current;
-        cauchybw_current = cauchybwatthr(alpha_current);
-    end
-elseif cauchybw_current < bwatthr
-    while cauchybw_current < bwatthr
-        alpha_current = 0.1*alpha_current;
-        alpha_left = alpha_current;
-        cauchybw_current = cauchybwatthr(alpha_current);
-    end
-else 
-    alpha = alpha_current;
-    return
-end
-
-for kk = 1:steps
-   exponent = 2^(-kk); 
-   alpha_current = alpha_left*10^exponent;
-   cauchybw_current = cauchybwatthr(alpha_current);
-   if cauchybw_current > bwatthr
-       alpha_left = alpha_current;
-   end
-end
-
-alpha = alpha_current;
-
-
+% end
+% 
+% alpha = alpha_current;
+% 
+% end
 
 function w = octave_lambertw(b,z)
 % Copyright (C) 1998 by Nicol N. Schraudolph <schraudo@inf.ethz.ch>
@@ -694,22 +653,22 @@ function w = octave_lambertw(b,z)
 %
 % This function satisfies W(z).*exp(W(z)) = z, and can thus be used to express%
 % solutions of transcendental equations involving exponentials or logarithms.%%
-%% @var{n} must be integer, and specifies the branch of W to be computed;
-%% W(z) is a shorthand for W(0,z), the principal branch.  Branches
-%% 0 and -1 are the only ones that can take on non-complex values.
-%%
-%% If either @var{n} or @var{z} are non-scalar, the function is mapped to each
-%% element; both may be non-scalar provided their dimensions agree.
-%%
-%% This implementation should return values within 2.5*eps of its
-%% counterpart in Maple V, release 3 or later.  Please report any
-%% discrepancies to the author, Nici Schraudolph <schraudo@@inf.ethz.ch>.
+% @var{n} must be integer, and specifies the branch of W to be computed;
+% W(z) is a shorthand for W(0,z), the principal branch.  Branches
+% 0 and -1 are the only ones that can take on non-complex values.
+%
+% If either @var{n} or @var{z} are non-scalar, the function is mapped to each
+% element; both may be non-scalar provided their dimensions agree.
+%
+% This implementation should return values within 2.5*eps of its
+% counterpart in Maple V, release 3 or later.  Please report any
+% discrepancies to the author, Nici Schraudolph <schraudo@@inf.ethz.ch>.
 
 if (nargin == 1)
     z = b;
     b = 0;
 else
-    %% some error checking
+    % some error checking
     if (nargin ~= 2)
         print_usage;
     else
@@ -719,8 +678,8 @@ else
     end
 end
 
-%%% series expansion about -1/e
-%%
+%% series expansion about -1/e
+%
 % p = (1 - 2*abs(b)).*sqrt(2*e*z + 2);
 % w = (11/72)*p;
 % w = (w - 1/3).*p;
@@ -735,14 +694,14 @@ w = (1 - 2*abs(b)).*sqrt(2*exp(1)*z + 2) - 1;
 v = log(z + double(~(z | b))) + 2*pi*1i*b;
 v = v - log(v + double(v==0));
 
-%%% choose strategy for initial guess
+%% choose strategy for initial guess
 %
 c = abs(z + 1/exp(1));
 c = (c > 1.45 - 1.1*abs(b));
 c = c | (b.*imag(z) > 0) | (~imag(z) & (b == 1));
 w = (1 - c).*w + c.*v;
 
-%%% Halley iteration
+%% Halley iteration
 %%
 for n = 1:10
     p = exp(w);
