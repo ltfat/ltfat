@@ -56,7 +56,7 @@ function [g,info] = gabwin(g,a,M,varargin);
 %   To compute Gaussian window with equal time and frequency support
 %   irrespective of *a* and *M*::
 %
-%     g=gabwin({'gauss',1},a,M,L);
+%     g=gabwin({'gauss'},a,M,L);
 %
 %   To compute the canonical dual of a Gaussian window fitted for a
 %   system with time-shift *a* and *M* channels::
