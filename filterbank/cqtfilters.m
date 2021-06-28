@@ -1,13 +1,13 @@
 function [g,a,fc,L,info]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %CQTFILTERS   CQT-spaced filters
 %   Usage:  [g,a,fc]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin);
-%           
+%          
 %
 %   Input parameters:
 %      fs    : Sampling rate (in Hz).
 %      fmin  : Minimum frequency (in Hz)
 %      fmax  : Maximum frequency (in Hz)
-%      bins  : Vector consisting of the number of bins per octave.
+%      bins  : Vector or scalar consisting of the number of bins per octave.
 %      Ls    : Signal length.
 %   Output parameters:
 %      g     : Cell array of filters.
@@ -42,7 +42,7 @@ function [g,a,fc,L,info]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %
 %   `[g,a]=cqtfilters(...,'uniform')` constructs a uniform filter bank
 %   where the downsampling rate is the same for all the channels. This
-%   results in most redundant representation, which produces nice plots.
+%   results in the most redundant representation, which produces nice plots.
 %
 %   `[g,a]=cqtfilters(...,'fractional')` constructs a filter bank with
 %   fractional downsampling rates *a*. The rates are constructed such
@@ -62,9 +62,9 @@ function [g,a,fc,L,info]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %
 %   `cqtfilters` accepts the following optional parameters:
 %
-%     'Qvar',Qvar           Bandwidth variation factor. Multiplies the
-%                           calculated bandwidth (divides Q). 
-%                           Default value is *1*.
+%     'Qvar',Qvar           Bandwidth scaling factor. Inversely proportional
+%                           to Q as it multiplies the calculated bandwidth
+%                           (which divides Q). The default value is *1*.
 %                           If the value is larger than one, the
 %                           system may no longer be painless.
 %
@@ -111,22 +111,22 @@ function [g,a,fc,L,info]=cqtfilters(fs,fmin,fmax,bins,Ls,varargin)
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     norm(f-r)
-% 
+%
 %     % Plot the response
 %     figure(1);
 %     subplot(2,1,1);
 %     R=filterbankresponse(g,a,L,fs,'real','plot');
-% 
+%
 %     subplot(2,1,2);
 %     semiaudplot(linspace(0,fs/2,L/2+1),R(1:L/2+1));
 %     ylabel('Magnitude');
-% 
+%
 %     % Plot frequency responses of individual filters
 %     gd=filterbankrealdual(g,a,L);
 %     figure(2);
 %     subplot(2,1,1);
 %     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
-% 
+%
 %     subplot(2,1,2);
 %     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 %
@@ -144,7 +144,7 @@ complainif_notenoughargs(nargin,5,upper(mfilename));
 complainif_notposscalar(fs,'fs',upper(mfilename));
 complainif_notposscalar(fmin,'fmin',upper(mfilename));
 complainif_notposscalar(fmax,'fmax',upper(mfilename));
-complainif_notposint(bins,'bins',upper(mfilename));
+%complainif_notposint(bins,'bins',upper(mfilename));
 complainif_notposint(Ls,'Ls',upper(mfilename));
 
 if fmin>=fmax
@@ -199,7 +199,9 @@ b = ceil(log2(fmax/fmin))+1;
 if length(bins) == 1
     % Constant number of bins in each octave
     bins = bins*ones(b,1);
-elseif length(bins) < b
+end
+
+if length(bins) < b
     % Pick bins for octaves for which it was not specified.
     bins = bins(:);
     bins( bins<=0 ) = 1;
@@ -248,8 +250,8 @@ fsupp(M+2) = 2*(nf-fc(end-1));
 % Keeping center frequency and changing bandwidth => Q=fbas/bw
 % Do that only for the constant Q filters
 fsupp(2:end-1) = kv.Qvar*fsupp(2:end-1);
-% Lowpass and highpass filters has to be treated differently 
-fsupp([1,end]) = fsupp([1,end]);
+% Lowpass and highpass filters has to be treated differently
+%fsupp([1,end]) = fsupp([1,end]);
 
 % Do not allow lower bandwidth than keyvals.min_win
 fsuppmin = kv.min_win/Ls*fs;
@@ -366,5 +368,3 @@ basebw = 1.875657;
 
 info.fc  = 2*fc/fs;
 info.tfr = @(L)(1/L)*1./((2*fsupp*winbwrat/fs)./basebw).^2;
-
-
