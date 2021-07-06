@@ -36,7 +36,9 @@ endif
 export CXXFLAGS := $(shell $(MKOCTFILE) -p CXXFLAGS) -std=gnu++11 -Wall -DLTFAT_LARGEARRAYS $(OPTCXXFLAGS)
 # export is necessary, otherwise LFLAGS won't have any effect
 # at least on Windows and on Mac
-export LFLAGS := $(shell $(MKOCTFILE) -p LFLAGS) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS) 
+export LDFLAGS := -L$(shell $(MKOCTFILE) -p LIBDIR) $(FLIBS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FFTW_LIBS) 
+undefine LFLAGS
+unexport LFLAGS
 
 MKOCTFILEFLAGS = -I../libltfat/modules/libltfat/include -DNDEBUG -L../lib -lltfat
 
