@@ -454,11 +454,11 @@ if ~flags.do_offline
            failedInit(devs,kv);
        end
        
-       if ~do_recaudio
-          if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
-            error('%s: Using more than one input channel.',upper(mfilename));
-          end
-       end
+       % if ~do_recaudio
+       %    if numel(kv.recch) >1 && numel(kv.recch) ~= numel(kv.playch)
+       %      error('%s: Using more than one input channel.',upper(mfilename));
+       %    end
+       % end
        block_interface('setPlayChanList',kv.playch);
        block_interface('setRecChanList',kv.recch);
     elseif play && ~record
