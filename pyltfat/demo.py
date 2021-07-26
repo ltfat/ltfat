@@ -2,6 +2,10 @@
 # to simplify calling the LTFAT from Python.
 # Distributed under the terms of the GPL v3 License.
 
+# This file is intended for getting started quickly with calling LTFAT from Python.
+# It is not exhaustive. For further details, see e.g. the oct2py documentation under
+# https://blink1073.github.io/oct2py/source/info.html
+
 # import the LTFAT class
 from ltfatpy import LTFAT
 
