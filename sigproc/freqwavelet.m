@@ -80,8 +80,11 @@ function [H,info] = freqwavelet(name,L,varargin)
 %     'bwthr',bwthr    The height at which the bandwidth is computed.
 %                      The default value is 10^(-3/10) (~0.5).
 %
-%     'efsuppthr',thr  The threshold determinig the effective support of
+%     'efsuppthr',thr  The threshold determining the effective support of
 %                      the wavelet. The default value is 10^(-5).
+%
+%     'scal',s         Scale the filter by the constant *s*. This can be
+%                      useful to equalize channels in a filter bank.
 %
 %   The admissible range of scales can be adjusted to handle different 
 %   scenarios:
@@ -123,7 +126,10 @@ function [H,info] = freqwavelet(name,L,varargin)
 %                     It can be directly used to convert the 'econ'
 %                     output to 'full' by `circshift(postpad(H,L),foff)`.
 %
-%     .fsupp       Length of the effective support (with values above efsuppthr.).basefc
+%     .fsupp          Length of the effective support (with values above 
+%                     efsuppthr).
+%
+%     .basefc         Center frequency of the implied mother wavelet.
 %
 %     .scale          The scale used.
 %
@@ -134,8 +140,13 @@ function [H,info] = freqwavelet(name,L,varargin)
 %     .tfr            Time-frequency ratio of a Gaussian with the same
 %                     bandwidth as the wavelet.
 %
+%     .aprecise       Exact natural subsampling factors (not rounded). 
+%
 %     .a_natural      Fractional natural subsampling factors in the
 %                     format acceptable by |filterbank| and related.
+%
+%     .cauchyAlpha    Alpha value of closest Cauchy wavelet [NOTE: Not 
+%                     implemented for non-Morse wavelets.]
 %
 %   Additionally, the function accepts flags to normalize the output.
 %   Please see the help of |normalize|. By default, no normaliazation is
@@ -157,6 +168,8 @@ function [H,info] = freqwavelet(name,L,varargin)
 %       H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
 %       .. math:: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%
+%   NOTE: Add definitions of other wavelets
 %
 %   See also: normalize, filterbank, blfilter
 
@@ -184,7 +197,7 @@ winName = lower(name{1});
 definput.import={'normalize', 'freqwavelet'};
 definput.importdefaults={'null'};
 definput.keyvals.scale = 1;
-%definput.keyvals.scal = 1;
+definput.keyvals.scal = [];
 definput.keyvals.basefc = 0.1;
 definput.keyvals.bwthr = 10^(-3/10);
 definput.keyvals.efsuppthr = 10^(-5);
@@ -220,23 +233,31 @@ if ~isscalar(kv.basefc)
     error('%s: basefc must be a positive scalar',upper(mfilename));
 end
 
-if ~isnumeric(L), error('%s: scale must be numeric',upper(mfilename)); end
+if ~isnumeric(scale), error('%s: scale must be numeric',upper(mfilename)); end
+
+if isempty(kv.scal)
+    kv.scal = scale;
+elseif ~isnumeric(kv.scal)
+    error('%s: scal must be numeric',upper(mfilename)); 
+elseif numel(kv.scal) ~= numel(scale)
+    error('%s: scal must have exactly as many entries as scale',upper(mfilename)); 
+end
 
 % Check range of scales
-if flags.do_positive && (any(scale <= 0) || any(kv.basefc/scale > 1))
-    error('%s: Frequency range flag is set to positive. scale must be positive and not smaller than 1/basefc.', upper(mfilename)); 
+if flags.do_positive && (any(scale <= 0) || any(kv.basefc./scale > 1))
+    error('%s: Frequency range flag is set to positive. scale must be positive and not smaller than basefc.', upper(mfilename)); 
 end
-if flags.do_negative && (any(scale >= 0) || any(kv.basefc/scale < -1))
-    error('%s: Frequency range flag is set to negative. scale must be negative and not larger than -1/basefc.', upper(mfilename)); 
+if flags.do_negative && (any(scale >= 0) || any(kv.basefc./scale < -1))
+    error('%s: Frequency range flag is set to negative. scale must be negative and not larger than -basefc.', upper(mfilename)); 
 end
-if flags.do_analytic && (any(scale <= 0) || any(kv.basefc/scale > 2))
-    error('%s: Frequency range flag is set to analytic. scale must be positive and not smaller than 1/(2*basefc).', upper(mfilename)); 
+if flags.do_analytic && (any(scale <= 0) || any(kv.basefc./scale > 2))
+    error('%s: Frequency range flag is set to analytic. scale must be positive and not smaller than 2*basefc.', upper(mfilename)); 
 end
 
 % Check other parameters
 if kv.efsuppthr < 0, error('%s: efsuppthr must be nonnegative',upper(mfilename)); end
 if kv.bwthr < 0, error('%s: bwthr must be nonnegative',upper(mfilename)); end
-if kv.bwthr < kv.efsuppthr, error('%s: bwthr must be lower than efsuppthr.',upper(mfilename)); end
+if kv.bwthr < kv.efsuppthr, error('%s: efsuppthr must be lower than bwthr.',upper(mfilename)); end
 
 %initialize the output info
 M = numel(scale);
@@ -247,6 +268,7 @@ info.scale = zeros(1,M);
 info.dilation = 0;
 info.bw    = zeros(1,M);
 info.tfr   = zeros(1,M);
+info.aprecise = ones(1,M);
 info.a_natural = L*ones(M,2);
 
 if flags.do_full
@@ -328,34 +350,35 @@ for m = 1:M
             
             info.bw(m)  = (fsupp(4) - fsupp(2));
             bwinsamples = info.bw(m)/kv.alphaStep;
+            info.aprecise(m) = L/bwinsamples;
             info.a_natural(m,2) = ceil(bwinsamples);
             
-            %              CauchyAlpha = wpghi_findalpha({'morse',order},0.2);
-            CauchyAlpha = alpha;
-            info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
-            info.CauchyAlpha(m) = CauchyAlpha;
+            %              cauchyAlpha = wpghi_findalpha({'morse',order},0.2);
+            cauchyAlpha = alpha;
+            info.tfr(m) = (cauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+            info.cauchyAlpha(m) = cauchyAlpha;
             
             if ~flags.do_negative
                 if flags.do_full
                     y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                    H(:,m) = scale(m)*normalize(fun(y), flags.norm);
+                    H(:,m) = kv.scal(m)*normalize(fun(y), flags.norm);
                 elseif flags.do_econ
                     y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                    H{m} = scale(m)*normalize(fun(y), flags.norm);
+                    H{m} = kv.scal(m)*normalize(fun(y), flags.norm);
                 elseif flags.do_asfreqfilter
                     y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                    H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                    H{m} = struct('H',@(L) kv.scal(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                 end
             else
                 if flags.do_full
                     y = ([0;(L-1:-1:1)']).*basedil*kv.alphaStep*scale(m);
-                    H(:,m) = abs(scale(m))*normalize(fun(y), flags.norm);
+                    H(:,m) = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                 elseif flags.do_econ
                     y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*abs(scale(m));
-                    H{m} = abs(scale(m))*normalize(fun(y), flags.norm);
+                    H{m} = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                 elseif flags.do_asfreqfilter
                     y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-                    H{m} = struct('H',@(L) abs(scale(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                    H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                 end
             end
         end
@@ -424,33 +447,34 @@ for m = 1:M
             
             info.bw(m)  = (fsupp(4) - fsupp(2));
             bwinsamples = info.bw(m)/kv.alphaStep;
+            info.aprecise(m) = L/bwinsamples;
             info.a_natural(m,2) = ceil(bwinsamples);
             
-            CauchyAlpha = wpghi_findalpha({'morlet',sigma},0.2);
-            info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
-            info.CauchyAlpha(m) = CauchyAlpha;
+            cauchyAlpha = wpghi_findalpha({'morlet',sigma},0.2);
+            info.tfr(m) = (cauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+            info.cauchyAlpha(m) = cauchyAlpha;
             
             if ~flags.do_negative
                 if flags.do_full
                     y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                    H(:,m) = scale(m)*normalize(fun(y), flags.norm);
+                    H(:,m) = kv.scal(m)*normalize(fun(y), flags.norm);
                 elseif flags.do_econ
                     y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                    H{m} = scale(m)*normalize(fun(y), flags.norm);
+                    H{m} = kv.scal(m)*normalize(fun(y), flags.norm);
                 elseif flags.do_asfreqfilter
                     y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                    H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                    H{m} = struct('H',@(L) kv.scal(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                 end
             else
                 if flags.do_full
                     y = ([0;(L-1:-1:1)']).*basedil*kv.alphaStep*scale(m);
-                    H(:,m) = abs(scale(m))*normalize(fun(y), flags.norm);
+                    H(:,m) = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                 elseif flags.do_econ
                     y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*abs(scale(m));
-                    H{m} = abs(scale(m))*normalize(fun(y), flags.norm);
+                    H{m} = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                 elseif flags.do_asfreqfilter
                     y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-                    H{m} = struct('H',@(L) abs(scale(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                    H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                 end
             end
         end
@@ -563,22 +587,23 @@ for m = 1:M
                     
                     info.bw(m)  = (fsupp(4) - fsupp(2));
                     bwinsamples = info.bw(m)/kv.alphaStep;
+                    info.aprecise(m) = L/bwinsamples;
                     info.a_natural(m,2) = ceil(bwinsamples);
                     
-                    CauchyAlpha = wpghi_findalpha({'fbsp',order,fb},0.2);
-                    info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
-                    info.CauchyAlpha(m) = CauchyAlpha;
+                    cauchyAlpha = wpghi_findalpha({'fbsp',order,fb},0.2);
+                    info.tfr(m) = (cauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+                    info.cauchyAlpha(m) = cauchyAlpha;
                     
                     if ~flags.do_negative
                         if flags.do_full
                             y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                            H(:,m) = scale(m)*normalize(fun(y), flags.norm);
+                            H(:,m) = kv.scal(m)*normalize(fun(y), flags.norm);
                         elseif flags.do_econ
                             y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                            H{m} = scale(m)*normalize(fun(y), flags.norm);
+                            H{m} = kv.scal(m)*normalize(fun(y), flags.norm);
                         elseif flags.do_asfreqfilter
                             y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                            H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                            H{m} = struct('H',@(L) kv.scal(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                         end
                     else
                         if flags.do_full
@@ -586,10 +611,10 @@ for m = 1:M
                             H(:,m) = abs(scale(m))*normalize(fun(y), flags.norm);
                         elseif flags.do_econ
                             y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*abs(scale(m));
-                            H{m} = abs(scale(m))*normalize(fun(y), flags.norm);
+                            H{m} = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                         elseif flags.do_asfreqfilter
                             y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-                            H{m} = struct('H',@(L) abs(scale(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                            H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                         end
                     end
                 end
@@ -637,33 +662,34 @@ for m = 1:M
                     
                     info.bw(m)  = (fsupp(4) - fsupp(2));
                     bwinsamples = info.bw(m)/kv.alphaStep;
+                    info.aprecise(m) = L/bwinsamples;
                     info.a_natural(m,2) = ceil(bwinsamples);
                     
-                    CauchyAlpha = wpghi_findalpha({'analyticsp',order,fb},0.2);
-                    info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
-                    info.CauchyAlpha(m) = CauchyAlpha;
+                    cauchyAlpha = wpghi_findalpha({'analyticsp',order,fb},0.2);
+                    info.tfr(m) = (cauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+                    info.cauchyAlpha(m) = cauchyAlpha;
                     
                     if ~flags.do_negative
                         if flags.do_full
                             y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                            H(:,m) = scale(m)*normalize(fun(y), flags.norm);
+                            H(:,m) = kv.scal(m)*normalize(fun(y), flags.norm);
                         elseif flags.do_econ
                             y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                            H{m} = scale(m)*normalize(fun(y), flags.norm);
+                            H{m} = kv.scal(m)*normalize(fun(y), flags.norm);
                         elseif flags.do_asfreqfilter
                             y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                            H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                            H{m} = struct('H',@(L) kv.scal(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                         end
                     else
                         if flags.do_full
                             y = ([0;(L-1:-1:1)']).*basedil*kv.alphaStep*scale(m);
-                            H(:,m) = abs(scale(m))*normalize(fun(y), flags.norm);
+                            H(:,m) = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                         elseif flags.do_econ
                             y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*abs(scale(m));
-                            H{m} = abs(scale(m))*normalize(fun(y), flags.norm);
+                            H{m} = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                         elseif flags.do_asfreqfilter
                             y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-                            H{m} = struct('H',@(L) abs(scale(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                            H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                         end
                     end
                 end
@@ -711,33 +737,34 @@ for m = 1:M
                     
                     info.bw(m)  = (fsupp(4) - fsupp(2));
                     bwinsamples = info.bw(m)/kv.alphaStep;
+                    info.aprecise(m) = L/bwinsamples;
                     info.a_natural(m,2) = ceil(bwinsamples);
                     
-                    CauchyAlpha = wpghi_findalpha({'cplxsp',order,fb},0.2);
-                    info.tfr(m) = (CauchyAlpha - 1)/(pi*info.fc(m)^2*L);
-                    info.CauchyAlpha(m) = CauchyAlpha;
+                    cauchyAlpha = wpghi_findalpha({'cplxsp',order,fb},0.2);
+                    info.tfr(m) = (cauchyAlpha - 1)/(pi*info.fc(m)^2*L);
+                    info.cauchyAlpha(m) = cauchyAlpha;
                     
                     if ~flags.do_negative
                         if flags.do_full
                             y = ((0:L-1)').*basedil*kv.alphaStep*scale(m);
-                            H(:,m) = scale(m)*normalize(fun(y), flags.norm);
+                            H(:,m) = kv.scal(m)*normalize(fun(y), flags.norm);
                         elseif flags.do_econ
                             y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*scale(m);
-                            H{m} = scale(m)*normalize(fun(y), flags.norm);
+                            H{m} = kv.scal(m)*normalize(fun(y), flags.norm);
                         elseif flags.do_asfreqfilter
                             y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*scale(m)*kv.fs/L;
-                            H{m} = struct('H',@(L) scale(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                            H{m} = struct('H',@(L) kv.scal(m)*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                         end
                     else
                         if flags.do_full
                             y = ([0;(L-1:-1:1)']).*basedil*kv.alphaStep*scale(m);
-                            H(:,m) = abs(scale(m))*normalize(fun(y), flags.norm);
+                            H(:,m) = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                         elseif flags.do_econ
                             y = ((fsuppL(1):fsuppL(end)-1)').*basedil*kv.alphaStep*abs(scale(m));
-                            H{m} = abs(scale(m))*normalize(fun(y), flags.norm);
+                            H{m} = abs(kv.scal(m))*normalize(fun(y), flags.norm);
                         elseif flags.do_asfreqfilter
                             y = @(L) ((fsuppL_inner(fsupp,kv.fs,L,1):fsuppL_inner(fsupp,kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-                            H{m} = struct('H',@(L) abs(scale(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
+                            H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp,kv.fs,L,1),'realonly',0);
                         end
                     end
                 end
