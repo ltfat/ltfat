@@ -77,7 +77,9 @@ if info.isuniform
     
     % A 'real' is needed here, because the matrices are known to be
     % Hermitian, but sometimes Matlab/Octave does not recognize this.  
-    work=real(eig(real(Ha*Ha'+Hb*Hb')));
+    % work=real(eig(real(Ha*Ha'+Hb*Hb'))); %Prior versions. This seems to 
+    % be wrong.
+    work=real(eig(Ha*Ha'+Hb*Hb'));
     
     AF=min(AF,min(work));
     BF=max(BF,max(work));
