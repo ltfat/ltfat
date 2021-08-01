@@ -7,18 +7,21 @@ from .ltfatpy import LTFAT
 from oct2py.utils import get_log, Oct2PyError
 import os
 
-dirname = os. getcwd()
-foldername = os.path.join(os.sep, dirname, 'ltfat', 'pyltfat')
+dirname = os.getcwd()
+foldername = os.path.join(os.sep, dirname, 'ltfat', 'pyltfat', 'files')
+#os.chdir(foldername)
 
 __all__ = ['ltfatpy']
 
+#import logging
+#logging.basicConfig(level=logging.DEBUG)
 try:
     ltfatpy = LTFAT(temp_dir=foldername)
-    ltfatpy.addpath('./ltfat')
-    ltfatpy.run('ltfatstart')
 except Oct2PyError as e:
     print(e)
 
+#ltfatpy.run('ltfatstart')
+#os.chdir(dirname)
 
 def kill_octave():
     """Kill all octave instances (cross-platform)."""

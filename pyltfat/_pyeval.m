@@ -95,23 +95,81 @@ catch ME
     err = ME;
 end
 
-%check if output contains a function handle
-for ii = 1:length(result)
-    if isstruct(result{ii})
-        curres = result{ii};
-        fn = fieldnames(curres);
-        for k=1:numel(fn)
-            if( is_function_handle(curres.(fn{k})) )
-                curres.(fn{k}) = char(curres.(fn{k}));
-            end
+toOctave = 1;
+if any(is_function_handle(result)) || any(isstruct(result)) || any(iscell(result))
+  toOctave = 0;
+  for ii = 1:numel(result)
+    %check if output is a cell array (like e.g. in filterbanks
+    if iscell(result{ii})
+      %typeinfo(result{ii})
+      for jj=1:numel(result{ii})
+        curres = result{ii}{jj};
+         %   typeinfo(result{ii}{jj})
+        %if strcmp(typeinfo(result{ii}{jj}), 'sq_string')
+        %  curres=char(curres)
+        %end
+
+        if isstruct(curres)
+          [curres, toOctave] = rewrite_struct2Python(curres);
+          %disp(typeinfo(curres.H))
         end
-        result{ii} = curres;
-    else    
-        if is_function_handle(result{ii})
-            result{ii} = char(result{ii});
-        end
-    end    
+        result{ii}{jj}=curres;
+      end
+    elseif isstruct(result{ii})
+       [curres, toOctave] = rewrite_struct2Python(result{ii});
+       result{ii}=curres;     
+    elseif is_function_handle(result{ii})
+       result{ii} = char(result{ii});
+       toOctave = 1;
+    end
+
+  end 
 end
+
+%check if we have a function handle converted to a string
+if 0 && toOctave
+  %for ii = 1:numel(result)
+  for ii=1:1  
+    %check if output is a cell array (like e.g. in filterbanks
+    if iscell(result{ii})
+      for jj=1:numel(result{ii})
+        curres = result{ii}{jj};
+        if isstruct(curres)
+          curres = rewrite_struct2Octave(curres);
+        end
+        result{ii}{jj}=curres;
+      end
+    elseif isstruct(result{ii})
+       curres = rewrite_struct2Octave(curres);
+       result{ii}=curres;
+    else
+       curres = result{ii};
+       if ischar(curres) && strcmp(curres(1), '@')
+         result{ii}=str2func(curres);
+       end
+    end
+  end 
+end
+%evalin('base', 'result{1}')
+%result = [];
+%check if output contains a function handle
+%for ii = 1:length(result)
+  
+%    if isstruct(result{ii})
+%        curres = result{ii};
+%        fn = fieldnames(curres);
+%        for k=1:numel(fn)
+%            if( is_function_handle(curres.(fn{k})) )
+%                curres.(fn{k}) = char(curres.(fn{k}));
+%            end
+%        end
+%        result{ii} = curres;
+%    else    
+%        if is_function_handle(result{ii})
+%            result{ii} = char(result{ii});
+%        end
+%    end    
+%end
 % Save the output to a file.
 try
   save('-v6', '-mat-binary', output_file, 'result', 'err');
@@ -130,4 +188,29 @@ function result = get_ans(sentinel)
     catch
       result = { sentinel };
     end
+end
+
+
+function [out, ret] = rewrite_struct2Python(in)
+    curres = in;
+    ret = 0;
+    fn = fieldnames(curres);
+    for k=1:numel(fn)
+        if( is_function_handle(curres.(fn{k})) )
+            curres.(fn{k}) = func2str(curres.(fn{k}));
+            ret = 1;%the function did something
+        end
+    end
+    out = curres;
+end
+
+function out = rewrite_struct2Octave(in)
+    curres = in;
+    fn = fieldnames(curres);
+    for k=1:numel(fn)
+        if isfield(curres, fn(k)) && ischar(curres.(fn{k})) && strcmp(curres.(fn{k})(1), '@')
+            curres.(fn{k}) = str2func(char(curres.(fn{k})));
+        end
+    end
+    out = curres;
 end

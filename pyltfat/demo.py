@@ -1,11 +1,3 @@
-# This file is an extension of oct2py (Copyright (c) oct2py developers, distributed under the MIT License),
-# to simplify calling the LTFAT from Python.
-# Distributed under the terms of the GPL v3 License.
-
-# This file is intended for getting started quickly with calling LTFAT from Python.
-# It is not exhaustive. For further details, see e.g. the oct2py documentation under
-# https://blink1073.github.io/oct2py/source/info.html
-
 # import the LTFAT class
 from ltfatpy import LTFAT
 
@@ -38,14 +30,20 @@ lp.disp(ptr)
 #access the help for LTFAT functions (e.g. the function frame.m)
 help(lp.frame)
 
+lp.eval('demo_dgt')
+lp.extract_figures('./', remove=True)
+
+x=lp.dgt('gauss', 200, 10, verbose=False)
+
 #run an (ltfat-)function in Octave and return the result to Python
-x = lp.feval('svd', lp.hilb(3))
+x = lp.feval('svd', lp.hilb(3), verbose=False)
 x
 # specify three return values
 (u, v, d) = lp.feval('svd', lp.hilb(3), nout=3)
 u.shape
 
 # Evaluate an Octave command or commands.
+lines = []
 lp.eval('for i = 1:3; disp(i);end', stream_handler=lines.append)
 
 # the whole procedure for the frame object
