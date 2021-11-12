@@ -188,10 +188,14 @@ lowpass_at_zero = 0; %Set to 1 if there is a lowpass filter at zero frequency
 %% Determine total number of filters and natural subsampling factor for lowpass
 if flags.do_repeat 
     lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.
-    if lowpass_number == round(lowpass_number)
+    if abs(lowpass_number - round(lowpass_number)) < eps*10^3
+        lowpass_number = round(lowpass_number);
         lowpass_at_zero = 1;
     end
     lowpass_number = floor(lowpass_number);
+    if lowpass_number == 0
+        lowpass_number = 1;
+    end
     M2 = M + lowpass_number;
     aprecise = (basea.*scales_sorted(1))*ones(lowpass_number,1);
 elseif flags.do_single
@@ -200,7 +204,7 @@ elseif flags.do_single
     M2 = M+1;
     aprecise = (0.2.*scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
 else
-    lowpass_number = 0;
+    lowpass_number = 0;%this should never happen
     M2 = M;
     aprecise = [];
 end
@@ -333,7 +337,8 @@ if flags.do_single % Compute single lowpass from frequency response
     lowpass_bandwidth = 0.2/scales_sorted(4); % Twice the center frequency of the fourth scale
     taper_ratio = 1-scales_sorted(4)/scales_sorted(2); % Plateau width is twice the center frequency of the second scale
     [glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1),flags);
-    gout = [{glow},gout];
+    %[glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1)/3,flags);
+gout = [{glow},gout];
     fields = fieldnames(info);
     for kk = 1:length(fields) % Concatenate info and infolow
         if strcmp('a_natural',fields{kk})
@@ -374,7 +379,7 @@ else
     error('%s: This should not happen.',upper(mfilename));
 end
 
-%% Adjust the downsampling rates in order to achieve 'redtar'
+%% Adjust the downsampling rates in order to achieve 'redtar' [It may be possible to do this up front and not run filterbankscale]
 if ~isempty(kv.redtar)
     
     if size(a,2) == 2
@@ -506,6 +511,9 @@ if scales_sorted(1)>0
         infolow.foff(lowpass_number-kk+1) = glow{lowpass_number-kk+1}.foff(L);
     end
     infolow.fc = LP_range-(lowpass_number:-1:1)*LP_step; % Correct fc
+    %if infolow.fc(1) < LP_step/2 %Experimental
+    %    glow{1}.H = @(L) glow{1}.H(L)/sqrt(2);
+    %end
 elseif scales_sorted(1)<0
     if lowpass_at_zero
         lowpass_number = lowpass_number-1;
