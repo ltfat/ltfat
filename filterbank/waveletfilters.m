@@ -220,7 +220,7 @@ if any(aprecise<1)
 end
 
 %% Compute the downsampling rate
-if flags.do_regsampling
+if flags.do_regsampling % This should only be used for lowpass = single!!!
     a = ones(M2,1);
     
     [lower_scale,lower_idx] = max(scales);
@@ -368,7 +368,9 @@ elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale
             end
         end
     end
-else 
+elseif flags.do_none % No lowpass, do nothing
+    %Do nothing
+else
     error('%s: This should not happen.',upper(mfilename));
 end
 
@@ -520,6 +522,10 @@ elseif scales_sorted(1)<0
     infolow.fc = LP_range+(1:lowpass_number)*LP_step; % Correct fc   
 else
     error('%s: This should not happen.',upper(mfilename));
+end
+
+if numel(infolow.fc) == 0 % This value has no meaning and is only assigned to prevent errors.
+    infolow.cauchyAlpha = [];
 end
 
 % Correction of TFR
