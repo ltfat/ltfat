@@ -507,7 +507,10 @@ if scales_sorted(1)>0
         glow = {glow};
     end
     for kk = 1:lowpass_number % Correct foff
-        glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - floor(L*kk*LP_step/2);
+        %Flooring sometimes introduces rounding problems when the filter is
+        %too slim. 
+        %glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - floor(L*kk*LP_step/2);
+        glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - round(L*kk*LP_step/2);
         infolow.foff(lowpass_number-kk+1) = glow{lowpass_number-kk+1}.foff(L);
     end
     infolow.fc = LP_range-(lowpass_number:-1:1)*LP_step; % Correct fc

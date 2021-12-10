@@ -297,12 +297,18 @@ end
 [fun, fsupp_, peakpos, cauchyAlpha] = helper_waveletgeneratorfunc(name, wltype);
 
 %% calculate the support as f(scale)
+fsupp = zeros(5,M);
+fsupp(5,:) = kv.fs;
 basedil = peakpos/(kv.basefc);
-fsupp(1 ,:) = (fsupp_(1)/basedil)./scale;
-fsupp(2 ,:) = (fsupp_(2)/basedil)./scale;
-fsupp(3,:) = (peakpos/basedil)./scale;
-fsupp(4 ,:) = min(kv.fs,(fsupp_(4)/basedil)./scale);
-fsupp(5 ,:) = min(kv.fs,(fsupp_(5)/basedil)./scale);
+
+if kv.efsuppthr > 0
+    fsupp(1,:) = max(0,(fsupp_(1)/basedil)./scale);
+    fsupp(5,:) = min(kv.fs,(fsupp_(5)/basedil)./scale);
+end
+fsupp(2,:) = max(0,(fsupp_(2)/basedil)./scale);
+fsupp(3,:) = (fsupp_(3)/basedil)./scale;
+fsupp(4,:) = min(kv.fs,(fsupp_(4)/basedil)./scale);
+
 
 if flags.do_negative
     fsupp = flip(fsupp);

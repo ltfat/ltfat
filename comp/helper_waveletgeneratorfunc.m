@@ -321,13 +321,13 @@ end
 
 
 
-fsupp = [0 0 kv.fc kv.fs kv.fs];
+fsupp = [-inf -inf peakpos inf inf];
 if kv.efsuppthr > 0
-    fsupp(1) = max( 0,freqatheightasc(kv.efsuppthr));
-    fsupp(5) = min(kv.fs,freqatheightdesc(kv.efsuppthr));
+    fsupp(1) = freqatheightasc(kv.efsuppthr);
+    fsupp(5) = freqatheightdesc(kv.efsuppthr);
 end
-fsupp(2) = max( 0,freqatheightasc(kv.bwthr));
-fsupp(4) = min(kv.fs,freqatheightdesc(kv.bwthr));
+fsupp(2) = freqatheightasc(kv.bwthr);
+fsupp(4) = freqatheightdesc(kv.bwthr);
         
 end
 
