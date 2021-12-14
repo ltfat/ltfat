@@ -168,14 +168,9 @@ switch name{1}
                 upper(mfilename),order);
         end
         
-        if fb < 1 || round(fb) ~= fb
-            if strcmp('fbsp', winName) && fb < 2
-                error('%s: fb must be an integer and at least 2 (passed fb=%.2f).',...
-                    upper(mfilename),fb);
-            else
-                error('%s: fb must be an integer and at least 1 (passed fb=%.2f).',...
-                    upper(mfilename),fb);
-            end
+        if fb < 2
+                error('%s: fb must be at least 2 (passed fb=%.2f).',...
+                      upper(mfilename),fb);
         end
         
         peakpos = 1;
@@ -247,13 +242,8 @@ switch name{1}
         end
         
         if fb < 1 || round(fb) ~= fb
-            if strcmp('fbsp', winName) && fb < 2
-                error('%s: fb must be an integer and at least 2 (passed fb=%.2f).',...
-                    upper(mfilename),fb);
-            else
-                error('%s: fb must be an integer and at least 1 (passed fb=%.2f).',...
-                    upper(mfilename),fb);
-            end
+            error('%s: fb must be an integer and at least 1 (passed fb=%.2f).',...
+                upper(mfilename),fb);
         end
         
         peakpos = 1;
@@ -292,13 +282,8 @@ switch name{1}
         end
         
         if fb < 1 || round(fb) ~= fb
-            if strcmp('fbsp', winName) && fb < 2
-                error('%s: fb must be an integer and at least 2 (passed fb=%.2f).',...
-                    upper(mfilename),fb);
-            else
-                error('%s: fb must be an integer and at least 1 (passed fb=%.2f).',...
-                    upper(mfilename),fb);
-            end
+            error('%s: fb must be an integer and at least 1 (passed fb=%.2f).',...
+                upper(mfilename),fb);
         end
         
         peakpos = 1;

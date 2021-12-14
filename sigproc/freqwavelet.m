@@ -111,7 +111,7 @@ function [H,info] = freqwavelet(name,L, varargin)
 %     'econ'           The output is a `numel(scale)` cell array with
 %                      individual freq. domain wavelets truncated to the
 %                      length of the effective support given by parameter 'efsuppthr'.
-%                      runs not stably for system lengths > 2000
+%                      Does not run stably for system lengths > 2000
 %
 %     'asfreqfilter'   As 'econ', but the elements of the cell-array are
 %                      filter structs with fields .H and .foff as in 
