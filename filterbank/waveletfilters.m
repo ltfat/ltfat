@@ -417,8 +417,9 @@ if ~isempty(kv.redtar)
     end
     
     if ~flags.do_uniform
+        N_old = ceil(L./a_old);
         N_new=ceil(L./a_new);
-        a_new=[repmat(L,numel(N_new),1),N];
+        a_new=[repmat(L,numel(N_new),1),N_old];
     else 
         L = filterbanklength(L,a_new);
     end
