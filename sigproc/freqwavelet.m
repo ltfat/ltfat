@@ -195,6 +195,8 @@ function [H,info] = freqwavelet(name,L, varargin)
 %       .. math:: H = C exp(-j \omega x + \xi )
 %
 %
+%   References: rioul92 unalsc94
+%
 %   See also: normalize, filterbank, blfilter
 
 
