@@ -226,7 +226,7 @@ scales_sorted = sort(scales,'descend');
 M = numel(scales); 
 
 %% Generate mother wavelet to determine parameters from
-[gtmp,info] = freqwavelet(winCell,Ls,1,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);
+[~,info] = freqwavelet(winCell,Ls,1,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);
 basea = info.aprecise;
 
 lowpass_at_zero = 0; %Set to 1 if there is a lowpass filter at zero frequency
@@ -281,7 +281,6 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
     for kk = lower_scale:upper_scale
         tempidx = find( floor(log2(1./scales)) == kk );
         [~,tempminidx] = min(1/scales(tempidx));
-        %[~,tempminidx] = max(scales(tempidx));
         idx = tempidx(tempminidx);
         
         % Deal the integer subsampling factors
@@ -308,7 +307,7 @@ elseif flags.do_fractionaluniform
     if lowpass_at_zero
         aprecise(2:end)= min(aprecise(2:end));
     else 
-        aprecise= min(aprecise);
+        aprecise= repmat(min(aprecise),numel(aprecise),1);
     end
     N=ceil(Ls./aprecise);
     a=[repmat(Ls,M2,1),N];
