@@ -170,7 +170,30 @@ function [H,info] = freqwavelet(name,L, varargin)
 %
 %       .. math:: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
 %
-%   NOTE: Add definitions of other wavelets
+%   Morlet wavelet
+%
+%       H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%
+%       .. math:: H = C \xi^{\frac{\alpha-1}{2\gamma}} exp( -2\pi\xi^{\gamma} )
+%
+%   Frequency bandlimited spline wavelet
+%
+%       H = C B (\xi - m \frac{\xi}{4})
+%
+%       .. math:: H = C B (\xi - m \frac{\xi}{4})
+%
+%   Analytic spline wavelet
+%
+%       H = C exp(-j \omega x) A(-exp(j \omega)) H(exp(-j \omega)
+%
+%       .. math:: H = C exp(-j \omega x) A(-exp(j \omega)) H(exp(-j \omega))
+%
+%   Complex spline wavelet
+%
+%       H = C exp(-j \omega x + \xi )
+%
+%       .. math:: H = C exp(-j \omega x + \xi )
+%
 %
 %   See also: normalize, filterbank, blfilter
 
@@ -215,8 +238,6 @@ end
 %switch lower(winName)
 %  case 'cauchy'
 %    definput.keyvals.waveletParams = [300,0,3];
-%  otherwise
-%        disp('not yet implemented')
 %   case 'morse'
 %     definput.keyvals.waveletParams = [100,0,3];  
 %   case 'morlet'
@@ -226,7 +247,9 @@ end
 %   case 'analyticsp'
 %     definput.keyvals.waveletParams = [4, 2];
 %   case 'cplxsp'
-%     definput.keyvals.waveletParams = [4, 2];  
+%     definput.keyvals.waveletParams = [4, 2];
+%  otherwise
+%        disp('not yet implemented')
 %end 
 
 [flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin,'freqwavelet');
