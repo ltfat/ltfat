@@ -116,6 +116,16 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   Examples:
 %   ---------
 %
+%   In the first example, we analyze a glockenspiel signal with a
+%   regularly sampled wavelet filterbank and visualize the result:::
+%
+%     [f,fs]=gspi;  % Get the test signal
+%     Ls = length(f);
+%     scales = linspace(10,0.1,100);
+%     [g,a,fc,L]=waveletfilters(Ls,scales);
+%     c=filterbank(f,g,a);
+%     plotfilterbank(c,a,fc,fs,90);
+%
 %   In the second example, we construct a wavelet filterbank with several
 %   lowpass channels based on a Cauchy wavelet and verify it.
 %   The plot shows frequency responses of
@@ -262,8 +272,8 @@ end
 if flags.do_regsampling % This should only be used for lowpass = single!!!
     a = ones(M2,1);
     
-    [lower_scale,lower_idx] = max(scales);
-    [upper_scale,upper_idx] = min(scales);
+    [lower_scale,~] = max(scales);
+    [upper_scale,~] = min(scales);
     lower_scale = floor(log2(1/lower_scale));
     upper_scale = floor(log2(1/upper_scale));
     
@@ -271,6 +281,7 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
     for kk = lower_scale:upper_scale
         tempidx = find( floor(log2(1/scales)) == kk );
         [tempmin,tempminidx] = min(1/scales(tempidx));
+        %[~,tempminidx] = max(scales(tempidx));
         idx = tempidx(tempminidx);
         
         % Deal the integer subsampling factors
@@ -373,7 +384,7 @@ if flags.do_single % Compute single lowpass from frequency response
     taper_ratio = 1-scales_sorted(4)/scales_sorted(2); % Plateau width is twice the center frequency of the second scale
     [glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1),flags);
     %[glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1)/3,flags);
-gout = [{glow},gout];
+    gout = [{glow},gout];
     fields = fieldnames(info);
     for kk = 1:length(fields) % Concatenate info and infolow
         if strcmp('a_natural',fields{kk})
