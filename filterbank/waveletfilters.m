@@ -116,7 +116,42 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   Examples:
 %   ---------
 %
-%   BAUSTELLE: Add some examples, be inspired by audfilters or cqtfilters
+%   In the second example, we construct a wavelet filterbank with several
+%   lowpass channels based on a Cauchy wavelet and verify it.
+%   The plot shows frequency responses of
+%   filters used for analysis (top) and synthesis (bottom). :::
+%
+%     [f,fs]=greasy;  % Get the test signal
+%     Ls = length(f);
+%     M0 = 512; %Desired number of channels (without lowpass channels)
+%     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
+%     freq_step = max_freqDiv10/M0;
+%     rate = 44100;
+%     min_freqHz = rate/20*freq_step
+%     start_index = 10;
+%     min_scale_freq = min_freqHz*start_index
+%     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
+%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0-start_index+1);
+%     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
+%     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
+%     CauchyAlpha = 600;
+%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','repeat','energy', 'delay',delays, 'redtar', 8);
+%
+%     c=filterbank(f,{'realdual',g},a);
+%     r=2*real(ifilterbank(c,g,a));
+%     if length(r) > length(f)
+%         norm(r(1:length(f))-f)
+%     else
+%         norm(r-f(1:length(r)))
+%      end
+%     % Plot frequency responses of individual filters
+%     gd=filterbankrealdual(g,a,L);
+%     figure(1);
+%     subplot(2,1,1);
+%     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
+%
+%     subplot(2,1,2);
+%     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 % 
 %   See also: freqwavelet, filterbank, normalize
 
@@ -286,7 +321,7 @@ elseif numel(kv.delay) == 1
 elseif any(size(kv.delay,2)) == 1 && numel(kv.delay) >= M2
     delayvec = kv.delay(:);
 else
-    error('%s: delay must be scaler or have enough elements to cover all channels.',upper(mfilename));
+    error('%s: delay must either be a scalar or have enough elements to cover all channels.',upper(mfilename));
 end
 
 %% Compute the scaling of the filters
