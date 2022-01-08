@@ -279,8 +279,8 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
     
     % Find minimum a in each octave and floor23 it.
     for kk = lower_scale:upper_scale
-        tempidx = find( floor(log2(1/scales)) == kk );
-        [tempmin,tempminidx] = min(1/scales(tempidx));
+        tempidx = find( floor(log2(1./scales)) == kk );
+        [~,tempminidx] = min(1/scales(tempidx));
         %[~,tempminidx] = max(scales(tempidx));
         idx = tempidx(tempminidx);
         
