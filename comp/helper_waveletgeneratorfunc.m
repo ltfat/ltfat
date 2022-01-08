@@ -37,7 +37,7 @@ if ~ischar(name{1}) || ~any(strcmpi(name{1},freqwavelettypes))
         upper(mfilename));
 end
 
-winName = name(1);
+%winName = name(1);
 winArgs = name(2:end);
 
 definput.keyvals.fs = 2;
@@ -215,7 +215,7 @@ switch name{1}
 
         end
         
-        fun = @(y) prefun((abs(y)-1).*fb.*order./2+order/2)./prefun(order/2);
+        fun = @(y) prefun((abs(y)-1).*fb.*order./2+order./2)./prefun(order./2);
         
         freqatheightdesc = @(thr) determine_freqatheight(fun,peakpos,thr,1);%/basedil/scale(m);
         freqatheightasc= @(thr) determine_freqatheight(fun,peakpos,thr,0);%/basedil/scale(m);
@@ -253,7 +253,7 @@ switch name{1}
        else
             fun = @(y) (y<0).* (sinc( fb.*(abs(y) - 1) ).^order + sinc( fb.*( abs(y) + 1) ).^order);
        end
-        
+
         
         heightfun = @(y) min(1,(y>0).* ( 1./abs(fb.*(pi.*y - pi)+eps).^order + 1./abs(fb.*( pi.*y + pi )).^order ));
         freqatheightdesc = @(thr) determine_freqatheight(heightfun,peakpos,thr,1);%/basedil/scale(m);

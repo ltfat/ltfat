@@ -43,7 +43,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %   `[gout,a]=waveletfilters(...,'uniform')` constructs a uniform filterbank
 %   where the integer downsampling rate is the same for all the channels. This
-%   results in most redundant representation which produces nice plots.
+%   results in the most redundant representation which produces nice plots.
 %
 %   `[gout,a]=waveletfilters(...,'fractional')` constructs a filterbank with
 %   fractional downsampling rates *a*. 
