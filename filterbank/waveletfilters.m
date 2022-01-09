@@ -370,8 +370,77 @@ elseif flags.do_complex
     end
 end
 
+%% Adjust the downsampling rates in order to achieve 'redtar' [It may be possible to do this up front and not run filterbankscale]
+if ~isempty(kv.redtar)
+    
+    if size(a,2) == 2
+        a_old = a(:,1)./a(:,2);
+    else
+        a_old = a;
+    end
+    
+    if ~flags.do_real
+        org_red = sum(1./a_old);
+    elseif lowpass_at_zero
+        org_red = 1./a_old(1) + sum(2./a_old(2:end));
+    else
+        org_red = sum(2./a_old);
+    end
+    
+    a_new = floor(a*org_red/kv.redtar);
+    scal_new = org_red/kv.redtar*ones(1,M2);
+
+    % Adjust function handle generated delays
+    if isa(kv.delay,'function_handle')
+        delayvec = zeros(M2,1);
+        for kk = 1:M2
+            delayvec(kk) = kv.delay(kk-1,a_new(kk));
+        end
+        if flags.do_complex
+            % Replicate the delays, except at zero
+            % frequency
+            if lowpass_at_zero
+                delayvec=[delayvec;flipud(delayvec(2:end))];
+            else
+                delayvec=[delayvec;flipud(delayvec)];
+            end
+        end
+    end
+    
+    if ~flags.do_uniform
+        N_old = ceil(L./a_old);
+        N_new=ceil(L./a_new);
+        a_new=[repmat(L,numel(N_new),1),N_old];
+    else 
+        L = filterbanklength(L,a_new);
+    end
+    
+%     g_new = filterbankscale(gout,sqrt(scal_new));
+%     a = a_new;
+%     gout = g_new;
+%     
+%     if 0 % This is just for testing.
+%         if size(a_new,2) == 2
+%             a_test = a_new(:,1)./a_new(:,2);
+%         else
+%             a_test = a_new;
+%         end
+%         if ~flags.do_real
+%             new_red = sum(1./a_test);
+%         elseif lowpass_at_zero
+%             new_red = 1./a_test(1) + sum(2./a_test(2:end));
+%         else
+%             new_red = sum(2./a_test);
+%         end
+%         % Compute and display redundancy for verification
+%         fprintf('Original redundancy: %g \n', org_red);
+%         fprintf('Target redundancy: %g \n', kv.redtar);
+%         fprintf('Actual redundancy: %g \n', new_red);
+%     end
+end
+
 if flags.do_complex
-    [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2), 'delay', delayvec(M2+1:M2+M), flags.norm);
+    [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2), 'delay', delayvec(lowpass_number+1:M2+M), flags.norm);
     [gout_negative,info_negative] = freqwavelet(winCell,L,-flipud(scales),'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'negative','scal',scal(M2+1:M2+M),'delay', delayvec(M2+1:M2+M), flags.norm);
     gout = [gout_positive,gout_negative];
     fields = fieldnames(info_positive);
@@ -439,79 +508,79 @@ else
     error('%s: This should not happen.',upper(mfilename));
 end
 
-%% Adjust the downsampling rates in order to achieve 'redtar' [It may be possible to do this up front and not run filterbankscale]
-if ~isempty(kv.redtar)
+% %% Adjust the downsampling rates in order to achieve 'redtar' [It may be possible to do this up front and not run filterbankscale]
+ if ~isempty(kv.redtar)
+%     
+%     if size(a,2) == 2
+%         a_old = a(:,1)./a(:,2);
+%     else
+%         a_old = a;
+%     end
+%     
+%     if ~flags.do_real
+%         org_red = sum(1./a_old);
+%     elseif lowpass_at_zero
+%         org_red = 1./a_old(1) + sum(2./a_old(2:end));
+%     else
+%         org_red = sum(2./a_old);
+%     end
+%     
+%     a_new = floor(a*org_red/kv.redtar);
+%     scal_new = org_red/kv.redtar*ones(1,numel(gout));
     
-    if size(a,2) == 2
-        a_old = a(:,1)./a(:,2);
-    else
-        a_old = a;
-    end
+%     % Adjust function handle generated delays
+%     if isa(kv.delay,'function_handle')
+%         delayvec = zeros(M2,1);
+%         for kk = 1:M2
+%             delayvec(kk) = kv.delay(kk-1,a_new(kk));
+%         end
+%         if flags.do_complex
+%             % Replicate the delays, except at zero
+%             % frequency
+%             if lowpass_at_zero
+%                 delayvec=[delayvec;flipud(delayvec(2:end))];
+%             else
+%                 delayvec=[delayvec;flipud(delayvec)];
+%             end
+%         end
+%     end
     
-    if ~flags.do_real
-        org_red = sum(1./a_old);
-    elseif lowpass_at_zero
-        org_red = 1./a_old(1) + sum(2./a_old(2:end));
-    else
-        org_red = sum(2./a_old);
-    end
-    
-    a_new = floor(a*org_red/kv.redtar);
-    scal_new = org_red/kv.redtar*ones(1,numel(gout));
-    
-    % Adjust function handle generated delays
-    if isa(kv.delay,'function_handle')
-        delayvec = zeros(M2,1);
-        for kk = 1:M2
-            delayvec(kk) = kv.delay(kk-1,a_new(kk));
-        end
-        if flags.do_complex
-            % Replicate the delays, except at zero
-            % frequency
-            if lowpass_at_zero
-                delayvec=[delayvec;flipud(delayvec(2:end))];
-            else
-                delayvec=[delayvec;flipud(delayvec)];
-            end
-        end
-    end
-    
-    if ~flags.do_uniform
-        N_old = ceil(L./a_old);
-        N_new=ceil(L./a_new);
-        a_new=[repmat(L,numel(N_new),1),N_old];
-    else 
-        L = filterbanklength(L,a_new);
-    end
-    
-    g_new = filterbankscale(gout,sqrt(scal_new));
-    a = a_new;
-    gout = g_new;
-    
-    if 0 % This is just for testing.
-        if size(a_new,2) == 2
-            a_test = a_new(:,1)./a_new(:,2);
-        else
-            a_test = a_new;
-        end
-        if ~flags.do_real
-            new_red = sum(1./a_test);
-        elseif lowpass_at_zero
-            new_red = 1./a_test(1) + sum(2./a_test(2:end));
-        else
-            new_red = sum(2./a_test);
-        end
-        % Compute and display redundancy for verification
-        fprintf('Original redundancy: %g \n', org_red);
-        fprintf('Target redundancy: %g \n', kv.redtar);
-        fprintf('Actual redundancy: %g \n', new_red);
-    end
-end
+%     if ~flags.do_uniform
+%         N_old = ceil(L./a_old);
+%         N_new=ceil(L./a_new);
+%         a_new=[repmat(L,numel(N_new),1),N_old];
+%     else 
+%         L = filterbanklength(L,a_new);
+%     end
+%     
+     g_new = filterbankscale(gout,sqrt(scal_new));
+     a = a_new;
+     gout = g_new;
+%     
+%     if 0 % This is just for testing.
+%         if size(a_new,2) == 2
+%             a_test = a_new(:,1)./a_new(:,2);
+%         else
+%             a_test = a_new;
+%         end
+%         if ~flags.do_real
+%             new_red = sum(1./a_test);
+%         elseif lowpass_at_zero
+%             new_red = 1./a_test(1) + sum(2./a_test(2:end));
+%         else
+%             new_red = sum(2./a_test);
+%         end
+%         % Compute and display redundancy for verification
+%         fprintf('Original redundancy: %g \n', org_red);
+%         fprintf('Target redundancy: %g \n', kv.redtar);
+%         fprintf('Actual redundancy: %g \n', new_red);
+%     end
+ end
 
 % Apply delays (might want to move this to freqwavelet instead)
-%for kk = 1:numel(gout)
-%    gout{kk}.delay = delayvec(kk);
-%end
+for kk = 1:lowpass_number
+   gout{kk}.delay = delayvec(kk);
+end
 
 % Assign fc and adjust for sampling rate 
 fc = (kv.fs/2).*info.fc;
@@ -537,6 +606,7 @@ glow.H = @(L) fftshift(long2fir(...
 filterbankfreqz(P0,1,L).*Hinv(L),Lw(L)))*scal; 
 glow.foff = @(L) -floor(Lw(L)/2);
 glow.realonly = 0;
+glow.delay = 0;
 
 % Initialize and populate infolow
 infolow = struct();
