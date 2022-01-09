@@ -148,7 +148,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %     [f,fs]=greasy;  % Get the test signal
 %     Ls = length(f);
-%     M0 = 512; %Desired number of channels (without lowpass channels)
+%     M0 = 511; %Desired number of channels (without 0 Hz-lowpass channel)
 %     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
 %     freq_step = max_freqDiv10/M0;
 %     rate = 44100;
@@ -415,29 +415,9 @@ if ~isempty(kv.redtar)
         L = filterbanklength(L,a_new);
     end
     
-%     g_new = filterbankscale(gout,sqrt(scal_new));
-%     a = a_new;
-%     gout = g_new;
-%     
-%     if 0 % This is just for testing.
-%         if size(a_new,2) == 2
-%             a_test = a_new(:,1)./a_new(:,2);
-%         else
-%             a_test = a_new;
-%         end
-%         if ~flags.do_real
-%             new_red = sum(1./a_test);
-%         elseif lowpass_at_zero
-%             new_red = 1./a_test(1) + sum(2./a_test(2:end));
-%         else
-%             new_red = sum(2./a_test);
-%         end
-%         % Compute and display redundancy for verification
-%         fprintf('Original redundancy: %g \n', org_red);
-%         fprintf('Target redundancy: %g \n', kv.redtar);
-%         fprintf('Actual redundancy: %g \n', new_red);
-%     end
 end
+
+%% retrieve the wavelets
 
 if flags.do_complex
     [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2), 'delay', delayvec(lowpass_number+1:M2+M), flags.norm);
@@ -581,7 +561,7 @@ end
 for kk = 1:lowpass_number
    gout{kk}.delay = delayvec(kk);
 end
-
+info.startindex = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 fc = (kv.fs/2).*info.fc;
 end
@@ -620,7 +600,7 @@ infolow.bw = lowpass_bandwidth;
 infolow.tfr = 1; % This value has no meaning and is only assigned to prevent errors.
 infolow.aprecise = lowpass_bandwidth*L;
 infolow.a_natural = [L ceil(infolow.aprecise)];
-infolow.cauchyAlpha = 1; % This value has no meaning and is only assigned to prevent errors.
+infolow.cauchyAlpha = []; % This value has no meaning and is only assigned to prevent errors.
 
 end
 
