@@ -7,7 +7,6 @@ function [H,info] = freqwavelet(name,L, varargin)
 %   Input parameters:
 %         name  : Name of the wavelet
 %         L     : System length
-%         scale : Wavelet scale (relative to basic scale)
 %   Output parameters:
 %         H     : Frequency domain wavelet
 %         info  : Struct with additional outputs
@@ -68,6 +67,8 @@ function [H,info] = freqwavelet(name,L, varargin)
 %   the individual wavelets as columns.
 %
 %   The following additional flags and key-value parameters are available:
+%
+%         'scale'       Wavelet scale (relative to basic scale)
 %
 %     'waveletParams'   a vector containing the respective wavelet parameters
 %                       [alpha, beta, gamma] for cauchy and morse wavelets
@@ -309,7 +310,7 @@ M = numel(scale);
 info.fc    = zeros(1,M);
 info.basefc    = zeros(1,M);
 info.foff  = zeros(1,M);
-info.fsupp = L*ones(1,M);
+info.fsupp = [];
 info.scale = zeros(1,M);
 info.dilation = 0;
 info.bw    = zeros(1,M);
