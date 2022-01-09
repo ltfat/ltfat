@@ -356,8 +356,8 @@ elseif flags.do_complex
 end
 
 if flags.do_complex
-    [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2),flags.norm);
-    [gout_negative,info_negative] = freqwavelet(winCell,L,-flipud(scales),'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'negative','scal',scal(M2+1:M2+M),flags.norm);
+    [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2), 'delay', delayvec(M2+1:M2+M), flags.norm);
+    [gout_negative,info_negative] = freqwavelet(winCell,L,-flipud(scales),'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'negative','scal',scal(M2+1:M2+M),'delay', delayvec(M2+1:M2+M), flags.norm);
     gout = [gout_positive,gout_negative];
     fields = fieldnames(info_positive);
     info = struct();
@@ -369,9 +369,9 @@ if flags.do_complex
         end
     end
 elseif flags.do_analytic
-    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'analytic','scal',scal(lowpass_number+1:M2),flags.norm);
+    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'analytic','scal',scal(lowpass_number+1:M2),'delay', delayvec(lowpass_number+1:M2),flags.norm);
 else
-    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2),flags.norm);
+    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2),'delay', delayvec(lowpass_number+1:M2),flags.norm);
 end
     
 %% Generate lowpass filters if desired
@@ -494,9 +494,9 @@ if ~isempty(kv.redtar)
 end
 
 % Apply delays (might want to move this to freqwavelet instead)
-for kk = 1:numel(gout)
-    gout{kk}.delay = delayvec(kk);
-end
+%for kk = 1:numel(gout)
+%    gout{kk}.delay = delayvec(kk);
+%end
 
 % Assign fc and adjust for sampling rate 
 fc = (kv.fs/2).*info.fc;

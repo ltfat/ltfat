@@ -86,6 +86,9 @@ function [H,info] = freqwavelet(name,L, varargin)
 %     'scal',s         Scale the filter by the constant *s*. This can be
 %                      useful to equalize channels in a filter bank.
 %
+%     'delay',d        Set the delay of the filter. Can be either a scalar or
+%                      a vector of the same length as *scale*. Default value is zero.
+%
 %   The admissible range of scales can be adjusted to handle different 
 %   scenarios:
 %
@@ -223,6 +226,7 @@ definput.importdefaults={'null'};
 definput.keyvals.scale = 1;
 definput.keyvals.scal = [];
 definput.keyvals.basefc = 0.1;
+definput.keyvals.delay=0;
 definput.keyvals.fc = [];
 definput.keyvals.bwthr = 10^(-3/10);
 definput.keyvals.efsuppthr = 10^(-5);
@@ -288,6 +292,13 @@ if flags.do_analytic && (any(scale <= 0) || any(kv.basefc./scale > 2))
     error('%s: Frequency range flag is set to analytic. scale must be positive and not smaller than 2*basefc.', upper(mfilename)); 
 end
 
+% Check delay vector
+if numel(kv.delay) == 1
+    kv.delay = repmat(kv.delay, 1, numel(scale));
+end
+if numel(kv.delay) ~= numel(scale)
+    error('%s: delay must have exactly as many entries as scale',upper(mfilename));
+end
 % Check other parameters
 if kv.efsuppthr < 0, error('%s: efsuppthr must be nonnegative',upper(mfilename)); end
 if kv.bwthr < 0, error('%s: bwthr must be nonnegative',upper(mfilename)); end
@@ -358,7 +369,7 @@ elseif flags.do_econ
 elseif flags.do_asfreqfilter
     for m = 1:numel(scale)
         y = @(L) ((fsuppL_inner(fsupp(:,m),kv.fs,L,1):fsuppL_inner(fsupp(:,m),kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-        H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp(:,m),kv.fs,L,1),'realonly',0);
+        H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp(:,m),kv.fs,L,1),'realonly',0, 'delay', kv.delay(m));
    end
 end
 
