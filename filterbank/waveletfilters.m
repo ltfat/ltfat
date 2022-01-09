@@ -18,9 +18,23 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   to a wavelet filter with peak positioned at the frequency 0.1 relative 
 %   to the Nyquist rate.
 %
-%   BAUSTELLE---Something about the default wavelet and parameters, also refer to 
-%   |freqwavelet| for more information---
-%   
+%   Wavelet types
+%   --------------------
+%
+%   The following wavelets can be passed as a flag:
+%
+%   'cauchy'     Cauchy wavelet (default parameters [alpha beta gamma] = [300 0 3])
+%
+%   'morse'      Generalized morse wavelet (default parameters [alpha beta gamma] = [300 0 3])
+%
+%   'morlet'     Morlet wavelet (default parameters sigma = [4])
+%
+%   'fbsp'       Frequency B-spline wavelet (default parameters [order fb] = [4 2])
+%
+%   'analyticsp' Analytic spline wavelet (default parameters [order fb] = [4 2])
+%
+%   'cplxsp'     Complex spline wavelet (default parameters [order fb] = [4 2])
+%
 %   For more details on the construction of the wavelets and the available
 %   wavelet types, please see |freqwavelet|. 
 %
@@ -117,12 +131,13 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   ---------
 %
 %   In the first example, we analyze a glockenspiel signal with a
-%   regularly sampled wavelet filterbank and visualize the result:::
+%   regularly sampled wavelet filterbank using a frequency B-spline
+%   wavelet of order 4 and with parameter fb=3 and visualize the result:::
 %
 %     [f,fs]=gspi;  % Get the test signal
 %     Ls = length(f);
 %     scales = linspace(10,0.1,100);
-%     [g,a,fc,L]=waveletfilters(Ls,scales);
+%     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3});
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90);
 %
@@ -226,7 +241,7 @@ scales_sorted = sort(scales,'descend');
 M = numel(scales); 
 
 %% Generate mother wavelet to determine parameters from
-[~,info] = freqwavelet(winCell,Ls,1,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);
+[~,info] = freqwavelet(winCell,Ls,1,'asfreqfilter', 'efsuppthr',kv.trunc_at,'basefc',0.1);
 basea = info.aprecise;
 
 lowpass_at_zero = 0; %Set to 1 if there is a lowpass filter at zero frequency
