@@ -313,6 +313,7 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
         L = filterbanklength(Ls,a);
     end
     
+    N=ceil(L./a);
 elseif flags.do_fractional
     L = Ls;
     N=ceil(Ls./aprecise);
@@ -505,7 +506,7 @@ end
         org_red = sum(2./a_old);
     end
     
-    a_new = floor(a*org_red/kv.redtar);
+    a_new = floor(a_old*org_red/kv.redtar);
     scal_new = org_red/kv.redtar*ones(1,numel(gout));
     
     % Adjust function handle generated delays
@@ -526,9 +527,13 @@ end
     end
     
     if ~flags.do_uniform
-        N_old = ceil(L./a_old);
+        %N_old = ceil(L./a_old);
         N_new=ceil(L./a_new);
-        a_new=[repmat(L,numel(N_new),1),N_old];
+        %a_new=[repmat(L,numel(N_new),1),N_old];
+        if flags.do_complex
+            N_new = [N_new;N_new(end:-1:2)];
+        end
+        a_new=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a_new);
     end
