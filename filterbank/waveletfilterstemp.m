@@ -262,7 +262,7 @@ elseif flags.do_single
     lowpass_number = 1;
     lowpass_at_zero = 1;
     M2 = M+1;
-    aprecise = (0.2.*scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
+    aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
 else
     lowpass_number = 0;%this should never happen
     M2 = M;
@@ -450,11 +450,11 @@ if flags.do_single % Compute single lowpass from frequency response
     gout = [{glow},gout];
     fields = fieldnames(info);
     for kk = 1:length(fields) % Concatenate info and infolow
-        if strcmp('a_natural',fields{kk})
-            info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk})];
-        else
+        %if strcmp('a_natural',fields{kk})
+        %    info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk})];
+        %else
             info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
-        end
+        %end
     end
 elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale wavelet with shifted center frequency
     if numel(scales_sorted) < 2 %This function fails for fewer than two elements in scales
@@ -467,19 +467,19 @@ elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale
         [ghigh,infohigh] = wavelet_lowpass_repeat(winCell,-scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(end:-1:end-lowpass_number+1),kv,flags);
         gout = [gout,ghigh];
         for kk = 1:length(fields) % Concatenate info with infolow and infohigh
-            if strcmp('a_natural',fields{kk})
-                info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk});infohigh.(fields{kk})];
-            else
+           % if strcmp('a_natural',fields{kk})
+           %     info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk});infohigh.(fields{kk})];
+           % else
                 info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk}),infohigh.(fields{kk})];
-            end
+           % end
         end
     else
         for kk = 1:length(fields) % Concatenate info and infolow
-            if strcmp('a_natural',fields{kk})
-                info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk})];
-            else
+          %  if strcmp('a_natural',fields{kk})
+          %      info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk})];
+          %  else
                 info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
-            end
+          %  end
         end
     end
 elseif flags.do_none % No lowpass, do nothing
@@ -490,48 +490,48 @@ end
 
 % %% Adjust the downsampling rates in order to achieve 'redtar' [It may be possible to do this up front and not run filterbankscale]
  if ~isempty(kv.redtar)
-%     
-%     if size(a,2) == 2
-%         a_old = a(:,1)./a(:,2);
-%     else
-%         a_old = a;
-%     end
-%     
-%     if ~flags.do_real
-%         org_red = sum(1./a_old);
-%     elseif lowpass_at_zero
-%         org_red = 1./a_old(1) + sum(2./a_old(2:end));
-%     else
-%         org_red = sum(2./a_old);
-%     end
-%     
-%     a_new = floor(a*org_red/kv.redtar);
-%     scal_new = org_red/kv.redtar*ones(1,numel(gout));
     
-%     % Adjust function handle generated delays
-%     if isa(kv.delay,'function_handle')
-%         delayvec = zeros(M2,1);
-%         for kk = 1:M2
-%             delayvec(kk) = kv.delay(kk-1,a_new(kk));
-%         end
-%         if flags.do_complex
-%             % Replicate the delays, except at zero
-%             % frequency
-%             if lowpass_at_zero
-%                 delayvec=[delayvec;flipud(delayvec(2:end))];
-%             else
-%                 delayvec=[delayvec;flipud(delayvec)];
-%             end
-%         end
-%     end
+    if size(a,2) == 2
+        a_old = a(:,1)./a(:,2);
+    else
+        a_old = a;
+    end
     
-%     if ~flags.do_uniform
-%         N_old = ceil(L./a_old);
-%         N_new=ceil(L./a_new);
-%         a_new=[repmat(L,numel(N_new),1),N_old];
-%     else 
-%         L = filterbanklength(L,a_new);
-%     end
+    if ~flags.do_real
+        org_red = sum(1./a_old);
+    elseif lowpass_at_zero
+        org_red = 1./a_old(1) + sum(2./a_old(2:end));
+    else
+        org_red = sum(2./a_old);
+    end
+    
+    a_new = floor(a*org_red/kv.redtar);
+    scal_new = org_red/kv.redtar*ones(1,numel(gout));
+    
+    % Adjust function handle generated delays
+    if isa(kv.delay,'function_handle')
+        delayvec = zeros(M2,1);
+        for kk = 1:M2
+            delayvec(kk) = kv.delay(kk-1,a_new(kk));
+        end
+        if flags.do_complex
+            % Replicate the delays, except at zero
+            % frequency
+            if lowpass_at_zero
+                delayvec=[delayvec;flipud(delayvec(2:end))];
+            else
+                delayvec=[delayvec;flipud(delayvec)];
+            end
+        end
+    end
+    
+    if ~flags.do_uniform
+        N_old = ceil(L./a_old);
+        N_new=ceil(L./a_new);
+        a_new=[repmat(L,numel(N_new),1),N_old];
+    else 
+        L = filterbanklength(L,a_new);
+    end
 %     
      g_new = filterbankscale(gout,sqrt(scal_new));
      a = a_new;
@@ -600,7 +600,8 @@ infolow.bw = lowpass_bandwidth;
 infolow.tfr = 1; % This value has no meaning and is only assigned to prevent errors.
 infolow.aprecise = lowpass_bandwidth*L;
 infolow.a_natural = [L ceil(infolow.aprecise)];
-infolow.cauchyAlpha = []; % This value has no meaning and is only assigned to prevent errors.
+infolow.a_natural = infolow.a_natural';
+infolow.cauchyAlpha = 1; % This value has no meaning and is only assigned to prevent errors.
 
 end
 

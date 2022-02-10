@@ -1,4 +1,4 @@
-function [afull, L] = c_comp_downsampling(Ls, M2, scales, aprecise, lowpass_at_zero, flags, kv)
+function [a, L] = c_comp_downsampling(Ls, M2, scales, aprecise, lowpass_at_zero, flags, kv)
 %account for downsampling type and target redundancy
 if ~isnumeric(scales) || any(scales <= 0)
     error('%s: scales must be positive and numeric.',upper(mfilename));
@@ -24,7 +24,7 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
     
     % Find minimum a in each octave and floor23 it.
     for kk = lower_scale:upper_scale
-        tempidx = find( floor(log2(1/scales)) == kk );
+        tempidx = find( floor(log2(1./scales)) == kk );
         [~,tempminidx] = min(1/scales(tempidx));
         idx = tempidx(tempminidx);
         
@@ -52,7 +52,7 @@ elseif flags.do_fractionaluniform
     if lowpass_at_zero
         aprecise(2:end)= min(aprecise(2:end));
     else 
-        aprecise= min(aprecise);
+        aprecise= repmat(min(aprecise),numel(aprecise),1);
     end
     N=ceil(Ls./aprecise);
     a=[repmat(Ls,M2,1),N];
@@ -61,19 +61,18 @@ elseif flags.do_uniform
     L=filterbanklength(Ls,a);
     a = repmat(a,M2,1);
 end
-
 afull=comp_filterbank_a(a,M2,struct());
 
 %==========================================================================
 %% Adjust the downsampling rates in order to achieve 'redtar'
+    
+if size(afull,2) == 2
+    a = afull(:,1)./afull(:,2);
+else
+    a = afull;
+end
 if ~isempty(kv.redtar)
-    
-    if size(a,2) == 2
-        a_old = afull(:,1)./afull(:,2);
-    else
-        a_old = afull;
-    end
-    
+    a_old = a;
     if ~flags.do_real
         org_red = sum(1./a_old);
     elseif lowpass_at_zero
@@ -82,7 +81,7 @@ if ~isempty(kv.redtar)
         org_red = sum(2./a_old);
     end
     
-    afull = floor(a*org_red/kv.redtar);
+    a_new = floor(a*org_red/kv.redtar);
 %    scal_new = org_red/kv.redtar*ones(1,numel(gout));
 
     if ~flags.do_uniform
@@ -92,7 +91,7 @@ if ~isempty(kv.redtar)
         if flags.do_complex
             N_new = [N_new;N_new(end:-1:2)];
         end
-        afull=[repmat(L,numel(N_new),1),N_new];
+        a_new=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
     end

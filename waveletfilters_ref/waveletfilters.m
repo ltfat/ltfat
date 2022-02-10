@@ -176,7 +176,7 @@ if size(scales,2)>1
 end
 
 % Get number of scales
-M = numel(scales); 
+%M = numel(scales); 
 
 %% Generate mother wavelet to determine parameters from
 [~,info] = freqwavelet(winCell,Ls,1,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);

@@ -68,7 +68,7 @@ function [H,info] = freqwavelet(name,L, varargin)
 %
 %   The following additional flags and key-value parameters are available:
 %
-%         'scale'       Wavelet scale (relative to basic scale)
+%     'scale'           Wavelet scale (relative to basic scale)
 %
 %     'waveletParams'   a vector containing the respective wavelet parameters
 %                       [alpha, beta, gamma] for cauchy and morse wavelets
