@@ -18,9 +18,23 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   to a wavelet filter with peak positioned at the frequency 0.1 relative 
 %   to the Nyquist rate.
 %
-%   BAUSTELLE---Something about the default wavelet and parameters, also refer to 
-%   |freqwavelet| for more information---
-%   
+%   Wavelet types
+%   --------------------
+%
+%   The following wavelets can be passed as a flag:
+%
+%   'cauchy'     Cauchy wavelet (default parameters [alpha beta gamma] = [300 0 3])
+%
+%   'morse'      Generalized morse wavelet (default parameters [alpha beta gamma] = [300 0 3])
+%
+%   'morlet'     Morlet wavelet (default parameters sigma = [4])
+%
+%   'fbsp'       Frequency B-spline wavelet (default parameters [order fb] = [4 2])
+%
+%   'analyticsp' Analytic spline wavelet (default parameters [order fb] = [4 2])
+%
+%   'cplxsp'     Complex spline wavelet (default parameters [order fb] = [4 2])
+%
 %   For more details on the construction of the wavelets and the available
 %   wavelet types, please see |freqwavelet|. 
 %
@@ -43,7 +57,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %   `[gout,a]=waveletfilters(...,'uniform')` constructs a uniform filterbank
 %   where the integer downsampling rate is the same for all the channels. This
-%   results in most redundant representation which produces nice plots.
+%   results in the most redundant representation which produces nice plots.
 %
 %   `[gout,a]=waveletfilters(...,'fractional')` constructs a filterbank with
 %   fractional downsampling rates *a*. 
@@ -116,7 +130,53 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   Examples:
 %   ---------
 %
-%   BAUSTELLE: Add some examples, be inspired by audfilters or cqtfilters
+%   In the first example, we analyze a glockenspiel signal with a
+%   regularly sampled wavelet filterbank using a frequency B-spline
+%   wavelet of order 4 and with parameter fb=3 and visualize the result:::
+%
+%     [f,fs]=gspi;  % Get the test signal
+%     Ls = length(f);
+%     scales = linspace(10,0.1,100);
+%     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3});
+%     c=filterbank(f,g,a);
+%     plotfilterbank(c,a,fc,fs,90);
+%
+%   In the second example, we construct a wavelet filterbank with several
+%   lowpass channels based on a Cauchy wavelet and verify it.
+%   The plot shows frequency responses of
+%   filters used for analysis (top) and synthesis (bottom). :::
+%
+%     [f,fs]=greasy;  % Get the test signal
+%     Ls = length(f);
+%     M0 = 511; %Desired number of channels (without 0 Hz-lowpass channel)
+%     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
+%     freq_step = max_freqDiv10/M0;
+%     rate = 44100;
+%     min_freqHz = rate/20*freq_step
+%     start_index = 10;
+%     min_scale_freq = min_freqHz*start_index
+%     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
+%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0-start_index+1);
+%     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
+%     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
+%     CauchyAlpha = 600;
+%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','repeat','energy', 'delay',delays, 'redtar', 8);
+%
+%     c=filterbank(f,{'realdual',g},a);
+%     r=2*real(ifilterbank(c,g,a));
+%     if length(r) > length(f)
+%         norm(r(1:length(f))-f)
+%     else
+%         norm(r-f(1:length(r)))
+%      end
+%     % Plot frequency responses of individual filters
+%     gd=filterbankrealdual(g,a,L);
+%     figure(1);
+%     subplot(2,1,1);
+%     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
+%
+%     subplot(2,1,2);
+%     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 % 
 %   See also: freqwavelet, filterbank, normalize
 
@@ -176,7 +236,7 @@ end
 basea = info.aprecise;
 
 % Sort scales for later use
-scales_sorted = sort(scales,'descend');
+%scales_sorted = sort(scales,'descend');
 
 %% Determine total number of filters and natural subsampling factor for lowpass
 [aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
@@ -208,39 +268,7 @@ else
 end
     
 %% Generate lowpass filters if desired
-if flags.do_single % Compute single lowpass from frequency response
-    lowpass_bandwidth = 0.2/scales_sorted(4); % Twice the center frequency of the fourth scale
-    taper_ratio = 1-scales_sorted(4)/scales_sorted(2); % Plateau width is twice the center frequency of the second scale
-    [glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1),flags);
-    gout = [{glow},gout];
-    fields = fieldnames(info);
-    for kk = 1:length(fields) % Concatenate info and infolow
-            info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
-    end
-elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale wavelet with shifted center frequency
-    if numel(scales_sorted) < 2 %This function fails for fewer than two elements in scales
-        error('%s: Lowpass generation requires at least two scales.',upper(mfilename));
-    end
-    [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(1:lowpass_number),kv,flags);
-    gout = [glow,gout];
-    fields = fieldnames(info);
-    if flags.do_complex  
-        [ghigh,infohigh] = wavelet_lowpass_repeat(winCell,-scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(end:-1:end-lowpass_number+1),kv,flags);
-        gout = [gout,ghigh];
-        for kk = 1:length(fields) % Concatenate info with infolow and infohigh
-                info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk}),infohigh.(fields{kk})];
-        end
-    else
-        for kk = 1:length(fields) % Concatenate info and infolow
-                info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
-        end
-    end
-elseif flags.do_none % No lowpass, do nothing
-    %Do nothing
-else
-    error('%s: This should not happen.',upper(mfilename));
-end
-
+[gout, info] = c_make_filters(gout, a, L, info, scales, scal, flags);
 
 % Apply delays (these are now for the lowpasses only)
 for kk = 1:numel(gout)
@@ -249,95 +277,5 @@ end
 info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 fc = (kv.fs/2).*info.fc;
-end
-
-%% Lowpass filters
-function [glow,infolow] = wavelet_lowpass(g,a,L,lowpass_bandwidth,taper_ratio,scal,flags)
-
-Lw = @(L) min(ceil(lowpass_bandwidth*L),L);
-
-% Compute tapered window
-P0 = blfilter({'hann','taper',taper_ratio},lowpass_bandwidth,'fs',2,'inf');
-% Compute the necessary compensation of the filterbank response
-if flags.do_real
-    temp_fbresp = @(L) filterbankresponse(g,a(2:end,:),L,'real');
-else
-    temp_fbresp = @(L) filterbankresponse(g,a(2:end,:),L);
-end
-Hinv = @(L) sqrt(max(temp_fbresp(L))-temp_fbresp(L));
-
-% Compute the final low-pass filter
-glow.H = @(L) fftshift(long2fir(...
-filterbankfreqz(P0,1,L).*Hinv(L),Lw(L)))*scal; 
-glow.foff = @(L) -floor(Lw(L)/2);
-glow.realonly = 0;
-glow.delay = 0;
-
-% Initialize and populate infolow
-infolow = struct();
-infolow.fc = 0;
-infolow.foff = glow.foff(L);
-infolow.fsupp = Lw(L);
-infolow.basefc = 0; % This value has no meaning and is only assigned to prevent errors.
-infolow.scale = 0; % This value has no meaning and is only assigned to prevent errors.
-infolow.dilation = 0; % This value has no meaning and is only assigned to prevent errors.
-infolow.bw = lowpass_bandwidth;
-infolow.tfr = 1; % This value has no meaning and is only assigned to prevent errors.
-infolow.aprecise = lowpass_bandwidth*L;
-infolow.a_natural = [L ceil(infolow.aprecise)];
-infolow.a_natural = infolow.a_natural';
-infolow.cauchyAlpha = 1; % This value has no meaning and is only assigned to prevent errors.
-
-end
-
-function [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted,L,lowpass_number,lowpass_at_zero,scal,kv,flags)
-
-% Compute frequency range to be covered and step between lowpass filters
-LP_range = 0.1/scales_sorted(1);
-LP_step = abs(0.1/scales_sorted(2)-LP_range);
-
-% Distinguish between positive and negative scales
-if scales_sorted(1)>0
-    [glow,infolow] = freqwavelet(winCell,L,repmat(scales_sorted(1),1,lowpass_number),...
-        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal,flags.norm);
-    if ~iscell(glow)
-        glow = {glow};
-    end
-    for kk = 1:lowpass_number % Correct foff
-        %Flooring sometimes introduces rounding problems when the filter is
-        %too slim. 
-        %glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - floor(L*kk*LP_step/2);
-        glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - round(L*kk*LP_step/2);
-        infolow.foff(lowpass_number-kk+1) = glow{lowpass_number-kk+1}.foff(L);
-    end
-    infolow.fc = LP_range-(lowpass_number:-1:1)*LP_step; % Correct fc
-    %if infolow.fc(1) < LP_step/2 %Experimental
-    %    glow{1}.H = @(L) glow{1}.H(L)/sqrt(2);
-    %end
-elseif scales_sorted(1)<0
-    if lowpass_at_zero
-        lowpass_number = lowpass_number-1;
-    end
-    [glow,infolow] = freqwavelet(winCell,L,repmat(scales_sorted(1),1,lowpass_number),...
-        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal,'negative',flags.norm);
-    if ~iscell(glow)
-        glow = {glow};
-    end
-    for kk = 1:lowpass_number % Correct foff
-        glow{kk}.foff = @(L) glow{kk}.foff(L) + floor(L*kk*LP_step/2);
-        infolow.foff(kk) = glow{kk}.foff(L);
-    end
-    infolow.fc = LP_range+(1:lowpass_number)*LP_step; % Correct fc   
-else
-    error('%s: This should not happen.',upper(mfilename));
-end
-
-if numel(infolow.fc) == 0 % This value has no meaning and is only assigned to prevent errors.
-    infolow.cauchyAlpha = [];
-end
-
-% Correction of TFR
-%infolow.tfr = @(L) ones(LP_num,1); %This should be unnecessary, as infolow.tfr is expected to be correct.
-  
 end
 
