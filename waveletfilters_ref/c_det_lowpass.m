@@ -5,18 +5,6 @@ function [aprecise, M2, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, sca
 %#lowpass
 %lowpass_at_zero...flag
 
-if ~isnumeric(scales) || any(scales <= 0)
-    error('%s: scales must be positive and numeric.',upper(mfilename));
-end
-
-if size(scales,2)>1
-    if size(scales,1)==1
-        % scales was a row vector.
-        scales=scales(:);
-    else
-        error('%s: scales must be a vector.',upper(mfilename));
-    end
-end
 
 if numel(scales) < 4 && flags.do_single
     error('%s: Lowpass generation requires at least 4 scales.',upper(mfilename));
@@ -24,12 +12,9 @@ elseif numel(scales) < 2 && flags.do_repeat
     error('%s: Lowpass generation requires at least two scales.',upper(mfilename));
 end
 
-% Sort scales for later use
-scales_sorted = sort(scales,'descend');
-
-% Get number of scales
+% Get number of scales and sort them
 M = numel(scales);
-
+scales_sorted = sort(scales,'descend');
 %% Determine total number of filters and natural subsampling factor for lowpass
 if flags.do_repeat 
     lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.

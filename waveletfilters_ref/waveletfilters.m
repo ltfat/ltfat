@@ -157,11 +157,6 @@ if ~isempty(kv.redtar)
     end
 end
 
-% We probably do not care about this. 
-% if kv.redtar <= 1
-%     warning('%s: redtar is very low; the resulting system might be unstable.',upper(mfilename));
-% end
-
 if ~isnumeric(scales) || any(scales <= 0)
     error('%s: scales must be positive and numeric.',upper(mfilename));
 end
@@ -175,8 +170,6 @@ if size(scales,2)>1
     end
 end
 
-% Get number of scales
-%M = numel(scales); 
 
 %% Generate mother wavelet to determine parameters from
 [~,info] = freqwavelet(winCell,Ls,1,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);
@@ -184,133 +177,21 @@ basea = info.aprecise;
 
 % Sort scales for later use
 scales_sorted = sort(scales,'descend');
-%lowpass_at_zero = 0; %Set to 1 if there is a lowpass filter at zero frequency
-%% Determine total number of filters and natural subsampling factor for lowpass
-% if flags.do_repeat 
-%     lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.
-%     if abs(lowpass_number - round(lowpass_number)) < eps*10^3
-%         lowpass_number = round(lowpass_number);
-%         lowpass_at_zero = 1;
-%     end
-%     lowpass_number = floor(lowpass_number);
-%     if lowpass_number == 0
-%         lowpass_number = 1;
-%     end
-%     M2 = M + lowpass_number;
-%     aprecise = (basea.*scales_sorted(1))*ones(lowpass_number,1);
-% elseif flags.do_single
-%     lowpass_number = 1;
-%     lowpass_at_zero = 1;
-%     M2 = M+1;
-%     aprecise = (0.2.*scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
-% else
-%     lowpass_number = 0;%this should never happen
-%     M2 = M;
-%     aprecise = [];
-% end
-% 
-% %% Get subsampling factors
-% aprecise = [aprecise;basea.*scales];
-% 
-% if any(aprecise<1)
-%     error(['%s: Bandwidth of one of the filters is bigger than fs. ',...
-%            'This should not happen'],upper(mfilename));
-% end
-% 
-% aprecise=aprecise/kv.redmul;
-% if any(aprecise<1)
-%     error('%s: The maximum redundancy mult. for this setting is %5.2f',...
-%          upper(mfilename), min(basea./scales));
-% end
-[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
-%% Compute the downsampling rate
-% if flags.do_regsampling % This should only be used for lowpass = single!!!
-%     a = ones(M2,1);
-%     
-%     [lower_scale,lower_idx] = max(scales);
-%     [upper_scale,upper_idx] = min(scales);
-%     lower_scale = floor(log2(1/lower_scale));
-%     upper_scale = floor(log2(1/upper_scale));
-%     
-%     % Find minimum a in each octave and floor23 it.
-%     for kk = lower_scale:upper_scale
-%         tempidx = find( floor(log2(1/scales)) == kk );
-%         [tempmin,tempminidx] = min(1/scales(tempidx));
-%         idx = tempidx(tempminidx);
-%         
-%         % Deal the integer subsampling factors
-%         a(tempidx) = floor23(aprecise(idx));
-%     end   
-%     
-%     % Determine the minimal transform length lcm(a)
-%     L = filterbanklength(Ls,a);
-%     
-%     % Heuristic trying to reduce lcm(a)
-%     while L>2*Ls && ~(all(a==a(1)))
-%         maxa = max(a);
-%         a(a==maxa) = 0;
-%         a(a==0) = max(a);
-%         L = filterbanklength(Ls,a);
-%     end
-%     
-% elseif flags.do_fractional
-%     L = Ls;
-%     N=ceil(Ls./aprecise);
-%     a=[repmat(Ls,M2,1),N];
-% elseif flags.do_fractionaluniform
-%     L = Ls;
-%     if lowpass_at_zero
-%         aprecise(2:end)= min(aprecise(2:end));
-%     else 
-%         aprecise= min(aprecise);
-%     end
-%     N=ceil(Ls./aprecise);
-%     a=[repmat(Ls,M2,1),N];
-% elseif flags.do_uniform
-%     a=floor(min(aprecise));
-%     L=filterbanklength(Ls,a);
-%     a = repmat(a,M2,1);
-% end
 
+%% Determine total number of filters and natural subsampling factor for lowpass
+[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
+
+%% Compute the downsampling rate
 [a, L] = c_comp_downsampling(Ls, M, scales, aprecise, lowpass_at_zero, flags, kv);
 % Get an expanded "a"
 %afull=comp_filterbank_a(a,M2,struct());
 
 %% Check or compute numeric delay vector
-% if isa(kv.delay,'function_handle')
-%     delayvec = zeros(M2,1);
-%     for kk = 1:M2
-%         delayvec(kk) = kv.delay(kk-1,afull(kk,1)./afull(kk,2));
-%     end
-% elseif numel(kv.delay) == 1
-%     delayvec = repmat(kv.delay,M2,1);
-% elseif any(size(kv.delay,2)) == 1 && numel(kv.delay) >= M2
-%     delayvec = kv.delay(:);
-% else
-%     error('%s: delay must be scaler or have enough elements to cover all channels.',upper(mfilename));
-% end
 delayvec = c_comp_delay(kv, M, a);
+
 %% Compute the scaling of the filters
-% Individual filter peaks are made square root of the subsampling factor
-% scal=sqrt(afull(:,1)./afull(:,2));
-% 
-% if flags.do_real && lowpass_at_zero
-%     % Scale the lowpass filters
-%     scal(1)=scal(1)/sqrt(2);
-% elseif flags.do_complex
-%     % Replicate the scaling, sampling rates and delays, except at zero
-%     % frequency
-%     if lowpass_at_zero
-%        a=[a;flipud(a(2:end,:))];
-%        scal=[scal;flipud(scal(2:end))];
-%        delayvec=[delayvec;flipud(delayvec(2:end))];
-%     else
-%         a=[a;flipud(a)];
-%         scal=[scal;flipud(scal)];
-%         delayvec=[delayvec;flipud(delayvec)];
-%     end
-% end
-[a, scal, delayvec] = c_comp_scaling(a, delayvec, lowpass_at_zero, flags);
+[scal, a, delayvec] = c_comp_scaling(a, delayvec, lowpass_at_zero, flags);
+
 if flags.do_complex
     [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2),flags.norm);
     [gout_negative,info_negative] = freqwavelet(winCell,L,-flipud(scales),'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'negative','scal',scal(M2+1:M2+M),flags.norm);
@@ -318,11 +199,7 @@ if flags.do_complex
     fields = fieldnames(info_positive);
     info = struct();
     for kk = 1:length(fields)
-    %    if strcmp('a_natural',fields{kk})
-    %        info.(fields{kk}) = [info_positive.(fields{kk});info_negative.(fields{kk})];
-    %    else
             info.(fields{kk}) = [info_positive.(fields{kk}),info_negative.(fields{kk})];
-    %    end
     end
 elseif flags.do_analytic
     [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'analytic','scal',scal(lowpass_number+1:M2),flags.norm);
@@ -332,21 +209,13 @@ end
     
 %% Generate lowpass filters if desired
 if flags.do_single % Compute single lowpass from frequency response
-   % if numel(scales_sorted) < 4 % Single lowpass generation currently fails for fewer than four elements in scales
-   %     error('%s: Lowpass generation requires at least 4 scales.',upper(mfilename));
-   % end
     lowpass_bandwidth = 0.2/scales_sorted(4); % Twice the center frequency of the fourth scale
     taper_ratio = 1-scales_sorted(4)/scales_sorted(2); % Plateau width is twice the center frequency of the second scale
     [glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1),flags);
-    %[glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1)/3,flags);
     gout = [{glow},gout];
     fields = fieldnames(info);
     for kk = 1:length(fields) % Concatenate info and infolow
-     %   if strcmp('a_natural',fields{kk})
-     %       info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk})];
-     %   else
             info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
-     %   end
     end
 elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale wavelet with shifted center frequency
     if numel(scales_sorted) < 2 %This function fails for fewer than two elements in scales
@@ -359,19 +228,11 @@ elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale
         [ghigh,infohigh] = wavelet_lowpass_repeat(winCell,-scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(end:-1:end-lowpass_number+1),kv,flags);
         gout = [gout,ghigh];
         for kk = 1:length(fields) % Concatenate info with infolow and infohigh
-            %if strcmp('a_natural',fields{kk})
-            %    info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk});infohigh.(fields{kk})];
-            %else
                 info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk}),infohigh.(fields{kk})];
-            %end
         end
     else
         for kk = 1:length(fields) % Concatenate info and infolow
-            %if strcmp('a_natural',fields{kk})
-            %    info.(fields{kk}) = [infolow.(fields{kk});info.(fields{kk})];
-            %else
                 info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
-            %end
         end
     end
 elseif flags.do_none % No lowpass, do nothing
@@ -380,80 +241,12 @@ else
     error('%s: This should not happen.',upper(mfilename));
 end
 
-%% Adjust the downsampling rates in order to achieve 'redtar' [It may be possible to do this up front and not run filterbankscale]
-% if ~isempty(kv.redtar)
-%     
-%     if size(a,2) == 2
-%         a_old = a(:,1)./a(:,2);
-%     else
-%         a_old = a;
-%     end
-%     
-%     if ~flags.do_real
-%         org_red = sum(1./a_old);
-%     elseif lowpass_at_zero
-%         org_red = 1./a_old(1) + sum(2./a_old(2:end));
-%     else
-%         org_red = sum(2./a_old);
-%     end
-%     
-%     a_new = floor(a*org_red/kv.redtar);
-%     scal_new = org_red/kv.redtar*ones(1,numel(gout));
-%     
-%     % Adjust function handle generated delays
-%     if isa(kv.delay,'function_handle')
-%         delayvec = zeros(M2,1);
-%         for kk = 1:M2
-%             delayvec(kk) = kv.delay(kk-1,a_new(kk));
-%         end
-%         if flags.do_complex
-%             % Replicate the delays, except at zero
-%             % frequency
-%             if lowpass_at_zero
-%                 delayvec=[delayvec;flipud(delayvec(2:end))];
-%             else
-%                 delayvec=[delayvec;flipud(delayvec)];
-%             end
-%         end
-%     end
-%     
-%     if ~flags.do_uniform
-%         N_old = ceil(L./a_old);
-%         N_new=ceil(L./a_new);
-%         a_new=[repmat(L,numel(N_new),1),N_old];
-%     else 
-%         L = filterbanklength(L,a_new);
-%     end
-%     
-%     g_new = filterbankscale(gout,sqrt(scal_new));
-%     a = a_new;
-%     gout = g_new;
-%     
-%     if 0 % This is just for testing.
-%         if size(a_new,2) == 2
-%             a_test = a_new(:,1)./a_new(:,2);
-%         else
-%             a_test = a_new;
-%         end
-%         if ~flags.do_real
-%             new_red = sum(1./a_test);
-%         elseif lowpass_at_zero
-%             new_red = 1./a_test(1) + sum(2./a_test(2:end));
-%         else
-%             new_red = sum(2./a_test);
-%         end
-%         % Compute and display redundancy for verification
-%         fprintf('Original redundancy: %g \n', org_red);
-%         fprintf('Target redundancy: %g \n', kv.redtar);
-%         fprintf('Actual redundancy: %g \n', new_red);
-%     end
-% end
 
-% Apply delays (might want to move this to freqwavelet instead)
+% Apply delays (these are now for the lowpasses only)
 for kk = 1:numel(gout)
     gout{kk}.delay = delayvec(kk);
 end
-
+info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 fc = (kv.fs/2).*info.fc;
 end
@@ -478,6 +271,7 @@ glow.H = @(L) fftshift(long2fir(...
 filterbankfreqz(P0,1,L).*Hinv(L),Lw(L)))*scal; 
 glow.foff = @(L) -floor(Lw(L)/2);
 glow.realonly = 0;
+glow.delay = 0;
 
 % Initialize and populate infolow
 infolow = struct();

@@ -1,18 +1,5 @@
 function [a, L] = c_comp_downsampling(Ls, M2, scales, aprecise, lowpass_at_zero, flags, kv)
 %account for downsampling type and target redundancy
-if ~isnumeric(scales) || any(scales <= 0)
-    error('%s: scales must be positive and numeric.',upper(mfilename));
-end
-
-if size(scales,2)>1
-    if size(scales,1)==1
-        % scales was a row vector.
-        scales=scales(:);
-    else
-        error('%s: scales must be a vector.',upper(mfilename));
-    end
-end
-
 
 if flags.do_regsampling % This should only be used for lowpass = single!!!
     a = ones(M2,1);
@@ -42,7 +29,7 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
         a(a==0) = max(a);
         L = filterbanklength(Ls,a);
     end
-    
+
 elseif flags.do_fractional
     L = Ls;
     N=ceil(Ls./aprecise);
@@ -63,38 +50,41 @@ elseif flags.do_uniform
 end
 afull=comp_filterbank_a(a,M2,struct());
 
+
 %==========================================================================
-%% Adjust the downsampling rates in order to achieve 'redtar'
-    
-if size(afull,2) == 2
-    a = afull(:,1)./afull(:,2);
-else
-    a = afull;
-end
+%% Adjust the downsampling rates in order to achieve 'redtar'    
+
 if ~isempty(kv.redtar)
-    a_old = a;
-    if ~flags.do_real
-        org_red = sum(1./a_old);
-    elseif lowpass_at_zero
-        org_red = 1./a_old(1) + sum(2./a_old(2:end));
+    if size(afull,2) == 2
+        a = afull(:,1)./afull(:,2);
     else
-        org_red = sum(2./a_old);
+        a = afull;
+    end
+
+    if ~flags.do_real
+        org_red = sum(1./a);
+    elseif lowpass_at_zero
+        org_red = 1./a(1) + sum(2./a(2:end));
+    else
+        org_red = sum(2./a);
     end
     
-    a_new = floor(a*org_red/kv.redtar);
-%    scal_new = org_red/kv.redtar*ones(1,numel(gout));
-
+    a = floor(a*org_red/kv.redtar);
+    a(a==0) = 1;
+    
     if ~flags.do_uniform
-        %N_old = ceil(L./a_old);
-        N_new=ceil(L./a_new);
-        %a_new=[repmat(L,numel(N_new),1),N_old];
+        N_new=ceil(L./a);
         if flags.do_complex
             N_new = [N_new;N_new(end:-1:2)];
         end
-        a_new=[repmat(L,numel(N_new),1),N_new];
+        a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
     end
-    
-    
+else
+    a = afull;
 end
+
+%if size(a,2) == 2
+%    a = a(:,1)./a(:,2);
+%end
