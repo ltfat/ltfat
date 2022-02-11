@@ -152,6 +152,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
 %     freq_step = max_freqDiv10/M0;
 %     rate = 44100;
+%     start_index = 1;
 %     min_freqHz = rate/20*freq_step
 %     start_index = 10;
 %     min_scale_freq = min_freqHz*start_index
