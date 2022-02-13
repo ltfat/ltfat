@@ -1,3 +1,4 @@
+%function [gout,a,fc,L,info] = waveletfilters(fs, fmin, fmax, M0, Ls, varargin)
 function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %WAVELETFILTERS Generates wavelet filters
 %   Usage: H=freqwavelet(Ls,scales)
@@ -137,13 +138,13 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     [f,fs]=gspi;  % Get the test signal
 %     Ls = length(f);
 %     scales = linspace(10,0.1,100);
-%     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3});
+%     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'repeat');
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90);
 %
-%   In the second example, we construct a wavelet filterbank with several
+%   In the second example, we construct a wavelet filterbank with a
 %   lowpass channels based on a Cauchy wavelet and verify it.
-%   The plot shows frequency responses of
+%   The plot shows the frequency responses of
 %   filters used for analysis (top) and synthesis (bottom). :::
 %
 %     [f,fs]=greasy;  % Get the test signal
@@ -152,15 +153,15 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
 %     freq_step = max_freqDiv10/M0;
 %     rate = 44100;
-%     min_freqHz = rate/20*freq_step
-%     start_index = 10;
+%     start_index = 1;
+%     min_freqHz = rate/10*freq_step
 %     min_scale_freq = min_freqHz*start_index
 %     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
-%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0-start_index+1);
+%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0);
 %     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
 %     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 %     CauchyAlpha = 600;
-%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','repeat','energy', 'delay',delays, 'redtar', 8);
+%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
 %
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
@@ -198,9 +199,19 @@ definput.keyvals.redtar=[];
 definput.keyvals.delay = 0;
 definput.keyvals.trunc_at  = 10^(-5);
 definput.keyvals.fs = 2;
+definput.keyvals.M0 = 512;
+nyquist = 10;%because freqwavelet has internally 0.1 as a reference and fs = 2;
+fstep = nyquist/definput.keyvals.M0;
+%minf = fs/nyquist*fstep;
+%maxf = fs/nyq
+
+%definput.keyvals.scales = 1./linspace(minf,maxf,definput.keyvals.M0);%linearly spaced f?
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
+%fs = kv.fs;
+%scales = kv.scales;
+
 if isempty(winCell), winCell = {flags.wavelettype}; end
 
 if ~isa(kv.delay,'function_handle') && ~isnumeric(kv.delay)
@@ -235,26 +246,48 @@ end
 [~,info] = freqwavelet(winCell,Ls,1,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1);
 basea = info.aprecise;
 
-% Sort scales for later use
-%scales_sorted = sort(scales,'descend');
 
 %% Determine total number of filters and natural subsampling factor for lowpass
 [aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
 
 %% Compute the downsampling rate
 [a, L] = c_comp_downsampling(Ls, M, scales, aprecise, lowpass_at_zero, flags, kv);
-% Get an expanded "a"
-%afull=comp_filterbank_a(a,M2,struct());
 
-%% Check or compute numeric delay vector
-delayvec = c_comp_delay(kv, M, a);
 
-%% Compute the scaling of the filters
-[scal, a, delayvec] = c_comp_scaling(a, delayvec, lowpass_at_zero, flags);
+%% Compute the scaling of the filters and the numeric delay vector
+
+if isa(kv.delay,'function_handle')
+    delayvec = zeros(M,1);
+    for kk = 1:M
+        delayvec(kk) = kv.delay(kk-1,a(kk,1)./a(kk,2));
+    end
+elseif numel(kv.delay) == 1
+    delayvec = repmat(kv.delay,M,1);
+elseif ~isempty(kv.delay) && size(kv.delay,2) > 1
+    delayvec = kv.delay(:);
+else
+    error('%s: delay must be scaler or have enough elements to cover all channels.',upper(mfilename));
+end
+scal=sqrt(a(:,1)./a(:,2));
 
 if flags.do_complex
-    [gout_positive,info_positive] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M2),flags.norm);
-    [gout_negative,info_negative] = freqwavelet(winCell,L,-flipud(scales),'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'negative','scal',scal(M2+1:M2+M),flags.norm);
+    
+    if lowpass_at_zero
+       a=[a;flipud(a(2:end,:))];
+       scal=[scal;flipud(scal(2:end))];
+       delayvec=[delayvec;flipud(delayvec(2:end))];
+    else
+        a=[a;flipud(a)];
+        scal=[scal;flipud(scal)];
+        delayvec=[delayvec;flipud(delayvec)];
+    end
+    
+    [gout_positive,info_positive] = freqwavelet(winCell,L,scales,...
+        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,...
+        'scal',scal(lowpass_number+1:M),'delay', delayvec(lowpass_number+1:M),flags.norm);
+    [gout_negative,info_negative] = freqwavelet(winCell,L,-flipud(scales),...
+        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,...
+        'negative','scal',scal(M+1:M+numel(scales)),'delay', delayvec(M+1:M+numel(scales)), flags.norm);
     gout = [gout_positive,gout_negative];
     fields = fieldnames(info_positive);
     info = struct();
@@ -262,18 +295,26 @@ if flags.do_complex
             info.(fields{kk}) = [info_positive.(fields{kk}),info_negative.(fields{kk})];
     end
 elseif flags.do_analytic
-    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'analytic','scal',scal(lowpass_number+1:M2),flags.norm);
+    [gout,info] = freqwavelet(winCell,L,scales,...
+        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,...
+        'analytic','scal',scal(lowpass_number+1:M),'delay', delayvec(lowpass_number+1:M),flags.norm);
 else
-    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M),flags.norm);
+    if lowpass_at_zero
+        % Scale the lowpass filters
+        scal(1)=scal(1)/sqrt(2);
+    end
+    
+    [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',...
+        kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M),'delay', delayvec(lowpass_number+1:M),flags.norm);
 end
     
 %% Generate lowpass filters if desired
-[gout, info] = c_make_filters(gout, a, L, info, scales, scal, flags);
+[gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, lowpass_number, lowpass_at_zero, kv, flags);
 
 % Apply delays (these are now for the lowpasses only)
-for kk = 1:numel(gout)
-    gout{kk}.delay = delayvec(kk);
-end
+%for kk = 1:numel(gout)
+%    gout{kk}.delay = delayvec(kk);
+%end
 info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 fc = (kv.fs/2).*info.fc;

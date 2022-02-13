@@ -10,6 +10,7 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
     upper_scale = floor(log2(1/upper_scale));
     
     % Find minimum a in each octave and floor23 it.
+    ct=1;
     for kk = lower_scale:upper_scale
         tempidx = find( floor(log2(1./scales)) == kk );
         [~,tempminidx] = min(1/scales(tempidx));
@@ -17,6 +18,7 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
         
         % Deal the integer subsampling factors
         a(tempidx) = floor23(aprecise(idx));
+        ct=ct+1;
     end   
     
     % Determine the minimal transform length lcm(a)
@@ -55,11 +57,11 @@ afull=comp_filterbank_a(a,M2,struct());
 %% Adjust the downsampling rates in order to achieve 'redtar'    
 
 if ~isempty(kv.redtar)
-    if size(afull,2) == 2
+   % if size(afull,2) == 2
         a = afull(:,1)./afull(:,2);
-    else
-        a = afull;
-    end
+   % else
+   %     a = afull;
+   % end
 
     if ~flags.do_real
         org_red = sum(1./a);
@@ -80,6 +82,7 @@ if ~isempty(kv.redtar)
         a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
+        a=[repmat(L,numel(a),1),ones(numel(a), 1)];
     end
 else
     a = afull;

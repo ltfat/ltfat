@@ -1,6 +1,7 @@
-function [gout, info] = c_make_filters(gout, a, L, info, scales, scal, flags)
+function [gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, lowpass_number, lowpass_at_zero, kv,flags)
 
 scales_sorted = sort(scales,'descend');
+%lowpass_number = numel(delayvec);
 
 if flags.do_single % Compute single lowpass from frequency response
     lowpass_bandwidth = 0.2/scales_sorted(4); % Twice the center frequency of the fourth scale
@@ -12,9 +13,7 @@ if flags.do_single % Compute single lowpass from frequency response
             info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk})];
     end
 elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale wavelet with shifted center frequency
-    if numel(scales_sorted) < 2 %This function fails for fewer than two elements in scales
-        error('%s: Lowpass generation requires at least two scales.',upper(mfilename));
-    end
+    
     [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(1:lowpass_number),kv,flags);
     gout = [glow,gout];
     fields = fieldnames(info);
@@ -84,15 +83,16 @@ LP_step = abs(0.1/scales_sorted(2)-LP_range);
 % Distinguish between positive and negative scales
 if scales_sorted(1)>0
     [glow,infolow] = freqwavelet(winCell,L,repmat(scales_sorted(1),1,lowpass_number),...
-        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal,flags.norm);
-    if ~iscell(glow)
-        glow = {glow};
-    end
+        'asfreqfilter','efsuppthr',kv.trunc_at,'basefc',0.1,'scal',scal, flags.norm);
+    %if ~iscell(glow)
+    %    glow = {glow};
+    %end
     for kk = 1:lowpass_number % Correct foff
         %Flooring sometimes introduces rounding problems when the filter is
         %too slim. 
         %glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - floor(L*kk*LP_step/2);
         glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - round(L*kk*LP_step/2);
+        %glow{kk}.delay = delayvec(kk);
         infolow.foff(lowpass_number-kk+1) = glow{lowpass_number-kk+1}.foff(L);
     end
     infolow.fc = LP_range-(lowpass_number:-1:1)*LP_step; % Correct fc

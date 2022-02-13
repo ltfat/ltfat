@@ -615,4 +615,3 @@ end
 %infolow.tfr = @(L) ones(LP_num,1); %This should be unnecessary, as infolow.tfr is expected to be correct.
   
 end
-
