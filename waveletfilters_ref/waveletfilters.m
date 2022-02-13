@@ -205,7 +205,7 @@ fstep = nyquist/definput.keyvals.M0;
 %minf = fs/nyquist*fstep;
 %maxf = fs/nyq
 
-%definput.keyvals.scales = 1./linspace(minf,maxf,definput.keyvals.M0);%linearly spaced f?
+%definput.keyvals.scales = 1./linspace(minf,maxf,definput.keyvals.M0);
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
@@ -309,7 +309,7 @@ else
 end
     
 %% Generate lowpass filters if desired
-[gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, lowpass_number, lowpass_at_zero, kv, flags);
+[gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
 
 % Apply delays (these are now for the lowpasses only)
 %for kk = 1:numel(gout)

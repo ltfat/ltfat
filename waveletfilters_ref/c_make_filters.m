@@ -1,12 +1,13 @@
-function [gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, lowpass_number, lowpass_at_zero, kv,flags)
+function [gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, delayvec, lowpass_at_zero, kv,flags)
 
 scales_sorted = sort(scales,'descend');
-%lowpass_number = numel(delayvec);
+lowpass_number = numel(delayvec);
 
 if flags.do_single % Compute single lowpass from frequency response
     lowpass_bandwidth = 0.2/scales_sorted(4); % Twice the center frequency of the fourth scale
     taper_ratio = 1-scales_sorted(4)/scales_sorted(2); % Plateau width is twice the center frequency of the second scale
     [glow,infolow] = wavelet_lowpass(gout,a,L,lowpass_bandwidth,taper_ratio,scal(1),flags);
+    glow.delay = delayvec(1);
     gout = [{glow},gout];
     fields = fieldnames(info);
     for kk = 1:length(fields) % Concatenate info and infolow
@@ -14,11 +15,11 @@ if flags.do_single % Compute single lowpass from frequency response
     end
 elseif flags.do_repeat % Lowpass filters are created by repeating smallest scale wavelet with shifted center frequency
     
-    [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(1:lowpass_number),kv,flags);
+    [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted(1:2),L,delayvec,lowpass_number,lowpass_at_zero,scal(1:lowpass_number),kv,flags);
     gout = [glow,gout];
     fields = fieldnames(info);
     if flags.do_complex  
-        [ghigh,infohigh] = wavelet_lowpass_repeat(winCell,-scales_sorted(1:2),L,lowpass_number,lowpass_at_zero,scal(end:-1:end-lowpass_number+1),kv,flags);
+        [ghigh,infohigh] = wavelet_lowpass_repeat(winCell,-scales_sorted(1:2),L,delayvec,lowpass_number,lowpass_at_zero,scal(end:-1:end-lowpass_number+1),kv,flags);
         gout = [gout,ghigh];
         for kk = 1:length(fields) % Concatenate info with infolow and infohigh
                 info.(fields{kk}) = [infolow.(fields{kk}),info.(fields{kk}),infohigh.(fields{kk})];
@@ -74,7 +75,7 @@ infolow.cauchyAlpha = 1; % This value has no meaning and is only assigned to pre
 
 end
 
-function [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted,L,lowpass_number,lowpass_at_zero,scal,kv,flags)
+function [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted,L,delayvec,lowpass_number,lowpass_at_zero,scal,kv,flags)
 
 % Compute frequency range to be covered and step between lowpass filters
 LP_range = 0.1/scales_sorted(1);
@@ -92,7 +93,7 @@ if scales_sorted(1)>0
         %too slim. 
         %glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - floor(L*kk*LP_step/2);
         glow{lowpass_number-kk+1}.foff = @(L) glow{lowpass_number-kk+1}.foff(L) - round(L*kk*LP_step/2);
-        %glow{kk}.delay = delayvec(kk);
+        glow{kk}.delay = delayvec(kk);
         infolow.foff(lowpass_number-kk+1) = glow{lowpass_number-kk+1}.foff(L);
     end
     infolow.fc = LP_range-(lowpass_number:-1:1)*LP_step; % Correct fc

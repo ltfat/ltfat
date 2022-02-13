@@ -1,16 +1,16 @@
 
 %test waveletfilters
 addpath('/run/media/clara/3143d7fe-0bef-4c9d-8983-732cfe02d2c9/ltfat/waveletfilters_ref');
-pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a while
+pedantic = 0;%switch pedantic on to compare fb coefficients, but this may take a while
  [f, fs] = gspi;
  Ls = length(f);
  scales = linspace(10,0.1,100);
  alpha = 1-2/(1+sqrt(5));
  delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 
-[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
+[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'repeat', 'delay', delays);
 %[g,a,fc,L,info] = waveletfilters(fs, fmin, fmax, M, Ls, 'redtar', 0.5);
-[gtemp,atemp,fctemp,Ltemp, infotemp]=waveletfilterstemp(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
+[gtemp,atemp,fctemp,Ltemp, infotemp]=waveletfilterstemp(Ls,scales, {'fbsp', 4, 3}, 'repeat', 'delay', delays);
 %filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 if pedantic
     %check coefficients
