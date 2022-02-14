@@ -1,5 +1,5 @@
-function [gout,a,fc,L,info] = waveletfilters(fs, fmin, fmax, channels, Ls, varargin)
-%function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
+%function [gout,a,fc,L,info] = waveletfilters(fs, fmin, fmax, channels, Ls, varargin)
+function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %WAVELETFILTERS Generates wavelet filters
 %   Usage: H=freqwavelet(Ls,scales)
 %          [H,info]=freqwavelet(...)
@@ -227,45 +227,45 @@ end
 %parse the
 %input format: waveletfilters(fmin fmax channels/bins/scalenum 'flag')
 
-if flags.do_scales
-    scales = linspace(fmax, fmin, channels);
-else
-    fn = fs/2;
-    min_freq = fmin/fn *10;%map to freqwavelets nyquist f
-    max_freq = fmax/fn *10;
-    kv.fs = fs;
-
-    if flags.do_geometric
-        scales = 1./linspace(min_freq,max_freq,channels);
-    elseif flags.do_logarithmic
-        %normalize f range to '1'
-        max_freq = max_freq/max(max_freq);
-        min_freq = min_freq/max(max_freq);
-        scales = 1./logspace(min_freq,max_freq,channels);
-    elseif flags.do_bins
-        bins = channels;
-        fc = zeros(sum(bins),1);
-
-        ll = 0;
-        for kk = 1:length(bins)
-            fc(ll+(1:bins(kk))) = ...
-                min_freq*2.^(((kk-1)*bins(kk):(kk*bins(kk)-1)).'/bins(kk));
-            ll = ll+bins(kk);
-        end
-
-        % Get rid of filters with frequency centers >=fmax and nf
-        % This will leave the first bigger than fmax it it is lower than nf
-        temp = find(fc>=fmax ,1);
-        if fc(temp) >= nf
-            fc = fc(1:temp-1);
-        else
-            fc = fc(1:temp);
-        end
-
-        channels = length(fc);
-        scales = 1./linspace(min_freq,max_freq,channels);
-    end
-end
+% if flags.do_scales
+%     scales = linspace(fmax, fmin, channels);
+% else
+%     fn = fs/2;
+%     min_freq = fmin/fn *10;%map to freqwavelets nyquist f
+%     max_freq = fmax/fn *10;
+%     kv.fs = fs;
+% 
+%     if flags.do_geometric
+%         scales = 1./linspace(min_freq,max_freq,channels);
+%     elseif flags.do_logarithmic
+%         %normalize f range to '1'
+%         max_freq = max_freq/max(max_freq);
+%         min_freq = min_freq/max(max_freq);
+%         scales = 1./logspace(min_freq,max_freq,channels);
+%     elseif flags.do_bins
+%         bins = channels;
+%         fc = zeros(sum(bins),1);
+% 
+%         ll = 0;
+%         for kk = 1:length(bins)
+%             fc(ll+(1:bins(kk))) = ...
+%                 min_freq*2.^(((kk-1)*bins(kk):(kk*bins(kk)-1)).'/bins(kk));
+%             ll = ll+bins(kk);
+%         end
+% 
+%         % Get rid of filters with frequency centers >=fmax and nf
+%         % This will leave the first bigger than fmax it it is lower than nf
+%         temp = find(fc>=fmax ,1);
+%         if fc(temp) >= nf
+%             fc = fc(1:temp-1);
+%         else
+%             fc = fc(1:temp);
+%         end
+% 
+%         channels = length(fc);
+%         scales = 1./linspace(min_freq,max_freq,channels);
+%     end
+% end
 
 if ~isnumeric(scales) || any(scales <= 0)
     error('%s: scales must be positive and numeric.',upper(mfilename));

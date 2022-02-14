@@ -14,8 +14,8 @@ pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a
  alpha = 1-2/(1+sqrt(5));
  delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 
-%[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
-[g,a,fc,L,info] = waveletfilters(fs,fmin, fmax, M, Ls, 'scales', 'repeat');
+[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
+%[g,a,fc,L,info] = waveletfilters(fs,fmin, fmax, M, Ls, 'scales', 'repeat');
 [gtemp,atemp,fctemp,Ltemp, infotemp]=waveletfilterstemp(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
 %filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 if pedantic
