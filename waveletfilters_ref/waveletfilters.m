@@ -228,7 +228,7 @@ end
 %input format: waveletfilters(fmin fmax channels/bins/scalenum 'flag')
 
 if flags.do_scales
-    scales = linspace(fmin, fmax, channels);
+    scales = linspace(fmax, fmin, channels);
 else
     fn = fs/2;
     min_freq = fmin/fn *10;%map to freqwavelets nyquist f
@@ -238,6 +238,9 @@ else
     if flags.do_geometric
         scales = 1./linspace(min_freq,max_freq,channels);
     elseif flags.do_logarithmic
+        %normalize f range to '1'
+        max_freq = max_freq/max(max_freq);
+        min_freq = min_freq/max(max_freq);
         scales = 1./logspace(min_freq,max_freq,channels);
     elseif flags.do_bins
         bins = channels;

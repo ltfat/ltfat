@@ -1,22 +1,3 @@
-%     [f,fs]=greasy;  % Get the test signal
-%     Ls = length(f);
-%     M0 = 511; %Desired number of channels (without 0 Hz-lowpass channel)
-%     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
-%     freq_step = max_freqDiv10/M0;
-%     rate = 44100;
-%     start_index = 1;
-%     min_freqHz = rate/10*freq_step
-%     min_scale_freq = min_freqHz*start_index
-%     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
-%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0);
-%     
-%     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
-%     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
-%     CauchyAlpha = 600;
-%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
-
-
-
 %test waveletfilters
 addpath('/run/media/clara/3143d7fe-0bef-4c9d-8983-732cfe02d2c9/ltfat/waveletfilters_ref');
 pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a while
@@ -24,14 +5,17 @@ pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a
  Ls = length(f);
  scales = linspace(10,0.1,100);
  fs = 44100;
+ fs = [];
  fmin = 220.5;
- fmax = 22050;
+ fmax = 22000;
+ fmin = 0.1;
+ fmax = 10;
  M = 100;
  alpha = 1-2/(1+sqrt(5));
  delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 
 %[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
-[g,a,fc,L,info] = waveletfilters(fs,fmin, fmax, M, Ls, 'geometric');
+[g,a,fc,L,info] = waveletfilters(fs,fmin, fmax, M, Ls, 'scales', 'repeat');
 [gtemp,atemp,fctemp,Ltemp, infotemp]=waveletfilterstemp(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
 %filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 if pedantic

@@ -46,8 +46,7 @@ end
 aprecise = [aprecise;basea.*scales];
 
 if any(aprecise<1)
-    error(['%s: Bandwidth of one of the filters is bigger than fs. ',...
-           'This should not happen'],upper(mfilename));
+    error(['%s: Bandwidth of at least one of the filters is bigger than fs. '],upper(mfilename));
 end
 
 aprecise=aprecise/kv.redmul;
