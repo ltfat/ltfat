@@ -1,5 +1,5 @@
-%function [gout,a,fc,L,info] = waveletfilters(fs, fmin, fmax, M0, Ls, varargin)
-function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
+function [gout,a,fc,L,info] = waveletfilters(fs, fmin, fmax, channels, Ls, varargin)
+%function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %WAVELETFILTERS Generates wavelet filters
 %   Usage: H=freqwavelet(Ls,scales)
 %          [H,info]=freqwavelet(...)
@@ -200,12 +200,7 @@ definput.keyvals.delay = 0;
 definput.keyvals.trunc_at  = 10^(-5);
 definput.keyvals.fs = 2;
 definput.keyvals.M0 = 512;
-nyquist = 10;%because freqwavelet has internally 0.1 as a reference and fs = 2;
-fstep = nyquist/definput.keyvals.M0;
-%minf = fs/nyquist*fstep;
-%maxf = fs/nyq
-
-%definput.keyvals.scales = 1./linspace(minf,maxf,definput.keyvals.M0);
+definput.flags.inputmode = {'geometric', 'logarithmic', 'bins', 'scales'};
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
@@ -225,6 +220,47 @@ end
 if ~isempty(kv.redtar)
     if ~isscalar(kv.redtar) || kv.redtar <= 0
         error('%s: redtar must be a positive scalar.',upper(mfilename));
+    end
+end
+
+
+%parse the
+%input format: waveletfilters(fmin fmax channels/bins/scalenum 'flag')
+
+if flags.do_scales
+    scales = linspace(fmin, fmax, channels);
+else
+    fn = fs/2;
+    min_freq = fmin/fn *10;%map to freqwavelets nyquist f
+    max_freq = fmax/fn *10;
+    kv.fs = fs;
+
+    if flags.do_geometric
+        scales = 1./linspace(min_freq,max_freq,channels);
+    elseif flags.do_logarithmic
+        scales = 1./logspace(min_freq,max_freq,channels);
+    elseif flags.do_bins
+        bins = channels;
+        fc = zeros(sum(bins),1);
+
+        ll = 0;
+        for kk = 1:length(bins)
+            fc(ll+(1:bins(kk))) = ...
+                min_freq*2.^(((kk-1)*bins(kk):(kk*bins(kk)-1)).'/bins(kk));
+            ll = ll+bins(kk);
+        end
+
+        % Get rid of filters with frequency centers >=fmax and nf
+        % This will leave the first bigger than fmax it it is lower than nf
+        temp = find(fc>=fmax ,1);
+        if fc(temp) >= nf
+            fc = fc(1:temp-1);
+        else
+            fc = fc(1:temp);
+        end
+
+        channels = length(fc);
+        scales = 1./linspace(min_freq,max_freq,channels);
     end
 end
 
