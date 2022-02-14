@@ -1,5 +1,5 @@
 %test waveletfilters
-addpath('/run/media/clara/3143d7fe-0bef-4c9d-8983-732cfe02d2c9/ltfat/waveletfilters_ref');
+%addpath('/run/media/clara/3143d7fe-0bef-4c9d-8983-732cfe02d2c9/ltfat/waveletfilters_ref');
 pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a while
  [f, fs] = gspi;
  Ls = length(f);
