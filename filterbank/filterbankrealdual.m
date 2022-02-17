@@ -107,12 +107,15 @@ if info.isuniform
             % to a struct with .h and .offset format.
             gdout = filterbankwin(gdout,a);      
         case 'full'
-            error('%s: Untested.', upper(mfilename)); 
+            %error('%s: Untested.', upper(mfilename)); 
             gd = gd*a;
         case 'econ'
-            error('%s: Not implemented yet.', upper(mfilename)); 
-            gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
-                      'UniformOutput',0);
+            %error('%s: Not implemented yet.', upper(mfilename)); 
+            % Shorten filters to essential support
+            [gdout,foff,~]=comp_economize_filters(gd,'efsuppthr',kv.efsuppthr);
+            
+            %gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+            %          'UniformOutput',0);
             % Shorten filters to essential support
         case 'asfreqfilter'
             gd = gd*a;
@@ -122,7 +125,7 @@ if info.isuniform
             gdout = cell(1,M);
             gdout(:) = {template};
             
-            [H,foff,L]=comp_economize_filters(gd,'efsuppthr',kv.efsuppthr);
+            [H,foff,~]=comp_economize_filters(gd,'efsuppthr',kv.efsuppthr);
             for kk = 1:M
                 gdout{kk} = setfield(gdout{kk},'H',H{kk});
                 gdout{kk} = setfield(gdout{kk},'foff',foff(kk));

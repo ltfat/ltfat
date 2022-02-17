@@ -11,6 +11,10 @@ if iscell(g)
     g = cell2mat(g);
 end
 
+if any(isnan(g))
+    error('%s: dual window could not be determined.',upper(mfilename));
+end
+
 L = size(g,1);
 M = size(g,2);
 H = cell(1,M);
@@ -26,6 +30,7 @@ for kk = 1:M
     % Find circular mean
     mean_g = .5*angle(sum(abs_g.*exp(2*pi*i.*idx./L)))/pi;
     mean_g = round(mod(mean_g,1)*L)+1;
+    
     
     shift_g = floor(L/2) - mean_g;
     abs_g = circshift(abs_g,shift_g,1);
