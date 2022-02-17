@@ -1,4 +1,4 @@
-function [aprecise, M2, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv)
+function [aprecise, M2, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, startfreq, flags, kv)
 %get the number of lowpasses
 %aprecise = [scales + #lowpass, 1]
 %M2 = M + #lowpass
@@ -16,20 +16,25 @@ end
 M = numel(scales);
 scales_sorted = sort(scales,'descend');
 %% Determine total number of filters and natural subsampling factor for lowpass
-if flags.do_repeat 
-    lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.
-    if abs(lowpass_number - round(lowpass_number)) < eps*10^3
-        lowpass_number = round(lowpass_number);
-        lowpass_at_zero = 1;
+if flags.do_repeat
+    if ~isempty(startfreq)
+        lowpass_number = max(find(scales_sorted(scales_sorted < 1/startfreq)));
     else
-        lowpass_at_zero = 0;
+        lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.
     end
-    lowpass_number = floor(lowpass_number);
-    if lowpass_number == 0
-        lowpass_number = 1;
-    end
-    M2 = M + lowpass_number;
-    aprecise = (basea.*scales_sorted(1))*ones(lowpass_number,1);
+        if abs(lowpass_number - round(lowpass_number)) < eps*10^3
+            lowpass_number = round(lowpass_number);
+            lowpass_at_zero = 1;
+        else
+            lowpass_at_zero = 0;
+        end
+        lowpass_number = floor(lowpass_number);
+        if lowpass_number == 0
+            lowpass_number = 1;
+        end
+        M2 = M + lowpass_number;
+        aprecise = (basea.*scales_sorted(1))*ones(lowpass_number,1);
+
 elseif flags.do_single
     lowpass_number = 1;
     lowpass_at_zero = 1;

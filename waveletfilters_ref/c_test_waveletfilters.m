@@ -8,15 +8,17 @@
  bins = 8;
  M=100;
  
+%first call includes the option to set a starting frequency for the wavelet
+%frequency range (can be applied to others too)
 [g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'repeat');
 [g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'repeat');
 [g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'repeat');
-[g_log,a_log,fc_log,L_log,info_log] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'repeat');
+[g_log,a_log,fc_log,L_log,info_log] = waveletfilters(Ls,'logarithmic', fs,fmin, fmax, M, 'repeat');
 
-figure; filterbankfreqz(g_scales,a_scales,L,fs,'plot','linabs','posfreq');
-figure; filterbankfreqz(g_bins,a_bins,L,fs,'plot','linabs','posfreq');
-figure; filterbankfreqz(g_linear,a_linear,L,fs,'plot','linabs','posfreq');
-figure; filterbankfreqz(g_log,a_log,L,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_scales,a_scales,Ls,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_bins,a_bins,Ls,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_linear,a_linear,Ls,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_log,a_log,Ls,fs,'plot','linabs','posfreq');
 
 
 %% basic test waveletfilters
@@ -61,4 +63,4 @@ assert(isequal(info.lowpassstart, infotemp.startindex))
 assert(isequal(g{1,95}.delay, gtemp{1,95}.delay))
 assert(isequal(g{1,1}.delay, gtemp{1,1}.delay))
 
-disp('finished')
+disp('passed all tests')

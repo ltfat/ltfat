@@ -223,6 +223,7 @@ definput.keyvals.delay = 0;
 definput.keyvals.trunc_at  = 10^(-5);
 definput.keyvals.fs = 2;
 definput.keyvals.M0 = 512;
+definput.keyvals.startfreq = [];%only relevant if 'repeat'
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
@@ -293,6 +294,14 @@ if ~flags.do_scales
     end
 end
 
+
+if ~isempty(kv.startfreq)
+    nf = 22050;
+    startfreq = kv.startfreq/nf * 10;
+else
+    startfreq = [];
+end
+
 if ~isnumeric(scales) || any(scales < 0.1)
    error('%s: scales must be positive and numeric.',upper(mfilename));
 end
@@ -313,7 +322,8 @@ basea = info.aprecise;
 
 
 %% Determine total number of filters and natural subsampling factor for lowpass
-[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
+[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, startfreq, flags, kv);
+
 
 %% Get subsampling factors
 aprecise = [aprecise;basea.*scales];
