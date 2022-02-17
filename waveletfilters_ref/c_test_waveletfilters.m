@@ -1,20 +1,44 @@
-%test waveletfilters
+%%test for new user interface
+ [f, ~] = gspi;
+ Ls = length(f);
+ scales = linspace(10,0.1,100);
+ fs = 44100;
+ fmin = 250;
+ fmax = 20000;
+ bins = 8;
+ M=100;
+ 
+[g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'repeat');
+[g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'repeat');
+[g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'repeat');
+[g_log,a_log,fc_log,L_log,info_log] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'repeat');
+
+figure; filterbankfreqz(g_scales,a_scales,L,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_bins,a_bins,L,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_linear,a_linear,L,fs,'plot','linabs','posfreq');
+figure; filterbankfreqz(g_log,a_log,L,fs,'plot','linabs','posfreq');
+
+
+%% basic test waveletfilters
+%for ensuring that the external behaviour of the refactored version equals the old one
 %addpath('/run/media/clara/3143d7fe-0bef-4c9d-8983-732cfe02d2c9/ltfat/waveletfilters_ref');
 pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a while
  [f, fs] = gspi;
  Ls = length(f);
  scales = linspace(10,0.1,100);
  fs = 44100;
- fs = [];
- fmin = 220.5;
- fmax = 22000;
- fmin = 0.1;
- fmax = 10;
- M = 100;
+ %fs = 10;
+ fmin = 250;
+ fmax = 20000;
+ %fmin = 0.1;
+ %fmax = 5;
+ M = 8;
  alpha = 1-2/(1+sqrt(5));
  delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
-
-[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
+%original test
+%[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
+%[g,a,fc,L, info]=waveletfilters(Ls,scales);
+[g,a,fc,L,info] = waveletfilters(Ls,'bins', fs,fmin, fmax, M, 'repeat');
 %[g,a,fc,L,info] = waveletfilters(fs,fmin, fmax, M, Ls, 'scales', 'repeat');
 [gtemp,atemp,fctemp,Ltemp, infotemp]=waveletfilterstemp(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
 %filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
