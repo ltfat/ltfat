@@ -41,16 +41,3 @@ else
     M2 = M;
     aprecise = [];
 end
-
-%% Get subsampling factors
-aprecise = [aprecise;basea.*scales];
-
-if any(aprecise<1)
-    error(['%s: Bandwidth of at least one of the filters is bigger than fs. '],upper(mfilename));
-end
-
-aprecise=aprecise/kv.redmul;
-if any(aprecise<1)
-    error('%s: The maximum redundancy mult. for this setting is %5.2f',...
-         upper(mfilename), min(basea./scales));
-end

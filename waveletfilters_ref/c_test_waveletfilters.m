@@ -26,22 +26,13 @@ pedantic = 1;%switch pedantic on to compare fb coefficients, but this may take a
  [f, fs] = gspi;
  Ls = length(f);
  scales = linspace(10,0.1,100);
- fs = 44100;
- %fs = 10;
- fmin = 250;
- fmax = 20000;
- %fmin = 0.1;
- %fmax = 5;
- M = 8;
+
  alpha = 1-2/(1+sqrt(5));
  delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
-%original test
-%[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
-%[g,a,fc,L, info]=waveletfilters(Ls,scales);
-[g,a,fc,L,info] = waveletfilters(Ls,'bins', fs,fmin, fmax, M, 'repeat');
-%[g,a,fc,L,info] = waveletfilters(fs,fmin, fmax, M, Ls, 'scales', 'repeat');
+
+[g,a,fc,L, info]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
 [gtemp,atemp,fctemp,Ltemp, infotemp]=waveletfilterstemp(Ls,scales, {'fbsp', 4, 3}, 'single', 'delay', delays);
-%filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
+
 if pedantic
     %check coefficients
     c = filterbank(f, g, a);
@@ -69,3 +60,5 @@ assert(isequal(info.cauchyAlpha, infotemp.cauchyAlpha))
 assert(isequal(info.lowpassstart, infotemp.startindex))
 assert(isequal(g{1,95}.delay, gtemp{1,95}.delay))
 assert(isequal(g{1,1}.delay, gtemp{1,1}.delay))
+
+disp('finished')

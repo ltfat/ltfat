@@ -1,4 +1,3 @@
-%function [gout,a,fc,L,info] = waveletfilters(fs, fmin, fmax, channels, Ls, varargin)
 function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %WAVELETFILTERS Generates wavelet filters
 %   Usage: H=freqwavelet(Ls,scales)
@@ -194,13 +193,10 @@ if ~isnumeric(scales)
     channels = varargin{4};
     switch scales
         case 'linear'
-            %disp('linear f-mapping selected');
             definput.flags.inputmode = {'linear', 'logarithmic', 'bins', 'scales'};
         case 'logarithmic'
-            %disp('log f-mapping selected');
             definput.flags.inputmode = {'logarithmic', 'bins', 'scales', 'linear'};
         case 'bins'
-            %disp('constant-Q style mapping');
             definput.flags.inputmode = {'bins', 'scales', 'linear', 'logarithmic'};
         otherwise
             error('%s: second argument must either be a scales vector or define the f-mapping.',upper(mfilename))
@@ -230,8 +226,6 @@ definput.keyvals.M0 = 512;
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
-%fs = kv.fs;
-%scales = kv.scales;
 
 if isempty(winCell), winCell = {flags.wavelettype}; end
 
@@ -250,9 +244,7 @@ if ~isempty(kv.redtar)
 end
 
 
-%parse the
-%input format: waveletfilters(fmin fmax channels/bins/scalenum 'flag')
-
+%parse the input format
 if ~flags.do_scales
     nf = fs/2;
 
@@ -301,7 +293,7 @@ if ~flags.do_scales
     end
 end
 
-if ~isnumeric(scales) || any(scales <= 0.1)
+if ~isnumeric(scales) || any(scales < 0.1)
    error('%s: scales must be positive and numeric.',upper(mfilename));
 end
     
@@ -322,6 +314,19 @@ basea = info.aprecise;
 
 %% Determine total number of filters and natural subsampling factor for lowpass
 [aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
+
+%% Get subsampling factors
+aprecise = [aprecise;basea.*scales];
+
+if any(aprecise<1)
+    error(['%s: Bandwidth of at least one of the filters is bigger than fs. '],upper(mfilename));
+end
+
+aprecise=aprecise/kv.redmul;
+if any(aprecise<1)
+    error('%s: The maximum redundancy mult. for this setting is %5.2f',...
+         upper(mfilename), min(basea./scales));
+end
 
 %% Compute the downsampling rate
 [a, L] = c_comp_downsampling(Ls, M, scales, aprecise, lowpass_at_zero, flags, kv);
@@ -384,10 +389,6 @@ end
 %% Generate lowpass filters if desired
 [gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
 
-% Apply delays (these are now for the lowpasses only)
-%for kk = 1:numel(gout)
-%    gout{kk}.delay = delayvec(kk);
-%end
 info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 if flags.do_scales
