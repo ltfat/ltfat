@@ -186,11 +186,38 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 complainif_notenoughargs(nargin,2,upper(mfilename));
 complainif_notposint(Ls,'Ls',upper(mfilename));
 
+%parse input arguments:
+if ~isnumeric(scales)
+    fs = varargin{1};
+    fmin = varargin{2};
+    fmax = varargin{3};
+    channels = varargin{4};
+    switch scales
+        case 'linear'
+            %disp('linear f-mapping selected');
+            definput.flags.inputmode = {'linear', 'logarithmic', 'bins', 'scales'};
+        case 'logarithmic'
+            %disp('log f-mapping selected');
+            definput.flags.inputmode = {'logarithmic', 'bins', 'scales', 'linear'};
+        case 'bins'
+            %disp('constant-Q style mapping');
+            definput.flags.inputmode = {'bins', 'scales', 'linear', 'logarithmic'};
+        otherwise
+            error('%s: second argument must either be a scales vector or define the f-mapping.',upper(mfilename))
+    end
+    %this is a slightly more efficient way to remove the first 4 args from
+    %varargin
+    varargin = circshift(varargin,-4);
+    varargin = varargin(1:end-4);
+else
+    definput.flags.inputmode = {'scales', 'linear', 'logarithmic', 'bins'};
+end
+
 definput.import={'normalize'};
 definput.importdefaults={'null'};
 definput.flags.real = {'real','complex','analytic'};
 definput.flags.lowpass  = {'single','repeat','none'};
-definput.flags.painless  = {'regular','painless'};
+%definput.flags.painless  = {'regular','painless'};
 definput.flags.sampling = {'regsampling','uniform',...
                            'fractional','fractionaluniform'};
 definput.flags.wavelettype = getfield(arg_freqwavelet(),'flags','wavelettype');
@@ -200,7 +227,6 @@ definput.keyvals.delay = 0;
 definput.keyvals.trunc_at  = 10^(-5);
 definput.keyvals.fs = 2;
 definput.keyvals.M0 = 512;
-definput.flags.inputmode = {'geometric', 'logarithmic', 'bins', 'scales'};
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
 [flags,kv]=ltfatarghelper({},definput,varargin);
@@ -227,48 +253,56 @@ end
 %parse the
 %input format: waveletfilters(fmin fmax channels/bins/scalenum 'flag')
 
-% if flags.do_scales
-%     scales = linspace(fmax, fmin, channels);
-% else
-%     fn = fs/2;
-%     min_freq = fmin/fn *10;%map to freqwavelets nyquist f
-%     max_freq = fmax/fn *10;
-%     kv.fs = fs;
-% 
-%     if flags.do_geometric
-%         scales = 1./linspace(min_freq,max_freq,channels);
-%     elseif flags.do_logarithmic
-%         %normalize f range to '1'
-%         max_freq = max_freq/max(max_freq);
-%         min_freq = min_freq/max(max_freq);
-%         scales = 1./logspace(min_freq,max_freq,channels);
-%     elseif flags.do_bins
-%         bins = channels;
-%         fc = zeros(sum(bins),1);
-% 
-%         ll = 0;
-%         for kk = 1:length(bins)
-%             fc(ll+(1:bins(kk))) = ...
-%                 min_freq*2.^(((kk-1)*bins(kk):(kk*bins(kk)-1)).'/bins(kk));
-%             ll = ll+bins(kk);
-%         end
-% 
-%         % Get rid of filters with frequency centers >=fmax and nf
-%         % This will leave the first bigger than fmax it it is lower than nf
-%         temp = find(fc>=fmax ,1);
-%         if fc(temp) >= nf
-%             fc = fc(1:temp-1);
-%         else
-%             fc = fc(1:temp);
-%         end
-% 
-%         channels = length(fc);
-%         scales = 1./linspace(min_freq,max_freq,channels);
-%     end
-% end
+if ~flags.do_scales
+    nf = fs/2;
 
-if ~isnumeric(scales) || any(scales <= 0)
-    error('%s: scales must be positive and numeric.',upper(mfilename));
+    if flags.do_linear
+        min_freq = fmin/nf *10;%map to freqwavelets nyquist f
+        max_freq = fmax/nf * 10;
+        scales = 1./linspace(min_freq,max_freq,channels);
+    elseif flags.do_logarithmic
+
+        fc = 2.^linspace(log2(fmin), log2(fmax), channels);    
+        fc = fc/nf * 10;   
+        scales = 1./fc;
+        
+    elseif flags.do_bins
+
+        if isscalar(channels)
+            % Number of octaves
+            b = ceil(log2(fmax/fmin))+1;
+            bins = channels*ones(b,1);
+        else
+            bins = channels;
+        end
+        
+        fc = zeros(sum(bins),1);
+
+        ll = 0;
+        for kk = 1:length(bins)
+            fc(ll+(1:bins(kk))) = ...
+                fmin*2.^(((kk-1)*bins(kk):(kk*bins(kk)-1)).'/bins(kk));
+            ll = ll+bins(kk);
+        end
+
+        % Get rid of filters with frequency centers >=fmax and nf
+        % This will leave the first bigger than fmax it it is lower than nf
+        temp = find(fc>=fmax ,1);
+        if fc(temp) >= nf
+            fc = fc(1:temp-1);
+        else
+            fc = fc(1:temp);
+        end
+
+        channels = length(fc);
+        min_freq = fmin/nf *10;%map to freqwavelets nyquist f
+        max_freq = fmax/nf * 10;
+        scales = 1./linspace(min_freq,max_freq,channels);
+    end
+end
+
+if ~isnumeric(scales) || any(scales <= 0.1)
+   error('%s: scales must be positive and numeric.',upper(mfilename));
 end
     
 if size(scales,2)>1
@@ -356,6 +390,9 @@ end
 %end
 info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
-fc = (kv.fs/2).*info.fc;
+if flags.do_scales
+    fc = (kv.fs/2).*info.fc;
+else
+    fc = nf.*info.fc;
 end
 
