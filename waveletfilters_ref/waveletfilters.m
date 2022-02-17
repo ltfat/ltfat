@@ -244,11 +244,9 @@ if ~isempty(kv.redtar)
     end
 end
 
-
 %parse the input format
 if ~flags.do_scales
-    nf = fs/2;
-
+nf = fs/2;
     if flags.do_linear
         min_freq = fmin/nf *10;%map to freqwavelets nyquist f
         max_freq = fmax/nf * 10;
@@ -292,15 +290,15 @@ if ~flags.do_scales
         max_freq = fmax/nf * 10;
         scales = 1./linspace(min_freq,max_freq,channels);
     end
-end
-
-
-if ~isempty(kv.startfreq)
-    nf = 22050;
-    startfreq = kv.startfreq/nf * 10;
+    if ~isempty(kv.startfreq)
+        startfreq = kv.startfreq/nf * 10;
+    else
+        startfreq = [];
+    end
 else
     startfreq = [];
 end
+
 
 if ~isnumeric(scales) || any(scales < 0.1)
    error('%s: scales must be positive and numeric.',upper(mfilename));

@@ -11,7 +11,7 @@
 %first call includes the option to set a starting frequency for the wavelet
 %frequency range (can be applied to others too)
 [g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'repeat');
-[g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'repeat');
+[g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'repeat', 'startfreq', 400);
 [g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'repeat');
 [g_log,a_log,fc_log,L_log,info_log] = waveletfilters(Ls,'logarithmic', fs,fmin, fmax, M, 'repeat');
 
