@@ -32,7 +32,11 @@ function gdout=filterbankrealdual(g,a,varargin)
 complainif_notenoughargs(nargin,2,'FILTERBANKREALDUAL');
 
 definput.import={'filterbankdual'};
-[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
+definput.flags.outformat = {'fir','full','econ','asfreqfilter'};
+definput.keyvals.efsuppthr = 10^(-5);
+%definput.keyvals.bwthr = 10^(-3/10);
+
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin,'filterbankrealdual');
 
 [g,asan,info]=filterbankwin(g,a,L,'normal');
 if isempty(L) 
@@ -93,14 +97,39 @@ if info.isuniform
     % The gd was created transposed because the indexing gd(:,idx_a)
     % is much faster than gd(idx_a,:)
     gd=gd.';
-    gd=ifft(gd)*a;
-
-    gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+    switch flags.outformat
+        case 'fir'
+            gd=ifft(gd)*a;
+            gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
                       'UniformOutput',0);
-
-    % All filters in gdout will be treated as FIR of length L. Convert them
-    % to a struct with .h and .offset format.
-    gdout = filterbankwin(gdout,a);            
+                  
+            % All filters in gdout will be treated as FIR of length L. Convert them
+            % to a struct with .h and .offset format.
+            gdout = filterbankwin(gdout,a);      
+        case 'full'
+            error('%s: Untested.', upper(mfilename)); 
+            gd = gd*a;
+        case 'econ'
+            error('%s: Not implemented yet.', upper(mfilename)); 
+            gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+                      'UniformOutput',0);
+            % Shorten filters to essential support
+        case 'asfreqfilter'
+            gd = gd*a;
+            % All filters in gdout will be treated as (numeric) freqfilter format. 
+            % Manually convert them to a struct with .H and .foff.
+            template = struct('H',[],'foff',0,'realonly',0,'delay',0,'L',L);
+            gdout = cell(1,M);
+            gdout(:) = {template};
+            
+            [H,foff,L]=comp_economize_filters(gd,'efsuppthr',kv.efsuppthr);
+            for kk = 1:M
+                gdout{kk} = setfield(gdout{kk},'H',H{kk});
+                gdout{kk} = setfield(gdout{kk},'foff',foff(kk));
+            end      
+        otherwise
+            error('%s: Unknown filter format.', upper(mfilename)); 
+    end             
   
 elseif info.ispainless
     gdout = comp_painlessfilterbank(g,asan,L,'dual',1);
