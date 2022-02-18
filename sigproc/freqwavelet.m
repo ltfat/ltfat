@@ -390,9 +390,9 @@ info.tfr = (cauchyAlpha - 1)./(pi*info.fc.^2*L);
 info.cauchyAlpha = cauchyAlpha;
 info.foff = fsuppL(1,:);
 
-if M==1 && iscell(H)
-    H = H{1};
-end
+%if M==1 && iscell(H)
+%    H = H{1};
+%end
 
 end
 
