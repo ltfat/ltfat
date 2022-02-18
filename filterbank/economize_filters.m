@@ -1,4 +1,4 @@
-function [H,foff,L]=comp_economize_filters(g,varargin)
+function [H,foff,L]=economize_filters(g,varargin)
 % Compute 'econ' or 'asfreqfilter' type filter output from full length
 % numerical filters
 

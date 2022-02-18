@@ -239,25 +239,7 @@ definput.keyvals.alphaStep = definput.keyvals.fs/L;
 if ~iscell(name)
     name = {name};
 end
-%winArgs = name(2:end);
-%winName = lower(name{1});
 
-%switch lower(winName)
-%  case 'cauchy'
-%    definput.keyvals.waveletParams = [300,0,3];
-%   case 'morse'
-%     definput.keyvals.waveletParams = [100,0,3];  
-%   case 'morlet'
-%     definput.keyvals.waveletParams = [4];  
-%   case 'fbsp'
-%     definput.keyvals.waveletParams = [4, 2];  
-%   case 'analyticsp'
-%     definput.keyvals.waveletParams = [4, 2];
-%   case 'cplxsp'
-%     definput.keyvals.waveletParams = [4, 2];
-%  otherwise
-%        disp('not yet implemented')
-%end 
 
 [flags,kv,scale]=ltfatarghelper({'scale'},definput,varargin,'freqwavelet');
 
