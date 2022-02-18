@@ -10,15 +10,24 @@
  
 %first call includes the option to set a starting frequency for the wavelet
 %frequency range (can be applied to others too)
-[g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'repeat');
-[g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'repeat', 'startfreq', 400);
-[g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'repeat');
-[g_log,a_log,fc_log,L_log,info_log] = waveletfilters(Ls,'logarithmic', fs,fmin, fmax, M, 'repeat');
+[g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'uniform');
+[g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'uniform', 'startfreq', 400);
+[g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'uniform');
+[g_log,a_log,fc_log,L_log,info_log] = waveletfilters(Ls,'logarithmic', fs,fmin, fmax, M, 'uniform');
 
-figure; filterbankfreqz(g_scales,a_scales,Ls,fs,'plot','linabs','posfreq');
-figure; filterbankfreqz(g_bins,a_bins,Ls,fs,'plot','linabs','posfreq');
-figure; filterbankfreqz(g_linear,a_linear,Ls,fs,'plot','linabs','posfreq');
-figure; filterbankfreqz(g_log,a_log,Ls,fs,'plot','linabs','posfreq');
+Lscales = filterbanklength(L_scales, a_scales);
+Lbins = filterbanklength(L_bins, a_bins);
+Llinear = filterbanklength(L_linear, a_linear);
+Llog = filterbanklength(L_log, a_log);
+
+gd_scales=filterbankrealdual(g_scales,a_scales(:,1),Lscales, 'asfreqfilter');
+gd_bins=filterbankrealdual(g_bins,a_bins(:,1),Lbins, 'asfreqfilter');
+gd_linear=filterbankrealdual(g_linear,a_linear(:,1),Llinear, 'asfreqfilter');
+gd_log=filterbankrealdual(g_log,a_log(:,1),Llog, 'asfreqfilter');
+%figure; filterbankfreqz(g_scales,a_scales,Ls,fs,'plot','linabs','posfreq');
+%figure; filterbankfreqz(g_bins,a_bins,Ls,fs,'plot','linabs','posfreq');
+%figure; filterbankfreqz(g_linear,a_linear,Ls,fs,'plot','linabs','posfreq');
+%figure; filterbankfreqz(g_log,a_log,Ls,fs,'plot','linabs','posfreq');
 
 
 %% basic test waveletfilters
