@@ -27,7 +27,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   by additional lowpass filter(s) . The signal length *Ls*
 %   is mandatory, since we need to avoid too narrow frequency windows
 %
-%   `[g,a,fc]=waveletfilters(Ls, 'linear', fs,fmin,fmax,channels)` constructs 
+%   `[g,a,fc]=waveletfilters(Ls, 'linear', fs, fmin, fmax, channels)` constructs 
 %    a set of wavelets *g* which cover the required frequency range
 %   `fmin`-`fmax` with `channels` equidistantly spaced filters starting at `fmin`.
 %

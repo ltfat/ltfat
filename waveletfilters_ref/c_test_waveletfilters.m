@@ -10,7 +10,7 @@
  
 %first call includes the option to set a starting frequency for the wavelet
 %frequency range (can be applied to others too)
-[g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'uniform');
+[g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'uniform', 'redtar', 4, 'complex');
 [g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins, 'uniform', 'startfreq', 800);
 [g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M, 'uniform');
 
@@ -20,7 +20,7 @@ Lbins = filterbanklength(L_bins, a_bins);
 Llinear = filterbanklength(L_linear, a_linear);
 
 
-%gd_scales=filterbankrealdual(g_scales,a_scales,Lscales, 'asfreqfilter');
+gd_scales=filterbankdual(g_scales,a_scales,Lscales, 'asfreqfilter');
 gd_bins_asf=filterbankrealdual(g_bins,a_bins,Lbins, 'asfreqfilter');
 gd_bins_e=filterbankrealdual(g_bins,a_bins,Lbins, 'econ');
 gd_linear=filterbankrealdual(g_linear,a_linear,Llinear, 'asfreqfilter');

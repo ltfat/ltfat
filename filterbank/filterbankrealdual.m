@@ -56,16 +56,18 @@ if flags.do_forcepainless
     info.ispainless = 1;
 end
 
+% Check user defined L
 if L~=filterbanklength(L,a)
      error(['%s: Specified length L is incompatible with the length of ' ...
             'the time shifts.'],upper(mfilename));
 end;
 
-% Prioritize painless over uniform algorithm
+% Prioritize painless over uniform algorithm if both are suitable
 if info.isuniform && info.ispainless
     info.isuniform = 0;
 end
 
+% Factorization of frame operator to block-diagonal matrix
 if info.isuniform
         
     % Uniform filterbank, use polyphase representation

@@ -34,7 +34,10 @@ function gdout=filterbankdual(g,a,varargin)
 complainif_notenoughargs(nargin,2,'FILTERBANKDUAL');
 
 definput.import={'filterbankdual'};
-[flags,~,L]=ltfatarghelper({'L'},definput,varargin);
+definput.flags.outformat = {'fir','full','econ','asfreqfilter'};
+definput.keyvals.efsuppthr = 10^(-5);
+
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
 
 [g,asan,info]=filterbankwin(g,a,L,'normal');
 if isempty(L) 
@@ -89,15 +92,42 @@ if info.isuniform
   % is much faster than gd(idx_a,:)
   gd =  gd.';
   
-  gd=ifft(gd)*a;
-  
-  % Matrix cols to cell elements + cast
-  gdout = cellfun(@(gdEl) cast(gdEl,class(G)), num2cell(gd,1),...
+
+switch flags.outformat
+    case 'fir'
+        gd=ifft(gd)*a;
+        % Matrix cols to cell elements + cast
+        gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
                   'UniformOutput',0);
-  % All filters in gdout will be treated as FIR of length L. Convert them
-  % to a struct with .h and .offset format.
-  gdout = filterbankwin(gdout,a); 
-  
+
+  %      All filters in gdout will be treated as FIR of length L. Convert them
+  %      to a struct with .h and .offset format.
+        gdout = filterbankwin(gdout,a);      
+    case 'full'
+
+        gdout = gd*a;
+    case 'econ'
+        Shorten filters to essential support
+        gd = gd*a;
+        gdout=economize_filters(gd,'efsuppthr',kv.efsuppthr);
+
+    case 'asfreqfilter'
+        gd = gd*a;
+%        All filters in gdout will be treated as (numeric) freqfilter format. 
+%        Manually convert them to a struct with .H and .foff.
+        template = struct('H',[],'foff',0,'realonly',0,'delay',0,'L',L);
+        gdout = cell(1,M);
+        gdout(:) = {template};
+
+        [H,foff,~]=economize_filters(gd,'efsuppthr',kv.efsuppthr);
+        for kk = 1:M
+            gdout{kk} = setfield(gdout{kk},'H',H{kk});
+            gdout{kk} = setfield(gdout{kk},'foff',foff(kk));
+        end      
+    otherwise
+        error('%s: Unknown filter format.', upper(mfilename)); 
+end 
+
 elseif info.ispainless
    % Factorized frame operator is diagonal.
    gdout = comp_painlessfilterbank(g,asan,L,'dual',0);
