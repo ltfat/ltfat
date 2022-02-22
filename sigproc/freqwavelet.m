@@ -264,6 +264,14 @@ elseif numel(kv.scal) ~= numel(scale)
     error('%s: scal must have exactly as many entries as scale',upper(mfilename)); 
 end
 
+if kv.alphaStep > 0.02
+    error('%s: wavelet sampling too small. increase system length.',upper(mfilename));
+end
+
+%if L/scale > 10
+%   error('%s: scale too large.',upper(mfilename));
+%end
+
 % Check range of scales
 if flags.do_positive && (any(scale <= 0) || any(kv.basefc./scale > 1))
     error('%s: Frequency range flag is set to positive. scale must be positive and not smaller than basefc.', upper(mfilename)); 
@@ -287,18 +295,8 @@ if kv.efsuppthr < 0, error('%s: efsuppthr must be nonnegative',upper(mfilename))
 if kv.bwthr < 0, error('%s: bwthr must be nonnegative',upper(mfilename)); end
 if kv.bwthr < kv.efsuppthr, error('%s: efsuppthr must be lower than bwthr.',upper(mfilename)); end
 
-%initialize the output info
 M = numel(scale);
-info.fc    = zeros(1,M);
-info.basefc    = zeros(1,M);
-info.foff  = zeros(1,M);
-info.fsupp = [];
-info.scale = zeros(1,M);
-info.dilation = 0;
-info.bw    = zeros(1,M);
-info.tfr   = zeros(1,M);
-info.aprecise = ones(1,M);
-info.a_natural = L*ones(M,2);
+
 
 if flags.do_full
     H = zeros(L,M);
@@ -371,9 +369,7 @@ info.a_natural = info.a_natural';
 info.tfr = (cauchyAlpha - 1)./(pi*info.fc.^2*L);
 info.cauchyAlpha = cauchyAlpha;
 info.foff = fsuppL(1,:);
-if fsupp_(4)-fsupp_(2) < 0.05
-    error('wavelet smaller than 5 samples. adjust selected scale');
-end
+
 
 %if M==1 && iscell(H)
 %    H = H{1};

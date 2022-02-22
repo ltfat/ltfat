@@ -37,15 +37,11 @@ if ~ischar(name{1}) || ~any(strcmpi(name{1},freqwavelettypes))
         upper(mfilename));
 end
 
-%winName = name(1);
-winArgs = name(2:end);
 
-definput.keyvals.fs = 2;
-definput.keyvals.fc = 0.1;
-definput.keyvals.basefc = 0.1;
+winArgs = name(2:end);
 definput.keyvals.bwthr = 10^(-3/10);
 definput.keyvals.efsuppthr = 10^(-5);
-%definput.flags.freqrange = {'positive','negative','analytic'};
+
 
 if ~isempty(varargin)
     if strcmp(varargin{1}, 'negative')

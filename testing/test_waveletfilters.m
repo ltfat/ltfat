@@ -1,4 +1,4 @@
-function test_failed=test_waveletfilters
+function [test_failed_s, test_failed_b, test_failed_l]=test_waveletfilters
 %TEST_WAVELETFILTERS  Test the erbfilters filter generator
 
 [f, fs] = gspi;
@@ -18,9 +18,9 @@ wavelettypes = {{'cauchy', 300},{'fbsp', 4, 3}, {'morse'} };
 for ii = 1:numel(wavelettypes)
     %first call includes the option to set a starting frequency for the wavelet
     %frequency range (can be applied to others too)
-    [g_scales,a_scales,fc_scales,L_scales, info_scales]=waveletfilters(Ls,scales, 'delay', delays, wavelettypes{ii}, 'single', 'uniform', 'redtar', 4, 'complex');
-    [g_bins,a_bins,fc_bins,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins,'delay', delays, wavelettypes{ii}, 'repeat', 'uniform', 'startfreq', 800);
-    [g_linear,a_linear,fc_linear,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M,'delay', delays, wavelettypes{ii}, 'uniform');
+    [g_scales,a_scales,~,L_scales, info_scales]=waveletfilters(Ls,scales, 'delay', delays, wavelettypes{ii}, 'single', 'uniform', 'redtar', 4, 'complex');
+    [g_bins,a_bins,~,L_bins,info_bins] = waveletfilters(Ls,'bins', fs,fmin, fmax, bins,'delay', delays, wavelettypes{ii}, 'repeat', 'uniform', 'startfreq', 800);
+    [g_linear,a_linear,~,L_linear,info_linear] = waveletfilters(Ls,'linear', fs,fmin, fmax, M,'delay', delays, wavelettypes{ii}, 'uniform');
 
 
     Lscales = filterbanklength(L_scales, a_scales);
@@ -91,8 +91,8 @@ for ii = 1:numel(wavelettypes)
     [test_failed_b,fail_b]=ltfatdiditfail(res_bins,0, 0.00001);
     [test_failed_l,fail_l]=ltfatdiditfail(res_linear,0, 0.00001);
     s_scales=sprintf(['WAVELETFILTER DUAL SCALES:%3i %0.5g %s'],res_scales,fail_s); 
-    s_bins=sprintf(['WAVELETFILTER DUAL SCALES:%3i %0.5g %s'],res_bins,fail_b);
-    s_linear=sprintf(['WAVELETFILTER DUAL SCALES:%3i %0.5g %s'],res_linear,fail_l);
+    s_bins=sprintf(['WAVELETFILTER DUAL BINS:%3i %0.5g %s'],res_bins,fail_b);
+    s_linear=sprintf(['WAVELETFILTER DUAL LINEAR:%3i %0.5g %s'],res_linear,fail_l);
     disp(s_scales);
     disp(s_bins);
     disp(s_linear);
