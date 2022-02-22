@@ -48,6 +48,12 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %   'cplxsp'     Complex spline wavelet (default parameters [order fb] = [4 2])
 %
+%   A scale of 1 corresponds
+%   to a wavelet filter with peak positioned at the frequency 0.1 relative
+%   to the Nyquist rate. By default, this function does not allow center frequencies
+%   exceeding the Nyquist rate, except with the optional parameter 'analytic',
+%   see below. This implies that scales below 0.1 (or 0.05 for the 'analytic' scheme)
+%   are not supported.
 %   For more details on the construction of the wavelets and the available
 %   wavelet types, please see |freqwavelet|. 
 %
