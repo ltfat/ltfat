@@ -371,6 +371,9 @@ info.a_natural = info.a_natural';
 info.tfr = (cauchyAlpha - 1)./(pi*info.fc.^2*L);
 info.cauchyAlpha = cauchyAlpha;
 info.foff = fsuppL(1,:);
+if fsupp_(4)-fsupp_(2) < 0.05
+    error('wavelet smaller than 5 samples. adjust selected scale');
+end
 
 %if M==1 && iscell(H)
 %    H = H{1};

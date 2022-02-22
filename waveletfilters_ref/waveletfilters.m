@@ -1,7 +1,8 @@
 function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %WAVELETFILTERS Generates wavelet filters
-%   Usage: H=freqwavelet(Ls,scales)
-%          [H,info]=freqwavelet(...)
+%   Usage: [gout,a,fc,L,info] = waveletfilters(Ls,scales)
+%          [gout,a,fc,L,info] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins)
+%          [gout,a,fc,L,info] = waveletfilters(Ls,'linear', fs, fmin, fmax, channels)
 %
 %   Input parameters:
 %         Ls     : System length
@@ -17,6 +18,18 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   scales in the range *scales* for system length *Ls*. A scale of 1 corresponds 
 %   to a wavelet filter with peak positioned at the frequency 0.1 relative 
 %   to the Nyquist rate.
+%
+%   `[g,a,fc]=waveletfilters(Ls, 'bins', fs,fmin,fmax,bins)` constructs a set of
+%   wavelets *g* which cover the required frequency range
+%   `fmin`-`fmax` with `bins` filters per octave starting at `fmin`. All
+%   filters have (approximately) equal $Q=f_c/f_b$. The
+%   frequency interval below fmin not covered by these is captured
+%   by additional lowpass filter(s) . The signal length *Ls*
+%   is mandatory, since we need to avoid too narrow frequency windows
+%
+%   `[g,a,fc]=waveletfilters(Ls, 'linear', fs,fmin,fmax,channels)` constructs 
+%    a set of wavelets *g* which cover the required frequency range
+%   `fmin`-`fmax` with `channels` equidistantly spaced filters starting at `fmin`.
 %
 %   Wavelet types
 %   --------------------
@@ -100,11 +113,11 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %                        adjusted to achieve a redundancy as close as possible
 %                        to 'redtar'.
 %
-%     'trunc_at',thr     Applies hard thresholding of the wavelet filters 
-%                        at the specified threshold value to reduce their 
-%                        support size. 
-%                        The default value is *trunc_at=10e-5*. When no 
-%                        truncation is desired, *trunc_at=0* should be chosen.
+%     'trunc_at',trunc_at     Applies hard thresholding of the wavelet filters 
+%                             at the specified threshold value to reduce their 
+%                             support size. 
+%                             The default value is *trunc_at=10e-5*. When no 
+%                             truncation is desired, *trunc_at=0* should be chosen.
 %
 %     'delay',delay      A scalar, numeric vector of function handle that 
 %                        specifies delays for the wavelet filters. A
@@ -126,6 +139,9 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     'analytic'         Allows positive scales with center frequencies up 
 %                        to twice the Nyquist frequency. This setting is
 %                        suitable for the analysis of analytic signals.
+%
+%     'startfreq'        Allows to manually set a starting frequency for
+%                        the wavelet range. Can not be lower than fmin.
 %
 %   Examples:
 %   ---------
@@ -184,7 +200,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 
 complainif_notenoughargs(nargin,2,upper(mfilename));
 complainif_notposint(Ls,'Ls',upper(mfilename));
-
+                 
 %parse input arguments:
 if ~isnumeric(scales)
     fs = varargin{1};
@@ -194,8 +210,8 @@ if ~isnumeric(scales)
     switch scales
         case 'linear'
             definput.flags.inputmode = {'linear', 'logarithmic', 'bins', 'scales'};
-        case 'logarithmic'
-            definput.flags.inputmode = {'logarithmic', 'bins', 'scales', 'linear'};
+        %case 'logarithmic'
+        %    definput.flags.inputmode = {'logarithmic', 'bins', 'scales', 'linear'};
         case 'bins'
             definput.flags.inputmode = {'bins', 'scales', 'linear', 'logarithmic'};
         otherwise
@@ -213,7 +229,6 @@ definput.import={'normalize'};
 definput.importdefaults={'null'};
 definput.flags.real = {'real','complex','analytic'};
 definput.flags.lowpass  = {'single','repeat','none'};
-%definput.flags.painless  = {'regular','painless'};
 definput.flags.sampling = {'regsampling','uniform',...
                            'fractional','fractionaluniform'};
 definput.flags.wavelettype = getfield(arg_freqwavelet(),'flags','wavelettype');
@@ -222,7 +237,6 @@ definput.keyvals.redtar=[];
 definput.keyvals.delay = 0;
 definput.keyvals.trunc_at  = 10^(-5);
 definput.keyvals.fs = 2;
-definput.keyvals.M0 = 512;
 definput.keyvals.startfreq = [];%only relevant if 'repeat'
 
 [varargin,winCell] = arghelper_filterswinparser(definput.flags.wavelettype,varargin);
@@ -246,16 +260,16 @@ end
 
 %parse the input format
 if ~flags.do_scales
-nf = fs/2;
+    nf = fs/2;
     if flags.do_linear
         min_freq = fmin/nf *10;%map to freqwavelets nyquist f
         max_freq = fmax/nf * 10;
         scales = 1./linspace(min_freq,max_freq,channels);
-    elseif flags.do_logarithmic
-
-        fc = 2.^linspace(log2(fmin), log2(fmax), channels);    
-        fc = fc/nf * 10;   
-        scales = 1./fc;
+  % elseif flags.do_logarithmic
+%
+%        fc = 2.^linspace(log2(fmin), log2(fmax), channels);    
+%        fc = fc/nf * 10;   
+%        scales = 1./fc;
         
     elseif flags.do_bins
 
@@ -290,13 +304,12 @@ nf = fs/2;
         max_freq = fmax/nf * 10;
         scales = 1./linspace(min_freq,max_freq,channels);
     end
-    if ~isempty(kv.startfreq)
+    scales_sorted = sort(scales,'descend');
+    if ~isempty(kv.startfreq)%set the start frequency
         startfreq = kv.startfreq/nf * 10;
-    else
-        startfreq = [];
+        scales_start = find(1./scales_sorted > startfreq,1,'first');%find first scale whose corr. f is larger than fmin
+        scales = scales(scales_start:end);
     end
-else
-    startfreq = [];
 end
 
 
@@ -320,8 +333,44 @@ basea = info.aprecise;
 
 
 %% Determine total number of filters and natural subsampling factor for lowpass
-[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, startfreq, flags, kv);
+%[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
+if numel(scales) < 4 && flags.do_single
+    error('%s: Lowpass generation requires at least 4 scales.',upper(mfilename));
+elseif numel(scales) < 2 && flags.do_repeat
+    error('%s: Lowpass generation requires at least two scales.',upper(mfilename));
+end
 
+% Get number of scales and sort them
+M = numel(scales);
+scales_sorted = sort(scales,'descend');
+%% Determine total number of filters and natural subsampling factor for lowpass
+if flags.do_repeat
+
+    lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.
+        if abs(lowpass_number - round(lowpass_number)) < eps*10^3
+            lowpass_number = round(lowpass_number);
+            lowpass_at_zero = 1;
+        else
+            lowpass_at_zero = 0;
+        end
+        lowpass_number = floor(lowpass_number);
+        if lowpass_number == 0
+            lowpass_number = 1;
+        end
+        M = M + lowpass_number;
+        aprecise = (basea.*scales_sorted(1))*ones(lowpass_number,1);
+
+elseif flags.do_single
+    lowpass_number = 1;
+    lowpass_at_zero = 1;
+    M = M+1;
+    aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
+else
+    lowpass_number = 0;
+    lowpass_at_zero = 0;
+    %M = M;
+    aprecise = [];
+end
 
 %% Get subsampling factors
 aprecise = [aprecise;basea.*scales];
@@ -337,8 +386,93 @@ if any(aprecise<1)
 end
 
 %% Compute the downsampling rate
-[a, L] = c_comp_downsampling(Ls, M, scales, aprecise, lowpass_at_zero, flags, kv);
+%[a, L] = c_comp_downsampling(Ls, M, scales, aprecise, lowpass_at_zero, flags, kv);
+if flags.do_regsampling % This should only be used for lowpass = single!!!
+    a = ones(M,1);
+    
+    [lower_scale,~] = max(scales);
+    [upper_scale,~] = min(scales);
+    lower_scale = floor(log2(1/lower_scale));
+    upper_scale = floor(log2(1/upper_scale));
+    
+    % Find minimum a in each octave and floor23 it.
+    ct=1;
+    for kk = lower_scale:upper_scale
+        tempidx = find( floor(log2(1./scales)) == kk );
+        [~,tempminidx] = min(1/scales(tempidx));
+        idx = tempidx(tempminidx);
+        
+        % Deal the integer subsampling factors
+        a(tempidx) = floor23(aprecise(idx));
+        ct=ct+1;
+    end   
+    
+    % Determine the minimal transform length lcm(a)
+    L = filterbanklength(Ls,a);
+    
+    % Heuristic trying to reduce lcm(a)
+    while L>2*Ls && ~(all(a==a(1)))
+        maxa = max(a);
+        a(a==maxa) = 0;
+        a(a==0) = max(a);
+        L = filterbanklength(Ls,a);
+    end
 
+elseif flags.do_fractional
+    L = Ls;
+    N=ceil(Ls./aprecise);
+    a=[repmat(Ls,M,1),N];
+elseif flags.do_fractionaluniform
+    L = Ls;
+    if lowpass_at_zero
+        aprecise(2:end)= min(aprecise(2:end));
+    else 
+        aprecise= repmat(min(aprecise),numel(aprecise),1);
+    end
+    N=ceil(Ls./aprecise);
+    a=[repmat(Ls,M,1),N];
+elseif flags.do_uniform
+    a=floor(min(aprecise));
+    L=filterbanklength(Ls,a);
+    a = repmat(a,M,1);
+end
+afull=comp_filterbank_a(a,M,struct());
+
+
+%==========================================================================
+%% Adjust the downsampling rates in order to achieve 'redtar'    
+
+if ~isempty(kv.redtar)
+   % if size(afull,2) == 2
+        a = afull(:,1)./afull(:,2);
+   % else
+   %     a = afull;
+   % end
+
+    if ~flags.do_real
+        org_red = sum(1./a);
+    elseif lowpass_at_zero
+        org_red = 1./a(1) + sum(2./a(2:end));
+    else
+        org_red = sum(2./a);
+    end
+    
+    a = floor(a*org_red/kv.redtar);
+    a(a==0) = 1;
+    
+    if ~flags.do_uniform
+        N_new=ceil(L./a);
+        if flags.do_complex
+            N_new = [N_new;N_new(end:-1:2)];
+        end
+        a=[repmat(L,numel(N_new),1),N_new];
+    else 
+        L = filterbanklength(L,a);
+        a=[repmat(L,numel(a),1),ones(numel(a), 1)];
+    end
+else
+    a = afull;
+end
 
 %% Compute the scaling of the filters and the numeric delay vector
 
@@ -395,7 +529,7 @@ else
 end
     
 %% Generate lowpass filters if desired
-[gout, info] = c_make_filters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
+[gout, info] = comp_fblowpassfilters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
 
 info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
@@ -403,5 +537,9 @@ if flags.do_scales
     fc = (kv.fs/2).*info.fc;
 else
     fc = nf.*info.fc;
+end
+
+if flags.do_uniform
+    a = a(:,1);
 end
 
