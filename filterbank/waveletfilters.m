@@ -443,16 +443,18 @@ elseif flags.do_uniform
 end
 afull=comp_filterbank_a(a,M,struct());
 
-
+%if flags.do_uniform
+%    a = a(:,1);
+%end
 %==========================================================================
 %% Adjust the downsampling rates in order to achieve 'redtar'    
 
 if ~isempty(kv.redtar)
-   % if size(afull,2) == 2
+   if size(afull,2) == 2
         a = afull(:,1)./afull(:,2);
-   % else
-   %     a = afull;
-   % end
+   else
+       a = afull;
+   end
 
     if ~flags.do_real
         org_red = sum(1./a);
@@ -473,7 +475,7 @@ if ~isempty(kv.redtar)
         a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
-        a=[repmat(L,numel(a),1),ones(numel(a), 1)];
+        a=[a,ones(length(a), 1)];
     end
 else
     a = afull;
