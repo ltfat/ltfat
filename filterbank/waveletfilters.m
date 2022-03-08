@@ -546,7 +546,7 @@ else
     fc = nf.*info.fc;
 end
 
-if flags.do_uniform
+if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
 end
 
