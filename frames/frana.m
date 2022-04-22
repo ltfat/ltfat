@@ -36,8 +36,9 @@ complainif_notenoughargs(nargin,2,'FRANA');
 complainif_notvalidframeobj(F,'FRANA');
 
 if size(insig,1) == 1
-    error('%s: Currently only column vectors are supported. See bug #59.',...
-          upper(mfilename));    
+%    error('%s: Currently only column vectors are supported. See bug #73.',...
+%          upper(mfilename)); 
+  insig = insig(:);
 end
 
 
