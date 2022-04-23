@@ -1,6 +1,32 @@
-Version 2.4.1 XX/XX 2019
+Version 2.5.0 XX/05 2022
 	* Improved precison of Daubechies wavelet filters for 'db1'-'db38'
 	  Thanks to KIMURA Masaru.
+	  
+	* Added internal reset condition to 'multidgtrealmp'
+	  Thanks to Zdenek Prusa.
+	  
+	* New filterbank-generating function 'waveletfilters'
+	  Thanks to Nicki Holighaus.
+
+	* Extended filterbankdual and filterbankrealdual with an 'economize_filters' option
+	  
+	* Addition of 'comp_fblowpassfilters'
+
+	* Extended wavelet function generator (supported Morlet and several others)
+	  freqwavelet, determine_freqatheight, arg_freqwavelet, wpghi_findalpha, helper_waveletgeneratorfunc
+
+    * Updated the JAVA Version and Portaudio-dll in the blockprocessing framework
+    
+	* rms accepts now 'dim' as an input
+	
+	* frana accepts now row vectors as input signals
+	
+	* expchirp optional fade-in and fade-out
+	
+	* Bug fixes and minor changes:
+	  nsdgt: Thanks to Shane F. Carr
+	  normalize, filterbankrealbounds, cqtfilters, firkaiser, gabwin, comp_frana_tensor
+
 
 Version 2.4.0 12/10 2018
 	* Added universal filterbank phase reconstruction function:
