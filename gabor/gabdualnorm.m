@@ -127,7 +127,7 @@ if nargout<2
 else
   % Scale the first element to make it one, if the windows are dual.
   o1=rhs(1)/scalconst;
-  if (norm(imag(g))+norm(imag(gamma))== 0
+  if ( norm(imag(g)) + norm(imag(gamma)) )== 0
      o1 = real(o1); 
   end 
   o2=norm(rhs(2:end),1);
