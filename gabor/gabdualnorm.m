@@ -24,7 +24,9 @@ function [o1,o2]=gabdualnorm(g,gamma,a,M,varargin);
 %
 %   `[scal,res]=gabdualnorm(...)` computes two entities: *scal* determines
 %   if the windows are scaled correctly, it must be 1 for the windows to be
-%   dual. *res* is close to zero if the windows (scaled correctly) are dual
+%   dual. Note that the scaling factor *scal* is expected to be real for 
+%   real-valued window pairs *g* and *gamma*, but may be complex for general 
+%   windows. *res* is close to zero if the windows (scaled correctly) are dual
 %   windows.
 %
 %   `gabdualnorm(g,gamma,a,M,L)` does the same, but considers a transform
@@ -125,5 +127,8 @@ if nargout<2
 else
   % Scale the first element to make it one, if the windows are dual.
   o1=rhs(1)/scalconst;
+  if (norm(imag(g))+norm(imag(gamma))== 0
+     o1 = real(o1); 
+  end 
   o2=norm(rhs(2:end),1);
 end;
