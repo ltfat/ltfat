@@ -1,6 +1,7 @@
 function H = comp_zerofilt(wintype,fs,chan_min,freqtoscale,scaletofreq,bwmul,bins,Ls)
 %COMP_ZEROFILT low-pass filter for warped filter banks
 
+%   see blfilter for an extended version
     kk = chan_min;
     while scaletofreq(kk+bwmul) > fs/Ls 
       kk = kk-1/bins;

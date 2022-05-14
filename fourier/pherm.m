@@ -174,7 +174,7 @@ end;
 
 if flags.do_noorth
     % Just normalize it, no orthonormalization
-    g=normalize(g);
+    g=apply_norm(g);
 end;
 
 if nargout>1

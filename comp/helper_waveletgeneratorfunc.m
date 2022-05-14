@@ -301,7 +301,7 @@ switch name{1}
 end
 
 
-
+% determine the frequency support
 fsupp = [-inf -inf peakpos inf inf];
 if kv.efsuppthr > 0
     fsupp(1) = freqatheightasc(kv.efsuppthr);

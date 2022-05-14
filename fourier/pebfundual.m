@@ -114,7 +114,7 @@ if any(w==0)
 end
 
 % Define initial value for flags and key/value pairs.
-%definput.import={'normalize'};
+%definput.import={'apply_norm'};
 definput.keyvals.inc = 10;
 %definput.flags.scale = {'nomatchscale','matchscale'};
 [flags,~,inc]=ltfatarghelper({'inc'},definput,varargin);
@@ -277,7 +277,7 @@ gd = gd/sqrt(width);
 %                               ' dual window.'],upper(mfilename)));
 %    gd = gd/scal;
 % else
-%    gd = normalize(gd,flags.norm);
+%    gd = apply_norm(gd,flags.norm);
 % end
 
 gd = gd(:);

@@ -1,5 +1,14 @@
 function [gh,gd,g]=comp_phasegradfilters(g,a,L)
 
+%   called by filterbankphasegrad
+%   worker function for computing the relative instantaneous 
+%   frequency *tgrad* and the negative of the group
+%   delay *fgrad* of the filterbank spectrogram *s* obtained from the 
+%   signal *f* and filterbank parameters *g* and *a*.
+%
+%   uses the equivalence of the filterbank coefficients with those
+%   of an STFT and thus, may not apply to all filterbanks
+
 % Number of filters
 M = numel(g);
 

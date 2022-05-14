@@ -45,9 +45,9 @@ disp('----------FILTERBANKSCALE-----------');
          for nId = 1:numel(norms)
              g = filterbankscale(gr,L,norms{nId},freqflag);
              if ii == 0
-                 [~,n] = normalize(ifft(filterbankfreqz(g,1,L)),norms{nId});
+                 [~,n] = apply_norm(ifft(filterbankfreqz(g,1,L)),norms{nId});
              else
-                [~,n] = normalize(filterbankfreqz(g,1,L),norms{nId});
+                [~,n] = apply_norm(filterbankfreqz(g,1,L),norms{nId});
              end
 
              res = sum(abs(n-1));

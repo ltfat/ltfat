@@ -85,7 +85,7 @@ function varargout=sgram(f,varargin)
 %     'nocolorbar'  Do not display the colorbar.
 %
 %   In addition to these parameters, `sgram` accepts any of the flags from
-%   |normalize|. The window used to calculate the spectrogram will be
+%   |apply_norm|. The window used to calculate the spectrogram will be
 %   normalized as specified.
 %
 %   Examples:
@@ -116,7 +116,7 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-definput.import={'ltfattranslate','normalize','tfplot'};
+definput.import={'ltfattranslate','apply_norm','tfplot'};
 % Override the setting from tfplot, because SGRAM does not support the
 % 'dbsq' setting (it does not make sense).
 definput.flags.log={'db','lin'};

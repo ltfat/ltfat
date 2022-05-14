@@ -86,7 +86,7 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-definput.import={'ltfattranslate','normalize','tfplot'};
+definput.import={'ltfattranslate','apply_norm','tfplot'};
 % Override the setting from tfplot, because phaseplot only uses the 'lin'
 % plotting.
 definput.flags.log={'lin'};

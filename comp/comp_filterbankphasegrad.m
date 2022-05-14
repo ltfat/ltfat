@@ -1,6 +1,6 @@
 function [tgrad,fgrad,s] = comp_filterbankphasegrad(c,ch,cd,L,minlvl)
 %
-%
+%this function is called by filterbankconstphase
 
 % Compute spectrogram and
 % remove small values because we need to divide by cs

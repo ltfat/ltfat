@@ -154,7 +154,7 @@ function [H,info] = freqwavelet(name,L, varargin)
 %                     implemented for non-Morse wavelets.]
 %
 %   Additionally, the function accepts flags to normalize the output.
-%   Please see the help of |normalize|. By default, no normaliazation is
+%   Please see the help of |apply_norm|. By default, no normaliazation is
 %   applied.
 %
 %   Wavelet definitions
@@ -201,7 +201,7 @@ function [H,info] = freqwavelet(name,L, varargin)
 %
 %   References: rioul92 unalsc94
 %
-%   See also: normalize, filterbank, blfilter
+%   See also: apply_norm, filterbank, blfilter
 
 
 
@@ -222,7 +222,7 @@ if ~ischar(name{1}) || ~any(strcmpi(name{1},freqwavelettypes))
 end
 
 
-definput.import={'normalize', 'freqwavelet'};
+definput.import={'apply_norm', 'freqwavelet'};
 definput.importdefaults={'null'};
 definput.keyvals.scale = 1;
 definput.keyvals.scal = [];
@@ -341,16 +341,16 @@ if flags.do_full
     else
         y = ([0;(L-1:-1:1)']).*basedil*kv.alphaStep*scale;
     end
-    H = abs(kv.scal).*normalize(fun(y), flags.norm);    
+    H = abs(kv.scal).*apply_norm(fun(y), flags.norm);    
 elseif flags.do_econ
     for ii = 1:numel(scale)
         y = ((fsuppL(1,ii):fsuppL(end,ii)-1)').*basedil*kv.alphaStep*abs(scale(ii));
-        H{ii} = abs(kv.scal(ii)).*normalize(fun(y), flags.norm);%TODO: check output format: should be cell
+        H{ii} = abs(kv.scal(ii)).*apply_norm(fun(y), flags.norm);%TODO: check output format: should be cell
     end
 elseif flags.do_asfreqfilter
     for m = 1:numel(scale)
         y = @(L) ((fsuppL_inner(fsupp(:,m),kv.fs,L,1):fsuppL_inner(fsupp(:,m),kv.fs,L,5)-1)').*basedil*abs(scale(m))*kv.fs/L;
-        H{m} = struct('H',@(L) abs(kv.scal(m))*normalize(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp(:,m),kv.fs,L,1),'realonly',0, 'delay', kv.delay(m));
+        H{m} = struct('H',@(L) abs(kv.scal(m))*apply_norm(fun(y(L)),flags.norm),'foff',@(L)fsuppL_inner(fsupp(:,m),kv.fs,L,1),'realonly',0, 'delay', kv.delay(m));
    end
 end
 

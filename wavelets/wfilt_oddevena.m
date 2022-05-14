@@ -52,7 +52,7 @@ switch(N)
     % This scaling is not in the reference paper, but it is here to be
     % consistent
     garr = garr*sqrt(2);
-    %garr = normalize(garr,'energy');
+    %garr = apply_norm(garr,'energy');
     
     offset = -10;
 

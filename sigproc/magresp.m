@@ -35,7 +35,7 @@ function magresp(g,varargin);
 %                   *op* are specified as a cell array
 %
 %   In addition to these flags, it is possible to speficy any of the
-%   normalization flags from |normalize| to normalize the input before
+%   normalization flags from |apply_norm| to normalize the input before
 %   calculation of the magnitude response. Specifying `'1'` or `'area'` will
 %   display a magnitude response which peaks at 0 dB.
 %
@@ -75,7 +75,7 @@ donf=0;
 
 definput.flags.posfreq={'autoposfreq','posfreq','nf'};
 
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'null'};
 definput.keyvals.fs=[];
 definput.keyvals.opts={};
@@ -117,7 +117,7 @@ end;
 
 g=pfilt([1;zeros(kv.L-1,1)],g);
 
-g=normalize(g,flags.norm);
+g=apply_norm(g,flags.norm);
 if do_real
 
   % Compute spectrum and normalize

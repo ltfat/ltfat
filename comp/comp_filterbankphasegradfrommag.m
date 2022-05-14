@@ -1,4 +1,7 @@
 function [tgrad,fgrad,logs] = comp_filterbankphasegradfrommag(abss,N,a,M,sqtfr,fc,NEIGH,posInfo,gderivweight,do_tfrdiff)
+
+%this function is called by filterbankconstphase
+
 NEIGH = NEIGH + 1;
 %chanStart = [0;cumsum(N)];
 fac = gderivweight;

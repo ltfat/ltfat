@@ -30,7 +30,7 @@ function [g,nlen] = pebfun(L,w,varargin)
 %   If $nlen < L$, additional zeros can be removed by calling
 %   `g=middlepad(g,nlen)`.
 %
-%   See also: dgt, pebfundual, gabdualnorm, normalize
+%   See also: dgt, pebfundual, gabdualnorm, apply_norm
 %
 %   References: grst13 kl12 bagrst14 klst14 klstgr16
 %
@@ -52,7 +52,7 @@ end
 %TODO: Sanity check for w e.g. 
 % pebfun(1000,[1000,300]) is degenerate
 
-%definput.import={'normalize'};
+%definput.import={'apply_norm'};
 definput.keyvals.width=floor(sqrt(L));
 [flags,~,width]=ltfatarghelper({'width'},definput,varargin);
 complainif_notposint(width,'width',upper(mfilename));
@@ -104,7 +104,7 @@ end
 
 nlen = min([L,m]);
 g = g(:);
-%g = normalize(g(:),flags.norm);
+%g = apply_norm(g(:),flags.norm);
 
 % Shift the window back
 %[~,maxidx] = max(abs(g));

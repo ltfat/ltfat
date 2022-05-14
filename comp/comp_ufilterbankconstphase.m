@@ -1,5 +1,8 @@
 function [newphase,usedmask] = comp_ufilterbankconstphase(abss,tgrad,fgrad,fc,mask,usephase,a,tol,phasetype,do_real)
 
+%   part of the heap integration for reconstructing phase from the
+%   magnitude of filterbank coefficients
+
 %% DO the heap integration
 absthr = max(abss(:))*tol;
 if isempty(mask)

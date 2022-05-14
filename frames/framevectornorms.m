@@ -73,7 +73,7 @@ vnorms = zeros(numel(idx),1);
 if flags.do_auto
     switch F.type
         case 'gen'
-            [~,vnorms] = normalize(F.g(:,idx));
+            [~,vnorms] = apply_norm(F.g(:,idx));
         case {'dgt','dgtreal','dwilt','wmdct'}
             vnorms(:) = norm(F.g);
         case {'filterbank','filterbankreal','ufilterbank'}

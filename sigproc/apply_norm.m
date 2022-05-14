@@ -1,13 +1,11 @@
-function [f,fnorm]=normalize(f,varargin)
-%NORMALIZE  Normalize input signal by specified norm
-%   Usage:  h=normalize(f,...);
+function [f,fnorm]=apply_norm(f,varargin)
+%APPLY_NORM  Normalize input signal by specified norm
+%   Usage:  h=apply_norm(f,...);
 %
-%   WARNING: Due to a possible naming clash with an upcoming Octave function
-%   of the same name, this function will be renamed in LTFAT 3.0.
 % 
-%   `normalize(f,...)` will normalize the signal *f* by the specified norm.
+%   `apply_norm(f,...)` will normalize the signal *f* by the specified norm.
 %
-%   `[f,fnorm]=normalize(f,...)` does the same thing, but in addition
+%   `[f,fnorm]=apply_norm(f,...)` does the same thing, but in addition
 %   returns norm *fnorm* of a signal *f*.
 %
 %   The norm is specified as a string and may be one of:
@@ -55,10 +53,10 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.keyvals.dim=[];
 
-[flags,kv]=ltfatarghelper({},definput,varargin,'normalize');
+[flags,kv]=ltfatarghelper({},definput,varargin,'apply_norm');
 
 if flags.do_null || flags.do_norm_notset || isempty(f);
   return

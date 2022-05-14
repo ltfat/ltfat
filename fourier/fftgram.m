@@ -21,7 +21,7 @@ function fftgram(f, varargin)
 %      'lin'     Plots the energy on a linear scale.
 %
 %   In addition to these parameters, `fftgram` accepts any of the flags from
-%   |normalize|. The input signal will be normalized as specified.
+%   |apply_norm|. The input signal will be normalized as specified.
 %
 %   See also: dft, plotfft
 
@@ -30,7 +30,7 @@ function fftgram(f, varargin)
 % Assert correct number of input parameters.
 complainif_notenoughargs(nargin, 1, 'FFTGRAM');
 
-definput.import={'ltfattranslate','normalize'};
+definput.import={'ltfattranslate','apply_norm'};
 definput.keyvals.fs=[];
 definput.keyvals.clim=[];
 definput.keyvals.dynrange=[];  
@@ -44,7 +44,7 @@ else
   p = (fft(f).*conj(fft(f)));
 end;
 
-p = normalize(p, flags.norm);
+p = apply_norm(p, flags.norm);
 
 if flags.do_db
   if isreal(f)

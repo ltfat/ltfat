@@ -1,6 +1,11 @@
 function [f,fl,W,wasrow,remembershape]=comp_sigreshape_pre(f,callfun,do_ndim)
 %COMP_SIGRESHAPE_PRE
-%  
+%
+
+%   helper function,
+%   reshapes the input signal *f* to a matrix, if it was multidimensional
+%   and to a column vector, in case it was a vector, and remembers its
+%   original dimensions
 
 %   AUTHOR : Peter L. Søndergaard.
 %   TESTING: OK

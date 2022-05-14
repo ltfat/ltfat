@@ -40,10 +40,10 @@ function H = freqwin(name,L,bw,varargin)
 %                  routines. This corresponds to a shift of $s=-.5$
 %
 %   Additionally, the function accepts flags to normalize the output. Please see
-%   the help of |normalize|. Default is to use `'peak'` normalization.
+%   the help of |apply_norm|. Default is to use `'peak'` normalization.
 %
 %
-%   See also: firwin, normalize, plotfft
+%   See also: firwin, apply_norm, plotfft
 
 % AUTHORS: Nicki Holighaus
 
@@ -70,7 +70,7 @@ end;
 winArgs = name(2:end);
 winName = lower(name{1});
 
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'null'};
 definput.flags.centering={'wp','hp','shift'};
 definput.keyvals.shift = 0;
@@ -121,5 +121,5 @@ switch winName
         error('%s: SENTINEL. Unknown window.',upper(mfilename));
 end
 
-H=normalize(H,flags.norm);
+H=apply_norm(H,flags.norm);
 

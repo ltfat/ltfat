@@ -1,5 +1,7 @@
 function [NEIGH,posInfo] = comp_filterbankneighbors(a,M,N,do_real)
 
+%this function is called by filterbankconstphase
+
 chanStart = [0;cumsum(N)];
 
 NEIGH = zeros(6,chanStart(end));

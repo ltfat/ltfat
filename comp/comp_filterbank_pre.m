@@ -22,7 +22,7 @@ mFreq = 1:M;
 mTime = mFreq(cellfun(@(gEl,aEl) isfield(gEl,'h') && numel(gEl.h)<=crossover,g(:),num2cell(a(:,1)))>0); 
 mFreq(mTime) = [];
 
-% Prepare time-domain filters
+% Prepare time-domain filters (adjust h for fc and handle real values)
 for m = mTime
 
    % Handle .fc parameter
@@ -51,7 +51,9 @@ for m = mTime
 
 end
 
-% Prepare frequency-domain filters
+% Prepare frequency-domain filters (if in time domain, handle offset and
+% fc, in in frequency domain, ensure that L of IR is known and correct, connect
+% L and frequency offset, if the latter is present)
 %l=(0:L-1).'/L;
 for m=mFreq
 

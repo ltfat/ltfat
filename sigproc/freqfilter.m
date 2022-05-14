@@ -49,7 +49,7 @@ function gout=freqfilter(winname,bw,varargin)
 if ~iscell(winname), winname = {winname}; end
 
 % Define initial value for flags and key/value pairs.
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.fc=0;
@@ -66,7 +66,7 @@ definput.flags.real={'complex','real'};
 
 [bw,kv.fc,kv.delay,kv.scal]=scalardistribute(bw,kv.fc,kv.delay,kv.scal);
 
-% Sanitize
+% Sanitize (limit fc to the range [-1 1[
 kv.fc=modcent(2*kv.fc/kv.fs,2);
 
 Lw = @(L,bw) min(round(bw*kv.bwtruncmul*L/kv.fs),L);
@@ -80,6 +80,7 @@ end
 
 Nfilt = numel(bw);
 gout = cell(Nfilt,1);
+% normalize the frequency response
 for ii=1:Nfilt
     g=struct();
     g.foff=@(L) round(L/2*kv.fc(ii)) - floor(Lw(L,bw(ii))/2); 

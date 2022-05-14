@@ -234,7 +234,7 @@ if isempty(kv.maxit), kv.maxit = L; end
 
 info.g = cell(dictno,1);
 for dIdx = 1:dictno
-    info.g{dIdx} = normalize(gabwin(gin{dIdx},a(dIdx),M(dIdx),L),'2');
+    info.g{dIdx} = apply_norm(gabwin(gin{dIdx},a(dIdx),M(dIdx),L),'2');
 end
 
 for dIdx = 1:dictno

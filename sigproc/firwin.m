@@ -133,7 +133,7 @@ function [g,info]=firwin(name,M,varargin)
 %                  tapering. Accepted values lie in the range from 0 to 1.
 %
 %   Additionally, `firwin` accepts flags to normalize the output. Please see
-%   the help of |normalize|. Default is to use `'peak'` normalization,
+%   the help of |apply_norm|. Default is to use `'peak'` normalization,
 %   which is useful for using the output from `firwin` for windowing in the
 %   time-domain. For filtering in the time-domain, a normalization of `'1'`
 %   or `'area'` is preferable.
@@ -156,7 +156,7 @@ function [g,info]=firwin(name,M,varargin)
 %
 %     legend('Hann','Hamming','Blackman','Nuttall','Itersine');
 %
-%   See also:  freqwin, pgauss, pbspline, firkaiser, normalize
+%   See also:  freqwin, pgauss, pbspline, firkaiser, apply_norm
 %
 %   References: opsc89 harris1978 nuttall1981 wesfreid1993
  
@@ -186,7 +186,7 @@ info.issqpu=0;
 name=lower(name);
 
 % Define initial value for flags and key/value pairs.
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'null'};
 definput.flags.centering={'wp','hp','shift'};
 definput.keyvals.shift=0;
@@ -358,5 +358,5 @@ if do_sqrt
   g=sqrt(g);
 end;
 
-g=normalize(g,flags.norm);
+g=apply_norm(g,flags.norm);
 

@@ -4,6 +4,9 @@ function [a,info]=comp_filterbank_a(a,M,info)
 %   
 %   `[a,info]=comp_filterbank_a(a,M)` returns a sanitized version of *a*
 %   expand to a $M\times 2$ matrix, and update the information in *info*.
+%
+%   Sanitize means, that at the output of this function, a is either a
+%   single value or a matrix with 2 columns
 
 % FIXME: Not sufficiently safe in the case where there is only one
 % channel, or when attempting to specify a uniform filterbank with

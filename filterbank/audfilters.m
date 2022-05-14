@@ -177,6 +177,8 @@ function [g,a,fc,L,info]=audfilters(fs,Ls,varargin)
 
 % Authors: Peter L. Søndergaard (original 'erbfilters' function)
 % Modified by: Thibaud Necciari, Nicki Holighaus
+% Comments updated by: Nicki Holighaus (09.05.22)
+
 % Date: 16.12.16
 
 complainif_notenoughargs(nargin,2,upper(mfilename));
@@ -258,6 +260,8 @@ if ~isempty(kv.M)
     kv.spacing = (freqtoaud(kv.fmax,flags.audscale) - freqtoaud(kv.fmin,flags.audscale))/(kv.M-1);
 end
 
+% Construct function handle for filter prototype and determine its ERB-type
+% bandwidth
 [filterfunc,winbw] = helper_filtergeneratorfunc(...
                           flags.wintype,winCell,fs,kv.bwmul,kv.min_win,kv.trunc_at,...
                           flags.audscale,flags.do_subprec,flags.do_symmetric,flags.do_warped);
@@ -283,6 +287,8 @@ if fmax <= fmin || fmin > fs/4 || fmax < fs/4
     error(['%s: Bad combination of fs, fmax and fmin.'],upper(mfilename));
 end
 
+% Center frequencies are given as equidistantly spaced points on auditory 
+% scale 
 fc=audspace(fmin,fmax,innerChanNum,flags.audscale).';
 fc = [0;fc;fs/2];
 M2 = innerChanNum+2;
@@ -298,15 +304,21 @@ if flags.do_symmetric
     fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
     
     % Generate lowpass filter parameters     
-    fsupp(1) = 0;
+    fsupp(1) = 0; % Placeholder value 
+    % Determine border of passband
     fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+    % Determine lowpass width
     fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    % Determine bandwidth-adapted decimation factor
     aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);  
     
     % Generate highpass filter parameters     
-    fsupp(end) = 0;
+    fsupp(end) = 0; % Placeholder value
+    % Determine border of passband
     fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
+    % Determine highpass width
     fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    % Determine bandwidth-adapted decimation factor
     aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
 else    
     % fsupp_scale is measured on the selected auditory scale
@@ -320,15 +332,21 @@ else
                audtofreq(freqtoaud(fc(ind),flags.audscale)-fsupp_scale/2,flags.audscale);
     
     % Generate lowpass filter parameters     
-    fsupp(1) = 0;
+    fsupp(1) = 0; % Placeholder value
+    % Determine border of passband
     fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+    % Determine lowpass width
     fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    % Determine bandwidth-adapted decimation factor
     aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);
     
     % Generate highpass filter parameters     
-    fsupp(end) = 0;
+    fsupp(end) = 0; % Placeholder value
+    % Determine border of passband
     fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
+    % Determine highpass width
     fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+    % Determine bandwidth-adapted decimation factor
     aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
 end;
 
@@ -364,6 +382,8 @@ if flags.do_regsampling
         L = filterbanklength(Ls,a);
     end
 
+% Determine true decimation factors from "aprecise" according to chosen
+% subsampling scheme (see help above)
 elseif flags.do_fractional
     L = Ls;
     N=ceil(Ls./aprecise);
@@ -378,10 +398,12 @@ elseif flags.do_uniform
     a = repmat(a,M2,1);
 end;
 
-% Get an expanded "a"
+% Get an expanded "a" / Convert "a" to LTFAT 2-column fractional format
 afull=comp_filterbank_a(a,M2,struct());
 
 %% Compute the scaling of the filters
+% Filters are scaled such that the energy of the subband coefficients
+% remains approximately constant independent of the decimation factor
 scal=sqrt(afull(:,1)./afull(:,2));
 
 %% Construct the real or complex filterbank
@@ -414,35 +436,40 @@ g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(1),kv,flags);
 % Generate highpass filter
 g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(M2),kv,flags);
 
-% Adjust the downsampling rates in order to achieve 'redtar'
+% Adjust the downsampling rates in order to achieve 'redtar' (see help
+% above)
 if ~isempty(kv.redtar)
     if flags.do_uniform
         % Compute and display redundancy for verification
         org_red = (M2-2)/a(1);
         a_new = floor(a*org_red/kv.redtar);
         scal_new = org_red/kv.redtar*ones(numel(g),1);
-%         new_red = (M2-2)/a_new(1);
+        % new_red = (M2-2)/a_new(1);
     else
-%         Exactly as in the paper
+        % The decimation factors of all filters except for lowpass and 
+        % highpass are adjusted proportional to their bandwidth. For 
+        % lowpass and highpass, only the tapered part is considered for 
+        % adjustment to better preserve stability. Please consult the
+        % references for details. 
         dk_old = a(:,1)./a(:,2);
         org_red = sum(2./dk_old(2:end-1));
         a_new = [a(1,:);[a(2:end-1,1),ceil(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
-%         %         Adjust d0 and dK to the new redundancy
+        % Adjust d0 and dK to the new redundancy
         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
-%         % Low-pass
+        % Low-pass
         fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
         fsupp_temp0 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
         a_new(1,2) = ceil(Ls/max(fs./(2*fps0+fsupp_temp0/cbw),1));  
-%         % High-pass
+        % High-pass
         fps1 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
         fsupp_temp1 = audfiltbw(fps1,flags.audscale)/winbw*kv.bwmul;
         a_new(end,2) = ceil(Ls/max(fs./(2*(fc(end)-fps1)+fsupp_temp1/cbw),1));
         % Finally re-scale all filters
         dk_new = a_new(:,1)./a_new(:,2);
-        scal_new = dk_new./dk_old;
-%         new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
+        scal_new = dk_new./dk_old; 
+        % new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
     end
-    g_new = filterbankscale(g,sqrt(scal_new)');
+    g_new = filterbankscale(g,sqrt(scal_new)'); % Perform rescaling
     a = a_new;
     g = g_new;
     if 0

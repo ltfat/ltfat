@@ -1,7 +1,8 @@
 function F = comp_ifilterbank_fftbl(c,G,foff,a,realonly)
 %COMP_IFILTERBANK_FFTBL  Compute filtering in FD
-%
-%
+
+%   called by comp_ifilterbank, performs frequency domain
+%   filtering for filters with bandlimited frequency responses
 
 M = numel(c);
 W = size(c{1},2);

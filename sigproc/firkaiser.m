@@ -20,12 +20,12 @@ function g=firkaiser(L,beta,varargin)
 %     'hp'       Generate half point even window.
 %  
 %   Additionally, `firkaiser` accepts flags to normalize the output. Please
-%   see the help of |normalize|. Default is to use `'null'` normalization.
+%   see the help of |apply_norm|. Default is to use `'null'` normalization.
 %
 %   Note that odd-length Derived Kaiser-Bessel windows are not
 %   mathematically defined, yet they are supported by this code.
 %
-%   See also: firwin, normalize
+%   See also: firwin, apply_norm
 %
 %   References: opsc89
 
@@ -40,7 +40,7 @@ if numel(beta)>1
 end;
 
 % Define initial value for flags and key/value pairs.
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'null'};
 definput.flags.centering={'wp','hp'};
 definput.flags.stype={'normal','derived'};
@@ -125,4 +125,4 @@ end;
 % The besseli computation sometimes generates a zero imaginary component.
 g=real(g);
 
-g=normalize(g,flags.norm);
+g=apply_norm(g,flags.norm);

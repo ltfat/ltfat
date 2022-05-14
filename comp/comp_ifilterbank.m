@@ -1,6 +1,9 @@
 function f = comp_ifilterbank(c,g,a,L)
 %COMP_IFILTERBANK Compute inverse filterbank
 
+%   called by comp_ifilterbank, performs frequency domain
+%   filtering for filters with finite impulse responses
+
 M = numel(g);
 classname = assert_classname(c{1});
 

@@ -26,7 +26,7 @@ function outsig = noise(siglen,varargin)
 %     'red'    This is the same as brown noise.     
 %
 %   By default, the noise is normalized to have a unit energy, but this can
-%   be changed by passing a flag to |normalize|.
+%   be changed by passing a flag to |apply_norm|.
 %
 %   Examples:
 %   ---------
@@ -43,7 +43,7 @@ function outsig = noise(siglen,varargin)
 %
 %     sgram(noise(5000,'brown'),'dynrange',70);
 % 
-%   See also: normalize
+%   See also: apply_norm
 
 %   AUTHOR: Hagen Wierstorf and Peter L. Søndergaard.
 
@@ -59,7 +59,7 @@ if ~isnumeric(siglen) || ~isscalar(siglen) || siglen<=0
     error('%s: siglen has to be a positive scalar.',upper(mfilename));
 end
 
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'2'};
 definput.flags.noisetype={'white','pink','brown','red'};
 definput.keyvals.nsigs=1;
@@ -94,5 +94,5 @@ if flags.do_pink
 
 end;
 
-outsig=normalize(outsig,flags.norm);
+outsig=apply_norm(outsig,flags.norm);
 

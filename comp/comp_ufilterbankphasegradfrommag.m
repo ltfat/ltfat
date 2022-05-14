@@ -1,5 +1,8 @@
 function [tgrad,fgrad,logs] = comp_ufilterbankphasegradfrommag(abss,N,a,M,sqtfr,fc,do_real,do_tfrdiff)
 
+%   part of the heap integration for reconstructing phase from the
+%   magnitude of filterbank coefficients
+
 L=N*a;
 
 % Prepare differences of center frequencies [given in normalized frequency]

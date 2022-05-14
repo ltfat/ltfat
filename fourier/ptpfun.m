@@ -32,7 +32,7 @@ function g = ptpfun(L,w,varargin)
 %   `ptpfun(L,w,width)` additionally stretches the function by a factor of 
 %   *width*.
 %
-%   See also: dgt, ptpfundual, gabdualnorm, normalize
+%   See also: dgt, ptpfundual, gabdualnorm, apply_norm
 %
 %   References: grst13 kl12 bagrst14 klst14
 %
@@ -52,7 +52,7 @@ if any(w==0)
 end
 
 % Define initial value for flags and key/value pairs.
-%definput.import={'normalize'};
+%definput.import={'apply_norm'};
 definput.keyvals.width=floor(sqrt(L));
 [flags,~,width]=ltfatarghelper({'width'},definput,varargin);
 complainif_notposint(width,'width',upper(mfilename));
@@ -132,7 +132,7 @@ else
     g = sum(reshape(Y(1,end-n*L+1:end),L,n),2) * sqrt(width) / L;
 end
 
-%g = normalize(g(:),flags.norm);
+%g = apply_norm(g(:),flags.norm);
 g = g(:);
 
 end

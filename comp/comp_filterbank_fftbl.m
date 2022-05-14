@@ -1,7 +1,8 @@
 function c=comp_filterbank_fftbl(F,G,foff,a,realonly)
 %COMP_FILTERBANK_FFTBL  Compute filtering in FD
 %
-%
+%   does the same as comp_filterbank_fft, but for filters
+%   with bandlimited frequency responses
 
 M = numel(G);
 [L,W] = size(F);

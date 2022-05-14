@@ -1,5 +1,8 @@
 function [newphase,usedmask] = comp_filterbankconstphase(abss,tgrad,fgrad,NEIGH,posInfo,fc,mask,usephase,a,M,N,tol,phasetype)
 
+%sets the mask for the heap integration and acts as a wrapper for
+%the corresponding C-function
+
 %% The actual phase construction
 sMax = max(abss(:));
 absthr = max(sMax)*tol;

@@ -195,7 +195,7 @@ do_additive = isAdditive(kv.cost);
 
 if(flags.do_bottomup)
    % Do full-tree Wavelet Packet decomposition beforehand and prune.
-   [c,info] = wpfbt(normalize(f,'2'),{w,J,'full'},'nat',flags.ext,'intnoscale');
+   [c,info] = wpfbt(apply_norm(f,'2'),{w,J,'full'},'nat',flags.ext,'intnoscale');
 
    % Nodes in the reverse BF order
    treePath = fliplr(nodeBForder(0,info.wt));

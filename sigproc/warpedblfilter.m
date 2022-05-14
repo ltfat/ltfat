@@ -47,7 +47,7 @@ function gout=warpedblfilter(winname,fsupp,fc,fs,freqtoscale,scaletofreq,varargi
 %                    useful to equalize channels in a filterbank.
 %
 %   It is possible to normalize the transfer function of the filter by
-%   passing any of the flags from the |normalize| function. The default
+%   passing any of the flags from the |apply_norm| function. The default
 %   normalization is `'energy'`.
 %
 %   The filter can be used in the |pfilt| routine to filter a signal, or
@@ -79,7 +79,7 @@ if isempty(fsupp) || ~isnumeric(fsupp)
 end
 
 % Define initial value for flags and key/value pairs.
-definput.import={'normalize'};
+definput.import={'apply_norm'};
 definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.scal=1;
