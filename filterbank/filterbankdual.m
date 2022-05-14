@@ -91,7 +91,7 @@ if info.isuniform
   % gd was created transposed because the indexing gd(:,idx_a)
   % is much faster than gd(idx_a,:)
   gd =  gd.';
-  
+  thisclass = class(G);
 
 switch flags.outformat
     case 'fir'
