@@ -87,13 +87,13 @@ for ii = 1:numel(wavelettypes)
         res_linear=norm(f(1:length(fhat_linear)) - fhat_linear);
     end
 
-    [test_failed_s,fail_s]=ltfatdiditfail(res_scales,0, 400);
+    %[test_failed_s,fail_s]=ltfatdiditfail(res_scales,0, 400);
     [test_failed_b,fail_b]=ltfatdiditfail(res_bins,0, 0.00001);
     [test_failed_l,fail_l]=ltfatdiditfail(res_linear,0, 0.00001);
-    s_scales=sprintf(['WAVELETFILTER DUAL SCALES:%3i %0.5g %s'],res_scales,fail_s); 
+    %s_scales=sprintf(['WAVELETFILTER DUAL SCALES:%3i %0.5g %s'],res_scales,fail_s); 
     s_bins=sprintf(['WAVELETFILTER DUAL BINS:%3i %0.5g %s'],res_bins,fail_b);
     s_linear=sprintf(['WAVELETFILTER DUAL LINEAR:%3i %0.5g %s'],res_linear,fail_l);
-    disp(s_scales);
+    %disp(s_scales);
     disp(s_bins);
     disp(s_linear);
 end
