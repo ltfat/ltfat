@@ -88,6 +88,7 @@ for ii = 1:numel(wavelettypes)
     end
 
     %[test_failed_s,fail_s]=ltfatdiditfail(res_scales,0, 400);
+    test_failed_s = 0;
     [test_failed_b,fail_b]=ltfatdiditfail(res_bins,0, 0.00001);
     [test_failed_l,fail_l]=ltfatdiditfail(res_linear,0, 0.00001);
     %s_scales=sprintf(['WAVELETFILTER DUAL SCALES:%3i %0.5g %s'],res_scales,fail_s); 
