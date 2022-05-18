@@ -44,6 +44,9 @@ function [f,fnorm]=normalize(f,varargin)
 %                means to work along the first non-singleton one.
 %
 %   See also: rms, s0norm
+
+warning(['LTFAT: NORMALIZE has been deprecated and will be removed',...
+         ' in the future releases, please use SETNORM instead.']);
   
 if ~isnumeric(f) 
   error('%s: Input must be numerical.',upper(mfilename));
