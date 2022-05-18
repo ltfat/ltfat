@@ -11,10 +11,10 @@ function H=comp_warpedfreqresponse(wintype,fc,bw,fs,L,freqtoscale,scaletofreq,va
 %      L           : Transform length (in samples).
 %      freqtoscale : Function to convert Hz into scale units.
 %      scaletofreq : Function to convert scale units into Hz.
-%      normtype    : Normalization flag to pass to |apply_norm|.
+%      normtype    : Normalization flag to pass to |setnorm|.
 
 
-definput.import={'apply_norm'};
+definput.import={'setnorm'};
 definput.flags.symmetry = {'nonsymmetric','symmetric'};
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
@@ -62,7 +62,7 @@ win_hi=firwin(wintype,bins_hi);
 H=win_lo+win_hi;
 H(isnan(H)) = 0;
  
-H=apply_norm(H,flags.norm);
+H=setnorm(H,flags.norm);
 
 H=circshift(H,-pos_lo);
 upidx=modcent(pos_hi-pos_lo,L);

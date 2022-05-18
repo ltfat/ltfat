@@ -93,7 +93,7 @@ function varargout=resgram(f,varargin)
 %     'nocolorbar'  Do not display the colorbar.
 %
 %   In addition to these parameters, `sgram` accepts any of the flags from
-%   |apply_norm|. The window used to calculate the spectrogram will be
+%   |setnorm|. The window used to calculate the spectrogram will be
 %   normalized as specified.
 %
 %   See also: sgram  
@@ -113,7 +113,7 @@ if sum(size(f)>1)>1
   error('Input must be a vector.');
 end;
 
-definput.import={'ltfattranslate','apply_norm','tfplot'};
+definput.import={'ltfattranslate','setnorm','tfplot'};
 
 % Define initial value for flags and key/value pairs.
 definput.flags.wlen={'nowlen','wlen'};

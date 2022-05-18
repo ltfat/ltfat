@@ -106,7 +106,7 @@ switch(a)
     ft(ind+1:ind+L)=[];
     frf=ifft(ft);
     frf = exp(-i*(1-a)*pi/4)*frf;
-    frf=apply_norm(frf)*m;
+    frf=setnorm(frf)*m;
     
 end;
 

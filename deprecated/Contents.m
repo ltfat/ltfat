@@ -7,7 +7,9 @@
 %  description on how to replace the function.
 %  
 %  Deprecated functions
-%    CONVOLVE	       - Use |lconv|
+%    ARG_NORMALIZE	 - Use |arg_setnorm|
+%    NORMALIZE	        - Use |setnorm|
+%    CONVOLVE	        - Use |lconv|
 %    GABELITISTLASSO   - Use |franagrouplasso|  
 %    GABGROUPLASSO     - Use |franagrouplasso|
 %    GABLASSO          - Use |franalasso|

@@ -59,7 +59,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %   By default, wavelet filters are peak normalized before being adjusted
 %   to the proposed downsampling factor. The peak normalization can be 
-%   overridden by forwarding any norm flag accepted by |apply_norm|.
+%   overridden by forwarding any norm flag accepted by |setnorm|.
 %
 %   Downsampling factors
 %   --------------------
@@ -200,7 +200,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     subplot(2,1,2);
 %     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 % 
-%   See also: freqwavelet, filterbank, apply_norm
+%   See also: freqwavelet, filterbank, setnorm
 
 % AUTHORS: Nicki Holighaus, Zdenek Prusa, Guenther Koliander, Clara Hollomey
 
@@ -231,7 +231,7 @@ else
     definput.flags.inputmode = {'scales', 'linear', 'logarithmic', 'bins'};
 end
 
-definput.import={'apply_norm'};
+definput.import={'setnorm'};
 definput.importdefaults={'null'};
 definput.flags.real = {'real','complex','analytic'};
 definput.flags.lowpass  = {'single','repeat','none'};

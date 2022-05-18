@@ -14,7 +14,7 @@ function [g,scal] = filterbankscale(g,varargin)
 %
 %   `g=filterbankscale(g,'flag')` instead normalizes each filter to have
 %   unit norm defined by 'flag'. It can be any of the flags recognized by
-%   |apply_norm|. The  normalization is done in the time domain by default.
+%   |setnorm|. The  normalization is done in the time domain by default.
 %   The normalization can be done in frequency by passing extra flag 'freq'.
 %
 %   `g=filterbankscale(g,L,'flag')` works as before, but some filters require
@@ -32,7 +32,7 @@ function [g,scal] = filterbankscale(g,varargin)
 
 complainif_notenoughargs(nargin,2,'FILTERBANKSCALE');
 
-definput.import={'apply_norm'};
+definput.import={'setnorm'};
 definput.importdefaults={'norm_notset'};
 definput.flags.normfreq = {'nofreq','freq'};
 definput.keyvals.arg1 = [];
@@ -65,7 +65,7 @@ end
 % numeric vectors
 
 if flags.do_norm_notset
-    % No flag from apply_norm was set
+    % No flag from setnorm was set
     scal = scalardistribute(arg1,ones(size(g)));
 
     for ii=1:numel(g)
@@ -100,7 +100,7 @@ if flags.do_norm_notset
    end
 else
     scal = zeros(numel(g),1);
-    % apply_norm flag was set
+    % setnorm flag was set
     
     L = arg1; % can be still empty
     % Run again with L specified
@@ -122,7 +122,7 @@ else
                     complain_L(L);
                     % Get frequency response and it's norm
                     H = comp_transferfunction(g2{ii},L);
-                    [~,scal(ii)] = apply_norm(H,flags.norm);
+                    [~,scal(ii)] = setnorm(H,flags.norm);
                     if scal(ii) == 0, scal(ii) = 1; end
                     g{ii}.h = g{ii}.h/scal(ii);
                 else
@@ -133,7 +133,7 @@ else
                     end
                     % Get impulse response with all the fields applied
                     tmpg = comp_filterbank_pre(g2(ii),1,L,inf);
-                    [~,scal(ii)] = apply_norm(tmpg{1}.h,flags.norm);
+                    [~,scal(ii)] = setnorm(tmpg{1}.h,flags.norm);
                     if scal(ii) == 0, scal(ii) = 1; end
                      g{ii}.h = g{ii}.h/scal(ii);
                 end
@@ -142,11 +142,11 @@ else
                     complain_L(L);
                     H = comp_transferfunction(g2{ii},L);
                     if flags.do_freq
-                        [~,scal(ii)] = apply_norm(H,flags.norm);
+                        [~,scal(ii)] = setnorm(H,flags.norm);
                         if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = @(L) g{ii}.H(L)/scal(ii);
                     else
-                        [~,scal(ii)] = apply_norm(ifft(H),flags.norm);
+                        [~,scal(ii)] = setnorm(ifft(H),flags.norm);
                         if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = @(L) g{ii}.H(L)/scal(ii);
                     end
@@ -166,11 +166,11 @@ else
 
                     H = comp_transferfunction(g2{ii},L);
                     if flags.do_freq
-                        [~,scal(ii)] = apply_norm(H,flags.norm);
+                        [~,scal(ii)] = setnorm(H,flags.norm);
                         if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = g{ii}.H/scal(ii);
                     else
-                        [~,scal(ii)] = apply_norm(ifft(H),flags.norm);
+                        [~,scal(ii)] = setnorm(ifft(H),flags.norm);
                         if scal(ii) == 0, scal(ii) = 1; end
                         g{ii}.H = g{ii}.H/scal(ii);
                     end
@@ -184,11 +184,11 @@ else
             if flags.do_freq
                 complain_L(L);
                 % We must use g2 here
-                [~, scal(ii)] = apply_norm(fft(g2{ii}.h,L),flags.norm);
+                [~, scal(ii)] = setnorm(fft(g2{ii}.h,L),flags.norm);
                 if scal(ii) == 0, scal(ii) = 1; end
                 g{ii} = g{ii}/scal(ii);
             else
-                [g{ii}, scal(ii)] = apply_norm(g{ii},flags.norm);
+                [g{ii}, scal(ii)] = setnorm(g{ii},flags.norm);
             end
         else
             error('%s: SENTINEL. Unrecognized filter format',...

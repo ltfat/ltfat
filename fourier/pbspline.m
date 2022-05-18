@@ -54,9 +54,9 @@ function [g,nlen] = pbspline(L,order,a,varargin)
 %   `g=middlepad(g,nlen)`.
 %
 %   Additionally, `pbspline` accepts flags to normalize the output. Please
-%   see the help of |apply_norm|. Default is to use `'peak'` normalization.
+%   see the help of |setnorm|. Default is to use `'peak'` normalization.
 %
-%   See also:   pgauss, firwin, middlepad, apply_norm
+%   See also:   pgauss, firwin, middlepad, setnorm
 %
 %   Demos: demo_pbspline
 %
@@ -98,7 +98,7 @@ function [g,nlen] = pbspline(L,order,a,varargin)
   end;
     
   % Define initial value for flags and key/value pairs.
-  definput.import={'apply_norm'};
+  definput.import={'setnorm'};
   definput.importdefaults={'inf'};
   definput.flags.centering={'wp','hp'};
   definput.flags.stype={'ed','xd','stard','ec','xc','starc'};
@@ -430,7 +430,7 @@ end;
 % nlen cannot be larger that L
 nlen=min(L,nlen);
 
-g=apply_norm(g,flags.norm);
+g=setnorm(g,flags.norm);
 
 function Z=myhzeta(z,v);
   

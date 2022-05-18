@@ -50,7 +50,7 @@ function plotfft(coef,varargin)
 %
 %
 %   In addition to these parameters, `plotfft` accepts any of the flags
-%   from |apply_norm|. The coefficients will be normalized as specified
+%   from |setnorm|. The coefficients will be normalized as specified
 %   before plotting.
 %
 %   See also: plotfftreal
@@ -63,7 +63,7 @@ end;
 %   error('%s: Can only plot vectors.',upper(mfilename));
 % end;
 
-definput.import={'ltfattranslate','apply_norm'};
+definput.import={'ltfattranslate','setnorm'};
 definput.importdefaults={'null'};
 definput.flags.log={'db','dbsq','lin','linsq','linabs'};
 definput.flags.posfreq={'nf','posfreq'};
@@ -84,7 +84,7 @@ end
 
 [coef,~,N]=assert_sigreshape_pre(coef,[],kv.dim,upper(mfilename));
 
-coef=apply_norm(coef,flags.norm);
+coef=setnorm(coef,flags.norm);
 
 % Apply transformation to coefficients.
 if flags.do_db

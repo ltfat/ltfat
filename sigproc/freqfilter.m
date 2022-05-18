@@ -49,7 +49,7 @@ function gout=freqfilter(winname,bw,varargin)
 if ~iscell(winname), winname = {winname}; end
 
 % Define initial value for flags and key/value pairs.
-definput.import={'apply_norm'};
+definput.import={'setnorm'};
 definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.fc=0;

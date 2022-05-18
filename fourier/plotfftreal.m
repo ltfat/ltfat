@@ -48,7 +48,7 @@ function plotfftreal(coef,varargin)
 %
 %
 %   In addition to these parameters, `plotfftreal` accepts any of the flags
-%   from |apply_norm|. The coefficients will be normalized as specified
+%   from |setnorm|. The coefficients will be normalized as specified
 %   before plotting.
 %
 %   See also: plotfft, fftreal
@@ -58,7 +58,7 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'ltfattranslate','apply_norm'};
+definput.import={'ltfattranslate','setnorm'};
 definput.importdefaults={'null'};
 
 definput.flags.log={'db','dbsq','lin','linsq','linabs'};
@@ -89,7 +89,7 @@ if N2~=Lc
   error('%s: Size mismatch.',upper(mfilename));
 end;
 
-coef=apply_norm(coef,flags.norm);
+coef=setnorm(coef,flags.norm);
 
 % Apply transformation to coefficients.
 if flags.do_db

@@ -1,4 +1,4 @@
-function definput=arg_apply_norm(definput)
+function definput=arg_setnorm(definput)
   
 % Both 'null' and 'empty' do no scaling when normalize is called
 % directly.

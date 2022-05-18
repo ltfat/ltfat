@@ -71,7 +71,7 @@ if ~isnumeric(fc) || ~isvector(fc) || any(fc<0) || any(fc>fs/2)
          'the sampling rate.'],upper(mfilename));
 end;
 
-definput.import={'apply_norm'};
+definput.import={'setnorm'};
 definput.importdefaults={'null'};
 definput.flags.real={'complex','real'};
 definput.keyvals.n=[];
@@ -130,7 +130,7 @@ for ii = 1:nchannels
   % Insert zeros before the start of the signal.
   %bwork = fftshift([bwork(1:nlast);zeros(n-nlast-nfirst,1);bwork(nlast+1:nlast+nfirst)]);
     
-  bwork = apply_norm(bwork,flags.norm);  
+  bwork = setnorm(bwork,flags.norm);  
   b{ii} = struct('h',bwork,'offset',-nfirst,'realonly',0);
 end;
 

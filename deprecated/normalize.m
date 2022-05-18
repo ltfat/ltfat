@@ -1,11 +1,11 @@
-function [f,fnorm]=apply_norm(f,varargin)
-%APPLY_NORM  Normalize input signal by specified norm
-%   Usage:  h=apply_norm(f,...);
+function [f,fnorm]=normalize(f,varargin)
+%NORMALIZE  Normalize input signal by specified norm
+%   Usage:  h=normalize(f,...);
 %
 % 
-%   `apply_norm(f,...)` will normalize the signal *f* by the specified norm.
+%   `normalize(f,...)` will normalize the signal *f* by the specified norm.
 %
-%   `[f,fnorm]=apply_norm(f,...)` does the same thing, but in addition
+%   `[f,fnorm]=normalize(f,...)` does the same thing, but in addition
 %   returns norm *fnorm* of a signal *f*.
 %
 %   The norm is specified as a string and may be one of:
@@ -53,10 +53,10 @@ if nargin<1
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
-definput.import={'apply_norm'};
+definput.import={'normalize'};
 definput.keyvals.dim=[];
 
-[flags,kv]=ltfatarghelper({},definput,varargin,'apply_norm');
+[flags,kv]=ltfatarghelper({},definput,varargin,'normalize');
 
 if flags.do_null || flags.do_norm_notset || isempty(f);
   return

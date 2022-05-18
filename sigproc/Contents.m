@@ -4,7 +4,7 @@
 %
 %  General
 %    RMS            -  Root Mean Square norm of signal.
-%    NORMALIZE      -  Normalize signal by specified norm.
+%    SETNORM      -  Normalize signal by specified norm.
 %    GAINDB         -  Scale input signal
 %    CRESTFACTOR    -  Compute the crest factor of a signal.
 %    UQUANT         -  Simulate uniform quantization.

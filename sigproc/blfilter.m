@@ -42,7 +42,7 @@ function gout=blfilter(winname,fsupp,varargin)
 %                 
 %
 %   It is possible to normalize the transfer function of the filter by
-%   passing any of the flags from the |apply_norm| function. The default
+%   passing any of the flags from the |setnorm| function. The default
 %   normalization is `'energy'`.
 %
 %   The filter can be used in the |pfilt| routine to filter a signal, or
@@ -83,7 +83,7 @@ function gout=blfilter(winname,fsupp,varargin)
 %   See also: firfilter, firwin, pfilt, filterbank
 
 % Define initial value for flags and key/value pairs.
-definput.import={'apply_norm'};
+definput.import={'setnorm'};
 definput.importdefaults={'energy'};
 definput.keyvals.delay=0;
 definput.keyvals.fc=0;
