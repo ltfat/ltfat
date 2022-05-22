@@ -6,6 +6,7 @@
 %
 %   Basic demos
 %     DEMO_DGT              - |dgt| and comparison to |sgram|
+%     DEMO_DGT_PARAMETRIZE  - Calculate the STFT
 %     DEMO_GABFIR           - FIR windows in Gabor systems.
 %     DEMO_WAVELETS         - Wavelet representations using  |fwt| and |wfbt|.
 %
