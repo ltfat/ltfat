@@ -277,7 +277,8 @@ end
 
 %% Compute the downsampling rate
 if flags.do_regsampling
-    % Find minimum a in each octave and floor23 it.
+    % Find minimum a in each octave and floor23 it
+    % to shrink it to the next composite number
     s = M-cumsum(bins);
     bins=bins(1:find(s<=0,1));
     bins(end) = bins(end)-(sum(bins)-M);
@@ -301,7 +302,8 @@ if flags.do_regsampling
     % Deal the integer subsampling factors
     a = cell2mat(cellfun(@(aoEl,aEl) ones(numel(aoEl),1)*aEl,...
         aocts,mat2cell(a,ones(numel(a),1)),'UniformOutput',0));
-
+% Determine true decimation factors from "aprecise" according to chosen
+% subsampling scheme (see help above)
 elseif flags.do_fractional
     L = Ls;
     N=ceil(Ls./aprecise);
@@ -318,11 +320,13 @@ elseif flags.do_uniform
 end;
 
 
-% Get an expanded "a"
+% Get an expanded "a" / Convert "a" to LTFAT 2-column fractional format
 afull=comp_filterbank_a(a,M2,struct());
 
 %% Compute the scaling of the filters
 % Individual filter peaks are made square root of the subsampling factor
+% Filters are scaled such that the energy of the subband coefficients
+% remains approximately constant independent of the decimation factor
 scal=sqrt(afull(:,1)./afull(:,2));
 
 if flags.do_real
@@ -330,8 +334,8 @@ if flags.do_real
     scal(1)=scal(1)/sqrt(2);
     scal(M2)=scal(M2)/sqrt(2);
 else
-    % Replicate the centre frequencies and sampling rates, except the first and
-    % last
+    % Replicate the centre frequencies and sampling rates, except for the first and
+    % last frequency channel
     a=[a;flipud(a(2:M2-1,:))];
     scal=[scal;flipud(scal(2:M2-1))];
     fc  =[fc; -flipud(fc(2:M2-1))];

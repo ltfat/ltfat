@@ -124,8 +124,7 @@ for ii = 1:N
         col = ceil(Lg/M(ii));
         
         temp = zeros(col*M(ii),W,assert_classname(f,g{1}));
-        temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, ...
-                                                          f(win_range,:),g{ii}(idx));
+        temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, f(win_range,:),g{ii}(idx));
         
         temp = reshape(temp,M(ii),col,W);
         X = squeeze(fft(sum(temp,2)));
@@ -134,8 +133,7 @@ for ii = 1:N
     else
         
         temp = zeros(M(ii),W,assert_classname(f,g{1}));
-        temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, ...
-                                                          f(win_range,:),g{ii}(idx));
+        temp([end-floor(Lg/2)+1:end,1:ceil(Lg/2)],:) = bsxfun(@times, f(win_range,:),g{ii}(idx));
         
         
         c{ii} = fft(temp);

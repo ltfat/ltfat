@@ -264,7 +264,8 @@ if ~isempty(kv.redtar)
     end
 end
 
-%parse the input format
+%parse the input format: map fmin and fmax to scales according to the input
+%parameter specification
 if ~flags.do_scales
     nf = fs/2;
     if flags.do_linear
@@ -313,7 +314,7 @@ if ~flags.do_scales
     scales_sorted = sort(scales,'descend');
     if ~isempty(kv.startfreq)%set the start frequency
         startfreq = kv.startfreq/nf * 10;
-        scales_start = find(1./scales_sorted > startfreq,1,'first');%find first scale whose corr. f is larger than fmin
+        scales_start = find(1./scales_sorted > startfreq,1,'first');%find first scale whose equiv. f is larger than fmin
         scales = scales(scales_start:end);
     end
 end
@@ -351,9 +352,10 @@ M = numel(scales);
 scales_sorted = sort(scales,'descend');
 %% Determine total number of filters and natural subsampling factor for lowpass
 if flags.do_repeat
-
-    lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); % Maybe adjust this to not guarantee some distance between first filter and zero frequency.
+% Maybe adjust this to not guarantee some distance between first filter and zero frequency.
+    lowpass_number = scales_sorted(2)/(scales_sorted(1)-scales_sorted(2)); 
         if abs(lowpass_number - round(lowpass_number)) < eps*10^3
+            % determine if lowpass is centered around 0 Hz
             lowpass_number = round(lowpass_number);
             lowpass_at_zero = 1;
         else
@@ -370,6 +372,7 @@ elseif flags.do_single
     lowpass_number = 1;
     lowpass_at_zero = 1;
     M = M+1;
+    %this is an estimated value
     aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
 else
     lowpass_number = 0;
@@ -391,8 +394,7 @@ if any(aprecise<1)
 end
 
 %% Compute the downsampling rate
-%[a, L] = c_comp_downsampling(Ls, M, scales, aprecise, lowpass_at_zero, flags, kv);
-if flags.do_regsampling % This should only be used for lowpass = single!!!
+if flags.do_regsampling
     a = ones(M,1);
     
     [lower_scale,~] = max(scales);
@@ -400,7 +402,8 @@ if flags.do_regsampling % This should only be used for lowpass = single!!!
     lower_scale = floor(log2(1/lower_scale));
     upper_scale = floor(log2(1/upper_scale));
     
-    % Find minimum a in each octave and floor23 it.
+    % Find minimum a in each octave and floor23 it
+    % to shrink "a" to the next composite number
     ct=1;
     for kk = lower_scale:upper_scale
         tempidx = find( floor(log2(1./scales)) == kk );
@@ -441,6 +444,7 @@ elseif flags.do_uniform
     L=filterbanklength(Ls,a);
     a = repmat(a,M,1);
 end
+% Get an expanded "a" / Convert "a" to LTFAT 2-column fractional format
 afull=comp_filterbank_a(a,M,struct());
 
 %if flags.do_uniform
@@ -482,7 +486,8 @@ else
 end
 
 %% Compute the scaling of the filters and the numeric delay vector
-
+% Filters are scaled such that the energy of the subband coefficients
+% remains approximately constant independent of the decimation factor
 if isa(kv.delay,'function_handle')
     delayvec = zeros(M,1);
     for kk = 1:M
