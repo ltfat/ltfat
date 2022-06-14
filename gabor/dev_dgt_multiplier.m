@@ -7,21 +7,22 @@ clear all;
 clc;
 L=100;
 symbols = ones(L, L);
-sg = [0.01 0.1 0.5 1 1.5]; %TODO: find suitable values
+sg = [0.01 0.1 0.5 1 1.5];%proportion of L corresponding to half-height width of window
+%corresponds to calculating g = pi*sg^2/4L*log(2)
+%TODO: find suitable values
 
-%create (separable) lattice of length L
+%make lattice
 a=1;
 b=1;
-sep = 0; %"separability constant" when given in in lower triangular Hermite normal form
+sep = 0; %"separability constant" when insep lat given in in lower triangular Hermite normal form
 M=abs(L/b);
 N=abs(L/a);
 
-% make (separable) lattice lat
 lat=zeros(2,M*N);
 for n=0:N-1
   for m=0:M-1
     offset = mod(sep*n,b);
-    % Determine gridpoint in rectangular coordinates.
+    %determine gridpoints in rectangular coordinates
     lat(1,m+n*M+1) = n*a;
     lat(2,m+n*M+1) = m*b + offset;
   end
@@ -37,7 +38,7 @@ jj=(0:L-1).';
 for ii = 1:numel(sg)
     %s = sqrt(sg(ii));
     s=sg(ii);
-    g = pgauss(L, 'width', s*L); %calculates pgauss(L,pi*s^2/4L*log(2))
+    g = pgauss(L, 'width', s*L);
 
     for p=1:MN
         G(:,p)=exp(-2*pi*1i*lat(2,p)*jj/L).*circshift(g,lat(1,p));
