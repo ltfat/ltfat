@@ -140,7 +140,7 @@ function [H,info] = freqwavelet(name,L, varargin)
 %
 %     .dilation       The actual dilation used in the formula.
 %
-%     .bw             Relative bandwidth at -3 dB (half of the height).
+%     .bw             Relative bandwidth at relative height 'bwthr'.
 %
 %     .tfr            Time-frequency ratio of a Gaussian with the same
 %                     bandwidth as the wavelet.
