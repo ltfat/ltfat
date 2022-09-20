@@ -175,15 +175,15 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     freq_step = max_freqDiv10/M0;
 %     rate = 44100;
 %     start_index = 1;
-%     min_freqHz = rate/10*freq_step
-%     min_scale_freq = min_freqHz*start_index
+%     min_freqHz = rate/10*freq_step;
+%     min_scale_freq = min_freqHz*start_index;
 %     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
 %     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0);
 %     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
 %     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 %     CauchyAlpha = 600;
 %     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
-%
+% 
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     if length(r) > length(f)
