@@ -27,7 +27,7 @@ fmin = 20;
 max_freq = 10;  % 10 corresponds to waveltfilters' internal Nyquist frequency
 freq_step = max_freq/M0;
 min_freqHz = fs/10*freq_step;
-start_index = 1; %set the desired number of compensation filters
+start_index = 6; %set the desired number of compensation filters
 min_scale_freq = min_freqHz*start_index;
 min_freqDiv10 = freq_step*start_index;
 scales = 1./linspace(min_freqDiv10,max_freq,M0);
@@ -48,7 +48,7 @@ delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 
 fbbounds = filterbankrealbounds(g,a,L);
 
-if fbbounds < 10
+if ~isinf(fbbounds)
     gd=filterbankrealdual(g,a,L);
     % Plot frequency responses of individual filters
     figure(1);
@@ -57,11 +57,22 @@ if fbbounds < 10
 
     subplot(2,1,2);
     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
+    
+    c=filterbank(f,gd,a);
+    fcons=2*real(ifilterbank(c,g,a));
+    if length(fcons) > length(f)
+        err=norm(fcons(1:length(f))-f)
+    else
+        err=norm(fcons-f(1:length(fcons)))
+    end
+    fprintf('Reconstruction error:      %e\n',err);
 else
+    c=filterbank(f,g,a);
     [fpcg,~,iterpcg] = ifilterbankiter(c,g,a,'pcg');
     if length(fpcg) > length(f)
-        norm(fpcg(1:length(f))-f);
+        err=norm(fpcg(1:length(f))-f);
     else
-        norm(fpcg-f(1:length(fpcg)));
+        err=norm(fpcg-f(1:length(fpcg)));
     end
+    fprintf('Reconstruction error:      %e\n',err);
 end
