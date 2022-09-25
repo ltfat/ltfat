@@ -1,3 +1,10 @@
+# ![LTFAT Logo](/signals/ltfattext.png) The Large Time Frequency Analysis Toolbox (LTFAT)
+
+This is the official repository of the Large Time Frequency Analysis Toolbox.
+
+LTFAT is an open source toolbox for audio signal processing and harmonic analysis.
+It is written in GNU Octave and C/C++.
+
 To use the toolbox, 'cd' to the LTFAT directory and execute 'ltfatstart'.
 
 In Octave you can put this command in your ~/.octaverc file.
