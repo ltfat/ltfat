@@ -1,9 +1,12 @@
 # The Large Time Frequency Analysis Toolbox (LTFAT).
 
 This is the official development repository of the Large Time Frequency Analysis Toolbox.
-
 LTFAT is an open source toolbox for audio signal processing and harmonic analysis.
-It is written in GNU Octave and C/C++.
+It is written in GNU Octave and C/C++. The development repository of the C/C++ backend library
+can be found [here](https://github.com/ltfat/libltfat).
+
+The phase retrieval toolbox, a collection of phase-reconstruction algorithms for time-frequency 
+representations can be retrieved from [here](https://github.com/ltfat/phaseret).
 
 # Usage
 Download the release applicable to your operating system [here](https://github.com/ltfat/ltfat/releases).
