@@ -215,11 +215,9 @@ if ~isnumeric(scales)
     channels = varargin{4};
     switch scales
         case 'linear'
-            definput.flags.inputmode = {'linear', 'logarithmic', 'bins', 'scales'};
-        %case 'logarithmic'
-        %    definput.flags.inputmode = {'logarithmic', 'bins', 'scales', 'linear'};
+            definput.flags.inputmode = {'linear', 'bins', 'scales'};
         case 'bins'
-            definput.flags.inputmode = {'bins', 'scales', 'linear', 'logarithmic'};
+            definput.flags.inputmode = {'bins', 'scales', 'linear'};
         otherwise
             error('%s: second argument must either be a scales vector or define the f-mapping.',upper(mfilename))
     end
@@ -228,7 +226,7 @@ if ~isnumeric(scales)
     varargin = circshift(varargin,-4);
     varargin = varargin(1:end-4);
 else
-    definput.flags.inputmode = {'scales', 'linear', 'logarithmic', 'bins'};
+    definput.flags.inputmode = {'scales', 'linear', 'bins'};
 end
 
 definput.import={'setnorm'};
@@ -271,13 +269,7 @@ if ~flags.do_scales
     if flags.do_linear
         min_freq = fmin/nf *10;%map to freqwavelets nyquist f
         max_freq = fmax/nf * 10;
-        scales = 1./linspace(min_freq,max_freq,channels);
-  % elseif flags.do_logarithmic
-%
-%        fc = 2.^linspace(log2(fmin), log2(fmax), channels);    
-%        fc = fc/nf * 10;   
-%        scales = 1./fc;
-        
+        scales = 1./linspace(min_freq,max_freq,channels);        
     elseif flags.do_bins
 
         if isscalar(channels)
@@ -340,7 +332,6 @@ basea = info.aprecise;
 
 
 %% Determine total number of filters and natural subsampling factor for lowpass
-%[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
 if numel(scales) < 4 && flags.do_single
     error('%s: Lowpass generation requires at least 4 scales.',upper(mfilename));
 elseif numel(scales) < 2 && flags.do_repeat
@@ -447,9 +438,6 @@ end
 % Get an expanded "a" / Convert "a" to LTFAT 2-column fractional format
 afull=comp_filterbank_a(a,M,struct());
 
-%if flags.do_uniform
-%    a = a(:,1);
-%end
 %==========================================================================
 %% Adjust the downsampling rates in order to achieve 'redtar'    
 
@@ -473,9 +461,9 @@ if ~isempty(kv.redtar)
     
     if ~flags.do_uniform
         N_new=ceil(L./a);
-        if flags.do_complex
-            N_new = [N_new;N_new(end:-1:2)];
-        end
+        %if flags.do_complex
+        %    N_new = [N_new;N_new(end:-1:2)];
+        %end
         a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
