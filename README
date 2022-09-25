@@ -9,7 +9,7 @@ To use the toolbox, 'cd' to the LTFAT directory and execute 'ltfatstart'.
 
 In Octave you can put this command in your ~/.octaverc file.
 
-Directory struture.
+# Directory struture.
 
 The toolbox is organized in subdirectories including the following:
 
