@@ -1,10 +1,18 @@
 %DEMO_WAVELETFILTERS  Introduction to grid-like wavelet sampling
 %
-%   This demo showcases three options to generate a wavelet filter bank.
+%   This demo shows three options to generate a wavelet filter bank.
+%   Firstly, a filterbank with linearly spaced center frequencies is generated, 
+%   by passing the desired frequency range directly. The filter bank
+%   coefficients are visualized.
+%   Secondly, waveletfilters is conventionally parametrized by direct
+%   passing of the desired scales and the frequency response of the
+%   filter bank and its dual are plotted.
+%   Finally, a constant-Q style wavelet filter bank is generated.
 %
 %   .. figure::
 %
-%      Invertible wavelet filterbank with linearly spaced center frequencies.
+%      Coefficients of an invertible wavelet filterbank with linearly 
+%      spaced center frequencies.
 %
 %   .. figure::
 %
@@ -16,7 +24,7 @@
 %   See also: waveletfilters, freqwavelet, lowdiscrepancy, filterbankrealdual
 
 %the input signal
-[f,fs]=gspi;
+[f,~]=gspi;
 Ls = length(f);
 
 %wavelet types
@@ -52,7 +60,7 @@ M = 127; %desired number of channels (without low frequency compensation channel
 max_freq = 10;  % 10 corresponds to waveltfilters' internal Nyquist frequency
 min_freq = max_freq/M;
 scales = 1./linspace(min_freq,max_freq,M);
-%calling waveletfilters via scales
+
 [g, a,fc_scales,L,info] = waveletfilters(Ls,scales,wvlt{2},'uniform',...
     'single','energy', 'delay',delays, 'redtar', 8);
 
