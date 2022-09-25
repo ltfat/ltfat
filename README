@@ -1,5 +1,4 @@
 # The Large Time Frequency Analysis Toolbox (LTFAT).
-## Matlab
 
 This is the official development repository of the Large Time Frequency Analysis Toolbox.
 
@@ -28,10 +27,8 @@ The toolbox is organized in subdirectories including the following:
   auditory    - Auditory scales and common filter types.
   demos       - Demos showing applications or aspects of LTFAT functions.
   signals     - Test signals for use with the examples.
-  comp        - Computational subroutines.
-                These should not be called directly.
-  src         - C implementation of the most computationally intensive
-                routines.
+  comp        - Computational subroutines. These should not be called directly.
+  src         - C implementation of the most computationally intensive routines.
   mex         - Mex files to speed up the toolbox (if compiled)
   oct         - Octave C++-files to speed up the toolbox (if compiled)
 
