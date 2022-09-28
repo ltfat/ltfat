@@ -8,6 +8,7 @@
 %   yields a similar reconstruction error as the first filter bank. The
 %   reconstruction can, however, be further improved by adding low
 %   frequency compensation filters as shown for the third filter bank.
+%   Alternative choices of the delay generating function are possible.
 %
 %   .. figure::
 %
@@ -82,8 +83,9 @@ if length(fpcg) > length(f)
 else
     err=norm(fpcg-f(1:length(fpcg)));
 end
-fprintf('Reconstruction error (delay and low-f compensation):      %e\n',err);
+fprintf('Reconstruction error (kronecker sequence delay and low-f compensation):      %e\n',err);
 
+figure
 subplot(1,3,1)
 plotfilterbank(c_cq, a_cq)
 xlim([0 Ls])
@@ -93,6 +95,22 @@ xlim([0 Ls])
 subplot(1,3,3)
 plotfilterbank(c_comp, a_comp)
 xlim([0 Ls])
+
+
+delays = lowdiscrepancy('digital');
+[g,a]=waveletfilters(Ls,'linear',fs,fmin,fmax,numscales,'repeat','delay',delays);
+
+c = filterbank(f, g, a);
+
+%perform iterative reconstruction and calculate the error
+fpcg = ifilterbankiter(c,g,a,'pcg');
+if length(fpcg) > length(f)
+    err=norm(fpcg(1:length(f))-f);
+else
+    err=norm(fpcg-f(1:length(fpcg)));
+end
+fprintf('Reconstruction error (digital net delay and low-f compensation):      %e\n',err);
+
 
 % M=64;
 % MC = 3;
