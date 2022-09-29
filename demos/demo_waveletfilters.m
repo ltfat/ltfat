@@ -2,17 +2,44 @@
 %
 %   This demo shows how to generate invertible wavelet filter banks with linear
 %   frequency spacing.
-%   Firstly, a conventional wavelet filter bank is generated.
-%   In a second iteration, the application of a small delay allows for the
-%   design of a filter bank with a linearly spaced frequency axis that
-%   yields a similar reconstruction error as the first filter bank. The
-%   reconstruction can, however, be further improved by adding low
-%   frequency compensation filters as shown for the third filter bank.
-%   Alternative choices of the delay generating function are possible.
+%
+%   The following wavelet filter banks are produced:
+%
+%   * a conventional wavelet filter bank with logarithmic frequency spacing
+%   * a wavelet filter bank with linear frequency spacing that achieves
+%   similar reconstruction quality
+%   * a wavelet filter bank that uses more than one compensation filter to
+%   improve the time-frequency coverage of the transform in the
+%   low-frequency range
+%   * two wavelet filter banks using different types of wavelets with 
+%   different Q-factors
 %
 %   .. figure::
 %
-%      Coefficients of the three filter banks.
+%      Coefficients, frequency response, and filter bank response of a
+%      conventional wavelet filter bank.
+%
+%   .. figure::
+%
+%      Comparison of the spacing of the center frequencies.
+%
+%   .. figure::
+%
+%      Comparison of the low-frequency range using a single and several 
+%      compensation filters. Energy tends to be more evenly distributed 
+%      when more than one compensation filter is used.
+%
+%   .. figure::
+%
+%      A Cauchy and a B-spline wavelet with similar Q-factors.
+%
+%   .. figure::
+%
+%      Frequency response of the Cauchy and B-spline wavelet filter banks.
+%
+%   .. figure::
+%
+%      Coefficients of the Cauchy and B-spline wavelet filter banks.
 %
 %
 %   See also: waveletfilters, freqwavelet, lowdiscrepancy, filterbankrealdual
@@ -40,7 +67,7 @@ if length(frec) > length(f)
 else
     err=norm(frec-f(1:length(frec)));
 end
-fprintf('Reconstruction error:      %e\n',err);
+fprintf('Reconstruction error (log. f-spacing):      %e\n',err);
 
 %plot the filter bank coefficients, the frequency response, and the
 %filter bank response of the wavelet filter bank
@@ -78,7 +105,7 @@ if length(frec) > length(f)
 else
     err=norm(frec-f(1:length(frec)));
 end
-fprintf('Reconstruction error (with delay):      %e\n',err);
+fprintf('Reconstruction error (lin. f-spacing):      %e\n',err);
 
 %compare the frequency spacing of the two filter banks
 figure(2)
@@ -116,9 +143,10 @@ end
 figure(3)
 subplot(2,1,1)
 plotfilterbank(c_dlow,a_del(1:lowf_del), fc_del(1:lowf_del))
+title('Low-f FB coefficients, single compensation filter')
 subplot(2,1,2)
 plotfilterbank(c_clow,a_comp(1:lowf_comp), fc_comp(1:lowf_comp))
-
+title('Low-f FB coefficients, 5 compensation filters')
 
 %% now, select the wavelet
 
@@ -143,10 +171,11 @@ grid on
 legend1 = sprintf('Cauchy wavelet with Q_est= %0.2f', qest1);
 legend2 = sprintf('B-spline wavelet with Q_est= %0.2f', qest2);
 legend({legend1, legend2}, 'location', 'northeast')
+title('Two wavelets with a similar Q-factor')
 
 %now, increase the Q-factor for wavelet 2
 wvlt2 = {'fbsp', 4, 10};
-[H2, info2]=freqwavelet(wvlt2,1000);
+H2=freqwavelet(wvlt2,1000);
 
 %specify a desired target redundancy and delay function
 redundancy = 4;
@@ -172,8 +201,10 @@ scales = 1./linspace(fmin,fmax,numscales);
 figure(5)
 subplot(2,1,1)
 filterbankfreqz(g_w1,a_w1,Ls1, 'plot', 'posfreq', 'dynrange', 70);
+title('FB frequency response, Cauchy wavelet with small Q-factor')
 subplot(2,1,2)
 filterbankfreqz(g_w2,a_w2,Ls2, 'plot', 'posfreq', 'dynrange', 70);
+title('FB frequency response, B-spline wavelet with large Q-factor')
 
 %...and their coefficients
 c_w1 = filterbank(f, g_w1, a_w1);
@@ -182,5 +213,7 @@ c_w2 = filterbank(f, g_w2, a_w2);
 figure(6)
 subplot(2,1,1)
 plotfilterbank(c_w1,a_w1, fc_w1)
+title('FB coefficients, Cauchy wavelet with small Q-factor')
 subplot(2,1,2)
 plotfilterbank(c_w2,a_w2, fc_w2)
+title('FB coefficients, B-spline wavelet with large Q-factor')
