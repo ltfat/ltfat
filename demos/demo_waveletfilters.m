@@ -81,7 +81,7 @@ filterbankfreqz(g_cq,a_cq,Ls, 'plot', 'posfreq', 'dynrange', 60);
 subplot(3,1,3)
 filterbankresponse(g_cq,a_cq,Ls, 'plot', 'real', 'fs', fs);
 
-%now, design an invertible wavelet filter bank covering the same frequency
+%% now, design an invertible wavelet filter bank covering the same frequency
 %range with linearly spaced center frequencies
 
 %use the same number of frequency channels as before
@@ -180,9 +180,6 @@ title('Two wavelets with a similar Q-factor')
 wvlt2 = {'fbsp', 4, 10};
 H2=freqwavelet(wvlt2,1000);
 
-%specify a desired target redundancy and delay function
-%redundancy =4;
-%delays = lowdiscrepancy('digital');
 
 %pass the scales directly
 %determine the frequency range to be covered
@@ -222,10 +219,10 @@ plotfilterbank(c_w2,a_w2, fc_w2)
 title('FB coefficients, B-spline wavelet with large Q-factor')
 
 %% the example from the paper
-fs = 2;
-fn = fs/2;
-M = 64;
-MC = 5;
+fs = 2; %sampling frequency
+fn = fs/2; %Nyquist frequency
+M = 64; %number of frequency channels
+MC = 5; %number of compensation channels
 %specify a desired target redundancy and delay function
 redundancy =4;
 delays = lowdiscrepancy('digital');
