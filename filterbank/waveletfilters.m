@@ -175,15 +175,15 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     freq_step = max_freqDiv10/M0;
 %     rate = 44100;
 %     start_index = 1;
-%     min_freqHz = rate/10*freq_step;
-%     min_scale_freq = min_freqHz*start_index;
+%     min_freqHz = rate/10*freq_step
+%     min_scale_freq = min_freqHz*start_index
 %     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
 %     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0);
 %     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
 %     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 %     CauchyAlpha = 600;
 %     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
-% 
+%
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     if length(r) > length(f)
@@ -269,7 +269,8 @@ if ~flags.do_scales
     if flags.do_linear
         min_freq = fmin/nf *10;%map to freqwavelets nyquist f
         max_freq = fmax/nf * 10;
-        scales = 1./linspace(min_freq,max_freq,channels);        
+        scales = 1./linspace(min_freq,max_freq,channels);
+        
     elseif flags.do_bins
 
         if isscalar(channels)
@@ -332,6 +333,7 @@ basea = info.aprecise;
 
 
 %% Determine total number of filters and natural subsampling factor for lowpass
+%[aprecise, M, lowpass_number, lowpass_at_zero] = c_det_lowpass(Ls, scales, basea, flags, kv);
 if numel(scales) < 4 && flags.do_single
     error('%s: Lowpass generation requires at least 4 scales.',upper(mfilename));
 elseif numel(scales) < 2 && flags.do_repeat
@@ -461,9 +463,9 @@ if ~isempty(kv.redtar)
     
     if ~flags.do_uniform
         N_new=ceil(L./a);
-        %if flags.do_complex
-        %    N_new = [N_new;N_new(end:-1:2)];
-        %end
+        if flags.do_complex
+            N_new = [N_new;N_new(end:-1:2)];
+        end
         a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
@@ -535,11 +537,10 @@ info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative
 % Assign fc and adjust for sampling rate 
 if flags.do_scales
     fc = (kv.fs/2).*info.fc;
-else
+elseif flags.do_linear
     fc = nf.*info.fc;
 end
 
 if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
 end
-
