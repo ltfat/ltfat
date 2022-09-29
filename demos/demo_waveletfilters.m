@@ -26,144 +26,161 @@ Ls = length(f);
 fmin = 16;
 fmax = 8000;
 bins = 16;
-[g_cq, a_cq, fc_cq] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins);
+[g_cq, a_cq, fc_cq] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins, 'uniform');
 
-%apply the filter bank thus generated
-c_cq=filterbank(f,g_cq,a_cq);
+%calculate the dual windows and apply the filterbank
+gd = filterbankrealdual(g_cq, a_cq, Ls);
+c_cq=filterbank(f,gd,a_cq);
 
-%perform iterative reconstruction and calculate the error
-fpcg = ifilterbankiter(c_cq,g_cq,a_cq,'pcg');
-if length(fpcg) > length(f)
-    err=norm(fpcg(1:length(f))-f);
+%invert the filterbank
+frec = ifilterbank(c_cq, g_cq, a_cq);
+%calculate the reconstruction error
+if length(frec) > length(f)
+    err=norm(frec(1:length(f))-f);
 else
-    err=norm(fpcg-f(1:length(fpcg)));
+    err=norm(frec-f(1:length(frec)));
 end
 fprintf('Reconstruction error:      %e\n',err);
 
+%plot the filter bank coefficients, the frequency response, and the
+%filter bank response of the wavelet filter bank
+figure(1)
+subplot(3,1,1)
+plotfilterbank(c_cq, a_cq)
+subplot(3,1,2)
+filterbankfreqz(g_cq,a_cq,Ls, 'plot', 'posfreq', 'dynrange', 60);
+subplot(3,1,3)
+filterbankresponse(g_cq,a_cq,Ls, 'plot', 'real', 'fs', fs);
 
 %now, design an invertible wavelet filter bank covering the same frequency
 %range with linearly spaced center frequencies
 
 %use the same number of frequency channels as before
 M = numel(fc_cq);
-%delays is an anonymous function that corresponds to the desired low 
+%delays is an anonymous function specifying the desired low 
 %discrepancy sequence; it can be passed directly to waveletfilters
 delays = lowdiscrepancy('kronecker');
 
 %to each sampled wavelet, a small delay 'delays' is applied to achieve even
 %coverage of the time-frequency plane;
 %a single compensation filter is added per default
-[g_del, a_del, fc_del]=waveletfilters(Ls,'linear',fs,fmin,fmax,M, 'delay',delays);
+[g_del, a_del, fc_del]=waveletfilters(Ls,'linear',fs,fmin,fmax,M,...
+    'delay',delays, 'uniform');
 
 c_del = filterbank(f, g_del, a_del);
 
-%perform iterative reconstruction and calculate the error
-fpcg = ifilterbankiter(c_del,g_del,a_del,'pcg');
-if length(fpcg) > length(f)
-    err=norm(fpcg(1:length(f))-f);
+%invert the filterbank using a short form for calculating the dual window
+frec = ifilterbank(c_del, {'realdual',g_del}, a_del);
+
+%calculate the error
+if length(frec) > length(f)
+    err=norm(frec(1:length(f))-f);
 else
-    err=norm(fpcg-f(1:length(fpcg)));
+    err=norm(frec-f(1:length(frec)));
 end
 fprintf('Reconstruction error (with delay):      %e\n',err);
 
-%now, further improve reconstruction by adding 3 compensation filters in the
-%lower frequency range
-MC = 3;
+%compare the frequency spacing of the two filter banks
+figure(2)
+plot(fc_cq, 'x')
+hold on
+plot(fc_del, 'o')
+xlabel('Number of wavelet filters')
+ylabel('Center frequencies [Hz]')
+xlim([0 numel(fc_del)])
+grid on
+legend({'Conventional f-spacing', 'Linear f-spacing'}, 'location', 'northwest')
+
+%% adding 5 compensation filters in the lower frequency range
+MC = 5;
 fmin = MC/M * fs;
 numscales = M-MC+1;
 
-[g_comp,a_comp]=waveletfilters(Ls,'linear',fs,fmin,fmax,numscales,'repeat','delay',delays);
+[g_comp,a_comp, fc_comp]=waveletfilters(Ls,'linear',fs,fmin,fmax,numscales,...
+    'repeat','delay',delays, 'uniform');
 
 c_comp = filterbank(f, g_comp, a_comp);
 
-%perform iterative reconstruction and calculate the error
-fpcg = ifilterbankiter(c_comp,g_comp,a_comp,'pcg');
-if length(fpcg) > length(f)
-    err=norm(fpcg(1:length(f))-f);
-else
-    err=norm(fpcg-f(1:length(fpcg)));
+
+lowf_del = numel(fc_del(fc_del<500));
+for ii = 1:lowf_del
+    c_dlow{ii} = c_del{ii};
 end
-fprintf('Reconstruction error (kronecker sequence delay and low-f compensation):      %e\n',err);
 
-figure
-subplot(1,3,1)
-plotfilterbank(c_cq, a_cq)
-xlim([0 Ls])
-subplot(1,3,2)
-plotfilterbank(c_del, a_del)
-xlim([0 Ls])
-subplot(1,3,3)
-plotfilterbank(c_comp, a_comp)
-xlim([0 Ls])
+lowf_comp = numel(fc_comp(fc_comp<500));
+for ii = 1:lowf_comp
+    c_clow{ii} = c_comp{ii};
+end
+
+%investigate the differences in the low frequency range
+figure(3)
+subplot(2,1,1)
+plotfilterbank(c_dlow,a_del(1:lowf_del), fc_del(1:lowf_del))
+subplot(2,1,2)
+plotfilterbank(c_clow,a_comp(1:lowf_comp), fc_comp(1:lowf_comp))
 
 
+%% now, select the wavelet
+
+wvlt1 = {'cauchy', 257};
+[H1, info1]=freqwavelet(wvlt1,1000);
+qest1 = info1.fc/info1.bw;
+
+wvlt2 = {'fbsp', 4, 3};
+[H2, info2]=freqwavelet(wvlt2,1000);
+
+%estimate their Q-factor, should be roughly the same
+qest1 = info1.fc/info1.bw;
+qest2 = info2.fc/info2.bw;
+
+figure(4)
+plot(H1)
+hold on
+plot(H2)
+xlim([0 100])
+ylim([0 1])
+grid on
+legend1 = sprintf('Cauchy wavelet with Q_est= %0.2f', qest1);
+legend2 = sprintf('B-spline wavelet with Q_est= %0.2f', qest2);
+legend({legend1, legend2}, 'location', 'northeast')
+
+%now, increase the Q-factor for wavelet 2
+wvlt2 = {'fbsp', 4, 10};
+[H2, info2]=freqwavelet(wvlt2,1000);
+
+%specify a desired target redundancy and delay function
+redundancy = 4;
 delays = lowdiscrepancy('digital');
-[g,a]=waveletfilters(Ls,'linear',fs,fmin,fmax,numscales,'repeat','delay',delays);
 
-c = filterbank(f, g, a);
+%pass the scales directly
+%determine the frequency range to be covered
+fn_wl = 10; %10 is waveletfilters' internal nyquist frequency
+fmax = fn_wl;
+freq_step = fn_wl/numscales;
+%set fmin depending on the desired start index for the compensation filters
+start_index = 3;
+fmin = freq_step*start_index; 
+scales = 1./linspace(fmin,fmax,numscales);
 
-%perform iterative reconstruction and calculate the error
-fpcg = ifilterbankiter(c,g,a,'pcg');
-if length(fpcg) > length(f)
-    err=norm(fpcg(1:length(f))-f);
-else
-    err=norm(fpcg-f(1:length(fpcg)));
-end
-fprintf('Reconstruction error (digital net delay and low-f compensation):      %e\n',err);
+[g_w1, a_w1,fc_w1,Ls1,info1] = waveletfilters(Ls,scales,...
+    wvlt1,'uniform','repeat','energy', 'delay',delays, 'redtar', redundancy);
 
+[g_w2, a_w2,fc_w2,Ls2,info2] = waveletfilters(Ls,scales,...
+    wvlt2,'uniform','repeat','energy', 'delay',delays, 'redtar', redundancy);
 
-% M=64;
-% MC = 3;
-% fmin = MC/M;
-% fmax = fs/2; %up to Nyquist frequency
-% numscales = M-MC+1;
-% redundancy = 4;
-% delays = lowdiscrepancy('digital');
-% 
-% %calling waveletfilters by passing the frequency range
-% [g,a,fc, L]=waveletfilters(Ls,'linear',fs,fmin,fmax,numscales,...
-%     {'cauchy',cauchyalpha(1)},'uniform','redtar',redundancy,'repeat','delay',delays);
-% 
-% c = filterbank(f, g, a);
-%     
-% figure(1)
-% plotfilterbank(c, a)
-% 
-% 
-% %call waveletfilters by passing the scales directly
-% M = 127; %desired number of channels (without low frequency compensation channels)
-% 
-% %derive the associated scales
-% max_freq = 10;  % 10 corresponds to waveltfilters' internal Nyquist frequency
-% min_freq = max_freq/M;
-% scales = 1./linspace(min_freq,max_freq,M);
-% 
-% [g, a,fc_scales,L,info] = waveletfilters(Ls,scales,wvlt{2},'uniform',...
-%     'single','energy', 'delay',delays, 'redtar', 8);
-% 
-% gd=filterbankrealdual(g,a,L);
-% % Plot frequency responses of individual filters
-% figure(2);
-% subplot(2,1,1);
-% filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
-% 
-% subplot(2,1,2);
-% filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
-%     
-% 
-% %calling waveletfilters in a constant-Q style
-% fmin = 20;
-% fmax = 8000;
-% bins = 16;
-% fs = 16000;
-% [g, a,fc_cqt, L] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins);
-% 
-% 
-% c=filterbank(f,g,a);
-% [fpcg,~,iterpcg] = ifilterbankiter(c,g,a,'pcg');
-% if length(fpcg) > length(f)
-%     err=norm(fpcg(1:length(f))-f);
-% else
-%     err=norm(fpcg-f(1:length(fpcg)));
-% end
-% fprintf('Reconstruction error:      %e\n',err);
+%compare the frequency response of the two filter banks...
+figure(5)
+subplot(2,1,1)
+filterbankfreqz(g_w1,a_w1,Ls1, 'plot', 'posfreq', 'dynrange', 70);
+subplot(2,1,2)
+filterbankfreqz(g_w2,a_w2,Ls2, 'plot', 'posfreq', 'dynrange', 70);
+
+%...and their coefficients
+c_w1 = filterbank(f, g_w1, a_w1);
+c_w2 = filterbank(f, g_w2, a_w2);
+
+figure(6)
+subplot(2,1,1)
+plotfilterbank(c_w1,a_w1, fc_w1)
+subplot(2,1,2)
+plotfilterbank(c_w2,a_w2, fc_w2)
