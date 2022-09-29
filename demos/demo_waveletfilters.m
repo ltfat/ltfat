@@ -1,7 +1,7 @@
 %DEMO_WAVELETFILTERS  Introduction to grid-like wavelet sampling
 %
-%   This demo shows how to generate invertible wavelet filter banks with linear
-%   frequency spacing.
+%   This demo shows how to generate uniformly sampled invertible wavelet filter 
+%   banks.
 %
 %   The following wavelet filter banks are produced:
 %
@@ -13,6 +13,8 @@
 %   low-frequency range
 %   * two wavelet filter banks using different types of wavelets with 
 %   different Q-factors
+%   * the example from the paper "Grid-based Decimation for Invertible Wavelet
+%   Transforms in Audio Processing", Section 4-C.
 %
 %   .. figure::
 %
@@ -148,14 +150,15 @@ subplot(2,1,2)
 plotfilterbank(c_clow,a_comp(1:lowf_comp), fc_comp(1:lowf_comp))
 title('Low-f FB coefficients, 5 compensation filters')
 
-%% now, select the wavelet
+%% now, generate 2 non-uniformly sampled filter banks using different wavelets
 
 wvlt1 = {'cauchy', 257};
-[H1, info1]=freqwavelet(wvlt1,1000);
+Lw = 5000;
+[H1, info1]=freqwavelet(wvlt1,Lw);
 qest1 = info1.fc/info1.bw;
 
 wvlt2 = {'fbsp', 4, 3};
-[H2, info2]=freqwavelet(wvlt2,1000);
+[H2, info2]=freqwavelet(wvlt2,Lw);
 
 %estimate their Q-factor, should be roughly the same
 qest1 = info1.fc/info1.bw;
@@ -165,7 +168,7 @@ figure(4)
 plot(H1)
 hold on
 plot(H2)
-xlim([0 100])
+xlim([0 Lw*info1.fc])
 ylim([0 1])
 grid on
 legend1 = sprintf('Cauchy wavelet with Q_est= %0.2f', qest1);
@@ -178,8 +181,8 @@ wvlt2 = {'fbsp', 4, 10};
 H2=freqwavelet(wvlt2,1000);
 
 %specify a desired target redundancy and delay function
-redundancy = 4;
-delays = lowdiscrepancy('digital');
+%redundancy =4;
+%delays = lowdiscrepancy('digital');
 
 %pass the scales directly
 %determine the frequency range to be covered
@@ -192,10 +195,10 @@ fmin = freq_step*start_index;
 scales = 1./linspace(fmin,fmax,numscales);
 
 [g_w1, a_w1,fc_w1,Ls1,info1] = waveletfilters(Ls,scales,...
-    wvlt1,'uniform','repeat','energy', 'delay',delays, 'redtar', redundancy);
+    wvlt1,'uniform', 'repeat','energy', 'delay', delays);
 
 [g_w2, a_w2,fc_w2,Ls2,info2] = waveletfilters(Ls,scales,...
-    wvlt2,'uniform','repeat','energy', 'delay',delays, 'redtar', redundancy);
+    wvlt2,'uniform','repeat','energy', 'delay', delays);
 
 %compare the frequency response of the two filter banks...
 figure(5)
@@ -217,3 +220,25 @@ title('FB coefficients, Cauchy wavelet with small Q-factor')
 subplot(2,1,2)
 plotfilterbank(c_w2,a_w2, fc_w2)
 title('FB coefficients, B-spline wavelet with large Q-factor')
+
+%% the example from the paper
+fs = 2;
+fn = fs/2;
+M = 64;
+MC = 5;
+%specify a desired target redundancy and delay function
+redundancy =4;
+delays = lowdiscrepancy('digital');
+
+[g,a,fc, Ls]=waveletfilters(Ls,'linear',fs,MC/M,fn,M-MC+1,{'cauchy',900},...
+'uniform','redtar',redundancy,'repeat','delay',delays);
+
+c=filterbank(f,g,a);
+
+figure(7)
+subplot(3,1,1)
+plotfilterbank(c, a)
+subplot(3,1,2)
+filterbankfreqz(g,a,Ls, 'plot', 'posfreq', 'dynrange', 60);
+subplot(3,1,3)
+filterbankresponse(g,a,Ls, 'plot', 'real', 'fs', fs);
