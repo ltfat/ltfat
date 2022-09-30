@@ -120,8 +120,8 @@ xlim([0 numel(fc_del)])
 grid on
 legend({'Conventional f-spacing', 'Linear f-spacing'}, 'location', 'northwest')
 
-%% adding 5 compensation filters in the lower frequency range
-MC = 5;
+%% adding 7 compensation filters in the lower frequency range
+MC = 7;
 fmin = MC/M * fs;
 numscales = M-MC+1;
 

@@ -291,7 +291,7 @@ if ~flags.do_scales
         end
 
         % Get rid of filters with frequency centers >=fmax and nf
-        % This will leave the first bigger than fmax it it is lower than nf
+        % This will leave the first bigger than fmax if it is lower than nf
         temp = find(fc>=fmax ,1);
         if fc(temp) >= nf
             fc = fc(1:temp-1);
@@ -299,10 +299,12 @@ if ~flags.do_scales
             fc = fc(1:temp);
         end
 
-        channels = length(fc);
-        min_freq = fmin/nf *10;%map to freqwavelets nyquist f
-        max_freq = fmax/nf * 10;
-        scales = 1./linspace(min_freq,max_freq,channels);
+        %channels = length(fc);
+        fc_internal = fc./nf.*10;
+        scales = 1./fc_internal;
+        %min_freq = fmin/nf *10;%map to freqwavelets nyquist f
+        %max_freq = fmax/nf * 10;
+        %scales = 1./logspace(min_freq,max_freq,channels);
     end
     scales_sorted = sort(scales,'descend');
     if ~isempty(kv.startfreq)%set the start frequency
@@ -388,36 +390,43 @@ end
 
 %% Compute the downsampling rate
 if flags.do_regsampling
-    a = ones(M,1);
+%    a = ones(M,1);
     
-    [lower_scale,~] = max(scales);
-    [upper_scale,~] = min(scales);
-    lower_scale = floor(log2(1/lower_scale));
-    upper_scale = floor(log2(1/upper_scale));
+%     [lower_scale,~] = max(scales);
+%     [upper_scale,~] = min(scales);
+%     lower_scale = floor(log2(1/lower_scale));
+%     upper_scale = floor(log2(1/upper_scale));
+% 
+%     % Find minimum a in each octave and floor23 it
+%     % to shrink "a" to the next composite number
+%     ct=1;
+%     %dist = ((upper_scale)-(lower_scale))/numel(scales);
+%     for kk = lower_scale:upper_scale
+%         
+%         tempidx = find( floor(log2(1./scales)) == kk );
+%         [~,tempminidx] = min(1/scales(tempidx));
+%         idx = tempidx(tempminidx);
+%         
+%         % Deal the integer subsampling factors
+%         a(tempidx) = floor23(aprecise(idx));
+%         ct=ct+1;
+%     end   
+% 
+%     % Determine the minimal transform length lcm(a)
+%     L = filterbanklength(Ls,a);
     
-    % Find minimum a in each octave and floor23 it
-    % to shrink "a" to the next composite number
-    ct=1;
-    for kk = lower_scale:upper_scale
-        tempidx = find( floor(log2(1./scales)) == kk );
-        [~,tempminidx] = min(1/scales(tempidx));
-        idx = tempidx(tempminidx);
-        
-        % Deal the integer subsampling factors
-        a(tempidx) = floor23(aprecise(idx));
-        ct=ct+1;
-    end   
-    
-    % Determine the minimal transform length lcm(a)
-    L = filterbanklength(Ls,a);
-    
+    a=floor23(aprecise);
+
+    % Determine the minimal transform length
+    L=filterbanklength(Ls,a);
+
     % Heuristic trying to reduce lcm(a)
-    while L>2*Ls && ~(all(a==a(1)))
-        maxa = max(a);
-        a(a==maxa) = 0;
-        a(a==0) = max(a);
-        L = filterbanklength(Ls,a);
-    end
+   while L>2*Ls && ~(all(a==a(1)))
+       maxa = max(a);
+       a(a==maxa) = 0;
+       a(a==0) = max(a);
+       L = filterbanklength(Ls,a);
+   end
 
 elseif flags.do_fractional
     L = Ls;
@@ -461,7 +470,7 @@ if ~isempty(kv.redtar)
     a = floor(a*org_red/kv.redtar);
     a(a==0) = 1;
     
-    if ~flags.do_uniform
+    if ~flags.do_uniform & ~flags.do_regsampling
         N_new=ceil(L./a);
         if flags.do_complex
             N_new = [N_new;N_new(end:-1:2)];
@@ -541,6 +550,9 @@ elseif flags.do_linear
     fc = nf.*info.fc;
 end
 
+
 if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
+%elseif flags.do_regsampling
+%     a = a(:,2);
 end
