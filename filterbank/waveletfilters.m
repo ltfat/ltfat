@@ -299,12 +299,9 @@ if ~flags.do_scales
             fc = fc(1:temp);
         end
 
-        %channels = length(fc);
         fc_internal = fc./nf.*10;
         scales = 1./fc_internal;
-        %min_freq = fmin/nf *10;%map to freqwavelets nyquist f
-        %max_freq = fmax/nf * 10;
-        %scales = 1./logspace(min_freq,max_freq,channels);
+
     end
     scales_sorted = sort(scales,'descend');
     if ~isempty(kv.startfreq)%set the start frequency
@@ -390,30 +387,6 @@ end
 
 %% Compute the downsampling rate
 if flags.do_regsampling
-%    a = ones(M,1);
-    
-%     [lower_scale,~] = max(scales);
-%     [upper_scale,~] = min(scales);
-%     lower_scale = floor(log2(1/lower_scale));
-%     upper_scale = floor(log2(1/upper_scale));
-% 
-%     % Find minimum a in each octave and floor23 it
-%     % to shrink "a" to the next composite number
-%     ct=1;
-%     %dist = ((upper_scale)-(lower_scale))/numel(scales);
-%     for kk = lower_scale:upper_scale
-%         
-%         tempidx = find( floor(log2(1./scales)) == kk );
-%         [~,tempminidx] = min(1/scales(tempidx));
-%         idx = tempidx(tempminidx);
-%         
-%         % Deal the integer subsampling factors
-%         a(tempidx) = floor23(aprecise(idx));
-%         ct=ct+1;
-%     end   
-% 
-%     % Determine the minimal transform length lcm(a)
-%     L = filterbanklength(Ls,a);
     
     a=floor23(aprecise);
 
@@ -467,19 +440,18 @@ if ~isempty(kv.redtar)
         org_red = sum(2./a);
     end
     
+    a_old = a;
     a = floor(a*org_red/kv.redtar);
     a(a==0) = 1;
-    
-    if ~flags.do_uniform & ~flags.do_regsampling
+
+    if ~flags.do_uniform && ~flags.do_regsampling
         N_new=ceil(L./a);
-        if flags.do_complex
-            N_new = [N_new;N_new(end:-1:2)];
-        end
         a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
         a=[a,ones(length(a), 1)];
     end
+
 else
     a = afull;
 end
@@ -500,6 +472,20 @@ else
     error('%s: delay must be scaler or have enough elements to cover all channels.',upper(mfilename));
 end
 scal=sqrt(a(:,1)./a(:,2));
+
+
+if flags.do_regsampling && ~isempty(kv.redtar)
+    %another heuristic for reducing the filter bank length...
+    %usually necessary when the redtar has been adjusted for regsampling
+    a=a(:,1);
+   while L>2*Ls && ~(all(a==a(1)))
+      maxa = max(a);
+      a(a==maxa) = 0;
+      a(a==0) = max(a);
+      L = filterbanklength(Ls,a);
+   end
+   scal = sqrt(a);
+end
 
 if flags.do_complex
     
@@ -553,6 +539,4 @@ end
 
 if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
-%elseif flags.do_regsampling
-%     a = a(:,2);
 end
