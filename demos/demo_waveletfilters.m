@@ -1,48 +1,22 @@
 %DEMO_WAVELETFILTERS  Introduction to grid-like wavelet sampling
 %
-%   This demo shows how to generate uniformly sampled invertible wavelet filter 
+%   This demo shows how to generate invertible wavelet filter 
 %   banks.
 %
 %   The following wavelet filter banks are produced:
 %
-%   * a conventional wavelet filter bank with logarithmic frequency spacing
-%   * a wavelet filter bank with linear frequency spacing that achieves
-%   similar reconstruction quality
-%   * a wavelet filter bank that uses more than one compensation filter to
-%   improve the time-frequency coverage of the transform in the
-%   low-frequency range
-%   * two wavelet filter banks using different types of wavelets with 
-%   different Q-factors
-%   * the example from the paper "Grid-based Decimation for Invertible Wavelet
-%   Transforms in Audio Processing", Section 4-C.
+%     * a non-uniformly sampled invertible filter bank with conventional, 
+%     geometric frequency spacing.
 %
-%   .. figure::
+%     * a non-uniformly sampled invertible filter bank with conventional, 
+%     geometric frequency spacing and adjusted redundancy and additional 
+%     compensation filters for simpler invertibility.
 %
-%      Coefficients, frequency response, and filter bank response of a
-%      conventional wavelet filter bank.
+%     * a uniformly sampled invertible filter bank with linear frequency
+%     spacing. 
 %
-%   .. figure::
-%
-%      Comparison of the spacing of the center frequencies.
-%
-%   .. figure::
-%
-%      Comparison of the low-frequency range using a single and several 
-%      compensation filters. Energy tends to be more evenly distributed 
-%      when more than one compensation filter is used.
-%
-%   .. figure::
-%
-%      A Cauchy and a B-spline wavelet with similar Q-factors.
-%
-%   .. figure::
-%
-%      Frequency response of the Cauchy and B-spline wavelet filter banks.
-%
-%   .. figure::
-%
-%      Coefficients of the Cauchy and B-spline wavelet filter banks.
-%
+%     * a uniformly sampled invertible filter bank with linear frequency
+%     spacing, where the scales are passed directly.
 %
 %   See also: waveletfilters, freqwavelet, lowdiscrepancy, filterbankrealdual
 
@@ -50,192 +24,200 @@
 [f,fs]=greasy;
 Ls = length(f);
 
-%retrieve the filters and downsampling factors for a wavelet filterbank
-%with the following parameters:
-fmin = 16;
-fmax = 8000;
-bins = 16;
-[g_cq, a_cq, fc_cq] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins, 'uniform');
+%% filter bank 1: retrieve the filters and downsampling factors for a 
+%  wavelet filterbank with the following parameters:
+fmin = 40;
+fmax = fs/2;
+bins = 4;
+[g_geo, a_geo, fc_geo, L_geo, info_geo] = waveletfilters(Ls,'bins', fs,...
+    fmin, fmax, bins);
 
-%calculate the dual windows and apply the filterbank
-gd = filterbankrealdual(g_cq, a_cq, Ls);
-c_cq=filterbank(f,gd,a_cq);
-
-%invert the filterbank
-frec = ifilterbank(c_cq, g_cq, a_cq);
-%calculate the reconstruction error
-if length(frec) > length(f)
-    err=norm(frec(1:length(f))-f);
+% compute redundancy
+if size(a_geo,2) == 2
+    a_temp = a_geo(:,1)./a_geo(:,2);
+    red_geo = 1/a_temp(1) + 2*sum(1./a_temp(2:end));
 else
-    err=norm(frec-f(1:length(frec)));
+    red_geo = 1/a_geo(1) + 2*sum(1./a_geo(2:end));
 end
-fprintf('Reconstruction error (log. f-spacing):      %e\n',err);
 
-%plot the filter bank coefficients, the frequency response, and the
-%filter bank response of the wavelet filter bank
+% compute coefficients
+c_geo=filterbank(f,g_geo,a_geo);
+
+% plot filter bank coefficients, frequency responses and total filter bank
+% response
 figure(1)
 subplot(3,1,1)
-plotfilterbank(c_cq, a_cq)
+plotfilterbank(c_geo, a_geo)
 subplot(3,1,2)
-filterbankfreqz(g_cq,a_cq,Ls, 'plot', 'posfreq', 'dynrange', 60);
+filterbankfreqz(g_geo,a_geo,Ls, 'plot', 'posfreq', 'dynrange', 60);
 subplot(3,1,3)
-filterbankresponse(g_cq,a_cq,Ls, 'plot', 'real', 'fs', fs);
+filterbankresponse(g_geo,a_geo,Ls, 'plot', 'real', 'fs', fs);
 
-%% now, design an invertible wavelet filter bank covering the same frequency
-%range with linearly spaced center frequencies
+% compute frame bounds, the filter bank has nonuniform decimation and the
+% wavelet is not bandlimited, such that the bounds are estimated by an
+% iteration. Iterative computation is not available directly in the filterbank 
+% module, but in the frames module
 
-%use the same number of frequency channels as before
-M = numel(fc_cq);
-%delays is an anonymous function specifying the desired low 
-%discrepancy sequence; it can be passed directly to waveletfilters
-delays = lowdiscrepancy('kronecker');
+F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
+[A,B]=framebounds(F,'iter');
+FB_ratio_geo = B/A
 
-%to each sampled wavelet, a small delay 'delays' is applied to achieve even
-%coverage of the time-frequency plane;
-%a single compensation filter is added per default
-[g_del, a_del, fc_del]=waveletfilters(Ls,'linear',fs,fmin,fmax,M,...
-    'delay',delays, 'uniform');
+%% filter bank 2: waveletfilters supports the direct setting of an 
+%  (approximate) redundancy for the filter bank. to improve inversion 
+%  stability, the flag 'repeat' specifies the usage of more than one 
+%  compensation filter in the low frequency range
+redundancy = 6;
 
-c_del = filterbank(f, g_del, a_del);
+[g_geored, a_geored, fc_geored, L_geored, info_geored] = waveletfilters(Ls,'bins',...
+    fs, fmin, fmax, bins, 'redtar', redundancy, 'repeat');
 
-%invert the filterbank using a short form for calculating the dual window
-frec = ifilterbank(c_del, {'realdual',g_del}, a_del);
+c_geored=filterbank(f,g_geored,a_geored);
 
-%calculate the error
-if length(frec) > length(f)
-    err=norm(frec(1:length(f))-f);
+if size(a_geo,2) == 2
+    a_temp = a_geored(:,1)./a_geored(:,2);
+    red_geored = 1/a_temp(1) + 2*sum(1./a_temp(2:end));
 else
-    err=norm(frec-f(1:length(frec)));
+    red_geored = 1/a_geored(1) + 2*sum(1./a_geored(2:end));
 end
-fprintf('Reconstruction error (lin. f-spacing):      %e\n',err);
 
-%compare the frequency spacing of the two filter banks
 figure(2)
-plot(fc_cq, 'x')
+subplot(3,1,1)
+plotfilterbank(c_geored, a_geored)
+subplot(3,1,2)
+filterbankfreqz(g_geored,a_geored,Ls, 'plot', 'posfreq', 'dynrange', 60);
+subplot(3,1,3)
+filterbankresponse(g_geored,a_geored,Ls, 'plot', 'real', 'fs', fs);
+
+% the frame bounds are not ideal, but direct inversion using the canonical 
+% dual frame is possible.
+F = frame('filterbankreal',g_geored, a_geored, numel(g_geored));
+[A,B]=framebounds(F,'iter');
+FB_ratio_geored = B/A
+
+gd_geored = filterbankrealdual(g_geored, a_geored, L_geored);
+% |ifilterbank| targets complex functions; for real functions, taking the
+% real value times *2*, or, alternatively, passing the flag 'real' is
+% necessary
+frec_geored = 2*real(ifilterbank(c_geored, gd_geored, a_geored));
+
+%% filter bank 3: construct a linearly spaced filterbank using twice the 
+%  number of channels and a lower redundancy than before. its invertibility 
+%  is achieved by the addition of a small delay to each wavelet sampling point. 
+channels = numel(fc_geo)*2;
+delay = lowdiscrepancy('kronecker');
+fmin = 160;%the range below fmin is covered by compensation filters
+cauchyalpha = 100;
+
+[g_lin, a_lin, fc_lin, L_lin, info_lin] = waveletfilters(Ls,'linear',...
+    fs, fmin, fmax, channels, {'cauchy', cauchyalpha}, 'uniform', 'delay',...
+    delay, 'redtar', redundancy/6,  'repeat', 'energy');
+% the 'energy' flag is used to scale each filter such that its energy is
+% *1*. for further scaling options, see the help of the function |setnorm|.
+
+% for the Cauchy wavelet, its first hyperparameter is proportional to its
+% Q-factor
+fprintf('Estimated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
+    cauchyalpha, info_lin.fc/info_lin.bw)
+
+F = frame('filterbankreal',g_lin, a_lin, numel(g_lin));
+[A,B]=framebounds(F,'iter');
+FB_ratio_lin = B/A;
+
+if size(a_lin,2) == 2
+    a_temp = a_lin(:,1)./a_lin(:,2);
+    red_lin = 1/a_temp(1) + 2*sum(1./a_temp(2:end));
+else
+    red_lin = 1/a_lin(1) + 2*sum(1./a_lin(2:end));
+end
+
+c_lin=filterbank(f,g_lin,a_lin);
+
+gd_lin = filterbankrealdual(g_lin, a_lin, L_lin);
+frec_lin = 2*real(ifilterbank(c_lin, gd_lin, a_lin));
+
+figure(3)
+subplot(3,1,1)
+plotfilterbank(c_lin, a_lin)
+subplot(3,1,2)
+filterbankfreqz(g_lin,a_lin,Ls, 'plot', 'posfreq', 'dynrange', 60);
+subplot(3,1,3)
+filterbankresponse(g_lin,a_lin,Ls, 'plot', 'real', 'fs', fs);
+
+% compare the frequency spacing of the two filter banks
+figure(4)
+plot(fc_geored, 'x')
 hold on
-plot(fc_del, 'o')
+plot(fc_lin, 'o')
 xlabel('Number of wavelet filters')
 ylabel('Center frequencies [Hz]')
-xlim([0 numel(fc_del)])
+xlim([0 numel(fc_lin)])
 grid on
 legend({'Conventional f-spacing', 'Linear f-spacing'}, 'location', 'northwest')
 
-%% adding 7 compensation filters in the lower frequency range
-MC = 7;
-fmin = MC/M * fs;
-numscales = M-MC+1;
+%% filter bank 4: to specify the wavelet scales directly, it is necessary 
+%  to know waveletfilters' internal sampling frequency:
+fs_intern = 20;
 
-[g_comp,a_comp, fc_comp]=waveletfilters(Ls,'linear',fs,fmin,fmax,numscales,...
-    'repeat','delay',delays, 'uniform');
+% the number of desired channels needs to be specified without the desired
+% number of compensation channels; here, the same number of compensation
+% channels as in filter bank 2 should be used
+channels = 256-info_geored.lowpassstart;
+fmax = fs/2;
+fmax_intern = fmax*fs_intern/fs;
+freq_step = fmax_intern/channels;
+fmin_intern = freq_step;
+fmin = fs/fs_intern * fmin_intern;
 
-c_comp = filterbank(f, g_comp, a_comp);
+% adjust fmin with the start index from filter bank 2
+start_index = info_geored.lowpassstart;
+fmin = fmin*start_index;
+fmin_intern = fmin_intern*start_index;
+scales = 1./linspace(fmin_intern,fmax_intern,channels);
+cauchyalpha = 200;
 
+[g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',cauchyalpha},...
+    'uniform','delay',delay,'energy', 'repeat', 'redtar', 4);
 
-lowf_del = numel(fc_del(fc_del<500));
-for ii = 1:lowf_del
-    c_dlow{ii} = c_del{ii};
-end
-
-lowf_comp = numel(fc_comp(fc_comp<500));
-for ii = 1:lowf_comp
-    c_clow{ii} = c_comp{ii};
-end
-
-%investigate the differences in the low frequency range
-figure(3)
-subplot(2,1,1)
-plotfilterbank(c_dlow,a_del(1:lowf_del), fc_del(1:lowf_del))
-title('Low-f FB coefficients, single compensation filter')
-subplot(2,1,2)
-plotfilterbank(c_clow,a_comp(1:lowf_comp), fc_comp(1:lowf_comp))
-title('Low-f FB coefficients, 5 compensation filters')
-
-%% now, generate 2 non-uniformly sampled filter banks using different wavelets
-
-wvlt1 = {'cauchy', 257};
-Lw = 5000;
-[H1, info1]=freqwavelet(wvlt1,Lw);
-qest1 = info1.fc/info1.bw;
-
-wvlt2 = {'fbsp', 4, 3};
-[H2, info2]=freqwavelet(wvlt2,Lw);
-
-%estimate their Q-factor, should be roughly the same
-qest1 = info1.fc/info1.bw;
-qest2 = info2.fc/info2.bw;
-
-figure(4)
-plot(H1)
-hold on
-plot(H2)
-xlim([0 Lw*info1.fc])
-ylim([0 1])
-grid on
-legend1 = sprintf('Cauchy wavelet with Q_est= %0.2f', qest1);
-legend2 = sprintf('B-spline wavelet with Q_est= %0.2f', qest2);
-legend({legend1, legend2}, 'location', 'northeast')
-title('Two wavelets with a similar Q-factor')
-
-%now, increase the Q-factor for wavelet 2
-wvlt2 = {'fbsp', 4, 10};
-H2=freqwavelet(wvlt2,1000);
-
-
-%pass the scales directly
-%determine the frequency range to be covered
-fn_wl = 10; %10 is waveletfilters' internal nyquist frequency
-fmax = fn_wl;
-freq_step = fn_wl/numscales;
-%set fmin depending on the desired start index for the compensation filters
-start_index = 3;
-fmin = freq_step*start_index; 
-scales = 1./linspace(fmin,fmax,numscales);
-
-[g_w1, a_w1,fc_w1,Ls1,info1] = waveletfilters(Ls,scales,...
-    wvlt1,'uniform', 'repeat','energy', 'delay', delays);
-
-[g_w2, a_w2,fc_w2,Ls2,info2] = waveletfilters(Ls,scales,...
-    wvlt2,'uniform','repeat','energy', 'delay', delays);
-
-%compare the frequency response of the two filter banks...
-figure(5)
-subplot(2,1,1)
-filterbankfreqz(g_w1,a_w1,Ls1, 'plot', 'posfreq', 'dynrange', 70);
-title('FB frequency response, Cauchy wavelet with small Q-factor')
-subplot(2,1,2)
-filterbankfreqz(g_w2,a_w2,Ls2, 'plot', 'posfreq', 'dynrange', 70);
-title('FB frequency response, B-spline wavelet with large Q-factor')
-
-%...and their coefficients
-c_w1 = filterbank(f, g_w1, a_w1);
-c_w2 = filterbank(f, g_w2, a_w2);
-
-figure(6)
-subplot(2,1,1)
-plotfilterbank(c_w1,a_w1, fc_w1)
-title('FB coefficients, Cauchy wavelet with small Q-factor')
-subplot(2,1,2)
-plotfilterbank(c_w2,a_w2, fc_w2)
-title('FB coefficients, B-spline wavelet with large Q-factor')
-
-%% the example from the paper
-fs = 2; %sampling frequency
-fn = fs/2; %Nyquist frequency
-M = 64; %number of frequency channels
-MC = 5; %number of compensation channels
-%specify a desired target redundancy and delay function
-redundancy =4;
-delays = lowdiscrepancy('digital');
-
-[g,a,fc, Ls]=waveletfilters(Ls,'linear',fs,MC/M,fn,M-MC+1,{'cauchy',900},...
-'uniform','redtar',redundancy,'repeat','delay',delays);
+fprintf('Estimated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
+    cauchyalpha, info.fc/info.bw)
 
 c=filterbank(f,g,a);
 
-figure(7)
+figure(5)
 subplot(3,1,1)
 plotfilterbank(c, a)
 subplot(3,1,2)
 filterbankfreqz(g,a,Ls, 'plot', 'posfreq', 'dynrange', 60);
 subplot(3,1,3)
 filterbankresponse(g,a,Ls, 'plot', 'real', 'fs', fs);
+
+F = frame('filterbankreal',g, a, numel(g));
+[A,B]=framebounds(F,'iter');
+FB_ratio = B/A
+
+if size(a,2) == 2
+    a_temp = a(:,1)./a(:,2);
+    red = 1/a_temp(1) + 2*sum(1./a_temp(2:end));
+else
+    red = 1/a(1) + 2*sum(1./a(2:end));
+end
+
+gd = filterbankrealdual(g, a, L);
+frec = 2*real(ifilterbank(c, gd, a));
+
+% calculate the error
+if length(frec_geored) > length(f)
+   err=norm(frec_geored(1:length(f))-f);
+else
+   err=norm(frec_geored-f(1:length(frec_geored)));
+end
+fprintf('Reconstruction error (geom. f-spacing):      %e\n',err);
+fprintf('Redundancy (geom. f-spacing):                %.2f\n',red_geored);
+
+if length(frec) > length(f)
+   err=norm(frec(1:length(f))-f);
+else
+   err=norm(frec-f(1:length(frec)));
+end
+fprintf('Reconstruction error (lin. f-spacing):       %e\n',err);
+fprintf('Redundancy (lin. f-spacing):                 %.2f\n',red);
