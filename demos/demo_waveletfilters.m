@@ -196,7 +196,7 @@ fs = 16000;
 % the number of desired channels needs to be specified without the desired
 % number of compensation channels; here, the same number of compensation
 % channels as in filter bank 2 should be used
-channels = 256-info_geored.compensationstart;
+channels = 512-info_geored.compensationstart;
 fmax = fs/2; %maximum frequency to be covered in Hz
 fmax_intern = fmax*fs_intern/fs;
 freq_step = fmax_intern/channels;
@@ -210,6 +210,7 @@ fmin_intern = fmin_intern*start_index;
 scales = 1./linspace(fmin_intern,fmax_intern,channels);
 
 cauchyalpha = 200;
+redundancy = 4;
 
 [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',cauchyalpha},...
     'uniform','delay',delay, 'repeat', 'redtar', redundancy, 'energy');
