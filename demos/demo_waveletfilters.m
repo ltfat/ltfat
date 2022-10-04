@@ -28,7 +28,7 @@ Ls = length(f);
 %  wavelet filterbank with the following parameters:
 fmin = 40;
 fmax = fs/2;
-bins = 4;
+bins = 16;
 [g_geo, a_geo, fc_geo, L_geo, info_geo] = waveletfilters(Ls,'bins', fs,...
     fmin, fmax, bins);
 
@@ -55,23 +55,23 @@ filterbankresponse(g_geo,a_geo,Ls, 'plot', 'real', 'fs', fs);
 
 % compute frame bounds, the filter bank has nonuniform decimation and the
 % wavelet is not bandlimited, such that the bounds are estimated by an
-% iteration. Iterative computation is not available directly in the filterbank 
-% module, but in the frames module
+% iterative procedure. Iterative computation is not available directly in 
+% the filterbank module, but in the frames module.
 
 F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
 [A,B]=framebounds(F,'iter');
 FB_ratio_geo = B/A
 
 %% filter bank 2: waveletfilters supports the direct setting of an 
-%  (approximate) redundancy for the filter bank. to improve inversion 
-%  stability, the flag 'repeat' specifies the usage of more than one 
-%  compensation filter in the low frequency range
-redundancy = 6;
+%  (approximate) redundancy for the filter bank. the flag 'repeat' 
+%  specifies the usage of more than one compensation filter in the 
+%  low frequency range
+redundancy = 32;
+bins = 8;
 
 [g_geored, a_geored, fc_geored, L_geored, info_geored] = waveletfilters(Ls,'bins',...
     fs, fmin, fmax, bins, 'redtar', redundancy, 'repeat');
 
-c_geored=filterbank(f,g_geored,a_geored);
 
 if size(a_geo,2) == 2
     a_temp = a_geored(:,1)./a_geored(:,2);
@@ -80,32 +80,29 @@ else
     red_geored = 1/a_geored(1) + 2*sum(1./a_geored(2:end));
 end
 
-figure(2)
-subplot(3,1,1)
-plotfilterbank(c_geored, a_geored)
-subplot(3,1,2)
-filterbankfreqz(g_geored,a_geored,Ls, 'plot', 'posfreq', 'dynrange', 60);
-subplot(3,1,3)
-filterbankresponse(g_geored,a_geored,Ls, 'plot', 'real', 'fs', fs);
+fprintf('Default redundancy (geom. f-spacing fb 1):                %.2f\n',red_geo);
+fprintf('Adjusted redundancy (geom. f-spacing fb 2):                %.2f\n',red_geored);
 
-% the frame bounds are not ideal, but direct inversion using the canonical 
-% dual frame is possible.
+
 F = frame('filterbankreal',g_geored, a_geored, numel(g_geored));
 [A,B]=framebounds(F,'iter');
 FB_ratio_geored = B/A
 
-gd_geored = filterbankrealdual(g_geored, a_geored, L_geored);
-% |ifilterbank| targets complex functions; for real functions, taking the
-% real value times *2*, or, alternatively, passing the flag 'real' is
-% necessary
-frec_geored = 2*real(ifilterbank(c_geored, gd_geored, a_geored));
+c_geored=filterbank(f,g_geored,a_geored);
+figure(2)
+subplot(3,1,1)
+plotfilterbank(c_geored, a_geored)
+subplot(3,1,2)
+filterbankfreqz(g_geored,a_geored,L_geored, 'plot', 'posfreq', 'dynrange', 60);
+subplot(3,1,3)
+filterbankresponse(g_geored,a_geored,L_geored, 'plot', 'real', 'fs', fs);
 
 %% filter bank 3: construct a linearly spaced filterbank using twice the 
 %  number of channels and a lower redundancy than before. its invertibility 
 %  is achieved by the addition of a small delay to each wavelet sampling point. 
 channels = numel(fc_geo)*2;
 delay = lowdiscrepancy('kronecker');
-fmin = 160;%the range below fmin is covered by compensation filters
+fmin = 250;%the range below fmin is covered by compensation filters
 cauchyalpha = 100;
 
 [g_lin, a_lin, fc_lin, L_lin, info_lin] = waveletfilters(Ls,'linear',...
@@ -114,14 +111,9 @@ cauchyalpha = 100;
 % the 'energy' flag is used to scale each filter such that its energy is
 % *1*. for further scaling options, see the help of the function |setnorm|.
 
-% for the Cauchy wavelet, its first hyperparameter is proportional to its
-% Q-factor
-fprintf('Estimated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
-    cauchyalpha, info_lin.fc/info_lin.bw)
-
 F = frame('filterbankreal',g_lin, a_lin, numel(g_lin));
 [A,B]=framebounds(F,'iter');
-FB_ratio_lin = B/A;
+FB_ratio_lin = B/A
 
 if size(a_lin,2) == 2
     a_temp = a_lin(:,1)./a_lin(:,2);
@@ -129,11 +121,21 @@ if size(a_lin,2) == 2
 else
     red_lin = 1/a_lin(1) + 2*sum(1./a_lin(2:end));
 end
+fprintf('Redundancy (lin. f-spacing fb 3):                %.2f\n',red_lin);
 
 c_lin=filterbank(f,g_lin,a_lin);
 
+% inversion via the dual system is possible
 gd_lin = filterbankrealdual(g_lin, a_lin, L_lin);
+% the |ifilterbank| function targets complex filter bank coefficients. for
+% energy preservation when inverting real coefficients, taking 2 times the 
+% real part of ifilterbank's result is necessary.
 frec_lin = 2*real(ifilterbank(c_lin, gd_lin, a_lin));
+
+% for the Cauchy wavelet, its first hyperparameter is proportional to its
+% Q-factor
+fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
+    cauchyalpha, info_lin.fc/info_lin.bw)
 
 figure(3)
 subplot(3,1,1)
@@ -143,9 +145,9 @@ filterbankfreqz(g_lin,a_lin,Ls, 'plot', 'posfreq', 'dynrange', 60);
 subplot(3,1,3)
 filterbankresponse(g_lin,a_lin,Ls, 'plot', 'real', 'fs', fs);
 
-% compare the frequency spacing of the two filter banks
+% compare the frequency spacing of the filter banks
 figure(4)
-plot(fc_geored, 'x')
+plot(fc_geo, 'x')
 hold on
 plot(fc_lin, 'o')
 xlabel('Number of wavelet filters')
@@ -162,24 +164,27 @@ fs_intern = 20;
 % number of compensation channels; here, the same number of compensation
 % channels as in filter bank 2 should be used
 channels = 256-info_geored.lowpassstart;
-fmax = fs/2;
+fmax = fs/2; %maximum frequency to be covered in Hz
 fmax_intern = fmax*fs_intern/fs;
 freq_step = fmax_intern/channels;
 fmin_intern = freq_step;
-fmin = fs/fs_intern * fmin_intern;
+fmin = fs/fs_intern * fmin_intern; %minimum frequency to be covered in Hz
 
 % adjust fmin with the start index from filter bank 2
 start_index = info_geored.lowpassstart;
 fmin = fmin*start_index;
 fmin_intern = fmin_intern*start_index;
 scales = 1./linspace(fmin_intern,fmax_intern,channels);
+
 cauchyalpha = 200;
 
 [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',cauchyalpha},...
     'uniform','delay',delay,'energy', 'repeat', 'redtar', 4);
 
-fprintf('Estimated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
+fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
     cauchyalpha, info.fc/info.bw)
+fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter 300: %.2f \n',...
+    info_geo.fc/info_geo.bw)
 
 c=filterbank(f,g,a);
 
@@ -202,22 +207,14 @@ else
     red = 1/a(1) + 2*sum(1./a(2:end));
 end
 
+% inversion via the dual system is possible
 gd = filterbankrealdual(g, a, L);
 frec = 2*real(ifilterbank(c, gd, a));
 
-% calculate the error
-if length(frec_geored) > length(f)
-   err=norm(frec_geored(1:length(f))-f);
-else
-   err=norm(frec_geored-f(1:length(frec_geored)));
-end
-fprintf('Reconstruction error (geom. f-spacing):      %e\n',err);
-fprintf('Redundancy (geom. f-spacing):                %.2f\n',red_geored);
-
+% calculate the reconstruction error
 if length(frec) > length(f)
    err=norm(frec(1:length(f))-f);
 else
    err=norm(frec-f(1:length(frec)));
 end
-fprintf('Reconstruction error (lin. f-spacing):       %e\n',err);
-fprintf('Redundancy (lin. f-spacing):                 %.2f\n',red);
+fprintf('Reconstruction error (lin. f-spacing fb 4):       %e\n',err);

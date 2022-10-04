@@ -183,7 +183,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
 %     CauchyAlpha = 600;
 %     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
-%
+% 
 %     c=filterbank(f,{'realdual',g},a);
 %     r=2*real(ifilterbank(c,g,a));
 %     if length(r) > length(f)

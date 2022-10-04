@@ -27,8 +27,8 @@
 %
 %      ERBLET representations
 %
-%      The high-redundany plot (top) consists of 400 channels (~9 filters 
-%      per ERB) and low-redundany plot (bottom) consists of 44 channels 
+%      The high-redundancy plot (top) consists of 400 channels (~9 filters 
+%      per ERB) and the low-redundancy plot (bottom) consists of 44 channels 
 %      (1 filter per ERB).
 %
 %   .. figure::

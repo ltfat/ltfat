@@ -2,11 +2,11 @@
 %
 %   In this file we construct a uniform filterbank using a the impulse
 %   response of a 4th order gammatone for each channel. The center frequencies
-%   are equidistantly spaced on an ERB-scale, and the width of the filter are
-%   choosen to match the auditory filter bandwidth as determined by Moore.
+%   are equidistantly spaced on an ERB-scale, and the width of the filters are
+%   chosen to match the auditory filter bandwidth as determined by Moore.
 %
 %   Each channel is subsampled by a factor of 8 (a=8), and to generate a
-%   nice plot, 4 channels per Erb has been used.
+%   nice plot, 4 channels per Erb have been used.
 %
 %   The filterbank covers only the positive frequencies, so we must use
 %   |filterbankrealdual| and |filterbankrealbounds|.
