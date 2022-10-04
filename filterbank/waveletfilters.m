@@ -527,12 +527,12 @@ end
 %% Generate lowpass filters if desired
 [gout, info] = comp_fblowpassfilters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
 
-info.compensationstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
+info.waveletstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 if flags.do_scales
     fc = (kv.fs/2).*info.fc;
-elseif flags.do_linear
-    fc = nf.*info.fc;
+else
+    fc = nf.*info.fc;    
 end
 
 
