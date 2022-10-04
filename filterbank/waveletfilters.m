@@ -520,7 +520,6 @@ else
         % Scale the lowpass filters
         scal(1)=scal(1)/sqrt(2);
     end
-    
     [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',...
         kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M),'delay', delayvec(lowpass_number+1:M),flags.norm);
 end
@@ -528,7 +527,7 @@ end
 %% Generate lowpass filters if desired
 [gout, info] = comp_fblowpassfilters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
 
-info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
+info.compensationstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 if flags.do_scales
     fc = (kv.fs/2).*info.fc;
