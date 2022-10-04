@@ -118,15 +118,15 @@ delay = lowdiscrepancy('kronecker');
 
 % waveletfilters supports various parametrizations of several wavelets.
 % with the Cuachy wavelet as the default. its alpha parameter has a
-% correspondence to its Q-factor, allowing for a particularly intuitive
+% correspondence to its Q-factor, allowing for a relatively intuitive
 % parametrization.
 cauchyalpha = 100;
-redundancy = 4;
+redundancy = 8;
 
 %specifying a new sampling frequency
 fs = 2;
 %the number of channels overall
-M = 512;
+M = 128;
 %number of compensation channels
 MC = 16;
 %number of wavelet channels
@@ -184,7 +184,7 @@ hold on
 plot(fc_lin, 'o')
 xlabel('Number of wavelet filters')
 ylabel('Center frequencies [Hz]')
-xlim([0 numel(fc_lin)])
+xlim([0 numel(fc_geo)])
 grid on
 legend({'Conventional f-spacing', 'Linear f-spacing'}, 'location', 'northwest')
 
