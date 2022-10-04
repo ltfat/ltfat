@@ -62,8 +62,10 @@ title('Total filter bank response')
 
 % compute frame bounds, the filter bank has nonuniform decimation and the
 % wavelet is not bandlimited. thus, the bounds are estimated by an
-% iterative procedure. Iterative computation is not available directly in 
-% the filterbank module, but in the frames module.
+% iterative procedure. Iterative computation of the frame bounds is not 
+% available directly in the filterbank module, but in the frames module.
+% for iteratively reconstructing the time-domain signal from the filter
+% bank coefficients, check |ifilterbankiter|.
 
 F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
 [A,B]=framebounds(F,'iter');
@@ -221,7 +223,7 @@ fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter 300: %.
 
 c=filterbank(f,g,a);
 
-figure(6)
+figure(5)
 subplot(3,1,1)
 plotfilterbank(c, a)
 title('Filter bank coefficients')
