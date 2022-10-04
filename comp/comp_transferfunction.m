@@ -12,7 +12,7 @@ g = comp_filterbank_pre({g},1,L,0);
 % Band-limited filters have to be made full-length
 H = circshift(postpad(g{1}.H(:),L),g{1}.foff);
 
-% Realonly has to be treated separatelly for band-limited filters
+% Realonly has to be treated separately for band-limited filters
 if isfield(g,'realonly') && g.realonly
      H=(H+involute(H))/2;
 end;

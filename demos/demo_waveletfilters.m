@@ -119,7 +119,7 @@ delay = lowdiscrepancy('kronecker');
 % waveletfilters supports various parametrizations of several wavelets.
 % with the Cuachy wavelet as the default. its alpha parameter has a
 % correspondence to its Q-factor, allowing for a relatively intuitive
-% parametrization.
+% parametrization. for details on the supported wavelets, check |freqwavelet|
 cauchyalpha = 100;
 redundancy = 8;
 
@@ -196,7 +196,7 @@ fs = 16000;
 % the number of desired channels needs to be specified without the desired
 % number of compensation channels; here, the same number of compensation
 % channels as in filter bank 2 should be used
-channels = 512-info_geored.compensationstart;
+channels = 512-info_geored.waveletstart-1;
 fmax = fs/2; %maximum frequency to be covered in Hz
 fmax_intern = fmax*fs_intern/fs;
 freq_step = fmax_intern/channels;
@@ -204,7 +204,7 @@ fmin_intern = freq_step;
 fmin = fs/fs_intern * fmin_intern; %minimum frequency to be covered in Hz
 
 % adjust fmin with the start index from filter bank 2
-start_index = info_geored.compensationstart;
+start_index = info_geored.waveletstart;
 fmin = fmin*start_index;
 fmin_intern = fmin_intern*start_index;
 scales = 1./linspace(fmin_intern,fmax_intern,channels);
@@ -216,6 +216,9 @@ redundancy = 4;
     'uniform','delay',delay, 'repeat', 'redtar', redundancy, 'energy');
 % the 'energy' flag is used to scale each filter such that its energy is
 % *1*. for further scaling options, see the help of the function |setnorm|.
+
+% since no information on fs has been passed to |waveletfilters|, fmin =
+% fc(info.waveletstart)*fs/2
 
 fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
     cauchyalpha, info.fc/info.bw)
