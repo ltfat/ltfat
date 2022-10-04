@@ -13,7 +13,7 @@
 %     filters maintaining a constant bandwidth in the low-frequency region
 %
 %     * a uniformly sampled invertible filter bank with linear frequency
-%     spaing where the compensation channel index is passed directly.
+%     spacing where the compensation channel index is passed directly.
 %     invertibility is achieved by passing a small delay to the filter
 %     generator.
 %
@@ -96,6 +96,7 @@ F = frame('filterbankreal',g_geored, a_geored, numel(g_geored));
 FB_ratio_geored = B/A
 
 c_geored=filterbank(f,g_geored,a_geored);
+
 figure(2)
 subplot(3,1,1)
 plotfilterbank(c_geored, a_geored)
@@ -189,7 +190,7 @@ legend({'Conventional f-spacing', 'Linear f-spacing'}, 'location', 'northwest')
 %% filter bank 4: to specify the wavelet scales directly, it is necessary 
 %  to know waveletfilters' internal sampling frequency:
 fs_intern = 20;
-
+fs = 16000;
 % the number of desired channels needs to be specified without the desired
 % number of compensation channels; here, the same number of compensation
 % channels as in filter bank 2 should be used
@@ -242,7 +243,7 @@ else
     red = 1/a(1) + 2*sum(1./a(2:end));
 end
 
-% inversion via the dual system is possible
+% inversion via the dual system
 gd = filterbankrealdual(g, a, L);
 frec = 2*real(ifilterbank(c, gd, a));
 
