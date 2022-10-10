@@ -173,7 +173,7 @@ gd_lin = filterbankrealdual(g_lin, a_lin, L_lin);
 frec_lin = 2*real(ifilterbank(c_lin, gd_lin, a_lin));
 
 % approximating the Q-factor of the wavelet
-fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
+fprintf('Approximated Q-factor of the Cauchy wavelet with alpha %i: %.2f \n',...
     cauchyalpha, info_lin.fc/info_lin.bw)
 
 
@@ -220,9 +220,9 @@ redundancy = 4;
 % since no information on fs has been passed to |waveletfilters|, fmin =
 % fc(info.waveletstart)*fs/2
 
-fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter %i: %.2f \n',...
+fprintf('Approximated Q-factor of the Cauchy wavelet with alpha %i: %.2f \n',...
     cauchyalpha, info.fc/info.bw)
-fprintf('Approximated Q-factor of the Cauchy wavelet with hyperparameter 300: %.2f \n',...
+fprintf('Approximated Q-factor of the Cauchy wavelet with alpha %i: %.2f \n',...
     info_geo.fc/info_geo.bw)
 
 c=filterbank(f,g,a);
