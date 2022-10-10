@@ -116,8 +116,8 @@ title('Total filter bank response')
 %  as an anonymous function.
 delay = lowdiscrepancy('kronecker');
 
-% waveletfilters supports various parametrizations of several wavelets.
-% with the Cuachy wavelet as the default. its alpha parameter has a
+% waveletfilters supports various parametrizations of several wavelets,
+% with the Cauchy wavelet as the default. its alpha parameter has a
 % correspondence to its Q-factor, allowing for a relatively intuitive
 % parametrization. for details on the supported wavelets, check |freqwavelet|
 cauchyalpha = 100;
@@ -168,7 +168,7 @@ fprintf('Redundancy (lin. f-spacing fb 3):                %.2f\n',red_lin);
 % inversion via the dual system is possible
 gd_lin = filterbankrealdual(g_lin, a_lin, L_lin);
 % the |ifilterbank| function targets complex filter bank coefficients. for
-% energy preservation when inverting real coefficients, taking 2 times the 
+% energy preservation when inverting real coefficients, taking twice the 
 % real part of ifilterbank's result is necessary.
 frec_lin = 2*real(ifilterbank(c_lin, gd_lin, a_lin));
 
