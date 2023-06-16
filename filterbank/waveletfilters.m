@@ -156,49 +156,13 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   regularly sampled wavelet filterbank using a frequency B-spline
 %   wavelet of order 4 and with parameter fb=3 and visualize the result:::
 %
-%     [f,fs]=gspi;  % Get the test signal
+%     [f,fs]=greasy;  % Get the test signal
 %     Ls = length(f);
-%     scales = linspace(10,0.1,100);
+%     scales = 2.^linspace(5,-3.3,256);
 %     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'repeat');
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90);
 %
-%   In the second example, we construct a wavelet filterbank with a
-%   lowpass channels based on a Cauchy wavelet and verify it.
-%   The plot shows the frequency responses of
-%   filters used for analysis (top) and synthesis (bottom). :::
-%
-%     [f,fs]=greasy;  % Get the test signal
-%     Ls = length(f);
-%     M0 = 511; %Desired number of channels (without 0 Hz-lowpass channel)
-%     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
-%     freq_step = max_freqDiv10/M0;
-%     rate = 44100;
-%     start_index = 1;
-%     min_freqHz = rate/10*freq_step
-%     min_scale_freq = min_freqHz*start_index
-%     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
-%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0);
-%     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
-%     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
-%     CauchyAlpha = 600;
-%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
-% 
-%     c=filterbank(f,{'realdual',g},a);
-%     r=2*real(ifilterbank(c,g,a));
-%     if length(r) > length(f)
-%         norm(r(1:length(f))-f)
-%     else
-%         norm(r-f(1:length(r)))
-%      end
-%     % Plot frequency responses of individual filters
-%     gd=filterbankrealdual(g,a,L);
-%     figure(1);
-%     subplot(2,1,1);
-%     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
-%
-%     subplot(2,1,2);
-%     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
 % 
 %   See also: freqwavelet, filterbank, setnorm
 
@@ -534,7 +498,6 @@ if flags.do_scales
 else
     fc = nf.*info.fc;    
 end
-
 
 if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
