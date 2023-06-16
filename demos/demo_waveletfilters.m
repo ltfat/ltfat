@@ -35,8 +35,14 @@ fmax = fs/2;
 bins = 12;
 redundancy = 128;
 
+% waveletfilters supports various parametrizations of several wavelets,
+% with the Cauchy wavelet as the default. its alpha parameter has a
+% correspondence to its Q-factor, allowing for a relatively intuitive
+% parametrization. for details on the supported wavelets, check |freqwavelet|
+cauchyalpha = 100;
+
 [g_geo, a_geo, fc_geo, L_geo, info_geo] = waveletfilters(Ls,'bins', fs,...
-    fmin, fmax, bins, {'cauchy',100}, 'redtar', redundancy);
+    fmin, fmax, bins, {'cauchy',cauchyalpha}, 'redtar', redundancy);
 %per default, one compensation (lowpass) filter covering the region from 0
 %Hz to the wavelet region is added to waveletfilters' output.
 
@@ -113,12 +119,6 @@ title('Total filter bank response')
 %  from a kronecker low discrepancy sequence and passed to waveletfilters
 %  as an anonymous function.
 delay = lowdiscrepancy('kronecker');
-
-% waveletfilters supports various parametrizations of several wavelets,
-% with the Cauchy wavelet as the default. its alpha parameter has a
-% correspondence to its Q-factor, allowing for a relatively intuitive
-% parametrization. for details on the supported wavelets, check |freqwavelet|
-cauchyalpha = 300;
 
 %specifying a new sampling frequency and redundancy
 fs = 2;
@@ -208,7 +208,7 @@ fmin = fmin*start_index;
 fmin_intern = fmin_intern*start_index;
 scales = 1./linspace(fmin_intern,fmax_intern,channels);
 
-cauchyalpha = 200;
+cauchyalpha = 400;
 redundancy = 4;
 
 [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',cauchyalpha},...
