@@ -25,11 +25,12 @@
 %the input signal
 [f,fs]=greasy;
 Ls = length(f);
+fbounds = 0;
 
 %% filter bank 1: retrieve the filters and downsampling factors for a 
 %  non-uniformly sampled wavelet filterbank with geometric frequency
-%  spacing the following parameters:
-fmin = 80;
+%  spacing, using the following parameters:
+fmin = 120;
 fmax = fs/2;
 bins = 12;
 
@@ -57,18 +58,22 @@ subplot(3,1,3)
 filterbankresponse(g_geo,a_geo,Ls, 'plot', 'real', 'fs', fs);
 title('Total filter bank response')
 
-% compute frame bounds, the filter bank has nonuniform decimation and the
+% compute the frame bounds, the filter bank has nonuniform decimation and the
 % wavelet is not bandlimited. thus, the bounds are estimated by an
 % iterative procedure. Iterative computation of the frame bounds is not 
 % available directly in the filterbank module, but in the frames module.
 % for iteratively reconstructing the time-domain signal from the filter
 % bank coefficients, check |ifilterbankiter|.
 
-F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
-[A,B]=framebounds(F,'iter');
-FB_ratio_geo = B/A;
+if fbounds
+    F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
+    [A,B]=framebounds(F,'iter');
+    FB_ratio_geo = B/A;
+else
+    FB_ratio_geo = nan;
+end
 
-if isinf(FB_ratio_geo)
+if isinf(FB_ratio_geo) || isnan(FB_ratio_geo)
     disp('Filter bank 1 is not invertible.')
 else
     FB_ratio_geo
@@ -76,7 +81,8 @@ end
 
 %% filter bank 2: non-uniformly sampled invertible wavelet filter bank
 %  the flag 'repeat' specifies the usage of more than one compensation 
-%  filter in the low frequency range.
+%  filter in the low frequency range and can improve the frame properties
+%  while keeping the redundancy similar
 
 [g_geored, a_geored, fc_geored, L_geored, info_geored] = waveletfilters(Ls,'bins',...
     fs, fmin, fmax, bins,'repeat');
@@ -120,18 +126,18 @@ delay = lowdiscrepancy('kronecker');
 cauchyalpha = 300;
 
 % waveletfilters supports the setting of a target redundancy.
-redundancy = 2;
+redundancy = 4;
 
 %specifying a new sampling frequency
 fs = 2;
 %the number of channels overall
-M = 128;
+M = 1024;
 %number of compensation channels
-MC = 8;
+MC = 16;
 %number of wavelet channels
 wlchannels = M-MC+1;
 
-%thus, the frequency range covered by wavelets is given as
+%thus, the frequency range covered by the wavelets is given as
 fmax = fs/2;
 fmin = MC/M;
 
@@ -254,4 +260,4 @@ if length(frec) > length(f)
 else
    err=norm(frec-f(1:length(frec)));
 end
-fprintf('Reconstruction error (lin. f-spacing fb 4):       %e\n',err);
+fprintf('Reconstruction error (fb 4):       %e\n',err);
