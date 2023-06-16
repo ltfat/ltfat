@@ -156,13 +156,21 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %   regularly sampled wavelet filterbank using a frequency B-spline
 %   wavelet of order 4 and with parameter fb=3 and visualize the result:::
 %
-%     [f,fs]=greasy;  % Get the test signal
+%     [f,fs]=gspi;  % Get the test signal
 %     Ls = length(f);
 %     scales = 2.^linspace(5,-3.3,256);
 %     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'repeat');
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90);
 %
+%   In the second example, we do a constant-Q style analysis, the default is
+%   a Cauchy wavelet, and plot its frequency bank response:
+%
+%     fmin = 120;
+%     fmax = fs/2;
+%     bins = 8;
+%     [g, a, fc, L, info] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins,'repeat');
+%     filterbankfreqz(g,a,Ls, 'plot', 'posfreq', 'dynrange', 60);
 % 
 %   See also: freqwavelet, filterbank, setnorm
 
