@@ -506,6 +506,7 @@ if flags.do_scales
 else
     fc = nf.*info.fc;    
 end
+fc = fc(:);
 
 if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
