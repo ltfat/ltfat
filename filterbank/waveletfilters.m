@@ -172,7 +172,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %     [g, a, fc, L, info] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins,'repeat');
 %     filterbankfreqz(g,a,Ls, 'plot', 'posfreq', 'dynrange', 60);
 % 
-%   See also: freqwavelet, filterbank, setnorm
+%   See also: freqwavelet, filterbank, setnorm, demo_waveletfilters
 
 % AUTHORS: Nicki Holighaus, Zdenek Prusa, Guenther Koliander, Clara Hollomey
 
