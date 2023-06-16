@@ -25,17 +25,18 @@
 %the input signal
 [f,fs]=greasy;
 Ls = length(f);
-fbounds = 0;
+fbounds = 1;
 
 %% filter bank 1: retrieve the filters and downsampling factors for a 
 %  non-uniformly sampled wavelet filterbank with geometric frequency
 %  spacing, using the following parameters:
-fmin = 120;
+fmin = 400;
 fmax = fs/2;
 bins = 12;
+redundancy = 128;
 
 [g_geo, a_geo, fc_geo, L_geo, info_geo] = waveletfilters(Ls,'bins', fs,...
-    fmin, fmax, bins);
+    fmin, fmax, bins, {'cauchy',100}, 'redtar', redundancy);
 %per default, one compensation (lowpass) filter covering the region from 0
 %Hz to the wavelet region is added to waveletfilters' output.
 
@@ -65,24 +66,18 @@ title('Total filter bank response')
 % for iteratively reconstructing the time-domain signal from the filter
 % bank coefficients, check |ifilterbankiter|.
 
-if fbounds
-    F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
-    [A,B]=framebounds(F,'iter');
-    FB_ratio_geo = B/A;
-else
-    FB_ratio_geo = nan;
-end
+F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
+[A,B]=framebounds(F,'iter');
+FB_ratio_geo = B/A
 
-if isinf(FB_ratio_geo) || isnan(FB_ratio_geo)
-    disp('Filter bank 1 is not invertible.')
-else
-    FB_ratio_geo
-end
+
 
 %% filter bank 2: non-uniformly sampled invertible wavelet filter bank
 %  the flag 'repeat' specifies the usage of more than one compensation 
 %  filter in the low frequency range and can improve the frame properties
 %  while keeping the redundancy similar
+
+fmin = 120;
 
 [g_geored, a_geored, fc_geored, L_geored, info_geored] = waveletfilters(Ls,'bins',...
     fs, fmin, fmax, bins,'repeat');
@@ -125,11 +120,9 @@ delay = lowdiscrepancy('kronecker');
 % parametrization. for details on the supported wavelets, check |freqwavelet|
 cauchyalpha = 300;
 
-% waveletfilters supports the setting of a target redundancy.
-redundancy = 4;
-
-%specifying a new sampling frequency
+%specifying a new sampling frequency and redundancy
 fs = 2;
+redundancy = 4;
 %the number of channels overall
 M = 1024;
 %number of compensation channels
@@ -142,7 +135,7 @@ fmax = fs/2;
 fmin = MC/M;
 
 [g_lin,a_lin,fc_lin, L_lin, info_lin]=waveletfilters(Ls,'linear',fs,fmin,fmax,wlchannels,...
-    {'cauchy',cauchyalpha},'uniform','redtar',redundancy,'repeat','delay',delay, 'energy');
+    {'cauchy',cauchyalpha},'uniform','redtar', redundancy, 'repeat','delay',delay, 'energy');
 % the 'energy' flag is used to scale each filter such that its energy is
 % *1*. for further scaling options, see the help of the function |setnorm|
 
