@@ -74,9 +74,12 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     // Output subbands pointers
     OCTAVE_LOCAL_BUFFER (const LTFAT_COMPLEX*, cPtrs, M);
     // Output cell elements array,
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, cElems, M);
-    //
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, GElems, M);
+    //avoid octave_local_buffer_gElems { new MArray<LTFAT_TYPE> [M] }, because of gcc warnings,
+    //until https://gcc.gnu.org/bugzilla//show_bug.cgi?id=85795 is resolved (freed below)
+    MArray<LTFAT_TYPE> *cElems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    MArray<LTFAT_TYPE> *GElems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, cElems, M);
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, GElems, M);
 
     for(octave_idx_type m=0; m<M; m++)
     {
@@ -98,5 +101,8 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     fwd_ifilterbank_fftbl(cPtrs,GPtrs,L,Gl,W,afrac,M,
                           foff,realonly,F.fortran_vec());
 
+    //freeing only necessary as long as gcc yields warnings with octave_local_buffer
+    free(cElems);
+    free(GElems);
     return octave_value(F);
 }

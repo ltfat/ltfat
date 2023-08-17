@@ -57,8 +57,16 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     // Output subbands pointers
     OCTAVE_LOCAL_BUFFER (LTFAT_TYPE*, cPtrs, M);
     // Output cell elements array,
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, gElems, M);
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, c_elems, M);
+    //avoid octave_local_buffer_gElems { new MArray<LTFAT_TYPE> [M] }, because of gcc warnings,
+    //until https://gcc.gnu.org/bugzilla//show_bug.cgi?id=85795 is resolved
+
+    //std::unique_ptr<MArray<LTFAT_TYPE> []> octave_local_buffer_gElems { new MArray<LTFAT_TYPE> [M] }; 
+    //MArray<LTFAT_TYPE>  *gElems = octave_local_buffer_gElems.get ();
+    //std::unique_ptr<MArray<LTFAT_TYPE> []> octave_local_buffer_c_elems { new MArray<LTFAT_TYPE> [M] }; 
+    //MArray<LTFAT_TYPE>  *c_elems = octave_local_buffer_c_elems.get ();  
+    MArray<LTFAT_TYPE> *gElems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    MArray<LTFAT_TYPE> *c_elems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+ 
 
     for (octave_idx_type m = 0; m < M; m++)
     {
@@ -77,6 +85,7 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     {
         c.elem(m) = c_elems[m];
     }
-
+    free(gElems);
+    free(c_elems);
     return octave_value(c);
 }
