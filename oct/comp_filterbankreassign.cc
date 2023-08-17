@@ -72,10 +72,16 @@ octFunction(const octave_value_list& args, int nargout)
     OCTAVE_LOCAL_BUFFER (const LTFAT_REAL*, fgradPtr, M);
     OCTAVE_LOCAL_BUFFER (LTFAT_TYPE*, srPtr, M);
 
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, s_elems, M);
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_REAL>, tgrad_elems, M);
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_REAL>, fgrad_elems, M);
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, sr_elems, M);
+    //avoid octave_local_buffer_gElems { new MArray<LTFAT_TYPE> [M] }, because of gcc warnings,
+    //until https://gcc.gnu.org/bugzilla//show_bug.cgi?id=85795 is resolved (freed below)
+    MArray<LTFAT_TYPE> *s_elems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    MArray<LTFAT_REAL> *tgrad_elems = (MArray<LTFAT_REAL>*)malloc((int)M * sizeof(MArray<LTFAT_REAL>));
+    MArray<LTFAT_REAL> *fgrad_elems = (MArray<LTFAT_REAL>*)malloc((int)M * sizeof(MArray<LTFAT_REAL>));
+    MArray<LTFAT_TYPE> *sr_elems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, s_elems, M);
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_REAL>, tgrad_elems, M);
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_REAL>, fgrad_elems, M);
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, sr_elems, M);
 
     for (octave_idx_type m = 0; m < M; ++m)
     {
@@ -143,5 +149,11 @@ octFunction(const octave_value_list& args, int nargout)
         retlist(1) = repos;
         fbreassOptOut_destroy(optout);
     }
+
+    //freeing only necessary as long as gcc yields warnings with octave_local_buffer
+    free(s_elems);
+    free(tgrad_elems);
+    free(fgrad_elems);
+    free(sr_elems);
     return retlist;
 }
