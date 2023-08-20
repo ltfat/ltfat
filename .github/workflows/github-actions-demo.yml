@@ -1,0 +1,23 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
+  testLTFAT:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - name: Run ltfatstart
+        uses: matlab-actions/run-command@v1
+        with:
+          command: ltfatstart
+      - name: Run ltfatmex
+        uses: matlab-actions/run-command@v1
+        with:
+          command: ltfatmex
+      - name: Run ltfat tests
+        uses: matlab-actions/run-command@v1
+        with:
+          command: test_all_ltfat
