@@ -19,7 +19,7 @@ jobs:
       - name: Move to LTFAT directory
         run: cd ${{ github.workspace }}
       - name: Start Octave, run ltfatstart
-        run: octave ltfatstart; test_all_ltfat;
+        run: octave --persist ci_spcript.m
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
