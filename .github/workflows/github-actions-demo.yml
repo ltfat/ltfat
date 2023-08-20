@@ -17,7 +17,7 @@ jobs:
       - name: Install Octave
         run: sudo apt-get install octave
       - name: Move to LTFAT directory
-        run: cd ./ltfat
+        run: cd ${{ github.workspace }}
       - name: Start Octave, run ltfatstart
         run: octave --persist ltfatstart.m
       - name: Run the tests
