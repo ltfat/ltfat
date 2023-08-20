@@ -21,7 +21,7 @@ jobs:
       - name: Start Octave, run ltfatstart
         run: octave --persist ltfatstart.m
       - name: Run the tests
-        run: octave test_all_ltfat;
+        run: test_all_ltfat;
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
