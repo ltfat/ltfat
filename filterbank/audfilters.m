@@ -451,9 +451,10 @@ if ~isempty(kv.redtar)
         % lowpass and highpass, only the tapered part is considered for 
         % adjustment to better preserve stability. Please consult the
         % references for details. 
-        dk_old = a(:,1)./a(:,2);
+        dk_old = afull(:,1)./afull(:,2);
+        
         org_red = sum(2./dk_old(2:end-1));
-        a_new = [a(1,:);[a(2:end-1,1),ceil(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
+        a_new = [afull(1,:);[afull(2:end-1,1),ceil(afull(2:end-1,2)*kv.redtar/org_red)];afull(end,:)];
         % Adjust d0 and dK to the new redundancy
         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
         % Low-pass
