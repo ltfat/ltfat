@@ -471,7 +471,11 @@ if ~isempty(kv.redtar)
         % new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
     end
     g_new = filterbankscale(g,sqrt(scal_new)'); % Perform rescaling
-    a = a_new;
+    if flags.do_regsampling
+        a = a_new(:,1);
+    else
+        a = a_new;
+    end
     g = g_new;
     if 0
         % Compute and display redundancy for verification
