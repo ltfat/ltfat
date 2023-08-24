@@ -35,7 +35,7 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %   The following parameters specifically related to the `iter` method: 
 %
-%     'tol',t      Stop if relative residual error of eighs is less than the
+%     'tol',t      Stop if relative residual error of eigs is less than the
 %                  specified tolerance. Default is 1e-9 
 %
 %     'maxit',n    Do at most n iterations in eigs. Default is 100.
