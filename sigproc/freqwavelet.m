@@ -365,6 +365,7 @@ info.bw  = (fsupp(4,:) - fsupp(2,:));
 bwinsamples = info.bw./kv.alphaStep;
 info.aprecise = L./bwinsamples;
 info.a_natural(:,2) = ceil(bwinsamples);
+info.a_natural(:,1) = L;
 info.a_natural = info.a_natural';
 info.tfr = (cauchyAlpha - 1)./(pi*info.fc.^2*L);
 info.cauchyAlpha = cauchyAlpha;
