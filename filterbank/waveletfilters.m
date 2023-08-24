@@ -337,7 +337,8 @@ elseif flags.do_single
     lowpass_at_zero = 1;
     M = M+1;
     %this is an estimated value
-    aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
+    aprecise = 2*scales_sorted(4)/0.2; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
+%    aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
 else
     lowpass_number = 0;
     lowpass_at_zero = 0;
