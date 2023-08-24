@@ -445,16 +445,33 @@ if ~isempty(kv.redtar)
         a_new = floor(a*org_red/kv.redtar);
         scal_new = org_red/kv.redtar*ones(numel(g),1);
         % new_red = (M2-2)/a_new(1);
+    elseif flags.do_regsampling
+        %do not yet take high and lowpass filters into account
+        org_red = (M2-2)./(sum(a(2:end-1))/numel(a(2:end-1)));
+        a_new = [a(1);floor(a(2:end-1)*org_red/kv.redtar);a(end)];
+        % Adjust the low- and highpass filters
+        cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
+        % low-pass
+        fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);
+        fsupp_temp0 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+        a_new(1) = ceil(Ls/max(fs./(2*fps0+fsupp_temp0/cbw),1));
+        % high-pass
+        fps1 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);
+        fsupp_temp1 = audfiltbw(fps1,flags.audscale)/winbw*kv.bwmul;
+        a_new(end) = ceil(Ls/max(fs./(2*(fc(end)-fps1)+fsupp_temp1/cbw),1));
+        % now, calculate the scaling factor for all filters
+        a_new_full = comp_filterbank_a(a_new,M2,struct());
+        scal_new=sqrt(a_new_full(:,1)./a_new_full(:,2));
     else
         % The decimation factors of all filters except for lowpass and 
         % highpass are adjusted proportional to their bandwidth. For 
         % lowpass and highpass, only the tapered part is considered for 
         % adjustment to better preserve stability. Please consult the
         % references for details. 
-        dk_old = afull(:,1)./afull(:,2);
+        dk_old = a(:,1)./a(:,2);
         
         org_red = sum(2./dk_old(2:end-1));
-        a_new = [afull(1,:);[afull(2:end-1,1),ceil(afull(2:end-1,2)*kv.redtar/org_red)];afull(end,:)];
+        a_new = [a(1,:);[a(2:end-1,1),ceil(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
         % Adjust d0 and dK to the new redundancy
         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
         % Low-pass
