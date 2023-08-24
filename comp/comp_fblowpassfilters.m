@@ -39,7 +39,8 @@ end
 %% Lowpass filters
 function [glow,infolow] = wavelet_lowpass(g,a,L,lowpass_bandwidth,taper_ratio,scal,flags)
 
-Lw = @(L) min(ceil(lowpass_bandwidth*L),L);
+%Lw = @(L) min(ceil(lowpass_bandwidth*L),L); % This is probably too long by a factor of 2
+Lw = @(L) min(ceil(lowpass_bandwidth*L/2),L); %Division by two account for range [0,2] of relative bandwidth
 
 % Compute tapered window
 P0 = blfilter({'hann','taper',taper_ratio},lowpass_bandwidth,'fs',2,'inf');
