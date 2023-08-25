@@ -22,5 +22,6 @@ jobs:
       - name: Install Python packages
         run: pip install numpy scipy pygments
       - name: Run mat2doc
-        run: ./mat2doc --help
+        run: cd ./mat2doc
+        run: ./mat2doc.py --h
 
