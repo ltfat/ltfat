@@ -2,7 +2,7 @@ name: GitHub Release Demo
 run-name: ${{ github.actor }} is trying to set up release automation ;) 🚀
 on: [push]
 jobs:
-  testLTFAT:
+  releaseLTFAT:
     runs-on: ubuntu-latest
     steps:
       - name: Check out ltfat repository
@@ -15,4 +15,12 @@ jobs:
         uses: actions/checkout@master
         with:
           name: ltfat/mat2doc     <-- clone https://github.com/ltfat/mat2doc
+      - name: Move to mat2doc directory
+        run: cd ${{ github.workspace }}
+      - name: Install pip
+        run: sudo apt install python3-pip
+      - name: Install Python packages
+        run: pip install numpy scipy pygments
+      - name: Run mat2doc
+        run: ./mat2doc --help
 
