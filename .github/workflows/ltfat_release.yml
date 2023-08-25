@@ -1,5 +1,5 @@
 name: GitHub Release Demo
-run-name: ${{ github.actor }} is trying to set up release automation 🚀
+run-name: ${{ github.actor }} is still trying to set up release automation 🚀
 on: [push]
 jobs:
   releaseLTFAT:
@@ -12,7 +12,7 @@ jobs:
       - name: Check out mat2doc repository
         uses: actions/checkout@master
         with:
-          repository: ltfat/mat2doc     <-- clone https://github.com/ltfat/mat2doc
+          repository: ltfat/mat2doc
           path: ./mat2doc_exec
       - name: Move to mat2doc directory
         run: cd ${{ github.workspace }}
