@@ -1,5 +1,5 @@
 name: GitHub Release Demo
-run-name: ${{ github.actor }} is trying to set up release automation ;) 🚀
+run-name: ${{ github.actor }} is trying to set up release automation 🚀
 on: [push]
 jobs:
   releaseLTFAT:
@@ -22,7 +22,5 @@ jobs:
       - name: Install Python packages
         run: pip install numpy scipy pygments
       - name: Move to mat2doc directory
-        run: cd ./mat2doc
-      - name: Run mat2doc
-        run: ./mat2doc.py --h
+        run: ls
 
