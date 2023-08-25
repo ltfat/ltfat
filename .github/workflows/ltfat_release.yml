@@ -20,7 +20,7 @@ jobs:
       - name: Install pip
         run: sudo apt install python3-pip
       - name: Install Python packages
-        run: pip install numpy scipy pygments sys os string re codecs shutil posixpath datetime argparse distutils subprocess
+        run: pip install numpy scipy os string re codecs shutil posixpath datetime argparse distutils subprocess
       - name: Move to mat2doc directory
         run: cd ..
       - name: Show content
