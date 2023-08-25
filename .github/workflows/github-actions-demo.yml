@@ -12,12 +12,4 @@ jobs:
       - name: Run ltfatstart
         uses: matlab-actions/run-command@v1
         with:
-          command: ltfatstart
-      - name: Run ltfatmex
-        uses: matlab-actions/run-command@v1
-        with:
-          command: ltfatmex
-      - name: Run ltfat tests
-        uses: matlab-actions/run-command@v1
-        with:
-          command: test_all_ltfat
+          command: ci_script
