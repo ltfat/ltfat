@@ -22,6 +22,6 @@ jobs:
         run: pip install numpy scipy
       - name: Check out ltfat repository
         uses: actions/checkout@v3
-      - name: Run mat2doc directory
-        run: /home/runner/work/mat2doc_exec/mat2doc.py --h
+      - name: Show dir content
+        run: cd ${{ github.workspace }}
 
