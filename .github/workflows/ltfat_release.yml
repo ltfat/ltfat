@@ -21,7 +21,8 @@ jobs:
         run: sudo apt install python3-pip
       - name: Install Python packages
         run: pip install numpy scipy pygments
-      - name: Run mat2doc
+      - name: Move to mat2doc directory
         run: cd ./mat2doc
+      - name: Run mat2doc
         run: ./mat2doc.py --h
 
