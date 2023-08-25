@@ -1,0 +1,19 @@
+name: GitHub Release Demo
+run-name: ${{ github.actor }} is trying to set up release automation ;) 🚀
+on: [push]
+jobs:
+  testLTFAT:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out ltfat repository
+        uses: actions/checkout@v3
+      - name: Update ubuntu
+        run: sudo apt-get update
+      - name: Install Octave
+        run: sudo apt-get install octave
+      - name: Check out mat2doc repository
+        uses: actions/checkout@master
+        with:
+          name: ltfat/mat2doc     <-- clone https://github.com/ltfat/mat2doc
+          ref: refs/heads/release
+
