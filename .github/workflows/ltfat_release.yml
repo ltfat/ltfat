@@ -20,7 +20,7 @@ jobs:
       - name: Install pip
         run: sudo apt install python3-pip
       - name: Install Python packages
-        run: pip install numpy scipy posixpath
+        run: pip install numpy scipy
       - name: Move to mat2doc directory
         run: cd ..
       - name: Show content
