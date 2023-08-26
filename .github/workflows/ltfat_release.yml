@@ -23,5 +23,5 @@ jobs:
       - name: Check out ltfat repository
         uses: actions/checkout@v3
       - name: Show dir content
-        run: cd ${{ github.workspace }}
+        run: ls /home/runner/work/ltfat/mat2doc
 
