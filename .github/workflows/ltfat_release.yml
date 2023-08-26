@@ -35,10 +35,6 @@ jobs:
           path: './ltfat_homepage'
       - name: Move to homepage folder
         run: cd ./ltfat_homepage
-      - name: Create branch
-        run: git branch testbranch
-      - name: Checkout testbranch
-        run: checkout testbranch
       - name: Copy html files
         run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
       - name: Pushes to ltfat.github.io
@@ -46,10 +42,10 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: 'output'
+          source-directory: './ltfat_homepage'
           destination-github-username: 'allthatsounds'
-          destination-repository-name: 'ltfat.github.io'
+          destination-repository-name: 'ltfat/ltfat.github.io'
           user-email: clara@allthatsounds.com
-          target-branch: test_branch
+          target-branch: master
 
 
