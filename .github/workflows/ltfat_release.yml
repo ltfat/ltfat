@@ -28,4 +28,3 @@ jobs:
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
       - name: Generate tex files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat tex
-
