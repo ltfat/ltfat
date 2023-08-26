@@ -26,10 +26,12 @@ jobs:
         run: pip install numpy scipy docutils
   do mat files:
     needs: setup ltfat and mat2doc
+    steps:
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
   do html files:
     needs: [setup ltfat and mat2doc, do mat files]
+    steps:
       - name: Generate tex files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat tex
 
