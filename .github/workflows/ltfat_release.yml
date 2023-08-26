@@ -28,3 +28,28 @@ jobs:
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
       - name: Generate tex files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat tex
+      - name: Check out ltfat homepage repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/ltfat.github.io
+          path: './ltfat_homepage'
+      - name: Move to homepage folder
+        run: cd ./ltfat_homepage
+      - name: Create branch
+        run: git branch testbranch
+      - name: Checkout testbranch
+        run: checkout testbranch
+      - name: Copy html files
+        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      - name: Pushes to ltfat.github.io
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'output'
+          destination-github-username: 'allthatsounds'
+          destination-repository-name: 'ltfat.github.io'
+          user-email: clara@allthatsounds.com
+          target-branch: test_branch
+
+
