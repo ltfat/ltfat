@@ -18,6 +18,8 @@ jobs:
           path: './mat2doc_exec'
       - name: Install Bibtex2html
         run: sudo apt-get install -y bibtex2html
+      - name: Install Bibtex2html
+        run: sudo apt-get install lynx
       - name: Install pip
         run: sudo apt install python3-pip
       - name: Install Python packages
