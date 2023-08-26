@@ -1,8 +1,8 @@
-name: GitHub Release Demo
-run-name: ${{ github.actor }} is still trying to set up release automation 🚀
+name: LTFAT Deployment
+run-name: ${{ github.actor }} is slowly getting there... 🚀
 on: [push]
 jobs:
-  releaseLTFAT:
+  setup ltfat and mat2doc:
     runs-on: ubuntu-latest
     steps:
       - name: Update ubuntu
@@ -24,8 +24,12 @@ jobs:
         run: sudo apt install python3-pip
       - name: Install Python packages
         run: pip install numpy scipy docutils
+  do mat files:
+    needs: setup ltfat and mat2doc
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      - name: Generate html files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+  do html files:
+    needs: [setup ltfat and mat2doc, do mat files]
+      - name: Generate tex files
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat tex
 
