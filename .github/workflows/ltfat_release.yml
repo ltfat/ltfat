@@ -23,5 +23,5 @@ jobs:
       - name: Check out ltfat repository
         uses: actions/checkout@v3
       - name: Show dir content
-        run: ls ./ltfat/mat2doc_exec
+        run: ls ./mat2doc_exec
 
