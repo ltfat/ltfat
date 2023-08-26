@@ -16,8 +16,8 @@ jobs:
         with:
           repository: ltfat/mat2doc
           path: './mat2doc_exec'
-      - name: Move to mat2doc directory
-        run: cd ${{ github.workspace }}
+      - name: Install Bibtex2html
+        run: sudo apt-get install -y bibtex2html
       - name: Install pip
         run: sudo apt install python3-pip
       - name: Install Python packages
