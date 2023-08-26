@@ -26,8 +26,8 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      - name: Generate tex files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat tex
+      - name: Generate html files
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
       - name: Check out ltfat homepage repository
         uses: actions/checkout@master
         with:
