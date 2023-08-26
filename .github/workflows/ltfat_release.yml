@@ -23,5 +23,5 @@ jobs:
       - name: Install Python packages
         run: pip install numpy scipy
       - name: Show dir content
-        run: ls ./mat2doc_exec
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
 
