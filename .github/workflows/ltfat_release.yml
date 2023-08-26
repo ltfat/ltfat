@@ -2,7 +2,7 @@ name: LTFAT Deployment
 run-name: ${{ github.actor }} is slowly getting there... 🚀
 on: [push]
 jobs:
-  setup ltfat and mat2doc:
+  deploy_ltfat:
     runs-on: ubuntu-latest
     steps:
       - name: Update ubuntu
