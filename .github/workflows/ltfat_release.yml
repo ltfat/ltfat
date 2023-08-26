@@ -21,7 +21,7 @@ jobs:
       - name: Install pip
         run: sudo apt install python3-pip
       - name: Install Python packages
-        run: pip install numpy scipy
+        run: pip install numpy scipy docutils
       - name: Show dir content
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
 
