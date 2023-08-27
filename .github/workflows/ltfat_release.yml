@@ -63,7 +63,11 @@ jobs:
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/ltfat
           cd ./ltfatfiles
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+      - name: Build Octave release
+        run: |
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+      - name: Build Windows release
+        run: |
           zip ltfat-2.6.0-win64.zip ltfat
       - name: Create Release
         id: create_release
