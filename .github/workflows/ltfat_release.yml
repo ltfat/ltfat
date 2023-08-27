@@ -1,5 +1,5 @@
 name: LTFAT Deployment
-run-name: ${{ github.actor }} is slowly getting there... 🚀
+run-name: Who knows... 🚀
 on: [push]
   #push:
     # Sequence of patterns matched against refs/tags
@@ -33,26 +33,35 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      - name: Generate html files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+      #- name: Generate html files
+      #  run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
       - name: Check out ltfat homepage repository
         uses: actions/checkout@master
         with:
           repository: ltfat/ltfat.github.io
           path: './ltfat_homepage'
+          token: ${{ secrets.API_TOKEN_GITHUB }}
       - name: Move to homepage folder
         run: cd ./ltfat_homepage
-      - name: Copy html files
-        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
-      - name: Pushes to ltfat.github.io
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source-directory: './ltfat_homepage'
-          destination-github-username: 'ltfat'
-          destination-repository-name: 'ltfat.github.io'
-          user-email: clara@allthatsounds.com
-          target-branch: master
+      - name: Commit something
+        run: |
+          date > 1.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add 1.txt
+          git commit -m updated
+          git push
+      #- name: Copy html files
+      #  run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      #- name: Pushes to ltfat.github.io
+      #  uses: cpina/github-action-push-to-another-repository@main
+      #  env:
+      #    API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+      #  with:
+      #    source-directory: './ltfat_homepage'
+      #    destination-github-username: 'ltfat'
+      #    destination-repository-name: 'ltfat.github.io'
+      #    user-email: clara@allthatsounds.com
+      #    target-branch: master
 
 
