@@ -59,7 +59,7 @@ jobs:
 #          target-branch: master
       - name: Build standard release
         run: |
-          tar -czvf ltfat-2.6.0-src.tar.gz /home/runner/publish/ltfat-html/
+          tar -czvf ltfat-2.6.0-src.tar.gz /home/runner/publish/ltfat-mat
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
