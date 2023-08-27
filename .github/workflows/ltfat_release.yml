@@ -75,7 +75,7 @@ jobs:
           draft: true
           prerelease: true
       - name: Upload Standard Release Asset
-        id: upload-release-asset 
+        id: upload-standard-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +85,7 @@ jobs:
           asset_name: ltfat-2.6.0-src.tar.gz
           asset_content_type: application/tgz
       - name: Upload Octave Release Asset
-        id: upload-release-asset 
+        id: upload-octave-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
