@@ -59,15 +59,21 @@ jobs:
 #          target-branch: master
       - name: Build standard release
         run: |
-          mkdir -p ./ltfatfiles/ltfat
-          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/ltfat
-          cd ./ltfatfiles
+          mkdir -p ./ltfatfiles/standard/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
+          cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
       - name: Build Octave release
         run: |
+          mkdir -p ./ltfatfiles/octave/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat
+          cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
       - name: Build Windows release
         run: |
+          mkdir -p ./ltfatfiles/windows/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
+          cd ./ltfatfiles/windows
           zip ltfat-2.6.0-win64.zip ltfat
       - name: Create Release
         id: create_release
