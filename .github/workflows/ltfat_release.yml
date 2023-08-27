@@ -33,43 +33,52 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      - name: Generate html files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
-      - name: Check out ltfat homepage repository
-        uses: actions/checkout@master
-        with:
-          repository: ltfat/ltfat.github.io
-          path: './ltfat_homepage'
-          token: ${{ secrets.API_TOKEN_GITHUB }}
-      #- name: Move to homepage folder
-      #  run: cd ./ltfat_homepage
-      #- name: Commit something
-      #  run: |
-      #    cd ./ltfat_homepage
-      #    date > 1.txt
-      #    git config user.name github-actions
-      #    git config user.email github-actions@github.com
-      #    git add 1.txt
-      #    git commit -m updated
-      #    git push
-      - name: Copy html files
-        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
-      - name: Setup git
+#      - name: Generate html files
+#        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+#      - name: Check out ltfat homepage repository
+#        uses: actions/checkout@master
+#        with:
+#          repository: ltfat/ltfat.github.io
+#          path: './ltfat_homepage'
+#          token: ${{ secrets.API_TOKEN_GITHUB }}
+#      - name: Copy html files
+#        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+#      - name: Setup git
+#        run: |
+#          git config user.name github-actions
+#          git config user.email github-actions@github.com
+#      - name: Pushes to ltfat.github.io
+#        uses: cpina/github-action-push-to-another-repository@main
+#        env:
+#          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+#        with:
+#          source-directory: './ltfat_homepage'
+#          destination-github-username: 'ltfat'
+#          destination-repository-name: 'ltfat.github.io'
+#          user-email: 'github-actions@github.com'
+#          target-branch: master
+      - name: Build standard release
         run: |
-          cd ./ltfat_homepage
-          date > 1.txt
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add 1.txt
-      - name: Pushes to ltfat.github.io
-        uses: cpina/github-action-push-to-another-repository@main
+          tar -czvf ltfat-2.6.0-src.tar.gz /home/runner/publish/ltfat-html/
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          source-directory: './ltfat_homepage'
-          destination-github-username: 'ltfat'
-          destination-repository-name: 'ltfat.github.io'
-          user-email: 'github-actions@github.com'
-          target-branch: master
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: true
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfat-2.6.0-src.tar.gz
+          asset_name: ltfat-2.6.0-src.tar.gz
+          asset_content_type: application/tgz
 
 
