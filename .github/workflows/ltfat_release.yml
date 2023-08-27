@@ -45,23 +45,24 @@ jobs:
         run: cd ./ltfat_homepage
       - name: Commit something
         run: |
+          cd ./ltfat_homepage
           date > 1.txt
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add 1.txt
-          git commit -m updated
-          git push
+      #    git config user.name github-actions
+      #    git config user.email github-actions@github.com
+      #    git add 1.txt
+      #    git commit -m updated
+      #    git push
       #- name: Copy html files
       #  run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
-      #- name: Pushes to ltfat.github.io
-      #  uses: cpina/github-action-push-to-another-repository@main
-      #  env:
-      #    API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-      #  with:
-      #    source-directory: './ltfat_homepage'
-      #    destination-github-username: 'ltfat'
-      #    destination-repository-name: 'ltfat.github.io'
-      #    user-email: clara@allthatsounds.com
-      #    target-branch: master
+      - name: Pushes to ltfat.github.io
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: './ltfat_homepage'
+          destination-github-username: 'ltfat/allthatsounds'
+          destination-repository-name: 'ltfat.github.io'
+          user-email: 'github-actions@github.com'
+          target-branch: master
 
 
