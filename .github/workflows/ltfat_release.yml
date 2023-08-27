@@ -56,11 +56,10 @@ jobs:
         run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
       - name: Setup git
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-      #this is just for testing
           cd ./ltfat_homepage
           date > 1.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
       - name: Pushes to ltfat.github.io
         uses: cpina/github-action-push-to-another-repository@main
         env:
