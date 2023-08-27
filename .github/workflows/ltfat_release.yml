@@ -93,7 +93,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./ltfatfiles/ltfat-2.6.0-src.tar.gz
+          asset_path: ./ltfatfiles/standard/ltfat-2.6.0-src.tar.gz
           asset_name: ltfat-2.6.0-src.tar.gz
           asset_content_type: application/tgz
       - name: Upload Octave Release Asset
@@ -103,7 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./ltfatfiles/ltfat-2.6.0-of.tar.gz
+          asset_path: ./ltfatfiles/octave/ltfat-2.6.0-of.tar.gz
           asset_name: ltfat-2.6.0-of.tar.gz
           asset_content_type: application/tgz
       - name: Upload Windows Binaries Release Asset
@@ -113,7 +113,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./ltfatfiles/ltfat-2.6.0-win64.zip
+          asset_path: ./ltfatfiles/windows/ltfat-2.6.0-win64.zip
           asset_name: ltfat-2.6.0-win64.zip
           asset_content_type: application/zip
 
