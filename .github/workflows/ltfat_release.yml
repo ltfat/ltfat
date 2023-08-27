@@ -1,6 +1,6 @@
 name: LTFAT Deployment
 run-name: Who knows... 🚀
-on: [push]
+on:
   push:
     Sequence of patterns matched against refs/tags
     tags:
