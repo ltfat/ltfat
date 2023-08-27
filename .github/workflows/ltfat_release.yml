@@ -70,6 +70,6 @@ jobs:
           destination-github-username: 'ltfat'
           destination-repository-name: 'ltfat.github.io'
           user-email: 'github-actions@github.com'
-          target-branch: prerelease
+          target-branch: master
 
 
