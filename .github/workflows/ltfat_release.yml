@@ -60,6 +60,7 @@ jobs:
           date > 1.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git add 1.txt
       - name: Pushes to ltfat.github.io
         uses: cpina/github-action-push-to-another-repository@main
         env:
