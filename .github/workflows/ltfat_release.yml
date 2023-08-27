@@ -65,8 +65,16 @@ jobs:
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
       - name: Build Octave release
         run: |
-          mkdir -p ./ltfatfiles/octave/ltfat
-          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat
+          mkdir -p ./ltfatfiles/octave/ltfat/inst
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
+          cp -r ./ltfat/ltfat/lib/ltfatcompat ./ltfatfiles/octave/ltfat/lib
+          cp -r ./ltfat/ltfat/oct/. ./ltfatfiles/octave/ltfat/oct
+          cp -r ./ltfat/ltfat/libltfat/. ./ltfatfiles/octave/ltfat/src
+          cp -r ./ltfat/ltfat/thirdparty/Playrec/. ./ltfatfiles/octave/ltfat/thirdparty/Playrec
+          cp -r ./ltfat/ltfat/thirdparty/polyboolclipper/. ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper
+          cp -r ./ltfat/ltfat/COPYING ./ltfatfiles/octave/ltfat/COPYING
+          cp -r ./ltfat/ltfat/CITATION ./ltfatfiles/octave/ltfat/CITATION
+          cp -r ./ltfat/ltfat/ChangeLog ./ltfatfiles/octave/ltfat/NEWS
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
       - name: Build Windows release
