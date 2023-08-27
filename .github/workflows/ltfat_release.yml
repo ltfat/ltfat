@@ -33,27 +33,31 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      #- name: Generate html files
-      #  run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+      - name: Generate html files
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
       - name: Check out ltfat homepage repository
         uses: actions/checkout@master
         with:
           repository: ltfat/ltfat.github.io
           path: './ltfat_homepage'
           token: ${{ secrets.API_TOKEN_GITHUB }}
-      - name: Move to homepage folder
-        run: cd ./ltfat_homepage
-      - name: Commit something
-        run: |
-          cd ./ltfat_homepage
-          date > 1.txt
+      #- name: Move to homepage folder
+      #  run: cd ./ltfat_homepage
+      #- name: Commit something
+      #  run: |
+      #    cd ./ltfat_homepage
+      #    date > 1.txt
       #    git config user.name github-actions
       #    git config user.email github-actions@github.com
       #    git add 1.txt
       #    git commit -m updated
       #    git push
-      #- name: Copy html files
-      #  run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      - name: Copy html files
+        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      - name: Setup git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
       - name: Pushes to ltfat.github.io
         uses: cpina/github-action-push-to-another-repository@main
         env:
