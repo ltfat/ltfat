@@ -59,7 +59,7 @@ jobs:
 #          target-branch: master
       - name: Build standard release
         run: |
-          cp -r /home/runner/publish/ltfat-mat ./ltfatfiles/ltfat
+          sudo cp -r /home/runner/publish/ltfat-mat ./ltfatfiles/ltfat
           cd ./ltfatfiles
           tar -czvf ltfat-2.6.0-src.tar.gz ./ltfat
       - name: Create Release
