@@ -60,7 +60,7 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source-directory: './ltfat_homepage'
-          destination-github-username: 'ltfat/allthatsounds'
+          destination-github-username: 'ltfat/'
           destination-repository-name: 'ltfat.github.io'
           user-email: 'github-actions@github.com'
           target-branch: master
