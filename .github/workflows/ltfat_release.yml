@@ -60,10 +60,11 @@ jobs:
       - name: Build standard release
         run: |
           mkdir -p ./ltfatfiles/ltfat
-          cp -r /home/runner/publish/ltfat-mat ./ltfatfiles/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/ltfat
           cd ./ltfatfiles
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+          zip ltfat-2.6.0-win64.zip ltfat
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -72,6 +73,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
+          body: This is a test release.
           draft: true
           prerelease: true
       - name: Upload Standard Release Asset
@@ -94,5 +96,15 @@ jobs:
           asset_path: ./ltfatfiles/ltfat-2.6.0-of.tar.gz
           asset_name: ltfat-2.6.0-of.tar.gz
           asset_content_type: application/tgz
+      - name: Upload Windows Binaries Release Asset
+        id: upload-windows-binaries-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfatfiles/ltfat-2.6.0-win64.zip
+          asset_name: ltfat-2.6.0-win64.zip
+          asset_content_type: application/zip
 
 
