@@ -293,9 +293,9 @@ switch flags1.method
                         % fir2long is here to avoid possible boundary effects
                         % as the time support of the Inf derivative is not FIR
                         dg  = pderiv(fir2long(g,L),[],Inf)/(2*pi);
-                        c_d = comp_dgt(f,flipwin(dg),a,M,kv.lt,0,0,0);
+                        c_d = comp_dgt(f,dg,a,M,kv.lt,0,0,0);
 
-                        phased = imag(c_d.*conj(c)./c_s);
+                        phased = -imag(c_d.*conj(c)./c_s);
                     end
 
                     switch flags1.phaseconv
@@ -313,9 +313,9 @@ switch flags1.method
                         % Compute the time weighted version of the window.
                         % g is already a column vector
                         hg = fftindex(size(g,1)).*g;
-                        c_h = comp_dgt(f,flipwin(hg),a,M,kv.lt,0,0,0);
+                        c_h = comp_dgt(f,hg,a,M,kv.lt,0,0,0);
 
-                        phased = real(c_h.*conj(c)./c_s);
+                        phased = -real(c_h.*conj(c)./c_s);
                     end
 
                     switch flags1.phaseconv
@@ -331,10 +331,10 @@ switch flags1.method
                 case 'tt'
                     if isempty(dg)
                         dg  = pderiv(fir2long(g,L),[],Inf)/(2*pi);
-                        c_d = comp_dgt(f,flipwin(dg),a,M,kv.lt,0,0,0);
+                        c_d = comp_dgt(f,dg,a,M,kv.lt,0,0,0);
                     end
                     dg2 = pderiv(dg,[],Inf);
-                    c_d2 = comp_dgt(f,flipwin(dg2),a,M,kv.lt,0,0,0);
+                    c_d2 = comp_dgt(f,dg2,a,M,kv.lt,0,0,0);
 
                     phased = imag(c_d2.*conj(c)./c_s - 2*pi*(c_d.*conj(c)./c_s).^2)/L;
                     % Phase convention does not have any effect
@@ -342,10 +342,10 @@ switch flags1.method
                     if isempty(hg)
                         % Time weighted window
                         hg =  fftindex(size(g,1)).*g;
-                        c_h = comp_dgt(f,flipwin(hg),a,M,kv.lt,0,0,0);
+                        c_h = comp_dgt(f,hg,a,M,kv.lt,0,0,0);
                     end
                     hg2 = fftindex(size(g,1)).^2.*g;
-                    c_h2 = comp_dgt(f,flipwin(hg2),a,M,kv.lt,0,0,0);
+                    c_h2 = comp_dgt(f,hg2,a,M,kv.lt,0,0,0);
 
                     phased = imag(-c_h2.*conj(c)./c_s + (c_h.*conj(c)./c_s).^2)*2*pi/L;
 
@@ -356,16 +356,16 @@ switch flags1.method
                 case {'ft','tf'}
                     if isempty(hg)
                         hg = fftindex(size(g,1)).*g;
-                        c_h = comp_dgt(f,flipwin(hg),a,M,kv.lt,0,0,0);
+                        c_h = comp_dgt(f,hg,a,M,kv.lt,0,0,0);
                     end
 
                     if isempty(dg)
                         dg = pderiv(fir2long(g,L),[],Inf)/(2*pi);
-                        c_d = comp_dgt(f,flipwin(dg),a,M,kv.lt,0,0,0);
+                        c_d = comp_dgt(f,dg,a,M,kv.lt,0,0,0);
                     end
 
                     hdg = (fftindex(size(dg,1))/L).*dg;
-                    c_hd = comp_dgt(f,flipwin(hdg),a,M,kv.lt,0,0,0);
+                    c_hd = comp_dgt(f,hdg,a,M,kv.lt,0,0,0);
 
                     % This is mixed derivative tf for freq. invariant
                     phased = real(c_hd.*conj(c)./c_s - (1/L)*c_h.*c_d.*(conj(c)./c_s).^2)*2*pi;
@@ -803,12 +803,12 @@ function g = timefreqshift(g,tshift,fshift,timeshiftfirst)
 % This function circularly shifts g by tshift in time and
 % by fshift in frequency.
 
-if nargin<2
+if nargin<3
     error('Not enough args');
-elseif nargin<3
+elseif nargin<4
     fshift = 0;
     timeshiftfirst = 1;
-elseif nargin<4
+elseif nargin<5
     timeshiftfirst = 1;
 end
 
@@ -818,7 +818,8 @@ tshiftop = @(g) g;
 fshiftop = @(g) g;
 
 if abs(fshift)>0
-    l = fftindex(gl)/gl;
+    %l = fftindex(gl)/gl;
+    l = fftindex(gl)/L;
     fshiftop = @(g) g.*exp(1i*2*pi*fshift*l);
 end
 
