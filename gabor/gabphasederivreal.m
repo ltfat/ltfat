@@ -410,7 +410,7 @@ switch flags1.method
         % --- linear method ---
         [M2,N,W]=size(cphase);
         L=N*a;
-        b=L/M2;
+        b=L/M;
 
         % Extend cphase to account for periodic frequency derivative
         difforder = 2; % Currently, pderivunwrap only supports second order 
@@ -521,7 +521,7 @@ switch flags1.method
                     % Phase convention does not have any effect.
                 case 'ff'
                     % fgrad is already unwrapped along frequency
-                    phased = pderiv(fgrad,1,2)/(2*pi);
+                    phased = M*pderiv(fgrad,1,2)/(2*pi)/(M2+2*difforder);
 
                     switch flags1.phaseconv
                         case 'relative'
@@ -577,7 +577,7 @@ switch flags1.method
         end;
 
         L=N*a;
-        b=L/M2;
+        b=L/M;
 
         % We must avoid taking the log of zero.
         % Therefore we add the smallest possible
@@ -613,7 +613,7 @@ switch flags1.method
 
             tgrad = []; fgrad = [];
             if isempty(tgrad) && any(strcmpi(typed,{'t','tt','ft','tf'}))
-                tgrad = pderiv(logs,1,difforder)/(2*pi);
+                tgrad = M*pderiv(logs,1,difforder)/(2*pi)/(M2+2*difforder);
             end
 
             if isempty(fgrad) && any(strcmpi(typed,{'f','ff'}))
@@ -668,7 +668,7 @@ switch flags1.method
                 case 'ff'
                     % Mixed derivatives of log-magnitude give second derivative
                     % of phase
-                    phased= info.tfr*pderiv(fgrad,1,difforder)/L;
+                    phased= M*info.tfr*pderiv(fgrad,1,difforder)/L/(M2+2*difforder);;
 
                     switch flags1.phaseconv
                         case 'relative'
@@ -682,7 +682,7 @@ switch flags1.method
                 case {'ft','tf'}
                     % (Both) second log-magnitude derivatives give mixed phase
                     % derivatives.
-                    phased = pderiv(tgrad,1,difforder)/(info.tfr*L);
+                    phased = M*pderiv(tgrad,1,difforder)/(info.tfr*L)/(M2+2*difforder);
 
                     % This is equal
                     % phased = pderiv(logs,2,difforder)/(2*pi);
@@ -851,7 +851,7 @@ end
 function fd=pderivunwrap(f,dim,unwrapconst)
 %PDERIVUNWRAP Periodic derivative with unwrapping
 %
-%  `pderivunwrap(f,dim,wrapconst)` performs derivative of *f* along
+%  `pderivunwrap(f,dim,unwrapconst)` performs derivative of *f* along
 %  dimmension *dim* using second order centered difference approximation
 %  including unwrapping by *unwrapconst*
 %

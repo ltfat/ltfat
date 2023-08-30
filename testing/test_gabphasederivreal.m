@@ -4,33 +4,28 @@ test_failed = 0;
 % Tests whether all the algorithms return the same values
 disp('-----------------test_gabphasederivreal----------------------');
 
-L = 100;
+L = 300;
 l = 0:L-1; l = l(:);
 
-f1 = exp(1i*pi*0.1*l);
-f2 = pchirp(L,1);
-f3 = expchirp(L,0.2,2.2,'fc',-1.2);
-f4 = exp(1i*pi*0.5*L*(l./(L)).^2);
-f5 = exp(1i*pi*0.1*L*(l./(L)).^2);
-f6 = zeros(L,1); f6(floor(L/2):floor(L/2)+5) = 1;
-l = linspace(0,1-1/L,L);
-modul = .4*sin(4*pi*l);
-f3 = sin(2*pi*(20*l+modul));
-
+f1 = zeros(L,1); f6(floor(L/2):floor(L/2)+5) = 1; %Box function
+modul = 2*sin(8*pi*l./L);
+f2 = sin(2*pi*(20*l./L+modul)); % Frequency-modulated sinusoid
+X = mod(mod(mod(mod(l./L*.65,2*L).*l./L,2*L).*l./L,2*L)*(L+1),2*L);
+f3 = sin(pi*X); % Real-valued quadratic chirp
 
 % Compare the phase derivatives only for coefficients bigger than
 % relminlvl*max(c(:)) and away from the borders..
 relminlvldb = 20;
 relminlvl = 10^(-relminlvldb/20);
 
-a = [1,1,1,4,4,  1,  4,  2];
-M = [L,L,L,L,L,L/4,L/2,L/2];
+a = [1,1,4,4,  1,  4,  2];
+M = [L,L,L,L,L/4,L/2,L/2];
 
 
 %g = {{'gauss',1},'gauss',{'hann',8}};
 %g = {{'hann',8}};
-g = {{'gauss',1},{'gauss',4},{'gauss',1/4},...
-    'gauss',{'gauss',4},{'gauss',1/4},'gauss',{'hann',8}};
+g = {{'gauss',1},{'gauss',4},...
+    'gauss',{'gauss',4},{'gauss',1},'gauss'};%,{'hann',80}};
 
 f = {f3,f3,f3,f3,f3,f3,f3,f3,f3};
 
@@ -49,8 +44,8 @@ for ii =1:numel(g)
             
             minlvl = max(abs(c(:)))*relminlvl;
             algArgs = {
+                {'dgt',f{ii},g{ii},a(ii),M(ii)}     
                 {'phase',angle(c),a(ii),M(ii)}
-                {'dgt',f{ii},g{ii},a(ii),M(ii)}                
                 {'cross',f{ii},g{ii},a(ii),M(ii)} 
                 {'abs',abs(c),g{ii},a(ii),M(ii)}   
                 };
@@ -89,11 +84,12 @@ for ii =1:numel(g)
              fail2string = cellfun(@(aEl,rEl)sprintf('%s=%d, ',aEl,rEl),algStr(2:end),num2cell(res),'UniformOutput',0);
              fail2string = strcat(fail2string{:});
              fprintf('GABPHASEDERIVREAL a=%d,M=%d, dflag:%2s pc:%8s MSE %d, %s,  %s\n',a(ii),M(ii),dflag,phaseconv,sum(res),fail2string,failstring);
-             if 1%~isempty(failstring)
-                 clim=1;figure(1);plotdgtreal(pderivs{1},1,M(ii),'lin','clim',[-clim,clim]);
+             if ~isempty(failstring)
+                 clim=2;figure(1);plotdgtreal(pderivs{1},1,M(ii),'lin','clim',[-clim,clim]);
                  figure(2);plotdgtreal(pderivs{2},1,M(ii),'lin','clim',[-clim,clim]);
                  figure(3);plotdgtreal(pderivs{3},1,M(ii),'lin','clim',[-clim,clim]);
                  figure(4);plotdgtreal(pderivs{1}-pderivs{3},1,M(ii),'lin','clim',[-clim,clim]);
+                 figure(5);plotdgtreal(pderivs{1}-pderivs{2},1,M(ii),'lin','clim',[-clim,clim]);
                  prd = 2;
              end
         end
