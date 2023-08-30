@@ -649,38 +649,34 @@ switch flags1.method
             typed = dflagsUnique{typedId};
 
             if (isempty(cright) || isempty(cleft)) && any(strcmpi(typed,{'t','tt'}))
-                cright = dgt(f,shiftwin(gtmp,1,0),a,M,L,'lt',kv.lt);
-                cleft = dgt(f,shiftwin(gtmp,-1,0),a,M,L,'lt',kv.lt);
+                cright = dgt(f,timefreqshift(gtmp,1,0),a,M,L,'lt',kv.lt);
+                cleft = dgt(f,timefreqshift(gtmp,-1,0),a,M,L,'lt',kv.lt);
             end
 
             if (isempty(cabove) || isempty(cbelow)) && any(strcmpi(typed,{'f','ff'}))
-                cabove = dgt(f,shiftwin(gtmp,0,1),a,M,L,'lt',kv.lt,'timeinv');
-                cbelow = dgt(f,shiftwin(gtmp,0,-1),a,M,L,'lt',kv.lt,'timeinv');
+                cabove = dgt(f,timefreqshift(gtmp,0,1),a,M,L,'lt',kv.lt,'timeinv');
+                cbelow = dgt(f,timefreqshift(gtmp,0,-1),a,M,L,'lt',kv.lt,'timeinv');
             end
 
             if isempty(ccenterfi) && any(strcmpi(typed,{'tt','t'}))
-                ccenterfi = dgt(f,gg,a,M,L,'lt',kv.lt);
+                ccenterfi = dgt(f,g,a,M,L,'lt',kv.lt);
             end
 
             if isempty(ccenterti) && any(strcmpi(typed,{'ff','f'}))
-                ccenterti = dgt(f,gg,a,M,L,'lt',kv.lt,'timeinv');
+                ccenterti = dgt(f,g,a,M,L,'lt',kv.lt,'timeinv');
             end
 
             if (isempty(crightabove) || isempty(crightbelow) || ...
                 isempty(cleftabove) || isempty(cleftbelow)) ...
                 && any(strcmpi(typed,{'tf','ft'}))
                 % Get four DGTs shifted by one in time and in frequency
-                frightabove = circshift(f,-1).*exp(-1i*2*pi*(0:L-1)'./L);
-                crightabove = dgt(frightabove,gg,a,M,L,'lt',kv.lt);
+                crightabove = dgt(timefreqshift(f,-1,-1),g,a,M,L,'lt',kv.lt);
 
-                frightbelow = circshift(f,-1).*exp(1i*2*pi*(0:L-1)'./L);
-                crightbelow = dgt(frightbelow,gg,a,M,L,'lt',kv.lt);
+                crightbelow = dgt(timefreqshift(f,-1,1),g,a,M,L,'lt',kv.lt);
 
-                fleftabove = circshift(f,1).*exp(-1i*2*pi*(0:L-1)'./L);
-                cleftabove = dgt(fleftabove,gg,a,M,L,'lt',kv.lt);
+                cleftabove = dgt(timefreqshift(f,1,-1),g,a,M,L,'lt',kv.lt);
 
-                fleftbelow = circshift(f,1).*exp(1i*2*pi*(0:L-1)'./L);
-                cleftbelow = dgt(fleftbelow,gg,a,M,L,'lt',kv.lt);
+                cleftbelow = dgt(timefreqshift(f,1,1),g,a,M,L,'lt',kv.lt);
             end
 
             switch typed
@@ -803,7 +799,7 @@ function g = flipwin(g)
 
 g = [g(1,:);flipud(g(2:end,:))];
 
-function g = shiftwin(g,tshift,fshift,timeshiftfirst)
+function g = timefreqshift(g,tshift,fshift,timeshiftfirst)
 % This function circularly shifts g by tshift in time and
 % by fshift in frequency.
 
