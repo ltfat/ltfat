@@ -2,8 +2,8 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %GABPHASEDERIV   DGT phase derivatives
 %   Usage:  [phased,c] = gabphasederiv(dflag,'dgt',f,g,a,M);
 %            phased    = gabphasederiv(dflag,'cross',f,g,a,M)
-%            phased    = gabphasederiv(dflag,'phase',cphase,a,difforder);
-%            phased    = gabphasederiv(dflag,'abs',s,g,a);
+%            phased    = gabphasederiv(dflag,'phase',cphase,a);
+%            phased    = gabphasederiv(dflag,'abs',s,g,a,difforder);
 %           [{phased1,phased2,...}] = gabphasederiv({dflag1,dflag2,...},...);
 %           [{phased1,phased2,...},c] = gabphasederiv({dflag1,dflag2,...},'dgt',...);
 %
