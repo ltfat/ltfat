@@ -1,6 +1,6 @@
 function c=comp_dgtreal(f,g,a,M,lt,phasetype)
 %COMP_DGTREAL  Compute a DGTREAL
-%   Usage:  c=comp_dgt_real(f,g,a,M,lt,phasetype);
+%   Usage:  c=comp_dgtreal(f,g,a,M,lt,phasetype);
 %
 %   Input parameters:
 %         f     : Input data
@@ -17,7 +17,7 @@ function c=comp_dgtreal(f,g,a,M,lt,phasetype)
 if lt(2)==1
     c = comp_sepdgtreal(f,g,a,M,phasetype);
 else
-    % Quinqux lattice
+    % Quinqunx lattice
     c = comp_nonsepdgtreal_quinqux(f,g,a,M);            
 end;
 
