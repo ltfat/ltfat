@@ -16,7 +16,7 @@ f6 = zeros(L,1); f6(floor(L/2):floor(L/2)+5) = 1;
 
 
 
-% Compare the pahse derivatives only for coefficients bigger than
+% Compare the phase derivatives only for coefficients bigger than
 % relminlvl*max(c(:)) and away from the borders..
 relminlvldb = 20;
 relminlvl = 10^(-relminlvldb/20);
