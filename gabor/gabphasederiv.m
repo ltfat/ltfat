@@ -138,7 +138,8 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %   References: aufl95 cmdaaufl97 fl65 auchfl12 fifu09 ne02 ltfatnote042
 
 
-% AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša, 2015
+% AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša, 2015;
+%         Nicki Holighaus, 2023
 
 % REMARK: There is no problem with phase conventions with the second
 % derivatives.
