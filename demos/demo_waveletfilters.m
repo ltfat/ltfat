@@ -94,7 +94,7 @@ title('Total filter bank response')
 % bank coefficients, check |ifilterbankiter|.
 
 F = frame('filterbankreal',g_geo, a_geo, numel(g_geo));
-[A,B]=framebounds(F,'iter');
+[A,B]=framebounds(F,L_geo,'iter','tol',1e-4,'maxit',100,'pcgtol',1e-4,'pcgmaxit',150);
 FB_ratio_geo = B/A
 
 
@@ -118,7 +118,7 @@ fprintf('Redundancy (geom. f-spacing fb 2):                %.2f\n',red_geored);
 
 
 F = frame('filterbankreal',g_geored, a_geored, numel(g_geored));
-[A,B]=framebounds(F,'iter');
+[A,B]=framebounds(F,L_geored,'iter','tol',1e-4,'maxit',100,'pcgtol',1e-4,'pcgmaxit',150);
 FB_ratio_geored = B/A
 
 c_geored=filterbank(f,g_geored,a_geored);
@@ -163,9 +163,12 @@ fmin = MC/M;
 % *1*. For further scaling options, see the help of the function |setnorm|.
 
 
-F = frame('filterbankreal',g_lin, a_lin, numel(g_lin));
-[A,B]=framebounds(F,'iter');
+% Note: Using the frames framework here is wasteful, since F is in fact a ufilterbankreal!!
+%F = frame('filterbankreal',g_lin, a_lin, numel(g_lin));
+%[A,B]=framebounds(F,L_lin,'iter','tol',1e-4,'maxit',100,'pcgtol',1e-4,'pcgmaxit',150);
+[A,B]=filterbankrealbounds(g_lin,a_lin,L_lin);
 FB_ratio_lin = B/A
+
 c_lin=filterbank(f,g_lin,a_lin);
 
 figure(3)
@@ -256,8 +259,10 @@ subplot(3,1,3)
 filterbankresponse(g,a,Ls, 'plot', 'real', 'fs', fs);
 title('Total filter bank response')
 
-F = frame('filterbankreal',g, a, numel(g));
-[A,B]=framebounds(F,'iter');
+% Note: Using the frames framework here is wasteful, since F is in fact a ufilterbankreal!!
+%F = frame('filterbankreal',g, a, numel(g));
+%[A,B]=framebounds(F,L,'iter','tol',1e-4,'maxit',100,'pcgtol',1e-4,'pcgmaxit',150);
+[A,B]=filterbankrealbounds(g,a,L);
 FB_ratio = B/A
 
 if size(a,2) == 2

@@ -441,27 +441,30 @@ g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(M2),kv,flags);
 if ~isempty(kv.redtar)
     if flags.do_uniform
         % Compute and display redundancy for verification
-        org_red = (M2-2)/a(1);
+        org_red = (2*M2-2)/a(1);
         a_new = floor(a*org_red/kv.redtar);
+        % Ensure that no decimation step is smaller than 1
+        a_new(a_new==0) = 1;
         scal_new = org_red/kv.redtar*ones(numel(g),1);
         % new_red = (M2-2)/a_new(1);
     elseif flags.do_regsampling
         %do not yet take high and lowpass filters into account
-        org_red = (M2-2)./(sum(a(2:end-1))/numel(a(2:end-1)));
+        org_red = sum(2./a(2:end-1))+sum(1./a([1,end]));
         a_new = [a(1);floor(a(2:end-1)*org_red/kv.redtar);a(end)];
         % Adjust the low- and highpass filters
         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
         % low-pass
         fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);
         fsupp_temp0 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
-        a_new(1) = ceil(Ls/max(fs./(2*fps0+fsupp_temp0/cbw),1));
+        a_new(1) = floor(max(fs./(2*fps0+fsupp_temp0/cbw),1));
         % high-pass
         fps1 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);
         fsupp_temp1 = audfiltbw(fps1,flags.audscale)/winbw*kv.bwmul;
-        a_new(end) = ceil(Ls/max(fs./(2*(fc(end)-fps1)+fsupp_temp1/cbw),1));
+        a_new(end) = floor(max(fs./(2*(fc(end)-fps1)+fsupp_temp1/cbw),1));
+        % Ensure that no decimation step is smaller than 1
+        a_new(a_new==0) = 1;
         % now, calculate the scaling factor for all filters
-        a_new_full = comp_filterbank_a(a_new,M2,struct());
-        scal_new=sqrt(a_new_full(:,1)./a_new_full(:,2));
+        scal_new=a_new./a;
     else
         % The decimation factors of all filters except for lowpass and 
         % highpass are adjusted proportional to their bandwidth. For 
@@ -469,8 +472,7 @@ if ~isempty(kv.redtar)
         % adjustment to better preserve stability. Please consult the
         % references for details. 
         dk_old = a(:,1)./a(:,2);
-        
-        org_red = sum(2./dk_old(2:end-1));
+        org_red = sum(2./dk_old(2:end-1))+sum(1./dk_old([1,end]));
         a_new = [a(1,:);[a(2:end-1,1),ceil(a(2:end-1,2)*kv.redtar/org_red)];a(end,:)];
         % Adjust d0 and dK to the new redundancy
         cbw = 2*sum(audfiltbw(fc(2:M2-1),flags.audscale)/winbw*kv.bwmul)/(kv.redtar*fs);
@@ -482,17 +484,20 @@ if ~isempty(kv.redtar)
         fps1 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
         fsupp_temp1 = audfiltbw(fps1,flags.audscale)/winbw*kv.bwmul;
         a_new(end,2) = ceil(Ls/max(fs./(2*(fc(end)-fps1)+fsupp_temp1/cbw),1));
+        % Ensure that no decimation step is smaller than 1
+        idx = a_new(:,1)<a_new(:,2);
+        a_new(idx,2) = a_new(idx,1);
         % Finally re-scale all filters
         dk_new = a_new(:,1)./a_new(:,2);
         scal_new = dk_new./dk_old; 
         % new_red = sum(2./dk_new)-sum(1./dk_new([1,end]));
     end
     g_new = filterbankscale(g,sqrt(scal_new)'); % Perform rescaling
-    if flags.do_regsampling
-        a = a_new(:,1);
-    else
+    %if flags.do_regsampling
+    %    a = a_new(:,1);
+    %else
         a = a_new;
-    end
+    %end
     g = g_new;
     if 0
         % Compute and display redundancy for verification

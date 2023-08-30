@@ -831,10 +831,3 @@ if timeshiftfirst
 else
     g = tshiftop(fshiftop(g));
 end
-
-
-
-
-
-
-
