@@ -1,4 +1,4 @@
-# [LTFAT Logo]([http://ltfat.org/img/ltfatlogo.png]) The Large Time Frequency Analysis Toolbox.
+# [LTFAT Logo]([signals/ltfatlogo.png]) The Large Time Frequency Analysis Toolbox.
 
 This is the official development repository of the Large Time Frequency Analysis Toolbox.
 LTFAT is an open source toolbox for audio signal processing and harmonic analysis.
