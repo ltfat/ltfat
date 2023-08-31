@@ -138,7 +138,8 @@ function [phased,c]=gabphasederiv(type,method,varargin)
 %   References: aufl95 cmdaaufl97 fl65 auchfl12 fifu09 ne02 ltfatnote042
 
 
-% AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša, 2015
+% AUTHOR: Peter L. Søndergaard, 2008; Zdenek Průša, 2015;
+%         Nicki Holighaus, 2023
 
 % REMARK: There is no problem with phase conventions with the second
 % derivatives.
@@ -792,12 +793,6 @@ fd_2 = fd_2 - unwrapconst*round(fd_2/(unwrapconst));
 % Average
 fd = (fd_1+fd_2)/2;
 
-
-function g = flipwin(g)
-% This function time-reverses a Gabor window g
-% assuming periodic indexing.
-
-g = [g(1,:);flipud(g(2:end,:))];
 
 function g = timefreqshift(g,L,tshift,fshift,timeshiftfirst)
 % This function circularly shifts g by tshift in time and
