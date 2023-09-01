@@ -287,8 +287,8 @@ switch flags1.method
 
             switch typed
                 case 't'
-                    if info.gauss && ~isempty(c_h)
-                        phased = -imag(c_h.*conj(c)./c_s)/info.tfr;
+                    if info.gauss && ~isempty(c_h)%%=======================
+                        phased = imag(c_h.*conj(c)./c_s)/info.tfr;
                     else
 
                         % fir2long is here to avoid possible boundary effects
@@ -308,8 +308,8 @@ switch flags1.method
                             phased = bsxfun(@plus,phased,fftindex(M)*b/2);
                     end
                 case 'f'
-                    if info.gauss && ~isempty(c_d)
-                        phased = -real(c_d.*conj(c)./c_s)*info.tfr;
+                    if info.gauss && ~isempty(c_d)%%=======================
+                        phased = real(c_d.*conj(c)./c_s)*info.tfr;
                     else
                         % Compute the time weighted version of the window.
                         % g is already a column vector
