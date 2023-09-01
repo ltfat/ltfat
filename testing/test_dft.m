@@ -27,6 +27,6 @@ for jj=1:length(Lr)
     disp(s);
     end
   end;
-end;
+%end;
 
 

@@ -1,3 +1,7 @@
+test_failed=0;
+  
+disp(' ===============  TEST_DGT_FAC ================');
+
 %TEST_DGT  Test DGT full window backend
 %
 %  This script runs a throrough test of the COMP_DGT_FAC
@@ -101,5 +105,5 @@ for ii=1:length(Lr);
   
 end;
 
-test_failed
+%test_failed
 
