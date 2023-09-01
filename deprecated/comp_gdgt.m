@@ -30,7 +30,7 @@ if (c_f~=0)
   f=f.*repmat(halfmod,1,W);
 end;
 
-c=comp_dgt(f,g,a,M,L,0);
+c=comp_dgt(f,g,a,M,[1 1],0,0,0);
 
 if timeinv
   c=phaselock(c,a);
