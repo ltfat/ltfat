@@ -70,7 +70,7 @@ if flags.do_real
     fc = postpad(fc,M);
 end
 
-gout = cell(M,1);
+gout = cell(1,M);
 
 for kk = 0:M-1
     gtmp.H = gnum;
