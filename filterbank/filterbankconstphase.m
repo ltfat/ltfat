@@ -88,7 +88,18 @@ function [c,newphase,usedmask,tgrad,fgrad]=filterbankconstphase(s,a,fc,tfr,varar
 %   Example
 %   -------
 %
-%   The following example shows basic usage
+%   We construct a constant-Q filterbank with fractional downsampling and a reasonably high redundancy.
+%   Then, we apply filterbankconstphase on the absolute values of the resulting coefficients to test the
+%   reconstruction accuracy of filterbankconstphase.
+%
+%    [f,fs] = gspi;
+%    [g,a,fc,L,info]=cqtfilters(fs,100,fs/2 - 100,48,numel(f),'fractional', 'redmul', 8, 'Qvar',4,'subprec');
+%    corig = filterbank(f,g,a);
+%
+%    c=filterbankconstphase(cellfun(@abs,corig,'UniformOutput',0),a,info.fc,info.tfr,'tol',1e-10);
+%    cproj = filterbank(ifilterbankiter(c,g,a,'pcg','tol',1e-6),g,a);
+%    Cdb = 20*log10( norm(abs(cell2mat(corig)) - abs(cell2mat(cproj)) )/norm( abs(cell2mat(corig))) );
+%      
 %
 %       
 %
