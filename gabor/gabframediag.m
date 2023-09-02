@@ -26,6 +26,7 @@ if nargin<4
 end;
 
 definput.keyvals.lt=[0 1];
+definput.flags.phase={'freqinv','timeinv'}; 
 [flags,kv]=ltfatarghelper({},definput,varargin);
 
 % ----- step 2a : Verify a, M and get L
