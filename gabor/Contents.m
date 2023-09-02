@@ -64,7 +64,9 @@
 %  Phase gradient methods and reassignment
 %    GABPHASEGRAD   -  Instantaneous time/frequency from signal
 %    GABPHASEDERIV  -  Phase derivatives
+%    GABPHASEDERIVREAL  -  Phase derivatives for |dgtreal|
 %    GABREASSIGN    -  Reassign positive distribution
+%    GABREASSIGNREAL    -  Reassign positive distribution for real signals
 %    GABREASSIGNADJUST - Adjustable t-f reassignment
 %
 %  Phase reconstruction
