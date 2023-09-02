@@ -126,8 +126,12 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     // Output subbands pointers
     OCTAVE_LOCAL_BUFFER (LTFAT_COMPLEX*, cPtrs, dictno);
     // Output cell elements array,
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_REAL>, gElems, dictno);
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, c_elems, dictno);
+    //avoid octave_local_buffer_gElems { new MArray<LTFAT_TYPE> [M] }, because of gcc warnings,
+    //until https://gcc.gnu.org/bugzilla//show_bug.cgi?id=85795 is resolved (freed below)
+    MArray<LTFAT_COMPLEX> *c_elems = (MArray<LTFAT_COMPLEX>*)malloc((int)dictno*sizeof(MArray<LTFAT_COMPLEX>));
+    MArray<LTFAT_REAL> *gElems = (MArray<LTFAT_REAL>*)malloc((int)dictno*sizeof(MArray<LTFAT_REAL>));
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_REAL>, gElems, dictno);
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_COMPLEX>, c_elems, dictno);
 
     for (octave_idx_type m = 0; m < dictno; m++)
     {
@@ -155,5 +159,10 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     if(nargout > 1) retlist(1) = octave_value((double)atoms);
     if(nargout > 2) retlist(2) = octave_value((double)iters);
     if(nargout > 3) retlist(3) = octave_value((double)dec_status);
+
+    //freeing only necessary as long as gcc yields warnings with octave_local_buffer
+    free(c_elems);
+    free(gElems);
+
     return retlist;
 }
