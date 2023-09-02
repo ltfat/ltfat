@@ -21,6 +21,7 @@
 %    CAMERAMAN      -  Greyscale image of the cameraman.
 %    LICHTENSTEIN   -  Color image of the Lichtenstein castle.
 %    LTFATTEXT      -  Black and white word: 'LTFAT'.
+%    LTFATLOGO      -  LTFAT Logo.
 %
 %  For help, bug reports, suggestions etc. please visit 
 %  http://github.com/ltfat/ltfat/issues
