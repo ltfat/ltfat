@@ -31,6 +31,7 @@ function sr=gabreassignreal(s,tgrad,fgrad,a,M)
 %   References: aufl95
 
 % AUTHOR: Peter L. Søndergaard, 2008.
+%         Nicki Holighaus, 2023.
 
 thisname = upper(mfilename);
 complainif_notenoughargs(nargin,5,thisname);
