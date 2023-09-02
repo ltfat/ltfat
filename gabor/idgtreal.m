@@ -12,14 +12,14 @@ function [f,g]=idgtreal(coef,g,a,M,varargin)
 %   Output parameters:
 %         f     : Signal.
 %
-%   `idgtreal(c,g,a,M)` computes the Gabor expansion of the input coefficients
-%   *c* with respect to the real-valued window *g*, time shift *a* and number of
-%   channels *M*. *c* is assumed to be the positive frequencies of the Gabor
-%   expansion of a real-valued signal.
+%   `idgtreal(c,g,a,M)` computes the inverse discrete Gabor transform of the 
+%   input coefficients *c* with respect to the real-valued window *g*, time 
+%   shift *a* and number of channels *M*.
+%   *c* is assumed to be the positive frequencies of the Gabor
+%   expansion of a real-valued signal. It must hold that `size(c,1)==floor(M/2)+1`. 
 %
-%   It must hold that `size(c,1)==floor(M/2)+1`. Note that since the
-%   correct number of channels cannot be deduced from the input, `idgtreal`
-%   takes an additional parameter as opposed to |idgt|.
+%   Note that since the correct number of channels cannot be deduced from 
+%   the input, `idgtreal` takes an additional parameter as opposed to |idgt|.   
 %
 %   The window *g* may be a vector of numerical values, a text string or a
 %   cell array. See the help of |gabwin| for more details.

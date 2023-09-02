@@ -5,7 +5,7 @@ function [f,relres,iter]=isgramreal(s,g,a,M,varargin)
 %           [f,relres,iter]=isgramreal(...);
 %
 %   Input parameters:
-%         c       : Array of coefficients.
+%         s       : Array of coefficients.
 %         g       : Window function.
 %         a       : Length of time shift.
 %         M       : Number of channels.
