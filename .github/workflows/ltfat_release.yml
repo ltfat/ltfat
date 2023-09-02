@@ -9,6 +9,23 @@ permissions:
   contents: write
 
 jobs:
+  compile_mex:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - name: Run tests
+        uses: matlab-actions/run-command@v1
+        with:
+          command: ltfatruntests
+      - name: upload binaries
+      - uses: actions/upload-artifact@v2
+  with:
+    name: mex-files
+    path: ./mex
+
   deploy_ltfat:
     runs-on: ubuntu-latest
     steps:
@@ -43,10 +60,10 @@ jobs:
 #          token: ${{ secrets.API_TOKEN_GITHUB }}
 #      - name: Copy html files
 #        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
-#      - name: Setup git
-#        run: |
-#          git config user.name github-actions
-#          git config user.email github-actions@github.com
+      - name: Setup git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
 #      - name: Pushes to ltfat.github.io
 #        uses: cpina/github-action-push-to-another-repository@main
 #        env:
@@ -63,12 +80,60 @@ jobs:
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+          cd ../../
+      - name: Check out release_documents repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/release_documents
+          path: './release_documents'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Octave release
         run: |
           mkdir -p ./ltfatfiles/octave/ltfat/inst
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
+          rm -r ./ltfatfiles/octave/ltfat/inst/lib
+          rm -r ./ltfatfiles/octave/ltfat/inst/libltfat/
+          rm -r ./ltfatfiles/octave/ltfat/inst/.github/
+          rm -r ./ltfatfiles/octave/ltfat/inst/mex
+          mv ./ltfatfiles/octave/ltfat/inst/testing ./ltfatfiles/octave/ltfat/inst/private
+          mv ./ltfatfiles/octave/ltfat/inst/oct ./ltfatfiles/octave/ltfat/oct
+          mv -v ./ltfatfiles/octave/ltfat/inst/reference/* ./ltfatfiles/octave/ltfat/inst/private
+          rm -r ./ltfatfiles/octave/ltfat/inst/reference/
+          rm -r ./ltfatfiles/octave/ltfat/inst/thirdparty/Playrec/
+          rm -r ./ltfatfiles/octave/ltfat/inst/thirdparty/polyboolclipper/
+          rm -r ./ltfatfiles/octave/ltfat/inst/timing
+          mkdir -p ./ltfatfiles/octave/ltfat/inst/ltfat
+          cp -r ./release_documents/octave_package/inst/ltfat/. ./ltfatfiles/octave/ltfat/inst/ltfat
+          cp -r ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./ltfatfiles/octave/ltfat/inst/blockproc/java/
+          sudo rm -r ./ltfatfiles/octave/ltfat/inst/.gitattributes
+          sudo rm -r ./ltfatfiles/octave/ltfat/inst/.gitignore
+          cp -r ./release_documents/octave_package/inst/Makefile ./ltfatfiles/octave/ltfat/inst/
+          cp -r ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/inst/
+          cp -r ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/inst/
+          sudo mkdir ./ltfatfiles/octave/ltfat/lib/
+          sudo mkdir ./ltfatfiles/octave/ltfat/lib/ltfatcompat
+          sudo cp -a ./lib/ltfatcompat/ ./ltfatfiles/octave/ltfat/lib/
+          mkdir ./ltfatfiles/octave/ltfat/src/
+          cp -a ./libltfat/examples ./ltfatfiles/octave/ltfat/src/examples
+          cp -a ./libltfat/modules ./ltfatfiles/octave/ltfat/src/modules
+          cp -a ./libltfat/copyrightplate ./ltfatfiles/octave/ltfat/src/copyrightplate
+          cp -a ./libltfat/CMakeLists.txt ./ltfatfiles/octave/ltfat/src/CMakeLists.txt
+          cp -a ./libltfat/comptarget.mk ./ltfatfiles/octave/ltfat/src/comptarget.mk
+          cp -a ./libltfat/ostools.mk ./ltfatfiles/octave/ltfat/src/ostools.mk
+          cp -a ./libltfat/Makefile ./ltfatfiles/octave/ltfat/src/Makefile
+          cp -a ./libltfat/README.md ./ltfatfiles/octave/ltfat/src/README.md
+          cp -a ./libltfat/LICENSE ./ltfatfiles/octave/ltfat/src/LICENSE
+          cp -a ./CITATION ./ltfatfiles/octave/ltfat/CITATION
+          cp -a ./COPYING ./ltfatfiles/octave/ltfat/COPYING
+          cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+
+      - name: Get mex files
+        uses: actions/checkout@v2
+        uses: actions/download-artifact@v2
+        with:
+          name: mex-files
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
