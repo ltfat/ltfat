@@ -96,7 +96,6 @@ jobs:
           cp -r ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/inst/
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
-
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
