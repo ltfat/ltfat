@@ -24,6 +24,8 @@ jobs:
         run: |
           copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
           copy ./release_documents/prerelease_binaries/windows/libfftw3f-3.dll ./mex
+          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./mex
+          copy ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./blockproc/java
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v1
       - name: Run tests
@@ -38,6 +40,7 @@ jobs:
 
   deploy_ltfat:
     runs-on: ubuntu-latest
+    needs: compile_mex
     steps:
       - name: Update ubuntu
         run: sudo apt-get update
@@ -139,11 +142,11 @@ jobs:
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
-#      - name: Get mex files
-#        uses: actions/checkout@v2
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: mex-files
+      - name: Get mex files
+        uses: actions/checkout@v2
+        uses: actions/download-artifact@v2
+        with:
+          name: mex-files
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
