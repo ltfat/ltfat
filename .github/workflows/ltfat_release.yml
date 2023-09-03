@@ -75,7 +75,6 @@ jobs:
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
           rm -r ./ltfatfiles/octave/ltfat/inst/lib
           rm -r ./ltfatfiles/octave/ltfat/inst/libltfat/
-          rm -r ./ltfatfiles/octave/ltfat/inst/mat2doc/
           rm -r ./ltfatfiles/octave/ltfat/inst/.github/
           rm -r ./ltfatfiles/octave/ltfat/inst/mex
           mv ./ltfatfiles/octave/ltfat/inst/testing ./ltfatfiles/octave/ltfat/inst/private
