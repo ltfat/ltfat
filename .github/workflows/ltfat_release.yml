@@ -28,7 +28,7 @@ jobs:
         run: |
           copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
           copy ./release_documents/prerelease_binaries/windows/libfftw3f-3.dll ./mex
-          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./mex
+          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./libltfat/build
           copy ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./blockproc/java
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v1
