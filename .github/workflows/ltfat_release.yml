@@ -89,7 +89,6 @@ jobs:
           cp -r ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./ltfatfiles/octave/ltfat/inst/blockproc/java/
           sudo rm -r ./ltfatfiles/octave/ltfat/inst/.gitattributes
           sudo rm -r ./ltfatfiles/octave/ltfat/inst/.gitignore
-          sudo rm -r ./ltfatfiles/octave/ltfat/inst/.github/
           cp -r ./release_documents/octave_package/inst/Makefile ./ltfatfiles/octave/ltfat/inst/
           cp -r ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/inst/
           cp -r ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/inst/
