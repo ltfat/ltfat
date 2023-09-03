@@ -92,6 +92,23 @@ jobs:
           cp -r ./release_documents/octave_package/inst/Makefile ./ltfatfiles/octave/ltfat/inst/
           cp -r ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/inst/
           cp -r ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/inst/
+
+          sudo mkdir ./ltfatfiles/octave/ltfat/lib/
+          sudo mkdir ./ltfatfiles/octave/ltfat/lib/ltfatcompat
+          sudo cp -a ./ltfat/ltfat/lib/ltfatcompat/* ./ltfatfiles/octave/ltfat/lib/ltfatcompat
+          mkdir ./ltfatfiles/octave/ltfat/src/
+          cp -a ./ltfat/ltfat/libltfat/examples ./ltfatfiles/octave/ltfat/src/examples
+          cp -a ./ltfat/ltfat/libltfat/modules ./ltfatfiles/octave/ltfat/src/modules
+          cp -a ./ltfat/ltfat/libltfat/copyrightplate ./ltfatfiles/octave/ltfat/src/copyrightplate
+          cp -a ./ltfat/ltfat/libltfat/CMakeLists.txt ./ltfatfiles/octave/ltfat/src/CMakeLists.txt
+          cp -a ./ltfat/ltfat/libltfat/comptarget.mk ./ltfatfiles/octave/ltfat/src/comptarget.mk
+          cp -a ./ltfat/ltfat/libltfat/ostools.mk ./ltfatfiles/octave/ltfat/src/ostools.mk
+          cp -a ./ltfat/ltfat/libltfat/Makefile ./ltfatfiles/octave/ltfat/src/Makefile
+          cp -a ./ltfat/ltfat/libltfat/README.md ./ltfatfiles/octave/ltfat/src/README.md
+          cp -a ./ltfat/ltfat/libltfat/LICENSE ./ltfatfiles/octave/ltfat/src/LICENSE
+          cp -a ./ltfat/ltfat/CITATION ./ltfatfiles/octave/ltfat/CITATION
+          cp -a ./ltfat/ltfat/COPYING ./ltfatfiles/octave/ltfat/COPYING
+          cp -a ./ltfat/ltfat/NEWS ./ltfatfiles/octave/ltfat/NEWS
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
       - name: Build Windows release
