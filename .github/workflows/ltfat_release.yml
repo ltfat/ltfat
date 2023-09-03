@@ -9,6 +9,23 @@ permissions:
   contents: write
 
 jobs:
+  compile_mex:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v1
+      - name: Run tests
+        uses: matlab-actions/run-command@v1
+        with:
+          command: ltfatruntests
+      - name: upload binaries
+      - uses: actions/upload-artifact@v2
+  with:
+    name: mex-files
+    path: ./mex
+
   deploy_ltfat:
     runs-on: ubuntu-latest
     steps:
@@ -111,6 +128,12 @@ jobs:
           cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+
+      - name: Get mex files
+        uses: actions/checkout@v2
+        uses: actions/download-artifact@v2
+        with:
+          name: mex-files
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
