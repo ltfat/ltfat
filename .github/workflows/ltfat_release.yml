@@ -22,8 +22,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up MinGW
         uses: egor-tensin/setup-mingw@v2
-        with:
-          platform: x64
+#        with:
+#          platform: x64
       - name: Move dlls to package
         run: |
           copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
