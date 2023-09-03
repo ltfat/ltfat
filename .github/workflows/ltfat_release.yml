@@ -9,42 +9,42 @@ permissions:
   contents: write
 
 jobs:
-  compile_mex:
-    runs-on: windows-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-      - name: Check out release_documents repository
-        uses: actions/checkout@master
-        with:
-          repository: ltfat/release_documents
-          path: './release_documents'
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up MinGW
-        uses: egor-tensin/setup-mingw@v2
+#  compile_mex:
+#    runs-on: windows-latest
+#    steps:
+#      - name: Check out repository
+#        uses: actions/checkout@v3
+#      - name: Check out release_documents repository
+#        uses: actions/checkout@master
+#        with:
+#          repository: ltfat/release_documents
+#          path: './release_documents'
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Set up MinGW
+#        uses: egor-tensin/setup-mingw@v2
 #        with:
 #          platform: x64
-      - name: Move dlls to package
-        run: |
-          copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
-          copy ./release_documents/prerelease_binaries/windows/libfftw3f-3.dll ./mex
-          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./libltfat/build
-          copy ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./blockproc/java
-      - name: Set up MATLAB
-        uses: matlab-actions/setup-matlab@v1
-      - name: Run tests
-        uses: matlab-actions/run-command@v1
-        with:
-          command: ltfatruntests
-      - name: Upload binaries
-        uses: actions/upload-artifact@v2
-        with:
-          name: mex-files
-          path: ./mex
+#      - name: Move dlls to package
+#        run: |
+#          copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
+#          copy ./release_documents/prerelease_binaries/windows/libfftw3f-3.dll ./mex
+#          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./libltfat/build
+#          copy ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./blockproc/java
+#      - name: Set up MATLAB
+#        uses: matlab-actions/setup-matlab@v1
+#      - name: Run tests
+#        uses: matlab-actions/run-command@v1
+#        with:
+#          command: ltfatruntests
+#      - name: Upload binaries
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: mex-files
+#          path: ./mex
 
   deploy_ltfat:
     runs-on: ubuntu-latest
-    needs: compile_mex
+#    needs: compile_mex
     steps:
       - name: Update ubuntu
         run: sudo apt-get update
@@ -67,30 +67,30 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-#      - name: Generate html files
-#        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
-#      - name: Check out ltfat homepage repository
-#        uses: actions/checkout@master
-#        with:
-#          repository: ltfat/ltfat.github.io
-#          path: './ltfat_homepage'
-#          token: ${{ secrets.API_TOKEN_GITHUB }}
-#      - name: Copy html files
-#        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      - name: Generate html files
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+      - name: Check out ltfat homepage repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/ltfat.github.io
+          path: './ltfat_homepage'
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+      - name: Copy html files
+        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
       - name: Setup git
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-#      - name: Pushes to ltfat.github.io
-#        uses: cpina/github-action-push-to-another-repository@main
-#        env:
-#          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-#        with:
-#          source-directory: './ltfat_homepage'
-#          destination-github-username: 'ltfat'
-#          destination-repository-name: 'ltfat.github.io'
-#          user-email: 'github-actions@github.com'
-#          target-branch: master
+      - name: Pushes to ltfat.github.io
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: './ltfat_homepage'
+          destination-github-username: 'ltfat'
+          destination-repository-name: 'ltfat.github.io'
+          user-email: 'github-actions@github.com'
+          target-branch: master
       - name: Build standard release
         run: |
           mkdir -p ./ltfatfiles/standard/ltfat
@@ -146,10 +146,10 @@ jobs:
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
-      - name: Get mex files
-        uses: actions/download-artifact@v2
-        with:
-          name: mex-files
+#      - name: Get mex files
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: mex-files
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
