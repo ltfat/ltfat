@@ -63,10 +63,31 @@ jobs:
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+      - name: Check out release_documents repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/release_documents
+          path: './release_documents'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Octave release
         run: |
           mkdir -p ./ltfatfiles/octave/ltfat/inst
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
+          rm -r ./ltfatfiles/octave/ltfat/inst/lib
+          rm -r ./ltfatfiles/octave/ltfat/inst/libltfat/
+          rm -r ./ltfatfiles/octave/ltfat/inst/mat2doc/
+          rm -r ./ltfatfiles/octave/ltfat/inst/.github/
+          rm -r ./ltfatfiles/octave/ltfat/inst/mex
+          mv ./ltfatfiles/octave/ltfat/inst/testing ./ltfatfiles/octave/ltfat/inst/private
+          mv ./ltfatfiles/octave/ltfat/inst/oct ./ltfatfiles/octave/ltfat/oct
+          mv -v ./ltfatfiles/octave/ltfat/inst/reference/* ./ltfatfiles/octave/ltfat/inst/private
+          rm -r ./ltfatfiles/octave/ltfat/inst/reference/
+          rm -r ./ltfatfiles/octave/ltfat/inst/thirdparty/Playrec/
+          rm -r ./ltfatfiles/octave/ltfat/inst/thirdparty/polyboolclipper/
+          rm -r ./ltfatfiles/octave/ltfat/inst/timing
+          mkdir -p ./ltfatfiles/octave/ltfat/inst/ltfat
+          cp -r ./release_documents/octave_package/inst/ltfat/. ./ltfatfiles/octave/ltfat/inst/ltfat
+          cp -r ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./ltfatfiles/octave/ltfat/inst/blockproc/java/
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
       - name: Build Windows release
