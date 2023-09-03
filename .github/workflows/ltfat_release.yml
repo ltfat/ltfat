@@ -20,8 +20,8 @@ jobs:
         uses: matlab-actions/run-command@v1
         with:
           command: ltfatruntests
-      - name: upload binaries
-      - uses: actions/upload-artifact@v2
+      - name: Upload binaries
+        uses: actions/upload-artifact@v2
         with:
           name: mex-files
           path: ./mex
