@@ -69,6 +69,7 @@ jobs:
           repository: ltfat/release_documents
           path: './release_documents'
           token: ${{ secrets.GITHUB_TOKEN }}
+          user-email: 'github-actions@github.com'
       - name: Build Octave release
         run: |
           mkdir -p ./ltfatfiles/octave/ltfat/inst
