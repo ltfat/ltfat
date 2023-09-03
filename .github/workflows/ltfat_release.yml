@@ -93,7 +93,7 @@ jobs:
           cp -r ./release_documents/octave_package/inst/Makefile ./ltfatfiles/octave/ltfat/inst/
           cp -r ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/inst/
           cp -r ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/inst/
-          ls ./ltfat/ltfat
+          ls ./ltfat
 #          sudo mkdir ./ltfatfiles/octave/ltfat/lib/
 #          sudo mkdir ./ltfatfiles/octave/ltfat/lib/ltfatcompat
 #          sudo cp -a ./ltfat/ltfat/lib/ltfatcompat/ ./ltfatfiles/octave/ltfat/lib/
