@@ -71,7 +71,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Octave release
         run: |
-#         assemble the /inst folder
           mkdir -p ./ltfatfiles/octave/ltfat/inst
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
           rm -r ./ltfatfiles/octave/ltfat/inst/lib
