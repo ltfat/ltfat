@@ -63,6 +63,7 @@ jobs:
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+          cd ../../
       - name: Check out release_documents repository
         uses: actions/checkout@master
         with:
