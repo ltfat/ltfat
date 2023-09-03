@@ -14,20 +14,37 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+      - name: Check out release_documents repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/release_documents
+          path: './release_documents'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+#        with:
+#          platform: x64
+      - name: Move dlls to package
+        run: |
+          copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
+          copy ./release_documents/prerelease_binaries/windows/libfftw3f-3.dll ./mex
+          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./libltfat/build
+          copy ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./blockproc/java
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v1
       - name: Run tests
         uses: matlab-actions/run-command@v1
         with:
           command: ltfatruntests
-      - name: upload binaries
-      - uses: actions/upload-artifact@v2
-  with:
-    name: mex-files
-    path: ./mex
+      - name: Upload binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: mex-files
+          path: ./mex
 
   deploy_ltfat:
     runs-on: ubuntu-latest
+    needs: compile_mex
     steps:
       - name: Update ubuntu
         run: sudo apt-get update
@@ -130,7 +147,6 @@ jobs:
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
       - name: Get mex files
-        uses: actions/checkout@v2
         uses: actions/download-artifact@v2
         with:
           name: mex-files
