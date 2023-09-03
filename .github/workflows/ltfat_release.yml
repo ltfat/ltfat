@@ -129,11 +129,11 @@ jobs:
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
-      - name: Get mex files
-        uses: actions/checkout@v2
-        uses: actions/download-artifact@v2
-        with:
-          name: mex-files
+#      - name: Get mex files
+#        uses: actions/checkout@v2
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: mex-files
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
