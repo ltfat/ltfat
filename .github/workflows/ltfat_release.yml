@@ -67,16 +67,16 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      - name: Generate html files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+#      - name: Generate html files
+#        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
       - name: Check out ltfat homepage repository
         uses: actions/checkout@master
         with:
           repository: ltfat/ltfat.github.io
           path: './ltfat_homepage'
           token: ${{ secrets.API_TOKEN_GITHUB }}
-      - name: Copy html files
-        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+ #     - name: Copy html files
+ #       run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
       - name: Setup git
         run: |
           git config user.name github-actions
@@ -143,6 +143,8 @@ jobs:
           cp -a ./CITATION ./ltfatfiles/octave/ltfat/CITATION
           cp -a ./COPYING ./ltfatfiles/octave/ltfat/COPYING
           cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
+          cp -a ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/DESCRIPTION
+          cp -a ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/INDEX
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
