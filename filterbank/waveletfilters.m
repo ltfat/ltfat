@@ -110,8 +110,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %     'redmul',redmul    Redundancy multiplier. Increasing the value of this
 %                        will make the system more redundant by lowering the
-%                        channel downsampling rates. It is only used if the
-%                        filterbank is a non-uniform filterbank. Default
+%                        channel downsampling rates. Default
 %                        value is *1*. If the value is less than one, the
 %                        system may no longer be painless.
 % 
@@ -413,7 +412,7 @@ if ~isempty(kv.redtar)
         org_red = sum(2./a);
     end
     
-    a_old = a;
+    %a_old = a;
     a = floor(a*org_red/kv.redtar);
     a(a==0) = 1;
 
