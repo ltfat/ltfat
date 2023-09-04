@@ -18,11 +18,13 @@
 %     geometric frequency spacing, a higher redundancy and using
 %     a wavelet with different Q-factor.
 %
+%
 %   .. figure::
 %
 %     The figure shows a uniformly sampled invertible filter bank with geometric 
 %     frequency spacing, where the scales are passed directly as input
 %     arguments.
+%
 %
 %   .. figure::
 %
@@ -31,9 +33,11 @@
 %     invertibility is achieved by passing a small delay to the filter
 %     generator.
 %
+%
 %   .. figure::
 %
 %      The figure shows a comparison of the filter center frequency spacing.
+%
 %
 %
 %   See also: waveletfilters, freqwavelet, lowdiscrepancy, filterbankrealdual
@@ -171,7 +175,7 @@ scale_max = log2(1/fmin_intern);
 
 % The largest scale accepted by waveletfilters is subject to numerical 
 % limitations. The bandwidth of wavelets at low frequencies may become too
-% too narrow to capture sufficient signal energy. Hence, `waveletfilters`
+% narrow to capture sufficient signal energy. Hence, `waveletfilters`
 % per default adds a lowpass channel to the filter bank. See `help
 % waveletfilters` for further options.
 % To construct a filter bank with the same number of channels as before,
@@ -180,7 +184,7 @@ channels = numel(fc_fb1) - 1;
 scales = 2.^linspace(scale_max,scale_min,channels);
 
 % To ensure invertibility, for uniformly sampled filter banks, a sufficiently 
-% high redundancy is required.
+% high redundancy is advantageous.
 redundancy = 128;
 
 % The 'energy' flag is used to scale each filter such that its energy is
@@ -302,7 +306,7 @@ fprintf('Reconstruction error (lin. f-spacing fb 4):       %e\n',err);
 
 % Compare the frequency spacing of the filter banks.
 figure(5)
-plot(fc_fb1/8000, 'x') %adjust for display purposes with the previous Nyquist f
+plot(fc_fb3, 'x') %adjust for display purposes with the previous Nyquist f
 hold on
 plot(fc_fb4, 'o')
 xlabel('Number of wavelet filters')
