@@ -67,8 +67,8 @@ jobs:
         run: pip install numpy scipy docutils
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
-      - name: Generate html files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+#      - name: Generate html files
+#        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
       - name: Check out ltfat homepage repository
         uses: actions/checkout@master
         with:
@@ -143,6 +143,7 @@ jobs:
           cp -a ./CITATION ./ltfatfiles/octave/ltfat/CITATION
           cp -a ./COPYING ./ltfatfiles/octave/ltfat/COPYING
           cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
+          cp -a ./ltfatfiles/octave/ltfat/DESCRIPTION ./DESCRIPTION
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
