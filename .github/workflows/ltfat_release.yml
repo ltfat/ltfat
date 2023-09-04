@@ -143,7 +143,7 @@ jobs:
           cp -a ./CITATION ./ltfatfiles/octave/ltfat/CITATION
           cp -a ./COPYING ./ltfatfiles/octave/ltfat/COPYING
           cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
-          cp -a ./ltfatfiles/octave/ltfat/DESCRIPTION ./DESCRIPTION
+          cp -a ./release_documents/octave_package/inst/DESCRIPTION ./DESCRIPTION
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
