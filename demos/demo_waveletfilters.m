@@ -102,15 +102,15 @@ fprintf('Frame bound ratio (geom. f-spacing fb 1):                %.2f\n',FB_rat
  
 % Approximate the Q-factor of the wavelet used in filter bank 1.
 cauchyalpha_fb1 = 300;
-[~,info_fb3] = freqwavelet({'cauchy', cauchyalpha_fb1},L_fb1);
+[~,info_wl1] = freqwavelet({'cauchy', cauchyalpha_fb1},L_fb1);
 fprintf('Approximated Q-factor of the Cauchy wavelet with alpha parameter %i: %.2f \n',...
-    cauchyalpha_fb1, info_fb3.fc/info_fb3.bw);
+    cauchyalpha_fb1, info_wl1.fc/info_wl1.bw);
 % For filter bank 2, use a wavelet with a higher Q-factor, and approximate
 % it for the length of filter bank 1.
 cauchyalpha_fb2 = 700;
-[~,info_fb3] = freqwavelet({'cauchy', cauchyalpha_fb2},L_fb1);
+[~,info_wl2] = freqwavelet({'cauchy', cauchyalpha_fb2},L_fb1);
 fprintf('Approximated Q-factor of the Cauchy wavelet with alpha parameter %i: %.2f \n',...
-    cauchyalpha_fb2, info_fb3.fc/info_fb3.bw);
+    cauchyalpha_fb2, info_wl2.fc/info_wl2.bw);
 
 % Increasing the redundancy via lowering the downsampling rate of the filter 
 % bank channels can, for non-uniformly sampled filter banks, improve the frame bounds.
@@ -186,7 +186,7 @@ redundancy = 128;
 % The 'energy' flag is used to scale each filter such that its energy is
 % *1*. For further scaling options, see the help of the function |setnorm|.
 [g_fb3, a_fb3,fc_fb3,L_fb3,info_fb3] = waveletfilters(Ls,scales,{'cauchy',cauchyalpha_fb1},...
-    'redtar', redundancy, 'uniform', 'energy');
+    'redtar', redundancy,  'energy', 'uniform');
 
 % Compute the redundancy.
 red = 1/a_fb3(1) + 2*sum(1./a_fb3(2:end));
@@ -196,11 +196,11 @@ fprintf('Redundancy (lin. f-spacing fb 3):                %.2f\n',red);
 % Compute the filter bank coefficients, and plot them, along with the
 % frequency responses of the single filters and the total filter bank
 % response.
-c=filterbank(f,g_fb3,a_fb3);
+c_fb3=filterbank(f,g_fb3,a_fb3);
 
 figure(3)
 subplot(3,1,1)
-plotfilterbank(c, a_fb3)
+plotfilterbank(c_fb3, a_fb3)
 title('Filter bank coefficients')
 subplot(3,1,2)
 filterbankfreqz(g_fb3,a_fb3,Ls, 'plot', 'posfreq', 'dynrange', 60);
@@ -211,15 +211,16 @@ title('Total filter bank response')
 
 % Compute the frame bounds.
 [A,B]=filterbankrealbounds(g_fb3,a_fb3,L_fb3);
-FB_ratio = B/A;
-fprintf('Frame bound ratio (geom. f-spacing fb 3):                %.2f\n',FB_ratio);
+FB_ratio_fb3 = B/A;
+fprintf('Frame bound ratio (lin. f-spacing fb 3):                %.2f\n',FB_ratio_fb3);
 
 % For inverting the filter bank, derive the dual system.
-gd = filterbankrealdual(g_fb3, a_fb3, L_fb3);
+L = filterbanklength(Ls, a_fb3);
+gd_fb3 = filterbankrealdual(g_fb3, a_fb3, L);
 % The |ifilterbank| function targets complex filter bank coefficients. For
 % energy preservation when inverting real coefficients, taking twice the 
 % real part of ifilterbank's result is necessary.
-frec = 2*real(ifilterbank(c, gd, a_fb3));
+frec = 2*real(ifilterbank(c_fb3, gd_fb3, a_fb3));
 
 % Calculate the reconstruction error.
 if length(frec) > length(f)
@@ -286,7 +287,8 @@ fprintf('Frame bound ratio (lin. f-spacing fb 4):                %.2f\n',FB_rati
 
 
 % Inversion via the dual system, as for filter bank 3.
-gd_fb4 = filterbankrealdual(g_fb4, a_fb4, L_fb4);
+L = filterbanklength(Ls, a_fb4);
+gd_fb4 = filterbankrealdual(g_fb4, a_fb4, L);
 frec_fb4 = 2*real(ifilterbank(c_fb4, gd_fb4, a_fb4));
 
 % Calculate the reconstruction error.
