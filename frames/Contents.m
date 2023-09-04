@@ -5,6 +5,7 @@
 %  Creation of a frame object
 %    FRAME             - Construct a new frame
 %    FRAMEPAIR         - Construct a pair of frames
+%    FUSIONFRAME       - Construct a new fusion frame
 %    FRAMEDUAL         - The canonical dual frame
 %    FRAMETIGHT        - The canonical tight frame
 %    FRAMEACCEL        - Precompute arrays for faster application
