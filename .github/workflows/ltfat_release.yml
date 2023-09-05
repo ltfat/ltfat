@@ -160,7 +160,7 @@ jobs:
 #          sudo cp ./release_documents/octave_package/thirdparty/Playrec/* ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
 #                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
         run: |
-          ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --octpkg
+          ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --script=release_keep_tests.py --tgz --unix --packagename=ltfat-%s-src
           ls ./
 #          cd ./ltfatfiles/octave
 #          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
@@ -201,16 +201,16 @@ jobs:
           asset_path: ./ltfatfiles/standard/ltfat-2.6.0-src.tar.gz
           asset_name: ltfat-2.6.0-src.tar.gz
           asset_content_type: application/tgz
-#      - name: Upload Octave Release Asset
-#        id: upload-octave-release-asset 
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-#          asset_path: ./ltfat-2.6.0.tar.gz
-#          asset_name: ltfat-2.6.0-of.tar.gz
-#          asset_content_type: application/tgz
+      - name: Upload Octave Release Asset
+        id: upload-octave-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfat-2.6.0.tar.gz
+          asset_name: ltfat-2.6.0-of.tar.gz
+          asset_content_type: application/tgz
       - name: Upload Windows Binaries Release Asset
         id: upload-windows-binaries-release-asset 
         uses: actions/upload-release-asset@v1
