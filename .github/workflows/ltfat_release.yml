@@ -153,8 +153,8 @@ jobs:
           sudo mkdir ./ltfatfiles/octave/ltfat/thirdparty
           sudo mkdir ./ltfatfiles/octave/ltfat/thirdparty/Playrec
           sudo mkdir ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper
-          cp -a ./thirdparty/Playrec ./ltfatfiles/octave/ltfat/thirdparty/Playrec
-          cp -a ./thirdparty/polyboolclipper ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper
+          cp -a ./thirdparty/Playrec/* ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
+          cp -a ./thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
