@@ -169,6 +169,7 @@ jobs:
       - name: Build Windows release
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
+          sudo apt install zip unzip
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
           cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
           cp ./release_documents/prerelease_binaries/windows/mex/* ./ltfatfiles/windows/ltfat/mex/
