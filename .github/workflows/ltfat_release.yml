@@ -161,7 +161,7 @@ jobs:
 #                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
         run: |
           ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --octpkg
-          ls /home/runner/publish/ltfat-tmp
+          ls ./
 #          cd ./ltfatfiles/octave
 #          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
@@ -208,7 +208,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: /home/runner/publish/ltfat-tmp/ltfat-2.6.0.tar.gz
+          asset_path: ./ltfat-2.6.0.tar.gz
           asset_name: ltfat-2.6.0-of.tar.gz
           asset_content_type: application/tgz
       - name: Upload Windows Binaries Release Asset
