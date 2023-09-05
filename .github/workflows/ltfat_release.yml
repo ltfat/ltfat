@@ -95,6 +95,11 @@ jobs:
         run: |
           mkdir -p ./ltfatfiles/standard/ltfat
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
+          rm -r ./ltfatfiles/standard/.github/
+          rm -r ./ltfatfiles/standard/.gitattributes
+          rm -r ./ltfatfiles/standard/.gitignore
+          rm -r ./ltfatfiles/standard/timing
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
           cd ../../
@@ -169,6 +174,10 @@ jobs:
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
+          cp ./release_documents/prerelease_binaries/windows/mex/* ./ltfatfiles/windows/ltfat/mex/
+          cp ./release_documents/prerelease_binaries/windows/thirdparty/Playrec/* ./ltfatfiles/windows/ltfat/thirdparty/Playrec/
+          cp ./release_documents/prerelease_binaries/windows/thirdparty/polyboolclipper/* ./ltfatfiles/windows/ltfat/thirdparty/polyboolclipper/
           cd ./ltfatfiles/windows
           zip ltfat-2.6.0-win64.zip ltfat
       - name: Create Release
