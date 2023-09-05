@@ -101,7 +101,7 @@ jobs:
         run: |
           mkdir -p ./ltfatfiles/standard/ltfat
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
-          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/standard/ltfat/blockproc/java/
           rm -r ./ltfatfiles/standard/.github/
           rm -r ./ltfatfiles/standard/.gitattributes
           rm -r ./ltfatfiles/standard/.gitignore
