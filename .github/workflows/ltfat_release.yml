@@ -91,6 +91,12 @@ jobs:
           destination-repository-name: 'ltfat.github.io'
           user-email: 'github-actions@github.com'
           target-branch: master
+        - name: Check out release_documents repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/release_documents
+          path: './release_documents'
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build standard release
         run: |
           mkdir -p ./ltfatfiles/standard/ltfat
@@ -103,12 +109,6 @@ jobs:
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
           cd ../../
-      - name: Check out release_documents repository
-        uses: actions/checkout@master
-        with:
-          repository: ltfat/release_documents
-          path: './release_documents'
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Octave release
         run: |
           mkdir -p ./ltfatfiles/octave/ltfat/inst
