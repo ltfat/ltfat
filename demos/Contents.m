@@ -36,6 +36,7 @@
 %     DEMO_PHASERET         - Spectrogram phase retrieval and phase difference
 %     DEMO_NEXTFASTFFT      - Next fast FFT size.
 %     DEMO_FILTERBANKS      - Non-stationary Gabor systems defined in frequency domain
+%     DEMO_WAVELETFILTERS   - Wavelet filter banks.
 %
 %  Auditory scales and filters
 %     DEMO_AUDSCALES          - Different auditory scales.
