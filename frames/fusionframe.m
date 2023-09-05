@@ -39,6 +39,7 @@ function [F,L] = fusionframe(frametypes, varargin)
 %
 %   See also: frame
 
+
 if ~iscell(frametypes)
    error('%s: The frame types need to be passed as a cell array.',upper(mfilename));
 end

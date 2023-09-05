@@ -48,6 +48,7 @@
 %
 %
 %
+%
 %   See also: waveletfilters, freqwavelet, lowdiscrepancy, filterbankrealdual
 
 % The input signal
