@@ -145,10 +145,10 @@ jobs:
           cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
           cp -a ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/DESCRIPTION
           cp -a ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/INDEX
-          rm -r ./ltfatfiles/octave/ltfat/inst/filterbank/filterbankinit
-          rm -r ./ltfatfiles/octave/ltfat/inst/gabor/gaborinit
-          rm -r ./ltfatfiles/octave/ltfat/inst/nonstatgab/nonstatgabinit
-          rm -r ./ltfatfiles/octave/ltfat/inst/demos/demosinit
+          rm -r ./ltfatfiles/octave/ltfat/inst/filterbank/filterbankinit.m
+          rm -r ./ltfatfiles/octave/ltfat/inst/gabor/gaborinit.m
+          rm -r ./ltfatfiles/octave/ltfat/inst/nonstatgab/nonstatgabinit.m
+          rm -r ./ltfatfiles/octave/ltfat/inst/demos/demosinit.m
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
