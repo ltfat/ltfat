@@ -102,9 +102,6 @@ jobs:
           mkdir -p ./ltfatfiles/standard/ltfat
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
           cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/standard/ltfat/blockproc/java/
-          rm -r ./ltfatfiles/standard/.github/
-          rm -r ./ltfatfiles/standard/.gitattributes
-          rm -r ./ltfatfiles/standard/.gitignore
           rm -r ./ltfatfiles/standard/timing
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
