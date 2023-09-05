@@ -91,19 +91,21 @@ jobs:
           destination-repository-name: 'ltfat.github.io'
           user-email: 'github-actions@github.com'
           target-branch: master
-      - name: Build standard release
-        run: |
-          mkdir -p ./ltfatfiles/standard/ltfat
-          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
-          cd ./ltfatfiles/standard
-          tar -czvf ltfat-2.6.0-src.tar.gz ltfat
-          cd ../../
       - name: Check out release_documents repository
         uses: actions/checkout@master
         with:
           repository: ltfat/release_documents
           path: './release_documents'
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build standard release
+        run: |
+          mkdir -p ./ltfatfiles/standard/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/standard/ltfat/blockproc/java/
+          rm -r ./ltfatfiles/standard/timing
+          cd ./ltfatfiles/standard
+          tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+          cd ../../
       - name: Build Octave release
         run: |
           mkdir -p ./ltfatfiles/octave/ltfat/inst
@@ -149,6 +151,15 @@ jobs:
           rm -r ./ltfatfiles/octave/ltfat/inst/gabor/gaborinit.m
           rm -r ./ltfatfiles/octave/ltfat/inst/nonstatgab/nonstatgabinit.m
           rm -r ./ltfatfiles/octave/ltfat/inst/demos/demosinit.m
+          cp ./release_documents/octave_package/src/* ./ltfatfiles/octave/ltfat/src
+          mkdir -p ./ltfatfiles/octave/ltfat/thirdparty
+          mkdir -p ./ltfatfiles/octave/ltfat/thirdparty/Playrec
+          mkdir -p ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper
+          sudo cp -r ./thirdparty/Playrec/. ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
+          sudo cp -r ./thirdparty/polyboolclipper/. ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
+          sudo cp ./release_documents/octave_package/oct/* ./ltfatfiles/octave/ltfat/oct/
+          sudo cp ./release_documents/octave_package/thirdparty/Playrec/* ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
+                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
@@ -160,6 +171,10 @@ jobs:
         run: |
           mkdir -p ./ltfatfiles/windows/ltfat
           cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
+          cp ./release_documents/prerelease_binaries/windows/mex/* ./ltfatfiles/windows/ltfat/mex/
+          cp ./release_documents/prerelease_binaries/windows/thirdparty/Playrec/* ./ltfatfiles/windows/ltfat/thirdparty/Playrec/
+          cp ./release_documents/prerelease_binaries/windows/thirdparty/polyboolclipper/* ./ltfatfiles/windows/ltfat/thirdparty/polyboolclipper/
           cd ./ltfatfiles/windows
           zip ltfat-2.6.0-win64.zip ltfat
       - name: Create Release
