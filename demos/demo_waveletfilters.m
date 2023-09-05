@@ -8,30 +8,30 @@
 %
 %   .. figure::
 %
-%     The figure shows a non-uniformly sampled invertible filter bank with 
-%     conventional, geometric frequency spacing.
+%      The figure shows a non-uniformly sampled invertible filter bank with 
+%      conventional, geometric frequency spacing.
 %
 %
 %   .. figure::
 %
-%     The figure shows a non-uniformly sampled invertible filter bank with 
-%     geometric frequency spacing, a higher redundancy and using
-%     a wavelet with different Q-factor.
+%      The figure shows a non-uniformly sampled invertible filter bank with 
+%      geometric frequency spacing, a higher redundancy and using
+%      a wavelet with different Q-factor.
 %
 %
 %   .. figure::
 %
-%     The figure shows a uniformly sampled invertible filter bank with geometric 
-%     frequency spacing, where the scales are passed directly as input
-%     arguments.
+%      The figure shows a uniformly sampled invertible filter bank with geometric 
+%      frequency spacing, where the scales are passed directly as input
+%      arguments.
 %
 %
 %   .. figure::
 %
-%     The figure shows a uniformly sampled invertible filter bank with linear 
-%     frequency spacing where the compensation channel index is passed directly.
-%     invertibility is achieved by passing a small delay to the filter
-%     generator.
+%      The figure shows a uniformly sampled invertible filter bank with linear 
+%      frequency spacing where the compensation channel index is passed directly.
+%      invertibility is achieved by passing a small delay to the filter
+%      generator.
 %
 %
 %   .. figure::
