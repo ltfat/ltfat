@@ -156,6 +156,8 @@ jobs:
           sudo cp -r ./thirdparty/Playrec/. ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
           sudo cp -r ./thirdparty/polyboolclipper/. ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
           sudo cp ./release_documents/octave_package/oct/* ./ltfatfiles/octave/ltfat/oct/
+          sudo cp ./release_documents/octave_package/thirdparty/Playrec/* ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
+                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/ployboolclipper/
           cd ./ltfatfiles/octave
           tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
