@@ -61,19 +61,20 @@ bins = 12;
 % Per default, one compensation (lowpass) filter covering the region from 0
 % Hz to the wavelet region is added to waveletfilters' output.
 
-% Compute the redundancy.
+% Compute the redundancy. Count the DC channel only once, since it produces
+% real-valued coefficients
 red_fb1 = 1/a_fb1(1) + 2*sum(1./a_fb1(2:end));
-fprintf('Redundancy (geom. f-spacing fb 1):                %.2f\n',red_fb1);
+fprintf('Redundancy (geom. f-spacing fb 1):                %.2f\n\n',red_fb1);
 
 % Compute the filter bank coefficients, and plot them, along with the
 % frequency responses of the single filters and the total filter bank
 % response.
 c_fb1=filterbank(f,g_fb1,a_fb1);
 
-figure(1)
+figure(1), clf
 subplot(3,1,1)
 plotfilterbank(c_fb1, a_fb1)
-title('Filter bank coefficients')
+title('Filter bank coefficients (fb 1)')
 subplot(3,1,2)
 filterbankfreqz(g_fb1,a_fb1,L_fb1, 'plot', 'posfreq', 'dynrange', 60);
 title('Frequency response single filters')
@@ -91,7 +92,7 @@ title('Total filter bank response')
 F = frame('filterbankreal',g_fb1, a_fb1, numel(g_fb1));
 [A,B]=framebounds(F,L_fb1,'iter','tol',1e-4,'maxit',100,'pcgtol',1e-4,'pcgmaxit',150);
 FB_ratio_fb1 = B/A;
-fprintf('Frame bound ratio (geom. f-spacing fb 1):                %.2f\n',FB_ratio_fb1);
+fprintf('Frame bound ratio (geom. f-spacing fb 1):                %.2f\n\n',FB_ratio_fb1);
 
 
 %% filter bank 2: Non-uniformly sampled invertible wavelet filter bank,
@@ -107,38 +108,42 @@ fprintf('Frame bound ratio (geom. f-spacing fb 1):                %.2f\n',FB_rat
 % Approximate the Q-factor of the wavelet used in filter bank 1.
 cauchyalpha_fb1 = 300;
 [~,info_wl1] = freqwavelet({'cauchy', cauchyalpha_fb1},L_fb1);
-fprintf('Approximated Q-factor of the Cauchy wavelet with alpha parameter %i: %.2f \n',...
+fprintf('Approximated Q-factor of the Cauchy wavelet with alpha parameter %i: %.2f \n\n',...
     cauchyalpha_fb1, info_wl1.fc/info_wl1.bw);
 % For filter bank 2, use a wavelet with a higher Q-factor, and approximate
 % it for the length of filter bank 1.
 cauchyalpha_fb2 = 700;
 [~,info_wl2] = freqwavelet({'cauchy', cauchyalpha_fb2},L_fb1);
-fprintf('Approximated Q-factor of the Cauchy wavelet with alpha parameter %i: %.2f \n',...
+fprintf('Approximated Q-factor of the Cauchy wavelet with alpha parameter %i: %.2f \n\n',...
     cauchyalpha_fb2, info_wl2.fc/info_wl2.bw);
 
 % Increasing the redundancy via lowering the downsampling rate of the filter 
 % bank channels can, for non-uniformly sampled filter banks, improve the frame bounds.
-% Here, the downsampling rate is decreased by factor 4.
+% Here, the downsampling rate is decreased by factor 4. Note that the multiplier 
+% is applied before(!) downsampling rates are adapted to the chosen
+% decimation scheme. If the decimation scheme is not 'fractional',
+% the final redundancy may be higher. 
 redundancy_multiplier = 4;
 
 % Construct the set of waveletfilters.
 [g_fb2, a_fb2, fc_fb2, L_fb2, info_fb2] = ...
     waveletfilters(Ls,'bins', fs, fmin, fmax, bins, {'cauchy',cauchyalpha_fb2},...
-   'redmul', redundancy_multiplier);
+   'redmul', redundancy_multiplier,'fractional');
 
 % Compute the redundancy.
-red_fb2 = 1/a_fb2(1) + 2*sum(1./a_fb2(2:end));
-fprintf('Redundancy (geom. f-spacing fb 2):                %.2f\n',red_fb2);
+a_long_fb2 = a_fb2(:,1)./a_fb2(:,2);
+red_fb2 = 1/a_long_fb2(1) + 2*sum(1./a_long_fb2(2:end));
+fprintf('Redundancy (geom. f-spacing fb 2):                %.2f\n\n',red_fb2);
 
 % Compute the filter bank coefficients, and plot them, along with the
 % frequency responses of the single filters and the total filter bank
 % response.
 c_fb2=filterbank(f,g_fb2,a_fb2);
 
-figure(2)
+figure(2), clf
 subplot(3,1,1)
 plotfilterbank(c_fb2, a_fb2)
-title('Filter bank coefficients')
+title('Filter bank coefficients (fb 2)')
 subplot(3,1,2)
 filterbankfreqz(g_fb2,a_fb2,L_fb2, 'plot', 'posfreq', 'dynrange', 60);
 title('Frequency response single filters')
@@ -150,7 +155,7 @@ title('Total filter bank response')
 F = frame('filterbankreal',g_fb2, a_fb2, numel(g_fb2));
 [A,B]=framebounds(F,L_fb2,'iter','tol',1e-4,'maxit',100,'pcgtol',1e-4,'pcgmaxit',150);
 FB_ratio_fb2 = B/A;
-fprintf('Frame bound ratio (geom. f-spacing fb 2):                %.2f\n',FB_ratio_fb2);
+fprintf('Frame bound ratio (geom. f-spacing fb 2):                %.2f\n\n',FB_ratio_fb2);
 
 %% filter bank 3: invertible filter bank, specified via wavelet scales
 
@@ -184,28 +189,30 @@ channels = numel(fc_fb1) - 1;
 scales = 2.^linspace(scale_max,scale_min,channels);
 
 % To ensure invertibility, for uniformly sampled filter banks, a sufficiently 
-% high redundancy is advantageous.
-redundancy = 128;
+% high redundancy is advantageous. Note that, similar to the redundancy
+% multiplier in fb 2, this is applied before(!) downsampling rates are adapted 
+% to the chosen decimation scheme. If the decimation scheme is not 'fractional',
+% the final redundancy may differ (usually by being higher). 
+redundancy = 64;
 
 % The 'energy' flag is used to scale each filter such that its energy is
 % *1*. For further scaling options, see the help of the function |setnorm|.
 [g_fb3, a_fb3,fc_fb3,L_fb3,info_fb3] = waveletfilters(Ls,scales,{'cauchy',cauchyalpha_fb1},...
-    'redtar', redundancy,  'energy', 'uniform');
+    'redtar', redundancy, 'uniform');
 
 % Compute the redundancy.
 red = 1/a_fb3(1) + 2*sum(1./a_fb3(2:end));
-fprintf('Redundancy (lin. f-spacing fb 3):                %.2f\n',red);
-
+fprintf('Redundancy (lin. f-spacing fb 3):                %.2f\n\n',red);
 
 % Compute the filter bank coefficients, and plot them, along with the
 % frequency responses of the single filters and the total filter bank
 % response.
 c_fb3=filterbank(f,g_fb3,a_fb3);
 
-figure(3)
+figure(3), clf
 subplot(3,1,1)
 plotfilterbank(c_fb3, a_fb3)
-title('Filter bank coefficients')
+title('Filter bank coefficients (fb 3)')
 subplot(3,1,2)
 filterbankfreqz(g_fb3,a_fb3,Ls, 'plot', 'posfreq', 'dynrange', 60);
 title('Frequency response single filters')
@@ -216,7 +223,7 @@ title('Total filter bank response')
 % Compute the frame bounds.
 [A,B]=filterbankrealbounds(g_fb3,a_fb3,L_fb3);
 FB_ratio_fb3 = B/A;
-fprintf('Frame bound ratio (lin. f-spacing fb 3):                %.2f\n',FB_ratio_fb3);
+fprintf('Frame bound ratio (lin. f-spacing fb 3):                %.2f\n\n',FB_ratio_fb3);
 
 % For inverting the filter bank, derive the dual system.
 L = filterbanklength(Ls, a_fb3);
@@ -232,7 +239,7 @@ if length(frec) > length(f)
 else
    err=norm(frec-f(1:length(frec)));
 end
-fprintf('Reconstruction error (geom. f-spacing fb 3):       %e\n',err);
+fprintf('Reconstruction error (geom. f-spacing fb 3):       %e\n\n',err);
 
 %% filter bank 4: invertible filter bank with linear frequency spacing
 
@@ -266,17 +273,17 @@ fmin = MC/M;
 
 % Compute the redundancy.
 red_fb4 = 1/a_fb4(1) + 2*sum(1./a_fb4(2:end));
-fprintf('Redundancy (lin. f-spacing fb 4):                %.2f\n',red_fb4);
+fprintf('Redundancy (lin. f-spacing fb 4):                %.2f\n\n',red_fb4);
 
 % Compute the filter bank coefficients, and plot them, along with the
 % frequency responses of the single filters and the total filter bank
 % response.
 c_fb4=filterbank(f,g_fb4,a_fb4);
 
-figure(4)
+figure(4), clf
 subplot(3,1,1)
 plotfilterbank(c_fb4, a_fb4)
-title('Filter bank coefficients')
+title('Filter bank coefficients (fb 4)')
 subplot(3,1,2)
 filterbankfreqz(g_fb4,a_fb4,L_fb4, 'plot', 'posfreq', 'dynrange', 60);
 title('Frequency response single filters')
@@ -287,7 +294,7 @@ title('Total filter bank response')
 % Compute the frame bounds.
 [A,B]=filterbankrealbounds(g_fb4,a_fb4,L_fb4);
 FB_ratio_fb4 = B/A;
-fprintf('Frame bound ratio (lin. f-spacing fb 4):                %.2f\n',FB_ratio_fb4);
+fprintf('Frame bound ratio (lin. f-spacing fb 4):                %.2f\n\n',FB_ratio_fb4);
 
 
 % Inversion via the dual system, as for filter bank 3.
@@ -301,11 +308,11 @@ if length(frec_fb4) > length(f)
 else
    err=norm(frec_fb4-f(1:length(frec_fb4)));
 end
-fprintf('Reconstruction error (lin. f-spacing fb 4):       %e\n',err);
+fprintf('Reconstruction error (lin. f-spacing fb 4):       %e\n\n',err);
 
 
 % Compare the frequency spacing of the filter banks.
-figure(5)
+figure(5), clf
 plot(fc_fb3, 'x') %adjust for display purposes with the previous Nyquist f
 hold on
 plot(fc_fb4, 'o')
