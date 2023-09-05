@@ -176,7 +176,7 @@ jobs:
           cp ./release_documents/prerelease_binaries/windows/thirdparty/Playrec/* ./ltfatfiles/windows/ltfat/thirdparty/Playrec/
           cp ./release_documents/prerelease_binaries/windows/thirdparty/polyboolclipper/* ./ltfatfiles/windows/ltfat/thirdparty/polyboolclipper/
           cd ./ltfatfiles/windows
-          zip ltfat-2.6.0-win64.zip ltfat
+          zip -r ltfat-2.6.0-win64.zip ltfat
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
