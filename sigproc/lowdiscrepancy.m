@@ -12,7 +12,7 @@ function delays = lowdiscrepancy(name, varargin)
 %   Currently, a kronecker sequence and a digital net are implemented.
 %
 %   See also: waveletfilters
-%
+
 %   Authors: Nicki Holighaus, Clara Hollomey, Guenther Koliander
 
 definput.keyvals.s = ceil(log2(4096));
