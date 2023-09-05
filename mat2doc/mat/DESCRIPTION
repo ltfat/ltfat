@@ -1,8 +1,8 @@
 Name: LTFAT
 Version: {VERSION}
 Date: {DATE}
-Author: Peter L. Soendergaard <peter@sonderport.dk>
-Maintainer: Zdenek Prusa
+Author: Zdenek Prusa, Peter L. Soendergaard <peter@sonderport.dk>
+Maintainer: Clara Hollomey
 Title: The Large Time-Frequency Analysis Toolbox
 Description: The Large Time/Frequency Analysis Toolbox (LTFAT) is a
  Matlab/Octave toolbox for working with time-frequency analysis,
