@@ -1,0 +1,133 @@
+name: LTFAT Deployment
+run-name: one more time... 🚀
+on:
+  push:
+    #Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+permissions:
+  contents: write
+
+jobs:
+  deploy_ltfat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update ubuntu
+        run: sudo apt-get update
+      - name: Check out ltfat repository
+        uses: actions/checkout@v3
+      - name: Install Octave
+        run: sudo apt-get install octave
+      - name: Check out mat2doc repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/mat2doc
+          path: './oct-tar/add_folder/mat2doc_exec'
+      - name: Install Bibtex2html
+        run: sudo apt-get install -y bibtex2html
+      - name: Install Bibtex2html
+        run: sudo apt-get install lynx
+      - name: Install pip
+        run: sudo apt install python3-pip
+      - name: Install Python packages
+        run: pip install numpy scipy docutils
+      - name: Generate mat files
+        run: ./oct-tar/add_folder/mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
+      - name: Generate html files
+        run: ./oct-tar/add_folder/mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+      - name: Check out ltfat homepage repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/ltfat.github.io
+          path: './ltfat_homepage'
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+      - name: Copy html files
+        run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      - name: Setup git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Pushes to ltfat.github.io
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: './ltfat_homepage'
+          destination-github-username: 'ltfat'
+          destination-repository-name: 'ltfat.github.io'
+          user-email: 'github-actions@github.com'
+          target-branch: master
+      - name: Check out release_documents repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/release_documents
+          path: './release_documents'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build standard release
+        run: |
+          mkdir -p ./ltfatfiles/standard/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/standard/ltfat/blockproc/java/
+          cd ./ltfatfiles/standard
+          tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+          cd ../../
+      - name: Build Octave release
+        run: |
+          ./oct-tar/add_folder/mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --script=release_keep_tests.py --tgz --unix --packagename=ltfat-%s-src
+#          ls ./
+#          cd ./ltfatfiles/octave
+#          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+      - name: Build Windows release
+        run: |
+          mkdir -p ./ltfatfiles/windows/ltfat
+          sudo apt install zip unzip
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
+          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
+          cp ./release_documents/prerelease_binaries/windows/mex/* ./ltfatfiles/windows/ltfat/mex/
+          cp ./release_documents/prerelease_binaries/windows/thirdparty/Playrec/* ./ltfatfiles/windows/ltfat/thirdparty/Playrec/
+          cp ./release_documents/prerelease_binaries/windows/thirdparty/polyboolclipper/* ./ltfatfiles/windows/ltfat/thirdparty/polyboolclipper/
+          cd ./ltfatfiles/windows
+          zip -r ltfat-2.6.0-win64.zip ltfat
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: This is a test release.
+          draft: true
+          prerelease: true
+      - name: Upload Standard Release Asset
+        id: upload-standard-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfatfiles/standard/ltfat-2.6.0-src.tar.gz
+          asset_name: ltfat-2.6.0-src.tar.gz
+          asset_content_type: application/tgz
+      - name: Upload Octave Release Asset
+        id: upload-octave-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfat-files/ltfat-2.6.0.tar.gz
+          asset_name: ltfat-2.6.0-of.tar.gz
+          asset_content_type: application/tgz
+      - name: Upload Windows Binaries Release Asset
+        id: upload-windows-binaries-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfatfiles/windows/ltfat-2.6.0-win64.zip
+          asset_name: ltfat-2.6.0-win64.zip
+          asset_content_type: application/zip
+
+
