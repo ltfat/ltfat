@@ -161,8 +161,9 @@ jobs:
 #                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
         run: |
           ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --octpkg
-          cd ./ltfatfiles/octave
-          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+#          /home/runner/publish/ltfat-mat
+#          cd ./ltfatfiles/octave
+#          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
 #      - name: Get mex files
 #        uses: actions/download-artifact@v2
@@ -207,7 +208,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./ltfatfiles/octave/ltfat-2.6.0-of.tar.gz
+          asset_path: /home/runner/publish/ltfat-mat/ltfat-2.6.0-of.tar.gz
           asset_name: ltfat-2.6.0-of.tar.gz
           asset_content_type: application/tgz
       - name: Upload Windows Binaries Release Asset
