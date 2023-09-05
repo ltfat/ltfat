@@ -110,8 +110,7 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %     'redmul',redmul    Redundancy multiplier. Increasing the value of this
 %                        will make the system more redundant by lowering the
-%                        channel downsampling rates. It is only used if the
-%                        filterbank is a non-uniform filterbank. Default
+%                        channel downsampling rates. Default
 %                        value is *1*. If the value is less than one, the
 %                        system may no longer be painless.
 % 
@@ -158,49 +157,21 @@ function [gout,a,fc,L,info] = waveletfilters(Ls, scales, varargin)
 %
 %     [f,fs]=gspi;  % Get the test signal
 %     Ls = length(f);
-%     scales = linspace(10,0.1,100);
+%     scales = 2.^linspace(5,-3.3,256);
 %     [g,a,fc,L]=waveletfilters(Ls,scales, {'fbsp', 4, 3}, 'repeat');
 %     c=filterbank(f,g,a);
 %     plotfilterbank(c,a,fc,fs,90);
 %
-%   In the second example, we construct a wavelet filterbank with a
-%   lowpass channels based on a Cauchy wavelet and verify it.
-%   The plot shows the frequency responses of
-%   filters used for analysis (top) and synthesis (bottom). :::
+%   In the second example, we do a constant-Q style analysis, the default is
+%   a Cauchy wavelet, and plot its frequency bank response:
 %
-%     [f,fs]=greasy;  % Get the test signal
-%     Ls = length(f);
-%     M0 = 511; %Desired number of channels (without 0 Hz-lowpass channel)
-%     max_freqDiv10 = 10;  % 10 corresponds to the nyquist frequency
-%     freq_step = max_freqDiv10/M0;
-%     rate = 44100;
-%     start_index = 1;
-%     min_freqHz = rate/10*freq_step
-%     min_scale_freq = min_freqHz*start_index
-%     min_freqDiv10 = freq_step*start_index; %1/25; % By default, the reference scale for freqwavelet has center frequency 0.1
-%     scales = 1./linspace(min_freqDiv10,max_freqDiv10,M0);
-%     alpha = 1-2/(1+sqrt(5)); % 1-1/(goldenratio) delay sequence
-%     delays = @(n,a) a*(mod(n*alpha+.5,1)-.5);
-%     CauchyAlpha = 600;
-%     [g, a,fc,L,info] = waveletfilters(Ls,scales,{'cauchy',CauchyAlpha},'uniform','single','energy', 'delay',delays, 'redtar', 8);
-%
-%     c=filterbank(f,{'realdual',g},a);
-%     r=2*real(ifilterbank(c,g,a));
-%     if length(r) > length(f)
-%         norm(r(1:length(f))-f)
-%     else
-%         norm(r-f(1:length(r)))
-%      end
-%     % Plot frequency responses of individual filters
-%     gd=filterbankrealdual(g,a,L);
-%     figure(1);
-%     subplot(2,1,1);
-%     filterbankfreqz(gd,a,L,fs,'plot','linabs','posfreq');
-%
-%     subplot(2,1,2);
-%     filterbankfreqz(g,a,L,fs,'plot','linabs','posfreq');
+%     fmin = 120;
+%     fmax = fs/2;
+%     bins = 8;
+%     [g, a, fc, L, info] = waveletfilters(Ls,'bins', fs, fmin, fmax, bins,'repeat');
+%     filterbankfreqz(g,a,Ls, 'plot', 'posfreq', 'dynrange', 60);
 % 
-%   See also: freqwavelet, filterbank, setnorm
+%   See also: freqwavelet, filterbank, setnorm, demo_waveletfilters
 
 % AUTHORS: Nicki Holighaus, Zdenek Prusa, Guenther Koliander, Clara Hollomey
 
@@ -215,11 +186,9 @@ if ~isnumeric(scales)
     channels = varargin{4};
     switch scales
         case 'linear'
-            definput.flags.inputmode = {'linear', 'logarithmic', 'bins', 'scales'};
-        %case 'logarithmic'
-        %    definput.flags.inputmode = {'logarithmic', 'bins', 'scales', 'linear'};
+            definput.flags.inputmode = {'linear', 'bins', 'scales'};
         case 'bins'
-            definput.flags.inputmode = {'bins', 'scales', 'linear', 'logarithmic'};
+            definput.flags.inputmode = {'bins', 'scales', 'linear'};
         otherwise
             error('%s: second argument must either be a scales vector or define the f-mapping.',upper(mfilename))
     end
@@ -228,7 +197,7 @@ if ~isnumeric(scales)
     varargin = circshift(varargin,-4);
     varargin = varargin(1:end-4);
 else
-    definput.flags.inputmode = {'scales', 'linear', 'logarithmic', 'bins'};
+    definput.flags.inputmode = {'scales', 'linear', 'bins'};
 end
 
 definput.import={'setnorm'};
@@ -272,11 +241,6 @@ if ~flags.do_scales
         min_freq = fmin/nf *10;%map to freqwavelets nyquist f
         max_freq = fmax/nf * 10;
         scales = 1./linspace(min_freq,max_freq,channels);
-  % elseif flags.do_logarithmic
-%
-%        fc = 2.^linspace(log2(fmin), log2(fmax), channels);    
-%        fc = fc/nf * 10;   
-%        scales = 1./fc;
         
     elseif flags.do_bins
 
@@ -298,7 +262,7 @@ if ~flags.do_scales
         end
 
         % Get rid of filters with frequency centers >=fmax and nf
-        % This will leave the first bigger than fmax it it is lower than nf
+        % This will leave the first bigger than fmax if it is lower than nf
         temp = find(fc>=fmax ,1);
         if fc(temp) >= nf
             fc = fc(1:temp-1);
@@ -306,10 +270,9 @@ if ~flags.do_scales
             fc = fc(1:temp);
         end
 
-        channels = length(fc);
-        min_freq = fmin/nf *10;%map to freqwavelets nyquist f
-        max_freq = fmax/nf * 10;
-        scales = 1./linspace(min_freq,max_freq,channels);
+        fc_internal = fc./nf.*10;
+        scales = 1./fc_internal;
+
     end
     scales_sorted = sort(scales,'descend');
     if ~isempty(kv.startfreq)%set the start frequency
@@ -373,7 +336,8 @@ elseif flags.do_single
     lowpass_at_zero = 1;
     M = M+1;
     %this is an estimated value
-    aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
+    aprecise = 2*scales_sorted(4)/0.2; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
+%    aprecise = (0.2./scales_sorted(4))*Ls; % This depends on how single lowpass is called (l.195ff). Maybe automate. Adapt if necessary!!!
 else
     lowpass_number = 0;
     lowpass_at_zero = 0;
@@ -395,36 +359,19 @@ end
 
 %% Compute the downsampling rate
 if flags.do_regsampling
-    a = ones(M,1);
     
-    [lower_scale,~] = max(scales);
-    [upper_scale,~] = min(scales);
-    lower_scale = floor(log2(1/lower_scale));
-    upper_scale = floor(log2(1/upper_scale));
-    
-    % Find minimum a in each octave and floor23 it
-    % to shrink "a" to the next composite number
-    ct=1;
-    for kk = lower_scale:upper_scale
-        tempidx = find( floor(log2(1./scales)) == kk );
-        [~,tempminidx] = min(1/scales(tempidx));
-        idx = tempidx(tempminidx);
-        
-        % Deal the integer subsampling factors
-        a(tempidx) = floor23(aprecise(idx));
-        ct=ct+1;
-    end   
-    
-    % Determine the minimal transform length lcm(a)
-    L = filterbanklength(Ls,a);
-    
+    a=floor23(aprecise);
+
+    % Determine the minimal transform length
+    L=filterbanklength(Ls,a);
+
     % Heuristic trying to reduce lcm(a)
-    while L>2*Ls && ~(all(a==a(1)))
-        maxa = max(a);
-        a(a==maxa) = 0;
-        a(a==0) = max(a);
-        L = filterbanklength(Ls,a);
-    end
+   while L>2*Ls && ~(all(a==a(1)))
+       maxa = max(a);
+       a(a==maxa) = 0;
+       a(a==0) = max(a);
+       L = filterbanklength(Ls,a);
+   end
 
 elseif flags.do_fractional
     L = Ls;
@@ -447,9 +394,6 @@ end
 % Get an expanded "a" / Convert "a" to LTFAT 2-column fractional format
 afull=comp_filterbank_a(a,M,struct());
 
-%if flags.do_uniform
-%    a = a(:,1);
-%end
 %==========================================================================
 %% Adjust the downsampling rates in order to achieve 'redtar'    
 
@@ -468,19 +412,18 @@ if ~isempty(kv.redtar)
         org_red = sum(2./a);
     end
     
+    %a_old = a;
     a = floor(a*org_red/kv.redtar);
     a(a==0) = 1;
-    
-    if ~flags.do_uniform
+
+    if ~flags.do_uniform && ~flags.do_regsampling
         N_new=ceil(L./a);
-        if flags.do_complex
-            N_new = [N_new;N_new(end:-1:2)];
-        end
         a=[repmat(L,numel(N_new),1),N_new];
     else 
         L = filterbanklength(L,a);
         a=[a,ones(length(a), 1)];
     end
+
 else
     a = afull;
 end
@@ -501,6 +444,20 @@ else
     error('%s: delay must be scaler or have enough elements to cover all channels.',upper(mfilename));
 end
 scal=sqrt(a(:,1)./a(:,2));
+
+
+if flags.do_regsampling && ~isempty(kv.redtar)
+    %another heuristic for reducing the filter bank length...
+    %usually necessary when the redtar has been adjusted for regsampling
+    a=a(:,1);
+   while L>2*Ls && ~(all(a==a(1)))
+      maxa = max(a);
+      a(a==maxa) = 0;
+      a(a==0) = max(a);
+      L = filterbanklength(Ls,a);
+   end
+   scal = sqrt(a);
+end
 
 if flags.do_complex
     
@@ -535,7 +492,6 @@ else
         % Scale the lowpass filters
         scal(1)=scal(1)/sqrt(2);
     end
-    
     [gout,info] = freqwavelet(winCell,L,scales,'asfreqfilter','efsuppthr',...
         kv.trunc_at,'basefc',0.1,'scal',scal(lowpass_number+1:M),'delay', delayvec(lowpass_number+1:M),flags.norm);
 end
@@ -543,15 +499,15 @@ end
 %% Generate lowpass filters if desired
 [gout, info] = comp_fblowpassfilters(winCell, gout, a, L, info, scales, scal, delayvec(1:lowpass_number), lowpass_at_zero, kv, flags);
 
-info.lowpassstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
+info.waveletstart = lowpass_number + 1;%startindex of actual wavelets (tentative)
 % Assign fc and adjust for sampling rate 
 if flags.do_scales
     fc = (kv.fs/2).*info.fc;
 else
-    fc = nf.*info.fc;
+    fc = nf.*info.fc;    
 end
+fc = fc(:); %for compatibility with the filter bank framework
 
 if flags.do_uniform || flags.do_regsampling
     a = a(:,1);
 end
-

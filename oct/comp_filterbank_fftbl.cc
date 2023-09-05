@@ -78,8 +78,12 @@ octave_value_list octFunction(const octave_value_list& args, int nargout)
     // Output subbands pointers
     OCTAVE_LOCAL_BUFFER (LTFAT_TYPE*, cPtrs, M);
     //
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, g_elems, M);
-    OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, c_elems, M);
+    //avoid octave_local_buffer_gElems { new MArray<LTFAT_TYPE> [M] }, because of gcc warnings,
+    //until https://gcc.gnu.org/bugzilla//show_bug.cgi?id=85795 is resolved
+    MArray<LTFAT_TYPE> *g_elems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    MArray<LTFAT_TYPE> *c_elems = (MArray<LTFAT_TYPE>*)malloc((int)M * sizeof(MArray<LTFAT_TYPE>));
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, g_elems, M);
+    //OCTAVE_LOCAL_BUFFER (MArray<LTFAT_TYPE>, c_elems, M);
 
     for (octave_idx_type m = 0; m < M; m++)
     {

@@ -58,7 +58,7 @@ NOCOMPLEXFMTCHANGE
     Macro overrides the default complex number format change.
 
 ************************************************************************************/
-#if defined(_WIN32) || defined(__WIN32__)
+# if defined(_WIN32) || defined(__WIN32__)
 #  define DLL_EXPORT_SYM __declspec(dllexport)
 #  define EXPORT_SYM __declspec(dllexport)
 #else
@@ -512,6 +512,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] )
    mexFunctionInner(nlhs, plhs, nrhs, prhs);
 
 }
+
+
+DLL_EXPORT_SYM void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
+EXPORT_SYM void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[] );
 
 void mexFunctionInner(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
