@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is testing LTFAT 🚀
 on: [push]
 jobs:
   testLTFAT:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
