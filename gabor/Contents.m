@@ -1,6 +1,6 @@
 % LTFAT - Gabor analysis
 %
-%  Peter L. Søndergaard, 2007 - 2018.
+%  Peter L. Søndergaard, 2007 - 2023.
 %
 %  Basic Time/Frequency analysis
 %    TCONV          -  Twisted convolution
@@ -64,7 +64,9 @@
 %  Phase gradient methods and reassignment
 %    GABPHASEGRAD   -  Instantaneous time/frequency from signal
 %    GABPHASEDERIV  -  Phase derivatives
+%    GABPHASEDERIVREAL  -  Phase derivatives for |dgtreal|
 %    GABREASSIGN    -  Reassign positive distribution
+%    GABREASSIGNREAL    -  Reassign positive distribution for real signals
 %    GABREASSIGNADJUST - Adjustable t-f reassignment
 %
 %  Phase reconstruction

@@ -1,6 +1,13 @@
 function test_failed=test_ptpfun()
 test_failed = 0;
 
+
+global LTFAT_TEST_TYPE;
+tolerance = 1e-7;
+if strcmpi(LTFAT_TEST_TYPE,'single')
+   tolerance = 1e-2;
+end
+
 % First, just test if functions run with various input parameters
 
 M = 10;
@@ -90,7 +97,7 @@ for inc =incrange
    g = ptpfun(L,w{1});
    gd = ptpfundual(w{1},a,M,L);
    [~,err] = gabdualnorm(g,gd,a,M,L);
-   [test_failed,fail]=ltfatdiditfail(err,test_failed);
+   [test_failed,fail]=ltfatdiditfail(err,test_failed,tolerance);
    fprintf('PTPFUN IS DUAL L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
 end
 end
@@ -103,7 +110,7 @@ for w = wcell
    c = dgt(f,g,a,M);
    fhat = idgt(c,{'dual',g},a);
    res = norm(f-fhat);
-   [test_failed,fail]=ltfatdiditfail(res,test_failed);
+   [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
    fprintf('PTPFUN REC L=%i,a=%i,M=%i, %s\n',L,a,M,fail);
 end
 
@@ -112,7 +119,7 @@ for w = wcell
    c = dgt(f,g,a,M);
    fhat = idgt(c,{'dual',g},a);
    res = norm(f-fhat);
-   [test_failed,fail]=ltfatdiditfail(res,test_failed);
+   [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
    fprintf('PTPFUNDUAL REC L=%i,a=%i,M=%i, %s\n',L,a,M,fail);
 end
 
@@ -124,7 +131,7 @@ for w = wcell
    c = dgt(f,g,a,M);
    fhat = idgt(c,gd,a);
    res = norm(f-fhat);
-   [test_failed,fail]=ltfatdiditfail(res,test_failed);
+   [test_failed,fail]=ltfatdiditfail(res,test_failed,tolerance);
    fprintf('PTPFUN PTPFUNDUAL REC ENERGY L=%i,a=%i,M=%i, inc=%i %s\n',L,a,M,inc,fail);
   end
 end

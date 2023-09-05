@@ -163,7 +163,7 @@ function [c,relres,iter,frec,cd] = franabp(F,f,varargin)
 %      legend({'sparsified coefficients','dual system coefficients'});
 %
 %   See also: frame, frana, frsyn, framebounds, franalasso
-%
+
 %   References: se14 bopachupeec11
 
 %   AUTHOR: Zdenek Prusa

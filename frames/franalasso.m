@@ -151,7 +151,7 @@ function [tc,relres,iter,frec,cd] = franalasso(F,f,lambda,varargin)
 %      legend({'sparsified coefficients','with debiasing','dual system coefficients'});
 %  
 %   See also: frame, frsyn, framebounds, franabp, franagrouplasso
-%
+
 %   References: dademo04 beck09 finowr07
 
 %   AUTHOR : Bruno Torresani.  

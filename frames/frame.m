@@ -568,12 +568,20 @@ switch(ftype)
   %%%%%%%%%%%%%%%%%%%%
   %% WRAPPER FRAMES %%
   %%%%%%%%%%%%%%%%%%%%
-  case {'erbletfb','cqtfb'}
+  case {'erbletfb','cqtfb', 'waveletfb', 'audletfb', 'warpedfb', 'gaborfb'}
     switch(ftype)
         case 'erbletfb'
             [g,a,~,L] = erbfilters(varargin{:});
         case 'cqtfb'
             [g,a,~,L] = cqtfilters(varargin{:});
+        case 'waveletfb'
+            [g,a,~,L] = waveletfilters(varargin{:});
+        case 'audletfb'
+            [g,a,~,L] = waveletfilters(varargin{:});
+        case 'warpedfb'
+            [g,a,~,L] = waveletfilters(varargin{:});
+        case 'gaborfb'
+            [g,a,~,L] = waveletfilters(varargin{:});
     end
     % Search for the 'complex' flag
     do_complex = ~isempty(varargin(strcmp('complex',varargin)));

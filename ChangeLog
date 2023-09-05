@@ -1,4 +1,20 @@
-Version 2.5.0 XX/05 2022
+Version 2.6.0 05/09 2023
+  * NEW: gabreassignreal, comp_gabreassignreal, gabphasederivreal, demo_waveletfilters, lowdiscrepancy, thirdparty/im2double (Octave function), ltfatruntests (continuous integration and deployment functionality via github actions), fusionframe, arg_fusionframe
+
+  * BUGFIX: comp_fblowpassfilters, audfilters, gabphasederiv, freqwavelet, ltfat_mex_template_helper,
+  oct/comp_filterbank (getting rid of octave buffer to reduce the number of warnings), test_all_ltfat, test_dft, test_dgt_alg, test_gabphasederiv, test_gabphasederivinterface, test_gabphasederivreal, test_idft, test_ptpfun
+
+  * EXTENSIONS: filterbanktight and filterbankrealtight (force painless option), frame (wavelet, auditory, warped, and gabor filter bank), waveletfilters (help example)
+
+  * ADJUSTMENTS: gabfilters and waveletfilters output format (to match that of the other filterbank generators)
+
+  * DOCUMENTATION: comp_dgt_real, comp_sepdgtreal, comp_gabreassign, comp_transferfunction,
+  demo_auditoryfilterbank, demo_filterbanks, filterbankconstphase, filterbankwin, framebounds
+
+  * DEPRECATED: comp_gdgt, test_dgt_fac, test_dgts, test_dwilts, test_framemulappr, test_gabmul, test_gdgt, test_hermbasis, test_ola, test_pherm, test_wfac
+
+
+Version 2.5.0 22/05 2022
 	* Improved precison of Daubechies wavelet filters for 'db1'-'db38'
 	  Thanks to KIMURA Masaru.
 	  

@@ -1,0 +1,216 @@
+name: LTFAT Deployment
+run-name: one more time... 🚀
+on:
+  push:
+    #Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+permissions:
+  contents: write
+
+jobs:
+#  compile_mex:
+#    runs-on: windows-latest
+#    steps:
+#      - name: Check out repository
+#        uses: actions/checkout@v3
+#      - name: Check out release_documents repository
+#        uses: actions/checkout@master
+#        with:
+#          repository: ltfat/release_documents
+#          path: './release_documents'
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Set up MinGW
+#        uses: egor-tensin/setup-mingw@v2
+#        with:
+#          platform: x64
+#      - name: Move dlls to package
+#        run: |
+#          copy ./release_documents/prerelease_binaries/windows/libfftw3-3.dll ./mex
+#          copy ./release_documents/prerelease_binaries/windows/libfftw3f-3.dll ./mex
+#          copy ./release_documents/prerelease_binaries/windows/libltfat.dll ./libltfat/build
+#          copy ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./blockproc/java
+#      - name: Set up MATLAB
+#        uses: matlab-actions/setup-matlab@v1
+#      - name: Run tests
+#        uses: matlab-actions/run-command@v1
+#        with:
+#          command: ltfatruntests
+#      - name: Upload binaries
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: mex-files
+#          path: ./mex
+
+  deploy_ltfat:
+    runs-on: ubuntu-latest
+#    needs: compile_mex
+    steps:
+      - name: Update ubuntu
+        run: sudo apt-get update
+      - name: Check out ltfat repository
+        uses: actions/checkout@v3
+      - name: Install Octave
+        run: sudo apt-get install octave
+      - name: Check out mat2doc repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/mat2doc
+          path: './mat2doc_exec'
+      - name: Install Bibtex2html
+        run: sudo apt-get install -y bibtex2html
+      - name: Install Bibtex2html
+        run: sudo apt-get install lynx
+      - name: Install pip
+        run: sudo apt install python3-pip
+      - name: Install Python packages
+        run: pip install numpy scipy docutils
+      - name: Generate mat files
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
+#      - name: Generate html files
+#        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+      - name: Check out ltfat homepage repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/ltfat.github.io
+          path: './ltfat_homepage'
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+ #     - name: Copy html files
+ #       run: cp -R /home/runner/publish/ltfat-html/ ./ltfat_homepage/doc
+      - name: Setup git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Pushes to ltfat.github.io
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: './ltfat_homepage'
+          destination-github-username: 'ltfat'
+          destination-repository-name: 'ltfat.github.io'
+          user-email: 'github-actions@github.com'
+          target-branch: master
+      - name: Build standard release
+        run: |
+          mkdir -p ./ltfatfiles/standard/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/standard/ltfat
+          cd ./ltfatfiles/standard
+          tar -czvf ltfat-2.6.0-src.tar.gz ltfat
+          cd ../../
+      - name: Check out release_documents repository
+        uses: actions/checkout@master
+        with:
+          repository: ltfat/release_documents
+          path: './release_documents'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Octave release
+        run: |
+          mkdir -p ./ltfatfiles/octave/ltfat/inst
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
+          rm -r ./ltfatfiles/octave/ltfat/inst/lib
+          rm -r ./ltfatfiles/octave/ltfat/inst/libltfat/
+          rm -r ./ltfatfiles/octave/ltfat/inst/.github/
+          rm -r ./ltfatfiles/octave/ltfat/inst/mex
+          mv ./ltfatfiles/octave/ltfat/inst/testing ./ltfatfiles/octave/ltfat/inst/private
+          mv ./ltfatfiles/octave/ltfat/inst/oct ./ltfatfiles/octave/ltfat/oct
+          mv -v ./ltfatfiles/octave/ltfat/inst/reference/* ./ltfatfiles/octave/ltfat/inst/private
+          rm -r ./ltfatfiles/octave/ltfat/inst/reference/
+          rm -r ./ltfatfiles/octave/ltfat/inst/thirdparty/Playrec/
+          rm -r ./ltfatfiles/octave/ltfat/inst/thirdparty/polyboolclipper/
+          rm -r ./ltfatfiles/octave/ltfat/inst/timing
+          mkdir -p ./ltfatfiles/octave/ltfat/inst/ltfat
+          cp -r ./release_documents/octave_package/inst/ltfat/. ./ltfatfiles/octave/ltfat/inst/ltfat
+          cp -r ./release_documents/octave_package/inst/blockproc/java/blockproc.jar ./ltfatfiles/octave/ltfat/inst/blockproc/java/
+          sudo rm -r ./ltfatfiles/octave/ltfat/inst/.gitattributes
+          sudo rm -r ./ltfatfiles/octave/ltfat/inst/.gitignore
+          cp -r ./release_documents/octave_package/inst/Makefile ./ltfatfiles/octave/ltfat/inst/
+          cp -r ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/inst/
+          cp -r ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/inst/
+          sudo mkdir ./ltfatfiles/octave/ltfat/lib/
+          sudo mkdir ./ltfatfiles/octave/ltfat/lib/ltfatcompat
+          sudo cp -a ./lib/ltfatcompat/ ./ltfatfiles/octave/ltfat/lib/
+          mkdir ./ltfatfiles/octave/ltfat/src/
+          cp -a ./libltfat/examples ./ltfatfiles/octave/ltfat/src/examples
+          cp -a ./libltfat/modules ./ltfatfiles/octave/ltfat/src/modules
+          cp -a ./libltfat/copyrightplate ./ltfatfiles/octave/ltfat/src/copyrightplate
+          cp -a ./libltfat/CMakeLists.txt ./ltfatfiles/octave/ltfat/src/CMakeLists.txt
+          cp -a ./libltfat/comptarget.mk ./ltfatfiles/octave/ltfat/src/comptarget.mk
+          cp -a ./libltfat/ostools.mk ./ltfatfiles/octave/ltfat/src/ostools.mk
+          cp -a ./libltfat/Makefile ./ltfatfiles/octave/ltfat/src/Makefile
+          cp -a ./libltfat/README.md ./ltfatfiles/octave/ltfat/src/README.md
+          cp -a ./libltfat/LICENSE ./ltfatfiles/octave/ltfat/src/LICENSE
+          cp -a ./CITATION ./ltfatfiles/octave/ltfat/CITATION
+          cp -a ./COPYING ./ltfatfiles/octave/ltfat/COPYING
+          cp -a ./NEWS ./ltfatfiles/octave/ltfat/NEWS
+          cp -a ./release_documents/octave_package/inst/DESCRIPTION ./ltfatfiles/octave/ltfat/DESCRIPTION
+          cp -a ./release_documents/octave_package/inst/INDEX ./ltfatfiles/octave/ltfat/INDEX
+          rm -r ./ltfatfiles/octave/ltfat/inst/filterbank/filterbankinit.m
+          rm -r ./ltfatfiles/octave/ltfat/inst/gabor/gaborinit.m
+          rm -r ./ltfatfiles/octave/ltfat/inst/nonstatgab/nonstatgabinit.m
+          rm -r ./ltfatfiles/octave/ltfat/inst/demos/demosinit.m
+          cp ./release_documents/octave_package/src/* ./ltfatfiles/octave/ltfat/src
+          mkdir -p ./ltfatfiles/octave/ltfat/thirdparty
+          mkdir -p ./ltfatfiles/octave/ltfat/thirdparty/Playrec
+          mkdir -p ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper
+          sudo cp -r ./thirdparty/Playrec/. ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
+          sudo cp -r ./thirdparty/polyboolclipper/. ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
+          sudo cp ./release_documents/octave_package/oct/* ./ltfatfiles/octave/ltfat/oct/
+          sudo cp ./release_documents/octave_package/thirdparty/Playrec/* ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
+                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
+          cd ./ltfatfiles/octave
+          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
+
+#      - name: Get mex files
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: mex-files
+      - name: Build Windows release
+        run: |
+          mkdir -p ./ltfatfiles/windows/ltfat
+          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
+          cd ./ltfatfiles/windows
+          zip ltfat-2.6.0-win64.zip ltfat
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: This is a test release.
+          draft: true
+          prerelease: true
+      - name: Upload Standard Release Asset
+        id: upload-standard-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfatfiles/standard/ltfat-2.6.0-src.tar.gz
+          asset_name: ltfat-2.6.0-src.tar.gz
+          asset_content_type: application/tgz
+      - name: Upload Octave Release Asset
+        id: upload-octave-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfatfiles/octave/ltfat-2.6.0-of.tar.gz
+          asset_name: ltfat-2.6.0-of.tar.gz
+          asset_content_type: application/tgz
+      - name: Upload Windows Binaries Release Asset
+        id: upload-windows-binaries-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./ltfatfiles/windows/ltfat-2.6.0-win64.zip
+          asset_name: ltfat-2.6.0-win64.zip
+          asset_content_type: application/zip
+
+

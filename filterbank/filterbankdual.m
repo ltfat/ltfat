@@ -1,8 +1,7 @@
 function gdout=filterbankdual(g,a,varargin)
 %FILTERBANKDUAL  Dual filters
 %   Usage:  gd=filterbankdual(g,a,L);
-%           gd=filterbankdual(g,a);
-%           
+%           gd=filterbankdual(g,a);           
 %
 %   `filterbankdual(g,a,L)` computes the canonical dual filters of *g* for a
 %   channel subsampling rate of *a* (hop-size) and system length *L*.
@@ -37,7 +36,7 @@ definput.import={'filterbankdual'};
 definput.flags.outformat = {'fir','full','econ','asfreqfilter'};
 definput.keyvals.efsuppthr = 10^(-5);
 
-[flags,kv,L]=ltfatarghelper({'L'},definput,varargin);
+[flags,kv,L]=ltfatarghelper({'L'},definput,varargin,'filterbankdual');
 
 [g,asan,info]=filterbankwin(g,a,L,'normal');
 if isempty(L) 
@@ -75,10 +74,11 @@ if info.isuniform
   
   % Transfer functions of individual filters as cols
   G = filterbankfreqz(g,a,L);
+  thisclass = class(G);
   
   N=L/a;
   
-  gd=zeros(M,N,class(G));
+  gd=zeros(M,N,thisclass);
   
   for w=0:N-1
     idx = mod(w-(0:a-1)*N,L)+1;
@@ -91,42 +91,41 @@ if info.isuniform
   % gd was created transposed because the indexing gd(:,idx_a)
   % is much faster than gd(idx_a,:)
   gd =  gd.';
-  thisclass = class(G);
 
-switch flags.outformat
-    case 'fir'
-        gd=ifft(gd)*a;
-        % Matrix cols to cell elements + cast
-        gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
-                  'UniformOutput',0);
-
-  %      All filters in gdout will be treated as FIR of length L. Convert them
-  %      to a struct with .h and .offset format.
-        gdout = filterbankwin(gdout,a);      
-    case 'full'
-
-        gdout = gd*a;
-    case 'econ'
-        Shorten filters to essential support
-        gd = gd*a;
-        gdout=economize_filters(gd,'efsuppthr',kv.efsuppthr);
-
-    case 'asfreqfilter'
-        gd = gd*a;
-%        All filters in gdout will be treated as (numeric) freqfilter format. 
-%        Manually convert them to a struct with .H and .foff.
-        template = struct('H',[],'foff',0,'realonly',0,'delay',0,'L',L);
-        gdout = cell(1,M);
-        gdout(:) = {template};
-
-        [H,foff,~]=economize_filters(gd,'efsuppthr',kv.efsuppthr);
-        for kk = 1:M
-            gdout{kk} = setfield(gdout{kk},'H',H{kk});
-            gdout{kk} = setfield(gdout{kk},'foff',foff(kk));
-        end      
-    otherwise
-        error('%s: Unknown filter format.', upper(mfilename)); 
-end 
+  switch flags.outformat
+      case 'fir'
+          gd=ifft(gd)*a;
+          % Matrix cols to cell elements + cast
+          gdout = cellfun(@(gdEl) cast(gdEl,thisclass), num2cell(gd,1),...
+              'UniformOutput',0);
+          
+          %      All filters in gdout will be treated as FIR of length L. Convert them
+          %      to a struct with .h and .offset format.
+          gdout = filterbankwin(gdout,a);
+      case 'full'
+          
+          gdout = gd*a;
+      case 'econ'
+          Shorten filters to essential support
+          gd = gd*a;
+          gdout=economize_filters(gd,'efsuppthr',kv.efsuppthr);
+          
+      case 'asfreqfilter'
+          gd = gd*a;
+          %        All filters in gdout will be treated as (numeric) freqfilter format.
+          %        Manually convert them to a struct with .H and .foff.
+          template = struct('H',[],'foff',0,'realonly',0,'delay',0,'L',L);
+          gdout = cell(1,M);
+          gdout(:) = {template};
+          
+          [H,foff,~]=economize_filters(gd,'efsuppthr',kv.efsuppthr);
+          for kk = 1:M
+              gdout{kk} = setfield(gdout{kk},'H',H{kk});
+              gdout{kk} = setfield(gdout{kk},'foff',foff(kk));
+          end
+      otherwise
+          error('%s: Unknown filter format.', upper(mfilename));
+  end
 
 elseif info.ispainless
    % Factorized frame operator is diagonal.
