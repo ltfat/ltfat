@@ -8,7 +8,6 @@
 %    LTFATHELP        -  Help
 %    LTFATMEX         -  Compile Mex/Oct interfaces
 %    LTFATBASEPATH    -  Return the base path
-%    LTFATRUNTESTS    -  Script for continuous testing
 %    ISOCTAVE         -  True if interpreter is Octave
 %
 %  Parameter handling
