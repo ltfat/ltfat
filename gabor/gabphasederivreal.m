@@ -1,5 +1,5 @@
 function [phased,c]=gabphasederivreal(type,method,varargin)
-%GABPHASEDERIV   DGT phase derivatives
+%GABPHASEDERIVREAL   DGT phase derivatives
 %   Usage:  [phased,c] = gabphasederivreal(dflag,'dgt',f,g,a,M);
 %            phased    = gabphasederivreal(dflag,'cross',f,g,a,M)
 %            phased    = gabphasederivreal(dflag,'phase',cphase,a,M);
