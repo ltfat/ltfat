@@ -7,7 +7,7 @@ function sr=gabreassignreal(s,tgrad,fgrad,a,M)
 %   and *tgrad*. The lattice is determined by the time shift *a* and the 
 %   number of channels *M*.
 %
-%   *fgrad* and *tgrad* can be obtained by the routine |gabphasegradreal|.
+%   *fgrad* and *tgrad* can be obtained by the routine |gabphasegrad|.
 %
 %   Examples:
 %   ---------
