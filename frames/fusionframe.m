@@ -17,7 +17,7 @@ function [F,L] = fusionframe(frametypes, varargin)
 %   `fusionframe` facilitates the construction of fusion frames by allowing
 %   for their programmatic instantiation via the frame type of the local frames. 
 %   Further specification of the frames is optionally ppossible. For a
-%   list of supported frames as well as their defaults, see |arg_fusionframe|. 
+%   list of supported frames as well as their defaults, see arg_fusionframe. 
 %   Currently, only one set of optional parameters per fusion frame type is
 %   possible.
 %   The common frame length is calculated as the lowest common multiple of
