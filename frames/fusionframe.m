@@ -8,12 +8,12 @@ function [F,L] = fusionframe(frametypes, varargin)
 %   *ftype*.
 %
 %   Input parameters:
-%         frametypes     : Cell array with the desired frame types. For
+%         frametypes       Cell array with the desired frame types. For
 %                          supported frames, see below.
 %
 %   Output parameters:
-%         F              : fusion frame structure
-%         L              : common frame length
+%         F                fusion frame structure
+%         L                common frame length
 %
 %   `fusionframe` facilitates the construction of fusion frames by allowing
 %   for their programmatic instantiation via the frame type of the local frames. 

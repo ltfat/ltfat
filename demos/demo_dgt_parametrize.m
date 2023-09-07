@@ -15,7 +15,7 @@
 %   See also: dgt, dgtreal, idgt, idgtreal, gabimagepars, demo_dgt
 
 [insig, fs] = gspi;
-
+L = length(insig);
 %specify the the parameters
 window = 'hanning';
 windowlength = 2048;
