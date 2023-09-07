@@ -59,7 +59,7 @@ jobs:
           path: './mat2doc_exec'
       - name: Install Bibtex2html
         run: sudo apt-get install -y bibtex2html
-      - name: Install Bibtex2html
+      - name: Install lynx
         run: sudo apt-get install lynx
       - name: Install pip
         run: sudo apt install python3-pip
@@ -68,7 +68,7 @@ jobs:
       - name: Generate mat files
         run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat
       - name: Generate html files
-        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html
+        run: ./mat2doc_exec/mat2doc.py ./ltfat/ltfat html --no-plot
       - name: Check out ltfat homepage repository
         uses: actions/checkout@master
         with:
@@ -107,7 +107,7 @@ jobs:
           cd ./ltfatfiles/standard
           tar -czvf ltfat-2.6.0-src.tar.gz ltfat
           cd ../../
-      - name: Build Octave release
+     # - name: Build Octave release
 #        run: |
 #          mkdir -p ./ltfatfiles/octave/ltfat/inst
 #          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/octave/ltfat/inst
@@ -161,9 +161,9 @@ jobs:
 #          sudo cp ./release_documents/octave_package/oct/* ./ltfatfiles/octave/ltfat/oct/
 #          sudo cp ./release_documents/octave_package/thirdparty/Playrec/* ./ltfatfiles/octave/ltfat/thirdparty/Playrec/
 #                    sudo cp ./release_documents/octave_package/thirdparty/polyboolclipper/* ./ltfatfiles/octave/ltfat/thirdparty/polyboolclipper/
-        run: |
-          ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --script=release_keep_tests.py --tgz --unix --packagename=ltfat-%s-src
-          ls ./
+     #   run: |
+     #     ./mat2doc_exec/mat2doc.py ./ltfat/ltfat mat --script=release_keep_tests.py --tgz --unix --packagename=ltfat-%s-src
+     #     ls ./
 #          cd ./ltfatfiles/octave
 #          tar -czvf ltfat-2.6.0-of.tar.gz ltfat
 
@@ -171,38 +171,38 @@ jobs:
 #        uses: actions/download-artifact@v2
 #        with:
 #          name: mex-files
-      - name: Build Windows release
-        run: |
-          mkdir -p ./ltfatfiles/windows/ltfat
-          sudo apt install zip unzip
-          cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
-          cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
-          cp ./release_documents/prerelease_binaries/windows/mex/* ./ltfatfiles/windows/ltfat/mex/
-          cp ./release_documents/prerelease_binaries/windows/thirdparty/Playrec/* ./ltfatfiles/windows/ltfat/thirdparty/Playrec/
-          cp ./release_documents/prerelease_binaries/windows/thirdparty/polyboolclipper/* ./ltfatfiles/windows/ltfat/thirdparty/polyboolclipper/
-          cd ./ltfatfiles/windows
-          zip -r ltfat-2.6.0-win64.zip ltfat
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: This is a test release.
-          draft: true
-          prerelease: true
-      - name: Upload Standard Release Asset
-        id: upload-standard-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./ltfatfiles/standard/ltfat-2.6.0-src.tar.gz
-          asset_name: ltfat-2.6.0-src.tar.gz
-          asset_content_type: application/tgz
+      #- name: Build Windows release
+      #  run: |
+      #    mkdir -p ./ltfatfiles/windows/ltfat
+      #    sudo apt install zip unzip
+      #    cp -r /home/runner/publish/ltfat-mat/. ./ltfatfiles/windows/ltfat
+      #    cp ./release_documents/prerelease_binaries/windows/blockproc/java/blockproc.jar ./ltfatfiles/windows/ltfat/blockproc/java/
+      #    cp ./release_documents/prerelease_binaries/windows/mex/* ./ltfatfiles/windows/ltfat/mex/
+      #    cp ./release_documents/prerelease_binaries/windows/thirdparty/Playrec/* ./ltfatfiles/windows/ltfat/thirdparty/Playrec/
+      #    cp ./release_documents/prerelease_binaries/windows/thirdparty/polyboolclipper/* ./ltfatfiles/windows/ltfat/thirdparty/polyboolclipper/
+      #    cd ./ltfatfiles/windows
+      #    zip -r ltfat-2.6.0-win64.zip ltfat
+      #- name: Create Release
+      #  id: create_release
+      #  uses: actions/create-release@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    tag_name: ${{ github.ref }}
+      #    release_name: Release ${{ github.ref }}
+      #    body: This is a test release.
+      #    draft: true
+      #    prerelease: true
+      #- name: Upload Standard Release Asset
+      #  id: upload-standard-release-asset 
+      #  uses: actions/upload-release-asset@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+      #    asset_path: ./ltfatfiles/standard/ltfat-2.6.0-src.tar.gz
+      #    asset_name: ltfat-2.6.0-src.tar.gz
+      #    asset_content_type: application/tgz
 #      - name: Upload Octave Release Asset
 #        id: upload-octave-release-asset 
 #        uses: actions/upload-release-asset@v1
@@ -213,15 +213,15 @@ jobs:
 #          asset_path: ./ltfat-2.6.0.tar.gz
 #          asset_name: ltfat-2.6.0-of.tar.gz
 #          asset_content_type: application/tgz
-      - name: Upload Windows Binaries Release Asset
-        id: upload-windows-binaries-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./ltfatfiles/windows/ltfat-2.6.0-win64.zip
-          asset_name: ltfat-2.6.0-win64.zip
-          asset_content_type: application/zip
+      #- name: Upload Windows Binaries Release Asset
+      #  id: upload-windows-binaries-release-asset 
+      #  uses: actions/upload-release-asset@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+      #    asset_path: ./ltfatfiles/windows/ltfat-2.6.0-win64.zip
+      #    asset_name: ltfat-2.6.0-win64.zip
+      #    asset_content_type: application/zip
 
 
