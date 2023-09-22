@@ -1,5 +1,5 @@
 function Fd=framedual(F)
-%FRAMEDUAL  Construct the canonical dual frame
+%FRAMEDUAL  Construct the canonical dual frame of a frame F
 %   Usage: Fd=framedual(F);
 %
 %   `Fd=framedual(F)` returns the canonical dual frame of *F*.
