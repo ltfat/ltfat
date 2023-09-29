@@ -26,36 +26,37 @@ function [AF,BF]=framebounds(F,varargin);
 %
 %     'auto'       Choose the `fac` method if possible, otherwise
 %                  use the `full` method for small problems and the
-%                  `iter` method for larger problems. 
-%                  This is the default. 
+%                  `iter` method for larger problems.
+%                  This is the default.
 %
 %     'crossover',c
 %                  Set the problem size for which the 'auto' method
 %                  switches between `full` and `iter`. Default is 200.
 %
-%   The following parameters specifically related to the `iter` method: 
+%   The following parameters specifically related to the `iter` method:
 %
 %     'tol',t      Stop if relative residual error of eigs is less than the
-%                  specified tolerance. Default is 1e-9 
+%                  specified tolerance. Default is 1e-9
 %
 %     'maxit',n    Do at most n iterations in eigs. Default is 100.
 %
 %     'pcgtol',t   Stop if relative residual error of pcg is less than the
-%                  specified tolerance. Default is 1e-6 
+%                  specified tolerance. Default is 1e-6
 %
 %     'pcgmaxit',n Do at most n iterations in pcg. Default is 150.
 %
 %     'p',p        The number of Lanzcos basis vectors to use.  More vectors
 %                  will result in faster convergence, but a larger amount of
 %                  memory.  The optimal value of `p` is problem dependent and
-%                  should be less than *L*.  The default value chosen 
+%                  should be less than *L*.  The default value chosen
 %                  automatically by eigs.
-% 
+%
 %     'print'      Display the progress.
 %
 %     'quiet'      Don't print anything, this is the default.
 %
 %   See also: frame, framered
+
 
 complainif_notenoughargs(nargin,1,'FRAMEBOUNDS');
 complainif_notvalidframeobj(F,'FRAMEBOUNDS');
@@ -71,10 +72,10 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
       end;
       AF=sqrt(AF);
       BF=sqrt(BF);
-        
+
       return;
-  end;    
-  
+  end;
+
   if strcmp(F.type,'tensor')
     AF=1;
     BF=1;
@@ -83,10 +84,10 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
       AF=AF*A;
       BF=BF*B;
     end;
-    
+
     return;
-  end;    
-    
+  end;
+
   definput.keyvals.Ls=1;
   definput.keyvals.maxit=100;
   definput.keyvals.tol=1e-9;
@@ -96,16 +97,16 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
   definput.keyvals.p=[];
   definput.flags.print={'quiet','print'};
   definput.flags.method={'auto','fac','iter','full'};
-  
+
   [flags,kv]=ltfatarghelper({'Ls'},definput,varargin);
-  
+
   F=frameaccel(F,kv.Ls);
   L=F.L;
-  
+
   % Default values, works for the pure frequency transforms.
   AF=1;
   BF=1;
-  
+
   % Simple heuristic: If F.g is defined, the frame uses windows.
   if isfield(F,'g')
       if isempty(F.g)
@@ -117,11 +118,11 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
   end;
 
   F_isfac = isfield(F,'isfac') && F.isfac;
-  
+
   if flags.do_fac && ~F_isfac
     error('%s: The type of frame has no factorization algorithm.',upper(mfilename));
   end;
-    
+
   if (flags.do_auto && F_isfac) || flags.do_fac
     switch(F.type)
      case 'gen'
@@ -129,13 +130,13 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
       AF=min(V)^2;
       BF=max(V)^2;
      case {'dgt','dgtreal'}
-      [AF,BF]=gabframebounds(g,F.a,F.M,L); 
+      [AF,BF]=gabframebounds(g,F.a,F.M,L);
      case {'dwilt','wmdct'}
-      [AF,BF]=wilbounds(g,F.M,L); 
+      [AF,BF]=wilbounds(g,F.M,L);
      case {'filterbank','ufilterbank'}
       [AF,BF]=filterbankbounds(g,F.a,L);
      case {'filterbankreal','ufilterbankreal'}
-      [AF,BF]=filterbankrealbounds(g,F.a,L); 
+      [AF,BF]=filterbankrealbounds(g,F.a,L);
      case 'fwt'
       [AF,BF]=wfbtbounds({g,F.J,'dwt'},L);
      case 'wfbt'
@@ -148,12 +149,12 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
       [AF,BF]=wpfbtbounds(g,L,F.flags.interscaling);
      case 'uwpfbt'
       [AF,BF]=wpfbtbounds(g,L,F.flags.interscaling,F.flags.scaling);
-    end;  
+    end;
   end;
-  
+
   if (flags.do_auto && ~F_isfac && F.L>kv.crossover) || flags.do_iter
-    
-  
+
+
     if flags.do_print
       opts.disp=1;
     else
@@ -166,40 +167,40 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
     if ~isempty(kv.p)
        opts.p      = kv.p;
     end
-    
+
     pcgopts.maxit = kv.pcgmaxit;
     pcgopts.tol = kv.pcgtol;
 
     % Upper frame bound
     frameop = @(x) F.frsyn(F.frana(x));
     BF = real(eigs(frameop,L,1,'LM',opts));
-    
+
     % Lower frame bound
     frameop2 = @(x) F.frsyn(F.frana(x));
     invfrop = @(x) pcgwrapper(frameop2,x,pcgopts.tol,pcgopts.maxit);
-    
+
     % Test convergence of pcg
     test = randn(L,1);
     if ~F.realinput, test = test +1i*randn(L,1); end
     [~,flag] = invfrop(test);
-    
+
     % If PCG converges, estimate the smallest eigenvalue, otherwise assume
     % AF = 0;
     if ~flag
         AF = real(eigs(invfrop,L,1,'SM',opts));
-    else 
+    else
         AF = 0;
     end
 
-    
+
   end;
-  
+
   if (flags.do_auto && ~F_isfac && F.L<=kv.crossover) || flags.do_full
     % Compute thee transform matrix.
     bigM=opadj(F,op(F,eye(L)));
-    
+
     D=eig(bigM);
-    
+
     % Clean the eigenvalues, we know they are real
     D=real(D);
     AF=min(D);
@@ -214,7 +215,7 @@ complainif_notvalidframeobj(F,'FRAMEBOUNDS');
       AF=BF/AF;
     end;
   end;
-  
+
 end
 
 % In order to mute pprinting out pcg progress
@@ -229,9 +230,9 @@ function y=afun(x,F_in,op_in,opadj_in)
   persistent F;
   persistent op;
   persistent opadj;
-  
+
   if nargin>1
-    F     = F_in; 
+    F     = F_in;
     op    = op_in;
     opadj = opadj_in;
   else
