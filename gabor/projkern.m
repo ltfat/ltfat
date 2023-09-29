@@ -1,66 +1,63 @@
-function c=projkern(c,p2,p3,p4,p5);
+function c=projkern(c,g,a,varargin)
 %PROJKERN  Projection onto generating kernel space
-%   Usage:  cout=projkern(cin,a);
-%           cout=projkern(cin,g,a);
-%           cout=projkern(cin,ga,gs,a);
+%   Usage:  cout=projkern(cin,g,a);
+%           cout=projkern(cin,g,a,varargin);
 %
 %   Input parameters:
 %         cin   : Input coefficients
 %         g     : analysis/synthesis window
-%         ga    : analysis window
-%         gs    : synthesis window
 %         a     : Length of time shift.
 %   Output parameters:
 %         cout  : Output coefficients
 %
-%   `cout=projkern(cin,a)` projects a set of Gabor coefficients *c* onto the
-%   space of possible Gabor coefficients. This means that *cin* and *cout*
-%   synthesize to the same signal. A tight window generated from a Gaussian
-%   will be used for both analysis and synthesis.
+%   `cout=projkern(cin,g,a)` projects a set of Gabor coefficients *cin* onto the
+%   space of possible Gabor coefficients, specified by the window g, time-shift
+%   a and the same number of channels as cin. This means that *cin* and *cout*
+%   synthesize to the same signal.
+%
+%   `cout=projkern(cin,g,a,M)` does the same but projects onto Gabor
+%   coefficients with M channels
+% 
+%   `cout=projkern(cin,g,a,M,'ga',ga)` uses the analysis window ga
+%
+%   Additionally, the function accepts the following flag:
+%
+%       'tight' A tight window generated from g will be used for
+%               analysis and synthesis.
 %
 %   The rationale for this function is a follows: Because the coefficient
 %   space of a Gabor frame is larger than the signal space (since the frame
 %   is redundant) then there are many coefficients that correspond to the
-%   same signal.
-%
-%   Therefore, you might desire to work with the coefficients *cin*, but you
-%   are in reality working with *cout*.
-%
-%   `cout=projkern(cin,g,a)` does the same, using the window *g* for analysis
-%   and synthesis.
-%
-%   `cout=projkern(cin,ga,gs,a)` does the same, but for different analysis
-%   *ga* and synthesis *gs* windows.
+%   same signal. Therefore, you might desire to work with the coefficients
+%   *cin*, but you are in reality working with *cout*.
 %
 %   See also: dgt, idgt
 
-complainif_argnonotinrange(nargin,2,4,mfilename);
+if nargin<3
+  error('%s: Too few input parameters.',upper(mfilename));
+end
 
-M=size(c,1);
-N=size(c,2);
+definput.keyvals.M = [];
+definput.keyvals.ga = g;
+definput.flags.proj = {'same','tight'};
+[flags,kv] = ltfatarghelper({'M'},definput,varargin);
 
-if nargin==2
-  a=p2;
-  L=a*N;
-  ga=gabtight(a,M,L);
-  gs=ga;
-end;
+M = kv.M;
+ga = kv.ga;
 
-if nargin==3;
-  ga=p2;
-  gs=p2;
-  a=p3;
-  L=a*N;
-end;
-
-if nargin==4;  
-  ga=p2;
-  gs=p3;
-  a=p4;
-  L=a*N;
-end;
+if isempty(kv.M); M=size(c,1); end
 
 assert_squarelat(a,M,1,'PROJKERN');
 
-c=dgt(idgt(c,gs,a),ga,a,M);
+switch flags.proj
+    case 'same'
+        gs=g;
+        c=dgt(idgt(c,gs,a),ga,a,M);
+    case 'tight'
+        gs=gabtight(g,a,M);
+        ga=gs;
+        c=dgt(idgt(c,gs,a),ga,a,M);
+end
+
+
 
