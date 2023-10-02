@@ -15,6 +15,8 @@ function [y,state] = partconv_execute( x, state )
 %   were passed to the *_init function, the respective outputs are stacked along the 3rd dimension.
 %   
 
+%   AUTHOR : Zdenek Prusa (2023)
+
 [B,W] = size(x);
 [hw] = size(state.H_parts,3);
 y = zeros([B,W,hw]);

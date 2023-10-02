@@ -17,6 +17,8 @@ function [y,state] = partconv_dualfdl_execute( x, state )
 %   If multiple impulse responses were passed to the *_init function, the respective outputs are stacked along the 3rd dimension.
 %
 
+%   AUTHOR : Zdenek Prusa (2023)
+
 [B,W] = size(x);
 [hw] = size(state.H_parts_long,3);
 

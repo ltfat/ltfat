@@ -14,6 +14,8 @@ function state = partconv_init( B, W, h)
 %   multiple convolutions are computed in parallel.
 %   
 
+%   AUTHOR : Zdenek Prusa (2023)
+
 [hl,hw] = size(h);
 hlpad   = ceil(hl/B)*B ;
 

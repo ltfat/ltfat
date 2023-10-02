@@ -21,6 +21,8 @@ function state = partconv_dualfdl_init( B_short, B_long, W, h)
 %   If *h* is a *hl x hw* matrix, its collumns are treated as *hw* impulse responses and
 %   multiple convolutions are computed in parallel.
 
+%   AUTHOR : Zdenek Prusa (2023)
+
 if 0 ~= rem(B_long,B_short)
     error('%s: Long buffer length must be divisible by short buffer length', mfilename);
 end

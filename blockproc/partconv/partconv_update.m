@@ -1,16 +1,18 @@
 function state = partconv_update( state, h)
-%PARTCONV_INIT Initialize FDL partitioned convolution
-%   Usage: state = partconv_init( B, W, h )
+%PARTCONV_UPDATE Update FDL partitioned convolution
+%   Usage: state = partconv_update( B, W, h )
 %
 %   Input parameters:
 %       h   : Impulse response
 %
-%   state = PARTCONV_INIT( B, W, h) initializes a state struct *state* for computing
+%   state = PARTCONV_UPDATE( B, W, h) updates a state struct *state* for computing
 %   *W*-channel partitioned convolution with impulse response *h* using frequency delay line 
 %   with block length *B*.
 %   If *h* is a *hl x hw* matrix, its collumns are treated as *hw* impulse responses and
 %   multiple convolutions are computed in parallel.
 %   
+
+%   AUTHOR : Zdenek Prusa (2023)
 
 [hl,hw] = size(h);
 hlpad   = ceil(hl/state.B)*state.B ;

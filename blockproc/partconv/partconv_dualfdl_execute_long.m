@@ -14,6 +14,8 @@ function [y,state] = partconv_dualfdl_execute_long( x, state )
 %   *x* must be *state.B_long * state.W*. This is a wrapper using the longer block size in order to avoid comp. spikes.
 %   This erases the benefit of lower latency introduced by the shorter blocks.
 
+%   AUTHOR : Zdenek Prusa (2023)
+
 [B,W] = size(x);
 [hw] = size(state.H_parts_long,3);
 
