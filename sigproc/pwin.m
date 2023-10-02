@@ -23,18 +23,18 @@ definput.keyvals.L = 1;
 kv.phi = 2*pi*kv.fc*tshift;
 kv.fc = kv.fc + fshift;
 
-%make the cosine
+%make the cosine...
 dt = 1/kv.fs;
 t = (0:dt:kv.L-dt)';
-x = cos(2*pi*kv.fc*t + kv.phi) + 1; % '+1' is just the offset, arbitrary
+x = cos(2*pi*kv.fc*t + kv.phi) + 1; % '+1' is just the offset, quasi-arbitrary
 
-%make the rectangular window
+%...make the rectangular window...
 T = 1/kv.fc;
 rect = zeros(size(x));
-rect(1:floor(T*kv.fs)) = ones(floor(T*kv.fs),1) * 0.5;
+rect(1:floor(T*kv.fs)) = ones(floor(T*kv.fs),1) * 0.5;%this '0.5' is the counterpart to the offset above
 rect = circshift(rect, floor(kv.phi/(2*pi*kv.fc)*kv.fs));
 
-%and the periodically sampled signal
+%...and the periodically sampled signal
 persamp = x.*rect;
 
 switch name  
