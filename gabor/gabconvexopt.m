@@ -375,9 +375,18 @@ if flags.do_tight
 else
 % - projection on a B2 ball -
     % Frame-type matrix of the adjoint lattice
-    %G=tfmat('dgt',glong,M,a);
-    Fal=frame('dgt',glong,M,a);
-    G=framematrix(Fal,L);
+    %switching the role of a and M (see ltfatnote 020)
+    Ncoef = a/M*L;
+    lt = [0 1];
+    do_timeinv = 0;
+    tmpf = zeros(Ncoef,1); tmpf(1) = 1; 
+    G = zeros(L,Ncoef);
+    for n = 1:Ncoef
+        coef = reshape(tmpf, [a, size(tmpf,1)/a,size(tmpf,2)]);
+        G(:,n) = comp_idgt(coef,g,M, lt, do_timeinv, 0); 
+        tmpf = circshift(tmpf,1);
+    end
+    %assert(norm(Gold-G)< 10^(-15))
     d=[a/M;zeros(a*b-1,1)];
     
     % Using a B2 ball projection
@@ -423,8 +432,16 @@ if kv.support
         g5.eval = @(x) 0;
 
     else
-        Fal=frame('dgt',glong,M,a);
-        G=framematrix(Fal,L);
+        %switching the role of a and M (see ltfatnote 020)
+        Ncoef = a/M*L;
+        lt = [0 1];
+        do_timeinv = 0;
+        tmpf = zeros(Ncoef,1); tmpf(1) = 1;    
+          for n = 1:Ncoef
+              coef = reshape(tmpf, [a, size(tmpf,1)/a,size(tmpf,2)]);
+              G(:,n) = comp_idgt(coef,g,M, lt, do_timeinv, 0); 
+              tmpf = circshift(tmpf,1);
+          end
         d=[a/M;zeros(a*b-1,1)];
         Lfirst=ceil(Ldual/2);
         Llast=Ldual-Lfirst;
@@ -604,8 +621,8 @@ end
     % solving the problem
     
     if nb_priors
-        [gd,iter,~]=ppxa(xin,F,param);
-        
+        [gd,info]=ppxa(xin,F,param);
+        iter = info.iter;
         % Force the hard constraint
         if flags.do_hardconstraint
             % In case of use of the douglas rachford algo instead of POCS
