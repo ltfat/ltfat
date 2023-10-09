@@ -15,10 +15,11 @@ disp('--- Used subroutines ---');
 
 warning('off','all');
 
-if exist('init_unlocbox', 'file')
+addpath([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']);
+if exist('init_unlocbox.m', 'file')
     init_unlocbox;
 else
-    disp('unlocbox not found. please install.')
+    disp('unlocbox not found. please initialize git submodule via git submodule update --init.')
 end
 
 for ii=1:length(Lr);
@@ -66,8 +67,6 @@ for ii=1:length(Lr);
     
     
     gd=gabfirdual(L, g,a,M);
-    gt=gabfirtight(L, g,a,M);
-
 
     for W=1:3
           
@@ -88,13 +87,6 @@ for ii=1:length(Lr);
                  '%0.5g %s'],rname,L,W,a,b,c,d,p,q,res,fail);
       disp(s)
       
-      % --- Test reconstruction of IDGT using the tight window. ---
-      
-      res=norm(f-idgt(dgt(f,gt,a,M),gt,a),'fro');
-      [test_failed,fail]=ltfatdiditfail(res,test_failed, tolerance);
-      s=sprintf(['TIG %s L:%3i W:%2i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i ' ...
-                 '%0.5g %s'],rname,L,W,a,b,c,d,p,q,res,fail);
-      disp(s);
       
       % Test the real valued transform
       if rtype==1
@@ -129,3 +121,4 @@ end;
 
 warning('on','all');
 close_unlocbox;
+rmpath(([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']));

@@ -1,52 +1,99 @@
-function test_failed = test_gabfirtight()
-%TEST_GABFIRTIGHT Some of the windows returned from firwin are tight
-%   immediatelly. This function tests for that
-test_failed = 0;
+function test_failed=test_gabfirtight
+%TEST_GABFIRDUAL  Test GABFIRTIGHT
 
+      
+Lr=[24,16,144,144];
+ar=[ 4, 4,  8, 12];
+Mr=[ 12, 16, 72, 48];
 
+test_failed=0;
+tolerance=1e-5;
 
 disp(' ===============  TEST_GABFIRTIGHT ================');
 
 disp('--- Used subroutines ---');
 
-which gabwin
-which comp_window
+warning('off','all');
 
-
-shouldBeTight = [...
-    struct('g','sine','a',10,'M',40,'L',[]),...
-    struct('g',{{'sine',40}},'a',10,'M',40,'L',[]),...
-    struct('g',{{'sine',28}},'a',14,'M',40,'L',[]),...
-    struct('g','sine','a',20,'M',40,'L',[]),...
-    struct('g',{{'sine',60}},'a',20,'M',60,'L',[]),...
-    struct('g',{{'sine',54}},'a',18,'M',60,'L',[]),...
-    struct('g',{{'sine',54,'inf'}},'a',18,'M',60,'L',[]),...
-    struct('g','sine','a',5,'M',40,'L',[]),...
-    struct('g','sqrttria','a',5,'M',40,'L',[]),...
-];
-
-shouldNotBeTight = [...
-    struct('g','sine','a',16,'M',40,'L',[]),...
-    struct('g',{{'sine',41}},'a',10,'M',40,'L',[]),...
-    struct('g',{{'sine',26}},'a',10,'M',40,'L',[]),...
-    struct('g','sqrttria','a',40,'M',40,'L',[]),...
-];
-
-
-for ii=1:numel(shouldBeTight)
-    gw = shouldBeTight(ii);
-    
-    [~,info] = gabwin(gw.g,gw.a,gw.M,gw.L);
-    [test_failed,fail]=ltfatdiditfail(~info.istight,test_failed,0);
-    fprintf(['GABFIRISTIGHT g= a=%i M=%i %s\n'],gw.a,gw.M,fail);
-    
+addpath([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']);
+if exist('init_unlocbox.m', 'file')
+    init_unlocbox;
+else
+    disp('unlocbox not found. please initialize git submodule via git submodule update --init.')
 end
 
-for ii=1:numel(shouldNotBeTight)
-    gw = shouldNotBeTight(ii);
+for ii=1:length(Lr);
+
+  L=Lr(ii);
+  
+  M=Mr(ii);
+  a=ar(ii);
+  b=L/M;
+  N=L/a;
+  c=gcd(a,M);
+  d=gcd(b,N);
+  p=a/c;
+  q=M/c;
+  
+
+  for rtype=1:2
+      
+    if rtype==1
+      rname='REAL ';	
+      g=tester_rand(L,1);
+    else
+      rname='CMPLX';	
+      g=tester_crand(L,1);
+    end;
+ 
+    global LTFAT_TEST_TYPE;
+    if strcmpi(LTFAT_TEST_TYPE,'single')
+        C = gabframebounds(g,a,M);
+        while C>1e3
+%             warning(sprintf(['The frame is too badly conditioned '...
+%                              'for single precision. Cond. num. %d. '...
+%                              ' Trying again.'],C));
+                         
+                         if rtype==1
+                             rname='REAL ';
+                             g=tester_rand(L,1);
+                         else
+                             rname='CMPLX';
+                             g=tester_crand(L,1);
+                         end;
+                         C = gabframebounds(g,a,M);
+        end
+    end
     
-    [~,info] = gabwin(gw.g,gw.a,gw.M,gw.L);
-    [test_failed,fail]=ltfatdiditfail(info.istight,test_failed,0);
-    fprintf(['GABFIRISNOTTIGHT g= a=%i M=%i %s\n'],gw.a,gw.M,fail);
-    
-end
+    gt=gabfirtight(L, g,a,M);
+
+
+    for W=1:3
+          
+      if rtype==1
+        f=tester_rand(L,W);
+      else
+        f=tester_crand(L,W);
+      end;
+
+     
+      
+      
+      % --- Test reconstruction of IDGT using the tight window. ---
+      
+      res=norm(f-idgt(dgt(f,gt,a,M),gt,a),'fro');
+      [test_failed,fail]=ltfatdiditfail(res,test_failed, tolerance);
+      s=sprintf(['TIG %s L:%3i W:%2i a:%3i b:%3i c:%3i d:%3i p:%3i q:%3i ' ...
+                 '%0.5g %s'],rname,L,W,a,b,c,d,p,q,res,fail);
+      disp(s);
+      
+
+    end;
+
+  end;  
+
+end;
+
+warning('on','all');
+close_unlocbox;
+rmpath(([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']));
