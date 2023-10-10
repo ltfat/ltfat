@@ -186,8 +186,8 @@ while ~isempty(d)
   
     module_version=ltfat_version;
      
-    % Add the module dir to the path
-    addpath([bp,basedir{1},name]);
+    % Add the module (and all its subdirectories) dir to the path
+    addpath(genpath([bp,basedir{1},name]));
     
     iffound = cellfun(@(iEl) strcmpi(initfilename,iEl{1}),ignored_inits);
     
