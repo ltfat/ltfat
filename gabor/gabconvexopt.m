@@ -424,7 +424,7 @@ if kv.support
         paramPOCS.tol=20*eps;
         paramPOCS.maxit=5000;
         paramPOCS.verbose=flags.do_print+flags.do_debug;
-        paramPOCS.abs_tol=1;
+        %paramPOCS.abs_tol=1;
         g5.prox = @(x,T) pocs(x,G,paramPOCS);
         % g5.prox = @(x,T) ppxa(x,G,paramPOCS);
         % g5.prox = @(x,T) douglas_rachford(x,g2,g4,paramPOCS);

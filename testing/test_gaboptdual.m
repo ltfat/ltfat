@@ -13,8 +13,6 @@ disp(' ===============  TEST_GABOPTDUAL ================');
 
 disp('--- Used subroutines ---');
 
-warning('off','all');
-
 addpath([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']);
 if exist('init_unlocbox.m', 'file')
     init_unlocbox;
@@ -125,6 +123,5 @@ for ii=1:length(Lr);
 
 end;
 
-warning('on','all');
 close_unlocbox;
 rmpath(([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']));

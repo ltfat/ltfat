@@ -13,7 +13,6 @@ disp(' ===============  TEST_GABFIRTIGHT ================');
 
 disp('--- Used subroutines ---');
 
-warning('off','all');
 
 addpath([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']);
 if exist('init_unlocbox.m', 'file')
@@ -94,6 +93,5 @@ for ii=1:length(Lr);
 
 end;
 
-warning('on','all');
 close_unlocbox;
 rmpath(([ltfatbasepath, 'thirdparty', filesep, 'unlocbox']));
