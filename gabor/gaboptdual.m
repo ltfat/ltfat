@@ -110,7 +110,7 @@ function [gd,relres,iter]=gaboptdual(g,a,M,varargin)
 % Author: Nathanael Perraudin
 % Date  : 18 Feb 2014 
     
-if nargin<4
+if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 

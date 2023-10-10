@@ -124,7 +124,7 @@ function [gd,relres,iter] = gabconvexopt(g,a,M,varargin)
 % Date  : 18 Feb 2014
 
 
-if nargin<4
+if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
