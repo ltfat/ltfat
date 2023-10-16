@@ -52,11 +52,16 @@ if strcmp(F.type,'fusion')
         Sf = comp_fusyn(F,c);
         F.frameoperator = Sf;
     end
-    [F.A, F.B] = framebounds(F);
+    try
+        [F.A, F.B] = framebounds(F);
+    catch
+        F.A = nan;
+        F.B = nan;
+    end
     F.istight = 0;
     F.isparseval = 0;
     F.isuniform = 0;
-    if isequal(F.A, F.B) 
+    if ~isnan(F.A) && ~isnan(F.B) && isequal(F.A, F.B) 
         F.istight = 1;
         if F.A == 1
             F.isparseval = 0;
