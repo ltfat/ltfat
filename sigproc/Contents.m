@@ -9,6 +9,7 @@
 %    CRESTFACTOR    -  Compute the crest factor of a signal.
 %    LOWDISCREPANCY -  Compute a low discrepancy sequence.
 %    UQUANT         -  Simulate uniform quantization.
+%    POSTPAD        -  Pad or truncate a vector.
 %
 %  Window functions
 %    FIRWIN         -  FIR windows (Hanning,Hamming,Blackman,...).
