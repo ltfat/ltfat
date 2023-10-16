@@ -42,6 +42,10 @@ if strcmp(F.type,'fusion')
     end;
     F=frame('fusion',F.w,accel_frames{:});
     F.L=L;
+    F = comp_checkfudim(F, L);
+    F.fuana = comp_fuana(F, eye(L));
+    F.fusyn = comp_fusyn(F, eye(L));
+    F.localdual = comp_fudual(F, eye(L));
     return;
 end;
 
