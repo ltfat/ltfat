@@ -46,6 +46,19 @@ if strcmp(F.type,'fusion')
     F.fuana = comp_fuana(F, eye(L));
     F.fusyn = comp_fusyn(F, eye(L));
     F.localdual = comp_fudual(F, eye(L));
+    [F.A, F.B] = framebounds(F.frameoperator);
+    F.istight = 0;
+    F.isparseval = 0;
+    F.isuniform = 0;
+    if isequal(F.A, F.B) 
+        F.istight = 1;
+        if F.A == 1
+            F.isparseval = 0;
+        end
+    end
+    if sum(F.w)/length(w) == 1
+        F.isuniform = 1;
+    end
     return;
 end;
 
