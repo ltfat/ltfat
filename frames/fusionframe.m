@@ -49,7 +49,7 @@ framenumber = numel(frametypes);
 definput.keyvals.weights = ones(framenumber, 1);
 definput.import={'fusionframe'};
 
-[~,kv]=ltfatarghelper({'framenumber'},definput,varargin,'fusionframe');
+[~,kv]=ltfatarghelper({},definput,varargin,'fusionframe');
 
 
 supported_frames = fieldnames(kv);

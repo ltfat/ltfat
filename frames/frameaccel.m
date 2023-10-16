@@ -44,9 +44,15 @@ if strcmp(F.type,'fusion')
     F.L=L;
     F = comp_checkfudim(F, L);
     F.fuana = comp_fuana(F, eye(L));
-    F.fusyn = comp_fusyn(F, eye(L));
+    F.fusyn = comp_fusyn(F, ones(L,F.Nframes));
     F.localdual = comp_fudual(F, eye(L));
-    [F.A, F.B] = framebounds(F.frameoperator);
+    if ~isfield(F, 'frameoperator')
+        Id = eye(F.cdim);
+        c = comp_fuana(F,Id);
+        Sf = comp_fusyn(F,c);
+        F.frameoperator = Sf;
+    end
+    [F.A, F.B] = framebounds(F);
     F.istight = 0;
     F.isparseval = 0;
     F.isuniform = 0;
@@ -56,7 +62,7 @@ if strcmp(F.type,'fusion')
             F.isparseval = 0;
         end
     end
-    if sum(F.w)/length(w) == 1
+    if sum(F.w)/length(F.w) == 1
         F.isuniform = 1;
     end
     return;

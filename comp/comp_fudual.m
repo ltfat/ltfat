@@ -1,4 +1,4 @@
-function FfD = fudual(F, L)
+function FfD = comp_fudual(F, L)
 %FUDUAL dual fusion frame
 %
 %   Input parameters:
@@ -17,7 +17,7 @@ function FfD = fudual(F, L)
 
 complainif_notvalidframeobj(F,'Fudual');
 
-F = checkfudim(F, L);
+F = comp_checkfudim(F, L);
 
 if ~strcmp(F.type, 'fusion')
     error('fudual only works for fusion frames');
@@ -27,8 +27,8 @@ if isfield(F, 'frameoperator')
     Sf = F.frameoperator;
 else
    Id = eye(F.cdim);
-   c = fuana(F,Id);
-   Sf = fusyn(F,c);
+   c = comp_fuana(F,Id);
+   Sf = comp_fusyn(F,c);
    F.frameoperator = Sf;
 end
 
