@@ -1,4 +1,4 @@
-function test_failed=test_dgt_fb
+function test_failed=test_dgt_fb_alg
 %TEST_DGT_FB  Test the filter bank algorithms in DGT
 %
 %  This script runs a throrough test of the DGT routine,
