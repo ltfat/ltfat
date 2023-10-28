@@ -1,40 +1,62 @@
 function ltfatstart(varargin)
+%-*- texinfo -*-
+%@deftypefn {Function} ltfatstart
+%@verbatim
 %LTFATSTART   Start the LTFAT toolbox
 %   Usage:  ltfatstart;
 %
-%   `ltfatstart` starts the LTFAT toolbox. This command must be run
+%   LTFATSTART starts the LTFAT toolbox. This command must be run
 %   before using any of the functions in the toolbox.
 %
 %   To configure default options for functions, you can use the
-%   |ltfatsetdefaults| function in your startup script. A typical startup
-%   file could look like::
+%   LTFATSETDEFAULTS function in your startup script. A typical startup
+%   file could look like:
 %
 %     addpath('/path/to/my/work/ltfat');
 %     ltfatstart;
 %     ltfatsetdefaults('sgram','nocolorbar');
 %
 %   This will add the main LTFAT directory to you path, start the
-%   toolbox, and configure |sgram| to not display the colorbar.
+%   toolbox, and configure SGRAM to not display the colorbar.
 %
 %   The function walks the directory tree and adds a subdirectory 
-%   to path if the directory contain a `[subdirectory,init.m]` 
-%   script setting a `status` variable to some value greater than 0.   
-%   `status==1` identifies a toolbox module any other value just a
+%   to path if the directory contain a [subdirectory,init.m] 
+%   script setting a status variable to some value greater than 0.   
+%   status==1 identifies a toolbox module any other value just a
 %   directory to be added to path.
 %
-%   `ltfatstart(0)` supresses any status messages.
+%   LTFATSTART(0) supresses any status messages.
 %
 %   !!WARNING for MATLAB users!!
 %   ----------------------------
 %
-%   The function indirectly calls `clear all`, which clears all your global
-%   and persistent variables. It comes with calling `javaaddpath` in
+%   The function indirectly calls clear all, which clears all your global
+%   and persistent variables. It comes with calling javaaddpath in
 %   blockproc/blockprocinit.m. You can avoid calling it by passing 
-%   additional `'nojava'` flag.
+%   additional 'nojava' flag.
 %
-%   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
+%@end verbatim
+%@strong{Url}: @url{http://ltfat.github.io/doc/ltfatstart.html}
+%@seealso{ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop}
+%@end deftypefn
 
-%   AUTHOR : Peter L. Søndergaard, Zdenek Prusa
+% Copyright (C) 2005-2022 Peter L. Soendergaard <peter@sonderport.dk> and others.
+% This file is part of LTFAT version 2.5.0
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+%   AUTHOR : Peter L. Soendergaard, Zdenek Prusa
 %   TESTING: NA
 
 %% PKG_ADD: ltfatstart(0); 
@@ -189,33 +211,33 @@ while ~isempty(d)
     % Add the module dir to the path
     addpath([bp,basedir{1},name]);
     
-    iffound = cellfun(@(iEl) strcmpi(initfilename,iEl{1}),ignored_inits);
-    
-    if any(iffound)
-        status = ignored_inits{iffound}{2};
-    else
-        % Execute the init file to see if the status is set.
-        % We are super paranoid co we wrap the call to a try block
-        try
-            run(initfilefullpath);
-        catch
-            % If the run command breaks, it might not cd back to the
-            % original directory. We do it manually here:
-            cd(currdir);
-        end
-    end
-    
-    if status>0
-      % Only store top-level modules
-      if status==1 && strcmp(basedir{1},filesep)
-        nplug=nplug+1;
-        modules{nplug}.name=name;
-        modules{nplug}.version=module_version;
-      end;
-    else
-      % Something failed, restore the path
-      rmpath([bp,basedir{1},name]);
-    end;
+%     iffound = cellfun(@(iEl) strcmpi(initfilename,iEl{1}),ignored_inits);
+%     
+%     if any(iffound)
+%         status = ignored_inits{iffound}{2};
+%     else
+%         % Execute the init file to see if the status is set.
+%         % We are super paranoid co we wrap the call to a try block
+%         try
+%             run(initfilefullpath);
+%         catch
+%             % If the run command breaks, it might not cd back to the
+%             % original directory. We do it manually here:
+%             cd(currdir);
+%         end
+%     end
+%     
+%     if status>0
+%       % Only store top-level modules
+%       if status==1 && strcmp(basedir{1},filesep)
+%         nplug=nplug+1;
+%         modules{nplug}.name=name;
+%         modules{nplug}.version=module_version;
+%       end;
+%     else
+%       % Something failed, restore the path
+%       rmpath([bp,basedir{1},name]);
+%     end;
   end;
   % Remove the just processed dir from the list
   basedir(1) = [];
@@ -254,7 +276,7 @@ if ltfatstartprint
     backend = 'Error with backend, consider running "ltfatmex clean" immediately.';
   end; 
   
-  banner = sprintf(['LTFAT version %s. Copyright 2005-2023 Peter L. Søndergaard. ' ...
+  banner = sprintf(['LTFAT version %s. Copyright 2005-2022 Peter L. Soendergaard. ' ...
                     'For help, please type "ltfathelp". %s'], ...
                    ltfat_version,backend);
   
@@ -286,4 +308,5 @@ ltfatsetdefaults('ltfathelp','versiondata',ltfat_version,...
 % Force the loading of FFTW, necessary for Matlab 64 bit on Linux. Thanks
 % to NFFT for this trick.
 fft([1,2,3,4]);
+
 
