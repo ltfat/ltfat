@@ -1,15 +1,12 @@
 function ltfatstart(varargin)
-%-*- texinfo -*-
-%@deftypefn {Function} ltfatstart
-%@verbatim
 %LTFATSTART   Start the LTFAT toolbox
 %   Usage:  ltfatstart;
 %
-%   LTFATSTART starts the LTFAT toolbox. This command must be run
+%   `ltfatstart` starts the LTFAT toolbox. This command must be run
 %   before using any of the functions in the toolbox.
 %
 %   To configure default options for functions, you can use the
-%   LTFATSETDEFAULTS function in your startup script. A typical startup
+%   |ltfatsetdefaults| function in your startup script. A typical startup
 %   file could look like:
 %
 %     addpath('/path/to/my/work/ltfat');
@@ -17,7 +14,7 @@ function ltfatstart(varargin)
 %     ltfatsetdefaults('sgram','nocolorbar');
 %
 %   This will add the main LTFAT directory to you path, start the
-%   toolbox, and configure SGRAM to not display the colorbar.
+%   toolbox, and configure |sgram| to not display the colorbar.
 %
 %   The function walks the directory tree and adds a subdirectory 
 %   to path if the directory contain a [subdirectory,init.m] 
@@ -25,7 +22,7 @@ function ltfatstart(varargin)
 %   status==1 identifies a toolbox module any other value just a
 %   directory to be added to path.
 %
-%   LTFATSTART(0) supresses any status messages.
+%   `ltfatstart(0)` supresses any status messages.
 %
 %   !!WARNING for MATLAB users!!
 %   ----------------------------
@@ -33,30 +30,9 @@ function ltfatstart(varargin)
 %   The function indirectly calls clear all, which clears all your global
 %   and persistent variables. It comes with calling javaaddpath in
 %   blockproc/blockprocinit.m. You can avoid calling it by passing 
-%   additional 'nojava' flag.
-%
-%@end verbatim
-%@strong{Url}: @url{http://ltfat.github.io/doc/ltfatstart.html}
-%@seealso{ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop}
-%@end deftypefn
+%   additional `'nojava'` flag.
 
-% Copyright (C) 2005-2022 Peter L. Soendergaard <peter@sonderport.dk> and others.
-% This file is part of LTFAT version 2.5.0
-%
-% This program is free software: you can redistribute it and/or modify
-% it under the terms of the GNU General Public License as published by
-% the Free Software Foundation, either version 3 of the License, or
-% (at your option) any later version.
-%
-% This program is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% GNU General Public License for more details.
-%
-% You should have received a copy of the GNU General Public License
-% along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-%   AUTHOR : Peter L. Soendergaard, Zdenek Prusa
+%   AUTHOR : Peter L. Søndergaard, Zdenek Prusa, Clara Hollomey
 %   TESTING: NA
 
 %% PKG_ADD: ltfatstart(0); 
@@ -276,7 +252,7 @@ if ltfatstartprint
     backend = 'Error with backend, consider running "ltfatmex clean" immediately.';
   end; 
   
-  banner = sprintf(['LTFAT version %s. Copyright 2005-2022 Peter L. Soendergaard. ' ...
+  banner = sprintf(['LTFAT version %s. Copyright 2005-2023 Peter L. Søndergaard. ' ...
                     'For help, please type "ltfathelp". %s'], ...
                    ltfat_version,backend);
   
