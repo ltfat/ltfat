@@ -1,0 +1,27 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing LTFAT 🚀
+on: [push]
+jobs:
+  testLTFAT:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update
+        run: sudo apt-get update
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - name: Update submodules
+        run: git submodule update --init
+      - name: Install Octave dev
+        run: sudo apt-get install -y liboctave-dev
+      - name: Install Octave
+        run: sudo apt-get install octave
+#      - name: Start octave
+#        run: |
+#         echo "pkg install 'https://github.com/ltfat/ltfat/releases/download/v2.6.0/ltfat-2.6.0-of.tar.gz'; pkg load ltfat; test_all_ltfat; " | octave-cli
+# octave
+#octave pkg install "https://github.com/ltfat/ltfat/releases/download/v2.6.0/ltfat-2.6.0-of.tar.gz"
+#octave pkg load ltfat
+#g = randn(144,1);
+#g = double(g); 
+#G=frsynmatrix(frame('dgt',g,a,M),length(g)); 
+#(G*G')^(1/2);

@@ -7,7 +7,7 @@ function ltfatstart(varargin)
 %
 %   To configure default options for functions, you can use the
 %   |ltfatsetdefaults| function in your startup script. A typical startup
-%   file could look like::
+%   file could look like:
 %
 %     addpath('/path/to/my/work/ltfat');
 %     ltfatstart;
@@ -17,9 +17,9 @@ function ltfatstart(varargin)
 %   toolbox, and configure |sgram| to not display the colorbar.
 %
 %   The function walks the directory tree and adds a subdirectory 
-%   to path if the directory contain a `[subdirectory,init.m]` 
-%   script setting a `status` variable to some value greater than 0.   
-%   `status==1` identifies a toolbox module any other value just a
+%   to path if the directory contain a [subdirectory,init.m] 
+%   script setting a status variable to some value greater than 0.   
+%   status==1 identifies a toolbox module any other value just a
 %   directory to be added to path.
 %
 %   `ltfatstart(0)` supresses any status messages.
@@ -27,14 +27,12 @@ function ltfatstart(varargin)
 %   !!WARNING for MATLAB users!!
 %   ----------------------------
 %
-%   The function indirectly calls `clear all`, which clears all your global
-%   and persistent variables. It comes with calling `javaaddpath` in
+%   The function indirectly calls clear all, which clears all your global
+%   and persistent variables. It comes with calling javaaddpath in
 %   blockproc/blockprocinit.m. You can avoid calling it by passing 
 %   additional `'nojava'` flag.
-%
-%   See also:  ltfatsetdefaults, ltfatmex, ltfathelp, ltfatstop
 
-%   AUTHOR : Peter L. Søndergaard, Zdenek Prusa
+%   AUTHOR : Peter L. Søndergaard, Zdenek Prusa, Clara Hollomey
 %   TESTING: NA
 
 %% PKG_ADD: ltfatstart(0); 
@@ -189,33 +187,33 @@ while ~isempty(d)
     % Add the module dir to the path
     addpath([bp,basedir{1},name]);
     
-    iffound = cellfun(@(iEl) strcmpi(initfilename,iEl{1}),ignored_inits);
-    
-    if any(iffound)
-        status = ignored_inits{iffound}{2};
-    else
-        % Execute the init file to see if the status is set.
-        % We are super paranoid co we wrap the call to a try block
-        try
-            run(initfilefullpath);
-        catch
-            % If the run command breaks, it might not cd back to the
-            % original directory. We do it manually here:
-            cd(currdir);
-        end
-    end
-    
-    if status>0
-      % Only store top-level modules
-      if status==1 && strcmp(basedir{1},filesep)
-        nplug=nplug+1;
-        modules{nplug}.name=name;
-        modules{nplug}.version=module_version;
-      end;
-    else
-      % Something failed, restore the path
-      rmpath([bp,basedir{1},name]);
-    end;
+%     iffound = cellfun(@(iEl) strcmpi(initfilename,iEl{1}),ignored_inits);
+%     
+%     if any(iffound)
+%         status = ignored_inits{iffound}{2};
+%     else
+%         % Execute the init file to see if the status is set.
+%         % We are super paranoid co we wrap the call to a try block
+%         try
+%             run(initfilefullpath);
+%         catch
+%             % If the run command breaks, it might not cd back to the
+%             % original directory. We do it manually here:
+%             cd(currdir);
+%         end
+%     end
+%     
+%     if status>0
+%       % Only store top-level modules
+%       if status==1 && strcmp(basedir{1},filesep)
+%         nplug=nplug+1;
+%         modules{nplug}.name=name;
+%         modules{nplug}.version=module_version;
+%       end;
+%     else
+%       % Something failed, restore the path
+%       rmpath([bp,basedir{1},name]);
+%     end;
   end;
   % Remove the just processed dir from the list
   basedir(1) = [];
@@ -286,4 +284,5 @@ ltfatsetdefaults('ltfathelp','versiondata',ltfat_version,...
 % Force the loading of FFTW, necessary for Matlab 64 bit on Linux. Thanks
 % to NFFT for this trick.
 fft([1,2,3,4]);
+
 

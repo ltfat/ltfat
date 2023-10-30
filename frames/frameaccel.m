@@ -42,6 +42,34 @@ if strcmp(F.type,'fusion')
     end;
     F=frame('fusion',F.w,accel_frames{:});
     F.L=L;
+    F = comp_checkfudim(F, L);
+    F.fuana = comp_fuana(F, eye(L));
+    F.fusyn = comp_fusyn(F, ones(L,F.Nframes));
+    F.localdual = comp_fudual(F, eye(L));
+    if ~isfield(F, 'frameoperator')
+        Id = eye(F.cdim);
+        c = comp_fuana(F,Id);
+        Sf = comp_fusyn(F,c);
+        F.frameoperator = Sf;
+    end
+    try
+        [F.A, F.B] = framebounds(F);
+    catch
+        F.A = nan;
+        F.B = nan;
+    end
+    F.istight = 0;
+    F.isparseval = 0;
+    F.isuniform = 0;
+    if ~isnan(F.A) && ~isnan(F.B) && isequal(F.A, F.B) 
+        F.istight = 1;
+        if F.A == 1
+            F.isparseval = 0;
+        end
+    end
+    if sum(F.w)/length(F.w) == 1
+        F.isuniform = 1;
+    end
     return;
 end;
 
