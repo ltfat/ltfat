@@ -54,11 +54,11 @@ function c=zak(f,a);
 complainif_argnonotinrange(nargin,2,2,mfilename);
 
 if (prod(size(a))~=1 || ~isnumeric(a))
-  error([callfun,': a must be a scalar']);
+  error([mfilename,': a must be a scalar']);
 end;
 
 if rem(a,1)~=0
-  error([callfun,': a must be an integer']);
+  error([mfilename,': a must be an integer']);
 end;
 
 

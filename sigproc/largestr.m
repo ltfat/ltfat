@@ -57,16 +57,23 @@ end;
 wascell=iscell(xi);
 
 if wascell
-  [xi,shape]=cell2vec(xi);
+  %[xi,shape]=cell2vec(xi);
+  xi = cell2mat(xi);
 end;
 
 % Determine the size of the array.
 ss=numel(xi);
 
-N=round(ss*p);
+% Determine if p was given as a fraction or as an integer
+if floor(p)==p
+    N = p;
+else
+    N=round(ss*p);
+end
   
 [xo,Nout]=largestn(xi,N,flags.outclass,flags.iofun);
 
 if wascell
-  xo=vec2cell(xo,shape);
+  %xo=vec2cell(xo,shape);
+  xo = mat2cell(xo,size(xo,1), size(xo,2));
 end;

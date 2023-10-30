@@ -1,4 +1,4 @@
-function [g,info] = wilwin(g,M,L,callfun);
+function [g,info] = wilwin(g,M,L, varargin)
 %WILWIN  Compute a Wilson/WMDCT window from text or cell array
 %   Usage: [g,info] = wilwin(g,M,L);
 %
@@ -124,22 +124,24 @@ if ischar(g)
   winname=lower(g);
   switch(winname)
    case {'pgauss','gauss'}
-    complain_L(L,callfun);
+    complain_L(L,mfilename);
     g=comp_pgauss(L,2*M*M/L,0,0);
     info.gauss=1;
     info.tfr=2*M*M/L;
    case {'psech','sech'}
-    complain_L(L,callfun);
+    complain_L(L,mfilename);
     g=psech(L,2*M*M/L);
+    a = 2*M;
     info.tfr=a*M/L;
    case {'dualgauss','gaussdual'}
-    complain_L(L,callfun);
+    complain_L(L,mfilename);
     g=comp_pgauss(L,2*M*M/L,0,0);
     g=wildual(g,M);
     info.isdual=1;
+    a = 2*M;
     info.tfr=a*M/L;
    case {'tight'}
-    complain_L(L,callfun);
+    complain_L(L,mfilename);
     g=wilorth(M,L);
     info.tfr=2*M*M/L;
     info.istight=1;
@@ -150,7 +152,7 @@ if ischar(g)
       info.istight=1;
     end;
    otherwise
-    error('%s: Unknown window type: %s',callfun,winname);
+    error('%s: Unknown window type: %s',mfilename,winname);
   end;
 end;
 
@@ -163,15 +165,15 @@ if iscell(g)
   
   switch(winname)
    case {'pgauss','gauss'}
-    complain_L(L,callfun);
+    complain_L(L,mfilename);
     [g,info.tfr]=pgauss(L,g{2:end});
     info.gauss=1;
    case {'psech','sech'}
-    complain_L(L,callfun);
+    complain_L(L,mfilename);
     [g,info.tfr]=psech(L,g{2:end});    
    case {'dual'}
     gorig = g{2};  
-    [g,info.auxinfo] = wilwin(gorig,M,L,callfun);    
+    [g,info.auxinfo] = wilwin(gorig,M,L,mfilename);    
     g = wildual(g,M,L);
     
     % gorig can be string or cell array
@@ -182,7 +184,7 @@ if iscell(g)
     info.isdual=1;
    case {'tight'}
     gorig = g{2};
-    [g,info.auxinfo] = wilwin(g{2},M,L,callfun);    
+    [g,info.auxinfo] = wilwin(g{2},M,L,mfilename);    
     g = wilorth(g,M,L);  
     % gorig can be string or cell array
     if info.auxinfo.isfir && test_isfir(gorig,M)
@@ -220,11 +222,11 @@ if (~isempty(L) && (info.gl<L))
   info.isfir=1;
 end;
 
-function complain_L(L,callfun)
+function complain_L(L,mfilename)
   
   if isempty(L)
     error(['%s: You must specify a length L if a window is represented as a ' ...
-           'text string or cell array.'],callfun);
+           'text string or cell array.'],mfilename);
   end;
   
   function isfir=test_isfir(gorig,M)
