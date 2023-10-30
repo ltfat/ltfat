@@ -1,3 +1,7 @@
+function test_failed = test_hermbasis()
+
+test_failed = 0;
+
 Lr=[100,101,102,103];
 
 test_failed=0;
