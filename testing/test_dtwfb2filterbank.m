@@ -1,7 +1,7 @@
 function test_failed = test_dtwfb2filterbank
 % This test only 
 test_failed = 0;
-disp('========= TEST DTWFB ============');
+disp('========= TEST DTWFB2FILTERBANK ============');
 global LTFAT_TEST_TYPE;
 tolerance = 3e-8;
 if strcmpi(LTFAT_TEST_TYPE,'single')
