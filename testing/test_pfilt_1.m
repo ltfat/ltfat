@@ -10,7 +10,7 @@ ar =[3,3, 5, 5, 1, 3];
 
 test_failed=0;
 
-disp(' ===============  TEST_PFILT ==============');
+disp(' ===============  TEST_PFILT_1 ==============');
 
 disp('--- Used subroutines ---');
 
