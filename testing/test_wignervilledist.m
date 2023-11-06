@@ -3,7 +3,7 @@ Lr = [1, 19, 20];
 
 test_failed = 0;
 
-disp(' ===============  TEST_WIGERVILLEDIST ==============');
+disp(' ===============  TEST_WIGNERVILLEDIST ==============');
 
 for ii = 1: length(Lr)
   L = Lr(ii);
