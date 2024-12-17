@@ -4,7 +4,7 @@ function test_failed = test_uwfbt(verbose)
 % Checks perfect reconstruction of the general wavelet transform of different
 % filters
 %
-disp('========= TEST UWPFBT ============');
+disp('========= TEST UWFBT ============');
 global LTFAT_TEST_TYPE;
 tolerance = 1e-8;
 if strcmpi(LTFAT_TEST_TYPE,'single')

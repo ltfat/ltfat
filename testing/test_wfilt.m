@@ -166,7 +166,7 @@ w = {
 
 
 globtol = 5e-8;
-disp('--------------TEST_WFIL-------------------');
+disp('--------------TEST_WFILT-------------------');
 
 
 exttype = {'per','odd','even','zero'};

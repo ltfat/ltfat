@@ -1,4 +1,4 @@
-function test_failed=test_pfilt
+function test_failed=test_pfilt_1
 %
 %
 %   This is the old test_pfilt from before the struct filters was
@@ -10,7 +10,7 @@ ar =[3,3, 5, 5, 1, 3];
 
 test_failed=0;
 
-disp(' ===============  TEST_PFILT ==============');
+disp(' ===============  TEST_PFILT_1 ==============');
 
 disp('--- Used subroutines ---');
 

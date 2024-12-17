@@ -124,7 +124,7 @@ function [gd,relres,iter] = gabconvexopt(g,a,M,varargin)
 % Date  : 18 Feb 2014
 
 
-if nargin<4
+if nargin<3
   error('%s: Too few input parameters.',upper(mfilename));
 end;
 
@@ -375,9 +375,18 @@ if flags.do_tight
 else
 % - projection on a B2 ball -
     % Frame-type matrix of the adjoint lattice
-    %G=tfmat('dgt',glong,M,a);
-    Fal=frame('dgt',glong,M,a);
-    G=framematrix(Fal,L);
+    %switching the role of a and M (see ltfatnote 020)
+    Ncoef = a/M*L;
+    lt = [0 1];
+    do_timeinv = 0;
+    tmpf = zeros(Ncoef,1); tmpf(1) = 1; 
+    G = zeros(L,Ncoef);
+    for n = 1:Ncoef
+        coef = reshape(tmpf, [a, size(tmpf,1)/a,size(tmpf,2)]);
+        G(:,n) = comp_idgt(coef,g,M, lt, do_timeinv, 0); 
+        tmpf = circshift(tmpf,1);
+    end
+    %assert(norm(Gold-G)< 10^(-15))
     d=[a/M;zeros(a*b-1,1)];
     
     % Using a B2 ball projection
@@ -415,7 +424,7 @@ if kv.support
         paramPOCS.tol=20*eps;
         paramPOCS.maxit=5000;
         paramPOCS.verbose=flags.do_print+flags.do_debug;
-        paramPOCS.abs_tol=1;
+        %paramPOCS.abs_tol=1;
         g5.prox = @(x,T) pocs(x,G,paramPOCS);
         % g5.prox = @(x,T) ppxa(x,G,paramPOCS);
         % g5.prox = @(x,T) douglas_rachford(x,g2,g4,paramPOCS);
@@ -423,8 +432,16 @@ if kv.support
         g5.eval = @(x) 0;
 
     else
-        Fal=frame('dgt',glong,M,a);
-        G=framematrix(Fal,L);
+        %switching the role of a and M (see ltfatnote 020)
+        Ncoef = a/M*L;
+        lt = [0 1];
+        do_timeinv = 0;
+        tmpf = zeros(Ncoef,1); tmpf(1) = 1;    
+          for n = 1:Ncoef
+              coef = reshape(tmpf, [a, size(tmpf,1)/a,size(tmpf,2)]);
+              G(:,n) = comp_idgt(coef,g,M, lt, do_timeinv, 0); 
+              tmpf = circshift(tmpf,1);
+          end
         d=[a/M;zeros(a*b-1,1)];
         Lfirst=ceil(Ldual/2);
         Llast=Ldual-Lfirst;
@@ -604,8 +621,8 @@ end
     % solving the problem
     
     if nb_priors
-        [gd,iter,~]=ppxa(xin,F,param);
-        
+        [gd,info]=ppxa(xin,F,param);
+        iter = info.iter;
         % Force the hard constraint
         if flags.do_hardconstraint
             % In case of use of the douglas rachford algo instead of POCS
@@ -660,4 +677,94 @@ end
 function x=forceeven(x)
 % this function force the signal to be even
    x=  (x+involute(x))/2;
+end
+
+function [ sol ] = proj_dual( x,~, param )
+%PROJ_DUAL projection onto the dual windows space
+%   Usage:  sol=proj_proj(x, ~, param)
+%           [sol, infos]=proj_b2(x, ~, param)
+%
+%   Input parameters:
+%         x     : Input signal.
+%         param : Structure of optional parameters.
+%   Output parameters:
+%         sol   : Solution.
+%         infos : Structure summarizing informations at convergence
+%
+%   `proj_dual(x,~,param)` solves:
+%
+%   .. sol = argmin_{z} ||x - z||_2^2   s.t.  A z=y
+%
+%   .. math::  sol = \min_z ||x - z||_2^2 \hspace{1cm} s.t. \hspace{1cm} A z= y
+%
+%   param is a Matlab structure containing the following fields:
+%
+%   * *param.y* : measurements (default: 0).
+%
+%   * *param.A* : Matrix (default: Id).
+%
+%   * *param.AAtinv* : $(A A^*)^(-1)$ Define this parameter to speed up computation.
+%
+%   * *param.verbose* : 0 no log, 1 a summary at convergence, 2 print main
+%     steps (default: 1)
+%
+%
+%   infos is a Matlab structure containing the following fields:
+%
+%   * *infos.algo* : Algorithm used
+%
+%   * *infos.iter* : Number of iteration
+%
+%   * *infos.time* : Time of execution of the function in sec.
+%
+%   * *infos.final_eval* : Final evaluation of the function
+%
+%   * *infos.crit* : Stopping critterion used 
+%
+%   * *infos.residue* : Final residue  
+%
+%
+%   Rem: The input "~" is useless but needed for compatibility issue.
+%
+%   See also:  prox_l2 proj_b1
+%
+%   References: fadili2009monotone
+
+%
+% Author: Nathanael Perraudin
+% Date: Feb 20, 2013
+%
+
+% Start the time counter
+t1 = tic;
+
+% Optional input arguments
+%if ~isfield(param, 'y'), param.y = 0; end
+%if ~isfield(param, 'A'), param.A = eye(length(x)); end
+%if ~isfield(param, 'AAtinv'), param.AAtinv=pinv(A*At); end
+%if ~isfield(param, 'verbose'), param.verbose = 1; end
+
+
+% Projection  
+   
+sol = x - param.A'*param.AAtinv*(param.A*x-param.y);
+crit = 'TOL_EPS'; iter = 0; u = NaN;
+    
+
+
+% Log after the projection onto the L2-ball
+error=norm(param.y-param.A *sol );
+if param.verbose >= 1
+    fprintf(['  Proj. dual windows: ||y-Ax||_2 = %e,', ...
+        ' %s, iter = %i\n'],error , crit, iter);
+end
+
+% Infos about algorithm
+infos.algo=mfilename;
+infos.iter=iter;
+infos.final_eval=error;
+infos.crit=crit;
+infos.residue=u;
+infos.time=toc(t1);
+
 end

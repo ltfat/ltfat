@@ -1,0 +1,3 @@
+[submodule "thirdparty/unlocbox"]
+	path = thirdparty/unlocbox
+	url = https://github.com/epfl-lts2/unlocbox.git
