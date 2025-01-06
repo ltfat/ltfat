@@ -115,7 +115,7 @@ Version 2.0.1
 
 -------- LTFAT 2.0 ---------------------------------------------
 
-Main features of LTFAT 2.0 are the the wavelets module, the frames 
+Main features of LTFAT 2.0 are the wavelets module, the frames 
 framework and the real-time block processing framework.
 
 Actual news:
@@ -166,7 +166,7 @@ Version 1.4.2
 
 * The filterbanks algorithms are now much faster because all the algorithms have been implemented in the C backend
   
-* franalasso can now use the the FISTA algorithm
+* franalasso can now use the FISTA algorithm
 
 * A generalization of the Goertzel algorithm "gga" has been added". 
 
