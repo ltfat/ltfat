@@ -261,7 +261,7 @@ end
 
 % Construct function handle for filter prototype and determine its ERB-type
 % bandwidth
-[filterfunc,winbw] = helper_filtergeneratorfunc(...
+[filterfunc,winbw] = helper_filtergeneratorfunc_fir(...
                           flags.wintype,winCell,fs,kv.bwmul,kv.min_win,kv.trunc_at,...
                           flags.audscale,flags.do_subprec,flags.do_symmetric,flags.do_warped);
 
@@ -288,7 +288,7 @@ end
 
 % Center frequencies are given as equidistantly spaced points on auditory 
 % scale 
-fc=audspace(fmin,fmax,innerChanNum,flags.audscale).';
+fc = audspace(fmin,fmax,innerChanNum,flags.audscale).';
 fc = [0;fc;fs/2];
 M2 = innerChanNum+2;
 
@@ -299,55 +299,25 @@ ind = (2:M2-1)';
 fsupp=zeros(M2,1);
 aprecise=zeros(M2,1);
 
-if flags.do_symmetric
-    fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
-    
-    % Generate lowpass filter parameters     
-    fsupp(1) = 0; % Placeholder value 
-    % Determine border of passband
-    fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
-    % Determine lowpass width
-    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
-    % Determine bandwidth-adapted decimation factor
-    aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);  
-    
-    % Generate highpass filter parameters     
-    fsupp(end) = 0; % Placeholder value
-    % Determine border of passband
-    fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
-    % Determine highpass width
-    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
-    % Determine bandwidth-adapted decimation factor
-    aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
-else    
-    % fsupp_scale is measured on the selected auditory scale
-    % The scaling is incorrect, it does not account for the warping (NH:
-    % I do think it is correct.)
-    fsupp_scale=1/winbw*kv.bwmul;
+fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
 
-    % Convert fsupp into the correct widths in Hz, necessary to compute
-    % "a" in the next if-statement
-    fsupp(ind)=audtofreq(freqtoaud(fc(ind),flags.audscale)+fsupp_scale/2,flags.audscale)-...
-               audtofreq(freqtoaud(fc(ind),flags.audscale)-fsupp_scale/2,flags.audscale);
-    
-    % Generate lowpass filter parameters     
-    fsupp(1) = 0; % Placeholder value
-    % Determine border of passband
-    fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
-    % Determine lowpass width
-    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
-    % Determine bandwidth-adapted decimation factor
-    aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);
-    
-    % Generate highpass filter parameters     
-    fsupp(end) = 0; % Placeholder value
-    % Determine border of passband
-    fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
-    % Determine highpass width
-    fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
-    % Determine bandwidth-adapted decimation factor
-    aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
-end;
+% Generate lowpass filter parameters     
+fsupp(1) = 0; % Placeholder value 
+% Determine border of passband
+fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+% Determine lowpass width
+fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+% Determine bandwidth-adapted decimation factor
+aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);  
+
+% Generate highpass filter parameters     
+fsupp(end) = 0; % Placeholder value
+% Determine border of passband
+fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale);% f_{p,s}^{+}
+% Determine highpass width
+fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+% Determine bandwidth-adapted decimation factor
+aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
 
 % Do not allow lower bandwidth than keyvals.min_win
 fsuppmin = kv.min_win/Ls*fs;
@@ -426,7 +396,8 @@ end;
 % This is actually much faster than the vectorized call.
 g = cell(1,numel(fc));
 for m=ind.'
-    g{m}=filterfunc(ceil(fsupp(m)/winbw),fc(m),scal(m));
+    g{m}=filterfunc(ceil(winbw/fsupp(m)*fs*16),fc(m)); % why the hell 16 ?!
+    %g{m}.h = postpad(g{m}.h,Ls);
 end
 
 % Generate lowpass filter

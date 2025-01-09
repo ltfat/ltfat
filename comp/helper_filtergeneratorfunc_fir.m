@@ -1,21 +1,25 @@
 function [filterfunc,winbw] = helper_filtergeneratorfunc_fir(wintype,winCell,fs,bwmul,min_win,trunc_at,audscale,do_subprec,do_symmetric,do_warped)
 firwinflags=getfield(arg_firwin,'flags','wintype');
-probeLs = 10000;
-probeLg = 100;
+freqwinflags=getfield(arg_freqwin,'flags','wintype');
+probeLs = fs;
+probeLg = 5000;
 
 subprecflag = 'pedantic';
 if ~do_subprec, subprecflag = 'nopedantic'; end
 
-switch flags.wintype
+switch wintype
     case firwinflags
+        % probe prototype window full length
         g_probe = fir2long(firwin(wintype,probeLg),probeLs);
+        % peak normalize
         gf_probe = fft(g_probe)/max(abs(fft(g_probe)));
-        winbw = probeLg*norm(gf_probe).^2/probeLs;
-        % This is the ERB-type bandwidth of the prototype
+        % compute ERB-type bandwidth of the prototype
+        winbw = norm(gf_probe).^2*probeLg/probeLs/4; % in normalized frequency
+        %winbw = norm(gf_probe).^2/(probebw*probeLg/2);
 
-        if flags.do_symmetric
+        if do_symmetric
             filterfunc = @(fsupp,fc)... 
-                         firfilter(winCell{1},fsupp,fc);
+                         firfilter(winCell{1},fsupp,fc/fs*2,'1');
         else
             fsupp_scale=1/winbw*kv.bwmul;
             filterfunc = @(fsupp,fc,scal)...

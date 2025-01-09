@@ -79,8 +79,10 @@ end
 function [glow,infolow] = wavelet_lowpass_repeat(winCell,scales_sorted,L,delayvec,lowpass_number,lowpass_at_zero,scal,kv,flags)
 
 % Compute frequency range to be covered and step between lowpass filters
-LP_range = 0.1/scales_sorted(1);
-LP_step = abs(0.1/scales_sorted(2)-LP_range);
+LP_range = 0.1/scales_sorted(1); % freqmin
+LP_step = abs(0.1/scales_sorted(2)-LP_range); % b = (fmin+1 - fmin) wenn der letzte dann zu nah ist (<b/2) oder firekt bei 0 dann mit 1/sqrt(2)
+
+% skala auf hertz und hertz auf skala und bandbreiten (audfilterbw)
 
 % Distinguish between positive and negative scales
 if scales_sorted(1)>0
