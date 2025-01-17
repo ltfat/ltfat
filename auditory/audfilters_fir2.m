@@ -1,4 +1,4 @@
-function [g,a,fc,L,info]=audfilters_fir(fs,Ls,varargin)
+ function [g,a,fc,L,info]=audfilters_fir2(fs,Ls,varargin)
 %AUDFILTERS Generates filters equidistantly spaced on auditory frequency scales
 %   Usage:  [g,a,fc,L]=audfilters(fs,Ls);
 %           [g,a,fc,L]=audfilters(fs,Ls,...);
@@ -190,7 +190,7 @@ freqwinflags=getfield(arg_freqwin,'flags','wintype');
 definput.flags.wintype = [ firwinflags, freqwinflags];
 definput.keyvals.M=[];
 definput.keyvals.redmul=1;
-definput.keyvals.min_win = 4;
+definput.keyvals.min_win = 1000;
 definput.keyvals.bwmul=[];
 definput.keyvals.spacing=[];
 definput.keyvals.trunc_at=10^(-5);
@@ -286,13 +286,19 @@ if fmax <= fmin || fmin > fs/4 || fmax < fs/4
     error(['%s: Bad combination of fs, fmax and fmin.'],upper(mfilename));
 end
 
+%%%%%%%%%%%%%%%%%% CHANGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Center frequencies are given as equidistantly spaced points on auditory 
 % scale 
 fc = audspace(fmin,fmax,innerChanNum,flags.audscale).';
-fc = [0;fc;fs/2];
-M2 = innerChanNum+2;
+fc = [fc;fs/2];
+M2 = innerChanNum+1;
 
-ind = (2:M2-1)';
+ind = (1:M2-1)';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %% Compute the frequency support
 % fsupp is measured in Hz 
 
@@ -301,14 +307,14 @@ aprecise=zeros(M2,1);
 
 fsupp(ind)=audfiltbw(fc(ind),flags.audscale)/winbw*kv.bwmul;
 
-% Generate lowpass filter parameters     
-fsupp(1) = 0; % Placeholder value 
-% Determine border of passband
-fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
-% Determine lowpass width
-fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
-% Determine bandwidth-adapted decimation factor
-aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);  
+% % Generate lowpass filter parameters     
+% fsupp(1) = 0; % Placeholder value 
+% % Determine border of passband
+% fps0 = audtofreq(freqtoaud(fc(2),flags.audscale)+3*kv.spacing,flags.audscale);% f_{p,s}^{-}
+% % Determine lowpass width
+% fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
+% % Determine bandwidth-adapted decimation factor
+% aprecise(1) = max(fs./(2*max(fps0,0)+fsupp_temp1*kv.redmul),1);  
 
 % Generate highpass filter parameters     
 fsupp(end) = 0; % Placeholder value
@@ -318,14 +324,6 @@ fps0 = audtofreq(freqtoaud(fc(end-1),flags.audscale)-3*kv.spacing,flags.audscale
 fsupp_temp1 = audfiltbw(fps0,flags.audscale)/winbw*kv.bwmul;
 % Determine bandwidth-adapted decimation factor
 aprecise(end) = max(fs./(2*(fc(end)-min(fps0,fs/2))+fsupp_temp1*kv.redmul),1);
-
-% Do not allow lower bandwidth than keyvals.min_win
-fsuppmin = kv.min_win/Ls*fs;
-for ii = 1:numel(fsupp)
-    if fsupp(ii) < fsuppmin;
-        fsupp(ii) = fsuppmin;
-    end
-end
 
 % Find suitable channel subsampling rates
 aprecise(ind)=fs./fsupp(ind)/kv.redmul;
@@ -365,7 +363,7 @@ elseif flags.do_uniform
     a=floor(min(aprecise));
     L=filterbanklength(Ls,a);
     a = repmat(a,M2,1);
-end;
+end
 
 % Get an expanded "a" / Convert "a" to LTFAT 2-column fractional format
 afull=comp_filterbank_a(a,M2,struct());
@@ -389,18 +387,58 @@ else
     fc  =[fc; -flipud(fc(2:M2-1))];
     fsupp=[fsupp;flipud(fsupp(2:M2-1))];
     ind = [ind;numel(fc)+2-(M2-1:-1:2)'];
-end;
+end
+
+
+%%%%%%%%%%%%%%%%%%%%% NEW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Do not allow longer support length than keyvals.min_win
+
+% time supports (w/o high-pass)
+tsupp = ceil(winbw./fsupp(1:end-1)*fs*16); 
+
+% all channels that have to be shortened
+ind_crit = find(tsupp(1:end-1) >= kv.min_win); 
+
+% the center frequency for the last valid channel
+fc_crit = fc(ind_crit(end)+1); 
+
+% the frequency step from the previous to the last valid fc 
+LP_step = (fc(ind_crit(end)+2) - fc_crit)-0.8;
+
+% number of bands needed to get to 0
+LP_num = floor(fc_crit/LP_step); 
+res = fc_crit/LP_step - LP_num;
+
+% center frequencies of the lp and hp filters
+fc_low = linspace((fc_crit - LP_step), res, LP_num)'; 
+fc_high = fc(ind_crit(end)+1:end);
+fc = [fc_low;fc_high];
+
+tsuppmax = tsupp(ind_crit(end)+1);
+tsupp_low = ones(LP_num,1)*tsuppmax;
+tsupp_high = tsupp(ind_crit(end)+1:end);
+tsupp = [tsupp_low;tsupp_high];
+
+M2 = length(fc);
+ind = (1:M2-1)';
+
+%LP_range = 0.1/scales_sorted(1); % freqmin
+%LP_step = abs(0.1/scales_sorted(2)-LP_range); % b = (fmin+1 - fmin) wenn der letzte dann zu nah ist (<b/2) oder firekt bei 0 dann mit 1/sqrt(2)
 
 
 %% Compute the filters
 % This is actually much faster than the vectorized call.
 g = cell(1,numel(fc));
 for m=ind.'
-    g{m}=filterfunc(ceil(winbw/fsupp(m)*fs*16),fc(m)); % why the hell 16 ?!
+    g{m}=filterfunc(tsupp(m),fc(m));
 end
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Generate lowpass filter
-g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(1),kv,flags);
+%g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(1),kv,flags);
 
 % Generate highpass filter
 g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(M2),kv,flags);
@@ -463,9 +501,8 @@ if ~isempty(kv.redtar)
     end
     g_new = filterbankscale(g,sqrt(scal_new)'); % Perform rescaling
     %if flags.do_regsampling
-    %    a = a_new(:,1);
+    a = a_new;
     %else
-        a = a_new;
     %end
     g = g_new;
     if 0
@@ -475,6 +512,8 @@ if ~isempty(kv.redtar)
         fprintf('Actual redundancy: %g \n', new_red);
     end
 end
+
+a = a(1:M2);
 
 winbwrat = winbw/0.754;
 basebw = 1.875657;
