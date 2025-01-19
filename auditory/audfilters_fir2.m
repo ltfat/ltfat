@@ -400,25 +400,28 @@ tsupp = ceil(winbw./fsupp(1:end-1)*fs*16);
 % all channels that have to be shortened
 ind_crit = find(tsupp(1:end-1) >= kv.min_win); 
 
-% the center frequency for the last valid channel
-fc_crit = fc(ind_crit(end)+1); 
+if ~isempty(ind_crit)
+    % the center frequency for the last valid channel
+    fc_crit = fc(ind_crit(end)+1);
 
-% the frequency step from the previous to the last valid fc 
-LP_step = (fc(ind_crit(end)+2) - fc_crit)-0.8;
 
-% number of bands needed to get to 0
-LP_num = floor(fc_crit/LP_step); 
-res = fc_crit/LP_step - LP_num;
+    % the frequency step from the previous to the last valid fc 
+    LP_step = (fc(ind_crit(end)+2) - fc_crit)-0.8;
 
-% center frequencies of the lp and hp filters
-fc_low = linspace((fc_crit - LP_step), res, LP_num)'; 
-fc_high = fc(ind_crit(end)+1:end);
-fc = [fc_low;fc_high];
+    % number of bands needed to get to 0
+    LP_num = floor(fc_crit/LP_step); 
+    res = fc_crit/LP_step - LP_num;
 
-tsuppmax = tsupp(ind_crit(end)+1);
-tsupp_low = ones(LP_num,1)*tsuppmax;
-tsupp_high = tsupp(ind_crit(end)+1:end);
-tsupp = [tsupp_low;tsupp_high];
+    % center frequencies of the lp and hp filters
+    fc_low = linspace((fc_crit - LP_step), res, LP_num)'; 
+    fc_high = fc(ind_crit(end)+1:end);
+    fc = [fc_low;fc_high];
+
+    tsuppmax = tsupp(ind_crit(end)+1);
+    tsupp_low = ones(LP_num,1)*tsuppmax;
+    tsupp_high = tsupp(ind_crit(end)+1:end);
+    tsupp = [tsupp_low;tsupp_high];
+end
 
 M2 = length(fc);
 ind = (1:M2-1)';
