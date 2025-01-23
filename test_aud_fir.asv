@@ -9,9 +9,9 @@ fmax = fs/2;
 num_filters = 128;
 mul = 100;
 
-[g, a, fc, L] = audfilters(fs,Ls,'uniform','spacing',1/2);
+[g, a, fc, L] = audfilters(fs,Ls,'uniform','spacing',8);
 
-[g_fir, a_fir, fc_fir, L_fir] = audfilters_fir2(fs,Ls,'uniform','spacing',1/2,'min_win',540);
+[g_fir, a_fir, fc_fir, L_fir] = audfilters_fir2(fs,Ls,'uniform','spacing',8);
 
 figure
 gf = filterbankresponse(g,a,L,'plot','real');
@@ -30,10 +30,10 @@ fb = filterbankrealbounds(g_fir,a_fir,L);
 sprintf('Framebound ratio FIR FB: %d', fb)
 
 figure;
-gfr = filterbankfreqz(g,a,L,'plot','linabs');
+filterbankfreqz(g,a,L,'plot','linabs');
 
 hold on
-gfr_fir = filterbankfreqz(g_fir,a_fir,L,'plot','linabs');
+gf = filterbankfreqz(g_fir,a_fir,L,'plot','linabs');
 hold off
 
 %the filters "only" go down to -300 dB (probably due to truncation)

@@ -2,7 +2,7 @@ function [filterfunc,winbw] = helper_filtergeneratorfunc_fir(wintype,winCell,fs,
 firwinflags=getfield(arg_firwin,'flags','wintype');
 freqwinflags=getfield(arg_freqwin,'flags','wintype');
 probeLs = fs;
-probeLg = 5000;
+probeLg = 1000;
 
 subprecflag = 'pedantic';
 if ~do_subprec, subprecflag = 'nopedantic'; end

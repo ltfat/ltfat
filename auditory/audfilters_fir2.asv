@@ -400,7 +400,7 @@ tsupp = round(winbw./fsupp(1:end-1)*fs*10.64);
 % all channels that have to be shortened
 ind_crit = find(tsupp(1:end-1) >= kv.min_win); 
 
- if ~isempty(ind_crit)
+if ~isempty(ind_crit)
     % the center frequency for the last valid channel
     fc_crit = fc(ind_crit(end)+1);
 
@@ -438,9 +438,9 @@ for m=ind.'
     g{m}.h = sqrt(a(m))*g{m}.h;
 end
 
-if fc(1) < fc(2)/2
-    g{1}.h = g{1}.h/sqrt(1.5);
-end
+% if fc(1) < fc(2)/2
+%     g{1}.h = g{1}.h/sqrt(2);
+% end
 
 a = a(1:M2);
 
@@ -453,9 +453,9 @@ a = a(1:M2);
 scal_hp = scal(end);
 g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal_hp,kv,flags);
 
-% if g{M2}.H(0) == 0
-%     g{M2-1}.h = g{M2-1}.h*1.075;
-% end
+if g{M2}.H(0) == 0
+   
+    g{M2}
 
 winbwrat = winbw/0.754;
 basebw = 1.875657;
