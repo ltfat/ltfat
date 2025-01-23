@@ -6,12 +6,12 @@ Ls = fs*len;
 
 fmin = 100;
 fmax = fs/2;
-num_filters = 128;
+num_filters = 256;
 mul = 100;
 
-[g, a, fc, L] = audfilters(fs,Ls,'uniform','spacing',1/2);
+[g, a, fc, L] = audfilters(fs,Ls,'uniform','spacing',1/8);
 
-[g_fir, a_fir, fc_fir, L_fir] = audfilters_fir2(fs,Ls,'uniform','spacing',1/2,'min_win',540);
+[g_fir, a_fir, fc_fir, L_fir] = audfilters_fir2(fs,Ls,'uniform','spacing',1/8,'min_win',512);
 
 figure
 gf = filterbankresponse(g,a,L,'plot','real');

@@ -438,9 +438,9 @@ for m=ind.'
     g{m}.h = sqrt(a(m))*g{m}.h;
 end
 
-if fc(1) < fc(2)/2
-    g{1}.h = g{1}.h/sqrt(1.5);
-end
+% if fc(1) < fc(2)/2
+%     g{1}.h = g{1}.h/sqrt(1.5);
+% end
 
 a = a(1:M2);
 
@@ -450,7 +450,7 @@ a = a(1:M2);
 %g{1} = audlowpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal(1),kv,flags);
 
 % Generate highpass filter
-scal_hp = scal(end);
+scal_hp = scal(end)*sqrt(2);
 g{M2} = audhighpassfilter(g(1:M2),a(1:M2,:),fc(1:M2),fs,scal_hp,kv,flags);
 
 % if g{M2}.H(0) == 0
