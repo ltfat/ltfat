@@ -322,9 +322,10 @@ elseif flags.do_fractionaluniform
     N=ceil(Ls./min(aprecise));
     a= repmat([Ls,N],M,1);
 elseif flags.do_uniform
-    a=floor(min(aprecise));
-    L=filterbanklength(Ls,a);
-    a = repmat(a,M,1);
+    L = Ls;
+    aprecise(2:end-1) = min(aprecise(2:end-1));
+    N=ceil(Ls./aprecise);
+    a=[repmat(Ls,M,1),N];
 end;
 
 % Get an expanded "a"
