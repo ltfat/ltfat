@@ -85,7 +85,7 @@ nchannels = length(fc);
 
 % ourbeta is used in order not to mask the beta function.
 
-ourbeta = betamul*audfiltbw(fc);
+ourbeta = betamul.*audfiltbw(fc);
 
 if isempty(n)
   % Calculate a good value for n
