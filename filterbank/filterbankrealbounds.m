@@ -68,19 +68,23 @@ if info.isuniform
   
   Ha=zeros(a,M,thisclass);
   Hb=zeros(a,M,thisclass);
+  if sum(G(floor(L/2)+1:end))
+      disp(['Not all filters are analytic. Aliasing interactions may not,...' ...
+          'be counted correctly and frame bounds may be too optimistic.']);
+  end 
   
   for w=0:N-1
     idx_a = mod(w-(0:a-1)*N,L)+1;
     idx_b = mod((0:a-1)*N-w,L)+1;
     Ha = G(idx_a,:);
-    Hb = conj(G(idx_b,:));
+    Hb = conj(G(idx_b,:));  
     
     % A 'real' is needed here, because the matrices are known to be
     % Hermitian, but sometimes Matlab/Octave does not recognize this.  
     % work=real(eig(real(Ha*Ha'+Hb*Hb'))); %Prior versions. This seems to 
     % be wrong.
+
     work=real(eig(Ha*Ha'+Hb*Hb'));
-    
     AF=min(AF,min(work));
     BF=max(BF,max(work));
     
@@ -91,11 +95,11 @@ if info.isuniform
   
 else
     if info.ispainless
-        % Compute the diagonal of the frame operator.
-        f=comp_filterbankresponse(g,asan,L,1);
-        
-        AF=min(f);
-        BF=max(f);
+
+        gf = comp_filterbankresponse(g, asan, L, 0);
+        gf=gf(1:floor(L/2)+1)
+        AF = min(gf);
+        BF = max(gf);
     else
         error(['%s: There is no fast method to find the frame bounds of ' ...
                'this filterbank as it is neither uniform nor painless. ' ...
